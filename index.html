@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="미국 증시 buy-side 모닝브리프 아카이브 — 매일 아침(화–토) 지수·섹터, 국채 금리커브, FX, 원자재, 메모리/DRAM, AI 인프라, 경제지표를 애널리스트 관점으로 정리합니다.">
+<link rel="canonical" href="https://fdo2a.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="US Market Brief — 미국 증시 모닝브리프">
+<meta property="og:description" content="매일 아침 전 거래일 미국 시장을 buy-side 애널리스트 관점으로 정리한 모닝브리프 아카이브">
+<meta property="og:url" content="https://fdo2a.github.io/">
+<meta property="og:locale" content="ko_KR">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Blog","name":"US Market Brief","url":"https://fdo2a.github.io/","description":"미국 증시 buy-side 모닝브리프 아카이브","inLanguage":"ko"}
+</script>
+<title>US Market Brief — 미국 증시 모닝브리프</title>
+<style>
+  :root {
+    --toss-blue: #0064FF;
+    --blue-bg: #E8F2FF;
+    --blue-deep: #003EA8;
+    --text: #191F28;
+    --text-2: #4E5968;
+    --text-3: #8B95A1;
+    --bg: #F2F4F6;
+    --border: #E5E8EB;
+    --border-subtle: #F2F4F6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: 'Toss Product Sans', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
+  header.site { display: flex; align-items: baseline; gap: 10px; padding: 4px 2px 6px; }
+  header.site .brand { font-size: 24px; font-weight: 800; color: var(--toss-blue); letter-spacing: -0.025em; }
+  header.site .desc { font-size: 12px; color: var(--text-3); font-weight: 600; margin-left: auto; }
+  .intro {
+    background: var(--blue-bg);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin: 14px 0 22px;
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .intro .small { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--blue-deep); }
+  h2.list-title { font-size: 15px; font-weight: 800; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+  h2.list-title::before { content: ''; width: 6px; height: 16px; border-radius: 3px; background: var(--toss-blue); }
+  .post-list { display: flex; flex-direction: column; gap: 8px; }
+  a.post {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 100ms ease, transform 100ms ease;
+  }
+  a.post:hover { border-color: var(--toss-blue); }
+  .post .date {
+    flex-shrink: 0;
+    background: var(--blue-bg); color: var(--toss-blue);
+    border-radius: 9999px;
+    font-size: 11.5px; font-weight: 800;
+    padding: 4px 12px;
+  }
+  .post .body { min-width: 0; }
+  .post .title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+  .post .headline {
+    font-size: 12px; color: var(--text-2); line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .post .arrow { margin-left: auto; color: var(--text-3); font-size: 18px; flex-shrink: 0; }
+  .empty { text-align: center; color: var(--text-3); font-size: 13px; font-weight: 600; padding: 40px 0; }
+  footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <span class="brand">US Market Brief</span>
+    <span class="desc">buy-side 모닝브리프 아카이브</span>
+  </header>
+  <div class="intro">
+    미국 증시가 열린 다음 날 아침(화–토 09:00 KST), 전 거래일의 시장을 정리한 buy-side 모닝브리프가 자동으로 올라옵니다.
+    <span class="small">지수·섹터 · 채권 · FX · 원자재 · 메모리/DRAM · AI 인프라 · 경제지표 vs 컨센서스</span>
+  </div>
+  <h2 class="list-title">전체 보고서</h2>
+  <div class="post-list" id="list">
+    <div class="empty">불러오는 중…</div>
+  </div>
+  <footer>
+    데이터: Yahoo Finance, FRED. 뉴스 코멘터리는 공개 보도 기반이며 불확실한 항목은 [확인필요]로 표기됩니다.<br>
+    본 자료는 정보 제공 목적으로 작성된 것으로, 특정 종목의 매수·매도 권유가 아닙니다.<br>
+    <a href="about.html" style="color:#8B95A1;">소개</a> · <a href="privacy.html" style="color:#8B95A1;">개인정보처리방침</a>
+  </footer>
+</div>
+<script>
+(async () => {
+  const list = document.getElementById('list');
+  try {
+    const res = await fetch('posts.json', { cache: 'no-store' });
+    const posts = await res.json();
+    posts.sort((a, b) => b.date.localeCompare(a.date));
+    if (!posts.length) {
+      list.innerHTML = '<div class="empty">아직 올라온 보고서가 없습니다.</div>';
+      return;
+    }
+    const days = ['일','월','화','수','목','금','토'];
+    list.innerHTML = posts.map(p => {
+      const d = new Date(p.date + 'T00:00:00');
+      const label = `${p.date} (${days[d.getDay()]})`;
+      return `<a class="post" href="posts/${p.date}.html">
+        <span class="date">${label}</span>
+        <span class="body">
+          <div class="title">${p.title}</div>
+          <div class="headline">${p.headline}</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>';
+  }
+})();
+</script>
+</body>
+</html>
