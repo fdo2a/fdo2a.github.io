@@ -20,18 +20,7 @@ Launch the Agent tool with subagent_type "brief-report-writer", run synchronousl
 
 Gate before proceeding (발행 게이트): (a) grep the final HTML for '확인필요' — must be 0 occurrences; (b) spot-check at least 5 numbers in the HTML tables against market_data.json / intraday.json — all must match. If either check fails, relaunch the writer subagent with the specific violations; repeat until clean. 수치 창작 절대 금지 — 미확인 항목은 삭제·재구성이 원칙.
 
-## STEP 3 — Generate PDF and Deliver
-
-Do NOT send email or create drafts. Install Korean fonts first: apt-get install -y fonts-noto-cjk
-
-Convert the HTML to PDF with headless Chromium:
-/opt/pw-browsers/chromium --headless --disable-gpu --no-sandbox --print-to-pdf=morning_brief_[YYYY-MM-DD].pdf --no-pdf-header-footer --virtual-time-budget=10000 morning_brief_[YYYY-MM-DD].html
-
-Verify with pypdf that every PDF page starts with a section header; if not, adjust the HTML page-break CSS (section { break-inside: avoid-page; page-break-inside: avoid; }) and re-render. Also re-verify zero '확인필요' occurrences.
-
-Deliver the PDF using SendUserFile with status: "proactive" and caption: [모닝브리프] 미국시장 [YYYY-MM-DD] — [헤드라인]. Then send a PushNotification with the headline and the blog post URL.
-
-## STEP 4 — Publish to the blog (GitHub Pages 루트 사이트)
+## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 
 Site base URL: https://fdo2a.github.io/
 
@@ -58,7 +47,7 @@ Site base URL: https://fdo2a.github.io/
    git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
 
-## STEP 5 — Publish to Notion
+## STEP 4 — Publish to Notion
 
 Using the Notion MCP tools (notion-create-pages), create one page in data source e75a2eb0-425a-4f01-94a1-ca8082811026 (database "US Market Brief"):
 - properties: "제목" = 보고서 제목, "date:날짜:start" = YYYY-MM-DD, "헤드라인" = 헤드라인 한 줄, "웹 링크" = https://fdo2a.github.io/posts/YYYY-MM-DD.html
@@ -66,8 +55,12 @@ Using the Notion MCP tools (notion-create-pages), create one page in data source
 - content: full report in Notion-flavored Markdown — > quote headline + styled-web link first, sections as # headings with markdown tables. 채권 섹션에 ![미 국채 수익률 커브](https://fdo2a.github.io/assets/yield_curve_[YYYY-MM-DD].png) + 주간 변화 캡션. 마지막에 면책 문구(정보 제공 목적, 투자 권유 아님).
 - Do not create duplicates for the same date.
 
+## STEP 5 — Notify
+
+Send a PushNotification with the headline and the blog post URL (mention any channel failures). Do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email — the deliverables are the blog post and the Notion page only.
+
 ## RULES
 - All prices/% changes in the published report MUST come from market_data.json / intraday.json; macro indicator values from research_notes.md. 수치 창작 절대 금지.
 - **발행본에 [확인필요] 금지 (STEP 2 게이트).** 미확인 항목은 끝까지 확인하거나 삭제·재구성.
 - Web findings attributed to sources. Professional buy-side tone.
-- Final message: delivery status of all three channels (PDF / GitHub Pages / Notion), which subagents ran (or which fallback was used), and any failures.
+- Final message: delivery status of both channels (GitHub Pages / Notion), which subagents ran (or which fallback was used), and any failures.
