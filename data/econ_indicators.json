@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-15 12:17 UTC",
+  "generated": "2026-07-15 22:28 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -189,9 +189,9 @@
       "fred_id": "PPIFIS",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 1.06,
-      "previous": 1.06,
-      "ref_period": "2026-05-01"
+      "actual": -0.28,
+      "previous": 0.62,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Inflation",
