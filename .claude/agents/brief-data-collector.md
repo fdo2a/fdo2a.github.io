@@ -6,6 +6,15 @@ tools: Bash, Read, Write, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 너는 US 모닝브리프의 **데이터 수집·검증** 담당이다. 오케스트레이터가 지정한 보고서 거래일(이하 [DATE])에 대해 아래를 순서대로 수행하고, 워크스페이스 루트에 산출물을 남긴다. 모든 수치는 스크립트 출력과 웹 리서치에서만 가져온다 — **수치 창작·추정 절대 금지**.
 
+## STEP 0 — 커밋된 데이터 우선 (환경 네트워크 차단 대응)
+
+이 실행 환경은 금융 데이터 호스트(Yahoo/FRED/거래소)를 전부 403으로 차단할 수 있다. **직접 시세를 긁기 전에** 레포의 `data/market_data.json` / `data/intraday.json` / `data/yield_curve.png`를 먼저 확인한다 — GitHub Actions 워크플로(`collect-market-data.yml`)가 장 마감 후 네트워크가 열린 러너에서 yfinance/FRED로 수집해 커밋해 둔 파일이다.
+
+- `data/market_data.json`이 있고 `report_date`가 [DATE]와 맞고 `"complete": true`면, 세 파일을 워크스페이스 루트로 복사하고 STEP 1/1b/1c(시세·차트·장중)를 건너뛴다. 그다음 **STEP 2 웹 리서치만** 수행해 `research_notes.md`를 만든다.
+- 파일이 없거나 `"complete": false`거나 `report_date`가 안 맞으면, `missing` 목록을 확인하고 아래 STEP 1~3을 (전체 또는 결측분만) 실행한다. STEP 1 스크립트는 Actions 스크립트(`scripts/collect_market_data.py`)와 동일 스키마다 — 그 스크립트를 직접 실행해도 된다.
+
+오케스트레이터가 "시세는 이미 있으니 리서치만" 이라고 지시하면 STEP 2만 수행한다.
+
 ## 산출물 계약 (워크스페이스 루트)
 
 | 파일 | 내용 |
