@@ -8,7 +8,7 @@ tools: Bash, Read, Write, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 ## STEP 0 — 커밋된 데이터 우선 (환경 네트워크 차단 대응)
 
-이 실행 환경은 금융 데이터 호스트(Yahoo/FRED/거래소)를 전부 403으로 차단할 수 있다. **직접 시세를 긁기 전에** 레포의 `data/market_data.json` / `data/intraday.json` / `data/yield_curve.png`를 먼저 확인한다 — GitHub Actions 워크플로(`collect-market-data.yml`)가 장 마감 후 네트워크가 열린 러너에서 yfinance/FRED로 수집해 커밋해 둔 파일이다.
+이 실행 환경은 금융 데이터 호스트(Yahoo/FRED/거래소)를 전부 403으로 차단할 수 있다. **직접 시세를 긁기 전에** 레포의 `data/market_data.json` / `data/intraday.json` / `data/yield_curve.png` / `data/econ_indicators.json`을 먼저 확인한다 — GitHub Actions 워크플로(`collect-market-data.yml`)가 장 마감 후 네트워크가 열린 러너에서 yfinance/FRED로 수집해 커밋해 둔 파일이다.
 
 - `data/market_data.json`이 있고 `report_date`가 [DATE]와 맞고 `"complete": true`면, 세 파일을 워크스페이스 루트로 복사하고 STEP 1/1b/1c(시세·차트·장중)를 건너뛴다. 그다음 **STEP 2 웹 리서치만** 수행해 `research_notes.md`를 만든다.
 - 파일이 없거나 `"complete": false`거나 `report_date`가 안 맞으면, `missing` 목록을 확인하고 아래 STEP 1~3을 (전체 또는 결측분만) 실행한다. STEP 1 스크립트는 Actions 스크립트(`scripts/collect_market_data.py`)와 동일 스키마다 — 그 스크립트를 직접 실행해도 된다.
@@ -163,19 +163,18 @@ print(json.dumps(out, default=str))
 2. [DATE] Treasury yields bond market 10Y 2Y Fed — 금리 맥락
 3. Micron Western Digital Seagate memory DRAM news [DATE]
 4. Marvell Coherent Lumentum GE Vernova Vertiv AI data center infrastructure news [DATE]
-5. **경제지표 캘린더 (중요)**: https://tradingeconomics.com/united-states/calendar WebFetch 및/또는 타겟 WebSearch로 아래 4축 지표 전체의 Actual / Forecast / Previous / 발표일을 확보한다. 최근 7일 내 발표 지표 우선, 나머지는 최신 확정 발표값+기준월.
-   - **Labor**: JOLTS Job Openings, Initial Jobless Claims, Initial Jobless Claims 4-week MA, Continuing Jobless Claims, ADP Employment Change (weekly), ADP National Employment, Nonfarm Payrolls, Unemployment Rate
-   - **Activity & Production**: Philadelphia Fed Manufacturing Index, ISM Manufacturing PMI, ISM Manufacturing Prices, ISM Manufacturing Employment, ISM Services PMI, Durable Goods Orders MoM, Core Durable Goods Orders MoM, Industrial Production MoM, Industrial Production YoY, S&P Global Manufacturing PMI, S&P Global Services PMI, Existing Home Sales, New Home Sales, GDP Growth QoQ, GDP Price Index QoQ
-   - **Consumption**: Michigan Consumer Expectations, Michigan Consumer Sentiment, CB Consumer Confidence, Retail Sales MoM, Core Retail Sales MoM
-   - **Inflation**: Michigan 1-Year Inflation Expectation, Michigan 5-Year Inflation Expectation, NY Fed 1-Year Consumer Inflation Expectation, PPI MoM, PPI YoY, Core PPI MoM, Core PPI YoY, CPI MoM, CPI YoY, Core CPI MoM, Core CPI YoY, Avg Hourly Earnings MoM, Avg Hourly Earnings YoY, PCE Price Index, Core PCE Price Index
-6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치
+5. **경제지표 (토큰 절약 — 웹서치 최소화)**: 지표 Actual/Previous/기준월의 **1차 출처는 커밋된 `data/econ_indicators.json`**(FRED 확정치, 22종). 이 파일을 읽어 그대로 사용하고 **개별 지표를 웹서치로 재확인하지 않는다**. 웹은 아래 두 경우에만 쓴다:
+   - (a) **컨센서스(Forecast)와 정확한 발표일**: `econ_indicators.json`에는 없다. `ref_period`가 가장 최근(≈최근 1~2주 내 발표)인 지표에 한해서만 컨센서스·발표일을 타겟 검색한다 — 하루에 보통 1~3개뿐. 오래된 기준월 지표는 Forecast 칸을 비우고 발표일은 기준월로 갈음(웹서치 낭비 금지).
+   - (b) **FRED에 없는 지표** — ISM Mfg/Services PMI, S&P Global PMI, ADP, CB Consumer Confidence, Philadelphia Fed, NY Fed 1-Yr Inflation Exp. 이 중 **최근 7일 내 발표된 것만** 검색해 Actual/Forecast/Previous를 채운다. 최근 발표가 아니면 생략 가능.
+   - tradingeconomics 캘린더 페이지 **통째 WebFetch 금지**(토큰 과다) — 필요한 항목만 타겟 WebSearch.
+6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치 (검색 1~2회)
 7. STEP 1 데이터에서 파악한 최대 변동 종목·자산에 대한 추가 검색
 
-`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록. 모든 항목에 출처를 붙인다('~로 보도된다', 출처명).
+`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록. 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명).
 
 ## STEP 3 — 검증 게이트 (필수)
 
 1. `market_data.json` 파싱 확인 — indices/sectors/yields 핵심 필드가 non-null이고 지수 date가 서로 일치하는지 (FRED 금리는 1영업일 랙 허용).
 2. 등락률 절대값이 비정상적으로 큰 값(지수 ±5%, 개별 종목 ±15% 초과 등)은 재조회·웹 교차 확인으로 데이터 오류 여부를 가린다.
-3. 경제지표 중 값을 확보하지 못한 항목은 검색어를 바꿔 2~3회 추가 추적한다. 끝내 미확정이면 research_notes.md의 '미확정 항목' 섹션에 지표명과 사유를 명시한다 — **빈 값을 창작으로 채우지 않는다**. '컨센서스 미공표'는 그 사실이 확인된 경우에만 기록.
+3. 경제지표 Actual/Previous는 `data/econ_indicators.json`(FRED)이 채우므로 재검색 불필요. **미확정으로 남는 것은 Forecast(컨센서스)와 비FRED 지표뿐** — 이는 최근 발표분만 1~2회 검색하고, 안 되면 '미확정 항목'에 사유 명기(**빈 값 창작 금지**, '컨센서스 미공표'는 확인 시에만).
 4. 최종 메시지로 보고: 산출물 파일 경로 목록, 데이터 기준일(주식/금리 각각), 차트 생성 여부, 미확정 항목 요약.

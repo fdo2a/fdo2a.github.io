@@ -107,20 +107,97 @@ def fill_daily_gaps(daily):
     return daily
 
 
+def fred_series(sid):
+    """(date, value) pairs, oldest→newest, '.' rows dropped."""
+    url = f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}'
+    data = urllib.request.urlopen(url, timeout=25, context=_SSL).read().decode()
+    rows = list(csv.reader(io.StringIO(data)))[1:]
+    return [(r[0], float(r[1])) for r in rows if r[1] not in ('.', '')]
+
+
 def fred_yields():
     out = {}
     for name, sid in [('2Y', 'DGS2'), ('5Y', 'DGS5'), ('10Y', 'DGS10'), ('30Y', 'DGS30')]:
         def one(sid=sid):
-            url = f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}'
-            data = urllib.request.urlopen(url, timeout=25, context=_SSL).read().decode()
-            rows = list(csv.reader(io.StringIO(data)))[1:]
-            vals = [(r[0], float(r[1])) for r in rows if r[1] not in ('.', '')]
+            vals = fred_series(sid)
             d2, d1 = vals[-2], vals[-1]
             wk = vals[-6] if len(vals) >= 6 else None
             return {'level': d1[1], 'date': d1[0], 'bp': (d1[1] - d2[1]) * 100,
                     'week_ago': wk[1] if wk else None, 'week_ago_date': wk[0] if wk else None}
         out[name] = retry(one)
         time.sleep(1)
+    return out
+
+
+# 4-axis economic dashboard indicators available on FRED (Actual/Previous/ref-period,
+# deterministic). transform: level | mom_pct | yoy_pct | mom_diff. units label is what the
+# report prints. Series NOT on FRED (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed,
+# NY Fed inflation exp) stay web-sourced — the agent only needs consensus/forecast anyway.
+ECON = [
+    ('Labor', 'JOLTS Job Openings', 'JTSJOL', 'level', 'K'),
+    ('Labor', 'Initial Jobless Claims', 'ICSA', 'level', ''),
+    ('Labor', 'Initial Claims 4-wk MA', 'IC4WSA', 'level', ''),
+    ('Labor', 'Continuing Jobless Claims', 'CCSA', 'level', ''),
+    ('Labor', 'Nonfarm Payrolls (chg)', 'PAYEMS', 'mom_diff', 'K'),
+    ('Labor', 'Unemployment Rate', 'UNRATE', 'level', '%'),
+    ('Labor', 'Avg Hourly Earnings MoM', 'CES0500000003', 'mom_pct', '%'),
+    ('Activity', 'Industrial Production MoM', 'INDPRO', 'mom_pct', '%'),
+    ('Activity', 'Durable Goods Orders MoM', 'DGORDER', 'mom_pct', '%'),
+    ('Activity', 'New Home Sales', 'HSN1F', 'level', 'K'),
+    ('Activity', 'Existing Home Sales', 'EXHOSLUSM495S', 'level', ''),
+    ('Activity', 'Real GDP Growth QoQ (ann.)', 'A191RL1Q225SBEA', 'level', '%'),
+    ('Consumption', 'Retail Sales MoM', 'RSAFS', 'mom_pct', '%'),
+    ('Consumption', 'Michigan Consumer Sentiment', 'UMCSENT', 'level', ''),
+    ('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%'),
+    ('Inflation', 'CPI MoM', 'CPIAUCSL', 'mom_pct', '%'),
+    ('Inflation', 'Core CPI YoY', 'CPILFESL', 'yoy_pct', '%'),
+    ('Inflation', 'Core CPI MoM', 'CPILFESL', 'mom_pct', '%'),
+    ('Inflation', 'PPI Final Demand MoM', 'PPIFIS', 'mom_pct', '%'),
+    ('Inflation', 'PCE Price Index YoY', 'PCEPI', 'yoy_pct', '%'),
+    ('Inflation', 'Core PCE YoY', 'PCEPILFE', 'yoy_pct', '%'),
+    ('Inflation', 'Michigan 1-Yr Inflation Exp', 'MICH', 'level', '%'),
+]
+
+
+def _apply(vals, i, tf):
+    """transform value at index i (must be negative index into vals)."""
+    if tf == 'level':
+        return vals[i][1]
+    if tf == 'mom_pct':
+        return (vals[i][1] / vals[i - 1][1] - 1) * 100
+    if tf == 'mom_diff':
+        return vals[i][1] - vals[i - 1][1]
+    if tf == 'yoy_pct':
+        return (vals[i][1] / vals[i - 12][1] - 1) * 100
+    raise ValueError(tf)
+
+
+def collect_econ():
+    """FRED-sourced Actual/Previous/ref-period for the dashboard. Never fabricates —
+    a series that fails to fetch is simply omitted (agent falls back to web for it)."""
+    out = []
+    seen = {}
+    for axis, name, sid, tf, units in ECON:
+        vals = seen.get(sid)
+        if vals is None:
+            vals = retry(lambda sid=sid: fred_series(sid), attempts=3, base_sleep=2)
+            seen[sid] = vals
+            time.sleep(0.6)
+        if not vals:
+            continue
+        need = 13 if tf == 'yoy_pct' else 2
+        if len(vals) < need:
+            continue
+        try:
+            actual = _apply(vals, -1, tf)
+            previous = _apply(vals, -2, tf)
+        except Exception:
+            continue
+        out.append({
+            'axis': axis, 'name': name, 'fred_id': sid, 'transform': tf, 'units': units,
+            'actual': round(actual, 2), 'previous': round(previous, 2),
+            'ref_period': vals[-1][0],  # observation month (reference period), not release date
+        })
     return out
 
 
@@ -260,6 +337,9 @@ def main():
     yields = fred_yields()
     print('collecting Yahoo yield supplement...')
     yields_yahoo = yahoo_yields_supplement()
+    print('collecting FRED economic indicators...')
+    econ = collect_econ()
+    print(f'  econ indicators: {len(econ)}/{len(ECON)}')
     print('collecting 30m intraday bars...')
     intraday = collect_intraday(datetime.date.fromisoformat(report_date))
 
@@ -295,6 +375,15 @@ def main():
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
+              indent=2, default=str, ensure_ascii=False)
+    json.dump({'generated': data['generated'], 'source': 'FRED via collect_market_data.py',
+               'note': 'Actual/Previous/ref_period are authoritative FRED values. '
+                       'Forecast/consensus and release dates are NOT here — the agent adds '
+                       'those from web only for recently-released indicators. '
+                       'Indicators absent from this list (ISM, S&P Global PMI, ADP, CB '
+                       'Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.',
+               'indicators': econ},
+              open(os.path.join(args.outdir, 'econ_indicators.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
 
     if missing:
