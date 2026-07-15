@@ -1,0 +1,227 @@
+{
+  "generated": "2026-07-15 12:17 UTC",
+  "source": "FRED via collect_market_data.py",
+  "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
+  "indicators": [
+    {
+      "axis": "Labor",
+      "name": "JOLTS Job Openings",
+      "fred_id": "JTSJOL",
+      "transform": "level",
+      "units": "K",
+      "actual": 7594.0,
+      "previous": 7585.0,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Labor",
+      "name": "Initial Jobless Claims",
+      "fred_id": "ICSA",
+      "transform": "level",
+      "units": "",
+      "actual": 215000.0,
+      "previous": 217000.0,
+      "ref_period": "2026-07-04"
+    },
+    {
+      "axis": "Labor",
+      "name": "Initial Claims 4-wk MA",
+      "fred_id": "IC4WSA",
+      "transform": "level",
+      "units": "",
+      "actual": 218750.0,
+      "previous": 222500.0,
+      "ref_period": "2026-07-04"
+    },
+    {
+      "axis": "Labor",
+      "name": "Continuing Jobless Claims",
+      "fred_id": "CCSA",
+      "transform": "level",
+      "units": "",
+      "actual": 1814000.0,
+      "previous": 1806000.0,
+      "ref_period": "2026-06-27"
+    },
+    {
+      "axis": "Labor",
+      "name": "Nonfarm Payrolls (chg)",
+      "fred_id": "PAYEMS",
+      "transform": "mom_diff",
+      "units": "K",
+      "actual": 57.0,
+      "previous": 129.0,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Labor",
+      "name": "Unemployment Rate",
+      "fred_id": "UNRATE",
+      "transform": "level",
+      "units": "%",
+      "actual": 4.2,
+      "previous": 4.3,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Labor",
+      "name": "Avg Hourly Earnings MoM",
+      "fred_id": "CES0500000003",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.35,
+      "previous": 0.27,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Activity",
+      "name": "Industrial Production MoM",
+      "fred_id": "INDPRO",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.14,
+      "previous": 0.87,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Activity",
+      "name": "Durable Goods Orders MoM",
+      "fred_id": "DGORDER",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": -4.47,
+      "previous": 8.51,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Activity",
+      "name": "New Home Sales",
+      "fred_id": "HSN1F",
+      "transform": "level",
+      "units": "K",
+      "actual": 580.0,
+      "previous": 626.0,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Activity",
+      "name": "Existing Home Sales",
+      "fred_id": "EXHOSLUSM495S",
+      "transform": "level",
+      "units": "",
+      "actual": 4090000.0,
+      "previous": 4190000.0,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Activity",
+      "name": "Real GDP Growth QoQ (ann.)",
+      "fred_id": "A191RL1Q225SBEA",
+      "transform": "level",
+      "units": "%",
+      "actual": 2.1,
+      "previous": 0.5,
+      "ref_period": "2026-01-01"
+    },
+    {
+      "axis": "Consumption",
+      "name": "Retail Sales MoM",
+      "fred_id": "RSAFS",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.88,
+      "previous": 0.4,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Consumption",
+      "name": "Michigan Consumer Sentiment",
+      "fred_id": "UMCSENT",
+      "transform": "level",
+      "units": "",
+      "actual": 44.8,
+      "previous": 49.8,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "CPI YoY",
+      "fred_id": "CPIAUCSL",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 3.73,
+      "previous": 4.27,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "CPI MoM",
+      "fred_id": "CPIAUCSL",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": -0.42,
+      "previous": 0.47,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Core CPI YoY",
+      "fred_id": "CPILFESL",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 2.81,
+      "previous": 2.96,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Core CPI MoM",
+      "fred_id": "CPILFESL",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": -0.02,
+      "previous": 0.21,
+      "ref_period": "2026-06-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "PPI Final Demand MoM",
+      "fred_id": "PPIFIS",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 1.06,
+      "previous": 1.06,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "PCE Price Index YoY",
+      "fred_id": "PCEPI",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 4.07,
+      "previous": 3.8,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Core PCE YoY",
+      "fred_id": "PCEPILFE",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 3.41,
+      "previous": 3.32,
+      "ref_period": "2026-05-01"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Michigan 1-Yr Inflation Exp",
+      "fred_id": "MICH",
+      "transform": "level",
+      "units": "%",
+      "actual": 4.8,
+      "previous": 4.7,
+      "ref_period": "2026-05-01"
+    }
+  ]
+}
