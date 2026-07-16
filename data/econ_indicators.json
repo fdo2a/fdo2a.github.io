@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-15 22:28 UTC",
+  "generated": "2026-07-16 22:28 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -19,9 +19,9 @@
       "fred_id": "ICSA",
       "transform": "level",
       "units": "",
-      "actual": 215000.0,
-      "previous": 217000.0,
-      "ref_period": "2026-07-04"
+      "actual": 208000.0,
+      "previous": 216000.0,
+      "ref_period": "2026-07-11"
     },
     {
       "axis": "Labor",
@@ -29,9 +29,9 @@
       "fred_id": "IC4WSA",
       "transform": "level",
       "units": "",
-      "actual": 218750.0,
-      "previous": 222500.0,
-      "ref_period": "2026-07-04"
+      "actual": 214250.0,
+      "previous": 219000.0,
+      "ref_period": "2026-07-11"
     },
     {
       "axis": "Labor",
@@ -39,9 +39,9 @@
       "fred_id": "CCSA",
       "transform": "level",
       "units": "",
-      "actual": 1814000.0,
-      "previous": 1806000.0,
-      "ref_period": "2026-06-27"
+      "actual": 1805000.0,
+      "previous": 1821000.0,
+      "ref_period": "2026-07-04"
     },
     {
       "axis": "Labor",
@@ -129,9 +129,9 @@
       "fred_id": "RSAFS",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.88,
-      "previous": 0.4,
-      "ref_period": "2026-05-01"
+      "actual": 0.22,
+      "previous": 1.02,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Consumption",
