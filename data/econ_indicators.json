@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-17 09:54 UTC",
+  "generated": "2026-07-17 22:11 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -79,9 +79,9 @@
       "fred_id": "INDPRO",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.14,
-      "previous": 0.87,
-      "ref_period": "2026-05-01"
+      "actual": 0.08,
+      "previous": 0.14,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Activity",
