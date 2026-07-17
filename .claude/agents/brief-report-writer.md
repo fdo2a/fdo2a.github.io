@@ -36,6 +36,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 ## 문체 요구사항 (중요)
 
 - 실제 증권사 애널리스트 모닝미팅 노트 수준: 메커니즘 + 포지셔닝 함의 + 손절·확인 트리거 명시.
+- **문단 규율 (가독성, 2026-07-17 사용자 지시)**: 한 문단 = 한 주제. 서술 블록(장중 흐름·해석·업계 뉴스·시장 해석·전망 등)에서 주제가 바뀌면 반드시 `<p>`를 나눈다 — 예: 지수 궤적 / 개별 종목 스윙 / 섹터 로테이션은 각각 별도 문단. 한 문단은 2~4문장, 5문장 이상 이어지면 분할한다. box-label 라벨은 블록의 첫 문단에만 붙인다. 통짜 장문 문단 금지.
 - 자연스러운 한국어. AI 티 금지: 피동 종결 반복 금지(문단당 최대 1회), ①②③ 대신 산문, 번역투 회피, 문장 종결 다양하게.
 - 웹 리서치 기반 서술은 출처 귀속('~로 보도된다', 출처명) — research_notes.md의 출처를 유지한다.
 
@@ -44,6 +45,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - font-family: 'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing -0.01em; base font 12.5px; 페이지 배경 #F2F4F6; 콘텐츠는 흰색 카드 위
 - 색상: primary/accent #0064FF (Toss Blue), 본문 #191F28, 보조 #4E5968, muted #8B95A1, 보더 #E5E8EB/#F2F4F6, 상승 #00A85A on #E8F8EE, 하락 #FF4040 on #FFE8E8, 정보 #0064FF on #E8F2FF
 - 카드: 흰 배경, border-radius 14px, 1px solid #F2F4F6, 플랫. 필 태그(border-radius 9999px)
+- 본문 문단 들여쓰기: `.card p { text-indent: 1em; margin-bottom: 9px; }` — 단 mover 설명(`.mover-body p`)과 차트 캡션·note는 `text-indent: 0`
 - h2: bold #191F28 + 6px 라운드 Toss Blue 바 프리픽스(::before). 표: 헤더 행 배경 #F2F4F6 + 2px Toss Blue 하단 보더, 라운드 컨테이너
 - 상단 바: 'US Market Brief' Toss Blue bold + 작성일. 헤드라인은 #E8F2FF 카드
 - 최상단에 `<meta charset="utf-8">`와 `<meta name="viewport" content="width=device-width, initial-scale=1">` 포함
