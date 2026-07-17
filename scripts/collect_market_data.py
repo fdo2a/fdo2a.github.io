@@ -30,7 +30,8 @@ INDICES = [('Nasdaq', '^IXIC'), ('S&P 500', '^GSPC'), ('Dow', '^DJI'), ('Russell
            ('S&P 500 Growth', 'IVW'), ('S&P 500 Value', 'IVE')]
 SECTORS = [('Technology', 'XLK'), ('Energy', 'XLE'), ('Communication Services', 'XLC'),
            ('Consumer Discretionary', 'XLY'), ('Utilities', 'XLU'), ('Consumer Staples', 'XLP'),
-           ('Health Care', 'XLV'), ('Industrials', 'XLI'), ('Financials', 'XLF'), ('Materials', 'XLB')]
+           ('Health Care', 'XLV'), ('Industrials', 'XLI'), ('Financials', 'XLF'), ('Materials', 'XLB'),
+           ('Real Estate', 'XLRE')]
 FX = [('DXY', 'DX-Y.NYB'), ('USD/KRW', 'KRW=X'), ('USD/JPY', 'JPY=X'), ('EUR/USD', 'EURUSD=X')]
 CMDTY = [('WTI', 'CL=F'), ('Brent', 'BZ=F'), ('Natural Gas', 'NG=F'), ('Gold', 'GC=F')]
 MEMORY = [('Micron', 'MU'), ('Western Digital', 'WDC'), ('Seagate', 'STX'), ('Nvidia', 'NVDA'),
@@ -105,6 +106,94 @@ def fill_daily_gaps(daily):
             daily[group][name] = retry(one)
             time.sleep(1)
     return daily
+
+
+PERF_HORIZONS = [('1D', 1), ('1W', 7), ('1M', 30), ('6M', 182), ('1Y', 365)]
+PERF_LABELS = {'1D': '1일', '1W': '1주', '1M': '1개월', '6M': '6개월', '1Y': '1년'}
+PERF_SHORT = {'Communication Services': 'Comm. Svcs', 'Consumer Discretionary': 'Consumer Disc.'}
+
+
+def collect_sector_performance():
+    """Multi-horizon sector returns from one 1y batched download.
+    1D = previous trading-day close; others = closest close on/before calendar offset."""
+    import yfinance as yf
+    import pandas as pd
+    tickers = [t for _, t in SECTORS]
+
+    def dl():
+        # 2y so the 1Y lookback always has a close on/before last_date - 365d
+        df = yf.download(tickers, period='2y', interval='1d', group_by='ticker',
+                         auto_adjust=True, progress=False, threads=False)
+        return df if df is not None and len(df) else None
+
+    df = retry(dl)
+    out = {}
+    as_of = None
+    for name, t in SECTORS:
+        try:
+            closes = df[t]['Close'].dropna()
+        except Exception:
+            out[name] = None
+            continue
+        if len(closes) < 2:
+            out[name] = None
+            continue
+        last = float(closes.iloc[-1])
+        as_of = as_of or str(closes.index[-1].date())
+        row = {}
+        for key, days in PERF_HORIZONS:
+            if key == '1D':
+                base = float(closes.iloc[-2])
+            else:
+                prior = closes[closes.index <= closes.index[-1] - pd.Timedelta(days=days)]
+                base = float(prior.iloc[-1]) if len(prior) else None
+            row[key] = round((last / base - 1) * 100, 2) if base else None
+        out[name] = row
+    return out, as_of
+
+
+def render_sector_perf_html(perf, as_of, path):
+    """Self-contained Toss-styled horizontal-bar section the report writer inserts verbatim.
+    All numbers are computed here — the writer must not edit them."""
+    style = (
+        '<style>\n'
+        '.spf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }\n'
+        '.spf-block { background: #fff; border: 1px solid #F2F4F6; border-radius: 14px;'
+        ' padding: 13px 16px; page-break-inside: avoid; }\n'
+        '.spf-title { font-size: 11px; font-weight: 800; color: #0050D9;'
+        ' letter-spacing: 0.03em; margin: 0 0 8px; }\n'
+        '.spf-row { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }\n'
+        '.spf-name { flex: 0 0 96px; font-size: 10px; font-weight: 600; color: #4E5968;'
+        ' text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n'
+        '.spf-track { flex: 1 1 auto; height: 13px; }\n'
+        '.spf-bar { height: 13px; border-radius: 4px; min-width: 2px; }\n'
+        '.spf-bar.p { background: #00A85A; } .spf-bar.n { background: #FF4040; }\n'
+        '.spf-val { flex: 0 0 52px; font-size: 10px; font-weight: 700; white-space: nowrap; }\n'
+        '.spf-val.p { color: #00A85A; } .spf-val.n { color: #FF4040; } .spf-val.z { color: #8B95A1; }\n'
+        '</style>\n')
+    blocks = []
+    for key, _ in PERF_HORIZONS:
+        vals = [(n, v[key]) for n, v in perf.items() if v and v.get(key) is not None]
+        if not vals:
+            continue
+        vals.sort(key=lambda x: x[1], reverse=True)
+        maxabs = max(abs(v) for _, v in vals) or 1
+        rows = []
+        for n, v in vals:
+            w = max(round(abs(v) / maxabs * 100), 1)
+            cls = 'p' if v > 0 else ('n' if v < 0 else 'z')
+            bar = '' if v == 0 else f'<div class="spf-bar {cls}" style="width:{w}%"></div>'
+            rows.append(f'<div class="spf-row"><span class="spf-name">{PERF_SHORT.get(n, n)}</span>'
+                        f'<div class="spf-track">{bar}</div>'
+                        f'<span class="spf-val {cls}">{v:+.2f}%</span></div>')
+        blocks.append(f'<div class="spf-block"><div class="spf-title">{PERF_LABELS[key]} 수익률</div>'
+                      + '\n'.join(rows) + '</div>')
+    html = ('<section class="sec">\n<h2>섹터 기간별 수익률</h2>\n' + style
+            + '<div class="spf-grid">\n' + '\n'.join(blocks) + '\n</div>\n'
+            + f'<div style="font-size:10px; color:#8B95A1; font-weight:600; margin:6px 2px 0;">'
+              f'※ SPDR 섹터 ETF 종가 기준(배당·분할 조정), {as_of} 마감 · 각 기간 시점 대비 등락률</div>\n'
+            + '</section>\n')
+    open(path, 'w').write(html)
 
 
 def fred_series(sid):
@@ -300,6 +389,12 @@ def completeness(data, intraday):
     for n in ('Nasdaq', 'S&P 500'):
         if intraday.get(n) is None:
             missing.append(f'intraday/{n}')
+    perf = data.get('sector_performance', {})
+    for name, _ in SECTORS:
+        row = perf.get(name)
+        # 6M/1Y may legitimately be short for a young ETF; gate only through 1M.
+        if row is None or any(row.get(k) is None for k in ('1D', '1W', '1M')):
+            missing.append(f'sector_performance/{name}')
     return missing
 
 
@@ -340,6 +435,9 @@ def main():
     print('collecting FRED economic indicators...')
     econ = collect_econ()
     print(f'  econ indicators: {len(econ)}/{len(ECON)}')
+    print('collecting sector multi-horizon performance...')
+    sector_perf, perf_as_of = collect_sector_performance()
+    print(f'  sector perf: {sum(1 for v in sector_perf.values() if v)}/{len(SECTORS)} (as of {perf_as_of})')
     print('collecting 30m intraday bars...')
     intraday = collect_intraday(datetime.date.fromisoformat(report_date))
 
@@ -355,6 +453,8 @@ def main():
         'ai_infra': daily['ai_infra'],
         'yields': yields,
         'yields_yahoo_sameday': yields_yahoo,
+        'sector_performance': sector_perf,
+        'sector_performance_as_of': perf_as_of,
     }
     y = data['yields']
     if y.get('2Y') and y.get('10Y'):
@@ -372,6 +472,8 @@ def main():
         print('week-ago yields incomplete — skipping chart', file=sys.stderr)
         if os.path.exists(chart_path):
             os.remove(chart_path)
+
+    render_sector_perf_html(sector_perf, perf_as_of, os.path.join(args.outdir, 'sector_performance.html'))
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),

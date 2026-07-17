@@ -8,9 +8,10 @@ tools: Bash, Read, Write, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 ## STEP 0 — 커밋된 데이터 우선 (환경 네트워크 차단 대응)
 
-이 실행 환경은 금융 데이터 호스트(Yahoo/FRED/거래소)를 전부 403으로 차단할 수 있다. **직접 시세를 긁기 전에** 레포의 `data/market_data.json` / `data/intraday.json` / `data/yield_curve.png` / `data/econ_indicators.json`을 먼저 확인한다 — GitHub Actions 워크플로(`collect-market-data.yml`)가 장 마감 후 네트워크가 열린 러너에서 yfinance/FRED로 수집해 커밋해 둔 파일이다.
+이 실행 환경은 금융 데이터 호스트(Yahoo/FRED/거래소)를 전부 403으로 차단할 수 있다. **직접 시세를 긁기 전에** 레포의 `data/market_data.json` / `data/intraday.json` / `data/yield_curve.png` / `data/econ_indicators.json` / `data/sector_performance.html`을 먼저 확인한다 — GitHub Actions 워크플로(`collect-market-data.yml`)가 장 마감 후 네트워크가 열린 러너에서 yfinance/FRED로 수집해 커밋해 둔 파일이다.
 
 - `data/market_data.json`이 있고 `report_date`가 [DATE]와 맞고 `"complete": true`면, 세 파일을 워크스페이스 루트로 복사하고 STEP 1/1b/1c(시세·차트·장중)를 건너뛴다. 그다음 **STEP 2 웹 리서치만** 수행해 `research_notes.md`를 만든다.
+- `sector_performance.html`(섹터 1일/1주/1개월/6개월/1년 수익률 막대 섹션)은 STEP 1 인라인 스크립트로 재생성할 수 없다 — 없으면 레포의 `scripts/collect_market_data.py`를 직접 실행해 얻는다.
 - 파일이 없거나 `"complete": false`거나 `report_date`가 안 맞으면, `missing` 목록을 확인하고 아래 STEP 1~3을 (전체 또는 결측분만) 실행한다. STEP 1 스크립트는 Actions 스크립트(`scripts/collect_market_data.py`)와 동일 스키마다 — 그 스크립트를 직접 실행해도 된다.
 
 오케스트레이터가 "시세는 이미 있으니 리서치만" 이라고 지시하면 STEP 2만 수행한다.
@@ -48,7 +49,7 @@ def chg(ticker):
     except: return None
 
 INDICES = [('Nasdaq','^IXIC'),('S&P 500','^GSPC'),('Dow','^DJI'),('Russell 2000','^RUT'),('S&P 500 Growth','IVW'),('S&P 500 Value','IVE')]
-SECTORS = [('Technology','XLK'),('Energy','XLE'),('Communication Services','XLC'),('Consumer Discretionary','XLY'),('Utilities','XLU'),('Consumer Staples','XLP'),('Health Care','XLV'),('Industrials','XLI'),('Financials','XLF'),('Materials','XLB')]
+SECTORS = [('Technology','XLK'),('Energy','XLE'),('Communication Services','XLC'),('Consumer Discretionary','XLY'),('Utilities','XLU'),('Consumer Staples','XLP'),('Health Care','XLV'),('Industrials','XLI'),('Financials','XLF'),('Materials','XLB'),('Real Estate','XLRE')]
 FX = [('DXY','DX-Y.NYB'),('USD/KRW','KRW=X'),('USD/JPY','JPY=X'),('EUR/USD','EURUSD=X')]
 CMDTY = [('WTI','CL=F'),('Brent','BZ=F'),('Natural Gas','NG=F'),('Gold','GC=F')]
 MEMORY = [('Micron','MU'),('Western Digital','WDC'),('Seagate','STX'),('Nvidia','NVDA'),('Samsung Elec','005930.KS'),('SK hynix','000660.KS')]
