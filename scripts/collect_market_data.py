@@ -170,6 +170,10 @@ def render_sector_perf_html(perf, as_of, path):
         '.spf-bar.p { background: #00A85A; } .spf-bar.n { background: #FF4040; }\n'
         '.spf-val { flex: 0 0 52px; font-size: 10px; font-weight: 700; white-space: nowrap; }\n'
         '.spf-val.p { color: #00A85A; } .spf-val.n { color: #FF4040; } .spf-val.z { color: #8B95A1; }\n'
+        '@media (max-width: 560px) {\n'
+        '  .spf-grid { grid-template-columns: 1fr; }\n'
+        '  .spf-name { flex-basis: 76px; font-size: 9.5px; }\n'
+        '}\n'
         '</style>\n')
     blocks = []
     for key, _ in PERF_HORIZONS:

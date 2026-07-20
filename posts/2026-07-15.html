@@ -84,7 +84,7 @@
   th { background: var(--color-neutral-100); color: var(--color-neutral-800); font-weight: 700; text-align: center; font-size: 10.5px; border-bottom: 2px solid var(--color-primary-500); }
   td:first-child, th:first-child { text-align: left; }
   tr:last-child td { border-bottom: none; }
-  .table-wrap { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-subtle); background: #fff; page-break-inside: avoid; }
+  .table-wrap { border-radius: var(--radius-md); overflow-x: auto; -webkit-overflow-scrolling: touch; overflow-y: hidden; border: 1px solid var(--border-subtle); background: #fff; page-break-inside: avoid; }
 
   .pos { color: var(--success-fg); font-weight: 700; }
   .neg { color: var(--error-fg); font-weight: 700; }
@@ -116,6 +116,13 @@
   .mover-body p { font-size: 11.5px; line-height: 1.6; text-indent: 0; }
 
   .src { color: var(--color-neutral-700); font-size: 10px; font-weight: 600; margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border-default); line-height: 1.6; }
+  @media (max-width: 560px) {
+    .doc { padding-left: 14px; padding-right: 14px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    table { font-size: 10.5px; }
+    th, td { padding: 4px 6px; white-space: nowrap; }
+    th:first-child, td:first-child { white-space: normal; }
+  }
 </style>
 
 <div style="max-width:760px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:10px;">
@@ -403,9 +410,13 @@
 <p><strong class="box-label" style="display:inline;">시장 해석</strong> — CPI·PPI가 나란히 컨센서스를 큰 폭 하회하며(CPI MoM -0.42% vs 예상 -0.1%, PPI MoM -0.28% vs 예상 0.0%) 국채금리는 전 구간에서 하락하고 주식은 안도 랠리를 보였다.</p>
   <p>CME FedWatch 기준 7/29 FOMC 동결 확률은 87.7%까지 급등해 직전 40%대였던 인상 베팅이 10%대로 급락했지만, 9월 회의는 인상(약 53%)과 동결(약 40%)이 팽팽히 맞서 시장이 이번 서프라이즈를 '추세 전환'으로 완전히 확신하지는 않고 있음을 보여준다.</p>
   <p>케빈 워시 이사의 매파적 발언과 NY연은 1년 기대인플레(3.7%, 2023년 9월 이후 최고)의 동반 상승은 컨센서스 괴리를 액면 그대로 받아들이기보다 향후 데이터로 재확인이 필요하다는 신중론에 힘을 싣는다.</p>
+</div>
+<div class="card">
 <p><strong class="box-label" style="display:inline;">4축 진단</strong> — 선행지표 격인 심리축(미시간 소비자심리 44.8, 직전 49.8 대비 악화)은 뚜렷이 둔화된 반면, 노동시장 후행 성적표(실업률 4.2%로 개선, 페이롤 증가폭은 +57K로 둔화 — 혼조)는 방향이 엇갈린다.</p>
   <p>활동(중행)축에서는 산업생산·내구재수주가 모두 전월 대비 크게 꺾여 심리 악화와 궤를 같이하지만, 소비축의 소매판매는 오히려 +0.88%로 개선돼 심리지표와 실제 지출 사이의 괴리가 두드러진다. 물가축은 선행성 있는 CPI·PPI 서프라이즈가 뚜렷한 개선(둔화)을 보였으나 기대인플레이션(미시간·NY연은)은 오히려 상승하고 있어, 물가축 내부에서도 실제치와 기대치가 상충하는 모습이다.</p>
   <p>종합하면 '심리 악화 → 활동 둔화'는 정합적이나 '소비 개선'과 '물가 실제치 개선 vs 기대치 악화'가 서로 다른 신호를 보내는 전형적인 전환기 혼조 국면이다.</p>
+</div>
+<div class="card">
 <p><strong class="box-label" style="display:inline;">경제 방향 전망</strong> — 기본 시나리오(확률 우위)는 향후 1~3개월간 디스인플레이션이 완만하게 이어지되 속도는 둔화되는 국면으로, 근거는 CPI·PPI 서프라이즈에도 기대인플레이션이 오히려 오르고 있어 추가 급락 여지가 제한적이라는 점이다.</p>
   <p>대안 시나리오는 소비(소매판매 개선)와 고용(실업률 개선)이 예상외로 견조하게 유지되며 물가 둔화가 일시적 노이즈에 그치는 경우로, 이 경우 9월 FOMC 인상 베팅(현재 53%)이 재차 강화될 수 있다.</p>
   <p>시나리오를 가를 핵심 발표는 다음 CPI·PPI(8월 발표분), 9월 FOMC 성명 및 점도표, 그리고 NY연은·미시간대 기대인플레이션 갱신치다.</p>

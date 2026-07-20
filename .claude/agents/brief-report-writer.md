@@ -29,10 +29,12 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 4축(Labor / Activity & Production / Consumption / Inflation) 지표를 축별 별도 `<section>`으로 나누어 각각 표를 만든다 (컬럼: 지표 | Actual | Forecast | Previous | 발표일 | 판정). **Actual/Previous/기준월은 `data/econ_indicators.json`(FRED 확정치)에서**, Forecast·발표일·비FRED 지표(ISM·S&P Global PMI·ADP·CB Confidence·Philly Fed·NY Fed 기대인플레)는 research_notes.md에서 가져온다. Forecast가 있어 판정 가능한 지표는 판정 태그(상회▲/하회▼/부합=) + 행 배경 #E8F2FF 하이라이트. Forecast가 없으면 그 칸은 비우고 판정은 생략(그래도 Actual/Previous는 표시). research_notes.md에 '미확정'인 항목은 **추가 리서치 없이** 행을 빼고 재구성한다. **[확인필요] 표기 금지.**
 
-표 다음에 카드 3개:
+표 다음에 카드 3개 — **가로 3열 그리드 금지 (2026-07-20 사용자 지시, 가독성)**. 각 카드는 `<div class="card">` 하나씩, 세로로 하나씩 쌓아 각각 전체 폭을 차지하게 한다(`margin-bottom: 12px`로 카드 사이 간격만 두고 grid-template-columns는 쓰지 않는다):
 - **시장 해석** — 채권금리·주식 반응, 연준 금리 경로 재가격(CME FedWatch 수치 명기), 컨센서스 괴리에 대한 시장 재해석
 - **4축 진단** — '심리(선행) → 활동(중행) → 성적표(후행)' 프레임으로 각 축 방향 판정(개선/악화/혼조), 축 간 정합·상충, 축 내 선행 vs 후행 일치 여부
 - **경제 방향 전망** — 향후 1~3개월 기본/대안 시나리오(확률적 언어, 근거 명시), 시나리오를 가를 핵심 발표 일정, 자산배분 함의
+
+각 카드 제목은 `<h4>` 또는 box-label로 카드 상단에 붙이고, 카드 안 문단은 위 문단 규율(한 문단 = 한 주제, 2~4문장)을 그대로 따른다.
 
 ## 문체 요구사항 (중요)
 
@@ -41,7 +43,9 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - 자연스러운 한국어. AI 티 금지: 피동 종결 반복 금지(문단당 최대 1회), ①②③ 대신 산문, 번역투 회피, 문장 종결 다양하게.
 - 웹 리서치 기반 서술은 출처 귀속('~로 보도된다', 출처명) — research_notes.md의 출처를 유지한다.
 
-## HTML / 디자인 사양 (Toss 시스템)
+## HTML / 디자인 사양 (Toss 시스템) — 고정 템플릿, 임의 리디자인 금지
+
+**폭 고정 (2026-07-20)**: 보고서 본문 컨테이너는 `max-width: 760px`로 고정한다. STEP 3에서 주입되는 상단 네비게이션 바도 760px이므로 폭이 다르면 어긋난다. 매일 CSS를 새로 설계하지 말고 아래 값을 그대로 쓴다 — 과거 한 호가 임의로 1180px·3열 그리드로 재설계해 모바일에서 글자가 깨질 정도로 좁아진 사고가 있었다.
 
 - font-family: 'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing -0.01em; base font 12.5px; 페이지 배경 #F2F4F6; 콘텐츠는 흰색 카드 위
 - 색상: primary/accent #0064FF (Toss Blue), 본문 #191F28, 보조 #4E5968, muted #8B95A1, 보더 #E5E8EB/#F2F4F6, 상승 #00A85A on #E8F8EE, 하락 #FF4040 on #FFE8E8, 정보 #0064FF on #E8F2FF
@@ -51,6 +55,24 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - 상단 바: 'US Market Brief' Toss Blue bold + 작성일. 헤드라인은 #E8F2FF 카드
 - 최상단에 `<meta charset="utf-8">`와 `<meta name="viewport" content="width=device-width, initial-scale=1">` 포함
 - 채권 섹션: 수익률 표 아래 카드에 yield_curve.png를 base64 data URI로 임베드 + 주간 변화 캡션
+
+**다단 그리드는 지수/섹터 표 한 곳(`.grid-2`, 2단)에만 쓴다.** 그 외 서술형 카드(경제지표 대시보드 3카드 등)는 위에서 지시한 대로 세로 스택 — 3열 이상 그리드로 텍스트 카드를 배치하지 않는다(모바일에서 읽기 불가능해짐).
+
+**모바일 반응형 (필수, 2026-07-20 사용자 지시)**: 실제 스마트폰(약 375~430px 폭)에서 읽었을 때 어떤 다단 요소도 글자가 뭉개지지 않아야 한다.
+
+**모든 `<table>`은 예외 없이 `<div class="tbl-scroll"><table>...</table></div>`로 감싼다.** (표 마크업을 쓸 때마다 이 래퍼를 빠뜨리지 말 것 — `table { display:block; overflow-x:auto }` 같은 트릭은 내부 table 레이아웃과 충돌해 동작하지 않는다. 실제로 동작을 확인한 방식은 래퍼 div뿐이다.) `<style>` 블록에 아래를 반드시 포함한다:
+```css
+.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+@media (max-width: 560px) {
+  .doc, .container { padding-left: 14px; padding-right: 14px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  table { font-size: 11px; }
+  th, td { padding: 5px 7px; white-space: nowrap; }
+  th:first-child, td:first-child { white-space: normal; }
+}
+```
+6열짜리 경제지표 표처럼 좁은 화면에 다 안 들어가는 표는 `.tbl-scroll` 래퍼 덕에 가로 스크롤이 생긴다 — 열을 줄이거나 글자를 억지로 더 축소하지 않는다. 검증은 스크린샷 눈대중이 아니라 `document.documentElement.scrollWidth`가 뷰포트 폭과 같은지(페이지 레벨 가로 스크롤이 없는지) 확인하는 방식이 정확하다.
+`sector_performance.html` 스니펫은 자체 미디어쿼리를 이미 포함하고 있으니 그대로 삽입하면 된다(수정 금지).
 
 **페이지 분할 규칙 (중요):** 각 섹션을 `<section>`으로 감싸고 `section { break-inside: avoid-page; page-break-inside: avoid; }` 적용 — 안 들어가면 통째로 다음 페이지부터. 경제지표 대시보드는 축별 섹션 분리. 표와 카드에도 page-break-inside: avoid.
 
