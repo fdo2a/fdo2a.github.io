@@ -45,7 +45,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 ## HTML / 디자인 사양 (Toss 시스템) — 고정 템플릿, 임의 리디자인 금지
 
-**폭 고정 (2026-07-20)**: 보고서 본문 컨테이너는 `max-width: 760px`로 고정한다. STEP 3에서 주입되는 상단 네비게이션 바도 760px이므로 폭이 다르면 어긋난다. 매일 CSS를 새로 설계하지 말고 아래 값을 그대로 쓴다 — 과거 한 호가 임의로 1180px·3열 그리드로 재설계해 모바일에서 글자가 깨질 정도로 좁아진 사고가 있었다.
+**폭 (2026-07-21 사용자 지시 — PC는 넓게, 모바일은 화면폭에 맞게)**: 보고서 본문 컨테이너는 `max-width: 1120px; margin: 0 auto`로 한다(고정 픽셀 폭이 아니라 max-width이므로 데스크톱에선 1120px까지 넓게 퍼지고, 좁은 화면에선 자동으로 화면폭에 맞춰진다). STEP 3에서 주입되는 상단 네비게이션 바도 `max-width:1120px`이므로 이 값과 반드시 일치시킨다. 매일 CSS를 새로 설계하지 말고 이 값을 그대로 쓴다 — 과거 한 호가 임의로 1180px·3열 그리드로 재설계해 **모바일 브레이크포인트 없이** 폰에서 글자가 깨진 사고가 있었다. 넓게 하되 아래 모바일 반응형 블록을 반드시 함께 넣는 것이 핵심이다.
 
 - font-family: 'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing -0.01em; base font 12.5px; 페이지 배경 #F2F4F6; 콘텐츠는 흰색 카드 위
 - 색상: primary/accent #0064FF (Toss Blue), 본문 #191F28, 보조 #4E5968, muted #8B95A1, 보더 #E5E8EB/#F2F4F6, 상승 #00A85A on #E8F8EE, 하락 #FF4040 on #FFE8E8, 정보 #0064FF on #E8F2FF
@@ -69,9 +69,10 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
   table { font-size: 11px; }
   th, td { padding: 5px 7px; white-space: nowrap; }
   th:first-child, td:first-child { white-space: normal; }
+  th:last-child, td:last-child { white-space: normal; }
 }
 ```
-6열짜리 경제지표 표처럼 좁은 화면에 다 안 들어가는 표는 `.tbl-scroll` 래퍼 덕에 가로 스크롤이 생긴다 — 열을 줄이거나 글자를 억지로 더 축소하지 않는다. 검증은 스크린샷 눈대중이 아니라 `document.documentElement.scrollWidth`가 뷰포트 폭과 같은지(페이지 레벨 가로 스크롤이 없는지) 확인하는 방식이 정확하다.
+첫 열(지표명·종목명)과 마지막 열은 줄바꿈을 허용하고 그 사이 숫자·날짜 열만 nowrap로 보호한다 — '전략 근거'처럼 긴 서술이 마지막 열에 오는 표(멀티에셋 매니저 전략)가 모바일에서 한 줄로 늘어나 과도한 가로 스크롤이 생기는 것을 막는다. 그래도 6열짜리 경제지표 표처럼 좁은 화면에 다 안 들어가는 표는 `.tbl-scroll` 래퍼 덕에 가로 스크롤이 생긴다 — 열을 줄이거나 글자를 억지로 더 축소하지 않는다. 검증은 스크린샷 눈대중이 아니라 `document.documentElement.scrollWidth`가 뷰포트 폭과 같은지(페이지 레벨 가로 스크롤이 없는지) 확인하는 방식이 정확하다.
 `sector_performance.html` 스니펫은 자체 미디어쿼리를 이미 포함하고 있으니 그대로 삽입하면 된다(수정 금지).
 
 **페이지 분할 규칙 (중요):** 각 섹션을 `<section>`으로 감싸고 `section { break-inside: avoid-page; page-break-inside: avoid; }` 적용 — 안 들어가면 통째로 다음 페이지부터. 경제지표 대시보드는 축별 섹션 분리. 표와 카드에도 page-break-inside: avoid.

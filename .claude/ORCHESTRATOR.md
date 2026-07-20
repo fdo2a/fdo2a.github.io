@@ -41,7 +41,7 @@ Site base URL: https://fdo2a.github.io/
 1. Copy the report HTML into the repo as posts/[YYYY-MM-DD].html, then make two injections:
    (a) Immediately BEFORE `<div class="doc">`, this navigation block:
 ```html
-<div style="max-width:760px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:10px;">
+<div style="max-width:1120px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:10px;">
   <a href="../index.html" style="text-decoration:none;background:#fff;border:1px solid #E5E8EB;border-radius:9999px;padding:6px 14px;font-size:12px;font-weight:700;color:#191F28;">‹ 전체 보고서</a>
   <a href="../index.html" style="text-decoration:none;font-size:14px;font-weight:800;color:#0064FF;letter-spacing:-0.02em;">US Market Brief</a>
 </div>
