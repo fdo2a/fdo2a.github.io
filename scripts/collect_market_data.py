@@ -160,19 +160,19 @@ def render_sector_perf_html(perf, as_of, path):
         '.spf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }\n'
         '.spf-block { background: #fff; border: 1px solid #F2F4F6; border-radius: 14px;'
         ' padding: 13px 16px; page-break-inside: avoid; }\n'
-        '.spf-title { font-size: 11px; font-weight: 800; color: #0050D9;'
+        '.spf-title { font-size: 13.5px; font-weight: 800; color: #0050D9;'
         ' letter-spacing: 0.03em; margin: 0 0 8px; }\n'
         '.spf-row { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }\n'
-        '.spf-name { flex: 0 0 96px; font-size: 10px; font-weight: 600; color: #4E5968;'
+        '.spf-name { flex: 0 0 116px; font-size: 12.5px; font-weight: 600; color: #4E5968;'
         ' text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\n'
         '.spf-track { flex: 1 1 auto; height: 13px; }\n'
         '.spf-bar { height: 13px; border-radius: 4px; min-width: 2px; }\n'
         '.spf-bar.p { background: #00A85A; } .spf-bar.n { background: #FF4040; }\n'
-        '.spf-val { flex: 0 0 52px; font-size: 10px; font-weight: 700; white-space: nowrap; }\n'
+        '.spf-val { flex: 0 0 58px; font-size: 12.5px; font-weight: 700; white-space: nowrap; }\n'
         '.spf-val.p { color: #00A85A; } .spf-val.n { color: #FF4040; } .spf-val.z { color: #8B95A1; }\n'
         '@media (max-width: 560px) {\n'
         '  .spf-grid { grid-template-columns: 1fr; }\n'
-        '  .spf-name { flex-basis: 76px; font-size: 9.5px; }\n'
+        '  .spf-name { flex-basis: 96px; font-size: 12px; }\n'
         '}\n'
         '</style>\n')
     blocks = []
@@ -194,7 +194,7 @@ def render_sector_perf_html(perf, as_of, path):
                       + '\n'.join(rows) + '</div>')
     html = ('<section class="sec">\n<h2>섹터 기간별 수익률</h2>\n' + style
             + '<div class="spf-grid">\n' + '\n'.join(blocks) + '\n</div>\n'
-            + f'<div style="font-size:10px; color:#8B95A1; font-weight:600; margin:6px 2px 0;">'
+            + f'<div style="font-size:12.5px; color:#8B95A1; font-weight:600; margin:6px 2px 0;">'
               f'※ SPDR 섹터 ETF 종가 기준(배당·분할 조정), {as_of} 마감 · 각 기간 시점 대비 등락률</div>\n'
             + '</section>\n')
     open(path, 'w').write(html)

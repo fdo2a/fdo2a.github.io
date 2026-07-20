@@ -47,7 +47,8 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 **폭 (2026-07-21 사용자 지시 — PC는 넓게, 모바일은 화면폭에 맞게)**: 보고서 본문 컨테이너는 `max-width: 1120px; margin: 0 auto`로 한다(고정 픽셀 폭이 아니라 max-width이므로 데스크톱에선 1120px까지 넓게 퍼지고, 좁은 화면에선 자동으로 화면폭에 맞춰진다). STEP 3에서 주입되는 상단 네비게이션 바도 `max-width:1120px`이므로 이 값과 반드시 일치시킨다. 매일 CSS를 새로 설계하지 말고 이 값을 그대로 쓴다 — 과거 한 호가 임의로 1180px·3열 그리드로 재설계해 **모바일 브레이크포인트 없이** 폰에서 글자가 깨진 사고가 있었다. 넓게 하되 아래 모바일 반응형 블록을 반드시 함께 넣는 것이 핵심이다.
 
-- font-family: 'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing -0.01em; base font 12.5px; 페이지 배경 #F2F4F6; 콘텐츠는 흰색 카드 위
+- font-family: 'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing -0.01em; 페이지 배경 #F2F4F6; 콘텐츠는 흰색 카드 위
+- **폰트 크기 (2026-07-21 사용자 지시 — 약 12pt로 확대)**: 본문 읽는 문단(`.card p`, 일반 `<p>`)은 **16px(=12pt)**. 표는 14.5~15px, 헤드라인 카드 16~17px, h1 22px, h2 18.5~19px, h3 16px, 캡션·note·출처 12~13px, 섹터 막대 라벨 12.5px. 이전의 12.5px 본문은 너무 작다는 지적이 있었으니 다시 줄이지 말 것.
 - 색상: primary/accent #0064FF (Toss Blue), 본문 #191F28, 보조 #4E5968, muted #8B95A1, 보더 #E5E8EB/#F2F4F6, 상승 #00A85A on #E8F8EE, 하락 #FF4040 on #FFE8E8, 정보 #0064FF on #E8F2FF
 - 카드: 흰 배경, border-radius 14px, 1px solid #F2F4F6, 플랫. 필 태그(border-radius 9999px)
 - 본문 문단 들여쓰기: `.card p { text-indent: 1em; margin-bottom: 9px; }` — 단 mover 설명(`.mover-body p`)과 차트 캡션·note는 `text-indent: 0`
