@@ -51,7 +51,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - **폰트 크기 (2026-07-21 사용자 지시 — 약 12pt로 확대)**: 본문 읽는 문단(`.card p`, 일반 `<p>`)은 **16px(=12pt)**. 표는 14.5~15px, 헤드라인 카드 16~17px, h1 22px, h2 18.5~19px, h3 16px, 캡션·note·출처 12~13px, 섹터 막대 라벨 12.5px. 이전의 12.5px 본문은 너무 작다는 지적이 있었으니 다시 줄이지 말 것.
 - 색상: primary/accent #0064FF (Toss Blue), 본문 #191F28, 보조 #4E5968, muted #8B95A1, 보더 #E5E8EB/#F2F4F6, 상승 #00A85A on #E8F8EE, 하락 #FF4040 on #FFE8E8, 정보 #0064FF on #E8F2FF
 - 카드: 흰 배경, border-radius 14px, 1px solid #F2F4F6, 플랫. 필 태그(border-radius 9999px)
-- 본문 문단 들여쓰기: `.card p { text-indent: 1em; margin-bottom: 9px; }` — 단 mover 설명(`.mover-body p`)과 차트 캡션·note는 `text-indent: 0`
+- 본문 문단 **들여쓰기 없음** (text-indent 금지, 2026-07-22 사용자 지시). 대신 `body { word-break: keep-all; }`를 반드시 넣어 한글이 줄바꿈에서 어절(단어) 중간에 쪼개지지 않게 한다 — 한글 기본값은 아무 글자에서나 줄바꿈되므로 keep-all이 없으면 '디스인플레이션' 같은 단어가 '디스인플레\n이션'으로 끊긴다. `.card p`는 `margin-bottom: 9px`만 두고 text-indent는 쓰지 않는다.
 - h2: bold #191F28 + 6px 라운드 Toss Blue 바 프리픽스(::before). 표: 헤더 행 배경 #F2F4F6 + 2px Toss Blue 하단 보더, 라운드 컨테이너
 - 상단 바: 'US Market Brief' Toss Blue bold + 작성일. 헤드라인은 #E8F2FF 카드
 - 최상단에 `<meta charset="utf-8">`와 `<meta name="viewport" content="width=device-width, initial-scale=1">` 포함
