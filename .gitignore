@@ -1,3 +1,8 @@
+# Python (kr data-collector test suite)
+__pycache__/
+*.pyc
+.pytest_cache/
+
 /market_data.json
 /intraday.json
 /econ_indicators.json
