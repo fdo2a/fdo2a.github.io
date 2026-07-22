@@ -1,0 +1,24 @@
+name: TEST kr sources (temporary)
+
+# One-off spike: does KRX/Naver/Yahoo respond from a US Actions runner IP?
+# Compares against the same script run locally from a Korean IP.
+# Delete this workflow + test_kr_sources.py once the sourcing decision is made.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install --quiet yfinance requests pykrx
+      - name: Probe KR data sources from US runner
+        run: python test_kr_sources.py
