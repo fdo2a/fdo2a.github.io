@@ -53,7 +53,7 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 
 ## STEP 4 — Notion 발행
 
-Notion MCP로 DB "KR Market Brief"에 페이지 1개 생성(같은 날짜 중복 금지). data_source_id는 최초 실행 시 `notion-create-database`로 생성해 이 파일·CLAUDE.md·프로젝트 메모리에 기록한다. properties: 제목·날짜·헤드라인·웹링크(https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html), icon 📉. content는 Notion 마크다운(헤드라인 인용 + 링크 + 섹션 헤딩·표 + 면책).
+Notion MCP(`notion-create-pages`)로 DB "KR Market Brief" data_source_id **`d1dcda42-2e15-4080-93a2-b77622e46f3d`**에 페이지 1개 생성(같은 날짜 중복 금지 — 새로 만들지 말고 이 DB 사용). properties: 제목·`date:날짜:start`·헤드라인·웹 링크(https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html), icon 📉. content는 Notion 마크다운(헤드라인 인용 + 링크 + 섹션 헤딩·표 + 면책).
 
 ## STEP 5 — 알림
 PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`. PDF·이메일 없음.
