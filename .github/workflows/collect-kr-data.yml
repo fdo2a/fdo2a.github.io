@@ -1,0 +1,57 @@
+name: Collect KR market data
+
+# 한국장 마감(15:30 KST) 후 저녁 브리프(18:00 KST) 전에 데이터 확정.
+# 17:00·17:30 KST = 08:00·08:30 UTC. 두 슬롯은 회복탄력성용.
+on:
+  schedule:
+    - cron: '0 8 * * 1-5'
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Regenerate even if a complete dataset exists'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-kr-data
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install --quiet yfinance pandas requests beautifulsoup4 lxml pytest
+      - name: Run unit tests
+        run: python -m pytest scripts/kr/tests -q
+      - name: Collect
+        run: python scripts/collect_kr_data.py --outdir kr/data
+      - name: Report status
+        run: |
+          python - <<'PY'
+          import json
+          d = json.load(open('kr/data/kr_market_data.json'))
+          print(f"report_date={d['report_date']} complete={d['complete']}")
+          if d['missing']:
+              print('missing:', ', '.join(d['missing']))
+          PY
+      - name: Commit data
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add kr/data/*.json kr/data/kr_sector.html
+          if git diff --cached --quiet; then
+            echo 'No data changes to commit.'
+          else
+            RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
+            git commit -m "data: kr market data for ${RD}"
+            git push
+          fi
