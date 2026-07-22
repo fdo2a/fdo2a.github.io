@@ -28,8 +28,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install CJK font (chart labels)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
       - name: Install deps
-        run: pip install --quiet yfinance pandas requests beautifulsoup4 lxml pytest
+        run: pip install --quiet yfinance pandas requests beautifulsoup4 lxml matplotlib pytest
       - name: Run unit tests
         run: python -m pytest scripts/kr/tests -q
       - name: Collect
@@ -47,7 +49,7 @@ jobs:
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add kr/data/*.json kr/data/kr_sector.html
+          git add kr/data/*.json kr/data/kr_sector.html kr/data/kr_charts.png 2>/dev/null || git add kr/data/*.json kr/data/kr_sector.html
           if git diff --cached --quiet; then
             echo 'No data changes to commit.'
           else

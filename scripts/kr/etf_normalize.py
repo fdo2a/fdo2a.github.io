@@ -31,37 +31,49 @@ def _underlying(name: str) -> str:
     return out.strip()
 
 
+def _direction(name: str) -> str:
+    """레버리지(롱) vs 인버스(숏) 방향. 인버스·곱버스는 하락 베팅."""
+    return "short" if ("인버스" in name or "곱버스" in name) else "long"
+
+
 def classify_ticker(name: str) -> dict:
     if not _is_etf(name):
-        return {"is_etf": False, "kind": "stock", "underlying": None}
+        return {"is_etf": False, "kind": "stock", "underlying": None, "direction": None}
     if any(k in name for k in OVERSEAS_KW):
-        return {"is_etf": True, "kind": "overseas_etf", "underlying": None}
+        return {"is_etf": True, "kind": "overseas_etf", "underlying": None, "direction": None}
     if "단일종목" in name:
-        return {"is_etf": True, "kind": "single_stock_lev", "underlying": _underlying(name)}
+        return {"is_etf": True, "kind": "single_stock_lev",
+                "underlying": _underlying(name), "direction": _direction(name)}
     is_lev = any(k in name for k in LEV_KW)
     if is_lev:
         u = _underlying(name)
         # 지수 토큰이 있거나(200·코스닥150 등) 남는 기초자산이 없는 맨몸 인버스/레버리지 → 지수 방향성
         if u == "" or any(k in name for k in INDEX_KW):
-            return {"is_etf": True, "kind": "index_lev", "underlying": "지수"}
-        return {"is_etf": True, "kind": "sector_theme_etf", "underlying": u}
-    return {"is_etf": True, "kind": "sector_theme_etf", "underlying": _underlying(name)}
+            return {"is_etf": True, "kind": "index_lev", "underlying": "지수",
+                    "direction": _direction(name)}
+        return {"is_etf": True, "kind": "sector_theme_etf", "underlying": u, "direction": None}
+    return {"is_etf": True, "kind": "sector_theme_etf",
+            "underlying": _underlying(name), "direction": None}
 
 
 def normalize_top_value(rows: list, top_n: int = 10) -> list:
+    """거래대금 상위를 정규화. 단일종목·지수 레버리지/인버스는 기초자산+방향별로
+    병합해 롱(레버리지)과 숏(인버스)을 별도 줄로 구분한다."""
     groups: dict = {}
     for r in rows:
         c = classify_ticker(r["name"])
-        kind = c["kind"]
+        kind, d = c["kind"], c["direction"]
         if kind == "overseas_etf":
             continue
         if kind == "single_stock_lev":
-            key, label = f"single::{c['underlying']}", f"{c['underlying']} 레버리지군"
+            dl = "레버리지" if d == "long" else "인버스"
+            key, label = f"single::{c['underlying']}::{d}", f"{c['underlying']} {dl}"
         elif kind == "index_lev":
-            key, label = "index::dir", "지수 방향성 ETF"
+            dl = "레버리지" if d == "long" else "인버스"
+            key, label = f"index::{d}", f"지수 {dl} ETF"
         else:  # stock or sector_theme_etf → 이름 유지
             key, label = f"{kind}::{r['name']}", r["name"]
-        g = groups.setdefault(key, {"label": label, "kind": kind,
+        g = groups.setdefault(key, {"label": label, "kind": kind, "direction": d,
                                     "value": 0, "volume": 0, "members": []})
         g["value"] += r.get("value", 0)
         g["volume"] += r.get("volume", 0)

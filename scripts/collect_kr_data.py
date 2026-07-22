@@ -100,6 +100,17 @@ def main(outdir: str):
     except Exception:
         intraday = {}
 
+    # 일봉 차트 (코스피·코스닥·SK하이닉스·삼성전자) → kr_charts.png
+    try:
+        import base64 as _b64
+        from kr import charts as _charts
+        uri = _charts.render_daily_charts([("코스피", "^KS11"), ("코스닥", "^KQ11"),
+                                           ("SK하이닉스", "000660.KS"), ("삼성전자", "005930.KS")])
+        with open(os.path.join(outdir, "kr_charts.png"), "wb") as f:
+            f.write(_b64.b64decode(uri.split(",", 1)[1]))
+    except Exception:
+        pass
+
     bundle = {"report_date": report_date, "indices": indices,
               "flows": flows_out if flows_ok else None,
               "top_value": top_value, "sectors": sector_rows, "themes": theme_rows}
