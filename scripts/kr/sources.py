@@ -53,6 +53,20 @@ def parse_top_value(html: str) -> list:
     return rows
 
 
+def fetch_index(code: str) -> dict:
+    """KR 지수 현재/종가 — Naver 네이티브(수급 소스와 일치). code: KOSPI|KOSDAQ."""
+    r = requests.get(f"https://m.stock.naver.com/api/index/{code}/basic",
+                     headers=NAVER_HDRS, timeout=12)
+    r.raise_for_status()
+    j = r.json()
+    close = float(str(j.get("closePrice", "0")).replace(",", ""))
+    try:
+        chg = float(j.get("fluctuationsRatio"))
+    except (TypeError, ValueError):
+        chg = 0.0
+    return {"close": round(close, 2), "change_pct": chg}
+
+
 def fetch_market_flows(sosok: str, bizdate: str) -> str:
     return fetch(f"https://finance.naver.com/sise/investorDealTrendDay.naver"
                  f"?bizdate={bizdate}&sosok={sosok}")
