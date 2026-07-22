@@ -92,12 +92,11 @@ def main(outdir: str):
     except Exception:
         theme_rows = []
 
-    # 장중 30분봉
+    # 장중 30분봉 (Naver 분봉 다운샘플) + 당일 OHLC
+    intraday = {}
     try:
-        d = yf.download("^KS11", period="1d", interval="30m",
-                        progress=False, auto_adjust=False)
-        intraday = {"KOSPI": [{"t": str(i), "close": round(float(c), 2)}
-                              for i, c in d["Close"].items()]}
+        intraday["KOSPI"] = sources.fetch_intraday("KOSPI")
+        intraday["KOSPI_ohlc"] = sources.fetch_index_ohlc("KOSPI")
     except Exception:
         intraday = {}
 

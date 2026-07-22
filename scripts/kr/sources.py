@@ -67,6 +67,47 @@ def fetch_index(code: str) -> dict:
     return {"close": round(close, 2), "change_pct": chg}
 
 
+def downsample_30min(bars: list) -> list:
+    """분봉 리스트를 30분 앵커(:00/:30)로 다운샘플. 마지막 봉(종가) 보장.
+    bars: [{"localDateTime":"YYYYMMDDHHMMSS","currentPrice":float}, ...]"""
+    out = {}
+    for b in bars:
+        t = str(b.get("localDateTime", ""))
+        if len(t) < 12:
+            continue
+        if t[10:12] in ("00", "30"):
+            out[f"{t[8:10]}:{t[10:12]}"] = round(float(b["currentPrice"]), 2)
+    if bars:
+        last = bars[-1]
+        t = str(last["localDateTime"])
+        out[f"{t[8:10]}:{t[10:12]}"] = round(float(last["currentPrice"]), 2)
+    return [{"t": k, "close": v} for k, v in out.items()]
+
+
+def fetch_intraday(code: str) -> list:
+    """KR 지수 30분봉 장중 궤적 — Naver 분봉을 30분 앵커로 다운샘플."""
+    r = requests.get(f"https://api.stock.naver.com/chart/domestic/index/{code}/minute?count=400",
+                     headers=NAVER_HDRS, timeout=15)
+    r.raise_for_status()
+    return downsample_30min(r.json())
+
+
+def fetch_index_ohlc(code: str) -> dict:
+    """당일 시가·고가·저가·전일종가 — 장중 궤적 서술용."""
+    r = requests.get(f"https://m.stock.naver.com/api/index/{code}/integration",
+                     headers=NAVER_HDRS, timeout=12)
+    r.raise_for_status()
+    ti = {x.get("code"): x.get("value") for x in r.json().get("totalInfos", [])}
+
+    def num(k):
+        try:
+            return float(str(ti.get(k, "")).replace(",", ""))
+        except (TypeError, ValueError):
+            return None
+    return {"open": num("openPrice"), "high": num("highPrice"),
+            "low": num("lowPrice"), "prevClose": num("lastClosePrice")}
+
+
 def fetch_market_flows(sosok: str, bizdate: str) -> str:
     return fetch(f"https://finance.naver.com/sise/investorDealTrendDay.naver"
                  f"?bizdate={bizdate}&sosok={sosok}")
