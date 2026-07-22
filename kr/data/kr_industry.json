@@ -1,0 +1,602 @@
+[
+  {
+    "name": "무선통신서비스",
+    "change_pct": 8.45,
+    "total": 4,
+    "rise": 3,
+    "breadth": 0.75,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "기계",
+    "change_pct": 5.49,
+    "total": 104,
+    "rise": 77,
+    "breadth": 0.74,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "전자제품",
+    "change_pct": 5.45,
+    "total": 16,
+    "rise": 11,
+    "breadth": 0.688,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "자동차부품",
+    "change_pct": 4.84,
+    "total": 155,
+    "rise": 86,
+    "breadth": 0.555,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "에너지장비및서비스",
+    "change_pct": 4.46,
+    "total": 34,
+    "rise": 26,
+    "breadth": 0.765,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "조선",
+    "change_pct": 3.86,
+    "total": 31,
+    "rise": 18,
+    "breadth": 0.581,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "복합기업",
+    "change_pct": 3.66,
+    "total": 22,
+    "rise": 19,
+    "breadth": 0.864,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "비철금속",
+    "change_pct": 3.4,
+    "total": 40,
+    "rise": 19,
+    "breadth": 0.475,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "자동차",
+    "change_pct": 3.36,
+    "total": 12,
+    "rise": 9,
+    "breadth": 0.75,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "디스플레이패널",
+    "change_pct": 3.3,
+    "total": 6,
+    "rise": 2,
+    "breadth": 0.333,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "IT서비스",
+    "change_pct": 3.22,
+    "total": 117,
+    "rise": 74,
+    "breadth": 0.632,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "건설",
+    "change_pct": 3.11,
+    "total": 78,
+    "rise": 44,
+    "breadth": 0.564,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "석유와가스",
+    "change_pct": 2.95,
+    "total": 19,
+    "rise": 13,
+    "breadth": 0.684,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "전기장비",
+    "change_pct": 2.68,
+    "total": 35,
+    "rise": 27,
+    "breadth": 0.771,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "항공화물운송과물류",
+    "change_pct": 2.35,
+    "total": 13,
+    "rise": 6,
+    "breadth": 0.462,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "전자장비와기기",
+    "change_pct": 2.09,
+    "total": 106,
+    "rise": 48,
+    "breadth": 0.453,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "소프트웨어",
+    "change_pct": 1.88,
+    "total": 73,
+    "rise": 38,
+    "breadth": 0.521,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "손해보험",
+    "change_pct": 1.69,
+    "total": 12,
+    "rise": 8,
+    "breadth": 0.667,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "도로와철도운송",
+    "change_pct": 1.58,
+    "total": 8,
+    "rise": 2,
+    "breadth": 0.25,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "핸드셋",
+    "change_pct": 1.54,
+    "total": 57,
+    "rise": 29,
+    "breadth": 0.509,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "통신장비",
+    "change_pct": 1.53,
+    "total": 55,
+    "rise": 29,
+    "breadth": 0.527,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "양방향미디어와서비스",
+    "change_pct": 1.49,
+    "total": 16,
+    "rise": 9,
+    "breadth": 0.562,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "전기제품",
+    "change_pct": 1.44,
+    "total": 70,
+    "rise": 46,
+    "breadth": 0.657,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "건축자재",
+    "change_pct": 1.38,
+    "total": 51,
+    "rise": 21,
+    "breadth": 0.412,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "생명보험",
+    "change_pct": 1.19,
+    "total": 4,
+    "rise": 2,
+    "breadth": 0.5,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "해운사",
+    "change_pct": 1.17,
+    "total": 11,
+    "rise": 8,
+    "breadth": 0.727,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "가구",
+    "change_pct": 1.16,
+    "total": 11,
+    "rise": 5,
+    "breadth": 0.455,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "전기유틸리티",
+    "change_pct": 1.11,
+    "total": 5,
+    "rise": 5,
+    "breadth": 1.0,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "다각화된소비자서비스",
+    "change_pct": 1.07,
+    "total": 1,
+    "rise": 1,
+    "breadth": 1.0,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "화학",
+    "change_pct": 0.93,
+    "total": 122,
+    "rise": 59,
+    "breadth": 0.484,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "교육서비스",
+    "change_pct": 0.87,
+    "total": 24,
+    "rise": 12,
+    "breadth": 0.5,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "우주항공과국방",
+    "change_pct": 0.81,
+    "total": 33,
+    "rise": 19,
+    "breadth": 0.576,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "식품과기본식료품소매",
+    "change_pct": 0.81,
+    "total": 7,
+    "rise": 4,
+    "breadth": 0.571,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "컴퓨터와주변기기",
+    "change_pct": 0.72,
+    "total": 21,
+    "rise": 11,
+    "breadth": 0.524,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "가스유틸리티",
+    "change_pct": 0.49,
+    "total": 12,
+    "rise": 9,
+    "breadth": 0.75,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "가정용품",
+    "change_pct": 0.49,
+    "total": 11,
+    "rise": 7,
+    "breadth": 0.636,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "복합유틸리티",
+    "change_pct": 0.47,
+    "total": 1,
+    "rise": 1,
+    "breadth": 1.0,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "포장재",
+    "change_pct": 0.39,
+    "total": 27,
+    "rise": 14,
+    "breadth": 0.519,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "철강",
+    "change_pct": 0.36,
+    "total": 55,
+    "rise": 26,
+    "breadth": 0.473,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "기타",
+    "change_pct": 0.33,
+    "total": 1538,
+    "rise": 942,
+    "breadth": 0.612,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "카드",
+    "change_pct": 0.32,
+    "total": 1,
+    "rise": 1,
+    "breadth": 1.0,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "방송과엔터테인먼트",
+    "change_pct": 0.26,
+    "total": 58,
+    "rise": 26,
+    "breadth": 0.448,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "광고",
+    "change_pct": 0.21,
+    "total": 19,
+    "rise": 11,
+    "breadth": 0.579,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "상업서비스와공급품",
+    "change_pct": 0.13,
+    "total": 31,
+    "rise": 9,
+    "breadth": 0.29,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "호텔,레스토랑,레저",
+    "change_pct": 0.12,
+    "total": 20,
+    "rise": 12,
+    "breadth": 0.6,
+    "liquidity_backed": true,
+    "leading": true,
+    "note": "폭넓은 상승 주도"
+  },
+  {
+    "name": "반도체와반도체장비",
+    "change_pct": 0.04,
+    "total": 171,
+    "rise": 60,
+    "breadth": 0.351,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "음료",
+    "change_pct": 0.04,
+    "total": 16,
+    "rise": 8,
+    "breadth": 0.5,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": "좁은 상승·개별종목"
+  },
+  {
+    "name": "은행",
+    "change_pct": -0.07,
+    "total": 11,
+    "rise": 4,
+    "breadth": 0.364,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "부동산",
+    "change_pct": -0.1,
+    "total": 31,
+    "rise": 12,
+    "breadth": 0.387,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "증권",
+    "change_pct": -0.16,
+    "total": 39,
+    "rise": 20,
+    "breadth": 0.513,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "판매업체",
+    "change_pct": -0.16,
+    "total": 13,
+    "rise": 5,
+    "breadth": 0.385,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "사무용전자제품",
+    "change_pct": -0.24,
+    "total": 1,
+    "rise": 0,
+    "breadth": 0.0,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "식품",
+    "change_pct": -0.25,
+    "total": 92,
+    "rise": 31,
+    "breadth": 0.337,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "운송인프라",
+    "change_pct": -0.26,
+    "total": 8,
+    "rise": 4,
+    "breadth": 0.5,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "창업투자",
+    "change_pct": -0.32,
+    "total": 92,
+    "rise": 33,
+    "breadth": 0.359,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "디스플레이장비및부품",
+    "change_pct": -0.33,
+    "total": 71,
+    "rise": 32,
+    "breadth": 0.451,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "건축제품",
+    "change_pct": -0.37,
+    "total": 11,
+    "rise": 3,
+    "breadth": 0.273,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "종이와목재",
+    "change_pct": -0.42,
+    "total": 14,
+    "rise": 3,
+    "breadth": 0.214,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "게임엔터테인먼트",
+    "change_pct": -0.49,
+    "total": 34,
+    "rise": 12,
+    "breadth": 0.353,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  },
+  {
+    "name": "기타금융",
+    "change_pct": -0.62,
+    "total": 6,
+    "rise": 1,
+    "breadth": 0.167,
+    "liquidity_backed": false,
+    "leading": false,
+    "note": ""
+  }
+]
