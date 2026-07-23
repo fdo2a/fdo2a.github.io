@@ -55,6 +55,8 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - 본문 문단 **들여쓰기 없음** (text-indent 금지, 2026-07-22 사용자 지시). 대신 `body { word-break: keep-all; }`를 반드시 넣어 한글이 줄바꿈에서 어절(단어) 중간에 쪼개지지 않게 한다 — 한글 기본값은 아무 글자에서나 줄바꿈되므로 keep-all이 없으면 '디스인플레이션' 같은 단어가 '디스인플레\n이션'으로 끊긴다. `.card p`는 `margin-bottom: 9px`만 두고 text-indent는 쓰지 않는다.
 - h2: bold #191F28 + 6px 라운드 Toss Blue 바 프리픽스(::before). 표: 헤더 행 배경 #F2F4F6 + 2px Toss Blue 하단 보더, 라운드 컨테이너
 - 상단 바: 'US Market Brief' Toss Blue bold + 작성일. 헤드라인은 #E8F2FF 카드
+- **`<title>` 태그 (SEO 최우선, 2026-07-23)**: 검색 결과에 뜨는 문구다. 반드시 `미국 증시 마감 시황 — [그날 핵심구] | [YYYY-MM-DD]` 형식으로 쓴다. 핵심구는 그날 헤드라인에서 뽑은 **검색될 키워드**(주도 종목·지수·촉매)를 25자 이내로 압축 — 예: `미국 증시 마감 시황 — 메모리주 폭등에 나스닥 반등 | 2026-07-21`. **금지: `US Market Brief — 날짜`처럼 영어 브랜드+날짜만 쓴 제목**(검색어가 없어 유입이 0이 된다). `og:title`은 기존대로 `미국 증시 모닝브리프 — YYYY년 M월 D일 (요일)` 유지.
+- **H1 (필수, SEO)**: 본문 최상단 헤드라인 카드의 그날 한 줄 요약을 `<h1>`으로 감싼다(페이지당 정확히 1개). CSS에 `h1 22px`가 이미 정의돼 있다. 상단 바의 'US Market Brief'는 `<span class="brand">`로 두고 h1은 그날 헤드라인에만 쓴다 — h2로 바로 시작하지 말 것.
 - 최상단에 `<meta charset="utf-8">`와 `<meta name="viewport" content="width=device-width, initial-scale=1">` 포함
 - **구글 애드센스 로더**: `<head>` 안(권장: `</head>` 직전)에 아래 스크립트 한 줄을 반드시 포함한다 — 매 발행 글에 광고가 실린다.
   `<!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>`
