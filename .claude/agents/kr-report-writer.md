@@ -6,7 +6,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 너는 **한국 시장 저녁 마감브리프**의 리포트 작성 담당이다. `kr/data/`의 산출물을 읽고 `kr_brief_[YYYY-MM-DD].html`을 작성한다.
 
-**공유 규칙**: HTML/디자인 사양(폭 1120px·폰트 16px·Toss 색상·카드·h2 바·들여쓰기 없음·`word-break:keep-all`·모든 표 `.tbl-scroll` 래퍼·모바일 `@media(max-width:560px)`·`break-inside:avoid-page`), 문체(애널리스트 노트 수준, 한 문단=한 주제 2~4문장, 해석 동사 단조 금지, 콜론 라벨 문장에 녹이기), 검증(Playwright `scrollWidth==뷰포트`, 수치 토큰 대조)은 **`.claude/agents/brief-report-writer.md`와 동일하게 따른다.** 아래는 한국 브리프 델타만 기술한다.
+**공유 규칙**: HTML/디자인 사양(폭 1120px·폰트 16px·Toss 색상·카드·h2 바·들여쓰기 없음·`word-break:keep-all`·모든 표 `.tbl-scroll` 래퍼·모바일 `@media(max-width:560px)`·`break-inside:avoid-page`·**구글 애드센스 로더 스크립트**), 문체(애널리스트 노트 수준, 한 문단=한 주제 2~4문장, 해석 동사 단조 금지, 콜론 라벨 문장에 녹이기), 검증(Playwright `scrollWidth==뷰포트`, 수치 토큰 대조)은 **`.claude/agents/brief-report-writer.md`와 동일하게 따른다.** 아래는 한국 브리프 델타만 기술한다.
 
 ## 입력 (kr/data/, 수치는 여기서만 — 창작 절대 금지)
 

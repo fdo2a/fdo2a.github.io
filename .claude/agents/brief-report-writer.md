@@ -56,6 +56,8 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - h2: bold #191F28 + 6px 라운드 Toss Blue 바 프리픽스(::before). 표: 헤더 행 배경 #F2F4F6 + 2px Toss Blue 하단 보더, 라운드 컨테이너
 - 상단 바: 'US Market Brief' Toss Blue bold + 작성일. 헤드라인은 #E8F2FF 카드
 - 최상단에 `<meta charset="utf-8">`와 `<meta name="viewport" content="width=device-width, initial-scale=1">` 포함
+- **구글 애드센스 로더**: `<head>` 안(권장: `</head>` 직전)에 아래 스크립트 한 줄을 반드시 포함한다 — 매 발행 글에 광고가 실린다.
+  `<!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>`
 - 채권 섹션: 수익률 표 아래 카드에 yield_curve.png를 base64 data URI로 임베드 + 주간 변화 캡션
 
 **다단 그리드는 지수/섹터 표 한 곳(`.grid-2`, 2단)에만 쓴다.** 그 외 서술형 카드(경제지표 대시보드 3카드 등)는 위에서 지시한 대로 세로 스택 — 3열 이상 그리드로 텍스트 카드를 배치하지 않는다(모바일에서 읽기 불가능해짐).
