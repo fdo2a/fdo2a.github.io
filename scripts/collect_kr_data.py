@@ -11,13 +11,16 @@ from datetime import datetime, timezone, timedelta
 
 import yfinance as yf
 
-from kr import sources, flows, sectors
+from kr import sources, flows, sectors, program, technical
 from kr.themes import rank_themes
 from kr.etf_normalize import normalize_top_value
 from kr.leadership import flag_leadership
 
 KST = timezone(timedelta(hours=9))
 CORE_KEYS = ("indices", "flows", "top_value", "sectors", "themes")
+# 기술적 분석 대상(일봉 차트와 동일 4종)
+TECH_SPECS = [("코스피", "^KS11"), ("코스닥", "^KQ11"),
+              ("SK하이닉스", "000660.KS"), ("삼성전자", "005930.KS")]
 
 
 def completeness(bundle: dict):
@@ -56,6 +59,29 @@ def main(outdir: str):
         except Exception as e:
             flows_out[mkt] = {"rows": [], "latest_date": None, "error": str(e)[:120]}
     flows_ok = any(v.get("latest_date") for v in flows_out.values())
+
+    # 프로그램 매매 (차익·비차익·전체 순매수, 억원) — 비-코어, 신선도는 flows와 동일 판정
+    program_out = {}
+    for mkt, sosok in (("KOSPI", "01"), ("KOSDAQ", "02")):
+        try:
+            parsed = program.parse_program_flows(sources.fetch_program_flows(sosok, bizdate))
+            fresh = flows.flows_freshness(parsed["latest_date"], report_date,
+                                          provisional=(parsed["latest_date"] == report_date))
+            program_out[mkt] = {**parsed, **fresh}
+        except Exception as e:
+            program_out[mkt] = {"rows": [], "latest_date": None, "error": str(e)[:120]}
+
+    # 기술적 지표 (이평 20/60/120·볼린저 20±2σ·일목 9/26/52) — 4종, 비-코어
+    technical_out = {}
+    for name, tk in TECH_SPECS:
+        try:
+            tdf = yf.download(tk, period="2y", progress=False, auto_adjust=False)
+            if hasattr(tdf.columns, "nlevels") and tdf.columns.nlevels > 1:
+                tdf.columns = tdf.columns.get_level_values(0)
+            if len(tdf):
+                technical_out[name] = technical.compute_technical(tdf)
+        except Exception as e:
+            technical_out[name] = {"error": str(e)[:120]}
 
     # 거래대금 상위 (ETF 정규화) — 단위 백만원
     try:
@@ -104,8 +130,7 @@ def main(outdir: str):
     try:
         import base64 as _b64
         from kr import charts as _charts
-        uri = _charts.render_daily_charts([("코스피", "^KS11"), ("코스닥", "^KQ11"),
-                                           ("SK하이닉스", "000660.KS"), ("삼성전자", "005930.KS")])
+        uri = _charts.render_daily_charts(TECH_SPECS)
         with open(os.path.join(outdir, "kr_charts.png"), "wb") as f:
             f.write(_b64.b64decode(uri.split(",", 1)[1]))
     except Exception:
@@ -128,6 +153,8 @@ def main(outdir: str):
 
     _write(outdir, "kr_market_data.json", market)
     _write(outdir, "kr_flows.json", flows_out)
+    _write(outdir, "kr_program.json", program_out)
+    _write(outdir, "kr_technical.json", technical_out)
     _write(outdir, "kr_top_value.json", top_value)
     _write(outdir, "kr_industry.json", industry)
     _write(outdir, "kr_theme.json", theme_rows)

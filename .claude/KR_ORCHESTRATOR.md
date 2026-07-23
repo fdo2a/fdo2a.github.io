@@ -6,7 +6,7 @@
 
 ## STEP 0 — 커밋된 KR 데이터 확인 (먼저)
 
-`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·거래대금·업종·테마·섹터·지수·장중). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.**
+`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr_charts.png` — 둘 다 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략).
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
 2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 5종: indices·flows·top_value·sectors·themes)면 그대로 사용. `missing`에 `econ`만 있으면 정상(ECOS 미구현, §10).
@@ -24,7 +24,7 @@
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
 
-Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록, research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`. Agent 미지원 시 `.claude/agents/kr-report-writer.md` 본문을 읽어 general-purpose에 위임하거나 직접 수행(폴백).
+Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`. Agent 미지원 시 `.claude/agents/kr-report-writer.md` 본문을 읽어 general-purpose에 위임하거나 직접 수행(폴백). 프로그램 매매는 §4 수급 서브블록, 기술적 분석/전략은 종합 해석 직전 신설 섹션(writer 스펙 §4·§9.5).
 
 **발행 게이트**: (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date`와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개+ 를 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍 있으면 발행 중단, PushNotification으로 누락 보고.**
 

@@ -1,0 +1,154 @@
+{
+  "코스피": {
+    "as_of": "2026-07-23",
+    "close": 7096.89,
+    "ma": {
+      "ma20": 7545.12,
+      "ma60": 7770.78,
+      "ma120": 6691.84
+    },
+    "ma_alignment": "혼조",
+    "disparity": {
+      "vs_ma20": -5.94,
+      "vs_ma60": -8.67,
+      "vs_ma120": 6.05
+    },
+    "bollinger": {
+      "upper": 8932.94,
+      "mid": 7545.12,
+      "lower": 6157.29,
+      "pct_b": 0.339,
+      "bandwidth": 0.3679
+    },
+    "ichimoku": {
+      "tenkan": 7066.98,
+      "kijun": 7907.31,
+      "senkou_a": 8035.24,
+      "senkou_b": 6988.31,
+      "cloud_top": 8035.24,
+      "cloud_bottom": 6988.31,
+      "price_vs_cloud": "inside"
+    },
+    "chikou_above_price_26ago": false,
+    "swing": {
+      "high_20": 9044.04,
+      "low_20": 6429.03,
+      "high_60": 9385.59,
+      "low_60": 6403.74
+    }
+  },
+  "코스닥": {
+    "as_of": "2026-07-23",
+    "close": 790.28,
+    "ma": {
+      "ma20": 829.2,
+      "ma60": 1002.79,
+      "ma120": 1064.44
+    },
+    "ma_alignment": "역배열",
+    "disparity": {
+      "vs_ma20": -4.69,
+      "vs_ma60": -21.19,
+      "vs_ma120": -25.76
+    },
+    "bollinger": {
+      "upper": 939.14,
+      "mid": 829.2,
+      "lower": 719.27,
+      "pct_b": 0.323,
+      "bandwidth": 0.2652
+    },
+    "ichimoku": {
+      "tenkan": 799.1,
+      "kijun": 885.18,
+      "senkou_a": 1027.03,
+      "senkou_b": 1068.94,
+      "cloud_top": 1068.94,
+      "cloud_bottom": 1027.03,
+      "price_vs_cloud": "below"
+    },
+    "chikou_above_price_26ago": false,
+    "swing": {
+      "high_20": 955.45,
+      "low_20": 730.81,
+      "high_60": 1229.42,
+      "low_60": 730.81
+    }
+  },
+  "SK하이닉스": {
+    "as_of": "2026-07-23",
+    "close": 1919000.0,
+    "ma": {
+      "ma20": 2202850.0,
+      "ma60": 2078283.33,
+      "ma120": 1517458.33
+    },
+    "ma_alignment": "정배열",
+    "disparity": {
+      "vs_ma20": -12.89,
+      "vs_ma60": -7.66,
+      "vs_ma120": 26.46
+    },
+    "bollinger": {
+      "upper": 2870546.12,
+      "mid": 2202850.0,
+      "lower": 1535153.88,
+      "pct_b": 0.287,
+      "bandwidth": 0.6062
+    },
+    "ichimoku": {
+      "tenkan": 1991500.0,
+      "kijun": 2332500.0,
+      "senkou_a": 2063250.0,
+      "senkou_b": 1606500.0,
+      "cloud_top": 2063250.0,
+      "cloud_bottom": 1606500.0,
+      "price_vs_cloud": "inside"
+    },
+    "chikou_above_price_26ago": false,
+    "swing": {
+      "high_20": 2987000.0,
+      "low_20": 1678000.0,
+      "high_60": 2987000.0,
+      "low_60": 1193000.0
+    }
+  },
+  "삼성전자": {
+    "as_of": "2026-07-23",
+    "close": 270000.0,
+    "ma": {
+      "ma20": 290250.0,
+      "ma60": 294941.67,
+      "ma120": 241574.58
+    },
+    "ma_alignment": "혼조",
+    "disparity": {
+      "vs_ma20": -6.98,
+      "vs_ma60": -8.46,
+      "vs_ma120": 11.77
+    },
+    "bollinger": {
+      "upper": 353463.53,
+      "mid": 290250.0,
+      "lower": 227036.47,
+      "pct_b": 0.34,
+      "bandwidth": 0.4356
+    },
+    "ichimoku": {
+      "tenkan": 269000.0,
+      "kijun": 307250.0,
+      "senkou_a": 320875.0,
+      "senkou_b": 268500.0,
+      "cloud_top": 320875.0,
+      "cloud_bottom": 268500.0,
+      "price_vs_cloud": "inside"
+    },
+    "chikou_above_price_26ago": false,
+    "swing": {
+      "high_20": 362500.0,
+      "low_20": 240000.0,
+      "high_60": 374500.0,
+      "low_60": 216500.0
+    }
+  }
+}

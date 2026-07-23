@@ -113,6 +113,12 @@ def fetch_market_flows(sosok: str, bizdate: str) -> str:
                  f"?bizdate={bizdate}&sosok={sosok}")
 
 
+def fetch_program_flows(sosok: str, bizdate: str) -> str:
+    """프로그램 매매(차익·비차익·전체 순매수, 억원). sosok: 01=KOSPI, 02=KOSDAQ."""
+    return fetch(f"https://finance.naver.com/sise/programDealTrendDay.naver"
+                 f"?bizdate={bizdate}&sosok={sosok}")
+
+
 def fetch_top_value(sosok: str = "0") -> list:
     return parse_top_value(fetch(f"https://finance.naver.com/sise/sise_quant.naver?sosok={sosok}"))
 

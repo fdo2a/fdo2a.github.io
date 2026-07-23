@@ -1,0 +1,260 @@
+{
+  "KOSPI": {
+    "rows": [
+      {
+        "date": "2026-07-23",
+        "arb_buy": 4043,
+        "arb_sell": 4471,
+        "arb_net": -428,
+        "narb_buy": 96503,
+        "narb_sell": 78502,
+        "narb_net": 18001,
+        "total_buy": 100546,
+        "total_sell": 82973,
+        "total_net": 17573
+      },
+      {
+        "date": "2026-07-22",
+        "arb_buy": 5089,
+        "arb_sell": 5077,
+        "arb_net": 12,
+        "narb_buy": 103896,
+        "narb_sell": 88653,
+        "narb_net": 15243,
+        "total_buy": 108985,
+        "total_sell": 93730,
+        "total_net": 15255
+      },
+      {
+        "date": "2026-07-21",
+        "arb_buy": 6034,
+        "arb_sell": 3009,
+        "arb_net": 3024,
+        "narb_buy": 85044,
+        "narb_sell": 76566,
+        "narb_net": 8479,
+        "total_buy": 91078,
+        "total_sell": 79575,
+        "total_net": 11503
+      },
+      {
+        "date": "2026-07-20",
+        "arb_buy": 4735,
+        "arb_sell": 3643,
+        "arb_net": 1091,
+        "narb_buy": 103297,
+        "narb_sell": 96526,
+        "narb_net": 6771,
+        "total_buy": 108032,
+        "total_sell": 100169,
+        "total_net": 7862
+      },
+      {
+        "date": "2026-07-16",
+        "arb_buy": 3707,
+        "arb_sell": 6034,
+        "arb_net": -2327,
+        "narb_buy": 103149,
+        "narb_sell": 113833,
+        "narb_net": -10684,
+        "total_buy": 106856,
+        "total_sell": 119867,
+        "total_net": -13011
+      },
+      {
+        "date": "2026-07-15",
+        "arb_buy": 1973,
+        "arb_sell": 3465,
+        "arb_net": -1492,
+        "narb_buy": 134593,
+        "narb_sell": 116389,
+        "narb_net": 18204,
+        "total_buy": 136566,
+        "total_sell": 119854,
+        "total_net": 16712
+      },
+      {
+        "date": "2026-07-14",
+        "arb_buy": 7713,
+        "arb_sell": 3137,
+        "arb_net": 4576,
+        "narb_buy": 157450,
+        "narb_sell": 151419,
+        "narb_net": 6031,
+        "total_buy": 165163,
+        "total_sell": 154556,
+        "total_net": 10607
+      },
+      {
+        "date": "2026-07-13",
+        "arb_buy": 4868,
+        "arb_sell": 3692,
+        "arb_net": 1176,
+        "narb_buy": 120079,
+        "narb_sell": 138973,
+        "narb_net": -18894,
+        "total_buy": 124947,
+        "total_sell": 142665,
+        "total_net": -17718
+      },
+      {
+        "date": "2026-07-10",
+        "arb_buy": 5125,
+        "arb_sell": 4166,
+        "arb_net": 959,
+        "narb_buy": 108373,
+        "narb_sell": 109415,
+        "narb_net": -1042,
+        "total_buy": 113498,
+        "total_sell": 113581,
+        "total_net": -83
+      },
+      {
+        "date": "2026-07-09",
+        "arb_buy": 8264,
+        "arb_sell": 8682,
+        "arb_net": -418,
+        "narb_buy": 125064,
+        "narb_sell": 112605,
+        "narb_net": 12459,
+        "total_buy": 133328,
+        "total_sell": 121287,
+        "total_net": 12041
+      }
+    ],
+    "latest_date": "2026-07-23",
+    "flows_date": "2026-07-23",
+    "flows_provisional": true,
+    "label": "당일 잠정치",
+    "stale": false
+  },
+  "KOSDAQ": {
+    "rows": [
+      {
+        "date": "2026-07-23",
+        "arb_buy": 33,
+        "arb_sell": 0,
+        "arb_net": 33,
+        "narb_buy": 18170,
+        "narb_sell": 16605,
+        "narb_net": 1564,
+        "total_buy": 18203,
+        "total_sell": 16605,
+        "total_net": 1597
+      },
+      {
+        "date": "2026-07-22",
+        "arb_buy": 0,
+        "arb_sell": 11,
+        "arb_net": -11,
+        "narb_buy": 16594,
+        "narb_sell": 17838,
+        "narb_net": -1244,
+        "total_buy": 16594,
+        "total_sell": 17849,
+        "total_net": -1255
+      },
+      {
+        "date": "2026-07-21",
+        "arb_buy": 11,
+        "arb_sell": 3,
+        "arb_net": 9,
+        "narb_buy": 15026,
+        "narb_sell": 16212,
+        "narb_net": -1186,
+        "total_buy": 15037,
+        "total_sell": 16215,
+        "total_net": -1177
+      },
+      {
+        "date": "2026-07-20",
+        "arb_buy": 0,
+        "arb_sell": 8,
+        "arb_net": -8,
+        "narb_buy": 16528,
+        "narb_sell": 17750,
+        "narb_net": -1222,
+        "total_buy": 16528,
+        "total_sell": 17758,
+        "total_net": -1230
+      },
+      {
+        "date": "2026-07-16",
+        "arb_buy": 9,
+        "arb_sell": 0,
+        "arb_net": 9,
+        "narb_buy": 13960,
+        "narb_sell": 17103,
+        "narb_net": -3143,
+        "total_buy": 13969,
+        "total_sell": 17103,
+        "total_net": -3134
+      },
+      {
+        "date": "2026-07-15",
+        "arb_buy": 0,
+        "arb_sell": 6,
+        "arb_net": -5,
+        "narb_buy": 20851,
+        "narb_sell": 20362,
+        "narb_net": 490,
+        "total_buy": 20851,
+        "total_sell": 20368,
+        "total_net": 485
+      },
+      {
+        "date": "2026-07-14",
+        "arb_buy": 0,
+        "arb_sell": 7,
+        "arb_net": -7,
+        "narb_buy": 22505,
+        "narb_sell": 24313,
+        "narb_net": -1808,
+        "total_buy": 22505,
+        "total_sell": 24320,
+        "total_net": -1815
+      },
+      {
+        "date": "2026-07-13",
+        "arb_buy": 0,
+        "arb_sell": 0,
+        "arb_net": 0,
+        "narb_buy": 22916,
+        "narb_sell": 24771,
+        "narb_net": -1855,
+        "total_buy": 22916,
+        "total_sell": 24771,
+        "total_net": -1855
+      },
+      {
+        "date": "2026-07-10",
+        "arb_buy": 274,
+        "arb_sell": 90,
+        "arb_net": 183,
+        "narb_buy": 21690,
+        "narb_sell": 22583,
+        "narb_net": -893,
+        "total_buy": 21964,
+        "total_sell": 22673,
+        "total_net": -710
+      },
+      {
+        "date": "2026-07-09",
+        "arb_buy": 114,
+        "arb_sell": 37,
+        "arb_net": 77,
+        "narb_buy": 20989,
+        "narb_sell": 20154,
+        "narb_net": 835,
+        "total_buy": 21103,
+        "total_sell": 20191,
+        "total_net": 912
+      }
+    ],
+    "latest_date": "2026-07-23",
+    "flows_date": "2026-07-23",
+    "flows_provisional": true,
+    "label": "당일 잠정치",
+    "stale": false
+  }
+}
