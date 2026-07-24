@@ -3,41 +3,40 @@
     "label": "SK하이닉스",
     "kind": "stock",
     "direction": null,
-    "value": 7777734,
-    "volume": 4081543,
+    "value": 8886016,
+    "volume": 4935571,
     "members": [
       "SK하이닉스"
-    ]
-  },
-  {
-    "label": "SK하이닉스 레버리지",
-    "kind": "single_stock_lev",
-    "direction": "long",
-    "value": 5662682,
-    "volume": 389788056,
-    "members": [
-      "KODEX SK하이닉스단일종목레버리지",
-      "TIGER SK하이닉스단일종목레버리지",
-      "SOL SK하이닉스단일종목레버리지",
-      "ACE SK하이닉스단일종목레버리지"
     ]
   },
   {
     "label": "삼성전자",
     "kind": "stock",
     "direction": null,
-    "value": 4304944,
-    "volume": 16000165,
+    "value": 6628392,
+    "volume": 26175580,
     "members": [
       "삼성전자"
+    ]
+  },
+  {
+    "label": "SK하이닉스 레버리지",
+    "kind": "single_stock_lev",
+    "direction": "long",
+    "value": 4593204,
+    "volume": 353119036,
+    "members": [
+      "KODEX SK하이닉스단일종목레버리지",
+      "TIGER SK하이닉스단일종목레버리지",
+      "SOL SK하이닉스단일종목레버리지"
     ]
   },
   {
     "label": "SK하이닉스 인버스",
     "kind": "single_stock_lev",
     "direction": "short",
-    "value": 3693385,
-    "volume": 351800796,
+    "value": 3628255,
+    "volume": 315500821,
     "members": [
       "SOL SK하이닉스선물단일종목인버스2X"
     ]
@@ -46,8 +45,8 @@
     "label": "지수 레버리지 ETF",
     "kind": "index_lev",
     "direction": "long",
-    "value": 1870401,
-    "volume": 85048696,
+    "value": 1965397,
+    "volume": 85477533,
     "members": [
       "KODEX 코스닥150레버리지",
       "KODEX 레버리지"
@@ -57,8 +56,8 @@
     "label": "지수 인버스 ETF",
     "kind": "index_lev",
     "direction": "short",
-    "value": 1699093,
-    "volume": 8276240979,
+    "value": 1893860,
+    "volume": 8782646069,
     "members": [
       "KODEX 200선물인버스2X",
       "KODEX 인버스",
@@ -69,11 +68,21 @@
     ]
   },
   {
+    "label": "SK이터닉스",
+    "kind": "stock",
+    "direction": null,
+    "value": 1709210,
+    "volume": 20828632,
+    "members": [
+      "SK이터닉스"
+    ]
+  },
+  {
     "label": "삼성전자 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
-    "value": 1477816,
-    "volume": 105394462,
+    "value": 1687469,
+    "volume": 135778497,
     "members": [
       "KODEX 삼성전자단일종목레버리지",
       "TIGER 삼성전자단일종목레버리지"
@@ -83,30 +92,20 @@
     "label": "KODEX 200",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 1431439,
-    "volume": 12757765,
+    "value": 1682637,
+    "volume": 15631005,
     "members": [
       "KODEX 200"
     ]
   },
   {
-    "label": "SK이터닉스",
+    "label": "HD현대에너지솔루션",
     "kind": "stock",
     "direction": null,
-    "value": 1359014,
-    "volume": 18261037,
+    "value": 609061,
+    "volume": 3278513,
     "members": [
-      "SK이터닉스"
-    ]
-  },
-  {
-    "label": "TIGER 반도체TOP10",
-    "kind": "sector_theme_etf",
-    "direction": null,
-    "value": 472146,
-    "volume": 12585304,
-    "members": [
-      "TIGER 반도체TOP10"
+      "HD현대에너지솔루션"
     ]
   }
 ]
