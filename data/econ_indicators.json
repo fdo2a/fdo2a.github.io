@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-23 22:30 UTC",
+  "generated": "2026-07-24 22:33 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -99,9 +99,9 @@
       "fred_id": "HSN1F",
       "transform": "level",
       "units": "K",
-      "actual": 580.0,
-      "previous": 626.0,
-      "ref_period": "2026-05-01"
+      "actual": 628.0,
+      "previous": 618.0,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Activity",
