@@ -3,35 +3,35 @@
     "as_of": "2026-07-27",
     "close": 6755.75,
     "ma": {
-      "ma20": 7350.36,
-      "ma60": 7776.71,
-      "ma120": 6720.27
+      "ma20": 7436.39,
+      "ma60": 7775.45,
+      "ma120": 6706.89
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -8.09,
-      "vs_ma60": -13.13,
-      "vs_ma120": 0.53
+      "vs_ma20": -9.15,
+      "vs_ma60": -13.11,
+      "vs_ma120": 0.73
     },
     "bollinger": {
-      "upper": 8579.68,
-      "mid": 7350.36,
-      "lower": 6121.04,
-      "pct_b": 0.258,
-      "bandwidth": 0.3345
+      "upper": 8709.04,
+      "mid": 7436.39,
+      "lower": 6163.74,
+      "pct_b": 0.233,
+      "bandwidth": 0.3423
     },
     "ichimoku": {
-      "tenkan": 6926.6,
+      "tenkan": 6979.05,
       "kijun": 7907.31,
-      "senkou_a": 8165.11,
-      "senkou_b": 7138.17,
-      "cloud_top": 8165.11,
-      "cloud_bottom": 7138.17,
+      "senkou_a": 8063.52,
+      "senkou_b": 7051.95,
+      "cloud_top": 8063.52,
+      "cloud_bottom": 7051.95,
       "price_vs_cloud": "below"
     },
     "chikou_above_price_26ago": false,
     "swing": {
-      "high_20": 8667.73,
+      "high_20": 8861.7,
       "low_20": 6429.03,
       "high_60": 9385.59,
       "low_60": 6429.03
