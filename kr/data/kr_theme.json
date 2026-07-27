@@ -1,62 +1,62 @@
 [
   {
+    "name": "인터넷 대표주",
+    "change_pct": 5.39
+  },
+  {
+    "name": "AI 챗봇(챗GPT 등)",
+    "change_pct": 4.45
+  },
+  {
+    "name": "온디바이스 AI",
+    "change_pct": 4.43
+  },
+  {
+    "name": "전자결제(전자화폐)",
+    "change_pct": 4.14
+  },
+  {
+    "name": "피지컬 AI/휴머노이드 로봇",
+    "change_pct": 4.14
+  },
+  {
     "name": "제습기",
-    "change_pct": 2.37
+    "change_pct": 4.09
   },
   {
-    "name": "손해보험",
-    "change_pct": 2.11
+    "name": "지능형로봇/인공지능(AI)",
+    "change_pct": 4.05
   },
   {
-    "name": "탈 플라스틱(친환경/생분해성 등)",
-    "change_pct": 2.06
+    "name": "로봇(산업용/협동로봇 등)",
+    "change_pct": 3.96
   },
   {
-    "name": "조선기자재",
-    "change_pct": 2.02
+    "name": "전자파",
+    "change_pct": 3.46
   },
   {
-    "name": "겨울",
-    "change_pct": 1.62
+    "name": "3D 프린터",
+    "change_pct": 3.45
   },
   {
-    "name": "통신",
-    "change_pct": 0.94
+    "name": "시스템반도체",
+    "change_pct": 3.22
   },
   {
-    "name": "편의점",
-    "change_pct": 0.92
+    "name": "마리화나(대마)",
+    "change_pct": 3.12
   },
   {
-    "name": "도시가스",
-    "change_pct": 0.84
+    "name": "스마트팩토리(스마트공장)",
+    "change_pct": 3.03
   },
   {
-    "name": "유심(USIM)",
-    "change_pct": 0.8
+    "name": "모바일솔루션(스마트폰)",
+    "change_pct": 2.9
   },
   {
-    "name": "여름",
-    "change_pct": 0.72
-  },
-  {
-    "name": "사료",
-    "change_pct": 0.64
-  },
-  {
-    "name": "윤활유",
-    "change_pct": 0.62
-  },
-  {
-    "name": "치매",
-    "change_pct": 0.57
-  },
-  {
-    "name": "골판지 제조",
-    "change_pct": 0.54
-  },
-  {
-    "name": "은행",
-    "change_pct": 0.52
+    "name": "음원/음반",
+    "change_pct": 2.82
   }
 ]
