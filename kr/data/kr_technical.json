@@ -3,30 +3,30 @@
     "as_of": "2026-07-28",
     "close": 6023.66,
     "ma": {
-      "ma20": 7317.01,
-      "ma60": 7765.6,
-      "ma120": 6714.72
+      "ma20": 7231.81,
+      "ma60": 7766.42,
+      "ma120": 6727.38
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -17.68,
-      "vs_ma60": -22.43,
-      "vs_ma120": -10.29
+      "vs_ma20": -16.71,
+      "vs_ma60": -22.44,
+      "vs_ma120": -10.46
     },
     "bollinger": {
-      "upper": 8648.08,
-      "mid": 7317.01,
-      "lower": 5985.94,
-      "pct_b": 0.014,
-      "bandwidth": 0.3638
+      "upper": 8492.34,
+      "mid": 7231.81,
+      "lower": 5971.28,
+      "pct_b": 0.021,
+      "bandwidth": 0.3486
     },
     "ichimoku": {
       "tenkan": 6708.55,
-      "kijun": 7689.25,
-      "senkou_a": 8165.11,
-      "senkou_b": 7138.17,
-      "cloud_top": 8165.11,
-      "cloud_bottom": 7138.17,
+      "kijun": 7622.96,
+      "senkou_a": 8304.87,
+      "senkou_b": 7351.0,
+      "cloud_top": 8304.87,
+      "cloud_bottom": 7351.0,
       "price_vs_cloud": "below"
     },
     "chikou_above_price_26ago": false,
