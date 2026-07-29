@@ -43,44 +43,6 @@
     ]
   },
   {
-    "label": "지수 인버스 ETF",
-    "kind": "index_lev",
-    "direction": "short",
-    "value": 5220762,
-    "volume": 19977876393,
-    "members": [
-      "KODEX 200선물인버스2X",
-      "KODEX 인버스",
-      "TIGER 200선물인버스2X",
-      "KODEX 코스닥150선물인버스",
-      "TIGER 인버스",
-      "RISE 200선물인버스2X",
-      "PLUS 200선물인버스2X"
-    ]
-  },
-  {
-    "label": "지수 레버리지 ETF",
-    "kind": "index_lev",
-    "direction": "long",
-    "value": 3699795,
-    "volume": 212143953,
-    "members": [
-      "KODEX 코스닥150레버리지",
-      "KODEX 레버리지",
-      "TIGER 코스닥150 레버리지"
-    ]
-  },
-  {
-    "label": "KODEX 200",
-    "kind": "sector_theme_etf",
-    "direction": null,
-    "value": 3286796,
-    "volume": 36440234,
-    "members": [
-      "KODEX 200"
-    ]
-  },
-  {
     "label": "삼성전자 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
@@ -109,6 +71,36 @@
     "volume": 30810389,
     "members": [
       "TIGER 반도체TOP10"
+    ]
+  },
+  {
+    "label": "SOL AI반도체TOP2플러스",
+    "kind": "sector_theme_etf",
+    "direction": null,
+    "value": 666544,
+    "volume": 48653703,
+    "members": [
+      "SOL AI반도체TOP2플러스"
+    ]
+  },
+  {
+    "label": "삼성전자 인버스",
+    "kind": "single_stock_lev",
+    "direction": "short",
+    "value": 516781,
+    "volume": 22751143,
+    "members": [
+      "PLUS 삼성전자선물단일종목인버스2X"
+    ]
+  },
+  {
+    "label": "KODEX AI반도체TOP2플러스",
+    "kind": "sector_theme_etf",
+    "direction": null,
+    "value": 411800,
+    "volume": 13173778,
+    "members": [
+      "KODEX AI반도체TOP2플러스"
     ]
   }
 ]

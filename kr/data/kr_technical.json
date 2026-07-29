@@ -3,35 +3,35 @@
     "as_of": "2026-07-29",
     "close": 5663.24,
     "ma": {
-      "ma20": 7091.15,
-      "ma60": 7749.3,
-      "ma120": 6731.07
+      "ma20": 7298.99,
+      "ma60": 7759.59,
+      "ma120": 6711.71
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -20.14,
-      "vs_ma60": -26.92,
-      "vs_ma120": -15.86
+      "vs_ma20": -22.41,
+      "vs_ma60": -27.02,
+      "vs_ma120": -15.62
     },
     "bollinger": {
-      "upper": 8391.93,
-      "mid": 7091.15,
-      "lower": 5790.37,
-      "pct_b": -0.049,
-      "bandwidth": 0.3669
+      "upper": 8707.14,
+      "mid": 7298.99,
+      "lower": 5890.84,
+      "pct_b": -0.081,
+      "bandwidth": 0.3858
     },
     "ichimoku": {
-      "tenkan": 6214.39,
-      "kijun": 7219.11,
-      "senkou_a": 8304.87,
-      "senkou_b": 7395.25,
-      "cloud_top": 8304.87,
-      "cloud_bottom": 7395.25,
+      "tenkan": 6343.48,
+      "kijun": 7324.18,
+      "senkou_a": 8165.11,
+      "senkou_b": 7138.17,
+      "cloud_top": 8165.11,
+      "cloud_bottom": 7138.17,
       "price_vs_cloud": "below"
     },
     "chikou_above_price_26ago": false,
     "swing": {
-      "high_20": 8620.15,
+      "high_20": 8667.73,
       "low_20": 5262.77,
       "high_60": 9385.59,
       "low_60": 5262.77
@@ -41,26 +41,26 @@
     "as_of": "2026-07-29",
     "close": 662.68,
     "ma": {
-      "ma20": 794.49,
-      "ma60": 969.72,
-      "ma120": 1051.41
+      "ma20": 805.01,
+      "ma60": 978.29,
+      "ma120": 1055.23
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": -16.59,
-      "vs_ma60": -31.66,
-      "vs_ma120": -36.97
+      "vs_ma20": -17.68,
+      "vs_ma60": -32.26,
+      "vs_ma120": -37.2
     },
     "bollinger": {
-      "upper": 912.92,
-      "mid": 794.49,
-      "lower": 676.05,
-      "pct_b": -0.056,
-      "bandwidth": 0.2981
+      "upper": 927.38,
+      "mid": 805.01,
+      "lower": 682.63,
+      "pct_b": -0.082,
+      "bandwidth": 0.304
     },
     "ichimoku": {
-      "tenkan": 723.73,
-      "kijun": 801.34,
+      "tenkan": 731.33,
+      "kijun": 805.29,
       "senkou_a": 1022.24,
       "senkou_b": 1068.94,
       "cloud_top": 1068.94,
