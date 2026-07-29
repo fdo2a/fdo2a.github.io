@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 import yfinance as yf
 
 from kr import sources, flows, sectors, program, technical
+from kr import econ as kr_econ
 from kr.themes import rank_themes
 from kr.etf_normalize import normalize_top_value
 from kr.leadership import flag_leadership
@@ -143,10 +144,11 @@ def main(outdir: str):
               "top_value": top_value, "sectors": sector_rows, "themes": theme_rows}
     ok, missing = completeness(bundle)
 
-    # 경제지표: ECOS 키 미발급 → 스텁 (§10)
-    econ = {"pending": True, "note": "ECOS API 키 발급 후 구현"}
-    if "econ" not in missing:
-        missing.append("econ")
+    # 경제지표: ECOS(국고채·기준금리·단기금리). 비-코어 — 실패해도 발행을 막지 않는다.
+    econ = kr_econ.collect()
+    if econ.get("pending") or econ.get("missing"):
+        if "econ" not in missing:
+            missing.append("econ")
 
     market = {"report_date": report_date, "complete": ok, "missing": missing,
               "indices": indices,

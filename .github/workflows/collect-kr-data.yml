@@ -35,6 +35,9 @@ jobs:
       - name: Run unit tests
         run: python -m pytest scripts/kr/tests -q
       - name: Collect
+        # ECOS 인증키는 URL 경로에 들어가므로 로그 유출에 주의 — kr/econ.py가 scrub()로 마스킹한다.
+        env:
+          ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
         run: python scripts/collect_kr_data.py --outdir kr/data
       - name: Report status
         run: |
