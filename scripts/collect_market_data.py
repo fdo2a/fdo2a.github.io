@@ -209,6 +209,8 @@ def fred_series(sid):
 
 
 def fred_yields():
+    """DGS constant-maturity yields. Published with a 1-business-day lag, so these trail
+    the equity close date — they are the 2Y source and the fallback for every tenor."""
     out = {}
     for name, sid in [('2Y', 'DGS2'), ('5Y', 'DGS5'), ('10Y', 'DGS10'), ('30Y', 'DGS30')]:
         def one(sid=sid):
@@ -216,7 +218,8 @@ def fred_yields():
             d2, d1 = vals[-2], vals[-1]
             wk = vals[-6] if len(vals) >= 6 else None
             return {'level': d1[1], 'date': d1[0], 'bp': (d1[1] - d2[1]) * 100,
-                    'week_ago': wk[1] if wk else None, 'week_ago_date': wk[0] if wk else None}
+                    'week_ago': wk[1] if wk else None, 'week_ago_date': wk[0] if wk else None,
+                    'source': 'FRED'}
         out[name] = retry(one)
         time.sleep(1)
     return out
@@ -294,18 +297,43 @@ def collect_econ():
     return out
 
 
-def yahoo_yields_supplement():
-    """Same-day CBOE yield indices (5Y/10Y/30Y) to cross-check FRED's 1-business-day lag."""
+def yahoo_spot_yields():
+    """Same-day CBOE spot yield indices — the PRIMARY source for 5Y/10Y/30Y (2026-07-28
+    사용자 지시). These settle on the same date as the equity close, unlike FRED's T-1 DGS
+    series. Shape matches fred_yields() so either can fill a tenor slot.
+
+    There is no 2Y index on Yahoo: ^UST2Y does not exist and 2YY=F (2-Year Yield futures)
+    is both a day staler than ^TNX and ~20bp off DGS2 — verified 2026-07-28, do not use it
+    as a spot proxy. 2Y therefore stays on FRED; see merge_yields()."""
     import yfinance as yf
     out = {}
     for name, t in [('5Y', '^FVX'), ('10Y', '^TNX'), ('30Y', '^TYX')]:
         def one(t=t):
-            h = yf.Ticker(t).history(period='7d')['Close'].dropna()
-            if not len(h):
+            h = yf.Ticker(t).history(period='1mo')['Close'].dropna()
+            if len(h) < 2:
                 return None
-            return {'level': float(h.iloc[-1]) / 1.0, 'date': str(h.index[-1].date())}
-        out[name] = retry(one, attempts=2)
+            cur, prev = float(h.iloc[-1]), float(h.iloc[-2])
+            wk = float(h.iloc[-6]) if len(h) >= 6 else None
+            return {'level': round(cur, 3), 'date': str(h.index[-1].date()),
+                    'bp': (cur - prev) * 100,
+                    'week_ago': round(wk, 3) if wk is not None else None,
+                    'week_ago_date': str(h.index[-6].date()) if len(h) >= 6 else None,
+                    'ticker': t, 'source': 'Yahoo'}
+        out[name] = retry(one, attempts=3)
         time.sleep(1)
+    return out
+
+
+def merge_yields(fred, yahoo):
+    """Yahoo same-day spot wins for 5Y/10Y/30Y; FRED fills 2Y (no Yahoo spot) and any tenor
+    Yahoo failed to return. Every row keeps its own `source`/`date` because the resulting
+    curve deliberately mixes as-of dates — the report MUST label the 2Y row accordingly."""
+    out = {}
+    for t in ('2Y', '5Y', '10Y', '30Y'):
+        row = (yahoo or {}).get(t)
+        if not (row and row.get('level') is not None):
+            row = (fred or {}).get(t)
+        out[t] = dict(row) if row else None
     return out
 
 
@@ -347,6 +375,9 @@ def render_curve(yields, path):
     today = [yields[t]['level'] for t in labels]
     week_ago = [yields[t]['week_ago'] for t in labels]
     t_date, w_date = yields['10Y']['date'], yields['10Y']['week_ago_date']
+    # 2Y comes from FRED (T-1) while 5Y/10Y/30Y are same-day Yahoo spot, so a point on this
+    # curve can be as of a different date than its neighbours. Star it rather than hide it.
+    odd = [t for t in labels if yields[t].get('date') != t_date]
     x = range(4)
     fig, ax = plt.subplots(figsize=(7.4, 3.4), dpi=200)
     fig.patch.set_facecolor('white'); ax.set_facecolor('white')
@@ -364,7 +395,12 @@ def render_curve(yields, path):
                 xytext=(14, 4), fontsize=9.5, color=INK2, fontweight='bold')
     ax.annotate(f'1주 전 ({w_date})', (3, week_ago[3]), textcoords='offset points',
                 xytext=(14, -12), fontsize=9.5, color=MUTED)
-    ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=11, color=INK2)
+    ax.set_xticks(list(x))
+    ax.set_xticklabels([f'{t}*' if t in odd else t for t in labels], fontsize=11, color=INK2)
+    if odd:
+        note = ' · '.join(f"{t} {yields[t].get('source', '?')} {yields[t]['date']}" for t in odd)
+        ax.text(0, -0.19, f'* {note} 기준 (그 외 Yahoo 스팟 {t_date})', transform=ax.transAxes,
+                fontsize=8.5, color=MUTED)
     ax.tick_params(axis='y', labelsize=9.5, colors=MUTED, length=0)
     ax.tick_params(axis='x', length=0, pad=8)
     lo, hi = min(today + week_ago), max(today + week_ago)
@@ -432,10 +468,13 @@ def main():
         except Exception:
             pass
 
-    print('collecting FRED yields...')
-    yields = fred_yields()
-    print('collecting Yahoo yield supplement...')
-    yields_yahoo = yahoo_yields_supplement()
+    print('collecting Yahoo spot yields (primary: 5Y/10Y/30Y)...')
+    yields_yahoo = yahoo_spot_yields()
+    print('collecting FRED yields (2Y + fallback)...')
+    yields_fred = fred_yields()
+    yields = merge_yields(yields_fred, yields_yahoo)
+    for t, row in yields.items():
+        print(f'  {t}: ' + (f"{row['level']}% ({row.get('source')} {row['date']})" if row else 'MISSING'))
     print('collecting FRED economic indicators...')
     econ = collect_econ()
     print(f'  econ indicators: {len(econ)}/{len(ECON)}')
@@ -456,13 +495,25 @@ def main():
         'memory': daily['memory'],
         'ai_infra': daily['ai_infra'],
         'yields': yields,
-        'yields_yahoo_sameday': yields_yahoo,
+        'yields_fred': yields_fred,
+        'yields_note': 'yields = 발행용 기준값. 5Y/10Y/30Y는 Yahoo 스팟(^FVX/^TNX/^TYX, '
+                       '주식 종가와 동일자), 2Y는 Yahoo에 스팟 지수가 없어 FRED DGS2(T-1). '
+                       '각 행의 source/date를 표·차트·캡션에 반드시 표기할 것. '
+                       'yields_fred는 전 만기 FRED 동일자 대조용.',
         'sector_performance': sector_perf,
         'sector_performance_as_of': perf_as_of,
     }
     y = data['yields']
+    # As-published spread (mixed legs: FRED 2Y vs Yahoo 10Y) — matches the printed table.
     if y.get('2Y') and y.get('10Y'):
         data['spread_2s10s_bp'] = (y['10Y']['level'] - y['2Y']['level']) * 100
+        data['spread_2s10s_basis'] = (f"2Y {y['2Y'].get('source')} {y['2Y']['date']} vs "
+                                      f"10Y {y['10Y'].get('source')} {y['10Y']['date']}")
+    # Single-date cross-checks: both legs FRED (T-1), and both legs Yahoo same-day.
+    if yields_fred.get('2Y') and yields_fred.get('10Y'):
+        data['spread_2s10s_fred_bp'] = (yields_fred['10Y']['level'] - yields_fred['2Y']['level']) * 100
+    if y.get('5Y') and y.get('30Y'):
+        data['spread_5s30s_bp'] = (y['30Y']['level'] - y['5Y']['level']) * 100
 
     missing = completeness(data, intraday)
     data['complete'] = not missing

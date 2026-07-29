@@ -55,7 +55,24 @@ CMDTY = [('WTI','CL=F'),('Brent','BZ=F'),('Natural Gas','NG=F'),('Gold','GC=F')]
 MEMORY = [('Micron','MU'),('Western Digital','WDC'),('Seagate','STX'),('Nvidia','NVDA'),('Samsung Elec','005930.KS'),('SK hynix','000660.KS')]
 AI_INFRA = [('Marvell','MRVL'),('Coherent','COHR'),('Lumentum','LITE'),('GE Vernova','GEV'),('Vertiv','VRT')]
 
-def yields():
+# 금리: 5Y/10Y/30Y는 야후 스팟이 기준(주식 종가와 동일자), 2Y만 FRED (2026-07-28 사용자 지시).
+# 야후에 2년 스팟 지수는 없다 — ^UST2Y 부재, 2YY=F는 선물이라 하루 더 늦고 DGS2와 20bp 이상 벌어짐.
+def yahoo_yields():
+    out = {}
+    for name, t in [('5Y','^FVX'),('10Y','^TNX'),('30Y','^TYX')]:
+        try:
+            h = yf.Ticker(t).history(period='1mo')['Close'].dropna()
+            if len(h) < 2: out[name] = None; continue
+            cur, prev = float(h.iloc[-1]), float(h.iloc[-2])
+            wk = float(h.iloc[-6]) if len(h) >= 6 else None
+            out[name] = {'level': round(cur,3), 'date': str(h.index[-1].date()), 'bp': (cur-prev)*100,
+                         'week_ago': round(wk,3) if wk is not None else None,
+                         'week_ago_date': str(h.index[-6].date()) if len(h) >= 6 else None,
+                         'ticker': t, 'source': 'Yahoo'}
+        except: out[name] = None
+    return out
+
+def fred_yields():
     out = {}
     for name, sid in [('2Y','DGS2'),('5Y','DGS5'),('10Y','DGS10'),('30Y','DGS30')]:
         try:
@@ -66,9 +83,14 @@ def yields():
             d2, d1 = vals[-2], vals[-1]
             wk = vals[-6] if len(vals) >= 6 else None
             out[name] = {'level': d1[1], 'date': d1[0], 'bp': (d1[1]-d2[1])*100,
-                         'week_ago': wk[1] if wk else None, 'week_ago_date': wk[0] if wk else None}
+                         'week_ago': wk[1] if wk else None, 'week_ago_date': wk[0] if wk else None,
+                         'source': 'FRED'}
         except: out[name] = None
     return out
+
+yf_y, fr_y = yahoo_yields(), fred_yields()
+# 야후가 우선, 비면 FRED로 메움 (2Y는 야후에 없으므로 항상 FRED로 떨어진다)
+merged = {t: dict(yf_y.get(t) or fr_y.get(t) or {}) or None for t in ('2Y','5Y','10Y','30Y')}
 
 data = {
     'generated': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
@@ -78,15 +100,21 @@ data = {
     'commodities': {n: chg(t) for n,t in CMDTY},
     'memory': {n: chg(t) for n,t in MEMORY},
     'ai_infra': {n: chg(t) for n,t in AI_INFRA},
-    'yields': yields(),
+    'yields': merged,
+    'yields_fred': fr_y,
 }
 y = data['yields']
 if y.get('2Y') and y.get('10Y'):
-    data['spread_2s10s_bp'] = (y['10Y']['level'] - y['2Y']['level']) * 100
+    data['spread_2s10s_bp'] = (y['10Y']['level'] - y['2Y']['level']) * 100   # 다리 날짜가 섞인 값
+    data['spread_2s10s_basis'] = f"2Y {y['2Y'].get('source')} {y['2Y']['date']} vs 10Y {y['10Y'].get('source')} {y['10Y']['date']}"
+if fr_y.get('2Y') and fr_y.get('10Y'):
+    data['spread_2s10s_fred_bp'] = (fr_y['10Y']['level'] - fr_y['2Y']['level']) * 100   # 동일자 FRED
+if y.get('5Y') and y.get('30Y'):
+    data['spread_5s30s_bp'] = (y['30Y']['level'] - y['5Y']['level']) * 100   # 동일자 야후
 print(json.dumps(data, indent=2, default=str))
 ```
 
-FRED 요청이 SSL 오류로 실패하면 certifi의 ssl context로 재시도한다. FRED 금리는 1영업일 랙이 있다 — 금리 날짜가 주식 날짜와 다르면 research_notes.md에 명시한다.
+FRED 요청이 SSL 오류로 실패하면 certifi의 ssl context로 재시도한다. **금리 기준일이 만기별로 다른 것은 정상이다** — 5Y/10Y/30Y(야후 스팟)는 주식 종가와 같은 날, 2Y(FRED DGS2)는 1영업일 이상 뒤진다. 각 만기의 date·source를 research_notes.md에 그대로 적고, 날짜를 억지로 맞추거나 값을 보정하지 않는다.
 
 ## STEP 1b — 수익률 커브 차트
 
@@ -105,7 +133,8 @@ BLUE, AMBER = '#0064FF', '#D97706'
 labels = ['2Y','5Y','10Y','30Y']
 today = [...]      # yields[t]['level']
 week_ago = [...]   # yields[t]['week_ago']
-t_date, w_date = ..., ...  # yields dates
+t_date, w_date = yields['10Y']['date'], yields['10Y']['week_ago_date']   # 야후 스팟 기준일
+odd = [t for t in labels if yields[t].get('date') != t_date]   # 보통 ['2Y'] (FRED, T-1)
 x = range(4)
 fig, ax = plt.subplots(figsize=(7.4, 3.4), dpi=200)
 fig.patch.set_facecolor('white'); ax.set_facecolor('white')
@@ -117,7 +146,11 @@ for i, (t, w) in enumerate(zip(today, week_ago)):
     ax.annotate(f"{'+' if d > 0 else ''}{d:.0f}bp", (i, min(t, w)), textcoords='offset points', xytext=(0, -20), ha='center', fontsize=9, color=MUTED)
 ax.annotate(f'오늘 ({t_date})', (3, today[3]), textcoords='offset points', xytext=(14, 4), fontsize=9.5, color=INK2, fontweight='bold')
 ax.annotate(f'1주 전 ({w_date})', (3, week_ago[3]), textcoords='offset points', xytext=(14, -12), fontsize=9.5, color=MUTED)
-ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=11, color=INK2)
+ax.set_xticks(list(x))
+ax.set_xticklabels([f'{t}*' if t in odd else t for t in labels], fontsize=11, color=INK2)
+if odd:   # 기준일이 다른 만기는 별표 + 각주로 밝힌다 (날짜 혼재를 숨기지 않는다)
+    note = ' · '.join(f"{t} {yields[t].get('source','?')} {yields[t]['date']}" for t in odd)
+    ax.text(0, -0.19, f'* {note} 기준 (그 외 Yahoo 스팟 {t_date})', transform=ax.transAxes, fontsize=8.5, color=MUTED)
 ax.tick_params(axis='y', labelsize=9.5, colors=MUTED, length=0)
 ax.tick_params(axis='x', length=0, pad=8)
 lo, hi = min(today + week_ago), max(today + week_ago)
