@@ -3,8 +3,8 @@
     "label": "SK하이닉스",
     "kind": "stock",
     "direction": null,
-    "value": 11745350,
-    "volume": 7376718,
+    "value": 17220303,
+    "volume": 12183764,
     "members": [
       "SK하이닉스"
     ]
@@ -13,8 +13,8 @@
     "label": "삼성전자",
     "kind": "stock",
     "direction": null,
-    "value": 9118487,
-    "volume": 40359563,
+    "value": 12931101,
+    "volume": 61720290,
     "members": [
       "삼성전자"
     ]
@@ -23,8 +23,8 @@
     "label": "SK하이닉스 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
-    "value": 4145918,
-    "volume": 413474196,
+    "value": 6561904,
+    "volume": 845899568,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지",
@@ -36,18 +36,34 @@
     "label": "SK하이닉스 인버스",
     "kind": "single_stock_lev",
     "direction": "short",
-    "value": 2828690,
-    "volume": 202906558,
+    "value": 5895483,
+    "volume": 348104693,
     "members": [
       "SOL SK하이닉스선물단일종목인버스2X"
+    ]
+  },
+  {
+    "label": "지수 인버스 ETF",
+    "kind": "index_lev",
+    "direction": "short",
+    "value": 5220762,
+    "volume": 19977876393,
+    "members": [
+      "KODEX 200선물인버스2X",
+      "KODEX 인버스",
+      "TIGER 200선물인버스2X",
+      "KODEX 코스닥150선물인버스",
+      "TIGER 인버스",
+      "RISE 200선물인버스2X",
+      "PLUS 200선물인버스2X"
     ]
   },
   {
     "label": "지수 레버리지 ETF",
     "kind": "index_lev",
     "direction": "long",
-    "value": 2484952,
-    "volume": 127682493,
+    "value": 3699795,
+    "volume": 212143953,
     "members": [
       "KODEX 코스닥150레버리지",
       "KODEX 레버리지",
@@ -55,26 +71,11 @@
     ]
   },
   {
-    "label": "지수 인버스 ETF",
-    "kind": "index_lev",
-    "direction": "short",
-    "value": 2250448,
-    "volume": 10836694517,
-    "members": [
-      "KODEX 200선물인버스2X",
-      "KODEX 인버스",
-      "TIGER 200선물인버스2X",
-      "KODEX 코스닥150선물인버스",
-      "TIGER 인버스",
-      "RISE 200선물인버스2X"
-    ]
-  },
-  {
     "label": "KODEX 200",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 2046225,
-    "volume": 21012456,
+    "value": 3286796,
+    "volume": 36440234,
     "members": [
       "KODEX 200"
     ]
@@ -83,8 +84,8 @@
     "label": "삼성전자 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
-    "value": 1112685,
-    "volume": 113248942,
+    "value": 1963295,
+    "volume": 227522378,
     "members": [
       "KODEX 삼성전자단일종목레버리지",
       "TIGER 삼성전자단일종목레버리지"
@@ -94,20 +95,20 @@
     "label": "삼성전자우",
     "kind": "stock",
     "direction": null,
-    "value": 669431,
-    "volume": 4138740,
+    "value": 1259311,
+    "volume": 8200778,
     "members": [
       "삼성전자우"
     ]
   },
   {
-    "label": "NAVER",
-    "kind": "stock",
+    "label": "TIGER 반도체TOP10",
+    "kind": "sector_theme_etf",
     "direction": null,
-    "value": 496680,
-    "volume": 2281917,
+    "value": 859953,
+    "volume": 30810389,
     "members": [
-      "NAVER"
+      "TIGER 반도체TOP10"
     ]
   }
 ]
