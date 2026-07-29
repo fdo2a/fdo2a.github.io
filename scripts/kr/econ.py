@@ -11,6 +11,7 @@ CLAUDE.md의 열린 항목이던 **국고채 소스**를 닫는 모듈. 브리�
 ECOS 항목 코드는 통계표 개편 때 바뀌고, 잘못된 코드는 INFO-200(데이터 없음)으로
 조용히 실패해 원인 추적이 어렵다.
 """
+import datetime
 import json
 import os
 import re
@@ -29,7 +30,24 @@ SPECS = [
     ("회사채 AA- 3년", "817Y002", "회사채(3년, AA-)", "D"),
     ("한국은행 기준금리", "722Y001", "한국은행 기준금리", "M"),
 ]
-_LOOKBACK = {"D": 30, "M": 6}  # 최근 관측 2개를 확보할 만큼만
+_LOOKBACK = {"D": 45, "M": 12}  # 연휴·미갱신을 감안해 최근 관측 2개를 확보할 만큼
+
+
+def time_range(cycle: str, today=None):
+    """ECOS 검색 시작·종료 일자. 주기별 포맷이 다르고 **빈 값은 허용되지 않는다** —
+    빈 경로 세그먼트로 호출하면 조용히 빈 결과가 돌아온다(2026-07-29 실패 원인)."""
+    today = today or datetime.date.today()
+    n = _LOOKBACK.get(cycle, 45)
+    if cycle == "D":
+        return (today - datetime.timedelta(days=n)).strftime("%Y%m%d"), today.strftime("%Y%m%d")
+    if cycle == "M":
+        y, m = today.year, today.month - n
+        while m <= 0:
+            y, m = y - 1, m + 12
+        return f"{y}{m:02d}", today.strftime("%Y%m")
+    if cycle == "Q":
+        return f"{today.year - 2}Q1", f"{today.year}Q{(today.month - 1) // 3 + 1}"
+    return str(today.year - n), str(today.year)
 
 
 def scrub(text: str) -> str:
@@ -102,17 +120,32 @@ def parse_series(payload):
             "prev": prev_val, "prev_date": _norm_time(prev_t) if prev_t else None, "bp": bp}
 
 
+def result_note(payload) -> str:
+    """ECOS 오류 응답(RESULT)을 진단 문자열로. 성공 응답이면 빈 문자열."""
+    if isinstance(payload, dict) and "RESULT" in payload:
+        r = payload["RESULT"] or {}
+        return f"{r.get('CODE')} {r.get('MESSAGE')}"
+    return ""
+
+
 def _fetch_one(key: str, stat_code: str, item_name: str, cycle: str, item_cache: dict):
+    """(관측, 진단문자열)을 돌려준다. 실패 원인을 삼키지 않고 호출자가 로그로 남긴다."""
     if stat_code not in item_cache:
         item_cache[stat_code] = _get_json(_url(key, "StatisticItemList", "json", "kr",
                                                1, 1000, stat_code))
-    code = resolve_item_code(item_cache[stat_code], item_name)
+    items = item_cache[stat_code]
+    code = resolve_item_code(items, item_name)
     if not code:
-        raise LookupError(f"항목 '{item_name}' 없음 (표 {stat_code})")
-    n = _LOOKBACK.get(cycle, 30)
-    payload = _get_json(_url(key, "StatisticSearch", "json", "kr", 1, n,
-                             stat_code, cycle, "", "", code))
-    return parse_series(payload)
+        note = result_note(items) or f"후보 {len(_rows(items, 'StatisticItemList'))}개 중 이름 불일치"
+        return None, f"항목 '{item_name}' 해석 실패 (표 {stat_code}): {note}"
+    start, end = time_range(cycle)
+    payload = _get_json(_url(key, "StatisticSearch", "json", "kr", 1, 200,
+                             stat_code, cycle, start, end, code))
+    row = parse_series(payload)
+    if row:
+        return row, ""
+    note = result_note(payload) or f"관측 0건 ({start}~{end})"
+    return None, f"조회 실패 (표 {stat_code} 항목 {code} 주기 {cycle}): {note}"
 
 
 def collect() -> dict:
@@ -128,12 +161,12 @@ def collect() -> dict:
     series, missing, item_cache = {}, [], {}
     for label, stat_code, item_name, cycle in SPECS:
         try:
-            row = _fetch_one(key, stat_code, item_name, cycle, item_cache)
+            row, note = _fetch_one(key, stat_code, item_name, cycle, item_cache)
         except Exception as e:
-            print(f"  econ {label}: {scrub(e)}")
-            row = None
+            row, note = None, f"{type(e).__name__}: {e}"
         if row:
             series[label] = row
         else:
             missing.append(label)
+            print(f"  econ {label}: {scrub(note)}")
     return {"source": "ECOS (한국은행 경제통계시스템)", "series": series, "missing": missing}

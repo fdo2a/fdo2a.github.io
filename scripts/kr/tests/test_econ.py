@@ -84,6 +84,38 @@ def test_scrub_masks_key_anywhere_in_text():
     assert "ABCD1234EFGH" not in econ.scrub(txt)
 
 
+def test_time_range_never_empty_and_matches_cycle_format():
+    """빈 시작·종료일자로 호출하면 ECOS가 조용히 빈 결과를 준다 (2026-07-29 실패 원인)."""
+    import datetime
+
+    d0, d1 = econ.time_range("D", datetime.date(2026, 7, 29))
+    assert d1 == "20260729" and d0 == "20260614" and len(d0) == 8
+    m0, m1 = econ.time_range("M", datetime.date(2026, 7, 29))
+    assert m1 == "202607" and m0 == "202507" and len(m0) == 6
+    for cycle in ("D", "M", "Q", "A"):
+        assert all(econ.time_range(cycle))
+
+
+def test_time_range_monthly_wraps_year_boundary():
+    import datetime
+
+    m0, _ = econ.time_range("M", datetime.date(2026, 3, 15))
+    assert m0 == "202503"
+
+
+def test_search_url_has_no_empty_path_segments():
+    start, end = econ.time_range("D")
+    url = econ._url("K", "StatisticSearch", "json", "kr", 1, 200,
+                    "817Y002", "D", start, end, "010200000")
+    assert "//" not in url.split("://", 1)[1]
+
+
+def test_result_note_surfaces_error_code():
+    assert "INFO-200" in econ.result_note(
+        {"RESULT": {"CODE": "INFO-200", "MESSAGE": "해당하는 데이터가 없습니다."}})
+    assert econ.result_note(_search([])) == ""
+
+
 def test_collect_returns_pending_stub_without_key(monkeypatch):
     monkeypatch.delenv("ECOS_API_KEY", raising=False)
     out = econ.collect()
