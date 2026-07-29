@@ -17,7 +17,9 @@ from kr.etf_normalize import normalize_top_value
 from kr.leadership import flag_leadership
 
 KST = timezone(timedelta(hours=9))
-CORE_KEYS = ("indices", "flows", "top_value", "sectors", "themes")
+# themes는 2026-07-29 사용자 지시로 리포트 테마 섹션이 폐지되면서 비-코어로 강등.
+# 수집은 계속하되(재도입 대비·업종 크로스체크 참고용) 발행 게이트를 막지 않는다.
+CORE_KEYS = ("indices", "flows", "top_value", "sectors")
 # 기술적 분석 대상(일봉 차트와 동일 4종)
 TECH_SPECS = [("코스피", "^KS11"), ("코스닥", "^KQ11"),
               ("SK하이닉스", "000660.KS"), ("삼성전자", "005930.KS")]
