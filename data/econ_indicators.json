@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-29 22:26 UTC",
+  "generated": "2026-07-30 22:33 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -19,9 +19,9 @@
       "fred_id": "ICSA",
       "transform": "level",
       "units": "",
-      "actual": 187000.0,
-      "previous": 209000.0,
-      "ref_period": "2026-07-18"
+      "actual": 197000.0,
+      "previous": 188000.0,
+      "ref_period": "2026-07-25"
     },
     {
       "axis": "Labor",
@@ -29,9 +29,9 @@
       "fred_id": "IC4WSA",
       "transform": "level",
       "units": "",
-      "actual": 207500.0,
-      "previous": 214750.0,
-      "ref_period": "2026-07-18"
+      "actual": 202750.0,
+      "previous": 207750.0,
+      "ref_period": "2026-07-25"
     },
     {
       "axis": "Labor",
@@ -39,9 +39,9 @@
       "fred_id": "CCSA",
       "transform": "level",
       "units": "",
-      "actual": 1796000.0,
-      "previous": 1798000.0,
-      "ref_period": "2026-07-11"
+      "actual": 1782000.0,
+      "previous": 1789000.0,
+      "ref_period": "2026-07-18"
     },
     {
       "axis": "Labor",
@@ -119,9 +119,9 @@
       "fred_id": "A191RL1Q225SBEA",
       "transform": "level",
       "units": "%",
-      "actual": 2.1,
-      "previous": 0.5,
-      "ref_period": "2026-01-01"
+      "actual": 1.5,
+      "previous": 2.1,
+      "ref_period": "2026-04-01"
     },
     {
       "axis": "Consumption",
@@ -199,9 +199,9 @@
       "fred_id": "PCEPI",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 4.07,
-      "previous": 3.8,
-      "ref_period": "2026-05-01"
+      "actual": 3.67,
+      "previous": 4.08,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Inflation",
@@ -209,9 +209,9 @@
       "fred_id": "PCEPILFE",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.41,
-      "previous": 3.32,
-      "ref_period": "2026-05-01"
+      "actual": 3.29,
+      "previous": 3.42,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Inflation",
