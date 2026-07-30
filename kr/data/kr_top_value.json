@@ -3,8 +3,8 @@
     "label": "SK하이닉스",
     "kind": "stock",
     "direction": null,
-    "value": 17220303,
-    "volume": 12183764,
+    "value": 12493429,
+    "volume": 9203696,
     "members": [
       "SK하이닉스"
     ]
@@ -13,18 +13,28 @@
     "label": "삼성전자",
     "kind": "stock",
     "direction": null,
-    "value": 12931101,
-    "volume": 61720290,
+    "value": 9802040,
+    "volume": 46150512,
     "members": [
       "삼성전자"
+    ]
+  },
+  {
+    "label": "SK하이닉스 인버스",
+    "kind": "single_stock_lev",
+    "direction": "short",
+    "value": 5012285,
+    "volume": 270883105,
+    "members": [
+      "SOL SK하이닉스선물단일종목인버스2X"
     ]
   },
   {
     "label": "SK하이닉스 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
-    "value": 6561904,
-    "volume": 845899568,
+    "value": 4918438,
+    "volume": 696310007,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지",
@@ -33,21 +43,11 @@
     ]
   },
   {
-    "label": "SK하이닉스 인버스",
-    "kind": "single_stock_lev",
-    "direction": "short",
-    "value": 5895483,
-    "volume": 348104693,
-    "members": [
-      "SOL SK하이닉스선물단일종목인버스2X"
-    ]
-  },
-  {
     "label": "삼성전자 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
-    "value": 1963295,
-    "volume": 227522378,
+    "value": 1955843,
+    "volume": 228144853,
     "members": [
       "KODEX 삼성전자단일종목레버리지",
       "TIGER 삼성전자단일종목레버리지"
@@ -57,8 +57,8 @@
     "label": "삼성전자우",
     "kind": "stock",
     "direction": null,
-    "value": 1259311,
-    "volume": 8200778,
+    "value": 864424,
+    "volume": 5616811,
     "members": [
       "삼성전자우"
     ]
@@ -67,8 +67,8 @@
     "label": "TIGER 반도체TOP10",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 859953,
-    "volume": 30810389,
+    "value": 783948,
+    "volume": 28832515,
     "members": [
       "TIGER 반도체TOP10"
     ]
@@ -77,8 +77,8 @@
     "label": "SOL AI반도체TOP2플러스",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 666544,
-    "volume": 48653703,
+    "value": 495777,
+    "volume": 37338708,
     "members": [
       "SOL AI반도체TOP2플러스"
     ]
@@ -87,8 +87,8 @@
     "label": "삼성전자 인버스",
     "kind": "single_stock_lev",
     "direction": "short",
-    "value": 516781,
-    "volume": 22751143,
+    "value": 490846,
+    "volume": 21850590,
     "members": [
       "PLUS 삼성전자선물단일종목인버스2X"
     ]
@@ -97,8 +97,8 @@
     "label": "KODEX AI반도체TOP2플러스",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 411800,
-    "volume": 13173778,
+    "value": 361889,
+    "volume": 11963448,
     "members": [
       "KODEX AI반도체TOP2플러스"
     ]
