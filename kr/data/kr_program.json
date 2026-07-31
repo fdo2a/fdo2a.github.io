@@ -2,6 +2,18 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-07-31",
+        "arb_buy": 1502,
+        "arb_sell": 9629,
+        "arb_net": -8127,
+        "narb_buy": 216917,
+        "narb_sell": 165881,
+        "narb_net": 51036,
+        "total_buy": 218419,
+        "total_sell": 175510,
+        "total_net": 42909
+      },
+      {
         "date": "2026-07-30",
         "arb_buy": 3324,
         "arb_sell": 4749,
@@ -108,28 +120,28 @@
         "total_buy": 108032,
         "total_sell": 100169,
         "total_net": 7862
-      },
-      {
-        "date": "2026-07-16",
-        "arb_buy": 3707,
-        "arb_sell": 6034,
-        "arb_net": -2327,
-        "narb_buy": 103149,
-        "narb_sell": 113833,
-        "narb_net": -10684,
-        "total_buy": 106856,
-        "total_sell": 119867,
-        "total_net": -13011
       }
     ],
-    "latest_date": "2026-07-30",
-    "flows_date": "2026-07-30",
+    "latest_date": "2026-07-31",
+    "flows_date": "2026-07-31",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
   },
   "KOSDAQ": {
     "rows": [
+      {
+        "date": "2026-07-31",
+        "arb_buy": 26,
+        "arb_sell": 4,
+        "arb_net": 23,
+        "narb_buy": 21358,
+        "narb_sell": 18782,
+        "narb_net": 2576,
+        "total_buy": 21384,
+        "total_sell": 18786,
+        "total_net": 2599
+      },
       {
         "date": "2026-07-30",
         "arb_buy": 73,
@@ -237,22 +249,10 @@
         "total_buy": 16528,
         "total_sell": 17758,
         "total_net": -1230
-      },
-      {
-        "date": "2026-07-16",
-        "arb_buy": 9,
-        "arb_sell": 0,
-        "arb_net": 9,
-        "narb_buy": 13960,
-        "narb_sell": 17103,
-        "narb_net": -3143,
-        "total_buy": 13969,
-        "total_sell": 17103,
-        "total_net": -3134
       }
     ],
-    "latest_date": "2026-07-30",
-    "flows_date": "2026-07-30",
+    "latest_date": "2026-07-31",
+    "flows_date": "2026-07-31",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false

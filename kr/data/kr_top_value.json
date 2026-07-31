@@ -3,8 +3,8 @@
     "label": "SK하이닉스",
     "kind": "stock",
     "direction": null,
-    "value": 12493429,
-    "volume": 9203696,
+    "value": 17287902,
+    "volume": 10347350,
     "members": [
       "SK하이닉스"
     ]
@@ -13,94 +13,93 @@
     "label": "삼성전자",
     "kind": "stock",
     "direction": null,
-    "value": 9802040,
-    "volume": 46150512,
+    "value": 14769098,
+    "volume": 57883859,
     "members": [
       "삼성전자"
-    ]
-  },
-  {
-    "label": "SK하이닉스 인버스",
-    "kind": "single_stock_lev",
-    "direction": "short",
-    "value": 5012285,
-    "volume": 270883105,
-    "members": [
-      "SOL SK하이닉스선물단일종목인버스2X"
     ]
   },
   {
     "label": "SK하이닉스 레버리지",
     "kind": "single_stock_lev",
     "direction": "long",
-    "value": 4918438,
-    "volume": 696310007,
+    "value": 1672301,
+    "volume": 171208370,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지",
-      "SOL SK하이닉스단일종목레버리지",
-      "ACE SK하이닉스단일종목레버리지"
-    ]
-  },
-  {
-    "label": "삼성전자 레버리지",
-    "kind": "single_stock_lev",
-    "direction": "long",
-    "value": 1955843,
-    "volume": 228144853,
-    "members": [
-      "KODEX 삼성전자단일종목레버리지",
-      "TIGER 삼성전자단일종목레버리지"
+      "SOL SK하이닉스단일종목레버리지"
     ]
   },
   {
     "label": "삼성전자우",
     "kind": "stock",
     "direction": null,
-    "value": 864424,
-    "volume": 5616811,
+    "value": 1598505,
+    "volume": 8631032,
     "members": [
       "삼성전자우"
+    ]
+  },
+  {
+    "label": "삼성전자 레버리지",
+    "kind": "single_stock_lev",
+    "direction": "long",
+    "value": 732668,
+    "volume": 63943014,
+    "members": [
+      "KODEX 삼성전자단일종목레버리지",
+      "TIGER 삼성전자단일종목레버리지"
+    ]
+  },
+  {
+    "label": "SK하이닉스 인버스",
+    "kind": "single_stock_lev",
+    "direction": "short",
+    "value": 565348,
+    "volume": 59529516,
+    "members": [
+      "SOL SK하이닉스선물단일종목인버스2X"
     ]
   },
   {
     "label": "TIGER 반도체TOP10",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 783948,
-    "volume": 28832515,
+    "value": 479351,
+    "volume": 14666939,
     "members": [
       "TIGER 반도체TOP10"
+    ]
+  },
+  {
+    "label": "한미반도체",
+    "kind": "stock",
+    "direction": null,
+    "value": 451404,
+    "volume": 2174359,
+    "members": [
+      "한미반도체"
+    ]
+  },
+  {
+    "label": "SK이터닉스",
+    "kind": "stock",
+    "direction": null,
+    "value": 427026,
+    "volume": 9118629,
+    "members": [
+      "SK이터닉스"
     ]
   },
   {
     "label": "SOL AI반도체TOP2플러스",
     "kind": "sector_theme_etf",
     "direction": null,
-    "value": 495777,
-    "volume": 37338708,
+    "value": 379195,
+    "volume": 23844239,
     "members": [
       "SOL AI반도체TOP2플러스"
-    ]
-  },
-  {
-    "label": "삼성전자 인버스",
-    "kind": "single_stock_lev",
-    "direction": "short",
-    "value": 490846,
-    "volume": 21850590,
-    "members": [
-      "PLUS 삼성전자선물단일종목인버스2X"
-    ]
-  },
-  {
-    "label": "KODEX AI반도체TOP2플러스",
-    "kind": "sector_theme_etf",
-    "direction": null,
-    "value": 361889,
-    "volume": 11963448,
-    "members": [
-      "KODEX AI반도체TOP2플러스"
     ]
   }
 ]
