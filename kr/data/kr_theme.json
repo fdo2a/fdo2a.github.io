@@ -1,62 +1,62 @@
 [
   {
-    "name": "로봇(산업용/협동로봇 등)",
-    "change_pct": 6.19
+    "name": "광통신(광케이블/광섬유 등)",
+    "change_pct": 11.17
   },
   {
-    "name": "항공/저가 항공사(LCC)",
-    "change_pct": 5.37
-  },
-  {
-    "name": "유리 기판",
-    "change_pct": 4.91
-  },
-  {
-    "name": "피지컬 AI/휴머노이드 로봇",
-    "change_pct": 4.9
-  },
-  {
-    "name": "제습기",
-    "change_pct": 4.69
-  },
-  {
-    "name": "공기청정기",
-    "change_pct": 4.35
-  },
-  {
-    "name": "황사/미세먼지",
-    "change_pct": 4.18
-  },
-  {
-    "name": "치아 치료(임플란트 등)",
-    "change_pct": 4.18
+    "name": "고체산화물 연료전지(SOFC)",
+    "change_pct": 9.42
   },
   {
     "name": "의료AI",
-    "change_pct": 4.13
+    "change_pct": 9.17
   },
   {
-    "name": "귀금속(금/은)",
-    "change_pct": 3.8
+    "name": "우주항공산업(누리호/인공위성 등)",
+    "change_pct": 9.09
+  },
+  {
+    "name": "건설 대표주",
+    "change_pct": 8.48
   },
   {
     "name": "면역항암제",
-    "change_pct": 3.74
+    "change_pct": 8.39
   },
   {
-    "name": "음성인식",
-    "change_pct": 3.67
-  },
-  {
-    "name": "반도체 기판(FC-BGA/PCB/MLB 등)",
-    "change_pct": 3.57
+    "name": "제대혈",
+    "change_pct": 7.86
   },
   {
     "name": "지능형로봇/인공지능(AI)",
-    "change_pct": 3.56
+    "change_pct": 7.72
   },
   {
-    "name": "비만치료제",
-    "change_pct": 3.55
+    "name": "딥페이크(deepfake)",
+    "change_pct": 7.58
+  },
+  {
+    "name": "AI 챗봇(챗GPT 등)",
+    "change_pct": 7.55
+  },
+  {
+    "name": "스페이스X(SpaceX)",
+    "change_pct": 7.4
+  },
+  {
+    "name": "원격진료/비대면진료(U-Healthcare)",
+    "change_pct": 7.31
+  },
+  {
+    "name": "전선",
+    "change_pct": 7.3
+  },
+  {
+    "name": "통신장비",
+    "change_pct": 7.24
+  },
+  {
+    "name": "유전자 치료제/분석",
+    "change_pct": 7.24
   }
 ]
