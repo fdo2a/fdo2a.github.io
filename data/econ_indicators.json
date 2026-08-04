@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-03 22:32 UTC",
+  "generated": "2026-08-04 22:34 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -9,9 +9,9 @@
       "fred_id": "JTSJOL",
       "transform": "level",
       "units": "K",
-      "actual": 7594.0,
-      "previous": 7585.0,
-      "ref_period": "2026-05-01"
+      "actual": 7359.0,
+      "previous": 7537.0,
+      "ref_period": "2026-06-01"
     },
     {
       "axis": "Labor",
@@ -89,8 +89,8 @@
       "fred_id": "DGORDER",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.32,
-      "previous": -4.04,
+      "actual": 0.47,
+      "previous": -4.0,
       "ref_period": "2026-06-01"
     },
     {
