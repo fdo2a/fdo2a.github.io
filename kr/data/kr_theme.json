@@ -1,62 +1,62 @@
 [
   {
-    "name": "광통신(광케이블/광섬유 등)",
-    "change_pct": 11.17
-  },
-  {
-    "name": "고체산화물 연료전지(SOFC)",
-    "change_pct": 9.42
-  },
-  {
-    "name": "의료AI",
-    "change_pct": 9.17
-  },
-  {
-    "name": "우주항공산업(누리호/인공위성 등)",
-    "change_pct": 9.09
-  },
-  {
-    "name": "건설 대표주",
-    "change_pct": 8.48
-  },
-  {
-    "name": "면역항암제",
-    "change_pct": 8.39
-  },
-  {
-    "name": "제대혈",
-    "change_pct": 7.86
-  },
-  {
-    "name": "지능형로봇/인공지능(AI)",
-    "change_pct": 7.72
-  },
-  {
-    "name": "딥페이크(deepfake)",
-    "change_pct": 7.58
-  },
-  {
-    "name": "AI 챗봇(챗GPT 등)",
-    "change_pct": 7.55
-  },
-  {
-    "name": "스페이스X(SpaceX)",
-    "change_pct": 7.4
-  },
-  {
-    "name": "원격진료/비대면진료(U-Healthcare)",
-    "change_pct": 7.31
-  },
-  {
     "name": "전선",
-    "change_pct": 7.3
+    "change_pct": 11.85
+  },
+  {
+    "name": "광통신(광케이블/광섬유 등)",
+    "change_pct": 10.92
+  },
+  {
+    "name": "반도체 기판(FC-BGA/PCB/MLB 등)",
+    "change_pct": 7.96
   },
   {
     "name": "통신장비",
-    "change_pct": 7.24
+    "change_pct": 7.54
   },
   {
-    "name": "유전자 치료제/분석",
-    "change_pct": 7.24
+    "name": "전력설비",
+    "change_pct": 7.17
+  },
+  {
+    "name": "마이크로 LED",
+    "change_pct": 7.08
+  },
+  {
+    "name": "CXL(컴퓨트익스프레스링크)",
+    "change_pct": 7.07
+  },
+  {
+    "name": "5G(5세대 이동통신)",
+    "change_pct": 7.02
+  },
+  {
+    "name": "건설 대표주",
+    "change_pct": 6.82
+  },
+  {
+    "name": "S7(삼성전자/SK하이닉스 등)",
+    "change_pct": 6.58
+  },
+  {
+    "name": "뉴로모픽 반도체",
+    "change_pct": 6.28
+  },
+  {
+    "name": "소캠(SOCAMM)",
+    "change_pct": 6.23
+  },
+  {
+    "name": "LED장비",
+    "change_pct": 6.09
+  },
+  {
+    "name": "고체산화물 연료전지(SOFC)",
+    "change_pct": 6.07
+  },
+  {
+    "name": "해저터널(지하화/지하도로 등)",
+    "change_pct": 5.97
   }
 ]
