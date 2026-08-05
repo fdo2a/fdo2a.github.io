@@ -6,10 +6,10 @@
 
 ## STEP 0 — 커밋된 KR 데이터 확인 (먼저)
 
-`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr_charts.png` — 둘 다 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략).
+`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr_flows_intraday.png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr_charts.png` — 전부 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략).
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
-2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices·flows·top_value·sectors)면 그대로 사용. `missing`에 `econ`·`themes`만 있으면 발행 가능(둘 다 비-코어). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
+2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices·flows·top_value·sectors)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §5 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
 3. 없거나 stale/`complete:false`면 `python scripts/collect_kr_data.py --outdir kr/data`를 실행해 채운다(네트워크 열린 환경에서만).
 
 **수급 신선도**: `flows_date`·`flows_provisional`을 STEP 2에 그대로 넘긴다. 당일 확정치가 없으면 writer가 "당일 잠정"/"전 거래일 기준"으로 라벨링한다 — 오케스트레이터가 수급을 창작하지 않는다.
@@ -26,7 +26,7 @@
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
 
-Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`. Agent 미지원 시 `.claude/agents/kr-report-writer.md` 본문을 읽어 general-purpose에 위임하거나 직접 수행(폴백). 프로그램 매매는 수급 서브블록, 기술적 분석/전략은 일봉 차트 바로 아래 산문 섹션(writer 스펙 §5·§4.5). **구조 변경 반영(2026-07-29)**: buy-side 종합 해석이 §2로 전진(헤드라인 다음), 테마 섹션 폐지, 정책·정치 촉매(§10) 확대 — writer 스펙의 섹션 순서를 그대로 따르게 프롬프트에 명시한다.
+Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`. Agent 미지원 시 `.claude/agents/kr-report-writer.md` 본문을 읽어 general-purpose에 위임하거나 직접 수행(폴백). 장중 수급 전개·프로그램 매매는 수급 서브블록(그 순서대로), 기술적 분석/전략은 일봉 차트 바로 아래 산문 섹션(writer 스펙 §5·§4.5). **구조 변경 반영(2026-07-29)**: buy-side 종합 해석이 §2로 전진(헤드라인 다음), 테마 섹션 폐지, 정책·정치 촉매(§10) 확대 — writer 스펙의 섹션 순서를 그대로 따르게 프롬프트에 명시한다.
 
 **발행 게이트**: (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date`와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개+ 를 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍 있으면 발행 중단, PushNotification으로 누락 보고.**
 

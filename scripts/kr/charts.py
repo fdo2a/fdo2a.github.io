@@ -25,6 +25,10 @@ UP, DOWN = "#00a763", "#e5342b"
 MA_COLORS = {"ma20": "#F59E0B", "ma60": "#0064FF", "ma120": "#8B5CF6"}
 DISPLAY_BARS = 63  # 약 3개월(거래일)
 
+# 장중 누적 순매수 3선 — 외국인(Toss Blue)·기관(상승 녹색)·개인(그레이)
+FLOW_COLORS = {"foreign": "#0064FF", "institution": "#00a763", "individual": "#8B95A1"}
+FLOW_LABELS = {"foreign": "외국인", "institution": "기관", "individual": "개인"}
+
 
 def _indicator_series(df: pd.DataFrame) -> pd.DataFrame:
     """전체 히스토리로 이평·볼린저·일목 선행스팬 시계열 계산(표시 전 슬라이스용)."""
@@ -89,6 +93,74 @@ def _draw_candles(ax, df, ind, title):
     ax.set_xticks([])
     ax.legend(loc="upper left", fontsize=6.2, frameon=False, ncol=3,
               handlelength=1.1, columnspacing=0.9, labelcolor="#6B7684")
+
+
+def _draw_flow_panel(ax, points, index_bars, title):
+    """누적 순매수 3선(좌축) + 지수 궤적(우축). x는 앵커 시각 라벨 순서."""
+    ts = [p["t"] for p in points]
+    xs = list(range(len(ts)))
+    ax.axhline(0, color="#E5E8EB", linewidth=1.0, zorder=1)
+    for key in ("foreign", "institution", "individual"):
+        ax.plot(xs, [p[key] for p in points], color=FLOW_COLORS[key], linewidth=1.6,
+                label=FLOW_LABELS[key], zorder=3)
+
+    # 지수는 같은 시각 라벨에 매칭되는 봉만 얹는다(없으면 생략 — 보간하지 않는다).
+    idx = {b["t"]: b["close"] for b in (index_bars or [])}
+    pairs = [(x, idx[t]) for x, t in zip(xs, ts) if t in idx]
+    extra = []
+    if len(pairs) >= 2:
+        ax2 = ax.twinx()
+        line, = ax2.plot([p[0] for p in pairs], [p[1] for p in pairs], color="#6B7684",
+                         linewidth=1.1, linestyle=(0, (3, 2)), zorder=2, label="지수(우축)")
+        extra.append(line)
+        ax2.tick_params(labelsize=7.5, colors="#8B95A1", length=0)
+        ax2.yaxis.set_major_formatter(lambda v, _: f"{v:,.0f}")
+        for s in ("top", "left", "bottom"):
+            ax2.spines[s].set_visible(False)
+        ax2.spines["right"].set_color("#E5E8EB")
+        ax2.margins(x=0.01, y=0.30)  # 범례 자리 확보 — 지수선이 상단 라벨과 겹치지 않게
+
+    ax.set_title(title, fontsize=11, fontweight="bold", loc="left")
+    ax.set_xticks(xs[::2])
+    ax.set_xticklabels(ts[::2], fontsize=7.5)
+    ax.margins(x=0.01, y=0.30)
+    ax.grid(axis="y", color="#EEF1F4", linewidth=0.8)
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+    for s in ("left", "bottom"):
+        ax.spines[s].set_color("#E5E8EB")
+    ax.tick_params(labelsize=8, colors="#8B95A1", length=0)
+    ax.yaxis.set_major_formatter(lambda v, _: f"{v:,.0f}")
+    handles = ax.get_lines()[1:] + extra  # [0]은 0 기준선
+    ax.legend(handles, [h.get_label() for h in handles], loc="upper left", fontsize=7,
+              frameon=False, ncol=4, handlelength=1.4, columnspacing=1.0,
+              labelcolor="#6B7684")
+
+
+def render_intraday_flow_chart(series, index_intraday=None):
+    """series: {"KOSPI": build_series(...), "KOSDAQ": ...}, index_intraday: kr_intraday.json.
+
+    누적 순매수(억원) 3선에 지수 궤적을 우축으로 겹친 1x2 패널. base64 data URI 반환.
+    그릴 점이 없는 시장은 패널을 비운다. 둘 다 비면 None.
+    """
+    panels = [(m, (series.get(m) or {}).get("points") or []) for m in ("KOSPI", "KOSDAQ")]
+    if not any(pts for _, pts in panels):
+        return None
+    fig, axes = plt.subplots(1, 2, figsize=(11, 3.6), dpi=140)
+    fig.patch.set_facecolor("white")
+    for ax, (mkt, pts) in zip(axes.flat, panels):
+        label = "코스피" if mkt == "KOSPI" else "코스닥"
+        if pts:
+            _draw_flow_panel(ax, pts, (index_intraday or {}).get(mkt),
+                             f"{label} 장중 누적 순매수 (억원)")
+        else:
+            ax.set_title(f"{label} (데이터 없음)", fontsize=11, loc="left")
+            ax.set_xticks([]); ax.set_yticks([])
+    fig.tight_layout(pad=1.6)
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
 
 
 def render_daily_charts(specs, period="2y", display_bars=DISPLAY_BARS):

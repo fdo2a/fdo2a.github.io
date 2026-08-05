@@ -11,7 +11,7 @@ from datetime import datetime, timezone, timedelta
 
 import yfinance as yf
 
-from kr import sources, flows, sectors, program, technical
+from kr import sources, flows, flows_intraday, sectors, program, technical
 from kr import econ as kr_econ
 from kr.themes import rank_themes
 from kr.etf_normalize import normalize_top_value
@@ -62,6 +62,24 @@ def main(outdir: str):
         except Exception as e:
             flows_out[mkt] = {"rows": [], "latest_date": None, "error": str(e)[:120]}
     flows_ok = any(v.get("latest_date") for v in flows_out.values())
+
+    # 장중 수급 궤적 (누적 순매수 스냅샷 → 30분 앵커·극값·부호 전환) — 비-코어.
+    # 확정 수치가 아니다: 정규장 마지막값과 일별 확정치는 정정 때문에 갈린다.
+    intraday_flows = {"unit": "억원", "date": report_date,
+                      "basis": "장중 누적 순매수 스냅샷 — 확정 일별 수치와 다를 수 있음"}
+    for mkt, sosok in (("KOSPI", "01"), ("KOSDAQ", "02")):
+        try:
+            rows = flows_intraday.collect_pages(
+                lambda pg, s=sosok: flows_intraday.parse_intraday_flows(
+                    sources.fetch_intraday_flows(s, bizdate, pg)))
+            series = flows_intraday.build_series(rows)
+            # 일별 수급이 전 거래일 기준이면 장중 궤적도 당일이라 부르지 않는다.
+            series["stale"] = bool(flows_out.get(mkt, {}).get("stale"))
+            intraday_flows[mkt] = series
+        except Exception as e:
+            intraday_flows[mkt] = {"points": [], "error": str(e)[:120]}
+    intraday_flows_ok = any((intraday_flows.get(m) or {}).get("points")
+                            for m in ("KOSPI", "KOSDAQ"))
 
     # 프로그램 매매 (차익·비차익·전체 순매수, 억원) — 비-코어, 신선도는 flows와 동일 판정
     program_out = {}
@@ -121,13 +139,14 @@ def main(outdir: str):
     except Exception:
         theme_rows = []
 
-    # 장중 30분봉 (Naver 분봉 다운샘플) + 당일 OHLC
+    # 장중 30분봉 (Naver 분봉 다운샘플) + 당일 OHLC — 코스닥은 수급 차트 우축에도 쓴다
     intraday = {}
-    try:
-        intraday["KOSPI"] = sources.fetch_intraday("KOSPI")
-        intraday["KOSPI_ohlc"] = sources.fetch_index_ohlc("KOSPI")
-    except Exception:
-        intraday = {}
+    for code in ("KOSPI", "KOSDAQ"):
+        try:
+            intraday[code] = sources.fetch_intraday(code)
+            intraday[f"{code}_ohlc"] = sources.fetch_index_ohlc(code)
+        except Exception:
+            pass
 
     # 일봉 차트 (코스피·코스닥·SK하이닉스·삼성전자) → kr_charts.png
     try:
@@ -136,6 +155,17 @@ def main(outdir: str):
         uri = _charts.render_daily_charts(TECH_SPECS)
         with open(os.path.join(outdir, "kr_charts.png"), "wb") as f:
             f.write(_b64.b64decode(uri.split(",", 1)[1]))
+    except Exception:
+        pass
+
+    # 장중 수급 차트 (누적 순매수 3선 + 지수 우축) → kr_flows_intraday.png
+    try:
+        import base64 as _b64
+        from kr import charts as _charts
+        uri = _charts.render_intraday_flow_chart(intraday_flows, intraday)
+        if uri:
+            with open(os.path.join(outdir, "kr_flows_intraday.png"), "wb") as f:
+                f.write(_b64.b64decode(uri.split(",", 1)[1]))
     except Exception:
         pass
 
@@ -149,6 +179,8 @@ def main(outdir: str):
     if econ.get("pending") or econ.get("missing"):
         if "econ" not in missing:
             missing.append("econ")
+    if not intraday_flows_ok:
+        missing.append("flows_intraday")
 
     market = {"report_date": report_date, "complete": ok, "missing": missing,
               "indices": indices,
@@ -157,6 +189,7 @@ def main(outdir: str):
 
     _write(outdir, "kr_market_data.json", market)
     _write(outdir, "kr_flows.json", flows_out)
+    _write(outdir, "kr_flows_intraday.json", intraday_flows)
     _write(outdir, "kr_program.json", program_out)
     _write(outdir, "kr_technical.json", technical_out)
     _write(outdir, "kr_top_value.json", top_value)

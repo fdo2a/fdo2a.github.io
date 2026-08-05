@@ -113,6 +113,13 @@ def fetch_market_flows(sosok: str, bizdate: str) -> str:
                  f"?bizdate={bizdate}&sosok={sosok}")
 
 
+def fetch_intraday_flows(sosok: str, bizdate: str, page: int = 1) -> str:
+    """시간대별 투자자 매매동향(누적 순매수, 억원). 페이지당 10행, 실측 37페이지.
+    bizdate가 비거나 휴장일이면 헤더만 온다 — 파서가 빈 리스트로 흡수한다."""
+    return fetch(f"https://finance.naver.com/sise/investorDealTrendTime.naver"
+                 f"?bizdate={bizdate}&sosok={sosok}&page={page}")
+
+
 def fetch_program_flows(sosok: str, bizdate: str) -> str:
     """프로그램 매매(차익·비차익·전체 순매수, 억원). sosok: 01=KOSPI, 02=KOSDAQ."""
     return fetch(f"https://finance.naver.com/sise/programDealTrendDay.naver"
