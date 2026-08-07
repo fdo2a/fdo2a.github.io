@@ -2,6 +2,18 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-08-07",
+        "arb_buy": 3821,
+        "arb_sell": 2944,
+        "arb_net": 877,
+        "narb_buy": 80656,
+        "narb_sell": 88047,
+        "narb_net": -7391,
+        "total_buy": 84477,
+        "total_sell": 90991,
+        "total_net": -6514
+      },
+      {
         "date": "2026-08-06",
         "arb_buy": 5643,
         "arb_sell": 3890,
@@ -108,28 +120,28 @@
         "total_buy": 75297,
         "total_sell": 101248,
         "total_net": -25951
-      },
-      {
-        "date": "2026-07-24",
-        "arb_buy": 1889,
-        "arb_sell": 6337,
-        "arb_net": -4448,
-        "narb_buy": 86822,
-        "narb_sell": 112459,
-        "narb_net": -25637,
-        "total_buy": 88711,
-        "total_sell": 118796,
-        "total_net": -30085
       }
     ],
-    "latest_date": "2026-08-06",
-    "flows_date": "2026-08-06",
+    "latest_date": "2026-08-07",
+    "flows_date": "2026-08-07",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
   },
   "KOSDAQ": {
     "rows": [
+      {
+        "date": "2026-08-07",
+        "arb_buy": 12,
+        "arb_sell": 220,
+        "arb_net": -208,
+        "narb_buy": 14769,
+        "narb_sell": 17215,
+        "narb_net": -2446,
+        "total_buy": 14781,
+        "total_sell": 17435,
+        "total_net": -2654
+      },
       {
         "date": "2026-08-06",
         "arb_buy": 311,
@@ -237,22 +249,10 @@
         "total_buy": 12877,
         "total_sell": 13978,
         "total_net": -1102
-      },
-      {
-        "date": "2026-07-24",
-        "arb_buy": 0,
-        "arb_sell": 3,
-        "arb_net": -3,
-        "narb_buy": 13174,
-        "narb_sell": 14792,
-        "narb_net": -1619,
-        "total_buy": 13174,
-        "total_sell": 14795,
-        "total_net": -1622
       }
     ],
-    "latest_date": "2026-08-06",
-    "flows_date": "2026-08-06",
+    "latest_date": "2026-08-07",
+    "flows_date": "2026-08-07",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
