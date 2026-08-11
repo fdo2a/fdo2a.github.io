@@ -1,62 +1,62 @@
 [
   {
-    "name": "광통신(광케이블/광섬유 등)",
-    "change_pct": 10.44
+    "name": "건설 중소형",
+    "change_pct": 5.08
   },
   {
-    "name": "스페이스X(SpaceX)",
-    "change_pct": 9.17
+    "name": "게임",
+    "change_pct": 4.59
   },
   {
-    "name": "귀금속(금/은)",
-    "change_pct": 9.08
+    "name": "시멘트/레미콘",
+    "change_pct": 4.38
   },
   {
-    "name": "우주항공산업(누리호/인공위성 등)",
-    "change_pct": 8.84
+    "name": "모바일게임(스마트폰)",
+    "change_pct": 4.32
+  },
+  {
+    "name": "콜드체인(저온 유통)",
+    "change_pct": 4.26
+  },
+  {
+    "name": "MLCC(적층세라믹콘덴서)",
+    "change_pct": 4.03
+  },
+  {
+    "name": "CXL(컴퓨트익스프레스링크)",
+    "change_pct": 3.83
+  },
+  {
+    "name": "전력반도체",
+    "change_pct": 3.58
   },
   {
     "name": "LED장비",
-    "change_pct": 8.32
+    "change_pct": 3.55
   },
   {
-    "name": "반도체 재료/부품",
-    "change_pct": 8.06
+    "name": "전자결제(전자화폐)",
+    "change_pct": 2.99
   },
   {
-    "name": "국내 상장 중국기업",
-    "change_pct": 8.06
-  },
-  {
-    "name": "핵융합에너지",
-    "change_pct": 7.8
-  },
-  {
-    "name": "고체산화물 연료전지(SOFC)",
-    "change_pct": 7.64
+    "name": "화장품",
+    "change_pct": 2.94
   },
   {
     "name": "HBM(고대역폭메모리)",
-    "change_pct": 7.45
+    "change_pct": 2.86
   },
   {
-    "name": "반도체 장비",
-    "change_pct": 7.44
+    "name": "전기차 화재 방지(배터리 열폭주 등)",
+    "change_pct": 2.84
   },
   {
-    "name": "반도체 기판(FC-BGA/PCB/MLB 등)",
-    "change_pct": 7.41
+    "name": "골프",
+    "change_pct": 2.79
   },
   {
-    "name": "2차전지(나트륨이온)",
-    "change_pct": 7.29
-  },
-  {
-    "name": "야놀자(Yanolja)",
-    "change_pct": 6.64
-  },
-  {
-    "name": "온디바이스 AI",
-    "change_pct": 6.55
+    "name": "태양광에너지",
+    "change_pct": 2.72
   }
 ]

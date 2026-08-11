@@ -1,24 +1,24 @@
 [
   {
-    "label": "SK하이닉스",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 4721462,
-    "volume": 3289681,
-    "members": [
-      "SK하이닉스"
-    ]
-  },
-  {
     "label": "삼성전자",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3782849,
-    "volume": 16324865,
+    "value": 5510876,
+    "volume": 23197807,
     "members": [
       "삼성전자"
+    ]
+  },
+  {
+    "label": "SK하이닉스",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 5214688,
+    "volume": 3682655,
+    "members": [
+      "SK하이닉스"
     ]
   },
   {
@@ -26,18 +26,19 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1192683,
-    "volume": 48433732,
+    "value": 1609416,
+    "volume": 56669902,
     "members": [
       "SOL AI반도체TOP2플러스",
       "TIGER 반도체TOP10",
-      "KODEX 반도체레버리지",
       "KODEX AI반도체TOP2플러스",
+      "KODEX 반도체레버리지",
       "ACE K반도체TOP2+",
       "SOL 반도체전공정",
       "TIGER 반도체TOP10레버리지",
-      "TIGER 반도체TOP10커버드콜액티브",
-      "SOL AI반도체소부장"
+      "SOL AI반도체소부장",
+      "KODEX 반도체",
+      "TIGER 반도체TOP10커버드콜액티브"
     ]
   },
   {
@@ -45,8 +46,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 333433,
-    "volume": 1928354,
+    "value": 422739,
+    "volume": 2382128,
     "members": [
       "삼성전자우"
     ]
@@ -56,8 +57,8 @@
     "kind": "single_stock_lev",
     "direction": "long",
     "theme": null,
-    "value": 312293,
-    "volume": 44436088,
+    "value": 370863,
+    "volume": 53592024,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지"
@@ -68,37 +69,44 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 268124,
-    "volume": 7666392,
+    "value": 332065,
+    "volume": 9117118,
     "members": [
       "한화솔루션"
     ]
   },
   {
-    "label": "2차전지 테마 ETF",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": "2차전지",
-    "value": 215168,
-    "volume": 114838377,
-    "members": [
-      "KODEX 2차전지산업레버리지",
-      "TIGER 2차전지TOP10레버리지",
-      "TIGER 2차전지소재Fn",
-      "TIGER 2차전지TOP10",
-      "KODEX 2차전지산업",
-      "KODEX 2차전지핵심소재10"
-    ]
-  },
-  {
-    "label": "GS건설",
+    "label": "대원전선",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 167025,
-    "volume": 4877996,
+    "value": 265660,
+    "volume": 17268848,
     "members": [
-      "GS건설"
+      "대원전선"
+    ]
+  },
+  {
+    "label": "삼화콘덴서",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 201686,
+    "volume": 2315045,
+    "members": [
+      "삼화콘덴서"
+    ]
+  },
+  {
+    "label": "삼성전자 레버리지",
+    "kind": "single_stock_lev",
+    "direction": "long",
+    "theme": null,
+    "value": 183884,
+    "volume": 18390987,
+    "members": [
+      "KODEX 삼성전자단일종목레버리지",
+      "TIGER 삼성전자단일종목레버리지"
     ]
   },
   {
@@ -106,21 +114,10 @@
     "kind": "single_stock_lev",
     "direction": "short",
     "theme": null,
-    "value": 153501,
-    "volume": 14306747,
+    "value": 172792,
+    "volume": 15310662,
     "members": [
       "SOL SK하이닉스선물단일종목인버스2X"
-    ]
-  },
-  {
-    "label": "광전자",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 150077,
-    "volume": 16496300,
-    "members": [
-      "광전자"
     ]
   }
 ]
