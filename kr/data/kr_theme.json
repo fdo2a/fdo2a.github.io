@@ -1,62 +1,62 @@
 [
   {
-    "name": "건설 중소형",
-    "change_pct": 5.08
+    "name": "전선",
+    "change_pct": 6.27
   },
   {
-    "name": "게임",
-    "change_pct": 4.59
+    "name": "S7(삼성전자/SK하이닉스 등)",
+    "change_pct": 5.42
   },
   {
-    "name": "시멘트/레미콘",
-    "change_pct": 4.38
+    "name": "IT 대표주",
+    "change_pct": 5.31
   },
   {
-    "name": "모바일게임(스마트폰)",
-    "change_pct": 4.32
-  },
-  {
-    "name": "콜드체인(저온 유통)",
-    "change_pct": 4.26
-  },
-  {
-    "name": "MLCC(적층세라믹콘덴서)",
-    "change_pct": 4.03
-  },
-  {
-    "name": "CXL(컴퓨트익스프레스링크)",
-    "change_pct": 3.83
-  },
-  {
-    "name": "전력반도체",
-    "change_pct": 3.58
+    "name": "반도체 대표주(생산)",
+    "change_pct": 4.75
   },
   {
     "name": "LED장비",
-    "change_pct": 3.55
+    "change_pct": 4.48
   },
   {
-    "name": "전자결제(전자화폐)",
-    "change_pct": 2.99
+    "name": "뉴로모픽 반도체",
+    "change_pct": 4.17
+  },
+  {
+    "name": "국내 상장 중국기업",
+    "change_pct": 3.94
+  },
+  {
+    "name": "반도체 기판(FC-BGA/PCB/MLB 등)",
+    "change_pct": 3.68
+  },
+  {
+    "name": "건설 중소형",
+    "change_pct": 3.61
+  },
+  {
+    "name": "MLCC(적층세라믹콘덴서)",
+    "change_pct": 3.58
+  },
+  {
+    "name": "LED",
+    "change_pct": 3.53
+  },
+  {
+    "name": "무선충전기술",
+    "change_pct": 3.46
+  },
+  {
+    "name": "CXL(컴퓨트익스프레스링크)",
+    "change_pct": 3.3
+  },
+  {
+    "name": "마이크로 LED",
+    "change_pct": 3.03
   },
   {
     "name": "화장품",
-    "change_pct": 2.94
-  },
-  {
-    "name": "HBM(고대역폭메모리)",
-    "change_pct": 2.86
-  },
-  {
-    "name": "전기차 화재 방지(배터리 열폭주 등)",
-    "change_pct": 2.84
-  },
-  {
-    "name": "골프",
-    "change_pct": 2.79
-  },
-  {
-    "name": "태양광에너지",
-    "change_pct": 2.72
+    "change_pct": 2.9
   }
 ]
