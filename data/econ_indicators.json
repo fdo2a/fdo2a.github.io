@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-11 22:10 UTC",
+  "generated": "2026-08-12 22:08 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -149,9 +149,9 @@
       "fred_id": "CPIAUCSL",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.73,
-      "previous": 4.27,
-      "ref_period": "2026-06-01"
+      "actual": 3.54,
+      "previous": 3.73,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -159,9 +159,9 @@
       "fred_id": "CPIAUCSL",
       "transform": "mom_pct",
       "units": "%",
-      "actual": -0.42,
-      "previous": 0.47,
-      "ref_period": "2026-06-01"
+      "actual": 0.07,
+      "previous": -0.42,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -169,9 +169,9 @@
       "fred_id": "CPILFESL",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 2.81,
-      "previous": 2.96,
-      "ref_period": "2026-06-01"
+      "actual": 2.79,
+      "previous": 2.81,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -179,9 +179,9 @@
       "fred_id": "CPILFESL",
       "transform": "mom_pct",
       "units": "%",
-      "actual": -0.02,
-      "previous": 0.21,
-      "ref_period": "2026-06-01"
+      "actual": 0.22,
+      "previous": -0.02,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
