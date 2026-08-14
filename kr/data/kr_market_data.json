@@ -1,9 +1,7 @@
 {
   "report_date": "2026-08-14",
   "complete": true,
-  "missing": [
-    "econ"
-  ],
+  "missing": [],
   "indices": {
     "KOSPI": {
       "close": 6977.94,
