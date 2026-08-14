@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-13 22:09 UTC",
+  "generated": "2026-08-14 21:46 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -129,9 +129,9 @@
       "fred_id": "RSAFS",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.22,
-      "previous": 1.02,
-      "ref_period": "2026-06-01"
+      "actual": -0.58,
+      "previous": 0.25,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Consumption",
