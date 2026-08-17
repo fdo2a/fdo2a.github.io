@@ -1,0 +1,143 @@
+{
+  "report_date": "2026-08-17",
+  "macro_date": null,
+  "horizon": "3-6개월",
+  "scores": {
+    "growth_score": 0.003,
+    "inflation_score": -0.264,
+    "growth_diffusion": 0.643,
+    "inflation_diffusion": 0.625
+  },
+  "implied": {
+    "growth": 0,
+    "inflation": 0,
+    "name": "교착"
+  },
+  "new_releases": [
+    "JOLTS Job Openings",
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims",
+    "Nonfarm Payrolls (chg)",
+    "Unemployment Rate",
+    "Avg Hourly Earnings MoM",
+    "Industrial Production MoM",
+    "Durable Goods Orders MoM",
+    "New Home Sales",
+    "Existing Home Sales",
+    "Real GDP Growth QoQ (ann.)",
+    "Retail Sales MoM",
+    "Michigan Consumer Sentiment",
+    "CPI YoY",
+    "CPI MoM",
+    "Core CPI YoY",
+    "Core CPI MoM",
+    "PPI Final Demand MoM",
+    "PCE Price Index YoY",
+    "Core PCE YoY",
+    "Michigan 1-Yr Inflation Exp"
+  ],
+  "stale": false,
+  "bootstrap": true,
+  "regime": null,
+  "regime_change_allowed": false,
+  "regime_block": "bootstrap",
+  "allowed_regimes": [],
+  "policy": {
+    "change_allowed": true,
+    "change_block": null
+  },
+  "transmission": {
+    "equities": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    },
+    "bonds": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    },
+    "fx": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    },
+    "energy": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    },
+    "metals": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    },
+    "memory": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    },
+    "ai_infra": {
+      "direction": 0,
+      "label": "중립",
+      "channel": null,
+      "confirm": null,
+      "since": "2026-08-17",
+      "days_held": 1,
+      "allowed_directions": [
+        -1,
+        0,
+        1
+      ]
+    }
+  }
+}

@@ -1,0 +1,372 @@
+{
+  "generated": "2026-08-17 21:47 UTC",
+  "report_date": "2026-08-17",
+  "growth_score": 0.003,
+  "inflation_score": -0.264,
+  "growth_diffusion": 0.643,
+  "inflation_diffusion": 0.625,
+  "axis_scores": {
+    "Labor": 0.664,
+    "Activity": 0.512,
+    "Consumption": -1.168,
+    "Inflation": -0.264
+  },
+  "indicators": [
+    {
+      "name": "JOLTS Job Openings",
+      "axis": "Labor",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.895,
+      "signed_z": 0.895,
+      "actual": 7359.0,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "Initial Jobless Claims",
+      "axis": "Labor",
+      "polarity": -1,
+      "window": 4,
+      "momentum_z": -1.503,
+      "signed_z": 1.503,
+      "actual": 209000.0,
+      "ref_period": "2026-08-08",
+      "is_new": true
+    },
+    {
+      "name": "Initial Claims 4-wk MA",
+      "axis": "Labor",
+      "polarity": -1,
+      "window": 4,
+      "momentum_z": -2.121,
+      "signed_z": 2.121,
+      "actual": 199000.0,
+      "ref_period": "2026-08-08",
+      "is_new": true
+    },
+    {
+      "name": "Continuing Jobless Claims",
+      "axis": "Labor",
+      "polarity": -1,
+      "window": 4,
+      "momentum_z": -0.956,
+      "signed_z": 0.956,
+      "actual": 1777000.0,
+      "ref_period": "2026-08-01",
+      "is_new": true
+    },
+    {
+      "name": "Nonfarm Payrolls (chg)",
+      "axis": "Labor",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -0.583,
+      "signed_z": -0.583,
+      "actual": -23.0,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Unemployment Rate",
+      "axis": "Labor",
+      "polarity": -1,
+      "window": 3,
+      "momentum_z": -0.454,
+      "signed_z": 0.454,
+      "actual": 4.1,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Avg Hourly Earnings MoM",
+      "axis": "Labor",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -0.697,
+      "signed_z": -0.697,
+      "actual": 0.05,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Industrial Production MoM",
+      "axis": "Activity",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.668,
+      "signed_z": 0.668,
+      "actual": 0.08,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "Durable Goods Orders MoM",
+      "axis": "Activity",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.868,
+      "signed_z": 0.868,
+      "actual": 0.47,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "New Home Sales",
+      "axis": "Activity",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.175,
+      "signed_z": 0.175,
+      "actual": 628.0,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "Existing Home Sales",
+      "axis": "Activity",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.908,
+      "signed_z": 0.908,
+      "actual": 4060000.0,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Real GDP Growth QoQ (ann.)",
+      "axis": "Activity",
+      "polarity": 1,
+      "window": 1,
+      "momentum_z": -0.061,
+      "signed_z": -0.061,
+      "actual": 1.5,
+      "ref_period": "2026-04-01",
+      "is_new": true
+    },
+    {
+      "name": "Retail Sales MoM",
+      "axis": "Consumption",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -1.146,
+      "signed_z": -1.146,
+      "actual": -0.58,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Michigan Consumer Sentiment",
+      "axis": "Consumption",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -1.19,
+      "signed_z": -1.19,
+      "actual": 49.5,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "CPI YoY",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.615,
+      "signed_z": 0.615,
+      "actual": 3.54,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "CPI MoM",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -2.67,
+      "signed_z": -2.67,
+      "actual": 0.07,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Core CPI YoY",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.088,
+      "signed_z": 0.088,
+      "actual": 2.79,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "Core CPI MoM",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -0.938,
+      "signed_z": -0.938,
+      "actual": 0.22,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "PPI Final Demand MoM",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": -2.148,
+      "signed_z": -2.148,
+      "actual": -0.03,
+      "ref_period": "2026-07-01",
+      "is_new": true
+    },
+    {
+      "name": "PCE Price Index YoY",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 1.204,
+      "signed_z": 1.204,
+      "actual": 3.67,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "Core PCE YoY",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 0.469,
+      "signed_z": 0.469,
+      "actual": 3.29,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    },
+    {
+      "name": "Michigan 1-Yr Inflation Exp",
+      "axis": "Inflation",
+      "polarity": 1,
+      "window": 3,
+      "momentum_z": 1.268,
+      "signed_z": 1.268,
+      "actual": 4.6,
+      "ref_period": "2026-06-01",
+      "is_new": true
+    }
+  ],
+  "new_releases": [
+    "JOLTS Job Openings",
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims",
+    "Nonfarm Payrolls (chg)",
+    "Unemployment Rate",
+    "Avg Hourly Earnings MoM",
+    "Industrial Production MoM",
+    "Durable Goods Orders MoM",
+    "New Home Sales",
+    "Existing Home Sales",
+    "Real GDP Growth QoQ (ann.)",
+    "Retail Sales MoM",
+    "Michigan Consumer Sentiment",
+    "CPI YoY",
+    "CPI MoM",
+    "Core CPI YoY",
+    "Core CPI MoM",
+    "PPI Final Demand MoM",
+    "PCE Price Index YoY",
+    "Core PCE YoY",
+    "Michigan 1-Yr Inflation Exp"
+  ],
+  "last_seen": {
+    "JOLTS Job Openings": [
+      "2026-06-01",
+      7359.0
+    ],
+    "Initial Jobless Claims": [
+      "2026-08-08",
+      209000.0
+    ],
+    "Initial Claims 4-wk MA": [
+      "2026-08-08",
+      199000.0
+    ],
+    "Continuing Jobless Claims": [
+      "2026-08-01",
+      1777000.0
+    ],
+    "Nonfarm Payrolls (chg)": [
+      "2026-07-01",
+      -23.0
+    ],
+    "Unemployment Rate": [
+      "2026-07-01",
+      4.1
+    ],
+    "Avg Hourly Earnings MoM": [
+      "2026-07-01",
+      0.05
+    ],
+    "Industrial Production MoM": [
+      "2026-06-01",
+      0.08
+    ],
+    "Durable Goods Orders MoM": [
+      "2026-06-01",
+      0.47
+    ],
+    "New Home Sales": [
+      "2026-06-01",
+      628.0
+    ],
+    "Existing Home Sales": [
+      "2026-07-01",
+      4060000.0
+    ],
+    "Real GDP Growth QoQ (ann.)": [
+      "2026-04-01",
+      1.5
+    ],
+    "Retail Sales MoM": [
+      "2026-07-01",
+      -0.58
+    ],
+    "Michigan Consumer Sentiment": [
+      "2026-06-01",
+      49.5
+    ],
+    "CPI YoY": [
+      "2026-07-01",
+      3.54
+    ],
+    "CPI MoM": [
+      "2026-07-01",
+      0.07
+    ],
+    "Core CPI YoY": [
+      "2026-07-01",
+      2.79
+    ],
+    "Core CPI MoM": [
+      "2026-07-01",
+      0.22
+    ],
+    "PPI Final Demand MoM": [
+      "2026-07-01",
+      -0.03
+    ],
+    "PCE Price Index YoY": [
+      "2026-06-01",
+      3.67
+    ],
+    "Core PCE YoY": [
+      "2026-06-01",
+      3.29
+    ],
+    "Michigan 1-Yr Inflation Exp": [
+      "2026-06-01",
+      4.6
+    ]
+  }
+}
