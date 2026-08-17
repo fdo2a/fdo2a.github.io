@@ -22,15 +22,27 @@ _GRADE = re.compile(r'\bdata-grade\s*=\s*"(-?\d+)"')
 _TAG = re.compile(r'<[^>]+>')
 
 
-def section8(html):
-    """The §8 slice of the report, or None if it isn't there."""
-    i = html.find('멀티에셋')
+def locate_section(html, keyword):
+    """The <section> whose heading names `keyword`, or None.
+
+    Headings first, body text only as a fallback: the macro section reconciles itself
+    against the stance section by name, so the word legitimately appears in prose
+    upstream of the section it labels.
+    """
+    heads = [m.start() for m in re.finditer(r'<h[1-4]\b[^>]*>(?:(?!</h[1-4]>).)*?'
+                                            + re.escape(keyword), html, re.S)]
+    i = heads[0] if heads else html.find(keyword)
     if i < 0:
         return None
     start = html.rfind('<section', 0, i)
     start = start if start >= 0 else i
     end = html.find('<section', i)
     return html[start:end if end > 0 else len(html)]
+
+
+def section8(html):
+    """The §8 slice of the report, or None if it isn't there."""
+    return locate_section(html, '멀티에셋')
 
 
 def strip_tags(html):
@@ -56,7 +68,7 @@ def parse_stance_cells(section):
     return found
 
 
-def _number_forms(value):
+def number_forms(value):
     """String spellings of a metric value a writer might reasonably use."""
     if value is None:
         return []
@@ -123,7 +135,7 @@ def check(html, prev_stance, stance_eval, next_stance, metric_names=()):
         met = [t for t in (eval_assets.get(key) or {}).get('increase', [])
                if t.get('status') == 'MET']
         if met:
-            if not any(any(f in text for f in _number_forms(t.get('actual'))) for t in met):
+            if not any(any(f in text for f in number_forms(t.get('actual'))) for t in met):
                 shown = ', '.join(str(t.get('actual')) for t in met)
                 v.append(f'§8 {key}: 등급을 {prev_grade}→{grade}로 확대했는데 '
                          f'충족된 트리거의 실측값({shown})이 본문에 인용되지 않았다')

@@ -54,6 +54,13 @@ jobs:
         continue-on-error: true
         run: python scripts/eval_stance_triggers.py --datadir data
 
+      - name: Evaluate macro regime
+        # Non-core, same contract as the stance step: judges yesterday's macro book
+        # against today's axis scores so §8 inherits a regime instead of re-reading the
+        # cycle every morning. Never fail the collection job on it.
+        continue-on-error: true
+        run: python scripts/eval_macro_regime.py --datadir data
+
       - name: Report status
         run: |
           python - <<'PY'
@@ -70,6 +77,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
           git add data/yield_curve.png data/stance_metrics.json data/stance_eval.json 2>/dev/null || true
+          git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No data changes to commit.'
           else

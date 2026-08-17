@@ -68,6 +68,17 @@ def test_section8_is_located_and_bounded():
     assert "멀티에셋" in s and "주목 섹터" not in s and "S&P 500" not in s
 
 
+def test_prose_mentioning_the_section_name_does_not_hijack_the_slice():
+    """§8-매크로 reconciles against the stance section by name, so the word appears
+    upstream in body text — the locator must key on the heading, not the first hit."""
+    html = ('<section><h2>8. 매크로 논리</h2>'
+            '<p>구조적으로는 우호적이나 멀티에셋 스탠스는 숏을 유지한다.</p></section>'
+            + build_html())
+    s = section8(html)
+    assert "매크로 논리" not in s
+    assert "data-asset" in s
+
+
 def test_missing_section_is_the_only_violation_reported():
     assert check("<p>no section</p>", stance_file(), eval_file(), next_file()) == \
         ['§8(멀티에셋 매니저 전략) 섹션을 찾을 수 없다']

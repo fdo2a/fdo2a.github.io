@@ -298,7 +298,12 @@ def _apply(vals, i, tf):
 
 def collect_econ():
     """FRED-sourced Actual/Previous/ref-period for the dashboard. Never fabricates —
-    a series that fails to fetch is simply omitted (agent falls back to web for it)."""
+    a series that fails to fetch is simply omitted (agent falls back to web for it).
+
+    Returns (rows, series_by_id). The raw histories cost nothing extra — fred_series()
+    already downloads the whole CSV — and the macro regime scores are computed from
+    them, so throwing them away here would mean paying for the same data twice.
+    """
     out = []
     seen = {}
     for axis, name, sid, tf, units in ECON:
@@ -322,7 +327,7 @@ def collect_econ():
             'actual': round(actual, 2), 'previous': round(previous, 2),
             'ref_period': vals[-1][0],  # observation month (reference period), not release date
         })
-    return out
+    return out, seen
 
 
 def yahoo_spot_yields():
@@ -504,7 +509,7 @@ def main():
     for t, row in yields.items():
         print(f'  {t}: ' + (f"{row['level']}% ({row.get('source')} {row['date']})" if row else 'MISSING'))
     print('collecting FRED economic indicators...')
-    econ = collect_econ()
+    econ, econ_series = collect_econ()
     print(f'  econ indicators: {len(econ)}/{len(ECON)}')
     print('collecting sector multi-horizon performance...')
     sector_perf, perf_as_of = collect_sector_performance()
@@ -577,6 +582,26 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'stance metrics failed: {e}', file=sys.stderr)
+
+    # Non-core, same contract as above: the macro regime's axis scores. `last_seen`
+    # comes from yesterday's committed book — without it every indicator reads as newly
+    # released and the regime would be free to move every single day.
+    print('computing macro axis scores...')
+    try:
+        from us.macro_metrics import compute as compute_macro_metrics
+        last_seen = None
+        try:
+            last_seen = json.load(open(os.path.join(args.outdir, 'macro.json'))).get('last_seen')
+        except Exception:
+            print('  no committed macro.json — treating every indicator as new', file=sys.stderr)
+        mm = compute_macro_metrics(econ_series, econ, last_seen)
+        print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
+              f"신규 발표 {len(mm['new_releases'])}건")
+        json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
+                  open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
+                  indent=2, default=str, ensure_ascii=False)
+    except Exception as e:
+        print(f'macro metrics failed: {e}', file=sys.stderr)
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
