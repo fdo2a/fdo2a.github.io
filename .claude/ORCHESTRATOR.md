@@ -12,6 +12,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
 1. `git -C <repo> pull` (or re-clone) to get the latest committed data, then Read `data/market_data.json`.
 2. If it exists, `report_date` matches today's expected US session (most recent US weekday; if it looks stale by >1 trading day, note it), and `"complete": true` — **copy the five data files to the workspace root** (`market_data.json`, `intraday.json`, `econ_indicators.json`, `sector_performance.html`, `yield_curve.png`) and skip STEP 1's market-data collection entirely. Proceed to STEP 1 for research_notes.md only (the web-research half).
+   Also copy `data/stance.json`, `data/stance_eval.json`, and `data/stance_metrics.json` if present — these carry yesterday's multi-asset book, today's trigger verdicts, and the metric names the writer may build new triggers from into §8. They are **non-core**: their absence does not block publication (the writer then freezes every grade, or opens the book in bootstrap mode), so never fail the completeness gate on them.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, note exactly which fields `missing` lists and run the full STEP 1 collector to fill the whole set (or just the gaps). The Actions run may have partially failed; treat its output as a starting point, not gospel.
 
 **토큰 규율**: 이 데이터 파일들이 있으면 그 안의 수치를 웹서치로 재확인하지 않는다. 웹 리서치(STEP 1의 리서치 절반)는 뉴스·해석·컨센서스처럼 파일에 없는 것에만 쓴다. 경제지표 Actual/Previous는 econ_indicators.json이 이미 확정했다.
@@ -30,9 +31,11 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 ## STEP 2 — 리포트 작성 (subagent: brief-report-writer)
 
-Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1, and the required output filename morning_brief_[YYYY-MM-DD].html in the workspace root. Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
+Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including stance.json and stance_eval.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html **and stance_next.json** (the updated book; the input stance.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
 Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` — must be 0; (b) spot-check 5+ numbers by grepping the HTML for specific values from market_data.json / intraday.json / econ_indicators.json (e.g. `grep -o '4\.62' <html>`), NOT by reading the whole ~34K-token HTML into context. If either check fails, relaunch the writer subagent with the specific violations; repeat until clean. 수치 창작 절대 금지 — 미확인 항목은 삭제·재구성이 원칙.
+
+**스탠스 게이트 (§8)** — run `python scripts/check_stance.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a §8 grade label is outside the controlled vocabulary; a grade sits outside that asset's `allowed_grades` from stance_eval.json; a moved row lacks the MET trigger's actual value (or, for an event trigger, a research_notes.md attribution) in the surrounding text; a row is missing its 유지 일수 or 다음 분기점; or the writer's new stance.json is not dated today / omits a history entry for a moved row. Relaunch the writer with the exact violations. This gate is what keeps §8 a position rather than a restatement of the day's tape — do not waive it.
 
 ## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 
@@ -54,7 +57,7 @@ Site base URL: https://fdo2a.github.io/
 <meta property="og:title" content="미국 증시 모닝브리프 — [YYYY년 M월 D일 (요일)]">
 <meta property="og:url" content="https://fdo2a.github.io/posts/[YYYY-MM-DD].html">
 ```
-2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png.
+2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png, and copy the writer's stance_next.json over `data/stance.json` — tomorrow's Actions run judges its triggers, so a report published without this file being updated leaves the book frozen.
 3. Update posts.json in the repo root: add {"date", "title", "headline"}. Same-date entry → REPLACE, never duplicate. Keep valid JSON.
 4. Regenerate sitemap.xml from posts.json: one <url> for https://fdo2a.github.io/ (lastmod=today, changefreq daily) plus one <url> per post (https://fdo2a.github.io/posts/DATE.html, lastmod). Keep valid XML.
 5. Commit and push to main:

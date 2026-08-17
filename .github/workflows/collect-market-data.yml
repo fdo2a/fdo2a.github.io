@@ -47,6 +47,13 @@ jobs:
         run: |
           python scripts/collect_market_data.py --outdir data ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
 
+      - name: Evaluate stance triggers
+        # Non-core: judges yesterday's committed stance against today's metrics so the
+        # routine's §8 inherits a position instead of re-deriving one from the tape.
+        # Never fail the collection job on it.
+        continue-on-error: true
+        run: python scripts/eval_stance_triggers.py --datadir data
+
       - name: Report status
         run: |
           python - <<'PY'
@@ -61,7 +68,8 @@ jobs:
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html data/yield_curve.png 2>/dev/null || git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
+          git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
+          git add data/yield_curve.png data/stance_metrics.json data/stance_eval.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No data changes to commit.'
           else

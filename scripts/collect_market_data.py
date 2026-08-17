@@ -108,6 +108,34 @@ def fill_daily_gaps(daily):
     return daily
 
 
+def collect_histories():
+    """Close-price histories for the stance trigger metrics (6mo covers a 50DMA).
+
+    Returns (closes, as_of) — as_of is the S&P 500's last bar date. The caller checks
+    it against the report date, because judging today's triggers against a history that
+    stops short would quietly decide the stance on stale prices.
+    """
+    import yfinance as yf
+    from us.stance_metrics import HISTORY_TICKERS
+
+    def dl():
+        df = yf.download(HISTORY_TICKERS, period='6mo', interval='1d', group_by='ticker',
+                         auto_adjust=True, progress=False, threads=False)
+        return df if df is not None and len(df) else None
+
+    df = retry(dl)
+    out, as_of = {}, None
+    for t in HISTORY_TICKERS:
+        try:
+            closes = df[t]['Close'].dropna()
+            out[t] = [float(x) for x in closes] if len(closes) else None
+            if t == '^GSPC' and len(closes):
+                as_of = str(closes.index[-1].date())
+        except Exception:
+            out[t] = None
+    return out, as_of
+
+
 PERF_HORIZONS = [('1D', 1), ('1W', 7), ('1M', 30), ('6M', 182), ('1Y', 365)]
 PERF_LABELS = {'1D': '1일', '1W': '1주', '1M': '1개월', '6M': '6개월', '1Y': '1년'}
 PERF_SHORT = {'Communication Services': 'Comm. Svcs', 'Consumer Discretionary': 'Consumer Disc.'}
@@ -529,6 +557,26 @@ def main():
             os.remove(chart_path)
 
     render_sector_perf_html(sector_perf, perf_as_of, os.path.join(args.outdir, 'sector_performance.html'))
+
+    # Non-core: the stance trigger inputs. A failure here must not cost us the dataset —
+    # eval_stance_triggers.py degrades every affected trigger to UNKNOWN, which freezes
+    # the grade rather than inventing a move.
+    print('computing stance trigger metrics...')
+    try:
+        from us.stance_metrics import compute as compute_stance_metrics
+        closes, hist_as_of = collect_histories()
+        metrics = compute_stance_metrics(closes, data)
+        have = sum(1 for v in metrics.values() if v is not None)
+        print(f'  stance metrics: {have}/{len(metrics)} (history as of {hist_as_of})')
+        if hist_as_of != report_date:
+            print(f'  WARN: history ends {hist_as_of}, report date is {report_date} — '
+                  'triggers will fall through to UNKNOWN', file=sys.stderr)
+        json.dump({'generated': data['generated'], 'report_date': report_date,
+                   'as_of': hist_as_of, 'metrics': metrics},
+                  open(os.path.join(args.outdir, 'stance_metrics.json'), 'w'),
+                  indent=2, default=str, ensure_ascii=False)
+    except Exception as e:
+        print(f'stance metrics failed: {e}', file=sys.stderr)
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
