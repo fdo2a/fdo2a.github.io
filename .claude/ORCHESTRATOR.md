@@ -71,21 +71,15 @@ Site base URL: https://fdo2a.github.io/
    git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
 
-## STEP 4 — Publish to Notion
+## STEP 4 — Notify
 
-Using the Notion MCP tools (notion-create-pages), create one page in data source e75a2eb0-425a-4f01-94a1-ca8082811026 (database "US Market Brief"):
-- properties: "제목" = 보고서 제목, "date:날짜:start" = YYYY-MM-DD, "헤드라인" = 헤드라인 한 줄, "웹 링크" = https://fdo2a.github.io/posts/YYYY-MM-DD.html
-- icon: 📈
-- content: full report in Notion-flavored Markdown — > quote headline + styled-web link first, sections as # headings with markdown tables. 채권 섹션에 ![미 국채 수익률 커브](https://fdo2a.github.io/assets/yield_curve_[YYYY-MM-DD].png) + 주간 변화 캡션. 마지막에 면책 문구(정보 제공 목적, 투자 권유 아님).
-- Do not create duplicates for the same date.
+Send a PushNotification with the headline and the blog post URL (mention any failures).
 
-## STEP 5 — Notify
-
-Send a PushNotification with the headline and the blog post URL (mention any channel failures). Do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email — the deliverables are the blog post and the Notion page only.
+**발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Do NOT publish to Notion, do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email. If a Notion connector is available in the session, leave it alone — its presence is not an instruction to use it.
 
 ## RULES
 - All prices/% changes in the published report MUST come from market_data.json / intraday.json; macro indicator values from research_notes.md. 수치 창작 절대 금지.
 - **완성본만 발행 (2026-07-14 사용자 지시)**: 핵심 표(지수·섹터·채권·FX·원자재·메모리·AI 인프라)에 누락 항목이 있는 채로 발행 금지. 완성 불가 시 발행하지 말고 PushNotification으로 누락 내역을 보고할 것. 웹 리서치로 대체 수집한 시세는 발행 전 반드시 복수 출처 교차 확인 — 단일 검색 결과 수치는 신뢰하지 않는다 (7/13호에서 FX 방향·유가 등락률 오류 발생 전례).
 - **발행본에 [확인필요] 금지 (STEP 2 게이트).** 미확인 항목은 끝까지 확인하거나 삭제·재구성.
 - Web findings attributed to sources. Professional buy-side tone.
-- Final message: delivery status of both channels (GitHub Pages / Notion), which subagents ran (or which fallback was used), and any failures.
+- Final message: blog (GitHub Pages) delivery status, which subagents ran (or which fallback was used), and any failures.
