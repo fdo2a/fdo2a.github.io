@@ -189,3 +189,20 @@ def test_no_conflict_when_signs_agree_or_either_side_is_neutral():
     trans['equities']['direction'] = 1
     stance = {'assets': {'equities': {'grade': 2}, 'bonds': {'grade': -1}}}
     assert macro.conflicts(trans, stance) == []
+
+
+# ------------------------------------------------------ transmission groups
+
+def test_groups_cover_every_asset_exactly_once():
+    seen = [a for _, _, assets in macro.TRANSMISSION_GROUPS for a in assets]
+    assert sorted(seen) == sorted(macro.TRANSMISSION_ASSETS)
+
+
+def test_group_of_maps_an_asset_to_its_channel():
+    assert macro.group_of('bonds') == 'rates'
+    assert macro.group_of('ai_infra') == 'ai_cycle'
+
+
+def test_group_of_rejects_an_unknown_asset():
+    with pytest.raises(ValueError):
+        macro.group_of('crypto')

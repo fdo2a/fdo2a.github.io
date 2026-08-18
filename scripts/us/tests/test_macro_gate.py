@@ -1,5 +1,6 @@
 from us import macro
-from us.macro_gate import check, parse_transmission_cells, section_macro
+from us.macro_gate import (check, parse_group_blocks, parse_transmission_cells,
+                           section_macro)
 
 REPORT_DATE = '2026-08-18'
 
@@ -7,17 +8,39 @@ DIRS = {'equities': 0, 'bonds': 1, 'fx': -1, 'energy': 0,
         'metals': 1, 'memory': 1, 'ai_infra': 0}
 
 
-def trow(asset, d):
-    label = macro.TRANSMISSION_LABELS[d]
-    return (f'<tr><td>{asset}</td>'
-            f'<td><span data-macro-asset="{asset}" data-direction="{d}">{label}</span></td>'
-            f'<td>전달 경로</td><td>확인 지표 3.5%</td></tr>')
+GROUP_TEXT = {
+    'rates': '실질금리 상단이 눌린다. 확인 지표는 Core PCE 3.3% 하회.',
+    'demand': '최종수요가 버티는 한 이익 추정치는 유지된다. 확인 지표는 소매판매 0.4% 반등.',
+    'dollar': '금리차가 좁혀지며 달러가 약해진다. 확인 지표는 DXY 96.5 하회.',
+    'ai_cycle': '캐펙스 사이클이 지표 사이클과 분리돼 있다. 확인 지표는 HBM 계약가 8% 인상.',
+}
+
+
+def strip(dirs):
+    """The at-a-glance direction row — one badge per asset, marker inside."""
+    items = ''.join(
+        f'<span class="mt-item"><b>{a}</b> '
+        f'<span data-macro-asset="{a}" data-direction="{d}">'
+        f'{macro.TRANSMISSION_LABELS[d]}</span> '
+        f'<span class="sub">4영업일</span></span>'
+        for a, d in dirs.items())
+    return f'<div class="mt-strip">{items}</div>'
+
+
+def groups(text=None, skip=()):
+    text = text or GROUP_TEXT
+    out = ''
+    for key, label, assets in macro.TRANSMISSION_GROUPS:
+        if key in skip:
+            continue
+        out += (f'<div data-macro-group="{key}"><h4>{label}</h4>'
+                f'<p>{text.get(key, "")}</p></div>')
+    return out
 
 
 def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.0,
-               reconcile=(), extra=''):
+               reconcile=(), extra='', group_text=None, skip_groups=()):
     dirs = DIRS if dirs is None else dirs
-    rows = ''.join(trow(a, d) for a, d in dirs.items())
     rec = ''.join(f'<p data-reconcile="{k}">구조적으로는 다르나 스윙 구간에서는…</p>'
                   for k in reconcile)
     name = macro.regime_name(growth, inflation)
@@ -28,8 +51,7 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
         f'data-inflation="{inflation}">{name}</span>이다. '
         f'성장축 {scores[0]}, 인플레축 {scores[1]}. '
         f'9월 인하 확률은 {prob}%.</p>'
-        f'{rec}{extra}'
-        f'<table>{rows}</table></section>'
+        f'{strip(dirs)}{rec}{extra}{groups(group_text, skip_groups)}</section>'
         '<section><h2>9. 멀티에셋 매니저 전략</h2></section>')
 
 
@@ -118,7 +140,7 @@ def test_axis_scores_must_be_quoted_in_the_section():
 
 # --- transmission -----------------------------------------------------------
 
-def test_missing_transmission_row_is_flagged():
+def test_missing_transmission_badge_is_flagged():
     dirs = {k: v for k, v in DIRS.items() if k != 'metals'}
     html = build_html(dirs=dirs)
     assert any('metals' in x for x in
@@ -213,3 +235,24 @@ def test_changed_transmission_direction_must_update_since():
     html = build_html(dirs=dirs)
     nxt = next_file(dirs=dirs)     # since left at the old date
     assert any('energy' in x and 'since' in x for x in check(html, macro_file(), ev, nxt))
+
+
+# --- channel groups ---------------------------------------------------------
+
+def test_every_channel_group_must_be_present():
+    out = check(build_html(skip_groups=('dollar',)), macro_file(), eval_file(),
+                next_file())
+    assert any('dollar' in x for x in out)
+
+
+def test_group_block_without_a_number_is_flagged():
+    text = dict(GROUP_TEXT, rates='실질금리 상단이 눌린다. 추이를 지켜본다.')
+    out = check(build_html(group_text=text), macro_file(), eval_file(), next_file())
+    assert any('rates' in x and '확인 지표' in x for x in out)
+
+
+def test_parse_group_blocks_slices_each_channel():
+    blocks = parse_group_blocks(section_macro(build_html()))
+    assert set(blocks) == {k for k, _, _ in macro.TRANSMISSION_GROUPS}
+    assert 'Core PCE' in blocks['rates']
+    assert 'Core PCE' not in blocks['demand']

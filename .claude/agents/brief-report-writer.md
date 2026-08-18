@@ -69,11 +69,33 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 1. **레짐 판정** (2~3문단) — 오늘의 국면을 통제 어휘로 선언하고 **축 점수와 확산지수를 수치로 밝힌다**. 레짐 표식은 `<span data-macro="regime" data-growth="N" data-inflation="M">라벨</span>` — 이 span 안에는 **격자 이름만** 넣는다(뉘앙스·수식어를 넣으면 게이트가 막는다). 어제와 국면이 같으면 왜 유지인지(신규 발표 없음 / 점수가 컷포인트를 못 넘음)를 밝히고, 바뀌었으면 어느 지표가 그것을 밀었는지 쓴다.
 2. **4축 진단** (1문단씩) — Labor / Activity / Consumption / Inflation 각각의 `axis_scores`와 방향. 축 간 상충(예: 고용 확산은 개선인데 소비가 급락)을 덮지 말고 그것 자체를 서술한다. 축 점수는 `macro_metrics.json`의 값을 그대로 쓴다.
 3. **정책 경로** (2문단) — 연준의 다음 수와 시점, **CME FedWatch 확률을 수치로**(`research_notes.md` 출처). 이 판단을 뒤집을 반증 조건(`falsifier`)을 반드시 한 문장으로 건다. 시점 판단은 신규 발표가 있거나 FedWatch 확률이 전일 대비 15%p 이상 움직였을 때만 바꿀 수 있다.
-4. **자산별 전달경로 표** — `자산군 | 방향 | 유지 | 전달 경로 | 확인 지표` 5열, 7행(equities/bonds/fx/energy/metals/memory/ai_infra)
-   - 방향 칸: `<span data-macro-asset="KEY" data-direction="N">라벨</span>`, 라벨은 `비우호`(−1) / `중립`(0) / `우호`(+1) **셋 중 하나만**, span 안에는 라벨만
+4. **자산별 전달경로** — **표로 만들지 말 것 (2026-08-18 사용자 지시, 가독성)**. 처음엔 `자산군 | 방향 | 유지 | 전달 경로 | 확인 지표` 5열 표로 설계했는데, 긴 서술 칸이 둘이라 모바일에서 가로 스크롤이 터지고, 같은 경로를 공유하는 자산끼리 같은 말을 네 번 반복하게 됐다. 대신 **한눈 스트립 + 경로별 묶음 서술** 두 덩이로 쓴다.
+
+   **(a) 방향 스트립** — 7개 자산의 방향을 배지로 한 곳에 모아 스캔되게 한다. 표가 아니라 `<div class="mt-strip">` 안의 인라인 배지들이고, 좁은 화면에서는 자연스럽게 여러 줄로 흐른다.
+   ```html
+   <div class="mt-strip">
+     <span class="mt-item"><b>채권</b>
+       <span data-macro-asset="bonds" data-direction="1">우호</span>
+       <span class="sub">12영업일</span></span>
+     …7개
+   </div>
+   ```
+   - 라벨은 `비우호`(−1) / `중립`(0) / `우호`(+1) **셋 중 하나만**, marker span 안에는 **라벨만** 넣는다(자산명·유지일수는 바깥 형제 요소로). 게이트가 완전 일치로 대조하므로 「중립~우호」 같은 헤지는 막힌다
    - 방향의 축은 §9 스탠스와 같다(채권=듀레이션, FX=달러). 그래야 두 섹션이 대조된다
-   - 전달 경로 칸: 레짐·정책이 **어떤 경로로** 그 자산에 닿는지(실질금리·할인율·달러·최종수요 등). 등락 나열 금지
-   - 확인 지표 칸: 이 방향이 맞는지 틀리는지를 가를 다음 지표를 **수치로**
+   - 배지 색: 우호 `#00A85A on #E8F8EE`, 비우호 `#FF4040 on #FFE8E8`, 중립 `#4E5968 on #F2F4F6`
+
+   **(b) 경로별 묶음 서술** — 자산을 행으로 쪼개지 않고 **같은 전달 경로를 공유하는 자산끼리 묶어** 산문으로 쓴다. 그룹은 아래 넷으로 고정이다(그룹이 매일 바뀌면 국면 변화인지 편집 변화인지 또 구분이 안 된다).
+
+   | 그룹 키 | 라벨 | 자산 |
+   |---|---|---|
+   | `rates` | 실질금리 경로 | 채권 · 귀금속 |
+   | `demand` | 최종수요 경로 | 주식 · 에너지 |
+   | `dollar` | 달러·상대금리 경로 | FX |
+   | `ai_cycle` | AI 캐펙스 사이클 | 메모리 · AI 인프라 |
+
+   각 블록은 `<div data-macro-group="KEY">` + `<h4>라벨 — 자산명</h4>` + 문단 1~2개(2~4문장). 레짐·정책이 **어떤 경로로** 그 자산군에 닿는지 메커니즘을 쓰고, 마지막에 **이 방향을 반증할 확인 지표를 수치로** 넣는다. 수치가 없으면 게이트가 막는다 — 「추이 확인 필요」류 무판정 문구 금지. 당일 등락 나열도 금지.
+
+   AI 캐펙스 사이클처럼 매크로 지표와 사이클이 어긋나 있는 그룹은 **그 분리 자체를 서술한다** — 억지로 레짐에 연결하지 말 것.
 5. **§9와의 정합** — 매크로 방향과 스탠스 등급의 부호가 반대인 자산군은 **반드시 해소 문단을 쓴다**. 그 `<p>`에 `data-reconcile="KEY"`를 달고 "구조적으로는 X지만 2~6주 구간에서는 Y로 가는 이유"를 설명한다. 시계가 다르므로 어긋나는 것 자체는 허용이고, **침묵이 금지**다.
 
 **산출물** — 보고서 HTML과 함께 워크스페이스 루트에 **`macro_next.json`을 쓴다**(입력 `macro.json`을 덮어쓰지 말 것). 오늘 `report_date`, `regime`(growth·inflation·since·thesis — 레짐이 바뀐 날만 since를 오늘로), `policy_path`(stance·timing·prob_pct·thesis·falsifier), `transmission` 7행(direction·since·channel·confirm), `last_seen`(`macro_metrics.json`의 것을 **그대로 복사** — 이 값이 내일의 신규 발표 판정 기준이다), 그리고 레짐이 바뀐 날은 `history`에 `{date, from, to, reason}`을 추가한다(최근 30건 유지). 이 파일이 없으면 다음날 책이 얼어붙는다.
@@ -185,6 +207,24 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 ```
 첫 열(지표명·종목명)과 마지막 열은 줄바꿈을 허용하고 그 사이 숫자·날짜 열만 nowrap로 보호한다 — '전략 근거'처럼 긴 서술이 마지막 열에 오는 표(멀티에셋 매니저 전략)가 모바일에서 한 줄로 늘어나 과도한 가로 스크롤이 생기는 것을 막는다. 그래도 6열짜리 경제지표 표처럼 좁은 화면에 다 안 들어가는 표는 `.tbl-scroll` 래퍼 덕에 가로 스크롤이 생긴다 — 열을 줄이거나 글자를 억지로 더 축소하지 않는다. 검증은 스크린샷 눈대중이 아니라 `document.documentElement.scrollWidth`가 뷰포트 폭과 같은지(페이지 레벨 가로 스크롤이 없는지) 확인하는 방식이 정확하다.
 `sector_performance.html` 스니펫은 자체 미디어쿼리를 이미 포함하고 있으니 그대로 삽입하면 된다(수정 금지).
+
+**§8 방향 스트립 CSS (2026-08-18)** — 표를 쓰지 않으므로 `.tbl-scroll` 규칙이 닿지 않는다. 아래를 `<style>`에 함께 넣는다. `flex-wrap`이 좁은 화면에서 배지를 여러 줄로 흘려보내므로 가로 스크롤이 아예 생기지 않는다.
+```css
+.mt-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 16px; }
+.mt-item { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 11px;
+           background: #F9FAFB; border: 1px solid #F2F4F6; border-radius: 9999px;
+           font-size: 13.5px; white-space: nowrap; }
+.mt-item b { font-weight: 700; color: #191F28; }
+.mt-item .sub { font-size: 11.5px; color: #8B95A1; }
+.mt-item [data-direction="1"]  { color: #00A85A; background: #E8F8EE; }
+.mt-item [data-direction="0"]  { color: #4E5968; background: #F2F4F6; }
+.mt-item [data-direction="-1"] { color: #FF4040; background: #FFE8E8; }
+.mt-item [data-direction] { padding: 2px 8px; border-radius: 9999px; font-weight: 700;
+                            font-size: 12.5px; }
+[data-macro-group] { margin-bottom: 14px; }
+[data-macro-group] h4 { font-size: 15px; font-weight: 700; color: #191F28;
+                        margin: 0 0 6px; }
+```
 
 **페이지 분할 규칙 (중요):** 각 섹션을 `<section>`으로 감싸고 `section { break-inside: avoid-page; page-break-inside: avoid; }` 적용 — 안 들어가면 통째로 다음 페이지부터. 경제지표 대시보드는 축별 섹션 분리. 표와 카드에도 page-break-inside: avoid.
 

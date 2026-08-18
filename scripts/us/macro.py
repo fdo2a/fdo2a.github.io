@@ -45,6 +45,19 @@ TRANSMISSION_ASSETS = ('equities', 'bonds', 'fx', 'energy', 'metals', 'memory', 
 # fx = dollar), so agreement and conflict are just a sign comparison.
 TRANSMISSION_LABELS = {-1: '비우호', 0: '중립', 1: '우호'}
 
+# Assets are narrated in channel groups, not one row each. A regime reaches bonds and
+# gold through the same real-rate channel and equities and energy through the same
+# final-demand channel, so a row per asset makes the writer say the same thing four
+# times — and buries the mechanism in a table cell nobody can read on a phone.
+# Fixed, like the label vocabulary: a grouping that shifts day to day would leave the
+# reader unable to tell a changed view from a changed layout.
+TRANSMISSION_GROUPS = (
+    ('rates', '실질금리 경로', ('bonds', 'metals')),
+    ('demand', '최종수요 경로', ('equities', 'energy')),
+    ('dollar', '달러·상대금리 경로', ('fx',)),
+    ('ai_cycle', 'AI 캐펙스 사이클', ('memory', 'ai_infra')),
+)
+
 HORIZON = '3-6개월'
 
 # Longer than the stance lock: a regime that flips weekly is not a regime.
@@ -53,6 +66,13 @@ LOCK_BUSINESS_DAYS = 5
 # Axis score is a cross-sectional mean of per-indicator momentum z-scores, so a third of
 # a standard deviation is already a broad, one-directional shift.
 CUT = 0.33
+
+
+def group_of(asset):
+    for key, _, assets in TRANSMISSION_GROUPS:
+        if asset in assets:
+            return key
+    raise ValueError(f'unknown transmission asset: {asset}')
 
 
 def regime_name(growth, inflation):

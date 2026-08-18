@@ -13,8 +13,8 @@ Pure — `check()` takes strings and dicts and returns a list of violation messa
 
 import re
 
-from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_LABELS, conflicts,
-                    regime_name)
+from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
+                    TRANSMISSION_LABELS, conflicts, regime_name)
 from .stance_gate import locate_section, number_forms, strip_tags
 
 _REGIME = re.compile(
@@ -46,6 +46,23 @@ def parse_regime_cell(section):
         'inflation': int(i.group(1)) if i else None,
         'text': strip_tags(m.group('text')).strip(),
     }
+
+
+_GROUP = re.compile(r'\bdata-macro-group\s*=\s*"([a-z_]+)"')
+
+
+def parse_group_blocks(section):
+    """{group key: prose} — each block runs to the next group marker or section end.
+
+    Slicing on the marker rather than on a matching close tag keeps this indifferent to
+    how the writer nests the block, which is one less thing for a gate to be brittle about.
+    """
+    hits = [(m.group(1), m.start()) for m in _GROUP.finditer(section or '')]
+    out = {}
+    for n, (key, at) in enumerate(hits):
+        end = hits[n + 1][1] if n + 1 < len(hits) else len(section)
+        out[key] = strip_tags(section[at:end])
+    return out
 
 
 def parse_transmission_cells(section):
@@ -99,7 +116,7 @@ def _check_transmission(section, macro_eval, v):
     cells = parse_transmission_cells(section)
     missing = [k for k in TRANSMISSION_ASSETS if k not in cells]
     if missing:
-        v.append(f"§8 전달경로 표에 표식이 없는 자산군: {', '.join(missing)}")
+        v.append(f"§8 방향 스트립에 표식이 없는 자산군: {', '.join(missing)}")
 
     ev_trans = (macro_eval or {}).get('transmission') or {}
     for key, cell in cells.items():
@@ -120,7 +137,25 @@ def _check_transmission(section, macro_eval, v):
         allowed = (ev_trans.get(key) or {}).get('allowed_directions')
         if allowed and d not in allowed:
             v.append(f'§8 {key}: 방향 {d}는 허용 범위 {allowed} 밖이다')
+
+    _check_groups(section, v)
     return cells
+
+
+def _check_groups(section, v):
+    """Every channel gets a narrated block, and every block names a number.
+
+    The strip alone would say what the macro likes without ever saying why, and a
+    block with no figure in it is the 「추이 확인 필요」 non-answer wearing a heading.
+    """
+    blocks = parse_group_blocks(section)
+    for key, label, _ in TRANSMISSION_GROUPS:
+        text = blocks.get(key)
+        if text is None:
+            v.append(f'§8: {label} 서술 블록이 없다 — <div data-macro-group="{key}">로 감쌀 것')
+        elif not re.search(r'\d', text):
+            v.append(f'§8 {key}({label}): 확인 지표가 수치로 없다 — '
+                     '「추이 확인 필요」류 무판정 문구는 금지')
 
 
 def _check_reconciliation(section, next_macro, stance, v):
