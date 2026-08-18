@@ -1,0 +1,13 @@
+{
+  "report_date": "2026-08-18",
+  "releases": [
+    {
+      "key": "industrial-production",
+      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 5386,
+      "path": "releases/industrial-production.txt"
+    }
+  ]
+}

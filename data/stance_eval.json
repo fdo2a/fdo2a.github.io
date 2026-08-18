@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-08-17",
-  "stance_date": "2026-08-14",
+  "report_date": "2026-08-18",
+  "stance_date": "2026-08-17",
   "stale": false,
   "bootstrap": false,
   "horizon": "2-6주",
@@ -13,8 +13,8 @@
       "tilt": "대형 성장주 축소, 에너지·소형주·가치주 선별 확대",
       "curve": null,
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "지수는 20DMA를 2.65% 상회하며 추세 자체는 살아 있으나, 브로드컴발 AI 파이낸싱 우려로 대형 기술주 심리가 흔들리는 사이 자금이 소형주·가치주로 이동하는 국면. 지수 방향에 베팅하기보다 틸트로 대응한다.",
+      "days_held": 3,
+      "thesis": "지수 자체 추세는 살아 있으나 대형 기술주 심리가 흔들리는 사이 자금이 소형주·가치주로 이동하는 국면이 이어진다. 지수 방향에 베팅하기보다 틸트로 대응한다.",
       "increase": [
         {
           "kind": "metric",
@@ -22,8 +22,8 @@
           "op": ">",
           "value": 4.0,
           "toward": "+",
-          "desc": "S&P 500이 50DMA를 4% 이상 상회(현 3.64%) — 추세 확장 확인",
-          "actual": 3.05,
+          "desc": "S&P 500이 50DMA를 4% 이상 상회(현 3.05%) — 추세 확장 확인",
+          "actual": 2.26,
           "status": "NOT_MET"
         },
         {
@@ -32,7 +32,7 @@
           "op": ">=",
           "value": 10,
           "toward": "+",
-          "desc": "11개 섹터 중 10개 이상이 1개월 플러스(현 9개) — breadth 확산",
+          "desc": "11개 섹터 중 10개 이상이 1개월 플러스(현 8개) — breadth 확산",
           "actual": 8,
           "status": "NOT_MET"
         },
@@ -42,8 +42,8 @@
           "op": ">",
           "value": 22,
           "toward": "-",
-          "desc": "VIX 22 상회(현 14.96) — 리스크오프 전환",
-          "actual": 15.19,
+          "desc": "VIX 22 상회(현 15.19) — 리스크오프 전환",
+          "actual": 15.84,
           "status": "NOT_MET"
         },
         {
@@ -55,10 +55,11 @@
         }
       ],
       "decrease": [],
-      "can_increase": false,
-      "increase_block": "lock_3bd",
+      "can_increase": true,
+      "increase_block": "manual",
       "can_decrease": false,
       "allowed_grades": [
+        -1,
         0
       ],
       "manual_pending": [
@@ -73,16 +74,16 @@
       "tilt": "5Y 중심 보유, 30Y 신규 확대 보류",
       "curve": "벨리 OW",
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "주간 기준 10Y +3.6bp·30Y +5.4bp가 5Y 0.0bp보다 뚜렷하게 더 올라 베어 스티프닝이 진행 중. 유가발 인플레 재부각이 장기물을 압박하는 동안 듀레이션은 짧게 가져가되, 벨리는 캐리가 살아 있어 유지한다.",
+      "days_held": 3,
+      "thesis": "주간 기준 10Y +2.5bp·30Y +6.6bp가 5Y -2.9bp보다 뚜렷하게 더 올라 베어 스티프닝이 진행 중이다. 유가발 인플레 재부각이 장기물을 압박하는 동안 듀레이션은 짧게, 벨리는 캐리가 살아있어 유지한다.",
       "increase": [
         {
           "kind": "metric",
           "metric": "ust30y",
           "op": ">",
           "value": 5.4,
-          "desc": "30Y 5.40% 상회(현 5.265%) — 장기물 매도 압력 가속",
-          "actual": 5.309,
+          "desc": "30Y 5.40% 상회(현 5.309%) — 장기물 매도 압력 가속",
+          "actual": 5.285,
           "status": "NOT_MET"
         },
         {
@@ -90,8 +91,8 @@
           "metric": "spread_5s30s_chg_5d_bp",
           "op": ">",
           "value": 15,
-          "desc": "5s30s가 주간 15bp 이상 확대(현 +5.4bp) — 스티프닝 가속",
-          "actual": 9.5,
+          "desc": "5s30s가 주간 15bp 이상 확대(현 +9.5bp) — 스티프닝 가속",
+          "actual": 6.7,
           "status": "NOT_MET"
         }
       ],
@@ -102,7 +103,7 @@
           "op": "<",
           "value": 5.05,
           "desc": "30Y 5.05% 하회 — 장기물 프리미엄 되돌림",
-          "actual": 5.309,
+          "actual": 5.285,
           "status": "NOT_MET"
         },
         {
@@ -113,7 +114,7 @@
         }
       ],
       "can_increase": false,
-      "increase_block": "lock_3bd",
+      "increase_block": "no_trigger_met",
       "can_decrease": true,
       "allowed_grades": [
         -1,
@@ -128,19 +129,19 @@
       "axis": "달러 방향",
       "grade": -1,
       "label": "달러 소폭 숏",
-      "tilt": null,
+      "tilt": "엔화는 개별 요인이 커 DXY와 분리 점검 — USD/JPY 159선",
       "curve": null,
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "DXY가 20일간 -1.63%로 완만한 약세 추세를 유지하고 유로가 이를 그대로 반영하는 반면 엔화는 덜 따라가는 국면. 달러 약세에 소폭 얹되 엔 크로스는 별도로 본다.",
+      "days_held": 3,
+      "thesis": "DXY가 20일간 -1.4%로 완만한 약세 추세를 유지하는 국면이 이어진다. 엔화는 미 장기금리 급등에 따른 금리차 확대 기대로 달러 대비 덜 따라가고 있어 별도로 본다.",
       "increase": [
         {
           "kind": "metric",
           "metric": "dxy_pct_20d",
           "op": "<",
           "value": -3.0,
-          "desc": "DXY 20일 -3% 이하(현 -1.63%) — 약세 추세 가속",
-          "actual": -1.4,
+          "desc": "DXY 20일 -3% 이하(현 -1.4%) — 약세 추세 가속",
+          "actual": -1.09,
           "status": "NOT_MET"
         }
       ],
@@ -150,13 +151,13 @@
           "metric": "dxy_close",
           "op": ">",
           "value": 101.0,
-          "desc": "DXY 101 상회(현 99.35) — 약세 시나리오 무효화",
-          "actual": 99.58,
+          "desc": "DXY 101 상회(현 99.58) — 약세 시나리오 무효화",
+          "actual": 99.64,
           "status": "NOT_MET"
         }
       ],
       "can_increase": false,
-      "increase_block": "lock_3bd",
+      "increase_block": "no_trigger_met",
       "can_decrease": true,
       "allowed_grades": [
         -1,
@@ -172,8 +173,8 @@
       "tilt": "이벤트드리븐 대응, 방향성 보유 없음",
       "curve": null,
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "WTI는 20일 -1.41%로 방향이 서 있지 않고, 대이란 압박 보도에 하루 단위로 크게 튄다. 지정학 헤드라인이 가격을 지배하는 구간에서는 방향 베팅 대신 이벤트 확인 후 진입한다.",
+      "days_held": 3,
+      "thesis": "WTI는 지정학 헤드라인에 하루 단위로 크게 튄다. 지정학 헤드라인이 가격을 지배하는 구간에서는 방향 베팅 대신 이벤트 확인 후 진입한다.",
       "increase": [
         {
           "kind": "metric",
@@ -181,8 +182,8 @@
           "op": ">",
           "value": 6.0,
           "toward": "+",
-          "desc": "WTI 5일 +6% 이상(현 -0.09%) — 지정학 프리미엄 재점화",
-          "actual": 3.43,
+          "desc": "WTI 5일 +6% 이상(현 +3.43%) — 지정학 프리미엄 재점화",
+          "actual": 1.47,
           "status": "NOT_MET"
         },
         {
@@ -198,17 +199,18 @@
           "op": "<",
           "value": 76.0,
           "toward": "-",
-          "desc": "WTI 76달러 하회(현 82.06) — 수요 둔화 우위",
-          "actual": 84.95,
+          "desc": "WTI 76달러 하회(현 84.95) — 수요 둔화 우위",
+          "actual": 84.42,
           "status": "NOT_MET"
         }
       ],
       "decrease": [],
-      "can_increase": false,
-      "increase_block": "lock_3bd",
+      "can_increase": true,
+      "increase_block": "manual",
       "can_decrease": false,
       "allowed_grades": [
-        0
+        0,
+        1
       ],
       "manual_pending": [
         "호르무즈 통항 차질 등 실제 공급 차질 확인"
@@ -222,16 +224,16 @@
       "tilt": "금 중심, 이중 헤지 성격",
       "curve": null,
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "금은 20일 +11.1%로 안전자산 수요와 달러 약세를 동시에 반영해 이중 헤지가 작동하는 국면. 주식·채권이 함께 흔들리는 구간의 완충재로 보유를 유지한다.",
+      "days_held": 3,
+      "thesis": "금은 20일 +11.54%로 안전자산 수요와 달러 약세를 동시에 반영해 이중 헤지가 계속 작동하는 국면이다. 주식·채권이 함께 흔들리는 구간의 완충재로 보유를 유지한다.",
       "increase": [
         {
           "kind": "metric",
           "metric": "gold_pct_20d",
           "op": ">",
           "value": 15.0,
-          "desc": "금 20일 +15% 이상(현 +11.1%) — 헤지 수요 가속",
-          "actual": 11.54,
+          "desc": "금 20일 +15% 이상(현 +11.54%) — 헤지 수요 가속",
+          "actual": 7.82,
           "status": "NOT_MET"
         }
       ],
@@ -241,8 +243,8 @@
           "metric": "gold_pct_5d",
           "op": "<",
           "value": -4.0,
-          "desc": "금 5일 -4% 이하(현 +2.15%) — 헤지 수요 이탈",
-          "actual": 2.55,
+          "desc": "금 5일 -4% 이하(현 +2.55%) — 헤지 수요 이탈",
+          "actual": 0.15,
           "status": "NOT_MET"
         },
         {
@@ -251,12 +253,12 @@
           "op": ">",
           "value": 101.0,
           "desc": "DXY 101 상회 — 달러 약세 축 소멸",
-          "actual": 99.58,
+          "actual": 99.64,
           "status": "NOT_MET"
         }
       ],
       "can_increase": false,
-      "increase_block": "lock_3bd",
+      "increase_block": "no_trigger_met",
       "can_decrease": true,
       "allowed_grades": [
         0,
@@ -272,8 +274,8 @@
       "tilt": "구조적 강세 추종, 분할 대응",
       "curve": null,
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "미국 상장 메모리 바스켓이 S&P 500 대비 20일 +10.49%p 초과수익으로 주도주 지위를 유지. 다만 최근 몇 주간 급등락이 반복돼 일괄매수 대신 분할로 접근한다.",
+      "days_held": 3,
+      "thesis": "미국 상장 메모리 바스켓이 S&P 500 대비 20일 +12.9%p 초과수익으로 주도주 지위를 오히려 더 굳혔다. 급등락이 반복돼 일괄매수 대신 분할로 접근한다.",
       "increase": [],
       "decrease": [
         {
@@ -281,9 +283,9 @@
           "metric": "memory_rel_20d",
           "op": "<",
           "value": 0,
-          "desc": "메모리 바스켓의 20일 초과수익이 마이너스 전환(현 +10.49%p) — 주도주 지위 상실",
-          "actual": 12.9,
-          "status": "NOT_MET"
+          "desc": "메모리 바스켓의 20일 초과수익이 마이너스 전환(현 +12.9%p) — 주도주 지위 상실",
+          "actual": -6.19,
+          "status": "MET"
         },
         {
           "kind": "event",
@@ -311,8 +313,8 @@
       "tilt": "실적 모멘텀 종목만 선별, 파이낸싱 리스크는 개별 이슈로 분리",
       "curve": null,
       "since": "2026-08-14",
-      "days_held": 2,
-      "thesis": "바스켓 초과수익이 20일 +8.28%p인데 5일은 +0.98%p로 급격히 식었고, 광통신과 전력인프라의 온도차가 크다. 테마 단위 베팅보다 개별 실적·수주 확인이 앞선다.",
+      "days_held": 3,
+      "thesis": "5일 초과수익 트리거(+5%p)는 오늘 +11.43%p로 이미 충족됐지만 3영업일 확대 잠금이 아직 풀리지 않아 등급을 유지한다. 광네트워킹과 전력인프라의 온도차가 여전히 커 테마 단위 베팅은 이르다.",
       "increase": [
         {
           "kind": "metric",
@@ -320,9 +322,9 @@
           "op": ">",
           "value": 5.0,
           "toward": "+",
-          "desc": "AI 인프라 바스켓 5일 초과수익 +5%p 이상(현 +0.98%p) — 테마 재점화",
-          "actual": 11.43,
-          "status": "MET"
+          "desc": "AI 인프라 바스켓 5일 초과수익 +5%p 이상(현 +11.43%p, 충족 — 잠금 해제 2026-08-19 대기) — 테마 재점화",
+          "actual": -0.05,
+          "status": "NOT_MET"
         },
         {
           "kind": "event",
@@ -333,10 +335,11 @@
         }
       ],
       "decrease": [],
-      "can_increase": false,
-      "increase_block": "lock_3bd",
+      "can_increase": true,
+      "increase_block": "manual",
       "can_decrease": false,
       "allowed_grades": [
+        -1,
         0
       ],
       "manual_pending": [
