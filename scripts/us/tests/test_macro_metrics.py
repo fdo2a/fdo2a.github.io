@@ -213,12 +213,35 @@ def test_market_moving_releases_outrank_secondary_ones():
     assert [r['key'] for r in out['headline_releases']][0] == 'cpi'
 
 
-def test_at_most_three_releases_are_promoted():
+def test_every_market_moving_release_is_promoted():
+    """A tier-1 print never gets crowded out — those are the ones the brief exists for."""
+    econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL'),
+            ind('Nonfarm Payrolls (chg)', 'Labor', 'PAYEMS'),
+            ind('Retail Sales MoM', 'Consumption', 'RSAFS'),
+            ind('Core PCE YoY', 'Inflation', 'PCEPILFE'),
+            ind('Real GDP Growth QoQ (ann.)', 'Activity', 'A191RL1Q225SBEA')]
+    series = {i['fred_id']: dated(jump(1)) for i in econ}
+    out = mm.compute(series, econ)
+    assert {r['key'] for r in out['headline_releases']} == {
+        'cpi', 'employment', 'retail-sales', 'pce', 'gdp'}
+
+
+def test_secondary_releases_are_capped():
     econ = [ind(f'X{i}', 'Activity', f'X{i}') for i in range(6)]
     series = {f'X{i}': dated(jump(1)) for i in range(6)}
     out = mm.compute(series, econ)
-    assert len(out['headline_releases']) == 3
+    assert len(out['headline_releases']) == mm.MAX_SECONDARY_RELEASES
     assert len(out['new_releases']) == 6
+
+
+def test_secondary_cap_does_not_eat_into_tier_one():
+    econ = ([ind('CPI YoY', 'Inflation', 'CPIAUCSL')]
+            + [ind(f'X{i}', 'Activity', f'X{i}') for i in range(6)])
+    series = {i['fred_id']: dated(jump(1)) for i in econ}
+    out = mm.compute(series, econ)
+    keys = [r['key'] for r in out['headline_releases']]
+    assert 'cpi' in keys
+    assert len(keys) == 1 + mm.MAX_SECONDARY_RELEASES
 
 
 def test_indicator_without_a_known_source_stands_alone_without_a_url():

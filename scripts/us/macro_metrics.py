@@ -131,10 +131,11 @@ RELEASE_COMPONENTS = {
     ),
 }
 
-# Anatomy is worth doing properly for a few releases, not thinly for a dozen. On the
-# first run every indicator reads as new, so an uncapped list would send the collector
-# after every press release the dashboard touches.
-MAX_HEADLINE_RELEASES = 3
+# Tier-1 prints are never dropped — those are the ones the brief exists to explain, and
+# in practice at most two or three land on the same morning. The cap applies only to the
+# context releases, which is what keeps the first run (every indicator reads as new) from
+# sending the collector after a dozen press releases.
+MAX_SECONDARY_RELEASES = 2
 
 GROWTH_AXES = ('Labor', 'Activity', 'Consumption')
 INFLATION_AXES = ('Inflation',)
@@ -226,7 +227,9 @@ def _headline_releases(rows, releases):
                             'momentum_z': r['momentum_z']} for r in items],
         })
     out.sort(key=lambda r: (r['tier'], -r['max_abs_z']))
-    return out[:MAX_HEADLINE_RELEASES]
+    primary = [r for r in out if r['tier'] <= 1]
+    secondary = [r for r in out if r['tier'] > 1][:MAX_SECONDARY_RELEASES]
+    return primary + secondary
 
 
 def component_specs(headline_releases):

@@ -39,7 +39,7 @@ def groups(text=None, skip=()):
 
 
 def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.0,
-               reconcile=(), extra='', group_text=None, skip_groups=()):
+               reconcile=(), extra='', group_text=None, skip_groups=(), anatomy=''):
     dirs = DIRS if dirs is None else dirs
     rec = ''.join(f'<p data-reconcile="{k}">구조적으로는 다르나 스윙 구간에서는…</p>'
                   for k in reconcile)
@@ -52,7 +52,9 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
         f'성장축 {scores[0]}, 인플레축 {scores[1]}. '
         f'9월 인하 확률은 {prob}%.</p>'
         f'{strip(dirs)}{rec}{extra}{groups(group_text, skip_groups)}</section>'
-        '<section><h2>9. 멀티에셋 매니저 전략</h2></section>')
+        '<section><h2>9. 멀티에셋 매니저 전략</h2></section>'
+        f'<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table>'
+        f'{anatomy}</section>')
 
 
 def macro_file(growth=0, inflation=-1, dirs=None, since='2026-08-10',
@@ -286,33 +288,33 @@ def test_new_release_requires_an_anatomy_block():
 
 
 def test_anatomy_block_satisfies_the_requirement():
-    out = check(build_html(extra=ANATOMY), macro_file(), rel_eval(), next_file())
+    out = check(build_html(anatomy=ANATOMY), macro_file(), rel_eval(), next_file())
     assert out == []
 
 
 def test_anatomy_must_quote_the_headline_number():
     block = (ANATOMY.replace('<h4>7월 CPI 3.54%</h4>', '<h4>7월 CPI</h4>')
                     .replace('헤드라인 3.54%는 전월 3.73%에서', '헤드라인은 전월 3.73%에서'))
-    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    out = check(build_html(anatomy=block), macro_file(), rel_eval(), next_file())
     assert any('cpi' in x and '실제값' in x for x in out)
 
 
 def test_anatomy_must_name_the_primary_source():
     block = ANATOMY.replace(' 출처 BLS.', '')
-    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    out = check(build_html(anatomy=block), macro_file(), rel_eval(), next_file())
     assert any('cpi' in x and '원본 발표' in x for x in out)
 
 
 def test_headline_number_alone_is_not_anatomy():
     block = ('<div data-release="cpi"><p>7월 CPI는 3.54%로 나왔다. 출처 BLS.</p></div>')
-    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
-    assert any('cpi' in x and '구성 항목' in x for x in out)
+    out = check(build_html(anatomy=block), macro_file(), rel_eval(), next_file())
+    assert any("cpi" in x and "구성 항목" in x for x in out)
 
 
 def test_a_year_is_not_counted_as_a_component_figure():
     rel = dict(RELEASES[0]); rel.pop('components')
     block = ('<div data-release="cpi"><p>2026년 7월 CPI는 3.54%. 출처 BLS.</p></div>')
-    out = check(build_html(extra=block), macro_file(), rel_eval([rel]), next_file())
+    out = check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file())
     assert any('cpi' in x and '세부' in x for x in out)
 
 
@@ -324,18 +326,31 @@ def test_anatomy_must_cite_the_components_that_moved():
     """The whole point: a block that names no basket line has not decomposed anything."""
     block = ('<div data-release="cpi"><p>7월 CPI 3.54%는 전월 3.73%에서 0.19%p '
              '내려왔다. 출처 BLS.</p></div>')
-    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
-    assert any('cpi' in x and '구성 항목' in x for x in out)
+    out = check(build_html(anatomy=block), macro_file(), rel_eval(), next_file())
+    assert any("cpi" in x and "구성 항목" in x for x in out)
 
 
 def test_one_component_is_not_enough():
     block = ('<div data-release="cpi"><p>7월 CPI 3.54%. 에너지가 -1.5% 빠졌다. '
              '전월 3.73%. 출처 BLS.</p></div>')
-    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
-    assert any('cpi' in x and '구성 항목' in x for x in out)
+    out = check(build_html(anatomy=block), macro_file(), rel_eval(), next_file())
+    assert any("cpi" in x and "구성 항목" in x for x in out)
 
 
 def test_a_release_without_a_known_breakdown_falls_back_to_the_figure_count():
     rel = dict(RELEASES[0]); rel.pop('components')
     block = ('<div data-release="cpi"><p>CPI 3.54%, 전월 3.73%, MoM 0.07%. 출처 BLS.</p></div>')
-    assert check(build_html(extra=block), macro_file(), rel_eval([rel]), next_file()) == []
+    assert check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file()) == []
+
+
+def test_anatomy_in_the_macro_section_is_not_where_it_belongs():
+    """It was §8 briefly; the numbers live in §13, so the dissection sits with them."""
+    out = check(build_html(extra=ANATOMY), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '해부 블록이 없다' in x for x in out)
+
+
+def test_a_release_block_does_not_swallow_the_following_section():
+    block = '<div data-release="cpi"><p>CPI 3.54%. 출처 BLS.</p></div>'
+    html = build_html(anatomy=block) + '<section><p>에너지 -1.484 주거비 0.139</p></section>'
+    out = check(html, macro_file(), rel_eval(), next_file())
+    assert any("cpi" in x and "구성 항목" in x for x in out)

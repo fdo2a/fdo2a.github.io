@@ -35,6 +35,12 @@ def section_macro(html):
     return locate_section(html, '매크로 논리')
 
 
+def section_econ(html):
+    """The §13 dashboard — where the indicator tables live, and so where the dissection
+    of a new print belongs (2026-08-18 사용자 지시: 수치가 있는 곳에 해설을 붙인다)."""
+    return locate_section(html, '경제지표')
+
+
 def parse_regime_cell(section):
     m = _REGIME.search(section or '')
     if not m:
@@ -50,6 +56,7 @@ def parse_regime_cell(section):
 
 _GROUP = re.compile(r'\bdata-macro-group\s*=\s*"([a-z_]+)"')
 _RELEASE = re.compile(r'\bdata-release\s*=\s*"([a-z0-9-]+)"')
+_SECTION = re.compile(r'<(section)\b')
 _NUM = re.compile(r'\d+(?:\.\d+)?')
 _YEAR = re.compile(r'^(?:19|20)\d{2}$')
 
@@ -76,7 +83,8 @@ def _blocks(section, wanted):
     """
     section = section or ''
     hits = sorted((m.start(), kind, m.group(1))
-                  for kind, pat in (('release', _RELEASE), ('group', _GROUP))
+                  for kind, pat in (('release', _RELEASE), ('group', _GROUP),
+                                    ('__section__', _SECTION))
                   for m in pat.finditer(section))
     out = {}
     for n, (at, kind, key) in enumerate(hits):
@@ -193,7 +201,7 @@ def _check_groups(section, v):
                      '「추이 확인 필요」류 무판정 문구는 금지')
 
 
-def _check_releases(section, macro_eval, v):
+def _check_releases(html, macro_eval, v):
     """A new print must be taken apart, not just quoted.
 
     The dashboard already prints the headline number; this section exists to say what
@@ -203,13 +211,14 @@ def _check_releases(section, macro_eval, v):
     wanted = (macro_eval or {}).get('headline_releases') or []
     if not wanted:
         return
-    blocks = parse_release_blocks(section)
+    scope = section_econ(html) or html
+    blocks = parse_release_blocks(scope)
     for rel in wanted:
         key = rel.get('key')
         label = rel.get('label') or key
         text = blocks.get(key)
         if text is None:
-            v.append(f'§8: 신규 발표 「{label}」 해부 블록이 없다 — '
+            v.append(f'§13: 신규 발표 「{label}」 해부 블록이 없다 — 지표 표 아래에 '
                      f'<div data-release="{key}">로 감쌀 것')
             continue
 
@@ -217,14 +226,14 @@ def _check_releases(section, macro_eval, v):
                         if i.get('name') == rel.get('primary')), None)
         if primary and primary.get('actual') is not None \
                 and not _cited(text, primary['actual']):
-            v.append(f'§8 {key}: 「{label}」 블록에 {primary["name"]} 실제값 '
+            v.append(f'§13 {key}: 「{label}」 블록에 {primary["name"]} 실제값 '
                      f'{primary["actual"]}이 없다')
 
         has_source = (any(a in text for a in AGENCIES) or 'http' in text
                       or (rel.get('agency') and rel['agency'] in text))
         if not has_source:
             agency = rel.get('agency') or '발표 기관'
-            v.append(f'§8 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
+            v.append(f'§13 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
                      f'{agency}의 릴리스를 근거로 밝힐 것')
 
         # When the breakdown was collected deterministically we can ask the precise
@@ -235,11 +244,11 @@ def _check_releases(section, macro_eval, v):
             cited = [c for c in comps if _cited(text, c['actual'])]
             if len(cited) < MIN_CITED_COMPONENTS:
                 names = ', '.join(f'{c["label"]} {c["actual"]}' for c in comps[:5])
-                v.append(f'§8 {key}: 「{label}」 블록이 구성 항목을 {len(cited)}개만 인용했다 '
+                v.append(f'§13 {key}: 「{label}」 블록이 구성 항목을 {len(cited)}개만 인용했다 '
                          f'— {MIN_CITED_COMPONENTS}개 이상 필요. '
                          f'macro_metrics.json에 있는 것: {names}')
         elif len(_figures(text)) < MIN_RELEASE_FIGURES:
-            v.append(f'§8 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
+            v.append(f'§13 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
                      '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
 
 
@@ -334,7 +343,7 @@ def check(html, prev_macro, macro_eval, next_macro, stance=None):
     v = []
 
     regime_cell = _check_regime(section, text, macro_eval, v)
-    _check_releases(section, macro_eval, v)
+    _check_releases(html, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
     _check_reconciliation(section, next_macro, stance, v)
     _check_policy(text, prev_macro, macro_eval, next_macro, v)

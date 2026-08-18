@@ -216,6 +216,17 @@ print(json.dumps(out, default=str))
 
    `research_notes.md`에 **⑧ 신규 발표 해부** 절을 만들어 발표문별로 적는다: 발표문 이름·기준월·헤드라인 수치, **원문에서 인용한 세부 수치 최소 2개**(가능하면 기여도 문장 그대로), 수정폭·특이 요인, 원문 URL과 기관명, 그리고 시장·연준 관점에서 이 구성이 무엇을 뜻하는지 한두 문장. **원문에 없는 구성 항목 수치는 절대 만들지 않는다** — 못 구했으면 그 사실과 사유를 쓴다(삭제 > 창작). 원문에 닿지 못했으면 반드시 그렇게 명기한다. 이 절이 §8 발행 게이트의 근거다.
 
+   **비FRED 지표도 원본이 있다.** `headline_releases`는 FRED 기반 지표만 감지하므로, 아래 6종은 STEP 2-5(b)에서 **최근 7일 내 발표된 것**을 확인했을 때 같은 방식으로 원문까지 들어가 ⑧절에 추가한다(자동 감지 대상이 아니므로 네가 판단한다). 여기도 헤드라인만 옮기지 말고 세부 구성까지 본다.
+
+   | 지표 | 기관 | 원문 | 볼 것 |
+   |---|---|---|---|
+   | ISM Manufacturing / Services PMI | ISM | ismworld.org 보도자료 | 신규주문·생산·고용·가격지불 서브지수, 응답자 코멘트 |
+   | S&P Global US PMI | S&P Global | pmi.spglobal.com | 제조/서비스 분해, 투입·산출 가격 |
+   | ADP National Employment | ADP Research | adpemploymentreport.com | 기업규모별·업종별 증감, 임금 상승률 |
+   | CB Consumer Confidence | Conference Board | conference-board.org | 현재상황 대 기대지수 격차, 노동시장 차이(jobs plentiful−hard to get) |
+   | Philadelphia Fed Mfg Survey | Philadelphia Fed | philadelphiafed.org | 신규주문·출하·6개월 기대, 가격 서브지수 |
+   | NY Fed Inflation Expectations | NY Fed | newyorkfed.org/microeconomics/sce | 1년·3년·5년 기대, 소득·지출 기대 |
+
    보조로 `macro_metrics.json`의 `headline_releases[].components`에 FRED에서 계산한 구성 항목(에너지·주거비·산업별 고용 등)의 MoM이 들어 있다. 원문과 **교차 확인**용이고, 원문 서술을 대체하지 않는다.
 
 6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치 (검색 1~2회)
