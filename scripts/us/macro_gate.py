@@ -49,20 +49,52 @@ def parse_regime_cell(section):
 
 
 _GROUP = re.compile(r'\bdata-macro-group\s*=\s*"([a-z_]+)"')
+_RELEASE = re.compile(r'\bdata-release\s*=\s*"([a-z0-9-]+)"')
+_NUM = re.compile(r'\d+(?:\.\d+)?')
+_YEAR = re.compile(r'^(?:19|20)\d{2}$')
+
+# Known statistical agencies — naming one (or linking the release) is how the block
+# shows it went to the source rather than paraphrasing the dashboard row.
+AGENCIES = ('BLS', 'BEA', 'Census', 'DOL', 'NAR', 'Federal Reserve', 'U. Michigan',
+            '노동통계국', '경제분석국', '센서스국', '노동부', '연준')
+
+# Headline + at least two component figures. A block that names one number has not
+# taken anything apart; it has restated the dashboard.
+MIN_RELEASE_FIGURES = 3
+
+
+def _blocks(section, wanted):
+    """{key: prose} for markers of one kind, each sliced to the next marker of ANY kind.
+
+    Slicing on markers rather than on a matching close tag keeps this indifferent to how
+    the writer nests things. The boundary has to span every marker kind, though —
+    otherwise a release block runs on into the channel blocks below it and inherits
+    their figures, which would let a bare headline number pass the anatomy check.
+    """
+    section = section or ''
+    hits = sorted((m.start(), kind, m.group(1))
+                  for kind, pat in (('release', _RELEASE), ('group', _GROUP))
+                  for m in pat.finditer(section))
+    out = {}
+    for n, (at, kind, key) in enumerate(hits):
+        if kind != wanted:
+            continue
+        end = hits[n + 1][0] if n + 1 < len(hits) else len(section)
+        out[key] = strip_tags(section[at:end])
+    return out
 
 
 def parse_group_blocks(section):
-    """{group key: prose} — each block runs to the next group marker or section end.
+    return _blocks(section, 'group')
 
-    Slicing on the marker rather than on a matching close tag keeps this indifferent to
-    how the writer nests the block, which is one less thing for a gate to be brittle about.
-    """
-    hits = [(m.group(1), m.start()) for m in _GROUP.finditer(section or '')]
-    out = {}
-    for n, (key, at) in enumerate(hits):
-        end = hits[n + 1][1] if n + 1 < len(hits) else len(section)
-        out[key] = strip_tags(section[at:end])
-    return out
+
+def parse_release_blocks(section):
+    return _blocks(section, 'release')
+
+
+def _figures(text):
+    """Distinct numeric tokens, with bare years dropped — a date is not a data point."""
+    return {t for t in _NUM.findall(text or '') if not _YEAR.match(t)}
 
 
 def parse_transmission_cells(section):
@@ -158,6 +190,45 @@ def _check_groups(section, v):
                      '「추이 확인 필요」류 무판정 문구는 금지')
 
 
+def _check_releases(section, macro_eval, v):
+    """A new print must be taken apart, not just quoted.
+
+    The dashboard already prints the headline number; this section exists to say what
+    moved underneath it and what to make of that. So the block has to reach the issuing
+    agency's release and carry the components, or it is adding nothing.
+    """
+    wanted = (macro_eval or {}).get('headline_releases') or []
+    if not wanted:
+        return
+    blocks = parse_release_blocks(section)
+    for rel in wanted:
+        key = rel.get('key')
+        label = rel.get('label') or key
+        text = blocks.get(key)
+        if text is None:
+            v.append(f'§8: 신규 발표 「{label}」 해부 블록이 없다 — '
+                     f'<div data-release="{key}">로 감쌀 것')
+            continue
+
+        primary = next((i for i in rel.get('indicators') or []
+                        if i.get('name') == rel.get('primary')), None)
+        if primary and primary.get('actual') is not None \
+                and not _cited(text, primary['actual']):
+            v.append(f'§8 {key}: 「{label}」 블록에 {primary["name"]} 실제값 '
+                     f'{primary["actual"]}이 없다')
+
+        has_source = (any(a in text for a in AGENCIES) or 'http' in text
+                      or (rel.get('agency') and rel['agency'] in text))
+        if not has_source:
+            agency = rel.get('agency') or '발표 기관'
+            v.append(f'§8 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
+                     f'{agency}의 릴리스를 근거로 밝힐 것')
+
+        if len(_figures(text)) < MIN_RELEASE_FIGURES:
+            v.append(f'§8 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
+                     '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
+
+
 def _check_reconciliation(section, next_macro, stance, v):
     if not stance:
         return
@@ -249,6 +320,7 @@ def check(html, prev_macro, macro_eval, next_macro, stance=None):
     v = []
 
     regime_cell = _check_regime(section, text, macro_eval, v)
+    _check_releases(section, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
     _check_reconciliation(section, next_macro, stance, v)
     _check_policy(text, prev_macro, macro_eval, next_macro, v)

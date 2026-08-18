@@ -206,3 +206,18 @@ def test_group_of_maps_an_asset_to_its_channel():
 def test_group_of_rejects_an_unknown_asset():
     with pytest.raises(ValueError):
         macro.group_of('crypto')
+
+
+# ---------------------------------------------------- headline releases pass-through
+
+def test_headline_releases_reach_the_writer_contract():
+    m = metrics(new_releases=['CPI YoY'])
+    m['headline_releases'] = [{'name': 'CPI YoY', 'key': 'cpi-yoy', 'actual': 3.54,
+                               'agency': 'BLS', 'url': 'https://example.test'}]
+    ev = macro.evaluate(book(), m, '2026-08-14')
+    assert ev['headline_releases'][0]['key'] == 'cpi-yoy'
+
+
+def test_headline_releases_default_to_empty():
+    ev = macro.evaluate(book(), metrics(), '2026-08-14')
+    assert ev['headline_releases'] == []

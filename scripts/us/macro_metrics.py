@@ -46,6 +46,59 @@ _POLARITY = {
     'Michigan 1-Yr Inflation Exp': (1, 3),
 }
 
+# Where the number actually comes from. The dashboard prints FRED's copy, but FRED only
+# carries the headline series — the composition that explains it (which CPI basket line,
+# which payroll industry) lives only in the issuing agency's release.
+#
+# Keyed by *release document*, not by indicator: CPI YoY and CPI MoM are two rows off one
+# BLS press release, and dissecting the same document twice is waste on the page and in
+# the collector's budget. tier 1 = the prints markets trade; tier 2 = context.
+RELEASES = {
+    'cpi': (1, 'BLS', '소비자물가(CPI)', 'https://www.bls.gov/news.release/cpi.nr0.htm'),
+    'employment': (1, 'BLS', '고용상황(Employment Situation)',
+                   'https://www.bls.gov/news.release/empsit.nr0.htm'),
+    'pce': (1, 'BEA', '개인소비지출(PCE)',
+            'https://www.bea.gov/data/personal-consumption-expenditures-price-index'),
+    'retail-sales': (1, 'Census', '소매판매',
+                     'https://www.census.gov/retail/marts/www/marts_current.pdf'),
+    'gdp': (1, 'BEA', 'GDP', 'https://www.bea.gov/data/gdp/gross-domestic-product'),
+    'ppi': (2, 'BLS', '생산자물가(PPI)', 'https://www.bls.gov/news.release/ppi.nr0.htm'),
+    'claims': (2, 'DOL', '신규 실업수당 청구', 'https://www.dol.gov/ui/data.pdf'),
+    'jolts': (2, 'BLS', 'JOLTS 구인·이직', 'https://www.bls.gov/news.release/jolts.nr0.htm'),
+    'industrial-production': (2, 'Federal Reserve', '산업생산(G.17)',
+                              'https://www.federalreserve.gov/releases/g17/current/'),
+    'durable-goods': (2, 'Census', '내구재 주문',
+                      'https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf'),
+    'new-home-sales': (2, 'Census', '신규주택 판매',
+                       'https://www.census.gov/construction/nrs/pdf/newressales.pdf'),
+    'existing-home-sales': (2, 'NAR', '기존주택 판매',
+                            'https://www.nar.realtor/newsroom/existing-home-sales'),
+    'michigan': (2, 'U. Michigan', '미시간대 소비자심리', 'http://www.sca.isr.umich.edu/'),
+}
+
+INDICATOR_RELEASE = {
+    'CPI YoY': 'cpi', 'CPI MoM': 'cpi', 'Core CPI YoY': 'cpi', 'Core CPI MoM': 'cpi',
+    'Nonfarm Payrolls (chg)': 'employment', 'Unemployment Rate': 'employment',
+    'Avg Hourly Earnings MoM': 'employment',
+    'Core PCE YoY': 'pce', 'PCE Price Index YoY': 'pce',
+    'Retail Sales MoM': 'retail-sales',
+    'Real GDP Growth QoQ (ann.)': 'gdp',
+    'PPI Final Demand MoM': 'ppi',
+    'Initial Jobless Claims': 'claims', 'Continuing Jobless Claims': 'claims',
+    'Initial Claims 4-wk MA': 'claims',
+    'JOLTS Job Openings': 'jolts',
+    'Industrial Production MoM': 'industrial-production',
+    'Durable Goods Orders MoM': 'durable-goods',
+    'New Home Sales': 'new-home-sales',
+    'Existing Home Sales': 'existing-home-sales',
+    'Michigan Consumer Sentiment': 'michigan', 'Michigan 1-Yr Inflation Exp': 'michigan',
+}
+
+# Anatomy is worth doing properly for a few releases, not thinly for a dozen. On the
+# first run every indicator reads as new, so an uncapped list would send the collector
+# after every press release the dashboard touches.
+MAX_HEADLINE_RELEASES = 3
+
 GROWTH_AXES = ('Labor', 'Activity', 'Consumption')
 INFLATION_AXES = ('Inflation',)
 
@@ -104,6 +157,41 @@ def momentum_z(values, window, lookback=LOOKBACK):
     return round(now / sd, _R3)
 
 
+def release_key(name):
+    """HTML-attribute-safe id for a release block marker."""
+    out = []
+    for ch in (name or '').lower():
+        if ch.isalnum():
+            out.append(ch)
+        elif out and out[-1] != '-':
+            out.append('-')
+    return ''.join(out).strip('-')
+
+
+def _headline_releases(rows, releases):
+    """New prints grouped by the document that announced them, most market-moving first."""
+    new = [r for r in rows if r['name'] in set(releases)]
+    grouped = {}
+    for r in new:
+        key = INDICATOR_RELEASE.get(r['name']) or release_key(r['name'])
+        grouped.setdefault(key, []).append(r)
+
+    out = []
+    for key, items in grouped.items():
+        tier, agency, label, url = RELEASES.get(key, (3, None, items[0]['name'], None))
+        ranked = sorted(items, key=lambda r: -abs(r['signed_z'] or 0.0))
+        out.append({
+            'key': key, 'label': label, 'tier': tier, 'agency': agency, 'url': url,
+            'primary': ranked[0]['name'],
+            'max_abs_z': abs(ranked[0]['signed_z'] or 0.0),
+            'indicators': [{'name': r['name'], 'axis': r['axis'], 'actual': r['actual'],
+                            'previous': r.get('previous'), 'ref_period': r['ref_period'],
+                            'momentum_z': r['momentum_z']} for r in items],
+        })
+    out.sort(key=lambda r: (r['tier'], -r['max_abs_z']))
+    return out[:MAX_HEADLINE_RELEASES]
+
+
 def _axis_mean(rows, axis):
     zs = [r['signed_z'] for r in rows if r['axis'] == axis and r['signed_z'] is not None]
     return sum(zs) / len(zs) if zs else None
@@ -146,6 +234,7 @@ def compute(series_by_id, econ_indicators, last_seen=None):
             'momentum_z': z,
             'signed_z': None if z is None else round(pol * z, _R3),
             'actual': item.get('actual'),
+            'previous': item.get('previous'),
             'ref_period': item.get('ref_period'),
         })
 
@@ -166,5 +255,6 @@ def compute(series_by_id, econ_indicators, last_seen=None):
                         for a in GROWTH_AXES + INFLATION_AXES},
         'indicators': rows,
         'new_releases': releases,
+        'headline_releases': _headline_releases(rows, releases),
         'last_seen': seen_now,
     }

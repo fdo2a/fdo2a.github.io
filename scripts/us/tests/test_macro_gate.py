@@ -256,3 +256,61 @@ def test_parse_group_blocks_slices_each_channel():
     assert set(blocks) == {k for k, _, _ in macro.TRANSMISSION_GROUPS}
     assert 'Core PCE' in blocks['rates']
     assert 'Core PCE' not in blocks['demand']
+
+
+# --- release anatomy --------------------------------------------------------
+
+RELEASES = [{'key': 'cpi', 'label': '소비자물가(CPI)', 'tier': 1, 'agency': 'BLS',
+             'url': 'https://www.bls.gov/news.release/cpi.nr0.htm',
+             'primary': 'CPI YoY',
+             'indicators': [{'name': 'CPI YoY', 'actual': 3.54, 'previous': 3.73,
+                             'ref_period': '2026-07-01'}]}]
+
+ANATOMY = ('<div data-release="cpi"><h4>7월 CPI 3.54%</h4>'
+           '<p>헤드라인 3.54%는 전월 3.73%에서 내려왔다. 에너지가 -1.2%p 끌어내렸고 '
+           '주거비는 +0.31%로 여전히 붙어 있다. 출처 BLS.</p></div>')
+
+
+def rel_eval(releases=None, **kw):
+    ev = eval_file(**kw)
+    ev['headline_releases'] = RELEASES if releases is None else releases
+    return ev
+
+
+def test_new_release_requires_an_anatomy_block():
+    out = check(build_html(), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x for x in out)
+
+
+def test_anatomy_block_satisfies_the_requirement():
+    out = check(build_html(extra=ANATOMY), macro_file(), rel_eval(), next_file())
+    assert out == []
+
+
+def test_anatomy_must_quote_the_headline_number():
+    block = (ANATOMY.replace('<h4>7월 CPI 3.54%</h4>', '<h4>7월 CPI</h4>')
+                    .replace('헤드라인 3.54%는 전월 3.73%에서', '헤드라인은 전월 3.73%에서'))
+    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '실제값' in x for x in out)
+
+
+def test_anatomy_must_name_the_primary_source():
+    block = ANATOMY.replace(' 출처 BLS.', '')
+    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '원본 발표' in x for x in out)
+
+
+def test_headline_number_alone_is_not_anatomy():
+    block = ('<div data-release="cpi"><p>7월 CPI는 3.54%로 나왔다. 출처 BLS.</p></div>')
+    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '세부' in x for x in out)
+
+
+def test_a_year_is_not_counted_as_a_component_figure():
+    block = ('<div data-release="cpi"><p>2026년 7월 CPI는 3.54%. 출처 BLS.</p></div>')
+    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '세부' in x for x in out)
+
+
+def test_quiet_day_needs_no_anatomy_block():
+    assert check(build_html(), macro_file(), rel_eval(releases=[]), next_file()) == []

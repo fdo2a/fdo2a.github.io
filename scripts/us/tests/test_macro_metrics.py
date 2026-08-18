@@ -161,3 +161,69 @@ def test_unknown_indicator_name_falls_back_to_positive_polarity():
     econ = [ind('Some New Print', 'Activity', 'XYZ')]
     out = mm.compute({'XYZ': dated(jump(1))}, econ)
     assert out['growth_score'] > 0
+
+
+# ------------------------------------------------------ headline releases
+
+def test_only_newly_released_indicators_become_headline_releases():
+    econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL', actual=3.5, ref='2026-07-01'),
+            ind('Retail Sales MoM', 'Consumption', 'RSAFS', actual=0.4, ref='2026-07-01')]
+    series = {'CPIAUCSL': dated(jump(1)), 'RSAFS': dated(jump(1))}
+    out = mm.compute(series, econ, last_seen={'CPI YoY': ['2026-07-01', 3.5]})
+    assert [r['key'] for r in out['headline_releases']] == ['retail-sales']
+
+
+def test_indicators_from_one_press_release_collapse_into_one_block():
+    """CPI YoY and CPI MoM are the same BLS release — dissecting it twice is waste."""
+    econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL', actual=3.54),
+            ind('CPI MoM', 'Inflation', 'CPIAUCSL', actual=0.07),
+            ind('Core CPI YoY', 'Inflation', 'CPILFESL', actual=2.79)]
+    series = {'CPIAUCSL': dated(jump(1)), 'CPILFESL': dated(jump(1))}
+    out = mm.compute(series, econ)
+    assert len(out['headline_releases']) == 1
+    rel = out['headline_releases'][0]
+    assert rel['key'] == 'cpi'
+    assert [i['name'] for i in rel['indicators']] == ['CPI YoY', 'CPI MoM', 'Core CPI YoY']
+
+
+def test_release_carries_the_primary_source():
+    econ = [ind('Nonfarm Payrolls (chg)', 'Labor', 'PAYEMS', actual=-23.0)]
+    out = mm.compute({'PAYEMS': dated(jump(1))}, econ)
+    rel = out['headline_releases'][0]
+    assert rel['key'] == 'employment'
+    assert rel['agency'] == 'BLS'
+    assert rel['url'].startswith('https://')
+    assert rel['indicators'][0]['actual'] == -23.0
+
+
+def test_the_primary_indicator_is_the_biggest_mover_in_the_release():
+    econ = [ind('Unemployment Rate', 'Labor', 'UNRATE', actual=4.1),
+            ind('Nonfarm Payrolls (chg)', 'Labor', 'PAYEMS', actual=-23.0)]
+    series = {'UNRATE': dated(jump(1)),
+              'PAYEMS': dated(jump(1)[:-3] + [400.0] * 3)}
+    out = mm.compute(series, econ)
+    assert out['headline_releases'][0]['primary'] == 'Nonfarm Payrolls (chg)'
+
+
+def test_market_moving_releases_outrank_secondary_ones():
+    econ = [ind('New Home Sales', 'Activity', 'HSN1F'),
+            ind('CPI YoY', 'Inflation', 'CPIAUCSL')]
+    series = {'HSN1F': dated(jump(1)), 'CPIAUCSL': dated(jump(1))}
+    out = mm.compute(series, econ)
+    assert [r['key'] for r in out['headline_releases']][0] == 'cpi'
+
+
+def test_at_most_three_releases_are_promoted():
+    econ = [ind(f'X{i}', 'Activity', f'X{i}') for i in range(6)]
+    series = {f'X{i}': dated(jump(1)) for i in range(6)}
+    out = mm.compute(series, econ)
+    assert len(out['headline_releases']) == 3
+    assert len(out['new_releases']) == 6
+
+
+def test_indicator_without_a_known_source_stands_alone_without_a_url():
+    econ = [ind('Some New Print', 'Activity', 'XYZ')]
+    out = mm.compute({'XYZ': dated(jump(1))}, econ)
+    rel = out['headline_releases'][0]
+    assert rel['key'] == 'some-new-print'
+    assert rel['url'] is None and rel['agency'] is None

@@ -167,6 +167,9 @@ def evaluate(macro, metrics, report_date, max_gap_bd=3):
         'scores': scores,
         'implied': implied,
         'new_releases': new_releases,
+        # The prints worth taking apart today. Empty on a quiet day, which is exactly
+        # when the anatomy block should not appear at all.
+        'headline_releases': list(m.get('headline_releases') or []),
     }
 
     prev_regime = (macro or {}).get('regime')

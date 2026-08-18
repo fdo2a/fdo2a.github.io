@@ -201,14 +201,27 @@ print(json.dumps(out, default=str))
    - (a) **컨센서스(Forecast)와 정확한 발표일**: `econ_indicators.json`에는 없다. `ref_period`가 가장 최근(≈최근 1~2주 내 발표)인 지표에 한해서만 컨센서스·발표일을 타겟 검색한다 — 하루에 보통 1~3개뿐. 오래된 기준월 지표는 Forecast 칸을 비우고 발표일은 기준월로 갈음(웹서치 낭비 금지).
    - (b) **FRED에 없는 지표** — ISM Mfg/Services PMI, S&P Global PMI, ADP, CB Consumer Confidence, Philadelphia Fed, NY Fed 1-Yr Inflation Exp. 이 중 **최근 7일 내 발표된 것만** 검색해 Actual/Forecast/Previous를 채운다. 최근 발표가 아니면 생략 가능.
    - tradingeconomics 캘린더 페이지 **통째 WebFetch 금지**(토큰 과다) — 필요한 항목만 타겟 WebSearch.
+5b. **신규 발표 원문 해부 (2026-08-18 사용자 지시 — 헤드라인에서 멈추지 말 것)**: `data/macro_metrics.json`의 `headline_releases`(최대 3건)가 **오늘 실제로 새로 나온 발표문**과 그 **기관·원문 URL·그 발표문이 담은 지표들(`indicators`)**을 이미 지목해 준다. 항목은 지표가 아니라 **발표문 단위**다 — CPI YoY와 CPI MoM은 한 건으로 묶여 있으니 릴리스도 한 번만 읽는다. 추측하지 말고 그 목록만 따라간다. 목록이 비어 있으면 이 항목 전체를 건너뛴다 — 발표 없는 날 억지로 만들지 않는다.
+
+   각 건마다 `url`을 WebFetch(막히면 `[기관] [지표] release [기준월]`로 WebSearch)해 **헤드라인 숫자를 만든 세부 구성**을 뽑는다. 무엇을 뽑는지는 지표마다 다르다:
+   - **CPI/PPI** — 에너지·식품·주거비(shelter)·중고차·의료 등 주요 바스켓의 기여도와 각 항목 MoM, core 대비 headline 격차, 특이 항목(계절조정·일회성)
+   - **고용보고서** — 산업별 증감(정부·헬스케어·레저 등), 전월치 **수정폭**, 경제활동참가율, U-6, 주당 노동시간, 시간당임금 MoM/YoY
+   - **소매판매** — control group, 자동차·주유 제외 코어, 온라인·외식 등 카테고리별 기여
+   - **PCE** — core services ex-housing(연준이 보는 축), 상품 vs 서비스 분해, 실질 소비지출
+   - **GDP** — 최종수요(final sales), 재고·순수출 기여도, 소비·설비투자 항목
+   - **신규실업수당** — 주별 특이 요인(주 정부 이슈·휴일 효과), 계속수당 추세, 미조정치와의 괴리
+
+   `research_notes.md`에 **⑧ 신규 발표 해부** 절을 만들어 건별로 적는다: 지표명·기준월·헤드라인 수치, **세부 항목 수치 최소 2개**, 원문 URL과 기관명, 그리고 시장·연준 관점에서 이 구성이 무엇을 뜻하는지 한두 문장. 세부를 못 구하면 그 사실과 사유를 명기한다(**구성 항목 수치 창작 절대 금지** — 없으면 없다고 쓰는 것이 낫다). 이 절이 §8 발행 게이트의 근거가 되므로, 원문에 닿지 못했으면 반드시 그렇게 적는다.
+
 6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치 (검색 1~2회)
 7. STEP 1 데이터에서 파악한 최대 변동 종목·자산에 대한 추가 검색
 
-`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록. 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명).
+`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록 ⑧ 신규 발표 해부(STEP 2-5b, `headline_releases`가 있을 때만). 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명).
 
 ## STEP 3 — 검증 게이트 (필수)
 
 1. `market_data.json` 파싱 확인 — indices/sectors/yields 핵심 필드가 non-null이고 지수 date가 서로 일치하는지 (FRED 금리는 1영업일 랙 허용).
 2. 등락률 절대값이 비정상적으로 큰 값(지수 ±5%, 개별 종목 ±15% 초과 등)은 재조회·웹 교차 확인으로 데이터 오류 여부를 가린다.
 3. 경제지표 Actual/Previous는 `data/econ_indicators.json`(FRED)이 채우므로 재검색 불필요. **미확정으로 남는 것은 Forecast(컨센서스)와 비FRED 지표뿐** — 이는 최근 발표분만 1~2회 검색하고, 안 되면 '미확정 항목'에 사유 명기(**빈 값 창작 금지**, '컨센서스 미공표'는 확인 시에만).
-4. 최종 메시지로 보고: 산출물 파일 경로 목록, 데이터 기준일(주식/금리 각각), 차트 생성 여부, 미확정 항목 요약.
+4. `macro_metrics.json`에 `headline_releases`가 있으면 research_notes.md ⑧절에 건별 항목이 있는지 확인한다 — 원문에 닿지 못한 건은 그 사유가 적혀 있어야 한다.
+5. 최종 메시지로 보고: 산출물 파일 경로 목록, 데이터 기준일(주식/금리 각각), 차트 생성 여부, 미확정 항목 요약, **신규 발표 해부 건수와 원문 도달 여부**.
