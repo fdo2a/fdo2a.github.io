@@ -264,11 +264,14 @@ RELEASES = [{'key': 'cpi', 'label': '소비자물가(CPI)', 'tier': 1, 'agency':
              'url': 'https://www.bls.gov/news.release/cpi.nr0.htm',
              'primary': 'CPI YoY',
              'indicators': [{'name': 'CPI YoY', 'actual': 3.54, 'previous': 3.73,
-                             'ref_period': '2026-07-01'}]}]
+                             'ref_period': '2026-07-01'}],
+             'components': [{'label': '에너지', 'actual': -1.484},
+                            {'label': '주거비(shelter)', 'actual': 0.139},
+                            {'label': '서비스 ex-에너지', 'actual': 0.228}]}]
 
 ANATOMY = ('<div data-release="cpi"><h4>7월 CPI 3.54%</h4>'
-           '<p>헤드라인 3.54%는 전월 3.73%에서 내려왔다. 에너지가 -1.2%p 끌어내렸고 '
-           '주거비는 +0.31%로 여전히 붙어 있다. 출처 BLS.</p></div>')
+           '<p>헤드라인 3.54%는 전월 3.73%에서 내려왔다. 에너지가 -1.5% 빠지며 끌어내렸고 '
+           '주거비는 +0.14%로 여전히 붙어 있다. 출처 BLS.</p></div>')
 
 
 def rel_eval(releases=None, **kw):
@@ -303,14 +306,36 @@ def test_anatomy_must_name_the_primary_source():
 def test_headline_number_alone_is_not_anatomy():
     block = ('<div data-release="cpi"><p>7월 CPI는 3.54%로 나왔다. 출처 BLS.</p></div>')
     out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
-    assert any('cpi' in x and '세부' in x for x in out)
+    assert any('cpi' in x and '구성 항목' in x for x in out)
 
 
 def test_a_year_is_not_counted_as_a_component_figure():
+    rel = dict(RELEASES[0]); rel.pop('components')
     block = ('<div data-release="cpi"><p>2026년 7월 CPI는 3.54%. 출처 BLS.</p></div>')
-    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    out = check(build_html(extra=block), macro_file(), rel_eval([rel]), next_file())
     assert any('cpi' in x and '세부' in x for x in out)
 
 
 def test_quiet_day_needs_no_anatomy_block():
     assert check(build_html(), macro_file(), rel_eval(releases=[]), next_file()) == []
+
+
+def test_anatomy_must_cite_the_components_that_moved():
+    """The whole point: a block that names no basket line has not decomposed anything."""
+    block = ('<div data-release="cpi"><p>7월 CPI 3.54%는 전월 3.73%에서 0.19%p '
+             '내려왔다. 출처 BLS.</p></div>')
+    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '구성 항목' in x for x in out)
+
+
+def test_one_component_is_not_enough():
+    block = ('<div data-release="cpi"><p>7월 CPI 3.54%. 에너지가 -1.5% 빠졌다. '
+             '전월 3.73%. 출처 BLS.</p></div>')
+    out = check(build_html(extra=block), macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '구성 항목' in x for x in out)
+
+
+def test_a_release_without_a_known_breakdown_falls_back_to_the_figure_count():
+    rel = dict(RELEASES[0]); rel.pop('components')
+    block = ('<div data-release="cpi"><p>CPI 3.54%, 전월 3.73%, MoM 0.07%. 출처 BLS.</p></div>')
+    assert check(build_html(extra=block), macro_file(), rel_eval([rel]), next_file()) == []

@@ -41,7 +41,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
 
       - name: Install Python deps
-        run: pip install --quiet yfinance pandas matplotlib certifi
+        run: pip install --quiet yfinance pandas matplotlib certifi 'curl_cffi>=0.15.0' pypdf
 
       - name: Collect
         run: |
@@ -61,6 +61,14 @@ jobs:
         continue-on-error: true
         run: python scripts/eval_macro_regime.py --datadir data
 
+      - name: Fetch primary releases
+        # Non-core: pulls the actual press release behind each promoted indicator so the
+        # routine reads the document rather than paraphrasing a dashboard row. The
+        # agencies 403 ordinary clients, hence the TLS impersonation in the script.
+        # Never fail the collection job on it.
+        continue-on-error: true
+        run: python scripts/fetch_releases.py --datadir data
+
       - name: Report status
         run: |
           python - <<'PY'
@@ -78,6 +86,7 @@ jobs:
           git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
           git add data/yield_curve.png data/stance_metrics.json data/stance_eval.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
+          git add data/releases 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No data changes to commit.'
           else

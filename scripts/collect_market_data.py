@@ -597,6 +597,27 @@ def main():
         mm = compute_macro_metrics(econ_series, econ, last_seen)
         print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
               f"신규 발표 {len(mm['new_releases'])}건")
+
+        # Only the promoted releases pull their breakdown, so a quiet day costs nothing
+        # and a CPI day costs six extra CSVs. The issuing agencies 403 their own press
+        # releases to non-browser clients; FRED redistributes the same components.
+        from us.macro_metrics import attach_components, component_specs
+        specs = component_specs(mm['headline_releases'])
+        comp_series = {}
+        for spec in specs:
+            sid = spec['fred_id']
+            if sid in comp_series or sid in econ_series:
+                continue
+            try:
+                comp_series[sid] = retry(lambda sid=sid: fred_series(sid), attempts=2)
+            except Exception as e:
+                print(f'  component {sid} failed: {e}', file=sys.stderr)
+            time.sleep(0.4)
+        comp_series.update(econ_series)
+        attach_components(mm['headline_releases'], comp_series)
+        for rel in mm['headline_releases']:
+            print(f"    해부 {rel['key']}: {rel['label']} "
+                  f"({len(rel.get('components') or [])}개 구성 항목)")
         json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
                   open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
                   indent=2, default=str, ensure_ascii=False)

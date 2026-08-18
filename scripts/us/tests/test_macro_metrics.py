@@ -227,3 +227,54 @@ def test_indicator_without_a_known_source_stands_alone_without_a_url():
     rel = out['headline_releases'][0]
     assert rel['key'] == 'some-new-print'
     assert rel['url'] is None and rel['agency'] is None
+
+
+# --------------------------------------------------- release components
+
+def promoted(key='cpi'):
+    return [{'key': key, 'label': 'L', 'tier': 1, 'agency': 'BLS', 'url': 'u',
+             'primary': 'CPI YoY', 'max_abs_z': 1.0, 'indicators': []}]
+
+
+def test_component_specs_only_cover_promoted_releases():
+    specs = mm.component_specs(promoted('cpi'))
+    assert specs
+    assert {s['release'] for s in specs} == {'cpi'}
+    assert all(s['fred_id'] for s in specs)
+
+
+def test_component_specs_are_empty_for_a_release_without_a_breakdown():
+    assert mm.component_specs(promoted('michigan')) == []
+
+
+def test_attach_components_fills_values_from_history():
+    rels = promoted('cpi')
+    specs = mm.component_specs(rels)
+    series = {s['fred_id']: dated([100, 110]) for s in specs}
+    mm.attach_components(rels, series)
+    comps = rels[0]['components']
+    assert comps and all(c['actual'] is not None for c in comps)
+    assert comps[0]['ref_period'] == dated([100, 110])[-1][0]
+
+
+def test_payroll_components_are_level_differences_in_thousands():
+    rels = promoted('employment')
+    specs = mm.component_specs(rels)
+    series = {s['fred_id']: dated([1000.0, 1023.0]) for s in specs}
+    mm.attach_components(rels, series)
+    mfg = [c for c in rels[0]['components'] if c['transform'] == 'mom_diff']
+    assert mfg and mfg[0]['actual'] == pytest.approx(23.0)
+
+
+def test_a_component_whose_series_is_missing_is_dropped_not_fatal():
+    rels = promoted('cpi')
+    specs = mm.component_specs(rels)
+    series = {specs[0]['fred_id']: dated([100, 110])}
+    mm.attach_components(rels, series)
+    assert len(rels[0]['components']) == 1
+
+
+def test_attach_components_is_a_no_op_without_promoted_releases():
+    rels = []
+    mm.attach_components(rels, {})
+    assert rels == []

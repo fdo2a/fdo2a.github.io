@@ -201,17 +201,22 @@ print(json.dumps(out, default=str))
    - (a) **컨센서스(Forecast)와 정확한 발표일**: `econ_indicators.json`에는 없다. `ref_period`가 가장 최근(≈최근 1~2주 내 발표)인 지표에 한해서만 컨센서스·발표일을 타겟 검색한다 — 하루에 보통 1~3개뿐. 오래된 기준월 지표는 Forecast 칸을 비우고 발표일은 기준월로 갈음(웹서치 낭비 금지).
    - (b) **FRED에 없는 지표** — ISM Mfg/Services PMI, S&P Global PMI, ADP, CB Consumer Confidence, Philadelphia Fed, NY Fed 1-Yr Inflation Exp. 이 중 **최근 7일 내 발표된 것만** 검색해 Actual/Forecast/Previous를 채운다. 최근 발표가 아니면 생략 가능.
    - tradingeconomics 캘린더 페이지 **통째 WebFetch 금지**(토큰 과다) — 필요한 항목만 타겟 WebSearch.
-5b. **신규 발표 원문 해부 (2026-08-18 사용자 지시 — 헤드라인에서 멈추지 말 것)**: `data/macro_metrics.json`의 `headline_releases`(최대 3건)가 **오늘 실제로 새로 나온 발표문**과 그 **기관·원문 URL·그 발표문이 담은 지표들(`indicators`)**을 이미 지목해 준다. 항목은 지표가 아니라 **발표문 단위**다 — CPI YoY와 CPI MoM은 한 건으로 묶여 있으니 릴리스도 한 번만 읽는다. 추측하지 말고 그 목록만 따라간다. 목록이 비어 있으면 이 항목 전체를 건너뛴다 — 발표 없는 날 억지로 만들지 않는다.
+5b. **신규 발표 원문 해부 (2026-08-18 사용자 지시 — 원문을 직접 열어 읽고 숫자를 분석할 것)**: `data/macro_metrics.json`의 `headline_releases`(최대 3건)가 오늘 새로 나온 **발표문**과 기관·URL·그 발표문이 담은 지표들을 지목한다. 항목은 지표가 아니라 발표문 단위다 — CPI YoY와 CPI MoM은 한 건으로 묶여 있다. 목록이 비면 이 항목 전체를 건너뛴다.
 
-   각 건마다 `url`을 WebFetch(막히면 `[기관] [지표] release [기준월]`로 WebSearch)해 **헤드라인 숫자를 만든 세부 구성**을 뽑는다. 무엇을 뽑는지는 지표마다 다르다:
-   - **CPI/PPI** — 에너지·식품·주거비(shelter)·중고차·의료 등 주요 바스켓의 기여도와 각 항목 MoM, core 대비 headline 격차, 특이 항목(계절조정·일회성)
-   - **고용보고서** — 산업별 증감(정부·헬스케어·레저 등), 전월치 **수정폭**, 경제활동참가율, U-6, 주당 노동시간, 시간당임금 MoM/YoY
-   - **소매판매** — control group, 자동차·주유 제외 코어, 온라인·외식 등 카테고리별 기여
-   - **PCE** — core services ex-housing(연준이 보는 축), 상품 vs 서비스 분해, 실질 소비지출
-   - **GDP** — 최종수요(final sales), 재고·순수출 기여도, 소비·설비투자 항목
-   - **신규실업수당** — 주별 특이 요인(주 정부 이슈·휴일 효과), 계속수당 추세, 미조정치와의 괴리
+   **원문은 이미 받아져 있다.** Actions가 `scripts/fetch_releases.py`로 각 발표문을 받아 `data/releases/<key>.txt`에 커밋해 둔다(`releases/index.json`에 성공 여부). BLS·DOL은 일반 클라이언트에 403을 주므로 TLS 지문 위장이 필요한데, 그 일은 Actions에서 이미 끝났다. **너는 그 파일을 Read해서 읽고 숫자를 분석한다.** 커밋된 파일이 없거나 `ok:false`면 그때만 `url`을 WebFetch하고, 그것도 막히면 `[기관] [지표] release [기준월]`로 WebSearch한다.
 
-   `research_notes.md`에 **⑧ 신규 발표 해부** 절을 만들어 건별로 적는다: 지표명·기준월·헤드라인 수치, **세부 항목 수치 최소 2개**, 원문 URL과 기관명, 그리고 시장·연준 관점에서 이 구성이 무엇을 뜻하는지 한두 문장. 세부를 못 구하면 그 사실과 사유를 명기한다(**구성 항목 수치 창작 절대 금지** — 없으면 없다고 쓰는 것이 낫다). 이 절이 §8 발행 게이트의 근거가 되므로, 원문에 닿지 못했으면 반드시 그렇게 적는다.
+   **읽을 때 무엇을 찾는가** — 헤드라인 숫자는 이미 `econ_indicators.json`에 있다. 원문에서 건져야 할 것은 **FRED가 주지 못하는 것들**이다:
+   - **기여도 귀속** — "shelter rose 0.1 percent, accounting for roughly two-thirds of the monthly all items increase" 같은 문장. 어느 항목이 헤드라인의 몇 할을 만들었는지
+   - **전월치 수정폭** — 고용보고서의 지난 두 달 revision은 헤드라인만큼 중요한데 FRED 최신 시리즈에는 흔적이 안 남는다
+   - **특이·일회성 요인** — 파업, 기상, 계절조정 왜곡, 정부 셧다운, 특정 주(state)의 처리 지연
+   - **기관이 직접 짚은 항목** — "motor vehicle insurance was among the major indexes that decreased" 처럼 원문이 이름을 부른 세부
+   - **본문 표(Table A 등)의 월별 궤적** — 이번 달만이 아니라 최근 6개월 흐름
+
+   지표별로 특히 볼 것: **CPI/PPI**는 shelter·에너지·식품·중고차·의료 기여와 core 대비 격차 / **고용보고서**는 산업별 증감·전월 수정폭·참가율·U-6·주당 노동시간·시간당임금 / **소매판매**는 control group과 카테고리 기여 / **PCE**는 core services ex-housing·상품 대 서비스 / **GDP**는 final sales와 재고·순수출 기여 / **신규 실업수당**은 주별 특이 요인과 계속수당 추세.
+
+   `research_notes.md`에 **⑧ 신규 발표 해부** 절을 만들어 발표문별로 적는다: 발표문 이름·기준월·헤드라인 수치, **원문에서 인용한 세부 수치 최소 2개**(가능하면 기여도 문장 그대로), 수정폭·특이 요인, 원문 URL과 기관명, 그리고 시장·연준 관점에서 이 구성이 무엇을 뜻하는지 한두 문장. **원문에 없는 구성 항목 수치는 절대 만들지 않는다** — 못 구했으면 그 사실과 사유를 쓴다(삭제 > 창작). 원문에 닿지 못했으면 반드시 그렇게 명기한다. 이 절이 §8 발행 게이트의 근거다.
+
+   보조로 `macro_metrics.json`의 `headline_releases[].components`에 FRED에서 계산한 구성 항목(에너지·주거비·산업별 고용 등)의 MoM이 들어 있다. 원문과 **교차 확인**용이고, 원문 서술을 대체하지 않는다.
 
 6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치 (검색 1~2회)
 7. STEP 1 데이터에서 파악한 최대 변동 종목·자산에 대한 추가 검색

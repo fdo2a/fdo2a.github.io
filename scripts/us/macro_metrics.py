@@ -94,6 +94,43 @@ INDICATOR_RELEASE = {
     'Michigan Consumer Sentiment': 'michigan', 'Michigan 1-Yr Inflation Exp': 'michigan',
 }
 
+# What actually moved underneath the headline. The issuing agencies sit behind bot
+# protection (bls.gov and dol.gov return 403 even to a real browser UA from a
+# residential IP — verified 2026-08-18), but the components are redistributed on FRED,
+# which this collector already reaches. So the decomposition is deterministic rather
+# than a daily scraping gamble — the same move that fixed STEP 1 on 2026-07-15.
+#
+# The press release still has things FRED does not: prior-month revisions, one-off
+# special factors, the agency's own framing. Those stay a job for web research.
+RELEASE_COMPONENTS = {
+    'cpi': (
+        ('에너지', 'CPIENGSL', 'mom_pct'),
+        ('식품', 'CPIUFDSL', 'mom_pct'),
+        ('주거비(shelter)', 'CUSR0000SAH1', 'mom_pct'),
+        ('중고차', 'CUSR0000SETA02', 'mom_pct'),
+        ('의료', 'CPIMEDSL', 'mom_pct'),
+        ('서비스 ex-에너지', 'CUSR0000SASLE', 'mom_pct'),
+    ),
+    'employment': (
+        ('민간 고용', 'USPRIV', 'mom_diff'),
+        ('정부 고용', 'USGOVT', 'mom_diff'),
+        ('헬스케어·사회복지', 'USEHS', 'mom_diff'),
+        ('레저·숙박', 'USLAH', 'mom_diff'),
+        ('제조업', 'MANEMP', 'mom_diff'),
+        ('경제활동참가율', 'CIVPART', 'level'),
+        ('U-6 실업률', 'U6RATE', 'level'),
+        ('주당 노동시간', 'AWHAETP', 'level'),
+    ),
+    'retail-sales': (
+        ('자동차 제외', 'RSFSXMV', 'mom_pct'),
+    ),
+    'pce': (
+        ('서비스', 'PCESV', 'mom_pct'),
+        ('내구재', 'PCEDG', 'mom_pct'),
+        ('실질 개인소비', 'PCEC96', 'mom_pct'),
+    ),
+}
+
 # Anatomy is worth doing properly for a few releases, not thinly for a dozen. On the
 # first run every indicator reads as new, so an uncapped list would send the collector
 # after every press release the dashboard touches.
@@ -190,6 +227,39 @@ def _headline_releases(rows, releases):
         })
     out.sort(key=lambda r: (r['tier'], -r['max_abs_z']))
     return out[:MAX_HEADLINE_RELEASES]
+
+
+def component_specs(headline_releases):
+    """Which extra FRED series today's promoted releases need. Only those — at most a
+    handful of fetches, and none at all on a day with no release worth dissecting."""
+    out = []
+    for rel in headline_releases or []:
+        for label, sid, tf in RELEASE_COMPONENTS.get(rel.get('key'), ()):
+            out.append({'release': rel['key'], 'label': label,
+                        'fred_id': sid, 'transform': tf})
+    return out
+
+
+def attach_components(headline_releases, series_by_id):
+    """Fill each promoted release's `components` in place from fetched history.
+
+    A component we could not fetch is dropped rather than carried as a hole — the
+    writer prints what is here, and a missing basket line is not worth failing on.
+    """
+    for rel in headline_releases or []:
+        comps = []
+        for label, sid, tf in RELEASE_COMPONENTS.get(rel.get('key'), ()):
+            raw = (series_by_id or {}).get(sid)
+            values = transform_series(raw, tf)
+            if not raw or not values:
+                continue
+            comps.append({
+                'label': label, 'fred_id': sid, 'transform': tf,
+                'actual': round(values[-1], _R3),
+                'previous': round(values[-2], _R3) if len(values) > 1 else None,
+                'ref_period': raw[-1][0],
+            })
+        rel['components'] = comps
 
 
 def _axis_mean(rows, axis):

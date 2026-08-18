@@ -62,6 +62,9 @@ AGENCIES = ('BLS', 'BEA', 'Census', 'DOL', 'NAR', 'Federal Reserve', 'U. Michiga
 # taken anything apart; it has restated the dashboard.
 MIN_RELEASE_FIGURES = 3
 
+# When macro_metrics.json carried a breakdown, name at least this many of its lines.
+MIN_CITED_COMPONENTS = 2
+
 
 def _blocks(section, wanted):
     """{key: prose} for markers of one kind, each sliced to the next marker of ANY kind.
@@ -224,7 +227,18 @@ def _check_releases(section, macro_eval, v):
             v.append(f'§8 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
                      f'{agency}의 릴리스를 근거로 밝힐 것')
 
-        if len(_figures(text)) < MIN_RELEASE_FIGURES:
+        # When the breakdown was collected deterministically we can ask the precise
+        # question — did the writer actually name the lines that moved? — instead of
+        # settling for "are there enough numbers in here".
+        comps = [c for c in (rel.get('components') or []) if c.get('actual') is not None]
+        if comps:
+            cited = [c for c in comps if _cited(text, c['actual'])]
+            if len(cited) < MIN_CITED_COMPONENTS:
+                names = ', '.join(f'{c["label"]} {c["actual"]}' for c in comps[:5])
+                v.append(f'§8 {key}: 「{label}」 블록이 구성 항목을 {len(cited)}개만 인용했다 '
+                         f'— {MIN_CITED_COMPONENTS}개 이상 필요. '
+                         f'macro_metrics.json에 있는 것: {names}')
+        elif len(_figures(text)) < MIN_RELEASE_FIGURES:
             v.append(f'§8 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
                      '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
 
