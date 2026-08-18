@@ -137,6 +137,44 @@ RELEASE_COMPONENTS = {
 # sending the collector after a dozen press releases.
 MAX_SECONDARY_RELEASES = 2
 
+# The dashboard table keeps the English series names (that is how they are published),
+# but prose has to read in Korean. Without this the §8 paragraphs turn into a list of
+# untranslated FRED tickers.
+LABELS_KO = {
+    'JOLTS Job Openings': '구인건수(JOLTS)',
+    'Initial Jobless Claims': '신규 실업수당 청구',
+    'Initial Claims 4-wk MA': '신규 청구 4주 평균',
+    'Continuing Jobless Claims': '계속 실업수당 청구',
+    'Nonfarm Payrolls (chg)': '비농업 고용',
+    'Unemployment Rate': '실업률',
+    'Avg Hourly Earnings MoM': '시간당 임금',
+    'Industrial Production MoM': '산업생산',
+    'Durable Goods Orders MoM': '내구재 주문',
+    'New Home Sales': '신규주택 판매',
+    'Existing Home Sales': '기존주택 판매',
+    'Real GDP Growth QoQ (ann.)': '실질 GDP 성장률',
+    'Retail Sales MoM': '소매판매',
+    'Michigan Consumer Sentiment': '미시간대 소비자심리',
+    'CPI YoY': '소비자물가 전년비',
+    'CPI MoM': '소비자물가 전월비',
+    'Core CPI YoY': '근원 소비자물가 전년비',
+    'Core CPI MoM': '근원 소비자물가 전월비',
+    'PPI Final Demand MoM': '생산자물가',
+    'PCE Price Index YoY': 'PCE 물가 전년비',
+    'Core PCE YoY': '근원 PCE 전년비',
+    'Michigan 1-Yr Inflation Exp': '미시간대 1년 기대인플레',
+}
+
+# Direction is the polarity-adjusted read, never the raw z. The 2026-08-17 brief printed
+# raw z for jobless claims and called a falling number "나쁜 방향" — the sign convention
+# is a trap, so the writer is handed a verdict instead of a number to interpret.
+AXIS_LABELS_KO = {'Labor': '고용', 'Activity': '생산·활동',
+                  'Consumption': '소비', 'Inflation': '물가'}
+
+DIRECTION_CUT = 0.25          # below this an indicator is going nowhere
+STRENGTH_BANDS = ((1.0, '뚜렷'), (0.5, '완만'))
+MAX_LEADERS = 3
+
 GROWTH_AXES = ('Labor', 'Activity', 'Consumption')
 INFLATION_AXES = ('Inflation',)
 
@@ -265,6 +303,43 @@ def attach_components(headline_releases, series_by_id):
         rel['components'] = comps
 
 
+def describe(signed_z):
+    """Polarity-adjusted score -> (direction, strength) in words."""
+    if signed_z is None:
+        return None, None
+    if abs(signed_z) < DIRECTION_CUT:
+        return '보합', '미미'
+    direction = '개선' if signed_z > 0 else '악화'
+    for cut, word in STRENGTH_BANDS:
+        if abs(signed_z) >= cut:
+            return direction, word
+    return direction, '미미'
+
+
+def _axis_summary(rows):
+    """Per-axis verdict a reader can act on: which way, how broadly, driven by what."""
+    out = {}
+    for axis, ko in AXIS_LABELS_KO.items():
+        members = [r for r in rows if r['axis'] == axis]
+        scored = [r for r in members if r['signed_z'] is not None]
+        mean = _axis_mean(rows, axis)
+        direction, strength = describe(mean)
+        leaders = sorted(scored, key=lambda r: -abs(r['signed_z']))[:MAX_LEADERS]
+        out[axis] = {
+            'label_ko': ko,
+            'score': round(mean, _R3) if mean is not None else None,
+            'direction': direction,
+            'strength': strength,
+            'improving': sum(1 for r in scored if r['signed_z'] > 0),
+            'total': len(scored),
+            'leaders': [{'label_ko': r['label_ko'], 'name': r['name'],
+                         'direction': r['direction'], 'strength': r['strength'],
+                         'actual': r['actual'], 'previous': r.get('previous')}
+                        for r in leaders],
+        }
+    return out
+
+
 def _axis_mean(rows, axis):
     zs = [r['signed_z'] for r in rows if r['axis'] == axis and r['signed_z'] is not None]
     return sum(zs) / len(zs) if zs else None
@@ -299,13 +374,18 @@ def compute(series_by_id, econ_indicators, last_seen=None):
         values = transform_series(series_by_id.get(item.get('fred_id')),
                                   item.get('transform', 'level'))
         z = momentum_z(values, window)
+        signed = None if z is None else round(pol * z, _R3)
+        direction, strength = describe(signed)
         rows.append({
             'name': name,
+            'label_ko': LABELS_KO.get(name, name),
             'axis': axis,
+            'direction': direction,
+            'strength': strength,
             'polarity': pol,
             'window': window,
             'momentum_z': z,
-            'signed_z': None if z is None else round(pol * z, _R3),
+            'signed_z': signed,
             'actual': item.get('actual'),
             'previous': item.get('previous'),
             'ref_period': item.get('ref_period'),
@@ -323,6 +403,7 @@ def compute(series_by_id, econ_indicators, last_seen=None):
         'inflation_score': _group_score(rows, INFLATION_AXES),
         'growth_diffusion': _diffusion(rows, GROWTH_AXES),
         'inflation_diffusion': _diffusion(rows, INFLATION_AXES),
+        'axis_summary': _axis_summary(rows),
         'axis_scores': {a: (round(_axis_mean(rows, a), _R3)
                             if _axis_mean(rows, a) is not None else None)
                         for a in GROWTH_AXES + INFLATION_AXES},

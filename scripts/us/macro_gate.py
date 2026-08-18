@@ -57,6 +57,7 @@ def parse_regime_cell(section):
 _GROUP = re.compile(r'\bdata-macro-group\s*=\s*"([a-z_]+)"')
 _RELEASE = re.compile(r'\bdata-release\s*=\s*"([a-z0-9-]+)"')
 _SECTION = re.compile(r'<(section)\b')
+_AXIS = re.compile(r'\bdata-axis\s*=\s*"([A-Za-z]+)"')
 _NUM = re.compile(r'\d+(?:\.\d+)?')
 _YEAR = re.compile(r'^(?:19|20)\d{2}$')
 
@@ -71,6 +72,21 @@ MIN_RELEASE_FIGURES = 3
 
 # When macro_metrics.json carried a breakdown, name at least this many of its lines.
 MIN_CITED_COMPONENTS = 2
+
+# Names of things that exist only inside the pipeline. A reader seeing "research_notes.md"
+# learns nothing and loses trust in everything around it — the 2026-08-17 brief shipped
+# "(8월 중순 기준 67~69% 범위로 보도, research_notes.md)".
+INTERNAL_ARTIFACTS = (
+    'research_notes.md', 'market_data.json', 'intraday.json', 'econ_indicators.json',
+    'macro.json', 'macro_eval.json', 'macro_metrics.json', 'macro_next.json',
+    'stance.json', 'stance_eval.json', 'stance_metrics.json', 'stance_next.json',
+    'sector_performance.html', 'releases/index.json',
+)
+
+# Instrument jargon. The score belongs to the machinery; the page gets 방향과 강도.
+INTERNAL_JARGON = ('signed-z', 'signed_z', 'z스코어', 'z-스코어', 'z-score',
+                   '모멘텀 z', 'momentum_z', 'allowed_grades', 'allowed_regimes',
+                   'headline_releases', 'new_releases', 'last_seen')
 
 
 def _blocks(section, wanted):
@@ -252,6 +268,35 @@ def _check_releases(html, macro_eval, v):
                      '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
 
 
+AXES = ('Labor', 'Activity', 'Consumption', 'Inflation')
+
+
+def _check_axis_strip(section, v):
+    """Four badges before the prose, so the diagnosis is scannable before it is read.
+
+    The same lever that fixed the transmission block: a reader who wants the verdict
+    should not have to parse four paragraphs to assemble it.
+    """
+    found = set(_AXIS.findall(section or ''))
+    missing = [a for a in AXES if a not in found]
+    if missing:
+        v.append(f"§8 4축 진단 스트립에 표식이 없는 축: {', '.join(missing)} — "
+                 '문단 앞에 <span data-axis="AXIS">방향</span> 배지를 둘 것')
+
+
+def _check_hygiene(html, v):
+    """Nothing that only exists inside the pipeline may appear on the published page."""
+    text = strip_tags(html)
+    for name in INTERNAL_ARTIFACTS:
+        if name in text:
+            v.append(f'발행본에 내부 파일명 "{name}"이 노출됐다 — '
+                     '출처는 발표 기관·매체 이름으로 쓸 것')
+    for word in INTERNAL_JARGON:
+        if word in text:
+            v.append(f'발행본에 내부 지표 용어 "{word}"가 노출됐다 — '
+                     '방향(개선/악화/보합)과 강도(뚜렷/완만)로 바꿔 쓸 것')
+
+
 def _check_reconciliation(section, next_macro, stance, v):
     if not stance:
         return
@@ -342,7 +387,9 @@ def check(html, prev_macro, macro_eval, next_macro, stance=None):
     text = strip_tags(section)
     v = []
 
+    _check_hygiene(html, v)
     regime_cell = _check_regime(section, text, macro_eval, v)
+    _check_axis_strip(section, v)
     _check_releases(html, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
     _check_reconciliation(section, next_macro, stance, v)

@@ -39,7 +39,8 @@ def groups(text=None, skip=()):
 
 
 def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.0,
-               reconcile=(), extra='', group_text=None, skip_groups=(), anatomy=''):
+               reconcile=(), extra='', group_text=None, skip_groups=(), anatomy='',
+               axes=True):
     dirs = DIRS if dirs is None else dirs
     rec = ''.join(f'<p data-reconcile="{k}">구조적으로는 다르나 스윙 구간에서는…</p>'
                   for k in reconcile)
@@ -51,6 +52,7 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
         f'data-inflation="{inflation}">{name}</span>이다. '
         f'성장축 {scores[0]}, 인플레축 {scores[1]}. '
         f'9월 인하 확률은 {prob}%.</p>'
+        f'{ax_strip() if axes else ""}'
         f'{strip(dirs)}{rec}{extra}{groups(group_text, skip_groups)}</section>'
         '<section><h2>9. 멀티에셋 매니저 전략</h2></section>'
         f'<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table>'
@@ -354,3 +356,64 @@ def test_a_release_block_does_not_swallow_the_following_section():
     html = build_html(anatomy=block) + '<section><p>에너지 -1.484 주거비 0.139</p></section>'
     out = check(html, macro_file(), rel_eval(), next_file())
     assert any("cpi" in x and "구성 항목" in x for x in out)
+
+
+# --- published-surface hygiene ----------------------------------------------
+
+def test_internal_filenames_never_reach_the_page():
+    """The 2026-08-17 brief published '…로 보도, research_notes.md)'."""
+    html = build_html(extra='<p>동결 확률 68% (research_notes.md)</p>')
+    out = check(html, macro_file(), eval_file(), next_file())
+    assert any('research_notes.md' in x for x in out)
+
+
+def test_every_pipeline_artifact_is_covered():
+    for name in ('macro_metrics.json', 'stance_eval.json', 'econ_indicators.json',
+                 'macro_next.json', 'market_data.json'):
+        html = build_html(extra=f'<p>근거는 {name}이다</p>')
+        out = check(html, macro_file(), eval_file(), next_file())
+        assert any(name in x for x in out), name
+
+
+def test_z_score_jargon_is_rejected():
+    html = build_html(extra='<p>고용은 signed-z 0.895로 축을 끌어올렸다</p>')
+    out = check(html, macro_file(), eval_file(), next_file())
+    assert any('내부 지표' in x for x in out)
+
+
+def test_ordinary_prose_is_untouched():
+    html = build_html(extra='<p>고용은 구인건수가 개선을 주도했다</p>')
+    assert check(html, macro_file(), eval_file(), next_file()) == []
+
+
+def test_hygiene_covers_the_whole_page_not_just_the_macro_section():
+    html = build_html() + '<section><p>출처 research_notes.md</p></section>'
+    out = check(html, macro_file(), eval_file(), next_file())
+    assert any('research_notes.md' in x for x in out)
+
+
+# --- four-axis strip --------------------------------------------------------
+
+def ax_strip(dirs=('개선', '개선', '악화', '둔화')):
+    keys = ('Labor', 'Activity', 'Consumption', 'Inflation')
+    items = ''.join(f'<span class="ax-item"><b>{k}</b> '
+                    f'<span data-axis="{k}">{d}</span></span>'
+                    for k, d in zip(keys, dirs))
+    return f'<div class="ax-strip">{items}</div>'
+
+
+def test_four_axis_strip_is_required():
+    out = check(build_html(axes=False), macro_file(), eval_file(), next_file())
+    assert any('4축' in x and '스트립' in x for x in out)
+
+
+def test_four_axis_strip_satisfies_the_check():
+    assert check(build_html(), macro_file(), eval_file(), next_file()) == []
+
+
+def test_a_missing_axis_is_named():
+    keys = ('Labor', 'Activity', 'Consumption')
+    strip_html = ''.join(f'<span data-axis="{k}">개선</span>' for k in keys)
+    out = check(build_html(axes=False, extra=strip_html), macro_file(), eval_file(),
+                next_file())
+    assert any('Inflation' in x for x in out)

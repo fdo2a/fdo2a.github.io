@@ -301,3 +301,56 @@ def test_attach_components_is_a_no_op_without_promoted_releases():
     rels = []
     mm.attach_components(rels, {})
     assert rels == []
+
+
+# ------------------------------------------------- reader-facing framing
+
+def test_indicators_carry_a_korean_label():
+    econ = [ind('Initial Jobless Claims', 'Labor', 'ICSA')]
+    out = mm.compute({'ICSA': dated(jump(1))}, econ)
+    assert out['indicators'][0]['label_ko'] == '신규 실업수당 청구'
+
+
+def test_falling_claims_read_as_improvement_not_as_a_negative_number():
+    """The published 08-17 brief called rising-z claims '나쁜 방향' — sign inverted.
+    Direction is polarity-adjusted so the writer never has to reason about the sign."""
+    econ = [ind('Initial Jobless Claims', 'Labor', 'ICSA')]
+    falling = dated(jump(-1))
+    out = mm.compute({'ICSA': falling}, econ)
+    assert out['indicators'][0]['direction'] == '개선'
+
+
+def test_rising_claims_read_as_deterioration():
+    econ = [ind('Initial Jobless Claims', 'Labor', 'ICSA')]
+    out = mm.compute({'ICSA': dated(jump(1))}, econ)
+    assert out['indicators'][0]['direction'] == '악화'
+
+
+def test_strength_is_banded_not_a_raw_score():
+    econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL')]
+    out = mm.compute({'CPIAUCSL': dated(jump(1))}, econ)
+    assert out['indicators'][0]['strength'] in ('뚜렷', '완만', '미미')
+
+
+def test_axis_summary_counts_how_many_point_which_way():
+    econ = [ind(f'L{i}', 'Labor', f'L{i}') for i in range(4)]
+    series = {f'L{i}': dated(jump(1 if i < 3 else -1)) for i in range(4)}
+    out = mm.compute(series, econ)
+    labor = out['axis_summary']['Labor']
+    assert labor['improving'] == 3
+    assert labor['total'] == 4
+    assert labor['direction'] == '개선'
+
+
+def test_axis_summary_lists_the_movers_that_mattered():
+    econ = [ind(f'L{i}', 'Labor', f'L{i}') for i in range(5)]
+    series = {f'L{i}': dated(jump(1)) for i in range(5)}
+    out = mm.compute(series, econ)
+    leaders = out['axis_summary']['Labor']['leaders']
+    assert 1 <= len(leaders) <= 3
+    assert all({'label_ko', 'direction', 'actual'} <= set(x) for x in leaders)
+
+
+def test_axis_summary_covers_an_axis_with_nothing_computable():
+    out = mm.compute({}, [ind('CPI YoY', 'Inflation', 'CPIAUCSL')])
+    assert out['axis_summary']['Inflation']['direction'] is None
