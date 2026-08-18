@@ -53,12 +53,10 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 3. `sitemap.xml`에 `https://fdo2a.github.io/kr/posts/DATE.html` url 추가(전체 재생성, US 항목 보존).
 4. main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
 
-## STEP 4 — Notion 발행
+## STEP 4 — 알림
+PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`.
 
-Notion MCP(`notion-create-pages`)로 DB "KR Market Brief" data_source_id **`d1dcda42-2e15-4080-93a2-b77622e46f3d`**에 페이지 1개 생성(같은 날짜 중복 금지 — 새로 만들지 말고 이 DB 사용). properties: 제목·`date:날짜:start`·헤드라인·웹 링크(https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html), icon 📉. content는 Notion 마크다운(헤드라인 인용 + 링크 + 섹션 헤딩·표 + 면책).
-
-## STEP 5 — 알림
-PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`. PDF·이메일 없음.
+**발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Notion·PDF·이메일 모두 없음. 세션에 Notion 커넥터가 붙어 있어도 쓰지 않는다 — 연결돼 있다는 사실이 사용 지시는 아니다.
 
 ## RULES
 - 모든 수치는 kr/data/*에서만. 수치 창작 절대 금지.
