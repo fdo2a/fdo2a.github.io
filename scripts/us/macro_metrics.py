@@ -171,6 +171,16 @@ LABELS_KO = {
 AXIS_LABELS_KO = {'Labor': '고용', 'Activity': '생산·활동',
                   'Consumption': '소비', 'Inflation': '물가'}
 
+# Growth axes read good/bad; the inflation axis reads hot/cold. Sharing one vocabulary
+# would make "개선" ambiguous on the price side — the same class of trap as printing a
+# raw z and asking the writer to remember the sign convention.
+DIRECTION_WORDS = {
+    'growth': {1: '개선', -1: '악화', 0: '보합'},
+    'inflation': {1: '재가속', -1: '둔화', 0: '교착'},
+}
+
+_KO_NUM = ('영', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉', '열')
+
 DIRECTION_CUT = 0.25          # below this an indicator is going nowhere
 STRENGTH_BANDS = ((1.0, '뚜렷'), (0.5, '완만'))
 MAX_LEADERS = 3
@@ -303,17 +313,41 @@ def attach_components(headline_releases, series_by_id):
         rel['components'] = comps
 
 
-def describe(signed_z):
-    """Polarity-adjusted score -> (direction, strength) in words."""
+def describe(signed_z, axis='Labor'):
+    """Polarity-adjusted score -> (direction, strength) in words, per axis vocabulary."""
+    words = DIRECTION_WORDS['inflation' if axis == 'Inflation' else 'growth']
     if signed_z is None:
         return None, None
     if abs(signed_z) < DIRECTION_CUT:
-        return '보합', '미미'
-    direction = '개선' if signed_z > 0 else '악화'
+        return words[0], '미미'
+    direction = words[1] if signed_z > 0 else words[-1]
     for cut, word in STRENGTH_BANDS:
         if abs(signed_z) >= cut:
             return direction, word
     return direction, '미미'
+
+
+def _ko_count(n):
+    return _KO_NUM[n] if 0 <= n < len(_KO_NUM) else str(n)
+
+
+def breadth_phrase(rows, axis):
+    """Breadth without making the reader parse a ratio: 「일곱 중 다섯이 개선」."""
+    scored = [r for r in rows if r['axis'] == axis and r['signed_z'] is not None]
+    if not scored:
+        return None
+    mean = sum(r['signed_z'] for r in scored) / len(scored)
+    direction, _ = describe(mean, axis)
+    words = DIRECTION_WORDS['inflation' if axis == 'Inflation' else 'growth']
+    if direction == words[0]:                       # axis is going nowhere
+        up = sum(1 for r in scored if r['signed_z'] > 0)
+        return f'{_ko_count(len(scored))} 중 {_ko_count(up)}이 {words[1]}, 나머지는 반대'
+    # Count support for the verdict the badge shows, never against it — otherwise the
+    # strip reads "물가 둔화 · 여덟 중 다섯이 재가속" and contradicts itself at a glance.
+    want = 1 if direction == words[1] else -1
+    count = sum(1 for r in scored if (r['signed_z'] > 0) == (want > 0))
+    particle = '만' if count * 2 < len(scored) else '이'
+    return f'{_ko_count(len(scored))} 중 {_ko_count(count)}{particle} {direction}'
 
 
 def _axis_summary(rows):
@@ -323,13 +357,14 @@ def _axis_summary(rows):
         members = [r for r in rows if r['axis'] == axis]
         scored = [r for r in members if r['signed_z'] is not None]
         mean = _axis_mean(rows, axis)
-        direction, strength = describe(mean)
+        direction, strength = describe(mean, axis)
         leaders = sorted(scored, key=lambda r: -abs(r['signed_z']))[:MAX_LEADERS]
         out[axis] = {
             'label_ko': ko,
             'score': round(mean, _R3) if mean is not None else None,
             'direction': direction,
             'strength': strength,
+            'breadth_ko': breadth_phrase(rows, axis),
             'improving': sum(1 for r in scored if r['signed_z'] > 0),
             'total': len(scored),
             'leaders': [{'label_ko': r['label_ko'], 'name': r['name'],
@@ -375,7 +410,7 @@ def compute(series_by_id, econ_indicators, last_seen=None):
                                   item.get('transform', 'level'))
         z = momentum_z(values, window)
         signed = None if z is None else round(pol * z, _R3)
-        direction, strength = describe(signed)
+        direction, strength = describe(signed, axis)
         rows.append({
             'name': name,
             'label_ko': LABELS_KO.get(name, name),

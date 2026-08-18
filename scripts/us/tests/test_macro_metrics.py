@@ -326,6 +326,49 @@ def test_rising_claims_read_as_deterioration():
     assert out['indicators'][0]['direction'] == '악화'
 
 
+def test_inflation_axis_speaks_of_reacceleration_not_improvement():
+    """Positive on the inflation axis means hotter, never better — a separate vocabulary
+    so nobody has to remember which way 'good' points."""
+    econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL')]
+    out = mm.compute({'CPIAUCSL': dated(jump(1))}, econ)
+    assert out['indicators'][0]['direction'] == '재가속'
+    assert out['axis_summary']['Inflation']['direction'] == '재가속'
+
+
+def test_cooling_prices_read_as_slowing():
+    econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL')]
+    out = mm.compute({'CPIAUCSL': dated(jump(-1))}, econ)
+    assert out['indicators'][0]['direction'] == '둔화'
+
+
+def test_axis_summary_states_breadth_in_words():
+    econ = [ind(f'L{i}', 'Labor', f'L{i}') for i in range(7)]
+    series = {f'L{i}': dated(jump(1 if i < 5 else -1)) for i in range(7)}
+    out = mm.compute(series, econ)
+    assert out['axis_summary']['Labor']['breadth_ko'] == '일곱 중 다섯이 개선'
+
+
+def rows(axis, *scores):
+    return [{'axis': axis, 'signed_z': z} for z in scores]
+
+
+def test_breadth_is_counted_against_the_axis_verdict():
+    """Breadth and magnitude can diverge; the phrase must not contradict the badge
+    beside it. Narrow support is said with 「만」."""
+    # one heavy cooler outweighs three mild hotter prints
+    got = mm.breadth_phrase(rows('Inflation', -4.0, 0.4, 0.4, 0.4), 'Inflation')
+    assert got == '넷 중 하나만 둔화'
+
+
+def test_broad_support_uses_the_plain_particle():
+    assert mm.breadth_phrase(rows('Labor', 1.0, 1.0, 1.0, -1.0), 'Labor') == '넷 중 셋이 개선'
+
+
+def test_a_flat_axis_says_so_rather_than_picking_a_side():
+    got = mm.breadth_phrase(rows('Labor', 1.0, -1.0), 'Labor')
+    assert '나머지는 반대' in got
+
+
 def test_strength_is_banded_not_a_raw_score():
     econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL')]
     out = mm.compute({'CPIAUCSL': dated(jump(1))}, econ)

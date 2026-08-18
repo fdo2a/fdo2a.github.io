@@ -68,6 +68,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 이 섹션은 계산 결과 보고서가 아니라 애널리스트 노트다. 아래는 §8 전체에 적용된다.
 
+- **면책·출처 문구에도 파일명을 쓰지 않는다.** 보고서 말미 면책 문구의 출처 표기는 «시세는 Yahoo Finance, 경제지표는 FRED와 각 발표 기관(BLS·BEA·Census 등), 그 밖의 내용은 본문에 밝힌 출처» 형태로 쓴다. 2026-08-17 발행본이 「수치는 market_data.json·intraday.json·…에서 발췌했습니다」로 나갔다
 - **내부 파일명·필드명은 발행본에 절대 나오지 않는다.** `research_notes.md`, `macro_metrics.json`, `allowed_regimes` 같은 것들 — 발행 게이트가 전 페이지를 검사한다. 출처는 **기관·매체 이름**으로 쓴다("CME FedWatch 기준", "BLS 릴리스"). 2026-08-17 발행본에 「…로 보도, research_notes.md)」가 그대로 실렸다
 - **결론 먼저.** 문단의 첫 문장이 판정이고, 근거는 그다음이다
 - **숫자는 독자 단위로.** 실제 값·전월 대비·퍼센트로 쓰고, 내부 지수는 캡션으로 밀거나 뺀다
