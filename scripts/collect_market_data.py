@@ -508,6 +508,25 @@ def main():
     yields = merge_yields(yields_fred, yields_yahoo)
     for t, row in yields.items():
         print(f'  {t}: ' + (f"{row['level']}% ({row.get('source')} {row['date']})" if row else 'MISSING'))
+    print('collecting yield drivers (real / breakeven / spreads)...')
+    try:
+        from us.yield_drivers import ROWS as YD_ROWS, build as build_yield_drivers
+        yd_series = {}
+        for _, sid, _ in YD_ROWS:
+            if sid in yd_series:
+                continue
+            got = retry(lambda sid=sid: fred_series(sid), attempts=2)
+            if got:
+                yd_series[sid] = got
+            time.sleep(0.3)
+        drivers = build_yield_drivers(yd_series)
+        for tenor, d in drivers['decomposition'].items():
+            print(f"  {tenor}: {d['nominal_chg_1d_bp']:+.1f}bp = 실질 {d['real_chg_1d_bp']:+.1f} "
+                  f"+ 기대 {d['breakeven_chg_1d_bp']:+.1f} -> {d['driver_ko']}")
+    except Exception as e:
+        print(f'yield drivers failed: {e}', file=sys.stderr)
+        drivers = {'rows': {}, 'decomposition': {}}
+
     print('collecting FRED economic indicators...')
     econ, econ_series = collect_econ()
     print(f'  econ indicators: {len(econ)}/{len(ECON)}')
@@ -533,6 +552,7 @@ def main():
                        '주식 종가와 동일자), 2Y는 Yahoo에 스팟 지수가 없어 FRED DGS2(T-1). '
                        '각 행의 source/date를 표·차트·캡션에 반드시 표기할 것. '
                        'yields_fred는 전 만기 FRED 동일자 대조용.',
+        'yield_drivers': drivers,
         'sector_performance': sector_perf,
         'sector_performance_as_of': perf_as_of,
     }
