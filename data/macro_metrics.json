@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-18 21:44 UTC",
-  "report_date": "2026-08-18",
+  "generated": "2026-08-19 21:50 UTC",
+  "report_date": "2026-08-19",
   "growth_score": -0.093,
   "inflation_score": -0.264,
   "growth_diffusion": 0.571,
@@ -264,7 +264,7 @@
       "actual": 0.2,
       "previous": 0.27,
       "ref_period": "2026-07-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Durable Goods Orders MoM",
@@ -477,31 +477,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Industrial Production MoM"
-  ],
-  "headline_releases": [
-    {
-      "key": "industrial-production",
-      "label": "산업생산(G.17)",
-      "tier": 2,
-      "agency": "Federal Reserve",
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
-      "primary": "Industrial Production MoM",
-      "max_abs_z": 0.771,
-      "indicators": [
-        {
-          "name": "Industrial Production MoM",
-          "axis": "Activity",
-          "actual": 0.2,
-          "previous": 0.27,
-          "ref_period": "2026-07-01",
-          "momentum_z": -0.771
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-06-01",
