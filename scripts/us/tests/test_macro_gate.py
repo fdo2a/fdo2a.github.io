@@ -320,6 +320,28 @@ def test_a_year_is_not_counted_as_a_component_figure():
     assert any('cpi' in x and '세부' in x for x in out)
 
 
+def test_a_quiet_day_may_not_carry_a_market_comment_card():
+    """2026-08-20 사용자 지시 — 새 발표가 없는 날은 굳이 코멘트를 달지 않는다.
+
+    The 08-19 brief opened its 시장 해석 card with 「오늘은 새로 발표된 헤드라인
+    경제지표가 없는 날이었다」 and then talked about something else entirely.
+    """
+    html = build_html(extra='<div class="card"><h4>시장 해석</h4><p>오늘은 발표가 없었다.</p></div>')
+    out = check(html, macro_file(), eval_file(), next_file())
+    assert any('시장 해석' in x for x in out)
+
+
+def test_a_release_day_keeps_its_market_comment_card():
+    html = build_html(anatomy=ANATOMY,
+                      extra='<div class="card"><h4>시장 해석</h4><p>10년물 -1.8bp.</p></div>')
+    assert check(html, macro_file(), rel_eval(), next_file()) == []
+
+
+def test_the_next_release_calendar_is_welcome_on_a_quiet_day():
+    html = build_html(extra='<div class="card"><h4>다음 발표 일정</h4><p>9/16 FOMC.</p></div>')
+    assert check(html, macro_file(), eval_file(), next_file()) == []
+
+
 def test_quiet_day_needs_no_anatomy_block():
     assert check(build_html(), macro_file(), rel_eval(releases=[]), next_file()) == []
 

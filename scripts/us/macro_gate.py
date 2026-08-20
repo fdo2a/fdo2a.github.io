@@ -272,6 +272,24 @@ def _check_releases(html, macro_eval, v):
                      '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
 
 
+_COMMENT_CARD = re.compile(r'<h4[^>]*>\s*시장 해석\s*</h4>')
+
+
+def _check_quiet_day(section, macro_eval, v):
+    """No new print, no commentary (2026-08-20 사용자 지시).
+
+    The card exists to say how the market took today's number. On a day without one it
+    has nothing to be about, and the 08-19 brief proved it: 「오늘은 새로 발표된 헤드라인
+    경제지표가 없는 날이었다」 followed by a paragraph the 시황 sections had already run.
+    The tables and the next-release calendar stay; the comment goes.
+    """
+    if (macro_eval or {}).get('headline_releases'):
+        return
+    if _COMMENT_CARD.search(section or ''):
+        v.append('§8: 오늘은 신규 발표가 없는데 「시장 해석」 카드가 있다 — '
+                 '발표 없는 날은 축 표까지만 두고 코멘트를 달지 않는다')
+
+
 AXES = ('Labor', 'Activity', 'Consumption', 'Inflation')
 
 
@@ -394,6 +412,7 @@ def check(html, prev_macro, macro_eval, next_macro, stance=None):
     _check_hygiene(html, v)
     regime_cell = _check_regime(section, text, macro_eval, v)
     _check_axis_strip(section, v)
+    _check_quiet_day(section, macro_eval, v)
     _check_releases(html, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
     _check_reconciliation(section, next_macro, stance, v)
