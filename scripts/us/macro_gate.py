@@ -36,8 +36,12 @@ def section_macro(html):
 
 
 def section_econ(html):
-    """The §13 dashboard — where the indicator tables live, and so where the dissection
-    of a new print belongs (2026-08-18 사용자 지시: 수치가 있는 곳에 해설을 붙인다)."""
+    """Where the indicator tables live, and so where the dissection of a new print
+    belongs (2026-08-18 사용자 지시: 수치가 있는 곳에 해설을 붙인다).
+
+    Since 2026-08-20 the tables sit inside §8, one under each axis diagnosis, so there
+    is usually no separate 경제지표 section to find; older briefs kept one at the back.
+    """
     return locate_section(html, '경제지표')
 
 
@@ -234,7 +238,7 @@ def _check_releases(html, macro_eval, v):
         label = rel.get('label') or key
         text = blocks.get(key)
         if text is None:
-            v.append(f'§13: 신규 발표 「{label}」 해부 블록이 없다 — 지표 표 아래에 '
+            v.append(f'§8: 신규 발표 「{label}」 해부 블록이 없다 — 해당 축 지표 표 아래에 '
                      f'<div data-release="{key}">로 감쌀 것')
             continue
 
@@ -242,14 +246,14 @@ def _check_releases(html, macro_eval, v):
                         if i.get('name') == rel.get('primary')), None)
         if primary and primary.get('actual') is not None \
                 and not _cited(text, primary['actual']):
-            v.append(f'§13 {key}: 「{label}」 블록에 {primary["name"]} 실제값 '
+            v.append(f'§8 {key}: 「{label}」 블록에 {primary["name"]} 실제값 '
                      f'{primary["actual"]}이 없다')
 
         has_source = (any(a in text for a in AGENCIES) or 'http' in text
                       or (rel.get('agency') and rel['agency'] in text))
         if not has_source:
             agency = rel.get('agency') or '발표 기관'
-            v.append(f'§13 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
+            v.append(f'§8 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
                      f'{agency}의 릴리스를 근거로 밝힐 것')
 
         # When the breakdown was collected deterministically we can ask the precise
@@ -260,11 +264,11 @@ def _check_releases(html, macro_eval, v):
             cited = [c for c in comps if _cited(text, c['actual'])]
             if len(cited) < MIN_CITED_COMPONENTS:
                 names = ', '.join(f'{c["label"]} {c["actual"]}' for c in comps[:5])
-                v.append(f'§13 {key}: 「{label}」 블록이 구성 항목을 {len(cited)}개만 인용했다 '
+                v.append(f'§8 {key}: 「{label}」 블록이 구성 항목을 {len(cited)}개만 인용했다 '
                          f'— {MIN_CITED_COMPONENTS}개 이상 필요. '
                          f'macro_metrics.json에 있는 것: {names}')
         elif len(_figures(text)) < MIN_RELEASE_FIGURES:
-            v.append(f'§13 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
+            v.append(f'§8 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
                      '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
 
 

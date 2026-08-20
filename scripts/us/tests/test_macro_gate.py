@@ -351,6 +351,25 @@ def test_anatomy_in_the_macro_section_is_not_where_it_belongs():
     assert any('cpi' in x and '해부 블록이 없다' in x for x in out)
 
 
+def test_merged_layout_keeps_the_dissection_with_the_axis_tables():
+    """2026-08-20 사용자 지시 — 지표 표가 §8 안으로 들어와 축 진단 바로 아래 붙는다.
+
+    There is no separate 경제지표 대시보드 section any more, so the dissection that used
+    to live at the back now sits inside the macro section, still next to its numbers.
+    """
+    html = build_html(extra=ANATOMY).replace(
+        '<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table></section>', '')
+    assert '경제지표 대시보드' not in html
+    assert check(html, macro_file(), rel_eval(), next_file()) == []
+
+
+def test_merged_layout_still_demands_the_dissection():
+    html = build_html().replace(
+        '<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table></section>', '')
+    out = check(html, macro_file(), rel_eval(), next_file())
+    assert any('cpi' in x and '해부 블록이 없다' in x for x in out)
+
+
 def test_a_release_block_does_not_swallow_the_following_section():
     block = '<div data-release="cpi"><p>CPI 3.54%. 출처 BLS.</p></div>'
     html = build_html(anatomy=block) + '<section><p>에너지 -1.484 주거비 0.139</p></section>'
