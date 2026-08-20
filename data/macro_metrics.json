@@ -1,16 +1,16 @@
 {
-  "generated": "2026-08-19 21:50 UTC",
-  "report_date": "2026-08-19",
-  "growth_score": -0.093,
+  "generated": "2026-08-20 21:51 UTC",
+  "report_date": "2026-08-20",
+  "growth_score": -0.182,
   "inflation_score": -0.264,
   "growth_diffusion": 0.571,
   "inflation_diffusion": 0.625,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.664,
+      "score": 0.398,
       "direction": "개선",
-      "strength": "완만",
+      "strength": "미미",
       "breadth_ko": "일곱 중 다섯이 개선",
       "improving": 5,
       "total": 7,
@@ -20,24 +20,24 @@
           "name": "Initial Claims 4-wk MA",
           "direction": "개선",
           "strength": "뚜렷",
-          "actual": 199000.0,
-          "previous": 199000.0
+          "actual": 204000.0,
+          "previous": 199750.0
         },
         {
-          "label_ko": "신규 실업수당 청구",
-          "name": "Initial Jobless Claims",
-          "direction": "개선",
-          "strength": "뚜렷",
-          "actual": 209000.0,
-          "previous": 200000.0
-        },
-        {
-          "label_ko": "계속 실업수당 청구",
-          "name": "Continuing Jobless Claims",
+          "label_ko": "구인건수(JOLTS)",
+          "name": "JOLTS Job Openings",
           "direction": "개선",
           "strength": "완만",
-          "actual": 1777000.0,
-          "previous": 1799000.0
+          "actual": 7359.0,
+          "previous": 7537.0
+        },
+        {
+          "label_ko": "시간당 임금",
+          "name": "Avg Hourly Earnings MoM",
+          "direction": "악화",
+          "strength": "완만",
+          "actual": 0.05,
+          "previous": 0.29
         }
       ]
     },
@@ -140,7 +140,7 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.664,
+    "Labor": 0.398,
     "Activity": 0.224,
     "Consumption": -1.168,
     "Inflation": -0.264
@@ -166,15 +166,15 @@
       "label_ko": "신규 실업수당 청구",
       "axis": "Labor",
       "direction": "개선",
-      "strength": "뚜렷",
+      "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -1.503,
-      "signed_z": 1.503,
-      "actual": 209000.0,
-      "previous": 200000.0,
-      "ref_period": "2026-08-08",
-      "is_new": false
+      "momentum_z": -0.39,
+      "signed_z": 0.39,
+      "actual": 206000.0,
+      "previous": 212000.0,
+      "ref_period": "2026-08-15",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -184,12 +184,12 @@
       "strength": "뚜렷",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -2.121,
-      "signed_z": 2.121,
-      "actual": 199000.0,
-      "previous": 199000.0,
-      "ref_period": "2026-08-08",
-      "is_new": false
+      "momentum_z": -1.725,
+      "signed_z": 1.725,
+      "actual": 204000.0,
+      "previous": 199750.0,
+      "ref_period": "2026-08-15",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -199,12 +199,12 @@
       "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.956,
-      "signed_z": 0.956,
-      "actual": 1777000.0,
-      "previous": 1799000.0,
-      "ref_period": "2026-08-01",
-      "is_new": false
+      "momentum_z": -0.605,
+      "signed_z": 0.605,
+      "actual": 1799000.0,
+      "previous": 1781000.0,
+      "ref_period": "2026-08-08",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -477,24 +477,65 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
+  ],
+  "headline_releases": [
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Initial Claims 4-wk MA",
+      "max_abs_z": 1.725,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 206000.0,
+          "previous": 212000.0,
+          "ref_period": "2026-08-15",
+          "momentum_z": -0.39
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 204000.0,
+          "previous": 199750.0,
+          "ref_period": "2026-08-15",
+          "momentum_z": -1.725
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1799000.0,
+          "previous": 1781000.0,
+          "ref_period": "2026-08-08",
+          "momentum_z": -0.605
+        }
+      ],
+      "components": []
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-06-01",
       7359.0
     ],
     "Initial Jobless Claims": [
-      "2026-08-08",
-      209000.0
+      "2026-08-15",
+      206000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-08-08",
-      199000.0
+      "2026-08-15",
+      204000.0
     ],
     "Continuing Jobless Claims": [
-      "2026-08-01",
-      1777000.0
+      "2026-08-08",
+      1799000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-07-01",

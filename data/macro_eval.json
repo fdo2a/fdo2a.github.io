@@ -1,9 +1,9 @@
 {
-  "report_date": "2026-08-19",
-  "macro_date": "2026-08-18",
+  "report_date": "2026-08-20",
+  "macro_date": "2026-08-19",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": -0.093,
+    "growth_score": -0.182,
     "inflation_score": -0.264,
     "growth_diffusion": 0.571,
     "inflation_diffusion": 0.625
@@ -13,8 +13,49 @@
     "inflation": 0,
     "name": "교착"
   },
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
+  ],
+  "headline_releases": [
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Initial Claims 4-wk MA",
+      "max_abs_z": 1.725,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 206000.0,
+          "previous": 212000.0,
+          "ref_period": "2026-08-15",
+          "momentum_z": -0.39
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 204000.0,
+          "previous": 199750.0,
+          "ref_period": "2026-08-15",
+          "momentum_z": -1.725
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1799000.0,
+          "previous": 1781000.0,
+          "ref_period": "2026-08-08",
+          "momentum_z": -0.605
+        }
+      ],
+      "components": []
+    }
+  ],
   "stale": false,
   "bootstrap": false,
   "regime": {
@@ -24,11 +65,11 @@
     "inflation_label": "교착",
     "name": "교착",
     "since": "2026-08-17",
-    "days_held": 3,
-    "thesis": "성장축 점수 -0.093, 인플레축 점수 -0.264로 둘 다 컷포인트(±0.33) 안쪽에 머물러 교착 국면이 이틀째 유지된다. 고용(+0.664)·생산활동(+0.224)은 개선/보합 방향이나 소비(-1.168)가 뚜렷하게 악화돼 성장축 합산이 상쇄된다. 물가는 CPI·PPI MoM은 둔화됐지만 PCE·미시간 기대인플레가 재가속을 가리켜 순합산은 완만한 디스인플레이션에 머문다. 8월 18일 발표된 산업생산(전월비 +0.2%, 컨센서스 +0.3% 하회)은 생산·활동 축 내부의 완만한 모멘텀 둔화를 재확인했을 뿐 성장축 전체 판정을 바꿀 정도는 아니었다."
+    "days_held": 4,
+    "thesis": "성장축 -0.093, 인플레축 -0.264로 둘 다 유의미한 방향을 가리킬 만큼 크지 않아 교착 국면이 사흘째 유지된다. 8월 19일은 신규 지표 발표가 없어 축 점수가 전일과 동일한 관측치로 계산됐고, 국면도 그에 따라 움직이지 않았다. 고용·생산활동은 완만한 개선·보합권이나 소비가 뚜렷하게 악화돼 성장축 전체가 상쇄되고, 물가는 CPI·PPI MoM 둔화와 PCE·미시간 기대인플레 재가속이 뒤섞여 순합산은 완만한 디스인플레이션에 머문다."
   },
   "regime_change_allowed": false,
-  "regime_block": "no_new_release",
+  "regime_block": "lock_5bd",
   "allowed_regimes": [
     [
       0,
@@ -38,31 +79,33 @@
   "policy": {
     "stance": "동결(hold) 유지",
     "timing": "9/16 FOMC 동결, 인하 재개는 4분기 이후로 지연",
-    "prob_pct": 69,
-    "thesis": "CME FedWatch가 9/16 FOMC 동결 확률을 69%로 반영 중이다. 고용·생산활동 축의 완만한 개선이 조기 인하 필요성을 낮추고, 인플레이션 축의 디스인플레이션이 인상 필요성도 낮추는 조합이 교착 레짐과 정합적이다.",
+    "prob_pct": 65.4,
+    "thesis": "CME FedWatch가 9/16 FOMC 동결 확률을 65.4%로 반영 중이다(전일 69%에서 3.6%p 하락, 15%p 임계치 미달로 시점 판단은 유지). 고용·생산활동 축의 완만한 개선이 조기 인하 필요성을 낮추고, 인플레이션 축의 디스인플레이션이 인상 필요성도 낮추는 조합이 교착 레짐과 정합적이다.",
     "falsifier": "8월분 CPI(9월 중순 발표)가 헤드라인 전월비 0.3% 이상으로 재가속하면 이 동결-우선 경로는 무효화된다.",
-    "change_allowed": false,
-    "change_block": "no_new_release"
+    "change_allowed": true,
+    "change_block": null
   },
   "transmission": {
     "equities": {
       "direction": 0,
       "label": "중립",
-      "channel": "성장 모멘텀 정체(성장축 -0.093)와 완만한 디스인플레이션이 상쇄되는 가운데, 30년물 급등에 따른 할인율 상승이 멀티플 상단을 제약하고 소비 축 급락(-1.168)이 이익 전망에 부담을 준다.",
+      "channel": "성장 모멘텀 정체(성장축 -0.093)와 완만한 디스인플레이션이 상쇄되는 가운데, 장기금리 급등에 따른 할인율 상승이 멀티플 상단을 제약하고 소비 축 급락(-1.168)이 이익 전망에 부담을 준다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     },
     "bonds": {
       "direction": 1,
       "label": "우호",
-      "channel": "인플레축의 디스인플레이션 모멘텀(-0.264)이 지속되면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로. 다만 기간프리미엄 확대와 유가발 인플레 재부각이 이 경로를 단기적으로 지연시키고 있다.",
+      "channel": "인플레축의 디스인플레이션 모멘텀(-0.264)이 지속되면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로. 8/19 재무부 바이백 확대가 첫 확인 신호이나 기간프리미엄 확대가 이 경로를 여전히 지연시키고 있다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         0,
         1
@@ -74,7 +117,7 @@
       "channel": "성장 정체 속 디스인플레이션이 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지하고, 안전자산 수요는 엔·금으로 분산되는 편이다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         -1,
         0
@@ -86,9 +129,11 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다.",
       "confirm": "Brent가 3개월 평균 $90 상회를 유지하는지, 호르무즈 통항 차질의 실제 발생 여부",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     },
     "metals": {
@@ -97,7 +142,7 @@
       "channel": "디스인플레이션·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학 헤지 수요가 병존한다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         0,
         1
@@ -109,7 +154,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 capex 사이클이 DRAM·NAND 수급을 견인하는 독립적 성장경로다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         0,
         1
@@ -121,9 +166,11 @@
       "channel": "capex 사이클 자체는 구조적으로 우호적이지만, 장기금리 급등에 따른 할인율 상승이 고밸류 성장주 멀티플을 압박하는 경로가 이를 상쇄한다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 3분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     }
   }

@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-08-18",
+  "report_date": "2026-08-20",
   "releases": [
     {
-      "key": "industrial-production",
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 5386,
-      "path": "releases/industrial-production.txt"
+      "chars": 20097,
+      "path": "releases/claims.txt"
     }
   ]
 }
