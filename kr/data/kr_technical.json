@@ -3,33 +3,33 @@
     "as_of": "2026-08-20",
     "close": 6852.58,
     "ma": {
-      "ma20": 6469.9,
-      "ma60": 7496.22,
-      "ma120": 6862.71
+      "ma20": 6465.94,
+      "ma60": 7541.74,
+      "ma120": 6841.73
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 5.91,
-      "vs_ma60": -8.59,
-      "vs_ma120": -0.15
+      "vs_ma20": 5.98,
+      "vs_ma60": -9.14,
+      "vs_ma120": 0.16
     },
     "bollinger": {
-      "upper": 7250.23,
-      "mid": 6469.9,
-      "lower": 5689.58,
-      "pct_b": 0.745,
-      "bandwidth": 0.2412
+      "upper": 7244.48,
+      "mid": 6465.94,
+      "lower": 5687.41,
+      "pct_b": 0.748,
+      "bandwidth": 0.2408
     },
     "ichimoku": {
       "tenkan": 6687.68,
-      "kijun": 6343.48,
-      "senkou_a": 7893.15,
-      "senkou_b": 7957.39,
-      "cloud_top": 7957.39,
-      "cloud_bottom": 7893.15,
+      "kijun": 6483.85,
+      "senkou_a": 8154.93,
+      "senkou_b": 7847.34,
+      "cloud_top": 8154.93,
+      "cloud_bottom": 7847.34,
       "price_vs_cloud": "below"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 7216.62,
       "low_20": 5262.77,
@@ -41,22 +41,22 @@
     "as_of": "2026-08-20",
     "close": 840.89,
     "ma": {
-      "ma20": 782.23,
-      "ma60": 885.66,
-      "ma120": 1013.36
+      "ma20": 787.57,
+      "ma60": 880.61,
+      "ma120": 1010.8
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": 7.5,
-      "vs_ma60": -5.05,
-      "vs_ma120": -17.02
+      "vs_ma20": 6.77,
+      "vs_ma60": -4.51,
+      "vs_ma120": -16.81
     },
     "bollinger": {
-      "upper": 909.09,
-      "mid": 782.23,
-      "lower": 655.37,
-      "pct_b": 0.731,
-      "bandwidth": 0.3243
+      "upper": 917.68,
+      "mid": 787.57,
+      "lower": 657.46,
+      "pct_b": 0.705,
+      "bandwidth": 0.3304
     },
     "ichimoku": {
       "tenkan": 827.94,
