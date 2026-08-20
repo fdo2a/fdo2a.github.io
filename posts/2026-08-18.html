@@ -78,6 +78,36 @@ tbody td:first-child { text-align:left; font-weight:600; }
   th:first-child, td:first-child { white-space:normal; }
   th:last-child, td:last-child { white-space:normal; }
 }
+
+/* 멀티에셋 스탠스 표 (.stance-tbl) — 서술 칸이 둘이라 일반 표 규칙으로는 비율이 무너진다 */
+.stance-tbl { table-layout: fixed; }
+@media (min-width: 561px) {
+.stance-tbl th:nth-child(1), .stance-tbl td:nth-child(1) { width: 8%; }
+.stance-tbl th:nth-child(2), .stance-tbl td:nth-child(2) { width: 17%; text-align: left; }
+.stance-tbl th:nth-child(3), .stance-tbl td:nth-child(3) { width: 8%; }
+.stance-tbl th:nth-child(4), .stance-tbl td:nth-child(4) { width: 9%; }
+.stance-tbl th:nth-child(5), .stance-tbl td:nth-child(5) { width: 31%; text-align: left; }
+.stance-tbl th:nth-child(6), .stance-tbl td:nth-child(6) { width: 27%; text-align: left; }
+}
+@media (max-width: 560px) {
+  /* 6열을 좁은 화면에 밀어넣지 않고 행 단위 카드로 쌓는다 — 가로 스크롤 0 */
+  .stance-tbl, .stance-tbl tbody, .stance-tbl tr, .stance-tbl td { display: block; width: auto; }
+  .stance-tbl thead { display: none; }
+  .stance-tbl { font-size: 14px; }
+  .stance-tbl tr { background: #fff; border: 1px solid #E5E8EB; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 10px; }
+  .stance-tbl tr:last-child { margin-bottom: 0; }
+  .stance-tbl td { padding: 0; border: none; text-align: left; white-space: normal; font-weight: 400; }
+  .stance-tbl td::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800;
+    color: #8B95A1; letter-spacing: 0.02em; margin: 10px 0 2px; }
+  .stance-tbl td:nth-child(1) { font-size: 15px; font-weight: 800; }
+  .stance-tbl td:nth-child(1)::before, .stance-tbl td:nth-child(2)::before { content: none; }
+  .stance-tbl td:nth-child(2) { margin-top: 3px; }
+  .stance-tbl td:nth-child(3), .stance-tbl td:nth-child(4) { display: inline-block;
+    margin: 9px 14px 0 0; font-size: 12.5px; color: #4E5968; }
+  .stance-tbl td:nth-child(3)::before, .stance-tbl td:nth-child(4)::before { display: inline;
+    margin: 0 5px 0 0; }
+}
 </style>
 </head>
 <body>
@@ -353,56 +383,56 @@ tbody td:first-child { text-align:left; font-weight:600; }
 <p>나머지 여섯 자산군은 전부 유지다. 주식은 S&amp;P500의 50일선 대비 상회폭이 2.26%로 확대 조건(4.0% 이상)에 못 미쳤고 VIX도 15.84로 리스크오프 전환 조건(22 상회)과는 거리가 멀어 중립을 유지한다. 채권은 30년물이 5.285%로 축소 조건(5.05% 하회)에도, 확대 조건(5.40% 상회)에도 닿지 않아 숏 바이어스를 그대로 가져간다. FX·에너지·귀금속도 각각의 트리거가 전부 미충족(NOT_MET)이라 전일 등급을 그대로 승계한다. AI 인프라는 5일 초과수익이 -0.05%p로 오히려 지난주의 강한 플러스(+11.43%p)에서 반전돼, 확대 조건에는 더 멀어진 채 중립을 유지한다.</p>
 </div>
 
-<div class="tbl-scroll"><table>
+<div class="tbl-scroll"><table class="stance-tbl">
 <thead><tr><th>자산군</th><th>등급</th><th>유지</th><th>전일대비</th><th>논거</th><th>다음 분기점</th></tr></thead>
 <tbody>
 <tr>
-<td>주식</td>
-<td><span data-asset="equities" data-grade="0">중립</span><br><span class="sub">대형 성장주 축소, 소형·가치주 선별 확대</span></td>
-<td>3영업일</td>
-<td>유지</td>
-<td>대형 기술주 심리 흔들림 속 자금이 소형·가치주로 이동하는 국면이 2~6주 시계에서 이어진다. 지수 방향 베팅보다 틸트로 대응한다.</td>
-<td>S&amp;P500 50일선 대비 +4.0% 상회(현재 +2.26%) 또는 VIX 22 상회(현재 15.84) 시 재검토</td>
+<td data-label="자산군">주식</td>
+<td data-label="등급"><span data-asset="equities" data-grade="0">중립</span><br><span class="sub">대형 성장주 축소, 소형·가치주 선별 확대</span></td>
+<td data-label="유지">3영업일</td>
+<td data-label="전일대비">유지</td>
+<td data-label="논거">대형 기술주 심리 흔들림 속 자금이 소형·가치주로 이동하는 국면이 2~6주 시계에서 이어진다. 지수 방향 베팅보다 틸트로 대응한다.</td>
+<td data-label="다음 분기점">S&amp;P500 50일선 대비 +4.0% 상회(현재 +2.26%) 또는 VIX 22 상회(현재 15.84) 시 재검토</td>
 </tr>
 <tr>
-<td>채권</td>
-<td><span data-asset="bonds" data-grade="-1">숏 바이어스</span><br><span class="sub">벨리 OW · 5Y 중심 보유, 30Y 신규 확대 보류</span></td>
-<td>3영업일</td>
-<td>유지</td>
-<td>30년물이 5.285%로 근 20년래 최고치권을 유지하는 베어 스티프닝 구간에서는 듀레이션을 짧게, 캐리가 살아있는 벨리는 유지한다.</td>
-<td>30Y 5.05% 하회 시 축소, 5.40% 상회 시 추가 확대(현재 5.285%)</td>
+<td data-label="자산군">채권</td>
+<td data-label="등급"><span data-asset="bonds" data-grade="-1">숏 바이어스</span><br><span class="sub">벨리 OW · 5Y 중심 보유, 30Y 신규 확대 보류</span></td>
+<td data-label="유지">3영업일</td>
+<td data-label="전일대비">유지</td>
+<td data-label="논거">30년물이 5.285%로 근 20년래 최고치권을 유지하는 베어 스티프닝 구간에서는 듀레이션을 짧게, 캐리가 살아있는 벨리는 유지한다.</td>
+<td data-label="다음 분기점">30Y 5.05% 하회 시 축소, 5.40% 상회 시 추가 확대(현재 5.285%)</td>
 </tr>
 <tr>
-<td>FX</td>
-<td><span data-asset="fx" data-grade="-1">달러 소폭 숏</span><br><span class="sub">엔화는 DXY와 분리 점검 — USD/JPY 159선</span></td>
-<td>3영업일</td>
-<td>유지</td>
-<td>DXY가 20일 기준 -1.09%의 완만한 약세 추세를 유지하는 국면이 이어진다. 엔은 미 장기금리 급등에 따른 금리차 확대 기대로 달러 대비 덜 움직여 별도로 본다.</td>
-<td>DXY 101 상회 시 청산(현재 99.64), 20일 -3% 이하 시 확대(현재 -1.09%)</td>
+<td data-label="자산군">FX</td>
+<td data-label="등급"><span data-asset="fx" data-grade="-1">달러 소폭 숏</span><br><span class="sub">엔화는 DXY와 분리 점검 — USD/JPY 159선</span></td>
+<td data-label="유지">3영업일</td>
+<td data-label="전일대비">유지</td>
+<td data-label="논거">DXY가 20일 기준 -1.09%의 완만한 약세 추세를 유지하는 국면이 이어진다. 엔은 미 장기금리 급등에 따른 금리차 확대 기대로 달러 대비 덜 움직여 별도로 본다.</td>
+<td data-label="다음 분기점">DXY 101 상회 시 청산(현재 99.64), 20일 -3% 이하 시 확대(현재 -1.09%)</td>
 </tr>
 <tr>
-<td>원자재</td>
-<td><span data-asset="energy" data-grade="0">중립</span> · <span data-asset="metals" data-grade="1">소폭확대</span><br><span class="sub">에너지는 이벤트드리븐, 금은 이중 헤지 성격 유지</span></td>
-<td>3영업일</td>
-<td>유지</td>
-<td>WTI는 지정학 헤드라인에 하루 단위로 크게 튀는 구간이라 방향 베팅 대신 이벤트 확인 후 대응한다. 금은 20일 +7.82%로 안전자산·달러 약세를 동시에 반영하는 이중 헤지가 계속 작동해 완충재로 보유를 유지한다.</td>
-<td>WTI 5일 +6% 이상(현재 +1.47%) 또는 76달러 하회(현재 84.42) 시 방향 결정, 금 20일 +15% 이상(현재 +7.82%) 확대 · 5일 -4% 이하(현재 +0.15%) 축소</td>
+<td data-label="자산군">원자재</td>
+<td data-label="등급"><span data-asset="energy" data-grade="0">중립</span> · <span data-asset="metals" data-grade="1">소폭확대</span><br><span class="sub">에너지는 이벤트드리븐, 금은 이중 헤지 성격 유지</span></td>
+<td data-label="유지">3영업일</td>
+<td data-label="전일대비">유지</td>
+<td data-label="논거">WTI는 지정학 헤드라인에 하루 단위로 크게 튀는 구간이라 방향 베팅 대신 이벤트 확인 후 대응한다. 금은 20일 +7.82%로 안전자산·달러 약세를 동시에 반영하는 이중 헤지가 계속 작동해 완충재로 보유를 유지한다.</td>
+<td data-label="다음 분기점">WTI 5일 +6% 이상(현재 +1.47%) 또는 76달러 하회(현재 84.42) 시 방향 결정, 금 20일 +15% 이상(현재 +7.82%) 확대 · 5일 -4% 이하(현재 +0.15%) 축소</td>
 </tr>
 <tr data-evidence="metric">
-<td>메모리</td>
-<td><span data-asset="memory" data-grade="0">중립</span><br><span class="sub">OW에서 축소 — 초과수익 마이너스 전환</span></td>
-<td>1영업일</td>
-<td>▼1단계</td>
-<td>S&amp;P500 대비 20일 초과수익이 -6.19%p로 마이너스 전환하며 주도주 지위가 흔들렸다. AI capex 사이클 자체의 구조적 강세는 유효하나 2~6주 시계의 상대강도가 꺾여 한 단계 축소한다.</td>
-<td>20일 초과수익이 +5.0%p 이상 재돌파(현재 -6.19%p)하면 재확대, -15.0%p 이하로 추가 악화되면 UW 검토</td>
+<td data-label="자산군">메모리</td>
+<td data-label="등급"><span data-asset="memory" data-grade="0">중립</span><br><span class="sub">OW에서 축소 — 초과수익 마이너스 전환</span></td>
+<td data-label="유지">1영업일</td>
+<td data-label="전일대비">▼1단계</td>
+<td data-label="논거">S&amp;P500 대비 20일 초과수익이 -6.19%p로 마이너스 전환하며 주도주 지위가 흔들렸다. AI capex 사이클 자체의 구조적 강세는 유효하나 2~6주 시계의 상대강도가 꺾여 한 단계 축소한다.</td>
+<td data-label="다음 분기점">20일 초과수익이 +5.0%p 이상 재돌파(현재 -6.19%p)하면 재확대, -15.0%p 이하로 추가 악화되면 UW 검토</td>
 </tr>
 <tr>
-<td>AI 인프라</td>
-<td><span data-asset="ai_infra" data-grade="0">중립</span><br><span class="sub">실적 모멘텀 종목만 선별, 파이낸싱 리스크는 개별 이슈로 분리</span></td>
-<td>3영업일</td>
-<td>유지</td>
-<td>광네트워킹과 전력인프라 사이 온도차가 여전히 커 테마 단위 베팅은 이르다. 5일 초과수익이 -0.05%p로 지난주 대비 크게 꺾여 확대 논거도 약해졌다.</td>
-<td>5일 초과수익 +5.0%p 이상(현재 -0.05%p) 재점화 시 확대, 하이퍼스케일러 캐펙스 가이던스 하향 확인 시 추가 축소 검토</td>
+<td data-label="자산군">AI 인프라</td>
+<td data-label="등급"><span data-asset="ai_infra" data-grade="0">중립</span><br><span class="sub">실적 모멘텀 종목만 선별, 파이낸싱 리스크는 개별 이슈로 분리</span></td>
+<td data-label="유지">3영업일</td>
+<td data-label="전일대비">유지</td>
+<td data-label="논거">광네트워킹과 전력인프라 사이 온도차가 여전히 커 테마 단위 베팅은 이르다. 5일 초과수익이 -0.05%p로 지난주 대비 크게 꺾여 확대 논거도 약해졌다.</td>
+<td data-label="다음 분기점">5일 초과수익 +5.0%p 이상(현재 -0.05%p) 재점화 시 확대, 하이퍼스케일러 캐펙스 가이던스 하향 확인 시 추가 축소 검토</td>
 </tr>
 </tbody>
 </table></div>

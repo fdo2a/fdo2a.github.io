@@ -176,6 +176,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 1. **전일 스탠스 리뷰** (표 앞, 2~3문단) — 어제 걸어둔 트리거가 오늘 어떻게 판정됐는지 실제 수치와 함께 쓴다. 예: "어제 주식 확대 조건으로 걸어둔 S&P 500의 50DMA 4% 상회는 오늘 3.64%에 그쳐 충족되지 않았다." 충족된 트리거가 있으면 그것이 어느 등급을 움직였는지, 없으면 왜 전 자산군을 유지하는지 밝힌다. 이 블록이 §8을 검증 가능하게 만드는 장치이므로 생략 불가.
 2. **스탠스 표** — `자산군 | 등급 | 유지 | 전일대비 | 논거 | 다음 분기점` 6열
+   - 마크업은 `<div class="tbl-scroll"><table class="stance-tbl">`이고 **모든 `<td>`에 `data-label="열 이름"`을 단다** — 모바일에서 이 표는 행 단위 카드로 쌓이고 `data-label`이 머리행을 대신한다(위 '모바일 반응형' 참조). 빠뜨리면 좁은 화면에서 라벨 없는 문단 더미가 된다
    - 등급 칸: 통제 어휘 라벨을 **`<span data-asset="KEY" data-grade="N">라벨</span>`로 감싼다** — 발행 게이트가 이 표식으로 등급을 대조하므로 누락하면 발행이 막힌다. KEY는 `equities` / `bonds` / `fx` / `energy` / `metals` / `memory` / `ai_infra`, N은 정수 등급. 라벨 뒤에 `tilt`를 `<span class="sub">`로 작게 병기한다(채권은 커브 라벨도). 원자재 행은 한 칸에 `<span data-asset="energy" …>` 와 `<span data-asset="metals" …>` 둘을 나란히 둔다
    - 이벤트형(MANUAL) 트리거만으로 등급을 옮긴 행은 그 `<tr>`에 `data-evidence="event"`를 달고, 논거 칸에 `research_notes.md`의 출처를 인용한다
    - 유지 칸: `stance_eval.json`의 `days_held`를 그대로 `N영업일`
@@ -255,8 +256,42 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
   th:last-child, td:last-child { white-space: normal; }
 }
 ```
-첫 열(지표명·종목명)과 마지막 열은 줄바꿈을 허용하고 그 사이 숫자·날짜 열만 nowrap로 보호한다 — '전략 근거'처럼 긴 서술이 마지막 열에 오는 표(멀티에셋 매니저 전략)가 모바일에서 한 줄로 늘어나 과도한 가로 스크롤이 생기는 것을 막는다. 그래도 6열짜리 경제지표 표처럼 좁은 화면에 다 안 들어가는 표는 `.tbl-scroll` 래퍼 덕에 가로 스크롤이 생긴다 — 열을 줄이거나 글자를 억지로 더 축소하지 않는다. 검증은 스크린샷 눈대중이 아니라 `document.documentElement.scrollWidth`가 뷰포트 폭과 같은지(페이지 레벨 가로 스크롤이 없는지) 확인하는 방식이 정확하다.
+첫 열(지표명·종목명)과 마지막 열은 줄바꿈을 허용하고 그 사이 숫자·날짜 열만 nowrap로 보호한다 — '전략 근거'처럼 긴 서술이 마지막 열에 오는 표가 모바일에서 한 줄로 늘어나 과도한 가로 스크롤이 생기는 것을 막는다. **서술 칸이 둘 이상인 표(§9 스탠스 표)에는 이 규칙이 통하지 않는다 — 아래 `.stance-tbl`을 쓴다.** 그래도 6열짜리 경제지표 표처럼 좁은 화면에 다 안 들어가는 표는 `.tbl-scroll` 래퍼 덕에 가로 스크롤이 생긴다 — 열을 줄이거나 글자를 억지로 더 축소하지 않는다. 검증은 스크린샷 눈대중이 아니라 `document.documentElement.scrollWidth`가 뷰포트 폭과 같은지(페이지 레벨 가로 스크롤이 없는지) 확인하는 방식이 정확하다.
 `sector_performance.html` 스니펫은 자체 미디어쿼리를 이미 포함하고 있으니 그대로 삽입하면 된다(수정 금지).
+
+**본문 `body`에 `overflow-wrap: break-word`를 함께 건다 (2026-08-20).** `word-break: keep-all`만 걸면 「Western Digital(+5.35%)·Marvell(+5.54%)·Micron(+4.13%)」처럼 공백 없이 가운뎃점으로 이어붙인 종목 나열이 **끊기지 않는 한 덩어리**가 돼 390px에서 페이지 전체가 가로로 밀린다(2026-07-22·08-17 발행본 실측 403px·524px). `break-word`는 한글 단어는 그대로 두고 넘치는 라틴 덩어리만 쪼갠다.
+
+**§9 멀티에셋 스탠스 표 = `.stance-tbl` (2026-08-20 사용자 지시)** — 서술 칸이 `논거`·`다음 분기점` 둘이라 위의 nowrap 규칙으로는 비율이 무너진다(실측: 390px에서 논거 칸이 1,250px 한 줄로 늘어나고 다음 분기점은 85px로 눌려 표 전체가 1,808px). 모바일에서는 표를 좁은 화면에 밀어넣지 말고 **행 하나를 카드 하나로 세로로 쌓는다**. 마크업은 `<table class="stance-tbl">` + **모든 `<td>`에 `data-label="열 이름"`** (`자산군`·`등급`·`유지`·`전일대비`·`논거`·`다음 분기점` — 라벨이 모바일에서 머리행을 대신한다).
+```css
+.stance-tbl { table-layout: fixed; }
+@media (min-width: 561px) {
+.stance-tbl th:nth-child(1), .stance-tbl td:nth-child(1) { width: 8%; }
+.stance-tbl th:nth-child(2), .stance-tbl td:nth-child(2) { width: 17%; text-align: left; }
+.stance-tbl th:nth-child(3), .stance-tbl td:nth-child(3) { width: 8%; }
+.stance-tbl th:nth-child(4), .stance-tbl td:nth-child(4) { width: 9%; }
+.stance-tbl th:nth-child(5), .stance-tbl td:nth-child(5) { width: 31%; text-align: left; }
+.stance-tbl th:nth-child(6), .stance-tbl td:nth-child(6) { width: 27%; text-align: left; }
+}
+@media (max-width: 560px) {
+  .stance-tbl, .stance-tbl tbody, .stance-tbl tr, .stance-tbl td { display: block; width: auto; }
+  .stance-tbl thead { display: none; }
+  .stance-tbl { font-size: 14px; }
+  .stance-tbl tr { background: #fff; border: 1px solid #E5E8EB; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 10px; }
+  .stance-tbl tr:last-child { margin-bottom: 0; }
+  .stance-tbl td { padding: 0; border: none; text-align: left; white-space: normal; font-weight: 400; }
+  .stance-tbl td::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800;
+    color: #8B95A1; letter-spacing: 0.02em; margin: 10px 0 2px; }
+  .stance-tbl td:nth-child(1) { font-size: 15px; font-weight: 800; }
+  .stance-tbl td:nth-child(1)::before, .stance-tbl td:nth-child(2)::before { content: none; }
+  .stance-tbl td:nth-child(2) { margin-top: 3px; }
+  .stance-tbl td:nth-child(3), .stance-tbl td:nth-child(4) { display: inline-block;
+    margin: 9px 14px 0 0; font-size: 12.5px; color: #4E5968; }
+  .stance-tbl td:nth-child(3)::before, .stance-tbl td:nth-child(4)::before { display: inline;
+    margin: 0 5px 0 0; }
+}
+```
+데스크톱 열 너비를 `min-width: 561px` 안에 가두는 것이 핵심이다 — `nth-child` 셀렉터(0,2,1)가 모바일의 `width: auto`(0,1,1)를 이기기 때문에, 밖에 두면 카드로 쌓아도 칸이 27px·103px로 쪼그라든다(실측).
 
 **§8 4축 스트립 CSS (2026-08-18)** — 전달경로 스트립과 같은 골격을 쓴다.
 ```css
