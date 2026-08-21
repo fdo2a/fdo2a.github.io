@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-20 21:51 UTC",
-  "report_date": "2026-08-20",
+  "generated": "2026-08-21 21:46 UTC",
+  "report_date": "2026-08-21",
   "growth_score": -0.182,
   "inflation_score": -0.264,
   "growth_diffusion": 0.571,
@@ -174,7 +174,7 @@
       "actual": 206000.0,
       "previous": 212000.0,
       "ref_period": "2026-08-15",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -189,7 +189,7 @@
       "actual": 204000.0,
       "previous": 199750.0,
       "ref_period": "2026-08-15",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -204,7 +204,7 @@
       "actual": 1799000.0,
       "previous": 1781000.0,
       "ref_period": "2026-08-08",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -477,49 +477,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims"
-  ],
-  "headline_releases": [
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 1.725,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 206000.0,
-          "previous": 212000.0,
-          "ref_period": "2026-08-15",
-          "momentum_z": -0.39
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 204000.0,
-          "previous": 199750.0,
-          "ref_period": "2026-08-15",
-          "momentum_z": -1.725
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1799000.0,
-          "previous": 1781000.0,
-          "ref_period": "2026-08-08",
-          "momentum_z": -0.605
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-06-01",
