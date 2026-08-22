@@ -92,6 +92,10 @@ INTERNAL_JARGON = ('signed-z', 'signed_z', 'z스코어', 'z-스코어', 'z-score
                    '모멘텀 z', 'momentum_z', 'allowed_grades', 'allowed_regimes',
                    'headline_releases', 'new_releases', 'last_seen')
 
+# 2026-08-22 사용자 지시: 발행본에서 「buy-side」를 쓰지 않는다. 같은 자리를
+# 전략·리포트·시황 정리로 부른다 (§7 헤더는 「전략 코멘트」, 섹션 박스는 「전략 해석」).
+BANNED_LABELS = ('buy-side', 'buy side', 'buyside', '바이사이드')
+
 
 def _blocks(section, wanted):
     """{key: prose} for markers of one kind, each sliced to the next marker of ANY kind.
@@ -317,6 +321,12 @@ def _check_hygiene(html, v):
         if word in text:
             v.append(f'발행본에 내부 지표 용어 "{word}"가 노출됐다 — '
                      '방향(개선/악화/보합)과 강도(뚜렷/완만)로 바꿔 쓸 것')
+    low = text.lower()
+    for word in BANNED_LABELS:
+        if word in low:
+            v.append(f'발행본에 buy-side 표기("{word}")가 남았다 — '
+                     '전략·리포트·시황 정리로 부를 것 (§7 헤더는 「전략 코멘트」)')
+            break
 
 
 def _check_reconciliation(section, next_macro, stance, v):

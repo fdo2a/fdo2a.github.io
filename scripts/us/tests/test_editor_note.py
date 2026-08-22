@@ -2,7 +2,7 @@ import pytest
 
 from us.editor_note import apply_note, extract_note, render_note
 
-PAGE = ('<body><section id="verdict"><h2>Buy-side 종합 해석</h2><p>…</p></section>\n'
+PAGE = ('<body><section id="verdict"><h2>전략 코멘트</h2><p>…</p></section>\n'
         '<section id="macro"><h2>매크로 논리</h2><p>…</p></section>\n'
         '<section id="disclaimer"><p>면책</p></section></body>')
 
@@ -60,7 +60,7 @@ def test_an_empty_note_renders_nothing():
 
 def test_the_note_lands_right_after_the_buyside_verdict():
     out = apply_note(PAGE, render_note('내 생각', '2026-08-20'))
-    assert out.index('내 생각') > out.index('Buy-side 종합 해석')
+    assert out.index('내 생각') > out.index('전략 코멘트')
     assert out.index('내 생각') < out.index('매크로 논리')
 
 
@@ -78,7 +78,7 @@ def test_an_empty_note_removes_the_section():
 
 def test_the_rest_of_the_page_is_untouched():
     out = apply_note(PAGE, render_note('내 생각', '2026-08-20'))
-    for keep in ('Buy-side 종합 해석', '매크로 논리', '면책'):
+    for keep in ('전략 코멘트', '매크로 논리', '면책'):
         assert keep in out
 
 

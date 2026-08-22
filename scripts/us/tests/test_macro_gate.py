@@ -46,7 +46,7 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
                   for k in reconcile)
     name = macro.regime_name(growth, inflation)
     return (
-        '<section><h2>7. Buy-side 종합 해석</h2><p>…</p></section>'
+        '<section><h2>7. 전략 코멘트</h2><p>…</p></section>'
         '<section><h2>8. 매크로 논리</h2>'
         f'<p>국면은 <span data-macro="regime" data-growth="{growth}" '
         f'data-inflation="{inflation}">{name}</span>이다. '
@@ -424,6 +424,19 @@ def test_z_score_jargon_is_rejected():
 
 def test_ordinary_prose_is_untouched():
     html = build_html(extra='<p>고용은 구인건수가 개선을 주도했다</p>')
+    assert check(html, macro_file(), eval_file(), next_file()) == []
+
+
+def test_buy_side_label_is_rejected():
+    """2026-08-22 사용자 지시 — 발행본에서 「buy-side」를 쓰지 않는다."""
+    for word in ('buy-side 종합 해석', 'Buy-side 해석', 'buy side 관점', '바이사이드 시각'):
+        html = build_html(extra=f'<p>{word}으로 정리하면</p>')
+        out = check(html, macro_file(), eval_file(), next_file())
+        assert any('buy-side' in x for x in out), word
+
+
+def test_strategy_wording_passes():
+    html = build_html(extra='<p>전략 코멘트로 정리하면 방어적이다</p>')
     assert check(html, macro_file(), eval_file(), next_file()) == []
 
 

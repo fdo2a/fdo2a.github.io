@@ -93,8 +93,9 @@ def render_note(markdown, date):
 
 
 def _insertion_point(html_doc):
-    """§7 Buy-side 종합 해석 바로 뒤. 그 섹션이 없으면 면책 문구 앞."""
-    m = re.search(r'<section\b[^>]*>(?:(?!</section>).)*?Buy-side 종합 해석.*?</section>\n?',
+    """§7 전략 코멘트(구 Buy-side 종합 해석) 바로 뒤. 그 섹션이 없으면 면책 문구 앞."""
+    m = re.search(r'<section\b[^>]*>(?:(?!</section>).)*?(?:전략 코멘트|Buy-side 종합 해석)'
+                  r'.*?</section>\n?',
                   html_doc, re.S)
     if m:
         return m.end()
