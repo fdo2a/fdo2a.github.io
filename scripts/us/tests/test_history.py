@@ -1,6 +1,8 @@
 import json
 import os
 
+import pytest
+
 from us.history import append_jsonl, macro_record, read_jsonl, stance_record
 
 STANCE = {
@@ -74,3 +76,24 @@ def test_read_jsonl_skips_corrupt_line(tmp_path):
         fh.write("{ not json\n")
         fh.write(json.dumps({"report_date": "2026-08-20"}) + "\n")
     assert len(read_jsonl(p)) == 2
+
+
+def test_append_jsonl_leaves_the_original_intact_when_writing_fails(tmp_path, monkeypatch):
+    p = os.path.join(tmp_path, "stance.jsonl")
+    append_jsonl(p, {"report_date": "2026-08-19", "v": 1})
+    before = open(p, encoding="utf-8").read()
+
+    import us.history as H
+
+    real_open = open
+
+    def boom(path, *a, **kw):
+        if str(path).endswith(".tmp") or ".tmp" in str(path):
+            raise OSError("disk full")
+        return real_open(path, *a, **kw)
+
+    monkeypatch.setattr(H, "open", boom, raising=False)
+    with pytest.raises(OSError):
+        append_jsonl(p, {"report_date": "2026-08-20", "v": 2})
+
+    assert open(p, encoding="utf-8").read() == before

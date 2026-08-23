@@ -6,6 +6,7 @@
 
 import json
 import os
+import tempfile
 
 # 발동 판정에 필요한 필드만 — desc 산문은 매일 바뀌어 이력을 부풀리기만 한다
 _TRIGGER_KEYS = ('kind', 'metric', 'op', 'value', 'toward')
@@ -62,8 +63,21 @@ def append_jsonl(path, record, key='report_date'):
         return False
     rows.append(record)
     rows.sort(key=lambda r: r.get(key) or '')
-    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
-    with open(path, 'w', encoding='utf-8') as fh:
-        for r in rows:
-            fh.write(json.dumps(r, ensure_ascii=False, default=str) + '\n')
+    directory = os.path.dirname(path) or '.'
+    os.makedirs(directory, exist_ok=True)
+    # 같은 디렉터리에 임시 파일을 쓰고 os.replace 로 원자적으로 바꿔치기 —
+    # 이 파일은 재구성 불가능한 유일본이라 중간에 죽어도 원본이 훼손되면 안 된다.
+    fd, tmp_path = tempfile.mkstemp(dir=directory, prefix='.history-', suffix='.tmp')
+    os.close(fd)
+    try:
+        with open(tmp_path, 'w', encoding='utf-8') as fh:
+            for r in rows:
+                fh.write(json.dumps(r, ensure_ascii=False, default=str) + '\n')
+        os.replace(tmp_path, path)
+    except BaseException:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
     return True
