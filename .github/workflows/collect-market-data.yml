@@ -87,6 +87,7 @@ jobs:
           git add data/yield_curve.png data/stance_metrics.json data/stance_eval.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true
+          git add data/history 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No data changes to commit.'
           else

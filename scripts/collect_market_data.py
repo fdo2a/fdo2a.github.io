@@ -645,6 +645,23 @@ def main():
         print(f'macro metrics failed: {e}', file=sys.stderr)
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
+
+    # 승계 책 이력 — 오늘 커밋돼 있는 stance/macro 를 로그에 밀어 넣는다.
+    # 어제까지의 판단이 대상이다 (오늘 것은 아직 writer 가 만들지 않았다).
+    try:
+        from us.history import append_jsonl, macro_record, stance_record
+        hdir = os.path.join(args.outdir, 'history')
+        for name, fn, out in (('stance.json', stance_record, 'stance.jsonl'),
+                              ('macro.json', macro_record, 'macro.jsonl')):
+            src = os.path.join(args.outdir, name)
+            if not os.path.exists(src):
+                continue
+            book = json.load(open(src, encoding='utf-8'))
+            if append_jsonl(os.path.join(hdir, out), fn(book)):
+                print(f"history: appended {book.get('report_date')} to {out}")
+    except Exception as e:
+        print(f'history append failed: {e}', file=sys.stderr)
+
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
     json.dump({'generated': data['generated'], 'source': 'FRED via collect_market_data.py',
