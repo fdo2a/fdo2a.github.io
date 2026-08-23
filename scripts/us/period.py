@@ -12,6 +12,7 @@ from datetime import date
 GROUPS = ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra')
 BASKETS = ('memory', 'ai_infra')
 BENCHMARK = 'S&P 500'
+TENORS = ('2Y', '5Y', '10Y', '30Y')
 
 
 def _d(s):
@@ -52,7 +53,9 @@ def level_change(series, start, end):
     if not window:
         return None, None, None
     before = [v for d, v in series if d < start]
-    base = before[-1] if before else window[0][1]
+    if not before:
+        return None, None, None
+    base = before[-1]
     return base, window[-1][1], window[-1][1] - base
 
 
@@ -75,7 +78,13 @@ def build(span, key, closes, yields_hist, daily_headlines):
 
     for g in GROUPS:
         rows = {}
-        for name, series in (closes.get(g) or {}).items():
+        group_data = closes.get(g)
+        if not group_data:
+            out['complete'] = False
+            out['missing'].append(f'{g}: group absent')
+            out[g] = rows
+            continue
+        for name, series in group_data.items():
             p = pct_change(series or [], start, end)
             if p is None:
                 out['complete'] = False
@@ -102,8 +111,13 @@ def build(span, key, closes, yields_hist, daily_headlines):
             out[g]['basket_excess_pct'] = round(b - spx['pct'], 4) if spx else None
 
     yields = {}
-    for tenor, series in (yields_hist or {}).items():
-        s0, s1, chg = level_change(series or [], start, end)
+    for tenor in TENORS:
+        series = (yields_hist or {}).get(tenor)
+        if not series:
+            out['complete'] = False
+            out['missing'].append(f'yields.{tenor}')
+            continue
+        s0, s1, chg = level_change(series, start, end)
         if chg is None:
             out['complete'] = False
             out['missing'].append(f'yields.{tenor}')

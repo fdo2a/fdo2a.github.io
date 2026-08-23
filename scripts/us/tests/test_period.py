@@ -1,6 +1,6 @@
 import pytest
 
-from us.period import build, month_key, pct_change, slice_series, week_key
+from us.period import build, month_key, pct_change, slice_series, week_key, TENORS
 
 
 def test_week_key_is_iso_and_zero_padded():
@@ -105,3 +105,51 @@ def test_build_carries_daily_headlines_ascending():
     r = build("weekly", "2026-W34", _closes(), YIELDS,
               [{"date": "2026-08-21", "headline": "b"}, {"date": "2026-08-17", "headline": "a"}])
     assert [x["date"] for x in r["daily"]] == ["2026-08-17", "2026-08-21"]
+
+
+def _complete_yields():
+    """모든 TENORS 를 포함한 완전한 yield 데이터."""
+    return {
+        '2Y': [("2026-08-14", 4.10), ("2026-08-17", 4.10), ("2026-08-21", 4.15)],
+        '5Y': [("2026-08-14", 4.15), ("2026-08-17", 4.15), ("2026-08-21", 4.20)],
+        '10Y': [("2026-08-14", 4.20), ("2026-08-17", 4.25), ("2026-08-21", 4.35)],
+        '30Y': [("2026-08-14", 4.50), ("2026-08-17", 4.50), ("2026-08-21", 4.55)],
+    }
+
+
+def test_build_complete_with_all_groups_and_tenors():
+    """모든 그룹과 tenor 가 있을 때 complete=True 와 missing=[]."""
+    r = build("weekly", "2026-W34", _closes(), _complete_yields(), HEADLINES)
+    assert r["complete"] is True
+    assert r["missing"] == []
+
+
+def test_build_flags_group_entirely_absent():
+    """그룹이 closes 에서 통째로 빠지면 missing 에 기록."""
+    c = _closes()
+    del c["memory"]
+    r = build("weekly", "2026-W34", c, _complete_yields(), HEADLINES)
+    assert r["complete"] is False
+    assert "memory: group absent" in r["missing"]
+
+
+def test_build_flags_tenor_absent():
+    """tenor 가 yields_hist 에서 빠지면 missing 에 기록."""
+    y = _complete_yields()
+    del y["5Y"]
+    r = build("weekly", "2026-W34", _closes(), y, HEADLINES)
+    assert r["complete"] is False
+    assert "yields.5Y" in r["missing"]
+
+
+def test_build_flags_tenor_without_prior_close():
+    """tenor 의 시리즈가 start 전 종가를 갖지 못하면 missing 에 기록."""
+    y = _complete_yields()
+    y["5Y"] = [("2026-08-17", 4.15), ("2026-08-21", 4.20)]  # start 전 데이터 없음
+    r = build("weekly", "2026-W34", _closes(), y, HEADLINES)
+    assert r["complete"] is False
+    assert "yields.5Y" in r["missing"]
+    # 5Y 가 missing 이므로 5Y 를 사용하는 spread_5s30s_bp 는 curve 에 없어야 한다
+    assert "spread_5s30s_bp" not in r["curve"]
+    # 하지만 2s10s 는 2Y 와 10Y 가 완전하면 있어야 한다
+    assert "spread_2s10s_bp" in r["curve"]
