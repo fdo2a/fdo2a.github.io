@@ -136,6 +136,56 @@ def collect_histories():
     return out, as_of
 
 
+def collect_dated_closes(period='3mo'):
+    """{group: {name: [(date, close), ...]}} — 기간 집계용. 3개월이면 주·월 모두 덮는다."""
+    import yfinance as yf
+    tickers = [t for _, pairs in GROUPS for _, t in pairs]
+
+    def dl():
+        df = yf.download(tickers, period=period, interval='1d', group_by='ticker',
+                         auto_adjust=True, progress=False, threads=False)
+        return df if df is not None and len(df) else None
+
+    df = retry(dl)
+    out = {}
+    for group, pairs in GROUPS:
+        out[group] = {}
+        for name, t in pairs:
+            try:
+                closes = df[t]['Close'].dropna()
+                out[group][name] = [(str(i.date()), float(v)) for i, v in closes.items()]
+            except Exception:
+                out[group][name] = []
+    return out
+
+
+def yield_histories():
+    """{tenor: [(date, level_pct), ...]} — FRED 일별. 기간 bp 변화는 이 계열로 잰다.
+
+    발행용 스팟(야후)과 달리 기간 변화는 만기별 기준일이 섞이면 안 되므로 FRED 로 통일한다.
+    """
+    out = {}
+    for tenor, sid in (('2Y', 'DGS2'), ('5Y', 'DGS5'), ('10Y', 'DGS10'), ('30Y', 'DGS30')):
+        try:
+            out[tenor] = [(d, v) for d, v in fred_series(sid) if v is not None]
+        except Exception as e:
+            print(f'yield history {tenor} failed: {e}', file=sys.stderr)
+            out[tenor] = []
+    return out
+
+
+def daily_headlines(repo_root):
+    """posts.json 에서 (date, headline) 회수 — 그 주의 촉매는 일간이 이미 확정했다."""
+    p = os.path.join(repo_root, 'posts.json')
+    if not os.path.exists(p):
+        return []
+    try:
+        posts = json.load(open(p, encoding='utf-8'))
+    except Exception:
+        return []
+    return [{'date': x['date'], 'headline': x.get('headline', '')} for x in posts if x.get('date')]
+
+
 PERF_HORIZONS = [('1D', 1), ('1W', 7), ('1M', 30), ('6M', 182), ('1Y', 365)]
 PERF_LABELS = {'1D': '1일', '1W': '1주', '1M': '1개월', '6M': '6개월', '1Y': '1년'}
 PERF_SHORT = {'Communication Services': 'Comm. Svcs', 'Consumer Discretionary': 'Consumer Disc.'}
@@ -661,6 +711,28 @@ def main():
                 print(f"history: appended {book.get('report_date')} to {out}")
     except Exception as e:
         print(f'history append failed: {e}', file=sys.stderr)
+
+    # 기간 집계 — 기간 키로 나눠 쓰므로 주/달이 넘어가면 지난 파일이 곧 확정본이다.
+    try:
+        from us.period import build as period_build, month_key, week_key
+        dated = collect_dated_closes()
+        yh = yield_histories()
+        # posts.json 은 레포 루트에 있다 — outdir 는 'data' 하위 상대/절대/중첩 어느 값도
+        # 될 수 있으므로 outdir 기준 역산 대신 이 스크립트 파일 위치(scripts/ 의 부모)로
+        # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        heads = daily_headlines(repo_root)
+        for span, keyer, sub in (('weekly', week_key, 'weekly'), ('monthly', month_key, 'monthly')):
+            k = keyer(report_date)
+            agg = period_build(span, k, dated, yh, heads)
+            d = os.path.join(args.outdir, sub)
+            os.makedirs(d, exist_ok=True)
+            json.dump(agg, open(os.path.join(d, f'{k}.json'), 'w'),
+                      indent=2, default=str, ensure_ascii=False)
+            print(f"{span} {k}: {agg['sessions']} sessions, "
+                  f"complete={agg['complete']}")
+    except Exception as e:
+        print(f'period aggregation failed: {e}', file=sys.stderr)
 
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
