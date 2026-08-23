@@ -88,17 +88,29 @@ footer.rpt { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--bo
   h2 { font-size: 16.5px; }
 }
 
-/* readability-v2 */
+/* readability-v3 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
+h1 { max-width: 34em; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
 table { font-variant-numeric: tabular-nums; }
+section { scroll-margin-top: 20px; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.reading-map a:first-of-type { color: #0064FF; border-color: #B9D5FF; background: #F5F9FF; }
+.reading-map a:focus-visible { outline: 2px solid #0064FF; outline-offset: 2px; }
 @media (max-width: 560px) {
   .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
   .card { padding: 16px 16px; }
+  .reading-map { margin-bottom: 16px; }
 }
 </style>
 </head>
@@ -118,8 +130,21 @@ table { font-variant-numeric: tabular-nums; }
   <h1>7월 비농업고용 -2.3만명 '고용쇼크'에 금리인하 기대 급부상 — S&amp;P500 사상 최고치, 금 온스당 4,400달러 돌파, 메모리주는 SK하이닉스發 공급과잉 우려로 급락</h1>
 </div>
 </section>
+<!-- reading-map-v1 -->
+<nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#read-6">전략 코멘트</a><a href="#read-1">시장 흐름</a><a href="#read-3">금리·수급</a><a href="#read-7">거시·포트폴리오</a><a href="#read-8">종목·섹터</a></nav>
+<!-- strategy-first-v1 -->
+<section id="read-6">
+<h2>전략 코멘트</h2>
+<div class="card">
+<p>이날 시장을 움직인 단일 동인은 7월 비농업고용 -2.3만명이라는 서프라이즈였다. 월가 컨센서스(+80~83K)를 큰 폭으로 하회한 이 수치는 실업률 하락(4.2%→4.1%)에도 불구하고 경제활동참가율 둔화가 반영된 결과로 해석되며, 평균시급 증가율도 전년 대비 3.2%로 2021년 5월 이후 최저치를 기록해 노동시장 냉각 신호가 뚜렷했다. 시장은 이를 "나쁜 뉴스가 좋은 뉴스"로 받아들여 국채금리 하락·주가 상승·금 급등이라는 전형적인 되돌림 패턴을 만들어냈다.</p>
+<p>크로스에셋 정합성은 대체로 높았다. 국채금리(5Y·10Y·30Y 하락), 주식(S&amp;P500 사상 최고 종가), 금(7주 최고치), 달러(약세) 모두 "금리인하 기대 확대"라는 하나의 서사로 수렴했다. 다만 WTI가 나홀로 약세를 보인 점과, 메모리주(SK하이닉스·웨스턴디지털·시게이트)가 거시 재료와 무관하게 자체 공급과잉 우려로 급락한 점은 예외였다. 이는 이번 랠리가 매크로 하나의 축으로만 설명되지 않으며, 종목·섹터 고유의 펀더멘털 재료가 동시에 작동하고 있다는 점을 보여준다.</p>
+<p>다음 촉매는 9월 16일 FOMC와 그 사이에 발표될 8월 고용지표(9월 초), 그리고 7월 CPI(8월 중순 발표)다. CME FedWatch 상 9월 인상 확률이 이번 지표로 약 57%에서 43.9%로 급락하고 동결 확률이 56.1%로 오른 만큼(CNBC, 2026-08-07), 다음 CPI가 디스인플레이션 추세를 재확인해주는지가 이 되돌림의 지속 여부를 가를 것이다. 코히런트(8/12)·루멘텀(8/11) 실적도 AI 인프라·광학 밸류체인 랠리의 펀더멘털 뒷받침 여부를 확인할 단기 이벤트로 주목할 만하다.</p>
+</div>
+</section>
 
-<section>
+
+
+<section id="read-1">
 <h2>주식</h2>
 <div class="grid-2">
 <div>
@@ -176,7 +201,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-2">
 <h2>섹터 기간별 수익률</h2>
 <style>
 .spf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -255,7 +280,7 @@ table { font-variant-numeric: tabular-nums; }
 </section>
 
 
-<section>
+<section id="read-3">
 <h2>채권</h2>
 <div class="tbl-scroll">
 <table>
@@ -280,11 +305,12 @@ table { font-variant-numeric: tabular-nums; }
 <p>2s10s 스프레드는 41.0bp(2Y FRED 08-06 vs 10Y Yahoo 08-07 기준)로, 동일자 FRED 기준으로는 44.0bp다. 두 값의 차이는 3bp로 크지 않아 날짜 불일치보다는 실제 스프레드 수준으로 봐도 무방하다.</p>
 <p>다만 2Y가 FRED 랙 때문에 고용쇼크가 반영되기 하루 전(08-06) 시점을 담고 있다는 점은 유의해야 한다 — 즉 이번 금리 하락은 5Y·10Y·30Y에는 이미 반영됐지만 2Y에는 아직 반영되지 않았을 가능성이 커서, 2Y가 포함된 2s10s 스프레드로 당일 커브 형태를 단정하기는 이르다.</p>
 <p>같은 기준일(야후, 08-07)로만 비교 가능한 5s30s 스프레드는 84.9bp로, 이날 5Y가 -2.7bp, 30Y가 -0.2bp 하락해 벨리가 장기물보다 더 크게 떨어지는 완만한 불 스티프닝(bull steepening)이 나타났다. 주간 기준으로도 5Y가 -9.8bp, 30Y가 -6.4bp 하락해 5s30s 스프레드가 한 주간 확대되는 동일한 방향성을 보였다.</p>
-<p>2Y의 주간 변화(+2.0bp, FRED-FRED 비교)까지 종합하면 이번 주 커브는 전반적으로 벨리~장기물 중심의 불 플래트닝(2s10s 압축) 성격이 강했다고 볼 수 있는데, 전단(2Y)의 변화 폭이 미미해 이 결론은 참고용으로만 받아들이는 편이 안전하다. 듀레이션 전략 관점에서는 이번 고용쇼크가 아직 전단 금리에 온전히 반영되지 않았다는 점을 활용해, 2년물 익스포저를 지금 선제적으로 확대하고 벨리~장기 구간은 이미 반영된 만큼 추가 매수보다는 보유·롤다운 전략이 유리해 보인다. 손절 기준은 다음 CPI(8월 중순 발표)나 ISM 물가지표가 예상보다 뜨겁게 나와 커브가 다시 베어 스티프닝으로 돌아설 경우로 잡는다.</p>
+<p>2Y의 주간 변화(+2.0bp, FRED-FRED 비교)까지 종합하면 이번 주 커브는 전반적으로 벨리~장기물 중심의 불 플래트닝(2s10s 압축) 성격이 강했다고 볼 수 있는데, 전단(2Y)의 변화 폭이 미미해 이 결론은 참고용으로만 받아들이는 편이 안전하다. 듀레이션 전략 관점에서는 이번 고용쇼크가 아직 전단 금리에 온전히 반영되지 않았다는 점을 활용해, 2년물 익스포저를 지금 선제적으로 확대하고 벨리~장기 구간은 이미 반영된 만큼 추가 매수보다는 보유·롤다운 전략이 유리해 보인다.</p>
+<p>손절 기준은 다음 CPI(8월 중순 발표)나 ISM 물가지표가 예상보다 뜨겁게 나와 커브가 다시 베어 스티프닝으로 돌아설 경우로 잡는다.</p>
 </div>
 </section>
 
-<section>
+<section id="read-4">
 <h2>FX</h2>
 <div class="tbl-scroll">
 <table>
@@ -304,7 +330,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section>
+<section id="read-5">
 <h2>원자재</h2>
 <div class="tbl-scroll">
 <table>
@@ -324,16 +350,9 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section>
-<h2>전략 코멘트</h2>
-<div class="card">
-<p>이날 시장을 움직인 단일 동인은 7월 비농업고용 -2.3만명이라는 서프라이즈였다. 월가 컨센서스(+80~83K)를 큰 폭으로 하회한 이 수치는 실업률 하락(4.2%→4.1%)에도 불구하고 경제활동참가율 둔화가 반영된 결과로 해석되며, 평균시급 증가율도 전년 대비 3.2%로 2021년 5월 이후 최저치를 기록해 노동시장 냉각 신호가 뚜렷했다. 시장은 이를 "나쁜 뉴스가 좋은 뉴스"로 받아들여 국채금리 하락·주가 상승·금 급등이라는 전형적인 되돌림 패턴을 만들어냈다.</p>
-<p>크로스에셋 정합성은 대체로 높았다. 국채금리(5Y·10Y·30Y 하락), 주식(S&amp;P500 사상 최고 종가), 금(7주 최고치), 달러(약세) 모두 "금리인하 기대 확대"라는 하나의 서사로 수렴했다. 다만 WTI가 나홀로 약세를 보인 점과, 메모리주(SK하이닉스·웨스턴디지털·시게이트)가 거시 재료와 무관하게 자체 공급과잉 우려로 급락한 점은 예외였다. 이는 이번 랠리가 매크로 하나의 축으로만 설명되지 않으며, 종목·섹터 고유의 펀더멘털 재료가 동시에 작동하고 있다는 점을 보여준다.</p>
-<p>다음 촉매는 9월 16일 FOMC와 그 사이에 발표될 8월 고용지표(9월 초), 그리고 7월 CPI(8월 중순 발표)다. CME FedWatch 상 9월 인상 확률이 이번 지표로 약 57%에서 43.9%로 급락하고 동결 확률이 56.1%로 오른 만큼(CNBC, 2026-08-07), 다음 CPI가 디스인플레이션 추세를 재확인해주는지가 이 되돌림의 지속 여부를 가를 것이다. 코히런트(8/12)·루멘텀(8/11) 실적도 AI 인프라·광학 밸류체인 랠리의 펀더멘털 뒷받침 여부를 확인할 단기 이벤트로 주목할 만하다.</p>
-</div>
-</section>
 
-<section>
+
+<section id="read-7">
 <h2>멀티에셋 매니저 전략</h2>
 <div class="tbl-scroll">
 <table>
@@ -356,7 +375,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section>
+<section id="read-8">
 <h2>주목 섹터·종목</h2>
 <div class="card">
 <p><strong>코히런트(Coherent, +13.44%)</strong> — 6거래일 연속 상승(누적 +51%)으로 이날 전체 종목 중 최대 상승폭을 기록했다. 촉매는 미국의 중국산 광트랜시버 수입 제한 초안 발의(서방 광학 공급업체 반사이익 기대)와 직전 분기 매출 18.1억달러(전년比 +21%, 컨센서스 상회)로, 800G·1.6T 광트랜시버 수요 강세가 뒷받침됐다(Trefis, 2026-08-07). 다음 실적 발표는 8월 12일 장마감 후로 이번 랠리의 펀더멘털 검증대가 될 전망이다.</p>
@@ -365,7 +384,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section>
+<section id="read-9">
 <h2>메모리/DRAM</h2>
 <div class="tbl-scroll">
 <table>
@@ -388,7 +407,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section>
+<section id="read-10">
 <h2>AI 인프라</h2>
 <div class="tbl-scroll">
 <table>
@@ -410,7 +429,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section>
+<section id="read-11">
 <h2>경제지표 대시보드</h2>
 
 <h3>Labor (고용)</h3>

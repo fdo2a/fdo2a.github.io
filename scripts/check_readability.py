@@ -17,8 +17,10 @@ from scripts.us import readability as R  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 
 LEN_WARN, LEN_FAIL = 120, 160
-FIG_WARN, FIG_FAIL = 6, 9
+# 작성 계약은 문장당 수치 넷까지다. 다섯째부터 경고, 일곱째부터 실패다.
+FIG_WARN, FIG_FAIL = 4, 6
 ECHO_LIMIT = 3
+H1_WARN, H1_FAIL = 80, 110
 
 
 def clip(s, n=90):
@@ -29,6 +31,16 @@ def audit(path):
     html = Path(path).read_text(encoding="utf-8")
     m = R.measure(html)
     fails, warns = [], []
+
+    h1 = R.first_heading(html)
+    if h1:
+        if len(h1) > H1_FAIL:
+            fails.append("헤드라인 %d자 · 110자 초과" % len(h1))
+        elif len(h1) > H1_WARN:
+            warns.append("헤드라인 %d자 · 80자 안으로 줄일 것" % len(h1))
+        h1_figures = len(R.figures(h1))
+        if h1_figures > FIG_WARN:
+            warns.append("헤드라인 수치 %d개 · 넷 이하로 줄일 것" % h1_figures)
 
     for s, n in R.long_sentences(html, LEN_WARN):
         (fails if n > LEN_FAIL else warns).append("%d자 문장 · %s" % (n, clip(s)))
@@ -57,13 +69,22 @@ def main(argv):
         m, fails, warns = audit(p)
         print("== %s" % p)
         print(
-            "   문장 %d · 중앙 %d자 · P90 %d자 · 120자 초과 %d문장 · 수치 중앙 %d개"
-            % (m["sentences"], m["median_len"], m["p90_len"], m["over_120"], m["median_figures"])
+            "   문장 %d · 중앙 %d자 · P90 %d자 · 120자 초과 %d문장 · "
+            "수치 중앙 %d개/P90 %d개 · 문단 P90 %d자"
+            % (
+                m["sentences"], m["median_len"], m["p90_len"], m["over_120"],
+                m["median_figures"], m["p90_figures"], m["p90_para_len"],
+            )
         )
         for f in fails:
             print("   FAIL %s" % f)
         for w in warns:
             print("   warn %s" % w)
+        if fails or warns:
+            print(
+                "   repair 헤드라인 압축 → 긴 문장 분리 → 정확값은 표로 이동 → "
+                "산문 반올림 → 반복 수치 제거 후 재검사"
+            )
         if fails or (strict and warns):
             bad += 1
     return 1 if bad else 0

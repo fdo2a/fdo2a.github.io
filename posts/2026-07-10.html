@@ -133,17 +133,29 @@
     th:last-child, td:last-child { white-space: normal; }
   }
 
-/* readability-v2 */
+/* readability-v3 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
+h1 { max-width: 34em; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
 table { font-variant-numeric: tabular-nums; }
+section { scroll-margin-top: 20px; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.reading-map a:first-of-type { color: #0064FF; border-color: #B9D5FF; background: #F5F9FF; }
+.reading-map a:focus-visible { outline: 2px solid #0064FF; outline-offset: 2px; }
 @media (max-width: 560px) {
   .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
   .card { padding: 16px 16px; }
+  .reading-map { margin-bottom: 16px; }
 }
 </style>
 
@@ -165,8 +177,21 @@ table { font-variant-numeric: tabular-nums; }
   <span class="tag tag-info">핵심 요약</span>
   <p>SK하이닉스의 사상 최대 외국기업 미 IPO(265억 달러, 첫날 <span class="hl">+15%</span>)와 AI 컴퓨트 랠리(엔비디아 +4.0%)가 3대 지수를 견인했으나, 러셀2000(-0.49%)과 헬스케어(-0.82%)의 약세에서 드러나듯 상승은 대형·AI 관련주에 국한된 좁은 랠리였다.</p>
 </div>
+<!-- reading-map-v1 -->
+<nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#read-5">전략 코멘트</a><a href="#read-1">시장 흐름</a><a href="#read-6">거시·포트폴리오</a><a href="#read-7">종목·섹터</a><a href="#read-4">정책·리스크</a></nav>
+<!-- strategy-first-v1 -->
+<section class="sec" id="read-5">
+<h2>전략 코멘트</h2>
+<div class="card">
+<p>7/10 장은 <strong>이벤트 드리븐 랠리</strong> 성격이 강했다. SK하이닉스의 사상 최대 외국기업 미 IPO(공모가 $149 → 첫날 $171대, 시총 $1.25조)가 반도체·AI 밸류체인 전반에 훈풍을 불어넣었고 메타의 AI 컴퓨트 사업을 긍정적으로 평가한 SemiAnalysis 리포트가 더해지며 커뮤니케이션 서비스·기술 섹터 강세로 이어졌다. 엔비디아(+4.0%)가 최대 수혜주였다.</p>
+<p>크로스에셋 조합이 묘하다. 주식 상승·금리 하락·엔화 강세·유가 하락 — 언뜻 골디락스처럼 보이지만 각 자산의 드라이버가 전부 다르다. 주식은 IPO·AI 이벤트, 금리는 고용 부진, 엔화는 지정학 헤지, 유가는 프리미엄 언와인드다. 서로 다른 이유로 만들어진 '우연한 정합성'은 지속력이 약하다. 러셀2000과 헬스케어의 소외, 채권의 방어적 랠리는 시장 저변의 리스크 심리가 아직 살아있음을 보여준다.</p>
+<p>결국 시험대는 <strong>7/14 CPI</strong>다. 상회하면 '고용 둔화 + 인상 종료' 프라이싱이 무너지며 주식·채권이 동시에 되돌려질 수 있고, 하회하면 불 스티프닝과 위험자산 랠리가 정합성을 얻는다. 그 전까지는 베타를 늘리기보다 실적 시즌 개막에 맞춘 이벤트 중심 종목 장세로 대응하는 편이 낫다.</p>
+</div>
+</section>
 
-<section class="sec">
+
+
+<section class="sec" id="read-1">
 <h2 class="first">주식</h2>
 
 <div class="grid-2">
@@ -200,14 +225,15 @@ table { font-variant-numeric: tabular-nums; }
 
 <div class="card" style="margin-top:12px;">
   <span class="box-label">장중 흐름</span>
-  <p>지수는 마감 숫자보다 장중 궤적이 말해주는 게 많았다. 나스닥은 개장 직후 한 시간 만에 시가 대비 0.6% 안팎 밀리며 저점(26,012, 10:30 ET)을 찍었지만, SK하이닉스 ADR이 공모가를 크게 웃돌며 거래를 시작하고 엔비디아가 개장가(201.92달러)를 그대로 저점 삼아 종일 우상향(시가 대비 +4.5%)하자 오후 내내 낙폭을 되돌려 15:30 고점(26,301) 부근에서 마쳤다. S&P 500도 같은 궤적(10:30 저점 → 막판 고점)이었다. 반면 러셀2000은 개장 직후가 그날 고점이었고 10:30까지 시가 대비 1.1% 급락한 뒤 끝내 회복하지 못했다 — 아침 조정은 함께 맞고 오후 반등에서는 소외된 셈이다.</p>
+  <p>지수는 마감 숫자보다 장중 궤적이 말해주는 게 많았다. 나스닥은 개장 직후 한 시간 만에 시가 대비 0.6% 안팎 밀리며 저점(26,012, 10:30 ET)을 찍었지만, SK하이닉스 ADR이 공모가를 크게 웃돌며 거래를 시작하고 엔비디아가 개장가(201.92달러)를 그대로 저점 삼아 종일 우상향(시가 대비 +4.5%)하자 오후 내내 낙폭을 되돌려 15:30 고점(26,301) 부근에서 마쳤다.</p>
+<p>S&P 500도 같은 궤적(10:30 저점 → 막판 고점)이었다. 반면 러셀2000은 개장 직후가 그날 고점이었고 10:30까지 시가 대비 1.1% 급락한 뒤 끝내 회복하지 못했다 — 아침 조정은 함께 맞고 오후 반등에서는 소외된 셈이다.</p>
   <span class="box-label">전략 해석</span>
   <p>지수 흐름만 보면 무난한 강세장이지만 내부는 그렇지 않다. S&amp;P 500 +0.42%의 상당 부분을 엔비디아(+4.0%)·메타 등 소수 메가캡이 만들었고, 같은 날 러셀2000은 -0.49%로 밀렸다. 실적 시즌을 앞두고 자금이 이익 가시성이 확보된 AI 대장주로 몰리는 전형적인 쏠림 장세다. Growth(+0.60%) vs Value(+0.25%) 스프레드 +34bp도 금리 하락(2Y -5bp)이 성장주의 듀레이션 부담을 덜어준 결과로 읽힌다.</p>
   <p>섹터 순위도 리스크온과는 거리가 있다. Materials(+1.25%)가 1위에 올랐지만 그 뒤는 Staples(+1.11%)·Utilities(+0.62%) 등 방어주다. 경기민감주가 아니라 방어주와 AI 수혜주가 같이 오르는 조합은 지수 레벨 부담 속 로테이션·숏커버 성격이 짙다. 대응은 <strong>바벨</strong>이다 — AI 대형주 코어에 퀄리티 방어주를 붙이고, 러셀2000 상대강도가 돌아서기 전까지 소형주·고베타 언더웨이트를 유지한다.</p>
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-2">
 <h2>채권 (Fixed Income)</h2>
 <div class="table-wrap">
 <table>
@@ -233,7 +259,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-3">
 <h2>FX</h2>
 <div class="table-wrap">
 <table>
@@ -249,7 +275,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-4">
 <h2>원자재</h2>
 <div class="table-wrap">
 <table>
@@ -267,16 +293,9 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
-<h2>전략 코멘트</h2>
-<div class="card">
-<p>7/10 장은 <strong>이벤트 드리븐 랠리</strong> 성격이 강했다. SK하이닉스의 사상 최대 외국기업 미 IPO(공모가 $149 → 첫날 $171대, 시총 $1.25조)가 반도체·AI 밸류체인 전반에 훈풍을 불어넣었고 메타의 AI 컴퓨트 사업을 긍정적으로 평가한 SemiAnalysis 리포트가 더해지며 커뮤니케이션 서비스·기술 섹터 강세로 이어졌다. 엔비디아(+4.0%)가 최대 수혜주였다.</p>
-<p>크로스에셋 조합이 묘하다. 주식 상승·금리 하락·엔화 강세·유가 하락 — 언뜻 골디락스처럼 보이지만 각 자산의 드라이버가 전부 다르다. 주식은 IPO·AI 이벤트, 금리는 고용 부진, 엔화는 지정학 헤지, 유가는 프리미엄 언와인드다. 서로 다른 이유로 만들어진 '우연한 정합성'은 지속력이 약하다. 러셀2000과 헬스케어의 소외, 채권의 방어적 랠리는 시장 저변의 리스크 심리가 아직 살아있음을 보여준다.</p>
-<p>결국 시험대는 <strong>7/14 CPI</strong>다. 상회하면 '고용 둔화 + 인상 종료' 프라이싱이 무너지며 주식·채권이 동시에 되돌려질 수 있고, 하회하면 불 스티프닝과 위험자산 랠리가 정합성을 얻는다. 그 전까지는 베타를 늘리기보다 실적 시즌 개막에 맞춘 이벤트 중심 종목 장세로 대응하는 편이 낫다.</p>
-</div>
-</section>
 
-<section class="sec">
+
+<section class="sec" id="read-6">
 <h2>멀티에셋 매니저 전략</h2>
 <div class="table-wrap">
 <table>
@@ -299,7 +318,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-7">
 <h2>주목 섹터·종목</h2>
 <div class="card">
   <div class="mover-row">
@@ -326,7 +345,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-8">
 <h2>메모리/DRAM</h2>
 <div class="table-wrap">
 <table>
@@ -345,7 +364,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-9">
 <h2>AI 인프라</h2>
 <div class="table-wrap">
 <table>
@@ -363,7 +382,7 @@ table { font-variant-numeric: tabular-nums; }
 </div>
 </section>
 
-<section class="sec">
+<section class="sec" id="read-10">
 <h2>경제지표 vs 컨센서스</h2>
 <div class="table-wrap">
 <table>
