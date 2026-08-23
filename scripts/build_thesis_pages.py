@@ -417,7 +417,7 @@ def build_narrative(as_of):
       <dl>
         <dt>처음</dt><dd>{_html.escape(row['start'])}</dd>
         <dt>지금</dt><dd>{_html.escape(row['now'])}</dd>
-        <dt>다음 증명</dt><dd>{_html.escape(row['proof'])}</dd>
+        <dt>다음으로 확인할 것</dt><dd>{_html.escape(row['proof'])}</dd>
       </dl>
     </article>''')
 
@@ -430,11 +430,11 @@ def build_narrative(as_of):
         for label, url in N.SOURCES.values())
 
     body = f'''  <div class="intro">
-    99개의 감시 기록을 그대로 옮기지 않고, <b>무슨 증거가 기존 판단을 바꿨는지</b>만 남겼습니다.
-    개별 뉴스의 양보다 thesis의 방향 전환, 정정된 해석과 다음 증명 포인트를 빠르게 읽는 페이지입니다.
+    99개의 감시 기록을 모두 옮기지 않았습니다. <b>기존 판단을 바꾼 증거만 추렸습니다.</b>
+    개별 뉴스의 양보다 thesis의 방향 전환, 바로잡은 해석과 다음 증명 포인트에 집중했습니다.
     <span class="small">최종 정리일 {as_of} · 주가 구간과 반복 알림은 의도적으로 제외</span>
   </div>
-  <h2 class="list-title">한 문장으로 압축한 현재 thesis</h2>
+  <h2 class="list-title">현재 thesis 한 문장</h2>
   <div class="panel"><p class="lead">{N.BOTTOM_LINE}</p></div>
   <h2 class="list-title">판단은 이렇게 바뀌었다</h2>
   <div class="timeline">

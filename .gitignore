@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+/_workspace/
 
 /market_data.json
 /intraday.json
