@@ -1,0 +1,29 @@
+{
+  "updated": "2026-08-24",
+  "tickers": [
+    {
+      "symbol": "005930.KS",
+      "name": "삼성전자",
+      "slug": "samsung",
+      "grade": "홀딩 강화",
+      "grade_since": "2026-08-24",
+      "url": "https://fdo2a.github.io/thesis/samsung.html"
+    },
+    {
+      "symbol": "000660.KS",
+      "name": "SK하이닉스",
+      "slug": "skhynix",
+      "grade": "홀딩 강화",
+      "grade_since": "2026-08-24",
+      "url": "https://fdo2a.github.io/thesis/skhynix.html"
+    },
+    {
+      "symbol": "MU",
+      "name": "Micron Technology",
+      "slug": "micron",
+      "grade": "홀딩 강화",
+      "grade_since": "2026-08-24",
+      "url": "https://fdo2a.github.io/thesis/micron.html"
+    }
+  ]
+}

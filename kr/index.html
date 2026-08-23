@@ -39,13 +39,13 @@
   header.site { display: flex; align-items: baseline; gap: 10px; padding: 4px 2px 6px; }
   header.site .brand { font-size: 24px; font-weight: 800; color: var(--toss-blue); letter-spacing: -0.025em; }
   header.site .desc { font-size: 12px; color: var(--text-3); font-weight: 600; }
-  .switch {
-    margin-left: auto; display: inline-flex; align-items: center; gap: 4px;
-    background: #fff; border: 1px solid var(--border); border-radius: 9999px;
-    padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--text-2);
-    text-decoration: none; transition: border-color 100ms ease;
-  }
-  .switch:hover { border-color: var(--toss-blue); color: var(--toss-blue); }
+  .nav { margin-left: auto; display: inline-flex; gap: 4px; background: #fff;
+         border: 1px solid var(--border); border-radius: 9999px; padding: 3px; }
+  .nav a { font-size: 12px; font-weight: 700; color: var(--text-2); text-decoration: none;
+           padding: 5px 11px; border-radius: 9999px; transition: background 100ms ease; }
+  .nav a:hover { color: var(--toss-blue); }
+  .nav a[aria-current="page"] { background: var(--toss-blue); color: #fff; }
+  @media (max-width: 520px) { .nav { margin-left: 0; width: 100%; justify-content: space-between; } }
   .intro {
     background: var(--blue-bg);
     border-radius: 14px;
@@ -96,7 +96,11 @@
   <header class="site">
     <span class="brand">KR Market Brief</span>
     <span class="desc">증시 전략 마감브리프 아카이브</span>
-    <a class="switch" href="../">🇺🇸 미국 시장 →</a>
+    <nav class="nav">
+      <a href="../">미국 시장</a>
+      <a href="../kr/" aria-current="page">한국 시장</a>
+      <a href="../thesis/">종목 thesis</a>
+    </nav>
   </header>
   <div class="intro">
     한국 증시가 마감한 평일 저녁(월–금 18:00 KST), 그날의 시장을 정리한 마감브리프가 자동으로 올라옵니다.

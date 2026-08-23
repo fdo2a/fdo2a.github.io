@@ -1,0 +1,77 @@
+{
+  "updated": "2026-08-24",
+  "tickers": {
+    "005930.KS": {
+      "grade": "홀딩 강화",
+      "grade_since": "2026-08-24",
+      "conviction": "base",
+      "last_seen": {
+        "eps_fy1": 67312.55,
+        "eps_fy1_low": 24323.0,
+        "eps_fy1_high": 93462.0,
+        "price": 281500.0,
+        "pb": 3.44
+      },
+      "open_questions": [
+        "분기 실적에서 HBM4 매출 가이던스(3배·비중 60%) 달성 여부",
+        "LTA 커버리지가 목표 대비 실제로 어디까지 왔는가",
+        "파운드리 흑자 전환 시점"
+      ],
+      "changelog": [
+        {
+          "date": "2026-08-24",
+          "signal": "init",
+          "title": "최초 작성 — thesis·지표·kill condition 기준 설정"
+        }
+      ]
+    },
+    "000660.KS": {
+      "grade": "홀딩 강화",
+      "grade_since": "2026-08-24",
+      "conviction": "base",
+      "last_seen": {
+        "eps_fy1": 455668.2,
+        "eps_fy1_low": 186357.0,
+        "eps_fy1_high": 598301.6,
+        "price": 1730000.0,
+        "pb": 7.46
+      },
+      "open_questions": [
+        "HBM4E 고객 퀄 통과 여부",
+        "LTA 가격 조항이 하한을 실제로 갖고 있는가",
+        "추가 주주환원 구체안 발표 시점"
+      ],
+      "changelog": [
+        {
+          "date": "2026-08-24",
+          "signal": "init",
+          "title": "최초 작성 — thesis·지표·kill condition 기준 설정"
+        }
+      ]
+    },
+    "MU": {
+      "grade": "홀딩 강화",
+      "grade_since": "2026-08-24",
+      "conviction": "base",
+      "last_seen": {
+        "eps_fy1": 155.02524,
+        "eps_fy1_low": 106.89,
+        "eps_fy1_high": 221.27,
+        "price": 966.78,
+        "pb": 10.84
+      },
+      "open_questions": [
+        "RPO 잔액의 분기 증감 방향",
+        "비GAAP 총이익률 궤적이 가이던스를 지키는가",
+        "차기 회계연도 캐펙스 확정치"
+      ],
+      "changelog": [
+        {
+          "date": "2026-08-24",
+          "signal": "init",
+          "title": "최초 작성 — thesis·지표·kill condition 기준 설정"
+        }
+      ]
+    }
+  }
+}

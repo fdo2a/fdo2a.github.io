@@ -1,0 +1,57 @@
+name: Collect thesis watch data
+
+# 평일 08:40 UTC (17:40 KST) — KR 수집(08:00·08:30) 이후, 감시 루틴(09:00) 이전.
+# 이 시각이면 삼성·하이닉스의 당일 종가와 Micron의 전 거래일 종가가 모두 확정돼 있다.
+on:
+  schedule:
+    - cron: '40 8 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '주말·휴장에도 수집'
+        type: boolean
+        default: false
+
+concurrency:
+  group: thesis-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet yfinance certifi pandas
+
+      - name: Collect
+        run: |
+          python3 scripts/collect_thesis_data.py \
+            ${{ inputs.force && '--force' || '' }} \
+            --out thesis/data
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add thesis/data/
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋 건너뜀"
+            exit 0
+          fi
+          git commit -m "thesis watch data $(date -u +%Y-%m-%d)"
+          # 루틴·다른 워크플로와 겹칠 수 있으니 rebase 후 재시도
+          for i in 1 2 3; do
+            git pull --rebase --autostash && git push && exit 0
+            sleep 5
+          done
+          echo "push 실패" >&2
+          exit 1
