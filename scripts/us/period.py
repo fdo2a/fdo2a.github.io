@@ -135,6 +135,27 @@ def build(span, key, closes, yields_hist, daily_headlines):
             curve[name] = {'start': round(s0, 2), 'end': round(s1, 2), 'chg': round(s1 - s0, 2)}
     out['curve'] = curve
 
-    out['daily'] = sorted((x for x in (daily_headlines or []) if start <= x['date'] <= end),
-                          key=lambda x: x['date'])
+    # daily: 각 헤드라인에 spx_pct 추가 (그 세션의 S&P 500 % 변화)
+    spx_series = ((closes.get('indices') or {}).get(BENCHMARK) or [])
+    daily_rows = []
+    for headline in (daily_headlines or []):
+        if not (start <= headline['date'] <= end):
+            continue
+        row = dict(headline)
+        # 그 날 S&P 종가 찾기
+        day_close = next((v for d, v in spx_series if d == headline['date']), None)
+        if day_close is None:
+            # 그 날 바가 없으면 spx_pct = None
+            row['spx_pct'] = None
+        else:
+            # 그 날 이전의 마지막 종가 찾기 (pct_change 관례 동일)
+            prev_closes = [v for d, v in spx_series if d < headline['date']]
+            if not prev_closes:
+                # 이전 종가가 없으면 spx_pct = None
+                row['spx_pct'] = None
+            else:
+                prev_close = prev_closes[-1]
+                row['spx_pct'] = round((day_close / prev_close - 1) * 100, 4)
+        daily_rows.append(row)
+    out['daily'] = sorted(daily_rows, key=lambda x: x['date'])
     return out

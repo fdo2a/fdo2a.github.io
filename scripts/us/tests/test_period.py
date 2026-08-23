@@ -153,3 +153,48 @@ def test_build_flags_tenor_without_prior_close():
     assert "spread_5s30s_bp" not in r["curve"]
     # 하지만 2s10s 는 2Y 와 10Y 가 완전하면 있어야 한다
     assert "spread_2s10s_bp" in r["curve"]
+
+
+def test_build_daily_row_gets_correct_spx_pct():
+    """daily 행이 정확한 spx_pct 를 받는다."""
+    headlines = [{"date": "2026-08-21", "headline": "test"}]
+    r = build("weekly", "2026-W34", _closes(), _complete_yields(), headlines)
+    # 2026-08-17(이전 종가 100) → 2026-08-21(종가 110): (110/100-1)*100 = 10%
+    row = r["daily"][0]
+    assert row["date"] == "2026-08-21"
+    assert row["spx_pct"] == pytest.approx(10.0)
+
+
+def test_build_first_daily_date_uses_prewindow_close():
+    """window 첫 날은 그 이전의 마지막 종가 대비다."""
+    # _closes() 의 S&P 500: 14=100, 17=100, 21=110
+    # 따라서 17은 14 대비 0% 변화
+    headlines = [{"date": "2026-08-17", "headline": "test"}]
+    r = build("weekly", "2026-W34", _closes(), _complete_yields(), headlines)
+    row = r["daily"][0]
+    # 2026-08-14(100) → 2026-08-17(100): (100/100-1)*100 = 0%
+    assert row["spx_pct"] == pytest.approx(0.0)
+
+
+def test_build_daily_with_missing_benchmark():
+    """benchmark 가 없으면 모든 daily 행의 spx_pct 가 None."""
+    c = _closes()
+    del c["indices"]
+    headlines = [{"date": "2026-08-21", "headline": "test"}]
+    r = build("weekly", "2026-W34", c, _complete_yields(), headlines)
+    row = r["daily"][0]
+    assert row["spx_pct"] is None
+    # 하지만 complete 는 indices 가 없어서 이미 False 다
+    assert r["complete"] is False
+
+
+def test_build_daily_with_no_matching_bar():
+    """headline 날짜가 benchmark 바를 갖지 못하면 spx_pct 는 None."""
+    headlines = [{"date": "2026-08-20", "headline": "test"}]
+    r = build("weekly", "2026-W34", _closes(), _complete_yields(), headlines)
+    # 2026-08-20 은 _closes() SPX 에 없다 (2026-08-14/17/21만 있음)
+    row = r["daily"][0]
+    assert row["date"] == "2026-08-20"
+    assert row["spx_pct"] is None
+    # 하지만 row 는 여전히 있다 (삭제되지 않음)
+    assert len(r["daily"]) == 1
