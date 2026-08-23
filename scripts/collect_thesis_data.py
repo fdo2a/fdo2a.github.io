@@ -197,7 +197,11 @@ def main():
                     help='주말·휴장에도 수집 (기본은 평일만)')
     args = ap.parse_args()
 
-    today = datetime.date.today()
+    # KST 고정. Actions 러너는 UTC라 같은 실행이 로컬(KST)과 하루 어긋난 날짜를 기록했다.
+    # 스케줄 시각(08:40 UTC)에는 두 날짜가 같지만, 수동 실행이나 스케줄 변경 때 갈라진다.
+    # 한국 시각 기준 루틴이고 페이지도 한국어이므로 KST 하나로 못 박는다.
+    today = (datetime.datetime.now(datetime.timezone.utc)
+             + datetime.timedelta(hours=9)).date()
     if today.weekday() >= 5 and not args.force:
         print(f'주말({today}) — 건너뜀. 강제하려면 --force')
         return 0
