@@ -43,12 +43,14 @@ STYLE = '''  :root {
   header.site { display: flex; align-items: baseline; gap: 10px; padding: 4px 2px 6px; flex-wrap: wrap; }
   header.site .brand { font-size: 24px; font-weight: 800; color: var(--toss-blue); letter-spacing: -0.025em; }
   header.site .desc { font-size: 12px; color: var(--text-3); font-weight: 600; }
-  .nav { margin-left: auto; display: inline-flex; gap: 4px; background: #fff;
-         border: 1px solid var(--border); border-radius: 9999px; padding: 3px; }
-  .nav a { font-size: 12px; font-weight: 700; color: var(--text-2); text-decoration: none;
-           padding: 5px 11px; border-radius: 9999px; transition: background 100ms ease; }
-  .nav a:hover { color: var(--toss-blue); }
-  .nav a[aria-current="page"] { background: var(--toss-blue); color: #fff; }
+  .menubar { display: flex; gap: 2px; flex-wrap: wrap; padding: 0 2px;
+             border-bottom: 1px solid var(--border); margin: 0 0 18px; }
+  .menubar a { font-size: 13px; font-weight: 700; color: var(--text-3); text-decoration: none;
+               padding: 9px 13px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+               white-space: nowrap; transition: color 100ms ease, border-color 100ms ease; }
+  .menubar a:hover { color: var(--text-2); }
+  .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
+  @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
   .intro { background: var(--blue-bg); border-radius: 14px; padding: 16px 18px; margin: 14px 0 22px;
            font-size: 13px; line-height: 1.65; font-weight: 600; color: var(--text); }
   .intro .small { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--blue-deep); }
@@ -108,8 +110,7 @@ STYLE = '''  :root {
   ol.log cite { font-style: normal; color: var(--text-3); font-size: 11.5px; }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border);
            font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
-  footer a { color: #8B95A1; }
-  @media (max-width: 520px) { .nav { margin-left: 0; width: 100%; justify-content: space-between; } }'''
+  footer a { color: #8B95A1; }'''
 
 ADSENSE = ('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
            '?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>')
@@ -121,13 +122,14 @@ FOOTER = '''  <footer>
   </footer>'''
 
 
-def nav(current, root):
-    items = [('미국 시장', f'{root}', 'us'), ('한국 시장', f'{root}kr/', 'kr'),
-             ('종목 thesis', f'{root}thesis/', 'thesis')]
+def menubar(current, root):
+    """좌측 상단 메뉴바. 세 카테고리는 index.html·kr/index.html과 문구·순서가 같아야 한다."""
+    items = [('미국 시장', root or './', 'us'), ('한국 시장', f'{root}kr/', 'kr'),
+             ('메모리 thesis', f'{root}thesis/', 'thesis')]
     links = '\n'.join(
-        f'      <a href="{href}"{" aria-current=\"page\"" if key == current else ""}>{label}</a>'
+        f'    <a href="{href}"{" aria-current=\"page\"" if key == current else ""}>{label}</a>'
         for label, href, key in items)
-    return f'    <nav class="nav">\n{links}\n    </nav>'
+    return f'  <nav class="menubar">\n{links}\n  </nav>'
 
 
 def shell(title, description, canonical, body, current, root, ld):
@@ -154,10 +156,10 @@ def shell(title, description, canonical, body, current, root, ld):
 </head>
 <body>
 <div class="wrap">
+{menubar(current, root)}
   <header class="site">
-    <span class="brand">종목 thesis</span>
+    <span class="brand">메모리 thesis</span>
     <span class="desc">감시 기준표</span>
-{nav(current, root)}
   </header>
 {body}
 {FOOTER.format(root=root)}
@@ -251,7 +253,7 @@ def build_ticker(symbol, row, book, as_of):
     blocks.append('  </article>')
 
     body = '\n'.join(blocks)
-    title = f'{spec["name"]} 투자 thesis 감시 기준표 | 종목 thesis'
+    title = f'{spec["name"]} 투자 thesis 감시 기준표 | 메모리 thesis'
     desc = (f'{spec["name"]}({spec["code"]}) 투자 thesis, 핵심 지표, 촉매, 리스크, '
             f'kill condition, 실적 체크포인트, 밸류에이션 기준을 정리한 감시 기준표.')
     ld = {'@context': 'https://schema.org', '@type': 'Article',
@@ -313,7 +315,7 @@ def build_index(watch, state, as_of):
 {protocol}'''
 
     ld = {'@context': 'https://schema.org', '@type': 'CollectionPage',
-          'name': '종목 thesis 감시 기준표',
+          'name': '메모리 thesis 감시 기준표',
           'url': 'https://fdo2a.github.io/thesis/', 'inLanguage': 'ko'}
     return shell('종목 투자 thesis 감시 기준표 | 삼성전자·SK하이닉스·Micron',
                  '삼성전자·SK하이닉스·Micron의 투자 thesis, 핵심 지표, kill condition, '

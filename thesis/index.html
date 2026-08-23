@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://fdo2a.github.io/thesis/">
 <meta property="og:locale" content="ko_KR">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "CollectionPage", "name": "종목 thesis 감시 기준표", "url": "https://fdo2a.github.io/thesis/", "inLanguage": "ko"}
+{"@context": "https://schema.org", "@type": "CollectionPage", "name": "메모리 thesis 감시 기준표", "url": "https://fdo2a.github.io/thesis/", "inLanguage": "ko"}
 </script>
 <title>종목 투자 thesis 감시 기준표 | 삼성전자·SK하이닉스·Micron</title>
 <style>
@@ -34,12 +34,14 @@
   header.site { display: flex; align-items: baseline; gap: 10px; padding: 4px 2px 6px; flex-wrap: wrap; }
   header.site .brand { font-size: 24px; font-weight: 800; color: var(--toss-blue); letter-spacing: -0.025em; }
   header.site .desc { font-size: 12px; color: var(--text-3); font-weight: 600; }
-  .nav { margin-left: auto; display: inline-flex; gap: 4px; background: #fff;
-         border: 1px solid var(--border); border-radius: 9999px; padding: 3px; }
-  .nav a { font-size: 12px; font-weight: 700; color: var(--text-2); text-decoration: none;
-           padding: 5px 11px; border-radius: 9999px; transition: background 100ms ease; }
-  .nav a:hover { color: var(--toss-blue); }
-  .nav a[aria-current="page"] { background: var(--toss-blue); color: #fff; }
+  .menubar { display: flex; gap: 2px; flex-wrap: wrap; padding: 0 2px;
+             border-bottom: 1px solid var(--border); margin: 0 0 18px; }
+  .menubar a { font-size: 13px; font-weight: 700; color: var(--text-3); text-decoration: none;
+               padding: 9px 13px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+               white-space: nowrap; transition: color 100ms ease, border-color 100ms ease; }
+  .menubar a:hover { color: var(--text-2); }
+  .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
+  @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
   .intro { background: var(--blue-bg); border-radius: 14px; padding: 16px 18px; margin: 14px 0 22px;
            font-size: 13px; line-height: 1.65; font-weight: 600; color: var(--text); }
   .intro .small { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--blue-deep); }
@@ -100,20 +102,19 @@
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border);
            font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
   footer a { color: #8B95A1; }
-  @media (max-width: 520px) { .nav { margin-left: 0; width: 100%; justify-content: space-between; } }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="wrap">
+  <nav class="menubar">
+    <a href="../">미국 시장</a>
+    <a href="../kr/">한국 시장</a>
+    <a href="../thesis/" aria-current="page">메모리 thesis</a>
+  </nav>
   <header class="site">
-    <span class="brand">종목 thesis</span>
+    <span class="brand">메모리 thesis</span>
     <span class="desc">감시 기준표</span>
-    <nav class="nav">
-      <a href="../">미국 시장</a>
-      <a href="../kr/">한국 시장</a>
-      <a href="../thesis/" aria-current="page">종목 thesis</a>
-    </nav>
   </header>
   <div class="intro">
     개별 종목을 계속 들고 갈 때 필요한 건 뉴스 요약이 아니라 <b>분류</b>입니다.
