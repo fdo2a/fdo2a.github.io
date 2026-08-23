@@ -166,14 +166,19 @@ def test_build_daily_row_gets_correct_spx_pct():
 
 
 def test_build_first_daily_date_uses_prewindow_close():
-    """window 첫 날은 그 이전의 마지막 종가 대비다."""
-    # _closes() 의 S&P 500: 14=100, 17=100, 21=110
-    # 따라서 17은 14 대비 0% 변화
+    """window 첫 날은 그 이전의 마지막 종가 대비다 — 창 시작 자신이 아니라."""
+    # 이 테스트는 "직전 종가" 관례를 검증하는 유일한 것이다.
+    # pre-window close 와 window start close 가 확연히 다를 때만 차별한다.
+    # 차용한 benchmark: 14=100 (pre-window), 17=125 (window start), 21=130 (end)
+    c = _closes()
+    c["indices"]["S&P 500"] = [("2026-08-14", 100.0), ("2026-08-17", 125.0), ("2026-08-21", 130.0)]
     headlines = [{"date": "2026-08-17", "headline": "test"}]
-    r = build("weekly", "2026-W34", _closes(), _complete_yields(), headlines)
+    r = build("weekly", "2026-W34", c, _complete_yields(), headlines)
     row = r["daily"][0]
-    # 2026-08-14(100) → 2026-08-17(100): (100/100-1)*100 = 0%
-    assert row["spx_pct"] == pytest.approx(0.0)
+    # 정확한 구현 (직전 종가 사용): (125/100-1)*100 = 25.0
+    # 잘못된 구현 (자신의 종가 사용): (125/125-1)*100 = 0.0
+    assert row["spx_pct"] == pytest.approx(25.0), \
+        "should measure from pre-window close (100), not window start itself (125)"
 
 
 def test_build_daily_with_missing_benchmark():
