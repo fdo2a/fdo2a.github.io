@@ -1,10 +1,12 @@
-# 주간·월간 정리와 주간 코멘트 구현 계획
+# 주간·월간 정리 구현 계획
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** US·KR 주간/월간 정리 4종과 US·KR 통합 주간 코멘트 1종을 자동 발행하고, 스탠스·레짐 판단을 누적 적중률로 채점한다.
+**Goal:** 그 기간에 발행한 리포트들을 총정리하는 US·KR 주간/월간 정리 4종을 자동 발행하고, 스탠스·레짐 판단을 누적 적중률로 채점한다.
 
-**Architecture:** 기존 GitHub Actions 수집기 둘을 확장해 기간 키(`2026-W34`/`2026-08`)로 나뉜 집계 파일과 승계 책 append-only 로그를 커밋한다. 순수 계산 모듈(`period.py`·`scorecard.py`)은 네트워크 없이 dated series를 입력받아 TDD로 검증하고, 수집기는 다운로드와 파일 쓰기만 맡는다. 클라우드 루틴 트리거 2개(`weekly`·`monthly`)가 오케스트레이터 파일을 읽어 서브에이전트에 작성을 위임하고, 발행 게이트가 수치를 집계 파일과 대조한다.
+**개정 (2026-08-24, Task 5까지 완료된 시점):** 사용자 지시로 리포트의 성격이 바뀌었다. 주간·월간은 시장을 새로 취재하는 글이 아니라 **그 기간에 이미 발행한 `posts/*.html`을 읽고 한 편으로 묶는 글**이다. 따라서 주 소스가 발행본이고, 집계 파일은 「이번 주 성과」표 하나만 채운다(기간 수익률은 일간 5편을 곱해야 나오는 값이라 발행본에서 회수할 수 없고, 에이전트 산술은 게이트가 막는다). 주간 코멘트 별도 발행물은 폐기. 네비는 미국·한국 각각 아래 일간/주간/월간 서브카테고리.
+
+**Architecture:** 기존 GitHub Actions 수집기 둘을 확장해 기간 키(`2026-W34`/`2026-08`)로 나뉜 집계 파일과 승계 책 append-only 로그를 커밋한다(Task 1~5, 완료). 발행 시점에는 `recap_source.py`가 그 기간 발행본에서 헤드라인·섹션 요지·수치 토큰을 회수해 작성 에이전트에 넘기고, 에이전트는 그것을 한 편의 서사로 묶는다. 순수 계산 모듈은 네트워크 없이 입력을 받아 TDD로 검증한다. 클라우드 루틴 트리거 2개(`weekly`·`monthly`)가 오케스트레이터 파일을 읽어 서브에이전트에 위임하고, 발행 게이트가 수치를 «집계 파일 ∪ 스코어카드 ∪ 발행본 토큰»과 대조한다.
 
 **Tech Stack:** Python 3 (stdlib + yfinance + pandas), pytest, GitHub Actions, Claude Code 클라우드 루틴
 
@@ -1236,7 +1238,236 @@ git commit -m "KR 수집기가 주·월 집계를 세션 단위로 누적한다"
 
 ---
 
-### Task 8: 복기 스코어카드
+### Task 8: 발행본 회수 — 이 리포트의 주 소스
+
+**Files:**
+- Create: `scripts/us/recap_source.py`
+- Test: `scripts/us/tests/test_recap_source.py`
+
+**Interfaces:**
+- Consumes: `us.post_check.body_text`, `us.post_check.data_tokens` (기존 모듈)
+- Produces:
+  - `post_sections(html: str, max_lead: int = 220) -> list[dict]` — `[{"title", "lead"}]`
+  - `post_figures(html: str) -> list[str]` — 그 발행본의 수치·티커 토큰 (정렬·중복 제거)
+  - `collect(posts_dir: str, listing: list[dict], start: str, end: str, span: str, key: str) -> dict` — `recap_source.json` 본체
+
+**왜 이 태스크가 있나:** 주간·월간은 그 기간에 이미 발행한 리포트들의 총정리다. 하지만 발행본 하나가 34K토큰이라 5편을 통째로 작성 에이전트에 넘기면 컨텍스트가 감당하지 못한다. 이 모듈이 발행본을 «날짜 + 헤드라인 + 섹션별 제목·첫 문단 + 수치 토큰»으로 줄인다. 수치 토큰은 게이트가 허용 집합을 만들 때도 쓰인다 — 발행본에 있던 숫자는 총정리에 인용해도 창작이 아니다.
+
+- [ ] **Step 1: Write the failing test**
+
+`scripts/us/tests/test_recap_source.py`:
+
+```python
+import json
+import os
+
+import pytest
+
+from us.recap_source import collect, post_figures, post_sections
+
+POST = """<html><body><main>
+<section id="s1"><h2>1. 시황 요약</h2>
+<p>S&amp;P 500은 0.43% 올랐고 나스닥도 0.43% 상승했다. 재무부 바이백 발표가 촉매였다.</p>
+<p>두 번째 문단은 리드가 아니다.</p></section>
+<section id="s2"><h2>2. 채권·금리</h2>
+<p>10년물은 4.35%로 3.7bp 올랐다.</p></section>
+<section id="s3"><h3>3. 메모리</h3><p>마이크론이 2.1% 반등했다.</p></section>
+</main></body></html>"""
+
+
+def test_post_sections_takes_title_and_first_paragraph_only():
+    secs = post_sections(POST)
+    assert [s["title"] for s in secs] == ["1. 시황 요약", "2. 채권·금리", "3. 메모리"]
+    assert secs[0]["lead"].startswith("S&P 500은 0.43% 올랐고")
+    assert "두 번째 문단" not in secs[0]["lead"]
+
+
+def test_post_sections_truncates_a_long_lead():
+    long = "<html><body><section><h2>T</h2><p>" + ("가" * 500) + "</p></section></body></html>"
+    secs = post_sections(long, max_lead=100)
+    assert len(secs[0]["lead"]) <= 101          # 100자 + 말줄임 기호
+    assert secs[0]["lead"].endswith("…")
+
+
+def test_post_sections_is_empty_for_markup_without_sections():
+    assert post_sections("<html><body><p>본문만</p></body></html>") == []
+
+
+def test_post_figures_collects_numbers_and_tickers_deduped_and_sorted():
+    figs = post_figures(POST)
+    assert "0.43%" in figs
+    assert "4.35%" in figs
+    assert "3.7bp" in figs or "3.7" in figs
+    assert figs == sorted(set(figs))
+
+
+def _write(tmp_path, name, html):
+    p = os.path.join(tmp_path, name)
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.write(html)
+    return p
+
+
+LISTING = [{"date": "2026-08-21", "headline": "재무부 바이백 확대"},
+           {"date": "2026-08-20", "headline": "PMI 4년래 최고"},
+           {"date": "2026-08-14", "headline": "지난주 발행분"}]
+
+
+def test_collect_gathers_only_posts_inside_the_window(tmp_path):
+    for d in ("2026-08-21", "2026-08-20", "2026-08-14"):
+        _write(tmp_path, f"{d}.html", POST)
+    r = collect(str(tmp_path), LISTING, "2026-08-17", "2026-08-21", "weekly", "2026-W34")
+    assert [p["date"] for p in r["posts"]] == ["2026-08-20", "2026-08-21"]
+
+
+def test_collect_carries_headline_from_the_listing(tmp_path):
+    _write(tmp_path, "2026-08-21.html", POST)
+    r = collect(str(tmp_path), LISTING, "2026-08-21", "2026-08-21", "weekly", "2026-W34")
+    assert r["posts"][0]["headline"] == "재무부 바이백 확대"
+
+
+def test_collect_records_a_listed_post_whose_file_is_missing(tmp_path):
+    # 목록에는 있는데 파일이 없다 — 조용히 빠뜨리면 그날 사건이 사라진다
+    r = collect(str(tmp_path), LISTING, "2026-08-17", "2026-08-21", "weekly", "2026-W34")
+    assert r["posts"] == []
+    assert "2026-08-20" in r["missing"]
+    assert "2026-08-21" in r["missing"]
+
+
+def test_collect_raises_when_no_post_exists_in_the_window(tmp_path):
+    with pytest.raises(ValueError, match="발행본"):
+        collect(str(tmp_path), [], "2026-08-17", "2026-08-21", "weekly", "2026-W34")
+
+
+def test_collect_sets_span_key_and_boundaries(tmp_path):
+    _write(tmp_path, "2026-08-21.html", POST)
+    r = collect(str(tmp_path), LISTING, "2026-08-17", "2026-08-21", "weekly", "2026-W34")
+    assert r["span"] == "weekly"
+    assert r["key"] == "2026-W34"
+    assert r["start_date"] == "2026-08-17"
+    assert r["end_date"] == "2026-08-21"
+    assert r["sessions"] == 1
+
+
+def test_collect_output_is_json_serialisable(tmp_path):
+    _write(tmp_path, "2026-08-21.html", POST)
+    r = collect(str(tmp_path), LISTING, "2026-08-21", "2026-08-21", "weekly", "2026-W34")
+    json.dumps(r, ensure_ascii=False)
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `python3 -m pytest scripts/us/tests/test_recap_source.py -q`
+Expected: FAIL — `ModuleNotFoundError: No module named 'us.recap_source'`
+
+- [ ] **Step 3: Write minimal implementation**
+
+`scripts/us/recap_source.py`:
+
+```python
+"""그 기간 발행본을 총정리용 재료로 줄인다.
+
+주간·월간 정리는 시장을 새로 취재하는 글이 아니라 이미 나간 리포트들을 한 편으로 묶는
+글이다. 그런데 발행본 하나가 34K토큰이라 5편을 통째로 넘기면 작성 에이전트의 컨텍스트가
+감당하지 못한다. 여기서 «제목 + 첫 문단»만 남긴다 — 각 절이 그날 무엇을 말했는지는
+그 둘로 충분하고, 세부가 필요하면 발행본 링크가 있다.
+
+`figures` 는 게이트용이다. 발행본에 이미 실린 숫자는 총정리에 인용해도 창작이 아니므로
+허용 집합에 들어간다.
+"""
+
+import os
+import re
+
+from us.post_check import body_text, data_tokens
+
+_SECTION = re.compile(r'<section\b[^>]*>(.*?)</section>', re.S | re.I)
+_HEADING = re.compile(r'<h[1-6]\b[^>]*>(.*?)</h[1-6]>', re.S | re.I)
+_PARA = re.compile(r'<p\b[^>]*>(.*?)</p>', re.S | re.I)
+
+
+def _plain(fragment):
+    return body_text(f'<body>{fragment}</body>').strip()
+
+
+def post_sections(html, max_lead=220):
+    out = []
+    for block in _SECTION.findall(html or ''):
+        h = _HEADING.search(block)
+        p = _PARA.search(block)
+        if not h:
+            continue
+        lead = _plain(p.group(1)) if p else ''
+        if len(lead) > max_lead:
+            lead = lead[:max_lead].rstrip() + '…'
+        out.append({'title': _plain(h.group(1)), 'lead': lead})
+    return out
+
+
+def post_figures(html):
+    return sorted(data_tokens(html or ''))
+
+
+def collect(posts_dir, listing, start, end, span, key):
+    """{span, key, start_date, end_date, sessions, posts[], missing[]}.
+
+    목록(posts.json)에 있는데 파일이 없으면 `missing` 에 남긴다 — 총정리에서 하루가
+    통째로 빠지면 그날 사건이 사라지므로, 조용히 넘어가지 않는다.
+    """
+    rows, missing = [], []
+    for entry in sorted(listing or [], key=lambda e: e.get('date') or ''):
+        d = entry.get('date')
+        if not d or not (start <= d <= end):
+            continue
+        path = os.path.join(posts_dir, f'{d}.html')
+        if not os.path.exists(path):
+            missing.append(d)
+            continue
+        with open(path, encoding='utf-8') as fh:
+            html = fh.read()
+        rows.append({'date': d,
+                     'headline': entry.get('headline', ''),
+                     'sections': post_sections(html),
+                     'figures': post_figures(html)})
+    if not rows and not missing:
+        raise ValueError(f'{start}~{end} 구간에 발행본이 없다 — 총정리할 원본이 없으므로 중단한다')
+    return {'span': span, 'key': key, 'start_date': start, 'end_date': end,
+            'sessions': len(rows), 'posts': rows, 'missing': missing}
+```
+
+- [ ] **Step 4: Run test to verify it passes**
+
+Run: `python3 -m pytest scripts/us/tests/test_recap_source.py -q`
+Expected: PASS (10 passed)
+
+- [ ] **Step 5: 실제 발행본으로 스모크**
+
+```bash
+python3 - <<'PY'
+import sys, json
+sys.path.insert(0, 'scripts')
+from us.recap_source import collect
+listing = json.load(open('posts.json', encoding='utf-8'))
+r = collect('posts', listing, '2026-08-17', '2026-08-21', 'weekly', '2026-W34')
+print('sessions', r['sessions'], 'missing', r['missing'])
+for p in r['posts']:
+    print(' ', p['date'], len(p['sections']), '섹션,', len(p['figures']), '토큰 |', p['headline'][:40])
+print('첫 섹션 예:', json.dumps(r['posts'][0]['sections'][:2], ensure_ascii=False)[:300])
+PY
+```
+
+Expected: 5세션(그 주 월~금), 각 발행본에서 섹션 10개 안팎과 수치 토큰 수백 개. 섹션 제목이 「1. 시황 요약」처럼 실제 리포트 목차로 나와야 한다. 0섹션이 나오면 발행본의 실제 마크업이 `<section>`이 아닐 수 있으니 `grep -o '<section[^>]*>' posts/2026-08-21.html | head`로 확인하고 셀렉터를 실제 구조에 맞춘다.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add scripts/us/recap_source.py scripts/us/tests/test_recap_source.py
+git commit -m "발행본을 총정리용 재료로 줄인다"
+```
+
+---
+
+### Task 9: 복기 스코어카드
 
 **Files:**
 - Create: `scripts/us/scorecard.py`
@@ -1594,7 +1825,7 @@ git commit -m "복기 스코어카드 — 스탠스 등급 부호를 가중 적�
 
 ---
 
-### Task 9: 발행 게이트
+### Task 10: 발행 게이트
 
 **Files:**
 - Create: `scripts/us/period_gate.py`
@@ -1602,8 +1833,10 @@ git commit -m "복기 스코어카드 — 스탠스 등급 부호를 가중 적�
 - Test: `scripts/us/tests/test_period_gate.py`
 
 **Interfaces:**
-- Consumes: `us.post_check.data_tokens`, `us.macro_gate.BANNED_LABELS`
-- Produces: `check(html: str, agg: dict, scorecard: dict | None, span: str, kind: str = 'report', sources: list[str] | None = None) -> list[str]` — 위반 문자열 목록, 빈 목록이면 발행 가능
+- Consumes: `us.post_check.data_tokens`/`body_text`/`banned_markers`, `us.macro_gate.BANNED_LABELS`, Task 4·6의 집계 스키마, Task 8의 `recap_source.json`, Task 9의 `scorecard.json`
+- Produces: `check(html, agg, scorecard, recap, span) -> list[str]` — 위반 문자열 목록, 빈 목록이면 발행 가능
+
+**핵심:** 발행본의 숫자는 «집계 파일 ∪ 스코어카드 ∪ 그 기간 발행본의 `figures`»에 실재해야 한다. 총정리이므로 원본에 있던 숫자는 인용해도 창작이 아니고, 원본에 없던 숫자는 에이전트가 지어낸 것이다.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1621,73 +1854,87 @@ AGG = {"span": "weekly", "key": "2026-W34", "start_date": "2026-08-17",
 SC = {"weighted": 0.33, "judged": 3, "neutral": 2, "neutral_share": 0.4,
       "assets": {"equities": {"verdict": "적중"}}}
 
+RECAP = {"start_date": "2026-08-17", "end_date": "2026-08-21", "sessions": 5,
+         "posts": [
+             {"date": "2026-08-17", "headline": "월요일", "sections": [], "figures": ["0.31%"]},
+             {"date": "2026-08-18", "headline": "화요일", "sections": [], "figures": ["1.42%"]},
+             {"date": "2026-08-19", "headline": "수요일", "sections": [], "figures": ["0.88%"]},
+             {"date": "2026-08-20", "headline": "목요일", "sections": [], "figures": ["57.3"]},
+             {"date": "2026-08-21", "headline": "금요일", "sections": [], "figures": ["3.22%"]}],
+         "missing": []}
+
 
 def _html(body):
     return f"<html><body><main>{body}</main></body></html>"
 
 
-GOOD = _html(
-    "<p>2026-08-17부터 2026-08-21까지 5거래일. S&amp;P 500은 2.0% 올랐고 "
-    "Technology가 20.0%로 1위였다. 10년물은 12.0bp 내렸다. "
-    "가중 점수는 0.33, 무포지션 비율 0.4다.</p>")
+ALL_DAYS = ("2026-08-17에 0.31% 밀렸고, 2026-08-18에 1.42% 되돌렸다. "
+            "2026-08-19은 0.88%, 2026-08-20에 지표가 57.3으로 나왔고 "
+            "2026-08-21에 3.22% 올랐다. ")
+
+GOOD = _html(f"<p>{ALL_DAYS}주간으로 S&amp;P 500은 2.0%, Technology가 20.0%로 1위였다. "
+             "10년물은 12.0bp 내렸다. 가중 점수 0.33, 무포지션 비율 0.4.</p>")
 
 
 def test_clean_report_passes():
-    assert check(GOOD, AGG, SC, "weekly") == []
+    assert check(GOOD, AGG, SC, RECAP, "weekly") == []
 
 
-def test_invented_number_is_caught():
+def test_number_absent_from_every_source_is_caught():
     html = GOOD.replace("2.0%", "2.7%")
-    v = check(html, AGG, SC, "weekly")
-    assert any("2.7" in x for x in v)
+    assert any("2.7" in x for x in check(html, AGG, SC, RECAP, "weekly"))
+
+
+def test_number_quoted_from_a_daily_post_is_allowed():
+    # 발행본에 있던 수치는 총정리에 인용해도 창작이 아니다
+    html = GOOD.replace("3.22%", "3.22%").replace("1위였다", "1위였다. 금 3.22% 급등")
+    assert check(html, AGG, SC, RECAP, "weekly") == []
 
 
 def test_scorecard_number_must_match_the_file():
     html = GOOD.replace("0.33", "0.51")
-    v = check(html, AGG, SC, "weekly")
-    assert any("0.51" in x for x in v)
+    assert any("0.51" in x for x in check(html, AGG, SC, RECAP, "weekly"))
 
 
 def test_unconfirmed_marker_is_banned():
-    v = check(_html("<p>[확인필요] 수치</p>"), AGG, SC, "weekly")
+    v = check(_html(f"<p>{ALL_DAYS}[확인필요]</p>"), AGG, SC, RECAP, "weekly")
     assert any("확인필요" in x for x in v)
 
 
 def test_buyside_wording_is_banned():
-    v = check(GOOD + "<p>buy-side 관점</p>", AGG, SC, "weekly")
+    v = check(GOOD + "<p>buy-side 관점</p>", AGG, SC, RECAP, "weekly")
     assert any("buy-side" in x for x in v)
 
 
 def test_internal_filenames_must_not_leak():
-    v = check(GOOD + "<p>weekly.json 참조</p>", AGG, SC, "weekly")
-    assert any("weekly.json" in x for x in v)
-
-
-def test_internal_ledger_key_must_not_leak():
-    v = check(GOOD + "<p>_sessions 원장</p>", AGG, SC, "weekly")
-    assert any("_sessions" in x for x in v)
+    for term in ("weekly.json", "recap_source.json", "_sessions", "scorecard.json"):
+        v = check(GOOD + f"<p>{term} 참조</p>", AGG, SC, RECAP, "weekly")
+        assert any(term in x for x in v), term
 
 
 def test_coverage_window_must_be_stated():
-    v = check(_html("<p>S&amp;P 500은 2.0% 올랐다.</p>"), AGG, SC, "weekly")
+    v = check(_html("<p>S&amp;P 500은 2.0% 올랐다.</p>"), AGG, SC, RECAP, "weekly")
     assert any("커버 기간" in x for x in v)
 
 
-def test_comment_may_only_cite_numbers_from_the_two_recaps():
-    sources = ["<p>S&amp;P 500은 2.0% 올랐다.</p>", "<p>코스피는 1.5% 내렸다.</p>"]
-    ok = _html("<p>2026-08-17~2026-08-21 주. S&amp;P 500 2.0%와 코스피 1.5%가 갈렸다.</p>")
-    assert check(ok, AGG, None, "weekly", kind="comment", sources=sources) == []
-    bad = _html("<p>2026-08-17~2026-08-21 주. 나스닥은 9.9% 올랐다.</p>")
-    v = check(bad, AGG, None, "weekly", kind="comment", sources=sources)
-    assert any("9.9" in x for x in v)
+def test_every_trading_day_must_be_mentioned():
+    # 총정리인데 하루를 통째로 빠뜨리면 그날 사건이 사라진다
+    html = GOOD.replace("2026-08-19은 0.88%, ", "")
+    v = check(html, AGG, SC, RECAP, "weekly")
+    assert any("2026-08-19" in x for x in v)
 
 
-def test_thin_sample_must_be_disclosed_when_rollup_is_insufficient():
+def test_missing_source_post_is_reported():
+    recap = {**RECAP, "missing": ["2026-08-18"]}
+    v = check(GOOD, AGG, SC, recap, "weekly")
+    assert any("발행본이 없다" in x and "2026-08-18" in x for x in v)
+
+
+def test_thin_sample_must_be_disclosed():
     sc = {**SC, "rollup": {"last_4": {"insufficient": True, "periods": 1}}}
-    v = check(GOOD, AGG, sc, "weekly")
-    assert any("표본 부족" in x for x in v)
-    ok = GOOD.replace("</p>", " 누적 표본 부족으로 당기만 싣는다.</p>")
-    assert check(ok, AGG, sc, "weekly") == []
+    assert any("표본 부족" in x for x in check(GOOD, AGG, sc, RECAP, "weekly"))
+    ok = GOOD.replace("0.4.", "0.4. 누적 표본 부족으로 당기만 싣는다.")
+    assert check(ok, AGG, sc, RECAP, "weekly") == []
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -1700,10 +1947,12 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'us.period_gate'`
 `scripts/us/period_gate.py`:
 
 ```python
-"""주간·월간 정리와 주간 코멘트의 발행 게이트.
+"""주간·월간 정리의 발행 게이트.
 
-핵심은 하나 — **발행본의 숫자는 집계 파일에 실재해야 한다.** 순위처럼 파생되는 값도
-집계가 미리 계산해 담아 두므로, 에이전트가 즉석에서 산술한 수치는 통과하지 못한다.
+이 리포트는 그 기간 발행본의 총정리다. 그래서 두 가지를 본다 —
+**원본에 없던 숫자를 지어내지 않았는가**, 그리고 **원본의 어느 하루를 통째로
+빠뜨리지 않았는가**. 뒤쪽은 총정리에만 있는 검사다: 요약은 빠뜨려도 티가 안 나고,
+빠진 그날의 사건은 어디에도 남지 않는다.
 """
 
 import re
@@ -1711,16 +1960,23 @@ import re
 from us.macro_gate import BANNED_LABELS
 from us.post_check import banned_markers, body_text, data_tokens
 
-INTERNAL_TERMS = ('weekly.json', 'monthly.json', 'scorecard.json', 'stance.jsonl',
-                  'macro.jsonl', 'market_data.json', 'research_notes.md',
+INTERNAL_TERMS = ('weekly.json', 'monthly.json', 'scorecard.json', 'recap_source.json',
+                  'stance.jsonl', 'macro.jsonl', 'market_data.json', 'research_notes.md',
                   'macro_metrics.json', 'kr_flows.json', '_sessions',
                   'signed-z', 'allowed_grades', 'basket_excess_pct')
 
 _NUM = re.compile(r'-?\d+(?:\.\d+)?')
 
 
+def _canon(v):
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return str(v)
+    return str(int(f)) if f == int(f) else f'{f:.10g}'
+
+
 def _numbers(obj, out=None):
-    """중첩 구조 안의 모든 수치를 문자열 집합으로 — 표기 흔들림을 흡수한다."""
     out = set() if out is None else out
     if isinstance(obj, dict):
         for k, v in obj.items():
@@ -1739,18 +1995,8 @@ def _numbers(obj, out=None):
     return out
 
 
-def _canon(v):
-    try:
-        f = float(v)
-    except (TypeError, ValueError):
-        return str(v)
-    if f == int(f):
-        return str(int(f))
-    return f'{f:.10g}'
-
-
 def _html_numbers(html):
-    # data_tokens 는 {토큰: 등장횟수} 딕트다 — 여기서는 키(토큰)만 쓴다
+    # data_tokens 는 {토큰: 등장횟수} 딕트다 — 여기서는 키만 쓴다
     out = set()
     for tok in data_tokens(html):
         for m in _NUM.findall(tok.replace(',', '')):
@@ -1758,7 +2004,7 @@ def _html_numbers(html):
     return out
 
 
-def check(html, agg, scorecard, span, kind='report', sources=None):
+def check(html, agg, scorecard, recap, span):
     v = []
     text = body_text(html)
 
@@ -1768,27 +2014,32 @@ def check(html, agg, scorecard, span, kind='report', sources=None):
     low = text.lower()
     for word in BANNED_LABELS:
         if word in low:
-            v.append(f'발행본에 buy-side 표기("{word}")가 남았다 — '
-                     '전략·리포트·시황 정리로 부를 것')
+            v.append(f'발행본에 buy-side 표기("{word}")가 남았다 — 전략·리포트·시황 정리로 부를 것')
             break
 
     for term in INTERNAL_TERMS:
         if term in text:
             v.append(f'내부 용어·파일명이 발행본에 노출됐다: {term}')
 
-    # 커버 기간 — 시작·종료 거래일이 본문에 있어야 한다
     start, end = agg.get('start_date'), agg.get('end_date')
     if not (start and start in text) or not (end and end in text):
         v.append(f'커버 기간이 본문에 없다 — 시작({start})과 종료({end}) 거래일을 명시할 것')
 
-    # 수치 대조
-    allowed = _numbers(agg)
-    if kind == 'comment':
-        for s in (sources or []):
-            allowed |= _html_numbers(s)
-    else:
-        allowed |= _numbers(scorecard or {})
-    allowed |= _numbers({'y': [str(y) for y in range(2020, 2036)]})   # 연도는 통과
+    # 총정리 커버리지 — 원본의 모든 거래일이 본문에 있어야 한다
+    for post in ((recap or {}).get('posts') or []):
+        d = post.get('date')
+        if d and d not in text:
+            v.append(f'{d} 발행본이 총정리에서 빠졌다 — 그날 사건이 사라진다. '
+                     f'헤드라인: {post.get("headline", "")[:40]}')
+
+    for d in ((recap or {}).get('missing') or []):
+        v.append(f'{d} 발행본이 없다 — 목록에는 있는데 파일을 못 찾았다. '
+                 '총정리 전에 원본을 확인할 것')
+
+    allowed = _numbers(agg) | _numbers(scorecard or {})
+    for post in ((recap or {}).get('posts') or []):
+        allowed |= _numbers(post.get('figures') or [])
+    allowed |= {str(y) for y in range(2020, 2036)}
 
     for n in sorted(_html_numbers(html) - allowed):
         try:
@@ -1796,8 +2047,9 @@ def check(html, agg, scorecard, span, kind='report', sources=None):
         except ValueError:
             continue
         if f <= 12 and f == int(f):
-            continue            # 섹션 번호·순위·거래일 수 같은 작은 정수는 통과
-        v.append(f'집계에 없는 수치가 본문에 있다: {n} — 창작 금지, 집계 파일 값만 인용할 것')
+            continue        # 섹션 번호·순위·거래일 수 같은 작은 정수는 통과
+        v.append(f'어느 원본에도 없는 수치가 본문에 있다: {n} — 창작 금지. '
+                 '집계 파일이나 그 기간 발행본에 실린 값만 인용할 것')
 
     ru = (scorecard or {}).get('rollup') or {}
     if any((ru.get(k) or {}).get('insufficient') for k in ru):
@@ -1811,14 +2063,11 @@ def check(html, agg, scorecard, span, kind='report', sources=None):
 
 ```python
 #!/usr/bin/env python3
-"""Publication gate for the weekly / monthly recaps and the weekly comment.
+"""Publication gate for the weekly / monthly recaps.
 
   python3 scripts/check_period.py --html weekly_2026-W34.html \
-      --agg data/weekly/2026-W34.json --scorecard data/scorecard.json --span weekly
-
-  python3 scripts/check_period.py --html comment_2026-08-22.html \
-      --agg data/weekly/2026-W34.json --span weekly --kind comment \
-      --source weekly_2026-W34.html --source kr_weekly_2026-W34.html
+      --agg data/weekly/2026-W34.json --recap recap_source.json \
+      --scorecard data/scorecard.json --span weekly
 
 Exit 0 = publishable. Exit 1 = violations printed, one per line; hand them back to the
 writer subagent verbatim and re-run.
@@ -1834,35 +2083,35 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from us.period_gate import check  # noqa: E402
 
 
-def read(path):
+def load(path):
+    if not path or not os.path.exists(path):
+        return None
     with open(path, encoding='utf-8') as fh:
-        return fh.read()
+        return json.load(fh)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--agg', required=True)
+    ap.add_argument('--recap', required=True)
     ap.add_argument('--scorecard', default=None)
     ap.add_argument('--span', choices=('weekly', 'monthly'), required=True)
-    ap.add_argument('--kind', choices=('report', 'comment'), default='report')
-    ap.add_argument('--source', action='append', default=[],
-                    help='코멘트 검사용 — 그 주 정리 발행본 HTML (여러 번 지정)')
     args = ap.parse_args()
 
     try:
-        html = read(args.html)
-        agg = json.loads(read(args.agg))
+        with open(args.html, encoding='utf-8') as fh:
+            html = fh.read()
+        agg = load(args.agg)
+        recap = load(args.recap)
     except OSError as e:
         print(f'FATAL: {e}', file=sys.stderr)
         sys.exit(2)
+    if agg is None or recap is None:
+        print('FATAL: 집계 파일 또는 발행본 회수 파일이 없다', file=sys.stderr)
+        sys.exit(2)
 
-    sc = None
-    if args.scorecard and os.path.exists(args.scorecard):
-        sc = json.loads(read(args.scorecard))
-    sources = [read(p) for p in args.source if os.path.exists(p)]
-
-    violations = check(html, agg, sc, args.span, kind=args.kind, sources=sources)
+    violations = check(html, agg, load(args.scorecard), recap, args.span)
     if not violations:
         print('기간 리포트 게이트 통과')
         return
@@ -1879,68 +2128,98 @@ if __name__ == '__main__':
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `python3 -m pytest scripts/us/tests/test_period_gate.py -q`
-Expected: PASS (10 passed)
+Expected: PASS (11 passed)
 
-- [ ] **Step 5: 전체 테스트가 여전히 통과하는지**
+- [ ] **Step 5: 전체 스위트**
 
 Run: `python3 -m pytest scripts -q`
-Expected: 기존 테스트 전부 + 신규 통과
+Expected: 기존 + 신규 전부 통과
 
 - [ ] **Step 6: Commit**
 
 ```bash
 git add scripts/us/period_gate.py scripts/check_period.py scripts/us/tests/test_period_gate.py
-git commit -m "기간 리포트 발행 게이트 — 집계에 없는 수치를 막는다"
+git commit -m "기간 리포트 게이트 — 원본에 없는 수치와 빠진 거래일을 막는다"
 ```
 
 ---
 
-### Task 10: 아카이브·sitemap 갱신
+### Task 11: 아카이브와 일간/주간/월간 서브카테고리
 
 **Files:**
-- Create: `scripts/update_archives.py`
 - Create: `scripts/us/archives.py`
+- Create: `scripts/update_archives.py`
 - Test: `scripts/us/tests/test_archives.py`
-- Modify: `index.html`, `kr/index.html` (종류 필터)
+- Modify: `index.html`, `kr/index.html`
 
 **Interfaces:**
-- Consumes: 없음
-- Produces: `upsert_entry(entries: list[dict], entry: dict, key: str = 'key') -> list[dict]`, `sitemap_urls(base: str, listings: dict) -> list[str]`
+- Produces: `upsert_entry(entries, entry, key='key') -> list[dict]`, `merge_sitemap(existing_xml: str, urls: list[str], lastmod: str) -> str`
+
+**주의 — sitemap은 재생성이 아니라 병합이다.** 현재 `sitemap.xml`은 55개 URL에 `<lastmod>`·`<changefreq>`를 달고 있고 `/thesis/` 항목을 포함한다. 세 오케스트레이터가 각자 갱신하므로 전체 재생성은 다른 파이프라인의 항목을 지운다. **모르는 URL은 건드리지 않는다.**
 
 - [ ] **Step 1: Write the failing test**
 
 `scripts/us/tests/test_archives.py`:
 
 ```python
-from us.archives import sitemap_urls, upsert_entry
+from us.archives import merge_sitemap, upsert_entry
 
 
 def test_upsert_adds_a_new_entry_newest_first():
-    e = upsert_entry([], {"key": "2026-W34", "title": "t", "headline": "h"})
-    e = upsert_entry(e, {"key": "2026-W35", "title": "u", "headline": "i"})
+    e = upsert_entry([], {"key": "2026-W34", "title": "t"})
+    e = upsert_entry(e, {"key": "2026-W35", "title": "u"})
     assert [x["key"] for x in e] == ["2026-W35", "2026-W34"]
 
 
 def test_upsert_replaces_rather_than_duplicating():
     e = upsert_entry([], {"key": "2026-W34", "title": "old"})
     e = upsert_entry(e, {"key": "2026-W34", "title": "new"})
-    assert len(e) == 1
-    assert e[0]["title"] == "new"
+    assert len(e) == 1 and e[0]["title"] == "new"
 
 
-def test_sitemap_lists_every_kind():
-    urls = sitemap_urls("https://fdo2a.github.io", {
-        "posts": ["2026-08-21"], "weekly": ["2026-W34"],
-        "monthly": ["2026-08"], "comment": ["2026-08-22"],
-        "kr/posts": ["2026-08-21"], "kr/weekly": ["2026-W34"], "kr/monthly": ["2026-08"]})
-    assert "https://fdo2a.github.io/weekly/2026-W34.html" in urls
-    assert "https://fdo2a.github.io/kr/monthly/2026-08.html" in urls
-    assert "https://fdo2a.github.io/comment/2026-08-22.html" in urls
+EXISTING = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://fdo2a.github.io/</loc><lastmod>2026-08-21</lastmod><changefreq>daily</changefreq></url>
+  <url><loc>https://fdo2a.github.io/thesis/micron.html</loc><lastmod>2026-08-24</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://fdo2a.github.io/posts/2026-08-21.html</loc><lastmod>2026-08-21</lastmod></url>
+</urlset>"""
 
 
-def test_sitemap_has_no_duplicates_and_is_sorted():
-    urls = sitemap_urls("https://x", {"weekly": ["2026-W34", "2026-W34", "2026-W33"]})
-    assert urls == sorted(set(urls))
+def test_merge_keeps_urls_it_was_not_told_about():
+    out = merge_sitemap(EXISTING, ["https://fdo2a.github.io/weekly/2026-08-21.html"], "2026-08-22")
+    assert "thesis/micron.html" in out
+    assert "posts/2026-08-21.html" in out
+    assert "https://fdo2a.github.io/" in out
+
+
+def test_merge_preserves_existing_metadata_on_untouched_urls():
+    out = merge_sitemap(EXISTING, ["https://fdo2a.github.io/weekly/2026-08-21.html"], "2026-08-22")
+    assert "<loc>https://fdo2a.github.io/thesis/micron.html</loc><lastmod>2026-08-24</lastmod><changefreq>weekly</changefreq>" in out
+
+
+def test_merge_adds_the_new_url_with_lastmod():
+    out = merge_sitemap(EXISTING, ["https://fdo2a.github.io/weekly/2026-08-21.html"], "2026-08-22")
+    assert "<loc>https://fdo2a.github.io/weekly/2026-08-21.html</loc><lastmod>2026-08-22</lastmod>" in out
+
+
+def test_merge_updates_lastmod_of_a_url_it_owns_without_duplicating():
+    out = merge_sitemap(EXISTING, ["https://fdo2a.github.io/posts/2026-08-21.html"], "2026-08-25")
+    assert out.count("posts/2026-08-21.html") == 1
+    assert "<loc>https://fdo2a.github.io/posts/2026-08-21.html</loc><lastmod>2026-08-25</lastmod>" in out
+
+
+def test_merge_output_is_wellformed_xml():
+    import xml.etree.ElementTree as ET
+    out = merge_sitemap(EXISTING, ["https://fdo2a.github.io/weekly/2026-08-21.html"], "2026-08-22")
+    root = ET.fromstring(out)
+    assert root.tag.endswith("urlset")
+    assert len(root) == 4
+
+
+def test_merge_into_an_empty_or_missing_sitemap():
+    out = merge_sitemap("", ["https://fdo2a.github.io/weekly/2026-08-21.html"], "2026-08-22")
+    import xml.etree.ElementTree as ET
+    assert len(ET.fromstring(out)) == 1
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -1953,7 +2232,21 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'us.archives'`
 `scripts/us/archives.py`:
 
 ```python
-"""목록 JSON·sitemap 갱신 — 재실행이 중복을 만들지 않게 기간 키로 upsert 한다."""
+"""목록 JSON 과 sitemap 갱신.
+
+sitemap 은 **재생성이 아니라 병합**한다. 지금 이 사이트에는 US·KR 브리프 말고
+thesis 파이프라인이 따로 있고, 셋이 각자 sitemap 을 건드린다. 전체 재생성은 남의
+항목을 지운다 — 모르는 URL 은 건드리지 않는 것이 유일하게 안전한 규약이다.
+"""
+
+import re
+
+_URL = re.compile(r'<url>\s*(.*?)\s*</url>', re.S)
+_LOC = re.compile(r'<loc>(.*?)</loc>', re.S)
+
+_HEAD = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+_TAIL = '</urlset>\n'
 
 
 def upsert_entry(entries, entry, key='key'):
@@ -1963,13 +2256,26 @@ def upsert_entry(entries, entry, key='key'):
     return out
 
 
-def sitemap_urls(base, listings):
-    base = base.rstrip('/')
-    urls = {f'{base}/'}
-    for path, keys in (listings or {}).items():
-        for k in keys:
-            urls.add(f'{base}/{path}/{k}.html')
-    return sorted(urls)
+def merge_sitemap(existing_xml, urls, lastmod):
+    """우리가 아는 URL 만 갱신·추가하고 나머지 <url> 블록은 원문 그대로 보존한다."""
+    kept, seen = [], set()
+    for block in _URL.findall(existing_xml or ''):
+        m = _LOC.search(block)
+        if not m:
+            continue
+        loc = m.group(1).strip()
+        if loc in seen:
+            continue
+        seen.add(loc)
+        if loc in set(urls):
+            kept.append(f'<loc>{loc}</loc><lastmod>{lastmod}</lastmod>')
+        else:
+            kept.append(block)          # 남의 항목 — 원문 보존
+    for loc in urls:
+        if loc not in seen:
+            kept.append(f'<loc>{loc}</loc><lastmod>{lastmod}</lastmod>')
+    body = ''.join(f'  <url>{b}</url>\n' for b in kept)
+    return _HEAD + body + _TAIL
 ```
 
 `scripts/update_archives.py`:
@@ -1978,39 +2284,28 @@ def sitemap_urls(base, listings):
 #!/usr/bin/env python3
 """발행 후 목록 JSON 과 sitemap 을 갱신한다.
 
-  python3 scripts/update_archives.py --root . \
-      --kind weekly --key 2026-W34 \
+  python3 scripts/update_archives.py --root . --kind weekly --key 2026-08-21 \
       --title "미국 증시 주간 정리 — 2026년 8월 3주" --headline "..."
 
---kind 는 weekly / monthly / comment / kr-weekly / kr-monthly.
-같은 키로 다시 돌리면 항목을 교체한다 (중복 생성 아님).
+--kind 는 weekly / monthly / kr-weekly / kr-monthly.
+같은 키로 다시 돌리면 항목을 교체한다.
 """
 
 import argparse
-import glob
+import datetime
 import json
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.archives import sitemap_urls, upsert_entry  # noqa: E402
+from us.archives import merge_sitemap, upsert_entry  # noqa: E402
 
 LISTINGS = {'weekly': ('weekly.json', 'weekly'),
             'monthly': ('monthly.json', 'monthly'),
-            'comment': ('comment.json', 'comment'),
             'kr-weekly': ('kr/weekly.json', 'kr/weekly'),
             'kr-monthly': ('kr/monthly.json', 'kr/monthly')}
 BASE = 'https://fdo2a.github.io'
-
-
-def load(path, default):
-    if not os.path.exists(path):
-        return default
-    try:
-        return json.load(open(path, encoding='utf-8'))
-    except Exception:
-        return default
 
 
 def main():
@@ -2024,28 +2319,27 @@ def main():
 
     listing_rel, dir_rel = LISTINGS[args.kind]
     listing = os.path.join(args.root, listing_rel)
-    entries = upsert_entry(load(listing, []),
-                           {'key': args.key, 'title': args.title,
-                            'headline': args.headline})
+    entries = []
+    if os.path.exists(listing):
+        with open(listing, encoding='utf-8') as fh:
+            entries = json.load(fh)
+    entries = upsert_entry(entries, {'key': args.key, 'title': args.title,
+                                     'headline': args.headline})
     os.makedirs(os.path.dirname(listing) or '.', exist_ok=True)
-    json.dump(entries, open(listing, 'w'), ensure_ascii=False, indent=2)
+    with open(listing, 'w', encoding='utf-8') as fh:
+        json.dump(entries, fh, ensure_ascii=False, indent=2)
     print(f'{listing_rel}: {len(entries)} entries')
 
-    # sitemap — 디스크에 실재하는 파일만 싣는다
-    listings = {}
-    for path in ('posts', 'weekly', 'monthly', 'comment',
-                 'kr/posts', 'kr/weekly', 'kr/monthly'):
-        d = os.path.join(args.root, path)
-        listings[path] = sorted(os.path.splitext(os.path.basename(p))[0]
-                                for p in glob.glob(os.path.join(d, '*.html')))
-    urls = sitemap_urls(BASE, listings)
-    with open(os.path.join(args.root, 'sitemap.xml'), 'w', encoding='utf-8') as fh:
-        fh.write('<?xml version="1.0" encoding="UTF-8"?>\n'
-                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
-        for u in urls:
-            fh.write(f'  <url><loc>{u}</loc></url>\n')
-        fh.write('</urlset>\n')
-    print(f'sitemap.xml: {len(urls)} urls')
+    sp = os.path.join(args.root, 'sitemap.xml')
+    existing = ''
+    if os.path.exists(sp):
+        with open(sp, encoding='utf-8') as fh:
+            existing = fh.read()
+    today = datetime.date.today().isoformat()
+    merged = merge_sitemap(existing, [f'{BASE}/{dir_rel}/{args.key}.html'], today)
+    with open(sp, 'w', encoding='utf-8') as fh:
+        fh.write(merged)
+    print(f'sitemap.xml merged (+1 url, {today})')
 
 
 if __name__ == '__main__':
@@ -2055,28 +2349,29 @@ if __name__ == '__main__':
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `python3 -m pytest scripts/us/tests/test_archives.py -q`
-Expected: PASS (4 passed)
+Expected: PASS (8 passed)
 
-- [ ] **Step 5: 기존 sitemap 형식과 충돌하지 않는지 확인**
-
-```bash
-head -6 sitemap.xml
-python3 scripts/update_archives.py --root . --kind weekly --key 2026-W00 \
-    --title "probe" --headline "probe"
-head -6 sitemap.xml && git diff --stat sitemap.xml
-```
-
-기존 sitemap에 `<lastmod>`·`<changefreq>` 같은 필드가 있으면 위 writer를 그 형식에 맞춘다. 확인 후 프로브 항목을 되돌린다:
+- [ ] **Step 5: 실제 sitemap으로 병합 스모크 (되돌릴 것)**
 
 ```bash
-git checkout sitemap.xml weekly.json 2>/dev/null || rm -f weekly.json
+grep -c "<loc>" sitemap.xml
+python3 scripts/update_archives.py --root . --kind weekly --key 2026-W00 --title probe
+grep -c "<loc>" sitemap.xml
+grep -c "thesis" sitemap.xml
+git checkout sitemap.xml && rm -f weekly.json
 ```
 
-- [ ] **Step 6: index.html 에 종류 필터 추가**
+Expected: URL 수가 55 → 56으로 **늘기만** 하고, `thesis` 항목 수가 그대로여야 한다. 줄면 병합이 아니라 재생성이 된 것이므로 중단하고 원인을 잡는다.
 
-`index.html`은 `posts.json`만 읽는다. 필터 칩 4개(일간·주간·월간·코멘트)를 붙이고 각 목록 JSON을 불러 합친 뒤 종류로 거른다. `kr/index.html`은 일간·주간·월간 3개.
+- [ ] **Step 6: index.html·kr/index.html에 서브카테고리 추가**
 
-기존 카드 마크업(`a.post` / `.post .date`)과 CSS 변수를 그대로 쓰고, 칩은 `.switch` 스타일을 재사용한다. 반응형 규격(390/1280px에서 가로 밀림 없음)을 지킨다.
+상단 메뉴바(`.menubar`, 「미국 시장 · 한국 시장 · 메모리 thesis」)는 **그대로 둔다**. 그 아래 각 index 본문에 **일간 / 주간 / 월간** 서브카테고리 탭을 넣는다.
+
+- URL은 바꾸지 않는다 — in-page 전환이다. 기존 50여 편 링크와 `/posts/` URL 무손상
+- 현재 선택은 밑줄로 표시해 `.menubar`의 시각 언어를 따르되, 클래스는 `.subnav`로 새로 만든다(메뉴바와 위계가 다르므로)
+- `index.html`은 `posts.json`·`weekly.json`·`monthly.json`을, `kr/index.html`은 `kr/posts.json`·`kr/weekly.json`·`kr/monthly.json`을 읽는다. 목록 파일이 아직 없으면(404) 그 탭은 「아직 발행된 글이 없습니다」를 보인다 — 콘솔 에러를 남기지 말 것
+- 항목 키가 다르다: `posts.json`은 `date`, 주간·월간은 `key`. 렌더 전에 `key = e.key ?? e.date`로 정규화한다
+- 기본 선택은 「일간」
 
 - [ ] **Step 7: 반응형 검증**
 
@@ -2084,187 +2379,130 @@ git checkout sitemap.xml weekly.json 2>/dev/null || rm -f weekly.json
 python3 - <<'PY'
 from playwright.sync_api import sync_playwright
 import pathlib
-url = pathlib.Path('index.html').resolve().as_uri()
 with sync_playwright() as p:
     b = p.chromium.launch()
-    for w in (390, 1280):
-        pg = b.new_page(viewport={'width': w, 'height': 900})
-        pg.goto(url); pg.wait_for_timeout(300)
-        sw = pg.evaluate('document.documentElement.scrollWidth')
-        print(w, sw, 'OK' if sw == w else 'OVERFLOW')
+    for page in ('index.html', 'kr/index.html'):
+        url = pathlib.Path(page).resolve().as_uri()
+        for w in (390, 1280):
+            pg = b.new_page(viewport={'width': w, 'height': 900})
+            pg.goto(url); pg.wait_for_timeout(400)
+            sw = pg.evaluate('document.documentElement.scrollWidth')
+            tabs = pg.evaluate("document.querySelectorAll('.subnav a').length")
+            print(page, w, 'scrollWidth', sw, 'tabs', tabs, 'OK' if sw == w and tabs == 3 else 'FAIL')
     b.close()
 PY
 ```
 
-Expected: 두 폭 모두 `OK`
+Expected: 네 조합 모두 `OK` (가로 밀림 없음, 서브탭 3개)
 
 - [ ] **Step 8: Commit**
 
 ```bash
-git add scripts/update_archives.py scripts/us/archives.py \
+git add scripts/us/archives.py scripts/update_archives.py \
         scripts/us/tests/test_archives.py index.html kr/index.html
-git commit -m "아카이브에 주간·월간·코멘트 종류를 세운다"
+git commit -m "미국·한국 각각에 일간·주간·월간 서브카테고리"
 ```
 
 ---
 
-### Task 11: 작성 에이전트·오케스트레이터·트리거
+### Task 12: 작성 에이전트·오케스트레이터·트리거
 
 **Files:**
 - Create: `.claude/agents/period-report-writer.md`
-- Create: `.claude/agents/weekly-comment-writer.md`
 - Create: `.claude/WEEKLY_ORCHESTRATOR.md`
 - Create: `.claude/MONTHLY_ORCHESTRATOR.md`
-- Modify: `CLAUDE.md` (구성 요소에 기간 리포트 추가)
+- Create: `scripts/build_recap_source.py`, `scripts/build_scorecard.py`
+- Modify: `CLAUDE.md`
 
-**Interfaces:**
-- Consumes: Task 4·6의 집계 파일, Task 8의 `data/scorecard.json`, Task 9의 게이트 CLI, Task 10의 아카이브 CLI
-- Produces: 루틴이 실행하는 파이프라인 문서
+- [ ] **Step 1: `build_recap_source.py`와 `build_scorecard.py` CLI**
 
-- [ ] **Step 1: `period-report-writer.md` 작성**
+오케스트레이터가 부를 진입점 둘. `build_recap_source.py`는 `--posts-dir`·`--listing`·`--start`·`--end`·`--span`·`--key`를 받아 `recap_source.json`을 쓴다. `build_scorecard.py`는 계획서 Task 12 Step 5의 코드를 쓰되 **월간은 `--spans 3,12`이고 `--no-append`** — 월간 스코어카드는 주간 행을 롤업하므로 같은 기간을 두 번 세면 안 된다.
 
-`market`(us|kr)와 `span`(weekly|monthly) 두 파라미터로 4종을 처리한다. 담아야 할 것:
+- [ ] **Step 2: `period-report-writer.md` 작성**
 
-- 입력 계약 — `data/weekly/<key>.json` 또는 `data/monthly/<key>.json`, `data/scorecard.json`, `data/history/*.jsonl` (KR은 `kr/data/...`, 스코어카드 없음)
+`market`(us|kr) × `span`(weekly|monthly) 네 조합을 하나로 처리한다. 반드시 담을 것:
+
+- **이 글의 성격** — 그 기간 발행본의 총정리. 시장을 새로 취재하지 않는다. 웹 검색 금지
+- 입력 계약 — `recap_source.json`(주 소스), 집계 파일(성과표 전용), `scorecard.json`, `data/history/*.jsonl`
 - 출력 계약 — `weekly_<key>.html` / `monthly_<key>.html` (KR은 `kr_` 접두)
-- **섹션 구조** — 스펙 §리포트 구조를 그대로 옮긴다. US 주간 5절, KR 주간 7절, 월간은 +3절(섹터 로테이션·레짐 궤적·스탠스 등급 궤적)
-- **금기** — 수치를 새로 계산하지 않는다. 집계 파일에 있는 값만 인용한다. 웹 재리서치 금지(그 기간의 촉매는 `daily[]`가 이미 확정했다)
-- **복기 서술 규율** — 틀린 것부터 쓴다. 맞은 것 나열 금지. 틀렸을 때 «트리거는 옳았는데 시장이 따라오지 않았나» 와 «트리거 설계가 틀렸나»를 구분한다
-- **표본 부족** — `scorecard.rollup`의 `insufficient`가 참이면 「누적 표본 부족」을 명시하고 당기만 싣는다
-- 디자인·반응형 규격은 `.claude/agents/brief-report-writer.md`를 참조하라고 지시 (중복 기술하지 않는다)
+- 섹션 구조 — 스펙 §리포트 구조 그대로
+- **금기** — 수치를 새로 계산하지 않는다(집계 파일과 발행본에 있는 값만). 발행본의 어느 하루도 빠뜨리지 않는다. 5편 요약 나열이 아니라 **한 편의 서사**로 묶는다 — 월요일에 던져진 질문이 목요일에 어떻게 답해졌는지가 보이게
+- 복기 서술 규율 — 틀린 것부터. 맞은 것 나열 금지. 「트리거는 옳았는데 시장이 안 따라왔나」와 「트리거 설계가 틀렸나」를 구분
+- 표본 부족 시 「누적 표본 부족」 명시
+- 디자인·반응형은 `.claude/agents/brief-report-writer.md` 참조(중복 기술 금지)
 
-- [ ] **Step 2: `weekly-comment-writer.md` 작성**
-
-- 입력 — 그 주 US·KR 주간 정리 **발행본 HTML 두 편**
-- 출력 — `comment_<YYYY-MM-DD>.html` (발행일 기준)
-- **표 없음.** 두 시장을 관통하는 주제 1~2개. 1,200~2,000자
-- **근거 수치는 두 발행본에서 인용만.** 새로 계산하지 않는다 — 게이트가 부분집합으로 검사한다
-
-- [ ] **Step 3: `WEEKLY_ORCHESTRATOR.md` 작성**
+- [ ] **Step 3: `WEEKLY_ORCHESTRATOR.md`**
 
 ```
-STEP 0  레포 클론, 최신 report_date 확인 → week_key 산출
+STEP 0  레포 클론, data/market_data.json 의 report_date → week_key 산출
 STEP 1  data/weekly/<key>.json, kr/data/weekly/<key>.json 존재·complete 확인
         없거나 incomplete 면 PushNotification 후 중단 (완성본만 발행)
-STEP 2  scorecard 계산 → data/scorecard.json, data/history/scorecard.jsonl append
-STEP 3  period-report-writer (market=us, span=weekly) → 게이트 → /weekly/<key>.html 발행
-STEP 4  period-report-writer (market=kr, span=weekly) → 게이트 → /kr/weekly/<key>.html 발행
-STEP 5  weekly-comment-writer (입력: STEP 3·4 발행본) → 게이트(kind=comment) → /comment/<date>.html
-STEP 6  update_archives.py 3회 → commit → push
+STEP 2  build_recap_source.py 2회 (US: posts/ + posts.json, KR: kr/posts/ + kr/posts.json)
+        posts 가 0편이면 중단 — 총정리할 원본이 없다
+STEP 3  build_scorecard.py --spans 4,12  → data/scorecard.json + history append
+STEP 4  period-report-writer (us, weekly) → check_period.py → /weekly/<key>.html
+STEP 5  period-report-writer (kr, weekly) → check_period.py → /kr/weekly/<key>.html
+STEP 6  update_archives.py 2회 → commit → push
 STEP 7  PushNotification
 ```
 
-각 STEP에 게이트 CLI 호출을 실제 명령으로 적는다. 게이트 실패 시 위반 목록을 writer에게 **그대로** 돌려주고 재작성시킨다(기존 관례).
+각 STEP의 게이트 호출을 실제 명령으로 적는다. 게이트 실패 시 위반 목록을 writer에게 **그대로** 돌려주고 재작성시킨다(기존 관례).
 
-- [ ] **Step 4: `MONTHLY_ORCHESTRATOR.md` 작성**
+- [ ] **Step 4: `MONTHLY_ORCHESTRATOR.md`**
 
 ```
-STEP 0  최신 report_date 의 달이 M+1 인지 확인.
-        data/monthly/<M>.json 이 있고 posts 에 /monthly/<M>.html 이 없을 때만 진행.
-        아니면 "월 롤오버 아님 — 종료" 를 남기고 즉시 끝낸다 (토큰 낭비 금지)
-STEP 1~6  주간과 동일, span=monthly, 코멘트 없음, 누적 구간은 3개월·12개월
+STEP 0  최신 report_date 의 달이 M+1 인지 확인. data/monthly/<M>.json 이 있고
+        /monthly/<M>.html 이 아직 없을 때만 진행. 아니면 "월 롤오버 아님 — 종료"
+        를 남기고 즉시 끝낸다 (토큰 낭비 금지)
+STEP 1~6  주간과 동일. span=monthly, --spans 3,12 --no-append
 ```
 
-- [ ] **Step 5: 스코어카드 산출 스크립트 확인**
+- [ ] **Step 5: CLAUDE.md 갱신**
 
-오케스트레이터 STEP 2가 부를 CLI가 필요하다. `scripts/us/scorecard.py`에 `__main__` 블록을 붙이거나 `scripts/build_scorecard.py`를 만든다:
+「구성 요소」 아래에 기간 리포트 항목 추가 — 발행물 4종, 트리거 2개, **성격(발행본 총정리)**, 기간 키 파일 구조, 스코어카드 규율, 게이트 CLI, 서브카테고리 네비. 기존 항목들의 밀도와 톤에 맞춘다.
 
-```python
-#!/usr/bin/env python3
-"""python3 scripts/build_scorecard.py --agg data/weekly/2026-W34.json --datadir data"""
-import argparse, json, os, sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from us.history import append_jsonl, read_jsonl  # noqa: E402
-from us.scorecard import regime_check, rollup, score, trigger_hygiene  # noqa: E402
-
-ap = argparse.ArgumentParser()
-ap.add_argument('--agg', required=True)
-ap.add_argument('--datadir', default='data')
-ap.add_argument('--spans', default='4,12')
-a = ap.parse_args()
-
-agg = json.load(open(a.agg, encoding='utf-8'))
-h = os.path.join(a.datadir, 'history')
-stance = read_jsonl(os.path.join(h, 'stance.jsonl'))
-macro = read_jsonl(os.path.join(h, 'macro.jsonl'))
-mm_path = os.path.join(a.datadir, 'macro_metrics.json')
-mm = json.load(open(mm_path, encoding='utf-8')) if os.path.exists(mm_path) else {}
-
-sc = score(stance, agg)
-sc['regime'] = regime_check(macro, mm, agg['start_date'], agg['end_date'])
-sc['triggers'] = trigger_hygiene(stance, agg['end_date'])
-hist_path = os.path.join(h, 'scorecard.jsonl')
-prior = read_jsonl(hist_path)
-spans = tuple(int(x) for x in a.spans.split(','))
-sc['rollup'] = rollup(prior + [{'key': agg['key'], 'weighted': sc['weighted'],
-                                'judged': sc['judged']}], spans=spans)
-json.dump(sc, open(os.path.join(a.datadir, 'scorecard.json'), 'w'),
-          ensure_ascii=False, indent=2, default=str)
-append_jsonl(hist_path, {'report_date': agg['end_date'], 'key': agg['key'],
-                         'weighted': sc['weighted'], 'judged': sc['judged'],
-                         'neutral_share': sc['neutral_share']})
-print(f"scorecard {agg['key']}: weighted={sc['weighted']} judged={sc['judged']}")
-```
-
-**주의:** 월간은 `--spans 3,12`로 부른다 (스펙: 주간 4·12, 월간 3개월·12개월). 월간 스코어카드는 주간 행을 롤업하므로 `scorecard.jsonl`에 **월간 행을 새로 쌓지 않는다** — 월간 실행 시 `append_jsonl` 호출을 건너뛰도록 `--no-append` 플래그를 붙인다.
+- [ ] **Step 6: Commit & push**
 
 ```bash
-python3 scripts/build_scorecard.py --agg data/weekly/$(python3 -c "
-import json,sys; sys.path.insert(0,'scripts')
-from us.period import week_key; print(week_key(json.load(open('data/market_data.json'))['report_date']))").json
-cat data/scorecard.json | head -30
+git add .claude CLAUDE.md scripts/build_scorecard.py scripts/build_recap_source.py
+git commit -m "주간·월간 파이프라인 — 총정리 에이전트와 오케스트레이터"
 ```
 
-- [ ] **Step 6: CLAUDE.md 갱신**
+- [ ] **Step 7: 트리거 2개 등록**
 
-「구성 요소」 아래에 기간 리포트 항목을 추가한다 — 발행물 5종, 트리거 2개, 기간 키 파일 구조, 스코어카드 규율, 게이트 CLI. 기존 항목들의 밀도와 톤에 맞춘다.
-
-- [ ] **Step 7: Commit & push**
-
-```bash
-git add .claude CLAUDE.md scripts/build_scorecard.py
-git commit -m "주간·월간 파이프라인 — 에이전트 정의와 오케스트레이터"
-git pull --rebase && git push
-```
-
-- [ ] **Step 8: 트리거 2개 등록**
-
-`RemoteTrigger` 도구로 등록한다. 부트스트랩은 짧게, 파이프라인은 레포 파일을 읽게 한다(기존 규칙 — 도구 입력 ~7KB 제한, 한글은 `\uXXXX`로 팽창).
+`RemoteTrigger`로 등록한다. 부트스트랩은 짧게, 파이프라인은 레포 파일(도구 입력 ~7KB 제한, 한글은 `\uXXXX`로 팽창).
 
 | 트리거 | cron (UTC) | 부트스트랩 |
 |---|---|---|
 | `weekly` | `0 0 * * 6` | 레포 클론 후 `.claude/WEEKLY_ORCHESTRATOR.md` 실행 |
 | `monthly` | `30 0 1,2,28,29,30,31 * *` | 레포 클론 후 `.claude/MONTHLY_ORCHESTRATOR.md` 실행 |
 
-등록 후 `CronList`(또는 RemoteTrigger 조회)로 두 트리거가 보이는지 확인하고, 트리거 ID를 CLAUDE.md에 적는다.
+등록 후 조회해 확인하고 트리거 ID를 CLAUDE.md에 적는다.
 
-- [ ] **Step 9: 첫 회차 드라이런**
+- [ ] **Step 8: 첫 회차 드라이런**
 
-주간 트리거를 수동 실행해 3편이 나오는지 본다. **첫 회차는 누적 4주·12주가 비어 있으므로** 게이트가 「누적 표본 부족」 명시를 요구한다 — 그게 정상 동작이다.
+주간 트리거를 수동 실행해 2편이 나오는지 본다. **첫 회차는 누적 4주·12주가 비어 있어** 게이트가 「누적 표본 부족」 명시를 요구한다 — 정상 동작이다.
 
 ---
 
-## 자체 검토
+## 자체 검토 (2026-08-24 개정)
 
 **스펙 커버리지**
 
 | 스펙 항목 | 태스크 |
 |---|---|
-| 발행물 매트릭스 5종·경로 | 10, 11 |
-| 기간 경계·기간 키 파일 | 4, 6 |
-| 집계 스키마 (US/KR) | 4, 6 |
-| `basket_excess_pct` | 4 |
-| KR 수급 확정치만 | 6 |
-| 승계 로그 + 백필 | 1, 2, 3 |
-| 스코어카드 부호·임계·중립·가중 | 8 |
-| 레짐 채점·트리거 위생 | 8 |
-| 누적 4주·12주 / 3개월·12개월 | 8, 11 |
-| 리포트 구조 4종 + 코멘트 | 11 |
-| 실행 구조 트리거 2개 | 11 |
-| 발행 게이트 8항목 | 9 |
-| 아카이브·SEO | 10 |
-| 마이그레이션·표본 부족 표기 | 2, 9, 11 |
+| 리포트 성격 = 발행본 총정리 | 8(회수), 12(에이전트 스펙) |
+| 발행물 4종·경로 | 11, 12 |
+| 기간 경계·기간 키 파일 | 4 ✅, 6 |
+| 집계 스키마 (US/KR) | 4 ✅, 6 |
+| 승계 로그 + 백필 | 1 ✅, 2 ✅, 3 ✅ |
+| 발행본 회수 (`recap_source`) | 8 |
+| 스코어카드 | 9 |
+| 게이트 8항목 + 거래일 커버리지 | 10 |
+| 네비 서브카테고리 | 11 |
+| sitemap 병합 보존 | 11 |
+| 트리거 2개 | 12 |
 
-**미해결로 남긴 것 하나** — Task 8의 `score()`는 기간 중 등급이 바뀐 구간에도 **기간 전체 실현치**를 공통 적용한다(코드 주석에 명시). 구간별 실현치를 정확히 재려면 일별 종가 계열이 스코어카드까지 흘러야 하는데, 그건 집계 스키마를 키우는 별도 변경이다. 등급 변경은 하루 1단계·3영업일 잠금 규율 때문에 주간 시계에서 드물어 당장은 영향이 작다. 월간에서 문제가 드러나면 그때 `daily_closes`를 집계에 실어 정확히 쪼갠다.
+**개정으로 폐기된 것** — 주간 코멘트 발행물, `weekly-comment-writer.md`, `/comment/` 경로와 `comment.json`, 게이트의 코멘트 부분집합 검사. 대신 게이트에 **거래일 커버리지** 검사가 들어왔다(총정리에만 있는 실패 모드 — 하루를 빠뜨리면 그날 사건이 사라진다).
 
-**타입 일관성** — `week_key`/`month_key`는 Task 4에서 정의해 5·7·11에서 재사용, `read_jsonl`/`append_jsonl`은 1에서 정의해 2·3·8·11에서 재사용, `data_tokens`/`body_text`/`banned_markers`는 기존 `us.post_check`에서 가져온다. `finalize`가 쓰는 `_sessions` 키는 6에서 정의하고 9의 `INTERNAL_TERMS`가 막는다.
+**남은 위험** — Task 8의 섹션 추출은 발행본 마크업이 `<section>` + `<h2>` 구조라는 데 의존한다. 실측 확인함(`posts/2026-08-21.html`에 `<section>` 13개, 각 `<h2>` 보유). 구조가 바뀌면 회수가 조용히 빈 목록을 내므로, Step 5 스모크에서 섹션 수가 0이면 중단하도록 적어 뒀다.
