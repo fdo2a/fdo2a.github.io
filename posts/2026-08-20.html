@@ -125,6 +125,19 @@ tbody tr:last-child td { border-bottom: none; }
   .stance-tbl td:nth-child(3)::before, .stance-tbl td:nth-child(4)::before { display: inline;
     margin: 0 5px 0 0; }
 }
+
+/* readability-v2 */
+.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+.card { padding: 20px 22px; }
+h2 { line-height: 1.45; margin-bottom: 14px; }
+h3, h4 { line-height: 1.45; }
+.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
+table { font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) {
+  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  .card { padding: 16px 16px; }
+}
 </style>
 </head>
 <body>
@@ -188,7 +201,7 @@ tbody tr:last-child td { border-bottom: none; }
 </div>
 
 <div class="card">
-<div class="box-label">Buy-side 해석</div>
+<div class="box-label">전략 해석</div>
 <p>오늘 하락은 매크로 충격이 아니라 개별 기업 실적發 소비 둔화 우려에 가깝다. 월마트의 동일점포매출 둔화(2.6%, 6년래 최저)는 미국 소비자의 저변이 느려지고 있다는 신호로 읽히며, 셔윈윌리엄스(-2.99%)·홈디포(-2.85%) 등 소비재·유통 관련주가 동반 약세를 보이며 다우를 끌어내렸다. Health Care(-1.87%)가 섹터 중 최대 낙폭을 기록했는데 이는 월마트와 직접 관련이 낮아, 오늘 조정이 단일 재료에 갇히지 않고 방어주 전반의 차익실현으로 번진 측면도 있다.</p>
 <p>다만 Energy(+0.27%)·Real Estate(+0.20%)만 강보합을 유지했고, 메모리·AI 옵틱스 개별 종목은 지수와 반대로 급등해 오늘의 매도가 브로드하지 않고 재료가 있는 곳(월마트·금리)에만 선택적으로 반영된 로테이션이라는 점을 보여준다. 포트폴리오 관점에서는 이 조정을 소비 둔화의 업종 전반 신호로 확대 해석하기보다, 다음 소매업체 실적에서 유사한 패턴이 반복되는지를 확인하는 것이 먼저다.</p>
 </div>
@@ -347,7 +360,7 @@ tbody tr:last-child td { border-bottom: none; }
 </section>
 
 <section id="synthesis">
-<h2>Buy-side 종합 해석</h2>
+<h2>전략 코멘트</h2>
 <div class="card">
 <p><b>동인.</b> 오늘 하락의 진앙은 월마트였다. EPS·매출 모두 컨센서스를 상회했음에도 미국 동일점포매출 증가율이 2.6%로 6년 만에 최저치를 기록하고 3분기 가이던스가 밋밋하게 나오면서 주가가 장중 두 자릿수% 급락했고, 셔윈윌리엄스·홈디포 등 소비재·유통 관련주가 동반 약세를 보이며 다우를 3대 지수 중 가장 크게 끌어내렸다(-1.32%). 여기에 재무부 바이백發 국채 랠리(8/19)가 하루 만에 되돌려지며 10년물이 +4.3bp 반등, 할인율 부담이 다시 커진 것도 지수 전반의 하방 압력으로 작용했다.</p>
 <p><b>크로스에셋 정합성.</b> 국채금리 반등·주식 하락·달러 보합권이라는 조합은 오늘의 하락이 순수한 금리 충격이라기보다 개별 기업 실적發 소비 둔화 우려와 실질금리 반등이 겹친 결과에 가깝다는 점을 보여준다. 신용시장(하이일드 -2bp, 투자등급 -1bp)이 오히려 안정적이었던 점은 오늘의 조정이 아직 스트레스 이벤트로 번지지 않았다는 신호다. 반면 금(+1.91%)과 메모리·AI 옵틱스(마이크론 +3.97%, 마벨 +5.79%, 루멘텀 +6.24%)가 지수 하락과 반대로 강세를 보인 것은, 이 국면에서 매크로 재료보다 개별 산업 재료(안전자산 수요·한국 메모리 주주환원·AI 광통신 계약)가 더 크게 작동했다는 뜻이다.</p>

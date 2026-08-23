@@ -63,6 +63,19 @@
     th:first-child, td:first-child { white-space:normal; }
     th:last-child, td:last-child { white-space:normal; }
   }
+
+/* readability-v2 */
+.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+.card { padding: 20px 22px; }
+h2 { line-height: 1.45; margin-bottom: 14px; }
+h3, h4 { line-height: 1.45; }
+.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
+table { font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) {
+  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  .card { padding: 16px 16px; }
+}
 </style>
 </head>
 <body>
@@ -83,7 +96,7 @@
 
 <section>
   <div class="card">
-    <h2>Buy-side 종합 해석</h2>
+    <h2>전략 코멘트</h2>
     <span class="box-label">동인</span>
     <p>오늘 코스피 반등의 동인은 거시 재료가 아니라 반도체 대형주 두 곳의 주주환원 이벤트다. SK하이닉스가 40조원 규모 자사주 매입·소각 계획을 재확인했고, 삼성전자는 이날 오후 4시 90조~110조원 규모(특별배당 포함 100조원 이상 관측)의 신규 주주환원 패키지를 발표할 예정이었다는 소식이 장중 내내 지수를 견인했다. 코스피는 시가(6,759.95, 전일比 -1.35%)에서 당일 저가 6,742.44(-1.61%)까지 밀렸다가 개장 40분 만에 반등해 12:00 6,933.53까지 올랐고, 14:30 30분봉 기준 고점 6,940.32(당일 고가는 6,954.12)를 거쳐 6,912.95(+0.88%)로 마감했다.</p>
     <span class="box-label">정합성·괴리</span>
