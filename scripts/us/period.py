@@ -60,10 +60,18 @@ def level_change(series, start, end):
 
 
 def _bounds(closes, key, span):
-    """기간에 실제로 존재한 거래일에서 start/end 를 뽑는다 — 날짜 산술을 쓰지 않는다."""
+    """기간 창은 벤치마크(S&P 500) 거래일만으로 정한다 — 날짜 산술을 쓰지 않는다.
+
+    다른 자산군(특히 FX)은 미국 주식 거래 달력을 공유하지 않아 주말 바를 들고
+    올 수 있다. 벤치마크만이 권위 있는 미국 거래 달력이므로, 창을 union 이 아니라
+    벤치마크 하나로 고정한다 — 다른 계열의 튄 날짜는 slice_series 가 창 밖이라
+    알아서 잘라낸다.
+    """
     keyer = week_key if span == 'weekly' else month_key
-    dates = sorted({d for g in GROUPS for s in (closes.get(g) or {}).values()
-                    for d, _ in (s or []) if keyer(d) == key})
+    series = (closes.get('indices') or {}).get(BENCHMARK)
+    if not series:
+        return None, None, 0
+    dates = sorted({d for d, _ in series if keyer(d) == key})
     return (dates[0], dates[-1], len(dates)) if dates else (None, None, 0)
 
 
@@ -73,7 +81,10 @@ def build(span, key, closes, yields_hist, daily_headlines):
            'sessions': sessions, 'complete': True, 'missing': []}
     if start is None:
         out['complete'] = False
-        out['missing'].append('no sessions in period')
+        if not (closes.get('indices') or {}).get(BENCHMARK):
+            out['missing'].append(f'indices.{BENCHMARK}')
+        else:
+            out['missing'].append('no sessions in period')
         return out
 
     for g in GROUPS:

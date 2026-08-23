@@ -1,6 +1,6 @@
 import pytest
 
-from us.period import build, month_key, pct_change, slice_series, week_key, TENORS
+from us.period import BENCHMARK, build, month_key, pct_change, slice_series, week_key, TENORS
 
 
 def test_week_key_is_iso_and_zero_padded():
@@ -182,15 +182,40 @@ def test_build_first_daily_date_uses_prewindow_close():
 
 
 def test_build_daily_with_missing_benchmark():
-    """benchmark 가 없으면 모든 daily 행의 spx_pct 가 None."""
+    """benchmark(S&P 500) 자체가 없으면 창을 정할 달력이 없다 — 하드 실패다.
+
+    _bounds 가 이제 벤치마크 하나만 보므로, indices 그룹이 통째로 없으면
+    start/end 를 못 정하고 (구 union 코드처럼 다른 그룹 날짜로 창을 만드는 대신)
+    'no sessions' 조기 반환과 같은 경로로 빠져 daily/groups 계산 자체를 건너뛴다.
+    """
     c = _closes()
     del c["indices"]
     headlines = [{"date": "2026-08-21", "headline": "test"}]
     r = build("weekly", "2026-W34", c, _complete_yields(), headlines)
-    row = r["daily"][0]
-    assert row["spx_pct"] is None
-    # 하지만 complete 는 indices 가 없어서 이미 False 다
     assert r["complete"] is False
+    assert f"indices.{BENCHMARK}" in r["missing"]
+    assert r["start_date"] is None
+    assert r["end_date"] is None
+    assert r["sessions"] == 0
+    # 창을 못 정했으므로 daily/그룹 계산 자체가 없다
+    assert "daily" not in r
+
+
+def test_bounds_ignores_stray_dates_outside_benchmark_calendar():
+    """FX 등 비-벤치마크 계열의 벤치마크 이후 튄 날짜는 창에 영향을 주면 안 된다.
+
+    실사고: KRW=X(원/달러)가 주말 바를 물어 와 주간 집계 end_date 가
+    토/일로 밀리고 sessions 가 부풀었던 버그의 회귀 테스트. 벤치마크(S&P 500)
+    에 없는 날짜가 창을 늘리면 안 된다 — union 기반 구코드에서는 이 assert 가
+    실패한다(end_date 가 2026-08-23, sessions 가 3 이 됨).
+    """
+    c = _closes()
+    # 벤치마크(S&P 500)의 마지막 날짜(08-21, 금) 이후 주말 바 하나를 FX 에만 추가
+    c["fx"]["KRW=X"] = [("2026-08-14", 1300.0), ("2026-08-17", 1300.0),
+                         ("2026-08-21", 1310.0), ("2026-08-23", 1312.0)]
+    r = build("weekly", "2026-W34", c, YIELDS, HEADLINES)
+    assert r["end_date"] == "2026-08-21"
+    assert r["sessions"] == 2
 
 
 def test_build_daily_with_no_matching_bar():
