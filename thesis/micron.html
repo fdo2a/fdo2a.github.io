@@ -99,22 +99,63 @@
   ol.log .date { font-size: 11px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
   ol.log div[data-part] { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin-top: 3px; }
   ol.log cite { font-style: normal; color: var(--text-3); font-size: 11.5px; }
+  .story-link { display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px;
+                padding: 15px 16px; margin-top: 10px; color: var(--text); text-decoration: none; }
+  .story-link:hover { border-color: var(--toss-blue); }
+  .story-link b { font-size: 14px; }
+  .story-link span { font-size: 12px; color: var(--text-3); text-align: right; }
+  .timeline { position: relative; display: flex; flex-direction: column; gap: 10px; }
+  .phase { position: relative; background: #fff; border: 1px solid var(--border-subtle);
+           border-radius: 14px; padding: 17px 18px 18px 22px; overflow: hidden; }
+  .phase::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+                   width: 5px; background: var(--toss-blue); }
+  .phase .period { font-size: 10.5px; font-weight: 800; color: var(--toss-blue); }
+  .phase h3 { font-size: 15px; line-height: 1.45; margin: 5px 0 13px; }
+  .shift-grid { display: grid; grid-template-columns: 1fr 26px 1fr; gap: 8px; align-items: stretch; }
+  .shift-box { background: var(--bg); border-radius: 10px; padding: 11px 12px; }
+  .shift-box.now { background: var(--blue-bg); }
+  .shift-box b { display: block; font-size: 10.5px; color: var(--text-3); margin-bottom: 5px; }
+  .shift-box.now b { color: var(--blue-deep); }
+  .shift-box p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .shift-arrow { display: flex; align-items: center; justify-content: center; color: var(--toss-blue);
+                 font-weight: 900; }
+  .phase-sources { margin-top: 10px; font-size: 10.5px; line-height: 1.55; color: var(--text-3); }
+  .phase-sources a, .sources a { color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; }
+  .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .company { background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 15px; }
+  .company h3 { font-size: 14px; margin: 0 0 11px; }
+  .company dl { margin: 0; }
+  .company dt { font-size: 10.5px; font-weight: 800; color: var(--text-3); margin-top: 10px; }
+  .company dt:first-child { margin-top: 0; }
+  .company dd { font-size: 12px; line-height: 1.58; color: var(--text-2); margin: 3px 0 0; }
+  .corrections { counter-reset: correction; display: flex; flex-direction: column; gap: 8px; }
+  .correction { counter-increment: correction; background: #fff; border: 1px solid var(--border-subtle);
+                border-radius: 14px; padding: 15px 16px; }
+  .correction b { display: block; font-size: 13.5px; margin-bottom: 6px; }
+  .correction b::before { content: counter(correction) '. '; color: var(--toss-blue); }
+  .correction p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .frame-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .frame-grid .panel { margin-bottom: 0; }
+  .sources { font-size: 11px; line-height: 1.7; color: var(--text-3); }
+  @media (max-width: 620px) {
+    .shift-grid { grid-template-columns: 1fr; }
+    .shift-arrow { transform: rotate(90deg); min-height: 18px; }
+    .company-grid, .frame-grid { grid-template-columns: 1fr; }
+    .story-link { align-items: flex-start; }
+  }
+  /* readability-v2 */
+  .card p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+  .card p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+  h2 { line-height: 1.45; margin-bottom: 14px; }
+  h3, h4 { line-height: 1.45; }
+  .note, .lead, li { max-width: 42em; }
+  @media (max-width: 560px) {
+    .card p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border);
            font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
   footer a { color: #8B95A1; }
-
-/* readability-v2 */
-.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
-.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
-.card { padding: 20px 22px; }
-h2 { line-height: 1.45; margin-bottom: 14px; }
-h3, h4 { line-height: 1.45; }
-.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
-table { font-variant-numeric: tabular-nums; }
-@media (max-width: 560px) {
-  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
-  .card { padding: 16px 16px; }
-}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
 </head>
@@ -134,6 +175,7 @@ table { font-variant-numeric: tabular-nums; }
     <span class="badge g-hold">홀딩 강화</span> &nbsp;MU · NASDAQ · 등급 유지 2026-08-24부터
     <span class="small">미국 유일의 D램·NAND 3사 플레이어. 매출의 대부분이 D램이고 NAND가 나머지. HBM3E·HBM4를 공급하며 사업부는 클라우드 메모리·코어 데이터센터·모바일·오토모티브/임베디드로 나뉜다. <b>3사 중 계약 구조를 가장 구체적으로 공시하는 회사</b>라 thesis 검증이 가장 쉽다. 회계연도는 8월 말 종료.</span>
   </div>
+  <a class="story-link" href="narrative.html"><b>메모리 thesis는 어떻게 바뀌었나</b><span>핵심 전환점만 읽기 ›</span></a>
   <div class="panel">
     <h3>변경 이력</h3>
     <ol class="log" data-block="changelog">

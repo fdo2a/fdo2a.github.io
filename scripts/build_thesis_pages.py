@@ -19,6 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from thesis import content as C          # noqa: E402
+from thesis import narrative as N        # noqa: E402
 from thesis import render as R           # noqa: E402
 
 OUT = Path('thesis')
@@ -108,6 +109,60 @@ STYLE = '''  :root {
   ol.log .date { font-size: 11px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
   ol.log div[data-part] { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin-top: 3px; }
   ol.log cite { font-style: normal; color: var(--text-3); font-size: 11.5px; }
+  .story-link { display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px;
+                padding: 15px 16px; margin-top: 10px; color: var(--text); text-decoration: none; }
+  .story-link:hover { border-color: var(--toss-blue); }
+  .story-link b { font-size: 14px; }
+  .story-link span { font-size: 12px; color: var(--text-3); text-align: right; }
+  .timeline { position: relative; display: flex; flex-direction: column; gap: 10px; }
+  .phase { position: relative; background: #fff; border: 1px solid var(--border-subtle);
+           border-radius: 14px; padding: 17px 18px 18px 22px; overflow: hidden; }
+  .phase::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+                   width: 5px; background: var(--toss-blue); }
+  .phase .period { font-size: 10.5px; font-weight: 800; color: var(--toss-blue); }
+  .phase h3 { font-size: 15px; line-height: 1.45; margin: 5px 0 13px; }
+  .shift-grid { display: grid; grid-template-columns: 1fr 26px 1fr; gap: 8px; align-items: stretch; }
+  .shift-box { background: var(--bg); border-radius: 10px; padding: 11px 12px; }
+  .shift-box.now { background: var(--blue-bg); }
+  .shift-box b { display: block; font-size: 10.5px; color: var(--text-3); margin-bottom: 5px; }
+  .shift-box.now b { color: var(--blue-deep); }
+  .shift-box p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .shift-arrow { display: flex; align-items: center; justify-content: center; color: var(--toss-blue);
+                 font-weight: 900; }
+  .phase-sources { margin-top: 10px; font-size: 10.5px; line-height: 1.55; color: var(--text-3); }
+  .phase-sources a, .sources a { color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; }
+  .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .company { background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 15px; }
+  .company h3 { font-size: 14px; margin: 0 0 11px; }
+  .company dl { margin: 0; }
+  .company dt { font-size: 10.5px; font-weight: 800; color: var(--text-3); margin-top: 10px; }
+  .company dt:first-child { margin-top: 0; }
+  .company dd { font-size: 12px; line-height: 1.58; color: var(--text-2); margin: 3px 0 0; }
+  .corrections { counter-reset: correction; display: flex; flex-direction: column; gap: 8px; }
+  .correction { counter-increment: correction; background: #fff; border: 1px solid var(--border-subtle);
+                border-radius: 14px; padding: 15px 16px; }
+  .correction b { display: block; font-size: 13.5px; margin-bottom: 6px; }
+  .correction b::before { content: counter(correction) '. '; color: var(--toss-blue); }
+  .correction p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .frame-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .frame-grid .panel { margin-bottom: 0; }
+  .sources { font-size: 11px; line-height: 1.7; color: var(--text-3); }
+  @media (max-width: 620px) {
+    .shift-grid { grid-template-columns: 1fr; }
+    .shift-arrow { transform: rotate(90deg); min-height: 18px; }
+    .company-grid, .frame-grid { grid-template-columns: 1fr; }
+    .story-link { align-items: flex-start; }
+  }
+  /* readability-v2 */
+  .card p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+  .card p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+  h2 { line-height: 1.45; margin-bottom: 14px; }
+  h3, h4 { line-height: 1.45; }
+  .note, .lead, li { max-width: 42em; }
+  @media (max-width: 560px) {
+    .card p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border);
            font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
   footer a { color: #8B95A1; }'''
@@ -213,6 +268,12 @@ def changelog(entries):
             f'    <ol class="log" data-block="changelog">\n{joined}\n    </ol>\n  </div>')
 
 
+def narrative_link():
+    return ('  <a class="story-link" href="narrative.html">'
+            '<b>메모리 thesis는 어떻게 바뀌었나</b>'
+            '<span>핵심 전환점만 읽기 ›</span></a>')
+
+
 def build_ticker(symbol, row, book, as_of):
     spec = C.TICKERS[symbol]
     grade = book.get('grade', '홀딩 강화')
@@ -226,6 +287,7 @@ def build_ticker(symbol, row, book, as_of):
         f'&nbsp;{spec["code"]} · 등급 유지 {book.get("grade_since", as_of)}부터',
         f'    <span class="small">{spec["what"]}</span>',
         '  </div>',
+        narrative_link(),
         changelog(book.get('changelog', [])),
         '  <h2 class="list-title">투자 thesis</h2>',
         '  <section data-block="thesis">',
@@ -307,6 +369,7 @@ def build_index(watch, state, as_of):
   <div class="cards">
 {cards}
   </div>
+{narrative_link()}
   <h2 class="list-title">{C.CYCLE['title']}</h2>
   <div class="panel">
 {cycle}
@@ -321,6 +384,82 @@ def build_index(watch, state, as_of):
                  '삼성전자·SK하이닉스·Micron의 투자 thesis, 핵심 지표, kill condition, '
                  '밸류에이션 기준을 정리하고 thesis를 흔드는 변화만 기록하는 감시 기준표.',
                  'https://fdo2a.github.io/thesis/', body, 'thesis', '../', ld)
+
+
+def _source_links(keys):
+    links = []
+    for key in keys:
+        label, url = N.SOURCES[key]
+        links.append(f'<a href="{_html.escape(url, quote=True)}">{_html.escape(label)}</a>')
+    return ' · '.join(links)
+
+
+def build_narrative(as_of):
+    phases = []
+    for index, phase in enumerate(N.PHASES, 1):
+        sources = (_source_links(phase['sources']) if phase['sources']
+                   else '기존 thesis 감시 기록의 판단 변화')
+        phases.append(f'''    <article class="phase" data-phase="{index}">
+      <div class="period">{_html.escape(phase['period'])}</div>
+      <h3>{_html.escape(phase['title'])}</h3>
+      <div class="shift-grid">
+        <div class="shift-box"><b>이전 판단</b><p>{_html.escape(phase['before'])}</p></div>
+        <div class="shift-arrow" aria-hidden="true">→</div>
+        <div class="shift-box now"><b>바뀐 판단</b><p>{_html.escape(phase['after'])}</p></div>
+      </div>
+      <div class="phase-sources">근거: {sources}</div>
+    </article>''')
+
+    companies = []
+    for row in N.COMPANIES:
+        companies.append(f'''    <article class="company">
+      <h3>{_html.escape(row['name'])}</h3>
+      <dl>
+        <dt>처음</dt><dd>{_html.escape(row['start'])}</dd>
+        <dt>지금</dt><dd>{_html.escape(row['now'])}</dd>
+        <dt>다음 증명</dt><dd>{_html.escape(row['proof'])}</dd>
+      </dl>
+    </article>''')
+
+    corrections = ''.join(
+        f'<article class="correction"><b>{_html.escape(title)}</b>'
+        f'<p>{_html.escape(text)}</p></article>' for title, text in N.CORRECTIONS)
+
+    sources = ''.join(
+        f'<li><a href="{_html.escape(url, quote=True)}">{_html.escape(label)}</a></li>'
+        for label, url in N.SOURCES.values())
+
+    body = f'''  <div class="intro">
+    99개의 감시 기록을 그대로 옮기지 않고, <b>무슨 증거가 기존 판단을 바꿨는지</b>만 남겼습니다.
+    개별 뉴스의 양보다 thesis의 방향 전환, 정정된 해석과 다음 증명 포인트를 빠르게 읽는 페이지입니다.
+    <span class="small">최종 정리일 {as_of} · 주가 구간과 반복 알림은 의도적으로 제외</span>
+  </div>
+  <h2 class="list-title">한 문장으로 압축한 현재 thesis</h2>
+  <div class="panel"><p class="lead">{N.BOTTOM_LINE}</p></div>
+  <h2 class="list-title">판단은 이렇게 바뀌었다</h2>
+  <div class="timeline">
+{''.join(phases)}
+  </div>
+  <h2 class="list-title">회사별로 남은 차이</h2>
+  <div class="company-grid">
+{''.join(companies)}
+  </div>
+  <h2 class="list-title">과정에서 바로잡은 것</h2>
+  <div class="corrections">{corrections}</div>
+  <h2 class="list-title">지금의 판정 기준</h2>
+  <div class="frame-grid">
+    {panel('계속 강화되는 조건', N.CURRENT_FRAME['supports'])}
+    {panel('깨지는 조건', N.CURRENT_FRAME['breaks'], extra_class='p-kill')}
+  </div>
+  <h2 class="list-title">근거 자료</h2>
+  <div class="panel sources"><ul>{sources}</ul></div>'''
+    ld = {'@context': 'https://schema.org', '@type': 'Article',
+          'headline': '메모리 투자 thesis는 어떻게 바뀌었나',
+          'url': 'https://fdo2a.github.io/thesis/narrative.html',
+          'dateModified': as_of, 'inLanguage': 'ko'}
+    return shell('메모리 투자 thesis는 어떻게 바뀌었나 | 핵심 내러티브',
+                 '삼성전자·SK하이닉스·Micron 감시 기록에서 thesis를 바꾼 핵심 증거와 현재 판단 기준만 정리했습니다.',
+                 'https://fdo2a.github.io/thesis/narrative.html', body, 'thesis', '../', ld)
 
 
 def main():
@@ -351,8 +490,13 @@ def main():
     (out / 'index.html').write_text(build_index(watch, state, as_of), encoding='utf-8')
     written.append(str(out / 'index.html'))
 
+    (out / 'narrative.html').write_text(build_narrative(as_of), encoding='utf-8')
+    written.append(str(out / 'narrative.html'))
+
     (out / 'index.json').write_text(json.dumps({
         'updated': as_of,
+        'narrative': {'url': 'https://fdo2a.github.io/thesis/narrative.html',
+                      'phases': len(N.PHASES)},
         'tickers': [{
             'symbol': s, 'name': C.TICKERS[s]['name'], 'slug': C.TICKERS[s]['slug'],
             'grade': state.get(s, {}).get('grade', '홀딩 강화'),
