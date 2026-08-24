@@ -32,7 +32,7 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
 
-1. `python3 scripts/apply_readability.py <kr_brief 절대경로>` 뒤 `python3 scripts/check_readability.py --strict <kr_brief 절대경로>`의 전체 출력을 저장한다.
+1. `python3 scripts/apply_readability.py <kr_brief 절대경로>` 뒤 `python3 scripts/check_readability.py --strict <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
 2. 위반 원인별로 처방한다: 헤드라인은 방향·촉매·행동만 남기고, 장중 시각이 셋 이상인 문장은 시간대별로 나눈다. 수치가 다섯 개 이상이면 정확한 레벨은 표에 두고 산문에는 가장 가까운 지지·저항과 관계만 남긴다. 원화·지수 소수점은 산문에서 반올림하고 정밀값은 표·JSON에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
 3. 검사 원문을 writer에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → strict check를 반복한다.
 4. writer가 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 수치 정본과 표 대조, 수급 신선도, 정책 블록 수는 다시 확인한다. **통과할 때까지 수리 루프를 계속한다.**
