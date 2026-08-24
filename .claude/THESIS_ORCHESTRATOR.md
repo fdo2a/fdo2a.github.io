@@ -38,12 +38,19 @@ for sym, row in watch['tickers'].items():
     past = {k: H.value_on(rows, back, sym, k)
             for k in ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price')}
     past = past if any(v is not None for v in past.values()) else None
-    out[sym] = T.evaluate(row, past, row.get('fair_value'), has_depth=deep)
+    prev = H.previous(rows, watch['as_of'], sym)
+    out[sym] = T.evaluate(row, past, row.get('fair_value'), has_depth=deep, prev=prev)
 print(json.dumps(out, ensure_ascii=False, indent=2))
 PY
 ```
 
 이 결과가 «오늘 숫자가 실제로 움직였는가»의 답이다. 재해석하지 마라 — 산술이다.
+
+**전부 «오늘 넘어섰는가»를 묻는다.** 조건이 유지되는 동안은 조용하다. 어제도 오늘도
+bear 가치권 안이면 트리거는 비어 있고, 그것이 아무 일도 없었다는 뜻으로 맞다. 그러니
+「트리거가 없는데 페이지에는 관심선 아래라고 쓰여 있다」는 모순이 아니다 — 위치는
+상태값(`position.in_band1`·`in_band2`)이고 페이지가 상시 보여준다. **주가가 관심선
+아래로 내려간 것 자체는 트리거가 아니다.** 논거가 흔들린 것이 아니라 싸진 것이다.
 
 ## STEP 2 — 사건 트리거 (리서치)
 

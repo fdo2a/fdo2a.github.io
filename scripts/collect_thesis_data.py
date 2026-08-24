@@ -51,7 +51,13 @@ TICKERS = [
 
 # Fields recorded to history.jsonl. Kept deliberately small — this file is appended
 # forever, and every field here is one we actually difference over time.
-HISTORY_FIELDS = ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price', 'pb')
+HISTORY_FIELDS = ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price', 'pb', 'price_date')
+
+# The valuation lines as they stood that day, recorded alongside. They move daily with
+# estimates, so "did the price cross the line?" is unanswerable later unless we keep the
+# line we drew at the time — without these, a line sliding under a flat price and a price
+# falling through a fixed line look identical.
+HISTORY_FV_FIELDS = ('band1', 'band2', 'bear')
 
 
 def retry(fn, attempts=3, base_sleep=3):
@@ -241,7 +247,10 @@ def main():
 
     H.append(out_dir / 'history.jsonl', {
         'date': today.isoformat(),
-        'tickers': {s: {f: r.get(f) for f in HISTORY_FIELDS} for s, r in tickers.items()},
+        'tickers': {
+            s: {**{f: r.get(f) for f in HISTORY_FIELDS},
+                **{f: (r.get('fair_value') or {}).get(f) for f in HISTORY_FV_FIELDS}}
+            for s, r in tickers.items()},
     })
 
     print(f'\nwatch.json complete={watch["complete"]} missing={missing or "없음"}')
