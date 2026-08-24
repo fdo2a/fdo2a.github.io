@@ -50,6 +50,54 @@ Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` �
 
 가독성 실패는 현재 초안을 반려할 뿐, “오늘 레포트 미발행” 사유가 아니다. 가독성 때문에 중단 알림을 보내지 않는다. 데이터 정본이 끝내 완성되지 않는 경우만 기존 completeness gate에 따라 중단할 수 있다.
 
+## STEP 2.5 — AI 티 제거 (발행 전 마지막 손질)
+
+2026-08-25 사용자 지시. 리포트를 **말하듯이** 쓰라는 문체 기준(`.claude/agents/brief-report-writer.md`의 「말하듯이 쓴다」 절)을 writer가 지켰더라도, 매일 같은 틀로 생성된 글에는 사람이 안 쓰는 리듬이 남는다. 발행 직전에 한 번 걸러낸다.
+
+**1. 원본을 남긴다.**
+
+```bash
+cp morning_brief_[DATE].html morning_brief_[DATE].pre-humanize.html
+```
+
+이 파일이 없으면 3번을 못 하므로 건너뛰지 않는다.
+
+**2. 스킬을 돌린다.** Skill 도구로 `humanize-korean:humanize-korean`을 호출한다. 대상은 **본문 산문만**이다 — `.doc` 안의 `<p>` 문단들. 표 셀·숫자·티커·섹션 제목·`data-*` 표식·에디터 노트(`scripts/apply_note.py`가 넣은 원문 그대로의 사람 글)는 **손대지 않는다**고 프롬프트에 명시한다.
+
+스킬이 없는 환경이면(플러그인 미탑재) 건너뛰지 말고 오케스트레이터가 직접 「말하듯이 쓴다」 절의 항목을 훑어 고친다 — 개조식 라벨, 비인칭 피동(`~로 읽힌다/판정된다`), `~에 따른`, 주어 생략, `~한 상태다`, `다만` 반복, `-다` 4연속.
+
+**3. 수치와 구조가 그대로인지 대조한다. 이게 이 단계의 안전장치다.**
+
+```bash
+python3 scripts/verify_post.py morning_brief_[DATE].html \
+  --before morning_brief_[DATE].pre-humanize.html --skip-layout
+```
+
+숫자·티커 멀티셋, 태그 구조, 그리고 게이트가 읽는 `data-*` 표식을 함께 본다. 윤문은 말투를 바꾸는 일이지 수치를 만지는 일이 아니다. 과거 손편집에서 FX 방향과 유가 등락률이 뒤집힌 전례가 있다.
+
+**한 건이라도 나오면 파일 전체를 원본으로 되돌린다.** 검사는 어느 문단에서 틀어졌는지
+알려주지 않으므로 「그 문단만 되돌리기」는 할 수 없다. 되돌린 뒤 한 번만 다시 시도하고,
+또 걸리면 윤문을 포기한다.
+
+**4. 게이트를 다시 돌린다. 이게 이 단계에서 제일 중요하다.**
+
+STEP 2의 게이트들은 **윤문 전 원고를 보고 통과시킨 것이다.** 문장을 다시 쓴 뒤에도 그
+판정이 유효하다고 가정하면 안 된다. 윤문은 문장을 합치거나 나누므로 문장 길이·수치
+밀도가 깨질 수 있고, 통제 어휘나 `data-*` 표식을 건드리면 §8·§9가 검사받지 않은 채로
+나간다.
+
+```bash
+python3 scripts/check_style.py morning_brief_[DATE].html
+python3 scripts/check_readability.py --strict morning_brief_[DATE].html
+python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>
+python scripts/check_stance.py --html morning_brief_[DATE].html --datadir <workspace>
+```
+
+넷 중 하나라도 실패하면 원본(`.pre-humanize.html`)으로 되돌리고 STEP 3으로 간다.
+**말투 때문에 발행을 거르지 않는다** — 윤문은 있으면 좋은 것이고, 게이트는 필수다.
+
+**5. 통과하면 `.pre-humanize.html`을 지우고 STEP 3으로 간다.**
+
 ## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 
 Site base URL: https://fdo2a.github.io/

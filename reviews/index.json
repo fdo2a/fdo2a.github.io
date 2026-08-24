@@ -312,6 +312,30 @@
       "findings": 0,
       "baseline": true
     },
+    "scripts/thesis/content.py": {
+      "sha": "96854ac4cef633439f371968e1d9c4d2a21e555c",
+      "at": "2026-08-25T02:07:38+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "scripts/thesis/narrative.py": {
+      "sha": "90651047f404a5fd0400be8ce146c9bc4d506c88",
+      "at": "2026-08-25T02:07:38+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "scripts/thesis/render.py": {
+      "sha": "3d65fe9c4afe1870aa647b9688295c8a344a74ae",
+      "at": "2026-08-25T02:07:38+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "thesis/data/thesis_state.json": {
+      "sha": "2518da46a593810851cb6269de4604f3f20caf56",
+      "at": "2026-08-25T02:07:38+09:00",
+      "findings": 0,
+      "baseline": true
+    },
     "thesis/micron.html": {
       "sha": "b58d53c30f213ec02be28a4dbb0c2d44f23a04ea",
       "at": "2026-08-24T13:32:40+09:00",

@@ -4,7 +4,8 @@
   python3 scripts/verify_post.py posts/2026-08-19.html
 
 세 가지를 본다.
-  1) 수치 불변  — git에 있는 판(기본 HEAD)과 비교해 숫자·티커가 늘거나 준 곳
+  1) 수치 불변  — git에 있는 판(기본 HEAD, `--before`로 파일 지정 가능)과 비교해
+                  숫자·티커가 늘거나 준 곳, 그리고 태그 구조가 달라진 곳
   2) 금지 표기  — [확인필요]·TODO 같은 미완 마커
   3) 모바일 레이아웃 — 390px·1280px에서 페이지가 가로로 밀리는지 (Playwright 있을 때만)
 
@@ -21,7 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.post_check import report  # noqa: E402
+from us.post_check import markup_diff, report  # noqa: E402
 
 MOBILE, DESKTOP = 390, 1280
 
@@ -72,16 +73,27 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('html', help='검사할 발행본 (예: posts/2026-08-19.html)')
     ap.add_argument('--base', default='HEAD', help='비교 기준 git ref (기본 HEAD)')
+    ap.add_argument('--before', help='git 대신 이 파일과 대조 (발행 전 윤문 검사용)')
     ap.add_argument('--skip-layout', action='store_true')
     args = ap.parse_args()
 
     with open(args.html, encoding='utf-8') as fh:
         after = fh.read()
-    before = git_show(args.base, args.html)
+    if args.before:
+        if args.base != 'HEAD':
+            sys.exit('--before와 --base는 같이 쓸 수 없다 — 대조 기준은 하나여야 한다.')
+        if not os.path.exists(args.before):
+            sys.exit(f'--before 파일이 없다: {args.before}')
+        with open(args.before, encoding='utf-8') as fh:
+            before = fh.read()
+    else:
+        before = git_show(args.base, args.html)
     if before is None:
         print(f'  ({args.base}에 이 파일이 없다 — 수치 대조는 건너뛰고 나머지만 본다)')
 
     findings = report(before, after)
+    if before is not None:
+        findings += markup_diff(before, after)
     if not args.skip_layout:
         findings += layout_findings(args.html)
 

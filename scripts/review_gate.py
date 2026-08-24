@@ -247,10 +247,13 @@ def cmd_mark(args):
     try:
         ledger = mark_entry(load_ledger(root), path, sha, at=now(),
                             findings=args.findings)
+        if args.baseline:
+            ledger['reviewed'][path]['baseline'] = True
     except ValueError as exc:
         sys.exit(str(exc))
     save_ledger(root, ledger)
-    print(f'검토 기록 — {path} @ {sha[:12]} (지적 {args.findings}건)')
+    kind = '범위 편입(읽지 않음)' if args.baseline else f'지적 {args.findings}건'
+    print(f'검토 기록 — {path} @ {sha[:12]} ({kind})')
     return 0
 
 
@@ -287,6 +290,8 @@ def main():
     p = sub.add_parser('mark', help='검토 완료 기록')
     p.add_argument('path', help='예: posts/2026-08-22.html')
     p.add_argument('--findings', type=int, default=0, help='반영한 지적 건수')
+    p.add_argument('--baseline', action='store_true',
+                   help='읽지 않고 감시 범위에만 넣는다 (기존 파일을 편입할 때)')
     p.set_defaults(fn=cmd_mark)
 
     p = sub.add_parser('seed', help='도입 시 1회 — 현재 발행분을 기준선으로')
