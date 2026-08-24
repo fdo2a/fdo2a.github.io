@@ -138,6 +138,11 @@
       "findings": 0,
       "baseline": true
     },
+    "kr/posts/2026-08-24.html": {
+      "sha": "e3fe475ea78af4339cfece7009aa0146c27578f6",
+      "at": "2026-08-25T02:14:00+09:00",
+      "findings": 7
+    },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
       "at": "2026-08-24T13:32:40+09:00",
