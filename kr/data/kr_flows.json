@@ -2,6 +2,12 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-08-24",
+        "individual": 33213,
+        "foreign": -36764,
+        "institution": -12928
+      },
+      {
         "date": "2026-08-21",
         "individual": -11652,
         "foreign": -1760,
@@ -54,22 +60,22 @@
         "individual": 9003,
         "foreign": -14909,
         "institution": 5692
-      },
-      {
-        "date": "2026-08-07",
-        "individual": 2675,
-        "foreign": -8651,
-        "institution": 5854
       }
     ],
-    "latest_date": "2026-08-21",
-    "flows_date": "2026-08-21",
+    "latest_date": "2026-08-24",
+    "flows_date": "2026-08-24",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
   },
   "KOSDAQ": {
     "rows": [
+      {
+        "date": "2026-08-24",
+        "individual": -2604,
+        "foreign": 2417,
+        "institution": 249
+      },
       {
         "date": "2026-08-21",
         "individual": 6236,
@@ -123,16 +129,10 @@
         "individual": -6729,
         "foreign": 1027,
         "institution": 5667
-      },
-      {
-        "date": "2026-08-07",
-        "individual": 3402,
-        "foreign": -2522,
-        "institution": -1044
       }
     ],
-    "latest_date": "2026-08-21",
-    "flows_date": "2026-08-21",
+    "latest_date": "2026-08-24",
+    "flows_date": "2026-08-24",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
