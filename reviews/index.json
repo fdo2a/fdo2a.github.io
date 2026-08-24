@@ -1,0 +1,340 @@
+{
+  "reviewed": {
+    "about.html": {
+      "sha": "38e5dabb9850c7e485c6abb14ad2fccd2f9184f2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-22.html": {
+      "sha": "6f9dfa57e998b3c77a2e82e203407d33c8722a2a",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-23.html": {
+      "sha": "967911d8dc5498b0e233c54cb3ef41187f79c31a",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-24.html": {
+      "sha": "9192b9fc2881b80ed2011ff519c9c99c73a1842a",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-27.html": {
+      "sha": "f823ba111165d2f3ddc9462f2e1321119e545d4b",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-28.html": {
+      "sha": "5b5b5d9a7870606020f20d1baf32eb5a9fd604b4",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-29.html": {
+      "sha": "08bba7383adfb51fe4505d399395e5071389bd9b",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-30.html": {
+      "sha": "601ee5e751458caef2f22bae582c673e93c5049e",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-07-31.html": {
+      "sha": "1a0d29f2a6543d53df4fbf7ee116115b84e43469",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-03.html": {
+      "sha": "ad1c6ed1010ff45abd0802a0f274777449bcaef5",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-04.html": {
+      "sha": "c3848833925ad0bed4a952a149c103aa573e1f90",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-05.html": {
+      "sha": "ff0dab990d238834e864060336c435e44d50fdfe",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-06.html": {
+      "sha": "507c76574cdd4e875dbb93be9b9c41724b0d44a2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-07.html": {
+      "sha": "572c16aeaa2653c6e6ebfb2f116bd0c3125ed605",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-10.html": {
+      "sha": "e4635b56d98a18f2695305c9165a746d1606d7fa",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-11.html": {
+      "sha": "375acda4cb0fe856b7bafe4d222358f140c86bcb",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-12.html": {
+      "sha": "9b96a2168471aaf8a0ada35eff281e4cb55cbadf",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-13.html": {
+      "sha": "9ff78fdf8d0016d8364f884af874f9094d3d36e8",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-14.html": {
+      "sha": "3a2033eb984a55edaa7f576d691e0479f8c0d16c",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-18.html": {
+      "sha": "a6d4cda1f0b0b915e707de74cd9406cd2b7e7077",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-19.html": {
+      "sha": "5e2d6f9472aea6b58cfe93ce9bd02eb326471a30",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-20.html": {
+      "sha": "db69ec76b52017bbeaa3013d12b850bd537dc9f2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-08-21.html": {
+      "sha": "c8b324b159faa712511083f855f150ca080e4f54",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-10.html": {
+      "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-13.html": {
+      "sha": "5574fca810be4839c45d97cb1ead52c0c7ec755b",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-15.html": {
+      "sha": "90eb08e9dd54ebce7e68cc7fa5d06e602bd9ceda",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-16.html": {
+      "sha": "9f9bafb8b5a309eefbc37f1567bca75c63b554a7",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-20.html": {
+      "sha": "58089c2112c5d840e8ef9133f1177e6659240c14",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-21.html": {
+      "sha": "c58a226901ada6b6da97fcf48a1239cbf805ed60",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-22.html": {
+      "sha": "e891d1932d70187ee9413383ebead628cad61331",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-23.html": {
+      "sha": "38ab5e32c80a29967843694d86176d187a3298b8",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-24.html": {
+      "sha": "f8a1bc774da8e568ee24bb82f037cc7aac54df91",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-27.html": {
+      "sha": "0aa540eef86086fce8ea94c21f8a92e8183b2668",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-28.html": {
+      "sha": "739f2222131d65b768959621aa0f05486a268771",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-29.html": {
+      "sha": "d3f580dc7ae8595ffabff1da4832b543ac803508",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-30.html": {
+      "sha": "adb26066fe3ecbc5b7af3aaa8be3c8b8b210eee1",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-07-31.html": {
+      "sha": "cf605ab51b10789a5f41e8b808c68ddeb38434a7",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-03.html": {
+      "sha": "07f3a5dd8a60bd45754a2d4cadd2f6565e801e74",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-04.html": {
+      "sha": "a33de433d52c5de8c848b0d05106efdde4d14356",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-05.html": {
+      "sha": "6d8855e3c6788adcf1cbb82fa2b938df50c3d0e2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-07.html": {
+      "sha": "b57819c7d62f7bb58c67fdcd37a8e0efe18b384e",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-10.html": {
+      "sha": "32bb204c0456f4536ffde91fd6e541f0603c62fc",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-11.html": {
+      "sha": "35bdaa977554967776751b7ff44cea76d15b8174",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-12.html": {
+      "sha": "115aea5ea8a33b5a17db03dc0ce0bce68a2dd2f2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-13.html": {
+      "sha": "7c7347c181de8411bfce584dd9be76f0386c0bc8",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-14.html": {
+      "sha": "54b2dfbf2170e8bb1521f116a65ab739fbc50dd2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-17.html": {
+      "sha": "ffed970a5d262d542752191f38af9158ee752b23",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-18.html": {
+      "sha": "5409355bef6eb2269a8029bbbc9e7ee8fae64c8c",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-19.html": {
+      "sha": "1f31d71704395174357f7c81af68898ee76363ee",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-20.html": {
+      "sha": "fb7fdd2605d363e594eb907d67dc60315f06f1fa",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-08-21.html": {
+      "sha": "a0f572394c667993baf917210bbbad8c9987aa99",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "privacy.html": {
+      "sha": "ea755ae587014fd8fbfb02847d7b92d45fb935d2",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "thesis/micron.html": {
+      "sha": "b58d53c30f213ec02be28a4dbb0c2d44f23a04ea",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "thesis/narrative.html": {
+      "sha": "a91b44a2b4e2b2a14a966059fd36d08c548fa533",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "thesis/samsung.html": {
+      "sha": "21ebb84e544a30f613211f56c545056117a56278",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "thesis/skhynix.html": {
+      "sha": "cfe743f3c524ac35632d5d9673254c5a9249a9c6",
+      "at": "2026-08-24T13:32:40+09:00",
+      "findings": 0,
+      "baseline": true
+    }
+  }
+}
