@@ -466,6 +466,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--data', default=str(DATA))
     ap.add_argument('--out', default=str(OUT))
+    ap.add_argument('--check', action='store_true',
+                    help='쓰지 않고, 이미 있는 파일이 지금 렌더 결과와 같은지만 본다')
     args = ap.parse_args()
 
     data, out = Path(args.data), Path(args.out)
@@ -476,24 +478,38 @@ def main():
     as_of = watch['as_of']
 
     out.mkdir(parents=True, exist_ok=True)
-    written = []
+    written, differing = [], []
+
+    def put(path, text):
+        """--check면 대조만, 아니면 쓴다.
+
+        이 페이지들은 손으로 타이핑하지 않는 것이 규칙이다. 그 규칙을 지켰는지 확인하는
+        유일한 방법이 「다시 렌더한 결과와 같은가」다. 발행 후 검토 게이트는 이 페이지를
+        보지 않으므로(매일 숫자가 바뀌어 큐가 무의미해진다) 손편집을 잡는 일은 여기가
+        맡는다.
+        """
+        if args.check:
+            before = path.read_text(encoding='utf-8') if path.exists() else None
+            if before != text:
+                differing.append(str(path))
+            return
+        path.write_text(text, encoding='utf-8')
+        written.append(str(path))
     for symbol, spec in C.TICKERS.items():
         row = watch['tickers'].get(symbol)
         if not row:
             print(f'  watch.json에 {symbol} 없음 — 건너뜀', file=sys.stderr)
             continue
-        path = out / f'{spec["slug"]}.html'
-        path.write_text(build_ticker(symbol, row, state.get(symbol, {}), as_of),
-                        encoding='utf-8')
-        written.append(str(path))
+        put(out / f'{spec["slug"]}.html',
+            build_ticker(symbol, row, state.get(symbol, {}), as_of))
 
-    (out / 'index.html').write_text(build_index(watch, state, as_of), encoding='utf-8')
-    written.append(str(out / 'index.html'))
+    put(out / 'index.html', build_index(watch, state, as_of))
 
-    (out / 'narrative.html').write_text(build_narrative(as_of), encoding='utf-8')
-    written.append(str(out / 'narrative.html'))
+    # 서사 페이지의 내용은 시세와 무관하다. as_of를 쓰면 산문이 그대로인 날에도 날짜만
+    # 바뀌어 매일 다시 쓰이므로, 실제로 산문이 바뀐 날을 쓴다.
+    put(out / 'narrative.html', build_narrative(N.UPDATED))
 
-    (out / 'index.json').write_text(json.dumps({
+    put(out / 'index.json', json.dumps({
         'updated': as_of,
         'narrative': {'url': 'https://fdo2a.github.io/thesis/narrative.html',
                       'phases': len(N.PHASES)},
@@ -503,8 +519,16 @@ def main():
             'grade_since': state.get(s, {}).get('grade_since', as_of),
             'url': f'https://fdo2a.github.io/thesis/{C.TICKERS[s]["slug"]}.html',
         } for s in C.TICKERS if s in watch['tickers']],
-    }, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    written.append(str(out / 'index.json'))
+    }, ensure_ascii=False, indent=2) + '\n')
+
+    if args.check:
+        if differing:
+            print('렌더 결과와 다른 파일 — 손으로 고쳤거나 데이터가 바뀐 채 방치됐다:')
+            for d in differing:
+                print(f'  - {d}')
+            return 1
+        print('모든 페이지가 지금 렌더 결과와 같다')
+        return 0
 
     for w in written:
         print(f'  wrote {w}')

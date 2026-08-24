@@ -34,11 +34,67 @@ TRIGGER_KEYS = (
 SEVERITIES = ('info', 'watch', 'kill_candidate')
 
 CONSENSUS_SWING_PCT = 20.0      # ±20% 이상 이동
+CONSENSUS_SWING_REARM_PCT = 15.0   # 여기까지 진정돼야 다시 장전
 CONSENSUS_FLOOR_PCT = 15.0      # 평균이 하단 대비 +15% 이내
 BEAR_PROXIMITY_PCT = 10.0       # bear 가치 ±10% 이내
 DISPERSION_WIDENING_PCT = 30.0  # high/low 비율이 30% 이상 확대
+DISPERSION_REARM_PCT = 20.0        # 여기까지 좁혀져야 다시 장전
 LOOKBACK_DAYS = 30
 MIN_HISTORY_ROWS = 20           # 이보다 짧으면 되돌아볼 게 없다
+
+
+def _armed(values, today_value, fire_at, rearm_at, signed=False):
+    """이 지표가 오늘 말할 자격이 있는가.
+
+    30일 변화 같은 지표는 창이 굴러가는 동안 임계 위에 며칠씩 머문다. 「지금 20%를
+    넘었나」로 물으면 그 며칠이 전부 발화하지만, 그건 하나의 사건이 여러 번 보고되는
+    것이다. 그래서 한 번 울리면 **충분히 진정될 때까지** 다시 울리지 않는다. 두 선을
+    떼어 놓은 이유는 임계선 근처에서 값이 오르내릴 때 매일 재발화하는 것을 막기 위해서다
+    (20%를 넘었다 18%로 내려온 것은 진정된 게 아니다).
+
+    `values`는 오늘을 뺀 과거 값들, 오래된 것부터. 기록이 짧으면 장전된 것으로 본다 —
+    처음 넘어선 날을 놓치는 쪽이 더 나쁘다.
+    """
+    for value in reversed(values or ()):
+        if value is None:
+            continue
+        # 한쪽 방향만 발화하는 지표(분산 확대)는 부호를 살려서 잰다. -25%는 「25%
+        # 좁혀졌다」는 뜻이라 재장전선을 한참 지난 것인데, 절댓값으로 재면 그 사실이
+        # 사라진다.
+        level = value if signed else abs(value)
+        if level <= rearm_at:
+            return True
+        if level >= fire_at:
+            # 같은 방향이면 이어지는 국면, 반대로 뒤집혔으면 새 사건이다.
+            return (value > 0) != (today_value > 0)
+    return True
+
+
+def prior_metrics(rows, ticker, before, lookback_days=None):
+    """`before`보다 앞선 각 관측일에 이 지표들이 얼마였는지. `_armed`가 먹는 모양이다.
+
+    `before`(보통 오늘)는 **반드시 빼야 한다.** 수집기가 오늘 행을 먼저 기록한 뒤 루틴이
+    도므로, 오늘 값이 과거 목록에 섞이면 처음 임계를 넘은 날조차 「이미 울렸다」로 읽혀
+    트리거가 스스로를 죽인다.
+
+    상태 파일을 따로 두지 않는다. 기록을 다시 훑어 계산하므로 백필하거나 다시 돌려도
+    결과가 같고, 조용한 날에 파일을 건드리지 않는다는 이 파이프라인의 규율도 지킨다.
+    """
+    from . import history as H
+
+    lookback_days = LOOKBACK_DAYS if lookback_days is None else lookback_days
+    swing, dispersion = [], []
+    for row in [r for r in rows if r['date'] < before]:
+        day = row['date']
+        snapshot = row.get('tickers', {}).get(ticker) or {}
+        back = H.days_ago(day, lookback_days)
+        then = {k: H.value_on([r for r in rows if r['date'] < day], back, ticker, k)
+                for k in ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high')}
+        swing.append(_pct_change(snapshot.get('eps_fy1'), then.get('eps_fy1')))
+        now_ratio, past_ratio = _ratio(snapshot), _ratio(then)
+        dispersion.append((now_ratio - past_ratio) / past_ratio * 100
+                          if now_ratio and past_ratio else None)
+    return {'consensus_swing': swing, 'dispersion_widening': dispersion}
 
 
 def _pct_change(now, before):
@@ -78,7 +134,7 @@ def _ratio(snapshot):
     return high / low
 
 
-def evaluate(today, past, fair_value, has_depth, prev=None):
+def evaluate(today, past, fair_value, has_depth, prev=None, prior=None):
     """Triggers fired by today's numbers. Empty list is the expected daily result.
 
     `past` is the snapshot ~LOOKBACK_DAYS ago (None when history is too short), and
@@ -93,6 +149,9 @@ def evaluate(today, past, fair_value, has_depth, prev=None):
     row from before these lines were recorded) those triggers stay quiet — the page still
     shows where the price stands.
 
+    `prior`는 지난 관측일들의 지표 값(`prior_metrics`)이고, 창이 굴러가는 동안 같은
+    국면이 매일 다시 보고되는 것을 막는다.
+
     Note the crossing compares each day against *that day's own* lines. When collapsing
     estimates lift the bear value up to a flat price, the state genuinely changed and it
     fires once, saying so. That is a real deterioration, not an artifact.
@@ -104,7 +163,9 @@ def evaluate(today, past, fair_value, has_depth, prev=None):
     # ── 컨센 급변 ──
     if has_depth and past:
         change = _pct_change(eps, past.get('eps_fy1'))
-        if change is not None and abs(change) >= CONSENSUS_SWING_PCT:
+        if (change is not None and abs(change) >= CONSENSUS_SWING_PCT
+                and _armed((prior or {}).get('consensus_swing'), change,
+                           CONSENSUS_SWING_PCT, CONSENSUS_SWING_REARM_PCT)):
             direction = '상향' if change > 0 else '하향'
             hits.append({
                 'key': 'consensus_swing',
@@ -174,7 +235,10 @@ def evaluate(today, past, fair_value, has_depth, prev=None):
         now_ratio, past_ratio = _ratio(today), _ratio(past)
         if now_ratio and past_ratio:
             widening = (now_ratio - past_ratio) / past_ratio * 100
-            if widening >= DISPERSION_WIDENING_PCT:
+            if (widening >= DISPERSION_WIDENING_PCT
+                    and _armed((prior or {}).get('dispersion_widening'), widening,
+                               DISPERSION_WIDENING_PCT, DISPERSION_REARM_PCT,
+                               signed=True)):
                 hits.append({
                     'key': 'dispersion_widening', 'severity': 'watch',
                     'value': round(widening, 1),

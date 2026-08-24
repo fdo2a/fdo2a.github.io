@@ -20,8 +20,9 @@ def yesterday(**kw):
     return base
 
 
-def fire(today, past=None, fv=FV, depth=True, prev=None):
-    return {t['key'] for t in T.evaluate(today, past, fv, has_depth=depth, prev=prev)}
+def fire(today, past=None, fv=FV, depth=True, prev=None, prior=None):
+    return {t['key'] for t in T.evaluate(today, past, fv, has_depth=depth, prev=prev,
+                                         prior=prior)}
 
 
 # ── 컨센 급변 ──
@@ -208,6 +209,93 @@ def test_a_holiday_repeat_of_the_same_numbers_fires_nothing():
     same = yesterday(price=310.0, eps_fy1=115.0)
     today = snap(price=310.0, eps_fy1=115.0)
     assert fire(today, prev=same) == set()
+
+
+# ── 재장전 (같은 국면에서 매일 다시 울리지 않게) ──
+
+def test_a_swing_that_stays_beyond_the_line_only_speaks_once():
+    """30일 변화가 20%를 넘은 채로 머무는 동안은 매일이 같은 사건이다. 어제 이미 울렸으면
+    오늘은 말할 것이 없다."""
+    today, past = snap(eps_fy1=200.0), snap(eps_fy1=155.0)   # +29%
+    assert 'consensus_swing' in fire(today, past, prior={'consensus_swing': [5.0]})
+    assert 'consensus_swing' not in fire(today, past, prior={'consensus_swing': [29.0]})
+
+
+def test_a_swing_rearms_after_the_move_settles_back_down():
+    today, past = snap(eps_fy1=200.0), snap(eps_fy1=155.0)
+    calmed = {'consensus_swing': [29.0, 25.0, 12.0]}          # 12%까지 진정됐다
+    assert 'consensus_swing' in fire(today, past, prior=calmed)
+
+
+def test_a_swing_hovering_between_the_two_lines_does_not_rearm():
+    """20%를 넘었다 18%로 내려온 것은 진정된 게 아니라 같은 국면이다. 15% 아래로 와야
+    다시 장전된다 — 안 그러면 임계선 근처에서 오르내릴 때마다 다시 울린다."""
+    today, past = snap(eps_fy1=200.0), snap(eps_fy1=155.0)
+    hovering = {'consensus_swing': [29.0, 18.0, 17.0]}
+    assert 'consensus_swing' not in fire(today, past, prior=hovering)
+
+
+def test_a_swing_the_other_way_is_a_new_event_even_while_still_beyond_the_line():
+    """상향이 이어지다 하향으로 뒤집힌 것은 같은 국면이 아니다."""
+    today, past = snap(eps_fy1=110.0), snap(eps_fy1=155.0)    # -29%
+    assert 'consensus_swing' in fire(today, past, prior={'consensus_swing': [29.0]})
+
+
+def test_no_prior_record_means_armed():
+    """기록이 짧으면 장전된 것으로 본다. 처음 넘어선 날을 놓치는 것이 더 나쁘다."""
+    today, past = snap(eps_fy1=200.0), snap(eps_fy1=155.0)
+    assert 'consensus_swing' in fire(today, past, prior=None)
+    assert 'consensus_swing' in fire(today, past, prior={'consensus_swing': []})
+
+
+def test_dispersion_also_speaks_once_per_episode():
+    today = snap(eps_fy1_low=80.0, eps_fy1_high=260.0)
+    past = snap(eps_fy1_low=110.0, eps_fy1_high=220.0)
+    assert 'dispersion_widening' in fire(today, past,
+                                         prior={'dispersion_widening': [5.0]})
+    assert 'dispersion_widening' not in fire(today, past,
+                                             prior={'dispersion_widening': [40.0]})
+
+
+def test_dispersion_rearms_below_its_own_lower_line():
+    today = snap(eps_fy1_low=80.0, eps_fy1_high=260.0)
+    past = snap(eps_fy1_low=110.0, eps_fy1_high=220.0)
+    assert 'dispersion_widening' in fire(today, past,
+                                         prior={'dispersion_widening': [40.0, 15.0]})
+    assert 'dispersion_widening' not in fire(today, past,
+                                             prior={'dispersion_widening': [40.0, 25.0]})
+
+
+def test_todays_own_value_never_counts_as_a_past_firing():
+    """오늘 값이 과거 목록에 섞이면 처음 넘어선 날조차 「이미 울렸다」로 읽혀서 트리거가
+    스스로를 죽인다. 수집기가 오늘 행을 먼저 기록하므로 실제로 일어나는 일이다."""
+    rows = [
+        {'date': '2026-07-01', 'tickers': {'MU': {'eps_fy1': 100.0, 'eps_fy1_low': 80.0,
+                                                  'eps_fy1_high': 120.0}}},
+        {'date': '2026-08-24', 'tickers': {'MU': {'eps_fy1': 100.0, 'eps_fy1_low': 80.0,
+                                                  'eps_fy1_high': 120.0}}},
+        {'date': '2026-08-25', 'tickers': {'MU': {'eps_fy1': 140.0, 'eps_fy1_low': 80.0,
+                                                  'eps_fy1_high': 120.0}}},
+    ]
+    prior = T.prior_metrics(rows, 'MU', before='2026-08-25')
+    assert prior['consensus_swing'][-1] is None or abs(prior['consensus_swing'][-1]) < 20
+    today = snap(eps_fy1=140.0, eps_fy1_low=80.0, eps_fy1_high=120.0)
+    past = snap(eps_fy1=100.0, eps_fy1_low=80.0, eps_fy1_high=120.0)
+    assert 'consensus_swing' in fire(today, past, prior=prior)
+
+
+def test_dispersion_rearms_when_the_spread_actually_narrowed():
+    """분산은 방향이 있는 지표다. -25%는 「25% 좁혀졌다」는 뜻이라 재장전선을 한참
+    지났는데, 절댓값으로 재면 20~30 사이로 읽혀 억제된다."""
+    today = snap(eps_fy1_low=80.0, eps_fy1_high=260.0)
+    past = snap(eps_fy1_low=110.0, eps_fy1_high=220.0)
+    assert 'dispersion_widening' in fire(today, past,
+                                         prior={'dispersion_widening': [40.0, -25.0]})
+
+
+def test_a_record_that_never_leaves_the_middle_stays_armed():
+    today, past = snap(eps_fy1=200.0), snap(eps_fy1=155.0)
+    assert 'consensus_swing' in fire(today, past, prior={'consensus_swing': [17.0, 18.0]})
 
 
 # ── 분산 확대 ──

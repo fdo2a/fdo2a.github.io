@@ -8,6 +8,7 @@ TREE = {
     'posts/2026-08-22.html': 'bbb',
     'kr/posts/2026-08-21.html': 'ccc',
     'thesis/skhynix.html': 'ddd',
+    'scripts/thesis/content.py': 'mmm',
     'about.html': 'jjj',
     'posts.json': 'eee',
     'index.html': 'fff',
@@ -22,7 +23,7 @@ TREE = {
 def test_published_prose_is_watched():
     assert watched(TREE) == sorted([
         'about.html', 'posts/2026-08-21.html', 'posts/2026-08-22.html',
-        'kr/posts/2026-08-21.html', 'thesis/skhynix.html',
+        'kr/posts/2026-08-21.html', 'scripts/thesis/content.py',
     ])
 
 
@@ -33,6 +34,28 @@ def test_a_pipeline_nobody_told_the_gate_about_is_still_watched():
                  'comment/2026-08-29.html', 'monthly/2026-08.html',
                  'kr/monthly/2026-08.html', 'newthing/whatever.html'):
         assert is_watched(path), path
+
+
+def test_machine_rendered_thesis_pages_are_not_watched():
+    """thesis 페이지는 사람이 타이핑하지 않는다. 산문은 content.py에서, 수치는 매일
+    갱신되는 watch.json에서 렌더된다. 페이지를 감시하면 숫자가 바뀐 날마다 큐에 오르고,
+    정작 읽어야 할 사람 글은 그 소음에 묻힌다."""
+    for path in ('thesis/samsung.html', 'thesis/skhynix.html', 'thesis/micron.html',
+                 'thesis/narrative.html'):
+        assert not is_watched(path), path
+
+
+def test_the_prose_those_pages_are_built_from_is_watched_instead():
+    """읽어야 할 것은 결과물이 아니라 사람이 쓴 원고다."""
+    for path in ('scripts/thesis/content.py', 'scripts/thesis/narrative.py'):
+        assert is_watched(path), path
+    assert section_of('scripts/thesis/content.py') == 'thesis 원고'
+
+
+def test_other_python_under_scripts_stays_out():
+    for path in ('scripts/thesis/triggers.py', 'scripts/us/macro.py',
+                 'scripts/review_gate.py'):
+        assert not is_watched(path), path
 
 
 def test_machine_written_fragments_and_fixtures_are_not_watched():
@@ -55,7 +78,6 @@ def test_non_html_is_never_watched():
 def test_section_labels_come_from_the_path():
     assert section_of('posts/2026-08-22.html') == 'us'
     assert section_of('kr/posts/2026-08-21.html') == 'kr'
-    assert section_of('thesis/skhynix.html') == 'thesis'
     assert section_of('weekly/2026-08-29.html') == 'weekly'
     assert section_of('kr/monthly/2026-08.html') == 'kr/monthly'
     assert section_of('about.html') == '사이트'
@@ -89,9 +111,9 @@ def test_newest_first_across_pipelines_not_by_path_spelling():
     """A path-string sort puts posts/2026-08-21 above kr/posts/2026-08-25 because 'p'
     beats 'k'. The queue is about recency, so the date in the filename decides."""
     tree = {'posts/2026-08-21.html': 'a', 'kr/posts/2026-08-25.html': 'b',
-            'monthly/2026-08.html': 'c', 'thesis/skhynix.html': 'd'}
+            'monthly/2026-08.html': 'c', 'about.html': 'd'}
     assert [p.path for p in pending({}, tree)] == [
-        'thesis/skhynix.html',        # undated — a page that just changed
+        'about.html',                 # undated — a page that just changed
         'monthly/2026-08.html',       # month end sorts after any day in that month
         'kr/posts/2026-08-25.html',
         'posts/2026-08-21.html',

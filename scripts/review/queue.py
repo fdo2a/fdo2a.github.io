@@ -34,6 +34,25 @@ _EXCLUDED_DIRS = ('data', 'scripts', 'node_modules', 'assets', '_workspace')
 # Navigation, not prose.
 _EXCLUDED_NAMES = ('index.html', '404.html')
 
+# Pages nobody types. /thesis/ is rendered every day by build_thesis_pages.py — prose out
+# of content.py, figures out of a committed watch.json — so the page changes whenever a
+# price does. Reviewing the page would put four entries in the queue every weekday and
+# bury the one thing worth a second read. What a person actually writes is the source
+# below, and that is what the gate follows instead. A page edited by hand is caught by a
+# different check: the collector re-renders and compares (build_thesis_pages.py --check).
+_RENDERED_DIRS = ('thesis',)
+
+# Authored prose that never becomes a page of its own — the sentences a person wrote
+# that end up in front of a reader. thesis_state.json is here because its changelog is
+# written by hand on the days a judgment changes, which is exactly when a second read is
+# worth the most.
+_PROSE_SOURCES = (
+    'scripts/thesis/content.py',
+    'scripts/thesis/narrative.py',
+    'scripts/thesis/render.py',
+    'thesis/data/thesis_state.json',
+)
+
 _DATE = re.compile(r'(\d{4}-\d{2}(?:-\d{2})?)')
 
 # Sorts after any dated page in the same month, and after every day of it, so an undated
@@ -50,18 +69,23 @@ class Pending:
 
 
 def is_watched(path):
-    """True for a published page whose prose the gate covers."""
+    """True for prose the gate covers — published pages, and the sources pages are
+    rendered from."""
+    if path in _PROSE_SOURCES:
+        return True
     if not path.endswith('.html'):
         return False
     parts = path.split('/')
     if parts[-1] in _EXCLUDED_NAMES:
+        return False
+    if parts[0] in _RENDERED_DIRS:
         return False
     return not any(part in _EXCLUDED_DIRS for part in parts[:-1])
 
 
 # The two daily briefs predate the gate and have names people use out loud; everything
 # else is called by its directory, which is what a new pipeline will have anyway.
-_SECTION_ALIASES = {'posts': 'us', 'kr/posts': 'kr'}
+_SECTION_ALIASES = {'posts': 'us', 'kr/posts': 'kr', 'scripts/thesis': 'thesis 원고'}
 
 
 def section_of(path):
