@@ -268,3 +268,30 @@ def test_홑별표_표기는_마크다운이_아니다():
     html = '<html><body><p>차트의 2Y*는 기준일 불일치를 나타낸 표기다.</p></body></html>'
     text, side = extract(html)
     assert reinsert(html, text.replace('표기다.', '표기입니다.'), side)
+
+
+# ── 허용 범위는 문법·말투까지 ────────────────────────────────────────────
+
+def test_절을_갈아끼우면_거부된다():
+    """사실 검사를 다 통과해도, 원문에 없던 말로 절을 바꾸는 것은 이 단계 밖이다."""
+    text, side = extract(SWAPPY)
+    broken = text.replace('시장은 이번 국면을 관망하며 다음 발표를 기다리는 분위기다.',
+                          '시장은 이번 국면을 관망한다고 보기는 어렵다고 판단된다.')
+    with pytest.raises(ProseSwapError, match='문법·말투 이상'):
+        reinsert(SWAPPY, broken, side)
+
+
+def test_종결어미_교체는_통과한다():
+    text, side = extract(SWAPPY)
+    out = reinsert(SWAPPY, text.replace('되풀이했다.', '되풀이했습니다.'), side)
+    assert '되풀이했습니다' in out
+
+
+def test_주어를_되살리고_문장을_나눠도_통과한다():
+    html = ('<html><body><p>장 초반 하락했다가 오후 들어 반등해 결국 강보합으로 '
+            '마감했고 거래대금도 늘었다.</p></body></html>')
+    text, side = extract(html)
+    talk = text.replace('장 초반 하락했다가 오후 들어 반등해 결국 강보합으로 마감했고 거래대금도 늘었다.',
+                        '지수는 장 초반 하락했습니다. 오후 들어 반등해 결국 강보합으로 '
+                        '마감했고, 거래대금도 늘었습니다.')
+    assert '지수는' in reinsert(html, talk, side)

@@ -18,6 +18,7 @@ STEP 2.5(AI 티 제거)에서 쓴다. `humanize-korean` 스킬은 텍스트를 �
 Pure — 문자열을 받아 문자열을 돌려준다. 파일은 CLI(`scripts/humanize_prose.py`)가 만진다.
 """
 
+import difflib
 import hashlib
 import re
 from collections import Counter
@@ -35,8 +36,16 @@ _MD_LINE_RE = re.compile(r'^\s*(#{1,6}\s|[-*+]\s|\d+[.)]\s|\||```|>\s)')
 _MD_INLINE_RE = re.compile(r'\*\*|\*[^\s*][^*]*\*|__|`|!\[|\]\(|~~')
 
 # 몸통이 제 이름에 묶여 있는지 보는 기준.
-SIM_FLOOR = 0.05      # 이보다 안 닮았으면 윤문이 아니라 다른 글이다. 낮게 잡는다 —
-                      # 사실 보존은 아래 토큰 검사들이 맡고, 이건 총체적 뒤바뀜만 본다
+# 이 단계가 허락하는 것은 **문법과 말투까지**다. 절을 갈아끼우는 재작성은 허락하지
+# 않는다 — 원문에 없던 인과를 넣거나 조건절을 떼어 단정으로 만드는 의미 변화는
+# 어떤 사실 검사로도 못 잡기 때문에, 애초에 그만큼 못 바꾸게 막는 편이 낫다.
+#
+# 08-21 발행본 58문단 실측 (2026-08-25):
+#   말투 교체 + 문장 분리 + 주어 복원   최저 0.95 / 중앙 0.99
+#   절을 갈아끼운 재작성              하위10% 0.10 / 중앙 0.62
+# 두 무리 사이에 선을 긋는다. 긴 문단에서 짧은 절 하나만 갈아끼우는 편집은 이
+# 문턱을 넘을 수 있는데, 그건 위의 사실 검사들(숫자·티커·판단 어휘·링크)이 맡는다.
+SIM_FLOOR = 0.80
 LEN_RATIO = (0.5, 2.0)  # 문장을 나누거나 합칠 수는 있어도 분량이 배로 뛰지는 않는다
 
 
@@ -137,16 +146,15 @@ def _plain(text):
     return re.sub(r'\s+', ' ', _MARK_RE.sub(' ', _TAG_RE.sub(' ', text))).strip()
 
 
-def _grams(text, n=3):
-    t = _plain(text)
-    return {t[i:i + n] for i in range(max(len(t) - n + 1, 1))}
-
-
 def _similarity(a, b):
-    ga, gb = _grams(a), _grams(b)
-    if not ga or not gb:
-        return 0.0
-    return len(ga & gb) / float(len(ga | gb))
+    """문자 단위 일치 비율.
+
+    3-gram Jaccard도 써 봤지만 짧은 문단에서 너무 예민했다 — 45자 문단에 주어
+    「지수는」을 되살리고 문장을 나눈 것만으로 0.60까지 떨어진다(같은 편집이
+    200자 문단에서는 0.90). SequenceMatcher는 삽입에 관대해서 문단 길이에
+    덜 휘둘린다 (2026-08-25 실측).
+    """
+    return difflib.SequenceMatcher(None, _plain(a), _plain(b)).ratio()
 
 
 def _check_bound(pid, body, known):
@@ -168,7 +176,8 @@ def _check_bound(pid, body, known):
             raise ProseSwapError('%s 자리에 다른 문단(%s)에 더 가까운 글이 왔다 '
                                  '— 제 원문과 %.2f, %s와 %.2f' % (pid, who, mine, who, best))
     if mine < SIM_FLOOR:
-        raise ProseSwapError('%s 가 제 원문과 너무 달라졌다 (닮은 정도 %.2f)' % (pid, mine))
+        raise ProseSwapError('%s 를 문법·말투 이상으로 바꿨다 (닮은 정도 %.2f, 하한 %.2f) '
+                             '— 이 단계는 다시 쓰는 자리가 아니다' % (pid, mine, SIM_FLOOR))
 
 
 def fingerprint(html):
