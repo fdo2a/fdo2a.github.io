@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-08-20",
+  "report_date": "2026-08-25",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "key": "new-home-sales",
+      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20097,
-      "path": "releases/claims.txt"
+      "chars": 17944,
+      "path": "releases/new-home-sales.txt"
     }
   ]
 }

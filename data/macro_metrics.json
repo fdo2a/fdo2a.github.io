@@ -1,9 +1,9 @@
 {
-  "generated": "2026-08-24 21:51 UTC",
-  "report_date": "2026-08-24",
-  "growth_score": -0.182,
+  "generated": "2026-08-25 21:50 UTC",
+  "report_date": "2026-08-25",
+  "growth_score": -0.2,
   "inflation_score": -0.264,
-  "growth_diffusion": 0.571,
+  "growth_diffusion": 0.5,
   "inflation_diffusion": 0.625,
   "axis_summary": {
     "Labor": {
@@ -43,11 +43,11 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": 0.224,
+      "score": 0.169,
       "direction": "보합",
       "strength": "미미",
-      "breadth_ko": "다섯 중 셋이 개선, 나머지는 반대",
-      "improving": 3,
+      "breadth_ko": "다섯 중 둘이 개선, 나머지는 반대",
+      "improving": 2,
       "total": 5,
       "leaders": [
         {
@@ -141,7 +141,7 @@
   },
   "axis_scores": {
     "Labor": 0.398,
-    "Activity": 0.224,
+    "Activity": 0.169,
     "Consumption": -1.168,
     "Inflation": -0.264
   },
@@ -289,12 +289,12 @@
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.175,
-      "signed_z": 0.175,
-      "actual": 628.0,
-      "previous": 618.0,
-      "ref_period": "2026-06-01",
-      "is_new": false
+      "momentum_z": -0.099,
+      "signed_z": -0.099,
+      "actual": 607.0,
+      "previous": 678.0,
+      "ref_period": "2026-07-01",
+      "is_new": true
     },
     {
       "name": "Existing Home Sales",
@@ -477,8 +477,31 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "New Home Sales"
+  ],
+  "headline_releases": [
+    {
+      "key": "new-home-sales",
+      "label": "신규주택 판매",
+      "tier": 2,
+      "agency": "Census",
+      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "primary": "New Home Sales",
+      "max_abs_z": 0.099,
+      "indicators": [
+        {
+          "name": "New Home Sales",
+          "axis": "Activity",
+          "actual": 607.0,
+          "previous": 678.0,
+          "ref_period": "2026-07-01",
+          "momentum_z": -0.099
+        }
+      ],
+      "components": []
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-06-01",
@@ -517,8 +540,8 @@
       0.47
     ],
     "New Home Sales": [
-      "2026-06-01",
-      628.0
+      "2026-07-01",
+      607.0
     ],
     "Existing Home Sales": [
       "2026-07-01",
