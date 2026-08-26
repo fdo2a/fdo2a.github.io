@@ -31,7 +31,7 @@
   h2::before { content:''; display:inline-block; width:6px; height:18px; background:#0064FF; border-radius:6px; }
   h3 { font-size:16px; margin:16px 0 8px; color:#191F28; font-weight:800; }
   h4 { font-size:15px; margin:10px 0 6px; color:#191F28; font-weight:700; }
-  .card p, p { font-size:16px; line-height:1.62; color:#191F28; margin:0 0 9px; }
+  p { font-size:16px; line-height:1.62; color:#191F28; margin:0 0 9px; }
   .card p:last-child { margin-bottom:0; }
   .muted { color:#4E5968; }
   .sub { color:#8B95A1; font-size:13px; }
@@ -64,7 +64,7 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v3 */
+/* readability-v4 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -87,6 +87,15 @@ section { scroll-margin-top: 20px; }
   .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
+}
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
 }
 </style>
 </head>

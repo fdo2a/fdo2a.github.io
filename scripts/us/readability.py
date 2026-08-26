@@ -10,13 +10,28 @@
 왜 조판인가: 2026-08-24 실측에서 본문 컨테이너가 1120px인데 문단에 폭 제한이
 없어 데스크톱 한 줄이 한글 약 65자였다(편한 범위는 35~45자). 줄간격 1.58~1.62,
 문단 간격 9px도 한글 장문에는 좁다. 셋 다 CSS 한 덩이로 고쳐진다.
+
+v4는 그 교정이 데스크톱에서 지나쳤던 것을 되돌린다. 2026-08-26 실측에서 뷰포트
+1440px든 768px든 문단 폭이 똑같이 672px이었다 — 카드는 1080px인데 글이 672px만
+쓰니 오른쪽 408px이 늘 비었고, PC로 봐도 모바일 화면을 늘려 놓은 꼴이었다.
+1024px 이상에서만 본문 글자를 17px로 키우고 폭을 50em(약 850px)으로 넓힌다.
+글자와 폭을 함께 키우므로 한 줄은 약 50자 — 42자와 65자 사이다. 폭 지정은 em이라
+캡션·각주는 제 글자 크기 기준으로 따라 좁아진다.
 """
 import html as _html
 import re
 from collections import Counter
 
-MARKER = "/* readability-v3 */"
+MARKER = "/* readability-v4 */"
+V3_MARKER = "/* readability-v3 */"
 OLD_MARKER = "/* readability-v2 */"
+_V4_MARKER_RE = re.compile(r"/\*\s*readability-v4\s*\*/", re.I)
+_V3_MARKER_RE = re.compile(r"/\*\s*readability-v3\s*\*/", re.I)
+_V2_MARKER_RE = re.compile(r"/\*\s*readability-v2\s*\*/", re.I)
+# 데스크톱 본문 — 글자와 폭을 함께 키워 한 줄 약 50자를 맞춘다.
+DESKTOP_MIN_PX = 1024
+DESKTOP_FONT = "17px"
+DESKTOP_MEASURE_EM = 50
 READING_MAP_MARKER = "<!-- reading-map-v1 -->"
 STRATEGY_FIRST_MARKER = "<!-- strategy-first-v1 -->"
 
@@ -36,8 +51,8 @@ table { font-variant-numeric: tabular-nums; }
 }
 """ % OLD_MARKER
 
-# 한글 본문 한 줄 42자 안팎. letter-spacing -0.01em을 감안한 값이다.
-CSS = """
+# v3 — 한글 본문 한 줄 42자 안팎. letter-spacing -0.01em을 감안한 값이다.
+_V3_CSS = """
 %s
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
@@ -62,7 +77,24 @@ section { scroll-margin-top: 20px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
 }
-""" % MARKER
+""" % V3_MARKER
+
+# v4 — 데스크톱만 넓힌다. 기본 조판(모바일·태블릿)은 v3 그대로 42em/16px.
+# 폰트 확대는 `p:not([class])`로 한정한다: `.card p`(0,1,1)가 `.caption`(0,1,0)을
+# 이기므로 무조건 얹으면 12.5px 캡션이 본문 크기로 튀어오른다.
+_DESKTOP_CSS = """
+@media (min-width: %dpx) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: %dem; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: %s; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
+}
+""" % (DESKTOP_MIN_PX, DESKTOP_MEASURE_EM, DESKTOP_FONT)
+
+CSS = _V3_CSS.replace(V3_MARKER, MARKER).rstrip("\n") + _DESKTOP_CSS
 
 _STRIP = re.compile(
     r"(?s)<head.*?</head>|<style.*?</style>|<script.*?</script>|<svg.*?</svg>|"
@@ -94,40 +126,260 @@ _EXCLUDED_P_CLASS = re.compile(
 )
 
 
+# `<script>`와 주석 안 텍스트는 마크업이 아니다. head에는 JSON-LD와 광고 로더가
+# 함께 있어서, 그 안의 문자열이 `</head>`나 `<style>`을 품으면 경계 판정이 어긋난다.
+_INERT = re.compile(r"(?is)<script\b[^>]*>.*?</script\s*>|<!--.*?-->")
+
+
+def _blank_inert(html: str) -> str:
+    """스크립트·주석 내용을 같은 길이의 공백으로 덮는다. 오프셋은 그대로."""
+    return _INERT.sub(lambda m: " " * (m.end() - m.start()), html)
+
+
+def _head_scope_end(html: str) -> int:
+    """Return the first boundary after head CSS, including head-less old posts."""
+    inert = _blank_inert(html)
+    match = re.search(r"(?i)</head\s*>", inert)
+    if match:
+        return match.start()
+    match = re.search(r"(?i)<body\b", inert)
+    return match.start() if match else len(html)
+
+
+_STYLE_EL = re.compile(r"(?is)<style\b[^>]*>(.*?)</style\s*>")
+
+
+def _head_style_spans(html: str):
+    """head 안 실제 `<style>` 요소의 (내용 시작, 내용 끝) 목록.
+
+    마커도 삽입 지점도 여기서만 찾는다. head에는 JSON-LD와 광고 로더가 함께
+    있어서, 바이트 범위를 통째로 훑으면 `<script>` 안 문자열이 CSS로 오인된다
+    — 그러면 마이그레이션이 JSON-LD 한복판을 잘라낸다.
+    """
+    scope_end = _head_scope_end(html)
+    # 스크립트 안 `<style>` 문자열은 요소가 아니다. 길이를 보존해 덮었으므로
+    # 여기서 얻은 오프셋은 원본 html에 그대로 쓸 수 있다.
+    return [
+        (m.start(1), m.end(1))
+        for m in _STYLE_EL.finditer(_blank_inert(html)[:scope_end])
+    ]
+
+
+def _find_in_head_css(html: str, marker_re):
+    """head CSS 안에서 마커를 찾아 (스타일 span, 매치)를 준다. 없으면 None."""
+    for start, end in _head_style_spans(html):
+        m = marker_re.search(html, start, end)
+        if m:
+            return (start, end), m
+    return None
+
+
 def has_override(html: str) -> bool:
-    return MARKER in html
+    return _find_in_head_css(html, _V4_MARKER_RE) is not None
 
 
 def inject_css(html: str) -> str:
-    """조판 오버라이드를 `<head>` 안 마지막 `</style>` 앞에 덧붙인다. 멱등.
+    """조판 오버라이드를 `<head>` 안 마지막 `<style>` 끝에 덧붙인다. 멱등.
 
     본문에도 인라인 `<style>`(섹터 막대 등)이 있으므로 문서 전체에서 마지막
-    것을 찾으면 카드 한복판에 끼어든다. 반드시 head 범위 안에서만 찾는다.
+    것을 찾으면 카드 한복판에 끼어든다. 반드시 head의 `<style>` 안에서만 찾는다.
     """
     if has_override(html):
         return html
-    if OLD_MARKER in html:
-        if _V2_CSS in html:
-            return html.replace(_V2_CSS, CSS, 1)
-        # v2는 항상 head의 마지막 CSS였다. 드문 서식 차이도 안전하게 마이그레이션한다.
-        return re.sub(
-            r"/\* readability-v2 \*/.*?(?=</style>)",
-            CSS.strip() + "\n",
-            html,
-            count=1,
-            flags=re.S,
-        )
-    head_end = html.find("</head>")
-    scope = html[:head_end] if head_end != -1 else html
-    idx = scope.rfind("</style>")
-    if idx != -1:
+    for marker_re, block in ((_V3_MARKER_RE, _V3_CSS), (_V2_MARKER_RE, _V2_CSS)):
+        found = _find_in_head_css(html, marker_re)
+        if not found:
+            continue
+        (span_start, span_end), match = found
+        style_css = html[span_start:span_end]
+        if block in style_css:
+            return html[:span_start] + style_css.replace(block, CSS, 1) + html[span_end:]
+        # 앞선 판은 늘 그 `<style>`의 마지막 CSS였다. 서식 차이도 안전하게 옮긴다.
+        return html[:match.start()] + CSS.strip() + "\n" + html[span_end:]
+    spans = _head_style_spans(html)
+    if spans:
+        idx = spans[-1][1]
         return html[:idx] + CSS + html[idx:]
     block = "<style>%s</style>\n" % CSS
+    inert = _blank_inert(html)
     for anchor in ("</head>", "<body>"):
-        i = html.find(anchor)
+        i = inert.find(anchor)
         if i != -1:
             return html[:i] + block + html[i:]
     return block + html
+
+
+# `.card p`처럼 한정된 선택자에 font-size가 얹히면 특정도 (0,1,1)이 되어
+# `.caption`(0,1,0)을 이긴다 — 캡션·각주가 본문 크기로 인쇄된다.
+_QUALIFIED_P = re.compile(r"^(?:\.[\w-]+\s+)+p$")
+_CSS_NON_CODE = re.compile(
+    r"/\*.*?\*/|\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", re.S
+)
+
+
+def _next_css_open(css: str, start: int) -> int:
+    """Find an unquoted, uncommented opening brace."""
+    i = start
+    while i < len(css):
+        if css.startswith("/*", i):
+            end = css.find("*/", i + 2)
+            if end == -1:
+                return -1
+            i = end + 2
+            continue
+        if css[i] in "\"'":
+            quote = css[i]
+            i += 1
+            while i < len(css):
+                if css[i] == "\\":
+                    i += 2
+                elif css[i] == quote:
+                    i += 1
+                    break
+                else:
+                    i += 1
+            continue
+        if css[i] == "\\":
+            i += 2
+            continue
+        if css[i] == "{":
+            return i
+        i += 1
+    return -1
+
+
+def _matching_css_close(css: str, opening: int) -> int:
+    """Find the brace paired with ``opening``, ignoring strings and comments."""
+    depth, i = 1, opening + 1
+    while i < len(css):
+        if css.startswith("/*", i):
+            end = css.find("*/", i + 2)
+            if end == -1:
+                return -1
+            i = end + 2
+            continue
+        if css[i] in "\"'":
+            quote = css[i]
+            i += 1
+            while i < len(css):
+                if css[i] == "\\":
+                    i += 2
+                elif css[i] == quote:
+                    i += 1
+                    break
+                else:
+                    i += 1
+            continue
+        if css[i] == "\\":
+            i += 2
+            continue
+        if css[i] == "{":
+            depth += 1
+        elif css[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return i
+        i += 1
+    return -1
+
+
+def _split_css_selectors(selector: str) -> list[str]:
+    """Split only on top-level commas, preserving commas in strings and functions."""
+    parts, start, i = [], 0, 0
+    square = paren = 0
+    while i < len(selector):
+        if selector.startswith("/*", i):
+            end = selector.find("*/", i + 2)
+            i = len(selector) if end == -1 else end + 2
+            continue
+        if selector[i] in "\"'":
+            quote = selector[i]
+            i += 1
+            while i < len(selector):
+                if selector[i] == "\\":
+                    i += 2
+                elif selector[i] == quote:
+                    i += 1
+                    break
+                else:
+                    i += 1
+            continue
+        if selector[i] == "\\":
+            i += 2
+            continue
+        if selector[i] == "[":
+            square += 1
+        elif selector[i] == "]":
+            square = max(0, square - 1)
+        elif selector[i] == "(":
+            paren += 1
+        elif selector[i] == ")":
+            paren = max(0, paren - 1)
+        elif selector[i] == "," and square == 0 and paren == 0:
+            parts.append(selector[start:i])
+            start = i + 1
+        i += 1
+    parts.append(selector[start:])
+    return parts
+
+
+def _demote_selector(prelude: str, block: str) -> str:
+    declarations = _CSS_NON_CODE.sub("", block)
+    if not re.search(r"(?i)(?:^|;)\s*font-size\s*:", declarations):
+        return prelude
+    leading = prelude[:len(prelude) - len(prelude.lstrip())]
+    trailing = prelude[len(prelude.rstrip()):]
+    core = prelude[len(leading):len(prelude) - len(trailing) if trailing else None]
+    parts = [part.strip() for part in _split_css_selectors(core)]
+    if "p" not in parts:
+        return prelude
+    kept = [part for part in parts if not _QUALIFIED_P.fullmatch(part)]
+    if kept == parts:
+        return prelude
+    return leading + ", ".join(kept) + trailing
+
+
+def _rewrite_css_rules(css: str) -> str:
+    """Rewrite qualified paragraph selectors without parsing CSS as flat regex text."""
+    out, pos = [], 0
+    while True:
+        opening = _next_css_open(css, pos)
+        if opening == -1:
+            out.append(css[pos:])
+            break
+        closing = _matching_css_close(css, opening)
+        if closing == -1:
+            out.append(css[pos:])
+            break
+        prelude, block = css[pos:opening], css[opening + 1:closing]
+        code = _CSS_NON_CODE.sub("", prelude).lstrip()
+        if code.startswith("@"):
+            block = _rewrite_css_rules(block)
+        else:
+            prelude = _demote_selector(prelude, block)
+        out.extend((prelude, "{", block, "}"))
+        pos = closing + 1
+    return "".join(out)
+
+
+def demote_card_p_font(html: str) -> str:
+    """본문 크기를 정하는 규칙에서 `.card p`류 한정 선택자를 떨어낸다.
+
+    2026-08-26 실측: KR 발행본 5편과 US 5편이 `.card p, p { font-size:16px }`를
+    썼고, 그 글들만 12.5px 캡션이 16px로 떴다. 맨 `p`가 같은 규칙에 함께 있을
+    때만 떼어내므로 본문 크기는 그대로고 클래스 붙은 문단만 제 크기를 찾는다.
+    멱등.
+    """
+
+    # 진짜 `<style>` 안에서만 고친다 — 스크립트 문자열 속 CSS 흉내는 CSS가 아니다.
+    out = []
+    at = 0
+    for start, end in _head_style_spans(html):
+        out.append(html[at:start])
+        out.append(_rewrite_css_rules(html[start:end]))
+        at = end
+    out.append(html[at:])
+    return "".join(out)
 
 
 def _plain(raw: str) -> str:
@@ -306,6 +558,7 @@ def enhance_html(html: str) -> str:
     """조판·문단·빠른 이동을 한 번에 적용한다. 보이는 숫자는 반드시 불변이다."""
     before = visible_numeric_tokens(html)
     out = inject_css(html)
+    out = demote_card_p_font(out)
     out = split_dense_paragraphs(out)
     out = inject_reading_map(out)
     out = move_strategy_first(out)

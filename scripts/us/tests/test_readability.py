@@ -150,3 +150,235 @@ def test_inject_ignores_inline_body_style():
     out = R.inject_css(doc)
     assert out.index(R.MARKER) < out.index("</head>")
     assert ".spf{color:red}</style>" in out
+
+
+def test_desktop_block_widens_prose_and_keeps_mobile_measure():
+    out = R.inject_css(DOC)
+    assert "@media (min-width: 1024px)" in out
+    desktop = out.split("@media (min-width: 1024px)", 1)[1]
+    # 데스크톱에서만 넓어진다 — 기본(모바일·태블릿) 조판은 42em 그대로.
+    assert "max-width: %dem" % R.DESKTOP_MEASURE_EM in desktop
+    assert "font-size: %s" % R.DESKTOP_FONT in desktop
+    base = out.split("@media (min-width: 1024px)", 1)[0]
+    assert "max-width: 42em" in base
+
+
+def test_desktop_font_bump_skips_classed_paragraphs():
+    """`.caption`·`.note`는 제 크기를 지킨다.
+
+    `.card p`(0,1,1)가 `.caption`(0,1,0)을 이기므로 font-size를 무조건 얹으면
+    12.5px 캡션이 본문 크기로 튀어오른다. `:not([class])`로 막는다.
+    """
+    out = R.inject_css(DOC)
+    desktop = out.split("@media (min-width: 1024px)", 1)[1]
+    for line in desktop.splitlines():
+        if "font-size" in line and " p" in line:
+            assert ":not([class])" in line, line
+
+
+def test_migrate_v3_css_to_v4():
+    old = DOC.replace("</style>", R._V3_CSS + "</style>")
+    out = R.inject_css(old)
+    assert R.MARKER in out
+    assert out.count(R.MARKER) == 1
+    assert R.V3_MARKER not in out
+    assert "@media (min-width: 1024px)" in out
+
+
+def test_migrate_v2_straight_to_v4():
+    old = DOC.replace("</style>", R._V2_CSS + "</style>")
+    out = R.inject_css(old)
+    assert R.MARKER in out and R.OLD_MARKER not in out and R.V3_MARKER not in out
+
+
+BAD_SPECIFICITY = """<html><head><style>
+.card p, p { font-size:16px; line-height:1.62; color:#191F28; margin:0 0 9px; }
+.caption { color:#8B95A1; font-size:12.5px; }
+</style></head><body>
+<div class="card"><p>본문이다.</p><p class="caption">출처: Naver.</p></div>
+</body></html>"""
+
+
+def test_demote_card_p_font_keeps_bare_p_rule():
+    """`.card p`(0,1,1)가 `.caption`(0,1,0)을 이겨 12.5px 캡션이 16px로 뜬다.
+
+    실측 2026-08-26: KR 발행본 5편과 US 5편이 이 선택자를 썼고, 그 글들만
+    캡션·각주가 본문 크기로 인쇄됐다. 한정 선택자를 떨어내면 맨 `p`가 그대로
+    본문을 맡고 클래스 붙은 문단은 제 크기를 되찾는다.
+    """
+    out = R.demote_card_p_font(BAD_SPECIFICITY)
+    assert ".card p, p { font-size" not in out
+    assert "p { font-size:16px; line-height:1.62; color:#191F28; margin:0 0 9px; }" in out
+    assert ".caption { color:#8B95A1; font-size:12.5px; }" in out
+
+
+def test_demote_card_p_font_is_idempotent():
+    once = R.demote_card_p_font(BAD_SPECIFICITY)
+    assert R.demote_card_p_font(once) == once
+
+
+def test_demote_card_p_font_leaves_rules_without_font_size():
+    """폭·줄간격만 정하는 v4 조판 규칙은 캡션 크기를 건드리지 않으므로 남긴다."""
+    doc = "<html><head><style>.card p, .doc p, p { line-height: 1.78; max-width: 42em; }" \
+          "</style></head><body><p>a</p></body></html>"
+    assert R.demote_card_p_font(doc) == doc
+
+
+def test_demote_card_p_font_keeps_rule_without_bare_p():
+    """맨 `p`가 없으면 규칙 전체가 사라지므로 손대지 않는다."""
+    doc = "<html><head><style>.card p { font-size:16px; }</style></head>" \
+          "<body><p>a</p></body></html>"
+    assert R.demote_card_p_font(doc) == doc
+
+
+def test_enhance_runs_demote_and_preserves_numbers():
+    out = R.enhance_html(BAD_SPECIFICITY)
+    assert ".card p, p { font-size" not in out
+    assert R.visible_numeric_tokens(out) == R.visible_numeric_tokens(BAD_SPECIFICITY)
+
+
+def test_demote_preserves_complex_selector_commas_and_rule_spacing():
+    doc = """<html><head><style>
+.previous { color:red; }
+.card p, p, [data-x="a,b"], :not(.a,.b) { font-size:16px; }
+</style></head><body><p>a</p></body></html>"""
+    expected = """<html><head><style>
+.previous { color:red; }
+p, [data-x="a,b"], :not(.a,.b) { font-size:16px; }
+</style></head><body><p>a</p></body></html>"""
+    assert R.demote_card_p_font(doc) == expected
+
+
+def test_demote_preserves_media_wrapper_and_indentation():
+    doc = """<html><head><style>
+@media screen and (min-width:1024px) {
+  .card p, p { font-size:16px; }
+}
+</style></head><body><p>a</p></body></html>"""
+    expected = """<html><head><style>
+@media screen and (min-width:1024px) {
+  p { font-size:16px; }
+}
+</style></head><body><p>a</p></body></html>"""
+    assert R.demote_card_p_font(doc) == expected
+
+
+def test_demote_ignores_inline_body_style():
+    doc = """<html><head><style>
+.card p, p { font-size:16px; }
+</style></head><body><style>
+.card p, p { font-size:12px; }
+</style><p>a</p></body></html>"""
+    out = R.demote_card_p_font(doc)
+    assert "\np { font-size:16px; }" in out
+    assert "\n.card p, p { font-size:12px; }" in out
+
+
+def test_demote_handles_literal_brace_in_declaration():
+    doc = """<html><head><style>
+.card p, p { font-size:16px; content:"{"; }
+</style></head><body><p>a</p></body></html>"""
+    out = R.demote_card_p_font(doc)
+    assert "\np { font-size:16px; content:\"{\"; }" in out
+
+
+def test_migrate_v3_css_with_marker_whitespace():
+    variant = R._V3_CSS.replace(R.V3_MARKER, "/*  readability-v3*/", 1)
+    old = DOC.replace("</style>", variant + "</style>")
+    out = R.inject_css(old)
+    assert out.count("readability-v3") == 0
+    assert out.count(R.MARKER) == 1
+    assert R.inject_css(out) == out
+
+
+# head 안의 <script>가 마커 문자열을 품고 있어도 CSS로 오인하지 않아야 한다.
+# 지금 발행본 29+23편에는 없지만, JSON-LD·광고 로더가 head에 있으므로
+# 언젠가 문자열이 섞이면 마크업이 깨진다. 검출은 실제 <style> 안에서만 한다.
+SCRIPT_DECOY = """<html><head>
+<script type="application/ld+json">
+{"description":"조판 이력: /* readability-v3 */ 를 </style> 앞에 넣었다"}
+</script>
+<style>
+p { font-size: 16px; }
+</style></head><body><div class="card"><p>본문이다. 6,460.71로 마감했다.</p></div></body></html>"""
+
+
+def test_marker_search_ignores_script_text():
+    out = R.inject_css(SCRIPT_DECOY)
+    # 스크립트 안 문자열은 CSS가 아니다 — 마이그레이션 경로로 새면 JSON-LD가 잘린다.
+    # 마커 뒤쪽까지 온전해야 실제로 안 건드린 것이다.
+    assert '{"description":"조판 이력: /* readability-v3 */ 를 </style> 앞에 넣었다"}' in out
+    assert out.count(R.MARKER) == 1
+    assert R.CSS.strip() in out
+    # 진짜 CSS(<style> 안)에 붙어야 한다 — 스크립트 자리가 아니라.
+    assert out.index("<style>") < out.index(R.MARKER)
+
+
+def test_has_override_ignores_script_text():
+    decoy = SCRIPT_DECOY.replace("readability-v3", "readability-v4")
+    assert not R.has_override(decoy)
+
+
+def test_script_decoy_is_idempotent_and_keeps_numbers():
+    once = R.enhance_html(SCRIPT_DECOY)
+    twice = R.enhance_html(once)
+    assert once == twice
+    assert R.visible_numeric_tokens(once) == R.visible_numeric_tokens(SCRIPT_DECOY)
+
+
+# script 안에 여는 <style>이나 </head>가 통째로 들어 있는 경우.
+# 위 SCRIPT_DECOY는 닫는 </style>만 있어서 이 갈래를 못 덮었다.
+FULL_TAG_DECOY = """<html><head>
+<script>var t = "<style>/* readability-v4 */</style>"; var u = "</head>";</script>
+<style>
+p { font-size: 16px; }
+</style></head><body><div class="card"><p>본문이다. 6,460.71로 마감했다.</p></div></body></html>"""
+
+
+def test_style_spans_ignore_tags_inside_script():
+    assert not R.has_override(FULL_TAG_DECOY)
+    out = R.inject_css(FULL_TAG_DECOY)
+    # 스크립트 문자열은 한 글자도 안 바뀐다.
+    assert 'var t = "<style>/* readability-v4 */</style>"; var u = "</head>";' in out
+    # 스크립트 안 미끼 문자열이 그대로 남아 있으니 문서 전체 개수는 2다.
+    # (`</head>`도 스크립트 안에 먼저 나오므로 index로 자르면 안 된다.)
+    # 세어야 하는 것은 스크립트 뒤 — 진짜 CSS — 에 정확히 하나 있느냐다.
+    after_script = out.split("</script>", 1)[1]
+    assert after_script.count(R.MARKER) == 1
+    assert R.CSS.strip() in after_script
+
+
+def test_head_scope_ignores_head_close_inside_script():
+    """`</head>` 문자열이 스크립트 안에 있으면 그것을 head 끝으로 삼지 않는다."""
+    assert R._head_scope_end(FULL_TAG_DECOY) > FULL_TAG_DECOY.index("</script>")
+
+
+def test_full_tag_decoy_idempotent_and_numbers_intact():
+    once = R.enhance_html(FULL_TAG_DECOY)
+    assert R.enhance_html(once) == once
+    assert R.visible_numeric_tokens(once) == R.visible_numeric_tokens(FULL_TAG_DECOY)
+
+
+# 진짜 <style>이 하나도 없는 문서 + 스크립트 안 </head> 미끼.
+# FULL_TAG_DECOY는 진짜 style이 있어서 「style 없을 때」 갈래를 못 덮었다.
+NO_STYLE_DECOY = """<html><head>
+<script>var u = "</head>"; var t = "<style>.card p, p { font-size:16px; }</style>";</script>
+</head><body><div class="card"><p>본문이다. 6,460.71로 마감했다.</p></div></body></html>"""
+
+
+def test_inject_without_style_does_not_write_into_script():
+    out = R.inject_css(NO_STYLE_DECOY)
+    assert 'var u = "</head>";' in out
+    assert R.MARKER in out.split("</script>", 1)[1]
+
+
+def test_demote_does_not_edit_style_string_inside_script():
+    out = R.demote_card_p_font(NO_STYLE_DECOY)
+    assert '"<style>.card p, p { font-size:16px; }</style>"' in out
+
+
+def test_enhance_leaves_script_decoy_intact():
+    out = R.enhance_html(NO_STYLE_DECOY)
+    assert 'var u = "</head>";' in out
+    assert '.card p, p { font-size:16px; }</style>";' in out
+    assert R.enhance_html(out) == out

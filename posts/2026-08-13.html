@@ -53,7 +53,7 @@
   h3 { font-size: 16px; font-weight: 800; color: var(--text); margin: 14px 0 8px; }
   h4.box-label { font-size: 13px; font-weight: 800; color: var(--toss-blue); margin: 0 0 8px; letter-spacing: 0.01em; }
   .card { background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 16px 18px; page-break-inside: avoid; margin-bottom: 12px; }
-  .card p, p { font-size: 16px; line-height: 1.68; margin: 0 0 9px; color: var(--text); }
+  p { font-size: 16px; line-height: 1.68; margin: 0 0 9px; color: var(--text); }
   .card p:last-child, p:last-child { margin-bottom: 0; }
   .muted { color: var(--text-3); }
   .sub { color: var(--text-2); }
@@ -88,7 +88,7 @@
     h2 { font-size: 16.5px; }
   }
 
-/* readability-v3 */
+/* readability-v4 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -111,6 +111,15 @@ section { scroll-margin-top: 20px; }
   .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
+}
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
 }
 </style>
 </head>

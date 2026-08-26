@@ -75,7 +75,7 @@
     h1{font-size:19px;} h2{font-size:16.5px;}
   }
 
-/* readability-v3 */
+/* readability-v4 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -98,6 +98,15 @@ section { scroll-margin-top: 20px; }
   .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
+}
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
 }
 </style>
 <!-- adsense-loader -->

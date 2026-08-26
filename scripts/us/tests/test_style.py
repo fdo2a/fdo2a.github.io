@@ -1,3 +1,4 @@
+from us import style as S
 from us.style import findings, sentences
 
 
@@ -86,3 +87,180 @@ def test_every_finding_says_what_to_do():
                 '금리는 하락한 것으로 해석된다.</p>')
     for f in findings(html):
         assert f['message'] and f['key'] and f['count'] >= 1
+
+
+def _wrap(*paras):
+    return "<html><body>" + "".join("<p>%s</p>" % p for p in paras) + "</body></html>"
+
+
+def _keys(html):
+    return {f["key"] for f in S.findings(html)}
+
+
+def test_transliterated_jargon_with_plain_korean_is_flagged():
+    """풀어 쓸 수 있는 외래어는 한 번만 나와도 잡는다.
+
+    2026-08-26 사용자 지시 — 「브레드스 확산 트리거같은 뭔 소린지 모르는 용어」.
+    이 말들은 한국어 대응이 이미 있어서 굳이 음차할 이유가 없다.
+    """
+    html = _wrap("코스피는 브레드스가 좋아졌고 반도체가 아웃퍼폼했습니다.")
+    found = [f for f in S.findings(html) if f["key"] == "jargon"]
+    assert found, "브레드스·아웃퍼폼이 안 잡혔다"
+    assert "브레드스" in found[0]["message"]
+    assert "상승 종목 비율" in found[0]["message"], "풀어 쓸 말을 알려줘야 한다"
+
+
+def test_plain_korean_alternative_passes():
+    html = _wrap("코스피는 오른 종목이 늘었고 반도체가 시장보다 더 올랐습니다.")
+    assert "jargon" not in _keys(html)
+
+
+def test_technical_term_needs_gloss_on_first_use():
+    """설명하면 쓸 수 있는 말 — 첫 등장에 풀이가 없으면 잡는다."""
+    bare = _wrap("장기물 기간프리미엄이 올랐습니다.")
+    assert "jargon_gloss" in _keys(bare)
+    glossed = _wrap("장기물 기간프리미엄, 즉 만기가 길어 감수하는 위험의 대가가 올랐습니다.")
+    assert "jargon_gloss" not in _keys(glossed)
+
+
+def test_gloss_in_parenthesis_counts():
+    html = _wrap("기간프리미엄(만기가 길수록 더 얹어 받는 값)이 올랐습니다.")
+    assert "jargon_gloss" not in _keys(html)
+
+
+def test_stacked_jargon_in_one_sentence_is_flagged():
+    """한 문장에 낯선 말이 겹치면 풀이가 있어도 못 읽는다 — 사용자 예시가 이 형태다."""
+    html = _wrap("레짐은 유지되나 확산지수가 트리거를 밑돌아 스탠스를 좁힙니다.")
+    found = [f for f in S.findings(html) if f["key"] == "jargon_stack"]
+    assert found
+
+
+def test_jargon_ignores_tables_and_headings():
+    html = ("<html><body><h2>브레드스</h2><table><tr><td>아웃퍼폼</td></tr></table>"
+            "<p>오늘은 오른 종목이 더 많았습니다.</p></body></html>")
+    assert "jargon" not in _keys(html)
+
+
+def test_gloss_message_picks_the_right_particle():
+    """「멀티플가」처럼 조사가 틀리면 검사 자체가 기계 티를 낸다."""
+    assert S._subject_josa('멀티플') == '이'
+    assert S._subject_josa('레짐') == '이'
+    assert S._subject_josa('컨센서스') == '가'
+
+
+# ── codex 검토(2026-08-26)가 잡은 오탐들 ────────────────────────────────────
+def test_jargon_does_not_match_inside_longer_korean_words():
+    """부분 문자열로 세면 멀쩡한 낱말이 걸린다 — 「베타테스트」의 「베타」."""
+    assert "jargon" not in _keys(_wrap("서비스는 베타테스트를 시작했습니다."))
+    assert "jargon_gloss" not in _keys(_wrap("서비스는 베타테스트를 시작했습니다."))
+
+
+def test_jargon_matches_with_korean_particle_attached():
+    """조사가 붙은 형태는 잡아야 한다 — 「브레드스가」·「아웃퍼폼했습니다」."""
+    assert "jargon" in _keys(_wrap("브레드스가 나빠졌습니다."))
+    assert "jargon" in _keys(_wrap("반도체가 아웃퍼폼했습니다."))
+
+
+def test_english_jargon_is_case_insensitive():
+    for form in ("breadth", "Breadth", "BREADTH"):
+        assert "jargon" in _keys(_wrap("%s가 나빠졌습니다." % form)), form
+
+
+def test_numeric_parenthesis_is_not_a_gloss():
+    """「기간프리미엄(3.2%)」은 뜻을 푼 것이 아니다."""
+    assert "jargon_gloss" in _keys(_wrap("기간프리미엄(3.2%)이 올랐습니다."))
+    assert "jargon_gloss" in _keys(_wrap("기간프리미엄(AAPL)이 올랐습니다."))
+
+
+def test_one_terms_gloss_does_not_excuse_another():
+    """문단을 이어 붙여 훑으면 남의 풀이가 내 풀이로 셈된다."""
+    html = _wrap("베타(지수가 1% 움직일 때 이 종목이 얼마나 움직이나)를 봅니다.",
+                 "레짐은 그대로입니다.")
+    found = [f for f in S.findings(html) if f["key"] == "jargon_gloss"]
+    assert found and "레짐" in found[0]["message"]
+    assert "베타" not in found[0]["message"]
+
+
+def test_gloss_must_be_in_the_same_sentence():
+    html = _wrap("레짐은 그대로입니다. 참고로 이것은 국면을 뜻하는 말입니다.")
+    assert "jargon_gloss" in _keys(html)
+
+
+def test_overlapping_terms_count_once():
+    """「디스인버전」 하나를 「인버전」까지 둘로 세면 안 된다."""
+    assert "jargon_stack" not in _keys(_wrap("디스인버전이 진행됐습니다."))
+
+
+def test_caption_paragraphs_are_not_checked():
+    html = '<html><body><p class="caption">breadth 자료입니다.</p>' \
+           '<p>오늘은 오른 종목이 더 많았습니다.</p></body></html>'
+    assert "jargon" not in _keys(html)
+
+
+def test_subject_josa_handles_empty_and_non_hangul():
+    assert S._subject_josa("") == "이"
+    assert S._subject_josa("breadth") == "이"
+
+
+def test_stack_counts_distinct_terms_not_repeats():
+    """같은 말을 두 번 쓴 것은 겹침이 아니다 — 실측 KR 08-24에서 나온 오탐."""
+    assert "jargon_stack" not in _keys(
+        _wrap("비철금속(breadth 65%)과 전기제품(breadth 58%)이 올랐습니다."))
+    assert "jargon_stack" in _keys(
+        _wrap("레짐은 그대로지만 확산지수가 밀렸습니다."))
+
+
+def test_trigger_and_stance_need_a_gloss():
+    """사용자가 든 예에 「트리거」가 들어 있었다 — 첫 등장에 한 번은 푼다."""
+    assert "jargon_gloss" in _keys(_wrap("확대 트리거를 넘어섰습니다."))
+    assert "jargon_gloss" not in _keys(
+        _wrap("확대 트리거(판단을 뒤집을 조건)를 넘어섰습니다."))
+
+
+def test_jargon_matches_inside_korean_compounds():
+    """「밸류에이션발」·「숏커버성」·「캐리트레이드」는 여전히 그 말이다 — 실측 발행본."""
+    for text in ("밸류에이션발 조정이 나왔습니다.", "숏커버성 반등이었습니다.",
+                 "캐리트레이드가 되감겼습니다.", "베타성 반등에 그쳤습니다."):
+        assert "jargon" in _keys(_wrap(text)) or "jargon_gloss" in _keys(_wrap(text)), text
+
+
+def test_known_compounds_that_are_not_jargon_pass():
+    """「베타테스트」의 「베타」는 주가 민감도가 아니다."""
+    assert "jargon" not in _keys(_wrap("서비스는 베타테스트를 시작했습니다."))
+    assert "jargon_gloss" not in _keys(_wrap("서비스는 베타테스트를 시작했습니다."))
+
+
+def test_uncommon_particles_still_match():
+    for text in ("브레드스마저 나빠졌습니다.", "브레드스조차 밀렸습니다.",
+                 "브레드스밖에 남지 않았습니다."):
+        assert "jargon" in _keys(_wrap(text)), text
+
+
+def test_gloss_must_follow_the_term_immediately():
+    """멀리 떨어진 남의 괄호가 이 말의 풀이로 셈되면 안 된다."""
+    html = _wrap("레짐은 유지되나 삼성전자(005930)가 밀렸습니다.")
+    assert "jargon_gloss" in _keys(html)
+
+
+def test_src_class_paragraph_is_excluded():
+    html = '<html><body><p class="src">breadth 출처입니다.</p>' \
+           '<p>오늘은 오른 종목이 더 많았습니다.</p></body></html>'
+    assert "jargon" not in _keys(html)
+
+
+def test_class_token_matching_is_exact():
+    """`class="my-note-widget"`은 각주가 아니다 — 부분 문자열로 빼면 본문이 샌다."""
+    html = '<html><body><p class="my-note-widget">breadth가 나빠졌습니다.</p></body></html>'
+    assert "jargon" in _keys(html)
+
+
+def test_spans_resolves_overlap_not_just_dedup():
+    hits = S._spans("디스인버전이 진행됐습니다.", ["인버전", "디스인버전"])
+    assert [term for _, _, term in hits] == ["디스인버전"]
+
+
+def test_later_sentence_gloss_does_not_clear_earlier_term():
+    """문장 분리가 완벽하지 않아도 풀이가 낱말 바로 뒤에 고정돼 있어 안 샌다."""
+    html = _wrap("레짐 상승. 베타(지수 대비 민감도)는 낮아졌습니다.")
+    found = [f for f in S.findings(html) if f["key"] == "jargon_gloss"]
+    assert found and "레짐" in found[0]["message"]

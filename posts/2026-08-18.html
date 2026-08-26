@@ -32,7 +32,7 @@ h2 { font-size:18.5px; font-weight:800; color:#191F28; margin:26px 0 12px; paddi
 h2::before { content:''; position:absolute; left:0; top:3px; width:6px; height:18px; background:#0064FF; border-radius:3px; }
 h3 { font-size:16px; font-weight:700; color:#191F28; margin:14px 0 8px; }
 h4 { font-size:15px; font-weight:700; color:#191F28; margin:0 0 6px; }
-.card p, p { font-size:16px; line-height:1.65; color:#333D4B; margin:0 0 9px; }
+p { font-size:16px; line-height:1.65; color:#333D4B; margin:0 0 9px; }
 .sub-note, .caption, .note { font-size:12.5px; color:#8B95A1; }
 .pos { color:#00A85A; font-weight:700; }
 .neg { color:#FF4040; font-weight:700; }
@@ -109,7 +109,7 @@ tbody td:first-child { text-align:left; font-weight:600; }
     margin: 0 5px 0 0; }
 }
 
-/* readability-v3 */
+/* readability-v4 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -132,6 +132,15 @@ section { scroll-margin-top: 20px; }
   .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
+}
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
 }
 </style>
 </head>
