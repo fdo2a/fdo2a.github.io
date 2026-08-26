@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-25 21:50 UTC",
+  "generated": "2026-08-26 23:08 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -89,9 +89,9 @@
       "fred_id": "DGORDER",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.47,
-      "previous": -4.0,
-      "ref_period": "2026-06-01"
+      "actual": 1.07,
+      "previous": 0.54,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Activity",
@@ -199,9 +199,9 @@
       "fred_id": "PCEPI",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.67,
-      "previous": 4.08,
-      "ref_period": "2026-06-01"
+      "actual": 3.7,
+      "previous": 3.72,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -209,9 +209,9 @@
       "fred_id": "PCEPILFE",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.29,
-      "previous": 3.42,
-      "ref_period": "2026-06-01"
+      "actual": 3.34,
+      "previous": 3.34,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",

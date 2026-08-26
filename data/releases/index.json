@@ -1,13 +1,21 @@
 {
-  "report_date": "2026-08-25",
+  "report_date": "2026-08-26",
   "releases": [
     {
-      "key": "new-home-sales",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "key": "pce",
+      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 17944,
-      "path": "releases/new-home-sales.txt"
+      "chars": 3081,
+      "path": "releases/pce.txt"
+    },
+    {
+      "key": "durable-goods",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 24001,
+      "path": "releases/durable-goods.txt"
     }
   ]
 }

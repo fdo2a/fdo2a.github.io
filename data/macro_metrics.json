@@ -1,9 +1,9 @@
 {
-  "generated": "2026-08-25 21:50 UTC",
-  "report_date": "2026-08-25",
-  "growth_score": -0.2,
-  "inflation_score": -0.264,
-  "growth_diffusion": 0.5,
+  "generated": "2026-08-26 23:08 UTC",
+  "report_date": "2026-08-26",
+  "growth_score": -0.377,
+  "inflation_score": -0.327,
+  "growth_diffusion": 0.429,
   "inflation_diffusion": 0.625,
   "axis_summary": {
     "Labor": {
@@ -43,13 +43,21 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": 0.169,
-      "direction": "보합",
+      "score": -0.362,
+      "direction": "악화",
       "strength": "미미",
-      "breadth_ko": "다섯 중 둘이 개선, 나머지는 반대",
-      "improving": 2,
+      "breadth_ko": "다섯 중 넷이 악화",
+      "improving": 1,
       "total": 5,
       "leaders": [
+        {
+          "label_ko": "내구재 주문",
+          "name": "Durable Goods Orders MoM",
+          "direction": "악화",
+          "strength": "뚜렷",
+          "actual": 1.07,
+          "previous": 0.54
+        },
         {
           "label_ko": "기존주택 판매",
           "name": "Existing Home Sales",
@@ -57,14 +65,6 @@
           "strength": "완만",
           "actual": 4060000.0,
           "previous": 4130000.0
-        },
-        {
-          "label_ko": "내구재 주문",
-          "name": "Durable Goods Orders MoM",
-          "direction": "개선",
-          "strength": "완만",
-          "actual": 0.47,
-          "previous": -4.0
         },
         {
           "label_ko": "산업생산",
@@ -105,7 +105,7 @@
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": -0.264,
+      "score": -0.327,
       "direction": "둔화",
       "strength": "미미",
       "breadth_ko": "여덟 중 셋만 둔화",
@@ -141,9 +141,9 @@
   },
   "axis_scores": {
     "Labor": 0.398,
-    "Activity": 0.169,
+    "Activity": -0.362,
     "Consumption": -1.168,
-    "Inflation": -0.264
+    "Inflation": -0.327
   },
   "indicators": [
     {
@@ -270,16 +270,16 @@
       "name": "Durable Goods Orders MoM",
       "label_ko": "내구재 주문",
       "axis": "Activity",
-      "direction": "개선",
-      "strength": "완만",
+      "direction": "악화",
+      "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.868,
-      "signed_z": 0.868,
-      "actual": 0.47,
-      "previous": -4.0,
-      "ref_period": "2026-06-01",
-      "is_new": false
+      "momentum_z": -1.787,
+      "signed_z": -1.787,
+      "actual": 1.07,
+      "previous": 0.54,
+      "ref_period": "2026-07-01",
+      "is_new": true
     },
     {
       "name": "New Home Sales",
@@ -294,7 +294,7 @@
       "actual": 607.0,
       "previous": 678.0,
       "ref_period": "2026-07-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Existing Home Sales",
@@ -436,15 +436,15 @@
       "label_ko": "PCE 물가 전년비",
       "axis": "Inflation",
       "direction": "재가속",
-      "strength": "뚜렷",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 1.204,
-      "signed_z": 1.204,
-      "actual": 3.67,
-      "previous": 4.08,
-      "ref_period": "2026-06-01",
-      "is_new": false
+      "momentum_z": 0.739,
+      "signed_z": 0.739,
+      "actual": 3.7,
+      "previous": 3.72,
+      "ref_period": "2026-07-01",
+      "is_new": true
     },
     {
       "name": "Core PCE YoY",
@@ -454,12 +454,12 @@
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.469,
-      "signed_z": 0.469,
-      "actual": 3.29,
-      "previous": 3.42,
-      "ref_period": "2026-06-01",
-      "is_new": false
+      "momentum_z": 0.433,
+      "signed_z": 0.433,
+      "actual": 3.34,
+      "previous": 3.34,
+      "ref_period": "2026-07-01",
+      "is_new": true
     },
     {
       "name": "Michigan 1-Yr Inflation Exp",
@@ -478,25 +478,80 @@
     }
   ],
   "new_releases": [
-    "New Home Sales"
+    "Durable Goods Orders MoM",
+    "PCE Price Index YoY",
+    "Core PCE YoY"
   ],
   "headline_releases": [
     {
-      "key": "new-home-sales",
-      "label": "신규주택 판매",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
-      "primary": "New Home Sales",
-      "max_abs_z": 0.099,
+      "key": "pce",
+      "label": "개인소비지출(PCE)",
+      "tier": 1,
+      "agency": "BEA",
+      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+      "primary": "PCE Price Index YoY",
+      "max_abs_z": 0.739,
       "indicators": [
         {
-          "name": "New Home Sales",
-          "axis": "Activity",
-          "actual": 607.0,
-          "previous": 678.0,
+          "name": "PCE Price Index YoY",
+          "axis": "Inflation",
+          "actual": 3.7,
+          "previous": 3.72,
           "ref_period": "2026-07-01",
-          "momentum_z": -0.099
+          "momentum_z": 0.739
+        },
+        {
+          "name": "Core PCE YoY",
+          "axis": "Inflation",
+          "actual": 3.34,
+          "previous": 3.34,
+          "ref_period": "2026-07-01",
+          "momentum_z": 0.433
+        }
+      ],
+      "components": [
+        {
+          "label": "서비스",
+          "fred_id": "PCESV",
+          "transform": "mom_pct",
+          "actual": 1.734,
+          "previous": 1.188,
+          "ref_period": "2026-04-01"
+        },
+        {
+          "label": "내구재",
+          "fred_id": "PCEDG",
+          "transform": "mom_pct",
+          "actual": -1.023,
+          "previous": 0.784,
+          "ref_period": "2026-07-01"
+        },
+        {
+          "label": "실질 개인소비",
+          "fred_id": "PCEC96",
+          "transform": "mom_pct",
+          "actual": 0.008,
+          "previous": 0.443,
+          "ref_period": "2026-07-01"
+        }
+      ]
+    },
+    {
+      "key": "durable-goods",
+      "label": "내구재 주문",
+      "tier": 2,
+      "agency": "Census",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "primary": "Durable Goods Orders MoM",
+      "max_abs_z": 1.787,
+      "indicators": [
+        {
+          "name": "Durable Goods Orders MoM",
+          "axis": "Activity",
+          "actual": 1.07,
+          "previous": 0.54,
+          "ref_period": "2026-07-01",
+          "momentum_z": -1.787
         }
       ],
       "components": []
@@ -536,8 +591,8 @@
       0.2
     ],
     "Durable Goods Orders MoM": [
-      "2026-06-01",
-      0.47
+      "2026-07-01",
+      1.07
     ],
     "New Home Sales": [
       "2026-07-01",
@@ -580,12 +635,12 @@
       -0.03
     ],
     "PCE Price Index YoY": [
-      "2026-06-01",
-      3.67
+      "2026-07-01",
+      3.7
     ],
     "Core PCE YoY": [
-      "2026-06-01",
-      3.29
+      "2026-07-01",
+      3.34
     ],
     "Michigan 1-Yr Inflation Exp": [
       "2026-06-01",
