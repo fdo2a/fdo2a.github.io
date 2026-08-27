@@ -1,21 +1,13 @@
 {
-  "report_date": "2026-08-26",
+  "report_date": "2026-08-27",
   "releases": [
     {
-      "key": "pce",
-      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 3081,
-      "path": "releases/pce.txt"
-    },
-    {
-      "key": "durable-goods",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-      "ok": true,
-      "note": "impersonate=safari",
-      "chars": 24001,
-      "path": "releases/durable-goods.txt"
+      "chars": 20233,
+      "path": "releases/claims.txt"
     }
   ]
 }
