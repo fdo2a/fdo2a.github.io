@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-24",
+  "updated": "2026-08-27",
   "tickers": {
     "005930.KS": {
       "grade": "홀딩 강화",
@@ -57,15 +57,26 @@
         "eps_fy1": 155.02524,
         "eps_fy1_low": 106.89,
         "eps_fy1_high": 221.27,
-        "price": 966.78,
-        "pb": 10.84
+        "price": 932.97,
+        "pb": 10.46
       },
       "open_questions": [
         "RPO 잔액의 분기 증감 방향",
         "비GAAP 총이익률 궤적이 가이던스를 지키는가",
-        "차기 회계연도 캐펙스 확정치"
+        "차기 회계연도 캐펙스 확정치",
+        "영업·제조·고객 수요 책임 일원화가 RPO·가격·납품 규율에 어떤 변화를 만드는가"
       ],
       "changelog": [
+        {
+          "date": "2026-08-27",
+          "signal": "홀딩 강화",
+          "stance": "Neutral",
+          "title": "President·COO 중심으로 영업·운영 책임 재편",
+          "fact": "Micron은 Manish Bhatia를 President 겸 COO로, Scott DeBoer를 President 겸 Chief Technology and Products Officer로 임명하고 Sumit Sadana를 CEO 선임고문으로 전환했다. Bhatia는 설비투자·제조 실행·고객 수요·가격·납품을 포함한 영업손익을 맡는다. <cite><a href=\"https://www.sec.gov/Archives/edgar/data/723125/000110465926101067/tm2624017d1_ex99-1.htm\">Micron 8-K Exhibit 99.1, 2026-08-26</a></cite>",
+          "inference": "추론: 사업부와 운영을 한 책임자 아래 묶어 AI 수요 대응과 실행 속도를 높이려는 조직 재편이다. 다만 이번 공시는 주문·RPO·가이던스·마진·캐펙스 규모를 바꾸지 않았다.",
+          "delta": "경영 실행의 책임 구조는 바뀌었지만 RPO·총이익률·현금흐름이라는 기존 thesis의 핵심 계기판은 그대로다. 등급은 홀딩 강화를 유지한다.",
+          "next": "9월 30일 실적에서 RPO, 비GAAP 총이익률, 차기 회계연도 캐펙스와 고객 계약 관련 표현 변화를 확인한다."
+        },
         {
           "date": "2026-08-24",
           "signal": "init",
