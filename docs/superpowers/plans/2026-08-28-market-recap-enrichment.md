@@ -679,6 +679,20 @@ def test_section_number_notation_fails_but_css_comment_passes():
 
 def test_absent_block_is_not_enforced():
     assert check('<p>아무것도 없다</p>', None) == []
+
+
+def test_table_must_carry_the_actual_closes():
+    """표에 실린 값이 원본과 어긋나면 발행을 막는다 — 손으로 옮겨 적은 수치는
+    반드시 흔들린다(과거 FX 방향·유가 등락률 오류 전례)."""
+    html = FULL.replace('DAX 0.31%, FTSE100 -0.79%', 'DAX 0.31%, FTSE100 -0.75%')
+    assert any('FTSE100' in v and '-0.79' in v for v in check(html, SESSION))
+
+
+def test_a_stale_regional_close_must_carry_its_date():
+    s = {**SESSION, 'report_date': '2026-08-27'}
+    s['global_close']['asia']['rows'] = [
+        {'name': '닛케이', 'pct': -0.2, 'date': '2026-08-21'}]      # 4거래일 전
+    assert any('닛케이' in v and '기준일' in v for v in check(FULL, s))
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -710,6 +724,25 @@ MISNOMERS = ('상승 종목 비율', '등락 종목 수', '시장 폭', 'breadth
 
 INTERNAL = ('global_close', 'participation', 'gap_pp', 'close_position',
             'kr_session', 'data-session')
+
+
+STALE_SESSIONS = 3
+
+
+def _stale(date, report_date):
+    """주말만 빼고 센 거래일 간격. 정확한 휴장 달력이 없으므로 과대평가하지 않는다."""
+    import datetime as dt
+    try:
+        a = dt.date.fromisoformat(str(date))
+        b = dt.date.fromisoformat(str(report_date))
+    except ValueError:
+        return False
+    n, cur = 0, a
+    while cur < b:
+        cur += dt.timedelta(days=1)
+        if cur.weekday() < 5:
+            n += 1
+    return n >= STALE_SESSIONS
 
 
 def _strip_style(html):
@@ -765,6 +798,18 @@ def check(html, session, market='us'):
     for bad in INTERNAL:
         if bad in page:
             v.append(f'내부 표기 「{bad}」가 발행본에 노출됐다')
+    for region in ('asia', 'europe'):
+        for row in ((session.get('global_close') or {}).get(region) or {}).get('rows') or []:
+            if row.get('pct') is None:
+                continue
+            if f'{row["pct"]:.2f}' not in page.replace('+', ''):
+                v.append(f'{row["name"]}의 등락({row["pct"]:+.2f}%)이 본문·표 어디에도 '
+                         '없거나 다른 값으로 적혔다')
+            rd, d = session.get('report_date'), row.get('date')
+            if d and rd and _stale(d, rd) and str(d) not in page:
+                v.append(f'{row["name"]}의 마감이 {d}로 report_date({rd})보다 이른데 '
+                         '기준일 표기가 없다 — 당일 마감인 양 쓰지 않는다')
+
     if re.search(r'§\s*\d', page):
         v.append('「§N」 표기가 발행본에 있다 — 독자에게는 섹션 번호가 보이지 않는다. '
                  '이름으로 부르거나 주어를 바꿀 것')
@@ -776,7 +821,7 @@ def check(html, session, market='us'):
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `python3 -m pytest scripts/us/tests/test_session_gate.py -v`
-Expected: PASS (7 passed)
+Expected: PASS (9 passed)
 
 - [ ] **Step 5: CLI를 만든다**
 
