@@ -32,6 +32,7 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
 
+0. **시황 게이트** — `python3 scripts/check_session.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. KR의 첫 데이터 게이트다. `data-session` 문단 넷, 전일 미국장이 2거래일 이상 묵었을 때의 기준일 표기, 아시아 지수 등락의 표 대조, 「시장 폭」 오칭·내부 필드명·「§N」 노출을 본다. 비-코어라 `kr_session.json`이 없으면 통과한다.
 1. `python3 scripts/apply_readability.py <kr_brief 절대경로>`(v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)) 뒤 `python3 scripts/check_readability.py --strict <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
 2. 위반 원인별로 처방한다: 헤드라인은 방향·촉매·행동만 남기고, 장중 시각이 셋 이상인 문장은 시간대별로 나눈다. 수치가 다섯 개 이상이면 정확한 레벨은 표에 두고 산문에는 가장 가까운 지지·저항과 관계만 남긴다. 원화·지수 소수점은 산문에서 반올림하고 정밀값은 표·JSON에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
 3. 검사 원문을 writer에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → strict check를 반복한다.
@@ -80,6 +81,7 @@ python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
   --original kr_brief_[DATE].html --payload <고친 prose_in.txt 또는 _workspace/{run_id}/final.md> \
   --gate "python3 scripts/check_style.py {f}" \
   --gate "python3 scripts/check_readability.py --strict {f}" \
+  --gate "python3 scripts/check_session.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/verify_post.py {f} --before kr_brief_[DATE].html --skip-layout"
 ```
 
