@@ -515,5 +515,322 @@
   "spread_2s10s_fred_bp": 46.99999999999997,
   "spread_5s30s_bp": 79.5,
   "complete": true,
-  "missing": []
+  "missing": [],
+  "price_context": {
+    "windows": {
+      "move": 60,
+      "percentile": 504,
+      "correlation": 60,
+      "weights": 252
+    },
+    "aligned": true,
+    "moves": {
+      "S&P 500": {
+        "ticker": "^GSPC",
+        "change": 0.72,
+        "unit": "%",
+        "multiple": 0.84,
+        "band": "보통"
+      },
+      "Nasdaq": {
+        "ticker": "^IXIC",
+        "change": 1.573,
+        "unit": "%",
+        "multiple": 1.14,
+        "band": "보통"
+      },
+      "Russell 2000": {
+        "ticker": "^RUT",
+        "change": 0.281,
+        "unit": "%",
+        "multiple": 0.27,
+        "band": "미미"
+      },
+      "VIX": {
+        "ticker": "^VIX",
+        "change": -4.602,
+        "unit": "%",
+        "multiple": -0.53,
+        "band": "보통"
+      },
+      "DXY": {
+        "ticker": "DX-Y.NYB",
+        "change": -0.042,
+        "unit": "%",
+        "multiple": -0.14,
+        "band": "미미"
+      },
+      "USD/JPY": {
+        "ticker": "JPY=X",
+        "change": 0.047,
+        "unit": "%",
+        "multiple": 0.11,
+        "band": "미미"
+      },
+      "USD/KRW": {
+        "ticker": "KRW=X",
+        "change": -0.442,
+        "unit": "%",
+        "multiple": -0.7,
+        "band": "보통"
+      },
+      "WTI": {
+        "ticker": "CL=F",
+        "change": 1.399,
+        "unit": "%",
+        "multiple": 0.43,
+        "band": "미미"
+      },
+      "Gold": {
+        "ticker": "GC=F",
+        "change": 0.979,
+        "unit": "%",
+        "multiple": 0.61,
+        "band": "보통"
+      },
+      "10Y": {
+        "ticker": "^TNX",
+        "change": 0.008,
+        "unit": "pp",
+        "multiple": 0.2,
+        "band": "미미"
+      },
+      "30Y": {
+        "ticker": "^TYX",
+        "change": 0.005,
+        "unit": "pp",
+        "multiple": 0.14,
+        "band": "미미"
+      }
+    },
+    "levels": {
+      "S&P 500": {
+        "value": 7730.99,
+        "percentile": 98.6,
+        "band": "매우 높음",
+        "sessions": 504
+      },
+      "Nasdaq": {
+        "value": 26541.352,
+        "percentile": 96.6,
+        "band": "매우 높음",
+        "sessions": 504
+      },
+      "Russell 2000": {
+        "value": 3014.339,
+        "percentile": 97.4,
+        "band": "매우 높음",
+        "sessions": 504
+      },
+      "VIX": {
+        "value": 14.51,
+        "percentile": 5.5,
+        "band": "매우 낮음",
+        "sessions": 504
+      },
+      "DXY": {
+        "value": 99.128,
+        "percentile": 39.1,
+        "band": "중간",
+        "sessions": 504
+      },
+      "USD/JPY": {
+        "value": 159.33,
+        "percentile": 86.9,
+        "band": "높음",
+        "sessions": 504
+      },
+      "USD/KRW": {
+        "value": 1377.38,
+        "percentile": 13.9,
+        "band": "낮음",
+        "sessions": 504
+      },
+      "WTI": {
+        "value": 83.38,
+        "percentile": 83.7,
+        "band": "높음",
+        "sessions": 504
+      },
+      "Gold": {
+        "value": 4643.2,
+        "percentile": 86.9,
+        "band": "높음",
+        "sessions": 504
+      },
+      "10Y": {
+        "value": 4.672,
+        "percentile": 96.4,
+        "band": "매우 높음",
+        "sessions": 504
+      },
+      "30Y": {
+        "value": 5.191,
+        "percentile": 96.8,
+        "band": "매우 높음",
+        "sessions": 504
+      }
+    },
+    "correlations": [
+      {
+        "key": "equity_rates",
+        "label_ko": "주식과 금리",
+        "value": -0.335,
+        "prior": -0.694,
+        "flipped": false,
+        "band": "반대로 움직임(느슨하게)"
+      },
+      {
+        "key": "equity_dollar",
+        "label_ko": "주식과 달러",
+        "value": -0.354,
+        "prior": -0.634,
+        "flipped": false,
+        "band": "반대로 움직임(느슨하게)"
+      },
+      {
+        "key": "gold_rates",
+        "label_ko": "금과 금리",
+        "value": -0.07,
+        "prior": -0.453,
+        "flipped": false,
+        "band": "거의 무관"
+      },
+      {
+        "key": "memory_nasdaq",
+        "label_ko": "메모리와 나스닥",
+        "value": 0.606,
+        "prior": 0.534,
+        "flipped": false,
+        "band": "같이 움직임(강하게)"
+      }
+    ],
+    "cohesion": {
+      "n_assets": 10,
+      "top1_pct": 43.6,
+      "top3_pct": 75.6
+    },
+    "drivers": {
+      "first": {
+        "group_ko": "주식",
+        "share_pct": 43.6
+      },
+      "second": {
+        "group_ko": "금리",
+        "share_pct": 19.6
+      },
+      "prior": null,
+      "changed": false
+    },
+    "factor_decomposition": {
+      "memory": {
+        "excess_pct": -4.631,
+        "market_beta": 3.429,
+        "factors": {
+          "style": {
+            "label_ko": "성장−가치",
+            "beta": 3.003,
+            "contribution": 10.387
+          },
+          "size": {
+            "label_ko": "대형−소형",
+            "beta": -2.137,
+            "contribution": -3.313
+          }
+        },
+        "specific_pct": -11.705,
+        "fit_r2": 0.4852,
+        "window_sessions": 60,
+        "horizon_sessions": 20,
+        "label_ko": "메모리"
+      },
+      "ai_infra": {
+        "excess_pct": 17.019,
+        "market_beta": 3.479,
+        "factors": {
+          "style": {
+            "label_ko": "성장−가치",
+            "beta": 2.743,
+            "contribution": 9.486
+          },
+          "size": {
+            "label_ko": "대형−소형",
+            "beta": -2.708,
+            "contribution": -4.197
+          }
+        },
+        "specific_pct": 11.73,
+        "fit_r2": 0.6559,
+        "window_sessions": 60,
+        "horizon_sessions": 20,
+        "label_ko": "AI 인프라"
+      }
+    },
+    "sector_contribution": {
+      "index_change": 0.72,
+      "estimated": true,
+      "fit_r2": 0.9762,
+      "window_sessions": 252,
+      "rows": [
+        {
+          "name": "Technology",
+          "change": 3.16,
+          "contribution": 1.056
+        },
+        {
+          "name": "Communication Services",
+          "change": -1.07,
+          "contribution": -0.154
+        },
+        {
+          "name": "Consumer Discretionary",
+          "change": -1.09,
+          "contribution": -0.139
+        },
+        {
+          "name": "Health Care",
+          "change": -1.13,
+          "contribution": -0.101
+        },
+        {
+          "name": "Financials",
+          "change": -0.65,
+          "contribution": -0.07
+        },
+        {
+          "name": "Industrials",
+          "change": -0.85,
+          "contribution": -0.053
+        },
+        {
+          "name": "Consumer Staples",
+          "change": -1.38,
+          "contribution": -0.049
+        },
+        {
+          "name": "Utilities",
+          "change": -0.76,
+          "contribution": -0.028
+        },
+        {
+          "name": "Energy",
+          "change": -0.22,
+          "contribution": -0.005
+        }
+      ],
+      "unidentified": [
+        "Materials",
+        "Real Estate"
+      ],
+      "residual": 0.263
+    },
+    "forward_5y5y": {
+      "nominal": 4.95,
+      "date": "2026-08-26",
+      "real": 2.62,
+      "chg_1d_bp": 2.0,
+      "breakeven_implied": 2.33,
+      "breakeven_gap_bp": null
+    }
+  }
 }

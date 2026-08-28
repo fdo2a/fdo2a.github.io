@@ -39,6 +39,8 @@ Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` �
 
 **매크로 게이트 (§8)** — run `python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: the regime label is outside the 3×3 controlled vocabulary; the regime sits outside `allowed_regimes` (the writer moved it on a day with no new release, inside the 5-business-day lock, or against what the axis scores imply); the axis scores or the FedWatch probability are not quoted in the section; a newly released indicator listed in `headline_releases` has no `data-release` anatomy block, or that block stops at the headline number (no primary source named, fewer than three figures); a transmission direction is outside its `allowed_directions`; the policy path was re-timed without either a new release or a 15%p probability move; a transmission direction conflicts with the §9 stance grade and no `data-reconcile` paragraph explains it; or macro_next.json is missing / not dated today / disagrees with the §8 markers. Relaunch the writer with the exact violations.
 
+**가격 맥락 게이트 (§3·§5·§6·§7)** — run `python scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a cross-asset relationship whose sign flipped against the prior 60 sessions is not written about (needs a `data-relation="KEY"` paragraph — same discipline as §8's reconciliation, disagreement allowed, silence not); a `data-attribution` block prints the sector split without the residual it cannot explain, or prints one at all on a day the sector weights barely fit the index; or internal machinery (주성분·고유값·필드명) reached the page. Non-core: an older dataset with no `price_context` block passes untouched. Relaunch the writer with the exact violations.
+
 **스탠스 게이트 (§9)** — run `python scripts/check_stance.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a §9 grade label is outside the controlled vocabulary; a grade sits outside that asset's `allowed_grades` from stance_eval.json; a moved row lacks the MET trigger's actual value (or, for an event trigger, a research_notes.md attribution) in the surrounding text; a row is missing its 유지 일수 or 다음 분기점; or the writer's new stance.json is not dated today / omits a history entry for a moved row. Relaunch the writer with the exact violations. This gate is what keeps §9 a position rather than a restatement of the day's tape — do not waive it. Neither gate is waivable: between them they are the only thing standing between «승계되는 판단» and a daily rewrite wearing the same headings.
 
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
@@ -93,7 +95,8 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
   --gate "python3 scripts/check_readability.py --strict {f}" \
   --gate "python3 scripts/verify_post.py {f} --before morning_brief_[DATE].html --skip-layout" \
   --gate "python scripts/check_macro.py --html {f} --datadir <workspace>" \
-  --gate "python scripts/check_stance.py --html {f} --datadir <workspace>"
+  --gate "python scripts/check_stance.py --html {f} --datadir <workspace>" \
+  --gate "python scripts/check_price_context.py --html {f} --datadir <workspace>"
 ```
 
 되꽂기 → 바뀐 문단 출력 → 게이트 순서로 돌고, **전부 통과했을 때만** `os.replace`로 원본을 교체한다. 하나라도 실패하면 사본을 지우고 exit 1로 끝난다 — 원본은 처음부터 수정되지 않았다. **맨손 `mv`는 쓰지 않는다.** 검사를 건너뛰고 교체할 자리를 남기지 않는 것이 이 명령의 존재 이유다.
@@ -113,7 +116,7 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
 
 `finalize`는 게이트가 **하나도 없으면 시작하지 않고**, 사본과 원본 경로가 같아도 시작하지 않는다(검사 실패 시 원본을 지우게 된다). 게이트는 셸을 거치지 않고 인자 배열로 실행된다.
 
-`check_macro`·`check_stance`가 여기 다시 들어가는 이유가 있다. STEP 2의 게이트들은 **윤문 전 원고를 보고 통과시킨 것이다.** 윤문은 문장을 합치거나 나누므로 문장 길이·수치 밀도가 깨질 수 있고, 통제 어휘나 `data-*` 표식을 건드리면 §8·§9가 검사받지 않은 채로 나간다.
+`check_macro`·`check_stance`·`check_price_context`가 여기 다시 들어가는 이유가 있다. STEP 2의 게이트들은 **윤문 전 원고를 보고 통과시킨 것이다.** 윤문은 문장을 합치거나 나누므로 문장 길이·수치 밀도가 깨질 수 있고, 통제 어휘나 `data-*` 표식을 건드리면 §8·§9가 검사받지 않은 채로 나간다.
 
 **5. 명령이 찍어 준 「바뀐 문단」을 읽는다.**
 

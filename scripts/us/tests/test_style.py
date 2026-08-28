@@ -156,9 +156,9 @@ def test_jargon_does_not_match_inside_longer_korean_words():
 
 
 def test_jargon_matches_with_korean_particle_attached():
-    """조사가 붙은 형태는 잡아야 한다 — 「브레드스가」·「아웃퍼폼했습니다」."""
+    """조사가 붙은 형태는 잡아야 한다 — 「브레드스가」·「인버전이」."""
     assert "jargon" in _keys(_wrap("브레드스가 나빠졌습니다."))
-    assert "jargon" in _keys(_wrap("반도체가 아웃퍼폼했습니다."))
+    assert "jargon" in _keys(_wrap("커브 인버전이 깊어졌습니다."))
 
 
 def test_english_jargon_is_case_insensitive():
@@ -210,17 +210,23 @@ def test_stack_counts_distinct_terms_not_repeats():
         _wrap("레짐은 그대로지만 확산지수가 밀렸습니다."))
 
 
-def test_trigger_and_stance_need_a_gloss():
-    """사용자가 든 예에 「트리거」가 들어 있었다 — 첫 등장에 한 번은 푼다."""
-    assert "jargon_gloss" in _keys(_wrap("확대 트리거를 넘어섰습니다."))
-    assert "jargon_gloss" not in _keys(
-        _wrap("확대 트리거(판단을 뒤집을 조건)를 넘어섰습니다."))
+def test_trigger_and_stance_are_ordinary_market_words():
+    """2026-08-28 사용자 지시로 COMMON으로 옮겼다 — 시장 기사에 흔한 말이라
+    풀이를 요구하면 오히려 글이 늘어진다. 2026-08-26에는 GLOSS였다."""
+    assert "jargon_gloss" not in _keys(_wrap("확대 트리거를 넘어섰습니다."))
+    assert "jargon_gloss" not in _keys(_wrap("연준 스탠스가 바뀌었습니다."))
 
 
 def test_jargon_matches_inside_korean_compounds():
-    """「밸류에이션발」·「숏커버성」·「캐리트레이드」는 여전히 그 말이다 — 실측 발행본."""
-    for text in ("밸류에이션발 조정이 나왔습니다.", "숏커버성 반등이었습니다.",
-                 "캐리트레이드가 되감겼습니다.", "베타성 반등에 그쳤습니다."):
+    """뒤에 뭐가 붙어도 여전히 그 말이다 — 「브레드스발」·「프록시성」.
+
+    예시가 2026-08-28에 바뀌었다: 원래 쓰던 「밸류에이션발」·「숏커버성」·
+    「캐리트레이드」는 이제 COMMON이라 검사 대상이 아니다. 검사하는 것은
+    분류가 아니라 **접미사가 붙어도 낱말을 찾아내는 능력**이므로, 여전히
+    걸려야 할 말로 예시만 옮겼다.
+    """
+    for text in ("브레드스발 반등이었습니다.", "프록시성 지표에 그쳤습니다.",
+                 "인버전발 우려가 커졌습니다.", "레짐성 변화로 보입니다."):
         assert "jargon" in _keys(_wrap(text)) or "jargon_gloss" in _keys(_wrap(text)), text
 
 
@@ -264,3 +270,48 @@ def test_later_sentence_gloss_does_not_clear_earlier_term():
     html = _wrap("레짐 상승. 베타(지수 대비 민감도)는 낮아졌습니다.")
     found = [f for f in S.findings(html) if f["key"] == "jargon_gloss"]
     assert found and "레짐" in found[0]["message"]
+
+
+# ── 업계용어·경제뉴스 상용어는 그대로 쓴다 (2026-08-28 사용자 지시) ──────────
+# 「어려운 말」의 기준은 «독자가 처음 보는 말»이지 «외래어»가 아니다. 경제
+# 뉴스를 읽는 사람이 이미 수없이 본 말까지 풀어 쓰면 글이 유치해진다.
+
+def test_terms_common_in_economic_news_pass_untouched():
+    for text in ("컨센서스를 밑돌았습니다.", "밸류에이션 부담이 커졌습니다.",
+                 "가이던스를 낮췄습니다.", "모멘텀이 살아났습니다.",
+                 "멀티플이 낮아졌습니다.", "리스크온 흐름이 이어졌습니다.",
+                 "반도체가 아웃퍼폼했습니다.", "비중은 오버웨이트를 유지합니다.",
+                 "커브가 스티프닝했습니다.", "숏커버가 들어왔습니다.",
+                 "기대인플레가 올랐습니다.", "확대 트리거를 넘어섰습니다.",
+                 "연준 스탠스가 바뀌었습니다.", "익스포저를 줄였습니다."):
+        assert "jargon" not in _keys(_wrap(text)), text
+        assert "jargon_gloss" not in _keys(_wrap(text)), text
+
+
+def test_common_terms_do_not_count_toward_a_stacked_sentence():
+    html = _wrap("컨센서스를 밑돌았지만 밸류에이션 부담이 줄어 모멘텀은 살아났습니다.")
+    assert "jargon_stack" not in _keys(html)
+
+
+def test_words_a_news_reader_has_never_seen_are_still_flagged():
+    """사용자가 처음 문제 삼은 말은 그대로 걸려야 한다."""
+    found = [f for f in S.findings(_wrap("브레드스가 좋아졌습니다.")) if f["key"] == "jargon"]
+    assert found and "상승 종목 비율" in found[0]["message"]
+
+
+def test_house_coinages_are_still_flagged():
+    for text in ("컨빅션이 높습니다.", "프록시로 삼았습니다.", "바텀아웃 신호입니다.",
+                 "캐치업 랠리였습니다."):
+        assert "jargon" in _keys(_wrap(text)), text
+
+
+def test_genuinely_specialist_terms_still_need_one_gloss():
+    assert "jargon_gloss" in _keys(_wrap("장기물 기간프리미엄이 올랐습니다."))
+    assert "jargon_gloss" in _keys(_wrap("레짐은 그대로입니다."))
+    assert "jargon_gloss" in _keys(_wrap("확산지수가 밀렸습니다."))
+
+
+def test_a_word_that_merely_contains_a_flagged_term_passes():
+    """「프록시서버」의 「프록시」는 대리 지표가 아니다 — NOT_JARGON이 막는다."""
+    assert "jargon" not in _keys(_wrap("프록시서버를 거쳐 접속합니다."))
+    assert "jargon" in _keys(_wrap("프록시로 삼았습니다."))

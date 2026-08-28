@@ -109,31 +109,46 @@ def fill_daily_gaps(daily):
 
 
 def collect_histories():
-    """Close-price histories for the stance trigger metrics (6mo covers a 50DMA).
+    """Close-price histories for the stance triggers and the price-context readings.
 
-    Returns (closes, as_of) — as_of is the S&P 500's last bar date. The caller checks
-    it against the report date, because judging today's triggers against a history that
-    stops short would quietly decide the stance on stale prices.
+    3y rather than the 6mo the stance triggers alone needed: the two-year percentile
+    and the 252-session weight regression both read further back, and one longer
+    batched download is cheaper than a second request.
+
+    Returns (closes, dates, as_of). `dates` carries each series' own session dates,
+    which the price-context readings need: FX trades ~26 more sessions over three
+    years than the equity indices (2026-08-28 measured), so anything that lines two
+    series up by list position is comparing different days. as_of is the S&P 500's
+    last bar date — the caller checks it against the report date, because judging
+    today's triggers against a history that stops short would quietly decide the
+    stance on stale prices.
     """
     import yfinance as yf
-    from us.stance_metrics import HISTORY_TICKERS
+    from us.price_context import HISTORY_TICKERS as PC_TICKERS
+    from us.stance_metrics import HISTORY_TICKERS as STANCE_TICKERS
+
+    tickers = sorted(set(STANCE_TICKERS) | set(PC_TICKERS) | {t for _, t in SECTORS})
 
     def dl():
-        df = yf.download(HISTORY_TICKERS, period='6mo', interval='1d', group_by='ticker',
+        df = yf.download(tickers, period='3y', interval='1d', group_by='ticker',
                          auto_adjust=True, progress=False, threads=False)
         return df if df is not None and len(df) else None
 
     df = retry(dl)
-    out, as_of = {}, None
-    for t in HISTORY_TICKERS:
+    out, idx, as_of = {}, {}, None
+    for t in tickers:
         try:
             closes = df[t]['Close'].dropna()
-            out[t] = [float(x) for x in closes] if len(closes) else None
+            if len(closes):
+                out[t] = [float(x) for x in closes]
+                idx[t] = [str(d.date()) for d in closes.index]
+            else:
+                out[t], idx[t] = None, None
             if t == '^GSPC' and len(closes):
                 as_of = str(closes.index[-1].date())
         except Exception:
-            out[t] = None
-    return out, as_of
+            out[t], idx[t] = None, None
+    return out, idx, as_of
 
 
 PERF_HORIZONS = [('1D', 1), ('1W', 7), ('1M', 30), ('6M', 182), ('1Y', 365)]
@@ -583,13 +598,28 @@ def main():
 
     render_sector_perf_html(sector_perf, perf_as_of, os.path.join(args.outdir, 'sector_performance.html'))
 
-    # Non-core: the stance trigger inputs. A failure here must not cost us the dataset —
+    # Non-core, and shared: one batched download feeds both the stance triggers and the
+    # price-context readings. A failure here must not cost us the dataset —
     # eval_stance_triggers.py degrades every affected trigger to UNKNOWN, which freezes
     # the grade rather than inventing a move.
+    print('collecting close-price histories (batched)...')
+    try:
+        closes, hist_dates, hist_as_of = collect_histories()
+        print(f'  histories: {sum(1 for v in closes.values() if v)}/{len(closes)} '
+              f'(as of {hist_as_of})')
+    except Exception as e:
+        print(f'histories failed: {e}', file=sys.stderr)
+        closes, hist_dates, hist_as_of = {}, {}, None
+
     print('computing stance trigger metrics...')
     try:
         from us.stance_metrics import compute as compute_stance_metrics
-        closes, hist_as_of = collect_histories()
+        # No provable history end date means no provable freshness. Writing the file
+        # anyway would replace yesterday's committed metrics — whose stale report_date
+        # is exactly what makes the evaluator fall through to UNKNOWN — with a fresh
+        # -looking file built on whatever partial prices survived.
+        if hist_as_of is None:
+            raise RuntimeError('history has no end date; leaving yesterday\'s metrics in place')
         metrics = compute_stance_metrics(closes, data)
         have = sum(1 for v in metrics.values() if v is not None)
         print(f'  stance metrics: {have}/{len(metrics)} (history as of {hist_as_of})')
@@ -643,6 +673,53 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'macro metrics failed: {e}', file=sys.stderr)
+
+    # Non-core, same contract as the blocks above: the statistical context for the
+    # price side — is today's move large for this asset, where does the level sit in
+    # its own history, are the standing cross-asset relationships still holding. A
+    # failure here costs the readings, never the dataset.
+    print('computing price context...')
+    try:
+        from us.price_context import compute as compute_price_context
+        pc = compute_price_context(closes, data, sectors=SECTORS, dates=hist_dates)
+        data['price_context'] = pc
+        big = [n for n, m in pc['moves'].items() if m and m.get('band') in ('큼', '매우 큼')]
+        flips = [c['label_ko'] for c in pc['correlations'] if c['flipped']]
+        unknown = [c['label_ko'] for c in pc['correlations'] if c['flipped'] is None]
+        if unknown:
+            print(f"  관계 판정 불가: {', '.join(unknown)}", file=sys.stderr)
+        coh = pc['cohesion']
+        print(f"  이례적 움직임: {', '.join(big) if big else '없음'}")
+        print(f"  관계 전환: {', '.join(flips) if flips else '없음'}")
+        if coh:
+            print(f"  시장 응집도: 상위 1개 요인 {coh['top1_pct']}% / 상위 3개 {coh['top3_pct']}%")
+        sc = pc['sector_contribution']
+        if sc and sc['rows']:
+            top = sc['rows'][0]
+            print(f"  지수 {sc['index_change']:+.2f}% 중 {top['name']} "
+                  f"{top['contribution']:+.2f}%p (설명력 R²={sc['fit_r2']})")
+    except Exception as e:
+        print(f'price context failed: {e}', file=sys.stderr)
+
+    # Non-core: the §9 track record. Mostly it says "not enough decisions yet" — that
+    # is the point. It accumulates now so a retrospective is possible later, and the
+    # publication gate blocks any claim made before the sample is there.
+    print('scoring the stance record...')
+    try:
+        from us.scorecard import build as build_scorecard
+        prev = {}
+        try:
+            prev = json.load(open(os.path.join(args.outdir, 'stance.json')))
+        except Exception:
+            print('  no committed stance.json — nothing to score', file=sys.stderr)
+        card = build_scorecard(prev.get('history') or [], closes, hist_dates)
+        print(f"  채점 {card['scored']}건 / 필요 {card['min_sample']}건"
+              + (f" · 적중률 {card['hit_rate']}%" if card['sufficient'] else ' · 표본 부족'))
+        json.dump({'generated': data['generated'], 'report_date': report_date, **card},
+                  open(os.path.join(args.outdir, 'scorecard.json'), 'w'),
+                  indent=2, default=str, ensure_ascii=False)
+    except Exception as e:
+        print(f'scorecard failed: {e}', file=sys.stderr)
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
     json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
