@@ -327,12 +327,12 @@ table { font-variant-numeric: tabular-nums; }
 
   `max-width: 42em`가 한 줄 42자를 만든다. 줄간격 1.78·문단 간격 15px은 이전 1.58·9px을 대체한다 — 한글 장문에서 1.6 이하 줄간격과 반 줄도 안 되는 문단 간격은 문단 경계를 지워 글을 벽으로 만든다. 모바일에서는 `max-width`가 저절로 무력해지므로 브레이크포인트를 따로 손댈 필요가 없다.
 
-- **데스크톱 폭 (2026-08-26 사용자 지시 — 「PC 글 폭이 모바일에 치중됐다」)**: 위 42em은 **모바일·태블릿 기준**이다. 그대로 두면 뷰포트가 1440px이든 768px이든 문단 폭이 똑같이 672px이라, 카드는 1080px인데 글은 672px만 쓰고 오른쪽 408px이 늘 빈다 — PC로 봐도 모바일 화면을 늘려 놓은 꼴이다. **1024px 이상에서만** 본문 글자를 17px로 키우고 폭을 50em(약 850px)으로 넓힌다. 글자와 폭을 함께 키우므로 한 줄은 약 50자 — 42자와 65자 사이다. 이 블록은 `scripts/apply_readability.py`가 자동으로 넣으므로 손으로 쓸 필요는 없지만, **직접 쓴 CSS가 이것과 싸우지 않게** 한다.
+- **데스크톱 폭 (2026-08-26 지시 → 2026-08-28 지시로 갱신)**: 위 42em은 **모바일·태블릿 기준**이다. 그대로 두면 뷰포트가 1440px이든 768px이든 문단 폭이 똑같이 672px이라, 카드는 1080px인데 글은 672px만 쓰고 오른쪽 408px이 늘 빈다. 2026-08-26에는 이것을 50em(약 850px)으로 넓혔는데, **2026-08-28 사용자 지시(「문장 끝이 네모 전체에 차게 작성해. 중간에 줄바꿈 하지 말고」)로 데스크톱에서는 폭 제한을 아예 걷어낸다** — 50em도 1080px 카드에서 오른쪽 230px을 비웠다. 1024px 이상에서 본문은 17px이고 폭은 카드가 정한다(실측 1034px). **줄 끝에서 단어가 잘리지 않는 것은 `word-break: keep-all`이 보장한다** — 폭을 넓힌다고 이 속성을 빼면 안 된다. 이 블록은 `scripts/apply_readability.py`(v5)가 자동으로 넣으므로 손으로 쓸 필요는 없지만, **직접 쓴 CSS가 이것과 싸우지 않게** 한다.
 
 ```css
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
-  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
   h1 { font-size: 25px; max-width: 30em; }
@@ -341,6 +341,7 @@ table { font-variant-numeric: tabular-nums; }
 }
 ```
 
+- **라벨은 본문 위에 선다 (2026-08-28 사용자 지시 — 「제목 바로 옆에 내용을 이어서 적지 말고 제목 밑에 줄바꿈을 해」)**: `<span class="box-label">장중 흐름.</span> 나스닥은…`처럼 라벨 옆에 본문이 이어 붙지 않는다. `.box-label`은 `display:block; width:fit-content`로 알약 모양을 지킨 채 제 줄을 차지하고, 문단 첫머리 `<strong>` 라벨은 `class="p-label"`을 달아 블록이 된다. **라벨과 강조된 첫 문장은 마침표 위치로 갈린다** — `<strong>오늘의 행동.</strong>`처럼 안에 있으면 라벨, `<strong>…지배했습니다</strong>.`처럼 밖에 있으면 그냥 문장이라 그대로 이어 쓴다. 종결어미(…다./…요.)로 끝나면 짧아도 문장이다. `apply_readability.py`가 자동으로 판정해 붙인다.
 - **본문 크기는 맨 `p`에만 얹는다 (2026-08-26 실측 사고)**: `.card p, p { font-size:16px }`처럼 쓰지 말고 **`p { font-size:16px }`**로 쓴다. `.card p`는 특정도 (0,1,1)이라 `.caption`(0,1,0)을 이기고, 그러면 12.5px이어야 할 캡션·각주가 본문 크기 16px로 인쇄된다. 실제로 KR 발행본 5편과 US 1편이 이 선택자를 썼고 그 글들만 캡션이 커져 있었다. `.card p`에는 폭·줄간격·여백만 얹고 **font-size는 절대 얹지 않는다.** `scripts/apply_readability.py`가 이 선택자를 발견하면 한정 부분을 떼어내지만, 애초에 만들지 않는 것이 맞다.
 - h2: bold #191F28 + 6px 라운드 Toss Blue 바 프리픽스(::before). 표: 헤더 행 배경 #F2F4F6 + 2px Toss Blue 하단 보더, 라운드 컨테이너
 - 상단 바: 'US Market Brief' Toss Blue bold + 작성일. 헤드라인은 #E8F2FF 카드

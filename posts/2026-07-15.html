@@ -132,7 +132,7 @@
     th:last-child, td:last-child { white-space: normal; }
   }
 
-/* readability-v4 */
+/* readability-v5 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -156,9 +156,12 @@ section { scroll-margin-top: 20px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
 }
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
-  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
   h1 { font-size: 25px; max-width: 30em; }
@@ -265,8 +268,8 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="card" style="margin-top:12px;">
 <span class="tag tag-neutral" style="margin-bottom:8px;">2s10s +40.0bp · 주간 베어 스티프닝</span>
-<p><strong class="box-label" style="display:inline;">주간 커브 변화</strong> — 최근 1거래일(7/14)은 2Y가 -8bp로 가장 크게 내리며 만기 전 구간에서 금리가 하락한 '불 스티프닝'(강세+커브 스티프닝)이었던 반면, 1주일 단위로 보면 2Y만 -1bp 소폭 하락하고 5Y·10Y·30Y는 각각 +4bp·+3bp·+3bp 상승해 '베어 스티프닝' 흐름이 우세했다. 2s10s 스프레드는 1주 전 36bp에서 현재 40bp로 4bp 확대됐다.</p>
-<p><strong class="box-label" style="display:inline;">해석 — 커브 형태 &amp; 듀레이션 전략</strong> — 7월14일 하루치 랠리만 보면 단기물이 더 크게 강해진 불 스티프닝이지만, 이는 전날 발표된 CPI 서프라이즈(-0.42% MoM)에 대한 즉각적 반응이며 주간 추세와는 결이 다르다.</p>
+<p><strong class="box-label">주간 커브 변화</strong> — 최근 1거래일(7/14)은 2Y가 -8bp로 가장 크게 내리며 만기 전 구간에서 금리가 하락한 '불 스티프닝'(강세+커브 스티프닝)이었던 반면, 1주일 단위로 보면 2Y만 -1bp 소폭 하락하고 5Y·10Y·30Y는 각각 +4bp·+3bp·+3bp 상승해 '베어 스티프닝' 흐름이 우세했다. 2s10s 스프레드는 1주 전 36bp에서 현재 40bp로 4bp 확대됐다.</p>
+<p><strong class="box-label">해석 — 커브 형태 &amp; 듀레이션 전략</strong> — 7월14일 하루치 랠리만 보면 단기물이 더 크게 강해진 불 스티프닝이지만, 이는 전날 발표된 CPI 서프라이즈(-0.42% MoM)에 대한 즉각적 반응이며 주간 추세와는 결이 다르다.</p>
   <p>한 주 전체로는 오히려 장기물 금리가 소폭 올라 2s10s 스프레드가 36bp에서 40bp로 벌어진 베어 스티프닝이 진행 중이었다 — 즉 연준의 향후 인상 사이클 지속 우려가 완전히 걷힌 것은 아니고, 장기 기대인플레이션(미시간대 1년 기대 4.8%, NY연은 1년 기대 3.7%로 상승)과 재정 리스크 프리미엄이 장기물 금리 하단을 지지하고 있다는 신호로 읽힌다.</p>
   <p>포지셔닝 측면에서는 단기물 위주 듀레이션 확대(2Y·5Y 비중 확대)는 CPI 서프라이즈 지속 시 유효하나, 30Y 롱 포지션은 기대인플레 재상승 리스크에 취약해 커브 스티프너(2s30s 매수) 형태로 헤지하는 전략이 합리적이다. 손절 트리거는 10Y가 4.65% 위로 재상승하며 베어 스티프닝이 재개될 경우로 설정한다.</p>
 </div>
@@ -323,8 +326,8 @@ section { scroll-margin-top: 20px; }
 </table>
 </div>
 <div class="card" style="margin-top:12px;">
-<p><strong class="box-label" style="display:inline;">리스크 시나리오 1</strong> — Fed 매파 발언(Warsh)이 확산되며 9월 FOMC 인상 확률이 재차 50%를 상회, 국채금리가 반등해 이번 주 랠리를 되돌리는 시나리오. 트리거는 10Y 4.65% 이상 재상승.</p>
-<p><strong class="box-label" style="display:inline;">리스크 시나리오 2</strong> — 메모리·AI 광학 조정이 차익실현을 넘어 실적 시즌 가이던스 하향으로 확인될 경우, 반도체 섹터 전반으로 매물이 확산되며 메가캡 랠리로 상쇄되지 않는 지수 조정이 발생할 수 있다. 확인 트리거는 다음 주 반도체 대형주 실적 가이던스.</p>
+<p><strong class="box-label">리스크 시나리오 1</strong> — Fed 매파 발언(Warsh)이 확산되며 9월 FOMC 인상 확률이 재차 50%를 상회, 국채금리가 반등해 이번 주 랠리를 되돌리는 시나리오. 트리거는 10Y 4.65% 이상 재상승.</p>
+<p><strong class="box-label">리스크 시나리오 2</strong> — 메모리·AI 광학 조정이 차익실현을 넘어 실적 시즌 가이던스 하향으로 확인될 경우, 반도체 섹터 전반으로 매물이 확산되며 메가캡 랠리로 상쇄되지 않는 지수 조정이 발생할 수 있다. 확인 트리거는 다음 주 반도체 대형주 실적 가이던스.</p>
 </div>
 </section>
 
@@ -369,10 +372,10 @@ section { scroll-margin-top: 20px; }
 </table>
 </div>
 <div class="card" style="margin-top:12px;">
-<p><strong class="box-label" style="display:inline;">업계 뉴스</strong> — 24/7 Wall St. 등의 보도에 따르면 이날 미국 상장 메모리·스토리지주(Micron, SanDisk, Western Digital, Seagate)의 급락은 개별 기업 악재가 아니라 2026년 들어 극단적으로 급등한 데 따른 차익실현 성격이 강하다.</p>
+<p><strong class="box-label">업계 뉴스</strong> — 24/7 Wall St. 등의 보도에 따르면 이날 미국 상장 메모리·스토리지주(Micron, SanDisk, Western Digital, Seagate)의 급락은 개별 기업 악재가 아니라 2026년 들어 극단적으로 급등한 데 따른 차익실현 성격이 강하다.</p>
   <p>같은 보도는 SK hynix 나스닥 ADR의 극심한 변동성(전일 +27% 급등 이후 급락)을 낮은 유동주식비율과 ADR-서울 상장주 간 프리미엄 괴리, 레버리지 상품 수요 탓으로 짚었는데, 이는 코스피 원주(000660.KS)와는 별개 종목·상장지에서 벌어진 일이라는 점에 유의해야 한다.</p>
   <p>결과적으로 이날 반도체 섹터의 핵심 스토리는 '미국 메모리 3사 차익실현 매물 vs 한국 메모리 2사 코스피 원주 강세'라는 지역 간 디커플링이다.</p>
-<p><strong class="box-label" style="display:inline;">투자 관점</strong> — YTD 급등폭을 감안하면 이번 조정은 밸류에이션 되돌림 국면으로, 펀더멘털 훼손 신호(수요 둔화, 가격 협상력 약화 등)가 뉴스플로우에서 확인되지 않는 한 저점 분할 매수 관점을 유지할 만하다. 다만 미·한 상장 종목 간 방향성 괴리가 큰 만큼 ADR 프리미엄·유동성 리스크가 있는 종목은 포지션 크기를 보수적으로 가져가야 한다.</p>
+<p><strong class="box-label">투자 관점</strong> — YTD 급등폭을 감안하면 이번 조정은 밸류에이션 되돌림 국면으로, 펀더멘털 훼손 신호(수요 둔화, 가격 협상력 약화 등)가 뉴스플로우에서 확인되지 않는 한 저점 분할 매수 관점을 유지할 만하다. 다만 미·한 상장 종목 간 방향성 괴리가 큰 만큼 ADR 프리미엄·유동성 리스크가 있는 종목은 포지션 크기를 보수적으로 가져가야 한다.</p>
 </div>
 </section>
 
@@ -389,10 +392,10 @@ section { scroll-margin-top: 20px; }
 </table>
 </div>
 <div class="card" style="margin-top:12px;">
-<p><strong class="box-label" style="display:inline;">업계 동향</strong> — 24/7 Wall St. 보도에 따르면 이날 AI 광통신(포토닉스) 종목군의 급락은 개별 악재가 아니라 마이크론 등 반도체 전반의 리스크오프에 동반된 결과이며, 과열된 트레이드에 대한 표적성 차익실현으로 해석된다.</p>
+<p><strong class="box-label">업계 동향</strong> — 24/7 Wall St. 보도에 따르면 이날 AI 광통신(포토닉스) 종목군의 급락은 개별 악재가 아니라 마이크론 등 반도체 전반의 리스크오프에 동반된 결과이며, 과열된 트레이드에 대한 표적성 차익실현으로 해석된다.</p>
   <p>같은 보도는 펀더멘털 자체는 견조하다고 지적하는데, Lumentum은 FY2026 3분기 매출 8억 840만 달러(전년비 +90%)를 기록했고 광회로스위치(OCS) 백로그가 400억 달러를 넘어서며 800G·1.6T 및 co-packaged optics 수요 논지가 유지되고 있다고 평가했다. Marvell에 대한 이날 단독 촉매 기사는 확인되지 않았으나 동일한 리스크오프 흐름에 동반된 것으로 추정된다.</p>
   <p>GE Vernova·Vertiv 등 데이터센터 전력·인프라 종목은 낙폭이 훨씬 작거나(-1.01%) 오히려 소폭 상승(+0.33%)해, 이번 조정이 AI 반도체·광학 부품에 갇혀 전력 인프라로는 좀처럼 옮겨붙지 않았다.</p>
-<p><strong class="box-label" style="display:inline;">투자 관점</strong> — 광학 부품주는 밸류에이션 부담에 따른 단기 변동성이 남아있지만 수주 잔고와 매출 성장률 등 펀더멘털 지표는 훼손되지 않아, 조정을 실적 시즌 전 비중 축소 후 재진입 기회로 활용하는 전략이 유효하다. 반면 전력·냉각 인프라는 AI 데이터센터 투자 사이클의 하방 경직성이 상대적으로 크다는 점에서 코어 비중을 유지할 근거가 있다.</p>
+<p><strong class="box-label">투자 관점</strong> — 광학 부품주는 밸류에이션 부담에 따른 단기 변동성이 남아있지만 수주 잔고와 매출 성장률 등 펀더멘털 지표는 훼손되지 않아, 조정을 실적 시즌 전 비중 축소 후 재진입 기회로 활용하는 전략이 유효하다. 반면 전력·냉각 인프라는 AI 데이터센터 투자 사이클의 하방 경직성이 상대적으로 크다는 점에서 코어 비중을 유지할 근거가 있다.</p>
 </div>
 </section>
 
@@ -455,17 +458,17 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="note">※ Actual/Previous는 FRED 확정치(econ_indicators.json), Forecast·발표일은 최근 발표분 웹 리서치 기준.</div>
 <div class="card" style="margin-top:12px;">
-<p><strong class="box-label" style="display:inline;">시장 해석</strong> — CPI·PPI가 나란히 컨센서스를 큰 폭 하회하며(CPI MoM -0.42% vs 예상 -0.1%, PPI MoM -0.28% vs 예상 0.0%) 국채금리는 전 구간에서 하락하고 주식은 안도 랠리를 보였다.</p>
+<p><strong class="box-label">시장 해석</strong> — CPI·PPI가 나란히 컨센서스를 큰 폭 하회하며(CPI MoM -0.42% vs 예상 -0.1%, PPI MoM -0.28% vs 예상 0.0%) 국채금리는 전 구간에서 하락하고 주식은 안도 랠리를 보였다.</p>
   <p>CME FedWatch 기준 7/29 FOMC 동결 확률은 87.7%까지 급등해 직전 40%대였던 인상 베팅이 10%대로 급락했지만, 9월 회의는 인상(약 53%)과 동결(약 40%)이 팽팽히 맞서, 시장은 이번 서프라이즈를 '추세 전환'으로까지 확신하지는 못하는 모습이다.</p>
   <p>케빈 워시 이사의 매파적 발언과 NY연은 1년 기대인플레(3.7%, 2023년 9월 이후 최고)의 동반 상승은 컨센서스 괴리를 액면 그대로 받아들이기보다 향후 데이터로 재확인이 필요하다는 신중론에 힘을 싣는다.</p>
 </div>
 <div class="card">
-<p><strong class="box-label" style="display:inline;">4축 진단</strong> — 선행지표 격인 심리축(미시간 소비자심리 44.8, 직전 49.8 대비 악화)은 뚜렷이 둔화된 반면, 노동시장 후행 성적표(실업률 4.2%로 개선, 페이롤 증가폭은 +57K로 둔화 — 혼조)는 방향이 엇갈린다.</p>
+<p><strong class="box-label">4축 진단</strong> — 선행지표 격인 심리축(미시간 소비자심리 44.8, 직전 49.8 대비 악화)은 뚜렷이 둔화된 반면, 노동시장 후행 성적표(실업률 4.2%로 개선, 페이롤 증가폭은 +57K로 둔화 — 혼조)는 방향이 엇갈린다.</p>
   <p>활동(중행)축에서는 산업생산·내구재수주가 모두 전월 대비 크게 꺾여 심리 악화와 궤를 같이하지만, 소비축의 소매판매는 오히려 +0.88%로 개선돼 심리지표와 실제 지출 사이의 괴리가 두드러진다. 물가축은 선행성 있는 CPI·PPI 서프라이즈가 뚜렷한 개선(둔화)을 보였으나 기대인플레이션(미시간·NY연은)은 오히려 상승하고 있어, 물가축 내부에서도 실제치와 기대치가 상충하는 모습이다.</p>
   <p>종합하면 '심리 악화 → 활동 둔화'는 정합적이나 '소비 개선'과 '물가 실제치 개선 vs 기대치 악화'가 서로 다른 신호를 보내는 전형적인 전환기 혼조 국면이다.</p>
 </div>
 <div class="card">
-<p><strong class="box-label" style="display:inline;">경제 방향 전망</strong> — 기본 시나리오(확률 우위)는 향후 1~3개월간 디스인플레이션이 완만하게 이어지되 속도는 둔화되는 국면으로, 근거는 CPI·PPI 서프라이즈에도 기대인플레이션이 오히려 오르고 있어 추가 급락 여지가 제한적이라는 점이다.</p>
+<p><strong class="box-label">경제 방향 전망</strong> — 기본 시나리오(확률 우위)는 향후 1~3개월간 디스인플레이션이 완만하게 이어지되 속도는 둔화되는 국면으로, 근거는 CPI·PPI 서프라이즈에도 기대인플레이션이 오히려 오르고 있어 추가 급락 여지가 제한적이라는 점이다.</p>
   <p>대안 시나리오는 소비(소매판매 개선)와 고용(실업률 개선)이 예상외로 견조하게 유지되며 물가 둔화가 일시적 노이즈에 그치는 경우로, 이 경우 9월 FOMC 인상 베팅(현재 53%)이 재차 강화될 수 있다.</p>
   <p>시나리오를 가를 핵심 발표는 다음 CPI·PPI(8월 발표분), 9월 FOMC 성명 및 점도표, 그리고 NY연은·미시간대 기대인플레이션 갱신치다.</p>
   <p>자산배분 관점에서는 단기물 채권 비중 확대와 메가캡 중심 주식 익스포저를 유지하되, 장기물 채권과 경기민감 섹터는 기대인플레 재상승 리스크를 감안해 헤지 비중을 남겨두는 바벨 전략이 합리적이다.</p>

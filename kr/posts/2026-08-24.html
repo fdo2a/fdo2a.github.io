@@ -61,7 +61,7 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v4 */
+/* readability-v5 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -85,9 +85,12 @@ section { scroll-margin-top: 20px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
 }
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
-  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
   h1 { font-size: 25px; max-width: 30em; }
@@ -118,9 +121,9 @@ section { scroll-margin-top: 20px; }
 <section id="read-1">
   <div class="card">
     <h2>전략 코멘트</h2>
-    <p><strong>오늘의 행동.</strong> 코스피 반도체 대형주 비중을 다음 세션까지 축소한다. 삼성전자가 주주환원 실망으로 8.69% 급락했고, 시가총액 1위인 만큼 지수 낙폭(3.12%)을 끌어내린 축이었습니다. 종목별 지수 기여도는 이 데이터에 없어 몫을 정확히 나누지는 못합니다. 외국인과 기관은 코스피에서 각각 3조6,691억원, 1조2,901억원을 순매도했다(모두 당일 잠정).</p>
-    <p><strong>왜 지금인가.</strong> 시장은 삼성전자의 주주환원 규모를 최대 150조원으로 기대했지만 실제 발표는 110조원에 그쳐 재료 소멸형 매물이 나왔다. 개인은 코스피에서 3조3,217억원을 순매수(당일 잠정)하며 대형주 저가 매수에 나섰지만 외국인·기관의 매도 규모를 감당하지 못했다. 코스닥은 비철금속(+7.84%)·전기제품(+6.54%) 로테이션에 힘입어 홀로 1.42% 올랐고, 두 업종 모두 폭넓은 상승이었다.</p>
-    <p><strong>무효화 조건.</strong> 코스피가 120일선(6,873)을 다시 회복하면 오늘의 급락을 일회성 재료 소멸로 판단해 축소 포지션을 되돌린다. 반대로 20일선(6,461)마저 하회하면 추세 훼손으로 보고 리스크를 추가로 줄인다.</p>
+    <p><strong class="p-label">오늘의 행동.</strong> 코스피 반도체 대형주 비중을 다음 세션까지 축소한다. 삼성전자가 주주환원 실망으로 8.69% 급락했고, 시가총액 1위인 만큼 지수 낙폭(3.12%)을 끌어내린 축이었습니다. 종목별 지수 기여도는 이 데이터에 없어 몫을 정확히 나누지는 못합니다. 외국인과 기관은 코스피에서 각각 3조6,691억원, 1조2,901억원을 순매도했다(모두 당일 잠정).</p>
+    <p><strong class="p-label">왜 지금인가.</strong> 시장은 삼성전자의 주주환원 규모를 최대 150조원으로 기대했지만 실제 발표는 110조원에 그쳐 재료 소멸형 매물이 나왔다. 개인은 코스피에서 3조3,217억원을 순매수(당일 잠정)하며 대형주 저가 매수에 나섰지만 외국인·기관의 매도 규모를 감당하지 못했다. 코스닥은 비철금속(+7.84%)·전기제품(+6.54%) 로테이션에 힘입어 홀로 1.42% 올랐고, 두 업종 모두 폭넓은 상승이었다.</p>
+    <p><strong class="p-label">무효화 조건.</strong> 코스피가 120일선(6,873)을 다시 회복하면 오늘의 급락을 일회성 재료 소멸로 판단해 축소 포지션을 되돌린다. 반대로 20일선(6,461)마저 하회하면 추세 훼손으로 보고 리스크를 추가로 줄인다.</p>
   </div>
 </section>
 

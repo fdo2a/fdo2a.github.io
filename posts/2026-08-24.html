@@ -126,7 +126,7 @@ tbody tr:last-child td { border-bottom: none; }
     margin: 0 5px 0 0; }
 }
 
-/* readability-v4 */
+/* readability-v5 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -150,9 +150,12 @@ section { scroll-margin-top: 20px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
 }
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
-  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
   h1 { font-size: 25px; max-width: 30em; }
@@ -182,8 +185,8 @@ section { scroll-margin-top: 20px; }
 <section id="synthesis">
 <h2>전략 코멘트</h2>
 <div class="card">
-<p><strong>오늘의 행동.</strong> 2~6주 시계에서 귀금속(금) 비중을 확대하고 에너지는 축소합니다. 주식·채권·FX·메모리·AI 인프라는 트리거가 아직 열리지 않아 그대로 유지합니다.</p>
-<p><strong>왜 지금인가.</strong> 금은 20일 수익률이 15.6%로 사전에 걸어둔 확대 트리거를 넘어섰고, 오늘도 사상 최고치를 새로 썼습니다. WTI는 5일 수익률이 0.57%까지 되돌려져 지난주 이란 리스크로 붙었던 지정학 프리미엄이 사실상 소멸했다고 판단합니다.</p>
+<p><strong class="p-label">오늘의 행동.</strong> 2~6주 시계에서 귀금속(금) 비중을 확대하고 에너지는 축소합니다. 주식·채권·FX·메모리·AI 인프라는 트리거가 아직 열리지 않아 그대로 유지합니다.</p>
+<p><strong class="p-label">왜 지금인가.</strong> 금은 20일 수익률이 15.6%로 사전에 걸어둔 확대 트리거를 넘어섰고, 오늘도 사상 최고치를 새로 썼습니다. WTI는 5일 수익률이 0.57%까지 되돌려져 지난주 이란 리스크로 붙었던 지정학 프리미엄이 사실상 소멸했다고 판단합니다.</p>
 <p><strong>무효화 조건은 다음과 같습니다</strong>. 금은 5일 수익률이 -4% 밑으로 꺾이면 확대를 되돌리고, 에너지는 WTI 5일 수익률이 다시 +6%를 넘으면 재확대를 검토합니다.</p>
 </div>
 </section>

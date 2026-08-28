@@ -14,24 +14,29 @@
 v4는 그 교정이 데스크톱에서 지나쳤던 것을 되돌린다. 2026-08-26 실측에서 뷰포트
 1440px든 768px든 문단 폭이 똑같이 672px이었다 — 카드는 1080px인데 글이 672px만
 쓰니 오른쪽 408px이 늘 비었고, PC로 봐도 모바일 화면을 늘려 놓은 꼴이었다.
-1024px 이상에서만 본문 글자를 17px로 키우고 폭을 50em(약 850px)으로 넓힌다.
-글자와 폭을 함께 키우므로 한 줄은 약 50자 — 42자와 65자 사이다. 폭 지정은 em이라
-캡션·각주는 제 글자 크기 기준으로 따라 좁아진다.
+1024px 이상에서만 본문 글자를 17px로 키운다.
+
+v5는 그 폭 제한마저 데스크톱에서 걷어낸다 (2026-08-28 사용자 지시 —
+「문장 끝이 네모 전체에 차게, 중간에 줄바꿈 하지 말고」). v4의 50em은 1080px
+카드에서 여전히 오른쪽 230px을 비웠다. 단어가 줄 끝에서 잘리지 않는 것은
+`word-break: keep-all`이 이미 보장한다. 함께: 문단 첫머리 라벨을 제 줄로 올려
+제목 옆에 본문이 이어 붙지 않게 한다(`box-label`·`p-label`).
 """
 import html as _html
 import re
 from collections import Counter
 
-MARKER = "/* readability-v4 */"
+MARKER = "/* readability-v5 */"
+V4_MARKER = "/* readability-v4 */"
 V3_MARKER = "/* readability-v3 */"
 OLD_MARKER = "/* readability-v2 */"
+_V5_MARKER_RE = re.compile(r"/\*\s*readability-v5\s*\*/", re.I)
 _V4_MARKER_RE = re.compile(r"/\*\s*readability-v4\s*\*/", re.I)
 _V3_MARKER_RE = re.compile(r"/\*\s*readability-v3\s*\*/", re.I)
 _V2_MARKER_RE = re.compile(r"/\*\s*readability-v2\s*\*/", re.I)
-# 데스크톱 본문 — 글자와 폭을 함께 키워 한 줄 약 50자를 맞춘다.
+# 데스크톱 본문 — 글자만 키우고 폭은 카드에 맡긴다 (v5).
 DESKTOP_MIN_PX = 1024
 DESKTOP_FONT = "17px"
-DESKTOP_MEASURE_EM = 50
 READING_MAP_MARKER = "<!-- reading-map-v1 -->"
 STRATEGY_FIRST_MARKER = "<!-- strategy-first-v1 -->"
 
@@ -85,16 +90,26 @@ section { scroll-margin-top: 20px; }
 _DESKTOP_CSS = """
 @media (min-width: %dpx) {
   .card p, .doc p, .panel p, p,
-  .caption, .sub, .footer-note, .note, .lead, li { max-width: %dem; }
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: %s; line-height: 1.8; }
   h1 { font-size: 25px; max-width: 30em; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
-""" % (DESKTOP_MIN_PX, DESKTOP_MEASURE_EM, DESKTOP_FONT)
+""" % (DESKTOP_MIN_PX, DESKTOP_FONT)
 
-CSS = _V3_CSS.replace(V3_MARKER, MARKER).rstrip("\n") + _DESKTOP_CSS
+# 라벨은 본문 옆이 아니라 본문 위에 선다 (2026-08-28 사용자 지시). box-label은
+# 알약 모양이라 통짜 block으로 두면 카드 폭만큼 늘어난다 — fit-content로 모양을
+# 지키고 줄만 차지하게 한다.
+_LABEL_CSS = """
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
+"""
+
+CSS = (_V3_CSS.replace(V3_MARKER, MARKER).rstrip("\n")
+       + _LABEL_CSS + _DESKTOP_CSS)
 
 _STRIP = re.compile(
     r"(?s)<head.*?</head>|<style.*?</style>|<script.*?</script>|<svg.*?</svg>|"
@@ -175,7 +190,7 @@ def _find_in_head_css(html: str, marker_re):
 
 
 def has_override(html: str) -> bool:
-    return _find_in_head_css(html, _V4_MARKER_RE) is not None
+    return _find_in_head_css(html, _V5_MARKER_RE) is not None
 
 
 def inject_css(html: str) -> str:
@@ -186,13 +201,14 @@ def inject_css(html: str) -> str:
     """
     if has_override(html):
         return html
-    for marker_re, block in ((_V3_MARKER_RE, _V3_CSS), (_V2_MARKER_RE, _V2_CSS)):
+    for marker_re, block in ((_V4_MARKER_RE, None), (_V3_MARKER_RE, _V3_CSS),
+                             (_V2_MARKER_RE, _V2_CSS)):
         found = _find_in_head_css(html, marker_re)
         if not found:
             continue
         (span_start, span_end), match = found
         style_css = html[span_start:span_end]
-        if block in style_css:
+        if block and block in style_css:
             return html[:span_start] + style_css.replace(block, CSS, 1) + html[span_end:]
         # 앞선 판은 늘 그 `<style>`의 마지막 CSS였다. 서식 차이도 안전하게 옮긴다.
         return html[:match.start()] + CSS.strip() + "\n" + html[span_end:]
@@ -554,11 +570,69 @@ def visible_numeric_tokens(html: str) -> list:
     return re.findall(r"[+-]?\$?\d[\d,]*(?:\.\d+)?%?", text)
 
 
+_LABEL_STRONG = re.compile(r"(?s)(<p\b[^>]*>\s*)<strong>([^<]{1,20})</strong>")
+_LABEL_END = re.compile(r"[.:：]$")
+_SENTENCE_END = re.compile(r"[다요]\.$")
+
+
+def block_labels(html: str) -> str:
+    """문단 첫머리의 라벨을 제 줄로 올린다. 보이는 글자는 그대로다.
+
+    라벨과 강조된 첫 문장은 **문장부호의 위치**로 갈린다. `<strong>오늘의 행동.</strong>`
+    `<strong>동인:</strong>`처럼 마침표·콜론이 안에 있으면 라벨이고,
+    `<strong>…지배했습니다</strong>.`처럼 밖에 있으면 그냥 문장이다. 종결어미
+    (…다./…요.)로 끝나는 것은 길이가 짧아도 문장으로 본다 — 「고용은 개선 쪽이다.」를
+    라벨로 올리면 문단이 두 동강 난다. 부호가 아예 없는 것도 라벨로 치지 않는다:
+    `<strong>코스피</strong>는 종가…`의 굵은 말은 라벨이 아니라 문장의 주어다.
+
+    태그 뒤 공백은 남긴다. 블록이라 화면에서는 접히지만, 복사하거나 평문으로
+    뽑으면 「오늘의 행동.축소합니다」처럼 붙어 나온다.
+    """
+    def sub(m):
+        text = m.group(2).strip()
+        if not _LABEL_END.search(text) or _SENTENCE_END.search(text):
+            return m.group(0)
+        return '%s<strong class="p-label">%s</strong>' % (m.group(1), m.group(2))
+
+    out = _LABEL_STRONG.sub(sub, html)
+    # 이미 붙인 라벨의 잃어버린 공백을 되살린다 — 위 정규식은 class가 붙은
+    # `<strong>`을 다시 잡지 않으므로 재적용만으로는 복구되지 않는다.
+    return re.sub(r'(<strong class="p-label">[^<]*</strong>)(?=[^\s<])', r"\1 ", out)
+
+
+_LABEL_EL = re.compile(r'(?is)<(\w+)([^>]*\bclass="[^"]*\b(?:box-label|p-label)\b[^"]*"[^>]*)>')
+_INLINE_DISPLAY = re.compile(r'(?i)display\s*:\s*inline(?:-block)?\s*;?')
+
+
+def unpin_inline_labels(html: str) -> str:
+    """라벨의 인라인 `display:inline`을 걷어낸다.
+
+    인라인 스타일은 시트를 이긴다. 소급 판 34건이 `style="display:inline;"`을
+    달고 있어 CSS만 고쳐서는 라벨이 여전히 본문 옆에 붙어 있었다
+    (2026-08-28 codex 검토에서 발견). 다른 선언(margin-top 등)은 건드리지 않는다.
+    """
+    def sub(m):
+        attrs = m.group(2)
+
+        def style_sub(sm):
+            cleaned = _INLINE_DISPLAY.sub("", sm.group(2)).strip()
+            if not cleaned.strip("; "):
+                return ""
+            return '%s"%s"' % (sm.group(1), cleaned)
+
+        return "<%s%s>" % (m.group(1),
+                           re.sub(r'(\s*style=)"([^"]*)"', style_sub, attrs))
+
+    return _LABEL_EL.sub(sub, html)
+
+
 def enhance_html(html: str) -> str:
     """조판·문단·빠른 이동을 한 번에 적용한다. 보이는 숫자는 반드시 불변이다."""
     before = visible_numeric_tokens(html)
     out = inject_css(html)
     out = demote_card_p_font(out)
+    out = block_labels(out)
+    out = unpin_inline_labels(out)
     out = split_dense_paragraphs(out)
     out = inject_reading_map(out)
     out = move_strategy_first(out)

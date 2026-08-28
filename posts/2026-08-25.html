@@ -118,7 +118,7 @@ tbody tr:last-child td { border-bottom: none; }
     margin: 0 5px 0 0; }
 }
 
-/* readability-v4 */
+/* readability-v5 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
@@ -142,9 +142,12 @@ section { scroll-margin-top: 20px; }
   .card { padding: 16px 16px; }
   .reading-map { margin-bottom: 16px; }
 }
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
-  .caption, .sub, .footer-note, .note, .lead, li { max-width: 50em; }
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
   h1 { font-size: 25px; max-width: 30em; }
@@ -174,9 +177,9 @@ section { scroll-margin-top: 20px; }
 <section id="synthesis">
 <h2>전략 코멘트</h2>
 <div class="card">
-<p><strong>오늘의 행동.</strong> 2~6주 시계에서는 유지가 오늘의 결론입니다. 어제 걸어둔 트리거 중 오늘 새로 충족된 것이 없어 전 자산군 포지션을 그대로 가져갑니다.</p>
+<p><strong class="p-label">오늘의 행동.</strong> 2~6주 시계에서는 유지가 오늘의 결론입니다. 어제 걸어둔 트리거 중 오늘 새로 충족된 것이 없어 전 자산군 포지션을 그대로 가져갑니다.</p>
 <p><strong>지금 이 판단을 유지하는 이유는 이렇습니다</strong>. 금은 이미 20일 수익률 16.84%로 지난 세션에 비중확대까지 올려둔 상태고, 오늘도 사상 최고치를 새로 썼습니다. WTI는 5일 수익률 -4.51%로 확대·축소 트리거 사이 중립권에 머뭅니다.</p>
-<p><strong>무효화 조건.</strong> 금은 5일 수익률이 -4% 밑으로 꺾이면 비중을 되돌리고, 채권은 30년물이 5.05%를 하회해야 듀레이션 확대를 검토합니다.</p>
+<p><strong class="p-label">무효화 조건.</strong> 금은 5일 수익률이 -4% 밑으로 꺾이면 비중을 되돌리고, 채권은 30년물이 5.05%를 하회해야 듀레이션 확대를 검토합니다.</p>
 </div>
 </section>
 

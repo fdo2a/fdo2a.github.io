@@ -156,8 +156,8 @@ def test_desktop_block_widens_prose_and_keeps_mobile_measure():
     out = R.inject_css(DOC)
     assert "@media (min-width: 1024px)" in out
     desktop = out.split("@media (min-width: 1024px)", 1)[1]
-    # 데스크톱에서만 넓어진다 — 기본(모바일·태블릿) 조판은 42em 그대로.
-    assert "max-width: %dem" % R.DESKTOP_MEASURE_EM in desktop
+    # v5: 데스크톱에서는 폭 제한을 걷어 카드를 다 쓴다. 기본 조판은 42em 그대로.
+    assert "max-width: none" in desktop
     assert "font-size: %s" % R.DESKTOP_FONT in desktop
     base = out.split("@media (min-width: 1024px)", 1)[0]
     assert "max-width: 42em" in base
@@ -382,3 +382,84 @@ def test_enhance_leaves_script_decoy_intact():
     assert 'var u = "</head>";' in out
     assert '.card p, p { font-size:16px; }</style>";' in out
     assert R.enhance_html(out) == out
+
+
+def test_desktop_prose_fills_the_card_instead_of_stopping_short():
+    """2026-08-28 사용자 지시 — PC에서 문장이 카드 폭을 다 쓰게. 50em에서 멈추면
+    1120px 카드의 오른쪽이 늘 빈다."""
+    block = R.CSS.split("@media (min-width: 1024px)")[1]
+    assert "max-width: none" in block
+    assert "50em" not in block
+    # 모바일·태블릿 기본 조판은 그대로 42em이다.
+    assert "max-width: 42em" in R.CSS
+
+
+def test_labels_sit_on_their_own_line_above_the_body():
+    assert ".box-label { display: block" in R.CSS
+    assert "width: fit-content" in R.CSS
+    assert ".p-label { display: block" in R.CSS
+
+
+def test_strong_label_is_promoted_to_a_block():
+    html = "<p><strong>오늘의 행동.</strong> 축소합니다 — 메모리를 중립으로.</p>"
+    out = R.block_labels(html)
+    assert '<strong class="p-label">오늘의 행동.</strong> 축소합니다' in out
+
+
+def test_strong_first_sentence_stays_inline():
+    """마침표가 <strong> 바깥이면 라벨이 아니라 강조된 첫 문장이다."""
+    html = "<p><strong>엔비디아가 하루를 지배했습니다</strong>. +8.74%로 마감했습니다.</p>"
+    assert R.block_labels(html) == html
+    html2 = "<p><strong>고용은 개선 쪽이다.</strong> 일곱 중 다섯이 좋아졌다.</p>"
+    assert R.block_labels(html2) == html2
+
+
+def test_block_labels_is_idempotent():
+    html = "<p><strong>무효화 조건.</strong> 20일 초과수익이 +5.0%포인트를 넘으면.</p>"
+    once = R.block_labels(html)
+    assert R.block_labels(once) == once
+
+
+def test_migrate_v4_css_to_v5():
+    html = "<html><head><style>body{}\n%s\n.card p { max-width: 42em; }</style></head><body><p>a</p></body></html>" % R.V4_MARKER
+    out = R.inject_css(html)
+    assert R.MARKER in out
+    assert out.count(R.MARKER) == 1
+    assert R.has_override(out)
+
+
+def test_colon_labels_are_promoted_too():
+    """2026-08-28 codex 검토 — 마침표만 보다가 「동인:」류 34건을 놓쳤다."""
+    html = "<p><strong>동인:</strong> 오늘 장의 단일 최대 동인은 미-이란 양해각서였다.</p>"
+    assert 'class="p-label">동인:' in R.block_labels(html)
+
+
+def test_bare_subject_with_a_particle_stays_inline():
+    """`<strong>코스피</strong>는 종가…`는 라벨이 아니라 문장의 주어다."""
+    html = "<p><strong>코스피</strong>는 종가 7,096.89포인트로 MA20을 밑돈다.</p>"
+    assert R.block_labels(html) == html
+
+
+def test_label_keeps_the_space_before_the_body_text():
+    """블록이라 화면에서는 안 보이지만, 복사·평문 추출에서는 붙어 나온다."""
+    out = R.block_labels("<p><strong>동인.</strong> 오늘 장의 최대 동인은.</p>")
+    assert "</strong> 오늘" in out
+
+
+def test_inline_styled_box_labels_are_unpinned():
+    """인라인 style="display:inline"은 시트를 이긴다 — 소급 판 34건이 그랬다."""
+    html = '<p><span class="box-label" style="display:inline;">동인.</span> 본문.</p>'
+    out = R.unpin_inline_labels(html)
+    assert "display:inline" not in out
+    keep = '<span class="box-label" style="margin-top:10px;">동인.</span>'
+    assert R.unpin_inline_labels(keep) == keep
+
+
+def test_labels_avoid_a_page_break_right_after_them():
+    assert "break-after: avoid-page" in R.CSS
+
+
+def test_already_converted_labels_get_their_lost_space_back():
+    """1차 소급 적용이 공백을 먹었다. 재적용으로는 안 잡히므로 따로 되살린다."""
+    html = '<p><strong class="p-label">동인.</strong>오늘 장의 최대 동인은.</p>'
+    assert '</strong> 오늘' in R.block_labels(html)
