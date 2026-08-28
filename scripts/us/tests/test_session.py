@@ -181,3 +181,38 @@ def test_overnight_takes_only_the_most_recent_evening():
     assert w['bars'] == 2
     assert w['low'] == 7690.25          # 이틀 전의 1이 아니다
     assert w['high'] == 7741.25
+
+
+def test_participation_refuses_to_span_a_hole():
+    """한쪽 종가가 비면 그 세션을 건너뛰어 이틀치가 하루치로 둔갑한다."""
+    closes = {'SPY': [100.0, float('nan'), 100.5], 'RSP': [100.0, 99.0, 101.0]}
+    dates = {t: ['2026-08-25', '2026-08-26', '2026-08-27'] for t in closes}
+    assert session.participation(closes, dates) is None
+
+
+def test_participation_still_spans_a_weekend():
+    """주말은 구멍이 아니다 — 어느 쪽에도 그 세션이 없다."""
+    closes = {'SPY': [100.0, 100.5], 'RSP': [100.0, 101.0]}
+    dates = {t: ['2026-08-21', '2026-08-24'] for t in closes}   # 금 → 월
+    assert session.participation(closes, dates)['band'] == '고르게 오름'
+
+
+def test_participation_refuses_a_stale_reading():
+    closes = {'SPY': [100.0, 100.5], 'RSP': [100.0, 99.0]}
+    dates = {t: ['2026-08-25', '2026-08-26'] for t in closes}
+    assert session.participation(closes, dates, report_date='2026-08-27') is None
+    assert session.participation(closes, dates, report_date='2026-08-26') is not None
+
+
+def test_tape_classifies_before_rounding():
+    """74.6을 75로 반올림한 뒤 「고점권」이라 부르지 않는다."""
+    t = session.tape({'S&P 500': {'close': 74.6, 'low': 0, 'high': 100},
+                      'Nasdaq': {'close': 25.4, 'low': 0, 'high': 100}})
+    assert t['S&P 500']['band'] == '중단 마감' and t['S&P 500']['close_position'] == 75
+    assert t['Nasdaq']['band'] == '중단 마감' and t['Nasdaq']['close_position'] == 25
+
+
+def test_futures_carry_their_overnight_range():
+    bars = [{'t': '2026-08-26T18:30:00-04:00', 'high': 110.0, 'low': 100.0},
+            {'t': '2026-08-27T04:30:00-04:00', 'high': 105.0, 'low': 102.0}]
+    assert session.overnight(bars, '2026-08-27')['range_pct'] == 10.0

@@ -12,6 +12,10 @@
 import datetime as dt
 import re
 
+from .stance_gate import locate_section
+
+SECTION_TITLE = '오늘의 장'
+
 MARKERS = ('global', 'preopen', 'tape', 'causal')
 
 PARTICIPATION_LABELS = ('고르게 오름', '소수가 끌어올림', '고르게 내림', '소수가 끌어내림')
@@ -19,8 +23,11 @@ PARTICIPATION_LABELS = ('고르게 오름', '소수가 끌어올림', '고르게
 # 이 값의 이름이 아닌 것들. 등락 종목 수를 세지 않으므로 폭이라 부를 수 없다.
 MISNOMERS = ('상승 종목 비율', '등락 종목 수', '시장 폭', 'breadth')
 
-INTERNAL = ('global_close', 'gap_pp', 'close_position', 'kr_session',
-            'us_prev', 'asia_peers', 'participation', 'data-session')
+# 발행본에 나오면 안 되는 내부 표기. 영문 토큰은 단어 경계로 본다 — 「session」이
+# 한국어 본문 한복판에서 부분일치로 걸리는 일을 막는다.
+INTERNAL = ('global_close', 'gap_pp', 'gap_pct', 'close_position', 'kr_session',
+            'us_prev', 'asia_peers', 'participation', 'data-session',
+            'breadth_proxy', 'session', 'tape')
 
 STALE_SESSIONS = 3
 
@@ -37,6 +44,10 @@ def _sessions_between(a, b):
         if cur.weekday() < 5:
             n += 1
     return n
+
+
+def _finite(x):
+    return isinstance(x, (int, float)) and x == x
 
 
 def _particle(word, with_final, without_final):
@@ -65,15 +76,17 @@ def _blocks(html):
 
 def _rows(session, market):
     if market == 'kr':
-        peers = (session.get('asia_peers') or {}).get('rows') or {}
-        return [{'name': n, 'pct': p, 'date': None} for n, p in peers.items()]
+        block = session.get('asia_peers') or {}
+        dates = block.get('dates') or {}
+        return [{'name': n, 'pct': p, 'date': dates.get(n)}
+                for n, p in (block.get('rows') or {}).items()]
     out = []
     for region in ('asia', 'europe'):
         out += ((session.get('global_close') or {}).get(region) or {}).get('rows') or []
     return out
 
 
-def check(html, session, market='us'):
+def check(html, session, market='us', price_context=None):
     """위반 문자열 리스트. 빈 리스트 = 발행 가능.
 
     비-코어: 블록이 없는 데이터셋이면 강제할 것이 없으므로 통과한다.
@@ -82,12 +95,22 @@ def check(html, session, market='us'):
         return []
     v = []
     body = _strip_style(html or '')
-    blocks = _blocks(body)
+    section = locate_section(body, SECTION_TITLE)
+    if not section:
+        return [f'「{SECTION_TITLE}」 섹션이 없다 — 표식만 흩어 놓는 것으로는 안 된다']
+    blocks = _blocks(section)
     page = _text(body)
     rows = _rows(session, market)
 
+    fut = session.get('futures') or {}
+    optional = set()
+    if not rows:
+        optional.add('global')
+    if market == 'us' and not (fut.get('contracts') or fut.get('gap')):
+        optional.add('preopen')          # 할 말이 없는 날은 비워도 된다
+
     for key in MARKERS:
-        if key == 'global' and not rows:
+        if key in optional:
             continue
         if not blocks.get(key, '').strip():
             v.append(f'「오늘의 장」 {key} 문단이 없거나 비었다 (data-session="{key}")')
@@ -101,7 +124,14 @@ def check(html, session, market='us'):
     else:
         for region, ko in (('asia', '아시아'), ('europe', '유럽')):
             al = ((session.get('global_close') or {}).get(region) or {}).get('alignment')
-            if al and al['label'] == '엇갈림' and '엇갈' not in blocks.get('global', ''):
+            if not (al and al['label'] == '엇갈림'):
+                continue
+            # 두 지역이 함께 엇갈린 날, 한쪽만 쓰고 넘어가지 못하게 **같은 문장 안에**
+            # 지역 이름과 엇갈림이 함께 있는지 본다.
+            named = any('엇갈' in sent and ko in sent
+                        for sent in re.split(r'(?<=[.!?])\s+|(?<=다)\s+',
+                                             blocks.get('global', '')))
+            if not named:
                 josa = _particle(ko, '이', '가')
                 v.append(f'{ko}{josa} 미국과 엇갈렸는데(평균 {al["avg_pct"]:+.2f}%) '
                          '서술이 없다 — 어긋남은 허용, 침묵은 금지')
@@ -127,13 +157,18 @@ def check(html, session, market='us'):
             v.append(f'{row["name"]}의 마감이 {d}로 report_date({rd})보다 이른데 기준일 '
                      '표기가 없다 — 당일 마감인 양 쓰지 않는다')
 
+    vix = ((price_context or {}).get('levels') or {}).get('VIX') or {}
+    if _finite(vix.get('value')) and f'{vix["value"]:.2f}' not in page:
+        v.append(f'VIX({vix["value"]:.2f})가 표에도 본문에도 없다 — 「오늘의 장」 표에 싣는다')
+
     for bad in MISNOMERS:
         if bad in page:
             v.append(f'「{bad}」{_particle(bad, "은", "는")} 이 값의 이름이 아니다 — '
                      '동일가중과 시총가중의 수익률 '
                      '차이지 종목 수가 아니다')
     for bad in INTERNAL:
-        if bad in page:
+        # 한글 조사가 붙으면(「gap_pp는」) \b가 깨진다 — 경계를 ASCII 기준으로 잡는다.
+        if re.search(r'(?<![A-Za-z0-9_])%s(?![A-Za-z0-9_])' % re.escape(bad), page):
             v.append(f'내부 표기 「{bad}」가 발행본에 노출됐다')
     if re.search(r'§\s*\d', page):
         v.append('「§N」 표기가 발행본에 있다 — 독자에게는 섹션 번호가 보이지 않는다. '

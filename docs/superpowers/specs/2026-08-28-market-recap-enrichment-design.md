@@ -27,11 +27,11 @@ US에서 시황을 담당하는 세 섹션(주식·FX·원자재)을 합쳐 2,09
 1. **대상** = US·KR 둘 다. 공통 원칙을 한 번 정하고 두 writer 스펙에 각각 반영한다.
 2. **방향** = 재료와 서술 둘 다. 수집을 늘리고, 그 재료를 반드시 쓰도록 서술 규칙과 게이트를 함께 건다.
 3. **구조** = 새 「오늘의 장」 섹션 신설 + 기존 자산군 섹션 심화. 시간 축을 한 곳에 모으고 자산 축은 제자리에 둔다.
-4. **강제 방식** = 데이터 계약 + 게이트. `price_context`·`macro_metrics`와 같은 패턴이다. 서술 규칙만 적는 안은 기각했다 — 「매일 두껍게 써」가 프롬프트로는 안 지켜진다는 것을 이 레포는 §8 매크로·§9 스탠스·thesis 감시에서 세 번 배웠다.
+4. **강제 방식** = 데이터 계약 + 게이트. `price_context`·`macro_metrics`와 같은 패턴이다. 서술 규칙만 적는 안은 기각했다 — 「매일 두껍게 써」가 프롬프트로는 안 지켜진다는 것을 이 레포는 §9 매크로·§10 스탠스·thesis 감시에서 세 번 배웠다.
 
 ## 새 데이터 — US `market_data.json`의 `session` 블록
 
-`scripts/us/session.py`의 `compute()`가 만들고, `collect_market_data.py`의 `main()`에서 `price_context.compute()` 바로 뒤에 호출한다. 판정이 끝난 상태로 넘어가고 **writer는 재계산하지 않는다** — §8이 z를 만지지 않는 것과 같은 계약이다.
+`scripts/us/session.py`의 `compute()`가 만들고, `collect_market_data.py`의 `main()`에서 `price_context.compute()` 바로 뒤에 호출한다. 판정이 끝난 상태로 넘어가고 **writer는 재계산하지 않는다** — §9가 z를 만지지 않는 것과 같은 계약이다.
 
 ### `global_close`
 

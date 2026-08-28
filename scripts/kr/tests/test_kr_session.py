@@ -46,3 +46,21 @@ def test_asia_peers_reports_kospi_relative_strength():
 def test_asia_peers_is_none_without_data():
     assert ks.asia_peers({}, kospi_pct=0.9) is None
     assert ks.asia_peers({'닛케이': -0.2}, kospi_pct=None) is None
+
+
+def test_usdkrw_window_reports_the_regular_session():
+    bars = [
+        {'t': '2026-08-27T00:00:00+01:00', 'high': 1, 'low': 1, 'close': 1},   # 08:00 KST
+        {'t': '2026-08-27T01:00:00+01:00', 'high': 1378.0, 'low': 1372.0, 'close': 1374.0},
+        {'t': '2026-08-27T06:00:00+01:00', 'high': 1376.0, 'low': 1370.0, 'close': 1371.0},
+    ]
+    w = ks.usdkrw_window(bars, '2026-08-27')
+    assert w['high'] == 1378.0 and w['high_t'] == '09:00'
+    assert w['low'] == 1370.0 and w['low_t'] == '14:00'
+    assert w['close'] == 1371.0
+
+
+def test_asia_peers_keep_their_session_dates():
+    peers = ks.asia_peers({'닛케이': (-0.2, '2026-08-27')}, kospi_pct=0.9)
+    assert peers['dates']['닛케이'] == '2026-08-27'
+    assert peers['rows']['닛케이'] == -0.2

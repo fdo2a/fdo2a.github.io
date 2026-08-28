@@ -43,10 +43,14 @@ def main():
         print(f'no {path} — nothing to check')
         return
     except Exception as e:
-        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
-        return
+        # 깨진 산출물은 「없는 것」과 다르다. 없으면 비-코어라 통과지만, 읽다 만
+        # 파일에 검사를 면제해 주면 게이트가 조용히 꺼진다.
+        print(f'FATAL: {path} is unreadable: {e}', file=sys.stderr)
+        sys.exit(2)
 
-    violations = check(html, blob.get(key) if key else blob, market=args.market)
+    pc = blob.get('price_context') if args.market == 'us' else None
+    violations = check(html, blob.get(key) if key else blob,
+                       market=args.market, price_context=pc)
     if violations:
         for line in violations:
             print(line)

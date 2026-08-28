@@ -126,8 +126,10 @@ def overnight(bars, report_date):
         return None
     hi = max(picked, key=lambda p: p[1]['high'])
     lo = min(picked, key=lambda p: p[1]['low'])
-    return {'high': round(float(hi[1]['high']), 2), 'high_t': hi[0].strftime('%H:%M'),
-            'low': round(float(lo[1]['low']), 2), 'low_t': lo[0].strftime('%H:%M'),
+    high, low = float(hi[1]['high']), float(lo[1]['low'])
+    return {'high': round(high, 2), 'high_t': hi[0].strftime('%H:%M'),
+            'low': round(low, 2), 'low_t': lo[0].strftime('%H:%M'),
+            'range_pct': round((high / low - 1) * 100, 2) if low else None,
             'bars': len(picked)}
 
 
@@ -161,23 +163,30 @@ TAPE_INDICES = ('S&P 500', 'Nasdaq', 'Russell 2000')
 TAPE_HIGH, TAPE_LOW = 75, 25
 
 
-def participation(closes, dates):
+def participation(closes, dates, report_date=None):
     """동일가중이 시총가중을 따라갔나 — 「평균적인 종목이 지수를 따라갔나」.
 
     시장 폭(breadth)이 아니다. 등락 종목 수를 세지 않으므로 그렇게 부르지도
     않는다. 섹터·시총 구성 차이만으로도 이 값은 움직인다.
     """
-    pairs = {}
+    pairs, seen = {}, set()
     for t in (CAP_WEIGHT, EQUAL_WEIGHT):
         cs = (closes or {}).get(t) or []
         ds = (dates or {}).get(t) or []
         if len(cs) != len(ds) or len(cs) < 2:
             return None
         pairs[t] = {d: c for d, c in zip(ds, cs) if _finite(c)}
+        seen |= {str(d) for d in ds}
     common = sorted(set(pairs[CAP_WEIGHT]) & set(pairs[EQUAL_WEIGHT]))
     if len(common) < 2:
         return None
     a, b = common[-2], common[-1]
+    if report_date and b != str(report_date):
+        return None       # 오늘 값이 아니면 오늘 것인 양 내보내지 않는다
+    # 한쪽 종가가 비어 세션을 건너뛰면 이틀치가 하루치로 둔갑한다. 어느 쪽 달력에든
+    # 그 사이 세션이 있으면 구멍이 있는 것 — 주말은 양쪽 모두에 없으므로 통과한다.
+    if any(a < d < b for d in seen):
+        return None
 
     def pct(t):
         prev, cur = pairs[t][a], pairs[t][b]
@@ -212,10 +221,12 @@ def tape(intraday):
         if not (_finite(hi) and _finite(lo) and _finite(cl)) or hi == lo:
             out[name] = None
             continue
-        pos = round((cl - lo) / (hi - lo) * 100)
-        band = ('고점권 마감' if pos >= TAPE_HIGH
-                else '저점권 마감' if pos <= TAPE_LOW else '중단 마감')
-        out[name] = {'close_position': pos, 'band': band}
+        raw = (cl - lo) / (hi - lo) * 100
+        # 판정은 반올림 **전** 값으로. 74.6을 75로 올린 뒤 고점권이라 부르면
+        # 경계가 실제보다 0.5 넓어진다.
+        band = ('고점권 마감' if raw >= TAPE_HIGH
+                else '저점권 마감' if raw <= TAPE_LOW else '중단 마감')
+        out[name] = {'close_position': round(raw), 'band': band}
     return out
 
 
@@ -240,6 +251,6 @@ def compute(closes, dates, market_data, intraday, futures_bars, report_date):
         'global_close': g,
         'futures': {'contracts': contracts, 'gap': gaps,
                     'direction': gap_direction(gaps.get('S&P 500'))},
-        'participation': participation(closes, dates),
+        'participation': participation(closes, dates, report_date),
         'tape': tape(intraday),
     }

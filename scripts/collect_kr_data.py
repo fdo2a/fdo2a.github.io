@@ -226,9 +226,20 @@ def main(outdir: str):
             try:
                 c = yf.Ticker(t).history(period="10d")["Close"].dropna()
                 if len(c) >= 2:
-                    peers[name] = float(c.iloc[-1] / c.iloc[-2] - 1) * 100
+                    peers[name] = (float(c.iloc[-1] / c.iloc[-2] - 1) * 100,
+                                   str(c.index[-1].date()))
             except Exception:
                 pass
+
+        fx_bars = []
+        try:
+            h = yf.Ticker("KRW=X").history(period="5d", interval="30m")
+            if h is not None and len(h):
+                fx_bars = [{"t": i.isoformat(), "high": float(r["High"]),
+                            "low": float(r["Low"]), "close": float(r["Close"])}
+                           for i, r in h.iterrows()]
+        except Exception:
+            pass
 
         kospi_pct = (indices.get("KOSPI") or {}).get("change_pct")
         _write(outdir, "kr_session.json", {
@@ -238,6 +249,7 @@ def main(outdir: str):
                 lab: kr_session.kr_hours_window(fut.get(t), report_date)
                 for lab, t in kr_session.FUTURES},
             "asia_peers": kr_session.asia_peers(peers, kospi_pct),
+            "usdkrw_intraday": kr_session.usdkrw_window(fx_bars, report_date),
         })
         print(f"session: 아시아 {len(peers)}종 / 미국 선물 {len(fut)}종")
     except Exception as e:

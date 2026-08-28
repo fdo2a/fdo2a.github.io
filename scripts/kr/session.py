@@ -84,11 +84,54 @@ def kr_hours_window(bars, report_date):
             'last_t': picked[-1][0].strftime('%H:%M')}
 
 
+def usdkrw_window(bars, report_date):
+    """원달러 정규장 구간의 고·저와 종가.
+
+    야후가 이 시리즈를 `Europe/London`으로 준다 — KST로 변환한 뒤 자른다.
+    """
+    try:
+        day = _dt.date.fromisoformat(str(report_date))
+    except ValueError:
+        return None
+    picked = []
+    for b in bars or []:
+        try:
+            ts = _dt.datetime.fromisoformat(str(b.get('t'))).astimezone(KST)
+        except (ValueError, TypeError):
+            continue
+        if ts.date() != day:
+            continue
+        if not all(_finite(b.get(k)) for k in ('high', 'low', 'close')):
+            continue
+        if KR_OPEN <= (ts.hour, ts.minute) <= KR_CLOSE:
+            picked.append((ts, b))
+    if not picked:
+        return None
+    picked.sort()
+    hi = max(picked, key=lambda p: p[1]['high'])
+    lo = min(picked, key=lambda p: p[1]['low'])
+    return {'high': round(float(hi[1]['high']), 2), 'high_t': hi[0].strftime('%H:%M'),
+            'low': round(float(lo[1]['low']), 2), 'low_t': lo[0].strftime('%H:%M'),
+            'close': round(float(picked[-1][1]['close']), 2),
+            'last_t': picked[-1][0].strftime('%H:%M'), 'bars': len(picked)}
+
+
 def asia_peers(pcts, kospi_pct):
-    """아시아 이웃 시장과 코스피의 상대 강약."""
-    rows = {k: round(v, 2) for k, v in (pcts or {}).items() if _finite(v)}
+    """아시아 이웃 시장과 코스피의 상대 강약.
+
+    값은 `{이름: 등락}` 또는 `{이름: (등락, 기준일)}`을 받는다. 기준일을 함께
+    주면 그대로 실어 휴장으로 묵은 값을 발행 게이트가 잡을 수 있다.
+    """
+    rows, dates = {}, {}
+    for k, v in (pcts or {}).items():
+        pct, date = v if isinstance(v, (tuple, list)) else (v, None)
+        if not _finite(pct):
+            continue
+        rows[k] = round(pct, 2)
+        if date:
+            dates[k] = str(date)
     if not rows or not _finite(kospi_pct):
         return None
     avg = sum(rows.values()) / len(rows)
-    return {'rows': rows, 'avg_pct': round(avg, 2),
+    return {'rows': rows, 'dates': dates, 'avg_pct': round(avg, 2),
             'relative_pp': round(kospi_pct - avg, 2)}

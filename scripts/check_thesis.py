@@ -43,6 +43,7 @@ STATE = 'thesis/data/thesis_state.json'
 
 _CHANGELOG = re.compile(
     r'<ol\b[^>]*\bdata-block="changelog"[^>]*>.*?</ol>', re.S)
+_GRADE_SINCE = re.compile(r'(등급 유지 )\d{4}-\d{2}-\d{2}(부터)')
 
 
 def stable_page_content(html):
@@ -51,7 +52,8 @@ def stable_page_content(html):
     A confirmed event is supposed to add a changelog entry, so its dates, source
     references, and factual figures cannot be compared with the pre-event page.
     """
-    return _CHANGELOG.sub('', html)
+    without_changelog = _CHANGELOG.sub('', html)
+    return _GRADE_SINCE.sub(r'\1기준일\2', without_changelog)
 
 
 def load_state(path=STATE):

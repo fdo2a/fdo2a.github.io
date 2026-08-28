@@ -114,3 +114,37 @@ def test_kr_stale_us_session_must_be_labelled():
 def test_violation_messages_use_the_right_particle():
     html = FULL.replace('유럽은 미국과 엇갈렸습니다.', '유럽도 함께 움직였습니다.')
     assert any('유럽이 미국과 엇갈렸는데' in v for v in check(html, SESSION))
+
+
+def test_markers_outside_the_section_do_not_satisfy_the_gate():
+    """제목 없이 문단 표식만 흩뿌려 놓고 통과시키지 않는다."""
+    loose = FULL.replace('<section><h2>오늘의 장</h2>', '<section>').replace('</section>', '')
+    assert any('오늘의 장' in v for v in check(loose, SESSION))
+
+
+def test_preopen_may_be_omitted_when_there_is_nothing_to_say():
+    s = {**SESSION, 'futures': {'contracts': {}, 'gap': {}, 'direction': None}}
+    html = FULL.replace('<p data-session="preopen">상승 출발이었습니다.</p>', '')
+    assert not any('preopen' in v for v in check(html, s))
+
+
+def test_each_divergent_region_needs_its_own_name():
+    s = {**SESSION}
+    s['global_close'] = {
+        'asia': {'rows': SESSION['global_close']['asia']['rows'],
+                 'alignment': {'label': '엇갈림', 'mixed': False, 'avg_pct': -0.27}},
+        'europe': SESSION['global_close']['europe'],
+    }
+    assert any('아시아' in v for v in check(FULL, s))      # 유럽만 언급했다
+
+
+def test_internal_names_from_the_spec_are_blocked():
+    for bad in ('gap_pct', 'close_position'):
+        assert any(bad in v for v in check(FULL + f'<p>{bad}</p>', SESSION))
+
+
+def test_vix_must_match_the_collected_level():
+    pc = {'levels': {'VIX': {'value': 14.51}}}
+    ok = FULL.replace('</section>', '<p>VIX는 14.51입니다.</p></section>')
+    assert check(ok, SESSION, price_context=pc) == []
+    assert any('VIX' in v for v in check(FULL, SESSION, price_context=pc))
