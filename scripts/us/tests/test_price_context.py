@@ -381,7 +381,7 @@ def _full_closes(seed=5, n=300):
     out = {}
     for _, t in TRACKED:
         out[t] = _walk([rng.uniform(-1.5, 1.5) for _ in range(n)])
-    for t in COHESION_SET + ['MU', '^GSPC', '^IXIC']:
+    for t in list(HISTORY_TICKERS) + COHESION_SET + ['MU', '^GSPC', '^IXIC']:
         out.setdefault(t, _walk([rng.uniform(-1.5, 1.5) for _ in range(n)]))
     for _, t in SECTORS_FOR_TEST:
         out[t] = _walk([rng.uniform(-2, 2) for _ in range(n)])
@@ -629,7 +629,7 @@ def test_an_attribution_with_nothing_left_to_attribute_is_dropped(monkeypatch):
 
 # ── 팩터 분해 (2026-08-28 사용자 지시) ──────────────────────────────────────
 
-from us.price_context import FACTORS, factor_decomposition  # noqa: E402
+from us.price_context import BASKETS, FACTORS, factor_decomposition  # noqa: E402
 
 
 def _factor_world(seed=13, n=200, style_beta=0.0, own=None):
@@ -642,8 +642,9 @@ def _factor_world(seed=13, n=200, style_beta=0.0, own=None):
     style = [ivw[i] - ive[i] for i in range(n)]
     idio = own if own is not None else [0.0] * n
     basket = [mkt[i] + style_beta * style[i] + idio[i] for i in range(n)]
+    soxx = [m + rng.uniform(-0.6, 0.6) for m in mkt]
     closes = {'^GSPC': _walk(mkt), 'IVW': _walk(ivw), 'IVE': _walk(ive),
-              '^RUT': _walk(rut), 'BSK': _walk(basket)}
+              '^RUT': _walk(rut), 'SOXX': _walk(soxx), 'BSK': _walk(basket)}
     return closes
 
 
@@ -785,7 +786,8 @@ def test_a_high_beta_basket_is_flagged_by_its_reported_market_beta():
     ive = [m - (ivw[i] - m) for i, m in enumerate(mkt)]
     rut = [m + rng.uniform(-0.4, 0.4) for m in mkt]
     closes = {'^GSPC': _walk(mkt), 'IVW': _walk(ivw), 'IVE': _walk(ive),
-              '^RUT': _walk(rut), 'BSK': _walk([1.6 * m for m in mkt])}
+              '^RUT': _walk(rut), 'SOXX': _walk([m + rng.uniform(-0.6, 0.6) for m in mkt]),
+              'BSK': _walk([1.6 * m for m in mkt])}
     got = factor_decomposition(closes, dates_for(closes), ('BSK',), w=120, horizon=20)
     assert abs(got['market_beta'] - 1.6) < 0.15, got
 
@@ -838,9 +840,62 @@ def test_the_market_beta_survives_a_market_heavy_style_spread():
     # 직교화 여부로 답이 갈리지 않아 검사가 아무것도 가려내지 못한다.
     bsk = [2.0 * mkt[i] + 0.8 * style[i] + rng.uniform(-0.3, 0.3) for i in range(n)]
     closes = {'^GSPC': _walk(mkt), 'IVW': _walk(ivw), 'IVE': _walk(ive),
-              '^RUT': _walk(rut), 'BSK': _walk(bsk)}
+              '^RUT': _walk(rut), 'SOXX': _walk([m + rng.uniform(-0.6, 0.6) for m in mkt]),
+              'BSK': _walk(bsk)}
     got = factor_decomposition(closes, dates_for(closes), ('BSK',), w=250, horizon=20)
     # 이 바스켓의 실제 시장 민감도는 2.0이 아니라 2.64다: 스타일 스프레드 자체가
     # 1.5m - 0.7m = 0.8m이라, 2.0m + 0.8x(0.8m) = 2.64m으로 움직인다. 단변량 베타는
     # 스타일을 타고 들어온 시장 노출까지 합쳐 재는 값이고, 그게 우리가 싣고 싶은 값이다.
     assert abs(got['market_beta'] - 2.64) < 0.2, got
+
+
+# ── 반도체 팩터 (2026-08-28 사용자 지시) ────────────────────────────────────
+
+def test_the_semiconductor_axis_is_declared():
+    assert 'semis' in {key for key, _, _, _ in FACTORS}
+
+
+def test_history_tickers_cover_the_factor_legs_and_baskets():
+    """팩터 다리와 바스켓이 스탠스 쪽 목록에 얹혀 있으면 그쪽이 바뀔 때 조용히
+    빠진다. 이 모듈이 읽는 것은 이 모듈이 선언한다."""
+    needed = {t for _, _, a, b in FACTORS for t in (a, b)}
+    needed |= {t for _, _, basket in BASKETS for t in basket}
+    assert needed <= set(HISTORY_TICKERS), needed - set(HISTORY_TICKERS)
+
+
+def test_a_sector_driven_basket_lands_on_the_sector_axis_not_the_remainder():
+    """반도체 전반을 따라 움직였을 뿐인 바스켓은 「설명 안 되는 몫」이 아니다."""
+    rng = random.Random(64)
+    n = 300
+    mkt = [rng.uniform(-1.0, 1.0) for _ in range(n)]
+    ivw = [m + rng.uniform(-0.3, 0.3) for m in mkt]
+    ive = [m - (ivw[i] - m) for i, m in enumerate(mkt)]
+    rut = [m + rng.uniform(-0.4, 0.4) for m in mkt]
+    soxx = [1.4 * m + rng.uniform(-1.0, 1.0) for m in mkt]     # 반도체 고유 변동
+    bsk = [soxx[i] + rng.uniform(-0.2, 0.2) for i in range(n)]  # 반도체를 그대로 따라감
+    closes = {'^GSPC': _walk(mkt), 'IVW': _walk(ivw), 'IVE': _walk(ive),
+              '^RUT': _walk(rut), 'SOXX': _walk(soxx), 'BSK': _walk(bsk)}
+    got = factor_decomposition(closes, dates_for(closes), ('BSK',), w=250, horizon=20)
+    assert abs(got['factors']['semis']['beta'] - 1.0) < 0.2, got['factors']
+    assert abs(got['specific_pct']) < abs(got['factors']['semis']['contribution']), got
+
+
+def test_the_decomposition_carries_its_own_stability_evidence():
+    """창을 바꾸면 계수가 얼마나 움직이는지가 결과와 함께 남아야 한다.
+
+    2026-08-28 codex 지적 — 안정성 근거를 손으로 재고 버리면 발행본의 수치를
+    나중에 아무도 재검증할 수 없다. 긴 창 재적합과 다리 사이 최대 상관을
+    산출에 담아 커밋된 데이터만으로 다시 볼 수 있게 한다.
+    """
+    closes = _factor_world(style_beta=0.8, n=400)   # 긴 창 재적합이 가능한 길이
+    got = factor_decomposition(closes, dates_for(closes), ('BSK',), w=120, horizon=20)
+    d = got['diagnostics']
+    assert set(d['betas_long']) == set(got['factors'])
+    assert d['long_window_sessions'] > got['window_sessions']
+    assert 0.0 <= d['max_factor_corr'] <= 1.0
+
+
+def test_stability_evidence_is_absent_rather_than_faked_on_short_history():
+    closes = _factor_world(n=140)
+    got = factor_decomposition(closes, dates_for(closes), ('BSK',), w=120, horizon=20)
+    assert got['diagnostics']['betas_long'] is None

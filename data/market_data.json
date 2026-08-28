@@ -555,37 +555,37 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.042,
+        "change": -0.056,
         "unit": "%",
-        "multiple": -0.14,
+        "multiple": -0.19,
         "band": "미미"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": 0.047,
+        "change": 0.07,
         "unit": "%",
-        "multiple": 0.11,
+        "multiple": 0.17,
         "band": "미미"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": -0.442,
+        "change": -0.355,
         "unit": "%",
-        "multiple": -0.7,
+        "multiple": -0.57,
         "band": "보통"
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 1.399,
+        "change": 1.326,
         "unit": "%",
-        "multiple": 0.43,
+        "multiple": 0.41,
         "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 0.979,
+        "change": 0.937,
         "unit": "%",
-        "multiple": 0.61,
+        "multiple": 0.59,
         "band": "보통"
       },
       "10Y": {
@@ -629,31 +629,31 @@
         "sessions": 504
       },
       "DXY": {
-        "value": 99.128,
+        "value": 99.114,
         "percentile": 39.1,
         "band": "중간",
         "sessions": 504
       },
       "USD/JPY": {
-        "value": 159.33,
-        "percentile": 86.9,
+        "value": 159.367,
+        "percentile": 87.5,
         "band": "높음",
         "sessions": 504
       },
       "USD/KRW": {
-        "value": 1377.38,
-        "percentile": 13.9,
+        "value": 1378.58,
+        "percentile": 14.9,
         "band": "낮음",
         "sessions": 504
       },
       "WTI": {
-        "value": 83.38,
+        "value": 83.32,
         "percentile": 83.7,
         "band": "높음",
         "sessions": 504
       },
       "Gold": {
-        "value": 4643.2,
+        "value": 4641.3,
         "percentile": 86.9,
         "band": "높음",
         "sessions": 504
@@ -729,19 +729,33 @@
         "factors": {
           "style": {
             "label_ko": "성장−가치",
-            "beta": 3.003,
-            "contribution": 10.387
+            "beta": -0.467,
+            "contribution": -1.615
           },
           "size": {
             "label_ko": "대형−소형",
-            "beta": -2.137,
-            "contribution": -3.313
+            "beta": 0.996,
+            "contribution": 1.543
+          },
+          "semis": {
+            "label_ko": "반도체",
+            "beta": 1.475,
+            "contribution": 1.048
           }
         },
-        "specific_pct": -11.705,
-        "fit_r2": 0.4852,
+        "specific_pct": -5.608,
+        "fit_r2": 0.7363,
         "window_sessions": 60,
         "horizon_sessions": 20,
+        "diagnostics": {
+          "long_window_sessions": 252,
+          "betas_long": {
+            "style": 0.171,
+            "size": 0.369,
+            "semis": 1.347
+          },
+          "max_factor_corr": 0.777
+        },
         "label_ko": "메모리"
       },
       "ai_infra": {
@@ -750,19 +764,33 @@
         "factors": {
           "style": {
             "label_ko": "성장−가치",
-            "beta": 2.743,
-            "contribution": 9.486
+            "beta": 0.811,
+            "contribution": 2.803
           },
           "size": {
             "label_ko": "대형−소형",
-            "beta": -2.708,
-            "contribution": -4.197
+            "beta": -0.963,
+            "contribution": -1.493
+          },
+          "semis": {
+            "label_ko": "반도체",
+            "beta": 0.821,
+            "contribution": 0.584
           }
         },
-        "specific_pct": 11.73,
-        "fit_r2": 0.6559,
+        "specific_pct": 15.125,
+        "fit_r2": 0.7749,
         "window_sessions": 60,
         "horizon_sessions": 20,
+        "diagnostics": {
+          "long_window_sessions": 252,
+          "betas_long": {
+            "style": 0.467,
+            "size": -0.334,
+            "semis": 0.987
+          },
+          "max_factor_corr": 0.777
+        },
         "label_ko": "AI 인프라"
       }
     },

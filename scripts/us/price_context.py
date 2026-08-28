@@ -480,14 +480,6 @@ COHESION_SET = ['^GSPC', '^IXIC', '^RUT', '^VIX', 'DX-Y.NYB', 'JPY=X', 'CL=F', '
 # reading that crosses zero inside the band is not reported as a change of regime.
 FLIP_FLOOR = 0.2
 
-# Everything compute() reads, for the collector's one batched download. Sector ETFs
-# are not here: they come from the collector's own SECTORS list.
-HISTORY_TICKERS = sorted(
-    {t for _, t in TRACKED}
-    | set(COHESION_SET)
-    | {a for _, _, a, _ in CORR_PAIRS}
-    | {b for _, _, _, b in CORR_PAIRS}
-)
 
 
 def _corr_band(v):
@@ -584,7 +576,7 @@ def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
 # ── 팩터 분해 ──────────────────────────────────────────────────────────────
 #
 # 「메모리가 나스닥을 앞섰다」는 그 자체로는 메모리 얘기인지 그냥 성장주가 오른
-# 것인지 말해 주지 않는다. 시장을 뺀 초과수익을 두 개의 롱숏 스프레드에 회귀해서
+# 것인지 말해 주지 않는다. 시장을 뺀 초과수익을 세 개의 롱숏 스프레드에 회귀해서
 # 스타일로 설명되는 몫과 그 바스켓 고유의 몫을 가른다. GS의 FactorRiskModel은
 # 인증 벽 뒤지만 우리가 답하려는 질문에는 세 요인이면 충분하고, 네 다리 전부
 # 이미 받고 있는 시세다.
@@ -592,6 +584,11 @@ def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
 FACTORS = (
     ('style', '성장−가치', 'IVW', 'IVE'),
     ('size', '대형−소형', '^GSPC', '^RUT'),
+    # 반도체 축(2026-08-28 사용자 지시). 이걸 빼면 성장−가치 다리가 반도체 움직임을
+    # 대신 떠안아 스타일 베타가 창 길이에 따라 +4.05~+1.52로 흔들렸다. 넣으면 스타일이
+    # ≈0으로 수렴하고 반도체 베타가 +1.17~+1.47로 안정된다(실측). 모형이 잘못 지정돼
+    # 있었다는 뜻이고, R²(메모리 0.49→0.74)보다 이쪽이 더 큰 소득이다.
+    ('semis', '반도체', 'SOXX', '^GSPC'),
 )
 
 BASKETS = (
@@ -599,7 +596,21 @@ BASKETS = (
     ('ai_infra', 'AI 인프라', ('MRVL', 'COHR', 'LITE', 'GEV', 'VRT')),
 )
 
+# Everything compute() reads, for the collector's one batched download. Sector ETFs
+# are not here: they come from the collector's own SECTORS list.
+HISTORY_TICKERS = sorted(
+    {t for _, t in TRACKED}
+    | set(COHESION_SET)
+    | {a for _, _, a, _ in CORR_PAIRS}
+    | {b for _, _, _, b in CORR_PAIRS}
+    # 팩터 다리와 바스켓도 여기서 선언한다. 스탠스 쪽 목록에 얹어 두면 그쪽이
+    # 바뀔 때 조용히 빠진다.
+    | {t for _, _, a, b in FACTORS for t in (a, b)}
+    | {t for _, _, basket in BASKETS for t in basket}
+)
+
 FACTOR_WINDOW = 60      # sessions the betas are fitted over
+FACTOR_LONG_WINDOW = 252  # 같은 적합을 긴 창에서 한 번 더 — 안정성 근거를 함께 남긴다
 FACTOR_HORIZON = 20     # sessions of excess return being split
 
 
@@ -607,7 +618,12 @@ def factor_decomposition(closes, dates, basket, market='^GSPC',
                          w=FACTOR_WINDOW, horizon=FACTOR_HORIZON):
     """Split a basket's excess return over the market into style, size and its own.
 
-    남는 몫은 **「고유 요인」이 아니라 「이 두 축으로 설명되지 않는 몫」**이다. 시장
+    남는 몫은 **「고유 요인」이 아니라 「이 축들로 설명되지 않는 몫」**이다. 반도체
+    축이 들어오면서 메모리에 대해서는 사실상 «반도체 전반 대비 얼마나 달랐나»가 된다.
+    SOXX 안에 마이크론이 들어 있어(메모리 3사가 SOXX 설명력에 +0.228을 더한다, 실측)
+    반도체 몫과 남는 몫이 서로 얼마나 섞였는지는 이 산출만으로 가릴 수 없다 — 편향이
+    어느 쪽으로 향하는지도 일반적으로는 정해지지 않는다(2026-08-28 codex 반례).
+    그러니 「메모리 고유」라고 부르지 않고, 남는 몫을 원인 규명으로도 쓰지 않는다. 시장
     민감도가 1이 아니면 그 차이도 여기 섞여 들어온다(2026-08-28 codex 지적). 그
     몫을 회귀로 갈라내 보려 했으나 시장 다리와 성장−가치 다리가 실측 0.75로 붙어
     있어 시장 베타가 창 길이에 따라 -0.94~+1.17로 흔들렸다 — 공유된 변동을 어느
@@ -663,6 +679,28 @@ def factor_decomposition(closes, dates, basket, market='^GSPC',
     # 단변량 시장 베타 — 스프레드끼리의 상관과 무관하게 잡히는, 해석 가능한 값.
     mvar = float((mkt * mkt).sum())
     market_beta = round(float((names * mkt).sum() / mvar), 3) if mvar else None
+
+    # 안정성 근거를 산출에 담는다(2026-08-28 codex 지적). 손으로 재고 버리면 발행본의
+    # 수치를 나중에 아무도 재검증할 수 없다. 긴 창에서 같은 적합을 한 번 더 하고,
+    # 다리 사이 최대 상관도 남긴다 — 창을 바꿔 부호가 뒤집히는 다리는 인용하지 않는다.
+    corrs = [abs(float(np.corrcoef(x[:, i], x[:, j])[0, 1]))
+             for i in range(x.shape[1]) for j in range(i + 1, x.shape[1])]
+    betas_long = None
+    long_cols = aligned_changes(closes, dates, legs, FACTOR_LONG_WINDOW)
+    if long_cols is not None:
+        lt = dict(zip(legs, long_cols))
+        lmkt = np.array(lt[market], dtype=float)
+        lnames = np.array([lt[t] for t in basket], dtype=float).mean(axis=0)
+        lx = np.array([np.array(lt[a], dtype=float) - np.array(lt[b], dtype=float)
+                       for _, _, a, b in FACTORS]).T
+        try:
+            lb, *_ = np.linalg.lstsq(lx, lnames - lmkt, rcond=None)
+            if np.all(np.isfinite(lb)):
+                betas_long = {k: round(float(lb[i]), 3)
+                              for i, (k, _lab, _a, _b) in enumerate(FACTORS)}
+        except np.linalg.LinAlgError:
+            betas_long = None
+
     return {
         'excess_pct': round(float(excess[tail].sum()), 3),
         'market_beta': market_beta,
@@ -671,4 +709,9 @@ def factor_decomposition(closes, dates, basket, market='^GSPC',
         'fit_r2': r2,
         'window_sessions': w,
         'horizon_sessions': horizon,
+        'diagnostics': {
+            'long_window_sessions': FACTOR_LONG_WINDOW,
+            'betas_long': betas_long,
+            'max_factor_corr': round(max(corrs), 3) if corrs else None,
+        },
     }
