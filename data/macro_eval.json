@@ -1,56 +1,47 @@
 {
-  "report_date": "2026-08-27",
+  "report_date": "2026-08-28",
   "macro_date": "2026-08-27",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": -0.449,
-    "inflation_score": -0.327,
+    "growth_score": -0.341,
+    "inflation_score": -0.391,
     "growth_diffusion": 0.357,
     "inflation_diffusion": 0.625
   },
   "implied": {
     "growth": -1,
-    "inflation": 0,
-    "name": "냉각"
+    "inflation": -1,
+    "name": "연착륙"
   },
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims"
+    "Michigan Consumer Sentiment",
+    "Michigan 1-Yr Inflation Exp"
   ],
   "headline_releases": [
     {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
+      "key": "michigan",
+      "label": "미시간대 소비자심리",
       "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 1.097,
+      "agency": "U. Michigan",
+      "url": "http://www.sca.isr.umich.edu/",
+      "primary": "Michigan 1-Yr Inflation Exp",
+      "max_abs_z": 0.756,
       "indicators": [
         {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 203000.0,
-          "previous": 207000.0,
-          "ref_period": "2026-08-22",
-          "momentum_z": 0.22
+          "name": "Michigan Consumer Sentiment",
+          "axis": "Consumption",
+          "actual": 55.2,
+          "previous": 49.5,
+          "ref_period": "2026-07-01",
+          "momentum_z": -0.547
         },
         {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 205500.0,
-          "previous": 204250.0,
-          "ref_period": "2026-08-22",
-          "momentum_z": -1.097
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1778000.0,
-          "previous": 1796000.0,
-          "ref_period": "2026-08-15",
-          "momentum_z": -0.343
+          "name": "Michigan 1-Yr Inflation Exp",
+          "axis": "Inflation",
+          "actual": 4.2,
+          "previous": 4.6,
+          "ref_period": "2026-07-01",
+          "momentum_z": 0.756
         }
       ],
       "components": []
@@ -65,7 +56,7 @@
     "inflation_label": "교착",
     "name": "냉각",
     "since": "2026-08-26",
-    "days_held": 2,
+    "days_held": 3,
     "thesis": "성장 쪽 점수가 -0.377로 내려와 처음으로 뚜렷하게 둔화 구간에 들어섰다. 오늘 새로 들어온 내구재 주문(7월, 헤드라인 +1.07%)은 항공기발 반등을 걷어내면 사실상 정체 수준이라 흐름 판정이 뚜렷한 악화로 나왔고, 이것이 활동축을 끌어내려 성장축 전체를 교착에서 둔화로 밀었다. 인플레 쪽은 PCE·근원 PCE가 나란히 완만한 재가속을 보였지만 점수(-0.327)는 아직 둔화 경계 안쪽에 머물러 인플레축은 교착을 유지한다. 그 결과 국면은 교착에서 냉각으로 한 칸 이동한다."
   },
   "regime_change_allowed": false,
@@ -92,7 +83,7 @@
       "channel": "성장 쪽 점수가 둔화로 넘어갔지만 물가 상승률 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 장기금리 레벨이 여전히 높아 할인율이 주가 수준의 상단을 누르는 경로도 남아 있다. 오늘 나스닥은 엔비디아 실적 하나에 힘입어 올랐지만 11개 섹터 중 기술 하나만 상승해 3~6개월 구조 판단을 흔들 신호는 아니었다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         -1,
         0,
@@ -105,7 +96,7 @@
       "channel": "물가 상승률 둔화 흐름이 이어지면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 오늘 FRED 동일자(2026-08-26) 분해에서 10년물 하루 상승분(+2bp)은 실질금리(+2bp)가 전부 설명했고 기대인플레는 보합이었다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         0,
         1
@@ -117,7 +108,7 @@
       "channel": "성장 정체 속 물가 상승률 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지하고, 안전자산 수요는 엔·금으로 분산되는 편이다. 오늘 DXY는 -0.04% 소폭 내려 이 경로와 결이 같았다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         -1,
         0
@@ -129,7 +120,7 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 오늘 WTI는 +1.68%로 반등했지만 지정학 재료에 따른 변동으로 추세 전환 신호는 아니다.",
       "confirm": "Brent가 3개월 평균 $90 상회를 유지하는지, 호르무즈 통항 차질의 실제 발생 여부",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         -1,
         0,
@@ -142,7 +133,7 @@
       "channel": "물가 상승률 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 오늘 금은 +1.42% 오른 4,663.40달러로 강세를 이어갔다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         0,
         1
@@ -154,7 +145,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 엔비디아가 실적 콜에서 언급한 메모리 원가 상승도 이 수급 타이트 내러티브와 연결된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         0,
         1
@@ -166,7 +157,7 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간에서는 할인율 상승이 고성장주 주가 수준을 압박하는 경로가 이를 상쇄한다. 오늘 마벨·루멘텀의 엇갈린 등락도 캐펙스 사이클 확인 신호로 곧바로 연결되지 않는다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 3분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
         -1,
         0,

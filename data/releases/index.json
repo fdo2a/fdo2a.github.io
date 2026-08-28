@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-08-27",
+  "report_date": "2026-08-28",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "key": "michigan",
+      "url": "http://www.sca.isr.umich.edu/",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20233,
-      "path": "releases/claims.txt"
+      "chars": 2428,
+      "path": "releases/michigan.txt"
     }
   ]
 }

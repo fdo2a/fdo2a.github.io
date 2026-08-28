@@ -1,8 +1,8 @@
 {
-  "generated": "2026-08-27 23:08 UTC",
-  "report_date": "2026-08-27",
-  "growth_score": -0.449,
-  "inflation_score": -0.327,
+  "generated": "2026-08-28 23:07 UTC",
+  "report_date": "2026-08-28",
+  "growth_score": -0.341,
+  "inflation_score": -0.391,
   "growth_diffusion": 0.357,
   "inflation_diffusion": 0.625,
   "axis_summary": {
@@ -78,21 +78,13 @@
     },
     "Consumption": {
       "label_ko": "소비",
-      "score": -1.168,
+      "score": -0.847,
       "direction": "악화",
-      "strength": "뚜렷",
+      "strength": "완만",
       "breadth_ko": "둘 중 둘이 악화",
       "improving": 0,
       "total": 2,
       "leaders": [
-        {
-          "label_ko": "미시간대 소비자심리",
-          "name": "Michigan Consumer Sentiment",
-          "direction": "악화",
-          "strength": "뚜렷",
-          "actual": 49.5,
-          "previous": 44.8
-        },
         {
           "label_ko": "소매판매",
           "name": "Retail Sales MoM",
@@ -100,12 +92,20 @@
           "strength": "뚜렷",
           "actual": -0.58,
           "previous": 0.25
+        },
+        {
+          "label_ko": "미시간대 소비자심리",
+          "name": "Michigan Consumer Sentiment",
+          "direction": "악화",
+          "strength": "완만",
+          "actual": 55.2,
+          "previous": 49.5
         }
       ]
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": -0.327,
+      "score": -0.391,
       "direction": "둔화",
       "strength": "미미",
       "breadth_ko": "여덟 중 셋만 둔화",
@@ -129,12 +129,12 @@
           "previous": -0.11
         },
         {
-          "label_ko": "미시간대 1년 기대인플레",
-          "name": "Michigan 1-Yr Inflation Exp",
-          "direction": "재가속",
-          "strength": "뚜렷",
-          "actual": 4.6,
-          "previous": 4.8
+          "label_ko": "근원 소비자물가 전월비",
+          "name": "Core CPI MoM",
+          "direction": "둔화",
+          "strength": "완만",
+          "actual": 0.22,
+          "previous": -0.02
         }
       ]
     }
@@ -142,8 +142,8 @@
   "axis_scores": {
     "Labor": 0.184,
     "Activity": -0.362,
-    "Consumption": -1.168,
-    "Inflation": -0.327
+    "Consumption": -0.847,
+    "Inflation": -0.391
   },
   "indicators": [
     {
@@ -174,7 +174,7 @@
       "actual": 203000.0,
       "previous": 207000.0,
       "ref_period": "2026-08-22",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -189,7 +189,7 @@
       "actual": 205500.0,
       "previous": 204250.0,
       "ref_period": "2026-08-22",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -204,7 +204,7 @@
       "actual": 1778000.0,
       "previous": 1796000.0,
       "ref_period": "2026-08-15",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -346,15 +346,15 @@
       "label_ko": "미시간대 소비자심리",
       "axis": "Consumption",
       "direction": "악화",
-      "strength": "뚜렷",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -1.19,
-      "signed_z": -1.19,
-      "actual": 49.5,
-      "previous": 44.8,
-      "ref_period": "2026-06-01",
-      "is_new": false
+      "momentum_z": -0.547,
+      "signed_z": -0.547,
+      "actual": 55.2,
+      "previous": 49.5,
+      "ref_period": "2026-07-01",
+      "is_new": true
     },
     {
       "name": "CPI YoY",
@@ -466,55 +466,46 @@
       "label_ko": "미시간대 1년 기대인플레",
       "axis": "Inflation",
       "direction": "재가속",
-      "strength": "뚜렷",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 1.268,
-      "signed_z": 1.268,
-      "actual": 4.6,
-      "previous": 4.8,
-      "ref_period": "2026-06-01",
-      "is_new": false
+      "momentum_z": 0.756,
+      "signed_z": 0.756,
+      "actual": 4.2,
+      "previous": 4.6,
+      "ref_period": "2026-07-01",
+      "is_new": true
     }
   ],
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims"
+    "Michigan Consumer Sentiment",
+    "Michigan 1-Yr Inflation Exp"
   ],
   "headline_releases": [
     {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
+      "key": "michigan",
+      "label": "미시간대 소비자심리",
       "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 1.097,
+      "agency": "U. Michigan",
+      "url": "http://www.sca.isr.umich.edu/",
+      "primary": "Michigan 1-Yr Inflation Exp",
+      "max_abs_z": 0.756,
       "indicators": [
         {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 203000.0,
-          "previous": 207000.0,
-          "ref_period": "2026-08-22",
-          "momentum_z": 0.22
+          "name": "Michigan Consumer Sentiment",
+          "axis": "Consumption",
+          "actual": 55.2,
+          "previous": 49.5,
+          "ref_period": "2026-07-01",
+          "momentum_z": -0.547
         },
         {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 205500.0,
-          "previous": 204250.0,
-          "ref_period": "2026-08-22",
-          "momentum_z": -1.097
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1778000.0,
-          "previous": 1796000.0,
-          "ref_period": "2026-08-15",
-          "momentum_z": -0.343
+          "name": "Michigan 1-Yr Inflation Exp",
+          "axis": "Inflation",
+          "actual": 4.2,
+          "previous": 4.6,
+          "ref_period": "2026-07-01",
+          "momentum_z": 0.756
         }
       ],
       "components": []
@@ -574,8 +565,8 @@
       -0.58
     ],
     "Michigan Consumer Sentiment": [
-      "2026-06-01",
-      49.5
+      "2026-07-01",
+      55.2
     ],
     "CPI YoY": [
       "2026-07-01",
@@ -606,8 +597,8 @@
       3.34
     ],
     "Michigan 1-Yr Inflation Exp": [
-      "2026-06-01",
-      4.6
+      "2026-07-01",
+      4.2
     ]
   }
 }
