@@ -697,30 +697,6 @@ def main():
     except Exception as e:
         print(f'macro metrics failed: {e}', file=sys.stderr)
 
-    # 같은 계약: 비-코어라 실패해도 데이터셋은 산다. 「오늘의 장」이 읽을 재료 —
-    # 세계장이 어디서 끝났나, 밤사이 선물이 무엇을 했나, 평균적인 종목이 따라갔나,
-    # 어디서 끝났나.
-    print('computing session context...')
-    try:
-        from us.session import compute as compute_session
-        sess = compute_session(closes, hist_dates, data, intraday,
-                               collect_futures_bars(), report_date)
-        data['session'] = sess
-        for key, ko in (('asia', '아시아'), ('europe', '유럽')):
-            al = sess['global_close'][key]['alignment']
-            if al:
-                print(f"  {ko}: 미국과 {al['label']} (평균 {al['avg_pct']:+.2f}%)"
-                      f"{' · 지역 내 혼조' if al['mixed'] else ''}")
-            else:
-                print(f"  {ko}: 판정 불가(지수 부족)")
-        par = sess['participation']
-        print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
-              else '  참여도: 판정 불가')
-        print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
-              f"야간 선물 {len(sess['futures']['contracts'])}종")
-    except Exception as e:
-        print(f'session context failed: {e}', file=sys.stderr)
-
     # Non-core, same contract as the blocks above: the statistical context for the
     # price side — is today's move large for this asset, where does the level sit in
     # its own history, are the standing cross-asset relationships still holding. A
@@ -747,6 +723,30 @@ def main():
                   f"{top['contribution']:+.2f}%p (설명력 R²={sc['fit_r2']})")
     except Exception as e:
         print(f'price context failed: {e}', file=sys.stderr)
+
+    # 같은 계약: 비-코어라 실패해도 데이터셋은 산다. 「오늘의 장」이 읽을 재료 —
+    # 세계장이 어디서 끝났나, 밤사이 선물이 무엇을 했나, 평균적인 종목이 따라갔나,
+    # 어디서 끝났나.
+    print('computing session context...')
+    try:
+        from us.session import compute as compute_session
+        sess = compute_session(closes, hist_dates, data, intraday,
+                               collect_futures_bars(), report_date)
+        data['session'] = sess
+        for key, ko in (('asia', '아시아'), ('europe', '유럽')):
+            al = sess['global_close'][key]['alignment']
+            if al:
+                print(f"  {ko}: 미국과 {al['label']} (평균 {al['avg_pct']:+.2f}%)"
+                      f"{' · 지역 내 혼조' if al['mixed'] else ''}")
+            else:
+                print(f"  {ko}: 판정 불가(지수 부족)")
+        par = sess['participation']
+        print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
+              else '  참여도: 판정 불가')
+        print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
+              f"야간 선물 {len(sess['futures']['contracts'])}종")
+    except Exception as e:
+        print(f'session context failed: {e}', file=sys.stderr)
 
     # Non-core: the §9 track record. Mostly it says "not enough decisions yet" — that
     # is the point. It accumulates now so a retrospective is possible later, and the

@@ -148,3 +148,31 @@ def test_vix_must_match_the_collected_level():
     ok = FULL.replace('</section>', '<p>VIX는 14.51입니다.</p></section>')
     assert check(ok, SESSION, price_context=pc) == []
     assert any('VIX' in v for v in check(FULL, SESSION, price_context=pc))
+
+
+def test_table_check_is_sign_aware():
+    """+0.31을 -0.31로 적은 것은 방향이 뒤집힌 것이다 — 과거 FX 오류와 같은 종류."""
+    html = FULL.replace('DAX 0.31%', 'DAX -0.31%')
+    assert any('DAX' in v for v in check(html, SESSION))
+
+
+def test_table_check_ignores_a_longer_number():
+    html = FULL.replace('FTSE100 -0.79%', 'FTSE100 -10.79%')
+    assert any('FTSE100' in v for v in check(html, SESSION))
+
+
+def test_stale_date_accepts_a_korean_rendering():
+    s = {**SESSION}
+    s['global_close'] = {**SESSION['global_close'],
+                         'asia': {'rows': [{'name': '닛케이', 'pct': -0.2, 'date': '2026-08-21'},
+                                           {'name': '항셍', 'pct': -0.34, 'date': '2026-08-21'}],
+                                  'alignment': None}}
+    ko = FULL.replace('아시아도', '8월 21일 기준 아시아는')
+    assert not any('기준일' in v for v in check(ko, s))
+    assert any('기준일' in v for v in check(FULL, s))
+
+
+def test_tape_paragraph_may_be_omitted_when_there_is_nothing_to_say():
+    s = {**SESSION, 'participation': {'gap_pp': 0.1, 'band': '중립'}, 'tape': {}}
+    html = FULL.replace('<p data-session="tape">소수가 끌어올림이었고 나스닥은 고점권 마감입니다.</p>', '')
+    assert not any('data-session="tape"' in v for v in check(html, s))

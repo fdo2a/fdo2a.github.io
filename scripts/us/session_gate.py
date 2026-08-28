@@ -74,6 +74,38 @@ def _blocks(html):
     return {k: ' '.join(v) for k, v in out.items()}
 
 
+def _has_figure(page, pct):
+    """그 수치가 **부호까지 맞게** 본문에 있나.
+
+    부분문자열로만 보면 +0.31을 「-0.31」로 적은 판이 통과한다 — 방향이 뒤집힌
+    발행본을 게이트가 승인하는 것이고, 이 레포가 과거 FX 방향·유가 등락률에서
+    실제로 겪은 오류다. 더 긴 수치의 일부(-10.79 안의 0.79)도 걸러낸다.
+    """
+    body = f'{abs(pct):.2f}'
+    for m in re.finditer(re.escape(body), page):
+        i, j = m.start(), m.end()
+        if i and (page[i - 1].isdigit() or page[i - 1] == '.'):
+            continue
+        if j < len(page) and page[j].isdigit():
+            continue
+        negative = bool(re.search(r'[-−–]\s*$', page[max(0, i - 2):i]))
+        if negative == (pct < 0):
+            return True
+    return False
+
+
+def _date_forms(date):
+    """ISO와 한국어 표기를 함께 인정한다 — 「8월 21일 기준」은 올바른 문장이다."""
+    forms = {str(date)}
+    try:
+        d = dt.date.fromisoformat(str(date))
+    except ValueError:
+        return forms
+    forms |= {f'{d.month}월 {d.day}일', f'{d.month:02d}월 {d.day:02d}일',
+              f'{d.year}년 {d.month}월 {d.day}일'}
+    return forms
+
+
 def _rows(session, market):
     if market == 'kr':
         block = session.get('asia_peers') or {}
@@ -108,6 +140,10 @@ def check(html, session, market='us', price_context=None):
         optional.add('global')
     if market == 'us' and not (fut.get('contracts') or fut.get('gap')):
         optional.add('preopen')          # 할 말이 없는 날은 비워도 된다
+    par_band = (session.get('participation') or {}).get('band')
+    if (market == 'us' and par_band in (None, '중립')
+            and not any((session.get('tape') or {}).values())):
+        optional.add('tape')
 
     for key in MARKERS:
         if key in optional:
@@ -145,15 +181,15 @@ def check(html, session, market='us', price_context=None):
                 v.append(f'참여도 {par["band"]}({par["gap_pp"]:+.2f}%p)을 서술하지 않았다')
 
     # 표에 실린 값이 원본과 어긋나면 막는다. 손으로 옮겨 적은 수치는 흔들린다.
-    flat = page.replace('+', '')
     for row in rows:
         if row.get('pct') is None:
             continue
-        if f'{row["pct"]:.2f}' not in flat:
+        if not _has_figure(page, row['pct']):
             v.append(f'{row["name"]}의 등락({row["pct"]:+.2f}%)이 본문·표 어디에도 없거나 '
-                     '다른 값으로 적혔다')
+                     '다른 값(부호 포함)으로 적혔다')
         d, rd = row.get('date'), session.get('report_date')
-        if d and rd and _sessions_between(d, rd) >= STALE_SESSIONS and str(d) not in page:
+        if (d and rd and _sessions_between(d, rd) >= STALE_SESSIONS
+                and not (_date_forms(d) & {f for f in _date_forms(d) if f in page})):
             v.append(f'{row["name"]}의 마감이 {d}로 report_date({rd})보다 이른데 기준일 '
                      '표기가 없다 — 당일 마감인 양 쓰지 않는다')
 
