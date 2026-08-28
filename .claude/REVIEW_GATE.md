@@ -68,8 +68,17 @@ KR 브리프면 근거를 `site/kr/data/*`로, thesis 페이지면 `site/thesis/
 
 ```
 python3 scripts/verify_post.py posts/2026-08-22.html
+python3 scripts/check_session.py --html posts/2026-08-22.html --datadir data --market us
 python3 scripts/review_gate.py mark posts/2026-08-22.html --findings 3
 ```
+
+KR 발행본이면 `--datadir kr/data --market kr`로 바꾼다.
+
+**시황 게이트를 여기서 다시 도는 이유**: 루틴이 발행할 때 이미 한 번 돌지만, 그때는
+그날 데이터로 돌았다. 여기서는 **커밋된 데이터와 공개된 글**을 맞대 본다 — 발행 후에
+데이터가 다시 커밋됐거나(수집 재실행), 4단계에서 손으로 고치며 「오늘의 장」 문단의
+수치·표식을 건드렸을 때 그것이 드러나는 자리다. 「오늘의 장」이 실린 첫 발행본은
+이 검사를 반드시 통과시킨 뒤 `mark`한다.
 
 `verify_post.py`가 「수치가 움직였다」고 잡는 것은 **정상이다.** 틀린 숫자를 고쳤으니
 움직이는 게 맞다. 출력에 나온 사라진 값·생긴 값이 의도한 정정과 일치하는지 눈으로

@@ -216,3 +216,32 @@ def test_futures_carry_their_overnight_range():
     bars = [{'t': '2026-08-26T18:30:00-04:00', 'high': 110.0, 'low': 100.0},
             {'t': '2026-08-27T04:30:00-04:00', 'high': 105.0, 'low': 102.0}]
     assert session.overnight(bars, '2026-08-27')['range_pct'] == 10.0
+
+
+def test_calibrate_tape_returns_the_draft_until_there_is_enough_history():
+    assert session.calibrate_tape([]) == (session.TAPE_HIGH, session.TAPE_LOW, None)
+    few = [{'high': 10, 'low': 0, 'close': c} for c in range(5)]
+    hi, lo, meta = session.calibrate_tape({'^GSPC': few})
+    assert (hi, lo) == (session.TAPE_HIGH, session.TAPE_LOW)
+    assert meta is None          # 표본이 모자라면 초안값을 그대로 쓴다
+
+
+def test_calibrate_tape_uses_the_observed_quartiles():
+    # 위치가 0,1,...,99로 고른 100세션 → 선형보간으로 p75=74.25, p25=24.75
+    bars = [{'high': 100.0, 'low': 0.0, 'close': float(i)} for i in range(100)]
+    hi, lo, meta = session.calibrate_tape({'^GSPC': bars})
+    assert (hi, lo) == (74.2, 24.8)
+    assert meta['sessions'] == 100
+
+
+def test_calibrate_tape_skips_degenerate_bars():
+    bars = ([{'high': 1.0, 'low': 1.0, 'close': 1.0}] * 30
+            + [{'high': 100.0, 'low': 0.0, 'close': float(i)} for i in range(100)])
+    _, _, meta = session.calibrate_tape({'^GSPC': bars})
+    assert meta['sessions'] == 100
+
+
+def test_tape_accepts_calibrated_thresholds():
+    t = session.tape({'S&P 500': {'close': 70, 'low': 0, 'high': 100}},
+                     thresholds=(60, 20))
+    assert t['S&P 500']['band'] == '고점권 마감'

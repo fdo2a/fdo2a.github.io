@@ -159,8 +159,49 @@ def gap_direction(gap_pct):
 
 PARTICIPATION_MIN_PP = 0.4   # 2년치 |차| 중앙값 0.33%p 바로 위. 최적값이 아니라 읽기용 컷.
 TAPE_INDICES = ('S&P 500', 'Nasdaq', 'Russell 2000')
-# 경계는 1일차 관측 뒤 확정한다(스펙 「열린 항목」). 초안값.
+# 초안값. 아래 calibrate_tape()가 실제 이력에서 사분위를 잡아 매일 대체한다 —
+# 사람이 며칠 기다렸다 손으로 정하는 자리를 남기지 않는다.
 TAPE_HIGH, TAPE_LOW = 75, 25
+TAPE_MIN_SESSIONS = 60      # 이보다 적으면 초안값을 그대로 쓴다
+
+
+def _positions(bars):
+    out = []
+    for b in bars or []:
+        hi, lo, cl = b.get('high'), b.get('low'), b.get('close')
+        if not (_finite(hi) and _finite(lo) and _finite(cl)) or hi == lo:
+            continue
+        out.append((cl - lo) / (hi - lo) * 100)
+    return out
+
+
+def _quantile(sorted_vals, q):
+    if not sorted_vals:
+        return None
+    i = q * (len(sorted_vals) - 1)
+    lo, hi = int(i), min(int(i) + 1, len(sorted_vals) - 1)
+    return sorted_vals[lo] + (sorted_vals[hi] - sorted_vals[lo]) * (i - lo)
+
+
+def calibrate_tape(ohlc):
+    """「고점권 마감」의 경계를 이력에서 잡는다.
+
+    75/25는 눈대중으로 고른 초안이었다. 실제 분포는 지수마다·국면마다 다르므로
+    일간 OHLC에서 종가 위치의 사분위를 직접 재고, 표본이 모자라면 초안값을
+    그대로 쓴다. 매 수집마다 다시 재므로 사람이 개입할 자리가 없다.
+
+    반환은 `(high, low, meta)` — meta가 None이면 초안값을 쓴 것이다.
+    """
+    vals = []
+    for bars in (ohlc or {}).values():
+        vals += _positions(bars)
+    if len(vals) < TAPE_MIN_SESSIONS:
+        return TAPE_HIGH, TAPE_LOW, None
+    vals.sort()
+    hi = round(_quantile(vals, 0.75), 1)
+    lo = round(_quantile(vals, 0.25), 1)
+    return hi, lo, {'sessions': len(vals), 'high': hi, 'low': lo,
+                    'source': '일간 OHLC 종가 위치의 사분위'}
 
 
 def participation(closes, dates, report_date=None):
@@ -205,7 +246,7 @@ def participation(closes, dates, report_date=None):
     return {'gap_pp': g, 'spy_pct': round(cap, 2), 'date': b, 'band': band}
 
 
-def tape(intraday):
+def tape(intraday, thresholds=None):
     """종가가 당일 등락폭의 몇 % 지점인가.
 
     입력은 intraday.json 값만이다. 그 파일의 close는 30분 마지막 봉이라
@@ -221,16 +262,18 @@ def tape(intraday):
         if not (_finite(hi) and _finite(lo) and _finite(cl)) or hi == lo:
             out[name] = None
             continue
+        t_hi, t_lo = thresholds or (TAPE_HIGH, TAPE_LOW)
         raw = (cl - lo) / (hi - lo) * 100
         # 판정은 반올림 **전** 값으로. 74.6을 75로 올린 뒤 고점권이라 부르면
         # 경계가 실제보다 0.5 넓어진다.
-        band = ('고점권 마감' if raw >= TAPE_HIGH
-                else '저점권 마감' if raw <= TAPE_LOW else '중단 마감')
+        band = ('고점권 마감' if raw >= t_hi
+                else '저점권 마감' if raw <= t_lo else '중단 마감')
         out[name] = {'close_position': round(raw), 'band': band}
     return out
 
 
-def compute(closes, dates, market_data, intraday, futures_bars, report_date):
+def compute(closes, dates, market_data, intraday, futures_bars, report_date,
+            ohlc=None):
     """「오늘의 장」 블록. 어느 조각이 없어도 나머지는 나온다."""
     us_pct = (((market_data or {}).get('indices') or {}).get('S&P 500') or {}).get('pct')
     g = {}
@@ -244,6 +287,7 @@ def compute(closes, dates, market_data, intraday, futures_bars, report_date):
         if w:
             contracts[label] = w
 
+    t_hi, t_lo, t_meta = calibrate_tape(ohlc)
     gaps = {n: gap(market_data, intraday, n) for n in TAPE_INDICES}
     gaps = {n: v for n, v in gaps.items() if v is not None}
     return {
@@ -252,5 +296,6 @@ def compute(closes, dates, market_data, intraday, futures_bars, report_date):
         'futures': {'contracts': contracts, 'gap': gaps,
                     'direction': gap_direction(gaps.get('S&P 500'))},
         'participation': participation(closes, dates, report_date),
-        'tape': tape(intraday),
+        'tape': tape(intraday, thresholds=(t_hi, t_lo)),
+        'tape_calibration': t_meta,
     }

@@ -108,6 +108,9 @@ def fill_daily_gaps(daily):
     return daily
 
 
+TAPE_TICKERS = ('^GSPC', '^IXIC', '^RUT')
+
+
 def collect_histories():
     """Close-price histories for the stance triggers and the price-context readings.
 
@@ -139,7 +142,7 @@ def collect_histories():
         return df if df is not None and len(df) else None
 
     df = retry(dl)
-    out, idx, as_of = {}, {}, None
+    out, idx, as_of, ohlc = {}, {}, None, {}
     for t in tickers:
         try:
             closes = df[t]['Close'].dropna()
@@ -150,9 +153,15 @@ def collect_histories():
                 out[t], idx[t] = None, None
             if t == '^GSPC' and len(closes):
                 as_of = str(closes.index[-1].date())
+            # 마감 위치 경계를 이력에서 잡기 위한 일간 OHLC. 같은 다운로드에서
+            # 꺼내므로 요청이 늘지 않는다.
+            if t in TAPE_TICKERS:
+                bars = df[t][['High', 'Low', 'Close']].dropna()
+                ohlc[t] = [{'high': float(r['High']), 'low': float(r['Low']),
+                            'close': float(r['Close'])} for _, r in bars.iterrows()]
         except Exception:
             out[t], idx[t] = None, None
-    return out, idx, as_of
+    return out, idx, as_of, ohlc
 
 
 PERF_HORIZONS = [('1D', 1), ('1W', 7), ('1M', 30), ('6M', 182), ('1Y', 365)]
@@ -627,12 +636,12 @@ def main():
     # the grade rather than inventing a move.
     print('collecting close-price histories (batched)...')
     try:
-        closes, hist_dates, hist_as_of = collect_histories()
+        closes, hist_dates, hist_as_of, hist_ohlc = collect_histories()
         print(f'  histories: {sum(1 for v in closes.values() if v)}/{len(closes)} '
               f'(as of {hist_as_of})')
     except Exception as e:
         print(f'histories failed: {e}', file=sys.stderr)
-        closes, hist_dates, hist_as_of = {}, {}, None
+        closes, hist_dates, hist_as_of, hist_ohlc = {}, {}, None, {}
 
     print('computing stance trigger metrics...')
     try:
@@ -731,7 +740,7 @@ def main():
     try:
         from us.session import compute as compute_session
         sess = compute_session(closes, hist_dates, data, intraday,
-                               collect_futures_bars(), report_date)
+                               collect_futures_bars(), report_date, ohlc=hist_ohlc)
         data['session'] = sess
         for key, ko in (('asia', '아시아'), ('europe', '유럽')):
             al = sess['global_close'][key]['alignment']
@@ -743,6 +752,9 @@ def main():
         par = sess['participation']
         print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
               else '  참여도: 판정 불가')
+        cal = sess.get('tape_calibration')
+        print(f"  마감 위치 경계: {cal['high']}/{cal['low']} ({cal['sessions']}세션 실측)"
+              if cal else '  마감 위치 경계: 초안값 75/25 (표본 부족)')
         print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
               f"야간 선물 {len(sess['futures']['contracts'])}종")
     except Exception as e:
