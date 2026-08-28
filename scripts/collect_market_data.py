@@ -126,8 +126,12 @@ def collect_histories():
     import yfinance as yf
     from us.price_context import HISTORY_TICKERS as PC_TICKERS
     from us.stance_metrics import HISTORY_TICKERS as STANCE_TICKERS
+    # 「오늘의 장」의 글로벌 지수·참여도 다리도 여기서 함께 받는다. GROUPS에 넣으면
+    # completeness()가 코어로 취급해 도쿄·홍콩 휴장일에 발행이 멈춘다.
+    from us.session import HISTORY_TICKERS as SESSION_TICKERS
 
-    tickers = sorted(set(STANCE_TICKERS) | set(PC_TICKERS) | {t for _, t in SECTORS})
+    tickers = sorted(set(STANCE_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
+                     | {t for _, t in SECTORS})
 
     def dl():
         df = yf.download(tickers, period='3y', interval='1d', group_by='ticker',
@@ -405,6 +409,25 @@ def collect_intraday(target):
     return out
 
 
+def collect_futures_bars():
+    """야간 선물 봉. 야후 인덱스를 ET로 변환해 ISO 문자열로 넘긴다 — 창이 ET
+    달력 경계를 넘으므로 순수 함수 쪽에서 naive 날짜로는 자를 수 없다."""
+    import yfinance as yf
+    from us.session import FUTURES
+    out = {}
+    for _, t in FUTURES:
+        def one(t=t):
+            h = yf.Ticker(t).history(period='5d', interval='30m')
+            if h is None or not len(h):
+                return None
+            h.index = h.index.tz_convert('America/New_York')
+            return [{'t': i.isoformat(), 'high': float(r['High']), 'low': float(r['Low'])}
+                    for i, r in h.iterrows()]
+        out[t] = retry(one, attempts=2) or []
+        time.sleep(1)
+    return out
+
+
 def render_curve(yields, path):
     """Toss-style curve chart. Palette #0064FF/#D97706 is CVD-validated; dashes are the
     secondary encoding — do not change colors."""
@@ -673,6 +696,30 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'macro metrics failed: {e}', file=sys.stderr)
+
+    # 같은 계약: 비-코어라 실패해도 데이터셋은 산다. 「오늘의 장」이 읽을 재료 —
+    # 세계장이 어디서 끝났나, 밤사이 선물이 무엇을 했나, 평균적인 종목이 따라갔나,
+    # 어디서 끝났나.
+    print('computing session context...')
+    try:
+        from us.session import compute as compute_session
+        sess = compute_session(closes, hist_dates, data, intraday,
+                               collect_futures_bars(), report_date)
+        data['session'] = sess
+        for key, ko in (('asia', '아시아'), ('europe', '유럽')):
+            al = sess['global_close'][key]['alignment']
+            if al:
+                print(f"  {ko}: 미국과 {al['label']} (평균 {al['avg_pct']:+.2f}%)"
+                      f"{' · 지역 내 혼조' if al['mixed'] else ''}")
+            else:
+                print(f"  {ko}: 판정 불가(지수 부족)")
+        par = sess['participation']
+        print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
+              else '  참여도: 판정 불가')
+        print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
+              f"야간 선물 {len(sess['futures']['contracts'])}종")
+    except Exception as e:
+        print(f'session context failed: {e}', file=sys.stderr)
 
     # Non-core, same contract as the blocks above: the statistical context for the
     # price side — is today's move large for this asset, where does the level sit in

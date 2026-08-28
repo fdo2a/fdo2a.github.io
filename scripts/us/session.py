@@ -11,6 +11,8 @@ compute()는 순수하다 — 이미 받아 온 종가·봉 리스트가 들어�
 completeness()가 순회하는 코어 목록이라, 도쿄나 홍콩이 쉬는 날 발행이 멈춘다.
 """
 
+import datetime as _dt
+
 ASIA = (('닛케이', '^N225'), ('항셍', '^HSI'), ('상해종합', '000001.SS'))
 EUROPE = (('DAX', '^GDAXI'), ('FTSE100', '^FTSE'), ('유로스톡스50', '^STOXX50E'))
 
@@ -75,3 +77,169 @@ def alignment(rows, us_pct):
     signs = {_sign(r['pct']) for r in rows}
     return {'label': label, 'avg_pct': round(avg, 2),
             'mixed': len({s for s in signs if s}) > 1}
+
+
+FUTURES = (('ES', 'ES=F'), ('NQ', 'NQ=F'))
+GAP_FLAT_PCT = 0.15
+_OPEN = (9, 30)      # ET 정규장 개장
+_CLOSE = (16, 0)     # ET 정규장 마감
+_MAX_GAP_DAYS = 4    # 주말·연휴를 건너뛴 직전 거래일까지만
+
+
+def _parse_et(t):
+    try:
+        return _dt.datetime.fromisoformat(str(t))
+    except (ValueError, TypeError):
+        return None
+
+
+def overnight(bars, report_date):
+    """전일 16:00 ET 초과 ~ 당일 09:30 ET 미만의 고·저와 그 시각.
+
+    이 창은 ET 달력 경계를 넘는다. 날짜 하나로 거르면 앞 절반(전날 저녁)이
+    통째로 사라진다 — 수집 쪽이 tz-aware로 변환해 넘기는 이유다.
+    """
+    day = _dt.date.fromisoformat(str(report_date))
+    usable = []
+    for b in bars or []:
+        ts = _parse_et(b.get('t'))
+        if ts is None or not (_finite(b.get('high')) and _finite(b.get('low'))):
+            continue
+        usable.append((ts, b))
+
+    # 저녁 쪽은 **직전 한 세션만** 담는다. 며칠치 저녁을 한 창에 넣으면 고·저가
+    # 그날 밤 값이 아니게 된다 — 2026-08-27 실전 수집에서 ES 봉이 33개가 아니라
+    # 61개로 나왔고 저점이 이틀 전 값이었다.
+    evenings = [ts.date() for ts, _ in usable
+                if ts.date() < day and (ts.hour, ts.minute) >= _CLOSE
+                and (day - ts.date()).days <= _MAX_GAP_DAYS]
+    prev = max(evenings) if evenings else None
+
+    picked = []
+    for ts, b in usable:
+        hm = (ts.hour, ts.minute)
+        if ts.date() == day and hm < _OPEN:
+            picked.append((ts, b))
+        elif prev and ts.date() == prev and hm >= _CLOSE:
+            picked.append((ts, b))
+    if not picked:
+        return None
+    hi = max(picked, key=lambda p: p[1]['high'])
+    lo = min(picked, key=lambda p: p[1]['low'])
+    return {'high': round(float(hi[1]['high']), 2), 'high_t': hi[0].strftime('%H:%M'),
+            'low': round(float(lo[1]['low']), 2), 'low_t': lo[0].strftime('%H:%M'),
+            'bars': len(picked)}
+
+
+def gap(market_data, intraday, name):
+    """정규장 시가 대비 전일 종가. **현물 지수 기준.**
+
+    선물로 계산하면 계약 롤오버 때 불연속이 섞인다. 선물은 야간 궤적에만 쓴다.
+    """
+    row = ((market_data or {}).get('indices') or {}).get(name) or {}
+    day = (intraday or {}).get(name) or {}
+    last, chg, op = row.get('last'), row.get('chg'), day.get('open')
+    if not (_finite(last) and _finite(chg) and _finite(op)):
+        return None
+    prev = last - chg
+    if not prev:
+        return None
+    return round((op / prev - 1) * 100, 2)
+
+
+def gap_direction(gap_pct):
+    if gap_pct is None:
+        return None
+    if abs(gap_pct) < GAP_FLAT_PCT:
+        return '보합 출발'
+    return '상승 출발' if gap_pct > 0 else '하락 출발'
+
+
+PARTICIPATION_MIN_PP = 0.4   # 2년치 |차| 중앙값 0.33%p 바로 위. 최적값이 아니라 읽기용 컷.
+TAPE_INDICES = ('S&P 500', 'Nasdaq', 'Russell 2000')
+# 경계는 1일차 관측 뒤 확정한다(스펙 「열린 항목」). 초안값.
+TAPE_HIGH, TAPE_LOW = 75, 25
+
+
+def participation(closes, dates):
+    """동일가중이 시총가중을 따라갔나 — 「평균적인 종목이 지수를 따라갔나」.
+
+    시장 폭(breadth)이 아니다. 등락 종목 수를 세지 않으므로 그렇게 부르지도
+    않는다. 섹터·시총 구성 차이만으로도 이 값은 움직인다.
+    """
+    pairs = {}
+    for t in (CAP_WEIGHT, EQUAL_WEIGHT):
+        cs = (closes or {}).get(t) or []
+        ds = (dates or {}).get(t) or []
+        if len(cs) != len(ds) or len(cs) < 2:
+            return None
+        pairs[t] = {d: c for d, c in zip(ds, cs) if _finite(c)}
+    common = sorted(set(pairs[CAP_WEIGHT]) & set(pairs[EQUAL_WEIGHT]))
+    if len(common) < 2:
+        return None
+    a, b = common[-2], common[-1]
+
+    def pct(t):
+        prev, cur = pairs[t][a], pairs[t][b]
+        return None if not prev else (cur / prev - 1) * 100
+
+    cap, eq = pct(CAP_WEIGHT), pct(EQUAL_WEIGHT)
+    if cap is None or eq is None:
+        return None
+    g = round(eq - cap, 2)
+    if abs(g) < PARTICIPATION_MIN_PP:
+        band = '중립'
+    elif cap > 0:
+        band = '고르게 오름' if g > 0 else '소수가 끌어올림'
+    else:
+        band = '소수가 끌어내림' if g > 0 else '고르게 내림'
+    return {'gap_pp': g, 'spy_pct': round(cap, 2), 'date': b, 'band': band}
+
+
+def tape(intraday):
+    """종가가 당일 등락폭의 몇 % 지점인가.
+
+    입력은 intraday.json 값만이다. 그 파일의 close는 30분 마지막 봉이라
+    market_data.json의 일간 확정 종가와 다르다(2026-08-27 실측: 7,730.11 vs
+    7,730.99). 두 출처를 섞지 않고, 이 종가를 그날 종가로 인용하지도 않는다.
+    """
+    out = {}
+    for name in TAPE_INDICES:
+        d = (intraday or {}).get(name)
+        if not d:
+            continue
+        hi, lo, cl = d.get('high'), d.get('low'), d.get('close')
+        if not (_finite(hi) and _finite(lo) and _finite(cl)) or hi == lo:
+            out[name] = None
+            continue
+        pos = round((cl - lo) / (hi - lo) * 100)
+        band = ('고점권 마감' if pos >= TAPE_HIGH
+                else '저점권 마감' if pos <= TAPE_LOW else '중단 마감')
+        out[name] = {'close_position': pos, 'band': band}
+    return out
+
+
+def compute(closes, dates, market_data, intraday, futures_bars, report_date):
+    """「오늘의 장」 블록. 어느 조각이 없어도 나머지는 나온다."""
+    us_pct = (((market_data or {}).get('indices') or {}).get('S&P 500') or {}).get('pct')
+    g = {}
+    for key, pairs in (('asia', ASIA), ('europe', EUROPE)):
+        rows = region_rows(closes, dates, pairs, report_date)
+        g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct)}
+
+    contracts = {}
+    for label, ticker in FUTURES:
+        w = overnight((futures_bars or {}).get(ticker), report_date)
+        if w:
+            contracts[label] = w
+
+    gaps = {n: gap(market_data, intraday, n) for n in TAPE_INDICES}
+    gaps = {n: v for n, v in gaps.items() if v is not None}
+    return {
+        'report_date': str(report_date),
+        'global_close': g,
+        'futures': {'contracts': contracts, 'gap': gaps,
+                    'direction': gap_direction(gaps.get('S&P 500'))},
+        'participation': participation(closes, dates),
+        'tape': tape(intraday),
+    }
