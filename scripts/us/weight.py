@@ -26,8 +26,9 @@ def section_slice(html_doc, title):
     if not heads:
         return None
     start = heads[0]
-    nxt = [m.start() for m in re.finditer(r'<h2\b', html_doc) if m.start() > start]
-    return html_doc[start:nxt[0] if nxt else len(html_doc)]
+    stops = [m.start() for m in re.finditer(r'<h2\b|<footer\b|</main\b', html_doc)
+             if m.start() > start]
+    return html_doc[start:stops[0] if stops else len(html_doc)]
 
 
 def prose_chars(section_html):
@@ -229,20 +230,24 @@ def check_cause(html_doc, price_context, market='us'):
 
 
 def _numbers(text):
-    """비교용 수치 토큰. 콤마를 걷고 유니코드 마이너스를 통일한다.
+    """비교용 (수치, 단위) 쌍. 콤마를 걷고 유니코드 마이너스를 통일한다.
 
-    연도·시각·한 자리 수는 뺀다 — 「8/26」·「09:30」·「2026년」이 우연히 겹치면
-    가격 중복이 아닌데도 걸린다.
+    단위를 함께 묶는 이유는 `-0.50%`와 `+0.50%p`가 같은 값으로 뭉개지는 것을 막기
+    위해서다(2026-08-30 codex 검토). 부호는 버린다 — 같은 수치의 방향이 다르면 그건
+    중복이 아니라 오류이고, 그 검사는 verify_post가 한다.
+
+    **세 자리 미만은 뺀다.** 「+2bp」 같은 짧은 수치는 우연히 겹치는 일이 잦아 잡으면
+    오탐이 쏟아진다 — 그래서 이 검사는 `10년물 +2bp` 중복을 놓친다. 놓치는 쪽을 택했다.
     """
     t = text.replace(',', '').replace('−', '-')
     out = set()
-    for m in re.finditer(r'\d+\.?\d*', t):
-        tok = m.group(0)
+    for m in re.finditer(r'(\d+\.?\d*)\s*(%p|%|bp|달러|엔|원|포인트)?', t):
+        tok, unit = m.group(1), m.group(2) or ''
         if len(tok.replace('.', '')) < 3:
             continue
         if tok.isdigit() and 1900 <= int(tok) <= 2100:
             continue
-        out.add(tok)
+        out.add((tok, unit))
     return out
 
 
@@ -285,9 +290,9 @@ def check_macro_prices(html_doc, market_data=None):
                 continue
             hit = _numbers(sent) & printed.get(key, set())
             if hit:
-                v.append(f'§9 {key}: 자산 섹션에 이미 있는 그날 가격'
-                         f'({", ".join(sorted(hit))})을 되풀이했다 — '
-                         '여기에는 경로 논리와 확인 지표만 쓸 것')
+                shown = ', '.join(f'{n}{u}' for n, u in sorted(hit))
+                v.append(f'§9 {key}: 자산 섹션에 이미 있는 그날 가격({shown})을 '
+                         '되풀이했다 — 여기에는 경로 논리와 확인 지표만 쓸 것')
                 break
     return v
 
@@ -300,7 +305,10 @@ def check_position_vocab(html_doc, market='us'):
         if seg is None:
             continue
         text = ' '.join(t for _, t in _paras(seg))
-        found = [w for w in BANNED_GRADE_WORDS if w in text]
+        # 「스프레드가 소폭확대됐다」·「종목 비중확대로」처럼 등급이 아니라 서술로 쓰인
+        # 자리는 뺀다 — 문맥 없는 부분문자열 금지는 정상 시황을 매일 잡는다(codex 검토).
+        found = [w for w in BANNED_GRADE_WORDS
+                 if re.search(re.escape(w) + r'(?![되돼됐된하한할해했로])', text)]
         if _OW_UW.search(text):
             found.append('OW/UW')
         if found:

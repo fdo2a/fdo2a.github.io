@@ -357,8 +357,15 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     if prob is None:
         v.append('macro_next.json policy_path에 prob_pct가 없다 — '
                  'FedWatch 수치 없이는 정책 경로를 검증할 수 없다')
+
     elif not _cited(text, prob):
         v.append(f'§8: 정책 경로 확률 {prob}%가 본문에 인용되지 않았다')
+
+    # 축약일 판정의 4축 조건은 전일 방향과 대조해야 산다. 이 필드가 없으면 조건이
+    # 조용히 통과로 굳어 겹치는 날에도 §9가 접히지 않는다(2026-08-30 codex 검토).
+    if not (next_macro or {}).get('axis_directions'):
+        v.append('macro_next.json에 axis_directions가 없다 — '
+                 '4축 방향을 승계하지 않으면 축약일 판정이 무력해진다')
 
     if not prev.get('timing') or nxt.get('timing') == prev.get('timing'):
         return

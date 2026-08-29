@@ -265,6 +265,13 @@ def test_axis_direction_change_is_not_abbreviated():
     assert '고용' in ev['abbreviated_reason']
 
 
+def test_policy_condition_is_gone_not_dead_code():
+    """전일 값끼리 비교하던 죽은 조건을 없앴다 — 정책 경로는 macro_gate가 본다."""
+    from us.macro import _abbreviated
+    ok, why = _abbreviated(ABBREV_BOOK, QUIET, [(-1, 0)], ABBREV_BOOK['axis_directions'])
+    assert ok is True and why is None
+
+
 def test_first_day_without_stored_directions_still_abbreviates():
     book = {k: v for k, v in ABBREV_BOOK.items() if k != 'axis_directions'}
     assert macro.evaluate(book, QUIET, '2026-08-27')['abbreviated'] is True

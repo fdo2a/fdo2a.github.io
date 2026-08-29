@@ -94,7 +94,11 @@ def eval_file(allowed=None, dirs=None, new_releases=('CPI YoY',), growth=0, infl
 
 def next_file(**kw):
     kw.setdefault('date', REPORT_DATE)
-    return macro_file(**kw)
+    out = macro_file(**kw)
+    # 4축 방향은 내일의 축약일 판정이 대조할 값이다 — 승계 계약의 일부(2026-08-30).
+    out.setdefault('axis_directions', {'Labor': '보합', 'Activity': '악화',
+                                       'Consumption': '악화', 'Inflation': '둔화'})
+    return out
 
 
 # --- location ---------------------------------------------------------------
@@ -488,4 +492,19 @@ def test_full_day_still_requires_narrated_blocks():
 def test_abbreviated_day_accepts_strip_without_narration():
     v = []
     _check_groups(STRIP_ONLY, v, abbreviated=True)
+    assert v == []
+
+
+def test_macro_next_must_carry_axis_directions():
+    """4축 방향을 승계하지 않으면 축약일 판정이 조용히 무력해진다."""
+    from us.macro_gate import _check_policy
+    nxt = {'policy_path': {'timing': '2026-12', 'prob_pct': 68.4}}
+    v = []
+    _check_policy('동결 확률은 68.4%다.', {'policy_path': {'timing': '2026-12'}},
+                  {}, nxt, v)
+    assert any('axis_directions' in x for x in v)
+
+    v = []
+    _check_policy('동결 확률은 68.4%다.', {'policy_path': {'timing': '2026-12'}},
+                  {}, dict(nxt, axis_directions={'Labor': '보합'}), v)
     assert v == []

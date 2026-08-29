@@ -211,7 +211,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 5. **시장 해석 · 다음 발표 일정 카드** — 섹션 맨 끝. 「시장 해석」은 **신규 발표가 있는 날만**, 「다음 발표 일정」은 매일. 상세는 아래 '섹션 8-b'.
 6. **§9와의 정합** — 매크로 방향과 스탠스 등급의 부호가 반대인 자산군은 **반드시 해소 문단을 쓴다**. 그 `<p>`에 `data-reconcile="KEY"`를 달고 "구조적으로는 X지만 2~6주 구간에서는 Y로 가는 이유"를 설명한다. 시계가 다르므로 어긋나는 것 자체는 허용이고, **침묵이 금지**다.
 
-**산출물** — 보고서 HTML과 함께 워크스페이스 루트에 **`macro_next.json`을 쓴다**(입력 `macro.json`을 덮어쓰지 말 것). 오늘 `report_date`, `regime`(growth·inflation·since·thesis — 레짐이 바뀐 날만 since를 오늘로), `policy_path`(stance·timing·prob_pct·thesis·falsifier), `transmission` 7행(direction·since·channel·confirm), `last_seen`(`macro_metrics.json`의 것을 **그대로 복사** — 이 값이 내일의 신규 발표 판정 기준이다), 그리고 레짐이 바뀐 날은 `history`에 `{date, from, to, reason}`을 추가한다(최근 30건 유지). 이 파일이 없으면 다음날 책이 얼어붙는다.
+**산출물** — 보고서 HTML과 함께 워크스페이스 루트에 **`macro_next.json`을 쓴다**(입력 `macro.json`을 덮어쓰지 말 것). 오늘 `report_date`, `regime`(growth·inflation·since·thesis — 레짐이 바뀐 날만 since를 오늘로), `policy_path`(stance·timing·prob_pct·thesis·falsifier), `transmission` 7행(direction·since·channel·confirm), `last_seen`(`macro_metrics.json`의 것을 **그대로 복사** — 이 값이 내일의 신규 발표 판정 기준이다), 그리고 레짐이 바뀐 날은 `history`에 `{date, from, to, reason}`을 추가한다(최근 30건 유지). 이 파일이 없으면 다음날 책이 얼어붙는다. **`axis_directions`(오늘 4축 방향 넷)를 반드시 담는다** — 내일의 축약일 판정이 이 값과 대조한다. 빠지면 4축 조건이 조용히 통과로 굳어 겹치는 날에도 §9가 접히지 않는다(게이트가 막는다).
 
 **경로 블록에 그날 가격을 쓰지 않는다 (2026-08-30).** 「오늘 DXY는 -0.04% 내린 99.13으로 마감해」 같은 문장은 자산 섹션에 이미 같은 수치로 있다 — 실측 중복 218자. `data-macro-group` 블록에는 3~6개월 경로 논리와 확인 지표만 남긴다. 「앞서 채권 섹션에서 본 대로」로 시작하는 되풀이도 없앤다.
 

@@ -31,6 +31,8 @@ def main():
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--market', choices=('us', 'kr'), default='us')
+    ap.add_argument('--allow-missing-eval', action='store_true',
+                    help='macro_eval.json 없이 검사한다 — 옛 발행본 점검용')
     args = ap.parse_args()
 
     try:
@@ -42,6 +44,14 @@ def main():
 
     market_data = _load(os.path.join(args.datadir, MARKET_FILE[args.market]))
     macro_eval = _load(os.path.join(args.datadir, 'macro_eval.json'))
+
+    # macro_eval이 없으면 축약일인지 알 수 없고, 모르는 채 평시 문턱(4,600/0.75)을
+    # 적용하면 축약일이 느슨하게 통과한다. 모르면 막는다(2026-08-30 codex 검토).
+    if args.market == 'us' and macro_eval is None and not args.allow_missing_eval:
+        print(f'macro_eval.json을 {args.datadir}에서 읽지 못했다 — 축약일 여부를 모르는 채 '
+              '문턱을 고를 수 없다. scripts/eval_macro_regime.py를 먼저 돌릴 것 '
+              '(옛 발행본을 검사할 때만 --allow-missing-eval)')
+        sys.exit(1)
 
     violations = check(doc, market=args.market, market_data=market_data,
                        macro_eval=macro_eval)

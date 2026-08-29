@@ -204,3 +204,68 @@ def test_check_skips_us_only_gates_for_kr():
                 '전략 코멘트': 700, '기술적 분석 & 트레이딩 전략': 500})
     v = check(doc, market='kr', market_data=MD, macro_eval=None)
     assert not any('§9' in x for x in v)
+
+
+# --- 판별력 있는 테스트 (2026-08-30 codex 검토: 무력 테스트 교체) ---
+
+import os  # noqa: E402
+
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+
+
+def _real_post():
+    with open(os.path.join(_ROOT, 'posts', '2026-08-27.html'), encoding='utf-8') as fh:
+        return fh.read()
+
+
+def _real_market_data():
+    import json
+    with open(os.path.join(_ROOT, 'data', 'market_data.json'), encoding='utf-8') as fh:
+        return json.load(fh)
+
+
+def test_real_post_reproduces_the_spec_numbers():
+    """합성이 아니라 실제 발행본을 센다 — 엔티티 디코드나 슬라이싱이 깨지면 틀어진다."""
+    m = measure(_real_post(), 'us')
+    assert m['sections']['주식'] == 1278
+    assert m['sections']['채권'] == 1581
+    assert m['sections']['FX'] == 360
+    assert m['sections']['원자재'] == 457
+    assert m['sections']['매크로 논리'] == 4788
+    assert m['sections']['멀티에셋 매니저 전략'] == 887 + 1357
+    assert m['recap'] == 3676 and m['judgment'] == 7424
+
+
+def test_real_post_is_blocked_on_every_designed_axis():
+    """check()가 모든 검사를 실제로 돌리는가 — 하나를 빈 함수로 바꾸면 이 테스트가 죽는다."""
+    v = check(_real_post(), market='us', market_data=_real_market_data(),
+              macro_eval={'abbreviated': False})
+    assert any('÷' in x for x in v)                       # 비율
+    assert any('매크로 논리' in x and '상한' in x for x in v)   # 매크로 상한
+    assert any('data-standing' in x for x in v)            # 「지금 어디에 있나」
+    assert any('포지션 등급 어휘' in x for x in v)             # 스탠스 되풀이
+    assert any('data-lede' in x for x in v)                # §2 순서
+    assert any('§9' in x and '되풀이' in x for x in v)        # 경로 블록 가격 중복
+
+
+def test_ratio_floor_actually_bites_on_an_abbreviated_day():
+    """축약일 1.00 문턱이 실제로 무는가 — 0.75로 낮추면 이 테스트가 죽는다."""
+    sizes = {'오늘의 장': 800, '주식': 1500, '채권': 1500, 'FX': 900, '원자재': 900,
+             '전략 코멘트': 400, '매크로 논리': 3200, '멀티에셋 매니저 전략': 2400}
+    m = measure(_doc(sizes), 'us')
+    assert 0.75 < m['ratio'] < 1.00
+    assert check_volume(m, False, 'us') == []
+    assert any('÷' in x and '축약일' in x for x in check_volume(m, True, 'us'))
+
+
+def test_position_vocab_does_not_flag_ordinary_prose():
+    for prose in ('신용스프레드는 전일보다 소폭확대됐습니다.',
+                  '상승 종목 비중확대로 시장 폭이 개선됐습니다.'):
+        assert check_position_vocab(_sec('채권', f'<p>{prose}</p>')) == []
+
+
+def test_sign_and_unit_do_not_collide():
+    doc = (_sec('FX', '<p>DXY는 -0.50% 내렸습니다.</p>')
+           + _sec('매크로 논리', '<div data-macro-group="dollar">'
+                  '<p>오늘 기대인플레는 +0.50%p 올랐습니다.</p></div>'))
+    assert check_macro_prices(doc) == []

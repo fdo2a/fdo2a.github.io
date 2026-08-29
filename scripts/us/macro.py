@@ -153,12 +153,20 @@ def _axis_directions(metrics):
             for k, v in ((metrics or {}).get('axis_summary') or {}).items()}
 
 
-def _abbreviated(macro, metrics, allowed, policy, directions):
+def _abbreviated(macro, metrics, allowed, directions):
     """축약일인가, 아니면 왜 아닌가 -> (bool, reason|None).
 
     「전일과 겹치면 짧게 요약만」(2026-08-30 사용자 지시)의 문지기. writer가 판단하면
     지켜지지 않으므로(§9 매크로가 이미 겪은 실패) 여기서 끝낸다. 새 네트워크 호출도
     새 계산도 없다 — macro_metrics.json과 전일 macro.json의 대조뿐이다.
+
+    **정책 경로는 여기서 못 본다.** 시점 변경은 작성 담당이 하는 일이고 오늘 metrics에는
+    새 정책 경로가 없다 — 전일 값끼리 비교하는 죽은 코드였다(2026-08-30 codex 검토).
+    축약일에 정책 경로를 옮기는 것은 macro_gate의 `policy` 검사가 따로 막는다.
+
+    **`axis_directions`가 전일 책에 없으면 4축 조건은 통과로 본다.** 첫날을 막지 않기
+    위해서지만, 그 상태가 이어지면 조건이 무력해진다 — 그래서 작성 담당의 macro_next.json
+    계약에 `axis_directions`를 넣고 게이트가 그 존재를 검사한다.
     """
     tiers = [r.get('tier') for r in ((metrics or {}).get('headline_releases') or [])]
     if 1 in tiers:
@@ -170,9 +178,6 @@ def _abbreviated(macro, metrics, allowed, policy, directions):
         was = prev.get(axis)
         if was is not None and now is not None and was != now:
             return False, f'{AXIS_KO.get(axis, axis)}축 방향이 {was}에서 {now}로 바뀐 날'
-    if policy.get('change_allowed') and policy.get('timing') != \
-            ((macro or {}).get('policy_path') or {}).get('timing'):
-        return False, '정책 경로 시점이 바뀐 날'
     return True, None
 
 
@@ -252,7 +257,7 @@ def evaluate(macro, metrics, report_date, max_gap_bd=3):
     policy['change_block'] = None if new_releases else 'no_new_release'
 
     directions = _axis_directions(m)
-    abbreviated, abbrev_reason = _abbreviated(macro, m, allowed, policy, directions)
+    abbreviated, abbrev_reason = _abbreviated(macro, m, allowed, directions)
 
     return {
         **base,
