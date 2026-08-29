@@ -1,6 +1,6 @@
 from us import macro
-from us.macro_gate import (check, parse_group_blocks, parse_transmission_cells,
-                           section_macro)
+from us.macro_gate import (_check_groups, check, parse_group_blocks,
+                           parse_transmission_cells, section_macro)
 
 REPORT_DATE = '2026-08-18'
 
@@ -471,3 +471,21 @@ def test_a_missing_axis_is_named():
     out = check(build_html(axes=False, extra=strip_html), macro_file(), eval_file(),
                 next_file())
     assert any('Inflation' in x for x in out)
+
+
+# --- 축약일 완화 (설계 5, 2026-08-30) ---
+
+STRIP_ONLY = ('<section><h2>매크로 논리</h2>'
+              '<p>전달경로 판정은 전일과 같다.</p></section>')
+
+
+def test_full_day_still_requires_narrated_blocks():
+    v = []
+    _check_groups(STRIP_ONLY, v, abbreviated=False)
+    assert len(v) == 4
+
+
+def test_abbreviated_day_accepts_strip_without_narration():
+    v = []
+    _check_groups(STRIP_ONLY, v, abbreviated=True)
+    assert v == []

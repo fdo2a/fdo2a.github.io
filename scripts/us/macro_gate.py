@@ -205,16 +205,23 @@ def _check_transmission(section, macro_eval, v):
         if allowed and d not in allowed:
             v.append(f'§8 {key}: 방향 {d}는 허용 범위 {allowed} 밖이다')
 
-    _check_groups(section, v)
+    _check_groups(section, v, abbreviated=bool((macro_eval or {}).get('abbreviated')))
     return cells
 
 
-def _check_groups(section, v):
+def _check_groups(section, v, abbreviated=False):
     """Every channel gets a narrated block, and every block names a number.
 
     The strip alone would say what the macro likes without ever saying why, and a
     block with no figure in it is the 「추이 확인 필요」 non-answer wearing a heading.
+
+    On an abbreviated day (설계 5, 2026-08-30) the channels collapse to the direction
+    strip on purpose — yesterday's reading still stands, so restating it is the
+    duplication we set out to remove. Demanding the prose here would block
+    publication every quiet day, and most days are quiet.
     """
+    if abbreviated:
+        return
     blocks = parse_group_blocks(section)
     for key, label, _ in TRANSMISSION_GROUPS:
         text = blocks.get(key)
