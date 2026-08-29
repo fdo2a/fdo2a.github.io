@@ -45,6 +45,8 @@ Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` �
 
 **스탠스 게이트 (§10)** — run `python scripts/check_stance.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a §9 grade label is outside the controlled vocabulary; a grade sits outside that asset's `allowed_grades` from stance_eval.json; a moved row lacks the MET trigger's actual value (or, for an event trigger, a research_notes.md attribution) in the surrounding text; a row is missing its 유지 일수 or 다음 분기점; or the writer's new stance.json is not dated today / omits a history entry for a moved row. Relaunch the writer with the exact violations. This gate is what keeps §9 a position rather than a restatement of the day's tape — do not waive it. Neither gate is waivable: between them they are the only thing standing between «승계되는 판단» and a daily rewrite wearing the same headings.
 
+**무게중심 게이트 (§2·§4·§6·§7·§8·§9)** — run `python3 scripts/check_weight.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: the recap group (오늘의 장·주식·채권·FX·원자재) falls below its floor or below its ratio to the judgment group (전략 코멘트·매크로 논리·멀티에셋 — 표 안 서술형 칸까지 센다, so prose cannot be hidden in a table); the macro section breaks the cap or floor for the day's mode (발표일 ≤4,600 / 축약일 ≤2,400, read from `macro_eval.json`'s `abbreviated` — the floor is there so §9 cannot be deleted to make the ratio); a price section has no substantive `data-standing` paragraph (120자·수치 하나 이상); an asset whose move was 「큼」·「매우 큼」 has no `data-cause` paragraph; a §9 transmission block repeats a price the asset section already printed; a price section restates a stance grade; or §2's `data-lede` paragraphs are missing or out of order (event → meaning → action → invalidation). Relaunch the writer with the exact violations. **이 게이트가 「포지션 위주」로 되돌아가는 것을 막는 유일한 장치다** — 2026-08-27 실측에서 판단·포지션이 53%, 시황·가격이 26%였다.
+
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
 
 1. `python3 scripts/apply_readability.py <morning_brief 절대경로>`로 v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)·빠른 이동·긴 문단 분리를 적용하고, `python3 scripts/check_readability.py --strict <morning_brief 절대경로>`와 **`python3 scripts/check_style.py <morning_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 「말하듯이 쓴다」 기준에서 셀 수 있는 부분(비인칭 피동·번역투 연결·서술어 없는 명사형 머리말·「~한 상태다」 종결·같은 문단 머리말 반복·「~다」 연속)을 본다. **STEP 2.5의 윤문과 별개로 여기서 항상 돈다** — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
@@ -99,7 +101,8 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
   --gate "python scripts/check_macro.py --html {f} --datadir <workspace>" \
   --gate "python scripts/check_stance.py --html {f} --datadir <workspace>" \
   --gate "python scripts/check_price_context.py --html {f} --datadir <workspace>" \
-  --gate "python3 scripts/check_session.py --html {f} --datadir <workspace> --market us"
+  --gate "python3 scripts/check_session.py --html {f} --datadir <workspace> --market us" \\
+  --gate "python3 scripts/check_weight.py --html {f} --datadir <workspace> --market us"
 ```
 
 되꽂기 → 바뀐 문단 출력 → 게이트 순서로 돌고, **전부 통과했을 때만** `os.replace`로 원본을 교체한다. 하나라도 실패하면 사본을 지우고 exit 1로 끝난다 — 원본은 처음부터 수정되지 않았다. **맨손 `mv`는 쓰지 않는다.** 검사를 건너뛰고 교체할 자리를 남기지 않는 것이 이 명령의 존재 이유다.
