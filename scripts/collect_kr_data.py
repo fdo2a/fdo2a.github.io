@@ -200,6 +200,61 @@ def main(outdir: str):
     with open(os.path.join(outdir, "kr_sector.html"), "w", encoding="utf-8") as f:
         f.write(sector_html)
 
+    # 「오늘의 장」 재료. 비-코어 — 실패해도 나머지 산출물은 나간다.
+    try:
+        from kr import session as kr_session
+        md = None
+        for cand in ("data/market_data.json", "../data/market_data.json"):
+            if os.path.exists(cand):
+                with open(cand, encoding="utf-8") as f:
+                    md = json.load(f)
+                break
+
+        fut = {}
+        for _, t in kr_session.FUTURES:
+            try:
+                h = yf.Ticker(t).history(period="5d", interval="30m")
+                if h is not None and len(h):
+                    h.index = h.index.tz_convert("America/New_York")
+                    fut[t] = [{"t": i.isoformat(), "close": float(r["Close"])}
+                              for i, r in h.iterrows()]
+            except Exception:
+                pass
+
+        peers = {}
+        for name, t in kr_session.PEERS:
+            try:
+                c = yf.Ticker(t).history(period="10d")["Close"].dropna()
+                if len(c) >= 2:
+                    peers[name] = (float(c.iloc[-1] / c.iloc[-2] - 1) * 100,
+                                   str(c.index[-1].date()))
+            except Exception:
+                pass
+
+        fx_bars = []
+        try:
+            h = yf.Ticker("KRW=X").history(period="5d", interval="30m")
+            if h is not None and len(h):
+                fx_bars = [{"t": i.isoformat(), "high": float(r["High"]),
+                            "low": float(r["Low"]), "close": float(r["Close"])}
+                           for i, r in h.iterrows()]
+        except Exception:
+            pass
+
+        kospi_pct = (indices.get("KOSPI") or {}).get("change_pct")
+        _write(outdir, "kr_session.json", {
+            "report_date": report_date,
+            "us_prev": kr_session.us_prev(md, report_date),
+            "us_futures_during_kr": {
+                lab: kr_session.kr_hours_window(fut.get(t), report_date)
+                for lab, t in kr_session.FUTURES},
+            "asia_peers": kr_session.asia_peers(peers, kospi_pct),
+            "usdkrw_intraday": kr_session.usdkrw_window(fx_bars, report_date),
+        })
+        print(f"session: 아시아 {len(peers)}종 / 미국 선물 {len(fut)}종")
+    except Exception as e:
+        print(f"kr session failed: {e}")
+
     print(f"report_date={report_date} complete={ok} missing={missing} "
           f"flows_date={market['flows_date']}")
 

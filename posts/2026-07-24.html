@@ -74,6 +74,43 @@
     th:last-child, td:last-child{white-space:normal;}
     h1{font-size:19px;} h2{font-size:16.5px;}
   }
+
+/* readability-v5 */
+.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+.card { padding: 20px 22px; }
+h1 { max-width: 34em; }
+h2 { line-height: 1.45; margin-bottom: 14px; }
+h3, h4 { line-height: 1.45; }
+.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
+table { font-variant-numeric: tabular-nums; }
+section { scroll-margin-top: 20px; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.reading-map a:first-of-type { color: #0064FF; border-color: #B9D5FF; background: #F5F9FF; }
+.reading-map a:focus-visible { outline: 2px solid #0064FF; outline-offset: 2px; }
+@media (max-width: 560px) {
+  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  .card { padding: 16px 16px; }
+  .reading-map { margin-bottom: 16px; }
+}
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
+}
 </style>
 <!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
 <!-- article-schema -->
@@ -97,6 +134,20 @@
       <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;">한국발 메모리 셀오프(마이크론 -6.99%, SK하이닉스 -8.34%)와 광통신·AI인프라 급락(코히런트 -9.84%, 루멘텀 -8.47%, 마벨 -7.21%)이 나스닥(-0.64%)을 3거래일 연속 끌어내렸지만, 파키스탄발 이란-미국 협상 기대에 유가가 급락(WTI -1.87%, 브렌트 -2.29%)하며 다우(+0.46%)는 반등했고 부동산(+2.22%)·소재(+1.93%) 등 방어·실물자산 섹터가 강세를 보였다.</h1>
     </div>
   </section>
+<!-- reading-map-v1 -->
+<nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#buyside">전략 코멘트</a><a href="#equities">시장 흐름</a><a href="#bonds">금리·수급</a><a href="#strategy">거시·포트폴리오</a><a href="#movers">종목·섹터</a></nav>
+<!-- strategy-first-v1 -->
+<section id="buyside">
+    <h2>전략 코멘트</h2>
+    <div class="card stack">
+      <p>오늘 장을 관통한 동인은 두 갈래다. 하나는 메모리·AI인프라 그룹의 동반 셀오프로, 한국발(서울 증시) 삼성전자·SK하이닉스 급락 여파가 프리마켓부터 반영되며 마이크론(-6.99%)·웨스턴디지털(-6.90%)·시게이트(-6.75%)가 동반 급락했고, 코히런트(-9.84%)·루멘텀(-8.47%)·마벨(-7.21%) 등 광통신·반도체주도 하이퍼스케일러 AI 지출 지속가능성 우려 속에 크게 밀렸다. 다른 하나는 오전 11시경 파키스탄의 이란-미국 협상 중재 보도로 촉발된 유가 급락(WTI -1.87%, 브렌트 -2.29%)이다.</p>
+      <p>크로스에셋 흐름은 대체로 정합적이다. 유가 급락이 인플레이션 우려를 일부 상쇄하며 국채금리(10Y 4.71%, 야후 동일자 스팟 4.68%)의 추가 상승을 눌러줬고, 이는 대형 우량주 중심의 다우 반등(+0.46%)을 뒷받침했다.</p>
+<p>다만 금(+0.22%)은 유가 하락과 함께 인플레이션 기대가 낮아지는 국면에서도 오히려 상승해 다소 예외적이었는데, 국채금리가 오전 고점을 찍기 전 이른 새벽 시간대의 안전자산 수요가 더 크게 반영된 결과로 짐작된다. 섹터 로테이션 측면에서는 부동산(+2.22%)·소재(+1.93%) 등 방어·실물자산 섹터가 기술(-1.44%) 약세를 상쇄하며 지수 전반의 낙폭을 제한했다.</p>
+      <p>다음 촉매는 두 갈래로 갈린다. 파키스탄발 이란-미국 협상이 실제로 진전을 보이는지가 유가·금리 방향을 다시 흔들 변수이며, 협상이 결렬될 경우 유가 재급등과 함께 오늘 형성된 방어섹터 강세·성장주 약세 로테이션이 더 강화될 수 있다. 메모리·AI인프라 쪽에서는 이번 셀오프가 낸드 가격 우려에 따른 일시 조정인지 밸류에이션 되돌림의 시작인지가 다음 확인 포인트이며, 마이크론의 낮은 밸류에이션(선행 PER 6배 수준)이 부각되는지 지켜볼 필요가 있다.</p>
+    </div>
+  </section>
+
+
 
   <section id="equities">
     <h2>주식</h2>
@@ -151,7 +202,7 @@
   </section>
 
 
-<section class="sec">
+<section class="sec" id="read-2">
 <h2>섹터 기간별 수익률</h2>
 <style>
 .spf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -297,14 +348,7 @@
     </div>
   </section>
 
-  <section id="buyside">
-    <h2>전략 코멘트</h2>
-    <div class="card stack">
-      <p>오늘 장을 관통한 동인은 두 갈래다. 하나는 메모리·AI인프라 그룹의 동반 셀오프로, 한국발(서울 증시) 삼성전자·SK하이닉스 급락 여파가 프리마켓부터 반영되며 마이크론(-6.99%)·웨스턴디지털(-6.90%)·시게이트(-6.75%)가 동반 급락했고, 코히런트(-9.84%)·루멘텀(-8.47%)·마벨(-7.21%) 등 광통신·반도체주도 하이퍼스케일러 AI 지출 지속가능성 우려 속에 크게 밀렸다. 다른 하나는 오전 11시경 파키스탄의 이란-미국 협상 중재 보도로 촉발된 유가 급락(WTI -1.87%, 브렌트 -2.29%)이다.</p>
-      <p>크로스에셋 흐름은 대체로 정합적이다. 유가 급락이 인플레이션 우려를 일부 상쇄하며 국채금리(10Y 4.71%, 야후 동일자 스팟 4.68%)의 추가 상승을 눌러줬고, 이는 대형 우량주 중심의 다우 반등(+0.46%)을 뒷받침했다. 다만 금(+0.22%)은 유가 하락과 함께 인플레이션 기대가 낮아지는 국면에서도 오히려 상승해 다소 예외적이었는데, 국채금리가 오전 고점을 찍기 전 이른 새벽 시간대의 안전자산 수요가 더 크게 반영된 결과로 짐작된다. 섹터 로테이션 측면에서는 부동산(+2.22%)·소재(+1.93%) 등 방어·실물자산 섹터가 기술(-1.44%) 약세를 상쇄하며 지수 전반의 낙폭을 제한했다.</p>
-      <p>다음 촉매는 두 갈래로 갈린다. 파키스탄발 이란-미국 협상이 실제로 진전을 보이는지가 유가·금리 방향을 다시 흔들 변수이며, 협상이 결렬될 경우 유가 재급등과 함께 오늘 형성된 방어섹터 강세·성장주 약세 로테이션이 더 강화될 수 있다. 메모리·AI인프라 쪽에서는 이번 셀오프가 낸드 가격 우려에 따른 일시 조정인지 밸류에이션 되돌림의 시작인지가 다음 확인 포인트이며, 마이크론의 낮은 밸류에이션(선행 PER 6배 수준)이 부각되는지 지켜볼 필요가 있다.</p>
-    </div>
-  </section>
+
 
   <section id="strategy">
     <h2>멀티에셋 매니저 전략</h2>

@@ -66,6 +66,24 @@ def value_on(rows, target_date, ticker, key):
     return best
 
 
+def previous(rows, today, ticker):
+    """The nearest observation of `ticker` strictly *before* `today`, or None.
+
+    This is the baseline every crossing trigger is judged against. Strictly earlier
+    matters: the collector appends today's row before the routine runs, so comparing
+    against "the latest row" would compare today with itself and no state change could
+    ever be detected. A gap is stepped over rather than interpolated — the last thing we
+    actually saw is the honest comparison, and it is also the one a reader would make.
+    """
+    for row in sorted(rows, key=lambda r: r['date'], reverse=True):
+        if row['date'] >= today:
+            continue
+        snapshot = row.get('tickers', {}).get(ticker)
+        if snapshot:
+            return snapshot
+    return None
+
+
 def days_ago(today, n):
     return (date.fromisoformat(today) - timedelta(days=n)).isoformat()
 

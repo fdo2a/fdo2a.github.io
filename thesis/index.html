@@ -99,6 +99,60 @@
   ol.log .date { font-size: 11px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
   ol.log div[data-part] { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin-top: 3px; }
   ol.log cite { font-style: normal; color: var(--text-3); font-size: 11.5px; }
+  .story-link { display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px;
+                padding: 15px 16px; margin-top: 10px; color: var(--text); text-decoration: none; }
+  .story-link:hover { border-color: var(--toss-blue); }
+  .story-link b { font-size: 14px; }
+  .story-link span { font-size: 12px; color: var(--text-3); text-align: right; }
+  .timeline { position: relative; display: flex; flex-direction: column; gap: 10px; }
+  .phase { position: relative; background: #fff; border: 1px solid var(--border-subtle);
+           border-radius: 14px; padding: 17px 18px 18px 22px; overflow: hidden; }
+  .phase::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+                   width: 5px; background: var(--toss-blue); }
+  .phase .period { font-size: 10.5px; font-weight: 800; color: var(--toss-blue); }
+  .phase h3 { font-size: 15px; line-height: 1.45; margin: 5px 0 13px; }
+  .shift-grid { display: grid; grid-template-columns: 1fr 26px 1fr; gap: 8px; align-items: stretch; }
+  .shift-box { background: var(--bg); border-radius: 10px; padding: 11px 12px; }
+  .shift-box.now { background: var(--blue-bg); }
+  .shift-box b { display: block; font-size: 10.5px; color: var(--text-3); margin-bottom: 5px; }
+  .shift-box.now b { color: var(--blue-deep); }
+  .shift-box p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .shift-arrow { display: flex; align-items: center; justify-content: center; color: var(--toss-blue);
+                 font-weight: 900; }
+  .phase-sources { margin-top: 10px; font-size: 10.5px; line-height: 1.55; color: var(--text-3); }
+  .phase-sources a, .sources a { color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; }
+  .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .company { background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 15px; }
+  .company h3 { font-size: 14px; margin: 0 0 11px; }
+  .company dl { margin: 0; }
+  .company dt { font-size: 10.5px; font-weight: 800; color: var(--text-3); margin-top: 10px; }
+  .company dt:first-child { margin-top: 0; }
+  .company dd { font-size: 12px; line-height: 1.58; color: var(--text-2); margin: 3px 0 0; }
+  .corrections { counter-reset: correction; display: flex; flex-direction: column; gap: 8px; }
+  .correction { counter-increment: correction; background: #fff; border: 1px solid var(--border-subtle);
+                border-radius: 14px; padding: 15px 16px; }
+  .correction b { display: block; font-size: 13.5px; margin-bottom: 6px; }
+  .correction b::before { content: counter(correction) '. '; color: var(--toss-blue); }
+  .correction p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .frame-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .frame-grid .panel { margin-bottom: 0; }
+  .sources { font-size: 11px; line-height: 1.7; color: var(--text-3); }
+  @media (max-width: 620px) {
+    .shift-grid { grid-template-columns: 1fr; }
+    .shift-arrow { transform: rotate(90deg); min-height: 18px; }
+    .company-grid, .frame-grid { grid-template-columns: 1fr; }
+    .story-link { align-items: flex-start; }
+  }
+  /* readability-v2 */
+  .card p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+  .card p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+  h2 { line-height: 1.45; margin-bottom: 14px; }
+  h3, h4 { line-height: 1.45; }
+  .note, .lead, li { max-width: 42em; }
+  @media (max-width: 560px) {
+    .card p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border);
            font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
   footer a { color: #8B95A1; }
@@ -120,7 +174,7 @@
     개별 종목을 계속 들고 갈 때 필요한 건 뉴스 요약이 아니라 <b>분류</b>입니다.
     들어온 사건이 처음 그 종목을 본 이유를 강화하는지·약화하는지·깨는지만 판정하고,
     판정이 바뀔 때만 기록합니다.
-    <span class="small">기준일 2026-08-24 · 변화가 없는 날은 아무것도 올라오지 않습니다</span>
+    <span class="small">기준일 2026-08-28 · 변화가 없는 날은 아무것도 올라오지 않습니다</span>
   </div>
   <h2 class="list-title">감시 중인 종목</h2>
   <div class="cards">
@@ -129,38 +183,39 @@
         <b>삼성전자</b>
         <span class="badge g-hold">홀딩 강화</span>
       </div>
-      <div class="card-px">281,500원</div>
+      <div class="card-px">261,500원</div>
       <div class="card-sub">
-        확률가중 적정가치 대비 +18.6% ·
-        52주 고점 대비 -22.3%
+        확률가중 적정가치 대비 +25.1% ·
+        52주 고점 대비 -27.8%
       </div>
       <div class="card-since">등급 유지 2026-08-24부터</div>
     </a>
     <a class="card" href="skhynix.html" data-ticker="000660.KS">
       <div class="card-head">
         <b>SK하이닉스</b>
-        <span class="badge g-hold">홀딩 강화</span>
+        <span class="badge g-watch">주의</span>
       </div>
-      <div class="card-px">1,730,000원</div>
+      <div class="card-px">1,688,000원</div>
       <div class="card-sub">
-        확률가중 적정가치 대비 +1.3% ·
-        52주 고점 대비 -40.7%
+        확률가중 적정가치 대비 +4.7% ·
+        52주 고점 대비 -42.2%
       </div>
-      <div class="card-since">등급 유지 2026-08-24부터</div>
+      <div class="card-since">등급 유지 2026-08-28부터</div>
     </a>
     <a class="card" href="micron.html" data-ticker="MU">
       <div class="card-head">
         <b>Micron</b>
         <span class="badge g-hold">홀딩 강화</span>
       </div>
-      <div class="card-px">$966.78</div>
+      <div class="card-px">$918.04</div>
       <div class="card-sub">
-        확률가중 적정가치 대비 -12.9% ·
-        52주 고점 대비 -20.3%
+        확률가중 적정가치 대비 -7.2% ·
+        52주 고점 대비 -24.3%
       </div>
       <div class="card-since">등급 유지 2026-08-24부터</div>
     </a>
   </div>
+  <a class="story-link" href="narrative.html"><b>메모리 thesis는 어떻게 바뀌었나</b><span>핵심 전환점만 읽기 ›</span></a>
   <h2 class="list-title">세 종목이 공유하는 판</h2>
   <div class="panel">
     <p>세 종목의 thesis는 개별 회사보다 <b>같은 하나의 변수</b>에 걸려 있다. 이번 사이클이 과거처럼 되돌아오는 순환인지, 계약 구조가 바뀐 다른 무엇인지.</p>
@@ -170,7 +225,10 @@
   </div>
   <h2 class="list-title">최근 변화</h2>
   <div class="panel">
-    <p class="muted">기록된 변화가 없습니다. 변화가 없는 날은 아무것도 올라오지 않습니다.</p>
+    <ol class="log">
+      <li><span class="date">2026-08-28</span> <span class="badge g-watch">주의</span> <b>SK하이닉스</b> — 인디애나 HBM 패키징 양산 일정 1년 지연</li>
+      <li><span class="date">2026-08-27</span> <span class="badge g-hold">홀딩 강화</span> <b>Micron Technology</b> — President·COO 중심으로 영업·운영 책임 재편</li>
+    </ol>
   </div>
   <h2 class="list-title">감시 프로토콜</h2>
   <div class="panel ">

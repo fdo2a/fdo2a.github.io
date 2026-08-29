@@ -1,16 +1,16 @@
 {
-  "updated": "2026-08-24",
+  "updated": "2026-08-28",
   "tickers": {
     "005930.KS": {
       "grade": "홀딩 강화",
       "grade_since": "2026-08-24",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 67312.55,
-        "eps_fy1_low": 24323.0,
+        "eps_fy1": 68481.61,
+        "eps_fy1_low": 25671.0,
         "eps_fy1_high": 93462.0,
-        "price": 281500.0,
-        "pb": 3.44
+        "price": 261500.0,
+        "pb": 3.2
       },
       "open_questions": [
         "분기 실적에서 HBM4 매출 가이던스(3배·비중 60%) 달성 여부",
@@ -26,22 +26,33 @@
       ]
     },
     "000660.KS": {
-      "grade": "홀딩 강화",
-      "grade_since": "2026-08-24",
+      "grade": "주의",
+      "grade_since": "2026-08-28",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 455668.2,
+        "eps_fy1": 462814.25,
         "eps_fy1_low": 186357.0,
         "eps_fy1_high": 598301.6,
-        "price": 1730000.0,
-        "pb": 7.46
+        "price": 1688000.0,
+        "pb": 7.28
       },
       "open_questions": [
         "HBM4E 고객 퀄 통과 여부",
         "LTA 가격 조항이 하한을 실제로 갖고 있는가",
-        "추가 주주환원 구체안 발표 시점"
+        "추가 주주환원 구체안 발표 시점",
+        "인디애나 팹이 2028년 10월 클린룸과 2029년 하반기 양산 일정을 지키는가"
       ],
       "changelog": [
+        {
+          "date": "2026-08-28",
+          "signal": "주의",
+          "stance": "Bearish",
+          "title": "인디애나 HBM 패키징 양산 일정 1년 지연",
+          "fact": "SK하이닉스는 2024년 4월 인디애나 첨단 패키징 시설의 양산 시작을 2028년 하반기로 제시했으나, 2026년 8월 28일 공식 발표에서 클린룸 개장은 2028년 10월, 차세대 HBM 양산은 2029년 하반기로 제시했다. <cite><a href=\"https://news.skhynix.com/en/sk-hynix-signs-investment-agreement-of-advanced-chip-packaging-with-indiana/\">SK hynix 투자협약 발표, 2024-04-03</a> · <a href=\"https://news.skhynix.com/en/groundbreaking-ceremony-in-indiana/\">SK hynix 기공식 발표, 2026-08-28</a></cite>",
+          "inference": "추론: 현재 한국 HBM 생산이나 LTA가 훼손된 것은 아니지만, 미국 고객 근접 공급과 현지 패키징 거점의 상업 가동이 약 1년 늦어져 장기 실행 신뢰도는 약해졌다. 업계 전체 공급에는 타이트 요인이어서 삼성전자·Micron에는 중립적이지만, 고객 배분 변화가 확인되지 않아 두 회사 등급에는 반영하지 않는다.",
+          "delta": "현재 HBM4 점유율·LTA라는 핵심 thesis는 유지되지만, 미국 생산 거점의 공식 양산 일정이 후퇴했다. 장기 실행 리스크를 반영해 등급을 홀딩 강화에서 주의로 한 단계 낮춘다.",
+          "next": "2028년 10월 클린룸 개장과 2029년 하반기 양산 이행, 미국 고객 공급 계약, 추가 지연 또는 일정 단축 여부를 확인한다."
+        },
         {
           "date": "2026-08-24",
           "signal": "init",
@@ -57,15 +68,26 @@
         "eps_fy1": 155.02524,
         "eps_fy1_low": 106.89,
         "eps_fy1_high": 221.27,
-        "price": 966.78,
-        "pb": 10.84
+        "price": 918.04,
+        "pb": 10.29
       },
       "open_questions": [
         "RPO 잔액의 분기 증감 방향",
         "비GAAP 총이익률 궤적이 가이던스를 지키는가",
-        "차기 회계연도 캐펙스 확정치"
+        "차기 회계연도 캐펙스 확정치",
+        "영업·제조·고객 수요 책임 일원화가 RPO·가격·납품 규율에 어떤 변화를 만드는가"
       ],
       "changelog": [
+        {
+          "date": "2026-08-27",
+          "signal": "홀딩 강화",
+          "stance": "Neutral",
+          "title": "President·COO 중심으로 영업·운영 책임 재편",
+          "fact": "Micron은 Manish Bhatia를 President 겸 COO로, Scott DeBoer를 President 겸 Chief Technology and Products Officer로 임명하고 Sumit Sadana를 CEO 선임고문으로 전환했다. Bhatia는 설비투자·제조 실행·고객 수요·가격·납품을 포함한 영업손익을 맡는다. <cite><a href=\"https://www.sec.gov/Archives/edgar/data/723125/000110465926101067/tm2624017d1_ex99-1.htm\">Micron 8-K Exhibit 99.1, 2026-08-26</a></cite>",
+          "inference": "추론: 사업부와 운영을 한 책임자 아래 묶어 AI 수요 대응과 실행 속도를 높이려는 조직 재편이다. 다만 이번 공시는 주문·RPO·가이던스·마진·캐펙스 규모를 바꾸지 않았다.",
+          "delta": "경영 실행의 책임 구조는 바뀌었지만 RPO·총이익률·현금흐름이라는 기존 thesis의 핵심 계기판은 그대로다. 등급은 홀딩 강화를 유지한다.",
+          "next": "9월 30일 실적에서 RPO, 비GAAP 총이익률, 차기 회계연도 캐펙스와 고객 계약 관련 표현 변화를 확인한다."
+        },
         {
           "date": "2026-08-24",
           "signal": "init",

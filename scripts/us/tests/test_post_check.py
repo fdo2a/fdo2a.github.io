@@ -1,4 +1,5 @@
-from us.post_check import banned_markers, body_text, report, token_diff
+from us.post_check import (banned_markers, body_text, markup_diff, report,
+                           token_diff)
 
 PAGE = ('<html><head><style>.a{color:#fff}</style></head><body>'
         '<p>S&amp;P 500은 7,707.98로 +0.21% 올랐다. VIX 14.89.</p></body></html>')
@@ -33,3 +34,27 @@ def test_repeated_figures_are_counted_not_deduped():
 
 def test_placeholder_markers_never_ship():
     assert banned_markers(PAGE.replace('14.89', '[확인필요]')) == ['[확인필요]']
+
+
+# ── 윤문 뒤 안전망 (AI 티 제거 스킬이 문장을 다시 쓴 뒤) ──
+
+def test_rewriting_a_sentence_keeps_the_markup_intact():
+    edited = PAGE.replace('S&amp;P 500은 7,707.98로 +0.21% 올랐다.',
+                          'S&amp;P 500은 7,707.98까지 올라 +0.21% 상승 마감했습니다.')
+    assert markup_diff(PAGE, edited) == []
+
+
+def test_a_dropped_tag_is_caught():
+    edited = PAGE.replace('<p>', '').replace('</p>', '')
+    assert any('p' in m for m in markup_diff(PAGE, edited))
+
+
+def test_an_added_tag_is_caught():
+    edited = PAGE.replace('<p>', '<p><em>x</em>')
+    assert any('em' in m for m in markup_diff(PAGE, edited))
+
+
+def test_reordered_tags_are_caught():
+    before = '<body><p>가</p><table><tr><td>나</td></tr></table></body>'
+    after = '<body><table><tr><td>나</td></tr></table><p>가</p></body>'
+    assert markup_diff(before, after) != []

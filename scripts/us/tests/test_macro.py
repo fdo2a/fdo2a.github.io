@@ -221,3 +221,57 @@ def test_headline_releases_reach_the_writer_contract():
 def test_headline_releases_default_to_empty():
     ev = macro.evaluate(book(), metrics(), '2026-08-14')
     assert ev['headline_releases'] == []
+
+
+# --- 축약일 판정 (2026-08-30 사용자 지시) ---
+
+ABBREV_BOOK = {
+    'report_date': '2026-08-26',
+    'regime': {'growth': -1, 'inflation': 0, 'since': '2026-08-26'},
+    'policy_path': {'timing': '2026-12', 'prob_pct': 68.4},
+    'transmission': {},
+    'axis_directions': {'Labor': '보합', 'Activity': '악화', 'Consumption': '악화',
+                        'Inflation': '둔화'},
+}
+ABBREV_AXES = {'Labor': {'direction': '보합'}, 'Activity': {'direction': '악화'},
+               'Consumption': {'direction': '악화'}, 'Inflation': {'direction': '둔화'}}
+QUIET = {
+    'report_date': '2026-08-27',
+    'growth_score': -0.377, 'inflation_score': -0.327,
+    'new_releases': ['Initial Jobless Claims'],
+    'headline_releases': [{'key': 'claims', 'tier': 2}],
+    'axis_summary': ABBREV_AXES,
+}
+
+
+def test_quiet_day_is_abbreviated():
+    ev = macro.evaluate(ABBREV_BOOK, QUIET, '2026-08-27')
+    assert ev['abbreviated'] is True
+    assert ev['abbreviated_reason'] is None
+    assert ev['axis_directions']['Activity'] == '악화'
+
+
+def test_tier1_release_is_not_abbreviated():
+    m = dict(QUIET, headline_releases=[{'key': 'cpi', 'tier': 1}])
+    ev = macro.evaluate(ABBREV_BOOK, m, '2026-08-27')
+    assert ev['abbreviated'] is False
+    assert 'tier 1' in ev['abbreviated_reason']
+
+
+def test_axis_direction_change_is_not_abbreviated():
+    m = dict(QUIET, axis_summary=dict(ABBREV_AXES, Labor={'direction': '악화'}))
+    ev = macro.evaluate(ABBREV_BOOK, m, '2026-08-27')
+    assert ev['abbreviated'] is False
+    assert '고용' in ev['abbreviated_reason']
+
+
+def test_policy_condition_is_gone_not_dead_code():
+    """전일 값끼리 비교하던 죽은 조건을 없앴다 — 정책 경로는 macro_gate가 본다."""
+    from us.macro import _abbreviated
+    ok, why = _abbreviated(ABBREV_BOOK, QUIET, [(-1, 0)], ABBREV_BOOK['axis_directions'])
+    assert ok is True and why is None
+
+
+def test_first_day_without_stored_directions_still_abbreviates():
+    book = {k: v for k, v in ABBREV_BOOK.items() if k != 'axis_directions'}
+    assert macro.evaluate(book, QUIET, '2026-08-27')['abbreviated'] is True

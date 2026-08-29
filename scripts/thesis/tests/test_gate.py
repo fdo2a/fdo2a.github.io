@@ -121,7 +121,7 @@ def test_no_edit_without_trigger_is_fine():
 
 
 def test_edit_with_numeric_trigger_is_fine():
-    assert G.check_silence(triggers=[{'key': 'band_entry'}], events=[],
+    assert G.check_silence(triggers=[{'key': 'bear_proximity'}], events=[],
                            page_changed=True) is None
 
 

@@ -86,6 +86,7 @@ jobs:
           git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
           git add data/yield_curve.png data/stance_metrics.json data/stance_eval.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
+          git add data/scorecard.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true
           git add data/history 2>/dev/null || true
           git add data/weekly data/monthly 2>/dev/null || true

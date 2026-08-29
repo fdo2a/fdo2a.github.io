@@ -45,6 +45,54 @@ def data_tokens(html):
     return counts
 
 
+_COMMENT = re.compile(r'<!--.*?-->', re.S)
+
+# 게이트들이 이 표식으로 §8·§9를 읽는다. 윤문이 문장을 다시 쓰다 이것을 지우면 그
+# 섹션은 검사받지 않은 채로 나간다.
+_MARKER = re.compile(r'\b(data-(?:asset|grade|release|reconcile|source)="[^"]*")')
+
+
+def tag_sequence(html):
+    """Opening/closing tag names in order — the page's skeleton, without its words."""
+    s = _COMMENT.sub(' ', _SCRIPT.sub(' ', html))
+    return [m.group(1).lower()
+            for m in re.finditer(r'<\s*(/?[a-zA-Z][a-zA-Z0-9]*)', s)]
+
+
+def markers(html):
+    """게이트가 읽는 data-* 표식의 멀티셋."""
+    counts = {}
+    for marker in _MARKER.findall(_COMMENT.sub(' ', _SCRIPT.sub(' ', html))):
+        counts[marker] = counts.get(marker, 0) + 1
+    return counts
+
+
+def markup_diff(before, after):
+    """Findings when the structure moved, not just the words inside it.
+
+    A humanising pass rewrites sentences, and a rewrite that also drops a `</p>` or
+    reorders a table turns a good edit into a broken page. Prose is free to change;
+    the skeleton is not.
+    """
+    out = []
+    was, now = markers(before), markers(after)
+    for marker in sorted(set(was) | set(now)):
+        if was.get(marker, 0) != now.get(marker, 0):
+            out.append(f'표식이 달라졌다: {marker} '
+                       f'{was.get(marker, 0)}개 → {now.get(marker, 0)}개')
+
+    a, b = tag_sequence(before), tag_sequence(after)
+    if a == b:
+        return out
+    for i, (x, y) in enumerate(zip(a, b)):
+        if x != y:
+            out.append(f'{i + 1}번째 태그가 <{x}>에서 <{y}>로 바뀌었다')
+            break
+    if len(a) != len(b):
+        out.append(f'태그 수가 {len(a)}개에서 {len(b)}개로 바뀌었다')
+    return out or ['태그 구조가 달라졌다']
+
+
 def token_diff(before, after):
     """{'added': {...}, 'removed': {...}} — empty dicts mean the figures held."""
     a, b = data_tokens(before), data_tokens(after)

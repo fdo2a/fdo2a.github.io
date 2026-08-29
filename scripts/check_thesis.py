@@ -23,6 +23,7 @@ Design: docs/superpowers/specs/2026-08-24-thesis-watch-design.md
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -39,6 +40,20 @@ PAGES = {
     'MU': 'thesis/micron.html',
 }
 STATE = 'thesis/data/thesis_state.json'
+
+_CHANGELOG = re.compile(
+    r'<ol\b[^>]*\bdata-block="changelog"[^>]*>.*?</ol>', re.S)
+_GRADE_SINCE = re.compile(r'(등급 유지 )\d{4}-\d{2}-\d{2}(부터)')
+
+
+def stable_page_content(html):
+    """Page content whose existing numeric tokens must remain unchanged.
+
+    A confirmed event is supposed to add a changelog entry, so its dates, source
+    references, and factual figures cannot be compared with the pre-event page.
+    """
+    without_changelog = _CHANGELOG.sub('', html)
+    return _GRADE_SINCE.sub(r'\1기준일\2', without_changelog)
 
 
 def load_state(path=STATE):
@@ -83,7 +98,7 @@ def check_page(symbol, path, state, run):
 
     before = git_show('HEAD', path)
     if before is not None:
-        findings += report(before, html)
+        findings += report(stable_page_content(before), stable_page_content(html))
 
     return findings
 

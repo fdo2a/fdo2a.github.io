@@ -1,0 +1,11 @@
+{
+  "$comment": "STEP 2.5(AI 티 제거)가 쓰는 humanize-korean 스킬을 클라우드 루틴 세션에도 붙이려는 best-effort 등록. 이 레포를 클론한 세션이 시작할 때 설치를 시도한다. 설치가 안 되는 경우(마켓플레이스 접근 실패, 트리거 allowed_tools에 Skill 없음)를 전제로 STEP 2.5는 스킬 없이 도는 수동 경로를 갖고 있으니, 세션이 정상 시작되기만 하면 스킬 없이 수동 경로로 계속한다. 2026-08-25.",
+  "extraKnownMarketplaces": {
+    "im-not-ai": {
+      "source": { "source": "github", "repo": "epoko77-ai/im-not-ai" }
+    }
+  },
+  "enabledPlugins": {
+    "humanize-korean@im-not-ai": true
+  }
+}

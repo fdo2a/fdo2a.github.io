@@ -69,6 +69,43 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
   h1{font-size:19px;}
   h2{font-size:16.5px;}
 }
+
+/* readability-v5 */
+.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+.card { padding: 20px 22px; }
+h1 { max-width: 34em; }
+h2 { line-height: 1.45; margin-bottom: 14px; }
+h3, h4 { line-height: 1.45; }
+.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
+table { font-variant-numeric: tabular-nums; }
+section { scroll-margin-top: 20px; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.reading-map a:first-of-type { color: #0064FF; border-color: #B9D5FF; background: #F5F9FF; }
+.reading-map a:focus-visible { outline: 2px solid #0064FF; outline-offset: 2px; }
+@media (max-width: 560px) {
+  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  .card { padding: 16px 16px; }
+  .reading-map { margin-bottom: 16px; }
+}
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
+}
 </style>
 <!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
 </head>
@@ -87,8 +124,10 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
   <div class="headline-card">
     <h1>미국 반도체주 약세 여파에 SK하이닉스 5%대 급락, 코스피 0.60% 밀리며 7주 연속 하락…한화솔루션은 미 태양광 관세 수혜 급등</h1>
   </div>
-
-  <section id="synthesis">
+<!-- reading-map-v1 -->
+<nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#synthesis">전략 코멘트</a><a href="#index">시장 흐름</a><a href="#flows">금리·수급</a><a href="#sector">종목·섹터</a><a href="#policy">정책·리스크</a></nav>
+<!-- strategy-first-v1 -->
+<section id="synthesis">
     <h2>전략 코멘트</h2>
     <div class="card">
       <p><span class="box-label">동인</span> 간밤 뉴욕 증시에서 엔비디아의 차세대 GPU 메모리 탑재량 축소 검토설과 AMD·샌디스크의 실적 가이던스 실망이 반도체주를 끌어내린 여진이 7일 국내 증시로 이어졌다. SK하이닉스가 5%대 약세를 보이며 코스피 하락을 주도했고, 코스피는 전일 종가(6,296.38포인트) 대비 갭업 출발해 장 초반 6,415.60포인트까지 올랐다가 이내 낙폭을 키워 -0.60%(6,258.77포인트)로 마감, 주간 기준 7주 연속 하락을 기록했다(2022년 12월 이후 최장). 삼성전자는 강보합 마감하며 SK하이닉스와 디커플링을 보였고, 반도체 대형주 비중이 낮은 코스닥은 -0.36%(798.81포인트)로 상대적으로 선방했다.</p>
@@ -96,6 +135,10 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
       <p><span class="box-label">다음 촉매·확인 트리거</span> 기술적으로 코스피는 20일선(6,574.78포인트)은 물론 일목균형표 구름대(7,724.91~8,561.66포인트)까지 밑도는 상태라, 20일선 회복 여부가 1차 확인 트리거다. 코스닥은 20일선(762.53포인트)을 4.76% 웃돌지만 60일선(917.60포인트) 아래 역배열이 이어지고 있어 볼린저 상단(860.70포인트) 돌파가 다음 관전 포인트다. 대외적으로는 8월11일 반도체특별법 시행, 8월27일 한은 금통위가 다음 분기점이라 그 전까지는 반도체 대형주 중심의 변동성과 태양광 관세 수혜주 순환매가 동시에 이어질 공산이 크다.</p>
     </div>
   </section>
+
+
+
+
 
   <section id="index">
     <h2>지수 &amp; 장중</h2>
@@ -181,10 +224,13 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
         </tbody>
       </table>
     </div>
-    <p style="margin-top:10px;">외국인의 코스피 누적 순매수선은 09시37분 +3,471억원(관측 구간 내 최고치)까지 순매수를 이어가다 10시33분 순매도로 전환했고, 이후 반전 없이 매도를 키워 15시21분 -9,761억원(최저치)까지 확대됐다. 지수 궤적과 맞춰보면 코스피는 장 초반 6,415.60포인트까지 오른 뒤 낙폭을 키워 30분봉 기준 09시30분 6,300.16포인트, 10시30분 6,258.56포인트로 밀렸다 — 외국인이 순매도로 돌아선 10시33분 전후 시점과 지수 하락 전환이 맞물린다. 개인은 13시15분 순매도에서 순매수로 전환해(정점 13시18분 +227억원) 오후 누적 매수를 키웠고, 이는 13시30분(6,243.41포인트)~14시30분(6,259.78포인트) 구간의 반등과 방향이 일치한다.</p>
-    <p>기관 내부를 나누면 금융투자(프로그램·선물 연계, 기계적 성격)는 09시30분 -90억원에서 시작해 반전 없이 매수를 늘려 15시30분 +7,357억원까지 불어나며 기관 매수를 이끌었다. 반면 연기금등(정책성 장기 자금)은 10시30분 +112억원을 정점으로 이후 계속 줄어 13시00분 -990억원, 15시30분 -1,009억원까지 순매도 기조를 유지했다 — 오늘 기관의 순매수는 정책성 장기 자금이 아니라 프로그램·선물 연계 성격의 매수가 이끈 결과로 풀이된다. 이는 뒤따르는 프로그램 매매 표에서도 확인된다 — 코스피 프로그램 매매의 비차익(방향성 바스켓)이 7,391억원 순매도로 전체를 끌어내린 가운데도 차익거래(선물 연계 기계적)는 877억원 순매수를 기록해, 장중 관찰된 금융투자의 매수 기조와 방향이 같다.</p>
+    <p style="margin-top:10px;">외국인의 코스피 누적 순매수선은 09시37분 +3,471억원(관측 구간 내 최고치)까지 순매수를 이어가다 10시33분 순매도로 전환했고, 이후 반전 없이 매도를 키워 15시21분 -9,761억원(최저치)까지 확대됐다. 지수 궤적과 맞춰보면 코스피는 장 초반 6,415.60포인트까지 오른 뒤 낙폭을 키워 30분봉 기준 09시30분 6,300.16포인트, 10시30분 6,258.56포인트로 밀렸다 — 외국인이 순매도로 돌아선 10시33분 전후 시점과 지수 하락 전환이 맞물린다.</p>
+<p style="margin-top:10px;">개인은 13시15분 순매도에서 순매수로 전환해(정점 13시18분 +227억원) 오후 누적 매수를 키웠고, 이는 13시30분(6,243.41포인트)~14시30분(6,259.78포인트) 구간의 반등과 방향이 일치한다.</p>
+    <p>기관 내부를 나누면 금융투자(프로그램·선물 연계, 기계적 성격)는 09시30분 -90억원에서 시작해 반전 없이 매수를 늘려 15시30분 +7,357억원까지 불어나며 기관 매수를 이끌었다. 반면 연기금등(정책성 장기 자금)은 10시30분 +112억원을 정점으로 이후 계속 줄어 13시00분 -990억원, 15시30분 -1,009억원까지 순매도 기조를 유지했다 — 오늘 기관의 순매수는 정책성 장기 자금이 아니라 프로그램·선물 연계 성격의 매수가 이끈 결과로 풀이된다.</p>
+<p>이는 뒤따르는 프로그램 매매 표에서도 확인된다 — 코스피 프로그램 매매의 비차익(방향성 바스켓)이 7,391억원 순매도로 전체를 끌어내린 가운데도 차익거래(선물 연계 기계적)는 877억원 순매수를 기록해, 장중 관찰된 금융투자의 매수 기조와 방향이 같다.</p>
     <p>코스닥에서는 개인 누적선이 방향 전환 없이 하루 종일 순매수 기조를 유지했다 — 관측 구간 내 최저치 09시07분 -65억원에서 최고치 13시54분 +3,822억원까지 단조 증가했다. 외국인 역시 전환 없이 매도 기조를 유지해 09시07분 -2억원(최고치)에서 14시51분 -2,596억원(최저치)까지 매도를 늘렸다. 기관은 09시52분 순매수에서 순매도로 전환해 13시28분 -1,547억원(정점)까지 매도를 키웠다가 이후 낙폭을 줄였다.</p>
-    <p>정규장 마지막 관측치(15시30분) 기준 코스피 외국인 누적은 -9,761억원, 개인은 +1,832억원, 기관은 +7,808억원이었으나, 이후 확정 발표된 수치는 외국인 -8,588억원·개인 +2,675억원·기관 +5,791억원으로 정정됐다 — 외국인 매도가 확정 과정에서 1,173억원 줄어들고 기관 매수도 2,017억원 줄어든 반면 개인 매수는 843억원 늘어난 셈이다. 코스닥에서도 정규장 마지막 관측(개인 3,422억·외국인 -2,492억·기관 -1,090억)과 확정치(개인 3,403억·외국인 -2,540억·기관 -1,028억) 사이에 소폭 차이가 있다. 다음 거래일에는 외국인 매도 강도가 실제로 장중 스냅샷보다 완만했는지를 확정치 발표 흐름으로 재확인할 필요가 있다.</p>
+    <p>정규장 마지막 관측치(15시30분) 기준 코스피 외국인 누적은 -9,761억원, 개인은 +1,832억원, 기관은 +7,808억원이었으나, 이후 확정 발표된 수치는 외국인 -8,588억원·개인 +2,675억원·기관 +5,791억원으로 정정됐다 — 외국인 매도가 확정 과정에서 1,173억원 줄어들고 기관 매수도 2,017억원 줄어든 반면 개인 매수는 843억원 늘어난 셈이다. 코스닥에서도 정규장 마지막 관측(개인 3,422억·외국인 -2,492억·기관 -1,090억)과 확정치(개인 3,403억·외국인 -2,540억·기관 -1,028억) 사이에 소폭 차이가 있다.</p>
+<p>다음 거래일에는 외국인 매도 강도가 실제로 장중 스냅샷보다 완만했는지를 확정치 발표 흐름으로 재확인할 필요가 있다.</p>
 
     <h3>프로그램 매매</h3>
     <div class="tbl-scroll">
@@ -196,7 +242,8 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
         </tbody>
       </table>
     </div>
-    <p style="margin-top:10px;">코스피 프로그램 매매는 비차익(방향성 바스켓)이 7,391억원 순매도를 기록해 전체 순매도(6,514억원)를 사실상 주도했고, 차익거래(선물 연계 기계적 매매)는 오히려 877억원 순매수로 반대 방향이었다 — 앞서 장중 수급 전개에서 확인한 금융투자 계정의 지속적 매수 기조와 결이 같다. 비차익 매도의 방향은 외국인 순매도(8,588억원, 당일 잠정)와 같은 쪽이라, 이번 하락이 지수선물 재정거래보다는 현물 바스켓 단위의 방향성 매도에서 비롯됐다고 읽는 편이 합리적이다. 코스닥은 차익(-208억원)·비차익(-2,446억원) 모두 매도 방향으로 전체 2,654억원 순매도를 기록해 코스피와 달리 소규모 차익거래까지 매도에 가담했다 — 다만 코스닥 기관의 최종 순매도(-1,028억원)는 프로그램 순매도(-2,654억원)보다 작아, 비프로그램 채널에서는 매도 강도가 다소 완화됐다는 뜻이 된다.</p>
+    <p style="margin-top:10px;">코스피 프로그램 매매는 비차익(방향성 바스켓)이 7,391억원 순매도를 기록해 전체 순매도(6,514억원)를 사실상 주도했고, 차익거래(선물 연계 기계적 매매)는 오히려 877억원 순매수로 반대 방향이었다 — 앞서 장중 수급 전개에서 확인한 금융투자 계정의 지속적 매수 기조와 결이 같다. 비차익 매도의 방향은 외국인 순매도(8,588억원, 당일 잠정)와 같은 쪽이라, 이번 하락이 지수선물 재정거래보다는 현물 바스켓 단위의 방향성 매도에서 비롯됐다고 읽는 편이 합리적이다.</p>
+<p style="margin-top:10px;">코스닥은 차익(-208억원)·비차익(-2,446억원) 모두 매도 방향으로 전체 2,654억원 순매도를 기록해 코스피와 달리 소규모 차익거래까지 매도에 가담했다 — 다만 코스닥 기관의 최종 순매도(-1,028억원)는 프로그램 순매도(-2,654억원)보다 작아, 비프로그램 채널에서는 매도 강도가 다소 완화됐다는 뜻이 된다.</p>
   </section>
 
   <section id="top-value">
@@ -227,8 +274,10 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
   <section id="sector">
     <h2>업종·섹터 멀티기간 수익률</h2>
     <style>.spf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.spf-block{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:12px}.spf-name{flex:0 0 72px}.spf-bar{flex:1;background:#f2f4f6;border-radius:4px;height:10px}.spf-bar i{display:block;height:10px;border-radius:4px}.spf-val{flex:0 0 52px;text-align:right}.spf-col h4{margin:0 0 6px;font-size:13px}@media(max-width:560px){.spf-grid{grid-template-columns:1fr}}</style><div class="spf-grid"><div class="spf-col"><h4>1D</h4><div class="spf-block"><span class="spf-name">2차전지</span><span class="spf-bar"><i style="width:23%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+5.74%</span></div><div class="spf-block"><span class="spf-name">방산</span><span class="spf-bar"><i style="width:11%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+2.67%</span></div><div class="spf-block"><span class="spf-name">은행</span><span class="spf-bar"><i style="width:11%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+2.66%</span></div><div class="spf-block"><span class="spf-name">헬스케어</span><span class="spf-bar"><i style="width:11%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+2.63%</span></div><div class="spf-block"><span class="spf-name">철강소재</span><span class="spf-bar"><i style="width:2%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+0.50%</span></div><div class="spf-block"><span class="spf-name">조선</span><span class="spf-bar"><i style="width:1%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+0.17%</span></div><div class="spf-block"><span class="spf-name">자동차</span><span class="spf-bar"><i style="width:0%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-0.09%</span></div><div class="spf-block"><span class="spf-name">소프트웨어</span><span class="spf-bar"><i style="width:4%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-1.09%</span></div><div class="spf-block"><span class="spf-name">로봇</span><span class="spf-bar"><i style="width:6%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-1.58%</span></div><div class="spf-block"><span class="spf-name">건설</span><span class="spf-bar"><i style="width:6%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-1.59%</span></div><div class="spf-block"><span class="spf-name">반도체</span><span class="spf-bar"><i style="width:12%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-2.97%</span></div><div class="spf-block"><span class="spf-name">증권</span><span class="spf-bar"><i style="width:15%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-3.68%</span></div></div><div class="spf-col"><h4>1W</h4><div class="spf-block"><span class="spf-name">건설</span><span class="spf-bar"><i style="width:66%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+16.59%</span></div><div class="spf-block"><span class="spf-name">헬스케어</span><span class="spf-bar"><i style="width:56%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+13.91%</span></div><div class="spf-block"><span class="spf-name">방산</span><span class="spf-bar"><i style="width:51%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+12.82%</span></div><div class="spf-block"><span class="spf-name">철강소재</span><span class="spf-bar"><i style="width:48%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+12.01%</span></div><div class="spf-block"><span class="spf-name">2차전지</span><span class="spf-bar"><i style="width:38%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+9.50%</span></div><div class="spf-block"><span class="spf-name">은행</span><span class="spf-bar"><i style="width:24%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+6.00%</span></div><div class="spf-block"><span class="spf-name">로봇</span><span class="spf-bar"><i style="width:23%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+5.75%</span></div><div class="spf-block"><span class="spf-name">조선</span><span class="spf-bar"><i style="width:19%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+4.72%</span></div><div class="spf-block"><span class="spf-name">자동차</span><span class="spf-bar"><i style="width:18%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+4.47%</span></div><div class="spf-block"><span class="spf-name">소프트웨어</span><span class="spf-bar"><i style="width:16%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+3.99%</span></div><div class="spf-block"><span class="spf-name">증권</span><span class="spf-bar"><i style="width:17%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-4.14%</span></div><div class="spf-block"><span class="spf-name">반도체</span><span class="spf-bar"><i style="width:43%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-10.83%</span></div></div><div class="spf-col"><h4>1M</h4><div class="spf-block"><span class="spf-name">철강소재</span><span class="spf-bar"><i style="width:48%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+11.90%</span></div><div class="spf-block"><span class="spf-name">건설</span><span class="spf-bar"><i style="width:38%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+9.43%</span></div><div class="spf-block"><span class="spf-name">2차전지</span><span class="spf-bar"><i style="width:35%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+8.78%</span></div><div class="spf-block"><span class="spf-name">헬스케어</span><span class="spf-bar"><i style="width:27%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+6.84%</span></div><div class="spf-block"><span class="spf-name">소프트웨어</span><span class="spf-bar"><i style="width:24%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+6.05%</span></div><div class="spf-block"><span class="spf-name">은행</span><span class="spf-bar"><i style="width:23%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+5.73%</span></div><div class="spf-block"><span class="spf-name">조선</span><span class="spf-bar"><i style="width:22%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+5.55%</span></div><div class="spf-block"><span class="spf-name">방산</span><span class="spf-bar"><i style="width:16%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+4.05%</span></div><div class="spf-block"><span class="spf-name">로봇</span><span class="spf-bar"><i style="width:3%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+0.80%</span></div><div class="spf-block"><span class="spf-name">자동차</span><span class="spf-bar"><i style="width:21%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-5.33%</span></div><div class="spf-block"><span class="spf-name">증권</span><span class="spf-bar"><i style="width:62%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-15.51%</span></div><div class="spf-block"><span class="spf-name">반도체</span><span class="spf-bar"><i style="width:82%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-20.41%</span></div></div><div class="spf-col"><h4>6M</h4><div class="spf-block"><span class="spf-name">건설</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+25.00%</span></div><div class="spf-block"><span class="spf-name">은행</span><span class="spf-bar"><i style="width:92%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+23.10%</span></div><div class="spf-block"><span class="spf-name">반도체</span><span class="spf-bar"><i style="width:89%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+22.17%</span></div><div class="spf-block"><span class="spf-name">자동차</span><span class="spf-bar"><i style="width:30%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-7.58%</span></div><div class="spf-block"><span class="spf-name">증권</span><span class="spf-bar"><i style="width:65%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-16.13%</span></div><div class="spf-block"><span class="spf-name">로봇</span><span class="spf-bar"><i style="width:68%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-16.97%</span></div><div class="spf-block"><span class="spf-name">소프트웨어</span><span class="spf-bar"><i style="width:70%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-17.59%</span></div><div class="spf-block"><span class="spf-name">방산</span><span class="spf-bar"><i style="width:71%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-17.87%</span></div><div class="spf-block"><span class="spf-name">2차전지</span><span class="spf-bar"><i style="width:78%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-19.40%</span></div><div class="spf-block"><span class="spf-name">조선</span><span class="spf-bar"><i style="width:83%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-20.83%</span></div><div class="spf-block"><span class="spf-name">철강소재</span><span class="spf-bar"><i style="width:94%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-23.57%</span></div><div class="spf-block"><span class="spf-name">헬스케어</span><span class="spf-bar"><i style="width:100%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-25.00%</span></div></div><div class="spf-col"><h4>1Y</h4><div class="spf-block"><span class="spf-name">반도체</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+201.02%</span></div><div class="spf-block"><span class="spf-name">로봇</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+82.83%</span></div><div class="spf-block"><span class="spf-name">건설</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+57.77%</span></div><div class="spf-block"><span class="spf-name">자동차</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+46.88%</span></div><div class="spf-block"><span class="spf-name">은행</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+34.41%</span></div><div class="spf-block"><span class="spf-name">증권</span><span class="spf-bar"><i style="width:100%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+32.56%</span></div><div class="spf-block"><span class="spf-name">2차전지</span><span class="spf-bar"><i style="width:51%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+12.72%</span></div><div class="spf-block"><span class="spf-name">방산</span><span class="spf-bar"><i style="width:34%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+8.45%</span></div><div class="spf-block"><span class="spf-name">조선</span><span class="spf-bar"><i style="width:22%;background:#00a763"></i></span><span class="spf-val" style="color:#00a763">+5.47%</span></div><div class="spf-block"><span class="spf-name">헬스케어</span><span class="spf-bar"><i style="width:27%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-6.72%</span></div><div class="spf-block"><span class="spf-name">철강소재</span><span class="spf-bar"><i style="width:33%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-8.30%</span></div><div class="spf-block"><span class="spf-name">소프트웨어</span><span class="spf-bar"><i style="width:35%;background:#e5342b"></i></span><span class="spf-val" style="color:#e5342b">-8.66%</span></div></div></div>
-    <p style="margin-top:12px;">위 섹터 차트(1D 기준 12개 테마)에서는 2차전지(+5.74%)가 가장 강했고 반도체(-2.97%)만 유일하게 뚜렷한 약세를 보였다. 더 세분화된 kr_industry.json(60개 업종) 기준으로 보면 전자제품(+5.40%)이 등락률 1위였지만 breadth는 0.438(16종목 중 7종목 상승)에 그쳐 좁은 상승·개별종목 장세로 판정된다. 반면 전기제품(+4.90%, breadth 0.586)·석유와가스(+4.41%, breadth 0.579)·화학(+3.98%, breadth 0.724)은 모두 '폭넓은 상승 주도'로 분류돼 업종 전반에 온기가 퍼졌다 — 특히 화학·석유와가스의 폭넓은 상승은 §6·§10에서 짚은 미국 폴리실리콘·태양광 관세 재료가 한화솔루션 한 종목을 넘어 업종 전체로 확산됐음을 뒷받침한다.</p>
-    <p>우주항공과국방(+3.37%, breadth 0.515)·전자장비와기기(+2.93%, breadth 0.509)는 등락률 상위권에 들었지만 breadth가 절반 안팎에 그쳐 좁은 상승·개별종목 판정을 받았다 — 상승률만으로 업종 전체의 주도력을 단정할 수 없다는 뜻이다. 은행(+2.25%, breadth 0.909)·제약(+1.88%, breadth 0.577)은 상승률 자체는 크지 않지만 폭넓은 상승 주도로 분류돼, 순환매 자금이 반도체 낙폭을 피해 저변이 넓은 업종으로 옮겨간 정황을 보여준다. 하락 업종은 조선(-0.22%)·창업투자(-0.27%)·자동차(-0.32%)·기계(-0.46%) 등으로 낙폭 자체가 크지 않았다. 이 60개 업종 목록에는 '반도체' 항목이 별도로 없다 — 삼성전자·SK하이닉스가 코스피 시가총액 최상위 비중을 차지해 지수 자체를 끌어내린 구조이지, 업종 breadth 데이터에는 반도체발 매도가 별도 항목으로 잡히지 않는다는 뜻이다.</p>
+    <p style="margin-top:12px;">위 섹터 차트(1D 기준 12개 테마)에서는 2차전지(+5.74%)가 가장 강했고 반도체(-2.97%)만 유일하게 뚜렷한 약세를 보였다. 더 세분화된 kr_industry.json(60개 업종) 기준으로 보면 전자제품(+5.40%)이 등락률 1위였지만 breadth는 0.438(16종목 중 7종목 상승)에 그쳐 좁은 상승·개별종목 장세로 판정된다.</p>
+<p style="margin-top:12px;">반면 전기제품(+4.90%, breadth 0.586)·석유와가스(+4.41%, breadth 0.579)·화학(+3.98%, breadth 0.724)은 모두 '폭넓은 상승 주도'로 분류돼 업종 전반에 온기가 퍼졌다 — 특히 화학·석유와가스의 폭넓은 상승은 §6·§10에서 짚은 미국 폴리실리콘·태양광 관세 재료가 한화솔루션 한 종목을 넘어 업종 전체로 확산됐음을 뒷받침한다.</p>
+    <p>우주항공과국방(+3.37%, breadth 0.515)·전자장비와기기(+2.93%, breadth 0.509)는 등락률 상위권에 들었지만 breadth가 절반 안팎에 그쳐 좁은 상승·개별종목 판정을 받았다 — 상승률만으로 업종 전체의 주도력을 단정할 수 없다는 뜻이다. 은행(+2.25%, breadth 0.909)·제약(+1.88%, breadth 0.577)은 상승률 자체는 크지 않지만 폭넓은 상승 주도로 분류돼, 순환매 자금이 반도체 낙폭을 피해 저변이 넓은 업종으로 옮겨간 정황을 보여준다.</p>
+<p>하락 업종은 조선(-0.22%)·창업투자(-0.27%)·자동차(-0.32%)·기계(-0.46%) 등으로 낙폭 자체가 크지 않았다. 이 60개 업종 목록에는 '반도체' 항목이 별도로 없다 — 삼성전자·SK하이닉스가 코스피 시가총액 최상위 비중을 차지해 지수 자체를 끌어내린 구조이지, 업종 breadth 데이터에는 반도체발 매도가 별도 항목으로 잡히지 않는다는 뜻이다.</p>
   </section>
 
   <section id="stocks">
@@ -255,7 +304,8 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
       </table>
     </div>
     <p style="margin-top:10px;">3년물과 10년물이 나란히 올랐으나(+0.4bp·+1.3bp) 10년물이 더 크게 올라 3s10s 스프레드는 46.2bp(10년 4.208%-3년 3.746%)로 전일 45.3bp보다 소폭 확대됐다 — 약한 베어 스티프닝이다. 코스피가 하락한 날임에도 채권 금리는 전 구간에서 소폭이나마 상승했다는 점은, 이번 코스피 낙폭이 금리·유동성 충격이 아니라 반도체 대형주 쏠림 매도라는 개별 재료성 이벤트였음을 뒷받침한다.</p>
-    <p>국고채 3년물(3.746%)은 한국은행 기준금리(2.75%, 7월 기준)보다 99.6bp 높다 — 8월27일 금통위를 앞두고 추가 인상 기대가 시장 금리에 이미 상당 부분 선반영돼 있다는 뜻이다. 회사채 AA- 3년물과 국고채 3년물의 신용 스프레드는 전일 70.3bp(4.445%-3.742%)에서 오늘 70.2bp(4.448%-3.746%)로 거의 변화가 없었다 — 코스피가 하락했음에도 회사채 시장의 신용 경계감이 확대되지 않았다는 뜻이다. 국고채 10년물(+1.3bp 상승)·외국인 순매도(축소됐지만 지속)·원화 강세(환율 하락)의 조합은 서로 다른 방향을 가리키고 있어, 당분간은 세 지표를 함께 지켜보며 방향성을 재확인할 필요가 있다.</p>
+    <p>국고채 3년물(3.746%)은 한국은행 기준금리(2.75%, 7월 기준)보다 99.6bp 높다 — 8월27일 금통위를 앞두고 추가 인상 기대가 시장 금리에 이미 상당 부분 선반영돼 있다는 뜻이다. 회사채 AA- 3년물과 국고채 3년물의 신용 스프레드는 전일 70.3bp(4.445%-3.742%)에서 오늘 70.2bp(4.448%-3.746%)로 거의 변화가 없었다 — 코스피가 하락했음에도 회사채 시장의 신용 경계감이 확대되지 않았다는 뜻이다.</p>
+<p>국고채 10년물(+1.3bp 상승)·외국인 순매도(축소됐지만 지속)·원화 강세(환율 하락)의 조합은 서로 다른 방향을 가리키고 있어, 당분간은 세 지표를 함께 지켜보며 방향성을 재확인할 필요가 있다.</p>
   </section>
 
   <section id="policy">

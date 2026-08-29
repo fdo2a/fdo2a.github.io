@@ -2,6 +2,66 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-08-28",
+        "arb_buy": 4208,
+        "arb_sell": 3759,
+        "arb_net": 449,
+        "narb_buy": 50587,
+        "narb_sell": 65986,
+        "narb_net": -15398,
+        "total_buy": 54795,
+        "total_sell": 69745,
+        "total_net": -14949
+      },
+      {
+        "date": "2026-08-27",
+        "arb_buy": 3515,
+        "arb_sell": 2949,
+        "arb_net": 566,
+        "narb_buy": 60786,
+        "narb_sell": 59801,
+        "narb_net": 985,
+        "total_buy": 64301,
+        "total_sell": 62750,
+        "total_net": 1551
+      },
+      {
+        "date": "2026-08-26",
+        "arb_buy": 3578,
+        "arb_sell": 3304,
+        "arb_net": 275,
+        "narb_buy": 51679,
+        "narb_sell": 65022,
+        "narb_net": -13343,
+        "total_buy": 55257,
+        "total_sell": 68326,
+        "total_net": -13068
+      },
+      {
+        "date": "2026-08-25",
+        "arb_buy": 3662,
+        "arb_sell": 2637,
+        "arb_net": 1025,
+        "narb_buy": 55660,
+        "narb_sell": 82997,
+        "narb_net": -27337,
+        "total_buy": 59322,
+        "total_sell": 85634,
+        "total_net": -26312
+      },
+      {
+        "date": "2026-08-24",
+        "arb_buy": 5138,
+        "arb_sell": 3955,
+        "arb_net": 1183,
+        "narb_buy": 58626,
+        "narb_sell": 89208,
+        "narb_net": -30582,
+        "total_buy": 63764,
+        "total_sell": 93163,
+        "total_net": -29399
+      },
+      {
         "date": "2026-08-21",
         "arb_buy": 4746,
         "arb_sell": 4089,
@@ -60,76 +120,76 @@
         "total_buy": 81638,
         "total_sell": 81169,
         "total_net": 469
-      },
-      {
-        "date": "2026-08-13",
-        "arb_buy": 3724,
-        "arb_sell": 3672,
-        "arb_net": 52,
-        "narb_buy": 106187,
-        "narb_sell": 106859,
-        "narb_net": -671,
-        "total_buy": 109911,
-        "total_sell": 110531,
-        "total_net": -619
-      },
-      {
-        "date": "2026-08-12",
-        "arb_buy": 3095,
-        "arb_sell": 4258,
-        "arb_net": -1163,
-        "narb_buy": 73629,
-        "narb_sell": 69590,
-        "narb_net": 4039,
-        "total_buy": 76724,
-        "total_sell": 73848,
-        "total_net": 2876
-      },
-      {
-        "date": "2026-08-11",
-        "arb_buy": 2013,
-        "arb_sell": 2147,
-        "arb_net": -134,
-        "narb_buy": 66637,
-        "narb_sell": 66600,
-        "narb_net": 37,
-        "total_buy": 68650,
-        "total_sell": 68747,
-        "total_net": -97
-      },
-      {
-        "date": "2026-08-10",
-        "arb_buy": 5903,
-        "arb_sell": 4164,
-        "arb_net": 1739,
-        "narb_buy": 57014,
-        "narb_sell": 72414,
-        "narb_net": -15400,
-        "total_buy": 62917,
-        "total_sell": 76578,
-        "total_net": -13661
-      },
-      {
-        "date": "2026-08-07",
-        "arb_buy": 3821,
-        "arb_sell": 2944,
-        "arb_net": 877,
-        "narb_buy": 80656,
-        "narb_sell": 88047,
-        "narb_net": -7391,
-        "total_buy": 84477,
-        "total_sell": 90991,
-        "total_net": -6514
       }
     ],
-    "latest_date": "2026-08-21",
-    "flows_date": "2026-08-21",
+    "latest_date": "2026-08-28",
+    "flows_date": "2026-08-28",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
   },
   "KOSDAQ": {
     "rows": [
+      {
+        "date": "2026-08-28",
+        "arb_buy": 0,
+        "arb_sell": 7,
+        "arb_net": -6,
+        "narb_buy": 12836,
+        "narb_sell": 13765,
+        "narb_net": -929,
+        "total_buy": 12836,
+        "total_sell": 13772,
+        "total_net": -935
+      },
+      {
+        "date": "2026-08-27",
+        "arb_buy": 49,
+        "arb_sell": 45,
+        "arb_net": 4,
+        "narb_buy": 15282,
+        "narb_sell": 13990,
+        "narb_net": 1292,
+        "total_buy": 15331,
+        "total_sell": 14035,
+        "total_net": 1296
+      },
+      {
+        "date": "2026-08-26",
+        "arb_buy": 0,
+        "arb_sell": 70,
+        "arb_net": -70,
+        "narb_buy": 11599,
+        "narb_sell": 12513,
+        "narb_net": -914,
+        "total_buy": 11599,
+        "total_sell": 12583,
+        "total_net": -984
+      },
+      {
+        "date": "2026-08-25",
+        "arb_buy": 8,
+        "arb_sell": 64,
+        "arb_net": -56,
+        "narb_buy": 13519,
+        "narb_sell": 12456,
+        "narb_net": 1063,
+        "total_buy": 13527,
+        "total_sell": 12520,
+        "total_net": 1007
+      },
+      {
+        "date": "2026-08-24",
+        "arb_buy": 12,
+        "arb_sell": 11,
+        "arb_net": 1,
+        "narb_buy": 13784,
+        "narb_sell": 11230,
+        "narb_net": 2554,
+        "total_buy": 13796,
+        "total_sell": 11241,
+        "total_net": 2555
+      },
       {
         "date": "2026-08-21",
         "arb_buy": 2,
@@ -189,70 +249,10 @@
         "total_buy": 19091,
         "total_sell": 19703,
         "total_net": -612
-      },
-      {
-        "date": "2026-08-13",
-        "arb_buy": 40,
-        "arb_sell": 72,
-        "arb_net": -32,
-        "narb_buy": 18869,
-        "narb_sell": 19953,
-        "narb_net": -1084,
-        "total_buy": 18909,
-        "total_sell": 20025,
-        "total_net": -1116
-      },
-      {
-        "date": "2026-08-12",
-        "arb_buy": 1,
-        "arb_sell": 15,
-        "arb_net": -14,
-        "narb_buy": 17140,
-        "narb_sell": 18329,
-        "narb_net": -1189,
-        "total_buy": 17141,
-        "total_sell": 18344,
-        "total_net": -1203
-      },
-      {
-        "date": "2026-08-11",
-        "arb_buy": 1,
-        "arb_sell": 7,
-        "arb_net": -6,
-        "narb_buy": 17439,
-        "narb_sell": 20546,
-        "narb_net": -3107,
-        "total_buy": 17440,
-        "total_sell": 20553,
-        "total_net": -3113
-      },
-      {
-        "date": "2026-08-10",
-        "arb_buy": 180,
-        "arb_sell": 15,
-        "arb_net": 165,
-        "narb_buy": 21798,
-        "narb_sell": 20061,
-        "narb_net": 1736,
-        "total_buy": 21978,
-        "total_sell": 20076,
-        "total_net": 1901
-      },
-      {
-        "date": "2026-08-07",
-        "arb_buy": 12,
-        "arb_sell": 220,
-        "arb_net": -208,
-        "narb_buy": 14769,
-        "narb_sell": 17215,
-        "narb_net": -2446,
-        "total_buy": 14781,
-        "total_sell": 17435,
-        "total_net": -2654
       }
     ],
-    "latest_date": "2026-08-21",
-    "flows_date": "2026-08-21",
+    "latest_date": "2026-08-28",
+    "flows_date": "2026-08-28",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false

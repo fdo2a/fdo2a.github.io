@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+/_workspace/
+/prose_in.txt
+/prose_map.json
 
 /market_data.json
 /intraday.json
@@ -22,3 +25,10 @@ __pycache__/
 /releases/
 kr/data/research_notes.md
 kr/research_notes.md
+
+# codex 위임용 워크트리 (루틴의 git add -A에 딸려가지 않게)
+.claude/worktrees/
+
+# codex CLI 세션 산출물
+.codex/
+.DS_Store

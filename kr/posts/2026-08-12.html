@@ -69,6 +69,43 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
   h1{font-size:19px;}
   h2{font-size:16.5px;}
 }
+
+/* readability-v5 */
+.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+.card { padding: 20px 22px; }
+h1 { max-width: 34em; }
+h2 { line-height: 1.45; margin-bottom: 14px; }
+h3, h4 { line-height: 1.45; }
+.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
+table { font-variant-numeric: tabular-nums; }
+section { scroll-margin-top: 20px; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.reading-map a:first-of-type { color: #0064FF; border-color: #B9D5FF; background: #F5F9FF; }
+.reading-map a:focus-visible { outline: 2px solid #0064FF; outline-offset: 2px; }
+@media (max-width: 560px) {
+  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  .card { padding: 16px 16px; }
+  .reading-map { margin-bottom: 16px; }
+}
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
+}
 </style>
 <!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
 </head>
@@ -87,8 +124,10 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
   <div class="headline-card">
     <h1>코스피, 반도체 랠리·매수 사이드카 발동에 6,579.04로 3.68% 급등 마감…코스닥은 858.91로 강보합</h1>
   </div>
-
-  <section id="synthesis">
+<!-- reading-map-v1 -->
+<nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#synthesis">전략 코멘트</a><a href="#index">시장 흐름</a><a href="#flows">금리·수급</a><a href="#sector">종목·섹터</a><a href="#policy">정책·리스크</a></nav>
+<!-- strategy-first-v1 -->
+<section id="synthesis">
     <h2>전략 코멘트</h2>
     <div class="card">
       <p><span class="box-label">동인</span> 코스피는 전일 종가(6,345.53포인트) 대비 갭업 출발한 6,438.50포인트에서 완만한 상승을 이어가 정오 무렵 12시30분 6,658.89포인트까지 올랐고(일중 고가 6,668.43포인트는 그 부근에서 형성된 것으로 추정) 오후 들어 상승폭 일부를 반납하며 6,579.04포인트(+3.68%)로 마감했다 — 3거래일 연속 상승이다. 코스닥은 854.85포인트에서 출발해 09시30분 839.86포인트까지 밀렸다가(일중 저점과 일치) 반등해 13시 860.03포인트까지 올랐고(일중 고가 860.76포인트는 그 부근에서 형성) 좁은 박스권을 거쳐 858.91포인트(+0.12%)로 강보합 마감했다. 간밤 미국 증시에서 AI 인프라 기업의 실적 서프라이즈(코어위브 대규모 수주잔고 공개, 슈퍼마이크로 시장 기대 상회 가이던스)로 필라델피아반도체지수가 강세를 보인 여파가 국내 반도체 대형주로 이어져, 삼성전자(+6.68%, 25만5500원)·SK하이닉스(+5.54%, 150만400원)가 지수 상승을 견인하고 코스피200선물지수 급변동에 매수 사이드카(올해 23번째)가 발동됐다.</p>
@@ -96,6 +135,10 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
       <p><span class="box-label">다음 촉매·확인 트리거</span> 기술적으로 코스피는 20일선(6,528.94포인트)을 0.77% 웃돌지만 일목균형표 구름대(7,724.91~8,561.66포인트)와는 여전히 거리가 멀어(구름 하단 대비 below), 오늘의 강한 반등이 추세 전환으로 확정되려면 120일선(6,786.55포인트) 회복 여부를 지켜봐야 한다. 장중 수급에서도 기관 순매수가 14시13분 +1조609억원으로 정점을 찍은 뒤 정규장 마감(15시30분, +6157억원)까지 4452억원 가까이 되돌려졌는데 그중 연기금등은 -282억원으로 순매도 전환해, 오늘 상승이 정책성 장기자금보다 프로그램·트레이딩 자금에 더 기댔음을 시사한다. 다음 확인 지점은 8월27일 한은 금통위와 8월 중 예정된 한미 통상 고위급 회담 결과, 그리고 반도체 랠리가 코스닥·다른 업종으로 확산되는지 여부다.</p>
     </div>
   </section>
+
+
+
+
 
   <section id="index">
     <h2>지수 &amp; 장중</h2>
@@ -181,8 +224,10 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
         </tbody>
       </table>
     </div>
-    <p style="margin-top:10px;">코스피 외국인 누적선은 하루 종일 전환 없이 순매수 방향으로만 움직였다(turns 비어있음) — 09시09분 +340억원의 미미한 규모에서 시작해 15시19분 +2조7395억원까지 꾸준히 늘어난 단조 흐름이다. 개인 누적선도 반대 방향으로 단조로웠는데, 09시07분 +318억원의 소폭 매수에서 출발해 15시10분 -3조2467억원까지 매도가 계속 확대됐다. 코스닥에서도 세 주체 모두 전환 없이 단조 흐름을 보였다 — 개인은 09시01분 +581억원에서 15시21분 +3063억원까지 순매수를 늘렸고, 외국인·기관은 각각 09시01분 -426억원·-105억원에서 15시21분·15시19분 -1527억원·-1483억원까지 순매도를 확대했다. §3에서 본 코스피의 완만한 오전 상승-오후 되돌림 궤적과 견줘보면, 지수가 정오 고점 대비 되밀린 오후에도 외국인 누적 매수 자체는 흔들림 없이 계속 확대돼 오늘 랠리의 실질적 매수 주체가 외국인이었음을 보여준다.</p>
-    <p>코스피 기관 누적선은 09시25분 순매도에서 순매수로 전환된 뒤 14시13분 +1조609억원까지 늘어 하루 중 최고치를 찍었고, 이후 정규장 마감(15시30분, session_last)까지 +6,157억원으로 되밀렸다 — 정점 대비 약 4,452억원이 빠졌다. 세부적으로 보면 금융투자(프로그램·선물 연계 성격) 누적은 14시30분 +7,990억원까지 늘었다가 15시30분 +4,733억원으로 줄었고, 연기금등(정책성 장기자금)은 11시00분 +2,280억원까지 늘었다가 계속 줄어 15시30분에는 -282억원으로 순매도 전환했다. 정규장 마감 무렵 기관 누적 순매수를 지지한 쪽은 연기금이 아니라 금융투자였던 셈이고, 이는 바로 아래 프로그램 매매에서 코스피 비차익이 +4,039억원 순매수를 기록한 것과 방향이 겹친다 — 오늘 기관 매수의 실질 색깔은 정책성 장기자금보다 프로그램·트레이딩 자금에 더 가깝다.</p>
+    <p style="margin-top:10px;">코스피 외국인 누적선은 하루 종일 전환 없이 순매수 방향으로만 움직였다(turns 비어있음) — 09시09분 +340억원의 미미한 규모에서 시작해 15시19분 +2조7395억원까지 꾸준히 늘어난 단조 흐름이다. 개인 누적선도 반대 방향으로 단조로웠는데, 09시07분 +318억원의 소폭 매수에서 출발해 15시10분 -3조2467억원까지 매도가 계속 확대됐다.</p>
+<p style="margin-top:10px;">코스닥에서도 세 주체 모두 전환 없이 단조 흐름을 보였다 — 개인은 09시01분 +581억원에서 15시21분 +3063억원까지 순매수를 늘렸고, 외국인·기관은 각각 09시01분 -426억원·-105억원에서 15시21분·15시19분 -1527억원·-1483억원까지 순매도를 확대했다. §3에서 본 코스피의 완만한 오전 상승-오후 되돌림 궤적과 견줘보면, 지수가 정오 고점 대비 되밀린 오후에도 외국인 누적 매수 자체는 흔들림 없이 계속 확대돼 오늘 랠리의 실질적 매수 주체가 외국인이었음을 보여준다.</p>
+    <p>코스피 기관 누적선은 09시25분 순매도에서 순매수로 전환된 뒤 14시13분 +1조609억원까지 늘어 하루 중 최고치를 찍었고, 이후 정규장 마감(15시30분, session_last)까지 +6,157억원으로 되밀렸다 — 정점 대비 약 4,452억원이 빠졌다. 세부적으로 보면 금융투자(프로그램·선물 연계 성격) 누적은 14시30분 +7,990억원까지 늘었다가 15시30분 +4,733억원으로 줄었고, 연기금등(정책성 장기자금)은 11시00분 +2,280억원까지 늘었다가 계속 줄어 15시30분에는 -282억원으로 순매도 전환했다.</p>
+<p>정규장 마감 무렵 기관 누적 순매수를 지지한 쪽은 연기금이 아니라 금융투자였던 셈이고, 이는 바로 아래 프로그램 매매에서 코스피 비차익이 +4,039억원 순매수를 기록한 것과 방향이 겹친다 — 오늘 기관 매수의 실질 색깔은 정책성 장기자금보다 프로그램·트레이딩 자금에 더 가깝다.</p>
     <p>정규장 마지막 관측치(session_last, 15시30분)와 확정치를 비교하면 외국인은 +2조7377억원에서 +2조8354억원으로(+977억원) 늘었고, 기관은 +6,157억원에서 +5,279억원으로(-878억원) 줄었으며, 개인은 -3조1782억원에서 -3조1911억원으로(-129억원) 더 팔린 것으로 정정됐다. 외국인은 장 마감 후 추가 매수가 확인된 반면 기관은 소폭 되돌림이 있었던 셈이라, 다음 거래일에는 이 정정 패턴이 반복되는지와 함께 기관의 연기금 라인이 순매수로 복귀하는지를 확인할 필요가 있다.</p>
 
     <h3>프로그램 매매</h3>
@@ -195,7 +240,8 @@ footer{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); fo
         </tbody>
       </table>
     </div>
-    <p style="margin-top:10px;">코스피 프로그램 매매는 비차익(방향성 바스켓) +4,039억원 순매수가 전체 순매수(+2,876억원)를 견인했고 차익(선물 연계) -1,163억원 순매도가 일부 상쇄했다. 비차익 순매수 방향은 외국인 현물 순매수(+2조8354억원, 당일 잠정) 방향과 정합적이라, 기관·외국인의 방향성 매수 의도가 프로그램에서도 함께 확인된다. 반면 코스닥은 비차익 -1,189억원, 차익 -14억원으로 전체 -1,203억원 순매도를 기록해 코스닥 기관 순매도(-1,459억원, 당일 잠정)와 방향이 일치한다 — 반도체 랠리 자금이 코스피에 쏠리고 코스닥 프로그램은 오히려 매도 우위였던 셈이다.</p>
+    <p style="margin-top:10px;">코스피 프로그램 매매는 비차익(방향성 바스켓) +4,039억원 순매수가 전체 순매수(+2,876억원)를 견인했고 차익(선물 연계) -1,163억원 순매도가 일부 상쇄했다. 비차익 순매수 방향은 외국인 현물 순매수(+2조8354억원, 당일 잠정) 방향과 정합적이라, 기관·외국인의 방향성 매수 의도가 프로그램에서도 함께 확인된다.</p>
+<p style="margin-top:10px;">반면 코스닥은 비차익 -1,189억원, 차익 -14억원으로 전체 -1,203억원 순매도를 기록해 코스닥 기관 순매도(-1,459억원, 당일 잠정)와 방향이 일치한다 — 반도체 랠리 자금이 코스피에 쏠리고 코스닥 프로그램은 오히려 매도 우위였던 셈이다.</p>
   </section>
 
   <section id="top-value">

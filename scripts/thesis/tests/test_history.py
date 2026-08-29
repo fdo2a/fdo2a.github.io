@@ -73,3 +73,43 @@ def test_has_depth_reports_whether_lookback_is_usable(tmp_path):
     rows = H.load(write(tmp_path))
     assert not H.has_depth(rows, minimum=20)
     assert H.has_depth(rows, minimum=3)
+
+
+# ── 어제 행 (교차 판정의 기준) ──
+
+ROWS = [
+    {'date': '2026-08-20', 'tickers': {'MU': {'price': 900.0, 'bear': 299}}},
+    {'date': '2026-08-24', 'tickers': {'MU': {'price': 310.0, 'bear': 299},
+                                       'X': {'price': 1.0}}},
+]
+
+
+def test_previous_row_is_the_nearest_earlier_observation():
+    from thesis.history import previous
+    assert previous(ROWS, '2026-08-25', 'MU') == {'price': 310.0, 'bear': 299}
+
+
+def test_previous_row_skips_a_gap_rather_than_inventing_one():
+    """수집이 빠진 날이 있어도 그 구간 이전의 마지막 관측과 비교한다 — 보간하지 않는다."""
+    from thesis.history import previous
+    assert previous(ROWS, '2026-08-24', 'MU') == {'price': 900.0, 'bear': 299}
+
+
+def test_todays_own_row_is_never_its_own_yesterday():
+    """수집기가 오늘 행을 이미 append한 뒤 루틴이 돈다. 그 행을 어제로 쓰면 모든 교차가
+    사라진다."""
+    from thesis.history import previous
+    assert previous(ROWS, '2026-08-24', 'X') is None
+
+
+def test_no_earlier_row_means_no_yesterday():
+    from thesis.history import previous
+    assert previous(ROWS, '2026-08-20', 'MU') is None
+    assert previous([], '2026-08-25', 'MU') is None
+
+
+def test_a_ticker_absent_from_the_last_row_falls_further_back():
+    from thesis.history import previous
+    rows = [{'date': '2026-08-20', 'tickers': {'MU': {'price': 900.0}}},
+            {'date': '2026-08-21', 'tickers': {'OTHER': {'price': 5.0}}}]
+    assert previous(rows, '2026-08-25', 'MU') == {'price': 900.0}

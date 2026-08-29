@@ -32,17 +32,32 @@ jobs:
       - name: Install dependencies
         run: pip install --quiet yfinance certifi pandas
 
+      # 손편집 탐지는 **수집 전**에만 가능하다. 커밋된 페이지는 커밋된 데이터로 렌더한
+      # 결과와 같아야 한다. 수집 후에 대조하면 그날의 정상적인 시세 변화까지 «다르다»로
+      # 나오고, 렌더를 먼저 돌리면 손편집을 잡는 게 아니라 덮어써 버린다.
+      - name: Check pages were not hand-edited
+        id: handedit
+        continue-on-error: true
+        run: python3 scripts/build_thesis_pages.py --data thesis/data --out thesis --check
+
       - name: Collect
         run: |
           python3 scripts/collect_thesis_data.py \
             ${{ inputs.force && '--force' || '' }} \
             --out thesis/data
 
+      # 페이지는 산문(content.py)과 오늘 수치(watch.json)로 결정론적으로 렌더된다.
+      # 여기서 매일 다시 만들지 않으면 페이지가 마지막 사건 때의 수치에 멈춘다 —
+      # 2026-08-25에 삼성 페이지가 사흘 낡은 281,500원·「관심선 위」를 띄우고 있었다.
+      # 판단은 들어가지 않는다. 등급·산문은 루틴만 바꾼다.
+      - name: Rebuild pages
+        run: python3 scripts/build_thesis_pages.py --data thesis/data --out thesis
+
       - name: Commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add thesis/data/
+          git add thesis/data/ thesis/*.html thesis/index.json
           if git diff --cached --quiet; then
             echo "변경 없음 — 커밋 건너뜀"
             exit 0
@@ -54,4 +69,12 @@ jobs:
             sleep 5
           done
           echo "push 실패" >&2
+          exit 1
+
+      # 데이터는 커밋해 두고, 손편집이 있었다는 사실은 빨간 실행으로 남긴다.
+      - name: Fail if pages had been hand-edited
+        if: steps.handedit.outcome == 'failure'
+        run: |
+          echo "커밋돼 있던 thesis 페이지가 렌더 결과와 달랐다 — 누군가 HTML을 직접 고쳤다." >&2
+          echo "이 실행이 덮어썼으므로 원본은 직전 커밋에 있다." >&2
           exit 1

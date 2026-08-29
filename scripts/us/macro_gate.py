@@ -93,7 +93,7 @@ INTERNAL_JARGON = ('signed-z', 'signed_z', 'z스코어', 'z-스코어', 'z-score
                    'headline_releases', 'new_releases', 'last_seen')
 
 # 2026-08-22 사용자 지시: 발행본에서 「buy-side」를 쓰지 않는다. 같은 자리를
-# 전략·리포트·시황 정리로 부른다 (§7 헤더는 「전략 코멘트」, 섹션 박스는 「전략 해석」).
+# 전략·리포트·시황 정리로 부른다 (§2 헤더는 「전략 코멘트」, 섹션 박스는 「전략 해석」).
 BANNED_LABELS = ('buy-side', 'buy side', 'buyside', '바이사이드')
 
 
@@ -205,16 +205,23 @@ def _check_transmission(section, macro_eval, v):
         if allowed and d not in allowed:
             v.append(f'§8 {key}: 방향 {d}는 허용 범위 {allowed} 밖이다')
 
-    _check_groups(section, v)
+    _check_groups(section, v, abbreviated=bool((macro_eval or {}).get('abbreviated')))
     return cells
 
 
-def _check_groups(section, v):
+def _check_groups(section, v, abbreviated=False):
     """Every channel gets a narrated block, and every block names a number.
 
     The strip alone would say what the macro likes without ever saying why, and a
     block with no figure in it is the 「추이 확인 필요」 non-answer wearing a heading.
+
+    On an abbreviated day (설계 5, 2026-08-30) the channels collapse to the direction
+    strip on purpose — yesterday's reading still stands, so restating it is the
+    duplication we set out to remove. Demanding the prose here would block
+    publication every quiet day, and most days are quiet.
     """
+    if abbreviated:
+        return
     blocks = parse_group_blocks(section)
     for key, label, _ in TRANSMISSION_GROUPS:
         text = blocks.get(key)
@@ -325,7 +332,7 @@ def _check_hygiene(html, v):
     for word in BANNED_LABELS:
         if word in low:
             v.append(f'발행본에 buy-side 표기("{word}")가 남았다 — '
-                     '전략·리포트·시황 정리로 부를 것 (§7 헤더는 「전략 코멘트」)')
+                     '전략·리포트·시황 정리로 부를 것 (§2 헤더는 「전략 코멘트」)')
             break
 
 
@@ -350,8 +357,15 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     if prob is None:
         v.append('macro_next.json policy_path에 prob_pct가 없다 — '
                  'FedWatch 수치 없이는 정책 경로를 검증할 수 없다')
+
     elif not _cited(text, prob):
         v.append(f'§8: 정책 경로 확률 {prob}%가 본문에 인용되지 않았다')
+
+    # 축약일 판정의 4축 조건은 전일 방향과 대조해야 산다. 이 필드가 없으면 조건이
+    # 조용히 통과로 굳어 겹치는 날에도 §9가 접히지 않는다(2026-08-30 codex 검토).
+    if not (next_macro or {}).get('axis_directions'):
+        v.append('macro_next.json에 axis_directions가 없다 — '
+                 '4축 방향을 승계하지 않으면 축약일 판정이 무력해진다')
 
     if not prev.get('timing') or nxt.get('timing') == prev.get('timing'):
         return

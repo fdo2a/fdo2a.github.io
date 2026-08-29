@@ -29,6 +29,28 @@ def load(path):
         return None
 
 
+def fresh_metrics(metrics_file, report_date):
+    """The metrics, but only if they can prove they describe today's session.
+
+    Metrics keyed to another session — or built from a price history that stopped
+    short of it — would silently judge today's triggers against stale prices. So
+    would metrics that cannot say when their history ended at all: a failed download
+    leaves `as_of` null, and treating unproven as fresh is how partial prices get to
+    move a grade. Everything doubtful is dropped, and every trigger then falls
+    through to UNKNOWN, which freezes the grade rather than inventing a move.
+    """
+    metrics = (metrics_file or {}).get('metrics') or {}
+    if not metrics:
+        return {}
+    for field in ('report_date', 'as_of'):
+        got = (metrics_file or {}).get(field)
+        if got != report_date:
+            print(f'WARN: stance_metrics.json {field}={got}, not {report_date} — ignoring',
+                  file=sys.stderr)
+            return {}
+    return metrics
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
@@ -42,16 +64,7 @@ def main():
 
     stance = load(os.path.join(args.datadir, 'stance.json'))
     metrics_file = load(os.path.join(args.datadir, 'stance_metrics.json')) or {}
-    metrics = metrics_file.get('metrics') or {}
-    # Metrics keyed to another session — or built from a price history that stopped
-    # short of it — would silently judge today's triggers against stale prices. Drop
-    # them and let every trigger fall through to UNKNOWN, which freezes the grade.
-    for field in ('report_date', 'as_of'):
-        got = metrics_file.get(field)
-        if metrics and got is not None and got != report_date:
-            print(f'WARN: stance_metrics.json {field}={got}, not {report_date} — ignoring',
-                  file=sys.stderr)
-            metrics = {}
+    metrics = fresh_metrics(metrics_file, report_date)
 
     try:
         ev = evaluate(stance, metrics, report_date)

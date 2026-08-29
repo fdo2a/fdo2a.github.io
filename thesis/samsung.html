@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://fdo2a.github.io/thesis/samsung.html">
 <meta property="og:locale" content="ko_KR">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "Article", "headline": "삼성전자 투자 thesis 감시 기준표", "url": "https://fdo2a.github.io/thesis/samsung.html", "dateModified": "2026-08-24", "inLanguage": "ko"}
+{"@context": "https://schema.org", "@type": "Article", "headline": "삼성전자 투자 thesis 감시 기준표", "url": "https://fdo2a.github.io/thesis/samsung.html", "dateModified": "2026-08-28", "inLanguage": "ko"}
 </script>
 <title>삼성전자 투자 thesis 감시 기준표 | 메모리 thesis</title>
 <style>
@@ -99,6 +99,60 @@
   ol.log .date { font-size: 11px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
   ol.log div[data-part] { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin-top: 3px; }
   ol.log cite { font-style: normal; color: var(--text-3); font-size: 11.5px; }
+  .story-link { display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px;
+                padding: 15px 16px; margin-top: 10px; color: var(--text); text-decoration: none; }
+  .story-link:hover { border-color: var(--toss-blue); }
+  .story-link b { font-size: 14px; }
+  .story-link span { font-size: 12px; color: var(--text-3); text-align: right; }
+  .timeline { position: relative; display: flex; flex-direction: column; gap: 10px; }
+  .phase { position: relative; background: #fff; border: 1px solid var(--border-subtle);
+           border-radius: 14px; padding: 17px 18px 18px 22px; overflow: hidden; }
+  .phase::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+                   width: 5px; background: var(--toss-blue); }
+  .phase .period { font-size: 10.5px; font-weight: 800; color: var(--toss-blue); }
+  .phase h3 { font-size: 15px; line-height: 1.45; margin: 5px 0 13px; }
+  .shift-grid { display: grid; grid-template-columns: 1fr 26px 1fr; gap: 8px; align-items: stretch; }
+  .shift-box { background: var(--bg); border-radius: 10px; padding: 11px 12px; }
+  .shift-box.now { background: var(--blue-bg); }
+  .shift-box b { display: block; font-size: 10.5px; color: var(--text-3); margin-bottom: 5px; }
+  .shift-box.now b { color: var(--blue-deep); }
+  .shift-box p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .shift-arrow { display: flex; align-items: center; justify-content: center; color: var(--toss-blue);
+                 font-weight: 900; }
+  .phase-sources { margin-top: 10px; font-size: 10.5px; line-height: 1.55; color: var(--text-3); }
+  .phase-sources a, .sources a { color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; }
+  .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .company { background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px; padding: 15px; }
+  .company h3 { font-size: 14px; margin: 0 0 11px; }
+  .company dl { margin: 0; }
+  .company dt { font-size: 10.5px; font-weight: 800; color: var(--text-3); margin-top: 10px; }
+  .company dt:first-child { margin-top: 0; }
+  .company dd { font-size: 12px; line-height: 1.58; color: var(--text-2); margin: 3px 0 0; }
+  .corrections { counter-reset: correction; display: flex; flex-direction: column; gap: 8px; }
+  .correction { counter-increment: correction; background: #fff; border: 1px solid var(--border-subtle);
+                border-radius: 14px; padding: 15px 16px; }
+  .correction b { display: block; font-size: 13.5px; margin-bottom: 6px; }
+  .correction b::before { content: counter(correction) '. '; color: var(--toss-blue); }
+  .correction p { font-size: 12.5px; line-height: 1.65; color: var(--text-2); margin: 0; }
+  .frame-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .frame-grid .panel { margin-bottom: 0; }
+  .sources { font-size: 11px; line-height: 1.7; color: var(--text-3); }
+  @media (max-width: 620px) {
+    .shift-grid { grid-template-columns: 1fr; }
+    .shift-arrow { transform: rotate(90deg); min-height: 18px; }
+    .company-grid, .frame-grid { grid-template-columns: 1fr; }
+    .story-link { align-items: flex-start; }
+  }
+  /* readability-v2 */
+  .card p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+  .card p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+  h2 { line-height: 1.45; margin-bottom: 14px; }
+  h3, h4 { line-height: 1.45; }
+  .note, .lead, li { max-width: 42em; }
+  @media (max-width: 560px) {
+    .card p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border);
            font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
   footer a { color: #8B95A1; }
@@ -121,6 +175,7 @@
     <span class="badge g-hold">홀딩 강화</span> &nbsp;005930 · KOSPI · 등급 유지 2026-08-24부터
     <span class="small">D램·NAND 메모리, 파운드리, 시스템LSI, 스마트폰(MX), 디스플레이(SDC), 전장(하만)을 모두 가진 종합 전자회사. <b>다만 지금 손익 구조는 사실상 메모리 단일 회사다</b> — 2026년 2분기 전사 영업이익의 대부분이 DS부문에서 나왔고 세트(DX)부문은 적자였다. 즉 지금 주가에 붙는 이익은 전부 메모리이고, 파운드리·세트·디스플레이는 밸류에이션에 거의 0으로 잡혀 있다.</span>
   </div>
+  <a class="story-link" href="narrative.html"><b>메모리 thesis는 어떻게 바뀌었나</b><span>핵심 전환점만 읽기 ›</span></a>
   <div class="panel">
     <h3>변경 이력</h3>
     <ol class="log" data-block="changelog">
@@ -217,22 +272,22 @@
   </div>
   </section>
   <h2 class="list-title">수치와 밸류에이션</h2>
-  <div class="panel"><section data-block="snapshot" data-as-of="2026-08-24">
+  <div class="panel"><section data-block="snapshot" data-as-of="2026-08-28">
   <h3>오늘의 수치</h3>
   <div class="kv">
-    <div><span>주가 (2026-08-21)</span><b>281,500원</b></div>
-    <div><span>52주 고점 대비</span><b>-22.3%</b></div>
-    <div><span>FY1 컨센 EPS</span><b>67,313</b></div>
-    <div><span>FY1 P/E</span><b>4.18배</b></div>
-    <div><span>P/B (2026-03-31 재무제표 기준)</span><b>3.44배</b></div>
-    <div><span>추정치 분산 (최고/최저)</span><b>3.8배</b></div>
+    <div><span>주가 (2026-08-26)</span><b>261,500원</b></div>
+    <div><span>52주 고점 대비</span><b>-27.8%</b></div>
+    <div><span>FY1 컨센 EPS</span><b>68,482</b></div>
+    <div><span>FY1 P/E</span><b>3.82배</b></div>
+    <div><span>P/B (2026-03-31 재무제표 기준)</span><b>3.2배</b></div>
+    <div><span>추정치 분산 (최고/최저)</span><b>3.6배</b></div>
     <div><span>다음 실적</span><b>2026-10-28</b></div>
   </div>
   <p class="caveat">P/B의 분모는 <b>마지막으로 <em>보고된</em> 재무제표</b>(2026-03-31)다.
   최근 분기 실적이 발표됐어도 데이터 소스에 반영되기 전이면 자본 증가가 아직 안 잡혀 P/B가 실제보다
   높게 보인다. 손으로 보정하지 않는다 — 창작한 숫자보다 기준일이 명시된 낡은 숫자가 낫다.</p>
 </section></div>
-  <div class="panel"><section data-block="valuation" data-computed="2026-08-24">
+  <div class="panel"><section data-block="valuation" data-computed="2026-08-28">
   <h3>밸류에이션</h3>
   <p class="lead">정규화이익법(FY1 컨센 EPS × 정규화율 × 정규화 P/E)과 자산법(2년 뒤 예상 BPS ×
   시나리오 P/B)을 각각 계산해 평균했다. 두 방법이 비슷한 값에 닿는지가 신뢰도의 척도다.</p>
@@ -240,19 +295,19 @@
     <table>
       <thead><tr><th>시나리오</th><th>적정가치 (원)</th><th>확률</th><th>현재가 대비</th></tr></thead>
       <tbody>
-      <tr><td>Bear 사이클 회귀</td><td class="n">128,203</td><td class="n">25%</td><td class="n">-54.5%</td></tr>
-      <tr><td>Base 연착륙</td><td class="n">299,563</td><td class="n">45%</td><td class="n">+6.4%</td></tr>
-      <tr><td>Bull 구조적 재평가</td><td class="n">597,233</td><td class="n">30%</td><td class="n">+112.2%</td></tr>
-        <tr class="hi"><td>확률가중</td><td class="n">346,024</td>
-          <td class="n">—</td><td class="n">+18.6%</td></tr>
+      <tr><td>Bear 사이클 회귀</td><td class="n">129,225</td><td class="n">25%</td><td class="n">-50.6%</td></tr>
+      <tr><td>Base 연착륙</td><td class="n">302,088</td><td class="n">45%</td><td class="n">+15.5%</td></tr>
+      <tr><td>Bull 구조적 재평가</td><td class="n">602,377</td><td class="n">30%</td><td class="n">+130.4%</td></tr>
+        <tr class="hi"><td>확률가중</td><td class="n">348,959</td>
+          <td class="n">—</td><td class="n">+25.1%</td></tr>
       </tbody>
     </table>
   </div>
   <div class="kv">
-    <div><span>현재가</span><b>281,500원</b></div>
-    <div><span>1차 관심선 (가중 −20%)</span><b>276,819</b></div>
-    <div><span>2차 관심선 (−32%)</span><b>235,296</b></div>
-    <div><span>현재 위치</span><b>관심선 위</b></div>
+    <div><span>현재가</span><b>261,500원</b></div>
+    <div><span>1차 관심선 (가중 −20%)</span><b>279,167</b></div>
+    <div><span>2차 관심선 (−32%)</span><b>237,292</b></div>
+    <div><span>현재 위치</span><b>1차 관심선 아래</b></div>
   </div>
   <p class="caveat"><b>가정이 결과를 지배한다.</b> 정규화율(80/48/25%)·배수·확률(30/45/25)은
   측정이 아니라 판단이다. Bull 확률을 50%로 올리면 현재가가 저평가로 바뀐다. 이건 모델의 결함이

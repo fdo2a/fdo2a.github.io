@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-21 21:46 UTC",
+  "generated": "2026-08-28 23:07 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -19,9 +19,9 @@
       "fred_id": "ICSA",
       "transform": "level",
       "units": "",
-      "actual": 206000.0,
-      "previous": 212000.0,
-      "ref_period": "2026-08-15"
+      "actual": 203000.0,
+      "previous": 207000.0,
+      "ref_period": "2026-08-22"
     },
     {
       "axis": "Labor",
@@ -29,9 +29,9 @@
       "fred_id": "IC4WSA",
       "transform": "level",
       "units": "",
-      "actual": 204000.0,
-      "previous": 199750.0,
-      "ref_period": "2026-08-15"
+      "actual": 205500.0,
+      "previous": 204250.0,
+      "ref_period": "2026-08-22"
     },
     {
       "axis": "Labor",
@@ -39,9 +39,9 @@
       "fred_id": "CCSA",
       "transform": "level",
       "units": "",
-      "actual": 1799000.0,
-      "previous": 1781000.0,
-      "ref_period": "2026-08-08"
+      "actual": 1778000.0,
+      "previous": 1796000.0,
+      "ref_period": "2026-08-15"
     },
     {
       "axis": "Labor",
@@ -89,9 +89,9 @@
       "fred_id": "DGORDER",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.47,
-      "previous": -4.0,
-      "ref_period": "2026-06-01"
+      "actual": 1.07,
+      "previous": 0.54,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Activity",
@@ -99,9 +99,9 @@
       "fred_id": "HSN1F",
       "transform": "level",
       "units": "K",
-      "actual": 628.0,
-      "previous": 618.0,
-      "ref_period": "2026-06-01"
+      "actual": 607.0,
+      "previous": 678.0,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Activity",
@@ -139,9 +139,9 @@
       "fred_id": "UMCSENT",
       "transform": "level",
       "units": "",
-      "actual": 49.5,
-      "previous": 44.8,
-      "ref_period": "2026-06-01"
+      "actual": 55.2,
+      "previous": 49.5,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -199,9 +199,9 @@
       "fred_id": "PCEPI",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.67,
-      "previous": 4.08,
-      "ref_period": "2026-06-01"
+      "actual": 3.7,
+      "previous": 3.72,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -209,9 +209,9 @@
       "fred_id": "PCEPILFE",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.29,
-      "previous": 3.42,
-      "ref_period": "2026-06-01"
+      "actual": 3.34,
+      "previous": 3.34,
+      "ref_period": "2026-07-01"
     },
     {
       "axis": "Inflation",
@@ -219,9 +219,9 @@
       "fred_id": "MICH",
       "transform": "level",
       "units": "%",
-      "actual": 4.6,
-      "previous": 4.8,
-      "ref_period": "2026-06-01"
+      "actual": 4.2,
+      "previous": 4.6,
+      "ref_period": "2026-07-01"
     }
   ]
 }
