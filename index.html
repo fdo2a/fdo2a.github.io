@@ -47,6 +47,14 @@
   .menubar a:hover { color: var(--text-2); }
   .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
   @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
+  /* 일간·주간·월간 — 메뉴바와 위계가 다르므로 별도 클래스 (2026-08-30) */
+  .subnav { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 0 14px; }
+  .subnav button { font-size: 13px; font-weight: 600; color: var(--text-3);
+    background: none; border: 0; border-bottom: 2px solid transparent;
+    padding: 8px 10px; cursor: pointer; font-family: inherit; }
+  .subnav button:hover { color: var(--text-2); }
+  .subnav button[aria-current="true"] { color: var(--toss-blue);
+    border-bottom-color: var(--toss-blue); }
   .intro {
     background: var(--blue-bg);
     border-radius: 14px;
@@ -107,6 +115,11 @@
     미국 증시가 열린 다음 날 아침(화–토 09:00 KST), 전 거래일의 시장을 정리한 모닝브리프가 자동으로 올라옵니다.
     <span class="small">지수·섹터 · 채권 · FX · 원자재 · 메모리/DRAM · AI 인프라 · 경제지표 vs 컨센서스</span>
   </div>
+  <nav class="subnav" aria-label="발행 주기">
+    <button type="button" data-span="daily" aria-current="true">일간</button>
+    <button type="button" data-span="weekly">주간</button>
+    <button type="button" data-span="monthly">월간</button>
+  </nav>
   <h2 class="list-title">전체 보고서</h2>
   <div class="post-list" id="list">
     <div class="empty">불러오는 중…</div>
@@ -120,30 +133,59 @@
 <script>
 (async () => {
   const list = document.getElementById('list');
-  try {
-    const res = await fetch('posts.json', { cache: 'no-store' });
-    const posts = await res.json();
-    posts.sort((a, b) => b.date.localeCompare(a.date));
-    if (!posts.length) {
-      list.innerHTML = '<div class="empty">아직 올라온 보고서가 없습니다.</div>';
-      return;
+  const days = ['일','월','화','수','목','금','토'];
+  const SOURCES = {
+    daily:   { file: 'posts.json',   dir: 'posts/',   empty: '아직 올라온 보고서가 없습니다.' },
+    weekly:  { file: 'weekly.json',  dir: 'weekly/',  empty: '아직 발행된 주간 정리가 없습니다.' },
+    monthly: { file: 'monthly.json', dir: 'monthly/', empty: '아직 발행된 월간 정리가 없습니다.' }
+  };
+  const cache = {};
+
+  function label(span, item) {
+    if (span === 'daily') {
+      const d = new Date(item.date + 'T00:00:00');
+      return `${item.date} (${days[d.getDay()]})`;
     }
-    const days = ['일','월','화','수','목','금','토'];
-    list.innerHTML = posts.map(p => {
-      const d = new Date(p.date + 'T00:00:00');
-      const label = `${p.date} (${days[d.getDay()]})`;
-      return `<a class="post" href="posts/${p.date}.html">
-        <span class="date">${label}</span>
+    return item.label || item.key || item.date || '';
+  }
+
+  async function load(span) {
+    if (cache[span]) return cache[span];
+    const src = SOURCES[span];
+    // 목록 파일이 아직 없는 것은 오류가 아니다 — 콘솔에 흔적을 남기지 않는다.
+    const res = await fetch(src.file, { cache: 'no-store' }).catch(() => null);
+    if (!res || !res.ok) { cache[span] = []; return cache[span]; }
+    const rows = await res.json().catch(() => []);
+    cache[span] = Array.isArray(rows) ? rows : [];
+    return cache[span];
+  }
+
+  async function render(span) {
+    const src = SOURCES[span];
+    list.innerHTML = '<div class="empty">불러오는 중…</div>';
+    const rows = (await load(span)).slice();
+    rows.sort((a, b) => String(b.date || b.key || '').localeCompare(String(a.date || a.key || '')));
+    if (!rows.length) { list.innerHTML = `<div class="empty">${src.empty}</div>`; return; }
+    list.innerHTML = rows.map(p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
+        <span class="date">${label(span, p)}</span>
         <span class="body">
-          <div class="title">${p.title}</div>
-          <div class="headline">${p.headline}</div>
+          <div class="title">${p.title || ''}</div>
+          <div class="headline">${p.headline || ''}</div>
         </span>
         <span class="arrow">›</span>
-      </a>`;
-    }).join('');
-  } catch (e) {
-    list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>';
+      </a>`).join('');
   }
+
+  document.querySelectorAll('.subnav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.subnav button')
+        .forEach(b => b.setAttribute('aria-current', String(b === btn)));
+      render(btn.dataset.span);
+    });
+  });
+
+  try { await render('daily'); }
+  catch (e) { list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>'; }
 })();
 </script>
 </body>
