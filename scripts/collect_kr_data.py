@@ -7,6 +7,7 @@ kr/data/*에 기록. 완성도·수급 신선도 게이트 포함. Do NOT use py
 import argparse
 import json
 import os
+import sys
 from datetime import datetime, timezone, timedelta
 
 import yfinance as yf
@@ -197,6 +198,55 @@ def main(outdir: str):
     _write(outdir, "kr_theme.json", theme_rows)
     _write(outdir, "kr_intraday.json", intraday)
     _write(outdir, "kr_econ.json", econ)
+
+    # 기간 집계 — 세션 upsert. 과거 확정 수급 행도 함께 메워 월간이 자가치유된다.
+    # US(collect_market_data.py)는 원천 계열을 매번 다시 받아 통째로 다시 계산하지만
+    # KR은 업종·거래대금에 과거 계열이 없어 그날 스냅샷을 날짜 키로 쌓는다.
+    try:
+        import yfinance as _yf
+        from kr.period import finalize, session_from, upsert_session
+        from us.period import month_key, week_key
+
+        sess = session_from(market, flows_out, industry, top_value)
+
+        closes = {}
+        for _name, _tk in (("KOSPI", "^KS11"), ("KOSDAQ", "^KQ11")):
+            try:
+                _df = _yf.download(_tk, period="3mo", progress=False, auto_adjust=True)
+                if hasattr(_df.columns, "nlevels") and _df.columns.nlevels > 1:
+                    _df.columns = _df.columns.get_level_values(0)
+                closes[_name] = [(str(i.date()), float(v))
+                                 for i, v in _df["Close"].dropna().items()]
+            except Exception as e:
+                print(f"kr index history {_name} failed: {e}", file=sys.stderr)
+                closes[_name] = []
+
+        for span, keyer, sub in (("weekly", week_key, "weekly"),
+                                 ("monthly", month_key, "monthly")):
+            k = keyer(report_date)
+            d = os.path.join(outdir, sub)
+            os.makedirs(d, exist_ok=True)
+            path = os.path.join(d, f"{k}.json")
+            agg = {"span": span, "key": k, "sessions": {}}
+            if os.path.exists(path):
+                with open(path, encoding="utf-8") as fh:
+                    agg["sessions"] = (json.load(fh).get("_sessions") or {})
+            agg = upsert_session(agg, sess)
+            # 과거 확정 수급 행 — 같은 기간에 속하는 것만 메운다
+            for ed, mkts in (sess.get("extra_flows") or {}).items():
+                if keyer(ed) == k:
+                    prior = dict(agg["sessions"].get(ed) or {})
+                    prior_flows = dict(prior.get("flows") or {})
+                    prior_flows.update(mkts)
+                    prior.pop("flows", None)
+                    agg = upsert_session(agg, {"date": ed, **prior, "flows": prior_flows})
+            final = finalize(agg, closes)
+            final["_sessions"] = agg["sessions"]     # 다음 실행이 이어 쓸 원장
+            _write(d, f"{k}.json", final)
+            print(f"kr {span} {k}: {final['sessions']} sessions, "
+                  f"flows {final['flows_sessions']}일")
+    except Exception as e:
+        print(f"kr period aggregation failed: {e}", file=sys.stderr)
     with open(os.path.join(outdir, "kr_sector.html"), "w", encoding="utf-8") as f:
         f.write(sector_html)
 
