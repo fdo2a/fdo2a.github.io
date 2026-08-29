@@ -76,22 +76,35 @@ def finalize(agg, index_closes):
            'end_date': dates[-1] if dates else None,
            'sessions': len(dates), 'complete': bool(dates), 'missing': []}
 
-    flows, n_flow = {}, 0
+    # 시장별로 따로 센다. 「어느 한쪽이라도 있으면 확정 하루」로 세면 코스피만 확정된
+    # 날이 「N일 확정치」에 들어가 양쪽 합계가 서로 다른 일수 위에 얹힌다
+    # (2026-08-30 codex 검토).
+    flows, per_market = {}, dict.fromkeys(MARKETS, 0)
     for d in dates:
         f = (sess[d].get('flows') or {})
         if not f:
             continue
-        n_flow += 1
+        for mkt in f:
+            if mkt in per_market:
+                per_market[mkt] += 1
         for mkt, vals in f.items():
             tgt = flows.setdefault(mkt, dict.fromkeys(SIDES, 0))
             for s in SIDES:
                 if vals.get(s) is not None:
                     tgt[s] += vals[s]
     out['flows'] = flows
+    out['flows_sessions_by_market'] = per_market
+    # 대표값은 «관측된 시장 모두가 확정된 날»이다 — 적게 잡는 쪽이 안전하다.
+    # 그 기간에 아예 나타나지 않은 시장은 대표값을 0으로 끌어내리지 않되 missing 에 남는다.
+    seen = [n for n in per_market.values() if n]
+    n_flow = min(seen) if seen else 0
     out['flows_sessions'] = n_flow
     out['flows_note'] = '확정치만 합산'
-    if n_flow < len(dates):
-        out['missing'].append(f'flows: {len(dates) - n_flow}일 잠정/결측')
+    for mkt, n in per_market.items():
+        if n < len(dates):
+            out['missing'].append(f'flows.{mkt}: {len(dates) - n}일 잠정/결측')
+    if any(n != n_flow for n in per_market.values()):
+        out['missing'].append('flows: 시장별 확정 일수가 다르다 — 합계를 나란히 읽지 말 것')
 
     ind = {}
     for d in dates:

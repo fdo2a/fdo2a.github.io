@@ -22,7 +22,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 |---|---|
 | `recap_source.json` | **주 소스.** 그 기간 발행본의 날짜·헤드라인·섹션 요약·수치 |
 | `data/weekly/<key>.json` 또는 `data/monthly/<key>.json` (KR은 `kr/data/…`) | **성과표 전용.** 기간 수익률·섹터 순위·금리 변화 |
-| `data/scorecard.json` | 복기 — 자산군별 판정, 가중 점수, 롤업, 레짐 점검, 트리거 위생 |
+| `data/period_scorecard.json` | 복기 — 자산군별 판정, 가중 점수, 롤업, 레짐 점검, 트리거 위생 |
 | `data/history/stance.jsonl` · `macro.jsonl` | 그 기간 등급·레짐 이동 이력 |
 
 **본문 서술은 발행본, 성과표는 집계 파일.** 두 소스가 하는 일이 갈린다. 집계 파일의 값을 산문에서 다시 계산하지 않는다.

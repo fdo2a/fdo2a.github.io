@@ -119,3 +119,16 @@ def test_leading_industries_are_capped_and_ranked():
     s = session_from(MARKET, FLOWS, rows, TOPVAL)
     assert s["leading_industries"] == ["업종9", "업종8", "업종7", "업종6", "업종5"]
     assert "안주도" not in s["leading_industries"]
+
+
+def test_partial_market_day_is_not_counted_as_fully_confirmed():
+    """코스피만 확정된 날을 「확정 하루」로 세면 두 합계가 다른 일수 위에 얹힌다."""
+    a = _agg()
+    a = upsert_session(a, {"date": "2026-08-20",
+                           "flows": {"KOSPI": {"foreign": 10},
+                                     "KOSDAQ": {"foreign": 5}}})
+    a = upsert_session(a, {"date": "2026-08-21", "flows": {"KOSPI": {"foreign": 3}}})
+    r = finalize(a, {})
+    assert r["flows_sessions"] == 1                       # 둘 다 확정된 날만
+    assert r["flows_sessions_by_market"] == {"KOSPI": 2, "KOSDAQ": 1}
+    assert any("시장별 확정 일수가 다르다" in m for m in r["missing"])

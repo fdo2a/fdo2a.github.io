@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""기간 복기 스코어카드 -> scorecard.json.
+"""기간 복기 스코어카드 -> period_scorecard.json.
+
+**data/scorecard.json 을 쓰지 않는다** — 그 이름은 일간 수집기가 20세션 스키마로
+매일 덮어쓰는 파일이다. 같은 경로에 다른 스키마를 쓰면 일간 게이트가 순서에 따라
+깨진다(2026-08-30 codex 검토).
 
 그 기간 내내 들고 있던 포지션을 기간 실현치로 채점한다. 등급 변경 하나하나를 이후
 20영업일로 채점하는 일간 성적표(us/scorecard.py)와는 재는 것이 다르다.
@@ -35,7 +39,7 @@ def main():
     ap.add_argument('--agg', required=True)
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--spans', default='4,12')
-    ap.add_argument('--out', default='data/scorecard.json')
+    ap.add_argument('--out', default='data/period_scorecard.json')
     ap.add_argument('--history', default=None,
                     help='기본 <datadir>/history/period_scorecard.jsonl')
     ap.add_argument('--no-append', action='store_true',

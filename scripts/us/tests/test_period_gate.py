@@ -100,3 +100,15 @@ def test_dates_are_not_read_as_negative_numbers():
     html = _html("<p>2026-08-17에 시작해 2026-08-21에 끝난 주간이다. "
                  "2026년 8월 20일과 8/21도 같은 주다.</p>")
     assert not [x for x in check(html, AGG, SC, RECAP, "weekly") if '없는 수치' in x]
+
+
+def test_small_integer_with_a_unit_is_still_checked():
+    """「7% 올랐다」가 작은 정수라는 이유로 통과하던 구멍 — codex 검토 2026-08-30."""
+    html = _html(f"{ALL_DAYS}주간으로 S&amp;P 500은 7% 올랐다.")
+    assert any('7' in x and '없는 수치' in x for x in check(html, AGG, SC, RECAP, "weekly"))
+
+
+def test_ratio_is_not_mistaken_for_a_date():
+    """「적중은 3/4」를 날짜로 가리면 창작이 그대로 통과한다."""
+    html = _html(f"{ALL_DAYS}주간으로 S&amp;P 500은 2.0%. 적중은 3/47이었다.")
+    assert any('47' in x for x in check(html, AGG, SC, RECAP, "weekly"))

@@ -41,20 +41,20 @@ python3 scripts/build_recap_source.py --posts-dir kr/posts --listing kr/posts.js
 
 ```bash
 python3 scripts/build_scorecard.py --agg data/monthly/<KEY>.json --datadir data \
-  --spans 3,12 --no-append --out data/scorecard.json
+  --spans 3,12 --no-append --out data/period_scorecard.json
 ```
 
 **`--no-append`가 붙는 이유**: 월간은 주간 행을 롤업하므로 같은 기간을 이력에 두 번 세면 안 된다. 첫 몇 회차는 `rollup`이 `insufficient: true`로 나오는 것이 정상이다.
 
 ## STEP 4 — US 주간 정리
 
-`period-report-writer` 서브에이전트를 `market=us, span=monthly`로 부른다. 입력은 `recap_us.json`·`data/monthly/<KEY>.json`·`data/scorecard.json`·`data/history/*.jsonl`. 산출은 `monthly_<KEY>.html`.
+`period-report-writer` 서브에이전트를 `market=us, span=monthly`로 부른다. 입력은 `recap_us.json`·`data/monthly/<KEY>.json`·`data/period_scorecard.json`·`data/history/*.jsonl`. 산출은 `monthly_<KEY>.html`.
 
 **발행 게이트:**
 
 ```bash
 python3 scripts/check_period.py --html monthly_<KEY>.html --agg data/monthly/<KEY>.json \
-  --recap recap_us.json --scorecard data/scorecard.json --span monthly
+  --recap recap_us.json --scorecard data/period_scorecard.json --span monthly
 ```
 
 위반이 나오면 **목록을 그대로 writer에게 돌려주고 다시 돌린다.** 게이트를 우회하지 않는다.
@@ -76,8 +76,8 @@ STEP 4와 같되 `market=kr`, 입력 `recap_kr.json`·`kr/data/monthly/<KEY>.jso
 ## STEP 6 — 목록·sitemap·커밋
 
 ```bash
-python3 scripts/update_archives.py --span monthly --key <KEY> --market us
-python3 scripts/update_archives.py --span monthly --key <KEY> --market kr
+python3 scripts/update_archives.py --kind monthly --key <KEY> --title "<제목>" --headline "<헤드라인>"
+python3 scripts/update_archives.py --kind kr-monthly --key <KEY> --title "<제목>" --headline "<헤드라인>"
 ```
 
 `git add` → commit → push. push가 403이면 Claude GitHub App이 **Installed** 상태인지 확인한다(Authorized만으로는 안 된다).
