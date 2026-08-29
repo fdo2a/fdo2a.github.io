@@ -8,6 +8,8 @@ US 와 달리 업종·거래대금은 그날 스냅샷만 있고 과거 계열�
 (2026-08-05 실측: 장중 +15,116 vs 확정 +14,464).
 """
 
+LEADING_CAP = 5
+
 MARKETS = ('KOSPI', 'KOSDAQ')
 SIDES = ('foreign', 'institution', 'individual')
 
@@ -37,7 +39,11 @@ def session_from(kr_market, kr_flows, kr_industry, kr_top_value):
     for row in (kr_industry or []):
         if row.get('name') is not None:
             out['industry'][row['name']] = row.get('change_pct')
-    out['leading_industries'] = [r['name'] for r in (kr_industry or []) if r.get('leading')]
+    # leading 은 그날 절반가량(60행 중 30행)에 붙는 폭넓은-상승 플래그다. 하루 30개를
+    # 그대로 담으면 주간 5일치가 150개가 되어 서술 재료가 못 된다 — 등락률 상위만 남긴다.
+    lead = [r for r in (kr_industry or []) if r.get('leading') and r.get('name')]
+    lead.sort(key=lambda r: -(r.get('change_pct') or 0))
+    out['leading_industries'] = [r['name'] for r in lead[:LEADING_CAP]]
 
     for row in (kr_top_value or []):
         if row.get('label') is not None:

@@ -109,3 +109,13 @@ def test_finalize_sets_boundaries_from_session_dates():
     r = finalize(a, {})
     assert r["start_date"] == "2026-08-17"
     assert r["end_date"] == "2026-08-21"
+
+
+def test_leading_industries_are_capped_and_ranked():
+    """leading 은 그날 절반에 붙는 플래그라 상위만 남긴다 — 실측 60행 중 30행이 true."""
+    rows = [{"name": f"업종{i}", "change_pct": float(i), "leading": True}
+            for i in range(10)]
+    rows += [{"name": "안주도", "change_pct": 99.0, "leading": False}]
+    s = session_from(MARKET, FLOWS, rows, TOPVAL)
+    assert s["leading_industries"] == ["업종9", "업종8", "업종7", "업종6", "업종5"]
+    assert "안주도" not in s["leading_industries"]
