@@ -32,6 +32,8 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import m
 
 없거나 `complete: false`면 **PushNotification으로 알리고 중단한다.** 완성본만 발행한다 — 반쪽 집계로 낸 총정리는 다음 달에 정정할 방법이 없다.
 
+이 집계는 시세를 다시 받지 않는다. 일별 스냅샷 원장(`data/history/market.jsonl`·`kr/data/history/kr_market.jsonl`)을 굴린 것이라 **끝값이 그 기간 마지막 발행본의 종가와 같아야 한다.** 다르면 원장이 어긋난 것이니 발행하지 말고 알린다 — 2026-08-30에 시세를 다시 받던 집계가 10년물·금·원달러를 발행본과 다르게 실어 주간본을 회수했다.
+
 ## STEP 2 — 발행본 회수
 
 ```bash
