@@ -203,3 +203,20 @@ def test_c_a_number_torn_out_of_a_date_is_not_a_quotable_figure():
     from us.recap_source import post_figures
     figs = post_figures('<html><body><p>2026-08-17 발행본이다.</p></body></html>')
     assert '-17' not in figs, figs
+
+
+def test_dates_inside_value_lists_do_not_leak_as_numbers():
+    """series 는 [날짜, 수치] 리스트라 필드명 제외가 듣지 않는다 — 「2026-08-21」에서
+    -21 이 새면 「-21%」 창작이 통과한다(2026-08-30 첫 발행에서 발견)."""
+    from us.period_gate import _numbers
+    n = _numbers({'series': {'fx': [['2026-08-21', 98.8], ['2026-08-24', 99.1]]}})
+    assert '-21' not in n and '-24' not in n
+    assert '98.8' in n
+
+
+def test_sign_flipped_figure_is_caught():
+    """「-21%」가 21 로 읽히면 부호를 뒤집은 창작이 통과한다 — 2026-08-30 첫 발행에서 발견."""
+    agg = dict(AGG, indices={"S&P 500": {"pct": 21.0}})
+    html = _html(f"{ALL_DAYS}5거래일을 정리했다. 포트폴리오는 -21%였다. "
+                 "가중 점수 0.33, 무포지션 비율 0.4.")
+    assert any('-21' in x and '없는 수치' in x for x in check(html, agg, SC, RECAP, "weekly"))
