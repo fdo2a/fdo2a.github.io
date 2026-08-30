@@ -568,6 +568,26 @@ def completeness(data, intraday):
     return missing
 
 
+def _seed_today(dated, data, report_date):
+    """이력에 오늘 세션이 없으면 방금 받은 종가로 채운다.
+
+    이력과 스냅샷은 같은 야후에서 오지만 반영 시점이 다르다. 둘이 어긋난 채 기간 집계를
+    돌리면 그 주의 마지막 거래일이 조용히 사라지고, 「빠졌다」고 알려 주지도 않는다
+    (2026-08-30 실측: report_date는 2026-08-28인데 ^GSPC 일별은 08-27에서 끊겼다).
+    """
+    for group in ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra'):
+        rows = (data or {}).get(group) or {}
+        series_group = dated.setdefault(group, {})
+        for name, row in rows.items():
+            last = (row or {}).get('last')
+            if last is None:
+                continue
+            series = series_group.setdefault(name, [])
+            if series and series[-1][0] >= report_date:
+                continue
+            series.append((report_date, float(last)))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--outdir', default='data')
@@ -853,6 +873,7 @@ def main():
         from us.period import build as period_build, month_key, week_key
         dated = collect_dated_closes()
         yh = yield_histories()
+        _seed_today(dated, data, report_date)
         # posts.json 은 레포 루트에 있다 — outdir 는 'data' 하위 상대/절대/중첩 어느 값도
         # 될 수 있으므로 outdir 기준 역산 대신 이 스크립트 파일 위치(scripts/ 의 부모)로
         # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.

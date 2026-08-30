@@ -142,3 +142,9 @@ def test_span_mismatch_is_refused():
 def test_session_count_must_appear():
     html = GOOD.replace("5거래일을 정리했다. ", "")
     assert any('거래일 수' in x for x in check(html, AGG, SC, RECAP, "weekly"))
+
+
+def test_aggregate_that_ends_before_the_last_post_is_refused():
+    """야후 일별이 하루 늦으면 집계가 금요일을 빠뜨린 채 complete=true 로 나온다."""
+    agg = dict(AGG, end_date="2026-08-20")
+    assert any('통째로 빠진다' in x for x in check(GOOD, agg, SC, RECAP, "weekly"))
