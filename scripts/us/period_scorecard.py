@@ -71,6 +71,28 @@ def _threshold(key):
     return BP_THRESHOLD if key == 'bonds' else PCT_THRESHOLD
 
 
+def _segment_realized(agg, key, frm, to):
+    """등급이 유지된 구간의 실현치. (값, 구간정확여부). 계열이 없으면 (None, False)."""
+    series = ((agg or {}).get('series') or {}).get(key)
+    if not series or len(series) < 2:
+        return None, False
+    pts = [(d, v) for d, v in series]
+    at_or_before = [v for d, v in pts if d <= frm]
+    inside = [v for d, v in pts if frm < d <= to]
+    if not at_or_before or not inside:
+        return None, False
+    a, b = at_or_before[-1], inside[-1]
+    if key == 'bonds':
+        # 금리는 레벨이다. 「롱 듀레이션(+) = 금리 하락 베팅」이므로 부호를 뒤집는다.
+        return -((b - a) * 100), True
+    if key in ('memory', 'ai_infra'):
+        # 이미 초과수익(%p) 누적 계열이라 차분이 곧 구간 초과수익이다.
+        return b - a, True
+    if not a:
+        return None, False
+    return (b / a - 1) * 100, True
+
+
 def score(stance_rows, agg):
     real = realized(agg)
     segs = segments(stance_rows, agg.get('start_date'), agg.get('end_date'))
@@ -88,12 +110,21 @@ def score(stance_rows, agg):
             gr = s['grade']
             if gr == 0:
                 continue
-            if r is None or abs(r) < _threshold(key):
-                units.append({'grade': gr, 'verdict': '무판정', 'weight': 0.0})
+            # 구간별 실현치. 계열이 있으면 그 구간만 재고, 없으면 기간 전체로 물러난다.
+            # 물러난 경우에는 표식을 남긴다 — 등급이 중간에 뒤집힌 주에 두 판단이 다
+            # 맞았어도 상쇄돼 0으로 나오던 자리다(2026-08-30 codex 검토).
+            sr, exact = _segment_realized(agg, key, s['from'], s['to'])
+            if sr is None:
+                sr, exact = r, False
+            if sr is None or abs(sr) < _threshold(key):
+                units.append({'grade': gr, 'verdict': '무판정', 'weight': 0.0,
+                              'realized': sr, 'segment_exact': exact})
                 continue
-            hit = (r > 0) == (gr > 0)
+            hit = (sr > 0) == (gr > 0)
             units.append({'grade': gr, 'verdict': '적중' if hit else '미스',
-                          'weight': float(abs(gr)), 'signed': (1 if hit else -1) * abs(gr)})
+                          'weight': float(abs(gr)), 'realized': round(sr, 4),
+                          'segment_exact': exact,
+                          'signed': (1 if hit else -1) * abs(gr)})
         if not units:
             neutral += 1
             assets[key] = {'grade': 0, 'realized': r, 'verdict': '중립', 'segments': segs[key]}
@@ -127,24 +158,32 @@ _AXIS_SIGN = {'개선': 1, '악화': -1, '보합': 0}
 def regime_check(macro_rows, macro_metrics, start, end):
     prints = [i for i in ((macro_metrics or {}).get('indicators') or [])
               if start <= (i.get('released') or '') <= end]
-    rows = sorted(macro_rows or [], key=lambda r: r.get('report_date') or '')
+    # 기간 종료일까지로 자른다 — 자르지 않으면 과거 기간을 다시 만들 때 미래 레짐으로
+    # 그 기간을 채점하게 된다(2026-08-30 codex 검토).
+    rows = sorted((r for r in (macro_rows or [])
+                   if (r.get('report_date') or '') <= (end or '')),
+                  key=lambda r: r.get('report_date') or '')
     regime = (rows[-1].get('regime') if rows else None) or {}
     if not prints:
         return {'verdict': '판정불가', 'prints': 0, 'regime': regime,
                 'note': '기간 중 신규 발표 없음'}
     growth = regime.get('growth') or 0
-    agree = 0
-    for i in prints:
-        s = _AXIS_SIGN.get(i.get('direction'), 0)
-        if s == 0:
-            continue
-        # 성장축이 마이너스면 악화 프린트가 정합, 플러스면 개선이 정합, 0이면 상쇄가 정합
-        if growth == 0 or (s > 0) == (growth > 0):
-            agree += 1
-    ratio = agree / len(prints)
+    # 성장축이 보합(0)인 국면은 «어느 방향도 정합»이 아니라 **채점 대상이 아니다.**
+    # 예전에는 growth == 0 이면 모든 프린트를 일치로 세어 개선·악화가 뒤섞인 주도
+    # 100% 정합으로 나왔다(2026-08-30 codex 검토).
+    if growth == 0:
+        return {'verdict': '판정불가', 'prints': len(prints), 'regime': regime,
+                'note': '성장축이 보합이라 방향 정합을 잴 기준이 없다'}
+    directional = [i for i in prints if _AXIS_SIGN.get(i.get('direction'), 0)]
+    if not directional:
+        return {'verdict': '판정불가', 'prints': len(prints), 'regime': regime,
+                'note': '방향이 있는 발표가 없다'}
+    agree = sum(1 for i in directional
+                if (_AXIS_SIGN[i['direction']] > 0) == (growth > 0))
+    ratio = agree / len(directional)
     verdict = '정합' if ratio >= 0.5 else '불일치'
-    return {'verdict': verdict, 'prints': len(prints), 'agree': agree,
-            'ratio': round(ratio, 4), 'regime': regime}
+    return {'verdict': verdict, 'prints': len(prints), 'directional': len(directional),
+            'agree': agree, 'ratio': round(ratio, 4), 'regime': regime}
 
 
 def trigger_hygiene(stance_rows, end, stale_days=20):

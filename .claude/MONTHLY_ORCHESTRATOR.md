@@ -6,7 +6,15 @@ US·KR 월간 정리 2편을 발행한다. **그 달 발행본의 총정리**이
 
 이 트리거는 달 경계를 놓치지 않으려고 여러 날에 걸쳐 뜬다. **대부분의 실행은 아무것도 하지 않고 끝나야 한다.**
 
-`data/market_data.json`의 `report_date`가 속한 달을 M이라 할 때, **`data/monthly/<M>.json`이 있고 `monthly/<M>.html`이 아직 없을 때만** 진행한다. 아니면 「월 롤오버 아님 — 종료」를 남기고 **즉시 끝낸다.** 리서치도 파일 읽기도 더 하지 않는다 — 토큰 낭비다.
+`report_date`가 속한 달이 아니라 **직전 달 M이 닫혔는가**를 본다. 세 조건이 모두 참일 때만 진행한다.
+
+1. `data/market_data.json`의 `report_date`가 **M보다 뒤의 달**에 있다 — 즉 달이 넘어갔다
+2. `data/monthly/<M>.json`이 있고 `complete: true`다
+3. `monthly/<M>.html`이 아직 없다
+
+하나라도 어긋나면 「월 롤오버 아님 — 종료」를 남기고 **즉시 끝낸다.** 리서치도 파일 읽기도 더 하지 않는다 — 토큰 낭비다.
+
+**「집계 파일이 있다」만으로 판단하지 않는다** — 수집기는 당월 집계를 매일 갱신하므로 새 달 이틀째에도 1세션짜리 당월 파일이 존재한다. 그걸 롤오버로 읽으면 한 달을 이틀로 정리해 발행한다(2026-08-30 codex 검토).
 
 ## STEP 0-b — 준비와 기간 키
 
@@ -66,6 +74,21 @@ python3 scripts/apply_readability.py $(pwd)/monthly_<KEY>.html
 python3 scripts/check_readability.py --strict $(pwd)/monthly_<KEY>.html
 python3 scripts/check_style.py $(pwd)/monthly_<KEY>.html
 ```
+
+**`check_weight.py`는 돌리지 않는다.** 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로 논리」)과 무게중심 비율을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
+
+**STEP 4-b — AI 티 제거.** 일간과 같은 관문을 지난다. 원본은 손대지 않고 사본에서 윤문한다.
+
+```bash
+python3 scripts/humanize_prose.py extract monthly_<KEY>.html --out prose_in.txt
+# humanize-korean 스킬 또는 수동 윤문 → prose_out.txt
+python3 scripts/humanize_prose.py finalize monthly_<KEY>.html --payload prose_out.txt \
+  --gate "python3 scripts/check_style.py {f}" \
+  --gate "python3 scripts/check_readability.py --strict {f}" \
+  --gate "python3 scripts/check_period.py --html {f} --agg <AGG> --recap <RECAP> --scorecard data/period_scorecard.json --span monthly"
+```
+
+전부 통과했을 때만 원본이 바뀐다. 실패하면 사본을 버리고 원본은 미수정으로 남는다.
 
 통과하면 `monthly/<KEY>.html`로 옮긴다.
 

@@ -11,8 +11,9 @@
   python3 scripts/build_scorecard.py --agg data/weekly/2026-W35.json \
       --datadir data --spans 4,12 --out data/scorecard.json
 
-월간은 `--spans 3,12 --no-append` — 월간은 주간 행을 롤업하므로 같은 기간을 두 번
-세면 안 된다.
+월간은 `--spans 3,12 --no-append`. **단위는 「행」이지 「개월」이 아니다** — 이력에 주간
+행이 쌓이므로 3,12는 최근 주간 3회·12회를 뜻한다. 월간을 이력에 append 하면 같은 기간이
+두 번 세어지므로 `--no-append` 가 필수다.
 """
 import argparse
 import json
@@ -66,17 +67,21 @@ def main():
 
     spans = tuple(int(x) for x in args.spans.split(',') if x.strip())
     path = args.history or os.path.join(hist_dir, 'period_scorecard.jsonl')
-    out['rollup'] = rollup(read_jsonl(path), spans=spans)
 
-    with open(args.out, 'w', encoding='utf-8') as fh:
-        json.dump(out, fh, indent=2, ensure_ascii=False)
-
+    # 당기를 이력에 먼저 넣고 롤업을 잰다. 순서를 뒤집으면 첫 실행은 당기를 빼고
+    # 재실행은 넣어 같은 입력에 다른 답이 나온다(2026-08-30 codex 검토).
     if not args.no_append:
         os.makedirs(hist_dir, exist_ok=True)
         append_jsonl(path, {'key': out['key'], 'span': out['span'],
                             'end_date': end, 'weighted': out.get('weighted'),
                             'judged': out.get('judged'),
                             'neutral_share': out.get('neutral_share')}, key='key')
+
+    out['rollup'] = rollup(read_jsonl(path), spans=spans)
+    out['rollup_unit'] = '주' if out['span'] == 'weekly' else '월'
+
+    with open(args.out, 'w', encoding='utf-8') as fh:
+        json.dump(out, fh, indent=2, ensure_ascii=False)
 
     print(f"{out['span']} {out['key']}: 가중 점수 {out.get('weighted')} "
           f"(판정 {out.get('judged')}건, 무포지션 {out.get('neutral')}건) -> {args.out}")

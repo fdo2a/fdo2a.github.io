@@ -1,7 +1,7 @@
 from us.period_gate import check
 
 AGG = {"span": "weekly", "key": "2026-W34", "start_date": "2026-08-17",
-       "end_date": "2026-08-21", "sessions": 5,
+       "end_date": "2026-08-21", "sessions": 5, "complete": True, "missing": [],
        "indices": {"S&P 500": {"pct": 2.0}},
        "sectors": {"Technology": {"pct": 20.0, "rank": 1}},
        "yields": {"10Y": {"chg_bp": -12.0}}}
@@ -9,7 +9,8 @@ AGG = {"span": "weekly", "key": "2026-W34", "start_date": "2026-08-17",
 SC = {"weighted": 0.33, "judged": 3, "neutral": 2, "neutral_share": 0.4,
       "assets": {"equities": {"verdict": "적중"}}}
 
-RECAP = {"start_date": "2026-08-17", "end_date": "2026-08-21", "sessions": 5,
+RECAP = {"key": "2026-W34", "start_date": "2026-08-17", "end_date": "2026-08-21",
+         "sessions": 5,
          "posts": [
              {"date": "2026-08-17", "headline": "월요일", "sections": [], "figures": ["0.31%"]},
              {"date": "2026-08-18", "headline": "화요일", "sections": [], "figures": ["1.42%"]},
@@ -28,7 +29,8 @@ ALL_DAYS = ("2026-08-17에 0.31% 밀렸고, 2026-08-18에 1.42% 되돌렸다. "
             "2026-08-21에 3.22% 올랐다. ")
 
 GOOD = _html(f"<p>{ALL_DAYS}주간으로 S&amp;P 500은 2.0%, Technology가 20.0%로 1위였다. "
-             "10년물은 12.0bp 내렸다. 가중 점수 0.33, 무포지션 비율 0.4.</p>")
+             "10년물은 12.0bp 내렸다. 5거래일을 정리했다. "
+             "가중 점수 0.33, 무포지션 비율 0.4.</p>")
 
 
 def test_clean_report_passes():
@@ -96,9 +98,12 @@ def test_dates_are_not_read_as_negative_numbers():
     """「2026-08-18」에서 -18 이 뜯겨 나오면 날짜를 부를 때마다 발행이 막힌다.
 
     한글도 단어문자라 \\b 로는 「2026-08-17에」의 경계가 서지 않는다 — 실행 중 발견.
+
+    축약형(8/21)은 가리지 않는다. 가리면 「적중은 3/4」 같은 비율까지 지워져 창작이
+    통과한다 — 그래서 작성 스펙이 축약 날짜를 금지한다.
     """
     html = _html("<p>2026-08-17에 시작해 2026-08-21에 끝난 주간이다. "
-                 "2026년 8월 20일과 8/21도 같은 주다.</p>")
+                 "2026년 8월 20일도 같은 주다.</p>")
     assert not [x for x in check(html, AGG, SC, RECAP, "weekly") if '없는 수치' in x]
 
 
@@ -112,3 +117,34 @@ def test_ratio_is_not_mistaken_for_a_date():
     """「적중은 3/4」를 날짜로 가리면 창작이 그대로 통과한다."""
     html = _html(f"{ALL_DAYS}주간으로 S&amp;P 500은 2.0%. 적중은 3/47이었다.")
     assert any('47' in x for x in check(html, AGG, SC, RECAP, "weekly"))
+
+
+def test_a_daily_figure_cannot_authorise_a_wrong_entity():
+    """어느 날 PMI가 57.3 이었다고 「S&P 500 +57.3%」가 통과하면 안 된다."""
+    recap = dict(RECAP)
+    html = _html(f"{ALL_DAYS}5거래일 동안 S&amp;P 500은 57.3% 올랐다. "
+                 "Technology가 20.0%로 1위였다. 10년물은 12.0bp 내렸다. "
+                 "가중 점수 0.33, 무포지션 비율 0.4.")
+    v = check(html, AGG, SC, recap, "weekly")
+    assert any('S&P 500' in x and '항목의 값이 아니다' in x for x in v)
+
+
+def test_incomplete_aggregate_is_refused():
+    agg = dict(AGG, complete=False, missing=['indices.Dow'])
+    assert any('complete=false' in x for x in check(GOOD, agg, SC, RECAP, "weekly"))
+
+
+def test_span_mismatch_is_refused():
+    agg = dict(AGG, span='monthly')      # 월간 집계로 주간을 발행하려 한다
+    assert any('span' in x for x in check(GOOD, agg, SC, RECAP, "weekly"))
+
+
+def test_session_count_must_appear():
+    html = GOOD.replace("5거래일을 정리했다. ", "")
+    assert any('거래일 수' in x for x in check(html, AGG, SC, RECAP, "weekly"))
+
+
+def test_aggregate_that_ends_before_the_last_post_is_refused():
+    """야후 일별이 하루 늦으면 집계가 금요일을 빠뜨린 채 complete=true 로 나온다."""
+    agg = dict(AGG, end_date="2026-08-20")
+    assert any('통째로 빠진다' in x for x in check(GOOD, agg, SC, RECAP, "weekly"))
