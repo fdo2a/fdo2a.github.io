@@ -79,14 +79,22 @@ def read_jsonl(path):
     return rows
 
 
-def append_jsonl(path, record, key='report_date'):
-    """Returns True if written, False if a row with the same key already existed."""
+def append_jsonl(path, record, key='report_date', upsert=False):
+    """Returns True if written, False if a row with the same key already existed.
+
+    `upsert=True` 면 같은 키의 행을 **덮어쓴다**. 시세 원장이 그 경우다 — 수집
+    워크플로가 하루 두 번 돌고 발행본은 마지막 실행의 스냅샷으로 나가므로, 선착순으로
+    두면 원장이 첫 실행 값을 들고 발행본과 갈린다(2026-08-30 codex 검토).
+    판단 이력(stance·macro)은 선착순 그대로다 — 그날 책은 하나뿐이다.
+    """
     val = record.get(key)
     if val is None:
         return False
     rows = read_jsonl(path)
     if any(r.get(key) == val for r in rows):
-        return False
+        if not upsert:
+            return False
+        rows = [r for r in rows if r.get(key) != val]
     rows.append(record)
     rows.sort(key=lambda r: r.get(key) or '')
     directory = os.path.dirname(path) or '.'

@@ -131,6 +131,14 @@ def _date_mentioned(text, iso):
     return bool(re.search(rf'({y}년\s*)?{m}월\s*{d}일', text))
 
 
+def _aliases(group, name):
+    """본문이 그 항목을 부르는 이름들. 금리는 한국어로만 불린다 — 「10Y」로는 안 잡힌다."""
+    if group != 'yields':
+        return [name]
+    tenor = name.rstrip('Yy')
+    return [name, f'{tenor}년물']
+
+
 def _check_provenance(text, agg):
     """이름 **바로 뒤 첫 수치**가 그 항목의 값인가.
 
@@ -138,19 +146,32 @@ def _check_provenance(text, agg):
     끊고 첫 수치 하나만 본다.
     """
     v = []
-    for group in ('indices', 'sectors', 'fx', 'commodities'):
+    for group in ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra',
+                  'yields'):
         for name, row in ((agg or {}).get(group) or {}).items():
-            if not isinstance(row, dict) or row.get('pct') is None:
+            if not isinstance(row, dict):
                 continue
             # 단위별로 갈라 둔다. 하나로 합치면 종가 7711.76 이 허용 집합에 있다는
             # 이유로 「S&P 500은 7711.76% 올랐다」가 통과한다(2026-08-30 회수 사유).
-            own = {'%': set(), 'level': set()}
-            own['%'] |= _round_variants(abs(row['pct']))
-            for k in ('start', 'end'):
-                val = row.get(k)
-                if isinstance(val, (int, float)):
-                    own['level'] |= _round_variants(abs(val))
-            for m in re.finditer(re.escape(name), text):
+            # bp 를 레벨과 같은 칸에 두면 같은 우회가 단위만 바꿔 되살아난다.
+            own = {'%': set(), 'bp': set(), 'level': set()}
+            if group == 'yields':
+                # 금리는 레벨이 %다 — 「4.72%로 마감」은 정상, 변화는 bp 로 말한다.
+                for k in ('start', 'end'):
+                    if isinstance(row.get(k), (int, float)):
+                        own['%'] |= _round_variants(abs(row[k]))
+                if isinstance(row.get('chg_bp'), (int, float)):
+                    own['bp'] |= _round_variants(abs(row['chg_bp']))
+            else:
+                if row.get('pct') is None:
+                    continue
+                own['%'] |= _round_variants(abs(row['pct']))
+                for k in ('start', 'end'):
+                    val = row.get(k)
+                    if isinstance(val, (int, float)):
+                        own['level'] |= _round_variants(abs(val))
+            for m in re.finditer('|'.join(re.escape(a) for a in _aliases(group, name)),
+                                 text):
                 # 마침표는 소수점이기도 하다 — 뒤에 공백·끝이 올 때만 절 경계로 본다.
                 window = re.split(r'[,·。]|\.(?=\s|$)',
                                   text[m.end():m.end() + _NEAR])[0]
@@ -158,15 +179,18 @@ def _check_provenance(text, agg):
                 if not hit:
                     continue
                 raw = abs(float(hit.group(1).replace(',', '')))
-                unit = '%' if hit.group(2) in ('%', '%p') else 'level'
+                unit = {'%': '%', '%p': '%', 'bp': 'bp'}.get(hit.group(2), 'level')
                 # 괄호가 없으면 & 가 먼저 묶여 검사가 통째로 무력해진다.
                 mine = _round_variants(raw)
                 if mine & own[unit]:
                     continue
-                expect = row['pct'] if unit == '%' else row.get('end')
+                if group == 'yields':
+                    expect = f"{row.get('chg_bp')}bp" if unit == 'bp' \
+                        else f"{row.get('end')}%"
+                else:
+                    expect = f"{row['pct']}%" if unit == '%' else f"{row.get('end')}"
                 v.append(f'「{name}」 바로 뒤 수치가 그 항목의 값이 아니다: '
-                         f'{hit.group(0).strip()} — 집계의 값은 '
-                         + (f'{expect}%다' if unit == '%' else f'{expect}다'))
+                         f'{hit.group(0).strip()} — 집계의 값은 {expect}다')
                 break
     return v
 

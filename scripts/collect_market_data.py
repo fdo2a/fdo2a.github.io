@@ -800,7 +800,8 @@ def main():
         from us.history import append_jsonl, macro_record, market_record, stance_record
         hdir = os.path.join(args.outdir, 'history')
         # 시세 원장이 먼저다 — 기간 집계가 이 행을 읽는다.
-        if append_jsonl(os.path.join(hdir, 'market.jsonl'), market_record(data)):
+        if append_jsonl(os.path.join(hdir, 'market.jsonl'), market_record(data),
+                        upsert=True):
             print(f"history: appended {report_date} to market.jsonl")
         for name, fn, out in (('stance.json', stance_record, 'stance.jsonl'),
                               ('macro.json', macro_record, 'macro.jsonl')):

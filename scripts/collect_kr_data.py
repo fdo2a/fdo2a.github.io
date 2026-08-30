@@ -212,7 +212,7 @@ def main(outdir: str):
 
         # 지수 종가는 다시 받지 않는다 — 그날 발행본이 인쇄한 값을 원장에 쌓고 그것만 읽는다.
         ledger = os.path.join(outdir, "history", "kr_market.jsonl")
-        if append_jsonl(ledger, index_record(market)):
+        if append_jsonl(ledger, index_record(market), upsert=True):
             print(f"history: appended {report_date} to kr_market.jsonl")
         closes = index_series(read_jsonl(ledger))
 

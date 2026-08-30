@@ -203,3 +203,39 @@ def test_c_a_number_torn_out_of_a_date_is_not_a_quotable_figure():
     from us.recap_source import post_figures
     figs = post_figures('<html><body><p>2026-08-17 발행본이다.</p></body></html>')
     assert '-17' not in figs, figs
+
+
+AGG_UNITS = {
+    'span': 'weekly', 'key': '2026-W35', 'start_date': '2026-08-24',
+    'end_date': '2026-08-28', 'sessions': 5, 'complete': True, 'missing': [],
+    'indices': {'S&P 500': {'start': 7674.37, 'end': 7711.76, 'pct': 0.4872}},
+    'memory': {'Micron': {'start': 900.0, 'end': 932.86, 'pct': 3.6511}},
+    'yields': {'10Y': {'start': 4.738, 'end': 4.72, 'chg_bp': -1.8}},
+}
+
+
+def test_a_price_level_may_not_be_quoted_as_basis_points():
+    v = check(_wrap('S&P 500은 7711.76bp 올랐다.'), AGG_UNITS, None, _recap(), 'weekly')
+    assert _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_the_memory_basket_names_are_checked_too():
+    # 메모리·AI 인프라는 검사 대상이 아니어서 0%가 다른 칸에서 빌려와 통과했다
+    v = check(_wrap('Micron은 0% 올랐다.'), AGG_UNITS, None, _recap(), 'weekly')
+    assert _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_the_memory_basket_still_takes_its_own_value():
+    v = check(_wrap('Micron은 3.65% 올랐다.'), AGG_UNITS, None, _recap(), 'weekly')
+    assert not _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_a_tenor_takes_its_level_in_percent_and_its_move_in_basis_points():
+    ok = _wrap('10년물은 4.72%로 마감했고 주간으로 1.8bp 내렸다.')
+    v = check(ok, AGG_UNITS, None, _recap(), 'weekly')
+    assert not _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_a_tenor_may_not_wear_the_wrong_unit():
+    v = check(_wrap('10년물은 4.72bp 내렸다.'), AGG_UNITS, None, _recap(), 'weekly')
+    assert _has(v, '그 항목의 값이 아니다'), v

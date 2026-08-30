@@ -124,13 +124,25 @@ def finalize(agg, index_closes):
                         for n, v in sorted(tv.items(), key=lambda x: -x[1])]
 
     idx = {}
+    if dates and not (index_closes or {}):
+        # 원장이 통째로 비면 지수 칸이 조용히 사라진다 — 이름이 없으니 아래 루프가
+        # 한 번도 돌지 않는다(2026-08-30 codex 검토).
+        out['complete'] = False
+        out['missing'].append('indices: 지수 원장이 비었다')
     for name, series in (index_closes or {}).items():
         p = _pct(series or [], out['start_date'], out['end_date']) if dates else None
         if p is None:
             out['complete'] = False
             out['missing'].append(f'indices.{name}')
             continue
-        idx[name] = {'pct': round(p, 4), 'end': series[-1][1]}
+        window = [(d, v) for d, v in series if out['start_date'] <= d <= out['end_date']]
+        if window[-1][0] != out['end_date']:
+            # 끝값이 마지막 거래일 값이 아니면 성과표가 발행본과 갈린다.
+            out['complete'] = False
+            out['missing'].append(
+                f"indices.{name}: {out['end_date']} 종가 없음 (원장 끝 {window[-1][0]})")
+            continue
+        idx[name] = {'pct': round(p, 4), 'end': window[-1][1]}
     out['indices'] = idx
 
     out['daily'] = [{'date': d,

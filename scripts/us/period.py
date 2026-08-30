@@ -70,6 +70,15 @@ def series_from(rows):
     """
     closes = {g: {} for g in GROUPS}
     yields_hist = {}
+    # 명부는 **이력 전체의 합집합**이다. 그날 행에 없는 이름을 그냥 빼면, 수집이 조용히
+    # 놓친 종목이 집계에서도 사라져 `missing` 에조차 안 남는다 — 재수집 시절엔 계열이
+    # 비어도 이름은 늘 나왔다(2026-08-30 codex 검토).
+    for row in (rows or []):
+        for g in GROUPS:
+            for name in (row.get(g) or {}):
+                closes[g].setdefault(name, [])
+        for tenor in (row.get('yields') or {}):
+            yields_hist.setdefault(tenor, [])
     for row in sorted(rows or [], key=lambda r: r.get('report_date') or ''):
         d = row.get('report_date')
         if not d:
@@ -131,6 +140,12 @@ def build(span, key, closes, yields_hist, daily_headlines):
                 continue
             window = slice_series(series, start, end)
             before = [v for d, v in series if d < start]
+            if window[-1][0] != end:
+                # 마지막 거래일에 값이 없으면 끝값이 하루 전 값이 된다 — 발행본과 갈린다.
+                out['complete'] = False
+                out['missing'].append(f'{g}.{name}: {end} 값 없음 (원장 끝 {window[-1][0]})')
+                rows[name] = None
+                continue
             rows[name] = {'start': before[-1], 'end': window[-1][1], 'pct': round(p, 4)}
         out[g] = rows
 
@@ -159,6 +174,11 @@ def build(span, key, closes, yields_hist, daily_headlines):
         if chg is None:
             out['complete'] = False
             out['missing'].append(f'yields.{tenor}')
+            continue
+        last = slice_series(series, start, end)[-1][0]
+        if last != end:
+            out['complete'] = False
+            out['missing'].append(f'yields.{tenor}: {end} 값 없음 (원장 끝 {last})')
             continue
         yields[tenor] = {'start': s0, 'end': s1, 'chg_bp': round(chg * 100, 2)}
     out['yields'] = yields
