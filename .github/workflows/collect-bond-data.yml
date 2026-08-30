@@ -1,0 +1,75 @@
+name: Collect global bond data
+
+# 미국 채권시장이 닫힌 직후. 서머타임 때문에 크론이 두 벌이다 —
+#   20:05 UTC = 16:05 ET (여름, EDT) = 05:05 KST
+#   21:05 UTC = 16:05 ET (겨울, EST) = 06:05 KST
+# 러너는 어느 쪽이 «마감 직후»인지 모르므로 둘 다 뜨고, 스크립트가 AGG 종가가
+# 닫힌 마지막 세션을 기준일로 잡아 같은 날 두 번 돌아도 한 번만 커밋되게 한다.
+on:
+  schedule:
+    - cron: '5 20 * * 1-5'
+    - cron: '5 21 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '휴장에도 수집'
+        type: boolean
+        default: false
+      report_date:
+        description: '기준일 고정 (YYYY-MM-DD)'
+        type: string
+
+concurrency:
+  group: bond-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet yfinance certifi pandas matplotlib
+
+      - name: Collect
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.report_date }}" ]; then
+            ARGS="--report-date ${{ inputs.report_date }}"
+          fi
+          python3 scripts/collect_bond_data.py --outdir bond/data $ARGS
+
+      - name: Draw curves
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          sys.path.insert(0, 'scripts')
+          from bond.charts import draw
+          m = json.load(open('bond/data/bond_metrics.json'))
+          draw(m['curves'], 'bond/data/yield_curves.png', m['report_date'])
+          PY
+
+      - name: Unit tests
+        run: python3 -m pytest scripts/bond scripts/common -q
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bond/data
+          if git diff --staged --quiet; then
+            echo "변경 없음 — 커밋 생략"
+          else
+            DATE=$(python3 -c "import json;print(json.load(open('bond/data/bond_market.json'))['report_date'])")
+            git commit -m "채권 데이터 수집 — $DATE"
+            git pull --rebase --autostash
+            git push
+          fi

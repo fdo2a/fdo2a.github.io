@@ -8,10 +8,20 @@ over from the previous day and may only move when a pre-declared trigger fires.
 Everything here is pure — no network, no clock. `evaluate()` takes yesterday's stance
 plus today's metrics and returns what today's writer is permitted to do.
 
+이동 규율 자체는 `common/discipline.py` 로 옮겼다 — 채권 뷰 3축이 글자 그대로 같은
+규칙을 쓰기 때문이다(2026-08-31). 여기 남은 것은 US 고유의 자산 스펙과, 기존 호출부를
+그대로 유지하기 위한 얇은 위임뿐이다.
+
 Design: docs/superpowers/specs/2026-08-17-us-multiasset-stance-persistence-design.md
+        docs/superpowers/specs/2026-08-31-global-bond-emp-design.md
 """
 
-from datetime import date, timedelta
+from common.discipline import (
+    Discipline,
+    business_days_inclusive,
+    evaluate_trigger,
+)
+
 
 # Direction is defined against 0 (neutral), not against "risk on/off" — neutral means
 # no bet, so moving away from it is always the act of putting a bet on. That keeps one
@@ -54,191 +64,29 @@ CURVE_LABELS = ('플래트너', '커브 중립', '스티프너', '벨리 OW')
 
 LOCK_BUSINESS_DAYS = 3
 
-_OPS = {
-    '>': lambda a, b: a > b,
-    '>=': lambda a, b: a >= b,
-    '<': lambda a, b: a < b,
-    '<=': lambda a, b: a <= b,
-}
+_D = Discipline(ASSETS, lock_business_days=LOCK_BUSINESS_DAYS,
+                extra_state_keys=('tilt', 'curve'))
 
-
-def _asset(key):
-    if key not in ASSETS:
-        raise ValueError(f'unknown asset: {key}')
-    return ASSETS[key]
+__all__ = ['ASSETS', 'CURVE_LABELS', 'LOCK_BUSINESS_DAYS', 'business_days_inclusive',
+           'evaluate_trigger', 'grade_bounds', 'label_for', 'evaluate_asset',
+           'evaluate', 'validate_transition']
 
 
 def grade_bounds(key):
-    grades = _asset(key)['labels']
-    return min(grades), max(grades)
+    return _D.grade_bounds(key)
 
 
 def label_for(key, grade):
-    labels = _asset(key)['labels']
-    if grade not in labels:
-        lo, hi = min(labels), max(labels)
-        raise ValueError(f'{key}: grade {grade} out of range [{lo}, {hi}]')
-    return labels[grade]
-
-
-def business_days_inclusive(start, end):
-    """Weekdays in [start, end], both ends counted. Never less than 1.
-
-    Holidays are ignored — a lock that runs one session long on a holiday week is a
-    far smaller error than the whipsaw this exists to prevent.
-    """
-    a, b = date.fromisoformat(str(start)), date.fromisoformat(str(end))
-    if b < a:
-        return 1
-    n, cur = 0, a
-    while cur <= b:
-        if cur.weekday() < 5:
-            n += 1
-        cur += timedelta(days=1)
-    return max(n, 1)
-
-
-def evaluate_trigger(trigger, metrics):
-    """One trigger against today's metrics -> MET / NOT_MET / UNKNOWN / MANUAL."""
-    out = dict(trigger)
-    if trigger.get('kind') == 'event':
-        out['status'] = 'MANUAL'
-        out['actual'] = None
-        return out
-
-    name = trigger.get('metric')
-    actual = metrics.get(name) if metrics else None
-    op = _OPS.get(trigger.get('op'))
-    out['actual'] = actual
-    if actual is None or op is None:
-        # A metric we failed to collect can never justify adding risk. Holding is the
-        # safe default, so UNKNOWN is deliberately not NOT_MET (which would read as a
-        # tested-and-failed condition in the published brief).
-        out['status'] = 'UNKNOWN'
-    else:
-        out['status'] = 'MET' if op(actual, trigger.get('value')) else 'NOT_MET'
-    return out
-
-
-def _increase_directions(grade, met_triggers):
-    """Which way |grade| may grow. Away from zero is implied once a side is picked;
-    at neutral the trigger must say which side it is opening."""
-    if grade > 0:
-        return {1}
-    if grade < 0:
-        return {-1}
-    dirs = set()
-    for t in met_triggers:
-        toward = t.get('toward')
-        if toward == '+':
-            dirs.add(1)
-        elif toward == '-':
-            dirs.add(-1)
-    return dirs
+    return _D.label_for(key, grade)
 
 
 def evaluate_asset(key, state, metrics, report_date, stale=False):
-    lo, hi = grade_bounds(key)
-    grade = state['grade']
-    if grade not in ASSETS[key]['labels']:
-        raise ValueError(f'{key}: stored grade {grade} out of range [{lo}, {hi}]')
-
-    triggers = state.get('triggers') or {}
-    inc = [evaluate_trigger(t, metrics) for t in triggers.get('increase') or []]
-    dec = [evaluate_trigger(t, metrics) for t in triggers.get('decrease') or []]
-
-    days_held = business_days_inclusive(state.get('since') or report_date, report_date)
-    at_max = (grade > 0 and grade == hi) or (grade < 0 and grade == lo)
-    met = [t for t in inc if t['status'] == 'MET']
-    manual = [t for t in inc if t['status'] == 'MANUAL']
-
-    directions = _increase_directions(grade, met + manual)
-    can_increase, block = False, None
-    if at_max:
-        block = 'at_max'
-    elif days_held < LOCK_BUSINESS_DAYS and not stale:
-        # A stale stance means the routine skipped days; the calendar already supplied
-        # the patience the lock exists to enforce.
-        block = 'lock_3bd'
-    elif not met and not manual:
-        block = 'no_trigger_met'
-    elif not directions:
-        block = 'no_direction'
-    else:
-        can_increase = True
-        block = None if met else 'manual'
-
-    can_decrease = grade != 0
-
-    allowed = {grade}
-    if can_decrease:
-        allowed.add(grade - 1 if grade > 0 else grade + 1)
-    if can_increase:
-        for d in directions:
-            nxt = grade + d
-            if lo <= nxt <= hi:
-                allowed.add(nxt)
-
-    return {
-        'name': ASSETS[key]['name'],
-        'axis': ASSETS[key]['axis'],
-        'grade': grade,
-        'label': label_for(key, grade),
-        'tilt': state.get('tilt'),
-        'curve': state.get('curve'),
-        'since': state.get('since'),
-        'days_held': days_held,
-        'thesis': state.get('thesis'),
-        'increase': inc,
-        'decrease': dec,
-        'can_increase': can_increase,
-        'increase_block': block,
-        'can_decrease': can_decrease,
-        'allowed_grades': sorted(allowed),
-        'manual_pending': [t.get('desc') for t in inc + dec if t['status'] == 'MANUAL'],
-    }
+    return _D.evaluate_asset(key, state, metrics, report_date, stale)
 
 
 def evaluate(stance, metrics, report_date, max_gap_bd=3):
-    """Yesterday's stance + today's metrics -> what today's writer may do.
-
-    Staleness is measured as a business-day gap rather than an exact previous-session
-    match, so a market holiday doesn't masquerade as a skipped routine run.
-    """
-    assets = (stance or {}).get('assets') or {}
-    if not assets:
-        return {
-            'report_date': report_date,
-            'stance_date': None,
-            'stale': False,
-            'bootstrap': True,
-            'horizon': (stance or {}).get('horizon', '2-6주'),
-            'assets': {},
-        }
-
-    stance_date = stance.get('report_date')
-    stale = bool(stance_date) and business_days_inclusive(stance_date, report_date) > max_gap_bd
-
-    return {
-        'report_date': report_date,
-        'stance_date': stance_date,
-        'stale': stale,
-        'bootstrap': False,
-        'horizon': stance.get('horizon', '2-6주'),
-        'assets': {k: evaluate_asset(k, v, metrics, report_date, stale)
-                   for k, v in assets.items()},
-    }
+    return _D.evaluate(stance, metrics, report_date, max_gap_bd)
 
 
 def validate_transition(key, old_grade, new_grade, asset_eval):
-    """Gate check for a grade the writer produced. -> (ok, reason)."""
-    lo, hi = grade_bounds(key)
-    if not (lo <= new_grade <= hi):
-        return False, 'out_of_range'
-    if abs(new_grade - old_grade) > 1:
-        # Sign flips fall out of this too: -1 -> +1 is two steps, so reversing a
-        # position always costs a day at neutral.
-        return False, 'two_step'
-    if new_grade not in asset_eval.get('allowed_grades', []):
-        return False, 'not_allowed'
-    return True, None
+    return _D.validate_transition(key, old_grade, new_grade, asset_eval)

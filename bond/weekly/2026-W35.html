@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="2026-08-24부터 2026-08-30까지 글로벌 채권시장 주간 정리. 4거래일치 국채 커브·크레딧 스프레드·환율·채권 ETF 성과를 원장에서 집계했습니다.">
+<link rel="canonical" href="https://fdo2a.github.io/bond/weekly/2026-W35.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="글로벌 채권 주간 정리 — 2026-W35">
+<meta property="og:url" content="https://fdo2a.github.io/bond/weekly/2026-W35.html">
+<meta property="og:description" content="2026-08-24부터 2026-08-30까지 글로벌 채권시장 주간 정리. 4거래일치 국채 커브·크레딧 스프레드·환율·채권 ETF 성과를 원장에서 집계했습니다.">
+<title>글로벌 채권 주간 정리 — 2026-W35</title>
+<style>
+:root { --blue:#0064FF; --ink:#191F28; --sub:#4E5968; --muted:#8B95A1;
+  --border:#E5E8EB; --border2:#F2F4F6; --up:#00A85A; --upbg:#E8F8EE;
+  --down:#FF4040; --downbg:#FFE8E8; --infobg:#E8F2FF; }
+* { box-sizing: border-box; }
+body { font-family: 'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif;
+  letter-spacing: -0.01em; background: #F2F4F6; color: var(--ink); margin: 0;
+  word-break: keep-all; overflow-wrap: break-word; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 20px 60px; }
+.topbar { background: #fff; border-bottom: 1px solid var(--border2); padding: 14px 20px; }
+.topbar-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: baseline; gap: 10px; }
+.brand { color: var(--blue); font-weight: 800; font-size: 15px; }
+.topbar-date { color: var(--muted); font-size: 13px; }
+.card { background: #fff; border-radius: 14px; border: 1px solid var(--border2);
+  padding: 20px 22px; margin: 16px 0; break-inside: avoid-page; }
+section { break-inside: avoid-page; margin-bottom: 8px; }
+h1 { font-size: 22px; margin: 0 0 10px; line-height: 1.4; }
+h2 { font-size: 18.5px; font-weight: 800; margin: 26px 0 12px; padding-left: 12px; position: relative; }
+h2::before { content:""; position:absolute; left:0; top:2px; bottom:2px; width:6px;
+  border-radius:6px; background: var(--blue); }
+h3 { font-size: 16px; font-weight: 800; margin: 22px 0 8px; }
+p { font-size: 16px; line-height: 1.78; margin: 0 0 15px; color: var(--ink); max-width: 42em; }
+p:last-child { margin-bottom: 0; }
+.caption, .sub { font-size: 12.5px; color: var(--muted); }
+.sub { font-weight: 600; }
+.headline-card { background: var(--infobg); border-radius: 14px; padding: 22px 24px; margin: 16px 0; }
+.up { color: var(--up); } .down { color: var(--down); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+thead th { background: var(--border2); border-bottom: 2px solid var(--blue); font-weight: 800;
+  text-align: right; padding: 9px 10px; }
+thead th:first-child, td:first-child { text-align: left; }
+tbody td { padding: 8px 10px; border-bottom: 1px solid var(--border2); text-align: right; }
+.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; margin: 12px 0 16px; }
+.mt-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 16px; }
+.mt-item { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 11px;
+  background: #F9FAFB; border: 1px solid #F2F4F6; border-radius: 9999px;
+  font-size: 13.5px; white-space: nowrap; }
+.mt-item b { font-weight: 700; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.footer-note { border-top: 1px solid var(--border); margin-top: 30px; padding-top: 16px;
+  font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+.stance-tbl { table-layout: fixed; }
+@media (min-width: 561px) {
+  .stance-tbl th:nth-child(1), .stance-tbl td:nth-child(1) { width: 10%; }
+  .stance-tbl th:nth-child(2), .stance-tbl td:nth-child(2) { width: 14%; text-align: left; }
+  .stance-tbl th:nth-child(3), .stance-tbl td:nth-child(3) { width: 14%; text-align: left; }
+  .stance-tbl th:nth-child(4), .stance-tbl td:nth-child(4) { width: 31%; text-align: left; }
+  .stance-tbl th:nth-child(5), .stance-tbl td:nth-child(5) { width: 31%; text-align: left; }
+}
+@media (max-width: 560px) {
+  .container { padding-left: 14px; padding-right: 14px; }
+  table { font-size: 11px; }
+  th, td { padding: 5px 7px; white-space: nowrap; }
+  th:first-child, td:first-child { white-space: normal; }
+  .card { padding: 16px 16px; }
+  .stance-tbl, .stance-tbl tbody, .stance-tbl tr, .stance-tbl td { display: block; width: auto; }
+  .stance-tbl thead { display: none; }
+  .stance-tbl tr { background:#fff; border:1px solid #E5E8EB; border-radius:12px;
+    padding:12px 14px; margin-bottom:10px; }
+  .stance-tbl td { padding:0; border:none; text-align:left; white-space:normal; }
+}
+@media (min-width: 1024px) {
+  p, .caption, .sub, li { max-width: none; }
+  p:not([class]) { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; } h2 { font-size: 20px; } h3 { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+<span class="brand">Global Bond Desk</span>
+<span class="topbar-date">2026년 8월 27일 (목요일) 글로벌 채권시장 정리</span>
+</div></div>
+<div style="max-width:1120px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:10px;">
+  <a href="../index.html" style="text-decoration:none;background:#fff;border:1px solid #E5E8EB;border-radius:9999px;padding:6px 14px;font-size:12px;font-weight:700;color:#191F28;">‹ 전체 보고서</a>
+  <a href="../index.html" style="text-decoration:none;font-size:14px;font-weight:800;color:#0064FF;letter-spacing:-0.02em;">Global Bond Desk</a>
+</div>
+<div class="container">
+<section id="b-1">
+<div class="headline-card">
+<h1>글로벌 채권 주간 정리 — 2026-W35</h1>
+<p>2026-08-24 ~ 2026-08-30 · 실제 세션 4일(2026-08-24 ~ 2026-08-27).
+구간을 온전히 덮습니다.</p>
+<p>기간 끝 기준 미국 10년물은 4.67%입니다. 이 기간
+4거래일 안에서만 보면 62.5 백분위 자리예요 —
+더 긴 시계에서 어디에 서 있는지는 일간 리포트가 매일 짚습니다.</p>
+</div>
+</section>
+
+<section id="b-2">
+<h2>이 기간에 나간 글</h2>
+<div class="card"><p>이 기간에 나간 일간 리포트는 1편입니다.</p><ul><li><a href="../posts/2026-08-27.html">2026-08-27</a> — 미국 국채는 하루 종일 제자리였지만, 서 있는 자리가 2년 만의 꼭대기입니다</li></ul></div>
+</section>
+
+<section id="b-3">
+<h2>국채금리</h2>
+<div class="card">
+<p>기간 시작값과 끝값, 그리고 그 차이입니다. 하루하루의 변화를 더한 것이 아니라
+원장의 양 끝을 맞댄 값이라, 중간에 어떤 경로를 지났는지는 일간 리포트에 있습니다.</p>
+<div class="tbl-scroll"><table><thead><tr><th>만기</th><th>시작</th><th>끝</th><th>변화</th><th>세션</th></tr></thead><tbody><tr><td>미국 2Y</td><td>4.240</td><td>4.200</td><td class="down">-4.0bp</td><td class="sub">4</td></tr><tr><td>미국 5Y</td><td>4.410</td><td>4.380</td><td class="down">-3.0bp</td><td class="sub">4</td></tr><tr><td>미국 10Y</td><td>4.700</td><td>4.670</td><td class="down">-3.0bp</td><td class="sub">4</td></tr><tr><td>미국 30Y</td><td>5.230</td><td>5.190</td><td class="down">-4.0bp</td><td class="sub">4</td></tr><tr><td>독일 2Y</td><td>2.810</td><td>2.790</td><td class="down">-2.0bp</td><td class="sub">4</td></tr><tr><td>독일 10Y</td><td>3.270</td><td>3.180</td><td class="down">-9.0bp</td><td class="sub">4</td></tr><tr><td>독일 30Y</td><td>3.730</td><td>3.600</td><td class="down">-13.0bp</td><td class="sub">4</td></tr><tr><td>일본 10Y</td><td>2.887</td><td>2.897</td><td class="up">+1.0bp</td><td class="sub">4</td></tr><tr><td>일본 30Y</td><td>4.036</td><td>4.038</td><td class="up">+0.2bp</td><td class="sub">4</td></tr><tr><td>영국 10Y</td><td>5.051</td><td>5.012</td><td class="down">-3.9bp</td><td class="sub">4</td></tr></tbody></table></div>
+</div>
+</section>
+
+<section id="b-6">
+<h2>크레딧 스프레드</h2>
+<div class="card">
+<p>스프레드가 좁아지면 회사채가 국채보다 나았다는 뜻이고, 벌어지면 반대입니다.</p>
+<div class="tbl-scroll"><table><thead><tr><th>구간</th><th>시작</th><th>끝</th><th>변화</th></tr></thead><tbody><tr><td>미국 IG</td><td>81bp</td><td>79bp</td><td class="down">-2.0bp</td></tr><tr><td>미국 HY</td><td>269bp</td><td>263bp</td><td class="down">-6.0bp</td></tr><tr><td>미국 HY CCC 이하</td><td>1,036bp</td><td>1,031bp</td><td class="down">-5.0bp</td></tr><tr><td>유럽 HY</td><td>254bp</td><td>256bp</td><td class="up">+2.0bp</td></tr><tr><td>EM 국공채</td><td>113bp</td><td>112bp</td><td class="down">-1.0bp</td></tr><tr><td>EM 회사채</td><td>140bp</td><td>139bp</td><td class="down">-1.0bp</td></tr></tbody></table></div>
+</div>
+</section>
+
+<section id="b-7">
+<h2>환율</h2>
+<div class="card">
+<div class="tbl-scroll"><table><thead><tr><th>통화쌍</th><th>시작</th><th>끝</th><th>변화</th></tr></thead><tbody><tr><td>DXY</td><td>99.0000</td><td>99.1600</td><td class="up">+0.16%</td></tr><tr><td>EURUSD</td><td>1.1682</td><td>1.1655</td><td class="down">-0.23%</td></tr><tr><td>USDJPY</td><td>158.9040</td><td>159.2550</td><td class="up">+0.22%</td></tr><tr><td>USDKRW</td><td>1,384.9800</td><td>1,383.4900</td><td class="down">-0.11%</td></tr></tbody></table></div>
+</div>
+</section>
+
+<section id="b-8">
+<h2>채권 ETF</h2>
+<div class="card">
+<p>기간 수익률이 큰 순서입니다. 달러 기준이고 분배금은 반영하지 않은 가격 수익률입니다.</p>
+<div class="tbl-scroll"><table><thead><tr><th>종목</th><th>시작</th><th>끝</th><th>수익률</th></tr></thead><tbody><tr><td>TLT</td><td>82.56</td><td>83.13</td><td class="up">+0.69%</td></tr><tr><td>LQD</td><td>106.18</td><td>106.73</td><td class="up">+0.52%</td></tr><tr><td>USIG</td><td>50.30</td><td>50.49</td><td class="up">+0.38%</td></tr><tr><td>IGIB</td><td>52.22</td><td>52.41</td><td class="up">+0.36%</td></tr><tr><td>EMB</td><td>94.85</td><td>95.13</td><td class="up">+0.29%</td></tr><tr><td>AGG</td><td>97.55</td><td>97.83</td><td class="up">+0.29%</td></tr><tr><td>EMHY</td><td>40.30</td><td>40.41</td><td class="up">+0.27%</td></tr><tr><td>IEF</td><td>93.01</td><td>93.23</td><td class="up">+0.24%</td></tr><tr><td>HYG</td><td>79.70</td><td>79.87</td><td class="up">+0.21%</td></tr><tr><td>GOVT</td><td>22.49</td><td>22.53</td><td class="up">+0.18%</td></tr><tr><td>TIP</td><td>107.25</td><td>107.44</td><td class="up">+0.18%</td></tr><tr><td>SHYG</td><td>42.26</td><td>42.33</td><td class="up">+0.17%</td></tr><tr><td>IGOV</td><td>41.47</td><td>41.42</td><td class="down">-0.12%</td></tr><tr><td>IAGG</td><td>49.81</td><td>49.78</td><td class="down">-0.06%</td></tr><tr><td>SHY</td><td>82.00</td><td>82.04</td><td class="up">+0.05%</td></tr><tr><td>FLOT</td><td>51.02</td><td>51.04</td><td class="up">+0.04%</td></tr><tr><td>STIP</td><td>100.89</td><td>100.91</td><td class="up">+0.02%</td></tr></tbody></table></div>
+</div>
+</section>
+
+<section id="b-9">
+<h2>복기 — 뷰 3축</h2>
+<div class="card"><p>이 기간에 뷰 3축은 한 번도 움직이지 않았습니다. 미리 걸어 둔 조건이 충족되지 않았다는 뜻이고, 채권 운용에서 이건 실패가 아니라 정상입니다. 움직일 이유가 없을 때 움직이지 않는 것이 규율의 목적이에요.</p></div>
+</section>
+<div class="footer-note">
+기준일 2026-08-24 ~ 2026-08-30 · 직전 비교일 2026-08-24 · 누적 원장 4거래일<br>
+데이터: 미국 연준 경제데이터(FRED) · 독일 분데스방크 · 유럽중앙은행 · 일본 재무성 · 영란은행 · iShares · 야후 파이낸스.
+축마다 게시 시차가 달라 각 표에 기준일과 출처를 함께 실었습니다.<br>
+내재선도금리는 현물 수익률 곡선을 무이표채로 근사해 계산한 값이고, ETF 순유입은 순자산 변화에서
+가격 수익분을 뺀 추정치입니다.<br>
+본 자료는 정보 제공과 학습 목적으로 작성된 것으로, 특정 종목의 매수·매도 권유가 아닙니다.
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,418 @@
+{
+ "start": "2026-08-24",
+ "end": "2026-08-30",
+ "first_session": "2026-08-24",
+ "last_session": "2026-08-27",
+ "sessions": 4,
+ "rates": {
+  "us/2Y": {
+   "start": 4.24,
+   "end": 4.2,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -4.0,
+   "min": 4.17,
+   "max": 4.24
+  },
+  "us/5Y": {
+   "start": 4.41,
+   "end": 4.38,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -3.0,
+   "min": 4.35,
+   "max": 4.41
+  },
+  "us/10Y": {
+   "start": 4.7,
+   "end": 4.67,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -3.0,
+   "min": 4.64,
+   "max": 4.7
+  },
+  "us/30Y": {
+   "start": 5.23,
+   "end": 5.19,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -4.0,
+   "min": 5.17,
+   "max": 5.23
+  },
+  "de/2Y": {
+   "start": 2.81,
+   "end": 2.79,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -2.0,
+   "min": 2.77,
+   "max": 2.83
+  },
+  "de/10Y": {
+   "start": 3.27,
+   "end": 3.18,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -9.0,
+   "min": 3.18,
+   "max": 3.27
+  },
+  "de/30Y": {
+   "start": 3.73,
+   "end": 3.6,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -13.0,
+   "min": 3.6,
+   "max": 3.73
+  },
+  "jp/10Y": {
+   "start": 2.887,
+   "end": 2.897,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": 1.0,
+   "min": 2.887,
+   "max": 2.897
+  },
+  "jp/30Y": {
+   "start": 4.036,
+   "end": 4.038,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": 0.2,
+   "min": 4.036,
+   "max": 4.04
+  },
+  "gb/10Y": {
+   "start": 5.0513,
+   "end": 5.0121,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -3.9,
+   "min": 4.9959,
+   "max": 5.0513
+  }
+ },
+ "credit": {
+  "us_ig": {
+   "start": 0.81,
+   "end": 0.79,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -2.0,
+   "min": 0.79,
+   "max": 0.81
+  },
+  "us_hy": {
+   "start": 2.69,
+   "end": 2.63,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -6.0,
+   "min": 2.63,
+   "max": 2.7
+  },
+  "us_hy_ccc": {
+   "start": 10.36,
+   "end": 10.31,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -5.0,
+   "min": 10.31,
+   "max": 10.39
+  },
+  "euro_hy": {
+   "start": 2.54,
+   "end": 2.56,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": 2.0,
+   "min": 2.54,
+   "max": 2.58
+  },
+  "em_sov": {
+   "start": 1.13,
+   "end": 1.12,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -1.0,
+   "min": 1.12,
+   "max": 1.15
+  },
+  "em_corp": {
+   "start": 1.4,
+   "end": 1.39,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "bp": -1.0,
+   "min": 1.39,
+   "max": 1.42
+  }
+ },
+ "fx": {
+  "DXY": {
+   "start": 99.0,
+   "end": 99.16,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.162,
+   "min": 98.92,
+   "max": 99.17
+  },
+  "EURUSD": {
+   "start": 1.1682,
+   "end": 1.1655,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": -0.231,
+   "min": 1.1655,
+   "max": 1.1682
+  },
+  "USDJPY": {
+   "start": 158.904,
+   "end": 159.255,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.221,
+   "min": 158.904,
+   "max": 159.255
+  },
+  "USDKRW": {
+   "start": 1384.98,
+   "end": 1383.49,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": -0.108,
+   "min": 1380.76,
+   "max": 1384.98
+  }
+ },
+ "etf": {
+  "AGG": {
+   "start": 97.55,
+   "end": 97.83,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.287,
+   "min": 97.55,
+   "max": 98.01
+  },
+  "GOVT": {
+   "start": 22.49,
+   "end": 22.53,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.178,
+   "min": 22.49,
+   "max": 22.57
+  },
+  "SHY": {
+   "start": 82.0,
+   "end": 82.04,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.049,
+   "min": 82.0,
+   "max": 82.08
+  },
+  "IEF": {
+   "start": 93.01,
+   "end": 93.23,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.237,
+   "min": 93.01,
+   "max": 93.51
+  },
+  "TLT": {
+   "start": 82.56,
+   "end": 83.13,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.69,
+   "min": 82.56,
+   "max": 83.47
+  },
+  "TIP": {
+   "start": 107.25,
+   "end": 107.44,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.177,
+   "min": 107.25,
+   "max": 107.64
+  },
+  "STIP": {
+   "start": 100.89,
+   "end": 100.91,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.02,
+   "min": 100.89,
+   "max": 100.99
+  },
+  "LQD": {
+   "start": 106.18,
+   "end": 106.73,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.518,
+   "min": 106.18,
+   "max": 106.86
+  },
+  "IGIB": {
+   "start": 52.22,
+   "end": 52.41,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.364,
+   "min": 52.22,
+   "max": 52.48
+  },
+  "USIG": {
+   "start": 50.3,
+   "end": 50.49,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.378,
+   "min": 50.3,
+   "max": 50.54
+  },
+  "HYG": {
+   "start": 79.7,
+   "end": 79.87,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.213,
+   "min": 79.7,
+   "max": 79.92
+  },
+  "SHYG": {
+   "start": 42.26,
+   "end": 42.33,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.166,
+   "min": 42.26,
+   "max": 42.35
+  },
+  "EMB": {
+   "start": 94.85,
+   "end": 95.13,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.295,
+   "min": 94.85,
+   "max": 95.38
+  },
+  "EMHY": {
+   "start": 40.3,
+   "end": 40.41,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.273,
+   "min": 40.3,
+   "max": 40.43
+  },
+  "IGOV": {
+   "start": 41.47,
+   "end": 41.42,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": -0.121,
+   "min": 41.42,
+   "max": 41.72
+  },
+  "IAGG": {
+   "start": 49.81,
+   "end": 49.78,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": -0.06,
+   "min": 49.78,
+   "max": 49.98
+  },
+  "FLOT": {
+   "start": 51.02,
+   "end": 51.04,
+   "start_date": "2026-08-24",
+   "end_date": "2026-08-27",
+   "sessions": 4,
+   "pct": 0.039,
+   "min": 51.02,
+   "max": 51.04
+  }
+ },
+ "move": {
+  "start": 73.98,
+  "end": 69.86,
+  "start_date": "2026-08-24",
+  "end_date": "2026-08-27",
+  "sessions": 4,
+  "bp": -4.1,
+  "min": 69.44,
+  "max": 73.98
+ },
+ "us10y_standing": {
+  "value": 4.67,
+  "percentile": 62.5,
+  "sessions": 4,
+  "window": "4거래일",
+  "min": 4.64,
+  "max": 4.7,
+  "band": "보통"
+ },
+ "complete": true,
+ "coverage_gap_days": [
+  0,
+  1
+ ],
+ "key": "2026-W35",
+ "span": "weekly",
+ "stance_changes": [],
+ "posts": [
+  {
+   "date": "2026-08-27",
+   "headline": "미국 국채는 하루 종일 제자리였지만, 서 있는 자리가 2년 만의 꼭대기입니다"
+  }
+ ]
+}

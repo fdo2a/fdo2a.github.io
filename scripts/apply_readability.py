@@ -17,7 +17,7 @@ from scripts.us import readability as R  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 # Thesis pages already pass the readability distribution and are regenerated from source.
 # This retrofit is for the daily US/KR archive that showed the density problem.
-DEFAULT_GLOBS = ("posts/*.html", "kr/posts/*.html")
+DEFAULT_GLOBS = ("posts/*.html", "kr/posts/*.html", "bond/posts/*.html")
 
 
 def targets(args):

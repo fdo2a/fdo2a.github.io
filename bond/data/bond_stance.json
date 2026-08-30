@@ -1,0 +1,114 @@
+{
+ "report_date": "2026-08-27",
+ "horizon": "2-6주",
+ "assets": {
+  "duration": {
+   "grade": 0,
+   "since": "2026-08-27",
+   "thesis": "10년물 4.67%는 2년 표본에서 95.2 백분위로 상단이지만, 금리 변동성(MOVE 69.86, 26.8 백분위)이 낮아 방향을 걸 촉매가 없다. 중립에서 출발한다.",
+   "tilt": null,
+   "segment": "전 구간",
+   "triggers": {
+    "increase": [
+     {
+      "kind": "level",
+      "metric": "us10y_level",
+      "op": ">=",
+      "value": 4.8,
+      "toward": "+",
+      "desc": "10년물 4.80% 이상 — 2년 최고치 부근에서 듀레이션을 산다"
+     },
+     {
+      "kind": "level",
+      "metric": "us10y_level",
+      "op": "<=",
+      "value": 4.35,
+      "toward": "-",
+      "desc": "10년물 4.35% 이하 — 랠리 끝단에서 듀레이션을 줄인다"
+     }
+    ],
+    "decrease": [
+     {
+      "kind": "level",
+      "metric": "move_level",
+      "op": ">=",
+      "value": 100,
+      "desc": "MOVE 100 이상 — 금리 변동성이 커지면 방향 베팅을 접는다"
+     }
+    ]
+   }
+  },
+  "curve": {
+   "grade": 0,
+   "since": "2026-08-27",
+   "thesis": "2년-10년 금리차 47bp, 5년-30년 81bp. 어느 쪽으로도 치우치지 않은 구간이라 걸지 않는다.",
+   "tilt": null,
+   "segment": null,
+   "triggers": {
+    "increase": [
+     {
+      "kind": "level",
+      "metric": "spread_2s10s_bp",
+      "op": "<=",
+      "value": 35,
+      "toward": "+",
+      "desc": "2년-10년 금리차 35bp 이하 — 평평해진 커브에 스티프너를 건다"
+     },
+     {
+      "kind": "level",
+      "metric": "spread_2s10s_bp",
+      "op": ">=",
+      "value": 70,
+      "toward": "-",
+      "desc": "2년-10년 금리차 70bp 이상 — 벌어진 커브에 플래트너를 건다"
+     }
+    ],
+    "decrease": [
+     {
+      "kind": "level",
+      "metric": "move_level",
+      "op": ">=",
+      "value": 100,
+      "desc": "MOVE 100 이상 — 커브 트레이드도 금리 변동성에 취약하다"
+     }
+    ]
+   }
+  },
+  "credit": {
+   "grade": 0,
+   "since": "2026-08-27",
+   "thesis": "하이일드 스프레드 263bp는 2년 표본 0.1 백분위로 사실상 최저다. 받는 대가가 없어 늘릴 자리가 아니고, CCC 이하가 1031bp (94.5 백분위)로 이미 벌어져 있어 줄일 근거도 아직 지수에는 안 잡힌다.",
+   "tilt": null,
+   "segment": null,
+   "triggers": {
+    "increase": [
+     {
+      "kind": "level",
+      "metric": "hy_oas_bp",
+      "op": ">=",
+      "value": 340,
+      "toward": "+",
+      "desc": "하이일드 스프레드 340bp 이상 — 대가가 붙으면 크레딧을 늘린다"
+     },
+     {
+      "kind": "level",
+      "metric": "hy_oas_bp",
+      "op": "<=",
+      "value": 245,
+      "toward": "-",
+      "desc": "하이일드 스프레드 245bp 이하 — 더 좁아지면 비중을 줄인다"
+     }
+    ],
+    "decrease": [
+     {
+      "kind": "level",
+      "metric": "hy_oas_5d_bp",
+      "op": ">=",
+      "value": 25,
+      "desc": "하이일드 스프레드 주간 +25bp — 벌어지기 시작하면 즉시 줄인다"
+     }
+    ]
+   }
+  }
+ }
+}
