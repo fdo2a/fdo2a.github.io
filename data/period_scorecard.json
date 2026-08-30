@@ -1,0 +1,144 @@
+{
+  "start_date": "2026-08-24",
+  "end_date": "2026-08-28",
+  "key": "2026-W35",
+  "assets": {
+    "equities": {
+      "grade": 1,
+      "realized": 0.4872,
+      "verdict": "적중",
+      "score": 1.0,
+      "segments": [
+        {
+          "grade": 1,
+          "from": "2026-08-24",
+          "to": "2026-08-28"
+        }
+      ]
+    },
+    "bonds": {
+      "grade": -1,
+      "realized": 1.8,
+      "verdict": "무판정",
+      "segments": [
+        {
+          "grade": -1,
+          "from": "2026-08-24",
+          "to": "2026-08-28"
+        }
+      ]
+    },
+    "fx": {
+      "grade": -1,
+      "realized": 0.8478,
+      "verdict": "미스",
+      "score": -1.0,
+      "segments": [
+        {
+          "grade": -1,
+          "from": "2026-08-24",
+          "to": "2026-08-28"
+        }
+      ]
+    },
+    "energy": {
+      "grade": 0,
+      "realized": -3.6934,
+      "verdict": "중립",
+      "segments": [
+        {
+          "grade": 0,
+          "from": "2026-08-24",
+          "to": "2026-08-28"
+        }
+      ]
+    },
+    "metals": {
+      "grade": 2,
+      "realized": -3.3787,
+      "verdict": "미스",
+      "score": -1.0,
+      "segments": [
+        {
+          "grade": 2,
+          "from": "2026-08-24",
+          "to": "2026-08-28"
+        }
+      ]
+    },
+    "memory": {
+      "grade": 1,
+      "realized": -2.1701,
+      "verdict": "적중",
+      "score": 1.0,
+      "segments": [
+        {
+          "grade": 0,
+          "from": "2026-08-24",
+          "to": "2026-08-26"
+        },
+        {
+          "grade": 1,
+          "from": "2026-08-26",
+          "to": "2026-08-27"
+        },
+        {
+          "grade": 0,
+          "from": "2026-08-27",
+          "to": "2026-08-28"
+        }
+      ]
+    },
+    "ai_infra": {
+      "grade": 0,
+      "realized": -3.5809,
+      "verdict": "중립",
+      "segments": [
+        {
+          "grade": 0,
+          "from": "2026-08-24",
+          "to": "2026-08-28"
+        }
+      ]
+    }
+  },
+  "judged": 4,
+  "neutral": 2,
+  "total": 7,
+  "neutral_share": 0.2857,
+  "weighted": -0.2,
+  "span": "weekly",
+  "regime": {
+    "verdict": "판정불가",
+    "prints": 0,
+    "regime": {
+      "growth": -1,
+      "inflation": 0,
+      "since": "2026-08-26",
+      "thesis": "성장축 점수는 -0.341로 둔화 컷포인트(-0.33) 아래에 그대로 머물러 있다. 물가축 점수는 -0.391로, 오늘 새로 반영된 미시간대 소비자심리·기대인플레 지표까지 더해지면서 사실상 둔화 경계를 넘어섰다 — 점수만 보면 연착륙 쪽을 가리킨다. 다만 국면이 냉각으로 바뀐 지 이제 사흘째라 최소 5영업일이 지나야 다시 움직일 수 있는 잠금이 걸려 있어, 오늘 지표가 방향을 바꿔 가리켜도 국면 자체는 냉각을 유지한다."
+    },
+    "note": "기간 중 신규 발표 없음"
+  },
+  "triggers": {
+    "dormant": [],
+    "stale_days": 20
+  },
+  "rollup": {
+    "last_4": {
+      "periods": 1,
+      "weighted": -0.2,
+      "insufficient": true
+    },
+    "last_12": {
+      "periods": 1,
+      "weighted": -0.2,
+      "insufficient": true
+    },
+    "all": {
+      "periods": 1,
+      "weighted": -0.2,
+      "insufficient": true
+    }
+  },
+  "rollup_unit": "주"
+}

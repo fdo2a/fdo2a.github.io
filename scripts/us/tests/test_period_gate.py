@@ -239,3 +239,19 @@ def test_a_tenor_takes_its_level_in_percent_and_its_move_in_basis_points():
 def test_a_tenor_may_not_wear_the_wrong_unit():
     v = check(_wrap('10년물은 4.72bp 내렸다.'), AGG_UNITS, None, _recap(), 'weekly')
     assert _has(v, '그 항목의 값이 아니다'), v
+
+def test_dates_inside_value_lists_do_not_leak_as_numbers():
+    """series 는 [날짜, 수치] 리스트라 필드명 제외가 듣지 않는다 — 「2026-08-21」에서
+    -21 이 새면 「-21%」 창작이 통과한다(2026-08-30 첫 발행에서 발견)."""
+    from us.period_gate import _numbers
+    n = _numbers({'series': {'fx': [['2026-08-21', 98.8], ['2026-08-24', 99.1]]}})
+    assert '-21' not in n and '-24' not in n
+    assert '98.8' in n
+
+
+def test_sign_flipped_figure_is_caught():
+    """「-21%」가 21 로 읽히면 부호를 뒤집은 창작이 통과한다 — 2026-08-30 첫 발행에서 발견."""
+    agg = dict(AGG, indices={"S&P 500": {"pct": 21.0}})
+    html = _html(f"{ALL_DAYS}5거래일을 정리했다. 포트폴리오는 -21%였다. "
+                 "가중 점수 0.33, 무포지션 비율 0.4.")
+    assert any('-21' in x and '없는 수치' in x for x in check(html, agg, SC, RECAP, "weekly"))

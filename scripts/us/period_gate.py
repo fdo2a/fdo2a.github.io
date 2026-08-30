@@ -56,7 +56,11 @@ def _numbers(obj, out=None):
     elif isinstance(obj, (int, float)):
         _add(out, obj)
     elif isinstance(obj, str):
-        for m in _NUM.findall(obj):
+        # 문자열 **안의** 날짜를 가린 뒤 센다. 필드명 제외만으로는 부족하다 — series 는
+        # 값이 [날짜, 수치] 리스트라 키 이름이 없고, 회수한 발행본의 헤드라인·요약에는
+        # 날짜가 문장 속에 박혀 있다. 「2026-08-21」이 -21 로 뜯겨 허용 집합에 섞이면
+        # 「-21%」 창작이 그대로 통과한다(2026-08-30 첫 발행에서 발견).
+        for m in _NUM.findall(mask_dates(obj)):
             _add(out, m)
     return out
 
@@ -105,12 +109,14 @@ def _add(out, value):
 
 
 def _html_numbers(html):
-    # data_tokens 는 {토큰: 등장횟수} 딕트다 — 여기서는 키만 쓴다
-    out = set()
-    for tok in data_tokens(mask_dates(html)):
-        for m in _NUM.findall(tok.replace(',', '')):
-            out.add(_canon(m))
-    return out
+    """본문의 수치. **부호를 살려서** 센다.
+
+    data_tokens 는 토큰을 자르면서 앞의 마이너스를 버린다. 그대로 쓰면 「-21%」가 21 로
+    읽혀, 원본 어딘가에 21 이 있기만 하면 통과한다 — 부호가 뒤집힌 창작이 그대로
+    지나가는 자리였다(2026-08-30 첫 발행에서 발견).
+    """
+    text = mask_dates(body_text(html)).replace(',', '').replace('−', '-')
+    return {_canon(m) for m in _NUM.findall(text)}
 
 
 # 「S&P 500은 57.3% 올랐다」가 통과하던 자리. 어느 날 PMI가 57.3 이었으면 그 값이
