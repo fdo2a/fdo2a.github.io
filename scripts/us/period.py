@@ -136,6 +136,52 @@ def build(span, key, closes, yields_hist, daily_headlines):
         yields[tenor] = {'start': s0, 'end': s1, 'chg_bp': round(chg * 100, 2)}
     out['yields'] = yields
 
+    # 자산군별 일별 계열 — 복기가 «구간별»로 채점하려면 기간 전체 수익률이 아니라
+    # 등급이 유지된 구간의 수익률이 필요하다. 이것이 없으면 등급이 중간에 뒤집힌 주에
+    # 두 판단이 다 맞았어도 서로 상쇄돼 0으로 나온다(2026-08-30 codex 검토).
+    # 기간 시작 직전 종가를 한 점 앞에 붙여 첫 구간도 잴 수 있게 한다.
+    def _window(series):
+        if not series:
+            return []
+        before = [(d, v) for d, v in series if d < start]
+        return (before[-1:] ) + slice_series(series, start, end)
+
+    series_out = {}
+    for key, group, name in (('equities', 'indices', BENCHMARK),
+                             ('fx', 'fx', 'DXY'),
+                             ('energy', 'commodities', 'WTI'),
+                             ('metals', 'commodities', 'Gold')):
+        w = _window(((closes.get(group) or {}).get(name)) or [])
+        if len(w) >= 2:
+            series_out[key] = [[d, v] for d, v in w]
+
+    ty = _window((yields_hist or {}).get('10Y') or [])
+    if len(ty) >= 2:
+        # 금리는 레벨(%%)이다. 부호 뒤집기는 채점 쪽이 한다.
+        series_out['bonds'] = [[d, v] for d, v in ty]
+
+    spx_w = dict(_window(((closes.get('indices') or {}).get(BENCHMARK)) or []))
+    for key in BASKETS:
+        members = [(closes.get(key) or {}).get(n) for n in (closes.get(key) or {})]
+        rows = [_window(m) for m in members if m]
+        if not rows or not spx_w:
+            continue
+        dates = sorted(set.intersection(*[{d for d, _ in r} for r in rows]) & set(spx_w))
+        if len(dates) < 2:
+            continue
+        base = {}
+        for r in rows:
+            m = dict(r)
+            b = m.get(dates[0])
+            if b:
+                for d in dates:
+                    base.setdefault(d, []).append(m[d] / b)
+        b0 = spx_w[dates[0]]
+        series_out[key] = [[d, round((sum(base[d]) / len(base[d]) - spx_w[d] / b0) * 100, 4)]
+                           for d in dates if base.get(d)]
+
+    out['series'] = series_out
+
     curve = {}
     for name, (short, long_) in (('spread_2s10s_bp', ('2Y', '10Y')),
                                  ('spread_5s30s_bp', ('5Y', '30Y'))):

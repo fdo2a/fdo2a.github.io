@@ -27,11 +27,26 @@ def _canon(v):
     return str(int(f)) if f == int(f) else f'{f:.10g}'
 
 
+# 날짜 문자열이 들어 있는 필드. 여기서 뽑은 「-17」이 허용 수치가 되면 「-17%」 창작이
+# 그대로 통과한다(2026-08-30 codex 검토).
+_DATE_KEY = re.compile(r'^\d{4}-\d{2}(-\d{2})?$|^\d{4}-W\d{2}$')
+
+_DATE_FIELDS = ('date', 'start_date', 'end_date', 'since', 'released', 'ref_period',
+                'generated', 'key', 'bvps_as_of', 'flows_date')
+
+
 def _numbers(obj, out=None):
     out = set() if out is None else out
     if isinstance(obj, dict):
         for k, v in obj.items():
-            _numbers(k, out)
+            # 날짜를 담는 필드의 값은 수치가 아니다 — 「2026-08-17」에서 -17 이 허용
+            # 토큰이 되면 「-17%」 창작이 그대로 통과한다(2026-08-30 codex 검토).
+            if k in _DATE_FIELDS:
+                continue
+            # 키 자체는 토큰으로 남긴다 — 「S&P 500」·「2s10s」처럼 이름에 든 숫자는
+            # 본문이 정당하게 부른다. 날짜꼴 키만 뺀다.
+            if not (isinstance(k, str) and _DATE_KEY.match(k)):
+                _numbers(k, out)
             _numbers(v, out)
     elif isinstance(obj, (list, tuple)):
         for v in obj:
@@ -92,9 +107,62 @@ def _html_numbers(html):
     return out
 
 
+# 「S&P 500은 57.3% 올랐다」가 통과하던 자리. 어느 날 PMI가 57.3 이었으면 그 값이
+# 허용 집합에 들어 있기 때문이다. 이름 옆에 붙은 수치는 **그 항목의 값이어야 한다**
+# (2026-08-30 codex 검토).
+_NEAR = 40      # 이름 뒤 이 글자 안의 수치를 그 항목의 것으로 본다
+
+
+def _check_provenance(text, agg):
+    """이름 **바로 뒤 첫 수치**가 그 항목의 값인가.
+
+    창을 넓게 잡으면 뒷 항목의 값까지 그 이름의 것으로 읽는다 — 절 경계(쉼표·마침표)에서
+    끊고 첫 수치 하나만 본다.
+    """
+    v = []
+    for group in ('indices', 'sectors', 'fx', 'commodities'):
+        for name, row in ((agg or {}).get(group) or {}).items():
+            if not isinstance(row, dict) or row.get('pct') is None:
+                continue
+            own = {_canon(abs(row['pct']))}
+            for k in ('start', 'end'):
+                if isinstance(row.get(k), (int, float)):
+                    own.add(_canon(abs(row[k])))
+            for m in re.finditer(re.escape(name), text):
+                # 마침표는 소수점이기도 하다 — 뒤에 공백·끝이 올 때만 절 경계로 본다.
+                window = re.split(r'[,·。]|\.(?=\s|$)',
+                                  text[m.end():m.end() + _NEAR])[0]
+                hit = _UNIT.search(window)
+                if not hit:
+                    continue
+                tok = _canon(abs(float(hit.group(1).replace(',', ''))))
+                if tok in own:
+                    continue
+                v.append(f'「{name}」 바로 뒤 수치가 그 항목의 값이 아니다: '
+                         f'{hit.group(0).strip()} — 집계의 값은 {row["pct"]}%다')
+                break
+    return v
+
+
 def check(html, agg, scorecard, recap, span):
     v = []
     text = body_text(html)
+
+    # 스키마·완성도 — 반쪽 집계로 낸 총정리는 다음 기간에 정정할 방법이 없다.
+    if (agg or {}).get('span') != span:
+        v.append(f'집계 파일의 span이 「{(agg or {}).get("span")}」인데 {span}로 발행하려 한다')
+    if not (agg or {}).get('complete'):
+        miss = ', '.join((agg or {}).get('missing') or []) or '사유 미기록'
+        v.append(f'집계가 complete=false다 — 완성본만 발행한다 (결측: {miss})')
+    if (recap or {}).get('key') and (agg or {}).get('key') \
+            and recap['key'] != agg['key']:
+        v.append(f'회수한 발행본의 기간 키({recap["key"]})가 집계({agg["key"]})와 다르다')
+
+    # 거래일 수는 본문에 있어야 한다 — 「몇 거래일을 정리한 글인가」가 총정리의 기본값이다.
+    sessions = (agg or {}).get('sessions')
+    # 「5」가 본문 어딘가에 있다는 것으로는 부족하다 — 수치는 어디에나 있다.
+    if sessions and not re.search(rf'(?<!\d){sessions}\s*(거래일|영업일|일간|일\b)', text):
+        v.append(f'커버한 거래일 수({sessions}거래일)가 본문에 없다')
 
     for marker in banned_markers(html):
         v.append(f'발행본에 미확인 마커가 남았다: {marker} — 확인해 확정하거나 삭제할 것')
@@ -142,6 +210,8 @@ def check(html, agg, scorecard, recap, span):
             continue
         v.append(f'어느 원본에도 없는 수치가 본문에 있다: {n} — 창작 금지. '
                  '집계 파일이나 그 기간 발행본에 실린 값만 인용할 것')
+
+    v += _check_provenance(text, agg)
 
     ru = (scorecard or {}).get('rollup') or {}
     if any((ru.get(k) or {}).get('insufficient') for k in ru):

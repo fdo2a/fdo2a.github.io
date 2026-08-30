@@ -65,5 +65,6 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 - 5편 요약 나열
 - 맞은 것부터 쓰는 복기
 - 표본 부족을 감춘 적중률
+- **축약 날짜(`8/21`)** — `2026-08-21` 또는 「8월 21일」로 쓴다. 발행 게이트는 「적중은 3/4」 같은 비율을 검사해야 해서 `M/D` 꼴을 날짜로 가리지 않는다. 축약해 쓰면 그 숫자가 창작으로 걸린다
 - 내부 파일명·필드명 노출(`recap_source.json`·`_sessions`·`weighted` 등)
 - 「buy-side」 표기
