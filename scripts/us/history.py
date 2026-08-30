@@ -37,6 +37,32 @@ def macro_record(macro):
             'policy_path': macro.get('policy_path')}
 
 
+MARKET_GROUPS = ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra')
+
+
+def market_record(data):
+    """그날 발행본이 인쇄한 시세 그대로 한 행.
+
+    기간 집계는 이 원장만 읽는다. 시세를 다시 받으면 조정계수(auto_adjust)와 기준
+    시각·출처가 달라져 총정리가 원본과 다른 숫자를 싣게 된다 — 2026-08-30 실측으로
+    10년물 4.67 대 4.72(FRED 대 야후 스팟), 금 4,529.90 대 4,504.10, 원달러
+    1,380.45 대 1,375.67이 갈렸고 주간본을 발행 직전에 회수했다. 총정리가 원본과
+    다른 숫자를 싣는 것은 이 발행물의 존재 이유를 무너뜨린다.
+
+    값이 없는 이름은 담지 않는다 — 빈 자리는 결측으로 남아야 하고, 기간 집계가
+    `missing` 으로 알린다.
+    """
+    row = {'report_date': data.get('report_date')}
+    for group in MARKET_GROUPS:
+        row[group] = {name: float(r['last'])
+                      for name, r in ((data or {}).get(group) or {}).items()
+                      if isinstance(r, dict) and r.get('last') is not None}
+    row['yields'] = {tenor: float(r['level'])
+                     for tenor, r in ((data or {}).get('yields') or {}).items()
+                     if isinstance(r, dict) and r.get('level') is not None}
+    return row
+
+
 def read_jsonl(path):
     if not os.path.exists(path):
         return []

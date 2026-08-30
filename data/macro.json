@@ -59,41 +59,122 @@
     }
   },
   "last_seen": {
-    "JOLTS Job Openings": ["2026-06-01", 7359.0],
-    "Initial Jobless Claims": ["2026-08-22", 203000.0],
-    "Initial Claims 4-wk MA": ["2026-08-22", 205500.0],
-    "Continuing Jobless Claims": ["2026-08-15", 1778000.0],
-    "Nonfarm Payrolls (chg)": ["2026-07-01", -23.0],
-    "Unemployment Rate": ["2026-07-01", 4.1],
-    "Avg Hourly Earnings MoM": ["2026-07-01", 0.05],
-    "Industrial Production MoM": ["2026-07-01", 0.2],
-    "Durable Goods Orders MoM": ["2026-07-01", 1.07],
-    "New Home Sales": ["2026-07-01", 607.0],
-    "Existing Home Sales": ["2026-07-01", 4060000.0],
-    "Real GDP Growth QoQ (ann.)": ["2026-04-01", 1.5],
-    "Retail Sales MoM": ["2026-07-01", -0.58],
-    "Michigan Consumer Sentiment": ["2026-07-01", 55.2],
-    "CPI YoY": ["2026-07-01", 3.54],
-    "CPI MoM": ["2026-07-01", 0.07],
-    "Core CPI YoY": ["2026-07-01", 2.79],
-    "Core CPI MoM": ["2026-07-01", 0.22],
-    "PPI Final Demand MoM": ["2026-07-01", -0.03],
-    "PCE Price Index YoY": ["2026-07-01", 3.7],
-    "Core PCE YoY": ["2026-07-01", 3.34],
-    "Michigan 1-Yr Inflation Exp": ["2026-07-01", 4.2]
+    "JOLTS Job Openings": [
+      "2026-06-01",
+      7359.0
+    ],
+    "Initial Jobless Claims": [
+      "2026-08-22",
+      203000.0
+    ],
+    "Initial Claims 4-wk MA": [
+      "2026-08-22",
+      205500.0
+    ],
+    "Continuing Jobless Claims": [
+      "2026-08-15",
+      1778000.0
+    ],
+    "Nonfarm Payrolls (chg)": [
+      "2026-07-01",
+      -23.0
+    ],
+    "Unemployment Rate": [
+      "2026-07-01",
+      4.1
+    ],
+    "Avg Hourly Earnings MoM": [
+      "2026-07-01",
+      0.05
+    ],
+    "Industrial Production MoM": [
+      "2026-07-01",
+      0.2
+    ],
+    "Durable Goods Orders MoM": [
+      "2026-07-01",
+      1.07
+    ],
+    "New Home Sales": [
+      "2026-07-01",
+      607.0
+    ],
+    "Existing Home Sales": [
+      "2026-07-01",
+      4060000.0
+    ],
+    "Real GDP Growth QoQ (ann.)": [
+      "2026-04-01",
+      1.5
+    ],
+    "Retail Sales MoM": [
+      "2026-07-01",
+      -0.58
+    ],
+    "Michigan Consumer Sentiment": [
+      "2026-07-01",
+      55.2
+    ],
+    "CPI YoY": [
+      "2026-07-01",
+      3.54
+    ],
+    "CPI MoM": [
+      "2026-07-01",
+      0.07
+    ],
+    "Core CPI YoY": [
+      "2026-07-01",
+      2.79
+    ],
+    "Core CPI MoM": [
+      "2026-07-01",
+      0.22
+    ],
+    "PPI Final Demand MoM": [
+      "2026-07-01",
+      -0.03
+    ],
+    "PCE Price Index YoY": [
+      "2026-07-01",
+      3.7
+    ],
+    "Core PCE YoY": [
+      "2026-07-01",
+      3.34
+    ],
+    "Michigan 1-Yr Inflation Exp": [
+      "2026-07-01",
+      4.2
+    ]
   },
   "history": [
     {
       "date": "2026-08-17",
       "from": null,
-      "to": [0, 0],
+      "to": [
+        0,
+        0
+      ],
       "reason": "부트스트랩 — 매크로 논리 책 최초 개설, 축 점수 implied 좌표(성장 0.003→보합, 인플레 -0.264→교착)를 그대로 채택"
     },
     {
       "date": "2026-08-26",
-      "from": [0, 0],
-      "to": [-1, 0],
+      "from": [
+        0,
+        0
+      ],
+      "to": [
+        -1,
+        0
+      ],
       "reason": "내구재 주문(7월)·PCE·근원 PCE 신규 발표로 성장축 점수가 -0.377로 내려와 둔화 경계를 처음 넘어섬. 인플레축은 -0.327로 교착 유지, 대각선 이동 없이 성장축만 한 칸 이동(교착→냉각)"
     }
-  ]
+  ],
+  "axis_directions": {
+    "Labor": "보합",
+    "Activity": "악화",
+    "Consumption": "악화",
+    "Inflation": "둔화"
+  }
 }

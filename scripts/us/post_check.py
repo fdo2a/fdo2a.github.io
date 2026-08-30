@@ -22,6 +22,18 @@ _TOKEN = re.compile(r'[-+]?\d[\d,\.]*%?|\b[A-Z]{2,5}\b')
 BANNED = ('[확인필요]', '[확인 필요]', 'TODO', 'TBD')
 
 
+# 날짜는 수치가 아니다. 가리지 않으면 「2026-08-18」에서 -18 이 음수로 뜯겨 나와
+# 창작 수치의 허용 토큰이 되거나(주간 게이트), 없는 수치로 걸린다.
+# \b 를 쓰지 않는다 — 한글도 단어문자라 「2026-08-17에」에서 경계가 서지 않는다.
+# 「8/21」 꼴은 가리지 않는다 — 「적중은 3/4」 같은 비율까지 지워 창작을 통과시킨다.
+_DATE = re.compile(r'(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)'
+                   r'|(?<!\d)\d{4}년\s*\d{1,2}월\s*\d{1,2}일')
+
+
+def mask_dates(text):
+    return _DATE.sub(' ', text or '')
+
+
 def body_text(html):
     """Visible text of the page — no markup, no script/style, entities resolved."""
     s = html[html.index('<body'):] if '<body' in html else html

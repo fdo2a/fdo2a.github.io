@@ -48,6 +48,14 @@
     }
   ],
   "stale": false,
+  "abbreviated": true,
+  "abbreviated_reason": null,
+  "axis_directions": {
+    "Labor": "보합",
+    "Activity": "악화",
+    "Consumption": "악화",
+    "Inflation": "둔화"
+  },
   "bootstrap": false,
   "regime": {
     "growth": -1,

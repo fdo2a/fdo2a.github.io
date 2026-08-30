@@ -59,6 +59,33 @@ def level_change(series, start, end):
     return base, window[-1][1], window[-1][1] - base
 
 
+def series_from(rows):
+    """일별 스냅샷 원장(data/history/market.jsonl) → build() 가 먹는 (closes, yields_hist).
+
+    원장 한 행이 그날 발행본이 인쇄한 값이므로, 기간 수익률은 정의상 발행본 종가끼리의
+    계산이 된다. 시세를 다시 받던 시절엔 조정계수·출처가 달라 총정리가 원본과 다른
+    숫자를 실었다(2026-08-30 회수 사유).
+
+    비어 있는 날은 비운 채 둔다 — 직전 값을 끌어오면 없던 거래일이 생긴다.
+    """
+    closes = {g: {} for g in GROUPS}
+    yields_hist = {}
+    for row in sorted(rows or [], key=lambda r: r.get('report_date') or ''):
+        d = row.get('report_date')
+        if not d:
+            continue
+        for g in GROUPS:
+            for name, v in (row.get(g) or {}).items():
+                if v is None:
+                    continue
+                closes[g].setdefault(name, []).append((d, float(v)))
+        for tenor, v in (row.get('yields') or {}).items():
+            if v is None:
+                continue
+            yields_hist.setdefault(tenor, []).append((d, float(v)))
+    return closes, yields_hist
+
+
 def _bounds(closes, key, span):
     """기간 창은 벤치마크(S&P 500) 거래일만으로 정한다 — 날짜 산술을 쓰지 않는다.
 

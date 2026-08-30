@@ -9,7 +9,7 @@
 import re
 
 from us.macro_gate import BANNED_LABELS
-from us.post_check import banned_markers, body_text, data_tokens
+from us.post_check import banned_markers, body_text, data_tokens, mask_dates
 
 INTERNAL_TERMS = ('weekly.json', 'monthly.json', 'scorecard.json', 'recap_source.json',
                   'stance.jsonl', 'macro.jsonl', 'market_data.json', 'research_notes.md',
@@ -61,27 +61,29 @@ def _numbers(obj, out=None):
     return out
 
 
-# 날짜는 수치가 아니다. 가리지 않으면 「2026-08-18」에서 -18 이 음수로 뜯겨 나와
-# 「어느 원본에도 없는 수치」로 걸린다 — 이 리포트는 날짜를 매 문단에서 부르므로
-# 그대로 두면 발행이 매번 막힌다(2026-08-30 실행 중 발견).
-# \b 를 쓰지 않는다 — 한글도 단어문자라 「2026-08-17에」에서 경계가 서지 않는다.
-# 「8/21」 꼴은 가리지 않는다 — 「적중은 3/4」 같은 비율까지 지워 창작을 통과시킨다
-# (2026-08-30 codex 검토).
-_DATE = re.compile(r'(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)'
-                   r'|(?<!\d)\d{4}년\s*\d{1,2}월\s*\d{1,2}일')
-
-
-def _mask_dates(text):
-    return _DATE.sub(' ', text)
-
-
 _UNIT = re.compile(r'(-?\d[\d,]*\.?\d*)\s*(%p|%|bp|배|달러|엔|원|포인트)')
 
 
 def _united_numbers(html):
     """단위를 달고 나온 수치 — 작은 정수라도 면제하지 않는다."""
-    text = _mask_dates(body_text(html))
+    text = mask_dates(body_text(html))
     return {_canon(m.group(1).replace(',', '')) for m in _UNIT.finditer(text)}
+
+
+def _round_variants(x):
+    """원값과 1·2자리 반올림. **값을 0으로 지우는 반올림은 넣지 않는다.**
+
+    산문은 반올림해 쓴다 — 0.8478%를 「0.85%」로 적는 것은 창작이 아니다. 그러나
+    +0.4872%를 「0% 올랐다」로 적는 것은 반올림이 아니라 다른 말이다. 정수 반올림을
+    무조건 허용한 탓에 이 문장이 그대로 통과했다(2026-08-30 주간본 회수 사유).
+    """
+    out = {_canon(x)}
+    for nd in (0, 1, 2):
+        r = round(x, nd)
+        if r == 0 and x != 0:
+            continue
+        out.add(_canon(r))
+    return out
 
 
 def _add(out, value):
@@ -99,15 +101,13 @@ def _add(out, value):
     # 산문은 반올림해 쓴다(일간 문체 규칙과 같다). 0.8478%를 「0.85%」로 적는 것은
     # 창작이 아니다 — 원값과 1·2자리 반올림을 함께 허용한다(2026-08-30 첫 발행에서 발견).
     for x in (f, abs(f)):
-        out.add(_canon(x))
-        for nd in (0, 1, 2):
-            out.add(_canon(round(x, nd)))
+        out |= _round_variants(x)
 
 
 def _html_numbers(html):
     # data_tokens 는 {토큰: 등장횟수} 딕트다 — 여기서는 키만 쓴다
     out = set()
-    for tok in data_tokens(_mask_dates(html)):
+    for tok in data_tokens(mask_dates(html)):
         for m in _NUM.findall(tok.replace(',', '')):
             out.add(_canon(m))
     return out
@@ -142,11 +142,14 @@ def _check_provenance(text, agg):
         for name, row in ((agg or {}).get(group) or {}).items():
             if not isinstance(row, dict) or row.get('pct') is None:
                 continue
-            own = set()
-            for val in [row['pct']] + [row.get(k) for k in ('start', 'end')]:
+            # 단위별로 갈라 둔다. 하나로 합치면 종가 7711.76 이 허용 집합에 있다는
+            # 이유로 「S&P 500은 7711.76% 올랐다」가 통과한다(2026-08-30 회수 사유).
+            own = {'%': set(), 'level': set()}
+            own['%'] |= _round_variants(abs(row['pct']))
+            for k in ('start', 'end'):
+                val = row.get(k)
                 if isinstance(val, (int, float)):
-                    a = abs(val)
-                    own |= {_canon(a)} | {_canon(round(a, nd)) for nd in (0, 1, 2)}
+                    own['level'] |= _round_variants(abs(val))
             for m in re.finditer(re.escape(name), text):
                 # 마침표는 소수점이기도 하다 — 뒤에 공백·끝이 올 때만 절 경계로 본다.
                 window = re.split(r'[,·。]|\.(?=\s|$)',
@@ -155,12 +158,15 @@ def _check_provenance(text, agg):
                 if not hit:
                     continue
                 raw = abs(float(hit.group(1).replace(',', '')))
+                unit = '%' if hit.group(2) in ('%', '%p') else 'level'
                 # 괄호가 없으면 & 가 먼저 묶여 검사가 통째로 무력해진다.
-                mine = {_canon(raw)} | {_canon(round(raw, nd)) for nd in (0, 1, 2)}
-                if mine & own:
+                mine = _round_variants(raw)
+                if mine & own[unit]:
                     continue
+                expect = row['pct'] if unit == '%' else row.get('end')
                 v.append(f'「{name}」 바로 뒤 수치가 그 항목의 값이 아니다: '
-                         f'{hit.group(0).strip()} — 집계의 값은 {row["pct"]}%다')
+                         f'{hit.group(0).strip()} — 집계의 값은 '
+                         + (f'{expect}%다' if unit == '%' else f'{expect}다'))
                 break
     return v
 

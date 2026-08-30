@@ -12,7 +12,7 @@
 import os
 import re
 
-from us.post_check import body_text, data_tokens
+from us.post_check import body_text, data_tokens, mask_dates
 
 _SECTION = re.compile(r'<section\b[^>]*>(.*?)</section>', re.S | re.I)
 _HEADING = re.compile(r'<h[1-6]\b[^>]*>(.*?)</h[1-6]>', re.S | re.I)
@@ -38,7 +38,12 @@ def post_sections(html, max_lead=220):
 
 
 def post_figures(html):
-    return sorted(data_tokens(html or ''))
+    """발행본에 실린 수치 — 날짜에서 뜯긴 조각은 뺀다.
+
+    가리지 않으면 「2026-08-17」에서 -17 이 허용 토큰이 되어 「포트폴리오는 -17%」
+    창작이 게이트를 그대로 지난다(2026-08-30 주간본 회수 사유 중 하나).
+    """
+    return sorted(data_tokens(mask_dates(html or '')))
 
 
 def collect(posts_dir, listing, start, end, span, key):

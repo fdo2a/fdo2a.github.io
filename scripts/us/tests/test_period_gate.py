@@ -148,3 +148,58 @@ def test_aggregate_that_ends_before_the_last_post_is_refused():
     """야후 일별이 하루 늦으면 집계가 금요일을 빠뜨린 채 complete=true 로 나온다."""
     agg = dict(AGG, end_date="2026-08-20")
     assert any('통째로 빠진다' in x for x in check(GOOD, agg, SC, RECAP, "weekly"))
+
+
+# ── 2026-08-30 회수분에서 실제로 통과했던 창작 셋 ────────────────────────────
+
+AGG_W35 = {
+    'span': 'weekly', 'key': '2026-W35', 'start_date': '2026-08-24',
+    'end_date': '2026-08-28', 'sessions': 5, 'complete': True, 'missing': [],
+    'indices': {'S&P 500': {'start': 7674.37, 'end': 7711.76, 'pct': 0.4872}},
+    'yields': {'10Y': {'start': 4.738, 'end': 4.72, 'chg_bp': -1.8}},
+}
+
+
+def _wrap(sentence):
+    return ('<html><body><p>2026-08-24부터 2026-08-28까지 5거래일을 정리한다. '
+            f'{sentence}</p></body></html>')
+
+
+def _recap(figures=()):
+    return {'key': '2026-W35', 'posts': [{'date': '2026-08-24', 'headline': '',
+                                          'figures': list(figures)}],
+            'missing': []}
+
+
+def _has(violations, needle):
+    return any(needle in x for x in violations)
+
+
+def test_a_rounding_may_not_erase_the_move():
+    # +0.4872% 를 「0% 올랐다」로 적는 것은 반올림이 아니라 다른 말이다
+    v = check(_wrap('S&P 500은 0% 올랐다.'), AGG_W35, None, _recap(), 'weekly')
+    assert _has(v, '0'), v
+
+
+def test_a_ordinary_rounding_still_passes():
+    v = check(_wrap('S&P 500은 0.49% 올랐다.'), AGG_W35, None, _recap(), 'weekly')
+    assert not _has(v, '창작 금지'), v
+    assert not _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_b_a_price_level_may_not_be_quoted_as_a_return():
+    # 7711.76 은 종가다. 허용 집합에 있다는 이유로 「% 올랐다」가 되면 안 된다
+    v = check(_wrap('S&P 500은 7711.76% 올랐다.'), AGG_W35, None, _recap(), 'weekly')
+    assert _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_b_the_level_itself_is_still_quotable():
+    v = check(_wrap('S&P 500은 7711.76포인트로 마감했다.'), AGG_W35, None, _recap(), 'weekly')
+    assert not _has(v, '그 항목의 값이 아니다'), v
+
+
+def test_c_a_number_torn_out_of_a_date_is_not_a_quotable_figure():
+    # 발행본에서 뜯긴 「-17」(2026-08-17)이 허용 토큰이 되면 -17% 창작이 통과한다
+    from us.recap_source import post_figures
+    figs = post_figures('<html><body><p>2026-08-17 발행본이다.</p></body></html>')
+    assert '-17' not in figs, figs

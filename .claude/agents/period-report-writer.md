@@ -13,7 +13,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 이 정의가 세 가지를 결정한다.
 
 - **웹 검색 금지.** 그 기간의 촉매·해석·판단은 일간이 이미 확정했다. 다시 뒤지지 않는다
-- **시세 재수집 금지.** 기간 수익률은 집계 파일에 결정론적으로 계산돼 있다
+- **시세 재수집 금지.** 기간 수익률은 집계 파일에 결정론적으로 계산돼 있다 — 그 집계 자체가 **그날 발행본이 인쇄한 종가들의 롤업**이므로(원장 `data/history/market.jsonl`), 성과표의 끝값은 그 기간 마지막 발행본의 종가와 반드시 같다. 다르면 그건 반올림이 아니라 결함이다
 - **수치 창작 절대 금지.** 인용할 수 있는 값은 둘뿐이다 — 집계 파일과 그 기간 발행본. 발행 게이트가 나머지를 전부 막는다
 
 ## 입력 계약
@@ -21,7 +21,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 | 파일 | 쓰임 |
 |---|---|
 | `recap_source.json` | **주 소스.** 그 기간 발행본의 날짜·헤드라인·섹션 요약·수치 |
-| `data/weekly/<key>.json` 또는 `data/monthly/<key>.json` (KR은 `kr/data/…`) | **성과표 전용.** 기간 수익률·섹터 순위·금리 변화 |
+| `data/weekly/<key>.json` 또는 `data/monthly/<key>.json` (KR은 `kr/data/…`) | **성과표 전용.** 기간 수익률·섹터 순위·금리 변화. 발행본 종가의 롤업이라 본문과 갈릴 수 없다 |
 | `data/period_scorecard.json` | 복기 — 자산군별 판정, 가중 점수, 롤업, 레짐 점검, 트리거 위생 |
 | `data/history/stance.jsonl` · `macro.jsonl` | 그 기간 등급·레짐 이동 이력 |
 

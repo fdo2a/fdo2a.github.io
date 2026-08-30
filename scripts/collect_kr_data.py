@@ -200,26 +200,21 @@ def main(outdir: str):
     _write(outdir, "kr_econ.json", econ)
 
     # 기간 집계 — 세션 upsert. 과거 확정 수급 행도 함께 메워 월간이 자가치유된다.
-    # US(collect_market_data.py)는 원천 계열을 매번 다시 받아 통째로 다시 계산하지만
-    # KR은 업종·거래대금에 과거 계열이 없어 그날 스냅샷을 날짜 키로 쌓는다.
+    # 양쪽 시장 모두 시세를 다시 받지 않는다. US 는 data/history/market.jsonl 을 굴리고,
+    # KR 은 업종·거래대금에 과거 계열이 없어 그날 스냅샷을 날짜 키로 쌓는다.
     try:
-        import yfinance as _yf
+        from kr.history import index_record, index_series
         from kr.period import finalize, session_from, upsert_session
+        from us.history import append_jsonl, read_jsonl
         from us.period import month_key, week_key
 
         sess = session_from(market, flows_out, industry, top_value)
 
-        closes = {}
-        for _name, _tk in (("KOSPI", "^KS11"), ("KOSDAQ", "^KQ11")):
-            try:
-                _df = _yf.download(_tk, period="3mo", progress=False, auto_adjust=True)
-                if hasattr(_df.columns, "nlevels") and _df.columns.nlevels > 1:
-                    _df.columns = _df.columns.get_level_values(0)
-                closes[_name] = [(str(i.date()), float(v))
-                                 for i, v in _df["Close"].dropna().items()]
-            except Exception as e:
-                print(f"kr index history {_name} failed: {e}", file=sys.stderr)
-                closes[_name] = []
+        # 지수 종가는 다시 받지 않는다 — 그날 발행본이 인쇄한 값을 원장에 쌓고 그것만 읽는다.
+        ledger = os.path.join(outdir, "history", "kr_market.jsonl")
+        if append_jsonl(ledger, index_record(market)):
+            print(f"history: appended {report_date} to kr_market.jsonl")
+        closes = index_series(read_jsonl(ledger))
 
         for span, keyer, sub in (("weekly", week_key, "weekly"),
                                  ("monthly", month_key, "monthly")):

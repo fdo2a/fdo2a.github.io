@@ -164,44 +164,6 @@ def collect_histories():
     return out, idx, as_of, ohlc
 
 
-def collect_dated_closes(period='3mo'):
-    """{group: {name: [(date, close), ...]}} — 기간 집계용. 3개월이면 주·월 모두 덮는다."""
-    import yfinance as yf
-    tickers = [t for _, pairs in GROUPS for _, t in pairs]
-
-    def dl():
-        df = yf.download(tickers, period=period, interval='1d', group_by='ticker',
-                         auto_adjust=True, progress=False, threads=False)
-        return df if df is not None and len(df) else None
-
-    df = retry(dl)
-    out = {}
-    for group, pairs in GROUPS:
-        out[group] = {}
-        for name, t in pairs:
-            try:
-                closes = df[t]['Close'].dropna()
-                out[group][name] = [(str(i.date()), float(v)) for i, v in closes.items()]
-            except Exception:
-                out[group][name] = []
-    return out
-
-
-def yield_histories():
-    """{tenor: [(date, level_pct), ...]} — FRED 일별. 기간 bp 변화는 이 계열로 잰다.
-
-    발행용 스팟(야후)과 달리 기간 변화는 만기별 기준일이 섞이면 안 되므로 FRED 로 통일한다.
-    """
-    out = {}
-    for tenor, sid in (('2Y', 'DGS2'), ('5Y', 'DGS5'), ('10Y', 'DGS10'), ('30Y', 'DGS30')):
-        try:
-            out[tenor] = [(d, v) for d, v in fred_series(sid) if v is not None]
-        except Exception as e:
-            print(f'yield history {tenor} failed: {e}', file=sys.stderr)
-            out[tenor] = []
-    return out
-
-
 def daily_headlines(repo_root):
     """posts.json 에서 (date, headline) 회수 — 그 주의 촉매는 일간이 이미 확정했다."""
     p = os.path.join(repo_root, 'posts.json')
@@ -568,26 +530,6 @@ def completeness(data, intraday):
     return missing
 
 
-def _seed_today(dated, data, report_date):
-    """이력에 오늘 세션이 없으면 방금 받은 종가로 채운다.
-
-    이력과 스냅샷은 같은 야후에서 오지만 반영 시점이 다르다. 둘이 어긋난 채 기간 집계를
-    돌리면 그 주의 마지막 거래일이 조용히 사라지고, 「빠졌다」고 알려 주지도 않는다
-    (2026-08-30 실측: report_date는 2026-08-28인데 ^GSPC 일별은 08-27에서 끊겼다).
-    """
-    for group in ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra'):
-        rows = (data or {}).get(group) or {}
-        series_group = dated.setdefault(group, {})
-        for name, row in rows.items():
-            last = (row or {}).get('last')
-            if last is None:
-                continue
-            series = series_group.setdefault(name, [])
-            if series and series[-1][0] >= report_date:
-                continue
-            series.append((report_date, float(last)))
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--outdir', default='data')
@@ -855,8 +797,11 @@ def main():
     # 승계 책 이력 — 오늘 커밋돼 있는 stance/macro 를 로그에 밀어 넣는다.
     # 어제까지의 판단이 대상이다 (오늘 것은 아직 writer 가 만들지 않았다).
     try:
-        from us.history import append_jsonl, macro_record, stance_record
+        from us.history import append_jsonl, macro_record, market_record, stance_record
         hdir = os.path.join(args.outdir, 'history')
+        # 시세 원장이 먼저다 — 기간 집계가 이 행을 읽는다.
+        if append_jsonl(os.path.join(hdir, 'market.jsonl'), market_record(data)):
+            print(f"history: appended {report_date} to market.jsonl")
         for name, fn, out in (('stance.json', stance_record, 'stance.jsonl'),
                               ('macro.json', macro_record, 'macro.jsonl')):
             src = os.path.join(args.outdir, name)
@@ -870,10 +815,11 @@ def main():
 
     # 기간 집계 — 기간 키로 나눠 쓰므로 주/달이 넘어가면 지난 파일이 곧 확정본이다.
     try:
-        from us.period import build as period_build, month_key, week_key
-        dated = collect_dated_closes()
-        yh = yield_histories()
-        _seed_today(dated, data, report_date)
+        from us.history import read_jsonl
+        from us.period import build as period_build, month_key, series_from, week_key
+        # 시세를 다시 받지 않는다 — 발행본이 인쇄한 스냅샷 원장만 굴린다.
+        dated, yh = series_from(read_jsonl(os.path.join(args.outdir, 'history',
+                                                        'market.jsonl')))
         # posts.json 은 레포 루트에 있다 — outdir 는 'data' 하위 상대/절대/중첩 어느 값도
         # 될 수 있으므로 outdir 기준 역산 대신 이 스크립트 파일 위치(scripts/ 의 부모)로
         # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.
