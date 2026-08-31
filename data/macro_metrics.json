@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-28 23:07 UTC",
-  "report_date": "2026-08-28",
+  "generated": "2026-08-31 23:09 UTC",
+  "report_date": "2026-08-31",
   "growth_score": -0.341,
   "inflation_score": -0.391,
   "growth_diffusion": 0.357,
@@ -354,7 +354,7 @@
       "actual": 55.2,
       "previous": 49.5,
       "ref_period": "2026-07-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "CPI YoY",
@@ -474,43 +474,11 @@
       "actual": 4.2,
       "previous": 4.6,
       "ref_period": "2026-07-01",
-      "is_new": true
+      "is_new": false
     }
   ],
-  "new_releases": [
-    "Michigan Consumer Sentiment",
-    "Michigan 1-Yr Inflation Exp"
-  ],
-  "headline_releases": [
-    {
-      "key": "michigan",
-      "label": "미시간대 소비자심리",
-      "tier": 2,
-      "agency": "U. Michigan",
-      "url": "http://www.sca.isr.umich.edu/",
-      "primary": "Michigan 1-Yr Inflation Exp",
-      "max_abs_z": 0.756,
-      "indicators": [
-        {
-          "name": "Michigan Consumer Sentiment",
-          "axis": "Consumption",
-          "actual": 55.2,
-          "previous": 49.5,
-          "ref_period": "2026-07-01",
-          "momentum_z": -0.547
-        },
-        {
-          "name": "Michigan 1-Yr Inflation Exp",
-          "axis": "Inflation",
-          "actual": 4.2,
-          "previous": 4.6,
-          "ref_period": "2026-07-01",
-          "momentum_z": 0.756
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-06-01",
