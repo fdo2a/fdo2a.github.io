@@ -8,7 +8,22 @@
 
 ---
 
-## STEP 0 — 데이터 확인 (직접 시세 fetch 금지)
+## STEP 0 — 이미 나갔으면 아무것도 하지 않는다 (멱등 가드)
+
+**이 루틴은 하루에 두 번 뜬다.** 서머타임 때문이다 — 20:35 UTC 는 여름(EDT)에
+미국 마감 35분 뒤지만 겨울(EST)엔 아직 장중이고, 21:35 UTC 는 그 반대다.
+어느 쪽이 «마감 직후»인지 루틴은 모르므로 둘 다 뜨고, **먼저 뜬 쪽이 발행하면
+나중 쪽은 아무것도 하지 않는다.**
+
+```
+python3 -c "import json;print(json.load(open('bond/data/bond_market.json'))['report_date'])"
+```
+
+그 날짜의 `bond/posts/<report_date>.html` 이 **이미 레포에 커밋돼 있으면 즉시 종료한다.**
+파일을 건드리지 말고, 커밋하지 말고, 알림도 보내지 말고, 「이미 발행됨」만 보고하고 끝낸다.
+장중에 뜬 회차는 전날 데이터를 보게 되는데 그건 이미 나간 글이므로 이 가드에 걸린다.
+
+## STEP 1 — 데이터 확인 (직접 시세 fetch 금지)
 
 레포를 클론하고 `bond/data/`를 읽는다.
 
@@ -21,7 +36,7 @@
 데이터가 없거나 하루 이상 낡았으면 `gh workflow run collect-bond-data.yml -f force=true`로
 수집을 먼저 돌리고, 그래도 안 되면 발행을 건너뛴다 — **없는 종가를 지어내지 않는다.**
 
-## STEP 1 — 리서치 (수집 에이전트)
+## STEP 2 — 리서치 (수집 에이전트)
 
 `bond-data-collector`가 웹에서 채워야 하는 것은 넷뿐이다. 나머지는 전부 데이터 파일에 있다.
 
@@ -34,7 +49,7 @@
 스펙은 `.claude/agents/bond-data-collector.md`. 조용한 날은 조용했다고 적는다 —
 안 움직인 축을 취재하면 본문이 패딩이 된다.
 
-## STEP 2 — 작성
+## STEP 3 — 작성
 
 `bond-report-writer`가 `.claude/agents/bond-report-writer.md`를 따라 쓴다.
 산출은 `bond/posts/<report_date>.html`.
@@ -43,12 +58,12 @@
 숫자는 데이터에서 온다. writer 는 그날의 사건·원인 서술을 빌더가 남긴 자리에 얹는다.
 **HTML 안에서 수치를 손으로 타이핑하지 않는다.**
 
-## STEP 2.5 — AI 티 제거
+## STEP 3.5 — AI 티 제거
 
 US·KR과 같은 관문을 지난다. 원본을 손대지 않고 사본에서 윤문한 뒤
 `scripts/humanize_prose.py finalize`가 전부 통과했을 때만 교체한다.
 
-## STEP 3 — 발행 게이트
+## STEP 4 — 발행 게이트
 
 ```
 python3 scripts/apply_readability.py bond/posts/<date>.html
@@ -73,14 +88,14 @@ python3 -m pytest scripts/bond scripts/common -q
 
 **위반은 그대로 writer 에게 돌려주고 다시 쓴다.** 게이트를 우회하지 않는다.
 
-## STEP 4 — 승계 책 갱신
+## STEP 5 — 승계 책 갱신
 
 writer 가 등급을 움직였으면 `bond_stance.json`을 새 등급·`since`·논거·트리거로 갱신하고
 `bond/data/history/bond_stance.jsonl`에 append 한다. **논거 문장에 수치를 손으로 적지
 않는다** — 원장이 갱신되면 그 숫자만 뒤처진다(2026-08-31 실측: 발행본 §6은 0.1 백분위,
 논거는 2.4 백분위였다). 값은 `bond_metrics.json`에서 포맷해 넣는다.
 
-## STEP 5 — 발행
+## STEP 6 — 발행
 
 1. `bond/posts.json`에 `{date, slug, title, headline}` 한 줄 추가
 2. `sitemap.xml`에 URL 추가
