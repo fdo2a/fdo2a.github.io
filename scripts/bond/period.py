@@ -98,6 +98,10 @@ def build(rows, start, end, etf_tickers=()):
     for k in CREDIT_KEYS:
         ch = _change(win, ('credit', k))
         if ch:
+            # 발행본은 크레딧을 bp 로 인쇄한다. 렌더 시점에 ×100 하면 그 값이 어느
+            # 집계 파일에도 없어서 게이트가 창작으로 잡는다(일간에서 겪은 것과 같다).
+            ch['start_bp'] = round(ch['start'] * 100, 1)
+            ch['end_bp'] = round(ch['end'] * 100, 1)
             credit[k] = ch
     fx = {}
     for k in FX_KEYS:

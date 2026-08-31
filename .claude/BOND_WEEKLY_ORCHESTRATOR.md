@@ -40,5 +40,16 @@ python3 scripts/build_bond_period.py --span weekly
 
 ## STEP 3 — 게이트·발행
 
-`scripts/check_style.py`와 `scripts/check_readability.py`를 돌리고,
-`bond/weekly.json`에 등록한 뒤 push.
+```
+python3 scripts/apply_readability.py    bond/weekly/<키>.html
+python3 scripts/check_bond_period.py --html bond/weekly/<키>.html
+python3 scripts/check_readability.py --html bond/weekly/<키>.html
+python3 scripts/check_style.py             bond/weekly/<키>.html
+```
+
+기간 게이트는 일간과 **다른 것**을 본다 — 인용 가능한 수치가 집계 파일과 그 기간
+발행본 둘뿐이고, 커버 기간·실제 세션 경계를 반드시 밝혀야 하며, 구간을 다 못 덮으면
+그 사실을 고지해야 하고, 표본이 모자란데 적중률을 인쇄하면 막힌다.
+그 기간 발행본을 하나라도 목록에서 빠뜨려도 막힌다.
+
+통과하면 `bond/weekly.json`에 등록하고 sitemap 갱신 후 push.

@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-31T06:01:23+0900",
+ "generated": "2026-08-31T15:07:08+0900",
  "report_date": "2026-08-27",
  "base_currency": "USD",
  "us_curve": {
@@ -220,6 +220,7 @@
    "tenor": "20Y"
   }
  },
+ "kr_curve": {},
  "misc": {
   "term_premium_10y": {
    "level": 0.8682,

@@ -195,6 +195,61 @@ def boe_gilts(date_from='01/Jan/2024'):
     return out
 
 
+# --- ECOS 한국은행 (국고채) --------------------------------------------------
+# KR 브리프가 쓰는 `kr/econ.py` 를 그대로 재사용한다. 다만 그쪽은 최신·직전 두 관측만
+# 돌려주므로, 원장 백필에 필요한 **긴 계열**은 여기서 따로 받는다.
+#
+# 보안: ECOS 는 인증키를 **URL 경로에** 넣는다. 그래서 이 함수는 URL 도 예외도 절대
+# 그대로 밖으로 내보내지 않고 `econ.scrub()` 를 통과시킨다. 키는 os.environ 에서만 읽는다.
+
+ECOS_KTB = {'3Y': '국고채(3년)', '10Y': '국고채(10년)'}
+ECOS_STAT = '817Y002'
+
+
+def ecos_series(item_name, stat_code=ECOS_STAT, cycle='D', years=3):
+    """(date, value) 쌍, 오래된 것 -> 최신. 키가 없거나 실패하면 빈 리스트.
+
+    국고채는 비-코어다 — 없으면 그 행만 빠지고 발행은 계속된다.
+    """
+    import os as _os
+    from datetime import date as _date, timedelta as _td
+
+    key = _os.environ.get('ECOS_API_KEY')
+    if not key:
+        return []
+    try:
+        from kr import econ
+    except ImportError:                                        # pragma: no cover
+        return []
+    try:
+        items = econ._get_json(econ._url(key, 'StatisticItemList', 'json', 'kr',
+                                         1, 1000, stat_code))
+        code = econ.resolve_item_code(items, item_name)
+        if not code:
+            print(f'  ecos {item_name}: 항목 이름 해석 실패')
+            return []
+        end = _date.today()
+        start = end - _td(days=365 * years)
+        payload = econ._get_json(econ._url(
+            key, 'StatisticSearch', 'json', 'kr', 1, 10000, stat_code, cycle,
+            start.strftime('%Y%m%d'), end.strftime('%Y%m%d'), code))
+        out = []
+        for r in econ._rows(payload, 'StatisticSearch'):
+            v = (r.get('DATA_VALUE') or '').strip()
+            if not v:
+                continue
+            try:
+                out.append((econ._norm_time(r.get('TIME')), float(v)))
+            except ValueError:
+                continue
+        out.sort(key=lambda x: x[0])
+        return out
+    except Exception as e:                                     # noqa: BLE001
+        # 예외 문자열에 URL 이 담겨 키가 샐 수 있다. 반드시 가려서 찍는다.
+        print(f'  ecos {item_name}: {econ.scrub(f"{type(e).__name__}: {e}")}')
+        return []
+
+
 # --- iShares 상품 스크리너 (ETF 특성) -----------------------------------------
 # 한 번의 호출로 524개 상품의 듀레이션·OAS·YTW·NAV·AUM 이 온다. 발행사를 하나로
 # 묶는 이유는 방법론 때문이다 — 발행사가 다르면 듀레이션 산출 기준이 달라

@@ -54,7 +54,8 @@ GROUPS = {
     'us': ('us_curve', 'FRED'), 'real': ('real_yields', 'FRED'),
     'bei': ('breakeven', 'FRED'), 'de': ('de_curve', 'Bundesbank'),
     'ea': ('ea_curve', 'ECB'), 'jp': ('jp_curve', 'MOF Japan'),
-    'gb': ('gb_curve', 'BOE'), 'misc': ('misc', 'FRED'),
+    'gb': ('gb_curve', 'BOE'), 'kr': ('kr_curve', 'ECOS 한국은행'),
+    'misc': ('misc', 'FRED'),
 }
 
 
@@ -88,7 +89,7 @@ def rows_at(hist, cutoff):
 
 def collect_rates():
     hist = {'us': {}, 'real': {}, 'bei': {}, 'de': {}, 'ea': {}, 'jp': {},
-            'gb': {}, 'misc': {}}
+            'gb': {}, 'kr': {}, 'misc': {}}
 
     print('· FRED 미국 커브·실질·기대인플레')
     for tenor, sid in src.FRED_US_CURVE.items():
@@ -127,12 +128,20 @@ def collect_rates():
         if s:
             hist['jp'][tenor] = s
 
-    print('· BOE 길트')
-    gilts = retry(src.boe_gilts, label='BOE') or []
+    print('· BOE 길트 (T-1 게시)')
+    # BOE IADB 는 하루 늦게 게시한다(FRED 크레딧과 같다). 「들쭉날쭉」이 아니라
+    # 구조적 시차이므로 stale 로 나가는 것이 정상이고, 실패는 재시도로 흡수한다.
+    gilts = retry(src.boe_gilts, tries=4, wait=3, label='BOE') or []
     for tenor in ('5Y', '10Y', '20Y'):
         s = [(dd, vv[tenor]) for dd, vv in gilts if tenor in vv]
         if s:
             hist['gb'][tenor] = s
+
+    print('· ECOS 국고채')
+    for tenor, item in src.ECOS_KTB.items():
+        s = src.ecos_series(item)
+        if s:
+            hist['kr'][tenor] = s
     return hist
 
 

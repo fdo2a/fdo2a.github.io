@@ -80,8 +80,8 @@ def build(span, asof, datadir, outdir, postsdir):
         f'<td class="sub">{v["sessions"]}</td></tr>'
         for k, v in p['rates'].items()]
     credit_rows = [
-        f'<tr><td>{CREDIT_KO.get(k, k)}</td><td>{n(v["start"] * 100, 0)}bp</td>'
-        f'<td>{n(v["end"] * 100, 0)}bp</td>'
+        f'<tr><td>{CREDIT_KO.get(k, k)}</td><td>{n(v["start_bp"], 1)}bp</td>'
+        f'<td>{n(v["end_bp"], 1)}bp</td>'
         f'<td{cls(v.get("bp"))}>{"" if v.get("bp") is None else f"{v['bp']:+.1f}bp"}</td></tr>'
         for k, v in p['credit'].items()]
     fx_rows = [

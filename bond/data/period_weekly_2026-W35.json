@@ -115,7 +115,9 @@
    "sessions": 4,
    "bp": -2.0,
    "min": 0.79,
-   "max": 0.81
+   "max": 0.81,
+   "start_bp": 81.0,
+   "end_bp": 79.0
   },
   "us_hy": {
    "start": 2.69,
@@ -125,7 +127,9 @@
    "sessions": 4,
    "bp": -6.0,
    "min": 2.63,
-   "max": 2.7
+   "max": 2.7,
+   "start_bp": 269.0,
+   "end_bp": 263.0
   },
   "us_hy_ccc": {
    "start": 10.36,
@@ -135,7 +139,9 @@
    "sessions": 4,
    "bp": -5.0,
    "min": 10.31,
-   "max": 10.39
+   "max": 10.39,
+   "start_bp": 1036.0,
+   "end_bp": 1031.0
   },
   "euro_hy": {
    "start": 2.54,
@@ -145,7 +151,9 @@
    "sessions": 4,
    "bp": 2.0,
    "min": 2.54,
-   "max": 2.58
+   "max": 2.58,
+   "start_bp": 254.0,
+   "end_bp": 256.0
   },
   "em_sov": {
    "start": 1.13,
@@ -155,7 +163,9 @@
    "sessions": 4,
    "bp": -1.0,
    "min": 1.12,
-   "max": 1.15
+   "max": 1.15,
+   "start_bp": 113.0,
+   "end_bp": 112.0
   },
   "em_corp": {
    "start": 1.4,
@@ -165,7 +175,9 @@
    "sessions": 4,
    "bp": -1.0,
    "min": 1.39,
-   "max": 1.42
+   "max": 1.42,
+   "start_bp": 140.0,
+   "end_bp": 139.0
   }
  },
  "fx": {

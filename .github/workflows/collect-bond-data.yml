@@ -40,6 +40,10 @@ jobs:
         run: pip install --quiet yfinance certifi pandas matplotlib
 
       - name: Collect
+        # ECOS 는 인증키를 URL 경로에 넣는다. env 로만 주입하고 로그에는 절대 찍지 않는다
+        # (scripts/kr/econ.py 의 scrub() 이 예외 문자열까지 가린다).
+        env:
+          ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
         run: |
           ARGS=""
           if [ -n "${{ inputs.report_date }}" ]; then
