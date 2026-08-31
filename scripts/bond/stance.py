@@ -68,6 +68,48 @@ def validate_transition(key, old_grade, new_grade, axis_eval):
     return _D.validate_transition(key, old_grade, new_grade, axis_eval)
 
 
+def thesis_for(key, m):
+    """논거를 **저장하지 않고 매번 현재 데이터에서 만든다.**
+
+    저장된 문자열로 두면 데이터가 갱신될 때마다 그 문장만 뒤처진다. 실제로 두 번 겪었다 —
+    2026-08-31 에는 발행본 §6(0.1 백분위)과 §9 논거(2.4 백분위)가 어긋났고,
+    2026-09-01 에는 5년-30년 금리차가 76.1 대 75.4 로 갈렸다. 승계되는 것은
+    **등급과 트리거**이지 문장이 아니다.
+    """
+    us = (m.get('curves') or {}).get('us') or {}
+    ust = us.get('tenors') or {}
+    st10 = (m.get('standing') or {}).get('us10y') or {}
+    vol = m.get('vol') or {}
+    vst = vol.get('standing') or {}
+    hy = (m.get('credit') or {}).get('us_hy') or {}
+    ccc = (m.get('credit') or {}).get('us_hy_ccc') or {}
+
+    def num(v, d=2):
+        return '—' if v is None else f'{v:,.{d}f}'
+
+    if key == 'duration':
+        return (f'10년물 {num((ust.get("10Y") or {}).get("level"))}%는 '
+                f'{st10.get("window", "")} 표본에서 {num(st10.get("percentile"), 1)} 백분위다. '
+                f'금리 변동성(MOVE {num(vol.get("move"))}, '
+                f'{num(vst.get("percentile"), 1)} 백분위)이 낮아 방향을 걸 촉매가 약하다.')
+    if key == 'curve':
+        # 기준일이 어긋난 스프레드를 논거에 쓸 때는 그 사실을 숨기지 않는다.
+        # 발행본 본문은 밝히는데 스탠스 표만 안 밝히면 같은 값이 두 얼굴을 갖는다.
+        mark = '' if us.get('spread_2s10s_aligned') else '*'
+        note = ('' if us.get('spread_2s10s_aligned')
+                else ' (*는 만기별 기준일이 달라 근거를 본문에 병기)')
+        return (f'2년-10년 {num(us.get("spread_2s10s_bp"), 1)}bp{mark}, '
+                f'5년-30년 {num(us.get("spread_5s30s_bp"), 1)}bp. '
+                f'어느 쪽으로도 치우치지 않은 구간이다.{note}')
+    if key == 'credit':
+        return (f'하이일드 스프레드 {num(hy.get("bp"), 0)}bp는 '
+                f'{num((hy.get("standing") or {}).get("percentile"), 1)} 백분위, '
+                f'CCC 이하는 {num(ccc.get("bp"), 0)}bp로 '
+                f'{num((ccc.get("standing") or {}).get("percentile"), 1)} 백분위다. '
+                f'지수는 좁고 바닥층은 넓다.')
+    return ''
+
+
 def bootstrap(report_date):
     """첫 회차 — 세 축 모두 중립에서 시작한다.
 

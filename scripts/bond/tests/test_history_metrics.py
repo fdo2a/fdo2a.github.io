@@ -12,10 +12,15 @@ def _market():
         'us_curve': {'2Y': {'level': 4.20, 'date': '2026-08-27', 'source': 'FRED'},
                      '10Y': {'level': 4.67, 'date': '2026-08-27', 'source': 'FRED'},
                      '30Y': {'level': 5.19, 'date': '2026-08-27', 'source': 'FRED'}},
+        # 분해는 세 계열이 **같은 두 날짜** 사이에서 빠져야 항등식이 닫힌다
+        'us_curve_fred': {'10Y': {'level': 4.67, 'date': '2026-08-27',
+                                  'prev_level': 4.66, 'prev_date': '2026-08-26'}},
         'de_curve': {'10Y': {'level': 3.18, 'date': '2026-08-27',
                              'source': 'Bundesbank'}},
-        'real_yields': {'10Y': {'level': 2.34, 'date': '2026-08-27'}},
-        'breakeven': {'10Y': {'level': 2.33, 'date': '2026-08-27'}},
+        'real_yields': {'10Y': {'level': 2.34, 'date': '2026-08-27',
+                                'prev_level': 2.34, 'prev_date': '2026-08-26'}},
+        'breakeven': {'10Y': {'level': 2.33, 'date': '2026-08-27',
+                              'prev_level': 2.32, 'prev_date': '2026-08-26'}},
         'credit': {'us_hy': {'value': 2.63, 'date': '2026-08-27'}},
         'fx': {'DXY': {'level': 99.16, 'date': '2026-08-27'}},
         'vol': {'move': 69.86},
@@ -65,8 +70,21 @@ class TestCompute:
         mk = _market()
         m = compute(mk, ROWS)
         assert m['decomposition']['10Y']['driver_ko'] == '기대인플레'
+        assert m['decomposition']['10Y']['residual_bp'] == 0.0
         mk['breakeven']['10Y']['date'] = '2026-08-26'
         assert compute(mk, ROWS)['decomposition'] == {}
+
+    def test_decomposition_needs_a_common_previous_date(self):
+        mk = _market()
+        mk['breakeven']['10Y']['prev_date'] = '2026-08-25'
+        assert compute(mk, ROWS)['decomposition'] == {}
+
+    def test_source_change_suppresses_daily_change(self):
+        mk = _market()
+        mk['us_curve']['10Y']['source'] = 'Yahoo'
+        rows = [dict(ROWS[0], dates={'us_source': {'10Y': 'FRED'}})]
+        row = compute(mk, rows)['curves']['us']['tenors']['10Y']
+        assert row['source_changed'] is True and row['bp'] is None
 
     def test_stale_row_reports_no_daily_change(self):
         mk = _market()

@@ -10,6 +10,7 @@ writer 는 읽어주기만 한다.
 
 from . import credit as credit_mod
 from . import curve as curve_mod
+from . import exposure as exp_mod
 from . import etf as etf_mod
 
 
@@ -32,6 +33,26 @@ def _pct(now, before):
     return round((now / before - 1) * 100, 3)
 
 
+def _last_before(rows, path, cutoff):
+    """cutoff 이전에서 **값이 실제로 있는** 가장 최근 관측 (date, value).
+
+    바로 전날 행에 값이 비는 날이 있다(야후가 특정 종목의 봉을 건너뛴다). 그때
+    「변화 없음」이 아니라 「비교 불가」로 처리하면 문장이 깨지고, 0 으로 채우면 거짓말이다.
+    값이 있는 데까지 거슬러 올라가 비교하고 **무엇과 맞댄 값인지 날짜를 남긴다.**
+    """
+    best = None
+    for r in rows:
+        d = r.get('report_date') or ''
+        if d >= cutoff:
+            continue
+        node = r
+        for k in path:
+            node = (node or {}).get(k) if isinstance(node, dict) else None
+        if node is not None:
+            best = (d, node)
+    return best or (None, None)
+
+
 def _series(rows, path):
     """원장에서 한 계열을 뽑는다. path 는 ('us','10Y') 같은 키 경로."""
     out = []
@@ -49,7 +70,7 @@ def _ma(series, n):
     return sum(vals) / len(vals) if len(vals) >= n else None
 
 
-def curve_block(market, prev):
+def curve_block(market, prev, prev_dates=None):
     """국가별 커브 — 수준·1일 변화·형태·선도금리."""
     out = {}
     for country, node_key in (('us', 'us_curve'), ('de', 'de_curve'),
@@ -64,7 +85,13 @@ def curve_block(market, prev):
             if not isinstance(row, dict):
                 continue
             lvl = row.get('level')
-            stale = row.get('date') != market.get('report_date')
+            # 출처가 바뀐 만기는 «어제 대비»가 성립하지 않는다. 야후 스팟과 FRED 는
+            # 산출 기준이 달라, 어제 FRED 값과 오늘 야후 값을 빼면 그 차이의 일부는
+            # 시장이 아니라 소스 교체가 만든 것이다.
+            prev_src = ((prev_dates or {}).get('us_source') or {}).get(tenor) \
+                if country == 'us' else None
+            src_changed = bool(prev_src) and prev_src != row.get('source')
+            stale = row.get('date') != market.get('report_date') or src_changed
             tenors[tenor] = {
                 'level': lvl,
                 # 기준일보다 오래된 관측이면 «어제 대비»가 성립하지 않는다. 0.0bp 로
@@ -72,31 +99,65 @@ def curve_block(market, prev):
                 'bp': None if stale else _bp(lvl, prev_node.get(tenor)),
                 'date': row.get('date'),
                 'stale': stale,
+                'source_changed': src_changed,
                 'source': row.get('source'),
             }
         if not tenors:
             continue
-        # 커브 안에서도 만기마다 관측 날짜가 다를 수 있다. 날짜가 갈리는 다리로
-        # 기울기나 선도금리를 계산하면 커브가 아니라 이틀치를 섞은 그림이 된다.
+        # 만기마다 관측 날짜가 다르다. 미국 커브는 5Y·10Y·30Y 가 야후 스팟(T-0)이고
+        # 나머지는 FRED(T-1 이상)라 **한 날짜로 정렬되는 일이 없다.** 그래서
+        # 「커브 전체가 정렬돼야 계산한다」는 규칙은 미국 커브를 통째로 죽인다.
+        #
+        # 대신 레포 규칙(2026-07-28)을 따른다 — **각 파생값을 그것이 쓰는 다리들의
+        # 날짜로 판정하고, 어긋나면 근거를 병기한다.** 발행값은 그대로 내되
+        # 「무엇과 무엇을 맞댄 값인가」를 숨기지 않는다.
         dates = {v['date'] for v in tenors.values() if v.get('date')}
-        aligned = len(dates) == 1
-        curve_date = next(iter(dates)) if aligned else None
+        latest = max(dates) if dates else None
 
-        def leg(t):
-            return tenors[t]['level'] if (aligned and t in tenors) else None
+        def pair(a, b):
+            ra, rb = tenors.get(a), tenors.get(b)
+            if not ra or not rb:
+                return None, None, False
+            bp = curve_mod.spread_bp(ra['level'], rb['level'])
+            same = ra.get('date') == rb.get('date')
+            basis = (f'{a} {ra.get("date")}({ra.get("source")}) · '
+                     f'{b} {rb.get("date")}({rb.get("source")})')
+            return bp, basis, same
 
-        years = ({_years(t): v['level'] for t, v in tenors.items() if _years(t)}
-                 if aligned else {})
-        short = tenors.get('2Y', {}).get('bp')
+        s2s10, b2s10, a2s10 = pair('2Y', '10Y')
+        s5s30, b5s30, a5s30 = pair('5Y', '30Y')
+
+        # 같은 날짜 다리끼리만 모아 선도금리를 만든다 — 이틀치를 섞은 커브에서
+        # 뽑은 선도금리는 아무 뜻이 없다.
+        same_day = {_years(t): v['level'] for t, v in tenors.items()
+                    if _years(t) and v.get('date') == latest}
+        # 커브 형태의 짧은 다리는 2년물이 원칙이다. 2년물이 낡은 날은 **2년 이상의
+        # 가장 짧은 «오늘» 다리**로 대신한다 — 3개월물로 내려가면 안 된다. 단기 T-bill 은
+        # 자금 사정·발행 물량에 흔들려 듀레이션 커브의 앞단을 대표하지 못하고,
+        # 실제로 그렇게 잡았더니 10년물이 +9bp 오른 날을 「불 스티프닝」이라 불렀다.
+        short_tenor = '2Y' if (tenors.get('2Y') or {}).get('bp') is not None else None
+        if short_tenor is None:
+            fresh = sorted((y, t) for t, y in ((t, _years(t)) for t in tenors)
+                           if y and 2 <= y < 10
+                           and (tenors[t] or {}).get('bp') is not None)
+            short_tenor = fresh[0][1] if fresh else None
+        short = (tenors.get(short_tenor) or {}).get('bp') if short_tenor else None
         long = tenors.get('10Y', {}).get('bp')
         out[country] = {
             'tenors': tenors,
-            'curve_date': curve_date,
-            'aligned': aligned,
+            'curve_date': latest,
+            'aligned': len(dates) == 1,
             'shape': curve_mod.shape(short, long),
-            'spread_2s10s_bp': curve_mod.spread_bp(leg('2Y'), leg('10Y')),
-            'spread_5s30s_bp': curve_mod.spread_bp(leg('5Y'), leg('30Y')),
-            'forwards': curve_mod.forwards(years),
+            'shape_basis': (None if not short_tenor
+                            else f'{short_tenor} 대 10Y'),
+            'spread_2s10s_bp': s2s10,
+            'spread_2s10s_basis': b2s10,
+            'spread_2s10s_aligned': a2s10,
+            'spread_5s30s_bp': s5s30,
+            'spread_5s30s_basis': b5s30,
+            'spread_5s30s_aligned': a5s30,
+            'forwards': curve_mod.forwards(same_day),
+            'forwards_date': latest,
         }
     return out
 
@@ -118,23 +179,33 @@ def rate_decomposition(market, prev):
     """
     out = {}
     for tenor in ('5Y', '10Y', '30Y'):
-        nom = (market.get('us_curve') or {}).get(tenor) or {}
+        # 명목은 **FRED 계열**을 쓴다. 발행용 명목금리는 야후 스팟(T-0)이지만
+        # 실질·기대인플레는 FRED 에만 있고 T-1 이라, 야후 명목과는 날짜가 영원히
+        # 안 맞는다. 항등식이 닫히려면 세 다리가 같은 소스·같은 날이어야 한다.
+        nom = ((market.get('us_curve_fred') or {}).get(tenor)
+               or (market.get('us_curve') or {}).get(tenor) or {})
         real = (market.get('real_yields') or {}).get(tenor) or {}
         bei = (market.get('breakeven') or {}).get(tenor) or {}
         dates = {nom.get('date'), real.get('date'), bei.get('date')}
         if None in dates or len(dates) != 1:
             continue
-        p = prev or {}
-        n_bp = _bp(nom.get('level'), (p.get('us') or {}).get(tenor))
-        r_bp = _bp(real.get('level'), (p.get('real') or {}).get(tenor))
-        b_bp = _bp(bei.get('level'), (p.get('bei') or {}).get(tenor))
+        # 변화량도 **같은 두 날짜** 사이에서 뺀다. 각 계열의 직전 관측에서 따로 빼면
+        # 항등식이 안 닫힌다 — 세 계열의 직전 관측일이 서로 다르기 때문이다.
+        prev_dates = {nom.get('prev_date'), real.get('prev_date'), bei.get('prev_date')}
+        if None in prev_dates or len(prev_dates) != 1:
+            continue
+        n_bp = _bp(nom.get('level'), nom.get('prev_level'))
+        r_bp = _bp(real.get('level'), real.get('prev_level'))
+        b_bp = _bp(bei.get('level'), bei.get('prev_level'))
         if None in (n_bp, r_bp, b_bp):
             continue
         driver = ('무변화' if abs(n_bp) < 1 else
                   '실질금리' if abs(r_bp) > abs(b_bp) * 1.5 else
                   '기대인플레' if abs(b_bp) > abs(r_bp) * 1.5 else '동반')
-        out[tenor] = {'date': nom.get('date'), 'nominal_bp': n_bp,
-                      'real_bp': r_bp, 'breakeven_bp': b_bp, 'driver_ko': driver,
+        out[tenor] = {'date': nom.get('date'), 'prev_date': nom.get('prev_date'),
+                      'nominal_bp': n_bp, 'real_bp': r_bp, 'breakeven_bp': b_bp,
+                      'residual_bp': round(n_bp - r_bp - b_bp, 1),
+                      'driver_ko': driver,
                       'real_level': real.get('level'), 'bei_level': bei.get('level')}
     return out
 
@@ -225,15 +296,17 @@ def compute(market, rows, econ=None):
     prev = previous(rows, report_date) if report_date else None
     prev_date = prev.get('report_date') if prev else None
     prev_dates = (prev or {}).get('dates') or {}
-
-    curves = curve_block(market, prev)
+    curves = curve_block(market, prev, prev_dates)
     etfs = etf_block(market, prev, prev_date)
     fx = {}
     for k, row in (market.get('fx') or {}).items():
         if not isinstance(row, dict):
             continue
-        fx[k] = {**row, 'change_pct': _pct(row.get('level'),
-                                           ((prev or {}).get('fx') or {}).get(k))}
+        base_date, base = _last_before(rows, ('fx', k), report_date)
+        fx[k] = {**row,
+                 'change_pct': _pct(row.get('level'), base),
+                 'vs_date': base_date,
+                 'vs_prev_session': base_date == prev_date}
 
     move = (market.get('vol') or {}).get('move')
     us10 = _lvl(market.get('us_curve'), '10Y')
@@ -253,7 +326,10 @@ def compute(market, rows, econ=None):
         'etf': etfs,
         'benchmark': etf_mod.attribution(etfs),
         'vol': {'move': move,
-                'move_chg': (None if None in (move, (prev or {}).get('move'))
+                'date': (market.get('vol') or {}).get('date'),
+                'stale': bool((market.get('vol') or {}).get('stale')),
+                'move_chg': (None if (market.get('vol') or {}).get('stale')
+                             or None in (move, (prev or {}).get('move'))
                              else round(move - prev['move'], 2)),
                 'standing': credit_mod.standing(move_series, move)},
         # 「지금 어디에 서 있나」 — 백분위를 한 번도 말하지 않는 발행본이 되지 않게
@@ -265,6 +341,23 @@ def compute(market, rows, econ=None):
     }
     out['teaching'] = teaching_block(out)
     out['econ'] = econ_block(econ)
+
+    # 무엇을 얼마나 볼지는 «선언»이 아니라 벤치마크 노출에서 «역산»한다
+    # (2026-09-01 사용자 지시). 벤치마크가 바뀌면 모니터링 비중도 따라 바뀐다.
+    out['exposure'] = exp_mod.monitor_plan(
+        [(t, w) for t, w, _ in etf_mod.BENCHMARK])
+    out['segments'] = {t: exp_mod.SEGMENT_KO[exp_mod.segment_of(t)]
+                       for t in (market.get('etf') or {})}
+    out['etf_factors'] = exp_mod.per_etf(list(market.get('etf') or {}))
+
+    # 해외 금리를 매일 보는 유일한 정당한 이유 — 동조인가 미국 고유인가.
+    us10_bp = ((curves.get('us') or {}).get('tenors') or {}).get('10Y', {}).get('bp')
+    out['divergence'] = {}
+    for key, label in (('de', '독일'), ('jp', '일본'), ('gb', '영국')):
+        f = ((curves.get(key) or {}).get('tenors') or {}).get('10Y', {}).get('bp')
+        d = exp_mod.divergence(us10_bp, f, label)
+        if d:
+            out['divergence'][key] = d
 
     # 국가 간 금리차도 두 나라의 관측 날짜가 같을 때만 뜻이 있다. 독일이 T-0,
     # 영국이 T-1 로 오는 날이 실제로 있어서(2026-08-27 실측) 날짜를 안 보면
@@ -319,7 +412,9 @@ def trigger_metrics(m, us10_series, rows):
         'us10y_5d_bp': chg(('us', '10Y'), 5),
         'us2y_1d_bp': (tn.get('2Y') or {}).get('bp'),
         'spread_2s10s_bp': us.get('spread_2s10s_bp'),
+        'spread_2s10s_aligned': 1 if us.get('spread_2s10s_aligned') else 0,
         'spread_5s30s_bp': us.get('spread_5s30s_bp'),
+        'spread_5s30s_aligned': 1 if us.get('spread_5s30s_aligned') else 0,
         'move_level': (m['vol'] or {}).get('move'),
         'move_chg': (m['vol'] or {}).get('move_chg'),
         'hy_oas_bp': hy.get('bp'),
@@ -380,7 +475,9 @@ def diff_summary(m):
         add('credit', key, row.get('chg_bp'), 'bp',
             {'level_bp': row.get('bp'), 'date': row.get('date')})
     for key, row in (m.get('fx') or {}).items():
-        add('fx', key, row.get('change_pct'), '%', {'level': row.get('level')})
+        add('fx', key, row.get('change_pct'), '%',
+            {'level': row.get('level'), 'vs_date': row.get('vs_date'),
+             'vs_prev_session': row.get('vs_prev_session')})
     for t, row in (m.get('etf') or {}).items():
         add('etf', t, row.get('change_pct'), '%', {'close': row.get('close')})
     add('vol', 'MOVE', (m.get('vol') or {}).get('move_chg'), 'pt',

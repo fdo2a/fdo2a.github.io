@@ -51,7 +51,9 @@ def _row(pairs, name, source):
 
 # 원장 그룹 -> (bond_market.json 노드 이름, 출처 표기)
 GROUPS = {
-    'us': ('us_curve', 'FRED'), 'real': ('real_yields', 'FRED'),
+    'us': ('us_curve', 'FRED'), 'us_spot': ('us_curve', 'Yahoo'),
+    'us_fred': ('us_curve_fred', 'FRED'),
+    'real': ('real_yields', 'FRED'),
     'bei': ('breakeven', 'FRED'), 'de': ('de_curve', 'Bundesbank'),
     'ea': ('ea_curve', 'ECB'), 'jp': ('jp_curve', 'MOF Japan'),
     'gb': ('gb_curve', 'BOE'), 'kr': ('kr_curve', 'ECOS 한국은행'),
@@ -70,7 +72,7 @@ def rows_at(hist, cutoff):
     out = {}
     for group, series_by_tenor in hist.items():
         node_key, source = GROUPS.get(group, (group, ''))
-        node = {}
+        node = out.setdefault(node_key, {})
         for tenor, pairs in series_by_tenor.items():
             # 소스가 오름차순으로 준다고 믿지 않는다. 내림차순이 한 번 섞이면
             # 첫 행에서 break 해 그 축이 통째로 비어 버린다.
@@ -81,21 +83,63 @@ def rows_at(hist, cutoff):
                 else:
                     break
             if pick:
+                # 같은 만기를 두 소스가 주면 **더 최신 관측이 이긴다.** 야후 스팟이
+                # FRED 보다 하루 이상 앞서므로 실무상 야후가 이긴다.
+                cur = node.get(tenor)
+                if cur and cur['date'] >= pick[0]:
+                    continue
                 node[tenor] = {'level': pick[1], 'date': pick[0],
                                'source': source, 'tenor': tenor}
-        out[node_key] = node
     return out
 
 
+def align_decomposition(rates, hist, cutoff):
+    """명목·실질·기대인플레를 **만기별 공통 날짜**로 다시 맞춘다.
+
+    FRED 가 DGS·DFII·T10YIE 를 서로 다른 시차로 게시해서(2026-09-01 실측: 명목·실질은
+    08-27, 기대인플레는 08-28), 각 계열의 마지막 값을 그냥 쓰면 항등식이 안 닫힌다.
+    US 브리프가 2026-08-18 에 겪은 것과 같은 문제이고, 답도 같다 —
+    **세 계열이 모두 값을 가진 가장 최근 날짜**로 내린다. 공통 날짜가 없으면 비운다.
+    """
+    for tenor in ('5Y', '10Y', '30Y'):
+        legs = {'us_curve_fred': hist['us_fred'].get(tenor),
+                'real_yields': hist['real'].get(tenor),
+                'breakeven': hist['bei'].get(tenor)}
+        if not all(legs.values()):
+            for node in ('us_curve_fred', 'real_yields', 'breakeven'):
+                (rates.get(node) or {}).pop(tenor, None)
+            continue
+        maps = {k: {d: v for d, v in s if d <= cutoff} for k, s in legs.items()}
+        common = set.intersection(*(set(m) for m in maps.values()))
+        if not common:
+            for node in ('us_curve_fred', 'real_yields', 'breakeven'):
+                (rates.get(node) or {}).pop(tenor, None)
+            continue
+        # **공통 날짜를 둘** 뽑는다. 하나만 뽑으면 수준은 정렬되지만 변화량은 각 계열의
+        # 직전 관측에서 따로 빼게 되고, 그러면 명목 +0.0 = 실질 +0.0 + 기대 +2.0 처럼
+        # 항등식이 안 닫힌다(2026-09-01 codex 검토에서 실증).
+        ordered = sorted(common, reverse=True)
+        d = ordered[0]
+        d_prev = ordered[1] if len(ordered) > 1 else None
+        for node, mm in maps.items():
+            row = {'level': mm[d], 'date': d, 'source': 'FRED', 'tenor': tenor}
+            if d_prev is not None:
+                row['prev_level'] = mm[d_prev]
+                row['prev_date'] = d_prev
+            rates.setdefault(node, {})[tenor] = row
+
+
 def collect_rates():
-    hist = {'us': {}, 'real': {}, 'bei': {}, 'de': {}, 'ea': {}, 'jp': {},
-            'gb': {}, 'kr': {}, 'misc': {}}
+    hist = {'us': {}, 'us_spot': {}, 'us_fred': {}, 'real': {}, 'bei': {},
+            'de': {}, 'ea': {}, 'jp': {}, 'gb': {}, 'kr': {}, 'misc': {}}
 
     print('· FRED 미국 커브·실질·기대인플레')
     for tenor, sid in src.FRED_US_CURVE.items():
         s = retry(lambda sid=sid: src.fred_series(sid), label=sid)
         if s:
             hist['us'][tenor] = s
+            # 야후 스팟이 발행값을 덮어쓰므로, 분해용 FRED 원본을 따로 남긴다
+            hist['us_fred'][tenor] = s
     for tenor, sid in src.FRED_REAL.items():
         s = retry(lambda sid=sid: src.fred_series(sid), label=sid)
         if s:
@@ -108,6 +152,11 @@ def collect_rates():
         s = retry(lambda sid=sid: src.fred_series(sid), label=sid)
         if s:
             hist['misc'][name] = s
+
+    print('· 야후 스팟 국채지수 (발행용 확정값)')
+    spot = retry(src.yahoo_yield_series, label='Yahoo yields') or {}
+    for tenor, series in spot.items():
+        hist['us_spot'][tenor] = series
 
     print('· Bundesbank 독일 커브')
     for tenor, key in src.BBK_DE.items():
@@ -186,10 +235,25 @@ def build(outdir, backfill_days, forced_date=None):
     report_date = forced_date or session
     if report_date and session and report_date > session:
         print(f'  ! 지정한 {report_date} 는 마지막 세션 {session} 보다 뒤다')
+
+    # **기준일은 뒤로 가지 않는다.** 야후가 갓 끝난 세션의 종가를 줬다 뺏었다 하는 일이
+    # 실제로 있다(2026-08-31·09-01 실측: 같은 종목의 같은 날 봉이 값 있음 -> null 로 뒤집혔다).
+    # 그때 더 낡은 스냅샷으로 덮어쓰면 이미 만든 발행용 데이터가 퇴행한다.
+    prev_path = os.path.join(outdir, 'bond_market.json')
+    if os.path.exists(prev_path) and not forced_date:
+        try:
+            prior = json.load(open(prev_path)).get('report_date')
+        except Exception:                                  # noqa: BLE001
+            prior = None
+        if prior and report_date and report_date < prior:
+            print(f'  ! 소스가 퇴행했다 — 계산된 기준일 {report_date} < 기존 {prior}. '
+                  f'덮어쓰지 않고 종료한다.')
+            return None, None
     if report_date:
         px = px[px.index <= report_date]
 
     rates = rows_at(rate_hist, report_date)
+    align_decomposition(rates, rate_hist, report_date)
     credit = {}
     for name, pairs in credit_hist.items():
         pick = None
@@ -220,11 +284,12 @@ def build(outdir, backfill_days, forced_date=None):
                 fx[name] = {'level': round(float(s.iloc[-1]), 4),
                             'date': str(s.index[-1].date()), 'source': 'Yahoo',
                             'ticker': tk}
-    move = None
+    move, move_date = None, None
     if '^MOVE' in px.columns:
         s = px['^MOVE'].dropna()
         if len(s):
             move = round(float(s.iloc[-1]), 2)
+            move_date = str(s.index[-1].date())
 
     missing = [label for label, node in (('us_curve', rates['us_curve']),
                                          ('credit', credit), ('etf', etf), ('fx', fx))
@@ -239,7 +304,8 @@ def build(outdir, backfill_days, forced_date=None):
         **rates,
         'credit': credit,
         'fx': fx,
-        'vol': {'move': move, 'source': 'Yahoo (^MOVE)'},
+        'vol': {'move': move, 'date': move_date, 'source': 'Yahoo (^MOVE)',
+                'stale': bool(move_date) and move_date != report_date},
         'etf': etf,
         'universe': src.UNIVERSE,
         'complete': not missing,

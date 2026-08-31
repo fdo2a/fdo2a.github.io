@@ -196,6 +196,39 @@ def check(html, market, metrics, evaluation, book, econ=None):
     # 진짜 방어선은 렌더러가 숫자를 데이터에서만 찍는다는 것이고, 이 검사는 그 뒤를
     # 받치는 보조 장치다. 정확성은 사람이 하는 팩트체크에서 잡힌다.
 
+    # --- 지면 배분이 노출과 어긋나면 막는다 --------------------------------
+    # 2026-09-01 사용자 지시: 「미국 상장 ETF를 쓴다」는 이유만으로 독일·영국 금리를
+    # 매일 동등한 비중으로 볼 필요는 없다. 중요한 건 상장 국가가 아니라 underlying
+    # exposure다. 첫 회차는 §3 에서 미국 10행 대 해외 14행이었다 — 산문은 미국
+    # 중심인데 표 지면은 정반대였고, 독자 눈에 먼저 들어오는 건 표다.
+    # 표의 소속은 **표식으로** 판정한다. 캡션 문자열에 「미국」이 있는지로 가르면
+    # 「해외 국채 — 미국과 비교」 같은 캡션 하나로 우회되고, 표가 캡션을 잃으면
+    # 검사가 통째로 열린 채 통과한다(2026-09-01 codex 지적).
+    rates_sec = secs.get('b-3', '')
+    tables = re.findall(r'<table([^>]*)>(.*?)</table>', rates_sec, re.S)
+    us_rows = foreign_rows = unscoped = 0
+    for attrs, body_html in tables:
+        rows = max(len(re.findall(r'<tr>', body_html))
+                   - len(re.findall(r'<thead>', body_html)), 0)
+        scope = re.search(r'data-scope="(\w+)"', attrs)
+        if not scope:
+            unscoped += 1
+        elif scope.group(1) == 'us':
+            us_rows += rows
+        else:
+            foreign_rows += rows
+    if unscoped:
+        errs.append(f'금리 섹션에 소속 표식(data-scope) 없는 표가 {unscoped}개 있다')
+    if tables and not us_rows:
+        errs.append('금리 섹션에 미국 표(data-scope="us")가 없다')
+    if us_rows and foreign_rows > us_rows:
+        errs.append(f'지면 배분 역전: 금리 섹션의 해외 표 {foreign_rows}행이 '
+                    f'미국 {us_rows}행보다 많다')
+
+    # 무엇을 얼마나 볼지의 근거(노출 역산)가 지면에 있어야 한다
+    if '노출' not in txt or '역산' not in txt:
+        errs.append('모니터링 비중을 무엇에서 역산했는지가 본문에 없다')
+
     # --- 무게중심 ----------------------------------------------------------
     mk = sum(len(text_of(secs.get(s, ''))) for s in MARKET_SECTIONS)
     jd = sum(len(text_of(secs.get(s, ''))) for s in JUDGEMENT_SECTIONS)

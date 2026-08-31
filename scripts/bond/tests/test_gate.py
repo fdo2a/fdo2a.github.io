@@ -25,7 +25,8 @@ def _html(body, grades=(0, 0, 0)):
                              {0: '커브 중립', 1: '완만한 스티프너'}[grades[1]]),
                             ('credit', grades[2],
                              {0: '크레딧 중립', 1: '소폭 OW', 2: '크레딧 OW'}[grades[2]])])
-    return ('<section id="b-2"><p data-standing="rates">2026-08-27 백분위</p>'
+    return ('<section id="b-2"><p data-standing="rates">2026-08-27 백분위 '
+            '노출을 역산했다</p>'
             + 'x' * 3200 + '</section>'
             '<section id="b-6"><p data-standing="credit">x</p></section>'
             '<section id="b-7"><p data-standing="fx">2026-08-27</p></section>'
@@ -120,6 +121,30 @@ class TestCheck:
         html = _html('<p>x</p>').replace('data-standing="fx"', 'data-x="fx"')
         errs = check(html, MARKET, METRICS, EVAL, BOOK)
         assert any('data-standing="fx"' in e for e in errs)
+
+    def test_foreign_tables_may_not_outweigh_us(self):
+        # 노출 8%인 축이 표 지면의 절반을 가져가면 막는다
+        def tbl(scope, rows):
+            return (f'<table data-scope="{scope}"><thead><tr><th>x</th></tr></thead>'
+                    + '<tr><td>1</td></tr>' * rows + '</table>')
+        html = _html('<p>x</p>').replace(
+            '<section id="b-2">',
+            '<section id="b-3">' + tbl('us', 3) + tbl('foreign', 9)
+            + '</section><section id="b-2">')
+        errs = check(html, MARKET, METRICS, EVAL, BOOK)
+        assert any('지면 배분 역전' in e for e in errs)
+
+    def test_unscoped_table_fails_closed(self):
+        html = _html('<p>x</p>').replace(
+            '<section id="b-2">',
+            '<section id="b-3"><table><thead><tr><th>x</th></tr></thead>'
+            '<tr><td>1</td></tr></table></section><section id="b-2">')
+        errs = check(html, MARKET, METRICS, EVAL, BOOK)
+        assert any('data-scope' in e for e in errs)
+
+    def test_missing_exposure_basis_is_caught(self):
+        html = _html('<p>x</p>').replace('노출을 역산했다', '그냥 봤다')
+        assert any('역산했는지' in e for e in check(html, MARKET, METRICS, EVAL, BOOK))
 
     def test_weight_inversion_is_caught(self):
         html = _html('<p>' + 'y' * 9000 + '</p>')

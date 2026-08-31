@@ -1,239 +1,284 @@
 {
- "report_date": "2026-08-27",
- "prev_date": "2026-08-26",
- "sessions_in_ledger": 519,
+ "report_date": "2026-08-31",
+ "prev_date": "2026-08-28",
+ "sessions_in_ledger": 521,
  "curves": {
   "us": {
    "tenors": {
     "3M": {
-     "level": 3.84,
-     "bp": -1.0,
-     "date": "2026-08-27",
+     "level": 3.74,
+     "bp": -10.0,
+     "date": "2026-08-31",
      "stale": false,
-     "source": "FRED"
+     "source_changed": false,
+     "source": "Yahoo"
     },
     "6M": {
      "level": 3.94,
-     "bp": 0.0,
+     "bp": null,
      "date": "2026-08-27",
-     "stale": false,
+     "stale": true,
+     "source_changed": false,
      "source": "FRED"
     },
     "1Y": {
      "level": 4.04,
-     "bp": 2.0,
+     "bp": null,
      "date": "2026-08-27",
-     "stale": false,
+     "stale": true,
+     "source_changed": false,
      "source": "FRED"
     },
     "2Y": {
      "level": 4.2,
-     "bp": 1.0,
+     "bp": null,
      "date": "2026-08-27",
-     "stale": false,
+     "stale": true,
+     "source_changed": false,
      "source": "FRED"
     },
     "3Y": {
      "level": 4.3,
-     "bp": 1.0,
+     "bp": null,
      "date": "2026-08-27",
-     "stale": false,
+     "stale": true,
+     "source_changed": false,
      "source": "FRED"
     },
     "5Y": {
-     "level": 4.38,
-     "bp": 1.0,
-     "date": "2026-08-27",
+     "level": 4.505,
+     "bp": 12.5,
+     "date": "2026-08-31",
      "stale": false,
-     "source": "FRED"
+     "source_changed": false,
+     "source": "Yahoo"
     },
     "7Y": {
      "level": 4.52,
-     "bp": 1.0,
+     "bp": null,
      "date": "2026-08-27",
-     "stale": false,
+     "stale": true,
+     "source_changed": false,
      "source": "FRED"
     },
     "10Y": {
-     "level": 4.67,
-     "bp": 1.0,
-     "date": "2026-08-27",
+     "level": 4.764,
+     "bp": 9.4,
+     "date": "2026-08-31",
      "stale": false,
-     "source": "FRED"
+     "source_changed": false,
+     "source": "Yahoo"
     },
     "20Y": {
      "level": 5.18,
-     "bp": 1.0,
+     "bp": null,
      "date": "2026-08-27",
-     "stale": false,
+     "stale": true,
+     "source_changed": false,
      "source": "FRED"
     },
     "30Y": {
-     "level": 5.19,
-     "bp": 1.0,
-     "date": "2026-08-27",
+     "level": 5.264,
+     "bp": 7.4,
+     "date": "2026-08-31",
      "stale": false,
-     "source": "FRED"
+     "source_changed": false,
+     "source": "Yahoo"
     }
    },
-   "curve_date": "2026-08-27",
-   "aligned": true,
-   "shape": "금리 상승(평행)",
-   "spread_2s10s_bp": 47.0,
-   "spread_5s30s_bp": 81.0,
+   "curve_date": "2026-08-31",
+   "aligned": false,
+   "shape": "베어 플래트닝",
+   "shape_basis": "5Y 대 10Y",
+   "spread_2s10s_bp": 56.4,
+   "spread_2s10s_basis": "2Y 2026-08-27(FRED) · 10Y 2026-08-31(Yahoo)",
+   "spread_2s10s_aligned": false,
+   "spread_5s30s_bp": 75.9,
+   "spread_5s30s_basis": "5Y 2026-08-31(Yahoo) · 30Y 2026-08-31(Yahoo)",
+   "spread_5s30s_aligned": true,
    "forwards": {
-    "1y1y": 4.36,
-    "2y1y": 4.5,
-    "1y4y": 4.465,
-    "5y5y": 4.961,
-    "2y8y": 4.788
-   }
+    "5y5y": 5.024
+   },
+   "forwards_date": "2026-08-31"
   },
   "de": {
    "tenors": {
     "1Y": {
-     "level": 2.75,
-     "bp": 7.0,
-     "date": "2026-08-27",
+     "level": 2.76,
+     "bp": 0.0,
+     "date": "2026-08-31",
      "stale": false,
+     "source_changed": false,
      "source": "Bundesbank"
     },
     "2Y": {
-     "level": 2.79,
-     "bp": 2.0,
-     "date": "2026-08-27",
+     "level": 2.89,
+     "bp": 8.0,
+     "date": "2026-08-31",
      "stale": false,
+     "source_changed": false,
      "source": "Bundesbank"
     },
     "5Y": {
-     "level": 2.81,
-     "bp": -8.0,
-     "date": "2026-08-27",
+     "level": 3.01,
+     "bp": 18.0,
+     "date": "2026-08-31",
      "stale": false,
+     "source_changed": false,
      "source": "Bundesbank"
     },
     "10Y": {
-     "level": 3.18,
-     "bp": -4.0,
-     "date": "2026-08-27",
+     "level": 3.33,
+     "bp": 13.0,
+     "date": "2026-08-31",
      "stale": false,
+     "source_changed": false,
      "source": "Bundesbank"
     },
     "30Y": {
-     "level": 3.6,
-     "bp": -10.0,
-     "date": "2026-08-27",
+     "level": 3.78,
+     "bp": 17.0,
+     "date": "2026-08-31",
      "stale": false,
+     "source_changed": false,
      "source": "Bundesbank"
     }
    },
-   "curve_date": "2026-08-27",
+   "curve_date": "2026-08-31",
    "aligned": true,
-   "shape": "불 플래트닝",
-   "spread_2s10s_bp": 39.0,
-   "spread_5s30s_bp": 79.0,
+   "shape": "베어 스티프닝",
+   "shape_basis": "2Y 대 10Y",
+   "spread_2s10s_bp": 44.0,
+   "spread_2s10s_basis": "2Y 2026-08-31(Bundesbank) · 10Y 2026-08-31(Bundesbank)",
+   "spread_2s10s_aligned": true,
+   "spread_5s30s_bp": 77.0,
+   "spread_5s30s_basis": "5Y 2026-08-31(Bundesbank) · 30Y 2026-08-31(Bundesbank)",
+   "spread_5s30s_aligned": true,
    "forwards": {
-    "1y1y": 2.83,
-    "1y4y": 2.825,
-    "5y5y": 3.551,
-    "2y8y": 3.278
-   }
+    "1y1y": 3.02,
+    "1y4y": 3.073,
+    "5y5y": 3.651,
+    "2y8y": 3.44
+   },
+   "forwards_date": "2026-08-31"
   },
   "ea": {
    "tenors": {
     "2Y": {
-     "level": 2.785058112,
-     "bp": 3.0,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 2.8053784303,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "ECB"
     },
     "5Y": {
-     "level": 2.9303421896,
-     "bp": 3.1,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 2.9431702485,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "ECB"
     },
     "10Y": {
-     "level": 3.2772699104,
-     "bp": 2.9,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 3.2789202996,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "ECB"
     },
     "30Y": {
-     "level": 3.727135333,
-     "bp": 2.8,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 3.7280126227,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "ECB"
     }
    },
-   "curve_date": "2026-08-27",
+   "curve_date": "2026-08-28",
    "aligned": true,
-   "shape": "금리 상승(평행)",
-   "spread_2s10s_bp": 49.2,
-   "spread_5s30s_bp": 79.7,
+   "shape": null,
+   "shape_basis": null,
+   "spread_2s10s_bp": 47.4,
+   "spread_2s10s_basis": "2Y 2026-08-28(ECB) · 10Y 2026-08-28(ECB)",
+   "spread_2s10s_aligned": true,
+   "spread_5s30s_bp": 78.5,
+   "spread_5s30s_basis": "5Y 2026-08-28(ECB) · 30Y 2026-08-28(ECB)",
+   "spread_5s30s_aligned": true,
    "forwards": {
-    "5y5y": 3.625,
-    "2y8y": 3.401
-   }
+    "5y5y": 3.616,
+    "2y8y": 3.398
+   },
+   "forwards_date": "2026-08-28"
   },
   "jp": {
    "tenors": {
     "2Y": {
-     "level": 1.696,
-     "bp": -0.1,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 1.719,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "MOF Japan"
     },
     "5Y": {
-     "level": 2.182,
-     "bp": 1.0,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 2.212,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "MOF Japan"
     },
     "10Y": {
-     "level": 2.897,
-     "bp": 0.5,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 2.93,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "MOF Japan"
     },
     "20Y": {
-     "level": 3.764,
-     "bp": 0.8,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 3.806,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "MOF Japan"
     },
     "30Y": {
-     "level": 4.038,
-     "bp": -0.1,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 4.084,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "MOF Japan"
     },
     "40Y": {
-     "level": 4.043,
-     "bp": -0.8,
-     "date": "2026-08-27",
-     "stale": false,
+     "level": 4.084,
+     "bp": null,
+     "date": "2026-08-28",
+     "stale": true,
+     "source_changed": false,
      "source": "MOF Japan"
     }
    },
-   "curve_date": "2026-08-27",
+   "curve_date": "2026-08-28",
    "aligned": true,
-   "shape": "보합",
-   "spread_2s10s_bp": 120.1,
-   "spread_5s30s_bp": 185.6,
+   "shape": null,
+   "shape_basis": null,
+   "spread_2s10s_bp": 121.1,
+   "spread_2s10s_basis": "2Y 2026-08-28(MOF Japan) · 10Y 2026-08-28(MOF Japan)",
+   "spread_2s10s_aligned": true,
+   "spread_5s30s_bp": 187.2,
+   "spread_5s30s_basis": "5Y 2026-08-28(MOF Japan) · 30Y 2026-08-28(MOF Japan)",
+   "spread_5s30s_aligned": true,
    "forwards": {
-    "5y5y": 3.617,
-    "2y8y": 3.199
-   }
+    "5y5y": 3.653,
+    "2y8y": 3.235
+   },
+   "forwards_date": "2026-08-28"
   },
   "gb": {
    "tenors": {
@@ -242,6 +287,7 @@
      "bp": null,
      "date": "2026-08-26",
      "stale": true,
+     "source_changed": false,
      "source": "BOE"
     },
     "10Y": {
@@ -249,6 +295,7 @@
      "bp": null,
      "date": "2026-08-26",
      "stale": true,
+     "source_changed": false,
      "source": "BOE"
     },
     "20Y": {
@@ -256,34 +303,45 @@
      "bp": null,
      "date": "2026-08-26",
      "stale": true,
+     "source_changed": false,
      "source": "BOE"
     }
    },
    "curve_date": "2026-08-26",
    "aligned": true,
    "shape": null,
+   "shape_basis": null,
    "spread_2s10s_bp": null,
+   "spread_2s10s_basis": null,
+   "spread_2s10s_aligned": false,
    "spread_5s30s_bp": null,
+   "spread_5s30s_basis": null,
+   "spread_5s30s_aligned": false,
    "forwards": {
     "5y5y": 5.497
-   }
+   },
+   "forwards_date": "2026-08-26"
   }
  },
  "decomposition": {
   "5Y": {
    "date": "2026-08-27",
+   "prev_date": "2026-08-26",
    "nominal_bp": 1.0,
    "real_bp": 1.0,
    "breakeven_bp": 0.0,
+   "residual_bp": 0.0,
    "driver_ko": "실질금리",
    "real_level": 2.07,
    "bei_level": 2.31
   },
   "10Y": {
    "date": "2026-08-27",
+   "prev_date": "2026-08-26",
    "nominal_bp": 1.0,
    "real_bp": 0.0,
    "breakeven_bp": 1.0,
+   "residual_bp": 0.0,
    "driver_ko": "기대인플레",
    "real_level": 2.34,
    "bei_level": 2.33
@@ -293,14 +351,14 @@
   "us_ig": {
    "value": 0.79,
    "bp": 79.0,
-   "chg_bp": -1.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
     "value": 0.79,
-    "percentile": 30.8,
-    "sessions": 519,
+    "percentile": 30.9,
+    "sessions": 521,
     "window": "2년",
     "min": 0.73,
     "max": 1.21,
@@ -308,16 +366,16 @@
    }
   },
   "us_hy": {
-   "value": 2.63,
-   "bp": 263.0,
-   "chg_bp": -4.0,
+   "value": 2.6,
+   "bp": 260.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 2.63,
-    "percentile": 2.4,
-    "sessions": 519,
+    "value": 2.6,
+    "percentile": 0.5,
+    "sessions": 521,
     "window": "2년",
     "min": 2.59,
     "max": 4.61,
@@ -325,16 +383,16 @@
    }
   },
   "us_ig_bbb": {
-   "value": 0.98,
-   "bp": 98.0,
-   "chg_bp": -1.0,
+   "value": 0.97,
+   "bp": 97.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 0.98,
-    "percentile": 22.7,
-    "sessions": 519,
+    "value": 0.97,
+    "percentile": 18.2,
+    "sessions": 521,
     "window": "2년",
     "min": 0.92,
     "max": 1.49,
@@ -342,16 +400,16 @@
    }
   },
   "us_hy_ccc": {
-   "value": 10.31,
-   "bp": 1031.0,
+   "value": 10.26,
+   "bp": 1026.0,
    "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 10.31,
-    "percentile": 96.4,
-    "sessions": 519,
+    "value": 10.26,
+    "percentile": 95.5,
+    "sessions": 521,
     "window": "2년",
     "min": 6.9,
     "max": 11.37,
@@ -359,16 +417,16 @@
    }
   },
   "em_sov": {
-   "value": 1.12,
-   "bp": 112.0,
-   "chg_bp": -1.0,
+   "value": 1.08,
+   "bp": 108.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 1.12,
-    "percentile": 5.0,
-    "sessions": 519,
+    "value": 1.08,
+    "percentile": 0.4,
+    "sessions": 521,
     "window": "2년",
     "min": 1.06,
     "max": 1.85,
@@ -376,16 +434,16 @@
    }
   },
   "em_corp": {
-   "value": 1.39,
-   "bp": 139.0,
-   "chg_bp": -1.0,
+   "value": 1.36,
+   "bp": 136.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 1.39,
-    "percentile": 1.5,
-    "sessions": 519,
+    "value": 1.36,
+    "percentile": 0.2,
+    "sessions": 521,
     "window": "2년",
     "min": 1.36,
     "max": 2.27,
@@ -393,16 +451,16 @@
    }
   },
   "em_hy": {
-   "value": 2.86,
-   "bp": 286.0,
-   "chg_bp": -2.0,
+   "value": 2.81,
+   "bp": 281.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 2.86,
-    "percentile": 1.2,
-    "sessions": 519,
+    "value": 2.81,
+    "percentile": 0.2,
+    "sessions": 521,
     "window": "2년",
     "min": 2.81,
     "max": 4.9,
@@ -410,16 +468,16 @@
    }
   },
   "euro_hy": {
-   "value": 2.56,
-   "bp": 256.0,
-   "chg_bp": -2.0,
+   "value": 2.55,
+   "bp": 255.0,
+   "chg_bp": 0.0,
    "stale": false,
-   "date": "2026-08-27",
+   "date": "2026-08-28",
    "source": "FRED (ICE BofA)",
    "standing": {
-    "value": 2.56,
-    "percentile": 3.8,
-    "sessions": 519,
+    "value": 2.55,
+    "percentile": 2.7,
+    "sessions": 521,
     "window": "2년",
     "min": 2.48,
     "max": 4.29,
@@ -429,32 +487,40 @@
  },
  "fx": {
   "DXY": {
-   "level": 99.16,
-   "date": "2026-08-27",
+   "level": 99.42,
+   "date": "2026-08-31",
    "source": "Yahoo",
    "ticker": "DX-Y.NYB",
-   "change_pct": -0.01
+   "change_pct": 0.262,
+   "vs_date": "2026-08-27",
+   "vs_prev_session": false
   },
   "EURUSD": {
-   "level": 1.1655,
-   "date": "2026-08-27",
+   "level": 1.1618,
+   "date": "2026-08-31",
    "source": "Yahoo",
    "ticker": "EURUSD=X",
-   "change_pct": -0.171
+   "change_pct": -0.326,
+   "vs_date": "2026-08-28",
+   "vs_prev_session": true
   },
   "USDJPY": {
-   "level": 159.255,
-   "date": "2026-08-27",
+   "level": 159.71,
+   "date": "2026-08-31",
    "source": "Yahoo",
    "ticker": "USDJPY=X",
-   "change_pct": 0.02
+   "change_pct": 0.244,
+   "vs_date": "2026-08-28",
+   "vs_prev_session": true
   },
   "USDKRW": {
-   "level": 1383.49,
-   "date": "2026-08-27",
+   "level": 1367.6801,
+   "date": "2026-08-31",
    "source": "Yahoo",
    "ticker": "USDKRW=X",
-   "change_pct": 0.145
+   "change_pct": -0.925,
+   "vs_date": "2026-08-28",
+   "vs_prev_session": true
   }
  },
  "etf": {
@@ -464,23 +530,23 @@
    "nav": 97.466564,
    "nav_as_of": "2026-08-28",
    "aum_usd": 138451253939.14,
-   "duration": 5.72109,
-   "oas_bp": 25.9,
-   "ytw_pct": 4.91,
-   "ytm_pct": 4.91,
+   "duration": 5.72554,
+   "oas_bp": 26.0,
+   "ytw_pct": 4.98,
+   "ytm_pct": 4.99,
    "sec_yield_pct": 4.6615,
    "source": "iShares",
-   "close": 97.83,
-   "close_date": "2026-08-27",
+   "close": 97.3358,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.031,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 138.5,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "GOVT": {
    "ticker": "GOVT",
@@ -488,23 +554,23 @@
    "nav": 22.453398,
    "nav_as_of": "2026-08-28",
    "aum_usd": 41862114969.7,
-   "duration": 5.5184,
-   "oas_bp": -0.1,
-   "ytw_pct": 4.51,
-   "ytm_pct": 4.51,
+   "duration": 5.51095,
+   "oas_bp": -0.2,
+   "ytw_pct": 4.59,
+   "ytm_pct": 4.59,
    "sec_yield_pct": 4.4924,
    "source": "iShares",
-   "close": 22.53,
-   "close_date": "2026-08-27",
+   "close": 22.4241,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.089,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 41.9,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "SHY": {
    "ticker": "SHY",
@@ -512,23 +578,23 @@
    "nav": 81.868421,
    "nav_as_of": "2026-08-28",
    "aum_usd": 25739431699.07,
-   "duration": 1.78376,
-   "oas_bp": -0.6,
-   "ytw_pct": 4.22,
-   "ytm_pct": 4.22,
+   "duration": 1.77966,
+   "oas_bp": -0.9,
+   "ytw_pct": 4.33,
+   "ytm_pct": 4.33,
    "sec_yield_pct": 4.097,
    "source": "iShares",
-   "close": 82.04,
-   "close_date": "2026-08-27",
+   "close": 81.905,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.012,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 25.7,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "IEF": {
    "ticker": "IEF",
@@ -536,23 +602,23 @@
    "nav": 92.812133,
    "nav_as_of": "2026-08-28",
    "aum_usd": 41839709507.32,
-   "duration": 6.82244,
+   "duration": 6.815,
    "oas_bp": 3.0,
-   "ytw_pct": 4.59,
-   "ytm_pct": 4.59,
+   "ytw_pct": 4.65,
+   "ytm_pct": 4.65,
    "sec_yield_pct": 4.5183,
    "source": "iShares",
-   "close": 93.23,
-   "close_date": "2026-08-27",
+   "close": 92.665,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.096,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 41.8,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "TLT": {
    "ticker": "TLT",
@@ -560,23 +626,23 @@
    "nav": 82.817506,
    "nav_as_of": "2026-08-28",
    "aum_usd": 47015498097.83,
-   "duration": 14.94797,
+   "duration": 14.94131,
    "oas_bp": 0.1,
-   "ytw_pct": 5.22,
-   "ytm_pct": 5.22,
+   "ytw_pct": 5.25,
+   "ytm_pct": 5.25,
    "sec_yield_pct": 5.1046,
    "source": "iShares",
-   "close": 83.13,
-   "close_date": "2026-08-27",
+   "close": 82.25,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.204,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 47.0,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "TIP": {
    "ticker": "TIP",
@@ -584,23 +650,23 @@
    "nav": 106.927606,
    "nav_as_of": "2026-08-28",
    "aum_usd": 15023328593.2,
-   "duration": 6.31246,
-   "oas_bp": -2.3,
-   "ytw_pct": 2.18,
-   "ytm_pct": 4.5,
+   "duration": 6.29993,
+   "oas_bp": -3.5,
+   "ytw_pct": 2.28,
+   "ytm_pct": 4.57,
    "sec_yield_pct": -1.0686,
    "source": "iShares",
-   "close": 107.44,
-   "close_date": "2026-08-27",
+   "close": 106.7706,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.065,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 15.0,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "STIP": {
    "ticker": "STIP",
@@ -608,23 +674,23 @@
    "nav": 100.625884,
    "nav_as_of": "2026-08-28",
    "aum_usd": 16034734563.09,
-   "duration": 2.39291,
-   "oas_bp": -10.4,
-   "ytw_pct": 2.1,
-   "ytm_pct": 4.12,
+   "duration": 2.38652,
+   "oas_bp": -14.0,
+   "ytw_pct": 2.18,
+   "ytm_pct": 4.19,
    "sec_yield_pct": -0.7531,
    "source": "iShares",
-   "close": 100.91,
-   "close_date": "2026-08-27",
+   "close": 100.655,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.03,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 16.0,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "LQD": {
    "ticker": "LQD",
@@ -632,23 +698,23 @@
    "nav": 106.348373,
    "nav_as_of": "2026-08-28",
    "aum_usd": 32691489894.76,
-   "duration": 7.7363,
-   "oas_bp": 84.0,
-   "ytw_pct": 5.58,
-   "ytm_pct": 5.59,
+   "duration": 7.72798,
+   "oas_bp": 83.3,
+   "ytw_pct": 5.63,
+   "ytm_pct": 5.64,
    "sec_yield_pct": 5.5189,
    "source": "iShares",
-   "close": 106.73,
-   "close_date": "2026-08-27",
+   "close": 106.075,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.047,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 32.7,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "IGIB": {
    "ticker": "IGIB",
@@ -656,23 +722,23 @@
    "nav": 52.203683,
    "nav_as_of": "2026-08-28",
    "aum_usd": 18735901916.0,
-   "duration": 5.9569,
-   "oas_bp": 89.2,
-   "ytw_pct": 5.45,
-   "ytm_pct": 5.49,
+   "duration": 5.95088,
+   "oas_bp": 87.9,
+   "ytw_pct": 5.51,
+   "ytm_pct": 5.55,
    "sec_yield_pct": 5.4848,
    "source": "iShares",
-   "close": 52.41,
-   "close_date": "2026-08-27",
+   "close": 52.1401,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.057,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 18.7,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "USIG": {
    "ticker": "USIG",
@@ -680,23 +746,23 @@
    "nav": 50.323232,
    "nav_as_of": "2026-08-28",
    "aum_usd": 17837069546.39,
-   "duration": 6.23969,
-   "oas_bp": 77.2,
-   "ytw_pct": 5.39,
-   "ytm_pct": 5.43,
+   "duration": 6.2356,
+   "oas_bp": 76.3,
+   "ytw_pct": 5.46,
+   "ytm_pct": 5.49,
    "sec_yield_pct": 5.4212,
    "source": "iShares",
-   "close": 50.49,
-   "close_date": "2026-08-27",
+   "close": 50.2399,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.04,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 17.8,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "HYG": {
    "ticker": "HYG",
@@ -704,23 +770,23 @@
    "nav": 79.713542,
    "nav_as_of": "2026-08-28",
    "aum_usd": 16413018385.59,
-   "duration": 1.73766,
-   "oas_bp": 237.8,
-   "ytw_pct": 6.9,
-   "ytm_pct": 7.23,
+   "duration": 1.77236,
+   "oas_bp": 234.4,
+   "ytw_pct": 6.96,
+   "ytm_pct": 7.28,
    "sec_yield_pct": 6.471,
    "source": "iShares",
-   "close": 79.87,
-   "close_date": "2026-08-27",
+   "close": 79.715,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.038,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 16.4,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "SHYG": {
    "ticker": "SHYG",
@@ -728,23 +794,23 @@
    "nav": 42.23389,
    "nav_as_of": "2026-08-28",
    "aum_usd": 7745695498.71,
-   "duration": 1.19624,
-   "oas_bp": 227.3,
-   "ytw_pct": 6.6,
-   "ytm_pct": 6.99,
+   "duration": 1.2305,
+   "oas_bp": 224.3,
+   "ytw_pct": 6.69,
+   "ytm_pct": 7.05,
    "sec_yield_pct": 6.548,
    "source": "iShares",
-   "close": 42.33,
-   "close_date": "2026-08-27",
+   "close": 42.275,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": 0.0,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 7.7,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "EMB": {
    "ticker": "EMB",
@@ -752,23 +818,23 @@
    "nav": 94.980333,
    "nav_as_of": "2026-08-28",
    "aum_usd": 15054382821.12,
-   "duration": 6.00136,
-   "oas_bp": 170.0,
-   "ytw_pct": 6.36,
-   "ytm_pct": 6.36,
+   "duration": 6.02065,
+   "oas_bp": 164.9,
+   "ytw_pct": 6.37,
+   "ytm_pct": 6.38,
    "sec_yield_pct": 5.9252,
    "source": "iShares",
-   "close": 95.13,
-   "close_date": "2026-08-27",
+   "close": 94.705,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.189,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 15.1,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "EMHY": {
    "ticker": "EMHY",
@@ -776,23 +842,23 @@
    "nav": 40.270119,
    "nav_as_of": "2026-08-28",
    "aum_usd": 646335405.47,
-   "duration": 3.87942,
-   "oas_bp": 270.5,
-   "ytw_pct": 7.27,
-   "ytm_pct": 7.38,
+   "duration": 3.87797,
+   "oas_bp": 259.1,
+   "ytw_pct": 7.23,
+   "ytm_pct": 7.42,
    "sec_yield_pct": 6.7297,
    "source": "iShares",
-   "close": 40.41,
-   "close_date": "2026-08-27",
+   "close": 40.195,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.049,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 0.6,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "IGOV": {
    "ticker": "IGOV",
@@ -800,23 +866,23 @@
    "nav": 41.231231,
    "nav_as_of": "2026-08-28",
    "aum_usd": 1546171180.28,
-   "duration": 7.28483,
+   "duration": 7.28027,
    "oas_bp": 16.5,
-   "ytw_pct": 3.6,
-   "ytm_pct": 3.6,
+   "ytw_pct": 3.63,
+   "ytm_pct": 3.63,
    "sec_yield_pct": 3.1806,
    "source": "iShares",
-   "close": 41.42,
-   "close_date": "2026-08-27",
+   "close": 41.21,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.169,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 1.5,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "IAGG": {
    "ticker": "IAGG",
@@ -824,23 +890,23 @@
    "nav": 49.72121,
    "nav_as_of": "2026-08-28",
    "aum_usd": 11403559497.76,
-   "duration": 6.30481,
+   "duration": 6.28286,
    "oas_bp": 29.5,
-   "ytw_pct": 3.36,
-   "ytm_pct": 3.38,
+   "ytw_pct": 3.39,
+   "ytm_pct": 3.4,
    "sec_yield_pct": 3.2153,
    "source": "iShares",
-   "close": 49.78,
-   "close_date": "2026-08-27",
+   "close": 49.6902,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": -0.14,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 11.4,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   },
   "FLOT": {
    "ticker": "FLOT",
@@ -848,110 +914,47 @@
    "nav": 51.000428,
    "nav_as_of": "2026-08-28",
    "aum_usd": 10664189512.86,
-   "duration": 0.01461,
-   "oas_bp": 38.7,
+   "duration": 0.015,
+   "oas_bp": 39.3,
    "ytw_pct": 4.22,
    "ytm_pct": 4.27,
    "sec_yield_pct": 4.0263,
    "source": "iShares",
-   "close": 51.04,
-   "close_date": "2026-08-27",
+   "close": 51.075,
+   "close_date": "2026-08-31",
    "nav_aligned": false,
-   "change_pct": 0.02,
+   "change_pct": null,
    "nav_return_pct": null,
    "premium_pct": null,
    "flow_est_usd": null,
    "aum_bn": 10.7,
    "duration_chg": null,
    "ytw_chg_bp": null,
-   "flow_basis_date": "2026-08-26"
+   "flow_basis_date": "2026-08-28"
   }
  },
  "benchmark": {
-  "total_pct": -0.0699,
-  "contributions": [
-   {
-    "ticker": "IGOV",
-    "weight": 0.15,
-    "weight_pct": 15.0,
-    "return_pct": -0.169,
-    "contribution_pct": -0.0254,
-    "bucket": "fx"
-   },
-   {
-    "ticker": "EMB",
-    "weight": 0.1,
-    "weight_pct": 10.0,
-    "return_pct": -0.189,
-    "contribution_pct": -0.0189,
-    "bucket": "credit"
-   },
-   {
-    "ticker": "AGG",
-    "weight": 0.6,
-    "weight_pct": 60.0,
-    "return_pct": -0.031,
-    "contribution_pct": -0.0186,
-    "bucket": "core"
-   },
-   {
-    "ticker": "HYG",
-    "weight": 0.1,
-    "weight_pct": 10.0,
-    "return_pct": -0.038,
-    "contribution_pct": -0.0038,
-    "bucket": "credit"
-   },
-   {
-    "ticker": "TIP",
-    "weight": 0.05,
-    "weight_pct": 5.0,
-    "return_pct": -0.065,
-    "contribution_pct": -0.0033,
-    "bucket": "inflation"
-   }
+  "total_pct": 0.0,
+  "contributions": [],
+  "missing": [
+   "AGG",
+   "IGOV",
+   "EMB",
+   "HYG",
+   "TIP"
   ],
-  "missing": [],
-  "complete": true,
-  "buckets": [
-   {
-    "bucket": "fx",
-    "contribution_pct": -0.0254,
-    "tickers": [
-     "IGOV"
-    ]
-   },
-   {
-    "bucket": "credit",
-    "contribution_pct": -0.0227,
-    "tickers": [
-     "EMB",
-     "HYG"
-    ]
-   },
-   {
-    "bucket": "core",
-    "contribution_pct": -0.0186,
-    "tickers": [
-     "AGG"
-    ]
-   },
-   {
-    "bucket": "inflation",
-    "contribution_pct": -0.0033,
-    "tickers": [
-     "TIP"
-    ]
-   }
-  ]
+  "complete": false,
+  "buckets": []
  },
  "vol": {
   "move": 69.86,
-  "move_chg": 0.42,
+  "date": "2026-08-27",
+  "stale": true,
+  "move_chg": null,
   "standing": {
    "value": 69.86,
-   "percentile": 19.3,
-   "sessions": 495,
+   "percentile": 19.4,
+   "sessions": 496,
    "window": "1년",
    "min": 55.77,
    "max": 139.88,
@@ -960,18 +963,18 @@
  },
  "standing": {
   "us10y": {
-   "value": 4.67,
-   "percentile": 95.8,
-   "sessions": 520,
+   "value": 4.764,
+   "percentile": 99.3,
+   "sessions": 522,
    "window": "2년",
    "min": 3.63,
    "max": 4.79,
    "band": "매우 넓음"
   },
   "us30y": {
-   "value": 5.19,
-   "percentile": 96.8,
-   "sessions": 520,
+   "value": 5.264,
+   "percentile": 99.1,
+   "sessions": 522,
    "window": "2년",
    "min": 3.94,
    "max": 5.31,
@@ -979,8 +982,8 @@
   }
  },
  "teaching": {
-  "tlt_duration": 14.94797,
-  "tlt_theory_pct": -0.149,
+  "tlt_duration": 14.94131,
+  "tlt_theory_pct": -1.106,
   "ref_duration": 6,
   "ref_bp": 10,
   "ref_impact_pct": -0.6,
@@ -1080,144 +1083,511 @@
    "ref_period": "2026-07-01"
   }
  ],
- "us_de_10y_bp": 149.0,
- "us_jp_10y_bp": 177.3,
+ "exposure": {
+  "factors": [
+   {
+    "factor": "us_rates",
+    "factor_ko": "미국 금리",
+    "weight": 0.615,
+    "pct": 61.5,
+    "watch": [
+     "미국 국채 2Y·5Y·10Y·30Y",
+     "2s10s·5s30s",
+     "연준 가격책정·SOFR",
+     "MOVE"
+    ],
+    "depth": "매일 깊게"
+   },
+   {
+    "factor": "credit",
+    "factor_ko": "크레딧 스프레드",
+    "weight": 0.165,
+    "pct": 16.5,
+    "watch": [
+     "미국 IG·HY OAS",
+     "등급별 분산"
+    ],
+    "depth": "매일"
+   },
+   {
+    "factor": "foreign_rates",
+    "factor_ko": "해외 금리",
+    "weight": 0.0825,
+    "pct": 8.2,
+    "watch": [
+     "분트 2Y·10Y",
+     "JGB 10Y",
+     "길트 10Y"
+    ],
+    "depth": "방향만 확인"
+   },
+   {
+    "factor": "fx",
+    "factor_ko": "환율",
+    "weight": 0.0675,
+    "pct": 6.7,
+    "watch": [
+     "달러지수·주요 통화쌍",
+     "환헤지 비용"
+    ],
+    "depth": "방향만 확인"
+   },
+   {
+    "factor": "em",
+    "factor_ko": "EM 국가위험",
+    "weight": 0.055,
+    "pct": 5.5,
+    "watch": [
+     "EM 국공채·회사채 OAS"
+    ],
+    "depth": "방향만 확인"
+   },
+   {
+    "factor": "inflation",
+    "factor_ko": "기대인플레",
+    "weight": 0.015,
+    "pct": 1.5,
+    "watch": [
+     "기대인플레·실질금리"
+    ],
+    "depth": "방향만 확인"
+   }
+  ],
+  "unknown": [],
+  "covered": 1.0
+ },
+ "segments": {
+  "AGG": "전 구간",
+  "GOVT": "전 구간",
+  "SHY": "프런트엔드",
+  "IEF": "벨리",
+  "TLT": "롱엔드",
+  "TIP": "벨리",
+  "STIP": "프런트엔드",
+  "LQD": "벨리",
+  "IGIB": "벨리",
+  "USIG": "벨리",
+  "HYG": "프런트엔드",
+  "SHYG": "프런트엔드",
+  "EMB": "벨리",
+  "EMHY": "벨리",
+  "IGOV": "벨리",
+  "IAGG": "벨리",
+  "FLOT": "프런트엔드"
+ },
+ "etf_factors": [
+  {
+   "ticker": "AGG",
+   "segment_ko": "전 구간",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 85.0
+    },
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 15.0
+    }
+   ]
+  },
+  {
+   "ticker": "GOVT",
+   "segment_ko": "전 구간",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 100.0
+    }
+   ]
+  },
+  {
+   "ticker": "SHY",
+   "segment_ko": "프런트엔드",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 100.0
+    }
+   ]
+  },
+  {
+   "ticker": "IEF",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 100.0
+    }
+   ]
+  },
+  {
+   "ticker": "TLT",
+   "segment_ko": "롱엔드",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 100.0
+    }
+   ]
+  },
+  {
+   "ticker": "TIP",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 70.0
+    },
+    {
+     "factor": "inflation",
+     "factor_ko": "기대인플레",
+     "pct": 30.0
+    }
+   ]
+  },
+  {
+   "ticker": "STIP",
+   "segment_ko": "프런트엔드",
+   "factors": [
+    {
+     "factor": "inflation",
+     "factor_ko": "기대인플레",
+     "pct": 60.0
+    },
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 40.0
+    }
+   ]
+  },
+  {
+   "ticker": "LQD",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 70.0
+    },
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 30.0
+    }
+   ]
+  },
+  {
+   "ticker": "IGIB",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 70.0
+    },
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 30.0
+    }
+   ]
+  },
+  {
+   "ticker": "USIG",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 70.0
+    },
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 30.0
+    }
+   ]
+  },
+  {
+   "ticker": "HYG",
+   "segment_ko": "프런트엔드",
+   "factors": [
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 75.0
+    },
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 25.0
+    }
+   ]
+  },
+  {
+   "ticker": "SHYG",
+   "segment_ko": "프런트엔드",
+   "factors": [
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 85.0
+    },
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 15.0
+    }
+   ]
+  },
+  {
+   "ticker": "EMB",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "em",
+     "factor_ko": "EM 국가위험",
+     "pct": 55.0
+    },
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 45.0
+    }
+   ]
+  },
+  {
+   "ticker": "EMHY",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "em",
+     "factor_ko": "EM 국가위험",
+     "pct": 75.0
+    },
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 25.0
+    }
+   ]
+  },
+  {
+   "ticker": "IGOV",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "foreign_rates",
+     "factor_ko": "해외 금리",
+     "pct": 55.0
+    },
+    {
+     "factor": "fx",
+     "factor_ko": "환율",
+     "pct": 45.0
+    }
+   ]
+  },
+  {
+   "ticker": "IAGG",
+   "segment_ko": "벨리",
+   "factors": [
+    {
+     "factor": "foreign_rates",
+     "factor_ko": "해외 금리",
+     "pct": 75.0
+    },
+    {
+     "factor": "fx",
+     "factor_ko": "환율",
+     "pct": 15.0
+    },
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 10.0
+    }
+   ]
+  },
+  {
+   "ticker": "FLOT",
+   "segment_ko": "프런트엔드",
+   "factors": [
+    {
+     "factor": "credit",
+     "factor_ko": "크레딧 스프레드",
+     "pct": 60.0
+    },
+    {
+     "factor": "us_rates",
+     "factor_ko": "미국 금리",
+     "pct": 40.0
+    }
+   ]
+  }
+ ],
+ "divergence": {
+  "de": {
+   "verdict": "동조",
+   "us_bp": 9.4,
+   "foreign_bp": 13.0,
+   "ratio": 1.38,
+   "reading": "글로벌 듀레이션이 함께 움직인 날이다",
+   "label": "독일"
+  }
+ },
+ "us_de_10y_bp": 143.4,
+ "us_jp_10y_bp": null,
  "us_gb_10y_bp": null,
- "cross_basis_date": "2026-08-27",
+ "cross_basis_date": "2026-08-31",
  "triggers": {
-  "us10y_level": 4.67,
-  "us10y_1d_bp": 1.0,
-  "us10y_dma20_gap_bp": -1.2,
-  "us10y_5d_bp": -2.0,
-  "us2y_1d_bp": 1.0,
-  "spread_2s10s_bp": 47.0,
-  "spread_5s30s_bp": 81.0,
+  "us10y_level": 4.764,
+  "us10y_1d_bp": 9.4,
+  "us10y_dma20_gap_bp": 8.3,
+  "us10y_5d_bp": 6.4,
+  "us2y_1d_bp": null,
+  "spread_2s10s_bp": 56.4,
+  "spread_2s10s_aligned": 0,
+  "spread_5s30s_bp": 75.9,
+  "spread_5s30s_aligned": 1,
   "move_level": 69.86,
-  "move_chg": 0.42,
-  "hy_oas_bp": 263.0,
-  "hy_oas_1d_bp": -4.0,
-  "hy_oas_5d_bp": -12.0,
-  "hy_oas_pctile": 2.4,
+  "move_chg": null,
+  "hy_oas_bp": 260.0,
+  "hy_oas_1d_bp": 0.0,
+  "hy_oas_5d_bp": -9.0,
+  "hy_oas_pctile": 0.5,
   "ig_oas_bp": 79.0,
-  "ig_oas_1d_bp": -1.0,
-  "ig_oas_pctile": 30.8,
+  "ig_oas_1d_bp": 0.0,
+  "ig_oas_pctile": 30.9,
   "real10y_1d_bp": 0.0,
   "bei10y_1d_bp": 1.0,
-  "us_de_10y_bp": 149.0,
-  "fwd_1y1y": 4.36,
-  "fwd_5y5y": 4.961
+  "us_de_10y_bp": 143.4,
+  "fwd_1y1y": null,
+  "fwd_5y5y": 5.024
  },
  "diff_summary": {
   "movers": [
    {
     "kind": "rate",
-    "label": "DE 30Y",
-    "value": -10.0,
-    "unit": "bp",
-    "abs": 10.0,
-    "level": 3.6,
-    "date": "2026-08-27"
-   },
-   {
-    "kind": "rate",
     "label": "DE 5Y",
-    "value": -8.0,
+    "value": 18.0,
     "unit": "bp",
-    "abs": 8.0,
-    "level": 2.81,
-    "date": "2026-08-27"
+    "abs": 18.0,
+    "level": 3.01,
+    "date": "2026-08-31"
    },
    {
     "kind": "rate",
-    "label": "DE 1Y",
-    "value": 7.0,
+    "label": "DE 30Y",
+    "value": 17.0,
     "unit": "bp",
-    "abs": 7.0,
-    "level": 2.75,
-    "date": "2026-08-27"
+    "abs": 17.0,
+    "level": 3.78,
+    "date": "2026-08-31"
    },
    {
     "kind": "rate",
     "label": "DE 10Y",
-    "value": -4.0,
+    "value": 13.0,
     "unit": "bp",
-    "abs": 4.0,
-    "level": 3.18,
-    "date": "2026-08-27"
-   },
-   {
-    "kind": "credit",
-    "label": "us_hy",
-    "value": -4.0,
-    "unit": "bp",
-    "abs": 4.0,
-    "level_bp": 263.0,
-    "date": "2026-08-27"
+    "abs": 13.0,
+    "level": 3.33,
+    "date": "2026-08-31"
    },
    {
     "kind": "rate",
-    "label": "EA 5Y",
-    "value": 3.1,
+    "label": "US 5Y",
+    "value": 12.5,
     "unit": "bp",
-    "abs": 3.1,
-    "level": 2.9303421896,
-    "date": "2026-08-27"
+    "abs": 12.5,
+    "level": 4.505,
+    "date": "2026-08-31"
    },
    {
     "kind": "rate",
-    "label": "EA 2Y",
-    "value": 3.0,
+    "label": "US 3M",
+    "value": -10.0,
     "unit": "bp",
-    "abs": 3.0,
-    "level": 2.785058112,
-    "date": "2026-08-27"
+    "abs": 10.0,
+    "level": 3.74,
+    "date": "2026-08-31"
    },
    {
     "kind": "rate",
-    "label": "EA 10Y",
-    "value": 2.9,
+    "label": "US 10Y",
+    "value": 9.4,
     "unit": "bp",
-    "abs": 2.9,
-    "level": 3.2772699104,
-    "date": "2026-08-27"
-   },
-   {
-    "kind": "rate",
-    "label": "EA 30Y",
-    "value": 2.8,
-    "unit": "bp",
-    "abs": 2.8,
-    "level": 3.727135333,
-    "date": "2026-08-27"
-   },
-   {
-    "kind": "rate",
-    "label": "US 1Y",
-    "value": 2.0,
-    "unit": "bp",
-    "abs": 2.0,
-    "level": 4.04,
-    "date": "2026-08-27"
+    "abs": 9.4,
+    "level": 4.764,
+    "date": "2026-08-31"
    },
    {
     "kind": "rate",
     "label": "DE 2Y",
-    "value": 2.0,
+    "value": 8.0,
     "unit": "bp",
-    "abs": 2.0,
-    "level": 2.79,
-    "date": "2026-08-27"
+    "abs": 8.0,
+    "level": 2.89,
+    "date": "2026-08-31"
    },
    {
-    "kind": "credit",
-    "label": "em_hy",
-    "value": -2.0,
+    "kind": "rate",
+    "label": "US 30Y",
+    "value": 7.4,
     "unit": "bp",
-    "abs": 2.0,
-    "level_bp": 286.0,
-    "date": "2026-08-27"
+    "abs": 7.4,
+    "level": 5.264,
+    "date": "2026-08-31"
+   },
+   {
+    "kind": "fx",
+    "label": "USDKRW",
+    "value": -0.925,
+    "unit": "%",
+    "abs": 0.925,
+    "level": 1367.6801,
+    "vs_date": "2026-08-28",
+    "vs_prev_session": true
+   },
+   {
+    "kind": "fx",
+    "label": "EURUSD",
+    "value": -0.326,
+    "unit": "%",
+    "abs": 0.326,
+    "level": 1.1618,
+    "vs_date": "2026-08-28",
+    "vs_prev_session": true
+   },
+   {
+    "kind": "fx",
+    "label": "DXY",
+    "value": 0.262,
+    "unit": "%",
+    "abs": 0.262,
+    "level": 99.42,
+    "vs_date": "2026-08-27",
+    "vs_prev_session": false
+   },
+   {
+    "kind": "fx",
+    "label": "USDJPY",
+    "value": 0.244,
+    "unit": "%",
+    "abs": 0.244,
+    "level": 159.71,
+    "vs_date": "2026-08-28",
+    "vs_prev_session": true
    }
   ],
-  "count": 55
+  "count": 21
  }
 }

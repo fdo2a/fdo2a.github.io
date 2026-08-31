@@ -15,6 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from bond import stance as stance_mod           # noqa: E402
 from bond.sources import CREDIT_KO             # noqa: E402
 
 WD = ['월', '화', '수', '목', '금', '토', '일']
@@ -50,9 +51,342 @@ def esc(s):
     return (str(s).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
 
 
+
+def movers_reading(top, ust):
+    """§2 — 그날 상위 mover 의 «구성»을 읽는다. 어느 축이 상위를 차지했는지는 매일 다르다."""
+    if not top:
+        return '어제 대비 비교할 만한 변화가 없습니다.'
+    head = top[:4]
+    foreign = [x for x in head if x['kind'] == 'rate' and not x['label'].startswith('US')]
+    us_rate = next((x for x in top if x['kind'] == 'rate' and x['label'].startswith('US')), None)
+    us_line = ('' if not us_rate else
+               f'미국에서 가장 크게 움직인 건 {us_rate["label"].replace("US ", "")} '
+               f'{us_rate["value"]:+.1f}bp였고요. ')
+    if len(foreign) >= 3:
+        return (f'상위 자리를 해외 금리가 채웠습니다. {us_line}'
+                f'이런 날 미국 화면만 보고 「별일 없었다」고 적으면 곤란하죠 — '
+                f'그날의 사건이 다른 시간대에서 이미 끝나 있었다는 뜻이니까요.')
+    if head[0]['kind'] == 'credit':
+        return (f'가장 크게 움직인 건 금리가 아니라 크레딧이었습니다. {us_line}'
+                f'금리와 스프레드가 따로 논 날은 국채 ETF와 회사채 ETF의 성과가 갈립니다.')
+    KIND_KO = {'rate': '금리', 'credit': '크레딧 스프레드', 'fx': '환율',
+               'etf': 'ETF 가격', 'vol': '금리 변동성'}
+    if head[0]['kind'] == 'rate' and head[0]['label'].startswith('US'):
+        return (f'상위는 미국 금리가 차지했습니다. {us_line}'
+                f'미국 금리가 움직인 날은 거의 모든 달러 채권이 같이 움직이므로, '
+                f'무엇이 그 금리를 밀었는지부터 봅니다.')
+    return (f'가장 크게 움직인 건 {KIND_KO.get(head[0]["kind"], head[0]["kind"])} '
+            f'쪽이었습니다({head[0]["label"]} {head[0]["value"]:+.1f}{head[0]["unit"]}). '
+            f'{us_line}어느 축이 상위를 차지했는지가 그날 무엇을 먼저 봐야 하는지를 말해 줍니다.')
+
+
+def credit_reading(hy, us_bp):
+    chg = hy.get('chg_bp')
+    if chg is None:
+        return (f'하이일드 스프레드는 {hy["bp"]:,.0f}bp입니다. 오늘은 새 관측이 없어 '
+                f'전일 대비 변화를 계산하지 않았습니다.')
+    if abs(chg) < 0.05:
+        head = f'하이일드 스프레드는 {hy["bp"]:,.0f}bp로 어제와 같습니다.'
+    else:
+        way = '벌어져' if chg > 0 else '좁아져'
+        head = f'하이일드 스프레드는 {chg:+.1f}bp {way} {hy["bp"]:,.0f}bp가 됐습니다.'
+    if us_bp is None:
+        return head
+    if us_bp > 0 and chg < 0:
+        tail = ('국채는 손해였지만 회사채는 그 손해를 스프레드로 일부 메운 하루입니다.')
+    elif us_bp < 0 and chg > 0:
+        tail = ('무위험금리는 내렸는데 신용위험은 커졌습니다 — 국채 ETF는 오르고 '
+                '하이일드 ETF는 내릴 수 있는 조합이에요.')
+    elif us_bp > 0 and chg > 0:
+        tail = '금리도 오르고 스프레드도 벌어졌습니다. 회사채가 양쪽으로 맞은 날입니다.'
+    elif us_bp < 0 and chg < 0:
+        tail = '금리도 내리고 스프레드도 좁아졌습니다. 채권이 전 구간에서 좋았던 날이에요.'
+    elif abs(chg) < 0.5 and abs(us_bp) >= 2:
+        move = '오르는' if us_bp > 0 else '내리는'
+        tail = (f'금리가 {move} 동안 스프레드는 그대로였습니다. 회사채가 국채와 같은 만큼만 '
+                f'움직인 날이라, 오늘 성과 차이는 크레딧이 아니라 듀레이션이 만들었습니다.')
+    else:
+        tail = '금리도 스프레드도 거의 제자리였습니다.'
+    return f'{head} {tail}'
+
+
+def decomposition_reading(d10):
+    if not d10:
+        return ('오늘은 명목·실질·기대인플레 세 계열의 기준일이 맞지 않아 분해를 생략했습니다. '
+                '날짜가 어긋난 세 다리로 계산하면 항등식이 닫히지 않습니다.')
+    drv, n_bp = d10.get('driver_ko'), d10.get('nominal_bp')
+    base = (f'왜 굳이 쪼개느냐면 대응이 갈리기 때문이에요. 실질금리가 밀어 올린 상승이면 '
+            f'성장과 국채 발행 물량 쪽을 의심하고, 기대인플레가 밀어 올린 상승이면 '
+            f'유가·관세·임금 쪽을 봅니다. ')
+    if drv == '무변화' or (n_bp is not None and abs(n_bp) < 1):
+        tail = (f'{d10.get("date")} 기준으로는 두 축 모두 1bp 안쪽이라 어느 쪽으로도 '
+                f'이야기를 만들 만한 날이 아니었죠.')
+    elif drv == '실질금리':
+        tail = f'{d10.get("date")} 기준 이 움직임은 실질금리가 끌었습니다 — 성장·수급 쪽을 봅니다.'
+    elif drv == '기대인플레':
+        tail = f'{d10.get("date")} 기준 이 움직임은 기대인플레가 끌었습니다 — 유가·관세·임금을 봅니다.'
+    else:
+        tail = f'{d10.get("date")} 기준으로는 두 축이 함께 움직였습니다.'
+    return (base + tail + f' 수준은 실질 {d10.get("real_level"):.2f}%, '
+            f'기대인플레 {d10.get("bei_level"):.2f}%입니다.')
+
+
+def ccc_reading(hy, ccc):
+    hp = (hy.get('standing') or {}).get('percentile')
+    cp = (ccc.get('standing') or {}).get('percentile')
+    if hp is None or cp is None:
+        return ('등급별 분포를 볼 표본이 아직 모자랍니다. 하이일드는 벌어질 때 '
+                '아래 등급부터 벌어지므로, 지수 하나만 보지 않는 습관이 필요합니다.')
+    if cp - hp >= 30:
+        return (f'<b>그런데 여기서 갈립니다.</b> 하이일드 안에서도 가장 등급이 낮은 CCC 이하는 '
+                f'{ccc["bp"]:,.0f}bp로 {cp:.1f} 백분위입니다. 지수 전체는 {hp:.1f} 백분위로 '
+                f'좁은데 바닥층만 벌어져 있어요. 평균 하나만 보고 「크레딧이 편안하다」고 '
+                f'적으면 안 되는 이유가 이 한 줄에 있습니다.')
+    if hp - cp >= 30:
+        return (f'특이하게도 바닥층이 더 편안합니다. CCC 이하가 {ccc["bp"]:,.0f}bp로 '
+                f'{cp:.1f} 백분위인데 지수 전체는 {hp:.1f} 백분위예요. '
+                f'질 낮은 쪽으로 돈이 몰린 국면일 수 있어 방향 전환에 특히 약합니다.')
+    return (f'등급별로 보면 CCC 이하가 {ccc["bp"]:,.0f}bp({cp:.1f} 백분위)로 지수 전체'
+            f'({hp:.1f} 백분위)와 같은 방향에 서 있습니다. 층이 갈리지 않은 국면이에요. '
+            f'벌어질 때는 아래에서부터 벌어지므로 이 간격을 계속 봅니다.')
+
+
+def fx_reading(fx):
+    rows = [(k, v) for k, v in fx.items() if v.get('change_pct') is not None]
+    if not rows:
+        return '오늘은 비교할 전일 환율 값이 없어 변화를 계산하지 않았어요.'
+    top = max(rows, key=lambda kv: abs(kv[1]['change_pct']))
+    if abs(top[1]['change_pct']) < 0.2:
+        return '오늘 환율은 이야깃거리가 아니었으니, 대신 환헤지 자체를 짚고 넘어가겠습니다.'
+    note = ('' if top[1].get('vs_prev_session', True)
+            else f'({top[1].get("vs_date")} 대비) ')
+    return (f'{top[0]}가 {note}{top[1]["change_pct"]:+.2f}%로 가장 크게 움직였네요. '
+            f'환이 움직인 날은 환노출형과 환헤지형의 성과가 갈리니 헤지 구조부터 확인합니다.')
+
+
+def etf_reading(etf, ust, tlt, tlt_theory):
+    rows = [(t, v.get('change_pct')) for t, v in etf.items()
+            if v.get('change_pct') is not None]
+    if not rows:
+        return '오늘은 ETF 종가 변화를 계산할 전일 값이 없습니다.'
+    rows.sort(key=lambda x: x[1])
+    low, high = rows[0], rows[-1]
+    bp10 = ust['10Y'].get('bp')
+    lead = '' if bp10 is None else f'미국 10년물이 {bp10:+.1f}bp 움직인 가운데 '
+    low_w = '가장 크게 밀린 건' if low[1] < 0 else '가장 덜 오른 건'
+    high_w = '가장 잘 버틴 건' if low[1] < 0 else '가장 많이 오른 건'
+    dur, th = tlt.get('duration'), tlt_theory
+    tail = ('' if None in (dur, th) else
+            f' 듀레이션 {dur:.2f}년짜리 장기 국채 ETF는 30년물 움직임만으로 이론상 '
+            f'{th:+.2f}% 정도가 나오는 상품이에요.')
+    return (f'{lead}{low_w} {low[0]} {low[1]:+.2f}%, {high_w} {high[0]} '
+            f'{high[1]:+.2f}%였습니다.{tail} 듀레이션이 사실상 0인 변동금리 ETF는 금리가 '
+            f'어떻게 움직이든 거의 제자리입니다. 같은 「채권 ETF」라도 무엇에 걸려 있는지가 '
+            f'이렇게 다릅니다.')
+
+
+def basket_reading(bm):
+    cs = bm.get('contributions') or []
+    if not cs:
+        return '오늘은 바스켓 기여를 계산할 값이 모자랍니다.'
+    top = cs[0]
+    heaviest = max(cs, key=lambda c: c['weight'])
+    tail = ('' if top['ticker'] == heaviest['ticker'] else
+            f' 눈여겨볼 점은 비중이 가장 큰 {heaviest["ticker"]}'
+            f'({heaviest["weight_pct"]:.0f}%)가 가장 큰 기여가 아니었다는 겁니다 — '
+            f'비중 {top["weight_pct"]:.0f}%짜리 {top["ticker"]}가 더 크게 움직였어요.')
+    return (f'바스켓 전체는 {bm["total_pct"]:+.4f}%였습니다. 기여가 가장 컸던 건 '
+            f'{top["ticker"]}로 {top["contribution_pct"]:+.4f}%p입니다.{tail} '
+            f'비중이 크다고 기여가 큰 게 아니라 <b>비중 × 그날 움직임</b>이 기여이고, '
+            f'이 곱셈이 성과 분해의 전부입니다.')
+
+
+def gap_reading(theory, actual):
+    if theory is None or actual is None:
+        return '오늘은 둘을 맞대 볼 값이 모자랍니다.'
+    gap = abs(actual - theory)
+    if gap < 0.05:
+        return '거의 맞았습니다.'
+    if gap < 0.15:
+        return f'{gap:.2f}%포인트 어긋났는데, 이 정도 차이는 늘 생깁니다.'
+    return (f'{gap:.2f}%포인트나 어긋났습니다. 이렇게 벌어지는 날은 30년물 하나가 아니라 '
+            f'커브 전체가 제각각 움직였다는 뜻이에요.')
+
+
 # --- 조각 -------------------------------------------------------------------
 
-def curve_table(node, title, note=''):
+def shape_sentence(us):
+    """커브 형태 문장 — 그날 판정에 따라 갈린다."""
+    shape, basis = us.get('shape'), us.get('shape_basis')
+    tail = f'({basis} 기준)' if basis else ''
+    if not shape:
+        return '오늘은 커브 형태를 판정할 만큼 신선한 다리가 모이지 않았습니다.'
+    if '평행' in shape:
+        return (f'커브 모양은 「{shape}」입니다{tail}. 짧은 쪽과 긴 쪽이 같은 폭으로 움직여 '
+                f'기울기가 그대로예요. 이런 날을 스티프닝이나 플래트닝이라 부르면 안 됩니다 — '
+                f'커브가 기운 게 아니라 커브 전체가 위아래로 밀린 것이고, 듀레이션이 긴 자산일수록 '
+                f'타격이 크다는 점만 달라집니다.')
+    if shape == '트위스트':
+        return (f'커브는 「트위스트」였습니다{tail} — 짧은 쪽과 긴 쪽이 정확히 같은 폭으로 '
+                f'반대로 갔어요. 어느 쪽이 주도했다고 말할 수 없는 모양입니다.')
+    if shape == '보합':
+        return f'커브는 「{shape}」이었습니다{tail}. 방향을 말할 만한 움직임이 아니었어요.'
+    bull, steep = shape.startswith('불'), '스티프' in shape
+    who = '짧은 쪽이 더' if steep == bull else '긴 쪽이 더'
+    what = '내렸' if bull else '올랐'
+    if bull and steep:
+        mean = '금리 인하 기대가 앞단에 먼저 반영될 때 나오는 모양입니다'
+    elif bull:
+        mean = '긴 쪽이 더 사들여진 모양이라 성장 둔화 쪽 이야기와 어울립니다'
+    elif steep:
+        mean = '긴 쪽이 더 밀린 모양이라 기간프리미엄이나 국채 발행 물량 쪽을 먼저 봅니다'
+    else:
+        mean = '앞단이 더 밀린 모양이라 정책 기대가 매파적으로 재조정될 때 자주 나옵니다'
+    return f'커브 모양은 「{shape}」입니다{tail}. {who} {what}기 때문이고, {mean}.'
+
+
+def divergence_sentence(div, us_bp):
+    """해외 금리를 매일 보는 유일한 정당한 이유 — 동조인가 미국 고유인가."""
+    de = (div or {}).get('de')
+    if not de:
+        return ('해외 금리는 오늘 기준일이 맞는 값이 없어 방향 비교를 하지 않았습니다. '
+                '비교가 성립하지 않을 때 억지로 맞대면 하루 어긋난 그림이 나옵니다.')
+    head = f'미국 10년물 {de["us_bp"]:+.1f}bp에 독일 10년물은 {de["foreign_bp"]:+.1f}bp였습니다. '
+    v = de['verdict']
+    if v == '동조':
+        body = ('두 시장이 같은 방향으로 비슷하게 움직였으니 글로벌 듀레이션이 함께 팔리거나 '
+                '사들여진 날로 읽습니다. 미국 고유 재료를 찾을 게 아니라 전 세계 금리에 같이 '
+                '걸린 무언가를 봐야 한다는 뜻이에요.')
+    elif v == '미국 고유':
+        body = ('미국만 움직였습니다. 이럴 때는 연준·미국 물가·국채 발행 물량·재정처럼 '
+                '미국 안쪽 재료를 먼저 의심합니다. 글로벌 금리 이야기로 끌고 가면 원인을 놓칩니다.')
+    elif v == '미국 주도':
+        body = ('같은 방향이지만 미국이 훨씬 크게 움직였습니다. 글로벌 흐름에 미국 고유 재료가 '
+                '얹힌 날로 보고, 연준·물가·국채 발행 쪽을 먼저 확인합니다.')
+    elif v.endswith('주도'):
+        body = ('같은 방향이지만 유럽 쪽이 훨씬 크게 움직였습니다. 그 지역 재료를 먼저 보되, '
+                '우리 상품 구성의 해외 금리 노출이 작다면 방향 확인에서 멈춥니다.')
+    elif v.endswith('고유'):
+        body = ('미국은 거의 그대로인데 유럽에서만 움직였습니다. 유로존 재료를 보되, '
+                '우리 상품 구성의 해외 금리 노출이 작다면 방향만 확인하고 넘어가는 것이 맞습니다.')
+    elif v == '반대 방향':
+        body = ('두 시장이 서로 다른 쪽을 봤습니다. 정책 경로가 갈리고 있다는 신호일 수 있어 '
+                '국가 간 금리차의 방향을 함께 봅니다.')
+    else:
+        body = '어느 쪽도 방향을 말할 만큼 움직이지 않았습니다.'
+    return head + body
+
+
+def move_sentence(vol):
+    st = (vol or {}).get('standing') or {}
+    lvl, chg = (vol or {}).get('move'), (vol or {}).get('move_chg')
+    if lvl is None:
+        return ''
+    # 낡은 값을 오늘 값처럼 인쇄하지 않는다. ^MOVE 는 다른 축보다 늦게 채워지는 날이 있다.
+    asof = f'{vol.get("date")} 기준으로 ' if vol.get('stale') else ''
+    pos = ('' if st.get('percentile') is None else
+           f' {st["window"]} 표본에서 {st["percentile"]:.1f} 백분위({st["band"]}) 자리고요.')
+    mv = '' if chg is None else f' 전일 대비 {chg:+.2f}'
+    tail = ' 오늘 값은 아직 안 채워져 직전 관측을 그대로 적었습니다.' if vol.get('stale') else ''
+    return (f'미국채 변동성을 재는 MOVE 지수는 {asof}{lvl:,.2f}{mv}입니다.{pos}{tail} '
+            f'채권에서는 주식 변동성 지수보다 이 숫자가 더 중요합니다 — 올라가면 듀레이션 위험과 '
+            f'유동성 위험이 같이 커지기 때문이에요.')
+
+
+def size_word(bp_value):
+    if bp_value is None:
+        return '판정 불가'
+    a = abs(bp_value)
+    return '미미' if a < 2 else '보통' if a < 6 else '큼' if a < 12 else '매우 큼'
+
+
+def headline(m, ust, st10, vol, hy, div):
+    """그날 가장 할 말이 있는 것으로 제목을 고른다.
+
+    첫 회차는 제목을 손으로 박았고 다음 거래일에 그대로 거짓이 됐다.
+    """
+    us_bp = (ust.get('10Y') or {}).get('bp')
+    top = (m.get('diff_summary') or {}).get('movers') or []
+    lead = top[0] if top else None
+    de = (div or {}).get('de') or {}
+    pct10 = (st10 or {}).get('percentile')
+    if us_bp is not None and abs(us_bp) >= 8:
+        if de.get('verdict') == '동조':
+            return f'미국 10년물 {us_bp:+.1f}bp, 유럽도 같이 — 글로벌 금리가 함께 움직였습니다'
+        if de.get('verdict') == '미국 고유':
+            return f'미국 10년물만 {us_bp:+.1f}bp — 원인은 미국 안쪽에 있습니다'
+        return f'미국 10년물이 {us_bp:+.1f}bp 움직였습니다'
+    if lead and lead['kind'] == 'rate' and lead['abs'] >= 8 and not lead['label'].startswith('US'):
+        return f'미국은 조용했고 {lead["label"]}가 {lead["value"]:+.1f}bp 움직였습니다'
+    if hy and hy.get('chg_bp') is not None and abs(hy['chg_bp']) >= 10:
+        way = '벌어졌' if hy['chg_bp'] > 0 else '좁아졌'
+        return f'금리보다 크레딧이 움직였습니다 — 하이일드 스프레드가 {way}습니다'
+    if pct10 is not None and pct10 >= 90:
+        return '오늘은 조용했지만, 미국 금리가 서 있는 자리는 구간 상단입니다'
+    if pct10 is not None and pct10 <= 10:
+        return '오늘은 조용했지만, 미국 금리가 서 있는 자리는 구간 하단입니다'
+    return '큰 움직임 없이 지나간 하루 — 자리와 대가를 점검합니다'
+
+
+def forward_sentence(fwd, policy):
+    """선도금리 문장 — 값이 없으면 없다고 말한다."""
+    f1, f5 = fwd.get('1y1y'), fwd.get('5y5y')
+    if f1 is None and f5 is None:
+        return ('그런데 오늘은 같은 날짜로 정렬되는 만기가 모자라 선도금리를 뽑지 못했습니다. '
+                '이틀치를 섞은 커브에서 뽑은 선도금리는 아무 뜻이 없어서 계산 자체를 건너뜁니다.')
+    out = []
+    if f1 is not None:
+        if policy is None:
+            out.append(f'국채 커브에서 뽑은 1년 뒤 1년 금리는 {f1:,.2f}%입니다.')
+        else:
+            rel = ('지금보다 <b>높습니다</b>' if f1 > policy + 0.05 else
+                   '지금보다 <b>낮습니다</b>' if f1 < policy - 0.05 else '지금과 거의 같습니다')
+            mean = ('시장이 앞으로 1년 사이 단기금리가 올라가는 쪽에 이미 서 있다는 뜻이죠.'
+                    if f1 > policy + 0.05 else
+                    '시장이 앞으로 1년 사이 인하를 이미 깔아 놨다는 뜻이에요.'
+                    if f1 < policy - 0.05 else
+                    '시장이 당분간 정책금리가 그대로일 것으로 본다는 뜻입니다.')
+            out.append(f'그런데 국채 커브에서 뽑은 1년 뒤 1년 금리는 {f1:,.2f}%로 {rel}. {mean}')
+    if f5 is not None:
+        out.append(f'5년 뒤 5년 금리는 {f5:,.2f}%인데, 먼 미래의 중립금리를 시장이 '
+                   f'이 언저리로 본다는 얘기가 됩니다.')
+    return ' '.join(out)
+
+
+def carry_gap_sentence(us10, jp10, gap_bp):
+    if gap_bp is None or us10 is None or jp10 is None:
+        return ('미국채가 일본 국채보다 표면금리가 훨씬 높으니 미국채가 좋다 — '
+                '(오늘은 두 나라 관측 날짜가 달라 금리차를 수치로 적지 않습니다) ')
+    return (f'미국 10년물이 {us10:,.2f}%고 일본 10년물이 {jp10:,.3f}%니까 '
+            f'미국채가 {gap_bp:,.1f}bp 더 준다, 그러니 미국채가 좋다 — ')
+
+
+def split_sentence(d10, d5):
+    """명목 = 실질 + 기대인플레 — 값이 없으면 문장을 만들지 않는다."""
+    if not d10 and not d5:
+        return ('오늘은 명목·실질·기대인플레 세 계열이 같은 날짜로 모이지 않아 분해를 '
+                '생략했습니다. 날짜가 어긋난 세 다리로는 항등식이 닫히지 않습니다.')
+    parts = []
+    if d10:
+        drv = d10.get('driver_ko') or '판정 보류'
+        led = ('두 축 모두 거의 안 움직였다는 뜻이에요' if drv == '무변화' else
+               '두 축이 함께 끌었다는 뜻이에요' if drv == '동반' else
+               f'{drv}가 끌었다는 뜻이에요')
+        parts.append(
+            f'{d10.get("prev_date")} 대비 {d10.get("date")} 기준 10년물은 명목 '
+            f'{d10.get("nominal_bp"):+.1f}bp 가운데 실질이 {d10.get("real_bp"):+.1f}bp, '
+            f'기대인플레가 {d10.get("breakeven_bp"):+.1f}bp였습니다. {led}.')
+    if d5:
+        d5drv = d5.get('driver_ko')
+        parts.append(
+            f'5년물은 실질 {d5.get("real_bp"):+.1f}bp · 기대인플레 '
+            f'{d5.get("breakeven_bp"):+.1f}bp'
+            + ('로 역시 큰 변화가 없었고요.' if d5drv == '무변화'
+               else f'로 {d5drv} 쪽이었고요.'))
+    return ' '.join(parts)
+
+
+def curve_table(node, title, note='', scope='us'):
     order = ['3M', '6M', '1Y', '2Y', '3Y', '5Y', '7Y', '10Y', '20Y', '30Y', '40Y']
     ten = node.get('tenors') or {}
     rows = []
@@ -68,7 +402,7 @@ def curve_table(node, title, note=''):
             f'<td class="sub">{r.get("source","")}</td></tr>')
     if not rows:
         return ''
-    return (f'<div class="tbl-scroll"><table><caption class="sub" '
+    return (f'<div class="tbl-scroll"><table data-scope="{scope}"><caption class="sub" '
             f'style="text-align:left;padding:0 0 6px">{title}{note}</caption>'
             '<thead><tr><th>만기</th><th>수익률(%)</th><th>1일</th>'
             '<th>기준일</th><th>출처</th></tr></thead><tbody>'
@@ -123,36 +457,34 @@ def build(datadir, outdir, sitedir):
 
     head = open(os.path.join(os.path.dirname(datadir), '..', 'bond',
                              '_head.html')).read() if False else HEAD
-    title = ('미국 국채는 제자리, 움직인 건 독일 — '
-             f'글로벌 채권 커브·크레딧·ETF 정리 | {rd}')
-    desc = (f'{ko_date(rd)} 글로벌 채권시장 정리. 미국 국채는 전 만기 ±2bp 안쪽에서 '
-            f'거의 움직이지 않았지만 10년물은 2년 표본 {n(st10["percentile"],1)} 백분위에 '
-            f'서 있고, 독일 30년물이 {bp(det["30Y"]["bp"])} 내리며 커브가 눌렸습니다. '
-            f'HY 스프레드 {n(hy["bp"],0)}bp, CCC {n(ccc["bp"],0)}bp의 갈림까지 정리했습니다.')
+    lead_line = headline(m, ust, st10, vol, hy, m.get('divergence'))
+    us_bp = ust['10Y'].get('bp')
+    title = f'{lead_line} | {rd}'
+    desc = (f'{ko_date(rd)} 글로벌 채권시장 정리. 미국 10년물 '
+            f'{n(ust["10Y"]["level"], 2)}%({bp(us_bp)}), 30년물 '
+            f'{n(ust["30Y"]["level"], 2)}%, 하이일드 스프레드 {n(hy["bp"], 0)}bp. '
+            f'국채 커브·정책 기대·크레딧·환헤지·채권 ETF를 상품 노출에서 역산한 '
+            f'우선순위대로 정리했습니다.')
 
     P = []
     A = P.append
 
     # ------------------------------------------------------------------ §1
-    A(f'''<section id="b-1">
+    A(f"""<section id="b-1">
 <div class="headline-card">
-<h1>미국 국채는 하루 종일 제자리였지만, 서 있는 자리가 2년 만의 꼭대기입니다</h1>
-<p>{ko_date(rd)} 미국 국채는 3개월물부터 30년물까지 전부 2bp 안쪽에서만 움직였습니다.
-커브 모양이 바뀐 게 아니라 커브 전체가 아주 조금 위로 밀린 하루였고, 금리 변동성을 재는 MOVE 지수도
-{n(vol['move'],2)}로 1년 표본에서 {n(vol['standing']['percentile'],1)} 백분위에 머물렀습니다. 조용했다는 뜻입니다.</p>
-<p>그런데 조용한 것과 편안한 것은 다릅니다. 10년물 {n(ust['10Y']['level'],2)}%는 최근 2년 구간에서
-{n(st10['percentile'],1)} 백분위, 30년물 {n(ust['30Y']['level'],2)}%는 {n(st30['percentile'],1)} 백분위입니다.
-2년 동안 이보다 금리가 높았던 날이 손에 꼽는다는 뜻이고, 채권을 사는 쪽에는 그만큼 표면금리가 두툼하다는 뜻이기도 합니다.</p>
-<p>오늘 진짜로 움직인 곳은 미국이 아니라 독일이었습니다. 독일 30년물이 {bp(det['30Y']['bp'])},
-5년물이 {bp(det['5Y']['bp'])} 내리는 동안 1년물은 오히려 {bp(det['1Y']['bp'])} 올랐습니다.
-앞은 오르고 뒤는 내리는 전형적인 불 플래트닝이고, 미국 커브가 멈춰 선 날 유럽에서 혼자 일어난 일입니다.</p>
+<h1>{esc(lead_line)}</h1>
+<p>{ko_date(rd)} 미국 10년물은 {n(ust['10Y']['level'], 2)}%({bp(us_bp)}), 30년물은
+{n(ust['30Y']['level'], 2)}%({bp(ust['30Y'].get('bp'))})로 끝났습니다.
+오늘 움직임의 크기는 {size_word(us_bp)} 쪽입니다.</p>
+<p>서 있는 자리는 따로 봅니다. 10년물 {n(ust['10Y']['level'], 2)}%는 최근
+{st10['window']} 구간에서 {n(st10['percentile'], 1)} 백분위, 30년물은
+{n(st30['percentile'], 1)} 백분위예요. 채권을 사는 쪽에는 표면금리가 그만큼 두툼하다는 뜻이고,
+들고 있는 쪽에는 가격 위험이 그만큼 크다는 뜻이기도 합니다.</p>
+<p>크레딧은 하이일드 스프레드 {n(hy['bp'], 0)}bp({bp(hy.get('chg_bp'))}),
+투자등급 {n(ig['bp'], 0)}bp({bp(ig.get('chg_bp'))})로 마쳤습니다.
+{divergence_sentence(m.get('divergence'), us_bp)}</p>
 </div>
-</section>
-
-<nav class="reading-map" aria-label="빠른 이동"><span class="reading-map-label">빠른 이동</span>
-<a href="#b-2">어제 대비</a><a href="#b-3">국채·커브</a><a href="#b-4">정책 기대</a>
-<a href="#b-6">크레딧</a><a href="#b-7">FX·환헤지</a><a href="#b-8">ETF</a>
-<a href="#b-9">뷰 3축</a><a href="#b-10">오늘의 개념</a></nav>''')
+</section>""")
 
     # ------------------------------------------------------------------ §2
     top = m['diff_summary']['movers']
@@ -162,58 +494,85 @@ def build(datadir, outdir, sitedir):
 <p>채권 운용에서 아침에 가장 먼저 해야 할 일은 값을 읽는 게 아니라 <b>어제와 달라진 것</b>을 찾는 일입니다.
 값은 어제도 있었고 오늘도 있지만, 판단을 바꾸는 건 차이니까요. {prev} 대비 크기순으로 줄을 세우면 이렇습니다.</p>
 {movers_strip(top, {'rate', 'credit'}, 8)}
-<p>상위 네 자리를 독일이 전부 가져갔어요. 미국에서 가장 크게 움직인 건 1년물
-{bp(ust['1Y']['bp'])}였고, 그다음이 3개월물 {bp(ust['3M']['bp'])}입니다.
-글로벌 채권을 운용한다면 이런 날 미국 화면만 보고 「오늘은 별일 없었다」고 적으면 곤란하죠.
-그날의 사건은 다른 시간대에서 이미 끝나 있었으니까요.</p>
-<p>크레딧에서는 미국 HY 스프레드가 {bp(hy['chg_bp'])} 좁아져 {n(hy['bp'],0)}bp가 됐습니다.
-금리는 살짝 오르고 스프레드는 좁아졌으니, 국채는 조금 손해였지만 회사채는 그 손해를 스프레드로 일부 메운 하루입니다.</p>
+<p>{movers_reading(top, ust)}</p>
+<p>{credit_reading(hy, ust['10Y'].get('bp'))}</p>
 </div>
 </section>''')
 
     # ------------------------------------------------------------------ §3
-    A(f'''<section id="b-3">
+    # 지면 배분은 노출에서 역산한다(2026-09-01 사용자 지시). 미국 커브는 전 만기 표,
+    # 해외는 방향 확인용 압축 표 하나 — 노출이 8%인 축에 표 지면의 절반을 주면 안 된다.
+    foreign_rows = []
+    for key, label, tenors in (('de', '독일', ('2Y', '10Y', '30Y')),
+                               ('jp', '일본', ('10Y', '30Y')),
+                               ('gb', '영국', ('10Y',)),
+                               ('kr', '한국', ('3Y', '10Y'))):
+        node = (m['curves'].get(key) or {}).get('tenors') or {}
+        for t in tenors:
+            r = node.get(t)
+            if not r:
+                continue
+            stale = ' <span class="sub">(전일자)</span>' if r.get('stale') else ''
+            foreign_rows.append(
+                f'<tr><td>{label} {t}</td><td>{n(r["level"], 3)}</td>'
+                f'<td{cls(r.get("bp"))}>{bp(r.get("bp"))}</td>'
+                f'<td class="sub">{r.get("date","")}{stale}</td>'
+                f'<td class="sub">{r.get("source","")}</td></tr>')
+    foreign_tbl = ('<div class="tbl-scroll"><table data-scope="foreign">'
+                   '<caption class="sub" '
+                   'style="text-align:left;padding:0 0 6px">해외 국채 — 방향 확인용</caption>'
+                   '<thead><tr><th>만기</th><th>수익률(%)</th><th>1일</th>'
+                   '<th>기준일</th><th>출처</th></tr></thead><tbody>'
+                   + ''.join(foreign_rows) + '</tbody></table></div>')
+
+    # 근거 문장은 두 스프레드 각각의 정렬 여부를 따로 본다. 예전엔 2s10s 만 보고
+    # 5s30s 를 무조건 「같은 날짜」라고 불렀고, 다리가 하나 없는 날엔 「기준일이
+    # 다릅니다 — None」이 그대로 인쇄될 수 있었다(2026-09-01 codex 지적).
+    notes = []
+    if us.get('spread_2s10s_bp') is not None and us.get('spread_2s10s_aligned') is False:
+        notes.append(f'2년-10년은 기준일이 다릅니다 — {us.get("spread_2s10s_basis")}')
+    if us.get('spread_5s30s_bp') is not None and us.get('spread_5s30s_aligned') is False:
+        notes.append(f'5년-30년도 기준일이 다릅니다 — {us.get("spread_5s30s_basis")}')
+    basis_note = ''
+    if notes:
+        basis_note = ' 다만 ' + '. '.join(notes) + '.'
+        if us.get('spread_5s30s_aligned'):
+            basis_note += (f' 같은 날짜끼리 맞댄 5년-30년 '
+                           f'{n(us["spread_5s30s_bp"], 1)}bp가 단일 기준일 커브 논의에는 '
+                           f'더 맞습니다.')
+    fr_pct = (next((r for r in m['exposure']['factors']
+                    if r['factor'] == 'foreign_rates'), {}) or {}).get('pct')
+
+    A(f"""<section id="b-3">
 <h2>국채금리와 커브</h2>
 <div class="card">
-<p data-standing="rates">미국 10년물은 {n(ust['10Y']['level'],2)}%로 최근 2년({st10['sessions']}거래일) 안에서
-{n(st10['percentile'],1)} 백분위, 같은 기간 최저 {n(st10['min'],2)}%·최고 {n(st10['max'],2)}% 사이에서
-꼭대기에 바싹 붙어 있습니다. 30년물은 {n(ust['30Y']['level'],2)}%로 {n(st30['percentile'],1)} 백분위고요.
-오늘 하루 움직임은 전 만기 {bp(ust['10Y']['bp'])} 수준이라 그 자체로는 이야깃거리가 아닙니다.
-읽을거리는 「얼마나 움직였나」가 아니라 「어디에 서 있나」 쪽에 있습니다.</p>
-<p>커브 모양은 「{us['shape']}」입니다. 2년물과 10년물이 같은 폭으로 함께 올랐기 때문에 기울기가 그대로예요.
-이런 날을 스티프닝이나 플래트닝이라고 부르면 안 됩니다. 커브가 기울어진 게 아니라 커브 전체가 평행하게 밀린 것이고,
-듀레이션이 긴 자산일수록 손실이 커지는 구조라는 점만 달라집니다.</p>
-<p>장단기 금리차는 2년-10년 {n(us['spread_2s10s_bp'],1)}bp, 5년-30년 {n(us['spread_5s30s_bp'],1)}bp입니다.
-장기물이 단기물보다 확실히 높은, 우상향 커브예요. 커브가 우상향이라는 건 금리가 하나도 안 움직여도 이익이 난다는 뜻이에요.
+<p data-standing="rates">미국 10년물은 {n(ust['10Y']['level'], 2)}%로 최근 {st10['window']}
+({st10['sessions']}거래일) 안에서 {n(st10['percentile'], 1)} 백분위, 같은 기간 최저
+{n(st10['min'], 2)}%·최고 {n(st10['max'], 2)}% 사이에 있습니다. 30년물은
+{n(ust['30Y']['level'], 2)}%로 {n(st30['percentile'], 1)} 백분위고요.
+오늘 10년물 움직임은 {bp(ust['10Y']['bp'])}로 크기로 치면 {size_word(ust['10Y'].get('bp'))} 쪽입니다.</p>
+<p>{move_sentence(vol)}</p>
+<p>{shape_sentence(us)}</p>
+<p>장단기 금리차는 2년-10년 {n(us['spread_2s10s_bp'], 1)}bp, 5년-30년
+{n(us['spread_5s30s_bp'], 1)}bp입니다.{basis_note}</p>
+<p>커브가 우상향이라는 건 금리가 하나도 안 움직여도 이익이 난다는 뜻이에요.
 시간이 지나면 10년물이던 채권이 9년물이 되고, 커브가 우상향이면 9년 금리가 더 낮으니
 그만큼 가격이 오릅니다. 만기가 짧아지며 저절로 붙는 이익이죠.
 채권 아이디어를 금리 방향만으로 보면 안 되는 이유가 여기 있습니다.</p>
-{curve_table(us, '미국 국채 (FRED, 만기별 고정만기 수익률)')}
+{curve_table(us, '미국 국채 — 발행값', ' · 5·10·30년은 야후 스팟 지수(주식 종가와 동일자), 나머지 만기는 FRED')}
+<h3>해외 금리 — 방향만 확인한다</h3>
+<p>이 리포트가 담는 상품 구성에서 해외 금리 노출은 {n(fr_pct, 1)}%입니다(뒤 §8에서 역산합니다).
+그래서 분트나 JGB의 커브를 매일 해부하지는 않아요. 대신 <b>딱 하나</b>를 봅니다 —
+미국과 같이 움직였나, 아니면 미국만 움직였나.</p>
+<p>{divergence_sentence(m.get('divergence'), ust['10Y'].get('bp'))}</p>
+{foreign_tbl}
 <figure style="margin:16px 0 6px">
-<img src="../data/yield_curves.png" alt="미국·독일·일본·영국 국채 수익률 곡선" style="width:100%;border-radius:12px;border:1px solid #F2F4F6">
-<figcaption class="caption" style="margin-top:6px">네 나라를 같은 축에 겹쳐 그렸습니다. 세로 간격이 곧 금리차이고,
-이 간격이 뒤에 나올 환헤지 이야기의 재료가 됩니다.</figcaption>
+<img src="../data/yield_curves.png" alt="주요국 국채 수익률 곡선" style="width:100%;border-radius:12px;border:1px solid #F2F4F6">
+<figcaption class="caption" style="margin-top:6px">주요국을 같은 축에 겹쳐 그렸습니다.
+세로 간격이 곧 금리차이고, 이 간격이 뒤에 나올 환헤지 이야기의 재료가 됩니다.</figcaption>
 </figure>
-<h3>독일 — 오늘의 사건</h3>
-<p>독일 커브는 「{de.get('shape')}」 모양이었습니다. 1년물이 {bp(det['1Y']['bp'])} 오르는 동안 30년물이
-{bp(det['30Y']['bp'])} 내렸으니, 짧은 쪽은 팔리고 긴 쪽은 사들여진 하루입니다.
-2년-10년 금리차가 {n(de.get('spread_2s10s_bp'),1)}bp까지 좁아졌습니다.</p>
-<p>이런 모양은 보통 두 가지 중 하나를 말합니다. 당장의 정책금리 기대는 조금 더 매파적으로 밀렸는데,
-더 먼 미래의 성장이나 물가 전망은 오히려 낮아졌다는 것이죠. 미국 커브가 같은 날 평행하게 밀린 것과 대비되어
-유로존 쪽에 국지적인 재료가 있었다는 신호로 읽는 것이 출발점입니다.</p>
-{curve_table(de, '독일 국채 (Bundesbank)')}
-<h3>일본과 영국</h3>
-<p>일본은 10년물 {n(jpt['10Y']['level'],3)}%, 30년물 {n(jpt['30Y']['level'],3)}%로 사실상 제자리였습니다
-(2년-10년 {n(jp.get('spread_2s10s_bp'),1)}bp). 다만 커브 자체가 네 나라 중 가장 가파릅니다 —
-2년물이 {n(jpt['2Y']['level'],3)}%인데 30년물이 {n(jpt['30Y']['level'],3)}%니까요.
-짧은 돈은 여전히 거의 공짜인데 긴 돈에는 값이 붙어 있다는 뜻이고, 이 구조가 뒤에 나올 환헤지 계산의 핵심입니다.</p>
-<p>영국 길트는 기준일이 {list((gb.get('tenors') or {}).values())[0]['date'] if gb.get('tenors') else '—'}로 하루 늦어
-당일 변화를 계산하지 않았습니다. 수준만 보면 10년물 {n((gb.get('tenors') or {}).get('10Y',{}).get('level'),2)}%로
-네 나라 중 가장 높습니다.</p>
-{curve_table(jp, '일본 국채 (일본 재무성)')}
-{curve_table(gb, '영국 길트 (영란은행)', ' · 전일자 기준')}
 </div>
-</section>''')
+</section>""")
 
     # ------------------------------------------------------------------ §4
     dec = m['decomposition']
@@ -226,22 +585,14 @@ def build(datadir, outdir, sitedir):
 시장이 1년 안에 100bp 인하를 이미 깔아 놨다면 「연준이 내릴 것 같다」는 견해에는 값이 없어요.
 값이 있는 견해는 「시장이 반영한 것보다 더 빠르거나 더 느릴 것이다」뿐입니다.</p>
 <p>지금 실효 연방기금금리는 {n(ffr,2)}%, 담보부 하루짜리 금리(SOFR)는 {n(sofr,2)}%예요.
-그런데 국채 커브에서 뽑은 1년 뒤 1년 금리는 {n(fwd.get('1y1y'),2)}%로 지금보다 <b>높습니다</b>.
-시장이 앞으로 1년 사이 단기금리가 올라가는 쪽에 이미 서 있다는 뜻이죠.
-5년 뒤 5년 금리는 {n(fwd.get('5y5y'),2)}%인데, 먼 미래의 중립금리를 시장이 이 언저리로 본다는 얘기가 됩니다.</p>
+{forward_sentence(fwd, ffr)}</p>
 <p><b>여기서 조심할 점</b>이 하나 있습니다. 이 선도금리는 정책금리 기대만 담고 있지 않아요.
 기간프리미엄(즉 돈을 오래 묶어 두는 데 대해 따로 요구하는 대가)도 함께 들어 있습니다.
 뉴욕 연준 추정치로는 10년물의 이 대가가 {n(tp.get('level'),2)}%({tp.get('date','')} 기준)네요.
 그러니 선도금리가 높다고 곧바로 인상 기대라고 읽으면 곤란하고, 얼마가 대가이고 얼마가 기대인지를 갈라야 합니다.</p>
 <h3>명목 = 실질 + 기대인플레</h3>
-<p>금리가 왜 움직였는지를 보려면 명목금리를 물가연동국채가 알려주는 실질금리와, 둘의 차이인 기대인플레로 쪼갭니다.
-{rd} 기준 10년물은 명목 {bp(d10.get('nominal_bp'))} 가운데 실질이 {bp(d10.get('real_bp'))},
-기대인플레가 {bp(d10.get('breakeven_bp'))}였습니다. 즉 {d10.get('driver_ko')}가 주도한 셈입니다.
-5년물은 반대로 실질 {bp(d5.get('real_bp'))} · 기대인플레 {bp(d5.get('breakeven_bp'))}로 {d5.get('driver_ko')} 쪽이었고요.</p>
-<p>왜 굳이 쪼개느냐면 대응이 갈리기 때문이에요. 실질금리가 밀어 올린 상승이면 성장과 국채 발행 물량 쪽을
-의심하고, 기대인플레가 밀어 올린 상승이면 유가·관세·임금 쪽을 봅니다. 오늘은 두 축 모두 1bp 안쪽이라
-어느 쪽으로도 이야기를 만들 만한 날은 아니었죠. 수준만 적어 두면 실질 {n(d10.get('real_level'),2)}%,
-기대인플레 {n(d10.get('bei_level'),2)}%입니다.</p>
+<p>{split_sentence(d10, d5)}</p>
+<p>{decomposition_reading(d10)}</p>
 </div>
 </section>''')
 
@@ -288,10 +639,7 @@ def build(datadir, outdir, sitedir):
 최근 2년 표본에서 <b>{n(hy['standing']['percentile'],1)} 백분위</b>예요. 2년 동안 이보다 좁았던 날이
 거의 없다는 뜻이고, 국채 대신 회사채를 들고 위험을 떠안는 대가가 지금 역사적으로 가장 얇은 축이라는 뜻입니다.
 투자등급은 {n(ig['bp'],0)}bp로 {n(ig['standing']['percentile'],1)} 백분위라 그나마 보통 수준입니다.</p>
-<p><b>그런데 여기서 갈립니다.</b> 하이일드 안에서도 가장 등급이 낮은 CCC 이하는
-{n(ccc['bp'],0)}bp로 {n(ccc['standing']['percentile'],1)} 백분위입니다. 지수 전체는 2년 만의 최저 수준으로
-좁은데, 바닥층은 거꾸로 2년 만의 최고 수준으로 벌어져 있어요. 평균 하나만 보고 「크레딧이 편안하다」고
-적으면 안 되는 이유가 이 한 줄에 있습니다.</p>
+<p>{ccc_reading(hy, ccc)}</p>
 <p>실무에서 이 갈림이 뜻하는 건 이렇습니다. 지수를 통째로 사는 상품은 좁은 스프레드를 사는 셈이고,
 문제가 생기는 곳은 지수 안에서 비중이 작은 바닥층이라 지수 수익률에 잘 안 드러납니다.
 그래서 하이일드를 볼 때는 지수 스프레드와 등급별 분포를 같이 보고, 벌어지기 시작하면 아래에서부터 벌어진다는 걸 기억합니다.</p>
@@ -301,7 +649,8 @@ def build(datadir, outdir, sitedir):
 주식·ETF 종가일보다 항상 하루 앞선 날짜를 답니다 — 표의 기준일 열이 그 사실을 그대로 보여줍니다.</p>
 <p>회사채 수익률을 볼 때는 항상 국채와 스프레드로 쪼개서 봅니다. 예를 들어 오늘 투자등급 회사채 ETF의
 만기수익률은 {n(etf['LQD'].get('ytw_pct'),2)}%인데, 같은 듀레이션 언저리의 국채가 {n(ust['7Y']['level'],2)}%(7년물)이니
-나머지가 신용위험의 대가입니다. 「6% 준다」가 아니라 「국채 4% + 신용 2%」로 읽는 습관이 크레딧 판단의 출발점입니다.</p>
+나머지가 신용위험의 대가입니다. 「몇 퍼센트 준다」로 통째로 보지 않고 「국채 얼마 + 신용위험의 대가 얼마」로 쪼개 읽는 습관이
+크레딧 판단의 출발점입니다.</p>
 </div>
 </section>''')
 
@@ -310,12 +659,11 @@ def build(datadir, outdir, sitedir):
     A(f'''<section id="b-7">
 <h2>환율과 환헤지</h2>
 <div class="card">
-<p data-standing="fx">달러지수는 {n(fx['DXY']['level'],2)}로 {pct(fx['DXY'].get('change_pct'))} 움직였습니다.
-사실상 정지 상태예요. 유로·달러는 {n(fx['EURUSD']['level'],4)}({pct(fx['EURUSD'].get('change_pct'))}),
+<p data-standing="fx">달러지수는 {n(fx['DXY']['level'],2)}입니다({fx['DXY'].get('vs_date','—')} 대비 {pct(fx['DXY'].get('change_pct'))}).
+유로·달러는 {n(fx['EURUSD']['level'],4)}({pct(fx['EURUSD'].get('change_pct'))}),
 달러·엔은 {n(fx['USDJPY']['level'],2)}({pct(fx['USDJPY'].get('change_pct'))})였습니다.
-오늘 환율은 이야깃거리가 아니었으니, 대신 환헤지 자체를 짚고 넘어가겠습니다.</p>
-<p>글로벌 채권에서 초보가 가장 많이 놓치는 게 이 부분이에요. 미국 10년물이 {n(us10,2)}%고
-일본 10년물이 {n(jp10,3)}%니까 미국채가 {n(m['us_jp_10y_bp'],1)}bp 더 준다, 그러니 미국채가 좋다 —
+{fx_reading(fx)}</p>
+<p>글로벌 채권에서 초보가 가장 많이 놓치는 게 이 부분이에요. {carry_gap_sentence(us10, jp10, m.get('us_jp_10y_bp'))}
 이렇게 끝내면 틀립니다. 일본 투자자가 엔으로 자금을 조달해 미국채를 사려면 환위험을 없애야 하고,
 그러자면 달러를 선물로 되팔아야 하거든요. 그 비용이 대략 <b>두 나라의 단기금리 차이</b>만큼 붙습니다.</p>
 <p>지금 미국 3개월물이 {n(ust['3M']['level'],2)}%예요. 일본의 단기금리는 이보다 훨씬 낮고,
@@ -326,10 +674,11 @@ def build(datadir, outdir, sitedir):
 <p>이 리포트는 달러 기준으로 쓰기 때문에 아래 표의 수익률은 전부 달러 기준입니다.
 다만 원화 투자자라면 여기에 원·달러 변동이 그대로 더해집니다. 오늘 원·달러는
 {n(fx['USDKRW']['level'],2)}({pct(fx['USDKRW'].get('change_pct'))})였습니다.</p>
-<div class="tbl-scroll"><table><thead><tr><th>통화쌍</th><th>수준</th><th>1일</th><th>기준일</th></tr></thead><tbody>
+<div class="tbl-scroll"><table><thead><tr><th>통화쌍</th><th>수준</th><th>변화</th><th>비교 대상일</th><th>기준일</th></tr></thead><tbody>
 ''' + ''.join(
         f'<tr><td>{k}</td><td>{n(v["level"],4)}</td>'
         f'<td{cls(v.get("change_pct"))}>{pct(v.get("change_pct"))}</td>'
+        f'<td class="sub">{v.get("vs_date") or "—"}</td>'
         f'<td class="sub">{v.get("date","")}</td></tr>'
         for k, v in fx.items()) + '''</tbody></table></div>
 </div>
@@ -344,6 +693,27 @@ def build(datadir, outdir, sitedir):
             f'<td>{n(v.get("duration"),2)}</td><td>{n(v.get("ytw_pct"),2)}%</td>'
             f'<td>{n(v.get("oas_bp"),1)}bp</td>'
             f'<td>{n(v.get("aum_bn"), 1)}</td></tr>')
+    exp_rows = m['exposure']['factors']
+    frows = ''.join(
+        f'<tr><td>{r["factor_ko"]}</td><td>{r["pct"]:.1f}%</td>'
+        f'<td class="sub">{r["depth"]}</td>'
+        f'<td class="sub">{esc(" · ".join(r["watch"]))}</td></tr>' for r in exp_rows)
+    seg = m.get('segments') or {}
+    erows2 = ''.join(
+        f'<tr><td>{row["ticker"]}</td><td class="sub">{row["segment_ko"]}</td>'
+        '<td class="sub">'
+        + esc(' · '.join(f'{f["factor_ko"]} {f["pct"]:.0f}%' for f in row['factors']))
+        + '</td></tr>' for row in (m.get('etf_factors') or []))
+    factor_tbl = (
+        '<div class="tbl-scroll"><table><caption class="sub" style="text-align:left;'
+        'padding:0 0 6px">상품 구성에서 역산한 모니터링 비중</caption><thead><tr>'
+        '<th>팩터</th><th>노출</th><th>보는 깊이</th><th>무엇을 보나</th></tr></thead>'
+        f'<tbody>{frows}</tbody></table></div>'
+        '<div class="tbl-scroll"><table><caption class="sub" style="text-align:left;'
+        'padding:0 0 6px">상품별 분해</caption><thead><tr>'
+        '<th>종목</th><th>커브 구간</th><th>수익률을 움직이는 것</th></tr></thead>'
+        f'<tbody>{erows2}</tbody></table></div>')
+
     brows = ''.join(
         f'<tr><td>{c["ticker"]}</td><td>{c["weight_pct"]:.0f}%</td>'
         f'<td{cls(c["return_pct"])}>{pct(c["return_pct"])}</td>'
@@ -356,10 +726,7 @@ def build(datadir, outdir, sitedir):
 같은 미국 투자등급 회사채 ETF라도 듀레이션 {n(etf['LQD'].get('duration'),1)}년짜리와
 {n(etf['IGIB'].get('duration'),1)}년짜리는 금리가 움직일 때 완전히 다르게 반응합니다.
 그래서 상품 이름이 아니라 <b>듀레이션·만기수익률·스프레드</b>를 보고 골라요.</p>
-<p>오늘 미국 국채가 전 만기 {bp(ust['10Y']['bp'])} 오르자 만기 20년 이상 국채 ETF가
-{pct(tlt.get('change_pct'))}로 가장 크게 밀렸습니다. 듀레이션이 {n(tlt.get('duration'),2)}년이니
-금리 1bp에 이론상 {pct(tlt_theory)} 정도 움직이는 상품이고, 실제로 그 언저리가 나온 겁니다.
-반대로 듀레이션이 사실상 0인 변동금리 ETF는 {pct(etf['FLOT'].get('change_pct'))}로 거의 꿈쩍하지 않았습니다.</p>
+<p>{etf_reading(etf, ust, tlt, tlt_theory)}</p>
 <div class="tbl-scroll"><table><thead><tr><th>종목</th><th>종가</th><th>1일</th>
 <th>듀레이션</th><th>만기수익률</th><th>OAS</th><th>순자산(십억$)</th></tr></thead>
 <tbody>{''.join(erows)}</tbody></table></div>
@@ -367,6 +734,22 @@ def build(datadir, outdir, sitedir):
 운용사(iShares)가 {etf['AGG'].get('nav_as_of')} 기준으로 공시한 값입니다. 기준일이 하루 다르므로
 시장가와 순자산가치의 괴리는 이번 회차에서 계산하지 않았습니다 — 날짜가 어긋난 두 값을 나누면
 하루치 시장 움직임이 괴리로 둔갑합니다. 순유입 추정치도 전일 순자산이 쌓인 뒤부터 나옵니다.</p>
+<h3>이 상품들이 실제로 무엇에 걸려 있나</h3>
+<p>ETF를 고를 때 가장 흔한 실수가 <b>상장 국가로 생각하는 것</b>입니다. 미국 거래소에 상장돼
+있어도 안에 담긴 게 독일·일본 국채면 그 나라 금리가 곧 수익률 요인이고, 반대로 이름에
+「글로벌」이 붙어 있어도 내용이 미국 국채·미국 회사채면 유럽 금리는 2차 지표예요.
+그래서 각 상품을 <b>무엇이 그 수익률을 움직이는가</b>로 쪼갠 다음, 거기서 아침에 무엇을
+얼마나 볼지를 역산합니다.</p>
+{factor_tbl}
+<p>역산 결과는 분명합니다. 미국 금리가 {n(exp_rows[0]['pct'], 1)}%로 압도적이고 해외 금리는
+{n((next((r for r in exp_rows if r['factor'] == 'foreign_rates'), {}) or {}).get('pct'), 1)}%뿐이에요.
+그러니 분트와 JGB는 방향만 확인하고 넘어가는 것이 맞고, 아침 시간의 대부분은 미국 커브·연준
+가격책정·크레딧 스프레드에 써야 합니다. 해외 채권 비중이 늘면 이 표가 먼저 바뀌고
+그다음에 보는 시간이 따라 바뀌어야 합니다 — 순서가 반대면 습관이 포트폴리오를 이깁니다.</p>
+<p class="caption">팩터 가중치는 각 상품의 듀레이션과 기초자산 구성에서 잡은 근사치입니다.
+정확한 민감도는 회귀로 추정해야 하지만, 「무엇을 더 봐야 하는가」를 가르는 데에는 이 해상도로
+충분합니다. 커브 구간은 그 상품이 커브의 어디를 타는지를 나타냅니다.</p>
+
 <h3>벤치마크 바스켓을 쪼개 보기</h3>
 <p>실제 펀드라면 매일 성과를 요인별로 쪼개서 설명할 수 있어야 합니다. 「오늘 얼마 벌었다」로 끝내지 않고
 듀레이션에서 얼마, 크레딧에서 얼마, 환에서 얼마인지를 말할 수 있어야 해요. 아래는 그 연습입니다 —
@@ -375,9 +758,7 @@ def build(datadir, outdir, sitedir):
 <th>기여도</th></tr></thead><tbody>{brows}
 <tr><td><b>합계</b></td><td></td><td></td>
 <td{cls(bm['total_pct'])}><b>{bm['total_pct']:+.4f}%p</b></td></tr></tbody></table></div>
-<p>바스켓 전체는 {bm['total_pct']:+.4f}% 였습니다. 눈여겨볼 점은 비중이 60%인 종합채권이
-가장 큰 마이너스 기여가 아니었다는 겁니다. 비중 15%짜리 해외국채가 더 크게 깎아먹었어요.
-비중이 크다고 기여가 큰 게 아니라 <b>비중 × 그날 움직임</b>이 기여이고, 이 곱셈이 성과 분해의 전부입니다.</p>
+<p>{basket_reading(bm)}</p>
 </div>
 </section>''')
 
@@ -391,7 +772,7 @@ def build(datadir, outdir, sitedir):
             f'<tr><td><b>{a["name"]}</b></td>'
             f'<td><span data-axis-key="{k}" data-grade="{a["grade"]}">{a["label"]}</span></td>'
             f'<td class="sub">{a["axis"]}</td>'
-            f'<td class="sub">{esc(book["assets"][k].get("thesis") or "")}</td>'
+            f'<td class="sub">{esc(stance_mod.thesis_for(k, m))}</td>'
             f'<td class="sub">{esc(inc)}</td></tr>')
     A(f'''<section id="b-9">
 <h2>뷰 3축 — 듀레이션·커브·크레딧</h2>

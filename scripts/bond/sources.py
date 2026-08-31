@@ -102,6 +102,30 @@ def fred_series(sid):
     return [(r[0], float(r[1])) for r in rows if len(r) > 1 and r[1] not in ('.', '')]
 
 
+# --- 야후 스팟 국채지수 (발행용 확정값) --------------------------------------
+# 레포 규칙(2026-07-28 사용자 지시): **발행용 미국 금리는 야후 스팟 기준**이다.
+# FRED DGS 는 게시가 하루 이상 늦어(2026-09-01 실측: 야후 08-31 대 FRED 08-27),
+# 주식·ETF 종가와 같은 날짜를 맞추려면 스팟 지수를 써야 한다. 야후에 없는 만기
+# (6M·1Y·2Y·3Y·7Y·20Y)만 FRED 로 메우고, **각 행이 자기 날짜와 출처를 단다.**
+YAHOO_YIELDS = {'3M': '^IRX', '5Y': '^FVX', '10Y': '^TNX', '30Y': '^TYX'}
+
+
+def yahoo_yield_series(period='2y'):
+    """만기 -> [(date, level)]. 야후가 주는 만기만."""
+    import yfinance as yf
+    df = yf.download(list(YAHOO_YIELDS.values()), period=period, progress=False,
+                     auto_adjust=False, threads=False)['Close']
+    out = {}
+    for tenor, ticker in YAHOO_YIELDS.items():
+        if ticker not in df.columns:
+            continue
+        s = df[ticker].dropna()
+        if len(s):
+            out[tenor] = [(str(i.date()), round(float(v), 3))
+                          for i, v in zip(s.index, s.values)]
+    return out
+
+
 # --- Bundesbank (독일) ------------------------------------------------------
 # 일별 현물 커브. 한 만기당 한 시리즈이고 T-0 로 나온다.
 BBK_DE = {

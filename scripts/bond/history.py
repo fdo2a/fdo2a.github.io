@@ -69,6 +69,10 @@ def market_record(market):
         return {k: v.get('date') for k, v in (node or {}).items()
                 if isinstance(v, dict) and v.get('date')}
 
+    def obs_sources(node):
+        return {k: v.get('source') for k, v in (node or {}).items()
+                if isinstance(v, dict) and v.get('source')}
+
     return {
         'report_date': market.get('report_date'),
         # 관측 날짜를 버리면 다음 날 «어제 대비»가 성립하는지 판정할 수 없다.
@@ -76,12 +80,17 @@ def market_record(market):
         'dates': {
             'credit': obs_dates(market.get('credit')),
             'us': obs_dates(market.get('us_curve')),
+            'us_source': obs_sources(market.get('us_curve')),
+            'us_fred': obs_dates(market.get('us_curve_fred')),
             'de': obs_dates(market.get('de_curve')),
             'jp': obs_dates(market.get('jp_curve')),
             'gb': obs_dates(market.get('gb_curve')),
             'ea': obs_dates(market.get('ea_curve')),
         },
         'us': curve(market.get('us_curve')),
+        # 발행값(야후 스팟)과 별개로 FRED 원본을 남긴다 — 명목=실질+기대인플레
+        # 분해는 세 다리가 같은 소스·같은 날이어야 닫힌다.
+        'us_fred': curve(market.get('us_curve_fred')),
         'de': curve(market.get('de_curve')),
         'jp': curve(market.get('jp_curve')),
         'gb': curve(market.get('gb_curve')),

@@ -41,6 +41,9 @@ def shape(short_bp, long_bp, flat_bp=FLAT_BP):
     slope_change = long_bp - short_bp          # + 면 커브 확대(스티프닝)
     # 방향은 두 다리의 평균이 아니라 «더 크게 움직인 다리»가 정한다 — 평균은
     # +10/-10 같은 순수 트위스트에서 0 이 되어 방향을 못 부른다.
+    if abs(short_bp) == abs(long_bp) and short_bp != long_bp:
+        # 정확히 같은 크기로 반대로 갔다. 어느 쪽이 «주도»했다고 말할 수 없다.
+        return '트위스트'
     driver = short_bp if abs(short_bp) >= abs(long_bp) else long_bp
     direction = 'bear' if driver > 0 else 'bull'
     if abs(slope_change) < flat_bp:
