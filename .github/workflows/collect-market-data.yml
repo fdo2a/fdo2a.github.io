@@ -54,6 +54,14 @@ jobs:
         continue-on-error: true
         run: python scripts/eval_stance_triggers.py --datadir data
 
+      - name: Roll the paper portfolio
+        # Non-core, same contract: turns yesterday's committed grades into today's
+        # weights and marks the book to today's close. The routine renders the result
+        # and does no arithmetic of its own. A failure here costs the section, not the
+        # dataset — check_portfolio.py then publishes without it.
+        continue-on-error: true
+        run: python scripts/build_portfolio.py --datadir data
+
       - name: Evaluate macro regime
         # Non-core, same contract as the stance step: judges yesterday's macro book
         # against today's axis scores so §8 inherits a regime instead of re-reading the
@@ -85,6 +93,7 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
           git add data/yield_curve.png data/stance_metrics.json data/stance_eval.json 2>/dev/null || true
+          git add data/portfolio.json data/portfolio_state.json data/portfolio_prices.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/scorecard.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true

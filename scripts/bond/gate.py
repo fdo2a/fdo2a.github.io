@@ -12,6 +12,11 @@ US 브리프의 `macro_gate`·`stance_gate`·`weight` 셋이 하는 일을 채�
 
 import re
 
+from common.numbers import (measure_numbers as _measure_numbers,
+                            numbers_split_by_tags as _split_numbers,
+                            numeric_tokens as _numeric_tokens,
+                            text_of as _text_of)
+
 from .stance import AXES, label_for
 
 BANNED_WORDS = ('buy-side', 'buy side', '바이사이드', '[확인필요]', 'TODO', 'TBD')
@@ -23,7 +28,6 @@ INTERNAL_TOKENS = ('bond_metrics.json', 'bond_market.json', 'bond_stance.json',
                    'report_date', 'us10y_dma20_gap_bp', 'signed-z')
 
 SECTION_RE = re.compile(r'<section id="(b-\d+)"[^>]*>(.*?)</section>', re.S)
-TAG_RE = re.compile(r'<[^>]+>')
 
 # 시황 섹션과 판단 섹션 — 무게중심 검사의 기준
 MARKET_SECTIONS = ('b-2', 'b-3', 'b-4', 'b-5', 'b-6', 'b-7', 'b-8')
@@ -33,85 +37,21 @@ MIN_MARKET_RATIO = 2.0    # 시황이 판단의 2배 이상이어야 한다
 
 
 def text_of(html):
-    """본문 + 메타 설명. 메타를 빼면 SEO 설명에 실린 수치 주장이 검사를 통째로
-    피해 간다 — 태그를 지우면 content="..." 속 문장도 같이 사라진다."""
-    t = re.sub(r'<style.*?</style>', ' ', html, flags=re.S)
-    t = re.sub(r'<script.*?</script>', ' ', t, flags=re.S)
-    metas = ' '.join(re.findall(r'<meta[^>]+content="([^"]*)"', t))
-    titles = ' '.join(re.findall(r'<title>(.*?)</title>', t, re.S))
-    return re.sub(r'\s+', ' ', TAG_RE.sub(' ', t) + ' ' + metas + ' ' + titles)
+    """공용 구현에 위임 — 규칙 정본은 `common/numbers.py` 하나뿐이다."""
+    return _text_of(html)
 
 
 def sections(html):
     return {m.group(1): m.group(2) for m in SECTION_RE.finditer(html)}
 
 
-MEASURE_RE = re.compile(
-    r'(-?\d[\d,]*(?:\.\d+)?)\s*(?:bp|%p|%|십억|배)'        # 단위를 단 수치
-    r'|(-?\d[\d,]*\.\d{2,})'                              # 소수 2자리 이상
-    r'|(-?\d{1,3}(?:,\d{3})+(?:\.\d+)?)')                 # 천 단위 구분자
-
-
 def _numbers(text):
-    """비교 가능한 수치 토큰.
-
-    하이픈을 음수 부호로 잘못 읽는 사고가 두 종류 있다. 하나는 날짜
-    (「2026-08-27」에서 -27 을 뜯어내는 것, 주간 게이트가 2026-08-30 에 겪은 실패)이고,
-    다른 하나는 만기 구간 표기(「5년-30년」에서 -30 을 뜯어내는 것)다.
-    그래서 날짜를 먼저 가리고, **앞에 공백이나 여는 괄호가 오지 않는 하이픈은
-    부호가 아니라 이음표**로 처리한다.
-    """
-    masked = re.sub(r'\d{4}-\d{2}-\d{2}', ' ', text)
-    masked = re.sub(r'\d{4}년|\d{1,2}월|\d{1,2}일', ' ', masked)
-    masked = re.sub(r'(?<=[^\s(\[])-', ' ', masked)
-
-    # **단위를 단 수치만 검사한다.** 예전에는 모든 숫자를 뜯어냈고, 그러면 산문의
-    # 「세 가지」·「3개월물」까지 걸리므로 0~100 정수를 통째로 면제해야 했다.
-    # 그 면제가 게이트를 갉아먹었다 — 지어낸 bp 값이 0~100 범위면 무조건 통과했다.
-    # 검사 대상을 좁히는 쪽이 면제를 넓히는 쪽보다 낫다.
-    out = set()
-    for m in MEASURE_RE.finditer(masked):
-        raw = next(g for g in m.groups() if g)
-        try:
-            out.add(round(float(raw.replace(',', '')), 4))
-        except ValueError:
-            continue
-    return out
+    return _measure_numbers(text)
 
 
 def data_tokens(market, metrics, evaluation, econ=None):
-    """발행본이 인용해도 되는 수치의 전체 집합."""
-    out = set()
-
-    def add(v, extra_scales=True):
-        if isinstance(v, bool) or v is None:
-            return
-        if isinstance(v, (int, float)):
-            f = float(v)
-            out.add(round(f, 4))
-            if extra_scales:
-                # **단위 변환은 허용하지 않는다.** 예전에는 ×100(% -> bp)과
-                # ÷10억(USD -> 십억)과 절댓값을 전부 허용했는데, 그러면 무관한 값이
-                # 남의 단위로 세탁된다 — 10년물 4.67 이 ×100 되어 「하이일드 스프레드
-                # 467bp」라는 거짓 문장을 통과시켰다(2026-08-31 codex 검토에서 실증).
-                # 발행본이 인쇄하는 단위는 metrics 가 그 단위로 직접 내려보낸다
-                # (credit 의 `bp`, etf 의 `aum_bn`). 여기서는 **같은 값을 다른
-                # 자릿수로 인쇄하는 것**만 허용한다.
-                # 정수 반올림(0자리)은 넣지 않는다. 달러지수 99.16 이 99 가 되어
-                # 「금리차 99bp」를 통과시킨다. 발행본이 정수로 인쇄해야 하는 값은
-                # metrics 가 그 자릿수로 내려보낸다.
-                for d in (1, 2, 3):
-                    out.add(round(f, d))
-        elif isinstance(v, dict):
-            for x in v.values():
-                add(x)
-        elif isinstance(v, (list, tuple)):
-            for x in v:
-                add(x)
-
-    for blob in (market, metrics, evaluation, econ):
-        add(blob)
-    return out
+    """발행본이 인용해도 되는 수치의 전체 집합 — 규칙은 `common/numbers.py`."""
+    return _numeric_tokens(market, metrics, evaluation, econ)
 
 
 def check(html, market, metrics, evaluation, book, econ=None):
@@ -140,6 +80,12 @@ def check(html, market, metrics, evaluation, book, econ=None):
     for tok in INTERNAL_TOKENS:
         if tok in txt:
             errs.append(f'내부 용어 노출: {tok}')
+
+    # 「4.<span>47</span>bp」는 화면에 4.47bp 로 보이는데 검사에는 4 와 47bp 로
+    # 들어간다 — 허용된 47bp 만 보고 통과한다(2026-09-01 codex 검토).
+    for run in _split_numbers(html)[:4]:
+        errs.append(f'수치 사이에 태그가 끼어 있다({run.strip()[:40]}) — '
+                    f'검사를 피해 가므로 허용하지 않는다')
 
     # --- 뷰 3축 표식 -------------------------------------------------------
     marks = re.findall(r'data-axis-key="(\w+)" data-grade="(-?\d+)"[^>]*>([^<]+)<',

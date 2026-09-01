@@ -11,6 +11,7 @@ Pure — `check()` takes strings and dicts and returns a list of violation messa
 import re
 
 from .stance import ASSETS, CURVE_LABELS, label_for
+from common.numbers import TAG_RE
 
 # The stance cell carries machine-readable markers so the gate reads grades exactly
 # instead of guessing from prose: <span data-asset="equities" data-grade="0">중립</span>
@@ -19,7 +20,9 @@ _SPAN = re.compile(
     r'(?P<text>.*?)</span>',
     re.S)
 _GRADE = re.compile(r'\bdata-grade\s*=\s*"(-?\d+)"')
-_TAG = re.compile(r'<[^>]+>')
+# 주석·속성값 안의 `>` 까지 한 토큰으로 읽는다 — 정본은 common/numbers.py
+# (2026-09-01 codex 검토: 트리거 근거를 주석 안에 숨기면 검사를 비껴갔다).
+_TAG = TAG_RE
 
 
 def locate_section(html, keyword):

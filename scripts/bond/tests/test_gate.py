@@ -150,3 +150,10 @@ class TestCheck:
         html = _html('<p>' + 'y' * 9000 + '</p>')
         errs = check(html, MARKET, METRICS, EVAL, BOOK)
         assert any('무게중심 역전' in e for e in errs)
+
+
+def test_a_number_split_by_markup_is_refused():
+    """「4.<span>47</span>bp」는 화면에 4.47bp 로 보이는데 검사에는 47bp 로 들어간다."""
+    from bond import gate
+    errs = gate._split_numbers('<p>스프레드는 4.<span>47</span>bp입니다.</p>')
+    assert errs

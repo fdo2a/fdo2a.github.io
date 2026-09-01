@@ -11,8 +11,11 @@ Pure — takes HTML strings, returns findings.
 """
 
 import re
+from common.numbers import TAG_RE
 
-_TAG = re.compile(r'<[^>]+>')
+# 주석·속성값 안의 `>` 까지 한 토큰으로 읽는다 — 정본은 common/numbers.py
+# (2026-09-01 codex 검토: 필수 문구를 주석 안에 숨기면 검사를 비껴갔다).
+_TAG = TAG_RE
 _SCRIPT = re.compile(r'<(script|style)\b.*?</\1>', re.S | re.I)
 _ENTITY = {'&amp;': '&', '&lt;': '<', '&gt;': '>', '&nbsp;': ' ', '&quot;': '"'}
 

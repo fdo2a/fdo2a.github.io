@@ -132,9 +132,11 @@ def collect_histories():
     # 「오늘의 장」의 글로벌 지수·참여도 다리도 여기서 함께 받는다. GROUPS에 넣으면
     # completeness()가 코어로 취급해 도쿄·홍콩 휴장일에 발행이 멈춘다.
     from us.session import HISTORY_TICKERS as SESSION_TICKERS
+    # 모의 포트폴리오가 담는 상품들. 같은 배치에 얹으므로 요청이 늘지 않는다.
+    from us.portfolio import HISTORY_TICKERS as PORTFOLIO_TICKERS
 
     tickers = sorted(set(STANCE_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
-                     | {t for _, t in SECTORS})
+                     | set(PORTFOLIO_TICKERS) | {t for _, t in SECTORS})
 
     def dl():
         df = yf.download(tickers, period='3y', interval='1d', group_by='ticker',
@@ -654,6 +656,42 @@ def main():
     except Exception as e:
         print(f'histories failed: {e}', file=sys.stderr)
         closes, hist_dates, hist_as_of, hist_ohlc = {}, {}, None, {}
+
+    # 모의 포트폴리오가 오늘 담을 종가. **기준일에 정확히 있는 값만** 담는다 —
+    # 마지막 값으로 대신하면 원장이 지난 종가로 굴려지고, 그 사실이 어디에도 남지
+    # 않는다. 없는 종목은 missing 으로 넘겨 build_portfolio.py 가 그 날을 건너뛴다.
+    print('pricing the paper portfolio...')
+    try:
+        from us.portfolio import HISTORY_TICKERS as PF_TICKERS
+        PF_WINDOW = 15
+        pf_closes, pf_missing, pf_recent = {}, [], {}
+        for t in PF_TICKERS:
+            series, dates_ = closes.get(t), hist_dates.get(t)
+            if series and dates_ and report_date in dates_:
+                i = dates_.index(report_date)
+                pf_closes[t] = series[i]
+                # 최근 창의 **오늘 기준** 종가들. auto_adjust 는 배당·분할 때 과거를
+                # 소급 조정하므로, 어제 저장해 둔 값과 이 값이 다르면 기준이 바뀐
+                # 것이다. build_portfolio.py 가 좌수를 다시 맞춘다. 직전 한 세션만
+                # 넘기면 중간에 한 세션을 건너뛴 날 조정이 통째로 샌다.
+                lo = max(0, i - PF_WINDOW)
+                pf_recent[t] = {d: v for d, v in zip(dates_[lo:i], series[lo:i])}
+            else:
+                pf_missing.append(t)
+        # 시장 달력 — 원장이 어느 세션을 통째로 빠뜨렸는지는 이것으로만 알 수 있다.
+        # 수집이 하루 아예 돌지 않으면 «결측» 기록조차 남지 않기 때문이다.
+        spx_dates = hist_dates.get('^GSPC') or []
+        pf_sessions = spx_dates[-(PF_WINDOW + 1):]
+        json.dump({'generated': data['generated'], 'report_date': report_date,
+                   'as_of': report_date if not pf_missing else None,
+                   'closes': pf_closes, 'recent': pf_recent,
+                   'sessions': pf_sessions, 'missing': pf_missing},
+                  open(os.path.join(args.outdir, 'portfolio_prices.json'), 'w'),
+                  indent=2, default=str, ensure_ascii=False)
+        print(f'  portfolio prices: {len(pf_closes)}/{len(PF_TICKERS)}'
+              + (f' missing {pf_missing}' if pf_missing else ''))
+    except Exception as e:
+        print(f'portfolio prices failed: {e}', file=sys.stderr)
 
     print('computing stance trigger metrics...')
     try:

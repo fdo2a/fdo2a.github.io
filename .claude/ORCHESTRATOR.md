@@ -15,6 +15,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.
    - §9 매크로 논리: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - §9 멀티에셋 스탠스: `data/stance.json`, `data/stance_eval.json`, `data/stance_metrics.json`. Missing → the writer freezes every grade, or bootstraps.
+   - 모의 포트폴리오: `data/portfolio.json` — 어제 등급이 오늘 종가에 어떤 비중이 됐고 얼마를 벌었는지가 **계산이 끝난 채로** 들어 있다. Missing → the writer omits that section entirely (never invents one).
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, note exactly which fields `missing` lists and run the full STEP 1 collector to fill the whole set (or just the gaps). The Actions run may have partially failed; treat its output as a starting point, not gospel.
 
 **토큰 규율**: 이 데이터 파일들이 있으면 그 안의 수치를 웹서치로 재확인하지 않는다. 웹 리서치(STEP 1의 리서치 절반)는 뉴스·해석·컨센서스처럼 파일에 없는 것에만 쓴다. 경제지표 Actual/Previous는 econ_indicators.json이 이미 확정했다.
@@ -44,6 +45,8 @@ Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` �
 **시황 게이트 (「오늘의 장」)** — run `python3 scripts/check_session.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: a `data-session` paragraph is missing or empty; a region whose average direction diverged from the S&P 500 is not written about (silence is the failure, disagreement is fine); the participation reading is narrated on a neutral day or omitted on a day it fired; a global close printed in the table disagrees with the collected value, or a close older than three sessions carries no as-of date; the reading is called 「상승 종목 비율」·「등락 종목 수」·「시장 폭」; internal field names or a 「§N」 notation reached the page. Non-core: a dataset with no `session` block passes untouched.
 
 **스탠스 게이트 (§10)** — run `python scripts/check_stance.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a §9 grade label is outside the controlled vocabulary; a grade sits outside that asset's `allowed_grades` from stance_eval.json; a moved row lacks the MET trigger's actual value (or, for an event trigger, a research_notes.md attribution) in the surrounding text; a row is missing its 유지 일수 or 다음 분기점; or the writer's new stance.json is not dated today / omits a history entry for a moved row. Relaunch the writer with the exact violations. This gate is what keeps §9 a position rather than a restatement of the day's tape — do not waive it. Neither gate is waivable: between them they are the only thing standing between «승계되는 판단» and a daily rewrite wearing the same headings.
+
+**포트폴리오 게이트 (모의 포트폴리오)** — run `python3 scripts/check_portfolio.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: `portfolio.json` exists but the section is missing (a day it could be published is not a day to skip it); the book is dated to another session; the 모의 운용 고지, the inception date, the benchmark definition (중립 책), or the one-session lag sentence is absent; a held sleeve has no `data-sleeve` marker; a figure in the section is not in `portfolio.json`; the record is still short of 60 sessions but the page prints 연율·샤프·변동성·승률; or internal field names reached the page. **에이전트가 이 섹션에서 산술을 하면 안 된다** — 모든 수치는 `performance` 블록에 계산돼 있고, 게이트는 그 밖의 수치를 창작으로 본다. `portfolio.json` 자체가 없으면 섹션 없이 발행한다(비-코어).
 
 **무게중심 게이트 (§2·§4·§6·§7·§8·§9)** — run `python3 scripts/check_weight.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: the recap group (오늘의 장·주식·채권·FX·원자재) falls below its floor or below its ratio to the judgment group (전략 코멘트·매크로 논리·멀티에셋 — 표 안 서술형 칸까지 센다, so prose cannot be hidden in a table); the macro section breaks the cap or floor for the day's mode (발표일 ≤4,600 / 축약일 ≤2,400, read from `macro_eval.json`'s `abbreviated` — the floor is there so §9 cannot be deleted to make the ratio); a price section has no substantive `data-standing` paragraph (120자·수치 하나 이상); an asset whose move was 「큼」·「매우 큼」 has no `data-cause` paragraph; a §9 transmission block repeats a price the asset section already printed; a price section restates a stance grade; or §2's `data-lede` paragraphs are missing or out of order (event → meaning → action → invalidation). Relaunch the writer with the exact violations. **이 게이트가 「포지션 위주」로 되돌아가는 것을 막는 유일한 장치다** — 2026-08-27 실측에서 판단·포지션이 53%, 시황·가격이 26%였다.
 
@@ -102,8 +105,11 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
   --gate "python scripts/check_stance.py --html {f} --datadir <workspace>" \
   --gate "python scripts/check_price_context.py --html {f} --datadir <workspace>" \
   --gate "python3 scripts/check_session.py --html {f} --datadir <workspace> --market us" \\
-  --gate "python3 scripts/check_weight.py --html {f} --datadir <workspace> --market us"
+  --gate "python3 scripts/check_weight.py --html {f} --datadir <workspace> --market us" \\
+  --gate "python3 scripts/check_portfolio.py --html {f} --datadir <workspace>"
 ```
+
+포트폴리오 게이트가 이 목록에 **반드시 있어야 한다** — 윤문은 문단을 통째로 갈아끼우므로 「모의」 고지나 결측 고지가 조용히 사라질 수 있다. 초안 단계에서 한 번 통과한 것으로는 최종본을 보증하지 못한다(2026-09-01 codex 검토).
 
 되꽂기 → 바뀐 문단 출력 → 게이트 순서로 돌고, **전부 통과했을 때만** `os.replace`로 원본을 교체한다. 하나라도 실패하면 사본을 지우고 exit 1로 끝난다 — 원본은 처음부터 수정되지 않았다. **맨손 `mv`는 쓰지 않는다.** 검사를 건너뛰고 교체할 자리를 남기지 않는 것이 이 명령의 존재 이유다.
 

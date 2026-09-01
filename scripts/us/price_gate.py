@@ -15,6 +15,7 @@ them, so they are enforced here rather than asked for in the prompt:
 """
 
 import re
+from common.numbers import TAG_RE
 
 # Machinery the reader has no use for. The 08-17 brief printed "signed-z 0.895" and a
 # filename; the same failure mode applies to anything named here.
@@ -31,7 +32,9 @@ def _markers(html, attr):
 
 
 def _text(html):
-    return re.sub(r'<[^>]+>', ' ', html or '')
+    # 주석·속성값 안의 `>` 까지 한 토큰으로 — 정본은 common/numbers.py
+    # (2026-09-01 codex 검토: 필수 해소 문구를 주석에 숨기면 통과했다).
+    return TAG_RE.sub(' ', html or '')
 
 
 def _blocks(html, attr):

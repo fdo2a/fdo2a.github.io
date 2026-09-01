@@ -6,8 +6,10 @@
 """
 import html as _html
 import re
+from common.numbers import TAG_RE
 
-_TAG = re.compile(r'<[^>]+>')
+# 주석·속성값 안의 `>` 까지 한 토큰으로 읽는다 — 정본은 common/numbers.py
+_TAG = TAG_RE
 _CELL_MIN = 40
 
 
@@ -53,7 +55,8 @@ def prose_chars(section_html):
 SECTION_GROUPS = {
     'us': {
         'recap': ('오늘의 장', '주식', '채권', 'FX', '원자재'),
-        'judgment': ('전략 코멘트', '매크로 논리', '멀티에셋 매니저 전략'),
+        'judgment': ('전략 코멘트', '매크로 논리', '멀티에셋 매니저 전략',
+                     '모의 포트폴리오'),
     },
     'kr': {
         'recap': ('오늘의 장', '지수 & 장중', '환율·금리'),
@@ -61,8 +64,10 @@ SECTION_GROUPS = {
     },
 }
 
-# 「오늘의 장」은 2026-08-28 신설이라 옛 판에는 없다. 없어도 위반으로 치지 않고 0자로 센다.
-OPTIONAL_SECTIONS = ('오늘의 장',)
+# 「오늘의 장」은 2026-08-28, 「모의 포트폴리오」는 2026-09-01 신설이라 옛 판에는 없다.
+# 없어도 위반으로 치지 않고 0자로 센다 — 신규 발행본의 존재 강제는 각 섹션의
+# 전용 게이트(check_session.py·check_portfolio.py)가 맡는다(관심사 분리).
+OPTIONAL_SECTIONS = ('오늘의 장', '모의 포트폴리오')
 
 THRESHOLDS = {
     'us': {

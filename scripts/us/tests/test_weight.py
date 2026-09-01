@@ -269,3 +269,17 @@ def test_sign_and_unit_do_not_collide():
            + _sec('매크로 논리', '<div data-macro-group="dollar">'
                   '<p>오늘 기대인플레는 +0.50%p 올랐습니다.</p></div>'))
     assert check_macro_prices(doc) == []
+
+
+def test_paper_portfolio_counts_as_judgment_not_a_free_pass():
+    """포트폴리오 섹션이 비율 밖에 있으면 판단군이 무한정 커질 수 있다."""
+    doc = ('<h2>주식</h2><p>' + '가' * 100 + '</p>'
+           '<h2>모의 포트폴리오</h2><p>' + '나' * 200 + '</p>')
+    m = measure(doc, 'us')
+    assert m['sections']['모의 포트폴리오'] == 200
+    assert m['judgment'] >= 200
+
+
+def test_older_posts_without_the_portfolio_section_are_not_violations():
+    doc = '<h2>주식</h2><p>가</p>'
+    assert '모의 포트폴리오' not in measure(doc, 'us')['missing']
