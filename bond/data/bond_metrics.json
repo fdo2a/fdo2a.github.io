@@ -101,6 +101,67 @@
    },
    "forwards_date": "2026-09-01"
   },
+  "de": {
+   "tenors": {
+    "1Y": {
+     "level": 2.83,
+     "bp": 7.0,
+     "date": "2026-09-01",
+     "stale": false,
+     "source_changed": false,
+     "source": "Bundesbank"
+    },
+    "2Y": {
+     "level": 2.9,
+     "bp": 1.0,
+     "date": "2026-09-01",
+     "stale": false,
+     "source_changed": false,
+     "source": "Bundesbank"
+    },
+    "5Y": {
+     "level": 2.93,
+     "bp": -8.0,
+     "date": "2026-09-01",
+     "stale": false,
+     "source_changed": false,
+     "source": "Bundesbank"
+    },
+    "10Y": {
+     "level": 3.28,
+     "bp": -5.0,
+     "date": "2026-09-01",
+     "stale": false,
+     "source_changed": false,
+     "source": "Bundesbank"
+    },
+    "30Y": {
+     "level": 3.68,
+     "bp": -10.0,
+     "date": "2026-09-01",
+     "stale": false,
+     "source_changed": false,
+     "source": "Bundesbank"
+    }
+   },
+   "curve_date": "2026-09-01",
+   "aligned": true,
+   "shape": "불 플래트닝",
+   "shape_basis": "2Y 대 10Y",
+   "spread_2s10s_bp": 38.0,
+   "spread_2s10s_basis": "2Y 2026-09-01(Bundesbank) · 10Y 2026-09-01(Bundesbank)",
+   "spread_2s10s_aligned": true,
+   "spread_5s30s_bp": 75.0,
+   "spread_5s30s_basis": "5Y 2026-09-01(Bundesbank) · 30Y 2026-09-01(Bundesbank)",
+   "spread_5s30s_aligned": true,
+   "forwards": {
+    "1y1y": 2.97,
+    "1y4y": 2.955,
+    "5y5y": 3.631,
+    "2y8y": 3.375
+   },
+   "forwards_date": "2026-09-01"
+  },
   "ea": {
    "tenors": {
     "2Y": {
@@ -260,38 +321,6 @@
     "5y5y": 5.507
    },
    "forwards_date": "2026-08-27"
-  },
-  "kr": {
-   "tenors": {
-    "3Y": {
-     "level": 3.878,
-     "bp": 4.0,
-     "date": "2026-09-01",
-     "stale": false,
-     "source_changed": false,
-     "source": "ECOS 한국은행"
-    },
-    "10Y": {
-     "level": 4.371,
-     "bp": 5.8,
-     "date": "2026-09-01",
-     "stale": false,
-     "source_changed": false,
-     "source": "ECOS 한국은행"
-    }
-   },
-   "curve_date": "2026-09-01",
-   "aligned": true,
-   "shape": "베어 스티프닝",
-   "shape_basis": "3Y 대 10Y",
-   "spread_2s10s_bp": null,
-   "spread_2s10s_basis": null,
-   "spread_2s10s_aligned": false,
-   "spread_5s30s_bp": null,
-   "spread_5s30s_basis": null,
-   "spread_5s30s_aligned": false,
-   "forwards": {},
-   "forwards_date": "2026-09-01"
   }
  },
  "decomposition": {
@@ -467,29 +496,29 @@
    "vs_prev_session": true
   },
   "EURUSD": {
-   "level": 1.1597,
+   "level": 1.1618,
    "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "EURUSD=X",
-   "change_pct": 0.069,
+   "change_pct": 0.25,
    "vs_date": "2026-08-31",
    "vs_prev_session": true
   },
   "USDJPY": {
-   "level": 160.167,
+   "level": 159.747,
    "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "USDJPY=X",
-   "change_pct": 0.028,
+   "change_pct": -0.234,
    "vs_date": "2026-08-31",
    "vs_prev_session": true
   },
   "USDKRW": {
-   "level": 1374.48,
+   "level": 1366.62,
    "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "USDKRW=X",
-   "change_pct": -0.191,
+   "change_pct": -0.762,
    "vs_date": "2026-08-31",
    "vs_prev_session": true
   }
@@ -1470,8 +1499,17 @@
    ]
   }
  ],
- "divergence": {},
- "us_de_10y_bp": null,
+ "divergence": {
+  "de": {
+   "verdict": "반대 방향",
+   "us_bp": 3.8,
+   "foreign_bp": -5.0,
+   "ratio": 1.32,
+   "reading": "두 시장이 서로 다른 쪽을 봤다",
+   "label": "독일"
+  }
+ },
+ "us_de_10y_bp": 151.6,
  "us_jp_10y_bp": null,
  "us_gb_10y_bp": null,
  "cross_basis_date": "2026-09-01",
@@ -1496,7 +1534,7 @@
   "ig_oas_pctile": 40.2,
   "real10y_1d_bp": 2.0,
   "bei10y_1d_bp": 0.0,
-  "us_de_10y_bp": null,
+  "us_de_10y_bp": 151.6,
   "fwd_1y1y": null,
   "fwd_5y5y": 5.036
  },
@@ -1512,6 +1550,15 @@
     "date": "2026-08-31"
    },
    {
+    "kind": "rate",
+    "label": "DE 30Y",
+    "value": -10.0,
+    "unit": "bp",
+    "abs": 10.0,
+    "level": 3.68,
+    "date": "2026-09-01"
+   },
+   {
     "kind": "credit",
     "label": "em_hy",
     "value": 9.0,
@@ -1522,11 +1569,20 @@
    },
    {
     "kind": "rate",
-    "label": "KR 10Y",
-    "value": 5.8,
+    "label": "DE 5Y",
+    "value": -8.0,
     "unit": "bp",
-    "abs": 5.8,
-    "level": 4.371,
+    "abs": 8.0,
+    "level": 2.93,
+    "date": "2026-09-01"
+   },
+   {
+    "kind": "rate",
+    "label": "DE 1Y",
+    "value": 7.0,
+    "unit": "bp",
+    "abs": 7.0,
+    "level": 2.83,
     "date": "2026-09-01"
    },
    {
@@ -1540,20 +1596,20 @@
    },
    {
     "kind": "rate",
+    "label": "DE 10Y",
+    "value": -5.0,
+    "unit": "bp",
+    "abs": 5.0,
+    "level": 3.28,
+    "date": "2026-09-01"
+   },
+   {
+    "kind": "rate",
     "label": "US 3M",
     "value": 4.0,
     "unit": "bp",
     "abs": 4.0,
     "level": 3.772,
-    "date": "2026-09-01"
-   },
-   {
-    "kind": "rate",
-    "label": "KR 3Y",
-    "value": 4.0,
-    "unit": "bp",
-    "abs": 4.0,
-    "level": 3.878,
     "date": "2026-09-01"
    },
    {
@@ -1590,26 +1646,8 @@
     "unit": "pt",
     "abs": 2.56,
     "level": 77.88
-   },
-   {
-    "kind": "credit",
-    "label": "em_sov",
-    "value": 2.0,
-    "unit": "bp",
-    "abs": 2.0,
-    "level_bp": 110.0,
-    "date": "2026-08-31"
-   },
-   {
-    "kind": "rate",
-    "label": "US 30Y",
-    "value": 1.9,
-    "unit": "bp",
-    "abs": 1.9,
-    "level": 5.268,
-    "date": "2026-09-01"
    }
   ],
-  "count": 36
+  "count": 39
  }
 }
