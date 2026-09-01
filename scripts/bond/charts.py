@@ -17,8 +17,14 @@ SERIES = [('us', '미국', '#0064FF'), ('de', '독일', '#00A85A'),
           ('kr', '한국', '#F04452')]
 
 
+# 축·범례가 한글이다. macOS 로컬과 우분투 러너가 같은 코드로 그리므로 양쪽을 다 적는다
+# — 러너에는 fonts-noto-cjk 가 깔린다(2026-09-01: 이 이름이 빠져 있어 두부로 렌더됐다).
+FONT_CANDIDATES = ('Pretendard', 'Apple SD Gothic Neo', 'AppleGothic',
+                   'Noto Sans CJK KR', 'Noto Sans KR', 'NanumGothic')
+
+
 def _font():
-    for name in ('Pretendard', 'Apple SD Gothic Neo', 'AppleGothic', 'NanumGothic'):
+    for name in FONT_CANDIDATES:
         try:
             font_manager.findfont(name, fallback_to_default=False)
             return name
