@@ -13,14 +13,15 @@
 import re
 
 from common.numbers import (measure_numbers, numbers_split_by_tags,
-                            numeric_tokens, text_of)
+                            numeric_tokens, strip_comments, text_dense,
+                            text_of)
 
 from .macro_gate import BANNED_LABELS
 from .portfolio import SLEEVE_LABEL, SLEEVE_ORDER
 from .weight import section_slice
 
 SECTION_TITLE = '모의 포트폴리오'
-MARKERS = ('basis', 'lag', 'perf')
+MARKERS = ('basis', 'logic', 'perf', 'lag')
 
 # 표본이 모자랄 때 인쇄가 금지되는 말 — 2주짜리 기록을 연율로 부풀리는 것은
 # 성적표가 아니라 소음이다.
@@ -117,16 +118,34 @@ def data_tokens(book, perf):
     return numeric_tokens(book, perf)
 
 
-def rate_tokens(perf):
+def design_tokens(book):
+    """**구성 근거 문단과 표 안에서만** 인용할 수 있는 수치.
+
+    이걸 섹션 전체에 풀면 창작 검사가 무뎌진다 — AI 인프라 변동성 56.8 이 「설정 이후
+    수익률은 56.8%」를 통과시켰다(2026-09-02 codex 검토). 설계 수치는 설계를 말하는
+    자리에서만 쓴다.
+    """
+    book = book or {}
+    return numeric_tokens(book.get('rationale'), book.get('scale_pct'),
+                          book.get('demand_pct'))
+
+
+def rate_tokens(perf, book=None):
     """**퍼센트로 인쇄해도 되는** 수치만.
 
     전체를 한 집합에 뭉쳐 두면 단위가 세탁된다 — 기준가 988.36 이 「988.36% 올랐다」로
     통과했다(2026-09-01 codex 검토). 비율은 비율 필드에서만 나와야 한다.
+    구성의 근거(변동성·위험 몫·한 칸의 크기)도 전부 비율이라 여기 들어온다.
     """
     perf = perf or {}
     return numeric_tokens(perf.get('returns'), perf.get('contrib'),
                           perf.get('weights'), perf.get('residual_pct'),
                           perf.get('max_drawdown_pct'))
+
+
+def _sentences(text):
+    """숫자 사이의 마침표는 문장 끝이 아니다."""
+    return re.split(r'(?:\.(?!\d)|[。!?])\s*', text or '')
 
 
 def _date_forms(iso):
@@ -155,24 +174,32 @@ def check(html, book, perf, market_report_date):
     if _heading_count(html) > 1:
         errs.append('「모의 포트폴리오」 제목이 두 번 이상 나온다 — 숨은 사본이 '
                     '검사를 통과하고 보이는 쪽이 창작을 실을 수 있다')
-    sec = section(html)
-    if not sec:
+    raw = section(html)
+    if not raw:
         errs.append(f'「{SECTION_TITLE}」 섹션이 없다')
         return errs
+    # 주석은 먼저 지운다. 주석 안에 살아 있는 표식으로 구역을 위조할 수 있다
+    # (2026-09-02 codex 검토). 숫자를 쪼개는 마크업 검사만 원문에서 한다.
+    sec = strip_comments(raw)
     if len(_MARKER.findall(html)) != len(_MARKER.findall(sec)):
         errs.append('섹션 밖에 data-portfolio 표식이 있다')
     sec_text = text_of(sec)
-    doc_text = text_of(html)
-    low = sec_text.lower()
+    # 태그로 쪼갠 금지어가 빠져나가지 않게 두 판을 함께 본다.
+    sec_words = (sec_text + ' ' + text_dense(sec)).lower()
+    doc_words = (text_of(html) + ' ' + text_dense(html)).lower()
 
     for word in BANNED_LABELS:
-        if word.lower() in doc_text.lower():
+        if word.lower() in doc_words:
             errs.append(f'금지 어휘: {word}')
     for tok in INTERNAL_TOKENS:
-        if tok.lower() in low:
+        if tok.lower() in sec_words:
             errs.append(f'내부 용어 노출: {tok}')
 
-    blocks = {k: text_of(v) for k, v in _MARKER.findall(sec)}
+    # 같은 표식이 여러 문단에 붙을 수 있다 — 「왜 이렇게 담았나」는 한 문단에 담기지
+    # 않는다. 이어 붙여서 한 구역으로 본다(2026-09-02).
+    blocks = {}
+    for name, body in _MARKER.findall(sec):
+        blocks[name] = (blocks.get(name, '') + ' ' + text_of(body)).strip()
     for name in MARKERS:
         if not (blocks.get(name) or '').strip():
             errs.append(f'표식 없음 또는 비어 있음: data-portfolio="{name}"')
@@ -186,6 +213,50 @@ def check(html, book, perf, market_report_date):
         errs.append('벤치마크 정의(중립 책)가 고지 문단에 없다')
     if '다음 거래일' not in blocks.get('lag', ''):
         errs.append('하루 시차 고지가 없다 — 오늘 바뀐 등급이 언제 반영되는지가 빠졌다')
+
+    # 「왜 이 비중인가」 — 수치 없이 「균형 있게 담았습니다」로 넘어가면 배우는 사람이
+    # 얻을 것이 없다(2026-09-02 사용자 지시 「왜 그렇게 구성했는지 논리를 만드는 거야」).
+    rationale = book.get('rationale') or {}
+    logic = blocks.get('logic', '')
+    missing_rationale = [f for f in ('budget_pct', 'equity_risk_share_pct', 'sessions')
+                         if rationale.get(f) is None]
+    if not rationale or missing_rationale:
+        errs.append('구성 근거가 없거나 불완전하다'
+                    + (f' (빠진 항목: {", ".join(missing_rationale)})'
+                       if missing_rationale else '')
+                    + ' — 근거 없이 비중을 설명할 수 없다')
+    if logic and rationale:
+        said = {v for v, _ in _scan(logic)}
+        for field, label in (('budget_pct', '한 칸의 위험 예산'),
+                             ('equity_risk_share_pct', '주식의 위험 몫')):
+            value = rationale.get(field)
+            if value is None:
+                continue
+            if not any(round(value, d) in said for d in (1, 2, 3)):
+                errs.append(f'구성 근거 문단(data-portfolio="logic")에 {label}'
+                            f'({value})이 없다 — 근거 없는 「균형 있게」는 설명이 아니다')
+    if rationale.get('recalibrate') and '재보정' not in sec_text:
+        errs.append(f'한 칸의 크기가 예산에서 벗어났는데({rationale["recalibrate"]}) '
+                    f'재보정 사실이 본문에 없다')
+
+    # 레버리지를 쓰지 않으므로 확대 판단이 겹치면 전 슬리브가 비례 축소된다.
+    # 그 사실을 숨기면 표의 비중이 「중립 + 한 칸」 산술과 맞지 않아 보인다.
+    if book.get('scaled'):
+        # 수치와 말이 **한 문장 안에** 있어야 하고, 부정문이면 안 된다. 떨어뜨려 놓거나
+        # 「비례 축소한 것은 아닙니다」로 써도 통과하던 구멍(2026-09-02 codex 검토).
+        wanted = {round(book.get(f) or 0, d)
+                  for f in ('scale_pct', 'demand_pct') for d in (1, 2)}
+        told = False
+        for sentence in _sentences(sec_text):
+            if '비례' not in sentence or '축소' not in sentence:
+                continue
+            if any(neg in sentence for neg in ('아니', '않', '없')):
+                continue
+            if {v for v, _ in _scan(sentence)} & wanted:
+                told = True
+        if not told:
+            errs.append('자본을 넘겨 비중을 비례 축소했는데 그 사실이 본문에 없다 — '
+                        '한 문장 안에 수치와 「비례 축소」가 함께 있어야 한다')
 
     # 「어느 날 정한 등급인가」를 본문이 다른 날로 말하면 시차 고지가 거짓이 된다.
     # 2026-09-01 실측: 정본은 8월 28일인데 발행본은 8월 31일이라고 썼다.
@@ -260,9 +331,18 @@ def check(html, book, perf, market_report_date):
     if book.get('stance_frozen') and '동결' not in sec_text:
         errs.append('등급 책을 받지 못해 비중을 동결했는데 그 사실이 본문에 없다')
 
+    # 근거 문단은 **몇 거래일을 재서 나온 값인지** 밝혀야 한다.
+    if rationale.get('sessions') and logic:
+        said = {v for v, _ in _scan(logic)}
+        if rationale['sessions'] not in said:
+            errs.append(f'구성 근거 문단에 측정 구간({rationale["sessions"]}거래일)이 '
+                        f'없다 — 변동성이 어디서 나온 값인지 밝혀야 한다')
+    # 금지어에 면제 구역을 두지 않는다 — 문단 하나를 통째로 빼면 그 안에 성과
+    # 이야기를 숨길 수 있다(2026-09-02 codex 검토). 설계를 말할 때는 「변동성」 대신
+    # 「한 해 움직이는 폭」처럼 풀어 쓴다. 어차피 그쪽이 읽기도 쉽다.
     if perf.get('insufficient'):
         for word in RISK_WORDS:
-            if word in low:
+            if word in sec_words:
                 errs.append(f'표본 부족({perf.get("sessions")}거래일)인데 「{word}」을(를) '
                             f'인쇄했다 — {perf.get("min_sessions")}거래일 전에는 금지')
 
@@ -271,20 +351,39 @@ def check(html, book, perf, market_report_date):
     levels = numeric_tokens(perf.get('nav'), perf.get('bench_nav'),
                             perf.get('base_nav'), book.get('base_nav'),
                             perf.get('sessions'), perf.get('min_sessions'),
-                            perf.get('grades'))
+                            perf.get('grades'), rationale.get('sessions'),
+                            [n.get('step_pct') for n in rationale.get('notches') or []])
     levels |= _label_numbers() | EXEMPT_YEARS
-    rates = rate_tokens(perf)
-    invented, laundered, wrong_unit = [], [], []
-    for value, unit in _scan(sec_text):
-        if abs(value) <= 0.001:
+    # **설계 수치는 설계를 말하는 자리에서만.** 근거 문단과 표 안에서는 rationale 의
+    # 값을 인용할 수 있고, 나머지 산문에서는 성과 수치만 쓸 수 있다.
+    spans = [(m.start(), m.end()) for m in _MARKER.finditer(sec)
+             if m.group(1) == 'logic']
+    spans += [(m.start(), m.end()) for m in re.finditer(r'<table.*?</table>', sec, re.S)]
+    spans.sort()
+    design_html, rest_html, cursor = [], [], 0
+    for a, b in spans:
+        if a < cursor:
             continue
-        if unit and _BP_UNIT.match(unit):
-            wrong_unit.append(f'{value}{unit}')
-        elif unit and value not in rates:
-            laundered.append(f'{value}{unit}')
-        elif not unit and value not in levels:
-            invented.append(value)
-    for run in numbers_split_by_tags(sec)[:4]:
+        rest_html.append(sec[cursor:a])
+        design_html.append(sec[a:b])
+        cursor = b
+    rest_html.append(sec[cursor:])
+    design_zone = text_of(' '.join(design_html))
+    rest = text_of(' '.join(rest_html))
+    rates = rate_tokens(perf, book)
+    design = rates | design_tokens(book)
+    invented, laundered, wrong_unit = [], [], []
+    for zone, allowed_rates in ((design_zone, design), (rest, rates)):
+        for value, unit in _scan(zone):
+            if abs(value) <= 0.001:
+                continue
+            if unit and _BP_UNIT.match(unit):
+                wrong_unit.append(f'{value}{unit}')
+            elif unit and value not in allowed_rates:
+                laundered.append(f'{value}{unit}')
+            elif not unit and value not in levels:
+                invented.append(value)
+    for run in numbers_split_by_tags(raw)[:4]:
         errs.append(f'수치 사이에 태그가 끼어 있다({run.strip()[:40]}) — '
                     f'검사를 피해 가므로 허용하지 않는다')
     for m in _UNREADABLE.finditer(_normalise(sec_text)):

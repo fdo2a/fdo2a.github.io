@@ -194,7 +194,8 @@ def main():
 
     try:
         book = IO.publishable(state, rows, report_date, sorted(gaps), grades_from,
-                              generated, stance_frozen=frozen)
+                              generated, stance_frozen=frozen,
+                              rationale=prices_file.get('rationale'))
     except ValueError as e:
         print(f'FATAL: {e}', file=sys.stderr)
         sys.exit(1)

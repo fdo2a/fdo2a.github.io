@@ -606,26 +606,35 @@ section { scroll-margin-top: 20px; }
 <p data-portfolio="basis">바로 위 표의 등급을 실제 비중으로 옮겨서 굴려 본 책입니다. 8월 14일에 기준가 1,000으로 시작한 모의 운용이고, 실제 계좌는 아닙니다. 비교 대상은 모든 자산군을 중립 등급으로 둔 같은 상품 구성이라, 두 책의 차이는 오직 등급이 만든 것입니다.</p>
 <p>거래비용은 반영하지 않았습니다. 에너지는 원유 선물을 담는 상품이어서 현물 유가 등락과는 조금씩 갈립니다.</p>
 
-<p data-portfolio="perf">10거래일이 지난 지금 기준가는 988.36이고, 설정 이후 수익률은 -1.16%입니다. 같은 기간 중립 책은 -0.82%였으니 등급을 얹어서 얻은 것은 -0.35%포인트, 아직 손해입니다. 8월 21일 종가 이후로 좁혀 봐도 -0.75% 대 -0.31%로 -0.44%포인트 밀립니다.</p>
-<p>설정 이후 가장 크게 밀렸을 때는 고점 대비 -1.43%였습니다. 하루 단위 수익률은 아래에 적은 결측 때문에 이번 회차에서는 뺐습니다.</p>
+<h3>왜 이렇게 담았나</h3>
+<p data-portfolio="logic">등급 한 칸은 어느 자산군에서나 같은 크기의 베팅입니다. 자본 몇 퍼센트가 아니라 한 해 움직이는 폭 0.75%포인트에 맞췄고, 지난 608거래일 가격으로 잰 값입니다. 중립 책은 위험을 고르게 나눈 것이 아니라 주식이 66.1%를 지도록 짰습니다.</p>
+<p data-portfolio="logic">자본으로 맞추면 같은 「소폭확대」가 자산군마다 다른 뜻이 됩니다. 금은 한 해 21.2%씩 움직이는데 장기채와 단기채의 차이는 12.5%씩 움직입니다. 그래서 주식은 한 칸에 4.75%포인트, 금은 3.25%포인트를 옮깁니다.</p>
+<p data-portfolio="logic">환만 예외로 예산의 3분의 2인 0.5%포인트만 씁니다. 통화는 오래 들고 있어도 기대할 수 있는 수익이 0에 가까워서, 같은 위험을 져도 돌아오는 것이 적기 때문입니다.</p>
+<p data-portfolio="logic">주식에 위험이 몰린 것은 의도한 것입니다. 이 리포트가 주식시장 브리프이고 전략 표의 첫 축도 주식이라, 기대수익의 대부분을 그쪽에서 받겠다는 뜻입니다. 채권·금·에너지는 그 위험을 상쇄하거나 보완하는 자리에 둡니다.</p>
+<p data-portfolio="logic">채권은 장기와 단기를 14%씩 나눠 담고 합계를 고정한 채 그 사이만 옮깁니다. 합계를 흔들면 「채권을 늘렸다」와 「듀레이션을 늘렸다」가 섞여서, 나중에 무엇이 맞았는지 가릴 수 없게 됩니다. 장기 쪽은 긴 만기를 보는 트리거에 맞춰 만기 20년 이상 상품을 담습니다.</p>
+<p data-portfolio="logic">현금은 틸트 재원입니다. 확대 판단이 나오면 여기서 먼저 꺼내 쓰고, 다 쓰면 전 슬리브를 비례로 줄입니다. 빌려서 사지 않습니다.</p>
+<p data-portfolio="logic">오늘이 그런 날이라 요구가 자본의 103.0%까지 차서 비중을 97.09%로 비례 축소했습니다. 확대 판단 셋이 겹치면 다 살 수는 없다는 뜻입니다.</p>
 
-<p>어디서 까먹었는지는 분명합니다. 주식 코어 -0.46%p, 메모리 -0.42%p, AI 인프라 -0.28%p 순으로 빠졌습니다. 주식을 중립보다 늘려 둔 판단과, 메모리·AI 인프라를 시장 비중만큼 그대로 들고 간 판단이 지난 열흘 조정을 정면으로 맞았습니다.</p>
-<p>반대로 귀금속은 +0.05%p로 유일하게 벌어 줬습니다. 금 비중을 중립의 두 배 가까이 올려 둔 자리가 여기입니다.</p>
+<h3>지금까지의 성적</h3>
+<p data-portfolio="perf">10거래일이 지난 지금 기준가는 989.72이고, 설정 이후 수익률은 -1.03%입니다. 같은 기간 중립 책은 -0.67%였으니 등급을 얹어서 얻은 것은 -0.36%포인트, 아직 손해입니다. 8월 21일 종가 이후로 좁혀 봐도 -0.71% 대 -0.27%로 -0.45%포인트 밀립니다.</p>
+<p>어디서 까먹었는지는 분명합니다. 메모리 -0.49%p, 주식 코어 -0.42%p, AI 인프라 -0.32%p 순으로 빠졌습니다. 주식을 중립보다 늘려 둔 판단과, 메모리·AI 인프라를 시장 비중만큼 그대로 들고 간 판단이 지난 열흘 조정을 정면으로 맞았습니다.</p>
+<p>벌어 준 자리는 에너지(WTI) +0.10%p가 가장 큽니다. 고점 대비 가장 크게 밀렸을 때는 -1.34%였습니다.</p>
 
 <div class="tbl-scroll"><table>
-<thead><tr><th>자산</th><th>담은 것</th><th>비중</th><th>중립 대비</th><th>설정 이후 기여</th></tr></thead>
+<thead><tr><th>자산</th><th>담은 것</th><th>비중</th><th>중립 대비</th><th>한 칸</th><th>설정 이후 기여</th></tr></thead>
 <tbody>
-<tr><td data-label="자산"><span data-sleeve="equity_core">주식 코어</span></td><td data-label="담은 것">SPY</td><td data-label="비중">45.6%</td><td data-label="중립 대비">+3.6%p</td><td data-label="설정 이후 기여">-0.46%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="memory">메모리</span></td><td data-label="담은 것">MU·WDC·STX</td><td data-label="비중">2.9%</td><td data-label="중립 대비">-0.1%p</td><td data-label="설정 이후 기여">-0.42%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="ai_infra">AI 인프라</span></td><td data-label="담은 것">MRVL·COHR·LITE·GEV·VRT</td><td data-label="비중">2.9%</td><td data-label="중립 대비">-0.1%p</td><td data-label="설정 이후 기여">-0.28%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="bonds_long">채권 장기(7-10Y)</span></td><td data-label="담은 것">IEF</td><td data-label="비중">8.7%</td><td data-label="중립 대비">-6.3%p</td><td data-label="설정 이후 기여">-0.03%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="bonds_short">채권 단기(1-3Y)</span></td><td data-label="담은 것">SHY</td><td data-label="비중">20.4%</td><td data-label="중립 대비">+5.4%p</td><td data-label="설정 이후 기여">-0.03%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="metals">귀금속</span></td><td data-label="담은 것">GLD</td><td data-label="비중">11.7%</td><td data-label="중립 대비">+5.7%p</td><td data-label="설정 이후 기여">+0.05%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="energy">에너지(WTI)</span></td><td data-label="담은 것">USO</td><td data-label="비중">2.9%</td><td data-label="중립 대비">-0.1%p</td><td data-label="설정 이후 기여">-0.02%p</td></tr>
-<tr><td data-label="자산"><span data-sleeve="fx_short">달러 약세</span></td><td data-label="담은 것">UDN</td><td data-label="비중">4.9%</td><td data-label="중립 대비">+4.9%p</td><td data-label="설정 이후 기여">+0.02%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="equity_core">주식 코어</span></td><td data-label="담은 것">SPY</td><td data-label="비중">42.5%</td><td data-label="중립 대비">+3.5%p</td><td data-label="한 칸">4.75%p</td><td data-label="설정 이후 기여">-0.42%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="memory">메모리</span></td><td data-label="담은 것">MU·WDC·STX</td><td data-label="비중">3.4%</td><td data-label="중립 대비">-0.1%p</td><td data-label="한 칸">1.75%p</td><td data-label="설정 이후 기여">-0.49%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="ai_infra">AI 인프라</span></td><td data-label="담은 것">MRVL·COHR·LITE·GEV·VRT</td><td data-label="비중">3.4%</td><td data-label="중립 대비">-0.1%p</td><td data-label="한 칸">1.75%p</td><td data-label="설정 이후 기여">-0.32%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="bonds_long">채권 장기(20Y+)</span></td><td data-label="담은 것">TLT</td><td data-label="비중">8.2%</td><td data-label="중립 대비">-5.8%p</td><td data-label="한 칸">5.60%p</td><td data-label="설정 이후 기여">+0.05%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="bonds_short">채권 단기(1-3Y)</span></td><td data-label="담은 것">SHY</td><td data-label="비중">19.0%</td><td data-label="중립 대비">+5.0%p</td><td data-label="한 칸">—</td><td data-label="설정 이후 기여">-0.03%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="metals">귀금속</span></td><td data-label="담은 것">GLD</td><td data-label="비중">12.6%</td><td data-label="중립 대비">+6.1%p</td><td data-label="한 칸">3.25%p</td><td data-label="설정 이후 기여">+0.05%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="energy">에너지(WTI)</span></td><td data-label="담은 것">USO</td><td data-label="비중">3.9%</td><td data-label="중립 대비">-0.1%p</td><td data-label="한 칸">2.00%p</td><td data-label="설정 이후 기여">+0.10%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="fx_short">달러 약세</span></td><td data-label="담은 것">UDN</td><td data-label="비중">7.0%</td><td data-label="중립 대비">+7.0%p</td><td data-label="한 칸">7.25%p</td><td data-label="설정 이후 기여">+0.03%p</td></tr>
+<tr><td data-label="자산"><span data-sleeve="cash">현금성</span></td><td data-label="담은 것">BIL</td><td data-label="비중">0.0%</td><td data-label="중립 대비">-15.5%p</td><td data-label="한 칸">—</td><td data-label="설정 이후 기여">+0.00%p</td></tr>
 </tbody>
 </table></div>
-<p class="caption">비중은 8월 31일 종가 기준이며 등락에 따라 표류합니다. 등급이 바뀐 날에만 다시 맞춥니다. 현금은 0.0%로, 중립 책이 남겨 두는 13.0%를 전부 위험자산에 실어 둔 상태입니다.</p>
+<p class="caption">비중은 8월 31일 종가 기준이며 등락에 따라 표류합니다. 등급이 바뀐 날에만 다시 맞춥니다. 「한 칸」은 등급이 한 단계 움직일 때 옮기는 자본이고, 채권은 합계를 고정한 채 장기 비중이 그만큼 이동합니다.</p>
 
 <p data-portfolio="lag">규칙 하나를 밝혀 둡니다. 등급은 장이 끝난 뒤에 정하므로, 오늘 바뀐 등급은 다음 거래일 종가에 반영됩니다. 마감 뒤에 정한 것을 그날 종가에 담으면 결과를 미리 보고 산 셈이 되기 때문입니다.</p>
 <p>지금 이 비중도 8월 28일에 정한 등급에서 나온 것입니다. 8월 28일은 담은 종목 절반의 종가가 결측이라 원장에 담지 않았고, 그 이틀치 등락은 8월 31일 수익률이 함께 안고 있습니다.</p>

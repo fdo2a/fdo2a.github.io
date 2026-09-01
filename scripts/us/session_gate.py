@@ -13,6 +13,7 @@ import datetime as dt
 import re
 
 from .stance_gate import locate_section
+from common.numbers import TAG_RE, numbers_split_by_tags
 
 SECTION_TITLE = '오늘의 장'
 
@@ -63,7 +64,10 @@ def _strip_style(html):
 
 
 def _text(html):
-    return re.sub(r'<[^>]+>', ' ', html or '')
+    # 주석·속성값 안의 `>` 까지 한 토큰으로 읽는다 — 정본은 common/numbers.py.
+    # 제 정규식을 쓰면 필수 문구를 `<!-- … -->` 안에 숨겨도 본문으로 읽힌다
+    # (2026-09-01 codex 검토에서 실증).
+    return TAG_RE.sub(' ', html or '')
 
 
 def _blocks(html):
@@ -127,6 +131,10 @@ def check(html, session, market='us', price_context=None):
         return []
     v = []
     body = _strip_style(html or '')
+    # 화면에 한 숫자로 보이는데 검사에는 둘로 들어가는 마크업을 원문에서 잡는다.
+    for run in numbers_split_by_tags(html or '')[:4]:
+        v.append(f'수치 사이에 태그가 끼어 있다({run.strip()[:40]}) — '
+                 f'검사를 피해 가므로 허용하지 않는다')
     section = locate_section(body, SECTION_TITLE)
     if not section:
         return [f'「{SECTION_TITLE}」 섹션이 없다 — 표식만 흩어 놓는 것으로는 안 된다']

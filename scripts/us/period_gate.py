@@ -8,6 +8,8 @@
 
 import re
 
+from common.numbers import numbers_split_by_tags
+
 from us.macro_gate import BANNED_LABELS
 from us.post_check import banned_markers, body_text, data_tokens, mask_dates
 
@@ -204,6 +206,13 @@ def _check_provenance(text, agg):
 def check(html, agg, scorecard, recap, span):
     v = []
     text = body_text(html)
+
+    # 「2.<!-- > -->20%」는 화면에 2.20% 로 보이는데 태그를 지우면 2 와 20% 로 쪼개져
+    # 허용 수치만 검사에 들어간다 — 창작 검사를 통째로 비껴가는 길이다
+    # (2026-09-01 codex 검토). 원문에서 본다.
+    for run in numbers_split_by_tags(html)[:4]:
+        v.append(f'수치 사이에 태그가 끼어 있다({run.strip()[:40]}) — '
+                 f'검사를 피해 가므로 허용하지 않는다')
 
     # 스키마·완성도 — 반쪽 집계로 낸 총정리는 다음 기간에 정정할 방법이 없다.
     if (agg or {}).get('span') != span:

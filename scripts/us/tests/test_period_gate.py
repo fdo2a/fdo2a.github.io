@@ -255,3 +255,10 @@ def test_sign_flipped_figure_is_caught():
     html = _html(f"{ALL_DAYS}5거래일을 정리했다. 포트폴리오는 -21%였다. "
                  "가중 점수 0.33, 무포지션 비율 0.4.")
     assert any('-21' in x and '없는 수치' in x for x in check(html, agg, SC, RECAP, "weekly"))
+
+def test_a_number_split_by_markup_is_refused():
+    """「2.<!-- > -->20%」는 화면에 2.20% 로 보이는데 검사에는 20% 만 들어간다."""
+    from us import period_gate as G
+    errs = G.check('<p>포트폴리오는 2.<!-- > -->20% 올랐다.</p>',
+                   {'span': 'week'}, {}, {}, 'week')
+    assert any('태그가 끼어' in e for e in errs)

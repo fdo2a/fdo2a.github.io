@@ -682,10 +682,19 @@ def main():
         # 수집이 하루 아예 돌지 않으면 «결측» 기록조차 남지 않기 때문이다.
         spx_dates = hist_dates.get('^GSPC') or []
         pf_sessions = spx_dates[-(PF_WINDOW + 1):]
+        # 「왜 이 비중인가」 — 변동성·위험 몫·한 칸의 크기. 같은 이력에서 나오므로
+        # 네트워크 호출이 늘지 않는다.
+        from us.portfolio_risk import compute as compute_rationale
+        pf_rationale = compute_rationale(closes, hist_dates)
+        if pf_rationale:
+            print(f"  구성 근거: 주식 위험 몫 {pf_rationale['equity_risk_share_pct']}%"
+                  + (f" · 재보정 필요 {pf_rationale['recalibrate']}"
+                     if pf_rationale['recalibrate'] else ''))
         json.dump({'generated': data['generated'], 'report_date': report_date,
                    'as_of': report_date if not pf_missing else None,
                    'closes': pf_closes, 'recent': pf_recent,
-                   'sessions': pf_sessions, 'missing': pf_missing},
+                   'sessions': pf_sessions, 'missing': pf_missing,
+                   'rationale': pf_rationale},
                   open(os.path.join(args.outdir, 'portfolio_prices.json'), 'w'),
                   indent=2, default=str, ensure_ascii=False)
         print(f'  portfolio prices: {len(pf_closes)}/{len(PF_TICKERS)}'

@@ -165,7 +165,8 @@ def test_step_runs_the_benchmark_alongside():
 
 def test_benchmark_holds_the_neutral_book_whatever_the_grades():
     st = P.open_state('2026-08-14', PX0, g(equities=2, metals=2))
-    assert st['bench']['weights'] == P.sleeve_weights(P.NEUTRAL_GRADES)
+    assert st['bench']['weights'] == pytest.approx(
+        P.sleeve_weights(P.NEUTRAL_GRADES))
 
 
 def test_benchmark_resets_on_the_active_rebalance_dates():
@@ -335,3 +336,47 @@ def test_re_anchoring_leaves_an_unchanged_basis_alone():
 def test_re_anchoring_ignores_prices_it_cannot_check():
     b = P.open_book('2026-08-14', PX0, NEUTRAL)
     assert P.reanchor(b, {'SPY': 0})['units'] == b['units']
+
+
+# ── 왜 이 비중인가 (2026-09-02 사용자 지시) ─────────────────────────────
+def test_a_notch_is_the_same_size_bet_in_every_sleeve():
+    """자본 기준으로 같으면 실제 베팅 크기가 자산군마다 다섯 배 차이 난다."""
+    vol = {'equity_core': 16.1, 'metals': 22.9, 'energy': 38.8,
+           'memory': 43.7, 'ai_infra': 42.1}
+    step = {'equity_core': P.EQUITY_STEP, 'metals': P.METALS_STEP,
+            'energy': P.ENERGY_STEP, 'memory': P.MEMORY_STEP,
+            'ai_infra': P.AI_STEP}
+    for key, v in vol.items():
+        risk = step[key] / 100 * v
+        assert abs(risk - P.NOTCH_RISK_PCT) < 0.10, (key, risk)
+
+
+def test_the_dollar_notch_deliberately_spends_less():
+    """통화는 장기 기대수익이 0에 가까워 같은 위험을 져도 돌아오는 것이 적다."""
+    assert P.FX_STEP / 100 * 6.8 < P.NOTCH_RISK_PCT
+    assert P.FX_STEP / 100 * 6.8 == pytest.approx(
+        P.NOTCH_RISK_PCT * P.FX_RISK_SHARE, abs=0.06)
+
+
+def test_a_full_underweight_empties_the_relative_sleeves():
+    """중립이 0이면 UW와 중립이 같은 책이 된다 — 자리를 주되 −2에서 정확히 비운다."""
+    w = P.sleeve_weights(g(memory=-2, ai_infra=-2))
+    assert w['memory'] == pytest.approx(0.0)
+    assert w['ai_infra'] == pytest.approx(0.0)
+    assert P.sleeve_weights(g(memory=2))['memory'] == pytest.approx(
+        P.MEMORY_NEUTRAL * 2)
+
+
+def test_the_bond_sleeve_holds_the_tenor_its_triggers_watch():
+    """트리거가 30년물을 보는데 상품이 7~10년이면 판정과 보유가 어긋난다."""
+    assert P.SLEEVE_TICKERS['bonds_long'] == ('TLT',)
+
+
+def test_over_spending_is_reported_not_hidden():
+    d = P.weight_detail(g(equities=2, metals=2, energy=2, fx=2))
+    assert d['scaled'] is True and d['demand_pct'] > 100
+    assert sum(d['weights'].values()) == pytest.approx(100.0)
+
+
+def test_an_ordinary_book_does_not_scale():
+    assert P.weight_detail(P.NEUTRAL_GRADES)['scaled'] is False

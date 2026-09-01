@@ -176,3 +176,15 @@ def test_tape_paragraph_may_be_omitted_when_there_is_nothing_to_say():
     s = {**SESSION, 'participation': {'gap_pp': 0.1, 'band': '중립'}, 'tape': {}}
     html = FULL.replace('<p data-session="tape">소수가 끌어올림이었고 나스닥은 고점권 마감입니다.</p>', '')
     assert not any('data-session="tape"' in v for v in check(html, s))
+
+
+def test_a_required_line_hidden_in_a_comment_is_not_body_text():
+    """주석 안에 숨긴 문구가 본문으로 읽히면 게이트가 스스로를 속인다."""
+    from us import session_gate as G
+    assert '유럽' not in G._text('<!-- >유럽은 미국과 엇갈렸습니다. -->')
+
+
+def test_a_number_split_by_a_comment_is_refused():
+    from us import session_gate as G
+    from common.numbers import numbers_split_by_tags
+    assert numbers_split_by_tags('<p>2.<!-- > -->20% 올랐다</p>')

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-01 10:45 UTC",
+  "generated": "2026-09-01 15:37 UTC",
   "report_date": "2026-08-31",
   "as_of": "2026-08-31",
   "inception": "2026-08-14",
@@ -8,14 +8,114 @@
     "2026-08-28"
   ],
   "stance_frozen": false,
+  "scaled": true,
+  "scale_pct": 97.09,
+  "demand_pct": 103.0,
+  "rationale": {
+    "sessions": 608,
+    "budget_pct": 0.75,
+    "fx_share": 0.667,
+    "vol": {
+      "equity_core": 15.3,
+      "memory": 52.2,
+      "ai_infra": 56.8,
+      "bonds_long": 13.5,
+      "bonds_short": 1.6,
+      "metals": 21.2,
+      "energy": 37.0,
+      "fx_short": 6.7,
+      "fx_long": 6.6,
+      "cash": 0.3
+    },
+    "neutral_risk_share": {
+      "equity_core": 40.3,
+      "memory": 12.3,
+      "ai_infra": 13.4,
+      "bonds_long": 12.8,
+      "bonds_short": 1.5,
+      "metals": 9.3,
+      "energy": 10.0,
+      "fx_short": 0.0,
+      "fx_long": 0.0,
+      "cash": 0.3
+    },
+    "equity_risk_share_pct": 66.1,
+    "notches": [
+      {
+        "sleeve": "equity_core",
+        "label": "주식 코어",
+        "step_pct": 4.75,
+        "vol_pct": 15.3,
+        "risk_pct": 0.73,
+        "budget_pct": 0.75
+      },
+      {
+        "sleeve": "memory",
+        "label": "메모리",
+        "step_pct": 1.75,
+        "vol_pct": 52.2,
+        "risk_pct": 0.91,
+        "budget_pct": 0.75
+      },
+      {
+        "sleeve": "ai_infra",
+        "label": "AI 인프라",
+        "step_pct": 1.75,
+        "vol_pct": 56.8,
+        "risk_pct": 0.99,
+        "budget_pct": 0.75
+      },
+      {
+        "sleeve": "bonds_long",
+        "label": "채권 장기(20Y+)",
+        "step_pct": 5.6,
+        "vol_pct": 12.5,
+        "risk_pct": 0.7,
+        "budget_pct": 0.75
+      },
+      {
+        "sleeve": "metals",
+        "label": "귀금속",
+        "step_pct": 3.25,
+        "vol_pct": 21.2,
+        "risk_pct": 0.69,
+        "budget_pct": 0.75
+      },
+      {
+        "sleeve": "energy",
+        "label": "에너지(WTI)",
+        "step_pct": 2.0,
+        "vol_pct": 37.0,
+        "risk_pct": 0.74,
+        "budget_pct": 0.75
+      },
+      {
+        "sleeve": "fx_short",
+        "label": "달러 약세",
+        "step_pct": 7.25,
+        "vol_pct": 6.7,
+        "risk_pct": 0.49,
+        "budget_pct": 0.5
+      },
+      {
+        "sleeve": "fx_long",
+        "label": "달러 강세",
+        "step_pct": 7.25,
+        "vol_pct": 6.6,
+        "risk_pct": 0.48,
+        "budget_pct": 0.5
+      }
+    ],
+    "recalibrate": []
+  },
   "base_nav": 1000.0,
   "performance": {
     "inception": "2026-08-14",
     "report_date": "2026-08-31",
     "sessions": 10,
     "base_nav": 1000.0,
-    "nav": 988.3560032753167,
-    "bench_nav": 991.8401114698577,
+    "nav": 989.7232480524782,
+    "bench_nav": 993.3213784726079,
     "insufficient": true,
     "min_sessions": 60,
     "gaps": [
@@ -24,9 +124,9 @@
     "returns": {
       "1d": null,
       "1w": {
-        "portfolio": -0.7545930489224584,
-        "benchmark": -0.31377214264788345,
-        "active": -0.44082090627457493,
+        "portfolio": -0.714996485590369,
+        "benchmark": -0.26770842737324774,
+        "active": -0.44728805821712125,
         "from": "2026-08-21",
         "to": "2026-08-31",
         "sessions": 5,
@@ -34,9 +134,9 @@
       },
       "1m": null,
       "itd": {
-        "portfolio": -1.1643996724683303,
-        "benchmark": -0.8159888530142378,
-        "active": -0.34841081945409247,
+        "portfolio": -1.0276751947521756,
+        "benchmark": -0.667862152739207,
+        "active": -0.3598130420129686,
         "from": "2026-08-14",
         "to": "2026-08-31",
         "sessions": 10,
@@ -46,43 +146,43 @@
     "contrib": {
       "equity_core": {
         "label": "주식 코어",
-        "itd": -0.46090366039376757,
-        "today": -0.23201560551432
+        "itd": -0.4206395262134731,
+        "today": -0.21416825124398767
       },
       "memory": {
         "label": "메모리",
-        "itd": -0.42169070513485724,
-        "today": -0.032105556747099404
+        "itd": -0.49048170221642257,
+        "today": -0.03745648287161599
       },
       "ai_infra": {
         "label": "AI 인프라",
-        "itd": -0.27708049762561837,
-        "today": -0.1883284181803132
+        "itd": -0.32184250871814224,
+        "today": -0.21971648787703213
       },
       "bonds_long": {
-        "label": "채권 장기(7-10Y)",
-        "itd": -0.027478571178725465,
-        "today": -0.04592514472177975
+        "label": "채권 장기(20Y+)",
+        "itd": 0.05335880650018106,
+        "today": -0.059843166408540316
       },
       "bonds_short": {
         "label": "채권 단기(1-3Y)",
-        "itd": -0.027250575689938696,
-        "today": -0.037277955914284934
+        "itd": -0.02520331737674805,
+        "today": -0.034792758853332606
       },
       "metals": {
         "label": "귀금속",
-        "itd": 0.04677035668407373,
-        "today": -0.3909223752447726
+        "itd": 0.05112711411432627,
+        "today": -0.42349923984850374
       },
       "energy": {
         "label": "에너지(WTI)",
-        "itd": -0.015859362124201023,
-        "today": 0.08266733620899323
+        "itd": 0.10065206063356319,
+        "today": 0.11022311494532433
       },
       "fx_short": {
         "label": "달러 약세",
-        "itd": 0.02035503705889875,
-        "today": -0.007966870663094613
+        "itd": 0.029678834888965427,
+        "today": -0.01155196246148719
       },
       "fx_long": {
         "label": "달러 강세",
@@ -91,12 +191,12 @@
       },
       "cash": {
         "label": "현금성",
-        "itd": 0.004046792982871098,
+        "itd": 0.004155073469216211,
         "today": 0.0
       }
     },
-    "residual_pct": -0.0053084870470654355,
-    "max_drawdown_pct": -1.4252373779986227,
+    "residual_pct": -0.008480029833641822,
+    "max_drawdown_pct": -1.3405685263771394,
     "rebalances": [
       {
         "report_date": "2026-08-19",
@@ -164,9 +264,9 @@
         "tickers": [
           "SPY"
         ],
-        "weight_pct": 45.63106796116506,
-        "neutral_pct": 42.0,
-        "diff_pct": 3.6310679611650585
+        "weight_pct": 42.4757281553398,
+        "neutral_pct": 39.0,
+        "diff_pct": 3.4757281553398016
       },
       {
         "sleeve": "memory",
@@ -176,9 +276,9 @@
           "WDC",
           "STX"
         ],
-        "weight_pct": 2.9126213592233015,
-        "neutral_pct": 3.0,
-        "diff_pct": -0.08737864077669855
+        "weight_pct": 3.3980582524271847,
+        "neutral_pct": 3.5,
+        "diff_pct": -0.10194174757281527
       },
       {
         "sleeve": "ai_infra",
@@ -190,19 +290,19 @@
           "GEV",
           "VRT"
         ],
-        "weight_pct": 2.9126213592233006,
-        "neutral_pct": 3.0,
-        "diff_pct": -0.08737864077669943
+        "weight_pct": 3.3980582524271847,
+        "neutral_pct": 3.5,
+        "diff_pct": -0.10194174757281527
       },
       {
         "sleeve": "bonds_long",
-        "label": "채권 장기(7-10Y)",
+        "label": "채권 장기(20Y+)",
         "tickers": [
-          "IEF"
+          "TLT"
         ],
-        "weight_pct": 8.737864077669903,
-        "neutral_pct": 15.0,
-        "diff_pct": -6.262135922330097
+        "weight_pct": 8.15533980582524,
+        "neutral_pct": 14.0,
+        "diff_pct": -5.844660194174759
       },
       {
         "sleeve": "bonds_short",
@@ -210,9 +310,9 @@
         "tickers": [
           "SHY"
         ],
-        "weight_pct": 20.388349514563103,
-        "neutral_pct": 15.0,
-        "diff_pct": 5.388349514563103
+        "weight_pct": 19.029126213592235,
+        "neutral_pct": 14.0,
+        "diff_pct": 5.029126213592235
       },
       {
         "sleeve": "metals",
@@ -220,9 +320,9 @@
         "tickers": [
           "GLD"
         ],
-        "weight_pct": 11.650485436893204,
-        "neutral_pct": 6.0,
-        "diff_pct": 5.650485436893204
+        "weight_pct": 12.62135922330097,
+        "neutral_pct": 6.5,
+        "diff_pct": 6.121359223300971
       },
       {
         "sleeve": "energy",
@@ -230,9 +330,9 @@
         "tickers": [
           "USO"
         ],
-        "weight_pct": 2.912621359223301,
-        "neutral_pct": 3.0,
-        "diff_pct": -0.08737864077669899
+        "weight_pct": 3.8834951456310685,
+        "neutral_pct": 4.0,
+        "diff_pct": -0.11650485436893154
       },
       {
         "sleeve": "fx_short",
@@ -240,9 +340,9 @@
         "tickers": [
           "UDN"
         ],
-        "weight_pct": 4.854368932038834,
+        "weight_pct": 7.038834951456311,
         "neutral_pct": 0.0,
-        "diff_pct": 4.854368932038834
+        "diff_pct": 7.038834951456311
       },
       {
         "sleeve": "fx_long",
@@ -261,8 +361,8 @@
           "BIL"
         ],
         "weight_pct": 0.0,
-        "neutral_pct": 13.0,
-        "diff_pct": -13.0
+        "neutral_pct": 15.5,
+        "diff_pct": -15.5
       }
     ],
     "grades": {

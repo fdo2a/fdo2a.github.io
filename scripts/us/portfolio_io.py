@@ -95,7 +95,7 @@ def state_blob(state, grades_from=None, stance_frozen=False):
 
 
 def publishable(state, rows, report_date, gaps, grades_from, generated=None,
-                stance_frozen=False):
+                stance_frozen=False, rationale=None):
     """발행본과 게이트가 읽는 책.
 
     성과는 **원장에서만** 나오고, 그 원장의 마지막 행이 상태와 같은 날인지 여기서
@@ -112,10 +112,15 @@ def publishable(state, rows, report_date, gaps, grades_from, generated=None,
         raise ValueError('원장 마지막 행의 기준가가 책과 다르다')
     if rows and abs((rows[-1].get('bench_nav') or 0) - state['bench']['nav']) > 1e-6:
         raise ValueError('원장 마지막 행의 벤치마크 기준가가 책과 다르다')
+    from .portfolio import weight_detail
+    detail = weight_detail(state['active']['grades'])
     return {'generated': generated, 'report_date': report_date,
             'as_of': as_of, 'inception': state['inception'],
             'grades_from': grades_from, 'gaps': gaps,
             'stance_frozen': bool(stance_frozen),
+            'scaled': detail['scaled'], 'scale_pct': detail['scale_pct'],
+            'demand_pct': detail['demand_pct'],
+            'rationale': rationale,
             'base_nav': BASE_NAV, 'performance': perf}
 
 

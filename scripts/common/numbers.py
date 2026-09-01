@@ -81,6 +81,26 @@ def text_of(html):
     return re.sub(r'\s+', ' ', TAG_RE.sub(' ', t) + ' ' + metas + ' ' + titles)
 
 
+COMMENT_RE = re.compile(r'<!--.*?--!?>', re.S)
+
+
+def strip_comments(html):
+    """주석을 통째로 지운다. 주석 안의 표식이 살아 있으면 그것으로 구역을 위조한다."""
+    return COMMENT_RE.sub(' ', html or '')
+
+
+def text_dense(html):
+    """태그를 **공백 없이** 지운 텍스트.
+
+    `text_of` 는 태그를 공백으로 바꾼다. 그래서 「변<span></span>동성」은 화면에
+    「변동성」으로 보이는데 검사 문자열은 「변 동성」이 되어 금지어와 안 맞는다
+    (2026-09-02 codex 검토). 어휘 검사는 두 판을 모두 본다.
+    """
+    t = re.sub(r'<style.*?</style>', ' ', html or '', flags=re.S)
+    t = re.sub(r'<script.*?</script>', ' ', t, flags=re.S)
+    return TAG_RE.sub('', t)
+
+
 def measure_numbers(text):
     """비교 가능한 수치 토큰.
 

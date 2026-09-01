@@ -29,18 +29,22 @@ def download(period):
                      threads=False)
     if df is None or not len(df):
         raise RuntimeError('yfinance returned nothing')
-    by_date = {}
+    by_date, closes, dates = {}, {}, {}
     for t in HISTORY_TICKERS:
-        closes = df[t]['Close'].dropna()
-        for stamp, value in closes.items():
+        series = df[t]['Close'].dropna()
+        closes[t] = [float(x) for x in series]
+        dates[t] = [str(d.date()) for d in series.index]
+        for stamp, value in series.items():
             by_date.setdefault(str(stamp.date()), {})[t] = float(value)
-    return by_date
+    return by_date, closes, dates
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
-    ap.add_argument('--period', default='6mo')
+    # 수집이 매일 쓰는 창과 같아야 한다 — 여기서 6개월로 재면 발행본이
+    # 「3년을 쟀다」고 쓰면서 6개월 값을 인쇄한다(2026-09-02 codex 검토).
+    ap.add_argument('--period', default='3y')
     ap.add_argument('--start', help='설정일 (기본: 스탠스 이력의 첫 날)')
     args = ap.parse_args()
     d = args.datadir
@@ -59,7 +63,7 @@ def main():
     market = IO.load(os.path.join(d, 'market_data.json')) or {}
     report_date = market.get('report_date')
 
-    prices_by_date = download(args.period)
+    prices_by_date, closes, hist_dates = download(args.period)
     sessions = [x for x in sorted(prices_by_date) if x >= start
                 and (not report_date or x <= report_date)]
     if not sessions:
@@ -81,8 +85,10 @@ def main():
     applied = book_for(state['active']['date']) or {}
     IO.write(os.path.join(d, 'portfolio_state.json'),
              IO.state_blob(state, applied.get('report_date')))
+    from us.portfolio_risk import compute as compute_rationale
     book = IO.publishable(state, rows, report_date or state['active']['date'],
-                          gaps, applied.get('report_date'), generated)
+                          gaps, applied.get('report_date'), generated,
+                          rationale=compute_rationale(closes, hist_dates))
     IO.write(os.path.join(d, 'portfolio.json'), book)
 
     perf = book['performance']

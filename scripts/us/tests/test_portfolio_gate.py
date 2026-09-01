@@ -29,20 +29,29 @@ def _perf():
 
 def _book(as_of='2026-08-31'):
     return {'report_date': '2026-08-31', 'as_of': as_of, 'inception': '2026-08-14',
-            'grades_from': '2026-08-28', 'gaps': []}
+            'grades_from': '2026-08-28', 'gaps': [], 'scaled': False,
+            'rationale': {'budget_pct': 0.75, 'equity_risk_share_pct': 66.1,
+                          'recalibrate': [], 'notches': [], 'vol': {},
+                          'sessions': 751, 'neutral_risk_share': {}}}
 
 
-def _section(perf, extra='', markers=('basis', 'lag', 'perf')):
+def _section(perf, extra='', markers=('basis', 'logic', 'perf', 'lag'),
+             book=None):
     rows = ''.join(
         f'<tr><td><span data-sleeve="{w["sleeve"]}">{w["label"]}</span></td>'
         f'<td>{w["weight_pct"]:.1f}%</td><td>{w["neutral_pct"]:.1f}%</td></tr>'
         for w in perf['weights'] if w['weight_pct'] > 0)
     itd = perf['returns']['itd']
+    r = (book or _book()).get('rationale') or {}
     blocks = {
         'basis': '<p data-portfolio="basis">2026-08-14 설정한 모의 운용입니다. '
                  '벤치마크는 모든 등급이 중립인 같은 상품 구성입니다.</p>',
         'lag': '<p data-portfolio="lag">오늘 바뀐 등급은 다음 거래일 종가에 '
                '반영됩니다.</p>',
+        'logic': f'<p data-portfolio="logic">한 칸은 한 해 움직이는 폭 '
+                 f'{r.get("budget_pct", 0)}%포인트짜리 베팅이고, 중립 책 위험의 '
+                 f'{r.get("equity_risk_share_pct", 0)}%를 주식이 집니다. '
+                 f'{r.get("sessions", 0)}거래일을 재서 나온 값입니다.</p>',
         'perf': f'<p data-portfolio="perf">설정 이후 {itd["portfolio"]:.2f}% '
                 f'올라 벤치마크를 {itd["active"]:.2f}%포인트 앞섭니다.</p>',
     }
@@ -70,10 +79,10 @@ def test_a_missing_section_fails():
     assert any('섹션' in e for e in check('<h2>다른 섹션</h2><p>없다.</p>'))
 
 
-@pytest.mark.parametrize('drop', ['basis', 'lag', 'perf'])
+@pytest.mark.parametrize('drop', ['basis', 'logic', 'perf', 'lag'])
 def test_every_required_marker_is_required(drop):
     perf = _perf()
-    keep = tuple(m for m in ('basis', 'lag', 'perf') if m != drop)
+    keep = tuple(m for m in ('basis', 'logic', 'perf', 'lag') if m != drop)
     errs = check(_section(perf, markers=keep), perf)
     assert any(drop in e for e in errs)
 
@@ -213,7 +222,7 @@ def test_the_stale_date_itself_must_be_named():
 
 def test_an_empty_promise_does_not_satisfy_the_performance_block():
     perf = _perf()
-    sec = _section(perf, markers=('basis', 'lag'))
+    sec = _section(perf, markers=('basis', 'logic', 'lag'))
     sec = sec.replace('<table>',
                       '<p data-portfolio="perf">성과 수치는 다음에 '
                       '확인하겠습니다.</p><table>')
@@ -402,3 +411,106 @@ def test_ordinary_block_boundaries_are_not_mistaken_for_split_numbers(markup):
     perf = _perf()
     assert [e for e in check(_section(perf, extra=markup), perf)
             if '태그' in e] == []
+
+
+# ── 구성의 근거 (2026-09-02 사용자 지시) ────────────────────────────────
+def test_the_logic_block_must_carry_the_risk_budget():
+    """「균형 있게 담았습니다」로 넘어가면 배우는 사람이 얻을 것이 없다."""
+    perf = _perf()
+    sec = _section(perf).replace('0.75%포인트짜리 베팅', '적당한 크기의 베팅')
+    assert any('위험 예산' in e for e in check(sec, perf))
+
+
+def test_the_logic_block_must_say_who_carries_the_risk():
+    perf = _perf()
+    sec = _section(perf).replace('66.1%를 주식이 집니다', '대부분을 주식이 집니다')
+    assert any('위험 몫' in e for e in check(sec, perf))
+
+
+def test_the_logic_block_must_name_its_measurement_window():
+    """3년 가격 이력에서 나온 값을 10거래일 기록처럼 읽으면 안 된다."""
+    perf = _perf()
+    sec = _section(perf).replace('751거래일을 재서 나온 값입니다.', '')
+    assert any('측정 구간' in e for e in check(sec, perf))
+
+
+def test_the_ban_has_no_exempt_zone():
+    """문단 하나를 통째로 면제하면 그 안에 성과 이야기를 숨길 수 있다."""
+    perf = _perf()
+    hidden = _section(perf).replace(
+        '한 해 움직이는 폭', '이 책의 성과 변동성은 56.8%였고 한 해 움직이는 폭')
+    assert any('표본' in e for e in check(hidden, perf))
+
+
+def test_a_design_figure_may_not_be_quoted_as_performance():
+    """AI 인프라 변동성 56.8 이 「설정 이후 56.8% 올랐다」를 통과시켰다."""
+    perf, book = _perf(), _book()
+    book['rationale']['vol'] = {'ai_infra': 56.8}
+    sec = _section(perf, extra='<p>설정 이후 56.8% 올랐습니다.</p>', book=book)
+    assert any('비율 데이터에 없는' in e for e in check(sec, perf, book))
+
+
+def test_a_design_figure_is_quotable_where_the_design_is_explained():
+    perf, book = _perf(), _book()
+    book['rationale']['vol'] = {'ai_infra': 56.8}
+    sec = _section(perf, book=book).replace(
+        '한 해 움직이는 폭', 'AI 인프라가 한 해 56.8% 움직이는데 그 폭')
+    assert [e for e in check(sec, perf, book) if '비율 데이터에 없는' in e] == []
+
+
+def test_a_book_without_its_rationale_may_not_publish_the_section():
+    perf, book = _perf(), _book()
+    book['rationale'] = None
+    assert any('구성 근거' in e for e in check(_section(perf), perf, book))
+
+
+def test_a_scaled_book_must_admit_it():
+    """레버리지를 안 쓰므로 확대가 겹치면 비례 축소된다 — 표 산술이 안 맞아 보인다."""
+    perf, book = _perf(), _book()
+    book.update(scaled=True, scale_pct=97.09, demand_pct=103.0)
+    assert any('비례 축소' in e for e in check(_section(perf), perf, book))
+    ok = _section(perf, extra='<p>요구가 103.0%라 전 슬리브를 비례 축소했습니다.</p>')
+    assert [e for e in check(ok, perf, book) if '비례 축소' in e] == []
+
+
+def test_a_drifted_notch_must_be_disclosed():
+    perf, book = _perf(), _book()
+    book['rationale']['recalibrate'] = ['energy']
+    assert any('재보정' in e for e in check(_section(perf), perf, book))
+
+
+# ── 2026-09-02 codex 2차 ────────────────────────────────────────────────
+def test_a_marker_hidden_in_a_comment_cannot_forge_the_design_zone():
+    """주석 속 표식이 살아 있으면 그 문자열로 일반 산문의 창작을 통과시킨다."""
+    perf, book = _perf(), _book()
+    book['rationale']['vol'] = {'ai_infra': 56.8}
+    fake = '<p data-portfolio="logic">AI 인프라는 56.8% 움직입니다.</p>'
+    sec = _section(perf, extra=f'<!-- {fake} -->' + fake.replace(
+        ' data-portfolio="logic"', ''), book=book)
+    assert any('비율 데이터에 없는' in e for e in check(sec, perf, book))
+
+
+def test_a_banned_word_split_by_a_tag_is_still_a_banned_word():
+    """「변<span></span>동성」은 화면에 변동성으로 보인다."""
+    perf = _perf()
+    sec = _section(perf, extra='<p>이 책의 변<span></span>동성은 낮았습니다.</p>')
+    assert any('표본' in e for e in check(sec, perf))
+
+
+@pytest.mark.parametrize('field', ['budget_pct', 'equity_risk_share_pct', 'sessions'])
+def test_an_incomplete_rationale_is_not_a_rationale(field):
+    perf, book = _perf(), _book()
+    section = _section(perf, book=book)
+    del book['rationale'][field]
+    assert any('구성 근거' in e for e in check(section, perf, book))
+
+
+def test_a_scaling_disclosure_must_be_one_positive_sentence():
+    perf, book = _perf(), _book()
+    book.update(scaled=True, scale_pct=97.09, demand_pct=103.0)
+    split = _section(perf, extra='<p>요구 자본은 103.0%입니다. '
+                                 '비례 축소한 것은 아닙니다.</p>', book=book)
+    assert any('비례 축소' in e for e in check(split, perf, book))
+    ok = _section(perf, extra='<p>요구가 103.0%라 전 슬리브를 비례 축소했습니다.</p>',
+                  book=book)
+    assert [e for e in check(ok, perf, book) if '비례 축소' in e] == []
