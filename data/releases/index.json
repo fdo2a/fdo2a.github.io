@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-08-28",
+  "report_date": "2026-09-01",
   "releases": [
     {
-      "key": "michigan",
-      "url": "http://www.sca.isr.umich.edu/",
+      "key": "jolts",
+      "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 2428,
-      "path": "releases/michigan.txt"
+      "chars": 5654,
+      "path": "releases/jolts.txt"
     }
   ]
 }
