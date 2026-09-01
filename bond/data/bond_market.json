@@ -1,125 +1,125 @@
 {
- "generated": "2026-09-01T09:02:17+0000",
- "report_date": "2026-08-31",
+ "generated": "2026-09-01T22:34:47+0000",
+ "report_date": "2026-09-01",
  "base_currency": "USD",
  "us_curve": {
   "3M": {
-   "level": 3.732,
-   "date": "2026-08-31",
+   "level": 3.772,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "tenor": "3M"
   },
   "6M": {
-   "level": 4.02,
-   "date": "2026-08-28",
+   "level": 3.99,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "6M"
   },
   "1Y": {
-   "level": 4.15,
-   "date": "2026-08-28",
+   "level": 4.16,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "1Y"
   },
   "2Y": {
    "level": 4.34,
-   "date": "2026-08-28",
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "2Y"
   },
   "3Y": {
-   "level": 4.41,
-   "date": "2026-08-28",
+   "level": 4.4,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "3Y"
   },
   "5Y": {
-   "level": 4.507,
-   "date": "2026-08-31",
+   "level": 4.557,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "tenor": "5Y"
   },
   "7Y": {
-   "level": 4.59,
-   "date": "2026-08-28",
+   "level": 4.62,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "7Y"
   },
   "10Y": {
-   "level": 4.758,
-   "date": "2026-08-31",
+   "level": 4.796,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "tenor": "10Y"
   },
   "20Y": {
-   "level": 5.21,
-   "date": "2026-08-28",
+   "level": 5.24,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "20Y"
   },
   "30Y": {
-   "level": 5.249,
-   "date": "2026-08-31",
+   "level": 5.268,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "tenor": "30Y"
   }
  },
  "us_curve_fred": {
   "3M": {
-   "level": 3.9,
-   "date": "2026-08-28",
+   "level": 3.91,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "3M"
   },
   "6M": {
-   "level": 4.02,
-   "date": "2026-08-28",
+   "level": 3.99,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "6M"
   },
   "1Y": {
-   "level": 4.15,
-   "date": "2026-08-28",
+   "level": 4.16,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "1Y"
   },
   "2Y": {
    "level": 4.34,
-   "date": "2026-08-28",
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "2Y"
   },
   "3Y": {
-   "level": 4.41,
-   "date": "2026-08-28",
+   "level": 4.4,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "3Y"
   },
   "5Y": {
-   "level": 4.48,
-   "date": "2026-08-28",
+   "level": 4.49,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "5Y",
-   "prev_level": 4.38,
-   "prev_date": "2026-08-27"
+   "prev_level": 4.48,
+   "prev_date": "2026-08-28"
   },
   "7Y": {
-   "level": 4.59,
-   "date": "2026-08-28",
+   "level": 4.62,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "7Y"
   },
   "10Y": {
-   "level": 4.73,
-   "date": "2026-08-28",
+   "level": 4.75,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "10Y",
-   "prev_level": 4.67,
-   "prev_date": "2026-08-27"
+   "prev_level": 4.73,
+   "prev_date": "2026-08-28"
   },
   "20Y": {
-   "level": 5.21,
-   "date": "2026-08-28",
+   "level": 5.24,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "20Y"
   }
@@ -127,99 +127,68 @@
  "real_yields": {
   "5Y": {
    "level": 2.18,
-   "date": "2026-08-28",
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "5Y",
-   "prev_level": 2.07,
-   "prev_date": "2026-08-27"
+   "prev_level": 2.18,
+   "prev_date": "2026-08-28"
   },
   "10Y": {
-   "level": 2.42,
-   "date": "2026-08-28",
+   "level": 2.44,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "10Y",
-   "prev_level": 2.34,
-   "prev_date": "2026-08-27"
+   "prev_level": 2.42,
+   "prev_date": "2026-08-28"
   }
  },
  "breakeven": {
   "5Y": {
-   "level": 2.3,
-   "date": "2026-08-28",
+   "level": 2.31,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "5Y",
-   "prev_level": 2.31,
-   "prev_date": "2026-08-27"
+   "prev_level": 2.3,
+   "prev_date": "2026-08-28"
   },
   "10Y": {
    "level": 2.31,
-   "date": "2026-08-28",
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "10Y",
-   "prev_level": 2.33,
-   "prev_date": "2026-08-27"
+   "prev_level": 2.31,
+   "prev_date": "2026-08-28"
   },
   "5y5y": {
-   "level": 2.31,
-   "date": "2026-08-31",
+   "level": 2.33,
+   "date": "2026-09-01",
    "source": "FRED",
    "tenor": "5y5y"
   }
  },
- "de_curve": {
-  "1Y": {
-   "level": 2.76,
-   "date": "2026-08-31",
-   "source": "Bundesbank",
-   "tenor": "1Y"
-  },
-  "2Y": {
-   "level": 2.89,
-   "date": "2026-08-31",
-   "source": "Bundesbank",
-   "tenor": "2Y"
-  },
-  "5Y": {
-   "level": 3.01,
-   "date": "2026-08-31",
-   "source": "Bundesbank",
-   "tenor": "5Y"
-  },
-  "10Y": {
-   "level": 3.33,
-   "date": "2026-08-31",
-   "source": "Bundesbank",
-   "tenor": "10Y"
-  },
-  "30Y": {
-   "level": 3.78,
-   "date": "2026-08-31",
-   "source": "Bundesbank",
-   "tenor": "30Y"
-  }
- },
+ "de_curve": {},
  "ea_curve": {
   "2Y": {
-   "level": 2.8053784303,
-   "date": "2026-08-28",
+   "level": 2.8560179314,
+   "date": "2026-08-31",
    "source": "ECB",
    "tenor": "2Y"
   },
   "5Y": {
-   "level": 2.9431702485,
-   "date": "2026-08-28",
+   "level": 3.0077482489,
+   "date": "2026-08-31",
    "source": "ECB",
    "tenor": "5Y"
   },
   "10Y": {
-   "level": 3.2789202996,
-   "date": "2026-08-28",
+   "level": 3.3395935506,
+   "date": "2026-08-31",
    "source": "ECB",
    "tenor": "10Y"
   },
   "30Y": {
-   "level": 3.7280126227,
-   "date": "2026-08-28",
+   "level": 3.7755565448,
+   "date": "2026-08-31",
    "source": "ECB",
    "tenor": "30Y"
   }
@@ -284,123 +253,123 @@
  },
  "kr_curve": {
   "3Y": {
-   "level": 3.838,
-   "date": "2026-08-31",
+   "level": 3.878,
+   "date": "2026-09-01",
    "source": "ECOS 한국은행",
    "tenor": "3Y"
   },
   "10Y": {
-   "level": 4.313,
-   "date": "2026-08-31",
+   "level": 4.371,
+   "date": "2026-09-01",
    "source": "ECOS 한국은행",
    "tenor": "10Y"
   }
  },
  "misc": {
   "term_premium_10y": {
-   "level": 0.8682,
-   "date": "2026-08-21",
+   "level": 0.8751,
+   "date": "2026-08-28",
    "source": "FRED",
    "tenor": "term_premium_10y"
   },
   "sofr": {
-   "level": 3.65,
-   "date": "2026-08-28",
+   "level": 3.68,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "sofr"
   },
   "tbill_3m": {
-   "level": 3.74,
-   "date": "2026-08-28",
+   "level": 3.78,
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "tbill_3m"
   },
   "fed_funds": {
    "level": 3.63,
-   "date": "2026-08-28",
+   "date": "2026-08-31",
    "source": "FRED",
    "tenor": "fed_funds"
   }
  },
  "credit": {
   "us_ig": {
-   "value": 0.79,
-   "date": "2026-08-28",
+   "value": 0.8,
+   "date": "2026-08-31",
    "name_ko": "미국 IG",
    "source": "FRED (ICE BofA)"
   },
   "us_hy": {
-   "value": 2.6,
-   "date": "2026-08-28",
+   "value": 2.63,
+   "date": "2026-08-31",
    "name_ko": "미국 HY",
    "source": "FRED (ICE BofA)"
   },
   "us_ig_bbb": {
-   "value": 0.97,
-   "date": "2026-08-28",
+   "value": 0.98,
+   "date": "2026-08-31",
    "name_ko": "미국 IG BBB",
    "source": "FRED (ICE BofA)"
   },
   "us_hy_ccc": {
-   "value": 10.26,
-   "date": "2026-08-28",
+   "value": 10.42,
+   "date": "2026-08-31",
    "name_ko": "미국 HY CCC 이하",
    "source": "FRED (ICE BofA)"
   },
   "em_sov": {
-   "value": 1.08,
-   "date": "2026-08-28",
+   "value": 1.1,
+   "date": "2026-08-31",
    "name_ko": "EM 국공채",
    "source": "FRED (ICE BofA)"
   },
   "em_corp": {
-   "value": 1.36,
-   "date": "2026-08-28",
+   "value": 1.37,
+   "date": "2026-08-31",
    "name_ko": "EM 회사채",
    "source": "FRED (ICE BofA)"
   },
   "em_hy": {
-   "value": 2.81,
-   "date": "2026-08-28",
+   "value": 2.9,
+   "date": "2026-08-31",
    "name_ko": "EM HY",
    "source": "FRED (ICE BofA)"
   },
   "euro_hy": {
-   "value": 2.55,
-   "date": "2026-08-28",
+   "value": 2.59,
+   "date": "2026-08-31",
    "name_ko": "유럽 HY",
    "source": "FRED (ICE BofA)"
   }
  },
  "fx": {
   "DXY": {
-   "level": 99.43,
-   "date": "2026-08-31",
+   "level": 99.654,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "DX-Y.NYB"
   },
   "EURUSD": {
-   "level": 1.1589,
-   "date": "2026-08-31",
+   "level": 1.1597,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "EURUSD=X"
   },
   "USDJPY": {
-   "level": 160.122,
-   "date": "2026-08-31",
+   "level": 160.167,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "USDJPY=X"
   },
   "USDKRW": {
-   "level": 1377.11,
-   "date": "2026-08-31",
+   "level": 1374.48,
+   "date": "2026-09-01",
    "source": "Yahoo",
    "ticker": "USDKRW=X"
   }
  },
  "vol": {
-  "move": 75.32,
-  "date": "2026-08-31",
+  "move": 77.88,
+  "date": "2026-09-01",
   "source": "Yahoo (^MOVE)",
   "stale": false
  },
@@ -411,14 +380,14 @@
    "nav": 97.372666,
    "nav_as_of": "2026-08-31",
    "aum_usd": 138317871958.15,
-   "duration": 5.72554,
-   "oas_bp": 26.03928,
-   "ytw_pct": 4.98,
-   "ytm_pct": 4.99,
-   "sec_yield_pct": 4.6783,
+   "duration": 5.75873,
+   "oas_bp": 26.59522,
+   "ytw_pct": 5.0,
+   "ytm_pct": 5.01,
+   "sec_yield_pct": 4.6864,
    "source": "iShares",
-   "close": 97.41,
-   "close_date": "2026-08-31"
+   "close": 96.77,
+   "close_date": "2026-09-01"
   },
   "GOVT": {
    "ticker": "GOVT",
@@ -426,14 +395,14 @@
    "nav": 22.436647,
    "nav_as_of": "2026-08-31",
    "aum_usd": 41821910102.3,
-   "duration": 5.51095,
-   "oas_bp": -0.22214,
-   "ytw_pct": 4.59,
-   "ytm_pct": 4.59,
-   "sec_yield_pct": 4.5084,
+   "duration": 5.57205,
+   "oas_bp": 0.18893,
+   "ytw_pct": 4.61,
+   "ytm_pct": 4.61,
+   "sec_yield_pct": 4.5135,
    "source": "iShares",
-   "close": 22.44,
-   "close_date": "2026-08-31"
+   "close": 22.32,
+   "close_date": "2026-09-01"
   },
   "SHY": {
    "ticker": "SHY",
@@ -441,14 +410,14 @@
    "nav": 81.8997,
    "nav_as_of": "2026-08-31",
    "aum_usd": 25913065081.02,
-   "duration": 1.77966,
-   "oas_bp": -0.89801,
-   "ytw_pct": 4.33,
-   "ytm_pct": 4.33,
+   "duration": 1.85344,
+   "oas_bp": -0.16452,
+   "ytw_pct": 4.34,
+   "ytm_pct": 4.34,
    "sec_yield_pct": 4.1081,
    "source": "iShares",
-   "close": 81.89,
-   "close_date": "2026-08-31"
+   "close": 81.59,
+   "close_date": "2026-09-01"
   },
   "IEF": {
    "ticker": "IEF",
@@ -456,14 +425,14 @@
    "nav": 92.715707,
    "nav_as_of": "2026-08-31",
    "aum_usd": 41824055447.36,
-   "duration": 6.815,
-   "oas_bp": 2.9569,
-   "ytw_pct": 4.65,
-   "ytm_pct": 4.65,
-   "sec_yield_pct": 4.539,
+   "duration": 6.94301,
+   "oas_bp": 3.19787,
+   "ytw_pct": 4.69,
+   "ytm_pct": 4.69,
+   "sec_yield_pct": 4.5394,
    "source": "iShares",
-   "close": 92.74,
-   "close_date": "2026-08-31"
+   "close": 92.1,
+   "close_date": "2026-09-01"
   },
   "TLT": {
    "ticker": "TLT",
@@ -471,14 +440,14 @@
    "nav": 82.479537,
    "nav_as_of": "2026-08-31",
    "aum_usd": 47046327933.96,
-   "duration": 14.94131,
-   "oas_bp": 0.07821,
-   "ytw_pct": 5.25,
-   "ytm_pct": 5.25,
-   "sec_yield_pct": 5.1223,
+   "duration": 15.00505,
+   "oas_bp": 0.09183,
+   "ytw_pct": 5.29,
+   "ytm_pct": 5.29,
+   "sec_yield_pct": 5.1355,
    "source": "iShares",
-   "close": 82.52,
-   "close_date": "2026-08-31"
+   "close": 81.87,
+   "close_date": "2026-09-01"
   },
   "TIP": {
    "ticker": "TIP",
@@ -486,14 +455,14 @@
    "nav": 106.833327,
    "nav_as_of": "2026-08-31",
    "aum_usd": 15010082391.01,
-   "duration": 6.29993,
-   "oas_bp": -3.50551,
+   "duration": 6.35362,
+   "oas_bp": -3.26854,
    "ytw_pct": 2.28,
-   "ytm_pct": 4.57,
-   "sec_yield_pct": -1.4749,
+   "ytm_pct": 4.58,
+   "sec_yield_pct": -2.2835,
    "source": "iShares",
-   "close": 106.82,
-   "close_date": "2026-08-31"
+   "close": 106.81,
+   "close_date": "2026-09-01"
   },
   "STIP": {
    "ticker": "STIP",
@@ -501,14 +470,14 @@
    "nav": 100.652683,
    "nav_as_of": "2026-08-31",
    "aum_usd": 16079266032.44,
-   "duration": 2.38652,
-   "oas_bp": -14.02354,
+   "duration": 2.37828,
+   "oas_bp": -13.25215,
    "ytw_pct": 2.18,
    "ytm_pct": 4.19,
-   "sec_yield_pct": -1.1424,
+   "sec_yield_pct": -1.9378,
    "source": "iShares",
-   "close": 100.68,
-   "close_date": "2026-08-31"
+   "close": 100.7,
+   "close_date": "2026-09-01"
   },
   "LQD": {
    "ticker": "LQD",
@@ -516,14 +485,14 @@
    "nav": 106.137172,
    "nav_as_of": "2026-08-31",
    "aum_usd": 32042812350.82,
-   "duration": 7.72798,
-   "oas_bp": 83.33917,
-   "ytw_pct": 5.63,
-   "ytm_pct": 5.64,
-   "sec_yield_pct": 5.5385,
+   "duration": 7.69431,
+   "oas_bp": 84.06862,
+   "ytw_pct": 5.66,
+   "ytm_pct": 5.67,
+   "sec_yield_pct": 5.5521,
    "source": "iShares",
-   "close": 106.21,
-   "close_date": "2026-08-31"
+   "close": 105.22,
+   "close_date": "2026-09-01"
   },
   "IGIB": {
    "ticker": "IGIB",
@@ -531,14 +500,14 @@
    "nav": 52.14931,
    "nav_as_of": "2026-08-31",
    "aum_usd": 18716387361.64,
-   "duration": 5.95088,
-   "oas_bp": 87.92861,
-   "ytw_pct": 5.51,
-   "ytm_pct": 5.55,
-   "sec_yield_pct": 5.5058,
+   "duration": 5.91406,
+   "oas_bp": 88.11835,
+   "ytw_pct": 5.53,
+   "ytm_pct": 5.57,
+   "sec_yield_pct": 5.5173,
    "source": "iShares",
-   "close": 52.19,
-   "close_date": "2026-08-31"
+   "close": 51.73,
+   "close_date": "2026-09-01"
   },
   "USIG": {
    "ticker": "USIG",
@@ -546,14 +515,14 @@
    "nav": 50.268292,
    "nav_as_of": "2026-08-31",
    "aum_usd": 17845243686.42,
-   "duration": 6.2356,
-   "oas_bp": 76.29675,
-   "ytw_pct": 5.46,
-   "ytm_pct": 5.49,
-   "sec_yield_pct": 5.4377,
+   "duration": 6.21525,
+   "oas_bp": 76.66518,
+   "ytw_pct": 5.47,
+   "ytm_pct": 5.5,
+   "sec_yield_pct": 5.4464,
    "source": "iShares",
-   "close": 50.28,
-   "close_date": "2026-08-31"
+   "close": 49.89,
+   "close_date": "2026-09-01"
   },
   "HYG": {
    "ticker": "HYG",
@@ -561,14 +530,14 @@
    "nav": 79.656464,
    "nav_as_of": "2026-08-31",
    "aum_usd": 16186193407.53,
-   "duration": 1.77236,
-   "oas_bp": 234.44731,
-   "ytw_pct": 6.96,
-   "ytm_pct": 7.28,
-   "sec_yield_pct": 6.4709,
+   "duration": 1.77512,
+   "oas_bp": 237.59307,
+   "ytw_pct": 7.0,
+   "ytm_pct": 7.31,
+   "sec_yield_pct": 6.4621,
    "source": "iShares",
-   "close": 79.81,
-   "close_date": "2026-08-31"
+   "close": 79.1,
+   "close_date": "2026-09-01"
   },
   "SHYG": {
    "ticker": "SHYG",
@@ -576,14 +545,14 @@
    "nav": 42.214295,
    "nav_as_of": "2026-08-31",
    "aum_usd": 7763208923.08,
-   "duration": 1.2305,
-   "oas_bp": 224.34113,
-   "ytw_pct": 6.69,
-   "ytm_pct": 7.05,
-   "sec_yield_pct": 6.5446,
+   "duration": 1.2263,
+   "oas_bp": 226.88861,
+   "ytw_pct": 6.71,
+   "ytm_pct": 7.06,
+   "sec_yield_pct": 6.5292,
    "source": "iShares",
-   "close": 42.32,
-   "close_date": "2026-08-31"
+   "close": 41.95,
+   "close_date": "2026-09-01"
   },
   "EMB": {
    "ticker": "EMB",
@@ -591,14 +560,14 @@
    "nav": 94.828552,
    "nav_as_of": "2026-08-31",
    "aum_usd": 14916531295.49,
-   "duration": 6.02065,
-   "oas_bp": 164.93643,
-   "ytw_pct": 6.37,
-   "ytm_pct": 6.38,
-   "sec_yield_pct": 5.9293,
+   "duration": 6.0027,
+   "oas_bp": 166.94392,
+   "ytw_pct": 6.41,
+   "ytm_pct": 6.41,
+   "sec_yield_pct": 5.9361,
    "source": "iShares",
-   "close": 94.77,
-   "close_date": "2026-08-31"
+   "close": 94.09,
+   "close_date": "2026-09-01"
   },
   "EMHY": {
    "ticker": "EMHY",
@@ -606,14 +575,14 @@
    "nav": 40.247943,
    "nav_as_of": "2026-08-31",
    "aum_usd": 645979487.13,
-   "duration": 3.87797,
-   "oas_bp": 259.1423,
-   "ytw_pct": 7.23,
-   "ytm_pct": 7.42,
-   "sec_yield_pct": 6.73,
+   "duration": 3.9025,
+   "oas_bp": 263.32588,
+   "ytw_pct": 7.28,
+   "ytm_pct": 7.47,
+   "sec_yield_pct": 6.7276,
    "source": "iShares",
-   "close": 40.22,
-   "close_date": "2026-08-31"
+   "close": 39.9401,
+   "close_date": "2026-09-01"
   },
   "IGOV": {
    "ticker": "IGOV",
@@ -621,14 +590,14 @@
    "nav": 41.242552,
    "nav_as_of": "2026-08-31",
    "aum_usd": 1546595685.27,
-   "duration": 7.28027,
-   "oas_bp": 16.45269,
-   "ytw_pct": 3.63,
-   "ytm_pct": 3.63,
-   "sec_yield_pct": 3.1861,
+   "duration": 7.29595,
+   "oas_bp": 16.64072,
+   "ytw_pct": 3.66,
+   "ytm_pct": 3.66,
+   "sec_yield_pct": 3.2021,
    "source": "iShares",
-   "close": 41.21,
-   "close_date": "2026-08-31"
+   "close": 40.92,
+   "close_date": "2026-09-01"
   },
   "IAGG": {
    "ticker": "IAGG",
@@ -636,14 +605,14 @@
    "nav": 49.650415,
    "nav_as_of": "2026-08-31",
    "aum_usd": 11387322655.55,
-   "duration": 6.28286,
-   "oas_bp": 29.48715,
-   "ytw_pct": 3.39,
-   "ytm_pct": 3.4,
-   "sec_yield_pct": 3.2074,
+   "duration": 6.26616,
+   "oas_bp": 29.51488,
+   "ytw_pct": 3.36,
+   "ytm_pct": 3.38,
+   "sec_yield_pct": 3.2254,
    "source": "iShares",
-   "close": 49.72,
-   "close_date": "2026-08-31"
+   "close": 49.58,
+   "close_date": "2026-09-01"
   },
   "FLOT": {
    "ticker": "FLOT",
@@ -651,14 +620,14 @@
    "nav": 51.022141,
    "nav_as_of": "2026-08-31",
    "aum_usd": 10684036404.79,
-   "duration": 0.015,
-   "oas_bp": 39.27066,
-   "ytw_pct": 4.22,
-   "ytm_pct": 4.27,
-   "sec_yield_pct": 4.0271,
+   "duration": 0.01373,
+   "oas_bp": 39.53587,
+   "ytw_pct": 4.23,
+   "ytm_pct": 4.28,
+   "sec_yield_pct": 4.027,
    "source": "iShares",
-   "close": 51.05,
-   "close_date": "2026-08-31"
+   "close": 50.86,
+   "close_date": "2026-09-01"
   }
  },
  "universe": [
