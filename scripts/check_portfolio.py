@@ -72,6 +72,20 @@ def main():
         print('portfolio.json 없음 — 섹션 없이 발행한다 (비-코어)', file=sys.stderr)
         return
 
+    # 책이 오늘 세션을 가리키지 않으면 **섹션이 없어야 한다.** 여기서 리포트 전체를
+    # 막으면 비-코어 한 조각이 발행을 세운다 — 게이트가 닫히면서 실패하는 것과
+    # 「하루치 리포트를 통째로 잃는 것」은 다르다. 지난 성과를 오늘 날짜로 인쇄하는
+    # 것만 막고, 섹션 없는 발행은 통과시킨다. 다음 수집이 책을 굴리면 저절로 돌아온다.
+    rd, today = book.get('report_date'), market.get('report_date')
+    if today and rd != today:
+        if section(html):
+            print(f'포트폴리오 책이 {rd} 자인데 오늘은 {today}다 — '
+                  f'지난 성과를 오늘 날짜로 실을 수 없다')
+            sys.exit(1)
+        print(f'portfolio.json 이 {rd} 에서 멈춰 있다 — 섹션 없이 발행한다 (비-코어)',
+              file=sys.stderr)
+        return
+
     errs = check(html, book, book.get('performance'), market.get('report_date'))
     if errs:
         for e in errs:

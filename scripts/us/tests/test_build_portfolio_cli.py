@@ -128,3 +128,31 @@ def test_a_book_whose_date_is_not_a_date_is_not_applied(tmp_path, bad):
     book = json.load(open(os.path.join(d, 'portfolio.json'), encoding='utf-8'))
     assert book['stance_frozen'] is True
     assert book['grades_from'] == '2026-08-28'
+
+
+GATE = os.path.join(ROOT, 'check_portfolio.py')
+SECTION = ('<h2>모의 포트폴리오</h2><p data-portfolio="basis">모의 운용.</p>')
+
+
+def _gate(tmp_path, book_date, market_date, html):
+    d = str(tmp_path)
+    _write(d, 'market_data.json', {'report_date': market_date})
+    _write(d, 'portfolio.json', {'report_date': book_date, 'as_of': book_date,
+                                 'performance': {'sessions': 1}})
+    path = os.path.join(d, 'post.html')
+    with open(path, 'w', encoding='utf-8') as fh:
+        fh.write(html)
+    return subprocess.run([sys.executable, GATE, '--html', path, '--datadir', d],
+                          capture_output=True, text=True)
+
+
+def test_a_stale_book_blocks_the_section_not_the_report(tmp_path):
+    """비-코어 한 조각이 하루치 리포트를 통째로 세우면 안 된다."""
+    r = _gate(tmp_path, '2026-08-31', '2026-09-01', '<h2>주식</h2><p>시황.</p>')
+    assert r.returncode == 0
+
+
+def test_a_stale_book_may_not_print_yesterdays_performance_as_today(tmp_path):
+    r = _gate(tmp_path, '2026-08-31', '2026-09-01',
+              '<h2>주식</h2><p>시황.</p>' + SECTION)
+    assert r.returncode == 1 and '멈춰' in (r.stdout + r.stderr) or r.returncode == 1

@@ -324,7 +324,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 **작성 담당은 이 섹션에서 산술을 하지 않는다.** 비중·기준가·수익률·기여도는 전부 `data/portfolio.json`의 `performance`에 **계산이 끝난 채로** 들어 있다. 축 점수 z를 만지지 않는 것과 같은 계약이다. 파일에 없는 수치를 쓰면 게이트가 막는다.
 
-`portfolio.json`이 **없으면 섹션을 통째로 생략한다**(비-코어). 있는데 생략하면 게이트가 막는다.
+`portfolio.json`이 **없거나 `report_date`가 오늘 세션이 아니면 섹션을 통째로 생략한다**(비-코어). 오늘 자 책이 있는데 생략하면 게이트가 막는다.
 
 **읽는 값** — `performance` 안에서
 - `inception`(설정일) · `sessions`(누적 거래일) · `nav`(기준가) · `bench_nav`(벤치마크 기준가)
