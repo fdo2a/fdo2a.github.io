@@ -110,6 +110,21 @@ def test_transliterated_jargon_with_plain_korean_is_flagged():
     assert "상승 종목 비율" in found[0]["message"], "풀어 쓸 말을 알려줘야 한다"
 
 
+def test_percentile_is_flagged_as_a_word_nobody_reads():
+    """음차가 아닌데도 잡는 유일한 말 — 2026-09-02 사용자 지적.
+
+    「96.4 백분위」는 계산에 맞는 말이지 읽는 사람에게 그림을 그려 주는 말이 아니다.
+    """
+    html = _wrap("10년물은 2년 표본에서 96.4 백분위 자리입니다.")
+    found = [f for f in S.findings(html) if f["key"] == "jargon"]
+    assert found and "백분위" in found[0]["message"]
+
+
+def test_counted_standing_sentence_passes():
+    html = _wrap("10년물은 최근 2년 가운데 이보다 높았던 날이 스무 날뿐인 자리입니다.")
+    assert "jargon" not in _keys(html)
+
+
 def test_plain_korean_alternative_passes():
     html = _wrap("코스피는 오른 종목이 늘었고 반도체가 시장보다 더 올랐습니다.")
     assert "jargon" not in _keys(html)

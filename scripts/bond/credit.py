@@ -1,14 +1,22 @@
-"""크레딧 스프레드 — 수준·백분위·수익률 분해.
+"""크레딧 스프레드 — 수준·위치·수익률 분해.
 
 발행본이 「HY 스프레드 400bp」라고만 쓰면 독자는 그게 넓은 건지 좁은 건지 모른다.
 이 모듈이 채우는 것은 「어디에 서 있나」다 — 이력 대비 백분위와, 그 백분위가 몇
 거래일 위에서 계산됐는지(짧은 표본에 「5년 최저」라고 쓰지 않기 위해).
 
+**백분위는 계산용 수이고 발행본이 인쇄하는 말이 아니다.** `plain` 이 같은 사실을
+「이보다 좁았던 날은 사흘뿐」처럼 세어 볼 수 있는 말로 바꿔 함께 내려보낸다
+(`common/standing.py`).
+
 그리고 채권 수익률을 «국채 + 스프레드»로 쪼개는 습관을 코드로 강제한다. 회사채
 6% 를 통째로 보면 국채가 4% 인지 5% 인지에 따라 완전히 다른 상품이라는 사실이 가려진다.
 """
 
-MIN_SESSIONS_FOR_YEARS = {5: 1260, 3: 756, 2: 504, 1: 252}
+from common import standing as standing_mod
+
+# 기간 이름 규칙은 US 브리프와 공유한다 — 같은 규칙을 두 벌 두면 한쪽만 고쳐진다.
+MIN_SESSIONS_FOR_YEARS = standing_mod.MIN_SESSIONS_FOR_YEARS
+window_label = standing_mod.window_label
 
 
 def percentile(series, value):
@@ -21,20 +29,20 @@ def percentile(series, value):
     return round((below + equal / 2.0) / len(vals) * 100, 1)
 
 
-def window_label(sessions):
-    """표본 길이에 걸맞은 기간 이름. 모자라면 「N거래일」로 정직하게 부른다."""
-    for years, need in sorted(MIN_SESSIONS_FOR_YEARS.items(), reverse=True):
-        if sessions >= need:
-            return f'{years}년'
-    return f'{sessions}거래일'
+def standing(series, value, kind='spread'):
+    """수준 + 위치 + 표본 길이 + 극값 — 한 스프레드가 지금 어디에 있나.
 
-
-def standing(series, value):
-    """수준 + 백분위 + 표본 길이 + 극값 — 한 스프레드가 지금 어디에 있나."""
+    `kind` 는 그 위치를 부르는 말만 고른다 — 스프레드는 넓고 좁고, 금리·지수는
+    높고 낮다.
+    """
     vals = [v for v in series if v is not None]
     if not vals or value is None:
         return None
     pct = percentile(vals, value)
+    # 날 수는 백분위에서 되돌리지 않고 **여기서 직접 센다** — 반올림된 백분위로
+    # 되돌리면 표본의 최댓값이 「이보다 넓었던 날이 하루뿐」이 된다(실제 0일).
+    above = sum(1 for v in vals if v > value)
+    below = sum(1 for v in vals if v < value)
     return {
         # 인쇄하지 않는 파생 단위는 만들지 않는다. 예전엔 `level_bp`(값 ×100)를 담았는데,
         # 이 필드가 10년물 4.67 을 467 로 만들어 「하이일드 스프레드 467bp」라는
@@ -46,6 +54,9 @@ def standing(series, value):
         'min': round(min(vals), 3),
         'max': round(max(vals), 3),
         'band': _band(pct),
+        # 발행본이 그대로 인쇄하는 말. 백분위라는 낱말은 여기서 끝난다.
+        'plain': standing_mod.plain(pct, len(vals), window_label(len(vals)), kind,
+                                    above=above, below=below),
     }
 
 

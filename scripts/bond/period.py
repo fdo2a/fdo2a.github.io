@@ -123,7 +123,7 @@ def build(rows, start, end, etf_tickers=()):
         'first_session': win[0]['report_date'], 'last_session': win[-1]['report_date'],
         'sessions': len(win),
         'rates': rates, 'credit': credit, 'fx': fx, 'etf': etf, 'move': move,
-        'us10y_standing': standing(us10, us10[-1]) if us10 else None,
+        'us10y_standing': standing(us10, us10[-1], 'level') if us10 else None,
         # 「완전하다」는 세션이 세 개 있다는 뜻이 아니라 **구간의 양 끝을 덮는다**는
         # 뜻이다. 8월 3~5일 세 세션으로 8월 전체를 완전하다고 표시하면 안 된다.
         'complete': len(win) >= 3 and _covers(win, start, end),

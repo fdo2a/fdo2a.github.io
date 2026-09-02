@@ -15,6 +15,7 @@ import re
 from common.numbers import (measure_numbers as _measure_numbers,
                             numbers_split_by_tags as _split_numbers,
                             numeric_tokens as _numeric_tokens,
+                            text_dense as _text_dense,
                             text_of as _text_of)
 
 from .stance import AXES, label_for
@@ -28,6 +29,21 @@ INTERNAL_TOKENS = ('bond_metrics.json', 'bond_market.json', 'bond_stance.json',
                    'report_date', 'us10y_dma20_gap_bp', 'signed-z')
 
 SECTION_RE = re.compile(r'<section id="(b-\d+)"[^>]*>(.*?)</section>', re.S)
+
+# 「지금 어디에 서 있나」를 사람 말로 한 자국. `common/standing.py` 가 만드는 세 꼴.
+# **날 수를 실제로 말해야 통과한다** — 「이보다 높았던 날을 확인한다」 같은 빈 상투구가
+# 통과하던 구멍을 막았다(2026-09-02 codex 검토).
+STANDING_PHRASE = re.compile(
+    r'이보다 (?:높|낮|넓|좁)았던 날이 (?:\d+일|하루|이틀|사흘|나흘|닷새|엿새|이레|여드레|아흐레|열흘)뿐'
+    r'|(?:높|낮|넓|좁)은 쪽 \d+% 안|한가운데쯤'
+    r'|통틀어 가장 (?:높|낮|넓|좁)은 자리')
+
+# 위치 문장이 실제로 그 자산의 «지금 어디에 있나» 문단 안에 있는가.
+STANDING_BLOCK = re.compile(
+    r'<p[^>]*\bdata-standing="([a-z_]+)"[^>]*>(.*?)</p>', re.S)
+
+# 발행본이 인쇄한 날 수·표본 길이. 데이터에 없는 값이면 창작이다.
+STANDING_NUMBERS = re.compile(r'(\d[\d,]*)\s*거래일|날이\s*(\d[\d,]*)일뿐')
 
 # 시황 섹션과 판단 섹션 — 무게중심 검사의 기준
 MARKET_SECTIONS = ('b-2', 'b-3', 'b-4', 'b-5', 'b-6', 'b-7', 'b-8')
@@ -58,6 +74,9 @@ def check(html, market, metrics, evaluation, book, econ=None):
     """-> 위반 목록. 빈 리스트면 발행 가능."""
     errs = []
     txt = text_of(html)
+    # 태그를 공백 없이 지운 판. 「백<span></span>분위」가 검사를 피해 가지 못하게
+    # 어휘 검사는 두 판을 모두 본다(2026-09-02 codex 검토).
+    dense = _text_dense(html)
     secs = sections(html)
 
     # --- 통제 입력 자체가 성립하는가 (fail closed) --------------------------
@@ -75,7 +94,7 @@ def check(html, market, metrics, evaluation, book, econ=None):
             errs.append(f'{name} 기준일 불일치: {other} != {rd}')
 
     for w in BANNED_WORDS:
-        if w.lower() in txt.lower():
+        if w.lower() in txt.lower() or w.lower() in dense.lower():
             errs.append(f'금지 어휘: {w}')
     for tok in INTERNAL_TOKENS:
         if tok in txt:
@@ -115,11 +134,27 @@ def check(html, market, metrics, evaluation, book, econ=None):
             errs.append(f'{key}: 하루에 두 칸 이동 ({prev} -> {g})')
 
     # --- 「지금 어디에 있나」 ------------------------------------------------
+    blocks = {k: _text_of(v) for k, v in STANDING_BLOCK.findall(html)}
     for axis in ('rates', 'credit', 'fx'):
         if f'data-standing="{axis}"' not in html:
             errs.append(f'위치 서술 표식 없음: data-standing="{axis}"')
-    if not re.search(r'백분위', txt):
-        errs.append('백분위를 한 번도 쓰지 않았다 — 시장이 어디에 서 있는지가 없다')
+    # 「지금 어디에 서 있나」를 **말했는가**를 본다. 예전에는 「백분위」라는 낱말을
+    # 찾았는데, 그 말은 계산에 맞을 뿐 읽는 사람에게 아무 그림도 안 그려 준다
+    # (2026-09-02 사용자 지적 — 「그렇게 쓰면 아무도 못 알아들을 것 같다」).
+    # 이제 세어 볼 수 있는 말을 찾고, 백분위라는 낱말 자체는 금지한다.
+    if '백분위' in txt or '백분위' in dense:
+        errs.append('「백분위」를 인쇄했다 — 「이보다 높았던 날이 나흘뿐」처럼 '
+                    '세어 볼 수 있는 말로 쓸 것(값은 metrics 의 plain 이 만든다)')
+    # 문서 어딘가에 한 번 나오는 것으로는 안 된다. **그 자산의 문단 안**에 있어야
+    # 한다 — 아니면 다른 섹션의 상투구 하나로 세 자산이 모두 면제된다(codex 검토).
+    # 위치 계산이 내려오는 축만 요구한다. FX 는 metrics 에 standing 이 없다.
+    for axis, label in (('rates', '금리'), ('credit', '크레딧')):
+        if axis in blocks and not STANDING_PHRASE.search(blocks[axis]):
+            errs.append(f'{label} 위치 문단이 어디에 서 있는지를 말하지 않았다 — '
+                        f'metrics 의 plain 문장을 쓸 것')
+    if not STANDING_PHRASE.search(txt):
+        errs.append('시장이 어디에 서 있는지를 한 번도 말하지 않았다 — '
+                    'metrics 의 plain 문장을 쓸 것')
 
     # --- 기준일 노출 -------------------------------------------------------
     if txt.count(metrics.get('report_date', '\x00')) < 2:
@@ -136,6 +171,13 @@ def check(html, market, metrics, evaluation, book, econ=None):
                       and abs(v) > 0.001)
     if invented:
         errs.append('데이터에 없는 수치: ' + ', '.join(str(v) for v in invented[:12]))
+    # 위치 문장이 인쇄하는 「523거래일」·「날이 15일뿐」은 단위 검사가 안 본다
+    # (날짜 가리기가 「15일」을 지운다). 따로 대조한다 — 이 수치야말로 손으로 적으면
+    # 안 되는 값이고, plain 이 만든 것이면 metrics 안에 그대로 들어 있다.
+    for a, b in STANDING_NUMBERS.findall(txt):
+        v = float((a or b).replace(',', ''))
+        if v not in allowed_nums:
+            errs.append(f'데이터에 없는 표본·날 수: {a or b}')
     # 이 검사의 한계 — 2026-08-31 실측. 허용 집합이 1,000개 남짓이고 발행본이 쓰는
     # 수치 범위가 좁아서, 그럴듯하게 «지어낸» 값도 3분의 1 정도는 통과한다.
     # 이건 크기·자릿수가 어긋난 창작을 잡는 그물이지 정확성의 증명이 아니다.

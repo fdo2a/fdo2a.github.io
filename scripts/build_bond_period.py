@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bond import history as ledger          # noqa: E402
 from bond import period as per              # noqa: E402
 from bond.sources import CREDIT_KO, UNIVERSE  # noqa: E402
-from build_bond_report import FOOT, HEAD, cls, esc, ko_date, n, pct  # noqa: E402
+from build_bond_report import FOOT, HEAD, cls, esc, ko_date, n, pct, where  # noqa: E402
 
 RATE_KO = {'us': '미국', 'de': '독일', 'jp': '일본', 'gb': '영국', 'ea': '유로존'}
 SPAN_KO = {'weekly': '주간', 'monthly': '월간'}
@@ -129,13 +129,18 @@ def build(span, asof, datadir, outdir, postsdir):
             f'{p["sessions"]}거래일치 국채 커브·크레딧 스프레드·환율·채권 ETF 성과를 '
             f'원장에서 집계했습니다.')
 
+    # 표본이 짧으면 `plain` 이 아무것도 안 돌려준다 — 그런 날은 위치를 말하지 않는다.
+    # 「이 기간 2거래일 안에서만 보면 한가운데쯤」은 문장만 성립하고 뜻이 없다.
+    standing_line = (f' 이 기간 {st.get("sessions", 0)}거래일 안에서만 보면 '
+                     f'{where(st, short=True, form="soft")} —'
+                     if where(st, short=True) else '')
+
     body = f'''<section id="b-1">
 <div class="headline-card">
 <h1>{esc(title)}</h1>
 <p>{start} ~ {end} · 실제 세션 {p["sessions"]}일({p["first_session"]} ~ {p["last_session"]}).
 {covered}.</p>
-<p>기간 끝 기준 미국 10년물은 {n(st.get("value"), 2)}%입니다. 이 기간
-{st.get("sessions", 0)}거래일 안에서만 보면 {n(st.get("percentile"), 1)} 백분위 자리예요 —
+<p>기간 끝 기준 미국 10년물은 {n(st.get("value"), 2)}%입니다.{standing_line}
 더 긴 시계에서 어디에 서 있는지는 일간 리포트가 매일 짚습니다.</p>
 </div>
 </section>

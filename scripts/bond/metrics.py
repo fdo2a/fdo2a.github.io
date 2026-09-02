@@ -331,12 +331,13 @@ def compute(market, rows, econ=None):
                 'move_chg': (None if (market.get('vol') or {}).get('stale')
                              or None in (move, (prev or {}).get('move'))
                              else round(move - prev['move'], 2)),
-                'standing': credit_mod.standing(move_series, move)},
-        # 「지금 어디에 서 있나」 — 백분위를 한 번도 말하지 않는 발행본이 되지 않게
-        # 기계가 먼저 계산해 둔다(US 브리프가 2026-08-30 에 겪은 실패와 같은 구조).
+                'standing': credit_mod.standing(move_series, move, 'level')},
+        # 「지금 어디에 서 있나」 — 시장이 어디에 서 있는지를 한 번도 말하지 않는
+        # 발행본이 되지 않게 기계가 먼저 계산해 둔다(US 브리프가 2026-08-30 에 겪은
+        # 실패와 같은 구조). 인쇄할 말(`plain`)까지 여기서 만들어 내려보낸다.
         'standing': {
-            'us10y': credit_mod.standing(us_series, us10),
-            'us30y': credit_mod.standing(us30_series, us30),
+            'us10y': credit_mod.standing(us_series, us10, 'level'),
+            'us30y': credit_mod.standing(us30_series, us30, 'level'),
         },
     }
     out['teaching'] = teaching_block(out)

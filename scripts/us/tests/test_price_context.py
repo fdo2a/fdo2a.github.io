@@ -475,6 +475,16 @@ def test_level_percentile_reading_is_capped_at_the_window():
     assert got['levels']['VIX']['sessions'] == 504
 
 
+def test_level_reading_carries_the_sentence_the_writer_prints():
+    # 백분위는 계산용 수다. 발행본에 그대로 옮겨 적으면 아무도 못 알아듣는다
+    # (2026-09-02 사용자 지적) — 옮긴 말을 데이터가 만들어 내려보낸다.
+    got = compute(_full_closes(n=900), {}, sectors=SECTORS_FOR_TEST, dates=dates_for(_full_closes(n=900)))
+    plain = got['levels']['VIX']['plain']
+    assert plain['sessions'] == 504
+    assert '백분위' not in plain['text']
+    assert plain['side'] in ('high', 'mid', 'low')
+
+
 from us.price_context import aligned_changes  # noqa: E402
 
 

@@ -24,6 +24,8 @@ Two rules the readings live or die by:
 
 import math
 
+from common import standing as standing_mod
+
 MOVE_WINDOW = 60        # sessions that define "a typical day"
 PCTL_WINDOW = 504       # ~2 years of sessions
 CORR_WINDOW = 60
@@ -518,12 +520,28 @@ def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
         pct = level_percentile(closes, ticker)
         # How many sessions actually backed the reading, so a caption cannot claim two
         # years of context off eight months of downloaded history.
-        levels[name] = None if pct is None else {
-            'value': round(_series(closes, ticker)[-1], 3),
-            'percentile': pct,
-            'band': percentile_band(pct),
-            'sessions': min(len(_series(closes, ticker)) - 1, PCTL_WINDOW),
-        }
+        if pct is None:
+            levels[name] = None
+        else:
+            s = _series(closes, ticker)
+            n = min(len(s) - 1, PCTL_WINDOW)
+            # 날 수는 세어서 넘긴다. 백분위에서 되돌리면 신고가가 「이보다 높았던
+            # 날이 하루뿐」이 된다(2026-09-02 codex 검토).
+            prior = s[-(PCTL_WINDOW + 1):][:-1]
+            levels[name] = {
+                'value': round(_series(closes, ticker)[-1], 3),
+                'percentile': pct,
+                'band': percentile_band(pct),
+                'sessions': n,
+                # 발행본이 그대로 쓸 말. 「96.4 백분위」는 계산에는 맞지만 읽는
+                # 사람에게는 아무 그림도 안 그려 준다(2026-09-02 사용자 지적) —
+                # writer 가 백분위를 옮겨 적지 않게 옮긴 말을 내려보낸다. 축 점수 z를
+                # 만지지 않는 것(macro_metrics)과 같은 계약.
+                'plain': standing_mod.plain(
+                    pct, n,
+                    above=sum(1 for v in prior if v > s[-1]),
+                    below=sum(1 for v in prior if v < s[-1])),
+            }
 
     correlations = []
     for key, label, a, b in CORR_PAIRS:

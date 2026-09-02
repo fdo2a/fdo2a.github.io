@@ -25,10 +25,11 @@ def _html(body, grades=(0, 0, 0)):
                              {0: '커브 중립', 1: '완만한 스티프너'}[grades[1]]),
                             ('credit', grades[2],
                              {0: '크레딧 중립', 1: '소폭 OW', 2: '크레딧 OW'}[grades[2]])])
-    return ('<section id="b-2"><p data-standing="rates">2026-08-27 백분위 '
-            '노출을 역산했다</p>'
+    return ('<section id="b-2"><p data-standing="rates">2026-08-27 최근 2년 가운데 '
+            '이보다 높았던 날이 나흘뿐이다. 노출을 역산했다</p>'
             + 'x' * 3200 + '</section>'
-            '<section id="b-6"><p data-standing="credit">x</p></section>'
+            '<section id="b-6"><p data-standing="credit">최근 2년 가운데 이보다 '
+            '좁았던 날이 사흘뿐이다</p></section>'
             '<section id="b-7"><p data-standing="fx">2026-08-27</p></section>'
             f'<section id="b-9">{marks}{body}</section>')
 
@@ -69,6 +70,39 @@ class TestDataTokens:
 class TestCheck:
     def test_clean_report_passes(self):
         assert check(_html('<p>47bp</p>'), MARKET, METRICS, EVAL, BOOK) == []
+
+    def test_percentile_word_is_refused(self):
+        # 계산에 맞는 말이 읽는 사람에게도 맞는 말은 아니다(2026-09-02 사용자 지적).
+        errs = check(_html('<p>하이일드는 0.5 백분위다</p>'), MARKET, METRICS, EVAL, BOOK)
+        assert any('백분위' in e for e in errs)
+
+    def test_report_that_never_says_where_the_market_stands_is_refused(self):
+        html = _html('<p>47bp</p>').replace(
+            '최근 2년 가운데 이보다 높았던 날이 나흘뿐이다.', '금리가 올랐다.')
+        errs = check(html, MARKET, METRICS, EVAL, BOOK)
+        assert any('어디에 서 있는지' in e for e in errs)
+
+    def test_empty_cliche_does_not_count_as_saying_where_it_stands(self):
+        # 「이보다 높았던 날을 확인한다」는 날 수를 말하지 않는다 — 통과하면 안 된다.
+        html = _html('<p>47bp</p>').replace(
+            '이보다 높았던 날이 나흘뿐이다.', '이보다 높았던 날을 확인한다.')
+        assert any('금리 위치 문단' in e for e in check(html, MARKET, METRICS, EVAL, BOOK))
+
+    def test_standing_sentence_in_another_section_does_not_cover_the_asset(self):
+        # 다른 섹션의 상투구 하나로 그 자산의 위치 문단이 면제되면 안 된다.
+        html = _html('<p>최근 2년 가운데 이보다 넓었던 날이 나흘뿐이다</p>').replace(
+            '최근 2년 가운데 이보다 높았던 날이 나흘뿐이다.', '금리가 올랐다.')
+        assert any('금리 위치 문단' in e for e in check(html, MARKET, METRICS, EVAL, BOOK))
+
+    def test_tag_split_percentile_is_still_caught(self):
+        errs = check(_html('<p>2년 표본에서 백<span></span>분위 상위다</p>'),
+                     MARKET, METRICS, EVAL, BOOK)
+        assert any('백분위' in e for e in errs)
+
+    def test_invented_session_count_is_caught(self):
+        errs = check(_html('<p>최근 999거래일 가운데 이보다 높았던 날이 777일뿐이다</p>'),
+                     MARKET, METRICS, EVAL, BOOK)
+        assert any('표본·날 수' in e for e in errs)
 
     def test_invented_number_is_caught(self):
         errs = check(_html('<p>스프레드는 999.5bp였다</p>'), MARKET, METRICS, EVAL, BOOK)

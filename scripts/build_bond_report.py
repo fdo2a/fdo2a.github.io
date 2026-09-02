@@ -15,6 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from common import standing as standing_mod    # noqa: E402
 from bond import stance as stance_mod           # noqa: E402
 from bond.sources import CREDIT_KO             # noqa: E402
 
@@ -131,23 +132,37 @@ def decomposition_reading(d10):
             f'기대인플레 {d10.get("bei_level"):.2f}%입니다.')
 
 
+def where(st, short=False, form=None):
+    """「지금 어디에 서 있나」를 사람 말로. 문장은 metrics 가 만들어 내려보낸다.
+
+    백분위를 그대로 인쇄하면 읽는 사람이 아무 그림도 못 그린다(2026-09-02 사용자
+    지적). 손으로 옮겨 적지 않는다 — 원장이 갱신되면 손타이핑만 뒤처진다.
+    `form` 을 주면 종결까지 붙여 준다(받침에 따라 「자리예요」·「뿐이에요」).
+    """
+    pl = ((st or {}).get('plain')) or {}
+    if form:
+        return standing_mod.say(pl, form, short)
+    return pl.get('short' if short else 'text') or ''
+
+
 def ccc_reading(hy, ccc):
     hp = (hy.get('standing') or {}).get('percentile')
     cp = (ccc.get('standing') or {}).get('percentile')
     if hp is None or cp is None:
         return ('등급별 분포를 볼 표본이 아직 모자랍니다. 하이일드는 벌어질 때 '
                 '아래 등급부터 벌어지므로, 지수 하나만 보지 않는 습관이 필요합니다.')
+    cw, hw = where(ccc.get('standing'), True), where(hy.get('standing'), True)
     if cp - hp >= 30:
         return (f'<b>그런데 여기서 갈립니다.</b> 하이일드 안에서도 가장 등급이 낮은 CCC 이하는 '
-                f'{ccc["bp"]:,.0f}bp로 {cp:.1f} 백분위입니다. 지수 전체는 {hp:.1f} 백분위로 '
-                f'좁은데 바닥층만 벌어져 있어요. 평균 하나만 보고 「크레딧이 편안하다」고 '
+                f'{ccc["bp"]:,.0f}bp — {where(ccc.get("standing"), form="formal")}. 지수 전체는 {hw}인데 '
+                f'바닥층만 벌어져 있어요. 평균 하나만 보고 「크레딧이 편안하다」고 '
                 f'적으면 안 되는 이유가 이 한 줄에 있습니다.')
     if hp - cp >= 30:
         return (f'특이하게도 바닥층이 더 편안합니다. CCC 이하가 {ccc["bp"]:,.0f}bp로 '
-                f'{cp:.1f} 백분위인데 지수 전체는 {hp:.1f} 백분위예요. '
+                f'{cw}인데 지수 전체는 {hw}입니다. '
                 f'질 낮은 쪽으로 돈이 몰린 국면일 수 있어 방향 전환에 특히 약합니다.')
-    return (f'등급별로 보면 CCC 이하가 {ccc["bp"]:,.0f}bp({cp:.1f} 백분위)로 지수 전체'
-            f'({hp:.1f} 백분위)와 같은 방향에 서 있습니다. 층이 갈리지 않은 국면이에요. '
+    return (f'등급별로 보면 CCC 이하가 {ccc["bp"]:,.0f}bp로 {cw}, 지수 전체는 {hw}라 '
+            f'둘이 같은 방향에 서 있습니다. 층이 갈리지 않은 국면이에요. '
             f'벌어질 때는 아래에서부터 벌어지므로 이 간격을 계속 봅니다.')
 
 
@@ -284,8 +299,7 @@ def move_sentence(vol):
         return ''
     # 낡은 값을 오늘 값처럼 인쇄하지 않는다. ^MOVE 는 다른 축보다 늦게 채워지는 날이 있다.
     asof = f'{vol.get("date")} 기준으로 ' if vol.get('stale') else ''
-    pos = ('' if st.get('percentile') is None else
-           f' {st["window"]} 표본에서 {st["percentile"]:.1f} 백분위({st["band"]}) 자리고요.')
+    pos = '' if not where(st) else f' 서 있는 자리는 {where(st, form="and")}.'
     mv = '' if chg is None else f' 전일 대비 {chg:+.2f}'
     tail = ' 오늘 값은 아직 안 채워져 직전 관측을 그대로 적었습니다.' if vol.get('stale') else ''
     return (f'미국채 변동성을 재는 MOVE 지수는 {asof}{lvl:,.2f}{mv}입니다.{pos}{tail} '
@@ -476,9 +490,9 @@ def build(datadir, outdir, sitedir):
 <p>{ko_date(rd)} 미국 10년물은 {n(ust['10Y']['level'], 2)}%({bp(us_bp)}), 30년물은
 {n(ust['30Y']['level'], 2)}%({bp(ust['30Y'].get('bp'))})로 끝났습니다.
 오늘 움직임의 크기는 {size_word(us_bp)} 쪽입니다.</p>
-<p>서 있는 자리는 따로 봅니다. 10년물 {n(ust['10Y']['level'], 2)}%는 최근
-{st10['window']} 구간에서 {n(st10['percentile'], 1)} 백분위, 30년물은
-{n(st30['percentile'], 1)} 백분위예요. 채권을 사는 쪽에는 표면금리가 그만큼 두툼하다는 뜻이고,
+<p>서 있는 자리는 따로 봅니다. 10년물 {n(ust['10Y']['level'], 2)}%는 {where(st10, form='clause')},
+30년물 {n(ust['30Y']['level'], 2)}%도 {where(st30, short=True, form='soft')}.
+채권을 사는 쪽에는 표면금리가 그만큼 두툼하다는 뜻이고,
 들고 있는 쪽에는 가격 위험이 그만큼 크다는 뜻이기도 합니다.</p>
 <p>크레딧은 하이일드 스프레드 {n(hy['bp'], 0)}bp({bp(hy.get('chg_bp'))}),
 투자등급 {n(ig['bp'], 0)}bp({bp(ig.get('chg_bp'))})로 마쳤습니다.
@@ -546,10 +560,8 @@ def build(datadir, outdir, sitedir):
     A(f"""<section id="b-3">
 <h2>국채금리와 커브</h2>
 <div class="card">
-<p data-standing="rates">미국 10년물은 {n(ust['10Y']['level'], 2)}%로 최근 {st10['window']}
-({st10['sessions']}거래일) 안에서 {n(st10['percentile'], 1)} 백분위, 같은 기간 최저
-{n(st10['min'], 2)}%·최고 {n(st10['max'], 2)}% 사이에 있습니다. 30년물은
-{n(ust['30Y']['level'], 2)}%로 {n(st30['percentile'], 1)} 백분위고요.
+<p data-standing="rates">미국 10년물은 {n(ust['10Y']['level'], 2)}%입니다. {where(st10, form='clause')}, 같은 기간 최저 {n(st10['min'], 2)}%·최고 {n(st10['max'], 2)}% 사이에 있어요. 30년물은
+{n(ust['30Y']['level'], 2)}%로 {where(st30, short=True, form='and')}.
 오늘 10년물 움직임은 {bp(ust['10Y']['bp'])}로 크기로 치면 {size_word(ust['10Y'].get('bp'))} 쪽입니다.</p>
 <p>{move_sentence(vol)}</p>
 <p>{shape_sentence(us)}</p>
@@ -621,30 +633,32 @@ def build(datadir, outdir, sitedir):
 
     # ------------------------------------------------------------------ §6
     crows = []
+    cwins = set()
     for k in ['us_ig', 'us_ig_bbb', 'us_hy', 'us_hy_ccc', 'euro_hy', 'em_sov',
               'em_corp', 'em_hy']:
         v = cr.get(k)
         if not v:
             continue
         s = v.get('standing') or {}
+        if s.get('window'):
+            cwins.add(s['window'])
         crows.append(
             f'<tr><td>{CREDIT_KO.get(k,k)}</td><td>{n(v["bp"],0)}bp</td>'
             f'<td{cls(v.get("chg_bp"))}>{bp(v.get("chg_bp"))}</td>'
-            f'<td>{n(s.get("percentile"),1)}</td><td>{s.get("band","")}</td>'
+            f'<td>{where(s, short=True)}</td><td>{s.get("band","")}</td>'
             f'<td class="sub">{v.get("date","")}</td></tr>')
     A(f'''<section id="b-6">
 <h2>크레딧 스프레드</h2>
 <div class="card">
 <p data-standing="credit">미국 하이일드 스프레드는 {n(hy['bp'],0)}bp입니다. 숫자만 보면 감이 안 오는데,
-최근 2년 표본에서 <b>{n(hy['standing']['percentile'],1)} 백분위</b>예요. 2년 동안 이보다 좁았던 날이
-거의 없다는 뜻이고, 국채 대신 회사채를 들고 위험을 떠안는 대가가 지금 역사적으로 가장 얇은 축이라는 뜻입니다.
-투자등급은 {n(ig['bp'],0)}bp로 {n(ig['standing']['percentile'],1)} 백분위라 그나마 보통 수준입니다.</p>
+<b>{where(hy['standing'], form='soft')}</b>. 국채 대신 회사채를 들고 위험을 떠안는 대가가
+그만큼 얇다는 뜻입니다. 투자등급은 {n(ig['bp'],0)}bp로 {where(ig['standing'], short=True, form='and')}.</p>
 <p>{ccc_reading(hy, ccc)}</p>
 <p>실무에서 이 갈림이 뜻하는 건 이렇습니다. 지수를 통째로 사는 상품은 좁은 스프레드를 사는 셈이고,
 문제가 생기는 곳은 지수 안에서 비중이 작은 바닥층이라 지수 수익률에 잘 안 드러납니다.
 그래서 하이일드를 볼 때는 지수 스프레드와 등급별 분포를 같이 보고, 벌어지기 시작하면 아래에서부터 벌어진다는 걸 기억합니다.</p>
 <div class="tbl-scroll"><table><thead><tr><th>구간</th><th>OAS</th><th>1일</th>
-<th>2년 백분위</th><th>위치</th><th>기준일</th></tr></thead><tbody>{''.join(crows)}</tbody></table></div>
+<th>{('최근 ' + next(iter(cwins)) + ' 안에서') if len(cwins) == 1 else '표본 안에서'}</th><th>폭</th><th>기준일</th></tr></thead><tbody>{''.join(crows)}</tbody></table></div>
 <p class="caption">스프레드는 ICE BofA 지수를 FRED가 게시한 값입니다. 게시가 하루 늦어
 주식·ETF 종가일보다 항상 하루 앞선 날짜를 답니다 — 표의 기준일 열이 그 사실을 그대로 보여줍니다.</p>
 <p>회사채 수익률을 볼 때는 항상 국채와 스프레드로 쪼개서 봅니다. 예를 들어 오늘 투자등급 회사채 ETF의
