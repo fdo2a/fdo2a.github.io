@@ -321,6 +321,38 @@
     "5y5y": 5.535
    },
    "forwards_date": "2026-08-28"
+  },
+  "kr": {
+   "tenors": {
+    "3Y": {
+     "level": 3.93,
+     "bp": null,
+     "date": "2026-09-02",
+     "stale": false,
+     "source_changed": false,
+     "source": "ECOS 한국은행"
+    },
+    "10Y": {
+     "level": 4.418,
+     "bp": null,
+     "date": "2026-09-02",
+     "stale": false,
+     "source_changed": false,
+     "source": "ECOS 한국은행"
+    }
+   },
+   "curve_date": "2026-09-02",
+   "aligned": true,
+   "shape": null,
+   "shape_basis": null,
+   "spread_2s10s_bp": null,
+   "spread_2s10s_basis": null,
+   "spread_2s10s_aligned": false,
+   "spread_5s30s_bp": null,
+   "spread_5s30s_basis": null,
+   "spread_5s30s_aligned": false,
+   "forwards": {},
+   "forwards_date": "2026-09-02"
   }
  },
  "decomposition": {
@@ -576,29 +608,29 @@
    "vs_prev_session": true
   },
   "EURUSD": {
-   "level": 1.159,
+   "level": 1.1596,
    "date": "2026-09-02",
    "source": "Yahoo",
    "ticker": "EURUSD=X",
-   "change_pct": -0.241,
+   "change_pct": -0.189,
    "vs_date": "2026-09-01",
    "vs_prev_session": true
   },
   "USDJPY": {
-   "level": 158.768,
+   "level": 160.196,
    "date": "2026-09-02",
    "source": "Yahoo",
    "ticker": "USDJPY=X",
-   "change_pct": -0.613,
+   "change_pct": 0.281,
    "vs_date": "2026-09-01",
    "vs_prev_session": true
   },
   "USDKRW": {
-   "level": 1358.63,
+   "level": 1372.86,
    "date": "2026-09-02",
    "source": "Yahoo",
    "ticker": "USDKRW=X",
-   "change_pct": -0.585,
+   "change_pct": 0.457,
    "vs_date": "2026-09-01",
    "vs_prev_session": true
   }
@@ -1749,14 +1781,13 @@
     "date": "2026-09-01"
    },
    {
-    "kind": "fx",
-    "label": "USDJPY",
-    "value": -0.613,
-    "unit": "%",
-    "abs": 0.613,
-    "level": 158.768,
-    "vs_date": "2026-09-01",
-    "vs_prev_session": true
+    "kind": "rate",
+    "label": "US 5Y",
+    "value": -0.5,
+    "unit": "bp",
+    "abs": 0.5,
+    "level": 4.552,
+    "date": "2026-09-02"
    }
   ],
   "count": 39

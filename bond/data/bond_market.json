@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-02T22:34:33+0000",
+ "generated": "2026-09-02T23:08:10+0000",
  "report_date": "2026-09-02",
  "base_currency": "USD",
  "us_curve": {
@@ -282,7 +282,20 @@
    "tenor": "20Y"
   }
  },
- "kr_curve": {},
+ "kr_curve": {
+  "3Y": {
+   "level": 3.93,
+   "date": "2026-09-02",
+   "source": "ECOS 한국은행",
+   "tenor": "3Y"
+  },
+  "10Y": {
+   "level": 4.418,
+   "date": "2026-09-02",
+   "source": "ECOS 한국은행",
+   "tenor": "10Y"
+  }
+ },
  "misc": {
   "term_premium_10y": {
    "level": 0.8751,
@@ -367,19 +380,19 @@
    "ticker": "DX-Y.NYB"
   },
   "EURUSD": {
-   "level": 1.159,
+   "level": 1.1596,
    "date": "2026-09-02",
    "source": "Yahoo",
    "ticker": "EURUSD=X"
   },
   "USDJPY": {
-   "level": 158.768,
+   "level": 160.196,
    "date": "2026-09-02",
    "source": "Yahoo",
    "ticker": "USDJPY=X"
   },
   "USDKRW": {
-   "level": 1358.63,
+   "level": 1372.86,
    "date": "2026-09-02",
    "source": "Yahoo",
    "ticker": "USDKRW=X"
