@@ -1,0 +1,29 @@
+{
+  "report_date": "2026-09-02",
+  "events": [
+    {
+      "key": "jackson-hole-20260828",
+      "kind": "jackson_hole",
+      "kind_ko": "잭슨홀 의장 연설",
+      "tier": 1,
+      "date": "2026-08-28",
+      "title": "Warsh, In Our Time",
+      "url": "https://www.federalreserve.gov/newsevents/speech/warsh20260828a.htm",
+      "speaker": "Kevin Warsh",
+      "role": "Chairman",
+      "first_seen": "2026-09-02",
+      "fresh": true,
+      "sources": [
+        {
+          "role": "primary",
+          "label": "잭슨홀 의장 연설",
+          "url": "https://www.federalreserve.gov/newsevents/speech/warsh20260828a.htm",
+          "ok": true,
+          "note": "prefetched",
+          "chars": 36068
+        }
+      ]
+    }
+  ],
+  "diff": null
+}

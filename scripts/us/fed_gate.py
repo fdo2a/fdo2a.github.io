@@ -245,6 +245,13 @@ def _quote_ok(raw_block, event, key, v):
     return ok
 
 
+def _names_date(text, iso):
+    """그 날짜를 사람이 읽는 어느 형태로든 밝혔는가."""
+    y, m, d = (int(x) for x in iso.split('-'))
+    forms = (iso, f'{m}월 {d}일', f'{m:02d}월 {d:02d}일', f'{m:02d}-{d:02d}', f'{m}/{d}')
+    return any(f in text for f in forms)
+
+
 def _check_orphan_quotes(sec, blk, v):
     """표식 밖의 `<blockquote>`. 하나라도 있으면 발행을 막는다.
 
@@ -342,6 +349,14 @@ def check(html_doc, book, *data_blobs):
         elif len(_text(raw)) < EVENT_MIN_CHARS:
             v.append(f'연준 이벤트 {key}: 도입 문단이 {len(_text(raw))}자뿐이다 — '
                      f'{EVENT_MIN_CHARS}자 이상 필요')
+        elif e.get('date') and e['date'] != (book or {}).get('report_date') \
+                and not _names_date(_text(raw), e['date']):
+            # 지난 날짜의 자리를 오늘 일처럼 쓰지 않는다. 탐지 창이 10일이라 며칠
+            # 지난 발언을 되찾아 싣게 되는데, 그때 날짜를 안 밝히면 독자는 어제
+            # 나온 말로 읽는다. 기자회견 전문이 3주 뒤에 열리는 날도 같은 규율이다.
+            y, m, d = e['date'].split('-')
+            v.append(f'연준 이벤트 {key}: {int(m)}월 {int(d)}일 자리인데 도입 문단이 '
+                     '그 날짜를 밝히지 않았다 — 오늘 일처럼 읽힌다')
 
     printed = {}
     for key, raw, _span in blk['quote']:

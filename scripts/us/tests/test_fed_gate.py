@@ -292,3 +292,42 @@ def test_entity_written_markup_is_not_a_hiding_place():
 def test_zero_width_character_in_a_quote_is_caught():
     bad = FULL.replace('We are not on a preset', 'We are​ not on a preset', 1)
     assert fg.check(bad, book())
+
+
+# ── 지난 날짜의 자리를 오늘 일처럼 쓰지 않는다 ────────────────────────────────
+
+OLD_EVENT = dict(EVENT, key='jackson-hole-20260828', kind='jackson_hole',
+                 kind_ko='잭슨홀 의장 연설', date='2026-08-28')
+
+
+def old_page(lede):
+    return page(f'<p data-fed-event="jackson-hole-20260828">{lede}</p>'
+                + quote_card('jackson-hole-20260828', QUOTE_A)
+                + quote_card('jackson-hole-20260828',
+                             'We are not on a preset course and will judge each meeting '
+                             'on the incoming data.',
+                             '미리 정해 둔 경로는 없고 회의마다 데이터를 보고 판단하겠다고 했습니다.')
+                + idea(1, 'jackson-hole-20260828') + idea(2, 'jackson-hole-20260828'))
+
+
+def test_a_past_event_must_name_its_date():
+    lede = '의장은 잭슨홀에서 통화정책의 틀을 다시 짚었습니다. ' * 5
+    v = fg.check(old_page(lede), book([OLD_EVENT]))
+    assert any('8월 28일 자리인데' in e for e in v)
+
+
+def test_naming_the_date_satisfies_it():
+    lede = '8월 28일 잭슨홀에서 의장은 통화정책의 틀을 다시 짚었습니다. ' * 5
+    assert fg.check(old_page(lede), book([OLD_EVENT])) == []
+
+
+def test_same_day_event_needs_no_date_line():
+    lede = '오늘 FOMC 는 정책금리 상단을 4%로 내렸습니다. 성명 문장이 어디서 바뀌었는지가 핵심입니다. ' * 2
+    same = page(f'<p data-fed-event="fomc-statement-20260917">{lede}</p>'
+                + quote_card('fomc-statement-20260917', QUOTE_A)
+                + quote_card('fomc-statement-20260917',
+                             'We are not on a preset course and will judge each meeting '
+                             'on the incoming data.',
+                             '미리 정해 둔 경로는 없고 회의마다 데이터를 보고 판단하겠다고 했습니다.')
+                + idea(1, 'fomc-statement-20260917') + idea(2, 'fomc-statement-20260917'))
+    assert fg.check(same, book()) == []
