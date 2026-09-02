@@ -2,6 +2,18 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-09-02",
+        "arb_buy": 1299,
+        "arb_sell": 1739,
+        "arb_net": -440,
+        "narb_buy": 52040,
+        "narb_sell": 66740,
+        "narb_net": -14700,
+        "total_buy": 53339,
+        "total_sell": 68479,
+        "total_net": -15140
+      },
+      {
         "date": "2026-09-01",
         "arb_buy": 2578,
         "arb_sell": 2816,
@@ -108,28 +120,28 @@
         "total_buy": 93744,
         "total_sell": 84700,
         "total_net": 9044
-      },
-      {
-        "date": "2026-08-19",
-        "arb_buy": 4207,
-        "arb_sell": 6112,
-        "arb_net": -1905,
-        "narb_buy": 55720,
-        "narb_sell": 89440,
-        "narb_net": -33721,
-        "total_buy": 59927,
-        "total_sell": 95552,
-        "total_net": -35626
       }
     ],
-    "latest_date": "2026-09-01",
-    "flows_date": "2026-09-01",
+    "latest_date": "2026-09-02",
+    "flows_date": "2026-09-02",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
   },
   "KOSDAQ": {
     "rows": [
+      {
+        "date": "2026-09-02",
+        "arb_buy": 7,
+        "arb_sell": 22,
+        "arb_net": -15,
+        "narb_buy": 14822,
+        "narb_sell": 14801,
+        "narb_net": 22,
+        "total_buy": 14829,
+        "total_sell": 14823,
+        "total_net": 7
+      },
       {
         "date": "2026-09-01",
         "arb_buy": 2,
@@ -237,22 +249,10 @@
         "total_buy": 15067,
         "total_sell": 16186,
         "total_net": -1118
-      },
-      {
-        "date": "2026-08-19",
-        "arb_buy": 359,
-        "arb_sell": 10,
-        "arb_net": 349,
-        "narb_buy": 17416,
-        "narb_sell": 17483,
-        "narb_net": -67,
-        "total_buy": 17775,
-        "total_sell": 17493,
-        "total_net": 282
       }
     ],
-    "latest_date": "2026-09-01",
-    "flows_date": "2026-09-01",
+    "latest_date": "2026-09-02",
+    "flows_date": "2026-09-02",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false
