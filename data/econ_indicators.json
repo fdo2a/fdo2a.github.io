@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-01 23:12 UTC",
+  "generated": "2026-09-02 23:27 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -89,8 +89,8 @@
       "fred_id": "DGORDER",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 1.07,
-      "previous": 0.54,
+      "actual": 1.08,
+      "previous": 0.58,
       "ref_period": "2026-07-01"
     },
     {

@@ -1,9 +1,9 @@
 {
-  "report_date": "2026-09-01",
-  "macro_date": "2026-08-31",
+  "report_date": "2026-09-02",
+  "macro_date": "2026-09-01",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": -0.364,
+    "growth_score": -0.363,
     "inflation_score": -0.391,
     "growth_diffusion": 0.357,
     "inflation_diffusion": 0.625
@@ -14,33 +14,33 @@
     "name": "연착륙"
   },
   "new_releases": [
-    "JOLTS Job Openings"
+    "Durable Goods Orders MoM"
   ],
   "headline_releases": [
     {
-      "key": "jolts",
-      "label": "JOLTS 구인·이직",
+      "key": "durable-goods",
+      "label": "내구재 주문",
       "tier": 2,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
-      "primary": "JOLTS Job Openings",
-      "max_abs_z": 0.423,
+      "agency": "Census",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "primary": "Durable Goods Orders MoM",
+      "max_abs_z": 1.78,
       "indicators": [
         {
-          "name": "JOLTS Job Openings",
-          "axis": "Labor",
-          "actual": 7271.0,
-          "previous": 7182.0,
+          "name": "Durable Goods Orders MoM",
+          "axis": "Activity",
+          "actual": 1.08,
+          "previous": 0.58,
           "ref_period": "2026-07-01",
-          "momentum_z": 0.423
+          "momentum_z": -1.78
         }
       ],
       "components": []
     }
   ],
   "stale": false,
-  "abbreviated": false,
-  "abbreviated_reason": "레짐이 움직일 수 있는 날",
+  "abbreviated": true,
+  "abbreviated_reason": null,
   "axis_directions": {
     "Labor": "보합",
     "Activity": "악화",
@@ -50,32 +50,28 @@
   "bootstrap": false,
   "regime": {
     "growth": -1,
-    "inflation": 0,
+    "inflation": -1,
     "growth_label": "둔화",
-    "inflation_label": "교착",
-    "name": "냉각",
-    "since": "2026-08-26",
-    "days_held": 5,
-    "thesis": "성장축 점수는 -0.341로 둔화 경계(-0.33) 아래에 그대로 머물러 있다. 물가축 점수도 -0.391로 교착과 둔화 사이 경계에 걸쳐 있다. 오늘은 새로 반영할 신규 발표가 없어 두 점수 모두 전일과 같고, 국면은 냉각을 나흘째 유지한다. 다시 열릴 조건은 신규 지표 발표이며, 물가축이 -0.33 아래로 확실히 내려가면 연착륙 쪽으로, 성장축이 반등하면 교착 쪽으로 이동할 수 있다."
+    "inflation_label": "둔화",
+    "name": "연착륙",
+    "since": "2026-09-01",
+    "days_held": 2,
+    "thesis": "물가축 점수는 -0.391로 둔화 경계(-0.33)를 오래전에 넘어섰지만, 8월26일 성장축 이동 이후의 5영업일 잠금에 걸려 그동안 교착 판정을 유지해왔다. 오늘 신규 발표(JOLTS 구인·이직)로 하루가 열렸고 마침 잠금도 풀려, 물가 좌표가 교착에서 둔화로 한 칸 이동한다. 성장축은 -0.364로 그대로 둔화에 머물러 대각선 이동은 아니다. 그 결과 국면은 냉각에서 연착륙으로 바뀐다."
   },
-  "regime_change_allowed": true,
-  "regime_block": null,
+  "regime_change_allowed": false,
+  "regime_block": "lock_5bd",
   "allowed_regimes": [
     [
       -1,
       -1
-    ],
-    [
-      -1,
-      0
     ]
   ],
   "policy": {
-    "stance": "동결 우선 판단이 흔들림 — 인상 리스크가 급격히 부상",
-    "timing": "9/16 FOMC, 동결과 25bp 인상이 팽팽히 맞서는 구도로 재편",
-    "prob_pct": 44,
-    "thesis": "케빈 워시 신임 연준의장의 잭슨홀 매파 발언 이후 CME FedWatch 기준 9월 16일 FOMC 인상 확률은 44% 안팎으로 본다. 오늘은 이 판단을 다시 열 신규 발표나 15%p 이상의 확률 이동이 없어 시점 판단을 그대로 승계한다.",
-    "falsifier": "9월 FOMC 전 발표될 8월 CPI가 컨센서스를 밑돌거나 워시 이후 다른 연준 위원들의 발언이 완화적으로 되돌아오면 이 인상 리스크 재평가는 무효화된다.",
+    "stance": "인상 리스크가 우위 — 동결은 소수 시나리오로 밀림",
+    "timing": "9월 16일 FOMC, 인상 확률이 동결을 앞지르는 구도로 재편",
+    "prob_pct": 66,
+    "thesis": "케빈 워시 신임 연준의장의 잭슨홀 매파 발언(8월28일) 이후 CME FedWatch 9월16일 FOMC 25bp 인상 확률은 급등했다. 이후 호르무즈발 유가 급등까지 겹치며 인플레이션 재점화 우려가 커져 확률은 9월1일 기준 약 66%(65~68% 범위로 보도)로 인상 쪽이 우위에 서는 구도로 재편됐다. 오늘 신규 지표 발표가 있어 이 판단을 다시 여는 것이 허용된다.",
+    "falsifier": "9월 FOMC 전 발표될 8월 CPI나 8월 고용보고서가 컨센서스를 크게 밑돌거나, 워시 이후 다른 연준 위원들의 발언이 완화적으로 되돌아오면 이 인상 우위 판단은 무효화된다.",
     "change_allowed": true,
     "change_block": null
   },
@@ -83,10 +79,10 @@
     "equities": {
       "direction": 0,
       "label": "중립",
-      "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 오늘은 지정학 리스크로 하루 조정을 받았지만 3~6개월 구조축 판단을 바꿀 신규 발표는 없었다.",
+      "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         -1,
         0,
@@ -96,10 +92,10 @@
     "bonds": {
       "direction": 1,
       "label": "우호",
-      "channel": "물가 둔화 흐름이 이어지면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 오늘은 지정학 리스크와 실질금리 재상승으로 전 구간 금리가 올랐지만 신규 발표에 따른 구조 판단 변경은 아니다.",
+      "channel": "물가가 공식적으로 둔화 국면에 들어서면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 다만 실질금리 자체가 기간프리미엄·수급 요인으로 계속 오르고 있어 이 경로가 가격에 반영되기까지는 시차가 있다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         0,
         1
@@ -108,10 +104,10 @@
     "fx": {
       "direction": -1,
       "label": "비우호",
-      "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 오늘 DXY는 오히려 소폭 하락해 이 구조적 경로와 방향이 같았다.",
+      "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 다만 안전자산 수요와 상대적으로 높은 미국 금리 수준이 이 경로에 계속 맞서는 힘으로 작용한다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         -1,
         0
@@ -120,10 +116,10 @@
     "energy": {
       "direction": 0,
       "label": "중립",
-      "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 오늘 WTI가 호르무즈 리스크로 급등했지만 하루짜리 이벤트 반응으로 본다.",
+      "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "Brent가 3개월 평균 $90 상회를 유지하는지, 호르무즈 통항 차질의 실제 발생 여부",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         -1,
         0,
@@ -133,10 +129,10 @@
     "metals": {
       "direction": 1,
       "label": "우호",
-      "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 오늘 금은 안전자산 수요로 소폭 올라 이 구조 경로와 정합적이었다.",
+      "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 다만 실질금리 자체가 계속 오르는 국면에서는 이 경로가 힘을 받기 어렵다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         0,
         1
@@ -145,10 +141,10 @@
     "memory": {
       "direction": 1,
       "label": "우호",
-      "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 오늘 메모리 업종은 종목별로 방향이 갈렸지만 이 구조 경로를 흔들 신호는 아니었다.",
+      "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         0,
         1
@@ -157,10 +153,10 @@
     "ai_infra": {
       "direction": 0,
       "label": "중립",
-      "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간에서는 할인율 상승이 고성장주 주가 수준을 압박하는 경로가 이를 상쇄한다. 오늘 마빈엘의 추가 하락은 구글 딜 매출 인식 시점 이슈의 여진으로, 사이클 자체의 훼손 신호는 아니다.",
+      "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간에서는 할인율 상승이 고성장주 밸류에이션을 압박하는 경로가 이를 상쇄한다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 3분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 12,
+      "days_held": 13,
       "allowed_directions": [
         -1,
         0,
