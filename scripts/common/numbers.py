@@ -63,7 +63,7 @@ def numbers_split_by_tags(html_fragment):
     return out
 
 MEASURE_RE = re.compile(
-    r'(-?\d[\d,]*(?:\.\d+)?)\s*(?:bp|%p|%|십억|배)'        # 단위를 단 수치
+    r'(-?\d[\d,]*(?:\.\d+)?)\s*(?:bp|%p|%|퍼센트|십억|배)'  # 단위를 단 수치
     r'|(-?\d[\d,]*\.\d{2,})'                              # 소수 2자리 이상
     r'|(-?\d{1,3}(?:,\d{3})+(?:\.\d+)?)')                 # 천 단위 구분자
 

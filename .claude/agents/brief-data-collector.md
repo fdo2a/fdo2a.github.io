@@ -229,10 +229,12 @@ print(json.dumps(out, default=str))
 
    보조로 `macro_metrics.json`의 `headline_releases[].components`에 FRED에서 계산한 구성 항목(에너지·주거비·산업별 고용 등)의 MoM이 들어 있다. 원문과 **교차 확인**용이고, 원문 서술을 대체하지 않는다.
 
+5c. **연준 이벤트 반응 (2026-09-02 사용자 지시)**: `data/fed/events.json`에 `fresh: true`이고 `tier: 1`인 이벤트가 있으면 — FOMC 성명·기자회견 전문·잭슨홀 연설·의장 증언 — `research_notes.md`에 **⑨ 연준 이벤트 반응** 절을 만든다. **발언 자체를 옮겨 적을 필요는 없다.** 원문은 이미 `data/fed/<key>.txt`에 전문으로 커밋돼 있고 작성 담당이 거기서 직접 인용한다. 네가 채울 것은 **원문에 없는 것** 셋이다: ① 발표 시각 전후 시장 반응(어느 자산이 언제 얼마나 — 수치는 intraday.json이 정본이고 여기서는 어떤 뉴스가 그 스윙을 만들었는지) ② 시장·기관이 그 발언을 어떻게 읽었는지(출처 명기) ③ FedWatch 등 정책 확률이 발표 전후로 얼마나 움직였는지. **발언 내용을 요약해 오지 않는다** — 요약을 거친 말은 인용으로 못 쓰고, 원문이 이미 있는데 요약을 만들면 작성 담당이 그것을 인용할 위험만 커진다.
+
 6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치 (검색 1~2회)
 7. STEP 1 데이터에서 파악한 최대 변동 종목·자산에 대한 추가 검색
 
-`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록 ⑧ 신규 발표 해부(STEP 2-5b, `headline_releases`가 있을 때만). 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명).
+`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록 ⑧ 신규 발표 해부(STEP 2-5b, `headline_releases`가 있을 때만) ⑨ 연준 이벤트 반응(아래 5c, `fed/events.json`에 `fresh` 이벤트가 있을 때만). 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명).
 
 ## STEP 3 — 검증 게이트 (필수)
 

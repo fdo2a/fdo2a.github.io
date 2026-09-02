@@ -53,12 +53,38 @@ class ProseSwapError(Exception):
     """되꽂기를 거부한 이유. 호출자는 이걸 받으면 사본을 버린다."""
 
 
+# 연준 발언 인용과 성명 변경점 블록. 이 안의 글은 **원문에 글자 그대로 있어야
+# 통과하는** 것이라 말투를 다듬는 순간 발행 게이트가 막는다. 애초에 안 넘긴다 —
+# 에디터 노트를 안 넘기는 것과 같은 이유다(넘기지 않은 것은 훼손될 수 없다).
+_FED_START = re.compile(r'<div[^>]*\bdata-fed-(?:quote|change)\s*=', re.I)
+_DIV_TOKEN = re.compile(r'<(/?)div\b', re.I)
+
+
+def _balanced_div(html, start):
+    """`start` 의 <div> 를 닫는 지점. 안 닫혀 있으면 문서 끝.
+
+    표식 사이를 자르는 방식(fed_gate)을 여기서는 쓸 수 없다. 마지막 블록 뒤에 다음
+    표식이 없으면 구역이 문서 끝까지 늘어나 **그 뒤 문단이 통째로 윤문에서 빠진다.**
+    안 닫힌 경우 문서 끝을 돌려주는 것은 안전한 쪽으로 실패하는 것이다 — 덜 다듬을
+    뿐이고, 인용문이 훼손되지는 않는다.
+    """
+    depth = 0
+    for m in _DIV_TOKEN.finditer(html, start):
+        depth += -1 if m.group(1) else 1
+        if depth == 0:
+            close = html.find('>', m.end())
+            return len(html) if close < 0 else close + 1
+    return len(html)
+
+
 def _skip_spans(html):
-    """뽑지 않을 구역 — 표 안, 에디터 노트 안."""
+    """뽑지 않을 구역 — 표 안, 에디터 노트 안, 연준 인용·변경점 블록 안."""
     spans = []
     for m in _BLOCK_RE.finditer(html):
         if m.group(1) == 'table' or 'data-editor-note' in m.group(0)[:400]:
             spans.append((m.start(), m.end()))
+    for m in _FED_START.finditer(html):
+        spans.append((m.start(), _balanced_div(html, m.start())))
     return spans
 
 

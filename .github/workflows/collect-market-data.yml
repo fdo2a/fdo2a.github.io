@@ -77,6 +77,15 @@ jobs:
         continue-on-error: true
         run: python scripts/fetch_releases.py --datadir data
 
+      - name: Fetch Fed events
+        # Non-core: finds today's FOMC statement / chair speech / Jackson Hole remarks and
+        # commits the primary documents verbatim, so the publication gate can check every
+        # quoted sentence against what was actually said. A fabricated Fed quote is worse
+        # than a fabricated number — a number can be matched against a data file, a
+        # plausible sentence in quotation marks cannot. Never fail the collection job.
+        continue-on-error: true
+        run: python scripts/collect_fed_events.py --datadir data
+
       - name: Report status
         run: |
           python - <<'PY'
@@ -97,6 +106,7 @@ jobs:
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/scorecard.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true
+          git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
           git add data/weekly data/monthly 2>/dev/null || true
           if git diff --cached --quiet; then

@@ -295,3 +295,41 @@ def test_주어를_되살리고_문장을_나눠도_통과한다():
                         '지수는 장 초반 하락했습니다. 오후 들어 반등해 결국 강보합으로 '
                         '마감했고, 거래대금도 늘었습니다.')
     assert '지수는' in reinsert(html, talk, side)
+
+
+FED_PAGE = ('<div class="card"><p>이 문단은 윤문 대상입니다. 오늘 시장은 조용했습니다.</p>'
+            '<div class="fed-quote" data-fed-quote="fomc-statement-20260729">'
+            '<blockquote>The economy is showing impressive resilience.</blockquote>'
+            '<p class="fed-trans">경제가 인상적인 회복력을 보이고 있다고 했습니다.</p>'
+            '<p class="caption">출처: 기자회견 전문</p></div>'
+            '<div data-fed-idea="1"><p>이 문단도 윤문 대상입니다. 커브는 눕는 쪽입니다.</p></div>'
+            '</div>')
+
+
+def test_fed_quote_block_is_never_handed_to_the_humanizer():
+    # 원문 대조를 통과해야 하는 글이라 말투를 다듬는 순간 발행이 막힌다.
+    payload, _ = extract(FED_PAGE)
+    assert '회복력을 보이고 있다고' not in payload
+    assert 'impressive resilience' not in payload
+    assert '오늘 시장은 조용했습니다' in payload
+    assert '커브는 눕는 쪽입니다' in payload
+
+
+def test_fed_change_block_is_skipped_too():
+    page = ('<p>바깥 문단입니다. 시장은 조용했습니다.</p>'
+            '<div data-fed-change="1"><p>The Committee is continuing its policy. '
+            '「reaffirmed」가 바뀌었습니다.</p></div>'
+            '<p>그다음 문단입니다. 커브가 섰습니다.</p>')
+    payload, _ = extract(page)
+    assert 'reaffirmed' not in payload
+    assert '바깥 문단입니다' in payload and '그다음 문단입니다' in payload
+
+
+def test_nested_divs_do_not_swallow_the_rest_of_the_page():
+    page = ('<div data-fed-quote="k"><div class="inner">'
+            '<blockquote>Verbatim words here.</blockquote>'
+            '<p class="fed-trans">번역입니다.</p></div></div>'
+            '<p>뒤 문단은 윤문 대상입니다. 커브가 섰습니다.</p>')
+    payload, _ = extract(page)
+    assert 'Verbatim words' not in payload and '번역입니다' not in payload
+    assert '뒤 문단은 윤문 대상입니다' in payload

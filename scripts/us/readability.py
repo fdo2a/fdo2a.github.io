@@ -137,7 +137,7 @@ _DATEISH_SPAN = re.compile(
 )
 _INTERVALISH_SPAN = re.compile(r"(?<!\d)\d+\s*(?:분봉|일선|년물)")
 _EXCLUDED_P_CLASS = re.compile(
-    r"\b(?:caption|sub|muted|footer-note|source|sources|note|disclaimer)\b", re.I
+    r"\b(?:caption|sub|muted|footer-note|source|sources|note|disclaimer|fed-trans)\b", re.I
 )
 
 
