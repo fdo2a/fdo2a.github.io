@@ -1,5 +1,5 @@
 {
- "report_date": "2026-08-31",
+ "report_date": "2026-09-01",
  "stance_date": "2026-08-31",
  "stale": false,
  "bootstrap": false,
@@ -11,8 +11,8 @@
    "grade": 0,
    "label": "중립 듀레이션",
    "since": "2026-08-27",
-   "days_held": 3,
-   "thesis": "10년물 4.76%는 2년 표본 99.3 백분위로 구간 상단이다. 금리 변동성(MOVE 69.86, 19.4 백분위)은 여전히 낮아 방향을 걸 촉매가 없다.",
+   "days_held": 4,
+   "thesis": null,
    "increase": [
     {
      "kind": "level",
@@ -21,7 +21,7 @@
      "value": 4.8,
      "toward": "+",
      "desc": "10년물 4.80% 이상 — 2년 최고치 부근에서 듀레이션을 산다",
-     "actual": 4.762,
+     "actual": 4.796,
      "status": "NOT_MET"
     },
     {
@@ -31,7 +31,7 @@
      "value": 4.35,
      "toward": "-",
      "desc": "10년물 4.35% 이하 — 랠리 끝단에서 듀레이션을 줄인다",
-     "actual": 4.762,
+     "actual": 4.796,
      "status": "NOT_MET"
     }
    ],
@@ -42,7 +42,7 @@
      "op": ">=",
      "value": 100,
      "desc": "MOVE 100 이상 — 금리 변동성이 커지면 방향 베팅을 접는다",
-     "actual": 69.86,
+     "actual": 77.88,
      "status": "NOT_MET"
     }
    ],
@@ -62,8 +62,8 @@
    "grade": 0,
    "label": "커브 중립",
    "since": "2026-08-27",
-   "days_held": 3,
-   "thesis": "2년-10년 56.2bp, 5년-30년 76.1bp. 어느 쪽으로도 치우치지 않은 구간이라 걸지 않는다.",
+   "days_held": 4,
+   "thesis": null,
    "increase": [
     {
      "kind": "level",
@@ -72,7 +72,7 @@
      "value": 35,
      "toward": "+",
      "desc": "2년-10년 금리차 35bp 이하 — 평평해진 커브에 스티프너를 건다",
-     "actual": 56.2,
+     "actual": 45.6,
      "status": "NOT_MET"
     },
     {
@@ -82,7 +82,7 @@
      "value": 70,
      "toward": "-",
      "desc": "2년-10년 금리차 70bp 이상 — 벌어진 커브에 플래트너를 건다",
-     "actual": 56.2,
+     "actual": 45.6,
      "status": "NOT_MET"
     }
    ],
@@ -93,7 +93,7 @@
      "op": ">=",
      "value": 100,
      "desc": "MOVE 100 이상 — 커브 트레이드도 금리 변동성에 취약하다",
-     "actual": 69.86,
+     "actual": 77.88,
      "status": "NOT_MET"
     }
    ],
@@ -113,8 +113,8 @@
    "grade": 0,
    "label": "크레딧 중립",
    "since": "2026-08-27",
-   "days_held": 3,
-   "thesis": "하이일드 스프레드 260bp는 2년 표본 0.5 백분위로 사실상 최저다. 받는 대가가 없어 늘릴 자리가 아니고, CCC 이하가 1026bp (95.5 백분위)로 이미 벌어져 있다.",
+   "days_held": 4,
+   "thesis": null,
    "increase": [
     {
      "kind": "level",
@@ -123,7 +123,7 @@
      "value": 340,
      "toward": "+",
      "desc": "하이일드 스프레드 340bp 이상 — 대가가 붙으면 크레딧을 늘린다",
-     "actual": 260.0,
+     "actual": 263.0,
      "status": "NOT_MET"
     },
     {
@@ -133,7 +133,7 @@
      "value": 245,
      "toward": "-",
      "desc": "하이일드 스프레드 245bp 이하 — 더 좁아지면 비중을 줄인다",
-     "actual": 260.0,
+     "actual": 263.0,
      "status": "NOT_MET"
     }
    ],
@@ -144,7 +144,7 @@
      "op": ">=",
      "value": 25,
      "desc": "하이일드 스프레드 주간 +25bp — 벌어지기 시작하면 즉시 줄인다",
-     "actual": -9.0,
+     "actual": -7.0,
      "status": "NOT_MET"
     }
    ],

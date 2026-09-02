@@ -362,7 +362,17 @@
     "window": "2년",
     "min": 0.73,
     "max": 1.21,
-    "band": "보통"
+    "band": "보통",
+    "plain": {
+     "percentile": 40.2,
+     "sessions": 522,
+     "window": "2년",
+     "days": null,
+     "share_pct": null,
+     "side": "mid",
+     "short": "한가운데쯤",
+     "text": "최근 2년(522거래일)의 한가운데쯤"
+    }
    }
   },
   "us_hy": {
@@ -379,7 +389,17 @@
     "window": "2년",
     "min": 2.59,
     "max": 4.61,
-    "band": "매우 좁음"
+    "band": "매우 좁음",
+    "plain": {
+     "percentile": 2.9,
+     "sessions": 522,
+     "window": "2년",
+     "days": 13,
+     "share_pct": null,
+     "side": "low",
+     "short": "이보다 좁았던 날이 13일뿐",
+     "text": "최근 2년(522거래일) 가운데 이보다 좁았던 날이 13일뿐"
+    }
    }
   },
   "us_ig_bbb": {
@@ -396,7 +416,17 @@
     "window": "2년",
     "min": 0.92,
     "max": 1.49,
-    "band": "좁음"
+    "band": "좁음",
+    "plain": {
+     "percentile": 23.1,
+     "sessions": 522,
+     "window": "2년",
+     "days": null,
+     "share_pct": 21,
+     "side": "low",
+     "short": "좁은 쪽 21% 안",
+     "text": "최근 2년(522거래일) 가운데 좁은 쪽 21% 안"
+    }
    }
   },
   "us_hy_ccc": {
@@ -413,7 +443,17 @@
     "window": "2년",
     "min": 6.9,
     "max": 11.37,
-    "band": "매우 넓음"
+    "band": "매우 넓음",
+    "plain": {
+     "percentile": 98.1,
+     "sessions": 522,
+     "window": "2년",
+     "days": 10,
+     "share_pct": null,
+     "side": "high",
+     "short": "이보다 넓었던 날이 열흘뿐",
+     "text": "최근 2년(522거래일) 가운데 이보다 넓었던 날이 열흘뿐"
+    }
    }
   },
   "em_sov": {
@@ -430,7 +470,17 @@
     "window": "2년",
     "min": 1.06,
     "max": 1.85,
-    "band": "매우 좁음"
+    "band": "매우 좁음",
+    "plain": {
+     "percentile": 2.3,
+     "sessions": 522,
+     "window": "2년",
+     "days": 10,
+     "share_pct": null,
+     "side": "low",
+     "short": "이보다 좁았던 날이 열흘뿐",
+     "text": "최근 2년(522거래일) 가운데 이보다 좁았던 날이 열흘뿐"
+    }
    }
   },
   "em_corp": {
@@ -447,7 +497,17 @@
     "window": "2년",
     "min": 1.36,
     "max": 2.27,
-    "band": "매우 좁음"
+    "band": "매우 좁음",
+    "plain": {
+     "percentile": 0.7,
+     "sessions": 522,
+     "window": "2년",
+     "days": 3,
+     "share_pct": null,
+     "side": "low",
+     "short": "이보다 좁았던 날이 사흘뿐",
+     "text": "최근 2년(522거래일) 가운데 이보다 좁았던 날이 사흘뿐"
+    }
    }
   },
   "em_hy": {
@@ -464,7 +524,17 @@
     "window": "2년",
     "min": 2.81,
     "max": 4.9,
-    "band": "매우 좁음"
+    "band": "매우 좁음",
+    "plain": {
+     "percentile": 3.4,
+     "sessions": 522,
+     "window": "2년",
+     "days": 17,
+     "share_pct": null,
+     "side": "low",
+     "short": "이보다 좁았던 날이 17일뿐",
+     "text": "최근 2년(522거래일) 가운데 이보다 좁았던 날이 17일뿐"
+    }
    }
   },
   "euro_hy": {
@@ -481,7 +551,17 @@
     "window": "2년",
     "min": 2.48,
     "max": 4.29,
-    "band": "매우 좁음"
+    "band": "매우 좁음",
+    "plain": {
+     "percentile": 8.9,
+     "sessions": 522,
+     "window": "2년",
+     "days": 43,
+     "share_pct": null,
+     "side": "low",
+     "short": "이보다 좁았던 날이 43일뿐",
+     "text": "최근 2년(522거래일) 가운데 이보다 좁았던 날이 43일뿐"
+    }
    }
   }
  },
@@ -1023,7 +1103,17 @@
    "window": "1년",
    "min": 55.77,
    "max": 139.88,
-   "band": "보통"
+   "band": "보통",
+   "plain": {
+    "percentile": 40.9,
+    "sessions": 497,
+    "window": "1년",
+    "days": null,
+    "share_pct": null,
+    "side": "mid",
+    "short": "한가운데쯤",
+    "text": "최근 497거래일의 한가운데쯤"
+   }
   }
  },
  "standing": {
@@ -1034,7 +1124,17 @@
    "window": "2년",
    "min": 3.63,
    "max": 4.796,
-   "band": "매우 넓음"
+   "band": "매우 넓음",
+   "plain": {
+    "percentile": 99.9,
+    "sessions": 523,
+    "window": "2년",
+    "days": 0,
+    "share_pct": null,
+    "side": "high",
+    "short": "통틀어 가장 높은 자리",
+    "text": "최근 2년(523거래일)을 통틀어 가장 높은 자리"
+   }
   },
   "us30y": {
    "value": 5.268,
@@ -1043,7 +1143,17 @@
    "window": "2년",
    "min": 3.94,
    "max": 5.31,
-   "band": "매우 넓음"
+   "band": "매우 넓음",
+   "plain": {
+    "percentile": 99.1,
+    "sessions": 523,
+    "window": "2년",
+    "days": 4,
+    "share_pct": null,
+    "side": "high",
+    "short": "이보다 높았던 날이 나흘뿐",
+    "text": "최근 2년(523거래일) 가운데 이보다 높았던 날이 나흘뿐"
+   }
   }
  },
  "teaching": {

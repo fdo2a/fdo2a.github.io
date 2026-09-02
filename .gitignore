@@ -26,6 +26,7 @@ __pycache__/
 /portfolio.json
 kr/data/research_notes.md
 kr/research_notes.md
+bond/data/bond_research.md
 
 # codex 위임용 워크트리 (루틴의 git add -A에 딸려가지 않게)
 .claude/worktrees/
