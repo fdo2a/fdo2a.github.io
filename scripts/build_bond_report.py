@@ -148,10 +148,12 @@ def where(st, short=False, form=None):
 def ccc_reading(hy, ccc):
     hp = (hy.get('standing') or {}).get('percentile')
     cp = (ccc.get('standing') or {}).get('percentile')
-    if hp is None or cp is None:
+    cw, hw = where(ccc.get('standing'), True), where(hy.get('standing'), True)
+    # 표본이 짧으면 `plain` 이 아무 말도 안 만든다(30거래일 미만). 그때 이 아래로
+    # 내려가면 「CCC 이하는 200bp로 , 지수 전체는 라」 같은 문장이 나온다(codex 2차).
+    if hp is None or cp is None or not cw or not hw:
         return ('등급별 분포를 볼 표본이 아직 모자랍니다. 하이일드는 벌어질 때 '
                 '아래 등급부터 벌어지므로, 지수 하나만 보지 않는 습관이 필요합니다.')
-    cw, hw = where(ccc.get('standing'), True), where(hy.get('standing'), True)
     if cp - hp >= 30:
         return (f'<b>그런데 여기서 갈립니다.</b> 하이일드 안에서도 가장 등급이 낮은 CCC 이하는 '
                 f'{ccc["bp"]:,.0f}bp — {where(ccc.get("standing"), form="formal")}. 지수 전체는 {hw}인데 '
@@ -483,6 +485,18 @@ def build(datadir, outdir, sitedir):
     P = []
     A = P.append
 
+    # 표본이 짧으면 `plain` 이 None 이라 위치를 말할 수 없다 — 그런 날은 그 절을
+    # 통째로 뺀다. 빈 문자열을 문장에 끼워 넣으면 「10년물 4.80%는 , 30년물도」가 된다.
+    lead_standing = ''
+    if where(st10):
+        both = bool(where(st30, short=True))
+        lead_standing = (
+            f"서 있는 자리는 따로 봅니다. 10년물 {n(ust['10Y']['level'], 2)}%는 "
+            + (f"{where(st10, form='clause')}, 30년물 "
+               f"{n(ust['30Y']['level'], 2)}%도 "
+               f"{where(st30, short=True, form='soft')}. " if both
+               else f"{where(st10, form='formal')}. "))
+
     # ------------------------------------------------------------------ §1
     A(f"""<section id="b-1">
 <div class="headline-card">
@@ -490,9 +504,7 @@ def build(datadir, outdir, sitedir):
 <p>{ko_date(rd)} 미국 10년물은 {n(ust['10Y']['level'], 2)}%({bp(us_bp)}), 30년물은
 {n(ust['30Y']['level'], 2)}%({bp(ust['30Y'].get('bp'))})로 끝났습니다.
 오늘 움직임의 크기는 {size_word(us_bp)} 쪽입니다.</p>
-<p>서 있는 자리는 따로 봅니다. 10년물 {n(ust['10Y']['level'], 2)}%는 {where(st10, form='clause')},
-30년물 {n(ust['30Y']['level'], 2)}%도 {where(st30, short=True, form='soft')}.
-채권을 사는 쪽에는 표면금리가 그만큼 두툼하다는 뜻이고,
+<p>{lead_standing}채권을 사는 쪽에는 표면금리가 그만큼 두툼하다는 뜻이고,
 들고 있는 쪽에는 가격 위험이 그만큼 크다는 뜻이기도 합니다.</p>
 <p>크레딧은 하이일드 스프레드 {n(hy['bp'], 0)}bp({bp(hy.get('chg_bp'))}),
 투자등급 {n(ig['bp'], 0)}bp({bp(ig.get('chg_bp'))})로 마쳤습니다.
@@ -557,11 +569,16 @@ def build(datadir, outdir, sitedir):
     fr_pct = (next((r for r in m['exposure']['factors']
                     if r['factor'] == 'foreign_rates'), {}) or {}).get('pct')
 
+    rates_standing = (f"{where(st10, form='clause')}, "
+                      if where(st10, form='clause') else '')
+    rates_standing_30 = (f"로 {where(st30, short=True, form='formal')}."
+                         if where(st30, short=True) else '입니다.')
+
     A(f"""<section id="b-3">
 <h2>국채금리와 커브</h2>
 <div class="card">
-<p data-standing="rates">미국 10년물은 {n(ust['10Y']['level'], 2)}%입니다. {where(st10, form='clause')}, 같은 기간 최저 {n(st10['min'], 2)}%·최고 {n(st10['max'], 2)}% 사이에 있어요. 30년물은
-{n(ust['30Y']['level'], 2)}%로 {where(st30, short=True, form='and')}.
+<p data-standing="rates">미국 10년물은 {n(ust['10Y']['level'], 2)}%입니다. {rates_standing}같은 기간 최저 {n(st10['min'], 2)}%·최고 {n(st10['max'], 2)}% 사이에 있어요. 30년물은
+{n(ust['30Y']['level'], 2)}%{rates_standing_30}
 오늘 10년물 움직임은 {bp(ust['10Y']['bp'])}로 크기로 치면 {size_word(ust['10Y'].get('bp'))} 쪽입니다.</p>
 <p>{move_sentence(vol)}</p>
 <p>{shape_sentence(us)}</p>
@@ -633,7 +650,7 @@ def build(datadir, outdir, sitedir):
 
     # ------------------------------------------------------------------ §6
     crows = []
-    cwins = set()
+    cwins, csess = set(), set()
     for k in ['us_ig', 'us_ig_bbb', 'us_hy', 'us_hy_ccc', 'euro_hy', 'em_sov',
               'em_corp', 'em_hy']:
         v = cr.get(k)
@@ -642,23 +659,34 @@ def build(datadir, outdir, sitedir):
         s = v.get('standing') or {}
         if s.get('window'):
             cwins.add(s['window'])
+            csess.add(s.get('sessions'))
         crows.append(
             f'<tr><td>{CREDIT_KO.get(k,k)}</td><td>{n(v["bp"],0)}bp</td>'
             f'<td{cls(v.get("chg_bp"))}>{bp(v.get("chg_bp"))}</td>'
             f'<td>{where(s, short=True)}</td><td>{s.get("band","")}</td>'
             f'<td class="sub">{v.get("date","")}</td></tr>')
+    # 「그만큼 얇다」를 손으로 박아 두면 스프레드가 벌어진 날에도 얇다고 우긴다.
+    _hy_side = ((hy.get('standing') or {}).get('plain') or {}).get('side')
+    _hy_word = {'low': '그만큼 얇다', 'high': '그만큼 두껍다'}.get(
+        _hy_side, '평소와 크게 다르지 않다')
+    hy_standing = (f" 숫자만 보면 감이 안 오는데, "
+                   f"<b>{where(hy['standing'], form='soft')}</b>."
+                   if where(hy['standing']) else '')
+    ig_standing = (f"로 {where(ig['standing'], short=True, form='formal')}."
+                   if where(ig['standing'], short=True) else '입니다.')
+
     A(f'''<section id="b-6">
 <h2>크레딧 스프레드</h2>
 <div class="card">
-<p data-standing="credit">미국 하이일드 스프레드는 {n(hy['bp'],0)}bp입니다. 숫자만 보면 감이 안 오는데,
-<b>{where(hy['standing'], form='soft')}</b>. 국채 대신 회사채를 들고 위험을 떠안는 대가가
-그만큼 얇다는 뜻입니다. 투자등급은 {n(ig['bp'],0)}bp로 {where(ig['standing'], short=True, form='and')}.</p>
+<p data-standing="credit">미국 하이일드 스프레드는 {n(hy['bp'],0)}bp입니다.{hy_standing}
+국채 대신 회사채를 들고 위험을 떠안는 대가가 {_hy_word}는 뜻입니다.
+투자등급은 {n(ig['bp'],0)}bp{ig_standing}</p>
 <p>{ccc_reading(hy, ccc)}</p>
 <p>실무에서 이 갈림이 뜻하는 건 이렇습니다. 지수를 통째로 사는 상품은 좁은 스프레드를 사는 셈이고,
 문제가 생기는 곳은 지수 안에서 비중이 작은 바닥층이라 지수 수익률에 잘 안 드러납니다.
 그래서 하이일드를 볼 때는 지수 스프레드와 등급별 분포를 같이 보고, 벌어지기 시작하면 아래에서부터 벌어진다는 걸 기억합니다.</p>
 <div class="tbl-scroll"><table><thead><tr><th>구간</th><th>OAS</th><th>1일</th>
-<th>{('최근 ' + next(iter(cwins)) + ' 안에서') if len(cwins) == 1 else '표본 안에서'}</th><th>폭</th><th>기준일</th></tr></thead><tbody>{''.join(crows)}</tbody></table></div>
+<th>{('최근 ' + next(iter(cwins)) + ' 안에서') if len(cwins) == 1 and len(csess) == 1 else '표본 안에서'}</th><th>폭</th><th>기준일</th></tr></thead><tbody>{''.join(crows)}</tbody></table></div>
 <p class="caption">스프레드는 ICE BofA 지수를 FRED가 게시한 값입니다. 게시가 하루 늦어
 주식·ETF 종가일보다 항상 하루 앞선 날짜를 답니다 — 표의 기준일 열이 그 사실을 그대로 보여줍니다.</p>
 <p>회사채 수익률을 볼 때는 항상 국채와 스프레드로 쪼개서 봅니다. 예를 들어 오늘 투자등급 회사채 ETF의

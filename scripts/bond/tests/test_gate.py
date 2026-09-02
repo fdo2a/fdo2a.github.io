@@ -94,6 +94,15 @@ class TestCheck:
             '최근 2년 가운데 이보다 높았던 날이 나흘뿐이다.', '금리가 올랐다.')
         assert any('금리 위치 문단' in e for e in check(html, MARKET, METRICS, EVAL, BOOK))
 
+    def test_standing_marker_that_is_not_a_paragraph_is_refused(self):
+        # <div data-standing> 으로 감싸면 축 검사가 통째로 사라지던 우회(codex 2차).
+        html = _html('<p>47bp</p>').replace(
+            '<p data-standing="rates">2026-08-27 최근 2년 가운데 '
+            '이보다 높았던 날이 나흘뿐이다. 노출을 역산했다</p>',
+            '<div data-standing="rates">2026-08-27 금리가 올랐다. '
+            '노출을 역산했다</div>')
+        assert any('<p> 가 아니다' in e for e in check(html, MARKET, METRICS, EVAL, BOOK))
+
     def test_tag_split_percentile_is_still_caught(self):
         errs = check(_html('<p>2년 표본에서 백<span></span>분위 상위다</p>'),
                      MARKET, METRICS, EVAL, BOOK)

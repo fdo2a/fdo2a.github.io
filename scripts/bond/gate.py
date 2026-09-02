@@ -148,8 +148,15 @@ def check(html, market, metrics, evaluation, book, econ=None):
     # 문서 어딘가에 한 번 나오는 것으로는 안 된다. **그 자산의 문단 안**에 있어야
     # 한다 — 아니면 다른 섹션의 상투구 하나로 세 자산이 모두 면제된다(codex 검토).
     # 위치 계산이 내려오는 축만 요구한다. FX 는 metrics 에 standing 이 없다.
+    # 표식이 `<p>` 가 아니면 **검사를 건너뛰지 않고 막는다** — `<div data-standing>` 로
+    # 감싸면 축 검사가 통째로 사라지던 우회를 닫았다(2026-09-02 codex 2차).
     for axis, label in (('rates', '금리'), ('credit', '크레딧')):
-        if axis in blocks and not STANDING_PHRASE.search(blocks[axis]):
+        if f'data-standing="{axis}"' not in html:
+            continue          # 표식 자체가 없는 것은 바로 위에서 이미 잡았다
+        if axis not in blocks:
+            errs.append(f'{label} 위치 표식이 <p> 가 아니다 — '
+                        f'<p data-standing="{axis}">로 쓸 것')
+        elif not STANDING_PHRASE.search(blocks[axis]):
             errs.append(f'{label} 위치 문단이 어디에 서 있는지를 말하지 않았다 — '
                         f'metrics 의 plain 문장을 쓸 것')
     if not STANDING_PHRASE.search(txt):
