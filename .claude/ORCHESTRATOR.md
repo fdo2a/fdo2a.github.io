@@ -17,7 +17,20 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    - §9 멀티에셋 스탠스: `data/stance.json`, `data/stance_eval.json`, `data/stance_metrics.json`. Missing → the writer freezes every grade, or bootstraps.
    - 모의 포트폴리오: `data/portfolio.json` — 어제 등급이 오늘 종가에 어떤 비중이 됐고 얼마를 벌었는지가 **계산이 끝난 채로** 들어 있다. Missing → the writer omits that section entirely (never invents one).
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
-3. If `data/market_data.json` is missing, stale, or `"complete": false`, note exactly which fields `missing` lists and run the full STEP 1 collector to fill the whole set (or just the gaps). The Actions run may have partially failed; treat its output as a starting point, not gospel.
+3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
+
+   ```
+   gh workflow run collect-market-data.yml -f force=true
+   sleep 15
+   RUN=$(gh run list --workflow=collect-market-data.yml --event=workflow_dispatch \
+           --limit 1 --json databaseId --jq '.[0].databaseId')
+   timeout 900 gh run watch "$RUN" --exit-status
+   git pull
+   ```
+
+   실행 ID 를 집고 `--exit-status` 를 붙인다 — 맨 `gh run watch` 는 엉뚱한 예약 실행을 기다리고, `--exit-status` 가 없으면 실패한 수집도 성공으로 읽혀 낡은 데이터가 그대로 발행된다. If that path is unavailable or still leaves gaps, note exactly which fields `missing` lists and run the full STEP 1 collector to fill the whole set (or just the gaps). The Actions run may have partially failed; treat its output as a starting point, not gospel.
+
+   **폴백이 끝나면 `report_date`와 `complete`를 다시 본다** — 날짜가 여전히 기대 세션보다 이르면 발행하지 않고 중단한다. 뒤의 completeness 게이트는 필드 존재만 보고 날짜는 보지 않으므로, 여기서 막지 않으면 전 세션 자료가 오늘 날짜로 나간다.
 
 **토큰 규율**: 이 데이터 파일들이 있으면 그 안의 수치를 웹서치로 재확인하지 않는다. 웹 리서치(STEP 1의 리서치 절반)는 뉴스·해석·컨센서스처럼 파일에 없는 것에만 쓴다. 경제지표 Actual/Previous는 econ_indicators.json이 이미 확정했다.
 
@@ -31,7 +44,7 @@ Fallbacks: if the subagent type is not available, Read .claude/agents/brief-data
 
 Gate before proceeding: market_data.json parses as JSON with non-null indices/sectors/yields; intraday.json parses; research_notes.md exists and contains the 4-axis macro indicator table. If `data/macro_metrics.json` lists `headline_releases`, research_notes.md must also carry section ⑧ (신규 발표 해부) with an entry per release — or an explicit note that the primary release could not be reached. If the gate fails, relaunch the subagent once with the specific error details; if it fails again, fix the gaps yourself using the agent file's instructions.
 
-**Completeness gate (사용자 지시 2026-07-14 — 완성본만 발행)**: the canonical dataset must be COMPLETE before STEP 2 — indices 6종(3대 지수+러셀+Growth/Value), sectors 11종 전부(XLRE 포함) + sector_performance 5기간, yields 2Y/5Y/10Y/30Y + curve chart, FX 4종, commodities 4종, memory 6종, AI infra 5종. "미확인이라 표에서 제외" 처리는 발행 사유가 아니라 발행 중단 사유다. Yields are Yahoo spot (^FVX/^TNX/^TYX) for 5Y/10Y/30Y and FRED DGS2 for 2Y (2026-07-28 사용자 지시) — **tenors carrying different as-of dates is expected, not a gate failure**; the gate only requires a non-null level + week_ago per tenor. If primary sources (yfinance/FRED) are blocked, retry via alternative canonical routes (FRED DGS5/DGS10/DGS30 as the yield fallback, FRED CSV via curl, exchange sites) until complete. If the dataset still cannot be completed, DO NOT publish a partial report to any channel — send a PushNotification listing exactly which fields are missing and why, and stop.
+**Completeness gate (사용자 지시 2026-07-14 — 완성본만 발행)**: the canonical dataset must be COMPLETE before STEP 2 — indices 6종(3대 지수+러셀+Growth/Value), sectors 11종 전부(XLRE 포함) + sector_performance 5기간, yields 2Y/5Y/10Y/30Y + curve chart, FX 4종, commodities 4종, memory 6종, AI infra 5종. "미확인이라 표에서 제외" 처리는 발행 사유가 아니라 발행 중단 사유다. Yields are Naver Treasury closes (17:05 ET SIFMA cash close) for all four tenors, which puts them on **one as-of date** (2026-09-04). Yahoo spot (^FVX/^TNX/^TYX) → FRED is the fallback chain when Naver is unavailable, and only then do tenors carry different as-of dates — that fallback is degraded but publishable, not a gate failure. The gate requires a non-null level + week_ago per tenor, and additionally fails closed on `yields/naver_close_not_posted`: a run that fired **before** the 17:05 ET Treasury close must not be committed as complete, or the later run gets skipped by the idempotency guard and the day's curve stays stuck on the prior session. If primary sources (yfinance/FRED) are blocked, retry via alternative canonical routes (FRED DGS5/DGS10/DGS30 as the yield fallback, FRED CSV via curl, exchange sites) until complete. If the dataset still cannot be completed, DO NOT publish a partial report to any channel — send a PushNotification listing exactly which fields are missing and why, and stop.
 
 ## STEP 2 — 리포트 작성 (subagent: brief-report-writer)
 
