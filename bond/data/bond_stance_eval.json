@@ -1,6 +1,6 @@
 {
- "report_date": "2026-09-01",
- "stance_date": "2026-08-31",
+ "report_date": "2026-09-02",
+ "stance_date": "2026-09-01",
  "stale": false,
  "bootstrap": false,
  "horizon": "2-6주",
@@ -11,7 +11,7 @@
    "grade": 0,
    "label": "중립 듀레이션",
    "since": "2026-08-27",
-   "days_held": 4,
+   "days_held": 5,
    "thesis": null,
    "increase": [
     {
@@ -42,7 +42,7 @@
      "op": ">=",
      "value": 100,
      "desc": "MOVE 100 이상 — 금리 변동성이 커지면 방향 베팅을 접는다",
-     "actual": 77.88,
+     "actual": 79.71,
      "status": "NOT_MET"
     }
    ],
@@ -62,7 +62,7 @@
    "grade": 0,
    "label": "커브 중립",
    "since": "2026-08-27",
-   "days_held": 4,
+   "days_held": 5,
    "thesis": null,
    "increase": [
     {
@@ -72,7 +72,7 @@
      "value": 35,
      "toward": "+",
      "desc": "2년-10년 금리차 35bp 이하 — 평평해진 커브에 스티프너를 건다",
-     "actual": 45.6,
+     "actual": 40.6,
      "status": "NOT_MET"
     },
     {
@@ -82,7 +82,7 @@
      "value": 70,
      "toward": "-",
      "desc": "2년-10년 금리차 70bp 이상 — 벌어진 커브에 플래트너를 건다",
-     "actual": 45.6,
+     "actual": 40.6,
      "status": "NOT_MET"
     }
    ],
@@ -93,7 +93,7 @@
      "op": ">=",
      "value": 100,
      "desc": "MOVE 100 이상 — 커브 트레이드도 금리 변동성에 취약하다",
-     "actual": 77.88,
+     "actual": 79.71,
      "status": "NOT_MET"
     }
    ],
@@ -113,7 +113,7 @@
    "grade": 0,
    "label": "크레딧 중립",
    "since": "2026-08-27",
-   "days_held": 4,
+   "days_held": 5,
    "thesis": null,
    "increase": [
     {
@@ -123,7 +123,7 @@
      "value": 340,
      "toward": "+",
      "desc": "하이일드 스프레드 340bp 이상 — 대가가 붙으면 크레딧을 늘린다",
-     "actual": 263.0,
+     "actual": 265.0,
      "status": "NOT_MET"
     },
     {
@@ -133,7 +133,7 @@
      "value": 245,
      "toward": "-",
      "desc": "하이일드 스프레드 245bp 이하 — 더 좁아지면 비중을 줄인다",
-     "actual": 263.0,
+     "actual": 265.0,
      "status": "NOT_MET"
     }
    ],
@@ -144,7 +144,7 @@
      "op": ">=",
      "value": 25,
      "desc": "하이일드 스프레드 주간 +25bp — 벌어지기 시작하면 즉시 줄인다",
-     "actual": -7.0,
+     "actual": -2.0,
      "status": "NOT_MET"
     }
    ],
