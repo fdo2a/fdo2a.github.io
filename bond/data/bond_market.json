@@ -1,65 +1,65 @@
 {
- "generated": "2026-09-02T23:08:10+0000",
- "report_date": "2026-09-02",
+ "generated": "2026-09-03T23:20:15+0000",
+ "report_date": "2026-09-03",
  "base_currency": "USD",
  "us_curve": {
   "3M": {
-   "level": 3.772,
-   "date": "2026-09-02",
+   "level": 3.74,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "tenor": "3M"
   },
   "6M": {
    "level": 4.0,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "6M"
   },
   "1Y": {
-   "level": 4.18,
-   "date": "2026-09-01",
+   "level": 4.16,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "1Y"
   },
   "2Y": {
    "level": 4.39,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "2Y"
   },
   "3Y": {
-   "level": 4.46,
-   "date": "2026-09-01",
+   "level": 4.45,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "3Y"
   },
   "5Y": {
-   "level": 4.552,
-   "date": "2026-09-02",
+   "level": 4.509,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "tenor": "5Y"
   },
   "7Y": {
    "level": 4.66,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "7Y"
   },
   "10Y": {
-   "level": 4.796,
-   "date": "2026-09-02",
+   "level": 4.762,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "tenor": "10Y"
   },
   "20Y": {
    "level": 5.27,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "20Y"
   },
   "30Y": {
-   "level": 5.267,
-   "date": "2026-09-02",
+   "level": 5.243,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "tenor": "30Y"
   }
@@ -67,231 +67,231 @@
  "us_curve_fred": {
   "3M": {
    "level": 3.92,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "3M"
   },
   "6M": {
    "level": 4.0,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "6M"
   },
   "1Y": {
-   "level": 4.18,
-   "date": "2026-09-01",
+   "level": 4.16,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "1Y"
   },
   "2Y": {
    "level": 4.39,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "2Y"
   },
   "3Y": {
-   "level": 4.46,
-   "date": "2026-09-01",
+   "level": 4.45,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "3Y"
   },
   "5Y": {
-   "level": 4.55,
-   "date": "2026-09-01",
+   "level": 4.54,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "5Y",
-   "prev_level": 4.49,
-   "prev_date": "2026-08-31"
+   "prev_level": 4.55,
+   "prev_date": "2026-09-01"
   },
   "7Y": {
    "level": 4.66,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "7Y"
   },
   "10Y": {
    "level": 4.79,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "10Y",
-   "prev_level": 4.75,
-   "prev_date": "2026-08-31"
+   "prev_level": 4.79,
+   "prev_date": "2026-09-01"
   },
   "20Y": {
    "level": 5.27,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "20Y"
   }
  },
  "real_yields": {
   "5Y": {
-   "level": 2.18,
-   "date": "2026-09-01",
+   "level": 2.19,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "5Y",
    "prev_level": 2.18,
-   "prev_date": "2026-08-31"
+   "prev_date": "2026-09-01"
   },
   "10Y": {
-   "level": 2.44,
-   "date": "2026-09-01",
+   "level": 2.45,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "10Y",
    "prev_level": 2.44,
-   "prev_date": "2026-08-31"
+   "prev_date": "2026-09-01"
   }
  },
  "breakeven": {
   "5Y": {
-   "level": 2.37,
-   "date": "2026-09-01",
+   "level": 2.35,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "5Y",
-   "prev_level": 2.31,
-   "prev_date": "2026-08-31"
+   "prev_level": 2.37,
+   "prev_date": "2026-09-01"
   },
   "10Y": {
-   "level": 2.35,
-   "date": "2026-09-01",
+   "level": 2.34,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "10Y",
-   "prev_level": 2.31,
-   "prev_date": "2026-08-31"
+   "prev_level": 2.35,
+   "prev_date": "2026-09-01"
   },
   "5y5y": {
    "level": 2.33,
-   "date": "2026-09-02",
+   "date": "2026-09-03",
    "source": "FRED",
    "tenor": "5y5y"
   }
  },
  "de_curve": {
   "1Y": {
-   "level": 2.83,
-   "date": "2026-09-02",
+   "level": 2.82,
+   "date": "2026-09-03",
    "source": "Bundesbank",
    "tenor": "1Y"
   },
   "2Y": {
-   "level": 2.98,
-   "date": "2026-09-02",
+   "level": 2.96,
+   "date": "2026-09-03",
    "source": "Bundesbank",
    "tenor": "2Y"
   },
   "5Y": {
-   "level": 3.1,
-   "date": "2026-09-02",
+   "level": 3.07,
+   "date": "2026-09-03",
    "source": "Bundesbank",
    "tenor": "5Y"
   },
   "10Y": {
-   "level": 3.41,
-   "date": "2026-09-02",
+   "level": 3.38,
+   "date": "2026-09-03",
    "source": "Bundesbank",
    "tenor": "10Y"
   },
   "30Y": {
-   "level": 3.83,
-   "date": "2026-09-02",
+   "level": 3.8,
+   "date": "2026-09-03",
    "source": "Bundesbank",
    "tenor": "30Y"
   }
  },
  "ea_curve": {
   "2Y": {
-   "level": 2.876001251,
-   "date": "2026-09-01",
+   "level": 2.9132061618,
+   "date": "2026-09-02",
    "source": "ECB",
    "tenor": "2Y"
   },
   "5Y": {
-   "level": 3.0262018177,
-   "date": "2026-09-01",
+   "level": 3.0592781992,
+   "date": "2026-09-02",
    "source": "ECB",
    "tenor": "5Y"
   },
   "10Y": {
-   "level": 3.355151665,
-   "date": "2026-09-01",
+   "level": 3.3918508877,
+   "date": "2026-09-02",
    "source": "ECB",
    "tenor": "10Y"
   },
   "30Y": {
-   "level": 3.7866516547,
-   "date": "2026-09-01",
+   "level": 3.7814353805,
+   "date": "2026-09-02",
    "source": "ECB",
    "tenor": "30Y"
   }
  },
  "jp_curve": {
   "2Y": {
-   "level": 1.802,
-   "date": "2026-09-01",
+   "level": 1.854,
+   "date": "2026-09-02",
    "source": "MOF Japan",
    "tenor": "2Y"
   },
   "5Y": {
-   "level": 2.28,
-   "date": "2026-09-01",
+   "level": 2.332,
+   "date": "2026-09-02",
    "source": "MOF Japan",
    "tenor": "5Y"
   },
   "10Y": {
-   "level": 2.987,
-   "date": "2026-09-01",
+   "level": 3.006,
+   "date": "2026-09-02",
    "source": "MOF Japan",
    "tenor": "10Y"
   },
   "20Y": {
-   "level": 3.859,
-   "date": "2026-09-01",
+   "level": 3.864,
+   "date": "2026-09-02",
    "source": "MOF Japan",
    "tenor": "20Y"
   },
   "30Y": {
-   "level": 4.131,
-   "date": "2026-09-01",
+   "level": 4.122,
+   "date": "2026-09-02",
    "source": "MOF Japan",
    "tenor": "30Y"
   },
   "40Y": {
-   "level": 4.145,
-   "date": "2026-09-01",
+   "level": 4.134,
+   "date": "2026-09-02",
    "source": "MOF Japan",
    "tenor": "40Y"
   }
  },
  "gb_curve": {
   "5Y": {
-   "level": 4.5935,
-   "date": "2026-08-28",
+   "level": 4.6616,
+   "date": "2026-09-01",
    "source": "BOE",
    "tenor": "5Y"
   },
   "10Y": {
-   "level": 5.0631,
-   "date": "2026-08-28",
+   "level": 5.1333,
+   "date": "2026-09-01",
    "source": "BOE",
    "tenor": "10Y"
   },
   "20Y": {
-   "level": 5.5511,
-   "date": "2026-08-28",
+   "level": 5.6139,
+   "date": "2026-09-01",
    "source": "BOE",
    "tenor": "20Y"
   }
  },
  "kr_curve": {
   "3Y": {
-   "level": 3.93,
-   "date": "2026-09-02",
+   "level": 3.888,
+   "date": "2026-09-03",
    "source": "ECOS 한국은행",
    "tenor": "3Y"
   },
   "10Y": {
-   "level": 4.418,
-   "date": "2026-09-02",
+   "level": 4.367,
+   "date": "2026-09-03",
    "source": "ECOS 한국은행",
    "tenor": "10Y"
   }
@@ -304,20 +304,20 @@
    "tenor": "term_premium_10y"
   },
   "sofr": {
-   "level": 3.66,
-   "date": "2026-09-01",
+   "level": 3.65,
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "sofr"
   },
   "tbill_3m": {
    "level": 3.78,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "tbill_3m"
   },
   "fed_funds": {
    "level": 3.63,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "source": "FRED",
    "tenor": "fed_funds"
   }
@@ -325,82 +325,82 @@
  "credit": {
   "us_ig": {
    "value": 0.81,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "name_ko": "미국 IG",
    "source": "FRED (ICE BofA)"
   },
   "us_hy": {
-   "value": 2.65,
-   "date": "2026-09-01",
+   "value": 2.66,
+   "date": "2026-09-02",
    "name_ko": "미국 HY",
    "source": "FRED (ICE BofA)"
   },
   "us_ig_bbb": {
    "value": 0.99,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "name_ko": "미국 IG BBB",
    "source": "FRED (ICE BofA)"
   },
   "us_hy_ccc": {
-   "value": 10.49,
-   "date": "2026-09-01",
+   "value": 10.53,
+   "date": "2026-09-02",
    "name_ko": "미국 HY CCC 이하",
    "source": "FRED (ICE BofA)"
   },
   "em_sov": {
-   "value": 1.1,
-   "date": "2026-09-01",
+   "value": 1.12,
+   "date": "2026-09-02",
    "name_ko": "EM 국공채",
    "source": "FRED (ICE BofA)"
   },
   "em_corp": {
-   "value": 1.36,
-   "date": "2026-09-01",
+   "value": 1.38,
+   "date": "2026-09-02",
    "name_ko": "EM 회사채",
    "source": "FRED (ICE BofA)"
   },
   "em_hy": {
    "value": 2.9,
-   "date": "2026-09-01",
+   "date": "2026-09-02",
    "name_ko": "EM HY",
    "source": "FRED (ICE BofA)"
   },
   "euro_hy": {
-   "value": 2.6,
-   "date": "2026-09-01",
+   "value": 2.62,
+   "date": "2026-09-02",
    "name_ko": "유럽 HY",
    "source": "FRED (ICE BofA)"
   }
  },
  "fx": {
   "DXY": {
-   "level": 99.577,
-   "date": "2026-09-02",
+   "level": 99.003,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "ticker": "DX-Y.NYB"
   },
   "EURUSD": {
-   "level": 1.1596,
-   "date": "2026-09-02",
+   "level": 1.1585,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "ticker": "EURUSD=X"
   },
   "USDJPY": {
-   "level": 160.196,
-   "date": "2026-09-02",
+   "level": 158.923,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "ticker": "USDJPY=X"
   },
   "USDKRW": {
-   "level": 1372.86,
-   "date": "2026-09-02",
+   "level": 1358.39,
+   "date": "2026-09-03",
    "source": "Yahoo",
    "ticker": "USDKRW=X"
   }
  },
  "vol": {
-  "move": 79.71,
-  "date": "2026-09-02",
+  "move": 74.68,
+  "date": "2026-09-03",
   "source": "Yahoo (^MOVE)",
   "stale": false
  },
@@ -408,257 +408,257 @@
   "AGG": {
    "ticker": "AGG",
    "name": "iShares Core U.S. Aggregate Bond ETF",
-   "nav": 96.769976,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 137626259429.2,
-   "duration": 5.77834,
-   "oas_bp": 27.47633,
-   "ytw_pct": 5.06,
-   "ytm_pct": 5.06,
-   "sec_yield_pct": 4.6864,
+   "nav": 96.84687,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 138026159232.2,
+   "duration": 5.77399,
+   "oas_bp": 27.25658,
+   "ytw_pct": 5.04,
+   "ytm_pct": 5.05,
+   "sec_yield_pct": 4.7169,
    "source": "iShares",
-   "close": 96.84,
-   "close_date": "2026-09-02"
+   "close": 96.95,
+   "close_date": "2026-09-03"
   },
   "GOVT": {
    "ticker": "GOVT",
    "name": "iShares U.S. Treasury Bond ETF",
-   "nav": 22.311648,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 41546519258.59,
-   "duration": 5.57945,
-   "oas_bp": 0.08926,
-   "ytw_pct": 4.66,
-   "ytm_pct": 4.66,
-   "sec_yield_pct": 4.5135,
+   "nav": 22.329054,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 41601260510.43,
+   "duration": 5.57776,
+   "oas_bp": -0.11644,
+   "ytw_pct": 4.64,
+   "ytm_pct": 4.64,
+   "sec_yield_pct": 4.5434,
    "source": "iShares",
-   "close": 22.335,
-   "close_date": "2026-09-02"
+   "close": 22.35,
+   "close_date": "2026-09-03"
   },
   "SHY": {
    "ticker": "SHY",
    "name": "iShares 1-3 Year Treasury Bond ETF",
-   "nav": 81.587346,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 25667379206.25,
-   "duration": 1.85568,
-   "oas_bp": -0.3587,
-   "ytw_pct": 4.39,
-   "ytm_pct": 4.39,
-   "sec_yield_pct": 4.1081,
+   "nav": 81.630861,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 26138201572.11,
+   "duration": 1.85363,
+   "oas_bp": -0.64506,
+   "ytw_pct": 4.37,
+   "ytm_pct": 4.37,
+   "sec_yield_pct": 4.1346,
    "source": "iShares",
-   "close": 81.64,
-   "close_date": "2026-09-02"
+   "close": 81.71,
+   "close_date": "2026-09-03"
   },
   "IEF": {
    "ticker": "IEF",
    "name": "iShares 7-10 Year Treasury Bond ETF",
-   "nav": 92.084552,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 41843220649.69,
-   "duration": 6.96095,
-   "oas_bp": 3.19592,
-   "ytw_pct": 4.74,
-   "ytm_pct": 4.74,
-   "sec_yield_pct": 4.5394,
+   "nav": 92.170512,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 41956017041.61,
+   "duration": 6.95837,
+   "oas_bp": 2.99786,
+   "ytw_pct": 4.73,
+   "ytm_pct": 4.73,
+   "sec_yield_pct": 4.5766,
    "source": "iShares",
-   "close": 92.18,
-   "close_date": "2026-09-02"
+   "close": 92.28,
+   "close_date": "2026-09-03"
   },
   "TLT": {
    "ticker": "TLT",
    "name": "iShares 20+ Year Treasury Bond ETF",
-   "nav": 81.83828,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 46934253555.17,
-   "duration": 15.04435,
-   "oas_bp": 0.01072,
-   "ytw_pct": 5.32,
-   "ytm_pct": 5.32,
-   "sec_yield_pct": 5.1355,
+   "nav": 81.915344,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 46667171681.54,
+   "duration": 15.04328,
+   "oas_bp": -0.05156,
+   "ytw_pct": 5.31,
+   "ytm_pct": 5.31,
+   "sec_yield_pct": 5.1761,
    "source": "iShares",
-   "close": 81.95,
-   "close_date": "2026-09-02"
+   "close": 82.07,
+   "close_date": "2026-09-03"
   },
   "TIP": {
    "ticker": "TIP",
    "name": "iShares TIPS Bond ETF",
-   "nav": 106.780647,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 15034715048.03,
-   "duration": 6.34869,
-   "oas_bp": -2.23084,
-   "ytw_pct": 2.29,
-   "ytm_pct": 4.64,
-   "sec_yield_pct": -2.2835,
+   "nav": 106.837475,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 14925195217.47,
+   "duration": 6.34952,
+   "oas_bp": -2.27295,
+   "ytw_pct": 2.28,
+   "ytm_pct": 4.63,
+   "sec_yield_pct": -1.999,
    "source": "iShares",
-   "close": 106.86,
-   "close_date": "2026-09-02"
+   "close": 107.0,
+   "close_date": "2026-09-03"
   },
   "STIP": {
    "ticker": "STIP",
    "name": "iShares 0-5 Year TIPS Bond ETF",
-   "nav": 100.66118,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 16176251610.52,
-   "duration": 2.37429,
-   "oas_bp": -13.25867,
+   "nav": 100.685299,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 16280812836.43,
+   "duration": 2.37189,
+   "oas_bp": -12.22251,
    "ytw_pct": 2.16,
-   "ytm_pct": 4.24,
-   "sec_yield_pct": -1.9378,
+   "ytm_pct": 4.23,
+   "sec_yield_pct": -1.7028,
    "source": "iShares",
-   "close": 100.7,
-   "close_date": "2026-09-02"
+   "close": 100.8,
+   "close_date": "2026-09-03"
   },
   "LQD": {
    "ticker": "LQD",
    "name": "iShares iBoxx $ Investment Grade Corporate Bond ETF",
-   "nav": 105.265844,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 31990289894.81,
-   "duration": 7.708,
-   "oas_bp": 85.96987,
-   "ytw_pct": 5.72,
-   "ytm_pct": 5.73,
-   "sec_yield_pct": 5.5521,
+   "nav": 105.353297,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 31131899301.59,
+   "duration": 7.70446,
+   "oas_bp": 86.1045,
+   "ytw_pct": 5.71,
+   "ytm_pct": 5.72,
+   "sec_yield_pct": 5.6031,
    "source": "iShares",
-   "close": 105.35,
-   "close_date": "2026-09-02"
+   "close": 105.5,
+   "close_date": "2026-09-03"
   },
   "IGIB": {
    "ticker": "IGIB",
    "name": "iShares 5-10 Year Investment Grade Corporate Bond ETF",
-   "nav": 51.762243,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 18605938363.94,
-   "duration": 5.93261,
-   "oas_bp": 89.11467,
-   "ytw_pct": 5.59,
-   "ytm_pct": 5.63,
-   "sec_yield_pct": 5.5173,
+   "nav": 51.78334,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 18673072361.43,
+   "duration": 5.92483,
+   "oas_bp": 89.65389,
+   "ytw_pct": 5.58,
+   "ytm_pct": 5.62,
+   "sec_yield_pct": 5.5692,
    "source": "iShares",
-   "close": 51.77,
-   "close_date": "2026-09-02"
+   "close": 51.83,
+   "close_date": "2026-09-03"
   },
   "USIG": {
    "ticker": "USIG",
    "name": "iShares Broad USD Investment Grade Corporate Bond ETF",
-   "nav": 49.916671,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 17705443206.36,
-   "duration": 6.22692,
-   "oas_bp": 77.8205,
-   "ytw_pct": 5.53,
-   "ytm_pct": 5.56,
-   "sec_yield_pct": 5.4464,
+   "nav": 49.936973,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 17712644324.17,
+   "duration": 6.22269,
+   "oas_bp": 78.2165,
+   "ytw_pct": 5.52,
+   "ytm_pct": 5.55,
+   "sec_yield_pct": 5.4933,
    "source": "iShares",
-   "close": 49.93,
-   "close_date": "2026-09-02"
+   "close": 49.995,
+   "close_date": "2026-09-03"
   },
   "HYG": {
    "ticker": "HYG",
    "name": "iShares iBoxx $ High Yield Corporate Bond ETF",
-   "nav": 79.070336,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 15711275737.56,
-   "duration": 1.79675,
-   "oas_bp": 240.39936,
-   "ytw_pct": 7.09,
-   "ytm_pct": 7.38,
-   "sec_yield_pct": 6.4621,
+   "nav": 79.118113,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 15546709126.01,
+   "duration": 1.7876,
+   "oas_bp": 240.34245,
+   "ytw_pct": 7.07,
+   "ytm_pct": 7.37,
+   "sec_yield_pct": 6.5138,
    "source": "iShares",
-   "close": 79.11,
-   "close_date": "2026-09-02"
+   "close": 79.21,
+   "close_date": "2026-09-03"
   },
   "SHYG": {
    "ticker": "SHYG",
    "name": "iShares 0-5 Year High Yield Corporate Bond ETF",
-   "nav": 41.913074,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 7707814258.96,
-   "duration": 1.24703,
-   "oas_bp": 230.29668,
-   "ytw_pct": 6.8,
-   "ytm_pct": 7.13,
-   "sec_yield_pct": 6.5292,
+   "nav": 41.93669,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 7741512970.4,
+   "duration": 1.23964,
+   "oas_bp": 229.47785,
+   "ytw_pct": 6.77,
+   "ytm_pct": 7.12,
+   "sec_yield_pct": 6.5784,
    "source": "iShares",
-   "close": 41.95,
-   "close_date": "2026-09-02"
+   "close": 42.0,
+   "close_date": "2026-09-03"
   },
   "EMB": {
    "ticker": "EMB",
    "name": "iShares J.P. Morgan USD Emerging Markets Bond ETF",
-   "nav": 94.125743,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 14805979387.71,
-   "duration": 6.02133,
-   "oas_bp": 167.97778,
-   "ytw_pct": 6.47,
-   "ytm_pct": 6.48,
-   "sec_yield_pct": 5.9361,
+   "nav": 94.023774,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 14658306396.89,
+   "duration": 6.0124,
+   "oas_bp": 171.7875,
+   "ytw_pct": 6.5,
+   "ytm_pct": 6.5,
+   "sec_yield_pct": 5.9892,
    "source": "iShares",
-   "close": 94.15,
-   "close_date": "2026-09-02"
+   "close": 94.45,
+   "close_date": "2026-09-03"
   },
   "EMHY": {
    "ticker": "EMHY",
    "name": "iShares J.P. Morgan EM High Yield Bond ETF",
-   "nav": 39.909376,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 640545486.2,
-   "duration": 3.92263,
-   "oas_bp": 266.23394,
-   "ytw_pct": 7.37,
-   "ytm_pct": 7.56,
-   "sec_yield_pct": 6.7276,
+   "nav": 39.883649,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 624179104.92,
+   "duration": 3.91271,
+   "oas_bp": 269.74031,
+   "ytw_pct": 7.39,
+   "ytm_pct": 7.58,
+   "sec_yield_pct": 6.7957,
    "source": "iShares",
-   "close": 39.95,
-   "close_date": "2026-09-02"
+   "close": 40.03,
+   "close_date": "2026-09-03"
   },
   "IGOV": {
    "ticker": "IGOV",
    "name": "iShares International Treasury Bond ETF",
-   "nav": 41.036915,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 1538884300.99,
-   "duration": 7.28048,
-   "oas_bp": 16.65789,
-   "ytw_pct": 3.69,
-   "ytm_pct": 3.69,
-   "sec_yield_pct": 3.2021,
+   "nav": 40.990616,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 1537148099.43,
+   "duration": 7.26901,
+   "oas_bp": 16.75527,
+   "ytw_pct": 3.73,
+   "ytm_pct": 3.73,
+   "sec_yield_pct": 3.2247,
    "source": "iShares",
-   "close": 41.09,
-   "close_date": "2026-09-02"
+   "close": 41.35,
+   "close_date": "2026-09-03"
   },
   "IAGG": {
    "ticker": "IAGG",
    "name": "iShares Core International Aggregate Bond ETF",
-   "nav": 49.631369,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 11866860413.36,
-   "duration": 6.25256,
-   "oas_bp": 29.57791,
-   "ytw_pct": 3.38,
-   "ytm_pct": 3.39,
-   "sec_yield_pct": 3.2254,
+   "nav": 49.563997,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 11850751701.65,
+   "duration": 6.25435,
+   "oas_bp": 29.62842,
+   "ytw_pct": 3.44,
+   "ytm_pct": 3.46,
+   "sec_yield_pct": 3.2336,
    "source": "iShares",
-   "close": 49.59,
-   "close_date": "2026-09-02"
+   "close": 49.68,
+   "close_date": "2026-09-03"
   },
   "FLOT": {
    "ticker": "FLOT",
    "name": "iShares Floating Rate Bond ETF",
-   "nav": 50.846399,
-   "nav_as_of": "2026-09-01",
-   "aum_usd": 10662489777.25,
-   "duration": 0.01374,
-   "oas_bp": 39.65437,
-   "ytw_pct": 4.26,
-   "ytm_pct": 4.31,
-   "sec_yield_pct": 4.027,
+   "nav": 50.85297,
+   "nav_as_of": "2026-09-02",
+   "aum_usd": 10689294393.08,
+   "duration": 0.01349,
+   "oas_bp": 38.91787,
+   "ytw_pct": 4.24,
+   "ytm_pct": 4.29,
+   "sec_yield_pct": 4.0448,
    "source": "iShares",
-   "close": 50.89,
-   "close_date": "2026-09-02"
+   "close": 50.87,
+   "close_date": "2026-09-03"
   }
  },
  "universe": [
