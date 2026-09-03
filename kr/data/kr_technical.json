@@ -3,33 +3,33 @@
     "as_of": "2026-09-03",
     "close": 6579.48,
     "ma": {
-      "ma20": 6661.69,
-      "ma60": 7263.88,
-      "ma120": 6941.02
+      "ma20": 6671.22,
+      "ma60": 7242.08,
+      "ma120": 6950.84
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -1.23,
-      "vs_ma60": -9.42,
-      "vs_ma120": -5.21
+      "vs_ma20": -1.38,
+      "vs_ma60": -9.15,
+      "vs_ma120": -5.34
     },
     "bollinger": {
-      "upper": 7109.78,
-      "mid": 6661.69,
-      "lower": 6213.6,
-      "pct_b": 0.408,
-      "bandwidth": 0.1345
+      "upper": 7121.61,
+      "mid": 6671.22,
+      "lower": 6220.82,
+      "pct_b": 0.398,
+      "bandwidth": 0.135
     },
     "ichimoku": {
       "tenkan": 6702.47,
       "kijun": 6239.7,
-      "senkou_a": 7416.96,
-      "senkou_b": 7907.31,
-      "cloud_top": 7907.31,
-      "cloud_bottom": 7416.96,
+      "senkou_a": 7165.75,
+      "senkou_b": 7689.25,
+      "cloud_top": 7689.25,
+      "cloud_bottom": 7165.75,
       "price_vs_cloud": "below"
     },
-    "chikou_above_price_26ago": false,
+    "chikou_above_price_26ago": true,
     "swing": {
       "high_20": 7216.62,
       "low_20": 6158.73,
@@ -41,30 +41,30 @@
     "as_of": "2026-09-03",
     "close": 790.21,
     "ma": {
-      "ma20": 827.68,
-      "ma60": 844.48,
-      "ma120": 987.33
+      "ma20": 829.62,
+      "ma60": 842.32,
+      "ma120": 984.85
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": -4.53,
-      "vs_ma60": -6.43,
-      "vs_ma120": -19.96
+      "vs_ma20": -4.75,
+      "vs_ma60": -6.19,
+      "vs_ma120": -19.76
     },
     "bollinger": {
-      "upper": 873.83,
-      "mid": 827.68,
-      "lower": 781.52,
-      "pct_b": 0.094,
-      "bandwidth": 0.1115
+      "upper": 874.12,
+      "mid": 829.62,
+      "lower": 785.12,
+      "pct_b": 0.057,
+      "bandwidth": 0.1073
     },
     "ichimoku": {
-      "tenkan": 810.73,
+      "tenkan": 811.37,
       "kijun": 755.14,
-      "senkou_a": 823.68,
-      "senkou_b": 978.05,
-      "cloud_top": 978.05,
-      "cloud_bottom": 823.68,
+      "senkou_a": 801.54,
+      "senkou_b": 951.29,
+      "cloud_top": 951.29,
+      "cloud_bottom": 801.54,
       "price_vs_cloud": "below"
     },
     "chikou_above_price_26ago": true,
