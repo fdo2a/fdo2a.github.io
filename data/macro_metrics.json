@@ -1,14 +1,14 @@
 {
-  "generated": "2026-09-02 23:27 UTC",
-  "report_date": "2026-09-02",
-  "growth_score": -0.363,
+  "generated": "2026-09-03 23:23 UTC",
+  "report_date": "2026-09-03",
+  "growth_score": -0.428,
   "inflation_score": -0.391,
   "growth_diffusion": 0.357,
   "inflation_diffusion": 0.625,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.117,
+      "score": -0.078,
       "direction": "보합",
       "strength": "미미",
       "breadth_ko": "일곱 중 넷이 개선, 나머지는 반대",
@@ -16,12 +16,12 @@
       "total": 7,
       "leaders": [
         {
-          "label_ko": "신규 청구 4주 평균",
-          "name": "Initial Claims 4-wk MA",
-          "direction": "개선",
-          "strength": "뚜렷",
-          "actual": 205500.0,
-          "previous": 204250.0
+          "label_ko": "신규 실업수당 청구",
+          "name": "Initial Jobless Claims",
+          "direction": "악화",
+          "strength": "완만",
+          "actual": 206000.0,
+          "previous": 204000.0
         },
         {
           "label_ko": "시간당 임금",
@@ -140,7 +140,7 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.117,
+    "Labor": -0.078,
     "Activity": -0.361,
     "Consumption": -0.847,
     "Inflation": -0.391
@@ -165,31 +165,31 @@
       "name": "Initial Jobless Claims",
       "label_ko": "신규 실업수당 청구",
       "axis": "Labor",
-      "direction": "보합",
-      "strength": "미미",
+      "direction": "악화",
+      "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": 0.22,
-      "signed_z": -0.22,
-      "actual": 203000.0,
-      "previous": 207000.0,
-      "ref_period": "2026-08-22",
-      "is_new": false
+      "momentum_z": 0.8,
+      "signed_z": -0.8,
+      "actual": 206000.0,
+      "previous": 204000.0,
+      "ref_period": "2026-08-29",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
       "label_ko": "신규 청구 4주 평균",
       "axis": "Labor",
-      "direction": "개선",
-      "strength": "뚜렷",
+      "direction": "보합",
+      "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -1.097,
-      "signed_z": 1.097,
-      "actual": 205500.0,
-      "previous": 204250.0,
-      "ref_period": "2026-08-22",
-      "is_new": false
+      "momentum_z": -0.241,
+      "signed_z": 0.241,
+      "actual": 207250.0,
+      "previous": 205750.0,
+      "ref_period": "2026-08-29",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -199,12 +199,12 @@
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.343,
-      "signed_z": 0.343,
-      "actual": 1778000.0,
-      "previous": 1796000.0,
-      "ref_period": "2026-08-15",
-      "is_new": false
+      "momentum_z": -0.414,
+      "signed_z": 0.414,
+      "actual": 1779000.0,
+      "previous": 1771000.0,
+      "ref_period": "2026-08-22",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -279,7 +279,7 @@
       "actual": 1.08,
       "previous": 0.58,
       "ref_period": "2026-07-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "New Home Sales",
@@ -478,25 +478,43 @@
     }
   ],
   "new_releases": [
-    "Durable Goods Orders MoM"
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
   ],
   "headline_releases": [
     {
-      "key": "durable-goods",
-      "label": "내구재 주문",
+      "key": "claims",
+      "label": "신규 실업수당 청구",
       "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-      "primary": "Durable Goods Orders MoM",
-      "max_abs_z": 1.78,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Initial Jobless Claims",
+      "max_abs_z": 0.8,
       "indicators": [
         {
-          "name": "Durable Goods Orders MoM",
-          "axis": "Activity",
-          "actual": 1.08,
-          "previous": 0.58,
-          "ref_period": "2026-07-01",
-          "momentum_z": -1.78
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 206000.0,
+          "previous": 204000.0,
+          "ref_period": "2026-08-29",
+          "momentum_z": 0.8
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 207250.0,
+          "previous": 205750.0,
+          "ref_period": "2026-08-29",
+          "momentum_z": -0.241
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1779000.0,
+          "previous": 1771000.0,
+          "ref_period": "2026-08-22",
+          "momentum_z": -0.414
         }
       ],
       "components": []
@@ -508,16 +526,16 @@
       7271.0
     ],
     "Initial Jobless Claims": [
-      "2026-08-22",
-      203000.0
+      "2026-08-29",
+      206000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-08-22",
-      205500.0
+      "2026-08-29",
+      207250.0
     ],
     "Continuing Jobless Claims": [
-      "2026-08-15",
-      1778000.0
+      "2026-08-22",
+      1779000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-07-01",

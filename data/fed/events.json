@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-09-02",
+  "report_date": "2026-09-03",
   "events": [
     {
       "key": "jackson-hole-20260828",
@@ -12,7 +12,7 @@
       "speaker": "Kevin Warsh",
       "role": "Chairman",
       "first_seen": "2026-09-02",
-      "fresh": true,
+      "fresh": false,
       "sources": [
         {
           "role": "primary",

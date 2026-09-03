@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-09-02",
+  "report_date": "2026-09-03",
   "releases": [
     {
-      "key": "durable-goods",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 24001,
-      "path": "releases/durable-goods.txt"
+      "chars": 20029,
+      "path": "releases/claims.txt"
     }
   ]
 }
