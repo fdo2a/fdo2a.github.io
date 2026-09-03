@@ -7,12 +7,13 @@ name: Collect market data
 
 on:
   schedule:
-    # US close is 20:00 UTC (EDT) / 21:00 UTC (EST). The cloud routine fires at
-    # 23:00 UTC (0 23 * * 1-5). Run after the close and finish well before then.
-    # Two slots for resilience — the second is a no-op if the first already
-    # produced a complete dataset for the same report date.
+    # 발행용 커브를 네이버 국채 «종가»로 바꾸면서(2026-09-04) 수집이 국채 현물
+    # 마감(17:05 ET) 뒤로 와야 한다. 예전 두 번째 슬롯 15:22 UTC 는 겨울에 17:15 EST
+    # 로 마감 10분 뒤라 마진이 없었다. 이제 두 슬롯 모두 **17:30 ET** 다 —
+    # 여름(EDT) 21:30 UTC · 겨울(EST) 22:30 UTC. 크론은 서머타임을 모르므로 두 벌을
+    # 띄우고, 같은 report_date 가 이미 완전하면 두 번째가 무동작으로 끝난다.
     - cron: '30 21 * * 1-5'
-    - cron: '15 22 * * 1-5'
+    - cron: '30 22 * * 1-5'
   workflow_dispatch:
     inputs:
       force:
@@ -109,10 +110,5 @@ jobs:
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
           git add data/weekly data/monthly 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo 'No data changes to commit.'
-          else
-            RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
-            git commit -m "data: market data for ${RD}"
-            git push
-          fi
+          RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
+          bash scripts/ci/push_with_retry.sh "data: market data for ${RD}"

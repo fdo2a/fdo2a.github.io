@@ -7,8 +7,11 @@ name: Collect global bond data
 # 닫힌 마지막 세션을 기준일로 잡아 같은 날 두 번 돌아도 한 번만 커밋되게 한다.
 on:
   schedule:
-    - cron: '5 20 * * 1-5'
-    - cron: '5 21 * * 1-5'
+    # 국채 현물 마감 17:05 ET 뒤에 돌아야 «그날 종가»를 잡는다 — 17:20 ET 고정.
+    # 여름(EDT) 21:20 UTC · 겨울(EST) 22:20 UTC. US 수집(17:30 ET)보다 10분 앞서
+    # 같은 레포 동시 push 를 피한다.
+    - cron: '20 21 * * 1-5'
+    - cron: '20 22 * * 1-5'
   workflow_dispatch:
     inputs:
       force:
@@ -78,11 +81,5 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add bond/data
-          if git diff --staged --quiet; then
-            echo "변경 없음 — 커밋 생략"
-          else
-            DATE=$(python3 -c "import json;print(json.load(open('bond/data/bond_market.json'))['report_date'])")
-            git commit -m "채권 데이터 수집 — $DATE"
-            git pull --rebase --autostash
-            git push
-          fi
+          DATE=$(python3 -c "import json;print(json.load(open('bond/data/bond_market.json'))['report_date'])")
+          bash scripts/ci/push_with_retry.sh "채권 데이터 수집 — $DATE"
