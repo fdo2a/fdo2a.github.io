@@ -59,9 +59,18 @@ def retry(fn, attempts=3, base_sleep=3):
     return None
 
 
+ANCHOR_TICKER = '^GSPC'
+
+
 def collect_daily():
-    """One batched download for every daily ticker; returns {group: {name: row|None}}."""
+    """One batched download for every daily ticker; returns ({group: {name: row|None}}, anchor).
+
+    모든 행이 **S&P 500 이 닫힌 날 이하**의 마지막 봉을 쓴다. 종목마다 마지막 봉을
+    각자 집으면 24시간 도는 통화쌍이 다음 날짜 봉을 이미 열어 둔 채 표에 섞인다 —
+    2026-09-02 발행본에서 DXY 만 09-02 이고 통화쌍 셋은 09-03 이었다.
+    """
     import yfinance as yf
+    from us.daily_row import anchor_date, row_from_closes
     tickers = [t for _, pairs in GROUPS for _, t in pairs]
 
     def dl():
@@ -70,26 +79,43 @@ def collect_daily():
         return df if df is not None and len(df) else None
 
     df = retry(dl)
+    closes = {}
+    for _, pairs in GROUPS:
+        for _, t in pairs:
+            try:
+                s = df[t]['Close'].dropna()
+                closes[t] = ([str(i.date()) for i in s.index], [float(v) for v in s.values])
+            except Exception:
+                closes[t] = ([], [])
+    anchor = anchor_date({t: d for t, (d, _) in closes.items()}, ANCHOR_TICKER)
+    if anchor is None:
+        # 배치에서 앵커 종목이 빠지면 나머지가 전부 「마지막 봉」으로 떨어져 통화쌍이
+        # 다음 날짜를 물고 들어온다. 행을 만들기 **전에** 앵커부터 따로 받아 온다
+        # (codex 검토 2026-09-04 — fill_daily_gaps 는 앵커를 되돌려 주지 않는다).
+        def anchor_only():
+            h = yf.Ticker(ANCHOR_TICKER).history(period='7d')['Close'].dropna()
+            return str(h.index[-1].date()) if len(h) else None
+
+        anchor = retry(anchor_only, attempts=2)
+        if anchor:
+            print(f'  anchor recovered separately: {anchor}', file=sys.stderr)
     out = {}
     for group, pairs in GROUPS:
         out[group] = {}
         for name, t in pairs:
-            row = None
-            try:
-                closes = df[t]['Close'].dropna()
-                if len(closes) >= 2:
-                    prev, cur = float(closes.iloc[-2]), float(closes.iloc[-1])
-                    row = {'last': cur, 'chg': cur - prev, 'pct': (cur / prev - 1) * 100,
-                           'date': str(closes.index[-1].date())}
-            except Exception:
-                row = None
-            out[group][name] = row
-    return out
+            d, v = closes.get(t, ([], []))
+            out[group][name] = row_from_closes(d, v, as_of=anchor)
+    return out, anchor
 
 
-def fill_daily_gaps(daily):
-    """Per-ticker fallback for anything the batch download missed."""
+def fill_daily_gaps(daily, anchor=None):
+    """Per-ticker fallback for anything the batch download missed.
+
+    폴백도 앵커를 지킨다 — 여기서만 마지막 봉을 집으면 배치가 실패한 종목만 하루
+    앞선 날짜를 달고 표에 들어간다.
+    """
     import yfinance as yf
+    from us.daily_row import row_from_closes
     for group, pairs in GROUPS:
         for name, t in pairs:
             if daily[group][name] is not None:
@@ -97,11 +123,8 @@ def fill_daily_gaps(daily):
 
             def one():
                 h = yf.Ticker(t).history(period='7d')['Close'].dropna()
-                if len(h) < 2:
-                    return None
-                prev, cur = float(h.iloc[-2]), float(h.iloc[-1])
-                return {'last': cur, 'chg': cur - prev, 'pct': (cur / prev - 1) * 100,
-                        'date': str(h.index[-1].date())}
+                return row_from_closes([str(i.date()) for i in h.index],
+                                       [float(v) for v in h.values], as_of=anchor)
 
             daily[group][name] = retry(one)
             time.sleep(1)
@@ -163,6 +186,14 @@ def collect_histories():
                             'close': float(r['Close'])} for _, r in bars.iterrows()]
         except Exception:
             out[t], idx[t] = None, None
+    # 이력도 기준일까지만 남긴다. 표(fx)만 앵커로 자르고 이력을 안 자르면 같은
+    # 발행본에서 표는 09-02 인데 stance_metrics·price_context 는 09-03 봉으로
+    # 계산된다 — 통화쌍은 주식 지수보다 세션이 더 열리므로 상시 조건이다
+    # (codex 검토 2026-09-04).
+    if as_of:
+        from us.daily_row import clip_series
+        for t in list(out):
+            out[t], idx[t] = clip_series(out[t], idx[t], as_of)
     return out, idx, as_of, ohlc
 
 
@@ -399,13 +430,66 @@ def yahoo_spot_yields():
     return out
 
 
-def merge_yields(fred, yahoo):
-    """Yahoo same-day spot wins for 5Y/10Y/30Y; FRED fills 2Y (no Yahoo spot) and any tenor
-    Yahoo failed to return. Every row keeps its own `source`/`date` because the resulting
-    curve deliberately mixes as-of dates — the report MUST label the 2Y row accordingly."""
+NAVER_PRICES = 'https://m.stock.naver.com/front-api/marketIndex/prices'
+NAVER_TENORS = {'2Y': 'US2YT=RR', '5Y': 'US5YT=RR', '10Y': 'US10YT=RR', '30Y': 'US30YT=RR'}
+
+
+def naver_spot_yields(pages=2, page_size=60, expected_date=None):
+    """전 만기 **동일자** 종가 커브 — 발행용 1순위 (2026-09-04).
+
+    야후에 2년 스팟 지수가 없어서 2Y 만 FRED DGS2(T-1) 를 쓰던 우회를 걷어낸다.
+    그 우회 탓에 2s10s 두 다리의 날짜가 갈렸고, 90영업일 실측으로 날짜 차이만으로
+    중앙 3.4bp·최대 11.8bp 오차가 났다(40bp 스프레드에서 무시 못 할 크기).
+
+    네이버는 SIFMA 국채 현물 마감(17:05 ET) 종가를 전 만기 한 날짜로 준다. 실측
+    120/120 영업일 전 만기 정렬·결측 0, FRED CMT 대비 중앙 0.1~0.4bp.
+
+    `pageSize` 는 10 미만을 거부한다(`too_small`).
+    """
+    from us.naver_yields import parse_prices, build_curve
+    series = {}
+    for tenor, code in NAVER_TENORS.items():
+        rows = []
+        for page in range(1, pages + 1):
+            url = (f'{NAVER_PRICES}?category=bond'
+                   f'&reutersCode={urllib.parse.quote(code, safe="")}'
+                   f'&page={page}&pageSize={page_size}')
+
+            def one(u=url):
+                raw = urllib.request.urlopen(u, timeout=25, context=_SSL).read()
+                return json.loads(raw.decode('utf-8', 'replace'))
+
+            payload = retry(one, attempts=3, base_sleep=2)
+            got = parse_prices(payload) if payload else []
+            if not got:
+                break
+            rows += got
+        series[tenor] = rows
+        time.sleep(0.5)
+    if any(not rows for rows in series.values()):
+        return None, None
+    from us.naver_yields import common_date
+    latest = common_date(series)
+    return build_curve(series, expected_date=expected_date), latest
+
+
+def merge_yields(fred, yahoo, naver=None):
+    """우선순위 네이버 -> 야후 -> FRED. 각 행은 자기 `source`/`date` 를 계속 단다.
+
+    네이버가 통째로 돌아오면 전 만기가 한 날짜라 2s10s 의 두 다리가 갈리지 않는다.
+    **네이버는 전부-아니면-전무로 쓴다** — 일부 만기만 네이버로 채우면 남은 만기가
+    야후·FRED 날짜를 달고 들어와, 고치려던 어긋남이 그대로 재현된다.
+    """
     out = {}
+    # `bp` 까지 요구한다 — 비교 구간이 늘어나 전일比를 못 만든 커브를 실으면 표의
+    # 「전일比」 칸이 통째로 빈다. 그런 날 폴백 사슬은 정상적인 전일 대비를 갖고 있다.
+    use_naver = bool(naver) and all(
+        (naver.get(t) or {}).get(f) is not None
+        for t in ('2Y', '5Y', '10Y', '30Y') for f in ('level', 'bp'))
     for t in ('2Y', '5Y', '10Y', '30Y'):
-        row = (yahoo or {}).get(t)
+        row = (naver or {}).get(t) if use_naver else None
+        if not (row and row.get('level') is not None):
+            row = (yahoo or {}).get(t)
         if not (row and row.get('level') is not None):
             row = (fred or {}).get(t)
         out[t] = dict(row) if row else None
@@ -508,8 +592,12 @@ def render_curve(yields, path):
     plt.close(fig)
 
 
-def completeness(data, intraday):
+def completeness(data, intraday, naver_stale=False):
     missing = []
+    if naver_stale:
+        # 국채 현물 마감 전에 뜬 회차. 이 판을 complete 로 커밋하면 마감 뒤 회차가
+        # 멱등 가드에 막혀 그날 커브가 영영 전일치로 남는다.
+        missing.append('yields/naver_close_not_posted')
     for group, pairs in GROUPS:
         for name, _ in pairs:
             if data[group].get(name) is None:
@@ -542,7 +630,8 @@ def main():
     md_path = os.path.join(args.outdir, 'market_data.json')
 
     print('collecting daily closes (batched)...')
-    daily = fill_daily_gaps(collect_daily())
+    daily, anchor = collect_daily()
+    daily = fill_daily_gaps(daily, anchor)
     report_date = None
     spx = daily['indices'].get('S&P 500')
     if spx:
@@ -562,11 +651,20 @@ def main():
         except Exception:
             pass
 
-    print('collecting Yahoo spot yields (primary: 5Y/10Y/30Y)...')
+    print('collecting Naver same-date curve (primary: 2Y/5Y/10Y/30Y)...')
+    yields_naver, naver_latest = naver_spot_yields(expected_date=report_date)
+    # 「아직 안 나왔다」와 「못 받았다」는 다르게 다뤄야 한다. 전자는 다음 회차가 메울
+    # 수 있으므로 incomplete 로 남겨 멱등 가드가 재시도를 막지 않게 하고, 후자는
+    # 야후·FRED 폴백으로 발행한다 — 네이버 장애로 발행이 멈추면 안 된다.
+    naver_stale = bool(naver_latest) and yields_naver is None and naver_latest < report_date
+    if naver_stale:
+        print(f'  Naver curve is still {naver_latest} (< {report_date}) — 국채 마감 전 회차로 본다',
+              file=sys.stderr)
+    print('collecting Yahoo spot yields (fallback: 5Y/10Y/30Y)...')
     yields_yahoo = yahoo_spot_yields()
-    print('collecting FRED yields (2Y + fallback)...')
+    print('collecting FRED yields (fallback + cross-check)...')
     yields_fred = fred_yields()
-    yields = merge_yields(yields_fred, yields_yahoo)
+    yields = merge_yields(yields_fred, yields_yahoo, yields_naver)
     for t, row in yields.items():
         print(f'  {t}: ' + (f"{row['level']}% ({row.get('source')} {row['date']})" if row else 'MISSING'))
     print('collecting yield drivers (real / breakeven / spreads)...')
@@ -609,27 +707,32 @@ def main():
         'ai_infra': daily['ai_infra'],
         'yields': yields,
         'yields_fred': yields_fred,
-        'yields_note': 'yields = 발행용 기준값. 5Y/10Y/30Y는 Yahoo 스팟(^FVX/^TNX/^TYX, '
-                       '주식 종가와 동일자), 2Y는 Yahoo에 스팟 지수가 없어 FRED DGS2(T-1). '
-                       '각 행의 source/date를 표·차트·캡션에 반드시 표기할 것. '
+        'yields_note': 'yields = 발행용 기준값. 1순위는 네이버 국채 종가(SIFMA 국채 현물 '
+                       '마감 17:05 ET)로 **전 만기가 동일 기준일**이다. 네이버가 비면 '
+                       'Yahoo 스팟(^FVX/^TNX/^TYX) -> FRED 순으로 메우는데, 그때는 만기별 '
+                       'date가 갈릴 수 있으므로 각 행의 source/date를 표·차트·캡션에 표기할 것. '
                        'yields_fred는 전 만기 FRED 동일자 대조용.',
         'yield_drivers': drivers,
         'sector_performance': sector_perf,
         'sector_performance_as_of': perf_as_of,
     }
     y = data['yields']
-    # As-published spread (mixed legs: FRED 2Y vs Yahoo 10Y) — matches the printed table.
+    # 발행값. 네이버로 채워진 날은 두 다리가 같은 날짜라 basis 가 「동일 기준일」로 나온다.
     if y.get('2Y') and y.get('10Y'):
         data['spread_2s10s_bp'] = (y['10Y']['level'] - y['2Y']['level']) * 100
-        data['spread_2s10s_basis'] = (f"2Y {y['2Y'].get('source')} {y['2Y']['date']} vs "
-                                      f"10Y {y['10Y'].get('source')} {y['10Y']['date']}")
+        same = y['2Y']['date'] == y['10Y']['date']
+        data['spread_2s10s_aligned'] = same
+        data['spread_2s10s_basis'] = (
+            f"2Y·10Y 모두 {y['10Y'].get('source')} {y['10Y']['date']} 동일 기준일" if same
+            else f"2Y {y['2Y'].get('source')} {y['2Y']['date']} vs "
+                 f"10Y {y['10Y'].get('source')} {y['10Y']['date']}")
     # Single-date cross-checks: both legs FRED (T-1), and both legs Yahoo same-day.
     if yields_fred.get('2Y') and yields_fred.get('10Y'):
         data['spread_2s10s_fred_bp'] = (yields_fred['10Y']['level'] - yields_fred['2Y']['level']) * 100
     if y.get('5Y') and y.get('30Y'):
         data['spread_5s30s_bp'] = (y['30Y']['level'] - y['5Y']['level']) * 100
 
-    missing = completeness(data, intraday)
+    missing = completeness(data, intraday, naver_stale=naver_stale)
     data['complete'] = not missing
     data['missing'] = missing
 

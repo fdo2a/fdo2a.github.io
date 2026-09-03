@@ -55,6 +55,11 @@ CMDTY = [('WTI','CL=F'),('Brent','BZ=F'),('Natural Gas','NG=F'),('Gold','GC=F')]
 MEMORY = [('Micron','MU'),('Western Digital','WDC'),('Seagate','STX'),('Nvidia','NVDA'),('Samsung Elec','005930.KS'),('SK hynix','000660.KS')]
 AI_INFRA = [('Marvell','MRVL'),('Coherent','COHR'),('Lumentum','LITE'),('GE Vernova','GEV'),('Vertiv','VRT')]
 
+# ⚠ 이건 **강등 폴백**이다 (2026-09-04). 정상 경로의 발행용 커브는 Actions 가 만드는
+# 네이버 국채 종가(전 만기 동일 기준일, 17:05 ET)이고, 여기 코드는 그 파일이 아예
+# 없을 때만 돈다. 그래서 아래는 기준일이 갈린 커브를 만들며, spread_2s10s_aligned 를
+# 세우지 않는다 — writer 는 그 필드가 없으면 예전 규율(별표 + 동일자 FRED 병기)로
+# 떨어진다. 그게 이 경로에서는 맞는 동작이다.
 # 금리: 5Y/10Y/30Y는 야후 스팟이 기준(주식 종가와 동일자), 2Y만 FRED (2026-07-28 사용자 지시).
 # 야후에 2년 스팟 지수는 없다 — ^UST2Y 부재, 2YY=F는 선물이라 하루 더 늦고 DGS2와 20bp 이상 벌어짐.
 def yahoo_yields():
