@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-09-03",
+  "report_date": "2026-09-04",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "key": "employment",
+      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20029,
-      "path": "releases/claims.txt"
+      "chars": 10380,
+      "path": "releases/employment.txt"
     }
   ]
 }

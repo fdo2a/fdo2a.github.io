@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-03 23:23 UTC",
+  "generated": "2026-09-04 23:08 UTC",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "indicators": [
@@ -49,9 +49,9 @@
       "fred_id": "PAYEMS",
       "transform": "mom_diff",
       "units": "K",
-      "actual": -23.0,
-      "previous": 20.0,
-      "ref_period": "2026-07-01"
+      "actual": 162.0,
+      "previous": 21.0,
+      "ref_period": "2026-08-01"
     },
     {
       "axis": "Labor",
@@ -60,8 +60,8 @@
       "transform": "level",
       "units": "%",
       "actual": 4.1,
-      "previous": 4.2,
-      "ref_period": "2026-07-01"
+      "previous": 4.1,
+      "ref_period": "2026-08-01"
     },
     {
       "axis": "Labor",
@@ -69,9 +69,9 @@
       "fred_id": "CES0500000003",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.05,
-      "previous": 0.29,
-      "ref_period": "2026-07-01"
+      "actual": 0.27,
+      "previous": 0.16,
+      "ref_period": "2026-08-01"
     },
     {
       "axis": "Activity",
