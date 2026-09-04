@@ -8,12 +8,10 @@ over from the previous day and may only move when a pre-declared trigger fires.
 Everything here is pure — no network, no clock. `evaluate()` takes yesterday's stance
 plus today's metrics and returns what today's writer is permitted to do.
 
-이동 규율 자체는 `common/discipline.py` 로 옮겼다 — 채권 뷰 3축이 글자 그대로 같은
-규칙을 쓰기 때문이다(2026-08-31). 여기 남은 것은 US 고유의 자산 스펙과, 기존 호출부를
-그대로 유지하기 위한 얇은 위임뿐이다.
+이동 규율 자체는 `common/discipline.py` 로 옮겼다(2026-08-31). 여기 남은 것은 US
+고유의 자산 스펙과, 기존 호출부를 그대로 유지하기 위한 얇은 위임뿐이다.
 
 Design: docs/superpowers/specs/2026-08-17-us-multiasset-stance-persistence-design.md
-        docs/superpowers/specs/2026-08-31-global-bond-emp-design.md
 """
 
 from common.discipline import (
