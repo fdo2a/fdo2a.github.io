@@ -151,6 +151,65 @@ def _blank_inert(html: str) -> str:
     return _INERT.sub(lambda m: " " * (m.end() - m.start()), html)
 
 
+# 태그 토큰화는 게이트가 쓰는 것과 같은 것을 쓴다 — 속성값 안의 `>` 에서 끊기면
+# 정상 발행본이 「div 가 열린 채」로 걸린다(2026-09-04 codex 검토가 실제로 뚫었다).
+from common.numbers import TAG_RE  # noqa: E402
+
+# `<script>`·주석은 `_blank_inert` 가 가리고, 여기서는 본문 안에 함께 실려 오는
+# `<style>`(§4 섹터 표)과 `<textarea>` 를 더 가린다. 안의 태그 모양 텍스트는
+# 마크업이 아니다.
+_MASKED_ELEMENT = re.compile(r"(?is)<(style|textarea)\b[^>]*>.*?</\1\s*>")
+_DIV_OR_SECTION = re.compile(r"(?i)^</?(div|section)\b")
+
+
+def section_div_breaks(html: str):
+    """섹션 경계를 넘나드는 `<div>` 를 찾는다. [(구역 이름, 사유), …].
+
+    2026-09-03 발행본이 깨진 방식이라 문서 전체의 여닫이 수를 세는 것으로는
+    부족하다 — 그날은 열린 채 끝난 섹션 하나와 짝 없이 닫힌 섹션 하나가
+    수치상 상쇄됐다. 브라우저는 `</section>` 에서 남은 div 를 암묵적으로 닫고,
+    그 결과 짝 없는 `</div>` 가 본문 컨테이너를 중간에서 닫아 뒤쪽 섹션 전부가
+    폭 제한 밖으로 밀려난다. 그래서 세는 자리를 **섹션 경계**로 옮긴다.
+
+    섹션 밖(「본문」)도 같은 자로 잰다 — 컨테이너가 안 닫히거나 섹션 사이에
+    짝 없는 `</div>` 가 있어도 폭은 똑같이 깨진다.
+    """
+    body = _MASKED_ELEMENT.sub(
+        lambda m: " " * (m.end() - m.start()), _blank_inert(html))
+    start = body.lower().find("<body")
+    if start >= 0:
+        body = body[start:]
+    out = []
+    stack = [["본문", 0]]
+    for m in TAG_RE.finditer(body):
+        tok = m.group(0)
+        hit = _DIV_OR_SECTION.match(tok)
+        if not hit:
+            continue
+        closing, tag = tok[1] == "/", hit.group(1).lower()
+        if tag == "section":
+            if closing:
+                if len(stack) > 1:
+                    sid, depth = stack.pop()
+                    if depth:
+                        out.append((sid, "%d개의 <div>가 열린 채 </section>" % depth))
+            else:
+                sid = re.search(r'(?i)\bid\s*=\s*"([^"]*)"', tok)
+                stack.append([sid.group(1) if sid else "이름 없는 섹션", 0])
+        else:
+            stack[-1][1] += -1 if closing else 1
+            if stack[-1][1] < 0:
+                out.append((stack[-1][0], "짝 없는 </div> — 바깥 요소를 닫는다"))
+                stack[-1][1] = 0
+    for sid, depth in reversed(stack[1:]):
+        out.append((sid, "닫히지 않은 <section>%s"
+                    % (" — <div> %d개도 열려 있다" % depth if depth else "")))
+    if stack[0][1]:
+        out.append((stack[0][0],
+                    "%d개의 <div>가 열린 채 문서가 끝난다" % stack[0][1]))
+    return out
+
+
 def _head_scope_end(html: str) -> int:
     """Return the first boundary after head CSS, including head-less old posts."""
     inert = _blank_inert(html)

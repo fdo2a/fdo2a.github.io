@@ -53,6 +53,12 @@ def audit(path):
     for tok, n in R.echoed_figures(html, ECHO_LIMIT):
         warns.append("같은 수치 %s가 산문에서 %d회 되풀이" % (tok, n))
 
+    for sid, why in R.section_div_breaks(html):
+        # 2026-09-03 발행본: §3이 div를 연 채 끝나고 §8에 짝 없는 </div>가 있어,
+        # 남은 하나가 본문 컨테이너를 §8 끝에서 닫았다. §9부터 1120px 제한과
+        # 좌우 여백을 잃어 「매크로 논리부터 폭이 넓어진다」로 보였다.
+        fails.append("%s 섹션 경계를 넘는 div — %s" % (sid or "이름 없는", why))
+
     if not R.has_override(html):
         fails.append("조판 오버라이드 미적용 — apply_readability.py를 돌릴 것")
     return m, fails, warns

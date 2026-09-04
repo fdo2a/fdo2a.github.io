@@ -463,3 +463,118 @@ def test_already_converted_labels_get_their_lost_space_back():
     """1차 소급 적용이 공백을 먹었다. 재적용으로는 안 잡히므로 따로 되살린다."""
     html = '<p><strong class="p-label">동인.</strong>오늘 장의 최대 동인은.</p>'
     assert '</strong> 오늘' in R.block_labels(html)
+
+
+# ── 섹션 경계를 넘는 div — 2026-09-03 발행본이 실제로 깨진 방식 ──────────────
+#
+# §3 「주식」이 `<div class="grid-2">` 를 닫지 않은 채 `</section>` 으로 끝났고,
+# §8 「매크로 논리」에는 짝 없는 `</div>` 가 하나 더 있었다. 여는 수와 닫는 수가
+# 문서 전체로는 맞아떨어져서 눈으로도, 기존 게이트로도 잡히지 않았다. 브라우저는
+# `</section>` 에서 열린 div 를 암묵적으로 닫아 버리므로, 남은 `</div>` 하나가
+# 본문 컨테이너(`.container`)를 §8 끝에서 닫았다 — 그 뒤 §9~§13 이 컨테이너
+# 밖으로 밀려나 1120px 제한과 좌우 여백을 잃었고, 「매크로 논리부터 폭이
+# 넓어진다」로 보였다.
+
+def test_a_div_left_open_at_the_section_boundary_is_caught():
+    html = ('<body><div class="container">'
+            '<section id="read-3"><div class="grid-2"><div class="card">A</div>'
+            '</section>'
+            '<section id="read-4"><div class="card">B</div></section>'
+            '</div></body>')
+    assert [k for k, _ in R.section_div_breaks(html)] == ["read-3"]
+
+
+def test_a_stray_closing_div_is_caught():
+    html = ('<body><div class="container">'
+            '<section id="read-8"><div class="card">A</div></div>'
+            '</section></div></body>')
+    breaks = R.section_div_breaks(html)
+    assert [k for k, _ in breaks] == ["read-8"]
+    assert "</div>" in breaks[0][1]
+
+
+def test_balanced_sections_pass():
+    html = ('<body><div class="container">'
+            '<section id="read-1"><div class="card"><div class="tbl-scroll">T</div>'
+            '</div></section>'
+            '<section id="read-2"><div class="card">B</div></section>'
+            '</div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+def test_comments_and_scripts_do_not_count_as_markup():
+    html = ('<body><div class="container">'
+            '<section id="read-1"><!-- <div> --><div class="card">A</div>'
+            '<script>if (a</div>b) {}</script></section></div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+def test_the_head_is_not_scanned():
+    """head 의 style·script 안 문자열이 마크업으로 세어지면 안 된다."""
+    html = ('<head><style>.card { }</style></head><body><div class="container">'
+            '<section id="read-1"><div class="card">A</div></section>'
+            '</div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+def test_nested_sections_each_keep_their_own_count():
+    """섹션을 겹쳐 쓰지는 않지만, 겹쳤을 때 바깥 섹션을 잃으면 미탐이 생긴다."""
+    html = ('<body><div class="container">'
+            '<section id="outer"><div class="card">'
+            '<section id="inner"><div class="x">A</div></section>'
+            '</section></div></body>')
+    assert [k for k, _ in R.section_div_breaks(html)] == ["outer"]
+
+
+def test_style_inside_the_body_is_not_markup():
+    """§4 섹터 표는 본문 안에 <style>을 함께 실어 온다."""
+    html = ('<body><div class="container">'
+            '<section id="read-4"><style>.spf-bar::after{content:"</div>"}</style>'
+            '<div class="card">A</div></section></div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+# 2026-09-04 codex 구현 검토가 뚫어 보인 것들.
+
+def test_a_greater_than_inside_an_attribute_is_not_a_tag_end():
+    html = ('<body><div class="container">'
+            '<section id="read-1" data-x="> <div>"><div class="card">A</div>'
+            '</section></div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+def test_tag_shaped_text_in_a_textarea_is_not_markup():
+    html = ('<body><div class="container">'
+            '<section id="read-1"><textarea><div></textarea>'
+            '<div class="card">A</div></section></div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+def test_the_other_comment_terminator_is_a_comment_too():
+    """브라우저는 `--!>` 도 주석 끝으로 받아들인다."""
+    html = ('<body><div class="container">'
+            '<section id="read-1"><!-- <div> --!><div class="card">A</div>'
+            '</section></div></body>')
+    assert R.section_div_breaks(html) == []
+
+
+def test_a_container_left_open_outside_every_section_is_caught():
+    """폭이 깨지는 경로는 섹션 안만이 아니다 — 컨테이너가 안 닫혀도 같다."""
+    html = ('<body><div class="container">'
+            '<section id="read-1"><div class="card">A</div></section>'
+            '</body>')
+    assert [k for k, _ in R.section_div_breaks(html)] == ["본문"]
+
+
+def test_a_stray_closing_div_between_sections_is_caught():
+    html = ('<body><div class="container">'
+            '<section id="read-1"><div class="card">A</div></section>'
+            '</div></div></body>')
+    assert [k for k, _ in R.section_div_breaks(html)] == ["본문"]
+
+
+def test_a_section_that_never_closes_is_caught():
+    html = ('<body><div class="container">'
+            '<section id="read-1"><div class="card">A</div></body>')
+    # 컨테이너도 함께 열린 채로 끝나므로 둘 다 나온다.
+    assert [k for k, _ in R.section_div_breaks(html)] == ["read-1", "본문"]
