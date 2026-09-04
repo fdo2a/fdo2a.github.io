@@ -19,8 +19,10 @@
 """
 
 import argparse
+import fcntl
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -28,11 +30,16 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from review.queue import is_watched, mark as mark_entry  # noqa: E402
-from review.queue import pending, seed, union_pending  # noqa: E402
+from review import prose as prose_mod  # noqa: E402
+from review.queue import accept as accept_entry  # noqa: E402
+from review.queue import baselines, classify, is_watched  # noqa: E402
+from review.queue import mark as mark_entry  # noqa: E402
+from review.queue import seed, union_pending  # noqa: E402
 
 LEDGER = 'reviews/index.json'
+LOCK = 'reviews/.index.lock'
 FETCH_TIMEOUT_SEC = 10
+BATCH_TIMEOUT_SEC = 30
 
 
 def repo_root():
@@ -47,6 +54,11 @@ def git(root, *args, **kw):
     """`-z` 출력을 쓰므로 경로 인코딩은 건드리지 않지만, quotepath는 확실히 끈다."""
     return subprocess.run(['git', '-C', root, '-c', 'core.quotepath=false', *args],
                           capture_output=True, text=True, **kw)
+
+
+def git_bytes(root, *args, **kw):
+    return subprocess.run(['git', '-C', root, '-c', 'core.quotepath=false', *args],
+                          capture_output=True, **kw)
 
 
 def _nul_fields(text):
@@ -92,12 +104,104 @@ def changed_paths(root, ref):
     return paths
 
 
-def hash_object(root, path):
-    out = git(root, 'hash-object', '--', path)
-    return out.stdout.strip() if out.returncode == 0 else None
+def hash_object(root, path, data=None):
+    """blob SHA. `data`를 주면 **그 바이트의** SHA다.
+
+    작업 폴더 파일은 SHA와 산문 지문이 반드시 같은 바이트에서 나와야 한다. 파일을 두 번
+    읽으면 그 사이의 수정으로 둘이 서로 다른 내용을 가리킬 수 있다.
+    """
+    if data is None:
+        out = git(root, 'hash-object', '--', path)
+        return out.stdout.strip() if out.returncode == 0 else None
+    out = git_bytes(root, 'hash-object', f'--path={path}', '--stdin', input=data)
+    return out.stdout.decode().strip() if out.returncode == 0 else None
 
 
-def working_tree(root, base, ref):
+_SHA = re.compile(r'^[0-9a-f]{40}$')
+
+
+class Blobs:
+    """blob SHA → 내용. 없으면 None.
+
+    커밋된 blob은 `cat-file --batch` **한 프로세스**로 미리 받는다. 항목마다 프로세스를
+    띄우면 origin 판과 작업 폴더 판이 같은 객체를 두 번씩 읽어 최초 1회가 수백 번이 된다.
+    작업 폴더 파일의 blob은 object DB에 없으므로(`hash-object`를 `-w` 없이 부른다 — 훅은
+    읽기 전용이어야 한다) `working_tree`가 읽어 둔 바이트를 여기에 맡겨 둔다.
+
+    **응답을 통째로 검증하고서야 캐시에 반영한다.** 헤더를 느슨하게 읽던 판은 요청에 섞인
+    쓰레기 한 줄에 스트림이 어긋나, 어떤 blob의 내용을 **다른 sha 아래** 캐시했다
+    (2026-09-04 codex 검토가 재현). 잘못된 내용을 조용히 통과시키느니 batch 전체를 버린다.
+    """
+
+    def __init__(self, root):
+        self.root = root
+        self._blobs = {}
+
+    def remember(self, sha, data):
+        self._blobs[sha] = data
+
+    def prefetch(self, shas):
+        want = sorted({s for s in shas if isinstance(s, str) and _SHA.match(s)
+                       and s not in self._blobs})
+        if not want:
+            return
+        try:
+            out = git_bytes(self.root, 'cat-file', '--batch',
+                            input=('\n'.join(want) + '\n').encode(),
+                            timeout=BATCH_TIMEOUT_SEC)
+        except (subprocess.TimeoutExpired, OSError):
+            return
+        if out.returncode:
+            return
+        got = self._parse(out.stdout, want)
+        if got is not None:
+            self._blobs.update(got)
+
+    @staticmethod
+    def _parse(buf, want):
+        """요청 순서대로 `<sha> blob <size>` 또는 `<sha> missing` 만 받는다.
+
+        하나라도 어긋나면 None — 그 batch 전체를 버린다. 어긋난 스트림에서 이어 읽으면 그
+        다음 blob 의 내용이 엉뚱한 sha 아래로 들어간다.
+        """
+        out, at = {}, 0
+        for sha in want:
+            nl = buf.find(b'\n', at)
+            if nl < 0:
+                return None
+            head = buf[at:nl].decode('utf-8', 'replace').split()
+            at = nl + 1
+            if not head or head[0] != sha:
+                return None
+            if len(head) == 2 and head[1] == 'missing':
+                continue
+            if len(head) != 3 or head[1] != 'blob':
+                return None
+            try:
+                size = int(head[2])
+            except ValueError:
+                return None
+            if size < 0 or at + size + 1 > len(buf) or buf[at + size] != 0x0A:
+                return None
+            out[sha] = buf[at:at + size]
+            at += size + 1
+        return out if at == len(buf) else None
+
+    def text(self, sha):
+        data = self._blobs.get(sha)
+        if data is None:
+            return None
+        try:
+            return data.decode('utf-8')
+        except UnicodeDecodeError:
+            return None
+
+    def equivalent(self, path, old_sha, new_sha):
+        """queue.classify 에 넘길 동등 판정."""
+        return prose_mod.typography(path, self.text(old_sha), self.text(new_sha))
+
+
+def working_tree(root, base, ref, blobs=None):
     """작업 폴더에 실제로 있는 내용으로 본 트리.
 
     손으로 고친 발행본은 push 전까지 origin에 없다. 손편집이야말로 이 게이트가 잡아야 할
@@ -111,9 +215,16 @@ def working_tree(root, base, ref):
         if not os.path.exists(os.path.join(root, path)):
             tree.pop(path, None)  # 로컬에서 지운 파일 — 이 눈에는 안 보인다
             continue
-        sha = hash_object(root, path)
+        try:
+            with open(os.path.join(root, path), 'rb') as fh:
+                data = fh.read()
+        except OSError:
+            continue
+        sha = hash_object(root, path, data)
         if sha:
             tree[path] = sha
+            if blobs is not None:
+                blobs.remember(sha, data)
     return tree
 
 
@@ -153,6 +264,51 @@ def save_ledger(root, ledger):
         raise
 
 
+class Ledger:
+    """원장을 잠그고 읽어, 로드 시점과 달라지지 않았을 때만 쓴다.
+
+    `os.replace()`는 반쪽 JSON만 막고 lost update는 막지 않는다. `mark` 한 건과 bulk
+    `refresh`가 겹치면 나중에 저장하는 쪽이 앞선 변경을 통째로 지운다.
+    """
+
+    def __init__(self, root):
+        self.root = root
+        self.lock = os.path.join(root, LOCK)
+        self.fd = None
+        self.before = None
+
+    def __enter__(self):
+        os.makedirs(os.path.dirname(self.lock), exist_ok=True)
+        self.fd = os.open(self.lock, os.O_CREAT | os.O_WRONLY, 0o644)
+        try:
+            # `O_EXCL` 파일은 프로세스가 강제 종료되거나 lock 을 잡은 뒤 원장 읽기가
+            # 실패하면 그대로 남아 이후 모든 writer 를 막는다. flock 은 커널이 푼다.
+            fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            os.close(self.fd)
+            self.fd = None
+            sys.exit(f'원장이 잠겨 있다 ({LOCK}). 다른 검토 작업이 돌고 있다.')
+        try:
+            self.before = load_ledger(self.root)
+        except BaseException:
+            self.__exit__(None, None, None)
+            raise
+        self.data = self.before
+        return self
+
+    def save(self, ledger):
+        if load_ledger(self.root) != self.before:
+            sys.exit('쓰는 동안 원장이 바뀌었다. 다시 실행해라.')
+        save_ledger(self.root, ledger)
+
+    def __exit__(self, *exc):
+        if self.fd is not None:
+            fcntl.flock(self.fd, fcntl.LOCK_UN)
+            os.close(self.fd)
+            self.fd = None
+        return False
+
+
 def now():
     return datetime.now().astimezone().isoformat(timespec='seconds')
 
@@ -172,13 +328,14 @@ def rel_path(root, path):
 
 
 def trees(root, want_fetch):
-    """(발행된 판, 작업 폴더 판, 기준 설명, 낡았는지). 한 번만 훑는다."""
+    """(발행된 판, 작업 폴더 판, 기준 설명, 낡았는지, 지문). 한 번만 훑는다."""
     fetched = try_fetch(root) if want_fetch else None
     published = tree_at(root, 'origin/main')
     ref = 'origin/main'
     if published is None:
         ref, published = 'HEAD', (tree_at(root, 'HEAD') or {})
-    work = working_tree(root, published, ref)
+    blobs = Blobs(root)
+    work = working_tree(root, published, ref, blobs)
 
     stale = ref == 'origin/main' and fetched is False
     if ref == 'HEAD':
@@ -189,51 +346,100 @@ def trees(root, want_fetch):
         basis = ('origin/main 캐시(fetch 실패) + 작업 폴더' if stale
                  else 'origin/main 캐시(조회 안 함) + 작업 폴더')
 
-    return published, work, basis, stale
+    return published, work, basis, stale, blobs
 
 
-def survey(root, want_fetch):
-    """(미검토 목록, 기준 설명, 낡았는지) — 발행된 판과 작업 폴더를 둘 다 본다."""
-    published, work, basis, stale = trees(root, want_fetch)
-    ledger = load_ledger(root)
-    todo = union_pending(pending(ledger, published), pending(ledger, work))
-    return todo, basis, stale
+def _needed_shas(ledger, trees_):
+    """내용이 필요한 blob — 원장과 SHA가 어긋난 항목의 새 판과 **모든 기준판**.
+
+    기준판을 승인분까지 넣는 이유: 최초 검토 blob은 force-push 뒤 gc나 얕은 클론에서 사라질
+    수 있고, 그때도 최근 승인분이 남아 있으면 판정이 된다.
+    """
+    reviewed = ledger.get('reviewed', {}) if isinstance(ledger, dict) else {}
+    want = set()
+    for tree in trees_:
+        for path, sha in tree.items():
+            if not is_watched(path):
+                continue
+            entry = reviewed.get(path)
+            if not isinstance(entry, dict):
+                continue
+            bases = baselines(entry)
+            if sha in bases:
+                continue
+            want.add(sha)
+            want.update(bases)
+    return want
+
+
+def _merge(left, right):
+    """두 뷰의 분류를 합친다. 한쪽에서라도 사람이 읽어야 하면 조판에서 뺀다."""
+    todo = union_pending(left.todo, right.todo)
+    unavailable = union_pending(left.unavailable, right.unavailable)
+    hot = {p.path for p in todo} | {p.path for p in unavailable}
+    typo = [p for p in union_pending(left.typography, right.typography)
+            if p.path not in hot]
+    return todo, typo, unavailable
+
+
+def survey(root, want_fetch, ledger=None):
+    """(미검토, 조판, 판정불가, 기준 설명, 낡았는지) — 발행된 판과 작업 폴더를 둘 다 본다."""
+    published, work, basis, stale, blobs = trees(root, want_fetch)
+    if ledger is None:
+        ledger = load_ledger(root)
+    blobs.prefetch(_needed_shas(ledger, (published, work)))
+    todo, typo, unavailable = _merge(classify(ledger, published, blobs.equivalent),
+                                     classify(ledger, work, blobs.equivalent))
+    return todo, typo, unavailable, basis, stale, published, work
 
 
 STALE_NOTE = '지금 본 판이 최신이 아닐 수 있다'
 
 
+TYPO_NOTE = '조판만 바뀐 %d건은 세지 않았다 (`review_gate.py refresh`로 원장 정리)'
+
+
 def cmd_pending(args):
     try:
         root = repo_root()
-        todo, basis, stale = survey(root, want_fetch=not args.no_fetch)
+        todo, typo, unavailable, basis, stale, _, _ = survey(
+            root, want_fetch=not args.no_fetch)
     except Exception as exc:  # noqa: BLE001 — 훅에서 조용히 죽는 것이 최악이다
         msg = f'[검토 게이트] 확인 실패 — {type(exc).__name__}: {exc}'
         print(msg)
         return 0 if args.hook else 1
 
+    queue = todo + unavailable
+
     if args.json:
         print(json.dumps({'basis': basis, 'stale': stale,
-                          'pending': [p.__dict__ for p in todo]}, ensure_ascii=False))
-        return 0 if (args.hook or not todo) else 1
+                          'pending': [p.__dict__ for p in queue],
+                          'typography': [p.__dict__ for p in typo],
+                          'unavailable': [p.__dict__ for p in unavailable]},
+                         ensure_ascii=False))
+        return 0 if (args.hook or not queue) else 1
 
     if args.hook:
-        if todo:
-            items = ', '.join(f'{p.path}({p.reason})' for p in todo[:5])
-            more = f' 외 {len(todo) - 5}건' if len(todo) > 5 else ''
-            print(f'[검토 게이트] codex 미검토 발행본 {len(todo)}건 — {items}{more}. '
+        if queue:
+            items = ', '.join(f'{p.path}({p.reason})' for p in queue[:5])
+            more = f' 외 {len(queue) - 5}건' if len(queue) > 5 else ''
+            print(f'[검토 게이트] codex 미검토 발행본 {len(queue)}건 — {items}{more}. '
                   f'기준 {basis}. 절차는 .claude/REVIEW_GATE.md.')
         elif stale:
             print(f'[검토 게이트] 미검토 없음 — 단 {STALE_NOTE} (기준 {basis}).')
         return 0
 
-    if not todo:
+    if not queue:
         print(f'미검토 없음 (기준 {basis})' + (f' — {STALE_NOTE}' if stale else ''))
-        return 0
-    print(f'미검토 {len(todo)}건 (기준 {basis})' + (f' — {STALE_NOTE}' if stale else ''))
-    for p in todo:
-        print(f'  - [{p.section}] {p.path} — {p.reason}')
-    return 1
+    else:
+        print(f'미검토 {len(queue)}건 (기준 {basis})'
+              + (f' — {STALE_NOTE}' if stale else ''))
+        for p in queue:
+            print(f'  - [{p.section}] {p.path} — {p.reason}')
+    # 조용히 사라지지 않게 꼬리에 남긴다.
+    if typo:
+        print('  ' + TYPO_NOTE % len(typo))
+    return 1 if queue else 0
 
 
 def cmd_mark(args):
@@ -241,17 +447,20 @@ def cmd_mark(args):
     path = rel_path(root, args.path)
     if not os.path.exists(os.path.join(root, path)):
         sys.exit(f'그런 파일이 없다: {path}')
-    sha = hash_object(root, path)
+    with open(os.path.join(root, path), 'rb') as fh:
+        data = fh.read()
+    sha = hash_object(root, path, data)
     if not sha:
         sys.exit(f'sha를 못 구했다: {path}')
-    try:
-        ledger = mark_entry(load_ledger(root), path, sha, at=now(),
-                            findings=args.findings)
-        if args.baseline:
-            ledger['reviewed'][path]['baseline'] = True
-    except ValueError as exc:
-        sys.exit(str(exc))
-    save_ledger(root, ledger)
+    with Ledger(root) as book:
+        try:
+            ledger = mark_entry(book.data, path, sha, at=now(),
+                                findings=args.findings)
+            if args.baseline:
+                ledger['reviewed'][path]['baseline'] = True
+        except ValueError as exc:
+            sys.exit(str(exc))
+        book.save(ledger)
     kind = '범위 편입(읽지 않음)' if args.baseline else f'지적 {args.findings}건'
     print(f'검토 기록 — {path} @ {sha[:12]} ({kind})')
     return 0
@@ -259,20 +468,57 @@ def cmd_mark(args):
 
 def cmd_seed(args):
     root = repo_root()
-    published, work, basis, _ = trees(root, want_fetch=False)
+    published, work, basis, _, _ = trees(root, want_fetch=False)
     # 발행된 판과 작업 폴더 판을 모두 기준선에 넣는다. 원격에만 있는 파일이 빠지면 그
     # 파일은 도입 첫날부터 미검토로 뜬다.
     tree = {**published, **work}
 
-    ledger = load_ledger(root)
-    if ledger.get('reviewed') and not args.force:
-        sys.exit(f'원장이 이미 있다 ({len(ledger["reviewed"])}건). 덮어쓰려면 --force.')
-    if args.force and ledger.get('reviewed'):
-        print('  (--force — 실제로 읽지 않은 글도 「본 것」으로 남는다)')
-    fresh = seed(tree, at=now())
-    save_ledger(root, fresh)
+    with Ledger(root) as book:
+        if book.data.get('reviewed') and not args.force:
+            sys.exit(f'원장이 이미 있다 ({len(book.data["reviewed"])}건). 덮어쓰려면 --force.')
+        if args.force and book.data.get('reviewed'):
+            print('  (--force — 실제로 읽지 않은 글도 「본 것」으로 남는다)')
+        fresh = seed(tree, at=now())
+        book.save(fresh)
     print(f'기준선 {len(fresh["reviewed"])}건 기록 (기준 {basis}) — '
           f'이후 발행·수정분부터 큐에 들어온다.')
+    return 0
+
+
+def cmd_refresh(args):
+    """조판만 바뀐 판을 «검토된 산문과 동등»으로 승인한다.
+
+    이 명령은 «읽었다»고 기록하지 않는다. `sha`·`at`·`findings`·`baseline`은 사람이 실제로
+    읽은 판을 가리킨 채로 두고 `accepted`만 붙인다. 기본이 dry-run 인 이유는, 동등 판정이
+    한 번 틀리면 아무도 안 읽은 판이 조용히 큐에서 사라지기 때문이다 — 적용은 손으로.
+    """
+    root = repo_root()
+    with Ledger(root) as book:
+        todo, typo, unavailable, basis, stale, published, work = survey(
+            root, want_fetch=not args.no_fetch, ledger=book.data)
+        if stale and not args.no_fetch:
+            sys.exit(f'{STALE_NOTE} (기준 {basis}). origin을 당긴 뒤 다시 해라.')
+        if not typo:
+            print(f'조판 변경 없음 (기준 {basis}).')
+            return 0
+
+        # 한 경로에 동등한 판이 둘이면 **둘 다** 승인한다. 승인을 하나만 담던 판은 origin
+        # 판과 작업 폴더 판이 매 실행 서로를 밀어내며 원장을 흔들었다(2026-09-04 codex #5).
+        picked = typo
+        for item in picked:
+            print(f'  [{item.section}] {item.path} → {item.sha[:12]}')
+        print(f'조판 {len(picked)}건 승인 대상 (기준 {basis})')
+        if not args.apply:
+            print('  (dry-run — 실제로 쓰려면 --apply)')
+            return 0
+
+        ledger = book.data
+        stamp = now()
+        for item in picked:
+            ledger = accept_entry(ledger, item.path, item.sha, at=stamp)
+        book.save(ledger)
+        done = len(picked)
+    print(f'{done}건 승인 — 읽었다고 기록하지 않았다.')
     return 0
 
 
@@ -297,6 +543,12 @@ def main():
     p = sub.add_parser('seed', help='도입 시 1회 — 현재 발행분을 기준선으로')
     p.add_argument('--force', action='store_true')
     p.set_defaults(fn=cmd_seed)
+
+    p = sub.add_parser('refresh', help='조판만 바뀐 판을 동등으로 승인 (읽었다고 기록하지 않는다)')
+    p.add_argument('--apply', action='store_true', help='실제로 원장에 쓴다')
+    p.add_argument('--no-fetch', action='store_true')
+    p.set_defaults(fn=cmd_refresh)
+
 
     args = ap.parse_args()
     return args.fn(args)

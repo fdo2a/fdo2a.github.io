@@ -25,7 +25,7 @@ Design: docs/superpowers/specs/2026-08-24-post-publish-review-gate-design.md
 """
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # Directories holding generated fragments and test fixtures. Nothing here is an argument
 # a reviewer could disagree with.
@@ -65,7 +65,26 @@ class Pending:
     path: str
     section: str
     sha: str
-    reason: str  # '신규' | '수정됨'
+    reason: str  # '신규' | '수정됨' | '지문 확인 불가'
+
+
+@dataclass(frozen=True)
+class Classified:
+    """한 번의 조사 결과를 세 갈래로.
+
+    셋을 한 번에 돌려주는 이유는, 같은 조사 결과를 `pending --hook`·`--json`·`refresh`가
+    각각 다시 판정하면 서로 다른 답을 낼 수 있기 때문이다. 조판 항목을 목록에서 그냥
+    빼 버리면 `refresh`가 그것을 받을 통로가 없고, `Pending`으로 섞어 돌려주면 훅과 exit
+    code가 미검토로 센다.
+    """
+    todo: list = field(default_factory=list)          # 사람이 읽어야 하는 것
+    typography: list = field(default_factory=list)    # 조판만 바뀐 것
+    unavailable: list = field(default_factory=list)   # 지문을 못 구한 것 — 미검토로 센다
+
+    @property
+    def pending(self):
+        """훅이 세는 수. 판정 불가는 안전한 쪽인 미검토로 센다."""
+        return self.todo + self.unavailable
 
 
 def is_watched(path):
@@ -127,16 +146,76 @@ def _reviewed_sha(ledger, path):
     return sha if isinstance(sha, str) else None
 
 
-def pending(ledger, tree):
-    """Pages in `tree` needing review, newest first."""
-    out = []
+def _entry(ledger, path):
+    reviewed = ledger.get('reviewed') if isinstance(ledger, dict) else None
+    if not isinstance(reviewed, dict):
+        return None
+    entry = reviewed.get(path)
+    return entry if isinstance(entry, dict) else None
+
+
+# 한 경로가 들고 갈 수 있는 승인 판의 수. origin 판과 작업 폴더 판이 동시에 조판 동등일 수
+# 있고(그때 하나만 담으면 매 실행 승인이 서로를 밀어낸다), 그렇다고 무한히 쌓으면 원장이
+# 커진다.
+ACCEPTED_MAX = 8
+
+
+def accepted_shas(entry):
+    """조판 동등으로 승인된 blob들. 사람이 읽은 판(`sha`)과는 다른 자리다."""
+    acc = entry.get('accepted') if isinstance(entry, dict) else None
+    if not isinstance(acc, list):
+        return []
+    return [a['sha'] for a in acc
+            if isinstance(a, dict) and isinstance(a.get('sha'), str)]
+
+
+def baselines(entry):
+    """동등 판정의 기준으로 쓸 수 있는 판들 — 최근 승인분 먼저, 그다음 읽은 판.
+
+    최초 검토 blob은 force-push 뒤 gc나 얕은 클론에서 사라질 수 있다. 그때도 최근 승인분이
+    남아 있으면 판정이 된다.
+    """
+    got = list(reversed(accepted_shas(entry)))
+    was = entry.get('sha') if isinstance(entry, dict) else None
+    if isinstance(was, str) and was not in got:
+        got.append(was)
+    return got
+
+
+def classify(ledger, tree, equivalent=None):
+    """`tree`를 미검토·조판·판정불가로 가른다, 최신 순.
+
+    `equivalent(path, old_sha, new_sha) -> True | False | None` 를 주면 blob SHA가 움직인
+    항목을 한 번 더 거른다. None은 「같다」가 아니라 「모른다」이므로 미검토로 센다.
+    주지 않으면 SHA만 보던 예전 판정 그대로다.
+    """
+    out = Classified()
     for path in sorted(watched(tree), key=_sort_key, reverse=True):
+        now = tree[path]
+        entry = _entry(ledger, path)
         was = _reviewed_sha(ledger, path)
-        if was is None:
-            out.append(Pending(path, section_of(path), tree[path], '신규'))
-        elif was != tree[path]:
-            out.append(Pending(path, section_of(path), tree[path], '수정됨'))
+        if entry is None or was is None:
+            out.todo.append(Pending(path, section_of(path), now, '신규'))
+            continue
+        if now == was or now in accepted_shas(entry):
+            continue
+        if equivalent is None:
+            out.todo.append(Pending(path, section_of(path), now, '수정됨'))
+            continue
+        verdicts = [equivalent(path, base, now) for base in baselines(entry)]
+        if any(v is True for v in verdicts):
+            out.typography.append(Pending(path, section_of(path), now, '조판'))
+        elif any(v is False for v in verdicts):
+            out.todo.append(Pending(path, section_of(path), now, '수정됨'))
+        else:
+            out.unavailable.append(
+                Pending(path, section_of(path), now, '판정 불가'))
     return out
+
+
+def pending(ledger, tree, equivalent=None):
+    """Pages in `tree` needing review, newest first. 호환 래퍼."""
+    return classify(ledger, tree, equivalent).pending
 
 
 def union_pending(*groups):
@@ -175,12 +254,41 @@ def seed(tree, at):
     }}
 
 
-def mark(ledger, path, sha, at, findings=0):
-    """Ledger with `path` recorded as reviewed at `sha`. Returns a new dict."""
-    if not is_watched(path):
-        raise ValueError(f'감시 대상이 아닌 경로다: {path}')
+def _replace(ledger, path, entry):
     reviewed = ledger.get('reviewed') if isinstance(ledger, dict) else None
     reviewed = dict(reviewed) if isinstance(reviewed, dict) else {}
-    reviewed[path] = {'sha': sha, 'at': at, 'findings': findings}
+    reviewed[path] = entry
     base = ledger if isinstance(ledger, dict) else {}
     return {**base, 'reviewed': reviewed}
+
+
+def mark(ledger, path, sha, at, findings=0):
+    """Ledger with `path` recorded as reviewed at `sha`. Returns a new dict.
+
+    새로 읽었으므로 이전에 승인해 둔 판들은 버린다 — 그것들은 옛 판과의 동등이었다.
+    """
+    if not is_watched(path):
+        raise ValueError(f'감시 대상이 아닌 경로다: {path}')
+    return _replace(ledger, path, {'sha': sha, 'at': at, 'findings': findings})
+
+
+def accept(ledger, path, sha, at):
+    """조판만 바뀐 판을 «검토된 산문과 동등»으로 승인한다.
+
+    `sha`·`at`·`findings`·`baseline`은 **건드리지 않는다.** 그 자리는 사람이 실제로 읽은
+    판을 가리켜야 하고, 여기서 갱신하면 원장을 보는 사람이 읽지 않은 blob을 검토된 판으로
+    오해한다.
+
+    승인은 **쌓인다.** 하나만 담으면 origin 판과 작업 폴더 판이 둘 다 동등할 때 매 실행이
+    서로를 밀어내며 원장을 흔든다.
+    """
+    entry = _entry(ledger, path)
+    if entry is None:
+        raise ValueError(f'원장에 없는 경로는 승인할 수 없다: {path}')
+    if sha == entry.get('sha') or sha in accepted_shas(entry):
+        return ledger
+    acc = [a for a in entry.get('accepted', []) if isinstance(a, dict)]
+    acc.append({'sha': sha, 'at': at, 'reason': 'typography'})
+    fresh = dict(entry)
+    fresh['accepted'] = acc[-ACCEPTED_MAX:]
+    return _replace(ledger, path, fresh)

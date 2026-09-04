@@ -35,3 +35,6 @@ bond/data/bond_research.md
 # codex CLI 세션 산출물
 .codex/
 .DS_Store
+
+# 검토 게이트 원장 잠금 — 루틴의 `git add -A` 에 딸려가면 안 된다
+reviews/.index.lock

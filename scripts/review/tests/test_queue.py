@@ -209,3 +209,120 @@ def test_the_same_version_seen_twice_is_still_one_row():
 
 def test_union_of_nothing_is_nothing():
     assert union_pending([], []) == []
+
+
+# ── 방향성 동등 판정으로 조판 변경을 걸러낸다 ────────────────────────────────
+
+from review.queue import accept, accepted_shas, baselines, classify  # noqa: E402
+
+LEDGER2 = {'reviewed': {
+    'posts/2026-08-21.html': {'sha': 'old', 'at': 't', 'findings': 0},
+}}
+ONE = {'posts/2026-08-21.html': 'new'}
+
+
+def verdicts(mapping):
+    """(old_sha, new_sha) -> True/False/None."""
+    return lambda path, old, new: mapping.get((old, new))
+
+
+def test_a_typography_only_change_leaves_the_queue():
+    got = classify(LEDGER2, ONE, verdicts({('old', 'new'): True}))
+    assert got.todo == [] and got.unavailable == []
+    assert [p.path for p in got.typography] == ['posts/2026-08-21.html']
+    assert got.pending == []
+
+
+def test_a_prose_change_stays_in_the_queue():
+    got = classify(LEDGER2, ONE, verdicts({('old', 'new'): False}))
+    assert [p.reason for p in got.todo] == ['수정됨']
+    assert got.typography == []
+
+
+def test_an_undecidable_change_counts_as_unreviewed():
+    """None은 「같다」가 아니라 「모른다」다."""
+    got = classify(LEDGER2, ONE, verdicts({}))
+    assert got.todo == [] and got.typography == []
+    assert [p.reason for p in got.unavailable] == ['판정 불가']
+    assert len(got.pending) == 1
+
+
+def test_without_a_verdict_source_the_old_sha_only_judgment_stands():
+    """기존 27 tests가 이 계약 위에 있다."""
+    assert [p.reason for p in classify(LEDGER2, ONE).todo] == ['수정됨']
+
+
+def test_an_unchanged_page_is_never_judged():
+    """SHA가 같으면 blob을 읽으러 가지 않는다 — 정상 상태에서 git 호출 0."""
+    def explode(path, old, new):
+        raise AssertionError('불려서는 안 된다')
+    assert classify(LEDGER2, {'posts/2026-08-21.html': 'old'}, explode).pending == []
+
+
+def test_an_accepted_version_is_the_fast_path_next_time():
+    once = accept(LEDGER2, 'posts/2026-08-21.html', 'new', at='u')
+
+    def explode(path, old, new):
+        raise AssertionError('불려서는 안 된다')
+    assert classify(once, ONE, explode).pending == []
+
+
+def test_accepting_does_not_touch_the_reviewed_version():
+    entry = accept(LEDGER2, 'posts/2026-08-21.html', 'new',
+                   at='u')['reviewed']['posts/2026-08-21.html']
+    assert entry['sha'] == 'old' and entry['at'] == 't' and entry['findings'] == 0
+    assert accepted_shas(entry) == ['new']
+    assert entry['accepted'][0]['reason'] == 'typography'
+
+
+def test_accepted_versions_accumulate_so_two_views_do_not_fight():
+    """origin 판과 작업 폴더 판이 둘 다 동등하면 둘 다 담는다."""
+    book = accept(accept(LEDGER2, 'posts/2026-08-21.html', 'r', at='u'),
+                  'posts/2026-08-21.html', 'w', at='u')
+    assert accepted_shas(book['reviewed']['posts/2026-08-21.html']) == ['r', 'w']
+
+
+def test_accepting_the_same_version_twice_changes_nothing():
+    once = accept(LEDGER2, 'posts/2026-08-21.html', 'new', at='u')
+    assert accept(once, 'posts/2026-08-21.html', 'new', at='v') is once
+    assert accept(LEDGER2, 'posts/2026-08-21.html', 'old', at='v') is LEDGER2
+
+
+def test_accepted_versions_do_not_grow_without_bound():
+    book = LEDGER2
+    for n in range(20):
+        book = accept(book, 'posts/2026-08-21.html', f's{n}', at='u')
+    kept = accepted_shas(book['reviewed']['posts/2026-08-21.html'])
+    assert len(kept) == 8 and kept[-1] == 's19'
+
+
+def test_reviewing_again_forgets_the_accepted_versions():
+    """새로 읽었으면 옛 판과의 동등 기록은 의미가 없다."""
+    once = accept(LEDGER2, 'posts/2026-08-21.html', 'new', at='u')
+    again = mark(once, 'posts/2026-08-21.html', 'new', at='v', findings=1)
+    assert accepted_shas(again['reviewed']['posts/2026-08-21.html']) == []
+
+
+def test_an_accepted_version_can_serve_as_the_baseline():
+    """최초 검토 blob이 사라져도 최근 승인분이 남아 있으면 판정이 된다."""
+    once = accept(LEDGER2, 'posts/2026-08-21.html', 'mid', at='u')
+    entry = once['reviewed']['posts/2026-08-21.html']
+    assert baselines(entry) == ['mid', 'old']
+    got = classify(once, ONE, verdicts({('mid', 'new'): True}))
+    assert [p.path for p in got.typography] == ['posts/2026-08-21.html']
+
+
+def test_accepting_does_not_mutate_the_ledger_it_was_given():
+    accept(LEDGER2, 'posts/2026-08-21.html', 'new', at='u')
+    assert 'accepted' not in LEDGER2['reviewed']['posts/2026-08-21.html']
+
+
+def test_accepting_an_unknown_path_is_refused():
+    with pytest.raises(ValueError):
+        accept(LEDGER2, 'posts/2026-09-01.html', 'new', at='u')
+
+
+def test_a_new_page_is_never_typography():
+    """원장에 없는 글은 판정이 무엇이든 신규다 — refresh가 집어갈 수 없어야 한다."""
+    got = classify({'reviewed': {}}, ONE, verdicts({('old', 'new'): True}))
+    assert [p.reason for p in got.todo] == ['신규'] and got.typography == []
