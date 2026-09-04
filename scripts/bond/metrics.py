@@ -88,8 +88,7 @@ def curve_block(market, prev, prev_dates=None):
             # 출처가 바뀐 만기는 «어제 대비»가 성립하지 않는다. 야후 스팟과 FRED 는
             # 산출 기준이 달라, 어제 FRED 값과 오늘 야후 값을 빼면 그 차이의 일부는
             # 시장이 아니라 소스 교체가 만든 것이다.
-            prev_src = ((prev_dates or {}).get('us_source') or {}).get(tenor) \
-                if country == 'us' else None
+            prev_src = ((prev_dates or {}).get(f'{country}_source') or {}).get(tenor)
             src_changed = bool(prev_src) and prev_src != row.get('source')
             stale = row.get('date') != market.get('report_date') or src_changed
             tenors[tenor] = {

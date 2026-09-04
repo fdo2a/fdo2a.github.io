@@ -57,11 +57,18 @@ GROUPS = {
     'bei': ('breakeven', 'FRED'), 'de': ('de_curve', 'Bundesbank'),
     'ea': ('ea_curve', 'ECB'), 'jp': ('jp_curve', 'MOF Japan'),
     'gb': ('gb_curve', 'BOE'), 'kr': ('kr_curve', 'ECOS 한국은행'),
+    'us_naver': ('us_curve', 'Naver'), 'gb_naver': ('gb_curve', 'Naver'),
+    'kr_naver': ('kr_curve', 'Naver'),
     'misc': ('misc', 'FRED'),
 }
 
 
-def rows_at(hist, cutoff):
+# 같은 날짜를 두 소스가 줄 때 누가 이기는지 못 박는다. 사전 순서에 맡기면 만기마다
+# 출처가 갈려 「전 만기 동일 기준일」이 무의미해진다. 숫자가 클수록 우선.
+SOURCE_PRIORITY = {'Naver': 3, 'Yahoo': 2}
+
+
+def rows_at(hist, cutoff, groups=None, priority=None):
     """각 계열에서 cutoff 이하의 마지막 관측으로 행을 만든다.
 
     소스마다 게시 시차가 달라(분데스방크 T-0, ECB·FRED BAML T-1) 기준일 뒤의 값을
@@ -69,9 +76,11 @@ def rows_at(hist, cutoff):
     커브가 08-28 이라 전부 탈락했다), 그대로 두면 하루 어긋난 값이 실린다.
     답은 **기준일 이하의 마지막 값**이고, 그 값의 실제 날짜를 행에 남기는 것이다.
     """
+    groups = GROUPS if groups is None else groups
+    priority = SOURCE_PRIORITY if priority is None else priority
     out = {}
     for group, series_by_tenor in hist.items():
-        node_key, source = GROUPS.get(group, (group, ''))
+        node_key, source = groups.get(group, (group, ''))
         node = out.setdefault(node_key, {})
         for tenor, pairs in series_by_tenor.items():
             # 소스가 오름차순으로 준다고 믿지 않는다. 내림차순이 한 번 섞이면
@@ -84,10 +93,16 @@ def rows_at(hist, cutoff):
                     break
             if pick:
                 # 같은 만기를 두 소스가 주면 **더 최신 관측이 이긴다.** 야후 스팟이
-                # FRED 보다 하루 이상 앞서므로 실무상 야후가 이긴다.
+                # FRED 보다 하루 이상 앞서므로 실무상 야후가 FRED 를 이긴다.
+                # 날짜가 같으면 SOURCE_PRIORITY 로 가른다 — 신선도가 먼저고,
+                # 우선순위는 동률을 깨는 데만 쓴다.
                 cur = node.get(tenor)
-                if cur and cur['date'] >= pick[0]:
-                    continue
+                if cur:
+                    if cur['date'] > pick[0]:
+                        continue
+                    if cur['date'] == pick[0] and \
+                            priority.get(cur['source'], 0) >= priority.get(source, 0):
+                        continue
                 node[tenor] = {'level': pick[1], 'date': pick[0],
                                'source': source, 'tenor': tenor}
     return out
@@ -131,7 +146,8 @@ def align_decomposition(rates, hist, cutoff):
 
 def collect_rates():
     hist = {'us': {}, 'us_spot': {}, 'us_fred': {}, 'real': {}, 'bei': {},
-            'de': {}, 'ea': {}, 'jp': {}, 'gb': {}, 'kr': {}, 'misc': {}}
+            'de': {}, 'ea': {}, 'jp': {}, 'gb': {}, 'kr': {}, 'misc': {},
+            'us_naver': {}, 'gb_naver': {}, 'kr_naver': {}}
 
     print('· FRED 미국 커브·실질·기대인플레')
     for tenor, sid in src.FRED_US_CURVE.items():
@@ -191,6 +207,15 @@ def collect_rates():
         s = src.ecos_series(item)
         if s:
             hist['kr'][tenor] = s
+
+    # 네이버 국채 종가 — 미국 2Y(FRED T-1), 길트(BOE T-5), 한국(ECOS 두 점)이
+    # 목적이다. 비-코어라 실패해도 그 만기만 빠지고 기존 소스가 그대로 남는다.
+    for nation, codes in src.NAVER_BOND.items():
+        print(f'· 네이버 국채 종가 ({nation})')
+        for tenor, code in codes.items():
+            s = retry(lambda c=code: src.naver_bond_series(c), label=f'Naver {code}')
+            if s:
+                hist[f'{nation}_naver'][tenor] = s
     return hist
 
 

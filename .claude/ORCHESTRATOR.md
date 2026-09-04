@@ -10,6 +10,14 @@ The repository fdo2a/fdo2a.github.io is cloned into your workspace as a source (
 
 A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects canonical yfinance/FRED data in a network-open runner and commits `data/market_data.json`, `data/intraday.json`, `data/econ_indicators.json`, `data/sector_performance.html`, `data/yield_curve.png` before this routine fires. **This is the primary data path** — the routine's own environment blocks finance hosts (Yahoo/FRED/exchanges all 403), so do NOT try to fetch them here.
 
+0. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` 이 이미 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
+
+   **「기대 세션과 같고」가 조건의 핵심이다.** 커밋된 데이터가 아직 어제 것이면(수집이 밀린 날 — 2026-08-27 이래 정상이다) 그 어제 글이 있는 건 당연하므로, 여기서 멈추면 오늘 글이 영영 안 나온다. 데이터가 낡았으면 가드를 통과시켜 아래 3번의 워크플로 재실행으로 내려보내고, **새 데이터를 받은 뒤 이 검사를 다시 한다**.
+
+   이 루틴은 하루에 여러 번 뜰 수 있다 — 수집 커밋에 걸린 웹훅(레포의 **모든** push 에 반응하고, 현재 두 벌이 걸려 있다)과 예약 크론이 함께 있고, GitHub 예약 실행이 2~5시간씩 밀리므로 순서도 보장되지 않는다. 가드가 없으면 그 여분의 회차가 같은 날 글을 다시 쓴다. 채권 파이프라인이 같은 이유로 같은 가드를 STEP 0 에 두고 있다.
+
+   **발행 커밋 직전에 이 검사를 한 번 더 한다.** 웹훅이 여러 벌이라 두 회차가 거의 동시에 시작할 수 있고, STEP 0 의 검사만으로는 둘 다 통과해 둘 다 쓰게 된다. 커밋 직전에 `git pull` 하고 `posts/<report_date>.html` 이 그 사이 생겼으면 **아무것도 커밋하지 말고 중단한다**. push 가 거절되면(이 레포는 KR·채권·thesis 수집이 함께 쓰므로 **우리와 무관한 커밋 때문에도 거절된다**) 강제로 밀지 말고 `git pull --rebase` 후 `posts/<report_date>.html` 이 원격에 생겼는지 확인한다 — 생겼으면 다른 회차가 발행한 것이니 중단하고, 아니면 그대로 다시 push 한다.
+
 1. `git -C <repo> pull` (or re-clone) to get the latest committed data, then Read `data/market_data.json`.
 2. If it exists, `report_date` matches today's expected US session (most recent US weekday; if it looks stale by >1 trading day, note it), and `"complete": true` — **copy the five data files to the workspace root** (`market_data.json`, `intraday.json`, `econ_indicators.json`, `sector_performance.html`, `yield_curve.png`) and skip STEP 1's market-data collection entirely. Proceed to STEP 1 for research_notes.md only (the web-research half).
    Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.

@@ -402,6 +402,9 @@ def split_sentence(d10, d5):
     return ' '.join(parts)
 
 
+from bond.report_note import source_note
+
+
 def curve_table(node, title, note='', scope='us'):
     order = ['3M', '6M', '1Y', '2Y', '3Y', '5Y', '7Y', '10Y', '20Y', '30Y', '40Y']
     ten = node.get('tenors') or {}
@@ -588,7 +591,7 @@ def build(datadir, outdir, sitedir):
 시간이 지나면 10년물이던 채권이 9년물이 되고, 커브가 우상향이면 9년 금리가 더 낮으니
 그만큼 가격이 오릅니다. 만기가 짧아지며 저절로 붙는 이익이죠.
 채권 아이디어를 금리 방향만으로 보면 안 되는 이유가 여기 있습니다.</p>
-{curve_table(us, '미국 국채 — 발행값', ' · 5·10·30년은 야후 스팟 지수(주식 종가와 동일자), 나머지 만기는 FRED')}
+{curve_table(us, '미국 국채 — 발행값', source_note(us))}
 <h3>해외 금리 — 방향만 확인한다</h3>
 <p>이 리포트가 담는 상품 구성에서 해외 금리 노출은 {n(fr_pct, 1)}%입니다(뒤 §8에서 역산합니다).
 그래서 분트나 JGB의 커브를 매일 해부하지는 않아요. 대신 <b>딱 하나</b>를 봅니다 —

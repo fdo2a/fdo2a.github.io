@@ -327,3 +327,46 @@ def ishares_characteristics(tickers=UNIVERSE):
         row['source'] = 'iShares'
         out[t] = row
     return out
+
+
+# --- 네이버 국채 종가 (2026-09-04) -------------------------------------------
+# 기존 소스의 게시 시차가 그대로 커브에 남아 있었다 (2026-09-02 실측):
+#   미국 2Y  FRED 09-01 (T-1)  ← 10Y 는 야후 09-02 라 2s10s 두 다리가 갈린다
+#   길트     BOE  08-28 (T-5)
+#   한국     ECOS 3Y·10Y 두 점뿐 — 커브라 부를 수도 없다
+# 네이버는 셋 다 T-0 로, 그것도 **전 만기를 한 날짜**로 준다(SIFMA 17:05 ET 종가,
+# 미국 기준 실측 120/120 영업일 정렬). US 파이프라인이 같은 소스를 쓰므로 두 리포트가
+# 같은 커브를 말하게 되는 부수 효과도 있다.
+NAVER_PRICES = 'https://m.stock.naver.com/front-api/marketIndex/prices'
+NAVER_BOND = {
+    'us': {t: f'US{t}T=RR' for t in ('3M', '6M', '1Y', '2Y', '3Y', '5Y', '7Y', '10Y', '20Y', '30Y')},
+    'gb': {t: f'GB{t}T=RR' for t in ('2Y', '5Y', '10Y', '20Y', '30Y')},
+    'kr': {t: f'KR{t}T=RR' for t in ('1Y', '2Y', '3Y', '5Y', '10Y', '20Y', '30Y')},
+}
+
+
+def naver_bond_series(code, pages=2, page_size=60):
+    """(date, level) 쌍, 오래된 것 -> 최신. 실패하면 빈 리스트(비-코어 취급).
+
+    `pageSize` 는 10 미만을 거부한다(`too_small`). 페이지 하나가 비면 더 안 넘긴다.
+    """
+    from urllib.parse import quote
+    from us.naver_yields import parse_prices
+
+    rows = []
+    for page in range(1, pages + 1):
+        url = (f'{NAVER_PRICES}?category=bond&reutersCode={quote(code, safe="")}'
+               f'&page={page}&pageSize={page_size}')
+        try:
+            got = parse_prices(json.loads(_text(url)))
+        except Exception:
+            # 첫 페이지 실패는 «못 받았다»이므로 위로 올려보낸다 — 여기서 삼키면
+            # 바깥 retry() 가 재시도할 거리가 사라진다(실측: tries=3 인데 호출 1회).
+            # 뒤 페이지 실패는 «더 없다»일 수 있으니 받아 둔 것을 살린다.
+            if page == 1:
+                raise
+            break
+        if not got:
+            break
+        rows += got
+    return sorted(set(rows))

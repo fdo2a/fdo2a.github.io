@@ -79,13 +79,16 @@ def market_record(market):
         # 크레딧이 이틀 연속 같은 값을 주는 날과 정말 안 움직인 날이 구별되지 않는다.
         'dates': {
             'credit': obs_dates(market.get('credit')),
-            'us': obs_dates(market.get('us_curve')),
-            'us_source': obs_sources(market.get('us_curve')),
             'us_fred': obs_dates(market.get('us_curve_fred')),
-            'de': obs_dates(market.get('de_curve')),
-            'jp': obs_dates(market.get('jp_curve')),
-            'gb': obs_dates(market.get('gb_curve')),
-            'ea': obs_dates(market.get('ea_curve')),
+            # 날짜와 **출처를 나라마다** 남긴다. 예전에는 미국만 출처를 남겼는데,
+            # 2026-09-04 에 길트가 BOE(T-5) 에서 네이버(T-0) 로, 한국이 ECOS 에서
+            # 네이버로 갈아타면서 10년물이 하루 만에 17bp 뛴 것처럼 보이게 됐다.
+            # 시장이 움직인 게 아니라 소스가 바뀐 것이고, 출처를 안 남기면 다음 날
+            # «어제 대비»가 그 점프를 그대로 하루 변화로 읽는다.
+            **{k: obs_dates(market.get(f'{k}_curve'))
+               for k in ('us', 'de', 'jp', 'gb', 'ea', 'kr')},
+            **{f'{k}_source': obs_sources(market.get(f'{k}_curve'))
+               for k in ('us', 'de', 'jp', 'gb', 'ea', 'kr')},
         },
         'us': curve(market.get('us_curve')),
         # 발행값(야후 스팟)과 별개로 FRED 원본을 남긴다 — 명목=실질+기대인플레
