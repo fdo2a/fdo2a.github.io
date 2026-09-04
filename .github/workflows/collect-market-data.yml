@@ -20,6 +20,10 @@ on:
         description: 'Regenerate even if a complete dataset for the same report date exists'
         type: boolean
         default: false
+      fred_check:
+        description: '수집 대신 FRED 공식 API 와 graph CSV 를 대조만 하고 끝낸다 (아무것도 커밋하지 않는다)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,7 +33,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # 키는 레포 시크릿에만 있고 로컬 셸에는 없다 — 전송을 바꾼 뒤 «같은 숫자인가» 를
+  # 물을 수 있는 자리가 여기뿐이라 진단을 워크플로에 둔다. 아무것도 쓰지 않고,
+  # 불일치가 하나라도 남으면 빨간 실행으로 끝난다.
+  fred_check:
+    if: github.event.inputs.fred_check == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet certifi
+      - name: Compare official API against the graph CSV
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python scripts/collect_market_data.py --fred-check
+
   collect:
+    if: github.event.inputs.fred_check != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,6 +67,10 @@ jobs:
         run: pip install --quiet yfinance pandas matplotlib certifi 'curl_cffi>=0.15.0' pypdf
 
       - name: Collect
+        # FRED_API_KEY 는 **스텝 단위**로만 준다(ECOS 선례). 키가 없거나 거부당하면
+        # 수집기가 예전 graph CSV 로 내려가 그대로 발행한다 — 데이터는 절대 안 멈춘다.
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           python scripts/collect_market_data.py --outdir data ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
 
@@ -95,6 +121,12 @@ jobs:
           print(f"report_date={d['report_date']} complete={d['complete']}")
           if d['missing']:
               print('missing:', ', '.join(d['missing']))
+          f = d.get('fred') or {}
+          print(f"fred: transport={f.get('transport')} reason={f.get('reason')} "
+                f"requests={f.get('requests')} series={f.get('series_ok')}")
+          for label in ('failed', 'csv_rescued'):
+              if f.get(label):
+                  print(f'::warning::fred {label}: ' + ', '.join(f[label]))
           PY
 
       - name: Commit data
@@ -112,3 +144,20 @@ jobs:
           git add data/weekly data/monthly 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: market data for ${RD}"
+
+      # 키가 설정됐는데 거부당했으면 빨간 실행으로 남긴다. **커밋 뒤**인 이유는
+      # 폴백 데이터가 이미 레포에 들어가 있어야 하기 때문이다 — 죽은 키가 몇 주 동안
+      # 조용히 지나가는 것만 막으면 된다.
+      - name: FRED key health
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, sys
+          f = (json.load(open('data/market_data.json')).get('fred') or {})
+          if os.environ.get('FRED_API_KEY') and f.get('degraded'):
+              print(f"::error::FRED API key configured but unused ({f.get('reason')}) — "
+                    f"data was collected from the unofficial graph CSV")
+              sys.exit(1)
+          print(f"fred transport={f.get('transport')} ok")
+          PY

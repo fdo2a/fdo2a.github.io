@@ -9,7 +9,7 @@ Schema is identical to the inline scripts in .claude/agents/brief-data-collector
 plus top-level report_date / complete / missing / source fields used by the
 orchestrator's completeness gate.
 """
-import argparse, csv, datetime, io, json, os, ssl, sys, time, urllib.request, warnings
+import argparse, datetime, json, os, ssl, sys, time, urllib.request, warnings
 
 warnings.filterwarnings('ignore')
 
@@ -301,12 +301,34 @@ def render_sector_perf_html(perf, as_of, path):
     open(path, 'w').write(html)
 
 
+_FRED = None
+
+
+def fred_client():
+    """이 실행의 FRED 클라이언트. `main()` 이 미리 세우고, 그 밖의 진입점(테스트·
+    직접 import)에서는 여기서 처음 만들어진다. 전역이 아니라 «실행당 하나» 인 이유는
+    한 번 열화한 전역은 인터프리터가 끝날 때까지 열화한 채로 남기 때문이다."""
+    global _FRED
+    if _FRED is None:
+        from us.fred import FredClient
+        _FRED = FredClient(ssl_ctx=_SSL)
+    return _FRED
+
+
+def set_fred_client(client):
+    """실행·테스트가 클라이언트를 주입한다(None 이면 리셋)."""
+    global _FRED
+    _FRED = client
+    return client
+
+
 def fred_series(sid):
-    """(date, value) pairs, oldest→newest, '.' rows dropped."""
-    url = f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}'
-    data = urllib.request.urlopen(url, timeout=25, context=_SSL).read().decode()
-    rows = list(csv.reader(io.StringIO(data)))[1:]
-    return [(r[0], float(r[1])) for r in rows if r[1] not in ('.', '')]
+    """(date, value) pairs, oldest→newest, '.' rows dropped.
+
+    2026-09-05 이래 전송은 `us.fred` 가 고른다 — 키가 있으면 공식 API, 없거나
+    거부당하면 예전 graph CSV. **계약은 그대로다**(전체 이력·오름차순·결측 제거).
+    """
+    return fred_client().series(sid)
 
 
 def fred_yields():
@@ -620,12 +642,105 @@ def completeness(data, intraday, naver_stale=False):
     return missing
 
 
+def production_sids():
+    """한 실행이 실제로 받는 FRED 시리즈 전부 — 수익률 4 + 대시보드 22 + 금리 분해."""
+    sids = ['DGS2', 'DGS5', 'DGS10', 'DGS30'] + [row[2] for row in ECON]
+    try:
+        from us.yield_drivers import ROWS as YD_ROWS
+        sids += [r[1] for r in YD_ROWS]
+    except Exception as e:
+        print(f'  (yield driver ids unavailable: {e})', file=sys.stderr)
+    out = []
+    for sid in sids:
+        if sid not in out:
+            out.append(sid)
+    return out
+
+
+def _diff_series(a, b):
+    """두 이력의 차이. 마지막 30포인트가 아니라 **전체 맵**을 본다 — 매크로 모멘텀이
+    60포인트를, YoY 변환이 12포인트를 더 거슬러 올라가 읽기 때문이다."""
+    ma, mb = dict(a), dict(b)
+    notes = []
+    if len(ma) != len(a):
+        notes.append(f'api has {len(a) - len(ma)} duplicate dates')
+    if len(mb) != len(b):
+        notes.append(f'csv has {len(b) - len(mb)} duplicate dates')
+    if len(a) != len(b):
+        notes.append(f'count {len(a)} vs {len(b)}')
+    if a and b and a[0][0] != b[0][0]:
+        notes.append(f'first {a[0][0]} vs {b[0][0]}')
+    if a and b and a[-1][0] != b[-1][0]:
+        notes.append(f'last {a[-1][0]} vs {b[-1][0]}')
+    off = sorted(d for d in set(ma) | set(mb) if ma.get(d) != mb.get(d))
+    return off, notes
+
+
+def fred_check():
+    """공식 API 와 graph CSV 가 **같은 숫자**를 주는지 전 생산 시리즈로 대조한다.
+
+    키를 넣은 직후 한 번 돌린다. 아무 파일도 쓰지 않고, 불일치가 남으면 비영으로
+    끝난다. 이 레포에서 가장 비싼 실패가 「데이터가 조용히 달라지는 것」이라 전송을
+    바꾸는 패치에는 이 대조가 딸려야 한다.
+    """
+    from us.fred import FredClient
+    if not os.environ.get('FRED_API_KEY'):
+        print('FRED_API_KEY is not set — nothing to compare', file=sys.stderr)
+        return 2
+    sids = production_sids()
+    print(f'comparing {len(sids)} series: official API vs graph CSV')
+    bad = 0
+    for sid in sids:
+        # fallback=False 가 핵심이다 — 켜 두면 키가 틀렸을 때 API 클라이언트가 조용히
+        # CSV 로 내려가 CSV 끼리 비교하고 「identical」을 인쇄한다.
+        api = FredClient(ssl_ctx=_SSL, transport='api', fallback=False)
+        raw = FredClient(key=None, ssl_ctx=_SSL, transport='csv')
+        try:
+            a, b = api.series(sid), raw.series(sid)
+        except Exception as e:
+            print(f'  {sid}: FETCH FAILED — {e}')
+            bad += 1
+            continue
+        off, notes = _diff_series(a, b)
+        # 마지막 한 점만 어긋나면 갱신 레이스일 수 있다 — 한 번만 다시 받아 본다.
+        if off and set(off) <= {a[-1][0] if a else None, b[-1][0] if b else None}:
+            a = FredClient(ssl_ctx=_SSL, transport='api', fallback=False).series(sid)
+            b = FredClient(key=None, ssl_ctx=_SSL, transport='csv').series(sid)
+            off, notes = _diff_series(a, b)
+        if off or notes:
+            bad += 1
+            detail = ', '.join(notes + [f'{d}: {dict(a).get(d)} vs {dict(b).get(d)}'
+                                        for d in off[:5]])
+            print(f'  {sid}: MISMATCH — {detail}'
+                  + (f' (+{len(off) - 5} more dates)' if len(off) > 5 else ''))
+        else:
+            print(f'  {sid}: {len(a)} obs {a[0][0]}..{a[-1][0]} identical' if a
+                  else f'  {sid}: empty on both paths')
+    print(f'{len(sids) - bad}/{len(sids)} series identical')
+    return 1 if bad else 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--outdir', default='data')
     ap.add_argument('--force', action='store_true',
                     help='regenerate even if a complete dataset for the same report date exists')
+    ap.add_argument('--fred-check', action='store_true',
+                    help='공식 API 와 graph CSV 를 전 생산 시리즈에 대해 대조하고 끝낸다 '
+                         '(아무 파일도 쓰지 않는다)')
     args = ap.parse_args()
+    # 진단은 정상 경로에 얹지 않는다 — makedirs 앞에서 갈라져야 산출물을 안 건드린다.
+    if args.fred_check:
+        sys.exit(fred_check())
+
+    set_fred_client(None)          # 재진입 실행이 지난 열화 상태를 물려받지 않게
+    fredc = fred_client()
+    print(f'FRED transport: {fredc.preflight()}'
+          + (f' ({fredc.reason})' if fredc.reason else ''))
+    if fredc.telemetry()['degraded']:
+        print(f'::warning::FRED API key is configured but unusable ({fredc.reason}) — '
+              f'falling back to the unofficial graph CSV', file=sys.stderr)
+
     os.makedirs(args.outdir, exist_ok=True)
     md_path = os.path.join(args.outdir, 'market_data.json')
 
@@ -941,6 +1056,16 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'scorecard failed: {e}', file=sys.stderr)
+
+    # FRED 텔레메트리는 **마지막 FRED 호출 뒤**에 굳힌다 — 구성항목 수집이 위에서
+    # 끝나므로 여기 값이 그 실행의 전부다. 죽은 키로 몇 주가 조용히 지나는 것을
+    # 이 필드 하나로 잡는다.
+    data['fred'] = fred_client().telemetry()
+    ft = data['fred']
+    print(f"FRED: transport={ft['transport']} requests={ft['requests']} "
+          f"series={ft['series_ok']}"
+          + (f" failed={','.join(ft['failed'])}" if ft['failed'] else '')
+          + (f" csv_rescued={','.join(ft['csv_rescued'])}" if ft['csv_rescued'] else ''))
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
 
