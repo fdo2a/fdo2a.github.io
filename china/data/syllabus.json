@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "note": "강의는 order 순으로 발행한다. prereq 는 반드시 더 작은 order 를 가리킨다. status:draft 는 발행 대상이 아니며 승격은 사람이 커밋으로 한다.",
+  "lessons": [
+    {"id": "A01", "track": "structure", "order": 1, "status": "fixed",
+     "title": "성장 목표가 실제 지출로 내려오는 경로",
+     "prereq": [], "required_data": [],
+     "core_question": "연간 성장 목표는 누가, 어떤 회의에서, 범위로 정하는가 — 그리고 그 숫자가 실제로 무엇을 구속하는가",
+     "notes": "2026년 목표는 4.5~5% 범위 + 「실제 업무에서는 더 나은 결과 추구」 단서. 연도 비종속으로 쓰고 그해 정부업무보고 값을 주입한다."},
+
+    {"id": "A02", "track": "structure", "order": 2, "status": "fixed",
+     "title": "토지재정이 반토막 난 뒤의 지방정부 재정",
+     "prereq": ["A01"], "required_data": ["land_sales_cum_yoy", "fiscal_revenue_cum_yoy"],
+     "core_question": "세수가 아닌 곳에서 오던 돈이 절반으로 줄었을 때 지방정부는 무엇으로 메우는가",
+     "notes": "토지출양수입 / 지방 일반공공예산 비율은 2020년 84% → 2025년 34%. 2025년 4.15조 위안(-14.8%), 2021년 정점 8.71조 대비 -52%."},
+
+    {"id": "A03", "track": "structure", "order": 3, "status": "fixed",
+     "title": "LGFV와 부채 스왑 — 3년 프로그램이 끝나는 해에 무엇이 남았나",
+     "prereq": ["A02"], "required_data": [],
+     "core_question": "장부 밖 부채를 장부 안으로 옮기면 무엇이 해결되고 무엇이 그대로 남는가",
+     "notes": "2024-11 전인대 상무위 10조 위안(특별채 한도 6조 증액 + 4조/5년). 은닉부채 14.3조 → 2028년 2.3조 목표. IMF 제출 LGFV 총부채 추정 44조와의 괴리를 함께 다룬다."},
+
+    {"id": "A04", "track": "structure", "order": 4, "status": "fixed",
+     "title": "총사회융자와 신용 임펄스 — 무엇이 그 안에 들어 있나",
+     "prereq": ["A01"], "required_data": ["tsf_stock_yoy", "m2_yoy"],
+     "core_question": "TSF 증감이 경기 신호인가, 아니면 통계 범위가 바뀐 것인가",
+     "notes": "flow(기간 중 조달액)와 stock(기말 잔액)은 다른 것이다. 2018 지방특별채·2019 국채/지방일반채·2023 범위 조정이 편입됐다. 신용 임펄스는 PBoC 공식 계열이 아니며 우리가 고른 산식임을 밝힌다. 구조변경 전후를 그대로 잇지 않는다."},
+
+    {"id": "A05", "track": "structure", "order": 5, "status": "fixed",
+     "title": "PBoC 정책금리 체계 — 7일 역RP가 축이 된 뒤의 LPR·MLF·지급준비율",
+     "prereq": ["A04"], "required_data": ["lpr_1y", "lpr_5y"],
+     "core_question": "정책금리가 하나로 모인 뒤 중국의 금리 전달 경로는 연준과 어디가 다른가",
+     "notes": "2024-06 판궁성 루자쭈이 발언 이후 7일 역RP가 주 정책금리. MLF 는 역할 축소(2025 초 이후 1Y 금리 갱신 없음), 국채 거래 재개·매입형 역RP 도입. MLF 를 주 도구로 서술하지 않는다."},
+
+    {"id": "A06", "track": "structure", "order": 6, "status": "fixed",
+     "title": "공식 통계를 어디까지 믿나 — 대체지표 읽는 법",
+     "prereq": ["A01"], "required_data": [],
+     "core_question": "통계가 멈추거나 정의가 바뀔 때 우리는 무엇을 대신 보는가",
+     "notes": "청년실업률이 실례다 — 2023-08 발표 중단 → 2023-12분부터 재학생 제외 신 통계로 재개. 이 강의 이후 모든 수치에 공식/대체 라벨을 붙인다."},
+
+    {"id": "A07", "track": "structure", "order": 7, "status": "fixed",
+     "title": "예매제에서 현방판매로 — 부동산 자금순환의 이중궤도",
+     "prereq": ["A02", "A06"], "required_data": ["property_inv_cum_yoy"],
+     "core_question": "선분양 대금으로 다음 공사를 하던 순환이 멈추면 개발업체의 현금은 어디서 오는가",
+     "notes": "선분양 폐지가 아니라 예매+현방 이중궤도다. 현방 비중 32.16%(2025-02), 2024년 이후 최소 32개 성·시가 시범 문건. 주건부장 2025-10-31 「일도절 아님」."},
+
+    {"id": "A08", "track": "structure", "order": 8, "status": "fixed",
+     "title": "가계 대차대조표 — 소도시 후커우 완화 이후에도 남은 것",
+     "prereq": ["A07"], "required_data": ["retail_yoy"],
+     "core_question": "소득이 늘어도 소비가 안 느는 이유를 자산·제도·안전망 어디에서 찾는가",
+     "notes": "2024~29 도시화 계획으로 상주 300만 미만 제한 철폐·300~500만 완화·500만 이상 점수제 개선. 남은 병목은 대도시 진입과 공공서비스·교육·사회보장 이전성이다. 「전국적 고정 장벽」으로 쓰지 않는다."},
+
+    {"id": "A09", "track": "structure", "order": 9, "status": "fixed",
+     "title": "환율 제도 — 중간가 고시, 역외 CNH, 그리고 열린 채널들",
+     "prereq": ["A05"], "required_data": [],
+     "core_question": "관리변동환율에서 하루의 움직임은 무엇이 정하고 무엇이 막는가",
+     "notes": "중간가 형성·일중 ±2% 밴드·CNY/CNH 괴리·경상계정 전환성·자본계정의 허용 채널을 각각 분리한다. 「자본통제」 한 단어로 묶지 않는다."},
+
+    {"id": "A10", "track": "structure", "order": 10, "status": "fixed",
+     "title": "수출 기계의 세대교체 — 가공무역에서 신3종으로",
+     "prereq": ["A06"], "required_data": ["exports_yoy", "imports_yoy"],
+     "core_question": "수출 품목이 바뀌면 무역흑자의 성격과 상대국의 반응은 어떻게 달라지는가",
+     "notes": "신3종 = 전기승용차·리튬전지·태양전지."},
+
+    {"id": "A11", "track": "structure", "order": 11, "status": "fixed",
+     "title": "은행 시스템 — 순이자마진 압착과 중소은행 정리",
+     "prereq": ["A03", "A05"], "required_data": [],
+     "core_question": "정책금리를 내릴수록 은행이 약해지는 구조에서 완화는 어디까지 가능한가",
+     "notes": "업계 NIM 2026 Q1 1.40% → Q2 1.41%, 유형별 이질(대형 1.31·주식제 1.54·도시 1.40·농촌상업 1.59). 중소은행 정리는 합병 하나가 아니라 성급 농촌금융기관 신설·농신사 통합·village bank 감소 혼합(2024년 말 농촌 중소은행 법인 -193개). 기준시점을 반드시 명시한다."},
+
+    {"id": "A12", "track": "structure", "order": 12, "status": "fixed",
+     "title": "GDP 디플레이터 — 12분기 마이너스와 그 뒤",
+     "prereq": ["A08", "A10"], "required_data": ["cpi_yoy", "ppi_yoy"],
+     "core_question": "소비자물가가 플러스인데 경제 전체 물가가 마이너스였던 것은 무엇을 뜻하는가",
+     "notes": "2026 Q1 까지 12분기 연속 마이너스, Q2 약 +1.5% 로 전환. 「진행 중인 디플레」로 쓰지 않는다. 디플레이터는 직접 발표 지수가 아니라 명목·실질 GDP 에서 산출된다."},
+
+    {"id": "B01", "track": "industry", "order": 13, "status": "fixed",
+     "title": "반도체와 수출통제 — 규제의 층위를 갈라 본다",
+     "prereq": ["A10"], "required_data": [],
+     "core_question": "무엇이 막혀 있고 무엇이 열렸는지를 어느 기준일로 말해야 하는가",
+     "notes": "2025 AI Diffusion Rule 은 철회·비집행, 2026-01 H200·MI325X급은 조건부 case-by-case 심사. 칩 성능·제조장비·최종사용자·제3국 우회·라이선스 심사정책을 분리하고 as of 날짜를 반드시 붙인다. 「막혔다/안 막혔다」 이분법 금지."},
+
+    {"id": "B02", "track": "industry", "order": 14, "status": "fixed",
+     "title": "EV·배터리 — 직접 보조금 이후에도 남은 지원과 가격경쟁",
+     "prereq": ["A10"], "required_data": [],
+     "core_question": "수요를 떠받치는 것이 보조금에서 세제·교체지원으로 옮겨가면 무엇이 달라지는가",
+     "notes": "중앙 일반 구매보조금은 종료됐으나 2026년에도 자동차 이구환신 시행 중(폐차 후 NEV 구매 가격의 12%·최대 2만 위안, 교체 8%·최대 1.5만 위안), NEV 취득세 2026~27 감면 잔존. 「보조금이 걷힌 뒤」로 규정하지 않는다."},
+
+    {"id": "B03", "track": "industry", "order": 15, "status": "fixed",
+     "title": "태양광 — 과잉설비와 반내권 정책",
+     "prereq": ["B02"], "required_data": [],
+     "core_question": "저가 단속·표준 강화·낙후설비 퇴출이 실제로 공급을 줄이는가",
+     "notes": "공급과잉만 설명하면 2025년 이후 정책 변수를 놓친다. 원가 이하 판매 조사·생산능력 파악·합병을 함께 다룬다."},
+
+    {"id": "B04", "track": "industry", "order": 16, "status": "fixed",
+     "title": "철강·조선과 원자재 수입 구조",
+     "prereq": ["A07"], "required_data": [],
+     "core_question": "부동산 착공이 줄어든 뒤 철강 수요는 어디로 옮겨갔는가",
+     "notes": ""}
+  ]
+}

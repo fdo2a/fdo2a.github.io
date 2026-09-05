@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="한국 증시 마감브리프 아카이브 — 매일 저녁(월–금) 코스피·코스닥 지수, 수급(외국인·기관·개인), 거래대금 상위, 업종·섹터, 테마, 정책 촉매를 애널리스트 관점으로 정리합니다.">
-<link rel="canonical" href="https://fdo2a.github.io/kr/">
+<meta name="description" content="중국 경제 학습 리포트 — 재정·통화·부동산·무역·소비 구조와 반도체·EV·태양광 산업을 한 주에 한 강의씩 뜯어보고, 그 주 발표된 중국 지표를 그 틀로 읽습니다.">
+<link rel="canonical" href="https://fdo2a.github.io/china/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="KR Market Brief — 한국 증시 마감브리프">
-<meta property="og:description" content="매일 저녁 그날의 한국 증시를 애널리스트 전략 관점으로 정리한 마감브리프 아카이브">
-<meta property="og:url" content="https://fdo2a.github.io/kr/">
+<meta property="og:title" content="중국 경제 학습 리포트">
+<meta property="og:description" content="중국 경제 학습 리포트 — 재정·통화·부동산·무역·소비 구조와 반도체·EV·태양광 산업을 한 주에 한 강의씩 뜯어보고, 그 주 발표된 중국 지표를 그 틀로 읽습니다.">
+<meta property="og:url" content="https://fdo2a.github.io/china/">
 <meta property="og:locale" content="ko_KR">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Blog","name":"KR Market Brief","url":"https://fdo2a.github.io/kr/","description":"한국 증시 마감브리프 아카이브","inLanguage":"ko"}
+{"@context":"https://schema.org","@type":"Blog","name":"China Learning Report","url":"https://fdo2a.github.io/china/","description":"중국 경제 학습 리포트 아카이브","inLanguage":"ko"}
 </script>
-<title>코스피·코스닥 마감 시황·마감브리프 아카이브 | KR Market Brief</title>
+<title>중국 경제 학습 리포트</title>
 <style>
   :root {
     --toss-blue: #0064FF;
@@ -96,6 +96,12 @@
   .post .arrow { margin-left: auto; color: var(--text-3); font-size: 18px; flex-shrink: 0; }
   .empty { text-align: center; color: var(--text-3); font-size: 13px; font-weight: 600; padding: 40px 0; }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
+  .progress { background: #fff; border: 1px solid var(--border-subtle); border-radius: 14px;
+              padding: 14px 16px; margin: 0 0 14px; }
+  .progress .small { font-size: 12px; color: var(--text-3); font-weight: 700; }
+  .progress .bars { display: flex; gap: 3px; margin-top: 9px; flex-wrap: wrap; }
+  .progress .bar { flex: 1 1 12px; height: 7px; border-radius: 4px; background: #E5E8EB; }
+  .progress .bar.done { background: var(--toss-blue); }
 </style>
 <!-- adsense-loader -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
@@ -104,89 +110,70 @@
 <div class="wrap">
   <nav class="menubar">
     <a href="../">미국 시장</a>
-    <a href="../kr/" aria-current="page">한국 시장</a>
+    <a href="../kr/">한국 시장</a>
     <a href="../thesis/">메모리 thesis</a>
-    <a href="../china/">중국 경제</a>
+    <a href="../china/" aria-current="page">중국 경제</a>
   </nav>
   <header class="site">
-    <span class="brand">KR Market Brief</span>
-    <span class="desc">증시 전략 마감브리프 아카이브</span>
+    <span class="brand">중국 경제 학습 리포트</span>
+    <span class="desc">한 주에 한 강의씩, 중국 경제가 굴러가는 방식</span>
   </header>
   <div class="intro">
-    한국 증시가 마감한 평일 저녁(월–금 18:00 KST), 그날의 시장을 정리한 마감브리프가 자동으로 올라옵니다.
-    <span class="small">코스피·코스닥 · 수급(외국인·기관·개인) · 거래대금 상위 · 업종·섹터 · 테마 · 정책 촉매</span>
+    그날의 가격을 좇는 글이 아닙니다. 중국 경제를 굴리는 장치를 하나씩 뜯어보고,
+    그 주에 나온 지표를 그 틀로 읽습니다. 매주 토요일에 한 편씩 쌓입니다.
+    <span class="small">재정·통화·부동산·무역·소비 구조 → 반도체·EV·태양광·철강 산업</span>
   </div>
-  <nav class="subnav" aria-label="발행 주기">
-    <button type="button" data-span="daily" aria-current="true">일간</button>
-    <button type="button" data-span="weekly">주간</button>
-    <button type="button" data-span="monthly">월간</button>
-  </nav>
-  <h2 class="list-title">전체 보고서</h2>
+  <div class="progress" id="progress"></div>
+  <h2 class="list-title">발행한 강의</h2>
   <div class="post-list" id="list">
     <div class="empty">불러오는 중…</div>
   </div>
   <footer>
-    데이터: Naver Finance, Yahoo Finance. 수급·거래대금은 발행 시점 잠정치일 수 있으며 본문에 기준일을 명시합니다.<br>
-    본 자료는 정보 제공 목적으로 작성된 것으로, 특정 종목의 매수·매도 권유가 아닙니다.<br>
+    데이터: 중국 국가통계국(NBS)·인민은행(PBoC)·해관총서·재정부 릴리스 원문, Yahoo Finance, FRED.<br>
+    수치는 각 기관이 발표한 원문에 근거하며, 발표 시차(대체로 직전월분)를 본문에 명시합니다.<br>
+    본 자료는 학습·정보 제공 목적이며 특정 종목의 매수·매도 권유가 아닙니다.<br>
     <a href="../about.html" style="color:#8B95A1;">소개</a> · <a href="../privacy.html" style="color:#8B95A1;">개인정보처리방침</a>
   </footer>
 </div>
 <script>
 (async () => {
   const list = document.getElementById('list');
-  const days = ['일','월','화','수','목','금','토'];
-  const SOURCES = {
-    daily:   { file: 'posts.json',   dir: 'posts/',   empty: '아직 올라온 보고서가 없습니다.' },
-    weekly:  { file: 'weekly.json',  dir: 'weekly/',  empty: '아직 발행된 주간 정리가 없습니다.' },
-    monthly: { file: 'monthly.json', dir: 'monthly/', empty: '아직 발행된 월간 정리가 없습니다.' }
-  };
-  const cache = {};
+  const progress = document.getElementById('progress');
 
-  function label(span, item) {
-    if (span === 'daily') {
-      const d = new Date(item.date + 'T00:00:00');
-      return `${item.date} (${days[d.getDay()]})`;
-    }
-    return item.label || item.key || item.date || '';
+  async function json(path, fallback) {
+    const res = await fetch(path, { cache: 'no-store' }).catch(() => null);
+    if (!res || !res.ok) return fallback;
+    return await res.json().catch(() => fallback);
   }
 
-  async function load(span) {
-    if (cache[span]) return cache[span];
-    const src = SOURCES[span];
-    // 목록 파일이 아직 없는 것은 오류가 아니다 — 콘솔에 흔적을 남기지 않는다.
-    const res = await fetch(src.file, { cache: 'no-store' }).catch(() => null);
-    if (!res || !res.ok) { cache[span] = []; return cache[span]; }
-    const rows = await res.json().catch(() => []);
-    cache[span] = Array.isArray(rows) ? rows : [];
-    return cache[span];
+  const [posts, syllabus] = await Promise.all([
+    json('posts.json', []),
+    json('data/syllabus.json', { lessons: [] })
+  ]);
+
+  const lessons = (syllabus.lessons || []).filter(l => l.status === 'fixed');
+  const doneIds = new Set(posts.map(p => p.lesson));
+  if (lessons.length) {
+    progress.innerHTML = `<span class="small">진도 ${doneIds.size} / ${lessons.length}강</span>`
+      + '<div class="bars">' + lessons
+        .sort((a, b) => a.order - b.order)
+        .map(l => `<span class="bar${doneIds.has(l.id) ? ' done' : ''}" title="${l.id} ${l.title}"></span>`)
+        .join('') + '</div>';
   }
 
-  async function render(span) {
-    const src = SOURCES[span];
-    list.innerHTML = '<div class="empty">불러오는 중…</div>';
-    const rows = (await load(span)).slice();
-    rows.sort((a, b) => String(b.date || b.key || '').localeCompare(String(a.date || a.key || '')));
-    if (!rows.length) { list.innerHTML = `<div class="empty">${src.empty}</div>`; return; }
-    list.innerHTML = rows.map(p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
-        <span class="date">${label(span, p)}</span>
-        <span class="body">
-          <div class="title">${p.title || ''}</div>
-          <div class="headline">${p.headline || ''}</div>
-        </span>
-        <span class="arrow">›</span>
-      </a>`).join('');
+  const rows = posts.slice().sort((a, b) => String(b.key || '').localeCompare(String(a.key || '')));
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty">아직 발행된 강의가 없습니다.</div>';
+    return;
   }
-
-  document.querySelectorAll('.subnav button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.subnav button')
-        .forEach(b => b.setAttribute('aria-current', String(b === btn)));
-      render(btn.dataset.span);
-    });
-  });
-
-  try { await render('daily'); }
-  catch (e) { list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>'; }
+  list.innerHTML = rows.map(p => `<a class="post" href="posts/${p.key}.html">
+      <span class="date">${p.key || ''}<br><b style="color:#0064FF;font-size:11px;">${p.lesson || ''}</b></span>
+      <span class="body">
+        <div class="title">${p.title || ''}</div>
+        <div class="headline">${p.headline || ''}</div>
+      </span>
+      <span class="arrow">›</span>
+    </a>`).join('');
 })();
 </script>
 </body>

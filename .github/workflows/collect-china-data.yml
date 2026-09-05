@@ -1,0 +1,55 @@
+name: Collect China data
+
+# 중국 학습 리포트의 수집. 릴리스 원문 덤프 + 헤드라인 manifest + 시세를 커밋한다.
+#
+# 왜 매 평일인가 — 중국 지표는 월간 리듬이지만 발표일이 주중에 흩어져 있다(CPI·PPI 10일,
+# 금융통계 13~15일, 월간 덤프 15~19일, LPR 20일, PMI 말일). 주 1회로는 놓친다.
+#
+# 시각은 06:00 UTC — 기존 수집 셋(KR 08:00·08:30, thesis 08:40)보다 앞에 둔다. 스케줄러가
+# 2~5시간씩 밀어내는 상황(2026-08-27~)에서 같은 분에 몰리는 것을 줄이고, 겹치더라도
+# push_with_retry.sh 가 서로의 push 를 걷어차지 않게 받아 준다.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '이미 받은 릴리스도 다시 받는다'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-china-data
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python deps
+        run: pip install --quiet yfinance pandas certifi 'curl_cffi>=0.15.0' pytest
+
+      - name: Collect
+        run: |
+          python scripts/collect_china_data.py --outdir china/data ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add china/data/
+          bash scripts/ci/push_with_retry.sh "china data $(date -u +%Y-%m-%d)"
+
+      # 테스트는 **커밋 뒤**에 돈다 — 검사 실패로 그날 수집분을 통째로 버리지 않는다.
+      - name: Unit tests
+        run: python3 -m pytest scripts/china -q

@@ -178,14 +178,15 @@ FOOTER = '''  <footer>
 
 
 def menubar(current, root):
-    """좌측 상단 메뉴바. 세 카테고리는 index.html·kr/index.html과 문구·순서가 같아야 한다.
+    """좌측 상단 메뉴바. 네 카테고리는 index.html·kr/index.html과 문구·순서가 같아야 한다.
 
     이 페이지들은 손으로 고칠 수 없다 — 수집 워크플로가 매일 다시 렌더한다.
     2026-08-31 에 index.html 셋만 고치고 여기를 빠뜨려, 그날 저녁 렌더가 thesis
     페이지의 메뉴를 도로 되돌린 전례가 있다. 회귀 검사는 thesis/tests/test_menubar.py.
     """
     items = [('미국 시장', root or './', 'us'), ('한국 시장', f'{root}kr/', 'kr'),
-             ('메모리 thesis', f'{root}thesis/', 'thesis')]
+             ('메모리 thesis', f'{root}thesis/', 'thesis'),
+             ('중국 경제', f'{root}china/', 'china')]
     links = '\n'.join(
         f'    <a href="{href}"{" aria-current=\"page\"" if key == current else ""}>{label}</a>'
         for label, href, key in items)
