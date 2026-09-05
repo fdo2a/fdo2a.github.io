@@ -162,6 +162,41 @@ _MASKED_ELEMENT = re.compile(r"(?is)<(style|textarea)\b[^>]*>.*?</\1\s*>")
 _DIV_OR_SECTION = re.compile(r"(?i)^</?(div|section)\b")
 
 
+# 아이콘 크기의 data URI 까지 막으면 규칙이 과해진다. 차트는 10만 자를 넘고
+# 아이콘은 수백 자다 — 그 사이 어디를 끊어도 같은 판정이 나온다.
+_INLINE_MIN = 1024
+# 브라우저가 읽는 URI 를 그대로 읽는다. 셋 다 실제로 게이트를 비껴갔다(2026-09-06):
+#   ① 속성값 안의 줄바꿈 — 브라우저는 무시하는데 정규식은 앞토막만 세고 버렸다
+#   ② `image/png;charset=utf-8;base64,` — MIME 매개변수가 붙으면 아예 안 걸렸다
+#   ③ `application/octet-stream` — `image/` 로 한정하면 같은 무게가 다른 MIME 을
+#      달고 그대로 들어온다. 무게를 재는 검사에 MIME 은 조건이 아니다.
+_DATA_URI = re.compile(
+    r"data:([a-z0-9.+/-]+)((?:;[a-z0-9.+=-]+)*);base64,([A-Za-z0-9+/=\s]+)", re.I)
+_WS = re.compile(r"\s+")
+
+
+def inline_data_uris(html: str):
+    """발행본에 남은 base64 인라인 이미지. [(mime, base64 길이, alt 또는 None), …].
+
+    `<img src>` 만 보면 CSS `background-image: url(data:…)` 로 같은 무게가 그대로
+    들어온다. 그래서 태그가 아니라 **data URI 자체**를 찾고, 어느 요소에 실렸는지는
+    직전 `<` 까지 되짚어 알아낸다 — 게이트가 읽는 문장과 독자가 받는 바이트가
+    갈리지 않게.
+    """
+    found = []
+    for m in _DATA_URI.finditer(html):
+        payload = _WS.sub("", m.group(3))
+        if len(payload) < _INLINE_MIN:
+            continue
+        open_at = html.rfind("<", 0, m.start())
+        tag = html[open_at:m.start()] if open_at >= 0 else ""
+        alt = re.search(r"""alt\s*=\s*("([^"]*)"|'([^']*)')""", tag)
+        found.append((m.group(1).lower(), len(payload),
+                      (alt.group(2) if alt and alt.group(2) is not None else
+                       alt.group(3) if alt else None)))
+    return found
+
+
 def section_div_breaks(html: str):
     """섹션 경계를 넘나드는 `<div>` 를 찾는다. [(구역 이름, 사유), …].
 
@@ -785,10 +820,18 @@ def echoed_figures(html: str, limit: int = 3) -> list:
     )
 
 
+# 산문이 한 문장도 없는 문서 — 차트만 남은 초안, 게이트 회귀 테스트의 최소 입력.
+# 키를 빼고 돌려주면 호출부가 KeyError 로 죽어 **정작 잡아야 할 FAIL 줄이 안 보인다**
+# (2026-09-06: base64 검사 테스트가 이 자리에서 죽었다). 0으로 채워 돌려준다.
+_EMPTY_KEYS = ("median_len", "p90_len", "over_120", "median_figures", "p90_figures",
+               "paragraphs", "median_para_len", "p90_para_len", "over_300_para",
+               "overprecise", "echoed")
+
+
 def measure(html: str) -> dict:
     ss = sentences(html)
     if not ss:
-        return {"sentences": 0}
+        return {"sentences": 0, **{k: 0 for k in _EMPTY_KEYS}}
     lens = sorted(len(s) for s in ss)
     figs = [len(figures(s)) for s in ss]
     ps = paragraphs(html)

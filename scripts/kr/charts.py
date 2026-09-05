@@ -5,8 +5,9 @@
 선행스팬2(52봉)+시프트(26봉)에 충분한 과거가 필요하기 때문. 색상은 문서 일관성을 위해
 상승=녹색(#00a763)·하락=적색(#e5342b) (섹터 막대와 동일).
 """
-import base64
+import hashlib
 import io
+import os
 
 import matplotlib
 matplotlib.use("Agg")
@@ -140,7 +141,7 @@ def _draw_flow_panel(ax, points, index_bars, title):
 def render_intraday_flow_chart(series, index_intraday=None):
     """series: {"KOSPI": build_series(...), "KOSDAQ": ...}, index_intraday: kr_intraday.json.
 
-    누적 순매수(억원) 3선에 지수 궤적을 우축으로 겹친 1x2 패널. base64 data URI 반환.
+    누적 순매수(억원) 3선에 지수 궤적을 우축으로 겹친 1x2 패널. PNG 바이트 반환.
     그릴 점이 없는 시장은 패널을 비운다. 둘 다 비면 None.
     """
     panels = [(m, (series.get(m) or {}).get("points") or []) for m in ("KOSPI", "KOSDAQ")]
@@ -160,7 +161,7 @@ def render_intraday_flow_chart(series, index_intraday=None):
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight", facecolor="white")
     plt.close(fig)
-    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+    return buf.getvalue()
 
 
 def render_daily_charts(specs, period="2y", display_bars=DISPLAY_BARS):
@@ -187,4 +188,71 @@ def render_daily_charts(specs, period="2y", display_bars=DISPLAY_BARS):
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight", facecolor="white")
     plt.close(fig)
-    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+    return buf.getvalue()
+
+
+class AssetConflict(Exception):
+    """같은 날짜 파일이 이미 **다른 바이트로** 있다.
+
+    KR 워크플로는 하루 두 번 돌고 수동 실행도 된다. 같은 거래일을 다시 수집할 때 이미
+    발행된 차트를 말없이 갈아치우면, 그날 발행본이 가리키는 그림이 뒤에서 바뀐다.
+    날짜를 파일명에 넣은 이유가 그것이므로 여기서 멈추는 편이 맞다.
+    """
+
+
+def publish(assetdir, kind, date, raw):
+    """차트 바이트를 `{kind}_{date}.png` 로 내보내고 파일 이름을 돌려준다.
+
+    같은 바이트면 다시 쓰지 않는다. 다른 바이트면 `AssetConflict`.
+    """
+    name = "%s_%s.png" % (kind, date)
+    path = os.path.join(assetdir, name)
+    if os.path.exists(path):
+        with open(path, "rb") as fh:
+            if fh.read() == raw:
+                return name
+        raise AssetConflict(path)
+    os.makedirs(assetdir, exist_ok=True)
+    with open(path, "wb") as fh:
+        fh.write(raw)
+    return name
+
+
+def publish_all(assetdir, date, charts):
+    """차트 여럿을 내보낸다. → (실제로 나간 것, 못 낸 사유)
+
+    차트는 이 파이프라인의 계약상 **비-코어**다 —「없어도 발행 게이트 통과, 해당 블록만
+    생략」. 충돌을 예외로 올리던 판은 하루 두 번 도는 워크플로의 2회차에서 시장·수급
+    JSON 저장에도 닿지 못했다(2026-09-06 codex 검토 3). 못 낸 차트는 **없는 것으로**
+    적고 수집은 계속한다 — 이미 발행된 그림은 그대로 둔 채로.
+    """
+    produced, notes = {}, {}
+    for kind, raw in charts.items():
+        if raw is None:
+            produced[kind] = None
+            continue
+        try:
+            publish(assetdir, kind, date, raw)
+            produced[kind] = raw
+        except AssetConflict as exc:
+            produced[kind] = None
+            notes[kind] = "충돌 — %s 가 이미 다른 바이트로 있다. 발행된 그림을 지키려 두었다" % exc
+        except OSError as exc:
+            produced[kind] = None
+            notes[kind] = "쓰기 실패 — %s" % exc
+    return produced, notes
+
+
+def manifest(charts, date, notes=None):
+    """이번 수집이 실제로 만든 차트. 실패한 것은 None 으로 **분명히** 적는다.
+
+    조용히 빠지면 writer 가 이름을 조립해 없는 파일을 가리킨다(2026-09-06 codex 1.2).
+    """
+    out = {}
+    for kind, raw in charts.items():
+        out[kind] = None if raw is None else {
+            "file": "%s_%s.png" % (kind, date),
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "bytes": len(raw),
+        }
+    return {"report_date": date, "charts": out, "notes": dict(notes or {})}

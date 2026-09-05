@@ -19,6 +19,7 @@
 설계: /Users/daeyoung/Desktop/AI/report/plan.md
 """
 
+import base64
 import os
 import re
 import sys
@@ -184,10 +185,101 @@ def equivalent(old_html, new_html):
     return out == new_html
 
 
-def typography(path, old, new):
-    """(경로, 옛 내용, 새 내용) → True 조판 / False 수정 / None 판정 불가."""
+# 임베드를 파일 참조로 바꾼 판. `equivalent()` 는 CSS 블록만 이식하므로 여기에 닿지
+# 못한다. 방향은 이 모듈의 원칙 그대로 — **새 판을 되감아 옛 판이 바이트 그대로 나오는지**
+# 만 본다. 수치·태그 비교로는 다른 이미지를 걸어도, 문장을 함께 고쳐도 통과한다.
+_SRC_EXTERNAL = re.compile(r'src="([^"]*)"')
+_SRC_INLINE = re.compile(r'src="data:(image/[a-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)"', re.I)
+_INLINE_URI = re.compile(r'data:(image/[a-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)\Z', re.I)
+_MASK = '\x00src\x00'
+# 주석은 태그가 아니다 — 먼저 소진시켜 그 안의 `src` 가 속성으로 읽히지 않게 한다.
+_TAG_SPAN = re.compile(r'<!--.*?-->|<[^>]*>', re.S)
+
+
+def asset_externalized(old_html, new_html, read_asset):
+    """True 자산 외부화만 한 판 / False 그 밖의 변경이 섞임 / None 판정 불가.
+
+    `read_asset(경로)` 는 새 판이 가리키는 파일의 바이트, 없으면 None 을 돌려준다.
+
+    되감기를 `src` 전부에 걸던 판은 광고 로더 `<script src="https://…">` 까지 파일로
+    찾다가 모든 발행본을 「판정 불가」로 만들었다(2026-09-06, 실측 38편 전부). 그래서
+    **양쪽의 `src` 를 자리표시자로 가려 나머지 바이트가 같은지 먼저 보고**, 그다음 자리
+    별로 짝을 맞춘다 — 안 바뀐 `src` 는 그대로여야 하고, 바뀐 자리는 옛 판이 임베드,
+    새 판이 파일이어야 하며 그 파일이 임베드 바이트와 정확히 같아야 한다.
+    """
+    if old_html is None or new_html is None:
+        return None
+    if not _SRC_INLINE.search(old_html):
+        return None  # 되감을 것이 없다 — 이 변환의 사례가 아니다
+    if _SRC_INLINE.search(new_html):
+        return None  # 아직 임베드가 남았다면 이 변환이 끝난 판이 아니다
+
+    def mask(html):
+        """태그 **안**의 `src` 만 가린다.
+
+        문서 전체에 정규식을 걸던 판은 산문에 `src="data:…"` 라고 쓰여 있기만 해도
+        그 글자를 자산으로 읽었다 — 본문을 고치고 「조판」으로 통과시킬 수 있었다
+        (2026-09-06 codex 검토 1). 주석 안도 태그가 아니다.
+        """
+        srcs = []
+        out = []
+        at = 0
+        for tag in _TAG_SPAN.finditer(html):
+            out.append(html[at:tag.start()])
+            span = tag.group(0)
+            out.append(span if span.startswith('<!--') else _SRC_EXTERNAL.sub(
+                lambda m: srcs.append(m.group(1)) or _MASK, span))
+            at = tag.end()
+        out.append(html[at:])
+        return ''.join(out), srcs
+
+    masked_old, old_srcs = mask(old_html)
+    masked_new, new_srcs = mask(new_html)
+    if masked_old != masked_new or len(old_srcs) != len(new_srcs):
+        return False  # src 밖의 바이트가 다르다
+
+    for was, now in zip(old_srcs, new_srcs):
+        if was == now:
+            continue  # 손대지 않은 자리
+        m = _INLINE_URI.match(was)
+        if not m:
+            return False  # 임베드가 아니었는데 바뀌었다
+        raw = read_asset(now)
+        if raw is None:
+            return None
+        if base64.b64encode(raw).decode() != m.group(2):
+            return False
+    return True
+
+
+def typography(path, old, new, root=None):
+    """(경로, 옛 내용, 새 내용) → True 조판 / False 수정 / None 판정 불가.
+
+    `root` 를 주면 자산 외부화(임베드 → 파일 참조)도 같은 자리로 받는다. 그 변환은
+    독자가 받는 그림이 바이트 그대로라 조판과 성격이 같은데, `equivalent()` 는 CSS
+    블록만 이식하므로 닿지 못한다(2026-09-06).
+    """
     if old is None or new is None:
         return None
     if not path.endswith('.html'):
         return False  # HTML 이 아닌 원고에는 조판이라는 것이 없다
-    return equivalent(old, new)
+    verdict = equivalent(old, new)
+    if verdict:
+        return True
+    asset = asset_externalized(old, new, _asset_reader(root, path))
+    if asset is not None:
+        return asset
+    return verdict
+
+
+def _asset_reader(root, path):
+    """발행본 위치를 기준으로 상대경로를 푸는 읽기 함수. root 가 없으면 늘 None."""
+    def read(rel):
+        if root is None or rel.startswith(('http:', 'https:', 'data:', '//')):
+            return None
+        target = os.path.normpath(os.path.join(root, os.path.dirname(path), rel))
+        if not os.path.isfile(target):
+            return None
+        with open(target, 'rb') as fh:
+            return fh.read()
+    return read

@@ -6,11 +6,24 @@
 
 ## STEP 0 — 커밋된 KR 데이터 확인 (먼저)
 
-`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr_flows_intraday.png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr_charts.png` — 전부 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략).
+`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr/assets/kr_flows_intraday_[DATE].png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr/assets/kr_charts_[DATE].png`(있는 것은 `kr/data/kr_charts_manifest.json` 이 정본) — 전부 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략).
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
 2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices·flows·top_value·sectors)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §6 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
-3. 없거나 stale/`complete:false`면 `python scripts/collect_kr_data.py --outdir kr/data`를 실행해 채운다(네트워크 열린 환경에서만).
+3. 없거나 stale/`complete:false`면 **수집 워크플로를 직접 돌린다**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려(cron 08:00·08:30 UTC 가 실제로는 12:40·12:57 UTC) **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**. 수동 dispatch 는 밀리지 않고 즉시 뜬다.
+
+   ```
+   gh workflow run collect-kr-data.yml -f force=true
+   sleep 15
+   RUN=$(gh run list --workflow=collect-kr-data.yml --event=workflow_dispatch \
+           --limit 1 --json databaseId --jq '.[0].databaseId')
+   timeout 900 gh run watch "$RUN" --exit-status
+   git pull
+   ```
+
+   **실행 ID 를 집고 `--exit-status` 를 붙인다** — 맨 `gh run watch` 는 엉뚱한 예약 실행을 기다리거나 대화형 선택으로 빠지고, `--exit-status` 가 없으면 실패한 수집도 「기다렸다」로 통과해 낡은 데이터로 발행된다. 워크플로를 못 돌리는 환경이면 `python scripts/collect_kr_data.py --outdir kr/data`를 직접 실행한다(네트워크 열린 환경에서만).
+
+   **폴백이 끝나면 다시 확인한다** — `report_date`가 여전히 예상 세션보다 이르거나 `complete:false`면 **발행하지 않고 중단한다**. 뒤의 completeness 게이트는 필드가 있는지만 보고 날짜는 보지 않으므로, 여기서 막지 않으면 전 거래일 자료로 오늘 글이 나간다. 한국 휴장일이면 예상 세션 자체가 전 거래일이라는 점에 주의 — 요일 산술이 아니라 `report_date`가 정본이다.
 
 **수급 신선도**: `flows_date`·`flows_provisional`을 STEP 2에 그대로 넘긴다. 당일 확정치가 없으면 writer가 "당일 잠정"/"전 거래일 기준"으로 라벨링한다 — 오케스트레이터가 수급을 창작하지 않는다.
 
@@ -35,7 +48,7 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 0. **시황 게이트** — `python3 scripts/check_session.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. KR의 첫 데이터 게이트다. `data-session` 문단 넷, 전일 미국장이 2거래일 이상 묵었을 때의 기준일 표기, 아시아 지수 등락의 표 대조, 「시장 폭」 오칭·내부 필드명·「§N」 노출을 본다. 비-코어라 `kr_session.json`이 없으면 통과한다.
 **무게중심 게이트** — `python3 scripts/check_weight.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. 시황·가격군(오늘의 장·지수 & 장중·환율·금리)의 하한 2,200자, 가격 섹션의 `data-standing` 문단(120자·수치 하나 이상), 가격 섹션의 스탠스 등급 어휘, §2의 `data-lede` 순서(event → meaning → action → invalidation)를 본다. 매크로·경로 항목은 KR에 없으므로 건너뛴다.
 
-1. `python3 scripts/apply_readability.py <kr_brief 절대경로>`(v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)) 뒤 `python3 scripts/check_readability.py --strict <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
+1. `python3 scripts/apply_readability.py <kr_brief 절대경로>`(v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)) 뒤 `python3 scripts/check_readability.py --strict --no-inline-images <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
 2. 위반 원인별로 처방한다: 헤드라인은 방향·촉매·행동만 남기고, 장중 시각이 셋 이상인 문장은 시간대별로 나눈다. 수치가 다섯 개 이상이면 정확한 레벨은 표에 두고 산문에는 가장 가까운 지지·저항과 관계만 남긴다. 원화·지수 소수점은 산문에서 반올림하고 정밀값은 표·JSON에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
 3. 검사 원문을 writer에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → strict check를 반복한다.
 4. writer가 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 수치 정본과 표 대조, 수급 신선도, 정책 블록 수는 다시 확인한다. **통과할 때까지 수리 루프를 계속한다.**
@@ -82,7 +95,7 @@ python3 scripts/humanize_prose.py extract kr_brief_[DATE].humanizing.html
 python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
   --original kr_brief_[DATE].html --payload <고친 prose_in.txt 또는 _workspace/{run_id}/final.md> \
   --gate "python3 scripts/check_style.py {f}" \
-  --gate "python3 scripts/check_readability.py --strict {f}" \
+  --gate "python3 scripts/check_readability.py --strict --no-inline-images {f}" \
   --gate "python3 scripts/check_session.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/check_weight.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/verify_post.py {f} --before kr_brief_[DATE].html --skip-layout"

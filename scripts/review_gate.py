@@ -198,7 +198,8 @@ class Blobs:
 
     def equivalent(self, path, old_sha, new_sha):
         """queue.classify 에 넘길 동등 판정."""
-        return prose_mod.typography(path, self.text(old_sha), self.text(new_sha))
+        return prose_mod.typography(path, self.text(old_sha), self.text(new_sha),
+                                    root=self.root)
 
 
 def working_tree(root, base, ref, blobs=None):

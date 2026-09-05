@@ -76,7 +76,7 @@ Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` �
 
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
 
-1. `python3 scripts/apply_readability.py <morning_brief 절대경로>`로 v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)·빠른 이동·긴 문단 분리를 적용하고, `python3 scripts/check_readability.py --strict <morning_brief 절대경로>`와 **`python3 scripts/check_style.py <morning_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 「말하듯이 쓴다」 기준에서 셀 수 있는 부분(비인칭 피동·번역투 연결·서술어 없는 명사형 머리말·「~한 상태다」 종결·같은 문단 머리말 반복·「~다」 연속)을 본다. **STEP 2.5의 윤문과 별개로 여기서 항상 돈다** — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
+1. `python3 scripts/apply_readability.py <morning_brief 절대경로>`로 v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)·빠른 이동·긴 문단 분리를 적용하고, `python3 scripts/check_readability.py --strict --no-inline-images <morning_brief 절대경로>`와 **`python3 scripts/check_style.py <morning_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 「말하듯이 쓴다」 기준에서 셀 수 있는 부분(비인칭 피동·번역투 연결·서술어 없는 명사형 머리말·「~한 상태다」 종결·같은 문단 머리말 반복·「~다」 연속)을 본다. **STEP 2.5의 윤문과 별개로 여기서 항상 돈다** — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
 2. 실패하면 출력에 찍힌 위반을 원인별로 고친다. 문체 위반은 「말하듯이 쓴다」 절의 해당 항목대로 문장을 다시 쓴다: 헤드라인은 방향·촉매·행동만 남기고, 120자 초과는 시간·주제가 바뀌는 곳에서 문장을 나누며, 수치 5개 이상은 정확한 값은 표에 두고 산문에는 관계만 남긴다. 과잉 정밀도는 산문만 반올림하고 정확한 값은 표에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
 3. writer를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 실행한다. 수정 뒤 데이터 정본과 표를 재대조하고 apply → strict check를 반복한다.
 4. writer 재실행이 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 긴 문장 분리 → 중복 수치 삭제 → 산문 반올림 순서로 고치고 다시 검사한다. **통과할 때까지 이 수리 루프를 계속한다.**
@@ -123,7 +123,7 @@ python3 scripts/humanize_prose.py extract morning_brief_[DATE].humanizing.html
 python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html \
   --original morning_brief_[DATE].html --payload <고친 prose_in.txt 또는 _workspace/{run_id}/final.md> \
   --gate "python3 scripts/check_style.py {f}" \
-  --gate "python3 scripts/check_readability.py --strict {f}" \
+  --gate "python3 scripts/check_readability.py --strict --no-inline-images {f}" \
   --gate "python3 scripts/verify_post.py {f} --before morning_brief_[DATE].html --skip-layout" \
   --gate "python scripts/check_macro.py --html {f} --datadir <workspace>" \
   --gate "python scripts/check_stance.py --html {f} --datadir <workspace>" \
@@ -185,7 +185,7 @@ Site base URL: https://fdo2a.github.io/
 <meta property="og:title" content="미국 증시 모닝브리프 — [YYYY년 M월 D일 (요일)]">
 <meta property="og:url" content="https://fdo2a.github.io/posts/[YYYY-MM-DD].html">
 ```
-2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png, then promote **both** of the writer's books:
+2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote **both** of the writer's books:
    - `macro_next.json` → `data/macro.json`
    - `stance_next.json` → `data/stance.json`
    Tomorrow's Actions run judges today's regime and triggers against these files. Publishing without promoting them leaves both books frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.

@@ -27,7 +27,7 @@ def clip(s, n=90):
     return s if len(s) <= n else s[:n] + "…"
 
 
-def audit(path):
+def audit(path, no_inline_images=False):
     html = Path(path).read_text(encoding="utf-8")
     m = R.measure(html)
     fails, warns = [], []
@@ -59,6 +59,14 @@ def audit(path):
         # 좌우 여백을 잃어 「매크로 논리부터 폭이 넓어진다」로 보였다.
         fails.append("%s 섹션 경계를 넘는 div — %s" % (sid or "이름 없는", why))
 
+    # 파이프라인별로 켠다. KR 은 수집기가 날짜별 차트 파일을 쓰기 전까지 임베드가
+    # 유일한 아카이브 수단이라, 공통 게이트에서 무조건 켜면 발행이 막힌다.
+    if no_inline_images:
+        for mime, size, alt in R.inline_data_uris(html):
+            fails.append(
+                "base64 인라인 이미지 %s %,d자%s — 파일로 빼고 경로로 참조할 것"
+                .replace("%,d", "%d") % (mime, size, " (%s)" % alt if alt else ""))
+
     if not R.has_override(html):
         fails.append("조판 오버라이드 미적용 — apply_readability.py를 돌릴 것")
     return m, fails, warns
@@ -66,22 +74,30 @@ def audit(path):
 
 def main(argv):
     strict = "--strict" in argv
+    no_inline = "--no-inline-images" in argv
     paths = [a for a in argv if not a.startswith("-")]
     if not paths:
-        print("사용법: check_readability.py [--strict] <파일…>")
+        print("사용법: check_readability.py [--strict] [--no-inline-images] <파일…>")
         return 2
     bad = 0
     for p in paths:
-        m, fails, warns = audit(p)
+        m, fails, warns = audit(p, no_inline_images=no_inline)
         print("== %s" % p)
-        print(
-            "   문장 %d · 중앙 %d자 · P90 %d자 · 120자 초과 %d문장 · "
-            "수치 중앙 %d개/P90 %d개 · 문단 P90 %d자"
-            % (
-                m["sentences"], m["median_len"], m["p90_len"], m["over_120"],
-                m["median_figures"], m["p90_figures"], m["p90_para_len"],
+        # 문장이 없으면 `measure()` 는 개수만 돌려준다. 그것을 모르고 분포 키를
+        # 인덱싱하던 판은 산문 없는 문서에서 KeyError 로 죽었고, 죽은 자리가
+        # 요약 출력이라 **아래의 FAIL 이 한 줄도 찍히지 않았다** — 종료 코드만
+        # 1 이라 「검사가 걸렀다」와 구별되지 않는다(2026-09-06).
+        if m["sentences"]:
+            print(
+                "   문장 %d · 중앙 %d자 · P90 %d자 · 120자 초과 %d문장 · "
+                "수치 중앙 %d개/P90 %d개 · 문단 P90 %d자"
+                % (
+                    m["sentences"], m["median_len"], m["p90_len"], m["over_120"],
+                    m["median_figures"], m["p90_figures"], m["p90_para_len"],
+                )
             )
-        )
+        else:
+            print("   산문 문단 없음 — 구조 검사만 돈다")
         for f in fails:
             print("   FAIL %s" % f)
         for w in warns:

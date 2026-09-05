@@ -52,13 +52,10 @@ jobs:
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add kr/data/*.json kr/data/kr_sector.html kr/data/*.png 2>/dev/null || git add kr/data/*.json kr/data/kr_sector.html
+          git add kr/data/*.json kr/data/kr_sector.html
+          # 차트는 날짜별로 kr/assets/ 에 나간다 — 발행본이 ../assets/ 로 참조한다.
+          git add kr/assets/*.png 2>/dev/null || true
           git add kr/data/history 2>/dev/null || true
           git add kr/data/weekly kr/data/monthly 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo 'No data changes to commit.'
-          else
-            RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
-            git commit -m "data: kr market data for ${RD}"
-            git push
-          fi
+          RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
+          bash scripts/ci/push_with_retry.sh "data: kr market data for ${RD}"

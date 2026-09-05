@@ -39,7 +39,7 @@ def _report_date():
     return datetime.now(KST).date().isoformat()
 
 
-def main(outdir: str):
+def main(outdir: str, assetdir: str = "kr/assets"):
     os.makedirs(outdir, exist_ok=True)
     report_date = _report_date()
     bizdate = report_date.replace("-", "")
@@ -149,26 +149,24 @@ def main(outdir: str):
         except Exception:
             pass
 
-    # 일봉 차트 (코스피·코스닥·SK하이닉스·삼성전자) → kr_charts.png
-    try:
-        import base64 as _b64
-        from kr import charts as _charts
-        uri = _charts.render_daily_charts(TECH_SPECS)
-        with open(os.path.join(outdir, "kr_charts.png"), "wb") as f:
-            f.write(_b64.b64decode(uri.split(",", 1)[1]))
-    except Exception:
-        pass
-
-    # 장중 수급 차트 (누적 순매수 3선 + 지수 우축) → kr_flows_intraday.png
-    try:
-        import base64 as _b64
-        from kr import charts as _charts
-        uri = _charts.render_intraday_flow_chart(intraday_flows, intraday)
-        if uri:
-            with open(os.path.join(outdir, "kr_flows_intraday.png"), "wb") as f:
-                f.write(_b64.b64decode(uri.split(",", 1)[1]))
-    except Exception:
-        pass
+    # 차트 2종 → `kr/assets/{종류}_{거래일}.png`.
+    # 무날짜 한 이름으로 쓰던 판은 매일 덮어써졌고, 그래서 발행본이 차트를 base64 로
+    # 안고 가야 했다(발행 HTML 의 91%가 그 바이트였다). 날짜를 파일명에 넣어 그 이유를
+    # 없앤다. 어느 차트가 실제로 만들어졌는지는 매니페스트가 적는다 — 조용히 빠지면
+    # writer 가 이름을 조립해 없는 파일을 가리킨다.
+    from kr import charts as _charts
+    produced = {}
+    for kind, render in (("kr_charts", lambda: _charts.render_daily_charts(TECH_SPECS)),
+                         ("kr_flows_intraday",
+                          lambda: _charts.render_intraday_flow_chart(intraday_flows, intraday))):
+        try:
+            produced[kind] = render()
+        except Exception:  # noqa: BLE001 — 차트는 비-코어다. 없으면 그 블록만 빠진다
+            produced[kind] = None
+    # 충돌·쓰기 실패는 매니페스트에 적고 수집은 계속한다 — 차트는 비-코어다.
+    produced, notes = _charts.publish_all(assetdir, report_date, produced)
+    _write(outdir, "kr_charts_manifest.json",
+           _charts.manifest(produced, report_date, notes))
 
     bundle = {"report_date": report_date, "indices": indices,
               "flows": flows_out if flows_ok else None,
@@ -312,5 +310,7 @@ def _write(outdir, name, obj):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--outdir", default="kr/data")
+    ap.add_argument("--assetdir", default="kr/assets",
+                    help="날짜별 차트 PNG 를 내보낼 곳. 발행본이 ../assets/ 로 참조한다")
     args = ap.parse_args()
-    main(args.outdir)
+    main(args.outdir, args.assetdir)
