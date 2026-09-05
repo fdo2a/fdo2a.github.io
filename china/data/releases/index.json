@@ -1,5 +1,6 @@
 {
- "generated": "2026-09-05T05:15:33+00:00",
+ "generated": "2026-09-05T10:13:40+00:00",
+ "index_ok": true,
  "releases": [
   {
    "key": "nbs-pmi-2026-08",
@@ -10,11 +11,11 @@
    "title": "Purchasing Managers’ Index for August 2026",
    "published": "2026-09-01",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "636caf0139af6ea441ec41553453dd3baf5e479c70c27677b4e647e0cda796fd",
-   "chars": 12580
+   "chars": 12580,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-industrial-profits-2026-07",
@@ -25,11 +26,11 @@
    "title": "Profits of Industrial Enterprises above the Designated Size from January to July in 2026",
    "published": "2026-08-28",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "c5e762b4341a31e1e7ca43bd7847f82b65ed851327ebfd44ef16b32cd65725a1",
-   "chars": 16273
+   "chars": 16273,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-ip-2026-07",
@@ -40,11 +41,11 @@
    "title": "Industrial Production Operation in July 2026",
    "published": "2026-08-18",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "d591041643cfc5bc61768049e7265da8cc94dad11c71df90a270d492dfe1d4de",
-   "chars": 11081
+   "chars": 11081,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-fai-2026-07",
@@ -55,11 +56,11 @@
    "title": "Investment in Fixed Assets from January to July 2026",
    "published": "2026-08-18",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "3f362a30b4fb2736f2979b91787955ce20fcbdfeed52ab80c8ac0ddf35f81eb2",
-   "chars": 8782
+   "chars": 8782,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-property-2026-07",
@@ -70,11 +71,11 @@
    "title": "Investment in Real Estate Development from January to July 2026",
    "published": "2026-08-19",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "8f82b6e74b2874cbb30773cbdb3906ded16bbc3e9384fef72378f8a86d03a2c0",
-   "chars": 10293
+   "chars": 10293,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-retail-2026-07",
@@ -85,11 +86,11 @@
    "title": "Total Retail Sales of Consumer Goods from January to July 2026",
    "published": "2026-08-19",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "364913dcb169d3f5586c13036daee795b72ff922bcf8662c646c48e2b4c1532c",
-   "chars": 8540
+   "chars": 8540,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-house-prices-2026-07",
@@ -100,11 +101,11 @@
    "title": "Sales Prices of Commercial Residential Buildings in 70 Medium and Large-sized Cities in July 2026",
    "published": "2026-08-17",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "52f445588ce31387487362f0bf7246d713c4048622365ece7ae69f4a6feb812e",
-   "chars": 14320
+   "chars": 14320,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-cpi-2026-07",
@@ -115,11 +116,11 @@
    "title": "Consumer Price Index in July 2026",
    "published": "2026-08-10",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "04ed6c1f54a6a55f35f34929fd4f9c5f926153a42c5e753bac4d5e9819948288",
-   "chars": 7230
+   "chars": 7230,
+   "fetch_status": "ok"
   },
   {
    "key": "nbs-ppi-2026-07",
@@ -130,12 +131,11 @@
    "title": "Industrial Producer Price Indexes in July 2026",
    "published": "2026-08-10",
    "discovered": true,
-   "fetch_status": "ok",
    "http_status": 200,
    "language": "en",
    "content_hash": "992a9eab55a8739d7fe6644658909f5350233713b93ac15bf93a8f96b4aca921",
-   "chars": 8049
+   "chars": 8049,
+   "fetch_status": "ok"
   }
- ],
- "index_ok": true
+ ]
 }
