@@ -1,7 +1,8 @@
 """발행자가 직접 쓰는 의견 블록.
 
 리포트의 나머지는 전부 기계가 쓴다 — 승계되는 국면, 계약으로 묶인 스탠스, 게이트가
-대조하는 수치. 이 블록만은 사람이 쓰고, **한 글자도 고쳐지지 않은 채** 실린다.
+대조하는 수치. 이 블록만은 사람이 쓰고, **문장이 윤문되지 않은 채** 실린다
+(원시 문자열 보존이 아니다 — 마크다운은 변환되고 HTML 태그는 문자로 바뀐다).
 그래서 파이프라인이 아니라 결정론적 스크립트가 붙인다: 작성 에이전트를 거치면
 문체 규칙에 맞춰 다듬고 싶은 유혹이 생기고, 그 순간 그것은 더 이상 그 사람의 글이 아니다.
 
@@ -30,15 +31,35 @@ _SECTION_RE = re.compile(r'\s*<section\b[^>]*\b' + MARKER + r'\s*=\s*"[^"]*"[^>]
                          re.S)
 
 
+_LINK_RE = re.compile(r'\[([^\]]+)\]\((https?://[^\s)]+)\)')
+
+# 주소를 잠시 빼두는 표식. HTML 에 실릴 수 없는 제어문자라 본문과 겹치지 않는다.
+_HOLD_OPEN, _HOLD_CLOSE = '\x00', '\x01'
+_HOLD_RE = re.compile(_HOLD_OPEN + r'(\d+)' + _HOLD_OPEN + r'(.*?)' + _HOLD_CLOSE, re.S)
+
+
 def _inline(text):
-    """이스케이프가 먼저다 — 노트에 <script>를 써도 글자로만 보이게."""
-    out = _html.escape(text, quote=False)
-    out = re.sub(r'\[([^\]]+)\]\((https?://[^\s)]+)\)',
-                 lambda m: f'<a href="{_html.escape(m.group(2), quote=True)}" '
-                           f'target="_blank" rel="noopener">{m.group(1)}</a>', out)
+    """이스케이프가 먼저다 — 노트에 <script>를 써도 글자로만 보이게.
+
+    **주소만은 먼저 빼낸다.** 본문과 함께 이스케이프한 뒤 다시 감싸면 `?a=1&b=2`가
+    `?a=1&amp;amp;b=2`가 되어 두 번째 쿼리 키가 달라지고, 강조 정규식이 결과 전체를
+    훑으면 `/**a**/`를 담은 주소가 `<strong>`으로 쪼개진다 — 링크가 가리키는 곳이
+    바뀐다(2026-09-06 codex 검토에서 둘 다 재현). 표시 텍스트는 빼내지 않으므로
+    이스케이프도 강조도 그대로 받는다.
+    """
+    hrefs = []
+
+    def _stash(m):
+        hrefs.append(m.group(2))
+        return f'{_HOLD_OPEN}{len(hrefs) - 1}{_HOLD_OPEN}{m.group(1)}{_HOLD_CLOSE}'
+
+    raw = text.replace(_HOLD_OPEN, '').replace(_HOLD_CLOSE, '')
+    out = _html.escape(_LINK_RE.sub(_stash, raw), quote=False)
     out = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', out)
     out = re.sub(r'(?<![\*\w])\*(?!\s)(.+?)(?<!\s)\*(?!\*)', r'<em>\1</em>', out)
-    return out
+    return _HOLD_RE.sub(
+        lambda m: f'<a href="{_html.escape(hrefs[int(m.group(1))], quote=True)}" '
+                  f'target="_blank" rel="noopener">{m.group(2)}</a>', out)
 
 
 def _blocks(body):

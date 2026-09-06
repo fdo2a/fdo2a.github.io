@@ -578,3 +578,10 @@ def test_a_section_that_never_closes_is_caught():
             '<section id="read-1"><div class="card">A</div></body>')
     # 컨테이너도 함께 열린 채로 끝나므로 둘 다 나온다.
     assert [k for k, _ in R.section_div_breaks(html)] == ["read-1", "본문"]
+
+
+def test_an_empty_document_still_reports_every_key():
+    """산문이 없는 문서도 같은 키를 돌려줘야 한다 — 키가 빠지면 호출부가
+    KeyError 로 죽고 정작 잡아야 할 FAIL 줄이 안 보인다(2026-09-06)."""
+    full = set(R.measure('<p>문장이 하나 있다. 두 번째 문장도 있다.</p>'))
+    assert set(R.measure('<div></div>')) == full

@@ -361,13 +361,18 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     elif not _cited(text, prob):
         v.append(f'§8: 정책 경로 확률 {prob}%가 본문에 인용되지 않았다')
 
-    # 축약일 판정의 4축 조건은 전일 방향과 대조해야 산다. 이 필드가 없으면 조건이
-    # 조용히 통과로 굳어 겹치는 날에도 §9가 접히지 않는다(2026-08-30 codex 검토).
-    if not (next_macro or {}).get('axis_directions'):
-        v.append('macro_next.json에 axis_directions가 없다 — '
-                 '4축 방향을 승계하지 않으면 축약일 판정이 무력해진다')
+    _check_axis_directions(macro_eval, next_macro, v)
 
     if not prev.get('timing') or nxt.get('timing') == prev.get('timing'):
+        return
+    # 축약일은 「전일과 겹쳐 새로 쓸 것이 없는 날」이다. 그런 날 시점을 옮겼다면
+    # 확률이 아무리 움직였어도 축약 판정 자체를 다시 봐야 한다 — macro.py의
+    # 「축약일 정책 변경은 게이트가 따로 막는다」는 주석이 여기 없으면 거짓말이 된다
+    # (2026-09-06 codex 검토: 축약일 + timing 변경 + 50→70이 통과했다).
+    if (macro_eval or {}).get('abbreviated'):
+        v.append(f'§8: 축약일인데 정책 경로를 "{prev.get("timing")}"에서 '
+                 f'"{nxt.get("timing")}"으로 옮겼다 — 새로 쓸 것이 없는 날로 판정해 놓고 '
+                 f'시점을 바꿀 수는 없다. 축약 판정을 다시 볼 것')
         return
     if (macro_eval or {}).get('new_releases'):
         return
@@ -376,6 +381,36 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     if not moved:
         v.append(f'§8: 정책 경로를 "{prev.get("timing")}"에서 "{nxt.get("timing")}"으로 '
                  f'옮겼는데 신규 지표 발표도, {PROB_JUMP_PP:.0f}%p 이상의 확률 이동도 없다')
+
+
+# 매크로 4축. macro.AXIS_KO와 같은 키이며, 내일의 축약일 판정이 이 넷을 대조한다.
+AXES = ('Labor', 'Activity', 'Consumption', 'Inflation')
+
+
+def _check_axis_directions(macro_eval, next_macro, v):
+    """4축 방향의 승계 계약. **존재만 봐서는 못 막는다** — 예전 검사는 truthy만
+    보았고 `{'junk': 'x'}`도 통과했다(2026-09-06 codex 검토에서 재현).
+
+    이 값이 빠지면 다음날 `macro._abbreviated()`는 대조할 전일 값이 없어 4축 조건을
+    **통과로 본다** — 축이 실제로 뒤집힌 날에도 §9가 접힌다. 방향이 반대로 적혀
+    있던 옛 주석(「접히지 않는다」)은 동작과 어긋난 설명이었다.
+    """
+    carried = (next_macro or {}).get('axis_directions')
+    if not carried:
+        v.append('macro_next.json에 axis_directions가 없다 — '
+                 '4축 방향을 승계하지 않으면 다음날 축약일 판정이 무력해진다')
+        return
+    missing = [a for a in AXES if not carried.get(a)]
+    if missing:
+        v.append(f'macro_next.json axis_directions에 {", ".join(missing)}이(가) 비었다 — '
+                 f'네 축 {", ".join(AXES)}를 모두 담을 것')
+        return
+    today = (macro_eval or {}).get('axis_directions') or {}
+    off = [f'{a} {carried[a]}≠{today[a]}' for a in AXES
+           if today.get(a) is not None and carried[a] != today[a]]
+    if off:
+        v.append(f'macro_next.json axis_directions가 오늘 계산값과 다르다({", ".join(off)}) — '
+                 f'macro_eval.json의 값을 그대로 복사할 것')
 
 
 def _check_next(next_macro, prev_macro, regime_cell, trans_cells, report_date, v):

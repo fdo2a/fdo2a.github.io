@@ -25,7 +25,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 4. **주식** — 지수 6종 + 섹터 11종 등락률순, 두 표를 나란히 2단 배치해 한 페이지에 압축 + **장중 흐름 문단** + 전략 해석
    - **심화 (2026-08-28)**: 「오늘의 장」의 참여도·마감 위치를 받아 「그래서 이 상승이 믿을 만한가」로 잇는다. 같은 숫자를 다시 적지 말고 함의만 쓴다.
 5. **섹터 기간별 수익률** — 워크스페이스의 `sector_performance.html` 스니펫(수집 단계가 결정론적으로 생성한 1일/1주/1개월/6개월/1년 가로 막대 섹션)을 **그대로 삽입한다. 내용·수치·스타일 수정 금지.** 파일이 없으면 market_data.json의 sector_performance 데이터로 동일 형식을 만든다(막대 너비 = |수익률|/기간 내 최대 |수익률|×100%).
-6. **채권** — 2Y/5Y/10Y/30Y 표 + 수익률 커브 차트 이미지(yield_curve.png를 base64 data URI로 임베드) + 주간 변화 캡션 + 2s10s 스프레드·커브 형태. 해석에는 전일 대비뿐 아니라 1주 전 대비 커브 변화(베어/불 × 스티프닝/플래트닝)를 반드시 포함 + 듀레이션 전략. 차트가 없으면 주간 변화를 산문으로 서술. **출처·기준일 표기는 아래 상세 사양을 반드시 따른다.**
+6. **채권** — 2Y/5Y/10Y/30Y 표 + 수익률 커브 차트 이미지(`<img src="../assets/yield_curve_[YYYY-MM-DD].png">` 로 **참조**한다 — base64 임베드 금지) + 주간 변화 캡션 + 2s10s 스프레드·커브 형태. 해석에는 전일 대비뿐 아니라 1주 전 대비 커브 변화(베어/불 × 스티프닝/플래트닝)를 반드시 포함 + 듀레이션 전략. 차트가 없으면 주간 변화를 산문으로 서술. **출처·기준일 표기는 아래 상세 사양을 반드시 따른다.**
 7. **FX** — DXY, USD/KRW, USD/JPY, EUR/USD + 해석, 주요 페어 장중 흐름 포함
    - **심화 (2026-08-28)**: 「달러가 왜 이 방향인가」를 한 문단으로 쓴다. 금리차·위험선호·개별 통화 재료 중 **무엇인지 특정한다** — 「달러 약세 흐름」처럼 방향만 되뇌는 문장은 쓰지 않는다.
 8. **원자재** — WTI, Brent, Natural Gas, Gold + 최대 변동 및 해석, WTI·금 장중 흐름 포함
@@ -233,7 +233,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 5. **시장 해석 · 다음 발표 일정 카드** — 섹션 맨 끝. 「시장 해석」은 **신규 발표가 있는 날만**, 「다음 발표 일정」은 매일. 상세는 아래 '섹션 8-b'.
 6. **§9와의 정합** — 매크로 방향과 스탠스 등급의 부호가 반대인 자산군은 **반드시 해소 문단을 쓴다**. 그 `<p>`에 `data-reconcile="KEY"`를 달고 "구조적으로는 X지만 2~6주 구간에서는 Y로 가는 이유"를 설명한다. 시계가 다르므로 어긋나는 것 자체는 허용이고, **침묵이 금지**다.
 
-**산출물** — 보고서 HTML과 함께 워크스페이스 루트에 **`macro_next.json`을 쓴다**(입력 `macro.json`을 덮어쓰지 말 것). 오늘 `report_date`, `regime`(growth·inflation·since·thesis — 레짐이 바뀐 날만 since를 오늘로), `policy_path`(stance·timing·prob_pct·thesis·falsifier), `transmission` 7행(direction·since·channel·confirm), `last_seen`(`macro_metrics.json`의 것을 **그대로 복사** — 이 값이 내일의 신규 발표 판정 기준이다), 그리고 레짐이 바뀐 날은 `history`에 `{date, from, to, reason}`을 추가한다(최근 30건 유지). 이 파일이 없으면 다음날 책이 얼어붙는다. **`axis_directions`(오늘 4축 방향 넷)를 반드시 담는다** — 내일의 축약일 판정이 이 값과 대조한다. 빠지면 4축 조건이 조용히 통과로 굳어 겹치는 날에도 §9가 접히지 않는다(게이트가 막는다).
+**산출물** — 보고서 HTML과 함께 워크스페이스 루트에 **`macro_next.json`을 쓴다**(입력 `macro.json`을 덮어쓰지 말 것). 오늘 `report_date`, `regime`(growth·inflation·since·thesis — 레짐이 바뀐 날만 since를 오늘로), `policy_path`(stance·timing·prob_pct·thesis·falsifier), `transmission` 7행(direction·since·channel·confirm), `last_seen`(`macro_metrics.json`의 것을 **그대로 복사** — 이 값이 내일의 신규 발표 판정 기준이다), 그리고 레짐이 바뀐 날은 `history`에 `{date, from, to, reason}`을 추가한다(최근 30건 유지). 이 파일이 없으면 다음날 책이 얼어붙는다. **`axis_directions`(오늘 4축 방향 넷)를 반드시 담는다** — 내일의 축약일 판정이 이 값과 대조한다. 빠지면 4축 조건이 조용히 통과로 굳어 **축이 실제로 뒤집힌 날에도 §9가 접힌다** — 대조할 전일 값이 없으면 통과로 보기 때문이다. 게이트는 존재만이 아니라 **네 축이 모두 있고 오늘 `macro_eval.json`의 값과 같은지**까지 본다(2026-09-06).
 
 **경로 블록에 그날 가격을 쓰지 않는다 (2026-08-30).** 「오늘 DXY는 -0.04% 내린 99.13으로 마감해」 같은 문장은 자산 섹션에 이미 같은 수치로 있다 — 실측 중복 218자. `data-macro-group` 블록에는 3~6개월 경로 논리와 확인 지표만 남긴다. 「앞서 채권 섹션에서 본 대로」로 시작하는 되풀이도 없앤다.
 
@@ -530,7 +530,7 @@ table { font-variant-numeric: tabular-nums; }
 - 최상단에 `<meta charset="utf-8">`와 `<meta name="viewport" content="width=device-width, initial-scale=1">` 포함
 - **구글 애드센스 로더**: `<head>` 안(권장: `</head>` 직전)에 아래 스크립트 한 줄을 반드시 포함한다 — 매 발행 글에 광고가 실린다.
   `<!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>`
-- 채권 섹션: 수익률 표 아래 카드에 yield_curve.png를 base64 data URI로 임베드 + 주간 변화 캡션 + 출처·기준일 각주(위 '섹션 5. 채권 — 상세 사양')
+- 채권 섹션: 수익률 표 아래 카드에 커브 차트를 **외부 참조**로 넣는다 — `<img src="../assets/yield_curve_[YYYY-MM-DD].png" alt="미국 국채 수익률 커브" style="width:100%">`. **base64 data URI 를 쓰지 않는다** — 발행 단계가 같은 PNG 를 `assets/yield_curve_[DATE].png` 로 커밋하므로 임베드하면 같은 그림이 레포에 두 벌 들어가고 발행본이 3배가 된다(2026-09-03 실측 165,239 B 중 99,310 B 가 base64, 참조로 바꾸면 65,965 B). 파일명이 날짜별이라 과거 발행본도 제 차트를 가리킨다 + 주간 변화 캡션 + 출처·기준일 각주(위 '섹션 5. 채권 — 상세 사양')
 
 **발행 전 가독성 수리 루프**: 먼저 `python3 scripts/apply_readability.py <산출 HTML>`로 조판·빠른 이동·긴 문단 분리를 적용한 뒤, `python3 scripts/check_readability.py --strict <산출 HTML>`을 돌린다. 경고는 현재 초안을 반려하는 수정 지시다. 출력에 찍힌 문장만 고쳐 다시 검사하고, 0건이 될 때까지 반복한 뒤 최종본을 넘긴다. 긴 문장은 분리하고, 수치 과밀은 정확값을 표에 남긴 채 산문을 관계 중심으로 줄이며, 반복 수치는 정본 표와 첫 설명만 남긴다. 이 과정에서 보고서 전체 섹션이나 근거를 삭제해 얇은 대체본으로 만들지 않는다.
 

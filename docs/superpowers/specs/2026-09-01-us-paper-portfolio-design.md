@@ -146,24 +146,32 @@
 
 ## 산출물
 
-- `data/portfolio.json` — 오늘의 책(기준일·NAV·좌수·가격·비중·목표 등급·리밸런싱 여부)
+- `data/portfolio.json` — 오늘의 책(기준일·NAV·좌수·가격·비중·목표 등급·리밸런싱 여부)에
+  더해 **완성된 성과가 `performance` 키로 함께 들어 있다**(기간 수익률·초과수익·
+  슬리브 기여도·`insufficient`·`min_sessions`). 근거 수치는 `rationale`, 동결·비례축소
+  여부는 `stance_frozen`·`scaled`.
+- `data/portfolio_state.json` — 승계 원장(설정일·active·bench·grades_from·stance_frozen)
+- `data/portfolio_prices.json` — 종가·직전 세션 종가
 - `data/history/portfolio.jsonl` — 매일 1행(append-only, 재계산 금지)
-- `data/portfolio_perf.json` — writer가 렌더할 완성된 성과(기간 수익률·초과수익·
-  슬리브 기여도·현재 비중 대 중립·리밸런싱 이력·최대 낙폭)
+
+> **2026-09-05 정정**: 이 문서의 초판은 산출물을 `portfolio.json`·`history/portfolio.jsonl`·
+> **`portfolio_perf.json`** 셋으로 적었으나, 구현은 성과를 `portfolio.json` 안 `performance`
+> 키로 합쳤고 `portfolio_perf.json` 은 **존재하지 않는다**. 낡은 이름을 읽으라는 지시가
+> 남아 있으면 파일을 못 찾고 섹션을 통째로 생략하게 되므로 위와 같이 고쳤다.
 
 가격은 `collect_histories()`의 3년 배치 다운로드에 16개 티커를 얹어 받는다 —
 **네트워크 호출 추가 없음**. `auto_adjust=True`라 배당 포함 총수익 기준이다.
 
 ## 표본이 모자라면 입을 다문다
 
-설정 이후 60거래일 미만이면 `portfolio_perf.json`의 `insufficient`가 켜지고,
+설정 이후 60거래일 미만이면 `portfolio.json`의 `performance.insufficient`가 켜지고,
 게이트가 **연율화·샤프·변동성·승률 인쇄를 막는다**. 2주짜리 기록을 연율로 부풀리는
 것은 성적표가 아니라 소음이다 — `period_scorecard`·thesis `history.jsonl` 20행
 규율과 같다.
 
 ## 게이트 `scripts/check_portfolio.py`
 
-- 인용 가능한 수치는 `portfolio.json`·`portfolio_perf.json`에서 나온 것뿐이다.
+- 인용 가능한 수치는 `portfolio.json`(`performance`·`rationale` 포함)에서 나온 것뿐이다.
 - `portfolio.json`의 기준일이 `market_data.json`과 다르면 **닫히면서 실패**한다.
 - 「모의」 고지, 설정일, 벤치마크 정의, 하루 시차 문장, 슬리브 표식
   (`data-sleeve=`)이 없으면 실패.

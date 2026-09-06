@@ -32,6 +32,28 @@ def test_emphasis_lists_quotes_and_links():
     assert '<a href="https://x.com"' in html and '<em>기울임</em>' in html
 
 
+def test_a_query_string_in_a_link_survives_intact():
+    """주소는 한 번만 이스케이프한다 — 본문 이스케이프 뒤 다시 감싸면
+    `?a=1&b=2` 가 `?a=1&amp;amp;b=2` 가 되어 두 번째 쿼리 키가 달라진다."""
+    html = render_note('[link](https://example.com/?a=1&b=2)', '2026-08-20')
+    assert 'href="https://example.com/?a=1&amp;b=2"' in html
+    assert '&amp;amp;' not in html
+
+
+def test_emphasis_syntax_never_rewrites_the_address():
+    """강조 변환이 주소까지 훑으면 `**` 를 담은 URL 이 <strong> 으로 쪼개진다."""
+    html = render_note('[link](https://example.com/a/**b**/c)', '2026-08-20')
+    assert 'href="https://example.com/a/**b**/c"' in html
+    assert '<strong>' not in html
+
+
+def test_link_text_still_takes_emphasis():
+    """주소만 보호한다 — 표시 텍스트의 강조는 그대로 살아 있어야 한다."""
+    html = render_note('[**굵은 링크**](https://x.com)', '2026-08-20')
+    assert '<a href="https://x.com"' in html
+    assert '<strong>굵은 링크</strong>' in html
+
+
 def test_html_in_the_note_is_escaped_not_executed():
     html = render_note('<script>alert(1)</script> & 그리고', '2026-08-20')
     assert '<script>' not in html

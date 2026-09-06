@@ -348,15 +348,37 @@ N배」 네 번, 그리고 첫 문장이 「먼저 지금 어디에 서 있는�
 writer가 「오늘은 겹치나」를 판단하지 않는다. `eval_macro_regime.py`가 `macro_eval.json`에
 `abbreviated`와 그 사유를 담아 넘긴다 — 축 점수 z를 writer가 만지지 않는 것과 같은 계약이다.
 
-**축약일** = 다음이 모두 참일 때.
+**축약일** = 다음이 모두 참일 때. `macro._abbreviated()`가 판정한다.
 
 - `headline_releases`에 **tier 1 발표가 없다**
-- 레짐(`growth`·`inflation`)이 전일과 같다
-- 4축 `direction`이 넷 다 전일과 같다
-- 정책 경로 `timing`이 전일과 같고 FedWatch 확률 이동이 15%p 미만이다
+- **레짐이 움직일 수 있는 날이 아니다** — `allowed_regimes`가 하나뿐이다. 「오늘 고른
+  레짐이 전일과 같다」가 아니다. 아직 아무도 고르지 않은 시점이라 **움직일 여지가
+  있는지**만 본다
+- 4축 `direction`이 넷 다 전일과 같다 — **전일 `macro.json`에 `axis_directions`가
+  없으면 이 조건은 통과로 본다.** 첫날을 막지 않기 위해서지만, 그 상태가 이어지면
+  **축이 실제로 뒤집힌 날에도 접힌다**
 
-넷 다 `macro_metrics.json`과 전일 `macro.json`의 대조만으로 나온다 — **새 네트워크 호출도,
+**정책 경로는 이 판정에 들어가지 않는다**(2026-09-06 정정 — 위 목록에 「timing 동일,
+FedWatch 15%p 미만」을 넷째 조건으로 적어 두었으나 코드에 그런 검사는 없고, 있을 수도
+없다). 판정 시점에는 **오늘의 정책 경로가 아직 존재하지 않는다** — 그것은 writer가
+`macro_next.json`에 쓰는 값이다. `macro.py`가 2026-08-30에 전일 값끼리 비교하던 죽은
+조건을 뺀 것도 같은 이유다.
+
+대신 **사후에 게이트가 막는다**: `macro_gate._check_policy()`는 축약일에 `timing`을
+옮기면 확률이 15%p 이상 움직였더라도 세운다. 새로 쓸 것이 없는 날로 판정해 놓고 시점을
+바꿨다면 축약 판정 자체를 다시 봐야 한다(2026-09-06 추가 — 그 전까지 축약일 + timing
+변경 + 확률 50→70이 위반 없이 통과했다).
+
+셋 다 `macro_metrics.json`과 전일 `macro.json`의 대조만으로 나온다 — **새 네트워크 호출도,
 새 계산도 없다.** 하나라도 어긋나면 평소 모드다.
+
+### `axis_directions` 승계 계약
+
+축약일 판정이 대조할 전일 값은 writer가 남긴다. **`macro_next.json`에 오늘 4축 방향
+넷(`Labor`·`Activity`·`Consumption`·`Inflation`)을 `macro_eval.json`의 값 그대로 복사**한다.
+게이트가 존재만 보던 시절에는 `{"junk": "x"}`도 통과했으므로(2026-09-06 재현), 지금은
+**네 키가 모두 있는지와 오늘 계산값과 같은지**까지 본다. 계산은
+`macro._axis_directions()`가 `macro_metrics.json`의 `axis_summary`에서 뽑는다.
 
 ### 축약일의 §9
 

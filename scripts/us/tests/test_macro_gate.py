@@ -92,12 +92,15 @@ def eval_file(allowed=None, dirs=None, new_releases=('CPI YoY',), growth=0, infl
     }
 
 
+FOUR_AXES = {'Labor': '보합', 'Activity': '악화',
+             'Consumption': '악화', 'Inflation': '둔화'}
+
+
 def next_file(**kw):
     kw.setdefault('date', REPORT_DATE)
     out = macro_file(**kw)
     # 4축 방향은 내일의 축약일 판정이 대조할 값이다 — 승계 계약의 일부(2026-08-30).
-    out.setdefault('axis_directions', {'Labor': '보합', 'Activity': '악화',
-                                       'Consumption': '악화', 'Inflation': '둔화'})
+    out.setdefault('axis_directions', dict(FOUR_AXES))
     return out
 
 
@@ -504,7 +507,53 @@ def test_macro_next_must_carry_axis_directions():
                   {}, nxt, v)
     assert any('axis_directions' in x for x in v)
 
+    # 존재만 보면 못 막는다 — 축 하나만 담아도, 아무 키나 담아도 통과했다
+    # (2026-09-06 codex 검토에서 `{"junk": "x"}` 로 재현).
+    for broken in ({'Labor': '보합'}, {'junk': 'x'}, {'Labor': '보합', 'Activity': None,
+                                                     'Consumption': '악화', 'Inflation': '둔화'}):
+        v = []
+        _check_policy('동결 확률은 68.4%다.', {'policy_path': {'timing': '2026-12'}},
+                      {}, dict(nxt, axis_directions=broken), v)
+        assert any('axis_directions' in x for x in v), broken
+
     v = []
     _check_policy('동결 확률은 68.4%다.', {'policy_path': {'timing': '2026-12'}},
-                  {}, dict(nxt, axis_directions={'Labor': '보합'}), v)
+                  {}, dict(nxt, axis_directions=FOUR_AXES), v)
+    assert v == []
+
+
+def test_carried_axis_directions_must_equal_todays_computed_ones():
+    """승계값이 오늘 계산값과 달라도 통과하면 내일 판정이 엉뚱한 값과 대조한다."""
+    from us.macro_gate import _check_policy
+    nxt = {'policy_path': {'timing': '2026-12', 'prob_pct': 68.4},
+           'axis_directions': dict(FOUR_AXES, Labor='개선')}
+    v = []
+    _check_policy('동결 확률은 68.4%다.', {'policy_path': {'timing': '2026-12'}},
+                  {'axis_directions': FOUR_AXES}, nxt, v)
+    assert any('오늘' in x for x in v), v
+
+    v = []
+    _check_policy('동결 확률은 68.4%다.', {'policy_path': {'timing': '2026-12'}},
+                  {'axis_directions': FOUR_AXES},
+                  dict(nxt, axis_directions=dict(FOUR_AXES)), v)
+    assert v == []
+
+
+def test_an_abbreviated_day_may_not_move_the_policy_path():
+    """축약일은 「전일과 겹쳐 새로 쓸 것이 없는 날」이다. 그런 날 시점을 옮기면
+    축약 판정 자체가 틀렸다는 뜻이므로 확률이 크게 움직였어도 세우고 본다
+    (2026-09-06 codex 검토: 축약일 + timing 변경 + 50→70 이 통과했다)."""
+    from us.macro_gate import _check_policy
+    prev = {'policy_path': {'timing': '2026-12', 'prob_pct': 50.0}}
+    nxt = {'policy_path': {'timing': '2026-10', 'prob_pct': 70.0},
+           'axis_directions': FOUR_AXES}
+    v = []
+    _check_policy('확률은 70.0%다.', prev,
+                  {'abbreviated': True, 'new_releases': []}, nxt, v)
+    assert any('축약일' in x for x in v), v
+
+    # 축약일이 아니면 15%p 이동은 지금까지처럼 정당한 근거다.
+    v = []
+    _check_policy('확률은 70.0%다.', prev,
+                  {'abbreviated': False, 'new_releases': []}, nxt, v)
     assert v == []
