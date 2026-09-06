@@ -790,6 +790,11 @@
       "at": "2026-08-24T13:32:40+09:00",
       "findings": 0,
       "baseline": true
+    },
+    "weekly/2026-W35.html": {
+      "sha": "a6de01a2272bd0ee71f793b73044eb600503ab2e",
+      "at": "2026-09-06T20:44:31+09:00",
+      "findings": 1
     }
   }
 }
