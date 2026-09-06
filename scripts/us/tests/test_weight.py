@@ -231,9 +231,12 @@ def test_real_post_reproduces_the_spec_numbers():
     assert m['sections']['채권'] == 1581
     assert m['sections']['FX'] == 360
     assert m['sections']['원자재'] == 457
-    assert m['sections']['매크로 논리'] == 4788
+    # 2026-09-06 검토 게이트에서 이 발행본의 매크로 논리 산문을 정정해 +31자가 됐다
+    # (물가축 교착 서술·고용 지표 개수). 이 테스트가 고정하는 것은 측정 코드이지
+    # 발행본 문장이 아니므로, 발행본을 고칠 때마다 기대값을 함께 옮긴다.
+    assert m['sections']['매크로 논리'] == 4819
     assert m['sections']['멀티에셋 매니저 전략'] == 887 + 1357
-    assert m['recap'] == 3676 and m['judgment'] == 7424
+    assert m['recap'] == 3676 and m['judgment'] == 7455
 
 
 def test_real_post_is_blocked_on_every_designed_axis():
