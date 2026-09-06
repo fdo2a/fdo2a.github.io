@@ -30,7 +30,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install --quiet yfinance certifi pandas
+        run: pip install --quiet yfinance certifi pandas pytest
 
       # 손편집 탐지는 **수집 전**에만 가능하다. 커밋된 페이지는 커밋된 데이터로 렌더한
       # 결과와 같아야 한다. 수집 후에 대조하면 그날의 정상적인 시세 변화까지 «다르다»로
@@ -58,18 +58,13 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add thesis/data/ thesis/*.html thesis/index.json
-          if git diff --cached --quiet; then
-            echo "변경 없음 — 커밋 건너뜀"
-            exit 0
-          fi
-          git commit -m "thesis watch data $(date -u +%Y-%m-%d)"
-          # 루틴·다른 워크플로와 겹칠 수 있으니 rebase 후 재시도
-          for i in 1 2 3; do
-            git pull --rebase --autostash && git push && exit 0
-            sleep 5
-          done
-          echo "push 실패" >&2
-          exit 1
+          bash scripts/ci/push_with_retry.sh "thesis watch data $(date -u +%Y-%m-%d)"
+
+      # 테스트는 **커밋 뒤**에 돈다. 2026-09-01 채권 워크플로가 pytest 미설치로 죽으면서
+      # 그날 모은 수집분을 통째로 버린 전례가 있다 — 검사 실패는 빨간 실행으로 남기되
+      # 데이터는 이미 레포에 들어가 있어야 한다.
+      - name: Unit tests
+        run: python3 -m pytest scripts/thesis scripts/common -q
 
       # 데이터는 커밋해 두고, 손편집이 있었다는 사실은 빨간 실행으로 남긴다.
       - name: Fail if pages had been hand-edited
