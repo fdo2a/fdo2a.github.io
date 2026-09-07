@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4660637,
-    "volume": 2827725,
+    "value": 6110477,
+    "volume": 3478577,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3586126,
-    "volume": 14031862,
+    "value": 4890428,
+    "volume": 18277791,
     "members": [
       "삼성전자"
     ]
@@ -26,16 +26,18 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 904418,
-    "volume": 32120345,
+    "value": 1517938,
+    "volume": 41170537,
     "members": [
       "SOL AI반도체TOP2플러스",
       "TIGER 반도체TOP10",
       "TIGER 반도체TOP10레버리지",
       "KODEX AI반도체TOP2플러스",
       "KODEX 반도체레버리지",
-      "ACE K반도체TOP2+",
-      "TIGER 반도체TOP10커버드콜액티브"
+      "TIGER 반도체TOP10커버드콜액티브",
+      "HANARO Fn K-반도체",
+      "KODEX 반도체",
+      "ACE K반도체TOP2+"
     ]
   },
   {
@@ -43,10 +45,32 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 397923,
-    "volume": 2100010,
+    "value": 617411,
+    "volume": 3125144,
     "members": [
       "삼성전자우"
+    ]
+  },
+  {
+    "label": "두산에너빌리티",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 531927,
+    "volume": 6221607,
+    "members": [
+      "두산에너빌리티"
+    ]
+  },
+  {
+    "label": "LG전자",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 366263,
+    "volume": 1672760,
+    "members": [
+      "LG전자"
     ]
   },
   {
@@ -54,59 +78,33 @@
     "kind": "single_stock_lev",
     "direction": "long",
     "theme": null,
-    "value": 241015,
-    "volume": 26678158,
+    "value": 363534,
+    "volume": 35915142,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지"
     ]
   },
   {
-    "label": "KB금융",
+    "label": "두산퓨얼셀",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 231737,
-    "volume": 1339705,
+    "value": 169417,
+    "volume": 3298077,
     "members": [
-      "KB금융"
+      "두산퓨얼셀"
     ]
   },
   {
-    "label": "SK이노베이션",
+    "label": "대우건설",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 176360,
-    "volume": 1280862,
+    "value": 164978,
+    "volume": 9298102,
     "members": [
-      "SK이노베이션"
-    ]
-  },
-  {
-    "label": "2차전지 테마 ETF",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": "2차전지",
-    "value": 148630,
-    "volume": 69154460,
-    "members": [
-      "KODEX 2차전지산업레버리지",
-      "TIGER 2차전지TOP10레버리지",
-      "KODEX 2차전지산업",
-      "TIGER 2차전지TOP10",
-      "TIGER 2차전지소재Fn"
-    ]
-  },
-  {
-    "label": "대한항공",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 144627,
-    "volume": 4801677,
-    "members": [
-      "대한항공"
+      "대우건설"
     ]
   },
   {
@@ -114,8 +112,8 @@
     "kind": "single_stock_lev",
     "direction": "long",
     "theme": null,
-    "value": 143103,
-    "volume": 13103114,
+    "value": 156481,
+    "volume": 13159776,
     "members": [
       "KODEX 삼성전자단일종목레버리지",
       "TIGER 삼성전자단일종목레버리지"

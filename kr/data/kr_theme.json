@@ -1,62 +1,62 @@
 [
   {
     "name": "2026 하반기 신규상장",
-    "change_pct": 15.58
+    "change_pct": 9.02
   },
   {
-    "name": "지역화폐",
-    "change_pct": 6.74
+    "name": "반도체 대표주(생산)",
+    "change_pct": 8.69
   },
   {
-    "name": "3D 프린터",
-    "change_pct": 5.55
-  },
-  {
-    "name": "전자결제(전자화폐)",
-    "change_pct": 5.52
-  },
-  {
-    "name": "정유",
-    "change_pct": 5.43
-  },
-  {
-    "name": "로봇(산업용/협동로봇 등)",
-    "change_pct": 5.12
-  },
-  {
-    "name": "스페이스X(SpaceX)",
-    "change_pct": 4.93
-  },
-  {
-    "name": "피지컬 AI/휴머노이드 로봇",
-    "change_pct": 4.7
-  },
-  {
-    "name": "스테이블코인",
-    "change_pct": 4.46
+    "name": "S7(삼성전자/SK하이닉스 등)",
+    "change_pct": 5.64
   },
   {
     "name": "고체산화물 연료전지(SOFC)",
-    "change_pct": 4.31
+    "change_pct": 5.35
   },
   {
-    "name": "가상화폐(비트코인 등)",
-    "change_pct": 3.79
+    "name": "낙태/피임",
+    "change_pct": 4.85
   },
   {
-    "name": "지능형로봇/인공지능(AI)",
-    "change_pct": 3.73
+    "name": "건설 대표주",
+    "change_pct": 4.72
   },
   {
-    "name": "핀테크(FinTech)",
-    "change_pct": 3.39
+    "name": "원자력발전소 해체",
+    "change_pct": 4.64
   },
   {
-    "name": "마이데이터",
-    "change_pct": 3.37
+    "name": "전선",
+    "change_pct": 4.27
   },
   {
-    "name": "우주항공산업(누리호/인공위성 등)",
-    "change_pct": 3.32
+    "name": "원자력발전",
+    "change_pct": 4.07
+  },
+  {
+    "name": "유리 기판",
+    "change_pct": 4.03
+  },
+  {
+    "name": "셰일가스(Shale Gas)",
+    "change_pct": 3.83
+  },
+  {
+    "name": "LED",
+    "change_pct": 3.62
+  },
+  {
+    "name": "IT 대표주",
+    "change_pct": 3.6
+  },
+  {
+    "name": "전력설비",
+    "change_pct": 3.53
+  },
+  {
+    "name": "PCB(FPCB 등)",
+    "change_pct": 3.44
   }
 ]

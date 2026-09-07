@@ -1,0 +1,16 @@
+{
+  "report_date": "2026-09-07",
+  "charts": {
+    "kr_charts": {
+      "file": "kr_charts_2026-09-07.png",
+      "sha256": "dd07fd332ec67c8c5fa9ebbbb3fbe9e20d81f03b10a8433c668112508b40b3ef",
+      "bytes": 219219
+    },
+    "kr_flows_intraday": {
+      "file": "kr_flows_intraday_2026-09-07.png",
+      "sha256": "be3119dcdfb432b6e3d3dee4a9a68c4a4994f19f2b74fe4a5d260ff5d74ddf10",
+      "bytes": 99542
+    }
+  },
+  "notes": {}
+}
