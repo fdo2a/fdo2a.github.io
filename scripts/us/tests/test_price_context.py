@@ -770,13 +770,8 @@ def test_market_drivers_needs_a_full_window():
     assert market_drivers(closes, dates_for(closes), COHESION_SET, w=120) is None
 
 
-def test_compute_flags_a_change_of_leading_force():
-    # Equities lead the older window, commodities the recent one.
-    old = _driver_world(lead='equity', seed=4, n=260)
-    new = _driver_world(lead='commodity', seed=8, n=80)
-    closes = {t: old[t] + [old[t][-1] * (v / new[t][0]) for v in new[t][1:]] for t in old}
-    got = compute(closes, {}, sectors=SECTORS_FOR_TEST, dates=dates_for(closes))
-    assert got['drivers']['changed'] is True
+# 「1등이 바뀌었다」는 사건은 은퇴했다 — 3년 381개 창에서 한 번도 일어나지 않아
+# 영원히 False 인 필드였다. 대체 계약은 아래 「동승자 재설계」에 있다.
 
 
 # ── codex 검토(2026-08-28)가 잡은 것들 ──────────────────────────────────────
@@ -909,3 +904,202 @@ def test_stability_evidence_is_absent_rather_than_faked_on_short_history():
     closes = _factor_world(n=140)
     got = factor_decomposition(closes, dates_for(closes), ('BSK',), w=120, horizon=20)
     assert got['diagnostics']['betas_long'] is None
+
+
+# ── 동승자 재설계 (2026-09-07) ─────────────────────────────────────────────
+#
+# 1등(`first`)은 3년 종가 381개 창에서 전부 「주식」이었다. 구조적 보장은 아니지만
+# (그룹 점수는 로딩의 평균이라 원자재가 1등인 합성 사례도 통과한다) 이 구성과 이
+# 관측 기간에서는 한 번도 안 바뀌었으므로 「1등이 바뀌었다」를 사건으로 삼으면
+# 영원히 발동하지 않는다. 회전하는 값은 1번 고유벡터 위에서 1등 다음으로 높은
+# 자산군이다 — 금리 258 / 원자재 86 / 달러 37창.
+
+from us import price_context as _pc_mod  # noqa: E402
+
+
+def _companion_world(lead='equity', companion='rates', rho=0.75, seed=5, n=200):
+    """A lead group carries the shared move and one other group partly rides it."""
+    rng = random.Random(seed)
+    shared = [rng.uniform(-3, 3) for _ in range(n)]
+    groups = {'equity': ('^GSPC', '^IXIC', '^RUT', '^VIX'), 'rates': ('^TNX', '^TYX'),
+              'dollar': ('DX-Y.NYB', 'JPY=X'), 'commodity': ('CL=F', 'GC=F')}
+    closes = {}
+    for name, tickers in groups.items():
+        for t in tickers:
+            if name == lead:
+                steps = [s + rng.uniform(-0.2, 0.2) for s in shared]
+            elif name == companion:
+                steps = [rho * s + rng.uniform(-0.6, 0.6) for s in shared]
+            else:
+                steps = [rng.uniform(-0.8, 0.8) for _ in range(n)]
+            closes[t] = _walk(steps) if t not in ('^TNX', '^TYX') else \
+                [4.0 + sum(steps[:i]) * 0.01 for i in range(n + 1)]
+    return closes
+
+
+def test_the_companion_group_is_named():
+    """공통 움직임에 1등 다음으로 강하게 연결된 자산군."""
+    closes = _companion_world(companion='rates')
+    got = market_drivers(closes, dates_for(closes), COHESION_SET, w=120)
+    assert got['companion']['group_ko'] == '금리'
+
+
+def test_a_different_companion_gets_its_own_name():
+    closes = _companion_world(companion='commodity')
+    got = market_drivers(closes, dates_for(closes), COHESION_SET, w=120)
+    assert got['companion']['group_ko'] == '원자재'
+
+
+def test_the_companion_is_never_the_leading_group_again():
+    closes = _companion_world()
+    got = market_drivers(closes, dates_for(closes), COHESION_SET, w=120)
+    assert got['companion']['group_ko'] != got['first']['group_ko']
+
+
+def test_a_companion_barely_on_the_common_factor_is_not_named():
+    """나머지 자산군이 전부 잡음이면 2등 로딩은 0 근처다 — 그것을 「동승자」라고
+    부르는 것은 없는 사건을 만드는 일이다. 리드 대비 30% 실측 문턱.
+
+    3등과의 격차는 넉넉한데(32.5%) 리드 대비 비중이 22.8%뿐인 창을 쓴다 — 격차
+    조건만 있었다면 통과했을 자리다."""
+    closes = _companion_world(companion='rates', rho=0.03, seed=13)
+    got = market_drivers(closes, dates_for(closes), COHESION_SET, w=120)
+    assert got is not None and got['companion'] is None, got
+
+
+def test_a_tied_companion_is_not_named_but_the_reading_survives():
+    """2·3위가 붙어 있으면 이름은 동전던지기다(상대격차 10% 미만에서 인접창
+    일치 0.672 실측). 그래도 공통 요인의 크기까지 버리지는 않는다."""
+    closes = _companion_world(companion='rates', rho=0.75)
+    # 원자재도 같은 세기로 태워 2·3위를 붙여 놓는다.
+    rng = random.Random(11)
+    n = len(closes['^GSPC']) - 1
+    base = [(closes['^TNX'][i + 1] - closes['^TNX'][i]) * 100 for i in range(n)]
+    for t in ('CL=F', 'GC=F'):
+        closes[t] = _walk([b + rng.uniform(-0.05, 0.05) for b in base])
+    got = market_drivers(closes, dates_for(closes), COHESION_SET, w=120)
+    assert got is not None and got['first'] is not None and got['companion'] is None
+
+
+def test_a_blurred_common_factor_is_not_read_at_all():
+    """1·2번 고유값이 붙어 있으면 1번 고유벡터 자체가 흔들린다 — 그 위의 순위는
+    아무것도 뜻하지 않는다(codex 설계검토 2026-09-07)."""
+    rng = random.Random(4)
+    n = 200
+    a = [rng.uniform(-3, 3) for _ in range(n)]
+    b = [rng.uniform(-3, 3) for _ in range(n)]
+    half = {'^GSPC', '^IXIC', '^RUT', '^VIX', '^TNX'}
+    closes = {}
+    for t in COHESION_SET:
+        steps = [(a[i] if t in half else b[i]) + rng.uniform(-0.02, 0.02) for i in range(n)]
+        closes[t] = _walk(steps) if t not in ('^TNX', '^TYX') else \
+            [4.0 + sum(steps[:i]) * 0.01 for i in range(n + 1)]
+    assert market_drivers(closes, dates_for(closes), COHESION_SET, w=120) is None
+
+
+def test_a_window_the_absolute_margin_rule_would_have_thrown_away_now_reads():
+    """옛 규칙은 1·2등 절대 격차가 0.05 미만이면 판정 자체를 버렸다.
+
+    그런데 corr(공통요인 비중, 절대격차) = -0.84 로, 응집도가 높을수록 격차가
+    줄어드는 구조다 — 가장 읽을 값이 있는 날에 정확히 판정이 막혔다(381창 중
+    32창). 아래는 주식 0.408 / 금리 0.400 으로 절대 격차가 0.008 뿐이지만
+    금리가 그 공통 움직임에 실제로 실려 있는 창이다."""
+    closes = _companion_world(companion='rates', rho=0.8, seed=5)
+    got = market_drivers(closes, dates_for(closes), COHESION_SET, w=120)
+    assert got is not None and got['companion']['group_ko'] == '금리', got
+    assert not hasattr(_pc_mod, 'MIN_DRIVER_MARGIN')
+
+
+def test_the_leading_group_is_no_longer_claimed_to_change():
+    """381창 전부 주식이었다. 영원히 False 인 필드는 계약이 아니라 오해다."""
+    closes = _companion_world()
+    got = compute(closes, {}, sectors=SECTORS_FOR_TEST, dates=dates_for(closes))
+    assert 'changed' not in got['drivers']
+
+
+def test_a_changed_companion_is_measured_against_the_prior_window():
+    old = _companion_world(companion='commodity', seed=4, n=260)
+    new = _companion_world(companion='rates', seed=8, n=80)
+    closes = {t: old[t] + [old[t][-1] * (v / new[t][0]) for v in new[t][1:]] for t in old}
+    got = compute(closes, {}, sectors=SECTORS_FOR_TEST, dates=dates_for(closes))
+    assert got['drivers']['companion_changed'] is True
+
+
+def test_an_undecided_companion_never_reports_a_change():
+    """한쪽이 판정 불가면 「바뀌었다」가 아니라 「모른다」다."""
+    closes = _companion_world(companion=None)
+    got = compute(closes, {}, sectors=SECTORS_FOR_TEST, dates=dates_for(closes))
+    assert got['drivers']['companion'] is None
+    assert got['drivers']['companion_changed'] is False
+
+
+def test_a_companion_change_needs_the_same_leading_group_in_both_windows():
+    """리드가 바뀌면 두 창은 서로 다른 그룹을 뺀 순위를 비교하게 된다."""
+    # 새 구간을 창 하나 길이로 맞춘다 — 그래야 직전 창이 옛 국면에 온전히 들어간다.
+    old = _companion_world(lead='commodity', companion='rates', seed=4, n=260)
+    new = _companion_world(lead='equity', companion='dollar', seed=8, n=62)
+    closes = {t: old[t] + [old[t][-1] * (v / new[t][0]) for v in new[t][1:]] for t in old}
+    got = compute(closes, {}, sectors=SECTORS_FOR_TEST, dates=dates_for(closes))
+    d = got['drivers']
+    # 전제가 성립하는지부터 확인한다 — 아니면 이 테스트는 아무것도 안 재는 것이다.
+    assert d['prior'] and d['prior']['first'] != d['first']['group_ko'], d
+    assert d['companion'] and d['companion_prior']
+    assert d['companion']['group_ko'] != d['companion_prior']
+    assert d['companion_changed'] is False
+
+
+# ── 응집도 백분위 (2026-09-07) ────────────────────────────────────────────
+#
+# 「값이 있으면 무조건 쓴다」로 강제하면 평범한 날에도 「응집도는 보통」이라는
+# 채움 문장이 매일 나간다. 이례적인 날에만 강제하려면 이례성을 잴 잣대가 있어야
+# 한다. 오프셋 1~252 창과 비교하고, 오늘은 자기 잣대에서 뺀다.
+
+def _cohesion_world(n=400, seed=6, drift=None):
+    rng = random.Random(seed)
+    steps = {t: [] for t in COHESION_SET}
+    for i in range(n):
+        s = rng.uniform(-2, 2)
+        tie = drift(i) if drift else 0.3
+        for t in COHESION_SET:
+            steps[t].append(tie * s + (1 - tie) * rng.uniform(-2, 2))
+    return {t: _walk(v) for t, v in steps.items()}
+
+
+def test_cohesion_says_where_today_sits_in_its_own_history():
+    closes = _cohesion_world()
+    got = cohesion(closes, dates_for(closes), COHESION_SET, w=60)
+    assert 0.0 <= got['percentile'] <= 100.0
+    assert got['band'] in ('매우 낮음', '낮음', '중간', '높음', '매우 높음')
+    assert got['history_windows'] > 0
+
+
+def test_a_market_that_just_locked_together_reads_as_unusually_cohesive():
+    closes = _cohesion_world(drift=lambda i: 0.95 if i >= 340 else 0.2)
+    got = cohesion(closes, dates_for(closes), COHESION_SET, w=60)
+    assert got['percentile'] >= 90.0, got
+
+
+def test_cohesion_has_no_percentile_without_enough_history():
+    """창 스무 개로 「2년 중 가장 높다」를 쓰면 맞는 말이 아니라 표본이 없다는 말이다."""
+    closes = _cohesion_world(n=100)
+    got = cohesion(closes, dates_for(closes), COHESION_SET, w=60)
+    assert got['top1_pct'] is not None
+    assert got['percentile'] is None and got['history_windows'] is None
+
+
+def test_the_cohesion_percentile_turns_on_at_exactly_a_full_lookback():
+    """60세션 창 하나 + 직전 252창 = 공통 세션 종가 313개가 최소치다."""
+    short = _cohesion_world(n=311)      # 종가 312개
+    assert cohesion(short, dates_for(short), COHESION_SET, w=60)['percentile'] is None
+    full = _cohesion_world(n=312)       # 종가 313개
+    got = cohesion(full, dates_for(full), COHESION_SET, w=60)
+    assert got['percentile'] is not None and got['history_windows'] == 252
+
+
+def test_the_cohesion_percentile_excludes_today_from_its_own_yardstick():
+    """오늘을 잣대에 넣으면 사상 최고 응집도가 「이보다 높았던 날이 없다」가
+    아니라 「자기 자신 하나」가 된다."""
+    # 응집도가 계속 올라가는 장 — 오늘 창이 자기 이력 전체보다 높다.
+    closes = _cohesion_world(n=420, drift=lambda i: 0.05 + 0.9 * i / 420)
+    got = cohesion(closes, dates_for(closes), COHESION_SET, w=60)
+    assert got['percentile'] == 100.0, got

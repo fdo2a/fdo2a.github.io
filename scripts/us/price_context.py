@@ -226,11 +226,35 @@ def correlation(closes, dates, a, b, w=CORR_WINDOW, offset=0):
 # 균등분산(10자산이면 10%)을 크게 웃돌 것, 그리고 1등 자산군이 2등을 뚜렷이
 # 앞설 것.
 # 실측 보정(2026-08-28): 상위 1개 요인 비중은 서로 무관한 열 개에서 15.5~16.0%,
-# 공통 움직임이 실제로 있는 경우 20.8~43.6%로 갈렸다. 자산군 간 격차는 둘을 못
-# 가른다(잡음 0.137 > 실제 0.176이 겹친다) — 비중이 판별자이고, 격차는 1·2등이
-# 사실상 동점일 때만 걸러 내는 보조 조건이다.
+# 공통 움직임이 실제로 있는 경우 20.8~43.6%로 갈렸다.
 MIN_DRIVER_SHARE = 20.0
-MIN_DRIVER_MARGIN = 0.05
+
+# 1·2번 고유값이 붙어 있으면 1번 고유벡터의 «방향» 자체가 창을 하루 옮기는 것만
+# 으로 돌아간다 — 그 위에서 읽은 그룹 순위는 아무것도 뜻하지 않는다. 실측 분포
+# (3년 종가, 60세션 창 381개): 최소 0.167 / 하위 10% 0.301 / 중앙 0.495 / 최대
+# 0.794, 0.20 미만인 창은 14개.
+MIN_EIGEN_GAP = 0.20
+
+# 1등이 아니라 «그다음»이 정보다. 3년 381개 창에서 1등은 전부 「주식」이었다 —
+# 그룹 점수가 로딩의 평균이라 구조적으로 보장되는 것은 아니지만(원자재가 1등인
+# 합성 사례는 실제로 통과한다) 이 구성과 이 관측 기간에서는 한 번도 안 바뀌었다.
+# 반면 그다음 자리는 금리 258 / 원자재 86 / 달러 37창으로 돌았다.
+#
+# 이름을 붙일 조건 둘. 2·3위 «상대» 격차가 10% 미만이면 인접창(60세션 중 59를
+# 공유) 일치율이 0.672 로 사실상 동전던지기이고, 10% 이상이면 0.925 다. 리드 대비
+# 30% 문턱은 로딩이 0 근처인데 격차만 크게 나오는 창을 걸러 낸다(0.073 대 0.070
+# 같은 창은 둘 다 애초에 요인 위에 없다). 표본 분할로 재검증했다 — 과거 구간
+# (오프셋 190~380)에서 문턱을 고르고 최근 구간(0~189)에서 평가해 유지율 0.930 /
+# 0.940. 시차별 지속성은 1세션 0.93, 5세션 0.81, 20세션 0.57, 60세션 0.29다.
+#
+# 절대 격차(옛 MIN_DRIVER_MARGIN = 0.05)는 버렸다. corr(상위 1개 요인 비중,
+# 절대격차) = -0.84 로 «응집도가 높을수록 격차가 줄어드는» 구조라, 가장 읽을
+# 값이 있는 날에 정확히 판정이 막혔다 — 381창 중 32창(8.4%)이 그렇게 사라졌다.
+MIN_COMPANION_GAP = 0.10
+MIN_COMPANION_RATIO = 0.30
+
+# 응집도 백분위가 비교하는 과거 창의 수. 오늘은 자기 잣대에서 뺀다.
+COHESION_LOOKBACK = 252
 
 # VIX는 주식과 한 묶음이다. S&P 옵션에서 나온 지표라 같은 위험 요인의 거울이고,
 # 따로 세워 두면 하나의 힘이 「주식 0.428 vs 변동성 0.400」으로 쪼개져 1등이
@@ -285,8 +309,11 @@ def market_drivers(closes, dates, tickers, w=CORR_WINDOW, offset=0):
     share = float(vals[order[0]]) / n * 100
     if share < MIN_DRIVER_SHARE:
         return None
+    lam1, lam2 = float(vals[order[0]]), float(vals[order[1]])
+    if lam1 <= 0 or (lam1 - lam2) / lam1 < MIN_EIGEN_GAP:
+        return None
     first_rank = rank(vecs[:, order[0]])
-    if len(first_rank) < 2 or first_rank[0][0] - first_rank[1][0] < MIN_DRIVER_MARGIN:
+    if len(first_rank) < 3:
         return None
     first_ko = first_rank[0][1]
     second_rank = [r for r in rank(vecs[:, order[1]]) if r[1] != first_ko]
@@ -295,38 +322,99 @@ def market_drivers(closes, dates, tickers, w=CORR_WINDOW, offset=0):
     return {
         'first': {'group_ko': first_ko, 'share_pct': round(share, 1)},
         'second': {'group_ko': second_rank[0][1],
-                   'share_pct': round(float(vals[order[1]]) / n * 100, 1)},
+                   'share_pct': round(lam2 / n * 100, 1)},
+        'companion': _companion(first_rank),
     }
 
 
-def cohesion(closes, dates, tickers, w=CORR_WINDOW):
-    """How much of the market is one bet.
+def _companion(first_rank):
+    """The group riding hardest on the common factor after the leader.
 
-    Standardise each asset's changes, take the correlation matrix, and read its
-    eigenvalues: the largest one is the share of all movement that a single common
-    factor explains. Near 100% means everything is the same trade wearing different
-    names — which is what a stress regime looks like from the inside, before anyone
-    calls it one.
+    Loadings are absolute, so this says «moves with the same force», not «moves the
+    same way» — direction needs the correlations, not this. None when the second and
+    third places are too close to separate, or when the runner-up is barely on the
+    factor at all.
     """
-    cols = aligned_changes(closes, dates, tickers, w)
-    if cols is None or len(cols) < 3:
+    lead, (load, ko) = first_rank[0][0], first_rank[1]
+    third = first_rank[2][0]
+    if not load or not lead:
         return None
+    gap = (load - third) / load
+    ratio = load / lead
+    if gap < MIN_COMPANION_GAP or ratio < MIN_COMPANION_RATIO:
+        return None
+    return {'group_ko': ko, 'loading': round(load, 3),
+            'gap_pct': round(gap * 100, 1), 'ratio_pct': round(ratio * 100, 1)}
+
+
+def _eigs(m):
+    """Sorted eigenvalues of the correlation matrix of one window, or None."""
     import numpy as np
 
-    m = np.array(cols, dtype=float)
-    sd = m.std(axis=1, ddof=1)
-    if not np.all(sd > 0):
+    if m.shape[1] < 3 or not np.all(m.std(axis=1, ddof=1) > 0):
         return None
     corr = np.corrcoef(m)
     if not np.all(np.isfinite(corr)):
         return None
-    eig = np.sort(np.linalg.eigvalsh(corr))[::-1]
+    return np.sort(np.linalg.eigvalsh(corr))[::-1]
+
+
+def cohesion(closes, dates, tickers, w=CORR_WINDOW, lookback=COHESION_LOOKBACK):
+    """How much of the market is one bet, and whether that is unusual for it.
+
+    Standardise each asset's changes, take the correlation matrix, and read its
+    eigenvalues: the largest one is the share of all movement that a single common
+    factor explains. High does not mean the diversification is gone — assets moving
+    exactly opposite load on the same factor too — it means one force is setting the
+    day and the names are downstream of it.
+
+    The level alone says nothing, because 43% is high for one market and low for
+    another. So it is ranked against the same reading over the previous `lookback`
+    windows, today excluded from its own yardstick, exactly as level_percentile does
+    for a price. Without enough history the three ranking fields stay None rather
+    than being computed off a handful of windows.
+    """
+    cols = aligned_changes(closes, dates, tickers, w + lookback)
+    if cols is None:
+        cols = aligned_changes(closes, dates, tickers, w)
+    if cols is None or len(cols) < 3:
+        return None
+    import numpy as np
+
+    full = np.array(cols, dtype=float)
+    eig = _eigs(full[:, -w:]) if full.shape[1] >= w else None
+    if eig is None:
+        return None
     n = len(eig)
-    return {
+    top1 = float(eig[0]) / n * 100
+    out = {
         'n_assets': n,
-        'top1_pct': round(float(eig[0]) / n * 100, 1),
+        'top1_pct': round(top1, 1),
         'top3_pct': round(float(eig[:3].sum()) / n * 100, 1),
+        'percentile': None,
+        'band': None,
+        'history_windows': None,
     }
+    hist = []
+    for off in range(1, lookback + 1):
+        end = full.shape[1] - off
+        if end - w < 0:
+            break
+        e = _eigs(full[:, end - w:end])
+        if e is not None:
+            hist.append(float(e[0]) / len(e) * 100)
+    # 부분 이력으로는 백분위를 만들지 않는다. 창 스무 개로 「2년 중 가장 높다」를
+    # 쓰면 그건 맞는 말이 아니라 표본이 없다는 말이다.
+    if len(hist) >= lookback:
+        # 반올림 전 값끼리 비교한다 — 표시용 반올림을 순위에 끌어들이면 소수점
+        # 한 자리가 같은 창들이 전부 동점이 된다.
+        below = sum(1 for v in hist if v < top1)
+        ties = sum(1 for v in hist if v == top1)
+        pct = round((below + 0.5 * ties) / len(hist) * 100, 1)
+        out['percentile'] = pct
+        out['band'] = percentile_band(pct)
+        out['history_windows'] = len(hist)
+    return out
 
 
 def estimate_weights(cols, y, iters=20000, tol=1e-12):
@@ -562,10 +650,17 @@ def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
         # 둘 다 기록한다 — 발행본이 「순서가 같다」고 쓰려면 직전 2등도 알아야 한다.
         drivers['prior'] = None if not prior else {
             'first': prior['first']['group_ko'], 'second': prior['second']['group_ko']}
-        # A change in what the market is "about" is the same class of event as a
-        # correlation flipping sign — it must not pass unremarked.
-        drivers['changed'] = bool(prior and prior['first']['group_ko']
-                                  != drivers['first']['group_ko'])
+        now_ko = (drivers.get('companion') or {}).get('group_ko')
+        was_ko = ((prior or {}).get('companion') or {}).get('group_ko')
+        drivers['companion_prior'] = was_ko
+        # 리드가 다르면 두 창은 서로 다른 그룹을 뺀 순위를 비교하게 된다 — 같은
+        # 질문에 대한 두 답이 아니므로 「바뀌었다」고 말할 수 없다.
+        same_lead = bool(prior and prior['first']['group_ko']
+                         == drivers['first']['group_ko'])
+        # 오늘 일어난 전환이 아니라 «직전 60세션 구간과 비교하면 다르다»는 뜻이다.
+        # 실측(시차 60): 유지 29% / 교체 35% / 판정 불가 37%.
+        drivers['companion_changed'] = bool(
+            now_ko and was_ko and same_lead and now_ko != was_ko)
     factors = {}
     for key, label, basket in BASKETS:
         got = factor_decomposition(closes, dates, basket)
