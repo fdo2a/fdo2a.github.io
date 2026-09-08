@@ -1,228 +1,238 @@
 {
   "unit": "억원",
-  "date": "2026-09-07",
+  "date": "2026-09-08",
   "basis": "장중 누적 순매수 스냅샷 — 확정 일별 수치와 다를 수 있음",
   "KOSPI": {
     "points": [
       {
         "t": "09:30",
-        "individual": -13764,
-        "foreign": 6158,
-        "institution": 6334,
-        "fin_invest": 2477,
-        "insurance": 6,
-        "trust": 675,
-        "bank": 3,
-        "other_fin": 3,
-        "pension": 3170,
-        "other_corp": 1272
+        "individual": -3021,
+        "foreign": -467,
+        "institution": 2103,
+        "fin_invest": 624,
+        "insurance": 44,
+        "trust": 638,
+        "bank": -1,
+        "other_fin": 7,
+        "pension": 791,
+        "other_corp": 1385
       },
       {
         "t": "10:00",
-        "individual": -17982,
-        "foreign": 7235,
-        "institution": 8085,
-        "fin_invest": 4326,
-        "insurance": -47,
-        "trust": 759,
-        "bank": 8,
-        "other_fin": 12,
-        "pension": 3028,
-        "other_corp": 2662
+        "individual": -6571,
+        "foreign": 938,
+        "institution": 2929,
+        "fin_invest": 1264,
+        "insurance": -52,
+        "trust": 623,
+        "bank": 107,
+        "other_fin": 20,
+        "pension": 966,
+        "other_corp": 2704
       },
       {
         "t": "10:30",
-        "individual": -21392,
-        "foreign": 8203,
-        "institution": 9291,
-        "fin_invest": 5470,
-        "insurance": -51,
-        "trust": 837,
-        "bank": 10,
-        "other_fin": 7,
-        "pension": 3018,
-        "other_corp": 3898
+        "individual": -7481,
+        "foreign": 173,
+        "institution": 3007,
+        "fin_invest": 1853,
+        "insurance": -79,
+        "trust": 581,
+        "bank": 150,
+        "other_fin": 31,
+        "pension": 471,
+        "other_corp": 4301
       },
       {
         "t": "11:00",
-        "individual": -21799,
-        "foreign": 8924,
-        "institution": 7748,
-        "fin_invest": 5843,
-        "insurance": -41,
-        "trust": 743,
-        "bank": 18,
-        "other_fin": 13,
-        "pension": 1173,
-        "other_corp": 5127
+        "individual": -11517,
+        "foreign": 1331,
+        "institution": 4652,
+        "fin_invest": 3231,
+        "insurance": -81,
+        "trust": 606,
+        "bank": 154,
+        "other_fin": 40,
+        "pension": 701,
+        "other_corp": 5534
       },
       {
         "t": "11:30",
-        "individual": -23515,
-        "foreign": 9065,
-        "institution": 7851,
-        "fin_invest": 6151,
-        "insurance": -19,
-        "trust": 667,
-        "bank": 23,
-        "other_fin": 21,
-        "pension": 1008,
-        "other_corp": 6599
+        "individual": -13243,
+        "foreign": 1451,
+        "institution": 4888,
+        "fin_invest": 4943,
+        "insurance": -124,
+        "trust": 541,
+        "bank": 158,
+        "other_fin": 50,
+        "pension": -680,
+        "other_corp": 6905
       },
       {
         "t": "12:00",
-        "individual": -25836,
-        "foreign": 9503,
-        "institution": 8189,
-        "fin_invest": 6300,
-        "insurance": 2,
-        "trust": 597,
-        "bank": 29,
-        "other_fin": 34,
-        "pension": 1228,
-        "other_corp": 8144
+        "individual": -15859,
+        "foreign": 2120,
+        "institution": 5164,
+        "fin_invest": 5463,
+        "insurance": -133,
+        "trust": 539,
+        "bank": 161,
+        "other_fin": 61,
+        "pension": -926,
+        "other_corp": 8575
       },
       {
         "t": "12:30",
-        "individual": -29577,
-        "foreign": 10536,
-        "institution": 9615,
-        "fin_invest": 7197,
-        "insurance": 19,
-        "trust": 398,
-        "bank": 33,
-        "other_fin": 48,
-        "pension": 1920,
-        "other_corp": 9426
+        "individual": -20361,
+        "foreign": 2061,
+        "institution": 8490,
+        "fin_invest": 7803,
+        "insurance": -134,
+        "trust": 495,
+        "bank": 159,
+        "other_fin": 73,
+        "pension": 94,
+        "other_corp": 9810
       },
       {
         "t": "13:00",
-        "individual": -34326,
-        "foreign": 12057,
-        "institution": 11673,
-        "fin_invest": 8700,
-        "insurance": 42,
-        "trust": 279,
-        "bank": 37,
-        "other_fin": 62,
-        "pension": 2554,
-        "other_corp": 10597
+        "individual": -22281,
+        "foreign": 2775,
+        "institution": 8431,
+        "fin_invest": 8376,
+        "insurance": -147,
+        "trust": 463,
+        "bank": 166,
+        "other_fin": 97,
+        "pension": -524,
+        "other_corp": 11075
       },
       {
         "t": "13:30",
-        "individual": -42563,
-        "foreign": 13913,
-        "institution": 16637,
-        "fin_invest": 11016,
-        "insurance": 78,
-        "trust": 239,
-        "bank": 41,
-        "other_fin": 84,
-        "pension": 5178,
-        "other_corp": 12013
+        "individual": -23573,
+        "foreign": 3402,
+        "institution": 7576,
+        "fin_invest": 8126,
+        "insurance": -153,
+        "trust": 525,
+        "bank": 169,
+        "other_fin": 130,
+        "pension": -1221,
+        "other_corp": 12594
       },
       {
         "t": "14:00",
-        "individual": -49035,
-        "foreign": 15923,
-        "institution": 19626,
-        "fin_invest": 13354,
-        "insurance": 98,
-        "trust": 512,
-        "bank": 74,
-        "other_fin": 98,
-        "pension": 5490,
-        "other_corp": 13486
+        "individual": -25330,
+        "foreign": 2957,
+        "institution": 7498,
+        "fin_invest": 7428,
+        "insurance": -206,
+        "trust": 1104,
+        "bank": 171,
+        "other_fin": 156,
+        "pension": -1155,
+        "other_corp": 14875
       },
       {
         "t": "14:30",
-        "individual": -55351,
-        "foreign": 16614,
-        "institution": 23758,
-        "fin_invest": 16500,
-        "insurance": 106,
-        "trust": 465,
-        "bank": 69,
-        "other_fin": 125,
-        "pension": 6494,
-        "other_corp": 14978
+        "individual": -27492,
+        "foreign": 2847,
+        "institution": 8243,
+        "fin_invest": 8681,
+        "insurance": -358,
+        "trust": 1594,
+        "bank": 168,
+        "other_fin": 190,
+        "pension": -2032,
+        "other_corp": 16401
       },
       {
         "t": "15:00",
-        "individual": -59970,
-        "foreign": 18220,
-        "institution": 25333,
-        "fin_invest": 18804,
-        "insurance": 162,
-        "trust": 679,
-        "bank": 68,
-        "other_fin": 140,
-        "pension": 5480,
-        "other_corp": 16417
+        "individual": -29304,
+        "foreign": 3589,
+        "institution": 8132,
+        "fin_invest": 8391,
+        "insurance": -530,
+        "trust": 2108,
+        "bank": 163,
+        "other_fin": 210,
+        "pension": -2210,
+        "other_corp": 17583
       },
       {
         "t": "15:30",
-        "individual": -65245,
-        "foreign": 22110,
-        "institution": 26750,
-        "fin_invest": 20369,
-        "insurance": 162,
-        "trust": 704,
-        "bank": 60,
-        "other_fin": 134,
-        "pension": 5322,
-        "other_corp": 16385
+        "individual": -30603,
+        "foreign": 4528,
+        "institution": 8488,
+        "fin_invest": 8871,
+        "insurance": -645,
+        "trust": 2180,
+        "bank": 164,
+        "other_fin": 208,
+        "pension": -2289,
+        "other_corp": 17587
       }
     ],
     "extremes": {
       "individual": {
         "max": {
-          "t": "09:01",
-          "v": -3020
+          "t": "09:03",
+          "v": 594
         },
         "min": {
-          "t": "15:21",
-          "v": -65245
+          "t": "15:15",
+          "v": -31191
         }
       },
       "foreign": {
         "max": {
-          "t": "15:21",
-          "v": 22110
+          "t": "15:16",
+          "v": 4588
         },
         "min": {
-          "t": "09:01",
-          "v": 2235
+          "t": "09:13",
+          "v": -1448
         }
       },
       "institution": {
         "max": {
-          "t": "15:21",
-          "v": 26750
+          "t": "15:07",
+          "v": 9427
         },
         "min": {
-          "t": "09:01",
-          "v": 743
+          "t": "09:03",
+          "v": -57
         }
       }
     },
     "turns": {
       "individual": [],
-      "foreign": [],
+      "foreign": [
+        {
+          "t": "09:46",
+          "from": "순매도",
+          "to": "순매수",
+          "peak": {
+            "t": "10:00",
+            "v": 938
+          }
+        }
+      ],
       "institution": []
     },
     "session_last": {
       "t": "15:30",
-      "individual": -65245,
-      "foreign": 22110,
-      "institution": 26750,
-      "fin_invest": 20369,
-      "insurance": 162,
-      "trust": 704,
-      "bank": 60,
-      "other_fin": 134,
-      "pension": 5322,
-      "other_corp": 16385
+      "individual": -30603,
+      "foreign": 4528,
+      "institution": 8488,
+      "fin_invest": 8871,
+      "insurance": -645,
+      "trust": 2180,
+      "bank": 164,
+      "other_fin": 208,
+      "pension": -2289,
+      "other_corp": 17587
     },
     "first_t": "09:01",
     "last_t": "15:30",
@@ -233,244 +243,271 @@
     "points": [
       {
         "t": "09:30",
-        "individual": 371,
-        "foreign": -346,
-        "institution": -71,
-        "fin_invest": -336,
-        "insurance": 4,
-        "trust": 206,
+        "individual": 172,
+        "foreign": 186,
+        "institution": -346,
+        "fin_invest": -257,
+        "insurance": -2,
+        "trust": -63,
         "bank": 0,
-        "other_fin": 1,
-        "pension": 55,
-        "other_corp": 46
+        "other_fin": -24,
+        "pension": -1,
+        "other_corp": -12
       },
       {
         "t": "10:00",
-        "individual": -195,
-        "foreign": 70,
-        "institution": 69,
-        "fin_invest": -446,
-        "insurance": 7,
-        "trust": 400,
-        "bank": -1,
-        "other_fin": 1,
-        "pension": 109,
-        "other_corp": 56
+        "individual": 748,
+        "foreign": -50,
+        "institution": -697,
+        "fin_invest": -487,
+        "insurance": -2,
+        "trust": -169,
+        "bank": -2,
+        "other_fin": -27,
+        "pension": -9,
+        "other_corp": 0
       },
       {
         "t": "10:30",
-        "individual": -96,
-        "foreign": 91,
-        "institution": -54,
-        "fin_invest": -515,
-        "insurance": 4,
-        "trust": 381,
-        "bank": -2,
-        "other_fin": 1,
-        "pension": 77,
-        "other_corp": 59
+        "individual": 892,
+        "foreign": -38,
+        "institution": -853,
+        "fin_invest": -543,
+        "insurance": -4,
+        "trust": -254,
+        "bank": -3,
+        "other_fin": -29,
+        "pension": -20,
+        "other_corp": -1
       },
       {
         "t": "11:00",
-        "individual": -97,
-        "foreign": 142,
-        "institution": -109,
-        "fin_invest": -549,
-        "insurance": 3,
-        "trust": 390,
-        "bank": -3,
-        "other_fin": -21,
-        "pension": 71,
-        "other_corp": 64
+        "individual": 1064,
+        "foreign": -71,
+        "institution": -1000,
+        "fin_invest": -552,
+        "insurance": -8,
+        "trust": -382,
+        "bank": -6,
+        "other_fin": -30,
+        "pension": -22,
+        "other_corp": 8
       },
       {
         "t": "11:30",
-        "individual": -23,
-        "foreign": 131,
-        "institution": -193,
-        "fin_invest": -608,
-        "insurance": 1,
-        "trust": 354,
-        "bank": -5,
-        "other_fin": -20,
-        "pension": 85,
-        "other_corp": 85
+        "individual": 823,
+        "foreign": 218,
+        "institution": -1054,
+        "fin_invest": -537,
+        "insurance": -10,
+        "trust": -478,
+        "bank": -8,
+        "other_fin": -31,
+        "pension": 9,
+        "other_corp": 13
       },
       {
         "t": "12:00",
-        "individual": 152,
-        "foreign": 88,
-        "institution": -325,
-        "fin_invest": -695,
-        "insurance": -1,
-        "trust": 320,
-        "bank": -7,
-        "other_fin": -20,
-        "pension": 79,
-        "other_corp": 85
+        "individual": 931,
+        "foreign": 190,
+        "institution": -1150,
+        "fin_invest": -547,
+        "insurance": -11,
+        "trust": -568,
+        "bank": -10,
+        "other_fin": -31,
+        "pension": 18,
+        "other_corp": 29
       },
       {
         "t": "12:30",
-        "individual": 376,
-        "foreign": 8,
-        "institution": -470,
-        "fin_invest": -735,
-        "insurance": -4,
-        "trust": 282,
-        "bank": -9,
-        "other_fin": -68,
-        "pension": 64,
-        "other_corp": 86
+        "individual": 879,
+        "foreign": 317,
+        "institution": -1232,
+        "fin_invest": -550,
+        "insurance": -13,
+        "trust": -640,
+        "bank": -13,
+        "other_fin": -32,
+        "pension": 16,
+        "other_corp": 37
       },
       {
         "t": "13:00",
-        "individual": 778,
-        "foreign": -271,
-        "institution": -600,
-        "fin_invest": -796,
-        "insurance": -6,
-        "trust": 248,
-        "bank": -10,
-        "other_fin": -89,
-        "pension": 53,
-        "other_corp": 92
+        "individual": 800,
+        "foreign": 443,
+        "institution": -1282,
+        "fin_invest": -529,
+        "insurance": -19,
+        "trust": -720,
+        "bank": -15,
+        "other_fin": -32,
+        "pension": 33,
+        "other_corp": 39
       },
       {
         "t": "13:30",
-        "individual": 1186,
-        "foreign": -501,
-        "institution": -788,
-        "fin_invest": -865,
-        "insurance": -3,
-        "trust": 150,
-        "bank": -11,
-        "other_fin": -100,
+        "individual": 708,
+        "foreign": 650,
+        "institution": -1393,
+        "fin_invest": -535,
+        "insurance": -23,
+        "trust": -819,
+        "bank": -25,
+        "other_fin": -33,
         "pension": 41,
-        "other_corp": 104
+        "other_corp": 35
       },
       {
         "t": "14:00",
-        "individual": 1477,
-        "foreign": -546,
-        "institution": -1028,
-        "fin_invest": -939,
-        "insurance": -6,
-        "trust": 24,
-        "bank": -11,
-        "other_fin": -110,
-        "pension": 14,
-        "other_corp": 97
+        "individual": 899,
+        "foreign": 560,
+        "institution": -1492,
+        "fin_invest": -530,
+        "insurance": -26,
+        "trust": -920,
+        "bank": -33,
+        "other_fin": -33,
+        "pension": 51,
+        "other_corp": 33
       },
       {
         "t": "14:30",
-        "individual": 1701,
-        "foreign": -513,
-        "institution": -1287,
-        "fin_invest": -995,
-        "insurance": -10,
-        "trust": -113,
-        "bank": -12,
-        "other_fin": -128,
-        "pension": -29,
-        "other_corp": 99
+        "individual": 932,
+        "foreign": 651,
+        "institution": -1618,
+        "fin_invest": -543,
+        "insurance": -33,
+        "trust": -1033,
+        "bank": -46,
+        "other_fin": -34,
+        "pension": 70,
+        "other_corp": 35
       },
       {
         "t": "15:00",
-        "individual": 1684,
-        "foreign": -411,
-        "institution": -1391,
-        "fin_invest": -1026,
-        "insurance": -10,
-        "trust": -167,
-        "bank": -14,
-        "other_fin": -132,
-        "pension": -43,
-        "other_corp": 118
+        "individual": 1168,
+        "foreign": 534,
+        "institution": -1756,
+        "fin_invest": -545,
+        "insurance": -48,
+        "trust": -1154,
+        "bank": -64,
+        "other_fin": -34,
+        "pension": 88,
+        "other_corp": 54
       },
       {
         "t": "15:30",
-        "individual": 1765,
-        "foreign": -484,
-        "institution": -1398,
-        "fin_invest": -1055,
-        "insurance": -3,
-        "trust": -149,
-        "bank": -14,
-        "other_fin": -133,
-        "pension": -45,
-        "other_corp": 116
+        "individual": 1346,
+        "foreign": 590,
+        "institution": -1996,
+        "fin_invest": -641,
+        "insurance": -51,
+        "trust": -1271,
+        "bank": -80,
+        "other_fin": -35,
+        "pension": 81,
+        "other_corp": 60
       }
     ],
     "extremes": {
       "individual": {
         "max": {
-          "t": "15:19",
-          "v": 1772
+          "t": "15:21",
+          "v": 1346
         },
         "min": {
-          "t": "10:09",
-          "v": -209
+          "t": "09:12",
+          "v": -246
         }
       },
       "foreign": {
         "max": {
-          "t": "11:12",
-          "v": 218
+          "t": "14:25",
+          "v": 693
         },
         "min": {
-          "t": "14:03",
-          "v": -564
+          "t": "09:01",
+          "v": -131
         }
       },
       "institution": {
         "max": {
-          "t": "10:00",
-          "v": 69
+          "t": "09:01",
+          "v": -90
         },
         "min": {
-          "t": "15:10",
-          "v": -1406
+          "t": "15:21",
+          "v": -1996
         }
       }
     },
     "turns": {
       "individual": [
         {
-          "t": "09:43",
+          "t": "09:06",
           "from": "순매수",
           "to": "순매도",
           "peak": {
-            "t": "10:09",
-            "v": -209
+            "t": "09:12",
+            "v": -246
           }
         },
         {
-          "t": "11:42",
+          "t": "09:18",
           "from": "순매도",
           "to": "순매수",
           "peak": {
-            "t": "15:19",
-            "v": 1772
+            "t": "15:21",
+            "v": 1346
           }
         }
       ],
       "foreign": [
         {
-          "t": "09:46",
+          "t": "09:04",
           "from": "순매도",
           "to": "순매수",
           "peak": {
-            "t": "11:12",
-            "v": 218
+            "t": "09:12",
+            "v": 454
           }
         },
         {
-          "t": "12:31",
+          "t": "09:57",
           "from": "순매수",
           "to": "순매도",
           "peak": {
-            "t": "14:03",
-            "v": -564
+            "t": "10:03",
+            "v": -102
+          }
+        },
+        {
+          "t": "10:07",
+          "from": "순매도",
+          "to": "순매수",
+          "peak": {
+            "t": "10:13",
+            "v": 109
+          }
+        },
+        {
+          "t": "10:28",
+          "from": "순매수",
+          "to": "순매도",
+          "peak": {
+            "t": "10:52",
+            "v": -98
+          }
+        },
+        {
+          "t": "11:07",
+          "from": "순매도",
+          "to": "순매수",
+          "peak": {
+            "t": "14:25",
+            "v": 693
           }
         }
       ],
@@ -478,16 +515,16 @@
     },
     "session_last": {
       "t": "15:30",
-      "individual": 1765,
-      "foreign": -484,
-      "institution": -1398,
-      "fin_invest": -1055,
-      "insurance": -3,
-      "trust": -149,
-      "bank": -14,
-      "other_fin": -133,
-      "pension": -45,
-      "other_corp": 116
+      "individual": 1346,
+      "foreign": 590,
+      "institution": -1996,
+      "fin_invest": -641,
+      "insurance": -51,
+      "trust": -1271,
+      "bank": -80,
+      "other_fin": -35,
+      "pension": 81,
+      "other_corp": 60
     },
     "first_t": "09:01",
     "last_t": "15:30",

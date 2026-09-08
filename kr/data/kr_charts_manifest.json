@@ -1,15 +1,15 @@
 {
-  "report_date": "2026-09-07",
+  "report_date": "2026-09-08",
   "charts": {
     "kr_charts": {
-      "file": "kr_charts_2026-09-07.png",
-      "sha256": "dd07fd332ec67c8c5fa9ebbbb3fbe9e20d81f03b10a8433c668112508b40b3ef",
-      "bytes": 219219
+      "file": "kr_charts_2026-09-08.png",
+      "sha256": "09450cd9196cd982c6e1a82be8978562a1ae0d33dbe4c6d3db9260d22a00b14f",
+      "bytes": 220330
     },
     "kr_flows_intraday": {
-      "file": "kr_flows_intraday_2026-09-07.png",
-      "sha256": "be3119dcdfb432b6e3d3dee4a9a68c4a4994f19f2b74fe4a5d260ff5d74ddf10",
-      "bytes": 99542
+      "file": "kr_flows_intraday_2026-09-08.png",
+      "sha256": "427a1300fc10d0b9891185c64c8821c90df58eddf9d1f538a87076526053925d",
+      "bytes": 94815
     }
   },
   "notes": {}

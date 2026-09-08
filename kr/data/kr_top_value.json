@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 6110477,
-    "volume": 3478577,
+    "value": 7585160,
+    "volume": 4119139,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4890428,
-    "volume": 18277791,
+    "value": 6195325,
+    "volume": 22563172,
     "members": [
       "삼성전자"
     ]
@@ -26,18 +26,18 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1517938,
-    "volume": 41170537,
+    "value": 2015193,
+    "volume": 55210252,
     "members": [
       "SOL AI반도체TOP2플러스",
       "TIGER 반도체TOP10",
       "TIGER 반도체TOP10레버리지",
       "KODEX AI반도체TOP2플러스",
       "KODEX 반도체레버리지",
+      "ACE K반도체TOP2+",
       "TIGER 반도체TOP10커버드콜액티브",
-      "HANARO Fn K-반도체",
-      "KODEX 반도체",
-      "ACE K반도체TOP2+"
+      "SOL AI반도체소부장",
+      "KODEX 반도체"
     ]
   },
   {
@@ -45,32 +45,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 617411,
-    "volume": 3125144,
+    "value": 714555,
+    "volume": 3566653,
     "members": [
       "삼성전자우"
-    ]
-  },
-  {
-    "label": "두산에너빌리티",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 531927,
-    "volume": 6221607,
-    "members": [
-      "두산에너빌리티"
-    ]
-  },
-  {
-    "label": "LG전자",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 366263,
-    "volume": 1672760,
-    "members": [
-      "LG전자"
     ]
   },
   {
@@ -78,22 +56,11 @@
     "kind": "single_stock_lev",
     "direction": "long",
     "theme": null,
-    "value": 363534,
-    "volume": 35915142,
+    "value": 629063,
+    "volume": 56495114,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지"
-    ]
-  },
-  {
-    "label": "두산퓨얼셀",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 169417,
-    "volume": 3298077,
-    "members": [
-      "두산퓨얼셀"
     ]
   },
   {
@@ -101,22 +68,54 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 164978,
-    "volume": 9298102,
+    "value": 543924,
+    "volume": 26835543,
     "members": [
       "대우건설"
     ]
   },
   {
-    "label": "삼성전자 레버리지",
-    "kind": "single_stock_lev",
-    "direction": "long",
+    "label": "두산에너빌리티",
+    "kind": "stock",
+    "direction": null,
     "theme": null,
-    "value": 156481,
-    "volume": 13159776,
+    "value": 527171,
+    "volume": 5754041,
     "members": [
-      "KODEX 삼성전자단일종목레버리지",
-      "TIGER 삼성전자단일종목레버리지"
+      "두산에너빌리티"
+    ]
+  },
+  {
+    "label": "현대약품",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 319771,
+    "volume": 31962413,
+    "members": [
+      "현대약품"
+    ]
+  },
+  {
+    "label": "한전기술",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 313345,
+    "volume": 2238809,
+    "members": [
+      "한전기술"
+    ]
+  },
+  {
+    "label": "현대건설",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 225034,
+    "volume": 1684608,
+    "members": [
+      "현대건설"
     ]
   }
 ]
