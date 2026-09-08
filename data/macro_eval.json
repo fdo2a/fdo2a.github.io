@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-09-04",
+  "report_date": "2026-09-08",
   "macro_date": "2026-09-04",
   "horizon": "3-6개월",
   "scores": {
@@ -13,117 +13,11 @@
     "inflation": -1,
     "name": "연착륙"
   },
-  "new_releases": [
-    "Nonfarm Payrolls (chg)",
-    "Unemployment Rate",
-    "Avg Hourly Earnings MoM"
-  ],
-  "headline_releases": [
-    {
-      "key": "employment",
-      "label": "고용상황(Employment Situation)",
-      "tier": 1,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
-      "primary": "Nonfarm Payrolls (chg)",
-      "max_abs_z": 0.893,
-      "indicators": [
-        {
-          "name": "Nonfarm Payrolls (chg)",
-          "axis": "Labor",
-          "actual": 162.0,
-          "previous": 21.0,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.893
-        },
-        {
-          "name": "Unemployment Rate",
-          "axis": "Labor",
-          "actual": 4.1,
-          "previous": 4.1,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.574
-        },
-        {
-          "name": "Avg Hourly Earnings MoM",
-          "axis": "Labor",
-          "actual": 0.27,
-          "previous": 0.16,
-          "ref_period": "2026-08-01",
-          "momentum_z": 0.517
-        }
-      ],
-      "components": [
-        {
-          "label": "민간 고용",
-          "fred_id": "USPRIV",
-          "transform": "mom_diff",
-          "actual": 127.0,
-          "previous": 71.0,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "정부 고용",
-          "fred_id": "USGOVT",
-          "transform": "mom_diff",
-          "actual": 35.0,
-          "previous": -50.0,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "헬스케어·사회복지",
-          "fred_id": "USEHS",
-          "transform": "mom_diff",
-          "actual": 29.0,
-          "previous": 12.0,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "레저·숙박",
-          "fred_id": "USLAH",
-          "transform": "mom_diff",
-          "actual": 62.0,
-          "previous": -21.0,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "제조업",
-          "fred_id": "MANEMP",
-          "transform": "mom_diff",
-          "actual": 16.0,
-          "previous": 14.0,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "경제활동참가율",
-          "fred_id": "CIVPART",
-          "transform": "level",
-          "actual": 61.6,
-          "previous": 61.4,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "U-6 실업률",
-          "fred_id": "U6RATE",
-          "transform": "level",
-          "actual": 7.7,
-          "previous": 7.9,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "주당 노동시간",
-          "fred_id": "AWHAETP",
-          "transform": "level",
-          "actual": 34.4,
-          "previous": 34.3,
-          "ref_period": "2026-08-01"
-        }
-      ]
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "stale": false,
-  "abbreviated": false,
-  "abbreviated_reason": "tier 1 발표가 있는 날",
+  "abbreviated": true,
+  "abbreviated_reason": null,
   "axis_directions": {
     "Labor": "보합",
     "Activity": "악화",
@@ -138,11 +32,11 @@
     "inflation_label": "둔화",
     "name": "연착륙",
     "since": "2026-09-01",
-    "days_held": 4,
+    "days_held": 6,
     "thesis": "성장축(-0.38)과 물가축(-0.391) 모두 둔화 경계(-0.33)보다 더 아래에 머물러 연착륙을 나흘째 유지한다. 오늘 새로 나온 8월 고용상황(비농업 고용·실업률·시간당임금)은 고용축 자체를 보합에서 밀어내지 못했고, 다른 세 축은 신규 발표가 없어 국면을 움직일 근거가 없다. 마지막 이동(9월1일) 이후 5영업일 잠금도 아직 풀리지 않았다."
   },
   "regime_change_allowed": false,
-  "regime_block": "lock_5bd",
+  "regime_block": "no_new_release",
   "allowed_regimes": [
     [
       -1,
@@ -155,8 +49,8 @@
     "prob_pct": 66,
     "thesis": "8월28일 잭슨홀 매파 발언 이후 형성된 9월 인상 우위 확률(66%)은 유지한다. 오늘 나온 8월 고용 서프라이즈(비농업 고용 +162K, 다우존스 컨센서스 +53K를 크게 상회)는 이 경로를 흔들기보다 뒷받침하는 재료로 시장에 받아들여졌고, CME FedWatch 9월 인상 확률도 발표 전 49~50%에서 발표 후 58~60%로 올랐다. 다만 이 하루짜리 재료만으로 구조적 확률(66%)을 상향할 만큼(15%포인트 이상) 움직인 것은 아니라 숫자는 그대로 둔다.",
     "falsifier": "다음 주 발표될 8월 CPI가 물가 재가속을 확인시키면 인상 우위는 더 굳어지고, 반대로 CPI가 크게 둔화되거나 워시 이후 다른 연준 위원의 발언이 완화적으로 되돌아오면 이 인상 우위 판단은 무효화된다.",
-    "change_allowed": true,
-    "change_block": null
+    "change_allowed": false,
+    "change_block": "no_new_release"
   },
   "transmission": {
     "equities": {
@@ -165,11 +59,9 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "bonds": {
@@ -178,7 +70,7 @@
       "channel": "물가가 공식적으로 둔화 국면에 들어서면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 다만 실질금리 자체가 기간프리미엄·수급 요인으로 계속 오르고 있어 이 경로가 가격에 반영되기까지는 시차가 있다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
         0,
         1
@@ -190,7 +82,7 @@
       "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 다만 안전자산 수요와 상대적으로 높은 미국 금리 수준이 이 경로에 계속 맞서는 힘으로 작용한다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
         -1,
         0
@@ -202,11 +94,9 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "Brent가 3개월 평균 $90 상회를 유지하는지, 호르무즈 통항 차질의 실제 발생 여부",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "metals": {
@@ -215,7 +105,7 @@
       "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 다만 실질금리 자체가 계속 오르는 국면에서는 이 경로가 힘을 받기 어렵다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
         0,
         1
@@ -227,7 +117,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
         0,
         1
@@ -239,11 +129,9 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간에서는 할인율 상승이 고성장주 밸류에이션을 압박하는 경로가 이를 상쇄한다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 3분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 15,
+      "days_held": 17,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     }
   }
