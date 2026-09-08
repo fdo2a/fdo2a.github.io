@@ -8,10 +8,10 @@
 
 1. **되짚기 대상은 writer 가 고르지 않는다.** `revisit_target()` 이 «가장 오래 안 본
    강의»를 결정론적으로 지목한다. 고르게 두면 쉬운 것을 고른다.
-2. **배열 회전을 쓰지 않는다.** 큐를 뒤로 미는 방식은 A01 을 되짚은 주에 A02 가 추가되면
-   다음 주도 A01 이 선두가 된다(codex C2). 강의마다 `last_reviewed_week` 을 두고
+2. **배열 회전을 쓰지 않는다.** 큐를 뒤로 미는 방식은 A01 을 되짚은 회차에 A02 가 추가되면
+   다음 회차도 A01 이 선두가 된다(codex C2). 강의마다 `last_reviewed` 를 두고
    `(안 본 것 먼저, 오래 본 것 먼저, 완료가 이른 것 먼저, id)` 로 가른다.
-3. **`advance()` 는 순수하고 멱등하다.** 입력 state 를 건드리지 않고, 같은 주로 두 번
+3. **`advance()` 는 순수하고 멱등하다.** 입력 state 를 건드리지 않고, 같은 발행일로 두 번
    불러도 같은 결과다. 게이트·커밋·push 어디서 실패하든 상태만 앞서 나가지 않게 하려면
    전이가 «계산»이어야 하고, 기록은 전부 통과한 뒤 한 번에 이뤄져야 한다.
 
@@ -31,33 +31,33 @@ class StateError(ValueError):
     """상태 전이가 규율을 어겼다."""
 
 
-def week_key(day):
-    """`YYYY-Www` — **ISO week-year** 를 쓴다.
+def period_key(day):
+    """`YYYY-MM-DD` — **발행일이 그대로 키다.**
 
-    달력 연도를 쓰면 12월 말·1월 초에 키가 어긋난다. 2027-01-01 은 ISO 로 2026-W53 이다.
+    3일 주기(2026-09-08 변경)에서는 한 ISO 주에 두 번 발행하는 것이 정상이라 주차 키를
+    못 쓴다 — 옛 `week_key()` 로는 그 두 번째가 「같은 주에 두 강의」로 거부됐다.
+    날짜 문자열은 사전순이 곧 시간순이라 역행 검사가 그대로 산다.
     state·URL·멱등 키가 전부 이 함수 하나를 지난다.
     """
     if isinstance(day, str):
         day = date.fromisoformat(day)
-    iso = day.isocalendar()
-    return f'{iso.year}-W{iso.week:02d}'
+    return day.isoformat()
 
 
 # `$` 는 끝의 개행을 받고 `\d` 는 전각 숫자까지 받는다 — 둘 다 원장에 다른 키를
 # 남기면서 형식 검사를 통과한다. `\A…\Z` 와 ASCII 자릿수로 못 박는다.
-_WEEK_RE = re.compile(r'\A([0-9]{4})-W([0-9]{2})\Z')
+# `date.fromisoformat` 하나로 갈음하지 않는 것도 같은 이유다 — 3.11 부터 `20260907`·
+# `2026-W36-1` 같은 다른 표기까지 받아 준다.
+_DATE_RE = re.compile(r'\A([0-9]{4})-([0-9]{2})-([0-9]{2})\Z')
 
 
-def valid_week(week):
-    """`YYYY-Www` 이면서 실재하는 주차인가. 형식만 보면 `2026-W99` 가 통과한다."""
-    m = _WEEK_RE.match(week or '')
+def valid_period(period):
+    """`YYYY-MM-DD` 이면서 실재하는 날인가. 형식만 보면 `2026-02-31` 이 통과한다."""
+    m = _DATE_RE.match(period or '')
     if not m:
         return False
-    year, wk = int(m.group(1)), int(m.group(2))
-    if not 1 <= wk <= 53:
-        return False
     try:
-        date.fromisocalendar(year, wk, 1)
+        date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
     except ValueError:
         return False
     return True
@@ -82,8 +82,8 @@ def claim_ids(state, lesson_id):
 
 def _sort_key(entry):
     """안 본 것 먼저 → 오래 본 것 먼저 → 완료가 이른 것 먼저 → id."""
-    reviewed = entry.get('last_reviewed_week')
-    return (reviewed is not None, reviewed or '', entry.get('week') or '', entry['id'])
+    reviewed = entry.get('last_reviewed')
+    return (reviewed is not None, reviewed or '', entry.get('date') or '', entry['id'])
 
 
 def revisit_target(state):
@@ -107,31 +107,32 @@ def _validate_claims(claims):
         seen.add(c['claim_id'])
 
 
-def advance(state, *, lesson, week, revisited, claims, url=None):
-    """다음 상태를 «계산»한다. 입력을 건드리지 않고, 같은 주로 두 번 불러도 같다."""
+def advance(state, *, lesson, period, revisited, claims, url=None):
+    """다음 상태를 «계산»한다. 입력을 건드리지 않고, 같은 발행일로 두 번 불러도 같다."""
     _validate_claims(claims)
-    if not valid_week(week):
-        raise StateError(f'주차 키가 아니다: {week!r} (YYYY-Www)')
+    if not valid_period(period):
+        raise StateError(f'발행일 키가 아니다: {period!r} (YYYY-MM-DD)')
 
     done = list(state.get('completed') or [])
     ids = [c['id'] for c in done]
 
-    # 멱등: 같은 주에 같은 강의가 이미 기록돼 있으면 그대로 돌려준다. 재실행이 진도를
+    # 멱등: 같은 날 같은 강의가 이미 기록돼 있으면 그대로 돌려준다. 재실행이 진도를
     # 두 칸 밀지 않게 하는 유일한 방어선이다.
     for c in done:
-        if c['id'] == lesson and c.get('week') == week:
+        if c['id'] == lesson and c.get('date') == period:
             return copy.deepcopy(state)
 
     if lesson in ids:
         raise StateError(f'{lesson} 은 이미 완료된 강의다 — 재탕은 진도가 아니다')
 
-    last = state.get('last_published_week')
-    if last is not None and week < last:
-        raise StateError(f'주차가 뒤로 간다: {last} → {week}')
-    # 한 주에 두 강의를 실으면 진도가 두 칸 밀린다. 멱등 분기는 위에서 이미 걸렀으므로
-    # 여기 걸리는 것은 «같은 주, 다른 강의» 뿐이다.
-    if last is not None and week == last:
-        raise StateError(f'같은 주에 두 강의를 발행할 수 없다: {last}')
+    last = state.get('last_published')
+    if last is not None and period < last:
+        raise StateError(f'발행일이 뒤로 간다: {last} → {period}')
+    # 하루에 두 강의를 실으면 진도가 두 칸 밀린다. 3일 주기에서 루틴이 하루에 두 번
+    # 깨어나는 경우가 여기 걸린다. 멱등 분기는 위에서 이미 걸렀으므로 여기 걸리는 것은
+    # «같은 날, 다른 강의» 뿐이다.
+    if last is not None and period == last:
+        raise StateError(f'같은 날에 두 강의를 발행할 수 없다: {last}')
 
     if revisited is not None:
         if revisited == lesson:
@@ -148,16 +149,16 @@ def advance(state, *, lesson, week, revisited, claims, url=None):
 
     nxt = copy.deepcopy(state)
     nxt['completed'] = [
-        {**c, 'last_reviewed_week': week} if c['id'] == revisited else copy.deepcopy(c)
+        {**c, 'last_reviewed': period} if c['id'] == revisited else copy.deepcopy(c)
         for c in done
     ]
     nxt['completed'].append({
         'id': lesson,
-        'week': week,
-        'url': url or f'/china/posts/{week}.html',
-        'last_reviewed_week': None,
+        'date': period,
+        'url': url or f'/china/posts/{period}.html',
+        'last_reviewed': None,
         'claims': copy.deepcopy(claims),
     })
-    nxt['last_published_week'] = week
-    nxt['updated'] = week
+    nxt['last_published'] = period
+    nxt['updated'] = period
     return nxt

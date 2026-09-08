@@ -45,12 +45,13 @@ US·KR 브리프는 **하루**를 설명한다. 이건 **한 강의**를 설명�
 `required_data` 에 적힌 지표는 본문에 **`data-metric` 으로 묶어** 나와야 한다. 게이트가
 검사한다(수집되지 않은 지표는 면제된다 — 없는 것을 쓰라고 하지는 않는다).
 
-### ② 이번 주 지표 — `<section data-block="observe">` (~20%)
+### ② 이번 회차 지표 — `<section data-block="observe">` (~20%)
 
 그 주에 새로 들어온 릴리스를 ①의 틀로 읽는다.
 
-**발표가 없는 주가 정상이다.** 중국 지표는 월간 리듬이라 4주 중 1~2주는 tier 1 발표가 없다.
-없으면 「이번 주에는 새 발표가 없었습니다」 한 문단으로 접는다. **게이트는 여기에 하한을 걸지
+**발표가 없는 회차가 정상이다.** 중국 지표는 월간 리듬인데 발행은 사흘마다라, 발표가 없는
+회차가 있는 회차보다 잦다.
+없으면 「지난 회차 이후 새 발표가 없었습니다」 한 문단으로 접는다. **게이트는 여기에 하한을 걸지
 않는다** — 채우라고 하면 창작하기 때문이다.
 
 **발표는 직전월 데이터다.** 8월 10일에 나온 CPI 는 7월분이다. 그 시차를 본문에 쓴다.
@@ -137,7 +138,7 @@ A06(공식 통계를 어디까지 믿나) 이후로는 모든 수치에 출처 �
 
 ```
 python3 scripts/apply_readability.py                       # 조판 (검사보다 먼저)
-python3 scripts/check_china.py china/posts/<ISO주>.html     # 전용 게이트 8종
-python3 scripts/check_readability.py --strict china/posts/<ISO주>.html
-python3 scripts/check_style.py china/posts/<ISO주>.html
+python3 scripts/check_china.py china/posts/<발행일>.html     # 전용 게이트 8종
+python3 scripts/check_readability.py --strict china/posts/<발행일>.html
+python3 scripts/check_style.py china/posts/<발행일>.html
 ```

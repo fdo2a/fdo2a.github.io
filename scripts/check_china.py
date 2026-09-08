@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """중국 학습 리포트를 push 하기 전에 돌리는 게이트.
 
-  python3 scripts/check_china.py china/posts/2026-W37.html
+  python3 scripts/check_china.py china/posts/2026-09-07.html
 
 보는 것:
   1) 진도      — 정해진 다음 강의를 썼는가 (재탕·건너뛰기·표식 위조)
@@ -66,7 +66,7 @@ def main():
     html = open(args.post, encoding='utf-8').read()
     syl = S.load(_load(os.path.join(args.datadir, 'syllabus.json')))
     state = _load(os.path.join(args.datadir, 'curriculum_state.json'),
-                  {'version': 1, 'completed': [], 'last_published_week': None})
+                  {'version': 1, 'completed': [], 'last_published': None})
     man = _load(os.path.join(args.datadir, 'manifest.json'), {})
     index = _load(os.path.join(args.datadir, 'releases', 'index.json'), {'releases': []})
     dumps = _dumps(index, os.path.join(args.datadir, 'releases'))

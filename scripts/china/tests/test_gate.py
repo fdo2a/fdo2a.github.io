@@ -15,11 +15,11 @@ SYL = S.load({'version': 1, 'lessons': [
 
 def state(completed=()):
     return {'version': 1, 'completed': [
-        {'id': lid, 'week': wk, 'url': f'/china/posts/{wk}.html',
-         'last_reviewed_week': lr,
+        {'id': lid, 'date': day, 'url': f'/china/posts/{day}.html',
+         'last_reviewed': lr,
          'claims': [{'claim_id': f'{lid}-c1', 'text': f'{lid} 명제'}]}
-        for lid, wk, lr in completed],
-        'last_published_week': completed[-1][1] if completed else None}
+        for lid, day, lr in completed],
+        'last_published': completed[-1][1] if completed else None}
 
 
 # 실제 강의 구간은 본문의 70%다. 표식만 있고 내용이 없는 것을 잡는 하한(200자)이
@@ -34,7 +34,7 @@ REVISIT_OK = ('<section data-revisit="A01" data-verdict="valid" data-claim="A01-
 # ── 진도 (C4) ──
 
 def test_correct_lesson_marker_passes():
-    assert G.check_progress(LESSON_OK, state([('A01', '2026-W36', None)]), SYL) == []
+    assert G.check_progress(LESSON_OK, state([('A01', '2026-09-05', None)]), SYL) == []
 
 
 def test_missing_lesson_marker_fails():
@@ -44,20 +44,20 @@ def test_missing_lesson_marker_fails():
 
 def test_two_lesson_markers_fail_even_if_one_is_right():
     html = LESSON_OK + '<section data-lesson="A03"><p>y</p></section>'
-    v = G.check_progress(html, state([('A01', '2026-W36', None)]), SYL)
+    v = G.check_progress(html, state([('A01', '2026-09-05', None)]), SYL)
     assert any('하나' in x for x in v)
 
 
 def test_hidden_correct_marker_does_not_satisfy_the_gate():
     html = ('<div hidden data-lesson="A02">정답표식</div>'
             '<section data-lesson="A03"><p>딴 얘기</p></section>')
-    v = G.check_progress(html, state([('A01', '2026-W36', None)]), SYL)
+    v = G.check_progress(html, state([('A01', '2026-09-05', None)]), SYL)
     assert v and not any('하나' in x for x in v)   # 숨긴 것은 세지 않는다
 
 
 def test_wrong_lesson_fails():
     v = G.check_progress('<section data-lesson="A03"><p>x</p></section>',
-                         state([('A01', '2026-W36', None)]), SYL)
+                         state([('A01', '2026-09-05', None)]), SYL)
     assert any('A02' in x for x in v)
 
 
@@ -72,8 +72,8 @@ def test_empty_lesson_section_fails():
 
 
 def test_exhausted_syllabus_blocks_publication():
-    full = state([('A01', '2026-W36', None), ('A02', '2026-W37', None),
-                  ('A03', '2026-W38', None)])
+    full = state([('A01', '2026-09-05', None), ('A02', '2026-09-08', None),
+                  ('A03', '2026-09-11', None)])
     v = G.check_progress(LESSON_OK, full, SYL)
     assert any('소진' in x for x in v)
 
@@ -85,16 +85,16 @@ def test_first_issue_needs_no_revisit():
 
 
 def test_revisit_block_required_once_something_is_completed():
-    v = G.check_revisit(LESSON_OK, state([('A01', '2026-W36', None)]))
+    v = G.check_revisit(LESSON_OK, state([('A01', '2026-09-05', None)]))
     assert any('data-revisit' in x for x in v)
 
 
 def test_correct_revisit_passes():
-    assert G.check_revisit(REVISIT_OK, state([('A01', '2026-W36', None)])) == []
+    assert G.check_revisit(REVISIT_OK, state([('A01', '2026-09-05', None)])) == []
 
 
 def test_revisit_of_the_wrong_lesson_fails():
-    st = state([('A01', '2026-W36', '2026-W38'), ('A02', '2026-W37', None)])
+    st = state([('A01', '2026-09-05', '2026-09-11'), ('A02', '2026-09-08', None)])
     html = REVISIT_OK.replace('data-revisit="A01"', 'data-revisit="A01"')
     v = G.check_revisit(html, st)
     assert any('A02' in x for x in v)      # 큐가 지목한 것은 A02 다
@@ -102,25 +102,25 @@ def test_revisit_of_the_wrong_lesson_fails():
 
 def test_unknown_verdict_fails():
     v = G.check_revisit(REVISIT_OK.replace('data-verdict="valid"', 'data-verdict="ok"'),
-                        state([('A01', '2026-W36', None)]))
+                        state([('A01', '2026-09-05', None)]))
     assert any('판정' in x for x in v)
 
 
 def test_verdict_negated_in_prose_fails():
     html = REVISIT_OK.replace('<b>유효</b>합니다', '<b>유효</b>하지 않습니다')
-    v = G.check_revisit(html, state([('A01', '2026-W36', None)]))
+    v = G.check_revisit(html, state([('A01', '2026-09-05', None)]))
     assert any('부정' in x for x in v)
 
 
 def test_claim_must_reference_a_real_claim_of_that_lesson():
     html = REVISIT_OK.replace('data-claim="A01-c1"', 'data-claim="A01-c9"')
-    v = G.check_revisit(html, state([('A01', '2026-W36', None)]))
+    v = G.check_revisit(html, state([('A01', '2026-09-05', None)]))
     assert any('A01-c9' in x for x in v)
 
 
 def test_missing_claim_marker_fails():
     html = REVISIT_OK.replace(' data-claim="A01-c1"', '')
-    v = G.check_revisit(html, state([('A01', '2026-W36', None)]))
+    v = G.check_revisit(html, state([('A01', '2026-09-05', None)]))
     assert any('data-claim' in x for x in v)
 
 
@@ -371,7 +371,7 @@ def test_required_data_satisfied_when_bound():
 def test_lesson_marker_must_sit_on_a_top_level_section():
     html = ('<section><div data-lesson="A02"><p>' + '본문입니다. ' * 40
             + '</p></div></section>')
-    v = G.check_progress(html, state([('A01', '2026-W36', None)]), SYL)
+    v = G.check_progress(html, state([('A01', '2026-09-05', None)]), SYL)
     assert any('section' in x for x in v)
 
 
@@ -386,7 +386,7 @@ def test_market_prose_outside_the_markets_block_still_counts():
 
 def test_verdict_negated_further_into_the_sentence_fails():
     html = REVISIT_OK.replace('<b>유효</b>합니다', '<b>유효</b>한 것은 아닙니다')
-    v = G.check_revisit(html, state([('A01', '2026-W36', None)]))
+    v = G.check_revisit(html, state([('A01', '2026-09-05', None)]))
     assert any('부정' in x for x in v)
 
 
@@ -486,13 +486,13 @@ def test_market_prose_without_the_block_still_counts_even_in_a_heading():
 
 def test_verdict_negation_survives_a_line_break():
     html = REVISIT_OK.replace('<b>유효</b>합니다', '<b>유효</b>한 것은\n아닙니다')
-    assert any('부정' in x for x in G.check_revisit(html, state([('A01', '2026-W36', None)])))
+    assert any('부정' in x for x in G.check_revisit(html, state([('A01', '2026-09-05', None)])))
 
 
 def test_a_later_unrelated_negative_does_not_flag_the_verdict():
     """오탐 회귀 — 「없습니다」가 부정하는 것은 추가 수정이지 판정이 아니다."""
     html = REVISIT_OK.replace('<b>유효</b>합니다', '<b>유효</b>하며 추가 수정은 필요가 없습니다')
-    assert G.check_revisit(html, state([('A01', '2026-W36', None)])) == []
+    assert G.check_revisit(html, state([('A01', '2026-09-05', None)])) == []
 
 
 def test_indirect_recommendation_phrasings_are_caught():

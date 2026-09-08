@@ -1,8 +1,9 @@
-# 중국 경제 학습 리포트 — 주간 파이프라인
+# 중국 경제 학습 리포트 — 3일 주기 파이프라인
 
-토요일 11:00 KST 실행 (트리거 `trig_01FC8hN3FGpYpXCRwr9rfuxH`, cron `0 2 * * 6`, sonnet-5).
-수집은 `collect-china-data.yml` 이 평일 06:00 UTC 에 돌린다.
-한 주에 강의 한 편을 발행한다.
+사흘마다 11:00 KST 실행 (트리거 `trig_01FC8hN3FGpYpXCRwr9rfuxH`, cron `0 2 */3 * *`, sonnet-5).
+매월 1·4·…·31일이라 **월말 경계에서 간격이 1~3일로 흔들린다** — cron 으로 진짜 rolling 3일은
+못 쓴다. 수집은 `collect-china-data.yml` 이 평일 06:00 UTC 에 돌린다.
+한 회차에 강의 한 편을 발행한다.
 
 **이 파이프라인은 시황 리포트가 아니다.** 그날의 가격을 좇는 대신 중국 경제가 굴러가는 방식을
 한 편에 하나씩 뜯어본다. 시황 이야기가 본문의 25%를 넘으면 게이트가 발행을 막는다.
@@ -33,10 +34,21 @@
    이건 「그 주에 발표가 없었다」와 다른 상황이고,
    구분하지 못하면 수집 장애가 조용한 무발표로 위장된다. 게이트도 같은 것을 본다.
 
-4. 이번 주 키를 구한다 — `python3 -c "import sys; sys.path.insert(0,'scripts'); from china.state import week_key; from datetime import date; print(week_key(date.today()))"`.
-   **ISO week-year 를 쓴다**(달력 연도가 아니다 — 2027-01-01 은 2026-W53).
+3. **주말 회차는 정상이다.** 3일 주기는 주말에도 걸리는데 수집 워크플로는 평일만 돈다.
+   1번의 직접 실행이 그 자리를 메운다 — `generated` 는 매 실행 갱신되므로 새 발표가 없어도
+   커밋이 생기고 「여전히 이르면 발행하지 않는다」에 걸리지 않는다.
 
-5. **이제** 멱등 가드: `china/posts/<주차키>.html` 이 이미 있으면 종료.
+4. 이번 회차 키를 구한다 — **KST 로 구한다.** 루틴은 UTC 에서 돌고 STEP 0-1 은 「오늘(KST)」을
+   보므로, `date.today()` 를 쓰면 실행이 15:00 UTC 를 넘겨 밀린 날 키와 신선도 판정이 하루 갈린다.
+
+   ```bash
+   python3 -c "import sys; sys.path.insert(0,'scripts'); from china.state import period_key; from datetime import datetime, timezone, timedelta; print(period_key(datetime.now(timezone(timedelta(hours=9))).date()))"
+   ```
+
+   **키는 발행일 `YYYY-MM-DD` 다.** 3일 주기에서는 한 ISO 주에 두 번 발행하는 것이 정상이라
+   주차 키를 못 쓴다(2026-09-08 변경).
+
+5. **이제** 멱등 가드: `china/posts/<발행일>.html` 이 이미 있으면 종료.
 
 ## STEP 1 — 무엇을 쓸 것인가 (기계가 정한다)
 
@@ -76,7 +88,7 @@ draft 승격은 사람이 커밋으로 한다.
 `china-report-writer` 서브에이전트에 위임한다. Agent 도구가 없으면
 `.claude/agents/china-report-writer.md` 를 읽어 직접 수행한다.
 
-산출: `china/posts/<주차키>.html`
+산출: `china/posts/<발행일>.html`
 
 ## STEP 4 — 조판
 
@@ -94,9 +106,9 @@ US·KR 과 동일. `scripts/humanize_prose.py` 로 `extract` → 윤문 → `fin
 ## STEP 6 — 게이트
 
 ```bash
-python3 scripts/check_china.py china/posts/<주차키>.html
-python3 scripts/check_readability.py --strict china/posts/<주차키>.html
-python3 scripts/check_style.py china/posts/<주차키>.html
+python3 scripts/check_china.py china/posts/<발행일>.html
+python3 scripts/check_readability.py --strict china/posts/<발행일>.html
+python3 scripts/check_style.py china/posts/<발행일>.html
 ```
 
 하나라도 실패하면 **고쳐서 다시 돌린다.** 게이트를 우회하지 않는다.
@@ -107,20 +119,20 @@ python3 scripts/check_style.py china/posts/<주차키>.html
 진도만 앞서 나가면 그 강의는 영영 빈칸으로 남는다.
 
 1. **읽은 판의 해시를 STEP 1 에서 미리 잡아 둔다** — `ST.state_hash(st)`.
-2. 커밋 직전에 `git pull --rebase` 하고 **세 가지를 다시 본다**: 그 주차 포스트가 이미
+2. 커밋 직전에 `git pull --rebase` 하고 **세 가지를 다시 본다**: 그 발행일 포스트가 이미
    원격에 있는가(있으면 종료) · `curriculum_state.json` 의 해시가 STEP 1 때와 같은가
    (다르면 다른 실행이 앞서 간 것이므로 종료) · `next_lesson` 이 여전히 같은 강의인가.
 3. 상태를 계산한다. **STEP 1 에서 얻은 값을 그대로 넣는다** — 아래는 형태만 보여 준다:
 
 ```bash
-LESSON=A01 WEEK=2026-W37 REVISIT= BASE_HASH=<STEP 1 해시> python3 - <<'PY'
+LESSON=A01 DAY=2026-09-07 REVISIT= BASE_HASH=<STEP 1 해시> python3 - <<'PY'
 import json, sys; sys.path.insert(0, 'scripts')
 from china import state as ST
 import os
 st = json.load(open('china/data/curriculum_state.json'))
 if ST.state_hash(st) != os.environ['BASE_HASH']:
     sys.exit('상태가 그 사이 바뀌었다 — 발행을 멈춘다')
-nxt = ST.advance(st, lesson=os.environ['LESSON'], week=os.environ['WEEK'],
+nxt = ST.advance(st, lesson=os.environ['LESSON'], period=os.environ['DAY'],
                  revisited=os.environ['REVISIT'] or None,
                  claims=json.load(open('claims.json')))
 json.dump(nxt, open('china/data/curriculum_state.json', 'w'),
@@ -128,21 +140,21 @@ json.dump(nxt, open('china/data/curriculum_state.json', 'w'),
 PY
 ```
 
-   `advance()` 는 순수하고 멱등하다 — 같은 주로 두 번 불러도 진도가 두 칸 밀리지 않고,
-   같은 주에 다른 강의를 실으려 하면 거부한다. 되짚기 대상이 큐 지목과 다르면 거부한다.
+   `advance()` 는 순수하고 멱등하다 — 같은 날로 두 번 불러도 진도가 두 칸 밀리지 않고,
+   같은 날에 다른 강의를 실으려 하면 거부한다. 되짚기 대상이 큐 지목과 다르면 거부한다.
 
 4. `china/posts.json` 에 항목 추가 (`{key, lesson, title, headline}`), `sitemap.xml` 갱신.
 5. **포스트·상태·목록·sitemap 을 한 커밋에** 넣고 push.
 
 ```bash
-git add china/posts/<주차키>.html china/data/curriculum_state.json china/posts.json sitemap.xml
-bash scripts/ci/push_with_retry.sh "china: <주차키> <강의 id>"
+git add china/posts/<발행일>.html china/data/curriculum_state.json china/posts.json sitemap.xml
+bash scripts/ci/push_with_retry.sh "china: <발행일> <강의 id>"
 ```
 
 **push 가 거절돼 rebase 로 다시 밀렸다면 CAS 를 다시 확인한다.** `push_with_retry.sh` 는
-push 거절만 재시도하고 **상태 비교는 하지 않는다** — 그 사이 다른 실행이 같은 주차를
-발행했으면 두 전이가 겹친다. 재시도 뒤 `china/posts/<주차키>.html` 이 원격 이력에 두 번
-들어갔거나 `curriculum_state.json` 의 `last_published_week` 가 기대와 다르면 **되돌리고
+push 거절만 재시도하고 **상태 비교는 하지 않는다** — 그 사이 다른 실행이 같은 발행일을
+발행했으면 두 전이가 겹친다. 재시도 뒤 `china/posts/<발행일>.html` 이 원격 이력에 두 번
+들어갔거나 `curriculum_state.json` 의 `last_published` 가 기대와 다르면 **되돌리고
 다시 시작한다**(force push 하지 않는다).
 
 ## 하지 않는 것
@@ -150,6 +162,7 @@ push 거절만 재시도하고 **상태 비교는 하지 않는다** — 그 사
 - **Notion 발행하지 않는다** (2026-08-18 지시 — 블로그 한 채널)
 - **종목 판정하지 않는다** — thesis 파이프라인의 일
 - **당파 논평하지 않는다** — 사실 → 전달 경로 → 다음 일정
-- **발표가 없는 주에 지표 섹션을 채우지 않는다** — 없으면 없다고 쓴다
+- **발표가 없는 회차에 지표 섹션을 채우지 않는다** — 없으면 없다고 쓴다. 3일 주기라 이런
+  회차가 주간 때보다 잦다
 
 설계: `docs/superpowers/specs/2026-09-05-china-learning-report-design.md`
