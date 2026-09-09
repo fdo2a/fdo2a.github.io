@@ -108,7 +108,8 @@ def test_a_typography_change_in_the_working_tree_is_not_queued(repo):
 def test_a_prose_change_in_the_working_tree_is_queued(repo):
     write(repo, 'posts/2026-08-21.html', EDITED)
     out = run(repo, 'pending')
-    assert out.returncode == 1 and 'posts/2026-08-21.html — 수정됨' in out.stdout
+    assert out.returncode == 1
+    assert 'posts/2026-08-21.html @ ' in out.stdout and '수정됨' in out.stdout
 
 
 def test_a_published_typography_change_is_not_queued(repo):

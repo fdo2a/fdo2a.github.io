@@ -41,6 +41,11 @@ kr/research_notes.md
 # 검토 게이트 원장 잠금 — 루틴의 `git add -A` 에 딸려가면 안 된다
 reviews/.index.lock
 
+# 검토 러너의 codex 초안·상태 — 지적 원문이 공개 레포에 올라가면 안 된다
+reviews/pending/
+reviews/runner.json
+reviews/.runner.lock
+
 # 차트는 날짜별로 kr/assets/ 에 나간다 — 무날짜 판은 매일 새 blob 을 만들었다(49회 커밋)
 kr/data/kr_charts.png
 kr/data/kr_flows_intraday.png

@@ -19,12 +19,16 @@
 """
 
 import argparse
+import errno
 import fcntl
+import io
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 from datetime import datetime
 
@@ -35,9 +39,22 @@ from review.queue import accept as accept_entry  # noqa: E402
 from review.queue import baselines, classify, is_watched  # noqa: E402
 from review.queue import mark as mark_entry  # noqa: E402
 from review.queue import seed, union_pending  # noqa: E402
+from review.runner import (accept_draft, draft_name,  # noqa: E402
+                           eligible, reserve, today_kst)
 
 LEDGER = 'reviews/index.json'
 LOCK = 'reviews/.index.lock'
+DRAFTS = 'reviews/pending'
+STATE = 'reviews/runner.json'
+RUNNER_LOCK = 'reviews/.runner.lock'
+
+# 러너가 codex 에 넘길 근거 — REVIEW_GATE 2단계가 손으로 가리키던 것과 같은 자리를,
+# 고정한 커밋에서 꺼낸다. 산문 검토에 안 쓰는 이미지는 빼서 스냅샷을 가볍게 둔다.
+SNAPSHOT = {'us': 'data', 'kr': 'kr/data'}
+# `.jsonl` 은 `data/history/` 의 이력이다 — 전일 대비 방향을 역산해 볼 수 있는 자리라
+# 정합 검토의 근거가 된다. 빠지는 것은 차트 이미지뿐이고, 산문 검토에 쓸 일이 없다.
+SNAPSHOT_SUFFIXES = ('.html', '.json', '.jsonl', '.txt')
+CODEX = os.environ.get('CODEX_BIN') or os.path.expanduser('~/.local/bin/codex')
 FETCH_TIMEOUT_SEC = 10
 BATCH_TIMEOUT_SEC = 30
 
@@ -400,6 +417,44 @@ STALE_NOTE = '지금 본 판이 최신이 아닐 수 있다'
 TYPO_NOTE = '조판만 바뀐 %d건은 세지 않았다 (`review_gate.py refresh`로 원장 정리)'
 
 
+def _ago(stamp):
+    """`last_ok` 를 사람이 읽는 말로. 못 읽으면 그 사실을 말한다 — 훅에서 예외가 나면
+    게이트 한 줄이 통째로 사라진다."""
+    if not isinstance(stamp, str) or not stamp:
+        return '아직 한 번도 성공하지 않았다'
+    try:
+        was = datetime.fromisoformat(stamp)
+        if was.tzinfo is None:
+            was = was.astimezone()
+        hours = (datetime.now().astimezone() - was).total_seconds() / 3600
+    except (TypeError, ValueError):
+        return '상태 파일이 이상하다'
+    if hours < 1:
+        return '마지막 성공 방금'
+    return f'마지막 성공 {int(hours)}시간 전'
+
+
+def runner_note(root, queue):
+    """훅 한 줄에 붙일 러너 상태 — 준비된 초안 수, 마지막 성공, 오류.
+
+    **세 수가 늘 함께 나와야** 「큐만 길어지고 초안은 안 늘어난다」 = 러너가 죽었다가
+    보인다. 하나라도 조건부로 빠지면 그 자리가 「괜찮다」로 읽힌다. launchd 가 job 을
+    아예 못 띄우는 경우는 러너 자신이 못 잡으므로 여기가 유일한 신호다.
+    """
+    try:
+        state = load_state(root)
+        bits = [f'codex 초안 준비됨 {drafts_ready(root, queue)}건 (검토 완료가 아니다)',
+                '러너 ' + ('한 번도 안 돌았다' if not state
+                          else _ago(state.get('last_ok')))]
+        errs = state.get('errors')
+        if isinstance(errs, dict) and errs:
+            detail = '; '.join(f'{k} {str(v)[:120]}' for k, v in sorted(errs.items()))
+            bits.append(f'러너 오류 — {detail}')
+        return ' ' + ' / '.join(bits) + '.'
+    except Exception as exc:  # noqa: BLE001 — 훅에서 조용히 죽는 것이 최악이다
+        return f' 러너 상태 확인 실패 — {type(exc).__name__}.'
+
+
 def cmd_pending(args):
     try:
         root = repo_root()
@@ -421,13 +476,16 @@ def cmd_pending(args):
         return 0 if (args.hook or not queue) else 1
 
     if args.hook:
+        note = runner_note(root, queue)
         if queue:
             items = ', '.join(f'{p.path}({p.reason})' for p in queue[:5])
             more = f' 외 {len(queue) - 5}건' if len(queue) > 5 else ''
             print(f'[검토 게이트] codex 미검토 발행본 {len(queue)}건 — {items}{more}. '
-                  f'기준 {basis}. 절차는 .claude/REVIEW_GATE.md.')
+                  f'기준 {basis}. 절차는 .claude/REVIEW_GATE.md.{note}')
         elif stale:
-            print(f'[검토 게이트] 미검토 없음 — 단 {STALE_NOTE} (기준 {basis}).')
+            print(f'[검토 게이트] 미검토 없음 — 단 {STALE_NOTE} (기준 {basis}).{note}')
+        else:
+            print(f'[검토 게이트] 미검토 없음.{note}')
         return 0
 
     if not queue:
@@ -436,7 +494,7 @@ def cmd_pending(args):
         print(f'미검토 {len(queue)}건 (기준 {basis})'
               + (f' — {STALE_NOTE}' if stale else ''))
         for p in queue:
-            print(f'  - [{p.section}] {p.path} — {p.reason}')
+            print(f'  - [{p.section}] {p.path} @ {p.sha[:7]} — {p.reason}')
     # 조용히 사라지지 않게 꼬리에 남긴다.
     if typo:
         print('  ' + TYPO_NOTE % len(typo))
@@ -523,6 +581,276 @@ def cmd_refresh(args):
     return 0
 
 
+PROMPT = """읽기 전용으로 검토만 해 줘. 파일을 고치지 말고 지적만 목록으로 돌려줘.
+
+대상: `{post}` (한국어 {market} 증시 모닝브리프 발행본)
+근거 데이터: 같은 디렉터리의 `{datadir}/` — **이 글이 발행된 커밋에서 그대로 꺼낸 것**이라
+본문이 인용한 값의 정본이다.
+
+세 가지만 본다.
+1. **데이터 ↔ 본문 정합** — 본문의 수치·방향·날짜가 근거 데이터와 어긋나는 곳.
+   특히 지표의 증감을 좋다/나쁘다로 옮길 때 부호가 뒤집힌 곳(실업수당 청구 감소는
+   개선이다).
+2. **논리 비약** — 근거가 지지하지 않는 단정, 앞뒤 절이 모순되는 곳.
+3. **문장** — 한 문단에 주제가 둘 이상인 곳, 피동 종결 반복, 기계적 나열.
+
+레이아웃·HTML·CSS는 보지 마. 별도 스크립트가 검사한다.
+지적마다 «위치(§번호나 첫 문장) / 무엇이 틀렸나 / 무엇이 맞나(근거 파일과 값)»으로.
+지적이 없으면 「지적 없음」이라고만 답해라.
+"""
+
+MARKET_NAME = {'us': '미국', 'kr': '한국'}
+
+
+class RunnerLock:
+    """tick 겹침 방지. **advisory lock 이어야 한다** — `mkdir` 락은 강제 종료나 전원
+    차단 뒤 남아서, 이후 모든 tick 이 「이미 실행 중」으로 조용히 끝난다. 그러면 러너가
+    영구히 꺼진 채 켜져 보인다. flock 은 프로세스가 죽으면 커널이 푼다.
+    """
+
+    def __init__(self, root):
+        self.path = os.path.join(root, RUNNER_LOCK)
+        self.fd = None
+
+    def __enter__(self):
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)
+        self.fd = os.open(self.path, os.O_CREAT | os.O_WRONLY, 0o644)
+        try:
+            fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            os.close(self.fd)
+            self.fd = None
+            # 경합만 조용히 비킨다. 파일시스템·플랫폼 오류까지 「다른 tick 이 돈다」로
+            # 삼키면 영구적인 정상 스킵이 되어 러너가 꺼진 채 켜져 보인다.
+            if exc.errno in (errno.EAGAIN, errno.EWOULDBLOCK, errno.EACCES):
+                return None
+            raise
+        return self
+
+    def __exit__(self, *exc):
+        if self.fd is not None:
+            fcntl.flock(self.fd, fcntl.LOCK_UN)
+            os.close(self.fd)
+            self.fd = None
+        return False
+
+
+def load_state(root):
+    try:
+        with open(os.path.join(root, STATE), encoding='utf-8') as fh:
+            got = json.load(fh)
+        return got if isinstance(got, dict) else {}
+    except (OSError, ValueError):
+        # 망가진 상태 파일에 러너가 멈추면 안 된다. 원장과 같은 실패 방향이다.
+        return {}
+
+
+def save_state(root, state):
+    full = os.path.join(root, STATE)
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(full))
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as fh:
+            json.dump(state, fh, ensure_ascii=False, indent=2, sort_keys=True)
+            fh.write('\n')
+        os.replace(tmp, full)
+    except BaseException:
+        os.path.exists(tmp) and os.unlink(tmp)
+        raise
+
+
+def drafts_ready(root, queue):
+    """큐 항목 중 **그 판의** 초안이 이미 놓인 것. 파일명이 SHA 를 들고 있으므로, 글이
+    바뀌면 초안은 자동으로 세어지지 않는다."""
+    try:
+        have = set(os.listdir(os.path.join(root, DRAFTS)))
+    except OSError:
+        return 0
+    return sum(1 for p in queue if draft_name(p) in have)
+
+
+def rev_parse(root, spec):
+    out = git(root, 'rev-parse', '--verify', '--quiet', spec)
+    got = out.stdout.strip()
+    return got if out.returncode == 0 and _SHA.match(got) else None
+
+
+def publish_commit(root, path, sha):
+    """이 blob 을 넣은 커밋. 없으면 None.
+
+    **`origin/main` HEAD 를 쓰면 안 된다.** 근거 데이터 파일은 날짜별이 아니라 한 자리를
+    덮어쓰므로, 최신 커밋에서 꺼내면 이틀 전 글에 오늘 데이터가 딸려온다 — 2026-09-10
+    실측: `posts/2026-09-08.html` 의 발행 커밋은 `4e1f3bf` 인데 그때의 `origin/main` HEAD
+    는 13 커밋 뒤인 `6633a08` 이었다. 발행 커밋에서 글과 데이터를 함께 꺼내야 「이 데이터가
+    이 글이 쓰인 데이터다」가 참이 된다.
+    """
+    out = git(root, 'log', '--format=%H', '-n', '40', 'origin/main', '--', path)
+    if out.returncode:
+        return None
+    # 최신 → 과거 순. 이 blob 을 담은 커밋 중 **가장 오래된** 것이 그 판을 넣은 커밋이다.
+    # 최신 쪽을 잡으면 정정 재발행 뒤 데이터가 한 번 더 덮어써진 자리를 꺼내게 된다.
+    found = None
+    for commit in out.stdout.split():
+        if rev_parse(root, f'{commit}:{path}') == sha:
+            found = commit
+        elif found:
+            break
+    return found
+
+
+def _wanted(name):
+    return name.endswith(SNAPSHOT_SUFFIXES)
+
+
+def snapshot(root, oid, paths, dest):
+    """고정한 커밋에서 글과 근거 데이터를 꺼낸다.
+
+    **한 커밋에서 둘을 함께 꺼내는 것이 요점이다.** 근거 데이터 파일은 날짜별이 아니라 한
+    자리를 덮어쓰므로(2026-09-10 실측), 작업 폴더의 데이터로 밀린 글을 대조하면 거짓 지적이
+    난다. 같은 커밋에서 나온 짝이면 「이 데이터가 이 글이 쓰인 데이터다」가 정의상 참이다.
+    """
+    out = git_bytes(root, 'archive', '--format=tar', oid, '--', *paths)
+    if out.returncode:
+        return False
+    with tarfile.open(fileobj=io.BytesIO(out.stdout)) as tf:
+        keep = [m for m in tf.getmembers() if m.isfile() and _wanted(m.name)]
+        tf.extractall(dest, members=keep, filter='data')
+    return True
+
+
+def review_one(root, commit, item, timeout):
+    """codex 를 읽기 전용으로 한 편 돌린다 — (초안 본문, 실패 이유)."""
+    work = tempfile.mkdtemp(prefix='review-')
+    try:
+        data_dir = SNAPSHOT[item.section]
+        if not snapshot(root, commit, (item.path, data_dir), work):
+            return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다'
+        prompt = PROMPT.format(post=item.path,
+                               market=MARKET_NAME.get(item.section, item.section),
+                               datadir=data_dir)
+        try:
+            out = subprocess.run(
+                [CODEX, 'exec', '--sandbox', 'read-only', '-C', work, '-'],
+                input=prompt, capture_output=True, text=True, timeout=timeout)
+        except FileNotFoundError:
+            return None, f'codex 가 없다 ({CODEX})'
+        except subprocess.TimeoutExpired:
+            return None, f'codex 가 {timeout}초 안에 안 끝났다'
+        # 읽는 사이 그 글이 재발행되지 않았는지 **지금 공개된 판**에 다시 물어본다. 고정한
+        # 커밋에 물으면 불변이라 늘 통과해서, 검사하는 시늉만 하게 된다.
+        try_fetch(root)
+        now_sha = rev_parse(root, f'origin/main:{item.path}')
+        ok, why = accept_draft(out.returncode, out.stdout, now_sha or '', item.sha)
+        if not ok:
+            tail = (out.stdout or out.stderr or '').strip().splitlines()[-1:]
+            return None, why + (f' — {tail[0][:200]}' if tail else '')
+        return out.stdout, None
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _save(root, state, errs):
+    """상태를 원자적으로 남긴다.
+
+    오류는 **섹션별로** 들고 간다. 하나로 뭉치면 kr 성공이 앞선 us 실패를 덮어 지우고,
+    한도는 이미 쓴 채 초안은 없는데 훅에는 「방금 성공」으로 보인다 — 조용한 실패다.
+    각 섹션의 오류는 **그 섹션이 초안을 낼 때만** 풀린다.
+    """
+    state['errors'] = errs
+    if not errs:
+        state['last_ok'] = now()
+    save_state(root, state)
+    for where, why in sorted(errs.items()):
+        print(f'[러너] {where}: {why}')
+    return 1 if errs else 0
+
+
+def _drafts_on_disk(root):
+    try:
+        return set(os.listdir(os.path.join(root, DRAFTS)))
+    except OSError:
+        return set()
+
+
+def cmd_run(args):
+    """매시 tick — 공개판을 고정하고, 한도 안에서 codex 초안을 만들어 둔다.
+
+    **읽고 파일로 남기는 것까지만 한다.** 고치지 않고, mark 하지 않고, 커밋하지 않는다.
+    산출물은 「검토 완료」가 아니라 초안이다 — 사람이 지적을 검증하고 정정한 뒤에야 원장에
+    들어간다.
+    """
+    root = repo_root()
+    lock = RunnerLock(root)
+    if lock.__enter__() is None:
+        return 0  # 앞 tick 이 아직 돈다. 조용히 비킨다.
+    state = load_state(root)
+    state['last_tick'] = now()
+    got = state.get('errors')
+    errs = dict(got) if isinstance(got, dict) else {}
+    errs.pop('러너', None)          # 이번 tick 이 다시 판정한다
+    try:
+        # pull 하지 않는다. 무인 pull 은 읽기가 아니라 사용자의 작업 폴더를 움직인다.
+        if not try_fetch(root):
+            errs['러너'] = 'fetch 실패 — 공개판을 확인 못 했다'
+            return _save(root, state, errs)
+        oid = rev_parse(root, 'origin/main')
+        if not oid:
+            errs['러너'] = 'origin/main 을 못 찾았다'
+            return _save(root, state, errs)
+
+        todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
+            root, want_fetch=False)
+        # 큐 판정은 두 트리를 보지만 **자동으로 읽을 대상은 고정한 판만**이다. 가변
+        # `origin/main` 을 다시 읽으면 tick 도중 재발행된 판을 고정판인 양 집는다.
+        published = tree_at(root, oid) or {}
+        day = today_kst()
+        picks = eligible(todo + unavailable, published, state, day,
+                         have=_drafts_on_disk(root))
+        if not picks:
+            # 남아 있는 섹션 오류는 그대로 둔다. 고를 것이 없다는 이유로 지우면, 한도만
+            # 태우고 초안은 없는 상태가 「방금 성공」으로 보인다.
+            return _save(root, state, errs)
+
+        os.makedirs(os.path.join(root, DRAFTS), exist_ok=True)
+        for item in picks:
+            # 호출 **전에** 예약한다. 성공만 세면 한도를 태우고 실패한 호출이 매시
+            # 되풀이되면서 사람 몫의 한도까지 먹는다.
+            state = reserve(state, day, item.section)
+            state['last_tick'] = now()
+            save_state(root, state)
+
+            text, why = review_one(root,
+                                   publish_commit(root, item.path, item.sha) or oid,
+                                   item, args.timeout)
+            if why:
+                # 한 편이 실패하면 그 tick 을 끝낸다. 한도 초과였다면 다음 섹션 호출은
+                # 어차피 같은 이유로 죽고, 그 사이 사람 몫의 한도만 더 먹는다.
+                errs[item.section] = f'{item.path}: {why}'
+                break
+            # 최종 이름은 성공한 뒤에만 붙는다 — 먼저 만들면 잘린 파일이 남고, 다음 tick 은
+            # 「파일이 있다」는 이유로 그 글을 건너뛴다.
+            fd, tmp = tempfile.mkstemp(dir=os.path.join(root, DRAFTS))
+            with os.fdopen(fd, 'w', encoding='utf-8') as fh:
+                fh.write(text)
+            os.replace(tmp, os.path.join(root, DRAFTS, draft_name(item)))
+            os.chmod(os.path.join(root, DRAFTS, draft_name(item)), 0o644)
+            errs.pop(item.section, None)   # 이 섹션은 풀렸다
+            print(f'초안 — [{item.section}] {item.path} @ {item.sha[:7]}')
+
+        return _save(root, state, errs)
+    except Exception as exc:  # noqa: BLE001
+        # 예약은 이미 저장됐다. 여기서 조용히 빠져나가면 오늘 재시도도 막힌 채로 러너가
+        # 꺼진 것처럼 굴고, 훅에는 아무 흔적이 없다.
+        try:
+            errs['러너'] = f'{type(exc).__name__}: {exc}'
+            _save(root, state, errs)
+        except Exception:  # noqa: BLE001
+            print(f'[러너] 상태도 못 남겼다 — {type(exc).__name__}: {exc}')
+        return 1
+    finally:
+        lock.__exit__(None, None, None)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -549,6 +877,11 @@ def main():
     p.add_argument('--apply', action='store_true', help='실제로 원장에 쓴다')
     p.add_argument('--no-fetch', action='store_true')
     p.set_defaults(fn=cmd_refresh)
+
+    p = sub.add_parser('run', help='launchd 러너 — codex 초안을 미리 만들어 둔다 (읽기만)')
+    p.add_argument('--timeout', type=int, default=900,
+                   help='codex 한 편의 제한 시간(초)')
+    p.set_defaults(fn=cmd_run)
 
 
     args = ap.parse_args()
