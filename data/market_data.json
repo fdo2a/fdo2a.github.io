@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09 21:29 UTC",
+  "generated": "2026-09-09 21:34 UTC",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-09-09",
   "indices": {
@@ -116,21 +116,21 @@
       "date": "2026-09-09"
     },
     "USD/KRW": {
-      "last": 1339.6099853515625,
-      "chg": -3.9599609375,
-      "pct": -0.2947342599049163,
+      "last": 1339.6500244140625,
+      "chg": -3.919921875,
+      "pct": -0.29175420943485797,
       "date": "2026-09-09"
     },
     "USD/JPY": {
-      "last": 153.55999755859375,
-      "chg": -0.2949981689453125,
-      "pct": -0.19173779021626203,
+      "last": 153.56100463867188,
+      "chg": -0.2939910888671875,
+      "pct": -0.19108322578476056,
       "date": "2026-09-09"
     },
     "EUR/USD": {
-      "last": 1.163602590560913,
-      "chg": 0.0008388757705688477,
-      "pct": 0.0721449904136362,
+      "last": 1.1641442775726318,
+      "chg": 0.0013805627822875977,
+      "pct": 0.11873115446645599,
       "date": "2026-09-09"
     }
   },
@@ -558,23 +558,23 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.069,
+        "change": -0.073,
         "unit": "%",
-        "multiple": -0.23,
+        "multiple": -0.24,
         "band": "미미"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": -0.193,
+        "change": -0.209,
         "unit": "%",
-        "multiple": -0.36,
+        "multiple": -0.39,
         "band": "미미"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": -0.292,
+        "change": -0.295,
         "unit": "%",
-        "multiple": -0.5,
+        "multiple": -0.51,
         "band": "보통"
       },
       "WTI": {
@@ -672,12 +672,12 @@
         }
       },
       "DXY": {
-        "value": 98.772,
-        "percentile": 30.2,
+        "value": 98.768,
+        "percentile": 30.0,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 30.2,
+          "percentile": 30.0,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -688,12 +688,12 @@
         }
       },
       "USD/JPY": {
-        "value": 153.558,
-        "percentile": 48.4,
+        "value": 153.533,
+        "percentile": 48.2,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 48.4,
+          "percentile": 48.2,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -704,7 +704,7 @@
         }
       },
       "USD/KRW": {
-        "value": 1339.64,
+        "value": 1339.6,
         "percentile": 1.4,
         "band": "매우 낮음",
         "sessions": 504,
