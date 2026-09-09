@@ -354,6 +354,11 @@
       "at": "2026-09-07T23:22:52+09:00",
       "findings": 9
     },
+    "kr/posts/2026-09-09.html": {
+      "sha": "318e2e66cdd56ffd6a96627e2196f1c7ccdf09a9",
+      "at": "2026-09-10T05:29:12+09:00",
+      "findings": 6
+    },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
       "at": "2026-08-24T13:32:40+09:00",
@@ -767,6 +772,11 @@
       "sha": "daf65520ce5a57c58be81aad00f3a7e73f06734e",
       "at": "2026-09-06T02:35:58+09:00",
       "findings": 9
+    },
+    "posts/2026-09-08.html": {
+      "sha": "6b2cd8722ff1f39b085b9dd2f45e6f74d40232aa",
+      "at": "2026-09-10T05:29:12+09:00",
+      "findings": 6
     },
     "privacy.html": {
       "sha": "ea755ae587014fd8fbfb02847d7b92d45fb935d2",
