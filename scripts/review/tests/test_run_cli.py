@@ -144,21 +144,28 @@ def test_an_empty_reply_does_not_become_a_draft(repo, tmp_path):
     assert '비어' in ' '.join(state_of(repo)['errors'].values())
 
 
-def test_the_cap_holds_on_the_next_tick(repo, tmp_path):
-    run(repo, 'run', codex=fake_codex(tmp_path))
-    for name in drafts(repo):
-        os.remove(os.path.join(repo, 'reviews/pending', name))
+def test_the_cap_holds_once_the_days_calls_are_spent(repo, tmp_path):
+    """섹션당 하루 2편. 초안을 지워 가며 세 번 돌리면 세 번째는 아무것도 안 부른다."""
+    for _ in range(2):
+        run(repo, 'run', codex=fake_codex(tmp_path))
+        for name in drafts(repo):
+            os.remove(os.path.join(repo, 'reviews/pending', name))
     assert run(repo, 'run', codex=fake_codex(tmp_path)).returncode == 0
-    assert drafts(repo) == []          # 한도를 이미 썼으므로 다시 부르지 않는다
+    assert drafts(repo) == []
+    state = state_of(repo)['calls'][max(state_of(repo)['calls'])]
+    assert state == {'us': 2, 'kr': 2}
 
 
 def test_a_failure_is_not_erased_by_the_next_quiet_tick(repo, tmp_path):
     """실패로 한도를 태우면 다음 tick 은 고를 것이 없다. 그때 `last_ok` 를 새로 찍고
     `error` 를 지우면, 초안은 없는데 훅에는 「방금 성공」으로 보이는 조용한 실패가 된다."""
-    run(repo, 'run', codex=fake_codex(tmp_path, code=3))
+    # us 를 두 번 실패시켜 그 섹션 한도를 소진한다. 실패하면 그 tick 이 끝나므로
+    # kr 은 아직 불리지 않은 상태다.
+    for _ in range(2):
+        run(repo, 'run', codex=fake_codex(tmp_path, code=3))
     was = dict(state_of(repo)['errors'])
     assert list(was) == ['us']
-    # 다음 tick 은 kr 을 성공시킨다. 그래도 us 오류는 살아 있어야 한다.
+    # 다음 tick 은 kr 만 성공시킨다. 그래도 us 오류는 살아 있어야 한다.
     out = run(repo, 'run', codex=fake_codex(tmp_path))
     assert out.returncode == 1
     assert [n for n in drafts(repo) if '-us-' in n] == []

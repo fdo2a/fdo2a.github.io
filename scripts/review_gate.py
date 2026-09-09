@@ -39,8 +39,8 @@ from review.queue import accept as accept_entry  # noqa: E402
 from review.queue import baselines, classify, is_watched  # noqa: E402
 from review.queue import mark as mark_entry  # noqa: E402
 from review.queue import seed, union_pending  # noqa: E402
-from review.runner import (accept_draft, draft_name,  # noqa: E402
-                           eligible, reserve, today_kst)
+from review.runner import (DAILY_CAP, accept_draft,  # noqa: E402
+                           draft_name, eligible, reserve, today_kst)
 
 LEDGER = 'reviews/index.json'
 LOCK = 'reviews/.index.lock'
@@ -446,6 +446,14 @@ def runner_note(root, queue):
         bits = [f'codex 초안 준비됨 {drafts_ready(root, queue)}건 (검토 완료가 아니다)',
                 '러너 ' + ('한 번도 안 돌았다' if not state
                           else _ago(state.get('last_ok')))]
+        # 한도 소진은 훅에 보여야 한다. 두 칸을 성공으로 다 쓴 뒤에는 빈 tick 이
+        # `last_ok` 를 계속 갱신해서, 그날 글이 대기 중인데도 「마지막 성공 방금」만
+        # 보인다 — 러너는 멀쩡한데 오늘 몫이 없다는 사실이 안 드러난다.
+        spent = [f'{k} {v}' for k, v in
+                 sorted((state.get('calls') or {}).get(today_kst(), {}).items())
+                 if isinstance(v, int) and v >= DAILY_CAP]
+        if spent:
+            bits.append('오늘 한도 소진 — ' + ', '.join(spent))
         errs = state.get('errors')
         if isinstance(errs, dict) and errs:
             detail = '; '.join(f'{k} {str(v)[:120]}' for k, v in sorted(errs.items()))
@@ -776,12 +784,65 @@ def _drafts_on_disk(root):
         return set()
 
 
+def _published_queue(root, oid):
+    """Automation uses the published ledger; the user's checkout may be days behind."""
+    published = tree_at(root, oid) or {}
+    if rev_parse(root, f'{oid}:{LEDGER}'):
+        ledger = json.loads(git(root, 'show', f'{oid}:{LEDGER}').stdout)
+        if not isinstance(ledger, dict) or not isinstance(ledger.get('reviewed'), dict):
+            raise ValueError('공개 원장이 손상됐다')
+    else:
+        ledger = {'reviewed': {}}
+    blobs = Blobs(root)
+    blobs.prefetch(_needed_shas(ledger, (published,)))
+    return classify(ledger, published, blobs.equivalent).pending, published
+
+
+def _correct_ready(root, args, state, errs):
+    from review.corrector import correct_one
+
+    if not try_fetch(root):
+        errs['러너'] = '정정 전 fetch 실패'
+        return state
+    oid = rev_parse(root, 'origin/main')
+    if not oid:
+        raise ValueError('정정할 origin/main 이 없다')
+    queue, published = _published_queue(root, oid)
+    have = _drafts_on_disk(root)
+    ready = [item for item in queue if draft_name(item) in have]
+    day = today_kst()
+    quota = {'calls': state.get('correction_calls', {})}
+    for item in eligible(ready, published, quota, day):
+        key = f'정정-{item.section}'
+        commit = publish_commit(root, item.path, item.sha)
+        if not commit:
+            errs[key] = f'{item.path}: 발행 커밋을 찾지 못했다'
+            break
+        quota = reserve(quota, day, item.section)
+        state['correction_calls'] = quota['calls']
+        save_state(root, state)
+        draft = os.path.join(root, DRAFTS, draft_name(item))
+        with open(draft, encoding='utf-8') as fh:
+            text, why = correct_one(root, item, fh.read(), commit,
+                                    args.correction_timeout)
+        # Keep the complete Claude report private, beside its Codex input.
+        with open(draft + '.claude.txt', 'w', encoding='utf-8') as fh:
+            fh.write(text or '')
+            if why:
+                fh.write('\nERROR: ' + why + '\n')
+        if why:
+            errs[key] = f'{item.path}: {why}'
+            break
+        errs.pop(key, None)
+        print(f'정정·푸시 완료 — [{item.section}] {item.path}')
+    return state
+
+
 def cmd_run(args):
     """매시 tick — 공개판을 고정하고, 한도 안에서 codex 초안을 만들어 둔다.
 
-    **읽고 파일로 남기는 것까지만 한다.** 고치지 않고, mark 하지 않고, 커밋하지 않는다.
-    산출물은 「검토 완료」가 아니라 초안이다 — 사람이 지적을 검증하고 정정한 뒤에야 원장에
-    들어간다.
+    기본은 읽기 전용 초안. --correct 는 Claude 검증·정정·정상 push까지 잇는다.
+    사용자의 checkout은 fetch 외에는 움직이지 않는다.
     """
     root = repo_root()
     lock = RunnerLock(root)
@@ -807,10 +868,13 @@ def cmd_run(args):
         # 큐 판정은 두 트리를 보지만 **자동으로 읽을 대상은 고정한 판만**이다. 가변
         # `origin/main` 을 다시 읽으면 tick 도중 재발행된 판을 고정판인 양 집는다.
         published = tree_at(root, oid) or {}
+        if getattr(args, 'correct', False):
+            todo, published = _published_queue(root, oid)
+            unavailable = []
         day = today_kst()
         picks = eligible(todo + unavailable, published, state, day,
                          have=_drafts_on_disk(root))
-        if not picks:
+        if not picks and not getattr(args, 'correct', False):
             # 남아 있는 섹션 오류는 그대로 둔다. 고를 것이 없다는 이유로 지우면, 한도만
             # 태우고 초안은 없는 상태가 「방금 성공」으로 보인다.
             return _save(root, state, errs)
@@ -830,7 +894,7 @@ def cmd_run(args):
                 # 한 편이 실패하면 그 tick 을 끝낸다. 한도 초과였다면 다음 섹션 호출은
                 # 어차피 같은 이유로 죽고, 그 사이 사람 몫의 한도만 더 먹는다.
                 errs[item.section] = f'{item.path}: {why}'
-                break
+                return _save(root, state, errs)
             # 최종 이름은 성공한 뒤에만 붙는다 — 먼저 만들면 잘린 파일이 남고, 다음 tick 은
             # 「파일이 있다」는 이유로 그 글을 건너뛴다.
             fd, tmp = tempfile.mkstemp(dir=os.path.join(root, DRAFTS))
@@ -841,6 +905,8 @@ def cmd_run(args):
             errs.pop(item.section, None)   # 이 섹션은 풀렸다
             print(f'초안 — [{item.section}] {item.path} @ {item.sha[:7]}')
 
+        if getattr(args, 'correct', False):
+            state = _correct_ready(root, args, state, errs)
         return _save(root, state, errs)
     except Exception as exc:  # noqa: BLE001
         # 예약은 이미 저장됐다. 여기서 조용히 빠져나가면 오늘 재시도도 막힌 채로 러너가
@@ -885,6 +951,10 @@ def main():
     p = sub.add_parser('run', help='launchd 러너 — codex 초안을 미리 만들어 둔다 (읽기만)')
     p.add_argument('--timeout', type=int, default=900,
                    help='codex 한 편의 제한 시간(초)')
+    p.add_argument('--correct', action='store_true',
+                   help='준비된 us/kr 초안을 Claude가 검증·정정하고 재게시')
+    p.add_argument('--correction-timeout', type=int, default=1800,
+                   help='Claude 한 편의 제한 시간(초)')
     p.set_defaults(fn=cmd_run)
 
 

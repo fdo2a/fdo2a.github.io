@@ -37,20 +37,60 @@ def test_only_us_and_kr():
     assert [p.section for p in eligible(rows, tree, {}, TODAY)] == ['kr']
 
 
-def test_one_call_per_section_per_day():
+def test_yesterdays_and_todays_post_fit_in_the_same_day():
+    """상한이 1이면 자정~발행 시각 사이의 tick 이 어제 글로 할당량을 태우고, 몇 시간 뒤
+    올라오는 그날 글이 다음 날로 밀려 지연이 상시 하루로 굳는다(사용자 지시로 2편)."""
     rows = [item('posts/2026-09-10.html', 'us', 'a'),
             item('posts/2026-09-09.html', 'us', 'b'),
             item('kr/posts/2026-09-10.html', 'kr', 'c')]
     tree = {r.path: r.sha for r in rows}
     got = eligible(rows, tree, {}, TODAY)
     assert [p.path for p in got] == ['posts/2026-09-10.html',
+                                     'posts/2026-09-09.html',
                                      'kr/posts/2026-09-10.html']
+    assert used(reserve(reserve({}, TODAY, 'us'), TODAY, 'us'), TODAY, 'us') == 2
+
+
+def test_todays_post_still_gets_a_slot_after_yesterdays_took_one():
+    """이 순서가 요구사항 자체다. 자정 tick 이 어제 글을 잡아 한 칸을 쓰고, 몇 시간 뒤
+    그날 글이 올라온다. 남은 한 칸이 그것을 받아야 지연이 하루로 굳지 않는다."""
+    yesterday = item('posts/2026-09-09.html', 'us', 'a')
+    tree = {yesterday.path: yesterday.sha}
+    assert eligible([yesterday], tree, {}, TODAY) == [yesterday]
+
+    state = reserve({}, TODAY, 'us')
+    today = item('posts/2026-09-10.html', 'us', 'b')
+    tree[today.path] = today.sha
+    got = eligible([today, yesterday], tree, state, TODAY,
+                   have=[draft_name(yesterday)])
+    assert [p.path for p in got] == ['posts/2026-09-10.html']
+
+
+def test_the_day_before_yesterday_never_takes_a_slot():
+    """상한만 2로 올리고 신선도를 2일로 두면 자정에 어제·그제가 두 칸을 다 먹어, 그날
+    글이 또 밀린다 — 상한 인상이 무의미해지는 자리다."""
+    rows = [item('posts/2026-09-09.html', 'us', 'a'),
+            item('posts/2026-09-08.html', 'us', 'b')]
+    tree = {r.path: r.sha for r in rows}
+    assert [p.path for p in eligible(rows, tree, {}, TODAY)] == \
+        ['posts/2026-09-09.html']
+
+
+def test_the_cap_still_stops_the_third_call_in_a_section():
+    """한도 경계 자체 — 정책값이 몇이든 `cap` 을 넘겨 받지 않는다."""
+    rows = [item(f'posts/2026-09-{d}.html', 'us', c)
+            for d, c in (('10', 'a'), ('09', 'b'))]
+    tree = {r.path: r.sha for r in rows}
+    assert len(eligible(rows, tree, {}, TODAY, cap=1)) == 1
+    assert len(eligible(rows, tree, {}, TODAY, cap=2)) == 2
 
 
 def test_a_used_slot_is_not_handed_out_again():
     """예약이 살아 있어야 실패한 호출이 매시 되풀이되지 않는다."""
     row = item('posts/2026-09-10.html', 'us', 'a')
-    state = reserve({}, TODAY, 'us')
+    state = {}
+    for _ in range(2):
+        state = reserve(state, TODAY, 'us')
     assert eligible([row], {row.path: row.sha}, state, TODAY) == []
 
 
