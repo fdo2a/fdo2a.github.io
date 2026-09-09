@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09 21:54 UTC",
+  "generated": "2026-09-09 23:23 UTC",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-09-09",
   "indices": {
@@ -110,53 +110,53 @@
   },
   "fx": {
     "DXY": {
-      "last": 98.76899719238281,
-      "chg": -0.0709991455078125,
-      "pct": -0.07183240402508506,
+      "last": 98.78299713134766,
+      "chg": -0.05699920654296875,
+      "pct": -0.05766815930274838,
       "date": "2026-09-09"
     },
     "USD/KRW": {
-      "last": 1339.550048828125,
-      "chg": -4.0198974609375,
-      "pct": -0.29919525009028947,
+      "last": 1339.2099609375,
+      "chg": -4.3599853515625,
+      "pct": -0.32450750804636774,
       "date": "2026-09-09"
     },
     "USD/JPY": {
-      "last": 153.50999450683594,
-      "chg": -0.345001220703125,
-      "pct": -0.2242379060047428,
+      "last": 153.47799682617188,
+      "chg": -0.3769989013671875,
+      "pct": -0.24503520316936367,
       "date": "2026-09-09"
     },
     "EUR/USD": {
-      "last": 1.163873314857483,
-      "chg": 0.0011096000671386719,
-      "pct": 0.09542782020324214,
+      "last": 1.1627366542816162,
+      "chg": -2.7060508728027344e-05,
+      "pct": -0.0023272577552746476,
       "date": "2026-09-09"
     }
   },
   "commodities": {
     "WTI": {
-      "last": 96.66999816894531,
-      "chg": 3.6399993896484375,
-      "pct": 3.912715723326965,
+      "last": 97.05999755859375,
+      "chg": 4.029998779296875,
+      "pct": 4.331934679325955,
       "date": "2026-09-09"
     },
     "Brent": {
-      "last": 101.62999725341797,
-      "chg": 3.7099990844726562,
-      "pct": 3.7888063254164273,
+      "last": 102.05000305175781,
+      "chg": 4.1300048828125,
+      "pct": 4.217733823571801,
       "date": "2026-09-09"
     },
     "Natural Gas": {
-      "last": 2.808000087738037,
-      "chg": -0.10799980163574219,
-      "pct": -3.703697041598153,
+      "last": 2.805000066757202,
+      "chg": -0.11099982261657715,
+      "pct": -3.8065784234448174,
       "date": "2026-09-09"
     },
     "Gold": {
-      "last": 4447.2001953125,
-      "chg": 53.30029296875,
-      "pct": 1.213052052922725,
+      "last": 4446.39990234375,
+      "chg": 52.5,
+      "pct": 1.1948383251060513,
       "date": "2026-09-09"
     }
   },
@@ -232,39 +232,36 @@
   },
   "yields": {
     "2Y": {
-      "level": 4.39,
-      "date": "2026-09-08",
-      "bp": 1.9999999999999574,
-      "week_ago": 4.34,
-      "week_ago_date": "2026-08-31",
-      "source": "FRED"
+      "level": 4.436,
+      "date": "2026-09-09",
+      "bp": 3.8000000000000256,
+      "week_ago": 4.394,
+      "week_ago_date": "2026-09-01",
+      "source": "Naver"
     },
     "5Y": {
-      "level": 4.614,
+      "level": 4.622,
       "date": "2026-09-09",
-      "bp": 4.09998893737793,
+      "bp": 4.899999999999949,
       "week_ago": 4.557,
       "week_ago_date": "2026-09-01",
-      "ticker": "^FVX",
-      "source": "Yahoo"
+      "source": "Naver"
     },
     "10Y": {
-      "level": 4.837,
+      "level": 4.845,
       "date": "2026-09-09",
-      "bp": 3.099966049194336,
+      "bp": 4.099999999999948,
       "week_ago": 4.796,
       "week_ago_date": "2026-09-01",
-      "ticker": "^TNX",
-      "source": "Yahoo"
+      "source": "Naver"
     },
     "30Y": {
-      "level": 5.286,
+      "level": 5.295,
       "date": "2026-09-09",
-      "bp": 2.200031280517578,
-      "week_ago": 5.268,
+      "bp": 3.0999999999999694,
+      "week_ago": 5.267,
       "week_ago_date": "2026-09-01",
-      "ticker": "^TYX",
-      "source": "Yahoo"
+      "source": "Naver"
     }
   },
   "yields_fred": {
@@ -510,15 +507,13 @@
     }
   },
   "sector_performance_as_of": "2026-09-09",
-  "spread_2s10s_bp": 44.7,
-  "spread_2s10s_aligned": false,
-  "spread_2s10s_basis": "2Y FRED 2026-09-08 vs 10Y Yahoo 2026-09-09",
+  "spread_2s10s_bp": 40.89999999999998,
+  "spread_2s10s_aligned": true,
+  "spread_2s10s_basis": "2Y·10Y 모두 Naver 2026-09-09 동일 기준일",
   "spread_2s10s_fred_bp": 41.000000000000014,
-  "spread_5s30s_bp": 67.19999999999997,
-  "complete": false,
-  "missing": [
-    "yields/naver_close_not_posted"
-  ],
+  "spread_5s30s_bp": 67.30000000000001,
+  "complete": true,
+  "missing": [],
   "price_context": {
     "windows": {
       "move": 60,
@@ -558,37 +553,37 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.071,
+        "change": -0.058,
         "unit": "%",
-        "multiple": -0.23,
+        "multiple": -0.19,
         "band": "미미"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": -0.224,
+        "change": -0.245,
         "unit": "%",
-        "multiple": -0.41,
+        "multiple": -0.45,
         "band": "미미"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": -0.299,
+        "change": -0.325,
         "unit": "%",
-        "multiple": -0.52,
+        "multiple": -0.56,
         "band": "보통"
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 3.913,
+        "change": 4.321,
         "unit": "%",
-        "multiple": 1.21,
+        "multiple": 1.34,
         "band": "보통"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 1.213,
+        "change": 1.165,
         "unit": "%",
-        "multiple": 0.77,
+        "multiple": 0.74,
         "band": "보통"
       },
       "10Y": {
@@ -672,12 +667,12 @@
         }
       },
       "DXY": {
-        "value": 98.77,
-        "percentile": 30.1,
+        "value": 98.783,
+        "percentile": 30.8,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 30.1,
+          "percentile": 30.8,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -688,12 +683,12 @@
         }
       },
       "USD/JPY": {
-        "value": 153.51,
-        "percentile": 48.2,
+        "value": 153.478,
+        "percentile": 48.0,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 48.2,
+          "percentile": 48.0,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -704,7 +699,7 @@
         }
       },
       "USD/KRW": {
-        "value": 1339.55,
+        "value": 1339.21,
         "percentile": 1.4,
         "band": "매우 낮음",
         "sessions": 504,
@@ -720,7 +715,7 @@
         }
       },
       "WTI": {
-        "value": 96.67,
+        "value": 97.05,
         "percentile": 95.0,
         "band": "매우 높음",
         "sessions": 504,
@@ -736,7 +731,7 @@
         }
       },
       "Gold": {
-        "value": 4447.2,
+        "value": 4445.1,
         "percentile": 77.8,
         "band": "높음",
         "sessions": 504,
@@ -796,7 +791,7 @@
       {
         "key": "equity_dollar",
         "label_ko": "주식과 달러",
-        "value": -0.275,
+        "value": -0.276,
         "prior": -0.626,
         "flipped": false,
         "band": "반대로 움직임(느슨하게)"
@@ -822,7 +817,7 @@
       "n_assets": 10,
       "top1_pct": 41.6,
       "top3_pct": 74.1,
-      "percentile": 56.3,
+      "percentile": 56.7,
       "band": "중간",
       "history_windows": 252
     },
@@ -1020,29 +1015,29 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25576.45,
-            "pct": -1.66,
-            "date": "2026-09-09"
+            "close": 26007.63,
+            "pct": 0.0,
+            "date": "2026-09-08"
           },
           {
             "name": "FTSE100",
             "ticker": "^FTSE",
-            "close": 10670.06,
-            "pct": -1.31,
-            "date": "2026-09-09"
+            "close": 10811.7,
+            "pct": -0.1,
+            "date": "2026-09-08"
           },
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6311.56,
-            "pct": -1.58,
-            "date": "2026-09-09"
+            "close": 6413.17,
+            "pct": 0.14,
+            "date": "2026-09-08"
           }
         ],
         "alignment": {
-          "label": "이어감",
-          "avg_pct": -1.52,
-          "mixed": false
+          "label": "보합",
+          "avg_pct": 0.01,
+          "mixed": true
         }
       }
     },
