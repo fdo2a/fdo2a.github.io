@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09 21:17 UTC",
+  "generated": "2026-09-09 21:21 UTC",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-09-09",
   "indices": {
@@ -110,27 +110,27 @@
   },
   "fx": {
     "DXY": {
-      "last": 98.79100036621094,
-      "chg": -0.0489959716796875,
-      "pct": -0.0495709970609437,
+      "last": 98.78099822998047,
+      "chg": -0.05899810791015625,
+      "pct": -0.05969052012959608,
       "date": "2026-09-09"
     },
     "USD/KRW": {
-      "last": 1339.6600341796875,
-      "chg": -3.909912109375,
-      "pct": -0.29100919681733783,
+      "last": 1339.6500244140625,
+      "chg": -3.919921875,
+      "pct": -0.29175420943485797,
       "date": "2026-09-09"
     },
     "USD/JPY": {
-      "last": 153.5260009765625,
-      "chg": -0.3289947509765625,
-      "pct": -0.21383429860099,
+      "last": 153.58200073242188,
+      "chg": -0.2729949951171875,
+      "pct": -0.17743654915218787,
       "date": "2026-09-09"
     },
     "EUR/USD": {
-      "last": 1.163873314857483,
-      "chg": 0.0011096000671386719,
-      "pct": 0.09542782020324214,
+      "last": 1.1637378931045532,
+      "chg": 0.0009741783142089844,
+      "pct": 0.08378127919004275,
       "date": "2026-09-09"
     }
   },
@@ -558,21 +558,21 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.05,
+        "change": -0.067,
         "unit": "%",
-        "multiple": -0.16,
+        "multiple": -0.22,
         "band": "미미"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": -0.196,
+        "change": -0.192,
         "unit": "%",
-        "multiple": -0.36,
+        "multiple": -0.35,
         "band": "미미"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": -0.291,
+        "change": -0.292,
         "unit": "%",
         "multiple": -0.5,
         "band": "보통"
@@ -672,12 +672,12 @@
         }
       },
       "DXY": {
-        "value": 98.791,
-        "percentile": 31.3,
+        "value": 98.774,
+        "percentile": 30.2,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 31.3,
+          "percentile": 30.2,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -688,12 +688,12 @@
         }
       },
       "USD/JPY": {
-        "value": 153.553,
-        "percentile": 48.2,
+        "value": 153.559,
+        "percentile": 48.4,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 48.2,
+          "percentile": 48.4,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -704,7 +704,7 @@
         }
       },
       "USD/KRW": {
-        "value": 1339.66,
+        "value": 1339.65,
         "percentile": 1.4,
         "band": "매우 낮음",
         "sessions": 504,
@@ -796,7 +796,7 @@
       {
         "key": "equity_dollar",
         "label_ko": "주식과 달러",
-        "value": -0.276,
+        "value": -0.275,
         "prior": -0.626,
         "flipped": false,
         "band": "반대로 움직임(느슨하게)"
@@ -822,7 +822,7 @@
       "n_assets": 10,
       "top1_pct": 41.6,
       "top3_pct": 74.1,
-      "percentile": 56.7,
+      "percentile": 56.3,
       "band": "중간",
       "history_windows": 252
     },
