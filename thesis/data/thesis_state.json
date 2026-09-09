@@ -1,23 +1,34 @@
 {
-  "updated": "2026-08-28",
+  "updated": "2026-09-09",
   "tickers": {
     "005930.KS": {
       "grade": "홀딩 강화",
       "grade_since": "2026-08-24",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 68481.61,
+        "eps_fy1": 69348.4,
         "eps_fy1_low": 25671.0,
-        "eps_fy1_high": 93462.0,
-        "price": 261500.0,
-        "pb": 3.2
+        "eps_fy1_high": 94075.0,
+        "price": 269500.0,
+        "pb": 2.76
       },
       "open_questions": [
         "분기 실적에서 HBM4 매출 가이던스(3배·비중 60%) 달성 여부",
         "LTA 커버리지가 목표 대비 실제로 어디까지 왔는가",
-        "파운드리 흑자 전환 시점"
+        "파운드리 흑자 전환 시점",
+        "2028년 High-NA EUV 첨단 D램 양산 도입이 일정대로 진행되고 수율·원가 개선으로 이어지는가"
       ],
       "changelog": [
+        {
+          "date": "2026-09-08",
+          "signal": "홀딩 강화",
+          "stance": "Bullish",
+          "title": "첨단 D램 High-NA EUV 양산 도입 시점 구체화",
+          "fact": "삼성전자는 2024년 11월 High-NA EUV를 차세대 메모리 연구개발용 NRD-K에 갖추겠다고 발표했다. 2026년 9월 8일에는 12인치 포토마스크 기술을 위한 업계 이니셔티브 참여와 2028년까지 첨단 D램 양산에 High-NA EUV를 업계 최초로 도입한다는 계획을 공개했다. <cite><a href=\"https://news.samsung.com/global/samsung-reaches-key-milestone-at-new-semiconductor-rd-complex\">Samsung Global Newsroom, 2024-11-18</a> · <a href=\"https://news.samsung.com/global/samsung-electronics-and-asml-expand-strategic-collaboration-for-next-generation-semiconductor-manufacturing\">Samsung Global Newsroom, 2026-09-08</a></cite>",
+          "inference": "추론: High-NA EUV가 연구개발 장비 도입 단계에서 양산 일정까지 구체화됐다. 공정 단순화와 생산성 개선 여지는 커졌지만 현재 고객 배분·점유율·주문·가이던스·캐펙스·마진·현금흐름 효과는 확인되지 않았다. 따라서 SK하이닉스와 Micron 등급도 유지한다.",
+          "delta": "HBM4 매출과 LTA라는 기존 핵심 thesis는 그대로다. 장기 첨단 D램 공정의 실행 이정표를 추가하되 삼성전자 등급은 홀딩 강화를 유지한다.",
+          "next": "2028년 High-NA EUV 양산 도입 일정, 장비·포토마스크 퀄, 실제 수율·원가 개선, 적용 D램 세대와 고객·매출 가이던스를 확인한다."
+        },
         {
           "date": "2026-08-24",
           "signal": "init",
@@ -30,11 +41,11 @@
       "grade_since": "2026-08-28",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 462814.25,
-        "eps_fy1_low": 186357.0,
-        "eps_fy1_high": 598301.6,
-        "price": 1688000.0,
-        "pb": 7.28
+        "eps_fy1": 472738.84,
+        "eps_fy1_low": 325173.0,
+        "eps_fy1_high": 557816.0,
+        "price": 1793000.0,
+        "pb": 4.84
       },
       "open_questions": [
         "HBM4E 고객 퀄 통과 여부",
@@ -68,8 +79,8 @@
         "eps_fy1": 155.02524,
         "eps_fy1_low": 106.89,
         "eps_fy1_high": 221.27,
-        "price": 918.04,
-        "pb": 10.29
+        "price": 1016.59,
+        "pb": 11.4
       },
       "open_questions": [
         "RPO 잔액의 분기 증감 방향",
