@@ -720,6 +720,9 @@ def snapshot(root, oid, paths, dest):
 
 def review_one(root, commit, item, timeout):
     """codex 를 읽기 전용으로 한 편 돌린다 — (초안 본문, 실패 이유)."""
+    # 스냅샷 디렉터리는 git 레포가 아니다. `--skip-git-repo-check` 없이 부르면 codex 가
+    # 「Not inside a trusted directory」로 거부한다 — 레포 안에서 손으로 돌릴 때는 안
+    # 드러나고 launchd 첫 실행에서야 나왔다(2026-09-10).
     work = tempfile.mkdtemp(prefix='review-')
     try:
         data_dir = SNAPSHOT[item.section]
@@ -730,7 +733,8 @@ def review_one(root, commit, item, timeout):
                                datadir=data_dir)
         try:
             out = subprocess.run(
-                [CODEX, 'exec', '--sandbox', 'read-only', '-C', work, '-'],
+                [CODEX, 'exec', '--sandbox', 'read-only',
+                 '--skip-git-repo-check', '-C', work, '-'],
                 input=prompt, capture_output=True, text=True, timeout=timeout)
         except FileNotFoundError:
             return None, f'codex 가 없다 ({CODEX})'

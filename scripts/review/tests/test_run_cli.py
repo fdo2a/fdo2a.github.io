@@ -233,6 +233,20 @@ def test_the_hook_shows_a_ready_draft(repo, tmp_path):
     assert '초안 준비됨 2건' in out.stdout and '검토 완료가 아니다' in out.stdout
 
 
+def test_codex_is_told_the_snapshot_is_not_a_git_repo(repo, tmp_path):
+    """스냅샷은 레포 밖의 임시 디렉터리다. `--skip-git-repo-check` 가 빠지면 codex 가
+    「Not inside a trusted directory」로 거부한다 — 2026-09-10 launchd 첫 실행에서 실제로
+    이렇게 죽었고, 레포 안에서 손으로 돌리는 검증으로는 안 드러난다."""
+    seen = tmp_path / 'argv.txt'
+    codex = tmp_path / 'codex'
+    codex.write_text(f'#!/bin/sh\nprintf "%s\\n" "$@" > {seen}\necho "지적 없음"\n')
+    codex.chmod(0o755)
+    run(repo, 'run', codex=str(codex))
+    args = seen.read_text().split('\n')
+    assert '--skip-git-repo-check' in args and '--sandbox' in args
+    assert 'read-only' in args
+
+
 def test_the_hook_says_the_runner_never_ran(repo):
     """세 필드가 늘 나와야 「큐만 길어지고 초안은 안 는다」가 보인다."""
     out = run(repo, 'pending', '--hook')
