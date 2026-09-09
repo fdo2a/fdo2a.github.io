@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09 21:34 UTC",
+  "generated": "2026-09-09 21:36 UTC",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-09-09",
   "indices": {
@@ -110,21 +110,21 @@
   },
   "fx": {
     "DXY": {
-      "last": 98.76899719238281,
-      "chg": -0.0709991455078125,
-      "pct": -0.07183240402508506,
+      "last": 98.7699966430664,
+      "chg": -0.06999969482421875,
+      "pct": -0.07082122361166121,
       "date": "2026-09-09"
     },
     "USD/KRW": {
-      "last": 1339.6500244140625,
-      "chg": -3.919921875,
-      "pct": -0.29175420943485797,
+      "last": 1339.6099853515625,
+      "chg": -3.9599609375,
+      "pct": -0.2947342599049163,
       "date": "2026-09-09"
     },
     "USD/JPY": {
-      "last": 153.56100463867188,
-      "chg": -0.2939910888671875,
-      "pct": -0.19108322578476056,
+      "last": 153.531005859375,
+      "chg": -0.3239898681640625,
+      "pct": -0.2105813117292743,
       "date": "2026-09-09"
     },
     "EUR/USD": {
@@ -558,14 +558,14 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.073,
+        "change": -0.07,
         "unit": "%",
-        "multiple": -0.24,
+        "multiple": -0.23,
         "band": "미미"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": -0.209,
+        "change": -0.211,
         "unit": "%",
         "multiple": -0.39,
         "band": "미미"
@@ -672,12 +672,12 @@
         }
       },
       "DXY": {
-        "value": 98.768,
-        "percentile": 30.0,
+        "value": 98.771,
+        "percentile": 30.2,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 30.0,
+          "percentile": 30.2,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -688,7 +688,7 @@
         }
       },
       "USD/JPY": {
-        "value": 153.533,
+        "value": 153.531,
         "percentile": 48.2,
         "band": "중간",
         "sessions": 504,
@@ -704,7 +704,7 @@
         }
       },
       "USD/KRW": {
-        "value": 1339.6,
+        "value": 1339.61,
         "percentile": 1.4,
         "band": "매우 낮음",
         "sessions": 504,
