@@ -33,6 +33,23 @@ def setup(tmp_path, monkeypatch):
     git(root, 'commit', '-m', 'publish')
     git(root, 'push', '-u', 'origin', 'main')
     item = Pending('posts/2026-09-10.html', 'us', git(root, 'rev-parse', 'HEAD:posts/2026-09-10.html'), 'new')
+    # Trusted local gate scripts are deliberately absent from the origin clone.
+    scripts = root / 'scripts'
+    scripts.mkdir()
+    for name in ('macro', 'stance', 'fed', 'weight', 'price_context', 'portfolio',
+                 'session', 'readability', 'style'):
+        (scripts / f'check_{name}.py').write_text('''import sys
+from pathlib import Path
+assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
+assert not any('repo/data' in x for x in sys.argv)
+with (Path(__file__).parent / 'gate-calls.txt').open('a') as f:
+    f.write(Path(__file__).name + '\\n')
+print('gate passed')
+''')
+    (scripts / 'verify_post.py').write_text('''import sys
+assert sys.argv[2] == '--before' and sys.argv[1] == sys.argv[3]
+print('layout passed')
+''')
     executable = tmp_path / 'claude'
     monkeypatch.setenv('CLAUDE_BIN', str(executable))
     return root, remote, item, executable
@@ -68,6 +85,7 @@ def test_success_keeps_user_checkout(setup):
     assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
+    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 9
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -99,4 +117,41 @@ def test_timeout(setup):
     base = git(root, 'rev-parse', 'HEAD')
     _, error = correct_one(root, item, 'review', base, 0.05)
     assert 'timeout' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_claude_failure(setup):
+    root, remote, item, exe = setup
+    fake(exe, 'sys.exit(7)\n')
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'exited 7' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_concurrent_remote_change(setup):
+    root, remote, item, exe = setup
+    base = git(root, 'rev-parse', 'HEAD')
+    fake(exe, f'''
+subprocess.run(['git','-C',{str(root)!r},'commit','--allow-empty','-m','concurrent publication'],check=True)
+subprocess.run(['git','-C',{str(root)!r},'push'],check=True)
+''')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'remote main changed' in error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
+
+
+@pytest.mark.parametrize('failure', ['nonzero', 'missing', 'layout_unavailable'])
+def test_independent_gate_blocks_push(setup, failure):
+    root, remote, item, exe = setup
+    fake(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    if failure == 'nonzero':
+        (root / 'scripts/check_macro.py').write_text("raise SystemExit('invalid HTML')")
+    elif failure == 'missing':
+        (root / 'scripts/check_macro.py').unlink()
+    else:
+        (root / 'scripts/verify_post.py').write_text("print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error
     assert git(remote, 'rev-parse', 'main') == base

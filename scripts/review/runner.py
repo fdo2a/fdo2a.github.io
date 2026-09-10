@@ -75,7 +75,8 @@ def eligible(queue, published, state, day, have=(), sections=SECTIONS, cap=DAILY
 
     큐는 최신 순이라 섹션마다 앞에서부터 채우면 그날 것이 먼저 잡힌다.
     """
-    limit = date.fromisoformat(day) - timedelta(days=max_age_days)
+    limit = (date.fromisoformat(day) - timedelta(days=max_age_days)
+             if max_age_days is not None else None)
     left = {s: max(0, cap - used(state, day, s)) for s in sections}
     have = set(have)
     picked = []
@@ -87,7 +88,7 @@ def eligible(queue, published, state, day, have=(), sections=SECTIONS, cap=DAILY
         if draft_name(item) in have:
             continue
         when = _dated(item.path)
-        if when is None or when < limit:
+        if when is None or (limit is not None and when < limit):
             continue
         picked.append(item)
         left[item.section] -= 1

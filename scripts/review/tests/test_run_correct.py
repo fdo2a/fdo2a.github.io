@@ -52,3 +52,30 @@ def test_published_ledger_prevents_repeat_with_stale_local_ledger(repo, tmp_path
     def forbidden(*args):
         raise AssertionError('already reviewed remote version was called again')
     assert invoke(repo, monkeypatch, forbidden) == 0
+
+
+def test_codex_failure_does_not_starve_existing_correction(repo, tmp_path, monkeypatch):
+    from pathlib import Path
+    run(repo, 'run', codex=fake_codex(tmp_path))
+    for draft in (Path(repo) / 'reviews/pending').glob('*-us-*.md'):
+        draft.unlink()
+    monkeypatch.setattr(gate, 'review_one', lambda *args: (None, 'Codex unavailable'))
+    calls = []
+    def correct(root, item, *args):
+        calls.append(item.path)
+        return 'checked', None
+    assert invoke(repo, monkeypatch, correct) == 1
+    assert calls == [KR_POST]
+    assert 'us' in state_of(repo)['errors']
+
+
+def test_ready_correction_does_not_expire_while_waiting_for_quota(repo, tmp_path, monkeypatch):
+    from datetime import date, timedelta
+    run(repo, 'run', codex=fake_codex(tmp_path))
+    monkeypatch.setattr(gate, 'today_kst', lambda: (date.today() + timedelta(days=4)).isoformat())
+    calls = []
+    def correct(root, item, *args):
+        calls.append(item.path)
+        return 'checked', None
+    assert invoke(repo, monkeypatch, correct) == 0
+    assert set(calls) == {POST, KR_POST}

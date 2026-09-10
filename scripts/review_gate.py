@@ -812,7 +812,7 @@ def _correct_ready(root, args, state, errs):
     ready = [item for item in queue if draft_name(item) in have]
     day = today_kst()
     quota = {'calls': state.get('correction_calls', {})}
-    for item in eligible(ready, published, quota, day):
+    for item in eligible(ready, published, quota, day, max_age_days=None):
         key = f'정정-{item.section}'
         commit = publish_commit(root, item.path, item.sha)
         if not commit:
@@ -894,7 +894,7 @@ def cmd_run(args):
                 # 한 편이 실패하면 그 tick 을 끝낸다. 한도 초과였다면 다음 섹션 호출은
                 # 어차피 같은 이유로 죽고, 그 사이 사람 몫의 한도만 더 먹는다.
                 errs[item.section] = f'{item.path}: {why}'
-                return _save(root, state, errs)
+                break
             # 최종 이름은 성공한 뒤에만 붙는다 — 먼저 만들면 잘린 파일이 남고, 다음 tick 은
             # 「파일이 있다」는 이유로 그 글을 건너뛴다.
             fd, tmp = tempfile.mkstemp(dir=os.path.join(root, DRAFTS))
