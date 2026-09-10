@@ -1,13 +1,21 @@
 {
-  "report_date": "2026-09-04",
+  "report_date": "2026-09-10",
   "releases": [
     {
-      "key": "employment",
-      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+      "key": "ppi",
+      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 10380,
-      "path": "releases/employment.txt"
+      "chars": 14870,
+      "path": "releases/ppi.txt"
+    },
+    {
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 20131,
+      "path": "releases/claims.txt"
     }
   ]
 }
