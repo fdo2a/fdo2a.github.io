@@ -1,16 +1,16 @@
 {
-  "as_of": "2026-09-09",
+  "as_of": "2026-09-10",
   "complete": true,
   "missing": [],
   "tickers": {
     "005930.KS": {
       "name": "삼성전자",
       "currency": "KRW",
-      "price": 269500.0,
-      "price_date": "2026-09-09",
-      "chg_20d_pct": 12.53,
-      "pct_from_52w_high": -25.57,
-      "market_cap": 1769688795185152.0,
+      "price": 269000.0,
+      "price_date": "2026-09-10",
+      "chg_20d_pct": 5.28,
+      "pct_from_52w_high": -25.71,
+      "market_cap": 1766405561122816.0,
       "eps_fy0": 48329.566,
       "eps_fy1": 69114.08,
       "eps_fy1_low": 25671.0,
@@ -19,7 +19,7 @@
       "bvps": 97550.03,
       "bvps_as_of": "2026-06-30",
       "pb": 2.76,
-      "pe_fy1": 3.9,
+      "pe_fy1": 3.89,
       "next_earnings_date": "2026-10-28",
       "fair_value": {
         "method": "blended",
@@ -31,10 +31,10 @@
         "band2": 261508
       },
       "position": {
-        "vs_weighted_pct": -29.9,
-        "vs_base_pct": -19.1,
-        "upside_bull_pct": 146.0,
-        "downside_bear_pct": -46.9,
+        "vs_weighted_pct": -30.1,
+        "vs_base_pct": -19.2,
+        "upside_bull_pct": 146.5,
+        "downside_bear_pct": -46.8,
         "in_band1": true,
         "in_band2": false
       }
@@ -42,11 +42,11 @@
     "000660.KS": {
       "name": "SK하이닉스",
       "currency": "KRW",
-      "price": 1856000.0,
-      "price_date": "2026-09-09",
-      "chg_20d_pct": 30.27,
-      "pct_from_52w_high": -36.4,
-      "market_cap": 1317490747506688.0,
+      "price": 1853000.0,
+      "price_date": "2026-09-10",
+      "chg_20d_pct": 23.23,
+      "pct_from_52w_high": -36.51,
+      "market_cap": 1315361114816512.0,
       "eps_fy0": 349386.7,
       "eps_fy1": 472170.0,
       "eps_fy1_low": 325173.0,
@@ -54,8 +54,8 @@
       "eps_fy1_analysts": 37.0,
       "bvps": 370438.68,
       "bvps_as_of": "2026-06-30",
-      "pb": 5.01,
-      "pe_fy1": 3.93,
+      "pb": 5.0,
+      "pe_fy1": 3.92,
       "next_earnings_date": "2026-10-27",
       "fair_value": {
         "method": "blended",
@@ -67,9 +67,9 @@
         "band2": 1470424
       },
       "position": {
-        "vs_weighted_pct": -14.2,
-        "vs_base_pct": 1.2,
-        "upside_bull_pct": 107.8,
+        "vs_weighted_pct": -14.3,
+        "vs_base_pct": 1.1,
+        "upside_bull_pct": 108.2,
         "downside_bear_pct": -61.2,
         "in_band1": false,
         "in_band2": false
@@ -78,11 +78,11 @@
     "MU": {
       "name": "Micron",
       "currency": "USD",
-      "price": 1000.26,
-      "price_date": "2026-09-08",
-      "chg_20d_pct": 16.17,
-      "pct_from_52w_high": -17.56,
-      "market_cap": 1129686761472.0,
+      "price": 1027.77,
+      "price_date": "2026-09-09",
+      "chg_20d_pct": 18.34,
+      "pct_from_52w_high": -15.3,
+      "market_cap": 1160756461568.0,
       "eps_fy0": 73.40044,
       "eps_fy1": 155.02524,
       "eps_fy1_low": 106.89,
@@ -90,8 +90,8 @@
       "eps_fy1_analysts": 39.0,
       "bvps": 89.18,
       "bvps_as_of": "2026-05-31",
-      "pb": 11.22,
-      "pe_fy1": 6.45,
+      "pb": 11.52,
+      "pe_fy1": 6.63,
       "next_earnings_date": "2026-09-30",
       "fair_value": {
         "method": "blended",
@@ -103,10 +103,10 @@
         "band2": 582
       },
       "position": {
-        "vs_weighted_pct": 16.9,
-        "vs_base_pct": 39.3,
-        "upside_bull_pct": 55.3,
-        "downside_bear_pct": -73.3,
+        "vs_weighted_pct": 20.1,
+        "vs_base_pct": 43.1,
+        "upside_bull_pct": 51.1,
+        "downside_bear_pct": -74.0,
         "in_band1": false,
         "in_band2": false
       }
