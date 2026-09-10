@@ -1,7 +1,37 @@
 {
- "generated": "2026-09-09T10:56:05+00:00",
+ "generated": "2026-09-10T10:52:37+00:00",
  "index_ok": true,
  "releases": [
+  {
+   "key": "nbs-cpi-2026-08",
+   "kind": "nbs-cpi",
+   "period": "2026-08",
+   "tier": 1,
+   "url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260910_1965275.html",
+   "title": "Consumer Price Index in August 2026",
+   "published": "2026-09-10",
+   "discovered": true,
+   "http_status": 200,
+   "language": "en",
+   "content_hash": "8a2e91315bc0db8ac508c201ef72acec58a6be6f7fb57662d313956aab05998f",
+   "chars": 7439,
+   "fetch_status": "ok"
+  },
+  {
+   "key": "nbs-ppi-2026-08",
+   "kind": "nbs-ppi",
+   "period": "2026-08",
+   "tier": 1,
+   "url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260910_1965274.html",
+   "title": "Industrial Producer Price Indexes in August 2026",
+   "published": "2026-09-10",
+   "discovered": true,
+   "http_status": 200,
+   "language": "en",
+   "content_hash": "ebd4d49ce5c22bb2e71859f8d6125cff3d058137d64d41d15d0832664a839e6b",
+   "chars": 8043,
+   "fetch_status": "ok"
+  },
   {
    "key": "nbs-pmi-2026-08",
    "kind": "nbs-pmi",
@@ -105,36 +135,6 @@
    "language": "en",
    "content_hash": "52f445588ce31387487362f0bf7246d713c4048622365ece7ae69f4a6feb812e",
    "chars": 14320,
-   "fetch_status": "ok"
-  },
-  {
-   "key": "nbs-cpi-2026-07",
-   "kind": "nbs-cpi",
-   "period": "2026-07",
-   "tier": 1,
-   "url": "https://www.stats.gov.cn/english/PressRelease/202608/t20260810_1965018.html",
-   "title": "Consumer Price Index in July 2026",
-   "published": "2026-08-10",
-   "discovered": true,
-   "http_status": 200,
-   "language": "en",
-   "content_hash": "04ed6c1f54a6a55f35f34929fd4f9c5f926153a42c5e753bac4d5e9819948288",
-   "chars": 7230,
-   "fetch_status": "ok"
-  },
-  {
-   "key": "nbs-ppi-2026-07",
-   "kind": "nbs-ppi",
-   "period": "2026-07",
-   "tier": 1,
-   "url": "https://www.stats.gov.cn/english/PressRelease/202608/t20260810_1965017.html",
-   "title": "Industrial Producer Price Indexes in July 2026",
-   "published": "2026-08-10",
-   "discovered": true,
-   "http_status": 200,
-   "language": "en",
-   "content_hash": "992a9eab55a8739d7fe6644658909f5350233713b93ac15bf93a8f96b4aca921",
-   "chars": 8049,
    "fetch_status": "ok"
   }
  ]

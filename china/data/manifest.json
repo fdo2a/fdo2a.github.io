@@ -1,4 +1,70 @@
 {
+ "cpi_yoy": {
+  "2026-08": {
+   "metric_id": "cpi_yoy",
+   "label_ko": "소비자물가 전년 대비",
+   "period": "2026-08",
+   "value": 0.8,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-cpi-2026-08"
+  }
+ },
+ "cpi_mom": {
+  "2026-08": {
+   "metric_id": "cpi_mom",
+   "label_ko": "소비자물가 전월 대비",
+   "period": "2026-08",
+   "value": 0.4,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-cpi-2026-08"
+  }
+ },
+ "cpi_food_yoy": {
+  "2026-08": {
+   "metric_id": "cpi_food_yoy",
+   "label_ko": "식품 물가 전년 대비",
+   "period": "2026-08",
+   "value": -1.4,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-cpi-2026-08"
+  }
+ },
+ "cpi_nonfood_yoy": {
+  "2026-08": {
+   "metric_id": "cpi_nonfood_yoy",
+   "label_ko": "비식품 물가 전년 대비",
+   "period": "2026-08",
+   "value": 1.2,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-cpi-2026-08"
+  }
+ },
+ "cpi_cum_yoy": {
+  "2026-08": {
+   "metric_id": "cpi_cum_yoy",
+   "label_ko": "소비자물가 누계 전년 대비",
+   "period": "2026-08",
+   "value": 0.9,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-cpi-2026-08"
+  }
+ },
+ "ppi_yoy": {
+  "2026-08": {
+   "metric_id": "ppi_yoy",
+   "label_ko": "생산자물가 전년 대비",
+   "period": "2026-08",
+   "value": 3.8,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-ppi-2026-08"
+  }
+ },
  "pmi_mfg": {
   "2026-08": {
    "metric_id": "pmi_mfg",
@@ -85,83 +151,6 @@
    "unit": "%",
    "kind": "change",
    "source_key": "nbs-retail-2026-07"
-  }
- },
- "cpi_yoy": {
-  "2026-07": {
-   "metric_id": "cpi_yoy",
-   "label_ko": "소비자물가 전년 대비",
-   "period": "2026-07",
-   "value": 0.5,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-cpi-2026-07"
-  }
- },
- "cpi_mom": {
-  "2026-07": {
-   "metric_id": "cpi_mom",
-   "label_ko": "소비자물가 전월 대비",
-   "period": "2026-07",
-   "value": -0.1,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-cpi-2026-07"
-  }
- },
- "cpi_food_yoy": {
-  "2026-07": {
-   "metric_id": "cpi_food_yoy",
-   "label_ko": "식품 물가 전년 대비",
-   "period": "2026-07",
-   "value": -1.5,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-cpi-2026-07"
-  }
- },
- "cpi_nonfood_yoy": {
-  "2026-07": {
-   "metric_id": "cpi_nonfood_yoy",
-   "label_ko": "비식품 물가 전년 대비",
-   "period": "2026-07",
-   "value": 0.9,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-cpi-2026-07"
-  }
- },
- "cpi_cum_yoy": {
-  "2026-07": {
-   "metric_id": "cpi_cum_yoy",
-   "label_ko": "소비자물가 누계 전년 대비",
-   "period": "2026-07",
-   "value": 0.9,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-cpi-2026-07"
-  }
- },
- "ppi_yoy": {
-  "2026-07": {
-   "metric_id": "ppi_yoy",
-   "label_ko": "생산자물가 전년 대비",
-   "period": "2026-07",
-   "value": 3.5,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-ppi-2026-07"
-  }
- },
- "ppi_mom": {
-  "2026-07": {
-   "metric_id": "ppi_mom",
-   "label_ko": "생산자물가 전월 대비",
-   "period": "2026-07",
-   "value": -0.7,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-ppi-2026-07"
   }
  }
 }
