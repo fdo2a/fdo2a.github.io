@@ -1,12 +1,12 @@
 {
-  "report_date": "2026-09-10",
+  "report_date": "2026-09-11",
   "macro_date": "2026-09-10",
   "horizon": "3-6개월",
   "scores": {
     "growth_score": -0.489,
-    "inflation_score": -0.381,
+    "inflation_score": -0.526,
     "growth_diffusion": 0.286,
-    "inflation_diffusion": 0.625
+    "inflation_diffusion": 0.375
   },
   "implied": {
     "growth": -1,
@@ -14,73 +14,109 @@
     "name": "연착륙"
   },
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "Existing Home Sales",
-    "PPI Final Demand MoM"
+    "CPI YoY",
+    "CPI MoM",
+    "Core CPI YoY",
+    "Core CPI MoM"
   ],
   "headline_releases": [
     {
-      "key": "ppi",
-      "label": "생산자물가(PPI)",
-      "tier": 2,
+      "key": "cpi",
+      "label": "소비자물가(CPI)",
+      "tier": 1,
       "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
-      "primary": "PPI Final Demand MoM",
-      "max_abs_z": 2.072,
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "primary": "CPI MoM",
+      "max_abs_z": 2.93,
       "indicators": [
         {
-          "name": "PPI Final Demand MoM",
+          "name": "CPI YoY",
+          "axis": "Inflation",
+          "actual": 3.71,
+          "previous": 3.54,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.228
+        },
+        {
+          "name": "CPI MoM",
           "axis": "Inflation",
           "actual": 0.4,
           "previous": 0.07,
           "ref_period": "2026-08-01",
-          "momentum_z": -2.072
-        }
-      ],
-      "components": []
-    },
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Initial Jobless Claims",
-      "max_abs_z": 0.608,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 206000.0,
-          "previous": 207000.0,
-          "ref_period": "2026-09-05",
-          "momentum_z": 0.608
+          "momentum_z": -2.93
         },
         {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 206000.0,
-          "previous": 207500.0,
-          "ref_period": "2026-09-05",
-          "momentum_z": 0.406
+          "name": "Core CPI YoY",
+          "axis": "Inflation",
+          "actual": 2.76,
+          "previous": 2.79,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.171
         },
         {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1774000.0,
-          "previous": 1775000.0,
-          "ref_period": "2026-08-29",
-          "momentum_z": -0.355
+          "name": "Core CPI MoM",
+          "axis": "Inflation",
+          "actual": 0.29,
+          "previous": 0.22,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.733
         }
       ],
-      "components": []
+      "components": [
+        {
+          "label": "에너지",
+          "fred_id": "CPIENGSL",
+          "transform": "mom_pct",
+          "actual": 2.097,
+          "previous": -1.484,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "식품",
+          "fred_id": "CPIUFDSL",
+          "transform": "mom_pct",
+          "actual": 0.122,
+          "previous": 0.078,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "주거비(shelter)",
+          "fred_id": "CUSR0000SAH1",
+          "transform": "mom_pct",
+          "actual": 0.264,
+          "previous": 0.139,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "중고차",
+          "fred_id": "CUSR0000SETA02",
+          "transform": "mom_pct",
+          "actual": 0.365,
+          "previous": 0.398,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "의료",
+          "fred_id": "CPIMEDSL",
+          "transform": "mom_pct",
+          "actual": -0.245,
+          "previous": 0.356,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "서비스 ex-에너지",
+          "fred_id": "CUSR0000SASLE",
+          "transform": "mom_pct",
+          "actual": 0.327,
+          "previous": 0.228,
+          "ref_period": "2026-08-01"
+        }
+      ]
     }
   ],
   "stale": false,
-  "abbreviated": true,
-  "abbreviated_reason": null,
+  "abbreviated": false,
+  "abbreviated_reason": "tier 1 발표가 있는 날",
   "axis_directions": {
     "Labor": "보합",
     "Activity": "악화",
@@ -95,7 +131,7 @@
     "inflation_label": "둔화",
     "name": "연착륙",
     "since": "2026-09-01",
-    "days_held": 8,
+    "days_held": 9,
     "thesis": "PPI·실업수당·기존주택 판매를 반영한 성장 -0.489, 물가 -0.381로 연착륙 국면을 유지한다. PPI 상승과 유가 급등의 지속 여부를 다음 물가 발표에서 확인한다."
   },
   "regime_change_allowed": false,
@@ -122,7 +158,7 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         -1,
         0,
@@ -135,7 +171,7 @@
       "channel": "물가가 공식적으로 둔화 국면에 들어서면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 다만 실질금리 자체가 기간프리미엄·수급 요인으로 계속 오르고 있어 이 경로가 가격에 반영되기까지는 시차가 있다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         0,
         1
@@ -147,7 +183,7 @@
       "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 다만 안전자산 수요와 상대적으로 높은 미국 금리 수준이 이 경로에 계속 맞서는 힘으로 작용한다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         -1,
         0
@@ -159,7 +195,7 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         -1,
         0,
@@ -172,7 +208,7 @@
       "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 다만 실질금리 자체가 계속 오르는 국면에서는 이 경로가 힘을 받기 어렵다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         0,
         1
@@ -184,7 +220,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         0,
         1
@@ -196,7 +232,7 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간에서는 할인율 상승이 고성장주 밸류에이션을 압박하는 경로가 이를 상쇄한다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 3분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 19,
+      "days_held": 20,
       "allowed_directions": [
         -1,
         0,

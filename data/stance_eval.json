@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-09-10",
+  "report_date": "2026-09-11",
   "stance_date": "2026-09-10",
   "stale": false,
   "bootstrap": false,
@@ -11,7 +11,7 @@
       "grade": 0,
       "label": "중립",
       "since": "2026-09-01",
-      "days_held": 8,
+      "days_held": 9,
       "thesis": "S&P의 50일선 대비 -0.16%, VIX 17.84로 기존 변경 조건에 닿지 않았다. 중립을 유지한다.",
       "increase": [
         {
@@ -21,7 +21,7 @@
           "value": 3.0,
           "toward": "+",
           "desc": "S&P 500이 50DMA를 3% 이상 상회 — 눌림목 이후 반등 재확인, 소폭확대 복귀",
-          "actual": -0.16,
+          "actual": 0.65,
           "status": "NOT_MET"
         },
         {
@@ -31,7 +31,7 @@
           "value": 22.0,
           "toward": "-",
           "desc": "VIX 22 상회 — 위험회피 본격화, 방어적 축소(소폭축소) 검토",
-          "actual": 17.84,
+          "actual": 15.84,
           "status": "NOT_MET"
         }
       ],
@@ -52,7 +52,7 @@
       "grade": -1,
       "label": "숏 바이어스",
       "since": "2026-08-14",
-      "days_held": 20,
+      "days_held": 21,
       "thesis": "30년 5.366%, 주간 5년·30년 금리차 변화 -10.9bp다. 만기를 짧게 두는 판단을 유지한다.",
       "increase": [
         {
@@ -61,7 +61,7 @@
           "op": ">",
           "value": 5.4,
           "desc": "30Y 5.40% 상회 — 장기물 매도 압력 가속",
-          "actual": 5.366,
+          "actual": 5.354,
           "status": "NOT_MET"
         },
         {
@@ -70,7 +70,7 @@
           "op": ">",
           "value": 15,
           "desc": "5s30s가 주간 15bp 이상 확대 — 장단기 금리차 확대 가속",
-          "actual": -10.9,
+          "actual": -17.1,
           "status": "NOT_MET"
         }
       ],
@@ -81,7 +81,7 @@
           "op": "<",
           "value": 5.05,
           "desc": "30Y 5.05% 하회 — 장기물 프리미엄 되돌림",
-          "actual": 5.366,
+          "actual": 5.354,
           "status": "NOT_MET"
         },
         {
@@ -110,7 +110,7 @@
       "grade": -1,
       "label": "달러 소폭 숏",
       "since": "2026-08-14",
-      "days_held": 20,
+      "days_held": 21,
       "thesis": "DXY 20일 변화 -0.92%다. 당일 반등에도 달러 소폭 숏을 유지하되 지속 강세를 경계한다.",
       "increase": [
         {
@@ -119,7 +119,7 @@
           "op": "<",
           "value": -3.0,
           "desc": "DXY 20일 -3% 이하 — 약세 추세 가속",
-          "actual": -0.92,
+          "actual": -0.87,
           "status": "NOT_MET"
         }
       ],
@@ -130,7 +130,7 @@
           "op": ">",
           "value": 101.0,
           "desc": "DXY 101 상회 — 약세 시나리오 무효화",
-          "actual": 99.09,
+          "actual": 99.1,
           "status": "NOT_MET"
         }
       ],
@@ -151,7 +151,7 @@
       "grade": 1,
       "label": "소폭확대",
       "since": "2026-09-01",
-      "days_held": 8,
+      "days_held": 9,
       "thesis": "WTI 5일 수익률 +14.06%다. 급등했지만 추가 확대 기준 아래여서 소폭확대를 유지한다.",
       "increase": [
         {
@@ -160,7 +160,7 @@
           "op": ">",
           "value": 20.0,
           "desc": "WTI 5일 수익률 +20% 이상 추가 급등 — 공급 차질 현실화, 비중확대로 추가 확대",
-          "actual": 14.06,
+          "actual": 9.52,
           "status": "NOT_MET"
         }
       ],
@@ -171,7 +171,7 @@
           "op": "<",
           "value": 3.0,
           "desc": "WTI 5일 수익률 +3% 이하로 되돌림 — 지정학 프리미엄 소멸, 중립 복귀",
-          "actual": 14.06,
+          "actual": 9.52,
           "status": "NOT_MET"
         }
       ],
@@ -192,7 +192,7 @@
       "grade": 1,
       "label": "소폭확대",
       "since": "2026-09-01",
-      "days_held": 8,
+      "days_held": 9,
       "thesis": "금 20일 -1.12%, 5일 -0.16%다. 기존 축소 조건 전까지 소폭확대를 유지한다.",
       "increase": [
         {
@@ -201,7 +201,7 @@
           "op": ">",
           "value": 15.0,
           "desc": "금 20일 수익률 +15% 이상 재가속 — 헤지 수요 재점화, 비중확대 복귀",
-          "actual": -1.12,
+          "actual": 0.61,
           "status": "NOT_MET"
         }
       ],
@@ -212,7 +212,7 @@
           "op": "<",
           "value": -8.0,
           "desc": "금 5일 수익률 -8% 이하로 추가 급락 — 헤지 축 소멸, 중립 검토",
-          "actual": -0.16,
+          "actual": -2.26,
           "status": "NOT_MET"
         },
         {
@@ -221,7 +221,7 @@
           "op": ">",
           "value": 101.0,
           "desc": "DXY 101 상회 — 달러 약세 축 소멸",
-          "actual": 99.09,
+          "actual": 99.1,
           "status": "NOT_MET"
         }
       ],
@@ -242,7 +242,7 @@
       "grade": 1,
       "label": "OW",
       "since": "2026-09-04",
-      "days_held": 5,
+      "days_held": 6,
       "thesis": "20일 초과수익 +4.35%포인트다. 오늘 동반 하락에도 상대비중 OW를 유지한다.",
       "increase": [],
       "decrease": [
@@ -253,8 +253,8 @@
           "value": 0.0,
           "toward": "-",
           "desc": "20일 초과수익이 0.0%포인트 아래로 반전 — 중립 복귀",
-          "actual": 4.35,
-          "status": "NOT_MET"
+          "actual": -3.32,
+          "status": "MET"
         },
         {
           "kind": "event",
@@ -282,7 +282,7 @@
       "grade": 1,
       "label": "OW",
       "since": "2026-09-08",
-      "days_held": 3,
+      "days_held": 4,
       "thesis": "5일 초과수익 +5.66%포인트다. 기존 OW를 유지하며 주문과 자금조달 변화를 확인한다.",
       "increase": [],
       "decrease": [
@@ -293,7 +293,7 @@
           "value": 0.0,
           "toward": "-",
           "desc": "5일 초과수익이 0.0%포인트 아래로 반전 — 중립 복귀",
-          "actual": 5.66,
+          "actual": 8.21,
           "status": "NOT_MET"
         },
         {
