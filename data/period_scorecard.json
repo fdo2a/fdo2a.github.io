@@ -1,121 +1,111 @@
 {
-  "start_date": "2026-08-24",
-  "end_date": "2026-08-28",
-  "key": "2026-W35",
+  "start_date": "2026-09-08",
+  "end_date": "2026-09-11",
+  "key": "2026-W37",
   "assets": {
     "equities": {
-      "grade": 1,
-      "realized": 0.4872,
-      "verdict": "적중",
-      "score": 1.0,
+      "grade": 0,
+      "realized": -0.7983,
+      "verdict": "중립",
       "segments": [
         {
-          "grade": 1,
-          "from": "2026-08-24",
-          "to": "2026-08-28"
+          "grade": 0,
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     },
     "bonds": {
       "grade": -1,
-      "realized": 1.8,
-      "verdict": "무판정",
+      "realized": -19.1,
+      "verdict": "적중",
+      "score": 1.0,
       "segments": [
         {
           "grade": -1,
-          "from": "2026-08-24",
-          "to": "2026-08-28"
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     },
     "fx": {
       "grade": -1,
-      "realized": 0.8478,
-      "verdict": "미스",
-      "score": -1.0,
+      "realized": -0.0625,
+      "verdict": "무판정",
       "segments": [
         {
           "grade": -1,
-          "from": "2026-08-24",
-          "to": "2026-08-28"
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     },
     "energy": {
-      "grade": 0,
-      "realized": -3.6934,
-      "verdict": "중립",
+      "grade": 1,
+      "realized": 9.6141,
+      "verdict": "적중",
+      "score": 1.0,
       "segments": [
         {
-          "grade": 0,
-          "from": "2026-08-24",
-          "to": "2026-08-28"
+          "grade": 1,
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     },
     "metals": {
-      "grade": 2,
-      "realized": -3.3787,
-      "verdict": "미스",
-      "score": -1.0,
+      "grade": 1,
+      "realized": -1.9477,
+      "verdict": "무판정",
       "segments": [
         {
-          "grade": 2,
-          "from": "2026-08-24",
-          "to": "2026-08-28"
+          "grade": 1,
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     },
     "memory": {
       "grade": 1,
-      "realized": -2.1701,
-      "verdict": "적중",
-      "score": 1.0,
+      "realized": 0.08,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
-          "grade": 0,
-          "from": "2026-08-24",
-          "to": "2026-08-26"
-        },
-        {
           "grade": 1,
-          "from": "2026-08-26",
-          "to": "2026-08-27"
-        },
-        {
-          "grade": 0,
-          "from": "2026-08-27",
-          "to": "2026-08-28"
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     },
     "ai_infra": {
-      "grade": 0,
-      "realized": -3.5809,
-      "verdict": "중립",
+      "grade": 1,
+      "realized": 3.2802,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
-          "grade": 0,
-          "from": "2026-08-24",
-          "to": "2026-08-28"
+          "grade": 1,
+          "from": "2026-09-08",
+          "to": "2026-09-11"
         }
       ]
     }
   },
   "judged": 4,
-  "neutral": 2,
+  "neutral": 1,
   "total": 7,
-  "neutral_share": 0.2857,
-  "weighted": -0.2,
+  "neutral_share": 0.1429,
+  "weighted": 0.0,
   "span": "weekly",
   "regime": {
     "verdict": "판정불가",
     "prints": 0,
     "regime": {
       "growth": -1,
-      "inflation": 0,
-      "since": "2026-08-26",
-      "thesis": "성장축 점수는 -0.341로 둔화 컷포인트(-0.33) 아래에 그대로 머물러 있다. 물가축 점수는 -0.391로, 오늘 새로 반영된 미시간대 소비자심리·기대인플레 지표까지 더해지면서 사실상 둔화 경계를 넘어섰다 — 점수만 보면 연착륙 쪽을 가리킨다. 다만 국면이 냉각으로 바뀐 지 이제 사흘째라 최소 5영업일이 지나야 다시 움직일 수 있는 잠금이 걸려 있어, 오늘 지표가 방향을 바꿔 가리켜도 국면 자체는 냉각을 유지한다."
+      "inflation": -1,
+      "since": "2026-09-01",
+      "thesis": "PPI·실업수당·기존주택 판매를 반영한 성장 -0.489, 물가 -0.381로 연착륙 국면을 유지한다. PPI 상승과 유가 급등의 지속 여부를 다음 물가 발표에서 확인한다."
     },
     "note": "기간 중 신규 발표 없음"
   },
@@ -125,19 +115,19 @@
   },
   "rollup": {
     "last_4": {
-      "periods": 1,
-      "weighted": -0.2,
+      "periods": 2,
+      "weighted": -0.1,
       "insufficient": true
     },
     "last_12": {
-      "periods": 1,
-      "weighted": -0.2,
+      "periods": 2,
+      "weighted": -0.1,
       "insufficient": true
     },
     "all": {
-      "periods": 1,
-      "weighted": -0.2,
-      "insufficient": true
+      "periods": 2,
+      "weighted": -0.1,
+      "insufficient": false
     }
   },
   "rollup_unit": "주"
