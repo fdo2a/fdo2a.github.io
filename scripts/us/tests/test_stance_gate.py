@@ -1,4 +1,5 @@
 import copy
+import re
 
 from us.stance import ASSETS, label_for
 from us.stance_gate import check, parse_stance_cells, section8
@@ -24,10 +25,11 @@ def build_html(book=None, labels=None, extra_text="", **row_kwargs):
     book = book or BOOK
     labels = labels or LABELS
     rows = "".join(row(a, g, labels[a], **row_kwargs) for a, g in book.items())
-    return ('<section><h2>1. 주식</h2><table><tr><td>S&P 500</td></tr></table></section>'
-            f'<section><h2>8. 멀티에셋 매니저 전략</h2><p>{extra_text}</p>'
-            f'<table>{rows}</table></section>'
-            '<section><h2>9. 주목 섹터</h2></section>')
+    return ('<section><h2>주식</h2><table><tr><td>S&P 500</td></tr></table></section>'
+            f'<section><h2>멀티에셋 전략·포트폴리오</h2><p>{extra_text}</p>'
+            f'<table>{rows}</table>'
+            '<h3>모의 포트폴리오</h3><p>여기부터는 포트폴리오다.</p></section>'
+            '<section><h2>주목 섹터</h2></section>')
 
 
 def stance_file(book=None, date="2026-08-17", since="2026-08-10", history=None):
@@ -66,22 +68,23 @@ METRICS = ("ust30y", "vix_close", "spx_vs_50dma_pct")
 def test_section8_is_located_and_bounded():
     s = section8(build_html())
     assert "멀티에셋" in s and "주목 섹터" not in s and "S&P 500" not in s
+    assert "여기부터는 포트폴리오다" not in s   # h3 뒤는 스탠스 구간이 아니다
 
 
 def test_prose_mentioning_the_section_name_does_not_hijack_the_slice():
     """§8-매크로 reconciles against the stance section by name, so the word appears
     upstream in body text — the locator must key on the heading, not the first hit."""
-    html = ('<section><h2>8. 매크로 논리</h2>'
+    html = ('<section><h2>매크로</h2>'
             '<p>구조적으로는 우호적이나 멀티에셋 스탠스는 숏을 유지한다.</p></section>'
             + build_html())
     s = section8(html)
-    assert "매크로 논리" not in s
+    assert "구조적으로는" not in s
     assert "data-asset" in s
 
 
 def test_missing_section_is_the_only_violation_reported():
     assert check("<p>no section</p>", stance_file(), eval_file(), next_file()) == \
-        ['§8(멀티에셋 매니저 전략) 섹션을 찾을 수 없다']
+        ['§8(멀티에셋 전략·포트폴리오) 섹션을 찾을 수 없다']
 
 
 def test_parse_reads_every_asset_marker():
@@ -267,3 +270,41 @@ def test_next_stance_label_must_match_its_grade():
     nxt["assets"]["memory"]["label"] = "비중확대"
     v = check(build_html(), stance_file(), eval_file(), nxt, METRICS)
     assert any("label은" in x and "memory" in x for x in v)
+
+
+# --- 병합 섹션의 경계 (2026-09-12 codex 설계 검토) ---
+
+def test_a_stance_table_below_the_portfolio_h3_is_not_read_as_the_book():
+    """h3 뒤 표에 표식을 숨겨 두고 위에는 아무 표도 두지 않던 경로 (C2-1)."""
+    html = build_html()
+    table = re.search(r'<table>(?:(?!</table>).)*data-asset.*?</table>',
+                      html, re.S).group(0)
+    moved = html.replace(table, '').replace(
+        '<h3>모의 포트폴리오</h3>', '<h3>모의 포트폴리오</h3>' + table)
+    v = check(moved, stance_file(), eval_file(), next_file())
+    assert any('data-asset 표식이 없는 자산군' in x for x in v)
+
+
+def test_a_duplicate_merged_heading_is_refused():
+    """숨은 사본이 검사를 통과하고 보이는 쪽이 창작을 싣던 경로 (C2-2)."""
+    doubled = ('<div style="display:none">' + build_html() + '</div>'
+               + '<section><h2>멀티에셋 전략·포트폴리오</h2><p>여기가 보이는 쪽.</p>'
+                 '</section>')
+    v = check(doubled, stance_file(), eval_file(), next_file())
+    assert any('제목이 2번 나온다' in x for x in v)
+
+
+def test_a_pre_merge_post_is_still_reviewable():
+    """검토 게이트 러너가 옛 발행본에 이 게이트를 다시 돌린다 — 소급은 하지 않았다."""
+    legacy = build_html().replace('<h2>멀티에셋 전략·포트폴리오</h2>',
+                                  '<h2>멀티에셋 매니저 전략</h2>')
+    assert check(legacy, stance_file(), eval_file(), next_file()) == []
+
+
+def test_an_entity_encoded_duplicate_heading_is_counted():
+    """제목 추출은 엔티티를 디코드하는데 중복 계수는 안 하던 구멍 (2026-09-12 구현 검토)."""
+    doubled = ('<div style="display:none">' + build_html() + '</div>'
+               '<section><h2>멀티에셋 전략&#183;포트폴리오</h2><p>보이는 창작본.</p>'
+               '</section>')
+    v = check(doubled, stance_file(), eval_file(), next_file())
+    assert any('제목이 2번 나온다' in x for x in v)

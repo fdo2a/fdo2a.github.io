@@ -28,6 +28,7 @@ from dataclasses import dataclass
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from review.known_blocks import is_known  # noqa: E402
+from us.colorize import paint  # noqa: E402
 from us.readability import _blank_inert as blank_inert  # noqa: E402
 from us.readability import _head_style_spans as head_style_spans  # noqa: E402
 from us.readability import (block_labels, demote_card_p_font,  # noqa: E402
@@ -159,11 +160,11 @@ def _inert(html):
     return '\0'.join(out)
 
 
-def equivalent(old_html, new_html):
-    """`old_html` 을 조판 변환으로 밀면 `new_html` 이 바이트 그대로 나오는가.
+def transformed(old_html, new_html):
+    """`old_html` 에 «새 판의 조판 블록 + 색칠»을 입힌 결과. 판정 불가면 None.
 
-    True 조판 · False 사람이 읽어야 함 · **None 판정 불가**. None 은 「같다」가 아니다 —
-    부르는 쪽은 미검토로 세야 한다.
+    `equivalent()` 와 조합 경로가 같은 변환을 쓰게 하려고 갈라 두었다 — 두 변환이 한
+    판에 겹쳤을 때(조판·색 + 자산 외부화) 이 결과를 다음 변환의 입력으로 넘긴다.
     """
     if old_html is None or new_html is None:
         return None
@@ -177,12 +178,24 @@ def equivalent(old_html, new_html):
         if _risky_css(old_html, stale) or _risky_css(new_html, fresh):
             return None
         # 순서는 `enhance_html()` 과 같다. `inject_css` 자리를 위의 이식이 대신한다.
-        out = unpin_inline_labels(block_labels(demote_card_p_font(grafted)))
+        # 색칠(`apply_colors.py`)은 그다음 단계라 여기서도 뒤에 온다. 값에서 결정론적으로
+        # 다시 계산하므로, 손으로 바꿔 넣은 색은 이 변환을 통과하지 못한다.
+        out = paint(unpin_inline_labels(block_labels(demote_card_p_font(grafted))))
         if _inert(out) != _inert(grafted):
             return None  # 변환이 스크립트·주석을 건드렸다
     except Exception:  # noqa: BLE001 — 못 다루는 페이지는 미검토로 남기는 것이 안전하다
         return None
-    return out == new_html
+    return out
+
+
+def equivalent(old_html, new_html):
+    """`old_html` 을 조판 변환으로 밀면 `new_html` 이 바이트 그대로 나오는가.
+
+    True 조판 · False 사람이 읽어야 함 · **None 판정 불가**. None 은 「같다」가 아니다 —
+    부르는 쪽은 미검토로 세야 한다.
+    """
+    out = transformed(old_html, new_html)
+    return None if out is None else out == new_html
 
 
 # 임베드를 파일 참조로 바꾼 판. `equivalent()` 는 CSS 블록만 이식하므로 여기에 닿지
@@ -266,7 +279,19 @@ def typography(path, old, new, root=None):
     verdict = equivalent(old, new)
     if verdict:
         return True
-    asset = asset_externalized(old, new, _asset_reader(root, path))
+    reader = _asset_reader(root, path)
+    asset = asset_externalized(old, new, reader)
+    if asset is not True:
+        # **두 변환이 한 판에 겹친 경우.** 각각으로는 설명되지 않는다 — 색이 섞이면
+        # `asset_externalized` 는 src 밖 바이트가 다르다며 False 를 준다 — 조판·색을 먼저
+        # 입히고 나서 자산 외부화만 남는지 본다. 2026-09-12 색 소급이 임베드가 남아 있던
+        # 옛 판 28편을 한꺼번에 「수정됨」으로 만든 자리다. 방향은 그대로 — 되감아
+        # 바이트가 같은지만 본다.
+        staged = transformed(old, new)
+        if staged is not None:
+            composed = asset_externalized(staged, new, reader)
+            if composed is not None:
+                asset = composed
     if asset is not None:
         return asset
     return verdict

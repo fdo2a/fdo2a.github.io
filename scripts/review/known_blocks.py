@@ -13,6 +13,7 @@
 행위»다 — 자동으로 늘어나면 이 파일은 아무것도 막지 못한다.
 """
 
+from us.colorize import CSS as _SIGNCOLOR  # noqa: E402
 from us.readability import CSS as _CURRENT  # noqa: E402
 
 # 2026-08-26 ~ 08-28 발행분 58편이 들고 있는 판.
@@ -20,8 +21,15 @@ _PREV_V5 = '/* readability-v5 */\n.card p, .doc p, .panel p, p { line-height: 1.
 
 
 def known():
-    """조판으로 인정하는 블록들. 앞뒤 빈 줄은 무시하고 비교한다."""
-    return {block.strip('\n') for block in (_CURRENT, _PREV_V5)}
+    """조판으로 인정하는 블록들. 앞뒤 빈 줄은 무시하고 비교한다.
+
+    2026-09-12부터 `apply_colors.py` 가 조판 블록과 같은 `<style>` 안에 색 규칙을
+    덧붙인다. 그래서 「조판 + 색」도 한 판으로 등록한다 — 둘 다 이 저장소의 도구가
+    내는 것이고, 색이 없던 시절의 판도 그대로 인정해야 옛 발행본이 막히지 않는다.
+    """
+    return {block.strip('\n')
+            for block in (_CURRENT, _CURRENT + _SIGNCOLOR, _PREV_V5,
+                          _PREV_V5 + _SIGNCOLOR)}
 
 
 def is_known(block):

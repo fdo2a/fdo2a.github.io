@@ -33,6 +33,62 @@ def section_slice(html_doc, title):
     return html_doc[start:stops[0] if stops else len(html_doc)]
 
 
+# 병합 섹션(2026-09-12 사용자 지시 「하나로 합쳐」) 안에서 포트폴리오가 시작하는 자리.
+PORTFOLIO_SUBTITLE = '모의 포트폴리오'
+_H3 = re.compile(r'<h3\b[^>]*>(.*?)</h3>', re.S)
+
+
+_SECTION_OPEN = re.compile(r'(?i)<section\b')
+_SECTION_CLOSE = re.compile(r'(?i)</section\s*>')
+
+
+def section_scope(html_doc, title):
+    """제목이 `title`인 <h2>를 담은 **실제 `<section>` 안쪽**. 없으면 h2 구간 그대로.
+
+    `section_slice` 는 다음 h2 까지 읽으므로, 형제 `<aside>`·`<div>` 에 놓인 블록이
+    이 섹션의 자식인 것처럼 검사된다(2026-09-12 codex 구현 검토). 중첩 `<section>`
+    (섹터 막대 스니펫)이 있으므로 깊이를 세어 짝을 찾는다.
+    """
+    seg = section_slice(html_doc, title)
+    if seg is None:
+        return None
+    start = html_doc.index(seg)
+    open_at = html_doc.rfind('<section', 0, start)
+    if open_at < 0:
+        return seg
+    depth, i = 0, open_at
+    while i < len(html_doc):
+        o = _SECTION_OPEN.search(html_doc, i)
+        c = _SECTION_CLOSE.search(html_doc, i)
+        if c is None:
+            break
+        if o is not None and o.start() < c.start():
+            depth += 1
+            i = o.end()
+            continue
+        depth -= 1
+        if depth == 0:
+            end = c.start()
+            return seg[:end - start] if end > start else seg
+        i = c.end()
+    return seg
+
+
+def sub_split(section_html, title):
+    """h2 구간을 «그 제목의 <h3> 앞»과 «h3부터 구간 끝»으로 가른다.
+
+    뒤쪽의 끝을 «다음 h3»으로 잡지 않는다 — h3 를 하나 더 두면 그 뒤가 검사 밖
+    꼬리가 된다(2026-09-12 codex 설계 검토 C2-4). 끝은 부모 구간의 끝이다.
+    h3 가 없으면 (전체, None).
+    """
+    if not section_html:
+        return (section_html, None)
+    for m in _H3.finditer(section_html):
+        if _text(m.group(1)) == title:
+            return (section_html[:m.start()], section_html[m.start():])
+    return (section_html, None)
+
+
 def prose_chars(section_html):
     """문단 + 서술형 표 칸(40자 초과)의 글자 수. 캡션은 뺀다.
 
@@ -52,11 +108,17 @@ def prose_chars(section_html):
     return n
 
 
+# 스탠스와 모의 포트폴리오는 2026-09-12 사용자 지시로 한 섹션이다. 옛 제목도 함께 본다 —
+# 검토 게이트 러너가 **이미 발행된** 글에 이 게이트들을 다시 돌리는데, 과거 발행본은
+# 구조를 소급하지 않았다(태그 시퀀스 대조가 어긋난다). 소급이 불가능한 자리에서는
+# 별칭이 옳다 — 「매크로」는 제목만 바뀌어 소급했으므로 별칭을 두지 않았다.
+STANCE_TITLE = '멀티에셋 전략·포트폴리오'
+LEGACY_TITLES = {STANCE_TITLE: '멀티에셋 매니저 전략'}
+
 SECTION_GROUPS = {
     'us': {
         'recap': ('오늘의 장', '주식', '채권', 'FX', '원자재'),
-        'judgment': ('전략 코멘트', '매크로 논리', '멀티에셋 매니저 전략',
-                     '모의 포트폴리오'),
+        'judgment': ('전략 코멘트', '매크로', STANCE_TITLE, PORTFOLIO_SUBTITLE),
     },
     'kr': {
         'recap': ('오늘의 장', '지수 & 장중', '환율·금리'),
@@ -69,10 +131,13 @@ SECTION_GROUPS = {
 # 대신 macro_min·stance_min 이 그대로 살아 있어서 다른 섹션을 비우고 이리로 옮겨
 # 담을 수는 없다.
 #
-# 「오늘의 장」은 2026-08-28, 「모의 포트폴리오」는 2026-09-01 신설이라 옛 판에는 없다.
+# 「오늘의 장」은 2026-08-28 신설이라 옛 판에는 없다. 「모의 포트폴리오」는 2026-09-12에
+# 스탠스와 한 섹션으로 합쳐져 더 이상 h2 가 아니다 — 분량은 병합 제목 하나로 잡힌다.
 # 없어도 위반으로 치지 않고 0자로 센다 — 신규 발행본의 존재 강제는 각 섹션의
 # 전용 게이트(check_session.py·check_portfolio.py)가 맡는다(관심사 분리).
-OPTIONAL_SECTIONS = ('오늘의 장', '모의 포트폴리오')
+# 「모의 포트폴리오」는 병합 뒤 h3 라 h2 구간으로는 잡히지 않는다(분량은 병합 제목이
+# 함께 센다). 옛 판에서는 독립 h2 였으므로 목록에 남겨 그 시절 분량을 잃지 않는다.
+OPTIONAL_SECTIONS = ('오늘의 장', PORTFOLIO_SUBTITLE)
 
 THRESHOLDS = {
     'us': {
@@ -92,7 +157,8 @@ def measure(html_doc, market='us'):
     sections, missing = {}, []
     for group in ('recap', 'judgment'):
         for title in groups[group]:
-            seg = section_slice(html_doc, title)
+            seg = (section_slice(html_doc, title)
+                   or section_slice(html_doc, LEGACY_TITLES.get(title, '')))
             if seg is None:
                 sections[title] = 0
                 if title not in OPTIONAL_SECTIONS:
@@ -101,7 +167,16 @@ def measure(html_doc, market='us'):
                 sections[title] = prose_chars(seg)
     recap = sum(sections[t] for t in groups['recap'])
     judgment = sum(sections[t] for t in groups['judgment'])
+    # 스탠스 하한은 병합 섹션 «전체»로 재면 포트폴리오 산문이 대신 채워 준다
+    # (2026-09-12 codex 설계 검토 C2-6). 여기서 갈라 두어야 검사가 살아 있다.
+    stance_chars = None
+    if market == 'us':
+        seg = (section_slice(html_doc, STANCE_TITLE)
+               or section_slice(html_doc, LEGACY_TITLES[STANCE_TITLE]))
+        head, _ = sub_split(seg, PORTFOLIO_SUBTITLE)
+        stance_chars = prose_chars(head)
     return {'sections': sections, 'recap': recap, 'judgment': judgment,
+            'stance_chars': stance_chars,
             'ratio': (recap / judgment) if judgment else None, 'missing': missing}
 
 
@@ -123,18 +198,20 @@ def check_volume(m, abbreviated=False, market='us'):
         v.append(f'시황·가격군 ÷ 판단군이 {m["ratio"]:.2f}로 {day} 하한 {floor:.2f}에 '
                  f'못 미친다 (시황 {m["recap"]}자 · 판단 {m["judgment"]}자)')
 
-    macro = m['sections'].get('매크로 논리', 0)
+    macro = m['sections'].get('매크로', 0)
     hi = t['macro_max_abbrev'] if abbreviated else t['macro_max']
     lo = t['macro_min_abbrev'] if abbreviated else t['macro_min']
     if macro > hi:
-        v.append(f'매크로 논리가 {macro}자로 {day} 상한 {hi}자를 넘는다')
+        v.append(f'매크로가 {macro}자로 {day} 상한 {hi}자를 넘는다')
     if macro < lo:
-        v.append(f'매크로 논리가 {macro}자로 {day} 하한 {lo}자에 못 미친다 — '
+        v.append(f'매크로가 {macro}자로 {day} 하한 {lo}자에 못 미친다 — '
                  '§9를 지워 비율을 맞추지 말 것')
 
-    stance = m['sections'].get('멀티에셋 매니저 전략', 0)
+    stance = m.get('stance_chars') or 0
     if stance < t['stance_min']:
-        v.append(f'멀티에셋 매니저 전략이 {stance}자로 하한 {t["stance_min"]}자에 못 미친다')
+        v.append(f'{STANCE_TITLE}의 스탠스 부분이 {stance}자로 하한 '
+                 f'{t["stance_min"]}자에 못 미친다 — 「{PORTFOLIO_SUBTITLE}」 h3 '
+                 '뒤의 산문은 이 하한을 채우지 못한다')
     return v
 
 
@@ -279,7 +356,7 @@ def check_macro_prices(html_doc, market_data=None):
 
     수치 중복만 본다 — 「달러는 소폭 내렸다」 같은 말바꿈은 잡지 못한다.
     """
-    seg = section_slice(html_doc, '매크로 논리')
+    seg = section_slice(html_doc, '매크로')
     if seg is None:
         return []
     printed = {}

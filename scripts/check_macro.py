@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publication gate for §8 (매크로 논리).
+"""Publication gate for §8 (매크로).
 
 Run from the repo clone, against the writer's output in the routine workspace:
 

@@ -131,7 +131,8 @@ def test_a_book_whose_date_is_not_a_date_is_not_applied(tmp_path, bad):
 
 
 GATE = os.path.join(ROOT, 'check_portfolio.py')
-SECTION = ('<h2>모의 포트폴리오</h2><p data-portfolio="basis">모의 운용.</p>')
+SECTION = ('<h2>멀티에셋 전략·포트폴리오</h2><p>등급 유지.</p>'
+           '<h3>모의 포트폴리오</h3><p data-portfolio="basis">모의 운용.</p>')
 
 
 def _gate(tmp_path, book_date, market_date, html):

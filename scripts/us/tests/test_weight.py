@@ -35,7 +35,7 @@ def _doc(sizes):
 
 
 US_FULL = {'오늘의 장': 800, '주식': 1900, '채권': 2000, 'FX': 650, '원자재': 750,
-           '전략 코멘트': 400, '매크로 논리': 4400, '멀티에셋 매니저 전략': 2200}
+           '전략 코멘트': 400, '매크로': 4400, '멀티에셋 전략·포트폴리오': 2200}
 
 
 def test_measure_groups_and_ratio():
@@ -59,23 +59,23 @@ def test_full_day_passes_thresholds():
 
 def test_measured_2026_08_27_shape_is_blocked():
     sizes = {'오늘의 장': 0, '주식': 1278, '채권': 1581, 'FX': 360, '원자재': 457,
-             '전략 코멘트': 392, '매크로 논리': 4788, '멀티에셋 매니저 전략': 2244}
+             '전략 코멘트': 392, '매크로': 4788, '멀티에셋 전략·포트폴리오': 2244}
     v = check_volume(measure(_doc(sizes), 'us'), False, 'us')
     assert any('비율' in x or '÷' in x for x in v)
-    assert any('매크로 논리' in x for x in v)
+    assert any('매크로' in x for x in v)
 
 
 def test_abbreviated_day_caps_macro_and_raises_ratio_floor():
     v = check_volume(measure(_doc(US_FULL), 'us'), True, 'us')
-    assert any('매크로 논리' in x and '2400' in x for x in v)
-    ok = dict(US_FULL, **{'매크로 논리': 2000})
+    assert any('매크로' in x and '2400' in x for x in v)
+    ok = dict(US_FULL, **{'매크로': 2000})
     assert check_volume(measure(_doc(ok), 'us'), True, 'us') == []
 
 
 def test_deleting_judgment_to_game_the_ratio_is_blocked():
-    sizes = dict(US_FULL, **{'매크로 논리': 500})
+    sizes = dict(US_FULL, **{'매크로': 500})
     v = check_volume(measure(_doc(sizes), 'us'), False, 'us')
-    assert any('매크로 논리' in x and '3000' in x for x in v)
+    assert any('매크로' in x and '3000' in x for x in v)
 
 
 def test_kr_has_floor_but_no_ratio():
@@ -147,13 +147,13 @@ def test_no_price_context_skips_both():
 
 def test_macro_group_may_not_repeat_a_price_the_asset_section_printed():
     doc = (_sec('FX', '<p>DXY는 -0.04% 내린 99.13으로 마감했습니다.</p>')
-           + _sec('매크로 논리', '<div data-macro-group="dollar">'
+           + _sec('매크로', '<div data-macro-group="dollar">'
                   '<p>오늘 DXY는 99.13으로 마감해 이 경로와 결이 같았습니다.</p></div>'))
     assert any('dollar' in x and '99.13' in x for x in check_macro_prices(doc))
 
 
 def test_macro_group_may_keep_structural_logic():
-    doc = _sec('FX', '<p>DXY는 99.13으로 마감했습니다.</p>') + _sec('매크로 논리', '<div data-macro-group="dollar">'
+    doc = _sec('FX', '<p>DXY는 99.13으로 마감했습니다.</p>') + _sec('매크로', '<div data-macro-group="dollar">'
                '<p>실질금리 격차가 줄면 달러가 약해지는 경로입니다. 확인 지표는 20일 '
                '수익률이 -3% 아래로 확대되는지입니다.</p></div>')
     assert check_macro_prices(doc) == []
@@ -215,7 +215,12 @@ _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'
 
 def _real_post():
     with open(os.path.join(_ROOT, 'posts', '2026-08-27.html'), encoding='utf-8') as fh:
-        return fh.read()
+        html = fh.read()
+    # 이 발행본은 2026-09-12 제목 변경·병합 이전 판이다. 계측 코드를 재는 것이
+    # 목적이므로 제목만 새 계약으로 옮겨 붙인다 — 발행본 자체는 소급하지 않는다
+    # (구조를 소급하면 태그 시퀀스 대조와 검토 원장이 어긋난다).
+    return (html.replace('<h2>멀티에셋 매니저 전략</h2>', '<h2>멀티에셋 전략·포트폴리오</h2>')
+                .replace('<h2>매크로 논리</h2>', '<h2>매크로</h2>'))
 
 
 def _real_market_data():
@@ -231,11 +236,11 @@ def test_real_post_reproduces_the_spec_numbers():
     assert m['sections']['채권'] == 1581
     assert m['sections']['FX'] == 360
     assert m['sections']['원자재'] == 457
-    # 2026-09-06 검토 게이트에서 이 발행본의 매크로 논리 산문을 정정해 +31자가 됐다
+    # 2026-09-06 검토 게이트에서 이 발행본의 매크로 산문을 정정해 +31자가 됐다
     # (물가축 교착 서술·고용 지표 개수). 이 테스트가 고정하는 것은 측정 코드이지
     # 발행본 문장이 아니므로, 발행본을 고칠 때마다 기대값을 함께 옮긴다.
-    assert m['sections']['매크로 논리'] == 4819
-    assert m['sections']['멀티에셋 매니저 전략'] == 887 + 1357
+    assert m['sections']['매크로'] == 4819
+    assert m['sections']['멀티에셋 전략·포트폴리오'] == 887 + 1357
     assert m['recap'] == 3676 and m['judgment'] == 7455
 
 
@@ -244,7 +249,7 @@ def test_real_post_is_blocked_on_every_designed_axis():
     v = check(_real_post(), market='us', market_data=_real_market_data(),
               macro_eval={'abbreviated': False})
     assert any('÷' in x for x in v)                       # 비율
-    assert any('매크로 논리' in x and '상한' in x for x in v)   # 매크로 상한
+    assert any('매크로' in x and '상한' in x for x in v)   # 매크로 상한
     assert any('data-standing' in x for x in v)            # 「지금 어디에 있나」
     assert any('포지션 등급 어휘' in x for x in v)             # 스탠스 되풀이
     assert any('data-lede' in x for x in v)                # §2 순서
@@ -254,7 +259,7 @@ def test_real_post_is_blocked_on_every_designed_axis():
 def test_ratio_floor_actually_bites_on_an_abbreviated_day():
     """축약일 1.00 문턱이 실제로 무는가 — 0.75로 낮추면 이 테스트가 죽는다."""
     sizes = {'오늘의 장': 800, '주식': 1500, '채권': 1500, 'FX': 900, '원자재': 900,
-             '전략 코멘트': 400, '매크로 논리': 3200, '멀티에셋 매니저 전략': 2400}
+             '전략 코멘트': 400, '매크로': 3200, '멀티에셋 전략·포트폴리오': 2400}
     m = measure(_doc(sizes), 'us')
     assert 0.75 < m['ratio'] < 1.00
     assert check_volume(m, False, 'us') == []
@@ -269,20 +274,29 @@ def test_position_vocab_does_not_flag_ordinary_prose():
 
 def test_sign_and_unit_do_not_collide():
     doc = (_sec('FX', '<p>DXY는 -0.50% 내렸습니다.</p>')
-           + _sec('매크로 논리', '<div data-macro-group="dollar">'
+           + _sec('매크로', '<div data-macro-group="dollar">'
                   '<p>오늘 기대인플레는 +0.50%p 올랐습니다.</p></div>'))
     assert check_macro_prices(doc) == []
 
 
+def _merged(stance=2000, portfolio=200):
+    """2026-09-12 병합 구조 — 스탠스 산문 뒤에 h3 로 포트폴리오가 붙는다."""
+    return ('<h2>멀티에셋 전략·포트폴리오</h2><p>' + '가' * stance + '</p>'
+            '<h3>모의 포트폴리오</h3><p>' + '나' * portfolio + '</p>')
+
+
 def test_paper_portfolio_counts_as_judgment_not_a_free_pass():
-    """포트폴리오 섹션이 비율 밖에 있으면 판단군이 무한정 커질 수 있다."""
-    doc = ('<h2>주식</h2><p>' + '가' * 100 + '</p>'
-           '<h2>모의 포트폴리오</h2><p>' + '나' * 200 + '</p>')
-    m = measure(doc, 'us')
-    assert m['sections']['모의 포트폴리오'] == 200
-    assert m['judgment'] >= 200
+    """포트폴리오 산문이 비율 밖에 있으면 판단군이 무한정 커질 수 있다."""
+    m = measure('<h2>주식</h2><p>' + '가' * 100 + '</p>' + _merged(), 'us')
+    assert m['sections']['멀티에셋 전략·포트폴리오'] == 2000 + 200
+    assert m['judgment'] >= 2200
 
 
-def test_older_posts_without_the_portfolio_section_are_not_violations():
-    doc = '<h2>주식</h2><p>가</p>'
-    assert '모의 포트폴리오' not in measure(doc, 'us')['missing']
+def test_portfolio_prose_cannot_fill_the_stance_floor():
+    """h3 뒤 산문으로 스탠스 하한을 채우던 구멍 (2026-09-12 codex 설계 검토 C2-6)."""
+    m = measure(_doc(dict(US_FULL)) .replace(
+        '<section><h2>멀티에셋 전략·포트폴리오</h2><p>' + '가' * 2200 + '</p></section>',
+        '<section>' + _merged(stance=200, portfolio=2000) + '</section>'), 'us')
+    assert m['sections']['멀티에셋 전략·포트폴리오'] == 2200
+    assert m['stance_chars'] == 200
+    assert any('스탠스 부분이 200자' in x for x in check_volume(m, False, 'us'))

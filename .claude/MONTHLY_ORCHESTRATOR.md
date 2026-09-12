@@ -77,7 +77,7 @@ python3 scripts/check_readability.py --strict $(pwd)/monthly_<KEY>.html
 python3 scripts/check_style.py $(pwd)/monthly_<KEY>.html
 ```
 
-**`check_weight.py`는 돌리지 않는다.** 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로 논리」)과 무게중심 비율을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
+**`check_weight.py`는 돌리지 않는다.** 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)과 무게중심 비율을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
 
 **STEP 4-b — AI 티 제거.** 일간과 같은 관문을 지난다. 원본은 손대지 않고 사본에서 윤문한다.
 

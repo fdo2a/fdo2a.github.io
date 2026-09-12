@@ -46,8 +46,8 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
                   for k in reconcile)
     name = macro.regime_name(growth, inflation)
     return (
-        '<section><h2>7. 전략 코멘트</h2><p>…</p></section>'
-        '<section><h2>8. 매크로 논리</h2>'
+        '<section><h2>전략 코멘트</h2><p>…</p></section>'
+        '<section><h2>매크로</h2>'
         f'<p>국면은 <span data-macro="regime" data-growth="{growth}" '
         f'data-inflation="{inflation}">{name}</span>이다. '
         f'성장축 {scores[0]}, 인플레축 {scores[1]}. '
@@ -113,7 +113,7 @@ def test_macro_section_is_located_and_bounded():
 
 def test_missing_section_is_the_only_violation():
     assert check('<p>없음</p>', macro_file(), eval_file(), next_file()) == \
-        ['§8(매크로 논리) 섹션을 찾을 수 없다']
+        ['§8(매크로) 섹션을 찾을 수 없다']
 
 
 def test_parse_reads_every_transmission_marker():
@@ -482,7 +482,7 @@ def test_a_missing_axis_is_named():
 
 # --- 축약일 완화 (설계 5, 2026-08-30) ---
 
-STRIP_ONLY = ('<section><h2>매크로 논리</h2>'
+STRIP_ONLY = ('<section><h2>매크로</h2>'
               '<p>전달경로 판정은 전일과 같다.</p></section>')
 
 

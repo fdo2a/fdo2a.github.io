@@ -1,4 +1,4 @@
-"""Publication gate for §8 (매크로 논리).
+"""Publication gate for §8 (매크로).
 
 The writer can be told that a regime only moves on a new release; only a gate can
 prove the published page obeyed it. Same division of labour as stance_gate, and the
@@ -31,8 +31,12 @@ _DIRECTION = re.compile(r'\bdata-direction\s*=\s*"(-?\d+)"')
 PROB_JUMP_PP = 15.0
 
 
+MACRO_TITLE = '매크로'
+
+
 def section_macro(html):
-    return locate_section(html, '매크로 논리')
+    """제목이 **정확히** 「매크로」인 섹션. 옛 「매크로 논리」는 통과하지 못한다."""
+    return locate_section(html, MACRO_TITLE, exact=True)
 
 
 def section_econ(html):
@@ -464,7 +468,7 @@ def _check_next(next_macro, prev_macro, regime_cell, trans_cells, report_date, v
 def check(html, prev_macro, macro_eval, next_macro, stance=None):
     section = section_macro(html)
     if section is None:
-        return ['§8(매크로 논리) 섹션을 찾을 수 없다']
+        return ['§8(매크로) 섹션을 찾을 수 없다']
     text = strip_tags(section)
     v = []
 

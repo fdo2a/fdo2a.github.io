@@ -18,9 +18,10 @@ from common.numbers import (measure_numbers, numbers_split_by_tags,
 
 from .macro_gate import BANNED_LABELS
 from .portfolio import SLEEVE_LABEL, SLEEVE_ORDER
-from .weight import section_slice
+from .weight import (LEGACY_TITLES, PORTFOLIO_SUBTITLE, STANCE_TITLE,
+                     section_scope, section_slice, sub_split)
 
-SECTION_TITLE = '모의 포트폴리오'
+SECTION_TITLE = PORTFOLIO_SUBTITLE
 MARKERS = ('basis', 'logic', 'perf', 'lag')
 
 # 표본이 모자랄 때 인쇄가 금지되는 말 — 2주짜리 기록을 연율로 부풀리는 것은
@@ -41,15 +42,17 @@ INTERNAL_TOKENS = ('portfolio.json', 'portfolio_perf.json', 'portfolio_prices.js
 EXEMPT_YEARS = {2024.0, 2025.0, 2026.0, 2027.0}
 
 _MARKER = re.compile(r'<p[^>]*data-portfolio="(\w+)"[^>]*>(.*?)</p>', re.S)
-_H2 = re.compile(r'<h2\b[^>]*>(.*?)</h2>', re.S)
+_H2 = re.compile(r'<h[23]\b[^>]*>(.*?)</h[23]>', re.S)
 
 
 def _heading_count(html):
     """제목 안의 인라인 태그를 벗겨서 센다.
 
-    `<h2><span>모의 포트폴리오</span></h2>` 는 문자열 비교로는 다른 제목이지만
-    `section_slice` 는 같은 것으로 읽는다. 세는 쪽과 자르는 쪽이 다르게 읽으면,
+    `<h3><span>모의 포트폴리오</span></h3>` 는 문자열 비교로는 다른 제목이지만
+    `sub_split` 은 같은 것으로 읽는다. 세는 쪽과 자르는 쪽이 다르게 읽으면,
     숨은 사본이 검사를 통과하고 보이는 쪽이 창작을 싣는다(2026-09-01 codex 2차).
+    h2 와 h3 를 함께 센다 — 2026-09-12에 이 섹션이 스탠스 아래 h3 로 들어갔고,
+    옛 판의 h2 사본이 문서에 남아 있으면 그것도 숨은 사본이다.
     """
     return sum(1 for m in _H2.finditer(html)
                if text_of(m.group(1)).strip() == SECTION_TITLE)
@@ -110,7 +113,20 @@ def _label_numbers():
 
 
 def section(html):
-    return section_slice(html, SECTION_TITLE)
+    """The portfolio half of the merged section — from its `<h3>` to the section end.
+
+    The tail is **not** cut at the next `<h3>`: a second heading would then park
+    invented figures outside every check (2026-09-12 codex design review C2-4).
+    """
+    merged = section_scope(html, STANCE_TITLE)
+    if merged is not None:
+        # 병합 계약을 쓰는 글에서는 h3 만 본다. 여기서 독립 h2 를 폴백으로 허용하면
+        # 새 구조 글이 옛 구조로 발행되고도 통과한다(2026-09-12 codex 구현 검토).
+        return sub_split(merged, SECTION_TITLE)[1]
+    legacy = section_scope(html, LEGACY_TITLES[STANCE_TITLE])
+    tail = sub_split(legacy, SECTION_TITLE)[1] if legacy else None
+    # 2026-09-12 병합 이전 발행본에서는 독립 `<h2>`였다.
+    return tail if tail is not None else section_slice(html, SECTION_TITLE)
 
 
 def data_tokens(book, perf):

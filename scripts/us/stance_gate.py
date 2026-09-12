@@ -11,6 +11,9 @@ Pure — `check()` takes strings and dicts and returns a list of violation messa
 import re
 
 from .stance import ASSETS, CURVE_LABELS, label_for
+from .weight import (LEGACY_TITLES, PORTFOLIO_SUBTITLE, STANCE_TITLE,
+                     section_scope, sub_split)
+from .weight import _text as _norm_title
 from common.numbers import TAG_RE
 
 # The stance cell carries machine-readable markers so the gate reads grades exactly
@@ -25,16 +28,28 @@ _GRADE = re.compile(r'\bdata-grade\s*=\s*"(-?\d+)"')
 _TAG = TAG_RE
 
 
-def locate_section(html, keyword):
+_H_ANY = re.compile(r'(?is)<h[1-4]\b[^>]*>(.*?)</h[1-4]\s*>')
+
+
+def locate_section(html, keyword, exact=False):
     """The <section> whose heading names `keyword`, or None.
 
     Headings first, body text only as a fallback: the macro section reconciles itself
     against the stance section by name, so the word legitimately appears in prose
     upstream of the section it labels.
+
+    `exact=True` demands the whole heading text and drops the body fallback. Use it
+    where the title **is** the contract — a substring match kept letting the retired
+    「매크로 논리」 heading through (2026-09-12 codex implementation review).
     """
-    heads = [m.start() for m in re.finditer(r'<h[1-4]\b[^>]*>(?:(?!</h[1-4]>).)*?'
-                                            + re.escape(keyword), html, re.S)]
-    i = heads[0] if heads else html.find(keyword)
+    if exact:
+        heads = [m.start() for m in _H_ANY.finditer(html)
+                 if _norm_title(m.group(1)) == keyword]
+        i = heads[0] if heads else -1
+    else:
+        heads = [m.start() for m in re.finditer(r'<h[1-4]\b[^>]*>(?:(?!</h[1-4]>).)*?'
+                                                + re.escape(keyword), html, re.S)]
+        i = heads[0] if heads else html.find(keyword)
     if i < 0:
         return None
     start = html.rfind('<section', 0, i)
@@ -43,9 +58,35 @@ def locate_section(html, keyword):
     return html[start:end if end > 0 else len(html)]
 
 
+_H2_TITLE = re.compile(r'(?is)<h2\b[^>]*>(.*?)</h2>')
+
+
 def section8(html):
-    """The §8 slice of the report, or None if it isn't there."""
-    return locate_section(html, '멀티에셋')
+    """The stance half of the merged section, or None if it isn't there.
+
+    Exact `<h2>` title, no body-text fallback: the substring locator let a section
+    with the wrong heading pass just because the word appeared in its prose
+    (2026-09-12 codex design review C2-3). The slice stops at the
+    `<h3>모의 포트폴리오</h3>` so a stance table hidden below it is not read as the
+    real one (C2-1).
+    """
+    seg = (section_scope(html, STANCE_TITLE)
+           or section_scope(html, LEGACY_TITLES[STANCE_TITLE]))
+    head, _ = sub_split(seg, PORTFOLIO_SUBTITLE)
+    return head
+
+
+def heading_count(html):
+    """How many `<h2>` carry the merged (or legacy) title.
+
+    **Normalised exactly like the slicer** — `weight._text` unescapes entities, so
+    counting with a plain tag strip let `멀티에셋 전략&#183;포트폴리오` hide a second
+    copy from the duplicate check while the slicer still found the first
+    (2026-09-12 codex implementation review).
+    """
+    titles = (STANCE_TITLE, LEGACY_TITLES[STANCE_TITLE])
+    return sum(1 for m in _H2_TITLE.finditer(html)
+               if _norm_title(m.group(1)) in titles)
 
 
 def strip_tags(html):
@@ -87,7 +128,11 @@ def check(html, prev_stance, stance_eval, next_stance, metric_names=()):
     v = []
     section = section8(html)
     if section is None:
-        return ['§8(멀티에셋 매니저 전략) 섹션을 찾을 수 없다']
+        return [f'§8({STANCE_TITLE}) 섹션을 찾을 수 없다']
+    seen = heading_count(html)
+    if seen > 1:
+        v.append(f'「{STANCE_TITLE}」 제목이 {seen}번 나온다 — 숨은 사본이 검사를 '
+                 '통과하고 보이는 쪽이 창작을 실을 수 있다')
     text = strip_tags(section)
 
     cells = parse_stance_cells(section)

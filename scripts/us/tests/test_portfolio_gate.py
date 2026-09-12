@@ -56,12 +56,14 @@ def _section(perf, extra='', markers=('basis', 'logic', 'perf', 'lag'),
                 f'올라 벤치마크를 {itd["active"]:.2f}%포인트 앞섭니다.</p>',
     }
     body = ''.join(blocks[m] for m in markers)
-    return ('<h2>모의 포트폴리오</h2><div class="card">' + body
+    return ('<h3>모의 포트폴리오</h3><div class="card">' + body
             + f'<table>{rows}</table>' + extra + '</div>')
 
 
 def _doc(section):
+    # 2026-09-12 사용자 지시로 이 섹션은 스탠스와 한 <section> 안에 들어간다.
     return ('<html><body><main><h2>주식</h2><p>시황입니다.</p>'
+            '<h2>멀티에셋 전략·포트폴리오</h2><p>등급은 그대로 둡니다.</p>'
             + section + '<h2>주목 섹터·종목</h2><p>끝.</p></main></body></html>')
 
 
@@ -266,8 +268,8 @@ def test_a_return_reused_as_a_bare_level_is_caught():
 
 def test_inline_markup_cannot_hide_a_duplicate_heading():
     perf = _perf()
-    marked = _section(perf).replace('<h2>모의 포트폴리오</h2>',
-                                    '<h2><span>모의 포트폴리오</span></h2>')
+    marked = _section(perf).replace('<h3>모의 포트폴리오</h3>',
+                                    '<h3><span>모의 포트폴리오</span></h3>')
     doc = _doc('<div style="display:none">' + marked + '</div>'
                + _section(perf, extra='<p>수익률은 37.42%였습니다.</p>'))
     assert any('두 번' in e for e in G.check(doc, _book(), perf, '2026-08-31'))
@@ -514,3 +516,42 @@ def test_a_scaling_disclosure_must_be_one_positive_sentence():
     ok = _section(perf, extra='<p>요구가 103.0%라 전 슬리브를 비례 축소했습니다.</p>',
                   book=book)
     assert [e for e in check(ok, perf, book) if '비례 축소' in e] == []
+
+
+def test_a_second_h3_does_not_park_invented_figures_outside_the_checks():
+    """구간을 「다음 h3」에서 끊으면 그 뒤가 검사 밖 꼬리가 됐다 (2026-09-12 C2-4)."""
+    perf = _perf()
+    tail = _section(perf) + '<h3>성과 해설</h3><p>설정 이후 777%였습니다.</p>'
+    assert any('데이터에 없는' in e for e in check(tail, perf))
+
+
+def test_a_pre_merge_post_keeps_its_own_h2_section():
+    """병합 이전 발행본에서는 독립 <h2>였다 — 검토 게이트가 계속 읽어야 한다."""
+    perf = _perf()
+    doc = ('<html><body><main><h2>주식</h2><p>시황입니다.</p>'
+           '<h2>멀티에셋 매니저 전략</h2><p>등급은 그대로 둡니다.</p>'
+           + _section(perf).replace('<h3>모의 포트폴리오</h3>', '<h2>모의 포트폴리오</h2>')
+           + '<h2>주목 섹터·종목</h2><p>끝.</p></main></body></html>')
+    assert G.check(doc, _book(), perf, '2026-08-31') == []
+
+
+def test_a_sibling_block_outside_the_section_is_not_the_merged_child():
+    """형제 <aside> 에 놓인 블록을 자식처럼 검사하던 구멍 (2026-09-12 구현 검토)."""
+    perf = _perf()
+    doc = ('<html><body><main>'
+           '<section><h2>멀티에셋 전략·포트폴리오</h2><p>스탠스.</p></section>'
+           '<aside>' + _section(perf) + '</aside>'
+           '<section><h2>주목 섹터·종목</h2><p>끝.</p></section>'
+           '</main></body></html>')
+    assert any('섹션이 없다' in e for e in G.check(doc, _book(), perf, '2026-08-31'))
+
+
+def test_the_old_h2_shape_is_refused_once_the_merged_heading_exists():
+    """병합 계약을 쓰면서 포트폴리오만 옛 h2 로 두고 통과하던 구멍."""
+    perf = _perf()
+    doc = ('<html><body><main>'
+           '<section><h2>멀티에셋 전략·포트폴리오</h2><p>스탠스.</p></section>'
+           '<section>'
+           + _section(perf).replace('<h3>모의 포트폴리오</h3>', '<h2>모의 포트폴리오</h2>')
+           + '</section></main></body></html>')
+    assert any('섹션이 없다' in e for e in G.check(doc, _book(), perf, '2026-08-31'))

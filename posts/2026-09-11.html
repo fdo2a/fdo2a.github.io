@@ -134,6 +134,10 @@ section { scroll-margin-top: 20px; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
+
+/* signcolor-v1 */
+td.sc-up { color: #00A85A; }
+td.sc-dn { color: #FF4040; }
 </style>
 <meta name="description" content="근원 CPI 서프라이즈에도 뉴욕증시 반등, 유가 급락과 단기채 금리 상승. 미국장 가격과 물가 발표 해부, 만기별 금리 변화, 모의 포트폴리오.">
 <link rel="canonical" href="https://fdo2a.github.io/posts/2026-09-11.html">
@@ -166,13 +170,13 @@ section { scroll-margin-top: 20px; }
 <section class="sec card" id="read-3"><h2>오늘의 장</h2>
 <p data-session="global">아시아와 유럽 모두 오늘 미국장과 엇갈려, 9월 10일 종가 기준 평균 -0.50%·-0.69%로 하락한 채 마감했지만 미국은 CPI 이후 강하게 반등했다. 아시아는 지역 안에서도 갈렸다 — 닛케이(+0.20%)만 올랐고 항셍(-1.27%)과 상해종합(-0.43%)은 내렸다. 유럽은 DAX·FTSE100·유로스톡스50 모두 -0.5%~-0.9%대로 같은 방향으로 내렸다.</p>
 <div class="tbl-scroll"><table><thead><tr><th>지수</th><th>종가</th><th>등락</th><th>기준일</th></tr></thead><tbody>
-<tr><td data-label="지수">닛케이</td><td data-label="종가">65,270.95</td><td data-label="등락">+0.20%</td><td data-label="기준일">2026-09-10</td></tr>
-<tr><td data-label="지수">항셍</td><td data-label="종가">24,954.47</td><td data-label="등락">-1.27%</td><td data-label="기준일">2026-09-10</td></tr>
-<tr><td data-label="지수">상해종합</td><td data-label="종가">3,934.40</td><td data-label="등락">-0.43%</td><td data-label="기준일">2026-09-10</td></tr>
-<tr><td data-label="지수">DAX</td><td data-label="종가">25,361.15</td><td data-label="등락">-0.84%</td><td data-label="기준일">2026-09-10</td></tr>
-<tr><td data-label="지수">FTSE100</td><td data-label="종가">10,608.90</td><td data-label="등락">-0.57%</td><td data-label="기준일">2026-09-10</td></tr>
-<tr><td data-label="지수">유로스톡스50</td><td data-label="종가">6,268.97</td><td data-label="등락">-0.67%</td><td data-label="기준일">2026-09-10</td></tr>
-<tr><td data-label="지수">VIX</td><td data-label="종가">15.84</td><td data-label="등락">-11.21%</td><td data-label="기준일">2026-09-11</td></tr>
+<tr><td data-label="지수">닛케이</td><td data-label="종가">65,270.95</td><td data-label="등락" class="sc-up">+0.20%</td><td data-label="기준일">2026-09-10</td></tr>
+<tr><td data-label="지수">항셍</td><td data-label="종가">24,954.47</td><td data-label="등락" class="sc-dn">-1.27%</td><td data-label="기준일">2026-09-10</td></tr>
+<tr><td data-label="지수">상해종합</td><td data-label="종가">3,934.40</td><td data-label="등락" class="sc-dn">-0.43%</td><td data-label="기준일">2026-09-10</td></tr>
+<tr><td data-label="지수">DAX</td><td data-label="종가">25,361.15</td><td data-label="등락" class="sc-dn">-0.84%</td><td data-label="기준일">2026-09-10</td></tr>
+<tr><td data-label="지수">FTSE100</td><td data-label="종가">10,608.90</td><td data-label="등락" class="sc-dn">-0.57%</td><td data-label="기준일">2026-09-10</td></tr>
+<tr><td data-label="지수">유로스톡스50</td><td data-label="종가">6,268.97</td><td data-label="등락" class="sc-dn">-0.67%</td><td data-label="기준일">2026-09-10</td></tr>
+<tr><td data-label="지수">VIX</td><td data-label="종가">15.84</td><td data-label="등락" class="sc-dn">-11.21%</td><td data-label="기준일">2026-09-11</td></tr>
 </tbody></table></div>
 <p data-session="preopen">간밤 선물은 S&amp;P 선물이 전일 저녁 8시, 나스닥 선물이 밤 11시 30분(ET) 무렵 각각 저점을 찍은 뒤 CPI 발표 직후인 오전 9시께 고점까지 올랐다(주요 지수선물 고저 폭 1.18~1.56%). 현물은 상승 출발했고 갭은 S&amp;P500 +0.59%, 나스닥 +0.79%, 러셀2000 +0.63%였다.</p>
 <p data-session="tape">마감 위치로 보면 S&amp;P(47)와 나스닥(30)은 하루 등락 범위의 중간께인 중단마감에 해당했고, 러셀2000(6)은 그 범위의 바닥권인 저점권마감으로 끝났다.</p>
@@ -186,25 +190,25 @@ section { scroll-margin-top: 20px; }
 <p data-cause="vix">VIX는 15.84로 11.21% 급락해 평소 하루 변동폭의 1.71배에 이르는 큰 움직임이었다. 근원 CPI가 컨센서스를 웃돌았음에도 헤드라인은 예상과 부합했고, 유가 급락이 인플레이션 우려를 상쇄한 안도 심리가 반영된 결과로 보인다. VIX는 낮은 쪽 25% 안에 드는 자리로 다시 내려왔다.</p>
 <div class="grid-2">
 <div class="tbl-scroll"><table><thead><tr><th>지수</th><th>종가</th><th>등락률</th></tr></thead><tbody>
-<tr><td data-label="지수">Dow</td><td data-label="종가">52,573.29</td><td data-label="등락률">+0.98%</td></tr>
-<tr><td data-label="지수">Nasdaq</td><td data-label="종가">26,333.04</td><td data-label="등락률">+0.96%</td></tr>
-<tr><td data-label="지수">S&amp;P 500 Value</td><td data-label="종가">235.32</td><td data-label="등락률">+0.89%</td></tr>
-<tr><td data-label="지수">S&amp;P 500</td><td data-label="종가">7,656.98</td><td data-label="등락률">+0.86%</td></tr>
-<tr><td data-label="지수">S&amp;P 500 Growth</td><td data-label="종가">139.31</td><td data-label="등락률">+0.82%</td></tr>
-<tr><td data-label="지수">Russell 2000</td><td data-label="종가">2,903.94</td><td data-label="등락률">+0.45%</td></tr>
+<tr><td data-label="지수">Dow</td><td data-label="종가">52,573.29</td><td data-label="등락률" class="sc-up">+0.98%</td></tr>
+<tr><td data-label="지수">Nasdaq</td><td data-label="종가">26,333.04</td><td data-label="등락률" class="sc-up">+0.96%</td></tr>
+<tr><td data-label="지수">S&amp;P 500 Value</td><td data-label="종가">235.32</td><td data-label="등락률" class="sc-up">+0.89%</td></tr>
+<tr><td data-label="지수">S&amp;P 500</td><td data-label="종가">7,656.98</td><td data-label="등락률" class="sc-up">+0.86%</td></tr>
+<tr><td data-label="지수">S&amp;P 500 Growth</td><td data-label="종가">139.31</td><td data-label="등락률" class="sc-up">+0.82%</td></tr>
+<tr><td data-label="지수">Russell 2000</td><td data-label="종가">2,903.94</td><td data-label="등락률" class="sc-up">+0.45%</td></tr>
 </tbody></table></div>
 <div class="tbl-scroll"><table><thead><tr><th>섹터</th><th>종가</th><th>등락률</th></tr></thead><tbody>
-<tr><td data-label="섹터">Technology</td><td data-label="종가">187.67</td><td data-label="등락률">+1.32%</td></tr>
-<tr><td data-label="섹터">Industrials</td><td data-label="종가">172.37</td><td data-label="등락률">+1.07%</td></tr>
-<tr><td data-label="섹터">Comm. Services</td><td data-label="종가">112.60</td><td data-label="등락률">+0.99%</td></tr>
-<tr><td data-label="섹터">Consumer Disc.</td><td data-label="종가">112.96</td><td data-label="등락률">+0.89%</td></tr>
-<tr><td data-label="섹터">Real Estate</td><td data-label="종가">43.42</td><td data-label="등락률">+0.86%</td></tr>
-<tr><td data-label="섹터">Financials</td><td data-label="종가">57.25</td><td data-label="등락률">+0.67%</td></tr>
-<tr><td data-label="섹터">Materials</td><td data-label="종가">50.95</td><td data-label="등락률">+0.37%</td></tr>
-<tr><td data-label="섹터">Consumer Staples</td><td data-label="종가">83.38</td><td data-label="등락률">+0.35%</td></tr>
-<tr><td data-label="섹터">Energy</td><td data-label="종가">65.14</td><td data-label="등락률">+0.32%</td></tr>
-<tr><td data-label="섹터">Health Care</td><td data-label="종가">165.36</td><td data-label="등락률">-0.18%</td></tr>
-<tr><td data-label="섹터">Utilities</td><td data-label="종가">42.39</td><td data-label="등락률">-0.31%</td></tr>
+<tr><td data-label="섹터">Technology</td><td data-label="종가">187.67</td><td data-label="등락률" class="sc-up">+1.32%</td></tr>
+<tr><td data-label="섹터">Industrials</td><td data-label="종가">172.37</td><td data-label="등락률" class="sc-up">+1.07%</td></tr>
+<tr><td data-label="섹터">Comm. Services</td><td data-label="종가">112.60</td><td data-label="등락률" class="sc-up">+0.99%</td></tr>
+<tr><td data-label="섹터">Consumer Disc.</td><td data-label="종가">112.96</td><td data-label="등락률" class="sc-up">+0.89%</td></tr>
+<tr><td data-label="섹터">Real Estate</td><td data-label="종가">43.42</td><td data-label="등락률" class="sc-up">+0.86%</td></tr>
+<tr><td data-label="섹터">Financials</td><td data-label="종가">57.25</td><td data-label="등락률" class="sc-up">+0.67%</td></tr>
+<tr><td data-label="섹터">Materials</td><td data-label="종가">50.95</td><td data-label="등락률" class="sc-up">+0.37%</td></tr>
+<tr><td data-label="섹터">Consumer Staples</td><td data-label="종가">83.38</td><td data-label="등락률" class="sc-up">+0.35%</td></tr>
+<tr><td data-label="섹터">Energy</td><td data-label="종가">65.14</td><td data-label="등락률" class="sc-up">+0.32%</td></tr>
+<tr><td data-label="섹터">Health Care</td><td data-label="종가">165.36</td><td data-label="등락률" class="sc-dn">-0.18%</td></tr>
+<tr><td data-label="섹터">Utilities</td><td data-label="종가">42.39</td><td data-label="등락률" class="sc-dn">-0.31%</td></tr>
 </tbody></table></div>
 </div>
 <p>나스닥은 개장가(26,288) 부근인 09:30 ET에 저점을 찍은 뒤 11:00 ET에 고점(26,431, 개장 대비 +0.54%)을 만들고 소폭 되밀려 마감했다. S&amp;P도 개장가가 그대로 저점이었고 오전 10시에 고점(개장 대비 +0.53%)을 찍은 뒤 오후 내내 그 부근에서 움직였다.</p>
@@ -296,10 +300,10 @@ section { scroll-margin-top: 20px; }
 <section class="sec card" id="read-6"><h2>채권</h2>
 <p data-standing="bonds">10년물은 4.975%로 지난 두 해 이력을 통틀어 가장 높은 자리까지 올라섰고, 30년물(5.354%)도 이보다 높았던 날이 하루뿐인 자리다. 한 주 사이 2년물은 31.0bp, 10년물은 21.3bp, 30년물은 11.1bp씩 올라 만기가 짧을수록 더 크게 뛰었다. 오늘 하루의 움직임 자체는 10년물이 평소 수준(보통), 30년물은 사실상 잠잠했다(미미).</p>
 <div class="tbl-scroll"><table><thead><tr><th>만기</th><th>9/11 금리</th><th>전일 변화</th><th>9/3 금리</th><th>주간 변화</th></tr></thead><tbody>
-<tr><td data-label="만기">2Y</td><td data-label="9/11 금리">4.644%</td><td data-label="전일 변화">+5.8bp</td><td data-label="9/3 금리">4.334%</td><td data-label="주간 변화">+31.0bp</td></tr>
-<tr><td data-label="만기">5Y</td><td data-label="9/11 금리">4.791%</td><td data-label="전일 변화">+3.1bp</td><td data-label="9/3 금리">4.509%</td><td data-label="주간 변화">+28.2bp</td></tr>
-<tr><td data-label="만기">10Y</td><td data-label="9/11 금리">4.975%</td><td data-label="전일 변화">+1.4bp</td><td data-label="9/3 금리">4.762%</td><td data-label="주간 변화">+21.3bp</td></tr>
-<tr><td data-label="만기">30Y</td><td data-label="9/11 금리">5.354%</td><td data-label="전일 변화">-1.2bp</td><td data-label="9/3 금리">5.243%</td><td data-label="주간 변화">+11.1bp</td></tr>
+<tr><td data-label="만기">2Y</td><td data-label="9/11 금리">4.644%</td><td data-label="전일 변화" class="sc-dn">+5.8bp</td><td data-label="9/3 금리">4.334%</td><td data-label="주간 변화" class="sc-dn">+31.0bp</td></tr>
+<tr><td data-label="만기">5Y</td><td data-label="9/11 금리">4.791%</td><td data-label="전일 변화" class="sc-dn">+3.1bp</td><td data-label="9/3 금리">4.509%</td><td data-label="주간 변화" class="sc-dn">+28.2bp</td></tr>
+<tr><td data-label="만기">10Y</td><td data-label="9/11 금리">4.975%</td><td data-label="전일 변화" class="sc-dn">+1.4bp</td><td data-label="9/3 금리">4.762%</td><td data-label="주간 변화" class="sc-dn">+21.3bp</td></tr>
+<tr><td data-label="만기">30Y</td><td data-label="9/11 금리">5.354%</td><td data-label="전일 변화" class="sc-up">-1.2bp</td><td data-label="9/3 금리">5.243%</td><td data-label="주간 변화" class="sc-dn">+11.1bp</td></tr>
 </tbody></table></div>
 <p class="caption">출처: Naver 국채 종가, 전 만기 2026-09-11 17:05 ET 기준. 주간 비교는 2026-09-03. 1bp는 0.01%포인트.</p>
 <img src="../assets/yield_curve_2026-09-11.png" alt="9월 11일과 9월 3일 미국 국채 수익률 곡선" style="width:100%;height:auto">
@@ -315,10 +319,10 @@ section { scroll-margin-top: 20px; }
 <section class="sec card" id="read-7"><h2>FX</h2>
 <p data-standing="fx">달러지수(DXY)는 99.10으로 최근 2년(504거래일)의 한가운데쯤에 머물러 있다. 오늘 변화는 0.01%에 그쳐 사실상 멈춰 있었고, 최근 한 달로도 -0.87% 정도로 크지 않은 흐름이었다. 원·달러는 1,341원으로 같은 기간 가운데 이보다 낮았던 날이 이레뿐인 낮은 자리이고, 엔·달러는 153.55엔으로 한가운데쯤에서 움직였다.</p>
 <div class="tbl-scroll"><table><thead><tr><th>자산</th><th>종가</th><th>전일 대비</th></tr></thead><tbody>
-<tr><td data-label="자산">DXY</td><td data-label="종가">99.10</td><td data-label="전일 대비">+0.01%</td></tr>
-<tr><td data-label="자산">USD/KRW</td><td data-label="종가">1,341.05</td><td data-label="전일 대비">+0.14%</td></tr>
-<tr><td data-label="자산">USD/JPY</td><td data-label="종가">153.55</td><td data-label="전일 대비">-0.01%</td></tr>
-<tr><td data-label="자산">EUR/USD</td><td data-label="종가">1.1602</td><td data-label="전일 대비">-0.27%</td></tr>
+<tr><td data-label="자산">DXY</td><td data-label="종가">99.10</td><td data-label="전일 대비" class="sc-up">+0.01%</td></tr>
+<tr><td data-label="자산">USD/KRW</td><td data-label="종가">1,341.05</td><td data-label="전일 대비" class="sc-up">+0.14%</td></tr>
+<tr><td data-label="자산">USD/JPY</td><td data-label="종가">153.55</td><td data-label="전일 대비" class="sc-dn">-0.01%</td></tr>
+<tr><td data-label="자산">EUR/USD</td><td data-label="종가">1.1602</td><td data-label="전일 대비" class="sc-dn">-0.27%</td></tr>
 </tbody></table></div>
 <p class="caption">DXY는 지수. 원·달러와 달러·엔은 달러당 원·엔, 유로·달러는 유로당 달러다.</p>
 <p><span class="p-label">달러가 왜 이 방향인가.</span> 오늘은 금리차와 위험선호 어느 경로로도 뚜렷하게 설명되지 않는다. 근원 CPI 서프라이즈로 인상 확률이 올라간 것은 통상 달러에 우호적이지만 DXY는 거의 움직이지 않았고, 지수가 강하게 오른 위험선호 회복 국면에서도 달러가 약해지지 않았다. 주식과 달러의 역상관도 최근 60거래일 -0.29로 직전 구간(-0.67)보다 크게 느슨해져 있어 두 경로 다 힘을 잃은 모습이며, 판별이 안 되는 만큼 다음 FOMC의 실제 정책 신호를 확인 자료로 삼는다.</p>
@@ -331,10 +335,10 @@ section { scroll-margin-top: 20px; }
 <section class="sec card" id="read-8"><h2>원자재</h2>
 <p data-standing="commodities">WTI는 99.99달러로 마감해 지난 두 해 이력 가운데 이보다 높았던 날이 열여드레뿐인 높은 자리를 지켰다. 최근 한 주로는 여전히 9.52% 넘게 오른 뒤라 오늘 낙폭(-2.43%)은 그 급등분의 일부를 되돌린 정도이고, 하루 변동 자체는 평소 범위(보통)였다. 금은 4,390달러로 높은 쪽 25% 안에 드는 자리이며 오늘은 0.58% 오르며 사실상 잠잠했다(미미).</p>
 <div class="tbl-scroll"><table><thead><tr><th>자산</th><th>종가</th><th>전일 대비</th></tr></thead><tbody>
-<tr><td data-label="자산">WTI</td><td data-label="종가">99.99</td><td data-label="전일 대비">-2.43%</td></tr>
-<tr><td data-label="자산">Brent</td><td data-label="종가">104.42</td><td data-label="전일 대비">-2.98%</td></tr>
-<tr><td data-label="자산">Natural Gas</td><td data-label="종가">2.82</td><td data-label="전일 대비">-0.49%</td></tr>
-<tr><td data-label="자산">Gold</td><td data-label="종가">4,390.00</td><td data-label="전일 대비">+0.58%</td></tr>
+<tr><td data-label="자산">WTI</td><td data-label="종가">99.99</td><td data-label="전일 대비" class="sc-dn">-2.43%</td></tr>
+<tr><td data-label="자산">Brent</td><td data-label="종가">104.42</td><td data-label="전일 대비" class="sc-dn">-2.98%</td></tr>
+<tr><td data-label="자산">Natural Gas</td><td data-label="종가">2.82</td><td data-label="전일 대비" class="sc-dn">-0.49%</td></tr>
+<tr><td data-label="자산">Gold</td><td data-label="종가">4,390.00</td><td data-label="전일 대비" class="sc-up">+0.58%</td></tr>
 </tbody></table></div>
 <p class="caption">원유는 달러/배럴, 천연가스는 달러/MMBtu, 금은 달러/트로이온스.</p>
 <p>WTI는 개장가(103.32) 대비 09:30 ET 저점(98.48, -4.68%)까지 급락했다. 이란이 오만에서 걸프 국가들과 호르무즈 해협 관련 회담을 갖기로 했다는 보도가 겹친 시점과 맞물린다. WTI(-2.43%)·브렌트(-2.98%)의 이번 급락은 이스라엘·이란·호르무즈 리스크로 한 주간 9%대 급등한 뒤의 되돌림이라, 오늘 하루로 추세 반전이 확인됐다고 보기는 이르다.</p>
@@ -358,23 +362,23 @@ section { scroll-margin-top: 20px; }
 <div class="card"><h3>고용(Labor)</h3>
 <p>고용은 보합인데, 일곱 지표 중 넷이 개선됐지만 나머지 셋이 만만찮게 끌어내려 축 전체로는 방향이 없다. 비농업 고용은 8월 16.2만 명 늘어 7월의 2.1만 명보다 증가폭 자체는 컸지만 추세 판정으로는 완만한 악화로 잡혔고, 신규 실업수당 청구도 20.6만 건으로 완만한 악화 쪽이다. 반대로 실업률은 4.1%로 제자리를 지키며 개선 쪽으로 잡혀, 개선과 악화가 팽팽히 맞선 축이다.<span class="sub"> 고용축 -0.005</span></p>
 <div class="tbl-scroll"><table><thead><tr><th>지표</th><th>Actual</th><th>Forecast</th><th>Previous</th><th>발표일</th><th>판정</th></tr></thead><tbody>
-<tr><td data-label="지표">JOLTS 구인건수</td><td data-label="Actual">7,271천</td><td data-label="Forecast">—</td><td data-label="Previous">7,182천</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">미미한 개선</td></tr>
-<tr><td data-label="지표">신규 실업수당 청구</td><td data-label="Actual">206,000</td><td data-label="Forecast">—</td><td data-label="Previous">207,000</td><td data-label="발표일">2026-09-10</td><td data-label="판정">완만한 악화</td></tr>
-<tr><td data-label="지표">신규 청구 4주 평균</td><td data-label="Actual">206,000</td><td data-label="Forecast">—</td><td data-label="Previous">207,500</td><td data-label="발표일">2026-09-10</td><td data-label="판정">미미한 악화</td></tr>
-<tr><td data-label="지표">계속 실업수당 청구</td><td data-label="Actual">1,774,000</td><td data-label="Forecast">—</td><td data-label="Previous">1,775,000</td><td data-label="발표일">기준월 갈음(8/29)</td><td data-label="판정">미미한 개선</td></tr>
-<tr class="hl"><td data-label="지표">비농업 고용(증감)</td><td data-label="Actual">+162천▲</td><td data-label="Forecast">+53천(다우존스)</td><td data-label="Previous">+21천</td><td data-label="발표일">2026-09-04</td><td data-label="판정">완만한 악화</td></tr>
-<tr class="hl"><td data-label="지표">실업률</td><td data-label="Actual">4.10%=</td><td data-label="Forecast">4.10%</td><td data-label="Previous">4.10%</td><td data-label="발표일">2026-09-04</td><td data-label="판정">완만한 개선</td></tr>
-<tr><td data-label="지표">시간당 임금(전월비)</td><td data-label="Actual">0.27%</td><td data-label="Forecast">—</td><td data-label="Previous">0.16%</td><td data-label="발표일">2026-09-04</td><td data-label="판정">완만한 개선</td></tr>
+<tr><td data-label="지표">JOLTS 구인건수</td><td data-label="Actual" class="sc-up">7,271천</td><td data-label="Forecast">—</td><td data-label="Previous">7,182천</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">미미한 개선</td></tr>
+<tr><td data-label="지표">신규 실업수당 청구</td><td data-label="Actual" class="sc-dn">206,000</td><td data-label="Forecast">—</td><td data-label="Previous">207,000</td><td data-label="발표일">2026-09-10</td><td data-label="판정">완만한 악화</td></tr>
+<tr><td data-label="지표">신규 청구 4주 평균</td><td data-label="Actual" class="sc-dn">206,000</td><td data-label="Forecast">—</td><td data-label="Previous">207,500</td><td data-label="발표일">2026-09-10</td><td data-label="판정">미미한 악화</td></tr>
+<tr><td data-label="지표">계속 실업수당 청구</td><td data-label="Actual" class="sc-up">1,774,000</td><td data-label="Forecast">—</td><td data-label="Previous">1,775,000</td><td data-label="발표일">기준월 갈음(8/29)</td><td data-label="판정">미미한 개선</td></tr>
+<tr class="hl"><td data-label="지표">비농업 고용(증감)</td><td data-label="Actual" class="sc-dn">+162천▲</td><td data-label="Forecast">+53천(다우존스)</td><td data-label="Previous">+21천</td><td data-label="발표일">2026-09-04</td><td data-label="판정">완만한 악화</td></tr>
+<tr class="hl"><td data-label="지표">실업률</td><td data-label="Actual" class="sc-up">4.10%=</td><td data-label="Forecast">4.10%</td><td data-label="Previous">4.10%</td><td data-label="발표일">2026-09-04</td><td data-label="판정">완만한 개선</td></tr>
+<tr><td data-label="지표">시간당 임금(전월비)</td><td data-label="Actual" class="sc-up">0.27%</td><td data-label="Forecast">—</td><td data-label="Previous">0.16%</td><td data-label="발표일">2026-09-04</td><td data-label="판정">완만한 개선</td></tr>
 </tbody></table></div>
 </div>
 
 <div class="card"><h3>생산·활동(Activity)</h3>
 <p>생산·활동은 악화인데, 다섯 지표 모두 악화 쪽으로 잡혔다. 내구재 주문은 전월비 1.08%로 7월의 0.58%보다 절대 증가폭은 컸지만 추세 판정으로는 뚜렷한 악화이고, 산업생산도 0.20%로 전월(0.27%)보다 완만하게 식었다. 기존주택 판매도 398만 채로 전월 406만 채보다 줄어 미미하게나마 같은 방향이다.<span class="sub"> 활동축 -0.615</span></p>
 <div class="tbl-scroll"><table><thead><tr><th>지표</th><th>Actual</th><th>Forecast</th><th>Previous</th><th>발표일</th><th>판정</th></tr></thead><tbody>
-<tr><td data-label="지표">산업생산(전월비)</td><td data-label="Actual">0.20%</td><td data-label="Forecast">—</td><td data-label="Previous">0.27%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 악화</td></tr>
-<tr><td data-label="지표">내구재 주문(전월비)</td><td data-label="Actual">1.08%</td><td data-label="Forecast">—</td><td data-label="Previous">0.58%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">뚜렷한 악화</td></tr>
+<tr><td data-label="지표">산업생산(전월비)</td><td data-label="Actual" class="sc-dn">0.20%</td><td data-label="Forecast">—</td><td data-label="Previous">0.27%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 악화</td></tr>
+<tr><td data-label="지표">내구재 주문(전월비)</td><td data-label="Actual" class="sc-dn">1.08%</td><td data-label="Forecast">—</td><td data-label="Previous">0.58%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">뚜렷한 악화</td></tr>
 <tr><td data-label="지표">신규주택 판매</td><td data-label="Actual">607천</td><td data-label="Forecast">—</td><td data-label="Previous">678천</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">미미한 보합</td></tr>
-<tr><td data-label="지표">기존주택 판매</td><td data-label="Actual">398.0만</td><td data-label="Forecast">—</td><td data-label="Previous">406.0만</td><td data-label="발표일">기준월 갈음(8월)</td><td data-label="판정">미미한 악화</td></tr>
+<tr><td data-label="지표">기존주택 판매</td><td data-label="Actual" class="sc-dn">398.0만</td><td data-label="Forecast">—</td><td data-label="Previous">406.0만</td><td data-label="발표일">기준월 갈음(8월)</td><td data-label="판정">미미한 악화</td></tr>
 <tr><td data-label="지표">실질GDP 성장률(연율)</td><td data-label="Actual">1.50%</td><td data-label="Forecast">—</td><td data-label="Previous">2.10%</td><td data-label="발표일">기준월 갈음(26 2Q)</td><td data-label="판정">미미한 보합</td></tr>
 </tbody></table></div>
 </div>
@@ -382,22 +386,22 @@ section { scroll-margin-top: 20px; }
 <div class="card"><h3>소비(Consumption)</h3>
 <p>소비는 악화다. 두 지표 모두 같은 방향이다. 소매판매는 전월비 -0.58%로 7월의 +0.25%에서 뚜렷하게 꺾였고, 미시간대 소비자심리도 55.2로 전월 49.5에서 절대 수치는 올랐지만 추세 판정으로는 완만한 악화로 잡혔다.<span class="sub"> 소비축 -0.847</span></p>
 <div class="tbl-scroll"><table><thead><tr><th>지표</th><th>Actual</th><th>Forecast</th><th>Previous</th><th>발표일</th><th>판정</th></tr></thead><tbody>
-<tr><td data-label="지표">소매판매(전월비)</td><td data-label="Actual">-0.58%</td><td data-label="Forecast">—</td><td data-label="Previous">0.25%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">뚜렷한 악화</td></tr>
-<tr><td data-label="지표">미시간대 소비자심리</td><td data-label="Actual">55.20</td><td data-label="Forecast">—</td><td data-label="Previous">49.50</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 악화</td></tr>
+<tr><td data-label="지표">소매판매(전월비)</td><td data-label="Actual" class="sc-dn">-0.58%</td><td data-label="Forecast">—</td><td data-label="Previous">0.25%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">뚜렷한 악화</td></tr>
+<tr><td data-label="지표">미시간대 소비자심리</td><td data-label="Actual" class="sc-dn">55.20</td><td data-label="Forecast">—</td><td data-label="Previous">49.50</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 악화</td></tr>
 </tbody></table></div>
 </div>
 
 <div class="card"><h3>물가(Inflation)</h3>
 <p>물가는 둔화인데, 여덟 지표 중 다섯이 둔화 쪽이다. 근거는 오늘 나온 소비자물가(CPI)와 어제 나온 생산자물가(PPI)다 — 둘 다 전월비 0.40%로 전월(각각 0.07%)보다는 높아졌지만 추세 판정으로는 뚜렷한 둔화로 잡혔다. 다만 미시간대 1년 기대인플레는 4.2%로 전월(4.6%)보다 낮아졌는데도 추세 판정은 완만한 재가속이어서, 헤드라인 숫자와 추세 판정이 엇갈리는 지표도 섞여 있다.<span class="sub"> 물가축 -0.526</span></p>
 <div class="tbl-scroll"><table><thead><tr><th>지표</th><th>Actual</th><th>Forecast</th><th>Previous</th><th>발표일</th><th>판정</th></tr></thead><tbody>
-<tr class="hl"><td data-label="지표">CPI 전월비</td><td data-label="Actual">0.40%=</td><td data-label="Forecast">0.40%(다우존스)</td><td data-label="Previous">0.07%</td><td data-label="발표일">2026-09-11</td><td data-label="판정">뚜렷한 둔화</td></tr>
+<tr class="hl"><td data-label="지표">CPI 전월비</td><td data-label="Actual" class="sc-up">0.40%=</td><td data-label="Forecast">0.40%(다우존스)</td><td data-label="Previous">0.07%</td><td data-label="발표일">2026-09-11</td><td data-label="판정">뚜렷한 둔화</td></tr>
 <tr><td data-label="지표">CPI 전년비*</td><td data-label="Actual">3.71%</td><td data-label="Forecast">—</td><td data-label="Previous">3.54%</td><td data-label="발표일">2026-09-11</td><td data-label="판정">미미한 교착</td></tr>
 <tr class="hl"><td data-label="지표">근원 CPI 전년비</td><td data-label="Actual">2.76%▲</td><td data-label="Forecast">약 2.40%</td><td data-label="Previous">2.79%</td><td data-label="발표일">2026-09-11</td><td data-label="판정">미미한 교착</td></tr>
-<tr class="hl"><td data-label="지표">근원 CPI 전월비</td><td data-label="Actual">0.29%▲</td><td data-label="Forecast">0.20%(다우존스)</td><td data-label="Previous">0.22%</td><td data-label="발표일">2026-09-11</td><td data-label="판정">완만한 둔화</td></tr>
-<tr class="hl"><td data-label="지표">생산자물가(전월비)</td><td data-label="Actual">0.40%=</td><td data-label="Forecast">0.40%(다우존스)</td><td data-label="Previous">0.07%</td><td data-label="발표일">2026-09-10</td><td data-label="판정">뚜렷한 둔화</td></tr>
-<tr><td data-label="지표">PCE 물가지수 전년비</td><td data-label="Actual">3.70%</td><td data-label="Forecast">—</td><td data-label="Previous">3.72%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 재가속</td></tr>
-<tr><td data-label="지표">근원 PCE 전년비</td><td data-label="Actual">3.34%</td><td data-label="Forecast">—</td><td data-label="Previous">3.34%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">미미한 재가속</td></tr>
-<tr><td data-label="지표">미시간대 1년 기대인플레</td><td data-label="Actual">4.20%</td><td data-label="Forecast">—</td><td data-label="Previous">4.60%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 재가속</td></tr>
+<tr class="hl"><td data-label="지표">근원 CPI 전월비</td><td data-label="Actual" class="sc-up">0.29%▲</td><td data-label="Forecast">0.20%(다우존스)</td><td data-label="Previous">0.22%</td><td data-label="발표일">2026-09-11</td><td data-label="판정">완만한 둔화</td></tr>
+<tr class="hl"><td data-label="지표">생산자물가(전월비)</td><td data-label="Actual" class="sc-up">0.40%=</td><td data-label="Forecast">0.40%(다우존스)</td><td data-label="Previous">0.07%</td><td data-label="발표일">2026-09-10</td><td data-label="판정">뚜렷한 둔화</td></tr>
+<tr><td data-label="지표">PCE 물가지수 전년비</td><td data-label="Actual" class="sc-dn">3.70%</td><td data-label="Forecast">—</td><td data-label="Previous">3.72%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 재가속</td></tr>
+<tr><td data-label="지표">근원 PCE 전년비</td><td data-label="Actual" class="sc-dn">3.34%</td><td data-label="Forecast">—</td><td data-label="Previous">3.34%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">미미한 재가속</td></tr>
+<tr><td data-label="지표">미시간대 1년 기대인플레</td><td data-label="Actual" class="sc-dn">4.20%</td><td data-label="Forecast">—</td><td data-label="Previous">4.60%</td><td data-label="발표일">기준월 갈음(7월)</td><td data-label="판정">완만한 재가속</td></tr>
 </tbody></table></div>
 <p class="caption">*BLS 원문의 CPI 전년비는 비계절조정 기준 3.4%(7월과 동일)다. 표의 3.71%는 계절조정 지수로 다시 계산한 값이라 산출식이 달라 두 수치를 섞지 않는다.</p>
 <div data-release="cpi">
@@ -485,12 +489,12 @@ section { scroll-margin-top: 20px; }
 
 <section class="sec card" id="read-13"><h2>메모리·DRAM</h2>
 <div class="tbl-scroll"><table><thead><tr><th>자산</th><th>종가</th><th>전일 대비</th></tr></thead><tbody>
-<tr><td data-label="자산">Micron</td><td data-label="종가">975.26</td><td data-label="전일 대비">-0.22%</td></tr>
-<tr><td data-label="자산">Western Digital</td><td data-label="종가">447.18</td><td data-label="전일 대비">-2.98%</td></tr>
-<tr><td data-label="자산">Seagate</td><td data-label="종가">830.17</td><td data-label="전일 대비">-3.73%</td></tr>
-<tr><td data-label="자산">Nvidia</td><td data-label="종가">218.29</td><td data-label="전일 대비">-0.03%</td></tr>
-<tr><td data-label="자산">Samsung Elec</td><td data-label="종가">259,500.00</td><td data-label="전일 대비">-3.53%</td></tr>
-<tr><td data-label="자산">SK hynix</td><td data-label="종가">1,812,000.00</td><td data-label="전일 대비">-2.21%</td></tr>
+<tr><td data-label="자산">Micron</td><td data-label="종가">975.26</td><td data-label="전일 대비" class="sc-dn">-0.22%</td></tr>
+<tr><td data-label="자산">Western Digital</td><td data-label="종가">447.18</td><td data-label="전일 대비" class="sc-dn">-2.98%</td></tr>
+<tr><td data-label="자산">Seagate</td><td data-label="종가">830.17</td><td data-label="전일 대비" class="sc-dn">-3.73%</td></tr>
+<tr><td data-label="자산">Nvidia</td><td data-label="종가">218.29</td><td data-label="전일 대비" class="sc-dn">-0.03%</td></tr>
+<tr><td data-label="자산">Samsung Elec</td><td data-label="종가">259,500.00</td><td data-label="전일 대비" class="sc-dn">-3.53%</td></tr>
+<tr><td data-label="자산">SK hynix</td><td data-label="종가">1,812,000.00</td><td data-label="전일 대비" class="sc-dn">-2.21%</td></tr>
 </tbody></table></div>
 <p class="caption">삼성전자·SK하이닉스는 먼저 마감한 9월 11일 한국장 원화 가격, 나머지는 미국장 달러 가격. 엔비디아는 수요 연관 비교 종목이다.</p>
 <p>메모리·저장장치 종목이 미국·한국 가릴 것 없이 전부 하락했는데, 24/7 Wall St는 이를 "연중 큰 폭 상승 뒤의 차익실현"으로 설명했다. 골드만삭스가 SK하이닉스·마이크론의 여름 하락 추세선 이탈과 가벼워진 헤지펀드 포지셔닝을 근거로 재진입 여지를 짚었다는 보도도 있다. 다만 이 리포트의 정확한 발표일과 원문은 확인하지 못해 "보도에 따르면"으로만 인용한다.</p>
@@ -499,11 +503,11 @@ section { scroll-margin-top: 20px; }
 
 <section class="sec card" id="read-14"><h2>AI 인프라</h2>
 <div class="tbl-scroll"><table><thead><tr><th>종목</th><th>분야</th><th>종가</th><th>전일 대비</th></tr></thead><tbody>
-<tr><td data-label="종목">Marvell</td><td data-label="분야">연결 반도체</td><td data-label="종가">236.10</td><td data-label="전일 대비">+4.03%</td></tr>
-<tr><td data-label="종목">Coherent</td><td data-label="분야">광학·레이저</td><td data-label="종가">305.37</td><td data-label="전일 대비">+4.16%</td></tr>
-<tr><td data-label="종목">Lumentum</td><td data-label="분야">광통신</td><td data-label="종가">927.03</td><td data-label="전일 대비">-0.93%</td></tr>
-<tr><td data-label="종목">GE Vernova</td><td data-label="분야">발전·전력망</td><td data-label="종가">957.27</td><td data-label="전일 대비">+3.61%</td></tr>
-<tr><td data-label="종목">Vertiv</td><td data-label="분야">전력·냉각</td><td data-label="종가">257.06</td><td data-label="전일 대비">+3.60%</td></tr>
+<tr><td data-label="종목">Marvell</td><td data-label="분야">연결 반도체</td><td data-label="종가">236.10</td><td data-label="전일 대비" class="sc-up">+4.03%</td></tr>
+<tr><td data-label="종목">Coherent</td><td data-label="분야">광학·레이저</td><td data-label="종가">305.37</td><td data-label="전일 대비" class="sc-up">+4.16%</td></tr>
+<tr><td data-label="종목">Lumentum</td><td data-label="분야">광통신</td><td data-label="종가">927.03</td><td data-label="전일 대비" class="sc-dn">-0.93%</td></tr>
+<tr><td data-label="종목">GE Vernova</td><td data-label="분야">발전·전력망</td><td data-label="종가">957.27</td><td data-label="전일 대비" class="sc-up">+3.61%</td></tr>
+<tr><td data-label="종목">Vertiv</td><td data-label="분야">전력·냉각</td><td data-label="종가">257.06</td><td data-label="전일 대비" class="sc-up">+3.60%</td></tr>
 </tbody></table></div>
 <p>마벨·코히런트·GE 버노바·버티브가 모두 3.5% 넘게 올랐고 루멘텀만 홀로 내렸다. 마벨은 9월 15~17일 산타클라라에서 열리는 AI Infra Summit 2026에서 포토닉 패브릭과 102Tbps 이더넷 스위치 등 신제품을 공개할 예정이라는 보도가 오늘 강세의 배경으로 꼽힌다.</p>
 <p>AI 인프라 바스켓의 최근 20거래일 초과성과는 세 스타일 축(성장-가치·대형-소형·반도체)으로 설명되지 않는 몫이 +6.97%포인트로 크다. 시장 민감도(베타) 3.26배를 감안해도, 오늘 같은 강세는 스타일 요인보다 마벨 같은 개별 종목의 자체 재료가 더 크게 작용했다는 뜻으로 읽을 수 있다. 5일 초과수익은 +8.21%포인트로 오히려 확대돼 기존 상대비중 OW를 유지한다.</p>
