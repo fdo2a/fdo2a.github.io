@@ -1,18 +1,18 @@
 {
-  "report_date": "2026-09-10",
+  "report_date": "2026-09-11",
   "horizon": "3-6개월",
   "regime": {
     "growth": -1,
     "inflation": -1,
     "since": "2026-09-01",
-    "thesis": "PPI·실업수당·기존주택 판매를 반영한 성장 -0.489, 물가 -0.381로 연착륙 국면을 유지한다. PPI 상승과 유가 급등의 지속 여부를 다음 물가 발표에서 확인한다."
+    "thesis": "새로 나온 근원 CPI가 물가축 점수를 -0.526까지 낮췄지만 이미 둔화 경계를 넘어선 뒤라 국면 좌표는 움직이지 않는다. 성장 -0.489, 물가 -0.526로 연착륙을 유지한다."
   },
   "policy_path": {
-    "stance": "인상 리스크가 우위 — 동결은 소수 시나리오로 밀림",
-    "timing": "9월 16일 FOMC, 인상 확률이 동결을 앞지르는 구도로 재편",
-    "prob_pct": 66,
-    "thesis": "새 PPI의 비용 압력에도 최신 FedWatch 확률은 확보하지 못했다. 66%는 이전 책의 참고치로만 남기며 인상 위험 우위 경로를 유지한다.",
-    "falsifier": "9월 11일 CPI에서 근원물가 둔화가 확인되거나 9월 16일 FOMC가 완화 경로를 제시하면 인상 우위 판단을 재검토한다."
+    "stance": "인상 리스크 우위가 한층 강화됨 — 동결은 소수 시나리오로 밀림",
+    "timing": "9월 16일 FOMC, 인상 쪽으로 무게가 더 실리는 구도",
+    "prob_pct": 91,
+    "thesis": "근원 CPI 서프라이즈 이후 FXStreet는 9월 16일 FOMC의 25bp 인상 확률을 91%로 보도했다. 다른 트래커는 69.3%로 더 낮지만 인상 우위라는 방향은 같다.",
+    "falsifier": "9월 16일 FOMC가 동결을 선택하거나 성명·회견에서 인상 신호를 거둬들이면 인상 우위 판단을 재검토한다."
   },
   "transmission": {
     "equities": {
@@ -59,94 +59,28 @@
     }
   },
   "last_seen": {
-    "JOLTS Job Openings": [
-      "2026-07-01",
-      7271.0
-    ],
-    "Initial Jobless Claims": [
-      "2026-09-05",
-      206000.0
-    ],
-    "Initial Claims 4-wk MA": [
-      "2026-09-05",
-      206000.0
-    ],
-    "Continuing Jobless Claims": [
-      "2026-08-29",
-      1774000.0
-    ],
-    "Nonfarm Payrolls (chg)": [
-      "2026-08-01",
-      162.0
-    ],
-    "Unemployment Rate": [
-      "2026-08-01",
-      4.1
-    ],
-    "Avg Hourly Earnings MoM": [
-      "2026-08-01",
-      0.27
-    ],
-    "Industrial Production MoM": [
-      "2026-07-01",
-      0.2
-    ],
-    "Durable Goods Orders MoM": [
-      "2026-07-01",
-      1.08
-    ],
-    "New Home Sales": [
-      "2026-07-01",
-      607.0
-    ],
-    "Existing Home Sales": [
-      "2026-08-01",
-      3980000.0
-    ],
-    "Real GDP Growth QoQ (ann.)": [
-      "2026-04-01",
-      1.5
-    ],
-    "Retail Sales MoM": [
-      "2026-07-01",
-      -0.58
-    ],
-    "Michigan Consumer Sentiment": [
-      "2026-07-01",
-      55.2
-    ],
-    "CPI YoY": [
-      "2026-07-01",
-      3.54
-    ],
-    "CPI MoM": [
-      "2026-07-01",
-      0.07
-    ],
-    "Core CPI YoY": [
-      "2026-07-01",
-      2.79
-    ],
-    "Core CPI MoM": [
-      "2026-07-01",
-      0.22
-    ],
-    "PPI Final Demand MoM": [
-      "2026-08-01",
-      0.4
-    ],
-    "PCE Price Index YoY": [
-      "2026-07-01",
-      3.7
-    ],
-    "Core PCE YoY": [
-      "2026-07-01",
-      3.34
-    ],
-    "Michigan 1-Yr Inflation Exp": [
-      "2026-07-01",
-      4.2
-    ]
+    "JOLTS Job Openings": ["2026-07-01", 7271.0],
+    "Initial Jobless Claims": ["2026-09-05", 206000.0],
+    "Initial Claims 4-wk MA": ["2026-09-05", 206000.0],
+    "Continuing Jobless Claims": ["2026-08-29", 1774000.0],
+    "Nonfarm Payrolls (chg)": ["2026-08-01", 162.0],
+    "Unemployment Rate": ["2026-08-01", 4.1],
+    "Avg Hourly Earnings MoM": ["2026-08-01", 0.27],
+    "Industrial Production MoM": ["2026-07-01", 0.2],
+    "Durable Goods Orders MoM": ["2026-07-01", 1.08],
+    "New Home Sales": ["2026-07-01", 607.0],
+    "Existing Home Sales": ["2026-08-01", 3980000.0],
+    "Real GDP Growth QoQ (ann.)": ["2026-04-01", 1.5],
+    "Retail Sales MoM": ["2026-07-01", -0.58],
+    "Michigan Consumer Sentiment": ["2026-07-01", 55.2],
+    "CPI YoY": ["2026-08-01", 3.71],
+    "CPI MoM": ["2026-08-01", 0.4],
+    "Core CPI YoY": ["2026-08-01", 2.76],
+    "Core CPI MoM": ["2026-08-01", 0.29],
+    "PPI Final Demand MoM": ["2026-08-01", 0.4],
+    "PCE Price Index YoY": ["2026-07-01", 3.7],
+    "Core PCE YoY": ["2026-07-01", 3.34],
+    "Michigan 1-Yr Inflation Exp": ["2026-07-01", 4.2]
   },
   "axis_directions": {
     "Labor": "보합",
@@ -158,34 +92,19 @@
     {
       "date": "2026-08-17",
       "from": null,
-      "to": [
-        0,
-        0
-      ],
+      "to": [0, 0],
       "reason": "부트스트랩 — 매크로 논리 책 최초 개설, 축 점수 implied 좌표(성장 0.003→보합, 인플레 -0.264→교착)를 그대로 채택"
     },
     {
       "date": "2026-08-26",
-      "from": [
-        0,
-        0
-      ],
-      "to": [
-        -1,
-        0
-      ],
+      "from": [0, 0],
+      "to": [-1, 0],
       "reason": "내구재 주문(7월)·PCE·근원 PCE 신규 발표로 성장축 점수가 -0.377로 내려와 둔화 경계를 처음 넘어섬. 인플레축은 -0.327로 교착 유지, 대각선 이동 없이 성장축만 한 칸 이동(교착→냉각)"
     },
     {
       "date": "2026-09-01",
-      "from": [
-        -1,
-        0
-      ],
-      "to": [
-        -1,
-        -1
-      ],
+      "from": [-1, 0],
+      "to": [-1, -1],
       "reason": "물가축 점수(-0.391)가 둔화 경계(-0.33)를 넘어선 지 오래됐으나 8/26 이동 이후의 5영업일 잠금에 묶여 있었다. 신규 발표(JOLTS)로 하루가 열리고 잠금도 풀려, 인플레 좌표만 한 칸 이동(교착→둔화). 성장축은 -0.364로 그대로라 대각선 이동은 아니며, 국면은 냉각→연착륙으로 바뀐다."
     }
   ]
