@@ -12,6 +12,7 @@ from common.numbers import numbers_split_by_tags
 
 from us.macro_gate import BANNED_LABELS
 from us.post_check import banned_markers, body_text, data_tokens, mask_dates
+from us.readability import PROSE_MARKER, has_prose_layout
 
 INTERNAL_TERMS = ('weekly.json', 'monthly.json', 'scorecard.json', 'recap_source.json',
                   'stance.jsonl', 'macro.jsonl', 'market_data.json', 'research_notes.md',
@@ -239,6 +240,14 @@ def check(html, agg, scorecard, recap, span):
 
     for marker in banned_markers(html):
         v.append(f'발행본에 미확인 마커가 남았다: {marker} — 확인해 확정하거나 삭제할 것')
+
+    # 총정리는 서사가 본체라 문단이 길다. 이 표시가 없으면 apply_readability 의
+    # split_dense_paragraphs 가 320자 넘는 문단을 두 문장씩 잘라 토막글로 되돌린다.
+    # 계약에만 적어 두면 빠뜨린 날 조용히 잘리므로 여기서 막는다
+    # (2026-09-13 사용자 지시 「하나의 완성된 스토리로 읽히도록」).
+    if not has_prose_layout(html):
+        v.append(f'<body {PROSE_MARKER}> 가 없다 — 조판기가 긴 문단을 두 문장씩 잘라 '
+                 '토막글로 만든다. 서사를 줄글로 유지하려면 반드시 단다')
 
     low = text.lower()
     for word in BANNED_LABELS:

@@ -50,6 +50,45 @@ def test_split_dense_paragraphs_preserves_text_and_numbers():
     assert R.visible_numeric_tokens(out) == R.visible_numeric_tokens(doc)
 
 
+def test_prose_marker_keeps_long_paragraphs_whole():
+    """줄글로 쓴 글은 자르지 않는다 (2026-09-13 사용자 지시).
+
+    같은 본문이 표시 없이는 잘리고 표시가 있으면 한 문단으로 남아야 한다 — 표시가
+    아니라 우연히 짧아서 살아남는 것을 테스트가 통과시키면 안 되므로 양쪽을 다 본다.
+    """
+    para = "첫 문장은 10을 설명한다. 둘째 문장은 20을 설명한다. 셋째 문장은 30을 설명한다. 넷째 문장은 40을 설명한다. " * 3
+    body = "<p>%s</p>" % para
+    plain = "<html><body>%s</body></html>" % body
+    marked = '<html><body %s>%s</body></html>' % (R.PROSE_MARKER, body)
+
+    assert R.split_dense_paragraphs(plain, limit=100).count("<p>") > 1
+    assert R.split_dense_paragraphs(marked, limit=100).count("<p>") == 1
+    assert R.split_dense_paragraphs(marked, limit=100) == marked
+
+
+def test_prose_marker_is_read_from_the_body_tag_only():
+    """본문에 그 문자열이 나온다고 분할이 꺼지면 안 된다 — 조판을 설명하는 글을 싣는 날."""
+    assert R.has_prose_layout('<body data-layout="prose"><p>본문</p></body>')
+    assert R.has_prose_layout("<body class='x' data-layout='prose'>")
+    assert not R.has_prose_layout('<body><p>data-layout="prose" 라고 씁니다</p></body>')
+    assert not R.has_prose_layout("<html><body><p>본문</p></body></html>")
+
+
+def test_three_sentence_paragraph_is_never_split():
+    """작성 계약이 「문단은 2~3문장」을 허용하므로 셋까지는 자르지 않는다.
+
+    옛 임계는 문장 셋에서 잘랐다 — 각 109자짜리 3문장이면 329자라, 계약과
+    가독성 게이트(문장 120자)를 둘 다 지킨 문단이 두 동강 났다.
+    """
+    s = ("유가가 오르자 국채금리가 따라 올랐고 그 오른 금리가 주식을 눌러 사흘 내리 지수가 밀렸습니다만 "
+         "금요일에 유가가 꺾이면서 그 흐름이 마침내 끊겼고 시장은 물가 지표보다 유가를 먼저 본 셈이었어요. ")
+    three = "<html><body><p>%s</p></body></html>" % (s * 3)
+    five = "<html><body><p>%s</p></body></html>" % (s * 5)
+
+    assert R.split_dense_paragraphs(three) == three          # 계약 준수 — 보존
+    assert R.split_dense_paragraphs(five).count("<p>") > 1   # 폭주 — 여전히 자른다
+
+
 def test_reading_map_is_idempotent_and_adds_section_ids():
     doc = "<html><body><div class='doc'><section><h1>제목</h1></section>" + "".join(
         "<section><h2>%s</h2><p>본문이다.</p></section>" % x

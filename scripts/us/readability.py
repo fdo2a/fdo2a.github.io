@@ -496,12 +496,36 @@ def _plain(raw: str) -> str:
     return re.sub(r"\s+", " ", _html.unescape(_TAG.sub("", raw))).strip()
 
 
+# 줄글로 쓰는 글(주간·월간 정리)이 스스로 다는 표시. 문서가 지니고 다니므로
+# 누가 어떤 인자로 조판기를 돌리든 따라온다 — 플래그로 두면 오케스트레이터가
+# 빠뜨린 날 조용히 토막난다(같은 사고가 이 파일 DEFAULT_GLOBS 에 codex C13 으로
+# 이미 적혀 있다). 2026-09-13 사용자 지시 「줄글 형태로 하나의 완성된 글로」.
+PROSE_MARKER = 'data-layout="prose"'
+# `<body>` 태그에서만 읽는다. 문서 전체 문자열 검사로 두면 본문 산문이나 `<style>`·
+# 주석에 이 문자열이 우연히 들어간 것만으로 분할이 통째로 꺼진다 — 조판 규칙을
+# 설명하는 글을 싣는 순간 벌어지는 일이다.
+_BODY_PROSE = re.compile(r'<body\b[^>]*\bdata-layout\s*=\s*["\']prose["\']', re.I)
+
+
+def has_prose_layout(html: str) -> bool:
+    """`<body data-layout="prose">` 로 줄글을 선언한 문서인가."""
+    return bool(_BODY_PROSE.search(html or ""))
+
+
 def split_dense_paragraphs(html: str, limit: int = 320) -> str:
     """세 문장 이상인 긴 `<p>`를 두 문장 단위로 나눈다.
+
+    `PROSE_MARKER` 를 단 문서는 통째로 건너뛴다. 같은 내용이 줄글이면 다섯 문단으로
+    잘리고 `<strong>` 리드를 달면 한 문단으로 남아(인라인 마크업이 있으면 건너뛰므로),
+    이 함수가 토막글을 보상하고 줄글을 벌해 왔다 — 주간 정리가 문단 28개 중 26개를
+    굵은 리드로 여는 글이 된 이유다.
 
     단어·문장부호·수치에는 손대지 않고 블록 경계만 추가한다. 인라인 마크업이
     있는 문단은 태그 쌍을 가로질러 자를 위험이 있어 보수적으로 건너뛴다.
     """
+
+    if has_prose_layout(html):
+        return html
 
     def repl(m):
         attrs, inner = m.group(1), m.group(2)
@@ -509,7 +533,11 @@ def split_dense_paragraphs(html: str, limit: int = 320) -> str:
             return m.group(0)
         core = inner.rstrip()
         boundaries = list(re.finditer(r"(?<=[.!?])\s+", core))
-        if len(boundaries) < 2:  # 문장 셋 미만
+        # 문장 넷 미만은 자르지 않는다. 작성 계약이 「문단은 2~3문장」을 허용하는데
+        # 예전 임계(셋 이상)는 그 최대치를 그대로 잘랐다 — 문장 109자짜리 3문장이면
+        # 329자라 계약과 가독성 게이트(120자)를 둘 다 지켰는데도 두 동강 났다.
+        # 폭주 방지라는 목적은 넷 이상에서도 그대로 선다 (2026-09-13).
+        if len(boundaries) < 3:
             return m.group(0)
         units, start = [], 0
         for boundary in boundaries:

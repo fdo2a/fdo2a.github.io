@@ -21,7 +21,8 @@ RECAP = {"key": "2026-W34", "start_date": "2026-08-17", "end_date": "2026-08-21"
 
 
 def _html(body):
-    return f"<html><body><main>{body}</main></body></html>"
+    # 총정리는 줄글이어야 하므로 조판기의 문단 분할을 끄는 표시를 달고 나간다.
+    return f'<html><body data-layout="prose"><main>{body}</main></body></html>'
 
 
 ALL_DAYS = ("2026-08-17에 0.31% 밀렸고, 2026-08-18에 1.42% 되돌렸다. "
@@ -35,6 +36,12 @@ GOOD = _html(f"<p>{ALL_DAYS}주간으로 S&amp;P 500은 2.0%, Technology가 20.0
 
 def test_clean_report_passes():
     assert check(GOOD, AGG, SC, RECAP, "weekly") == []
+
+
+def test_prose_layout_marker_is_required():
+    """표시가 빠지면 조판기가 서사를 두 문장씩 잘라 토막글로 되돌린다."""
+    stripped = GOOD.replace(' data-layout="prose"', "")
+    assert any("data-layout" in x for x in check(stripped, AGG, SC, RECAP, "weekly"))
 
 
 def test_number_absent_from_every_source_is_caught():
