@@ -14,6 +14,7 @@
 | `releases.py` | 인덱스 파싱·원문 덤프·**실패를 남기는 원장** |
 | `dom.py` | 보이는 것만 세는 최소 DOM |
 | `gate.py` | 발행 게이트 8종 |
+| `rounds.py` | **예정 회차가 비었는지** 본다. 발행이 아니라 감시 — SessionStart 훅이 `PYTHONPATH=scripts python3 -m china.rounds` 로 부른다(`python3 scripts/china/rounds.py` 는 import 가 깨진다) |
 
 ## 고칠 때 반드시 지킬 것
 
@@ -28,12 +29,21 @@ WAF 에 막힌 주가 조용한 무발표로 위장된다. `releases.ledger()` �
 `gate.check_release_coverage()` 가 tier 1 실패를 차단한다. **②에 분량 하한을 걸지 않는 것**도
 같은 이유다 — 채우라고 하면 창작한다.
 
-**③ 수집기는 `curriculum_state.json` 을 쓰지 않는다.** 상태는 발행이 소유한다. 수집과 발행이
+**③ 회차 감시는 이력이 아니라 달력에서 센다.** `rounds.py` 는 「최신 글이 며칠 전인가」로
+판정하지 않는다 — 2026-09-10 루틴이 사용량 한도로 init 에서 죽었을 때 `china/posts/` 는 아예
+비어 있었고, 기준점이 없는 그 상태가 정확히 잡아야 할 실패였다. 달력에서 회차를 먼저 구한 뒤
+원장의 `last_published` 가 그 회차를 설명하는지 본다. 원장은 `origin/main` 판과 작업 폴더 판
+중 **뒤에 있는 쪽**을 쓴다 — 작업 폴더만 보면 며칠 안 받아 온 것만으로 매 세션 오경보다.
+주기를 바꾸면 `PUBLISH_WEEKDAYS` 와 `FIRST_ROUND` 를 같이 옮긴다 — 안 옮기면 조용히 옛 요일을
+감시한다. **오경보를 내지 않는 것이 이 파일의 설계 목표다**: 매 세션 뜨는 한 줄이라 한 번
+틀리기 시작하면 사람이 곧 안 읽는다. 그래서 실라버스 소진(정상 정지)은 장애와 다르게 말한다.
+
+**④ 수집기는 `curriculum_state.json` 을 쓰지 않는다.** 상태는 발행이 소유한다. 수집과 발행이
 같은 파일을 쓰면 실패한 발행 뒤에 진도만 앞서 나가고 그 강의는 영영 빈칸으로 남는다.
 
-**④ 표식은 정규식이 아니라 `dom.py` 로 센다.** 숨긴 요소·중복 표식에 뚫린다.
+**⑤ 표식은 정규식이 아니라 `dom.py` 로 센다.** 숨긴 요소·중복 표식에 뚫린다.
 
-**⑤ 공유 `us/weight.py` 의 `prose_chars` 를 고치지 않는다.** US·KR 임계값이 현행 계산식에 맞춰
+**⑥ 공유 `us/weight.py` 의 `prose_chars` 를 고치지 않는다.** US·KR 임계값이 현행 계산식에 맞춰
 실측 튜닝돼 있다. 중국 자수 계산은 `dom.py` 에 따로 둔다.
 
 설계: `docs/superpowers/specs/2026-09-05-china-learning-report-design.md`
