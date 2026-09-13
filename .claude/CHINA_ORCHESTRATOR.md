@@ -1,9 +1,13 @@
-# 중국 경제 학습 리포트 — 3일 주기 파이프라인
+# 중국 경제 학습 리포트 — 월·목 파이프라인
 
-사흘마다 11:00 KST 실행 (트리거 `trig_01FC8hN3FGpYpXCRwr9rfuxH`, cron `0 2 */3 * *`, sonnet-5).
-매월 1·4·…·31일이라 **월말 경계에서 간격이 1~3일로 흔들린다** — cron 으로 진짜 rolling 3일은
-못 쓴다. 수집은 `collect-china-data.yml` 이 평일 06:00 UTC 에 돌린다.
+**월·목 11:00 KST** 실행 (트리거 `trig_01FC8hN3FGpYpXCRwr9rfuxH`, cron `0 2 * * 1,4`, sonnet-5).
+간격은 3~4일. 옛 `*/3` 은 매월 1·4·…·31일이라 월말 경계가 1~3일로 흔들렸다 — 요일 고정이
+그 흔들림을 없앤다(2026-09-13 변경). 수집은 `collect-china-data.yml` 이 평일 06:00 UTC 에 돌린다.
 한 회차에 강의 한 편을 발행한다.
+
+**놓친 회차는 메우지 않는다.** 직전 회차가 실패했어도(사용량 한도·수집 장애 무엇이든) 두 편을
+몰아 쓰지 않는다 — 오늘 날짜로 다음 강의 한 편을 내고 넘어간다. 이 리포트는 순차적이지 달력에
+묶여 있지 않다. 2026-09-10 회차가 주간 한도로 죽었을 때 정한 규칙이다.
 
 **이 파이프라인은 시황 리포트가 아니다.** 그날의 가격을 좇는 대신 중국 경제가 굴러가는 방식을
 한 편에 하나씩 뜯어본다. 시황 이야기가 본문의 25%를 넘으면 게이트가 발행을 막는다.
@@ -15,14 +19,51 @@
 **순서가 중요하다.** 멱등 가드를 먼저 걸면 낡은 데이터를 보고 「이미 발행됨」으로 끝낸다
 (2026-08-28·09-02 전례).
 
-1. `china/data/releases/index.json` 의 `generated` 를 본다. 오늘(KST) 이전이면 수집을
-   **한 번만** 직접 돌린다:
+1. **이번 회차의 「오늘(KST)」을 파일에 박는다.** 루틴은 UTC 에서 돈다 — 머리로 「오늘」을
+   정하면 15:00 UTC 이후 실행에서 하루 어긋난다(2026-09-13 실측: 런이 UTC 09-12 를
+   「오늘(KST)」로 읽었다). Bash 호출마다 셸이 새로 뜨므로 변수로는 0-4 까지 못 가져간다.
+   **파일 하나가 회차 전체의 「오늘」이다** — 아래 어디서도 날짜를 다시 계산하지 않는다.
+
+   ```bash
+   TZ=Asia/Seoul date +%F > /tmp/china-today && cat /tmp/china-today
+   ```
+
+   이제 `china/data/releases/index.json` 의 신선도를 그 날짜와 견준다. **`generated` 는 UTC
+   시각이라 날짜 부분을 그대로 비교하면 안 된다** — `2026-09-12T16:31Z` 는 KST 로 09-13 이다.
+   판정까지 한 명령에서 끝낸다:
+
+   ```bash
+   python3 -c "import json; from datetime import datetime,timezone,timedelta; \
+KST=timezone(timedelta(hours=9)); \
+today=open('/tmp/china-today').read().strip(); \
+gen=str(datetime.fromisoformat(json.load(open('china/data/releases/index.json'))['generated']).astimezone(KST).date()); \
+print(('STALE' if gen < today else 'FRESH'), 'generated(KST)=' + gen, 'today=' + today)"
+   ```
+
+   `STALE` 이면 수집을 **한 번만** 직접 돌린다:
 
    ```bash
    gh workflow run collect-china-data.yml
    RUN=$(gh run list --workflow=collect-china-data.yml --limit 1 --json databaseId -q '.[0].databaseId')
    gh run watch "$RUN" --exit-status
    ```
+
+   **`-f force=true` 를 붙이지 않는다.** `AGENTS.md` 의 수집 트리거 예시와 설계 spec §11 에는
+   force 가 붙어 있지만, 그건 사람이 손으로 전량 재수집할 때의 꼴이다. 발행 경로에서 필요한
+   것은 「인덱스를 다시 훑어 **새** 릴리스를 받는 것」이고, `--force` 는 원장을 비워
+   (`collect_china_data.py:217`) 이미 받아 둔 원문까지 다시 긁어 NBS 를 불필요하게 두드린다.
+
+   **클라우드 샌드박스에는 `gh` 가 없다**(실측 exit 127). 없으면 GitHub MCP 로 간다 —
+   `mcp__github__actions_run_trigger`(`method: run_workflow`) 로 걸고
+   `mcp__github__actions_list`(`method: list_workflow_runs`) 로 run id 를 받은 뒤,
+   샌드박스에 있는 `$GH_TOKEN` 으로 REST 를 폴링해 `conclusion == "success"` 를 확인한다.
+   확인 없이 넘어가면 `--exit-status` 를 버린 것과 같다. (이 세 가지는 2026-09-13 런
+   `cse_01JVScs8AU5FHo7yHouBYhpP` 기록으로 확인된 것이다 — 레포 안에는 스키마가 없으니
+   레포만 읽는 검토자에게는 미검증으로 보인다.)
+
+   `--limit 1` 이든 `list_workflow_runs` 든 **방금 건 run 이 아닌 것을 집을 수 있다**(동시
+   실행·목록 반영 지연). 그래서 기다림이 끝난 뒤의 `generated` 재확인이 진짜 가드다 — 엉뚱한
+   run 을 기다렸다면 재확인에서 여전히 낡은 채로 걸려 발행이 멈춘다.
 
    `--exit-status` 가 없으면 실패한 수집이 성공으로 읽혀 낡은 데이터로 발행한다.
    **끝나면 `git pull --rebase` 로 그 커밋을 받아 오고 `generated` 를 다시 본다** —
@@ -34,18 +75,23 @@
    이건 「그 주에 발표가 없었다」와 다른 상황이고,
    구분하지 못하면 수집 장애가 조용한 무발표로 위장된다. 게이트도 같은 것을 본다.
 
-3. **주말 회차는 정상이다.** 3일 주기는 주말에도 걸리는데 수집 워크플로는 평일만 돈다.
-   1번의 직접 실행이 그 자리를 메운다 — `generated` 는 매 실행 갱신되므로 새 발표가 없어도
-   커밋이 생기고 「여전히 이르면 발행하지 않는다」에 걸리지 않는다.
+3. **발행이 수집보다 먼저 돈다.** 발행은 02:00 UTC, 수집 cron 은 06:00 UTC 인데 스케줄러가
+   몇 시간씩 밀어 실제로는 10~11시 UTC 에 돈다. 그래서 회차 아침의 `generated` 는 **언제나
+   낡아 있고**(목요일 회차는 하루, 월요일 회차는 금요일 수집이라 사흘), 1번의 직접 실행이
+   정상 경로다 — 예외가 아니다. `generated` 는 매 실행
+   갱신되므로 새 발표가 없어도 커밋이 생기고 「여전히 이르면 발행하지 않는다」에 걸리지 않는다.
 
-4. 이번 회차 키를 구한다 — **KST 로 구한다.** 루틴은 UTC 에서 돌고 STEP 0-1 은 「오늘(KST)」을
-   보므로, `date.today()` 를 쓰면 실행이 15:00 UTC 를 넘겨 밀린 날 키와 신선도 판정이 하루 갈린다.
+4. 이번 회차 키를 구한다 — **0-1 이 박아 둔 파일에서 읽는다.** 여기서 날짜를 다시 계산하면
+   0-1 과 0-4 사이에 KST 자정을 넘겼을 때 「어제 데이터로 신선도를 통과하고 오늘 키로 발행」이
+   된다. 키는 `period_key()` 를 지난다 — state·URL·멱등 키가 전부 그 함수 하나를 거친다는
+   계약(`state.py:41`)을 여기서 깨지 않는다.
 
    ```bash
-   python3 -c "import sys; sys.path.insert(0,'scripts'); from china.state import period_key; from datetime import datetime, timezone, timedelta; print(period_key(datetime.now(timezone(timedelta(hours=9))).date()))"
+   python3 -c "import sys; sys.path.insert(0,'scripts'); from china.state import period_key; \
+from datetime import date; print(period_key(date.fromisoformat(open('/tmp/china-today').read().strip())))"
    ```
 
-   **키는 발행일 `YYYY-MM-DD` 다.** 3일 주기에서는 한 ISO 주에 두 번 발행하는 것이 정상이라
+   **키는 발행일 `YYYY-MM-DD` 다.** 월·목은 같은 ISO 주에 들어가 한 주에 두 편이 정상이라
    주차 키를 못 쓴다(2026-09-08 변경).
 
 5. **이제** 멱등 가드: `china/posts/<발행일>.html` 이 이미 있으면 종료.
@@ -162,7 +208,7 @@ push 거절만 재시도하고 **상태 비교는 하지 않는다** — 그 사
 - **Notion 발행하지 않는다** (2026-08-18 지시 — 블로그 한 채널)
 - **종목 판정하지 않는다** — thesis 파이프라인의 일
 - **당파 논평하지 않는다** — 사실 → 전달 경로 → 다음 일정
-- **발표가 없는 회차에 지표 섹션을 채우지 않는다** — 없으면 없다고 쓴다. 3일 주기라 이런
+- **발표가 없는 회차에 지표 섹션을 채우지 않는다** — 없으면 없다고 쓴다. 주 2회라 이런
   회차가 주간 때보다 잦다
 
 설계: `docs/superpowers/specs/2026-09-05-china-learning-report-design.md`

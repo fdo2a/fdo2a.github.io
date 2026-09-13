@@ -9,7 +9,7 @@
 | 파일 | 하는 일 |
 |---|---|
 | `syllabus.py` | 실라버스 로드·그래프 검증·다음 강의 선택. **draft 는 발행 대상이 아니고 소진되면 fail-closed** |
-| `state.py` | 승계 책. 기간 키는 **발행일 `YYYY-MM-DD`**(3일 주기라 주차 키를 못 쓴다). `advance()` 는 순수·멱등, `revisit_target()` 이 되짚기 대상을 지목 |
+| `state.py` | 승계 책. 기간 키는 **발행일 `YYYY-MM-DD`**(월·목이 같은 ISO 주에 들어가 주차 키를 못 쓴다). `advance()` 는 순수·멱등, `revisit_target()` 이 되짚기 대상을 지목 |
 | `manifest.py` | 릴리스 원문에서 **헤드라인 지표만** 뽑는다. 못 뽑으면 없는 것 |
 | `releases.py` | 인덱스 파싱·원문 덤프·**실패를 남기는 원장** |
 | `dom.py` | 보이는 것만 세는 최소 DOM |

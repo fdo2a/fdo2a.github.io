@@ -34,8 +34,9 @@ class StateError(ValueError):
 def period_key(day):
     """`YYYY-MM-DD` — **발행일이 그대로 키다.**
 
-    3일 주기(2026-09-08 변경)에서는 한 ISO 주에 두 번 발행하는 것이 정상이라 주차 키를
-    못 쓴다 — 옛 `week_key()` 로는 그 두 번째가 「같은 주에 두 강의」로 거부됐다.
+    한 ISO 주에 두 번 발행하는 것이 정상이라 주차 키를 못 쓴다(2026-09-08 변경) — 옛
+    `week_key()` 로는 그 두 번째가 「같은 주에 두 강의」로 거부됐다. 월·목 주기(2026-09-13)
+    에서는 정규 회차 두 편이 **항상** 같은 ISO 주에 들어간다.
     날짜 문자열은 사전순이 곧 시간순이라 역행 검사가 그대로 산다.
     state·URL·멱등 키가 전부 이 함수 하나를 지난다.
     """
@@ -128,8 +129,8 @@ def advance(state, *, lesson, period, revisited, claims, url=None):
     last = state.get('last_published')
     if last is not None and period < last:
         raise StateError(f'발행일이 뒤로 간다: {last} → {period}')
-    # 하루에 두 강의를 실으면 진도가 두 칸 밀린다. 3일 주기에서 루틴이 하루에 두 번
-    # 깨어나는 경우가 여기 걸린다. 멱등 분기는 위에서 이미 걸렀으므로 여기 걸리는 것은
+    # 하루에 두 강의를 실으면 진도가 두 칸 밀린다. 루틴이 하루에 두 번 깨어나는 경우가
+    # 여기 걸린다(2026-09-13 실측: 수동 발화 + 정규 발화가 같은 날 겹쳤다). 멱등 분기는 위에서 이미 걸렀으므로 여기 걸리는 것은
     # «같은 날, 다른 강의» 뿐이다.
     if last is not None and period == last:
         raise StateError(f'같은 날에 두 강의를 발행할 수 없다: {last}')

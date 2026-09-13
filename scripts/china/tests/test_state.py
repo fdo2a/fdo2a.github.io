@@ -18,7 +18,7 @@ def done(lid, day, last_reviewed=None, claims=None):
                 {'claim_id': f'{lid}-c1', 'text': f'{lid} 명제'}]}
 
 
-# ── 발행일 키 (C15, 2026-09-08 3일 주기) ──
+# ── 발행일 키 (C15, 2026-09-08 도입) ──
 
 def test_period_key_is_the_publication_date():
     assert S.period_key('2026-09-05') == '2026-09-05'
@@ -177,8 +177,9 @@ def test_two_lessons_cannot_land_on_the_same_day():
 
 
 def test_two_lessons_may_land_in_the_same_iso_week():
-    """3일 주기의 존재 이유 — 09-07(월)과 09-10(목)은 같은 ISO 주다. 주차 키를 쓰면
-    이 두 번째 발행이 「같은 주에 두 강의」로 거부됐다. 이제는 정상 회차다."""
+    """발행일 키의 존재 이유 — 09-07(월)과 09-10(목)은 같은 ISO 주다. 주차 키를 쓰면
+    이 두 번째 발행이 「같은 주에 두 강의」로 거부됐다. 이제는 정상 회차다.
+    월·목 주기(2026-09-13)에서는 이게 예외가 아니라 매주 벌어지는 일이다."""
     s = st(completed=[done('A01', '2026-09-07')], last_published='2026-09-07')  # 월요일
     nxt = S.advance(s, lesson='A02', period='2026-09-10', revisited='A01',  # 같은 ISO 주 목요일
                     claims=[{'claim_id': 'A02-c1', 'text': 'x'}])
