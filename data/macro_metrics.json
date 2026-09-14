@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-11 23:24 UTC",
-  "report_date": "2026-09-11",
+  "generated": "2026-09-14 23:55 UTC",
+  "report_date": "2026-09-14",
   "growth_score": -0.489,
   "inflation_score": -0.526,
   "growth_diffusion": 0.286,
@@ -369,7 +369,7 @@
       "actual": 3.71,
       "previous": 3.54,
       "ref_period": "2026-08-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "CPI MoM",
@@ -384,7 +384,7 @@
       "actual": 0.4,
       "previous": 0.07,
       "ref_period": "2026-08-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Core CPI YoY",
@@ -399,7 +399,7 @@
       "actual": 2.76,
       "previous": 2.79,
       "ref_period": "2026-08-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Core CPI MoM",
@@ -414,7 +414,7 @@
       "actual": 0.29,
       "previous": 0.22,
       "ref_period": "2026-08-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "PPI Final Demand MoM",
@@ -477,107 +477,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "CPI YoY",
-    "CPI MoM",
-    "Core CPI YoY",
-    "Core CPI MoM"
-  ],
-  "headline_releases": [
-    {
-      "key": "cpi",
-      "label": "소비자물가(CPI)",
-      "tier": 1,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
-      "primary": "CPI MoM",
-      "max_abs_z": 2.93,
-      "indicators": [
-        {
-          "name": "CPI YoY",
-          "axis": "Inflation",
-          "actual": 3.71,
-          "previous": 3.54,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.228
-        },
-        {
-          "name": "CPI MoM",
-          "axis": "Inflation",
-          "actual": 0.4,
-          "previous": 0.07,
-          "ref_period": "2026-08-01",
-          "momentum_z": -2.93
-        },
-        {
-          "name": "Core CPI YoY",
-          "axis": "Inflation",
-          "actual": 2.76,
-          "previous": 2.79,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.171
-        },
-        {
-          "name": "Core CPI MoM",
-          "axis": "Inflation",
-          "actual": 0.29,
-          "previous": 0.22,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.733
-        }
-      ],
-      "components": [
-        {
-          "label": "에너지",
-          "fred_id": "CPIENGSL",
-          "transform": "mom_pct",
-          "actual": 2.097,
-          "previous": -1.484,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "식품",
-          "fred_id": "CPIUFDSL",
-          "transform": "mom_pct",
-          "actual": 0.122,
-          "previous": 0.078,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "주거비(shelter)",
-          "fred_id": "CUSR0000SAH1",
-          "transform": "mom_pct",
-          "actual": 0.264,
-          "previous": 0.139,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "중고차",
-          "fred_id": "CUSR0000SETA02",
-          "transform": "mom_pct",
-          "actual": 0.365,
-          "previous": 0.398,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "의료",
-          "fred_id": "CPIMEDSL",
-          "transform": "mom_pct",
-          "actual": -0.245,
-          "previous": 0.356,
-          "ref_period": "2026-08-01"
-        },
-        {
-          "label": "서비스 ex-에너지",
-          "fred_id": "CUSR0000SASLE",
-          "transform": "mom_pct",
-          "actual": 0.327,
-          "previous": 0.228,
-          "ref_period": "2026-08-01"
-        }
-      ]
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-07-01",

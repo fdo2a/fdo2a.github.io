@@ -1,0 +1,212 @@
+{
+  "report_date": "2026-09-14",
+  "generated": "2026-09-14 23:56 UTC",
+  "horizon_days": 10,
+  "events": [
+    {
+      "key": "auction-20260915-6-Week",
+      "kind": "auction",
+      "name_ko": "6-Week 국채 입찰 750억 달러",
+      "date": "2026-09-15",
+      "time_et": "11:30",
+      "time_kst": "2026-09-16 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20260915-20-Year",
+      "kind": "auction",
+      "name_ko": "20-Year 국채 입찰 130억 달러",
+      "date": "2026-09-15",
+      "time_et": "13:00",
+      "time_kst": "2026-09-16 02:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20260917-10-Year",
+      "kind": "auction",
+      "name_ko": "10-Year 국채 입찰 190억 달러",
+      "date": "2026-09-17",
+      "time_et": "13:00",
+      "time_kst": "2026-09-18 02:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "expiry-202609",
+      "kind": "expiry",
+      "name_ko": "쿼드러플 위칭(분기 만기)",
+      "date": "2026-09-18",
+      "time_et": null,
+      "time_kst": null,
+      "status": "confirmed",
+      "source": "셋째 금요일 규칙",
+      "assets": [
+        "주식"
+      ],
+      "watch": "만기 주간의 거래량과 되돌림"
+    },
+    {
+      "key": "release-industrial-production-20260918",
+      "kind": "release",
+      "name_ko": "산업생산(G.17)",
+      "date": "2026-09-18",
+      "time_et": "09:15",
+      "time_kst": "2026-09-18 22:15",
+      "status": "confirmed",
+      "source": "Federal Reserve 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-new-home-sales-20260924",
+      "kind": "release",
+      "name_ko": "신규주택 판매",
+      "date": "2026-09-24",
+      "time_et": "10:00",
+      "time_kst": "2026-09-24 23:00",
+      "status": "confirmed",
+      "source": "Census 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    }
+  ],
+  "recent_auctions": [
+    {
+      "date": "2026-09-14",
+      "term": "26-Week",
+      "type": "Bill",
+      "offering_amt": 79000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.74,
+      "indirect_pct": 54.4,
+      "dealer_pct": 29.6
+    },
+    {
+      "date": "2026-09-14",
+      "term": "13-Week",
+      "type": "Bill",
+      "offering_amt": 92000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.64,
+      "indirect_pct": 49.4,
+      "dealer_pct": 34.2
+    },
+    {
+      "date": "2026-09-10",
+      "term": "30-Year",
+      "type": "Bond",
+      "offering_amt": 22000000000.0,
+      "high_yield": 5.308,
+      "bid_to_cover": 2.61,
+      "indirect_pct": 79.3,
+      "dealer_pct": 2.2
+    },
+    {
+      "date": "2026-09-10",
+      "term": "8-Week",
+      "type": "Bill",
+      "offering_amt": 85000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.82,
+      "indirect_pct": 59.6,
+      "dealer_pct": 24.9
+    },
+    {
+      "date": "2026-09-10",
+      "term": "4-Week",
+      "type": "Bill",
+      "offering_amt": 90000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.81,
+      "indirect_pct": 60.9,
+      "dealer_pct": 20.6
+    },
+    {
+      "date": "2026-09-09",
+      "term": "10-Year",
+      "type": "Note",
+      "offering_amt": 39000000000.0,
+      "high_yield": 4.834,
+      "bid_to_cover": 2.71,
+      "indirect_pct": 79.0,
+      "dealer_pct": 4.3
+    },
+    {
+      "date": "2026-09-09",
+      "term": "17-Week",
+      "type": "Bill",
+      "offering_amt": 72000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.73,
+      "indirect_pct": 40.2,
+      "dealer_pct": 44.2
+    },
+    {
+      "date": "2026-09-08",
+      "term": "6-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.93,
+      "indirect_pct": 56.0,
+      "dealer_pct": 29.5
+    },
+    {
+      "date": "2026-09-08",
+      "term": "26-Week",
+      "type": "Bill",
+      "offering_amt": 79000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.88,
+      "indirect_pct": 58.2,
+      "dealer_pct": 24.4
+    },
+    {
+      "date": "2026-09-08",
+      "term": "3-Year",
+      "type": "Note",
+      "offering_amt": 58000000000.0,
+      "high_yield": 4.474,
+      "bid_to_cover": 2.72,
+      "indirect_pct": 61.7,
+      "dealer_pct": 10.8
+    },
+    {
+      "date": "2026-09-08",
+      "term": "13-Week",
+      "type": "Bill",
+      "offering_amt": 92000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.61,
+      "indirect_pct": 47.0,
+      "dealer_pct": 36.2
+    }
+  ],
+  "blackout": {
+    "active": false,
+    "meeting": null,
+    "until": null
+  },
+  "missing": [
+    "fomc"
+  ],
+  "complete": false
+}
