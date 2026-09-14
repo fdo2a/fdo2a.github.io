@@ -1,16 +1,14 @@
 {
   "report_date": "2026-09-14",
   "charts": {
-    "kr_charts": {
-      "file": "kr_charts_2026-09-14.png",
-      "sha256": "9464e22bccd749a3cc1408dc2950393ef0ab8639c2e45f1208ccb0159ebbba38",
-      "bytes": 220586
-    },
+    "kr_charts": null,
     "kr_flows_intraday": {
       "file": "kr_flows_intraday_2026-09-14.png",
       "sha256": "8fb3c789d303127a93768ca190f3eeb6eb7c0be3486552a7477c02f131c7c49a",
       "bytes": 94566
     }
   },
-  "notes": {}
+  "notes": {
+    "kr_charts": "충돌 — kr/assets/kr_charts_2026-09-14.png 가 이미 다른 바이트로 있다. 발행된 그림을 지키려 두었다"
+  }
 }
