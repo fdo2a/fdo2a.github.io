@@ -113,6 +113,19 @@ jobs:
         continue-on-error: true
         run: python scripts/collect_fed_events.py --datadir data
 
+      - name: Build the next-ten-days calendar
+        # Non-core, same contract: what is coming (economic releases, Treasury auctions,
+        # index expiry, the Fed blackout) plus the demand behind the auctions that just
+        # cleared. Everything the report carried about "next" used to be web-search prose
+        # with no prior value and no gate. A failure here costs the card, not the dataset,
+        # and a material it could not reach is recorded in `missing` rather than invented.
+        # FRED_API_KEY is step-scoped like every other key here; without it the release
+        # calendar is simply absent (the graph-CSV fallback has no release table).
+        continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python scripts/build_calendar.py --datadir data
+
       - name: Report status
         run: |
           python - <<'PY'
@@ -138,6 +151,7 @@ jobs:
           git add data/portfolio.json data/portfolio_state.json data/portfolio_prices.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/scorecard.json 2>/dev/null || true
+          git add data/calendar.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true

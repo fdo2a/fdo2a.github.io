@@ -43,47 +43,52 @@ def test_migrate_v2_css():
 
 def test_split_dense_paragraphs_preserves_text_and_numbers():
     para = "첫 문장은 10을 설명한다. 둘째 문장은 20을 설명한다. 셋째 문장은 30을 설명한다. 넷째 문장은 40을 설명한다. " * 3
-    doc = "<html><body><p>%s</p></body></html>" % para
+    doc = '<html><body %s><p>%s</p></body></html>' % (R.COMPACT_MARKER, para)
     out = R.split_dense_paragraphs(doc, limit=100)
     assert out.count("<p>") > 1
     assert "<p></p>" not in out and out.count("<p>") == out.count("</p>")
     assert R.visible_numeric_tokens(out) == R.visible_numeric_tokens(doc)
 
 
-def test_prose_marker_keeps_long_paragraphs_whole():
-    """줄글로 쓴 글은 자르지 않는다 (2026-09-13 사용자 지시).
+def test_unmarked_documents_are_left_whole():
+    """기본값이 뒤집혔다 (2026-09-14 사용자 지시 「전반적으로 기사체로 작성해」).
 
-    같은 본문이 표시 없이는 잘리고 표시가 있으면 한 문단으로 남아야 한다 — 표시가
-    아니라 우연히 짧아서 살아남는 것을 테스트가 통과시키면 안 되므로 양쪽을 다 본다.
+    표시가 없으면 자르지 않는다. 자르는 쪽이 opt-in 이다 — 예전에는 반대였고, 그래서
+    조판기가 토막글을 보상하고 줄글을 벌했다.
     """
     para = "첫 문장은 10을 설명한다. 둘째 문장은 20을 설명한다. 셋째 문장은 30을 설명한다. 넷째 문장은 40을 설명한다. " * 3
     body = "<p>%s</p>" % para
     plain = "<html><body>%s</body></html>" % body
-    marked = '<html><body %s>%s</body></html>' % (R.PROSE_MARKER, body)
+    prose = '<html><body %s>%s</body></html>' % (R.PROSE_MARKER, body)
+    compact = '<html><body %s>%s</body></html>' % (R.COMPACT_MARKER, body)
 
-    assert R.split_dense_paragraphs(plain, limit=100).count("<p>") > 1
-    assert R.split_dense_paragraphs(marked, limit=100).count("<p>") == 1
-    assert R.split_dense_paragraphs(marked, limit=100) == marked
+    assert R.split_dense_paragraphs(plain, limit=100) == plain      # 표시 없음 — 보존
+    assert R.split_dense_paragraphs(prose, limit=100) == prose      # 줄글 — 보존
+    assert R.split_dense_paragraphs(compact, limit=100).count("<p>") > 1   # 자른다
 
 
-def test_prose_marker_is_read_from_the_body_tag_only():
-    """본문에 그 문자열이 나온다고 분할이 꺼지면 안 된다 — 조판을 설명하는 글을 싣는 날."""
+def test_layout_markers_are_read_from_the_body_tag_only():
+    """본문에 그 문자열이 나온다고 판정이 뒤집히면 안 된다 — 조판을 설명하는 글을 싣는 날."""
     assert R.has_prose_layout('<body data-layout="prose"><p>본문</p></body>')
     assert R.has_prose_layout("<body class='x' data-layout='prose'>")
     assert not R.has_prose_layout('<body><p>data-layout="prose" 라고 씁니다</p></body>')
     assert not R.has_prose_layout("<html><body><p>본문</p></body></html>")
 
+    assert R.has_compact_layout('<body data-layout="compact"><p>본문</p></body>')
+    assert not R.has_compact_layout('<body><p>data-layout="compact" 라고 씁니다</p></body>')
+    assert not R.has_compact_layout('<body data-layout="prose"><p>본문</p></body>')
 
-def test_three_sentence_paragraph_is_never_split():
-    """작성 계약이 「문단은 2~3문장」을 허용하므로 셋까지는 자르지 않는다.
 
-    옛 임계는 문장 셋에서 잘랐다 — 각 109자짜리 3문장이면 329자라, 계약과
-    가독성 게이트(문장 120자)를 둘 다 지킨 문단이 두 동강 났다.
+def test_compact_still_spares_a_three_sentence_paragraph():
+    """자르기를 켠 문서에서도 계약이 허용한 「2~3문장」은 보존한다.
+
+    옛 임계는 문장 셋에서 잘랐다 — 각 109자짜리 3문장이면 329자라, 계약과 가독성
+    게이트를 둘 다 지킨 문단이 두 동강 났다.
     """
     s = ("유가가 오르자 국채금리가 따라 올랐고 그 오른 금리가 주식을 눌러 사흘 내리 지수가 밀렸습니다만 "
          "금요일에 유가가 꺾이면서 그 흐름이 마침내 끊겼고 시장은 물가 지표보다 유가를 먼저 본 셈이었어요. ")
-    three = "<html><body><p>%s</p></body></html>" % (s * 3)
-    five = "<html><body><p>%s</p></body></html>" % (s * 5)
+    three = '<html><body %s><p>%s</p></body></html>' % (R.COMPACT_MARKER, s * 3)
+    five = '<html><body %s><p>%s</p></body></html>' % (R.COMPACT_MARKER, s * 5)
 
     assert R.split_dense_paragraphs(three) == three          # 계약 준수 — 보존
     assert R.split_dense_paragraphs(five).count("<p>") > 1   # 폭주 — 여전히 자른다
@@ -624,3 +629,21 @@ def test_an_empty_document_still_reports_every_key():
     KeyError 로 죽고 정작 잡아야 할 FAIL 줄이 안 보인다(2026-09-06)."""
     full = set(R.measure('<p>문장이 하나 있다. 두 번째 문장도 있다.</p>'))
     assert set(R.measure('<div></div>')) == full
+
+
+def test_an_imitation_marker_cannot_claim_the_editor_note_exemption():
+    """`class="data-editor-note-ish"` 로 계측 전체를 피할 수 있었다 (2026-09-14)."""
+    from scripts.us import readability as R
+    long_s = '코스피는 ' + '오르내리며 방향을 탐색하는 흐름이 이어졌고 ' * 8 + '마감했다.'
+
+    def page(sec):
+        return ("<html><head></head><body><div class='card'><h1>제목</h1>"
+                f"{sec}</div></body></html>")
+
+    exempt = f'<section data-editor-note="1"><p>{long_s}</p></section>'
+    slot = ('<section class="sec" data-editor-note-slot id="read-4">'
+            f'<p>{long_s}</p></section>')
+    fake = f'<section class="data-editor-note-ish"><p>{long_s}</p></section>'
+    assert R.long_sentences(page(exempt), 120) == []
+    assert R.long_sentences(page(slot), 120) == []
+    assert len(R.long_sentences(page(fake), 120)) == 1

@@ -16,11 +16,25 @@ from scripts.us import readability as R  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
-LEN_WARN, LEN_FAIL = 120, 160
-# 작성 계약은 문장당 수치 넷까지다. 다섯째부터 경고, 일곱째부터 실패다.
-FIG_WARN, FIG_FAIL = 4, 6
+# 문장 길이는 2026-09-14 사용자 지시로 **발행을 막지 않는다** — 「문장 길이도 굳이 꼭
+# 제약을 둘 필요는 없어」. 길이는 원인이 아니다: 긴 문장이 관계 하나면 읽히고, 짧은
+# 문장이 관계 셋이면 안 읽힌다. 그래서 재서 보여 주기만 하고(`infos`) 막지 않는다.
+#
+# 지우지 않고 남겨 둔 이유는 회귀가 눈에 보여야 해서다. 게이트 도입 전 일간 28편은
+# 2,591문장 중앙값 90자·P90 145자·최장 273자에 160자 초과가 129문장이었고, 도입 뒤
+# 14편은 2,896문장 중앙값 54자·P90 93자에 160자 초과 0문장이었다. 그 129문장 가운데
+# 58%는 수치가 넷 이하라 **수치 밀도 검사로는 잡히지 않는다** — 길이 검사를 없애면
+# 그만큼이 아무 데도 안 걸린다(codex 설계 검토 2026-09-14).
+LEN_INFO = 120
+# 기사체로 가면서 넷 → 여섯으로 풀었다. 기사도 한 문장에 수치 여섯이면 안 읽히므로
+# 없애지는 않는다.
+FIG_WARN, FIG_FAIL = 6, 8
 ECHO_LIMIT = 3
 H1_WARN, H1_FAIL = 80, 110
+# 헤드라인은 본문과 따로 센다. 2026-09-14 에 본문 임계를 넷 → 여섯으로 풀 때 이 검사가
+# 같은 상수를 쓰고 있어서 제목 규칙까지 조용히 함께 풀렸다 — 계약은 그대로 「수치 넷
+# 이내」다(`brief-report-writer.md` 구조 1번).
+H1_FIG_WARN = 4
 
 
 def clip(s, n=90):
@@ -30,20 +44,21 @@ def clip(s, n=90):
 def audit(path, no_inline_images=False):
     html = Path(path).read_text(encoding="utf-8")
     m = R.measure(html)
-    fails, warns = [], []
+    fails, warns, infos = [], [], []
 
-    h1 = R.first_heading(html)
-    if h1:
+    # 헤드라인은 «전부» 본다. 첫 개만 보면 짧은 미끼 h1 을 앞에 두는 것으로
+    # 길이·수치 검사를 통째로 피할 수 있다(발행본 78편은 전부 h1 이 하나다).
+    for h1 in R.headings(html):
         if len(h1) > H1_FAIL:
             fails.append("헤드라인 %d자 · 110자 초과" % len(h1))
         elif len(h1) > H1_WARN:
             warns.append("헤드라인 %d자 · 80자 안으로 줄일 것" % len(h1))
         h1_figures = len(R.figures(h1))
-        if h1_figures > FIG_WARN:
+        if h1_figures > H1_FIG_WARN:
             warns.append("헤드라인 수치 %d개 · 넷 이하로 줄일 것" % h1_figures)
 
-    for s, n in R.long_sentences(html, LEN_WARN):
-        (fails if n > LEN_FAIL else warns).append("%d자 문장 · %s" % (n, clip(s)))
+    for s, n in R.long_sentences(html, LEN_INFO):
+        infos.append("%d자 문장 · %s" % (n, clip(s)))
     for s, n in R.dense_sentences(html, FIG_WARN):
         (fails if n > FIG_FAIL else warns).append("수치 %d개 문장 · %s" % (n, clip(s)))
     for tok in sorted(set(R.overprecise(html))):
@@ -69,7 +84,7 @@ def audit(path, no_inline_images=False):
 
     if not R.has_override(html):
         fails.append("조판 오버라이드 미적용 — apply_readability.py를 돌릴 것")
-    return m, fails, warns
+    return m, fails, warns, infos
 
 
 def main(argv):
@@ -81,7 +96,7 @@ def main(argv):
         return 2
     bad = 0
     for p in paths:
-        m, fails, warns = audit(p, no_inline_images=no_inline)
+        m, fails, warns, infos = audit(p, no_inline_images=no_inline)
         print("== %s" % p)
         # 문장이 없으면 `measure()` 는 개수만 돌려준다. 그것을 모르고 분포 키를
         # 인덱싱하던 판은 산문 없는 문서에서 KeyError 로 죽었고, 죽은 자리가
@@ -102,6 +117,13 @@ def main(argv):
             print("   FAIL %s" % f)
         for w in warns:
             print("   warn %s" % w)
+        # info 는 **종료 코드에 들어가지 않는다.** 여기를 warns 로 두면 모든 발행
+        # 경로가 `--strict` 로 도는 탓에 경고 한 줄이 곧 발행 중단이 되고, 길이
+        # 제약을 푼다는 변경이 아무것도 바꾸지 못한다(codex 검토 2026-09-14 치명).
+        for x in infos[:5]:
+            print("   info %s" % x)
+        if len(infos) > 5:
+            print("   info 길이 표시 %d건 중 5건만 출력 — 막지 않는다" % len(infos))
         if fails or warns:
             print(
                 "   repair 헤드라인 압축 → 긴 문장 분리 → 정확값은 표로 이동 → "

@@ -55,3 +55,59 @@ def test_zero_prose_document_reports_instead_of_crashing(tmp_path):
     assert "Traceback" not in r.stderr
     assert "base64" in r.stdout
     assert r.returncode == 1
+
+
+def test_a_long_sentence_no_longer_blocks_publishing(tmp_path):
+    """2026-09-14 사용자 지시 — 길이는 재서 보여 주되 막지 않는다.
+
+    `--strict` 에서 경고는 곧 발행 중단이므로, 길이가 `warns` 로 남아 있으면 이
+    변경은 아무것도 바꾸지 못한다. 그래서 문구가 아니라 종료 코드로 검사한다.
+    """
+    long_one = '나스닥은 ' + '개장 직후 밀렸다가 오후 내내 되돌리며 ' * 8 + '마감했습니다.'
+    assert len(long_one) > 160
+    p = _post(tmp_path, '<p>%s</p>' % long_one)
+    r = _run(p, '--strict')
+    assert r.returncode == 0, r.stdout
+    assert '자 문장' in r.stdout and 'info' in r.stdout
+    assert 'FAIL' not in r.stdout
+
+
+def test_figure_density_still_blocks(tmp_path):
+    """길이는 풀되 수치 밀도는 남긴다 — 기사도 한 문장에 수치 여섯이면 안 읽힌다."""
+    dense = ('S&P 500은 6,584.29로 0.85% 올랐고 나스닥은 22,141.10으로 0.72%, '
+             '다우는 45,883.45로 1.36%, 러셀은 2,391.05로 2.11%, '
+             '10년물은 4.06%로 3.2bp 움직였습니다.')
+    p = _post(tmp_path, '<p>%s</p>' % dense)
+    r = _run(p, '--strict')
+    assert r.returncode == 1, r.stdout
+    assert '수치' in r.stdout
+
+
+def test_the_headline_figure_rule_did_not_move_with_the_body(tmp_path):
+    """본문 임계를 넷 → 여섯으로 풀 때 제목 규칙이 딸려 풀렸었다 (2026-09-14).
+
+    계약은 제목 수치 넷 이내 그대로다.
+    """
+    from scripts.us import readability as R
+    html = R.inject_css(
+        "<html><head></head><body><div class='card'>"
+        "<h1>S&P 6,584 · 나스닥 22,141 · 다우 45,883 · 러셀 2,391 · 10년물 4.06%</h1>"
+        "<p>코스피는 20일선을 웃돌아 마감했다.</p></div></body></html>")
+    p = tmp_path / "h1.html"
+    p.write_text(html, encoding="utf-8")
+    r = _run(p, "--strict")
+    assert "헤드라인 수치" in r.stdout, r.stdout
+
+
+def test_a_decoy_headline_cannot_take_the_real_one_out_of_scope(tmp_path):
+    """첫 h1 만 보면 짧은 미끼를 앞에 두는 것으로 제목 검사를 통째로 피한다."""
+    from scripts.us import readability as R
+    html = R.inject_css(
+        "<html><head></head><body><div class='card'>"
+        "<h1>시황</h1>"
+        "<h1>S&P 6,584 · 나스닥 22,141 · 다우 45,883 · 러셀 2,391 · 10년물 4.06%</h1>"
+        "<p>코스피는 20일선을 웃돌아 마감했다.</p></div></body></html>")
+    p = tmp_path / "decoy.html"
+    p.write_text(html, encoding="utf-8")
+    r = _run(p, "--strict")
+    assert "헤드라인 수치" in r.stdout, r.stdout

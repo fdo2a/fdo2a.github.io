@@ -111,9 +111,18 @@ _LABEL_CSS = """
 CSS = (_V3_CSS.replace(V3_MARKER, MARKER).rstrip("\n")
        + _LABEL_CSS + _DESKTOP_CSS)
 
+# 편집자 노트는 계측에서 통째로 빠진다 — 사람이 쓴 문장은 게이트가 다듬을 대상이
+# 아니기 때문이다. 그래서 이 표식을 «흉내내면» 검사 전체를 피할 수 있다:
+# `class="data-editor-note-ish"` 가 실제로 그렇게 동작했다(2026-09-14 실측).
+# 속성 이름으로만 읽히도록 뒤에 구분자를 요구한다. 두 표식이 실제로 쓰인다 —
+# `data-editor-note="…"`(노트 본체)와 `data-editor-note-slot`(빈 자리).
+# ponytail: 정규식은 인용부호 안을 모른다. `class="x data-editor-note "` 처럼
+# 값 안에 공백으로 둘러싸 넣으면 여전히 통과한다 — 속성을 진짜로 파싱해야 막힌다.
+_NOTE_ATTR = r'\bdata-editor-note(?:-slot)?\b(?=[\s>=])'
+
 _STRIP = re.compile(
     r"(?s)<head.*?</head>|<style.*?</style>|<script.*?</script>|<svg.*?</svg>|"
-    r"<section\b[^>]*data-editor-note.*?</section>|<!--.*?-->"
+    r"<section\b[^>]*" + _NOTE_ATTR + r".*?</section>|<!--.*?-->"
 )
 _P = re.compile(r"(?s)<p\b([^>]*)>(.*?)</p>")
 _TAG = re.compile(r"<[^>]+>")
@@ -501,10 +510,20 @@ def _plain(raw: str) -> str:
 # 빠뜨린 날 조용히 토막난다(같은 사고가 이 파일 DEFAULT_GLOBS 에 codex C13 으로
 # 이미 적혀 있다). 2026-09-13 사용자 지시 「줄글 형태로 하나의 완성된 글로」.
 PROSE_MARKER = 'data-layout="prose"'
+# 2026-09-14 사용자 지시 「전반적으로 기사체로 작성해」로 기본값이 뒤집혔다. 이제
+# **표시가 없으면 자르지 않는다** — 자르는 쪽이 opt-in 이다.
+#
+# 기본값을 그냥 반대로 돌리지 않고 표시를 하나 더 둔 이유가 있다. `prose` 는 주간·
+# 월간이 «반드시» 달아야 하는 표시이고 `check_period` 가 없으면 발행을 막는다. 기본을
+# 뒤집기만 하면 그 표시와 전용 게이트가 하루아침에 무의미해진다(codex 검토 2026-09-14).
+# 그래서 셋으로 나눈다 — 표시 없음=자르지 않음, `prose`=자르지 않음(뜻 그대로 보존),
+# `compact`=자른다.
+COMPACT_MARKER = 'data-layout="compact"'
 # `<body>` 태그에서만 읽는다. 문서 전체 문자열 검사로 두면 본문 산문이나 `<style>`·
-# 주석에 이 문자열이 우연히 들어간 것만으로 분할이 통째로 꺼진다 — 조판 규칙을
-# 설명하는 글을 싣는 순간 벌어지는 일이다.
+# 주석에 이 문자열이 우연히 들어간 것만으로 판정이 뒤집힌다 — 조판 규칙을 설명하는
+# 글을 싣는 순간 벌어지는 일이다.
 _BODY_PROSE = re.compile(r'<body\b[^>]*\bdata-layout\s*=\s*["\']prose["\']', re.I)
+_BODY_COMPACT = re.compile(r'<body\b[^>]*\bdata-layout\s*=\s*["\']compact["\']', re.I)
 
 
 def has_prose_layout(html: str) -> bool:
@@ -512,19 +531,25 @@ def has_prose_layout(html: str) -> bool:
     return bool(_BODY_PROSE.search(html or ""))
 
 
+def has_compact_layout(html: str) -> bool:
+    """`<body data-layout="compact">` 로 «잘라 달라»고 선언한 문서인가."""
+    return bool(_BODY_COMPACT.search(html or ""))
+
+
 def split_dense_paragraphs(html: str, limit: int = 320) -> str:
     """세 문장 이상인 긴 `<p>`를 두 문장 단위로 나눈다.
 
-    `PROSE_MARKER` 를 단 문서는 통째로 건너뛴다. 같은 내용이 줄글이면 다섯 문단으로
-    잘리고 `<strong>` 리드를 달면 한 문단으로 남아(인라인 마크업이 있으면 건너뛰므로),
-    이 함수가 토막글을 보상하고 줄글을 벌해 왔다 — 주간 정리가 문단 28개 중 26개를
-    굵은 리드로 여는 글이 된 이유다.
+    **`COMPACT_MARKER` 를 단 문서에서만 돈다.** 예전에는 반대였다 — 표시가 없으면
+    잘랐고, 그래서 같은 내용이 줄글이면 다섯 문단으로 잘리고 `<strong>` 리드를 달면
+    한 문단으로 남았다(인라인 마크업이 있으면 건너뛰므로). 이 함수가 **토막글을
+    보상하고 줄글을 벌해 온** 것이고, 주간 정리가 문단 28개 중 26개를 굵은 리드로
+    여는 글이 된 이유다. 2026-09-14 사용자 지시로 기본값을 뒤집었다.
 
     단어·문장부호·수치에는 손대지 않고 블록 경계만 추가한다. 인라인 마크업이
     있는 문단은 태그 쌍을 가로질러 자를 위험이 있어 보수적으로 건너뛴다.
     """
 
-    if has_prose_layout(html):
+    if not has_compact_layout(html):
         return html
 
     def repl(m):
@@ -658,7 +683,7 @@ def move_strategy_first(html: str) -> str:
         return html
     start, end = strategy.span()
     trailing = re.match(
-        r'\s*<section\b[^>]*data-editor-note[^>]*>.*?</section>',
+        r'\s*<section\b[^>]*' + _NOTE_ATTR + r'[^>]*>.*?</section>',
         html[end:],
         re.S,
     )
@@ -802,9 +827,15 @@ def figures(text: str) -> list:
     return out
 
 
+def headings(html: str, tag: str = "h1") -> list:
+    """그 태그의 제목 «전부». 첫 개만 보면 짧은 미끼를 앞에 두고 통과할 수 있다."""
+    return [_plain(x) for x in
+            re.findall(r"<%s\b[^>]*>(.*?)</%s>" % (tag, tag), html, re.S | re.I)]
+
+
 def first_heading(html: str, tag: str = "h1") -> str:
-    m = re.search(r"<%s\b[^>]*>(.*?)</%s>" % (tag, tag), html, re.S | re.I)
-    return _plain(m.group(1)) if m else ""
+    got = headings(html, tag)
+    return got[0] if got else ""
 
 
 def long_sentences(html: str, limit: int = 120) -> list:

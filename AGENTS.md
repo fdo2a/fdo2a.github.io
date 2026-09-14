@@ -1,6 +1,6 @@
 <!-- This file is where shared rules live. codex walks project docs from the git repo
      root (site/) down to cwd and never above it, so report/CLAUDE.md is NOT loaded when
-     working inside site/ (measured 2026-09-05 with `codex debug prompt-input`).
+     working inside site/ (measured; see report/CLAUDE.md).
      This file + one leaf must fit codex's chain limit, which drops the tail with no
      marker. Byte budget and what to do when it goes red: rule 4 below.
      Gate: scripts/common/tests/test_agent_docs.py -->
@@ -9,7 +9,7 @@
 
 - **Work from `site/`.** The project root (`/Users/daeyoung/Desktop/AI/report`) is not a git repo. Every path and command below is relative to `site/`; run `git`, `gh`, and all scripts after `cd site`.
 - **Tests**: `cd site && python3 -m pytest scripts` — the whole tree, no `--ignore`. **Must run from `site/`**: from the project root it fails collection (`ModuleNotFoundError: scripts`) and ends with "N collected, 6 errors", and **the count alone looks like a pass, so read the `Interrupted` line.**
-- **Publish gates run in order**: `scripts/apply_readability.py` (typography override — must come before any check) → `scripts/apply_colors.py` (US sign colours) → per-pipeline gates (US `check_macro.py`, `check_stance.py`, `check_fed.py`, `check_weight.py`, `check_price_context.py`, `check_portfolio.py`, `check_session.py`; thesis `check_thesis.py`; weekly/monthly `check_period.py`; China `check_china.py`) → `check_readability.py --strict` → `check_style.py`. Note `check_style.py` takes a path only — it does not accept `--html`.
+- **Publish gates run in order**: `scripts/apply_readability.py` (typography override — must come before any check) → `scripts/apply_colors.py` (US sign colours) → per-pipeline gates (US `check_macro.py`, `check_stance.py`, `check_fed.py`, `check_weight.py`, `check_price_context.py`, `check_portfolio.py`, `check_session.py`, `check_sources.py`, `check_calendar.py`; thesis `check_thesis.py`; weekly/monthly `check_period.py`; China `check_china.py`) → `check_readability.py --strict` → `check_style.py`. Note `check_style.py` takes a path only — it does not accept `--html`.
 - **Hand-edited posts**: `python3 scripts/verify_post.py posts/DATE.html` (compares the number multiset against git HEAD).
 - **Trigger data collection manually**: `gh workflow run collect-market-data.yml -f force=true` (same for `collect-kr-data.yml`, `collect-thesis-data.yml`, `collect-china-data.yml`).
 - **Check unreviewed posts**: `python3 scripts/review_gate.py pending --hook`. The SessionStart hook calls this automatically, but the hook ends in `|| true` and fails silently — run it by hand whenever the queue looks wrong. The 「조판만 바뀐 N건」 and 「판정 불가」 queues have their own handling — `.claude/REVIEW_GATE.md`. The hourly launchd runner (`review_gate.py run --correct`) reviews us/kr with Codex, then invokes Claude to verify, correct and republish from an isolated clone. Drafts in `reviews/pending/` alone never authorize `mark`; follow `.claude/REVIEW_GATE.md`.

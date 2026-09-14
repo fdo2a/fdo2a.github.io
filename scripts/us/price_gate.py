@@ -36,8 +36,16 @@ MARKERS = ('data-relation', 'data-attribution', 'data-driver', 'data-forward',
 _INERT_TAGS = {'script', 'style', 'template'}
 _VOID_TAGS = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
               'meta', 'param', 'source', 'track', 'wbr'}
-_HIDING_STYLE = re.compile(r'(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden)',
-                           re.I)
+# Every way an element can be on the page and not on the reader's screen. The first
+# two were the original pair; the rest are what a 2026-09-14 codex review put through
+# the source gate untouched — an anchor at `opacity:0` satisfied a link requirement
+# nobody could click. Same bypass class applies to every marker these gates read.
+_HIDING_STYLE = re.compile(
+    r'(?:^|;)\s*(?:display\s*:\s*none'
+    r'|visibility\s*:\s*hidden'
+    r'|opacity\s*:\s*0(?!\s*\.?[1-9])'
+    r'|(?:width|height|font-size|max-width|max-height)\s*:\s*0(?!\s*\.?[1-9])'
+    r')', re.I)
 
 
 def _hides(tag, attrs):

@@ -12,6 +12,7 @@ FRED 는 수익률·경제지표·금리 분해·해부 구성항목의 유일�
 
 설계·검토 이력은 프로젝트 루트 `plan.md`(2026-09-05).
 """
+import datetime as dt
 import json
 import os
 import re
@@ -23,6 +24,12 @@ import urllib.request
 
 API = 'https://api.stlouisfed.org/fred/series/observations'
 CSV = 'https://fred.stlouisfed.org/graph/fredgraph.csv'
+# 다음 발표가 언제인가. 그래프 서비스에는 이 표가 없어서 **폴백 경로로는 못 온다** —
+# 키가 없는 날은 일정이 빈다. 없는 것을 없다고 적는 쪽이 지난 일정을 오늘 것처럼
+# 인쇄하는 쪽보다 낫다.
+RELEASES_DATES = 'https://api.stlouisfed.org/fred/releases/dates'
+# 한 번에 몇 건이나 오는가. 열흘 창이면 수십 건이라 넉넉하다 — 그래도 잘림은 센다.
+DATES_LIMIT = 1000
 
 # 응답이 잘렸는지 셀 수 있게 상한을 명시로 보낸다. FRED 기본값도 같은 수지만
 # 기본값은 약속이 아니다 — 계약이 기본값에 기대면 조용히 짧아진 이력을 받는다.
@@ -259,6 +266,39 @@ class FredClient:
             if sid not in self.csv_rescued:
                 self.csv_rescued.append(sid)
             return rows
+
+    def release_dates(self, start, end):
+        """-> [(date, release_id, release_name)] 오름차순. 구간 안의 발표 일정 전부.
+
+        **한 번만 부른다.** 릴리스마다 `release_id` 를 코드에 박고 13번 부르는 대신
+        구간 전체를 받아 이름으로 거른다 — 박아 둔 id 가 틀리면 다른 지표의 일정을
+        그 지표 이름으로 인쇄하는데, 그 오류는 화면에서 안 보인다.
+
+        `include_release_dates_with_no_data=true` 가 **미래 일정을 여는 열쇠**다.
+        빼면 이미 값이 붙은 과거 발표만 온다.
+        """
+        if self.transport != 'api':
+            raise FredError(f'release calendar needs the official API '
+                            f'(transport={self.transport or "unknown"})')
+        q = [('api_key', self.key or ''), ('file_type', 'json'),
+             ('realtime_start', start.isoformat()), ('realtime_end', end.isoformat()),
+             ('include_release_dates_with_no_data', 'true'),
+             ('sort_order', 'asc'), ('limit', str(DATES_LIMIT))]
+        url = RELEASES_DATES + '?' + urllib.parse.urlencode(q)
+        payload = json.loads(self._get(url).decode('utf-8'))
+        count = payload.get('count')
+        if isinstance(count, int) and count > DATES_LIMIT:
+            raise FredError(f'release calendar truncated ({count} > {DATES_LIMIT})')
+        out = []
+        for row in payload.get('release_dates') or []:
+            day, rid, name = row.get('date'), row.get('release_id'), row.get('release_name')
+            if not (day and name):
+                continue
+            try:
+                out.append((dt.date.fromisoformat(day), rid, name))
+            except ValueError:
+                continue
+        return sorted(out, key=lambda r: (r[0], str(r[2])))
 
     def telemetry(self):
         return {'transport': self.transport or 'unknown',
