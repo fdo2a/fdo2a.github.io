@@ -1,22 +1,22 @@
 {
-  "report_date": "2026-09-11",
+  "report_date": "2026-09-14",
   "complete": false,
   "missing": [
     "top_value"
   ],
   "indices": {
     "KOSPI": {
-      "close": 6909.91,
-      "change_pct": -1.76
+      "close": 6684.37,
+      "change_pct": -3.26
     },
     "KOSDAQ": {
-      "close": 820.64,
-      "change_pct": -1.95
+      "close": 806.79,
+      "change_pct": -1.69
     }
   },
   "flows_date": {
-    "KOSPI": "2026-09-11",
-    "KOSDAQ": "2026-09-11"
+    "KOSPI": "2026-09-14",
+    "KOSDAQ": "2026-09-14"
   },
   "flows_provisional": {
     "KOSPI": true,

@@ -2,8 +2,8 @@
   "span": "monthly",
   "key": "2026-09",
   "start_date": "2026-09-01",
-  "end_date": "2026-09-11",
-  "sessions": 9,
+  "end_date": "2026-09-14",
+  "sessions": 10,
   "complete": true,
   "missing": [
     "flows.KOSPI: 1일 잠정/결측",
@@ -11,27 +11,27 @@
   ],
   "flows": {
     "KOSPI": {
-      "foreign": -17648,
-      "institution": 47274,
-      "individual": -146934
+      "foreign": -40632,
+      "institution": 35090,
+      "individual": -128259
     },
     "KOSDAQ": {
-      "foreign": -7137,
-      "institution": 5041,
-      "individual": 2070
+      "foreign": -10260,
+      "institution": 2882,
+      "individual": 7190
     }
   },
   "flows_sessions_by_market": {
-    "KOSPI": 8,
-    "KOSDAQ": 8
+    "KOSPI": 9,
+    "KOSDAQ": 9
   },
-  "flows_sessions": 8,
+  "flows_sessions": 9,
   "flows_note": "확정치만 합산",
   "industry": {
     "도로와철도운송": {
-      "pct": 0.5714,
-      "sessions": 7,
-      "rank": 30
+      "pct": 0.4487,
+      "sessions": 8,
+      "rank": 32
     },
     "석유와가스": {
       "pct": 2.6433,
@@ -39,89 +39,89 @@
       "rank": 2
     },
     "손해보험": {
-      "pct": 1.3586,
-      "sessions": 7,
-      "rank": 15
+      "pct": 1.0425,
+      "sessions": 8,
+      "rank": 18
     },
     "백화점과일반상점": {
-      "pct": 0.9729,
-      "sessions": 7,
-      "rank": 22
+      "pct": 0.9363,
+      "sessions": 8,
+      "rank": 24
     },
     "무역회사와판매업체": {
       "pct": 1.08,
       "sessions": 7,
-      "rank": 19
+      "rank": 16
     },
     "게임엔터테인먼트": {
-      "pct": -0.195,
-      "sessions": 8,
+      "pct": -0.1456,
+      "sessions": 9,
       "rank": 65
     },
     "생명보험": {
       "pct": 1.6033,
       "sessions": 6,
-      "rank": 12
+      "rank": 11
     },
     "복합기업": {
       "pct": 0.84,
       "sessions": 7,
-      "rank": 24
+      "rank": 25
     },
     "가스유틸리티": {
-      "pct": 0.6375,
-      "sessions": 8,
-      "rank": 29
+      "pct": 0.5511,
+      "sessions": 9,
+      "rank": 30
     },
     "다각화된통신서비스": {
-      "pct": 0.4386,
-      "sessions": 7,
-      "rank": 34
+      "pct": 0.4287,
+      "sessions": 8,
+      "rank": 36
     },
     "건축자재": {
-      "pct": 0.31,
-      "sessions": 7,
-      "rank": 40
+      "pct": 0.04,
+      "sessions": 8,
+      "rank": 57
     },
     "섬유,의류,신발,호화품": {
-      "pct": 0.0729,
-      "sessions": 7,
-      "rank": 55
+      "pct": 0.0813,
+      "sessions": 8,
+      "rank": 56
     },
     "사무용전자제품": {
-      "pct": -0.4422,
-      "sessions": 9,
-      "rank": 75
+      "pct": -0.411,
+      "sessions": 10,
+      "rank": 73
     },
     "컴퓨터와주변기기": {
-      "pct": 1.3671,
-      "sessions": 7,
-      "rank": 14
-    },
-    "항공화물운송과물류": {
-      "pct": 1.3757,
-      "sessions": 7,
+      "pct": 1.2962,
+      "sessions": 8,
       "rank": 13
     },
-    "증권": {
-      "pct": 0.1938,
+    "항공화물운송과물류": {
+      "pct": 0.9838,
       "sessions": 8,
-      "rank": 45
+      "rank": 23
+    },
+    "증권": {
+      "pct": 0.1889,
+      "sessions": 9,
+      "rank": 48
     },
     "호텔,레스토랑,레저": {
-      "pct": 0.345,
-      "sessions": 6,
-      "rank": 38
+      "pct": 0.2757,
+      "sessions": 7,
+      "rank": 42
     },
     "은행": {
-      "pct": 1.0829,
-      "sessions": 7,
-      "rank": 18
+      "pct": 1.1575,
+      "sessions": 8,
+      "rank": 14
     },
     "반도체와반도체장비": {
       "pct": 1.64,
       "sessions": 7,
-      "rank": 11
+      "rank": 10
     },
     "철강": {
       "pct": 0.4343,
@@ -129,44 +129,44 @@
       "rank": 35
     },
     "건축제품": {
-      "pct": 0.4133,
-      "sessions": 9,
-      "rank": 36
+      "pct": 0.238,
+      "sessions": 10,
+      "rank": 44
     },
     "무선통신서비스": {
-      "pct": 0.07,
-      "sessions": 7,
-      "rank": 56
+      "pct": -0.0763,
+      "sessions": 8,
+      "rank": 62
     },
     "판매업체": {
-      "pct": 0.1871,
-      "sessions": 7,
-      "rank": 46
+      "pct": 0.2787,
+      "sessions": 8,
+      "rank": 40
     },
     "광고": {
-      "pct": -0.1544,
-      "sessions": 9,
-      "rank": 61
+      "pct": -0.154,
+      "sessions": 10,
+      "rank": 66
     },
     "기타금융": {
-      "pct": 0.23,
-      "sessions": 7,
-      "rank": 43
+      "pct": 0.5513,
+      "sessions": 8,
+      "rank": 29
     },
     "핸드셋": {
-      "pct": 0.745,
-      "sessions": 8,
-      "rank": 26
+      "pct": 0.9844,
+      "sessions": 9,
+      "rank": 22
     },
     "조선": {
-      "pct": 1.8914,
-      "sessions": 7,
-      "rank": 7
+      "pct": 1.4937,
+      "sessions": 8,
+      "rank": 12
     },
     "운송인프라": {
-      "pct": -0.0944,
-      "sessions": 9,
-      "rank": 60
+      "pct": -0.065,
+      "sessions": 10,
+      "rank": 61
     },
     "전기유틸리티": {
       "pct": 2.4683,
@@ -174,144 +174,144 @@
       "rank": 4
     },
     "종이와목재": {
-      "pct": -0.2662,
-      "sessions": 8,
-      "rank": 69
-    },
-    "항공사": {
-      "pct": 1.19,
-      "sessions": 7,
-      "rank": 17
-    },
-    "디스플레이장비및부품": {
-      "pct": 0.5567,
-      "sessions": 6,
-      "rank": 31
-    },
-    "교육서비스": {
-      "pct": -0.2013,
-      "sessions": 8,
+      "pct": -0.1878,
+      "sessions": 9,
       "rank": 67
     },
-    "소프트웨어": {
-      "pct": 0.9086,
+    "항공사": {
+      "pct": 1.0925,
+      "sessions": 8,
+      "rank": 15
+    },
+    "디스플레이장비및부품": {
+      "pct": 0.34,
       "sessions": 7,
-      "rank": 23
+      "rank": 38
+    },
+    "교육서비스": {
+      "pct": -0.0144,
+      "sessions": 9,
+      "rank": 59
+    },
+    "소프트웨어": {
+      "pct": 1.015,
+      "sessions": 8,
+      "rank": 20
     },
     "출판": {
-      "pct": 0.1683,
-      "sessions": 6,
-      "rank": 50
+      "pct": 0.0329,
+      "sessions": 7,
+      "rank": 58
     },
     "가정용기기와용품": {
-      "pct": 0.28,
-      "sessions": 6,
-      "rank": 41
+      "pct": 0.62,
+      "sessions": 7,
+      "rank": 28
     },
     "식품과기본식료품소매": {
-      "pct": -0.28,
-      "sessions": 8,
-      "rank": 71
+      "pct": -0.1122,
+      "sessions": 9,
+      "rank": 63
     },
     "레저용장비와제품": {
-      "pct": 0.1025,
-      "sessions": 8,
-      "rank": 53
+      "pct": 0.1467,
+      "sessions": 9,
+      "rank": 51
     },
     "기타": {
-      "pct": 0.18,
-      "sessions": 8,
-      "rank": 47
+      "pct": -0.0367,
+      "sessions": 9,
+      "rank": 60
     },
     "음료": {
-      "pct": -0.1956,
-      "sessions": 9,
-      "rank": 66
-    },
-    "제약": {
-      "pct": -0.4786,
-      "sessions": 7,
-      "rank": 76
-    },
-    "방송과엔터테인먼트": {
-      "pct": 0.3262,
-      "sessions": 8,
-      "rank": 39
-    },
-    "부동산": {
-      "pct": 0.0775,
-      "sessions": 8,
-      "rank": 54
-    },
-    "상업서비스와공급품": {
-      "pct": 0.0278,
-      "sessions": 9,
-      "rank": 57
-    },
-    "다각화된소비자서비스": {
-      "pct": -0.2543,
-      "sessions": 7,
+      "pct": -0.224,
+      "sessions": 10,
       "rank": 68
     },
-    "가정용품": {
-      "pct": -0.525,
+    "제약": {
+      "pct": -0.52,
       "sessions": 8,
       "rank": 77
+    },
+    "방송과엔터테인먼트": {
+      "pct": 0.4444,
+      "sessions": 9,
+      "rank": 34
+    },
+    "부동산": {
+      "pct": 0.0911,
+      "sessions": 9,
+      "rank": 55
+    },
+    "상업서비스와공급품": {
+      "pct": 0.192,
+      "sessions": 10,
+      "rank": 47
+    },
+    "다각화된소비자서비스": {
+      "pct": 0.15,
+      "sessions": 8,
+      "rank": 50
+    },
+    "가정용품": {
+      "pct": -0.38,
+      "sessions": 9,
+      "rank": 72
     },
     "자동차": {
       "pct": 0.7183,
       "sessions": 6,
-      "rank": 28
+      "rank": 27
     },
     "가구": {
-      "pct": 0.2413,
-      "sessions": 8,
-      "rank": 42
+      "pct": 0.2156,
+      "sessions": 9,
+      "rank": 46
     },
     "생명과학도구및서비스": {
       "pct": 0.2162,
       "sessions": 8,
-      "rank": 44
+      "rank": 45
     },
     "양방향미디어와서비스": {
-      "pct": -0.1671,
-      "sessions": 7,
-      "rank": 63
+      "pct": -0.275,
+      "sessions": 8,
+      "rank": 70
     },
     "해운사": {
-      "pct": 0.1743,
-      "sessions": 7,
-      "rank": 49
+      "pct": 0.27,
+      "sessions": 8,
+      "rank": 43
     },
     "포장재": {
-      "pct": -0.4014,
-      "sessions": 7,
-      "rank": 73
-    },
-    "IT서비스": {
-      "pct": 1.054,
-      "sessions": 5,
-      "rank": 21
-    },
-    "건강관리업체및서비스": {
-      "pct": -0.184,
-      "sessions": 5,
+      "pct": -0.14,
+      "sessions": 8,
       "rank": 64
     },
+    "IT서비스": {
+      "pct": 0.5217,
+      "sessions": 6,
+      "rank": 31
+    },
+    "건강관리업체및서비스": {
+      "pct": -0.4383,
+      "sessions": 6,
+      "rank": 75
+    },
     "복합유틸리티": {
-      "pct": 0.1029,
-      "sessions": 7,
-      "rank": 52
+      "pct": 0.1062,
+      "sessions": 8,
+      "rank": 53
     },
     "건강관리기술": {
-      "pct": 3.0137,
-      "sessions": 8,
+      "pct": 2.7022,
+      "sessions": 9,
       "rank": 1
     },
     "창업투자": {
-      "pct": 0.5467,
-      "sessions": 6,
-      "rank": 32
+      "pct": 0.36,
+      "sessions": 7,
+      "rank": 37
     },
     "자동차부품": {
       "pct": 0.4486,
@@ -319,79 +319,79 @@
       "rank": 33
     },
     "식품": {
-      "pct": -0.43,
-      "sessions": 7,
-      "rank": 74
+      "pct": -0.4637,
+      "sessions": 8,
+      "rank": 76
     },
     "전기장비": {
       "pct": 1.8167,
       "sessions": 6,
-      "rank": 8
+      "rank": 7
     },
     "담배": {
-      "pct": 0.1317,
-      "sessions": 6,
-      "rank": 51
+      "pct": 0.0957,
+      "sessions": 7,
+      "rank": 54
     },
     "통신장비": {
-      "pct": 1.2367,
-      "sessions": 6,
-      "rank": 16
+      "pct": 1.0314,
+      "sessions": 7,
+      "rank": 19
     },
     "전문소매": {
-      "pct": -0.0767,
-      "sessions": 6,
-      "rank": 58
+      "pct": 0.1271,
+      "sessions": 7,
+      "rank": 52
     },
     "카드": {
-      "pct": 0.354,
-      "sessions": 5,
-      "rank": 37
+      "pct": 0.2767,
+      "sessions": 6,
+      "rank": 41
     },
     "인터넷과카탈로그소매": {
-      "pct": -0.79,
-      "sessions": 2,
-      "rank": 78
+      "pct": 0.3133,
+      "sessions": 3,
+      "rank": 39
     },
     "생물공학": {
       "pct": 0.18,
       "sessions": 5,
-      "rank": 48
+      "rank": 49
     },
     "건강관리장비와용품": {
-      "pct": -0.386,
-      "sessions": 5,
-      "rank": 72
+      "pct": -0.5517,
+      "sessions": 6,
+      "rank": 78
     },
     "문구류": {
-      "pct": -0.0871,
-      "sessions": 7,
-      "rank": 59
+      "pct": -0.2362,
+      "sessions": 8,
+      "rank": 69
     },
     "전자장비와기기": {
       "pct": 1.0733,
       "sessions": 6,
-      "rank": 20
+      "rank": 17
     },
     "화장품": {
-      "pct": -0.852,
-      "sessions": 5,
+      "pct": -0.625,
+      "sessions": 6,
       "rank": 79
     },
     "디스플레이패널": {
-      "pct": -0.1586,
-      "sessions": 7,
-      "rank": 62
+      "pct": -0.2912,
+      "sessions": 8,
+      "rank": 71
     },
     "전자제품": {
       "pct": 0.7433,
       "sessions": 6,
-      "rank": 27
+      "rank": 26
     },
     "비철금속": {
-      "pct": -0.2714,
-      "sessions": 7,
-      "rank": 70
+      "pct": -0.4362,
+      "sessions": 8,
+      "rank": 74
     },
     "건설": {
       "pct": 2.1471,
@@ -411,17 +411,17 @@
     "화학": {
       "pct": 1.7725,
       "sessions": 4,
-      "rank": 9
+      "rank": 8
     },
     "우주항공과국방": {
-      "pct": 0.7814,
-      "sessions": 7,
-      "rank": 25
+      "pct": 0.9875,
+      "sessions": 8,
+      "rank": 21
     },
     "에너지장비및서비스": {
       "pct": 1.72,
       "sessions": 6,
-      "rank": 10
+      "rank": 9
     }
   },
   "top_value": [
@@ -520,12 +520,12 @@
   ],
   "indices": {
     "KOSPI": {
-      "pct": 1.318,
-      "end": 6909.91
+      "pct": -1.989,
+      "end": 6684.37
     },
     "KOSDAQ": {
-      "pct": -1.6361,
-      "end": 820.64
+      "pct": -3.2962,
+      "end": 806.79
     }
   },
   "daily": [
@@ -613,6 +613,16 @@
         "조선",
         "은행",
         "항공화물운송과물류"
+      ]
+    },
+    {
+      "date": "2026-09-14",
+      "leading_industries": [
+        "다각화된소비자서비스",
+        "핸드셋",
+        "기타금융",
+        "우주항공과국방",
+        "소프트웨어"
       ]
     }
   ],
@@ -2339,7 +2349,6 @@
       }
     },
     "2026-09-11": {
-      "flows": {},
       "industry": {
         "손해보험": 4.18,
         "소프트웨어": 4.08,
@@ -2530,6 +2539,213 @@
         "2026-09-08",
         "2026-09-09",
         "2026-09-10"
+      ],
+      "flows_note": "잠정치 제외",
+      "flows": {
+        "KOSPI": {
+          "foreign": -22984,
+          "institution": -12184,
+          "individual": 18675
+        },
+        "KOSDAQ": {
+          "foreign": -3123,
+          "institution": -2159,
+          "individual": 5120
+        }
+      }
+    },
+    "2026-09-14": {
+      "flows": {},
+      "industry": {
+        "다각화된소비자서비스": 2.98,
+        "핸드셋": 2.9,
+        "기타금융": 2.8,
+        "가정용기기와용품": 2.66,
+        "인터넷과카탈로그소매": 2.52,
+        "우주항공과국방": 2.43,
+        "소프트웨어": 1.76,
+        "포장재": 1.69,
+        "은행": 1.68,
+        "상업서비스와공급품": 1.67,
+        "교육서비스": 1.48,
+        "방송과엔터테인먼트": 1.39,
+        "전문소매": 1.35,
+        "식품과기본식료품소매": 1.23,
+        "해운사": 0.94,
+        "판매업체": 0.92,
+        "컴퓨터와주변기기": 0.8,
+        "가정용품": 0.78,
+        "백화점과일반상점": 0.68,
+        "화장품": 0.51,
+        "레저용장비와제품": 0.5,
+        "종이와목재": 0.44,
+        "항공사": 0.41,
+        "다각화된통신서비스": 0.36,
+        "게임엔터테인먼트": 0.25,
+        "건강관리기술": 0.21,
+        "부동산": 0.2,
+        "운송인프라": 0.2,
+        "증권": 0.15,
+        "섬유,의류,신발,호화품": 0.14,
+        "복합유틸리티": 0.13,
+        "가구": 0.01,
+        "카드": -0.11,
+        "담배": -0.12,
+        "사무용전자제품": -0.13,
+        "호텔,레스토랑,레저": -0.14,
+        "가스유틸리티": -0.14,
+        "광고": -0.15,
+        "통신장비": -0.2,
+        "도로와철도운송": -0.41,
+        "음료": -0.48,
+        "식품": -0.7,
+        "창업투자": -0.76,
+        "출판": -0.78,
+        "제약": -0.81,
+        "디스플레이장비및부품": -0.96,
+        "양방향미디어와서비스": -1.03,
+        "무선통신서비스": -1.1,
+        "손해보험": -1.17,
+        "디스플레이패널": -1.22,
+        "문구류": -1.28,
+        "조선": -1.29,
+        "건축제품": -1.34,
+        "건강관리장비와용품": -1.38,
+        "비철금속": -1.59,
+        "건강관리업체및서비스": -1.71,
+        "항공화물운송과물류": -1.76,
+        "기타": -1.77,
+        "건축자재": -1.85,
+        "IT서비스": -2.14
+      },
+      "top_value": {},
+      "leading_industries": [
+        "다각화된소비자서비스",
+        "핸드셋",
+        "기타금융",
+        "우주항공과국방",
+        "소프트웨어"
+      ],
+      "extra_flows": {
+        "2026-09-11": {
+          "KOSPI": {
+            "foreign": -22984,
+            "institution": -12184,
+            "individual": 18675
+          },
+          "KOSDAQ": {
+            "foreign": -3123,
+            "institution": -2159,
+            "individual": 5120
+          }
+        },
+        "2026-09-10": {
+          "KOSPI": {
+            "foreign": -26217,
+            "institution": 5744,
+            "individual": 3802
+          },
+          "KOSDAQ": {
+            "foreign": -11253,
+            "institution": 13996,
+            "individual": -2698
+          }
+        },
+        "2026-09-09": {
+          "KOSPI": {
+            "foreign": -4348,
+            "institution": 9422,
+            "individual": -22879
+          },
+          "KOSDAQ": {
+            "foreign": 2646,
+            "institution": -190,
+            "individual": -2548
+          }
+        },
+        "2026-09-08": {
+          "KOSPI": {
+            "foreign": 6316,
+            "institution": 6427,
+            "individual": -30329
+          },
+          "KOSDAQ": {
+            "foreign": 1583,
+            "institution": -2135,
+            "individual": 479
+          }
+        },
+        "2026-09-07": {
+          "KOSPI": {
+            "foreign": 25532,
+            "institution": 26491,
+            "individual": -68374
+          },
+          "KOSDAQ": {
+            "foreign": -717,
+            "institution": -1292,
+            "individual": 1896
+          }
+        },
+        "2026-09-04": {
+          "KOSPI": {
+            "foreign": 4796,
+            "institution": 16694,
+            "individual": -37229
+          },
+          "KOSDAQ": {
+            "foreign": 2599,
+            "institution": 1609,
+            "individual": -4125
+          }
+        },
+        "2026-09-03": {
+          "KOSPI": {
+            "foreign": 414,
+            "institution": 9143,
+            "individual": -9552
+          },
+          "KOSDAQ": {
+            "foreign": -1082,
+            "institution": -1838,
+            "individual": 2950
+          }
+        },
+        "2026-09-02": {
+          "KOSPI": {
+            "foreign": -19173,
+            "institution": -20361,
+            "individual": 23029
+          },
+          "KOSDAQ": {
+            "foreign": 618,
+            "institution": -2322,
+            "individual": 1727
+          }
+        },
+        "2026-09-01": {
+          "KOSPI": {
+            "foreign": -4968,
+            "institution": -6286,
+            "individual": -5402
+          },
+          "KOSDAQ": {
+            "foreign": -1531,
+            "institution": -2787,
+            "individual": 4389
+          }
+        }
+      },
+      "extra_flow_dates": [
+        "2026-09-01",
+        "2026-09-02",
+        "2026-09-03",
+        "2026-09-04",
+        "2026-09-07",
+        "2026-09-08",
+        "2026-09-09",
+        "2026-09-10",
+        "2026-09-11"
       ],
       "flows_note": "잠정치 제외"
     }
