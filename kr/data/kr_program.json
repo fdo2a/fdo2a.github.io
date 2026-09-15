@@ -4,14 +4,14 @@
       {
         "date": "2026-09-15",
         "arb_buy": 1158,
-        "arb_sell": 2323,
-        "arb_net": -1165,
-        "narb_buy": 45650,
-        "narb_sell": 53758,
-        "narb_net": -8108,
-        "total_buy": 46808,
-        "total_sell": 56081,
-        "total_net": -9273
+        "arb_sell": 2500,
+        "arb_net": -1342,
+        "narb_buy": 45977,
+        "narb_sell": 53824,
+        "narb_net": -7847,
+        "total_buy": 47135,
+        "total_sell": 56324,
+        "total_net": -9189
       },
       {
         "date": "2026-09-14",
@@ -132,15 +132,15 @@
     "rows": [
       {
         "date": "2026-09-15",
-        "arb_buy": 382,
+        "arb_buy": 415,
         "arb_sell": 3,
-        "arb_net": 378,
-        "narb_buy": 15661,
-        "narb_sell": 15459,
-        "narb_net": 201,
-        "total_buy": 16043,
-        "total_sell": 15462,
-        "total_net": 579
+        "arb_net": 411,
+        "narb_buy": 15742,
+        "narb_sell": 15517,
+        "narb_net": 224,
+        "total_buy": 16157,
+        "total_sell": 15520,
+        "total_net": 635
       },
       {
         "date": "2026-09-14",
