@@ -1,15 +1,15 @@
 {
-  "report_date": "2026-09-14",
-  "generated": "2026-09-15 00:45 UTC",
+  "report_date": "2026-09-15",
+  "generated": "2026-09-15 23:35 UTC",
   "horizon_days": 10,
   "events": [
     {
-      "key": "auction-20260915-6-Week",
+      "key": "auction-20260916-17-Week",
       "kind": "auction",
-      "name_ko": "6-Week 국채 입찰 750억 달러",
-      "date": "2026-09-15",
+      "name_ko": "17-Week 국채 입찰 720억 달러",
+      "date": "2026-09-16",
       "time_et": "11:30",
-      "time_kst": "2026-09-16 00:30",
+      "time_kst": "2026-09-17 00:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -18,12 +18,26 @@
       "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
-      "key": "auction-20260915-20-Year",
+      "key": "auction-20260917-4-Week",
       "kind": "auction",
-      "name_ko": "20-Year 국채 입찰 130억 달러",
-      "date": "2026-09-15",
-      "time_et": "13:00",
-      "time_kst": "2026-09-16 02:00",
+      "name_ko": "4-Week 국채 입찰 900억 달러",
+      "date": "2026-09-17",
+      "time_et": "11:30",
+      "time_kst": "2026-09-18 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20260917-8-Week",
+      "kind": "auction",
+      "name_ko": "8-Week 국채 입찰 850억 달러",
+      "date": "2026-09-17",
+      "time_et": "11:30",
+      "time_kst": "2026-09-18 00:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -86,9 +100,43 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "release-michigan-20260925",
+      "kind": "release",
+      "name_ko": "미시간대 소비자심리",
+      "date": "2026-09-25",
+      "time_et": "10:00",
+      "time_kst": "2026-09-25 23:00",
+      "status": "confirmed",
+      "source": "U. Michigan 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-09-15",
+      "term": "20-Year",
+      "type": "Bond",
+      "offering_amt": 13000000000.0,
+      "high_yield": 5.42,
+      "bid_to_cover": 2.57,
+      "indirect_pct": 52.1,
+      "dealer_pct": 16.7
+    },
+    {
+      "date": "2026-09-15",
+      "term": "6-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 3.16,
+      "indirect_pct": 60.4,
+      "dealer_pct": 24.7
+    },
     {
       "date": "2026-09-14",
       "term": "26-Week",
