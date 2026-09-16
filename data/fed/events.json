@@ -1,5 +1,76 @@
 {
-  "report_date": "2026-09-15",
-  "events": [],
+  "report_date": "2026-09-16",
+  "events": [
+    {
+      "key": "fomc-statement-20260916",
+      "kind": "fomc_statement",
+      "kind_ko": "FOMC 성명",
+      "tier": 1,
+      "date": "2026-09-16",
+      "title": "Federal Reserve issues FOMC statement",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+      "speaker": null,
+      "role": null,
+      "first_seen": "2026-09-16",
+      "fresh": true,
+      "sources": [
+        {
+          "role": "statement",
+          "label": "FOMC 성명 전문",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+          "ok": true,
+          "note": "impersonate=safari",
+          "chars": 9677
+        },
+        {
+          "role": "impl_note",
+          "label": "정책 실행 지침",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a1.htm",
+          "ok": true,
+          "note": "impersonate=safari",
+          "chars": 10991
+        },
+        {
+          "role": "projections",
+          "label": "경제전망 요약(SEP)",
+          "url": "https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20260916.pdf",
+          "ok": true,
+          "note": "impersonate=safari",
+          "chars": 31972
+        },
+        {
+          "role": "presconf",
+          "label": "기자회견 전문",
+          "url": "https://www.federalreserve.gov/mediacenter/files/FOMCpresconf20260916.pdf",
+          "ok": true,
+          "note": "impersonate=safari",
+          "chars": 6045
+        }
+      ]
+    },
+    {
+      "key": "fomc-projections-20260916",
+      "kind": "fomc_projections",
+      "kind_ko": "FOMC 경제전망(SEP)",
+      "tier": 1,
+      "date": "2026-09-16",
+      "title": "Federal Reserve Board and Federal Open Market Committee release economic projections from the September 15-16 FOMC meeting",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916b.htm",
+      "speaker": null,
+      "role": null,
+      "first_seen": "2026-09-16",
+      "fresh": true,
+      "sources": [
+        {
+          "role": "primary",
+          "label": "FOMC 경제전망(SEP)",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916b.htm",
+          "ok": true,
+          "note": "impersonate=safari",
+          "chars": 9175
+        }
+      ]
+    }
+  ],
   "diff": null
 }

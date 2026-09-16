@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-09-11",
+  "report_date": "2026-09-16",
   "releases": [
     {
-      "key": "cpi",
-      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "key": "retail-sales",
+      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20400,
-      "path": "releases/cpi.txt"
+      "chars": 20828,
+      "path": "releases/retail-sales.txt"
     }
   ]
 }
