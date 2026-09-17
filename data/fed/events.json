@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-09-16",
+  "report_date": "2026-09-17",
   "events": [
     {
       "key": "fomc-statement-20260916",
@@ -12,7 +12,7 @@
       "speaker": null,
       "role": null,
       "first_seen": "2026-09-16",
-      "fresh": true,
+      "fresh": false,
       "sources": [
         {
           "role": "statement",
@@ -44,7 +44,7 @@
           "url": "https://www.federalreserve.gov/mediacenter/files/FOMCpresconf20260916.pdf",
           "ok": true,
           "note": "impersonate=safari",
-          "chars": 6045
+          "chars": 27282
         }
       ]
     },
@@ -59,7 +59,7 @@
       "speaker": null,
       "role": null,
       "first_seen": "2026-09-16",
-      "fresh": true,
+      "fresh": false,
       "sources": [
         {
           "role": "primary",

@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-09-16",
+  "report_date": "2026-09-17",
   "releases": [
     {
-      "key": "retail-sales",
-      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20828,
-      "path": "releases/retail-sales.txt"
+      "chars": 20172,
+      "path": "releases/claims.txt"
     }
   ]
 }
