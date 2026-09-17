@@ -1,6 +1,6 @@
 {
   "report_date": "2026-09-16",
-  "generated": "2026-09-16 23:43 UTC",
+  "generated": "2026-09-17 00:44 UTC",
   "horizon_days": 10,
   "events": [
     {
@@ -58,48 +58,6 @@
         "주식"
       ],
       "watch": "만기 주간의 거래량과 되돌림"
-    },
-    {
-      "key": "release-industrial-production-20260918",
-      "kind": "release",
-      "name_ko": "산업생산(G.17)",
-      "date": "2026-09-18",
-      "time_et": "09:15",
-      "time_kst": "2026-09-18 22:15",
-      "status": "confirmed",
-      "source": "Federal Reserve 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-new-home-sales-20260924",
-      "kind": "release",
-      "name_ko": "신규주택 판매",
-      "date": "2026-09-24",
-      "time_et": "10:00",
-      "time_kst": "2026-09-24 23:00",
-      "status": "confirmed",
-      "source": "Census 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-michigan-20260925",
-      "kind": "release",
-      "name_ko": "미시간대 소비자심리",
-      "date": "2026-09-25",
-      "time_et": "10:00",
-      "time_kst": "2026-09-25 23:00",
-      "status": "confirmed",
-      "source": "U. Michigan 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
     }
   ],
   "recent_auctions": [
@@ -210,7 +168,8 @@
     "until": null
   },
   "missing": [
-    "fomc"
+    "fomc",
+    "releases"
   ],
   "complete": false
 }
