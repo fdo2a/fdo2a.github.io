@@ -2,11 +2,11 @@
   "KOSPI": {
     "rows": [],
     "latest_date": null,
-    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendDay.naver?bizdate=20260917&sosok=01"
+    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendDay.naver?bizdate=20260918&sosok=01"
   },
   "KOSDAQ": {
     "rows": [],
     "latest_date": null,
-    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendDay.naver?bizdate=20260917&sosok=02"
+    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendDay.naver?bizdate=20260918&sosok=02"
   }
 }

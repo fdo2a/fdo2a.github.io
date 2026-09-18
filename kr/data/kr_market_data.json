@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-09-17",
+  "report_date": "2026-09-18",
   "complete": false,
   "missing": [
     "flows",
@@ -8,12 +8,12 @@
   ],
   "indices": {
     "KOSPI": {
-      "close": 6715.41,
-      "change_pct": -0.04
+      "close": 6894.23,
+      "change_pct": 2.66
     },
     "KOSDAQ": {
-      "close": 822.18,
-      "change_pct": 0.76
+      "close": 827.12,
+      "change_pct": 0.6
     }
   },
   "flows_date": {
