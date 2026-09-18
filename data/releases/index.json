@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-09-17",
+  "report_date": "2026-09-18",
   "releases": [
     {
       "key": "claims",
@@ -8,6 +8,14 @@
       "note": "impersonate=safari",
       "chars": 20172,
       "path": "releases/claims.txt"
+    },
+    {
+      "key": "industrial-production",
+      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 8718,
+      "path": "releases/industrial-production.txt"
     }
   ]
 }

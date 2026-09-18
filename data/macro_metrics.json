@@ -1,7 +1,7 @@
 {
-  "generated": "2026-09-17 23:36 UTC",
-  "report_date": "2026-09-17",
-  "growth_score": -0.426,
+  "generated": "2026-09-18 23:25 UTC",
+  "report_date": "2026-09-18",
+  "growth_score": -0.391,
   "inflation_score": -0.526,
   "growth_diffusion": 0.357,
   "inflation_diffusion": 0.375,
@@ -43,7 +43,7 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.615,
+      "score": -0.51,
       "direction": "악화",
       "strength": "완만",
       "breadth_ko": "다섯 중 다섯이 악화",
@@ -59,20 +59,20 @@
           "previous": 0.58
         },
         {
-          "label_ko": "산업생산",
-          "name": "Industrial Production MoM",
-          "direction": "악화",
-          "strength": "완만",
-          "actual": 0.2,
-          "previous": 0.27
-        },
-        {
           "label_ko": "기존주택 판매",
           "name": "Existing Home Sales",
           "direction": "악화",
           "strength": "미미",
           "actual": 3980000.0,
           "previous": 4060000.0
+        },
+        {
+          "label_ko": "산업생산",
+          "name": "Industrial Production MoM",
+          "direction": "보합",
+          "strength": "미미",
+          "actual": 0.02,
+          "previous": 0.2
         }
       ]
     },
@@ -141,7 +141,7 @@
   },
   "axis_scores": {
     "Labor": 0.217,
-    "Activity": -0.615,
+    "Activity": -0.51,
     "Consumption": -0.879,
     "Inflation": -0.526
   },
@@ -255,16 +255,16 @@
       "name": "Industrial Production MoM",
       "label_ko": "산업생산",
       "axis": "Activity",
-      "direction": "악화",
-      "strength": "완만",
+      "direction": "보합",
+      "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.771,
-      "signed_z": -0.771,
-      "actual": 0.2,
-      "previous": 0.27,
-      "ref_period": "2026-07-01",
-      "is_new": false
+      "momentum_z": -0.248,
+      "signed_z": -0.248,
+      "actual": 0.02,
+      "previous": 0.2,
+      "ref_period": "2026-08-01",
+      "is_new": true
     },
     {
       "name": "Durable Goods Orders MoM",
@@ -480,7 +480,8 @@
   "new_releases": [
     "Initial Jobless Claims",
     "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims"
+    "Continuing Jobless Claims",
+    "Industrial Production MoM"
   ],
   "headline_releases": [
     {
@@ -518,6 +519,26 @@
         }
       ],
       "components": []
+    },
+    {
+      "key": "industrial-production",
+      "label": "산업생산(G.17)",
+      "tier": 2,
+      "agency": "Federal Reserve",
+      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "primary": "Industrial Production MoM",
+      "max_abs_z": 0.248,
+      "indicators": [
+        {
+          "name": "Industrial Production MoM",
+          "axis": "Activity",
+          "actual": 0.02,
+          "previous": 0.2,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.248
+        }
+      ],
+      "components": []
     }
   ],
   "last_seen": {
@@ -550,8 +571,8 @@
       0.27
     ],
     "Industrial Production MoM": [
-      "2026-07-01",
-      0.2
+      "2026-08-01",
+      0.02
     ],
     "Durable Goods Orders MoM": [
       "2026-07-01",

@@ -1,11 +1,27 @@
 {
-  "generated": "2026-09-17 23:36 UTC",
-  "report_date": "2026-09-17",
+  "generated": "2026-09-18 23:25 UTC",
+  "report_date": "2026-09-18",
   "horizon_sessions": 20,
   "min_sample": 20,
-  "scored": 0,
+  "scored": 1,
   "sufficient": false,
-  "hit_rate": null,
-  "by_asset": {},
-  "changes": []
+  "hit_rate": 100.0,
+  "by_asset": {
+    "energy": {
+      "scored": 1,
+      "hits": 1,
+      "hit_rate": 100.0,
+      "avg_score": 8.699
+    }
+  },
+  "changes": [
+    {
+      "date": "2026-08-20",
+      "asset": "energy",
+      "grade": 1,
+      "benchmark": "CL=F",
+      "forward": 8.699,
+      "score": 8.699
+    }
+  ]
 }
