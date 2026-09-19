@@ -69,6 +69,44 @@ footer.disclaimer { color: #8B95A1; font-size: 12.5px; line-height: 1.6; margin-
   th:first-child, td:first-child { white-space: normal; }
   th:last-child, td:last-child { white-space: normal; }
 }
+
+/* readability-v5 */
+.card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
+.card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
+.card { padding: 20px 22px; }
+h1 { max-width: 34em; }
+h2 { line-height: 1.45; margin-bottom: 14px; }
+h3, h4 { line-height: 1.45; }
+.caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
+table { font-variant-numeric: tabular-nums; }
+section { scroll-margin-top: 20px; }
+.reading-map { display: flex; align-items: center; gap: 8px; overflow-x: auto;
+  margin: -2px 0 20px; padding: 10px 2px 4px; scrollbar-width: none; }
+.reading-map::-webkit-scrollbar { display: none; }
+.reading-map-label { flex: 0 0 auto; color: #8B95A1; font-size: 12px; font-weight: 700; }
+.reading-map a { flex: 0 0 auto; color: #4E5968; background: #fff; border: 1px solid #E5E8EB;
+  border-radius: 9999px; padding: 6px 11px; font-size: 12.5px; font-weight: 700;
+  line-height: 1.2; text-decoration: none; }
+.reading-map a:first-of-type { color: #0064FF; border-color: #B9D5FF; background: #F5F9FF; }
+.reading-map a:focus-visible { outline: 2px solid #0064FF; outline-offset: 2px; }
+@media (max-width: 560px) {
+  .card p, .doc p, .panel p, p { line-height: 1.72; margin-bottom: 13px; }
+  .card { padding: 16px 16px; }
+  .reading-map { margin-bottom: 16px; }
+}
+.box-label { display: block; width: fit-content; margin-bottom: 6px; }
+.p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
+
+@media (min-width: 1024px) {
+  .card p, .doc p, .panel p, p,
+  .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
+  .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
+  .doc li { font-size: 17px; line-height: 1.8; }
+  h1 { font-size: 25px; max-width: 30em; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 17px; }
+}
 </style>
 <!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
 </head>
@@ -79,19 +117,22 @@ footer.disclaimer { color: #8B95A1; font-size: 12.5px; line-height: 1.6; margin-
 <section class="card headline-card">
 <h1>AI 속도조절 경고와 FOMC 인상 사이, 유가 급락에도 S&amp;P500은 버텼다</h1>
 <p>2026-09-14부터 2026-09-18까지 5거래일 동안 미국 증시는 AI 속도조절 경고로 문을 열어 FOMC의 25bp 인상을 지나 유가 급락으로 닫았다. 이번 주는 5거래일을 커버하지만 발행본은 나흘 치만 나왔고, 2026-09-17에는 그날치 리포트가 없었다.</p>
-<p>그 사이 10년물은 두 차례나 이 리포트가 추적한 기간 중 최고치를 새로 썼고, 달러는 FOMC 이후 강세로 돌아섰으며, 주 후반에는 WTI가 하루 만에 6.32% 급락했다. 그런데도 S&amp;P500은 주간 기준 -0.08%로 사실상 제자리였다.</p>
+<p>그 사이 10년물은 두 차례나 이 리포트가 추적한 기간 중 최고치를 새로 썼고, 달러는 FOMC 이후 강세로 돌아섰으며, 주 후반에는 유가가 하루 만에 6.32% 급락했다. 그런데도 S&amp;P500은 주간 기준 -0.08%로 사실상 제자리였다.</p>
 </section>
+<!-- reading-map-v1 -->
+<nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#read-1">한 주의 서사</a><a href="#read-2">성과표</a><a href="#read-3">복기</a><a href="#read-4">다음 기간에 볼 것</a></nav>
 
-<section>
+
+<section id="read-1">
 <h2>한 주의 서사</h2>
 <p>2026-09-14 월요일 장이 열리기 전에 앤트로픽 CEO 다리오 아모데이가 AI 속도조절을 경고하는 발언을 내놓으면서 반도체·메모리·AI 인프라가 먼저 흔들렸다. 나스닥은 장중 한때 시가 대비 1.2% 반등했다가 되밀려 -0.56%로 마감했고, AI 인프라 관련주 중에서는 코히런트가 -12.73%, 루멘텀이 -9.92%, GE 버노바가 -8.62% 급락했다. 같은 날 10년물은 4.961%로 마감해 이 리포트가 추적한 두 해 이력 가운데 이보다 높았던 날이 하루뿐인 자리까지 올라섰다.</p>
-<p>다음 날인 2026-09-15에는 중동 공급 우려로 WTI가 하루 만에 3.98% 뛰어 105.43달러로 올라서며 10년물을 4.996%까지 밀어올렸다 — 이 리포트가 추적한 기간을 통틀어 가장 높은 자리였다. 이튿날인 2026-09-16 위원회는 실제로 기준금리를 25bp 올려 목표 범위를 3.75~4.00%로 높였다. 그 여파로 2년물이 6.4bp, 10년물이 0.8bp 더 오르는 동안 달러지수(DXY)는 0.69% 뛰어 100.34를 찍었고, WTI는 3.62% 밀려 102.00달러로 내려앉았으며 S&amp;P500은 사흘째 하락해 7,551.81로 마감했다.</p>
-<p>2026-09-17에는 그날치 발행본이 없다. 그래도 집계 원장에는 그날 종가가 남아 있다 — S&amp;P500은 7,637.76으로 올라서 전날의 낙폭을 되돌렸고, 10년물은 4.947%로 내려섰으며, WTI는 101.08달러로 살짝 밀렸고 금은 4,385.70달러로 뛰었다. 이 흐름은 다음 날 유가에서 더 크게 터졌다. 2026-09-18 WTI는 전일 대비 6.32% 급락해 95.47달러로 마감했는데, 낙폭 대부분이 정규장 개장 전 이른 시간대에 이미 반영돼 있었다. 그런데도 나스닥과 S&amp;P500은 오르고 다우와 러셀2000만 내려, 유가 충격이 지수 전반을 끌어내리지는 못했다.</p>
+<p>다음 날인 2026-09-15에는 중동 공급 우려로 유가가 하루 만에 3.98% 뛰어 105.43달러로 올라서며 10년물을 4.996%까지 밀어올렸다 — 이 리포트가 추적한 기간을 통틀어 가장 높은 자리였다. 이튿날인 2026-09-16 위원회는 실제로 기준금리를 25bp 올려 목표 범위를 3.75~4.00%로 높였다. 그 여파로 단기 금리가 6.4bp, 장기 금리가 0.8bp 더 오르는 동안 달러지수(DXY)는 0.69% 뛰어 100.34를 찍었고, 유가는 3.62% 밀려 102.00달러로 내려앉았으며 S&amp;P500은 사흘째 하락해 7,551.81로 마감했다.</p>
+<p>2026-09-17에는 그날치 발행본이 없다. 그래도 집계 원장에는 그날 종가가 남아 있다 — S&amp;P500은 7,637.76으로 올라서 전날의 낙폭을 되돌렸고, 10년물은 4.947%로 내려섰으며, 유가는 101.08달러로 살짝 밀렸고 금은 4,385.70달러로 뛰었다. 이 흐름은 다음 날 유가에서 더 크게 터졌다. 2026-09-18 유가는 전일 대비 6.32% 급락해 95.47달러로 마감했는데, 낙폭 대부분이 정규장 개장 전 이른 시간대에 이미 반영돼 있었다. 그런데도 나스닥과 S&amp;P500은 오르고 다우와 러셀2000만 내려, 유가 충격이 지수 전반을 끌어내리지는 못했다.</p>
 <p>월요일 가장 크게 흔들렸던 AI 인프라·메모리 쪽도 주 후반에는 색깔이 바뀌었다. 2026-09-18에는 메모리·스토리지에서 시게이트가 6.93%, SK하이닉스가 6.42%, 마이크론이 3.92%, 웨스턴디지털이 4.13% 오르며 동반 상승했고, AI 인프라 5종목도 이날 모두 올랐다. 한 주 전체로 보면 메모리 바스켓은 1.86%, AI 인프라 바스켓은 0.61% 올라 마감해, 월요일의 속도조절 경고가 한 주 내내 이어지지는 않았다.</p>
 <p>그 사이 채권시장이 던진 질문 — 2년물이 10년물보다 계속 더 크게 오르는가 — 은 한 주 내내 그렇다는 쪽으로 답이 쌓였다. 이번 주 2년물은 9.9bp, 10년물은 2.1bp 오른 반면 30년물은 오히려 2.7bp 내려, 커브는 2s10s 기준 33.1bp에서 25.3bp로 7.8bp 더 평평해졌다.</p>
 </section>
 
-<section>
+<section id="read-2">
 <h2>성과표</h2>
 <h3>지수</h3>
 <div class="tbl-scroll"><table>
@@ -101,8 +142,8 @@ footer.disclaimer { color: #8B95A1; font-size: 12.5px; line-height: 1.6; margin-
 <tr><td>S&amp;P 500</td><td>7,650.50</td><td class="neg">-0.08%</td></tr>
 <tr><td>Dow</td><td>51,682.64</td><td class="neg">-1.69%</td></tr>
 <tr><td>Russell 2000</td><td>2,860.40</td><td class="neg">-1.50%</td></tr>
-<tr><td>S&amp;P 500 Growth</td><td>140.13</td><td class="pos">+0.59%</td></tr>
-<tr><td>S&amp;P 500 Value</td><td>231.89</td><td class="neg">-1.46%</td></tr>
+<tr><td>Growth</td><td>140.13</td><td class="pos">+0.59%</td></tr>
+<tr><td>Value</td><td>231.89</td><td class="neg">-1.46%</td></tr>
 </tbody>
 </table></div>
 <div class="caption">Growth·Value는 S&amp;P 500 성장주·가치주 지수. 종가는 2026-09-18 기준.</div>
@@ -169,7 +210,7 @@ footer.disclaimer { color: #8B95A1; font-size: 12.5px; line-height: 1.6; margin-
 <div class="caption">메모리 바스켓: 마이크론·웨스턴디지털·시게이트·삼성전자·SK하이닉스. AI 인프라 바스켓: 마벨·코히런트·루멘텀·GE 버노바·버티브. 종가는 2026-09-18 기준.</div>
 </section>
 
-<section>
+<section id="read-3">
 <h2>복기</h2>
 <p>이번 주 복기에서 먼저 봐야 할 것은 두 개의 미스다. 달러를 소폭 숏으로 잡은 포지션은 FOMC가 실제로 25bp를 올리면서 빗나갔다 — 이번 주 DXY는 오히려 1.13% 올라 실현 수익률이 포지션과 정반대로 움직였다. 원자재·에너지를 소폭확대로 잡은 포지션도 빗나갔다. WTI가 주간 기준 4.52% 내렸기 때문이다.</p>
 <p>두 미스의 성격은 다르다. 에너지 쪽은 트리거 설계 자체가 틀린 사례가 아니다. WTI 5일 수익률이 -4.58%로 축소 기준을 넘어서자 2026-09-18에 원자재·에너지 등급을 소폭확대에서 중립으로 실제로 낮췄고, 트리거는 의도한 대로 작동했다. 다만 그 확인이 주 후반에야 나온 탓에, 한 주 전체로 계산한 실현 수익률에는 이미 낙폭 대부분이 반영된 뒤였다. 달러 쪽은 다르다. 이번 주 동안 환율 관련 트리거는 하나도 움직이지 않았고, 그중 하나 — 달러지수가 종가 기준 101.0을 넘으면 숏 비중을 줄이는 조건 — 는 벌써 23거래일째 잠들어 있다. FOMC라는 뚜렷한 재료가 나온 주에도 반응하지 않았다면, 이 트리거의 문턱 자체가 너무 빡빡하다고 봐야 한다.</p>
@@ -179,7 +220,7 @@ footer.disclaimer { color: #8B95A1; font-size: 12.5px; line-height: 1.6; margin-
 <p>주간 성적을 누적해 보는 롤업은 아직 표본 부족이다. 최근 4주 롤업과 최근 12주 롤업 모두 집계된 주가 3건뿐이라 표본 부족으로 표시돼 있고, 이번 주를 포함한 전체 누적 가중 점수는 -0.07이다. 표본이 더 쌓이기 전에는 이 누적치에 의미를 두지 않는다.</p>
 </section>
 
-<section>
+<section id="read-4">
 <h2>다음 기간에 볼 것</h2>
 <p>첫째는 커브다. 2년물이 10년물보다 더 크게 오르는 흐름이 이번 주 내내 이어졌고 2s10s는 25.3bp까지 좁혀졌다. 이 흐름이 다음 주에도 이어져 스프레드가 더 좁혀지는지, 아니면 FOMC의 충격이 소화되며 되돌리는지가 다음 확인 지점이다.</p>
 <p>둘째는 트리거 문턱이다. 채권·환율·귀금속에 걸린 트리거 다섯이 23거래일째 잠들어 있다. 30년물 5.4%·5.05%, 달러지수 종가 101.0, 5s30s 5거래일 변화 15bp가 그 구체적인 문턱인데, FOMC라는 이벤트가 있었던 이번 주에도 하나도 건드리지 못했다는 것은 다음 기간에 이 문턱들을 다시 손볼 근거가 쌓였다는 뜻이다.</p>
