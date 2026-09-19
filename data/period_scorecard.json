@@ -1,101 +1,101 @@
 {
-  "start_date": "2026-09-08",
-  "end_date": "2026-09-11",
-  "key": "2026-W37",
+  "start_date": "2026-09-14",
+  "end_date": "2026-09-18",
+  "key": "2026-W38",
   "assets": {
     "equities": {
       "grade": 0,
-      "realized": -0.7983,
+      "realized": -0.0846,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     },
     "bonds": {
       "grade": -1,
-      "realized": -19.1,
+      "realized": -2.1,
       "verdict": "적중",
       "score": 1.0,
       "segments": [
         {
           "grade": -1,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     },
     "fx": {
       "grade": -1,
-      "realized": -0.0625,
-      "verdict": "무판정",
+      "realized": 1.1302,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
           "grade": -1,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     },
     "energy": {
       "grade": 1,
-      "realized": 9.6141,
-      "verdict": "적중",
-      "score": 1.0,
+      "realized": -4.5204,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
           "grade": 1,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     },
     "metals": {
       "grade": 1,
-      "realized": -1.9477,
-      "verdict": "무판정",
+      "realized": 0.59,
+      "verdict": "적중",
+      "score": 1.0,
       "segments": [
         {
           "grade": 1,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     },
     "memory": {
-      "grade": 1,
-      "realized": 0.08,
-      "verdict": "미스",
-      "score": -1.0,
+      "grade": 0,
+      "realized": 1.9492,
+      "verdict": "중립",
       "segments": [
         {
-          "grade": 1,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "grade": 0,
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     },
     "ai_infra": {
-      "grade": 1,
-      "realized": 3.2802,
-      "verdict": "미스",
-      "score": -1.0,
+      "grade": 0,
+      "realized": 0.6933,
+      "verdict": "중립",
       "segments": [
         {
-          "grade": 1,
-          "from": "2026-09-08",
-          "to": "2026-09-11"
+          "grade": 0,
+          "from": "2026-09-14",
+          "to": "2026-09-18"
         }
       ]
     }
   },
   "judged": 4,
-  "neutral": 1,
+  "neutral": 3,
   "total": 7,
-  "neutral_share": 0.1429,
+  "neutral_share": 0.4286,
   "weighted": 0.0,
   "span": "weekly",
   "regime": {
@@ -105,28 +105,85 @@
       "growth": -1,
       "inflation": -1,
       "since": "2026-09-01",
-      "thesis": "PPI·실업수당·기존주택 판매를 반영한 성장 -0.489, 물가 -0.381로 연착륙 국면을 유지한다. PPI 상승과 유가 급등의 지속 여부를 다음 물가 발표에서 확인한다."
+      "thesis": "신규 발표가 없어 축 점수가 어제와 동일하다(성장 -0.489, 물가 -0.526). 연착륙 국면을 그대로 유지한다."
     },
     "note": "기간 중 신규 발표 없음"
   },
   "triggers": {
-    "dormant": [],
+    "dormant": [
+      {
+        "asset": "bonds",
+        "direction": "increase",
+        "metric": "ust30y",
+        "op": ">",
+        "value": 5.4,
+        "days": 23
+      },
+      {
+        "asset": "bonds",
+        "direction": "increase",
+        "metric": "spread_5s30s_chg_5d_bp",
+        "op": ">",
+        "value": 15,
+        "days": 23
+      },
+      {
+        "asset": "bonds",
+        "direction": "decrease",
+        "metric": "ust30y",
+        "op": "<",
+        "value": 5.05,
+        "days": 23
+      },
+      {
+        "asset": "bonds",
+        "direction": "decrease",
+        "metric": null,
+        "op": null,
+        "value": null,
+        "days": 23
+      },
+      {
+        "asset": "fx",
+        "direction": "increase",
+        "metric": "dxy_pct_20d",
+        "op": "<",
+        "value": -3.0,
+        "days": 23
+      },
+      {
+        "asset": "fx",
+        "direction": "decrease",
+        "metric": "dxy_close",
+        "op": ">",
+        "value": 101.0,
+        "days": 23
+      },
+      {
+        "asset": "metals",
+        "direction": "decrease",
+        "metric": "dxy_close",
+        "op": ">",
+        "value": 101.0,
+        "days": 23
+      }
+    ],
     "stale_days": 20
   },
   "rollup": {
     "last_4": {
-      "periods": 2,
-      "weighted": -0.1,
+      "periods": 3,
+      "weighted": -0.0667,
       "insufficient": true
     },
     "last_12": {
-      "periods": 2,
-      "weighted": -0.1,
+      "periods": 3,
+      "weighted": -0.0667,
       "insufficient": true
     },
     "all": {
-      "periods": 2,
-      "weighted": -0.1,
+      "periods": 3,
+      "weighted": -0.0667,
       "insufficient": false
     }
   },
