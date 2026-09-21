@@ -54,9 +54,9 @@ def main(outdir: str, assetdir: str = "kr/assets"):
 
     # 수급 (신선도) — 코스피·코스닥
     flows_out = {}
-    for mkt, sosok in (("KOSPI", "01"), ("KOSDAQ", "02")):
+    for mkt in ("KOSPI", "KOSDAQ"):
         try:
-            parsed = flows.parse_market_flows(sources.fetch_market_flows(sosok, bizdate))
+            parsed = flows.build_market_flows(sources.fetch_market_flows(mkt, bizdate))
             fresh = flows.flows_freshness(parsed["latest_date"], report_date,
                                           provisional=(parsed["latest_date"] == report_date))
             flows_out[mkt] = {**parsed, **fresh}
@@ -108,7 +108,9 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     # 거래대금 상위 (ETF 정규화) — 단위 백만원
     try:
         top_value = normalize_top_value(sources.fetch_top_value("0"), top_n=10)
-    except Exception:
+    except Exception as e:
+        # 빈 결과도 예외로 올라온다 — 조용한 [] 가 2026-09-10~09-21 발행을 막았다.
+        print(f"top_value failed: {e}", file=sys.stderr)
         top_value = []
 
     # 섹터 멀티기간 수익률 (대표 ETF, yfinance) — 바 차트용

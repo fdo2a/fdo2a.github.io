@@ -6,7 +6,7 @@
 
 ## STEP 0 — 커밋된 KR 데이터 확인 (먼저)
 
-`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr/assets/kr_flows_intraday_[DATE].png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr/assets/kr_charts_[DATE].png`(있는 것은 `kr/data/kr_charts_manifest.json` 이 정본) — 전부 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략).
+`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr/assets/kr_flows_intraday_[DATE].png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr/assets/kr_charts_[DATE].png`(있는 것은 `kr/data/kr_charts_manifest.json` 이 정본) — 전부 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략). **2026-09-17 네이버 SPA 개편으로 장중 수급·프로그램 매매는 소스가 폐지됐다 — 상시 결측이니 §5·§6 의 해당 서브블록을 빼고 쓰고, 수집을 다시 돌려도 안 돌아온다.**
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
 2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices·flows·top_value·sectors)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §6 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.

@@ -1,22 +1,47 @@
-import os
-from kr.flows import parse_market_flows, flows_freshness
-
-FIX = os.path.join(os.path.dirname(__file__), "fixtures", "flows_kospi.html")
+from kr.flows import build_market_flows, flows_freshness, parse_flows_row
 
 
-def _html():
-    with open(FIX, encoding="utf-8") as f:
-        return f.read()
+def _payload(bizdate, personal, foreign, inst):
+    return {"bizdate": bizdate, "personalValue": personal,
+            "foreignValue": foreign, "institutionalValue": inst}
 
 
-def test_parse_market_flows_reads_rows_and_latest():
-    d = parse_market_flows(_html())
-    assert d["latest_date"] == "2024-06-07"
-    top = d["rows"][0]
-    assert top["individual"] == -4715
-    assert top["foreign"] == 2873
-    assert top["institution"] == 1582
-    assert len(d["rows"]) == 3
+def test_parse_flows_row_reads_signed_thousands():
+    r = parse_flows_row(_payload("20260916", "-12,061", "-16,726", "+12,251"))
+    assert r == {"date": "2026-09-16", "individual": -12061,
+                 "foreign": -16726, "institution": 12251}
+
+
+def test_parse_flows_row_drops_non_trading_day():
+    # 휴장일도 200 을 주되 세 주체가 전부 0 이다 — 거래일로 세면 안 된다.
+    assert parse_flows_row(_payload("20260920", "0", "0", "0")) is None
+
+
+def test_parse_flows_row_drops_malformed_bizdate():
+    assert parse_flows_row(_payload("", "-1", "2", "3")) is None
+    assert parse_flows_row({}) is None
+    assert parse_flows_row(None) is None
+
+
+def test_build_market_flows_sorts_latest_first():
+    d = build_market_flows([
+        _p2("2026-09-16", -12061, -16726, 12251),
+        _p2("2026-09-18", -36359, 4486, 15322),
+        _p2("2026-09-17", 3020, -22546, 2480),
+    ])
+    assert d["latest_date"] == "2026-09-18"
+    assert [r["date"] for r in d["rows"]] == ["2026-09-18", "2026-09-17", "2026-09-16"]
+    assert d["rows"][0]["foreign"] == 4486
+
+
+def test_build_market_flows_empty():
+    d = build_market_flows([])
+    assert d == {"rows": [], "latest_date": None}
+
+
+def _p2(date, individual, foreign, institution):
+    return {"date": date, "individual": individual,
+            "foreign": foreign, "institution": institution}
 
 
 def test_freshness_same_day_confirmed():

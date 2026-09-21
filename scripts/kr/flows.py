@@ -1,36 +1,40 @@
-"""Naver 시장 수급(investorDealTrendDay) 파싱 + 신선도 판정.
+"""시장 수급 파싱 + 신선도 판정.
 
-주의: 이 엔드포인트는 유효한 bizdate가 있어야 데이터 행을 반환한다(빈 bizdate=헤더만).
+소스는 m.stock `/api/index/{code}/trend?bizdate=` 다. 레거시 investorDealTrendDay 는
+2026-09-17 폐지(410). 한 호출이 하루치 한 행만 주므로 `sources.fetch_market_flows` 가
+날짜를 거슬러 모으고, 여기서는 행 하나를 표준형으로 바꾸는 일만 한다.
+
 당일 확정치가 발행 시점(18:00)에 없을 수 있으므로 최신 가용일을 감지해 라벨링한다.
 """
-import re
-from bs4 import BeautifulSoup
-
-_DATE = re.compile(r"^(\d{2})\.(\d{2})\.(\d{2})$")
 
 
-def _to_int(s: str) -> int:
+def _to_int(s) -> int:
     try:
-        return int(s.replace(",", ""))
-    except ValueError:
+        return int(str(s).replace(",", ""))
+    except (TypeError, ValueError):
         return 0
 
 
-def parse_market_flows(html: str) -> dict:
-    soup = BeautifulSoup(html, "html.parser")
-    table = soup.select_one("table.type_1")
-    rows = []
-    if table:
-        for tr in table.select("tr"):
-            cells = [c.get_text(strip=True) for c in tr.select("td")]
-            if len(cells) >= 4 and _DATE.match(cells[0]):
-                y, m, d = _DATE.match(cells[0]).groups()
-                rows.append({
-                    "date": f"20{y}-{m}-{d}",
-                    "individual": _to_int(cells[1]),
-                    "foreign": _to_int(cells[2]),
-                    "institution": _to_int(cells[3]),
-                })
+def parse_flows_row(payload: dict):
+    """수급 응답 한 건 → {date, individual, foreign, institution}. 빈 날이면 None.
+
+    휴장일·미래 일자도 200 을 주되 세 주체가 전부 0 이다. 0 을 데이터로 받으면 그 날이
+    '수급 0원'인 거래일로 집계에 섞여 들어가므로 여기서 떨어뜨린다.
+    """
+    bizdate = str((payload or {}).get("bizdate") or "")
+    if len(bizdate) != 8 or not bizdate.isdigit():
+        return None
+    vals = {"individual": _to_int(payload.get("personalValue")),
+            "foreign": _to_int(payload.get("foreignValue")),
+            "institution": _to_int(payload.get("institutionalValue"))}
+    if not any(vals.values()):
+        return None
+    return {"date": f"{bizdate[:4]}-{bizdate[4:6]}-{bizdate[6:]}", **vals}
+
+
+def build_market_flows(rows: list) -> dict:
+    """행 목록 → 레거시 parse_market_flows 와 같은 모양. 최신일이 rows[0]."""
+    rows = sorted([r for r in rows if r], key=lambda r: r["date"], reverse=True)
     return {"rows": rows, "latest_date": rows[0]["date"] if rows else None}
 
 

@@ -1,7 +1,7 @@
-import os
-from kr.sources import parse_top_value, downsample_30min
+import pytest
 
-FIX = os.path.join(os.path.dirname(__file__), "fixtures", "top_value.html")
+from kr import sources
+from kr.sources import downsample_30min
 
 
 def test_downsample_30min_keeps_anchors_and_close():
@@ -18,11 +18,95 @@ def test_downsample_30min_keeps_anchors_and_close():
     assert pts[-1] == {"t": "15:18", "close": 6793.11}  # 종가 보장
 
 
-def test_parse_top_value():
-    with open(FIX, encoding="utf-8") as f:
-        rows = parse_top_value(f.read())
-    assert rows[0]["name"] == "KODEX 200선물인버스2X"
-    assert rows[0]["value"] == 900
-    assert rows[0]["volume"] == 100000
-    assert rows[1]["name"] == "모나리자"
-    assert len(rows) == 2
+def _stock(code, name, sosok, value, volume, ratio):
+    return {"itemCode": code, "stockName": name, "sosok": sosok,
+            "accumulatedTradingValue": value, "accumulatedTradingVolume": volume,
+            "fluctuationsRatio": ratio}
+
+
+def _fake_pages(monkeypatch, pages):
+    """marketValue 응답을 페이지 번호로 흉내낸다. 범위를 넘으면 빈 목록."""
+    def fake(url, timeout=12):
+        page = int(url.split("page=")[1].split("&")[0])
+        return {"stocks": pages[page - 1] if page <= len(pages) else []}
+    monkeypatch.setattr(sources, "fetch_json", fake)
+
+
+def test_fetch_top_value_sorts_by_value_and_filters_market(monkeypatch):
+    _fake_pages(monkeypatch, [[
+        _stock("1", "삼성전자", "0", "6,043,124", "22,223,579", "5.36"),
+        _stock("2", "알테오젠", "1", "9,999,999", "1", "1.0"),   # 코스닥 — 제외
+        _stock("3", "LG에너지솔루션", "0", "812,876", "1,000", "-2.34"),
+    ]])
+    rows = sources.fetch_top_value("0")
+    assert [r["name"] for r in rows] == ["삼성전자", "LG에너지솔루션"]
+    assert rows[0]["value"] == 6043124 and rows[0]["volume"] == 22223579
+    assert rows[1]["change_pct"] == -2.34
+
+
+def test_fetch_top_value_pages_until_no_new_codes(monkeypatch):
+    page = [_stock("1", "삼성전자", "0", "100", "1", "0.1")]
+    _fake_pages(monkeypatch, [page, page, page])   # 2쪽부터 새 종목 없음
+    rows = sources.fetch_top_value("0")
+    assert len(rows) == 1
+
+
+def test_fetch_top_value_raises_when_empty(monkeypatch):
+    """SPA 껍데기가 조용히 [] 를 내던 실패 — 이제 예외로 올린다."""
+    _fake_pages(monkeypatch, [[]])
+    with pytest.raises(RuntimeError, match="거래대금"):
+        sources.fetch_top_value("0")
+
+
+def test_fetch_market_flows_walks_back_over_holidays(monkeypatch):
+    seen = []
+
+    def fake(url, timeout=12):
+        bizdate = url.split("bizdate=")[1]
+        seen.append(bizdate)
+        if bizdate in ("20260920", "20260919"):       # 주말 — 전부 0
+            return {"bizdate": bizdate, "personalValue": "0",
+                    "foreignValue": "0", "institutionalValue": "0"}
+        return {"bizdate": bizdate, "personalValue": "-1",
+                "foreignValue": "+2", "institutionalValue": "3"}
+    monkeypatch.setattr(sources, "fetch_json", fake)
+    rows = sources.fetch_market_flows("KOSPI", "20260921", days=2)
+    assert [r["date"] for r in rows] == ["2026-09-21", "2026-09-18"]
+    assert seen == ["20260921", "20260920", "20260919", "20260918"]
+
+
+def test_fetch_market_flows_raises_when_all_blank(monkeypatch):
+    monkeypatch.setattr(sources, "fetch_json", lambda url, timeout=12: {
+        "bizdate": "20260921", "personalValue": "0",
+        "foreignValue": "0", "institutionalValue": "0"})
+    with pytest.raises(RuntimeError, match="수급"):
+        sources.fetch_market_flows("KOSPI", "20260921", days=1, max_back=3)
+
+
+def test_retired_sources_raise_without_network():
+    for call in (lambda: sources.fetch_intraday_flows("01", "20260921"),
+                 lambda: sources.fetch_program_flows("01", "20260921"),
+                 lambda: sources.fetch_themes()):
+        with pytest.raises(RuntimeError, match="폐지"):
+            call()
+
+
+def test_fetch_index_raises_on_blank_close(monkeypatch):
+    """지수도 빈 응답을 0 으로 통과시키지 않는다."""
+    monkeypatch.setattr(sources, "fetch_json",
+                        lambda url, timeout=12: {"closePrice": "0", "fluctuationsRatio": "0"})
+    with pytest.raises(RuntimeError, match="지수"):
+        sources.fetch_index("KOSPI")
+
+
+def test_fetch_index_reads_close_and_ratio(monkeypatch):
+    monkeypatch.setattr(sources, "fetch_json",
+                        lambda url, timeout=12: {"closePrice": "7,007.72",
+                                                 "fluctuationsRatio": "1.65"})
+    assert sources.fetch_index("KOSPI") == {"close": 7007.72, "change_pct": 1.65}
+
+
+def test_fetch_industry_raises_when_empty(monkeypatch):
+    monkeypatch.setattr(sources, "fetch_json", lambda url, timeout=12: {"groups": []})
+    with pytest.raises(RuntimeError, match="업종"):
+        sources.fetch_industry()
