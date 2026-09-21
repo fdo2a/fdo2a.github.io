@@ -1,4 +1,59 @@
 {
+ "ip_yoy": {
+  "2026-08": {
+   "metric_id": "ip_yoy",
+   "label_ko": "산업생산 전년 대비",
+   "period": "2026-08",
+   "value": 5.2,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-ip-2026-08"
+  }
+ },
+ "fai_cum_yoy": {
+  "2026-08": {
+   "metric_id": "fai_cum_yoy",
+   "label_ko": "고정자산투자 누계 전년 대비",
+   "period": "2026-08",
+   "value": -7.2,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-fai-2026-08"
+  }
+ },
+ "property_inv_cum_yoy": {
+  "2026-08": {
+   "metric_id": "property_inv_cum_yoy",
+   "label_ko": "부동산개발투자 누계 전년 대비",
+   "period": "2026-08",
+   "value": -19.9,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-property-2026-08"
+  }
+ },
+ "retail_yoy": {
+  "2026-08": {
+   "metric_id": "retail_yoy",
+   "label_ko": "소매판매 전년 대비",
+   "period": "2026-08",
+   "value": 0.4,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-retail-2026-08"
+  }
+ },
+ "retail_cum_yoy": {
+  "2026-08": {
+   "metric_id": "retail_cum_yoy",
+   "label_ko": "소매판매 누계 전년 대비",
+   "period": "2026-08",
+   "value": 1.1,
+   "unit": "%",
+   "kind": "change",
+   "source_key": "nbs-retail-2026-08"
+  }
+ },
  "cpi_yoy": {
   "2026-08": {
    "metric_id": "cpi_yoy",
@@ -96,61 +151,6 @@
    "unit": "%",
    "kind": "level",
    "source_key": "nbs-pmi-2026-08"
-  }
- },
- "ip_yoy": {
-  "2026-07": {
-   "metric_id": "ip_yoy",
-   "label_ko": "산업생산 전년 대비",
-   "period": "2026-07",
-   "value": 4.5,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-ip-2026-07"
-  }
- },
- "fai_cum_yoy": {
-  "2026-07": {
-   "metric_id": "fai_cum_yoy",
-   "label_ko": "고정자산투자 누계 전년 대비",
-   "period": "2026-07",
-   "value": -6.7,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-fai-2026-07"
-  }
- },
- "property_inv_cum_yoy": {
-  "2026-07": {
-   "metric_id": "property_inv_cum_yoy",
-   "label_ko": "부동산개발투자 누계 전년 대비",
-   "period": "2026-07",
-   "value": -19.2,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-property-2026-07"
-  }
- },
- "retail_yoy": {
-  "2026-07": {
-   "metric_id": "retail_yoy",
-   "label_ko": "소매판매 전년 대비",
-   "period": "2026-07",
-   "value": 0.6,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-retail-2026-07"
-  }
- },
- "retail_cum_yoy": {
-  "2026-07": {
-   "metric_id": "retail_cum_yoy",
-   "label_ko": "소매판매 누계 전년 대비",
-   "period": "2026-07",
-   "value": 1.2,
-   "unit": "%",
-   "kind": "change",
-   "source_key": "nbs-retail-2026-07"
   }
  }
 }
