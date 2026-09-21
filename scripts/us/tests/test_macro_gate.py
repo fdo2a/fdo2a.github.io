@@ -44,6 +44,9 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
     dirs = DIRS if dirs is None else dirs
     rec = ''.join(f'<p data-reconcile="{k}">구조적으로는 다르나 스윙 구간에서는…</p>'
                   for k in reconcile)
+    # 2026-09-19: 스탠스 해소 문단이 없어지고 반증조건이 그 자리를 맡는다
+    fals = ('<p data-falsifier="1">9월 FOMC가 동결을 선택하거나 성명에서 인하 신호를 '
+            '거둬들이면 이 판단을 재검토한다.</p>')
     name = macro.regime_name(growth, inflation)
     return (
         '<section><h2>전략 코멘트</h2><p>…</p></section>'
@@ -53,8 +56,7 @@ def build_html(growth=0, inflation=-1, dirs=None, scores=(0.12, -0.55), prob=68.
         f'성장축 {scores[0]}, 인플레축 {scores[1]}. '
         f'9월 인하 확률은 {prob}%.</p>'
         f'{ax_strip() if axes else ""}'
-        f'{strip(dirs)}{rec}{extra}{groups(group_text, skip_groups)}</section>'
-        '<section><h2>9. 멀티에셋 매니저 전략</h2></section>'
+        f'{strip(dirs)}{rec}{fals}{extra}{groups(group_text, skip_groups)}</section>'
         f'<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table>'
         f'{anatomy}</section>')
 
@@ -174,26 +176,6 @@ def test_transmission_label_must_match_the_controlled_vocabulary():
 
 
 # --- §9 reconciliation ------------------------------------------------------
-
-def test_conflict_with_the_stance_book_must_be_reconciled_in_prose():
-    stance = {'assets': {'bonds': {'grade': -1}}}   # macro 우호(+1) vs 숏 바이어스(-1)
-    out = check(build_html(), macro_file(), eval_file(), next_file(), stance)
-    assert any('bonds' in x and 'data-reconcile' in x for x in out)
-
-
-def test_reconciled_conflict_passes():
-    stance = {'assets': {'bonds': {'grade': -1}}}
-    out = check(build_html(reconcile=['bonds']), macro_file(), eval_file(),
-                next_file(), stance)
-    assert out == []
-
-
-def test_agreeing_signs_need_no_reconciliation():
-    stance = {'assets': {'bonds': {'grade': 1}, 'fx': {'grade': -1}}}
-    assert check(build_html(), macro_file(), eval_file(), next_file(), stance) == []
-
-
-# --- policy path ------------------------------------------------------------
 
 def test_policy_timing_cannot_move_without_a_release_or_a_probability_jump():
     ev = eval_file(new_releases=())
@@ -416,7 +398,7 @@ def test_internal_filenames_never_reach_the_page():
 
 
 def test_every_pipeline_artifact_is_covered():
-    for name in ('macro_metrics.json', 'stance_eval.json', 'econ_indicators.json',
+    for name in ('macro_metrics.json', 'econ_indicators.json',
                  'macro_next.json', 'market_data.json'):
         html = build_html(extra=f'<p>근거는 {name}이다</p>')
         out = check(html, macro_file(), eval_file(), next_file())
@@ -557,3 +539,41 @@ def test_an_abbreviated_day_may_not_move_the_policy_path():
     _check_policy('확률은 70.0%다.', prev,
                   {'abbreviated': False, 'new_releases': []}, nxt, v)
     assert v == []
+
+
+# ── 2026-09-19 스탠스 삭제: 해소 문단이 사라지고 반증조건이 그 자리를 맡는다 ──
+def _macro_page(extra=''):
+    return ('<html><body><main><section><h2>매크로</h2>'
+            '<p data-macro="regime">레짐 서술</p>'
+            + extra + '</section></main></body></html>')
+
+
+def test_the_falsifier_must_reach_the_page():
+    """스탠스가 지던 「무엇이 나오면 이 판단이 바뀌나」를 매크로가 넘겨받는다."""
+    from us.macro_gate import check_falsifier
+    nxt = {'policy_path': {'falsifier': '9월 16일 FOMC가 동결을 선택하면 재검토한다.'}}
+    assert check_falsifier(_macro_page(), nxt) != []
+
+
+def test_a_page_carrying_the_falsifier_passes():
+    from us.macro_gate import check_falsifier
+    nxt = {'policy_path': {'falsifier': '9월 16일 FOMC가 동결을 선택하면 재검토한다.'}}
+    page = _macro_page('<p data-falsifier="1">9월 16일 FOMC가 동결을 선택하면 '
+                       '이 판단을 재검토한다.</p>')
+    assert check_falsifier(page, nxt) == []
+
+
+def test_an_empty_falsifier_marker_is_not_a_statement():
+    from us.macro_gate import check_falsifier
+    nxt = {'policy_path': {'falsifier': '동결이면 재검토'}}
+    assert check_falsifier(_macro_page('<p data-falsifier="1"></p>'), nxt) != []
+
+
+def test_no_falsifier_in_the_book_means_no_obligation():
+    from us.macro_gate import check_falsifier
+    assert check_falsifier(_macro_page(), {'policy_path': {}}) == []
+
+
+def test_the_reconciliation_check_is_gone_with_the_stance_book():
+    import us.macro_gate as g
+    assert not hasattr(g, '_check_reconciliation')

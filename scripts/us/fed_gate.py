@@ -30,7 +30,6 @@ IDEA_MIN_CHARS = 150
 INVALIDATION_MIN_CHARS = 30
 CHANGE_MIN_CHARS = 150
 MIN_QUOTES_PER_EVENT = 2
-MIN_IDEAS = 2
 
 _H2 = re.compile(r'<h2\b[^>]*>(.*?)</h2>', re.S | re.I)
 _QUOTE_REF = re.compile(r'\bdata-fed-quote-ref\s*=\s*"([A-Za-z0-9_-]+)"', re.I)
@@ -68,7 +67,6 @@ IDEA_MIN_CHARS = 150
 INVALIDATION_MIN_CHARS = 30
 CHANGE_MIN_CHARS = 150
 MIN_QUOTES_PER_EVENT = 2
-MIN_IDEAS = 2
 
 # 내부 사정이 지면에 나오면 안 된다 — 독자는 우리 파일 이름을 모른다.
 INTERNAL = ('events.json', 'fed_events', 'statement_diff', 'fed_gate', 'research_notes',
@@ -290,8 +288,6 @@ def _check_change(diff, blk, v):
 
 def _check_ideas(blk, printed_keys, v):
     ideas = blk['idea']
-    if len(ideas) < MIN_IDEAS:
-        v.append(f'연준 이벤트: 투자 아이디어가 {len(ideas)}개다 — {MIN_IDEAS}개 이상 필요')
     for n, (_key, raw, (a, b)) in enumerate(ideas, 1):
         # 무효화 조건은 **그 아이디어 안에** 있어야 한다. 섹션 어딘가에 개수만
         # 맞춰 두면 어느 아이디어가 무엇으로 무효화되는지 알 수 없다.

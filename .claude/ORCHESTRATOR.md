@@ -1,5 +1,7 @@
 # US Morning Brief — Orchestrator Runbook
 
+**적용 시점:** 2026-09-21 KST 이후 새로 작성하는 보고서는 `.claude/DESK_REPORT.md`와 `.claude/RESEARCH_WORKFLOW.md`를 적용한다. 이미 발행된 파일은 이 전환을 이유로 다시 쓰지 않는다.
+
 You are the orchestrator for the daily US morning market brief. Follow this runbook start to finish.
 
 **Report trading date**: the most recent completed US trading day. **Authoritative source is the committed data file** (STEP 0 below) — trust `report_date` in `data/market_data.json`, which is the S&P 500's actual last-close date. Do NOT compute it from the KST run day; the old weekday-arithmetic rule caused a duplicate-report bug (2026-07-15). Only if no data file exists, fall back to arithmetic: previous US weekday relative to the KST run day (Tuesday KST → Monday US session, … Saturday KST → Friday), stepping back over US market holidays.
@@ -22,9 +24,8 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 2. If it exists, `report_date` matches today's expected US session (most recent US weekday; if it looks stale by >1 trading day, note it), and `"complete": true` — **copy the five data files to the workspace root** (`market_data.json`, `intraday.json`, `econ_indicators.json`, `sector_performance.html`, `yield_curve.png`) and skip STEP 1's market-data collection entirely. Proceed to STEP 1 for research_notes.md only (the web-research half).
    Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
-   - §9 멀티에셋 스탠스: `data/stance.json`, `data/stance_eval.json`, `data/stance_metrics.json`. Missing → the writer freezes every grade, or bootstraps.
-   - 모의 포트폴리오(§11 안 `<h3>`): `data/portfolio.json` — 어제 등급이 오늘 종가에 어떤 비중이 됐고 얼마를 벌었는지가 **계산이 끝난 채로** 들어 있다. Missing → the writer omits that section entirely (never invents one).
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
+   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. 작성자에게 이 메타데이터 경로와 다음 본문 수집 단계가 만든 파일 경로를 입력으로 전달한다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
@@ -44,7 +45,18 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
 ## STEP 1 — 데이터 수집·검증 (subagent: brief-data-collector)
 
-**학습·복기:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안과 STEP 2.5 윤문 후에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
+**운용자 대상 시황·리서치:** STEP 1 시작 전에 `.claude/DESK_REPORT.md`를 읽고 그 문서의 Handoff를 수행한다. 기존 시황·수급·뉴스 자료를 유지하면서 `research_notes.md`에 `운용 판단 브리핑`을 추가한다. 작성자에게 이 절과 해당 문서 경로를 반드시 넘긴다. STEP 2 초안과 STEP 2.5 윤문 후에는 그 문서의 Editorial acceptance를 수행한다. 실제 보유·운용제약이 주어지지 않았으면 자산별 조건부 판단으로 쓰며, 새 거래 아이디어가 없는 날도 정상 발행한다.
+
+**리서치 인계:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안과 STEP 2.5 윤문 후에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
+
+**앞으로 작성하는 보고서:** `.claude/RESEARCH_WORKFLOW.md`를 읽고 증거 → 가설·복기 기록 → 당일 cycle 순서로 진행한다. 원장은 `research/us`, 원장·증거 파일을 새 발행본과 함께 커밋한다. 기존 발행본은 이 변경의 대상이 아니다. 작성자에게 cycle ID와 모든 미해결 가설을 전달하고, 초안과 윤문 후 모두 아래 검사를 통과시킨다. 새 자료가 추가되면 cycle도 다시 기록한다.
+
+```bash
+python3 scripts/check_research.py check --span daily --html <새 초안> --root research/us --market us --date <DATE> --cycle <CYCLE_ID>
+```
+
+STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`). 초안 전후 비교는 workflow의 `compare`로 기록하고, 인과관계·유보 표현의 의미 보존은 사람이 확인한다.
+
 
 If STEP 0 already produced a complete market_data.json/intraday.json/yield_curve.png, you still need **research_notes.md** — launch the collector subagent (or fallback) for the web-research portion only (STEP 2 of the agent file: 시황 동인·채권 맥락·메모리·AI 인프라·경제지표 4축). Otherwise run it in full.
 
@@ -58,27 +70,27 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 ## STEP 2 — 리포트 작성 (subagent: brief-report-writer)
 
-Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json and stance.json / stance_eval.json / stance_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html **plus macro_next.json and stance_next.json** (the updated books; the input macro.json / stance.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
+**뉴스 본문 내려받기 (작성 전)** — `python3 scripts/fetch_news.py --bodies-only --datadir <workspace> --bodydir <workspace>/_workspace/news --date [DATE]`. **`--datadir` 는 게이트와 같은 값을 준다** — 재수집이 `<workspace>/data/news/` 를 고치고 게이트가 `<workspace>/news/` 를 읽으면 서로 다른 파일을 본다(2026-09-19 codex 2차 검토 #14). 커밋된 `news/[DATE].json` 은 **메타데이터뿐이고 기사 본문이 없다** — 본문은 상업 저작물이라 공개 레포에 커밋하지 않고, 수집 잡의 러너는 이미 사라졌다(2026-09-19 codex 검토 #3). 이 명령이 그 메타데이터로 본문을 다시 받아 워크스페이스에 떨어뜨린다. **작성 담당이 300자 요약을 쓰려면 이 파일들이 있어야 한다** — 없으면 제목만 보고 쓰게 되고 그것은 창작이다. 실패한 건은 `body_chars: 0` 으로 기록되고 게이트가 그 기사의 사용을 막는다.
+
+Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
 Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` — must be 0; (b) spot-check 5+ numbers by grepping the HTML for specific values from market_data.json / intraday.json / econ_indicators.json (e.g. `grep -o '4\.62' <html>`), NOT by reading the whole ~34K-token HTML into context. If either check fails, relaunch the writer subagent with the specific violations; repeat until clean. 수치 창작 절대 금지 — 미확인 항목은 삭제·재구성이 원칙.
 
-**매크로 게이트 (§10)** — run `python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: the regime label is outside the 3×3 controlled vocabulary; the regime sits outside `allowed_regimes` (the writer moved it on a day with no new release, inside the 5-business-day lock, or against what the axis scores imply); the axis scores or the FedWatch probability are not quoted in the section; a newly released indicator listed in `headline_releases` has no `data-release` anatomy block, or that block stops at the headline number (no primary source named, fewer than three figures); a transmission direction is outside its `allowed_directions`; the policy path was re-timed without either a new release or a 15%p probability move; a transmission direction conflicts with the §10 stance grade and no `data-reconcile` paragraph explains it; or macro_next.json is missing / not dated today / disagrees with the §8 markers. Relaunch the writer with the exact violations.
+**매크로 게이트 (§10)** — run `python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: the policy path의 `falsifier` 가 지면에 없을 때; the regime label is outside the 3×3 controlled vocabulary; the regime sits outside `allowed_regimes` (the writer moved it on a day with no new release, inside the 5-business-day lock, or against what the axis scores imply); the axis scores or the FedWatch probability are not quoted in the section; a newly released indicator listed in `headline_releases` has no `data-release` anatomy block, or that block stops at the headline number (no primary source named, fewer than three figures); a transmission direction is outside its `allowed_directions`; the policy path was re-timed without either a new release or a 15%p probability move; or macro_next.json is missing / not dated today / disagrees with the §8 markers. Relaunch the writer with the exact violations.
 
 **가격 맥락 게이트 (§4·§6·§7·§8)** — run `python scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a cross-asset relationship whose sign flipped against the prior 60 sessions is not written about (needs a `data-relation="KEY"` paragraph — same discipline as §8's reconciliation, disagreement allowed, silence not); a `data-attribution` block prints the sector split without the residual it cannot explain, or prints one at all on a day the sector weights barely fit the index; or internal machinery (주성분·고유값·필드명) reached the page. Non-core: an older dataset with no `price_context` block passes untouched. Relaunch the writer with the exact violations.
 
 **시황 게이트 (「오늘의 장」)** — run `python3 scripts/check_session.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: a `data-session` paragraph is missing or empty; a region whose average direction diverged from the S&P 500 is not written about (silence is the failure, disagreement is fine); the participation reading is narrated on a neutral day or omitted on a day it fired; a global close printed in the table disagrees with the collected value, or a close older than three sessions carries no as-of date; the reading is called 「상승 종목 비율」·「등락 종목 수」·「시장 폭」; internal field names or a 「§N」 notation reached the page. Non-core: a dataset with no `session` block passes untouched.
 
-**스탠스 게이트 (§10)** — run `python scripts/check_stance.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a §9 grade label is outside the controlled vocabulary; a grade sits outside that asset's `allowed_grades` from stance_eval.json; a moved row lacks the MET trigger's actual value (or, for an event trigger, a research_notes.md attribution) in the surrounding text; a row is missing its 유지 일수 or 다음 분기점; or the writer's new stance.json is not dated today / omits a history entry for a moved row. Relaunch the writer with the exact violations. This gate is what keeps §9 a position rather than a restatement of the day's tape — do not waive it. Neither gate is waivable: between them they are the only thing standing between «승계되는 판단» and a daily rewrite wearing the same headings.
-
 **연준 이벤트 게이트 (「연준 이벤트」)** — run `python3 scripts/check_fed.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: today has no fresh Fed event but the section was published anyway (**침묵이 기본값이다** — FOMC·잭슨홀 같은 자리가 없는 날 이 섹션을 열면 이벤트 섹션이 아니라 매일 새로 쓰는 논평란이 된다); a fresh tier-1 event has no section, no `data-fed-event` intro, or fewer than two verified quotes; **a quoted sentence is not in the collected primary document, character for character**; a quote was printed for an event whose document could not be fetched; a quote has no Korean translation or no source caption; a computed statement redline has no `data-fed-change` block, or that block quotes none of the changed sentences; there are fewer than two `data-fed-idea` blocks, an idea hangs off a quote that was never printed, or an idea has no invalidation condition; or a figure in the section is in neither the data files nor the primary document. **이 게이트의 자리는 인용문이다** — 지어낸 수치는 데이터와 맞대면 걸리지만 지어낸 발언은 그럴듯할수록 안 걸린다. 인용의 문턱 값(무효화 조건 안의 수치)만 창작 검사에서 면제된다. Relaunch the writer with the exact violations.
-
-**포트폴리오 게이트 (모의 포트폴리오)** — run `python3 scripts/check_portfolio.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. **이 절은 2026-09-12부터 `<h2>멀티에셋 전략·포트폴리오</h2>` 안의 `<h3>모의 포트폴리오</h3>`다** — 새 `<h2>`로 나오면 게이트가 섹션을 못 찾고, 검사 구간은 그 `<h3>`부터 **부모 `<section>`의 끝까지**이므로, 뒤에 `<h3>`를 더 두어도 그 안의 수치는 함께 검사된다. It fails the run when: `portfolio.json` exists but the section is missing (a day it could be published is not a day to skip it); the book is dated to another session; the 모의 운용 고지, the inception date, the benchmark definition (중립 책), or the one-session lag sentence is absent; a held sleeve has no `data-sleeve` marker; a figure in the section is not in `portfolio.json`; the record is still short of 60 sessions but the page prints 연율·샤프·변동성·승률; or internal field names reached the page. **에이전트가 이 섹션에서 산술을 하면 안 된다** — 모든 수치는 `performance` 블록에 계산돼 있고, 게이트는 그 밖의 수치를 창작으로 본다. `portfolio.json` 자체가 없거나 **어제 세션에서 멈춰 있으면 섹션 없이 발행한다**(비-코어) — 그 경우 섹션을 실으면 지난 성과가 오늘 날짜로 나가므로 막지만, 리포트 전체를 세우지는 않는다. 다음 수집이 책을 굴리면 저절로 돌아온다.
 
 **캘린더 게이트 (§9 「다음 발표 일정」 카드)** — run `python3 scripts/check_calendar.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. 금지형이다 — 카드를 채우라고 요구하지 않는다. 막는 것은 셋: `data-calendar="<key>"` 가 **수집한 적 없는 일정**을 가리키는 것, 표식이 가리키는 일정과 **다른 날짜**를 적는 것, **시각을 모르는 일정에 시각을 적는 것**. 낡은 `calendar.json` 은 없는 것과 같이 다룬다(어제 일정으로 오늘 표식을 인가하면 하루 밀린 시각이 인쇄된다). 표식이 없는 글은 그대로 통과한다. Relaunch the writer with the exact violations.
 
+**뉴스 게이트 (오늘의 뉴스)** — run `python3 scripts/check_news.py --html morning_brief_[DATE].html --datadir <workspace> --date [DATE]` from the repo clone. 수집분 `news/<date>.json` 과 발행본을 `data-news` 표식으로 대조한다. It fails the run when: 수집되지 않은 `guid` 를 실었을 때(지어낸 기사); 수집은 됐지만 **본문을 못 받은** 기사를 요약했을 때(제목만 보고 쓴 것); 같은 기사를 두 번 실었을 때; 한 항목의 본문이 240자 미만(RSS 한 줄 요약을 옮긴 것)이거나 420자 초과일 때; `data-news` 없는 뉴스 블록이 있을 때; `display:none`·`hidden`·주석으로 **숨긴 블록**으로 항목 수를 채웠을 때(2026-09-19 실측으로 셋 다 재현 후 차단); 블록의 링크가 그 기사의 원문이 아닐 때. **수집분이 없거나 비면 섹션 의무만 면제되고 표식 대조는 그대로 돈다** — 수집이 실패한 날이 지어낸 뉴스가 실릴 확률이 가장 높다(2026-09-19 codex 검토 #1). 본문을 하나도 못 받은 날도 섹션 없이 발행할 수 있다. **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다(#11). 그날 뉴스를 기억에서 꺼내 쓰는 것이 이 게이트가 막는 실패다.
+
 **출처 게이트 (§9 발표 해부·연준 이벤트)** — run `python3 scripts/check_sources.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. **금지형이다 — 링크를 요구하지 않는다.** 귀속은 문장의 주어로 쓴다(「BLS 는 … 밝혔습니다」). 막는 것은 «인쇄된 링크가 거짓말인 경우»뿐이다: 수집한 원문 목록에 없는 URL, 수집에 실패한 문서(`ok:false`)를 가리키는 링크, 다른 발표의 URL 이 이 블록에 붙은 것, 표식 없는 블록의 외부 링크, 글자 없는 링크, http(s) 아닌 스킴. **숨긴 링크도 검사한다** — 미디어쿼리 한 줄로 「숨김」 판정이 뚫리는 것을 확인했고, CSS 엔진 없이 렌더 결과를 맞힐 수 없다. `script`/`style`/`template` 만 빠진다. 수집 파일이 없거나 날짜가 어긋나면 **아무것도 인가되지 않은 것**으로 본다 — 게이트가 꺼지지 않는다(수집이 실패한 날이 지어낸 링크가 실릴 확률이 가장 높은 날이다). Head 의 AdSense·canonical·OG·JSON-LD 와 사이트 안 이동 링크는 대상이 아니다. Relaunch the writer with the exact violations.
 
-**무게중심 게이트 (§2·§4·§6·§7·§8·§9)** — run `python3 scripts/check_weight.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: the recap group (오늘의 장·주식·채권·FX·원자재) falls below its floor or below its ratio to the judgment group (전략 코멘트·매크로·멀티에셋 전략·포트폴리오 — 표 안 서술형 칸까지 센다, so prose cannot be hidden in a table); the macro section breaks the cap or floor for the day's mode (발표일 ≤4,600 / 축약일 ≤2,400, read from `macro_eval.json`'s `abbreviated` — the floor is there so §9 cannot be deleted to make the ratio); a price section has no substantive `data-standing` paragraph (120자·수치 하나 이상); an asset whose move was 「큼」·「매우 큼」 has no `data-cause` paragraph; a §9 transmission block repeats a price the asset section already printed; a price section restates a stance grade; or §2's `data-lede` paragraphs are missing or out of order (event → meaning → action → invalidation); or the stance half of §11 (the prose **before** the 모의 포트폴리오 `<h3>`) is under 1,800자 — 포트폴리오 산문은 그 하한을 채우지 못한다. Relaunch the writer with the exact violations. **이 게이트가 「포지션 위주」로 되돌아가는 것을 막는 유일한 장치다** — 2026-08-27 실측에서 판단·포지션이 53%, 시황·가격이 26%였다.
+**무게중심 게이트** — `python3 scripts/check_weight.py --html <새 초안> --datadir <workspace> --market us`. 필수 시황 섹션이 비어 있지 않은지, 가격 위치의 수치 근거와 큰 변동의 설명, 전략 코멘트의 논리 순서를 검사한다. 총 글자 수 하한과 시황/판단 비율은 강제하지 않는다. US 매크로 상한은 발표일 4,600자·축약일 2,400자로 유지한다.
 
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
 
@@ -117,9 +129,9 @@ python3 scripts/humanize_prose.py extract morning_brief_[DATE].humanizing.html
 
 - **스킬로 할 때**: `prose_in.txt`를 입력으로 준다. 스킬은 텍스트를 받아 `_workspace/{run_id}/final.md`(마크다운)를 내놓는다 — **HTML을 고쳐 주지 않으므로 HTML을 통째로 넘기는 사용법은 없다.** 이름표를 그대로 두고 문장만 고치라고, **강도는 「보수」**로 명시한다 — 스킬이 절을 갈아끼우기 시작하면 4번에서 통째로 거부된다.
 - **직접 할 때**: `prose_in.txt`를 그 자리에서 고치고, 그 파일을 그대로 4번의 `--payload`로 쓴다. `python3 scripts/check_style.py <html>`의 출력이 작업 목록이다. 검사가 짚은 항목부터 고치고, 검사가 못 보는 아래 셋도 함께 훑는다.
-  - **주어를 되살린다.** 앞 문장에서 이어받아 생략한 주어를 다시 넣는다. 「이후 반등해…」 → 「나스닥은 이후 반등해…」.
+  - **주체가 모호할 때만 밝힌다.** 문맥상 분명한 주어를 문장마다 반복하지 않는다.
   - **한 문장에 한 관계만 남긴다.** 「A했다가 B했고 이후 C해서 D로 마감했다」는 문장이 아니라 표다. 시각이 셋 이상이면 나눈다.
-  - **판단을 능동으로 쓴다.** 「~로 읽힌다/판정된다」를 「~라고 볼 수 있습니다」나 「A가 B를 끌어내렸습니다」로 바꾼다.
+  - **판단의 강도를 보존한다.** 피동 표현을 줄여도 추정을 단정이나 인과관계로 바꾸지 않는다.
 
 **두 경로 모두 문장만 만진다.** 숫자·자리표·이름표는 그대로 둔다. 4번이 그것을 강제한다.
 
@@ -132,17 +144,17 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
   --gate "python3 scripts/check_readability.py --strict --no-inline-images {f}" \
   --gate "python3 scripts/verify_post.py {f} --before morning_brief_[DATE].html --skip-layout" \
   --gate "python scripts/check_macro.py --html {f} --datadir <workspace>" \
-  --gate "python scripts/check_stance.py --html {f} --datadir <workspace>" \
   --gate "python scripts/check_price_context.py --html {f} --datadir <workspace>" \
-  --gate "python3 scripts/check_session.py --html {f} --datadir <workspace> --market us" \\
-  --gate "python3 scripts/check_weight.py --html {f} --datadir <workspace> --market us" \\
-  --gate "python3 scripts/check_portfolio.py --html {f} --datadir <workspace>" \\
-  --gate "python3 scripts/check_fed.py --html {f} --datadir <workspace>" \\
+  --gate "python3 scripts/check_session.py --html {f} --datadir <workspace> --market us" \
+  --gate "python3 scripts/check_weight.py --html {f} --datadir <workspace> --market us" \
+  --gate "python3 scripts/check_research.py check --span daily --html {f} --root research/us --market us --date <DATE> --cycle <CYCLE_ID>" \
+  --gate "python3 scripts/check_fed.py --html {f} --datadir <workspace>" \
+  --gate "python3 scripts/check_news.py --html {f} --datadir <workspace> --date [DATE]" \
   --gate "python3 scripts/check_sources.py --html {f} --datadir <workspace>" \
   --gate "python3 scripts/check_calendar.py --html {f} --datadir <workspace>"
 ```
 
-포트폴리오 게이트와 연준 이벤트 게이트가 이 목록에 **반드시 있어야 한다** — 윤문은 문단을 통째로 갈아끼우므로 「모의」 고지나 결측 고지가 조용히 사라질 수 있다. 연준 인용문은 더 분명하다: 한 낱말만 다듬어도 원문 대조가 깨지고, 그러면 의장이 하지 않은 말이 따옴표 안에 남는다. 인용 블록 자체는 `humanize_prose.py`가 애초에 뽑지 않지만(넘기지 않은 것은 훼손될 수 없다), 검사는 그 가정을 믿지 않고 다시 한다. 초안 단계에서 한 번 통과한 것으로는 최종본을 보증하지 못한다(2026-09-01 codex 검토).
+연구 원장 게이트와 연준 이벤트 게이트가 이 목록에 **반드시 있어야 한다** — 윤문은 문단을 통째로 갈아끼우므로 판단 유보나 결측 고지가 조용히 사라질 수 있다. 연준 인용문은 더 분명하다: 한 낱말만 다듬어도 원문 대조가 깨지고, 그러면 의장이 하지 않은 말이 따옴표 안에 남는다. 인용 블록 자체는 `humanize_prose.py`가 애초에 뽑지 않지만(넘기지 않은 것은 훼손될 수 없다), 검사는 그 가정을 믿지 않고 다시 한다. 초안 단계에서 한 번 통과한 것으로는 최종본을 보증하지 못한다(2026-09-01 codex 검토).
 
 되꽂기 → 바뀐 문단 출력 → 게이트 순서로 돌고, **전부 통과했을 때만** `os.replace`로 원본을 교체한다. 하나라도 실패하면 사본을 지우고 exit 1로 끝난다 — 원본은 처음부터 수정되지 않았다. **맨손 `mv`는 쓰지 않는다.** 검사를 건너뛰고 교체할 자리를 남기지 않는 것이 이 명령의 존재 이유다.
 
@@ -161,7 +173,7 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
 
 `finalize`는 게이트가 **하나도 없으면 시작하지 않고**, 사본과 원본 경로가 같아도 시작하지 않는다(검사 실패 시 원본을 지우게 된다). 게이트는 셸을 거치지 않고 인자 배열로 실행된다.
 
-`check_macro`·`check_stance`·`check_price_context`가 여기 다시 들어가는 이유가 있다. STEP 2의 게이트들은 **윤문 전 원고를 보고 통과시킨 것이다.** 윤문은 문장을 합치거나 나누므로 문장 길이·수치 밀도가 깨질 수 있고, 통제 어휘나 `data-*` 표식을 건드리면 §8·§9가 검사받지 않은 채로 나간다.
+`check_macro`·`check_price_context`가 여기 다시 들어가는 이유가 있다. STEP 2의 게이트들은 **윤문 전 원고를 보고 통과시킨 것이다.** 윤문은 문장을 합치거나 나누므로 문장 길이·수치 밀도가 깨질 수 있고, 통제 어휘나 `data-*` 표식을 건드리면 §8·§9가 검사받지 않은 채로 나간다.
 
 **5. 명령이 찍어 준 「바뀐 문단」을 읽는다.**
 
@@ -193,10 +205,9 @@ Site base URL: https://fdo2a.github.io/
 <meta property="og:title" content="미국 증시 모닝브리프 — [YYYY년 M월 D일 (요일)]">
 <meta property="og:url" content="https://fdo2a.github.io/posts/[YYYY-MM-DD].html">
 ```
-2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote **both** of the writer's books:
+2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote the writer's macro book:
    - `macro_next.json` → `data/macro.json`
-   - `stance_next.json` → `data/stance.json`
-   Tomorrow's Actions run judges today's regime and triggers against these files. Publishing without promoting them leaves both books frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.
+   Tomorrow's Actions run judges today's regime and triggers against this file. Publishing without promoting it leaves the macro book frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.
 3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
 4. Update posts.json in the repo root: add {"date", "title", "headline"}. Same-date entry → REPLACE, never duplicate. Keep valid JSON.
 5. Regenerate sitemap.xml from posts.json: one <url> for https://fdo2a.github.io/ (lastmod=today, changefreq daily) plus one <url> per post (https://fdo2a.github.io/posts/DATE.html, lastmod). Keep valid XML.
@@ -221,6 +232,6 @@ Send a PushNotification with the headline and the blog post URL (mention any fai
 - All prices/% changes in the published report MUST come from market_data.json / intraday.json; macro indicator values from research_notes.md. 수치 창작 절대 금지.
 - **완성본만 발행 (2026-07-14 사용자 지시)**: 핵심 표(지수·섹터·채권·FX·원자재·메모리·AI 인프라)에 누락 항목이 있는 채로 발행 금지. 완성 불가 시 발행하지 말고 PushNotification으로 누락 내역을 보고할 것. 웹 리서치로 대체 수집한 시세는 발행 전 반드시 복수 출처 교차 확인 — 단일 검색 결과 수치는 신뢰하지 않는다 (7/13호에서 FX 방향·유가 등락률 오류 발생 전례).
 - **발행본에 [확인필요] 금지 (STEP 2 게이트).** 미확인 항목은 끝까지 확인하거나 삭제·재구성.
-- Web findings attributed to sources. Professional strategy-desk tone (기관 전략 리포트 톤).
+- Web findings attributed to sources. Clear, natural report prose (근거와 판단이 분명한 자연스러운 보고서 문체).
 - **「buy-side」 금지 (2026-08-22 사용자 지시)** — 발행본 어디에도 쓰지 않는다. §2 헤더는 「전략 코멘트」, 해석 박스는 「전략 해석」. `scripts/check_macro.py` 게이트가 차단한다.
 - Final message: blog (GitHub Pages) delivery status, which subagents ran (or which fallback was used), and any failures.

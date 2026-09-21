@@ -333,3 +333,11 @@ def test_nested_divs_do_not_swallow_the_rest_of_the_page():
     payload, _ = extract(page)
     assert 'Verbatim words' not in payload and '번역입니다' not in payload
     assert '뒤 문단은 윤문 대상입니다' in payload
+
+
+def test_generated_research_summary_is_not_sent_for_humanization():
+    html = '<p>시장 설명은 다듬는다.</p><section data-research-summary="hash"><p>검토 대상 17건입니다.</p></section>'
+    text, side = extract(html)
+    assert '시장 설명' in text
+    assert '검토 대상' not in text
+    assert reinsert(html, text, side) == html

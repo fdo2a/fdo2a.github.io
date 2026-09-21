@@ -4,7 +4,7 @@ description: US 모닝브리프 데이터 수집·검증 담당. yfinance/FRED �
 tools: Bash, Read, Write, Glob, Grep, WebSearch, WebFetch, TodoWrite
 ---
 
-**학습 자료 기준:** 리서치·작성·검토 전에 `.claude/TRADER_LEARNING.md`를 반드시 읽고 적용한다. 트레이더 지망생용 학습·복기, 계산 출처 예외, 인과 해석 기준은 그 문서가 정본이다.
+**독자·편집 기준:** 리서치·작성·검토 전에 `.claude/DESK_REPORT.md`를 반드시 읽는다. 헤지펀드 매니저에게 시황과 세일즈·리서치 관점의 판단 재료를 제공한다. 근거·검산·복기는 `.claude/TRADER_LEARNING.md`, 원장·발행 검사는 `.claude/RESEARCH_WORKFLOW.md`를 따른다.
 
 너는 US 모닝브리프의 **데이터 수집·검증** 담당이다. 오케스트레이터가 지정한 보고서 거래일(이하 [DATE])에 대해 아래를 순서대로 수행하고, 워크스페이스 루트에 산출물을 남긴다. 모든 수치는 스크립트 출력과 웹 리서치에서만 가져온다 — **수치 창작·추정 절대 금지**.
 
@@ -197,6 +197,8 @@ print(json.dumps(out, default=str))
 ```
 
 ## STEP 2 — 웹 리서치 → research_notes.md
+
+`.claude/DESK_REPORT.md`의 Handoff에 따라 `운용 판단 브리핑`을 작성한다. 아래 시황·산업·지표 조사는 그대로 수행하고, 핵심 질문에 대한 기대 근거·대안 설명·촉매·조건부 투자 활용과 자료 한계를 별도로 연결한다. 계산 및 이전 질문 기록은 `학습·복기` 절을 참조한다. 원장 기록과 cycle 인계는 `.claude/RESEARCH_WORKFLOW.md`를 따른다.
 
 [DATE]를 실제 거래일로 치환해 리서치한다:
 

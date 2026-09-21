@@ -166,9 +166,17 @@ def test_invalidation_must_sit_inside_its_own_idea():
     assert any('무효화 조건이 없다' in e for e in fg.check(moved, book()))
 
 
-def test_too_few_ideas():
-    v = fg.check(FULL.replace(idea(2, 'fomc-statement-20260917'), ''), book())
-    assert any('투자 아이디어가 1개' in e for e in v)
+def test_one_supported_idea_does_not_require_padding():
+    one = FULL.replace(idea(2, 'fomc-statement-20260917'), '')
+    assert fg.check(one, book()) == []
+    assert any('근거 발언 표식' in e for e in fg.check(one.replace('data-fed-quote-ref', 'unused-ref'), book()))
+    assert any('무효화 조건이 없다' in e for e in fg.check(one.replace('data-invalidation', 'unused-condition'), book()))
+
+
+def test_observation_without_a_trade_idea_is_valid():
+    html = FULL.replace(idea(1, 'fomc-statement-20260917'), '').replace(idea(2, 'fomc-statement-20260917'), '')
+    html = html.replace('<h2>멀티에셋', '<p>정책 경로에 대한 해석은 열려 있지만 현재 가격에서 투자 우위를 확인하기 어렵다. 다음 발표를 확인한다.</p><h2>멀티에셋')
+    assert fg.check(html, book()) == []
 
 
 def test_intro_paragraph_is_required():

@@ -35,13 +35,13 @@ def _doc(sizes):
 
 
 US_FULL = {'오늘의 장': 800, '주식': 1900, '채권': 2000, 'FX': 650, '원자재': 750,
-           '전략 코멘트': 400, '매크로': 4400, '멀티에셋 전략·포트폴리오': 2200}
+           '전략 코멘트': 400, '매크로': 4400}
 
 
 def test_measure_groups_and_ratio():
     m = measure(_doc(US_FULL), 'us')
     assert m['recap'] == 800 + 1900 + 2000 + 650 + 750
-    assert m['judgment'] == 400 + 4400 + 2200
+    assert m['judgment'] == 400 + 4400
     assert round(m['ratio'], 3) == round(m['recap'] / m['judgment'], 3)
     assert m['missing'] == []
 
@@ -59,23 +59,23 @@ def test_full_day_passes_thresholds():
 
 def test_measured_2026_08_27_shape_is_blocked():
     sizes = {'오늘의 장': 0, '주식': 1278, '채권': 1581, 'FX': 360, '원자재': 457,
-             '전략 코멘트': 392, '매크로': 4788, '멀티에셋 전략·포트폴리오': 2244}
+             '전략 코멘트': 392, '매크로': 4788}
     v = check_volume(measure(_doc(sizes), 'us'), False, 'us')
-    assert any('비율' in x or '÷' in x for x in v)
+    assert not any('비율' in x or '÷' in x for x in v)
     assert any('매크로' in x for x in v)
 
 
-def test_abbreviated_day_caps_macro_and_raises_ratio_floor():
+def test_abbreviated_day_caps_macro():
     v = check_volume(measure(_doc(US_FULL), 'us'), True, 'us')
     assert any('매크로' in x and '2400' in x for x in v)
     ok = dict(US_FULL, **{'매크로': 2000})
     assert check_volume(measure(_doc(ok), 'us'), True, 'us') == []
 
 
-def test_deleting_judgment_to_game_the_ratio_is_blocked():
+def test_short_macro_with_content_does_not_need_padding():
     sizes = dict(US_FULL, **{'매크로': 500})
     v = check_volume(measure(_doc(sizes), 'us'), False, 'us')
-    assert any('매크로' in x and '3000' in x for x in v)
+    assert v == []
 
 
 def test_kr_has_floors_but_no_ratio():
@@ -249,15 +249,17 @@ def test_real_post_reproduces_the_spec_numbers():
     # (물가축 교착 서술·고용 지표 개수). 이 테스트가 고정하는 것은 측정 코드이지
     # 발행본 문장이 아니므로, 발행본을 고칠 때마다 기대값을 함께 옮긴다.
     assert m['sections']['매크로'] == 4819
-    assert m['sections']['멀티에셋 전략·포트폴리오'] == 887 + 1357
-    assert m['recap'] == 3676 and m['judgment'] == 7455
+    # 2026-09-19: 멀티에셋 섹션이 없어져 판단군은 전략 코멘트 + 매크로뿐이다.
+    # 옛 발행본에 그 섹션이 남아 있어도 더 이상 세지 않는다.
+    assert '멀티에셋 전략·포트폴리오' not in m['sections']
+    assert m['recap'] == 3676 and m['judgment'] == 7455 - 887 - 1357
 
 
 def test_real_post_is_blocked_on_every_designed_axis():
     """check()가 모든 검사를 실제로 돌리는가 — 하나를 빈 함수로 바꾸면 이 테스트가 죽는다."""
     v = check(_real_post(), market='us', market_data=_real_market_data(),
               macro_eval={'abbreviated': False})
-    assert any('÷' in x for x in v)                       # 비율
+    assert not any('÷' in x for x in v)                   # 비율은 진단용
     assert any('매크로' in x and '상한' in x for x in v)   # 매크로 상한
     assert any('data-standing' in x for x in v)            # 「지금 어디에 있나」
     assert any('포지션 등급 어휘' in x for x in v)             # 스탠스 되풀이
@@ -265,14 +267,27 @@ def test_real_post_is_blocked_on_every_designed_axis():
     assert any('§9' in x and '되풀이' in x for x in v)        # 경로 블록 가격 중복
 
 
-def test_ratio_floor_actually_bites_on_an_abbreviated_day():
-    """축약일 1.00 문턱이 실제로 무는가 — 0.75로 낮추면 이 테스트가 죽는다."""
-    sizes = {'오늘의 장': 800, '주식': 1500, '채권': 1500, 'FX': 900, '원자재': 900,
-             '전략 코멘트': 400, '매크로': 3200, '멀티에셋 전략·포트폴리오': 2400}
-    m = measure(_doc(sizes), 'us')
-    assert 0.75 < m['ratio'] < 1.00
-    assert check_volume(m, False, 'us') == []
-    assert any('÷' in x and '축약일' in x for x in check_volume(m, True, 'us'))
+def test_quiet_complete_report_passes_without_a_ratio_floor():
+    sizes = {title: 140 for title in US_FULL}
+    sizes['매크로'] = 900
+    doc = _doc({title: size for title, size in sizes.items()
+                if title != '전략 코멘트'}) + LEDE_GOOD
+    m = measure(doc)
+    assert m['ratio'] < 0.75
+    assert check(doc, macro_eval={'abbreviated': False}) == []
+    assert check(doc, macro_eval={'abbreviated': True}) == []
+
+
+def test_empty_macro_is_blocked_even_when_the_section_exists():
+    doc = _doc(dict(US_FULL, **{'매크로': 0}))
+    assert any('매크로' in item and '비어' in item
+               for item in check_volume(measure(doc)))
+
+
+def test_empty_required_price_section_is_blocked():
+    doc = _doc(dict(US_FULL, **{'FX': 0}))
+    assert any('FX' in item and '비어' in item
+               for item in check_volume(measure(doc)))
 
 
 def test_position_vocab_does_not_flag_ordinary_prose():
@@ -286,26 +301,32 @@ def test_sign_and_unit_do_not_collide():
            + _sec('매크로', '<div data-macro-group="dollar">'
                   '<p>오늘 기대인플레는 +0.50%p 올랐습니다.</p></div>'))
     assert check_macro_prices(doc) == []
+def test_the_stance_floor_is_gone_with_the_section():
+    from us.weight import THRESHOLDS
+    assert 'stance_min' not in THRESHOLDS['us']
 
 
-def _merged(stance=2000, portfolio=200):
-    """2026-09-12 병합 구조 — 스탠스 산문 뒤에 h3 로 포트폴리오가 붙는다."""
-    return ('<h2>멀티에셋 전략·포트폴리오</h2><p>' + '가' * stance + '</p>'
-            '<h3>모의 포트폴리오</h3><p>' + '나' * portfolio + '</p>')
+def test_the_judgment_group_no_longer_expects_a_stance_section():
+    from us.weight import SECTION_GROUPS
+    joined = ' '.join(SECTION_GROUPS['us']['judgment'])
+    assert '멀티에셋' not in joined and '포트폴리오' not in joined
 
 
-def test_paper_portfolio_counts_as_judgment_not_a_free_pass():
-    """포트폴리오 산문이 비율 밖에 있으면 판단군이 무한정 커질 수 있다."""
-    m = measure('<h2>주식</h2><p>' + '가' * 100 + '</p>' + _merged(), 'us')
-    assert m['sections']['멀티에셋 전략·포트폴리오'] == 2000 + 200
-    assert m['judgment'] >= 2200
+def test_a_page_without_a_stance_section_is_not_missing_anything():
+    html = ('<section><h2>전략 코멘트</h2><p>' + '가' * 400 + '</p></section>'
+            '<section><h2>매크로</h2><p>' + '나' * 3200 + '</p></section>'
+            '<section><h2>오늘의 장</h2><p>' + '다' * 1200 + '</p></section>'
+            '<section><h2>주식</h2><p>' + '라' * 1600 + '</p></section>'
+            '<section><h2>채권</h2><p>' + '마' * 1400 + '</p></section>'
+            '<section><h2>FX</h2><p>' + '바' * 900 + '</p></section>'
+            '<section><h2>원자재</h2><p>' + '사' * 1000 + '</p></section>')
+    m = measure(html, 'us')
+    assert m['missing'] == []
+    assert check_volume(m, market='us') == []
 
 
-def test_portfolio_prose_cannot_fill_the_stance_floor():
-    """h3 뒤 산문으로 스탠스 하한을 채우던 구멍 (2026-09-12 codex 설계 검토 C2-6)."""
-    m = measure(_doc(dict(US_FULL)) .replace(
-        '<section><h2>멀티에셋 전략·포트폴리오</h2><p>' + '가' * 2200 + '</p></section>',
-        '<section>' + _merged(stance=200, portfolio=2000) + '</section>'), 'us')
-    assert m['sections']['멀티에셋 전략·포트폴리오'] == 2200
-    assert m['stance_chars'] == 200
-    assert any('스탠스 부분이 200자' in x for x in check_volume(m, False, 'us'))
+def test_news_and_mlcc_stay_outside_the_recall_judgment_ratio():
+    """업종·뉴스 섹션은 비율 계산 밖이다 — 길이를 늘려도 비중이 흔들리지 않는다."""
+    from us.weight import SECTION_GROUPS
+    every = SECTION_GROUPS['us']['recap'] + SECTION_GROUPS['us']['judgment']
+    assert '오늘의 뉴스' not in every and 'MLCC' not in every

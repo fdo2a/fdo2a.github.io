@@ -81,7 +81,7 @@ def _skip_spans(html):
     """뽑지 않을 구역 — 표 안, 에디터 노트 안, 연준 인용·변경점 블록 안."""
     spans = []
     for m in _BLOCK_RE.finditer(html):
-        if m.group(1) == 'table' or 'data-editor-note' in m.group(0)[:400]:
+        if m.group(1) == 'table' or 'data-editor-note' in m.group(0)[:400] or 'data-research-summary' in m.group(0).split('>', 1)[0]:
             spans.append((m.start(), m.end()))
     for m in _FED_START.finditer(html):
         spans.append((m.start(), _balanced_div(html, m.start())))

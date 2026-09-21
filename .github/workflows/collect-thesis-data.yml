@@ -35,10 +35,12 @@ jobs:
       # 손편집 탐지는 **수집 전**에만 가능하다. 커밋된 페이지는 커밋된 데이터로 렌더한
       # 결과와 같아야 한다. 수집 후에 대조하면 그날의 정상적인 시세 변화까지 «다르다»로
       # 나오고, 렌더를 먼저 돌리면 손편집을 잡는 게 아니라 덮어써 버린다.
+      # 템플릿 전환은 감사한 이전 페이지·데이터의 정확한 해시 조합만 허용한다.
+      # 임의 손편집이나 다른 데이터 조합은 예외가 아니다.
       - name: Check pages were not hand-edited
         id: handedit
         continue-on-error: true
-        run: python3 scripts/build_thesis_pages.py --data thesis/data --out thesis --check
+        run: python3 scripts/build_thesis_pages.py --data thesis/data --out thesis --check --allow-template-transition
 
       - name: Collect
         run: |

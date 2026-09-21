@@ -1,7 +1,7 @@
 """발행본의 무게중심을 재는 게이트 — 시황·가격 대 판단·포지션.
 
 2026-08-27 실측에서 판단·포지션이 7,424자(53%)·시황·가격이 3,676자(26%)였다.
-자수는 엔티티를 디코드한 뒤 센다 — stance_gate.strip_tags는 &amp;를 5자로 세므로
+자수는 엔티티를 디코드한 뒤 센다 — 단순 태그 제거는 &amp;를 5자로 세므로
 여기서 쓰지 않는다(2026-08-30 codex 검토).
 """
 import html as _html
@@ -108,17 +108,17 @@ def prose_chars(section_html):
     return n
 
 
-# 스탠스와 모의 포트폴리오는 2026-09-12 사용자 지시로 한 섹션이다. 옛 제목도 함께 본다 —
-# 검토 게이트 러너가 **이미 발행된** 글에 이 게이트들을 다시 돌리는데, 과거 발행본은
-# 구조를 소급하지 않았다(태그 시퀀스 대조가 어긋난다). 소급이 불가능한 자리에서는
-# 별칭이 옳다 — 「매크로」는 제목만 바뀌어 소급했으므로 별칭을 두지 않았다.
+# 「멀티에셋 전략·포트폴리오」는 2026-09-19 사용자 지시로 없어졌다. 옛 발행본에는 그
+# 섹션이 남아 있지만 새 글은 갖지 않는다 — 분량 계약에서 뺀다.
+# Compatibility exports for historical portfolio/stance review modules.
 STANCE_TITLE = '멀티에셋 전략·포트폴리오'
 LEGACY_TITLES = {STANCE_TITLE: '멀티에셋 매니저 전략'}
+RETIRED_TITLES = ('멀티에셋 전략·포트폴리오', '멀티에셋 매니저 전략', '모의 포트폴리오')
 
 SECTION_GROUPS = {
     'us': {
         'recap': ('오늘의 장', '주식', '채권', 'FX', '원자재'),
-        'judgment': ('전략 코멘트', '매크로', STANCE_TITLE, PORTFOLIO_SUBTITLE),
+        'judgment': ('전략 코멘트', '매크로'),
     },
     'kr': {
         'recap': ('오늘의 장', '지수 & 장중', '환율·금리'),
@@ -126,27 +126,14 @@ SECTION_GROUPS = {
     },
 }
 
-# 「연준 이벤트」는 어느 군에도 넣지 않는다 (2026-09-02). 사건 기록이면서 해석이라
-# 어느 쪽으로 세도 그날 비율이 왜곡되고, FOMC 날 그 섹션이 커지는 것은 정상이다.
-# 대신 macro_min·stance_min 이 그대로 살아 있어서 다른 섹션을 비우고 이리로 옮겨
-# 담을 수는 없다.
-#
-# 「오늘의 장」은 2026-08-28 신설이라 옛 판에는 없다. 「모의 포트폴리오」는 2026-09-12에
-# 스탠스와 한 섹션으로 합쳐져 더 이상 h2 가 아니다 — 분량은 병합 제목 하나로 잡힌다.
-# 없어도 위반으로 치지 않고 0자로 센다 — 신규 발행본의 존재 강제는 각 섹션의
-# 전용 게이트(check_session.py·check_portfolio.py)가 맡는다(관심사 분리).
-# 「모의 포트폴리오」는 병합 뒤 h3 라 h2 구간으로는 잡히지 않는다(분량은 병합 제목이
-# 함께 센다). 옛 판에서는 독립 h2 였으므로 목록에 남겨 그 시절 분량을 잃지 않는다.
-OPTIONAL_SECTIONS = ('오늘의 장', PORTFOLIO_SUBTITLE)
+# 「연준 이벤트」는 사건 기록이면서 해석이라 진단용 비율에서도 별도로 둔다.
+# 「오늘의 장」은 옛 판에 없으며 신규 발행본 존재 검사는 check_session.py가 맡는다.
+OPTIONAL_SECTIONS = ('오늘의 장',)
 
+# 길이 하한과 비율 문턱은 패딩을 유도하므로 쓰지 않는다. 비율은 measure()의 진단값.
+# 매크로 중복을 억제하는 상한과 필수 섹션의 존재·내용 검사는 유지한다.
 THRESHOLDS = {
-    'us': {
-        'recap_min': 5500,
-        'ratio_min': 0.75, 'ratio_min_abbrev': 1.00,
-        'macro_max': 4600, 'macro_min': 3000,
-        'macro_max_abbrev': 2400, 'macro_min_abbrev': 1200,
-        'stance_min': 1800,
-    },
+    'us': {'macro_max': 4600, 'macro_max_abbrev': 2400},
     # KR 은 2026-09-22 사용자 지시로 독자가 개인에서 **헤지펀드 매니저**로 바뀌었다.
     # 그 전까지 KR 에는 시황 하한만 있고 판단 하한이 없어서, 2026-09-21 발행본은
     # 시황 2,542자 대 판단 1,287자로 판단이 시황의 절반이었다. 판단 재료를 받아 보는
@@ -161,8 +148,7 @@ def measure(html_doc, market='us'):
     sections, missing = {}, []
     for group in ('recap', 'judgment'):
         for title in groups[group]:
-            seg = (section_slice(html_doc, title)
-                   or section_slice(html_doc, LEGACY_TITLES.get(title, '')))
+            seg = section_slice(html_doc, title)
             if seg is None:
                 sections[title] = 0
                 if title not in OPTIONAL_SECTIONS:
@@ -171,16 +157,7 @@ def measure(html_doc, market='us'):
                 sections[title] = prose_chars(seg)
     recap = sum(sections[t] for t in groups['recap'])
     judgment = sum(sections[t] for t in groups['judgment'])
-    # 스탠스 하한은 병합 섹션 «전체»로 재면 포트폴리오 산문이 대신 채워 준다
-    # (2026-09-12 codex 설계 검토 C2-6). 여기서 갈라 두어야 검사가 살아 있다.
-    stance_chars = None
-    if market == 'us':
-        seg = (section_slice(html_doc, STANCE_TITLE)
-               or section_slice(html_doc, LEGACY_TITLES[STANCE_TITLE]))
-        head, _ = sub_split(seg, PORTFOLIO_SUBTITLE)
-        stance_chars = prose_chars(head)
     return {'sections': sections, 'recap': recap, 'judgment': judgment,
-            'stance_chars': stance_chars,
             'ratio': (recap / judgment) if judgment else None, 'missing': missing}
 
 
@@ -190,36 +167,24 @@ def check_volume(m, abbreviated=False, market='us'):
     for title in m['missing']:
         v.append(f'섹션 「{title}」을 찾지 못했다 — <h2>{title}</h2>가 있어야 분량을 잰다')
 
-    if m['recap'] < t['recap_min']:
+    for title, count in m['sections'].items():
+        if title not in OPTIONAL_SECTIONS and title not in m['missing'] and count == 0:
+            v.append(f'섹션 「{title}」의 본문이 비어 있다 — 필수 설명을 남길 것')
+
+    if t.get('recap_min') and m['recap'] < t['recap_min']:
         v.append(f'시황·가격군이 {m["recap"]}자로 하한 {t["recap_min"]}자에 못 미친다')
 
     if t.get('judgment_min') and m['judgment'] < t['judgment_min']:
         v.append(f'판단군이 {m["judgment"]}자로 하한 {t["judgment_min"]}자에 못 미친다 '
                  f'(시황 {m["recap"]}자) — 분량을 시황으로 채우고 판단을 줄이지 않는다')
 
-    if market != 'us':
-        return v
+    if market == 'us':
+        day = '축약일' if abbreviated else '발표일'
+        macro = m['sections'].get('매크로', 0)
+        hi = t['macro_max_abbrev'] if abbreviated else t['macro_max']
+        if macro > hi:
+            v.append(f'매크로가 {macro}자로 {day} 상한 {hi}자를 넘는다')
 
-    floor = t['ratio_min_abbrev'] if abbreviated else t['ratio_min']
-    day = '축약일' if abbreviated else '발표일'
-    if m['ratio'] is not None and m['ratio'] < floor:
-        v.append(f'시황·가격군 ÷ 판단군이 {m["ratio"]:.2f}로 {day} 하한 {floor:.2f}에 '
-                 f'못 미친다 (시황 {m["recap"]}자 · 판단 {m["judgment"]}자)')
-
-    macro = m['sections'].get('매크로', 0)
-    hi = t['macro_max_abbrev'] if abbreviated else t['macro_max']
-    lo = t['macro_min_abbrev'] if abbreviated else t['macro_min']
-    if macro > hi:
-        v.append(f'매크로가 {macro}자로 {day} 상한 {hi}자를 넘는다')
-    if macro < lo:
-        v.append(f'매크로가 {macro}자로 {day} 하한 {lo}자에 못 미친다 — '
-                 '§9를 지워 비율을 맞추지 말 것')
-
-    stance = m.get('stance_chars') or 0
-    if stance < t['stance_min']:
-        v.append(f'{STANCE_TITLE}의 스탠스 부분이 {stance}자로 하한 '
-                 f'{t["stance_min"]}자에 못 미친다 — 「{PORTFOLIO_SUBTITLE}」 h3 '
-                 '뒤의 산문은 이 하한을 채우지 못한다')
     return v
 
 

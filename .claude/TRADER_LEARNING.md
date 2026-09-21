@@ -1,10 +1,6 @@
-# US/KR — learning to read markets
+# Evidence and review — US/KR reports
 
-Read this before researching, writing, or reviewing either daily brief. The reader
-is a trader aspirant, especially in Rates/FICC. Teach them to explain a price
-move, distinguish evidence from inference, and test their explanation next time.
-Keep the existing market coverage, section order, numeric sources, and gates.
-This contract adds learning to the reports; it does not change portfolio rules.
+Read `.claude/DESK_REPORT.md` first for the PM-facing market coverage and sales/research mandate. This document owns evidence discipline, calculation provenance and the closing review. `.claude/RESEARCH_WORKFLOW.md` owns the append-only record and publication checks. Keep existing market coverage and source/gate contracts.
 
 **KR reader, from 2026-09-22 (user instruction).** The KR evening brief writes for a
 hedge fund manager, not a trader aspirant; the desk supplies judgment material and
@@ -17,13 +13,13 @@ still the individual named in `brief-report-writer.md`. Where this file says
 
 ## Activation — first publication on 2026-09-11 KST
 
-The new research handoff, learning section and its editorial presence check start
+The original research handoff, closing review and presence check start
 at US `report_date >= 2026-09-10` and KR `report_date >= 2026-09-11`. These are
 market-session dates, not the machine's run date. This activation rule governs
-the learning-section entries and handoff pointers in both writers and runbooks.
+the review-section entries and handoff pointers in both writers and runbooks.
 For earlier sessions, keep the existing report structure and skip the new
-learning handoff/block/presence check. Do not republish an existing post to add
-learning. Evidence discipline applies whenever writing new prose. The first
+review handoff/block/presence check. Do not republish an existing post to add
+review material. Evidence discipline applies whenever writing new prose. The first
 eligible issue bootstraps if its predecessor has no learning question.
 
 ## Research handoff
@@ -35,10 +31,10 @@ Add `학습·복기` to `research_notes.md` before handing it to the writer:
    `kr/posts/` for KR). Record its path, date, learning question, original test
    condition and deadline. Use its learning block only, not the editor's personal
    note. If it has no learning block, bootstrap; do not invent a previous question.
-2. **One case.** Choose a material move or a useful non-reaction in today's data.
+2. **Material question.** Choose a material move or a useful non-reaction in today's data.
    Record the observation, one explanatory hypothesis, a plausible alternative
    where supported, and the evidence that could distinguish them. An unknown
-   cause is a valid lesson; never manufacture a competing explanation.
+   cause is a valid research outcome; never manufacture a competing explanation.
 3. **One calculation, when supported.** Reuse an existing calculated field first.
    Otherwise run simple arithmetic in Python using canonical input values: e.g.
    `(long yield - short yield) * 100` in bp when inputs are in percent, or
@@ -48,7 +44,7 @@ Add `학습·복기` to `research_notes.md` before handing it to the writer:
    Writer copies this checked result; this is the narrow numeric-source exception
    for the learning block and the KR rates section’s specified spreads, not
    permission to calculate portfolio performance.
-   Missing inputs → conceptual exercise without a numerical answer. No invented
+   Missing inputs → qualitative reasoning with the missing evidence stated. No invented
    market quotes, notionals, DV01, hedge ratios or P&L examples.
 4. **Next test.** Name one observable condition, the instrument/series to watch,
    and a next-session or named-event horizon. Event dates/times need a source and
@@ -56,7 +52,7 @@ Add `학습·복기` to `research_notes.md` before handing it to the writer:
    price targets. Record source URLs and observation times for research evidence.
 
 Keep canonical prices in their existing data files. This handoff supplements
-them with explanation and reproducible learning arithmetic, not a second price
+them with explanation and reproducible analytical arithmetic, not a second price
 feed. Research missing conceptual context from primary institutional sources;
 the writer uses the handoff and does not start a second research pass.
 
@@ -83,7 +79,8 @@ event outcome may be used to make an earlier prediction look informed.
 
 ## Evidence discipline — applies throughout the report
 
-- State **observation → possible mechanism → distinguishing evidence**. Reserve
+- Check **observation, possible mechanism and distinguishing evidence** across
+  the explanation, without repeating this sequence in every paragraph. Reserve
   causal conclusions for supporting evidence. Temporal coincidence alone is not
   attribution. If a section asks for a cause but it is unverified, state the
   limitation and the next check instead of asserting a cause.
@@ -102,47 +99,40 @@ event outcome may be used to make an earlier prediction look informed.
 - Lagged real yields, breakevens, credit spreads or term-premium estimates explain
   their own observation window, not today's new shock. Nominal-minus-real yield
   is inflation compensation, also affected by risk/liquidity premia; explain this
-  qualification when using the familiar label `기대인플레` to teach the concept.
+  qualification when using the familiar label `기대인플레` to explain the interpretation.
 
 ## Writer output
 
-Explain the day's relevant concept briefly where it first helps the price story.
-Use one or two concepts at most; do not append a glossary to every section.
-Strategy comments describe the report's model view and its invalidation, not an
-instruction to copy trades. Keep the existing stance vocabulary and markers.
+Follow the daily reading path in `DESK_REPORT.md`. Explain a concept briefly where
+it helps assess the evidence; no daily concept or exercise quota. Reproducible
+calculations belong in the handoff and appear in prose only when they resolve a
+material question. Strategy comments give the current interpretation, conditional
+investment relevance and falsifier; the closing section reviews prior reasoning.
 
 Append one `<section class="card" data-learning="daily">` with the heading
-`오늘의 학습과 복기` after the existing final content section and before the
-disclaimer. Use 3–4 short paragraphs, roughly 350–650 Korean characters excluding
-the calculation, with ordinary headings/captions rather than another dashboard:
+`시장 판단과 복기` after the existing final content section and before the disclaimer.
+The legacy `data-learning` attribute is retained for compatibility. Add the cycle
+and hypothesis attributes from `RESEARCH_WORKFLOW.md`. Use connected prose:
 
-- **지난 질문 복기:** cite the previous issue date and link, preserve its question
-  and test condition, then compare available observations: supported, weakened,
-  or still undecidable. A price direction alone does not prove the mechanism.
-  If the event is pending/data unavailable, retain the original question, date
-  and condition in the next-test paragraph; keep at most one open question.
-  Bootstrap skips this paragraph. Never call the previous issue “yesterday”
-  across holidays or missing issues, or rewrite its original hypothesis.
-- **오늘의 개념:** explain one concept through today's observed move. Quiet days
-  may revisit an unresolved case; no obligation to invent a new lesson.
-- **직접 확인:** pose the short exercise and give the checked formula/result in
-  a separate paragraph or caption, with units and source date. The calculation
-  is allowed only through the research handoff above. Otherwise ask a qualitative
-  question and provide the reasoning; no empty numeric slots.
-- **다음 확인:** state the single hypothesis/test/horizon from the handoff, with
-  an original question date so unresolved questions survive successive issues.
+- Compare the prior hypothesis, original observation window and condition with new
+  evidence. Link its original issue with its actual date; distinguish support,
+  weakening and undecidable outcomes. Direction alone does not prove mechanism.
+- Explain changes to the interpretation and the strongest unresolved alternative.
+  Do not repeat the opening's complete market summary or reprint an entire idea.
+- Retain every open ledger question and its next distinguishing observation or
+  original deadline. Unchanged items can be brief. Include today's closed failures
+  and reviewed nonexecution; a bootstrap honestly has no prior view to evaluate.
 
-Use existing CSS and keep market coverage dominant. No learning-only stance
-changes, no new portfolio, no customer-flow fiction, and no compulsory daily
-VaR/stop-loss display without an actual model and inputs.
+Definitions and methodology are subordinate to the decision question. Calculations
+still require the research handoff and aligned canonical inputs. No invented
+portfolio, customer flow, hedge ratio, VaR or compulsory risk-limit number.
 
 ## Editorial check before publishing
 
-After drafting and again after prose editing, verify: learning block present;
-previous question/date/condition copied accurately or genuine bootstrap;
-every calculation reproducible with aligned inputs; inference and unknowns
-clearly distinguished; one next check retained; no future information; all
-portfolio numbers still from `portfolio.json`. Check causal claims in the body
-as well as the learning block. Repair the affected paragraphs when this check
-fails. This is an editorial check, not a newly implemented automated gate;
-run the existing publish gates in their usual order as well.
+After drafting and again after prose editing, apply `DESK_REPORT.md`'s acceptance
+checks. Verify the review block and cycle markers; previous question/date/condition
+accurate or genuine bootstrap; calculations reproducible with aligned inputs;
+causal uncertainty preserved; unresolved questions carried; no future information;
+market numbers from canonical collected inputs. Review causal claims throughout
+the report. Repair failed paragraphs, then run existing gates plus the research
+checks. Automated reference matching complements, but cannot replace, semantic review.

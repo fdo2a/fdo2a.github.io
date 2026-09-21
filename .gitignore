@@ -50,3 +50,8 @@ reviews/.runner.lock
 # 차트는 날짜별로 kr/assets/ 에 나간다 — 무날짜 판은 매일 새 blob 을 만들었다(49회 커밋)
 kr/data/kr_charts.png
 kr/data/kr_flows_intraday.png
+
+# Research working copies and local append locks (evidence remains tracked)
+.research-drafts/
+research/**/.lock
+.unlazy/

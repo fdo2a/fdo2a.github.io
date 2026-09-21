@@ -33,6 +33,9 @@ def main():
     ap.add_argument('--recap', required=True)
     ap.add_argument('--scorecard', default=None)
     ap.add_argument('--span', choices=('weekly', 'monthly'), required=True)
+    ap.add_argument('--research-root', help='Verified append-only research directory')
+    ap.add_argument('--research-as-of', help='Timezone-aware frozen review cutoff')
+    ap.add_argument('--market', choices=('us', 'kr'))
     args = ap.parse_args()
 
     try:
@@ -47,7 +50,20 @@ def main():
         print('FATAL: 집계 파일 또는 발행본 회수 파일이 없다', file=sys.stderr)
         sys.exit(2)
 
-    violations = check(html, agg, load(args.scorecard), recap, args.span)
+    research_summary = None
+    if args.research_root or args.research_as_of:
+        if not (args.research_root and args.research_as_of and args.market):
+            ap.error('--research-root, --research-as-of and --market are required together')
+        from pathlib import Path
+        from common.research_ledger import summarize
+        try:
+            research_summary = summarize(Path(args.research_root), args.market,
+                                         agg['start_date'], agg['end_date'], args.research_as_of)
+        except (OSError, ValueError, KeyError) as e:
+            print(f'FATAL: research ledger: {e}', file=sys.stderr)
+            return 2
+    violations = check(html, agg, load(args.scorecard), recap, args.span,
+                       research_summary=research_summary)
     if not violations:
         print('기간 리포트 게이트 통과')
         return
@@ -58,4 +74,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

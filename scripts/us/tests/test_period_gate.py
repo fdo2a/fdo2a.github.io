@@ -269,3 +269,17 @@ def test_a_number_split_by_markup_is_refused():
     errs = G.check('<p>포트폴리오는 2.<!-- > -->20% 올랐다.</p>',
                    {'span': 'week'}, {}, {}, 'week')
     assert any('태그가 끼어' in e for e in errs)
+
+
+def test_ledger_summary_numbers_are_scoped_to_verified_fragment():
+    from common.research_gate import render_summary
+    s = {'market': 'us', 'start': '2026-08-17', 'end': '2026-08-21',
+         'as_of': '2026-08-22T00:00:00+00:00',
+         'counts': {'total': 17, 'prospective': 17, 'retrospective': 0, 'open': 17, 'overdue': 0},
+         'hypotheses': [], 'cycles': []}
+    fragment = render_summary(s)
+    html = GOOD.replace('</main>', fragment + '</main>')
+    assert check(html, AGG, SC, RECAP, 'weekly', research_summary=s) == []
+    assert check(html.replace('검토 대상 17건', '검토 대상 18건'), AGG, SC, RECAP, 'weekly', research_summary=s)
+    assert check(html.replace('</main>', '<p>금은 17% 올랐다.</p></main>'), AGG, SC, RECAP, 'weekly', research_summary=s)
+    assert check(html, AGG, SC, RECAP, 'weekly')

@@ -11,6 +11,7 @@ Design: docs/superpowers/specs/2026-08-24-thesis-watch-design.md
 """
 
 import argparse
+import hashlib
 import html as _html
 import json
 import sys
@@ -293,6 +294,7 @@ def build_ticker(symbol, row, book, as_of):
         f'&nbsp;{spec["code"]} · 등급 유지 {book.get("grade_since", as_of)}부터',
         f'    <span class="small">{spec["what"]}</span>',
         '  </div>',
+        '  <div class="panel">' + R.desk_block(row, book, as_of) + '</div>',
         narrative_link(),
         changelog(book.get('changelog', [])),
         '  <h2 class="list-title">투자 thesis</h2>',
@@ -366,9 +368,9 @@ def build_index(watch, state, as_of):
         + panel('판정 규칙', C.PROTOCOL['rules']))
 
     body = f'''  <div class="intro">
-    개별 종목을 계속 들고 갈 때 필요한 건 뉴스 요약이 아니라 <b>분류</b>입니다.
-    들어온 사건이 처음 그 종목을 본 이유를 강화하는지·약화하는지·깨는지만 판정하고,
-    판정이 바뀔 때만 기록합니다.
+    메모리 산업의 변화가 각 회사의 <b>투자 논거와 가치 가정</b>에 미치는 영향을 살핍니다.
+    보유 여부를 가정하지 않고, 새로운 근거가 기존 판단을 강화하는지·약화하는지·깨는지 기록합니다.
+    컨센서스와 시세는 수집 기준일의 관측값이며, 시장 기대와 다른 부분은 근거가 있을 때만 제시합니다.
     <span class="small">기준일 {as_of} · 변화가 없는 날은 아무것도 올라오지 않습니다</span>
   </div>
   <h2 class="list-title">감시 중인 종목</h2>
@@ -468,12 +470,25 @@ def build_narrative(as_of):
                  'https://fdo2a.github.io/thesis/narrative.html', body, 'thesis', '../', ld)
 
 
+def matches_template_transition(data, out, manifest=None):
+    """Accept only the audited pre-upgrade snapshot, never an arbitrary old page."""
+    if manifest is None:
+        manifest = json.loads((Path(__file__).parent / 'thesis/template_transition.json').read_text())
+    for name, digest in manifest.items():
+        path = data / name[5:] if name.startswith('data/') else out / name
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+            return False
+    return bool(manifest)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--data', default=str(DATA))
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--check', action='store_true',
                     help='쓰지 않고, 이미 있는 파일이 지금 렌더 결과와 같은지만 본다')
+    ap.add_argument('--allow-template-transition', action='store_true',
+                    help='--check에서 검증된 이전 템플릿의 정확한 파일·데이터 조합만 허용')
     args = ap.parse_args()
 
     data, out = Path(args.data), Path(args.out)
@@ -528,6 +543,9 @@ def main():
     }, ensure_ascii=False, indent=2) + '\n')
 
     if args.check:
+        if differing and args.allow_template_transition and matches_template_transition(data, out):
+            print('검증된 이전 템플릿과 일치 — 다음 정상 수집에서 새 템플릿 적용')
+            return 0
         if differing:
             print('렌더 결과와 다른 파일 — 손으로 고쳤거나 데이터가 바뀐 채 방치됐다:')
             for d in differing:

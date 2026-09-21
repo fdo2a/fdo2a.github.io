@@ -1,12 +1,14 @@
 """Publication gate for §8 (매크로).
 
 The writer can be told that a regime only moves on a new release; only a gate can
-prove the published page obeyed it. Same division of labour as stance_gate, and the
+prove the published page obeyed it. Same division of labour as the other gates, and the
 same bluntness — a macro read that quietly drifts is the failure this exists to end.
 
-One check here has no counterpart in §8: **reconciliation**. The macro book and the
-stance book are read on the same axis but over different horizons, so they are allowed
-to disagree. What they are not allowed to do is disagree silently.
+2026-09-19 에 스탠스 책이 없어지면서 **해소(reconciliation) 검사가 짝을 잃었다.** 그
+검사는 매크로 방향과 스탠스 등급의 부호가 어긋날 때 해소 문단을 강제했다. 그 자리를
+`check_falsifier` 가 대신한다 — 매크로가 「무엇이 나오면 이 판단이 틀린 것인가」를
+지면에 밝히게 한다. 성적표가 채점하는 대상이 이제 이 판정이므로, 독자도 그 탈출
+조건을 볼 수 있어야 한다.
 
 Pure — `check()` takes strings and dicts and returns a list of violation messages.
 """
@@ -15,7 +17,7 @@ import re
 
 from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
                     TRANSMISSION_LABELS, conflicts, regime_name)
-from .stance_gate import locate_section, number_forms, strip_tags
+from .section import locate_section, number_forms, strip_tags
 
 _REGIME = re.compile(
     r'<span\b(?P<attrs>[^>]*\bdata-macro\s*=\s*"regime"[^>]*)>(?P<text>.*?)</span>', re.S)
@@ -87,7 +89,6 @@ MIN_CITED_COMPONENTS = 2
 INTERNAL_ARTIFACTS = (
     'research_notes.md', 'market_data.json', 'intraday.json', 'econ_indicators.json',
     'macro.json', 'macro_eval.json', 'macro_metrics.json', 'macro_next.json',
-    'stance.json', 'stance_eval.json', 'stance_metrics.json', 'stance_next.json',
     'sector_performance.html', 'releases/index.json',
 )
 
@@ -340,15 +341,25 @@ def _check_hygiene(html, v):
             break
 
 
-def _check_reconciliation(section, next_macro, stance, v):
-    if not stance:
-        return
-    clash = conflicts((next_macro or {}).get('transmission'), stance)
-    for key in clash:
-        if f'data-reconcile="{key}"' not in section:
-            v.append(f'§8 {key}: 매크로 방향과 §9 스탠스 등급이 반대인데 해소 문단이 없다 '
-                     f'— 해당 문단에 data-reconcile="{key}"를 달 것')
+def check_falsifier(html, next_macro):
+    """정책 경로의 반증조건이 **지면에 실렸는지**.
 
+    2026-09-19 에 스탠스 책이 없어지면서 `_check_reconciliation` 이 짝을 잃었다 —
+    그 검사는 매크로 방향과 스탠스 등급의 부호가 어긋날 때 해소 문단을 강제했다.
+    대신 스탠스가 지던 **「무엇이 나오면 이 판단이 바뀌나」**를 매크로가 넘겨받는다.
+    `falsifier` 는 지금까지 JSON 에만 있고 지면에 나올 의무가 없었는데, 성적표가
+    채점하는 대상이 이 판정이 된 이상 독자도 그 조건을 볼 수 있어야 한다.
+    """
+    want = ((next_macro or {}).get('policy_path') or {}).get('falsifier')
+    if not want:
+        return []
+    section = locate_section(html, MACRO_TITLE, exact=True) or html
+    for m in re.finditer(r'<p\b[^>]*\bdata-falsifier\s*=\s*"[^"]*"[^>]*>(.*?)</p>',
+                         section, re.S):
+        if len(strip_tags(m.group(1)).strip()) >= 20:
+            return []
+    return ['정책 경로의 반증조건이 지면에 없다 — 그 문단에 `data-falsifier="1"` 을 '
+            '달고 무엇이 나오면 이 판단이 바뀌는지 쓸 것']
 
 def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     prev = (prev_macro or {}).get('policy_path') or {}
@@ -465,7 +476,7 @@ def _check_next(next_macro, prev_macro, regime_cell, trans_cells, report_date, v
                      f'{row.get("since")}로 오늘이 아니다')
 
 
-def check(html, prev_macro, macro_eval, next_macro, stance=None):
+def check(html, prev_macro, macro_eval, next_macro):
     section = section_macro(html)
     if section is None:
         return ['§8(매크로) 섹션을 찾을 수 없다']
@@ -478,7 +489,7 @@ def check(html, prev_macro, macro_eval, next_macro, stance=None):
     _check_quiet_day(section, macro_eval, v)
     _check_releases(html, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
-    _check_reconciliation(section, next_macro, stance, v)
+    v.extend(check_falsifier(html, next_macro))
     _check_policy(text, prev_macro, macro_eval, next_macro, v)
     _check_next(next_macro, prev_macro, regime_cell, trans_cells,
                 (macro_eval or {}).get('report_date'), v)

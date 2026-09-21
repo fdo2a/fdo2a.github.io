@@ -1,5 +1,7 @@
 # KR Evening Brief — Orchestrator Runbook
 
+**적용 시점:** 2026-09-21 KST 이후 새로 작성하는 보고서는 `.claude/DESK_REPORT.md`와 `.claude/RESEARCH_WORKFLOW.md`를 적용한다. 이미 발행된 파일은 이 전환을 이유로 다시 쓰지 않는다.
+
 한국 시장 **저녁 마감브리프**의 오케스트레이터. 평일 18:00 KST 실행. US 모닝브리프(`ORCHESTRATOR.md`)와 데이터·발행이 완전 분리되며, 공유 규칙(디자인·문체·검증)은 US 문서를 참조한다.
 
 **Report trading date**: `kr/data/kr_market_data.json`의 `report_date`(코스피 실제 종가일)를 신뢰한다. KST 요일 산술은 폴백일 뿐. 저녁 발행이라 당일 세션이 마감된 상태여야 한다 — 장중(15:30 이전) 실행 시 당일치는 미완이므로 데이터 워크플로(17:00·17:30 KST cron)가 마감 후 확정한 데이터를 쓴다.
@@ -29,11 +31,22 @@
 
 ## STEP 1 — 리서치 (research_notes.md)
 
-**학습·복기:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안과 STEP 2.5 윤문 후에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
+**운용자 대상 시황·리서치:** STEP 1 시작 전에 `.claude/DESK_REPORT.md`를 읽고 그 문서의 Handoff를 수행한다. 기존 시황·수급·뉴스 자료를 유지하면서 `research_notes.md`에 `운용 판단 브리핑`을 추가한다. 작성자에게 이 절과 해당 문서 경로를 반드시 넘긴다. STEP 2 초안과 STEP 2.5 윤문 후에는 그 문서의 Editorial acceptance를 수행한다. 실제 보유·운용제약이 주어지지 않았으면 자산별 조건부 판단으로 쓰며, 새 거래 아이디어가 없는 날도 정상 발행한다.
+
+**리서치 인계:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안과 STEP 2.5 윤문 후에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
+
+**앞으로 작성하는 보고서:** `.claude/RESEARCH_WORKFLOW.md`를 읽고 증거 → 가설·복기 기록 → 당일 cycle 순서로 진행한다. 원장은 `research/kr`, 원장·증거 파일을 새 발행본과 함께 커밋한다. 기존 발행본은 이 변경의 대상이 아니다. 작성자에게 cycle ID와 모든 미해결 가설을 전달하고, 초안과 윤문 후 모두 아래 검사를 통과시킨다. 새 자료가 추가되면 cycle도 다시 기록한다.
+
+```bash
+python3 scripts/check_research.py check --span daily --html <새 초안> --root research/kr --market kr --date <DATE> --cycle <CYCLE_ID>
+```
+
+STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`). 초안 전후 비교는 workflow의 `compare`로 기록하고, 인과관계·유보 표현의 의미 보존은 사람이 확인한다.
+
 
 수치가 아닌 **뉴스·정책 촉매·해석**만 웹 리서치한다(수치는 kr/data가 확정). 최소 포함:
 - 그날 코스피·코스닥·수급을 움직인 뉴스(외국인 매매 배경, 대장주 이슈)
-- **정책·정치 촉매 — 리서치 비중 최우선 (2026-07-29 사용자 지시로 섹션 확대)**: 밸류업·기업지배구조(상법·자사주)·금투세·대주주 양도세·배당 분리과세·한은 금통위·반도체/2차전지/바이오 보조금·통상(대미 관세·수출규제)·환율당국·국민연금·부동산 규제·지정학·국회 일정 중 그날 해당분. writer가 블록당 **사실 → 전달 경로(수급/이익/멀티플) → 수혜·피해 업종 → 다음 일정·확인 트리거** 4요소를 쓸 수 있도록 각 재료마다 이 네 가지를 채워서 넘긴다. 그날 신규 재료가 없으면 **계류 중인 정책의 진행 상황**을 조사해 채운다(검색 2~4회 배정).
+- **정책·정치 촉매 — 리서치 비중 최우선 (2026-07-29 사용자 지시로 섹션 확대)**: 밸류업·기업지배구조(상법·자사주)·금투세·대주주 양도세·배당 분리과세·한은 금통위·반도체/2차전지/바이오 보조금·통상(대미 관세·수출규제)·환율당국·국민연금·부동산 규제·지정학·국회 일정 중 그날 해당분. writer가 블록당 **사실 → 전달 경로(수급/이익/멀티플) → 수혜·피해 업종 → 다음 일정·확인 트리거** 4요소를 쓸 수 있도록 각 재료마다 이 네 가지를 채워서 넘긴다. 신규 재료가 없으면 중요한 계류 정책의 변화 여부를 확인하고, 변화가 없다는 사실만 짧게 쓴다. 분량을 채우기 위한 재서술은 하지 않는다.
 - 거래대금 상위·업종 주도에서 드러난 종목의 개별 재료(§9 특징주용)
 - 출처 귀속 필수. 복수 출처 교차 확인(단일 검색 수치 불신 — US 전례).
 
@@ -87,9 +100,9 @@ python3 scripts/humanize_prose.py extract kr_brief_[DATE].humanizing.html
 
 - **스킬로 할 때**: `prose_in.txt`를 입력으로 준다. 스킬은 텍스트를 받아 `_workspace/{run_id}/final.md`(마크다운)를 내놓는다 — **HTML을 고쳐 주지 않으므로 HTML을 통째로 넘기는 사용법은 없다.** 이름표를 그대로 두고 문장만 고치라고, **강도는 「보수」**로 명시한다 — 스킬이 절을 갈아끼우기 시작하면 4번에서 통째로 거부된다.
 - **직접 할 때**: `prose_in.txt`를 그 자리에서 고치고, 그 파일을 그대로 4번의 `--payload`로 쓴다. `python3 scripts/check_style.py <html>`의 출력이 작업 목록이다. 검사가 짚은 항목부터 고치고, 검사가 못 보는 아래 셋도 함께 훑는다.
-  - **주어를 되살린다.** 앞 문장에서 이어받아 생략한 주어를 다시 넣는다. 「이후 반등해…」 → 「코스피는 이후 반등해…」.
+  - **주체가 모호할 때만 밝힌다.** 문맥상 분명한 주어를 문장마다 반복하지 않는다.
   - **한 문장에 한 관계만 남긴다.** 「A했다가 B했고 이후 C해서 D로 마감했다」는 문장이 아니라 표다. 시각이 셋 이상이면 나눈다.
-  - **판단을 능동으로 쓴다.** 「~로 읽힌다/판정된다」를 「~라고 볼 수 있습니다」나 「A가 B를 끌어내렸습니다」로 바꾼다.
+  - **판단의 강도를 보존한다.** 피동 표현을 줄여도 추정을 단정이나 인과관계로 바꾸지 않는다.
 
 **두 경로 모두 문장만 만진다.** 숫자·자리표·이름표는 그대로 둔다. 4번이 그것을 강제한다.
 
@@ -103,6 +116,7 @@ python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
   --gate "python3 scripts/check_session.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/check_weight.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/check_kr_stance.py --html {f} --datadir kr/data" \
+  --gate "python3 scripts/check_research.py check --span daily --html {f} --root research/kr --market kr --date <DATE> --cycle <CYCLE_ID>" \
   --gate "python3 scripts/verify_post.py {f} --before kr_brief_[DATE].html --skip-layout"
 ```
 
@@ -184,5 +198,5 @@ PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-
 - 모든 수치는 kr/data/*에서만. 수치 창작 절대 금지.
 - **수급 신선도 라벨 필수** — 당일 확정 없으면 잠정/전거래일 명시.
 - **완성본만 발행** — 코어 표 구멍 시 중단·보고.
-- 발행본 [확인필요] 금지. 출처 귀속. 기관 전략 리포트 톤.
+- 발행본 [확인필요] 금지. 출처 귀속. 근거와 판단이 분명한 자연스러운 보고서 문체.
 - **buy-side 표기 금지 (2026-08-22 사용자 지시)** — 전략·리포트·시황 정리로. 발행 전 `grep -i "buy[- ]\?side" kr_brief_*.html`로 확인.

@@ -38,8 +38,20 @@ MEMORY = [('Micron', 'MU'), ('Western Digital', 'WDC'), ('Seagate', 'STX'), ('Nv
           ('Samsung Elec', '005930.KS'), ('SK hynix', '000660.KS')]
 AI_INFRA = [('Marvell', 'MRVL'), ('Coherent', 'COHR'), ('Lumentum', 'LITE'),
             ('GE Vernova', 'GEV'), ('Vertiv', 'VRT')]
+# MLCC (2026-09-19 사용자 지시 「mlcc 산업분석을 메모리처럼 뒤에 붙이는걸로」).
+# 종목은 thesis 파이프라인의 mlcc 그룹과 **같은 여덟 개**다(CCML ETF 보유 기준,
+# `docs/superpowers/specs/2026-09-17-mlcc-thesis-group-design.md`). 삼성전자는 거기서
+# memory 그룹이라 빠져 있고 여기서도 그대로 둔다 — 한 종목이 두 자리에서 다르게 불리면
+# 독자가 같은 회사를 둘로 읽는다.
+#
+# **여덟 개가 전부 해외장이다.** 미국장 마감 시점에는 전부 전일 종가이고, 그중 일본·한국·
+# 대만·중국이 서로 다른 날짜일 수 있다. 억지로 같은 날로 맞추지 않는다 — 메모리 표가
+# 삼성전자·SK하이닉스를 캡션으로 처리하는 것과 같다.
+MLCC = [('Murata', '6981.T'), ('Samsung E-M', '009150.KS'), ('Taiyo Yuden', '6976.T'),
+        ('Yageo', '2327.TW'), ('Walsin', '2492.TW'), ('Holy Stone', '3026.TW'),
+        ('Sanhuan', '300408.SZ'), ('Fenghua', '000636.SZ')]
 GROUPS = [('indices', INDICES), ('sectors', SECTORS), ('fx', FX), ('commodities', CMDTY),
-          ('memory', MEMORY), ('ai_infra', AI_INFRA)]
+          ('memory', MEMORY), ('ai_infra', AI_INFRA), ('mlcc', MLCC)]
 INTRADAY_KEY = [('Nasdaq', '^IXIC'), ('S&P 500', '^GSPC'), ('Russell 2000', '^RUT'),
                 ('Nvidia', 'NVDA'), ('WTI', 'CL=F'), ('Gold', 'GC=F'), ('USD/JPY', 'JPY=X')]
 
@@ -820,6 +832,7 @@ def main():
         'commodities': daily['commodities'],
         'memory': daily['memory'],
         'ai_infra': daily['ai_infra'],
+        'mlcc': daily['mlcc'],
         'yields': yields,
         'yields_fred': yields_fred,
         'yields_note': 'yields = 발행용 기준값. 1순위는 네이버 국채 종가(SIFMA 국채 현물 '

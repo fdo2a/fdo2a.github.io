@@ -204,7 +204,19 @@ def _check_provenance(text, agg):
     return v
 
 
-def check(html, agg, scorecard, recap, span):
+def check(html, agg, scorecard, recap, span, research_summary=None):
+    # Caller derives this object from the verified ledger, never an author-edited
+    # JSON. Only the exact generated block gets its own numeric provenance.
+    if research_summary is not None:
+        from common.research_gate import checked_summary_body
+        if (research_summary.get('start'), research_summary.get('end')) != (agg.get('start_date'), agg.get('end_date')):
+            return ['Research summary period does not match the aggregate']
+        try:
+            html = checked_summary_body(html, research_summary)
+        except ValueError as e:
+            return [str(e)]
+    elif 'data-research-summary' in html:
+        return ['Research summary requires a verified ledger and as-of cutoff']
     v = []
     text = body_text(html)
 

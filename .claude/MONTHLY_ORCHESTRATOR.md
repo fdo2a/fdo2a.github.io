@@ -2,6 +2,8 @@
 
 US·KR 월간 정리 2편을 발행한다. **그 달 발행본의 총정리**이지 새 취재가 아니다 — 웹 검색도 시세 재수집도 하지 않는다.
 
+**편집 계약:** 준비 단계에서 `.claude/DESK_REPORT.md`를 읽고 writer에게 경로를 전달한다. 기간 시황과 성과표를 유지하면서 현재 판단의 함의·기대와 결과의 차이·다음 확인 조건을 연결한다. 주간은 중요한 질문의 심화, 월간은 판단 방법의 복기다. 작성 전후 그 문서의 Editorial acceptance를 적용하고 기존 연구·수치·문체 검사를 모두 수행한다.
+
 ## STEP 0 — 월이 넘어갔는가 (먼저 확인하고, 아니면 즉시 끝낸다)
 
 이 트리거는 달 경계를 놓치지 않으려고 여러 날에 걸쳐 뜬다. **대부분의 실행은 아무것도 하지 않고 끝나야 한다.**
@@ -56,6 +58,12 @@ python3 scripts/build_scorecard.py --agg data/monthly/<KEY>.json --datadir data 
 
 **`--no-append`가 붙는 이유**: 월간은 주간 행을 롤업하므로 같은 기간을 이력에 두 번 세면 안 된다. 첫 몇 회차는 `rollup`이 `insufficient: true`로 나오는 것이 정상이다.
 
+## 연구 복기 준비 — 작성자 호출 전
+
+`.claude/RESEARCH_WORKFLOW.md`의 기간 복기를 수행한다. 시장별 `research/us`·`research/kr` 원장과 저장 증거만 사용한다. 집계의 START·END와 실제 검토 시각 AS_OF를 고정하고 `check_research.py render`로 요약을 만든다. 작성자는 생성된 section을 그대로 삽입하고, 주간에는 가설 변화와 반증, 월간에는 반복된 설명의 한계와 다음 검증 조건을 서술한다. 초기 원장이 비어 있으면 축적 전이라고 밝힌다.
+
+아래 US 명령의 `<AS_OF>`는 같은 고정 시각이다. KR 실행에서는 모든 입력 경로와 `--research-root research/kr --market kr`를 함께 바꾼다. 윤문 전후 `check_research.py check`도 workflow대로 수행한다.
+
 ## STEP 4 — US 주간 정리
 
 `period-report-writer` 서브에이전트를 `market=us, span=monthly`로 부른다. 입력은 `recap_us.json`·`data/monthly/<KEY>.json`·`data/period_scorecard.json`·`data/history/*.jsonl`. 산출은 `monthly_<KEY>.html`.
@@ -64,7 +72,7 @@ python3 scripts/build_scorecard.py --agg data/monthly/<KEY>.json --datadir data 
 
 ```bash
 python3 scripts/check_period.py --html monthly_<KEY>.html --agg data/monthly/<KEY>.json \
-  --recap recap_us.json --scorecard data/period_scorecard.json --span monthly
+  --recap recap_us.json --scorecard data/period_scorecard.json --span monthly --research-root research/us --research-as-of <AS_OF> --market us
 ```
 
 위반이 나오면 **목록을 그대로 writer에게 돌려주고 다시 돌린다.** 게이트를 우회하지 않는다.
@@ -77,17 +85,18 @@ python3 scripts/check_readability.py --strict $(pwd)/monthly_<KEY>.html
 python3 scripts/check_style.py $(pwd)/monthly_<KEY>.html
 ```
 
-**`check_weight.py`는 돌리지 않는다.** 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)과 무게중심 비율을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
+**`check_weight.py`는 돌리지 않는다.** 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
 
 **STEP 4-b — AI 티 제거.** 일간과 같은 관문을 지난다. 원본은 손대지 않고 사본에서 윤문한다.
 
 ```bash
-python3 scripts/humanize_prose.py extract monthly_<KEY>.html --out prose_in.txt
+cp monthly_<KEY>.html monthly_<KEY>.humanizing.html
+python3 scripts/humanize_prose.py extract monthly_<KEY>.humanizing.html --out prose_in.txt
 # humanize-korean 스킬 또는 수동 윤문 → prose_out.txt
-python3 scripts/humanize_prose.py finalize monthly_<KEY>.html --payload prose_out.txt \
+python3 scripts/humanize_prose.py finalize monthly_<KEY>.humanizing.html --original monthly_<KEY>.html --payload prose_out.txt \
   --gate "python3 scripts/check_style.py {f}" \
   --gate "python3 scripts/check_readability.py --strict {f}" \
-  --gate "python3 scripts/check_period.py --html {f} --agg <AGG> --recap <RECAP> --scorecard data/period_scorecard.json --span monthly"
+  --gate "python3 scripts/check_period.py --html {f} --agg <AGG> --recap <RECAP> --scorecard data/period_scorecard.json --span monthly --research-root research/us --research-as-of <AS_OF> --market us"
 ```
 
 전부 통과했을 때만 원본이 바뀐다. 실패하면 사본을 버리고 원본은 미수정으로 남는다.

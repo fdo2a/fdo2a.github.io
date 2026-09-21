@@ -35,7 +35,7 @@ def main():
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='.',
                     help='workspace holding macro.json / macro_eval.json / '
-                         'macro_next.json / stance_next.json')
+                         'macro_next.json')
     ap.add_argument('--next', dest='next_path', default=None,
                     help='override the macro_next.json path')
     args = ap.parse_args()
@@ -51,15 +51,12 @@ def main():
     prev = load(os.path.join(d, 'macro.json'))
     ev = load(os.path.join(d, 'macro_eval.json'))
     nxt = load(args.next_path or os.path.join(d, 'macro_next.json'))
-    # Reconciliation is checked against today's stance, falling back to yesterday's book
-    # so the check still runs when the writer's stance output is not on disk yet.
-    stance = load(os.path.join(d, 'stance_next.json')) or load(os.path.join(d, 'stance.json'))
 
     if prev is None and ev is None:
         print('macro.json / macro_eval.json 둘 다 없다 — 부트스트랩 실행으로 간주하고 '
               '§8 어휘·표 완성도만 검사한다', file=sys.stderr)
 
-    violations = check(html, prev, ev, nxt, stance)
+    violations = check(html, prev, ev, nxt)
     if not violations:
         print('매크로 게이트 통과')
         return

@@ -12,7 +12,7 @@
 import datetime as dt
 import re
 
-from .stance_gate import locate_section
+from .section import locate_section
 from common.numbers import TAG_RE, numbers_split_by_tags
 
 SECTION_TITLE = '오늘의 장'
