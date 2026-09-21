@@ -155,3 +155,23 @@ def test_normalize_does_not_merge_across_different_themes():
     themes = {g.get("theme") for g in out}
     assert themes == {"반도체", "방산", "조선"}
     assert next(g for g in out if g.get("theme") == "반도체")["value"] == 500
+
+
+def test_dropped_products_returns_index_and_overseas_etfs_by_value():
+    from kr.etf_normalize import dropped_products
+    rows = [{"name": "삼성전자", "value": 6043124, "volume": 1},
+            {"name": "KODEX 200", "value": 2120429, "volume": 2},
+            {"name": "KODEX 레버리지", "value": 1659237, "volume": 3},
+            {"name": "TIGER 미국S&P500", "value": 680002, "volume": 4},
+            {"name": "TIGER 200 IT", "value": 500000, "volume": 5}]
+    out = dropped_products(rows)
+    names = [r["name"] for r in out]
+    assert names == ["KODEX 200", "KODEX 레버리지", "TIGER 미국S&P500"]
+    assert "삼성전자" not in names          # 종목은 상위 표가 맡는다
+    assert "TIGER 200 IT" not in names     # 섹터 ETF 는 상위 표에 남는다
+    assert out[0]["value"] == 2120429
+
+
+def test_dropped_products_empty():
+    from kr.etf_normalize import dropped_products
+    assert dropped_products([]) == []

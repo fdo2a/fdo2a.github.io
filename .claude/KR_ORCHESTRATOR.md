@@ -48,7 +48,9 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 **가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
 
 0. **시황 게이트** — `python3 scripts/check_session.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. KR의 첫 데이터 게이트다. `data-session` 문단 넷, 전일 미국장이 2거래일 이상 묵었을 때의 기준일 표기, 아시아 지수 등락의 표 대조, 「시장 폭」 오칭·내부 필드명·「§N」 노출을 본다. 비-코어라 `kr_session.json`이 없으면 통과한다.
-**무게중심 게이트** — `python3 scripts/check_weight.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. 시황·가격군(오늘의 장·지수 & 장중·환율·금리)의 하한 2,200자, 가격 섹션의 `data-standing` 문단(120자·수치 하나 이상), 가격 섹션의 스탠스 등급 어휘, §2의 `data-lede` 순서(event → meaning → action → invalidation)를 본다. 매크로·경로 항목은 KR에 없으므로 건너뛴다.
+**무게중심 게이트** — `python3 scripts/check_weight.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. 시황·가격군(오늘의 장·지수 & 장중·환율·금리)의 하한 2,200자, **판단군(전략 코멘트·기술적 분석)의 하한 1,800자**(2026-09-22 신설 — 그전까지 KR엔 판단 하한이 없어 09-21 발행본이 시황 2,542자 대 판단 1,287자였다), 가격 섹션의 `data-standing` 문단(120자·수치 하나 이상), 가격 섹션의 스탠스 등급 어휘를 본다. 매크로·경로 항목은 KR에 없으므로 건너뛴다.
+
+**판단 원장 게이트** — `python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json`. §2 여섯 블록의 존재·순서, `action`의 노출 등급·시계가 원장과 같은지, **`invalidation` 산문의 레벨이 원장 `level`과 같은 수인지**, `review`가 `kr_stance_eval.json`의 판정을 실제로 말하는지를 본다. 비-코어가 아니다 — 원장이 틀어지면 **다음 회차의 복기가 통째로 거짓이 된다.**
 
 1. `python3 scripts/apply_readability.py <kr_brief 절대경로>`(v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)) 뒤 `python3 scripts/check_readability.py --strict --no-inline-images <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
 2. 위반 원인별로 처방한다: 헤드라인은 방향·촉매·행동만 남기고, 장중 시각이 셋 이상인 문장은 시간대별로 나눈다. 수치가 다섯 개 이상이면 정확한 레벨은 표에 두고 산문에는 가장 가까운 지지·저항과 관계만 남긴다. 원화·지수 소수점은 산문에서 반올림하고 정밀값은 표·JSON에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
@@ -100,6 +102,7 @@ python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
   --gate "python3 scripts/check_readability.py --strict --no-inline-images {f}" \
   --gate "python3 scripts/check_session.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/check_weight.py --html {f} --datadir kr/data --market kr" \
+  --gate "python3 scripts/check_kr_stance.py --html {f} --datadir kr/data" \
   --gate "python3 scripts/verify_post.py {f} --before kr_brief_[DATE].html --skip-layout"
 ```
 
@@ -131,6 +134,16 @@ python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
 **윤문이 거부돼도 발행은 계속한다.** 말투는 있으면 좋은 것이고, 게이트는 필수다.
 
 사본(`*.humanizing.html`)·`prose_in.txt`·`prose_map.json`과 스킬 작업 폴더(`_workspace/`)는 `.gitignore`에 걸려 있다. STEP 3의 `git add -A`가 쓸어 담지 않는다.
+
+## STEP 2.9 — 판단 원장 승계
+
+게이트를 다 통과한 뒤, writer가 낸 `kr_stance_next.json`을 **`kr/data/kr_stance.json`으로 옮긴다.** 이것이 내일 STEP 0의 입력이 되고, 내일 수집기가 여기 적힌 무효화 레벨을 그날 종가로 검산해 `kr_stance_eval.json`을 만든다.
+
+```
+cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
+```
+
+**순서가 중요하다.** 게이트 전에 옮기면 통과 못 한 판단이 원장에 남고, 발행을 접은 날에도 내일이 그 판단을 채점한다. **발행이 확정된 뒤에만 옮긴다.** STEP 3의 `git add -A`가 이 파일을 함께 커밋한다.
 
 ## STEP 3 — 블로그 발행 (/kr/)
 

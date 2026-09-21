@@ -17,6 +17,8 @@ import os
 import re
 import urllib.request
 
+from kr import expectations
+
 BASE = "https://ecos.bok.or.kr/api"
 # /api/{서비스}/{인증키}/... — 키 자리를 패턴으로 가린다. env 값에 의존하지 않으므로
 # 키가 설정돼 있지 않거나 다른 값이어도 URL이 로그에 그대로 나가는 일이 없다.
@@ -30,7 +32,13 @@ SPECS = [
     ("회사채 AA- 3년", "817Y002", "회사채(3년, AA-)", "D"),
     ("한국은행 기준금리", "722Y001", "한국은행 기준금리", "M"),
 ]
-_LOOKBACK = {"D": 45, "M": 12}  # 연휴·미갱신을 감안해 최근 관측 2개를 확보할 만큼
+# 최근 관측 2개만 필요하던 값이었다. 2026-09-22 「가격에 반영된 기대」(expectations.py)가
+# 스프레드를 제 이력에 세우면서 2년 표본이 필요해졌다 — 창은 넓히고, 최신·직전을 뽑는
+# parse_series 는 그대로 마지막 둘만 본다.
+_LOOKBACK = {"D": 800, "M": 40}
+# 800일 창의 일별 관측은 550여 개다. 200 이면 **앞쪽이 잘려** 최신값은 맞는데 이력만
+# 조용히 짧아진다 — 넉넉히 잡는다.
+_MAX_ROWS = 1000
 
 
 def time_range(cycle: str, today=None):
@@ -120,6 +128,24 @@ def parse_series(payload):
             "prev": prev_val, "prev_date": _norm_time(prev_t) if prev_t else None, "bp": bp}
 
 
+def parse_history(payload) -> list:
+    """관측 전체를 [(날짜, 값)] 오름차순으로. 스프레드 이력용.
+
+    parse_series 가 마지막 둘만 보는 것과 같은 원자료를 쓴다 — 한 번 받아 두 군데가
+    나눠 읽는다. 빈 값·숫자가 아닌 행은 버린다.
+    """
+    out = []
+    for r in _rows(payload, "StatisticSearch"):
+        v = (r.get("DATA_VALUE") or "").strip()
+        if not v:
+            continue
+        try:
+            out.append((_norm_time(r.get("TIME")), float(v)))
+        except ValueError:
+            continue
+    return out
+
+
 def result_note(payload) -> str:
     """ECOS 오류 응답(RESULT)을 진단 문자열로. 성공 응답이면 빈 문자열."""
     if isinstance(payload, dict) and "RESULT" in payload:
@@ -129,7 +155,10 @@ def result_note(payload) -> str:
 
 
 def _fetch_one(key: str, stat_code: str, item_name: str, cycle: str, item_cache: dict):
-    """(관측, 진단문자열)을 돌려준다. 실패 원인을 삼키지 않고 호출자가 로그로 남긴다."""
+    """(최신 관측, 이력, 진단문자열)을 돌려준다.
+
+    실패 원인을 삼키지 않고 호출자가 로그로 남긴다.
+    """
     if stat_code not in item_cache:
         item_cache[stat_code] = _get_json(_url(key, "StatisticItemList", "json", "kr",
                                                1, 1000, stat_code))
@@ -137,15 +166,15 @@ def _fetch_one(key: str, stat_code: str, item_name: str, cycle: str, item_cache:
     code = resolve_item_code(items, item_name)
     if not code:
         note = result_note(items) or f"후보 {len(_rows(items, 'StatisticItemList'))}개 중 이름 불일치"
-        return None, f"항목 '{item_name}' 해석 실패 (표 {stat_code}): {note}"
+        return None, [], f"항목 '{item_name}' 해석 실패 (표 {stat_code}): {note}"
     start, end = time_range(cycle)
-    payload = _get_json(_url(key, "StatisticSearch", "json", "kr", 1, 200,
+    payload = _get_json(_url(key, "StatisticSearch", "json", "kr", 1, _MAX_ROWS,
                              stat_code, cycle, start, end, code))
     row = parse_series(payload)
     if row:
-        return row, ""
+        return row, parse_history(payload), ""
     note = result_note(payload) or f"관측 0건 ({start}~{end})"
-    return None, f"조회 실패 (표 {stat_code} 항목 {code} 주기 {cycle}): {note}"
+    return None, [], f"조회 실패 (표 {stat_code} 항목 {code} 주기 {cycle}): {note}"
 
 
 def collect() -> dict:
@@ -158,15 +187,23 @@ def collect() -> dict:
     if not key:
         return {"pending": True, "note": "ECOS_API_KEY 미설정 — GitHub Actions 시크릿 확인"}
 
-    series, missing, item_cache = {}, [], {}
+    series, missing, history, item_cache = {}, [], {}, {}
     for label, stat_code, item_name, cycle in SPECS:
         try:
-            row, note = _fetch_one(key, stat_code, item_name, cycle, item_cache)
+            row, hist, note = _fetch_one(key, stat_code, item_name, cycle, item_cache)
         except Exception as e:
-            row, note = None, f"{type(e).__name__}: {e}"
+            row, hist, note = None, [], f"{type(e).__name__}: {e}"
         if row:
             series[label] = row
+            history[label] = hist
         else:
             missing.append(label)
             print(f"  econ {label}: {scrub(note)}")
-    return {"source": "ECOS (한국은행 경제통계시스템)", "series": series, "missing": missing}
+    # 「가격에 반영된 기대」 — 이력은 산출물에 담지 않고 스프레드만 남긴다.
+    try:
+        expect = expectations.build(history)
+    except Exception as e:  # noqa: BLE001 — 비-코어. 금리 표는 그대로 나가야 한다
+        print(f"  econ expectations: {scrub(f'{type(e).__name__}: {e}')}")
+        expect = {}
+    return {"source": "ECOS (한국은행 경제통계시스템)", "series": series,
+            "missing": missing, "expectations": expect}

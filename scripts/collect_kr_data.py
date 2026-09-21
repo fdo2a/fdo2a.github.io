@@ -12,10 +12,10 @@ from datetime import datetime, timezone, timedelta
 
 import yfinance as yf
 
-from kr import sources, flows, flows_intraday, sectors, program, technical
+from kr import sources, flows, flows_intraday, sectors, program, stance, technical
 from kr import econ as kr_econ
 from kr.themes import rank_themes
-from kr.etf_normalize import normalize_top_value
+from kr.etf_normalize import dropped_products, normalize_top_value
 from kr.leadership import flag_leadership
 
 KST = timezone(timedelta(hours=9))
@@ -106,8 +106,13 @@ def main(outdir: str, assetdir: str = "kr/assets"):
             technical_out[name] = {"error": str(e)[:120]}
 
     # 거래대금 상위 (ETF 정규화) — 단위 백만원
+    # 지수·해외 ETF 는 상위 표에서 빠지지만(2026-07-29) 실행 조건의 유동성 근거로는
+    # 필요하다 — 같은 raw 에서 갈라 따로 쓴다. 비-코어.
+    index_etf = []
     try:
-        top_value = normalize_top_value(sources.fetch_top_value("0"), top_n=10)
+        raw_top = sources.fetch_top_value("0")
+        top_value = normalize_top_value(raw_top, top_n=10)
+        index_etf = dropped_products(raw_top)
     except Exception as e:
         # 빈 결과도 예외로 올라온다 — 조용한 [] 가 2026-09-10~09-21 발행을 막았다.
         print(f"top_value failed: {e}", file=sys.stderr)
@@ -194,10 +199,25 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     _write(outdir, "kr_program.json", program_out)
     _write(outdir, "kr_technical.json", technical_out)
     _write(outdir, "kr_top_value.json", top_value)
+    _write(outdir, "kr_index_etf.json", index_etf)
     _write(outdir, "kr_industry.json", industry)
     _write(outdir, "kr_theme.json", theme_rows)
     _write(outdir, "kr_intraday.json", intraday)
     _write(outdir, "kr_econ.json", econ)
+
+    # 판단 원장 판정 — 어제 적어 둔 무효화 레벨을 오늘 종가로 검산한다. 비-코어.
+    # 원장이 없으면 「판정불가」로 남고, 그게 첫 회차의 정상 상태다(부트스트랩).
+    prior = None
+    prior_path = os.path.join(outdir, "kr_stance.json")
+    if os.path.exists(prior_path):
+        try:
+            with open(prior_path, encoding="utf-8") as fh:
+                prior = json.load(fh)
+        except Exception as e:  # noqa: BLE001 — 깨진 원장이 수집을 막지 않는다
+            print(f"kr_stance.json 읽기 실패: {e}", file=sys.stderr)
+    stance_eval = stance.evaluate(prior, indices)
+    _write(outdir, "kr_stance_eval.json", stance_eval)
+    print(f"stance: {stance_eval['verdict']} — {stance_eval['note']}")
 
     # 기간 집계 — 세션 upsert. 과거 확정 수급 행도 함께 메워 월간이 자가치유된다.
     # 양쪽 시장 모두 시세를 다시 받지 않는다. US 는 data/history/market.jsonl 을 굴리고,

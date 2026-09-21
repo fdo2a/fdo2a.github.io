@@ -103,6 +103,24 @@ def classify_ticker(name: str) -> dict:
 DROP_KINDS = ("overseas_etf", "index_lev", "index_etf")
 
 
+def dropped_products(rows: list, top_n: int = 8) -> list:
+    """상위 표에서 떨어진 지수·해외 ETF 를 거래대금과 함께 따로 돌려준다.
+
+    2026-07-29 사용자 지시로 이것들이 상위 표에서 빠진 이유는 **실체 있는 종목 쏠림을
+    가려서**였고, 그 판단은 그대로다. 다만 2026-09-22 실행 조건(§2 action)이 「이 판단을
+    어떤 상품으로 표현하나」를 쓰면서 그 상품의 **유동성 근거**가 필요해졌다 — 지수
+    ETF 가 바로 그 자리에 오는 상품이다. 표에는 안 넣고 재료로만 남긴다.
+    """
+    out = []
+    for r in rows:
+        c = classify_ticker(r["name"])
+        if c["kind"] not in DROP_KINDS:
+            continue
+        out.append({"name": r["name"], "kind": c["kind"], "direction": c["direction"],
+                    "value": r.get("value", 0), "volume": r.get("volume", 0)})
+    return sorted(out, key=lambda x: -x["value"])[:top_n]
+
+
 def normalize_top_value(rows: list, top_n: int = 10) -> list:
     """거래대금 상위를 정규화.
 

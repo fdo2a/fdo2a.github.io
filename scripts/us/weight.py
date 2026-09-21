@@ -147,7 +147,11 @@ THRESHOLDS = {
         'macro_max_abbrev': 2400, 'macro_min_abbrev': 1200,
         'stance_min': 1800,
     },
-    'kr': {'recap_min': 2200},
+    # KR 은 2026-09-22 사용자 지시로 독자가 개인에서 **헤지펀드 매니저**로 바뀌었다.
+    # 그 전까지 KR 에는 시황 하한만 있고 판단 하한이 없어서, 2026-09-21 발행본은
+    # 시황 2,542자 대 판단 1,287자로 판단이 시황의 절반이었다. 판단 재료를 받아 보는
+    # 독자에게 그 배분은 거꾸로다 — 판단군에도 바닥을 깐다. 상한은 두지 않는다.
+    'kr': {'recap_min': 2200, 'judgment_min': 1800},
 }
 
 
@@ -188,6 +192,10 @@ def check_volume(m, abbreviated=False, market='us'):
 
     if m['recap'] < t['recap_min']:
         v.append(f'시황·가격군이 {m["recap"]}자로 하한 {t["recap_min"]}자에 못 미친다')
+
+    if t.get('judgment_min') and m['judgment'] < t['judgment_min']:
+        v.append(f'판단군이 {m["judgment"]}자로 하한 {t["judgment_min"]}자에 못 미친다 '
+                 f'(시황 {m["recap"]}자) — 분량을 시황으로 채우고 판단을 줄이지 않는다')
 
     if market != 'us':
         return v

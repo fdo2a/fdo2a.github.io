@@ -89,9 +89,15 @@ def test_time_range_never_empty_and_matches_cycle_format():
     import datetime
 
     d0, d1 = econ.time_range("D", datetime.date(2026, 7, 29))
-    assert d1 == "20260729" and d0 == "20260614" and len(d0) == 8
+    # 창 길이는 _LOOKBACK 에서 끌어온다 — 2026-09-22 스프레드 이력 때문에 45일에서
+    # 800일로 넓어졌고, 여기 숫자를 박아 두면 창을 조정할 때마다 테스트가 깨진다.
+    back = datetime.date(2026, 7, 29) - datetime.timedelta(days=econ._LOOKBACK["D"])
+    assert d1 == "20260729" and d0 == back.strftime("%Y%m%d") and len(d0) == 8
     m0, m1 = econ.time_range("M", datetime.date(2026, 7, 29))
-    assert m1 == "202607" and m0 == "202507" and len(m0) == 6
+    y, mth = 2026, 7 - econ._LOOKBACK["M"]
+    while mth <= 0:
+        y, mth = y - 1, mth + 12
+    assert m1 == "202607" and m0 == f"{y}{mth:02d}" and len(m0) == 6
     for cycle in ("D", "M", "Q", "A"):
         assert all(econ.time_range(cycle))
 
@@ -100,7 +106,11 @@ def test_time_range_monthly_wraps_year_boundary():
     import datetime
 
     m0, _ = econ.time_range("M", datetime.date(2026, 3, 15))
-    assert m0 == "202503"
+    months = econ._LOOKBACK["M"]
+    y, mth = 2026, 3 - months
+    while mth <= 0:
+        y, mth = y - 1, mth + 12
+    assert m0 == f"{y}{mth:02d}"
 
 
 def test_search_url_has_no_empty_path_segments():
@@ -162,3 +172,20 @@ def test_collect_survives_partial_failure(monkeypatch):
     out = econ.collect()
     # 전부 실패해도 예외를 던지지 않고 missing만 채운다 (econ은 비-코어)
     assert out["series"] == {} and out["missing"]
+
+
+def test_parse_history_keeps_every_observation():
+    from kr.econ import parse_history
+    payload = {"StatisticSearch": {"row": [
+        {"TIME": "20260916", "DATA_VALUE": "4.012"},
+        {"TIME": "20260917", "DATA_VALUE": ""},        # 빈 값 — 버린다
+        {"TIME": "20260918", "DATA_VALUE": "4.035"},
+        {"TIME": "20260921", "DATA_VALUE": "4.056"},
+    ]}}
+    assert parse_history(payload) == [("2026-09-16", 4.012), ("2026-09-18", 4.035),
+                                      ("2026-09-21", 4.056)]
+
+
+def test_parse_history_on_error_payload():
+    from kr.econ import parse_history
+    assert parse_history({"RESULT": {"CODE": "INFO-200"}}) == []

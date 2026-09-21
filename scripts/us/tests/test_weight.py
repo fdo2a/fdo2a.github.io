@@ -78,13 +78,22 @@ def test_deleting_judgment_to_game_the_ratio_is_blocked():
     assert any('매크로' in x and '3000' in x for x in v)
 
 
-def test_kr_has_floor_but_no_ratio():
+def test_kr_has_floors_but_no_ratio():
     sizes = {'오늘의 장': 700, '지수 & 장중': 900, '환율·금리': 700,
-             '전략 코멘트': 700, '기술적 분석 & 트레이딩 전략': 500}
+             '전략 코멘트': 1300, '기술적 분석 & 트레이딩 전략': 500}
     assert check_volume(measure(_doc(sizes), 'kr'), market='kr') == []
     thin = dict(sizes, **{'지수 & 장중': 300})
     assert any('시황·가격군' in x
                for x in check_volume(measure(_doc(thin), 'kr'), market='kr'))
+
+
+def test_kr_judgment_floor_catches_thin_judgment():
+    """시황만 채우고 판단을 줄이는 것을 막는다 (2026-09-22 독자 전환)."""
+    sizes = {'오늘의 장': 900, '지수 & 장중': 900, '환율·금리': 900,
+             '전략 코멘트': 700, '기술적 분석 & 트레이딩 전략': 500}
+    v = check_volume(measure(_doc(sizes), 'kr'), market='kr')
+    assert any('판단군이 1200자로 하한 1800자' in x for x in v)
+    assert not any('시황·가격군' in x for x in v)
 
 
 # --- 「지금 어디에 있나」·원인 문단 (설계 1-b) ---

@@ -6,6 +6,15 @@ move, distinguish evidence from inference, and test their explanation next time.
 Keep the existing market coverage, section order, numeric sources, and gates.
 This contract adds learning to the reports; it does not change portfolio rules.
 
+**KR reader, from 2026-09-22 (user instruction).** The KR evening brief writes for a
+hedge fund manager, not a trader aspirant; the desk supplies judgment material and
+the reader decides. That changes who the prose addresses, not the evidence rules
+below — hypothesis, plausible alternative, distinguishing evidence and the next
+test apply unchanged, and they now also carry the KR judgment ledger
+(`kr_stance.json`). The learning section stays. US is unchanged: its reader is
+still the individual named in `brief-report-writer.md`. Where this file says
+"trader aspirant", read "hedge fund manager" for KR only.
+
 ## Activation — first publication on 2026-09-11 KST
 
 The new research handoff, learning section and its editorial presence check start

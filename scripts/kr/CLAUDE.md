@@ -12,7 +12,12 @@
 - **클라우드 루틴 트리거**: `trig_01HmSKF1UVXZvQSDk9pzYY8C` — 월~금 18:00 KST(cron `0 9 * * 1-5` UTC) 실행, 레포 클론 후 `.claude/KR_ORCHESTRATOR.md` 실행. sonnet-5, Notion·PushNotification 연결. 트리거 변경만 RemoteTrigger로(부트스트랩은 짧게, 파이프라인은 레포 파일)
 - **일봉 차트**: `scripts/kr/charts.py`가 코스피·코스닥·SK하이닉스·삼성전자 3개월 일봉 캔들 → **PNG 바이트 반환**, `charts.publish()` 가 `kr/assets/kr_charts_{거래일}.png` 로 내보낸다(matplotlib, 상승 녹색/하락 적색). 같은 날짜에 **다른 바이트**를 쓰려 하면 `AssetConflict` — 발행된 그림이 뒤에서 바뀌는 것을 막는다. 만들어진 차트 목록은 `kr/data/kr_charts_manifest.json`. 거래대금 상위는 **레버리지(롱)/인버스(숏) 방향 분리** 병합
 - **ECOS 연동** (2026-07-29): 인증키는 레포 시크릿 `ECOS_API_KEY`(워크플로 `env`로만 주입, 로컬 env엔 없음). ECOS는 **키를 URL 경로에 넣으므로** `scripts/kr/econ.py`의 `scrub()`를 거치지 않은 URL·예외를 절대 출력하지 말 것. 항목 코드는 하드코딩하지 않고 `StatisticItemList`에서 이름으로 해석(코드는 통계표 개편 때 바뀌고 오류 시 INFO-200으로 조용히 실패). 비-코어 — 결측이어도 발행 게이트 통과, writer가 해당 행만 뺀다
-- **미완/열린 항목**: ECOS 월별 지표(CPI·수출입) 추가 여부
+- **독자 = 헤지펀드 매니저** (2026-09-22 사용자 지시). 세일즈·리서치 팀이 판단 재료를 대는 관계다 — 사실에서 멈추지 않고 **사실 → 해석 → 판단 영향 → 다음 확인 조건**까지 간다. **US 는 바뀌지 않았다**(US 스펙은 「독자는 개인」 그대로). 정본은 `.claude/agents/kr-report-writer.md` 머리의 「독자와 역할」 절.
+- **판단 원장** (2026-09-22): `kr/data/kr_stance.json`(어제 판단) → 수집기가 무효화 레벨을 그날 종가로 검산 → `kr_stance_eval.json`(`유효`·`무효화`·`판정불가`) → writer 가 §2 `review` 에서 그 판정을 말하고 `kr_stance_next.json` 을 낸다 → 오케스트레이터 STEP 2.9 가 그것을 원장으로 승계. **무효화 조건을 수로 남기는 게 핵심이다** — 산문으로만 적으면 다음 날 작성자가 제 기억으로 「대체로 맞았다」를 쓴다. `scripts/kr/stance.py`(판정·검증)·`stance_gate.py`(산문 ↔ 원장 대조)·`scripts/check_kr_stance.py`(CLI).
+- **가격에 반영된 기대** (2026-09-22): `kr_econ.json` 의 `expectations` — 정책(국고3년−기준금리)·성장(10년−3년)·신용(회사채AA-−국고3년) 세 스프레드와 **그 스프레드가 제 2년 이력에서 선 자리**(`common/standing.py` 재사용, 「이보다 넓었던 날이 나흘뿐」). KR 엔 FedWatch·컨센서스가 없어 **금리가 이미 값매긴 것**으로 시장 기대를 읽는다. VKOSPI 는 2026-09-22 실측에서 네이버·야후·KRX 전부 막혀 채택 불가. `econ.py` 의 `_LOOKBACK` 이 45일→800일로 넓어진 게 이것 때문이다(`_MAX_ROWS` 1000 — 200이면 앞쪽이 조용히 잘린다).
+- **지수 ETF 는 상위 표에서 빼되 버리지 않는다**: `etf_normalize.dropped_products()` → `kr_index_etf.json`. §7 표에는 여전히 안 들어간다(2026-07-29 지시 유지). §2 `action` 이 상품을 댈 때 **유동성 근거**로만 쓴다.
+- **판단군 하한 1,800자** (`check_weight.py`, market=kr). 2026-09-21 발행본이 시황 2,542자 대 판단 1,287자였다 — 판단 재료를 받는 독자에게 그 배분은 거꾸로다.
+- **미완/열린 항목**: ECOS 월별 지표(CPI·수출입) 추가 여부 / 장중 수급·프로그램 매매 대체재(대안 설명의 판별 자료가 거기 있었다) / US 도 독자를 PM 으로 바꿀지
 
 
 ## 주간·월간 정리 — KR 몫 (설계 2026-08-23)
