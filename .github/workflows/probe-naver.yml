@@ -1,0 +1,19 @@
+name: Probe Naver endpoints (temporary diagnostic)
+
+# 2026-09-17 수집분부터 finance.naver.com/sise/*.naver 가 410 Gone.
+# 루틴 샌드박스는 금융 호스트가 막혀 있어 Actions 가 유일한 실측 환경이다.
+# 원인 규명과 대체 엔드포인트가 확정되면 이 워크플로와 scripts/ci/probe_naver.py 를 지운다.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet requests
+      - run: python scripts/ci/probe_naver.py
