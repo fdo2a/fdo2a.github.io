@@ -4,10 +4,10 @@
   "basis": "장중 누적 순매수 스냅샷 — 확정 일별 수치와 다를 수 있음",
   "KOSPI": {
     "points": [],
-    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260921&sosok=01&page"
+    "error": "Naver 레거시 페이지 폐지(2026-09-17 SPA 개편) — 대체 소스 없음: investorDealTrendTime"
   },
   "KOSDAQ": {
     "points": [],
-    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendTime.naver?bizdate=20260921&sosok=02&page"
+    "error": "Naver 레거시 페이지 폐지(2026-09-17 SPA 개편) — 대체 소스 없음: investorDealTrendTime"
   }
 }

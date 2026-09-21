@@ -1,9 +1,7 @@
 {
   "report_date": "2026-09-21",
-  "complete": false,
+  "complete": true,
   "missing": [
-    "flows",
-    "top_value",
     "flows_intraday"
   ],
   "indices": {
@@ -17,11 +15,11 @@
     }
   },
   "flows_date": {
-    "KOSPI": null,
-    "KOSDAQ": null
+    "KOSPI": "2026-09-21",
+    "KOSDAQ": "2026-09-21"
   },
   "flows_provisional": {
-    "KOSPI": null,
-    "KOSDAQ": null
+    "KOSPI": true,
+    "KOSDAQ": true
   }
 }

@@ -1,12 +1,140 @@
 {
   "KOSPI": {
-    "rows": [],
-    "latest_date": null,
-    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendDay.naver?bizdate=20260921&sosok=01"
+    "rows": [
+      {
+        "date": "2026-09-21",
+        "individual": -31850,
+        "foreign": 117,
+        "institution": 15162
+      },
+      {
+        "date": "2026-09-18",
+        "individual": -36359,
+        "foreign": 4486,
+        "institution": 15322
+      },
+      {
+        "date": "2026-09-17",
+        "individual": 3020,
+        "foreign": -22546,
+        "institution": 2480
+      },
+      {
+        "date": "2026-09-16",
+        "individual": -12061,
+        "foreign": -16726,
+        "institution": 12251
+      },
+      {
+        "date": "2026-09-15",
+        "individual": 8596,
+        "foreign": -15458,
+        "institution": -9585
+      },
+      {
+        "date": "2026-09-14",
+        "individual": 30351,
+        "foreign": -33363,
+        "institution": -11869
+      },
+      {
+        "date": "2026-09-11",
+        "individual": 18675,
+        "foreign": -22984,
+        "institution": -12184
+      },
+      {
+        "date": "2026-09-10",
+        "individual": 3802,
+        "foreign": -26217,
+        "institution": 5744
+      },
+      {
+        "date": "2026-09-09",
+        "individual": -22879,
+        "foreign": -4348,
+        "institution": 9422
+      },
+      {
+        "date": "2026-09-08",
+        "individual": -30329,
+        "foreign": 6316,
+        "institution": 6427
+      }
+    ],
+    "latest_date": "2026-09-21",
+    "flows_date": "2026-09-21",
+    "flows_provisional": true,
+    "label": "당일 잠정치",
+    "stale": false
   },
   "KOSDAQ": {
-    "rows": [],
-    "latest_date": null,
-    "error": "410 Client Error: 410 for url: https://finance.naver.com/sise/investorDealTrendDay.naver?bizdate=20260921&sosok=02"
+    "rows": [
+      {
+        "date": "2026-09-21",
+        "individual": 1416,
+        "foreign": -995,
+        "institution": -285
+      },
+      {
+        "date": "2026-09-18",
+        "individual": 162,
+        "foreign": -511,
+        "institution": 250
+      },
+      {
+        "date": "2026-09-17",
+        "individual": -250,
+        "foreign": -329,
+        "institution": 455
+      },
+      {
+        "date": "2026-09-16",
+        "individual": 62,
+        "foreign": -272,
+        "institution": 222
+      },
+      {
+        "date": "2026-09-15",
+        "individual": -1478,
+        "foreign": 272,
+        "institution": 1149
+      },
+      {
+        "date": "2026-09-14",
+        "individual": 1029,
+        "foreign": -923,
+        "institution": -238
+      },
+      {
+        "date": "2026-09-11",
+        "individual": 5120,
+        "foreign": -3123,
+        "institution": -2159
+      },
+      {
+        "date": "2026-09-10",
+        "individual": -2698,
+        "foreign": -11253,
+        "institution": 13996
+      },
+      {
+        "date": "2026-09-09",
+        "individual": -2548,
+        "foreign": 2646,
+        "institution": -190
+      },
+      {
+        "date": "2026-09-08",
+        "individual": 479,
+        "foreign": 1583,
+        "institution": -2135
+      }
+    ],
+    "latest_date": "2026-09-21",
+    "flows_date": "2026-09-21",
+    "flows_provisional": true,
+    "label": "당일 잠정치",
+    "stale": false
   }
 }
