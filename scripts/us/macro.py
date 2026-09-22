@@ -17,7 +17,7 @@ today's metrics and returns what today's writer is permitted to say.
 Design: docs/superpowers/specs/2026-08-18-us-macro-logic-persistence-design.md
 """
 
-from .stance import business_days_inclusive
+from common.discipline import business_days_inclusive
 
 # Both axes are momentum, not level — the vocabulary ("둔화/보합/가속") names a direction
 # of travel, and a level-based grid would park the regime in one cell for quarters.
@@ -37,12 +37,12 @@ REGIME_NAMES = {
     (-1, 1): '스태그플레이션',
 }
 
-# Same keys as stance.ASSETS on purpose: the two sections are cross-checked row by row,
-# and a transmission taxonomy of its own would make that comparison a judgement call.
+# 자산 키는 성적표(`scorecard.BENCHMARKS`·`RELATIVE`)가 채점하는 키와 같아야 한다 —
+# 여기 있는데 거기 없는 자산은 조용히 채점에서 빠진다(test_scorecard 가 그것을 막는다).
 TRANSMISSION_ASSETS = ('equities', 'bonds', 'fx', 'energy', 'metals', 'memory', 'ai_infra')
 
-# Direction is read on the same axis as the matching stance grade (bonds = duration,
-# fx = dollar), so agreement and conflict are just a sign comparison.
+# 방향은 자산마다 정해진 축에서 읽는다(채권 = 듀레이션, FX = 달러). 성적표의 부호
+# 규약이 같은 축을 쓰므로 「+1 인데 금리가 올랐다」가 바로 오답으로 잡힌다.
 TRANSMISSION_LABELS = {-1: '비우호', 0: '중립', 1: '우호'}
 
 # Assets are narrated in channel groups, not one row each. A regime reaches bonds and

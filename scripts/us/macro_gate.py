@@ -374,7 +374,7 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch=None,
     if prob is None:
         # 원천이 둘 다 없는 날까지 숫자를 요구하면 지어내라는 말이 된다.
         # **면제는 명시적일 때만** — 사유를 적고 비워야 통과한다(2026-09-22
-        # codex 검토). 전일 확률을 복사하거나 0으로 채우면 여전히 실패다.
+        # codex 검토 P1-8). 전일 확률을 복사하거나 0으로 채우면 여전히 실패다.
         if nxt.get('prob_status') in ('unavailable', 'unverified') and nxt.get('prob_note'):
             pass
         else:
@@ -503,16 +503,17 @@ def _check_prob_source(prob, nxt, fedwatch, v, present=False):
     지금까지 `prob_pct` 는 에이전트가 만든 수치와 에이전트가 만든 `macro_next`
     를 대조할 뿐이었다. 그러면 다음 회의가 바뀌었거나 특정 구간 확률과 누적
     확률을 섞었어도 통과한다. 확률은 **회의일·목표구간·공급자**에 묶여야
-    비교된다(2026-09-22 codex 검토).
+    비교된다(2026-09-22 codex 검토 P1-7).
     """
     if prob is None:
         return
     if not fedwatch:
         # **파일이 있는데 승인되지 않은 것**과 **원천이 아예 없는 것**은 다르다.
         # 앞은 맥이 꺼져 어제 파일이 남았거나 세션이 어긋난 날이고, 그 숫자를
-        # 통과시키면 장부에 적힌 값 자체가 무검증이다. 뒤는 아직 이 경로를 쓰지
-        # 않는 날이라 기존 계약대로 둔다 — 원천 필수화는 작성 계약을 함께
-        # 바꿔야 하는 광범위 수정이라 spec 의 열린 항목에 단계로 남겼다.
+        # 통과시키면 장부에 적힌 값 자체가 무검증이다(codex 구현 검토 P1-1).
+        # 뒤는 아직 이 경로를 쓰지 않는 날이라 기존 계약대로 둔다 — 원천 필수화는
+        # 작성 계약(`.claude/agents/`)을 함께 바꿔야 하는 광범위 수정이라
+        # spec 의 열린 항목에 단계로 남겼다.
         if present:
             v.append(f'§8: FedWatch 파일은 있으나 승인되지 않았는데 확률 {prob}% 를 '
                      f'인쇄했다 — 상태나 대상 세션이 정본과 어긋난다. 원천을 다시 '

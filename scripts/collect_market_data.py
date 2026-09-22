@@ -147,9 +147,9 @@ TAPE_TICKERS = ('^GSPC', '^IXIC', '^RUT')
 
 
 def collect_histories():
-    """Close-price histories for the stance triggers and the price-context readings.
+    """Close-price histories for the scorecard and the price-context readings.
 
-    3y rather than the 6mo the stance triggers alone needed: the two-year percentile
+    3y rather than the 6mo the scorecard alone needs: the two-year percentile
     and the 252-session weight regression both read further back, and one longer
     batched download is cheaper than a second request.
 
@@ -158,20 +158,17 @@ def collect_histories():
     years than the equity indices (2026-08-28 measured), so anything that lines two
     series up by list position is comparing different days. as_of is the S&P 500's
     last bar date — the caller checks it against the report date, because judging
-    today's triggers against a history that stops short would quietly decide the
-    stance on stale prices.
+    today's judgments against a history that stops short would quietly score them
+    on stale prices.
     """
     import yfinance as yf
     from us.price_context import HISTORY_TICKERS as PC_TICKERS
-    from us.stance_metrics import HISTORY_TICKERS as STANCE_TICKERS
+    from us.scorecard import HISTORY_TICKERS as SCORECARD_TICKERS
     # 「오늘의 장」의 글로벌 지수·참여도 다리도 여기서 함께 받는다. GROUPS에 넣으면
     # completeness()가 코어로 취급해 도쿄·홍콩 휴장일에 발행이 멈춘다.
     from us.session import HISTORY_TICKERS as SESSION_TICKERS
-    # 모의 포트폴리오가 담는 상품들. 같은 배치에 얹으므로 요청이 늘지 않는다.
-    from us.portfolio import HISTORY_TICKERS as PORTFOLIO_TICKERS
-
-    tickers = sorted(set(STANCE_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
-                     | set(PORTFOLIO_TICKERS) | {t for _, t in SECTORS})
+    tickers = sorted(set(SCORECARD_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
+                     | {t for _, t in SECTORS})
 
     def dl():
         df = yf.download(tickers, period='3y', interval='1d', group_by='ticker',
@@ -199,7 +196,7 @@ def collect_histories():
         except Exception:
             out[t], idx[t] = None, None
     # 이력도 기준일까지만 남긴다. 표(fx)만 앵커로 자르고 이력을 안 자르면 같은
-    # 발행본에서 표는 09-02 인데 stance_metrics·price_context 는 09-03 봉으로
+    # 발행본에서 표는 09-02 인데 price_context 는 09-03 봉으로
     # 계산된다 — 통화쌍은 주식 지수보다 세션이 더 열리므로 상시 조건이다
     # (codex 검토 2026-09-04).
     if as_of:
@@ -875,10 +872,9 @@ def main():
 
     render_sector_perf_html(sector_perf, perf_as_of, os.path.join(args.outdir, 'sector_performance.html'))
 
-    # Non-core, and shared: one batched download feeds both the stance triggers and the
-    # price-context readings. A failure here must not cost us the dataset —
-    # eval_stance_triggers.py degrades every affected trigger to UNKNOWN, which freezes
-    # the grade rather than inventing a move.
+    # Non-core, and shared: one batched download feeds both the scorecard and the
+    # price-context readings. A failure here must not cost us the dataset — the
+    # scorecard simply reports `sufficient: false` rather than inventing a score.
     print('collecting close-price histories (batched)...')
     try:
         closes, hist_dates, hist_as_of, hist_ohlc = collect_histories()
@@ -888,180 +884,18 @@ def main():
         print(f'histories failed: {e}', file=sys.stderr)
         closes, hist_dates, hist_as_of, hist_ohlc = {}, {}, None, {}
 
-    # 모의 포트폴리오가 오늘 담을 종가. **기준일에 정확히 있는 값만** 담는다 —
-    # 마지막 값으로 대신하면 원장이 지난 종가로 굴려지고, 그 사실이 어디에도 남지
-    # 않는다. 없는 종목은 missing 으로 넘겨 build_portfolio.py 가 그 날을 건너뛴다.
-    print('pricing the paper portfolio...')
+    print('scoring the macro record...')
     try:
-        from us.portfolio import HISTORY_TICKERS as PF_TICKERS
-        PF_WINDOW = 15
-        pf_closes, pf_missing, pf_recent = {}, [], {}
-        for t in PF_TICKERS:
-            series, dates_ = closes.get(t), hist_dates.get(t)
-            if series and dates_ and report_date in dates_:
-                i = dates_.index(report_date)
-                pf_closes[t] = series[i]
-                # 최근 창의 **오늘 기준** 종가들. auto_adjust 는 배당·분할 때 과거를
-                # 소급 조정하므로, 어제 저장해 둔 값과 이 값이 다르면 기준이 바뀐
-                # 것이다. build_portfolio.py 가 좌수를 다시 맞춘다. 직전 한 세션만
-                # 넘기면 중간에 한 세션을 건너뛴 날 조정이 통째로 샌다.
-                lo = max(0, i - PF_WINDOW)
-                pf_recent[t] = {d: v for d, v in zip(dates_[lo:i], series[lo:i])}
-            else:
-                pf_missing.append(t)
-        # 시장 달력 — 원장이 어느 세션을 통째로 빠뜨렸는지는 이것으로만 알 수 있다.
-        # 수집이 하루 아예 돌지 않으면 «결측» 기록조차 남지 않기 때문이다.
-        spx_dates = hist_dates.get('^GSPC') or []
-        pf_sessions = spx_dates[-(PF_WINDOW + 1):]
-        # 「왜 이 비중인가」 — 변동성·위험 몫·한 칸의 크기. 같은 이력에서 나오므로
-        # 네트워크 호출이 늘지 않는다.
-        from us.portfolio_risk import compute as compute_rationale
-        pf_rationale = compute_rationale(closes, hist_dates)
-        if pf_rationale:
-            print(f"  구성 근거: 주식 위험 몫 {pf_rationale['equity_risk_share_pct']}%"
-                  + (f" · 재보정 필요 {pf_rationale['recalibrate']}"
-                     if pf_rationale['recalibrate'] else ''))
-        json.dump({'generated': data['generated'], 'report_date': report_date,
-                   'as_of': report_date if not pf_missing else None,
-                   'closes': pf_closes, 'recent': pf_recent,
-                   'sessions': pf_sessions, 'missing': pf_missing,
-                   'rationale': pf_rationale},
-                  open(os.path.join(args.outdir, 'portfolio_prices.json'), 'w'),
-                  indent=2, default=str, ensure_ascii=False)
-        print(f'  portfolio prices: {len(pf_closes)}/{len(PF_TICKERS)}'
-              + (f' missing {pf_missing}' if pf_missing else ''))
-    except Exception as e:
-        print(f'portfolio prices failed: {e}', file=sys.stderr)
-
-    print('computing stance trigger metrics...')
-    try:
-        from us.stance_metrics import compute as compute_stance_metrics
-        # No provable history end date means no provable freshness. Writing the file
-        # anyway would replace yesterday's committed metrics — whose stale report_date
-        # is exactly what makes the evaluator fall through to UNKNOWN — with a fresh
-        # -looking file built on whatever partial prices survived.
-        if hist_as_of is None:
-            raise RuntimeError('history has no end date; leaving yesterday\'s metrics in place')
-        metrics = compute_stance_metrics(closes, data)
-        have = sum(1 for v in metrics.values() if v is not None)
-        print(f'  stance metrics: {have}/{len(metrics)} (history as of {hist_as_of})')
-        if hist_as_of != report_date:
-            print(f'  WARN: history ends {hist_as_of}, report date is {report_date} — '
-                  'triggers will fall through to UNKNOWN', file=sys.stderr)
-        json.dump({'generated': data['generated'], 'report_date': report_date,
-                   'as_of': hist_as_of, 'metrics': metrics},
-                  open(os.path.join(args.outdir, 'stance_metrics.json'), 'w'),
-                  indent=2, default=str, ensure_ascii=False)
-    except Exception as e:
-        print(f'stance metrics failed: {e}', file=sys.stderr)
-
-    # Non-core, same contract as above: the macro regime's axis scores. `last_seen`
-    # comes from yesterday's committed book — without it every indicator reads as newly
-    # released and the regime would be free to move every single day.
-    print('computing macro axis scores...')
-    try:
-        from us.macro_metrics import compute as compute_macro_metrics
-        last_seen = None
-        try:
-            last_seen = json.load(open(os.path.join(args.outdir, 'macro.json'))).get('last_seen')
-        except Exception:
-            print('  no committed macro.json — treating every indicator as new', file=sys.stderr)
-        mm = compute_macro_metrics(econ_series, econ, last_seen)
-        print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
-              f"신규 발표 {len(mm['new_releases'])}건")
-
-        # Only the promoted releases pull their breakdown, so a quiet day costs nothing
-        # and a CPI day costs six extra CSVs. The issuing agencies 403 their own press
-        # releases to non-browser clients; FRED redistributes the same components.
-        from us.macro_metrics import attach_components, component_specs
-        specs = component_specs(mm['headline_releases'])
-        comp_series = {}
-        for spec in specs:
-            sid = spec['fred_id']
-            if sid in comp_series or sid in econ_series:
-                continue
-            try:
-                comp_series[sid] = retry(lambda sid=sid: fred_series(sid), attempts=2)
-            except Exception as e:
-                print(f'  component {sid} failed: {e}', file=sys.stderr)
-            time.sleep(0.4)
-        comp_series.update(econ_series)
-        attach_components(mm['headline_releases'], comp_series)
-        for rel in mm['headline_releases']:
-            print(f"    해부 {rel['key']}: {rel['label']} "
-                  f"({len(rel.get('components') or [])}개 구성 항목)")
-        json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
-                  open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
-                  indent=2, default=str, ensure_ascii=False)
-    except Exception as e:
-        print(f'macro metrics failed: {e}', file=sys.stderr)
-
-    # Non-core, same contract as the blocks above: the statistical context for the
-    # price side — is today's move large for this asset, where does the level sit in
-    # its own history, are the standing cross-asset relationships still holding. A
-    # failure here costs the readings, never the dataset.
-    print('computing price context...')
-    try:
-        from us.price_context import compute as compute_price_context
-        pc = compute_price_context(closes, data, sectors=SECTORS, dates=hist_dates)
-        data['price_context'] = pc
-        big = [n for n, m in pc['moves'].items() if m and m.get('band') in ('큼', '매우 큼')]
-        flips = [c['label_ko'] for c in pc['correlations'] if c['flipped']]
-        unknown = [c['label_ko'] for c in pc['correlations'] if c['flipped'] is None]
-        if unknown:
-            print(f"  관계 판정 불가: {', '.join(unknown)}", file=sys.stderr)
-        coh = pc['cohesion']
-        print(f"  이례적 움직임: {', '.join(big) if big else '없음'}")
-        print(f"  관계 전환: {', '.join(flips) if flips else '없음'}")
-        if coh:
-            print(f"  시장 응집도: 상위 1개 요인 {coh['top1_pct']}% / 상위 3개 {coh['top3_pct']}%")
-        sc = pc['sector_contribution']
-        if sc and sc['rows']:
-            top = sc['rows'][0]
-            print(f"  지수 {sc['index_change']:+.2f}% 중 {top['name']} "
-                  f"{top['contribution']:+.2f}%p (설명력 R²={sc['fit_r2']})")
-    except Exception as e:
-        print(f'price context failed: {e}', file=sys.stderr)
-
-    # 같은 계약: 비-코어라 실패해도 데이터셋은 산다. 「오늘의 장」이 읽을 재료 —
-    # 세계장이 어디서 끝났나, 밤사이 선물이 무엇을 했나, 평균적인 종목이 따라갔나,
-    # 어디서 끝났나.
-    print('computing session context...')
-    try:
-        from us.session import compute as compute_session
-        sess = compute_session(closes, hist_dates, data, intraday,
-                               collect_futures_bars(), report_date, ohlc=hist_ohlc)
-        data['session'] = sess
-        for key, ko in (('asia', '아시아'), ('europe', '유럽')):
-            al = sess['global_close'][key]['alignment']
-            if al:
-                print(f"  {ko}: 미국과 {al['label']} (평균 {al['avg_pct']:+.2f}%)"
-                      f"{' · 지역 내 혼조' if al['mixed'] else ''}")
-            else:
-                print(f"  {ko}: 판정 불가(지수 부족)")
-        par = sess['participation']
-        print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
-              else '  참여도: 판정 불가')
-        cal = sess.get('tape_calibration')
-        print(f"  마감 위치 경계: {cal['high']}/{cal['low']} ({cal['sessions']}세션 실측)"
-              if cal else '  마감 위치 경계: 초안값 75/25 (표본 부족)')
-        print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
-              f"야간 선물 {len(sess['futures']['contracts'])}종")
-    except Exception as e:
-        print(f'session context failed: {e}', file=sys.stderr)
-
-    # Non-core: the §9 track record. Mostly it says "not enough decisions yet" — that
-    # is the point. It accumulates now so a retrospective is possible later, and the
-    # publication gate blocks any claim made before the sample is there.
-    print('scoring the stance record...')
-    try:
+        from us.history import read_jsonl
         from us.scorecard import build as build_scorecard
-        prev = {}
-        try:
-            prev = json.load(open(os.path.join(args.outdir, 'stance.json')))
-        except Exception:
-            print('  no committed stance.json — nothing to score', file=sys.stderr)
-        card = build_scorecard(prev.get('history') or [], closes, hist_dates)
+        from us.scorecard import direction_changes
+        # **원장에서 직접 전환을 뽑는다**(2026-09-19). 예전에는 stance.json 의 자기 보고
+        # `history` 를 읽었는데, 그 책이 없어졌고 원장 쪽이 덜 거짓말한다 — 매일 그날
+        # 책 전체가 남으므로 연속한 두 행을 견주면 전환이 나온다.
+        macro_rows = read_jsonl(os.path.join(args.outdir, 'history', 'macro.jsonl'))
+        if not macro_rows:
+            print('  no macro ledger — nothing to score', file=sys.stderr)
+        card = build_scorecard(direction_changes(macro_rows), closes, hist_dates)
         print(f"  채점 {card['scored']}건 / 필요 {card['min_sample']}건"
               + (f" · 적중률 {card['hit_rate']}%" if card['sufficient'] else ' · 표본 부족'))
         json.dump({'generated': data['generated'], 'report_date': report_date, **card},
@@ -1082,17 +916,16 @@ def main():
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
 
-    # 승계 책 이력 — 오늘 커밋돼 있는 stance/macro 를 로그에 밀어 넣는다.
+    # 승계 책 이력 — 오늘 커밋돼 있는 macro 를 로그에 밀어 넣는다.
     # 어제까지의 판단이 대상이다 (오늘 것은 아직 writer 가 만들지 않았다).
     try:
-        from us.history import append_jsonl, macro_record, market_record, stance_record
+        from us.history import append_jsonl, macro_record, market_record
         hdir = os.path.join(args.outdir, 'history')
         # 시세 원장이 먼저다 — 기간 집계가 이 행을 읽는다.
         if append_jsonl(os.path.join(hdir, 'market.jsonl'), market_record(data),
                         upsert=True):
             print(f"history: appended {report_date} to market.jsonl")
-        for name, fn, out in (('stance.json', stance_record, 'stance.jsonl'),
-                              ('macro.json', macro_record, 'macro.jsonl')):
+        for name, fn, out in (('macro.json', macro_record, 'macro.jsonl'),):
             src = os.path.join(args.outdir, name)
             if not os.path.exists(src):
                 continue

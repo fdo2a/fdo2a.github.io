@@ -29,6 +29,7 @@ from pathlib import Path
 warnings.filterwarnings('ignore')
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from thesis import disclosure as D  # noqa: E402
 from thesis import history as H  # noqa: E402
 from thesis import valuation as V  # noqa: E402
 
@@ -48,6 +49,16 @@ TICKERS = [
     ('000660.KS', 'SK하이닉스', 'KRW'),
     ('MU', 'Micron', 'USD'),
 ]
+
+# DART 고유번호 -> (corp_code, 종목코드). 매핑표 전체는 20MB 짜리 zip 이라 두 종목은
+# 상수로 두되, 매 수집마다 company.json 의 stock_code 와 대조한다(disclosure.verify_corp).
+# 틀린 고유번호는 오류가 아니라 «조회 결과 없음» 으로 돌아와 조용한 날과 구분되지 않는다 —
+# ECOS 항목 코드가 INFO-200 으로 조용히 실패하던 것과 같은 함정이다.
+# Micron 은 미국 상장사라 DART 에 없다.
+DART_CORPS = {
+    '005930.KS': ('00126380', '005930'),
+    '000660.KS': ('00164779', '000660'),
+}
 
 # Fields recorded to history.jsonl. Kept deliberately small — this file is appended
 # forever, and every field here is one we actually difference over time.
@@ -185,6 +196,7 @@ def collect_ticker(symbol, name, currency):
     bvps, bvps_as_of = _book_value_per_share(tk, info)
     row['bvps'] = round(bvps, 2) if bvps else None
     row['bvps_as_of'] = bvps_as_of
+    row['bvps_source'] = 'yfinance' if bvps else None
     if price and bvps:
         row['pb'] = round(price / bvps, 2)
     if price and row.get('eps_fy1'):
@@ -194,6 +206,40 @@ def collect_ticker(symbol, name, currency):
 
 
 REQUIRED = ('price', 'eps_fy1')
+
+
+def apply_dart_book_value(tickers, today):
+    """Replace yfinance's book value with the latest *filed* one, where DART has it.
+
+    yfinance lags the press release by about a quarter, and in a cycle where equity
+    compounds 30-50% a quarter that lag understates book value in one direction — in
+    2026-08 SK하이닉스 was still showing a Q1 basis. DART's statement is filed about 45 days
+    after quarter end, so this shortens the lag by roughly one quarter. It does not make
+    book value same-day, and `bvps_as_of` keeps saying which period it is.
+
+    Non-core: any failure leaves the yfinance number in place rather than blocking
+    collection, and `bvps_source` records which one the page is showing.
+
+    Note this moves the asset leg of `fair_value`, so the switchover day can legitimately
+    fire a bear-line trigger. `triggers.evaluate()` reports that as 「기준선이 이동」, which
+    is what actually happened — the line moved, not the price.
+    """
+    for symbol, (corp_code, _) in DART_CORPS.items():
+        row = tickers.get(symbol)
+        if not row:
+            continue
+        try:
+            value, period = D.book_value(corp_code, today)
+        except Exception as e:  # noqa: BLE001 — 비-코어, 어떤 실패든 yfinance 값을 남긴다
+            print(f'  DART 재무제표 {symbol}: {D.scrub(e)}', file=sys.stderr)
+            continue
+        if not value:
+            continue
+        row['bvps'] = round(value, 2)
+        row['bvps_as_of'] = period
+        row['bvps_source'] = 'dart'
+        if row.get('price'):
+            row['pb'] = round(row['price'] / value, 2)
 
 
 def main():
@@ -227,6 +273,10 @@ def main():
             missing.append(f'{symbol}:{",".join(gaps)}')
         tickers[symbol] = row
 
+    # 공시 재무제표가 yfinance 보다 새 분기면 갈아끼운다. fair_value 계산 **전에** 해야
+    # 자산법이 낡은 장부가로 굴러가지 않는다.
+    apply_dart_book_value(tickers, today.isoformat())
+
     watch = {
         'as_of': today.isoformat(),
         'complete': not missing and len(tickers) == len(TICKERS),
@@ -244,6 +294,21 @@ def main():
 
     (out_dir / 'watch.json').write_text(
         json.dumps(watch, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+    # 공시 — 비-코어. **오늘 행을 append 하기 전에** 이력을 읽는다: 조회 창이 마지막
+    # 기록일부터 시작해야 수집이 실패했던 날과 18:00 직전 공시가 다음 창에 걸린다.
+    history_rows = H.load(out_dir / 'history.jsonl')
+    try:
+        disclosures = D.collect(DART_CORPS, history_rows, today.isoformat())
+    except Exception as e:  # noqa: BLE001 — 공시 실패가 수집 전체를 죽이지 않는다
+        disclosures = {'as_of': today.isoformat(), 'tickers': {},
+                       'missing': [D.scrub(e)[:200]]}
+    (out_dir / 'disclosures.json').write_text(
+        json.dumps(disclosures, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    confirmed = sum(t.get('confirmed_count', 0) for t in disclosures['tickers'].values())
+    print(f'공시 confirmed={confirmed} '
+          f'missing={disclosures.get("missing") or "없음"}'
+          f'{" (DART_API_KEY 미설정)" if disclosures.get("pending") else ""}')
 
     H.append(out_dir / 'history.jsonl', {
         'date': today.isoformat(),

@@ -23,8 +23,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us.history import append_jsonl, read_jsonl  # noqa: E402
-from us.period_scorecard import (regime_check, rollup, score,  # noqa: E402
-                                 trigger_hygiene)
+from us.period_scorecard import regime_check, rollup, score  # noqa: E402
 
 
 def _load(path, default=None):
@@ -53,17 +52,15 @@ def main():
         sys.exit(2)
 
     hist_dir = os.path.join(args.datadir, 'history')
-    stance_rows = read_jsonl(os.path.join(hist_dir, 'stance.jsonl'))
     macro_rows = read_jsonl(os.path.join(hist_dir, 'macro.jsonl'))
     metrics = _load(os.path.join(args.datadir, 'macro_metrics.json'), {})
 
     start, end = agg.get('start_date'), agg.get('end_date')
-    out = score(stance_rows, agg)
+    out = score(macro_rows, agg)
     out['span'] = agg.get('span')
     out['key'] = agg.get('key')
     out['start_date'], out['end_date'] = start, end
     out['regime'] = regime_check(macro_rows, metrics, start, end)
-    out['triggers'] = trigger_hygiene(stance_rows, end)
 
     spans = tuple(int(x) for x in args.spans.split(',') if x.strip())
     path = args.history or os.path.join(hist_dir, 'period_scorecard.jsonl')

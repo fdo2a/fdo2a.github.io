@@ -43,9 +43,9 @@ def write(repo, rel, text):
         fh.write(text)
 
 
-def fake_codex(tmp_path, body='지적 없음', code=0):
+def fake_codex(tmp_path, body='지적 없음', code=0, stderr='', name='codex'):
     """codex 자리에 세우는 가짜. 스냅샷이 실제로 놓였는지도 함께 확인한다."""
-    path = tmp_path / 'codex'
+    path = tmp_path / name
     path.write_text(
         '#!/bin/sh\n'
         'cd "$(echo "$@" | tr " " "\\n" | grep -A1 -x -- -C | tail -1)" || exit 9\n'
@@ -60,7 +60,8 @@ def fake_codex(tmp_path, body='지적 없음', code=0):
         '  test ! -f data/market_data.json || { echo "us 데이터가 섞였다" >&2; exit 3; }\n'
         'else echo "스냅샷에 글이 없다" >&2; exit 8; fi\n'
         f'printf %s "{body}"\n'
-        f'exit {code}\n')
+        + (f'printf %s "{stderr}" >&2\n' if stderr else '')
+        + f'exit {code}\n')
     path.chmod(0o755)
     return str(path)
 
@@ -128,20 +129,26 @@ def test_the_snapshot_comes_from_the_pinned_commit(repo, tmp_path):
     assert len(drafts(repo)) == 2
 
 
+def _errors(state):
+    """오류 값은 `{kind, detail}` 이다. 표시는 러너의 정규화 함수 하나로만 한다."""
+    from review.runner import err_line
+    return ' '.join(err_line(k, v) for k, v in state['errors'].items())
+
+
 def test_a_failed_call_still_uses_the_quota(repo, tmp_path):
     """실패가 한도를 안 쓰면 매시 되풀이되면서 사람 몫까지 먹는다."""
     out = run(repo, 'run', codex=fake_codex(tmp_path, code=3))
     assert out.returncode == 1 and drafts(repo) == []
     state = state_of(repo)
     assert sum(state['calls'][max(state['calls'])].values()) == 1
-    assert '종료 코드 3' in ' '.join(state['errors'].values())
+    assert '종료 코드 3' in _errors(state)
 
 
 def test_an_empty_reply_does_not_become_a_draft(repo, tmp_path):
     """잘린 출력이 최종 이름을 받으면 다음 tick 이 「파일이 있다」고 건너뛴다."""
     assert run(repo, 'run', codex=fake_codex(tmp_path, body='  ')).returncode == 1
     assert drafts(repo) == []
-    assert '비어' in ' '.join(state_of(repo)['errors'].values())
+    assert '비어' in _errors(state_of(repo))
 
 
 def test_the_cap_holds_once_the_days_calls_are_spent(repo, tmp_path):

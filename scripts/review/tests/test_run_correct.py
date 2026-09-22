@@ -59,7 +59,8 @@ def test_codex_failure_does_not_starve_existing_correction(repo, tmp_path, monke
     run(repo, 'run', codex=fake_codex(tmp_path))
     for draft in (Path(repo) / 'reviews/pending').glob('*-us-*.md'):
         draft.unlink()
-    monkeypatch.setattr(gate, 'review_one', lambda *args: (None, 'Codex unavailable'))
+    monkeypatch.setattr(gate, 'review_one',
+                        lambda *args: (None, 'Codex unavailable', gate.UNKNOWN, ''))
     calls = []
     def correct(root, item, *args):
         calls.append(item.path)

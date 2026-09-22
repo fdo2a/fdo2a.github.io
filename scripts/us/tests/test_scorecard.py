@@ -146,12 +146,15 @@ def test_a_memory_underweight_scores_positive_when_the_basket_lags():
     assert got['score'] > 0
 
 
-def test_every_asset_in_the_stance_book_can_be_scored():
-    """책에 7개 자산이 있는데 5개만 채점하면 나머지는 조용히 빠진다."""
-    import json
-    book = set(json.load(open('data/stance.json'))['assets'])
+def test_every_asset_in_the_macro_book_can_be_scored():
+    """책에 7개 자산이 있는데 5개만 채점하면 나머지는 조용히 빠진다.
+
+    2026-09-19: 책이 스탠스에서 매크로 전달경로로 바뀌었다. 자산 목록은 상수라
+    데이터 파일을 읽지 않는다 — 그 파일이 없는 날에도 이 계약은 유효하다.
+    """
+    from us.macro import TRANSMISSION_ASSETS
     covered = {k for k, _t, _s in BENCHMARKS} | {k for k, _t, _b, _s in RELATIVE}
-    assert book <= covered, book - covered
+    assert set(TRANSMISSION_ASSETS) <= covered, set(TRANSMISSION_ASSETS) - covered
 
 
 def test_a_leg_starting_late_is_aligned_rather_than_inventing_excess():

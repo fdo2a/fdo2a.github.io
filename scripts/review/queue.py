@@ -51,6 +51,9 @@ _PROSE_SOURCES = (
     'scripts/thesis/narrative.py',
     'scripts/thesis/render.py',
     'thesis/data/thesis_state.json',
+    # 산업 뉴스 로그의 title/body는 사람이 쓴 문장이다. /thesis/ 아래 HTML은 전부 렌더물로
+    # 제외되므로, 이 파일을 원고로 세우지 않으면 그 문장들이 검토를 통째로 피한다.
+    'thesis/data/mlcc_news.jsonl',
 )
 
 _DATE = re.compile(r'(\d{4}-\d{2}(?:-\d{2})?)')

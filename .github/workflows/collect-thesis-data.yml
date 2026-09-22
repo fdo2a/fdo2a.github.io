@@ -43,6 +43,10 @@ jobs:
         run: python3 scripts/build_thesis_pages.py --data thesis/data --out thesis --check --allow-template-transition
 
       - name: Collect
+        # DART 인증키는 **쿼리스트링**에 들어간다(ECOS는 URL 경로 — scrub 패턴이 다르다).
+        # thesis/disclosure.py 의 scrub()을 거치지 않은 URL·예외를 절대 출력하지 말 것.
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: |
           python3 scripts/collect_thesis_data.py \
             ${{ inputs.force && '--force' || '' }} \

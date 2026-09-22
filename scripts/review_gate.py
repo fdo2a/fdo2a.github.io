@@ -39,8 +39,12 @@ from review.queue import accept as accept_entry  # noqa: E402
 from review.queue import baselines, classify, is_watched  # noqa: E402
 from review.queue import mark as mark_entry  # noqa: E402
 from review.queue import seed, union_pending  # noqa: E402
-from review.runner import (DAILY_CAP, accept_draft,  # noqa: E402
-                           draft_name, eligible, reserve, today_kst)
+from review.runner import (DAILY_CAP, HUMAN, LIMIT, RESHIPPED,  # noqa: E402
+                           ROUND_CAP, TIMEOUT, UNKNOWN, accept_draft,
+                           blocked_until, clear_rounds, draft_name, eligible,
+                           err, err_line, is_limit_error, may_release,
+                           note_limit, note_round, release, reserve, retry_at,
+                           stalled, today_kst)
 
 LEDGER = 'reviews/index.json'
 LOCK = 'reviews/.index.lock'
@@ -454,9 +458,12 @@ def runner_note(root, queue):
                  if isinstance(v, int) and v >= DAILY_CAP]
         if spent:
             bits.append('오늘 한도 소진 — ' + ', '.join(spent))
+        wait = blocked_until(state)
+        if wait:
+            bits.append('codex 대기 — ' + wait.strftime('%H:%M') + ' 이후 재시도')
         errs = state.get('errors')
         if isinstance(errs, dict) and errs:
-            detail = '; '.join(f'{k} {str(v)[:120]}' for k, v in sorted(errs.items()))
+            detail = '; '.join(err_line(k, v)[:140] for k, v in sorted(errs.items()))
             bits.append(f'러너 오류 — {detail}')
         return ' ' + ' / '.join(bits) + '.'
     except Exception as exc:  # noqa: BLE001 — 훅에서 조용히 죽는 것이 최악이다
@@ -727,7 +734,14 @@ def snapshot(root, oid, paths, dest):
 
 
 def review_one(root, commit, item, timeout):
-    """codex 를 읽기 전용으로 한 편 돌린다 — (초안 본문, 실패 이유)."""
+    """codex 를 읽기 전용으로 한 편 돌린다 — (초안, 실패 이유, 실패 종류, 원문).
+
+    **종류는 발생한 분기에서 붙인다.** 타임아웃은 예외이고 재발행은 SHA 비교라,
+    종료 코드와 출력만 보고 넷을 가를 수 없다.
+
+    네 번째 값은 **자르지 않은** 실행 결과다. 훅에 남기는 이유는 200 자로 자르므로
+    그걸로 한도를 판별하면 긴 메시지에서 문구를 놓친다.
+    """
     # 스냅샷 디렉터리는 git 레포가 아니다. `--skip-git-repo-check` 없이 부르면 codex 가
     # 「Not inside a trusted directory」로 거부한다 — 레포 안에서 손으로 돌릴 때는 안
     # 드러나고 launchd 첫 실행에서야 나왔다(2026-09-10).
@@ -735,7 +749,7 @@ def review_one(root, commit, item, timeout):
     try:
         data_dir = SNAPSHOT[item.section]
         if not snapshot(root, commit, (item.path, data_dir), work):
-            return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다'
+            return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다', UNKNOWN, ''
         prompt = PROMPT.format(post=item.path,
                                market=MARKET_NAME.get(item.section, item.section),
                                datadir=data_dir)
@@ -745,35 +759,47 @@ def review_one(root, commit, item, timeout):
                  '--skip-git-repo-check', '-C', work, '-'],
                 input=prompt, capture_output=True, text=True, timeout=timeout)
         except FileNotFoundError:
-            return None, f'codex 가 없다 ({CODEX})'
+            return None, f'codex 가 없다 ({CODEX})', UNKNOWN, ''
         except subprocess.TimeoutExpired:
-            return None, f'codex 가 {timeout}초 안에 안 끝났다'
+            return None, f'codex 가 {timeout}초 안에 안 끝났다', TIMEOUT, ''
         # 읽는 사이 그 글이 재발행되지 않았는지 **지금 공개된 판**에 다시 물어본다. 고정한
         # 커밋에 물으면 불변이라 늘 통과해서, 검사하는 시늉만 하게 된다.
         try_fetch(root)
         now_sha = rev_parse(root, f'origin/main:{item.path}')
         ok, why = accept_draft(out.returncode, out.stdout, now_sha or '', item.sha)
         if not ok:
+            raw = ((out.stdout or '') + '\n' + (out.stderr or '')).strip()
             tail = (out.stdout or out.stderr or '').strip().splitlines()[-1:]
-            return None, why + (f' — {tail[0][:200]}' if tail else '')
-        return out.stdout, None
+            if out.returncode != 0:
+                kind = (LIMIT if is_limit_error(out.returncode, out.stdout, out.stderr)
+                        else UNKNOWN)
+            elif now_sha != item.sha:
+                kind = RESHIPPED
+            else:
+                kind = UNKNOWN
+            return None, why + (f' — {tail[0][:200]}' if tail else ''), kind, raw
+        return out.stdout, None, None, ''
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
 
-def _save(root, state, errs):
+def _save(root, state, errs, progressed=True):
     """상태를 원자적으로 남긴다.
+
+    `progressed=False` 는 **이번 tick 이 아무 판정도 하지 않았다**는 뜻이다(codex 대기).
+    그때 `last_ok` 를 갱신하면 훅에 「마지막 성공 방금」만 보이고, 러너가 한도에 막혀
+    아무것도 안 하고 있다는 사실이 사라진다.
 
     오류는 **섹션별로** 들고 간다. 하나로 뭉치면 kr 성공이 앞선 us 실패를 덮어 지우고,
     한도는 이미 쓴 채 초안은 없는데 훅에는 「방금 성공」으로 보인다 — 조용한 실패다.
     각 섹션의 오류는 **그 섹션이 초안을 낼 때만** 풀린다.
     """
     state['errors'] = errs
-    if not errs:
+    if not errs and progressed:
         state['last_ok'] = now()
     save_state(root, state)
     for where, why in sorted(errs.items()):
-        print(f'[러너] {where}: {why}')
+        print('[러너] ' + err_line(where, why))
     return 1 if errs else 0
 
 
@@ -802,7 +828,7 @@ def _correct_ready(root, args, state, errs):
     from review.corrector import correct_one
 
     if not try_fetch(root):
-        errs['러너'] = '정정 전 fetch 실패'
+        errs['러너'] = err(UNKNOWN, '정정 전 fetch 실패')
         return state
     oid = rev_parse(root, 'origin/main')
     if not oid:
@@ -814,9 +840,16 @@ def _correct_ready(root, args, state, errs):
     quota = {'calls': state.get('correction_calls', {})}
     for item in eligible(ready, published, quota, day, max_age_days=None):
         key = f'정정-{item.section}'
+        if stalled(state, item.path):
+            # 같은 글에서 세 번 실패했다. 더 고치는 대신 사람에게 넘긴다 — 세 번이면
+            # 대개 고칠 대상이 본문이 아니라 게이트나 계약이다. **날짜가 바뀌어도
+            # 풀리지 않는다**: 하루 상한과 달리 이 회차는 누적이라야 의미가 있다.
+            errs[key] = err(HUMAN,
+                            f'{item.path}: 자동 정정 {ROUND_CAP}회 실패 — 사람이 읽어야 한다')
+            continue
         commit = publish_commit(root, item.path, item.sha)
         if not commit:
-            errs[key] = f'{item.path}: 발행 커밋을 찾지 못했다'
+            errs[key] = err(UNKNOWN, f'{item.path}: 발행 커밋을 찾지 못했다')
             break
         quota = reserve(quota, day, item.section)
         state['correction_calls'] = quota['calls']
@@ -831,8 +864,14 @@ def _correct_ready(root, args, state, errs):
             if why:
                 fh.write('\nERROR: ' + why + '\n')
         if why:
-            errs[key] = f'{item.path}: {why}'
+            # 재시도성 실패(그 사이 main 이 움직였다)는 회차로 세지 않는다 — 고칠 수
+            # 없다는 신호가 아니라 다음 tick 에 다시 하라는 신호다.
+            if 'remote main changed' not in why:
+                state = note_round(state, item.path)
+                save_state(root, state)
+            errs[key] = err(UNKNOWN, f'{item.path}: {why}')
             break
+        state = clear_rounds(state, item.path)
         errs.pop(key, None)
         print(f'정정·푸시 완료 — [{item.section}] {item.path}')
     return state
@@ -856,11 +895,11 @@ def cmd_run(args):
     try:
         # pull 하지 않는다. 무인 pull 은 읽기가 아니라 사용자의 작업 폴더를 움직인다.
         if not try_fetch(root):
-            errs['러너'] = 'fetch 실패 — 공개판을 확인 못 했다'
+            errs['러너'] = err(UNKNOWN, 'fetch 실패 — 공개판을 확인 못 했다')
             return _save(root, state, errs)
         oid = rev_parse(root, 'origin/main')
         if not oid:
-            errs['러너'] = 'origin/main 을 못 찾았다'
+            errs['러너'] = err(UNKNOWN, 'origin/main 을 못 찾았다')
             return _save(root, state, errs)
 
         todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
@@ -872,12 +911,20 @@ def cmd_run(args):
             todo, published = _published_queue(root, oid)
             unavailable = []
         day = today_kst()
-        picks = eligible(todo + unavailable, published, state, day,
-                         have=_drafts_on_disk(root))
+        # 차단 대상은 **codex 신규 검토 호출만**이다. 준비된 초안의 정정(Claude)은 계속
+        # 돈다 — 공급자 한도는 codex 쪽 사정이고, 정정까지 멈추면 이미 읽어 둔 지적이
+        # 발행본에 반영되지 않은 채 남는다.
+        wait = blocked_until(state)
+        if wait:
+            picks = []
+        else:
+            state.pop('blocked_until', None)   # 만료됐으면 필드를 지운다
+            picks = eligible(todo + unavailable, published, state, day,
+                             have=_drafts_on_disk(root))
         if not picks and not getattr(args, 'correct', False):
             # 남아 있는 섹션 오류는 그대로 둔다. 고를 것이 없다는 이유로 지우면, 한도만
             # 태우고 초안은 없는 상태가 「방금 성공」으로 보인다.
-            return _save(root, state, errs)
+            return _save(root, state, errs, progressed=not wait)
 
         os.makedirs(os.path.join(root, DRAFTS), exist_ok=True)
         for item in picks:
@@ -887,13 +934,27 @@ def cmd_run(args):
             state['last_tick'] = now()
             save_state(root, state)
 
-            text, why = review_one(root,
-                                   publish_commit(root, item.path, item.sha) or oid,
-                                   item, args.timeout)
+            text, why, kind, raw = review_one(
+                root, publish_commit(root, item.path, item.sha) or oid,
+                item, args.timeout)
             if why:
+                if kind == LIMIT:
+                    # 공급자 한도는 **우리 예산을 쓴 게 아니다.** 되돌리지 않으면 초안
+                    # 0 건인 채로 그날 자동 검토가 끝난다(2026-09-19 실측).
+                    # 다만 무조건 되돌리면 하루 상한이 사라지므로 되돌린 횟수를 따로
+                    # 세서 바닥을 둔다.
+                    if may_release(state, day):
+                        state = release(state, day, item.section)
+                    state = note_limit(state, day)
+                    when = retry_at(raw or why)
+                    if when:
+                        state['blocked_until'] = when
+                    # 정정(Claude)이 시작되기 **전에** 디스크에 남긴다. 마지막 _save 까지
+                    # 미루면 정정 중 강제 종료가 반납을 통째로 날린다.
+                    save_state(root, state)
                 # 한 편이 실패하면 그 tick 을 끝낸다. 한도 초과였다면 다음 섹션 호출은
                 # 어차피 같은 이유로 죽고, 그 사이 사람 몫의 한도만 더 먹는다.
-                errs[item.section] = f'{item.path}: {why}'
+                errs[item.section] = err(kind, f'{item.path}: {why}')
                 break
             # 최종 이름은 성공한 뒤에만 붙는다 — 먼저 만들면 잘린 파일이 남고, 다음 tick 은
             # 「파일이 있다」는 이유로 그 글을 건너뛴다.
@@ -912,7 +973,7 @@ def cmd_run(args):
         # 예약은 이미 저장됐다. 여기서 조용히 빠져나가면 오늘 재시도도 막힌 채로 러너가
         # 꺼진 것처럼 굴고, 훅에는 아무 흔적이 없다.
         try:
-            errs['러너'] = f'{type(exc).__name__}: {exc}'
+            errs['러너'] = err(UNKNOWN, f'{type(exc).__name__}: {exc}')
             _save(root, state, errs)
         except Exception:  # noqa: BLE001
             print(f'[러너] 상태도 못 남겼다 — {type(exc).__name__}: {exc}')

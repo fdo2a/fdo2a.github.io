@@ -1,4 +1,4 @@
-"""Append-only 이력 — stance.json / macro.json 은 매일 덮어쓰기라 과거 판단이 남지 않는다.
+"""Append-only 이력 — macro.json 은 매일 덮어쓰기라 과거 판단이 남지 않는다.
 
 주간·월간 복기가 이 로그를 소비하지만, 로그 자체는 그것과 무관하게 있어야 할 자산이다.
 쓰기는 멱등이다 — 같은 report_date 를 두 번 넣어도 한 줄이다.
@@ -17,27 +17,23 @@ def _trigger(t):
     return {k: t[k] for k in _TRIGGER_KEYS if k in t}
 
 
-def stance_record(stance):
-    assets = {}
-    for key, a in (stance.get('assets') or {}).items():
-        row = {k: a[k] for k in _ASSET_KEYS if k in a}
-        trig = a.get('triggers') or {}
-        row['triggers'] = {d: [_trigger(t) for t in (trig.get(d) or [])]
-                           for d in ('increase', 'decrease')}
-        assets[key] = row
-    return {'report_date': stance.get('report_date'),
-            'horizon': stance.get('horizon'),
-            'assets': assets}
+# 이력에 남기는 전달경로 필드. **`channel` 은 뺀다** — 문단 하나가 자산마다, 날마다
+# 복사되면 원장이 산문으로 부푼다. 채점에 필요한 것은 방향과 시작일이다.
+_TRANSMISSION_KEYS = ('direction', 'since', 'confirm')
 
 
 def macro_record(macro):
+    trans = {}
+    for key, t in (macro.get('transmission') or {}).items():
+        trans[key] = {k: t[k] for k in _TRANSMISSION_KEYS if k in t}
     return {'report_date': macro.get('report_date'),
             'horizon': macro.get('horizon'),
+            'transmission': trans,
             'regime': macro.get('regime'),
             'policy_path': macro.get('policy_path')}
 
 
-MARKET_GROUPS = ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra')
+MARKET_GROUPS = ('indices', 'sectors', 'fx', 'commodities', 'memory', 'ai_infra', 'mlcc')
 
 
 def market_record(data):

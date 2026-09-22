@@ -1,6 +1,6 @@
 import pytest
 
-from us.period_scorecard import realized, regime_check, rollup, score, segments, trigger_hygiene
+from us.period_scorecard import realized, regime_check, rollup, score, segments
 
 AGG = {
     "start_date": "2026-08-17", "end_date": "2026-08-21",
@@ -29,7 +29,9 @@ def test_realized_flips_the_sign_for_bonds():
 
 
 def _rows(*pairs):
-    return [{"report_date": d, "assets": {k: {"grade": g} for k, g in grades.items()}}
+    # 2026-09-19: 입력이 스탠스 등급에서 매크로 전달경로 방향으로 바뀌었다
+    return [{"report_date": d,
+             "transmission": {k: {"direction": g} for k, g in grades.items()}}
             for d, grades in pairs]
 
 
@@ -103,16 +105,6 @@ def test_regime_check_is_undecidable_without_new_prints():
     macro = [{"report_date": "2026-08-21", "regime": {"growth": 0, "inflation": 0}}]
     r = regime_check(macro, {"indicators": []}, "2026-08-17", "2026-08-21")
     assert r["verdict"] == "판정불가"
-
-
-def test_trigger_hygiene_flags_long_dormant_conditions():
-    rows = [{"report_date": f"2026-07-{d:02d}",
-             "assets": {"equities": {"grade": 0, "triggers": {
-                 "increase": [{"metric": "spx_vs_50dma_pct", "op": ">", "value": 4.0}],
-                 "decrease": []}}}}
-            for d in range(1, 29)]
-    r = trigger_hygiene(rows, "2026-07-28", stale_days=20)
-    assert any(t["metric"] == "spx_vs_50dma_pct" for t in r["dormant"])
 
 
 def test_rollup_averages_recent_periods():

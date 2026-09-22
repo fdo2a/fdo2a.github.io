@@ -1,8 +1,15 @@
-"""§9 스탠스가 실제로 맞았는지 재는 성적표.
+"""매크로 전달경로 방향이 실제로 맞았는지 재는 성적표.
 
 승계되는 판단 구조를 만들어 놓고 그것이 도움이 되는지 재지 않으면, 일관되게
-틀리고 있어도 알 수가 없다. 이 모듈은 `stance.json`의 `history`에 남은 등급 변경
-하나하나에 그 뒤 실제 가격을 붙여 «그 포지션이 돈을 벌었나»를 셈한다.
+틀리고 있어도 알 수가 없다. 이 모듈은 자산별 방향 전환 하나하나에 그 뒤 실제
+가격을 붙여 «그 판단이 맞았나»를 셈한다.
+
+**입력이 2026-09-19 에 스탠스 등급에서 매크로 전달경로로 바뀌었다** (사용자 지시로
+멀티에셋 섹션이 없어졌다). 자료형이 같다 — 둘 다 7개 자산에 방향 하나와 시작일이다.
+바뀐 것은 시계뿐이고(2~6주 → 3~6개월) `HORIZON` 이 그것을 반영한다. 그리고 전환을
+**자기 보고 `history` 필드가 아니라 append-only 원장에서 직접 뽑는다** — 원장은 매일
+그날 책 전체를 남기므로 연속한 두 행을 견주면 전환이 나온다. 보고된 이력보다 원장이
+덜 거짓말한다.
 
 **대부분의 날에는 아무 말도 하지 않는다.** 등급 변경이 MIN_SAMPLE건에 못 미치면
 `sufficient: False`만 돌려주고, 발행 게이트가 인용을 막는다 — thesis 파이프라인이
@@ -14,7 +21,30 @@
 """
 
 MIN_SAMPLE = 20        # 이만큼 쌓이기 전에는 아무 말도 하지 않는다
-HORIZON = 20           # §9의 시계가 2~6주이므로 20영업일
+HORIZON = 60           # 매크로 시계가 3~6개월이므로 60영업일
+
+ASSET_KEYS = ('equities', 'bonds', 'fx', 'energy', 'metals', 'memory', 'ai_infra')
+
+
+def direction_changes(rows):
+    """원장 연속 두 행을 견줘 방향 전환을 뽑는다 -> [{date, asset, from, to}].
+
+    자산이 «처음 등장한» 것은 전환이 아니다 — 이전 값이 없으면 비교할 대상이 없고,
+    그것을 0에서 온 것으로 세면 책을 처음 만든 날 일곱 건이 한꺼번에 채점된다.
+    """
+    ordered = sorted(rows or [], key=lambda r: r.get('report_date') or '')
+    out, prev = [], {}
+    for r in ordered:
+        cur = {k: (t or {}).get('direction')
+               for k, t in ((r.get('transmission') or {}).items())}
+        for key, now in cur.items():
+            was = prev.get(key)
+            if was is not None and now is not None and now != was:
+                out.append({'date': r.get('report_date'), 'asset': key,
+                            'from': was, 'to': now})
+        prev.update({k: v for k, v in cur.items() if v is not None})
+    return out
+
 
 # (자산 키, 벤치마크 티커, 부호) — 부호는 «등급이 +일 때 이 벤치마크가 오르면
 # 맞은 것인가»다. 채권만 -1: 비중 확대는 금리 하락에 베팅한 것이다.
@@ -34,6 +64,14 @@ RELATIVE = (
     ('ai_infra', ('MRVL', 'COHR', 'LITE', 'GEV', 'VRT'), '^GSPC', 1),
 )
 _REL = {k: (tickers, bench, sign) for k, tickers, bench, sign in RELATIVE}
+
+
+# 성적표가 채점에 쓰는 종가들. 예전에는 스탠스 트리거 배치에 얹혀 왔는데 그 모듈이
+# 없어졌다(2026-09-19) — 필요한 것을 여기서 직접 밝힌다.
+HISTORY_TICKERS = tuple(sorted(
+    {t for _k, t, _s in BENCHMARKS}
+    | {b for _k, _ts, b, _s in RELATIVE}
+    | {t for _k, ts, _b, _s in RELATIVE for t in ts}))
 
 
 def _common_calendar(dates, tickers):

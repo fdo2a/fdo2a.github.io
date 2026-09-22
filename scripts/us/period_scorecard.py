@@ -1,6 +1,7 @@
-"""기간 복기 스코어카드 — 스탠스 등급 부호를 실현치로 채점한다.
+"""기간 복기 스코어카드 — 매크로 전달경로 방향을 실현치로 채점한다.
 
-등급이 곧 방향 베팅이다. 메모리·AI 인프라는 «주식 대비 상대비중»이므로 절대수익이 아니라
+**입력이 2026-09-19 에 스탠스 등급에서 매크로 전달경로로 바뀌었다** — 멀티에셋 섹션이
+사용자 지시로 없어졌다. 방향이 곧 베팅이다. 메모리·AI 인프라는 «주식 대비 상대비중»이므로 절대수익이 아니라
 초과수익으로 채점한다 — 절대수익으로 재면 그 판단이 아니라 시장 방향을 채점하게 된다.
 
 
@@ -37,17 +38,17 @@ def realized(agg):
 
 
 def _grade_at(rows, key, when):
-    """`when` 시점에 유효했던 등급 — 그 날짜 이하의 마지막 기록."""
+    """`when` 시점에 유효했던 방향 — 그 날짜 이하의 마지막 기록."""
     prior = [r for r in rows if (r.get('report_date') or '') <= when]
     if not prior:
         return None
-    a = (prior[-1].get('assets') or {}).get(key) or {}
-    return a.get('grade')
+    a = (prior[-1].get('transmission') or {}).get(key) or {}
+    return a.get('direction')
 
 
-def segments(stance_rows, start, end):
-    """자산군별 [{grade, from, to}] — 기간 중 등급이 바뀌면 쪼갠다."""
-    rows = sorted(stance_rows, key=lambda r: r.get('report_date') or '')
+def segments(macro_rows, start, end):
+    """자산군별 [{grade, from, to}] — 기간 중 방향이 바뀌면 쪼갠다."""
+    rows = sorted(macro_rows, key=lambda r: r.get('report_date') or '')
     out = {}
     for key in ASSET_KEYS:
         opening = _grade_at(rows, key, start)
@@ -58,7 +59,7 @@ def segments(stance_rows, start, end):
             d = r.get('report_date') or ''
             if not (start < d <= end):
                 continue
-            g = ((r.get('assets') or {}).get(key) or {}).get('grade')
+            g = ((r.get('transmission') or {}).get(key) or {}).get('direction')
             if g is not None and g != cur:
                 segs.append({'grade': cur, 'from': since, 'to': d})
                 cur, since = g, d
@@ -93,9 +94,9 @@ def _segment_realized(agg, key, frm, to):
     return (b / a - 1) * 100, True
 
 
-def score(stance_rows, agg):
+def score(macro_rows, agg):
     real = realized(agg)
-    segs = segments(stance_rows, agg.get('start_date'), agg.get('end_date'))
+    segs = segments(macro_rows, agg.get('start_date'), agg.get('end_date'))
     assets, num, den, judged, neutral, total = {}, 0.0, 0.0, 0, 0, 0
 
     for key in ASSET_KEYS:
@@ -186,24 +187,10 @@ def regime_check(macro_rows, macro_metrics, start, end):
             'agree': agree, 'ratio': round(ratio, 4), 'regime': regime}
 
 
-def trigger_hygiene(stance_rows, end, stale_days=20):
-    """발동한 트리거와, 오래 잠들어 있는(=임계가 너무 빡빡한) 조건."""
-    rows = sorted(stance_rows or [], key=lambda r: r.get('report_date') or '')
-    recent = [r for r in rows if (r.get('report_date') or '') <= end]
-    dormant, seen = [], {}
-    for r in recent:
-        for key, a in (r.get('assets') or {}).items():
-            for direction in ('increase', 'decrease'):
-                for t in ((a.get('triggers') or {}).get(direction) or []):
-                    sig = (key, direction, t.get('metric'), t.get('op'), t.get('value'))
-                    seen.setdefault(sig, 0)
-                    seen[sig] += 1
-    for (key, direction, metric, op, value), days in seen.items():
-        if days >= stale_days:
-            dormant.append({'asset': key, 'direction': direction, 'metric': metric,
-                            'op': op, 'value': value, 'days': days})
-    dormant.sort(key=lambda x: -x['days'])
-    return {'dormant': dormant, 'stale_days': stale_days}
+# `trigger_hygiene` 는 2026-09-19 에 스탠스와 함께 없어졌다. 「오래 잠들어 있는 트리거」를
+# 찾으려면 임계가 기계가 읽을 수 있는 형태여야 하는데(metric·op·value), 매크로의 `confirm`
+# 은 산문이다 — 「Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회」. 이것을
+# 파싱하는 것은 조건을 만들어 내는 것에 가깝다. 옮기지 않고 잃는 쪽을 택했다.
 
 
 def rollup(history_rows, spans=(4, 12)):
