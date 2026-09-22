@@ -1,11 +1,12 @@
 {
-  "generated": "2026-09-19 00:27 UTC",
-  "report_date": "2026-09-18",
+  "generated": "2026-09-22 00:13 UTC",
+  "report_date": "2026-09-21",
   "as_of": "2026-09-18",
   "inception": "2026-08-14",
-  "grades_from": "2026-09-16",
+  "grades_from": "2026-09-18",
   "gaps": [
-    "2026-08-28"
+    "2026-08-28",
+    "2026-09-21"
   ],
   "stance_frozen": false,
   "scaled": false,
@@ -19,10 +20,10 @@
       "equity_core": 15.3,
       "memory": 52.4,
       "ai_infra": 56.9,
-      "bonds_long": 13.5,
+      "bonds_long": 13.4,
       "bonds_short": 1.6,
       "metals": 21.4,
-      "energy": 37.4,
+      "energy": 37.5,
       "fx_short": 6.7,
       "fx_long": 6.6,
       "cash": 0.2
@@ -31,7 +32,7 @@
       "equity_core": 40.3,
       "memory": 12.4,
       "ai_infra": 13.4,
-      "bonds_long": 12.7,
+      "bonds_long": 12.6,
       "bonds_short": 1.5,
       "metals": 9.4,
       "energy": 10.1,
@@ -39,7 +40,7 @@
       "fx_long": 0.0,
       "cash": 0.2
     },
-    "equity_risk_share_pct": 66.0,
+    "equity_risk_share_pct": 66.1,
     "notches": [
       {
         "sleeve": "equity_core",
@@ -69,8 +70,8 @@
         "sleeve": "bonds_long",
         "label": "채권 장기(20Y+)",
         "step_pct": 5.6,
-        "vol_pct": 12.5,
-        "risk_pct": 0.7,
+        "vol_pct": 12.4,
+        "risk_pct": 0.69,
         "budget_pct": 0.75
       },
       {
@@ -85,7 +86,7 @@
         "sleeve": "energy",
         "label": "에너지(WTI)",
         "step_pct": 2.0,
-        "vol_pct": 37.4,
+        "vol_pct": 37.5,
         "risk_pct": 0.75,
         "budget_pct": 0.75
       },
@@ -119,7 +120,8 @@
     "insufficient": true,
     "min_sessions": 60,
     "gaps": [
-      "2026-08-28"
+      "2026-08-28",
+      "2026-09-21"
     ],
     "returns": {
       "1d": {

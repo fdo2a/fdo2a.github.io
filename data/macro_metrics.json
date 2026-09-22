@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-18 23:25 UTC",
-  "report_date": "2026-09-18",
+  "generated": "2026-09-22 00:13 UTC",
+  "report_date": "2026-09-21",
   "growth_score": -0.391,
   "inflation_score": -0.526,
   "growth_diffusion": 0.357,
@@ -174,7 +174,7 @@
       "actual": 196000.0,
       "previous": 206000.0,
       "ref_period": "2026-09-12",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -189,7 +189,7 @@
       "actual": 203250.0,
       "previous": 206000.0,
       "ref_period": "2026-09-12",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -204,7 +204,7 @@
       "actual": 1730000.0,
       "previous": 1769000.0,
       "ref_period": "2026-09-05",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -264,7 +264,7 @@
       "actual": 0.02,
       "previous": 0.2,
       "ref_period": "2026-08-01",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Durable Goods Orders MoM",
@@ -477,70 +477,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "Industrial Production MoM"
-  ],
-  "headline_releases": [
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Continuing Jobless Claims",
-      "max_abs_z": 1.289,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 196000.0,
-          "previous": 206000.0,
-          "ref_period": "2026-09-12",
-          "momentum_z": -0.099
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 203250.0,
-          "previous": 206000.0,
-          "ref_period": "2026-09-12",
-          "momentum_z": 0.488
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1730000.0,
-          "previous": 1769000.0,
-          "ref_period": "2026-09-05",
-          "momentum_z": -1.289
-        }
-      ],
-      "components": []
-    },
-    {
-      "key": "industrial-production",
-      "label": "산업생산(G.17)",
-      "tier": 2,
-      "agency": "Federal Reserve",
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
-      "primary": "Industrial Production MoM",
-      "max_abs_z": 0.248,
-      "indicators": [
-        {
-          "name": "Industrial Production MoM",
-          "axis": "Activity",
-          "actual": 0.02,
-          "previous": 0.2,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.248
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-07-01",

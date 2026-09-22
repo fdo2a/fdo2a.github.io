@@ -1,36 +1,8 @@
 {
-  "report_date": "2026-09-18",
-  "generated": "2026-09-19 00:28 UTC",
+  "report_date": "2026-09-21",
+  "generated": "2026-09-22 00:13 UTC",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20260921-13-Week",
-      "kind": "auction",
-      "name_ko": "13-Week 국채 입찰 920억 달러",
-      "date": "2026-09-21",
-      "time_et": "11:30",
-      "time_kst": "2026-09-22 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20260921-26-Week",
-      "kind": "auction",
-      "name_ko": "26-Week 국채 입찰 790억 달러",
-      "date": "2026-09-21",
-      "time_et": "11:30",
-      "time_kst": "2026-09-22 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "auction-20260922-6-Week",
       "kind": "auction",
@@ -128,9 +100,58 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "release-jolts-20260929",
+      "kind": "release",
+      "name_ko": "JOLTS 구인·이직",
+      "date": "2026-09-29",
+      "time_et": "10:00",
+      "time_kst": "2026-09-29 23:00",
+      "status": "confirmed",
+      "source": "BLS 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-pce-20260930",
+      "kind": "release",
+      "name_ko": "개인소비지출(PCE)",
+      "date": "2026-09-30",
+      "time_et": "08:30",
+      "time_kst": "2026-09-30 21:30",
+      "status": "confirmed",
+      "source": "BEA 공표 일정(FRED)",
+      "assets": [
+        "금리",
+        "주식"
+      ],
+      "watch": "컨센서스 대비 서프라이즈"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-09-21",
+      "term": "13-Week",
+      "type": "Bill",
+      "offering_amt": 92000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.77,
+      "indirect_pct": 48.8,
+      "dealer_pct": 34.0
+    },
+    {
+      "date": "2026-09-21",
+      "term": "26-Week",
+      "type": "Bill",
+      "offering_amt": 79000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.62,
+      "indirect_pct": 50.1,
+      "dealer_pct": 30.4
+    },
     {
       "date": "2026-09-17",
       "term": "10-Year",
