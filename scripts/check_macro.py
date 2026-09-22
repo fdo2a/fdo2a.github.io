@@ -16,6 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from us import moomoo_forward as MF  # noqa: E402
 from us.macro_gate import check  # noqa: E402
 
 
@@ -56,7 +57,23 @@ def main():
         print('macro.json / macro_eval.json 둘 다 없다 — 부트스트랩 실행으로 간주하고 '
               '§8 어휘·표 완성도만 검사한다', file=sys.stderr)
 
-    violations = check(html, prev, ev, nxt)
+    # FedWatch 원천 승인: 파일이 있다는 사실이 아니라 **상태·대상 세션·회차**가
+    # 정본과 맞을 때만 대조에 쓴다(2026-09-22 codex 검토).
+    market = load(os.path.join(d, 'market_data.json')) or {}
+    fw_env = load(os.path.join(d, 'moomoo', 'fedwatch.json'))
+    manifest = load(os.path.join(d, 'moomoo', 'manifest.json')) or {}
+    if fw_env and manifest.get('run_id') and fw_env.get('run_id') != manifest['run_id']:
+        print('FedWatch 파일의 run_id 가 manifest 와 다르다 — 원천 대조를 건너뛴다',
+              file=sys.stderr)
+        fw_env = None
+    fedwatch = None
+    if fw_env and market.get('report_date'):
+        fedwatch = MF.approved_fedwatch(fw_env, report_date=market['report_date'])
+        if fw_env.get('status') == 'ok' and fedwatch is None:
+            print('FedWatch 파일은 있으나 상태·세션·관측시각이 정본과 맞지 않는다 — '
+                  '원천 대조를 건너뛴다', file=sys.stderr)
+
+    violations = check(html, prev, ev, nxt, fedwatch, fw_env is not None)
     if not violations:
         print('매크로 게이트 통과')
         return

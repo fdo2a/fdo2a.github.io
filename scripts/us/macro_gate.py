@@ -18,6 +18,7 @@ import re
 from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
                     TRANSMISSION_LABELS, conflicts, regime_name)
 from .section import locate_section, number_forms, strip_tags
+from . import moomoo_forward as _MF
 
 _REGIME = re.compile(
     r'<span\b(?P<attrs>[^>]*\bdata-macro\s*=\s*"regime"[^>]*)>(?P<text>.*?)</span>', re.S)
@@ -361,7 +362,8 @@ def check_falsifier(html, next_macro):
     return ['정책 경로의 반증조건이 지면에 없다 — 그 문단에 `data-falsifier="1"` 을 '
             '달고 무엇이 나오면 이 판단이 바뀌는지 쓸 것']
 
-def _check_policy(text, prev_macro, macro_eval, next_macro, v):
+def _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch=None,
+                  fedwatch_present=False):
     prev = (prev_macro or {}).get('policy_path') or {}
     nxt = (next_macro or {}).get('policy_path') or {}
     if not nxt:
@@ -370,11 +372,20 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v):
 
     prob = nxt.get('prob_pct')
     if prob is None:
-        v.append('macro_next.json policy_path에 prob_pct가 없다 — '
-                 'FedWatch 수치 없이는 정책 경로를 검증할 수 없다')
+        # 원천이 둘 다 없는 날까지 숫자를 요구하면 지어내라는 말이 된다.
+        # **면제는 명시적일 때만** — 사유를 적고 비워야 통과한다(2026-09-22
+        # codex 검토). 전일 확률을 복사하거나 0으로 채우면 여전히 실패다.
+        if nxt.get('prob_status') in ('unavailable', 'unverified') and nxt.get('prob_note'):
+            pass
+        else:
+            v.append('macro_next.json policy_path에 prob_pct가 없다 — '
+                     'FedWatch 수치 없이는 정책 경로를 검증할 수 없다. 원천이 '
+                     '없는 날이면 prob_status 와 prob_note 를 적을 것')
 
     elif not _cited(text, prob):
         v.append(f'§8: 정책 경로 확률 {prob}%가 본문에 인용되지 않았다')
+
+    _check_prob_source(prob, nxt, fedwatch, v, fedwatch_present)
 
     _check_axis_directions(macro_eval, next_macro, v)
 
@@ -392,6 +403,16 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     if (macro_eval or {}).get('new_releases'):
         return
     old = prev.get('prob_pct')
+    if prev.get('prob_meeting') is not None and not _MF.same_event(prev, nxt):
+        # 회의나 구간을 갈아탄 뒤의 확률 차이는 시장의 이동이 아니다.
+        # 9월 회의 40% → 10월 회의 100% 가 +60%p 로 읽혀 시점 변경을
+        # 승인하던 경로다(2026-09-22 codex 구현 검토 P1-2).
+        v.append(f'§8: 정책 경로를 "{prev.get("timing")}"에서 "{nxt.get("timing")}"으로 '
+                 f'옮겼는데, 전일과 오늘의 확률이 같은 사건이 아니다 '
+                 f'(전일 {prev.get("prob_meeting")}/{prev.get("prob_range_lower")}, '
+                 f'오늘 {nxt.get("prob_meeting")}/{nxt.get("prob_range_lower")}) — '
+                 f'비교 불가능한 확률 변화로 시점을 옮길 수 없다')
+        return
     moved = (old is not None and prob is not None and abs(prob - old) >= PROB_JUMP_PP)
     if not moved:
         v.append(f'§8: 정책 경로를 "{prev.get("timing")}"에서 "{nxt.get("timing")}"으로 '
@@ -476,7 +497,46 @@ def _check_next(next_macro, prev_macro, regime_cell, trans_cells, report_date, v
                      f'{row.get("since")}로 오늘이 아니다')
 
 
-def check(html, prev_macro, macro_eval, next_macro):
+def _check_prob_source(prob, nxt, fedwatch, v, present=False):
+    """인쇄된 확률이 **승인된 원천값과 같은가**.
+
+    지금까지 `prob_pct` 는 에이전트가 만든 수치와 에이전트가 만든 `macro_next`
+    를 대조할 뿐이었다. 그러면 다음 회의가 바뀌었거나 특정 구간 확률과 누적
+    확률을 섞었어도 통과한다. 확률은 **회의일·목표구간·공급자**에 묶여야
+    비교된다(2026-09-22 codex 검토).
+    """
+    if prob is None:
+        return
+    if not fedwatch:
+        # **파일이 있는데 승인되지 않은 것**과 **원천이 아예 없는 것**은 다르다.
+        # 앞은 맥이 꺼져 어제 파일이 남았거나 세션이 어긋난 날이고, 그 숫자를
+        # 통과시키면 장부에 적힌 값 자체가 무검증이다. 뒤는 아직 이 경로를 쓰지
+        # 않는 날이라 기존 계약대로 둔다 — 원천 필수화는 작성 계약을 함께
+        # 바꿔야 하는 광범위 수정이라 spec 의 열린 항목에 단계로 남겼다.
+        if present:
+            v.append(f'§8: FedWatch 파일은 있으나 승인되지 않았는데 확률 {prob}% 를 '
+                     f'인쇄했다 — 상태나 대상 세션이 정본과 어긋난다. 원천을 다시 '
+                     f'받거나, prob_pct 를 비우고 prob_status 와 prob_note 를 적을 것')
+        return
+    meeting = nxt.get('prob_meeting')
+    lower = nxt.get('prob_range_lower')
+    if meeting is None or lower is None:
+        v.append('§8: FedWatch 원천이 승인됐는데 macro_next.policy_path 에 '
+                 'prob_meeting / prob_range_lower 가 없다 — 어느 회의의 어느 '
+                 '구간 확률인지 밝히지 않으면 원천 대조가 불가능하다')
+        return
+    approved = _MF.find_probability(fedwatch, meeting_date=meeting, lower_pct=lower,
+                                    upper_pct=nxt.get('prob_range_upper'))
+    if approved is None:
+        v.append(f'§8: 승인된 FedWatch 장부에 {meeting} / 하단 {lower}% 구간이 '
+                 f'없다 — 존재하지 않는 사건의 확률을 인쇄하고 있다')
+    elif abs(float(prob) - float(approved)) > 0.05:
+        v.append(f'§8: 정책 경로 확률 {prob}% 가 원천값 {approved}% 와 다르다 '
+                 f'({meeting} / 하단 {lower}%)')
+
+
+def check(html, prev_macro, macro_eval, next_macro, fedwatch=None,
+          fedwatch_present=False):
     section = section_macro(html)
     if section is None:
         return ['§8(매크로) 섹션을 찾을 수 없다']
@@ -490,7 +550,8 @@ def check(html, prev_macro, macro_eval, next_macro):
     _check_releases(html, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
     v.extend(check_falsifier(html, next_macro))
-    _check_policy(text, prev_macro, macro_eval, next_macro, v)
+    _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch,
+                  fedwatch_present)
     _check_next(next_macro, prev_macro, regime_cell, trans_cells,
                 (macro_eval or {}).get('report_date'), v)
     return v

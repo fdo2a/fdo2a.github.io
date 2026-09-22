@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- moomoo 보조 입력 로컬 수집. 설치:
+       cp scripts/ci/com.fdo2a.moomoo-forward.plist ~/Library/LaunchAgents/
+       launchctl load ~/Library/LaunchAgents/com.fdo2a.moomoo-forward.plist
+     KST 화~토 07:00. 발행은 08:00 KST 이고, 여름 정본 수집(17:30 ET)은 06:30 KST 다.
+     겨울(EST)에는 07:30 KST 라 정본이 아직 없을 수 있다 — 그때는 잠정 세션으로
+     보관되고 발행 때 session_matches() 로 매칭한다. OpenD 가 꺼져 있으면 그날
+     파일이 갱신되지 않고 파이프라인은 웹서치 경로로 떨어진다. -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.fdo2a.moomoo-forward</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/Desktop/AI/report/site" &amp;&amp; /usr/bin/python3 scripts/collect_moomoo_forward.py --datadir data</string>
+  </array>
+  <key>StartCalendarInterval</key><array>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Weekday</key><integer>6</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
+  <key>StandardOutPath</key><string>/tmp/moomoo-forward.log</string>
+  <key>StandardErrorPath</key><string>/tmp/moomoo-forward.err</string>
+  <key>RunAtLoad</key><false/>
+</dict></plist>

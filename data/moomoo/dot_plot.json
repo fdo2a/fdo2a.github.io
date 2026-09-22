@@ -1,0 +1,111 @@
+{
+  "fetched_at": "2026-09-22T17:41:21+09:00",
+  "kind": "dot_plot",
+  "missing": [],
+  "note": null,
+  "provider": "moomoo",
+  "query_range": null,
+  "rows": [
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 4.125,
+      "rate": 3.875,
+      "vote_count": 2,
+      "year": 2026
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": true,
+      "median_rate": 4.125,
+      "rate": 4.125,
+      "vote_count": 12,
+      "year": 2026
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 4.125,
+      "rate": 4.375,
+      "vote_count": 4,
+      "year": 2026
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 4.125,
+      "rate": 3.125,
+      "vote_count": 1,
+      "year": 2027
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 4.125,
+      "rate": 3.625,
+      "vote_count": 3,
+      "year": 2027
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": true,
+      "median_rate": 4.125,
+      "rate": 4.125,
+      "vote_count": 6,
+      "year": 2027
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 4.125,
+      "rate": 4.375,
+      "vote_count": 8,
+      "year": 2027
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 3.875,
+      "rate": 3.125,
+      "vote_count": 4,
+      "year": 2028
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 3.875,
+      "rate": 3.375,
+      "vote_count": 1,
+      "year": 2028
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 3.875,
+      "rate": 3.625,
+      "vote_count": 3,
+      "year": 2028
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": true,
+      "median_rate": 3.875,
+      "rate": 3.875,
+      "vote_count": 5,
+      "year": 2028
+    },
+    {
+      "current_rate": 3.88,
+      "is_median": false,
+      "median_rate": 3.875,
+      "rate": 4.125,
+      "vote_count": 4,
+      "year": 2028
+    }
+  ],
+  "run_id": "7b9099684236",
+  "session": "2026-09-21",
+  "source": null,
+  "source_as_of": null,
+  "status": "ok"
+}

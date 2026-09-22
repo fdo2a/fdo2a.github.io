@@ -1,0 +1,226 @@
+{
+  "fetched_at": "2026-09-22T17:41:21+09:00",
+  "kind": "short_interest",
+  "missing": [],
+  "note": null,
+  "provider": "moomoo",
+  "query_range": {
+    "codes": [
+      "US.MU",
+      "US.WDC",
+      "US.STX",
+      "US.NVDA",
+      "US.MRVL",
+      "US.COHR",
+      "US.LITE",
+      "US.GEV",
+      "US.VRT"
+    ],
+    "failed": []
+  },
+  "rows": [
+    {
+      "avg_daily_share_volume": 25645506,
+      "close_price": 958.73,
+      "code": "US.MU",
+      "days_to_cover": 1.16,
+      "last_close_price": 932.86,
+      "shares_short": 29705339,
+      "short_percent": 2.63,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 33755659,
+      "close_price": 971.66,
+      "code": "US.MU",
+      "days_to_cover": 1.0,
+      "last_close_price": 949.83,
+      "shares_short": 30016025,
+      "short_percent": 2.657,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 6339096,
+      "close_price": 450.405425713,
+      "code": "US.WDC",
+      "days_to_cover": 3.14,
+      "last_close_price": 459.302569846,
+      "shares_short": 19887791,
+      "short_percent": 5.516,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 8969172,
+      "close_price": 508.63673422,
+      "code": "US.WDC",
+      "days_to_cover": 2.26,
+      "last_close_price": 487.133636435,
+      "shares_short": 20281115,
+      "short_percent": 5.884,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 3590490,
+      "close_price": 828.38,
+      "code": "US.STX",
+      "days_to_cover": 2.36,
+      "last_close_price": 829.76,
+      "shares_short": 8482797,
+      "short_percent": 3.742,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 4733552,
+      "close_price": 973.44,
+      "code": "US.STX",
+      "days_to_cover": 1.72,
+      "last_close_price": 921.37,
+      "shares_short": 8161824,
+      "short_percent": 3.601,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 139118326,
+      "close_price": 220.533229999,
+      "code": "US.NVDA",
+      "days_to_cover": 2.14,
+      "last_close_price": 217.306840231,
+      "shares_short": 298301619,
+      "short_percent": 1.237,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 113580992,
+      "close_price": 224.908334389,
+      "code": "US.NVDA",
+      "days_to_cover": 2.52,
+      "last_close_price": 225.048177909,
+      "shares_short": 285956804,
+      "short_percent": 1.181,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 28197801,
+      "close_price": 211.66,
+      "code": "US.MRVL",
+      "days_to_cover": 1.35,
+      "last_close_price": 216.62,
+      "shares_short": 38175634,
+      "short_percent": 4.353,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 20010395,
+      "close_price": 222.02,
+      "code": "US.MRVL",
+      "days_to_cover": 1.42,
+      "last_close_price": 222.18,
+      "shares_short": 28388438,
+      "short_percent": 3.241,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 6272083,
+      "close_price": 277.83,
+      "code": "US.COHR",
+      "days_to_cover": 1.72,
+      "last_close_price": 279.2,
+      "shares_short": 10764076,
+      "short_percent": 5.496,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 8821687,
+      "close_price": 325.83,
+      "code": "US.COHR",
+      "days_to_cover": 1.14,
+      "last_close_price": 327.23,
+      "shares_short": 10032446,
+      "short_percent": 5.128,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 4143406,
+      "close_price": 914.76,
+      "code": "US.LITE",
+      "days_to_cover": 1.72,
+      "last_close_price": 895.0,
+      "shares_short": 7122028,
+      "short_percent": 7.939,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 5595730,
+      "close_price": 926.14,
+      "code": "US.LITE",
+      "days_to_cover": 1.3,
+      "last_close_price": 880.41,
+      "shares_short": 7270171,
+      "short_percent": 8.205,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 2236245,
+      "close_price": 898.53,
+      "code": "US.GEV",
+      "days_to_cover": 3.92,
+      "last_close_price": 911.93,
+      "shares_short": 8763426,
+      "short_percent": 3.29,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 1806164,
+      "close_price": 1063.25,
+      "code": "US.GEV",
+      "days_to_cover": 4.39,
+      "last_close_price": 1049.42,
+      "shares_short": 7936921,
+      "short_percent": 2.98,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    },
+    {
+      "avg_daily_share_volume": 4380575,
+      "close_price": 258.657096371,
+      "code": "US.VRT",
+      "days_to_cover": 3.14,
+      "last_close_price": 257.017495111,
+      "shares_short": 13764719,
+      "short_percent": 3.575,
+      "timestamp": 1788148800,
+      "timestamp_str": "2026-08-31"
+    },
+    {
+      "avg_daily_share_volume": 4710166,
+      "close_price": 293.768557505,
+      "code": "US.VRT",
+      "days_to_cover": 2.77,
+      "last_close_price": 287.000203522,
+      "shares_short": 13058621,
+      "short_percent": 3.391,
+      "timestamp": 1786680000,
+      "timestamp_str": "2026-08-14"
+    }
+  ],
+  "run_id": "7b9099684236",
+  "session": "2026-09-21",
+  "source": null,
+  "source_as_of": "2026-08-31",
+  "status": "ok"
+}

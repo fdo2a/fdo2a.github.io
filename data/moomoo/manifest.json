@@ -1,0 +1,18 @@
+{
+  "fetched_at": "2026-09-22T17:41:21+09:00",
+  "files": {
+    "dot_plot": "ok",
+    "earnings": "ok",
+    "econ_consensus": "partial",
+    "fedwatch": "ok",
+    "fomc_dates": "book",
+    "ratings": "ok",
+    "session_rank": "ok",
+    "short_interest": "ok"
+  },
+  "notes": {},
+  "offline": false,
+  "opend": "127.0.0.1:11111",
+  "run_id": "7b9099684236",
+  "session": "2026-09-21"
+}

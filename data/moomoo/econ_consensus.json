@@ -1,0 +1,85 @@
+{
+  "fetched_at": "2026-09-22T17:41:21+09:00",
+  "kind": "econ_consensus",
+  "missing": [],
+  "note": null,
+  "provider": "moomoo",
+  "query_range": {
+    "begin": "2026-09-22",
+    "end": "2026-10-02",
+    "market": "US"
+  },
+  "rows": [
+    {
+      "consensus": 53.4,
+      "metric_key": "manufacturing_pmi",
+      "observed_at": "2026-09-22T17:41:21+09:00",
+      "provider": "moomoo",
+      "star": "HIGH",
+      "timestamp": 1790171100.0,
+      "title": "Manufacturing PMI",
+      "unit": "index",
+      "vendor": null
+    },
+    {
+      "consensus": 56.0,
+      "metric_key": "services_pmi",
+      "observed_at": "2026-09-22T17:41:21+09:00",
+      "provider": "moomoo",
+      "star": "HIGH",
+      "timestamp": 1790171100.0,
+      "title": "Services PMI",
+      "unit": "index",
+      "vendor": null
+    },
+    {
+      "consensus": 201000.0,
+      "metric_key": "initial_claims",
+      "observed_at": "2026-09-22T17:41:21+09:00",
+      "provider": "moomoo",
+      "star": "HIGH",
+      "timestamp": 1790253000.0,
+      "title": "Initial Jobless Claims",
+      "unit": "count",
+      "vendor": null
+    },
+    {
+      "consensus": 619000.0,
+      "metric_key": "new_home_sales",
+      "observed_at": "2026-09-22T17:41:21+09:00",
+      "provider": "moomoo",
+      "star": "HIGH",
+      "timestamp": 1790258400.0,
+      "title": "New Home Sales",
+      "unit": "count",
+      "vendor": null
+    },
+    {
+      "consensus": -0.3,
+      "metric_key": "durable_goods_mom",
+      "observed_at": "2026-09-22T17:41:21+09:00",
+      "provider": "moomoo",
+      "star": "MEDIUM",
+      "timestamp": 1790339400.0,
+      "title": "Durable Goods Orders (MoM)",
+      "unit": "pct",
+      "vendor": null
+    },
+    {
+      "consensus": 47.8,
+      "metric_key": "michigan_sentiment",
+      "observed_at": "2026-09-22T17:41:21+09:00",
+      "provider": "moomoo",
+      "star": "MEDIUM",
+      "timestamp": 1790344800.0,
+      "title": "Michigan Consumer Sentiment",
+      "unit": "index",
+      "vendor": null
+    }
+  ],
+  "run_id": "7b9099684236",
+  "session": "2026-09-21",
+  "source": null,
+  "source_as_of": null,
+  "status": "partial"
+}

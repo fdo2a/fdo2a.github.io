@@ -577,3 +577,104 @@ def test_no_falsifier_in_the_book_means_no_obligation():
 def test_the_reconciliation_check_is_gone_with_the_stance_book():
     import us.macro_gate as g
     assert not hasattr(g, '_check_reconciliation')
+
+
+# --- FedWatch 원천 대조 (2026-09-22 codex 검토) --------------------------------
+
+from us import macro_gate as MG  # noqa: E402
+from us import moomoo_forward as _MF  # noqa: E402
+
+_FW = _MF.normalize_fedwatch(
+    [{'meeting_date': '2026-10-28', 'target_range': '3.75-4.00%', 'probability': 42.4},
+     {'meeting_date': '2026-10-28', 'target_range': '4.00-4.25%', 'probability': 57.6}],
+    observed_at='t', provider='moomoo/CME FedWatch')
+
+
+def _policy_html(prob):
+    return (f'<section id="s8"><p>다음 회의 동결 확률은 {prob}%다.</p>'
+            f'<p data-falsifier="1">근원 물가가 0.4%를 넘으면 이 판단은 틀린다.</p>'
+            f'</section>')
+
+
+def _nxt(**kw):
+    path = {'timing': '12월', 'prob_pct': 57.6, 'prob_meeting': '2026-10-28',
+            'prob_range_lower': 4.00}
+    path.update(kw)
+    return {'policy_path': path}
+
+
+def _policy_violations(html, nxt, fedwatch, present=False, prev=None):
+    v = []
+    MG._check_policy(html, prev, None, nxt, v, fedwatch, present)
+    return [x for x in v if '§8' in x or 'prob' in x]
+
+
+def test_a_probability_that_matches_the_source_passes():
+    assert _policy_violations(_policy_html('57.6'), _nxt(), _FW) == []
+
+
+def test_a_probability_that_disagrees_with_the_source_is_blocked():
+    """에이전트가 만든 수치와 에이전트가 만든 macro_next 를 대조하는 것으로는
+    부족하다 — 원천값과 달라야 걸린다."""
+    out = _policy_violations(_policy_html('61.0'), _nxt(prob_pct=61.0), _FW)
+    assert any('원천값' in x for x in out)
+
+
+def test_a_probability_without_its_event_is_blocked():
+    nxt = _nxt()
+    nxt['policy_path'].pop('prob_meeting')
+    out = _policy_violations(_policy_html('57.6'), nxt, _FW)
+    assert any('prob_meeting' in x for x in out)
+
+
+def test_an_event_absent_from_the_ledger_is_blocked():
+    out = _policy_violations(_policy_html('57.6'),
+                             _nxt(prob_meeting='2026-11-05'), _FW)
+    assert any('없다' in x for x in out)
+
+
+def test_an_upper_bound_that_does_not_match_is_blocked():
+    """같은 하단의 3.75–4.00 과 3.75–4.25 는 다른 사건이다."""
+    out = _policy_violations(_policy_html('57.6'),
+                             _nxt(prob_range_upper=9.99), _FW)
+    assert any('없다' in x for x in out)
+
+
+def test_a_missing_probability_needs_an_explicit_exemption():
+    bare = _policy_violations(_policy_html('—'), _nxt(prob_pct=None), None)
+    assert any('prob_status' in x for x in bare)
+    excused = _policy_violations(
+        _policy_html('—'),
+        _nxt(prob_pct=None, prob_status='unavailable',
+             prob_note='OpenD 미기동, 웹 검색으로도 확인되지 않음'), None)
+    assert excused == []
+
+
+def test_a_file_that_exists_but_is_not_approved_blocks_the_number():
+    """맥이 꺼져 어제 파일이 남았거나 세션이 어긋난 날 — 그 숫자는 무검증이다."""
+    out = _policy_violations(_policy_html('57.6'), _nxt(), None, present=True)
+    assert any('승인되지 않았' in x for x in out)
+
+
+def test_no_source_at_all_keeps_the_old_contract():
+    out = _policy_violations(_policy_html('57.6'), _nxt(), None, present=False)
+    assert not any('승인되지 않았' in x for x in out)
+
+
+def test_a_timing_move_across_different_events_is_blocked():
+    """9월 회의 40% → 10월 회의 100% 를 +60%p 이동으로 읽던 경로."""
+    prev = {'policy_path': {'timing': '9월', 'prob_pct': 40.0,
+                            'prob_meeting': '2026-09-16', 'prob_range_lower': 4.00}}
+    nxt = _nxt(timing='10월', prob_pct=100.0, prob_meeting='2026-10-28',
+               prob_range_lower=4.00)
+    v = []
+    MG._check_policy(_policy_html('100.0'), prev, {}, nxt, v, None, False)
+    assert any('같은 사건이 아니다' in x for x in v)
+
+
+def test_a_timing_move_within_the_same_event_still_uses_the_jump_rule():
+    prev = {'policy_path': {'timing': '9월', 'prob_pct': 40.0,
+                            'prob_meeting': '2026-10-28', 'prob_range_lower': 4.00}}
+    v = []
+    MG._check_policy(_policy_html('57.6'), prev, {}, _nxt(timing='10월'), v, None, False)
+    assert not any('같은 사건이 아니다' in x for x in v)
