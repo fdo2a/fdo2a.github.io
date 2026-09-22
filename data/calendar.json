@@ -1,29 +1,15 @@
 {
-  "report_date": "2026-09-21",
-  "generated": "2026-09-22 00:58 UTC",
+  "report_date": "2026-09-22",
+  "generated": "2026-09-22 23:43 UTC",
   "horizon_days": 10,
   "events": [
     {
-      "key": "auction-20260922-6-Week",
+      "key": "auction-20260923-17-Week",
       "kind": "auction",
-      "name_ko": "6-Week 국채 입찰 750억 달러",
-      "date": "2026-09-22",
+      "name_ko": "17-Week 국채 입찰 720억 달러",
+      "date": "2026-09-23",
       "time_et": "11:30",
-      "time_kst": "2026-09-23 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20260922-2-Year",
-      "kind": "auction",
-      "name_ko": "2-Year 국채 입찰 690억 달러",
-      "date": "2026-09-22",
-      "time_et": "13:00",
-      "time_kst": "2026-09-23 02:00",
+      "time_kst": "2026-09-24 00:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -72,6 +58,34 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "auction-20260924-4-Week",
+      "kind": "auction",
+      "name_ko": "4-Week 국채 입찰 900억 달러",
+      "date": "2026-09-24",
+      "time_et": "11:30",
+      "time_kst": "2026-09-25 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20260924-8-Week",
+      "kind": "auction",
+      "name_ko": "8-Week 국채 입찰 850억 달러",
+      "date": "2026-09-24",
+      "time_et": "11:30",
+      "time_kst": "2026-09-25 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
       "key": "auction-20260924-7-Year",
@@ -129,9 +143,45 @@
         "주식"
       ],
       "watch": "컨센서스 대비 서프라이즈"
+    },
+    {
+      "key": "release-employment-20261002",
+      "kind": "release",
+      "name_ko": "고용상황(Employment Situation)",
+      "date": "2026-10-02",
+      "time_et": "08:30",
+      "time_kst": "2026-10-02 21:30",
+      "status": "confirmed",
+      "source": "BLS 공표 일정(FRED)",
+      "assets": [
+        "금리",
+        "달러",
+        "주식"
+      ],
+      "watch": "컨센서스 대비 서프라이즈"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-09-22",
+      "term": "6-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 3.03,
+      "indirect_pct": 59.1,
+      "dealer_pct": 25.7
+    },
+    {
+      "date": "2026-09-22",
+      "term": "2-Year",
+      "type": "Note",
+      "offering_amt": 69000000000.0,
+      "high_yield": 4.787,
+      "bid_to_cover": 2.63,
+      "indirect_pct": 49.3,
+      "dealer_pct": 11.2
+    },
     {
       "date": "2026-09-21",
       "term": "13-Week",
@@ -211,26 +261,6 @@
       "bid_to_cover": 3.16,
       "indirect_pct": 60.4,
       "dealer_pct": 24.7
-    },
-    {
-      "date": "2026-09-14",
-      "term": "26-Week",
-      "type": "Bill",
-      "offering_amt": 79000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.74,
-      "indirect_pct": 54.4,
-      "dealer_pct": 29.6
-    },
-    {
-      "date": "2026-09-14",
-      "term": "13-Week",
-      "type": "Bill",
-      "offering_amt": 92000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.64,
-      "indirect_pct": 49.4,
-      "dealer_pct": 34.2
     }
   ],
   "blackout": {
@@ -238,8 +268,6 @@
     "meeting": null,
     "until": null
   },
-  "missing": [
-    "fomc"
-  ],
-  "complete": false
+  "missing": [],
+  "complete": true
 }

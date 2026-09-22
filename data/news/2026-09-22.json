@@ -1,0 +1,144 @@
+{
+  "report_date": "2026-09-22",
+  "harvested": 168,
+  "notes": [
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6981.T&region=US&lang=en-US: HTTP 429",
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=009150.KS&region=US&lang=en-US: HTTP 429",
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6976.T&region=US&lang=en-US: HTTP 429",
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=2327.TW&region=US&lang=en-US: HTTP 429"
+  ],
+  "items": [
+    {
+      "guid": "108366288",
+      "url": "https://www.cnbc.com/2026/09/22/trump-trades-microsoft-amazon-july-financial-disclosure.html",
+      "title": "Trump discloses more than 1,100 July trades, including up to $25 million each in sales of Microsoft, Amazon",
+      "summary": "Trump sold tech stocks including Amazon and Microsoft when the Mag 7 stocks popped on July 20, adding $291 billion in market value in one day.",
+      "published": "2026-09-22T22:03:33+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 5048,
+      "body_file": "01-politics.txt"
+    },
+    {
+      "guid": "108365078",
+      "url": "https://www.cnbc.com/2026/09/22/clarity-act-crypto-rules-regulators.html",
+      "title": "U.S. regulators rush to write crypto rulebook after Clarity Act stalls in Senate",
+      "summary": "State and federal regulators are rushing to fill the void after comprehensive crypto rules failed to clear the Senate.",
+      "published": "2026-09-22T20:46:52+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 5257,
+      "body_file": "02-politics.txt"
+    },
+    {
+      "guid": "108366173",
+      "url": "https://www.cnbc.com/2026/09/22/trump-un-speech-today.html",
+      "title": "Trump slams Iran and Cuba, defends AI growth in boastful UN speech",
+      "summary": "The U.S. \"will no longer permit threats to America to gain a foothold anywhere in the Western Hemisphere,\" Trump told the UN leaders.",
+      "published": "2026-09-22T19:00:39+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 4059,
+      "body_file": "03-politics.txt"
+    },
+    {
+      "guid": "108364741",
+      "url": "https://www.cnbc.com/2026/09/18/japan-rate-hike-stocks-rise-bond-yields-yen-fall.html",
+      "title": "Why Japan’s markets flipped the usual script after central bank rate hike",
+      "summary": "The yen weakened past 157 against the dollar, the yield on the 10-year Japanese Government Bond slipped, while the Nikkei 225 gained 1.5%.",
+      "published": "2026-09-21T01:02:25+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 3756,
+      "body_file": "04-economy.txt"
+    },
+    {
+      "guid": "108364814",
+      "url": "https://www.cnbc.com/2026/09/20/france-wine-production-70-year-low-heatwaves-drought.html",
+      "title": "France’s wine production nears a 70-year low, leaving winemakers with tough choices",
+      "summary": "As the French wine industry reaches a crisis point, key players are considering new markets, products and generations.",
+      "published": "2026-09-20T05:00:01+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 7176,
+      "body_file": "05-economy.txt"
+    },
+    {
+      "guid": "108365102",
+      "url": "https://www.cnbc.com/2026/09/19/goldman-sachs-happiness-struggling-consumer-sentiment.html",
+      "title": "Consumer sentiment is in the dumps despite a solid economy. Goldman Sachs blames 'lower happiness'",
+      "summary": "Goldman economist Joseph Briggs said broader pessimism in society may be contributing to struggling consumer sentiment even as the economy chugs along.",
+      "published": "2026-09-19T12:50:49+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 2438,
+      "body_file": "06-economy.txt"
+    },
+    {
+      "guid": "108366337",
+      "url": "https://www.cnbc.com/2026/09/22/lennar-shares-pop-as-berkshire-builds-almost-a-10percent-stake-in-beleaguered-homebuilder.html",
+      "title": "Lennar shares pop as Berkshire builds almost a 10% stake in beleaguered homebuilder",
+      "summary": "The conglomerate built by Warren Buffett and led today by Greg Abel holds a sizable stake in Miami-based homebuilder Lennar.",
+      "published": "2026-09-22T22:35:50+00:00",
+      "category": "market",
+      "source": "CNBC",
+      "body_chars": 3012,
+      "body_file": "07-market.txt"
+    },
+    {
+      "guid": "108366300",
+      "url": "https://www.cnbc.com/2026/09/22/no-new-stock-highs-no-problem-options-traders-bet-theyre-coming-in-these-names.html",
+      "title": "No new stock highs, no problem: Options traders bet they're coming in these names",
+      "summary": "Options activity shows traders anticipate fresh highs are around the corner for a handful of names.",
+      "published": "2026-09-22T18:09:32+00:00",
+      "category": "market",
+      "source": "CNBC",
+      "body_chars": 2661,
+      "body_file": "08-market.txt"
+    },
+    {
+      "guid": "108365853",
+      "url": "https://www.cnbc.com/2026/09/21/meta-investors-discover-new-ai-play.html",
+      "title": "Investors discover their new favorite consumer AI play in Meta. Options volume is surging",
+      "summary": "Shares of the social media giant surged 12% Monday.",
+      "published": "2026-09-21T20:13:33+00:00",
+      "category": "market",
+      "source": "CNBC",
+      "body_chars": 1989,
+      "body_file": "09-market.txt"
+    },
+    {
+      "guid": "108366436",
+      "url": "https://www.cnbc.com/2026/09/22/royal-caribbean-sandals.html",
+      "title": "Royal Caribbean nears $3 billion deal to take 50% equity stake in Sandals",
+      "summary": "Royal Caribbean has been trying to diversify beyond cruises and become a leader overall in vacations.",
+      "published": "2026-09-22T21:25:42+00:00",
+      "category": "top",
+      "source": "CNBC",
+      "body_chars": 1279,
+      "body_file": "10-top.txt"
+    },
+    {
+      "guid": "108366320",
+      "url": "https://www.cnbc.com/2026/09/22/trump-administration-removes-around-760000-obamacare-enrollments.html",
+      "title": "Trump administration removes around 760,000 Obamacare enrollments, alleging fraud",
+      "summary": "Vice President JD Vance's White House Task Force to Eliminate Fraud estimates the action will save roughly $2.2 billion in taxpayer-funded subsidies.",
+      "published": "2026-09-22T21:07:21+00:00",
+      "category": "top",
+      "source": "CNBC",
+      "body_chars": 3715,
+      "body_file": "11-top.txt"
+    },
+    {
+      "guid": "108366295",
+      "url": "https://www.cnbc.com/2026/09/22/cisco-stock-piper-sandler-price-target.html",
+      "title": "Cisco stock sinks 5% after Piper Sandler cuts price target on growth concerns",
+      "summary": "Cisco stock hit a record over the summer, but Piper Sandler analysts expressed concerns that growth is peaking in the industry.",
+      "published": "2026-09-22T20:49:25+00:00",
+      "category": "top",
+      "source": "CNBC",
+      "body_chars": 1428,
+      "body_file": "12-top.txt"
+    }
+  ]
+}
