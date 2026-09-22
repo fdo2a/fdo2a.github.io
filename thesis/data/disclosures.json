@@ -1,0 +1,49 @@
+{
+  "as_of": "2026-09-22",
+  "window": {
+    "bgn": "20260922",
+    "end": "20260922"
+  },
+  "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
+  "tickers": {
+    "005930.KS": {
+      "corp_code": "00126380",
+      "events": [
+        {
+          "rcept_no": "20260922000524",
+          "date": "2026-09-22",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "허은녕",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260922000524",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
+      "axes": [],
+      "confirmed_count": 0
+    },
+    "000660.KS": {
+      "corp_code": "00164779",
+      "events": [
+        {
+          "rcept_no": "20260922000361",
+          "date": "2026-09-22",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "SK하이닉스",
+          "filer": "정인철",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260922000361",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
+      "axes": [],
+      "confirmed_count": 0
+    }
+  },
+  "missing": []
+}
