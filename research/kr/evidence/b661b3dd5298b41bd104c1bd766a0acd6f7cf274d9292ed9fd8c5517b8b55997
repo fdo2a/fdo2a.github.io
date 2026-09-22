@@ -1,0 +1,28 @@
+{
+  "source_file": "kr/data/kr_flows.json",
+  "market": "KOSPI",
+  "unit": "억원",
+  "rows": [
+    {
+      "date": "2026-09-22",
+      "individual": -15797,
+      "foreign": 649,
+      "institution": -1297
+    },
+    {
+      "date": "2026-09-21",
+      "individual": -31850,
+      "foreign": 117,
+      "institution": 15162
+    },
+    {
+      "date": "2026-09-18",
+      "individual": -36359,
+      "foreign": 4486,
+      "institution": 15322
+    }
+  ],
+  "flows_date": "2026-09-22",
+  "flows_provisional": true,
+  "label": "당일 잠정치"
+}

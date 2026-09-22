@@ -1,0 +1,46 @@
+{
+  "source_file": "kr/data/kr_industry.json",
+  "report_date": "2026-09-22",
+  "rows": [
+    {
+      "name": "전자제품",
+      "change_pct": 5.49,
+      "total": 16,
+      "rise": 10,
+      "breadth": 0.625,
+      "liquidity_backed": true,
+      "leading": true,
+      "note": "폭넓은 상승 주도"
+    },
+    {
+      "name": "항공사",
+      "change_pct": 5.43,
+      "total": 9,
+      "rise": 9,
+      "breadth": 1.0,
+      "liquidity_backed": true,
+      "leading": true,
+      "note": "폭넓은 상승 주도"
+    },
+    {
+      "name": "전자장비와기기",
+      "change_pct": 3.84,
+      "total": 105,
+      "rise": 47,
+      "breadth": 0.448,
+      "liquidity_backed": true,
+      "leading": true,
+      "note": "폭넓은 상승 주도"
+    },
+    {
+      "name": "반도체와반도체장비",
+      "change_pct": -0.09,
+      "total": 171,
+      "rise": 77,
+      "breadth": 0.45,
+      "liquidity_backed": true,
+      "leading": false,
+      "note": ""
+    }
+  ]
+}
