@@ -31,19 +31,25 @@ def _git(root, *args):
     return _run(['git', *args], root)
 
 
+# 2026-09-22 stance/portfolio 은퇴(c7f6540)가 두 게이트 스크립트를 지웠는데 여기 목록에
+# 남아, US 정정이 매번 「required gate missing」으로 죽었다. 목록은 test_corrector 가
+# 실제 scripts/ 와 대조한다.
+US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'session')
+KR_DATADIR_GATES = ('session', 'weight')
+
+
 def _gates(root, clone, item, evidence, timeout):
     """Replay trusted gates independently of Claude's completion claim."""
     post = str(clone / item.path)
     data = evidence / ('kr/data' if item.section == 'kr' else 'data')
     gates = []
     if item.section == 'us':
-        for name, book in [('macro', 'macro.json'), ('stance', 'stance.json')]:
-            gates.append((f'check_{name}.py', ['--html', post, '--datadir', str(data),
-                                             '--next', str(data / book)]))
-        for name in ('fed', 'weight', 'price_context', 'portfolio', 'session'):
+        gates.append(('check_macro.py', ['--html', post, '--datadir', str(data),
+                                         '--next', str(data / 'macro.json')]))
+        for name in US_DATADIR_GATES:
             gates.append((f'check_{name}.py', ['--html', post, '--datadir', str(data)]))
     else:
-        for name in ('session', 'weight'):
+        for name in KR_DATADIR_GATES:
             gates.append((f'check_{name}.py', ['--html', post, '--datadir', str(data),
                                              '--market', 'kr']))
     gates.extend([

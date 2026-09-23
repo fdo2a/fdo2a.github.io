@@ -36,7 +36,7 @@ def setup(tmp_path, monkeypatch):
     # Trusted local gate scripts are deliberately absent from the origin clone.
     scripts = root / 'scripts'
     scripts.mkdir()
-    for name in ('macro', 'stance', 'fed', 'weight', 'price_context', 'portfolio',
+    for name in ('macro', 'fed', 'weight', 'price_context',
                  'session', 'readability', 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
@@ -85,7 +85,7 @@ def test_success_keeps_user_checkout(setup):
     assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
-    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 9
+    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 7
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -155,3 +155,13 @@ def test_independent_gate_blocks_push(setup, failure):
     _, error = correct_one(root, item, 'review', base, 10)
     assert error
     assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_every_replayed_gate_exists_in_the_real_repo():
+    """픽스처는 게이트 스크립트를 가짜로 만든다 — 지워진 게이트는 여기서만 드러난다."""
+    from pathlib import Path
+    from scripts.review import corrector
+    real = Path(__file__).resolve().parents[2]
+    names = {'macro', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES}
+    missing = [n for n in names if not (real / f'check_{n}.py').is_file()]
+    assert missing == []
