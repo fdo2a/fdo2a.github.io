@@ -1,6 +1,6 @@
 {
   "report_date": "2026-09-22",
-  "harvested": 168,
+  "harvested": 170,
   "notes": [
     "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6981.T&region=US&lang=en-US: HTTP 429",
     "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=009150.KS&region=US&lang=en-US: HTTP 429",
@@ -108,36 +108,36 @@
       "body_file": "09-market.txt"
     },
     {
-      "guid": "108366436",
-      "url": "https://www.cnbc.com/2026/09/22/royal-caribbean-sandals.html",
-      "title": "Royal Caribbean nears $3 billion deal to take 50% equity stake in Sandals",
-      "summary": "Royal Caribbean has been trying to diversify beyond cruises and become a leader overall in vacations.",
-      "published": "2026-09-22T21:25:42+00:00",
+      "guid": "108366361",
+      "url": "https://www.cnbc.com/2026/09/22/trump-diesel-export-ban-urkaine-russia-iran.html",
+      "title": "Trump administration is examining whether a diesel export ban is feasible, Treasury Secretary says",
+      "summary": "Republican lawmakers have called for an export ban as high diesel prices hit farmers and truckers ahead of the November midterm elections.",
+      "published": "2026-09-22T23:43:48+00:00",
       "category": "top",
       "source": "CNBC",
-      "body_chars": 1279,
+      "body_chars": 2420,
       "body_file": "10-top.txt"
     },
     {
-      "guid": "108366320",
-      "url": "https://www.cnbc.com/2026/09/22/trump-administration-removes-around-760000-obamacare-enrollments.html",
-      "title": "Trump administration removes around 760,000 Obamacare enrollments, alleging fraud",
-      "summary": "Vice President JD Vance's White House Task Force to Eliminate Fraud estimates the action will save roughly $2.2 billion in taxpayer-funded subsidies.",
-      "published": "2026-09-22T21:07:21+00:00",
+      "guid": "108365467",
+      "url": "https://www.cnbc.com/2026/09/22/heres-who-we-know-is-going-to-the-trump-xi-dinner-so-far.html",
+      "title": "Here's who we know is going to the Trump-Xi dinner so far",
+      "summary": "Very little is known about which Chinese business executives, if any, are expected to attend.",
+      "published": "2026-09-22T23:43:43+00:00",
       "category": "top",
       "source": "CNBC",
-      "body_chars": 3715,
+      "body_chars": 2368,
       "body_file": "11-top.txt"
     },
     {
-      "guid": "108366295",
-      "url": "https://www.cnbc.com/2026/09/22/cisco-stock-piper-sandler-price-target.html",
-      "title": "Cisco stock sinks 5% after Piper Sandler cuts price target on growth concerns",
-      "summary": "Cisco stock hit a record over the summer, but Piper Sandler analysts expressed concerns that growth is peaking in the industry.",
-      "published": "2026-09-22T20:49:25+00:00",
+      "guid": "108366463",
+      "url": "https://www.cnbc.com/2026/09/22/qantas-flight-new-york-sydney-nonstop.html",
+      "title": "Qantas to start selling tickets next year for its New York to Sydney nonstop flight",
+      "summary": "Qantas plans to start selling tickets for its first New York to Sydney nonstop flight.",
+      "published": "2026-09-22T23:00:01+00:00",
       "category": "top",
       "source": "CNBC",
-      "body_chars": 1428,
+      "body_chars": 1968,
       "body_file": "12-top.txt"
     }
   ]
