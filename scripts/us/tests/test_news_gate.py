@@ -1,14 +1,19 @@
+import pytest
 """뉴스 섹션 발행 게이트 — 실재하지 않는 기사를 막는다."""
 from us.news_gate import MAX_CHARS, MIN_CHARS, check
 
+SUMMARY = '가' * 300      # 수집 잡이 만든 요약 — 픽스처 블록 본문과 같은 글자
+
 COLLECTED = {'report_date': '2026-09-19', 'items': [
-    {'guid': 'g1', 'category': 'top', 'source': 'CNBC', 'title': 'Alpha',
-     'url': 'https://www.cnbc.com/2026/09/18/alpha.html', 'body_chars': 5000},
+    {'guid': 'g1', 'category': 'politics', 'source': 'CNBC', 'title': 'Alpha',
+     'url': 'https://www.cnbc.com/2026/09/18/alpha.html', 'body_chars': 5000,
+     'summary_ko': SUMMARY},
     {'guid': 'g2', 'category': 'economy', 'source': 'CNBC', 'title': 'Beta',
-     'url': 'https://www.cnbc.com/2026/09/18/beta.html', 'body_chars': 4000},
-    {'guid': 'g3', 'category': 'market', 'source': 'Yahoo Finance', 'title': 'Gamma',
+     'url': 'https://www.cnbc.com/2026/09/18/beta.html', 'body_chars': 4000,
+     'summary_ko': SUMMARY},
+    {'guid': 'g3', 'category': 'macro', 'source': 'Yahoo Finance', 'title': 'Gamma',
      'url': 'https://finance.yahoo.com/news/gamma.html', 'body_chars': 0,
-     'body_note': 'HTTPError'},
+     'body_note': 'HTTPError', 'summary_note': 'HTTPError'},
 ]}
 
 
@@ -58,7 +63,7 @@ def test_the_same_article_cannot_be_printed_twice():
 def test_an_article_whose_body_we_failed_to_fetch_cannot_be_written_up():
     # g3 은 수집됐지만 본문을 못 받았다 — 요약할 재료가 없으므로 창작이 된다
     v = check(page(block('g3')), COLLECTED)
-    assert any('본문' in m and 'g3' in m for m in v)
+    assert any('요약' in m and 'g3' in m for m in v)
 
 
 # ── 분량 ──────────────────────────────────────────────────────────────────
@@ -170,7 +175,8 @@ def test_a_hidden_attribute_item_is_not_coverage_either():
 # ── MLCC 뉴스는 다른 섹션에 있지만 같은 규율을 받는다 (2026-09-19) ──────────
 MLCC_COLLECTED = {'report_date': '2026-09-19', 'items': COLLECTED['items'] + [
     {'guid': 'm1', 'category': 'mlcc', 'source': 'Yahoo Finance', 'title': 'Murata',
-     'url': 'https://finance.yahoo.com/news/murata.html', 'body_chars': 3000},
+     'url': 'https://finance.yahoo.com/news/murata.html', 'body_chars': 3000,
+     'summary_ko': SUMMARY},
 ]}
 
 
@@ -272,7 +278,7 @@ def test_a_matching_report_date_passes():
 def test_when_every_body_failed_the_section_may_be_omitted():
     """#5 [중대] 본문을 하나도 못 받은 날 축소 발행이 막혔다."""
     nobody = {'report_date': '2026-09-19', 'items': [
-        {'guid': 'g1', 'category': 'top', 'url': 'https://x/a', 'body_chars': 0,
+        {'guid': 'g1', 'category': 'politics', 'url': 'https://x/a', 'body_chars': 0,
          'body_note': 'HTTPError'}]}
     html = '<html><body><section><h2>매크로</h2><p>x</p></section></body></html>'
     assert check(html, nobody) == []
@@ -349,3 +355,78 @@ def test_a_collection_without_a_date_cannot_justify_a_dated_page():
     undated = {'items': COLLECTED['items']}
     v = check(page(block('g1')), undated, report_date='2026-09-19')
     assert any('날짜' in m or '수집분' in m for m in v)
+
+
+
+# ── 요약 충실도 (2026-09-24) ─────────────────────────────────────────────
+REAL = ('연방준비제도는 기준금리를 4.25~4.50%로 동결했습니다. 파월 의장은 기자회견에서 물가가 '
+        '목표치인 2%를 여전히 웃돌고 있어 서두를 이유가 없다고 말했습니다. 위원 19명 가운데 '
+        '12명은 연내 한 차례 인하를 예상했고, 나머지는 동결 또는 두 차례 인하를 점쳤습니다. '
+        '성장률 전망은 1.4%에서 1.6%로 올렸고 실업률 전망은 4.5%로 유지했습니다. 시장은 '
+        '12월 인하 가능성을 낮춰 잡았고 2년물 금리는 소폭 올랐다고 기사는 전했습니다. '
+        '연준은 보유 채권 축소 속도도 그대로 유지하기로 했습니다. 이번 결정에 반대표를 던진 '
+        '위원은 한 명으로, 그는 0.25%포인트 인하를 주장했습니다.')
+FED = {'report_date': '2026-09-19', 'items': [
+    {'guid': 'f1', 'category': 'macro', 'source': 'CNBC', 'title': 'Fed holds',
+     'url': 'https://www.cnbc.com/f1.html', 'body_chars': 5000, 'summary_ko': REAL}]}
+
+
+def fed_page(text):
+    return page(f'<div class="news-item" data-news="f1"><p class="news-head">연준</p>'
+                f'<p>{text}</p></div>')
+
+
+def test_the_collected_summary_itself_passes():
+    assert check(fed_page(REAL), FED) == []
+
+
+def test_light_editing_of_the_summary_passes():
+    edited = (REAL.replace('말했습니다', '밝혔습니다').replace('올렸고', '상향했고')
+              .replace('점쳤습니다', '예상했습니다'))
+    assert check(fed_page(edited), FED) == []
+
+
+def test_a_different_story_under_a_real_guid_is_caught():
+    other = ('미국 상무부는 8월 소매판매가 전월보다 0.6% 늘었다고 발표했습니다. 자동차와 '
+             '주유소를 뺀 근원 소매판매도 0.4% 증가해 시장 예상치를 웃돌았습니다. 온라인 '
+             '판매가 1.2% 늘며 증가를 이끌었고 식당·주점 매출은 0.3% 줄었습니다. 소비가 '
+             '여전히 견조하다는 해석과 함께 연말 쇼핑 시즌 기대도 커졌다고 기사는 '
+             '전했습니다. 일부 분석가는 관세로 인한 가격 상승이 명목 판매를 부풀렸을 수 '
+             '있다고 지적했습니다.')
+    v = check(fed_page(other), FED)
+    assert any('유사도' in m for m in v)
+
+
+
+def test_hidden_padding_with_font_size_zero_is_not_coverage():
+    """구현 검토 #4 — 보이는 건 지어낸 52자, 숨긴 건 요약 전문."""
+    fake = '가짜 내용' * 13
+    html = page(f'<div class="news-item" data-news="f1"><p class="news-head">연준</p>'
+                f'<p>{fake}<span style="font-size:0">{REAL}</span></p></div>')
+    assert check(html, FED) != []
+
+
+@pytest.mark.parametrize('attr', ['style="opacity:0"', 'style="color:transparent"',
+                                  'aria-hidden="true"', 'class="sr-only"',
+                                  'style="position:absolute;clip:rect(0 0 0 0)"'])
+def test_other_ways_of_hiding_text_are_not_coverage(attr):
+    html = page(f'<div class="news-item" data-news="f1"><p class="news-head">연준</p>'
+                f'<p>짧은 문장</p><span {attr}>{REAL}</span></div>')
+    assert check(html, FED) != []
+
+
+def test_font_size_that_merely_contains_a_zero_is_visible():
+    html = page(f'<div class="news-item" data-news="f1"><p class="news-head">연준</p>'
+                f'<p style="font-size:10px">{REAL}</p></div>')
+    assert check(html, FED) == []
+
+
+def test_invented_figures_appended_to_the_summary_are_caught():
+    padded = REAL + ' 이에 따라 S&P500은 3.4% 급등했고 나스닥은 5.1% 뛰었으며 국채 10년물은 21bp 급락해 사상 최대 낙폭을 기록했습니다.'
+    v = check(fed_page(padded), FED)
+    assert any('요약에 없는' in m for m in v)
+
+
+def test_one_market_link_sentence_is_allowed():
+    linked = REAL + ' 이 결정이 오늘 2년물이 소폭 오른 배경입니다.'
+    assert check(fed_page(linked), FED) == []

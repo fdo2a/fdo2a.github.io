@@ -24,9 +24,11 @@ import html as _html
 import re
 from email.utils import parsedate_to_datetime
 
-# 사용자가 말한 다섯 갈래 중 「정치」와 「정책」은 CNBC 에서 한 피드라 실제 갈래는 넷이다.
-# MLCC 산업 뉴스는 종목 피드에서 수집하며 뉴스 게이트가 본문 근거를 검증한다.
-# **뉴스 피드는 유동성 있는 넷만 본다.** 표는 여덟 종목을 그대로 싣지만(시세는
+# 2026-09-24 사용자 지시 「정치, 경제, 매크로, 산업, AI 관련 뉴스 위주로」. 그 전의
+# 넷(주요·시장·경제·정치)을 이 다섯으로 바꿨다. CNBC 에 매크로·AI 전용 피드는 없다 —
+# 그래서 **피드는 출처 묶음이고, 갈래는 기사마다 `classify()` 가 정한다.**
+# MLCC 산업 뉴스는 종목 피드에서 수집하며 뉴스 게이트가 근거를 검증한다.
+# **MLCC 뉴스 피드는 유동성 있는 넷만 본다.** 표는 여덟 종목을 그대로 싣지만(시세는
 # `collect_market_data.MLCC`), 뉴스 피드까지 여덟 개를 연속 호출하면 Yahoo 가 429 를
 # 준다(2026-09-19 실측). 월신·홀리스톤·싼환·펑화는 애초에 영문 기사가 1~2건뿐이라
 # 빼도 잃는 것이 거의 없다 — 요청을 절반으로 줄이는 쪽이 남는 장사다.
@@ -37,24 +39,77 @@ from email.utils import parsedate_to_datetime
 MLCC_TICKERS = ('6981.T', '009150.KS', '6976.T', '2327.TW')
 _YAHOO_TICKER = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s={}&region=US&lang=en-US'
 
+_CNBC = 'https://www.cnbc.com/id/{}/device/rss/rss.html'
+
+# 출처 묶음 -> 피드. `pool` 은 갈래가 정해지지 않은 종합 피드라, 키워드로 매크로·AI 에
+# 걸리지 않은 기사는 버린다(「주요 뉴스」 칸이 따로 없다).
 FEEDS = {
-    'top': ('https://www.cnbc.com/id/100003114/device/rss/rss.html',),
-    'market': ('https://www.cnbc.com/id/15839069/device/rss/rss.html',
-               'https://finance.yahoo.com/news/rssindex'),
-    'economy': ('https://www.cnbc.com/id/20910258/device/rss/rss.html',),
-    'politics': ('https://www.cnbc.com/id/10000113/device/rss/rss.html',),
+    'politics': (_CNBC.format('10000113'),),                  # Politics & Policy
+    'economy': (_CNBC.format('20910258'),),                   # Economy
+    'industry': tuple(_CNBC.format(i) for i in (
+        '10001147',     # Business
+        '19836768',     # Energy
+        '10000108',     # Health Care
+        '10000101',     # Autos
+        '10000116',     # Retail
+    )),
+    'tech': (_CNBC.format('19854910'),),                      # Technology
+    'pool': (_CNBC.format('100003114'),                       # Top News
+             _CNBC.format('10000664'),                        # Finance
+             'https://finance.yahoo.com/news/rssindex'),
     'mlcc': tuple(_YAHOO_TICKER.format(t) for t in MLCC_TICKERS),
 }
 
-LABELS = {'top': '주요', 'market': '시장', 'economy': '경제', 'politics': '정치·정책',
-          'mlcc': 'MLCC'}
+LABELS = {'politics': '정치', 'economy': '경제', 'macro': '매크로', 'industry': '산업',
+          'ai': 'AI', 'mlcc': 'MLCC'}
 
 # 「오늘의 뉴스」 섹션이 싣는 갈래. `mlcc` 는 MLCC 섹션의 뉴스 층으로 가므로 빠진다.
-DIGEST_CATEGORIES = ('top', 'market', 'economy', 'politics')
+DIGEST_CATEGORIES = ('politics', 'economy', 'macro', 'industry', 'ai')
 
-# 겹친 기사는 더 좁은 갈래에 남긴다 — 「경제」가 「주요」보다 독자에게 말해 주는 것이 많다.
-# 숫자가 작을수록 좁다. MLCC 가 가장 좁다 — 종목 피드에서 왔으므로 그 종목 기사가 맞다.
-NARROWNESS = {'mlcc': 0, 'economy': 1, 'politics': 1, 'market': 2, 'top': 3}
+# 겹친 기사는 더 좁은 갈래에 남긴다. 숫자가 작을수록 좁다. MLCC 가 가장 좁다 — 종목
+# 피드에서 왔으므로 그 종목 기사가 맞다.
+NARROWNESS = {'mlcc': 0, 'ai': 1, 'macro': 1, 'politics': 2, 'industry': 2, 'economy': 3}
+
+# 제목·RSS 요약에서 찾는다. 대문자가 뜻을 가르는 약어(AI·Fed·HBM)는 대소문자를 구분하고,
+# 일반 단어는 구분하지 않는다. 2026-09-24 구현 검토가 실제 헤드라인 모양으로 잡은 오분류 —
+# 「fed up」·Dollar General·동사 yields·가상자산 거래소 Gemini — 를 막는 형태다.
+_AI = re.compile(
+    r'\bAI\b|\bA\.I\.|\bHBM\b|\bGenAI\b|\bGPUs?\b|\bLLMs?\b|\bNvidia\b|\bOpenAI\b|'
+    r'\bChatGPT\b|\bAnthropic\b|\bCopilot\b|\bGoogle Gemini\b|'
+    r'(?i:\b(?:artificial intelligence|generative|chatbots?|data cent(?:er|re)s?|'
+    r'semiconductors?|chips?|chipmakers?|superintelligence)\b)')
+_MACRO = re.compile(
+    r'\bFed\b(?!\s+up)|\bFOMC\b|\bPowell\b|\bCPI\b|\bPCE\b|\bGDP\b|\bECB\b|\bBOJ\b|'
+    r'(?i:\b(?:Federal Reserve|interest rates?|rate (?:cut|hike)s?|inflation|'
+    r'Treasur(?:y|ies)|(?:bond|treasury|10-year|2-year|30-year) yields?|bond market|'
+    r'central banks?|Bank of (?:Japan|England)|(?:the|U\.S\.) dollar|dollar index|greenback|'
+    r'tariffs?|recession|jobs report|payrolls?|unemployment|jobless|deficit|debt ceiling)\b)')
+_HINT = {'politics': 'politics', 'economy': 'economy', 'industry': 'industry',
+         'tech': 'industry', 'pool': None}
+
+
+def classify(item):
+    """출처 묶음 + 제목·요약 -> 최종 갈래. 어디에도 안 맞는 종합 피드 기사는 None."""
+    hint = item.get('category')
+    if hint == 'mlcc':
+        return 'mlcc'
+    text = f"{item.get('title') or ''} {item.get('summary') or ''}"
+    if _AI.search(text):
+        return 'ai'
+    if _MACRO.search(text):
+        return 'macro'
+    return _HINT.get(hint, hint if hint in NARROWNESS else None)
+
+
+def categorize(items):
+    """각 기사에 최종 갈래를 매기고, 갈래가 없는 것은 버린다."""
+    out = []
+    for it in items or []:
+        cat = classify(it)
+        if cat:
+            out.append(dict(it, category=cat))
+    return out
+
 
 DEFAULT_PER_CATEGORY = 3
 DEFAULT_MAX_BODY = 12000

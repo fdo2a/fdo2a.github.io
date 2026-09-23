@@ -169,14 +169,65 @@ def test_items_without_a_timestamp_sort_last_but_are_not_dropped():
 
 
 # ── 피드 등록부 ───────────────────────────────────────────────────────────
-def test_every_category_the_user_asked_for_has_a_feed():
-    assert set(FEEDS) == {'top', 'market', 'economy', 'politics', 'mlcc'}
+def test_the_digest_carries_the_five_categories_the_user_asked_for():
+    # 2026-09-24 「정치, 경제, 매크로, 산업, AI 관련 뉴스 위주로」
+    from us.news import DIGEST_CATEGORIES, LABELS
+    assert set(DIGEST_CATEGORIES) == {'politics', 'economy', 'macro', 'industry', 'ai'}
+    assert [LABELS[c] for c in ('politics', 'economy', 'macro', 'industry', 'ai')] == \
+        ['정치', '경제', '매크로', '산업', 'AI']
 
 
 def test_the_digest_section_does_not_carry_mlcc_it_belongs_to_its_own_section():
     from us.news import DIGEST_CATEGORIES
     assert 'mlcc' not in DIGEST_CATEGORIES
-    assert set(DIGEST_CATEGORIES) < set(FEEDS)
+
+
+def test_every_final_category_is_reachable_from_some_feed():
+    from us.news import DIGEST_CATEGORIES, classify
+    samples = {'politics': ('Senate passes bill', 'politics'),
+               'economy': ('Consumer sentiment slumps', 'economy'),
+               'macro': ('Fed holds rates steady', 'pool'),
+               'industry': ('Ford recalls a million SUVs', 'industry'),
+               'ai': ('OpenAI raises funding', 'tech')}
+    for cat in DIGEST_CATEGORIES:
+        title, hint = samples[cat]
+        assert classify({'title': title, 'category': hint}) == cat
+
+
+# ── 갈래 분류 (2026-09-24) ────────────────────────────────────────────────
+def test_ai_keywords_win_over_the_feed_the_story_came_from():
+    from us.news import classify
+    assert classify({'title': 'Trump defends AI growth at UN', 'category': 'politics'}) == 'ai'
+    assert classify({'title': 'Nvidia unveils new GPU', 'category': 'industry'}) == 'ai'
+
+
+def test_lowercase_ai_inside_a_word_is_not_ai():
+    from us.news import classify
+    assert classify({'title': 'Airline maintains guidance', 'category': 'industry'}) == 'industry'
+
+
+def test_macro_keywords_pull_stories_out_of_the_economy_and_pool_feeds():
+    from us.news import classify
+    assert classify({'title': 'Treasury yields jump', 'category': 'economy'}) == 'macro'
+    assert classify({'title': 'x', 'summary': 'The Federal Reserve held', 'category': 'pool'}) \
+        == 'macro'
+
+
+def test_unclassified_pool_stories_are_dropped():
+    from us.news import categorize
+    rows = [{'guid': 'a', 'title': 'Lennar shares pop', 'category': 'pool'},
+            {'guid': 'b', 'title': 'Fed cuts rates', 'category': 'pool'}]
+    assert [r['guid'] for r in categorize(rows)] == ['b']
+
+
+def test_non_ai_tech_news_counts_as_industry():
+    from us.news import classify
+    assert classify({'title': 'Apple ships new iPhone', 'category': 'tech'}) == 'industry'
+
+
+def test_mlcc_stays_mlcc_whatever_its_keywords():
+    from us.news import classify
+    assert classify({'title': 'Murata AI capacitor demand', 'category': 'mlcc'}) == 'mlcc'
 
 
 def test_mlcc_news_feeds_are_trimmed_to_the_liquid_names():
@@ -295,3 +346,26 @@ def test_a_short_article_is_reported_as_short_not_as_a_fetch_failure():
     assert body_note('x' * 100) == '짧다'
     assert body_note('') == '추출 실패'
     assert body_note('y' * 500) is None
+
+
+# ── 구현 검토(2026-09-24) — 실제 헤드라인 모양의 오분류 ──────────────────────
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize('title,hint,want', [
+    ('Shoppers are fed up with prices at the pump', 'economy', 'economy'),
+    ('Dollar General shares sink on weak guidance', 'industry', 'industry'),
+    ('Dollar Tree to close 600 stores', 'pool', None),
+    ('Billion-dollar startup files for IPO', 'pool', None),
+    ('New well yields strong flow for Exxon', 'industry', 'industry'),
+    ('Gemini crypto exchange cuts staff', 'pool', None),
+    ('The Fed holds rates steady', 'pool', 'macro'),
+    ('10-year Treasury yields jump', 'pool', 'macro'),
+    ('The dollar slides against the yen', 'pool', 'macro'),
+    ('Google Gemini gets a new model', 'tech', 'ai'),
+    ('Micron HBM chips sell out for 2027', 'pool', 'ai'),
+    ('Chipmakers rally on export relief', 'pool', 'ai'),
+])
+def test_realistic_headlines_land_where_a_reader_expects(title, hint, want):
+    from us.news import classify
+    assert classify({'title': title, 'category': hint}) == want

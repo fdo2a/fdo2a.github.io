@@ -6,8 +6,10 @@ Actions 수집 잡에서 돈다 — `fetch_releases.py` 와 같은 자리, 같�
 사후에 대조할 수 있게 한다.
 
 **본문은 커밋하지 않는다.** 이 레포는 공개이고(`fdo2a.github.io`) CNBC·Yahoo 기사는
-상업 저작물이다. 본문은 `--bodydir`(기본값 `_workspace/`, gitignore 됨)에만 떨어뜨려
-그날 루틴이 읽고 버리며, 커밋되는 것은 메타데이터와 거기서 쓴 한국어 요약이다.
+상업 저작물이다. 본문은 `--bodydir`(기본값 `_workspace/`, gitignore 됨)에만 떨어뜨리고,
+**이 잡 안에서 한국어 요약(`summary_ko`)까지 만든 뒤** 메타데이터와 요약만 커밋한다
+(2026-09-24). 예전에는 루틴이 `--bodies-only` 로 본문을 다시 받게 했는데, 클라우드 루틴
+환경은 CNBC·Yahoo 에 403 이라 한 번도 성공하지 못했고 뉴스 섹션은 한 번도 발행되지 않았다.
 
 비-코어다. 피드가 죽거나 기사가 안 열리면 그 사실을 적고 넘어간다 — 뉴스 섹션이
 빠질 뿐 브리프는 발행된다.
@@ -27,8 +29,9 @@ from datetime import date as _date
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.news import (FEEDS, body_note, dedupe,  # noqa: E402
+from us.news import (FEEDS, body_note, categorize, dedupe,  # noqa: E402
                      extract_body, parse_feed_strict, select)
+from us.news_summary import summarize_items  # noqa: E402
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
@@ -106,45 +109,13 @@ def save_json(path, payload):
     os.replace(tmp, path)
 
 
-def bodies_only(args):
-    """커밋된 메타데이터로 본문만 다시 받는다 — 루틴의 워크스페이스용."""
-    path = os.path.join(args.datadir, 'news', f'{args.date}.json')
-    try:
-        with open(path, encoding='utf-8') as fh:
-            data = json.load(fh)
-    except FileNotFoundError:
-        print(f'{path} 없음 — 그날 뉴스 섹션 없이 발행한다')
-        return
-    items = data.get('items') or []
-    if not items:
-        print(f'{path} 에 항목 없음 — 뉴스 섹션 없이 발행한다')
-        return
-    fetch_bodies(items, args.bodydir, _context())
-    save_json(path, data)
-    got = sum(1 for it in items if it.get('body_chars'))
-    print(f'{args.bodydir} — 본문 {got}/{len(items)}건 확보')
-    if not got:
-        print('본문을 한 건도 받지 못했다 — 그날은 뉴스 섹션 없이 발행한다',
-              file=sys.stderr)
-        return 1
-    return 0
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--bodydir', default='_workspace/news')
     ap.add_argument('--date', default=_date.today().isoformat())
     ap.add_argument('--per-category', type=int, default=3)
-    ap.add_argument('--bodies-only', action='store_true',
-                    help='이미 커밋된 news/<date>.json 을 읽어 본문만 이 워크스페이스로 '
-                         '다시 받는다. 루틴이 쓰는 모드다 — Actions 러너의 _workspace '
-                         '는 그 잡이 끝나면 사라지므로 본문이 작성 환경에 도달하지 '
-                         '않는다(2026-09-19 codex 검토 #3).')
     args = ap.parse_args()
-
-    if args.bodies_only:
-        return bodies_only(args) or 0
 
     ctx = _context()
     harvested, notes = [], []
@@ -168,7 +139,7 @@ def main():
             harvested.extend(items)
             print(f'  {category}: {len(items)}건 ({url.split("/")[2]})')
 
-    chosen = select(dedupe(harvested), per_category=args.per_category)
+    chosen = select(dedupe(categorize(harvested)), per_category=args.per_category)
     print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건')
 
     fetch_bodies(chosen, args.bodydir, ctx)
@@ -176,10 +147,20 @@ def main():
     outdir = os.path.join(args.datadir, 'news')
     os.makedirs(outdir, exist_ok=True)
     path = os.path.join(outdir, f'{args.date}.json')
-    save_json(path, {'report_date': args.date, 'harvested': len(harvested),
-                     'notes': notes, 'items': chosen})
+    payload = {'report_date': args.date, 'harvested': len(harvested),
+               'notes': notes, 'items': chosen}
+    # 요약 **전에** 한 번 저장한다 — 요약(외부 API·인증)이 어떤 식으로 죽어도 메타데이터와
+    # MLCC 행은 남아야 한다(2026-09-24 구현 검토 #2).
+    save_json(path, payload)
+    try:
+        summarized = summarize_items(chosen, args.bodydir)
+    except Exception as e:             # summarize_items 는 삼키게 짰지만, 저장을 걸지 않는다
+        summarized = 0
+        notes.append(f'요약 단계 실패: {type(e).__name__}')
+        print(f'  요약 단계 실패 ({type(e).__name__})', file=sys.stderr)
+    save_json(path, payload)
     got = sum(1 for it in chosen if it.get('body_chars'))
-    print(f'{path} — 본문 {got}/{len(chosen)}건 확보')
+    print(f'{path} — 본문 {got}/{len(chosen)}건 · 요약 {summarized}건')
 
 
 if __name__ == '__main__':

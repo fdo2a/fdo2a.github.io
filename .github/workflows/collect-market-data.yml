@@ -27,6 +27,9 @@ on:
 
 permissions:
   contents: write
+  # 뉴스 요약의 Claude API 인증 = Workload Identity Federation (2026-09-24). 레포에 정적 키를
+  # 두지 않고 이 잡의 GitHub OIDC 토큰을 Anthropic 토큰으로 교환한다.
+  id-token: write
 
 concurrency:
   group: collect-market-data
@@ -90,15 +93,27 @@ jobs:
         run: python scripts/fetch_releases.py --datadir data
 
       - name: Fetch market news
-        # Non-core (2026-09-19 사용자 지시): CNBC·Yahoo 의 주요·시장·경제·정치 피드를 받아
-        # 갈래별로 추린 뒤 기사 본문까지 읽어 온다. 에이전트 웹서치로 뉴스를 모으면 발행본에
-        # 실린 기사가 실재했는지 사후에 확인할 방법이 없는데, 파일로 커밋하면 check_news.py
-        # 가 대조할 수 있다 — 지어낸 헤드라인이 막힌다.
-        # 본문은 _workspace/ (gitignore) 에만 떨어뜨린다: 이 레포는 공개이고 CNBC·Yahoo
-        # 기사는 상업 저작물이라 data/releases 의 정부 발표문과 같은 취급을 할 수 없다.
+        # Non-core (2026-09-19 사용자 지시, 2026-09-24 갈래 개편): CNBC·Yahoo 피드를 받아
+        # 정치·경제·매크로·산업·AI 로 분류해 추린 뒤 기사 본문까지 읽어 온다. 에이전트 웹서치로
+        # 뉴스를 모으면 발행본에 실린 기사가 실재했는지 사후에 확인할 방법이 없는데, 파일로
+        # 커밋하면 check_news.py 가 대조할 수 있다 — 지어낸 헤드라인이 막힌다.
+        # 본문은 _workspace/ (gitignore) 에만 떨어뜨리고, **여기서 한국어 요약(summary_ko)
+        # 까지 만들어** 요약만 커밋한다: 이 레포는 공개이고 기사는 상업 저작물이며, 클라우드
+        # 루틴은 CNBC·Yahoo 에 403 이라 본문을 다시 받을 수 없다(2026-09-24 실측).
+        # 인증은 WIF 다 — ID 셋(+선택 워크스페이스)은 비밀이 아니라 레포 Variables 에 둔다.
+        # GitHub OIDC 토큰은 약 5분짜리 1회용이라 파일로 미리 받아 두지 않는다 —
+        # news_summary 가 SDK 에 공급자 함수를 넘겨, 교환할 때마다 새 토큰을 받는다.
+        # 값이 없으면 요약 없이 커밋되고 그날 뉴스 섹션은 빠진다(수집분은 남는다).
         # 피드가 죽으면 그날 뉴스 섹션이 빠질 뿐이므로 수집 잡을 세우지 않는다.
         continue-on-error: true
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
         run: |
+          pip install --quiet 'anthropic>=1.8,<2'
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])" 2>/dev/null || date -u +%F)
           python scripts/fetch_news.py --datadir data --bodydir _workspace/news --date "$RD"
 

@@ -8,9 +8,15 @@
 막는 실패는 넷이다.
 
   · 수집되지 않은 기사 — 그럴듯한 헤드라인을 지어내 쓰는 것
-  · 본문을 못 받은 기사 — 제목만 보고 300자를 쓰면 그건 요약이 아니라 창작이다
+  · 요약이 없는 기사 — 제목만 보고 300자를 쓰면 그건 요약이 아니라 창작이다
+    (2026-09-24 부터 요약은 Actions 가 본문을 읽고 만든 `summary_ko` 다)
   · RSS 한 줄 요약을 옮긴 것 — 사용자가 「한줄 요약은 좀 짧다」고 한 바로 그것
   · 지어낸 링크 — `source_gate` 와 같은 규율. 링크는 그 블록이 근거로 삼은 기사여야 한다
+
+**요약 충실도 (2026-09-24).** 요약은 이제 수집 잡이 원문을 읽고 만든 `summary_ko` 로
+커밋된다. 발행 블록은 그 요약에서 크게 벗어날 수 없다 — 글자 단위 유사도가
+`MIN_SIMILARITY` 미만이면 막는다. 문장을 다듬는 것(윤문)은 통과하고, 실제 guid 를 달고
+다른 내용을 쓰는 것은 걸린다. 아래 문단은 그 전의 한계 기록이다.
 
 **이 게이트가 증명하지 못하는 것**(2026-09-19 codex 검토 #9). 표식이 가리키는 기사가
 그날 실제로 받아졌다는 것까지가 한계다. **요약이 그 기사에 충실한지는 검사하지 않는다** —
@@ -33,6 +39,7 @@ Pure — `check()` 는 문자열과 dict 를 받아 위반 메시지 목록을 �
 """
 
 import re
+from difflib import SequenceMatcher
 from html.parser import HTMLParser
 
 from .news import DIGEST_CATEGORIES
@@ -50,15 +57,34 @@ MAX_CHARS = 420
 # 블록 검사를 통째로 비껴갔다(1차 #10). 제목·표·캡션은 조판이므로 세지 않는다(2차 #8b).
 STRAY_MAX = 200
 
+# 발행 블록 ↔ 수집 요약(`summary_ko`)의 글자 유사도 하한. 2026-09-24 테스트 표본에서
+# 어미·동사 몇 개를 바꾼 윤문은 0.97, 실제 guid 아래 다른 기사 내용을 쓴 것은 0.20 이었다.
+# 윤문이 문장 순서까지 흔드는 경우를 위해 여유를 크게 둔다.
+MIN_SIMILARITY = 0.5
+# 블록 글자 중 요약과 겹치는 몫의 하한. 유사도는 대칭이라 「요약 전문 + 지어낸 수치 50자」가
+# 0.89 로 통과했다(2026-09-24 구현 검토). 작성 계약이 허용하는 것은 시세 연결 한 문장뿐이다 —
+# 표본에서 그 한 문장(22자)은 0.93, 지어낸 수치 문장(59자)을 붙인 것은 0.81 이었다. 요약 270자
+# 기준으로 45자 안팎까지 덧붙일 수 있는 선이다.
+MIN_COVERAGE = 0.85
+
 # 분량에서 빼는 것 — 제목 줄과 캡션을 늘려 하한을 채우는 우회를 막는다.
 _SKIP_CLASSES = ('news-head', 'caption', 'sub')
 _SKIP_TAGS = ('script', 'style', 'template', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
               'table', 'figcaption')
-_HIDDEN_STYLE = re.compile(r'display\s*:\s*none|visibility\s*:\s*hidden', re.I)
+# 눈에 안 보이게 만드는 방법은 display·visibility 말고도 많다. 2026-09-24 구현 검토에서
+# `<span style="font-size:0">{summary_ko}</span>` 한 줄이 분량·유사도 검사를 둘 다 통과했다.
+_HIDDEN_STYLE = re.compile(
+    r'display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?![.\d]*[1-9])|'
+    r'opacity\s*:\s*0(?:\.0*)?\s*(?:;|$)|color\s*:\s*transparent|'
+    r'clip(?:-path)?\s*:|text-indent\s*:\s*-|(?:max-)?(?:height|width)\s*:\s*0(?:px)?\s*(?:;|$)',
+    re.I)
+_HIDDEN_CLASSES = ('sr-only', 'visually-hidden', 'screen-reader-text')
 
 
 def _is_hidden(attrs):
-    if 'hidden' in attrs:
+    if 'hidden' in attrs or (attrs.get('aria-hidden') or '').lower() == 'true':
+        return True
+    if any(c in (attrs.get('class') or '').split() for c in _HIDDEN_CLASSES):
         return True
     return bool(_HIDDEN_STYLE.search(attrs.get('style') or ''))
 
@@ -96,7 +122,7 @@ class _Reader(HTMLParser):
             c in (a.get('class') or '') for c in _SKIP_CLASSES)
         item = parent[3] if parent else None
         if _is_item(a) and item is None:
-            item = {'guid': a.get('data-news'), 'chars': 0, 'links': [],
+            item = {'guid': a.get('data-news'), 'chars': 0, 'text': '', 'links': [],
                     'hidden': hidden, 'in_section': self.section_depth is not None}
             self.items.append(item)
             if self.section_depth is not None:
@@ -142,6 +168,7 @@ class _Reader(HTMLParser):
             return
         if item is not None:
             item['chars'] += len(text)
+            item['text'] += text
         elif self.section_depth is not None:
             self.section_stray += len(text)
 
@@ -202,9 +229,9 @@ def check(html, collected, report_date=None):
         v.append(f'뉴스 섹션에 표식 밖 산문이 {doc.section_stray}자 있다 '
                  f'(허용 {STRAY_MAX}자) — 기사는 `data-news` 블록 안에 둔다')
 
-    # 다이제스트 섹션은 **본문까지 확보된** 갈래 기사가 있는 날에만 요구한다(1차 #5).
+    # 다이제스트 섹션은 **요약까지 만들어진** 갈래 기사가 있는 날에만 요구한다(1차 #5).
     usable = [it for it in items
-              if it.get('category') in DIGEST_CATEGORIES and it.get('body_chars')]
+              if it.get('category') in DIGEST_CATEGORIES and it.get('summary_ko')]
     if usable:
         if TITLE not in (html or ''):
             v.append(f'뉴스 섹션(「{TITLE}」)을 찾을 수 없다 — 수집분 {len(usable)}건')
@@ -212,6 +239,23 @@ def check(html, collected, report_date=None):
             v.append(f'뉴스 섹션에 항목이 하나도 없다 — `data-news` 를 단 블록이 '
                      f'필요하다 (수집분 {len(usable)}건)')
     return v
+
+
+def coverage(block_text, summary):
+    """블록 글자 가운데 요약과 일치하는 구간에 든 몫(0~1)."""
+    a, b = re.sub(r'\s+', '', block_text or ''), re.sub(r'\s+', '', summary or '')
+    if not a or not b:
+        return 0.0
+    blocks = SequenceMatcher(None, a, b, autojunk=False).get_matching_blocks()
+    return sum(m.size for m in blocks) / len(a)
+
+
+def similarity(block_text, summary):
+    """공백을 걷어낸 두 한국어 문단의 글자 단위 유사도(0~1)."""
+    a, b = re.sub(r'\s+', '', block_text or ''), re.sub(r'\s+', '', summary or '')
+    if not a or not b:
+        return 0.0
+    return SequenceMatcher(None, a, b, autojunk=False).ratio()
 
 
 def _key(source, guid):
@@ -224,9 +268,9 @@ def _check_one(guid, block, known):
     if row is None:
         return [f'`data-news="{guid}"` 는 그날 수집분에 없다 — '
                 f'수집되지 않은 기사는 인용할 수 없다']
-    if not row.get('body_chars'):
-        note = row.get('body_note') or '사유 미기재'
-        return [f'`data-news="{guid}"` 는 본문을 받지 못했다({note}) — '
+    if not row.get('summary_ko'):
+        note = row.get('summary_note') or row.get('body_note') or '사유 미기재'
+        return [f'`data-news="{guid}"` 는 수집 요약(summary_ko)이 없다({note}) — '
                 f'제목만 보고 요약을 쓸 수 없다']
 
     v = []
@@ -236,6 +280,15 @@ def _check_one(guid, block, known):
                  f'— RSS 한 줄 요약을 옮긴 것이 아닌지 볼 것')
     elif n > MAX_CHARS:
         v.append(f'`data-news="{guid}"` 요약이 {n}자로 길다 (상한 {MAX_CHARS}자)')
+
+    sim = similarity(block.get('text', ''), row['summary_ko'])
+    if sim < MIN_SIMILARITY:
+        v.append(f'`data-news="{guid}"` 블록이 수집 요약과 너무 다르다 (유사도 {sim:.2f}, '
+                 f'하한 {MIN_SIMILARITY}) — summary_ko 를 바탕으로 쓴다')
+    cov = coverage(block.get('text', ''), row['summary_ko'])
+    if cov < MIN_COVERAGE:
+        v.append(f'`data-news="{guid}"` 블록의 {1 - cov:.0%} 가 수집 요약에 없는 내용이다 '
+                 f'(허용 {1 - MIN_COVERAGE:.0%}) — 시세 연결 한 문장 외에는 요약에 있는 사실만 쓴다')
 
     own = row.get('url')
     for href in block['links']:
