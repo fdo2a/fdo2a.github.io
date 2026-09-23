@@ -1,0 +1,44 @@
+{
+ "source": "kr/data/kr_flows.json (commit 929152f)",
+ "label": "당일 잠정치",
+ "KOSPI": [
+  {
+   "date": "2026-09-23",
+   "individual": -14649,
+   "foreign": -4942,
+   "institution": 3189
+  },
+  {
+   "date": "2026-09-22",
+   "individual": -15643,
+   "foreign": 494,
+   "institution": -1295
+  },
+  {
+   "date": "2026-09-21",
+   "individual": -31850,
+   "foreign": 117,
+   "institution": 15162
+  },
+  {
+   "date": "2026-09-18",
+   "individual": -36359,
+   "foreign": 4486,
+   "institution": 15322
+  }
+ ],
+ "KOSDAQ": [
+  {
+   "date": "2026-09-23",
+   "individual": 275,
+   "foreign": -462,
+   "institution": 76
+  },
+  {
+   "date": "2026-09-22",
+   "individual": 1548,
+   "foreign": -545,
+   "institution": -953
+  }
+ ]
+}

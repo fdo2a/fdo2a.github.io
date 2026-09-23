@@ -1,0 +1,70 @@
+{
+ "source": "kr/data/kr_industry.json (commit 929152f, 2026-09-23T13:31:18Z)",
+ "report_date": "2026-09-23",
+ "rows": [
+  {
+   "name": "석유와가스",
+   "change_pct": 3.13,
+   "total": 19,
+   "rise": 11,
+   "breadth": 0.579,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "반도체와반도체장비",
+   "change_pct": 2.79,
+   "total": 171,
+   "rise": 137,
+   "breadth": 0.801,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "전자장비와기기",
+   "change_pct": 1.06,
+   "total": 105,
+   "rise": 67,
+   "breadth": 0.638,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "증권",
+   "change_pct": -0.85,
+   "total": 39,
+   "rise": 16,
+   "breadth": 0.41,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": ""
+  },
+  {
+   "name": "자동차부품",
+   "change_pct": -0.95,
+   "total": 154,
+   "rise": 64,
+   "breadth": 0.416,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": ""
+  },
+  {
+   "name": "자동차",
+   "change_pct": -1.13,
+   "total": 12,
+   "rise": 5,
+   "breadth": 0.417,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": ""
+  }
+ ],
+ "summary": {
+  "rising_industries": 38,
+  "total_industries": 60
+ }
+}
