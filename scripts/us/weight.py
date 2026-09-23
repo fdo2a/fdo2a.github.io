@@ -219,6 +219,10 @@ VOCAB_SECTIONS = {'us': ('오늘의 장', '주식', '채권', 'FX', '원자재')
                   'kr': ('오늘의 장', '지수 & 장중', '환율·금리')}
 
 LEDE_ORDER = ('event', 'meaning', 'action', 'invalidation')
+# KR §2 는 2026-09-22 여섯 블록이 됐다(기대 차이·복기 추가). 정본은 kr/stance_gate.ORDER —
+# 여기서 넷을 요구하면 check_kr_stance 와 동시에 통과할 수 없다(2026-09-23 실측).
+LEDE_ORDERS = {'us': LEDE_ORDER,
+               'kr': ('event', 'gap', 'meaning', 'action', 'invalidation', 'review')}
 
 _TODAY_CUE = re.compile(r'오늘|전일 대비|마감|하루 변화')
 
@@ -377,16 +381,17 @@ def check_position_vocab(html_doc, market='us'):
     return v
 
 
-def check_lede(html_doc):
-    """§2가 사건 → 의미 → 행동 → 무효화 순인가."""
+def check_lede(html_doc, market='us'):
+    """§2가 사건 → 의미 → 행동 → 무효화 순인가(KR 은 기대 차이·복기를 더한 여섯)."""
+    order = LEDE_ORDERS[market]
     seg = section_slice(html_doc, '전략 코멘트')
     if seg is None:
         return ['섹션 「전략 코멘트」를 찾지 못했다']
     got = [k for k, _ in _marked(seg, 'data-lede')]
-    v = [f'§2: data-lede="{k}" 문단이 없다' for k in LEDE_ORDER if k not in got]
-    if not v and got != list(LEDE_ORDER):
+    v = [f'§2: data-lede="{k}" 문단이 없다' for k in order if k not in got]
+    if not v and got != list(order):
         v.append(f'§2: data-lede 순서가 {" → ".join(got)}이다 — '
-                 f'{" → ".join(LEDE_ORDER)} 순이어야 한다')
+                 f'{" → ".join(order)} 순이어야 한다')
     return v
 
 
@@ -399,7 +404,7 @@ def check(html_doc, market='us', market_data=None, macro_eval=None):
     v += check_standing(html_doc, pc, market)
     v += check_cause(html_doc, pc, market)
     v += check_position_vocab(html_doc, market)
-    v += check_lede(html_doc)
+    v += check_lede(html_doc, market)
     if market == 'us':
         v += check_macro_prices(html_doc)
     return v

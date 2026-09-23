@@ -202,6 +202,25 @@ def test_lede_missing_paragraph_is_flagged():
     assert any('meaning' in x for x in check_lede(missing))
 
 
+KR_LEDE_GOOD = _sec('전략 코멘트', ''.join(
+    f'<p data-lede="{k}">문단</p>'
+    for k in ('event', 'gap', 'meaning', 'action', 'invalidation', 'review')))
+
+
+def test_kr_six_block_lede_passes():
+    # 2026-09-22 KR §2 가 여섯 블록이 됐는데 이 게이트만 넷을 요구해
+    # check_kr_stance 와 동시에 통과할 수 없었다(2026-09-23 발행 실측).
+    assert check_lede(KR_LEDE_GOOD, market='kr') == []
+
+
+def test_kr_four_block_lede_is_flagged():
+    assert check_lede(LEDE_GOOD, market='kr') != []
+
+
+def test_us_rejects_kr_six_blocks():
+    assert check_lede(KR_LEDE_GOOD) != []
+
+
 def test_check_runs_every_gate_for_us():
     v = check(_doc(US_FULL), market='us', market_data=MD,
               macro_eval={'abbreviated': False})
