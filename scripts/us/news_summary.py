@@ -99,6 +99,13 @@ def wif_config_problems(env=None):
     if not _UUID.fullmatch(org):
         problems.append(f'ANTHROPIC_ORGANIZATION_ID 는 접두사 없는 UUID'
                         f'(xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)여야 한다 — 받은 값 {_shape(org)}')
+    # 접두사는 서버 응답으로 확인(2026-09-24): 「not a well-formed fdrl_ tagged ID」·
+    # 「service_account_id: does not have prefix `svac_`」. 앞뒤 공백 하나로도 같은 400 이 난다.
+    for key, prefix in (('ANTHROPIC_FEDERATION_RULE_ID', 'fdrl_'),
+                        ('ANTHROPIC_SERVICE_ACCOUNT_ID', 'svac_')):
+        value = _v(env, key)
+        if not value.startswith(prefix):
+            problems.append(f"{key} 는 '{prefix}…' 로 시작해야 한다 — 받은 값 {_shape(value)}")
     ws = _v(env, 'ANTHROPIC_WORKSPACE_ID')
     if ws and ws != 'default' and not ws.startswith('wrkspc_'):
         problems.append(f"ANTHROPIC_WORKSPACE_ID 는 'wrkspc_…' 또는 'default' 여야 한다 — "

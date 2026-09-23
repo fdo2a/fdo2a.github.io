@@ -165,6 +165,12 @@ def test_wif_id_shapes_are_checked_before_the_exchange():
     for bad in ('org_01ABC', 'My Org', ''):
         (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_ORGANIZATION_ID=bad))
         assert 'ANTHROPIC_ORGANIZATION_ID' in p
+    # 붙여 넣기 공백은 문제로 치지 않는다 — make_client 가 걷어 낸다
+    assert NS.wif_config_problems(dict(WIF, ANTHROPIC_ORGANIZATION_ID=WIF['ANTHROPIC_ORGANIZATION_ID'] + '\n')) == []
+    (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_FEDERATION_RULE_ID='rule-1'))
+    assert 'ANTHROPIC_FEDERATION_RULE_ID' in p
+    (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_SERVICE_ACCOUNT_ID='sa_1'))
+    assert 'ANTHROPIC_SERVICE_ACCOUNT_ID' in p
     (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_WORKSPACE_ID='Default Workspace'))
     assert 'ANTHROPIC_WORKSPACE_ID' in p
 
