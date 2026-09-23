@@ -1,6 +1,8 @@
 {
-  "generated": "2026-09-22 00:13 UTC",
-  "report_date": "2026-09-21",
+  "generated": "2026-09-23 19:02 UTC",
+  "report_date": "2026-09-23",
+  "schema": 2,
+  "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": -0.391,
   "inflation_score": -0.526,
   "growth_diffusion": 0.357,
@@ -159,6 +161,14 @@
       "actual": 7271.0,
       "previous": 7182.0,
       "ref_period": "2026-07-01",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 7131.333,
+        "recent_avg": 7330.0
+      },
+      "trend_cell_ko": "개선(미미) · 3개월 평균 7,131K → 7,330K",
       "is_new": false
     },
     {
@@ -174,6 +184,14 @@
       "actual": 196000.0,
       "previous": 206000.0,
       "ref_period": "2026-09-12",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 4,
+        "label_ko": "4주 평균",
+        "prior_avg": 204250.0,
+        "recent_avg": 203250.0
+      },
+      "trend_cell_ko": "보합 · 4주 평균 204K → 203K",
       "is_new": false
     },
     {
@@ -189,6 +207,14 @@
       "actual": 203250.0,
       "previous": 206000.0,
       "ref_period": "2026-09-12",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 4,
+        "label_ko": "4주 평균",
+        "prior_avg": 201562.5,
+        "recent_avg": 205625.0
+      },
+      "trend_cell_ko": "악화(미미) · 4주 평균 202K → 206K",
       "is_new": false
     },
     {
@@ -204,6 +230,14 @@
       "actual": 1730000.0,
       "previous": 1769000.0,
       "ref_period": "2026-09-05",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 4,
+        "label_ko": "4주 평균",
+        "prior_avg": 1788250.0,
+        "recent_avg": 1761250.0
+      },
+      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,788K → 1,761K",
       "is_new": false
     },
     {
@@ -219,6 +253,14 @@
       "actual": 162.0,
       "previous": 21.0,
       "ref_period": "2026-08-01",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 141.667,
+        "recent_avg": 71.333
+      },
+      "trend_cell_ko": "악화(완만) · 3개월 평균 +142K → +71K",
       "is_new": false
     },
     {
@@ -234,6 +276,14 @@
       "actual": 4.1,
       "previous": 4.1,
       "ref_period": "2026-08-01",
+      "vs_prev": "보합",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 4.3,
+        "recent_avg": 4.133
+      },
+      "trend_cell_ko": "개선(완만) · 3개월 평균 4.30% → 4.13%",
       "is_new": false
     },
     {
@@ -249,6 +299,14 @@
       "actual": 0.27,
       "previous": 0.16,
       "ref_period": "2026-08-01",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 0.196,
+        "recent_avg": 0.231
+      },
+      "trend_cell_ko": "개선(완만) · 3개월 평균 +0.20% → +0.23%",
       "is_new": false
     },
     {
@@ -264,6 +322,14 @@
       "actual": 0.02,
       "previous": 0.2,
       "ref_period": "2026-08-01",
+      "vs_prev": "악화",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 0.241,
+        "recent_avg": 0.139
+      },
+      "trend_cell_ko": "보합 · 3개월 평균 +0.24% → +0.14%",
       "is_new": false
     },
     {
@@ -279,6 +345,14 @@
       "actual": 1.08,
       "previous": 0.58,
       "ref_period": "2026-07-01",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 2.896,
+        "recent_avg": -0.783
+      },
+      "trend_cell_ko": "악화(뚜렷) · 3개월 평균 +2.90% → -0.78%",
       "is_new": false
     },
     {
@@ -294,6 +368,14 @@
       "actual": 607.0,
       "previous": 678.0,
       "ref_period": "2026-07-01",
+      "vs_prev": "악화",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 643.333,
+        "recent_avg": 638.333
+      },
+      "trend_cell_ko": "보합 · 3개월 평균 643K → 638K",
       "is_new": false
     },
     {
@@ -309,6 +391,14 @@
       "actual": 3980000.0,
       "previous": 4060000.0,
       "ref_period": "2026-08-01",
+      "vs_prev": "악화",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 4080000.0,
+        "recent_avg": 4056666.667
+      },
+      "trend_cell_ko": "악화(미미) · 3개월 평균 4,080K → 4,057K",
       "is_new": false
     },
     {
@@ -324,6 +414,14 @@
       "actual": 1.5,
       "previous": 2.1,
       "ref_period": "2026-04-01",
+      "vs_prev": "악화",
+      "trend": {
+        "window": 1,
+        "label_ko": "1기 평균",
+        "prior_avg": 2.1,
+        "recent_avg": 1.5
+      },
+      "trend_cell_ko": null,
       "is_new": false
     },
     {
@@ -339,6 +437,14 @@
       "actual": 1.24,
       "previous": -0.54,
       "ref_period": "2026-08-01",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 1.109,
+        "recent_avg": 0.339
+      },
+      "trend_cell_ko": "악화(뚜렷) · 3개월 평균 +1.11% → +0.34%",
       "is_new": false
     },
     {
@@ -354,6 +460,14 @@
       "actual": 55.2,
       "previous": 49.5,
       "ref_period": "2026-07-01",
+      "vs_prev": "개선",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 53.233,
+        "recent_avg": 49.833
+      },
+      "trend_cell_ko": "악화(완만) · 3개월 평균 53.2 → 49.8",
       "is_new": false
     },
     {
@@ -369,6 +483,14 @@
       "actual": 3.71,
       "previous": 3.54,
       "ref_period": "2026-08-01",
+      "vs_prev": "상승",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 3.846,
+        "recent_avg": 3.66
+      },
+      "trend_cell_ko": "교착 · 3개월 평균 3.85% → 3.66%",
       "is_new": false
     },
     {
@@ -384,6 +506,14 @@
       "actual": 0.4,
       "previous": 0.07,
       "ref_period": "2026-08-01",
+      "vs_prev": "상승",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 0.659,
+        "recent_avg": 0.016
+      },
+      "trend_cell_ko": "둔화(뚜렷) · 3개월 평균 +0.66% → +0.02%",
       "is_new": false
     },
     {
@@ -399,6 +529,14 @@
       "actual": 2.76,
       "previous": 2.79,
       "ref_period": "2026-08-01",
+      "vs_prev": "하락",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 2.873,
+        "recent_avg": 2.785
+      },
+      "trend_cell_ko": "교착 · 3개월 평균 2.87% → 2.79%",
       "is_new": false
     },
     {
@@ -414,6 +552,14 @@
       "actual": 0.29,
       "previous": 0.22,
       "ref_period": "2026-08-01",
+      "vs_prev": "상승",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 0.26,
+        "recent_avg": 0.163
+      },
+      "trend_cell_ko": "둔화(완만) · 3개월 평균 +0.26% → +0.16%",
       "is_new": false
     },
     {
@@ -429,6 +575,14 @@
       "actual": 0.4,
       "previous": 0.07,
       "ref_period": "2026-08-01",
+      "vs_prev": "상승",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 0.79,
+        "recent_avg": 0.116
+      },
+      "trend_cell_ko": "둔화(뚜렷) · 3개월 평균 +0.79% → +0.12%",
       "is_new": false
     },
     {
@@ -444,6 +598,14 @@
       "actual": 3.7,
       "previous": 3.72,
       "ref_period": "2026-07-01",
+      "vs_prev": "하락",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 3.406,
+        "recent_avg": 3.843
+      },
+      "trend_cell_ko": "재가속(완만) · 3개월 평균 3.41% → 3.84%",
       "is_new": false
     },
     {
@@ -459,6 +621,14 @@
       "actual": 3.34,
       "previous": 3.34,
       "ref_period": "2026-07-01",
+      "vs_prev": "보합",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 3.211,
+        "recent_avg": 3.384
+      },
+      "trend_cell_ko": "재가속(미미) · 3개월 평균 3.21% → 3.38%",
       "is_new": false
     },
     {
@@ -474,6 +644,14 @@
       "actual": 4.2,
       "previous": 4.6,
       "ref_period": "2026-07-01",
+      "vs_prev": "하락",
+      "trend": {
+        "window": 3,
+        "label_ko": "3개월 평균",
+        "prior_avg": 3.967,
+        "recent_avg": 4.533
+      },
+      "trend_cell_ko": "재가속(완만) · 3개월 평균 3.97% → 4.53%",
       "is_new": false
     }
   ],

@@ -1,0 +1,144 @@
+{
+  "report_date": "2026-09-23",
+  "harvested": 170,
+  "notes": [
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6981.T&region=US&lang=en-US: HTTP 429",
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=009150.KS&region=US&lang=en-US: HTTP 429",
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6976.T&region=US&lang=en-US: HTTP 429",
+    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=2327.TW&region=US&lang=en-US: HTTP 429"
+  ],
+  "items": [
+    {
+      "guid": "108366925",
+      "url": "https://www.cnbc.com/2026/09/23/jeffrey-epstein-estate-executors-investigation.html",
+      "title": "Federal prosecutors probe Jeffrey Epstein estate executors, WSJ reports",
+      "summary": "A group that advocates for Epstein victims applauded the news that Richard Kahn and Darren Indyke are facing an investigation. No charges have been been filed.",
+      "published": "2026-09-23T18:41:23+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 4519,
+      "body_file": "01-politics.txt"
+    },
+    {
+      "guid": "108366853",
+      "url": "https://www.cnbc.com/2026/09/23/iran-united-nations-trump-israel.html",
+      "title": "Iran's president blames U.S., Israel for global instability in defiant UN speech",
+      "summary": "Pezeshkian began his address to the U.N. General Assembly in New York City by holding up photos of children he said were killed by U.S. and Israeli bombs.",
+      "published": "2026-09-23T17:38:47+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 4456,
+      "body_file": "02-politics.txt"
+    },
+    {
+      "guid": "108365963",
+      "url": "https://www.cnbc.com/2026/09/23/trump-xi-china-summit-allies.html",
+      "title": "Trump faces Xi as strains with allies complicate U.S. pressure on China",
+      "summary": "As Trump prepares to meet Xi, strains with U.S. allies are complicating Washington’s efforts to marshal pressure against an increasingly resilient China.",
+      "published": "2026-09-23T16:47:21+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 8868,
+      "body_file": "03-politics.txt"
+    },
+    {
+      "guid": "108364741",
+      "url": "https://www.cnbc.com/2026/09/18/japan-rate-hike-stocks-rise-bond-yields-yen-fall.html",
+      "title": "Why Japan’s markets flipped the usual script after central bank rate hike",
+      "summary": "The yen weakened past 157 against the dollar, the yield on the 10-year Japanese Government Bond slipped, while the Nikkei 225 gained 1.5%.",
+      "published": "2026-09-21T01:02:25+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 3756,
+      "body_file": "04-economy.txt"
+    },
+    {
+      "guid": "108364814",
+      "url": "https://www.cnbc.com/2026/09/20/france-wine-production-70-year-low-heatwaves-drought.html",
+      "title": "France’s wine production nears a 70-year low, leaving winemakers with tough choices",
+      "summary": "As the French wine industry reaches a crisis point, key players are considering new markets, products and generations.",
+      "published": "2026-09-20T05:00:01+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 7176,
+      "body_file": "05-economy.txt"
+    },
+    {
+      "guid": "108365102",
+      "url": "https://www.cnbc.com/2026/09/19/goldman-sachs-happiness-struggling-consumer-sentiment.html",
+      "title": "Consumer sentiment is in the dumps despite a solid economy. Goldman Sachs blames 'lower happiness'",
+      "summary": "Goldman economist Joseph Briggs said broader pessimism in society may be contributing to struggling consumer sentiment even as the economy chugs along.",
+      "published": "2026-09-19T12:50:49+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 2438,
+      "body_file": "06-economy.txt"
+    },
+    {
+      "guid": "108366744",
+      "url": "https://www.cnbc.com/2026/09/23/metas-muse-ai-causes-schwab-selloff.html",
+      "title": "Meta's Muse reignites AI disruption fears. Traders are targeting this brokerage stock as next casualty",
+      "summary": "Meta's latest consumer AI product is sending such big shockwaves through the market that it's even inflaming a long-time rivalry in the brokerage business.",
+      "published": "2026-09-23T18:06:25+00:00",
+      "category": "market",
+      "source": "CNBC",
+      "body_chars": 4332,
+      "body_file": "07-market.txt"
+    },
+    {
+      "guid": "108366337",
+      "url": "https://www.cnbc.com/2026/09/22/lennar-shares-pop-as-berkshire-builds-almost-a-10percent-stake-in-beleaguered-homebuilder.html",
+      "title": "Lennar shares pop as Berkshire builds almost a 10% stake in beleaguered homebuilder",
+      "summary": "The conglomerate built by Warren Buffett and led today by Greg Abel holds a sizable stake in Miami-based homebuilder Lennar.",
+      "published": "2026-09-22T22:35:50+00:00",
+      "category": "market",
+      "source": "CNBC",
+      "body_chars": 3012,
+      "body_file": "08-market.txt"
+    },
+    {
+      "guid": "108366300",
+      "url": "https://www.cnbc.com/2026/09/22/no-new-stock-highs-no-problem-options-traders-bet-theyre-coming-in-these-names.html",
+      "title": "No new stock highs, no problem: Options traders bet they're coming in these names",
+      "summary": "Options activity shows traders anticipate fresh highs are around the corner for a handful of names.",
+      "published": "2026-09-22T18:09:32+00:00",
+      "category": "market",
+      "source": "CNBC",
+      "body_chars": 2661,
+      "body_file": "09-market.txt"
+    },
+    {
+      "guid": "108367011",
+      "url": "https://www.cnbc.com/2026/09/23/tesla-roadster-reveal-is-creating-a-unique-options-opportunity-says-mike-khouw.html",
+      "title": "Tesla Roadster reveal is creating a unique options opportunity, says Mike Khouw",
+      "summary": "Teslas are expensive cars, and the Roadster, which the company will reveal on October 1st, will likely be the its most expensive.",
+      "published": "2026-09-23T18:52:11+00:00",
+      "category": "top",
+      "source": "CNBC",
+      "body_chars": 6083,
+      "body_file": "10-top.txt"
+    },
+    {
+      "guid": "108366973",
+      "url": "https://www.cnbc.com/2026/09/23/trump-xi-chinese-automakers-us-access.html",
+      "title": "As Trump and Xi meet, Chinese automakers could be a Pandora's box for U.S. auto industry",
+      "summary": "Trump’s meeting with Xi comes as U.S. automakers and lawmakers push to keep restrictions on Chinese vehicles and manufacturers.",
+      "published": "2026-09-23T18:47:29+00:00",
+      "category": "top",
+      "source": "CNBC",
+      "body_chars": 5241,
+      "body_file": "11-top.txt"
+    },
+    {
+      "guid": "108366667",
+      "url": "https://www.cnbc.com/2026/09/23/treasury-yields-oil-inflation-fed.html",
+      "title": "10-year Treasury yield rockets to 19-year high. Here's what's driving the spike",
+      "summary": "Treasury yields traded higher on Wednesday as new services and manufacturing sector data increased worry of further Federal Reserve rate hikes.",
+      "published": "2026-09-23T18:46:49+00:00",
+      "category": "top",
+      "source": "CNBC",
+      "body_chars": 3633,
+      "body_file": "12-top.txt"
+    }
+  ]
+}
