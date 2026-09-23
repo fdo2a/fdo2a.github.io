@@ -1,13 +1,56 @@
 {
   "report_date": "2026-09-23",
-  "harvested": 350,
-  "notes": [
-    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6981.T&region=US&lang=en-US: HTTP 429",
-    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=009150.KS&region=US&lang=en-US: HTTP 429",
-    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6976.T&region=US&lang=en-US: HTTP 429",
-    "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=2327.TW&region=US&lang=en-US: HTTP 429"
-  ],
+  "harvested": 392,
+  "notes": [],
   "items": [
+    {
+      "guid": "3c7be82f-35ea-396d-8357-fab36c1bcb00",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/surging-earnings-estimates-signal-upside-162001281.html?.tsrc=rss",
+      "title": "Surging Earnings Estimates Signal Upside for Murata Manufacturing (MRAAY) Stock",
+      "summary": "Murata Manufacturing Inc. (MRAAY) shares have started gaining and might continue moving higher in the near term, as indicated by solid earnings estimate revisions.",
+      "published": "2026-09-16T16:20:01+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 2651,
+      "body_file": "01-mlcc.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "295ee9ef-17c2-3d15-bd6e-c5742ac0139f",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/murata-manufacturing-tse-6981-stock-190625775.html?.tsrc=rss",
+      "title": "Murata Manufacturing (TSE:6981) Stock Looks Pricey After A 250% Run",
+      "summary": "Murata Manufacturing has delivered a striking 250.1% return over the past year, yet its valuation picture is mixed as a Discounted Cash Flow (DCF) intrinsic value estimate points to roughly 20.3% upside while traditional earnings multiples lean expensive and the broader value checks are weak. Over the last 12 months, Murata Manufacturing has returned 250.1%, which puts extra focus on whether that ",
+      "published": "2026-08-15T19:06:25+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 5311,
+      "body_file": "02-mlcc.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "2f2414c3-249c-3fb7-a21b-5c3e70d32b68",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/murata-manufacturing-tse-6981-behind-090911904.html?.tsrc=rss",
+      "title": "Murata Manufacturing (TSE:6981), What Is Behind The Latest Attention?",
+      "summary": "Murata Manufacturing (TSE:6981) has drawn investor attention after a sharp share price move over the past week, with the stock rising about 13% even though the past month shows a decline. See our latest analysis for Murata Manufacturing. The recent 13.38% 7 day share price return for Murata Manufacturing contrasts with a decline of about 9.51% over 30 days. However, the 90 day share price return o",
+      "published": "2026-08-15T09:09:11+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 4147,
+      "body_file": "03-mlcc.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366914",
+      "url": "https://www.cnbc.com/2026/09/23/altman-amodei-un-ai-safety.html",
+      "title": "OpenAI and Anthropic CEOs push for AI cooperation at UN after Trump rebuffs 'globalist scheme' to control it",
+      "summary": "Altman is one of several tech executives who's argued that AI companies should temper the pace of AI development in order to manage potential risks.",
+      "published": "2026-09-23T19:55:31+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 1776,
+      "body_file": "04-ai.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
     {
       "guid": "108366744",
       "url": "https://www.cnbc.com/2026/09/23/metas-muse-ai-causes-schwab-selloff.html",
@@ -17,7 +60,7 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 4332,
-      "body_file": "01-ai.txt",
+      "body_file": "05-ai.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -29,19 +72,7 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 5264,
-      "body_file": "02-ai.txt",
-      "summary_note": "인증 실패 WorkloadIdentityError"
-    },
-    {
-      "guid": "108362200",
-      "url": "https://www.cnbc.com/2026/09/23/texas-data-centers-election.html",
-      "title": "Texas turning blue may hinge on Democrats harnessing data center opposition",
-      "summary": "Data center opposition is reshaping Texas' 2026 governor and Senate races as voters raise concerns over power, water and utility costs.",
-      "published": "2026-09-23T10:00:01+00:00",
-      "category": "ai",
-      "source": "CNBC",
-      "body_chars": 12000,
-      "body_file": "03-ai.txt",
+      "body_file": "06-ai.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -53,7 +84,7 @@
       "category": "macro",
       "source": "CNBC",
       "body_chars": 4648,
-      "body_file": "04-macro.txt",
+      "body_file": "07-macro.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -65,7 +96,7 @@
       "category": "macro",
       "source": "CNBC",
       "body_chars": 4541,
-      "body_file": "05-macro.txt",
+      "body_file": "08-macro.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -84,11 +115,11 @@
       "url": "https://www.cnbc.com/2026/09/23/trump-media-ban-court-hearing.html",
       "title": "Court hearing on Trump media ban begins; MS NOW, CNN, Politico seek White House reinstatement",
       "summary": "The DOJ on Tuesday night cited national security concerns in justifying President Trump's ban of MS NOW, CNN and Politico from the White House.",
-      "published": "2026-09-23T19:51:23+00:00",
+      "published": "2026-09-23T20:00:36+00:00",
       "category": "politics",
       "source": "CNBC",
-      "body_chars": 3544,
-      "body_file": "07-politics.txt",
+      "body_chars": 3699,
+      "body_file": "10-politics.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -100,7 +131,7 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 4519,
-      "body_file": "08-politics.txt",
+      "body_file": "11-politics.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -112,7 +143,19 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 4456,
-      "body_file": "09-politics.txt",
+      "body_file": "12-politics.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366973",
+      "url": "https://www.cnbc.com/2026/09/23/trump-xi-chinese-automakers-us-access.html",
+      "title": "As Trump and Xi meet, Chinese automakers could be a Pandora's box for U.S. auto industry",
+      "summary": "Trump’s meeting with Xi comes as U.S. automakers and lawmakers push to keep restrictions on Chinese vehicles and manufacturers.",
+      "published": "2026-09-23T19:56:26+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 5233,
+      "body_file": "13-industry.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -124,7 +167,7 @@
       "category": "industry",
       "source": "CNBC",
       "body_chars": 5117,
-      "body_file": "10-industry.txt",
+      "body_file": "14-industry.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -136,19 +179,7 @@
       "category": "industry",
       "source": "CNBC",
       "body_chars": 1619,
-      "body_file": "11-industry.txt",
-      "summary_note": "인증 실패 WorkloadIdentityError"
-    },
-    {
-      "guid": "108366973",
-      "url": "https://www.cnbc.com/2026/09/23/trump-xi-chinese-automakers-us-access.html",
-      "title": "As Trump and Xi meet, Chinese automakers could be a Pandora's box for U.S. auto industry",
-      "summary": "Trump’s meeting with Xi comes as U.S. automakers and lawmakers push to keep restrictions on Chinese vehicles and manufacturers.",
-      "published": "2026-09-23T18:47:29+00:00",
-      "category": "industry",
-      "source": "CNBC",
-      "body_chars": 5233,
-      "body_file": "12-industry.txt",
+      "body_file": "15-industry.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -160,7 +191,7 @@
       "category": "economy",
       "source": "CNBC",
       "body_chars": 7176,
-      "body_file": "13-economy.txt",
+      "body_file": "16-economy.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -172,7 +203,7 @@
       "category": "economy",
       "source": "CNBC",
       "body_chars": 2438,
-      "body_file": "14-economy.txt",
+      "body_file": "17-economy.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -184,7 +215,7 @@
       "category": "economy",
       "source": "CNBC",
       "body_chars": 4744,
-      "body_file": "15-economy.txt",
+      "body_file": "18-economy.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     }
   ]
