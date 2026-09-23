@@ -21,7 +21,8 @@
 * 지표 판정 — 매크로 섹션의 `Actual`. **판정을 다시 계산하지 않는다** — 같은 행의
   「판정」 칸에 `개선`·`악화`·`둔화`·`재가속`이 이미 계산돼 실려 있다. 원시 부호로
   다시 읽으면 실업수당이 **줄어든** 날을 나쁜 방향이라 칠한다(작성 사양 §9가
-  판정 어휘를 도입한 바로 그 사고).
+  판정 어휘를 도입한 바로 그 사고). 2026-09-23 부터는 `data-vs-prev` 칸(직전 대비)이
+  있으면 그것이 먼저다 — Actual 이 말하는 것은 Previous 와의 비교다.
 * **(철회) 멀티에셋 섹션 예외** — 2026-09-19 그 섹션이 없어졌다. 아래는 왜 예외가
   있었는지의 기록이다. 그 표의 「전일대비」는 가격 변화가 아니라
   등급 이동(`유지`·`▲1단계`·`▼1단계`)이다. 부호로 읽으면 `▼1단계`가 초록이 된다.
@@ -29,7 +30,7 @@
 
 import re
 
-from .macro_metrics import DIRECTION_WORDS, _POLARITY
+from .macro_metrics import DIRECTION_WORDS, VS_PREV_WORDS, _POLARITY
 from .readability import (_MASKED_ELEMENT, _V5_MARKER_RE, _blank_inert,
                           _find_in_head_css, _head_style_spans)
 
@@ -55,6 +56,13 @@ MACRO_NAME = ('지표',)
 # 물가축은 재가속(뜨거워짐)/둔화 — 경제·자산가격에 좋은 쪽은 개선과 둔화다.
 _VERDICT_POS = (DIRECTION_WORDS['growth'][1], DIRECTION_WORDS['inflation'][-1])
 _VERDICT_NEG = (DIRECTION_WORDS['growth'][-1], DIRECTION_WORDS['inflation'][1])
+
+# 「직전 대비」 칸(2026-09-23)이 있는 행은 그 칸이 정본이다 — Actual 칸이 말하는 것은
+# Previous 와의 비교이므로, 3개월 평균 비교인 「추세」로 칠하면 오른 소매판매가 빨갛게
+# 나간다(9/17 발행본). 이 칸이 비었거나 보합이면 무색이고, 추세로 폴백하지 않는다.
+_VS_POS = (VS_PREV_WORDS['growth'][1], VS_PREV_WORDS['inflation'][-1])
+_VS_NEG = (VS_PREV_WORDS['growth'][-1], VS_PREV_WORDS['inflation'][1])
+_VS_ATTR = re.compile(r'\bdata-vs-prev\b')
 
 # 판정 열이 없는 옛 표(「최근 | 이전」)에만 쓰는 대체 경로. `_POLARITY` 는 「오르면
 # 성장이 강해지거나 물가가 뜨거워진다」를 +1 로 적어 두었으므로 물가 축만 뒤집는다.
@@ -169,9 +177,26 @@ def _macro_class(labels):
     return _class_for(a - b, sign)
 
 
+def vs_prev_class(text):
+    """직전 대비 어휘 -> 색. 보합·빈칸이면 None."""
+    text = text.strip()
+    if text in _VS_POS:
+        return POS
+    if text in _VS_NEG:
+        return NEG
+    return None
+
+
 def _paint_row(row, yields=False, macro=False):
-    labels = {_label_of(a): (a, b) for a, b in _TD.findall(row)}
-    macro_cls = _macro_class(labels) if macro else None
+    tds = _TD.findall(row)
+    labels = {_label_of(a): (a, b) for a, b in tds}
+    vs = next((b for a, b in tds if _VS_ATTR.search(a)), None)
+    if not macro:
+        macro_cls = None
+    elif vs is not None:
+        macro_cls = vs_prev_class(_text(vs))
+    else:
+        macro_cls = _macro_class(labels)
 
     def repaint(m):
         attrs, body = m.group(1), m.group(2)

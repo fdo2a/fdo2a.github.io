@@ -212,7 +212,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
    <div class="card">
      <h3>고용(Labor)</h3>
      <p>고용은 개선 쪽이다. …<span class="sub"> 고용축 +0.664</span></p>
-     <div class="tbl-scroll"><table>…지표 | Actual | Forecast | Previous | 발표일 | 판정…</table></div>
+     <div class="tbl-scroll"><table>…지표 | Actual | Forecast | Previous | 발표일 | 컨센 대비 | 직전 대비 | 추세…</table></div>
      <!-- 그 축에 오늘 신규 발표가 있으면 여기에 <div data-release="KEY"> 해부 블록 -->
    </div>
    ```
@@ -266,7 +266,25 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 **2026-08-19까지는 이 내용이 맨 뒤 §13 「경제지표 대시보드」로 따로 서 있었다.** 논리는 앞에서, 그 논리를 만든 숫자는 열두 섹션 뒤에서 읽히니 독자가 두 곳을 왔다 갔다 해야 했다. 이제 **축 단위로 붙인다** — 고용 판정 문단 바로 아래 고용 표, 물가 판정 문단 바로 아래 물가 표. 별도 섹션은 없다.
 
-**축 지표 표** — 4축(Labor / Activity & Production / Consumption / Inflation) 각각 표 하나, 컬럼은 `지표 | Actual | Forecast | Previous | 발표일 | 판정`. **Actual/Previous/기준월은 `data/econ_indicators.json`(FRED 확정치)에서**, Forecast·발표일·비FRED 지표(ISM·S&P Global PMI·ADP·CB Confidence·Philly Fed·NY Fed 기대인플레)는 research_notes.md에서 가져온다. Forecast가 있어 판정 가능한 지표는 판정 태그(상회▲/하회▼/부합=) + 행 배경 #E8F2FF 하이라이트. Forecast가 없으면 그 칸은 비우고 판정은 생략(그래도 Actual/Previous는 표시). research_notes.md에 '미확정'인 항목은 **추가 리서치 없이** 행을 빼고 재구성한다. **[확인필요] 표기 금지.**
+**축 지표 표** — 4축(Labor / Activity & Production / Consumption / Inflation) 각각 표 하나, 컬럼은 `지표 | Actual | Forecast | Previous | 발표일 | 컨센 대비 | 직전 대비 | 추세`. **Actual/Previous/기준월은 `data/econ_indicators.json`(FRED 확정치)에서**, Forecast·발표일·비FRED 지표(ISM·S&P Global PMI·ADP·CB Confidence·Philly Fed·NY Fed 기대인플레)는 research_notes.md에서 가져온다. Forecast가 있어 판정 가능한 지표는 「컨센 대비」 칸에 태그(상회▲/하회▼/부합=) + 행 배경 #E8F2FF 하이라이트. Forecast가 없으면 그 칸은 비운다(그래도 Actual/Previous는 표시). research_notes.md에 '미확정'인 연구 자료 항목은 **추가 리서치 없이** 행을 빼고 재구성한다(`econ_indicators.json` 정본 행은 빼지 않는다). **[확인필요] 표기 금지.**
+
+**직전 대비 · 추세 — 두 비교를 따로 싣는다 (2026-09-23 사용자 지시).** 전에는 Actual/Previous 옆에 모멘텀 판정 하나만 붙여, 내구재 +0.58% → +1.08% 가 「악화」로 읽혔다(판정은 앞 3개월 평균 +2.89% 와 최근 3개월 평균 −0.78% 를 견준 것이었다). 이제 계산된 문자열을 **그대로** 싣고, `scripts/check_macro.py` 가 칸마다 대조한다.
+
+```html
+<tr data-indicator="Durable Goods Orders MoM">
+  <td data-label="지표">내구재주문 MoM(7월)</td><td data-label="Actual">+1.08%</td>
+  <td data-label="Forecast">—</td><td data-label="Previous">+0.58%</td>
+  <td data-label="발표일">2026-07 기준월</td><td data-label="컨센 대비"></td>
+  <td data-label="직전 대비" data-vs-prev>개선</td>
+  <td data-label="추세" data-trend>악화(뚜렷) · 3개월 평균 +2.89% → -0.78%</td></tr>
+```
+- `econ_indicators.json` 의 지표는 **한 행씩 빠짐없이**, `<tr data-indicator="영문 name">` 으로 싣는다. Actual/Previous 는 그 파일 값이다(게이트가 첫 수치를 대조한다)
+- 「직전 대비」 = `econ_indicators.json` `indicators[].vs_prev` (개선/악화/보합, 물가축은 상승/하락/보합). 값이 없으면 「—」. `macro_metrics.json` 이 낡은 날에도 이 칸은 그대로 채운다
+- 「추세」 = `indicators[].trend_cell_ko` 그대로. `null` 이면 「—」. **`macro_metrics.json` 의 `report_date` 가 오늘 세션이 아니면 모든 추세 칸은 「—」** — 어제 추세를 오늘 숫자 옆에 두지 않는다
+- ISM·PMI·ADP 같은 연구 자료 행은 `data-indicator` 없이 쓰고 두 칸은 「—」 (판정 극성은 정본 지표만 안다)
+- `<style>` 에 `td[data-trend] { min-width: 13em; white-space: normal; }` 를 넣는다 — 없으면 390px 에서 추세 칸이 좁게 접혀 행 높이가 세 배가 된다(실측 102px → 37px)
+- §9 안에 `<p class="caption" data-trend-note>` 하나에 `econ_indicators.json` 의 `trend_note_ko` 를 **그대로** 싣는다
+- 두 칸이 반대로 가는 행(오늘처럼 반등했지만 3개월 평균은 아직 낮은 경우)은 축 문단에서 한 번 이름 붙여도 된다 — 「소매판매는 8월에 반등했지만 석 달 평균으로는 아직 앞 석 달보다 낮다」. 변명 문장이 아니라 관계를 말한다
 
 표는 `<div class="tbl-scroll">`로 감싸고, **`<section>`을 새로 열지 않는다** — 발행 게이트는 §9 슬라이스를 다음 `<section>` 태그에서 자르므로, 축 표를 별도 섹션으로 만들면 전달경로·해부 블록이 게이트 시야 밖으로 나간다. 축 하나 = `<div class="card">` 하나(`<h3>고용(Labor)</h3>` + 판정 문단 + 표 + 그 축의 발표 해부).
 
@@ -538,7 +556,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - **정보 배치**: 자산별 시황은 그 시장을 이해하는 데 필요한 사건과 반응을 충분히 다룬다. 설명의 깊이는 핵심 질문에 집중하되 사실 개수나 문단 구조를 일률적으로 제한하지 않는다. §2에서 이미 쓴 판단을 자산별 전략 해석에서 다시 풀어 쓰지 말고, 자산별 추가 판단은 새로운 근거·반례가 있을 때 보탠다. **변하지 않은 배경은 매일 다시 설명하지 않는다.** 전일과 같은 뷰라면 유지 사유와 다음 분기점만 쓴다.
 - **산문에서 수치는 반올림한다 (2026-08-24)**: 표는 소수점을 그대로 두되 **문장 안에서는** 지수·이동평균을 정수로, 원화는 만원·천원 단위로 줄인다. 「60일선 2,043,966.67원」은 사람이 쓰지 않는 문장이다 — 「60일선 204만원」이다. 정확도는 표가 책임지고 문장은 크기만 전한다. **예외: 그 값이 판정 경계일 때는 반올림하지 않는다** — 손절·무효화·트리거로 쓰는 이동평균이나 금리 레벨은 산문에서도 정확한 값으로 쓴다(「60일선 204만원」은 좋지만, 그 60일선이 무효화 조건이면 「2,043,967원」이다).
 - **§ 상호참조는 한 리포트에 다섯 번까지 (2026-08-24)**: 「§9에서 보듯」이 잦으면 선형으로 읽히지 않는다. 참조 대신 그 자리에서 한 구절로 요약하고, 참조는 정말 되짚어야 할 때만 남긴다.
-- **판정과 표가 어긋나면 표에 판정 근거를 넣는다 (2026-08-24)**: 「전월보다 숫자상으로는 줄었지만 추세 판정으로는 완만한 개선」류 문장이 2026-08-20 발행본에만 14번 나왔다. 독자에게 이 문장은 「기계가 틀렸다」로 읽힌다. 표에 찍힌 비교(Actual vs Previous)와 `direction`이 보는 비교(모멘텀 추세)가 다르기 때문이니, **변명 문장을 쓰지 말고** 축 표에 `추세` 열을 따로 두어 두 비교를 나란히 보이고 문장에서는 판정만 말한다.
+- **판정과 표가 어긋나면 표에 판정 근거를 넣는다 (2026-08-24)**: 「전월보다 숫자상으로는 줄었지만 추세 판정으로는 완만한 개선」류 문장이 2026-08-20 발행본에만 14번 나왔다. 독자에게 이 문장은 「기계가 틀렸다」로 읽힌다. 표에 찍힌 비교(Actual vs Previous)와 `direction`이 보는 비교(모멘텀 추세)가 다르기 때문이니, **변명 문장을 쓰지 말고** 축 표에 `직전 대비`·`추세` 열을 따로 두어 두 비교를 나란히 보이고 문장에서는 판정만 말한다(2026-09-23 부터 두 칸 모두 계산값 그대로 — 섹션 9-b).
 - **해석 동사 단조로움 금지 (2026-07-22 사용자 지시)**: 해석·판단 서술 시 "~로 풀이된다/판단된다/해석된다/시사한다" 계열 비인칭 피동은 글 전체에서 각 2회 이하. 견해가 분명한 곳은 능동 인과("A가 B를 끌어내렸다")나 직접 단언으로 쓰고, 산문 속 "장중 흐름:/해석:" 콜론 라벨은 문장에 녹인다.
 - 웹 리서치 기반 서술은 출처 귀속 — research_notes.md의 출처를 유지하되 **매체를 주어로** 쓴다(「블룸버그는 …라고 보도했습니다」). 피동형 「~로 보도된다」는 쓰지 않는다.
 - **금지 어휘 「buy-side」 (2026-08-22 사용자 지시)**: 발행본 어디에도 buy-side/buy side/바이사이드를 쓰지 않는다. §2 헤더는 「전략 코멘트」, 섹션별 해석 박스 라벨은 「전략 해석」, 산문에서는 전략·리포트·시황 정리로 부른다. 발행 게이트 `scripts/check_macro.py`가 발행본 전체에서 이 표기를 차단한다.
@@ -599,7 +617,7 @@ table { font-variant-numeric: tabular-nums; }
 
 - 「전일 대비」·「등락」 — 값 부호 그대로. 오르면 초록
 - **채권 섹션**의 「전일 변화」·「주간 변화」 — **수익률 기준으로 반전**. 금리가 떨어지면 초록
-- **매크로 섹션**의 「Actual」 — **같은 행 「판정」 칸의 어휘를 그대로 읽는다**(개선·둔화 초록 / 악화·재가속 빨강 / 보합·교착 무색). 판정을 다시 계산하지 않는다 — 원시 부호로 읽으면 실업수당이 **줄어든** 날을 나쁜 방향이라 칠한다(§9가 판정 어휘를 도입한 바로 그 사고). 판정 칸이 없는 옛 「최근 | 이전」 표에만 전기 대비로 대체한다
+- **매크로 섹션**의 「Actual」 — **같은 행 「직전 대비」 칸(`data-vs-prev`)을 그대로 읽는다**(개선·하락 초록 / 악화·상승 빨강 / 보합 무색). 그 칸이 없는 옛 표만 「판정」 어휘를 읽는다(개선·둔화 초록 / 악화·재가속 빨강 / 보합·교착 무색). 판정을 다시 계산하지 않는다 — 원시 부호로 읽으면 실업수당이 **줄어든** 날을 나쁜 방향이라 칠한다(§9가 판정 어휘를 도입한 바로 그 사고). 판정 칸이 없는 옛 「최근 | 이전」 표에만 전기 대비로 대체한다
 
 하루 70칸이라 사람이 칠하면 매일 틀린다. **해야 할 일은 하나뿐이다 — 열 이름을 위 이름 그대로 쓰고 모든 `<td>`에 `data-label`을 단다.** 색 class 를 직접 쓰거나 인라인 `style`로 색을 넣지 말 것.
 

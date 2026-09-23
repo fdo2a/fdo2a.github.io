@@ -19,6 +19,7 @@ from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
                     TRANSMISSION_LABELS, conflicts, regime_name)
 from .section import locate_section, number_forms, strip_tags
 from . import moomoo_forward as _MF
+from .macro_table_gate import check_tables
 
 _REGIME = re.compile(
     r'<span\b(?P<attrs>[^>]*\bdata-macro\s*=\s*"regime"[^>]*)>(?P<text>.*?)</span>', re.S)
@@ -537,7 +538,7 @@ def _check_prob_source(prob, nxt, fedwatch, v, present=False):
 
 
 def check(html, prev_macro, macro_eval, next_macro, fedwatch=None,
-          fedwatch_present=False):
+          fedwatch_present=False, econ=None, metrics=None, report_date=None):
     section = section_macro(html)
     if section is None:
         return ['§8(매크로) 섹션을 찾을 수 없다']
@@ -555,4 +556,7 @@ def check(html, prev_macro, macro_eval, next_macro, fedwatch=None,
                   fedwatch_present)
     _check_next(next_macro, prev_macro, regime_cell, trans_cells,
                 (macro_eval or {}).get('report_date'), v)
+    # 축 표의 직전 대비·추세 칸 (2026-09-23). econ 이 없으면(부트스트랩) 건너뛴다.
+    v.extend(check_tables(section, econ, metrics,
+                          report_date or (macro_eval or {}).get('report_date')))
     return v

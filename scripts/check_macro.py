@@ -73,7 +73,18 @@ def main():
             print('FedWatch 파일은 있으나 상태·세션·관측시각이 정본과 맞지 않는다 — '
                   '원천 대조를 건너뛴다', file=sys.stderr)
 
-    violations = check(html, prev, ev, nxt, fedwatch, fw_env is not None)
+    # 축 표 게이트의 기준일은 세션(market_data)이다. metrics 가 그 날짜·현행 스키마가
+    # 아니면 추세 칸은 「—」만 허용된다 — 어제 추세가 오늘 숫자 옆에 나가지 않게.
+    econ = (load(os.path.join(d, 'econ_indicators.json')) or {}).get('indicators')
+    if not econ and market.get('report_date'):
+        print('WARN: econ_indicators.json 이 없거나 읽을 수 없다 — §9 축 표(직전 대비·추세) '
+              '검사를 건너뛴다. 표의 Actual/Previous 를 대조할 정본이 없다', file=sys.stderr)
+    metrics = load(os.path.join(d, 'macro_metrics.json'))
+    if econ and metrics and metrics.get('report_date') != market.get('report_date'):
+        print(f"WARN: macro_metrics.json report_date={metrics.get('report_date')}, "
+              f"세션 {market.get('report_date')} — 추세 칸은 「—」만 허용", file=sys.stderr)
+    violations = check(html, prev, ev, nxt, fedwatch, fw_env is not None,
+                       econ=econ, metrics=metrics, report_date=market.get('report_date'))
     if not violations:
         print('매크로 게이트 통과')
         return

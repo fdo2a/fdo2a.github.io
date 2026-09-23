@@ -397,3 +397,95 @@ def test_axis_summary_lists_the_movers_that_mattered():
 def test_axis_summary_covers_an_axis_with_nothing_computable():
     out = mm.compute({}, [ind('CPI YoY', 'Inflation', 'CPIAUCSL')])
     assert out['axis_summary']['Inflation']['direction'] is None
+
+
+# ------------------------------------------- 직전 대비 · 3개월 추세 (2026-09-23)
+# 표는 Actual/Previous 옆에 모멘텀 판정을 붙여 두고 무엇을 비교했는지 말하지 않았다.
+# 내구재 +0.58% → +1.08% 가 「악화」로 읽힌 이유 — 판정은 앞 3개월 평균 +2.89% 와
+# 최근 3개월 평균 −0.78% 를 견준 것이었다.
+
+DURABLE = [0.0, 1.0] * 30 + [-1.17, 1.34, 8.51, -4.0, 0.58, 1.08]
+
+
+def durable_row(actual=1.08, previous=0.58):
+    econ = [dict(ind('Durable Goods Orders MoM', 'Activity', 'DG', actual, previous),
+                 units='%', transform='level')]
+    out = mm.compute({'DG': dated(DURABLE)}, econ)
+    return out['indicators'][0]
+
+
+def test_vs_prev_reads_the_two_printed_numbers_not_the_momentum():
+    row = durable_row()
+    assert row['direction'] == '악화'
+    assert row['vs_prev'] == '개선'
+
+
+def test_vs_prev_respects_polarity():
+    assert mm.vs_prev('Initial Jobless Claims', 'Labor', 196000, 206000) == '개선'
+    assert mm.vs_prev('Unemployment Rate', 'Labor', 4.3, 4.1) == '악화'
+
+
+def test_vs_prev_uses_price_vocabulary_on_the_inflation_axis():
+    assert mm.vs_prev('CPI MoM', 'Inflation', 0.4, 0.07) == '상승'
+    assert mm.vs_prev('Michigan 1-Yr Inflation Exp', 'Inflation', 4.2, 4.6) == '하락'
+
+
+def test_vs_prev_equal_prints_are_flat_and_missing_prints_are_none():
+    assert mm.vs_prev('Unemployment Rate', 'Labor', 4.1, 4.1) == '보합'
+    assert mm.vs_prev('CPI YoY', 'Inflation', 3.7, 3.7) == '보합'
+    assert mm.vs_prev('CPI YoY', 'Inflation', None, 3.7) is None
+
+
+def test_trend_carries_both_block_averages():
+    row = durable_row()
+    assert row['trend'] == {'window': 3, 'label_ko': '3개월 평균',
+                            'prior_avg': 2.893, 'recent_avg': -0.78}
+
+
+def test_trend_cell_names_the_verdict_and_both_averages():
+    # 이 픽스처는 이미 변환된 값을 level 로 넘긴다 — 부호 표기는 test_fmt_value 가 본다.
+    assert durable_row()['trend_cell_ko'] == '악화(뚜렷) · 3개월 평균 2.89% → -0.78%'
+
+
+def test_trend_cell_is_none_when_the_verdict_is_not_computable():
+    # 평균은 낼 수 있어도 표준화 이력이 부족하면 판정이 없다 — 칸은 「—」다.
+    econ = [dict(ind('Retail Sales MoM', 'Consumption', 'R', 1.0, 0.0), units='%')]
+    row = mm.compute({'R': dated([1, 1, 1, 2, 2, 2])}, econ)['indicators'][0]
+    assert row['signed_z'] is None
+    assert row['trend_cell_ko'] is None
+    assert row['vs_prev'] == '개선'
+
+
+def test_flat_verdict_drops_the_strength_word():
+    assert mm.trend_cell('보합', '미미', 3, 1.0, 1.1, '%', 'mom_pct') == \
+        '보합 · 3개월 평균 +1.00% → +1.10%'
+
+
+@pytest.mark.parametrize('value,units,tf,want', [
+    (0.58, '%', 'mom_pct', '+0.58%'),
+    (-0.78, '%', 'mom_pct', '-0.78%'),
+    (4.133, '%', 'level', '4.13%'),
+    (141.7, 'K', 'mom_diff', '+142K'),
+    (7186.3, 'K', 'level', '7,186K'),
+    (203250.0, '', 'level', '203K'),
+    (1769000.0, '', 'level', '1,769K'),
+    (53.23, '', 'level', '53.2'),
+])
+def test_fmt_value(value, units, tf, want):
+    assert mm.fmt_value(value, units, tf) == want
+
+
+@pytest.mark.parametrize('window,label', [(3, '3개월 평균'), (4, '4주 평균')])
+def test_window_labels(window, label):
+    assert mm.window_label(window) == label
+
+
+def test_a_single_observation_window_has_no_trend_cell():
+    # GDP: 평균 비교가 곧 직전 대비다 — 두 칸이 같은 수를 보고 다른 말을 하게 두지 않는다.
+    assert mm.trend_cell('보합', '미미', 1, 2.1, 1.5, '%', 'level') is None
+
+
+def test_compute_stamps_the_schema_and_the_caption():
+    out = mm.compute({}, [])
+    assert out['schema'] == mm.SCHEMA >= 2
+    assert out['trend_note_ko'] == mm.TREND_NOTE_KO

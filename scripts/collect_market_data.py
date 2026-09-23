@@ -812,6 +812,11 @@ def main():
 
     print('collecting FRED economic indicators...')
     econ, econ_series = collect_econ()
+    # 「직전 대비」 칸의 정본(2026-09-23). macro_metrics.json 이 실패하거나 낡은 날에도
+    # 표에 찍힌 두 수의 비교는 이 파일 하나로 끝나야 한다 — 게이트도 같은 함수로 잰다.
+    from us.macro_metrics import TREND_NOTE_KO, vs_prev
+    for e in econ:
+        e['vs_prev'] = vs_prev(e.get('name'), e.get('axis'), e.get('actual'), e.get('previous'))
     print(f'  econ indicators: {len(econ)}/{len(ECON)}')
     print('collecting sector multi-horizon performance...')
     sector_perf, perf_as_of = collect_sector_performance()
@@ -1062,6 +1067,7 @@ def main():
                        'those from web only for recently-released indicators. '
                        'Indicators absent from this list (ISM, S&P Global PMI, ADP, CB '
                        'Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.',
+               'trend_note_ko': TREND_NOTE_KO,
                'indicators': econ},
               open(os.path.join(args.outdir, 'econ_indicators.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)

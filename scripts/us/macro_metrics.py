@@ -179,6 +179,26 @@ DIRECTION_WORDS = {
     'inflation': {1: '재가속', -1: '둔화', 0: '교착'},
 }
 
+# 「직전 대비」 칸의 어휘 (2026-09-23). 표가 Actual/Previous 옆에 모멘텀 판정만 붙여
+# 두자 +0.58% → +1.08% 인 내구재가 「악화」로 읽혔다 — 판정은 앞 3개월 평균과 최근
+# 3개월 평균을 견준 것이었다. 두 비교를 나란히 싣는다. 물가 쪽은 일부러 추세 어휘
+# (재가속/둔화/교착)와 다른 말을 쓴다 — 같은 말이면 두 열이 같은 비교로 읽힌다.
+VS_PREV_WORDS = {
+    'growth': {1: '개선', -1: '악화', 0: '보합'},
+    'inflation': {1: '상승', -1: '하락', 0: '보합'},
+}
+
+# 계약이 바뀌면 올린다. 게이트는 이보다 낮은 파일의 추세 칸을 믿지 않는다.
+SCHEMA = 2
+
+TREND_NOTE_KO = ('직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 '
+                 '그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). '
+                 '추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 '
+                 '보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 '
+                 '대비만 싣습니다.')
+
+_WINDOW_KO = {3: '3개월 평균', 4: '4주 평균'}
+
 _KO_NUM = ('영', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉', '열')
 
 DIRECTION_CUT = 0.25          # below this an indicator is going nowhere
@@ -219,6 +239,57 @@ def momentum(values, window):
     recent = values[-window:]
     prior = values[-2 * window:-window]
     return sum(recent) / window - sum(prior) / window
+
+
+def block_means(values, window):
+    """(앞 블록 평균, 최근 블록 평균) — momentum() 이 빼는 바로 그 두 수."""
+    if values is None or len(values) < 2 * window or window < 1:
+        return None
+    return (sum(values[-2 * window:-window]) / window, sum(values[-window:]) / window)
+
+
+def vs_prev(name, axis, actual, previous):
+    """표에 찍힌 두 수(Actual vs Previous)의 극성 반영 비교. 둘 중 하나라도 없으면 None."""
+    if actual is None or previous is None:
+        return None
+    words = VS_PREV_WORDS['inflation' if axis == 'Inflation' else 'growth']
+    diff = float(actual) - float(previous)
+    if diff == 0:
+        return words[0]
+    sign = 1 if diff > 0 else -1
+    if axis != 'Inflation':
+        sign *= polarity_for(name)[0]
+    return words[sign]
+
+
+def window_label(window):
+    return _WINDOW_KO.get(window, f'{window}기 평균')
+
+
+def fmt_value(value, units, transform):
+    """추세 칸의 평균값 표기. 변화량(MoM·차분)만 부호를 붙인다."""
+    signed = transform in ('mom_pct', 'mom_diff')
+    if units == '%':
+        return f'{value:+.2f}%' if signed else f'{value:.2f}%'
+    if units == 'K':
+        return f'{value:+,.0f}K' if signed else f'{value:,.0f}K'
+    if abs(value) >= 1000:
+        return f'{value / 1000:+,.0f}K' if signed else f'{value / 1000:,.0f}K'
+    return f'{value:+.1f}' if signed else f'{value:.1f}'
+
+
+def trend_cell(direction, strength, window, prior, recent, units, transform):
+    """「추세」 칸에 그대로 찍을 문자열. 판정이 없으면 None(칸은 「—」).
+
+    창이 한 관측(GDP)이면 None — 평균 비교가 곧 직전 대비와 같은 두 수인데 판정만
+    임계값 때문에 갈려, 「보합 · 2.10% → 1.50%」 옆에 「악화」가 서게 된다.
+    """
+    if direction is None or prior is None or recent is None or window < 2:
+        return None
+    word = direction if strength in (None, '미미') and direction in ('보합', '교착') \
+        else f'{direction}({strength})'
+    return (f'{word} · {window_label(window)} '
+            f'{fmt_value(prior, units, transform)} → {fmt_value(recent, units, transform)}')
 
 
 def momentum_z(values, window, lookback=LOOKBACK):
@@ -411,6 +482,10 @@ def compute(series_by_id, econ_indicators, last_seen=None):
         z = momentum_z(values, window)
         signed = None if z is None else round(pol * z, _R3)
         direction, strength = describe(signed, axis)
+        means = block_means(values, window)
+        trend = None if means is None else {
+            'window': window, 'label_ko': window_label(window),
+            'prior_avg': round(means[0], _R3), 'recent_avg': round(means[1], _R3)}
         rows.append({
             'name': name,
             'label_ko': LABELS_KO.get(name, name),
@@ -424,6 +499,11 @@ def compute(series_by_id, econ_indicators, last_seen=None):
             'actual': item.get('actual'),
             'previous': item.get('previous'),
             'ref_period': item.get('ref_period'),
+            'vs_prev': vs_prev(name, axis, item.get('actual'), item.get('previous')),
+            'trend': trend,
+            'trend_cell_ko': trend_cell(direction, strength, window,
+                                        means and means[0], means and means[1],
+                                        item.get('units'), item.get('transform', 'level')),
         })
 
         seen_now[name] = [item.get('ref_period'), item.get('actual')]
@@ -434,6 +514,8 @@ def compute(series_by_id, econ_indicators, last_seen=None):
         r['is_new'] = r['name'] in releases
 
     return {
+        'schema': SCHEMA,
+        'trend_note_ko': TREND_NOTE_KO,
         'growth_score': _group_score(rows, GROWTH_AXES),
         'inflation_score': _group_score(rows, INFLATION_AXES),
         'growth_diffusion': _diffusion(rows, GROWTH_AXES),

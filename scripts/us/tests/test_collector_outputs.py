@@ -37,3 +37,8 @@ def test_derived_blocks_run_before_market_data_is_written():
     written = SRC.index('json.dump(data, open(md_path')
     for marker in ("data['price_context'] = ", "data['session'] = "):
         assert SRC.index(marker) < written
+
+
+def test_econ_rows_carry_their_vs_prev_verdict():
+    assert "e['vs_prev'] = vs_prev(" in SRC
+    assert SRC.index("e['vs_prev'] = vs_prev(") < SRC.index("'econ_indicators.json'")

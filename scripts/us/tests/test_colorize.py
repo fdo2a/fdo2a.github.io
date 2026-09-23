@@ -204,3 +204,33 @@ def test_a_marker_string_in_the_body_does_not_suppress_the_css():
         _row(('자산', 'S&P 500'), ('전일 대비', '+0.42%')))
     out = C.apply(_doc(body, head=''))
     assert 'td.%s' % C.POS in out
+
+
+# --- 직전 대비 칸 (2026-09-23) ---
+# Actual 칸이 말하는 것은 Previous 와의 비교다. 추세(3개월 평균 비교)로 칠하면 +0.58%
+# → +1.24% 로 오른 소매판매가 빨갛게 칠해진다 — 9/17 발행본에 실제로 그렇게 나갔다.
+
+def _vsrow(name, actual, previous, vs, trend):
+    return (f'<tr data-indicator="{name}"><td data-label="지표">{name}</td>'
+            f'<td data-label="Actual">{actual}</td><td data-label="Previous">{previous}</td>'
+            f'<td data-label="직전 대비" data-vs-prev>{vs}</td>'
+            f'<td data-label="추세" data-trend>{trend}</td></tr>')
+
+
+MACRO_VS = '<h2>매크로</h2>' + _table(
+    _vsrow('Retail Sales MoM', '+1.24%', '-0.54%', '개선', '악화(뚜렷) · 3개월 평균 +1.11% → +0.34%'),
+    _vsrow('CPI MoM', '0.40%', '0.07%', '상승', '둔화(뚜렷) · 3개월 평균 +0.66% → +0.02%'),
+    _vsrow('Michigan 1-Yr Inflation Exp', '4.20%', '4.60%', '하락', '재가속(완만) · …'),
+    _vsrow('Unemployment Rate', '4.1%', '4.1%', '보합', '개선(완만) · …'),
+    _vsrow('Durable Goods Orders MoM', '+1.08%', '—', '—', '악화(뚜렷) · …'))
+
+
+def test_actual_follows_the_vs_prev_cell_not_the_trend():
+    out = C.apply(_doc(MACRO_VS))
+    assert _cls(out, 'Actual') == [C.POS, C.NEG, C.POS, None, None]
+
+
+def test_trend_and_vs_prev_cells_themselves_are_not_painted():
+    out = C.apply(_doc(MACRO_VS))
+    assert _cls(out, '직전 대비') == [None] * 5
+    assert _cls(out, '추세') == [None] * 5
