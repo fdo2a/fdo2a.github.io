@@ -884,6 +884,101 @@ def main():
         print(f'histories failed: {e}', file=sys.stderr)
         closes, hist_dates, hist_as_of, hist_ohlc = {}, {}, None, {}
 
+    # Non-core, same contract as above: the macro regime's axis scores. `last_seen`
+    # comes from yesterday's committed book — without it every indicator reads as newly
+    # released and the regime would be free to move every single day.
+    print('computing macro axis scores...')
+    try:
+        from us.macro_metrics import compute as compute_macro_metrics
+        last_seen = None
+        try:
+            last_seen = json.load(open(os.path.join(args.outdir, 'macro.json'))).get('last_seen')
+        except Exception:
+            print('  no committed macro.json — treating every indicator as new', file=sys.stderr)
+        mm = compute_macro_metrics(econ_series, econ, last_seen)
+        print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
+              f"신규 발표 {len(mm['new_releases'])}건")
+
+        # Only the promoted releases pull their breakdown, so a quiet day costs nothing
+        # and a CPI day costs six extra CSVs. The issuing agencies 403 their own press
+        # releases to non-browser clients; FRED redistributes the same components.
+        from us.macro_metrics import attach_components, component_specs
+        specs = component_specs(mm['headline_releases'])
+        comp_series = {}
+        for spec in specs:
+            sid = spec['fred_id']
+            if sid in comp_series or sid in econ_series:
+                continue
+            try:
+                comp_series[sid] = retry(lambda sid=sid: fred_series(sid), attempts=2)
+            except Exception as e:
+                print(f'  component {sid} failed: {e}', file=sys.stderr)
+            time.sleep(0.4)
+        comp_series.update(econ_series)
+        attach_components(mm['headline_releases'], comp_series)
+        for rel in mm['headline_releases']:
+            print(f"    해부 {rel['key']}: {rel['label']} "
+                  f"({len(rel.get('components') or [])}개 구성 항목)")
+        json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
+                  open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
+                  indent=2, default=str, ensure_ascii=False)
+    except Exception as e:
+        print(f'macro metrics failed: {e}', file=sys.stderr)
+
+    # Non-core, same contract as the blocks above: the statistical context for the
+    # price side — is today's move large for this asset, where does the level sit in
+    # its own history, are the standing cross-asset relationships still holding. A
+    # failure here costs the readings, never the dataset.
+    print('computing price context...')
+    try:
+        from us.price_context import compute as compute_price_context
+        pc = compute_price_context(closes, data, sectors=SECTORS, dates=hist_dates)
+        data['price_context'] = pc
+        big = [n for n, m in pc['moves'].items() if m and m.get('band') in ('큼', '매우 큼')]
+        flips = [c['label_ko'] for c in pc['correlations'] if c['flipped']]
+        unknown = [c['label_ko'] for c in pc['correlations'] if c['flipped'] is None]
+        if unknown:
+            print(f"  관계 판정 불가: {', '.join(unknown)}", file=sys.stderr)
+        coh = pc['cohesion']
+        print(f"  이례적 움직임: {', '.join(big) if big else '없음'}")
+        print(f"  관계 전환: {', '.join(flips) if flips else '없음'}")
+        if coh:
+            print(f"  시장 응집도: 상위 1개 요인 {coh['top1_pct']}% / 상위 3개 {coh['top3_pct']}%")
+        sc = pc['sector_contribution']
+        if sc and sc['rows']:
+            top = sc['rows'][0]
+            print(f"  지수 {sc['index_change']:+.2f}% 중 {top['name']} "
+                  f"{top['contribution']:+.2f}%p (설명력 R²={sc['fit_r2']})")
+    except Exception as e:
+        print(f'price context failed: {e}', file=sys.stderr)
+
+    # 같은 계약: 비-코어라 실패해도 데이터셋은 산다. 「오늘의 장」이 읽을 재료 —
+    # 세계장이 어디서 끝났나, 밤사이 선물이 무엇을 했나, 평균적인 종목이 따라갔나,
+    # 어디서 끝났나.
+    print('computing session context...')
+    try:
+        from us.session import compute as compute_session
+        sess = compute_session(closes, hist_dates, data, intraday,
+                               collect_futures_bars(), report_date, ohlc=hist_ohlc)
+        data['session'] = sess
+        for key, ko in (('asia', '아시아'), ('europe', '유럽')):
+            al = sess['global_close'][key]['alignment']
+            if al:
+                print(f"  {ko}: 미국과 {al['label']} (평균 {al['avg_pct']:+.2f}%)"
+                      f"{' · 지역 내 혼조' if al['mixed'] else ''}")
+            else:
+                print(f"  {ko}: 판정 불가(지수 부족)")
+        par = sess['participation']
+        print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
+              else '  참여도: 판정 불가')
+        cal = sess.get('tape_calibration')
+        print(f"  마감 위치 경계: {cal['high']}/{cal['low']} ({cal['sessions']}세션 실측)"
+              if cal else '  마감 위치 경계: 초안값 75/25 (표본 부족)')
+        print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
+              f"야간 선물 {len(sess['futures']['contracts'])}종")
+    except Exception as e:
+        print(f'session context failed: {e}', file=sys.stderr)
+
     print('scoring the macro record...')
     try:
         from us.history import read_jsonl
