@@ -1,6 +1,6 @@
 {
   "report_date": "2026-09-23",
-  "harvested": 170,
+  "harvested": 350,
   "notes": [
     "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=6981.T&region=US&lang=en-US: HTTP 429",
     "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=009150.KS&region=US&lang=en-US: HTTP 429",
@@ -8,6 +8,77 @@
     "mlcc https://feeds.finance.yahoo.com/rss/2.0/headline?s=2327.TW&region=US&lang=en-US: HTTP 429"
   ],
   "items": [
+    {
+      "guid": "108366744",
+      "url": "https://www.cnbc.com/2026/09/23/metas-muse-ai-causes-schwab-selloff.html",
+      "title": "Meta's Muse reignites AI disruption fears. Traders are targeting this brokerage stock as next casualty",
+      "summary": "Meta's latest consumer AI product is sending such big shockwaves through the market that it's even inflaming a long-time rivalry in the brokerage business.",
+      "published": "2026-09-23T18:06:25+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 4332,
+      "body_file": "01-ai.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366047",
+      "url": "https://www.cnbc.com/2026/09/23/trump-xi-meeting-ai-safety-chips-us-china-dialogue.html",
+      "title": "Trump-Xi summit puts AI safety talks on the table but neither side wants to slow down",
+      "summary": "Recent weeks have seen AI safety fears reach new heights. That will be a key focus for the U.S. and Chinese leaders, analysts told CNBC.",
+      "published": "2026-09-23T17:39:36+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 5264,
+      "body_file": "02-ai.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108362200",
+      "url": "https://www.cnbc.com/2026/09/23/texas-data-centers-election.html",
+      "title": "Texas turning blue may hinge on Democrats harnessing data center opposition",
+      "summary": "Data center opposition is reshaping Texas' 2026 governor and Senate races as voters raise concerns over power, water and utility costs.",
+      "published": "2026-09-23T10:00:01+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 12000,
+      "body_file": "03-ai.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366801",
+      "url": "https://www.cnbc.com/2026/09/23/fed-rate-hike-borrowing-costs.html",
+      "title": "Higher interest rates squeeze younger and lower-income households. 'A rate hike is a blunt tool,' says expert",
+      "summary": "Higher interest rates will significantly affect consumer borrowing costs and savings returns, but the impact will not be felt equally across all households.",
+      "published": "2026-09-23T19:31:08+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 4541,
+      "body_file": "04-macro.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366667",
+      "url": "https://www.cnbc.com/2026/09/23/treasury-yields-oil-inflation-fed.html",
+      "title": "10-year Treasury yield rockets to 19-year high. Here's what's driving the spike",
+      "summary": "Treasury yields traded higher on Wednesday as new services and manufacturing sector data increased worry of further Federal Reserve rate hikes.",
+      "published": "2026-09-23T19:20:36+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 4281,
+      "body_file": "05-macro.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108367012",
+      "url": "https://www.cnbc.com/2026/09/23/bond-yields-spike-and-stocks-drop-plus-why-boeing-is-bucking-the-trend.html",
+      "title": "Bond yields spike and stocks drop — plus, why Boeing is bucking the trend",
+      "summary": "Every weekday, the Investing Club releases the Homestretch; an actionable afternoon update just in time for the last hour of trading.",
+      "published": "2026-09-23T18:42:17+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 0,
+      "body_note": "추출 실패"
+    },
     {
       "guid": "108366925",
       "url": "https://www.cnbc.com/2026/09/23/jeffrey-epstein-estate-executors-investigation.html",
@@ -17,7 +88,8 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 4519,
-      "body_file": "01-politics.txt"
+      "body_file": "07-politics.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
       "guid": "108366853",
@@ -28,7 +100,8 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 4456,
-      "body_file": "02-politics.txt"
+      "body_file": "08-politics.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
       "guid": "108365963",
@@ -39,18 +112,44 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 8868,
-      "body_file": "03-politics.txt"
+      "body_file": "09-politics.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
-      "guid": "108364741",
-      "url": "https://www.cnbc.com/2026/09/18/japan-rate-hike-stocks-rise-bond-yields-yen-fall.html",
-      "title": "Why Japan’s markets flipped the usual script after central bank rate hike",
-      "summary": "The yen weakened past 157 against the dollar, the yield on the 10-year Japanese Government Bond slipped, while the Nikkei 225 gained 1.5%.",
-      "published": "2026-09-21T01:02:25+00:00",
-      "category": "economy",
+      "guid": "108366783",
+      "url": "https://www.cnbc.com/2026/09/23/trump-diesel-export-ban-gas-prices.html",
+      "title": "Oil industry warns a diesel export ban will raise fuel prices as Trump weighs restrictions",
+      "summary": "A diesel export ban would provide only brief relief before prices start to rise again as refiners cut production, experts say.",
+      "published": "2026-09-23T19:30:54+00:00",
+      "category": "industry",
       "source": "CNBC",
-      "body_chars": 3756,
-      "body_file": "04-economy.txt"
+      "body_chars": 5117,
+      "body_file": "10-industry.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366580",
+      "url": "https://www.cnbc.com/2026/09/23/iran-us-talks-crude-oil-un-wti.html",
+      "title": "Oil prices rise, snap five day losing streak as Iran vows it will not surrender",
+      "summary": "Oil prices were mixed Wednesday, amid hopes of a diplomatic solution to the conflict in the Middle East after Iran and the U.S. had talks.",
+      "published": "2026-09-23T19:16:31+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 1619,
+      "body_file": "11-industry.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
+      "guid": "108366973",
+      "url": "https://www.cnbc.com/2026/09/23/trump-xi-chinese-automakers-us-access.html",
+      "title": "As Trump and Xi meet, Chinese automakers could be a Pandora's box for U.S. auto industry",
+      "summary": "Trump’s meeting with Xi comes as U.S. automakers and lawmakers push to keep restrictions on Chinese vehicles and manufacturers.",
+      "published": "2026-09-23T18:47:29+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 5241,
+      "body_file": "12-industry.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
       "guid": "108364814",
@@ -61,7 +160,8 @@
       "category": "economy",
       "source": "CNBC",
       "body_chars": 7176,
-      "body_file": "05-economy.txt"
+      "body_file": "13-economy.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
       "guid": "108365102",
@@ -72,73 +172,20 @@
       "category": "economy",
       "source": "CNBC",
       "body_chars": 2438,
-      "body_file": "06-economy.txt"
+      "body_file": "14-economy.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
-      "guid": "108366744",
-      "url": "https://www.cnbc.com/2026/09/23/metas-muse-ai-causes-schwab-selloff.html",
-      "title": "Meta's Muse reignites AI disruption fears. Traders are targeting this brokerage stock as next casualty",
-      "summary": "Meta's latest consumer AI product is sending such big shockwaves through the market that it's even inflaming a long-time rivalry in the brokerage business.",
-      "published": "2026-09-23T18:06:25+00:00",
-      "category": "market",
+      "guid": "108362854",
+      "url": "https://www.cnbc.com/2026/09/16/indonesia-finance-minister-msci-prabowo-.html",
+      "title": "Indonesia's new finance minister faces an uphill battle on fiscal credibility",
+      "summary": "Nazara, sworn in hours after Purbaya's dismissal, spent seven years as deputy finance minister and led the ministry's fiscal policy agency from 2015 to 2019.",
+      "published": "2026-09-16T01:53:52+00:00",
+      "category": "economy",
       "source": "CNBC",
-      "body_chars": 4332,
-      "body_file": "07-market.txt"
-    },
-    {
-      "guid": "108366337",
-      "url": "https://www.cnbc.com/2026/09/22/lennar-shares-pop-as-berkshire-builds-almost-a-10percent-stake-in-beleaguered-homebuilder.html",
-      "title": "Lennar shares pop as Berkshire builds almost a 10% stake in beleaguered homebuilder",
-      "summary": "The conglomerate built by Warren Buffett and led today by Greg Abel holds a sizable stake in Miami-based homebuilder Lennar.",
-      "published": "2026-09-22T22:35:50+00:00",
-      "category": "market",
-      "source": "CNBC",
-      "body_chars": 3012,
-      "body_file": "08-market.txt"
-    },
-    {
-      "guid": "108366300",
-      "url": "https://www.cnbc.com/2026/09/22/no-new-stock-highs-no-problem-options-traders-bet-theyre-coming-in-these-names.html",
-      "title": "No new stock highs, no problem: Options traders bet they're coming in these names",
-      "summary": "Options activity shows traders anticipate fresh highs are around the corner for a handful of names.",
-      "published": "2026-09-22T18:09:32+00:00",
-      "category": "market",
-      "source": "CNBC",
-      "body_chars": 2661,
-      "body_file": "09-market.txt"
-    },
-    {
-      "guid": "108367011",
-      "url": "https://www.cnbc.com/2026/09/23/tesla-roadster-reveal-is-creating-a-unique-options-opportunity-says-mike-khouw.html",
-      "title": "Tesla Roadster reveal is creating a unique options opportunity, says Mike Khouw",
-      "summary": "Teslas are expensive cars, and the Roadster, which the company will reveal on October 1st, will likely be the its most expensive.",
-      "published": "2026-09-23T18:52:11+00:00",
-      "category": "top",
-      "source": "CNBC",
-      "body_chars": 6083,
-      "body_file": "10-top.txt"
-    },
-    {
-      "guid": "108366973",
-      "url": "https://www.cnbc.com/2026/09/23/trump-xi-chinese-automakers-us-access.html",
-      "title": "As Trump and Xi meet, Chinese automakers could be a Pandora's box for U.S. auto industry",
-      "summary": "Trump’s meeting with Xi comes as U.S. automakers and lawmakers push to keep restrictions on Chinese vehicles and manufacturers.",
-      "published": "2026-09-23T18:47:29+00:00",
-      "category": "top",
-      "source": "CNBC",
-      "body_chars": 5241,
-      "body_file": "11-top.txt"
-    },
-    {
-      "guid": "108366667",
-      "url": "https://www.cnbc.com/2026/09/23/treasury-yields-oil-inflation-fed.html",
-      "title": "10-year Treasury yield rockets to 19-year high. Here's what's driving the spike",
-      "summary": "Treasury yields traded higher on Wednesday as new services and manufacturing sector data increased worry of further Federal Reserve rate hikes.",
-      "published": "2026-09-23T18:46:49+00:00",
-      "category": "top",
-      "source": "CNBC",
-      "body_chars": 3633,
-      "body_file": "12-top.txt"
+      "body_chars": 4744,
+      "body_file": "15-economy.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
     }
   ]
 }
