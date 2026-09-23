@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23 20:04 UTC",
+  "generated": "2026-09-23 20:08 UTC",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-09-23",
   "indices": {
@@ -10,21 +10,21 @@
       "date": "2026-09-23"
     },
     "S&P 500": {
-      "last": 7706.39013671875,
-      "chg": -58.31005859375,
-      "pct": -0.750963425850637,
+      "last": 7706.0498046875,
+      "chg": -58.650390625,
+      "pct": -0.7553464930997178,
       "date": "2026-09-23"
     },
     "Dow": {
-      "last": 51512.421875,
-      "chg": -536.40625,
-      "pct": -1.0305827610792129,
+      "last": 51511.58984375,
+      "chg": -537.23828125,
+      "pct": -1.032181320124581,
       "date": "2026-09-23"
     },
     "Russell 2000": {
-      "last": 2841.470458984375,
-      "chg": -33.8896484375,
-      "pct": -1.178622752330194,
+      "last": 2840.72412109375,
+      "chg": -34.635986328125,
+      "pct": -1.2045790799810607,
       "date": "2026-09-23"
     },
     "S&P 500 Growth": {
@@ -110,41 +110,41 @@
   },
   "fx": {
     "DXY": {
-      "last": 101.10800170898438,
-      "chg": 0.6780014038085938,
-      "pct": 0.6750984782917024,
+      "last": 101.11000061035156,
+      "chg": 0.6800003051757812,
+      "pct": 0.6770888211784065,
       "date": "2026-09-23"
     },
     "USD/KRW": {
-      "last": 1366.18994140625,
-      "chg": -7.4901123046875,
-      "pct": -0.5452588675545877,
+      "last": 1365.97998046875,
+      "chg": -7.7000732421875,
+      "pct": -0.5605434264977505,
       "date": "2026-09-23"
     },
     "USD/JPY": {
-      "last": 158.33900451660156,
-      "chg": 0.970001220703125,
-      "pct": 0.6163864550118747,
+      "last": 158.29400634765625,
+      "chg": 0.9250030517578125,
+      "pct": 0.5877924066269635,
       "date": "2026-09-23"
     },
     "EUR/USD": {
-      "last": 1.1388224363327026,
-      "chg": -0.0076378583908081055,
-      "pct": -0.6662122034195805,
+      "last": 1.1390818357467651,
+      "chg": -0.0073784589767456055,
+      "pct": -0.6435860893486134,
       "date": "2026-09-23"
     }
   },
   "commodities": {
     "WTI": {
-      "last": 92.5199966430664,
-      "chg": -2.0699996948242188,
-      "pct": -2.1883917697066435,
+      "last": 92.54000091552734,
+      "chg": -2.0499954223632812,
+      "pct": -2.167243367935412,
       "date": "2026-09-23"
     },
     "Brent": {
-      "last": 98.37999725341797,
-      "chg": -0.8700027465820312,
-      "pct": -0.8765770746418489,
+      "last": 98.44999694824219,
+      "chg": -0.8000030517578125,
+      "pct": -0.8060484148693314,
       "date": "2026-09-23"
     },
     "Natural Gas": {
@@ -154,9 +154,9 @@
       "date": "2026-09-23"
     },
     "Gold": {
-      "last": 4320.89990234375,
-      "chg": -55.5,
-      "pct": -1.268165643872654,
+      "last": 4319.5,
+      "chg": -56.89990234375,
+      "pct": -1.300153176433394,
       "date": "2026-09-23"
     }
   },
@@ -580,7 +580,7 @@
     "moves": {
       "S&P 500": {
         "ticker": "^GSPC",
-        "change": -0.755,
+        "change": -0.756,
         "unit": "%",
         "multiple": -1.06,
         "band": "보통"
@@ -594,49 +594,49 @@
       },
       "Russell 2000": {
         "ticker": "^RUT",
-        "change": -1.172,
+        "change": -1.192,
         "unit": "%",
-        "multiple": -1.43,
+        "multiple": -1.46,
         "band": "보통"
       },
       "VIX": {
         "ticker": "^VIX",
-        "change": 2.085,
+        "change": 3.362,
         "unit": "%",
-        "multiple": 0.33,
-        "band": "미미"
+        "multiple": 0.53,
+        "band": "보통"
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": 0.675,
+        "change": 0.684,
         "unit": "%",
-        "multiple": 2.32,
+        "multiple": 2.35,
         "band": "큼"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": 0.599,
+        "change": 0.595,
         "unit": "%",
-        "multiple": 1.04,
+        "multiple": 1.03,
         "band": "보통"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": -0.534,
+        "change": -0.555,
         "unit": "%",
-        "multiple": -0.89,
+        "multiple": -0.93,
         "band": "보통"
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": -2.231,
+        "change": -2.136,
         "unit": "%",
-        "multiple": -0.7,
+        "multiple": -0.67,
         "band": "보통"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -1.275,
+        "change": -1.282,
         "unit": "%",
         "multiple": -0.94,
         "band": "보통"
@@ -658,7 +658,7 @@
     },
     "levels": {
       "S&P 500": {
-        "value": 7706.09,
+        "value": 7706.03,
         "percentile": 96.8,
         "band": "매우 높음",
         "sessions": 504,
@@ -690,7 +690,7 @@
         }
       },
       "Russell 2000": {
-        "value": 2841.664,
+        "value": 2841.08,
         "percentile": 82.3,
         "band": "높음",
         "sessions": 504,
@@ -706,28 +706,28 @@
         }
       },
       "VIX": {
-        "value": 15.18,
-        "percentile": 14.8,
+        "value": 15.37,
+        "percentile": 17.9,
         "band": "낮음",
         "sessions": 504,
         "plain": {
-          "percentile": 14.8,
+          "percentile": 17.9,
           "sessions": 504,
           "window": "2년",
           "days": null,
-          "share_pct": 15,
+          "share_pct": 18,
           "side": "low",
-          "short": "낮은 쪽 15% 안",
-          "text": "최근 2년(504거래일) 가운데 낮은 쪽 15% 안"
+          "short": "낮은 쪽 18% 안",
+          "text": "최근 2년(504거래일) 가운데 낮은 쪽 18% 안"
         }
       },
       "DXY": {
-        "value": 101.108,
-        "percentile": 70.6,
+        "value": 101.117,
+        "percentile": 70.8,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 70.6,
+          "percentile": 70.8,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -738,7 +738,7 @@
         }
       },
       "USD/JPY": {
-        "value": 158.312,
+        "value": 158.305,
         "percentile": 77.2,
         "band": "높음",
         "sessions": 504,
@@ -754,7 +754,7 @@
         }
       },
       "USD/KRW": {
-        "value": 1366.34,
+        "value": 1366.06,
         "percentile": 7.1,
         "band": "매우 낮음",
         "sessions": 504,
@@ -770,7 +770,7 @@
         }
       },
       "WTI": {
-        "value": 92.48,
+        "value": 92.57,
         "percentile": 88.3,
         "band": "높음",
         "sessions": 504,
@@ -786,7 +786,7 @@
         }
       },
       "Gold": {
-        "value": 4320.6,
+        "value": 4320.3,
         "percentile": 68.8,
         "band": "중간",
         "sessions": 504,
@@ -870,16 +870,16 @@
     ],
     "cohesion": {
       "n_assets": 10,
-      "top1_pct": 45.8,
+      "top1_pct": 45.9,
       "top3_pct": 73.5,
-      "percentile": 69.4,
+      "percentile": 69.8,
       "band": "중간",
       "history_windows": 252
     },
     "drivers": {
       "first": {
         "group_ko": "주식",
-        "share_pct": 45.8
+        "share_pct": 45.9
       },
       "second": {
         "group_ko": "금리",
@@ -900,29 +900,29 @@
         "factors": {
           "style": {
             "label_ko": "성장−가치",
-            "beta": -0.254,
-            "contribution": -1.345
+            "beta": -0.255,
+            "contribution": -1.353
           },
           "size": {
             "label_ko": "대형−소형",
-            "beta": -0.275,
-            "contribution": -1.633
+            "beta": -0.271,
+            "contribution": -1.613
           },
           "semis": {
             "label_ko": "반도체",
-            "beta": 1.406,
-            "contribution": 15.563
+            "beta": 1.407,
+            "contribution": 15.57
           }
         },
-        "specific_pct": 1.003,
-        "fit_r2": 0.6891,
+        "specific_pct": 0.985,
+        "fit_r2": 0.689,
         "window_sessions": 60,
         "horizon_sessions": 20,
         "diagnostics": {
           "long_window_sessions": 252,
           "betas_long": {
             "style": 0.142,
-            "size": 0.324,
+            "size": 0.325,
             "semis": 1.327
           },
           "max_factor_corr": 0.769
@@ -936,28 +936,28 @@
           "style": {
             "label_ko": "성장−가치",
             "beta": 0.732,
-            "contribution": 3.881
+            "contribution": 3.878
           },
           "size": {
             "label_ko": "대형−소형",
-            "beta": -1.637,
-            "contribution": -9.72
+            "beta": -1.638,
+            "contribution": -9.758
           },
           "semis": {
             "label_ko": "반도체",
             "beta": 1.05,
-            "contribution": 11.62
+            "contribution": 11.624
           }
         },
-        "specific_pct": 1.846,
-        "fit_r2": 0.8054,
+        "specific_pct": 1.884,
+        "fit_r2": 0.8056,
         "window_sessions": 60,
         "horizon_sessions": 20,
         "diagnostics": {
           "long_window_sessions": 252,
           "betas_long": {
-            "style": 0.389,
-            "size": -0.449,
+            "style": 0.39,
+            "size": -0.45,
             "semis": 1.006
           },
           "max_factor_corr": 0.769
@@ -966,7 +966,7 @@
       }
     },
     "sector_contribution": {
-      "index_change": -0.75,
+      "index_change": -0.76,
       "estimated": true,
       "fit_r2": 0.976,
       "window_sessions": 252,
@@ -1021,7 +1021,7 @@
         "Materials",
         "Real Estate"
       ],
-      "residual": -0.068
+      "residual": -0.069
     },
     "forward_5y5y": {
       "nominal": 5.09,
