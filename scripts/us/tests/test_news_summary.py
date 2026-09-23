@@ -79,7 +79,7 @@ def test_no_credentials_marks_every_article_and_calls_nothing(tmp_path, monkeypa
     assert all(it['summary_note'] == '자격 증명 없음' for it in its)
 
 
-WIF = {'ANTHROPIC_FEDERATION_RULE_ID': 'fdrl_1', 'ANTHROPIC_ORGANIZATION_ID': 'org',
+WIF = {'ANTHROPIC_FEDERATION_RULE_ID': 'fdrl_1', 'ANTHROPIC_ORGANIZATION_ID': '0f3c9a52-7d1e-4b8a-9c2d-5e6f7a8b9c0d',
        'ANTHROPIC_SERVICE_ACCOUNT_ID': 'svac_1',
        'ACTIONS_ID_TOKEN_REQUEST_URL': 'https://gh/token?api-version=2.0',
        'ACTIONS_ID_TOKEN_REQUEST_TOKEN': 'req-tok'}
@@ -143,11 +143,41 @@ def test_wif_client_gets_a_provider_that_fetches_a_fresh_token_each_time(monkeyp
     assert client['credentials'][0] == 'creds'
     kw = sdk.creds
     assert (kw['federation_rule_id'], kw['organization_id'], kw['service_account_id']) == \
-        ('fdrl_1', 'org', 'svac_1')
+        ('fdrl_1', '0f3c9a52-7d1e-4b8a-9c2d-5e6f7a8b9c0d', 'svac_1')
     assert kw['workspace_id'] is None            # 빈 문자열을 넘기지 않는다
     # 1회용 토큰 — 교환할 때마다 새로 받아야 한다
     assert kw['identity_token_provider']() == 'jwt1'
     assert kw['identity_token_provider']() == 'jwt2'
+
+
+def test_pasted_whitespace_is_stripped_before_the_exchange(monkeypatch):
+    sdk = FakeSDK()
+    NS.make_client(dict(WIF, ANTHROPIC_ORGANIZATION_ID=' ' + WIF['ANTHROPIC_ORGANIZATION_ID'] + '\n',
+                        ANTHROPIC_SERVICE_ACCOUNT_ID='svac_1 '), sdk=sdk)
+    assert sdk.creds['organization_id'] == WIF['ANTHROPIC_ORGANIZATION_ID']
+    assert sdk.creds['service_account_id'] == 'svac_1'
+
+
+def test_wif_id_shapes_are_checked_before_the_exchange():
+    assert NS.wif_config_problems(WIF) == []
+    assert NS.wif_config_problems(dict(WIF, ANTHROPIC_WORKSPACE_ID='default')) == []
+    # 2026-09-24 첫 실행: 교환 400 「organization_id: must be…」
+    for bad in ('org_01ABC', 'My Org', ''):
+        (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_ORGANIZATION_ID=bad))
+        assert 'ANTHROPIC_ORGANIZATION_ID' in p
+    (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_WORKSPACE_ID='Default Workspace'))
+    assert 'ANTHROPIC_WORKSPACE_ID' in p
+
+
+def test_a_malformed_org_id_skips_without_calling_the_api(tmp_path, monkeypatch):
+    monkeypatch.delenv('ANTHROPIC_API_KEY', raising=False)
+    for k, v in dict(WIF, ANTHROPIC_ORGANIZATION_ID='org_01ABCDEF').items():
+        monkeypatch.setenv(k, v)
+    monkeypatch.setattr(NS, 'make_client', lambda *a, **k: (_ for _ in ()).throw(AssertionError))
+    logs, its = [], items(tmp_path, 2)
+    assert NS.summarize_items(its, str(tmp_path), log=logs.append) == 0
+    assert all(it['summary_note'] == 'WIF 설정 형식 오류' for it in its)
+    assert any("'org_…' 12자" in line for line in logs)   # 값 전체는 공개 로그에 찍지 않는다
 
 
 def test_no_sdk_or_no_credentials_means_no_client():

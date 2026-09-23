@@ -64,6 +64,10 @@ _WIF_VARS = ('ANTHROPIC_FEDERATION_RULE_ID', 'ANTHROPIC_ORGANIZATION_ID',
 _GHA_VARS = ('ACTIONS_ID_TOKEN_REQUEST_URL', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN')
 _AUTH_ERRORS = ('AuthenticationError', 'PermissionDeniedError',
                 'WorkloadIdentityError', 'IdentityTokenFileError')
+# 조직 ID 는 **접두사 없는 UUID** 다(SDK docstring: "organizations do not use tagged IDs").
+# 2026-09-24 첫 실행이 다른 형식으로 교환 400 「organization_id: must be…」에 막혔다 —
+# 교환 전에 걸러 로그에 어느 칸이 틀렸는지 적는다.
+_UUID = re.compile(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}')
 
 
 # ── 자격 증명 ────────────────────────────────────────────────────────────
@@ -75,6 +79,31 @@ def credential_source(env=None):
     if all(env.get(k) for k in _WIF_VARS + _GHA_VARS):
         return 'wif'
     return None
+
+
+def _v(env, key):
+    """Variables 칸에 붙여 넣다 딸려 온 공백·줄바꿈을 걷는다."""
+    return (env.get(key) or '').strip()
+
+
+def _shape(value):
+    """공개 로그에 값 전체를 찍지 않고 형식만 보인다."""
+    return f"'{value[:4]}…' {len(value)}자" if value else '빈 값'
+
+
+def wif_config_problems(env=None):
+    """교환을 보내기 전에 알 수 있는 WIF 설정 오류 — 형식이 문서로 확정된 칸만 본다."""
+    env = os.environ if env is None else env
+    problems = []
+    org = _v(env, 'ANTHROPIC_ORGANIZATION_ID')
+    if not _UUID.fullmatch(org):
+        problems.append(f'ANTHROPIC_ORGANIZATION_ID 는 접두사 없는 UUID'
+                        f'(xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)여야 한다 — 받은 값 {_shape(org)}')
+    ws = _v(env, 'ANTHROPIC_WORKSPACE_ID')
+    if ws and ws != 'default' and not ws.startswith('wrkspc_'):
+        problems.append(f"ANTHROPIC_WORKSPACE_ID 는 'wrkspc_…' 또는 'default' 여야 한다 — "
+                        f'받은 값 {_shape(ws)}')
+    return problems
 
 
 def github_oidc_token(env=None, opener=urllib.request.urlopen):
@@ -99,10 +128,10 @@ def make_client(env=None, sdk=None):
         return sdk.Anthropic(max_retries=3, timeout=60.0)
     creds = sdk.WorkloadIdentityCredentials(
         identity_token_provider=lambda: github_oidc_token(env),
-        federation_rule_id=env['ANTHROPIC_FEDERATION_RULE_ID'],
-        organization_id=env['ANTHROPIC_ORGANIZATION_ID'],
-        service_account_id=env['ANTHROPIC_SERVICE_ACCOUNT_ID'],
-        workspace_id=env.get('ANTHROPIC_WORKSPACE_ID') or None)
+        federation_rule_id=_v(env, 'ANTHROPIC_FEDERATION_RULE_ID'),
+        organization_id=_v(env, 'ANTHROPIC_ORGANIZATION_ID'),
+        service_account_id=_v(env, 'ANTHROPIC_SERVICE_ACCOUNT_ID'),
+        workspace_id=_v(env, 'ANTHROPIC_WORKSPACE_ID') or None)
     return sdk.Anthropic(credentials=creds, max_retries=3, timeout=60.0)
 
 
@@ -180,6 +209,11 @@ def summarize_items(items, bodydir, model=None, client=None, log=print):
                 it['summary_note'] = note
 
     if client is None:
+        if credential_source() == 'wif' and wif_config_problems():
+            mark_all('WIF 설정 형식 오류')
+            for p in wif_config_problems():
+                log(f'  요약 건너뜀 — {p}')
+            return 0
         try:
             client = make_client()
         except Exception as e:              # 잘못된 설정값으로 생성자부터 실패하는 경우
@@ -205,7 +239,7 @@ def summarize_items(items, bodydir, model=None, client=None, log=print):
             text, why = summarize_one(client, model, it, body)
         except Exception as e:              # 인증 실패 — 남은 건도 같은 벽에 부딪힌다
             mark_all(f'인증 실패 {type(e).__name__}')
-            log(f'  요약 중단 — 인증 실패 ({type(e).__name__}: {str(e)[:120]}) '
+            log(f'  요약 중단 — 인증 실패 ({type(e).__name__}: {str(e)[:400]}) '
                 f'— WIF 는 Console 「인증 기록」에서 사유를 본다')
             return done
         if text:
