@@ -54,8 +54,31 @@ def _context():
 GAP = 2.0
 RETRY_WAIT = 15
 
+# **간격으로는 안 풀렸다.** 9/22·9/23 모두 종목 피드 넷이 전부 429 였고(재시도 포함),
+# 로컬에서도 첫 요청부터 429 다 — 속도 제한이 아니라 파이썬·curl 의 TLS 지문을 막는
+# 것이다. 브라우저 지문(curl_cffi)으로는 넷 다 200·기사 42건(2026-09-24 실측).
+# `fetch_releases.py`·`collect_fed_events.py` 가 기관 사이트 403 에 쓰는 것과 같은 처리다.
+# curl_cffi 는 수집 잡이 이미 설치한다. 없으면 예전처럼 urllib 결과를 그대로 올린다.
+IMPERSONATE = ('chrome', 'safari')
 
-def get(url, ctx, retries=2):
+
+def _impersonated(url):
+    """urllib 이 거절당한 주소를 브라우저 TLS 지문으로 한 번 더. 실패하면 None."""
+    try:
+        from curl_cffi import requests as creq
+    except ImportError:
+        return None
+    for imp in IMPERSONATE:
+        try:
+            r = creq.get(url, impersonate=imp, timeout=TIMEOUT)
+        except Exception:
+            continue
+        if r.status_code == 200:
+            return r.text
+    return None
+
+
+def get(url, ctx, retries=2, impersonated=_impersonated):
     req = urllib.request.Request(
         url, headers={'User-Agent': UA,
                       'Accept': 'application/rss+xml,application/xml;q=0.9,*/*;q=0.8'})
@@ -64,6 +87,10 @@ def get(url, ctx, retries=2):
             with urllib.request.urlopen(req, timeout=TIMEOUT, context=ctx) as r:
                 return r.read().decode('utf-8', 'replace')
         except urllib.error.HTTPError as e:
+            if e.code in (403, 429):
+                text = impersonated(url)
+                if text is not None:
+                    return text
             if e.code == 429 and attempt < retries:
                 time.sleep(RETRY_WAIT)
                 continue

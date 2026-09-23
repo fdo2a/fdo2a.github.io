@@ -84,6 +84,13 @@ _MACRO = re.compile(
     r'Treasur(?:y|ies)|(?:bond|treasury|10-year|2-year|30-year) yields?|bond market|'
     r'central banks?|Bank of (?:Japan|England)|(?:the|U\.S\.) dollar|dollar index|greenback|'
     r'tariffs?|recession|jobs report|payrolls?|unemployment|jobless|deficit|debt ceiling)\b)')
+# Yahoo 종목 피드는 그 종목 기사만 주지 않는다 — 2026-09-24 실측 42건 중 절반이 아시아
+# 증시 시황·리튬 배터리 시장·같은 번호의 일본 종목(NS Solutions, TSE:2327 ↔ Yageo 2327.TW)·
+# 동종 업종 비교 기사(IDEX)였다. **제목**에 회사명이나 MLCC 가 있어야 MLCC 기사로 친다.
+# 요약은 보지 않는다: 동종 비교 기사가 요약에서 Murata 를 들먹여 통과한다.
+_MLCC = re.compile(
+    r'(?i:\b(?:Murata|MRAAY|Samsung Electro-Mechanics|Taiyo Yuden|Yageo|Walsin|Holy Stone|'
+    r'Sanhuan|Fenghua|MLCCs?|multilayer ceramic|capacitors?)\b)')
 _HINT = {'politics': 'politics', 'economy': 'economy', 'industry': 'industry',
          'tech': 'industry', 'pool': None}
 
@@ -91,8 +98,8 @@ _HINT = {'politics': 'politics', 'economy': 'economy', 'industry': 'industry',
 def classify(item):
     """출처 묶음 + 제목·요약 -> 최종 갈래. 어디에도 안 맞는 종합 피드 기사는 None."""
     hint = item.get('category')
-    if hint == 'mlcc':
-        return 'mlcc'
+    if hint == 'mlcc':          # 무관한 종목 피드 기사는 다른 갈래로도 보내지 않는다 — 대개 몇 달 전 시황이다
+        return 'mlcc' if _MLCC.search(item.get('title') or '') else None
     text = f"{item.get('title') or ''} {item.get('summary') or ''}"
     if _AI.search(text):
         return 'ai'

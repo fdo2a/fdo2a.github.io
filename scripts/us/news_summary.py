@@ -27,6 +27,7 @@ WebFetch 도구도 CNBC 에 403 이다(2026-09-24 실측). 그런데 본문은 �
 않는다** — 새면 수집분 저장까지 날아간다(2026-09-24 구현 검토 #2).
 """
 
+import base64
 import json
 import os
 import re
@@ -113,6 +114,23 @@ def wif_config_problems(env=None):
     return problems
 
 
+# 교환이 401 이면 규칙과 토큰 중 어느 칸이 어긋났는지가 문제다 — 마지막으로 받은 토큰의
+# **대조용 클레임만** 기억했다가 로그에 찍는다(2026-09-24 두 번째 실행: 401 「Ensure your
+# federation rule matches your identity token」). 서명·jti 는 남기지 않는다.
+DIAG_CLAIMS = ('iss', 'aud', 'sub', 'repository_owner', 'ref', 'event_name')
+last_claims = {}
+
+
+def token_claims(jwt):
+    """JWT 페이로드에서 대조용 클레임만. 서명은 검증하지 않는다 — 진단용이다."""
+    try:
+        payload = jwt.split('.')[1]
+        data = json.loads(base64.urlsafe_b64decode(payload + '=' * (-len(payload) % 4)))
+    except Exception:
+        return {}
+    return {k: data[k] for k in DIAG_CLAIMS if k in data}
+
+
 def github_oidc_token(env=None, opener=urllib.request.urlopen):
     """GitHub Actions OIDC 토큰을 **매번 새로** 받는다. 실패하면 예외를 올린다."""
     env = os.environ if env is None else env
@@ -121,7 +139,10 @@ def github_oidc_token(env=None, opener=urllib.request.urlopen):
     req = urllib.request.Request(f'{url}{sep}audience={urllib.parse.quote(AUDIENCE, safe="")}',
                                  headers={'Authorization': f'Bearer {bearer}'})
     with opener(req, timeout=20) as r:
-        return json.loads(r.read().decode('utf-8'))['value']
+        token = json.loads(r.read().decode('utf-8'))['value']
+    last_claims.clear()
+    last_claims.update(token_claims(token))
+    return token
 
 
 def make_client(env=None, sdk=None):
@@ -248,6 +269,9 @@ def summarize_items(items, bodydir, model=None, client=None, log=print):
             mark_all(f'인증 실패 {type(e).__name__}')
             log(f'  요약 중단 — 인증 실패 ({type(e).__name__}: {str(e)[:400]}) '
                 f'— WIF 는 Console 「인증 기록」에서 사유를 본다')
+            if last_claims:
+                log('  GitHub 토큰 클레임 (Console 규칙의 발급자·대상·주체 접두사·클레임과 '
+                    '한 글자씩 대조): ' + json.dumps(last_claims, ensure_ascii=False))
             return done
         if text:
             it['summary_ko'], it['summary_model'] = text, model

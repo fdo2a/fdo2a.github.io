@@ -230,6 +230,27 @@ def test_mlcc_stays_mlcc_whatever_its_keywords():
     assert classify({'title': 'Murata AI capacitor demand', 'category': 'mlcc'}) == 'mlcc'
 
 
+# 2026-09-24 실측 — Yahoo 종목 피드에 실제로 섞여 온 제목들
+MLCC_FEED_REAL = [
+    ('Surging Earnings Estimates Signal Upside for Murata Manufacturing (MRAAY) Stock', 'mlcc'),
+    ('Samsung Electro-Mechanics Co Ltd (XKRX:009150) (Q2 2026) Earnings Call Highlights: ...', 'mlcc'),
+    ('AI Demand for High-End MLCCs Drives Japan and Korea Suppliers’ Book-to-Bill Ratios', 'mlcc'),
+    ('TAIYO YUDEN Commercializes 1005M-Size Embeddable Multilayer Ceramic Capacitor', 'mlcc'),
+    ('NS Solutions (TSE:2327) Stock Dropped, So What Is Driving Attention Now?', None),
+    ('Is IDEX (IEX) Stock Outpacing Its Industrial Products Peers This Year?', None),
+    ('Nikkei Slides 3.9% As AI Trade Breaks', None),
+    ('Tech Shares, Lull in Oil Prices Lift Asian Stock Markets', None),
+]
+
+
+def test_off_topic_ticker_feed_items_are_dropped_not_rerouted():
+    from us.news import classify
+    for title, want in MLCC_FEED_REAL:
+        # 요약에 회사명이 있어도 제목이 무관하면 버린다(동종 비교 기사)
+        got = classify({'title': title, 'summary': 'peers include Murata', 'category': 'mlcc'})
+        assert got == want, title
+
+
 def test_mlcc_news_feeds_are_trimmed_to_the_liquid_names():
     # 여덟을 연속 호출하면 Yahoo 가 429 를 준다 — 표는 여덟, 뉴스 피드는 넷
     from us.news import MLCC_TICKERS

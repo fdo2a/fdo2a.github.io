@@ -215,6 +215,31 @@ def test_a_token_exchange_failure_stops_quietly_instead_of_raising(tmp_path):
     assert all('인증 실패' in it['summary_note'] for it in its)
 
 
+def _jwt(claims):
+    import base64
+    import json
+    b = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip('=')
+    return f"{b({'alg': 'RS256'})}.{b(claims)}.sig"
+
+
+def test_the_token_claims_are_logged_when_the_exchange_is_refused(tmp_path, monkeypatch):
+    claims = {'iss': 'https://token.actions.githubusercontent.com', 'aud': 'https://api.anthropic.com',
+              'sub': 'repo:fdo2a/fdo2a.github.io:ref:refs/heads/main', 'ref': 'refs/heads/main',
+              'repository_owner': 'fdo2a', 'jti': 'secret-ish', 'run_id': '1'}
+    NS.github_oidc_token(WIF, opener=lambda req, timeout: _Resp(
+        ('{"value": "%s"}' % _jwt(claims)).encode()))
+    assert NS.last_claims == {k: claims[k] for k in ('iss', 'aud', 'sub', 'ref', 'repository_owner')}
+    WorkloadIdentityError = type('WorkloadIdentityError', (Exception,), {})
+    logs = []
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m',
+                       client=Raising(WorkloadIdentityError('HTTP 401')), log=logs.append)
+    assert any('refs/heads/main' in line and 'jti' not in line for line in logs)
+
+
+def test_a_malformed_token_yields_no_claims():
+    assert NS.token_claims('not-a-jwt') == {}
+
+
 def test_a_401_stops_and_a_529_skips_only_that_article(tmp_path):
     its = items(tmp_path, 2)
     c = Raising(Boom(status_code=529))
