@@ -56,7 +56,7 @@ STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
 
-Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`. Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
+Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
 
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
  장중 수급 전개·프로그램 매매는 수급 서브블록(그 순서대로), 기술적 분석/전략은 일봉 차트 바로 아래 산문 섹션(writer 스펙 §5·§5.5). **구조 변경 반영(2026-07-29)**: 전략 코멘트가 §2로 전진(헤드라인 다음), 테마 섹션 폐지, 정책·정치 촉매(§10) 확대 — writer 스펙의 섹션 순서를 그대로 따르게 프롬프트에 명시한다.
@@ -166,23 +166,7 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 
 ## STEP 3 — 블로그 발행 (/kr/)
 
-1. 리포트 HTML을 `kr/posts/[YYYY-MM-DD].html`로 복사, 두 주입:
-   (a) `<div class="doc">` 바로 앞 네비게이션(폭 1120px 일치):
-```html
-<div style="max-width:1120px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:10px;">
-  <a href="../index.html" style="text-decoration:none;background:#fff;border:1px solid #E5E8EB;border-radius:9999px;padding:6px 14px;font-size:12px;font-weight:700;color:#191F28;">‹ 전체 보고서</a>
-  <a href="../index.html" style="text-decoration:none;font-size:14px;font-weight:800;color:#0064FF;letter-spacing:-0.02em;">KR Market Brief</a>
-  <a href="../../index.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#8B95A1;margin-left:auto;">🇺🇸 미국 시장 →</a>
-</div>
-```
-   (b) `<title>` 바로 앞 SEO 메타:
-```html
-<meta name="description" content="[헤드라인 한 줄]. [YYYY-MM-DD] 한국 증시 마감브리프.">
-<link rel="canonical" href="https://fdo2a.github.io/kr/posts/[YYYY-MM-DD].html">
-<meta property="og:type" content="article">
-<meta property="og:title" content="한국 증시 마감브리프 — [YYYY년 M월 D일 (요일)]">
-<meta property="og:url" content="https://fdo2a.github.io/kr/posts/[YYYY-MM-DD].html">
-```
+1. 리포트 HTML을 `kr/posts/[YYYY-MM-DD].html`로 복사한다. **아무것도 주입하지 않는다** — 네비게이션과 SEO 메타(description·canonical·og)는 `scripts/render_post.py` 가 이미 한 번 넣었다. 다시 넣으면 head 태그가 두 벌이 된다(2026-09-23 US 발행본). 파일에 `post-shell-v1` 이 없으면 작성자가 셸을 건너뛴 것이다 — head 를 손으로 고치지 말고 렌더로 돌려보낸다.
 2. `kr/posts.json`에 `{date,title,headline}` 추가(같은 날짜는 REPLACE, 중복 금지). 유효 JSON 유지.
 3. `sitemap.xml`에 `https://fdo2a.github.io/kr/posts/DATE.html` url 추가(전체 재생성, US 항목 보존).
 4. main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).

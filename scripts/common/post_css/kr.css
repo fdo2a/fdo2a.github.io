@@ -1,0 +1,45 @@
+/* Post shell — KR base stylesheet, verbatim from kr/posts/2026-09-23.html (identical
+   in every KR brief since 2026-09-04). Rendered by scripts/render_post.py. */
+* { box-sizing: border-box; }
+body { margin:0; padding:0; background:#F2F4F6; color:#191F28; font-family:'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing:-0.01em; word-break:keep-all; overflow-wrap:break-word; line-height:1.6; }
+.doc { max-width:1120px; margin:0 auto; padding:20px 20px 60px; }
+.topbar { max-width:1120px; margin:0 auto; padding:14px 20px; display:flex; align-items:baseline; gap:10px; }
+.topbar .brand { color:#0064FF; font-weight:800; font-size:15px; }
+.topbar .date { color:#8B95A1; font-size:13px; }
+.card { background:#fff; border-radius:14px; border:1px solid #F2F4F6; padding:20px 22px; margin-bottom:14px; page-break-inside:avoid; }
+.headline-card { background:#E8F2FF; border:1px solid #D6E8FF; }
+h1 { font-size:22px; margin:0 0 6px; line-height:1.35; color:#191F28; font-weight:800; }
+h2 { font-size:18.5px; margin:0 0 12px; color:#191F28; font-weight:800; display:flex; align-items:center; gap:8px; }
+h2::before { content:''; display:inline-block; width:6px; height:18px; background:#0064FF; border-radius:6px; }
+h3 { font-size:16px; margin:16px 0 8px; color:#191F28; font-weight:800; }
+h4 { font-size:15px; margin:10px 0 6px; color:#191F28; font-weight:700; }
+p { font-size:16px; color:#191F28; }
+.muted { color:#4E5968; }
+.sub { color:#8B95A1; font-size:13px; }
+.caption { color:#8B95A1; font-size:12.5px; margin:6px 0 0; line-height:1.5; }
+section { break-inside: avoid-page; page-break-inside: avoid; margin-bottom:6px; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+thead th { background:#F2F4F6; border-bottom:2px solid #0064FF; text-align:right; padding:9px 11px; font-weight:700; color:#191F28; white-space:nowrap; }
+thead th:first-child, td:first-child { text-align:left; }
+tbody td { padding:9px 11px; border-bottom:1px solid #F2F4F6; text-align:right; white-space:nowrap; }
+tbody tr:last-child td { border-bottom:none; }
+.tbl-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:10px; border:1px solid #F2F4F6; margin-bottom:6px; page-break-inside:avoid; break-inside:avoid-page; }
+.up { color:#00A85A; font-weight:700; }
+.down { color:#FF4040; font-weight:700; }
+.pill { display:inline-block; padding:2px 9px; border-radius:9999px; font-size:12.5px; font-weight:700; }
+.pill-long { background:#E8F8EE; color:#00A85A; }
+.pill-short { background:#FFE8E8; color:#FF4040; }
+.pill-info { background:#E8F2FF; color:#0064FF; }
+.box-label { display:inline-block; font-size:12.5px; font-weight:800; color:#0064FF; background:#E8F2FF; border-radius:6px; padding:2px 8px; margin-bottom:8px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+img.chart { width:100%; display:block; border-radius:10px; }
+.footer-note { font-size:12.5px; color:#8B95A1; line-height:1.6; margin-top:18px; }
+.tbl-scroll table { margin:0; }
+@media (max-width: 560px) {
+  .doc, .topbar { padding-left:14px; padding-right:14px; }
+  .grid-2 { grid-template-columns:1fr; }
+  table { font-size:11px; }
+  th, td { padding:5px 7px; white-space:nowrap; }
+  th:first-child, td:first-child { white-space:normal; }
+  th:last-child, td:last-child { white-space:normal; }
+}

@@ -76,7 +76,7 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 **뉴스 입력 (작성 전)** — 커밋된 `news/[DATE].json` 의 각 항목에 수집 잡이 원문을 읽고 만든 한국어 요약 `summary_ko` 가 있다(2026-09-24). **루틴에서 기사 본문을 다시 받지 않는다** — 클라우드 환경은 CNBC·Yahoo 에 403 이라 예전의 `--bodies-only` 재수집은 한 번도 성공하지 못했고, 실패한 재수집이 `body_chars` 를 0 으로 덮어써 게이트가 뉴스 섹션을 면제해 왔다(9/19~9/22 발행본에 뉴스가 없던 이유). `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」 섹션은 의무다. 하나도 없으면(예: 레포 Variables 에 WIF 값 미등록, 항목의 `summary_note` 참조) 섹션 없이 발행하되 **최종 보고에 그 사유를 적는다** — 조용히 빠지게 두지 않는다.
 
-Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
+Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
 Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` — must be 0; (b) spot-check 5+ numbers by grepping the HTML for specific values from market_data.json / intraday.json / econ_indicators.json (e.g. `grep -o '4\.62' <html>`), NOT by reading the whole ~34K-token HTML into context. If either check fails, relaunch the writer subagent with the specific violations; repeat until clean. 수치 창작 절대 금지 — 미확인 항목은 삭제·재구성이 원칙.
 
@@ -193,22 +193,7 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
 
 Site base URL: https://fdo2a.github.io/
 
-1. Copy the report HTML into the repo as posts/[YYYY-MM-DD].html, then make two injections:
-   (a) Immediately BEFORE `<div class="doc">`, this navigation block:
-```html
-<div style="max-width:1120px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:10px;">
-  <a href="../index.html" style="text-decoration:none;background:#fff;border:1px solid #E5E8EB;border-radius:9999px;padding:6px 14px;font-size:12px;font-weight:700;color:#191F28;">‹ 전체 보고서</a>
-  <a href="../index.html" style="text-decoration:none;font-size:14px;font-weight:800;color:#0064FF;letter-spacing:-0.02em;">US Market Brief</a>
-</div>
-```
-   (b) Immediately BEFORE `<title>`, SEO meta tags:
-```html
-<meta name="description" content="[헤드라인 한 줄 요약]. [YYYY-MM-DD] 미국 증시 모닝브리프.">
-<link rel="canonical" href="https://fdo2a.github.io/posts/[YYYY-MM-DD].html">
-<meta property="og:type" content="article">
-<meta property="og:title" content="미국 증시 모닝브리프 — [YYYY년 M월 D일 (요일)]">
-<meta property="og:url" content="https://fdo2a.github.io/posts/[YYYY-MM-DD].html">
-```
+1. Copy the report HTML into the repo as posts/[YYYY-MM-DD].html. **Inject nothing** — the navigation block and the SEO meta (description, canonical, og:*) are already in it, rendered once by `scripts/render_post.py`. Injecting them again is how the 2026-09-23 post ended up with every head tag twice. If `grep -c 'post-shell-v1'` on the file is 0, the writer skipped the shell: send it back to render rather than patching the head by hand.
 2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote the writer's macro book:
    - `macro_next.json` → `data/macro.json`
    Tomorrow's Actions run judges today's regime and triggers against this file. Publishing without promoting it leaves the macro book frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.

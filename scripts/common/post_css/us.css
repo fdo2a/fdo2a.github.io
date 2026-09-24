@@ -1,0 +1,102 @@
+/* Post shell — US base stylesheet. Rendered into every US brief by
+   scripts/render_post.py; writers do not write CSS. Source: posts/2026-09-23.html
+   base block + the component rules brief-report-writer.md used to ask for.
+   apply_readability.py / apply_colors.py still inject their own marked blocks. */
+body { margin:0; background:#F2F4F6; font-family:'Toss Product Sans',Pretendard,'Noto Sans CJK KR',-apple-system,sans-serif;
+  letter-spacing:-0.01em; color:#191F28; word-break:keep-all; overflow-wrap:break-word; }
+.container, .doc { max-width:1120px; margin:0 auto; padding:16px; }
+.card { background:#fff; border:1px solid #F2F4F6; border-radius:14px; padding:18px 20px; margin-bottom:14px; }
+section { break-inside:avoid-page; page-break-inside:avoid; }
+table, .card { page-break-inside:avoid; }
+h1 { font-size:22px; }
+h2 { font-size:18.5px; font-weight:800; color:#191F28; }
+h2::before { content:""; display:inline-block; width:6px; height:6px; border-radius:3px; background:#0064FF; margin-right:8px; }
+h3 { font-size:16px; font-weight:800; color:#191F28; }
+.brand { color:#0064FF; font-weight:800; }
+.topbar { max-width:1120px; margin:0 auto; padding:14px 16px; font-size:14px; }
+.headline-card { background:#E8F2FF; }
+p { line-height:1.78; margin:0 0 15px; max-width:42em; font-size:16px; }
+p:last-child { margin-bottom:0; }
+table { font-variant-numeric:tabular-nums; width:100%; border-collapse:collapse; font-size:14.5px; }
+th, td { padding:8px 10px; text-align:right; border-bottom:1px solid #F2F4F6; }
+th:first-child, td:first-child { text-align:left; }
+thead th { background:#F2F4F6; border-bottom:2px solid #0064FF; font-weight:700; }
+.caption { font-size:12.5px; color:#8B95A1; margin:6px 2px 0; }
+.sub { font-size:12.5px; color:#8B95A1; }
+.box-label { display:block; width:fit-content; background:#E8F2FF; color:#0064FF; font-weight:700;
+  font-size:12.5px; padding:3px 10px; border-radius:9999px; margin-bottom:6px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.tbl-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:10px; }
+.hl { background:#E8F2FF; }
+td[data-trend] { min-width: 13em; white-space: normal; }
+.ax-strip { display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 14px; }
+.ax-item { display:inline-flex; align-items:baseline; gap:6px; padding:7px 11px; background:#F9FAFB;
+  border:1px solid #F2F4F6; border-radius:9999px; font-size:13.5px; white-space:nowrap; }
+.ax-item b { font-weight:700; color:#191F28; }
+.ax-item .sub { font-size:11.5px; color:#8B95A1; }
+.ax-item [data-axis] { padding:2px 8px; border-radius:9999px; font-weight:700; font-size:12.5px;
+  background:#F2F4F6; color:#4E5968; }
+.mt-strip { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 16px; }
+.mt-item { display:inline-flex; align-items:baseline; gap:6px; padding:7px 11px; background:#F9FAFB;
+  border:1px solid #F2F4F6; border-radius:9999px; font-size:13.5px; white-space:nowrap; }
+.mt-item b { font-weight:700; color:#191F28; }
+.mt-item .sub { font-size:11.5px; color:#8B95A1; }
+.mt-item [data-direction="1"] { color:#00A85A; background:#E8F8EE; }
+.mt-item [data-direction="0"] { color:#4E5968; background:#F2F4F6; }
+.mt-item [data-direction="-1"] { color:#FF4040; background:#FFE8E8; }
+.mt-item [data-direction] { padding:2px 8px; border-radius:9999px; font-weight:700; font-size:12.5px; }
+[data-macro-group] { margin-bottom:14px; }
+[data-macro-group] h4 { font-size:15px; font-weight:700; color:#191F28; margin:0 0 6px; }
+@media (max-width:560px) {
+  .doc, .container { padding-left:14px; padding-right:14px; }
+  .grid-2 { grid-template-columns:1fr; }
+  table { font-size:11px; }
+  th, td { padding:5px 7px; white-space:nowrap; }
+  th:first-child, td:first-child { white-space:normal; }
+  th:last-child, td:last-child { white-space:normal; }
+}
+@media (min-width:1024px) {
+  p:not([class]), li { max-width:none; font-size:17px; line-height:1.8; }
+  h1 { font-size:25px; max-width:30em; }
+  h2 { font-size:20px; }
+  h3 { font-size:17px; }
+}
+
+/* 서술 칸이 둘 이상인 표 — 매크로 4축·MLCC (모바일에서 행을 카드로 쌓는다) */
+.stance-tbl { table-layout: fixed; }
+@media (min-width: 561px) {
+.stance-tbl th:nth-child(1), .stance-tbl td:nth-child(1) { width: 8%; }
+.stance-tbl th:nth-child(2), .stance-tbl td:nth-child(2) { width: 17%; text-align: left; }
+.stance-tbl th:nth-child(3), .stance-tbl td:nth-child(3) { width: 8%; }
+.stance-tbl th:nth-child(4), .stance-tbl td:nth-child(4) { width: 9%; }
+.stance-tbl th:nth-child(5), .stance-tbl td:nth-child(5) { width: 31%; text-align: left; }
+.stance-tbl th:nth-child(6), .stance-tbl td:nth-child(6) { width: 27%; text-align: left; }
+}
+@media (max-width: 560px) {
+  .stance-tbl, .stance-tbl tbody, .stance-tbl tr, .stance-tbl td { display: block; width: auto; }
+  .stance-tbl thead { display: none; }
+  .stance-tbl { font-size: 14px; }
+  .stance-tbl tr { background: #fff; border: 1px solid #E5E8EB; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 10px; }
+  .stance-tbl tr:last-child { margin-bottom: 0; }
+  .stance-tbl td { padding: 0; border: none; text-align: left; white-space: normal; font-weight: 400; }
+  .stance-tbl td::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800;
+    color: #8B95A1; letter-spacing: 0.02em; margin: 10px 0 2px; }
+  .stance-tbl td:nth-child(1) { font-size: 15px; font-weight: 800; }
+  .stance-tbl td:nth-child(1)::before, .stance-tbl td:nth-child(2)::before { content: none; }
+  .stance-tbl td:nth-child(2) { margin-top: 3px; }
+  .stance-tbl td:nth-child(3), .stance-tbl td:nth-child(4) { display: inline-block;
+    margin: 9px 14px 0 0; font-size: 12.5px; color: #4E5968; }
+  .stance-tbl td:nth-child(3)::before, .stance-tbl td:nth-child(4)::before { display: inline;
+    margin: 0 5px 0 0; }
+}
+
+/* §10 연준 이벤트 — 인용과 투자 아이디어 */
+.fed-quote { border-left: 3px solid #0064FF; background: #F7F9FC; border-radius: 0 12px 12px 0;
+             padding: 14px 16px; margin: 14px 0; }
+.fed-quote blockquote { margin: 0 0 8px; font-size: 14px; line-height: 1.65; color: #333D4B;
+                        font-style: normal; }
+.fed-quote .fed-trans { margin: 0 0 6px; font-weight: 600; color: #191F28; }
+.fed-quote .caption { margin: 0; }
+.fed-idea { border: 1px solid #E5E8EB; border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.fed-idea [data-invalidation] { margin-bottom: 0; color: #6B7684; }

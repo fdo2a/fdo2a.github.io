@@ -63,7 +63,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 ## 보고서 구조 (한국 특화, 순서 고정)
 
-**`<title>` 태그 (SEO 최우선, 2026-07-23)**: `코스피 마감 시황 — [그날 핵심구] | [YYYY-MM-DD]` 형식. 핵심구는 그날 헤드라인의 검색될 키워드(지수 등락·수급·주도 업종·주도주)를 25자 이내로 — 예: `코스피 마감 시황 — 외국인 순매수에 코스피·코스닥 동반 급등 | 2026-07-23`. `og:title`은 `한국 증시 마감브리프 — YYYY년 M월 D일 (요일)` 유지. **H1**은 US 스펙과 동일 — 그날 헤드라인을 `<h1>` 1개로. **NewsArticle 구조화 데이터**도 US 스펙과 동일하게 `<head>`에 넣되 `author`·`publisher`의 name은 `"KR Market Brief"`, url은 `"https://fdo2a.github.io/kr/"`로.
+**제목 (SEO 최우선, 2026-07-23)**: `kr_brief_[DATE].meta.json` 의 `title` 을 `코스피 마감 시황 — [그날 핵심구] | [YYYY-MM-DD]` 형식으로 쓴다. 핵심구는 그날 헤드라인의 검색될 키워드(지수 등락·수급·주도 업종·주도주)를 25자 이내로 — 예: `코스피 마감 시황 — 외국인 순매수에 코스피·코스닥 동반 급등 | 2026-07-23`. **H1** 은 그날 헤드라인 `<h1>` 1개. og:title·JSON-LD·메타 description 은 셸이 만든다(아래 「HTML — 본문만 쓴다」).
 
 1. **헤드라인 한 줄 요약** — H1은 80자 이내, 수치 넷 이내. `시장 방향 + 가장 중요한 촉매 + 포트폴리오 함의`만 남기고 지수·수급·업종 수치를 한 문장에 전부 욱여넣지 않는다. 헤드라인 카드 본문은 두 문단·문단당 두 문장 이내다.
 2. **전략 코멘트** — **여섯 문단**을 `<p data-lede="...">` 표식과 함께 이 순서로 쓴다 (2026-09-22 독자 전환으로 넷에서 여섯으로 늘었다).
@@ -162,6 +162,16 @@ spec §4.4. 한국 증시는 정책·정치 변수가 밸류에이션을 직접 
 **정보 예산**: 각 이슈는 새 사실과 근거 있는 영향에 집중한다. 실제 다음 분기점은 밝히되 동일한 해설·행동 문장을 매번 덧붙이지 않는다. §2에서 이미 쓴 판단과 수치를 뒤 섹션에서 되풀이하지 않는다. 변하지 않은 정책 배경은 매일 처음부터 설명하지 말고, 전일 대비 새로 생긴 변화와 다음 분기점만 쓴다.
 
 **금지**: 정치적 당파 논평, 특정 정당·정치인에 대한 가치판단, 선거 결과 예측. 정책이 자산 가격에 미치는 경로만 다룬다.
+
+## HTML — 본문만 쓴다 (셸이 나머지를 만든다, 2026-09-24)
+
+쓰는 파일은 둘이다 — `kr_brief_[DATE].body.html`(`<div class="doc">` 안에 들어갈 섹션들, 첫 섹션은 `<div class="card headline-card">` + `<h1>` 하나)과 `kr_brief_[DATE].meta.json`(`{"title": 위 형식, "summary": "검색·공유 설명 1~2문장"}`). 합친다:
+
+`python3 scripts/render_post.py --market kr --date [DATE] --meta kr_brief_[DATE].meta.json --body kr_brief_[DATE].body.html --out kr_brief_[DATE].html`
+
+`FAIL` 이 나오면 적힌 대로 고쳐 다시 돌린다. 렌더는 한 번이고, 이후 수정·게이트는 완성본에서 한다. **`<head>`·`<style>`·메타·JSON-LD·애드센스·상단 바·네비게이션·`<div class="doc">` 는 쓰지 않는다** — `scripts/common/post_css/kr.css` 가 CSS 전부다. **CSS 를 베끼려고 직전 발행본을 읽지 않는다.** 섹터 막대(`kr_sector.html`)처럼 데이터가 싣고 오는 `<style>` 은 그대로 둔다.
+
+쓸 수 있는 클래스: `.card`·`.headline-card` · 본문 보조 `.muted` · 캡션 `.caption`·`.sub`·`.footer-note` · 등락 `.up`·`.down` · 알약 `.pill` + `.pill-long`·`.pill-short`·`.pill-info` · 라벨 `.box-label` · 2단 `.grid-2` · 표 래퍼 `.tbl-scroll`(모든 `<table>` 을 감싼다) · 차트 `<img class="chart">`. 섹션은 `<section>` 으로 감싸고 `<h2>`·`<h3>`·`<h4>` 를 쓴다. When changing this: read `docs/superpowers/specs/2026-09-24-post-shell.md` before touching `scripts/common/post_css/kr.css`.
 
 ## 팩트체크 마감 (발행 게이트)
 
