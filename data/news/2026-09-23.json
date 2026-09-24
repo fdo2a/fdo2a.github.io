@@ -112,6 +112,18 @@
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
+      "guid": "108366656",
+      "url": "https://www.cnbc.com/2026/09/23/lee-jae-myung-trump-kim-summit-north-korea.html",
+      "title": "South Korea pushes for Trump summit with renegade North Korea, seeing opportunity for peace",
+      "summary": "South Korea pushes for Trump summit with renegade North Korea, seeing opportunity for peace",
+      "published": "2026-09-23T23:58:43+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 2521,
+      "body_file": "10-politics.txt",
+      "summary_note": "인증 실패 WorkloadIdentityError"
+    },
+    {
       "guid": "108367112",
       "url": "https://www.cnbc.com/2026/09/23/flock-axon-senate-hearing-josh-hawley.html",
       "title": "Flock, Axon dodge Senate hearing after invite from Chair Josh Hawley",
@@ -120,7 +132,7 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 4048,
-      "body_file": "10-politics.txt",
+      "body_file": "11-politics.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
     {
@@ -132,18 +144,6 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 9261,
-      "body_file": "11-politics.txt",
-      "summary_note": "인증 실패 WorkloadIdentityError"
-    },
-    {
-      "guid": "108367066",
-      "url": "https://www.cnbc.com/2026/09/23/trump-media-ban-court-hearing.html",
-      "title": "Judge hears arguments on Trump White House media ban, hopes to rule 'soon'",
-      "summary": "The DOJ on Tuesday night cited national security concerns in justifying President Trump's ban of MS NOW, CNN and Politico from the White House.",
-      "published": "2026-09-23T21:22:30+00:00",
-      "category": "politics",
-      "source": "CNBC",
-      "body_chars": 4408,
       "body_file": "12-politics.txt",
       "summary_note": "인증 실패 WorkloadIdentityError"
     },
