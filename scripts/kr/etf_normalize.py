@@ -179,14 +179,16 @@ def krx_changes(candidates: list, closes: dict, report_date: str) -> list:
     네이버 marketValue 의 `closePrice`·`fluctuationsRatio` 는 넥스트레이드 애프터마켓(~20:00)
     까지 섞인 통합가다 — 9/23 삼성전자 네이버 +3.62%(286,500) vs KRX +3.25%(285,500).
     수집이 17:00·17:30 KST 에 돌아 매번 어긋나므로 yfinance `<code>.KS` 일봉으로 다시 잰다.
-    마지막 봉이 report_date 가 아니거나 전일 종가가 없으면 뺀다 — 추정하지 않는다.
+    report_date 봉을 찾아 쓴다(재실행하면 뒤에 봉이 붙는다). 그 봉이나 전일 종가가 없으면 뺀다 — 추정하지 않는다.
     """
     out = []
     for c in candidates:
         series = closes.get(c["code"]) or []
-        if len(series) < 2 or series[-1][0] != report_date:
+        dates = [d for d, _ in series]
+        if report_date not in dates or dates.index(report_date) == 0:
             continue
-        prev, last = series[-2][1], series[-1][1]
+        i = dates.index(report_date)
+        prev, last = series[i - 1][1], series[i][1]
         if not prev:
             continue
         out.append({"name": c["name"], "change_pct": round((last / prev - 1) * 100, 2),

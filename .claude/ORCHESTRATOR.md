@@ -25,6 +25,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
+   - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
    - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. 작성자에게 이 파일 경로를 입력으로 전달한다 — 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
@@ -90,6 +91,7 @@ python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadi
 python3 scripts/check_news.py          --html morning_brief_[DATE].html --datadir <workspace> --date [DATE]
 python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
+python3 scripts/check_movers.py        --html morning_brief_[DATE].html --datadir <workspace>
 ```
 
 - `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다.
@@ -156,7 +158,8 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
   --gate "python3 scripts/check_fed.py --html {f} --datadir <workspace>" \
   --gate "python3 scripts/check_news.py --html {f} --datadir <workspace> --date [DATE]" \
   --gate "python3 scripts/check_sources.py --html {f} --datadir <workspace>" \
-  --gate "python3 scripts/check_calendar.py --html {f} --datadir <workspace>"
+  --gate "python3 scripts/check_calendar.py --html {f} --datadir <workspace>" \
+  --gate "python3 scripts/check_movers.py --html {f} --datadir <workspace>"
 ```
 
 연구 원장 게이트와 연준 이벤트 게이트가 이 목록에 **반드시 있어야 한다** — 윤문은 문단을 통째로 갈아끼우므로 판단 유보나 결측 고지가 조용히 사라질 수 있다. 연준 인용문은 더 분명하다: 한 낱말만 다듬어도 원문 대조가 깨지고, 그러면 의장이 하지 않은 말이 따옴표 안에 남는다. 인용 블록 자체는 `humanize_prose.py`가 애초에 뽑지 않지만(넘기지 않은 것은 훼손될 수 없다), 검사는 그 가정을 믿지 않고 다시 한다. 초안 단계에서 한 번 통과한 것으로는 최종본을 보증하지 못한다(2026-09-01 codex 검토).

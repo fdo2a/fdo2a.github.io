@@ -140,6 +140,8 @@ def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
             rows.append({
                 "name": s["stockName"],
                 "code": s.get("itemCode"),
+                # 시가총액(원) — 움직인 종목의 지수 기여 순위에만 쓴다(통합가 기준 근사)
+                "cap": _to_int(s.get("marketValueRaw")),
                 "value": _to_int(s.get("accumulatedTradingValue")),
                 "volume": _to_int(s.get("accumulatedTradingVolume")),
                 # 넥스트레이드 애프터마켓까지 섞인 통합가 기준이다 — KRX 종가 등락이 아니다.
@@ -149,6 +151,23 @@ def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
         raise RuntimeError(f"거래대금 목록이 비었다 — marketValue 응답 확인 필요(sosok={sosok})")
     rows.sort(key=lambda r: r["value"], reverse=True)
     return rows
+
+
+def fetch_industry_names() -> dict:
+    """업종 번호 → 이름, 전 업종(79개). `fetch_industry()` 는 60개만 받아 두산에너빌리티(299
+    기계) 같은 코드가 풀리지 않았다 — 그 목록(`kr_industry.json`)은 그대로 두고 이름만 따로 받는다."""
+    groups = fetch_json(
+        "https://m.stock.naver.com/api/stocks/industry?menu=industry&pageSize=100"
+    ).get("groups", [])
+    return {str(g["no"]): g.get("name") or g.get("groupName") for g in groups if g.get("no") is not None}
+
+
+def fetch_stock_industry(code: str):
+    """종목의 네이버 업종 번호(`industryCode`) — 업종명은 `fetch_industry()` 의 `no` 로 푼다.
+    움직인 종목 후보(하루 20 안팎)만 조회한다. 없으면 None."""
+    code_ = (fetch_json(f"https://m.stock.naver.com/api/stock/{code}/integration",
+                        timeout=15) or {}).get("industryCode")
+    return str(code_) if code_ not in (None, "") else None
 
 
 def fetch_intraday_flows(sosok: str, bizdate: str, page: int = 1):
@@ -185,7 +204,7 @@ def fetch_industry() -> list:
         breadth = (rise / total) if total else 0.0
         if nm and cr is not None:
             out.append({"name": nm, "change_pct": cr, "total": total,
-                        "rise": rise, "breadth": round(breadth, 3)})
+                        "rise": rise, "breadth": round(breadth, 3), "no": it.get("no")})
     if not out:
         raise RuntimeError("업종 목록이 비었다 — industry 응답 확인 필요")
     return out

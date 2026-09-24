@@ -207,3 +207,11 @@ def test_krx_changes_drop_stale_or_short_series():
     closes = {"1": [("2026-09-21", 10.0), ("2026-09-22", 11.0)],   # 오늘 봉이 없다
               "2": [("2026-09-23", 10.0)]}                        # 전일 종가가 없다
     assert krx_changes(cands, closes, "2026-09-23") == []
+
+
+def test_krx_changes_use_the_report_date_bar_even_when_a_later_bar_exists():
+    cands = [{"name": "삼성전자", "code": "005930", "value": 900}]
+    closes = {"005930": [("2026-09-22", 276500.0), ("2026-09-23", 285500.0),
+                         ("2026-09-28", 290000.0)]}
+    assert krx_changes(cands, closes, "2026-09-23")[0]["change_pct"] == 3.25
+

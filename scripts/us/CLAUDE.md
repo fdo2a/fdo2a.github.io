@@ -53,3 +53,5 @@ Publishes a US equity morning brief automatically every trading day. Full histor
 ## Desk prose gate (US/KR, rule 5 in site/AGENTS.md)
 
 `style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (capped at 2 × 600 chars). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py` — the old 「~다」 run limit is what pushed writers into rhetorical questions.
+
+**Movers** (§12): `data/movers.json` from `us/movers_data.py`, rules in `common/movers.py`, gate `check_movers.py`. **When changing this**: read `docs/superpowers/specs/2026-09-24-movers-design.md` first.

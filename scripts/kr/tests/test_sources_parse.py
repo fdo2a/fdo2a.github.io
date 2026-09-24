@@ -112,3 +112,37 @@ def test_fetch_industry_raises_when_empty(monkeypatch):
     monkeypatch.setattr(sources, "fetch_json", lambda url, timeout=12: {"groups": []})
     with pytest.raises(RuntimeError, match="업종"):
         sources.fetch_industry()
+
+
+# --- 움직인 종목의 업종 (2026-09-24) ---
+
+def test_fetch_top_value_carries_market_cap(monkeypatch):
+    s = _stock("005930", "삼성전자", "0", "5,504,265", "1", "3.62")
+    s["marketValueRaw"] = "1674958821192000"
+    _fake_pages(monkeypatch, [[s]])
+    assert sources.fetch_top_value("0")[0]["cap"] == 1674958821192000
+
+
+def test_fetch_industry_keeps_the_group_number(monkeypatch):
+    monkeypatch.setattr(sources, "fetch_json", lambda url, timeout=12: {"groups": [
+        {"no": 299, "name": "전기장비", "changeRate": "-1.2", "totalCount": 10, "riseCount": 3}]})
+    assert sources.fetch_industry()[0]["no"] == 299
+
+
+def test_fetch_stock_industry_reads_the_integration_code(monkeypatch):
+    monkeypatch.setattr(sources, "fetch_json",
+                        lambda url, timeout=12: {"stockName": "두산에너빌리티", "industryCode": "299"})
+    assert sources.fetch_stock_industry("034020") == "299"
+    monkeypatch.setattr(sources, "fetch_json", lambda url, timeout=12: {})
+    assert sources.fetch_stock_industry("034020") is None
+
+
+def test_fetch_industry_names_maps_every_group(monkeypatch):
+    seen = {}
+
+    def fake(url, timeout=12):
+        seen["url"] = url
+        return {"groups": [{"no": 299, "name": "기계"}, {"no": 278, "name": "건설"}]}
+    monkeypatch.setattr(sources, "fetch_json", fake)
+    assert sources.fetch_industry_names() == {"299": "기계", "278": "건설"}
+    assert "pageSize=100" in seen["url"]      # 업종은 79개 — 60 으로 받으면 코드가 안 풀린다

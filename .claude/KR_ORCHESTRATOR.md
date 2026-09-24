@@ -48,7 +48,7 @@ STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`
 수치가 아닌 **뉴스·정책 촉매·해석**만 웹 리서치한다(수치는 kr/data가 확정). 최소 포함:
 - 그날 코스피·코스닥·수급을 움직인 뉴스(외국인 매매 배경, 대장주 이슈)
 - **정책·정치 촉매 — 리서치 비중 최우선 (2026-07-29 사용자 지시로 섹션 확대)**: 밸류업·기업지배구조(상법·자사주)·금투세·대주주 양도세·배당 분리과세·한은 금통위·반도체/2차전지/바이오 보조금·통상(대미 관세·수출규제)·환율당국·국민연금·부동산 규제·지정학·국회 일정 중 그날 해당분. writer가 블록당 **사실 → 전달 경로(수급/이익/멀티플) → 수혜·피해 업종 → 다음 일정·확인 트리거** 4요소를 쓸 수 있도록 각 재료마다 이 네 가지를 채워서 넘긴다. 신규 재료가 없으면 중요한 계류 정책의 변화 여부를 확인하고, 변화가 없다는 사실만 짧게 쓴다. 분량을 채우기 위한 재서술은 하지 않는다.
-- 거래대금 상위·업종 주도에서 드러난 종목의 개별 재료(§9 특징주용)
+- **움직인 종목의 「왜」 (§9 특징주용, 2026-09-24)** — `kr/data/kr_movers.json` 의 `groups`(최대 5묶음: 지수 기여 상·하위 2 + |등락| ≥ 5%, 업종·방향으로 묶음)마다 **원인 검색 1회**(「대표 종목명 + 날짜 + 특징주/급등/급락」, 묶음이면 업종명도). `research_notes.md` 의 「움직인 종목의 이유」 절에 묶음 id(`g1`…)별로 **원인 한 줄 + 출처 매체**를 적는다. 출처 있는 원인을 못 찾으면 「확인된 재료 없음」 — 추측으로 채우지 않는다. 종목 등락률은 검색 결과가 아니라 파일 값이 정본이다(장중 기사 숫자는 종가와 다르다).
 - 출처 귀속 필수. 복수 출처 교차 확인(단일 검색 수치 불신 — US 전례).
 - **§12 오늘의 뉴스는 리서치 대상이 아니다** — 수집 잡이 만든 `kr/data/news/<DATE>.json`(네이버증권 주요뉴스 + `summary_ko`)이 유일한 재료다. 그 요약은 촉매 리서치의 출발점으로 읽어도 되지만, 웹에서 찾은 기사를 §12 에 넣지 않는다(`check_news.py --market kr` 가 막는다).
 
@@ -69,6 +69,7 @@ python3 scripts/check_session.py  --html <kr_brief 절대경로> --datadir kr/da
 python3 scripts/check_weight.py   --html <kr_brief 절대경로> --datadir kr/data --market kr
 python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json
 python3 scripts/check_news.py    --html <kr_brief 절대경로> --datadir kr/data --market kr --date <DATE>
+python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
 ```
 
 - `check_weight.py` 의 KR 계약: 시황·가격군 하한 2,200자, **판단군(전략 코멘트·기술적 분석) 하한 1,800자**, 가격 섹션의 `data-standing`, 가격 섹션의 스탠스 등급 어휘 금지.
@@ -127,6 +128,7 @@ python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
   --gate "python3 scripts/check_weight.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/check_kr_stance.py --html {f} --datadir kr/data" \
   --gate "python3 scripts/check_news.py --html {f} --datadir kr/data --market kr --date <DATE>" \
+  --gate "python3 scripts/check_movers.py --html {f} --datadir kr/data --market kr" \
   --gate "python3 scripts/check_research.py check --span daily --html {f} --root research/kr --market kr --date <DATE> --cycle <CYCLE_ID>" \
   --gate "python3 scripts/verify_post.py {f} --before kr_brief_[DATE].html --skip-layout"
 ```

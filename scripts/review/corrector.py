@@ -40,8 +40,8 @@ def _git(root, *args):
 # 2026-09-22 stance/portfolio 은퇴(c7f6540)가 두 게이트 스크립트를 지웠는데 여기 목록에
 # 남아, US 정정이 매번 「required gate missing」으로 죽었다. 목록은 test_corrector 가
 # 실제 scripts/ 와 대조한다.
-US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'session')
-KR_DATADIR_GATES = ('session', 'weight')
+US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'session', 'movers')
+KR_DATADIR_GATES = ('session', 'weight', 'movers')
 _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
                                             US_DATADIR_GATES + KR_DATADIR_GATES)])

@@ -12,6 +12,8 @@ from datetime import datetime, timezone, timedelta
 
 import yfinance as yf
 
+from common import movers as movers_mod
+
 from kr import sources, flows, flows_intraday, sectors, program, stance, technical
 from kr import econ as kr_econ
 from kr.themes import rank_themes
@@ -159,6 +161,28 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     except Exception:
         industry = []
 
+    # 움직인 종목 — 지수 기여 상·하위 2 + |등락| ≥ 5% 를 업종·방향으로 묶어 최대 5묶음.
+    # 리서치가 묶음마다 「왜」를 찾는다(2026-09-24). 업종은 후보만 조회한다. 비-코어.
+    kr_movers = {"report_date": report_date, "groups": []}
+    try:
+        caps = {r["name"]: r.get("cap") or 0 for r in raw_top} if candidates else {}
+        codes = {c["name"]: c["code"] for c in candidates}
+        rows = [dict(m, cap=caps.get(m["name"], 0)) for m in moves]
+        names = sources.fetch_industry_names()
+        picked = {c["name"] for c in movers_mod.select_candidates(rows)}
+        industries = {}
+        for name in picked:
+            try:
+                no = sources.fetch_stock_industry(codes[name])
+            except Exception:
+                no = None
+            industries[name] = names.get(no) if no else None
+        kr_movers = movers_mod.build(report_date, "코스피 거래대금 상위 60 개별주(KRX 종가)",
+                                     rows, industries)
+    except Exception as e:
+        print(f"movers failed: {e}", file=sys.stderr)
+        kr_movers = {"report_date": report_date, "groups": [], "error": str(e)[:200]}
+
     # 테마 랭킹
     try:
         theme_rows = rank_themes(sources.fetch_themes(7), top=15)
@@ -219,6 +243,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     _write(outdir, "kr_top_value.json", top_value)
     _write(outdir, "kr_index_etf.json", index_etf)
     _write(outdir, "kr_stock_moves.json", moves)
+    _write(outdir, "kr_movers.json", kr_movers)
     _write(outdir, "kr_industry.json", industry)
     _write(outdir, "kr_theme.json", theme_rows)
     _write(outdir, "kr_intraday.json", intraday)

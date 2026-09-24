@@ -37,7 +37,7 @@ def setup(tmp_path, monkeypatch):
     scripts = root / 'scripts'
     scripts.mkdir()
     for name in ('macro', 'fed', 'weight', 'price_context',
-                 'session', 'readability', 'style'):
+                 'session', 'movers', 'readability', 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
 assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
@@ -85,8 +85,8 @@ def test_success_keeps_user_checkout(setup):
     assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
-    # Seven gates on the original (baseline) and the same seven on the correction.
-    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 14
+    # Eight gates on the original (baseline) and the same eight on the correction.
+    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 16
 
 
 @pytest.mark.parametrize('extra,mark,reason', [

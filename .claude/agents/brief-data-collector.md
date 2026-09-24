@@ -206,6 +206,7 @@ print(json.dumps(out, default=str))
 2. [DATE] Treasury yields bond market 10Y 2Y Fed — 금리 맥락
 3. Micron Western Digital Seagate memory DRAM news [DATE]
 4. Marvell Coherent Lumentum GE Vernova Vertiv AI data center infrastructure news [DATE]
+4b. **움직인 종목의 「왜」 (2026-09-24)** — `movers.json` 의 `groups`(최대 5묶음: S&P 500 달러 거래대금 상위 60 중 지수 기여 상·하위 2 + |등락| ≥ 5%, GICS 하위 업종·방향으로 묶음)마다 **원인 검색 1회**(「대표 종목 티커 + stock + [DATE] + why」). `research_notes.md` 「움직인 종목의 이유」 절에 묶음 id(`g1`…)별로 원인 한 줄 + 출처. 출처 있는 원인이 없으면 「확인된 재료 없음」 — 추측으로 채우지 않는다. 등락률은 파일 값이 정본이다.
 5. **경제지표 (토큰 절약 — 웹서치 최소화)**: 지표 Actual/Previous/기준월의 **1차 출처는 커밋된 `data/econ_indicators.json`**(FRED 확정치, 22종). 이 파일을 읽어 그대로 사용하고 **개별 지표를 웹서치로 재확인하지 않는다**. 웹은 아래 두 경우에만 쓴다:
    - (a) **컨센서스(Forecast)와 정확한 발표일**: `econ_indicators.json`에는 없다. `ref_period`가 가장 최근(≈최근 1~2주 내 발표)인 지표에 한해서만 컨센서스·발표일을 타겟 검색한다 — 하루에 보통 1~3개뿐. 오래된 기준월 지표는 Forecast 칸을 비우고 발표일은 기준월로 갈음(웹서치 낭비 금지).
    - (b) **FRED에 없는 지표** — ISM Mfg/Services PMI, S&P Global PMI, ADP, CB Consumer Confidence, Philadelphia Fed, NY Fed 1-Yr Inflation Exp. 이 중 **최근 7일 내 발표된 것만** 검색해 Actual/Forecast/Previous를 채운다. 최근 발표가 아니면 생략 가능.

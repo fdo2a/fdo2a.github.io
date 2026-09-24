@@ -1016,6 +1016,17 @@ def main():
 
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
 
+    # 움직인 종목 — S&P 500 중 달러 거래대금 상위 60 에서 지수 기여 상·하위 2 + |등락| ≥ 5% 를
+    # GICS 하위 업종·방향으로 묶어 최대 5묶음. 리서치가 묶음마다 「왜」를 찾는다. 비-코어.
+    try:
+        from us.movers_data import collect as collect_movers
+        movers = collect_movers(report_date, _SSL)
+    except Exception as e:
+        movers = {'report_date': report_date, 'groups': [], 'error': str(e)[:200]}
+    json.dump(movers, open(os.path.join(args.outdir, 'movers.json'), 'w'),
+              indent=2, ensure_ascii=False)
+    print(f"movers: {len(movers.get('groups', []))} groups" + (f" ({movers['error']})" if movers.get('error') else ''))
+
     # 승계 책 이력 — 오늘 커밋돼 있는 macro 를 로그에 밀어 넣는다.
     # 어제까지의 판단이 대상이다 (오늘 것은 아직 writer 가 만들지 않았다).
     try:
