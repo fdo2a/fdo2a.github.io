@@ -30,6 +30,7 @@ warnings.filterwarnings('ignore')
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from thesis import disclosure as D  # noqa: E402
+from thesis import newsroom as NR  # noqa: E402
 from thesis import history as H  # noqa: E402
 from thesis import valuation as V  # noqa: E402
 
@@ -309,6 +310,22 @@ def main():
     print(f'공시 confirmed={confirmed} '
           f'missing={disclosures.get("missing") or "없음"}'
           f'{" (DART_API_KEY 미설정)" if disclosures.get("pending") else ""}')
+
+    # 뉴스룸 — 비-코어. 창은 직전 수집 시각부터다(events.json 의 collected_at).
+    # 실패한 피드는 missing 에 남고, 그러면 그날은 「조용함을 증명할 수 없는 날」이 된다.
+    events_path = out_dir / 'events.json'
+    try:
+        prev_events = json.loads(events_path.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        prev_events = None
+    try:
+        events = NR.collect(prev_events, datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0))
+    except Exception as e:  # noqa: BLE001 — 뉴스룸 실패가 수집 전체를 죽이지 않는다
+        events = {'collected_at': datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat(),
+                  'items': [], 'missing': [f'{type(e).__name__}: {str(e)[:160]}']}
+    events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2) + '\n',
+                           encoding='utf-8')
+    print(f'뉴스룸 새 항목={len(events["items"])} missing={events["missing"] or "없음"}')
 
     H.append(out_dir / 'history.jsonl', {
         'date': today.isoformat(),
