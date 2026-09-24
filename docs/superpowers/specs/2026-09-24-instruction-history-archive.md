@@ -605,3 +605,185 @@
 - **긴 문단은 이제 기본값이다 (2026-09-14).** `split_dense_paragraphs` 는 `<body data-layout="compact">` 를 단 문서에서만 돈다. 예전에는 반대였고, 인라인 마크업이 있는 문단은 건너뛰었기 때문에 **굵은 리드를 단 문단만 살아남았다** — 조판기가 토막글을 보상하고 줄글을 벌한 셈이고, 위 26/28 이 그 적응 결과다. `data-layout="prose"` 는 뜻 그대로 남아 있다(주간·월간이 반드시 단다).
 
 **일간 §2 는 예외적으로 골격이 고정이다.** `check_weight.py` 가 `data-lede="event" → "meaning" → "action" → "invalidation"` 네 문단을 순서대로 요구한다. **네 개의 `<p>` 는 유지된다** — 표식은 속성이라 독자에게 보이지 않으므로 기사 리드와 양립하지만, 하나로 합칠 수는 없다(합치려면 게이트 계약부터 바꿔야 한다). 각각을 독립 선언으로 쓰지 말고 event 가 만든 상황을 meaning 이 받고 action 이 그에 답하고 invalidation 이 그 답을 뒤집는 조건을 말하는 **네 문단의 논리적 연속**으로 쓴다.
+
+---
+
+## 원문 — `.claude/ORCHESTRATOR.md` · STEP 2 — 리포트 작성 (subagent: brief-report-writer)
+
+### STEP 2 — 리포트 작성 (subagent: brief-report-writer)
+
+**뉴스 입력 (작성 전)** — 커밋된 `news/[DATE].json` 의 각 항목에 수집 잡이 원문을 읽고 만든 한국어 요약 `summary_ko` 가 있다(2026-09-24). **루틴에서 기사 본문을 다시 받지 않는다** — 클라우드 환경은 CNBC·Yahoo 에 403 이라 예전의 `--bodies-only` 재수집은 한 번도 성공하지 못했고, 실패한 재수집이 `body_chars` 를 0 으로 덮어써 게이트가 뉴스 섹션을 면제해 왔다(9/19~9/22 발행본에 뉴스가 없던 이유). `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」 섹션은 의무다. 하나도 없으면(예: 레포 Variables 에 WIF 값 미등록, 항목의 `summary_note` 참조) 섹션 없이 발행하되 **최종 보고에 그 사유를 적는다** — 조용히 빠지게 두지 않는다.
+
+Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
+
+Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` — must be 0; (b) spot-check 5+ numbers by grepping the HTML for specific values from market_data.json / intraday.json / econ_indicators.json (e.g. `grep -o '4\.62' <html>`), NOT by reading the whole ~34K-token HTML into context. If either check fails, relaunch the writer subagent with the specific violations; repeat until clean. 수치 창작 절대 금지 — 미확인 항목은 삭제·재구성이 원칙.
+
+**매크로 게이트 (§10)** — run `python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: the policy path의 `falsifier` 가 지면에 없을 때; the regime label is outside the 3×3 controlled vocabulary; the regime sits outside `allowed_regimes` (the writer moved it on a day with no new release, inside the 5-business-day lock, or against what the axis scores imply); the axis scores or the FedWatch probability are not quoted in the section; a newly released indicator listed in `headline_releases` has no `data-release` anatomy block, or that block stops at the headline number (no primary source named, fewer than three figures); a transmission direction is outside its `allowed_directions`; the policy path was re-timed without either a new release or a 15%p probability move; macro_next.json is missing / not dated today / disagrees with the §8 markers; or an axis-table row (`data-indicator`) is missing, or its 직전 대비 / 추세 cell, Actual or Previous differs from the computed value (추세 must be 「—」 when `macro_metrics.json` is not today's). Relaunch the writer with the exact violations.
+
+**가격 맥락 게이트 (§4·§6·§7·§8)** — run `python scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a cross-asset relationship whose sign flipped against the prior 60 sessions is not written about (needs a `data-relation="KEY"` paragraph — same discipline as §8's reconciliation, disagreement allowed, silence not); a `data-attribution` block prints the sector split without the residual it cannot explain, or prints one at all on a day the sector weights barely fit the index; or internal machinery (주성분·고유값·필드명) reached the page. Non-core: an older dataset with no `price_context` block passes untouched. Relaunch the writer with the exact violations.
+
+**시황 게이트 (「오늘의 장」)** — run `python3 scripts/check_session.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: a `data-session` paragraph is missing or empty; a region whose average direction diverged from the S&P 500 is not written about (silence is the failure, disagreement is fine); the participation reading is narrated on a neutral day or omitted on a day it fired; a global close printed in the table disagrees with the collected value, or a close older than three sessions carries no as-of date; the reading is called 「상승 종목 비율」·「등락 종목 수」·「시장 폭」; internal field names or a 「§N」 notation reached the page. Non-core: a dataset with no `session` block passes untouched.
+
+**연준 이벤트 게이트 (「연준 이벤트」)** — run `python3 scripts/check_fed.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: today has no fresh Fed event but the section was published anyway (**침묵이 기본값이다** — FOMC·잭슨홀 같은 자리가 없는 날 이 섹션을 열면 이벤트 섹션이 아니라 매일 새로 쓰는 논평란이 된다); a fresh tier-1 event has no section, no `data-fed-event` intro, or fewer than two verified quotes; **a quoted sentence is not in the collected primary document, character for character**; a quote was printed for an event whose document could not be fetched; a quote has no Korean translation or no source caption; a computed statement redline has no `data-fed-change` block, or that block quotes none of the changed sentences; there are fewer than two `data-fed-idea` blocks, an idea hangs off a quote that was never printed, or an idea has no invalidation condition; or a figure in the section is in neither the data files nor the primary document. **이 게이트의 자리는 인용문이다** — 지어낸 수치는 데이터와 맞대면 걸리지만 지어낸 발언은 그럴듯할수록 안 걸린다. 인용의 문턱 값(무효화 조건 안의 수치)만 창작 검사에서 면제된다. Relaunch the writer with the exact violations.
+
+**캘린더 게이트 (§9 「다음 발표 일정」 카드)** — run `python3 scripts/check_calendar.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. 금지형이다 — 카드를 채우라고 요구하지 않는다. 막는 것은 셋: `data-calendar="<key>"` 가 **수집한 적 없는 일정**을 가리키는 것, 표식이 가리키는 일정과 **다른 날짜**를 적는 것, **시각을 모르는 일정에 시각을 적는 것**. 낡은 `calendar.json` 은 없는 것과 같이 다룬다(어제 일정으로 오늘 표식을 인가하면 하루 밀린 시각이 인쇄된다). 표식이 없는 글은 그대로 통과한다. Relaunch the writer with the exact violations.
+
+**뉴스 게이트 (오늘의 뉴스)** — run `python3 scripts/check_news.py --html morning_brief_[DATE].html --datadir <workspace> --date [DATE]` from the repo clone. 수집분 `news/<date>.json` 과 발행본을 `data-news` 표식으로 대조한다. It fails the run when: 수집되지 않은 `guid` 를 실었을 때(지어낸 기사); **수집 요약(`summary_ko`)이 없는** 기사를 실었을 때(제목만 보고 쓴 것); 블록이 그 기사의 `summary_ko` 와 글자 유사도 0.5 미만일 때(실제 guid 아래 다른 내용); 같은 기사를 두 번 실었을 때; 한 항목의 본문이 240자 미만(RSS 한 줄 요약을 옮긴 것)이거나 420자 초과일 때; `data-news` 없는 뉴스 블록이 있을 때; `display:none`·`hidden`·주석으로 **숨긴 블록**으로 항목 수를 채웠을 때(2026-09-19 실측으로 셋 다 재현 후 차단); 블록의 링크가 그 기사의 원문이 아닐 때. **수집분이 없거나 비면 섹션 의무만 면제되고 표식 대조는 그대로 돈다** — 수집이 실패한 날이 지어낸 뉴스가 실릴 확률이 가장 높다(2026-09-19 codex 검토 #1). 요약이 하나도 없는 날도 섹션 없이 발행할 수 있다. **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다(#11). 그날 뉴스를 기억에서 꺼내 쓰는 것이 이 게이트가 막는 실패다.
+
+**출처 게이트 (§9 발표 해부·연준 이벤트)** — run `python3 scripts/check_sources.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. **금지형이다 — 링크를 요구하지 않는다.** 귀속은 문장의 주어로 쓴다(「BLS 는 … 밝혔습니다」). 막는 것은 «인쇄된 링크가 거짓말인 경우»뿐이다: 수집한 원문 목록에 없는 URL, 수집에 실패한 문서(`ok:false`)를 가리키는 링크, 다른 발표의 URL 이 이 블록에 붙은 것, 표식 없는 블록의 외부 링크, 글자 없는 링크, http(s) 아닌 스킴. **숨긴 링크도 검사한다** — 미디어쿼리 한 줄로 「숨김」 판정이 뚫리는 것을 확인했고, CSS 엔진 없이 렌더 결과를 맞힐 수 없다. `script`/`style`/`template` 만 빠진다. 수집 파일이 없거나 날짜가 어긋나면 **아무것도 인가되지 않은 것**으로 본다 — 게이트가 꺼지지 않는다(수집이 실패한 날이 지어낸 링크가 실릴 확률이 가장 높은 날이다). Head 의 AdSense·canonical·OG·JSON-LD 와 사이트 안 이동 링크는 대상이 아니다. Relaunch the writer with the exact violations.
+
+**무게중심 게이트** — `python3 scripts/check_weight.py --html <새 초안> --datadir <workspace> --market us`. 필수 시황 섹션이 비어 있지 않은지, 가격 위치의 수치 근거와 큰 변동의 설명, 전략 코멘트의 논리 순서를 검사한다. 총 글자 수 하한과 시황/판단 비율은 강제하지 않는다. US 매크로 상한은 발표일 4,600자·축약일 2,400자로 유지한다.
+
+**가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
+
+1. `python3 scripts/apply_readability.py <morning_brief 절대경로>` 다음 **`python3 scripts/apply_colors.py <morning_brief 절대경로>`**(수치 칸 방향색 — 오르면 초록, 채권 금리는 반전, 매크로는 같은 행 「직전 대비」 칸을 따른다. 보이는 글자는 안 바뀌므로 수치 대조에 영향이 없다. `--check`는 미적용이면 exit 1 이므로 체인에서 빠진 날을 알 수 있다)로 v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)·빠른 이동·긴 문단 분리를 적용하고, `python3 scripts/check_readability.py --strict --no-inline-images <morning_brief 절대경로>`와 **`python3 scripts/check_style.py <morning_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 「말하듯이 쓴다」 기준에서 셀 수 있는 부분(비인칭 피동·번역투 연결·서술어 없는 명사형 머리말·「~한 상태다」 종결·같은 문단 머리말 반복·「~다」 연속)을 본다. **STEP 2.5의 윤문과 별개로 여기서 항상 돈다** — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
+2. 실패하면 출력에 찍힌 위반을 원인별로 고친다. 문체 위반은 「말하듯이 쓴다」 절의 해당 항목대로 문장을 다시 쓴다: 헤드라인은 방향·촉매·행동만 남기고, 120자 초과는 시간·주제가 바뀌는 곳에서 문장을 나누며, 수치 5개 이상은 정확한 값은 표에 두고 산문에는 관계만 남긴다. 과잉 정밀도는 산문만 반올림하고 정확한 값은 표에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
+3. writer를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 실행한다. 수정 뒤 데이터 정본과 표를 재대조하고 apply → strict check를 반복한다.
+4. writer 재실행이 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 긴 문장 분리 → 중복 수치 삭제 → 산문 반올림 순서로 고치고 다시 검사한다. **통과할 때까지 이 수리 루프를 계속한다.**
+
+가독성 실패는 현재 초안을 반려할 뿐, “오늘 레포트 미발행” 사유가 아니다. 가독성 때문에 중단 알림을 보내지 않는다. 데이터 정본이 끝내 완성되지 않는 경우만 기존 completeness gate에 따라 중단할 수 있다.
+
+---
+
+## 원문 — `.claude/agents/kr-report-writer.md` · 보고서 구조 (한국 특화, 순서 고정)
+
+### 보고서 구조 (한국 특화, 순서 고정)
+
+**제목 (SEO 최우선, 2026-07-23)**: `kr_brief_[DATE].meta.json` 의 `title` 을 `코스피 마감 시황 — [그날 핵심구] | [YYYY-MM-DD]` 형식으로 쓴다. 핵심구는 그날 헤드라인의 검색될 키워드(지수 등락·수급·주도 업종·주도주)를 25자 이내로 — 예: `코스피 마감 시황 — 외국인 순매수에 코스피·코스닥 동반 급등 | 2026-07-23`. **H1** 은 그날 헤드라인 `<h1>` 1개. og:title·JSON-LD·메타 description 은 셸이 만든다(아래 「HTML — 본문만 쓴다」).
+
+1. **헤드라인 한 줄 요약** — H1은 80자 이내, 수치 넷 이내. `시장 방향 + 가장 중요한 촉매 + 포트폴리오 함의`만 남기고 지수·수급·업종 수치를 한 문장에 전부 욱여넣지 않는다. 헤드라인 카드 본문은 두 문단·문단당 두 문장 이내다.
+2. **전략 코멘트** — **여섯 문단**을 `<p data-lede="...">` 표식과 함께 이 순서로 쓴다 (2026-09-22 독자 전환으로 넷에서 여섯으로 늘었다).
+
+   | 표식 | 답하는 질문 |
+   |---|---|
+   | `event` | 오늘 무슨 일이 있었나 |
+   | `gap` | **시장이 무엇을 예상한다는 근거가 있고, 우리는 어디서 다르게 보는가** |
+   | `meaning` | 그게 왜 중요한가 — **우리 해석을 지지하는 자료와, 가능한 다른 설명** |
+   | `action` | 그래서 무엇을 할까 — 노출 등급·시계·**어떤 상품으로·무엇을 기다려** |
+   | `invalidation` | 틀렸다고 볼 조건 |
+   | `review` | **어제 판단을 유지·수정·폐기하는가, 무엇을 잘못 봤나** |
+
+   - **행동 선언은 첫 문단이 아니라 네 번째다** (2026-08-30 사용자 지시 「무슨 일이 있었나를 앞으로」는 그대로 산다). 순서는 고정이되 **라벨을 명사형 머리말로 못 박지 않는다** (2026-08-25 — 매일 같은 개조식 머리말이 딱딱함을 만들었다). 강조가 필요하면 그 문단의 첫 문장 자체를 `<strong>`으로 감싼다.
+   - **`gap`**(80자 이상) — 재료는 `kr_econ.json`의 `expectations` 다. 세 스프레드 중 **그날 할 말이 있는 것 하나**를 골라 「채권은 이미 이렇게 값을 매겼는데 주식은 아니다」류의 **구체적 어긋남**을 쓴다. 셋을 다 나열하지 않는다. `standing.text`를 그대로 인용하고 백분위 숫자는 쓰지 않는다. expectations 가 비었으면 그날은 수급·거래대금이 값매긴 것으로 대신한다 — 그래도 문단은 있어야 한다.
+   - **`meaning`**(120자 이상) — 해석 하나로 끝내지 않는다. **가능한 다른 설명**과 **둘을 가를 자료**를 함께 쓴다. 원장의 `alternative`·`distinguisher` 가 그 두 줄이다. 판별이 안 되면 안 되는 대로 쓴다 — **없는 대안을 지어내지 않는다**(근거 없는 대안은 창작이다).
+   - **`action`** — 노출을 `확대`·`유지`·`축소` 중 하나로, 시계를 `다음 세션` 또는 `2~6주`로 밝힌다. 상품을 댄다면 그 상품의 **거래대금을 수로** 함께 쓴다(`kr_top_value.json` 또는 `kr_index_etf.json`에서 그대로). **상품을 안 대는 날도 정상이다** — 그때는 무엇을 기다리는지(`wait_for`)를 쓴다.
+   - **`invalidation`** — 무효화 레벨을 **숫자로** 쓴다. 기술적 섹션(§5.5)이 있으면 가장 가까운 레벨 하나와 연결한다. **산문의 이 수와 원장 `invalidation.level` 이 다르면 게이트가 막는다** — 다음 회차의 복기 전체가 이 수 하나에 걸려 있다.
+   - **`review`**(80자 이상) — `kr_stance_eval.json`의 `verdict` 를 **반드시 입에 담는다**. `유효`면 유지·수정 중 무엇인지, `무효화`면 무엇을 잘못 봤는지, `판정불가`면 왜 비교할 직전 판단이 없는지. 어제의 `wait_for` 가 충족됐는지도 여기서 답한다. 첫 회차는 부트스트랩이라 「원장이 없어 비교할 직전 판단이 없다」가 맞는 답이다.
+   - 위치가 앞이라 **아래 섹션들의 근거를 미리 인용하는 형태**가 된다. 수급·거래대금·업종·기술적 레벨의 핵심 수치를 여기서 먼저 제시하되, **아래 표에 실제로 실릴 값과 한 글자도 어긋나면 안 된다**(작성 순서는 자유지만 마감 전 대조 필수 — 팩트체크 게이트 항목).
+   - 요약이 아니라 **판단**을 쓴다. 아래 섹션 문장을 그대로 복사해 오지 않는다.
+   - **2026-07-29 사용자 지시로 맨 앞(헤드라인 바로 다음)** — 독자가 표를 스크롤하기 전에 결론을 먼저 읽게 한다.
+
+   **산출물이 하나 더 있다: `kr_stance_next.json`.** §2 에 쓴 판단을 그대로 원장 모양으로 옮겨 워크스페이스 루트에 쓴다. 필드는 `date`·`exposure`·`horizon`·`thesis`·`gap`·`alternative`·`distinguisher`·`wait_for`·`expression`(상품을 댄 날만, `{instrument, value}`)·`invalidation`(`{metric, level, side, note}`)다. `scripts/check_kr_stance.py` 가 이 파일과 §2 산문이 같은 말을 하는지 대조한다. **이 파일이 내일의 `kr_stance.json` 이 된다 — 여기 적은 레벨로 내일 네 판단이 채점된다.**
+
+3. **오늘의 장** — 하루를 시간 축으로 읽는다. 네 문단이고 표식은 US와 같다. 판정은 `kr_session.json`에 끝난 상태로 온다 — 다시 계산하지 않는다.
+   - `<p data-session="global">` 전일 미국장 + 아시아 동시간대와 코스피 상대 강약. **`us_prev.lag_sessions`가 2 이상이면 「N일 미국장 기준」을 명시한다**(수급 신선도와 같은 규율, 게이트가 강제).
+   - `<p data-session="preopen">` 시가 갭과 한국 장중의 미국 선물 궤적.
+   - `<p data-session="tape">` 코스피·코스닥 장중 궤적과 마감 위치 + **원달러**. 원달러는 여기 들어간다 — 다섯 번째 문단을 만들지 않는다.
+   - `<p data-session="causal">` 무엇이 무엇을 움직인 날인가 + 시간외.
+   - 데이터가 없으면 섹션을 통째로 생략한다. [확인필요] 마커 금지.
+4. **지수 & 장중** — 코스피·코스닥 표(close·change_pct·일중 고가/저가) + 30분봉 궤적 문단(시가·고점 시각·오후 흐름·종가, kr_intraday 있으면; 없으면 생략, 마커 금지) + 촉매.
+   - **「지금 어디에 있나」로 시작한다** (2026-08-30 사용자 지시) — `<p data-standing="equities">` 문단을 맨 앞에 둔다. 120자 이상·수치 하나 이상. 재료는 **위치**(지수가 자기 이력에서 어디인가)·**경로**(어떻게 여기까지 왔나)·**오늘의 크기**(평소 대비 큰 하루인가) 셋인데 **순서를 고정하지 않고 그날 가장 할 말이 있는 것부터 쓴다**(2026-08-30 사용자 지시 — 순서를 못 박으면 매일 같은 서식을 채운 글이 된다. 상세는 US 스펙의 같은 절). 그 뒤에 장중 궤적이 온다. 기준은 「이걸 본 사람이 요즘 코스피 어떠냐는 질문에 대답할 수 있는가」다.
+   - **스탠스 등급 어휘를 쓰지 않는다** — 가격 섹션은 시황을 말하고 포지션은 §2에서만 말한다.
+5. **일봉 차트** — `<img src="../assets/kr_charts_[DATE].png" alt="코스피·코스닥·SK하이닉스·삼성전자 일봉 차트" style="width:100%">` 로 참조. 캡션(3개월 일봉에 이평 20·60·120·볼린저밴드·일목 구름대 오버레이, 상승 녹색·하락 적색).
+5.5. **기술적 분석 & 트레이딩 전략**(일봉 차트 **바로 아래**, `kr_technical.json` 있을 때) — 4종 각각 **산문 1문단**(표 없음). 종목별로 현재 위치(MA20/60/120·구름 대비, 정/역배열)를 짚고 조건부 전략을 서술: 상승 트리거(저항 레벨 회복/돌파)→목표(다음 저항·스윙 고점), 하락 트리거(지지 이탈)→목표(다음 지지·스윙 저점). **모든 레벨은 kr_technical.json의 계산값·스윙 고저만 인용, 창작 금지.**
+
+   **레벨을 다 쓰지 않는다 (2026-08-24 사용자 지시 — 「잘 안 읽힌다」).** 2026-08-21 발행본의 이 섹션은 4종 각각 레벨을 열 개씩 나열해 한 문단이 수치 스무 개짜리 벽이 됐고, 코스피 6,912에 「최후 지지선 5,262」처럼 24% 아래 레벨까지 실렸다. 지금 시계에서 닿지 않는 레벨은 정보가 아니다.
+   - **종가 대비 ±10% 밖의 레벨은 인용하지 않는다.** 「최후 지지선」 관용구도 그 안에 들어올 때만 쓴다.
+   - **한 종목당 레벨 넷까지** — 가장 가까운 저항 하나·지지 하나가 기본이고, 의미가 있을 때만 둘을 더한다.
+   - **산문에서는 반올림한다.** 지수는 정수(6,461), 원화는 만원 단위(204만원). 소수점 두 자리 이동평균(2,043,966.67원)은 사람이 쓰지 않는 문장이다 — 정확한 값은 `kr_technical.json`이 갖고 있으면 된다.
+   - 문단은 **두 문장**: 지금 어디에 서 있나 → 어느 쪽이 열리고 어느 쪽이 닫히나.
+
+   지수는 포인트·종목은 원 단위를 숫자 뒤에 붙여 조사(은/는/이/가)를 자연스럽게. 말미 "기계적 계산·투자권유 아님" 노트. 없으면 섹션 생략.
+6. **수급** — 코스피·코스닥 각각 개인/외국인/기관 순매수 표(억원) + §4.1 라벨. 외국인·기관 방향과 지수의 정합/괴리를 전략 관점으로 해석. **시그니처 섹션.**
+   - **장중 수급 전개 서브블록**(이 섹션 안, 일별 확정 표·해석 **뒤**, 프로그램 매매 **앞**. `kr_flows_intraday.json` 있을 때) — 아래 상세 사양.
+   - **프로그램 매매 서브블록**(이 섹션 안, `kr_program.json` 있을 때): `<h3>프로그램 매매</h3>` + 시장별 **차익·비차익·전체 순매수** 표(억원, 순매수 3종만; 매수/매도 gross 미노출) + 해석 1문단 — **비차익과 차익**을 구분해 관측 방향을 비교한다. 비차익을 특정 투자자의 의도로 단정하지 않고, 투자자별 합계와 프로그램 합계의 차이로 자체 계정 매수를 역산하지 않는다. 신선도 라벨은 §4.1과 동일(당일 잠정/전 거래일). 없으면 서브블록 생략.
+7. **거래대금 상위 종목** — `kr_top_value.json`을 표로. **레버리지(롱)와 인버스(숏)는 별도 줄**(정규화가 방향별 분리) — 롱/숏 거래대금을 대비해 어느 방향 상품의 거래가 활발했는지 읽는다. 투자자별 순매수 자료 없이 개인의 방향성 베팅으로 단정하지 않는다(예: SK하이닉스 레버리지 vs 인버스). 구분 칼럼에 롱=녹색·숏=적색. **지수 관련 ETF(코스피200·코스닥150 추종 및 그 레버리지·인버스)는 정규화 단계에서 제외되므로 표에 없다 — 없다고 다시 채워 넣지 말 것** (2026-07-29 사용자 지시). 각주: "같은 기초자산 ETF는 방향별로, 같은 테마 섹터 ETF는 테마별로 묶고 지수·해외 ETF 제외". 단위 백만원(조 환산).
+   - **테마 ETF 줄 해석** (2026-08-06 사용자 지시로 병합): `kind`가 `sector_theme_etf`이고 `theme`이 있는 줄(예: `반도체 테마 ETF`)은 같은 테마 ETF 여러 종을 합친 값이다. `members`에 구성 종목명이 들어 있으니 **몇 종을 묶었는지 본문에 밝힌다**(예: "반도체 ETF 9종 합산 1.46조"). 한 종뿐이면 병합이 없었던 것이라 라벨이 원래 ETF 이름 그대로다.
+   - 이 줄은 **개별 종목과 테마 ETF의 거래 활동**을 대비한다. 같은 테마의 개별 종목 거래대금과 나란히 놓고 어느 상품군에서 거래가 활발했는지 설명한다(예: 반도체는 개별주 11.9조 + 바스켓 1.5조). Naver가 업종 단위 거래대금을 주지 않으므로 **리포트에서 테마별 거래 활동을 비교하는 자료다** — §8 업종은 등락률·breadth로 가격만 본다. 두 섹션을 교차 검증하면 "많이 오른 업종에서 거래도 활발했나"를 살필 수 있다. 거래대금만으로 순유입·신규 매수 의도를 판정하지 않는다.
+8. **업종·섹터 멀티기간 수익률** — `kr_sector.html` 스니펫을 **그대로 삽입(수정 금지)**. 이어 `kr_industry.json`의 breadth 크로스체크로 "상승률 상위지만 좁은 상승(개별종목)"과 "폭넓은 주도"를 구분해 서술 — 상승률만으로 주도라 부르지 않는다(spec §4.3).
+9. **특징주·대장주** — 거래대금 상위·업종 주도에서 드러난 종목 + research_notes 이슈 종목.
+10. **환율·금리** — USD/KRW + **국고채 금리 표**(`kr_econ.json`). 2026-07-29 ECOS 연동으로 국고채가 상시 가용해졌다 — "가용 시" 조건부 서술은 폐기하고 기본 포함한다.
+   - **「지금 어디에 있나」로 시작한다** (2026-08-30 사용자 지시) — `<p data-standing="rates">` 문단을 맨 앞에 둔다. 120자 이상·수치 하나 이상. 재료는 **위치**(원달러·국고채 금리가 자기 이력에서 어디인가)·**경로**·**오늘의 크기** 셋이고 **순서는 그날 가장 할 말이 있는 것부터**다(2026-08-30 사용자 지시). 기준은 「이걸 본 사람이 요즘 환율·금리 어떠냐는 질문에 대답할 수 있는가」다.
+   - **스탠스 등급 어휘를 쓰지 않는다** — 가격 섹션은 시황을 말하고 포지션은 §2에서만 말한다.
+   - 표 컬럼: 지표 | 금리 | 전일比(bp) | 기준일. `kr_econ.json`의 `series`에서 국고채 3년·10년, CD 91일, 회사채 AA- 3년, 한국은행 기준금리를 싣는다. `value`·`bp`·`date`를 그대로 쓰고 **반올림·보정·창작 금지**.
+   - `series`에 없는 항목(= `missing`에 있는 항목)은 **행을 빼고 재구성**한다. [확인필요] 표기 금지. `pending: true`면 금리 표 전체를 생략하고 USD/KRW만 다룬다.
+   - **기준일이 report_date와 다를 수 있다**(ECOS 일별 시장금리는 마감 후 갱신). `date`가 report_date보다 이르면 "N일 기준"을 명시한다 — 당일 금리인 양 쓰지 않는다(수급 신선도 규율과 동일).
+   - 해석: 동일 기준일의 **10년−3년** 스프레드와 변화로 커브 방향을 읽고, 회사채 AA- 3년−국고채 3년 스프레드로 신용 가격을 비교한다. 계산은 학습 기준의 Research handoff에서 검산한다. 전일 미국 금리와 당일 한국 금리의 방향을 기준일과 함께 비교한다. 외국인 **주식** 수급·USD/KRW는 별도 관측이며 채권 자금 이동의 증거가 아니다. 3년물과 기준금리의 격차는 위치로만 설명하고, 정책 선반영 여부는 별도 정책시장 근거가 있을 때만 쓴다.
+11. **정책·정치 촉매** — 아래 상세 사양. **분량·깊이 면에서 수급 다음가는 주력 섹션이다.**
+12. **시장 판단과 복기** — `.claude/TRADER_LEARNING.md`의 Writer output을 따른다. 이 섹션 뒤에 면책 문구를 붙인다.
+
+> **테마 섹션은 폐지됐다 (2026-07-29 사용자 지시).** `kr_theme.json`은 더 이상 리포트 입력이 아니다 — 별도 테마 섹션을 만들지 말고, 테마 랭킹을 표·목록으로 싣지도 말 것. 종목 단위 재료는 §9 특징주에서, 산업 단위 쏠림은 §8 업종에서 다룬다.
+
+---
+
+## 원문 — `.claude/agents/kr-report-writer.md` · 공유 규칙 문단
+
+**공유 규칙**: HTML/디자인 사양(폭 1120px·폰트 16px·**문단 조판 `max-width:42em`·줄간격 1.78·문단 간격 15px, 1024px 이상에서 본문 17px·**폭 제한 없음**(2026-08-28 — 문장이 카드를 다 채운다, 단어 잘림은 `word-break:keep-all`이 막는다)·**라벨은 제 줄에**(`box-label`·`p-label`이 블록)**·**본문 font-size는 맨 `p`에만**(`.card p`에 얹으면 캡션이 본문 크기로 튄다)·Toss 색상·카드·h2 바·들여쓰기 없음·`word-break:keep-all`·모든 표 `.tbl-scroll` 래퍼·모바일 `@media(max-width:560px)`·`break-inside:avoid-page`·**구글 애드센스 로더 스크립트**), 문체(**말하듯이 — 주어를 드러내고 능동으로, 한 문장에 한 관계**, 한 문단=한 주제이며 문장 수는 설명에 맞추되 **문단끼리 이어져 한 편으로 읽히게**(2026-09-13 지시 — 정본의 「하나의 글로 읽히게 쓴다」 절, 문단마다 굵은 리드로 여는 패턴 금지), **한 문장에 관계 하나**(2026-09-14 — 길이 제약은 풀렸다, 게이트는 세어 보여 주기만 한다)**·수치 여섯 이내, 같은 수치 세 번까지, 산문에서 반올림**, 해석 동사 단조 금지, 콜론 라벨 문장에 녹이기, **어려운 말은 풀어 쓰기 — 단, 2026-08-28 사용자 지시로 「업계용어·경제뉴스 상용어는 그대로」**(시장 기사에 흔한 말은 `COMMON`이라 검사 안 함, 그 기준을 못 넘는 음차만 `PLAIN`으로 금지, 뉴스에도 안 나오는 전문어 셋만 첫 등장 풀이, 한 문장에 낯선 말 겹치지 않기 — `scripts/check_style.py`가 검사, KR은 특히 breadth가 상습. 플래트닝·스티프닝은 이제 그대로 써도 된다)), 검증(Playwright `scrollWidth==뷰포트`, 수치 토큰 대조, **`scripts/check_readability.py`**)은 **`.claude/agents/brief-report-writer.md`와 동일하게 따른다.** 아래는 한국 브리프 델타만 기술한다.
+
+**KR 리포트는 수치 밀도가 US보다 높다** — 2026-08-24 실측에서 문장당 수치 문자가 US 5.6개 대 KR 10.9개, 한 편에 「2,043,966.67원」류 과잉 정밀 표기가 54번 나왔다. 아래 §5.5·§7이 그 진앙이므로 그 두 곳의 규율을 특히 지킨다.
+
+---
+
+## 원문 — `.claude/KR_ORCHESTRATOR.md` · STEP 2 — 리포트 작성 (subagent: kr-report-writer)
+
+### STEP 2 — 리포트 작성 (subagent: kr-report-writer)
+
+Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
+
+**위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
+ 장중 수급 전개·프로그램 매매는 수급 서브블록(그 순서대로), 기술적 분석/전략은 일봉 차트 바로 아래 산문 섹션(writer 스펙 §5·§5.5). **구조 변경 반영(2026-07-29)**: 전략 코멘트가 §2로 전진(헤드라인 다음), 테마 섹션 폐지, 정책·정치 촉매(§10) 확대 — writer 스펙의 섹션 순서를 그대로 따르게 프롬프트에 명시한다.
+
+**발행 게이트**: (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date`와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개+ 를 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍 있으면 발행 중단, PushNotification으로 누락 보고.**
+
+**가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
+
+0. **시황 게이트** — `python3 scripts/check_session.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. KR의 첫 데이터 게이트다. `data-session` 문단 넷, 전일 미국장이 2거래일 이상 묵었을 때의 기준일 표기, 아시아 지수 등락의 표 대조, 「시장 폭」 오칭·내부 필드명·「§N」 노출을 본다. 비-코어라 `kr_session.json`이 없으면 통과한다.
+**무게중심 게이트** — `python3 scripts/check_weight.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. 시황·가격군(오늘의 장·지수 & 장중·환율·금리)의 하한 2,200자, **판단군(전략 코멘트·기술적 분석)의 하한 1,800자**(2026-09-22 신설 — 그전까지 KR엔 판단 하한이 없어 09-21 발행본이 시황 2,542자 대 판단 1,287자였다), 가격 섹션의 `data-standing` 문단(120자·수치 하나 이상), 가격 섹션의 스탠스 등급 어휘를 본다. 매크로·경로 항목은 KR에 없으므로 건너뛴다.
+
+**판단 원장 게이트** — `python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json`. §2 여섯 블록의 존재·순서, `action`의 노출 등급·시계가 원장과 같은지, **`invalidation` 산문의 레벨이 원장 `level`과 같은 수인지**, `review`가 `kr_stance_eval.json`의 판정을 실제로 말하는지를 본다. 비-코어가 아니다 — 원장이 틀어지면 **다음 회차의 복기가 통째로 거짓이 된다.**
+
+1. `python3 scripts/apply_readability.py <kr_brief 절대경로>`(v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)) 뒤 `python3 scripts/check_readability.py --strict --no-inline-images <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
+2. 위반 원인별로 처방한다: 헤드라인은 방향·촉매·행동만 남기고, 장중 시각이 셋 이상인 문장은 시간대별로 나눈다. 수치가 다섯 개 이상이면 정확한 레벨은 표에 두고 산문에는 가장 가까운 지지·저항과 관계만 남긴다. 원화·지수 소수점은 산문에서 반올림하고 정밀값은 표·JSON에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
+3. 검사 원문을 writer에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → strict check를 반복한다.
+4. writer가 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 수치 정본과 표 대조, 수급 신선도, 정책 블록 수는 다시 확인한다. **통과할 때까지 수리 루프를 계속한다.**
+
+가독성 실패는 현재 초안을 반려할 뿐 미발행 사유가 아니다. 데이터 정본의 completeness 실패만 기존 규칙에 따라 중단할 수 있다.
+
+---
+
+## 원문 — `scripts/kr/CLAUDE.md` (2026-09-24 이전 전문)
+
+<!-- 이 파일은 `scripts/kr/` 안의 파일을 건드릴 때 자동으로 로드된다.
+     공통 규칙은 site/AGENTS.md. 이 파일 + site/AGENTS.md 가 32,768 B 를 넘으면 꼬리부터 조용히 잘린다. -->
+
+### 한국 시장 마감브리프 (2026-07-22~)
+미국 브리프와 짝을 이루는 **평일 저녁 한국 증시 마감브리프**. `/kr/` 경로로 분리 발행(미국 URL 무손상). 상세는 프로젝트 메모리(kr-market-brief-project) + spec `docs/superpowers/specs/2026-07-23-kr-program-technical-design.md`·`2026-08-06-kr-intraday-flows-design.md` (원래 적혀 있던 `2026-07-22-kr-market-brief-design.md`는 레포에 없다 — 2026-09-05 확인).
+- **데이터 소스 = Naver Finance(주) + yfinance(보조)만.** pykrx·키움 API 폐기(2026-07-22 실증: KRX는 해외 IP 미차단이나 pykrx 수급·지수 함수가 버그로 불안정, Naver는 미국 Actions IP에서 전 엔드포인트 작동). **2026-09-17 네이버가 Next.js SPA 로 개편되면서 레거시 `finance.naver.com/sise/*.naver` 가 전부 죽었다** — `investorDealTrendDay`·`investorDealTrendTime`·`programDealTrendDay` 는 410 Gone, `sise_quant`·`theme` 는 200 을 주되 표가 없는 껍데기다. 뒤쪽이 더 위험했다: 파서가 조용히 `[]` 를 내 **거래대금이 09-10 에 깨졌는데 에러가 안 나 8거래일(09-10~09-21) 발행이 막힌 뒤에야 드러났다.** 그래서 `scripts/kr/sources.py` 의 fetch_* 는 **빈 결과를 성공으로 취급하지 않는다 — 비면 예외를 올린다.** 살아남은 소스는 m.stock/api.stock JSON API 다: 수급은 `m.stock/api/index/{KOSPI|KOSDAQ}/trend?bizdate=`(하루 한 행 — 10거래일을 모으려고 날짜를 거슬러 호출, 단위·부호는 레거시와 동일하고 2026-09-16 확정치로 대조 검증), 거래대금은 `m.stock/api/stocks/marketValue/all` 페이지네이션(시총 순으로만 주므로 전량을 훑어 거래대금으로 재정렬, `sosok="0"` 코스피 · 단위 백만원). **장중 수급·프로그램 매매·테마는 대체재가 없어 폐지** — 전부 비-코어라 해당 블록만 빠지고 발행은 된다.
+- **수집 = GitHub Actions** `.github/workflows/collect-kr-data.yml`(평일 17:00·17:30 KST = 08:00·08:30 UTC, 마감 후) → `scripts/collect_kr_data.py` + `scripts/kr/` 패키지(TDD, 21 tests)가 `kr/data/*` 커밋. 수동: `gh workflow run collect-kr-data.yml -f force=true`
+- **산출**: kr_market_data.json(지수·complete·flows_date) / kr_flows.json(외/기/개 순매수, 억원) / **kr_flows_intraday.json + .png**(장중 누적 순매수 궤적 — **2026-09-17 소스 폐지로 현재 항상 결측**, 대체재가 생기면 아래 파이프라인이 그대로 산다. 2026-08-06 사용자 지시로 신설. Naver `investorDealTrendTime`이 09:03~18:06 약 180~360개 누적 스냅샷을 주고, `scripts/kr/flows_intraday.py`가 정규장(≤15:30)만 잘라 30분 앵커 13개·주체별 극값·**의미 있는 방향 전환**(그날 최대 절대값의 5% 미만 구간은 개장 직후 잡음이라 버림)으로 가공. 차트는 수급 3선 + 지수 우축 오버레이 2패널. **장중 스냅샷 ≠ 확정치** — 정정 때문에 갈리므로(2026-08-05 코스피 외국인 15:30 +15,116 vs 확정 +14,464) 확정 수치는 kr_flows.json에서만 인용) / kr_top_value.json(거래대금 상위 10, **ETF 정규화** — 단일종목 레버리지는 기초자산+방향별 병합, **지수 관련 ETF·해외 ETF는 제외**. 2026-07-29 사용자 지시로 지수 ETF 버킷 폐기 — 코스피200·코스닥150 추종과 그 레버리지/인버스 모두 `etf_normalize.DROP_KINDS`로 탈락. 판정은 브랜드·레버리지 수식어·지수명을 걷어낸 잔여물이 비면 지수 상품, 남으면 섹터/테마 유지(`TIGER 200 IT`·`TIGER 코스피고배당`은 잔류). **2026-08-06 사용자 지시로 같은 테마 섹터 ETF를 테마+방향별 1줄 병합** — 지수 ETF를 걷어낸 뒤 반도체 ETF가 매일 2~5칸을 쪼개 차지했고(실측 raw 100행엔 9종 1.46조가 들어 있는데 상위 10엔 3종 0.98조만 노출) 셋 다 같은 베팅이라 신호가 죽었다. `THEME_KEYWORDS` 사전 매칭, 실패 시 제 이름 유지(안전 폴백), 병합 1종이면 라벨도 원래 이름. 섹터 ETF를 아예 빼는 안은 기각 — Naver가 업종 단위 거래대금을 안 줘서 리포트에서 업종별 **자금량**이 나오는 곳이 여기뿐이다(§7 업종은 등락률·breadth라 가격 신호)) / kr_industry.json(업종 breadth 주도 크로스체크) / kr_theme.json(**항상 빈 배열** — 2026-07-29 테마 섹션 폐지로 비-코어 강등, 2026-09-17 소스마저 폐지) / kr_sector.html(1D~1Y 막대) / kr_intraday.json / **kr_econ.json**(ECOS 한국은행 — 국고채 3년·10년, CD 91일, 회사채 AA- 3년, 기준금리. 2026-07-29 연동 완료)
+- **핵심 규칙**: ① **수급 신선도** — 당일 확정치가 18:00에 없을 수 있음 → `flows_date`·`flows_provisional`로 "당일 잠정/전 거래일 기준" 라벨, 당일 수급 창작 금지. 장중 궤적도 같은 규율(`stale`) + 앵커 사이 값 보간 금지. ② 거래대금 상위 ETF 정규화. ③ 멀티기간 수익률은 **거래대금·breadth 크로스체크**로 주도 판정(상승률만 X). ④ **정책·정치 촉매 = 수급 다음가는 주력 섹션**(2026-07-29 사용자 지시로 확대) — 하위 블록 3개 이상, 각 블록에 사실 → 전달 경로(수급/이익/멀티플) → 수혜·피해 업종 → 다음 일정·확인 트리거 4요소. 당파 논평·선거 예측 금지
+- **리포트 구조** (2026-07-29 사용자 지시): **전략 코멘트를 헤드라인 바로 다음(§2)으로 전진 배치** — 결론 먼저, 표는 뒤. 선행 요약이라 여기 실린 수치는 아래 표와 1:1 대조가 발행 게이트에 추가됨. **테마 섹션 폐지** — 종목 재료는 특징주, 산업 쏠림은 업종 섹션이 흡수. §5 수급 서브블록 순서는 **일별 확정 → 장중 수급 전개(2026-08-06 신설: 차트+30분 앵커 표+해석 2~3문단, 기관은 금융투자·연기금등 두 축만 서술) → 프로그램 매매**
+- **작성·발행**: writer 스펙 `.claude/agents/kr-report-writer.md`, 파이프라인 `.claude/KR_ORCHESTRATOR.md`(공유 규칙은 US brief-report-writer.md 참조). report_date는 `kr_market_data.json` 신뢰. 발행 `/kr/posts/[date].html` + `kr/posts.json` + sitemap. **Notion 발행 중지** (2026-08-18 사용자 지시 — US와 함께, 블로그 한 채널만). (재개 대비 기록: DB "KR Market Brief", data_source_id `d1dcda42-2e15-4080-93a2-b77622e46f3d`)
+- **클라우드 루틴 트리거**: `trig_01HmSKF1UVXZvQSDk9pzYY8C` — 월~금 18:00 KST(cron `0 9 * * 1-5` UTC) 실행, 레포 클론 후 `.claude/KR_ORCHESTRATOR.md` 실행. sonnet-5, Notion·PushNotification 연결. 트리거 변경만 RemoteTrigger로(부트스트랩은 짧게, 파이프라인은 레포 파일)
+- **일봉 차트**: `scripts/kr/charts.py`가 코스피·코스닥·SK하이닉스·삼성전자 3개월 일봉 캔들 → **PNG 바이트 반환**, `charts.publish()` 가 `kr/assets/kr_charts_{거래일}.png` 로 내보낸다(matplotlib, 상승 녹색/하락 적색). 같은 날짜에 **다른 바이트**를 쓰려 하면 `AssetConflict` — 발행된 그림이 뒤에서 바뀌는 것을 막는다. 만들어진 차트 목록은 `kr/data/kr_charts_manifest.json`. 거래대금 상위는 **레버리지(롱)/인버스(숏) 방향 분리** 병합
+- **ECOS 연동** (2026-07-29): 인증키는 레포 시크릿 `ECOS_API_KEY`(워크플로 `env`로만 주입, 로컬 env엔 없음). ECOS는 **키를 URL 경로에 넣으므로** `scripts/kr/econ.py`의 `scrub()`를 거치지 않은 URL·예외를 절대 출력하지 말 것. 항목 코드는 하드코딩하지 않고 `StatisticItemList`에서 이름으로 해석(코드는 통계표 개편 때 바뀌고 오류 시 INFO-200으로 조용히 실패). 비-코어 — 결측이어도 발행 게이트 통과, writer가 해당 행만 뺀다
+- **독자 = 헤지펀드 매니저** (2026-09-22 사용자 지시). 세일즈·리서치 팀이 판단 재료를 대는 관계다 — 사실에서 멈추지 않고 **사실 → 해석 → 판단 영향 → 다음 확인 조건**까지 간다. **US 는 바뀌지 않았다**(US 스펙은 「독자는 개인」 그대로). 정본은 `.claude/agents/kr-report-writer.md` 머리의 「독자와 역할」 절.
+- **판단 원장** (2026-09-22): `kr/data/kr_stance.json`(어제 판단) → 수집기가 무효화 레벨을 그날 종가로 검산 → `kr_stance_eval.json`(`유효`·`무효화`·`판정불가`) → writer 가 §2 `review` 에서 그 판정을 말하고 `kr_stance_next.json` 을 낸다 → 오케스트레이터 STEP 2.9 가 그것을 원장으로 승계. **무효화 조건을 수로 남기는 게 핵심이다** — 산문으로만 적으면 다음 날 작성자가 제 기억으로 「대체로 맞았다」를 쓴다. `scripts/kr/stance.py`(판정·검증)·`stance_gate.py`(산문 ↔ 원장 대조)·`scripts/check_kr_stance.py`(CLI).
+- **가격에 반영된 기대** (2026-09-22): `kr_econ.json` 의 `expectations` — 정책(국고3년−기준금리)·성장(10년−3년)·신용(회사채AA-−국고3년) 세 스프레드와 **그 스프레드가 제 2년 이력에서 선 자리**(`common/standing.py` 재사용, 「이보다 넓었던 날이 나흘뿐」). KR 엔 FedWatch·컨센서스가 없어 **금리가 이미 값매긴 것**으로 시장 기대를 읽는다. VKOSPI 는 2026-09-22 실측에서 네이버·야후·KRX 전부 막혀 채택 불가. `econ.py` 의 `_LOOKBACK` 이 45일→800일로 넓어진 게 이것 때문이다(`_MAX_ROWS` 1000 — 200이면 앞쪽이 조용히 잘린다).
+- **지수 ETF 는 상위 표에서 빼되 버리지 않는다**: `etf_normalize.dropped_products()` → `kr_index_etf.json`. §7 표에는 여전히 안 들어간다(2026-07-29 지시 유지). §2 `action` 이 상품을 댈 때 **유동성 근거**로만 쓴다.
+- **판단군 하한 1,800자** (`check_weight.py`, market=kr). 2026-09-21 발행본이 시황 2,542자 대 판단 1,287자였다 — 판단 재료를 받는 독자에게 그 배분은 거꾸로다.
+- **미완/열린 항목**: ECOS 월별 지표(CPI·수출입) 추가 여부 / 장중 수급·프로그램 매매 대체재(대안 설명의 판별 자료가 거기 있었다) / US 도 독자를 PM 으로 바꿀지
+
+
+### 주간·월간 정리 — KR 몫 (설계 2026-08-23)
+
+- **성격**: 그 기간에 **발행한 KR 마감브리프들의 총정리**다. 새로 취재하지 않는다 — **웹 검색 금지·시세 재수집 금지.** 본문 서술은 `kr/posts/*.html`, 성과표는 집계 파일로 소스가 갈린다.
+- **발행물**: 토요일 `/kr/weekly/<YYYY-Www>.html`, 월 롤오버 다음날 `/kr/monthly/<YYYY-MM>.html`. **키는 기간 식별자다** — `us/period.py` 의 `week_key()`·`month_key()` 를 그대로 쓴다. 마지막 거래일은 `end_date` 필드이지 파일명이 아니다.
+- **저장소가 둘이다. 섞으면 복원이 안 된다** (2026-09-06 정정).
+  - `kr/data/history/kr_market.jsonl` — **지수 종가 원장**. `collect_kr_data.py` 가 그날 발행본이 인쇄한 값을 쌓는다(`upsert=True`). 성과표의 끝값이 여기서 나온다.
+  - `kr/data/{weekly,monthly}/<KEY>.json` 의 **`_sessions`** — 업종·거래대금·수급 **세션 원장**. `scripts/kr/period.py` 의 `upsert_session()` 이 날짜 키로 쌓고 `finalize()` 가 굴린다. 과거 계열이 없어 여기 모으는 것이며, **JSONL 만 백업하면 이쪽은 복원되지 않는다.** 두 번 돌아도 두 번 더해지지 않고, 실패한 날은 다음 실행이 메운다.
+- **수급은 확정치만 담는다** — 잠정치는 정정되면서 조용히 틀려진다(일간의 `flows_provisional` 규율과 같다).
+- **`leading` 플래그는 60개 업종 중 30개에 붙는다**(2026-08-30 실측) — 등락률 상위 5개만 남긴다.
+- **미완** (2026-09-04): **KR 주간·월간은 아직 한 편도 없다** — `kr/weekly/`·`kr/monthly/` 디렉터리 자체가 없으므로 트리거 등록(토 `0 0 * * 6`, 월 `30 0 1,2,28,29,30,31 * *`) 여부를 먼저 확인할 것. 첫 몇 회차는 롤업이 표본 부족으로 나오는 것이 정상이다.
+- **고칠 때**: `scripts/kr/period.py` 를 건드리기 전에 `docs/superpowers/specs/2026-08-23-period-reports-design.md` 를 읽는다. 게이트(`check_period.py`)와 작성 사양은 US·KR 공용이라 `scripts/us/CLAUDE.md` 의 「주간·월간 정리 — US 몫」에도 같은 규율이 적혀 있다.
+

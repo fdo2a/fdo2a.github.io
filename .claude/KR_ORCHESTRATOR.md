@@ -45,7 +45,6 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 
 STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`). 초안 전후 비교는 workflow의 `compare`로 기록하고, 인과관계·유보 표현의 의미 보존은 사람이 확인한다.
 
-
 수치가 아닌 **뉴스·정책 촉매·해석**만 웹 리서치한다(수치는 kr/data가 확정). 최소 포함:
 - 그날 코스피·코스닥·수급을 움직인 뉴스(외국인 매매 배경, 대장주 이슈)
 - **정책·정치 촉매 — 리서치 비중 최우선 (2026-07-29 사용자 지시로 섹션 확대)**: 밸류업·기업지배구조(상법·자사주)·금투세·대주주 양도세·배당 분리과세·한은 금통위·반도체/2차전지/바이오 보조금·통상(대미 관세·수출규제)·환율당국·국민연금·부동산 규제·지정학·국회 일정 중 그날 해당분. writer가 블록당 **사실 → 전달 경로(수급/이익/멀티플) → 수혜·피해 업종 → 다음 일정·확인 트리거** 4요소를 쓸 수 있도록 각 재료마다 이 네 가지를 채워서 넘긴다. 신규 재료가 없으면 중요한 계류 정책의 변화 여부를 확인하고, 변화가 없다는 사실만 짧게 쓴다. 분량을 채우기 위한 재서술은 하지 않는다.
@@ -56,26 +55,30 @@ STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
 
-Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
+Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다), 그리고 **writer 스펙의 섹션 순서를 그대로 따르라**는 지시(전략 코멘트는 헤드라인 바로 다음, 테마 섹션 없음, 장중 수급·프로그램 매매는 수급 서브블록, 기술적 분석은 일봉 차트 바로 아래). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
 
-**위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
- 장중 수급 전개·프로그램 매매는 수급 서브블록(그 순서대로), 기술적 분석/전략은 일봉 차트 바로 아래 산문 섹션(writer 스펙 §5·§5.5). **구조 변경 반영(2026-07-29)**: 전략 코멘트가 §2로 전진(헤드라인 다음), 테마 섹션 폐지, 정책·정치 촉매(§10) 확대 — writer 스펙의 섹션 순서를 그대로 따르게 프롬프트에 명시한다.
+**위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 
-**발행 게이트**: (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date`와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개+ 를 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍 있으면 발행 중단, PushNotification으로 누락 보고.**
+**발행 게이트** — (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date` 와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개 이상을 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍이 있으면 발행 중단, PushNotification 으로 누락 보고.**
 
-**가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
+아래 게이트는 실패하면 **출력에 찍힌 위반을 그대로** writer 에게 넘겨 다시 돌린다(게이트 소스를 읽지 않는다).
 
-0. **시황 게이트** — `python3 scripts/check_session.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. KR의 첫 데이터 게이트다. `data-session` 문단 넷, 전일 미국장이 2거래일 이상 묵었을 때의 기준일 표기, 아시아 지수 등락의 표 대조, 「시장 폭」 오칭·내부 필드명·「§N」 노출을 본다. 비-코어라 `kr_session.json`이 없으면 통과한다.
-**무게중심 게이트** — `python3 scripts/check_weight.py --html <kr_brief 절대경로> --datadir kr/data --market kr`. 시황·가격군(오늘의 장·지수 & 장중·환율·금리)의 하한 2,200자, **판단군(전략 코멘트·기술적 분석)의 하한 1,800자**(2026-09-22 신설 — 그전까지 KR엔 판단 하한이 없어 09-21 발행본이 시황 2,542자 대 판단 1,287자였다), 가격 섹션의 `data-standing` 문단(120자·수치 하나 이상), 가격 섹션의 스탠스 등급 어휘를 본다. 매크로·경로 항목은 KR에 없으므로 건너뛴다.
+```bash
+python3 scripts/check_session.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
+python3 scripts/check_weight.py   --html <kr_brief 절대경로> --datadir kr/data --market kr
+python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json
+```
 
-**판단 원장 게이트** — `python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json`. §2 여섯 블록의 존재·순서, `action`의 노출 등급·시계가 원장과 같은지, **`invalidation` 산문의 레벨이 원장 `level`과 같은 수인지**, `review`가 `kr_stance_eval.json`의 판정을 실제로 말하는지를 본다. 비-코어가 아니다 — 원장이 틀어지면 **다음 회차의 복기가 통째로 거짓이 된다.**
+- `check_weight.py` 의 KR 계약: 시황·가격군 하한 2,200자, **판단군(전략 코멘트·기술적 분석) 하한 1,800자**, 가격 섹션의 `data-standing`, 가격 섹션의 스탠스 등급 어휘 금지.
+- `check_kr_stance.py` 는 비-코어가 아니다 — 원장이 틀어지면 다음 회차의 복기가 통째로 거짓이 된다.
 
-1. `python3 scripts/apply_readability.py <kr_brief 절대경로>`(v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)) 뒤 `python3 scripts/check_readability.py --strict --no-inline-images <kr_brief 절대경로>`와 **`python3 scripts/check_style.py <kr_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 STEP 2.5의 윤문과 별개로 여기서 항상 돈다 — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
-2. 위반 원인별로 처방한다: 헤드라인은 방향·촉매·행동만 남기고, 장중 시각이 셋 이상인 문장은 시간대별로 나눈다. 수치가 다섯 개 이상이면 정확한 레벨은 표에 두고 산문에는 가장 가까운 지지·저항과 관계만 남긴다. 원화·지수 소수점은 산문에서 반올림하고 정밀값은 표·JSON에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
-3. 검사 원문을 writer에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → strict check를 반복한다.
-4. writer가 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 수치 정본과 표 대조, 수급 신선도, 정책 블록 수는 다시 확인한다. **통과할 때까지 수리 루프를 계속한다.**
+**가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
 
-가독성 실패는 현재 초안을 반려할 뿐 미발행 사유가 아니다. 데이터 정본의 completeness 실패만 기존 규칙에 따라 중단할 수 있다.
+1. `python3 scripts/apply_readability.py <html>` → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 STEP 2.5 윤문과 별개로 항상 돈다.
+2. 실패하면 검사 원문을 writer 에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → check 를 반복한다.
+3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고치고(장중 시각이 셋 이상인 문장은 시간대별로 나누기 → 정확한 레벨은 표에 두고 산문엔 가장 가까운 지지·저항만 → 산문 반올림 → 반복 수치 제거), 수치 정본·표·수급 신선도·정책 블록 수를 다시 확인한다. **통과할 때까지 계속한다.**
+
+가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다. 중단은 데이터 정본의 completeness 실패뿐이다.
 
 ## STEP 2.5 — AI 티 제거 (발행 전 마지막 손질)
 

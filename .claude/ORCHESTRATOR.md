@@ -59,7 +59,6 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 
 STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`). 초안 전후 비교는 workflow의 `compare`로 기록하고, 인과관계·유보 표현의 의미 보존은 사람이 확인한다.
 
-
 If STEP 0 already produced a complete market_data.json/intraday.json/yield_curve.png, you still need **research_notes.md** — launch the collector subagent (or fallback) for the web-research portion only (STEP 2 of the agent file: 시황 동인·채권 맥락·메모리·AI 인프라·경제지표 4축). Otherwise run it in full.
 
 Launch the Agent tool with subagent_type "brief-data-collector", run synchronously (run_in_background: false). Prompt: the report trading date [YYYY-MM-DD], whether market data is already present (and its path), and the instruction to produce any missing artifacts in the workspace root: market_data.json, intraday.json, yield_curve.png (may be skipped if week-ago yields are missing), research_notes.md.
@@ -74,36 +73,38 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 ## STEP 2 — 리포트 작성 (subagent: brief-report-writer)
 
-**뉴스 입력 (작성 전)** — 커밋된 `news/[DATE].json` 의 각 항목에 수집 잡이 원문을 읽고 만든 한국어 요약 `summary_ko` 가 있다(2026-09-24). **루틴에서 기사 본문을 다시 받지 않는다** — 클라우드 환경은 CNBC·Yahoo 에 403 이라 예전의 `--bodies-only` 재수집은 한 번도 성공하지 못했고, 실패한 재수집이 `body_chars` 를 0 으로 덮어써 게이트가 뉴스 섹션을 면제해 왔다(9/19~9/22 발행본에 뉴스가 없던 이유). `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」 섹션은 의무다. 하나도 없으면(예: 레포 Variables 에 WIF 값 미등록, 항목의 `summary_note` 참조) 섹션 없이 발행하되 **최종 보고에 그 사유를 적는다** — 조용히 빠지게 두지 않는다.
+**뉴스 입력** — 커밋된 `news/[DATE].json` 의 각 항목에 `summary_ko`(수집 잡이 원문을 읽고 만든 한국어 요약)가 있다. **루틴에서 기사 본문을 다시 받지 않는다**(클라우드는 CNBC·Yahoo 에 403 이고, 실패한 재수집이 `body_chars` 를 0 으로 덮어써 뉴스 섹션이 면제되던 원인이었다). `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」는 의무다. 하나도 없으면 섹션 없이 발행하되 **최종 보고에 사유(`summary_note`)를 적는다.**
 
 Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
-Gate before proceeding (발행 게이트): (a) `grep -c '확인필요' <html>` — must be 0; (b) spot-check 5+ numbers by grepping the HTML for specific values from market_data.json / intraday.json / econ_indicators.json (e.g. `grep -o '4\.62' <html>`), NOT by reading the whole ~34K-token HTML into context. If either check fails, relaunch the writer subagent with the specific violations; repeat until clean. 수치 창작 절대 금지 — 미확인 항목은 삭제·재구성이 원칙.
+**발행 게이트** — 아래를 레포 클론에서 돌린다. 하나라도 실패하면 **출력에 찍힌 위반을 그대로** writer 에게 넘겨 다시 돌린다(게이트가 무엇을 막는지는 출력이 말한다 — 게이트 소스를 읽지 않는다). 표식을 지우거나 게이트를 우회하지 않는다.
 
-**매크로 게이트 (§10)** — run `python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: the policy path의 `falsifier` 가 지면에 없을 때; the regime label is outside the 3×3 controlled vocabulary; the regime sits outside `allowed_regimes` (the writer moved it on a day with no new release, inside the 5-business-day lock, or against what the axis scores imply); the axis scores or the FedWatch probability are not quoted in the section; a newly released indicator listed in `headline_releases` has no `data-release` anatomy block, or that block stops at the headline number (no primary source named, fewer than three figures); a transmission direction is outside its `allowed_directions`; the policy path was re-timed without either a new release or a 15%p probability move; macro_next.json is missing / not dated today / disagrees with the §8 markers; or an axis-table row (`data-indicator`) is missing, or its 직전 대비 / 추세 cell, Actual or Previous differs from the computed value (추세 must be 「—」 when `macro_metrics.json` is not today's). Relaunch the writer with the exact violations.
+(a) `grep -c '확인필요' <html>` = 0. (b) 수치 5개 이상을 `grep -o '4\.62' <html>` 식으로 `market_data.json`·`intraday.json`·`econ_indicators.json` 원본과 대조 — HTML 전체(~34K 토큰)를 읽지 않는다. 수치 창작 금지, 미확인은 삭제·재구성.
 
-**가격 맥락 게이트 (§4·§6·§7·§8)** — run `python scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: a cross-asset relationship whose sign flipped against the prior 60 sessions is not written about (needs a `data-relation="KEY"` paragraph — same discipline as §8's reconciliation, disagreement allowed, silence not); a `data-attribution` block prints the sector split without the residual it cannot explain, or prints one at all on a day the sector weights barely fit the index; or internal machinery (주성분·고유값·필드명) reached the page. Non-core: an older dataset with no `price_context` block passes untouched. Relaunch the writer with the exact violations.
+```bash
+python  scripts/check_macro.py         --html morning_brief_[DATE].html --datadir <workspace>
+python  scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_session.py       --html morning_brief_[DATE].html --datadir <workspace> --market us
+python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_news.py          --html morning_brief_[DATE].html --datadir <workspace> --date [DATE]
+python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
+```
 
-**시황 게이트 (「오늘의 장」)** — run `python3 scripts/check_session.py --html morning_brief_[DATE].html --datadir <workspace> --market us` from the repo clone. It fails the run when: a `data-session` paragraph is missing or empty; a region whose average direction diverged from the S&P 500 is not written about (silence is the failure, disagreement is fine); the participation reading is narrated on a neutral day or omitted on a day it fired; a global close printed in the table disagrees with the collected value, or a close older than three sessions carries no as-of date; the reading is called 「상승 종목 비율」·「등락 종목 수」·「시장 폭」; internal field names or a 「§N」 notation reached the page. Non-core: a dataset with no `session` block passes untouched.
+- `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다.
+- `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
+- 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 
-**연준 이벤트 게이트 (「연준 이벤트」)** — run `python3 scripts/check_fed.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. It fails the run when: today has no fresh Fed event but the section was published anyway (**침묵이 기본값이다** — FOMC·잭슨홀 같은 자리가 없는 날 이 섹션을 열면 이벤트 섹션이 아니라 매일 새로 쓰는 논평란이 된다); a fresh tier-1 event has no section, no `data-fed-event` intro, or fewer than two verified quotes; **a quoted sentence is not in the collected primary document, character for character**; a quote was printed for an event whose document could not be fetched; a quote has no Korean translation or no source caption; a computed statement redline has no `data-fed-change` block, or that block quotes none of the changed sentences; there are fewer than two `data-fed-idea` blocks, an idea hangs off a quote that was never printed, or an idea has no invalidation condition; or a figure in the section is in neither the data files nor the primary document. **이 게이트의 자리는 인용문이다** — 지어낸 수치는 데이터와 맞대면 걸리지만 지어낸 발언은 그럴듯할수록 안 걸린다. 인용의 문턱 값(무효화 조건 안의 수치)만 창작 검사에서 면제된다. Relaunch the writer with the exact violations.
+**가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
 
-**캘린더 게이트 (§9 「다음 발표 일정」 카드)** — run `python3 scripts/check_calendar.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. 금지형이다 — 카드를 채우라고 요구하지 않는다. 막는 것은 셋: `data-calendar="<key>"` 가 **수집한 적 없는 일정**을 가리키는 것, 표식이 가리키는 일정과 **다른 날짜**를 적는 것, **시각을 모르는 일정에 시각을 적는 것**. 낡은 `calendar.json` 은 없는 것과 같이 다룬다(어제 일정으로 오늘 표식을 인가하면 하루 밀린 시각이 인쇄된다). 표식이 없는 글은 그대로 통과한다. Relaunch the writer with the exact violations.
+1. `python3 scripts/apply_readability.py <html>` → `python3 scripts/apply_colors.py <html>`(방향색; `--check` 는 미적용이면 exit 1) → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 **STEP 2.5 윤문과 별개로 항상 돈다.**
+2. 실패하면 writer 를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 돌리고, 데이터 정본·표를 재대조한 뒤 apply → check 를 반복한다.
+3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고친다(긴 문장 분리 → 중복 수치 삭제 → 산문 반올림). **통과할 때까지 계속한다.**
 
-**뉴스 게이트 (오늘의 뉴스)** — run `python3 scripts/check_news.py --html morning_brief_[DATE].html --datadir <workspace> --date [DATE]` from the repo clone. 수집분 `news/<date>.json` 과 발행본을 `data-news` 표식으로 대조한다. It fails the run when: 수집되지 않은 `guid` 를 실었을 때(지어낸 기사); **수집 요약(`summary_ko`)이 없는** 기사를 실었을 때(제목만 보고 쓴 것); 블록이 그 기사의 `summary_ko` 와 글자 유사도 0.5 미만일 때(실제 guid 아래 다른 내용); 같은 기사를 두 번 실었을 때; 한 항목의 본문이 240자 미만(RSS 한 줄 요약을 옮긴 것)이거나 420자 초과일 때; `data-news` 없는 뉴스 블록이 있을 때; `display:none`·`hidden`·주석으로 **숨긴 블록**으로 항목 수를 채웠을 때(2026-09-19 실측으로 셋 다 재현 후 차단); 블록의 링크가 그 기사의 원문이 아닐 때. **수집분이 없거나 비면 섹션 의무만 면제되고 표식 대조는 그대로 돈다** — 수집이 실패한 날이 지어낸 뉴스가 실릴 확률이 가장 높다(2026-09-19 codex 검토 #1). 요약이 하나도 없는 날도 섹션 없이 발행할 수 있다. **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다(#11). 그날 뉴스를 기억에서 꺼내 쓰는 것이 이 게이트가 막는 실패다.
+가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다 — 중단 알림을 보내지 않는다. 중단은 데이터 정본이 끝내 완성되지 않을 때(completeness gate)뿐이다.
 
-**출처 게이트 (§9 발표 해부·연준 이벤트)** — run `python3 scripts/check_sources.py --html morning_brief_[DATE].html --datadir <workspace>` from the repo clone. **금지형이다 — 링크를 요구하지 않는다.** 귀속은 문장의 주어로 쓴다(「BLS 는 … 밝혔습니다」). 막는 것은 «인쇄된 링크가 거짓말인 경우»뿐이다: 수집한 원문 목록에 없는 URL, 수집에 실패한 문서(`ok:false`)를 가리키는 링크, 다른 발표의 URL 이 이 블록에 붙은 것, 표식 없는 블록의 외부 링크, 글자 없는 링크, http(s) 아닌 스킴. **숨긴 링크도 검사한다** — 미디어쿼리 한 줄로 「숨김」 판정이 뚫리는 것을 확인했고, CSS 엔진 없이 렌더 결과를 맞힐 수 없다. `script`/`style`/`template` 만 빠진다. 수집 파일이 없거나 날짜가 어긋나면 **아무것도 인가되지 않은 것**으로 본다 — 게이트가 꺼지지 않는다(수집이 실패한 날이 지어낸 링크가 실릴 확률이 가장 높은 날이다). Head 의 AdSense·canonical·OG·JSON-LD 와 사이트 안 이동 링크는 대상이 아니다. Relaunch the writer with the exact violations.
-
-**무게중심 게이트** — `python3 scripts/check_weight.py --html <새 초안> --datadir <workspace> --market us`. 필수 시황 섹션이 비어 있지 않은지, 가격 위치의 수치 근거와 큰 변동의 설명, 전략 코멘트의 논리 순서를 검사한다. 총 글자 수 하한과 시황/판단 비율은 강제하지 않는다. US 매크로 상한은 발표일 4,600자·축약일 2,400자로 유지한다.
-
-**가독성 게이트 = 초안 수리 루프 (실패로 루틴 종료 금지)**
-
-1. `python3 scripts/apply_readability.py <morning_brief 절대경로>` 다음 **`python3 scripts/apply_colors.py <morning_brief 절대경로>`**(수치 칸 방향색 — 오르면 초록, 채권 금리는 반전, 매크로는 같은 행 「직전 대비」 칸을 따른다. 보이는 글자는 안 바뀌므로 수치 대조에 영향이 없다. `--check`는 미적용이면 exit 1 이므로 체인에서 빠진 날을 알 수 있다)로 v5 조판(데스크톱 본문 17px·**폭 제한 없음** — 문장이 카드를 다 채운다, 라벨은 제 줄에, 캡션 특정도 교정)·빠른 이동·긴 문단 분리를 적용하고, `python3 scripts/check_readability.py --strict --no-inline-images <morning_brief 절대경로>`와 **`python3 scripts/check_style.py <morning_brief 절대경로>`**의 전체 출력을 저장한다. 문체 검사는 **쉬운 말 검사를 겸한다(2026-08-26)** — 풀어 쓸 수 있는 음차어, 풀이 없이 처음 나온 전문어, 한 문장에 겹친 낯선 말을 잡는다. 나머지 문체 항목은 「말하듯이 쓴다」 기준에서 셀 수 있는 부분(비인칭 피동·번역투 연결·서술어 없는 명사형 머리말·「~한 상태다」 종결·같은 문단 머리말 반복·「~다」 연속)을 본다. **STEP 2.5의 윤문과 별개로 여기서 항상 돈다** — 윤문은 건너뛸 수 있어도 문체 기준은 건너뛰지 않는다.
-2. 실패하면 출력에 찍힌 위반을 원인별로 고친다. 문체 위반은 「말하듯이 쓴다」 절의 해당 항목대로 문장을 다시 쓴다: 헤드라인은 방향·촉매·행동만 남기고, 120자 초과는 시간·주제가 바뀌는 곳에서 문장을 나누며, 수치 5개 이상은 정확한 값은 표에 두고 산문에는 관계만 남긴다. 과잉 정밀도는 산문만 반올림하고 정확한 값은 표에서 보존한다. 반복 수치는 첫 설명과 정본 표 한 곳만 남긴다.
-3. writer를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 실행한다. 수정 뒤 데이터 정본과 표를 재대조하고 apply → strict check를 반복한다.
-4. writer 재실행이 두 번 연속 같은 위반을 남기면 오케스트레이터가 해당 문단을 직접 국소 수정한다. 긴 문장 분리 → 중복 수치 삭제 → 산문 반올림 순서로 고치고 다시 검사한다. **통과할 때까지 이 수리 루프를 계속한다.**
-
-가독성 실패는 현재 초안을 반려할 뿐, “오늘 레포트 미발행” 사유가 아니다. 가독성 때문에 중단 알림을 보내지 않는다. 데이터 정본이 끝내 완성되지 않는 경우만 기존 completeness gate에 따라 중단할 수 있다.
+각 게이트가 막는 조건의 상세와 이력: `docs/superpowers/specs/2026-09-24-instruction-history-archive.md` 「STEP 2」.
 
 ## STEP 2.5 — AI 티 제거 (발행 전 마지막 손질)
 

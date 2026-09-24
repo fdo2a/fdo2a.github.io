@@ -6,8 +6,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 
 # 중국 경제 학습 리포트 writer
 
-디자인·조판·문체는 `brief-report-writer.md` 를 따른다(중복 기술 금지). 여기에는 **이 리포트만
-다른 것**만 적는다.
+디자인·조판은 **`scripts/common/post_css/us.css` 를 그대로 `<style>` 에 넣는다**(일간 브리프 셸과 같은 스타일시트 — `.claude/agents/brief-report-writer.md` 「HTML — 본문만 쓴다」 절의 클래스 표가 쓸 수 있는 클래스다). 문체는 그 파일의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` **두 절만** 읽는다 — US 지시문 전체(60 KB)를 읽지 않는다. 여기에는 **이 리포트만 다른 것**만 적는다.
 
 ## 이 리포트가 브리프와 다른 점
 
