@@ -28,6 +28,15 @@
       "prev_date": "2026-09-22",
       "bp": 0.0
     },
+    "회사채 AA- 3년": {
+      "value": 4.689,
+      "date": "2026-09-23",
+      "unit": "연%",
+      "item_name": "회사채(3년, AA-)",
+      "prev": 4.713,
+      "prev_date": "2026-09-22",
+      "bp": -2.4
+    },
     "한국은행 기준금리": {
       "value": 3.0,
       "date": "2026-08",
@@ -38,9 +47,7 @@
       "bp": 25.0
     }
   },
-  "missing": [
-    "회사채 AA- 3년"
-  ],
+  "missing": [],
   "expectations": {
     "policy": {
       "label": "정책 기대",
@@ -82,6 +89,27 @@
         "side": "mid",
         "short": "한가운데쯤",
         "text": "최근 2년(535거래일)의 한가운데쯤"
+      }
+    },
+    "credit": {
+      "label": "신용 가격",
+      "numerator": "회사채 AA- 3년",
+      "denominator": "국고채 3년",
+      "note": "같은 만기에서 신용 위험에 매겨진 값",
+      "bp": 68.3,
+      "date": "2026-09-23",
+      "sessions": 535,
+      "change_bp": 1.0,
+      "prev_date": "2026-09-22",
+      "standing": {
+        "percentile": 91.2,
+        "sessions": 535,
+        "window": "2년",
+        "days": 44,
+        "share_pct": null,
+        "side": "high",
+        "short": "이보다 넓었던 날이 44일뿐",
+        "text": "최근 2년(535거래일) 가운데 이보다 넓었던 날이 44일뿐"
       }
     }
   }
