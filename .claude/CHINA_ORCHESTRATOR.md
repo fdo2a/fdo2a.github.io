@@ -56,7 +56,7 @@ print(('STALE' if gen < today else 'FRESH'), 'generated(KST)=' + gen, 'today=' +
    **클라우드 샌드박스에는 `gh` 가 없다**(실측 exit 127). 없으면 GitHub MCP 로 간다 —
    `mcp__github__actions_run_trigger`(`method: run_workflow`) 로 걸고
    `mcp__github__actions_list`(`method: list_workflow_runs`) 로 run id 를 받은 뒤,
-   샌드박스에 있는 `$GH_TOKEN` 으로 REST 를 폴링해 `conclusion == "success"` 를 확인한다.
+   **`bash scripts/ci/wait_run.sh "$RUN"` 한 번으로** 기다린다(샌드박스의 `$GH_TOKEN` 으로 REST 를 폴링하고, exit 0 만 `conclusion == "success"` 다). Bash 도구 timeout 을 600000 으로 올린다 — 도구가 먼저 끊으면 같은 명령을 다시 부른다. **Monitor·ScheduleWakeup·짧은 폴링 반복으로 기다리지 않는다** — 깨어날 때마다 전체 컨텍스트가 다시 실린다(2026-09-21 실행이 「아직 진행 중」 확인에 수십 턴을 썼다).
    확인 없이 넘어가면 `--exit-status` 를 버린 것과 같다. (이 세 가지는 2026-09-13 런
    `cse_01JVScs8AU5FHo7yHouBYhpP` 기록으로 확인된 것이다 — 레포 안에는 스키마가 없으니
    레포만 읽는 검토자에게는 미검증으로 보인다.)

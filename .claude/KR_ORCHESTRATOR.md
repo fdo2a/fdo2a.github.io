@@ -23,6 +23,8 @@
    git pull
    ```
 
+   **`gh` 가 없으면**(클라우드 샌드박스, 실측 exit 127) `mcp__github__actions_run_trigger`(`method: run_workflow`)로 걸고 `mcp__github__actions_list`(`method: list_workflow_runs`)로 run id 를 받은 뒤 **`bash scripts/ci/wait_run.sh "$RUN"` 한 번으로** 기다린다(Bash 도구 timeout 을 600000 으로 올린다 — 도구가 먼저 끊으면 같은 명령을 다시 부른다). exit 0 만 성공이다. **Monitor·ScheduleWakeup·짧은 폴링 반복으로 기다리지 않는다** — 깨어날 때마다 전체 컨텍스트가 다시 실린다(2026-09-21 China 실행이 「아직 진행 중」을 확인하느라 수십 턴을 썼다).
+
    **실행 ID 를 집고 `--exit-status` 를 붙인다** — 맨 `gh run watch` 는 엉뚱한 예약 실행을 기다리거나 대화형 선택으로 빠지고, `--exit-status` 가 없으면 실패한 수집도 「기다렸다」로 통과해 낡은 데이터로 발행된다. 워크플로를 못 돌리는 환경이면 `python scripts/collect_kr_data.py --outdir kr/data`를 직접 실행한다(네트워크 열린 환경에서만).
 
    **폴백이 끝나면 다시 확인한다** — `report_date`가 여전히 예상 세션보다 이르거나 `complete:false`면 **발행하지 않고 중단한다**. 뒤의 completeness 게이트는 필드가 있는지만 보고 날짜는 보지 않으므로, 여기서 막지 않으면 전 거래일 자료로 오늘 글이 나간다. 한국 휴장일이면 예상 세션 자체가 전 거래일이라는 점에 주의 — 요일 산술이 아니라 `report_date`가 정본이다.
