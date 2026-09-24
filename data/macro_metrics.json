@@ -1,19 +1,19 @@
 {
-  "generated": "2026-09-23 23:48 UTC",
-  "report_date": "2026-09-23",
+  "generated": "2026-09-24 23:37 UTC",
+  "report_date": "2026-09-24",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "growth_score": -0.391,
+  "growth_score": -0.303,
   "inflation_score": -0.526,
-  "growth_diffusion": 0.357,
+  "growth_diffusion": 0.429,
   "inflation_diffusion": 0.375,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.217,
-      "direction": "보합",
+      "score": 0.377,
+      "direction": "개선",
       "strength": "미미",
-      "breadth_ko": "일곱 중 다섯이 개선, 나머지는 반대",
+      "breadth_ko": "일곱 중 다섯이 개선",
       "improving": 5,
       "total": 7,
       "leaders": [
@@ -22,8 +22,8 @@
           "name": "Continuing Jobless Claims",
           "direction": "개선",
           "strength": "뚜렷",
-          "actual": 1730000.0,
-          "previous": 1769000.0
+          "actual": 1719000.0,
+          "previous": 1717000.0
         },
         {
           "label_ko": "비농업 고용",
@@ -45,11 +45,11 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.51,
+      "score": -0.406,
       "direction": "악화",
-      "strength": "완만",
-      "breadth_ko": "다섯 중 다섯이 악화",
-      "improving": 0,
+      "strength": "미미",
+      "breadth_ko": "다섯 중 넷이 악화",
+      "improving": 1,
       "total": 5,
       "leaders": [
         {
@@ -61,20 +61,20 @@
           "previous": 0.58
         },
         {
+          "label_ko": "신규주택 판매",
+          "name": "New Home Sales",
+          "direction": "개선",
+          "strength": "미미",
+          "actual": 684.0,
+          "previous": 643.0
+        },
+        {
           "label_ko": "기존주택 판매",
           "name": "Existing Home Sales",
           "direction": "악화",
           "strength": "미미",
           "actual": 3980000.0,
           "previous": 4060000.0
-        },
-        {
-          "label_ko": "산업생산",
-          "name": "Industrial Production MoM",
-          "direction": "보합",
-          "strength": "미미",
-          "actual": 0.02,
-          "previous": 0.2
         }
       ]
     },
@@ -142,8 +142,8 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.217,
-    "Activity": -0.51,
+    "Labor": 0.377,
+    "Activity": -0.406,
     "Consumption": -0.879,
     "Inflation": -0.526
   },
@@ -175,24 +175,24 @@
       "name": "Initial Jobless Claims",
       "label_ko": "신규 실업수당 청구",
       "axis": "Labor",
-      "direction": "보합",
+      "direction": "개선",
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.099,
-      "signed_z": 0.099,
-      "actual": 196000.0,
-      "previous": 206000.0,
-      "ref_period": "2026-09-12",
+      "momentum_z": -0.355,
+      "signed_z": 0.355,
+      "actual": 197000.0,
+      "previous": 198000.0,
+      "ref_period": "2026-09-19",
       "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 204250.0,
-        "recent_avg": 203250.0
+        "prior_avg": 205750.0,
+        "recent_avg": 202250.0
       },
-      "trend_cell_ko": "보합 · 4주 평균 204K → 203K",
-      "is_new": false
+      "trend_cell_ko": "개선(미미) · 4주 평균 206K → 202K",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -202,20 +202,20 @@
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": 0.488,
-      "signed_z": -0.488,
-      "actual": 203250.0,
-      "previous": 206000.0,
-      "ref_period": "2026-09-12",
+      "momentum_z": 0.342,
+      "signed_z": -0.342,
+      "actual": 202250.0,
+      "previous": 204000.0,
+      "ref_period": "2026-09-19",
       "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 201562.5,
-        "recent_avg": 205625.0
+        "prior_avg": 202187.5,
+        "recent_avg": 205000.0
       },
-      "trend_cell_ko": "악화(미미) · 4주 평균 202K → 206K",
-      "is_new": false
+      "trend_cell_ko": "악화(미미) · 4주 평균 202K → 205K",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -225,20 +225,20 @@
       "strength": "뚜렷",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -1.289,
-      "signed_z": 1.289,
-      "actual": 1730000.0,
-      "previous": 1769000.0,
-      "ref_period": "2026-09-05",
-      "vs_prev": "개선",
+      "momentum_z": -2.002,
+      "signed_z": 2.002,
+      "actual": 1719000.0,
+      "previous": 1717000.0,
+      "ref_period": "2026-09-12",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 1788250.0,
-        "recent_avg": 1761250.0
+        "prior_avg": 1786750.0,
+        "recent_avg": 1744000.0
       },
-      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,788K → 1,761K",
-      "is_new": false
+      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,787K → 1,744K",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -359,24 +359,24 @@
       "name": "New Home Sales",
       "label_ko": "신규주택 판매",
       "axis": "Activity",
-      "direction": "보합",
+      "direction": "개선",
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.099,
-      "signed_z": -0.099,
-      "actual": 607.0,
-      "previous": 678.0,
-      "ref_period": "2026-07-01",
-      "vs_prev": "악화",
+      "momentum_z": 0.422,
+      "signed_z": 0.422,
+      "actual": 684.0,
+      "previous": 643.0,
+      "ref_period": "2026-08-01",
+      "vs_prev": "개선",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 643.333,
-        "recent_avg": 638.333
+        "prior_avg": 645.333,
+        "recent_avg": 666.333
       },
-      "trend_cell_ko": "보합 · 3개월 평균 643K → 638K",
-      "is_new": false
+      "trend_cell_ko": "개선(미미) · 3개월 평균 645K → 666K",
+      "is_new": true
     },
     {
       "name": "Existing Home Sales",
@@ -655,24 +655,86 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims",
+    "New Home Sales"
+  ],
+  "headline_releases": [
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Continuing Jobless Claims",
+      "max_abs_z": 2.002,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 197000.0,
+          "previous": 198000.0,
+          "ref_period": "2026-09-19",
+          "momentum_z": -0.355
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 202250.0,
+          "previous": 204000.0,
+          "ref_period": "2026-09-19",
+          "momentum_z": 0.342
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1719000.0,
+          "previous": 1717000.0,
+          "ref_period": "2026-09-12",
+          "momentum_z": -2.002
+        }
+      ],
+      "components": []
+    },
+    {
+      "key": "new-home-sales",
+      "label": "신규주택 판매",
+      "tier": 2,
+      "agency": "Census",
+      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "primary": "New Home Sales",
+      "max_abs_z": 0.422,
+      "indicators": [
+        {
+          "name": "New Home Sales",
+          "axis": "Activity",
+          "actual": 684.0,
+          "previous": 643.0,
+          "ref_period": "2026-08-01",
+          "momentum_z": 0.422
+        }
+      ],
+      "components": []
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-07-01",
       7271.0
     ],
     "Initial Jobless Claims": [
-      "2026-09-12",
-      196000.0
+      "2026-09-19",
+      197000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-09-12",
-      203250.0
+      "2026-09-19",
+      202250.0
     ],
     "Continuing Jobless Claims": [
-      "2026-09-05",
-      1730000.0
+      "2026-09-12",
+      1719000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-08-01",
@@ -695,8 +757,8 @@
       1.08
     ],
     "New Home Sales": [
-      "2026-07-01",
-      607.0
+      "2026-08-01",
+      684.0
     ],
     "Existing Home Sales": [
       "2026-08-01",

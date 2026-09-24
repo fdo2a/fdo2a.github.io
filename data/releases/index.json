@@ -1,21 +1,21 @@
 {
-  "report_date": "2026-09-18",
+  "report_date": "2026-09-24",
   "releases": [
     {
       "key": "claims",
       "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20172,
+      "chars": 20674,
       "path": "releases/claims.txt"
     },
     {
-      "key": "industrial-production",
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "key": "new-home-sales",
+      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 8718,
-      "path": "releases/industrial-production.txt"
+      "chars": 17925,
+      "path": "releases/new-home-sales.txt"
     }
   ]
 }

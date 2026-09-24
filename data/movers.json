@@ -1,0 +1,93 @@
+{
+  "report_date": "2026-09-24",
+  "universe": "S&P 500 중 달러 거래대금 상위 60",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "Interactive Media & Services",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Meta Platforms (META)",
+          "change_pct": 4.5,
+          "close": 777.59,
+          "value": 26940781418.94
+        },
+        {
+          "name": "Alphabet Inc. (Class A) (GOOGL)",
+          "change_pct": 1.34,
+          "close": 342.36,
+          "value": 8065389799.95
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Consumer Staples Merchandise Retail",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Walmart (WMT)",
+          "change_pct": -2.66,
+          "close": 107.59,
+          "value": 2651320052.84
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Semiconductors",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": -0.41,
+          "close": 224.58,
+          "value": 17162516703.67
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Biotechnology",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Moderna (MRNA)",
+          "change_pct": 6.98,
+          "close": 194.82,
+          "value": 3210660021.4
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Everpure (P)",
+          "change_pct": 11.15,
+          "close": 121.88,
+          "value": 1414116202.65
+        }
+      ]
+    }
+  ]
+}
