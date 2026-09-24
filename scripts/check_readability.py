@@ -37,6 +37,20 @@ H1_WARN, H1_FAIL = 80, 110
 H1_FIG_WARN = 4
 
 
+# 걸린 실행마다 한 번 찍는다. 작성자가 기준을 알려고 이 파일과 readability.py 를
+# 읽지 않게 하려는 것이다(2026-09-22 KR 작성 에이전트가 수백 줄을 읽었다).
+# 상수를 바꾸면 이 문장도 같이 바뀐다 — 값은 전부 위 상수에서 온다.
+LEGEND = (
+    "   기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·"
+    "muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.\n"
+    "        수치: 숫자 토큰(%%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, "
+    "「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.\n"
+    "        문장당 수치 %d개 초과 warn · %d개 초과 FAIL. 같은 수치는 %d개 문장까지(한 문장 안 중복은 1회).\n"
+    "        과잉 정밀(FAIL): 원 단위 소수, 백만 이상 값의 소수. 천 단위+소수(warn): 호가가 아니면 반올림.\n"
+    "        헤드라인 %d자 초과 warn · %d자 초과 FAIL · 수치 %d개 이하. --strict 에서는 warn 도 반려다."
+    % (FIG_WARN, FIG_FAIL, ECHO_LIMIT, H1_WARN, H1_FAIL, H1_FIG_WARN))
+
+
 def clip(s, n=90):
     return s if len(s) <= n else s[:n] + "…"
 
@@ -50,23 +64,25 @@ def audit(path, no_inline_images=False):
     # 길이·수치 검사를 통째로 피할 수 있다(발행본 78편은 전부 h1 이 하나다).
     for h1 in R.headings(html):
         if len(h1) > H1_FAIL:
-            fails.append("헤드라인 %d자 · 110자 초과" % len(h1))
+            fails.append("헤드라인 %d자 · 한도 %d자 초과" % (len(h1), H1_FAIL))
         elif len(h1) > H1_WARN:
-            warns.append("헤드라인 %d자 · 80자 안으로 줄일 것" % len(h1))
+            warns.append("헤드라인 %d자 · %d자 안으로 줄일 것" % (len(h1), H1_WARN))
         h1_figures = len(R.figures(h1))
         if h1_figures > H1_FIG_WARN:
-            warns.append("헤드라인 수치 %d개 · 넷 이하로 줄일 것" % h1_figures)
+            warns.append("헤드라인 수치 %d개 · 한도 %d개" % (h1_figures, H1_FIG_WARN))
 
     for s, n in R.long_sentences(html, LEN_INFO):
         infos.append("%d자 문장 · %s" % (n, clip(s)))
     for s, n in R.dense_sentences(html, FIG_WARN):
-        (fails if n > FIG_FAIL else warns).append("수치 %d개 문장 · %s" % (n, clip(s)))
+        (fails if n > FIG_FAIL else warns).append(
+            "수치 %d개 문장 (한도 %d, %d 초과는 FAIL) · %s" % (n, FIG_WARN, FIG_FAIL, clip(s)))
     for tok in sorted(set(R.overprecise(html))):
         fails.append("산문 과잉 정밀 %s — 반올림할 것" % tok)
     for tok in sorted(set(R.loosely_precise(html))):
         warns.append("산문 소수점 %s — 호가가 아니면 반올림" % tok)
     for tok, n in R.echoed_figures(html, ECHO_LIMIT):
-        warns.append("같은 수치 %s가 산문에서 %d회 되풀이" % (tok, n))
+        warns.append("같은 수치 %s가 산문에서 %d회 되풀이 (한도 %d회 — 문장 단위로 센다)"
+                     % (tok, n, ECHO_LIMIT))
 
     for sid, why in R.section_div_breaks(html):
         # 2026-09-03 발행본: §3이 div를 연 채 끝나고 §8에 짝 없는 </div>가 있어,
@@ -129,6 +145,7 @@ def main(argv):
                 "   repair 헤드라인 압축 → 긴 문장 분리 → 정확값은 표로 이동 → "
                 "산문 반올림 → 반복 수치 제거 후 재검사"
             )
+            print(LEGEND)
         if fails or (strict and warns):
             bad += 1
     return 1 if bad else 0

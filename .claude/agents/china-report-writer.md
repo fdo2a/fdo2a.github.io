@@ -142,3 +142,5 @@ python3 scripts/check_china.py china/posts/<발행일>.html     # 전용 게이�
 python3 scripts/check_readability.py --strict china/posts/<발행일>.html
 python3 scripts/check_style.py china/posts/<발행일>.html
 ```
+
+**게이트 소스를 읽지 않는다.** `scripts/check_*.py`·`scripts/us/readability.py` 등을 열어 기준을 역산하지 않는다 — 게이트는 걸린 줄마다 한도를 찍고, 가독성 게이트는 무엇을 세는지 「기준」 줄도 찍는다. 출력이 계약의 전부다. 출력만으로 고칠 수 없으면 추측하지 말고 그 출력을 그대로 보고한다.

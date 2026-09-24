@@ -111,3 +111,17 @@ def test_a_decoy_headline_cannot_take_the_real_one_out_of_scope(tmp_path):
     p.write_text(html, encoding="utf-8")
     r = _run(p, "--strict")
     assert "헤드라인 수치" in r.stdout, r.stdout
+
+
+def test_output_states_the_limits_so_nobody_reads_the_gate_source(tmp_path):
+    """2026-09-22 KR 작성 에이전트가 기준을 알려고 게이트 소스 수백 줄을 읽었다.
+    걸린 줄마다 한도가, 걸린 실행마다 무엇을 세는지가 출력에 있어야 한다."""
+    dense = "<p>지수는 1.1%, 2.2%, 3.3%, 4.4%, 5.5%, 6.6%, 7.7% 움직였고 모두 기록됐다.</p>"
+    echo = "".join("<p>코스피는 오늘 7,017 에서 마감했고 거래가 이어졌다 %d.</p>" % i
+                   for i in range(4))
+    r = _run(_post(tmp_path, dense + echo), "--strict")
+    assert r.returncode == 1
+    out = r.stdout
+    assert "한도 6" in out                      # 문장당 수치: 경고선
+    assert "4회 이상" in out or "한도 3" in out  # 반복 수치
+    assert "기준" in out and "표" in out        # 무엇을 세는지(표는 제외)
