@@ -38,7 +38,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 
 디자인·조판은 **시장에 맞는 `scripts/common/post_css/us.css`·`kr.css` 를 그대로 `<style>` 에 넣는다**(일간 브리프 셸과 같은 스타일시트 — `.claude/agents/brief-report-writer.md` 「HTML — 본문만 쓴다」 절의 클래스 표가 쓸 수 있는 클래스다). 문체는 그 파일의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` **두 절만** 읽는다 — US 지시문 전체(60 KB)를 읽지 않는다. 여기 다시 쓰지 않는다 — 한쪽만 고쳐지는 사고를 막기 위해서다.
 
-**`<body data-layout="prose" data-register="da">` 를 반드시 단다.** `data-register="da"` 는 PM 이 읽는 `-다` 문서라는 선언이다(2026-09-24) — 어미를 `-다` 로 고정하고, 묻고 답하는 문장·작업 어휘(원장·회차·판정불가·파일명·실행 코드)·「국채 급등」을 쓰지 않는다. `check_period.py` 가 선언을 확인하고 `check_style.py` 가 내용을 막는다. 고치기 전/후 짝은 `.claude/agents/STYLE_EXEMPLARS.md` §5. 생성된 「연구 판단 복기」 구간은 손대지 않는다(검사 밖이다).
+**`<body data-layout="prose" data-register="da">` 를 반드시 단다.** `data-register="da"` 는 PM 이 읽는 `-다` 문서라는 선언이다(2026-09-24) — 어미를 `-다` 로 고정하고, 묻고 답하는 문장·작업 어휘(원장·회차·판정불가·파일명·실행 코드)·「국채 급등」을 쓰지 않는다. `check_period.py` 가 선언을 확인하고 `check_style.py` 가 내용을 막는다. 고치기 전/후 짝은 `.claude/agents/STYLE_EXEMPLARS.md`. 생성된 「연구 판단 복기」 구간은 손대지 않는다(검사 밖이다).
 
 **`data-layout="prose"` 도 빠뜨리지 않는다.** 총정리는 서사가 본체라 문단이 길다. 이 표시가 없으면 `apply_readability.py` 가 320자 넘는 문단을 두 문장씩 잘라 토막글로 되돌린다. `check_period.py` 가 표시 없는 총정리를 막는다.
 

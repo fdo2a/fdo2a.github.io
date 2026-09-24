@@ -42,6 +42,8 @@ def test_fetch_top_value_sorts_by_value_and_filters_market(monkeypatch):
     assert [r["name"] for r in rows] == ["삼성전자", "LG에너지솔루션"]
     assert rows[0]["value"] == 6043124 and rows[0]["volume"] == 22223579
     assert rows[1]["change_pct"] == -2.34
+    # 종목코드를 들고 나가야 KRX 종가(yfinance `<code>.KS`)로 등락률을 다시 잴 수 있다
+    assert rows[0]["code"] == "1"
 
 
 def test_fetch_top_value_pages_until_no_new_codes(monkeypatch):

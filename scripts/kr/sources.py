@@ -139,8 +139,10 @@ def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
                 continue
             rows.append({
                 "name": s["stockName"],
+                "code": s.get("itemCode"),
                 "value": _to_int(s.get("accumulatedTradingValue")),
                 "volume": _to_int(s.get("accumulatedTradingVolume")),
+                # 넥스트레이드 애프터마켓까지 섞인 통합가 기준이다 — KRX 종가 등락이 아니다.
                 "change_pct": _to_float(s.get("fluctuationsRatio")),
             })
     if not rows:

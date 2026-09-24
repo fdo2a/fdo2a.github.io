@@ -157,17 +157,38 @@ def normalize_top_value(rows: list, top_n: int = 10) -> list:
 
 
 def stock_moves(rows: list, top_n: int = 60) -> list:
-    """거래대금 상위 개별주의 등락률 — 특징주 문장의 가격 출처.
+    """거래대금 상위 개별주 후보 — 특징주 문장의 가격 출처가 될 종목들.
 
     2026-09-23 KR 발행본은 삼성전자 +3.25% 같은 **가격**을 「파이낸셜뉴스는 …라고 전했다」로
     인용했다(매체 주어 10회). 개별주 등락이 데이터에 없어 작성자가 신문을 출처로 삼은 것이다.
-    가격은 데이터로 주고, 매체는 주장·원인·전망에만 세운다. 단위: value 백만원, change_pct %.
+    등락률은 여기서 싣지 않는다 — 네이버 값은 KRX 종가가 아니다(`krx_changes`).
     """
     out = []
     for r in sorted(rows, key=lambda x: -(x.get("value") or 0)):
-        if classify_ticker(r["name"])["kind"] != "stock" or r.get("change_pct") is None:
+        if classify_ticker(r["name"])["kind"] != "stock" or not r.get("code"):
             continue
-        out.append({"name": r["name"], "change_pct": r["change_pct"], "value": r.get("value", 0)})
+        out.append({"name": r["name"], "code": r["code"], "value": r.get("value", 0)})
         if len(out) >= top_n:
             break
+    return out
+
+
+def krx_changes(candidates: list, closes: dict, report_date: str) -> list:
+    """KRX 종가 기준 등락률. `closes` 는 {종목코드: [(ISO 날짜, 종가), …]} 오름차순.
+
+    네이버 marketValue 의 `closePrice`·`fluctuationsRatio` 는 넥스트레이드 애프터마켓(~20:00)
+    까지 섞인 통합가다 — 9/23 삼성전자 네이버 +3.62%(286,500) vs KRX +3.25%(285,500).
+    수집이 17:00·17:30 KST 에 돌아 매번 어긋나므로 yfinance `<code>.KS` 일봉으로 다시 잰다.
+    마지막 봉이 report_date 가 아니거나 전일 종가가 없으면 뺀다 — 추정하지 않는다.
+    """
+    out = []
+    for c in candidates:
+        series = closes.get(c["code"]) or []
+        if len(series) < 2 or series[-1][0] != report_date:
+            continue
+        prev, last = series[-2][1], series[-1][1]
+        if not prev:
+            continue
+        out.append({"name": c["name"], "change_pct": round((last / prev - 1) * 100, 2),
+                    "close": int(round(last)), "value": c["value"]})
     return out

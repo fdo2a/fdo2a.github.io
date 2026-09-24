@@ -178,22 +178,32 @@ def test_dropped_products_empty():
 
 
 # --- 개별주 등락 (2026-09-24) ---
-from kr.etf_normalize import stock_moves  # noqa: E402
+from kr.etf_normalize import krx_changes, stock_moves  # noqa: E402
 
 
-def test_stock_moves_keeps_individual_stocks_by_trading_value():
+def test_stock_moves_picks_individual_stocks_by_trading_value():
     raw = [
-        {"name": "삼성전자", "value": 900, "volume": 1, "change_pct": 3.25},
-        {"name": "KODEX 200", "value": 800, "volume": 1, "change_pct": 0.9},
-        {"name": "두산에너빌리티", "value": 300, "volume": 1, "change_pct": -5.55},
-        {"name": "SK하이닉스", "value": 700, "volume": 1, "change_pct": 1.2},
+        {"name": "삼성전자", "code": "005930", "value": 900, "volume": 1, "change_pct": 3.62},
+        {"name": "KODEX 200", "code": "069500", "value": 800, "volume": 1, "change_pct": 0.9},
+        {"name": "두산에너빌리티", "code": "034020", "value": 300, "volume": 1, "change_pct": -5.5},
+        {"name": "SK하이닉스", "code": "000660", "value": 700, "volume": 1, "change_pct": 1.2},
     ]
-    out = stock_moves(raw, top_n=2)
-    assert out == [{"name": "삼성전자", "change_pct": 3.25, "value": 900},
-                   {"name": "SK하이닉스", "change_pct": 1.2, "value": 700}]
+    assert stock_moves(raw, top_n=2) == [{"name": "삼성전자", "code": "005930", "value": 900},
+                                         {"name": "SK하이닉스", "code": "000660", "value": 700}]
 
 
-def test_stock_moves_skips_rows_without_a_change():
-    raw = [{"name": "A", "value": 5, "volume": 1, "change_pct": None},
-           {"name": "B", "value": 4, "volume": 1, "change_pct": -1.0}]
-    assert [r["name"] for r in stock_moves(raw)] == ["B"]
+def test_krx_changes_use_the_krx_close_not_naver():
+    """네이버 등락률은 넥스트레이드 애프터마켓(~20:00)까지 섞인 통합가다 — 9/23 삼성전자
+    네이버 +3.62%(286,500) vs KRX 종가 +3.25%(285,500). 수집이 17:00 에 돌아 매번 어긋난다."""
+    cands = [{"name": "삼성전자", "code": "005930", "value": 900}]
+    closes = {"005930": [("2026-09-22", 276500.0), ("2026-09-23", 285500.0)]}
+    assert krx_changes(cands, closes, "2026-09-23") == [
+        {"name": "삼성전자", "change_pct": 3.25, "close": 285500, "value": 900}]
+
+
+def test_krx_changes_drop_stale_or_short_series():
+    cands = [{"name": "A", "code": "1", "value": 5}, {"name": "B", "code": "2", "value": 4},
+             {"name": "C", "code": "3", "value": 3}]
+    closes = {"1": [("2026-09-21", 10.0), ("2026-09-22", 11.0)],   # 오늘 봉이 없다
+              "2": [("2026-09-23", 10.0)]}                        # 전일 종가가 없다
+    assert krx_changes(cands, closes, "2026-09-23") == []

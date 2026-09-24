@@ -479,6 +479,12 @@ MAX_SAME_NUMBER = 3
 _NUMBER = re.compile(r'(?<![\d.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+)(?![\d])')
 
 
+# 판단을 자기 동사로 말했나 — 증권사 리포트 기준(2026-09-24, `STYLE_EXEMPLARS.md` §0). 전략
+# 코멘트에 하나도 없으면 판단을 「~로 보인다」로 흐렸거나 한계만 늘어놓은 것이다. 경고만 한다.
+_STRATEGY = re.compile(r'<h2\b[^>]*>\s*전략\s*코멘트\s*</h2\s*>(.*?)(?=<h2\b|$)', re.S | re.I)
+_JUDGMENT = re.compile(r'(판단한다|판단이다|(?<![켜려])본다|전망한다|예상한다|추정한다|기대한다)')
+
+
 def is_desk_register(html):
     """`<body data-register="da">` 로 데스크 문체를 선언한 문서인가. `<body>` 태그에서만 읽는다."""
     return bool(_BODY_REGISTER.search(html or ''))
@@ -527,6 +533,12 @@ def _desk_findings(html, texts):
                             f'근거 블록이 {len(blocks)}개·최대 {max(sizes)}자다'
                             f'({MAX_PROVENANCE_BLOCKS}개·{MAX_PROVENANCE_CHARS}자까지) — '
                             '입력·공식·결과만 둔다. 줄글은 본문으로'))
+
+    m = _STRATEGY.search(body)
+    if m and not _JUDGMENT.search(_text(m.group(1))):
+        out.append(_finding('judgment_verb', 0,
+                            '전략 코멘트에 판단 동사(판단한다·본다·전망한다·예상한다)가 없다 — '
+                            '판단을 섹션 첫머리에 자기 동사로 말한다', 'warn'))
 
     whole = ' '.join(texts)
     dashes = whole.count('—')

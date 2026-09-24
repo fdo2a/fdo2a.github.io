@@ -15,7 +15,7 @@ import yfinance as yf
 from kr import sources, flows, flows_intraday, sectors, program, stance, technical
 from kr import econ as kr_econ
 from kr.themes import rank_themes
-from kr.etf_normalize import dropped_products, normalize_top_value, stock_moves
+from kr.etf_normalize import dropped_products, krx_changes, normalize_top_value, stock_moves
 from kr.leadership import flag_leadership
 
 KST = timezone(timedelta(hours=9))
@@ -108,16 +108,33 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     # 거래대금 상위 (ETF 정규화) — 단위 백만원
     # 지수·해외 ETF 는 상위 표에서 빠지지만(2026-07-29) 실행 조건의 유동성 근거로는
     # 필요하다 — 같은 raw 에서 갈라 따로 쓴다. 비-코어.
-    index_etf, moves = [], []
+    index_etf, candidates = [], []
     try:
         raw_top = sources.fetch_top_value("0")
         top_value = normalize_top_value(raw_top, top_n=10)
         index_etf = dropped_products(raw_top)
-        moves = stock_moves(raw_top)
+        candidates = stock_moves(raw_top)
     except Exception as e:
         # 빈 결과도 예외로 올라온다 — 조용한 [] 가 2026-09-10~09-21 발행을 막았다.
         print(f"top_value failed: {e}", file=sys.stderr)
         top_value = []
+
+    # 개별주 등락 — KRX 종가 기준(yfinance). 네이버 등락은 넥스트레이드 통합가라 쓰지 않는다. 비-코어.
+    moves = []
+    try:
+        if candidates:
+            tickers = [f'{c["code"]}.KS' for c in candidates]
+            closes_df = yf.download(tickers, period="7d", progress=False, auto_adjust=False)["Close"]
+            closes = {}
+            for c in candidates:
+                tk = f'{c["code"]}.KS'
+                if tk in getattr(closes_df, "columns", []):
+                    col = closes_df[tk].dropna()
+                    closes[c["code"]] = [(i.date().isoformat(), float(v)) for i, v in col.items()]
+            moves = krx_changes(candidates, closes, report_date)
+    except Exception as e:
+        print(f"stock_moves failed: {e}", file=sys.stderr)
+        moves = []
 
     # 섹터 멀티기간 수익률 (대표 ETF, yfinance) — 바 차트용
     sector_rows = []

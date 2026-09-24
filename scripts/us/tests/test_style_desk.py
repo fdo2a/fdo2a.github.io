@@ -180,3 +180,20 @@ def test_polite_endings_without_a_period_or_inside_quotes_count():
     assert 'register' in keys(html)
     qs = desk('<p>(나머지는 어땠을까?)</p><p>「무엇을 기다릴까?」</p>')
     assert 'question' in keys(qs)
+
+
+# --- 판단 동사 (2026-09-24, 증권사 리포트 기준) ---
+
+def test_strategy_comment_without_an_owned_judgment_is_warned():
+    hedged = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 어느 쪽이 밀었는지는 내일 갈린다. '
+                  '정책 재가격화에 가까워 보인다.</p><h2>오늘의 장</h2>' + GOOD)
+    owned = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 정책 재가격화에 가깝다고 판단한다. '
+                 '어느 쪽이 밀었는지는 내일 갈린다.</p><h2>오늘의 장</h2>' + GOOD)
+    assert 'judgment_verb' in keys(hedged, 'warn')
+    assert 'judgment_verb' not in keys(owned)
+    assert 'judgment_verb' not in keys(desk(GOOD))          # 섹션이 없으면 보지 않는다
+
+
+def test_watching_is_not_a_judgment():
+    html = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 내일 실질금리를 지켜본다.</p><h2>x</h2>')
+    assert 'judgment_verb' in keys(html, 'warn')
