@@ -68,6 +68,8 @@ python3 scripts/build_scorecard.py --agg data/monthly/<KEY>.json --datadir data 
 
 `period-report-writer` 서브에이전트를 `market=us, span=monthly`로 부른다. 입력은 `recap_us.json`·`data/monthly/<KEY>.json`·`data/period_scorecard.json`·`data/history/*.jsonl`. 산출은 `monthly_<KEY>.html`.
 
+**위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
+
 **발행 게이트:**
 
 ```bash
