@@ -29,7 +29,8 @@ LIST_URL = ('https://m.stock.naver.com/front-api/news/category'
             '?category=mainnews&page={page}&pageSize={size}')
 ARTICLE_URL = 'https://n.news.naver.com/mnews/article/{office}/{article}'
 PAGE_SIZE = 20          # 100 은 400 이다(2026-09-24 실측). 20 은 된다.
-MAX_PAGES = 8           # 평일 주요뉴스 하루치는 3쪽 안팎이다. 날짜가 지나면 멈춘다.
+MAX_PAGES = 12          # 당일 수집이면 4~5쪽에서 멈춘다. 연휴 뒤 전 거래일분은 8쪽(160건)으로
+                        # 모자랐다(2026-09-24 run 35981964976, 9/23 76건까지).
 
 LABELS = {'macro': '매크로', 'policy': '정책·정치', 'market': '증시', 'industry': '산업·기업'}
 DIGEST_CATEGORIES = ('macro', 'policy', 'market', 'industry')
