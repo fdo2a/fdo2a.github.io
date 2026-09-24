@@ -8,6 +8,7 @@ git·codex·파일 I/O 는 `review_gate.py` 의 `cmd_run` 이 한다. 여기 있
 
 import re
 from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .queue import _DATE
 
@@ -290,13 +291,65 @@ def _horizon(when, now):
     return when.isoformat()
 
 
-def blocked_until(state, now=None):
+# Claude CLI 한도. codex 와 문구가 다르고, 주간 한도는 초기화가 며칠 뒤라 codex 의 24 시간
+# 지평으로는 버려진다. 한도 거부는 0 초에 끝나 토큰을 안 쓰지만, 회차로 세면 멀쩡한 글이
+# 세 번 만에 사람검토로 넘어간다(2026-09-24 posts/2026-09-22.html).
+CLAUDE_BLOCK_HORIZON_HOURS = 24 * 8
+_CLAUDE_LIMIT = re.compile(r"claude exited \d+: You\W?ve hit your [\w-]+ limit")
+_CLAUDE_RESET = re.compile(
+    r"resets\s+(?:(?P<mon>[A-Z][a-z]{2})\s+(?P<day>\d{1,2}),?\s+(?:at\s+)?)?"
+    r"(?P<h>\d{1,2})(?::(?P<m>\d{2}))?\s*(?P<ap>am|pm)\s*\((?P<tz>[^)]+)\)", re.I)
+_MONTHS = ('jan', 'feb', 'mar', 'apr', 'may', 'jun',
+           'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
+
+
+def is_claude_limit(why):
+    """정정기의 Claude 호출이 계정 한도로 거부됐는가 — CLI 실패 줄의 머리에서만 인정한다."""
+    return bool(_CLAUDE_LIMIT.search(why or ''))
+
+
+def claude_retry_at(text, now=None):
+    """Claude 가 알려 준 초기화 시각(절대 시각 ISO) — 못 읽으면 None."""
+    found = _CLAUDE_RESET.search(text or '')
+    if not found:
+        return None
+    try:
+        zone = timezone.utc if found.group('tz').upper() == 'UTC' else ZoneInfo(found.group('tz'))
+    except (ZoneInfoNotFoundError, ValueError):
+        return None
+    now = (now or datetime.now(timezone.utc)).astimezone(zone)
+    hour, minute = int(found.group('h')), int(found.group('m') or 0)
+    if hour > 12 or minute > 59:
+        return None
+    hour = hour % 12 + (12 if found.group('ap').lower() == 'pm' else 0)
+    if found.group('mon'):
+        mon = found.group('mon').lower()
+        if mon not in _MONTHS:
+            return None
+        try:
+            when = now.replace(month=_MONTHS.index(mon) + 1, day=int(found.group('day')),
+                               hour=hour, minute=minute, second=0, microsecond=0)
+        except ValueError:
+            return None
+        if when < now - timedelta(days=1):       # 12월에 받은 「Jan 2」
+            when = when.replace(year=when.year + 1)
+    else:
+        when = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        if when <= now:
+            when += timedelta(days=1)
+    if when <= now or when - now > timedelta(hours=CLAUDE_BLOCK_HORIZON_HOURS):
+        return None
+    return when.isoformat()
+
+
+def blocked_until(state, now=None, key='blocked_until', horizon_hours=None):
     """차단이 아직 유효하면 그 시각, 아니면 None — 손상·과도한 미래는 전부 None.
 
     구문만 맞는 「9999 년」이 「미래면 참」을 통과해 러너를 영영 세우는 경로를 여기서
     막는다. tz 없는 값도 버린다 — 비교 기준이 기계마다 달라진다.
     """
-    raw = state.get('blocked_until') if isinstance(state, dict) else None
+    horizon_hours = horizon_hours or BLOCK_HORIZON_HOURS
+    raw = state.get(key) if isinstance(state, dict) else None
     if not isinstance(raw, str) or not raw:
         return None
     try:
@@ -306,7 +359,7 @@ def blocked_until(state, now=None):
     if when.tzinfo is None:
         return None
     now = now or datetime.now().astimezone()
-    if when <= now or when - now > timedelta(hours=BLOCK_HORIZON_HOURS):
+    if when <= now or when - now > timedelta(hours=horizon_hours):
         return None
     return when
 

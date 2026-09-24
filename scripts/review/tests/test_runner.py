@@ -176,3 +176,20 @@ def test_today_is_kst_not_the_machines_idea_of_a_day():
     from datetime import datetime, timezone
     # 2026-09-10 00:30 KST — UTC로는 아직 9월 9일이다.
     assert today_kst(datetime(2026, 9, 9, 15, 30, tzinfo=timezone.utc)) == '2026-09-10'
+
+
+def test_claude_limit_reset_times():
+    from datetime import datetime, timezone
+    from scripts.review.runner import claude_retry_at, is_claude_limit
+    now = datetime(2026, 9, 24, 0, 0, tzinfo=timezone.utc)
+    weekly = "/x/claude exited 1: You've hit your weekly limit · resets Sep 26 at 9am (Asia/Seoul)"
+    assert is_claude_limit(weekly)
+    assert datetime.fromisoformat(claude_retry_at(weekly, now)) == datetime(
+        2026, 9, 26, 0, 0, tzinfo=timezone.utc)   # 9am Seoul
+    session = "/x/claude exited 1: You've hit your session limit · resets 12:20pm (UTC)"
+    assert claude_retry_at(session, now) == '2026-09-24T12:20:00+00:00'
+    comma = "/x/claude exited 1: You've hit your weekly limit · resets Sep 26, 12am (UTC)"
+    assert claude_retry_at(comma, now) == '2026-09-26T00:00:00+00:00'
+    # A post body quoting the phrase is not the CLI's own failure.
+    assert not is_claude_limit("gate failed: 본문에 You've hit your weekly limit 인용")
+    assert claude_retry_at('no reset here', now) is None

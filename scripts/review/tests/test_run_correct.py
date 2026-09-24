@@ -80,3 +80,27 @@ def test_ready_correction_does_not_expire_while_waiting_for_quota(repo, tmp_path
         return 'checked', None
     assert invoke(repo, monkeypatch, correct) == 0
     assert set(calls) == {POST, KR_POST}
+
+
+# No date in the message, so the reset is always within the next 24 hours.
+LIMIT_WHY = ("/Users/x/.local/bin/claude exited 1: You've hit your session limit"
+             " · resets 11:59pm (UTC)")
+
+
+def test_claude_limit_is_not_a_failed_round(repo, tmp_path, monkeypatch):
+    """한도로 거부된 호출은 글의 결함이 아니다 — 세면 멀쩡한 글이 사람검토로 넘어간다."""
+    run(repo, 'run', codex=fake_codex(tmp_path))
+    calls = []
+    def correct(root, item, *args):
+        calls.append(item.path)
+        return '', LIMIT_WHY
+    invoke(repo, monkeypatch, correct)
+    state = state_of(repo)
+    assert not state.get('rounds')
+    assert state['correction_blocked_until'].endswith('+00:00')
+    assert '한도' in str(state['errors'])
+    # The day's correction budget is returned: the call spent nothing.
+    assert not any(state.get('correction_calls', {}).values())
+    # While blocked, the next tick makes no Claude call at all.
+    invoke(repo, monkeypatch, correct)
+    assert len(calls) == 1

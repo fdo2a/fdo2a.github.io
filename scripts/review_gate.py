@@ -39,9 +39,11 @@ from review.queue import accept as accept_entry  # noqa: E402
 from review.queue import baselines, classify, is_watched  # noqa: E402
 from review.queue import mark as mark_entry  # noqa: E402
 from review.queue import seed, union_pending  # noqa: E402
-from review.runner import (DAILY_CAP, HUMAN, LIMIT, RESHIPPED,  # noqa: E402
+from review.runner import (CLAUDE_BLOCK_HORIZON_HOURS,  # noqa: E402
+                           DAILY_CAP, HUMAN, LIMIT, RESHIPPED,
                            ROUND_CAP, TIMEOUT, UNKNOWN, accept_draft,
-                           blocked_until, clear_rounds, draft_name, eligible,
+                           blocked_until, claude_retry_at, clear_rounds,
+                           draft_name, eligible, is_claude_limit,
                            err, err_line, is_limit_error, may_release,
                            note_limit, note_round, release, reserve, retry_at,
                            stalled, today_kst)
@@ -51,6 +53,7 @@ LOCK = 'reviews/.index.lock'
 DRAFTS = 'reviews/pending'
 STATE = 'reviews/runner.json'
 RUNNER_LOCK = 'reviews/.runner.lock'
+CORRECTION_BLOCK = 'correction_blocked_until'
 
 # 러너가 codex 에 넘길 근거 — REVIEW_GATE 2단계가 손으로 가리키던 것과 같은 자리를,
 # 고정한 커밋에서 꺼낸다. 산문 검토에 안 쓰는 이미지는 빼서 스냅샷을 가볍게 둔다.
@@ -461,6 +464,11 @@ def runner_note(root, queue):
         wait = blocked_until(state)
         if wait:
             bits.append('codex 대기 — ' + wait.strftime('%H:%M') + ' 이후 재시도')
+        wait = blocked_until(state, key=CORRECTION_BLOCK,
+                             horizon_hours=CLAUDE_BLOCK_HORIZON_HOURS)
+        if wait:
+            bits.append('Claude 정정 대기 — '
+                        + wait.astimezone().strftime('%m/%d %H:%M') + ' 이후 재시도')
         errs = state.get('errors')
         if isinstance(errs, dict) and errs:
             detail = '; '.join(err_line(k, v)[:140] for k, v in sorted(errs.items()))
@@ -833,6 +841,10 @@ def _correct_ready(root, args, state, errs):
     oid = rev_parse(root, 'origin/main')
     if not oid:
         raise ValueError('정정할 origin/main 이 없다')
+    if blocked_until(state, key=CORRECTION_BLOCK,
+                     horizon_hours=CLAUDE_BLOCK_HORIZON_HOURS):
+        return state   # Claude 계정 한도 — 초기화 전에는 부르지 않는다
+    state.pop(CORRECTION_BLOCK, None)
     queue, published = _published_queue(root, oid)
     have = _drafts_on_disk(root)
     ready = [item for item in queue if draft_name(item) in have]
@@ -863,6 +875,17 @@ def _correct_ready(root, args, state, errs):
             fh.write(text or '')
             if why:
                 fh.write('\nERROR: ' + why + '\n')
+        if why and is_claude_limit(why):
+            # 계정 한도 거부는 글의 결함이 아니고 토큰도 안 썼다 — 회차로 세지 않고
+            # 예약을 되돌린 뒤, 초기화 시각까지 정정을 쉰다.
+            quota = release(quota, day, item.section)
+            state['correction_calls'] = quota['calls']
+            when = claude_retry_at(why)
+            if when:
+                state[CORRECTION_BLOCK] = when
+            save_state(root, state)
+            errs[key] = err(LIMIT, f'{item.path}: {why[-160:]}')
+            break
         if why:
             # 재시도성 실패(그 사이 main 이 움직였다)는 회차로 세지 않는다 — 고칠 수
             # 없다는 신호가 아니라 다음 tick 에 다시 하라는 신호다.

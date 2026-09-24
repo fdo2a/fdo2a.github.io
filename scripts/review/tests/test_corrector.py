@@ -85,7 +85,8 @@ def test_success_keeps_user_checkout(setup):
     assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
-    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 7
+    # Seven gates on the original (baseline) and the same seven on the correction.
+    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 14
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -147,7 +148,11 @@ def test_independent_gate_blocks_push(setup, failure):
     fake(exe)
     base = git(root, 'rev-parse', 'HEAD')
     if failure == 'nonzero':
-        (root / 'scripts/check_macro.py').write_text("raise SystemExit('invalid HTML')")
+        # Passes on the original, fails only on the corrected post — a regression.
+        (root / 'scripts/check_macro.py').write_text(
+            "import sys\nfrom pathlib import Path\n"
+            "post = sys.argv[sys.argv.index('--html') + 1]\n"
+            "if 'fixed' in Path(post).read_text(): raise SystemExit('invalid HTML')\n")
     elif failure == 'missing':
         (root / 'scripts/check_macro.py').unlink()
     else:
@@ -165,3 +170,68 @@ def test_every_replayed_gate_exists_in_the_real_repo():
     names = {'macro', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES}
     missing = [n for n in names if not (real / f'check_{n}.py').is_file()]
     assert missing == []
+
+
+def _claude_calls(tmp):
+    marker = tmp / 'claude-called'
+    return marker.read_text().count('x') if marker.exists() else 0
+
+
+def _counting(exe, extra=''):
+    """fake() plus a marker so a test can prove Claude was (not) invoked."""
+    fake(exe, f"Path({str(exe.parent / 'claude-called')!r}).open('a').write('x')\n" + extra)
+
+
+def test_gate_failing_on_original_does_not_block(setup):
+    """발행 뒤에 생긴 게이트는 원본부터 실패한다 — 정정을 버릴 이유가 아니다(2026-09-21 KR)."""
+    root, remote, item, exe = setup
+    (root / 'scripts/check_weight.py').write_text("raise SystemExit('판단군이 하한에 못 미친다')")
+    _counting(exe, "assert 'check_weight.py' in prompt\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert 'pre-existing' in result
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+
+
+def test_untracked_leftovers_do_not_discard_correction(setup):
+    root, remote, item, exe = setup
+    _counting(exe, "import atexit\natexit.register(lambda: Path('scratch-notes.txt').write_text('tmp'))\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+
+
+def test_uncommitted_tracked_change_names_the_file(setup):
+    root, remote, item, exe = setup
+    fake(exe, "import atexit\natexit.register(lambda: Path('data/evidence.json').write_text('{\"x\": 1}'))\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'data/evidence.json' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+@pytest.mark.parametrize('broken', ['missing', 'layout_unavailable'])
+def test_unrunnable_gate_stops_before_claude(setup, tmp_path, broken):
+    """게이트를 못 돌리는 환경이면 결과를 어차피 버린다 — 모델을 부르기 전에 멈춘다."""
+    root, remote, item, exe = setup
+    _counting(exe)
+    if broken == 'missing':
+        (root / 'scripts/check_style.py').unlink()
+    else:
+        (root / 'scripts/verify_post.py').write_text("print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error
+    assert _claude_calls(tmp_path) == 0
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_model_is_pinned(setup, monkeypatch):
+    root, remote, item, exe = setup
+    fake(exe, "i = sys.argv.index('--model'); assert sys.argv[i + 1] == 'test-model'\n")
+    monkeypatch.setenv('CLAUDE_CORRECTION_MODEL', 'test-model')
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error is None, error
