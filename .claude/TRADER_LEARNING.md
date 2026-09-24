@@ -106,7 +106,10 @@ event outcome may be used to make an earlier prediction look informed.
 Follow the daily reading path in `DESK_REPORT.md`. Explain a concept briefly where
 it helps assess the evidence; no daily concept or exercise quota. Reproducible
 calculations belong in the handoff and appear in prose only when they resolve a
-material question. Strategy comments give the current interpretation, conditional
+material question. When a report shows one, put inputs, formula and result inside
+`<details data-provenance><summary>계산 근거</summary>…</details>` (at most two, 600
+characters each); code, filenames and ledger vocabulary (원장·회차·판정불가·가설 등록)
+never appear in captions or prose — `check_style.py` blocks them in US/KR reports. Strategy comments give the current interpretation, conditional
 investment relevance and falsifier; the closing section reviews prior reasoning.
 
 Append one `<section class="card" data-learning="daily">` with the heading

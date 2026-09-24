@@ -49,3 +49,7 @@ Publishes a US equity morning brief automatically every trading day. Full histor
 - **What the gate cannot see**: it checks length, markers and vocabulary but **not the quality of the analysis**. Padding and pro-forma `data-cause` are caught by a human.
 
 **When changing this**: read `docs/superpowers/specs/2026-08-30-recap-weight-rebalance-design.md` before touching `scripts/us/weight.py` or `check_weight.py`.
+
+## Desk prose gate (US/KR, rule 5 in site/AGENTS.md)
+
+`style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (capped at 2 × 600 chars). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py` — the old 「~다」 run limit is what pushed writers into rhetorical questions.

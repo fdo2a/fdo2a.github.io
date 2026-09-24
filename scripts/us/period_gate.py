@@ -13,6 +13,7 @@ from common.numbers import numbers_split_by_tags
 from us.macro_gate import BANNED_LABELS
 from us.post_check import banned_markers, body_text, data_tokens, mask_dates
 from us.readability import PROSE_MARKER, has_prose_layout
+from us.style import is_desk_register
 
 INTERNAL_TERMS = ('weekly.json', 'monthly.json', 'scorecard.json', 'recap_source.json',
                   'stance.jsonl', 'macro.jsonl', 'market_data.json', 'research_notes.md',
@@ -260,6 +261,12 @@ def check(html, agg, scorecard, recap, span, research_summary=None):
     if not has_prose_layout(html):
         v.append(f'<body {PROSE_MARKER}> 가 없다 — 조판기가 긴 문단을 두 문장씩 잘라 '
                  '토막글로 만든다. 서사를 줄글로 유지하려면 반드시 단다')
+
+    # US·KR 총정리는 PM 이 읽는 -다 문서다(2026-09-24). 선언이 없으면 check_style 이
+    # 어미 혼합·작업 어휘 검사를 조용히 건너뛴다 — prose 표시와 같은 이유로 여기서 막는다.
+    if not is_desk_register(html):
+        v.append('<body data-register="da"> 가 없다 — 총정리는 -다 로 쓰는 데스크 문서다. '
+                 '선언이 없으면 문체 게이트가 어미 혼합·작업 어휘를 보지 않는다')
 
     low = text.lower()
     for word in BANNED_LABELS:

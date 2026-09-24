@@ -82,10 +82,19 @@ def test_review_accepts_broken_verdict_language():
 
 def test_bootstrap_verdict_language():
     boot = {"verdict": "판정불가"}
-    ok = _html({"review": "직전 회차에는 원장이 없어 비교할 직전 판단이 남아 있지 않다. "
-                          "오늘 기록을 첫 기록으로 남기고, 무효화 레벨이 실제로 지켜지는지는 "
-                          "다음 회차부터 복기한다."})
+    ok = _html({"review": "어제와 비교할 직전 판단이 없어 오늘은 판정할 수 없다. "
+                          "오늘 적은 판단이 첫 기록이고, 무효화 레벨이 실제로 지켜지는지는 "
+                          "다음 거래일부터 복기한다."})
     assert check(ok, STANCE, boot) == []
+
+
+def test_bootstrap_cue_is_not_ledger_jargon():
+    """「원장」은 작업 어휘다 — 판정 신호로 받아 주면 작성자가 본문에 원장 이야기를 쓴다
+    (2026-09-23 「판단 원장에는 오늘과 비교할 직전 판단이 없다」)."""
+    boot = {"verdict": "판정불가"}
+    jargon = _html({"review": "판단 원장에는 기록이 남아 있지 않다. 부트스트랩 상태라 "
+                              "기계 채점은 내일부터 이뤄지고 오늘은 판단을 그대로 둔다."})
+    assert any("판정불가" in x for x in check(jargon, STANCE, boot))
 
 
 def test_helpers():

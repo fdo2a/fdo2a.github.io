@@ -170,6 +170,7 @@ def render(market, date, meta, body):
         f'<title>{escape(meta["title"].strip())}</title>\n'
         f'<script type="application/ld+json">\n{ld_text}\n</script>\n'
         f'{ADSENSE}\n{MARKER}\n<style>\n{css(market)}</style>\n</head>\n'
-        f'<body>\n<div class="topbar">{topbar}</div>\n{nav}\n'
+        # US·KR 일간은 PM 이 읽는 -다 문서다 — check_style 이 이 선언을 보고 데스크 검사를 건다.
+        f'<body data-register="da">\n<div class="topbar">{topbar}</div>\n{nav}\n'
         f'<div class="doc">{body}</div>\n</body>\n</html>\n'
     )

@@ -88,3 +88,13 @@ def test_json_ld_cannot_be_closed_by_the_summary():
                                         'summary': 'a</script><script>alert(1)'}, '<h1>a</h1>')
     ld = re.search(r'<script type="application/ld\+json">(.*?)</script>', out, re.S).group(1)
     assert json.loads(ld)['description'].startswith('a</script>')
+
+
+def test_daily_shell_declares_the_desk_register():
+    """US·KR 일간은 PM 이 읽는 -다 문서다(2026-09-24). 선언이 있어야 check_style 이 데스크 검사를 한다."""
+    import sys
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    from us.style import is_desk_register
+    for market, path in (('us', 'posts/2026-09-23.html'), ('kr', 'kr/posts/2026-09-23.html')):
+        meta, body = _split(path)
+        assert is_desk_register(S.render(market, '2026-09-23', meta, body)), market

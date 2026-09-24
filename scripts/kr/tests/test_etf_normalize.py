@@ -175,3 +175,25 @@ def test_dropped_products_returns_index_and_overseas_etfs_by_value():
 def test_dropped_products_empty():
     from kr.etf_normalize import dropped_products
     assert dropped_products([]) == []
+
+
+# --- 개별주 등락 (2026-09-24) ---
+from kr.etf_normalize import stock_moves  # noqa: E402
+
+
+def test_stock_moves_keeps_individual_stocks_by_trading_value():
+    raw = [
+        {"name": "삼성전자", "value": 900, "volume": 1, "change_pct": 3.25},
+        {"name": "KODEX 200", "value": 800, "volume": 1, "change_pct": 0.9},
+        {"name": "두산에너빌리티", "value": 300, "volume": 1, "change_pct": -5.55},
+        {"name": "SK하이닉스", "value": 700, "volume": 1, "change_pct": 1.2},
+    ]
+    out = stock_moves(raw, top_n=2)
+    assert out == [{"name": "삼성전자", "change_pct": 3.25, "value": 900},
+                   {"name": "SK하이닉스", "change_pct": 1.2, "value": 700}]
+
+
+def test_stock_moves_skips_rows_without_a_change():
+    raw = [{"name": "A", "value": 5, "volume": 1, "change_pct": None},
+           {"name": "B", "value": 4, "volume": 1, "change_pct": -1.0}]
+    assert [r["name"] for r in stock_moves(raw)] == ["B"]

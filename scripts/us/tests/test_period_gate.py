@@ -22,7 +22,7 @@ RECAP = {"key": "2026-W34", "start_date": "2026-08-17", "end_date": "2026-08-21"
 
 def _html(body):
     # 총정리는 줄글이어야 하므로 조판기의 문단 분할을 끄는 표시를 달고 나간다.
-    return f'<html><body data-layout="prose"><main>{body}</main></body></html>'
+    return f'<html><body data-layout="prose" data-register="da"><main>{body}</main></body></html>'
 
 
 ALL_DAYS = ("2026-08-17에 0.31% 밀렸고, 2026-08-18에 1.42% 되돌렸다. "
@@ -42,6 +42,12 @@ def test_prose_layout_marker_is_required():
     """표시가 빠지면 조판기가 서사를 두 문장씩 잘라 토막글로 되돌린다."""
     stripped = GOOD.replace(' data-layout="prose"', "")
     assert any("data-layout" in x for x in check(stripped, AGG, SC, RECAP, "weekly"))
+
+
+def test_desk_register_marker_is_required():
+    """US·KR 총정리는 PM 이 읽는 -다 문서다 — 선언이 없으면 문체 게이트가 조용히 건너뛴다."""
+    stripped = GOOD.replace(' data-register="da"', "")
+    assert any("data-register" in x for x in check(stripped, AGG, SC, RECAP, "weekly"))
 
 
 def test_number_absent_from_every_source_is_caught():

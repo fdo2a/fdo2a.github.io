@@ -173,14 +173,47 @@ def _is_meta_paragraph(attrs):
 _PARA_WITH_ATTRS = re.compile(r'<p\b([^>]*)>(.*?)</p>', re.S | re.I)
 
 
+# 검사 밖에 두는 두 구간. 연구 판단 복기는 원장에서 생성해 바이트로 대조하는 불변 구간이라
+# 작성자가 말투를 고칠 수 없고, 근거 블록은 계산 재현용이라 코드·파일명이 제자리다.
+# 요소가 **닫히는 곳까지** 지운다 — 다음 표식까지로 자르면 남의 글을 빌린다.
+_RESEARCH_SUMMARY = re.compile(
+    r'(<section\b[^>]*\bdata-research-summary\b[^>]*>)(.*?)(</section\s*>)', re.S | re.I)
+# 구간을 통째로 빼면 가짜 `data-research-summary` 안에 산문을 숨길 수 있다. 그래서
+# `research_gate.render_summary` 가 **만드는 것만** 걷어 낸다 — 기대값을 재현하는 쪽이다.
+_GENERATED_SUMMARY_PARTS = (
+    re.compile(r'<h2>연구 판단 복기</h2>'),
+    re.compile(r'<p>검토 대상 \d+건 중 사전 기록 \d+건, 사후 기록 \d+건입니다\. '
+               r'진행 중 \d+건이며 확인 기한이 지난 가설은 \d+건입니다\.</p>'),
+    re.compile(r'<p>아직 평가할 가설 기록이 없습니다\.</p>'),
+    re.compile(r'<div class="tbl-scroll"><table><thead><tr><th>가설</th>.*?</table></div>', re.S),
+)
+_PROVENANCE = re.compile(
+    r'<details\b[^>]*\bdata-provenance\b[^>]*>(.*?)</details\s*>', re.S | re.I)
+
+
+def _body(html):
+    """`<body>` 안에서 스크립트·스타일·불변 생성 구간·근거 블록을 뺀 것."""
+    m = re.search(r'<body\b', html, re.I)
+    body = html[m.start():] if m else html
+    body = _SCRIPT.sub(' ', body)
+    body = _RESEARCH_SUMMARY.sub(_strip_generated_summary, body)
+    return _PROVENANCE.sub(' ', body)
+
+
+def _strip_generated_summary(m):
+    inner = m.group(2)
+    for part in _GENERATED_SUMMARY_PARTS:
+        inner = part.sub(' ', inner, count=1)
+    return m.group(1) + inner + m.group(3)
+
+
 def _prose_html(html):
     """산문 문단만. 표·제목·캡션은 뺀다.
 
     표와 제목은 라벨이 짧아 개조식으로 오탐되고, 캡션·각주는 좁은 칸이라
     줄임말이 오히려 낫다 — 쉬운 말 규칙의 대상이 아니다.
     """
-    body = html[html.index('<body'):] if '<body' in html else html
-    body = _SCRIPT.sub(' ', body)
+    body = _body(html)
     body = _TABLE.sub(' ', body)
     body = _HEADING.sub(' ', body)
     return [inner for attrs, inner in _PARA_WITH_ATTRS.findall(body)
@@ -215,8 +248,9 @@ def _subject_josa(word):
     return '이'
 
 
-def _finding(key, count, message):
-    return {'key': key, 'count': count, 'message': message}
+def _finding(key, count, message, level='fail'):
+    """`level` 은 'fail'(발행을 막는다) 또는 'warn'(보여 주기만 한다)."""
+    return {'key': key, 'count': count, 'message': message, 'level': level}
 
 
 def findings(html):
@@ -264,6 +298,23 @@ def findings(html):
                                 f'문단이 「{word}」로 시작한 것이 {count}번이다'
                                 f'({MAX_SAME_OPENER}번까지)'))
 
+    desk = is_desk_register(html)
+    worst, tail_word = (_same_ending_run(texts) if desk else (_da_run(texts), '~다'))
+    if worst > MAX_SAME_ENDING_RUN:
+        out.append(_finding('monotone', worst,
+                            f'한 문단에서 「{tail_word}」로 끝나는 문장이 {worst}개 이어졌다'
+                            f'({MAX_SAME_ENDING_RUN}개까지). '
+                            + ('동사를 바꾸거나 문장을 합친다 — 어미는 -다 그대로 둔다'
+                               if desk else '종결을 섞는다')))
+
+    out += _plain_language(texts, whole, gloss=not desk)
+    if desk:
+        out += _desk_findings(html, texts)
+    return out
+
+
+def _da_run(texts):
+    """선언 없는 문서의 옛 규칙 — 「~다」 종결이 몇 개 이어졌나."""
     worst = 0
     for text in texts:
         run = 0
@@ -274,17 +325,34 @@ def findings(html):
                 worst = max(worst, run)
             else:
                 run = 0
-    if worst > MAX_SAME_ENDING_RUN:
-        out.append(_finding('monotone', worst,
-                            f'한 문단에서 「~다」로 끝나는 문장이 {worst}개 이어졌다'
-                            f'({MAX_SAME_ENDING_RUN}개까지). 종결을 섞는다'))
-
-    out += _plain_language(texts, whole)
-    return out
+    return worst
 
 
-def _plain_language(texts, whole):
-    """쉬운 말 검사 — 음차어, 첫 등장 풀이, 한 문장 안 겹침."""
+def _same_ending_run(texts):
+    """-다 로 고정한 문서의 단조 — **같은 두 글자 종결**(했다·했다…)이 몇 개 이어졌나.
+
+    「~다 4연속 금지」를 -다 문서에 그대로 걸면 연속을 끊을 방법이 수사의문·-습니다·
+    「~죠」밖에 없다. 2026-09-23 KR 발행본의 「나머지 업종은 어땠을까?」가 그 적응이었다.
+    """
+    worst, word = 0, ''
+    for text in texts:
+        run, prev = 0, None
+        for sentence in sentences(text):
+            core = sentence.rstrip().rstrip('.!?')
+            tail = core[-2:] if len(core) >= 2 else core
+            run = run + 1 if tail == prev else 1
+            prev = tail
+            if run > worst:
+                worst, word = run, tail
+    return worst, word
+
+
+def _plain_language(texts, whole, gloss=True):
+    """쉬운 말 검사 — 음차어, 첫 등장 풀이, 한 문장 안 겹침.
+
+    `gloss=False` 는 PM 이 읽는 데스크 문서다 — 기간프리미엄·레짐을 풀어 주면 오히려
+    교과서가 된다(2026-09-23 US 「기간프리미엄(만기가 길수록 더 얹어 받는 값)」).
+    """
     out = []
     prose_sentences = [sent for text in texts for sent in sentences(text)]
 
@@ -299,14 +367,14 @@ def _plain_language(texts, whole):
                             '한국어로 바꿔 쓴다' % (shown, more)))
 
     bare = [term for term in GLOSS
-            if _first_use_unglossed(prose_sentences, term)]
+            if gloss and _first_use_unglossed(prose_sentences, term)]
     if bare:
         out.append(_finding('jargon_gloss', len(bare),
                             '전문어 %s%s 처음 나올 때 풀이가 없다. '
                             '괄호나 「즉 ~」로 한 번은 뜻을 밝힌다'
                             % ('·'.join(bare), _subject_josa(bare[-1]))))
 
-    all_terms = list(PLAIN) + list(GLOSS)
+    all_terms = list(PLAIN) + (list(GLOSS) if gloss else [])
     stacked = []
     for sentence in prose_sentences:
         hits = _spans(sentence, all_terms)
@@ -346,3 +414,142 @@ def _first_use_unglossed(prose_sentences, term):
             return True
         return False
     return False
+
+
+# ── 데스크 문체 (`<body data-register="da">`) ─────────────────────────────────
+#
+# 2026-09-24 사용자 지시 「US독자는 PM으로 통일해. 어미는 다로 고정하자」. 독자가 운용자인
+# US·KR 일간·주간·월간이 이 선언을 단다(일간은 `post_shell` 이, 주간·월간은 작성자가 달고
+# `check_period` 가 확인한다). 선언이 없는 문서 — 중국 학습 리포트와 그 이전 발행본 — 는
+# 아래 검사를 받지 않는다. 교정 러너가 옛 발행본에 이 검사를 돌려도 멀쩡한 글을 막지 않는다.
+#
+# 근거: 9/23 회차 실측(내부 어휘 US 14·KR 6, KR 수사의문 5, US 어미 혼합 56/105) —
+# `docs/superpowers/specs/2026-09-24-desk-prose-design.md`.
+
+_BODY_REGISTER = re.compile(r'<body\b[^>]*\bdata-register\s*=\s*["\']da["\']', re.I)
+
+# 합쇼체·해요체 종결. -다 문서에 섞이면 한 글이 두 목소리가 된다.
+_POLITE = re.compile(r'(니다|세요|[어아해여]요|죠|지요)[.!?]?$')
+# 문장 끝의 닫는 따옴표·괄호. 「…했습니다.」·(…어땠을까?) 도 그 문장의 종결로 본다.
+_CLOSERS = '"\'」』)]’”'
+# 폭 없는 문자로 「원\u200b장」처럼 낱말을 쪼개면 화면에는 붙어 보이고 검사에서는 갈린다.
+_INVISIBLE = re.compile('[\u00ad\u200b-\u200f\u2060\ufeff]')
+
+
+def _tail(sentence):
+    return sentence.strip().rstrip(_CLOSERS).rstrip()
+MAX_POLITE = 2
+MAX_QUESTIONS = 1
+
+# 독자 문장에 나오면 안 되는 작업 어휘 — 원장·채점·수집·계산 재현은 검토 자료의 말이다.
+# 앞 글자가 한글이면 다른 낱말이다(금감원장·볼린저밴드·분위기).
+INTERNAL_PATTERNS = (
+    (r'(?<![가-힣])원장', '원장'),
+    (r'(?<![가-힣])회차', '회차'),
+    (r'기계\s*판정', '기계 판정'),
+    (r'판정\s*불가', '판정불가'),
+    (r'판단\s*불가', '판단 불가'),
+    (r'부트스트랩', '부트스트랩'),
+    (r'프로스펙티브', '프로스펙티브'),
+    (r'관측\s*창', '관측 창'),
+    (r'산출물', '산출물'),
+    (r'수집\s*(파일|분)', '수집 파일'),
+    (r'퍼센타일', '퍼센타일'),
+    (r'\d\s*분위(?!기)', 'N분위'),
+    (r'(큼|보통|미미)[»」\'"]?\s*밴드', '크기 밴드 이름'),
+    (r'python3?\b|print\(', '실행 코드'),
+    (r'\b[\w-]+\.(json|py|md)\b', '파일명'),
+    (r'(가설|질문)[을를]?\s*등록|등록을\s*보류', '가설 등록'),
+)
+_INTERNAL_RE = [(re.compile(p, re.I), label) for p, label in INTERNAL_PATTERNS]
+
+# 「국채 급등」은 국채 **가격**이 뛰었다(금리 하락)로 읽힌다. 금리를 말하려면 「금리」를 쓴다.
+_BOND_AMBIGUOUS = re.compile(r'국채\s*(급등|급락|폭등|폭락)')
+
+# 근거 블록은 계산을 재현하는 자리다. 줄글을 숨겨 검사를 비껴가는 자리가 되지 않게 묶는다.
+MAX_PROVENANCE_BLOCKS = 2
+MAX_PROVENANCE_CHARS = 600
+
+# 경고 — 발행은 막지 않는다. 한두 번은 그 문장에 맞는 표현이고, 잡으려는 것은 반복이다.
+MAX_EMDASH = 6
+HEDGES = ('가를 자료', '가를 근거', '단정하지', '단정할', '판단을 유보', '유보한다',
+          '확정하기는 이르', '쪼갤 수 없', '가리지 못', '특정할 수 없', '겹쳐 읽지')
+MAX_HEDGES = 6
+MAX_SAME_NUMBER = 3
+_NUMBER = re.compile(r'(?<![\d.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+)(?![\d])')
+
+
+def is_desk_register(html):
+    """`<body data-register="da">` 로 데스크 문체를 선언한 문서인가. `<body>` 태그에서만 읽는다."""
+    return bool(_BODY_REGISTER.search(html or ''))
+
+
+def _desk_findings(html, texts):
+    out = []
+    prose_sentences = [sent for text in texts for sent in sentences(text)]
+
+    polite = [s for s in prose_sentences if _POLITE.search(_tail(s))]
+    if len(polite) > MAX_POLITE:
+        out.append(_finding('register', len(polite),
+                            f'-다 로 고정한 문서에 -습니다·-죠 종결이 {len(polite)}개 섞였다'
+                            f'({MAX_POLITE}개까지) — 예: 「{polite[0][-30:]}」. 뉴스 요약도 어미를 바꿔 싣는다'))
+
+    questions = [s for s in prose_sentences if _tail(s).endswith('?')]
+    if len(questions) > MAX_QUESTIONS:
+        out.append(_finding('question', len(questions),
+                            f'묻고 답하는 문장이 {len(questions)}개다({MAX_QUESTIONS}개까지) — '
+                            f'예: 「{questions[0][-30:]}」. 답을 바로 쓴다'))
+
+    body = _body(html)
+    visible = _INVISIBLE.sub('', _text(body))
+    hits = []
+    for pattern, label in _INTERNAL_RE:
+        m = pattern.search(visible)
+        if m:
+            hits.append(f'{label}(「{visible[max(0, m.start() - 8):m.end() + 8]}」)')
+    if hits:
+        out.append(_finding('internal', len(hits),
+                            '독자 문장에 작업 어휘가 있다 — ' + ', '.join(hits[:4])
+                            + '. 계산 재현은 <details data-provenance> 로, 원장·채점 절차는 '
+                              '검토 자료로 옮기고 본문은 판단만 말한다'))
+
+    m = _BOND_AMBIGUOUS.search(visible)
+    if m:
+        out.append(_finding('bond_ambiguous', 1,
+                            f'「{m.group(0)}」은 국채 가격이 움직였다로 읽힌다 — '
+                            f'금리를 말하면 「국채금리 {m.group(1)}」으로 쓴다'))
+
+    raw = re.search(r'<body\b', html, re.I)
+    blocks = _PROVENANCE.findall(html[raw.start():] if raw else html)
+    sizes = [len(re.sub(r'\s', '', _text(b))) for b in blocks]
+    if len(blocks) > MAX_PROVENANCE_BLOCKS or any(n > MAX_PROVENANCE_CHARS for n in sizes):
+        out.append(_finding('provenance', len(blocks),
+                            f'근거 블록이 {len(blocks)}개·최대 {max(sizes)}자다'
+                            f'({MAX_PROVENANCE_BLOCKS}개·{MAX_PROVENANCE_CHARS}자까지) — '
+                            '입력·공식·결과만 둔다. 줄글은 본문으로'))
+
+    whole = ' '.join(texts)
+    dashes = whole.count('—')
+    if dashes > MAX_EMDASH:
+        out.append(_finding('emdash', dashes,
+                            f'줄표(—)로 이은 곳이 {dashes}군데다({MAX_EMDASH}군데까지 권장) — '
+                            '문장을 나누거나 「~해서」·「~지만」으로 잇는다', 'warn'))
+
+    hedges = sum(whole.count(h) for h in HEDGES)
+    if hedges > MAX_HEDGES:
+        out.append(_finding('hedge', hedges,
+                            f'「가를 자료가 없다·단정하지 않는다」류 단서가 {hedges}번이다'
+                            f'({MAX_HEDGES}번까지 권장) — 한계는 섹션당 한 번, 다음 확인 자료와 '
+                            '묶어 쓰고 안 할 말은 그냥 안 한다', 'warn'))
+
+    counts = {}
+    for n in _NUMBER.findall(whole):
+        counts[n] = counts.get(n, 0) + 1
+    repeated = sorted((k for k, v in counts.items() if v > MAX_SAME_NUMBER),
+                      key=lambda k: -counts[k])
+    if repeated:
+        shown = ', '.join(f'{k}({counts[k]}회)' for k in repeated[:4])
+        out.append(_finding('repeat_number', len(repeated),
+                            f'같은 수치가 {MAX_SAME_NUMBER}번 넘게 나온다 — {shown}. '
+                            '다시 부를 때는 수치 없이 「시가가 곧 고가」처럼', 'warn'))
+    return out

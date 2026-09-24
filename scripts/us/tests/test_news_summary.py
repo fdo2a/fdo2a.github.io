@@ -269,3 +269,11 @@ def test_a_caller_can_swap_the_system_prompt_for_korean_sources(tmp_path):
     assert client.calls[0]['system'] == NS.SYSTEM
     assert client.calls[1]['system'] == NS.SYSTEM_KO_SOURCE
     assert '그대로 옮기거나' in NS.SYSTEM_KO_SOURCE
+
+
+def test_both_prompts_ask_for_the_desk_register():
+    """US·KR 발행본은 -다 로 고정했다(2026-09-24). 요약이 -습니다 면 뉴스 섹션만 다른 목소리가 된다."""
+    for system in (NS.SYSTEM, NS.SYSTEM_KO_SOURCE):
+        assert '(~다)' in system
+        assert '존댓말' not in system
+        assert '운용자' in system

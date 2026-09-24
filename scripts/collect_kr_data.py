@@ -15,7 +15,7 @@ import yfinance as yf
 from kr import sources, flows, flows_intraday, sectors, program, stance, technical
 from kr import econ as kr_econ
 from kr.themes import rank_themes
-from kr.etf_normalize import dropped_products, normalize_top_value
+from kr.etf_normalize import dropped_products, normalize_top_value, stock_moves
 from kr.leadership import flag_leadership
 
 KST = timezone(timedelta(hours=9))
@@ -108,11 +108,12 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     # 거래대금 상위 (ETF 정규화) — 단위 백만원
     # 지수·해외 ETF 는 상위 표에서 빠지지만(2026-07-29) 실행 조건의 유동성 근거로는
     # 필요하다 — 같은 raw 에서 갈라 따로 쓴다. 비-코어.
-    index_etf = []
+    index_etf, moves = [], []
     try:
         raw_top = sources.fetch_top_value("0")
         top_value = normalize_top_value(raw_top, top_n=10)
         index_etf = dropped_products(raw_top)
+        moves = stock_moves(raw_top)
     except Exception as e:
         # 빈 결과도 예외로 올라온다 — 조용한 [] 가 2026-09-10~09-21 발행을 막았다.
         print(f"top_value failed: {e}", file=sys.stderr)
@@ -200,6 +201,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     _write(outdir, "kr_technical.json", technical_out)
     _write(outdir, "kr_top_value.json", top_value)
     _write(outdir, "kr_index_etf.json", index_etf)
+    _write(outdir, "kr_stock_moves.json", moves)
     _write(outdir, "kr_industry.json", industry)
     _write(outdir, "kr_theme.json", theme_rows)
     _write(outdir, "kr_intraday.json", intraday)

@@ -154,3 +154,20 @@ def normalize_top_value(rows: list, top_n: int = 10) -> list:
         if g["kind"] == "sector_theme_etf" and len(g["members"]) == 1:
             g["label"] = g["members"][0]
     return sorted(groups.values(), key=lambda x: -x["value"])[:top_n]
+
+
+def stock_moves(rows: list, top_n: int = 60) -> list:
+    """거래대금 상위 개별주의 등락률 — 특징주 문장의 가격 출처.
+
+    2026-09-23 KR 발행본은 삼성전자 +3.25% 같은 **가격**을 「파이낸셜뉴스는 …라고 전했다」로
+    인용했다(매체 주어 10회). 개별주 등락이 데이터에 없어 작성자가 신문을 출처로 삼은 것이다.
+    가격은 데이터로 주고, 매체는 주장·원인·전망에만 세운다. 단위: value 백만원, change_pct %.
+    """
+    out = []
+    for r in sorted(rows, key=lambda x: -(x.get("value") or 0)):
+        if classify_ticker(r["name"])["kind"] != "stock" or r.get("change_pct") is None:
+            continue
+        out.append({"name": r["name"], "change_pct": r["change_pct"], "value": r.get("value", 0)})
+        if len(out) >= top_n:
+            break
+    return out

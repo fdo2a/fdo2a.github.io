@@ -6,7 +6,9 @@ and research team: explain the market, identify consequential differences in
 expectations, and connect supported analysis to possible investment decisions.
 This mandate applies to future reports only. Keep published reports unchanged.
 China retains its separate economic-learning curriculum; shared prose rules still
-apply. Memory thesis pages follow the memory branch below and retain their deterministic generation/state contract.
+apply. US and KR prose uses the `-다` register throughout (2026-09-24), including
+news summaries; the shell declares `<body data-register="da">` and `check_style.py`
+blocks mixed endings, rhetorical Q&A, workflow vocabulary and 「국채 급등」. Memory thesis pages follow the memory branch below and retain their deterministic generation/state contract.
 
 ## Roles and scope
 
