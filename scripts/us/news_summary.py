@@ -19,7 +19,8 @@ WebFetch 도구도 CNBC 에 403 이다(2026-09-24 실측). 그런데 본문은 �
 때마다 이 함수를 불러 새 토큰을 받는다(anthropic 1.8.0 소스로 확인: `IdentityTokenProvider
 = Callable[[], str]`, 교환마다 재호출). 필요한 값은 레포 Variables 의
 `ANTHROPIC_FEDERATION_RULE_ID`·`ANTHROPIC_ORGANIZATION_ID`·`ANTHROPIC_SERVICE_ACCOUNT_ID`
-(+ 선택 `ANTHROPIC_WORKSPACE_ID`)와 Actions 가 주는 `ACTIONS_ID_TOKEN_REQUEST_URL/TOKEN`.
+`ANTHROPIC_WORKSPACE_ID` 와 Actions 가 주는 `ACTIONS_ID_TOKEN_REQUEST_URL/TOKEN`. 워크스페이스
+ID 는 SDK 가 선택 인자로 받지만 **빠지면 교환이 401 이다** — 규칙이 워크스페이스 하나여도(2026-09-24 실측).
 로컬에서는 `ANTHROPIC_API_KEY` 로도 돈다.
 
 자격 증명이 없거나 호출이 실패하면 그 기사에 `summary_ko` 가 없을 뿐이다 — 게이트는
@@ -107,8 +108,12 @@ def wif_config_problems(env=None):
         value = _v(env, key)
         if not value.startswith(prefix):
             problems.append(f"{key} 는 '{prefix}…' 로 시작해야 한다 — 받은 값 {_shape(value)}")
+    # 에러 문구는 「규칙이 워크스페이스 여러 개면」이라 하지만, 하나여도 없으면 401 이었다
+    # (2026-09-24 — Default 하나에 걸린 규칙, 넣자마자 18/18 요약).
     ws = _v(env, 'ANTHROPIC_WORKSPACE_ID')
-    if ws and ws != 'default' and not ws.startswith('wrkspc_'):
+    if not ws:
+        problems.append('ANTHROPIC_WORKSPACE_ID 가 없다 — 규칙이 워크스페이스 하나여도 교환이 401 이다')
+    elif ws != 'default' and not ws.startswith('wrkspc_'):
         problems.append(f"ANTHROPIC_WORKSPACE_ID 는 'wrkspc_…' 또는 'default' 여야 한다 — "
                         f'받은 값 {_shape(ws)}')
     return problems

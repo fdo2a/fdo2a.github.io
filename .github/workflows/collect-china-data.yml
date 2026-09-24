@@ -31,6 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        # 예약 실행은 만들어질 때의 커밋에 고정된다 — concurrency 로 줄 서 있다가 앞 실행이 push 한 뒤
+        # 시작해도 옛 커밋을 받아, 같은 파일을 옛 내용 위에 다시 써 rebase 충돌로 수집분을 버린다
+        # (2026-09-24 run 35935382006). 시작 시점의 main 을 받는다.
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:

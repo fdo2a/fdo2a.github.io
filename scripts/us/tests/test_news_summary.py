@@ -80,7 +80,7 @@ def test_no_credentials_marks_every_article_and_calls_nothing(tmp_path, monkeypa
 
 
 WIF = {'ANTHROPIC_FEDERATION_RULE_ID': 'fdrl_1', 'ANTHROPIC_ORGANIZATION_ID': '0f3c9a52-7d1e-4b8a-9c2d-5e6f7a8b9c0d',
-       'ANTHROPIC_SERVICE_ACCOUNT_ID': 'svac_1',
+       'ANTHROPIC_SERVICE_ACCOUNT_ID': 'svac_1', 'ANTHROPIC_WORKSPACE_ID': 'wrkspc_1',
        'ACTIONS_ID_TOKEN_REQUEST_URL': 'https://gh/token?api-version=2.0',
        'ACTIONS_ID_TOKEN_REQUEST_TOKEN': 'req-tok'}
 
@@ -172,6 +172,14 @@ def test_wif_id_shapes_are_checked_before_the_exchange():
     (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_SERVICE_ACCOUNT_ID='sa_1'))
     assert 'ANTHROPIC_SERVICE_ACCOUNT_ID' in p
     (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_WORKSPACE_ID='Default Workspace'))
+    assert 'ANTHROPIC_WORKSPACE_ID' in p
+    # 2026-09-24: 규칙이 Default 워크스페이스 하나뿐인데도 워크스페이스 ID 없이 교환하면 401
+    for missing in ('', '  '):
+        (p,) = NS.wif_config_problems(dict(WIF, ANTHROPIC_WORKSPACE_ID=missing))
+        assert 'ANTHROPIC_WORKSPACE_ID' in p
+    env = dict(WIF)
+    del env['ANTHROPIC_WORKSPACE_ID']
+    (p,) = NS.wif_config_problems(env)
     assert 'ANTHROPIC_WORKSPACE_ID' in p
 
 

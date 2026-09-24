@@ -58,6 +58,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        # 예약 실행은 만들어질 때의 커밋에 고정된다 — concurrency 로 줄 서 있다가 앞 실행이 push 한 뒤
+        # 시작해도 옛 커밋을 받아, 같은 파일을 옛 내용 위에 다시 써 rebase 충돌로 수집분을 버린다
+        # (2026-09-24 run 35935382006). 시작 시점의 main 을 받는다.
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
@@ -100,7 +105,8 @@ jobs:
         # 본문은 _workspace/ (gitignore) 에만 떨어뜨리고, **여기서 한국어 요약(summary_ko)
         # 까지 만들어** 요약만 커밋한다: 이 레포는 공개이고 기사는 상업 저작물이며, 클라우드
         # 루틴은 CNBC·Yahoo 에 403 이라 본문을 다시 받을 수 없다(2026-09-24 실측).
-        # 인증은 WIF 다 — ID 셋(+선택 워크스페이스)은 비밀이 아니라 레포 Variables 에 둔다.
+        # 인증은 WIF 다 — ID 넷(규칙·조직·서비스 계정·워크스페이스)은 비밀이 아니라 레포 Variables 에
+        # 둔다. 규칙이 워크스페이스 하나여도 워크스페이스 ID 가 없으면 교환이 401 이다(2026-09-24 실측).
         # GitHub OIDC 토큰은 약 5분짜리 1회용이라 파일로 미리 받아 두지 않는다 —
         # news_summary 가 SDK 에 공급자 함수를 넘겨, 교환할 때마다 새 토큰을 받는다.
         # 값이 없으면 요약 없이 커밋되고 그날 뉴스 섹션은 빠진다(수집분은 남는다).
