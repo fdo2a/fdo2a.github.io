@@ -4,6 +4,7 @@
 Run from the repo clone, against the writer's output in the routine workspace:
 
   python scripts/check_news.py --html morning_brief_2026-09-19.html --datadir .
+  python scripts/check_news.py --html kr_brief_2026-09-25.html --datadir kr/data --market kr --date 2026-09-25
 
 Exit 0 = publishable. Exit 1 = violations printed, one per line; hand them back to
 the writer subagent verbatim and re-run.
@@ -19,7 +20,13 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from kr.news import DIGEST_CATEGORIES as KR_CATEGORIES  # noqa: E402
+from us.news import DIGEST_CATEGORIES as US_CATEGORIES  # noqa: E402
 from us.news_gate import check  # noqa: E402
+
+# KR 은 네이버증권 주요뉴스(`kr/data/news/<date>.json`, `fetch_kr_news.py`). 갈래만 다르고
+# 대조 규칙은 같다(2026-09-24).
+CATEGORIES = {'us': US_CATEGORIES, 'kr': KR_CATEGORIES}
 
 
 def load_collected(datadir, report_date=None):
@@ -49,6 +56,8 @@ def main():
     ap.add_argument('--date', default=None,
                     help='발행일. 주면 그날 수집분만 쓰고 날짜 불일치를 위반으로 본다 '
                          '— 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다')
+    ap.add_argument('--market', choices=sorted(CATEGORIES), default='us',
+                    help='섹션 의무를 거는 갈래. KR 은 --datadir kr/data 와 함께')
     args = ap.parse_args()
 
     with open(args.html, encoding='utf-8') as fh:
@@ -63,7 +72,8 @@ def main():
               f'표식 대조는 그대로 한다')
         collected = collected or {'items': []}
 
-    violations = check(html, collected, report_date=args.date)
+    violations = check(html, collected, report_date=args.date,
+                       categories=CATEGORIES[args.market])
     if violations:
         print(f'뉴스 게이트 위반 {len(violations)}건 ({path}):', file=sys.stderr)
         for v in violations:

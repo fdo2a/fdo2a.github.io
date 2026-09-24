@@ -15,6 +15,9 @@ on:
 
 permissions:
   contents: write
+  # 뉴스 요약의 Claude API 인증 = Workload Identity Federation — US 수집 잡과 같은 규칙·
+  # Variables 를 쓴다(`collect-market-data.yml`). GitHub OIDC 토큰을 교환한다.
+  id-token: write
 
 concurrency:
   group: collect-kr-data
@@ -44,6 +47,23 @@ jobs:
         env:
           ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
         run: python scripts/collect_kr_data.py --outdir kr/data
+      - name: Fetch news (non-core)
+        # 네이버증권 주요뉴스 → kr/data/news/<date>.json (2026-09-24). 본문은 _workspace/ 에만 두고
+        # 여기서 한국어 요약(summary_ko)까지 만들어 요약만 커밋한다 — 기사는 상업 저작물이고
+        # 이 레포는 공개다. 발행 게이트 `check_news.py --market kr` 가 발행본을 이 파일과 대조한다.
+        # WIF ID 넷(규칙·조직·서비스 계정·워크스페이스)은 US 와 같은 레포 Variables — 워크스페이스
+        # ID 가 없으면 교환이 401 이다. 실패해도 그날 KR 뉴스 섹션만 빠진다.
+        continue-on-error: true
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
+        run: |
+          pip install --quiet certifi 'anthropic>=1.8,<2'
+          RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
+          python scripts/fetch_kr_news.py --datadir kr/data --bodydir _workspace/kr_news --date "$RD"
       - name: Report status
         run: |
           python - <<'PY'
@@ -62,5 +82,6 @@ jobs:
           git add kr/assets/*.png 2>/dev/null || true
           git add kr/data/history 2>/dev/null || true
           git add kr/data/weekly kr/data/monthly 2>/dev/null || true
+          git add kr/data/news 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: kr market data for ${RD}"

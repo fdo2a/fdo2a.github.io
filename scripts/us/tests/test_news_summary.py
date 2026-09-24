@@ -257,3 +257,15 @@ def test_a_401_stops_and_a_529_skips_only_that_article(tmp_path):
     c = Raising(Boom(status_code=401))
     NS.summarize_items(its, str(tmp_path), model='m', client=c, log=lambda *_: None)
     assert len(c.calls) == 1
+
+
+def test_a_caller_can_swap_the_system_prompt_for_korean_sources(tmp_path):
+    # KR 뉴스(fetch_kr_news.py)는 한국어 원문이라 「옮겨 적지 말라」를 세게 말하는 지시문을 쓴다
+    client = Client([GOOD, GOOD])
+    its = items(tmp_path, 2)
+    assert NS.summarize_items(its[:1], str(tmp_path), client=client, log=lambda m: None) == 1
+    assert NS.summarize_items(its[1:], str(tmp_path), client=client, log=lambda m: None,
+                              system=NS.SYSTEM_KO_SOURCE) == 1
+    assert client.calls[0]['system'] == NS.SYSTEM
+    assert client.calls[1]['system'] == NS.SYSTEM_KO_SOURCE
+    assert '그대로 옮기거나' in NS.SYSTEM_KO_SOURCE

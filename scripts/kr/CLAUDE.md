@@ -15,6 +15,7 @@
 - **독자 = 헤지펀드 매니저**(KR 만). 정본은 writer 머리의 「독자와 역할」.
 - **판단 원장**: `kr_stance.json`(어제 판단) → 수집기가 무효화 레벨을 그날 종가로 검산 → `kr_stance_eval.json`(`유효`·`무효화`·`판정불가`) → writer 가 §2 `review` 에서 그 판정을 말하고 `kr_stance_next.json` 을 낸다 → 오케스트레이터 STEP 2.9 가 원장으로 승계. **무효화 조건을 수로 남기는 게 핵심이다.** `scripts/kr/stance.py`·`stance_gate.py`·`scripts/check_kr_stance.py`.
 - **판단군 하한 1,800자** (`check_weight.py`, market=kr).
+- **오늘의 뉴스 (§12, 2026-09-24)**: `fetch_kr_news.py` (KR 수집 잡의 비-코어 단계) → `kr/data/news/<date>.json`. 원천은 네이버증권 주요뉴스(`m.stock` front-api 는 `mainnews`·`flashnews`·`ranknews` 만 받는다), 본문은 `n.news.naver.com` 의 `#dic_area`. 갈래는 제목 키워드(`macro`→`policy`→`market`→`industry` 우선순위, 해외 증시 마감·생활 기획은 버림), 매체별 재탕은 제목 유사도 ≥0.6 으로 접는다. **본문은 커밋하지 않는다** — 수집 잡이 `us/news_summary.py`(`SYSTEM_KO_SOURCE`, WIF)로 요약만 커밋. 게이트는 US 와 같은 `us/news_gate.check` 를 `check_news.py --market kr` 로(`categories=kr.news.DIGEST_CATEGORIES`). 순수 로직 `scripts/kr/news.py`.
 - **미완**: ECOS 월별 지표(CPI·수출입) / 장중 수급·프로그램 매매 대체재 / US 독자 전환 여부.
 
 ## 주간·월간 정리 — KR 몫

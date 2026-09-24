@@ -61,6 +61,22 @@ SYSTEM = (
     '- 존댓말(~습니다)로 쓰고, 제목·머리말·목록·따옴표 없이 요약 문단만 출력합니다.'
 )
 
+# 국내 기사(KR 뉴스, `fetch_kr_news.py`). 원문이 이미 한국어라 **옮겨 적기가 가장 쉬운 실패다** —
+# 기사 문장을 이어 붙인 요약은 공개 레포에 원문 일부를 커밋하는 것과 같다. 그래서 「자기
+# 문장으로」를 번역 기사보다 세게 말한다. 나머지 계약(분량·사실 범위·문체)은 SYSTEM 과 같다.
+SYSTEM_KO_SOURCE = (
+    '당신은 한국어 경제 뉴스 요약가입니다. 국내 언론의 한국어 기사 본문을 받아 증권 '
+    '운용자용 요약 한 문단을 씁니다.\n'
+    f'- 분량은 공백을 뺀 글자 수로 {TARGET_MIN}~{TARGET_MAX}자입니다'
+    f'(공백 포함 약 {TARGET_MIN * 5 // 4}~{TARGET_MAX * 5 // 4}자).\n'
+    '- 누가 무엇을 했는지, 핵심 수치와 날짜, 그 사건이 왜 중요한지를 기사에 적힌 '
+    '범위에서만 씁니다. 기사에 없는 전망·해석·시장 영향은 덧붙이지 않습니다.\n'
+    '- 기사 문장을 그대로 옮기거나 어미만 바꿔 이어 붙이지 않습니다. 내용을 소화해 '
+    '문장 구조부터 새로 씁니다. 직접 인용은 꼭 필요할 때 짧게 한 번까지입니다.\n'
+    '- 기자 이름·매체 홍보·광고 문구는 쓰지 않습니다.\n'
+    '- 존댓말(~습니다)로 쓰고, 제목·머리말·목록·따옴표 없이 요약 문단만 출력합니다.'
+)
+
 _WIF_VARS = ('ANTHROPIC_FEDERATION_RULE_ID', 'ANTHROPIC_ORGANIZATION_ID',
              'ANTHROPIC_SERVICE_ACCOUNT_ID')
 _GHA_VARS = ('ACTIONS_ID_TOKEN_REQUEST_URL', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN')
@@ -202,14 +218,15 @@ def in_band(text):
     return BAND_MIN <= chars(text) <= BAND_MAX
 
 
-def summarize_one(client, model, item, body):
+def summarize_one(client, model, item, body, system=None):
     """(요약, 사유). 분량이 벗어나면 한 번만 고쳐 쓰게 한다. 인증 실패는 예외로 올린다."""
     messages = [{'role': 'user', 'content': _prompt(item, body)}]
     text = ''
     try:
         for _ in range(2):
             response = client.messages.create(model=model, max_tokens=1024,
-                                              system=SYSTEM, messages=messages)
+                                              system=system or SYSTEM,
+                                              messages=messages)
             if response.stop_reason == 'refusal':
                 return None, '모델 거절'
             text = _text(response)
@@ -227,7 +244,7 @@ def summarize_one(client, model, item, body):
         return None, describe(e)
 
 
-def summarize_items(items, bodydir, model=None, client=None, log=print):
+def summarize_items(items, bodydir, model=None, client=None, log=print, system=None):
     """본문 파일이 있는 기사마다 `summary_ko` 를 채운다. 제자리 수정, 성공 건수 반환.
 
     어떤 실패도 예외로 내보내지 않는다 — 호출자는 이 뒤에 수집분을 다시 저장한다.
@@ -269,7 +286,7 @@ def summarize_items(items, bodydir, model=None, client=None, log=print):
             it['summary_note'] = f'본문 파일 없음 {type(e).__name__}'
             continue
         try:
-            text, why = summarize_one(client, model, it, body)
+            text, why = summarize_one(client, model, it, body, system=system)
         except Exception as e:              # 인증 실패 — 남은 건도 같은 벽에 부딪힌다
             mark_all(f'인증 실패 {type(e).__name__}')
             log(f'  요약 중단 — 인증 실패 ({type(e).__name__}: {str(e)[:400]}) '

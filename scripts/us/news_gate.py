@@ -183,8 +183,12 @@ def _read(html):
     return r
 
 
-def check(html, collected, report_date=None):
-    """-> 위반 메시지 목록. 빈 목록이면 통과."""
+def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES):
+    """-> 위반 메시지 목록. 빈 목록이면 통과.
+
+    `categories` 는 섹션 의무를 거는 갈래 — US 는 `us.news`, KR 은 `kr.news` 의
+    `DIGEST_CATEGORIES`(2026-09-24). 나머지 검사는 시장과 무관하다.
+    """
     items = (collected or {}).get('items') or []
     # guid 는 **매체 안에서만** 고유하다 — 게이트도 수집기와 같은 범위를 써야
     # 한쪽에서 가른 것이 다른 쪽에서 합쳐지지 않는다(2차 #9).
@@ -231,7 +235,7 @@ def check(html, collected, report_date=None):
 
     # 다이제스트 섹션은 **요약까지 만들어진** 갈래 기사가 있는 날에만 요구한다(1차 #5).
     usable = [it for it in items
-              if it.get('category') in DIGEST_CATEGORIES and it.get('summary_ko')]
+              if it.get('category') in categories and it.get('summary_ko')]
     if usable:
         if TITLE not in (html or ''):
             v.append(f'뉴스 섹션(「{TITLE}」)을 찾을 수 없다 — 수집분 {len(usable)}건')
