@@ -24,6 +24,8 @@ import re
 from datetime import date as _date, timedelta
 from pathlib import Path
 
+from scripts.common.analytics import SNIPPET as ANALYTICS
+
 CSS_DIR = Path(__file__).resolve().parent / 'post_css'
 MARKER = '<!-- post-shell-v1 -->'
 ADSENSE = ('<!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com'
@@ -169,7 +171,7 @@ def render(market, date, meta, body):
         f'<meta property="og:description" content="{escape(summary)}">\n'
         f'<title>{escape(meta["title"].strip())}</title>\n'
         f'<script type="application/ld+json">\n{ld_text}\n</script>\n'
-        f'{ADSENSE}\n{MARKER}\n<style>\n{css(market)}</style>\n</head>\n'
+        f'{ADSENSE}\n{MARKER}\n<style>\n{css(market)}</style>\n{ANALYTICS}\n</head>\n'
         # US·KR 일간은 PM 이 읽는 -다 문서다 — check_style 이 이 선언을 보고 데스크 검사를 건다.
         f'<body data-register="da">\n<div class="topbar">{topbar}</div>\n{nav}\n'
         f'<div class="doc">{body}</div>\n</body>\n</html>\n'

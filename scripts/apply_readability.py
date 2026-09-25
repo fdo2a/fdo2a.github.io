@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """발행본에 가독성 보정을 소급 적용한다.
 
-한글 장문에 필요한 조판, 빠른 이동, 긴 문단 분리를 더한다. 보이는 글자와
-수치는 손대지 않으므로 `verify_post.py`의 수치 멀티셋 대조를 그대로 통과한다.
+한글 장문에 필요한 조판, 빠른 이동, 긴 문단 분리를 더하고, 방문 통계 로더
+(`scripts/common/analytics.py`)를 넣는다. 보이는 글자와 수치는 손대지 않으므로
+`verify_post.py`의 수치 멀티셋 대조를 그대로 통과한다.
 
     python3 scripts/apply_readability.py              # daily US + KR posts
     python3 scripts/apply_readability.py posts/2026-08-21.html
@@ -12,6 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from scripts.common import analytics  # noqa: E402
 from scripts.us import readability as R  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -37,7 +39,10 @@ def main(argv):
     done = skipped = 0
     for path in files:
         html = path.read_text(encoding="utf-8")
-        enhanced = R.enhance_html(html)
+        # 방문 통계 로더도 여기서 넣는다 — 주간·월간·중국 작성자는 문서 전체를 손으로 쓰므로
+        # 모든 발행 흐름이 지나는 이 단계가 빠뜨림을 막는 자리다. 조판 변환(enhance_html)과
+        # 섞지 않고 뒤에 둔다: 검토 게이트는 두 변환을 따로 되감는다(review.prose).
+        enhanced = analytics.inject(R.enhance_html(html))
         if enhanced == html:
             skipped += 1
             continue

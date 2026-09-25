@@ -27,6 +27,7 @@ from dataclasses import dataclass
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from common import analytics  # noqa: E402
 from review.known_blocks import is_known  # noqa: E402
 from us.colorize import paint  # noqa: E402
 from us.readability import _blank_inert as blank_inert  # noqa: E402
@@ -271,11 +272,28 @@ def typography(path, old, new, root=None):
     `root` 를 주면 자산 외부화(임베드 → 파일 참조)도 같은 자리로 받는다. 그 변환은
     독자가 받는 그림이 바이트 그대로라 조판과 성격이 같은데, `equivalent()` 는 CSS
     블록만 이식하므로 닿지 못한다(2026-09-06).
+
+    방문 통계 로더 삽입(`common.analytics.inject`)도 받는다 — 독자가 읽는 글자는
+    그대로다. 방향은 같다: 옛 판에 **삽입을 재연**해 그 결과를 옛 판 삼아 다시 본다.
+    로더를 한 글자라도 다르게 넣었거나 다른 자리에 넣은 판은 재연과 맞지 않는다(2026-09-25).
     """
     if old is None or new is None:
         return None
     if not path.endswith('.html'):
         return False  # HTML 이 아닌 원고에는 조판이라는 것이 없다
+    verdict = _typography(path, old, new, root)
+    if verdict is True or analytics.MARKER not in new:
+        return verdict
+    primed = analytics.inject(old)
+    if primed == old:
+        return verdict  # 옛 판에 이미 있었다 — 재연할 삽입이 없다
+    if primed == new:
+        return True
+    again = _typography(path, primed, new, root)
+    return True if again is True else verdict
+
+
+def _typography(path, old, new, root):
     verdict = equivalent(old, new)
     if verdict:
         return True

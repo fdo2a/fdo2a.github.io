@@ -19,6 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from common.analytics import SNIPPET as ANALYTICS  # noqa: E402
 from thesis import content as C          # noqa: E402
 from thesis import narrative as N        # noqa: E402
 from thesis import render as R           # noqa: E402
@@ -215,6 +216,7 @@ def shell(title, description, canonical, body, current, root, ld):
 {STYLE}
 </style>
 {ADSENSE}
+{ANALYTICS}
 </head>
 <body>
 <div class="wrap">
