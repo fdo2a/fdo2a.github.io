@@ -661,6 +661,12 @@
         }
       ]
     },
+    "kr/posts/2026-09-08.html": {
+      "sha": "88cf002ba8f50c7cff792cc1c03c9c362259dd4a",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
     "kr/posts/2026-09-09.html": {
       "sha": "318e2e66cdd56ffd6a96627e2196f1c7ccdf09a9",
       "at": "2026-09-10T05:29:12+09:00",
@@ -673,10 +679,23 @@
         }
       ]
     },
+    "kr/posts/2026-09-21.html": {
+      "sha": "4403ff0dd27a2caad9ad6a73e310c9c8b3159eb2",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "kr/posts/2026-09-23.html": {
+      "sha": "63e68f8dd9a0ec9bfa9b430fc0d3d2ef58f0b655",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
     "kr/weekly/2026-W37.html": {
-      "sha": "b5b92ae0e823c70470640057dcf1a85b96323b72",
-      "at": "2026-09-13T15:08:22+09:00",
-      "findings": 5
+      "sha": "fa51d8d70a2ae2f0c87b9c72dd01f51c6be3c9e2",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
     },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
@@ -1579,6 +1598,36 @@
       "at": "2026-09-17T20:00:27+09:00",
       "findings": 0
     },
+    "posts/2026-09-18.html": {
+      "sha": "c943af8bf22164bf90d378dbb48ca7eac3916624",
+      "at": "2026-09-26T04:18:31+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-09-21.html": {
+      "sha": "0d41067f456acc68478c29e97df8cff2b7ab1740",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-09-22.html": {
+      "sha": "79be7640fb2b64faaae15610ec37b2991e57b61d",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-09-23.html": {
+      "sha": "cdcb6c783179f8641c9ae548f2300de03455fbe3",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "posts/2026-09-24.html": {
+      "sha": "59df12a4dd5e5741377e901cd588a6663b77b00d",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
     "privacy.html": {
       "sha": "ea755ae587014fd8fbfb02847d7b92d45fb935d2",
       "at": "2026-08-24T13:32:40+09:00",
@@ -1645,9 +1694,16 @@
       ]
     },
     "weekly/2026-W37.html": {
-      "sha": "ddcd5765e60d0358003465183a0d33e1e580facc",
-      "at": "2026-09-13T14:44:30+09:00",
-      "findings": 6
+      "sha": "a518b79d10951fb86ce35f24804d49916bfac0c0",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
+    },
+    "weekly/2026-W38.html": {
+      "sha": "7e9d263eb29d3da065937df2476244db53cf6abe",
+      "at": "2026-09-26T04:18:32+09:00",
+      "findings": 0,
+      "baseline": true
     }
   }
 }
