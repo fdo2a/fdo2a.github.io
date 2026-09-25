@@ -54,6 +54,16 @@ MARKETS = {
         'extra_nav': ('\n  <a href="../../index.html" style="text-decoration:none;font-size:12px;'
                       'font-weight:700;color:#8B95A1;margin-left:auto;">🇺🇸 미국 시장 →</a>'),
     },
+    # 뉴스·산업 브리프(2026-09-26) — US 루틴이 브리프와 함께 쓰는 둘째 글. 오늘의 뉴스·메모리/DRAM·
+    # AI 인프라·MLCC 가 브리프에서 여기로 옮겨 왔다. 조판은 US 와 같다(`css` 키).
+    'news': {
+        'brand': 'US News & Industry', 'site': 'https://fdo2a.github.io/', 'dir': 'news',
+        'og': '미국 뉴스·산업 브리프', 'title_prefix': '미국 뉴스·산업 브리프 — ',
+        'published_offset': 1, 'css': 'us', 'topbar': 'us',
+        # 같은 날 브리프로 돌아가는 길. 브리프가 먼저 발행되므로 링크가 끊기지 않는다.
+        'extra_nav': ('\n  <a href="../posts/{date}.html" style="text-decoration:none;font-size:12px;'
+                      'font-weight:700;color:#8B95A1;margin-left:auto;">같은 날 시황 브리프 →</a>'),
+    },
 }
 
 _FORBIDDEN = (('<!doctype', 'DOCTYPE'), ('<html', '<html>'), ('<head', '<head>'),
@@ -78,7 +88,8 @@ def plain(fragment):
 
 
 def css(market):
-    return (CSS_DIR / f'{market}.css').read_text(encoding='utf-8')
+    name = MARKETS.get(market, {}).get('css', market)
+    return (CSS_DIR / f'{name}.css').read_text(encoding='utf-8')
 
 
 def _selectors(stylesheet):
@@ -102,7 +113,7 @@ def validate(market, date, meta, body):
     """Everything wrong with the writer's inputs, as sentences. Empty means renderable."""
     errors = []
     if market not in MARKETS:
-        return [f'market 은 us·kr 중 하나다 ({market!r})']
+        return [f'market 은 {"·".join(MARKETS)} 중 하나다 ({market!r})']
     cfg = MARKETS[market]
     try:
         _date.fromisoformat(date)
@@ -150,14 +161,15 @@ def render(market, date, meta, body):
           'mainEntityOfPage': url, 'inLanguage': 'ko'}
     # `</` inside a JSON string would close the <script> element early.
     ld_text = json.dumps(ld, ensure_ascii=False).replace('</', '<\\/')
-    if market == 'us':
+    if cfg.get('topbar', market) == 'us':
         topbar = (f'<span class="brand">{cfg["brand"]}</span> · {day.year}년 {day.month}월 '
                   f'{day.day}일({WEEKDAYS[day.weekday()]}) 마감 기준')
     else:
         topbar = (f'<span class="brand">{cfg["brand"]}</span>'
                   f'<span class="date">{_long_date(day)} 마감</span>')
     nav = (f'{_NAV_OPEN}\n  <a href="../index.html" style="{_PILL}">‹ 전체 보고서</a>\n'
-           f'  <a href="../index.html" style="{_HOME}">{cfg["brand"]}</a>{cfg["extra_nav"]}\n'
+           f'  <a href="../index.html" style="{_HOME}">{cfg["brand"]}</a>'
+           f'{cfg["extra_nav"].replace("{date}", date)}\n'
            '</div>')
     return (
         '<!DOCTYPE html>\n<html lang="ko">\n<head>\n'

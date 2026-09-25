@@ -26,7 +26,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
-   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. 작성자에게 이 파일 경로를 입력으로 전달한다 — 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
+   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 2.7)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
@@ -74,7 +74,7 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 ## STEP 2 — 리포트 작성 (subagent: brief-report-writer)
 
-**뉴스 입력** — 커밋된 `news/[DATE].json` 의 각 항목에 `summary_ko`(수집 잡이 원문을 읽고 만든 한국어 요약)가 있다. **루틴에서 기사 본문을 다시 받지 않는다**(클라우드는 CNBC·Yahoo 에 403 이고, 실패한 재수집이 `body_chars` 를 0 으로 덮어써 뉴스 섹션이 면제되던 원인이었다). `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」는 의무다. 하나도 없으면 섹션 없이 발행하되 **최종 보고에 사유(`summary_note`)를 적는다.**
+**시황 브리프에는 오늘의 뉴스·메모리/DRAM·AI 인프라·MLCC 가 없다**(2026-09-26 사용자 지시) — 네 섹션은 STEP 2.7 의 둘째 글 「뉴스·산업 브리프」로 옮겨 갔다. 작성자에게 그 섹션을 쓰라고 하지 않는다.
 
 Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
@@ -88,13 +88,11 @@ python  scripts/check_price_context.py --html morning_brief_[DATE].html --datadi
 python3 scripts/check_session.py       --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_news.py          --html morning_brief_[DATE].html --datadir <workspace> --date [DATE]
 python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_movers.py        --html morning_brief_[DATE].html --datadir <workspace>
 ```
 
-- `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다.
 - `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
 - 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 
@@ -156,7 +154,6 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
   --gate "python3 scripts/check_weight.py --html {f} --datadir <workspace> --market us" \
   --gate "python3 scripts/check_research.py check --span daily --html {f} --root research/us --market us --date <DATE> --cycle <CYCLE_ID>" \
   --gate "python3 scripts/check_fed.py --html {f} --datadir <workspace>" \
-  --gate "python3 scripts/check_news.py --html {f} --datadir <workspace> --date [DATE]" \
   --gate "python3 scripts/check_sources.py --html {f} --datadir <workspace>" \
   --gate "python3 scripts/check_calendar.py --html {f} --datadir <workspace>" \
   --gate "python3 scripts/check_movers.py --html {f} --datadir <workspace>"
@@ -193,6 +190,26 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
 
 사본(`*.humanizing.html`)·`prose_in.txt`·`prose_map.json`과 스킬 작업 폴더(`_workspace/`)는 `.gitignore`에 걸려 있다. STEP 3의 `git add -A`가 쓸어 담지 않는다.
 
+## STEP 2.7 — 뉴스·산업 브리프 (subagent: news-industry-writer)
+
+2026-09-26 사용자 지시 「오늘의 뉴스, 메모리/DRAM, AI 인프라, MLCC…를 시황 레포트에서 제외시킨 뒤, 새로운 글을 하나 더 만드는 방향으로」. **같은 날, 같은 입력으로 쓰는 둘째 글이다** — 새로 수집하거나 웹서치하지 않는다.
+
+**시황 브리프가 먼저다.** STEP 2.5 까지 끝난 브리프는 이 단계의 성패와 무관하게 STEP 3 에서 발행한다. 이 글이 게이트를 끝내 못 넘으면 브리프만 발행하고 최종 보고·알림에 사유를 적는다.
+
+0. **멱등 가드** — `news/[DATE].html` 이 이미 커밋돼 있으면 이 단계를 건너뛴다.
+1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 네 가지 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절. 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것).
+2. **게이트** — 작성자가 돌린 것을 레포 클론에서 다시 돌린다. 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 오케스트레이터가 직접).
+   ```bash
+   python3 scripts/apply_readability.py news_industry_[DATE].html
+   python3 scripts/apply_colors.py news_industry_[DATE].html
+   python3 scripts/check_news.py --html news_industry_[DATE].html --datadir <workspace> --date [DATE]
+   python3 scripts/check_readability.py --strict --no-inline-images news_industry_[DATE].html
+   python3 scripts/check_style.py news_industry_[DATE].html
+   grep -c '확인필요' news_industry_[DATE].html     # 0
+   ```
+   `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다. `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」는 의무다. 하나도 없으면 섹션 없이 발행하되 **최종 보고에 사유(`summary_note`)를 적는다.** **루틴에서 기사 본문을 다시 받지 않는다**(클라우드는 CNBC·Yahoo 에 403).
+3. **윤문(STEP 2.5)은 이 글에 하지 않는다** — 뉴스 블록은 `summary_ko` 에 묶여 있어(유사도 게이트) 윤문이 걸리고, 산업 세 섹션은 짧다. 문체 검사(`check_style`)는 위에서 돈다.
+
 ## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 
 Site base URL: https://fdo2a.github.io/
@@ -202,15 +219,17 @@ Site base URL: https://fdo2a.github.io/
    - `macro_next.json` → `data/macro.json`
    Tomorrow's Actions run judges today's regime and triggers against this file. Publishing without promoting it leaves the macro book frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.
 3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
-4. Update posts.json in the repo root: add {"date", "title", "headline"}. Same-date entry → REPLACE, never duplicate. Keep valid JSON.
-5. Regenerate sitemap.xml from posts.json: one <url> for https://fdo2a.github.io/ (lastmod=today, changefreq daily) plus one <url> per post (https://fdo2a.github.io/posts/DATE.html, lastmod). Keep valid XML.
+4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
+   `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
+5. **뉴스·산업 브리프 (STEP 2.7 이 통과한 날만)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 1번과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`.
 6. Commit and push to main:
    git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
+   (뉴스·산업 브리프가 있으면 같은 커밋에 들어간다.)
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
 
 ## STEP 4 — Notify
 
-Send a PushNotification with the headline and the blog post URL (mention any failures).
+Send a PushNotification with the headline and the blog post URL, plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures).
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Do NOT publish to Notion, do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email. If a Notion connector is available in the session, leave it alone — its presence is not an instruction to use it.
 
@@ -223,7 +242,7 @@ Send a PushNotification with the headline and the blog post URL (mention any fai
 
 ## RULES
 - All prices/% changes in the published report MUST come from market_data.json / intraday.json; macro indicator values from research_notes.md. 수치 창작 절대 금지.
-- **완성본만 발행 (2026-07-14 사용자 지시)**: 핵심 표(지수·섹터·채권·FX·원자재·메모리·AI 인프라)에 누락 항목이 있는 채로 발행 금지. 완성 불가 시 발행하지 말고 PushNotification으로 누락 내역을 보고할 것. 웹 리서치로 대체 수집한 시세는 발행 전 반드시 복수 출처 교차 확인 — 단일 검색 결과 수치는 신뢰하지 않는다 (7/13호에서 FX 방향·유가 등락률 오류 발생 전례).
+- **완성본만 발행 (2026-07-14 사용자 지시)**: 핵심 표(지수·섹터·채권·FX·원자재; 뉴스·산업 브리프는 메모리·AI 인프라)에 누락 항목이 있는 채로 발행 금지 — 메모리·AI 인프라가 비면 뉴스·산업 브리프만 싣지 않고 시황 브리프는 발행한다. 완성 불가 시 발행하지 말고 PushNotification으로 누락 내역을 보고할 것. 웹 리서치로 대체 수집한 시세는 발행 전 반드시 복수 출처 교차 확인 — 단일 검색 결과 수치는 신뢰하지 않는다 (7/13호에서 FX 방향·유가 등락률 오류 발생 전례).
 - **발행본에 [확인필요] 금지 (STEP 2 게이트).** 미확인 항목은 끝까지 확인하거나 삭제·재구성.
 - Web findings attributed to sources. Clear, natural report prose (근거와 판단이 분명한 자연스러운 보고서 문체).
 - **「buy-side」 금지 (2026-08-22 사용자 지시)** — 발행본 어디에도 쓰지 않는다. §2 헤더는 「전략 코멘트」, 해석 박스는 「전략 해석」. `scripts/check_macro.py` 게이트가 차단한다.

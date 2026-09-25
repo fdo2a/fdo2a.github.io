@@ -114,12 +114,13 @@
   </header>
   <div class="intro">
     미국 증시가 열린 다음 날 아침(화–토 09:00 KST), 전 거래일의 시장을 정리한 모닝브리프가 자동으로 올라옵니다.
-    <span class="small">지수·섹터 · 채권 · FX · 원자재 · 메모리/DRAM · AI 인프라 · 경제지표 vs 컨센서스</span>
+    <span class="small">지수·섹터 · 채권 · FX · 원자재 · 매크로 · 경제지표 vs 컨센서스 — 뉴스와 메모리/DRAM · AI 인프라 · MLCC 는 「뉴스·산업」 탭</span>
   </div>
   <nav class="subnav" aria-label="발행 주기">
     <button type="button" data-span="daily" aria-current="true">일간</button>
     <button type="button" data-span="weekly">주간</button>
     <button type="button" data-span="monthly">월간</button>
+    <button type="button" data-span="news">뉴스·산업</button>
   </nav>
   <h2 class="list-title">전체 보고서</h2>
   <div class="post-list" id="list">
@@ -138,14 +139,16 @@
   const SOURCES = {
     daily:   { file: 'posts.json',   dir: 'posts/',   empty: '아직 올라온 보고서가 없습니다.' },
     weekly:  { file: 'weekly.json',  dir: 'weekly/',  empty: '아직 발행된 주간 정리가 없습니다.' },
-    monthly: { file: 'monthly.json', dir: 'monthly/', empty: '아직 발행된 월간 정리가 없습니다.' }
+    monthly: { file: 'monthly.json', dir: 'monthly/', empty: '아직 발행된 월간 정리가 없습니다.' },
+    news:    { file: 'news.json',    dir: 'news/',    empty: '아직 발행된 뉴스·산업 브리프가 없습니다.' }
   };
   const cache = {};
 
   function label(span, item) {
-    if (span === 'daily') {
-      const d = new Date(item.date + 'T00:00:00');
-      return `${item.date} (${days[d.getDay()]})`;
+    if (span === 'daily' || span === 'news') {
+      const day = item.date || item.key;
+      const d = new Date(day + 'T00:00:00');
+      return `${day} (${days[d.getDay()]})`;
     }
     return item.label || item.key || item.date || '';
   }

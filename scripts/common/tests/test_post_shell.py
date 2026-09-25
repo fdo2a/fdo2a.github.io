@@ -98,3 +98,37 @@ def test_daily_shell_declares_the_desk_register():
     for market, path in (('us', 'posts/2026-09-23.html'), ('kr', 'kr/posts/2026-09-23.html')):
         meta, body = _split(path)
         assert is_desk_register(S.render(market, '2026-09-23', meta, body)), market
+
+
+# ── 뉴스·산업 브리프 (2026-09-26) ─────────────────────────────────────────
+# 사용자 지시 「오늘의 뉴스, 메모리/DRAM, AI 인프라, MLCC…를 시황 레포트에서 제외시킨 뒤, 새로운
+# 글을 하나 더 만드는 방향으로」 — US 루틴이 브리프와 함께 쓰는 둘째 글.
+NEWS_META = {'title': '미국 뉴스·산업 브리프 — 엔저 경계와 HBM 증설 | 2026-09-25', 'summary': '요약'}
+
+
+def test_news_post_lives_under_news_with_its_own_canonical():
+    out = S.render('news', '2026-09-25', NEWS_META, '<h1>엔저 경계와 HBM 증설</h1>')
+    assert 'href="https://fdo2a.github.io/news/2026-09-25.html"' in out
+    assert S.validate('news', '2026-09-25', NEWS_META, '<h1>a</h1>') == []
+
+
+def test_news_post_reuses_the_us_stylesheet():
+    assert S.css('news') == S.css('us')
+
+
+def test_news_post_links_back_to_the_same_day_brief():
+    out = S.render('news', '2026-09-25', NEWS_META, '<h1>a</h1>')
+    assert 'href="../posts/2026-09-25.html"' in out
+
+
+def test_news_post_title_format_is_its_own():
+    errors = S.validate('news', '2026-09-25', {'title': '미국 증시 마감 시황 — x | 2026-09-25',
+                                               'summary': 's'}, '<h1>a</h1>')
+    assert any('미국 뉴스·산업 브리프' in e for e in errors)
+
+
+def test_news_post_is_a_desk_document():
+    import sys
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    from us.style import is_desk_register
+    assert is_desk_register(S.render('news', '2026-09-25', NEWS_META, '<h1>a</h1>'))

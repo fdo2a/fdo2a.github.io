@@ -244,7 +244,7 @@ print(json.dumps(out, default=str))
 6. 최근 지표 발표에 대한 시장 해석 — 예: 'jobless claims market reaction Fed rate expectations [week]' + CME FedWatch 금리 경로 수치 (검색 1~2회)
 7. STEP 1 데이터에서 파악한 최대 변동 종목·자산에 대한 추가 검색
 
-`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스 ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록 ⑧ 신규 발표 해부(STEP 2-5b, `headline_releases`가 있을 때만) ⑨ 연준 이벤트 반응(아래 5c, `fed/events.json`에 `fresh` 이벤트가 있을 때만). 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명). **뉴스 리서치는 정치·경제·매크로·산업·AI 위주로 한다 (2026-09-24 사용자 지시).** 먼저 `data/news/[DATE].json` 의 `summary_ko`(수집 잡이 CNBC·Yahoo 원문을 읽고 만든 요약)를 읽고, 거기 이미 있는 사건은 다시 검색하지 않는다 — 웹서치는 그 요약이 답하지 못하는 시장 연결·후속 보도에만 쓴다.
+`research_notes.md` 구조: ① 시황 동인(장중 스윙 촉매 포함) ② 채권·금리 맥락 ③ 메모리/DRAM 뉴스 ④ AI 인프라 뉴스(③·④ 는 2026-09-26 부터 시황 브리프가 아니라 둘째 글 「뉴스·산업 브리프」의 재료다 — 수집은 그대로) ⑤ 경제지표 4축 표(지표 | Actual | Forecast | Previous | 발표일 — Actual/Previous는 econ_indicators.json 값, 출처 'FRED'; Forecast·발표일은 최근 발표분만 웹) ⑥ 시장 해석·FedWatch 수치 ⑦ 미확정 항목 목록 ⑧ 신규 발표 해부(STEP 2-5b, `headline_releases`가 있을 때만) ⑨ 연준 이벤트 반응(아래 5c, `fed/events.json`에 `fresh` 이벤트가 있을 때만). 뉴스·해석 항목에 출처를 붙인다('~로 보도된다', 출처명). **뉴스 리서치는 정치·경제·매크로·산업·AI 위주로 한다 (2026-09-24 사용자 지시).** 먼저 `data/news/[DATE].json` 의 `summary_ko`(수집 잡이 CNBC·Yahoo 원문을 읽고 만든 요약)를 읽고, 거기 이미 있는 사건은 다시 검색하지 않는다 — 웹서치는 그 요약이 답하지 못하는 시장 연결·후속 보도에만 쓴다.
 
 ## STEP 3 — 검증 게이트 (필수)
 
