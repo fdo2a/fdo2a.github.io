@@ -3,30 +3,30 @@
     "as_of": "2026-09-23",
     "close": 7080.92,
     "ma": {
-      "ma20": 6833.4,
-      "ma60": 6881.38,
-      "ma120": 7091.27
+      "ma20": 6843.88,
+      "ma60": 6858.43,
+      "ma120": 7107.65
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": 3.62,
-      "vs_ma60": 2.9,
-      "vs_ma120": -0.15
+      "vs_ma20": 3.46,
+      "vs_ma60": 3.24,
+      "vs_ma120": -0.38
     },
     "bollinger": {
-      "upper": 7146.47,
-      "mid": 6833.4,
-      "lower": 6520.33,
-      "pct_b": 0.895,
-      "bandwidth": 0.0916
+      "upper": 7166.77,
+      "mid": 6843.88,
+      "lower": 6521.0,
+      "pct_b": 0.867,
+      "bandwidth": 0.0944
     },
     "ichimoku": {
-      "tenkan": 6868.1,
-      "kijun": 6808.72,
-      "senkou_a": 6514.7,
+      "tenkan": 6876.82,
+      "kijun": 6786.17,
+      "senkou_a": 6585.76,
       "senkou_b": 7324.18,
       "cloud_top": 7324.18,
-      "cloud_bottom": 6514.7,
+      "cloud_bottom": 6585.76,
       "price_vs_cloud": "inside"
     },
     "chikou_above_price_26ago": true,
@@ -41,33 +41,33 @@
     "as_of": "2026-09-23",
     "close": 844.48,
     "ma": {
-      "ma20": 822.67,
-      "ma60": 811.7,
-      "ma120": 950.61
+      "ma20": 823.04,
+      "ma60": 810.26,
+      "ma120": 948.79
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 2.65,
-      "vs_ma60": 4.04,
-      "vs_ma120": -11.16
+      "vs_ma20": 2.6,
+      "vs_ma60": 4.22,
+      "vs_ma120": -10.99
     },
     "bollinger": {
-      "upper": 849.43,
-      "mid": 822.67,
-      "lower": 795.91,
-      "pct_b": 0.908,
-      "bandwidth": 0.0651
+      "upper": 850.24,
+      "mid": 823.04,
+      "lower": 795.85,
+      "pct_b": 0.894,
+      "bandwidth": 0.0661
     },
     "ichimoku": {
       "tenkan": 823.56,
-      "kijun": 827.24,
-      "senkou_a": 784.44,
+      "kijun": 816.33,
+      "senkou_a": 791.54,
       "senkou_b": 848.45,
       "cloud_top": 848.45,
-      "cloud_bottom": 784.44,
+      "cloud_bottom": 791.54,
       "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": false,
+    "chikou_above_price_26ago": true,
     "swing": {
       "high_20": 847.35,
       "low_20": 782.87,
