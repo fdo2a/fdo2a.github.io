@@ -76,7 +76,7 @@ REPO = os.path.dirname(  # site/
     os.path.dirname(os.path.dirname(os.path.dirname(_HERE)))
 )
 
-LEAVES = ("us", "kr", "thesis", "china")
+LEAVES = ("us", "kr", "thesis")
 
 # 「고칠 때 이 spec 을 읽어라」 — 한국어·영어 어느 쪽이든 **조건부 지시**여야 한다.
 # 맨 포인터는 읽히지 않는다(AGENTS.md 「Adding something new」 1항).

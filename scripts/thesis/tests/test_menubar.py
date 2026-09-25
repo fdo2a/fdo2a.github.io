@@ -24,7 +24,7 @@ def labels(html):
 
 def test_menubar_carries_every_section():
     assert labels(build.menubar("thesis", "../")) == [
-        "미국 시장", "한국 시장", "메모리 thesis", "중국 경제"]
+        "미국 시장", "한국 시장", "메모리 thesis"]
 
 
 def test_menubar_matches_the_hand_written_indexes():

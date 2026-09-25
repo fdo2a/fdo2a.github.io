@@ -187,8 +187,7 @@ def menubar(current, root):
     페이지의 메뉴를 도로 되돌린 전례가 있다. 회귀 검사는 thesis/tests/test_menubar.py.
     """
     items = [('미국 시장', root or './', 'us'), ('한국 시장', f'{root}kr/', 'kr'),
-             ('메모리 thesis', f'{root}thesis/', 'thesis'),
-             ('중국 경제', f'{root}china/', 'china')]
+             ('메모리 thesis', f'{root}thesis/', 'thesis')]
     links = '\n'.join(
         f'    <a href="{href}"{" aria-current=\"page\"" if key == current else ""}>{label}</a>'
         for label, href, key in items)

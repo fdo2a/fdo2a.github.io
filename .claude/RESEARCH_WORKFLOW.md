@@ -4,8 +4,7 @@ Read before researching, writing or reviewing a new US/KR daily, weekly or month
 report. Read `.claude/DESK_REPORT.md` first for the market-coverage and PM-facing sales/research mandate. Use alongside `TRADER_LEARNING.md` (evidence discipline) and the common
 writer (prose). Applies to newly authored reports after this change; **never
 backfill hypotheses from outcomes or rewrite published reports to add these fields**.
-China retains its curriculum and claim history; only the shared editorial method
-applies there. This is research, not an order, portfolio or position-sizing system.
+This is research, not an order, portfolio or position-sizing system.
 
 ## What the research must answer
 

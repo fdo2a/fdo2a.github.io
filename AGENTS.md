@@ -9,9 +9,9 @@
 
 - **Work from `site/`.** The project root (`/Users/daeyoung/Desktop/AI/report`) is not a git repo. Every path and command below is relative to `site/`; run `git`, `gh`, and all scripts after `cd site`.
 - **Tests**: `cd site && python3 -m pytest scripts` — the whole tree, no `--ignore`. **Must run from `site/`**: from the project root it fails collection (`ModuleNotFoundError: scripts`) and ends with "N collected, 6 errors", and **the count alone looks like a pass, so read the `Interrupted` line.**
-- **Publish gates run in order**: `scripts/apply_readability.py` (typography override — must come before any check) → `scripts/apply_colors.py` (US sign colours) → per-pipeline gates (US `check_macro.py`, `check_fed.py`, `check_weight.py`, `check_price_context.py`, `check_session.py`, `check_sources.py`, `check_news.py`, `check_research.py`, `check_calendar.py`; thesis `check_thesis.py`; weekly/monthly `check_period.py`; China `check_china.py`) → `check_readability.py --strict` → `check_style.py`. Note `check_style.py` takes a path only — it does not accept `--html`.
+- **Publish gates run in order**: `scripts/apply_readability.py` (typography override — must come before any check) → `scripts/apply_colors.py` (US sign colours) → per-pipeline gates (US `check_macro.py`, `check_fed.py`, `check_weight.py`, `check_price_context.py`, `check_session.py`, `check_sources.py`, `check_news.py`, `check_research.py`, `check_calendar.py`; thesis `check_thesis.py`; weekly/monthly `check_period.py`) → `check_readability.py --strict` → `check_style.py`. Note `check_style.py` takes a path only — it does not accept `--html`.
 - **Hand-edited posts**: `python3 scripts/verify_post.py posts/DATE.html` (compares the number multiset against git HEAD).
-- **Trigger data collection manually**: `gh workflow run collect-market-data.yml -f force=true` (same for `collect-kr-data.yml`, `collect-thesis-data.yml`, `collect-china-data.yml`).
+- **Trigger data collection manually**: `gh workflow run collect-market-data.yml -f force=true` (same for `collect-kr-data.yml`, `collect-thesis-data.yml`).
 - **Check unreviewed posts**: `python3 scripts/review_gate.py pending --hook`. The SessionStart hook calls this automatically, but the hook ends in `|| true` and fails silently — run it by hand whenever the queue looks wrong. The 「조판만 바뀐 N건」 and 「판정 불가」 queues have their own handling — `.claude/REVIEW_GATE.md`. The hourly launchd runner (`review_gate.py run --correct`) reviews us/kr with Codex, then invokes Claude to verify, correct and republish from an isolated clone. Drafts in `reviews/pending/` alone never authorize `mark`; follow `.claude/REVIEW_GATE.md`.
 
 ## Adding something new — keep this shape
@@ -29,12 +29,12 @@ Before you write new guidance, **decide where it goes.** `scripts/common/tests/t
 1. A leaf holds **only the contract you need while working** — send history to a spec and end the section with **"When changing this: read `<spec>` before touching `X.py`."** A bare pointer does not get read; it has to be a conditional instruction. Name the **spec file**, not the directory. A path that no longer exists goes in **strikethrough** (`~~scripts/gone.py~~`) — that is the only exemption the reference gate honours.
 2. New pipeline → create the leaf plus the `AGENTS.md → CLAUDE.md` symlink, and add its name to `LEAVES` in the test.
 3. **No copies.** `AGENTS.md` is always a symlink (`site/` alone runs the other way).
-4. **Budget: this file ≤ 12,488 B, this file + one leaf ≤ 31,744 B** — 1,024 B short of codex's 32,768 B cliff, where it discards the tail **with no marker**. The reserve is not room to spend; it is the width that lets the test go red while codex can still read the whole chain. When the test fails, **do not squeeze the leaf** — move the history (dates, measurements, what went wrong) into a spec and keep every obligation, then check the destination does not already say it. Growth here eats every chain's slack at once, and **us is the chain that runs out first** (~1 KB left; kr, thesis and china have 10 KB or more), so before writing here, suspect it belongs to a single pipeline.
+4. **Budget: this file ≤ 12,488 B, this file + one leaf ≤ 31,744 B** — 1,024 B short of codex's 32,768 B cliff, where it discards the tail **with no marker**. The reserve is not room to spend; it is the width that lets the test go red while codex can still read the whole chain. When the test fails, **do not squeeze the leaf** — move the history (dates, measurements, what went wrong) into a spec and keep every obligation, then check the destination does not already say it. Growth here eats every chain's slack at once, and **us is the chain that runs out first** (~1 KB left; kr and thesis have 10 KB or more), so before writing here, suspect it belongs to a single pipeline.
 5. English is fine for CLAUDE.md / AGENTS.md / SKILL.md (2026-09-05). Korean costs 3 bytes per character against the byte budget, so prefer English for guidance — but keep Korean where the Korean string *is* the data (section labels, controlled vocabulary, gate markers).
 
 ## Pipeline index — which file to open when
 
-`scripts/{us,kr,thesis,china}/CLAUDE.md` attaches **automatically** when you touch a file in that directory. Everything below must be **opened explicitly**.
+`scripts/{us,kr,thesis}/CLAUDE.md` attaches **automatically** when you touch a file in that directory. Everything below must be **opened explicitly**.
 
 | Pipeline | To change the routine | Report spec |
 |---|---|---|
@@ -42,7 +42,6 @@ Before you write new guidance, **decide where it goes.** `scripts/common/tests/t
 | KR close brief | `.claude/KR_ORCHESTRATOR.md` | `.claude/agents/kr-report-writer.md` |
 | Ticker thesis watch | `.claude/THESIS_ORCHESTRATOR.md` | pages are never hand-written — `scripts/thesis/content.py` |
 | Weekly / monthly | `.claude/WEEKLY_ORCHESTRATOR.md`, `MONTHLY_ORCHESTRATOR.md` | `.claude/agents/period-report-writer.md` |
-| China econ learning | `.claude/CHINA_ORCHESTRATOR.md` | `.claude/agents/china-report-writer.md` |
 | Post-publish review | skill `review-gate` (`.claude/REVIEW_GATE.md`) | ledger `reviews/index.json` |
 
 
