@@ -1,10 +1,11 @@
 name: Collect thesis watch data
 
-# 평일 08:40 UTC (17:40 KST) — KR 수집(08:00·08:30) 이후, 감시 루틴(09:00) 이전.
+# 평일 17:40 KST — KR 수집(17:00·17:30) 이후, 감시 루틴(19:00 KST) 이전.
 # 이 시각이면 삼성·하이닉스의 당일 종가와 Micron의 전 거래일 종가가 모두 확정돼 있다.
 on:
   schedule:
-    - cron: '40 8 * * 1-5'
+    - cron: '40 17 * * 1-5'
+      timezone: 'Asia/Seoul'
   workflow_dispatch:
     inputs:
       force:
@@ -69,7 +70,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add thesis/data/ thesis/*.html thesis/index.json
-          bash scripts/ci/push_with_retry.sh "thesis watch data $(date -u +%Y-%m-%d)"
+          bash scripts/ci/push_with_retry.sh "thesis watch data $(TZ=Asia/Seoul date +%Y-%m-%d)"
 
       # 테스트는 **커밋 뒤**에 돈다. 2026-09-01 채권 워크플로가 pytest 미설치로 죽으면서
       # 그날 모은 수집분을 통째로 버린 전례가 있다 — 검사 실패는 빨간 실행으로 남기되

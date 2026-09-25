@@ -163,7 +163,7 @@ def build(report_date, *, meetings=(), horizon_days=HORIZON_DAYS, extra=(),
                 'until': blackout_window(covering)[1].isoformat() if covering else None}
 
     return {'report_date': report_date.isoformat(),
-            'generated': dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+            'generated': dt.datetime.now(KST).strftime('%Y-%m-%d %H:%M KST'),
             'horizon_days': horizon_days, 'events': events,
             'recent_auctions': list(auctions),
             'blackout': blackout, 'missing': sorted(set(gaps)), 'complete': not gaps}

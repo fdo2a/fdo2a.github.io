@@ -825,7 +825,7 @@ def main():
     intraday = collect_intraday(datetime.date.fromisoformat(report_date))
 
     data = {
-        'generated': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
+        'generated': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M KST'),
         'source': 'github-actions/collect_market_data.py',
         'report_date': report_date,
         'indices': daily['indices'],

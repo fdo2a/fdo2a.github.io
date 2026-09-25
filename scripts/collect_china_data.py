@@ -24,7 +24,9 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+
+KST = timezone(timedelta(hours=9))
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -92,7 +94,7 @@ def collect_releases(outdir, prev_index):
         except Exception as exc2:
             print(f'  위장 요청도 실패: {exc2}', file=sys.stderr)
             broken = R.ledger([], {}, {},
-                              generated=datetime.now(timezone.utc).isoformat(timespec='seconds'))
+                              generated=datetime.now(KST).isoformat(timespec='seconds'))
             broken['index_ok'] = False
             return broken, {}
 
@@ -133,7 +135,7 @@ def collect_releases(outdir, prev_index):
         fetched[key] = (text, lang)
         time.sleep(1)
 
-    now = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    now = datetime.now(KST).isoformat(timespec='seconds')
     index = R.ledger(discovered, fetched, errors, generated=now)
     index['index_ok'] = index_ok
     return index, texts

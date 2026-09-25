@@ -34,6 +34,8 @@ from thesis import newsroom as NR  # noqa: E402
 from thesis import history as H  # noqa: E402
 from thesis import valuation as V  # noqa: E402
 
+KST = datetime.timezone(datetime.timedelta(hours=9))
+
 
 def _ssl_context():
     try:
@@ -251,10 +253,9 @@ def main():
     args = ap.parse_args()
 
     # KST 고정. Actions 러너는 UTC라 같은 실행이 로컬(KST)과 하루 어긋난 날짜를 기록했다.
-    # 스케줄 시각(08:40 UTC)에는 두 날짜가 같지만, 수동 실행이나 스케줄 변경 때 갈라진다.
+    # 스케줄 시각(17:40 KST)에는 두 날짜가 같지만, 수동 실행이나 스케줄 변경 때 갈라진다.
     # 한국 시각 기준 루틴이고 페이지도 한국어이므로 KST 하나로 못 박는다.
-    today = (datetime.datetime.now(datetime.timezone.utc)
-             + datetime.timedelta(hours=9)).date()
+    today = datetime.datetime.now(KST).date()
     if today.weekday() >= 5 and not args.force:
         print(f'주말({today}) — 건너뜀. 강제하려면 --force')
         return 0
@@ -319,9 +320,9 @@ def main():
     except (OSError, ValueError):
         prev_events = None
     try:
-        events = NR.collect(prev_events, datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0))
+        events = NR.collect(prev_events, datetime.datetime.now(KST).replace(microsecond=0))
     except Exception as e:  # noqa: BLE001 — 뉴스룸 실패가 수집 전체를 죽이지 않는다
-        events = {'collected_at': datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat(),
+        events = {'collected_at': datetime.datetime.now(KST).replace(microsecond=0).isoformat(),
                   'items': [], 'missing': [f'{type(e).__name__}: {str(e)[:160]}']}
     events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2) + '\n',
                            encoding='utf-8')

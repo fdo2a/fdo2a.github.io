@@ -1,11 +1,13 @@
 name: Collect KR market data
 
 # 한국장 마감(15:30 KST) 후 저녁 브리프(18:00 KST) 전에 데이터 확정.
-# 17:00·17:30 KST = 08:00·08:30 UTC. 두 슬롯은 회복탄력성용.
+# 17:00·17:30 KST. 두 슬롯은 회복탄력성용. 크론은 KST 로 적는다(timezone 필드).
 on:
   schedule:
-    - cron: '0 8 * * 1-5'
-    - cron: '30 8 * * 1-5'
+    - cron: '0 17 * * 1-5'
+      timezone: 'Asia/Seoul'
+    - cron: '30 17 * * 1-5'
+      timezone: 'Asia/Seoul'
   workflow_dispatch:
     inputs:
       force:
