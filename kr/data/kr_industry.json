@@ -5,6 +5,7 @@
     "total": 12,
     "rise": 4,
     "breadth": 0.333,
+    "no": 297,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -15,6 +16,7 @@
     "total": 19,
     "rise": 11,
     "breadth": 0.579,
+    "no": 313,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -25,6 +27,7 @@
     "total": 171,
     "rise": 137,
     "breadth": 0.801,
+    "no": 278,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -35,6 +38,7 @@
     "total": 13,
     "rise": 4,
     "breadth": 0.308,
+    "no": 265,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -45,6 +49,7 @@
     "total": 8,
     "rise": 6,
     "breadth": 0.75,
+    "no": 314,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -55,6 +60,7 @@
     "total": 30,
     "rise": 16,
     "breadth": 0.533,
+    "no": 316,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -65,6 +71,7 @@
     "total": 90,
     "rise": 34,
     "breadth": 0.378,
+    "no": 277,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -75,6 +82,7 @@
     "total": 3,
     "rise": 2,
     "breadth": 0.667,
+    "no": 330,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -85,6 +93,7 @@
     "total": 59,
     "rise": 33,
     "breadth": 0.559,
+    "no": 286,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -95,6 +104,7 @@
     "total": 105,
     "rise": 67,
     "breadth": 0.638,
+    "no": 282,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -105,6 +115,7 @@
     "total": 34,
     "rise": 11,
     "breadth": 0.324,
+    "no": 295,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -115,6 +126,7 @@
     "total": 24,
     "rise": 16,
     "breadth": 0.667,
+    "no": 290,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -125,6 +137,7 @@
     "total": 51,
     "rise": 22,
     "breadth": 0.431,
+    "no": 289,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -135,6 +148,7 @@
     "total": 57,
     "rise": 26,
     "breadth": 0.456,
+    "no": 285,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -145,6 +159,7 @@
     "total": 13,
     "rise": 6,
     "breadth": 0.462,
+    "no": 288,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -155,6 +170,7 @@
     "total": 55,
     "rise": 33,
     "breadth": 0.6,
+    "no": 294,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -165,6 +181,7 @@
     "total": 64,
     "rise": 37,
     "breadth": 0.578,
+    "no": 266,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -175,6 +192,7 @@
     "total": 1,
     "rise": 1,
     "breadth": 1.0,
+    "no": 339,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -185,6 +203,7 @@
     "total": 21,
     "rise": 10,
     "breadth": 0.476,
+    "no": 293,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -195,6 +214,7 @@
     "total": 1542,
     "rise": 831,
     "breadth": 0.539,
+    "no": 25,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -205,6 +225,7 @@
     "total": 71,
     "rise": 37,
     "breadth": 0.521,
+    "no": 269,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -215,6 +236,7 @@
     "total": 74,
     "rise": 35,
     "breadth": 0.473,
+    "no": 287,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -225,6 +247,7 @@
     "total": 13,
     "rise": 10,
     "breadth": 0.769,
+    "no": 271,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -235,6 +258,7 @@
     "total": 31,
     "rise": 16,
     "breadth": 0.516,
+    "no": 280,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -245,6 +269,7 @@
     "total": 6,
     "rise": 4,
     "breadth": 0.667,
+    "no": 319,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -255,6 +280,7 @@
     "total": 41,
     "rise": 28,
     "breadth": 0.683,
+    "no": 262,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -265,6 +291,7 @@
     "total": 40,
     "rise": 20,
     "breadth": 0.5,
+    "no": 322,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -275,6 +302,7 @@
     "total": 1,
     "rise": 1,
     "breadth": 1.0,
+    "no": 331,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -285,6 +313,7 @@
     "total": 104,
     "rise": 45,
     "breadth": 0.433,
+    "no": 281,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -295,6 +324,7 @@
     "total": 19,
     "rise": 10,
     "breadth": 0.526,
+    "no": 310,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -305,6 +335,7 @@
     "total": 24,
     "rise": 11,
     "breadth": 0.458,
+    "no": 276,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -315,6 +346,7 @@
     "total": 122,
     "rise": 68,
     "breadth": 0.557,
+    "no": 272,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -325,6 +357,7 @@
     "total": 6,
     "rise": 2,
     "breadth": 0.333,
+    "no": 327,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -335,6 +368,7 @@
     "total": 16,
     "rise": 5,
     "breadth": 0.312,
+    "no": 309,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -345,6 +379,7 @@
     "total": 27,
     "rise": 16,
     "breadth": 0.593,
+    "no": 311,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -355,6 +390,7 @@
     "total": 20,
     "rise": 10,
     "breadth": 0.5,
+    "no": 298,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -365,6 +401,7 @@
     "total": 19,
     "rise": 10,
     "breadth": 0.526,
+    "no": 317,
     "liquidity_backed": true,
     "leading": true,
     "note": "폭넓은 상승 주도"
@@ -375,6 +412,7 @@
     "total": 69,
     "rise": 33,
     "breadth": 0.478,
+    "no": 283,
     "liquidity_backed": false,
     "leading": false,
     "note": "좁은 상승·개별종목"
@@ -385,6 +423,7 @@
     "total": 1,
     "rise": 0,
     "breadth": 0.0,
+    "no": 338,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -395,6 +434,7 @@
     "total": 8,
     "rise": 5,
     "breadth": 0.625,
+    "no": 296,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -405,6 +445,7 @@
     "total": 57,
     "rise": 32,
     "breadth": 0.561,
+    "no": 292,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -415,6 +456,7 @@
     "total": 31,
     "rise": 16,
     "breadth": 0.516,
+    "no": 324,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -425,6 +467,7 @@
     "total": 4,
     "rise": 1,
     "breadth": 0.25,
+    "no": 333,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -435,6 +478,7 @@
     "total": 8,
     "rise": 2,
     "breadth": 0.25,
+    "no": 329,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -445,6 +489,7 @@
     "total": 175,
     "rise": 88,
     "breadth": 0.503,
+    "no": 261,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -455,6 +500,7 @@
     "total": 1,
     "rise": 0,
     "breadth": 0.0,
+    "no": 337,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -465,6 +511,7 @@
     "total": 7,
     "rise": 2,
     "breadth": 0.286,
+    "no": 302,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -475,6 +522,7 @@
     "total": 92,
     "rise": 43,
     "breadth": 0.467,
+    "no": 268,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -485,6 +533,7 @@
     "total": 5,
     "rise": 3,
     "breadth": 0.6,
+    "no": 328,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -495,6 +544,7 @@
     "total": 3,
     "rise": 0,
     "breadth": 0.0,
+    "no": 336,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -505,6 +555,7 @@
     "total": 14,
     "rise": 6,
     "breadth": 0.429,
+    "no": 318,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -515,6 +566,7 @@
     "total": 35,
     "rise": 12,
     "breadth": 0.343,
+    "no": 306,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -525,6 +577,7 @@
     "total": 81,
     "rise": 44,
     "breadth": 0.543,
+    "no": 274,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -535,6 +588,7 @@
     "total": 12,
     "rise": 4,
     "breadth": 0.333,
+    "no": 312,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -545,6 +599,7 @@
     "total": 9,
     "rise": 6,
     "breadth": 0.667,
+    "no": 305,
     "liquidity_backed": true,
     "leading": false,
     "note": ""
@@ -555,6 +610,7 @@
     "total": 39,
     "rise": 16,
     "breadth": 0.41,
+    "no": 321,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -565,6 +621,7 @@
     "total": 12,
     "rise": 5,
     "breadth": 0.417,
+    "no": 315,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -575,6 +632,7 @@
     "total": 11,
     "rise": 1,
     "breadth": 0.091,
+    "no": 303,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -585,6 +643,7 @@
     "total": 154,
     "rise": 64,
     "breadth": 0.416,
+    "no": 270,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
@@ -595,6 +654,7 @@
     "total": 12,
     "rise": 5,
     "breadth": 0.417,
+    "no": 273,
     "liquidity_backed": false,
     "leading": false,
     "note": ""
