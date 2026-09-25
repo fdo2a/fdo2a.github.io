@@ -1,19 +1,16 @@
 {
-  "report_date": "2026-09-23",
-  "horizon": "3-6개월",
+  "report_date": "2026-09-24",
   "regime": {
     "growth": -1,
     "inflation": -1,
     "since": "2026-09-01",
-    "thesis": "오늘도 신규 헤드라인 발표가 없어 성장(-0.391)·물가(-0.526) 두 축 점수가 어제와 같은 값으로 유지됐고, 연착륙 국면도 그대로 이어진다."
+    "thesis": "신규 실업수당 청구·신규주택 판매가 개선 방향으로 나오며 성장 쪽 점수가 -0.391에서 -0.303으로 올라왔지만 물가 쪽 점수(-0.526)는 그대로다. 두 점수 모두 아직 음(-)의 방향이라 좌표를 옮길 만큼은 아니었고 연착륙을 유지한다."
   },
   "policy_path": {
     "stance": "인상 리스크 우위가 한층 강화됨 — 동결은 소수 시나리오로 밀림",
-    "timing": "9월 16일 FOMC는 25bp 인상을 단행했다. 사전 91% 확률은 회의 전 기대였으며, 다음 판단은 실제 물가·고용 자료로 갱신한다.",
-    "prob_pct": null,
-    "prob_status": "unverified",
-    "prob_note": "data/moomoo/fedwatch.json이 있으나 세션 라벨이 report_date와 달라 승인되지 않았다. 웹 소스별 10월 28일 25bp 추가 인상 확률(49~70%대)도 서로 달라 1차 CME 페이지 확인 없이는 단일 수치를 확정할 수 없다.",
-    "thesis": "실제 인상 결과가 확인됐다. 단기 금리 상승과 달러 강세가 관측됐지만 다음 조치는 신규 자료에 달렸다.",
+    "timing": "9월 16일 FOMC는 25bp 인상을 단행했다. CME FedWatch 기준 10월28일 FOMC 추가 25bp 인상 확률은 1주일 전 49%에서 9월24일 기준 75% 이상으로 뛰었다(CNBC 보도).",
+    "prob_pct": 75,
+    "thesis": "강한 PMI·주택 지표와 연준 인사의 매파 발언이 겹쳐 추가 인상 확률이 크게 올라왔다.",
     "falsifier": "다음 FOMC 성명·회견에서 이미 확인된 인상 신호를 되돌리는 언급이 나오거나 물가·고용 지표가 예상보다 뚜렷하게 냉각되면 인상 우위 판단을 재검토한다."
   },
   "transmission": {
@@ -62,15 +59,15 @@
   },
   "last_seen": {
     "JOLTS Job Openings": ["2026-07-01", 7271.0],
-    "Initial Jobless Claims": ["2026-09-12", 196000.0],
-    "Initial Claims 4-wk MA": ["2026-09-12", 203250.0],
-    "Continuing Jobless Claims": ["2026-09-05", 1730000.0],
+    "Initial Jobless Claims": ["2026-09-19", 197000.0],
+    "Initial Claims 4-wk MA": ["2026-09-19", 202250.0],
+    "Continuing Jobless Claims": ["2026-09-12", 1719000.0],
     "Nonfarm Payrolls (chg)": ["2026-08-01", 162.0],
     "Unemployment Rate": ["2026-08-01", 4.1],
     "Avg Hourly Earnings MoM": ["2026-08-01", 0.27],
     "Industrial Production MoM": ["2026-08-01", 0.02],
     "Durable Goods Orders MoM": ["2026-07-01", 1.08],
-    "New Home Sales": ["2026-07-01", 607.0],
+    "New Home Sales": ["2026-08-01", 684.0],
     "Existing Home Sales": ["2026-08-01", 3980000.0],
     "Real GDP Growth QoQ (ann.)": ["2026-04-01", 1.5],
     "Retail Sales MoM": ["2026-08-01", 1.24],
@@ -83,12 +80,6 @@
     "PCE Price Index YoY": ["2026-07-01", 3.7],
     "Core PCE YoY": ["2026-07-01", 3.34],
     "Michigan 1-Yr Inflation Exp": ["2026-07-01", 4.2]
-  },
-  "axis_directions": {
-    "Labor": "보합",
-    "Activity": "악화",
-    "Consumption": "악화",
-    "Inflation": "둔화"
   },
   "history": [
     {
@@ -109,5 +100,11 @@
       "to": [-1, -1],
       "reason": "물가축 점수(-0.391)가 둔화 경계(-0.33)를 넘어선 지 오래됐으나 8/26 이동 이후의 5영업일 잠금에 묶여 있었다. 신규 발표(JOLTS)로 하루가 열리고 잠금도 풀려, 인플레 좌표만 한 칸 이동(교착→둔화). 성장축은 -0.364로 그대로라 대각선 이동은 아니며, 국면은 냉각→연착륙으로 바뀐다."
     }
-  ]
+  ],
+  "axis_directions": {
+    "Labor": "개선",
+    "Activity": "악화",
+    "Consumption": "악화",
+    "Inflation": "둔화"
+  }
 }
