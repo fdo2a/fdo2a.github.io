@@ -21,7 +21,9 @@
 """
 
 import html as _html
+import json
 import re
+from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 
 # 2026-09-24 사용자 지시 「정치, 경제, 매크로, 산업, AI 관련 뉴스 위주로」. 그 전의
@@ -40,6 +42,7 @@ MLCC_TICKERS = ('6981.T', '009150.KS', '6976.T', '2327.TW')
 _YAHOO_TICKER = 'https://feeds.finance.yahoo.com/rss/2.0/headline?s={}&region=US&lang=en-US'
 
 _CNBC = 'https://www.cnbc.com/id/{}/device/rss/rss.html'
+_INVESTING = 'https://www.investing.com/rss/{}.rss'
 
 # 출처 묶음 -> 피드. `pool` 은 갈래가 정해지지 않은 종합 피드라, 키워드로 매크로·AI 에
 # 걸리지 않은 기사는 버린다(「주요 뉴스」 칸이 따로 없다).
@@ -58,17 +61,37 @@ FEEDS = {
              _CNBC.format('10000664'),                        # Finance
              'https://finance.yahoo.com/news/rssindex'),
     'mlcc': tuple(_YAHOO_TICKER.format(t) for t in MLCC_TICKERS),
+    # 2026-09-26 「글로벌」 — 미·한 밖의 정책·경제 뉴스. 출처 실측은 `../plan.md` 2026-09-26 표.
+    # 로이터는 reuters.com 이 401(DataDome)이라 Investing.com 이 전재한 판으로 받는다.
+    'global': (_CNBC.format('100727362'),                     # World
+               _CNBC.format('19794221'),                      # Europe
+               _CNBC.format('19832390'),                      # Asia
+               _INVESTING.format('news_14'),                  # Economy (로이터 전재)
+               _INVESTING.format('news_287'),                 # World (로이터 전재)
+               'https://www.theguardian.com/business/rss',
+               'https://www.aljazeera.com/xml/rss/all.xml',
+               'https://feeds.bbci.co.uk/news/business/rss.xml',
+               'https://www.ecb.europa.eu/rss/press.html',
+               'https://www.bankofengland.co.uk/rss/news'),
+    # 2026-09-26 「리포트·칼럼」 — 「인사이트를 얻을 수 있는 내용이라면 다 좋아」.
+    # Investing 분석의 Technical·Fundamental·ideas 피드는 8월에 멈춰 뺐다.
+    'insight': tuple(_INVESTING.format(f) for f in (
+                   'market_overview', 'forex', 'commodities', 'bonds')) + (
+               'https://think.ing.com/rss/',
+               'https://www.ecb.europa.eu/rss/blog.html',
+               'https://www.bis.org/doclist/cbspeeches.rss'),
 }
 
 LABELS = {'politics': '정치', 'economy': '경제', 'macro': '매크로', 'industry': '산업',
-          'ai': 'AI', 'mlcc': 'MLCC'}
+          'ai': 'AI', 'global': '글로벌', 'insight': '리포트·칼럼', 'mlcc': 'MLCC'}
 
 # 「오늘의 뉴스」 섹션이 싣는 갈래. `mlcc` 는 MLCC 섹션의 뉴스 층으로 가므로 빠진다.
-DIGEST_CATEGORIES = ('politics', 'economy', 'macro', 'industry', 'ai')
+DIGEST_CATEGORIES = ('politics', 'economy', 'macro', 'industry', 'ai', 'global', 'insight')
 
 # 겹친 기사는 더 좁은 갈래에 남긴다. 숫자가 작을수록 좁다. MLCC 가 가장 좁다 — 종목
 # 피드에서 왔으므로 그 종목 기사가 맞다.
-NARROWNESS = {'mlcc': 0, 'ai': 1, 'macro': 1, 'politics': 2, 'industry': 2, 'economy': 3}
+NARROWNESS = {'mlcc': 0, 'insight': 1, 'global': 1, 'ai': 1, 'macro': 1, 'politics': 2,
+              'industry': 2, 'economy': 3}
 
 # 제목·RSS 요약에서 찾는다. 대문자가 뜻을 가르는 약어(AI·Fed·HBM)는 대소문자를 구분하고,
 # 일반 단어는 구분하지 않는다. 2026-09-24 구현 검토가 실제 헤드라인 모양으로 잡은 오분류 —
@@ -92,7 +115,80 @@ _MLCC = re.compile(
     r'(?i:\b(?:Murata|MRAAY|Samsung Electro-Mechanics|Taiyo Yuden|Yageo|Walsin|Holy Stone|'
     r'Sanhuan|Fenghua|MLCCs?|multilayer ceramic|capacitors?)\b)')
 _HINT = {'politics': 'politics', 'economy': 'economy', 'industry': 'industry',
-         'tech': 'industry', 'pool': None}
+         'tech': 'industry', 'pool': None, 'global': None, 'insight': None}
+
+# ── 글로벌 (2026-09-26) ──────────────────────────────────────────────────
+# When changing this: read `docs/superpowers/specs/2026-09-26-global-news-sources.md` first —
+# 출처 실측(무엇이 403·유료벽인지)과 오분류 사례가 거기 있다.
+# 사용자 지시 「미국, 한국을 제외한 나라 뉴스 중 정책이나 경제에 큰 영향을 준 뉴스…대표적으로
+# 일본, 중국, 유럽, 중동」. **제목**에서 지역을 찾는다 — 요약은 「중국과의 경쟁」 같은 곁가지를
+# 들먹인다. 통화 이름(yen·yuan)은 지역으로 치지 않는다: 「The dollar slides against the yen」
+# 은 매크로 기사다. 영국·스위스·러시아·우크라이나는 유럽에 넣는다.
+_REGIONS = (
+    ('japan', re.compile(r'\b(?:Japan(?:ese)?|Tokyo|BOJ|BoJ|Bank of Japan)\b')),
+    ('china', re.compile(r"\b(?:China|Chinese|Beijing|Xi|PBOC|PBoC|People's Bank of China|"
+                         r'Hong Kong|Shanghai|Shenzhen)\b')),
+    ('europe', re.compile(
+        r'\b(?:Europe|European|EU|euro ?zone|Eurozone|ECB|Lagarde|German[y]?|Berlin|France|'
+        r'French|Britain|British|UK|U\.K\.|England|BoE|BOE|London|Ital(?:y|ian)|Spain|Spanish|'
+        r'Switzerland|Swiss|SNB|Netherlands|Dutch|Poland|Polish|Russia|Russian|Kremlin|Putin|'
+        r'Moscow|Ukraine|Ukrainian|Zelenskyy?|Kyiv|NATO|Brussels)\b')),
+    # 「Gulf」 만으로는 멕시코만이 걸린다
+    ('mideast', re.compile(
+        r'\b(?:Middle East|Mideast|Iran(?:ian)?|Tehran|Israel(?:i)?|Gaza|Hamas|Hezbollah|'
+        r'Lebanon|Saudi|Riyadh|UAE|Emirates|Dubai|Abu Dhabi|Qatar|Kuwait|Iraq|Syria|Yemen|'
+        r'Houthis?|OPEC\+?|Hormuz|Red Sea|Gulf states|Gulf Cooperation)\b')),
+)
+# 공식 기관 피드는 제목에 나라 이름을 쓰지 않는다(「Monetary policy decisions」).
+_HOST_REGION = {'www.ecb.europa.eu': 'europe', 'www.bankofengland.co.uk': 'europe'}
+
+# 정책·경제 어휘. **몇 개가 걸렸는지**가 후보 순위다 — 「큰 영향」을 기계가 잴 수는 없으니
+# 정책·경제 어휘가 촘촘한 기사를 앞에 둔다. 「fiscal」 은 「fiscal first quarter」(회계연도)가
+# 걸려 정책 뒤에 오는 형태만 센다. 「summit」 은 판다 외교 기사를 끌어와 뺐다.
+_POLICY_TERMS = tuple(re.compile(p) for p in (
+    r'(?i:\binterest rates?\b|\brates?\b|\brate (?:cut|hike)s?\b)',
+    r'(?i:\bcentral bank|\bmonetary\b|\bpolicy\b|\bpolicymakers?\b)',
+    r'(?i:\binflation|\bdeflation|\bCPI\b|\bGDP\b|\brecession|\bgrowth\b|\beconom(?:y|ic|ies)\b)',
+    r'(?i:\bstimulus|\bfiscal (?:policy|stimulus|deficit|package|spending|rules?)|\bbudget|'
+    r'\bdebt\b|\bdeficit|\bbonds?\b|\byields?\b|\bborrowing)',
+    r'(?i:\btariffs?\b|\btrade\b|\bexports?\b|\bimports?\b|\bsanctions?\b|'
+    r'\bexport controls?\b|\bembargo)',
+    r'(?i:\boil\b|\bcrude\b|\bgas\b|\bLNG\b|\bOPEC|\boutput\b|\benergy\b)',
+    r'(?i:\bceasefire|\btruce\b|\bwar\b|\binvasion)',
+    r'(?i:\belection|\bprime minister|\bparliament|\bgovernment\b|\bminister|\bresign)',
+    r'(?i:\bproperty\b|\bhousing\b|\bmanufacturing|\bPMI\b|\bunemployment|\bjobs\b|\bwages?\b)',
+    r'(?i:\bcurrency|\byen\b|\byuan\b|\beuro\b|\bintervention)',
+    r'(?i:\btalks\b|\bdeal\b|\bnegotiat|\bagreement)',
+    r'(?i:\bdecisions?\b|\bcuts?\b|\bhikes?\b)',
+))
+
+# 칼럼 피드의 종목 나열형·셋업 글. 「9 Stocks Still Flying…」「These 2 Bond ETFs…」
+_LISTICLE = re.compile(
+    r'(?i:^\s*(?:top\s+)?\d+\s+(?:[\w-]+\s+){0,3}?(?:stocks?|etfs?|picks|setups|names|'
+    r'dividend)\b|\bthese\s+\d+\s|live levels|pre-?market setups)')
+
+
+def region(title):
+    """제목 -> 'japan'|'china'|'europe'|'mideast'|None. 여럿이면 먼저 나온 것."""
+    best = None
+    for name, rx in _REGIONS:
+        m = rx.search(title or '')
+        if m and (best is None or m.start() < best[1]):
+            best = (name, m.start())
+    return best[0] if best else None
+
+
+def _host(url):
+    return (url or '').split('/')[2] if (url or '').count('/') >= 2 else ''
+
+
+def region_of(item):
+    return region(item.get('title')) or _HOST_REGION.get(_host(item.get('url')))
+
+
+def policy_score(text):
+    """정책·경제 어휘 묶음 가운데 몇 개가 걸렸나."""
+    return sum(1 for rx in _POLICY_TERMS if rx.search(text or ''))
 
 
 def classify(item):
@@ -100,7 +196,13 @@ def classify(item):
     hint = item.get('category')
     if hint == 'mlcc':          # 무관한 종목 피드 기사는 다른 갈래로도 보내지 않는다 — 대개 몇 달 전 시황이다
         return 'mlcc' if _MLCC.search(item.get('title') or '') else None
+    if hint == 'insight':       # 칼럼은 지역어가 있어도 칼럼 칸에 남는다
+        return None if _LISTICLE.search(item.get('title') or '') else 'insight'
     text = f"{item.get('title') or ''} {item.get('summary') or ''}"
+    if region_of(item) and policy_score(text):
+        return 'global'
+    if hint == 'global':        # 세계 피드의 판다·만찬·사건 기사는 다른 갈래로 보내지 않는다
+        return None
     if _AI.search(text):
         return 'ai'
     if _MACRO.search(text):
@@ -113,7 +215,9 @@ def categorize(items):
     out = []
     for it in items or []:
         cat = classify(it)
-        if cat:
+        if cat == 'global':
+            out.append(dict(it, category=cat, region=region_of(it)))
+        elif cat:
             out.append(dict(it, category=cat))
     return out
 
@@ -139,7 +243,8 @@ _ERROR_PAGE = (
     'this site requires', 'unusual traffic',
 )
 
-_ITEM = re.compile(r'<item[^>]*>(.*?)</item>', re.S | re.I)
+# `<item\b` 가 아니면 RDF 의 `<items><rdf:Seq>` 가 첫 item 으로 읽힌다(BIS, 2026-09-26).
+_ITEM = re.compile(r'<item(?:\s[^>]*)?>(.*?)</item>', re.S | re.I)
 _CDATA = re.compile(r'^\s*<!\[CDATA\[(.*?)\]\]>\s*$', re.S)
 _DROP = re.compile(r'<(script|style|noscript|svg|head)\b.*?</\1>', re.S | re.I)
 _PARA = re.compile(r'<p[^>]*>(.*?)</p>', re.S | re.I)
@@ -191,6 +296,32 @@ def _iso(pubdate):
         return None
 
 
+def _iso8601(stamp):
+    """ISO 8601(dc:date·JSON-LD) -> 정규화한 ISO. 시간대가 없거나 못 읽으면 None."""
+    try:
+        dt = datetime.fromisoformat((stamp or '').strip().replace('Z', '+00:00'))
+    except ValueError:
+        return None
+    return dt.replace(microsecond=0).isoformat() if dt.tzinfo else None
+
+
+# 호스트 -> 발행본에 적는 매체 이름. 없는 호스트는 호스트 그대로 둔다(추측하지 않는다).
+SOURCES = {
+    'www.cnbc.com': 'CNBC', 'finance.yahoo.com': 'Yahoo Finance',
+    'www.investing.com': 'Investing.com', 'www.ecb.europa.eu': 'ECB',
+    'www.bankofengland.co.uk': 'Bank of England', 'www.bis.org': 'BIS',
+    'think.ing.com': 'ING THINK', 'www.theguardian.com': 'The Guardian',
+    'www.aljazeera.com': 'Al Jazeera', 'www.bbc.com': 'BBC', 'www.bbc.co.uk': 'BBC',
+}
+
+
+def source_name(url):
+    host = _host(url)
+    if host.endswith('yahoo.com'):
+        return 'Yahoo Finance'
+    return SOURCES.get(host, host or None)
+
+
 def parse_feed(xml, category):
     """RSS 문자열 -> [{guid, url, title, summary, published, category, source}].
 
@@ -210,9 +341,10 @@ def parse_feed(xml, category):
             'url': url,
             'title': _field(chunk, 'title'),
             'summary': (summary or '')[:MAX_SUMMARY] or None,
-            'published': _iso(_field(chunk, 'pubDate')),
+            'published': (_iso(_field(chunk, 'pubDate'))
+                          or _iso8601(_field(chunk, 'dc:date'))),      # RDF·ING
             'category': category,
-            'source': 'Yahoo Finance' if 'yahoo.com' in url else 'CNBC',
+            'source': source_name(url),
         })
     return out
 
@@ -226,6 +358,10 @@ def extract_body(html, max_chars=DEFAULT_MAX_BODY):
     """
     if not html:
         return ''
+    # Investing.com 은 기사 위에 시세·추천 기사 위젯을 <p> 로 싣는다 — 본문 상자부터 읽는다.
+    start = html.find('id="article"')
+    if start >= 0:
+        html = html[start:]
     stripped = _DROP.sub(' ', html)
     kept = []
     for raw in _PARA.findall(stripped):
@@ -308,7 +444,7 @@ def dedupe(items):
     return out
 
 
-def select(items, per_category=DEFAULT_PER_CATEGORY):
+def select(items, per_category=DEFAULT_PER_CATEGORY, now=None):
     """갈래별 상한을 적용한다. 갈래가 얇으면 **다른 갈래에서 채우지 않는다.**
 
     상한이지 할당량이 아니다 — 쓸 만한 것이 둘뿐인 날 셋째를 고르는 것은 자리를 채우는
@@ -320,6 +456,9 @@ def select(items, per_category=DEFAULT_PER_CATEGORY):
     out = []
     for cat in sorted(buckets, key=lambda c: NARROWNESS.get(c, 9)):
         rows = buckets[cat]
+        if cat in TWO_PHASE:          # 후보만 — 확정은 본문을 받은 뒤 `trim()`
+            out.extend(_two_phase(rows, PRESELECT[cat], now, undated_ok=True))
+            continue
         dated = sorted((r for r in rows if r.get('published')),
                        key=lambda r: r['published'], reverse=True)
         undated = [r for r in rows if not r.get('published')]
@@ -346,3 +485,122 @@ def parse_feed_strict(xml, category):
     if '<item' not in xml.lower() and '<channel' not in xml.lower():
         return [], 'RSS 가 아닌 응답(오류 페이지일 수 있다)'
     return [], None
+
+
+# ── 글로벌·칼럼의 2단 선정 (2026-09-26) ──────────────────────────────────
+# 후보를 넉넉히 골라 본문을 받고(`fetch_news.fetch_bodies`), 본문·날짜가 확인된 것만 확정한다.
+# Investing.com 뉴스 피드에는 날짜가 없어 기사면에서 읽어야 하고, 확정 전에는 몇 건이 살아남을지
+# 모른다. 요약(유료 호출)은 확정분만 만든다.
+TWO_PHASE = ('global', 'insight')
+PRESELECT = {'global': 8, 'insight': 6}
+# 글로벌 넷 = 사용자가 든 지역 넷(일본·중국·유럽·중동)이 한 건씩 들어갈 자리.
+FINAL = {'global': 4, 'insight': 3}
+WINDOW = timedelta(hours=36)
+SAME_EVENT = 0.5            # 제목 단어 자카드. 같은 사건을 CNBC·로이터·가디언이 따로 쓴다
+_WORD = re.compile(r'[a-z0-9]{3,}')
+_STOP = {'the', 'and', 'for', 'with', 'from', 'says', 'said', 'after', 'over', 'into', 'its'}
+
+
+def _words(title):
+    return {w for w in _WORD.findall((title or '').lower()) if w not in _STOP}
+
+
+def same_event(a, b):
+    wa, wb = _words(a), _words(b)
+    return bool(wa and wb) and len(wa & wb) / len(wa | wb) >= SAME_EVENT
+
+
+def _when(row):
+    """aware datetime 만. 시간대 없는 값(RFC 2822 「-0000」)은 날짜 없음으로 친다 — 비교가 터진다."""
+    try:
+        when = datetime.fromisoformat(row.get('published') or '')
+    except ValueError:
+        return None
+    return when if when.tzinfo else None
+
+
+def _fresh(row, now, undated_ok):
+    when = _when(row)
+    if when is None:
+        return undated_ok
+    return now - WINDOW <= when <= now + timedelta(hours=1)
+
+
+def _rank(rows):
+    """정책·경제 어휘 수 → 최신순. 날짜 없는 행은 같은 점수 안에서 뒤로."""
+    def key(r):
+        when = _when(r)
+        return (-policy_score(f"{r.get('title') or ''} {r.get('summary') or ''}"),
+                when is None, -(when.timestamp() if when else 0))
+    return sorted(rows, key=key)
+
+
+def _spread(rows, cap):
+    """지역을 돌아가며 뽑는다 — 중국 기사 넷이 다른 지역을 밀어내지 않게. 같은 사건은 한 번."""
+    lanes, order = {}, []
+    for r in rows:
+        lane = r.get('region') or r.get('source') or ''
+        if lane not in lanes:
+            lanes[lane] = []
+            order.append(lane)
+        lanes[lane].append(r)
+    out = []
+    while len(out) < cap and any(lanes.values()):
+        for lane in order:
+            while lanes[lane]:
+                r = lanes[lane].pop(0)
+                if not any(same_event(r.get('title'), o.get('title')) for o in out):
+                    out.append(r)
+                    break
+            if len(out) >= cap:
+                break
+    return out
+
+
+def _two_phase(rows, cap, now, undated_ok):
+    if now is not None:
+        rows = [r for r in rows if _fresh(r, now, undated_ok)]
+    return _spread(_rank(rows), cap)
+
+
+def trim(items, now):
+    """본문을 받은 뒤 글로벌·칼럼을 확정한다. 다른 갈래는 그대로 둔다.
+
+    본문이 없거나 날짜가 끝내 없거나(기사면에서도 못 읽은 것) 창 밖이면 버린다 — 날짜를
+    수집 시각으로 채우지 않는다.
+    """
+    out, pools = [], {c: [] for c in TWO_PHASE}
+    for it in items or []:
+        if it.get('category') in pools:
+            if it.get('body_chars'):
+                pools[it['category']].append(it)
+        else:
+            out.append(it)
+    for cat in TWO_PHASE:
+        out.extend(_two_phase(pools[cat], FINAL[cat], now, undated_ok=False))
+    return out
+
+
+_LD_DATE = re.compile(r'"datePublished"\s*:\s*"([^"]+)"')
+_META_DATE = re.compile(
+    r'<meta[^>]+(?:property|name)="(?:article:published_time|pubdate|DC\.date\.issued)"'
+    r'[^>]+content="([^"]+)"', re.I)
+
+
+def page_published(html):
+    """기사면의 발행 시각(JSON-LD → OpenGraph). 못 읽으면 None."""
+    for rx in (_LD_DATE, _META_DATE):
+        for m in rx.finditer(html or ''):
+            got = _iso8601(m.group(1))
+            if got:
+                return got
+    return None
+
+
+_WIRE = re.compile(r'\((Reuters|AP|AFP|Bloomberg)\)\s*[-–—]')
+
+
+def wire_of(body):
+    """본문 첫머리의 통신사 표기(「PARIS, Sept 25 (Reuters) -」). 앞머리에만 있어야 전재다."""
+    m = _WIRE.search((body or '')[:120])
+    return m.group(1) if m else None

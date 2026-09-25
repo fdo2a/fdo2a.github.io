@@ -52,7 +52,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 - `kr_index_etf.json` — 상위 표에서 빠진 **지수·해외 ETF 의 거래대금**(백만원). §7 표에 넣지 말 것 — §2 `action` 이 상품을 댈 때 **유동성 근거**로만 쓴다. 비-코어
 - `kr_econ.json`의 `expectations` — **가격에 반영된 기대**. `policy`(국고채3년−기준금리)·`growth`(10년−3년)·`credit`(회사채AA-3년−국고채3년) 각각 `bp`·`change_bp`·`standing`. `standing.text`는 「최근 2년(N거래일) 가운데 이보다 넓었던 날이 나흘뿐」처럼 **이미 문장으로 내려온다 — 그대로 쓰고 백분위를 옮겨 적지 않는다**(US 가격 섹션과 같은 계약). 비-코어
 - `research_notes.md` — 뉴스·**정책·정치 촉매(§11 4요소 재료)**·종목 이슈·해석(오케스트레이터 리서치 산출)
-- `news/<report_date>.json` — **§12 오늘의 뉴스 재료.** 네이버증권 주요뉴스에서 수집 잡이 고른 기사(갈래 `macro`·`policy`·`market`·`industry`)와 원문을 읽고 만든 한국어 요약 `summary_ko`. 원문은 없다 — 사실의 근거는 `summary_ko` 뿐이다. 비-코어
+- `news/<report_date>.json` — **§12 오늘의 뉴스 재료.** 네이버증권 주요뉴스·네이버 뉴스 세계 섹션에서 수집 잡이 고른 기사(갈래 `macro`·`policy`·`market`·`industry`·`global`)와 원문을 읽고 만든 한국어 요약 `summary_ko`. 원문은 없다 — 사실의 근거는 `summary_ko` 뿐이다. 비-코어
 
 > `kr_theme.json`은 2026-07-29부터 리포트 입력이 아니다(테마 섹션 폐지). 수집은 계속되지만 writer는 읽지 않는다.
 
@@ -118,7 +118,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
    - **`date` 가 report_date 보다 이르면 「N일 기준」 명시**(당일 금리인 양 쓰지 않는다).
    - 해석: 동일 기준일 **10년−3년** 스프레드와 변화로 커브 방향, 회사채 AA- 3년−국고채 3년으로 신용 가격. 계산은 Research handoff 에서 검산. 전일 미국 금리와 당일 한국 금리를 기준일과 함께 비교. 외국인 **주식** 수급·USD/KRW 는 채권 자금 이동의 증거가 아니다. 3년물과 기준금리의 격차는 위치로만(정책 선반영은 별도 근거가 있을 때만).
 11. **정책·정치 촉매** — 아래 상세 사양. **수급 다음가는 주력 섹션.**
-12. **오늘의 뉴스** — 매크로·정책·정치·증시·산업·기업 갈래별 한 건당 300자. `news/<date>.json` 에서 `summary_ko` 가 있는 기사만. 아래 상세 사양.
+12. **오늘의 뉴스** — 매크로·정책·정치·증시·산업·기업·글로벌 갈래별 한 건당 300자. `news/<date>.json` 에서 `summary_ko` 가 있는 기사만. 아래 상세 사양.
 13. **시장 판단과 복기** — `.claude/TRADER_LEARNING.md` 의 Writer output. 뒤에 면책 문구.
 
 > **테마 섹션은 없다.** `kr_theme.json` 은 입력이 아니다 — 테마 섹션·테마 랭킹 표를 만들지 않는다. 종목 재료는 §9, 산업 쏠림은 §8.
@@ -164,9 +164,10 @@ spec §4.4. 한국 증시는 정책·정치 변수가 밸류에이션을 직접 
 
 그날 국내 시장 기사를 운용자가 한 번에 훑는 다이제스트다. §11 이 **해석**(전달 경로·수혜/피해·트리거)이라면 여기는 **기사 요약**이다 — 같은 기사를 §11 에서 분석했으면 여기서는 요약만 싣고 해석을 되풀이하지 않는다.
 
-**입력은 `news/<date>.json` 하나다**(네이버증권 주요뉴스, 수집 잡이 원문을 읽고 만든 `summary_ko`). `summary_ko` 가 없는 건은 싣지 않는다(게이트가 막는다; 사유는 `summary_note`).
+**입력은 `news/<date>.json` 하나다**(네이버증권 주요뉴스 + 네이버 뉴스 세계 섹션, 수집 잡이 원문을 읽고 만든 `summary_ko`). `summary_ko` 가 없는 건은 싣지 않는다(게이트가 막는다; 사유는 `summary_note`).
 
-**갈래별 `<h3>`** — 순서와 라벨: 「매크로」·「정책·정치」·「증시」·「산업·기업」(`category` = `macro`·`policy`·`market`·`industry`). 갈래당 3건은 **상한**이다 — 얇으면 채우지 않는다. 갈래에 기사가 없으면 그 `<h3>` 를 뺀다.
+**갈래별 `<h3>`** — 순서와 라벨: 「매크로」·「정책·정치」·「증시」·「산업·기업」·「글로벌」(`category` = `macro`·`policy`·`market`·`industry`·`global`). 갈래당 3건(글로벌 4건)은 **상한**이다 — 얇으면 채우지 않는다. 갈래에 기사가 없으면 그 `<h3>` 를 뺀다.
+**글로벌** (2026-09-26) — 미·한 밖(일본·중국·유럽·중동)의 정책·경제 뉴스. 행마다 `region`(`japan`·`china`·`europe`·`mideast`)이 있다 — 지역 순서로 싣는다. 국내 시장과 이어지는 건(엔화·유가·대중 수출)은 마지막 한 문장을 그 연결로 바꿔도 된다(수치는 그날 `kr/data` 의 것).
 
 **한 항목:** `<div class="news-item" data-news="GUID"><p class="news-head">제목<span class="sub">연합뉴스 · 9월 25일</span></p><p>본문 300자</p></div>`
 - **`data-news` 는 수집분의 `guid` 그대로**(`001-0016330001` 꼴) — `scripts/check_news.py --market kr` 가 이것으로 대조한다. 지우거나 바꿔서 우회하지 않는다.

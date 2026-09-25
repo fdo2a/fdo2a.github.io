@@ -26,12 +26,14 @@ import time
 import urllib.error
 import urllib.request
 from datetime import date as _date
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us.news import (FEEDS, body_note, categorize, dedupe,  # noqa: E402
-                     extract_body, parse_feed_strict, select)
-from us.news_summary import summarize_items  # noqa: E402
+                     extract_body, page_published, parse_feed_strict, select, trim,
+                     wire_of)
+from us.news_summary import SYSTEM_ANALYSIS, summarize_items  # noqa: E402
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
@@ -97,12 +99,25 @@ def get(url, ctx, retries=2, impersonated=_impersonated):
             raise
 
 
-def fetch_bodies(chosen, bodydir, ctx):
-    """선정된 기사의 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 기록하고 넘어간다."""
+def fetch_bodies(chosen, bodydir, ctx, fetch=None):
+    """선정된 기사의 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 기록하고 넘어간다.
+
+    피드에 날짜가 없던 기사(Investing.com 뉴스)는 기사면의 발행 시각을 적는다 — 글로벌·칼럼
+    확정(`trim`)이 그 날짜로 창을 본다. 피드 날짜는 덮지 않는다.
+    """
+    fetch = fetch or get
     os.makedirs(bodydir, exist_ok=True)
     for i, it in enumerate(chosen, 1):
         try:
-            body = extract_body(get(it['url'], ctx))
+            page = fetch(it['url'], ctx)
+            body = extract_body(page)
+            if not it.get('published'):
+                it['published'] = page_published(page)
+                if it['published']:
+                    it['published_from'] = 'page'
+            wire = wire_of(body)
+            if wire:
+                it['wire'] = wire
         except Exception as e:
             why = (f'HTTP {e.code}' if isinstance(e, urllib.error.HTTPError)
                    else type(e).__name__)
@@ -126,6 +141,16 @@ def fetch_bodies(chosen, bodydir, ctx):
         it['body_chars'], it['body_file'] = len(body), name
         print(f'  [{i}] {it["category"]:8s} 본문 {len(body):5d}자  {title[:52]}')
     return chosen
+
+
+def summarize_chosen(chosen, bodydir, summarize=summarize_items):
+    """뉴스는 기사 프롬프트로, 리포트·칼럼은 견해를 필자에게 귀속하는 프롬프트로 요약한다."""
+    columns = [it for it in chosen if it.get('category') == 'insight']
+    news = [it for it in chosen if it.get('category') != 'insight']
+    done = summarize(news, bodydir) if news else 0
+    if columns:
+        done += summarize(columns, bodydir, system=SYSTEM_ANALYSIS)
+    return done
 
 
 def save_json(path, payload):
@@ -166,10 +191,12 @@ def main():
             harvested.extend(items)
             print(f'  {category}: {len(items)}건 ({url.split("/")[2]})')
 
-    chosen = select(dedupe(categorize(harvested)), per_category=args.per_category)
-    print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건')
+    now = datetime.now(timezone.utc)
+    chosen = select(dedupe(categorize(harvested)), per_category=args.per_category, now=now)
+    print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건(글로벌·칼럼은 후보)')
 
     fetch_bodies(chosen, args.bodydir, ctx)
+    chosen = trim(chosen, now)             # 글로벌·칼럼 확정 — 본문·날짜가 확인된 것만
 
     outdir = os.path.join(args.datadir, 'news')
     os.makedirs(outdir, exist_ok=True)
@@ -180,7 +207,7 @@ def main():
     # MLCC 행은 남아야 한다(2026-09-24 구현 검토 #2).
     save_json(path, payload)
     try:
-        summarized = summarize_items(chosen, args.bodydir)
+        summarized = summarize_chosen(chosen, args.bodydir)
     except Exception as e:             # summarize_items 는 삼키게 짰지만, 저장을 걸지 않는다
         summarized = 0
         notes.append(f'요약 단계 실패: {type(e).__name__}')

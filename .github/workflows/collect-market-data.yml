@@ -99,7 +99,9 @@ jobs:
 
       - name: Fetch market news
         # Non-core (2026-09-19 사용자 지시, 2026-09-24 갈래 개편): CNBC·Yahoo 피드를 받아
-        # 정치·경제·매크로·산업·AI 로 분류해 추린 뒤 기사 본문까지 읽어 온다. 에이전트 웹서치로
+        # 정치·경제·매크로·산업·AI 로 분류해 추린 뒤 기사 본문까지 읽어 온다. 2026-09-26 부터
+        # 글로벌(CNBC 세계·Investing.com 의 로이터 전재·가디언·알자지라·BBC·ECB·BoE)과
+        # 리포트·칼럼(ING THINK·BIS 연설·ECB 블로그·Investing.com 분석)도 받는다. 에이전트 웹서치로
         # 뉴스를 모으면 발행본에 실린 기사가 실재했는지 사후에 확인할 방법이 없는데, 파일로
         # 커밋하면 check_news.py 가 대조할 수 있다 — 지어낸 헤드라인이 막힌다.
         # 본문은 _workspace/ (gitignore) 에만 떨어뜨리고, **여기서 한국어 요약(summary_ko)

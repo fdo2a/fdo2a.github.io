@@ -22,9 +22,10 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fetch_news import _context, get, save_json  # noqa: E402
-from kr.news import (KST, LIST_URL, MAX_PAGES, PAGE_SIZE, body_note,  # noqa: E402
-                     categorize, dedupe, extract_body, older_than, on_date,
-                     parse_list, select)
+from kr.news import (KST, LIST_URL, MAX_PAGES, PAGE_SIZE, SECTION_URL,  # noqa: E402
+                     WORLD_SECTIONS, article_published, body_note, categorize, dedupe,
+                     extract_body, older_than, on_date, parse_list, parse_section, select,
+                     trim)
 from us.news_summary import SYSTEM_KO_SOURCE, summarize_items  # noqa: E402
 
 GAP = 0.5              # 같은 호스트를 붙여 때리지 않는다
@@ -57,8 +58,30 @@ def harvest(report_date, ctx, fetch=None, pages=MAX_PAGES):
     return rows, notes
 
 
+def harvest_world(report_date, ctx, fetch=None, gap=GAP):
+    """(세계 섹션 행, 사유 목록). 섹션 하나가 죽어도 나머지는 읽는다 — 글로벌 칸이 얇아질 뿐이다."""
+    fetch = fetch or get
+    rows, notes = [], []
+    day = report_date.replace('-', '')
+    for i, (sid1, sid2, name) in enumerate(WORLD_SECTIONS):
+        if i and gap:
+            time.sleep(gap)
+        try:
+            got = parse_section(fetch(SECTION_URL.format(sid1=sid1, sid2=sid2, date=day), ctx))
+        except Exception as e:
+            notes.append(f'세계 {name}: {_why(e)} {str(e)[:160]}')
+            continue
+        if not got:
+            notes.append(f'세계 {name}: 0건')
+        rows.extend(got)
+    return rows, notes
+
+
 def fetch_bodies(chosen, bodydir, ctx, fetch=None):
-    """선정 기사 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 적고 넘어간다."""
+    """선정 기사 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 적고 넘어간다.
+
+    세계 섹션 행은 목록에 날짜가 없다 — 기사면의 입력 시각을 적는다(`trim` 이 발행일과 대조).
+    """
     fetch = fetch or get
     os.makedirs(bodydir, exist_ok=True)
     for i, it in enumerate(chosen, 1):
@@ -68,6 +91,8 @@ def fetch_bodies(chosen, bodydir, ctx, fetch=None):
             it['body_chars'], it['body_note'] = 0, _why(e)
             print(f'  [{i}] 본문 실패({_why(e)}) {it["url"]}', file=sys.stderr)
             continue
+        if not it.get('published'):
+            it['published'] = article_published(page)
         body = extract_body(page)
         if not body:
             it['body_chars'], it['body_note'] = 0, body_note(page)
@@ -98,19 +123,25 @@ def main(argv=None):
 
     ctx = _context()
     harvested, notes = harvest(args.date, ctx)
+    world, world_notes = harvest_world(args.date, ctx)
+    notes += world_notes
     todays = on_date(harvested, args.date)
-    chosen = select(categorize(dedupe(todays)), per_category=args.per_category)
-    print(f'주요뉴스 {len(harvested)}건 → {args.date} {len(todays)}건 → 선정 {len(chosen)}건')
+    # 주요뉴스가 먼저 — 같은 기사가 세계 섹션에도 있으면 주요뉴스 갈래로 남는다
+    chosen = select(categorize(dedupe(todays + world)), per_category=args.per_category)
+    print(f'주요뉴스 {len(harvested)}건 → {args.date} {len(todays)}건 · 세계 섹션 {len(world)}건 '
+          f'→ 선정 {len(chosen)}건(글로벌은 후보)')
     for n in notes:
         print(f'  {n}', file=sys.stderr)
 
     fetch_bodies(chosen, args.bodydir, ctx)
+    chosen = trim(chosen, args.date)       # 글로벌 확정 — 본문이 있고 기사면 날짜가 발행일인 것만
 
     outdir = os.path.join(args.datadir, 'news')
     os.makedirs(outdir, exist_ok=True)
     path = os.path.join(outdir, f'{args.date}.json')
     payload = {'report_date': args.date, 'source': '네이버증권 주요뉴스',
-               'harvested': len(harvested), 'notes': notes, 'items': chosen}
+               'harvested': len(harvested), 'harvested_world': len(world),
+               'notes': notes, 'items': chosen}
     save_json(path, payload)             # 요약이 어떻게 죽어도 수집분은 남는다
     try:
         summarized = summarize_items(chosen, args.bodydir, system=SYSTEM_KO_SOURCE)

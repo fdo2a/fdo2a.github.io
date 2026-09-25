@@ -31,7 +31,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
    - **이 섹션 바로 뒤는 에디터 노트 자리다** — 작성 담당은 만들지 않는다(발행 단계의 `scripts/apply_note.py` 가 `notes/[날짜].md` 원문을 붙인다). 남의 목소리를 지어내지 않는다.
 9. **매크로** — 레짐 + 4축 진단(축별 판정 문단 바로 아래 그 축의 지표 표) + 정책 경로 + 자산별 전달경로 + 시장 해석·다음 발표 일정 카드. **전일 판단을 승계한다.** 아래 상세 사양.
 10. **연준 이벤트 — 발언록과 해석** — 의장이 실제로 말한 날에만 있다. 아래 상세 사양. 인용문은 수집해 둔 원문에서 복사한다.
-11. **오늘의 뉴스** — 정치·경제·매크로·산업·AI 갈래별 한 건당 300자. `news/<date>.json` 에 있고 `summary_ko` 가 있는 기사만. 아래 상세 사양.
+11. **오늘의 뉴스** — 정치·경제·매크로·산업·AI·글로벌·리포트·칼럼 갈래별 한 건당 300자. `news/<date>.json` 에 있고 `summary_ko` 가 있는 기사만. 아래 상세 사양.
 12. **주목 섹터·종목** — `movers.json` 의 묶음(최대 5: S&P 500 달러 거래대금 상위 60 중 지수 기여 상·하위 2 + |등락| ≥ 5%, GICS 하위 업종·방향으로 묶음)마다 `<p data-mover="gN">` 한 문단. 무엇이 얼마나 움직였고(대표 종목 등락률을 괄호 근거로 — **파일 값 그대로**) 왜인지(`research_notes.md` 「움직인 종목의 이유」, 매체를 원인의 주어로). 원인이 없으면 「확인된 재료 없음」 한 문장으로 끝내고 추측하지 않는다. 종목명은 한국어 통용 표기로(Micron → 마이크론). `check_movers.py` 가 묶음마다 표식 문단과 대표 종목 등락률을 확인한다. 파일이 없거나 비면 예전처럼 눈에 띄는 종목 2~3개.
 13. **메모리/DRAM** — 표 + 업계 뉴스 + 투자 관점
 14. **AI 인프라** — 표(분야 컬럼) + 업계 동향 + 투자 관점
@@ -265,7 +265,10 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 **입력은 `news/<date>.json` 하나다.** 항목마다 메타데이터와 **`summary_ko`**(수집 잡이 원문을 읽고 만든 한국어 요약)가 있다. 루틴 환경은 원문에 접근할 수 없으므로 **사실의 근거는 `summary_ko` 뿐이다.** `summary_ko` 가 없는 건은 싣지 않는다(게이트가 막는다; 사유는 `summary_note`).
 
-**갈래별 `<h3>`** — 순서와 라벨: 「정치」·「경제」·「매크로」·「산업」·「AI」(`category` = `politics`·`economy`·`macro`·`industry`·`ai`). 갈래당 3건은 **상한**이다 — 얇으면 채우지 않는다.
+**갈래별 `<h3>`** — 순서와 라벨: 「정치」·「경제」·「매크로」·「산업」·「AI」·「글로벌」·「리포트·칼럼」(`category` = `politics`·`economy`·`macro`·`industry`·`ai`·`global`·`insight`). 갈래당 3건(글로벌 4건)은 **상한**이다 — 얇으면 채우지 않는다. 기사가 없는 갈래는 `<h3>` 를 뺀다.
+
+**글로벌** (2026-09-26) — 미·한 밖(일본·중국·유럽·중동)의 정책·경제 뉴스. 행마다 `region`(`japan`·`china`·`europe`·`mideast`)이 있다 — 지역 순서로 싣는다. `wire: "Reuters"` 행은 Investing.com 이 전재한 로이터 기사다: 캡션을 `로이터(Investing.com) · 9월 25일` 로 쓴다.
+**리포트·칼럼** (2026-09-26) — ING THINK·BIS 중앙은행 연설·ECB 블로그·Investing.com 기고. **전망·권고는 필자의 견해다** — `summary_ko` 가 이미 「ING 는 …로 본다」 꼴로 귀속해 두었으니 단정형으로 바꾸지 않는다. 캡션은 기관·매체명(`ING THINK · 9월 25일`).
 
 **한 항목:** `<div class="news-item" data-news="GUID"><p class="news-head">제목<span class="sub">CNBC · 9월 18일</span></p><p>본문 300자</p></div>`
 - **`data-news` 는 수집분의 `guid` 그대로** — `scripts/check_news.py` 가 이것으로 대조한다. 지우거나 바꿔서 우회하지 않는다.

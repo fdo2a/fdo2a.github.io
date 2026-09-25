@@ -160,6 +160,7 @@ def test_harvest_records_why_the_list_failed(monkeypatch):
 
 def test_main_writes_metadata_and_exits_red_when_the_list_is_dead(tmp_path, monkeypatch):
     monkeypatch.setattr(F, 'harvest', lambda d, ctx: ([], ['주요뉴스 1쪽: HTTP 403']))
+    monkeypatch.setattr(F, 'harvest_world', lambda d, ctx: ([], []))     # 네트워크를 타지 않는다
     monkeypatch.setattr(F, 'summarize_items', lambda *a, **k: 0)
     assert F.main(['--datadir', str(tmp_path), '--bodydir', str(tmp_path / 'b'),
                    '--date', '2026-09-25']) == 1
@@ -170,6 +171,7 @@ def test_main_writes_metadata_and_exits_red_when_the_list_is_dead(tmp_path, monk
 def test_main_summarizes_with_the_korean_source_prompt(tmp_path, monkeypatch):
     rows = N.parse_list(payload(row('1', '외국인 코스피 순매수', '20260925160000')))
     monkeypatch.setattr(F, 'harvest', lambda d, ctx: (rows, []))
+    monkeypatch.setattr(F, 'harvest_world', lambda d, ctx: ([], []))
     monkeypatch.setattr(F.time, 'sleep', lambda s: None)
     monkeypatch.setattr(F, 'get', lambda url, ctx: page(PARA))
     calls = {}

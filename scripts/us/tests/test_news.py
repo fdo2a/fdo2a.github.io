@@ -172,7 +172,9 @@ def test_items_without_a_timestamp_sort_last_but_are_not_dropped():
 def test_the_digest_carries_the_five_categories_the_user_asked_for():
     # 2026-09-24 「정치, 경제, 매크로, 산업, AI 관련 뉴스 위주로」
     from us.news import DIGEST_CATEGORIES, LABELS
-    assert set(DIGEST_CATEGORIES) == {'politics', 'economy', 'macro', 'industry', 'ai'}
+    # 2026-09-26 「글로벌」·「리포트·칼럼」 추가 — test_news_global.py
+    assert set(DIGEST_CATEGORIES) == {'politics', 'economy', 'macro', 'industry', 'ai',
+                                      'global', 'insight'}
     assert [LABELS[c] for c in ('politics', 'economy', 'macro', 'industry', 'ai')] == \
         ['정치', '경제', '매크로', '산업', 'AI']
 
@@ -188,7 +190,9 @@ def test_every_final_category_is_reachable_from_some_feed():
                'economy': ('Consumer sentiment slumps', 'economy'),
                'macro': ('Fed holds rates steady', 'pool'),
                'industry': ('Ford recalls a million SUVs', 'industry'),
-               'ai': ('OpenAI raises funding', 'tech')}
+               'ai': ('OpenAI raises funding', 'tech'),
+               'global': ('BOJ keeps rates steady', 'global'),
+               'insight': ('Treasury Yields: The Market Is Pricing Growth', 'insight')}
     for cat in DIGEST_CATEGORIES:
         title, hint = samples[cat]
         assert classify({'title': title, 'category': hint}) == cat
