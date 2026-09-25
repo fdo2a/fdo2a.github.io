@@ -173,3 +173,10 @@ def test_fetch_bodies_fills_the_date_from_the_article_page(tmp_path):
     F.fetch_bodies(rows, str(tmp_path), None, fetch=lambda u, c: html)
     assert rows[0]['published'] == '2026-09-25T08:00:00+09:00'
     assert rows[0]['body_chars'] > 0
+
+
+def test_japan_goes_first_in_the_rotation():
+    # 2026-09-26 「일본 관련 뉴스…추가해」 — 후보가 있으면 일본 한 건은 반드시 들어간다
+    rows = [g('e1', 'ECB 금리 동결', 'europe'), g('c1', '中 인민은행 금리 인하', 'china'),
+            g('j1', '日銀 금리 인상', 'japan')]
+    assert N.select(rows)[0]['guid'] == 'j1'

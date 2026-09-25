@@ -265,10 +265,11 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 **입력은 `news/<date>.json` 하나다.** 항목마다 메타데이터와 **`summary_ko`**(수집 잡이 원문을 읽고 만든 한국어 요약)가 있다. 루틴 환경은 원문에 접근할 수 없으므로 **사실의 근거는 `summary_ko` 뿐이다.** `summary_ko` 가 없는 건은 싣지 않는다(게이트가 막는다; 사유는 `summary_note`).
 
-**갈래별 `<h3>`** — 순서와 라벨: 「정치」·「경제」·「매크로」·「산업」·「AI」·「글로벌」·「리포트·칼럼」(`category` = `politics`·`economy`·`macro`·`industry`·`ai`·`global`·`insight`). 갈래당 3건(글로벌 4건)은 **상한**이다 — 얇으면 채우지 않는다. 기사가 없는 갈래는 `<h3>` 를 뺀다.
+**갈래별 `<h3>`** — 순서와 라벨: 「정치」·「경제」·「매크로」·「산업」·「AI」·「글로벌」·「리포트·칼럼」(`category` = `politics`·`economy`·`macro`·`industry`·`ai`·`global`·`insight`). 갈래당 3건(글로벌·리포트·칼럼 4건)은 **상한**이다 — 얇으면 채우지 않는다. 기사가 없는 갈래는 `<h3>` 를 뺀다.
 
 **글로벌** (2026-09-26) — 미·한 밖(일본·중국·유럽·중동)의 정책·경제 뉴스. 행마다 `region`(`japan`·`china`·`europe`·`mideast`)이 있다 — 지역 순서로 싣는다. `wire: "Reuters"` 행은 Investing.com 이 전재한 로이터 기사다: 캡션을 `로이터(Investing.com) · 9월 25일` 로 쓴다.
-**리포트·칼럼** (2026-09-26) — ING THINK·BIS 중앙은행 연설·ECB 블로그·Investing.com 기고. **전망·권고는 필자의 견해다** — `summary_ko` 가 이미 「ING 는 …로 본다」 꼴로 귀속해 두었으니 단정형으로 바꾸지 않는다. 캡션은 기관·매체명(`ING THINK · 9월 25일`).
+**일본** (2026-09-26) — 일본 행(`region: "japan"`)은 두 칸 모두 맨 앞이다. 출처가 일본어일 수 있다(Yahoo!ニュース 의 교도·지지 통신 기사, 닛세이기초연구소 리포트) — **제목은 한국어로 옮겨 쓴다**(`summary_ko` 는 이미 한국어다). 캡션: Yahoo 행은 `wire` 를 매체로(`교도통신 · 9월 25일`), 일본은행은 `일본은행 · 9월 18일`, 닛세이기초연구소는 `닛세이기초연구소 · 9월 25일`. 일본은행 정책 발표문(`kind: "official"`)은 결정 사실만 쓰고 해석을 보태지 않는다.
+**리포트·칼럼** (2026-09-26) — ING THINK·BIS 중앙은행 연설·ECB 블로그·Investing.com 기고·일본은행 연설·닛세이기초연구소. **전망·권고는 필자의 견해다** — `summary_ko` 가 이미 「ING 는 …로 본다」 꼴로 귀속해 두었으니 단정형으로 바꾸지 않는다. 캡션은 기관·매체명(`ING THINK · 9월 25일`).
 
 **한 항목:** `<div class="news-item" data-news="GUID"><p class="news-head">제목<span class="sub">CNBC · 9월 18일</span></p><p>본문 300자</p></div>`
 - **`data-news` 는 수집분의 `guid` 그대로** — `scripts/check_news.py` 가 이것으로 대조한다. 지우거나 바꿔서 우회하지 않는다.

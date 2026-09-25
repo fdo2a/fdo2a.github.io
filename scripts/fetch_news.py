@@ -31,8 +31,8 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us.news import (FEEDS, body_note, categorize, dedupe,  # noqa: E402
-                     extract_body, page_published, parse_feed_strict, select, trim,
-                     wire_of)
+                     extract_body, page_published, pages, parse_feed_strict, pdf_text,
+                     select, title_wire, trim, wire_of)
 from us.news_summary import SYSTEM_ANALYSIS, summarize_items  # noqa: E402
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
@@ -99,23 +99,34 @@ def get(url, ctx, retries=2, impersonated=_impersonated):
             raise
 
 
-def fetch_bodies(chosen, bodydir, ctx, fetch=None):
+def get_bytes(url, ctx):
+    """PDF 처럼 글자로 풀면 깨지는 응답(일본은행 정책 발표문)."""
+    req = urllib.request.Request(url, headers={'User-Agent': UA})
+    with urllib.request.urlopen(req, timeout=TIMEOUT, context=ctx) as r:
+        return r.read()
+
+
+def fetch_bodies(chosen, bodydir, ctx, fetch=None, fetch_bytes=None):
     """선정된 기사의 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 기록하고 넘어간다.
 
     피드에 날짜가 없던 기사(Investing.com 뉴스)는 기사면의 발행 시각을 적는다 — 글로벌·칼럼
     확정(`trim`)이 그 날짜로 창을 본다. 피드 날짜는 덮지 않는다.
     """
-    fetch = fetch or get
+    fetch, fetch_bytes = fetch or get, fetch_bytes or get_bytes
     os.makedirs(bodydir, exist_ok=True)
     for i, it in enumerate(chosen, 1):
         try:
-            page = fetch(it['url'], ctx)
-            body = extract_body(page)
+            if it['url'].lower().endswith('.pdf'):
+                page, body = '', pdf_text(fetch_bytes(it['url'], ctx))
+            else:
+                page = fetch(it['url'], ctx)
+                body = extract_body(page)
             if not it.get('published'):
                 it['published'] = page_published(page)
                 if it['published']:
                     it['published_from'] = 'page'
-            wire = wire_of(body)
+            wire = wire_of(body) or (title_wire(it.get('title'))
+                                     if 'yahoo.co.jp' in it['url'] else None)
             if wire:
                 it['wire'] = wire
         except Exception as e:
@@ -192,6 +203,19 @@ def main():
             print(f'  {category}: {len(items)}건 ({url.split("/")[2]})')
 
     now = datetime.now(timezone.utc)
+    # 피드가 없는 출처(일본은행 정책 발표문·연설 목록, 2026-09-26)
+    for category, rows in pages(now.year).items():
+        for url, parse in rows:
+            time.sleep(GAP)
+            try:
+                got = parse(get(url, ctx), category)
+            except Exception as e:
+                why = (f'HTTP {e.code}' if isinstance(e, urllib.error.HTTPError)
+                       else f'{type(e).__name__} {str(e)[:120]}')
+                notes.append(f'{category} {url}: {why}')
+                continue
+            harvested.extend(got)
+            print(f'  {category}: {len(got)}건 ({url.split("/")[2]} 목록)')
     chosen = select(dedupe(categorize(harvested)), per_category=args.per_category, now=now)
     print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건(글로벌·칼럼은 후보)')
 

@@ -331,6 +331,9 @@ def _spread(rows, cap):
             lanes[lane] = []
             order.append(lane)
         lanes[lane].append(r)
+    if 'japan' in order:          # 일본을 맨 앞에(2026-09-26 사용자 지시, US `news.FIRST_LANE` 과 같다)
+        order.remove('japan')
+        order.insert(0, 'japan')
     out = []
     while len(out) < cap and any(lanes.values()):
         for lane in order:

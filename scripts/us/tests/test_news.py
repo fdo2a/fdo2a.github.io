@@ -324,7 +324,10 @@ def test_namespaced_and_atom_feeds_are_reported_not_silently_empty():
     from us.news import parse_feed_strict
     atom = ('<feed xmlns="http://www.w3.org/2005/Atom">'
             '<entry><title>T</title><link href="https://x/a"/></entry></feed>')
+    # 2026-09-26 부터 Atom 을 읽는다(닛세이기초연구소) — entry 가 없는 Atom 만 사유를 남긴다
     rows, note = parse_feed_strict(atom, 'top')
+    assert [r['url'] for r in rows] == ['https://x/a'] and note is None
+    rows, note = parse_feed_strict('<feed xmlns="http://www.w3.org/2005/Atom"></feed>', 'top')
     assert rows == [] and note and 'atom' in note.lower()
     rows, note = parse_feed_strict('<rss><channel></channel></rss>', 'top')
     assert rows == [] and note is None

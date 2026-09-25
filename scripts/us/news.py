@@ -72,14 +72,18 @@ FEEDS = {
                'https://www.aljazeera.com/xml/rss/all.xml',
                'https://feeds.bbci.co.uk/news/business/rss.xml',
                'https://www.ecb.europa.eu/rss/press.html',
-               'https://www.bankofengland.co.uk/rss/news'),
+               'https://www.bankofengland.co.uk/rss/news',
+               # 일본(2026-09-26 「일본 관련 뉴스…방법을 찾아서 추가해」) — 교도·지지 등 통신 기사.
+               # NHK(JS 렌더)·지지(무료판 본문 없음)·Japan Times(403)·교도 영문(유료)은 실측 탈락.
+               'https://news.yahoo.co.jp/rss/categories/business.xml'),
     # 2026-09-26 「리포트·칼럼」 — 「인사이트를 얻을 수 있는 내용이라면 다 좋아」.
     # Investing 분석의 Technical·Fundamental·ideas 피드는 8월에 멈춰 뺐다.
     'insight': tuple(_INVESTING.format(f) for f in (
                    'market_overview', 'forex', 'commodities', 'bonds')) + (
                'https://think.ing.com/rss/',
                'https://www.ecb.europa.eu/rss/blog.html',
-               'https://www.bis.org/doclist/cbspeeches.rss'),
+               'https://www.bis.org/doclist/cbspeeches.rss',
+               'https://www.nli-research.co.jp/RSS.rdf?site=nli'),          # 닛세이기초연구소(Atom)
 }
 
 LABELS = {'politics': '정치', 'economy': '경제', 'macro': '매크로', 'industry': '산업',
@@ -140,7 +144,20 @@ _REGIONS = (
         r'Houthis?|OPEC\+?|Hormuz|Red Sea|Gulf states|Gulf Cooperation)\b')),
 )
 # 공식 기관 피드는 제목에 나라 이름을 쓰지 않는다(「Monetary policy decisions」).
-_HOST_REGION = {'www.ecb.europa.eu': 'europe', 'www.bankofengland.co.uk': 'europe'}
+# 일본 출처는 제목에 「日本」 을 쓰지 않는다(국내 기사다) — 다른 지역을 말하면 제목이 이긴다.
+_HOST_REGION = {'www.ecb.europa.eu': 'europe', 'www.bankofengland.co.uk': 'europe',
+                'news.yahoo.co.jp': 'japan', 'www.boj.or.jp': 'japan',
+                'www.nli-research.co.jp': 'japan'}
+# 일본어 제목. 「米中」 은 미중(중국 쪽 기사)이다.
+_REGIONS_JA = (
+    ('japan', re.compile(r'日本|日銀|東京|円相場|円安|円高|強い円')),
+    ('china', re.compile(r'中国|米中|日中|習近平|人民銀|人民元|香港')),
+    # 한 글자 약칭(独·仏·露)은 뒤에 기관·직함이 올 때만 — 独自·独占·披露 가 걸린다.
+    ('europe', re.compile(r'欧州|ユーロ|EU|ECB|ドイツ|英国|イギリス|英中銀|フランス|イタリア|スイス|'
+                          r'ロシア|ウクライナ|NATO|'
+                          r'(?:独|仏|露)(?:首相|大統領|政府|経済|中銀|連銀|外相|財務相|軍|産)')),
+    ('mideast', re.compile(r'中東|イラン|イスラエル|ガザ|サウジ|UAE|カタール|OPEC|ホルムズ|紅海|フーシ')),
+)
 
 # 정책·경제 어휘. **몇 개가 걸렸는지**가 후보 순위다 — 「큰 영향」을 기계가 잴 수는 없으니
 # 정책·경제 어휘가 촘촘한 기사를 앞에 둔다. 「fiscal」 은 「fiscal first quarter」(회계연도)가
@@ -162,6 +179,23 @@ _POLICY_TERMS = tuple(re.compile(p) for p in (
     r'(?i:\bdecisions?\b|\bcuts?\b|\bhikes?\b)',
 ))
 
+_POLICY_TERMS_JA = tuple(re.compile(p) for p in (
+    r'金利|利上げ|利下げ|金融政策|日銀|中央銀行|政策金利',
+    r'物価|インフレ|デフレ|CPI|GDP|成長率|景気|経済',
+    r'財政|予算|国債|補正|減税|増税|補助金|税',
+    r'関税|貿易|輸出|輸入|制裁|通商|農産物|大豆',
+    r'原油|石油|ガス|LNG|エネルギー|OPEC|減産|増産',
+    r'為替|円安|円高|強い円|介入|人民元|ユーロ',
+    r'賃金|春闘|雇用|失業|労働|最低賃金|年金|社会保険',
+    r'選挙|首相|内閣|国会|政府|大臣|財務相|規制|法案',
+    r'停戦|戦争|攻撃|封鎖|首脳会談|合意|協議|交渉',
+    r'不動産|住宅|設備投資|消費|生産',
+))
+# Yahoo!ニュース 경제의 정례 시세표·시황. 시장 섹션의 몫이다.
+_JA_ROUTINE = re.compile(r'為替相場|日経平均|東証|NY株|NY外為|終値|前場|後場|寄り付き|株価|相場概況')
+# 생활 리포트가 섞이는 연구소 — 경제 어휘가 제목에 있어야 싣는다.
+_NEEDS_POLICY = {'www.nli-research.co.jp'}
+
 # 칼럼 피드의 종목 나열형·셋업 글. 「9 Stocks Still Flying…」「These 2 Bond ETFs…」
 _LISTICLE = re.compile(
     r'(?i:^\s*(?:top\s+)?\d+\s+(?:[\w-]+\s+){0,3}?(?:stocks?|etfs?|picks|setups|names|'
@@ -171,7 +205,7 @@ _LISTICLE = re.compile(
 def region(title):
     """제목 -> 'japan'|'china'|'europe'|'mideast'|None. 여럿이면 먼저 나온 것."""
     best = None
-    for name, rx in _REGIONS:
+    for name, rx in _REGIONS + _REGIONS_JA:
         m = rx.search(title or '')
         if m and (best is None or m.start() < best[1]):
             best = (name, m.start())
@@ -188,7 +222,7 @@ def region_of(item):
 
 def policy_score(text):
     """정책·경제 어휘 묶음 가운데 몇 개가 걸렸나."""
-    return sum(1 for rx in _POLICY_TERMS if rx.search(text or ''))
+    return sum(1 for rx in _POLICY_TERMS + _POLICY_TERMS_JA if rx.search(text or ''))
 
 
 def classify(item):
@@ -196,10 +230,17 @@ def classify(item):
     hint = item.get('category')
     if hint == 'mlcc':          # 무관한 종목 피드 기사는 다른 갈래로도 보내지 않는다 — 대개 몇 달 전 시황이다
         return 'mlcc' if _MLCC.search(item.get('title') or '') else None
+    title = item.get('title') or ''
     if hint == 'insight':       # 칼럼은 지역어가 있어도 칼럼 칸에 남는다
-        return None if _LISTICLE.search(item.get('title') or '') else 'insight'
-    text = f"{item.get('title') or ''} {item.get('summary') or ''}"
-    if region_of(item) and policy_score(text):
+        if _LISTICLE.search(title):
+            return None
+        if _host(item.get('url')) in _NEEDS_POLICY and not policy_score(title):
+            return None
+        return 'insight'
+    if hint == 'global' and item.get('kind') == 'official':     # 일본은행 정책 발표문
+        return 'global'
+    text = f"{title} {item.get('summary') or ''}"
+    if region_of(item) and policy_score(text) and not _JA_ROUTINE.search(title):
         return 'global'
     if hint == 'global':        # 세계 피드의 판다·만찬·사건 기사는 다른 갈래로 보내지 않는다
         return None
@@ -217,6 +258,10 @@ def categorize(items):
         cat = classify(it)
         if cat == 'global':
             out.append(dict(it, category=cat, region=region_of(it)))
+        elif cat == 'insight' and _HOST_REGION.get(_host(it.get('url'))):
+            # 칼럼의 칸은 발행 기관이 정한다 — 제목에 Japan 이 든 서구 칼럼이 일본 기관 리포트를
+            # 밀어내지 않게(2026-09-26 실수집). 나머지 칼럼은 매체별로 돈다.
+            out.append(dict(it, category=cat, region=_HOST_REGION[_host(it['url'])]))
         elif cat:
             out.append(dict(it, category=cat))
     return out
@@ -312,6 +357,8 @@ SOURCES = {
     'www.bankofengland.co.uk': 'Bank of England', 'www.bis.org': 'BIS',
     'think.ing.com': 'ING THINK', 'www.theguardian.com': 'The Guardian',
     'www.aljazeera.com': 'Al Jazeera', 'www.bbc.com': 'BBC', 'www.bbc.co.uk': 'BBC',
+    'news.yahoo.co.jp': 'Yahoo!ニュース', 'www.boj.or.jp': 'Bank of Japan',
+    'www.nli-research.co.jp': 'ニッセイ基礎研究所',
 }
 
 
@@ -330,6 +377,8 @@ def parse_feed(xml, category):
     """
     if not xml:
         return []
+    if _ATOM.search(xml):
+        return _parse_atom(xml, category)
     out = []
     for chunk in _ITEM.findall(xml):
         url = _field(chunk, 'link')
@@ -358,10 +407,18 @@ def extract_body(html, max_chars=DEFAULT_MAX_BODY):
     """
     if not html:
         return ''
-    # Investing.com 은 기사 위에 시세·추천 기사 위젯을 <p> 로 싣는다 — 본문 상자부터 읽는다.
-    start = html.find('id="article"')
-    if start >= 0:
-        html = html[start:]
+    if '■要旨' in html:            # 닛세이기초연구소 — 요지부터 공유 버튼 앞까지, <p> 가 아니다
+        return _nli_body(html, max_chars)
+    # Investing.com·Yahoo!ニュース 는 기사 위에 위젯·순위를 <p> 로 싣는다 — 본문 상자부터 읽는다.
+    # 끝 표식: Yahoo 는 본문 상자 뒤에 추천 기사·순위·푸터가 <p> 로 이어진다(2026-09-26 실수집).
+    for marker, ends in (('id="article"', ()), ('class="article_body', ('【関連記事】', '<section'))):
+        start = html.find(marker)
+        if start >= 0:
+            html = html[start:]
+            stops = [i for i in (html.find(e) for e in ends) if i > 0]
+            if stops:
+                html = html[:min(stops)]
+            break
     stripped = _DROP.sub(' ', html)
     kept = []
     for raw in _PARA.findall(stripped):
@@ -466,8 +523,34 @@ def select(items, per_category=DEFAULT_PER_CATEGORY, now=None):
     return out
 
 
-_ATOM = re.compile(r'<feed\b[^>]*xmlns="http://www\.w3\.org/2005/Atom"', re.I)
 _NS_ITEM = re.compile(r'<\w+:item\b', re.I)
+
+
+_ATOM = re.compile(r'<feed\b[^>]*xmlns="http://www\.w3\.org/2005/Atom"', re.I)
+_ENTRY = re.compile(r'<entry\b[^>]*>(.*?)</entry>', re.S | re.I)
+_ATOM_LINK = re.compile(r'<link\b[^>]*\bhref="([^"]+)"', re.I)
+
+
+def _parse_atom(xml, category):
+    """Atom <entry> -> parse_feed 와 같은 행(닛세이기초연구소, 2026-09-26)."""
+    out = []
+    for chunk in _ENTRY.findall(xml):
+        m = _ATOM_LINK.search(chunk)
+        if not m:
+            continue
+        url = _html.unescape(m.group(1))
+        summary = _field(chunk, 'summary') or _field(chunk, 'content')
+        out.append({
+            'guid': _field(chunk, 'id') or url,
+            'url': url,
+            'title': _field(chunk, 'title'),
+            'summary': (summary or '')[:MAX_SUMMARY] or None,
+            'published': (_iso8601(_field(chunk, 'published'))
+                          or _iso8601(_field(chunk, 'updated'))),
+            'category': category,
+            'source': source_name(url),
+        })
+    return out
 
 
 def parse_feed_strict(xml, category):
@@ -479,7 +562,7 @@ def parse_feed_strict(xml, category):
     if rows or not xml:
         return rows, None
     if _ATOM.search(xml):
-        return [], 'Atom 피드 — RSS 파서가 읽지 못한다'
+        return [], 'Atom 피드인데 entry 가 없다 — 형식이 바뀌었을 수 있다'
     if _NS_ITEM.search(xml):
         return [], '네임스페이스 접두사가 붙은 item — 피드 형식이 바뀌었다'
     if '<item' not in xml.lower() and '<channel' not in xml.lower():
@@ -494,7 +577,9 @@ def parse_feed_strict(xml, category):
 TWO_PHASE = ('global', 'insight')
 PRESELECT = {'global': 8, 'insight': 6}
 # 글로벌 넷 = 사용자가 든 지역 넷(일본·중국·유럽·중동)이 한 건씩 들어갈 자리.
-FINAL = {'global': 4, 'insight': 3}
+FINAL = {'global': 4, 'insight': 4}
+# 일본을 맨 앞에 돌린다(2026-09-26 사용자 지시) — 후보가 있으면 일본 한 건은 반드시 들어간다.
+FIRST_LANE = 'japan'
 WINDOW = timedelta(hours=36)
 SAME_EVENT = 0.5            # 제목 단어 자카드. 같은 사건을 CNBC·로이터·가디언이 따로 쓴다
 _WORD = re.compile(r'[a-z0-9]{3,}')
@@ -544,6 +629,9 @@ def _spread(rows, cap):
             lanes[lane] = []
             order.append(lane)
         lanes[lane].append(r)
+    if FIRST_LANE in order:
+        order.remove(FIRST_LANE)
+        order.insert(0, FIRST_LANE)
     out = []
     while len(out) < cap and any(lanes.values()):
         for lane in order:
@@ -604,3 +692,115 @@ def wire_of(body):
     """본문 첫머리의 통신사 표기(「PARIS, Sept 25 (Reuters) -」). 앞머리에만 있어야 전재다."""
     m = _WIRE.search((body or '')[:120])
     return m.group(1) if m else None
+
+
+# ── 일본 (2026-09-26) ────────────────────────────────────────────────────
+_NLI_END = ('はてなブックマーク', 'メルマガ配信中', '関連レポート')
+
+
+def _nli_body(html, max_chars=DEFAULT_MAX_BODY):
+    """닛세이기초연구소 리포트면 — 「■要旨」 부터 공유 버튼 앞까지를 글자로. 길면 PDF 가 본판이라
+    HTML 은 앞머리만 싣는다(실측 1,500자 안팎) — 300자 요약의 재료로는 넉넉하다."""
+    seg = html[html.find('■要旨') + len('■要旨'):]
+    ends = [i for i in (seg.find(m) for m in _NLI_END) if i >= 0]
+    if ends:
+        seg = seg[:min(ends)]
+    seg = _DROP.sub(' ', seg)
+    seg = re.sub(r'<(?:br|/p|/div|/li|/h\d)\b[^>]*>', '\n', seg, flags=re.I)
+    lines = [_WS.sub(' ', _html.unescape(_TAG.sub('', ln))).strip() for ln in seg.split('\n')]
+    body = '\n\n'.join(ln for ln in lines if len(ln) >= 20)
+    if len(body) < MIN_BODY:
+        return ''
+    return body[:max_chars]
+
+
+def pdf_text(data, max_chars=DEFAULT_MAX_BODY):
+    """PDF 바이트 -> 글자(일본은행 정책 발표문). pypdf 가 없거나 못 읽으면 ''."""
+    try:
+        import io
+        import pypdf
+        reader = pypdf.PdfReader(io.BytesIO(data))
+        text = '\n'.join(page.extract_text() or '' for page in reader.pages)
+    except Exception:
+        return ''
+    text = re.sub(r'[ \t]+', ' ', text).strip()
+    return text[:max_chars] if len(text) >= MIN_BODY else ''
+
+
+_TITLE_WIRE = re.compile(r'[(（]([^()（）]{2,20})[)）]\s*$')
+
+
+def title_wire(title):
+    """Yahoo!ニュース 제목 끝의 제공사 「(共同通信)」."""
+    m = _TITLE_WIRE.search(title or '')
+    return m.group(1) if m else None
+
+
+_BOJ = 'https://www.boj.or.jp'
+_BOJ_ROW = re.compile(r'<tr\b[^>]*>(.*?)</tr>', re.S | re.I)
+_BOJ_CELL = re.compile(r'<t[dh]\b[^>]*>(.*?)</t[dh]>', re.S | re.I)
+_BOJ_LINK = re.compile(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', re.S | re.I)
+_MONTHS = {m: i for i, m in enumerate(
+    ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'), 1)}
+
+
+def _boj_date(cell):
+    """「Sept.&nbsp;10,&nbsp;2026」 -> 그날 00:00 JST. 시각은 목록에 없다 — 날짜만 믿는다."""
+    m = re.match(r'([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),\s*(\d{4})', _clean_cell(cell))
+    if not m or m.group(1).lower() not in _MONTHS:
+        return None
+    jst = timezone(timedelta(hours=9))
+    return datetime(int(m.group(3)), _MONTHS[m.group(1).lower()], int(m.group(2)),
+                    tzinfo=jst).isoformat()
+
+
+def _clean_cell(text):
+    return _WS.sub(' ', _html.unescape(_TAG.sub(' ', text or '')).replace('\xa0', ' ')).strip()
+
+
+def _boj_rows(html):
+    if '<table' not in (html or '').lower():
+        raise ValueError(f'일본은행 목록에 표가 없다: {_clean_cell(html)[:120]}')
+    for tr in _BOJ_ROW.findall(html):
+        cells = _BOJ_CELL.findall(tr)
+        link = _BOJ_LINK.search(tr)
+        if len(cells) >= 2 and link:
+            yield cells, link
+
+
+def _boj_row(url, title, published, category, **extra):
+    url = url if url.startswith('http') else _BOJ + url
+    return dict({'guid': url, 'url': url, 'title': title, 'summary': None,
+                 'published': published, 'category': category,
+                 'source': 'Bank of Japan'}, **extra)
+
+
+def parse_boj_speeches(html, category):
+    """일본은행 연설 목록(날짜·연사·제목) -> 행. 연설문 본문은 HTML 이다."""
+    out = []
+    for cells, link in _boj_rows(html):
+        speaker = _clean_cell(cells[1]) if len(cells) >= 3 else ''
+        title = _clean_cell(link.group(2))
+        out.append(_boj_row(link.group(1), f'{speaker}: {title}' if speaker else title,
+                            _boj_date(cells[0]), category))
+    return out
+
+
+def parse_boj_statements(html, category):
+    """일본은행 정책 발표문 목록 -> 행. 「(Reference)」 요약본은 뺀다. 본문은 PDF 다."""
+    out = []
+    for cells, link in _boj_rows(html):
+        title = re.sub(r'\s*\[PDF[^\]]*\]\s*$', '', _clean_cell(link.group(2)))
+        if title.startswith('(Reference)'):
+            continue
+        out.append(_boj_row(link.group(1), title, _boj_date(cells[0]), category, kind='official'))
+    return out
+
+
+def pages(year):
+    """피드가 없는 출처 — 갈래 -> [(목록 URL, 파서)]. 일본은행 새소식 RSS 에는 연설이 없고
+    정책 발표문은 운영 공지 수십 건에 묻힌다(2026-09-26 실측)."""
+    return {
+        'global': [(f'{_BOJ}/en/mopo/mpmdeci/state_{year}/index.htm', parse_boj_statements)],
+        'insight': [(f'{_BOJ}/en/about/press/koen_{year}/index.htm', parse_boj_speeches)],
+    }
