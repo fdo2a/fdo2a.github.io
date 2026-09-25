@@ -712,13 +712,77 @@ def publish_commit(root, path, sha):
         return None
     # 최신 → 과거 순. 이 blob 을 담은 커밋 중 **가장 오래된** 것이 그 판을 넣은 커밋이다.
     # 최신 쪽을 잡으면 정정 재발행 뒤 데이터가 한 번 더 덮어써진 자리를 꺼내게 된다.
-    found = None
-    for commit in out.stdout.split():
+    #
+    # **조판만 바꾼 커밋은 발행 커밋이 아니다.** 직전 판이 조판 변환으로 이 판이 되면
+    # (`prose.typography` 가 True) 한 판 더 거슬러 올라간다. 2026-09-26 실측: 방문 통계
+    # 소급(8458e9a)이 미검토 11편의 발행 커밋을 9/25 로 바꿔, 9/17 글을 9/25 데이터와
+    # 맞댈 뻔했다. 문장을 고친 판(False)과 판정 불가(None)에서는 멈춘다.
+    commits = out.stdout.split()
+    found, at = None, None
+    for i, commit in enumerate(commits):
         if rev_parse(root, f'{commit}:{path}') == sha:
-            found = commit
+            found, at = commit, i
         elif found:
             break
+    while found and at + 1 < len(commits):
+        prev = rev_parse(root, f'{commits[at + 1]}:{path}')
+        if not prev or prose_mod.typography(path, _blob_text(root, prev),
+                                            _blob_text(root, sha), root=root) is not True:
+            break
+        sha, at, found = prev, at + 1, commits[at + 1]
+        while at + 1 < len(commits) and rev_parse(root, f'{commits[at + 1]}:{path}') == sha:
+            at += 1
+            found = commits[at]
     return found
+
+
+EVIDENCE_DATE = {'us': 'data/market_data.json', 'kr': 'kr/data/kr_market_data.json'}
+_POST_DATE = re.compile(r'(?:kr/)?posts/(\d{4}-\d{2}-\d{2})\.html$')
+
+
+def evidence_mismatch(root, item):
+    """발행 커밋의 근거 데이터가 이 글의 날짜가 아니면 그 이유, 맞으면 None.
+
+    무인 검토·정정의 근거는 발행 커밋 스냅샷뿐이다. 소급 발행(9/17 글이 9/19 에 9/18
+    데이터로)이나 문장을 고친 재발행(9/02 글의 9/14 문단 분리)은 그 커밋의 데이터가
+    다른 날 것이라, 맞대면 정상 문장이 오류로 정정된다. 그런 글은 자동으로 읽지 않는다.
+    """
+    m = _POST_DATE.fullmatch(item.path)
+    if item.section not in EVIDENCE_DATE or not m:
+        return None   # 날짜가 박힌 us·kr 일간 글만 판정한다
+    commit = publish_commit(root, item.path, item.sha)
+    if not commit:
+        return None   # 기존 경로가 「발행 커밋을 찾지 못했다」로 따로 알린다
+    raw = git(root, 'show', f'{commit}:{EVIDENCE_DATE[item.section]}')
+    try:
+        got = json.loads(raw.stdout).get('report_date') if raw.returncode == 0 else None
+    except (ValueError, AttributeError):
+        got = None
+    if got == m.group(1):
+        return None
+    return f'{item.path}: 근거 기준일 {got} ≠ 글 날짜 {m.group(1)} ({commit[:7]})'
+
+
+def _drop_misdated(root, items, errs):
+    keep, why = [], []
+    for item in items:
+        reason = evidence_mismatch(root, item)
+        (why.append(reason) if reason else keep.append(item))
+    if why:
+        errs['근거'] = err(HUMAN, f'{len(why)}건 자동 검토 제외 — ' + '; '.join(why))
+    else:
+        errs.pop('근거', None)
+    return keep
+
+
+def _blob_text(root, sha):
+    out = git_bytes(root, 'cat-file', 'blob', sha)
+    if out.returncode:
+        return None
+    try:
+        return out.stdout.decode('utf-8')
+    except UnicodeDecodeError:
+        return None
 
 
 def _wanted(name):
@@ -863,6 +927,10 @@ def _correct_ready(root, args, state, errs):
         if not commit:
             errs[key] = err(UNKNOWN, f'{item.path}: 발행 커밋을 찾지 못했다')
             break
+        misdated = evidence_mismatch(root, item)
+        if misdated:
+            errs[key] = err(HUMAN, misdated)
+            continue
         quota = reserve(quota, day, item.section)
         state['correction_calls'] = quota['calls']
         save_state(root, state)
@@ -942,7 +1010,8 @@ def cmd_run(args):
             picks = []
         else:
             state.pop('blocked_until', None)   # 만료됐으면 필드를 지운다
-            picks = eligible(todo + unavailable, published, state, day,
+            # 한도를 예약하기 **전에** 거른다. 뒤에서 거르면 하루 상한만 태우고 매일 같은 글에서 헛돈다.
+            picks = eligible(_drop_misdated(root, todo + unavailable, errs), published, state, day,
                              have=_drafts_on_disk(root))
         if not picks and not getattr(args, 'correct', False):
             # 남아 있는 섹션 오류는 그대로 둔다. 고를 것이 없다는 이유로 지우면, 한도만

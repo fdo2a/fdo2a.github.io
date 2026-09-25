@@ -235,3 +235,36 @@ def test_model_is_pinned(setup, monkeypatch):
     base = git(root, 'rev-parse', 'HEAD')
     _, error = correct_one(root, item, 'review', base, 10)
     assert error is None, error
+
+
+def _republish(root, text):
+    (root / 'posts/2026-09-10.html').write_text(text)
+    git(root, 'commit', '-am', 'republish')
+    git(root, 'push')
+    return Pending('posts/2026-09-10.html', 'us',
+                   git(root, 'rev-parse', 'HEAD:posts/2026-09-10.html'), 'new')
+
+
+DOC = '<html><head><title>t</title>\n</head><body><p>old 1</p></body></html>'
+
+
+def test_loader_backfill_keeps_the_original_evidence_commit(setup):
+    """발행 커밋은 로더 이전 판을 가리킨다(publish_commit 이 조판을 건너뛴다)."""
+    from common import analytics
+    root, remote, item, exe = setup
+    (root / item.path).write_text(DOC)
+    git(root, 'commit', '-am', 'publish doc')
+    git(root, 'push')
+    base = git(root, 'rev-parse', 'HEAD')
+    item = _republish(root, analytics.inject(DOC))
+    fake(exe)
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+
+
+def test_prose_change_since_the_evidence_commit_is_refused(setup):
+    root, remote, item, exe = setup
+    base = git(root, 'rev-parse', 'HEAD')
+    item = _republish(root, '<p>old 9</p>')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'publishing snapshot' in error

@@ -99,6 +99,20 @@ def _gates(root, clone, item, evidence, timeout, allowed=()):
     return '\n'.join(results), failed
 
 
+def _typeset_only(root, path, old_sha, new_sha):
+    """The evidence commit may hold the pre-typesetting blob: `publish_commit()` walks
+    back past typesetting-only commits (loader backfill 2026-09-25) so data is the
+    post's own day. Accept that gap only when `typography()` proves it is layout."""
+    from review import prose
+
+    def text(sha):
+        try:
+            return _git(root, 'cat-file', 'blob', sha)
+        except RuntimeError:
+            return None
+    return prose.typography(path, text(old_sha), text(new_sha), root=str(root)) is True
+
+
 def correct_one(root, item, draft_text, publish_commit, timeout=1800):
     """Return (Claude report, error); never change the caller's checkout."""
     root = Path(root)
@@ -109,7 +123,8 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
         if item.section not in ('us', 'kr') or not re.fullmatch(
                 r'(?:kr/)?posts/\d{4}-\d{2}-\d{2}\.html', item.path):
             raise RuntimeError('unsupported correction target')
-        if _git(root, 'rev-parse', f'{publish_commit}:{item.path}') != item.sha:
+        published = _git(root, 'rev-parse', f'{publish_commit}:{item.path}')
+        if published != item.sha and not _typeset_only(root, item.path, published, item.sha):
             raise RuntimeError('publishing snapshot does not match reviewed SHA')
         remote = _git(root, 'remote', 'get-url', 'origin')
         with tempfile.TemporaryDirectory(prefix='review-correction-') as temp:
