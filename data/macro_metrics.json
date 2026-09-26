@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-24 23:37 UTC",
-  "report_date": "2026-09-24",
+  "generated": "2026-09-26 09:05 KST",
+  "report_date": "2026-09-25",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "growth_score": -0.303,
-  "inflation_score": -0.526,
-  "growth_diffusion": 0.429,
-  "inflation_diffusion": 0.375,
+  "growth_score": -0.065,
+  "inflation_score": -0.648,
+  "growth_diffusion": 0.5,
+  "inflation_diffusion": 0.25,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
@@ -45,10 +45,10 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.406,
-      "direction": "악화",
+      "score": -0.193,
+      "direction": "보합",
       "strength": "미미",
-      "breadth_ko": "다섯 중 넷이 악화",
+      "breadth_ko": "다섯 중 하나이 개선, 나머지는 반대",
       "improving": 1,
       "total": 5,
       "leaders": [
@@ -56,9 +56,9 @@
           "label_ko": "내구재 주문",
           "name": "Durable Goods Orders MoM",
           "direction": "악화",
-          "strength": "뚜렷",
-          "actual": 1.08,
-          "previous": 0.58
+          "strength": "완만",
+          "actual": -0.02,
+          "previous": 0.86
         },
         {
           "label_ko": "신규주택 판매",
@@ -80,11 +80,11 @@
     },
     "Consumption": {
       "label_ko": "소비",
-      "score": -0.879,
+      "score": -0.378,
       "direction": "악화",
-      "strength": "완만",
-      "breadth_ko": "둘 중 둘이 악화",
-      "improving": 0,
+      "strength": "미미",
+      "breadth_ko": "둘 중 하나이 악화",
+      "improving": 1,
       "total": 2,
       "leaders": [
         {
@@ -98,20 +98,20 @@
         {
           "label_ko": "미시간대 소비자심리",
           "name": "Michigan Consumer Sentiment",
-          "direction": "악화",
-          "strength": "완만",
-          "actual": 55.2,
-          "previous": 49.5
+          "direction": "개선",
+          "strength": "미미",
+          "actual": 51.7,
+          "previous": 55.2
         }
       ]
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": -0.526,
+      "score": -0.648,
       "direction": "둔화",
       "strength": "완만",
-      "breadth_ko": "여덟 중 다섯이 둔화",
-      "improving": 3,
+      "breadth_ko": "여덟 중 여섯이 둔화",
+      "improving": 2,
       "total": 8,
       "leaders": [
         {
@@ -131,21 +131,21 @@
           "previous": 0.07
         },
         {
-          "label_ko": "미시간대 1년 기대인플레",
-          "name": "Michigan 1-Yr Inflation Exp",
+          "label_ko": "PCE 물가 전년비",
+          "name": "PCE Price Index YoY",
           "direction": "재가속",
           "strength": "완만",
-          "actual": 4.2,
-          "previous": 4.6
+          "actual": 3.7,
+          "previous": 3.72
         }
       ]
     }
   },
   "axis_scores": {
     "Labor": 0.377,
-    "Activity": -0.406,
-    "Consumption": -0.879,
-    "Inflation": -0.526
+    "Activity": -0.193,
+    "Consumption": -0.378,
+    "Inflation": -0.648
   },
   "indicators": [
     {
@@ -192,7 +192,7 @@
         "recent_avg": 202250.0
       },
       "trend_cell_ko": "개선(미미) · 4주 평균 206K → 202K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -215,7 +215,7 @@
         "recent_avg": 205000.0
       },
       "trend_cell_ko": "악화(미미) · 4주 평균 202K → 205K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -238,7 +238,7 @@
         "recent_avg": 1744000.0
       },
       "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,787K → 1,744K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -337,23 +337,23 @@
       "label_ko": "내구재 주문",
       "axis": "Activity",
       "direction": "악화",
-      "strength": "뚜렷",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -1.78,
-      "signed_z": -1.78,
-      "actual": 1.08,
-      "previous": 0.58,
-      "ref_period": "2026-07-01",
-      "vs_prev": "개선",
+      "momentum_z": -0.713,
+      "signed_z": -0.713,
+      "actual": -0.02,
+      "previous": 0.86,
+      "ref_period": "2026-08-01",
+      "vs_prev": "악화",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 2.896,
-        "recent_avg": -0.783
+        "prior_avg": 1.951,
+        "recent_avg": 0.474
       },
-      "trend_cell_ko": "악화(뚜렷) · 3개월 평균 +2.90% → -0.78%",
-      "is_new": false
+      "trend_cell_ko": "악화(완만) · 3개월 평균 +1.95% → +0.47%",
+      "is_new": true
     },
     {
       "name": "New Home Sales",
@@ -376,7 +376,7 @@
         "recent_avg": 666.333
       },
       "trend_cell_ko": "개선(미미) · 3개월 평균 645K → 666K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Existing Home Sales",
@@ -451,24 +451,24 @@
       "name": "Michigan Consumer Sentiment",
       "label_ko": "미시간대 소비자심리",
       "axis": "Consumption",
-      "direction": "악화",
-      "strength": "완만",
+      "direction": "개선",
+      "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.547,
-      "signed_z": -0.547,
-      "actual": 55.2,
-      "previous": 49.5,
-      "ref_period": "2026-07-01",
-      "vs_prev": "개선",
+      "momentum_z": 0.456,
+      "signed_z": 0.456,
+      "actual": 51.7,
+      "previous": 55.2,
+      "ref_period": "2026-08-01",
+      "vs_prev": "악화",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 53.233,
-        "recent_avg": 49.833
+        "prior_avg": 49.3,
+        "recent_avg": 52.133
       },
-      "trend_cell_ko": "악화(완만) · 3개월 평균 53.2 → 49.8",
-      "is_new": false
+      "trend_cell_ko": "개선(미미) · 3개월 평균 49.3 → 52.1",
+      "is_new": true
     },
     {
       "name": "CPI YoY",
@@ -635,85 +635,76 @@
       "name": "Michigan 1-Yr Inflation Exp",
       "label_ko": "미시간대 1년 기대인플레",
       "axis": "Inflation",
-      "direction": "재가속",
-      "strength": "완만",
+      "direction": "교착",
+      "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.756,
-      "signed_z": 0.756,
-      "actual": 4.2,
-      "previous": 4.6,
-      "ref_period": "2026-07-01",
+      "momentum_z": -0.224,
+      "signed_z": -0.224,
+      "actual": 4.0,
+      "previous": 4.2,
+      "ref_period": "2026-08-01",
       "vs_prev": "하락",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 3.967,
-        "recent_avg": 4.533
+        "prior_avg": 4.433,
+        "recent_avg": 4.267
       },
-      "trend_cell_ko": "재가속(완만) · 3개월 평균 3.97% → 4.53%",
-      "is_new": false
+      "trend_cell_ko": "교착 · 3개월 평균 4.43% → 4.27%",
+      "is_new": true
     }
   ],
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "New Home Sales"
+    "Durable Goods Orders MoM",
+    "Michigan Consumer Sentiment",
+    "Michigan 1-Yr Inflation Exp"
   ],
   "headline_releases": [
     {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
+      "key": "durable-goods",
+      "label": "내구재 주문",
       "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Continuing Jobless Claims",
-      "max_abs_z": 2.002,
+      "agency": "Census",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "primary": "Durable Goods Orders MoM",
+      "max_abs_z": 0.713,
       "indicators": [
         {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 197000.0,
-          "previous": 198000.0,
-          "ref_period": "2026-09-19",
-          "momentum_z": -0.355
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 202250.0,
-          "previous": 204000.0,
-          "ref_period": "2026-09-19",
-          "momentum_z": 0.342
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1719000.0,
-          "previous": 1717000.0,
-          "ref_period": "2026-09-12",
-          "momentum_z": -2.002
+          "name": "Durable Goods Orders MoM",
+          "axis": "Activity",
+          "actual": -0.02,
+          "previous": 0.86,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.713
         }
       ],
       "components": []
     },
     {
-      "key": "new-home-sales",
-      "label": "신규주택 판매",
+      "key": "michigan",
+      "label": "미시간대 소비자심리",
       "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
-      "primary": "New Home Sales",
-      "max_abs_z": 0.422,
+      "agency": "U. Michigan",
+      "url": "http://www.sca.isr.umich.edu/",
+      "primary": "Michigan Consumer Sentiment",
+      "max_abs_z": 0.456,
       "indicators": [
         {
-          "name": "New Home Sales",
-          "axis": "Activity",
-          "actual": 684.0,
-          "previous": 643.0,
+          "name": "Michigan Consumer Sentiment",
+          "axis": "Consumption",
+          "actual": 51.7,
+          "previous": 55.2,
           "ref_period": "2026-08-01",
-          "momentum_z": 0.422
+          "momentum_z": 0.456
+        },
+        {
+          "name": "Michigan 1-Yr Inflation Exp",
+          "axis": "Inflation",
+          "actual": 4.0,
+          "previous": 4.2,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.224
         }
       ],
       "components": []
@@ -753,8 +744,8 @@
       0.02
     ],
     "Durable Goods Orders MoM": [
-      "2026-07-01",
-      1.08
+      "2026-08-01",
+      -0.02
     ],
     "New Home Sales": [
       "2026-08-01",
@@ -773,8 +764,8 @@
       1.24
     ],
     "Michigan Consumer Sentiment": [
-      "2026-07-01",
-      55.2
+      "2026-08-01",
+      51.7
     ],
     "CPI YoY": [
       "2026-08-01",
@@ -805,8 +796,8 @@
       3.34
     ],
     "Michigan 1-Yr Inflation Exp": [
-      "2026-07-01",
-      4.2
+      "2026-08-01",
+      4.0
     ]
   }
 }

@@ -1,21 +1,21 @@
 {
-  "report_date": "2026-09-24",
+  "report_date": "2026-09-25",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "key": "durable-goods",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20674,
-      "path": "releases/claims.txt"
+      "chars": 23827,
+      "path": "releases/durable-goods.txt"
     },
     {
-      "key": "new-home-sales",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "key": "michigan",
+      "url": "http://www.sca.isr.umich.edu/",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 17925,
-      "path": "releases/new-home-sales.txt"
+      "chars": 2245,
+      "path": "releases/michigan.txt"
     }
   ]
 }

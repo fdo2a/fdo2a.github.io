@@ -1,22 +1,8 @@
 {
-  "report_date": "2026-09-24",
-  "generated": "2026-09-25 00:41 UTC",
+  "report_date": "2026-09-25",
+  "generated": "2026-09-26 09:10 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-michigan-20260925",
-      "kind": "release",
-      "name_ko": "미시간대 소비자심리",
-      "date": "2026-09-25",
-      "time_et": "10:00",
-      "time_kst": "2026-09-25 23:00",
-      "status": "confirmed",
-      "source": "U. Michigan 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "auction-20260928-13-Week",
       "kind": "auction",
@@ -219,36 +205,6 @@
       "bid_to_cover": 2.62,
       "indirect_pct": 50.1,
       "dealer_pct": 30.4
-    },
-    {
-      "date": "2026-09-17",
-      "term": "10-Year",
-      "type": "Note",
-      "offering_amt": 19000000000.0,
-      "high_yield": 2.653,
-      "bid_to_cover": 2.24,
-      "indirect_pct": 51.1,
-      "dealer_pct": 10.5
-    },
-    {
-      "date": "2026-09-17",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 90000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 3.02,
-      "indirect_pct": 59.0,
-      "dealer_pct": 22.8
-    },
-    {
-      "date": "2026-09-17",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 85000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.94,
-      "indirect_pct": 55.7,
-      "dealer_pct": 29.2
     }
   ],
   "blackout": {
