@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-26 09:05 KST",
+  "generated": "2026-09-26 10:03 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-09-25",
   "indices": {
@@ -1144,11 +1144,9 @@
     "reason": null,
     "key_configured": true,
     "degraded": false,
-    "requests": 37,
+    "requests": 36,
     "series_ok": 35,
     "failed": [],
-    "csv_rescued": [
-      "DGS30"
-    ]
+    "csv_rescued": []
   }
 }
