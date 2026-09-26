@@ -2,5 +2,93 @@
   "report_date": "2026-09-25",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "Systems Software",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Microsoft (MSFT)",
+          "change_pct": 3.66,
+          "close": 516.17,
+          "value": 19694052761.95
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 1.53,
+          "close": 341.07,
+          "value": 10215080826.36
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": 5.01,
+          "close": 562.89,
+          "value": 4899338398.5
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Interactive Media & Services",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Meta Platforms (META)",
+          "change_pct": -3.33,
+          "close": 751.66,
+          "value": 19357574454.39
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Automobile Manufacturers",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Tesla, Inc. (TSLA)",
+          "change_pct": -1.54,
+          "close": 372.11,
+          "value": 17089337132.26
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Electrical Components & Equipment",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Bloom Energy (BE)",
+          "change_pct": 8.27,
+          "close": 288.7,
+          "value": 5004412621.6
+        }
+      ]
+    }
+  ]
 }
