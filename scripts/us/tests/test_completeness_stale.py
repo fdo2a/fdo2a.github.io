@@ -27,3 +27,19 @@ def test_otherwise_complete_dataset_reports_nothing_missing():
 def test_a_pre_close_run_is_marked_incomplete():
     missing = cmd.completeness(_full_data(), _INTRADAY, naver_stale=True)
     assert 'yields/naver_close_not_posted' in missing
+
+
+def test_us_listed_rows_dated_before_the_session_are_incomplete():
+    # 2026-09-25 판: 섹터가 전부 09-24 날짜인데 complete:true 였다(codex #14).
+    data = _full_data()
+    for n in data['sectors']:
+        data['sectors'][n]['date'] = '2026-09-24'
+    missing = cmd.completeness(data, _INTRADAY, report_date='2026-09-25')
+    assert 'sectors/Technology/stale:2026-09-24' in missing
+
+
+def test_foreign_listed_and_24h_rows_may_carry_another_date():
+    data = _full_data()
+    data['memory']['SK hynix']['date'] = '2026-09-23'      # 한국 추석 휴장
+    data['fx']['USD/JPY']['date'] = '2026-09-26'
+    assert cmd.completeness(data, _INTRADAY, report_date='2026-09-25') == []

@@ -51,3 +51,10 @@ def test_summarizer_skips_items_that_already_have_a_summary(tmp_path):
     items = [{'guid': 'a', 'body_chars': 2, 'body_file': 'x.txt', 'summary_ko': '예전 요약'}]
     assert NS.summarize_items(items, str(tmp_path), model='m', client=Fake, log=lambda *a: None) == 0
     assert items[0]['summary_ko'] == '예전 요약' and not calls
+
+
+def test_a_day_with_some_unsummarised_bodies_is_not_frozen(tmp_path):
+    # codex #5: 요약이 한 건이라도 있으면 동결해, 실패한 나머지가 영영 재시도되지 않던 길.
+    p = _write(tmp_path, [{'guid': 'a', 'summary_ko': '요약', 'body_chars': 300},
+                          {'guid': 'b', 'body_chars': 400, 'summary_note': '호출 실패'}])
+    assert not F.frozen(p)

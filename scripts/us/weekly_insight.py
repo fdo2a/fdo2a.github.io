@@ -80,7 +80,10 @@ def _week_last(rows):
 
 def _baseline(rows, before, bp=False):
     """`before`(그 주 시작일) 이전 주간 변화들. 이번 주는 섞지 않는다."""
-    wk = [(d, v) for d, v in _week_last(rows) if d < before]
+    # 날짜가 아니라 ISO 주로 자른다 — 월요일 휴장 주에 집계가 화요일에 시작하면 24시간 시장(환율)의
+    # 그 주 월요일 값이 「과거」로 섞였다(codex 2026-09-27 #9).
+    cut = date.fromisoformat(before).isocalendar()[:2]
+    wk = [(d, v) for d, v in _week_last(rows) if date.fromisoformat(d).isocalendar()[:2] < cut]
     ch = []
     for (_, a), (_, b) in zip(wk, wk[1:]):
         if bp:
@@ -264,6 +267,16 @@ _DAILY_SERIES = (('equities', 'S&P 500', '%'), ('bonds', '10년물', 'bp'),
                  ('fx', '달러지수', '%'), ('energy', 'WTI', '%'))
 
 
+def _business_days_between(d0, d1):
+    a, b = date.fromisoformat(d0), date.fromisoformat(d1)
+    n, d = 0, a + timedelta(days=1)
+    while d < b:
+        if d.weekday() < 5:
+            n += 1
+        d += timedelta(days=1)
+    return n
+
+
 def daily_record(agg):
     """그 주 날짜별 주요 가격 — 집계의 일별 계열(발행본 종가)에서. 헤드라인을 다시 싣지 않는다
     (발행된 헤드라인의 표현을 고칠 수 없는데 문체 게이트는 표까지 본다)."""
@@ -275,7 +288,11 @@ def daily_record(agg):
             if d1 < agg['start_date'] or d1 > agg['end_date'] or a in (None, 0) or b is None:
                 continue
             chg = round((b - a) * 100, 1) if unit == 'bp' else round((b / a - 1) * 100, 2)
-            days.setdefault(d1, {'date': d1})[label] = {'level': round(b, 3), 'chg': chg, 'unit': unit}
+            cell = {'level': round(b, 3), 'chg': chg, 'unit': unit}
+            # 사이에 영업일이 비면 「전일 대비」가 아니다(codex #11) — 비교한 날을 적는다.
+            if _business_days_between(d0, d1) > 0:
+                cell['since'] = d0
+            days.setdefault(d1, {'date': d1})[label] = cell
     return [days[d] for d in sorted(days)]
 
 
@@ -443,7 +460,11 @@ def _t_daily(diag):
             if not c:
                 continue
             lvl = f"{c['level']:.3f}%" if unit == 'bp' else f"{c['level']:,.2f}"
-            rows.append([_e(r['date']), lvl, _c(c['chg'], unit, 1 if unit == 'bp' else 2, invert=unit == 'bp')])
+            chg = _c(c['chg'], unit, 1 if unit == 'bp' else 2, invert=unit == 'bp')
+            if c.get('since'):
+                _, m, d = c['since'].split('-')
+                chg += f' ({int(m)}월 {int(d)}일 대비)'
+            rows.append([_e(r['date']), lvl, chg])
         if rows:
             out.append(f'<h3>{klass} — {_e(label)}</h3>' + _table(['날짜', '종가', '전일 대비'], rows))
     return ''.join(out) + '<p class="caption">그날 발행본에 실린 종가 기준.</p>'

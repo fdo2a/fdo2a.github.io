@@ -59,3 +59,34 @@ def test_unreachable_remote_does_not_proceed(tmp_path):
     env = dict(os.environ, RUN_LOCK_REMOTE='nowhere')
     r = subprocess.run(['bash', str(SCRIPT), 'acquire', 'x'], cwd=a, env=env, capture_output=True, text=True)
     assert r.returncode == 4
+
+
+def test_release_does_not_delete_a_lock_someone_else_took_over(tmp_path):
+    # codex #2: A 가 만료된 뒤 B 가 넘겨받았는데 A 가 release 하면 B 의 잠금이 지워지던 길.
+    a, b = _setup(tmp_path)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert 'took over' in _run(b, 'acquire', 'k', '0').stdout
+    assert 'left it alone' in _run(a, 'release', 'k').stdout
+    c = _clone(tmp_path, 'c', tmp_path / 'remote.git')
+    assert _run(c, 'acquire', 'k').returncode == 3          # B 의 잠금이 살아 있다
+
+
+def test_renew_keeps_a_live_holder_from_being_taken_over(tmp_path):
+    # codex #1: 오래 걸리는 런이 갱신하면 stale 기준이 다시 시작된다.
+    a, b = _setup(tmp_path)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert _run(b, 'acquire', 'k', '60').returncode == 3
+
+
+def test_renew_fails_once_the_lock_is_lost(tmp_path):
+    a, b = _setup(tmp_path)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(b, 'acquire', 'k', '0').returncode == 0
+    assert _run(a, 'renew', 'k').returncode == 3
+
+
+def test_key_is_a_session_date():
+    import re
+    r = subprocess.run(['bash', str(SCRIPT), 'key', 'us'], capture_output=True, text=True)
+    assert r.returncode == 0 and re.fullmatch(r'us-\d{4}-\d{2}-\d{2}\n', r.stdout)

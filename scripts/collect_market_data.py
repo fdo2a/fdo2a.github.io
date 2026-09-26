@@ -623,16 +623,32 @@ def render_curve(yields, path):
     plt.close(fig)
 
 
-def completeness(data, intraday, naver_stale=False):
+# 미국 상장 계열은 그날 세션 종가여야 한다. 2026-09-25 판이 섹터·스타일·메모리를 09-24
+# 날짜로 싣고도 complete:true 였다 — 수집 시각에 야후에 금요일 종가가 아직 없었고, 이 검사는
+# 행이 있는지만 봤다. 그 판이 멱등 가드에 걸리면 낡은 값이 그날의 정본으로 굳는다(codex 검토
+# 2026-09-27 #14). 환율·원자재(24시간 시장)와 한국·일본 상장 종목은 날짜가 정상적으로 다르다.
+DATE_CHECKED_GROUPS = ('indices', 'sectors', 'memory', 'ai_infra')
+
+
+def _us_listed(ticker):
+    return '.' not in ticker and '=' not in ticker
+
+
+def completeness(data, intraday, naver_stale=False, report_date=None):
     missing = []
+    report_date = report_date or data.get('report_date')
     if naver_stale:
         # 국채 현물 마감 전에 뜬 회차. 이 판을 complete 로 커밋하면 마감 뒤 회차가
         # 멱등 가드에 막혀 그날 커브가 영영 전일치로 남는다.
         missing.append('yields/naver_close_not_posted')
     for group, pairs in GROUPS:
-        for name, _ in pairs:
-            if data[group].get(name) is None:
+        for name, ticker in pairs:
+            row = data[group].get(name)
+            if row is None:
                 missing.append(f'{group}/{name}')
+            elif (report_date and group in DATE_CHECKED_GROUPS and _us_listed(ticker)
+                  and row.get('date') and row['date'] != report_date):
+                missing.append(f'{group}/{name}/stale:{row["date"]}')
     for t in ['2Y', '5Y', '10Y', '30Y']:
         y = data['yields'].get(t)
         if y is None or y.get('level') is None:
@@ -868,7 +884,7 @@ def main():
     if y.get('5Y') and y.get('30Y'):
         data['spread_5s30s_bp'] = (y['30Y']['level'] - y['5Y']['level']) * 100
 
-    missing = completeness(data, intraday, naver_stale=naver_stale)
+    missing = completeness(data, intraday, naver_stale=naver_stale, report_date=report_date)
     data['complete'] = not missing
     data['missing'] = missing
 

@@ -93,3 +93,20 @@ def test_analysis_sections_need_a_commentary_box():
     j = html.index('</section>', i)
     out = G.check(html[:i] + html[i:j].replace(BOX, '') + html[j:], _diag())
     assert any('flows' in v and '해석' in v for v in out)
+
+
+def test_standalone_jo_is_checked_as_a_unit_amount():
+    # codex #13: 「2조 엔」은 작은 정수 2 로 면제되던 길.
+    out = G.check(_html(flows='거주자는 해외채권을 2조 엔 순매도했다.'), _diag())
+    assert any('20000' in v for v in out)
+
+
+def test_direction_is_checked_outside_the_flows_section_too():
+    out = G.check(_html(scenario='인상 지속과 인상 중단 가운데, 해외채권을 순매수한 흐름이 인상 지속을 받친다.'),
+                  _diag())
+    assert any('해외채권' in v for v in out)
+
+
+def test_spread_legs_too_far_apart_are_blocked():
+    d = _diag(core={'usjp2y': {'asof_gap_days': 5, 'asof_us': '2026-09-25', 'asof_jp': '2026-09-20'}})
+    assert any('기준일' in v and '5일' in v for v in G.check(_html(), d))

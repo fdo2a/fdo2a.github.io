@@ -167,7 +167,7 @@ _CLASS_ATTR = re.compile(r'\bclass\s*=\s*["\']([^"\']*)["\']', re.I)
 
 # 뉴스 블록의 요약 문단(`expand_news_items.py` 가 채운 수집 요약). 문장을 쓴 것은 수집 단계의
 # 요약기라 작성자가 어미 반복을 고칠 수 없다. 원문 그대로인지는 뉴스 게이트가 본다(2026-09-26).
-_SUMMARY_ATTR = re.compile(r'\bdata-summary\s*=')
+_SUMMARY_ATTR = re.compile(r'\bdata-summary="')   # 확장기가 만드는 꼴만 면제(codex #6)
 
 
 def _is_meta_paragraph(attrs):

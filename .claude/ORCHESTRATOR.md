@@ -12,21 +12,18 @@ The repository fdo2a/fdo2a.github.io is cloned into your workspace as a source (
 
 A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects canonical yfinance/FRED data in a network-open runner and commits `data/market_data.json`, `data/intraday.json`, `data/econ_indicators.json`, `data/sector_performance.html`, `data/yield_curve.png` before this routine fires. **This is the primary data path** — the routine's own environment blocks finance hosts (Yahoo/FRED/exchanges all 403), so do NOT try to fetch them here.
 
-0. **선점 잠금 — 가장 먼저, 다른 파일을 읽기 전에.** 이 루틴은 푸시 웹훅(두 벌)과 예약 크론으로 하루에 여러 번 뜬다. 2026-09-26 에는 새벽에 10번 떴고 넷이 동시에 작성하다 5시간 한도를 함께 태워 그날 글이 나가지 못했다. 아래 가드는 중복 **발행**만 막고 병렬 **작성**은 못 막는다. 레포 클론으로 들어가자마자:
+0. **선점 잠금 — 가장 먼저, 다른 파일을 읽기 전에.** 이 루틴은 푸시 웹훅과 예약 크론으로 하루에 여러 번 뜬다. 2026-09-26 에는 새벽에 10번 떴고 넷이 동시에 작성하다 5시간 한도를 함께 태워 그날 글이 나가지 못했다. 아래 가드는 중복 **발행**만 막고 병렬 **작성**은 못 막는다. 레포 클론으로 들어가자마자:
 
    ```bash
-   bash scripts/ci/run_lock.sh acquire "us-$(TZ=Asia/Seoul date +%F)" 150
+   bash scripts/ci/run_lock.sh key us > /tmp/us-lock-key && cat /tmp/us-lock-key
+   bash scripts/ci/run_lock.sh acquire "$(cat /tmp/us-lock-key)" 120
    ```
 
-   **exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고, PushNotification 도 보내지 말고 「locked by another run」만 보고하고 끝낸다.** exit 4(원격 확인 실패)도 진행하지 않고 그 사실을 보고한다. exit 0 이면 아래로 진행한다.
+   키는 뉴욕 기준 세션 날짜라 KST 자정을 넘겨도 같은 세션은 같은 이름이다. **이후 모든 잠금 명령은 `/tmp/us-lock-key` 의 이름을 쓴다** — 다시 계산하지 않는다. **exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고, PushNotification 도 보내지 말고 「locked by another run」만 보고하고 끝낸다.** exit 4(원격 확인 실패)도 진행하지 않고 그 사실을 보고한다. exit 0 이면 아래로 진행한다.
 
-   **쓰지 않고 끝나는 모든 경로에서는 끝내기 전에 잠금을 푼다** — 멱등 가드로 중단(already published), 수집 뒤에도 데이터가 기대 세션보다 이르거나 불완전해 중단하는 경우 전부:
+   **살아 있다는 표시**: STEP 2 작성 시작 전과 STEP 3 발행 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"` 를 한다. **renew 가 exit 3 이면 잠금을 잃은 것이다 — 다른 런이 넘겨받았으니 커밋·푸시하지 말고 끝낸다.** 갱신 없이 120분이 지나면 다음 런이 넘겨받는다(한도로 죽은 런의 잠금).
 
-   ```bash
-   bash scripts/ci/run_lock.sh release "us-$(TZ=Asia/Seoul date +%F)"
-   ```
-
-   안 풀면 새벽 웹훅 런이 잡아 둔 잠금이 08:30 정규 런을 막는다. 작성·발행까지 간 런은 풀지 않는다. 작성 도중 한도로 죽은 런의 잠금은 150분 뒤 다음 런이 넘겨받는다(`run_lock.sh` 기본값은 180 — 이 루틴은 `acquire "us-…" 150` 으로 부른다). **사람이 띄운 복구 런**은 `acquire "us-<날짜>" 0` 으로 즉시 넘겨받는다.
+   **쓰지 않고 끝나는 모든 경로에서는 끝내기 전에 잠금을 푼다** — 멱등 가드로 중단(already published), 수집 뒤에도 데이터가 기대 세션보다 이르거나 불완전해 중단하는 경우 전부: `bash scripts/ci/run_lock.sh release "$(cat /tmp/us-lock-key)"`. 해제는 자기가 잡은 잠금만 지운다. 작성·발행까지 간 런은 풀지 않는다. **사람이 띄운 복구 런**은 `acquire <키> 0` 으로 즉시 넘겨받는다.
 
 0-1. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` 이 이미 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
 

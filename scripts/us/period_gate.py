@@ -205,6 +205,23 @@ def _check_provenance(text, agg):
     return v
 
 
+_TABLE_RE = re.compile(r'<table\b.*?</table>', re.S)
+
+
+def _strip_generated_tables(html, insight, agg):
+    """조립기가 진단·집계에서 만든 표와 **글자까지 같은** 표만 뺀다. 작성자가 따로 넣은 표는
+    남겨 이름-수치 검사를 받게 한다(codex 2026-09-27 #8 — 표 전체를 빼면 연준 선물 금리를
+    S&P 500 칸에 적어도 진단 어딘가에 그 숫자가 있다는 이유로 통과했다)."""
+    from us.weekly_insight import render_tables
+
+    def norm(fragment):
+        return re.sub(r'\s+', ' ', body_text(fragment)).strip()
+
+    expected = {norm(t) for frag in render_tables(insight, agg).values()
+                for t in _TABLE_RE.findall(frag)}
+    return _TABLE_RE.sub(lambda m: ' ' if norm(m.group(0)) in expected else m.group(0), html)
+
+
 def check(html, agg, scorecard, recap, span, research_summary=None, insight=None):
     # Caller derives this object from the verified ledger, never an author-edited
     # JSON. Only the exact generated block gets its own numeric provenance.
@@ -319,7 +336,7 @@ def check(html, agg, scorecard, recap, span, research_summary=None, insight=None
     # 인사이트 형식의 표는 조립기가 집계·진단에서 만든다 — 작성자가 옮긴 숫자가 아니다. 표 안에서는
     # 「이름 바로 뒤 수치」가 다른 행·다른 기간의 값이라(부록 일별 기록의 WTI 일간 등락) 이 검사가
     # 오탐한다. 산문에만 건다. 수치 자체의 출처 대조(허용 집합)는 표에도 그대로 걸린다.
-    prov_text = body_text(re.sub(r'<table\b.*?</table>', ' ', html, flags=re.S)) \
+    prov_text = body_text(_strip_generated_tables(html, insight, agg)) \
         if insight is not None else text
     v += _check_provenance(prov_text, agg)
 

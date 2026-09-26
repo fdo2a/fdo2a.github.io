@@ -75,22 +75,32 @@ def expand(body, news):
     return PLACEHOLDER.sub(repl, body), errors
 
 
-_SUMMARY_P = re.compile(r'<p\b[^>]*\bdata-summary="([^"]*)"[^>]*>(.*?)</p>', re.S)
+# 표시가 어떤 따옴표 꼴이든 찾는다. 문체 면제는 확장기가 만드는 큰따옴표 꼴에만 주므로(style.py),
+# 다른 꼴로 표시한 문단은 면제 없이 문체 검사도 받고 여기서 원문 대조도 받는다(codex #6).
+_SUMMARY_P = re.compile(
+    r"""<p\b[^>]*?\bdata-summary\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))[^>]*>(.*?)</p>""",
+    re.S | re.I)
 _TAG = re.compile(r'<[^>]+>')
 
 
-def _norm(s):
-    return re.sub(r'\s+', ' ', _html.unescape(_TAG.sub('', s))).strip()
+def _ws(s):
+    return re.sub(r'\s+', ' ', s).strip()
 
 
 def summary_violations(html, news):
-    """`data-summary` 문단이 요약 원문(+ 연결 한 문장)인지. 문체 검사 면제를 산문 은신처로 쓰지 못하게."""
+    """`data-summary` 문단이 요약 원문(+ 연결 한 문장)인지. 문체 검사 면제를 산문 은신처로 쓰지 못하게.
+
+    원문 요약은 **해제하지 않는다** — 확장기는 원문을 한 번 이스케이프해 넣으므로, 생성 문단만
+    한 번 해제하면 화면 글자끼리 같아진다. 둘 다 해제하면 원문에 글자 그대로 있던 `&amp;` 가
+    어긋난다(codex #7).
+    """
     items = {str(it.get('guid')): it for it in (news or {}).get('items') or []}
     v = []
-    for guid, inner in _SUMMARY_P.findall(html or ''):
+    for m in _SUMMARY_P.finditer(html or ''):
+        guid = next(g for g in m.groups()[:3] if g is not None)
         it = items.get(guid)
-        want = _norm((it or {}).get('summary_ko') or '')
-        got = _norm(inner)
+        want = _ws((it or {}).get('summary_ko') or '')
+        got = _ws(_html.unescape(_TAG.sub('', m.group(4))))
         if not want or not got.startswith(want):
             v.append(f'`data-summary="{guid}"` 문단이 수집 요약 원문이 아니다 — 이 표시는 '
                      'expand_news_items.py 가 채운 문단에만 붙는다. 직접 쓴 문단에서는 뺀다')

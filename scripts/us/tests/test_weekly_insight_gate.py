@@ -101,3 +101,16 @@ def test_provenance_ignores_generated_tables_but_still_checks_prose():
     stripped = body_text(re.sub(r'<table\b.*?</table>', ' ', table, flags=re.S))
     assert _check_provenance(stripped, agg) == []
     assert _check_provenance(body_text(prose), agg)      # 산문으로 쓰면 여전히 잡는다
+
+
+def test_generated_tables_are_exempt_but_a_hand_written_table_is_checked():
+    # codex #8: 인사이트 모드에서 표 전체를 이름-수치 검사에서 빼면 작성자가 넣은 표도 빠졌다.
+    from us import weekly_insight as I
+    from us.period_gate import _strip_generated_tables
+    from us.tests.test_weekly_insight import _agg, _snap
+    agg, snap = _agg(), _snap()
+    diag = I.build(agg, snap, {'events': []}, [])
+    gen = I.render_tables(diag, agg)['performance']
+    hand = '<table><tr><td>S&P 500</td><td>+4.035%</td></tr></table>'
+    out = _strip_generated_tables(gen + hand, diag, agg)
+    assert hand in out and '<table' not in out.replace(hand, '')   # 생성 표는 모두 빠지고 손 표만 남는다

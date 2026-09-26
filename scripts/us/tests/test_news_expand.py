@@ -58,3 +58,23 @@ def test_prose_hidden_under_data_summary_is_blocked_by_the_news_gate():
     fake = ('<section><h2>오늘의 뉴스</h2><div class="news-item" data-news="g1">'
             '<p class="news-head">제목</p><p data-summary="g1">작성자가 지어낸 문장이다.</p></div></section>')
     assert any('data-summary' in v for v in news_check(fake, NEWS, '2026-09-25'))
+
+
+def test_single_quoted_marker_is_neither_exempt_nor_unchecked():
+    # codex #6: 작은따옴표 꼴로 표시하면 문체 면제는 받고 원문 대조는 피하던 길.
+    fake = ('<section><h2>오늘의 뉴스</h2><div class="news-item" data-news="g1">'
+            "<p class=\"news-head\">제목</p><p data-summary='g1'>지어낸 문장이다.</p></div></section>")
+    assert any('data-summary' in v for v in news_check(fake, NEWS, '2026-09-25'))
+    wrap = '<body data-register="da">{}</body>'
+    runs = ('<p data-summary=\'g1\'>연준이 결정했다. 시장이 반영했다. 금리는 상승했다. '
+            '주가는 하락했다.</p>')
+    assert _runs(wrap.format(runs))
+
+
+def test_literal_entity_in_a_summary_survives_expansion_and_the_gate():
+    # codex #7: 요약에 글자 그대로 &amp; 가 있으면 확장 뒤 게이트가 거절하던 길.
+    news = {'report_date': '2026-09-25', 'items': [
+        {'guid': 'e1', 'source': 'CNBC', 'published': '2026-09-25T00:00:00+00:00',
+         'summary_ko': 'S&amp;P 지수와 R&D 투자가 늘었다.'}]}
+    out, errs = X.expand('<!--NEWS:e1|제목-->', news)
+    assert errs == [] and X.summary_violations(out, news) == []

@@ -110,6 +110,7 @@ def leg_spread(us, jp, start, end, label):
         return None if x is None or y is None else _bp(x - y)
     return {'label': label, 'value': round(a['value'] - b['value'], 3),
             'asof': min(a['asof'], b['asof']), 'asof_us': a['asof'], 'asof_jp': b['asof'],
+            'asof_gap_days': abs((date.fromisoformat(a['asof']) - date.fromisoformat(b['asof'])).days),
             'chg_1w_bp': diff(a['chg_1w'], b['chg_1w']), 'chg_4w_bp': diff(a['chg_4w'], b['chg_4w']),
             'pctile_1y': _pctile(spread_rows(us, jp), end)}
 

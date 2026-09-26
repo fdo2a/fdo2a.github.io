@@ -173,3 +173,17 @@ def test_only_tables_are_coloured_not_the_prose():
     assert '<p>금리가 +15.2bp 올랐다.</p>' in html
     perf = html[html.index('미 국채 금리'):]
     assert '<span class="neg">+10.0bp</span>' in perf     # 2년물 +10bp → 채권 쪽에서 손실
+
+
+def test_baseline_cuts_by_iso_week_not_by_date():
+    # codex #9: 집계가 화요일에 시작하는 휴일 주, 그 주 월요일 값이 기준선에 섞이던 길.
+    rows = [['2026-09-11', 100.0], ['2026-09-18', 101.0], ['2026-09-21', 150.0]]
+    assert I._baseline(rows, '2026-09-22') == pytest.approx([1.0])
+
+
+def test_daily_record_marks_a_gap_instead_of_calling_it_the_previous_day():
+    agg = _agg(start_date='2026-09-14', end_date='2026-09-18',
+               series={'equities': [['2026-09-11', 100.0], ['2026-09-14', 101.0], ['2026-09-17', 102.0]]})
+    rec = {r['date']: r for r in I.daily_record(agg)}
+    assert 'since' not in rec['2026-09-14']['S&P 500']
+    assert rec['2026-09-17']['S&P 500']['since'] == '2026-09-14'

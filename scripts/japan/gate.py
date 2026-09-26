@@ -32,9 +32,14 @@ _WEEKKEY = re.compile(r'\d{4}-W\d{2}')
 _JO_EOK = re.compile(r'(\d+)조\s*([\d,]+)억')
 
 
+_JO_ONLY = re.compile(r'(\d+(?:\.\d+)?)조(?!\s*[\d,]+억)')
+
+
 def _jo_eok(text):
-    """「1조 6,065억」 → 「16065억」. 조·억으로 쪼개 쓰면 원천값과 대조되지 않는다."""
-    return _JO_EOK.sub(lambda m: f'{int(m.group(1)) * 10000 + int(m.group(2).replace(",", ""))}억', text)
+    """「1조 6,065억」 → 「16065억」, 「2조」 → 「20000억」. 조·억으로 쪼개 쓰면 원천값과 대조되지
+    않고, 단독 「조」는 작은 정수로 면제되던 길이다(codex 2026-09-27 #13)."""
+    text = _JO_EOK.sub(lambda m: f'{int(m.group(1)) * 10000 + int(m.group(2).replace(",", ""))}억', text)
+    return _JO_ONLY.sub(lambda m: f'{float(m.group(1)) * 10000:g}억', text)
 
 
 def _figures(html):
@@ -89,13 +94,19 @@ def check(html, diag, news_texts=()):
         if '헤지' in p and '근사' not in p:
             v.append(f'헤지 후 금리를 말하는 문단에 「근사」가 없다 — 「{p[:40]}」')
     f = diag.get('flows') or {}
-    sents = [s.strip() for p in flows_prose + _prose(secs.get('core', '')) for s in _SENT.findall(p)]
+    # 방향 어휘는 모든 산문 절에서 본다 — flows·core 만 보면 시나리오 절의 반대 서술이 빠졌다(#13).
+    sents = [s.strip() for name in secs for p in _prose(secs[name]) for s in _SENT.findall(p)]
     v += _sign_check(sents, _BOND, f.get('res_foreign_ltdebt_word'),
                      f.get('res_foreign_ltdebt_4w_word'), '거주자 해외채권 방향')
     eq4 = f.get('nonres_jp_equity_4w')
     v += _sign_check(sents, _JPEQ, f.get('nonres_jp_equity_word'),
                      None if eq4 in (None, 0) else ('순매수' if eq4 > 0 else '순매도'),
                      '외국인 일본 주식 방향')
+
+    spread = (diag.get('core') or {}).get('usjp2y') or {}
+    if (spread.get('asof_gap_days') or 0) > 3:
+        v.append(f"미·일 2년 금리차의 두 다리 기준일이 {spread['asof_gap_days']}일 벌어졌다"
+                 f"(미 {spread.get('asof_us')} · 일 {spread.get('asof_jp')}) — 같은 주의 값으로 다시 수집한다(#12)")
 
     pos = diag.get('positioning')
     yen = ' '.join(_prose(secs.get('yen', '')))

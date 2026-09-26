@@ -176,6 +176,11 @@ def frozen(path):
             items = json.load(fh).get('items') or []
     except (OSError, ValueError):
         return False
+    # 본문을 받았는데 요약이 없는 기사가 남아 있으면 동결하지 않는다 — 첫 실행에서 일부 API 호출만
+    # 실패한 날이 그대로 굳던 길(codex 2026-09-27 #5). 다시 받을 때 기존 요약은 carry_summaries 가
+    # 재사용하므로, 이미 쓰인 요약의 문장은 바뀌지 않는다.
+    if any(it.get('body_chars') and not it.get('summary_ko') for it in items):
+        return False
     return any(it.get('summary_ko') for it in items)
 
 

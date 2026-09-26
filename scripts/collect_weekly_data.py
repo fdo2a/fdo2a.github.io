@@ -85,8 +85,12 @@ def collect(key, end, today=None):
         if rows:
             fred[sid] = rows
     fedfunds = []
-    for month, sym in W.fed_funds_contracts(today, months=7):
-        raw = _try(status, f'fedfunds:{sym}', lambda sym=sym: W.fetch_closes_volume(sym, '1mo'))
+    # 월물 선정과 두 비교 봉은 그 주 마지막 거래일(end)에 고정한다 — 수집일에 묶으면 다음 주에
+    # 같은 주를 다시 만들 때 값과 월물이 바뀐다(codex 2026-09-27 #10).
+    anchor = date.fromisoformat(end)
+    for month, sym in W.fed_funds_contracts(anchor, months=7):
+        raw = _try(status, f'fedfunds:{sym}', lambda sym=sym: W.fetch_closes_volume(sym, '3mo'))
+        raw = [r for r in (raw or []) if r[0] <= end]
         if raw:
             rows, copied = W.drop_copied_rows(raw)
             # 1주 전 = 마지막 행 날짜로부터 7일 이상 앞선 마지막 행. 행 개수로 세면 복사 행을
