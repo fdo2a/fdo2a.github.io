@@ -1,10 +1,10 @@
 {
-  "report_date": "2026-09-24",
+  "report_date": "2026-09-25",
   "regime": {
     "growth": -1,
     "inflation": -1,
     "since": "2026-09-01",
-    "thesis": "신규 실업수당 청구·신규주택 판매가 개선 방향으로 나오며 성장 쪽 점수가 -0.391에서 -0.303으로 올라왔지만 물가 쪽 점수(-0.526)는 그대로다. 두 점수 모두 아직 음(-)의 방향이라 좌표를 옮길 만큼은 아니었고 연착륙을 유지한다."
+    "thesis": "신규 실업수당 청구·신규주택 판매가 개선 방향으로 나오며 성장 쪽 점수가 -0.391에서 -0.303으로 올라왔지만 물가 쪽 점수(-0.526)는 그대로다. 두 점수 모두 아직 음(-)의 방향이라 좌표를 옮길 만큼은 아니었고 연착륙을 유지한다. 9월25일 기준으로는 내구재 주문 신규 발표로 성장축 점수가 -0.065까지, 물가축 점수는 -0.648까지 움직였으나 여전히 현재 좌표의 경계 안이다."
   },
   "policy_path": {
     "stance": "인상 리스크 우위가 한층 강화됨 — 동결은 소수 시나리오로 밀림",
@@ -66,12 +66,12 @@
     "Unemployment Rate": ["2026-08-01", 4.1],
     "Avg Hourly Earnings MoM": ["2026-08-01", 0.27],
     "Industrial Production MoM": ["2026-08-01", 0.02],
-    "Durable Goods Orders MoM": ["2026-07-01", 1.08],
+    "Durable Goods Orders MoM": ["2026-08-01", -0.02],
     "New Home Sales": ["2026-08-01", 684.0],
     "Existing Home Sales": ["2026-08-01", 3980000.0],
     "Real GDP Growth QoQ (ann.)": ["2026-04-01", 1.5],
     "Retail Sales MoM": ["2026-08-01", 1.24],
-    "Michigan Consumer Sentiment": ["2026-07-01", 55.2],
+    "Michigan Consumer Sentiment": ["2026-08-01", 51.7],
     "CPI YoY": ["2026-08-01", 3.71],
     "CPI MoM": ["2026-08-01", 0.4],
     "Core CPI YoY": ["2026-08-01", 2.76],
@@ -79,7 +79,7 @@
     "PPI Final Demand MoM": ["2026-08-01", 0.4],
     "PCE Price Index YoY": ["2026-07-01", 3.7],
     "Core PCE YoY": ["2026-07-01", 3.34],
-    "Michigan 1-Yr Inflation Exp": ["2026-07-01", 4.2]
+    "Michigan 1-Yr Inflation Exp": ["2026-08-01", 4.0]
   },
   "history": [
     {
@@ -103,7 +103,7 @@
   ],
   "axis_directions": {
     "Labor": "개선",
-    "Activity": "악화",
+    "Activity": "보합",
     "Consumption": "악화",
     "Inflation": "둔화"
   }
