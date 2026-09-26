@@ -2,7 +2,7 @@
 
 > 2026-09-26: 12:00 → 15:00. US 일간(08:30)이 5시간 한도를 태운 날 같은 창에서 0초 만에 죽었다 — 창을 뗐다.
 
-US·KR 주간 정리 2편을 발행한다. **그 주 발행본의 총정리**이지 새 취재가 아니다 — 웹 검색도 시세 재수집도 하지 않는다.
+US·KR 주간 2편을 발행한다. 웹 검색은 하지 않는다. **KR 은 그 주 발행본의 총정리**, **US 는 인사이트 형식**(2026-09-26 — 발행본 + 주간 스냅샷으로 계산한 진단, STEP 4). 시세는 다시 받지 않는다 — 표 끝값은 집계, 진단은 스냅샷에서 온다.
 
 **편집 계약:** 준비 단계에서 `.claude/DESK_REPORT.md`를 읽고 writer에게 경로를 전달한다. 기간 시황과 성과표를 유지하면서 현재 판단의 함의·기대와 결과의 차이·다음 확인 조건을 연결한다. 주간은 중요한 질문의 심화, 월간은 판단 방법의 복기다. 작성 전후 그 문서의 Editorial acceptance를 적용하고 기존 연구·수치·문체 검사를 모두 수행한다.
 
@@ -52,9 +52,25 @@ python3 scripts/build_scorecard.py --agg data/weekly/<KEY>.json --datadir data \
 
 아래 US 명령의 `<AS_OF>`는 같은 고정 시각이다. KR 실행에서는 모든 입력 경로와 `--research-root research/kr --market kr`를 함께 바꾼다. 윤문 전후 `check_research.py check`도 workflow대로 수행한다.
 
-## STEP 4 — US 주간 정리
+## STEP 4 — US 주간 인사이트
 
-`period-report-writer` 서브에이전트를 `market=us, span=weekly`로 부른다. 입력은 `recap_us.json`·`data/weekly/<KEY>.json`·`data/period_scorecard.json`·`data/history/*.jsonl`. 산출은 `weekly_<KEY>.html`.
+**4-0. 주간 스냅샷과 진단.** 요약이 아니라 진단을 쓰는 형식이라(2026-09-26) 원자료를 한 번 받는다 — 매일 수집이 아니다.
+
+```bash
+python3 scripts/collect_weekly_data.py --key <KEY> --end <END>
+python3 scripts/build_weekly_insight.py diag --key <KEY>
+```
+
+수집기가 실패 소스를 나열하면 **한 번만** 다시 돌린다. 여전히 실패면 진단 게이트가 막는다 — 못 받은 소스를 조용한 무변화로 쓰지 않는다. 스냅샷(`data/weekly_ext/<KEY>.json`)과 진단(`<KEY>.insight.json`)은 발행 커밋에 같이 넣는다(게이트 재현용).
+
+`period-report-writer` 서브에이전트를 `market=us, span=weekly`로 부른다(지시문 끝 「US 주간 인사이트」 절). 입력은 `recap_us.json`·`data/weekly/<KEY>.json`·`data/weekly_ext/<KEY>.insight.json`·`data/period_scorecard.json`·`data/history/*.jsonl`. 산출은 `weekly_<KEY>.body.html`·`weekly_<KEY>.meta.json`. 이어서 조립한다:
+
+```bash
+python3 scripts/build_weekly_insight.py assemble --key <KEY> \
+  --body weekly_<KEY>.body.html --meta weekly_<KEY>.meta.json --out weekly_<KEY>.html
+```
+
+조립이 exit 1 이면 목록을 writer 에게 그대로 돌려준다. 아래 US 게이트 명령에는 모두 `--insight data/weekly_ext/<KEY>.insight.json` 을 붙인다(humanize finalize 의 `--gate` 포함).
 
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 
@@ -62,7 +78,8 @@ python3 scripts/build_scorecard.py --agg data/weekly/<KEY>.json --datadir data \
 
 ```bash
 python3 scripts/check_period.py --html weekly_<KEY>.html --agg data/weekly/<KEY>.json \
-  --recap recap_us.json --scorecard data/period_scorecard.json --span weekly --research-root research/us --research-as-of <AS_OF> --market us
+  --recap recap_us.json --scorecard data/period_scorecard.json --span weekly --research-root research/us --research-as-of <AS_OF> --market us \
+  --insight data/weekly_ext/<KEY>.insight.json
 ```
 
 위반이 나오면 **목록을 그대로 writer에게 돌려주고 다시 돌린다.** 게이트를 우회하지 않는다.
@@ -75,7 +92,7 @@ python3 scripts/check_readability.py --strict $(pwd)/weekly_<KEY>.html
 python3 scripts/check_style.py $(pwd)/weekly_<KEY>.html
 ```
 
-**`check_weight.py`는 돌리지 않는다.** 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
+**`check_weight.py`는 돌리지 않는다.** (US 인사이트의 무게중심은 `--insight` 가 대신 본다 — 이례적 움직임 언급.) 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
 
 **STEP 4-b — AI 티 제거.** 일간과 같은 관문을 지난다. 원본은 손대지 않고 사본에서 윤문한다.
 
@@ -86,7 +103,7 @@ python3 scripts/humanize_prose.py extract weekly_<KEY>.humanizing.html --out pro
 python3 scripts/humanize_prose.py finalize weekly_<KEY>.humanizing.html --original weekly_<KEY>.html --payload prose_out.txt \
   --gate "python3 scripts/check_style.py {f}" \
   --gate "python3 scripts/check_readability.py --strict {f}" \
-  --gate "python3 scripts/check_period.py --html {f} --agg <AGG> --recap <RECAP> --scorecard data/period_scorecard.json --span weekly --research-root research/us --research-as-of <AS_OF> --market us"
+  --gate "python3 scripts/check_period.py --html {f} --agg <AGG> --recap <RECAP> --scorecard data/period_scorecard.json --span weekly --research-root research/us --research-as-of <AS_OF> --market us --insight data/weekly_ext/<KEY>.insight.json"
 ```
 
 전부 통과했을 때만 원본이 바뀐다. 실패하면 사본을 버리고 원본은 미수정으로 남는다.
@@ -99,9 +116,14 @@ STEP 4와 같되 `market=kr`, 입력 `recap_kr.json`·`kr/data/weekly/<KEY>.json
 
 ## STEP 6 — 목록·sitemap·커밋
 
+**목록에는 주 키(2026-W39)가 아니라 날짜를 보인다**(`--label`, 2026-09-26 사용자 지시 — 「W39 라고 하면 언제인지 알 수 없다」). 제목(`<title>`)에도 주 키 대신 「2026년 9월 21일~25일」 꼴을 쓴다.
+
+
 ```bash
-python3 scripts/update_archives.py --kind weekly --key <KEY> --title "<제목>" --headline "<헤드라인>"
-python3 scripts/update_archives.py --kind kr-weekly --key <KEY> --title "<제목>" --headline "<헤드라인>"
+LABEL=$(python3 -c "import sys;sys.path.insert(0,'.');from scripts.common.datelabel import range_ko;import json;a=json.load(open('data/weekly/<KEY>.json'));print(range_ko(a['start_date'],a['end_date']))")
+python3 scripts/update_archives.py --kind weekly --key <KEY> --title "<제목>" --headline "<헤드라인>" --label "$LABEL"
+KLABEL=$(python3 -c "import sys;sys.path.insert(0,'.');from scripts.common.datelabel import range_ko;import json;a=json.load(open('kr/data/weekly/<KEY>.json'));print(range_ko(a['start_date'],a['end_date']))")
+python3 scripts/update_archives.py --kind kr-weekly --key <KEY> --title "<제목>" --headline "<헤드라인>" --label "$KLABEL"
 ```
 
 `git add` → commit → push. push가 403이면 Claude GitHub App이 **Installed** 상태인지 확인한다(Authorized만으로는 안 된다).

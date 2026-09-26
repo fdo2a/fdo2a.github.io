@@ -1,0 +1,286 @@
+{
+ "key": "2026-W39",
+ "start_date": "2026-09-21",
+ "end_date": "2026-09-25",
+ "core": {
+  "jgb10y": {
+   "label": "JGB 10년",
+   "value": 3.073,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 9.2,
+   "chg_4w_bp": 14.3,
+   "pctile_1y": 100
+  },
+  "ust10y": {
+   "label": "미 국채 10년",
+   "value": 5.181,
+   "asof": "2026-09-25",
+   "chg_1w_bp": 17.1,
+   "chg_4w_bp": 45.1,
+   "pctile_1y": 100
+  },
+  "jgb2y": {
+   "label": "JGB 2년",
+   "value": 1.912,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 6.3,
+   "chg_4w_bp": 19.3,
+   "pctile_1y": 100
+  },
+  "usjp2y": {
+   "label": "미·일 2년 금리차",
+   "value": 2.952,
+   "asof": "2026-09-24",
+   "asof_us": "2026-09-25",
+   "asof_jp": "2026-09-24",
+   "chg_1w_bp": 4.1,
+   "chg_4w_bp": 33.1,
+   "pctile_1y": 100
+  },
+  "usdjpy": {
+   "value": 158.811,
+   "asof": "2026-09-25",
+   "pct_1w": 1.72,
+   "pct_4w": -0.32
+  }
+ },
+ "curve": [
+  {
+   "label": "JGB 2년",
+   "value": 1.912,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 6.3,
+   "chg_4w_bp": 19.3,
+   "pctile_1y": 100
+  },
+  {
+   "label": "JGB 5년",
+   "value": 2.4,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 9.5,
+   "chg_4w_bp": 18.8,
+   "pctile_1y": 100
+  },
+  {
+   "label": "JGB 10년",
+   "value": 3.073,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 9.2,
+   "chg_4w_bp": 14.3,
+   "pctile_1y": 100
+  },
+  {
+   "label": "JGB 20년",
+   "value": 3.887,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 7.5,
+   "chg_4w_bp": 8.1,
+   "pctile_1y": 100
+  },
+  {
+   "label": "JGB 30년",
+   "value": 4.115,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 7.1,
+   "chg_4w_bp": 3.1,
+   "pctile_1y": 99
+  },
+  {
+   "label": "JGB 40년",
+   "value": 4.103,
+   "asof": "2026-09-24",
+   "chg_1w_bp": 7.0,
+   "chg_4w_bp": 1.9,
+   "pctile_1y": 99
+  }
+ ],
+ "curve_10s30s": {
+  "label": "JGB 10-30년 차",
+  "value": 1.042,
+  "asof": "2026-09-24",
+  "chg_1w_bp": -2.1,
+  "chg_4w_bp": -11.2,
+  "pctile_1y": 1
+ },
+ "flows": {
+  "week_start": "2026-09-06",
+  "week_end": "2026-09-12",
+  "res_foreign_ltdebt_net": 10829,
+  "res_foreign_ltdebt_4w": -16065,
+  "net_selling_weeks_of_4": 2,
+  "nonres_jp_equity_net": -15228,
+  "nonres_jp_equity_4w": -15607,
+  "res_foreign_equity_net": 1692,
+  "unit": "억 엔",
+  "recent": [
+   {
+    "week_end": "2026-08-22",
+    "bonds": -19768,
+    "jp_equity": -7634
+   },
+   {
+    "week_end": "2026-08-29",
+    "bonds": -8240,
+    "jp_equity": 359
+   },
+   {
+    "week_end": "2026-09-05",
+    "bonds": 1114,
+    "jp_equity": 6896
+   },
+   {
+    "week_end": "2026-09-12",
+    "bonds": 10829,
+    "jp_equity": -15228
+   }
+  ],
+  "res_foreign_ltdebt_word": "순매수",
+  "res_foreign_ltdebt_4w_word": "순매도",
+  "nonres_jp_equity_word": "순매도"
+ },
+ "hedged": {
+  "approx": true,
+  "ust_10y": 5.181,
+  "bill_3m": 4.08,
+  "jgb_1y": 1.627,
+  "jgb_10y": 3.073,
+  "hedge_cost": 2.453,
+  "hedged_ust10": 2.728,
+  "gap_vs_jgb10": -0.345,
+  "asof": {
+   "ust": "2026-09-25",
+   "bill": "2026-09-24",
+   "jgb": "2026-09-24"
+  }
+ },
+ "positioning": {
+  "date": "2026-09-22",
+  "lev_net": 7423,
+  "lev_net_chg": -15747,
+  "pct_3y": 88,
+  "lev_net_chg_4w": 84465,
+  "nc_net": 71982
+ },
+ "equities": [
+  {
+   "name": "Nikkei 225",
+   "label": "닛케이 225",
+   "code": null,
+   "value": 66364.203,
+   "asof": "2026-09-25",
+   "pct_1w": 2.07,
+   "pct_4w": -0.06,
+   "rel_topix_4w": 0.33
+  },
+  {
+   "name": "TOPIX ETF",
+   "label": "TOPIX",
+   "code": "1306",
+   "value": 430.3,
+   "asof": "2026-09-25",
+   "pct_1w": 0.94,
+   "pct_4w": -0.39
+  },
+  {
+   "name": "TOPIX Banks ETF",
+   "label": "은행",
+   "code": "1615",
+   "value": 780.7,
+   "asof": "2026-09-25",
+   "pct_1w": 2.59,
+   "pct_4w": 1.53,
+   "rel_topix_4w": 1.92
+  },
+  {
+   "name": "J-REIT ETF",
+   "label": "REIT",
+   "code": "1343",
+   "value": 1877.0,
+   "asof": "2026-09-25",
+   "pct_1w": -0.48,
+   "pct_4w": -3.15,
+   "rel_topix_4w": -2.76
+  },
+  {
+   "name": "TOPIX Autos ETF",
+   "label": "자동차",
+   "code": "1622",
+   "value": 34370.0,
+   "asof": "2026-09-25",
+   "pct_1w": 0.15,
+   "pct_4w": -3.67,
+   "rel_topix_4w": -3.28
+  }
+ ],
+ "signals": {
+  "items": [
+   {
+    "key": "jgb2y_4w",
+    "label": "JGB 2년 4주 변화",
+    "value": 19.3,
+    "unit": "bp",
+    "threshold": 5.0,
+    "side": "A",
+    "why": "BOJ 정책 기대에 가장 민감하다. 오르면 추가 인상을 가격에 넣는 중"
+   },
+   {
+    "key": "usjp2y_4w",
+    "label": "미·일 2년 금리차 4주 변화",
+    "value": 33.1,
+    "unit": "bp",
+    "threshold": -10.0,
+    "side": "B",
+    "why": "좁혀지면(음수) 엔 캐리 매력이 줄어 인상 지속과 같은 방향"
+   },
+   {
+    "key": "usdjpy_4w",
+    "label": "엔·달러 4주 변화",
+    "value": -0.32,
+    "unit": "%",
+    "threshold": -1.5,
+    "side": "중립",
+    "why": "엔 강세(음수)가 인상 지속과 같은 방향"
+   },
+   {
+    "key": "banks_rel_4w",
+    "label": "은행주 − TOPIX 4주",
+    "value": 1.92,
+    "unit": "%p",
+    "threshold": 2.0,
+    "side": "중립",
+    "why": "금리 수혜 업종이 앞서면 시장이 금리 상승 지속에 베팅"
+   },
+   {
+    "key": "yen_lev_4w",
+    "label": "엔 레버리지 순포지션 4주 변화",
+    "value": 84465,
+    "unit": "계약",
+    "threshold": 0.0,
+    "side": "A",
+    "why": "엔 매수 쪽으로 늘면 인상 지속 쪽"
+   }
+  ],
+  "tally": {
+   "A": 2,
+   "B": 1,
+   "중립": 2
+  }
+ },
+ "next_events": [
+  {
+   "date": "2026-10-01",
+   "time_jst": "08:50",
+   "name_ko": "BOJ 9월 회의 의견 요약",
+   "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+   "watch": "추가 인상 조건을 어떻게 적었는가"
+  },
+  {
+   "date": "2026-10-01",
+   "time_jst": "08:50",
+   "name_ko": "단칸(9월 조사)",
+   "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+   "watch": "대기업 제조업·비제조업 업황, 설비투자 계획, 기업 물가 전망"
+  }
+ ],
+ "fetch_status": {}
+}

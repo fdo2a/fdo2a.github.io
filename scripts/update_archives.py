@@ -39,6 +39,8 @@ def main():
     ap.add_argument('--key', required=True)
     ap.add_argument('--title', required=True)
     ap.add_argument('--headline', default='')
+    ap.add_argument('--label', default='',
+                    help='목록에 보일 날짜 표시(주간·월간). 비우면 목록이 키(2026-W39)를 보인다')
     args = ap.parse_args()
 
     listing_rel, dir_rel = LISTINGS[args.kind]
@@ -48,8 +50,10 @@ def main():
         with open(listing, encoding='utf-8') as fh:
             entries = json.load(fh)
     field = ENTRY_KEY.get(args.kind, 'key')
-    entries = upsert_entry(entries, {field: args.key, 'title': args.title,
-                                     'headline': args.headline}, key=field)
+    entry = {field: args.key, 'title': args.title, 'headline': args.headline}
+    if args.label:
+        entry['label'] = args.label
+    entries = upsert_entry(entries, entry, key=field)
     os.makedirs(os.path.dirname(listing) or '.', exist_ok=True)
     with open(listing, 'w', encoding='utf-8') as fh:
         json.dump(entries, fh, ensure_ascii=False, indent=2)

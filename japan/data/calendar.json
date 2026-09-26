@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-09-26",
+  "note": "원출처에서 확인한 일정만 싣는다. 도쿄 CPI 공표일은 총무성 일정표에서 확인하지 못해 넣지 않았다(추측 금지).",
+  "events": [
+    {"date": "2026-10-01", "time_jst": "08:50", "name_ko": "BOJ 9월 회의 의견 요약", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "watch": "추가 인상 조건을 어떻게 적었는가"},
+    {"date": "2026-10-01", "time_jst": "08:50", "name_ko": "단칸(9월 조사)", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "watch": "대기업 제조업·비제조업 업황, 설비투자 계획, 기업 물가 전망"},
+    {"date": "2026-10-29", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(10월 29-30일)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "정책금리와 다음 인상의 조건"},
+    {"date": "2026-10-30", "time_jst": null, "name_ko": "BOJ 전망 보고서", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "물가·성장 전망 경로"},
+    {"date": "2026-11-10", "time_jst": "08:50", "name_ko": "BOJ 10월 회의 의견 요약", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "추가 인상 조건"},
+    {"date": "2026-12-17", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(12월 17-18일)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "정책금리"}
+  ]
+}

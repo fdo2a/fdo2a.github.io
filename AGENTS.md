@@ -9,7 +9,7 @@
 
 - **Work from `site/`.** The project root (`/Users/daeyoung/Desktop/AI/report`) is not a git repo. Every path and command below is relative to `site/`; run `git`, `gh`, and all scripts after `cd site`.
 - **Tests**: `cd site && python3 -m pytest scripts` — the whole tree, no `--ignore`. **Must run from `site/`**: from the project root it fails collection (`ModuleNotFoundError: scripts`) and ends with "N collected, 6 errors", and **the count alone looks like a pass, so read the `Interrupted` line.**
-- **Publish gates run in order**: `scripts/apply_readability.py` (typography override — must come before any check) → `scripts/apply_colors.py` (US sign colours) → per-pipeline gates (US `check_macro.py`, `check_fed.py`, `check_weight.py`, `check_price_context.py`, `check_session.py`, `check_sources.py`, `check_news.py`, `check_research.py`, `check_calendar.py`; thesis `check_thesis.py`; weekly/monthly `check_period.py`) → `check_readability.py --strict` → `check_style.py`. Note `check_style.py` takes a path only — it does not accept `--html`.
+- **Publish gates run in order**: `scripts/apply_readability.py` (typography override — must come before any check) → `scripts/apply_colors.py` (US sign colours) → per-pipeline gates (US `check_macro.py`, `check_fed.py`, `check_weight.py`, `check_price_context.py`, `check_session.py`, `check_sources.py`, `check_news.py`, `check_research.py`, `check_calendar.py`; thesis `check_thesis.py`; weekly/monthly `check_period.py` (US weekly adds `--insight`); Japan `check_japan.py`) → `check_readability.py --strict` → `check_style.py`. Note `check_style.py` takes a path only — it does not accept `--html`.
 - **Hand-edited posts**: `python3 scripts/verify_post.py posts/DATE.html` (compares the number multiset against git HEAD).
 - **Trigger data collection manually**: `gh workflow run collect-market-data.yml -f force=true` (same for `collect-kr-data.yml`, `collect-thesis-data.yml`).
 - **Check unreviewed posts**: `python3 scripts/review_gate.py pending --hook`. The SessionStart hook calls this automatically, but the hook ends in `|| true` and fails silently — run it by hand whenever the queue looks wrong. The 「조판만 바뀐 N건」 and 「판정 불가」 queues have their own handling — `.claude/REVIEW_GATE.md`. The hourly launchd runner (`review_gate.py run --correct`) reviews us/kr with Codex, then invokes Claude to verify, correct and republish from an isolated clone. Drafts in `reviews/pending/` alone never authorize `mark`; follow `.claude/REVIEW_GATE.md`.
@@ -34,7 +34,7 @@ Before you write new guidance, **decide where it goes.** `scripts/common/tests/t
 
 ## Pipeline index — which file to open when
 
-`scripts/{us,kr,thesis}/CLAUDE.md` attaches **automatically** when you touch a file in that directory. Everything below must be **opened explicitly**.
+`scripts/{us,kr,thesis,japan}/CLAUDE.md` attaches **automatically** when you touch a file in that directory. Everything below must be **opened explicitly**.
 
 | Pipeline | To change the routine | Report spec |
 |---|---|---|
@@ -42,6 +42,7 @@ Before you write new guidance, **decide where it goes.** `scripts/common/tests/t
 | KR close brief | `.claude/KR_ORCHESTRATOR.md` | `.claude/agents/kr-report-writer.md` |
 | Ticker thesis watch | `.claude/THESIS_ORCHESTRATOR.md` | pages are never hand-written — `scripts/thesis/content.py` |
 | Weekly / monthly | `.claude/WEEKLY_ORCHESTRATOR.md`, `MONTHLY_ORCHESTRATOR.md` | `.claude/agents/period-report-writer.md` |
+| Japan weekly | `.claude/JAPAN_ORCHESTRATOR.md` | `.claude/agents/japan-report-writer.md` |
 | Post-publish review | skill `review-gate` (`.claude/REVIEW_GATE.md`) | ledger `reviews/index.json` |
 
 

@@ -27,16 +27,16 @@ Publishes a US equity morning brief automatically every trading day. Full histor
 
 ## Weekly / monthly recap — US half
 
-- **Its character is the whole point**: a recap is a **summary of the reports published in that period**, not new reporting — **no web search, no re-collecting quotes.** The primary source is `posts/*.html`, and `scripts/us/recap_source.py` extracts only four things: date, headline, section summary, figures. **The one exception is the period aggregate** — a weekly index move means multiplying five daily moves, which is agent arithmetic, so the gate blocks it. Hence the split: **prose comes from the posts, the performance table from the aggregate files.**
+- **Character**: monthly and KR weekly summarise the period's posts (`recap_source.py`). **US weekly is an insight report** (2026-09-26): posts + snapshot diagnostics, prose only, tables assembled. No web search; period moves come only from the aggregates.
 - **Outputs**: Saturday `/weekly/<YYYY-Www>.html`; the day after month rollover `/monthly/<YYYY-MM>.html`. **The key is the period identifier, not a date** — `period.week_key()` (ISO week) and `month_key()`; the last trading day is `end_date`, a field, never the filename. The CLI does not validate the key format, so a stale `--key 2026-08-21` silently publishes a date URL.
 - **Before touching a path that has never published, confirm the trigger is actually registered** — the routine file existing is not the same as it being scheduled. (`monthly/` has never published.)
 - **Never re-fetch quotes**: aggregates roll up the **closes the posts themselves printed** (`data/history/market.jsonl`), so the last value in the performance table cannot disagree with the last post of the period.
 - **Carried-book history**: `data/history/macro.jsonl` is appended daily — the scorecards diff consecutive rows for direction changes. Backfill past entries with `scripts/backfill_history.py`.
 - **Scorecard**: `scripts/us/period_scorecard.py` is **a different thing** from `scorecard.py` in main. Only the sign convention is shared (**expanding bonds is a bet on falling yields, so the sign must be flipped for it to count as correct**). Insufficient sample yields `insufficient: true`, and **the gate then requires the post to state that the sample is short**.
-- **Gate `scripts/check_period.py`**: the only quotable numbers are the aggregate files and that period's posts. **No day in the period may be missing.** Apply **`mask_dates` first** so dates are not read as figures.
+- **Gate `scripts/check_period.py`**: quotable numbers are the aggregates, that period's posts and (US weekly, `--insight`) the diagnostics. **No day in the period may be missing.** Apply **`mask_dates` first** so dates are not read as figures.
 - **Authoring**: `.claude/agents/period-report-writer.md`.
 - **Pipeline**: `.claude/WEEKLY_ORCHESTRATOR.md` and `MONTHLY_ORCHESTRATOR.md`. **Most monthly runs must do nothing and exit** — STEP 0 confirms it is not a rollover and stops. The monthly scorecard uses `--spans 3,12 --no-append`.
-- **When changing this**: read `docs/superpowers/specs/2026-08-23-period-reports-design.md` before touching `recap_source.py`, `period_scorecard.py`, or `check_period.py` — the three gate holes, the difference between the two scorecards, and the short-sample rule are there. The KR half lives in `scripts/kr/CLAUDE.md`.
+- **When changing this**: read `docs/superpowers/specs/2026-08-23-period-reports-design.md` before touching `recap_source.py`, `period_scorecard.py`, or `check_period.py` — the three gate holes, the difference between the two scorecards, and the short-sample rule are there; US weekly insight: `docs/superpowers/specs/2026-09-26-weekly-insight-and-japan-design.md` before `weekly_insight*.py`. The KR half lives in `scripts/kr/CLAUDE.md`.
 
 ## Center of gravity: market/price > judgment/positioning (US body of rule 6 in site/AGENTS.md)
 

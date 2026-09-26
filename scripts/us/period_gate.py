@@ -205,7 +205,7 @@ def _check_provenance(text, agg):
     return v
 
 
-def check(html, agg, scorecard, recap, span, research_summary=None):
+def check(html, agg, scorecard, recap, span, research_summary=None, insight=None):
     # Caller derives this object from the verified ledger, never an author-edited
     # JSON. Only the exact generated block gets its own numeric provenance.
     if research_summary is not None:
@@ -294,6 +294,10 @@ def check(html, agg, scorecard, recap, span, research_summary=None):
                  '총정리 전에 원본을 확인할 것')
 
     allowed = _numbers(agg) | _numbers(scorecard or {})
+    # US 주간 인사이트: 코드가 계산한 진단(z·상관·포지션·선물 내재금리)도 인용 소스다.
+    # 진단 파일은 스냅샷과 집계에서 결정론적으로 나오고, 작성자가 손대지 않는다.
+    if insight is not None:
+        allowed |= _numbers(insight)
     for post in ((recap or {}).get('posts') or []):
         allowed |= _numbers(post.get('figures') or [])
     allowed |= {str(y) for y in range(2020, 2036)}
@@ -312,7 +316,16 @@ def check(html, agg, scorecard, recap, span, research_summary=None):
         v.append(f'어느 원본에도 없는 수치가 본문에 있다: {n} — 창작 금지. '
                  '집계 파일이나 그 기간 발행본에 실린 값만 인용할 것')
 
-    v += _check_provenance(text, agg)
+    # 인사이트 형식의 표는 조립기가 집계·진단에서 만든다 — 작성자가 옮긴 숫자가 아니다. 표 안에서는
+    # 「이름 바로 뒤 수치」가 다른 행·다른 기간의 값이라(부록 일별 기록의 WTI 일간 등락) 이 검사가
+    # 오탐한다. 산문에만 건다. 수치 자체의 출처 대조(허용 집합)는 표에도 그대로 걸린다.
+    prov_text = body_text(re.sub(r'<table\b.*?</table>', ' ', html, flags=re.S)) \
+        if insight is not None else text
+    v += _check_provenance(prov_text, agg)
+
+    if insight is not None:
+        from us.weekly_insight_gate import check as insight_check
+        v += insight_check(html, insight)
 
     ru = (scorecard or {}).get('rollup') or {}
     if any((ru.get(k) or {}).get('insufficient') for k in ru):

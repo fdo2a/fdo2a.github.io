@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="일본 시장 주간 리포트 — BOJ 정책, JGB 금리, 엔화와 미·일 금리차, 일본 자금의 해외채권 매매, 엔 투기 포지션, 일본 주식으로 금리 정상화의 지속 가능성을 매주 점검합니다.">
+<link rel="canonical" href="https://fdo2a.github.io/japan/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Japan Market Weekly — 일본 시장 주간">
+<meta property="og:description" content="BOJ·JGB·엔화·자금흐름으로 일본의 금리 정상화를 매주 점검하는 주간 리포트">
+<meta property="og:url" content="https://fdo2a.github.io/japan/">
+<meta property="og:locale" content="ko_KR">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Blog","name":"Japan Market Weekly","url":"https://fdo2a.github.io/japan/","description":"일본 시장 주간 리포트","inLanguage":"ko"}
+</script>
+<title>일본 시장 주간 — BOJ·JGB·엔화·자금흐름 | Japan Market Weekly</title>
+<style>
+  :root {
+    --toss-blue: #0064FF;
+    --blue-bg: #E8F2FF;
+    --blue-deep: #003EA8;
+    --text: #191F28;
+    --text-2: #4E5968;
+    --text-3: #8B95A1;
+    --bg: #F2F4F6;
+    --border: #E5E8EB;
+    --border-subtle: #F2F4F6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: 'Toss Product Sans', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    word-break: keep-all;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
+  header.site { display: flex; align-items: baseline; gap: 10px; padding: 4px 2px 6px; }
+  header.site .brand { font-size: 24px; font-weight: 800; color: var(--toss-blue); letter-spacing: -0.025em; }
+  header.site .desc { font-size: 12px; color: var(--text-3); font-weight: 600; }
+  .menubar { display: flex; gap: 2px; flex-wrap: wrap; padding: 0 2px;
+             border-bottom: 1px solid var(--border); margin: 0 0 18px; }
+  .menubar a { font-size: 13px; font-weight: 700; color: var(--text-3); text-decoration: none;
+               padding: 9px 13px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+               white-space: nowrap; transition: color 100ms ease, border-color 100ms ease; }
+  .menubar a:hover { color: var(--text-2); }
+  .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
+  @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
+  /* 일간·주간·월간 — 메뉴바와 위계가 다르므로 별도 클래스 (2026-08-30) */
+  .subnav { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 0 14px; }
+  .subnav button { font-size: 13px; font-weight: 600; color: var(--text-3);
+    background: none; border: 0; border-bottom: 2px solid transparent;
+    padding: 8px 10px; cursor: pointer; font-family: inherit; }
+  .subnav button:hover { color: var(--text-2); }
+  .subnav button[aria-current="true"] { color: var(--toss-blue);
+    border-bottom-color: var(--toss-blue); }
+  .intro {
+    background: var(--blue-bg);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin: 14px 0 22px;
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .intro .small { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--blue-deep); }
+  h2.list-title { font-size: 15px; font-weight: 800; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+  h2.list-title::before { content: ''; width: 6px; height: 16px; border-radius: 3px; background: var(--toss-blue); }
+  .post-list { display: flex; flex-direction: column; gap: 8px; }
+  a.post {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 100ms ease, transform 100ms ease;
+  }
+  a.post:hover { border-color: var(--toss-blue); }
+  .post .date {
+    flex-shrink: 0;
+    background: var(--blue-bg); color: var(--toss-blue);
+    border-radius: 9999px;
+    font-size: 11.5px; font-weight: 800;
+    padding: 4px 12px;
+  }
+  .post .body { min-width: 0; }
+  .post .title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+  .post .headline {
+    font-size: 12px; color: var(--text-2); line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .post .arrow { margin-left: auto; color: var(--text-3); font-size: 18px; flex-shrink: 0; }
+  .empty { text-align: center; color: var(--text-3); font-size: 13px; font-weight: 600; padding: 40px 0; }
+  footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
+</style>
+<!-- adsense-loader -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>
+<!-- goatcounter --><script data-goatcounter="https://fdo2a.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <nav class="menubar">
+    <a href="../">미국 시장</a>
+    <a href="../kr/">한국 시장</a>
+    <a href="../thesis/">메모리 thesis</a>
+    <a href="../japan/" aria-current="page">일본 시장</a>
+  </nav>
+  <header class="site">
+    <span class="brand">Japan Market Weekly</span>
+    <span class="desc">일본 시장 주간 리포트 아카이브</span>
+  </header>
+  <div class="intro">
+    매주 일요일, 일본이 금리 정상화를 계속할 수 있는지를 BOJ → JGB → 엔화·자금흐름 → 일본 기업의 순서로 점검합니다.
+    <span class="small">JGB 2·10·30·40년 · 미·일 2년 금리차 · 엔·달러 · 일본 자금의 해외채권 매매 · 엔 투기 포지션 · 은행·REIT·수출주</span>
+  </div>
+  
+  <h2 class="list-title">전체 보고서</h2>
+  <div class="post-list" id="list">
+    <div class="empty">불러오는 중…</div>
+  </div>
+  <footer>
+    데이터: 일본 재무성(JGB 금리·대외 증권투자), CFTC, FRED, 일본은행, Yahoo Finance. 헤지 후 금리는 근사입니다.<br>
+    본 자료는 정보 제공 목적으로 작성된 것으로, 특정 종목의 매수·매도 권유가 아닙니다.<br>
+    <a href="../about.html" style="color:#8B95A1;">소개</a> · <a href="../privacy.html" style="color:#8B95A1;">개인정보처리방침</a>
+  </footer>
+</div>
+<script>
+(async () => {
+  const list = document.getElementById('list');
+  const days = ['일','월','화','수','목','금','토'];
+  const SOURCES = {
+    weekly:  { file: 'posts.json',  dir: 'posts/',  empty: '아직 발행된 주간 리포트가 없습니다.' }
+  };
+  const cache = {};
+
+  function label(span, item) {
+    if (span === 'daily') {
+      const d = new Date(item.date + 'T00:00:00');
+      return `${item.date} (${days[d.getDay()]})`;
+    }
+    return item.label || item.key || item.date || '';
+  }
+
+  async function load(span) {
+    if (cache[span]) return cache[span];
+    const src = SOURCES[span];
+    // 목록 파일이 아직 없는 것은 오류가 아니다 — 콘솔에 흔적을 남기지 않는다.
+    const res = await fetch(src.file, { cache: 'no-store' }).catch(() => null);
+    if (!res || !res.ok) { cache[span] = []; return cache[span]; }
+    const rows = await res.json().catch(() => []);
+    cache[span] = Array.isArray(rows) ? rows : [];
+    return cache[span];
+  }
+
+  async function render(span) {
+    const src = SOURCES[span];
+    list.innerHTML = '<div class="empty">불러오는 중…</div>';
+    const rows = (await load(span)).slice();
+    rows.sort((a, b) => String(b.date || b.key || '').localeCompare(String(a.date || a.key || '')));
+    if (!rows.length) { list.innerHTML = `<div class="empty">${src.empty}</div>`; return; }
+    list.innerHTML = rows.map(p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
+        <span class="date">${label(span, p)}</span>
+        <span class="body">
+          <div class="title">${p.title || ''}</div>
+          <div class="headline">${p.headline || ''}</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>`).join('');
+  }
+
+  document.querySelectorAll('.subnav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.subnav button')
+        .forEach(b => b.setAttribute('aria-current', String(b === btn)));
+      render(btn.dataset.span);
+    });
+  });
+
+  try { await render('weekly'); }
+  catch (e) { list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>'; }
+})();
+</script>
+</body>
+</html>

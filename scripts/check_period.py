@@ -15,6 +15,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from us.period_gate import check  # noqa: E402
 
@@ -36,6 +37,7 @@ def main():
     ap.add_argument('--research-root', help='Verified append-only research directory')
     ap.add_argument('--research-as-of', help='Timezone-aware frozen review cutoff')
     ap.add_argument('--market', choices=('us', 'kr'))
+    ap.add_argument('--insight', help='US 주간 인사이트 진단 (data/weekly/<KEY>.insight.json)')
     args = ap.parse_args()
 
     try:
@@ -62,8 +64,12 @@ def main():
         except (OSError, ValueError, KeyError) as e:
             print(f'FATAL: research ledger: {e}', file=sys.stderr)
             return 2
+    insight = load(args.insight) if args.insight else None
+    if args.insight and insight is None:
+        print(f'FATAL: 진단 파일이 없다: {args.insight}', file=sys.stderr)
+        return 2
     violations = check(html, agg, load(args.scorecard), recap, args.span,
-                       research_summary=research_summary)
+                       research_summary=research_summary, insight=insight)
     if not violations:
         print('기간 리포트 게이트 통과')
         return
