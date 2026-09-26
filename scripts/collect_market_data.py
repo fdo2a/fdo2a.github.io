@@ -771,6 +771,12 @@ def main():
             prev = json.load(open(md_path))
             if prev.get('report_date') == report_date and prev.get('complete'):
                 print('complete dataset for this report date already exists — skipping')
+                # 뒤 단계(뉴스·일정·연준·커밋)도 멈추게 알린다. 수집기만 건너뛰고 뒤 단계가 돌면
+                # 뉴스가 다시 긁히고 커밋이 생겨, 그 push 가 루틴을 또 띄웠다(2026-09-26).
+                out = os.environ.get('GITHUB_OUTPUT')
+                if out:
+                    with open(out, 'a') as fh:
+                        fh.write('skipped=true\n')
                 return
         except Exception:
             pass

@@ -229,6 +229,9 @@ def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES):
         seen.add(guid)
         v.extend(_check_one(guid, it, known))
 
+    from us.news_expand import summary_violations
+    v.extend(summary_violations(html, collected))
+
     if doc.section_stray > STRAY_MAX:
         v.append(f'뉴스 섹션에 표식 밖 산문이 {doc.section_stray}자 있다 '
                  f'(허용 {STRAY_MAX}자) — 기사는 `data-news` 블록 안에 둔다')

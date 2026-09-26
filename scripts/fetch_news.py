@@ -164,6 +164,39 @@ def summarize_chosen(chosen, bodydir, summarize=summarize_items):
     return done
 
 
+def frozen(path):
+    """그날 파일에 요약된 기사가 하나라도 있으면 동결한다 — 다시 긁지 않는다.
+
+    재수집은 기사 선정도 요약 문장도 바꾼다(요약 모델은 매번 다른 문장을 낸다). 루틴이 이미
+    그 요약으로 글을 쓰는 중이면 발행 직전에 게이트가 어긋난다(2026-09-26 9/25 브리프 유실).
+    요약이 하나도 없는 날(자격 증명 실패 등)은 동결하지 않는다 — 다시 받아야 한다.
+    """
+    try:
+        with open(path, encoding='utf-8') as fh:
+            items = json.load(fh).get('items') or []
+    except (OSError, ValueError):
+        return False
+    return any(it.get('summary_ko') for it in items)
+
+
+def carry_summaries(path, chosen):
+    """--refresh 로 다시 받을 때, 같은 guid 의 기존 요약을 그대로 옮긴다. 옮긴 건수."""
+    try:
+        with open(path, encoding='utf-8') as fh:
+            old = {it.get('guid'): it for it in json.load(fh).get('items') or []}
+    except (OSError, ValueError):
+        return 0
+    n = 0
+    for it in chosen:
+        prev = old.get(it.get('guid'))
+        if prev and prev.get('summary_ko'):
+            for k in ('summary_ko', 'summary_model'):
+                if prev.get(k):
+                    it[k] = prev[k]
+            n += 1
+    return n
+
+
 def save_json(path, payload):
     """원자적 교체 — 'w' 로 직접 덮어쓰다 실패하면 기존 수집분까지 깨진다(2차 #13)."""
     tmp = path + '.tmp'
@@ -178,7 +211,14 @@ def main():
     ap.add_argument('--bodydir', default='_workspace/news')
     ap.add_argument('--date', default=_date.today().isoformat())
     ap.add_argument('--per-category', type=int, default=3)
+    ap.add_argument('--refresh', action='store_true',
+                    help='이미 요약된 날도 다시 받는다(같은 기사는 기존 요약을 재사용)')
     args = ap.parse_args()
+
+    path = os.path.join(args.datadir, 'news', f'{args.date}.json')
+    if frozen(path) and not args.refresh:
+        print(f'{path} — 이미 요약된 날이라 동결한다(다시 받으려면 --refresh)')
+        return 0
 
     ctx = _context()
     harvested, notes = [], []
@@ -222,9 +262,10 @@ def main():
     fetch_bodies(chosen, args.bodydir, ctx)
     chosen = trim(chosen, now)             # 글로벌·칼럼 확정 — 본문·날짜가 확인된 것만
 
-    outdir = os.path.join(args.datadir, 'news')
-    os.makedirs(outdir, exist_ok=True)
-    path = os.path.join(outdir, f'{args.date}.json')
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    carried = carry_summaries(path, chosen)
+    if carried:
+        print(f'  기존 요약 {carried}건 재사용')
     payload = {'report_date': args.date, 'harvested': len(harvested),
                'notes': notes, 'items': chosen}
     # 요약 **전에** 한 번 저장한다 — 요약(외부 API·인증)이 어떤 식으로 죽어도 메타데이터와

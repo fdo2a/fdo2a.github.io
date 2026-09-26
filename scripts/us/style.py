@@ -165,6 +165,11 @@ _META_CLASSES = frozenset((
 _CLASS_ATTR = re.compile(r'\bclass\s*=\s*["\']([^"\']*)["\']', re.I)
 
 
+# 뉴스 블록의 요약 문단(`expand_news_items.py` 가 채운 수집 요약). 문장을 쓴 것은 수집 단계의
+# 요약기라 작성자가 어미 반복을 고칠 수 없다. 원문 그대로인지는 뉴스 게이트가 본다(2026-09-26).
+_SUMMARY_ATTR = re.compile(r'\bdata-summary\s*=')
+
+
 def _is_meta_paragraph(attrs):
     m = _CLASS_ATTR.search(attrs)
     if not m:
@@ -217,7 +222,7 @@ def _prose_html(html):
     body = _TABLE.sub(' ', body)
     body = _HEADING.sub(' ', body)
     return [inner for attrs, inner in _PARA_WITH_ATTRS.findall(body)
-            if not _is_meta_paragraph(attrs)]
+            if not _is_meta_paragraph(attrs) and not _SUMMARY_ATTR.search(attrs)]
 
 
 def _text(fragment):

@@ -38,13 +38,13 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 **일본** — 일본 행(`region: "japan"`)은 두 칸 모두 맨 앞이다. 출처가 일본어일 수 있다(Yahoo!ニュース 의 교도·지지 통신 기사, 닛세이기초연구소 리포트) — **제목은 한국어로 옮겨 쓴다**(`summary_ko` 는 이미 한국어다). 캡션: Yahoo 행은 `wire` 를 매체로(`교도통신 · 9월 25일`), 일본은행은 `일본은행 · 9월 18일`, 닛세이기초연구소는 `닛세이기초연구소 · 9월 25일`. 일본은행 정책 발표문(`kind: "official"`)은 결정 사실만 쓰고 해석을 보태지 않는다.
 **리포트·칼럼** — ING THINK·BIS 중앙은행 연설·ECB 블로그·Investing.com 기고·일본은행 연설·닛세이기초연구소. **전망·권고는 필자의 견해다** — `summary_ko` 가 이미 「ING 는 …로 본다」 꼴로 귀속해 두었으니 단정형으로 바꾸지 않는다. 캡션은 기관·매체명(`ING THINK · 9월 25일`).
 
-**한 항목:** `<div class="news-item" data-news="GUID"><p class="news-head">제목<span class="sub">CNBC · 9월 18일</span></p><p>본문 300자</p></div>`
+**한 항목은 한 줄이다 (2026-09-26 — 요약을 손으로 옮기지 않는다):** `<!--NEWS:GUID|한국어 제목-->`. 그날 시세와 잇는 문장을 붙일 때만 `<!--NEWS:GUID|한국어 제목|연결 한 문장(80자 이내)-->`. `scripts/expand_news_items.py` 가 캡션(매체·날짜)과 `summary_ko` **원문**을 채워 표준 블록(`<div class="news-item" data-news="GUID">…<p data-summary="GUID">요약</p></div>`)으로 바꾼다. 요약을 다듬어 옮기던 방식은 9/25 런에서 25만 토큰·20분을 썼다. **요약이 `-습니다` 로 끝나 확장이 거부된 기사만** 예전처럼 블록을 직접 쓴다(`data-summary` 없이, 어미만 `-다` 로). `data-summary` 는 확장이 채운 문단에만 붙는다 — 직접 쓴 문단에 붙이면 뉴스 게이트가 막는다.
 - **`data-news` 는 수집분의 `guid` 그대로** — `scripts/check_news.py` 가 이것으로 대조한다. 지우거나 바꿔서 우회하지 않는다.
 - **본문 `<p>` 240~420자**(목표 300자). `news-head`·`caption`·`sub` 는 분량에서 빠진다.
 - 숨긴 블록(`display:none`·`hidden`·주석·`font-size:0`·`opacity:0`·`sr-only`)은 없는 것으로 센다.
 - 링크는 그 기사의 원문만.
 
-**무엇을 쓰는가** — `summary_ko` 를 다듬어 쓴다(어순·어미·군더더기 정리는 자유). **사실은 `summary_ko` 에 있는 것만** — 수치·인물·발언을 보태지 않는다. 그날 시세와 연결되는 건은 마지막 한 문장(40자 안팎)을 그 연결로 바꿔도 된다(수치는 그날 `market_data.json` 의 것). 연결을 지어내지 않는다. 게이트는 블록과 `summary_ko` 의 글자 유사도 0.5 미만, 요약에서 온 몫 85% 미만을 막는다.
+**무엇을 쓰는가** — 확장되는 기사는 **제목과 (필요하면) 연결 한 문장뿐**이다. 본문은 `summary_ko` 원문이 들어간다. 직접 쓰는 예외 블록만 `summary_ko` 를 다듬어 쓴다(어순·어미·군더더기 정리는 자유). **사실은 `summary_ko` 에 있는 것만** — 수치·인물·발언을 보태지 않는다. 그날 시세와 연결되는 건은 마지막 한 문장(40자 안팎)을 그 연결로 바꿔도 된다(수치는 그날 `market_data.json` 의 것). 연결을 지어내지 않는다. 게이트는 블록과 `summary_ko` 의 글자 유사도 0.5 미만, 요약에서 온 몫 85% 미만을 막는다.
 
 **비-코어다.** `news/<date>.json` 이 없거나 `summary_ko` 가 있는 갈래 기사가 하나도 없으면 섹션을 넣지 않는다 — **하나라도 있으면 섹션은 의무다.** 기억에서 뉴스를 꺼내지 않는다.
 
@@ -76,7 +76,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 - `news_industry_[DATE].body.html` — `<div class="doc">` 안에 들어갈 섹션들.
 - `news_industry_[DATE].meta.json` — `{"title": "미국 뉴스·산업 브리프 — [핵심구] | [DATE]", "summary": "[검색·공유 설명 1~2문장]"}`. 핵심구는 25자 이내의 검색될 키워드.
 
-합친다: `python3 scripts/render_post.py --market news --date [DATE] --meta news_industry_[DATE].meta.json --body news_industry_[DATE].body.html --out news_industry_[DATE].html`. `FAIL` 이면 적힌 대로 고쳐 다시 돌린다. 렌더는 한 번이고 이후 수정·게이트는 완성본에서 한다.
+먼저 채운다: `python3 scripts/expand_news_items.py --body news_industry_[DATE].body.html --news news/[DATE].json --out news_industry_[DATE].body.expanded.html` — exit 1 이면 적힌 기사만 직접 쓰거나 뺀다. 그다음 합친다(`--body` 는 **expanded** 파일): `python3 scripts/render_post.py --market news --date [DATE] --meta news_industry_[DATE].meta.json --body news_industry_[DATE].body.expanded.html --out news_industry_[DATE].html`. `FAIL` 이면 적힌 대로 고쳐 다시 돌린다. 렌더는 한 번이고 이후 수정·게이트는 완성본에서 한다.
 
 **쓰지 않는 것**: `<html>`·`<head>`·`<body>`·`<style>`·메타·상단 바·네비게이션·`<div class="doc">` — 셸(`post_shell.py`, CSS 는 US 와 같은 `post_css/us.css`)이 만든다. 색은 칠하지 않는다(`apply_colors.py`).
 

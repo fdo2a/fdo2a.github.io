@@ -268,7 +268,10 @@ def summarize_items(items, bodydir, model=None, client=None, log=print, system=N
 
     어떤 실패도 예외로 내보내지 않는다 — 호출자는 이 뒤에 수집분을 다시 저장한다.
     """
-    todo = [it for it in items if it.get('body_chars') and it.get('body_file')]
+    # 이미 요약된 기사는 다시 부르지 않는다 — 문장이 바뀌면 그 요약으로 쓰던 글이 게이트에서
+    # 어긋난다(2026-09-26). 비용도 든다.
+    todo = [it for it in items if it.get('body_chars') and it.get('body_file')
+            and not it.get('summary_ko')]
     if not todo:
         return 0
 

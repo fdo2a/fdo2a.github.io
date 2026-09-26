@@ -12,7 +12,23 @@ The repository fdo2a/fdo2a.github.io is cloned into your workspace as a source (
 
 A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects canonical yfinance/FRED data in a network-open runner and commits `data/market_data.json`, `data/intraday.json`, `data/econ_indicators.json`, `data/sector_performance.html`, `data/yield_curve.png` before this routine fires. **This is the primary data path** — the routine's own environment blocks finance hosts (Yahoo/FRED/exchanges all 403), so do NOT try to fetch them here.
 
-0. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` 이 이미 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
+0. **선점 잠금 — 가장 먼저, 다른 파일을 읽기 전에.** 이 루틴은 푸시 웹훅(두 벌)과 예약 크론으로 하루에 여러 번 뜬다. 2026-09-26 에는 새벽에 10번 떴고 넷이 동시에 작성하다 5시간 한도를 함께 태워 그날 글이 나가지 못했다. 아래 가드는 중복 **발행**만 막고 병렬 **작성**은 못 막는다. 레포 클론으로 들어가자마자:
+
+   ```bash
+   bash scripts/ci/run_lock.sh acquire "us-$(TZ=Asia/Seoul date +%F)" 150
+   ```
+
+   **exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고, PushNotification 도 보내지 말고 「locked by another run」만 보고하고 끝낸다.** exit 4(원격 확인 실패)도 진행하지 않고 그 사실을 보고한다. exit 0 이면 아래로 진행한다.
+
+   **쓰지 않고 끝나는 모든 경로에서는 끝내기 전에 잠금을 푼다** — 멱등 가드로 중단(already published), 수집 뒤에도 데이터가 기대 세션보다 이르거나 불완전해 중단하는 경우 전부:
+
+   ```bash
+   bash scripts/ci/run_lock.sh release "us-$(TZ=Asia/Seoul date +%F)"
+   ```
+
+   안 풀면 새벽 웹훅 런이 잡아 둔 잠금이 08:30 정규 런을 막는다. 작성·발행까지 간 런은 풀지 않는다. 작성 도중 한도로 죽은 런의 잠금은 150분 뒤 다음 런이 넘겨받는다(`run_lock.sh` 기본값은 180 — 이 루틴은 `acquire "us-…" 150` 으로 부른다). **사람이 띄운 복구 런**은 `acquire "us-<날짜>" 0` 으로 즉시 넘겨받는다.
+
+0-1. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` 이 이미 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
 
    **「기대 세션과 같고」가 조건의 핵심이다.** 커밋된 데이터가 아직 어제 것이면(수집이 밀린 날 — 2026-08-27 이래 정상이다) 그 어제 글이 있는 건 당연하므로, 여기서 멈추면 오늘 글이 영영 안 나온다. 데이터가 낡았으면 가드를 통과시켜 아래 3번의 워크플로 재실행으로 내려보내고, **새 데이터를 받은 뒤 이 검사를 다시 한다**.
 
@@ -26,7 +42,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
-   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 2.7)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
+   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
@@ -74,7 +90,7 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 ## STEP 2 — 리포트 작성 (subagent: brief-report-writer)
 
-**시황 브리프에는 오늘의 뉴스·메모리/DRAM·AI 인프라·MLCC 가 없다**(2026-09-26 사용자 지시) — 네 섹션은 STEP 2.7 의 둘째 글 「뉴스·산업 브리프」로 옮겨 갔다. 작성자에게 그 섹션을 쓰라고 하지 않는다.
+**시황 브리프에는 오늘의 뉴스·메모리/DRAM·AI 인프라·MLCC 가 없다**(2026-09-26 사용자 지시) — 네 섹션은 STEP 3.5 의 둘째 글 「뉴스·산업 브리프」로 옮겨 갔다. 작성자에게 그 섹션을 쓰라고 하지 않는다.
 
 Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
@@ -190,11 +206,26 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
 
 사본(`*.humanizing.html`)·`prose_in.txt`·`prose_map.json`과 스킬 작업 폴더(`_workspace/`)는 `.gitignore`에 걸려 있다. STEP 3의 `git add -A`가 쓸어 담지 않는다.
 
-## STEP 2.7 — 뉴스·산업 브리프 (subagent: news-industry-writer)
+## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
+
+Site base URL: https://fdo2a.github.io/
+
+1. Copy the report HTML into the repo as posts/[YYYY-MM-DD].html. **Inject nothing** — the navigation block and the SEO meta (description, canonical, og:*) are already in it, rendered once by `scripts/render_post.py`. Injecting them again is how the 2026-09-23 post ended up with every head tag twice. If `grep -c 'post-shell-v1'` on the file is 0, the writer skipped the shell: send it back to render rather than patching the head by hand.
+2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote the writer's macro book:
+   - `macro_next.json` → `data/macro.json`
+   Tomorrow's Actions run judges today's regime and triggers against this file. Publishing without promoting it leaves the macro book frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.
+3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
+4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
+   `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
+5. Commit and push to main — **뉴스·산업 브리프를 쓰기 전에** 이 커밋부터 올린다:
+   git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
+   If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
+
+## STEP 3.5 — 뉴스·산업 브리프 (subagent: news-industry-writer) — 브리프를 발행한 **뒤에**
 
 2026-09-26 사용자 지시 「오늘의 뉴스, 메모리/DRAM, AI 인프라, MLCC…를 시황 레포트에서 제외시킨 뒤, 새로운 글을 하나 더 만드는 방향으로」. **같은 날, 같은 입력으로 쓰는 둘째 글이다** — 새로 수집하거나 웹서치하지 않는다.
 
-**시황 브리프가 먼저다.** STEP 2.5 까지 끝난 브리프는 이 단계의 성패와 무관하게 STEP 3 에서 발행한다. 이 글이 게이트를 끝내 못 넘으면 브리프만 발행하고 최종 보고·알림에 사유를 적는다.
+**시황 브리프가 먼저다 — 순서로 지킨다.** 이 단계는 STEP 3 에서 브리프를 **커밋·푸시한 다음에** 시작한다. 2026-09-26 에는 9/25 브리프가 게이트를 다 통과하고도, 발행이 이 단계 뒤에 있었던 탓에 뉴스 글을 고치다 5시간 한도에 걸려 함께 사라졌다. 이 글이 게이트를 끝내 못 넘으면 이 글만 빼고 최종 보고·알림에 사유를 적는다.
 
 0. **멱등 가드** — `news/[DATE].html` 이 이미 커밋돼 있으면 이 단계를 건너뛴다.
 1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 네 가지 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절. 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것).
@@ -209,23 +240,7 @@ python3 scripts/humanize_prose.py finalize morning_brief_[DATE].humanizing.html 
    ```
    `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다. `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」는 의무다. 하나도 없으면 섹션 없이 발행하되 **최종 보고에 사유(`summary_note`)를 적는다.** **루틴에서 기사 본문을 다시 받지 않는다**(클라우드는 CNBC·Yahoo 에 403).
 3. **윤문(STEP 2.5)은 이 글에 하지 않는다** — 뉴스 블록은 `summary_ko` 에 묶여 있어(유사도 게이트) 윤문이 걸리고, 산업 세 섹션은 짧다. 문체 검사(`check_style`)는 위에서 돈다.
-
-## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
-
-Site base URL: https://fdo2a.github.io/
-
-1. Copy the report HTML into the repo as posts/[YYYY-MM-DD].html. **Inject nothing** — the navigation block and the SEO meta (description, canonical, og:*) are already in it, rendered once by `scripts/render_post.py`. Injecting them again is how the 2026-09-23 post ended up with every head tag twice. If `grep -c 'post-shell-v1'` on the file is 0, the writer skipped the shell: send it back to render rather than patching the head by hand.
-2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote the writer's macro book:
-   - `macro_next.json` → `data/macro.json`
-   Tomorrow's Actions run judges today's regime and triggers against this file. Publishing without promoting it leaves the macro book frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.
-3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
-4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
-   `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
-5. **뉴스·산업 브리프 (STEP 2.7 이 통과한 날만)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 1번과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`.
-6. Commit and push to main:
-   git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
-   (뉴스·산업 브리프가 있으면 같은 커밋에 들어간다.)
-   If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
+4. **발행 (이 글만의 커밋)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 STEP 3-1 과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 그리고 `git add news/ news.json sitemap.xml && git commit -m "Add [YYYY-MM-DD] news-industry brief" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다.
 
 ## STEP 4 — Notify
 

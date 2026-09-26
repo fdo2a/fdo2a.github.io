@@ -77,6 +77,7 @@ jobs:
         run: pip install --quiet yfinance pandas lxml matplotlib certifi 'curl_cffi>=0.15.0' pypdf
 
       - name: Collect
+        id: collect
         # FRED_API_KEY 는 **스텝 단위**로만 준다(ECOS 선례). 키가 없거나 거부당하면
         # 수집기가 예전 graph CSV 로 내려가 그대로 발행한다 — 데이터는 절대 안 멈춘다.
         env:
@@ -85,6 +86,7 @@ jobs:
           python scripts/collect_market_data.py --outdir data ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
 
       - name: Evaluate macro regime
+        if: steps.collect.outputs.skipped != 'true'
         # Non-core: judges yesterday's macro book
         # against today's axis scores so §8 inherits a regime instead of re-reading the
         # cycle every morning. Never fail the collection job on it.
@@ -92,6 +94,7 @@ jobs:
         run: python scripts/eval_macro_regime.py --datadir data
 
       - name: Fetch primary releases
+        if: steps.collect.outputs.skipped != 'true'
         # Non-core: pulls the actual press release behind each promoted indicator so the
         # routine reads the document rather than paraphrasing a dashboard row. The
         # agencies 403 ordinary clients, hence the TLS impersonation in the script.
@@ -100,6 +103,7 @@ jobs:
         run: python scripts/fetch_releases.py --datadir data
 
       - name: Fetch market news
+        if: steps.collect.outputs.skipped != 'true'
         # Non-core (2026-09-19 사용자 지시, 2026-09-24 갈래 개편): CNBC·Yahoo 피드를 받아
         # 정치·경제·매크로·산업·AI 로 분류해 추린 뒤 기사 본문까지 읽어 온다. 2026-09-26 부터
         # 글로벌(CNBC 세계·Investing.com 의 로이터 전재·가디언·알자지라·BBC·ECB·BoE)과
@@ -128,6 +132,7 @@ jobs:
           python scripts/fetch_news.py --datadir data --bodydir _workspace/news --date "$RD"
 
       - name: Fetch Fed events
+        if: steps.collect.outputs.skipped != 'true'
         # Non-core: finds today's FOMC statement / chair speech / Jackson Hole remarks and
         # commits the primary documents verbatim, so the publication gate can check every
         # quoted sentence against what was actually said. A fabricated Fed quote is worse
@@ -137,6 +142,7 @@ jobs:
         run: python scripts/collect_fed_events.py --datadir data
 
       - name: Build the next-ten-days calendar
+        if: steps.collect.outputs.skipped != 'true'
         # Non-core, same contract: what is coming (economic releases, Treasury auctions,
         # index expiry, the Fed blackout) plus the demand behind the auctions that just
         # cleared. Everything the report carried about "next" used to be web-search prose
@@ -166,6 +172,7 @@ jobs:
           PY
 
       - name: Commit data
+        if: steps.collect.outputs.skipped != 'true'
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
