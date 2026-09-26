@@ -697,6 +697,11 @@
       "findings": 0,
       "baseline": true
     },
+    "kr/weekly/2026-W39.html": {
+      "sha": "d1157f25feb23eb98775ec51c100acbed43059d9",
+      "at": "2026-09-27T01:02:28+09:00",
+      "findings": 1
+    },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
       "at": "2026-08-24T13:32:40+09:00",
@@ -1461,16 +1466,9 @@
       ]
     },
     "posts/2026-09-02.html": {
-      "sha": "1e2a4890579749da443571e8424e82865587d257",
-      "at": "2026-09-06T17:19:26+09:00",
-      "findings": 5,
-      "accepted": [
-        {
-          "sha": "da67aa90fe19c030e21f1e9c48d7ace26533c9fb",
-          "at": "2026-09-13T01:23:56+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "48895ecc4947ebbd1e39d68e3d4b861a48e0ded8",
+      "at": "2026-09-27T00:58:56+09:00",
+      "findings": 0
     },
     "posts/2026-09-03.html": {
       "sha": "8dc7901434e07318226cc71b8bc1d5f4db83d077",
@@ -1507,16 +1505,9 @@
       ]
     },
     "posts/2026-09-08.html": {
-      "sha": "6b2cd8722ff1f39b085b9dd2f45e6f74d40232aa",
-      "at": "2026-09-10T05:29:12+09:00",
-      "findings": 6,
-      "accepted": [
-        {
-          "sha": "6e5da721aabf1122f51ef07239ea8ee3cfc9e31e",
-          "at": "2026-09-13T01:23:56+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "dd0601d4d0ac5846c4d7f235dd6ee6b1defbf6f8",
+      "at": "2026-09-27T00:58:56+09:00",
+      "findings": 0
     },
     "posts/2026-09-09.html": {
       "sha": "bd92d77bda4bb9e32f0085ff9d65979b5d2afbec",
@@ -1594,9 +1585,9 @@
       ]
     },
     "posts/2026-09-16.html": {
-      "sha": "d7bc70932a8ff3d764bb60472014b672dbb2fc8d",
-      "at": "2026-09-17T20:00:27+09:00",
-      "findings": 0
+      "sha": "2932ebd385d80f01a5ca63f08789bbab423c1a2d",
+      "at": "2026-09-27T01:04:12+09:00",
+      "findings": 1
     },
     "posts/2026-09-18.html": {
       "sha": "c943af8bf22164bf90d378dbb48ca7eac3916624",
@@ -1629,10 +1620,9 @@
       "baseline": true
     },
     "privacy.html": {
-      "sha": "ea755ae587014fd8fbfb02847d7b92d45fb935d2",
-      "at": "2026-08-24T13:32:40+09:00",
-      "findings": 0,
-      "baseline": true
+      "sha": "c0e4cefbbbfbd41d7d2178c31fcb41d04ad71d5a",
+      "at": "2026-09-27T01:05:02+09:00",
+      "findings": 2
     },
     "scripts/thesis/content.py": {
       "sha": "96854ac4cef633439f371968e1d9c4d2a21e555c",
