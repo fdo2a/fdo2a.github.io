@@ -25,7 +25,17 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
    **쓰지 않고 끝나는 모든 경로에서는 끝내기 전에 잠금을 푼다** — 멱등 가드로 중단(already published), 수집 뒤에도 데이터가 기대 세션보다 이르거나 불완전해 중단하는 경우 전부: `bash scripts/ci/run_lock.sh release "$(cat /tmp/us-lock-key)"`. 해제는 자기가 잡은 잠금만 지운다. 작성·발행까지 간 런은 풀지 않는다. **사람이 띄운 복구 런**은 `acquire <키> 0` 으로 즉시 넘겨받는다.
 
-0-1. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` 이 이미 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
+0-1. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` **과 `news/<report_date>.html` 이 둘 다** 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
+
+   **브리프만 있고 뉴스·산업 브리프가 없으면 이어 쓴다**(2026-09-27 — 9/25 런이 브리프 발행 1분 뒤 5시간 한도로 죽어, 재실행이 이 가드에서 멈췄다). STEP 1~3 을 건너뛰고 **STEP 3.5 만** 한다. 입력은 브리프 **발행 커밋**에서 복원한다 — 그 뒤 수집이 데이터를 덮어썼을 수 있다:
+
+   ```bash
+   C=$(git log -1 --diff-filter=A --format=%H -- posts/<report_date>.html)
+   git show "$C:data/market_data.json" > <workspace>/market_data.json
+   mkdir -p <workspace>/news && git show "$C:data/news/<report_date>.json" > <workspace>/news/<report_date>.json
+   ```
+
+   `research_notes.md` 는 없다(죽은 런의 워크스페이스와 함께 사라졌다) — 작성자에게 ③·④ 업계 뉴스 층을 비우라고 넘긴다. 뉴스 파일이 그 커밋에 없으면 없다고 넘긴다. 잠금은 위에서 잡은 그대로다.
 
    **「기대 세션과 같고」가 조건의 핵심이다.** 커밋된 데이터가 아직 어제 것이면(수집이 밀린 날 — 2026-08-27 이래 정상이다) 그 어제 글이 있는 건 당연하므로, 여기서 멈추면 오늘 글이 영영 안 나온다. 데이터가 낡았으면 가드를 통과시켜 아래 3번의 워크플로 재실행으로 내려보내고, **새 데이터를 받은 뒤 이 검사를 다시 한다**.
 

@@ -16,6 +16,12 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 이 값이 `<KEY>`(예: `2026-W35`)다. **날짜 산술로 도출하지 않는다** — 2026-07-13 중복 생성 직전까지 갔던 버그와 같은 부류다.
 
+**선점 잠금과 부분 발행 이어받기**(2026-09-27 — 한도 뒤 재시도 루틴이 토·일에 여러 번 뜬다). `bash scripts/ci/run_lock.sh acquire weekly-<KEY> 180` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). 쓰지 않고 끝나는 경로에서는 `release weekly-<KEY>` 로 풀고 끝낸다. 그다음:
+
+- `weekly/<KEY>.html` 과 `kr/weekly/<KEY>.html` 이 **둘 다** 원격에 있으면 「already published」만 보고하고 끝낸다.
+- **하나만 있으면 있는 쪽은 다시 만들지 않는다** — US 가 있으면 STEP 4 를, KR 이 있으면 STEP 5 를 건너뛰고, STEP 6 에서도 없던 쪽의 목록만 갱신한다. STEP 2·3 도 없는 쪽 시장만 돈다.
+- STEP 6 커밋 직전에 `git pull` 하고 같은 확인을 다시 한다 — 그 사이 생긴 쪽은 커밋에서 뺀다.
+
 ## STEP 1 — 집계 파일 확인
 
 `data/weekly/<KEY>.json`과 `kr/data/weekly/<KEY>.json`이 있고 `complete: true`인지 본다.

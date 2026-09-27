@@ -22,15 +22,10 @@ cmd=${1:?key|acquire|renew|release}
 remote=${RUN_LOCK_REMOTE:-origin}
 
 if [ "$cmd" = key ]; then
+  # 규칙은 routine_due.py 한 곳에 있다 — 재시도 루틴이 확인하는 이름과 어긋나면 살아 있는
+  # 런을 못 보고 겹쳐 뜬다. us = 뉴욕 −17h, kr = 서울 −16h.
   prefix=${2:?prefix}
-  python3 - "$prefix" <<'PY'
-import sys
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-now = datetime.now(ZoneInfo('America/New_York'))
-print(f"{sys.argv[1]}-{(now - timedelta(hours=17)).date().isoformat()}")
-PY
-  exit 0
+  exec python3 "$(dirname "$0")/routine_due.py" lock-name "$prefix"
 fi
 
 name=${2:?lock name}
