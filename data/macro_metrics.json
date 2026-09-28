@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-26 18:58 KST",
-  "report_date": "2026-09-25",
+  "generated": "2026-09-29 08:35 KST",
+  "report_date": "2026-09-28",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": -0.065,
@@ -353,7 +353,7 @@
         "recent_avg": 0.474
       },
       "trend_cell_ko": "악화(완만) · 3개월 평균 +1.95% → +0.47%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "New Home Sales",
@@ -468,7 +468,7 @@
         "recent_avg": 52.133
       },
       "trend_cell_ko": "개선(미미) · 3개월 평균 49.3 → 52.1",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "CPI YoY",
@@ -652,64 +652,11 @@
         "recent_avg": 4.267
       },
       "trend_cell_ko": "교착 · 3개월 평균 4.43% → 4.27%",
-      "is_new": true
+      "is_new": false
     }
   ],
-  "new_releases": [
-    "Durable Goods Orders MoM",
-    "Michigan Consumer Sentiment",
-    "Michigan 1-Yr Inflation Exp"
-  ],
-  "headline_releases": [
-    {
-      "key": "durable-goods",
-      "label": "내구재 주문",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-      "primary": "Durable Goods Orders MoM",
-      "max_abs_z": 0.713,
-      "indicators": [
-        {
-          "name": "Durable Goods Orders MoM",
-          "axis": "Activity",
-          "actual": -0.02,
-          "previous": 0.86,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.713
-        }
-      ],
-      "components": []
-    },
-    {
-      "key": "michigan",
-      "label": "미시간대 소비자심리",
-      "tier": 2,
-      "agency": "U. Michigan",
-      "url": "http://www.sca.isr.umich.edu/",
-      "primary": "Michigan Consumer Sentiment",
-      "max_abs_z": 0.456,
-      "indicators": [
-        {
-          "name": "Michigan Consumer Sentiment",
-          "axis": "Consumption",
-          "actual": 51.7,
-          "previous": 55.2,
-          "ref_period": "2026-08-01",
-          "momentum_z": 0.456
-        },
-        {
-          "name": "Michigan 1-Yr Inflation Exp",
-          "axis": "Inflation",
-          "actual": 4.0,
-          "previous": 4.2,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.224
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-07-01",
