@@ -1,24 +1,24 @@
 {
   "코스피": {
     "as_of": "2026-09-28",
-    "close": 6889.74,
+    "close": null,
     "ma": {
-      "ma20": 6842.75,
-      "ma60": 6831.99,
-      "ma120": 7119.41
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 0.69,
-      "vs_ma60": 0.85,
-      "vs_ma120": -3.23
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 7164.82,
-      "mid": 6842.75,
-      "lower": 6520.68,
-      "pct_b": 0.573,
-      "bandwidth": 0.0941
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 6876.82,
@@ -29,7 +29,7 @@
       "cloud_bottom": 6541.8,
       "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 7171.52,
       "low_20": 6439.49,
@@ -39,24 +39,24 @@
   },
   "코스닥": {
     "as_of": "2026-09-28",
-    "close": 846.58,
+    "close": null,
     "ma": {
-      "ma20": 823.49,
-      "ma60": 809.1,
-      "ma120": 946.55
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 2.8,
-      "vs_ma60": 4.63,
-      "vs_ma120": -10.56
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 851.89,
-      "mid": 823.49,
-      "lower": 795.09,
-      "pct_b": 0.906,
-      "bandwidth": 0.069
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 830.46,
@@ -65,9 +65,9 @@
       "senkou_b": 842.65,
       "cloud_top": 842.65,
       "cloud_bottom": 791.54,
-      "price_vs_cloud": "above"
+      "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 861.15,
       "low_20": 782.87,
