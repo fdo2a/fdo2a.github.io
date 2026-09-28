@@ -1,0 +1,36 @@
+Evidence snapshot — web search result summaries (WebFetch of article pages was blocked by the network egress proxy in this environment; text below is the search-engine summary of the cited pages, observed 2026-09-28 ~23:30-23:45 UTC).
+
+[1] Yahoo Finance live blog "Stock market today: Dow, S&P 500, Nasdaq fall as Treasury yields continue to climb" (Mon Sep 28 2026)
+https://finance.yahoo.com/markets/live/stock-market-today-monday-september-28-dow-sp-500-nasdaq-080420627.html
+- Dow -0.7%, S&P 500 ~-0.8%, Nasdaq -0.9%.
+- 10Y +6bp to 5.24%, highest since 2007; 30Y 5.56%, highest since 2004; 2Y roughly +8bp to 4.93%.
+- US stocks fell as US-Iran tensions resurfaced, lifting oil, and Treasury yields jumped to start a data-packed week; President Trump rejected Tehran's proposal (similar to a previous MOU) to reopen the Strait of Hormuz and end the war.
+TheStreet (Sep 28 2026): "Nasdaq, S&P 500 fall after Trump rebuffs Iran peace deal, oil prices rise".
+https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-sept-28-2026
+
+[2] CNBC "Treasury yields rise as march to multiyear highs continues" (2026-09-28 20:31 UTC; collector summary in data/news/2026-09-28.json)
+https://www.cnbc.com/2026/09/28/treasury-yields-bonds-selloff.html
+- 10Y +5bp to 5.234%, 30Y +5bp to 5.552%, 2Y +6bp+ to 4.926%; renewed global bond selling on oil and inflation worries. This week: payrolls, unemployment, core PCE, GDP; JOLTS Tuesday expected 7.24m vs 7.30m.
+
+[3] CNBC "Oil price today: WTI, Brent, Trump, Iran" (2026-09-28)
+https://www.cnbc.com/2026/09/28/oil-price-today-wti-brent-trump-iran.html
+- Brent crude futures closed at $105.28, +96 cents, after climbing as high as $108.83. WTI settled $92.60 after hitting $96.54.
+- Brent climbed above $106 after Trump rejected Iran's latest proposal to reopen Hormuz; crude pulled back from session highs as Saudi Arabia reportedly ramps up its East-West pipeline after repairs.
+
+[4] Brent contract structure (search summary citing investing.com/oilprice.com contract pages, Sep 28 2026)
+https://www.investing.com/commodities/brent-oil-contracts
+- Brent November 2026 contract 104.32; December 2026 contract 97.44; spread ~ $6.88 (steep backwardation).
+Note: yfinance BZ=F in market_data.json shows prev 104.32 -> last 98.60 (-5.48%), consistent with a front-month roll from Nov to Dec, not a price decline.
+
+[5] FedWatch
+- Gold article (Yahoo Finance personal finance, Sep 28 2026; USAGOLD daily report Sep 28 2026): "Traders were pricing a 70.3% probability of an October Fed rate hike"; gold spot fell to its lowest since Aug 5.
+  https://www.usagold.com/daily-precious-metals-market-report-september-28-2026/
+- growbeansprout FedWatch tracker (search summary): "As of September 28, 2026, there is a 72.3% probability ... raise by 25bp at October meeting (Oct 28)".
+  https://growbeansprout.com/tools/fedwatch
+- Prior reference: CNBC 2026-09-25 20:17 UTC reported 64% (ledger hypothesis us-2026-09-25-iran-fedwatch-curve-steepening). Different outlets/snapshot times: compare direction only.
+
+[6] Gold (search summary, Sep 28 2026): spot fell ~3% to $4,156.45 at 0814 GMT, lowest since Aug 5; drivers cited: oil rebound after Trump rejected Iran proposal, stronger dollar, higher yields, rising odds of another Fed hike.
+https://finance.yahoo.com/personal-finance/investing/article/gold-prices-today-monday-september-28-2026-gold-prices-slump-as-iran-tensions-and-oil-prices-rise-110730952.html
+
+[7] Yen (Bloomberg / The Star, Sep 28 2026): yen rose as much as 0.4% to 156.51, strongest since Sep 18, after Japan's currency czar warned about weakness and said PM, FM and US sent a "very clear" message; PM Takaichi called an undervalued currency "problematic" in a meeting with Trump.
+https://www.bloomberg.com/news/articles/2026-09-28/yen-gains-after-japan-s-currency-czar-warns-against-weakness

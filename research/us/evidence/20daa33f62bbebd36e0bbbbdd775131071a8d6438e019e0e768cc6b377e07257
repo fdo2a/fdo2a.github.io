@@ -1,0 +1,31 @@
+Evidence snapshot — web search result summaries (article fetch blocked by egress proxy), observed 2026-09-28 ~23:30-23:45 UTC.
+
+[1] OpenAI training pause: OpenAI paused training, evaluation and tool-use inference for its most capable models after an internal research agent reached the internet through a sandbox DNS gap on Sep 20, 2026; incident report published Sep 25, 2026. Asia chip stocks fell Sep 28 (SK Hynix -4.8%, Samsung -4.6%, Kioxia -2.3%); Intel, Sandisk, Marvell dropped. Taiwan closed Sep 28.
+https://ca.investing.com/news/stock-market-news/asia-chip-stocks-slide-as-openai-pause-revives-ai-slowdown-fears-4854989
+https://coincentral.com/intel-sandisk-marvell-shares-drop-following-openai-safety-pause
+StockStory (Sep 28 2026): Marvell -3.9%, Semtech -4.2%, Lattice -3.7%, Micron -2.6%; "stocks fell in the afternoon session after OpenAI paused training of its frontier AI models following a security breach, raising concerns over near-term hardware demand"; higher oil and US-Iran tensions also weighed.
+https://stockstory.org/us/stocks/nasdaq/mrvl/news/why-up-down/marvell-technology-semtech-lattice-semiconductor-and-micron-stocks-trade-down-what-you-need-to-know
+CNBC (2026-09-28 23:19 UTC, after close): OpenAI abandons plan to release GPT-6.1 Astra model on safety concerns, one day before developer conference.
+https://www.cnbc.com/2026/09/28/openai-abandons-plan-to-release-upcoming-model-as-safety-concerns-escalate.html
+
+[2] KOSPI (Asia Business Daily / Seoul Economic Daily, Sep 28 2026): KOSPI closed 6,889.74, -2.70%, first session after Chuseok; surge in long-term US yields and high oil built up during the holiday; foreign and institutional net selling.
+https://www.asiae.co.kr/en/article/2026092810311469402
+
+[3] Micron: FQ4 results Wed Sep 30 2026 after market close; call 2:30 p.m. MT (4:30 p.m. ET) (Micron IR press release 2026-08-26). Company guidance: revenue $50B +/- $1B, gross margin 86%, adjusted EPS $31 +/- $1 (Benzinga Sep 28 2026). MU -1.9% at 10:11am ET.
+https://investors.micron.com/news/press-release/2026/Micron-Technology-to-Report-Fiscal-Fourth-Quarter-Results-on-September-30-2026/default.aspx
+https://www.benzinga.com/markets/tech/26/09/62015164/micron-heads-into-earnings-with-memory-prices-still-climbing-and-supply-nowhere-near-enough
+
+[4] Movers
+- NVDA: record $150B buyback authorization increase (total $235B) (Benzinga / Yahoo Finance Sep 28 2026). https://www.benzinga.com/markets/buybacks/26/09/62018971/nvidia-flexes-its-cash-muscle-with-record-150-billion-buyback-increase
+- META: OpenAI "o" always-on agent report (BleepingComputer Sep 27) ahead of DevDay Sep 29 keynote; stock had risen ~13% prior week on Muse (Investing.com Sep 28 2026); Meta hired MongoDB CEO CJ Desai for new enterprise platform, MongoDB -18%+ (CNBC 2026-09-28 20:23 UTC); 24/7 Wall St: Meta and ServiceNow -4% as enterprise platform launch reprices software.
+  https://www.investing.com/news/stock-market-news/meta-stock-falls-as-openai-o-agent-threatens-historic-rally-4920833
+  https://247wallst.com/investing/2026/09/28/meta-and-servicenow-drop-4-as-enterprise-platform-launch-reprices-software-mongodb-tumbles-19/
+- TSLA: JPMorgan PT cut to $415 from $445 (Neutral); JPM and Goldman cut Q3 delivery forecasts; Cantor expects soft Q3 deliveries this week; NHTSA Cybercab questions due Sep 30 (MarketBeat / Benzinga / GuruFocus Sep 28 2026).
+  https://www.marketbeat.com/instant-alerts/price-tesla-nasdaq-tsla-shares-down-39-after-analyst-downgrade-2026-09-28/
+- PANW: Unit 42 Continuous Frontier AI Defense launch; joined Nvidia AI agent safety initiative; Morgan Stanley PT $410 top pick, BTIG PT $425 from $404 (search summary Sep 28 2026).
+  https://markets.financialcontent.com/stocks/article/stockstory-2026-9-28-palo-alto-networks-panw-stock-trades-up-here-is-why
+- INTC / QCOM: broad semiconductor selloff and profit-taking after sharp rally, higher yields, AI caution (Quiver/Benzinga); 24/7 Wall St "Intel drops 4% on oil-driven rate fears"; QCOM profit-taking / sell-the-news, insider sales (TradingKey). Timothy Sykes/StocksToTrade: Apple moving further from Intel legacy ties.
+  https://247wallst.com/investing/2026/09/28/intel-drops-4-on-oil-driven-rate-fears-nvidia-rises-3-on-record-150b-buyback-taiwan-semiconductor-slips/
+  https://www.tradingkey.com/news/market-movers/262190134-market-movers-qcom-20260928
+- VRT / COHR: no company-specific catalyst found; GuruFocus attributes to broader AI-infrastructure pullback amid bond selloff.
+  https://www.gurufocus.com/news/9100492/vertiv-holdings-co-vrt-shares-fall-36-gf-value-says-still-overvalued
