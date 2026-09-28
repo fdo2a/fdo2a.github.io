@@ -1,0 +1,119 @@
+{
+  "report_date": "2026-09-28",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성전자",
+          "change_pct": -5.43,
+          "close": 270000,
+          "value": 5642986
+        },
+        {
+          "name": "SK하이닉스",
+          "change_pct": -5.05,
+          "close": 1768000,
+          "value": 5723611
+        },
+        {
+          "name": "삼성전자우",
+          "change_pct": -5.91,
+          "close": 207000,
+          "value": 1328698
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": -7.56,
+          "close": 1100000,
+          "value": 789618
+        },
+        {
+          "name": "이수페타시스",
+          "change_pct": -5.55,
+          "close": 112300,
+          "value": 81698
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "전기제품",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "LG에너지솔루션",
+          "change_pct": 3.56,
+          "close": 364000,
+          "value": 115771
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "석유와가스",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "SK이노베이션",
+          "change_pct": 6.03,
+          "close": 158200,
+          "value": 176762
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "전자장비와기기",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "LG이노텍",
+          "change_pct": 8.04,
+          "close": 578000,
+          "value": 241140
+        },
+        {
+          "name": "코리아써키트",
+          "change_pct": 5.99,
+          "close": 69000,
+          "value": 119878
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "에너지장비및서비스",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한화솔루션",
+          "change_pct": 14.21,
+          "close": 33350,
+          "value": 337971
+        }
+      ]
+    }
+  ]
+}
