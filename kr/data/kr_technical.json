@@ -1,24 +1,24 @@
 {
   "코스피": {
     "as_of": "2026-09-29",
-    "close": 6870.81,
+    "close": null,
     "ma": {
-      "ma20": 6846.85,
-      "ma60": 6808.11,
-      "ma120": 7133.05
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 0.35,
-      "vs_ma60": 0.92,
-      "vs_ma120": -3.68
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 7168.16,
-      "mid": 6846.85,
-      "lower": 6525.54,
-      "pct_b": 0.537,
-      "bandwidth": 0.0939
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 6876.82,
@@ -29,7 +29,7 @@
       "cloud_bottom": 6515.58,
       "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 7171.52,
       "low_20": 6439.49,
@@ -39,24 +39,24 @@
   },
   "코스닥": {
     "as_of": "2026-09-29",
-    "close": 849.8,
+    "close": null,
     "ma": {
-      "ma20": 824.06,
-      "ma60": 807.77,
-      "ma120": 944.82
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 3.12,
-      "vs_ma60": 5.2,
-      "vs_ma120": -10.06
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 854.05,
-      "mid": 824.06,
-      "lower": 794.07,
-      "pct_b": 0.929,
-      "bandwidth": 0.0728
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 831.14,
@@ -65,9 +65,9 @@
       "senkou_b": 842.65,
       "cloud_top": 842.65,
       "cloud_bottom": 791.54,
-      "price_vs_cloud": "above"
+      "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 861.15,
       "low_20": 782.87,
@@ -77,24 +77,24 @@
   },
   "SK하이닉스": {
     "as_of": "2026-09-29",
-    "close": 1765000.0,
+    "close": null,
     "ma": {
-      "ma20": 1758550.0,
-      "ma60": 1761416.67,
-      "ma120": 1799075.0
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
-    "ma_alignment": "역배열",
+    "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 0.37,
-      "vs_ma60": 0.2,
-      "vs_ma120": -1.89
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 1927289.41,
-      "mid": 1758550.0,
-      "lower": 1589810.59,
-      "pct_b": 0.519,
-      "bandwidth": 0.1919
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 1803000.0,
@@ -105,7 +105,7 @@
       "cloud_bottom": 1645500.0,
       "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 1935000.0,
       "low_20": 1558000.0,
@@ -115,24 +115,24 @@
   },
   "삼성전자": {
     "as_of": "2026-09-29",
-    "close": 272500.0,
+    "close": null,
     "ma": {
-      "ma20": 262875.0,
-      "ma60": 260266.67,
-      "ma120": 269173.33
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
     "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": 3.66,
-      "vs_ma60": 4.7,
-      "vs_ma120": 1.24
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 283541.1,
-      "mid": 262875.0,
-      "lower": 242208.9,
-      "pct_b": 0.733,
-      "bandwidth": 0.1572
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 265750.0,
@@ -143,7 +143,7 @@
       "cloud_bottom": 248175.0,
       "price_vs_cloud": "inside"
     },
-    "chikou_above_price_26ago": true,
+    "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 285500.0,
       "low_20": 243000.0,
