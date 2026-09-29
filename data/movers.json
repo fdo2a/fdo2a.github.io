@@ -1,91 +1,85 @@
 {
-  "report_date": "2026-09-28",
+  "report_date": "2026-09-29",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
-      "direction": "up",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": 1.68,
-          "close": 228.86,
-          "value": 32332640345.77
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": -2.66,
+          "close": 329.4,
+          "value": 12442731652.65
         }
       ]
     },
     {
       "id": "g2",
       "industry": "Interactive Media & Services",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "Meta Platforms (META)",
-          "change_pct": -4.79,
-          "close": 715.62,
-          "value": 19772113880.85
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Automobile Manufacturers",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "Tesla, Inc. (TSLA)",
-          "change_pct": -3.94,
-          "close": 357.45,
-          "value": 13707951319.03
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "Systems Software",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Palo Alto Networks (PANW)",
-          "change_pct": 4.63,
-          "close": 392.09,
-          "value": 2348828454.12
+          "name": "Meta Platforms (META)",
+          "change_pct": 3.24,
+          "close": 738.79,
+          "value": 17017349673.45
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Semiconductors",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": -0.72,
+          "close": 227.21,
+          "value": 22317591803.78
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Semiconductors",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Broadcom (AVGO)",
+          "change_pct": 1.58,
+          "close": 355.1,
+          "value": 6701530408.59
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Semiconductors",
-      "direction": "down",
+      "industry": "Electrical Components & Equipment",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Intel (INTC)",
-          "change_pct": -5.67,
-          "close": 116.03,
-          "value": 12760802436.03
-        },
-        {
-          "name": "Qualcomm (QCOM)",
-          "change_pct": -7.17,
-          "close": 187.48,
-          "value": 3114840643.9
+          "name": "Bloom Energy (BE)",
+          "change_pct": 10.8,
+          "close": 291.25,
+          "value": 6883181732.5
         }
       ]
     }

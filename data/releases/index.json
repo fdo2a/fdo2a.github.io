@@ -1,21 +1,21 @@
 {
-  "report_date": "2026-09-25",
+  "report_date": "2026-09-29",
   "releases": [
     {
-      "key": "durable-goods",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "key": "retail-sales",
+      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 23827,
-      "path": "releases/durable-goods.txt"
+      "chars": 20843,
+      "path": "releases/retail-sales.txt"
     },
     {
-      "key": "michigan",
-      "url": "http://www.sca.isr.umich.edu/",
+      "key": "jolts",
+      "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 2245,
-      "path": "releases/michigan.txt"
+      "chars": 5776,
+      "path": "releases/jolts.txt"
     }
   ]
 }
