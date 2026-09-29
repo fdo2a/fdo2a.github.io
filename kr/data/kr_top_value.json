@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 5842450,
-    "volume": 3264425,
+    "value": 5094466,
+    "volume": 2887064,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 5794187,
-    "volume": 21080365,
+    "value": 4178933,
+    "volume": 15380005,
     "members": [
       "삼성전자"
     ]
@@ -26,59 +26,37 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1617893,
-    "volume": 45987683,
+    "value": 1890020,
+    "volume": 53134344,
     "members": [
       "TIGER 반도체TOP10",
       "KODEX 반도체레버리지",
       "SOL AI반도체TOP2플러스",
-      "TIGER 반도체TOP10레버리지",
       "KODEX 반도체",
+      "TIGER 반도체TOP10레버리지",
       "KODEX AI반도체TOP2플러스",
-      "HANARO Fn K-반도체",
       "SOL AI반도체소부장",
-      "ACE K반도체TOP2+",
-      "SOL 반도체전공정",
-      "TIGER 반도체TOP10커버드콜액티브",
-      "TIGER 반도체",
+      "HANARO Fn K-반도체",
       "KODEX AI반도체핵심장비",
-      "TIGER AI반도체핵심공정",
-      "SOL 반도체후공정",
+      "SOL 반도체전공정",
       "ACE AI반도체TOP3+",
+      "TIGER 반도체",
+      "SOL 반도체후공정",
+      "TIGER AI반도체핵심공정",
+      "TIGER 반도체TOP10커버드콜액티브",
+      "ACE K반도체TOP2+",
+      "PLUS AI반도체소부장액티브",
       "ACE 반도체Plus전략산업",
-      "RISE AI반도체TOP10",
       "HANARO 반도체핵심공정주도주",
+      "RISE AI반도체TOP10",
       "KODEX 반도체타겟위클리커버드콜",
       "PLUS 코리아HBM반도체",
-      "PLUS AI반도체소부장액티브",
       "RISE 비메모리반도체액티브",
       "FOCUS AI반도체위클리고정커버드콜",
       "KODEX 아시아AI반도체exChina액티브",
       "FOCUS 금융반도체지주채권혼합50액티브",
-      "TIGER 한중반도체(합성)",
-      "KODEX 한중반도체(합성)"
-    ]
-  },
-  {
-    "label": "삼성전자우",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 1394377,
-    "volume": 6644486,
-    "members": [
-      "삼성전자우"
-    ]
-  },
-  {
-    "label": "삼성전기",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 1005267,
-    "volume": 659923,
-    "members": [
-      "삼성전기"
+      "KODEX 한중반도체(합성)",
+      "TIGER 한중반도체(합성)"
     ]
   },
   {
@@ -86,10 +64,32 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 937778,
-    "volume": 871633,
+    "value": 1096918,
+    "volume": 1022098,
     "members": [
       "KODEX CD금리액티브(합성)"
+    ]
+  },
+  {
+    "label": "삼성전기",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 827602,
+    "volume": 543258,
+    "members": [
+      "삼성전기"
+    ]
+  },
+  {
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 758646,
+    "volume": 3732925,
+    "members": [
+      "삼성전자우"
     ]
   },
   {
@@ -97,21 +97,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 800610,
-    "volume": 717246,
+    "value": 472389,
+    "volume": 426725,
     "members": [
       "SK스퀘어"
-    ]
-  },
-  {
-    "label": "한화솔루션",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 379486,
-    "volume": 11519453,
-    "members": [
-      "한화솔루션"
     ]
   },
   {
@@ -119,8 +108,8 @@
     "kind": "single_stock_lev",
     "direction": "long",
     "theme": null,
-    "value": 280454,
-    "volume": 27170616,
+    "value": 273569,
+    "volume": 27239202,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지",
@@ -134,23 +123,34 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "2차전지",
-    "value": 253289,
-    "volume": 108071410,
+    "value": 264672,
+    "volume": 115190792,
     "members": [
       "KODEX 2차전지산업레버리지",
       "KODEX 2차전지산업",
       "TIGER 2차전지TOP10",
       "TIGER 2차전지소재Fn",
-      "SOL 전고체배터리&실리콘음극재",
-      "KODEX 전고체배터리ESS TOP2플러스",
       "TIGER 2차전지TOP10레버리지",
       "TIGER 2차전지테마",
+      "SOL 전고체배터리&실리콘음극재",
+      "KODEX 전고체배터리ESS TOP2플러스",
       "KODEX 2차전지핵심소재10",
-      "SOL 2차전지소부장Fn",
       "RISE 2차전지TOP10",
+      "SOL 2차전지소부장Fn",
       "RISE 2차전지액티브",
       "ACE 2차전지&친환경차액티브",
       "RISE 배터리 리사이클링"
+    ]
+  },
+  {
+    "label": "삼화콘덴서",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 224699,
+    "volume": 1472600,
+    "members": [
+      "삼화콘덴서"
     ]
   }
 ]
