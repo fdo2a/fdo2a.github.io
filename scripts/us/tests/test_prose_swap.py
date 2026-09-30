@@ -1,5 +1,7 @@
 """prose_swap — 이름으로 되꽂기가 실제로 거부해야 할 것을 거부하는가."""
 
+import json
+
 import pytest
 
 from us.prose_swap import ProseSwapError, extract, parse_payload, reinsert
@@ -341,3 +343,141 @@ def test_generated_research_summary_is_not_sent_for_humanization():
     assert '시장 설명' in text
     assert '검토 대상' not in text
     assert reinsert(html, text, side) == html
+
+
+# ── 문단 단위 되꽂기 (발행 뒤 codex 문체 수정, 2026-09-27 사용자 지시) ─────────────
+# 한 문단이 닮은 정도 0.79 로 걸려 수십 문단의 수정이 통째로 버려졌다. 걸린 문단만
+# 원문으로 두고 나머지는 반영한다. 문단마다의 검사는 그대로다.
+
+from us.prose_swap import reinsert_partial  # noqa: E402
+
+
+def test_부분_되꽂기는_걸린_문단만_원문으로_둔다():
+    text, side = extract(SWAPPY)
+    edited = (text.replace('되풀이했다.', '되풀이했습니다.')
+                  .replace('시장은 이번 국면을 관망하며 다음 발표를 기다리는 분위기다.',
+                           '오늘 점심은 김치찌개였다.'))
+    out, rejected = reinsert_partial(SWAPPY, edited, side)
+    assert '되풀이했습니다' in out
+    assert '시장은 이번 국면을 관망하며 다음 발표를 기다리는 분위기다.' in out
+    assert '김치찌개' not in out
+    assert [pid for pid, _ in rejected] == ['P002']
+
+
+def test_부분_되꽂기도_수치가_바뀐_문단은_반영하지_않는다():
+    text, side = extract(SWAPPY)
+    out, rejected = reinsert_partial(SWAPPY, text.replace('+1.2%', '+1.3%')
+                                     .replace('밀렸다.', '밀렸습니다.'), side)
+    assert '+1.2%' in out and '+1.3%' not in out and '밀렸습니다' in out
+    assert [pid for pid, _ in rejected] == ['P003']
+
+
+def test_부분_되꽂기는_맞바꾼_문단을_둘_다_원문으로_둔다():
+    text, side = extract(SWAPPY)
+    out, rejected = reinsert_partial(SWAPPY, _swap_bodies(text, 'P001', 'P002'), side)
+    assert out == SWAPPY
+    assert sorted(pid for pid, _ in rejected) == ['P001', 'P002']
+
+
+def test_부분_되꽂기에서_빠진_문단과_모르는_이름은_원문이다():
+    text, side = extract(SWAPPY)
+    blocks = text.strip().split('\n\n')
+    edited = '\n\n'.join(blocks[1:] + ['[[P999]]\n엉뚱한 문단.']).replace('분위기다.', '분위기입니다.')
+    out, rejected = reinsert_partial(SWAPPY, edited, side)
+    assert '분위기입니다' in out and '되풀이했다.' in out
+    assert 'P999' in [pid for pid, _ in rejected]
+
+
+def test_부분_되꽂기에서_마크다운이_섞인_문단만_원문이다():
+    text, side = extract(SWAPPY)
+    edited = text.replace('되풀이했다.', '**되풀이**했다.').replace('분위기다.', '분위기입니다.')
+    out, rejected = reinsert_partial(SWAPPY, edited, side)
+    assert '되풀이했다.' in out and '분위기입니다' in out
+    assert [pid for pid, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기도_다른_HTML의_사이드카는_통째로_거부한다():
+    text, side = extract(SWAPPY)
+    with pytest.raises(ProseSwapError):
+        reinsert_partial(HTML, text, side)
+
+
+# ── 부분 되꽂기의 추가 검사 (2026-09-30 codex 구현 검토) ──────────────────────────
+# 사람이 보지 않는 자동 경로라 개수만 맞추는 검사로는 모자란다. 아래 넷은 전부
+# 개수·유사도 검사를 통과하던 편집이다(재현 후 추가).
+
+def _one(sentence):
+    return ('<html><body><div class="card"><p>' + sentence + '</p>'
+            '<p>S&amp;P 500 은 0.4% 올랐다.</p></div></body></html>')
+
+
+def _partial(before, after, names=()):
+    html = _one(before)
+    text, side = extract(html)
+    return reinsert_partial(html, text.replace(before, after), side, names=names)
+
+
+def test_부분_되꽂기는_수치의_순서가_바뀐_문단을_원문으로_둔다():
+    out, rejected = _partial('금리는 100에서 200으로 올랐고 시장은 이를 경계했다.',
+                             '금리는 200에서 100으로 올랐고 시장은 이를 경계했다.')
+    assert '100에서 200으로' in out and [p for p, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기는_방향이_뒤집힌_문단을_원문으로_둔다():
+    out, rejected = _partial('유가가 오르면서 지수가 상승할 가능성이 커졌다고 본다.',
+                             '유가가 오르면서 지수가 하락할 가능성이 커졌다고 본다.')
+    assert '상승할' in out and [p for p, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기는_부정이_빠진_문단을_원문으로_둔다():
+    out, rejected = _partial('수출 기업은 환율 상승의 덕을 크게 보지 않았다고 판단한다.',
+                             '수출 기업은 환율 상승의 덕을 크게 보았다고 판단한다.')
+    assert '않았다' in out and [p for p, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기는_아는_이름이_바뀐_문단을_원문으로_둔다():
+    out, rejected = _partial('삼성전자 실적이 시장 기대를 웃돌았다고 판단한다.',
+                             '현대전자 실적이 시장 기대를 웃돌았다고 판단한다.',
+                             names=('삼성전자',))
+    assert '삼성전자' in out and [p for p, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기는_같은_방향의_말바꿈은_받는다():
+    out, rejected = _partial('유가가 올랐고 그래서 에너지 업종이 강세를 보인 것으로 나타났다.',
+                             '유가가 올랐고 그래서 에너지 업종이 강세를 보였다.',
+                             names=('에너지',))
+    assert '강세를 보였다' in out and rejected == []
+
+
+def test_부분_되꽂기는_넘겨받은_사이드카가_아니라_HTML_을_기준으로_본다():
+    """codex 는 작업 폴더에 쓰기 권한이 있다 — 사이드카의 기대값을 고쳐 판단 어휘를 뒤집을 수 있었다."""
+    html = _one('경기는 개선 흐름이라고 판단한다.')
+    text, side = extract(html)
+    forged = json.loads(json.dumps(side))
+    for rec in forged['items'].values():
+        if rec.get('controlled'):
+            rec['controlled'] = {'악화': 1}
+    out, rejected = reinsert_partial(html, text.replace('개선', '악화'), forged)
+    assert '개선' in out and '악화' not in out
+    assert [p for p, _ in rejected] == ['P001']
+
+
+# ── 재검토(2026-09-30) ─────────────────────────────────────────────────────────
+
+def test_부분_되꽂기는_독립된_안이_빠진_문단을_원문으로_둔다():
+    out, rejected = _partial('지금은 주식 비중을 늘리면 안 된다고 판단한다.',
+                             '지금은 주식 비중을 늘리면 된다고 판단한다.')
+    assert '안 된다' in out and [p for p, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기는_이름과_방향의_짝이_바뀐_문단을_원문으로_둔다():
+    out, rejected = _partial('삼성전자는 상승했고 현대차는 하락했다. 반도체 업황 회복 기대와 환율 부담이 엇갈린 하루였고 외국인 수급도 종목별로 크게 갈렸다고 판단한다.',
+                             '현대차는 상승했고 삼성전자는 하락했다. 반도체 업황 회복 기대와 환율 부담이 엇갈린 하루였고 외국인 수급도 종목별로 크게 갈렸다고 판단한다.',
+                             names=('삼성전자', '현대차'))
+    assert out.index('삼성전자') < out.index('현대차') and [p for p, _ in rejected] == ['P001']
+
+
+def test_부분_되꽂기는_영문_이름과_방향의_짝도_본다():
+    out, rejected = _partial('AAPL 은 상승했고 TSLA 는 하락했다. 반도체 업황 회복 기대와 환율 부담이 엇갈린 하루였고 외국인 수급도 종목별로 크게 갈렸다고 판단한다.',
+                             'TSLA 는 상승했고 AAPL 은 하락했다. 반도체 업황 회복 기대와 환율 부담이 엇갈린 하루였고 외국인 수급도 종목별로 크게 갈렸다고 판단한다.')
+    assert [p for p, _ in rejected] == ['P001']

@@ -33,17 +33,17 @@
 
 ## STEP 1 — 리서치 (research_notes.md)
 
-**운용자 대상 시황·리서치:** STEP 1 시작 전에 `.claude/DESK_REPORT.md`를 읽고 그 문서의 Handoff를 수행한다. 기존 시황·수급·뉴스 자료를 유지하면서 `research_notes.md`에 `운용 판단 브리핑`을 추가한다. 작성자에게 이 절과 해당 문서 경로를 반드시 넘긴다. STEP 2 초안과 STEP 2.5 윤문 후에는 그 문서의 Editorial acceptance를 수행한다. 실제 보유·운용제약이 주어지지 않았으면 자산별 조건부 판단으로 쓰며, 새 거래 아이디어가 없는 날도 정상 발행한다.
+**운용자 대상 시황·리서치:** STEP 1 시작 전에 `.claude/DESK_REPORT.md`를 읽고 그 문서의 Handoff를 수행한다. 기존 시황·수급·뉴스 자료를 유지하면서 `research_notes.md`에 `운용 판단 브리핑`을 추가한다. 작성자에게 이 절과 해당 문서 경로를 반드시 넘긴다. STEP 2 초안 뒤에 그 문서의 Editorial acceptance를 수행한다. 실제 보유·운용제약이 주어지지 않았으면 자산별 조건부 판단으로 쓰며, 새 거래 아이디어가 없는 날도 정상 발행한다.
 
-**리서치 인계:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안과 STEP 2.5 윤문 후에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
+**리서치 인계:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안 뒤에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
 
-**앞으로 작성하는 보고서:** `.claude/RESEARCH_WORKFLOW.md`를 읽고 증거 → 가설·복기 기록 → 당일 cycle 순서로 진행한다. 원장은 `research/kr`, 원장·증거 파일을 새 발행본과 함께 커밋한다. 기존 발행본은 이 변경의 대상이 아니다. 작성자에게 cycle ID와 모든 미해결 가설을 전달하고, 초안과 윤문 후 모두 아래 검사를 통과시킨다. 새 자료가 추가되면 cycle도 다시 기록한다.
+**앞으로 작성하는 보고서:** `.claude/RESEARCH_WORKFLOW.md`를 읽고 증거 → 가설·복기 기록 → 당일 cycle 순서로 진행한다. 원장은 `research/kr`, 원장·증거 파일을 새 발행본과 함께 커밋한다. 기존 발행본은 이 변경의 대상이 아니다. 작성자에게 cycle ID와 모든 미해결 가설을 전달하고, 초안이 아래 검사를 통과해야 한다. 새 자료가 추가되면 cycle도 다시 기록한다.
 
 ```bash
 python3 scripts/check_research.py check --span daily --html <새 초안> --root research/kr --market kr --date <DATE> --cycle <CYCLE_ID>
 ```
 
-STEP 2.5 `finalize`에도 같은 명령을 `--gate`로 추가한다(`--html {f}`). 초안 전후 비교는 workflow의 `compare`로 기록하고, 인과관계·유보 표현의 의미 보존은 사람이 확인한다.
+발행 뒤 codex 문체 수정도 글에 박힌 cycle 로 이 검사를 다시 돌린다(`scripts/review/style_pass.py`).
 
 수치가 아닌 **뉴스·정책 촉매·해석**만 웹 리서치한다(수치는 kr/data가 확정). 최소 포함:
 - 그날 코스피·코스닥·수급을 움직인 뉴스(외국인 매매 배경, 대장주 이슈)
@@ -77,90 +77,19 @@ python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/dat
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
 
-1. `python3 scripts/apply_readability.py <html>` → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 STEP 2.5 윤문과 별개로 항상 돈다.
+1. `python3 scripts/apply_readability.py <html>` → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 항상 돈다.
 2. 실패하면 검사 원문을 writer 에게 넘겨 **전체 보고서를 유지한 채 위반 문단만 수정**하게 하고 apply → check 를 반복한다.
 3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고치고(장중 시각이 셋 이상인 문장은 시간대별로 나누기 → 정확한 레벨은 표에 두고 산문엔 가장 가까운 지지·저항만 → 산문 반올림 → 반복 수치 제거), 수치 정본·표·수급 신선도·정책 블록 수를 다시 확인한다. **통과할 때까지 계속한다.**
 
 가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다. 중단은 데이터 정본의 completeness 실패뿐이다.
 
-## STEP 2.5 — AI 티 제거 (발행 전 마지막 손질)
+## STEP 2.5 — 윤문은 루틴에서 하지 않는다 (2026-09-27)
 
-2026-08-25 사용자 지시. 리포트를 **말하듯이** 쓰라는 문체 기준(`.claude/agents/brief-report-writer.md`의 「말하듯이 쓴다」 절(KR도 공유))을 writer가 지켰더라도, 매일 같은 틀로 생성된 글에는 사람이 안 쓰는 리듬이 남는다. 발행 직전에 한 번 걸러낸다.
+**루틴은 STEP 2 게이트를 통과하면 바로 STEP 3 으로 간다.** `humanize-korean` 윤문을 부르지 않는다 — Claude 주간 한도를 아끼려고 사용자가 뺐다.
 
-**1. 원본은 건드리지 않는다. 사본에서 작업한다.**
+말투 손질은 **발행 뒤** 로컬 러너(`scripts/review_gate.py run --correct`, 매시)가 codex 로 한다. codex 는 발행 커밋 스냅샷에서 `prose_in.txt`(이 단계가 쓰던 `humanize_prose.py extract` 산출물)만 고치고, Python 이 `prose_swap.reinsert`(문단마다 숫자·영문 이름·판단 어휘·링크·닮은 정도)와 이 단계가 쓰던 게이트 목록 전체를 발행 커밋의 데이터로 다시 돌린 뒤에만 공개판을 교체한다. 거부되면 원본이 그대로 공개돼 있을 뿐이다. 모듈 `scripts/review/style_pass.py`, 설계 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
 
-```bash
-cp kr_brief_[DATE].html kr_brief_[DATE].humanizing.html
-```
-
-윤문도 검증도 전부 이 사본에서 한다. 원본이 바뀌는 순간은 4번의 finalize 하나뿐이다. 그래서 스킬이 예외로 죽든, 시간이 초과되든, 문단을 반만 쓰고 멈추든, 사본을 지우면 그것으로 끝이다 — 원본은 애초에 한 번도 수정되지 않았다. **원본을 먼저 고치고 나중에 되돌리는 방식은 쓰지 않는다.** 되돌리기가 실패하는 분기가 남기 때문이다.
-
-**2. 산문을 꺼낸다.**
-
-```bash
-python3 scripts/humanize_prose.py extract kr_brief_[DATE].humanizing.html
-```
-
-`prose_in.txt`(손댈 문단만, 이름표 `[[P001]]`이 붙어 있다)와 `prose_map.json`(사이드카)이 나온다. 표 안 문단·캡션·에디터 노트는 애초에 뽑히지 않는다 — **넘기지 않은 것은 훼손될 수 없다.** 인라인 태그(`<strong>` 등)는 `⟦0⟧` 자리표로 바뀌어 나가고, 되꽂을 때 하나라도 없으면 거부된다.
-
-**3. `prose_in.txt`의 문장을 고친다. 이름표 줄(`[[P001]]`)은 건드리지 않는다.**
-
-`humanize-korean` 스킬은 레포 `.claude/settings.json`이 마켓플레이스(`epoko77-ai/im-not-ai`)째 등록해 둔다 — 이 레포를 클론한 세션은 시작할 때 설치를 시도한다. **그래도 쓸 수 있다고 가정하지 않는다.** 트리거의 `allowed_tools`에 `Skill`이 빠져 있으면 설치돼도 부를 수 없고(스킬이 서브에이전트를 띄우므로 `Agent`도 있어야 한다), 샌드박스가 마켓플레이스를 못 받아오는 경우도 있다.
-
-**목록에 보이는 것과 부를 수 있는 것은 다르다.** `allowed_tools`는 사전 승인 목록이라 이름이 보여도 호출이 거부될 수 있다. 그러니 판정은 호출해 보고 한다 — 거부·오류·산출물 없음 중 하나라도 나오면 **반쯤 나온 결과는 버리고** 직접 고친다. **어느 쪽이든 이 단계를 건너뛰지는 않는다.**
-
-- **스킬로 할 때**: `prose_in.txt`를 입력으로 준다. 스킬은 텍스트를 받아 `_workspace/{run_id}/final.md`(마크다운)를 내놓는다 — **HTML을 고쳐 주지 않으므로 HTML을 통째로 넘기는 사용법은 없다.** 이름표를 그대로 두고 문장만 고치라고, **강도는 「보수」**로 명시한다 — 스킬이 절을 갈아끼우기 시작하면 4번에서 통째로 거부된다.
-- **직접 할 때**: `prose_in.txt`를 그 자리에서 고치고, 그 파일을 그대로 4번의 `--payload`로 쓴다. `python3 scripts/check_style.py <html>`의 출력이 작업 목록이다. 검사가 짚은 항목부터 고치고, 검사가 못 보는 아래 셋도 함께 훑는다.
-  - **주체가 모호할 때만 밝힌다.** 문맥상 분명한 주어를 문장마다 반복하지 않는다.
-  - **한 문장에 한 관계만 남긴다.** 「A했다가 B했고 이후 C해서 D로 마감했다」는 문장이 아니라 표다. 시각이 셋 이상이면 나눈다.
-  - **판단의 강도를 보존한다.** 피동 표현을 줄여도 추정을 단정이나 인과관계로 바꾸지 않는다.
-
-**두 경로 모두 문장만 만진다.** 숫자·자리표·이름표는 그대로 둔다. 4번이 그것을 강제한다.
-
-**4. 되꽂고, 검사하고, 통과했을 때만 원본을 교체한다. 한 명령으로 한다.**
-
-```bash
-python3 scripts/humanize_prose.py finalize kr_brief_[DATE].humanizing.html \
-  --original kr_brief_[DATE].html --payload <고친 prose_in.txt 또는 _workspace/{run_id}/final.md> \
-  --gate "python3 scripts/check_style.py {f}" \
-  --gate "python3 scripts/check_readability.py --strict --no-inline-images {f}" \
-  --gate "python3 scripts/check_session.py --html {f} --datadir kr/data --market kr" \
-  --gate "python3 scripts/check_weight.py --html {f} --datadir kr/data --market kr" \
-  --gate "python3 scripts/check_kr_stance.py --html {f} --datadir kr/data" \
-  --gate "python3 scripts/check_news.py --html {f} --datadir kr/data --market kr --date <DATE>" \
-  --gate "python3 scripts/check_movers.py --html {f} --datadir kr/data --market kr" \
-  --gate "python3 scripts/check_research.py check --span daily --html {f} --root research/kr --market kr --date <DATE> --cycle <CYCLE_ID>" \
-  --gate "python3 scripts/verify_post.py {f} --before kr_brief_[DATE].html --skip-layout"
-```
-
-되꽂기 → 바뀐 문단 출력 → 게이트 순서로 돌고, **전부 통과했을 때만** `os.replace`로 원본을 교체한다. 하나라도 실패하면 사본을 지우고 exit 1로 끝난다 — 원본은 처음부터 수정되지 않았다. **맨손 `mv`는 쓰지 않는다.** 검사를 건너뛰고 교체할 자리를 남기지 않는 것이 이 명령의 존재 이유다.
-
-되꽂기가 거부하는 것 — **문단마다** 이것들이 원문과 같아야 한다:
-
-- 숫자 (**부호 포함** — `+1.2%`와 `-1.2%`는 다른 값이다)
-- 영문 이름·티커 (AAPL과 TSLA를 문단끼리 맞바꾸면 각자 제 원문과는 여전히 닮아 유사도로는 안 잡힌다)
-- **판단 어휘** — 개선·악화·보합, 둔화·가속·재가속, 뚜렷·완만·미미, 레짐 이름 9종, 확대·축소·중립. 「완만한 개선」을 「뚜렷한 악화」로 바꾸면 3-gram 유사도는 0.8이 넘는다. 말투는 바꿔도 이 낱말들은 그대로 둔다
-- 링크가 감싼 말 (`<a>`가 「연준 보고서」에서 「노동부 자료」로 옮겨 붙으면 멀쩡한 링크가 엉뚱한 출처를 가리킨다)
-- 인라인 자리표의 개수와 순서, 문단 길이(0.5~2.0배)
-- 그리고 **몸통이 제 원문보다 다른 문단에 더 닮지 않을 것**
-
-**이 단계가 허락하는 것은 문법과 말투까지다.** 어미는 `-다` 로 고정돼 있다(2026-09-24) — `-습니다`·「~죠」로 바꾸거나 질문을 끼워 리듬을 만들지 않는다. 동사를 바꾸고, 주어를 되살리고, 긴 문장을 나누는 것 — 거기까지다. 절을 갈아끼우는 재작성은 문턱(닮은 정도 0.80)에서 걸린다. 원문에 없던 인과를 넣거나 조건절을 떼어 단정으로 만드는 의미 변화는 어떤 사실 검사로도 못 잡으니, **애초에 그만큼 못 바꾸게 막는 편이 낫다.** 08-21 발행본 58문단 실측에서 말투 편집은 최저 0.95, 절을 갈아끼운 재작성은 중앙 0.62로 두 무리가 갈렸다.
-
-닮은 정도 비교는 총체적 뒤바뀜도 함께 잡는다. 이름표는 자리만 정하지 몸통이 제 자리 것인지는 보증하지 않는다 — 숫자가 없는 문단끼리 내용을 통째로 맞바꾸면 수치 검사도 `verify_post`도 전부 통과한다(2026-08-25 codex 검토에서 실제로 뚫린 뒤 들어간 검사다).
-
-`finalize`는 게이트가 **하나도 없으면 시작하지 않고**, 사본과 원본 경로가 같아도 시작하지 않는다(검사 실패 시 원본을 지우게 된다). 게이트는 셸을 거치지 않고 인자 배열로 실행된다.
-
-게이트를 다시 돌리는 이유가 있다. STEP 2의 게이트들은 **윤문 전 원고를 보고 통과시킨 것이다.** 문장을 다시 쓴 뒤에도 그 판정이 유효하다고 가정하면 안 된다. 통과한 뒤 §2 전략 코멘트의 수치가 아래 표와 여전히 1:1로 맞는지, 수급 신선도 라벨(당일 잠정/전 거래일 기준)이 그대로인지도 확인한다 — 윤문이 라벨을 문장에 녹이다 지울 수 있다.
-
-**5. 명령이 찍어 준 「바뀐 문단」을 읽는다.**
-
-허용 범위를 문법·말투로 좁혔으니 남는 것은 그 안에서의 미세한 뉘앙스뿐이다. 그래도 **사람이 한 번 읽는다** — finalize가 바뀐 문단만 전/후로 찍어 주므로 그 출력을 그 자리에서 읽는다.
-
-**이 읽기는 교체를 막지 못한다** — finalize는 이미 원본을 바꾼 뒤다. 그래서 여기서 이상한 것을 발견하면 발행 후 검토 게이트(`.claude/REVIEW_GATE.md`)로 넘긴다. 그쪽이 발행본을 다시 읽고 정정하는 자리다. 윤문이 만든 의미 변화도 그 절차가 잡는 대상에 포함된다.
-
-**윤문이 거부돼도 발행은 계속한다.** 말투는 있으면 좋은 것이고, 게이트는 필수다.
-
-사본(`*.humanizing.html`)·`prose_in.txt`·`prose_map.json`과 스킬 작업 폴더(`_workspace/`)는 `.gitignore`에 걸려 있다. STEP 3의 `git add -A`가 쓸어 담지 않는다.
+**그래서 초고가 곧 발행본이다.** writer 지시문의 「말하듯이 쓴다」와 STEP 2 의 `check_style` 이 첫 판의 문체를 책임진다.
 
 ## STEP 2.9 — 판단 원장 승계
 

@@ -19,6 +19,7 @@
 """
 
 import argparse
+import dataclasses
 import errno
 import fcntl
 import io
@@ -624,6 +625,36 @@ PROMPT = """읽기 전용으로 검토만 해 줘. 파일을 고치지 말고 �
 
 MARKET_NAME = {'us': '미국', 'kr': '한국'}
 
+# 문체 수정 단계(루틴 STEP 2.5 대체, 2026-09-27). codex 가 참고할 문체 기준 — 발행 커밋에서
+# 글과 함께 꺼낸다. humanize 규칙은 공개 레포에 복사하지 않고 로컬 플러그인 경로를 읽힌다.
+STYLE_REFS = ('.claude/agents/STYLE_EXEMPLARS.md',)
+HUMANIZE_RULES = os.environ.get('HUMANIZE_RULES') or os.path.expanduser(
+    '~/.claude/plugins/marketplaces/im-not-ai/skills/humanize-korean/references/quick-rules.md')
+
+STYLE_PROMPT = """
+이번에는 위 검토에 앞서 **문체 수정**도 한다. 이 작업 폴더에서 고쳐도 되는 파일은
+`prose_in.txt` **하나뿐**이다. 글 HTML·데이터·다른 파일은 절대 수정하지 마라.
+
+`prose_in.txt` 는 발행본의 산문 문단만 뽑은 것이다. `[[P001]]` 같은 이름표 줄과 `⟦0⟧` 같은
+자리표는 그대로 두고 그 아래 문장만 고친다. 고칠 것이 없으면 파일을 그대로 둔다.
+
+기준: 이 글은 PM 이 읽는 데스크 문서다. 어미는 `-다` 로 고정(-습니다·~죠 금지), 수사 의문 금지,
+작업 어휘(원장·회차·판정불가·파일명·코드) 금지. 한 문장에 한 관계, 한 문단에 한 주제.
+주체가 모호할 때만 밝히고, 피동 종결·기계적 나열·번역투를 걷어낸다.
+문장 표본: `.claude/agents/STYLE_EXEMPLARS.md`.{rules}
+
+**문법과 말투까지만** 고친다. 아래는 문단마다 원문과 같아야 하고, 하나라도 어기면 그 수정 전체가
+버려진다.
+- 숫자(부호 포함)·날짜·영문 이름·티커, 인용문
+- 판단 어휘: 개선·악화·보합·둔화·가속·재가속·뚜렷·완만·미미·확대·축소·중립과 레짐 이름
+- 자리표의 개수와 순서, 자리표 쌍이 감싼 말(링크 문구)
+- 문단 길이는 0.5~2배, 절을 갈아끼우는 재작성 금지(원문과 많이 닮아야 한다)
+- 추정을 단정으로, 조건을 인과로 바꾸지 않는다. 마크다운·HTML 을 넣지 않는다.
+
+**출력 계약** — 마지막 답의 첫 줄은 정확히 `검토 판본: 윤문 후` 이다. 둘째 줄부터 위 세 가지
+검토를 **고친 뒤의 문장 기준으로** 한 지적 목록, 없으면 「지적 없음」만 쓴다.
+"""
+
 
 class RunnerLock:
     """tick 겹침 방지. **advisory lock 이어야 한다** — `mkdir` 락은 강제 종료나 전원
@@ -726,14 +757,28 @@ def publish_commit(root, path, sha):
             break
     while found and at + 1 < len(commits):
         prev = rev_parse(root, f'{commits[at + 1]}:{path}')
-        if not prev or prose_mod.typography(path, _blob_text(root, prev),
-                                            _blob_text(root, sha), root=root) is not True:
+        if not prev or not (_style_step(root, found, path, prev, sha)
+                            or prose_mod.typography(path, _blob_text(root, prev),
+                                                    _blob_text(root, sha), root=root) is True):
             break
         sha, at, found = prev, at + 1, commits[at + 1]
         while at + 1 < len(commits) and rev_parse(root, f'{commits[at + 1]}:{path}') == sha:
             at += 1
             found = commits[at]
     return found
+
+
+def _style_step(root, commit, path, prev, sha):
+    """발행 뒤 codex 문체 커밋인가 — 트레일러 **와** 태그 구조·수치 불변이 둘 다 참일 때만.
+
+    트레일러만 믿으면 손으로 쓴 커밋 메시지 하나로 근거 데이터를 옛 날짜에 묶을 수 있다.
+    """
+    from review import style_pass
+    msg = git(root, 'log', '-1', '--format=%B', commit)
+    if msg.returncode or not style_pass.is_style_commit(msg.stdout, prev):
+        return False
+    before, after = _blob_text(root, prev), _blob_text(root, sha)
+    return bool(before and after) and style_pass.same_skeleton(before, after)
 
 
 EVIDENCE_DATE = {'us': 'data/market_data.json', 'kr': 'kr/data/kr_market_data.json'}
@@ -786,10 +831,10 @@ def _blob_text(root, sha):
 
 
 def _wanted(name):
-    return name.endswith(SNAPSHOT_SUFFIXES)
+    return name.endswith(SNAPSHOT_SUFFIXES) or name in STYLE_REFS
 
 
-def snapshot(root, oid, paths, dest):
+def snapshot(root, oid, paths, dest, everything=False):
     """고정한 커밋에서 글과 근거 데이터를 꺼낸다.
 
     **한 커밋에서 둘을 함께 꺼내는 것이 요점이다.** 근거 데이터 파일은 날짜별이 아니라 한
@@ -800,12 +845,12 @@ def snapshot(root, oid, paths, dest):
     if out.returncode:
         return False
     with tarfile.open(fileobj=io.BytesIO(out.stdout)) as tf:
-        keep = [m for m in tf.getmembers() if m.isfile() and _wanted(m.name)]
+        keep = [m for m in tf.getmembers() if m.isfile() and (everything or _wanted(m.name))]
         tf.extractall(dest, members=keep, filter='data')
     return True
 
 
-def review_one(root, commit, item, timeout):
+def review_one(root, commit, item, timeout, style=False):
     """codex 를 읽기 전용으로 한 편 돌린다 — (초안, 실패 이유, 실패 종류, 원문).
 
     **종류는 발생한 분기에서 붙인다.** 타임아웃은 예외이고 재발행은 SHA 비교라,
@@ -822,12 +867,29 @@ def review_one(root, commit, item, timeout):
         data_dir = SNAPSHOT[item.section]
         if not snapshot(root, commit, (item.path, data_dir), work):
             return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다', UNKNOWN, ''
+        # 문체 기준은 발행 당시 것이 아니라 **지금** 것이다. 없어도 문체 수정은 돈다.
+        if style and not snapshot(root, 'origin/main', STYLE_REFS, work):
+            print(f'[러너] 문체 기준을 못 꺼냈다 — {", ".join(STYLE_REFS)}')
         prompt = PROMPT.format(post=item.path,
                                market=MARKET_NAME.get(item.section, item.section),
                                datadir=data_dir)
+        if style:
+            from review import style_pass
+            # 고치는 판은 **지금 공개된 판**이다. 발행 커밋의 판과는 조판만 다를 수 있다.
+            current = _blob_text(root, item.sha)
+            if current is None:
+                return None, f'{item.sha[:7]} 을 못 읽었다', UNKNOWN, ''
+            with open(os.path.join(work, item.path), 'w', encoding='utf-8') as fh:
+                fh.write(current)
+            style_pass.prepare(work, current)
+            rules = (f'\n추가 규칙(읽기만): `{HUMANIZE_RULES}`'
+                     if os.path.isfile(HUMANIZE_RULES) else '')
+            prompt = STYLE_PROMPT.format(rules=rules) + '\n' + prompt.replace(
+                '읽기 전용으로 검토만 해 줘. 파일을 고치지 말고 지적만 목록으로 돌려줘.',
+                '검토 부분은 지적만 목록으로 돌려줘.')
         try:
             out = subprocess.run(
-                [CODEX, 'exec', '--sandbox', 'read-only',
+                [CODEX, 'exec', '--sandbox', 'workspace-write' if style else 'read-only',
                  '--skip-git-repo-check', '-C', work, '-'],
                 input=prompt, capture_output=True, text=True, timeout=timeout)
         except FileNotFoundError:
@@ -850,9 +912,39 @@ def review_one(root, commit, item, timeout):
             else:
                 kind = UNKNOWN
             return None, why + (f' — {tail[0][:200]}' if tail else ''), kind, raw
+        if style:
+            return out.stdout, None, None, _apply_style(root, commit, item, work)
         return out.stdout, None, None, ''
     finally:
         shutil.rmtree(work, ignore_errors=True)
+
+
+def _apply_style(root, commit, item, work):
+    """codex 가 고친 문단을 공개판에 반영 → style_pass.Result.
+
+    게이트 근거는 **새로** 꺼낸다. codex 는 스냅샷 안에서 쓰기 권한이 있었으므로 그 데이터를
+    근거로 믿지 않는다.
+    """
+    from review import style_pass
+    evidence = tempfile.mkdtemp(prefix='style-evidence-')
+    try:
+        data_dir = SNAPSHOT[item.section]
+        if not snapshot(root, commit, (data_dir,), evidence):
+            return style_pass.Result(reason=f'{commit[:7]} 에서 근거를 다시 못 꺼냈다')
+        # 연구 원장도 **발행 당시** 것이라야 한다. 지금 원장에는 다음 날 cycle 이 쌓여 있어
+        # 원본부터 「stale」로 실패하고, 그러면 유보 표현이 사라져도 못 잡는다. 증거 파일은
+        # 확장자가 없어 필터 없이 꺼낸다. 연구 워크플로 이전 커밋에는 없다.
+        research = f'research/{item.section}'
+        has_research = snapshot(root, commit, (research,), evidence, everything=True)
+        with open(os.path.join(work, style_pass.PAYLOAD), encoding='utf-8') as fh:
+            payload = fh.read()
+        return style_pass.apply(root, item, payload, work, os.path.join(evidence, data_dir),
+                                research_root=(os.path.join(evidence, research)
+                                               if has_research else None))
+    except OSError as exc:
+        return style_pass.Result(reason=f'{type(exc).__name__}: {exc}')
+    finally:
+        shutil.rmtree(evidence, ignore_errors=True)
 
 
 def _save(root, state, errs, progressed=True):
@@ -873,6 +965,42 @@ def _save(root, state, errs, progressed=True):
     for where, why in sorted(errs.items()):
         print('[러너] ' + err_line(where, why))
     return 1 if errs else 0
+
+
+STYLE_LOG_KEEP = 20
+STYLE_NOTE_HEAD = '[문체 반영 상태]'
+
+
+def _style_note(result):
+    """초안 앞에 붙일 반영 상태 — 지적은 codex 가 고친 문장 기준이다(`검토 판본: 윤문 후`).
+
+    전부 공개됐으면 빈 문자열. 일부·전부가 공개되지 않았으면 정정 단계가 「인용이 공개판에
+    없다」는 이유로 실제 오류를 기각하지 않게 알린다(2026-09-30 codex 구현 검토).
+    """
+    kept = [pid for pid, _ in getattr(result, 'skipped', ())]
+    if result.sha and not kept:
+        return ''
+    if result.sha:
+        where = f'문단 {", ".join(kept)} 은 윤문이 공개되지 않고 원문 그대로다.'
+    else:
+        where = f'윤문은 공개되지 않았다 — 공개판은 원문 그대로다({(result.reason or "")[:200]}).'
+    return (f'{STYLE_NOTE_HEAD} {where} 아래 지적이 인용한 문장은 공개판과 다를 수 있다. '
+            '인용이 다르다는 이유만으로 기각하지 말고, 공개판의 같은 자리 문장에서 사실 여부를 '
+            '확인하라.\n\n')
+
+
+def _note_style(state, item, result):
+    """문체 단계의 결과를 남긴다. 거부는 러너 오류가 아니다 — 원본이 그대로 공개돼 있을 뿐이다."""
+    log = [x for x in state.get('style_log', []) if isinstance(x, dict)]
+    log.append({'at': now(), 'path': item.path, 'from': item.sha[:7],
+                'to': (result.sha or '')[:7], 'reason': (result.reason or '')[:300],
+                'kept': [pid for pid, _ in getattr(result, 'skipped', ())]})
+    state['style_log'] = log[-STYLE_LOG_KEEP:]
+    kept = len(getattr(result, 'skipped', ()))
+    tag = (f'반영 {item.sha[:7]} → {result.sha[:7]}' + (f' (원문 유지 {kept}문단)' if kept else '')
+           if result.sha else f'미반영 — {result.reason}')
+    print(f'문체 — [{item.section}] {item.path}: {tag}')
+    return state
 
 
 def _drafts_on_disk(root):
@@ -1026,9 +1154,10 @@ def cmd_run(args):
             state['last_tick'] = now()
             save_state(root, state)
 
+            style = getattr(args, 'correct', False)
             text, why, kind, raw = review_one(
                 root, publish_commit(root, item.path, item.sha) or oid,
-                item, args.timeout)
+                item, args.timeout, style=style)
             if why:
                 if kind == LIMIT:
                     # 공급자 한도는 **우리 예산을 쓴 게 아니다.** 되돌리지 않으면 초안
@@ -1048,15 +1177,23 @@ def cmd_run(args):
                 # 어차피 같은 이유로 죽고, 그 사이 사람 몫의 한도만 더 먹는다.
                 errs[item.section] = err(kind, f'{item.path}: {why}')
                 break
+            # 문체 수정이 **푸시까지 끝났을 때만** 초안이 새 판의 이름을 받는다. 그 전에
+            # 새 이름을 붙이면 푸시가 실패한 날 공개판(옛 SHA)과 초안이 어긋나 정정이 못 집는다.
+            target = item
+            if style and raw is not None and hasattr(raw, 'sha'):
+                state = _note_style(state, item, raw)
+                text = _style_note(raw) + text
+                if raw.sha:
+                    target = dataclasses.replace(item, sha=raw.sha)
             # 최종 이름은 성공한 뒤에만 붙는다 — 먼저 만들면 잘린 파일이 남고, 다음 tick 은
             # 「파일이 있다」는 이유로 그 글을 건너뛴다.
             fd, tmp = tempfile.mkstemp(dir=os.path.join(root, DRAFTS))
             with os.fdopen(fd, 'w', encoding='utf-8') as fh:
                 fh.write(text)
-            os.replace(tmp, os.path.join(root, DRAFTS, draft_name(item)))
-            os.chmod(os.path.join(root, DRAFTS, draft_name(item)), 0o644)
+            os.replace(tmp, os.path.join(root, DRAFTS, draft_name(target)))
+            os.chmod(os.path.join(root, DRAFTS, draft_name(target)), 0o644)
             errs.pop(item.section, None)   # 이 섹션은 풀렸다
-            print(f'초안 — [{item.section}] {item.path} @ {item.sha[:7]}')
+            print(f'초안 — [{item.section}] {item.path} @ {target.sha[:7]}')
 
         if getattr(args, 'correct', False):
             state = _correct_ready(root, args, state, errs)

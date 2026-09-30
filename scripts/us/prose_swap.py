@@ -172,6 +172,58 @@ def _plain(text):
     return re.sub(r'\s+', ' ', _MARK_RE.sub(' ', _TAG_RE.sub(' ', text))).strip()
 
 
+# 발행 뒤 codex 문체 수정(`reinsert_partial`)에만 더하는 검사. 사람이 보지 않는 자동 경로라
+# 개수만 맞추면 「100에서 200으로」→「200에서 100으로」, 「상승할」→「하락할」, 「않았다」를
+# 뺀 문장, 「삼성전자」→「현대전자」가 모두 통과했다(2026-09-30 codex 구현 검토에서 재현).
+# 걸린 문단은 원문으로 남을 뿐이라 엄격한 쪽이 안전하다.
+_UP = ('상승', '오르', '올랐', '올라', '오른', '올린', '올려', '반등', '급등', '강세', '웃돌',
+       '웃돈', '상회', '증가', '늘었', '늘어', '늘린', '늘려', '인상', '순매수', '매수', '높아',
+       '높였', '높인', '플러스')
+_DOWN = ('하락', '내리', '내렸', '내려', '내린', '떨어', '급락', '약세', '밑돌', '밑돈', '하회',
+         '감소', '줄었', '줄어', '줄인', '줄여', '인하', '순매도', '매도', '낮아', '낮췄', '낮춘',
+         '마이너스')
+_POLAR = sorted(_UP + _DOWN, key=len, reverse=True)
+# 독립된 「안」(안 된다·안 올랐다)은 낱말 경계로만 센다 — 「안정」「안에서」는 부정이 아니다.
+_NEG_RE = re.compile(r'않|아니|못|없|(?<![가-힣])안(?=\s)')
+
+
+def _number_order(text):
+    return _NUM_RE.findall(_MARK_RE.sub('', _TAG_RE.sub('', text)))
+
+
+def _stream(text, names):
+    """이름·영문 이름·방향어를 나온 순서대로 — 개수가 같아도 짝(누가 올랐나)이 바뀌면 달라진다."""
+    alts = [re.escape(n) for n in sorted(names, key=len, reverse=True)]
+    parts = ['(?P<n>%s)' % '|'.join(alts)] if alts else []
+    parts += [r'(?P<l>[A-Za-z][A-Za-z&.\-]{1,})', '(?P<p>%s)' % '|'.join(_POLAR)]
+    pattern = '|'.join(parts)
+    out = []
+    for m in re.finditer(pattern, _plain(text)):
+        if m.group('p'):
+            out.append('+' if m.group('p') in _UP else '-')
+        else:
+            out.append(m.group(0))
+    return out
+
+
+def _negations(text):
+    return Counter(m.group(0) for m in _NEG_RE.finditer(_plain(text)))
+
+
+def _check_strict(pid, before, after, names):
+    """문단 안의 관계 — 수치의 순서, 이름·방향어의 순서, 부정어."""
+    if _number_order(before) != _number_order(after):
+        raise ProseSwapError('%s 의 수치 순서가 달라졌다' % pid)
+    was, now = _stream(before, names), _stream(after, names)
+    if was != now:
+        raise ProseSwapError('%s 의 이름·방향(오름·내림) 순서가 달라졌다 — %s → %s'
+                             % (pid, ' '.join(was)[:120] or '없음', ' '.join(now)[:120] or '없음'))
+    want, got = _negations(before), _negations(after)
+    if want != got:
+        raise ProseSwapError('%s 의 부정어가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
+                             % (pid, sorted(want - got), sorted(got - want)))
+
+
 def _similarity(a, b):
     """문자 단위 일치 비율.
 
@@ -262,6 +314,28 @@ def parse_payload(text):
     return out
 
 
+def _check_one(pid, body, known):
+    """한 문단의 검사 전부 — 통과하면 되꽂을 inner, 아니면 ProseSwapError."""
+    rec = known[pid]
+    if _numbers(body) != Counter(rec['numbers']):
+        before, after = Counter(rec['numbers']), _numbers(body)
+        raise ProseSwapError('%s 의 수치가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
+                             % (pid, sorted(before - after), sorted(after - before)))
+    for kind, fn, label in (('controlled', _controlled, '판단 어휘'),
+                            ('latin', _latin, '영문 이름·티커')):
+        want = Counter(rec.get(kind, {}))
+        got = fn(body)
+        if want != got:
+            raise ProseSwapError('%s 의 %s가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
+                                 % (pid, label, sorted(want - got), sorted(got - want)))
+    for i, j, text in rec.get('anchors', []):
+        m = re.search(MARK.format(i) + '(.*?)' + MARK.format(j), body, re.S)
+        if not m or ' '.join(m.group(1).split()) != text:
+            raise ProseSwapError('%s 의 링크가 감싼 말이 달라졌다 — 원래 %r' % (pid, text))
+    _check_bound(pid, body, known)
+    return _unmask(body, rec['tags'])
+
+
 def reinsert(html, payload_text, sidecar):
     """이름으로 되꽂는다. 하나라도 어긋나면 아무것도 쓰지 않고 예외."""
     if sidecar.get('fingerprint') != fingerprint(html):
@@ -275,31 +349,88 @@ def reinsert(html, payload_text, sidecar):
     if missing:
         raise ProseSwapError('돌아오지 않은 문단이 있다: %s' % ', '.join(missing))
 
-    new_inner = {}
-    for pid, body in rewritten.items():
-        rec = known[pid]
-        if _numbers(body) != Counter(rec['numbers']):
-            before, after = Counter(rec['numbers']), _numbers(body)
-            raise ProseSwapError('%s 의 수치가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
-                                 % (pid, sorted(before - after), sorted(after - before)))
-        for kind, fn, label in (('controlled', _controlled, '판단 어휘'),
-                                ('latin', _latin, '영문 이름·티커')):
-            want = Counter(rec.get(kind, {}))
-            got = fn(body)
-            if want != got:
-                raise ProseSwapError('%s 의 %s가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
-                                     % (pid, label, sorted(want - got), sorted(got - want)))
-        for i, j, text in rec.get('anchors', []):
-            m = re.search(MARK.format(i) + '(.*?)' + MARK.format(j), body, re.S)
-            if not m or ' '.join(m.group(1).split()) != text:
-                raise ProseSwapError('%s 의 링크가 감싼 말이 달라졌다 — 원래 %r' % (pid, text))
-        _check_bound(pid, body, known)
-        new_inner[pid] = _unmask(body, rec['tags'])
+    new_inner = {pid: _check_one(pid, body, known) for pid, body in rewritten.items()}
 
+    return _splice(html, new_inner)
+
+
+def _splice(html, new_inner):
+    """이름 → 새 inner. 없는 이름은 원문 그대로 둔다."""
     out, last = [], 0
     for pid, m in _eligible(html):
         out.append(html[last:m.start(2)])
-        out.append(new_inner[pid])
+        out.append(new_inner.get(pid, m.group(2)))
         last = m.end(2)
     out.append(html[last:])
     return ''.join(out)
+
+
+def _split_payload(text):
+    """관대한 파서 → (이름 → 문단, [(이름, 이유)]). 문제가 있는 블록만 뺀다."""
+    blocks, order, pid, buf = {}, [], None, []
+    for line in text.splitlines():
+        m = _ID_RE.match(line.strip())
+        if m:
+            if pid is not None:
+                blocks.setdefault(pid, []).append(buf)
+            pid, buf = m.group(1), []
+            order.append(pid)
+            continue
+        if line.strip().startswith('<!-- HUMANIZE-SUMMARY'):
+            break
+        if pid is not None:
+            buf.append(line)
+    if pid is not None:
+        blocks.setdefault(pid, []).append(buf)
+    out, rejected = {}, []
+    for pid in dict.fromkeys(order):
+        bufs = blocks[pid]
+        if len(bufs) > 1:
+            rejected.append((pid, '이름이 두 번 나왔다'))
+            continue
+        lines = bufs[0]
+        bad = next((l for l in lines if _MD_LINE_RE.match(l) or _MD_INLINE_RE.search(l)
+                    or '<' in l or '>' in l), None)
+        if bad is not None:
+            rejected.append((pid, '마크다운·HTML 이 섞였다: %r' % bad.strip()[:40]))
+            continue
+        body = ' '.join(' '.join(lines).split())
+        if not body:
+            rejected.append((pid, '문단이 비어서 돌아왔다'))
+            continue
+        out[pid] = body
+    return out, rejected
+
+
+def reinsert_partial(html, payload_text, sidecar, names=()):
+    """문단 단위로 되꽂는다 → (새 HTML, [(이름, 이유)]).
+
+    `reinsert` 의 검사에 `_check_strict`(수치 순서·방향·부정어·`names`)를 더한다. 그리고
+    **걸린 문단만 원문으로 두고** 나머지를 반영한다. 발행 뒤 codex 문체 수정에서 한 문단
+    (닮은 정도 0.79)이 수십 문단의 수정을 통째로 버리게 했다(2026-09-27 실측, 사용자 지시로
+    전체 거부를 없앴다). 빠진 문단은 원문 그대로다.
+
+    기대값은 넘겨받은 `sidecar` 가 아니라 **이 HTML 에서 새로 뽑는다** — 사이드카는 codex 가
+    쓸 수 있는 작업 폴더에 있었다. 넘겨받은 것은 그 판에서 뽑혔는지(지문)만 본다 — 아니면
+    이름이 엉뚱한 자리를 가리키므로 통째로 거부한다.
+    """
+    if sidecar.get('fingerprint') != fingerprint(html):
+        raise ProseSwapError('사이드카가 이 HTML에서 뽑힌 것이 아니다')
+    original_text, fresh = extract(html)
+    known = fresh['items']
+    original, _ = _split_payload(original_text)
+    rewritten, rejected = _split_payload(payload_text)
+    new_inner = {}
+    for pid, body in rewritten.items():
+        if pid not in known:
+            rejected.append((pid, '모르는 이름'))
+            continue
+        if pid not in original:
+            rejected.append((pid, '원문 문단을 대조할 수 없다'))
+            continue
+        try:
+            _check_strict(pid, original[pid], body, names)
+            new_inner[pid] = _check_one(pid, body, known)
+        except ProseSwapError as exc:
+            rejected.append((pid, str(exc)))
+    return _splice(html, new_inner), rejected

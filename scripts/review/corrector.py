@@ -110,7 +110,38 @@ def _typeset_only(root, path, old_sha, new_sha):
             return _git(root, 'cat-file', 'blob', sha)
         except RuntimeError:
             return None
-    return prose.typography(path, text(old_sha), text(new_sha), root=str(root)) is True
+    if prose.typography(path, text(old_sha), text(new_sha), root=str(root)) is True:
+        return True
+    return _after_style_pass(root, path, old_sha, new_sha, text)
+
+
+def _after_style_pass(root, path, old_sha, new_sha, text):
+    """The post-publish codex style pass (`review.style_pass`) sits between the
+    publishing blob and the reviewed one: a trailer commit naming the publishing blob
+    as its parent, with figures/markup unchanged, and from ITS blob to the reviewed
+    one nothing but that blob itself or a typesetting-only change. Finding some style
+    commit is not enough — a hand edit after it would ride along (2026-09-30 review)."""
+    from review import prose, style_pass
+    old, new = text(old_sha), text(new_sha)
+    if not (old and new and style_pass.same_skeleton(old, new)):
+        return False
+    try:
+        log = _git(root, 'log', '--format=%H', '-n', '40', 'origin/main', '--', path)
+    except RuntimeError:
+        return False
+    for commit in log.split():
+        try:
+            if not (style_pass.is_style_commit(_git(root, 'log', '-1', '--format=%B', commit),
+                                               old_sha)
+                    and _git(root, 'rev-parse', f'{commit}^:{path}') == old_sha):
+                continue
+            styled = _git(root, 'rev-parse', f'{commit}:{path}')
+        except RuntimeError:
+            continue
+        if styled == new_sha:
+            return True
+        return prose.typography(path, text(styled), new, root=str(root)) is True
+    return False
 
 
 def correct_one(root, item, draft_text, publish_commit, timeout=1800):
