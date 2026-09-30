@@ -1,21 +1,21 @@
 {
-  "report_date": "2026-09-29",
+  "report_date": "2026-09-30",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
+      "direction": "up",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 상위"
       ],
       "members": [
         {
           "name": "Apple Inc. (AAPL)",
-          "change_pct": -2.66,
-          "close": 329.4,
-          "value": 12442731652.65
+          "change_pct": 1.1,
+          "close": 333.02,
+          "value": 16609470192.95
         }
       ]
     },
@@ -28,58 +28,58 @@
       ],
       "members": [
         {
-          "name": "Meta Platforms (META)",
-          "change_pct": 3.24,
-          "close": 738.79,
-          "value": 17017349673.45
+          "name": "Alphabet Inc. (Class C) (GOOG)",
+          "change_pct": 1.01,
+          "close": 340.74,
+          "value": 8033487387.1
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Semiconductors",
+      "industry": "Interactive Media & Services",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -0.72,
-          "close": 227.21,
-          "value": 22317591803.78
+          "name": "Meta Platforms (META)",
+          "change_pct": -1.84,
+          "close": 725.18,
+          "value": 13888003985.07
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Semiconductors",
-      "direction": "up",
+      "industry": "Pharmaceuticals",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Broadcom (AVGO)",
-          "change_pct": 1.58,
-          "close": 355.1,
-          "value": 6701530408.59
+          "name": "Lilly (Eli) (LLY)",
+          "change_pct": -2.33,
+          "close": 1157.08,
+          "value": 3931152537.86
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Electrical Components & Equipment",
-      "direction": "up",
+      "industry": "Biotechnology",
+      "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Bloom Energy (BE)",
-          "change_pct": 10.8,
-          "close": 291.25,
-          "value": 6883181732.5
+          "name": "Moderna (MRNA)",
+          "change_pct": -5.35,
+          "close": 192.57,
+          "value": 3963985045.85
         }
       ]
     }

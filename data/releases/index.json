@@ -1,21 +1,21 @@
 {
-  "report_date": "2026-09-29",
+  "report_date": "2026-09-30",
   "releases": [
     {
-      "key": "retail-sales",
-      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
+      "key": "pce",
+      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20843,
-      "path": "releases/retail-sales.txt"
+      "chars": 3083,
+      "path": "releases/pce.txt"
     },
     {
-      "key": "jolts",
-      "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
+      "key": "gdp",
+      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 5776,
-      "path": "releases/jolts.txt"
+      "chars": 3633,
+      "path": "releases/gdp.txt"
     }
   ]
 }
