@@ -1,8 +1,8 @@
 {
-  "as_of": "2026-09-30",
+  "as_of": "2026-10-01",
   "window": {
-    "bgn": "20260929",
-    "end": "20260930"
+    "bgn": "20260930",
+    "end": "20261001"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
@@ -14,7 +14,20 @@
     },
     "000660.KS": {
       "corp_code": "00164779",
-      "events": [],
+      "events": [
+        {
+          "rcept_no": "20260930000861",
+          "date": "2026-09-30",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "SK하이닉스",
+          "filer": "서진우",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930000861",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
       "axes": [],
       "confirmed_count": 0
     }
