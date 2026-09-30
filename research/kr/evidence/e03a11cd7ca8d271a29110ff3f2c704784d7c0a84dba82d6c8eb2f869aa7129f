@@ -1,0 +1,32 @@
+{
+ "date": "2026-09-30",
+ "semis_industry": [
+  {
+   "name": "반도체와반도체장비",
+   "change_pct": -0.18,
+   "total": 172,
+   "rise": 104,
+   "breadth": 0.605,
+   "no": 278,
+   "liquidity_backed": true,
+   "leading": false,
+   "note": ""
+  }
+ ],
+ "indices": {
+  "KOSPI": {
+   "close": 6838.04,
+   "change_pct": -0.48
+  },
+  "KOSDAQ": {
+   "close": 855.91,
+   "change_pct": 0.72
+  }
+ },
+ "kospi_flows_provisional": {
+  "date": "2026-09-30",
+  "individual": 11795,
+  "foreign": -20478,
+  "institution": -7833
+ }
+}
