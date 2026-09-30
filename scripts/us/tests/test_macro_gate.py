@@ -350,6 +350,43 @@ def test_one_component_is_not_enough():
     assert any("cpi" in x and "구성 항목" in x for x in out)
 
 
+def test_a_one_line_breakdown_asks_for_that_line_not_two():
+    """2026-09-30 — retail-sales carries a single component (자동차 제외). Asking for two
+    cited lines made every retail-sales day unpublishable; the 9/29 brief was held."""
+    rel = dict(RELEASES[0], components=[{'label': '에너지', 'actual': -1.484}])
+    block = ('<div data-release="cpi"><p>7월 CPI 3.54%는 전월 3.73%에서 내려왔다. '
+             '에너지가 -1.484% 빠졌다. 출처 BLS.</p></div>')
+    assert check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file()) == []
+
+
+def test_a_one_line_breakdown_still_has_to_be_cited():
+    rel = dict(RELEASES[0], components=[{'label': '에너지', 'actual': -1.484}])
+    block = ('<div data-release="cpi"><p>7월 CPI 3.54%, 전월 3.73%, MoM 0.07%. '
+             '출처 BLS.</p></div>')
+    out = check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file())
+    assert any("cpi" in x and "구성 항목" in x for x in out)
+
+
+def test_a_one_line_breakdown_does_not_excuse_a_headline_only_block():
+    """Citing the one line is not a dissection — the figure-count floor still applies."""
+    rel = dict(RELEASES[0], components=[{'label': '에너지', 'actual': -1.484}])
+    block = ('<div data-release="cpi"><p>에너지가 -1.484% 빠졌다. 출처 BLS.</p></div>')
+    out = check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file())
+    assert any("cpi" in x and "헤드라인 수치에서 멈췄다" in x for x in out)
+
+
+def test_a_one_line_breakdown_is_held_to_the_no_breakdown_floor():
+    """codex 2026-09-30 — seven rounds of a tighter floor (unit-only figures, date masks,
+    headline subtraction) each traded a bypass for a false block. The thin basket now asks
+    exactly what a release with no breakdown asks, plus the one line it does have."""
+    rel = dict(RELEASES[0], components=[{'label': '에너지', 'actual': -1.484}])
+    block = ('<div data-release="cpi"><p>CPI는 3.54%로, 전월 3.73에서 내려왔다. '
+             '에너지는 -1.484% 빠졌다. 출처 BLS.</p></div>')
+    assert check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file()) == []
+    bare = dict(RELEASES[0]); bare.pop('components')
+    assert check(build_html(anatomy=block), macro_file(), rel_eval([bare]), next_file()) == []
+
+
 def test_a_release_without_a_known_breakdown_falls_back_to_the_figure_count():
     rel = dict(RELEASES[0]); rel.pop('components')
     block = ('<div data-release="cpi"><p>CPI 3.54%, 전월 3.73%, MoM 0.07%. 출처 BLS.</p></div>')

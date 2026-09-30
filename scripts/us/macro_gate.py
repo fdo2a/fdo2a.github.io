@@ -279,12 +279,22 @@ def _check_releases(html, macro_eval, v):
         # settling for "are there enough numbers in here".
         comps = [c for c in (rel.get('components') or []) if c.get('actual') is not None]
         if comps:
+            # A one-line basket (retail-sales) can never show two lines — 2026-09-29 was
+            # held on that. Ask for what exists, and keep the figure floor so citing the
+            # one line alone still does not pass as a dissection.
+            thin = len(comps) < MIN_CITED_COMPONENTS
             cited = [c for c in comps if _cited(text, c['actual'])]
-            if len(cited) < MIN_CITED_COMPONENTS:
+            need = min(MIN_CITED_COMPONENTS, len(comps))
+            if len(cited) < need:
                 names = ', '.join(f'{c["label"]} {c["actual"]}' for c in comps[:5])
                 v.append(f'§8 {key}: 「{label}」 블록이 구성 항목을 {len(cited)}개만 인용했다 '
-                         f'— {MIN_CITED_COMPONENTS}개 이상 필요. '
+                         f'— {need}개 이상 필요. '
                          f'macro_metrics.json에 있는 것: {names}')
+            # Citing the one line alone is not a dissection: hold a thin basket to the same
+            # figure floor as a release with no breakdown at all.
+            elif thin and len(_figures(text)) < MIN_RELEASE_FIGURES:
+                v.append(f'§8 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
+                         '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
         elif len(_figures(text)) < MIN_RELEASE_FIGURES:
             v.append(f'§8 {key}: 「{label}」 블록이 헤드라인 수치에서 멈췄다 — '
                      '무엇이 그 숫자를 만들었는지 세부 항목을 수치로 분해할 것')
