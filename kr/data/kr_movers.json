@@ -1,6 +1,105 @@
 {
-  "report_date": "2026-09-29",
+  "report_date": "2026-09-30",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성전자",
+          "change_pct": -1.47,
+          "close": 268500,
+          "value": 4180391
+        },
+        {
+          "name": "삼성전자우",
+          "change_pct": -4.31,
+          "close": 195200,
+          "value": 943694
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": 0.62,
+          "close": 1776000,
+          "value": 5270483
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": 1.88,
+          "close": 1139000,
+          "value": 494203
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "화학",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "후성",
+          "change_pct": 6.23,
+          "close": 15000,
+          "value": 141281
+        },
+        {
+          "name": "이수스페셜티케미컬",
+          "change_pct": 17.21,
+          "close": 79700,
+          "value": 89052
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "전기제품",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼화콘덴서",
+          "change_pct": -5.27,
+          "close": 149200,
+          "value": 135314
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "자동차부품",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한온시스템",
+          "change_pct": 10.0,
+          "close": 3520,
+          "value": 80990
+        }
+      ]
+    }
+  ]
 }

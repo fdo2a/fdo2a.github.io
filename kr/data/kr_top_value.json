@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 5177831,
-    "volume": 2933822,
+    "value": 5270483,
+    "volume": 2941689,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4253832,
-    "volume": 15653425,
+    "value": 4180391,
+    "volume": 15450591,
     "members": [
       "삼성전자"
     ]
@@ -26,37 +26,48 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1890020,
-    "volume": 53134344,
+    "value": 1771273,
+    "volume": 47143298,
     "members": [
       "TIGER 반도체TOP10",
       "KODEX 반도체레버리지",
-      "SOL AI반도체TOP2플러스",
       "KODEX 반도체",
       "TIGER 반도체TOP10레버리지",
+      "SOL AI반도체TOP2플러스",
       "KODEX AI반도체TOP2플러스",
       "SOL AI반도체소부장",
+      "SOL 반도체전공정",
       "HANARO Fn K-반도체",
       "KODEX AI반도체핵심장비",
-      "SOL 반도체전공정",
-      "ACE AI반도체TOP3+",
       "TIGER 반도체",
-      "SOL 반도체후공정",
-      "TIGER AI반도체핵심공정",
-      "TIGER 반도체TOP10커버드콜액티브",
+      "ACE AI반도체TOP3+",
       "ACE K반도체TOP2+",
-      "PLUS AI반도체소부장액티브",
-      "ACE 반도체Plus전략산업",
+      "SOL 반도체후공정",
+      "TIGER 반도체TOP10커버드콜액티브",
+      "TIGER AI반도체핵심공정",
       "HANARO 반도체핵심공정주도주",
+      "ACE 반도체Plus전략산업",
+      "PLUS AI반도체소부장액티브",
       "RISE AI반도체TOP10",
-      "KODEX 반도체타겟위클리커버드콜",
       "PLUS 코리아HBM반도체",
+      "KODEX 반도체타겟위클리커버드콜",
       "RISE 비메모리반도체액티브",
-      "FOCUS AI반도체위클리고정커버드콜",
       "KODEX 아시아AI반도체exChina액티브",
+      "FOCUS AI반도체위클리고정커버드콜",
       "FOCUS 금융반도체지주채권혼합50액티브",
-      "KODEX 한중반도체(합성)",
-      "TIGER 한중반도체(합성)"
+      "TIGER 한중반도체(합성)",
+      "KODEX 한중반도체(합성)"
+    ]
+  },
+  {
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 943694,
+    "volume": 4769584,
+    "members": [
+      "삼성전자우"
     ]
   },
   {
@@ -64,8 +75,8 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 1096918,
-    "volume": 1022098,
+    "value": 925609,
+    "volume": 862398,
     "members": [
       "KODEX CD금리액티브(합성)"
     ]
@@ -75,21 +86,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 853498,
-    "volume": 560023,
+    "value": 721419,
+    "volume": 472181,
     "members": [
       "삼성전기"
-    ]
-  },
-  {
-    "label": "삼성전자우",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 776106,
-    "volume": 3818208,
-    "members": [
-      "삼성전자우"
     ]
   },
   {
@@ -97,8 +97,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 480640,
-    "volume": 434081,
+    "value": 494203,
+    "volume": 434523,
     "members": [
       "SK스퀘어"
     ]
@@ -108,8 +108,8 @@
     "kind": "single_stock_lev",
     "direction": "long",
     "theme": null,
-    "value": 273569,
-    "volume": 27239202,
+    "value": 271700,
+    "volume": 25916483,
     "members": [
       "KODEX SK하이닉스단일종목레버리지",
       "TIGER SK하이닉스단일종목레버리지",
@@ -119,38 +119,25 @@
     ]
   },
   {
-    "label": "2차전지 테마 ETF",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": "2차전지",
-    "value": 264672,
-    "volume": 115190792,
-    "members": [
-      "KODEX 2차전지산업레버리지",
-      "KODEX 2차전지산업",
-      "TIGER 2차전지TOP10",
-      "TIGER 2차전지소재Fn",
-      "TIGER 2차전지TOP10레버리지",
-      "TIGER 2차전지테마",
-      "SOL 전고체배터리&실리콘음극재",
-      "KODEX 전고체배터리ESS TOP2플러스",
-      "KODEX 2차전지핵심소재10",
-      "RISE 2차전지TOP10",
-      "SOL 2차전지소부장Fn",
-      "RISE 2차전지액티브",
-      "ACE 2차전지&친환경차액티브",
-      "RISE 배터리 리사이클링"
-    ]
-  },
-  {
-    "label": "삼화콘덴서",
+    "label": "HD현대일렉트릭",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 232865,
-    "volume": 1524048,
+    "value": 250013,
+    "volume": 371678,
     "members": [
-      "삼화콘덴서"
+      "HD현대일렉트릭"
+    ]
+  },
+  {
+    "label": "한화솔루션",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 214616,
+    "volume": 6329669,
+    "members": [
+      "한화솔루션"
     ]
   }
 ]
