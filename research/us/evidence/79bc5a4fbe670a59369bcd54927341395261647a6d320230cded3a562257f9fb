@@ -1,0 +1,23 @@
+# Web evidence bundle — US rates / Fed / macro data, session 2026-09-29 (ET)
+# Collected 2026-09-29 ~23:30-23:45 UTC via WebSearch result summaries. Article bodies could not be fetched (egress proxy blocks yahoo/cnbc/admiralmarkets etc.); text below is paraphrased from search-result summaries with the source URL.
+
+[1] Williams speech — NY Fed, University at Buffalo, 2:00 PM EDT 2026-09-29 (NY Fed media advisory; https://www.newyorkfed.org/newsevents/speeches/2026/wil260929 ; https://www.buffalo.edu/news/releases/2026/09/ny-fed-visit-ub.html)
+  Reuters via US News/Investing.com (https://money.usnews.com/investing/news/articles/2026-09-29/feds-williams-sees-no-urgency-for-next-fed-rate-hike): "With the policy action we took at our September meeting, there is no need for urgency"; one more increase likely before year-end; inflation ~3.5% at year-end, growth 2.25% this year. (AOL copy timestamp 18:00 UTC; FXStreet 18:22 GMT)
+  GuruFocus "US Treasury Yields Mixed Amid Williams' Remarks" (https://www.gurufocus.com/news/9102211/us-treasury-yields-mixed-amid-williams-remarks): short-term yields dropped while long-term yields rose; Williams suggested Fed could wait until December; "markets currently see a 68% probability of a Fed rate hike in October and a 95% chance of an increase in December" (CME FedWatch, time not stated).
+
+[2] CME FedWatch October-hike readings reported for 2026-09-29 (NOT like-for-like; times differ/unknown)
+  - 72.5% Oct 28 hike; 94.5% at least one more hike by Dec 9 — TheStreet/Yahoo "October Fed rate hike hinges on two looming economic reports" (https://www.thestreet.com/fed/fed-rate-hike-october-pce-jobs-data); also cited by admiralmarkets Williams blog.
+  - 68% October / 95% December — GuruFocus (above), after Williams.
+  - 47.1% vs 70.9% "yesterday" and 55.4% on Sept 22 — Daily Economics substack "Less Confidence. Less Rate Urgency." (https://dailyeconomics.substack.com/p/less-confidence-less-rate-urgency); same post: 2Y 4.89% (-5.0bp), 10Y 5.24% (-0.7bp); CB labor differential narrowed to 1.7pp; 12-month inflation expectations 6.1%.
+  - 76.9% (growbeansprout FedWatch page, https://growbeansprout.com/tools/fedwatch, time unknown); Kalshi/Polymarket ~69% (search summary).
+
+[3] Conference Board Consumer Confidence, September 2026, released 10:00 ET 2026-09-29 (https://www.prnewswire.com/news-releases/us-consumer-confidence-fell-in-september-302892867.html ; Reuters via https://www.investing.com/news/economic-indicators/us-consumer-confidence-dives-to-more-than-12year-low-in-september-4923037)
+  Index 81.9, down 6.7 pts (prior 88.6), lowest since 2014; Reuters poll forecast 89.2. Present Situation 109.3 (-7.9); Expectations 63.6 (-5.9, third straight decline). "More jobs" 14.6%->14.0%; "fewer jobs" +2.3pp to 28.4%. Write-in references to prices, oil and gas at new highs; business-conditions appraisal negative for first time since Sept 2024.
+
+[4] JOLTS August 2026, released 10:00 ET 2026-09-29 (BLS https://www.bls.gov/news.release/jolts.nr0.htm): openings 7.079M vs 7.225M estimate (https://investinglive.com/news/jolts-job-openings-7-079m-vs-7-225m-estimate/); July revised to 7.335M.
+
+[5] Long end — Bloomberg "US 30-Year Treasury Yield Rises to Highest Level Since 2002" (https://www.bloomberg.com/news/articles/2026-09-29/us-30-year-treasury-yield-approaches-highest-level-since-2002): 30Y surpassed 5.61% intraday Tuesday, sixth straight daily rise; drivers cited: oil-driven inflation concerns, heavy issuance, fiscal unease, global bond selloff. CNBC "30-year Treasury bond yield scales to highest level since 2002" (https://www.cnbc.com/2026/09/29/treasury-yields-bonds.html). Seeking Alpha: 30Y tags 5.6%.
+
+[6] Upcoming: August PCE 8:30 ET 2026-09-30 — consensus headline +0.4% m/m, core +0.3% m/m (TheStreet; tradingkey), CNBC preview cites 0.3%/0.3% and 3.7%/3.3% y/y (https://www.cnbc.com/2026/09/29/the-feds-main-inflation-measure-will-be-released-wednesday-heres-what-to-expect.html). September payrolls 8:30 ET 2026-10-02 — forecast +100k, unemployment 4.2% (TheStreet). FOMC 2026-10-28.
+
+[7] Equities context: TheStreet (https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-sept-29-2026) "S&P 500 falls as consumer confidence falls to 12-year low"; Russell 2000 down ~0.7% intraday as yields climb and market digests weak confidence and labor data. CNBC live: bank stocks slid (JPM, MS, BAC); S&P financials -6.3% in September, worst month since March 2023.
