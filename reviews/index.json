@@ -691,6 +691,11 @@
       "findings": 0,
       "baseline": true
     },
+    "kr/posts/2026-09-28.html": {
+      "sha": "391c06ee84690f8f164281f60e1989be7846a25d",
+      "at": "2026-10-02T03:29:37+07:00",
+      "findings": 0
+    },
     "kr/posts/2026-09-29.html": {
       "sha": "3b5e80b9fe8baf3d93e73865ea8eb1d00605ea06",
       "at": "2026-09-30T11:07:04+07:00",
