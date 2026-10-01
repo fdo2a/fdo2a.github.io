@@ -176,6 +176,13 @@ def test_weekly_busy():
 # ── 잠금 이름은 루틴이 잡는 이름과 같아야 한다 ────────────────────────────────
 
 def test_lock_names_match_run_lock_rules():
-    assert rd.lock_name('us', utc(2026, 9, 26, 17, 30)) == 'us-2026-09-25'
-    assert rd.lock_name('kr', utc(2026, 9, 25, 12, 0)) == 'kr-2026-09-25'
+    assert rd.lock_name('us', utc(2026, 9, 26, 17, 30), holidays=US_HOL) == 'us-2026-09-25'
+    assert rd.lock_name('kr', utc(2026, 9, 23, 12, 0), holidays=KR_HOL) == 'kr-2026-09-23'
     assert rd.lock_name('weekly', None, key='2026-W39') == 'weekly-2026-W39'
+
+
+def test_one_session_one_lock_across_a_holiday():
+    """추석 사흘 동안 9/23 세션을 처리하는 런은 모두 같은 잠금을 잡는다(구현 재검토 #1)."""
+    runs = [utc(2026, 9, 24, 9, 0), utc(2026, 9, 25, 6, 0), utc(2026, 9, 25, 12, 0),
+            utc(2026, 9, 26, 6, 0), utc(2026, 9, 26, 12, 0)]
+    assert {rd.lock_name('kr', t, holidays=KR_HOL) for t in runs} == {'kr-2026-09-23'}

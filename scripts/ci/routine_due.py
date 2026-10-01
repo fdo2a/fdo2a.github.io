@@ -24,6 +24,7 @@
 설계: docs/superpowers/specs/2026-09-27-routine-retry-after-limit.md
 """
 import json
+import os
 import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
@@ -31,7 +32,7 @@ from zoneinfo import ZoneInfo
 
 NY = ZoneInfo('America/New_York')
 SEOUL = ZoneInfo('Asia/Seoul')
-STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 180}
+STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 240}
 
 
 def _trading_back(d, holidays=()):
@@ -55,12 +56,16 @@ def week_of(now, holidays=()):
     return f'{y}-W{w:02d}'
 
 
-def lock_name(kind, now, key=None):
-    """루틴이 잡는 이름 그대로 — `run_lock.sh key <prefix>` 와 같은 규칙."""
+def lock_name(kind, now, key=None, holidays=()):
+    """루틴이 잡는 이름 그대로 — `run_lock.sh key <prefix>` 가 이 함수를 부른다.
+
+    **이름은 거래 세션이다.** 달력 날짜로 지으면 추석 사흘 동안 같은 9/23 세션을 처리하는
+    런들이 서로 다른 잠금을 잡아 겹쳐 쓸 수 있다(구현 재검토 #1).
+    """
     if kind == 'us':
-        return f'us-{(now.astimezone(NY) - timedelta(hours=17)).date().isoformat()}'
+        return f'us-{us_session(now, holidays)}'
     if kind == 'kr':
-        return f'kr-{(now.astimezone(SEOUL) - timedelta(hours=16)).date().isoformat()}'
+        return f'kr-{kr_session(now, holidays)}'
     return f'weekly-{key}'
 
 
@@ -112,8 +117,17 @@ def _show_json(path):
 
 
 def _holidays(market):
-    """달력의 그 시장 휴장일. 못 읽으면 빈 목록 — 판정이 DUE 쪽으로 기운다."""
-    got = (_show_json('data/market_holidays.json') or {}).get(market) or {}
+    """달력의 그 시장 휴장일. 원격 판 → 작업 폴더 판 순. 못 읽으면 빈 목록 — 판정이 DUE 쪽으로 기운다."""
+    cal = _show_json('data/market_holidays.json')
+    if cal is None:
+        try:
+            here = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..',
+                                'data', 'market_holidays.json')
+            with open(here, encoding='utf-8') as fh:
+                cal = json.load(fh)
+        except (OSError, ValueError):
+            cal = {}
+    got = (cal or {}).get(market) or {}
     days = got.get('dates')
     return tuple(days) if isinstance(days, list) else ()
 
@@ -139,7 +153,7 @@ def main(argv=None):
         if len(args) < 2 or args[1] not in ('us', 'kr'):
             print('usage: routine_due.py lock-name us|kr', file=sys.stderr)
             return 2
-        print(lock_name(args[1], datetime.now(timezone.utc)))
+        print(lock_name(args[1], datetime.now(timezone.utc), holidays=_holidays(args[1])))
         return 0
     kind = args[0]
     if kind not in ('us', 'kr', 'weekly'):
@@ -152,11 +166,13 @@ def main(argv=None):
         return 0
     now = datetime.now(timezone.utc)
     if kind == 'us':
-        verdict = decide_us(now, _files('posts', 'news'), _lock_age(lock_name('us', now), now),
-                            _holidays('us'))
+        hol = _holidays('us')
+        verdict = decide_us(now, _files('posts', 'news'),
+                            _lock_age(lock_name('us', now, holidays=hol), now), hol)
     elif kind == 'kr':
-        verdict = decide_kr(now, _files('kr/posts'), _lock_age(lock_name('kr', now), now),
-                            _holidays('kr'))
+        hol = _holidays('kr')
+        verdict = decide_kr(now, _files('kr/posts'),
+                            _lock_age(lock_name('kr', now, holidays=hol), now), hol)
     else:
         key = week_of(now, _holidays('us'))
         aggs = {'us': _show_json(f'data/weekly/{key}.json'),
