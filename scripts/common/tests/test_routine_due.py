@@ -39,15 +39,39 @@ def test_kr_session_is_seoul_minus_16h():
     assert rd.kr_session(utc(2026, 9, 27, 6, 0)) == '2026-09-25'     # 일 → 금
 
 
+# ── 휴장 달력 ─────────────────────────────────────────────────────────────────
+
+import json  # noqa: E402
+
+ROOT = os.path.join(HERE, '..', '..', '..')
+CAL = json.load(open(os.path.join(ROOT, 'data', 'market_holidays.json'), encoding='utf-8'))
+US_HOL, KR_HOL = tuple(CAL['us']['dates']), tuple(CAL['kr']['dates'])
+
+
+def test_holiday_calendar_has_no_weekends_and_is_sorted():
+    from datetime import date
+    for m in ('us', 'kr'):
+        days = CAL[m]['dates']
+        assert days == sorted(set(days))
+        assert all(date.fromisoformat(d).weekday() < 5 for d in days)
+
+
+def test_kr_chuseok_moves_the_session_back_to_the_last_trading_day():
+    """9/24·25 추석 — 금 21:00 KST 의 기대 세션은 9/23 이다."""
+    assert rd.kr_session(utc(2026, 9, 25, 12, 0), KR_HOL) == '2026-09-23'
+
+
+def test_us_independence_day_observed():
+    assert rd.us_session(utc(2026, 7, 3, 23, 30), US_HOL) == '2026-07-02'
+
+
 # ── US ────────────────────────────────────────────────────────────────────────
 
 NOW = utc(2026, 9, 26, 17, 30)          # 일 02:30 KST — 9/25 세션 재시도 시각
-FRESH = utc(2026, 9, 26, 9, 59)         # 마감(금 16:00 ET = 20:00Z) 뒤 수집
 
 
-def us(files, report_date='2026-09-25', complete=True, committed=FRESH, lock_age=None, now=NOW):
-    return rd.decide_us(now, {'report_date': report_date, 'complete': complete}, committed,
-                        set(files), lock_age)[0]
+def us(files, lock_age=None, now=NOW, hol=US_HOL):
+    return rd.decide_us(now, set(files), lock_age, hol)[0]
 
 
 def test_us_both_articles_published_is_done():
@@ -71,36 +95,29 @@ def test_us_stale_lock_is_left_to_acquire():
     assert us(set(), lock_age=200) == 'DUE'
 
 
-def test_us_data_still_on_yesterday_is_due_not_done():
-    """수집이 밀린 날: 어제 글이 있다고 DONE 이면 오늘 글이 영영 안 나온다(codex #1)."""
-    got = us({'posts/2026-09-24.html', 'news/2026-09-24.html'}, report_date='2026-09-24',
-             committed=utc(2026, 9, 25, 9, 0))      # 금 05:00 ET — 금요일 마감 전 수집
-    assert got == 'DUE'
+def test_us_yesterdays_articles_do_not_make_today_done():
+    """수집이 밀리거나 시세가 늦게 붙은 거래일 — 어제 글로 DONE 이면 오늘 글이 빠진다(codex #1·#2)."""
+    assert us({'posts/2026-09-24.html', 'news/2026-09-24.html'}) == 'DUE'
 
 
-def test_us_holiday_is_done():
-    """마감 한참 뒤에 수집했는데도 데이터가 전 세션이면 휴장이다."""
-    got = us({'posts/2026-09-24.html', 'news/2026-09-24.html'}, report_date='2026-09-24')
-    assert got == 'DONE'
+def test_us_unlisted_holiday_errs_toward_due():
+    """달력에 없는 휴장일은 헛도는 재시도로 끝난다 — 글이 빠지는 쪽으로 틀리지 않는다."""
+    assert us({'posts/2026-09-24.html', 'news/2026-09-24.html'}, hol=()) == 'DUE'
 
 
-def test_us_incomplete_data_is_due_because_step0_recollects():
-    assert us(set(), complete=False) == 'DUE'
+def test_us_listed_holiday_is_done_when_the_prior_session_is_published():
+    labor = utc(2026, 9, 8, 2, 30)       # 9/7 노동절 다음날 11:30 KST → 기대 세션 9/4(금)
+    assert us({'posts/2026-09-04.html', 'news/2026-09-04.html'}, now=labor) == 'DONE'
 
 
 # ── KR ────────────────────────────────────────────────────────────────────────
 
-KNOW = utc(2026, 9, 25, 12, 0)          # 금 21:00 KST
-
-
-def kr(files, report_date='2026-09-25', complete=True, committed=utc(2026, 9, 25, 9, 12),
-       lock_age=None):
-    return rd.decide_kr(KNOW, {'report_date': report_date, 'complete': complete}, committed,
-                        set(files), lock_age)[0]
+def kr(files, now=utc(2026, 9, 23, 12, 0), lock_age=None):
+    return rd.decide_kr(now, set(files), lock_age, KR_HOL)[0]
 
 
 def test_kr_published_is_done():
-    assert kr({'kr/posts/2026-09-25.html'}) == 'DONE'
+    assert kr({'kr/posts/2026-09-23.html'}) == 'DONE'
 
 
 def test_kr_missing_is_due():
@@ -108,20 +125,7 @@ def test_kr_missing_is_due():
 
 
 def test_kr_chuseok_is_done():
-    """9/25 는 추석 휴장 — 18:12 KST 수집기 커밋이 여전히 9/23 이면 할 일이 없다."""
-    assert kr({'kr/posts/2026-09-23.html'}, report_date='2026-09-23',
-              committed=utc(2026, 9, 25, 9, 12)) == 'DONE'
-
-
-def test_kr_collection_just_after_close_is_not_yet_a_holiday():
-    """마감 직후 소스 지연을 휴장으로 오판하면 그날 글이 빠진다."""
-    assert kr({'kr/posts/2026-09-24.html'}, report_date='2026-09-24',
-              committed=utc(2026, 9, 25, 7, 40)) == 'DUE'
-
-
-def test_kr_collection_before_close_is_due():
-    assert kr({'kr/posts/2026-09-24.html'}, report_date='2026-09-24',
-              committed=utc(2026, 9, 25, 3, 0)) == 'DUE'
+    assert kr({'kr/posts/2026-09-23.html'}, now=utc(2026, 9, 25, 12, 0)) == 'DONE'
 
 
 def test_kr_busy():
@@ -130,12 +134,20 @@ def test_kr_busy():
 
 # ── 주간 ──────────────────────────────────────────────────────────────────────
 
+def test_week_key_comes_from_the_calendar_not_the_data():
+    """금요일 수집이 실패해 데이터가 지난주에 머물러도 키는 이번 주다(codex #4)."""
+    assert rd.week_of(utc(2026, 9, 26, 9, 0), US_HOL) == '2026-W39'
+
+
+def test_week_key_when_friday_is_a_holiday():
+    assert rd.week_of(utc(2026, 4, 4, 9, 0), US_HOL) == '2026-W14'   # 4/3 성금요일
+
+
 def weekly(files, us_agg=True, kr_agg=True, lock_age=None):
-    aggs = {'us': {'complete': True} if us_agg else None,
-            'kr': {'complete': True} if kr_agg else None}
-    if us_agg == 'partial':
-        aggs['us'] = {'complete': False}
-    return rd.decide_weekly('2026-W39', aggs, set(files), lock_age)[0]
+    def agg(v):
+        return None if v is None else {'complete': v}
+    return rd.decide_weekly('2026-W39', {'us': agg(us_agg), 'kr': agg(kr_agg)},
+                            set(files), lock_age)[0]
 
 
 def test_weekly_both_published_is_done():
@@ -148,8 +160,13 @@ def test_weekly_one_missing_is_due():
 
 def test_weekly_incomplete_aggregate_waits():
     """주간 루틴은 집계를 다시 만들지 않는다 — 돌려도 같은 자리에서 멈춘다(codex #2)."""
-    assert weekly(set(), us_agg='partial') == 'WAIT'
-    assert weekly(set(), kr_agg=False) == 'WAIT'
+    assert weekly(set(), us_agg=False) == 'WAIT'
+    assert weekly(set(), kr_agg=None) == 'WAIT'
+
+
+def test_weekly_published_side_needs_no_aggregate():
+    """이미 나간 쪽 집계가 없다고 남은 쪽을 막지 않는다(codex #6)."""
+    assert weekly({'weekly/2026-W39.html'}, us_agg=None) == 'DUE'
 
 
 def test_weekly_busy():

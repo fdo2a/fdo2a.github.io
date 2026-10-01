@@ -10,9 +10,13 @@
 
 판정 순서는 루틴과 같다: **기대 세션을 먼저 정하고**(데이터에 적힌 날짜가 아니다 — 수집이
 밀린 날 어제 글이 있다고 끝내면 오늘 글이 영영 안 나온다), 그 세션의 글이 다 있으면 DONE,
-그 세션의 잠금이 살아 있으면 BUSY, 아니면 DUE. 마감 한참 뒤에 수집했는데도 데이터가 전
-세션이면 휴장으로 보고 DONE. 주간은 집계가 불완전하면 WAIT — 주간 루틴은 집계를 다시
-만들지 않으므로 돌려도 같은 자리에서 멈춘다.
+그 세션의 잠금이 살아 있으면 BUSY, 아니면 DUE. 주간은 남은 시장의 집계가 불완전하면 WAIT —
+주간 루틴은 집계를 다시 만들지 않으므로 돌려도 같은 자리에서 멈춘다.
+
+**휴장은 달력(`data/market_holidays.json`)으로만 판정한다.** 「마감 뒤 수집했는데 날짜가
+이전」은 휴장과 시세 지연을 가르지 못해, 지연된 거래일을 휴장으로 보고 글을 조용히 건너뛴다
+(codex 구현 검토 #2). 달력에 없는 휴장일은 DUE 로 떨어져 재시도가 헛돌 뿐이다 — 틀리는 방향을
+토큰 쪽으로 둔다.
 
 잠금의 최종 판정은 `run_lock.sh acquire` 다. 여기서 BUSY 는 그 날짜 키의 잠금이 stale
 기준보다 젊을 때뿐이다.
@@ -22,36 +26,33 @@
 import json
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
+from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 NY = ZoneInfo('America/New_York')
 SEOUL = ZoneInfo('Asia/Seoul')
 STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 180}
-# 이 시각 뒤에 **수집기가** 돌았는데도 데이터가 전 세션이면 휴장이다. 소스 지연(네이버
-# 국채 종가 17:05 ET, KR 마감 직후)을 휴장으로 오판하면 그날 글이 빠지므로 넉넉히 늦춘다.
-US_CLOSE = (18, 0)
-KR_CLOSE = (18, 0)
-# 휴장일에는 주 데이터 파일이 안 바뀌어 커밋되지 않는다(9/24~26 추석 실측). 수집기 커밋은
-# 디렉터리의 다른 파일을 바꾸므로 **수집기 메시지가 붙은 디렉터리 커밋**을 본다 — 아무
-# 커밋이나 보면 발행 커밋이 data/macro.json 을 건드린 것을 수집으로 착각한다.
-COLLECTOR = {'us': ('data', '^data: market data for'),
-             'kr': ('kr/data', '^data: kr market data for')}
 
 
-def _weekday_back(d):
-    while d.weekday() >= 5:
+def _trading_back(d, holidays=()):
+    hol = set(holidays)
+    while d.weekday() >= 5 or d.isoformat() in hol:
         d -= timedelta(days=1)
     return d
 
 
-def us_session(now):
-    return _weekday_back((now.astimezone(NY) - timedelta(hours=17)).date()).isoformat()
+def us_session(now, holidays=()):
+    return _trading_back((now.astimezone(NY) - timedelta(hours=17)).date(), holidays).isoformat()
 
 
-def kr_session(now):
-    return _weekday_back((now.astimezone(SEOUL) - timedelta(hours=16)).date()).isoformat()
+def kr_session(now, holidays=()):
+    return _trading_back((now.astimezone(SEOUL) - timedelta(hours=16)).date(), holidays).isoformat()
+
+
+def week_of(now, holidays=()):
+    """주간 키 — 그 주 마지막 거래일(US 기대 세션)의 ISO 주. 데이터 날짜가 아니다(codex #4)."""
+    y, w, _ = date.fromisoformat(us_session(now, holidays)).isocalendar()
+    return f'{y}-W{w:02d}'
 
 
 def lock_name(kind, now, key=None):
@@ -63,16 +64,7 @@ def lock_name(kind, now, key=None):
     return f'weekly-{key}'
 
 
-def _after_close(committed, session, tz, hm):
-    y, m, d = map(int, session.split('-'))
-    return committed is not None and committed >= datetime(y, m, d, *hm, tzinfo=tz)
-
-
-def _daily(session, data, committed, files, lock_age, stale, want, tz, close):
-    got = (data or {}).get('report_date')
-    if got and got < session and (data or {}).get('complete') and _after_close(
-            committed, session, tz, close):
-        return 'DONE', f'{session} 휴장으로 본다 — 마감 뒤 수집이 {got}'
+def _daily(session, files, lock_age, stale, want):
     missing = [p for p in want(session) if p not in files]
     if not missing:
         return 'DONE', f'{session} 발행 완료'
@@ -81,27 +73,28 @@ def _daily(session, data, committed, files, lock_age, stale, want, tz, close):
     return 'DUE', f'{session} 미발행: {", ".join(missing)}'
 
 
-def decide_us(now, data, committed, files, lock_age):
-    return _daily(us_session(now), data, committed, files, lock_age, STALE_MIN['us'],
-                  lambda d: (f'posts/{d}.html', f'news/{d}.html'), NY, US_CLOSE)
+def decide_us(now, files, lock_age, holidays=()):
+    return _daily(us_session(now, holidays), files, lock_age, STALE_MIN['us'],
+                  lambda d: (f'posts/{d}.html', f'news/{d}.html'))
 
 
-def decide_kr(now, data, committed, files, lock_age):
-    return _daily(kr_session(now), data, committed, files, lock_age, STALE_MIN['kr'],
-                  lambda d: (f'kr/posts/{d}.html',), SEOUL, KR_CLOSE)
+def decide_kr(now, files, lock_age, holidays=()):
+    return _daily(kr_session(now, holidays), files, lock_age, STALE_MIN['kr'],
+                  lambda d: (f'kr/posts/{d}.html',))
 
 
 def decide_weekly(key, aggs, files, lock_age):
-    want = (f'weekly/{key}.html', f'kr/weekly/{key}.html')
-    missing = [p for p in want if p not in files]
+    want = {'us': f'weekly/{key}.html', 'kr': f'kr/weekly/{key}.html'}
+    missing = {m: p for m, p in want.items() if p not in files}
     if not missing:
         return 'DONE', f'{key} 발행 완료'
-    bad = [m for m, a in aggs.items() if not (a or {}).get('complete')]
+    # 남은 시장의 집계만 본다 — 이미 나간 쪽 집계가 사라졌다고 남은 글을 막지 않는다(codex #6).
+    bad = [m for m in missing if not (aggs.get(m) or {}).get('complete')]
     if bad:
         return 'WAIT', f'{key} 집계 불완전: {", ".join(bad)} — 주간 루틴이 고칠 수 없다'
     if lock_age is not None and lock_age < STALE_MIN['weekly']:
         return 'BUSY', f'{key} 작성 중 (잠금 {lock_age}분 전)'
-    return 'DUE', f'{key} 미발행: {", ".join(missing)}'
+    return 'DUE', f'{key} 미발행: {", ".join(missing.values())}'
 
 
 # ── git 에서 사실을 모은다 ──────────────────────────────────────────────────────
@@ -118,11 +111,11 @@ def _show_json(path):
         return None
 
 
-def _collected(kind):
-    path, pattern = COLLECTOR[kind]
-    out = _git('log', '-1', '--format=%ct', f'--grep={pattern}', 'origin/main', '--', path)
-    s = out.stdout.strip()
-    return datetime.fromtimestamp(int(s), timezone.utc) if s else None
+def _holidays(market):
+    """달력의 그 시장 휴장일. 못 읽으면 빈 목록 — 판정이 DUE 쪽으로 기운다."""
+    got = (_show_json('data/market_holidays.json') or {}).get(market) or {}
+    days = got.get('dates')
+    return tuple(days) if isinstance(days, list) else ()
 
 
 def _files(*dirs):
@@ -159,21 +152,13 @@ def main(argv=None):
         return 0
     now = datetime.now(timezone.utc)
     if kind == 'us':
-        path = 'data/market_data.json'
-        verdict = decide_us(now, _show_json(path), _collected('us'), _files('posts', 'news'),
-                            _lock_age(lock_name('us', now), now))
+        verdict = decide_us(now, _files('posts', 'news'), _lock_age(lock_name('us', now), now),
+                            _holidays('us'))
     elif kind == 'kr':
-        path = 'kr/data/kr_market_data.json'
-        verdict = decide_kr(now, _show_json(path), _collected('kr'), _files('kr/posts'),
-                            _lock_age(lock_name('kr', now), now))
+        verdict = decide_kr(now, _files('kr/posts'), _lock_age(lock_name('kr', now), now),
+                            _holidays('kr'))
     else:
-        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-        from us.period import week_key
-        data = _show_json('data/market_data.json') or {}
-        if not data.get('report_date'):
-            print('DUE 주 키를 못 정했다 — 오케스트레이터가 판정한다')
-            return 0
-        key = week_key(data['report_date'])
+        key = week_of(now, _holidays('us'))
         aggs = {'us': _show_json(f'data/weekly/{key}.json'),
                 'kr': _show_json(f'kr/data/weekly/{key}.json')}
         verdict = decide_weekly(key, aggs, _files('weekly', 'kr/weekly'),

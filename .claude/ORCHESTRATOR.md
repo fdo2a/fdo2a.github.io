@@ -30,12 +30,14 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    **브리프만 있고 뉴스·산업 브리프가 없으면 이어 쓴다**(2026-09-27 — 9/25 런이 브리프 발행 1분 뒤 5시간 한도로 죽어, 재실행이 이 가드에서 멈췄다). STEP 1~3 을 건너뛰고 **STEP 3.5 만** 한다. 입력은 브리프 **발행 커밋**에서 복원한다 — 그 뒤 수집이 데이터를 덮어썼을 수 있다:
 
    ```bash
-   C=$(git log -1 --diff-filter=A --format=%H -- posts/<report_date>.html)
-   git show "$C:data/market_data.json" > <workspace>/market_data.json
-   mkdir -p <workspace>/news && git show "$C:data/news/<report_date>.json" > <workspace>/news/<report_date>.json
+   D=<report_date>; WS=<workspace>          # 두 값을 실제 값으로 바꿔 넣는다
+   C=$(git log -1 --diff-filter=A --format=%H -- "posts/$D.html")
+   git show "$C:data/market_data.json" > "$WS/market_data.json"
+   mkdir -p "$WS/news"
+   git show "$C:data/news/$D.json" > "$WS/news/$D.json" 2>/dev/null || rm -f "$WS/news/$D.json"
    ```
 
-   `research_notes.md` 는 없다(죽은 런의 워크스페이스와 함께 사라졌다) — 작성자에게 ③·④ 업계 뉴스 층을 비우라고 넘긴다. 뉴스 파일이 그 커밋에 없으면 없다고 넘긴다. 잠금은 위에서 잡은 그대로다.
+   마지막 줄의 `|| rm -f` 는 지우지 않는다 — 리다이렉션이 실패해도 빈 파일이 먼저 생기고, 작성자는 그것을 JSON 으로 읽다 죽는다. 뉴스 파일이 없으면 작성자에게 없다고 넘긴다. `research_notes.md` 는 없다(죽은 런의 워크스페이스와 함께 사라졌다) — ③·④ 업계 뉴스 층을 비우라고 넘긴다. 잠금은 위에서 잡은 그대로다.
 
    **「기대 세션과 같고」가 조건의 핵심이다.** 커밋된 데이터가 아직 어제 것이면(수집이 밀린 날 — 2026-08-27 이래 정상이다) 그 어제 글이 있는 건 당연하므로, 여기서 멈추면 오늘 글이 영영 안 나온다. 데이터가 낡았으면 가드를 통과시켜 아래 3번의 워크플로 재실행으로 내려보내고, **새 데이터를 받은 뒤 이 검사를 다시 한다**.
 

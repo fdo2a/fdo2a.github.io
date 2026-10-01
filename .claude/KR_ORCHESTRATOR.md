@@ -117,7 +117,7 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 1. 리포트 HTML을 `kr/posts/[YYYY-MM-DD].html`로 복사한다. **아무것도 주입하지 않는다** — 네비게이션과 SEO 메타(description·canonical·og)는 `scripts/render_post.py` 가 이미 한 번 넣었다. 다시 넣으면 head 태그가 두 벌이 된다(2026-09-23 US 발행본). 파일에 `post-shell-v1` 이 없으면 작성자가 셸을 건너뛴 것이다 — head 를 손으로 고치지 말고 렌더로 돌려보낸다.
 2. `kr/posts.json`에 `{date,title,headline}` 추가(같은 날짜는 REPLACE, 중복 금지). 유효 JSON 유지.
 3. `sitemap.xml`에 `https://fdo2a.github.io/kr/posts/DATE.html` url 추가(전체 재생성, US 항목 보존).
-4. **커밋 직전에 가드를 한 번 더** — `git pull` 후 `kr/posts/[YYYY-MM-DD].html` 이 그 사이 원격에 생겼으면 아무것도 커밋하지 않고 끝낸다. 그다음 main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 거절되면 `git pull --rebase` 후 같은 확인을 하고 다시 push 한다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
+4. **커밋 직전에 가드를 한 번 더** — 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main && git cat-file -e origin/main:kr/posts/[YYYY-MM-DD].html` 로 본다. 성공(그 사이 다른 런이 발행)이면 아무것도 커밋하지 않고 끝낸다. 아니면 main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 거절되면 `git pull --rebase` 한다 — `kr/posts.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) 이 날짜 항목만 STEP 3 의 2·3번으로 다시 넣은 뒤 `git add` → `git rebase --continue`. 그다음 같은 확인을 하고 다시 push 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
 
 ## STEP 4 — 알림
 PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`.

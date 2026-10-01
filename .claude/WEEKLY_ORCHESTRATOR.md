@@ -16,15 +16,17 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 이 값이 `<KEY>`(예: `2026-W35`)다. **날짜 산술로 도출하지 않는다** — 2026-07-13 중복 생성 직전까지 갔던 버그와 같은 부류다.
 
-**선점 잠금과 부분 발행 이어받기**(2026-09-27 — 한도 뒤 재시도 루틴이 토·일에 여러 번 뜬다). `bash scripts/ci/run_lock.sh acquire weekly-<KEY> 180` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). 쓰지 않고 끝나는 경로에서는 `release weekly-<KEY>` 로 풀고 끝낸다. 그다음:
+**선점 잠금과 부분 발행 이어받기**(2026-09-27 — 한도 뒤 재시도 루틴이 토요일 저녁부터 3시간마다 뜬다). `bash scripts/ci/run_lock.sh acquire weekly-<KEY> 180` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). **STEP 4·5 의 작성자를 부르기 직전과 STEP 6 커밋 직전에 `bash scripts/ci/run_lock.sh renew weekly-<KEY>`** 를 한다 — exit 3 이면 잠금을 잃은 것이니(갱신 없이 180분이 지나 재시도가 넘겨받았다) 커밋하지 않고 끝낸다. 쓰지 않고 끝나는 경로에서는 `release weekly-<KEY>` 로 풀고 끝낸다. 그다음:
 
 - `weekly/<KEY>.html` 과 `kr/weekly/<KEY>.html` 이 **둘 다** 원격에 있으면 「already published」만 보고하고 끝낸다.
-- **하나만 있으면 있는 쪽은 다시 만들지 않는다** — US 가 있으면 STEP 4 를, KR 이 있으면 STEP 5 를 건너뛰고, STEP 6 에서도 없던 쪽의 목록만 갱신한다. STEP 2·3 도 없는 쪽 시장만 돈다.
-- STEP 6 커밋 직전에 `git pull` 하고 같은 확인을 다시 한다 — 그 사이 생긴 쪽은 커밋에서 뺀다.
+- **하나만 있으면 있는 쪽은 다시 만들지 않는다** — US 가 있으면 STEP 4 를, KR 이 있으면 STEP 5 를 건너뛰고, STEP 1·2·3 과 STEP 6 도 **남은 시장만** 본다(이미 나간 쪽 집계는 확인하지 않는다).
+- STEP 6 커밋 직전에는 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main && git cat-file -e origin/main:<그 글 경로>` 로 확인한다 — 그 사이 생긴 쪽은 커밋에서 뺀다. push 가 거절되면 `git pull --rebase` 하고, `weekly.json`·`kr/weekly.json`·`sitemap.xml` 충돌은 원격 판을 받은 뒤 STEP 6 의 `update_archives.py` 를 이 키로 다시 돌려 `git rebase --continue` 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
+
+**주 키는 데이터에서 정한다(위)** — 금요일 수집이 실패해 `report_date` 가 지난주에 머물면 지난주 키가 나와 「already published」로 끝난다. 그 경우 이번 주 집계(`data/weekly/`)의 최신 키와 다르면 발행하지 않고 그 사실을 PushNotification 으로 알린다. 재시도 판정(`routine_due.py weekly`)은 달력으로 이번 주 키를 정하므로 계속 미발행으로 본다.
 
 ## STEP 1 — 집계 파일 확인
 
-`data/weekly/<KEY>.json`과 `kr/data/weekly/<KEY>.json`이 있고 `complete: true`인지 본다.
+`data/weekly/<KEY>.json`과 `kr/data/weekly/<KEY>.json`이 있고 `complete: true`인지 본다(STEP 0 에서 한 시장이 이미 발행됐으면 남은 시장의 집계만).
 
 없거나 `complete: false`면 **PushNotification으로 알리고 중단한다.** 완성본만 발행한다 — 반쪽 집계로 낸 총정리는 나중에 정정할 방법이 없다.
 

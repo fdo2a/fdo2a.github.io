@@ -20,26 +20,42 @@ STEP 0-1 가드가 「already published」로 멈춰 STEP 3.5 에 닿지 못했�
 
 ## routine_due 판정
 
-1. **기대 세션을 먼저 정한다** — US 뉴욕 −17h, KR 서울 −16h, 주말이면 금요일. 주간은 `week_key(report_date)`.
-   데이터에 적힌 날짜로 DONE 을 정하면 수집이 밀린 날 어제 글을 보고 끝나 오늘 글이 영영 안 나온다(codex #1).
+1. **기대 세션을 먼저 정한다** — US 뉴욕 −17h, KR 서울 −16h에서 주말과 **휴장일 달력**(`data/market_holidays.json`)을
+   거슬러 올라간 마지막 거래일. 주간은 그 US 세션의 ISO 주. 데이터에 적힌 날짜로 DONE 을 정하면 수집이 밀린 날
+   어제 글을 보고 끝나 오늘 글이 영영 안 나온다(설계 검토 #1).
 2. 그 세션의 글이 다 있으면 `DONE`. US 는 `posts/` 와 `news/` 둘 다, KR 은 `kr/posts/`, 주간은 US·KR 둘 다.
-3. **휴장**: 데이터가 기대 세션보다 이르고 `complete` 인데, 기대 세션 18:00(현지) 뒤에 **수집기 커밋**이 있으면 DONE.
-   휴장일에는 주 데이터 파일이 안 바뀌어 커밋되지 않으므로 디렉터리 단위로, 발행 커밋이 `data/macro.json` 을
-   건드린 것을 수집으로 착각하지 않도록 수집기 메시지(`data: market data for`·`data: kr market data for`)로 거른다.
-   18:00 은 소스 지연을 휴장으로 오판하지 않으려는 여유다(오판하면 글이 빠진다 — 반대 방향보다 비싸다).
-4. 그 세션 키의 잠금이 stale 기준(US·KR 120분, 주간 180분)보다 젊으면 `BUSY`. 아니면 `DUE` — 최종 선점은
-   `run_lock.sh acquire` 다(codex #6).
-5. 주간 집계가 없거나 불완전하면 `WAIT` — 주간 루틴은 집계를 다시 만들지 않으므로 돌려도 같은 자리에서 멈춘다(codex #2).
-6. fetch 실패·주 키 불명은 `DUE` — 틀려도 오케스트레이터 가드가 막는다. DONE 으로 보내면 글이 조용히 빠진다.
+3. 그 세션 키의 잠금이 stale 기준(US·KR 120분, 주간 180분)보다 젊으면 `BUSY`. 아니면 `DUE` — 최종 선점은
+   `run_lock.sh acquire` 다.
+4. 주간은 **남은 시장의** 집계가 없거나 불완전하면 `WAIT` — 주간 루틴은 집계를 다시 만들지 않는다.
+5. fetch 실패는 `DUE` — 틀려도 오케스트레이터 가드가 막는다. DONE 으로 보내면 글이 조용히 빠진다.
+
+**휴장은 달력으로만 판정한다.** 첫 구현은 「기대 세션 18:00 뒤 수집기 커밋이 있는데 데이터가 이전」을 휴장으로
+봤는데, 시세가 늦게 붙은 거래일도 같은 모양이라 글을 조용히 건너뛴다(구현 검토 #2). 달력에 없는 휴장일은 DUE 로
+떨어져 재시도가 헛돌 뿐이고, 거래일을 잘못 넣으면 그날 글이 빠지므로 **거래소 공지로 확인한 날만** 넣는다.
+US 는 NYSE 2026·2027, KR 은 2026(2027 은 대체공휴일 공고 전). 임시공휴일이 지정되면 추가한다.
 
 잠금 이름 규칙은 `routine_due.lock_name` 한 곳에 있고 `run_lock.sh key` 가 그것을 부른다.
+
+## 재시도 트리거 프롬프트
+
+본 루틴과 같은 환경·모델·도구로 만든다. 프롬프트는 판정 단계 뒤에 **본 루틴 프롬프트 원문**을 붙인다:
+
+> You are the RETRY run for <the daily US morning brief | the daily KR evening brief | the weekly US + KR recap>.
+> It fires every 3 hours after the main run and exists only to finish work that a usage limit cut short.
+> Step 1 — in the repository, run exactly: `git pull -q origin main; python3 scripts/ci/routine_due.py <us|kr|weekly>`
+> and read its single output line. Step 2 — unless that line starts with `DUE`, stop now: do not read any other file,
+> do not run anything else, do not send a PushNotification; reply with the line and end. Stop the same way if the
+> script is missing or fails. Step 3 — only on `DUE`, do exactly what the main routine does: <본 루틴 프롬프트 원문>
 
 ## 오케스트레이터 변경
 
 - US STEP 0-1: 브리프만 있고 뉴스 글이 없으면 STEP 3.5 만 — 입력은 브리프 발행 커밋에서 복원(codex #3).
   `research_notes.md` 는 사라졌으므로 ③·④ 업계 뉴스 층은 비운다(작성자 지시문이 허용한다).
 - KR STEP 0: 잠금(`kr-<서울 −16h>`)·멱등 가드·커밋 직전 재확인 신설(codex #4).
-- 주간 STEP 0: 잠금(`weekly-<KEY>`)·둘 다 있으면 종료·하나만 있으면 없는 쪽만(codex #5).
+- 주간 STEP 0: 잠금(`weekly-<KEY>`, 작성 전·커밋 전 갱신)·둘 다 있으면 종료·하나만 있으면 남은 시장만(집계도 남은 쪽만).
+- 커밋 직전 재확인은 `pull` 이 아니라 `fetch` + `git cat-file -e` — 작업 중 변경과 충돌하지 않는다. push 거절 뒤
+  목록·sitemap 충돌은 원격 판을 받고 이 날짜 항목만 다시 넣는다(구현 검토 #7).
+- US 복원 명령은 뉴스 파일이 없을 때 빈 파일을 남기지 않는다(`|| rm -f`, 구현 검토 #5).
 
 ## 비용
 
