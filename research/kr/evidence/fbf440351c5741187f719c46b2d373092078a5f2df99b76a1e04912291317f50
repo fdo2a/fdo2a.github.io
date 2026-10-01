@@ -1,0 +1,73 @@
+{
+ "indices": {
+  "KOSPI": {
+   "close": 6971.35,
+   "change_pct": 1.95
+  },
+  "KOSDAQ": {
+   "close": 894.29,
+   "change_pct": 4.48
+  }
+ },
+ "flows_date": {
+  "KOSPI": "2026-10-01",
+  "KOSDAQ": "2026-10-01"
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "semis": [
+  {
+   "name": "반도체와반도체장비",
+   "change_pct": 2.15,
+   "total": 172,
+   "rise": 162,
+   "breadth": 0.942,
+   "no": 278,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  }
+ ],
+ "kospi_flows": [
+  {
+   "date": "2026-10-01",
+   "individual": -14171,
+   "foreign": -5572,
+   "institution": 3321
+  },
+  {
+   "date": "2026-09-30",
+   "individual": 12109,
+   "foreign": -20646,
+   "institution": -7993
+  },
+  {
+   "date": "2026-09-29",
+   "individual": 12447,
+   "foreign": -29922,
+   "institution": 1041
+  },
+  {
+   "date": "2026-09-28",
+   "individual": 26467,
+   "foreign": -32682,
+   "institution": -10169
+  }
+ ],
+ "kosdaq_flows": [
+  {
+   "date": "2026-10-01",
+   "individual": -7790,
+   "foreign": 2303,
+   "institution": 5683
+  },
+  {
+   "date": "2026-09-30",
+   "individual": 188,
+   "foreign": -713,
+   "institution": 482
+  }
+ ]
+}
