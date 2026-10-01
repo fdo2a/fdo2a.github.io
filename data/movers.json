@@ -1,85 +1,103 @@
 {
-  "report_date": "2026-09-30",
+  "report_date": "2026-10-01",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "up",
+      "industry": "Interactive Media & Services",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": 1.1,
-          "close": 333.02,
-          "value": 16609470192.95
+          "name": "Alphabet Inc. (Class A) (GOOGL)",
+          "change_pct": -1.7,
+          "close": 338.24,
+          "value": 11199444022.25
+        },
+        {
+          "name": "Alphabet Inc. (Class C) (GOOG)",
+          "change_pct": -1.71,
+          "close": 334.93,
+          "value": 6575195567.57
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Interactive Media & Services",
+      "industry": "Semiconductors",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Alphabet Inc. (Class C) (GOOG)",
-          "change_pct": 1.01,
-          "close": 340.74,
-          "value": 8033487387.1
+          "name": "Nvidia (NVDA)",
+          "change_pct": 1.09,
+          "close": 230.86,
+          "value": 22517656214.23
+        },
+        {
+          "name": "Micron Technology (MU)",
+          "change_pct": 3.03,
+          "close": 1097.39,
+          "value": 49119463474.46
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Interactive Media & Services",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "Meta Platforms (META)",
-          "change_pct": -1.84,
-          "close": 725.18,
-          "value": 13888003985.07
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "Pharmaceuticals",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "Lilly (Eli) (LLY)",
-          "change_pct": -2.33,
-          "close": 1157.08,
-          "value": 3931152537.86
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Biotechnology",
-      "direction": "down",
+      "industry": "Communications Equipment",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Moderna (MRNA)",
-          "change_pct": -5.35,
-          "close": 192.57,
-          "value": 3963985045.85
+          "name": "Lumentum (LITE)",
+          "change_pct": 7.67,
+          "close": 1045.78,
+          "value": 7811041891.5
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "IT Consulting & Other Services",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Accenture (ACN)",
+          "change_pct": 15.78,
+          "close": 212.3,
+          "value": 6147690076.37
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Application Software",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Synopsys (SNPS)",
+          "change_pct": 12.78,
+          "close": 490.54,
+          "value": 3098880547.34
+        },
+        {
+          "name": "Fair Isaac (FICO)",
+          "change_pct": 11.69,
+          "close": 661.75,
+          "value": 1964115690.25
         }
       ]
     }

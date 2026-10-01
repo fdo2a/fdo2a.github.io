@@ -1,21 +1,13 @@
 {
-  "report_date": "2026-09-30",
+  "report_date": "2026-10-01",
   "releases": [
     {
-      "key": "pce",
-      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 3083,
-      "path": "releases/pce.txt"
-    },
-    {
-      "key": "gdp",
-      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
-      "ok": true,
-      "note": "impersonate=safari",
-      "chars": 3633,
-      "path": "releases/gdp.txt"
+      "chars": 19998,
+      "path": "releases/claims.txt"
     }
   ]
 }
