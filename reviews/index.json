@@ -1634,6 +1634,11 @@
       "findings": 0,
       "baseline": true
     },
+    "posts/2026-09-29.html": {
+      "sha": "9a23ca47575ad4af18b5552dd8d235d6de01ceeb",
+      "at": "2026-10-01T21:22:13+07:00",
+      "findings": 5
+    },
     "privacy.html": {
       "sha": "c0e4cefbbbfbd41d7d2178c31fcb41d04ad71d5a",
       "at": "2026-09-27T01:05:02+09:00",
