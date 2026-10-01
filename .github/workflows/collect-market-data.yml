@@ -141,6 +141,15 @@ jobs:
         continue-on-error: true
         run: python scripts/collect_fed_events.py --datadir data
 
+      - name: Refresh FOMC schedule
+        if: steps.collect.outputs.skipped != 'true'
+        # Non-core: federalreserve.gov is the schedule of record for data/fomc_dates.json.
+        # A failed fetch leaves yesterday's file in place; readers refuse it once the
+        # official check is more than 45 days old (fomc_official.load), so a broken
+        # fetch drops the FOMC rows rather than printing a stale table.
+        continue-on-error: true
+        run: python scripts/update_fomc_dates.py --datadir data
+
       - name: Build the next-ten-days calendar
         if: steps.collect.outputs.skipped != 'true'
         # Non-core, same contract: what is coming (economic releases, Treasury auctions,
@@ -182,6 +191,7 @@ jobs:
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/scorecard.json 2>/dev/null || true
           git add data/calendar.json 2>/dev/null || true
+          git add data/fomc_dates.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true
           git add data/news 2>/dev/null || true
           git add data/fed 2>/dev/null || true

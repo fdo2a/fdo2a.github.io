@@ -18,7 +18,6 @@ import re
 from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
                     TRANSMISSION_LABELS, conflicts, regime_name)
 from .section import locate_section, number_forms, strip_tags
-from . import moomoo_forward as _MF
 from .macro_table_gate import check_tables
 
 _REGIME = re.compile(
@@ -373,8 +372,7 @@ def check_falsifier(html, next_macro):
     return ['정책 경로의 반증조건이 지면에 없다 — 그 문단에 `data-falsifier="1"` 을 '
             '달고 무엇이 나오면 이 판단이 바뀌는지 쓸 것']
 
-def _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch=None,
-                  fedwatch_present=False):
+def _check_policy(text, prev_macro, macro_eval, next_macro, v):
     prev = (prev_macro or {}).get('policy_path') or {}
     nxt = (next_macro or {}).get('policy_path') or {}
     if not nxt:
@@ -396,8 +394,6 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch=None,
     elif not _cited(text, prob):
         v.append(f'§8: 정책 경로 확률 {prob}%가 본문에 인용되지 않았다')
 
-    _check_prob_source(prob, nxt, fedwatch, v, fedwatch_present)
-
     _check_axis_directions(macro_eval, next_macro, v)
 
     if not prev.get('timing') or nxt.get('timing') == prev.get('timing'):
@@ -414,7 +410,7 @@ def _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch=None,
     if (macro_eval or {}).get('new_releases'):
         return
     old = prev.get('prob_pct')
-    if prev.get('prob_meeting') is not None and not _MF.same_event(prev, nxt):
+    if prev.get('prob_meeting') is not None and not same_event(prev, nxt):
         # 회의나 구간을 갈아탄 뒤의 확률 차이는 시장의 이동이 아니다.
         # 9월 회의 40% → 10월 회의 100% 가 +60%p 로 읽혀 시점 변경을
         # 승인하던 경로다(2026-09-22 codex 구현 검토 P1-2).
@@ -508,47 +504,23 @@ def _check_next(next_macro, prev_macro, regime_cell, trans_cells, report_date, v
                      f'{row.get("since")}로 오늘이 아니다')
 
 
-def _check_prob_source(prob, nxt, fedwatch, v, present=False):
-    """인쇄된 확률이 **승인된 원천값과 같은가**.
+def same_event(a, b):
+    """두 정책 경로가 **같은 사건**을 가리키는가.
 
-    지금까지 `prob_pct` 는 에이전트가 만든 수치와 에이전트가 만든 `macro_next`
-    를 대조할 뿐이었다. 그러면 다음 회의가 바뀌었거나 특정 구간 확률과 누적
-    확률을 섞었어도 통과한다. 확률은 **회의일·목표구간·공급자**에 묶여야
-    비교된다(2026-09-22 codex 검토 P1-7).
+    회의나 구간이 바뀌었는데 확률 차이를 「시장이 움직였다」로 읽으면, 9월
+    회의 40% 에서 10월 회의 100% 로 갈아타는 것만으로 정책 시점 변경이
+    승인된다(2026-09-22 codex 구현 검토 P1-2).
     """
-    if prob is None:
-        return
-    if not fedwatch:
-        # **파일이 있는데 승인되지 않은 것**과 **원천이 아예 없는 것**은 다르다.
-        # 앞은 맥이 꺼져 어제 파일이 남았거나 세션이 어긋난 날이고, 그 숫자를
-        # 통과시키면 장부에 적힌 값 자체가 무검증이다(codex 구현 검토 P1-1).
-        # 뒤는 아직 이 경로를 쓰지 않는 날이라 기존 계약대로 둔다 — 원천 필수화는
-        # 작성 계약(`.claude/agents/`)을 함께 바꿔야 하는 광범위 수정이라
-        # spec 의 열린 항목에 단계로 남겼다.
-        if present:
-            v.append(f'§8: FedWatch 파일은 있으나 승인되지 않았는데 확률 {prob}% 를 '
-                     f'인쇄했다 — 상태나 대상 세션이 정본과 어긋난다. 원천을 다시 '
-                     f'받거나, prob_pct 를 비우고 prob_status 와 prob_note 를 적을 것')
-        return
-    meeting = nxt.get('prob_meeting')
-    lower = nxt.get('prob_range_lower')
-    if meeting is None or lower is None:
-        v.append('§8: FedWatch 원천이 승인됐는데 macro_next.policy_path 에 '
-                 'prob_meeting / prob_range_lower 가 없다 — 어느 회의의 어느 '
-                 '구간 확률인지 밝히지 않으면 원천 대조가 불가능하다')
-        return
-    approved = _MF.find_probability(fedwatch, meeting_date=meeting, lower_pct=lower,
-                                    upper_pct=nxt.get('prob_range_upper'))
-    if approved is None:
-        v.append(f'§8: 승인된 FedWatch 장부에 {meeting} / 하단 {lower}% 구간이 '
-                 f'없다 — 존재하지 않는 사건의 확률을 인쇄하고 있다')
-    elif abs(float(prob) - float(approved)) > 0.05:
-        v.append(f'§8: 정책 경로 확률 {prob}% 가 원천값 {approved}% 와 다르다 '
-                 f'({meeting} / 하단 {lower}%)')
+    if not a or not b:
+        return False
+    for k in ('prob_meeting', 'prob_range_lower', 'prob_range_upper'):
+        if a.get(k) != b.get(k):
+            return False
+    return a.get('prob_meeting') is not None
 
 
-def check(html, prev_macro, macro_eval, next_macro, fedwatch=None,
-          fedwatch_present=False, econ=None, metrics=None, report_date=None):
+def check(html, prev_macro, macro_eval, next_macro, *, econ=None, metrics=None,
+          report_date=None):
     section = section_macro(html)
     if section is None:
         return ['§8(매크로) 섹션을 찾을 수 없다']
@@ -562,8 +534,7 @@ def check(html, prev_macro, macro_eval, next_macro, fedwatch=None,
     _check_releases(html, macro_eval, v)
     trans_cells = _check_transmission(section, macro_eval, v)
     v.extend(check_falsifier(html, next_macro))
-    _check_policy(text, prev_macro, macro_eval, next_macro, v, fedwatch,
-                  fedwatch_present)
+    _check_policy(text, prev_macro, macro_eval, next_macro, v)
     _check_next(next_macro, prev_macro, regime_cell, trans_cells,
                 (macro_eval or {}).get('report_date'), v)
     # 축 표의 직전 대비·추세 칸 (2026-09-23). econ 이 없으면(부트스트랩) 건너뛴다.

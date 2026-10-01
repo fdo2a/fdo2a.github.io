@@ -12,16 +12,19 @@
 어제 받은 일정을 오늘 것처럼 인쇄하는 대신 없다고 적는다 — 낡은 일정은 없는 일정보다
 나쁘고, 같은 이유로 낡은 FOMC 표도 쓰지 않는다.
 
-**FOMC 회의일은 이 스크립트가 만들지 않는다.** `data/fomc_dates.json` 을 읽고, 없거나
-낡았으면 그 항목을 빼고 `missing` 에 적는다. 레포가 아는 FOMC 날짜는 웹서치 산문 한
+**FOMC 회의일은 이 스크립트가 만들지 않는다.** `data/fomc_dates.json`
+(`update_fomc_dates.py` 가 연준 원문으로 갱신)을 `fomc_official.load()` 로 읽고, 없거나
+공식 확인이 45일을 넘겼으면 그 항목을 빼고 `missing` 에 적는다. 레포가 아는 FOMC 날짜는 웹서치 산문 한
 줄뿐이라 나머지를 채우면 수집이 아니라 창작이다 — 이 파이프라인에서 삭제는 언제나
 창작보다 낫다.
 
 `fomc_dates.json` 형식:
 
     {"source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
-     "checked_at": "2026-09-14",
+     "verified_at": "2026-09-14",
      "meetings": ["2026-09-16", "2026-10-28"]}
+
+`verified_at`(연준 원문 확인일, KST)이 없거나 45일을 넘겼으면 읽지 않는다.
 """
 
 import argparse
@@ -32,6 +35,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from us import fomc_official as F  # noqa: E402
 from us import upcoming as U  # noqa: E402
 from us.calendar import HORIZON_DAYS, build  # noqa: E402
 from us.fred import FredClient, FredError  # noqa: E402
@@ -68,24 +72,6 @@ def _collect(report_date, start, end):
     return events, auctions, missing
 
 
-def _load_meetings(path):
-    """-> (dates, note). 못 읽으면 빈 목록 — 없는 일정을 지어내지 않는다."""
-    try:
-        with open(path, encoding='utf-8') as fh:
-            book = json.load(fh)
-    except FileNotFoundError:
-        return [], f'{path} 없음'
-    except Exception as e:
-        return [], f'{path} 읽기 실패: {e}'
-    out = []
-    for raw in book.get('meetings') or []:
-        try:
-            out.append(dt.date.fromisoformat(raw))
-        except Exception:
-            return [], f'{path} 의 날짜 형식이 잘못됐다: {raw!r}'
-    return out, f"{len(out)}건 (확인 {book.get('checked_at') or '미상'})"
-
-
 def _report_date(datadir, override):
     if override:
         return dt.date.fromisoformat(override)
@@ -111,7 +97,10 @@ def main():
     args = ap.parse_args()
 
     report_date = _report_date(args.datadir, args.date)
-    meetings, note = _load_meetings(os.path.join(args.datadir, 'fomc_dates.json'))
+    # 신선도는 **실행일(KST)** 로 잰다. 확인일은 KST 로 찍히는데 report_date 는 그
+    # 전날 미국 세션이라, report_date 로 재면 오늘 받은 표가 「미래 확인」으로 거부된다.
+    today = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).date()
+    meetings, note = F.load(os.path.join(args.datadir, 'fomc_dates.json'), as_of=today)
     print(f'FOMC 일정표: {note}', file=sys.stderr)
 
     start = report_date + dt.timedelta(days=1)

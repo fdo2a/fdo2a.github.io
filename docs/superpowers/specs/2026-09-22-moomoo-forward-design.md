@@ -1,5 +1,13 @@
 # moomoo OpenAPI 보조 입력 설계 (2026-09-22)
 
+> **2026-10-01 폐지** — 사용자 지시 「이 프로젝트에서 moomoo는 그냥 빼자」. 수집은 9/22 한 번뿐이었고,
+> 남은 낡은 `fedwatch.json` 이 「있으나 미승인」으로 §8 확률 인쇄를 막고 있었다. 수집기·정규화 모듈·
+> `data/moomoo/`·plist·FedWatch 원천 대조(`_check_prob_source`)를 지웠다. **남긴 것**: FOMC 일정의
+> 정본 = 연준 원문(`fomc_official.py`), 갱신은 `scripts/update_fomc_dates.py`(Actions), 45일 낡음 판정과
+> 직전 회의 보존은 **읽는 쪽** `fomc_official.load()` 로 옮겼다. `same_event` 는 `macro_gate` 로 옮겼다.
+> 아래 본문은 이력이다. 결정 기록: `../plan.md` 「2026-10-01 moomoo 제거」.
+
+
 사용자 지시: moomoo OpenD 를 설치하고, 미국 리포트에 붙일 수 있는 것은 전부 붙인다.
 
 ## 왜 붙이는가 — 웹서치 산문이던 칸 둘

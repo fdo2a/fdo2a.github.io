@@ -10,6 +10,7 @@ body 계약·절 순서·표 자리: scripts/us/weekly_insight.py 머리말. 계
 전부 나열하고 아무것도 쓰지 않는다.
 """
 import argparse
+import datetime as dt
 import json
 import sys
 from pathlib import Path
@@ -17,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'scripts'))
 sys.path.insert(0, str(ROOT))
+from us import fomc_official as F  # noqa: E402
 from us import weekly_insight as I  # noqa: E402
 
 
@@ -28,7 +30,13 @@ def cmd_diag(args):
     agg = _load(f'data/weekly/{args.key}.json')
     snap = _load(f'data/weekly_ext/{args.key}.json')
     cal = _load('data/calendar.json') if Path('data/calendar.json').exists() else {}
-    fomc = _load('data/fomc_dates.json').get('meetings', []) if Path('data/fomc_dates.json').exists() else []
+    # 신선도는 **실행일** 기준이다 — 집계 종료일로 재면 지난 주간본을 다시 진단할 때
+    # 낡은 표가 나이 0 으로 통과한다. 어느 회의를 고를지는 `I.build` 가 end_date 로 정한다.
+    today = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).date()
+    meetings, note = F.load('data/fomc_dates.json', as_of=today)
+    if not meetings:
+        print(f'FOMC 일정표: {note}', file=sys.stderr)
+    fomc = [d.isoformat() for d in meetings]
     if snap.get('end_date') and snap['end_date'] < agg['end_date']:
         print(f'스냅샷 기준일({snap["end_date"]})이 집계 종료일({agg["end_date"]})보다 이르다 — 다시 수집한다')
         return 1
