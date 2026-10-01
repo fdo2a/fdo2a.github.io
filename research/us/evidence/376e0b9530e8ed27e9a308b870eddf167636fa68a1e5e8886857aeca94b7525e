@@ -1,0 +1,38 @@
+# Evidence packet: US 2026-09-30 PCE / GDP / rates / FedWatch (WebSearch result summaries, collected 2026-09-30 ~23:30-23:50 UTC)
+# Public web sources; summaries as returned by search engine. URLs listed per item. Observation times approximate (collection time).
+
+[BEA Personal Income and Outlays, August 2026 — released 2026-09-30 08:30 ET]
+URL: https://www.bea.gov/news/2026/personal-income-and-outlays-august-2026 (direct fetch blocked by egress proxy; figures from search snippet of the release)
+- Personal income +$66.6B (+0.2% m/m); DPI +$68.6B (+0.3%); PCE +$190.8B (+0.9%); saving rate 4.1%.
+- PCE price index +0.3% m/m, +3.4% y/y; ex food & energy +0.2% m/m, +3.0% y/y.
+BEA PCE page (committed file data/releases/pce.txt): Aug 2026 +3.4%, Jul +3.4%, Jun +3.5%, May +3.8% (y/y).
+
+[Consensus before release — CNBC preview 2026-09-29]
+URL: https://www.cnbc.com/2026/09/29/the-feds-main-inflation-measure-will-be-released-wednesday-heres-what-to-expect.html
+- Expected +0.3% headline and core m/m; 3.7% and 3.3% y/y (Dow Jones survey), "unchanged from July".
+
+[Revisions / methodology]
+URLs: https://tradingeconomics.com/united-states/pce-price-index-monthly-change ; https://www.fxstreet.com/news/us-core-pce-inflation-set-to-rise-in-august-pressuring-the-federal-reserve-202609300830 ; https://www.techtimes.com/articles/328346/20260930/august-pce-inflation-cooled-34-bea-rewrote-how-it-measures-prices.htm ; https://www.americanbanker.com/news/august-pce-comes-in-at-3-4-but-fed-hike-remains-on-the-table ; https://www.kucoin.com/news/flash/bea-to-revise-pce-inflation-methodology-core-reading-may-drop-to-3-2-3-3
+- July headline m/m revised to 0.1%; July y/y revised to 3.4% from 3.7%; July core y/y revised to 3.0% from 3.3%.
+- Goods +0.3% m/m (nondurables +0.5%, gasoline & other energy goods +4.4%); services +0.3% (from 0.1%), transportation services +1.4%, food services & accommodations +0.5%.
+- BEA changed methodology (back to 2021) for legal services, software & computer accessories, portfolio management; reported to lower July core PCE level by 0.36 pp; pre-release estimates said it could shave 0.1-0.2 pp off core readings.
+- American Banker: Gov. Waller quoted with concerns about imputed nonmarket services prices / methodology.
+- CNBC 9/30: with June/July revisions, 3-month annualized core now ~2%; Gov. Barr: only two months consistent with 2% in past 20 months.
+- ING THINK (https://think.ing.com/snaps/softer-than-feared-us-inflation-despite-robust-spending/, 13:16 UTC): core 0.2% vs 0.3% exp; 3.0% vs 3.3%; July revised to 0.1%; 3m annualized ~2%; October hike pricing fell from 18bp to 9bp; real spending +0.6% m/m; Q2 GDP revised 1.5%->2.2%, private investment +1.9pp revision.
+
+[GDP Q2 third estimate — 2026-09-30 08:30 ET]
+BEA page (data/releases/gdp.txt): "Real GDP increased at an annual rate of 2.2 percent in the second quarter of 2026 ... In the first quarter, real GDP increased 2.5 percent (revised)."
+URLs: https://qz.com/pce-price-index-revised-q2-2026-093026 ; https://investinglive.com/news/us-gdp-final-for-q2-2-2-vs-1-5-estimate/ ; https://www.dailyforex.com/forex-news/2026/09/us-inflation-news-30-september-2026/250244
+- Second estimate 1.5%, consensus 1.5%; Q2 PCE price index 5.0% (revised down 0.3pp), core 3.3% (revised down 0.3pp); real final sales +2.8% (prev est 2.2%, exp 2.3%).
+
+[Other data 9/30]
+- ADP Sept private payrolls +90k vs 68k (Dow Jones); base pay job-stayers +3.0% y/y (ADP https://mediacenter.adp.com/2026-09-30-ADP-National-Employment-Report-Private-Sector-Employment-Increased-by-90,000-Jobs-in-September ; CNBC)
+- Chicago PMI Sept: 58.8 vs 51.2 exp, prev 47.1 (Newsquawk https://www.newsquawk.com/headlines/us-chicago-pmi-sep-588-vs-exp-512-prev-471); GuruFocus headline says 55.8 (conflict, unresolved).
+
+[Yields / Fed pricing]
+- CNBC 20:33 UTC https://www.cnbc.com/2026/09/30/treasury-yields-bonds-selloff.html : 10Y +4bp to 5.298%; 30Y 5.632%, near highest since 2002; yields fell early after PCE then rose ahead of Friday jobs report; October hike probability fell to 37% from 80%, next hike moved to December. Jobs consensus 84k (Friday Oct 2).
+- CME FedWatch via KuCoin/PANews/Phemex (after PCE): October hold 52.9% / +25bp 47.1%; December: hold 10%, +25bp 51.8%, +50bp 38.2%. https://www.kucoin.com/news/flash/fed-rate-hike-probability-at-47-1-for-october-after-pce-data
+- 24/7 Wall St 2026-09-30: Williams (9/29) "no need for urgency ... we have time to gather more information"; "one further upward adjustment ... may be appropriate late this year". https://247wallst.com/investing/2026/09/30/williams-says-the-fed-has-time-october-rate-hike-odds-fell-below-a-coin-flip/
+- Kashkari (CNBC 23:23 UTC): inflation "still too high" after softer PCE; neutral rate raised to 3.25%. https://www.cnbc.com/2026/09/30/watch-minneapolis-fed-president-neel-kashkari.html
+- Stocks: gains erased in last hour as 30Y touched highest since 2002; stocks turned lower after GDP showed stronger spring economy; ADP beat (search summary of CNBC live blog https://www.cnbc.com/2026/09/29/stock-market-today-live-updates.html)
+- Stopgap funding: Senate passed CR 90-6 (to Dec 11), House version Dec 4; base case no shutdown (https://breakingdefense.com/2026/09/house-passes-funding-stopgap-averting-government-shutdown-in-october/ ; https://www.fedtools.com/blog/government-shutdown-october-2026)
