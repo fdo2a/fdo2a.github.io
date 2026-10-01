@@ -3,6 +3,7 @@
 
     python3 scripts/ci/routine_due.py us|kr|weekly     # 한 줄: DONE|BUSY|WAIT|DUE <이유>
     python3 scripts/ci/routine_due.py lock-name us|kr  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
+    python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
 
 본 루틴이 5시간 한도로 죽으면 다시 띄울 장치가 없었다(9/25 US 뉴스·산업 브리프). 재시도
 루틴이 3시간마다 뜨고, 이 스크립트가 `DUE` 일 때만 오케스트레이터를 읽는다. 나머지는 곧바로
@@ -154,6 +155,10 @@ def main(argv=None):
             print('usage: routine_due.py lock-name us|kr', file=sys.stderr)
             return 2
         print(lock_name(args[1], datetime.now(timezone.utc), holidays=_holidays(args[1])))
+        return 0
+    if args[0] == 'week-key':
+        # 주간 오케스트레이터가 데이터로 정한 키와 맞대 본다 — 다르면 데이터가 밀린 것이다.
+        print(week_of(datetime.now(timezone.utc), _holidays('us')))
         return 0
     kind = args[0]
     if kind not in ('us', 'kr', 'weekly'):

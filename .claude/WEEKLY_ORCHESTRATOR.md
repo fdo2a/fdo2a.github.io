@@ -18,7 +18,7 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 **선점 잠금과 부분 발행 이어받기**(2026-09-27 — 한도 뒤 재시도 루틴이 토요일 저녁부터 3시간마다 뜬다). `bash scripts/ci/run_lock.sh acquire weekly-<KEY> 240` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). **STEP 4·5 의 작성자를 부르기 직전과 돌아온 직후, STEP 6 커밋 직전에 `bash scripts/ci/run_lock.sh renew weekly-<KEY>`** 를 한다 — exit 3 이면 잠금을 잃은 것이니(갱신 없이 240분이 지나 재시도가 넘겨받았다) 커밋하지 않고 끝낸다. 쓰지 않고 끝나는 경로에서는 `release weekly-<KEY>` 로 풀고 끝낸다.
 
-**먼저 데이터가 밀렸는지 본다** — 금요일 수집이 실패해 `report_date` 가 지난주에 머물면 지난주 키가 나와 아래 가드가 「already published」로 끝낸다. 그러니 가드보다 먼저, `data/weekly/` 의 최신 키가 `<KEY>` 보다 새것이면 발행하지 않고 그 사실을 PushNotification 으로 알린 뒤(잠금을 풀고) 끝낸다. 재시도 판정(`routine_due.py weekly`)은 달력으로 이번 주 키를 정하므로 계속 미발행으로 본다.
+**먼저 데이터가 밀렸는지 본다** — 금요일 수집이 실패해 `report_date` 가 지난주에 머물면 지난주 키가 나와 아래 가드가 「already published」로 끝낸다. 그러니 가드보다 먼저 `python3 scripts/ci/routine_due.py week-key`(휴장일 달력으로 정한 이번 주 키)를 `<KEY>` 와 맞대고, **다르면** 발행하지 않고 그 사실을 PushNotification 으로 알린 뒤(잠금을 풀고) 끝낸다. 이번 주 집계가 아예 없어도 이것으로 잡힌다. 재시도 판정(`routine_due.py weekly`)은 달력으로 이번 주 키를 정하므로 계속 미발행으로 본다.
 
 그다음:
 
