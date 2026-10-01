@@ -20,6 +20,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us.archives import merge_sitemap, upsert_entry  # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.common import post_shell  # noqa: E402
 
 LISTINGS = {'daily': ('posts.json', 'posts'),
             'weekly': ('weekly.json', 'weekly'),
@@ -30,6 +32,8 @@ LISTINGS = {'daily': ('posts.json', 'posts'),
 BASE = 'https://fdo2a.github.io'
 # 목록 항목의 열쇠 이름. posts.json 은 처음부터 `date` 였다(index.html 이 그 이름으로 읽는다).
 ENTRY_KEY = {'daily': 'date'}
+# 목록 종류 → 표시 날짜를 정하는 셸 시장.
+SHOWN_MARKET = {'daily': 'us', 'news': 'news'}
 
 
 def main():
@@ -53,6 +57,11 @@ def main():
     entry = {field: args.key, 'title': args.title, 'headline': args.headline}
     if args.label:
         entry['label'] = args.label
+    # 목록에 한국 발행일을 보인다(2026-10-01) — 키·정렬·링크는 거래일 그대로, 셸과 같은 경계.
+    if args.kind in SHOWN_MARKET:
+        shown = post_shell.shown_date(SHOWN_MARKET[args.kind], args.key).isoformat()
+        if shown != args.key:
+            entry['shown'] = shown
     entries = upsert_entry(entries, entry, key=field)
     os.makedirs(os.path.dirname(listing) or '.', exist_ok=True)
     with open(listing, 'w', encoding='utf-8') as fh:

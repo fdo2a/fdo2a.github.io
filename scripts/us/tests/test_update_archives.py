@@ -40,3 +40,15 @@ def test_daily_and_news_merge_the_sitemap_instead_of_regenerating_it(tmp_path):
         assert sitemap.count(f'<loc>{loc}</loc>') == 1, loc
     news = json.loads((tmp_path / 'news.json').read_text(encoding='utf-8'))
     assert news == [{'key': '2026-09-25', 'title': 'n', 'headline': ''}]
+
+
+def test_daily_and_news_from_the_cutover_carry_the_shown_date(tmp_path):
+    """2026-10-01 — 목록은 한국 발행일(키 + 1일)을 보인다. 키·정렬·링크는 거래일 그대로."""
+    seed(tmp_path)
+    run(tmp_path, '--kind', 'daily', '--key', '2026-09-29', '--title', 'a')
+    run(tmp_path, '--kind', 'daily', '--key', '2026-09-30', '--title', 'b')
+    run(tmp_path, '--kind', 'news', '--key', '2026-10-01', '--title', 'c')
+    rows = {r['date']: r for r in json.loads((tmp_path / 'posts.json').read_text(encoding='utf-8'))}
+    assert 'shown' not in rows['2026-09-29'] and rows['2026-09-30']['shown'] == '2026-10-01'
+    news = json.loads((tmp_path / 'news.json').read_text(encoding='utf-8'))
+    assert news[0]['key'] == '2026-10-01' and news[0]['shown'] == '2026-10-02'
