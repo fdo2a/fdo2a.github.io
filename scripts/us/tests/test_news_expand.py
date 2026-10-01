@@ -78,3 +78,23 @@ def test_literal_entity_in_a_summary_survives_expansion_and_the_gate():
          'summary_ko': 'S&amp;P 지수와 R&D 투자가 늘었다.'}]}
     out, errs = X.expand('<!--NEWS:e1|제목-->', news)
     assert errs == [] and X.summary_violations(out, news) == []
+
+
+def test_nli_url_gets_its_korean_name():
+    """실제 도메인은 nli-research.co.jp 다 — nli-research.jp 로 찾으면 영영 안 맞는다."""
+    item = {'url': 'http://www.nli-research.co.jp/report/detail/id=86896?site=nli',
+            'source': 'ニッセイ基礎研究所', 'published': '2026-09-25T09:00:00+09:00'}
+    assert X.caption(item) == '닛세이기초연구소 · 9월 25일'
+
+
+def test_reuters_wire_names_the_carrier():
+    """작성자 지시문: Investing.com 이 전재한 로이터 기사는 「로이터(Investing.com)」."""
+    item = {'url': 'https://www.investing.com/news/economy-news/x', 'wire': 'Reuters',
+            'source': 'Investing.com', 'published': '2026-09-25T10:00:00Z'}
+    assert X.caption(item) == '로이터(Investing.com) · 9월 25일'
+
+
+def test_other_wires_keep_their_own_name():
+    item = {'url': 'https://news.yahoo.co.jp/articles/x', 'wire': '교도통신',
+            'source': 'Yahoo!ニュース', 'published': '2026-09-25T10:00:00+09:00'}
+    assert X.caption(item) == '교도통신 · 9월 25일'

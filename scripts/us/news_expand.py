@@ -20,13 +20,18 @@ PLACEHOLDER = re.compile(r'<!--NEWS:([^|>]+)\|([^|>]*?)(?:\|([^>]*?))?-->')
 _POLITE = re.compile(r'(습니다|니다|어요|아요|해요|세요)[.!?]?\s*$')
 LINK_MAX = 80
 
-_ORGS = (('boj.or.jp', '일본은행'), ('nli-research.jp', '닛세이기초연구소'))
+_ORGS = (('boj.or.jp', '일본은행'), ('nli-research.co.jp', '닛세이기초연구소'))
 
 
 def caption(item):
     url = item.get('url') or ''
-    name = next((ko for dom, ko in _ORGS if dom in url), None) \
-        or item.get('wire') or item.get('source') or ''
+    name = next((ko for dom, ko in _ORGS if dom in url), None)
+    if name is None:
+        wire = item.get('wire')
+        if wire == 'Reuters':
+            name = f"로이터({item.get('source') or 'Investing.com'})"
+        else:
+            name = wire or item.get('source') or ''
     day = (item.get('published') or '')[:10]
     if re.fullmatch(r'\d{4}-\d{2}-\d{2}', day):
         _, m, d = day.split('-')
