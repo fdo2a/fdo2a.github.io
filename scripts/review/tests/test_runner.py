@@ -29,12 +29,15 @@ def test_a_matching_published_version_is_picked():
     assert eligible([got], {'posts/2026-09-10.html': 'aaa'}, {}, TODAY) == [got]
 
 
-def test_only_us_and_kr():
+def test_daily_and_keyed_period_pages_only():
+    """2026-10-01 부터 주간·월간·일본도 자동 대상이다. 키 형식이 아닌 기간 페이지와 thesis 는 아니다."""
     rows = [item('thesis/data/thesis_state.json', 'thesis/data', 'a'),
             item('weekly/2026-09-10.html', 'weekly', 'b'),
+            item('weekly/2026-W37.html', 'weekly', 'd'),
             item('kr/posts/2026-09-10.html', 'kr', 'c')]
     tree = {r.path: r.sha for r in rows}
-    assert [p.section for p in eligible(rows, tree, {}, TODAY)] == ['kr']
+    assert [p.path for p in eligible(rows, tree, {}, TODAY)] == [
+        'weekly/2026-W37.html', 'kr/posts/2026-09-10.html']
 
 
 def test_yesterdays_and_todays_post_fit_in_the_same_day():

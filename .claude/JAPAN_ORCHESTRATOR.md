@@ -40,7 +40,7 @@ python3 scripts/check_readability.py --strict $(pwd)/japan_<KEY>.html
 python3 scripts/check_style.py $(pwd)/japan_<KEY>.html
 ```
 
-위반은 목록 그대로 writer 에게 돌려준다. AI 티 제거는 US 주간 STEP 4-b 와 같은 `humanize_prose.py finalize` 관문을 지난다(`--gate` 에 위 셋).
+위반은 목록 그대로 writer 에게 돌려준다. 윤문은 루틴에서 하지 않는다(2026-10-01) — 발행 뒤 로컬 러너가 codex 로 고치고, 위 셋(`check_japan` 은 발행 커밋의 `japan/data`)을 다시 통과할 때만 공개판을 바꾼다. US 주간 STEP 4-b 참고.
 
 ## STEP 4 — 발행
 

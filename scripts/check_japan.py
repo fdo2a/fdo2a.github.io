@@ -21,11 +21,14 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--key', required=True)
+    ap.add_argument('--datadir', default='japan/data',
+                    help='진단·뉴스 파일 폴더 (발행 뒤 재검사는 발행 커밋에서 꺼낸 것)')
     args = ap.parse_args(argv)
     try:
         html = Path(args.html).read_text(encoding='utf-8')
-        diag = json.loads(Path(f'japan/data/{args.key}.json').read_text(encoding='utf-8'))
-        news = json.loads(Path(f'japan/data/{args.key}.news.json').read_text(encoding='utf-8'))
+        data = Path(args.datadir)
+        diag = json.loads((data / f'{args.key}.json').read_text(encoding='utf-8'))
+        news = json.loads((data / f'{args.key}.news.json').read_text(encoding='utf-8'))
     except (OSError, ValueError) as e:
         print(f'FATAL: {e}', file=sys.stderr)
         return 2

@@ -110,3 +110,22 @@ def test_direction_is_checked_outside_the_flows_section_too():
 def test_spread_legs_too_far_apart_are_blocked():
     d = _diag(core={'usjp2y': {'asof_gap_days': 5, 'asof_us': '2026-09-25', 'asof_jp': '2026-09-20'}})
     assert any('기준일' in v and '5일' in v for v in G.check(_html(), d))
+
+
+def test_cli_reads_the_data_dir_it_is_given(tmp_path):
+    """발행 뒤 재검사는 발행 커밋에서 꺼낸 근거를 본다 — 작업 폴더의 japan/data 가 아니다 (2026-10-01)."""
+    import json
+    import os
+    import subprocess
+    import sys
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    data = tmp_path / 'ev'
+    data.mkdir()
+    (data / '2099-W01.json').write_text(json.dumps({}), encoding='utf-8')
+    (data / '2099-W01.news.json').write_text(json.dumps([]), encoding='utf-8')
+    page = tmp_path / 'p.html'
+    page.write_text('<html><body><p>x</p></body></html>', encoding='utf-8')
+    p = subprocess.run([sys.executable, os.path.join(root, 'scripts/check_japan.py'), '--html', str(page),
+                        '--key', '2099-W01', '--datadir', str(data)],
+                       capture_output=True, text=True, cwd=str(tmp_path))
+    assert 'FATAL' not in p.stdout + p.stderr and 'unrecognized' not in p.stderr

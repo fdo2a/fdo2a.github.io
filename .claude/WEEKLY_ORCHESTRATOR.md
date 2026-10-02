@@ -61,7 +61,7 @@ python3 scripts/build_scorecard.py --agg data/weekly/<KEY>.json --datadir data \
 
 `.claude/RESEARCH_WORKFLOW.md`의 기간 복기를 수행한다. 시장별 `research/us`·`research/kr` 원장과 저장 증거만 사용한다. 집계의 START·END와 실제 검토 시각 AS_OF를 고정하고 `check_research.py render`로 요약을 만든다. 작성자는 생성된 section을 그대로 삽입하고, 주간에는 가설 변화와 반증, 월간에는 반복된 설명의 한계와 다음 검증 조건을 서술한다. 초기 원장이 비어 있으면 축적 전이라고 밝힌다.
 
-아래 US 명령의 `<AS_OF>`는 같은 고정 시각이다. KR 실행에서는 모든 입력 경로와 `--research-root research/kr --market kr`를 함께 바꾼다. 윤문 전후 `check_research.py check`도 workflow대로 수행한다.
+아래 US 명령의 `<AS_OF>`는 같은 고정 시각이다. KR 실행에서는 모든 입력 경로와 `--research-root research/kr --market kr`를 함께 바꾼다. 발행 전 `check_research.py check`도 workflow대로 수행한다(윤문은 발행 뒤 codex 가 하고, 그때 연구 요약은 원본과 바이트 대조한다).
 
 ## STEP 4 — US 주간 인사이트
 
@@ -81,7 +81,7 @@ python3 scripts/build_weekly_insight.py assemble --key <KEY> \
   --body weekly_<KEY>.body.html --meta weekly_<KEY>.meta.json --out weekly_<KEY>.html
 ```
 
-조립이 exit 1 이면 목록을 writer 에게 그대로 돌려준다. 아래 US 게이트 명령에는 모두 `--insight data/weekly_ext/<KEY>.insight.json` 을 붙인다(humanize finalize 의 `--gate` 포함).
+조립이 exit 1 이면 목록을 writer 에게 그대로 돌려준다. 아래 US 게이트 명령에는 모두 `--insight data/weekly_ext/<KEY>.insight.json` 을 붙인다.
 
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 
@@ -105,19 +105,7 @@ python3 scripts/check_style.py $(pwd)/weekly_<KEY>.html
 
 **`check_weight.py`는 돌리지 않는다.** (US 인사이트의 무게중심은 `--insight` 가 대신 본다 — 이례적 움직임 언급.) 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
 
-**STEP 4-b — AI 티 제거.** 일간과 같은 관문을 지난다. 원본은 손대지 않고 사본에서 윤문한다.
-
-```bash
-cp weekly_<KEY>.html weekly_<KEY>.humanizing.html
-python3 scripts/humanize_prose.py extract weekly_<KEY>.humanizing.html --out prose_in.txt
-# humanize-korean 스킬 또는 수동 윤문 → prose_out.txt
-python3 scripts/humanize_prose.py finalize weekly_<KEY>.humanizing.html --original weekly_<KEY>.html --payload prose_out.txt \
-  --gate "python3 scripts/check_style.py {f}" \
-  --gate "python3 scripts/check_readability.py --strict {f}" \
-  --gate "python3 scripts/check_period.py --html {f} --agg <AGG> --recap <RECAP> --scorecard data/period_scorecard.json --span weekly --research-root research/us --research-as-of <AS_OF> --market us --insight data/weekly_ext/<KEY>.insight.json"
-```
-
-전부 통과했을 때만 원본이 바뀐다. 실패하면 사본을 버리고 원본은 미수정으로 남는다.
+**STEP 4-b — 윤문은 루틴에서 하지 않는다 (2026-10-01).** 위 게이트를 통과한 판이 곧 발행본이다. 말투 손질은 **발행 뒤** 로컬 러너(`scripts/review_gate.py run --correct`, 매시)가 codex 로 한다 — `prose_in.txt` 만 고치고, 문단별 되꽂기와 이 단계의 게이트(`check_period` 는 발행 커밋의 집계·recap·스코어카드로, 연구 요약은 원본과 바이트 대조)를 통과해야 공개판을 바꾼다. 거부되면 원본이 그대로 남는다. Claude 윤문(humanize-korean)은 부르지 않는다 — 사용자 지시 「주간, 월간, 일본 보고서도 codex가 검토하도록 해」. 설계 `docs/superpowers/specs/2026-10-01-period-codex-style-pass.md`.
 
 통과하면 `weekly/<KEY>.html`로 옮긴다.
 

@@ -30,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from review import kinds  # noqa: E402
 from us.post_check import markup_diff, token_diff  # noqa: E402
 from us.prose_swap import ProseSwapError, extract, reinsert_partial  # noqa: E402
 
@@ -134,6 +135,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
     """
     py = sys.executable
     s = 'scripts/'
+    if section in kinds.PERIOD:
+        return _period_gates(section, post, datadir, original, date)
     head = [[py, s + 'check_style.py', post],
             [py, s + 'check_readability.py', '--strict', '--no-inline-images', post]]
     if section == 'us':
@@ -166,6 +169,31 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
         cmds.append([py, s + 'check_research.py', 'check', '--span', 'daily', '--html', post,
                      '--root', research_root, '--market', market, '--date', date,
                      '--cycle', cycle])
+    return cmds
+
+
+def _period_gates(section, post, root, original, key):
+    """주간·월간·일본 — 루틴 STEP 4-b·일본 STEP 3 의 게이트 그대로, 근거는 `root`(발행 커밋에서
+    꺼낸 것). 연구 요약은 as-of 를 되살릴 수 없어 다시 렌더하지 않고 원본과 바이트 대조한다
+    (`check_period --research-frozen`). 일본 게이트는 근거 폴더를 인자로 받는다."""
+    py = sys.executable
+    s = 'scripts/'
+    market, span = kinds.PERIOD[section]
+    ev = kinds.evidence(section, key)
+    cmds = [[py, s + 'check_style.py', post],
+            [py, s + 'check_readability.py', '--strict', post],
+            [py, s + 'verify_post.py', post, '--before', original, '--skip-layout']]
+    if market == 'jp':
+        cmds.append([py, s + 'check_japan.py', '--html', post, '--key', key,
+                     '--datadir', os.path.join(root, 'japan/data')])
+        return cmds
+    cmd = [py, s + 'check_period.py', '--html', post, '--agg', os.path.join(root, ev[0]),
+           '--recap', os.path.join(root, f'recap_{market}.json'),
+           '--scorecard', os.path.join(root, 'data/period_scorecard.json'),
+           '--span', span, '--market', market, '--research-frozen', original]
+    if section == 'weekly':
+        cmd += ['--insight', os.path.join(root, ev[1])]
+    cmds.append(cmd)
     return cmds
 
 
@@ -230,7 +258,15 @@ def _push(clone, path, sha, recheck=None):
 
 
 def apply(root, item, payload, workdir, evidence_datadir, research_root=None, timeout=180):
-    """codex 가 고친 문단을 공개판에 반영한다 → Result. 호출자의 checkout 은 건드리지 않는다."""
+    """codex 가 고친 문단을 공개판에 반영한다 → Result. 호출자의 checkout 은 건드리지 않는다.
+
+    `evidence_datadir` 는 일간이면 근거 데이터 폴더, 주간·월간·일본이면 발행 커밋에서 근거 파일을
+    레포 경로 그대로 꺼내 둔 뿌리다(`kinds.evidence`).
+    """
+    period = item.section in kinds.PERIOD
+    key = kinds.key_of(item.path)
+    names_dir = (os.path.dirname(os.path.join(evidence_datadir, kinds.evidence(item.section, key)[0]))
+                 if period else evidence_datadir)
     try:
         with tempfile.TemporaryDirectory(prefix='style-pass-') as temp:
             clone = os.path.join(temp, 'repo')
@@ -243,7 +279,7 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
             post = os.path.join(clone, item.path)
             html = Path(post).read_text(encoding='utf-8')
             _, sidecar = extract(html)
-            names = known_names(html, evidence_datadir)
+            names = known_names(html, names_dir)
             try:
                 new, skipped = reinsert_partial(html, payload, sidecar, names=names)
             except ProseSwapError as exc:
@@ -259,8 +295,8 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
             m = _DATE.search(item.path)
             cycle = _CYCLE.search(html)
             cmds = gate_commands(item.section, post, evidence_datadir, original,
-                                 m.group(1) if m else '', cycle.group(1) if cycle else None,
-                                 research_root)
+                                 key if period else (m.group(1) if m else ''),
+                                 cycle.group(1) if cycle else None, research_root)
             baseline = run_gates(clone, cmds, timeout)
             Path(post).write_text(new, encoding='utf-8')
             bad = judge(baseline, run_gates(clone, cmds, timeout))

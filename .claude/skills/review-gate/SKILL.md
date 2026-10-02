@@ -32,6 +32,7 @@ Codex 초안 존재만으로 완료 처리하지 않는다. 지적 없음도 Cla
 러너가 되꽂기·STEP 2.5 게이트를 통과시켜 `Style-Pass: codex` 트레일러로 먼저 푸시하고, 초안은 그 새 판의 이름을
 받는다. 정정은 새 판을 원래 발행 커밋의 데이터로 본다. 원장은 문체 커밋이 건드리지 않는다.
 설계 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
+**주간·월간·일본(2026-10-01)**도 같은 문체 수정을 받지만 Claude 자동 정정은 없다 — 그 초안(`<발행일>-weekly|kr_weekly|monthly|kr_monthly|japan_posts-<sha7>.md`)은 아래 수동 절차로 처리한다. 설계 `docs/superpowers/specs/2026-10-01-period-codex-style-pass.md`.
 
 실패·시간 초과·원격 변경은 정정 완료가 아니다. 초안을 보존하고 다음 tick에서 한도 내
 재시도한다. 이미 준비된 초안은 대기 중 날짜가 지나도 정정 대상에 남는다. `reviews/runner.json` 오류와 `reviews/pending/*.claude.txt`에 결과를 남긴다.

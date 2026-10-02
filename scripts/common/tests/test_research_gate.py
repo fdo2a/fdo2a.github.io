@@ -137,3 +137,29 @@ def test_registered_research_flows_to_daily_and_period_publication(tmp_path):
     assert not extract(fragment)[1]['items']
     with pytest.raises(ValueError):
         gate().checked_summary_body(fragment.replace('평가 불가', '성과 확인'), s)
+
+
+# ── 발행 뒤 재검사: 요약을 다시 렌더할 수 없을 때 (2026-10-01) ─────────────────────
+from common.research_gate import frozen_summary_body  # noqa: E402
+
+_FROZEN = ('<section class="card"><p>앞 문단.</p>'
+           '<section data-research-summary="h"><p>검토 대상 2건이다.</p></section></section>')
+
+
+def test_frozen_summary_unchanged_is_removed_for_the_remaining_checks():
+    edited = _FROZEN.replace('앞 문단.', '앞 문단이다.')
+    out = frozen_summary_body(edited, _FROZEN)
+    assert '검토 대상' not in out and '앞 문단이다.' in out
+
+
+def test_frozen_summary_changed_after_publishing_is_refused():
+    import pytest
+    with pytest.raises(ValueError):
+        frozen_summary_body(_FROZEN.replace('2건이다', '3건이다'), _FROZEN)
+    with pytest.raises(ValueError):
+        frozen_summary_body(_FROZEN.replace(' data-research-summary="h"', ''), _FROZEN)
+
+
+def test_frozen_summary_absent_on_both_sides_is_a_no_op():
+    html = '<p>요약 없는 글.</p>'
+    assert frozen_summary_body(html, html) == html

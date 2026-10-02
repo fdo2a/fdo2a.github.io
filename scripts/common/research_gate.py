@@ -89,6 +89,19 @@ def checked_summary_body(html, summary):
     return html[:start] + html[end:]
 
 
+def frozen_summary_body(html, original):
+    """Post-publish replay (codex style pass) of a period page whose as-of cutoff is not
+    recoverable: the summary cannot be re-rendered, so require it byte-identical to the
+    published original and drop it, leaving every other check to run."""
+    now = Elements(html, 'data-research-summary').matches
+    was = Elements(original, 'data-research-summary').matches
+    if [html[s:e] for s, e, _, _ in now] != [original[s:e] for s, e, _, _ in was]:
+        raise ValueError('Research summary changed after publishing')
+    for start, end, _, _ in reversed(now):
+        html = html[:start] + html[end:]
+    return html
+
+
 def check_daily(html, records, cycle_id, market, report_date):
     cycles = [r for r in records if r['id'] == cycle_id and r['type'] == 'cycle']
     if len(cycles) != 1:

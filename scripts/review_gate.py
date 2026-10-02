@@ -35,13 +35,14 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from review import kinds  # noqa: E402
 from review import prose as prose_mod  # noqa: E402
 from review.queue import accept as accept_entry  # noqa: E402
 from review.queue import baselines, classify, is_watched  # noqa: E402
 from review.queue import mark as mark_entry  # noqa: E402
 from review.queue import seed, union_pending  # noqa: E402
 from review.runner import (CLAUDE_BLOCK_HORIZON_HOURS,  # noqa: E402
-                           DAILY_CAP, HUMAN, LIMIT, RESHIPPED,
+                           DAILY_CAP, HUMAN, KST, LIMIT, RESHIPPED,
                            ROUND_CAP, TIMEOUT, UNKNOWN, accept_draft,
                            blocked_until, claude_retry_at, clear_rounds,
                            draft_name, eligible, is_claude_limit,
@@ -623,7 +624,24 @@ PROMPT = """읽기 전용으로 검토만 해 줘. 파일을 고치지 말고 �
 지적이 없으면 「지적 없음」이라고만 답해라.
 """
 
-MARKET_NAME = {'us': '미국', 'kr': '한국'}
+MARKET_NAME = {'us': '미국', 'kr': '한국', 'jp': '일본'}
+
+# 주간·월간·일본(2026-10-01). 근거는 데이터 폴더가 아니라 그 글의 파일들이다(`review.kinds.evidence`).
+PERIOD_PROMPT = """읽기 전용으로 검토만 해 줘. 파일을 고치지 말고 지적만 목록으로 돌려줘.
+
+대상: `{post}` (한국어 {market} {span} 리포트 발행본)
+근거 파일: {evidence} — **이 글이 발행된 커밋에서 그대로 꺼낸 것**이라 본문이 인용한 값의 정본이다.
+
+세 가지만 본다.
+1. **데이터 ↔ 본문 정합** — 본문의 수치·방향·기간이 근거 파일과 어긋나는 곳.
+2. **논리 비약** — 근거가 지지하지 않는 단정, 앞뒤 절이 모순되는 곳.
+3. **문장** — 한 문단에 주제가 둘 이상인 곳, 피동 종결 반복, 기계적 나열.
+
+레이아웃·HTML·CSS는 보지 마. 별도 스크립트가 검사한다.
+지적마다 «위치(섹션 제목이나 첫 문장) / 무엇이 틀렸나 / 무엇이 맞나(근거 파일과 값)»으로.
+지적이 없으면 「지적 없음」이라고만 답해라.
+"""
+SPAN_NAME = {'weekly': '주간', 'monthly': '월간'}
 
 # 문체 수정 단계(루틴 STEP 2.5 대체, 2026-09-27). codex 가 참고할 문체 기준 — 발행 커밋에서
 # 글과 함께 꺼낸다. humanize 규칙은 공개 레포에 복사하지 않고 로컬 플러그인 경로를 읽힌다.
@@ -864,15 +882,24 @@ def review_one(root, commit, item, timeout, style=False):
     # 드러나고 launchd 첫 실행에서야 나왔다(2026-09-10).
     work = tempfile.mkdtemp(prefix='review-')
     try:
-        data_dir = SNAPSHOT[item.section]
-        if not snapshot(root, commit, (item.path, data_dir), work):
-            return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다', UNKNOWN, ''
+        if item.section in kinds.PERIOD:
+            market, span = kinds.PERIOD[item.section]
+            have = _period_evidence(root, commit, item)
+            if not snapshot(root, commit, (item.path, *have), work):
+                return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다', UNKNOWN, ''
+            prompt = PERIOD_PROMPT.format(post=item.path, market=MARKET_NAME[market],
+                                          span=SPAN_NAME[span],
+                                          evidence=', '.join(f'`{p}`' for p in have) or '없음')
+        else:
+            data_dir = SNAPSHOT[item.section]
+            if not snapshot(root, commit, (item.path, data_dir), work):
+                return None, f'{commit[:7]} 에서 스냅샷을 못 꺼냈다', UNKNOWN, ''
+            prompt = PROMPT.format(post=item.path,
+                                   market=MARKET_NAME.get(item.section, item.section),
+                                   datadir=data_dir)
         # 문체 기준은 발행 당시 것이 아니라 **지금** 것이다. 없어도 문체 수정은 돈다.
         if style and not snapshot(root, 'origin/main', STYLE_REFS, work):
             print(f'[러너] 문체 기준을 못 꺼냈다 — {", ".join(STYLE_REFS)}')
-        prompt = PROMPT.format(post=item.path,
-                               market=MARKET_NAME.get(item.section, item.section),
-                               datadir=data_dir)
         if style:
             from review import style_pass
             # 고치는 판은 **지금 공개된 판**이다. 발행 커밋의 판과는 조판만 다를 수 있다.
@@ -928,6 +955,8 @@ def _apply_style(root, commit, item, work):
     from review import style_pass
     evidence = tempfile.mkdtemp(prefix='style-evidence-')
     try:
+        if item.section in kinds.PERIOD:
+            return _apply_period_style(root, commit, item, work, evidence)
         data_dir = SNAPSHOT[item.section]
         if not snapshot(root, commit, (data_dir,), evidence):
             return style_pass.Result(reason=f'{commit[:7]} 에서 근거를 다시 못 꺼냈다')
@@ -945,6 +974,58 @@ def _apply_style(root, commit, item, work):
         return style_pass.Result(reason=f'{type(exc).__name__}: {exc}')
     finally:
         shutil.rmtree(evidence, ignore_errors=True)
+
+
+def _period_ready(root, oid, items, errs):
+    """주간·월간·일본 → (남길 항목, {경로: 실제 발행일}).
+
+    근거가 빠진 글은 **codex 를 부르기 전에** 뺀다. 부른 뒤 거르면 근거 없이 쓴 「지적 없음」
+    초안이 남고 하루 한도도 쓴다(2026-10-01 codex 구현 검토). 발행일은 그 판을 낸 커밋의 KST 날짜다.
+    """
+    keep, dated, why = [], {}, []
+    for item in items:
+        if item.section not in kinds.PERIOD:
+            keep.append(item)
+            continue
+        commit = publish_commit(root, item.path, item.sha) or oid
+        want = kinds.evidence(item.section, kinds.key_of(item.path))
+        missing = [p for p in want if p not in _period_evidence(root, commit, item)]
+        if missing:
+            why.append(f'{item.path}: 근거 없음 {", ".join(missing)}')
+            continue
+        out = git(root, 'log', '-1', '--format=%cI', commit)
+        try:
+            dated[item.path] = datetime.fromisoformat(out.stdout.strip()).astimezone(KST).date()
+        except ValueError:
+            pass
+        keep.append(item)
+    if why:
+        errs['근거-기간'] = err(HUMAN, f'{len(why)}건 자동 검토 제외 — ' + '; '.join(why))
+    else:
+        errs.pop('근거-기간', None)
+    return keep, dated
+
+
+def _period_evidence(root, commit, item):
+    """발행 커밋에 있는 근거 파일만 — 없는 경로를 넘기면 git archive 가 통째로 실패한다."""
+    return tuple(p for p in kinds.evidence(item.section, kinds.key_of(item.path))
+                 if rev_parse(root, f'{commit}:{p}'))
+
+
+def _apply_period_style(root, commit, item, work, evidence):
+    """주간·월간·일본. 근거가 하나라도 없으면 반영하지 않는다 — 게이트가 원본·수정본 모두 같은
+    FATAL 로 죽으면 「원본에서도 같은 실패」로 봐줘서 게이트가 꺼진 채 통과한다."""
+    from review import style_pass
+    want = kinds.evidence(item.section, kinds.key_of(item.path))
+    have = _period_evidence(root, commit, item)
+    missing = [p for p in want if p not in have]
+    if missing:
+        return style_pass.Result(reason=f'{commit[:7]} 에 근거가 없다: {", ".join(missing)}')
+    if not snapshot(root, commit, have, evidence, everything=True):
+        return style_pass.Result(reason=f'{commit[:7]} 에서 근거를 다시 못 꺼냈다')
+    with open(os.path.join(work, style_pass.PAYLOAD), encoding='utf-8') as fh:
+        payload = fh.read()
+    return style_pass.apply(root, item, payload, work, evidence)
 
 
 def _save(root, state, errs, progressed=True):
@@ -1039,7 +1120,8 @@ def _correct_ready(root, args, state, errs):
     state.pop(CORRECTION_BLOCK, None)
     queue, published = _published_queue(root, oid)
     have = _drafts_on_disk(root)
-    ready = [item for item in queue if draft_name(item) in have]
+    # Claude 자동 정정은 일간만이다. 주간·월간·일본의 초안은 수동 review-gate 로 간다.
+    ready = [item for item in queue if item.section in kinds.DAILY and draft_name(item) in have]
     day = today_kst()
     quota = {'calls': state.get('correction_calls', {})}
     for item in eligible(ready, published, quota, day, max_age_days=None):
@@ -1139,8 +1221,10 @@ def cmd_run(args):
         else:
             state.pop('blocked_until', None)   # 만료됐으면 필드를 지운다
             # 한도를 예약하기 **전에** 거른다. 뒤에서 거르면 하루 상한만 태우고 매일 같은 글에서 헛돈다.
-            picks = eligible(_drop_misdated(root, todo + unavailable, errs), published, state, day,
-                             have=_drafts_on_disk(root))
+            ready, dated = _period_ready(root, oid, _drop_misdated(root, todo + unavailable, errs),
+                                         errs)
+            picks = eligible(ready, published, state, day, have=_drafts_on_disk(root),
+                             dated=dated)
         if not picks and not getattr(args, 'correct', False):
             # 남아 있는 섹션 오류는 그대로 둔다. 고를 것이 없다는 이유로 지우면, 한도만
             # 태우고 초안은 없는 상태가 「방금 성공」으로 보인다.

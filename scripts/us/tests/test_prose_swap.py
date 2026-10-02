@@ -481,3 +481,24 @@ def test_부분_되꽂기는_영문_이름과_방향의_짝도_본다():
     out, rejected = _partial('AAPL 은 상승했고 TSLA 는 하락했다. 반도체 업황 회복 기대와 환율 부담이 엇갈린 하루였고 외국인 수급도 종목별로 크게 갈렸다고 판단한다.',
                              'TSLA 는 상승했고 AAPL 은 하락했다. 반도체 업황 회복 기대와 환율 부담이 엇갈린 하루였고 외국인 수급도 종목별로 크게 갈렸다고 판단한다.')
     assert [p for p, _ in rejected] == ['P001']
+
+
+# ── 기간 리포트 (2026-10-01 codex 설계 검토) ─────────────────────────────────────
+
+def test_중첩된_연구_요약도_윤문에_넘기지_않는다():
+    """KR W39: 요약 section 이 바깥 section 안에 있어 _BLOCK_RE 가 바깥만 잡고 요약 문단을 넘겼다."""
+    html = ('<section class="card"><h2>복기</h2><p>이번 주 판단을 돌아본다.</p>'
+            '<section data-research-summary="h"><p>검토 대상 2건이다.</p></section>'
+            '<p>다음 주에 확인할 조건이 있다.</p></section>')
+    text, side = extract(html)
+    assert '검토 대상' not in text
+    assert '돌아본다' in text and '확인할 조건' in text
+    assert reinsert(html, text, side) == html
+
+
+def test_실제_KR_W39_의_연구_요약은_추출되지_않는다():
+    import os
+    path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'kr', 'weekly', '2026-W39.html')
+    html = open(path, encoding='utf-8').read()
+    text, _ = extract(html)
+    assert '검토 대상' not in text

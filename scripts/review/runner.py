@@ -14,7 +14,7 @@ from .queue import _DATE
 
 # 러너가 미리 읽어 두는 섹션. 나머지는 사람이 기존 수동 경로로 처리한다 — 게이트의 감시
 # 범위를 좁히는 게 아니라, 자동으로 앞당겨 읽는 대상만 좁힌다.
-SECTIONS = ('us', 'kr')
+from .kinds import DAILY, MAX_AGE, SECTIONS, publish_day, section_of
 
 # 섹션당 하루 호출 수. 구독 한도를 사람이 세션에서 쓰는 codex 와 나눠 쓴다 — 2026-09-10
 # 이 설계의 검토 한 번이 한도를 태웠다.
@@ -77,6 +77,10 @@ def today_kst(now=None):
 
 
 def _dated(path):
+    """발행일 — 일간은 파일명 날짜, 주간·월간·일본은 키에서(`kinds.publish_day`)."""
+    when = publish_day(path)
+    if when is not None or section_of(path) not in DAILY:
+        return when
     found = _DATE.search(path.rsplit('/', 1)[-1])
     if not found or len(found.group(1)) != 10:
         return None
@@ -98,7 +102,7 @@ def used(state, day, section):
 
 
 def eligible(queue, published, state, day, have=(), sections=SECTIONS, cap=DAILY_CAP,
-             max_age_days=MAX_AGE_DAYS):
+             max_age_days=MAX_AGE_DAYS, dated=None):
     """자동으로 읽을 항목 — 섹션·공개판 일치·신선도·한도를 전부 통과한 것만.
 
     `published` 는 **고정한 origin 커밋의 트리**다. 큐 항목의 SHA 가 그 트리의 것과 같을
@@ -111,6 +115,9 @@ def eligible(queue, published, state, day, have=(), sections=SECTIONS, cap=DAILY
     올라오는 그날 글은 한도가 없어 못 읽는다.
 
     큐는 최신 순이라 섹션마다 앞에서부터 채우면 그날 것이 먼저 잡힌다.
+
+    `dated` 는 {경로: 실제 발행일} — 주간·월간·일본은 키에서 정한 날보다 늦게 나올 수 있어
+    신선도는 이것으로 잰다(US W39 는 키 날짜 9/26 보다 5일 늦은 10/01 발행). 초안 이름은 키 날짜다.
     """
     limit = (date.fromisoformat(day) - timedelta(days=max_age_days)
              if max_age_days is not None else None)
@@ -124,8 +131,11 @@ def eligible(queue, published, state, day, have=(), sections=SECTIONS, cap=DAILY
             continue
         if draft_name(item) in have:
             continue
-        when = _dated(item.path)
-        if when is None or (limit is not None and when < limit):
+        when = (dated or {}).get(item.path) or _dated(item.path)
+        if when is None:
+            continue
+        if limit is not None and when < limit - timedelta(
+                days=max(0, MAX_AGE.get(item.section, max_age_days) - max_age_days)):
             continue
         picked.append(item)
         left[item.section] -= 1

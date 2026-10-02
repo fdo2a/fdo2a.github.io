@@ -38,6 +38,9 @@ def main():
     ap.add_argument('--research-as-of', help='Timezone-aware frozen review cutoff')
     ap.add_argument('--market', choices=('us', 'kr'))
     ap.add_argument('--insight', help='US 주간 인사이트 진단 (data/weekly/<KEY>.insight.json)')
+    ap.add_argument('--research-frozen', metavar='ORIGINAL',
+                    help='발행 뒤 재검사: 연구 요약이 이 원본과 바이트까지 같으면 떼고 나머지를 검사한다 '
+                         '(as-of 를 복원할 수 없는 codex 문체 수정용)')
     args = ap.parse_args()
 
     try:
@@ -53,7 +56,21 @@ def main():
         sys.exit(2)
 
     research_summary = None
-    if args.research_root or args.research_as_of:
+    if args.research_frozen:
+        if args.research_root or args.research_as_of:
+            ap.error('--research-frozen excludes --research-root/--research-as-of')
+        from common.research_gate import frozen_summary_body
+        try:
+            with open(args.research_frozen, encoding='utf-8') as fh:
+                html = frozen_summary_body(html, fh.read())
+        except OSError as e:
+            print(f'FATAL: {e}', file=sys.stderr)
+            return 2
+        except ValueError as e:
+            print('기간 리포트 게이트 실패 — 1건')
+            print(f'  - {e}')
+            return 1
+    elif args.research_root or args.research_as_of:
         if not (args.research_root and args.research_as_of and args.market):
             ap.error('--research-root, --research-as-of and --market are required together')
         from pathlib import Path

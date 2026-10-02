@@ -427,3 +427,38 @@ def test_a_changed_gate_list_during_rebase_stops_the_push(repo, tmp_path, monkey
     res = sp.apply(repo, it, edit_payload(text, '보인 것으로 나타났다', '보였다'),
                    str(work), str(tmp_path / 'ev'))
     assert res.sha is None and '게이트 목록' in res.reason
+
+
+# ── 주간·월간·일본 (2026-10-01) ───────────────────────────────────────────────
+
+def _gates(section, key):
+    return {c[1].rsplit('/', 1)[-1]: c for c in
+            sp.gate_commands(section, '/c/p.html', '/ev', '/o.html', key, None, None)}
+
+
+def test_us_weekly_gates_replay_check_period_on_the_publish_evidence():
+    g_ = _gates('weekly', '2026-W39')
+    assert {'check_style.py', 'check_readability.py', 'verify_post.py', 'check_period.py'} <= set(g_)
+    cmd = g_['check_period.py']
+    assert cmd[cmd.index('--agg') + 1] == '/ev/data/weekly/2026-W39.json'
+    assert cmd[cmd.index('--recap') + 1] == '/ev/recap_us.json'
+    assert cmd[cmd.index('--insight') + 1] == '/ev/data/weekly_ext/2026-W39.insight.json'
+    assert cmd[cmd.index('--research-frozen') + 1] == '/o.html'
+    assert cmd[cmd.index('--span') + 1] == 'weekly' and cmd[cmd.index('--market') + 1] == 'us'
+    assert '--no-inline-images' not in g_['check_readability.py']
+    assert 'check_weight.py' not in g_ and 'check_macro.py' not in g_
+
+
+def test_kr_monthly_gates_have_no_insight():
+    cmd = _gates('kr/monthly', '2026-09')['check_period.py']
+    assert '--insight' not in cmd
+    assert cmd[cmd.index('--agg') + 1] == '/ev/kr/data/monthly/2026-09.json'
+    assert cmd[cmd.index('--span') + 1] == 'monthly' and cmd[cmd.index('--market') + 1] == 'kr'
+
+
+def test_japan_gates_read_the_publish_evidence():
+    g_ = _gates('japan/posts', '2026-W40')
+    cmd = g_['check_japan.py']
+    assert cmd[cmd.index('--key') + 1] == '2026-W40'
+    assert cmd[cmd.index('--datadir') + 1] == '/ev/japan/data'
+    assert 'check_period.py' not in g_

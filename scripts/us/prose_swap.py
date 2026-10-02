@@ -85,7 +85,24 @@ def _skip_spans(html):
             spans.append((m.start(), m.end()))
     for m in _FED_START.finditer(html):
         spans.append((m.start(), _balanced_div(html, m.start())))
+    spans.extend(_research_summaries(html))
     return spans
+
+
+def _research_summaries(html):
+    """연구 요약(원장에서 생성한 구역)은 중첩돼 있어도 뺀다.
+
+    `_BLOCK_RE` 는 바깥 section 을 먼저 잡으므로 그 안의 요약 section 을 못 본다 — KR W39 주간의
+    요약 문단이 윤문 대상으로 넘어갔다(2026-10-01 codex 설계 검토에서 재현). 균형 매칭으로
+    찾고, 구조를 못 읽으면 첫 요약부터 문서 끝까지 뺀다(넘기는 것보다 덜 넘기는 쪽이 안전하다).
+    """
+    if 'data-research-summary' not in html:
+        return []
+    from common.research_gate import Elements
+    try:
+        return [(start, end) for start, end, _, _ in Elements(html, 'data-research-summary').matches]
+    except ValueError:
+        return [(html.index('data-research-summary'), len(html))]
 
 
 def _eligible(html):
