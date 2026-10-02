@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3639655,
-    "volume": 1977329,
+    "value": 3707834,
+    "volume": 2014287,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3104183,
-    "volume": 11271917,
+    "value": 3141812,
+    "volume": 11408387,
     "members": [
       "삼성전자"
     ]
@@ -75,8 +75,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 737319,
-    "volume": 471506,
+    "value": 750887,
+    "volume": 480105,
     "members": [
       "삼성전기"
     ]
@@ -86,8 +86,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 488359,
-    "volume": 2433962,
+    "value": 509257,
+    "volume": 2537796,
     "members": [
       "삼성전자우"
     ]
@@ -97,8 +97,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 393507,
-    "volume": 341349,
+    "value": 399905,
+    "volume": 346879,
     "members": [
       "SK스퀘어"
     ]
@@ -132,25 +132,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 199082,
-    "volume": 151268,
+    "value": 201210,
+    "volume": 152860,
     "members": [
       "두산"
     ]
   },
   {
-    "label": "SK하이닉스 레버리지",
-    "kind": "single_stock_lev",
-    "direction": "long",
+    "label": "한화솔루션",
+    "kind": "stock",
+    "direction": null,
     "theme": null,
-    "value": 196058,
-    "volume": 17858253,
+    "value": 197657,
+    "volume": 5534468,
     "members": [
-      "KODEX SK하이닉스단일종목레버리지",
-      "TIGER SK하이닉스단일종목레버리지",
-      "SOL SK하이닉스단일종목레버리지",
-      "ACE SK하이닉스단일종목레버리지",
-      "RISE SK하이닉스단일종목레버리지"
+      "한화솔루션"
     ]
   }
 ]
