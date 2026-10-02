@@ -1,16 +1,16 @@
 {
-  "updated": "2026-09-09",
+  "updated": "2026-10-02",
   "tickers": {
     "005930.KS": {
       "grade": "홀딩 강화",
       "grade_since": "2026-08-24",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 69348.4,
-        "eps_fy1_low": 25671.0,
+        "eps_fy1": 71030.125,
+        "eps_fy1_low": 48732.0,
         "eps_fy1_high": 94075.0,
-        "price": 269500.0,
-        "pb": 2.76
+        "price": 268500.0,
+        "pb": 2.74
       },
       "open_questions": [
         "분기 실적에서 HBM4 매출 가이던스(3배·비중 60%) 달성 여부",
@@ -41,11 +41,11 @@
       "grade_since": "2026-08-28",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 472738.84,
+        "eps_fy1": 470265.62,
         "eps_fy1_low": 325173.0,
-        "eps_fy1_high": 557816.0,
-        "price": 1793000.0,
-        "pb": 4.84
+        "eps_fy1_high": 610284.25,
+        "price": 1776000.0,
+        "pb": 4.81
       },
       "open_questions": [
         "HBM4E 고객 퀄 통과 여부",
@@ -76,19 +76,29 @@
       "grade_since": "2026-08-24",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 155.02524,
-        "eps_fy1_low": 106.89,
-        "eps_fy1_high": 221.27,
-        "price": 1016.59,
-        "pb": 11.4
+        "eps_fy1": 189.61601,
+        "eps_fy1_low": 136.0,
+        "eps_fy1_high": 335.5,
+        "price": 1046.59,
+        "pb": 11.74
       },
       "open_questions": [
         "RPO 잔액의 분기 증감 방향",
-        "비GAAP 총이익률 궤적이 가이던스를 지키는가",
+        "다음 실적에서 비GAAP 총이익률이 직전 가이던스를 지키는가",
         "차기 회계연도 캐펙스 확정치",
         "영업·제조·고객 수요 책임 일원화가 RPO·가격·납품 규율에 어떤 변화를 만드는가"
       ],
       "changelog": [
+        {
+          "date": "2026-10-02",
+          "signal": "홀딩 강화",
+          "stance": "Bullish",
+          "title": "FY26 4분기 실적과 다음 분기 마진 전망 확인",
+          "fact": "Micron은 2026 회계연도 4분기 매출 542.29억달러, 비GAAP 총이익률 87.0%, 조정 잉여현금흐름 331.99억달러를 발표했다. 비GAAP 총이익률은 전분기 84.9%와 직전 4분기 전망 약 86.0%를 웃돌았다. 2027 회계연도 1분기 매출 전망은 615억달러±15억달러, 비GAAP 총이익률 전망은 약 86.25%다. <cite><a href=\"https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results/default.aspx\">Micron FY26 4분기 실적 발표, 2026-09-30</a> · <a href=\"https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe\">Micron FY26 3분기 실적 콜 준비 발언, 2026-06-24</a></cite>",
+          "inference": "추론: 수집된 FY1 EPS 컨센서스가 30일 전보다 22.3% 높아지며 밸류에이션 재계산 트리거를 넘었다. 발표된 마진과 현금창출은 가격·제품 믹스가 여전히 강하다는 근거지만, 다음 분기 마진 전망은 이번 분기 실제치보다 낮다. 높은 추정치가 주가에 얼마나 반영됐는지는 이 자료만으로 알 수 없다. 삼성전자·SK하이닉스에는 업황의 긍정적 교차 신호이나 고객별 배분이나 각사의 계약 개선을 확인한 것은 아니다.",
+          "delta": "기존 계약 지속성과 총이익률을 확인하려던 논거 중 총이익률·현금흐름 축은 강화됐다. 다만 실적 발표 자료에 RPO 잔액 증감과 차기 회계연도 확정 캐펙스가 없어 계약 축은 미확인으로 남긴다. Micron 등급은 홀딩 강화를 유지한다.",
+          "next": "2026 회계연도 10-K 또는 다음 실적자료에서 RPO 잔액·SCA·선수금 변화를 확인하고, 2027 회계연도 1분기 실적에서 비GAAP 총이익률 86.25% 전망 이행과 캐펙스 확정치를 점검한다."
+        },
         {
           "date": "2026-08-27",
           "signal": "홀딩 강화",
