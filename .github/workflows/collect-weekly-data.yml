@@ -59,7 +59,7 @@ jobs:
           IN_KEY: ${{ inputs.key }}
           IN_END: ${{ inputs.end }}
         run: |
-          # 입력은 환경 변수로만 받고 모양을 검사한다 — 셸 본문에 ${{ }} 로 끼우면 명령 치환이 된다.
+          # 입력은 환경 변수로만 받고 모양을 검사한다 — 셸 본문에 표현식을 바로 끼우면 명령 치환이 된다.
           KEY="${IN_KEY:-$(python scripts/ci/routine_due.py week-key)}"
           END="${IN_END:-$(python scripts/ci/routine_due.py week-end)}"
           [[ "$KEY" =~ ^[0-9]{4}-W[0-9]{2}$ ]] || { echo "bad key: $KEY"; exit 1; }
