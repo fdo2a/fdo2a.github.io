@@ -1,6 +1,100 @@
 {
-  "report_date": "2026-10-01",
+  "report_date": "2026-10-02",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": 0.44,
+          "close": 1841000,
+          "value": 3639655
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "제약",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성바이오로직스",
+          "change_pct": -4.61,
+          "close": 1354000,
+          "value": 69024
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성전자우",
+          "change_pct": -1.71,
+          "close": 201000,
+          "value": 488359
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "석유와가스",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "SK이노베이션",
+          "change_pct": 10.32,
+          "close": 154000,
+          "value": 176315
+        },
+        {
+          "name": "S-Oil",
+          "change_pct": 11.69,
+          "close": 166200,
+          "value": 74611
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "에너지장비및서비스",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한화솔루션",
+          "change_pct": 5.4,
+          "close": 36100,
+          "value": 191654
+        },
+        {
+          "name": "HD현대에너지솔루션",
+          "change_pct": 6.25,
+          "close": 139300,
+          "value": 54424
+        }
+      ]
+    }
+  ]
 }
