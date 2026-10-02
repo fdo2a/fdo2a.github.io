@@ -50,7 +50,7 @@ US_HOL, KR_HOL = tuple(CAL['us']['dates']), tuple(CAL['kr']['dates'])
 
 def test_holiday_calendar_has_no_weekends_and_is_sorted():
     from datetime import date
-    for m in ('us', 'kr'):
+    for m in ('us', 'kr', 'jp'):
         days = CAL[m]['dates']
         assert days == sorted(set(days))
         assert all(date.fromisoformat(d).weekday() < 5 for d in days)

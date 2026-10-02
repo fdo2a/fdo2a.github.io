@@ -35,12 +35,10 @@ def test_other_week_or_end_is_stale():
     assert sr.verdict('us', snap(end='2026-10-01'), '2026-W40', '2026-10-02')[0] == 'STALE'
 
 
-def test_us_ignores_japan_only_failures_but_not_its_own():
-    assert sr.verdict('us', snap(status={'mof:week': 'HTTP 503'}), 'W', 'E')[0] == 'STALE'  # key mismatch
-    s = snap(status={'mof:week': 'HTTP 503'})
-    assert sr.verdict('us', s, '2026-W40', '2026-10-02')[0] == 'READY'
-    s = snap(status={'price:^GSPC': 'empty'})
-    assert sr.verdict('us', s, '2026-W40', '2026-10-02')[0] == 'STALE'
+def test_us_needs_every_source_because_its_diag_gates_on_all_failures():
+    """US 진단은 실패 소스를 전부 게이트로 넘긴다 — 재무성 실패도 US 발행을 막는다(구현 검토 #2)."""
+    assert sr.verdict('us', snap(status={'mof:week': 'HTTP 503'}), '2026-W40', '2026-10-02')[0] == 'STALE'
+    assert sr.verdict('us', snap(status={'price:^GSPC': 'empty'}), '2026-W40', '2026-10-02')[0] == 'STALE'
 
 
 def test_japan_ignores_us_only_failures_but_not_its_own():
@@ -57,9 +55,18 @@ def test_saturday_snapshot_without_tokyo_friday_is_stale_for_japan():
     assert sr.verdict('us', s, '2026-W40', '2026-10-02')[0] == 'READY'
 
 
-def test_sunday_snapshot_tolerates_a_tokyo_friday_holiday():
-    """일요일에 받았는데도 금요일이 없으면 도쿄 휴장으로 본다 — 사흘까지."""
+def test_sunday_snapshot_still_missing_friday_is_stale_unless_the_calendar_says_holiday():
+    """일요일에 받았다는 사실만으로 금요일 누락을 휴장으로 보지 않는다(구현 검토 #3)."""
     s = snap(generated='2026-10-04T08:10:00+09:00', jgb_last='2026-10-01', nikkei_last='2026-10-01')
-    assert sr.verdict('japan', s, '2026-W40', '2026-10-02')[0] == 'READY'
-    s = snap(generated='2026-10-04T08:10:00+09:00', jgb_last='2026-09-28')
-    assert sr.verdict('japan', s, '2026-W40', '2026-10-02')[0] == 'STALE'
+    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())[0] == 'STALE'
+    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=('2026-10-02',))[0] == 'READY'
+
+
+def test_observations_after_the_end_date_do_not_hide_a_missing_friday():
+    s = snap(jgb_last='2026-10-05')     # 다음 주 월요일 행만 있고 금요일은 없다
+    s['jgb'] = [{'date': '2026-10-01', '10Y': 1.8}, {'date': '2026-10-05', '10Y': 1.82}]
+    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())[0] == 'STALE'
+
+
+def test_last_tokyo_day_walks_back_over_jpx_holidays():
+    assert sr.last_tokyo_day('2026-09-23', ('2026-09-21', '2026-09-22', '2026-09-23')).isoformat() == '2026-09-18'

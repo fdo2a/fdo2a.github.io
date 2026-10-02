@@ -37,10 +37,12 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 ## STEP 1-b — 주간 스냅샷 (작업 트리를 바꾸기 전에)
 
+**US 글이 이미 원격에 있으면(STEP 0 의 부분 발행) 이 단계를 건너뛴다** — 스냅샷은 US 진단에만 쓰이고, KR 만 남은 재시도를 US 스냅샷이 막으면 안 된다.
+
 **스냅샷은 루틴 안에서 받지 않는다**(2026-10-02 — 루틴 환경은 Yahoo·MOF·CFTC·FRED 모두 연결 실패, yfinance 없음). `collect-weekly-data.yml`(Actions)이 받아 `data/weekly_ext/<KEY>.json` 을 커밋하고, **그 파일의 주인은 그 워크플로 하나다** — 루틴은 읽기만 하고 발행 커밋에 넣지 않는다.
 
 1. `python3 scripts/ci/snapshot_ready.py us --key <KEY> --end <END>` — `READY` 면 2·3 을 건너뛴다.
-2. `STALE` 이면 워크플로를 띄운다: `gh workflow run collect-weekly-data.yml -f key=<KEY> -f end=<END>` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-weekly-data.yml --event=workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId')`. `gh` 가 없으면 KR_ORCHESTRATOR STEP 0 처럼 `mcp__github__actions_run_trigger`·`actions_list` 로 같은 일을 한다. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash 도구 timeout 600000) — exit 2(아직 도는 중)면 같은 명령을 한 번 더, 0·1·3 이면 그대로 3 으로 간다.
+2. `STALE` 이면 워크플로를 띄운다: `N=wk-$(date +%s)-$RANDOM` → `gh workflow run collect-weekly-data.yml -f key=<KEY> -f end=<END> -f nonce=$N` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-weekly-data.yml --limit 20 --json databaseId,displayTitle --jq "[.[] | select(.displayTitle | endswith(\" $N\"))][0].databaseId")` — **nonce 로 집는다**(맨 `--limit 1` 은 다른 실행을 집을 수 있다). 비어 있으면 15초 뒤 한 번 더 찾는다. `gh` 가 없으면 KR_ORCHESTRATOR STEP 0 처럼 `mcp__github__actions_run_trigger`(같은 입력과 nonce)·`actions_list` 로 같은 일을 한다. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash 도구 timeout 600000) — exit 2(아직 도는 중)면 같은 명령을 한 번 더, 0·1·3 이면 그대로 3 으로 간다.
 3. `git pull` 하고 1 을 다시 한다. 여전히 `STALE` 이면 발행하지 않고 그 이유(판정 출력)를 PushNotification 으로 알린 뒤 잠금을 풀고 끝낸다. `<END>` 는 집계의 `end_date` 다.
 
 이 단계를 STEP 2·3 **앞에** 두는 이유: STEP 3 이 이력·스코어카드를 고친 뒤에는 `git pull` 이 작업 중 변경과 부딪친다.
