@@ -150,6 +150,8 @@ table { font-variant-numeric: tabular-nums; }
 
 **본문 `body`에 `overflow-wrap: break-word`를 함께 건다 (2026-08-20).** `word-break: keep-all`만 걸면 「Western Digital(+5.35%)·Marvell(+5.54%)·Micron(+4.13%)」처럼 공백 없이 가운뎃점으로 이어붙인 종목 나열이 **끊기지 않는 한 덩어리**가 돼 390px에서 페이지 전체가 가로로 밀린다(2026-07-22·08-17 발행본 실측 403px·524px). `break-word`는 한글 단어는 그대로 두고 넘치는 라틴 덩어리만 쪼갠다.
 
+> **2026-10-02 정정 — 아래 CSS 는 옛 원문이다. 정본은 `scripts/common/post_css/us.css`.** 「매크로 4축 표」는 원래 6칸 멀티에셋 스탠스 표를 가리켰는데, 그 표가 칩 줄로 바뀐 뒤 작성자가 9/28부터 8칸 매크로 지표 표에 이 클래스를 붙였다. 6칸 비율(합 100%)이 칸 수와 무관하게 걸려 1280px 에서 직전 대비·추세 칸이 0px, 표 하나가 2,840px 로 늘어났다(MLCC 4칸 표도 「시장」 칸 410px). 이제 고정 비율은 `:has(th:nth-child(6):last-child)` 인 6칸 표에만 걸리고 나머지는 자동 폭, 모바일 카드는 빈 칸을 숨긴다. 회귀 검사: `scripts/common/tests/test_stance_tbl_widths.py`(Playwright 계산 폭, CI 에는 브라우저가 없어 로컬에서만 돈다).
+
 **서술 칸이 둘 이상인 표 = `.stance-tbl` (2026-08-20 사용자 지시, 2026-09-19 부터 매크로 4축 표·MLCC 표에 적용)** — 서술 칸이 `논거`·`다음 분기점` 둘이라 위의 nowrap 규칙으로는 비율이 무너진다(실측: 390px에서 논거 칸이 1,250px 한 줄로 늘어나고 다음 분기점은 85px로 눌려 표 전체가 1,808px). 모바일에서는 표를 좁은 화면에 밀어넣지 말고 **행 하나를 카드 하나로 세로로 쌓는다**. 마크업은 `<table class="stance-tbl">` + **모든 `<td>`에 `data-label="열 이름"`** (라벨이 모바일에서 머리행을 대신한다).
 ```css
 .stance-tbl { table-layout: fixed; }

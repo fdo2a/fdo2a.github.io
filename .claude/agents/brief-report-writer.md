@@ -377,7 +377,7 @@ US·KR 일간·주간·월간과 중국 학습 리포트에 적용한다. 문단
 | 섹션 | `<section>` 안에 `<h2>` 와 `<div class="card">`. 인쇄 분할은 템플릿이 건다 |
 | 소제목 | `<h3>`·`<h4>` |
 | 라벨 | `<span class="box-label">장중 흐름.</span>` 은 제 줄에 선다 — 라벨 옆에 본문을 이어 붙이지 않는다. 문단 첫머리 `<strong>오늘의 행동.</strong>` 은 마침표가 안에 있으면 라벨, 밖에 있으면 문장이다(`apply_readability.py` 가 판정해 블록으로 만든다) |
-| 표 | **모든 `<table>` 은 `<div class="tbl-scroll">` 로 감싼다.** 서술 칸이 둘 이상인 표(매크로 4축·MLCC)는 `<table class="stance-tbl">` — 모바일에서 행이 카드로 쌓인다. **모든 `<td>` 에 `data-label="열 이름"`**. 강조 행 `class="hl"`, 추세 칸 `data-trend` |
+| 표 | **모든 `<table>` 은 `<div class="tbl-scroll">` 로 감싼다.** 서술 칸이 둘 이상인 표(매크로 지표 표·MLCC)는 `<table class="stance-tbl">` — 모바일에서 행이 카드로 쌓인다. 데스크톱 고정 비율은 6칸 표에만 걸리고 나머지 칸 수는 자동 폭이다. **모든 `<td>` 에 `data-label="열 이름"`**. 강조 행 `class="hl"`, 추세 칸 `data-trend` |
 | 2단 | `.grid-2` 는 지수/섹터 표 한 곳에만. 그 밖의 카드는 세로로 쌓는다. 3단 이상 금지 |
 | 캡션·각주 | `<p class="caption">`, `<span class="sub">` |
 | §8 스트립 | `.ax-strip` > `.ax-item` + `[data-axis]` / `.mt-strip` > `.mt-item` + `[data-direction="1\|0\|-1"]` / 묶음 `[data-macro-group]` + `<h4>` |
