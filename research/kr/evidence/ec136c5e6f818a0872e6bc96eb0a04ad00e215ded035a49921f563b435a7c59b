@@ -1,0 +1,139 @@
+{
+ "source": "collect_kr_data.py (Naver 지수·업종·투자자별 순매수, KRX 종가) — kr/data 커밋 fac1e09, 2026-10-02",
+ "indices": {
+  "KOSPI": {
+   "close": 7003.74,
+   "change_pct": 0.46
+  },
+  "KOSDAQ": {
+   "close": 893.29,
+   "change_pct": -0.11
+  }
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_KOSPI_last5": [
+  {
+   "date": "2026-10-02",
+   "individual": -17423,
+   "foreign": -1193,
+   "institution": 3800
+  },
+  {
+   "date": "2026-10-01",
+   "individual": -14102,
+   "foreign": -5558,
+   "institution": 3239
+  },
+  {
+   "date": "2026-09-30",
+   "individual": 12109,
+   "foreign": -20646,
+   "institution": -7993
+  },
+  {
+   "date": "2026-09-29",
+   "individual": 12447,
+   "foreign": -29922,
+   "institution": 1041
+  },
+  {
+   "date": "2026-09-28",
+   "individual": 26467,
+   "foreign": -32682,
+   "institution": -10169
+  }
+ ],
+ "flows_KOSDAQ_today": {
+  "date": "2026-10-02",
+  "individual": 816,
+  "foreign": -1738,
+  "institution": 938
+ },
+ "industries": [
+  {
+   "name": "석유와가스",
+   "change_pct": 4.16,
+   "total": 19,
+   "rise": 17,
+   "breadth": 0.895,
+   "no": 313,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "에너지장비및서비스",
+   "change_pct": 2.67,
+   "total": 34,
+   "rise": 22,
+   "breadth": 0.647,
+   "no": 295,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "화학",
+   "change_pct": 2.27,
+   "total": 122,
+   "rise": 77,
+   "breadth": 0.631,
+   "no": 272,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "반도체와반도체장비",
+   "change_pct": 0.18,
+   "total": 172,
+   "rise": 90,
+   "breadth": 0.523,
+   "no": 278,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": "좁은 상승·개별종목"
+  }
+ ],
+ "stocks": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": 0.44,
+   "close": 1841000,
+   "value": 3639655
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": 0.0,
+   "close": 276000,
+   "value": 3104183
+  },
+  {
+   "name": "한화솔루션",
+   "change_pct": 5.4,
+   "close": 36100,
+   "value": 191654
+  },
+  {
+   "name": "SK이노베이션",
+   "change_pct": 10.32,
+   "close": 154000,
+   "value": 176315
+  },
+  {
+   "name": "S-Oil",
+   "change_pct": 11.69,
+   "close": 166200,
+   "value": 74611
+  },
+  {
+   "name": "삼성바이오로직스",
+   "change_pct": -4.61,
+   "close": 1354000,
+   "value": 69024
+  }
+ ]
+}
