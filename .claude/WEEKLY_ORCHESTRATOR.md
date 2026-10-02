@@ -35,6 +35,16 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 이 집계는 시세를 다시 받지 않는다. 일별 스냅샷 원장(`data/history/market.jsonl`·`kr/data/history/kr_market.jsonl`)을 굴린 것이라 **끝값이 그 기간 마지막 발행본의 종가와 같아야 한다.** 다르면 원장이 어긋난 것이니 발행하지 말고 알린다 — 2026-08-30에 시세를 다시 받던 집계가 10년물·금·원달러를 발행본과 다르게 실어 주간본을 회수했다.
 
+## STEP 1-b — 주간 스냅샷 (작업 트리를 바꾸기 전에)
+
+**스냅샷은 루틴 안에서 받지 않는다**(2026-10-02 — 루틴 환경은 Yahoo·MOF·CFTC·FRED 모두 연결 실패, yfinance 없음). `collect-weekly-data.yml`(Actions)이 받아 `data/weekly_ext/<KEY>.json` 을 커밋하고, **그 파일의 주인은 그 워크플로 하나다** — 루틴은 읽기만 하고 발행 커밋에 넣지 않는다.
+
+1. `python3 scripts/ci/snapshot_ready.py us --key <KEY> --end <END>` — `READY` 면 2·3 을 건너뛴다.
+2. `STALE` 이면 워크플로를 띄운다: `gh workflow run collect-weekly-data.yml -f key=<KEY> -f end=<END>` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-weekly-data.yml --event=workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId')`. `gh` 가 없으면 KR_ORCHESTRATOR STEP 0 처럼 `mcp__github__actions_run_trigger`·`actions_list` 로 같은 일을 한다. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash 도구 timeout 600000) — exit 2(아직 도는 중)면 같은 명령을 한 번 더, 0·1·3 이면 그대로 3 으로 간다.
+3. `git pull` 하고 1 을 다시 한다. 여전히 `STALE` 이면 발행하지 않고 그 이유(판정 출력)를 PushNotification 으로 알린 뒤 잠금을 풀고 끝낸다. `<END>` 는 집계의 `end_date` 다.
+
+이 단계를 STEP 2·3 **앞에** 두는 이유: STEP 3 이 이력·스코어카드를 고친 뒤에는 `git pull` 이 작업 중 변경과 부딪친다.
+
 ## STEP 2 — 발행본 회수
 
 ```bash
@@ -65,14 +75,13 @@ python3 scripts/build_scorecard.py --agg data/weekly/<KEY>.json --datadir data \
 
 ## STEP 4 — US 주간 인사이트
 
-**4-0. 주간 스냅샷과 진단.** 요약이 아니라 진단을 쓰는 형식이라(2026-09-26) 원자료를 한 번 받는다 — 매일 수집이 아니다.
+**4-0. 진단.** 요약이 아니라 진단을 쓰는 형식이라(2026-09-26) STEP 1-b 의 스냅샷을 쓴다. 진단은 커밋된 파일만 읽는다(네트워크 없음).
 
 ```bash
-python3 scripts/collect_weekly_data.py --key <KEY> --end <END>
 python3 scripts/build_weekly_insight.py diag --key <KEY>
 ```
 
-수집기가 실패 소스를 나열하면 **한 번만** 다시 돌린다. 여전히 실패면 진단 게이트가 막는다 — 못 받은 소스를 조용한 무변화로 쓰지 않는다. 스냅샷(`data/weekly_ext/<KEY>.json`)과 진단(`<KEY>.insight.json`)은 발행 커밋에 같이 넣는다(게이트 재현용).
+진단(`data/weekly_ext/<KEY>.insight.json`)은 발행 커밋에 넣는다(게이트 재현용). 스냅샷은 Actions 가 이미 커밋했다 — 넣지 않는다.
 
 `period-report-writer` 서브에이전트를 `market=us, span=weekly`로 부른다(지시문 끝 「US 주간 인사이트」 절). 입력은 `recap_us.json`·`data/weekly/<KEY>.json`·`data/weekly_ext/<KEY>.insight.json`·`data/period_scorecard.json`·`data/history/*.jsonl`. 산출은 `weekly_<KEY>.body.html`·`weekly_<KEY>.meta.json`. 이어서 조립한다:
 

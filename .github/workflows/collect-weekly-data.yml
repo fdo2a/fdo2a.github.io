@@ -1,0 +1,93 @@
+name: Collect weekly snapshot
+
+# US 주간 인사이트(토 15:00 KST)와 일본 주간(일 10:00 KST)의 원자료 — Yahoo·MOF·CFTC·FRED.
+# 루틴 환경은 이 호스트들에 닿지 못한다(2026-10-02 실측: 연결 실패, yfinance 없음). 그래서 스냅샷은
+# 여기서만 받고 커밋한다 — data/weekly_ext/<KEY>.json 의 주인은 이 워크플로 하나다.
+# 예약 실행은 2~5시간 밀리므로(AGENTS.md 규칙 10) 루틴이 필요할 때 key/end 를 넣어 직접 띄운다.
+# 판정은 scripts/ci/snapshot_ready.py, 설계 docs/superpowers/specs/2026-10-02-weekly-snapshot-in-actions.md
+on:
+  schedule:
+    - cron: '0 12 * * 6'
+      timezone: 'Asia/Seoul'
+    - cron: '0 8 * * 0'
+      timezone: 'Asia/Seoul'
+  workflow_dispatch:
+    inputs:
+      key:
+        description: 'ISO week key (e.g. 2026-W40). Empty = calendar week of the last US session'
+        type: string
+        default: ''
+      end:
+        description: 'End date YYYY-MM-DD. Empty = last US trading day of that week'
+        type: string
+        default: ''
+      dry_run:
+        description: 'Collect and report, but do not commit'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-weekly-data
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install --quiet yfinance pandas requests certifi pytest
+      - name: Run unit tests
+        run: python -m pytest scripts/common/tests/test_weekly_sources.py scripts/common/tests/test_snapshot_ready.py scripts/japan/tests -q
+      - name: Resolve key and end
+        id: when
+        env:
+          IN_KEY: ${{ inputs.key }}
+          IN_END: ${{ inputs.end }}
+        run: |
+          KEY="${IN_KEY:-$(python scripts/ci/routine_due.py week-key)}"
+          END="${IN_END:-$(python scripts/ci/routine_due.py week-end)}"
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+          echo "end=$END" >> "$GITHUB_OUTPUT"
+          echo "key=$KEY end=$END"
+      - name: Collect
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python scripts/collect_weekly_data.py --key "${{ steps.when.outputs.key }}" --end "${{ steps.when.outputs.end }}"
+      - name: Report readiness
+        run: |
+          for m in us japan; do
+            printf '%s: ' "$m"
+            python scripts/ci/snapshot_ready.py "$m" --key "${{ steps.when.outputs.key }}" --end "${{ steps.when.outputs.end }}" || true
+          done
+      - name: Commit snapshot
+        if: ${{ !inputs.dry_run }}
+        env:
+          KEY: ${{ steps.when.outputs.key }}
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          # 원격 판이 더 늦게 받은 것이면 덮어쓰지 않는다 — 밀린 예약 실행이 새 스냅샷을 되돌리지 않게.
+          git fetch -q origin main
+          python - <<'PY'
+          import json, os, subprocess, sys
+          key = os.environ['KEY']
+          path = f'data/weekly_ext/{key}.json'
+          mine = json.load(open(path)).get('generated', '')
+          out = subprocess.run(['git', 'show', f'origin/main:{path}'], capture_output=True, text=True)
+          theirs = json.loads(out.stdout).get('generated', '') if out.returncode == 0 else ''
+          if theirs and theirs > mine:
+              print(f'원격 스냅샷이 더 새것이다 ({theirs} > {mine}) — 커밋하지 않는다')
+              open('.skip-commit', 'w').close()
+          PY
+          if [ -f .skip-commit ]; then exit 0; fi
+          git add "data/weekly_ext/${KEY}.json"
+          bash scripts/ci/push_with_retry.sh "data: weekly snapshot for ${KEY}"

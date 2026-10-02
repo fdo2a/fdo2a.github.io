@@ -7,7 +7,7 @@ One post per week (Sunday), answering one question: **can Japan keep normalising
 | File | Does |
 |---|---|
 | `scripts/common/weekly_sources.py` | Parsers + fetchers shared with the US weekly insight (MOF curve and flows, CFTC, yfinance, FRED, fed funds contracts) |
-| `scripts/collect_weekly_data.py` | Snapshot `data/weekly_ext/<KEY>.json`. **No daily collection** — every source returns full history |
+| `scripts/collect_weekly_data.py` | Snapshot `data/weekly_ext/<KEY>.json`. **No daily collection** — every source returns full history. **Runs only in Actions** (`collect-weekly-data.yml`; routines cannot reach these hosts) — routines check `scripts/ci/snapshot_ready.py` and dispatch |
 | `core.py` | Core six, curve, flows, hedged proxy, positioning, equities, fixed A/B signals. Pure |
 | `render.py` | Tables, body contract (`SECTIONS`, `<!--T:name-->`), assembly |
 | `gate.py` | Publish gate; CLI `scripts/check_japan.py` |

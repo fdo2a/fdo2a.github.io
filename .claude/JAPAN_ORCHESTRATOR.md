@@ -15,12 +15,17 @@ python3 -c "import datetime as d;t=d.date.fromisoformat(open('/tmp/japan-today')
 
 ## STEP 1 — 스냅샷과 진단
 
+**스냅샷은 루틴 안에서 받지 않는다**(2026-10-02 — 루틴 환경은 Yahoo·MOF·CFTC·FRED 모두 연결 실패, yfinance 없음). `collect-weekly-data.yml`(Actions)이 받아 `data/weekly_ext/<KEY>.json` 을 커밋하고, **그 파일의 주인은 그 워크플로 하나다** — 루틴은 읽기만 하고 발행 커밋에 넣지 않는다.
+
+1. `python3 scripts/ci/snapshot_ready.py japan --key <KEY> --end <그 주 금요일>` — `READY` 면 2·3 을 건너뛴다.
+2. `STALE` 이면 워크플로를 띄운다: `gh workflow run collect-weekly-data.yml -f key=<KEY> -f end=<그 주 금요일>` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-weekly-data.yml --event=workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId')`. `gh` 가 없으면 KR_ORCHESTRATOR STEP 0 처럼 `mcp__github__actions_run_trigger`·`actions_list` 로 같은 일을 한다. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash 도구 timeout 600000) — exit 2(아직 도는 중)면 같은 명령을 한 번 더, 0·1·3 이면 그대로 3 으로 간다.
+3. `git pull` 하고 1 을 다시 한다. 여전히 `STALE` 이면 발행하지 않고 그 이유를 PushNotification 으로 알린 뒤 잠금을 풀고 끝낸다.
+
+`japan` 판정은 일본이 쓰는 소스만 보고, **도쿄 금요일분**(JGB 10년·닛케이)이 있어야 `READY` 다 — 토요일 새벽 스냅샷은 그것이 비어 있다(2026-09-26 실측). US 주간이 토요일에 받은 스냅샷이면 대개 `STALE` 이 나와 일요일에 다시 받는다. 그다음 진단(커밋된 파일만 읽는다):
+
 ```bash
-python3 scripts/collect_weekly_data.py --key <KEY> --end <그 주 금요일>
 python3 scripts/build_japan_weekly.py diag --key <KEY>
 ```
-
-US 주간이 토요일에 같은 키로 스냅샷을 이미 만들었어도 **다시 받는다** — 토요일 새벽에는 도쿄 금요일 종가와 MOF 커브 금요일분이 비어 있다(2026-09-26 실측). 실패 소스가 남으면 한 번만 재시도하고, 그래도 남으면 발행하지 않고 PushNotification 으로 알린다.
 
 ## STEP 2 — 작성과 조립
 
@@ -44,4 +49,4 @@ python3 scripts/check_style.py $(pwd)/japan_<KEY>.html
 
 ## STEP 4 — 발행
 
-커밋 직전에는 작업 중 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:japan/posts/<KEY>.html` 로 본다. 있으면 다른 런이 발행한 것이니 커밋하지 않고 끝낸다. 아니면 `japan/posts/<KEY>.html` 로 옮기고 `japan/posts.json` 맨 앞에 `{key, title, headline, start_date, end_date}` 를 넣는다. 스냅샷·진단·뉴스 파일과 함께 **한 커밋**으로 `bash scripts/ci/push_with_retry.sh`. PushNotification 으로 URL 을 보낸다.
+커밋 직전에는 작업 중 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:japan/posts/<KEY>.html` 로 본다. 있으면 다른 런이 발행한 것이니 커밋하지 않고 끝낸다. 아니면 `japan/posts/<KEY>.html` 로 옮기고 `japan/posts.json` 맨 앞에 `{key, title, headline, start_date, end_date}` 를 넣는다. 진단·뉴스 파일과 함께 **한 커밋**으로(스냅샷은 Actions 가 커밋했다 — 넣지 않는다) `bash scripts/ci/push_with_retry.sh`. PushNotification 으로 URL 을 보낸다.
