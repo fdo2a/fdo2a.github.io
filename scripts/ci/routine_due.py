@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """재시도 루틴의 첫 단계 — 모델 없이 「지금 돌 일이 있는가」를 판정한다 (2026-09-27).
 
-    python3 scripts/ci/routine_due.py us|kr|weekly     # 한 줄: DONE|BUSY|WAIT|DUE <이유>
+    python3 scripts/ci/routine_due.py us|kr|weekly|japan  # 한 줄: DONE|BUSY|WAIT|DUE <이유>
     python3 scripts/ci/routine_due.py lock-name us|kr  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
     python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
 
@@ -33,7 +33,7 @@ from zoneinfo import ZoneInfo
 
 NY = ZoneInfo('America/New_York')
 SEOUL = ZoneInfo('Asia/Seoul')
-STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 240}
+STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 240, 'japan': 240}
 
 
 def _trading_back(d, holidays=()):
@@ -57,6 +57,21 @@ def week_of(now, holidays=()):
     return f'{y}-W{w:02d}'
 
 
+def japan_key(now):
+    """일본 주간의 키 — JAPAN_ORCHESTRATOR STEP 0 과 같은 규칙(서울 날짜 −2일의 ISO 주)."""
+    y, w, _ = ((now.astimezone(SEOUL)).date() - timedelta(days=2)).isocalendar()
+    return f'{y}-W{w:02d}'
+
+
+def decide_japan(key, files, lock_age):
+    path = f'japan/posts/{key}.html'
+    if path in files:
+        return 'DONE', f'{key} 발행 완료'
+    if lock_age is not None and lock_age < STALE_MIN['japan']:
+        return 'BUSY', f'{key} 작성 중 (잠금 {lock_age}분 전)'
+    return 'DUE', f'{key} 미발행: {path}'
+
+
 def lock_name(kind, now, key=None, holidays=()):
     """루틴이 잡는 이름 그대로 — `run_lock.sh key <prefix>` 가 이 함수를 부른다.
 
@@ -67,6 +82,8 @@ def lock_name(kind, now, key=None, holidays=()):
         return f'us-{us_session(now, holidays)}'
     if kind == 'kr':
         return f'kr-{kr_session(now, holidays)}'
+    if kind == 'japan':
+        return f'japan-{key}'
     return f'weekly-{key}'
 
 
@@ -161,8 +178,8 @@ def main(argv=None):
         print(week_of(datetime.now(timezone.utc), _holidays('us')))
         return 0
     kind = args[0]
-    if kind not in ('us', 'kr', 'weekly'):
-        print('usage: routine_due.py us|kr|weekly', file=sys.stderr)
+    if kind not in ('us', 'kr', 'weekly', 'japan'):
+        print('usage: routine_due.py us|kr|weekly|japan', file=sys.stderr)
         return 2
     if _git('fetch', '-q', 'origin', 'main').returncode:
         # 판정 불가는 DUE 로 보낸다 — 틀려도 오케스트레이터의 가드가 막는다. 반대로
@@ -178,6 +195,10 @@ def main(argv=None):
         hol = _holidays('kr')
         verdict = decide_kr(now, _files('kr/posts'),
                             _lock_age(lock_name('kr', now, holidays=hol), now), hol)
+    elif kind == 'japan':
+        key = japan_key(now)
+        verdict = decide_japan(key, _files('japan/posts'),
+                               _lock_age(lock_name('japan', now, key), now))
     else:
         key = week_of(now, _holidays('us'))
         aggs = {'us': _show_json(f'data/weekly/{key}.json'),

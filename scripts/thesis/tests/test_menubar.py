@@ -24,7 +24,7 @@ def labels(html):
 
 def test_menubar_carries_every_section():
     assert labels(build.menubar("thesis", "../")) == [
-        "미국 시장", "한국 시장", "메모리 thesis"]
+        "미국 시장", "한국 시장", "메모리 thesis", "일본 시장"]
 
 
 def test_menubar_matches_the_hand_written_indexes():
@@ -44,3 +44,12 @@ def test_no_link_survives_from_the_retired_bond_pipeline():
     """2026-09-04 폐기 — 되살아나면 죽은 링크가 된다."""
     for current, root in (("thesis", "../"), ("us", "")):
         assert "bond" not in build.menubar(current, root)
+
+
+def test_every_hand_written_index_carries_the_same_menubar():
+    """홈·KR·일본 목록과 thesis 페이지가 같은 메뉴를 보인다(2026-10-02 일본 시장 추가)."""
+    want = labels(build.menubar("thesis", "../"))
+    for rel in ("index.html", "kr/index.html", "japan/index.html", "thesis/index.html"):
+        html = (ROOT / rel).read_text(encoding="utf-8")
+        nav = re.search(r"<nav class=\"menubar\">.*?</nav>", html, re.S).group(0)
+        assert labels(nav) == want, rel

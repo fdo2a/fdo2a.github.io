@@ -186,3 +186,18 @@ def test_one_session_one_lock_across_a_holiday():
     runs = [utc(2026, 9, 24, 9, 0), utc(2026, 9, 25, 6, 0), utc(2026, 9, 25, 12, 0),
             utc(2026, 9, 26, 6, 0), utc(2026, 9, 26, 12, 0)]
     assert {rd.lock_name('kr', t, holidays=KR_HOL) for t in runs} == {'kr-2026-09-23'}
+
+
+# ── 일본 주간 ─────────────────────────────────────────────────────────────────
+
+def test_japan_key_follows_the_orchestrator_rule():
+    """일요일 10:00 KST 본 런과 그날 재시도는 그 주 금요일이 속한 주다."""
+    assert rd.japan_key(utc(2026, 10, 4, 1, 0)) == '2026-W40'     # 일 10:00 KST
+    assert rd.japan_key(utc(2026, 10, 4, 13, 0)) == '2026-W40'    # 일 22:00 KST
+
+
+def test_japan_done_busy_due():
+    assert rd.decide_japan('2026-W40', {'japan/posts/2026-W40.html'}, None)[0] == 'DONE'
+    assert rd.decide_japan('2026-W40', set(), 30)[0] == 'BUSY'
+    assert rd.decide_japan('2026-W40', set(), 300)[0] == 'DUE'
+    assert rd.lock_name('japan', None, key='2026-W40') == 'japan-2026-W40'

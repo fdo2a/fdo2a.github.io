@@ -1,6 +1,6 @@
 # 일본 시장 주간 — 오케스트레이터 (일요일)
 
-일요일 10:00 KST 에 한 편을 발행한다(루틴은 사용자가 초안을 확인한 뒤 등록). 재무성 증권투자(목)와 CFTC(금 공개, 화요일 기준)가 모두 들어온 뒤다. US·KR 주간 루틴(토)과 5시간 한도 창을 나누지 않으려고 날을 뗐다. 웹 검색은 하지 않는다.
+일요일 10:00 KST 에 한 편을 발행한다(2026-10-02 루틴 등록, 첫 호 W40). 한도로 죽으면 같은 날 13·16·19·22시 KST 재시도 루틴이 `scripts/ci/routine_due.py japan` 으로 판정해 이어받는다. 재무성 증권투자(목)와 CFTC(금 공개, 화요일 기준)가 모두 들어온 뒤다. US·KR 주간 루틴(토)과 5시간 한도 창을 나누지 않으려고 날을 뗐다. 웹 검색은 하지 않는다.
 
 ## STEP 0 — 기간 키와 오늘
 
@@ -10,6 +10,8 @@ python3 -c "import datetime as d;t=d.date.fromisoformat(open('/tmp/japan-today')
 ```
 
 두 번째 값이 `<KEY>`(그 주 금요일이 속한 ISO 주)다. `japan/posts/<KEY>.html` 이 이미 있으면 끝낸다 — **이 가드는 수집 뒤에 둔다**(STEP 1 이 끝난 다음 다시 확인).
+
+**선점 잠금 — 다른 파일을 읽기 전에.** `bash scripts/ci/run_lock.sh acquire japan-<KEY> 240` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). STEP 2 작성자를 부르기 직전과 돌아온 직후, STEP 4 커밋 직전에 `bash scripts/ci/run_lock.sh renew japan-<KEY>` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. 쓰지 않고 끝나는 경로(가드·수집 실패)에서는 `bash scripts/ci/run_lock.sh release japan-<KEY>` 로 풀고 끝낸다.
 
 ## STEP 1 — 스냅샷과 진단
 
@@ -42,4 +44,4 @@ python3 scripts/check_style.py $(pwd)/japan_<KEY>.html
 
 ## STEP 4 — 발행
 
-`japan/posts/<KEY>.html` 로 옮기고 `japan/posts.json` 맨 앞에 `{key, title, headline, start_date, end_date}` 를 넣는다. 스냅샷·진단·뉴스 파일과 함께 **한 커밋**으로 `bash scripts/ci/push_with_retry.sh`. PushNotification 으로 URL 을 보낸다.
+커밋 직전에는 작업 중 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main && git cat-file -e origin/main:japan/posts/<KEY>.html` 로 확인한다 — 성공이면 다른 런이 발행한 것이니 커밋하지 않고 끝낸다. 아니면 `japan/posts/<KEY>.html` 로 옮기고 `japan/posts.json` 맨 앞에 `{key, title, headline, start_date, end_date}` 를 넣는다. 스냅샷·진단·뉴스 파일과 함께 **한 커밋**으로 `bash scripts/ci/push_with_retry.sh`. PushNotification 으로 URL 을 보낸다.
