@@ -24,7 +24,7 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 - `weekly/<KEY>.html` 과 `kr/weekly/<KEY>.html` 이 **둘 다** 원격에 있으면 「already published」만 보고하고 끝낸다.
 - **하나만 있으면 있는 쪽은 다시 만들지 않는다** — US 가 있으면 STEP 4 를, KR 이 있으면 STEP 5 를 건너뛰고, STEP 1·2·3 과 STEP 6 도 **남은 시장만** 본다(이미 나간 쪽 집계는 확인하지 않는다).
-- STEP 6 커밋 직전에는 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main && git cat-file -e origin/main:<그 글 경로>` 로 확인한다 — 그 사이 생긴 쪽은 커밋에서 뺀다. push 가 거절되면 `git pull --rebase` 하고, `weekly.json`·`kr/weekly.json`·`sitemap.xml` 충돌은 원격 판을 받은 뒤 STEP 6 의 `update_archives.py` 를 이 키로 다시 돌려 `git rebase --continue` 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
+- STEP 6 커밋 직전에는 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:<그 글 경로>` 로 확인한다. 그 사이 생긴 쪽은 커밋에서 뺀다. push 가 거절되면 `git pull --rebase` 하고, `weekly.json`·`kr/weekly.json`·`sitemap.xml` 충돌은 원격 판을 받은 뒤 STEP 6 의 `update_archives.py` 를 이 키로 다시 돌려 `git rebase --continue` 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
 
 
 ## STEP 1 — 집계 파일 확인

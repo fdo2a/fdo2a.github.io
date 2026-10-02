@@ -44,4 +44,4 @@ python3 scripts/check_style.py $(pwd)/japan_<KEY>.html
 
 ## STEP 4 — 발행
 
-커밋 직전에는 작업 중 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main && git cat-file -e origin/main:japan/posts/<KEY>.html` 로 확인한다 — 성공이면 다른 런이 발행한 것이니 커밋하지 않고 끝낸다. 아니면 `japan/posts/<KEY>.html` 로 옮기고 `japan/posts.json` 맨 앞에 `{key, title, headline, start_date, end_date}` 를 넣는다. 스냅샷·진단·뉴스 파일과 함께 **한 커밋**으로 `bash scripts/ci/push_with_retry.sh`. PushNotification 으로 URL 을 보낸다.
+커밋 직전에는 작업 중 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:japan/posts/<KEY>.html` 로 본다. 있으면 다른 런이 발행한 것이니 커밋하지 않고 끝낸다. 아니면 `japan/posts/<KEY>.html` 로 옮기고 `japan/posts.json` 맨 앞에 `{key, title, headline, start_date, end_date}` 를 넣는다. 스냅샷·진단·뉴스 파일과 함께 **한 커밋**으로 `bash scripts/ci/push_with_retry.sh`. PushNotification 으로 URL 을 보낸다.
