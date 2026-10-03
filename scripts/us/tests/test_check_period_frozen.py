@@ -43,3 +43,13 @@ def test_an_invented_number_is_still_caught(tmp_path):
     edited.write_text(html, encoding='utf-8')
     code, out = run(str(edited), PAGE)
     assert code == 1 and '987.65' in out
+
+
+def test_kr_grade_talk_is_caught(tmp_path):
+    # KR 기간물도 노출 등급을 본문에 쓰지 않는다(2026-10-04, scripts/kr/grade_talk.py).
+    html = open(PAGE, encoding='utf-8').read()
+    i = html.index('<p>', html.index('</h1>'))
+    edited = tmp_path / 'p.html'
+    edited.write_text(html[:i] + '<p>위험 노출은 다음 세션까지 유지한다.</p>' + html[i:], encoding='utf-8')
+    code, out = run(str(edited), PAGE)
+    assert code == 1 and '노출 등급 말투' in out

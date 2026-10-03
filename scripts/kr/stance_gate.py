@@ -5,7 +5,9 @@
 게이트가 보는 것은 문단 개수가 아니라 **산문과 원장의 일치**다.
 
   · 여섯 블록이 순서대로 있는가
-  · `action` 이 노출 등급과 시계를 밝혔고 원장의 exposure·horizon 과 같은가
+  · 본문에 노출 등급 말투가 없는가 — 등급·시계는 원장에만 남는다(2026-10-04 사용자 결정,
+    `kr.grade_talk`). 전에는 action 이 등급과 시계를 밝히고 원장과 같아야 했는데, 그 계약이
+    「코스피 노출은 다음 세션까지 유지한다」라는 독자가 읽을 수 없는 문장을 매일 만들었다.
   · `invalidation` 산문에 적힌 레벨이 원장의 level 과 같은 수인가
   · `review` 가 어제 판정(kr_stance_eval.json)을 실제로 반영했는가
 
@@ -17,7 +19,7 @@ Pure — HTML 문자열과 dict 둘을 받아 위반 목록을 돌려준다.
 """
 import re
 
-from kr.stance import EXPOSURES, HORIZONS
+from kr import grade_talk
 
 ORDER = ("event", "gap", "meaning", "action", "invalidation", "review")
 SECTION = "전략 코멘트"
@@ -27,7 +29,7 @@ _NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
 # 판정이 「유효」면 유지·수정, 「무효화」면 수정·폐기를 말해야 한다. 어느 쪽이든
 # 판정 자체를 입에 담지 않고 지나가는 것이 제일 흔한 회피다.
 VERDICT_CUES = {
-    "유효": ("유지", "그대로", "이어간다", "수정", "조정"),
+    "유효": ("유효", "지켰", "유지", "그대로", "이어간다", "수정", "조정"),
     "무효화": ("무효", "폐기", "수정", "바꾼다", "접는다", "틀렸"),
     "판정불가": ("첫", "판정할 수 없", "비교할 직전"),
 }
@@ -129,14 +131,7 @@ def check(html_doc: str, stance: dict, stance_eval: dict, liquidity=None) -> lis
         if len(body.get(key, "")) < need:
             v.append(f"§2 {key}: {need}자에 못 미친다 — 자리만 채웠다")
 
-    action = body.get("action", "")
-    grade = [g for g in EXPOSURES if g in action]
-    if not grade:
-        v.append(f"§2 action: 노출을 {'·'.join(EXPOSURES)} 중 하나로 밝히지 않았다")
-    elif stance and stance.get("exposure") and stance["exposure"] not in grade:
-        v.append(f"§2 action: 산문은 {grade} 인데 원장은 {stance['exposure']} 다")
-    if not any(h in action for h in HORIZONS):
-        v.append(f"§2 action: 시계({'·'.join(HORIZONS)})를 밝히지 않았다")
+    v += grade_talk.violations(html_doc, exempt_news=True)
 
     level = ((stance or {}).get("invalidation") or {}).get("level")
     if level is not None:

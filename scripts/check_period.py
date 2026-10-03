@@ -87,6 +87,10 @@ def main():
         return 2
     violations = check(html, agg, load(args.scorecard), recap, args.span,
                        research_summary=research_summary, insight=insight)
+    if args.market == 'kr':
+        # KR 은 노출 등급을 본문에 쓰지 않는다 — 원장에만(2026-10-04, scripts/kr/grade_talk.py).
+        from kr import grade_talk
+        violations += grade_talk.violations(html)
     if not violations:
         print('기간 리포트 게이트 통과')
         return

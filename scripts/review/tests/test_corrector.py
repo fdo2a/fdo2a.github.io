@@ -268,3 +268,22 @@ def test_prose_change_since_the_evidence_commit_is_refused(setup):
     item = _republish(root, '<p>old 9</p>')
     _, error = correct_one(root, item, 'review', base, 10)
     assert 'publishing snapshot' in error
+
+
+def test_kr_correction_may_not_add_grade_talk():
+    # 옛 KR 글에는 노출 등급 말투가 이미 있다 — 그대로 두거나 줄이는 것은 되고, 늘리면 막는다(2026-10-04).
+    from scripts.review.corrector import _no_new_grade_talk
+    old = '<body><p>위험 노출은 다음 세션까지 축소한다.</p></body>'
+    _no_new_grade_talk(old, old)
+    _no_new_grade_talk(old, '<body><p>반도체가 쉬었다.</p></body>')
+    with pytest.raises(RuntimeError, match='exposure-grade'):
+        _no_new_grade_talk(old, old.replace('</body>', '<p>코스피 노출은 유지한다.</p></body>'))
+
+
+def test_kr_correction_may_not_hide_grade_talk_in_a_news_block():
+    # 정정 경로에는 check_news 가 없다 — 뉴스 블록이라도 면제하지 않는다.
+    from scripts.review.corrector import _no_new_grade_talk
+    old = '<body><section><h2>오늘의 뉴스</h2></section></body>'
+    new = old.replace('</section>', '<div data-news="fake"><p>위험 노출은 유지한다.</p></div></section>')
+    with pytest.raises(RuntimeError, match='exposure-grade'):
+        _no_new_grade_talk(old, new)

@@ -51,6 +51,11 @@ or no new idea are valid outcomes. `invalidation`: what would change our view.
 These are paragraph functions, not repeated visible labels. Expansion/maintenance/
 reduction may describe a conditional exposure choice only when its reference is
 explicit; do not require such a declaration every day or imply a position exists.
+KR (daily, weekly, monthly) keeps its exposure grade and horizon in the stance
+ledger only and never writes them in reader prose (user decision 2026-10-04 —
+"KOSPI exposure stays maintained through the next session" reads as noise); say
+what is awaited, what would change the view and when it is checked. The KR gates
+block declarative grade wording (`scripts/kr/grade_talk.py`).
 
 Keep the broad market account even when one or two questions deserve deeper work.
 Give each fact a main home. The opening states its significance briefly; the asset

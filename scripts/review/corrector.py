@@ -99,6 +99,18 @@ def _gates(root, clone, item, evidence, timeout, allowed=()):
     return '\n'.join(results), failed
 
 
+def _no_new_grade_talk(before, after):
+    """KR 정정이 노출 등급 말투를 새로 쓰지 않았는가(2026-10-04). 옛 글에는 이미 있어서
+    `check_kr_stance` 를 이름 단위로 허용하면 새로 쓴 것까지 통과한다 — 원본보다 늘어난 것만 막는다."""
+    from collections import Counter
+    from kr import grade_talk
+    # 뉴스 면제는 쓰지 않는다 — 이 경로에는 guid 를 대조할 check_news 가 없다.
+    added = Counter(grade_talk.find(after)) - Counter(grade_talk.find(before))
+    if added:
+        raise RuntimeError('correction added KR exposure-grade wording: '
+                           + ', '.join(sorted(added)))
+
+
 def _typeset_only(root, path, old_sha, new_sha):
     """The evidence commit may hold the pre-typesetting blob: `publish_commit()` walks
     back past typesetting-only commits (loader backfill 2026-09-25) so data is the
@@ -278,6 +290,9 @@ END CODEX FINDINGS
             report, _ = _gates(root, clone, item, gate_evidence, min(timeout, 180),
                                allowed=preexisting)
             output += '\n\nIndependent gate replay:\n' + report
+            if item.section == 'kr':
+                _no_new_grade_talk(_git(clone, 'show', f'{base}:{item.path}'),
+                                   (clone / item.path).read_text(encoding='utf-8'))
             _git(clone, 'fetch', 'origin', 'main')
             if _git(clone, 'rev-parse', 'origin/main') != base:
                 raise RuntimeError('remote main changed during correction; retry next run')
