@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-03 09:37 KST",
+  "generated": "2026-10-03 10:19 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-02",
   "indices": {
@@ -122,9 +122,9 @@
       "date": "2026-10-02"
     },
     "USD/JPY": {
-      "last": 157.8300018310547,
-      "chg": 0.272003173828125,
-      "pct": 0.17263685509225635,
+      "last": 157.927001953125,
+      "chg": 0.3690032958984375,
+      "pct": 0.2342015632613048,
       "date": "2026-10-02"
     },
     "EUR/USD": {
@@ -633,9 +633,9 @@
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": 0.173,
+        "change": 0.234,
         "unit": "%",
-        "multiple": 0.3,
+        "multiple": 0.4,
         "band": "미미"
       },
       "USD/KRW": {
@@ -756,12 +756,12 @@
         }
       },
       "USD/JPY": {
-        "value": 157.83,
-        "percentile": 73.6,
+        "value": 157.927,
+        "percentile": 74.8,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 73.6,
+          "percentile": 74.8,
           "sessions": 504,
           "window": "2년",
           "days": null,
