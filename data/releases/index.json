@@ -1,13 +1,21 @@
 {
-  "report_date": "2026-10-01",
+  "report_date": "2026-10-02",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "key": "employment",
+      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 19998,
-      "path": "releases/claims.txt"
+      "chars": 9939,
+      "path": "releases/employment.txt"
+    },
+    {
+      "key": "durable-goods",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 23827,
+      "path": "releases/durable-goods.txt"
     }
   ]
 }
