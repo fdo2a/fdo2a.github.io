@@ -1,189 +1,127 @@
 {
-  "start_date": "2026-09-14",
-  "end_date": "2026-09-18",
-  "key": "2026-W38",
+  "start_date": "2026-09-28",
+  "end_date": "2026-10-02",
+  "key": "2026-W40",
   "assets": {
     "equities": {
       "grade": 0,
-      "realized": -0.0846,
+      "realized": -0.2672,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     },
     "bonds": {
-      "grade": -1,
-      "realized": -2.1,
-      "verdict": "적중",
-      "score": 1.0,
+      "grade": 1,
+      "realized": -9.6,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
-          "grade": -1,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "grade": 1,
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     },
     "fx": {
       "grade": -1,
-      "realized": 1.1302,
+      "realized": 0.9448,
       "verdict": "미스",
       "score": -1.0,
       "segments": [
         {
           "grade": -1,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     },
     "energy": {
-      "grade": 1,
-      "realized": -4.5204,
-      "verdict": "미스",
-      "score": -1.0,
+      "grade": 0,
+      "realized": -1.2445,
+      "verdict": "중립",
       "segments": [
         {
-          "grade": 1,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "grade": 0,
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     },
     "metals": {
       "grade": 1,
-      "realized": 0.59,
-      "verdict": "적중",
-      "score": 1.0,
+      "realized": -3.4504,
+      "verdict": "무판정",
       "segments": [
         {
           "grade": 1,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     },
     "memory": {
-      "grade": 0,
-      "realized": 1.9492,
-      "verdict": "중립",
+      "grade": 1,
+      "realized": -2.6797,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
-          "grade": 0,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "grade": 1,
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     },
     "ai_infra": {
       "grade": 0,
-      "realized": 0.6933,
+      "realized": 7.4591,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-09-14",
-          "to": "2026-09-18"
+          "from": "2026-09-28",
+          "to": "2026-10-02"
         }
       ]
     }
   },
-  "judged": 4,
+  "judged": 3,
   "neutral": 3,
   "total": 7,
   "neutral_share": 0.4286,
-  "weighted": 0.0,
+  "weighted": -1.0,
   "span": "weekly",
   "regime": {
     "verdict": "판정불가",
     "prints": 0,
     "regime": {
-      "growth": -1,
+      "growth": 0,
       "inflation": -1,
-      "since": "2026-09-01",
-      "thesis": "신규 발표가 없어 축 점수가 어제와 동일하다(성장 -0.489, 물가 -0.526). 연착륙 국면을 그대로 유지한다."
+      "since": "2026-09-30",
+      "thesis": "10월 1일 새로 나온 것은 주간 실업수당 청구(9월 26일 주간 신규 197,000건, 9월 19일 주간 계속 1,701,000건)뿐이고, 9월 30일 국면을 옮긴 뒤 5영업일 잠금 안이라 골디락스를 이틀째 유지한다. 성장 점수 -0.042는 보합 안쪽, 물가 점수 -0.869는 여덟 지표 중 재가속이 없어 둔화를 유지한다. 청구 개선은 계절요인 차이 수준으로 작아 성장 좌표를 밀지 않았다. 10월 2일 9월 고용상황이 올린 성장 좌표를 처음 시험한다."
     },
     "note": "기간 중 신규 발표 없음"
   },
-  "triggers": {
-    "dormant": [
-      {
-        "asset": "bonds",
-        "direction": "increase",
-        "metric": "ust30y",
-        "op": ">",
-        "value": 5.4,
-        "days": 23
-      },
-      {
-        "asset": "bonds",
-        "direction": "increase",
-        "metric": "spread_5s30s_chg_5d_bp",
-        "op": ">",
-        "value": 15,
-        "days": 23
-      },
-      {
-        "asset": "bonds",
-        "direction": "decrease",
-        "metric": "ust30y",
-        "op": "<",
-        "value": 5.05,
-        "days": 23
-      },
-      {
-        "asset": "bonds",
-        "direction": "decrease",
-        "metric": null,
-        "op": null,
-        "value": null,
-        "days": 23
-      },
-      {
-        "asset": "fx",
-        "direction": "increase",
-        "metric": "dxy_pct_20d",
-        "op": "<",
-        "value": -3.0,
-        "days": 23
-      },
-      {
-        "asset": "fx",
-        "direction": "decrease",
-        "metric": "dxy_close",
-        "op": ">",
-        "value": 101.0,
-        "days": 23
-      },
-      {
-        "asset": "metals",
-        "direction": "decrease",
-        "metric": "dxy_close",
-        "op": ">",
-        "value": 101.0,
-        "days": 23
-      }
-    ],
-    "stale_days": 20
-  },
   "rollup": {
     "last_4": {
-      "periods": 3,
-      "weighted": -0.0667,
-      "insufficient": true
+      "periods": 4,
+      "weighted": -0.3,
+      "insufficient": false
     },
     "last_12": {
-      "periods": 3,
-      "weighted": -0.0667,
+      "periods": 4,
+      "weighted": -0.3,
       "insufficient": true
     },
     "all": {
-      "periods": 3,
-      "weighted": -0.0667,
+      "periods": 4,
+      "weighted": -0.3,
       "insufficient": false
     }
   },
