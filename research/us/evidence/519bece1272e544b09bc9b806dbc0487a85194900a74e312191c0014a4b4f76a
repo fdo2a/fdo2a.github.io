@@ -1,0 +1,36 @@
+US 2026-10-02 session — WebSearch result summaries collected 2026-10-03 ~02:30-02:50 UTC (WebFetch to cnbc.com, investinglive.com, cp24.com, fxstreet.com was blocked by the egress proxy; text below is search-engine summary of each page, not full article text).
+
+[Payrolls consensus/actual]
+- CNBC "U.S. Treasury yields rise despite September jobs report" https://www.cnbc.com/2026/10/02/treasury-yields-bonds-nonfarm-payrolls.html (published 2026-10-02T20:03:56Z): NFP +29,000, unemployment 4.2% from 4.1%; Dow Jones consensus +84,000 and unemployment steady. Yields rose after initially falling; 10Y up almost 5bp to 5.281%; 2Y +5bp at 4.839%; 30Y +2bp at 5.629%. FedWatch: 77% chance of hold at October meeting; still high likelihood of hike in December.
+- CNBC amp headline earlier in day: "10-year Treasury yield dives after much weaker-than-expected jobs report" https://www.cnbc.com/amp/2026/10/02/treasury-yields-bonds-nonfarm-payrolls.html (initial reaction, timing not stated).
+- CNBC "Traders now see little chance of a Fed rate hike in October after weak jobs report" https://www.cnbc.com/2026/10/02/fed-rate-hike-odds-decline-after-september-jobs-report.html : FedWatch only 17% chance of 25bp October hike; December hike odds above 75%. Another summary of the same query cited "CME FedWatch puts October at 21.59%" and "close to 36% a week ago" (attribution between CNBC/FXStreet unclear in summary).
+- Reuters via CTV/CP24 "Fed may skip October but pull U.S. rate hike trigger in December" https://www.ctvnews.ca/business/article/fed-may-skip-october-but-pull-us-rate-hike-trigger-in-december/ : after the data, futures priced less than one-in-five chance of October hike, down from more than one-in-four previously; traders eased December bets but still nearly 90% probability. Reuters consensus +90,000.
+- FXStreet "The October Fed hike just died..." https://www.fxstreet.com/analysis/the-october-fed-hike-just-died-heres-what-the-29k-jobs-report-really-means-for-rates-202610021806
+- Yahoo Finance "Jobs report September 2026" consensus AHE +0.3% m/m; actual +0.1% ($37.81).
+- investingLive Americas FX wrap 2 Oct https://investinglive.com/news/investinglive-americas-fx-news-wrap-2-oct-nasdaq-100-closes-at-a-record-after-soft-us-jobs-treasury-yields-reverse-higher/ : yields reversed higher and ended above Thursday's levels: 2Y 4.8414% (+5.44bp), 5Y 5.0733% (+6.83bp), 10Y 5.2939% (+5.99bp), 30Y 5.6448% (+4.18bp) [their own quote source; canonical publication values are Naver]. Nasdaq 100 record close 30,807.93 (+1.00%). USD lower vs most majors despite yield recovery.
+- Reuters via Investing.com "Wall St opens higher as softer payrolls data, lower yields lift sentiment" https://www.investing.com/news/stock-market-news/wall-st-opens-higher-as-softer-payrolls-data-lower-yields-lift-sentiment-4930009
+- Yahoo Finance live "Dow, S&P 500, Nasdaq rally as Fed rate-hike expectations fade, tech gains" https://finance.yahoo.com/markets/live/stock-market-today-friday-october-2-dow-sp-500-nasdaq-september-jobs-report-080623878.html
+- Detroit News/AP "Nasdaq hits record high after softer jobs data cuts rate-hike bets" https://www.detroitnews.com/story/business/2026/10/02/nasdaq-hits-record-high-after-softer-jobs-data-cuts-rate-hike-bets/92057145007/
+
+[Prior-week data]
+- ISM Manufacturing Sept 2026 (released 2026-10-01): PMI 54.5 (Aug 54.6, consensus 55.0); prices 77.9 (+6.8); employment 52.7 (Aug 51.2). https://www.prnewswire.com/news-releases/manufacturing-pmi-at-54-5-september-2026-ism-manufacturing-pmi-report-302894520.html ; https://qz.com/ism-manufacturing-pmi-prices-september-2026-fed-rates-100126
+- Census full M3 report (2026-10-02 10:00 ET) per MDM: durable goods orders Aug -0.1% to $338.5B (advance: virtually unchanged); ex-transport +0.2%; total factory orders +0.1% to $663.5B after +0.8% July; nondurables +0.3%. https://www.mdm.com/news/research/economic-trends/u-s-durable-goods-orders-slip-0-1-in-august-core-gains-1-6/
+
+[Schedule]
+- BLS: CPI for September 2026 scheduled Wednesday 2026-10-14 08:30 ET. https://www.bls.gov/schedule/news_release/current_year.asp
+- BLS: Employment Situation for October 2026 scheduled Friday 2026-11-06 08:30 ET (in release text).
+
+[Stocks]
+- Toshiba to double AI data-center HDD capacity within FY2027, ~¥60bn (~$380M) mainly in the Philippines; aims share from just over 10% to 30% (Nikkei Asia 2026-10-02 https://asia.nikkei.com/business/electronics/toshiba-to-double-hard-disk-drive-supply-to-fill-ai-chip-memory-gap ; TrendForce https://www.trendforce.com/news/2026/10/02/news-toshiba-to-double-ai-data-center-hdd-capacity-by-fy2027-with-380m-expansion-as-ai-storage-demand-surges/ ; 24/7 Wall St https://247wallst.com/investing/2026/10/02/seagate-tumbles-10-western-digital-drops-7-as-toshiba-moves-to-double-hard-disk-output/ ; Invezz https://invezz.com/in/news/2026/10/02/why-are-seagate-technology-and-western-digital-stocks-tanking-on-friday/). 24/7 Wall St: "the rest of the memory sector shrugged it off".
+- ON Semiconductor amended Synaptics deal to all-cash ~$5.7B ($123/sh) from all-stock ~$7B after unsolicited competing bid; announced evening 2026-10-01 (Investing.com https://www.investing.com/news/stock-market-news/why-is-on-semiconductor-stock-surging-today-93CH-4929107).
+- Tesla Q3 deliveries 486,532 vs production 464,391, beat consensus by ~25,000 (CNBC https://www.cnbc.com/2026/10/02/tesla-tsla-q3-2026-vehicle-delivery-production.html ; Motley Fool https://www.fool.com/coverage/stock-market-today/2026/10/02/stock-market-today-oct-2-tesla-rises-on-q3-delivery-beat/).
+- Optics: Lumentum/Coherent/Corning extended gains Friday "on no fresh catalyst" after 10/1 Bernstein Outperform initiations and Coherent PhotonLink launch (Yahoo Finance/24/7 Wall St https://finance.yahoo.com/markets/stocks/articles/coherent-jumps-10-photonlink-push-145611273.html).
+- SemiAnalysis (X, Wed 9/30): OpenAI GPT-6.1 Sol Ultrafast runs on Nvidia GPUs, not Cerebras; Cerebras -20% for the week (CNBC https://www.cnbc.com/2026/10/02/cerebras-stock-hits-post-ipo-low-on-nvidia-pressure-lockup-expiration.html ; officechai https://officechai.com/ai/openais-gpt-6-1-sol-ultrafast-is-not-running-on-cerebras-but-on-nvidia-gpus-says-semi-analysis/).
+
+[Energy/geopolitics]
+- G7 agreed 2026-10-02 to release 100 million barrels of stocks (diesel focus), IEA-coordinated, over 4 months (CNBC https://www.cnbc.com/2026/10/02/diesel-oil-trump-europe-export-ban.html).
+- US sending third carrier group to Mideast; Trump reportedly planning to resume Iran strikes in November (CNBC https://www.cnbc.com/2026/10/02/us-iran-war-trump-hormuz-.html).
+- Trading Economics: Brent 99.68 (-2.57%), WTI 91.24 (-1.76%) on 2026-10-02 (contract basis differs from canonical BZ=F).
+
+[Europe]
+- ING Rates Spark "Widening fiscal woes" 2026-10-02 https://think.ing.com/articles/rates-spark-widening-fiscal-woes/ ; CNBC France OAT 10Y at 24-year high 4.914% https://www.cnbc.com/2026/10/02/france-student-protests-budget-debt.html
