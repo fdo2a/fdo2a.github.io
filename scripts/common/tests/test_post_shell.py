@@ -134,40 +134,39 @@ def test_news_post_is_a_desk_document():
     assert is_desk_register(S.render('news', '2026-09-25', NEWS_META, '<h1>a</h1>'))
 
 
-# --- shown date (2026-10-01 사용자 지시) -------------------------------------------
-# US 일간·뉴스 글은 미국 거래일로 키를 잡지만, 독자에게는 한국 발행일을 보인다.
-# 9/30 세션부터만 — 그 이전 글은 다시 렌더해도 표시가 바뀌지 않는다.
+# --- 표시 날짜 = 미국 거래일 (2026-10-04 사용자 지시) ------------------------------
+# 10-01 에 한국 발행일(키 + 1일)로 바꿨다가 되돌렸다. 화면에 보이는 날짜는 모두 키(거래일)다.
+# JSON-LD datePublished 만 발행 메타데이터라 키 + published_offset 그대로다.
 
-_META = {'title': '미국 증시 마감 시황 — 테스트 | {d}', 'summary': '요약.'}
+_META = {'us': '미국 증시 마감 시황 — 테스트 | {d}', 'news': '미국 뉴스·산업 브리프 — 테스트 | {d}',
+         'kr': '코스피 마감 시황 — 테스트 | {d}'}
 _BODY = '<section><h1>헤드라인</h1><p>본문 9월 30일 마감.</p></section>'
 
 
 def _head(market, date):
-    out = S.render(market, date, {k: v.format(d=date) for k, v in _META.items()}, _BODY)
+    out = S.render(market, date, {'title': _META[market].format(d=date), 'summary': '요약.'}, _BODY)
     return out[:out.index('<div class="doc">')], out
 
 
-@pytest.mark.parametrize('market,date,shown', [
-    ('us', '2026-09-30', '2026-10-01'),
-    ('us', '2026-10-01', '2026-10-02'),
-    ('news', '2026-09-30', '2026-10-01'),
+@pytest.mark.parametrize('market,date,published', [
+    ('us', '2026-09-29', '2026-09-30'),
+    ('us', '2026-09-30', '2026-10-01'),                 # 월말
+    ('us', '2026-10-02', '2026-10-03'),                 # 금요일 세션, 토요일 발행
+    ('news', '2026-10-01', '2026-10-02'),
+    ('kr', '2026-09-30', '2026-09-30'),
 ])
-def test_us_posts_from_the_cutover_show_the_kst_publish_date(market, date, shown):
+def test_every_shown_date_is_the_session_date(market, date, published):
     head, out = _head(market, date)
-    sd = S._date.fromisoformat(shown)
-    assert f'<title>미국 증시 마감 시황 — 테스트 | {shown}</title>' in head
-    assert S._long_date(sd) in re.search(r'property="og:title" content="([^"]*)"', head).group(1)
-    assert f'. {shown} ' in re.search(r'name="description" content="([^"]*)"', head).group(1)
-    topbar = re.search(r'<div class="topbar">(.*?)</div>', out).group(1)
-    assert f'{sd.month}월 {sd.day}일' in topbar and '미국' in topbar and '마감 기준' in topbar
-    assert f'/{date}.html' in head                     # 키·URL 은 거래일 그대로
-    assert _BODY in out
-
-
-@pytest.mark.parametrize('market,date', [('us', '2026-09-29'), ('kr', '2026-09-30')])
-def test_before_the_cutover_and_kr_keep_the_session_date(market, date):
-    head, out = _head(market, date)
-    assert f'| {date}</title>' in head
     d = S._date.fromisoformat(date)
+    assert f'| {date}</title>' in head
     assert S._long_date(d) in re.search(r'property="og:title" content="([^"]*)"', head).group(1)
-    assert '미국' not in re.search(r'<div class="topbar">(.*?)</div>', out).group(1)
+    ld = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>',
+                              head, re.S).group(1))
+    assert ld['headline'].endswith(S._long_date(d))
+    assert ld['datePublished'] == ld['dateModified'] == published
+    if market != 'kr':
+        assert f'. {date} ' in re.search(r'name="description" content="([^"]*)"', head).group(1)
+    topbar = re.search(r'<div class="topbar">(.*?)</div>', out).group(1)
+    assert f'{d.month}월 {d.day}일' in topbar and '미국' not in topbar
+    assert f'/{date}.html' in head
+    assert _BODY in out

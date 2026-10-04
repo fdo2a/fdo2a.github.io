@@ -147,8 +147,7 @@
 
   function label(span, item) {
     if (span === 'daily' || span === 'news') {
-      // shown = 한국 발행일(2026-10-01~). 정렬·링크는 거래일 키 그대로.
-      const day = item.shown || item.date || item.key;
+      const day = item.date || item.key;
       const d = new Date(day + 'T00:00:00');
       return `${day} (${days[d.getDay()]})`;
     }

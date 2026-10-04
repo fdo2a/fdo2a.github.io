@@ -32,9 +32,6 @@ ADSENSE = ('<!-- adsense-loader --><script async src="https://pagead2.googlesynd
            '/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" '
            'crossorigin="anonymous"></script>')
 WEEKDAYS = '월화수목금토일'
-# 2026-10-01 사용자 지시 — US 일간·뉴스 글은 거래일로 키를 잡되 독자에게는 한국 발행일을 보인다.
-# 이 세션 키부터만: 그 전 글은 다시 렌더해도 표시가 바뀌지 않는다. update_archives 도 이 값을 쓴다.
-SHOWN_FROM = '2026-09-30'
 
 _PILL = ('text-decoration:none;background:#fff;border:1px solid #E5E8EB;border-radius:9999px;'
          'padding:6px 14px;font-size:12px;font-weight:700;color:#191F28;')
@@ -112,16 +109,6 @@ def _long_date(day):
     return f'{day.year}년 {day.month}월 {day.day}일 ({WEEKDAYS[day.weekday()]}요일)'
 
 
-def shown_date(market, date):
-    """The date a reader sees: the KST publish day for US/news keys from SHOWN_FROM on,
-    the key itself otherwise. Keys, URLs and report_date stay on the trading day."""
-    offset = MARKETS[market]['published_offset']
-    day = _date.fromisoformat(date)
-    if offset and date >= SHOWN_FROM:
-        return day + timedelta(days=offset)
-    return day
-
-
 def validate(market, date, meta, body):
     """Everything wrong with the writer's inputs, as sentences. Empty means renderable."""
     errors = []
@@ -162,13 +149,11 @@ def render(market, date, meta, body):
     cfg = MARKETS[market]
     day = _date.fromisoformat(date)
     url = f'https://fdo2a.github.io/{cfg["dir"]}/{date}.html'
-    shown = shown_date(market, date)
-    og_title = f'{cfg["og"]} — {_long_date(shown)}'
+    # 독자가 보는 날짜는 모두 거래일(키)이다 — 2026-10-04 사용자 지시로 한국 발행일 표시를 되돌렸다.
+    og_title = f'{cfg["og"]} — {_long_date(day)}'
     h1 = plain(_H1.search(body).group(1))
-    description = f'{h1}. {shown.isoformat()} {cfg["og"]}.'
+    description = f'{h1}. {date} {cfg["og"]}.'
     title = meta['title'].strip()
-    if shown != day and title.endswith(f' | {date}'):
-        title = title[:-len(date)] + shown.isoformat()
     summary = meta['summary'].strip()
     published = (day + timedelta(days=cfg['published_offset'])).isoformat()
     ld = {'@context': 'https://schema.org', '@type': 'NewsArticle', 'headline': og_title,
@@ -181,10 +166,6 @@ def render(market, date, meta, body):
     if cfg.get('topbar', market) == 'us':
         topbar = (f'<span class="brand">{cfg["brand"]}</span> · {day.year}년 {day.month}월 '
                   f'{day.day}일({WEEKDAYS[day.weekday()]}) 마감 기준')
-        if shown != day:
-            topbar = (f'<span class="brand">{cfg["brand"]}</span> · {shown.year}년 {shown.month}월 '
-                      f'{shown.day}일({WEEKDAYS[shown.weekday()]}) · 미국 {day.month}월 '
-                      f'{day.day}일({WEEKDAYS[day.weekday()]}) 마감 기준')
     else:
         topbar = (f'<span class="brand">{cfg["brand"]}</span>'
                   f'<span class="date">{_long_date(day)} 마감</span>')
