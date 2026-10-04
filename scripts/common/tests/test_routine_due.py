@@ -5,7 +5,7 @@
 판정이 틀리는 방향은 둘이다 — 할 일이 있는데 DONE(글이 영영 안 나온다), 할 일이 없는데
 DUE(토큰을 태운다). 앞쪽이 훨씬 비싸다.
 """
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import importlib.util
 import os
 
@@ -190,14 +190,33 @@ def test_one_session_one_lock_across_a_holiday():
 
 # ── 일본 주간 ─────────────────────────────────────────────────────────────────
 
-def test_japan_key_follows_the_orchestrator_rule():
-    """일요일 10:00 KST 본 런과 그날 재시도는 그 주 금요일이 속한 주다."""
+def test_japan_key_is_the_week_of_the_last_friday_before_today():
+    """발행일은 MOF 가 금요일 커브를 올리는 다음 도쿄 영업일(보통 월, 휴일이면 그 뒤)이다."""
     assert rd.japan_key(utc(2026, 10, 4, 1, 0)) == '2026-W40'     # 일 10:00 KST
-    assert rd.japan_key(utc(2026, 10, 4, 13, 0)) == '2026-W40'    # 일 22:00 KST
+    assert rd.japan_key(utc(2026, 10, 5, 4, 0)) == '2026-W40'     # 월 13:00 KST
+    assert rd.japan_key(utc(2026, 10, 13, 13, 0)) == '2026-W41'   # 화 22:00 KST (월 체육의 날)
+    assert rd.japan_key(utc(2026, 10, 9, 4, 0)) == '2026-W40'     # 금 13:00 KST — 그 주 금요일은 아직이다
+    assert rd.japan_key(utc(2026, 10, 10, 4, 0)) == '2026-W41'    # 토
+
+
+def test_japan_post_day_is_the_tokyo_business_day_after_friday():
+    assert rd.japan_post_day('2026-W40', ()).isoformat() == '2026-10-05'
+    assert rd.japan_post_day('2026-W41', ('2026-10-12',)).isoformat() == '2026-10-13'
+    # 금요일이 휴장이면 그 주 마지막 거래일(목)의 다음 영업일 — 같은 월요일
+    assert rd.japan_post_day('2026-W40', ('2026-10-02',)).isoformat() == '2026-10-05'
+
+
+def test_japan_waits_until_the_post_day():
+    hol = ('2026-10-12',)
+    assert rd.decide_japan('2026-W41', set(), None, date(2026, 10, 12), hol)[0] == 'WAIT'
+    assert rd.decide_japan('2026-W41', set(), None, date(2026, 10, 13), hol)[0] == 'DUE'
+    assert rd.decide_japan('2026-W40', set(), None, date(2026, 10, 4), ())[0] == 'WAIT'
+    assert rd.decide_japan('2026-W40', {'japan/posts/2026-W40.html'}, None, date(2026, 10, 4), ())[0] == 'DONE'
 
 
 def test_japan_done_busy_due():
-    assert rd.decide_japan('2026-W40', {'japan/posts/2026-W40.html'}, None)[0] == 'DONE'
-    assert rd.decide_japan('2026-W40', set(), 30)[0] == 'BUSY'
-    assert rd.decide_japan('2026-W40', set(), 300)[0] == 'DUE'
+    today = date(2026, 10, 5)
+    assert rd.decide_japan('2026-W40', {'japan/posts/2026-W40.html'}, None, today, ())[0] == 'DONE'
+    assert rd.decide_japan('2026-W40', set(), 30, today, ())[0] == 'BUSY'
+    assert rd.decide_japan('2026-W40', set(), 300, today, ())[0] == 'DUE'
     assert rd.lock_name('japan', None, key='2026-W40') == 'japan-2026-W40'

@@ -49,48 +49,30 @@ def test_japan_ignores_us_only_failures_but_not_its_own():
 
 
 def test_saturday_snapshot_without_tokyo_friday_is_stale_for_japan():
-    """닛케이 금요일분이 없으면 STALE — 도쿄 마감 전 스냅샷."""
-    s = snap(generated='2026-10-03T05:05:00+09:00', jgb_last='2026-10-01', nikkei_last='2026-10-01')
-    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())[0] == 'STALE'
+    """2026-09-26 실측: 토요일 새벽 스냅샷은 JGB 금요일분이 비어 있었다."""
+    s = snap(generated='2026-10-03T12:05:00+09:00', jgb_last='2026-10-01')
+    assert sr.verdict('japan', s, '2026-W40', '2026-10-02')[0] == 'STALE'
     assert sr.verdict('us', s, '2026-W40', '2026-10-02')[0] == 'READY'
 
 
-def test_jgb_one_tokyo_day_behind_is_ready_because_mof_posts_next_business_day():
-    """MOF 커브는 다음 도쿄 영업일에 올라온다 — 금요일분은 월요일에야 나온다(2026-10-04 실측:
-    토 15시~일 22시 스냅샷 6개가 전부 10/1 에서 끝났고, W39 토요일분도 9/24 에서 끝났다)."""
+def test_jgb_still_on_thursday_is_stale_because_mof_posts_friday_on_the_next_business_day():
+    """MOF 커브는 다음 도쿄 영업일에 올라온다(2026-10-04 실측: 토 15시~일 22시 스냅샷 6개가 전부
+    목요일에서 끝났다). 그래서 일본 주간은 그 게시일에 발행한다 — 판정은 금요일분을 그대로 요구한다."""
     s = snap(generated='2026-10-04T22:09:00+09:00', jgb_last='2026-10-01', nikkei_last='2026-10-02')
-    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=()) == ('READY', '')
-
-
-def test_jgb_two_tokyo_days_behind_is_still_stale():
-    s = snap(jgb_last='2026-09-30', nikkei_last='2026-10-02')
-    s['jgb'] = [{'date': '2026-09-29', '10Y': 1.8}, {'date': '2026-09-30', '10Y': 1.81}]
     v, why = sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())
-    assert v == 'STALE' and 'JGB' in why and '2026-10-01' in why
-
-
-def test_jgb_lag_walks_back_over_jpx_holidays():
-    """금요일 직전 목요일이 휴장이면 JGB 는 수요일분이면 된다."""
-    s = snap(jgb_last='2026-09-30', nikkei_last='2026-10-02')
-    s['jgb'] = [{'date': '2026-09-29', '10Y': 1.8}, {'date': '2026-09-30', '10Y': 1.81}]
-    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=('2026-10-01',))[0] == 'READY'
+    assert v == 'STALE' and 'JGB' in why
 
 
 def test_sunday_snapshot_still_missing_friday_is_stale_unless_the_calendar_says_holiday():
     """일요일에 받았다는 사실만으로 금요일 누락을 휴장으로 보지 않는다(구현 검토 #3)."""
     s = snap(generated='2026-10-04T08:10:00+09:00', jgb_last='2026-10-01', nikkei_last='2026-10-01')
     assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())[0] == 'STALE'
-    s = snap(generated='2026-10-04T08:10:00+09:00', jgb_last='2026-09-30', nikkei_last='2026-10-01')
-    s['jgb'] = [{'date': '2026-09-29', '10Y': 1.8}, {'date': '2026-09-30', '10Y': 1.81}]
     assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=('2026-10-02',))[0] == 'READY'
 
 
 def test_observations_after_the_end_date_do_not_hide_a_missing_friday():
-    s = snap(nikkei_last='2026-10-05')     # 다음 주 월요일 행만 있고 금요일은 없다
-    s['prices']['Nikkei 225']['daily'] = [['2026-10-01', 1.0], ['2026-10-05', 1.0]]
-    assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())[0] == 'STALE'
-    s = snap()
-    s['jgb'] = [{'date': '2026-09-30', '10Y': 1.8}, {'date': '2026-10-05', '10Y': 1.82}]
+    s = snap(jgb_last='2026-10-05')     # 다음 주 월요일 행만 있고 금요일은 없다
+    s['jgb'] = [{'date': '2026-10-01', '10Y': 1.8}, {'date': '2026-10-05', '10Y': 1.82}]
     assert sr.verdict('japan', s, '2026-W40', '2026-10-02', jp_holidays=())[0] == 'STALE'
 
 

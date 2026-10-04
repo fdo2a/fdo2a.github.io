@@ -1,6 +1,6 @@
 name: Collect weekly snapshot
 
-# US 주간 인사이트(토 15:00 KST)와 일본 주간(일 10:00 KST)의 원자료 — Yahoo·MOF·CFTC·FRED.
+# US 주간 인사이트(토 15:00 KST)와 일본 주간(MOF 금요일 커브 게시일, 보통 월)의 원자료 — Yahoo·MOF·CFTC·FRED.
 # 루틴 환경은 이 호스트들에 닿지 못한다(2026-10-02 실측: 연결 실패, yfinance 없음). 그래서 스냅샷은
 # 여기서만 받고 커밋한다 — data/weekly_ext/<KEY>.json 의 주인은 이 워크플로 하나다.
 # 예약 실행은 2~5시간 밀리므로(AGENTS.md 규칙 10) 루틴이 필요할 때 key/end 를 넣어 직접 띄운다.
@@ -11,7 +11,7 @@ on:
   schedule:
     - cron: '0 12 * * 6'
       timezone: 'Asia/Seoul'
-    - cron: '0 8 * * 0'
+    - cron: '0 12 * * 1'
       timezone: 'Asia/Seoul'
   workflow_dispatch:
     inputs:

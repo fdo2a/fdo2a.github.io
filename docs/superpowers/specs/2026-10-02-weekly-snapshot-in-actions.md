@@ -15,7 +15,7 @@ Yahoo 차트 API·MOF jgbcme.csv·MOF week.csv·CFTC Socrata·FRED CSV 다섯 �
   지난주 키를 받지 않게(설계 검토 #2). `data/weekly_ext/<KEY>.json` 의 **주인은 이 워크플로 하나**다. 원격 판의
   `generated` 가 더 늦으면 커밋하지 않는다 — 밀린 예약 실행이 새 스냅샷을 되돌리지 않게(#3).
 - `scripts/ci/snapshot_ready.py us|japan --key --end` — READY / STALE. 키·종료일 일치, 그 시장이 쓰는 소스만의
-  `fetch_status`(일본 판별은 `japan.core._japan_source`), 일본은 도쿄 금요일분(닛케이)과 그 전 영업일분(JGB 10년 — MOF 는 다음 영업일 공표, 2026-10-04 수정)까지 —
+  `fetch_status`(일본 판별은 `japan.core._japan_source`), 일본은 도쿄 금요일분(JGB 10년·닛케이)까지 —
   종료일 +2일 이후 받은 스냅샷이면 도쿄 휴장으로 보고 사흘 봐준다(#4·#5).
 - 오케스트레이터는 받지 않는다: READY 면 그대로, STALE 이면 워크플로를 key/end 로 띄우고 `wait_run.sh` 로
   기다린 뒤(2 면 한 번 더) `git pull` 하고 다시 판정, 그래도 STALE 이면 알리고 끝낸다. 주간은 이 단계를 STEP 3
@@ -25,3 +25,14 @@ Yahoo 차트 API·MOF jgbcme.csv·MOF week.csv·CFTC Socrata·FRED CSV 다섯 �
 
 1 pull 위치(STEP 3 앞으로) · 2 예약 키는 달력 · 3 스냅샷 소유권 하나 + 늦은 실행 덮어쓰기 방지 · 4 일본 완결성은
 마지막 관측일로 · 5 대기 결과별 처리, 시장별 소스만 · 6 워크플로에 pytest 설치·일본 테스트 · 7 문서는 규칙 10 과 잎사귀 한 줄.
+
+## 2026-10-04 — 일본 발행일을 MOF 게시일로
+
+- 실측: W40 스냅샷 6개(토 15:09~일 22:09 KST)의 JGB 가 전부 10/1(목)에서 끝났다. W39 토요일분(9/26 18:55)도
+  9/24(목)에서 끝났다. MOF 커브는 **다음 도쿄 영업일**에 금요일분을 올린다. 일요일 루틴은 금요일 JGB 를
+  영원히 받지 못해 W40 이 STALE 로 멈췄다.
+- 기각한 안: JGB 만 「그 전 영업일분」을 허용(목요일 값으로 발행). 핵심 지표의 금요일 움직임이 빠진다.
+- 채택: 발행일을 게시일(`routine_due.japan_post_day` — 그 주 마지막 도쿄 거래일의 다음 영업일, JPX 달력)로.
+  키는 `japan_key` = 서울 날짜보다 앞선 마지막 금요일의 주. 게시일 전이면 `WAIT`. 루틴은 월~금 13시 본 런,
+  16·19·22시 재시도. 게시 시각은 실측이 없어 낮 STALE 은 조용히 넘기고 22시 런에서만 알린다.
+- 남은 일: 첫 게시일(10/5)에 스냅샷 `generated` 와 JGB 마지막 날짜로 MOF 게시 시각을 실측해 본 런 시각을 맞춘다.

@@ -3,6 +3,7 @@
 
     python3 scripts/ci/routine_due.py us|kr|weekly|japan  # 한 줄: DONE|BUSY|WAIT|DUE <이유>
     python3 scripts/ci/routine_due.py lock-name us|kr  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
+    python3 scripts/ci/routine_due.py japan-key        # 일본 주간 키·그 주 금요일·MOF 게시일 (STEP 0)
     python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
     python3 scripts/ci/routine_due.py week-end         # 달력상 그 주 마지막 US 거래일 (주간 스냅샷 기본 종료일)
 
@@ -59,15 +60,41 @@ def week_of(now, holidays=()):
 
 
 def japan_key(now):
-    """일본 주간의 키 — JAPAN_ORCHESTRATOR STEP 0 과 같은 규칙(서울 날짜 −2일의 ISO 주)."""
-    y, w, _ = ((now.astimezone(SEOUL)).date() - timedelta(days=2)).isocalendar()
+    """일본 주간의 키 — 서울 날짜보다 **앞선** 마지막 금요일이 속한 ISO 주. JAPAN_ORCHESTRATOR STEP 0 이
+    `japan-key` 로 이 값을 쓴다. 발행이 월·화로 밀려도 지난주를 가리킨다(2026-10-04)."""
+    d = now.astimezone(SEOUL).date() - timedelta(days=1)
+    while d.weekday() != 4:
+        d -= timedelta(days=1)
+    y, w, _ = d.isocalendar()
     return f'{y}-W{w:02d}'
 
 
-def decide_japan(key, files, lock_age):
+def japan_friday(key):
+    y, w = key.split('-W')
+    return date.fromisocalendar(int(y), int(w), 5)
+
+
+def japan_post_day(key, holidays=()):
+    """MOF 가 그 주 마지막 도쿄 거래일의 커브를 올리는 날 — 다음 도쿄 영업일(2026-10-04 실측: 금요일분은
+    주말에 없다). 보통 월요일, 월요일이 휴장이면 그 뒤. 휴장은 달력(JPX)으로만 본다."""
+    last = _trading_back(japan_friday(key), holidays)
+    return _trading_forward(last + timedelta(days=1), holidays)
+
+
+def _trading_forward(d, holidays=()):
+    hol = set(holidays)
+    while d.weekday() >= 5 or d.isoformat() in hol:
+        d += timedelta(days=1)
+    return d
+
+
+def decide_japan(key, files, lock_age, today, holidays=()):
     path = f'japan/posts/{key}.html'
     if path in files:
         return 'DONE', f'{key} 발행 완료'
+    post = japan_post_day(key, holidays)
+    if today < post:
+        return 'WAIT', f'{key} MOF 금요일 커브 게시일({post.isoformat()}) 전'
     if lock_age is not None and lock_age < STALE_MIN['japan']:
         return 'BUSY', f'{key} 작성 중 (잠금 {lock_age}분 전)'
     return 'DUE', f'{key} 미발행: {path}'
@@ -178,6 +205,11 @@ def main(argv=None):
         # 주간 스냅샷 워크플로의 기본 종료일 — 달력상 그 주 마지막 US 거래일.
         print(us_session(datetime.now(timezone.utc), _holidays('us')))
         return 0
+    if args[0] == 'japan-key':
+        # 일본 STEP 0 — 키, 그 주 금요일(스냅샷 종료일), MOF 게시일.
+        key = japan_key(datetime.now(timezone.utc))
+        print(key, japan_friday(key).isoformat(), japan_post_day(key, _holidays('jp')).isoformat())
+        return 0
     if args[0] == 'week-key':
         # 주간 오케스트레이터가 데이터로 정한 키와 맞대 본다 — 다르면 데이터가 밀린 것이다.
         print(week_of(datetime.now(timezone.utc), _holidays('us')))
@@ -203,7 +235,8 @@ def main(argv=None):
     elif kind == 'japan':
         key = japan_key(now)
         verdict = decide_japan(key, _files('japan/posts'),
-                               _lock_age(lock_name('japan', now, key), now))
+                               _lock_age(lock_name('japan', now, key), now),
+                               now.astimezone(SEOUL).date(), _holidays('jp'))
     else:
         key = week_of(now, _holidays('us'))
         aggs = {'us': _show_json(f'data/weekly/{key}.json'),

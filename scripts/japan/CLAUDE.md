@@ -1,6 +1,6 @@
 # Japan weekly — code rules
 
-One post per week (Sunday), answering one question: **can Japan keep normalising rates?** The chain is BOJ → JGB → yen and money flows → Japanese equities. Code computes every number; the writer only interprets (`.claude/agents/japan-report-writer.md`, routine `.claude/JAPAN_ORCHESTRATOR.md`).
+One post per week, on the day MOF posts Friday's JGB curve (next Tokyo business day — usually Monday; `routine_due.py japan_post_day`), answering one question: **can Japan keep normalising rates?** The chain is BOJ → JGB → yen and money flows → Japanese equities. Code computes every number; the writer only interprets (`.claude/agents/japan-report-writer.md`, routine `.claude/JAPAN_ORCHESTRATOR.md`).
 
 ## Modules
 
