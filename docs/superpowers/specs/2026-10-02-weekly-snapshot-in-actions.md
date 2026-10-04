@@ -15,7 +15,7 @@ Yahoo 차트 API·MOF jgbcme.csv·MOF week.csv·CFTC Socrata·FRED CSV 다섯 �
   지난주 키를 받지 않게(설계 검토 #2). `data/weekly_ext/<KEY>.json` 의 **주인은 이 워크플로 하나**다. 원격 판의
   `generated` 가 더 늦으면 커밋하지 않는다 — 밀린 예약 실행이 새 스냅샷을 되돌리지 않게(#3).
 - `scripts/ci/snapshot_ready.py us|japan --key --end` — READY / STALE. 키·종료일 일치, 그 시장이 쓰는 소스만의
-  `fetch_status`(일본 판별은 `japan.core._japan_source`), 일본은 도쿄 금요일분(JGB 10년·닛케이)까지 —
+  `fetch_status`(일본 판별은 `japan.core._japan_source`), 일본은 도쿄 금요일분(닛케이)과 그 전 영업일분(JGB 10년 — MOF 는 다음 영업일 공표, 2026-10-04 수정)까지 —
   종료일 +2일 이후 받은 스냅샷이면 도쿄 휴장으로 보고 사흘 봐준다(#4·#5).
 - 오케스트레이터는 받지 않는다: READY 면 그대로, STALE 이면 워크플로를 key/end 로 띄우고 `wait_run.sh` 로
   기다린 뒤(2 면 한 번 더) `git pull` 하고 다시 판정, 그래도 STALE 이면 알리고 끝낸다. 주간은 이 단계를 STEP 3

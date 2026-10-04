@@ -21,7 +21,7 @@ python3 -c "import datetime as d;t=d.date.fromisoformat(open('/tmp/japan-today')
 2. `STALE` 이면 워크플로를 띄운다: `N=wk-$(date +%s)-$RANDOM` → `gh workflow run collect-weekly-data.yml -f key=<KEY> -f end=<그 주 금요일> -f nonce=$N` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-weekly-data.yml --limit 20 --json databaseId,displayTitle --jq "[.[] | select(.displayTitle | endswith(\" $N\"))][0].databaseId")` — **nonce 로 집는다**(맨 `--limit 1` 은 다른 실행을 집을 수 있다). 비어 있으면 15초 뒤 한 번 더 찾는다. `gh` 가 없으면 KR_ORCHESTRATOR STEP 0 처럼 `mcp__github__actions_run_trigger`(같은 입력과 nonce)·`actions_list` 로 같은 일을 한다. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash 도구 timeout 600000) — exit 2(아직 도는 중)면 같은 명령을 한 번 더, 0·1·3 이면 그대로 3 으로 간다.
 3. `git pull` 하고 1 을 다시 한다. 여전히 `STALE` 이면 발행하지 않고 그 이유를 PushNotification 으로 알린 뒤 잠금을 풀고 끝낸다.
 
-`japan` 판정은 일본이 쓰는 소스만 보고, **도쿄 금요일분**(JGB 10년·닛케이)이 있어야 `READY` 다 — 토요일 새벽 스냅샷은 그것이 비어 있다(2026-09-26 실측). US 주간이 토요일에 받은 스냅샷이면 대개 `STALE` 이 나와 일요일에 다시 받는다. 그다음 진단(커밋된 파일만 읽는다):
+`japan` 판정은 일본이 쓰는 소스만 보고, **닛케이 도쿄 금요일분**과 **JGB 10년 그 전 영업일분**이 있어야 `READY` 다 — MOF 커브는 다음 영업일에 올라와 일요일엔 금요일분이 없다(2026-10-04 실측). JGB 는 행마다 기준일을 밝힌 목요일 값으로 쓴다. US 주간이 토요일에 받은 스냅샷이면 대개 `STALE` 이 나와 일요일에 다시 받는다. 그다음 진단(커밋된 파일만 읽는다):
 
 ```bash
 python3 scripts/build_japan_weekly.py diag --key <KEY>

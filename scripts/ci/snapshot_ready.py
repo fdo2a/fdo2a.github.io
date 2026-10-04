@@ -13,7 +13,8 @@ STALE 일 때 그 워크플로를 띄운다.
   무시한다(일본 판별은 `japan.core._japan_source` 그대로).
 - US 는 **모든** 소스가 ok 여야 한다 — US 진단은 실패 소스를 전부 게이트로 넘긴다(일본 전용 포함).
 - 일본은 일본이 쓰는 소스만(`japan.core._japan_source`) 보고, **종료일 이하의 마지막 도쿄 거래일**
-  자료(JGB 10년·닛케이)가 있어야 한다. 토요일 새벽 스냅샷은 금요일분이 비어 있다(2026-09-26 실측).
+  닛케이가 있어야 한다. JGB 10년은 MOF 가 다음 영업일에 올리므로 **그 전 도쿄 거래일**이면 된다
+  (2026-10-04 — 일요일엔 금요일분이 없다. 본문 표는 행마다 기준일을 밝힌다).
   도쿄 휴장은 추정하지 않고 달력(`data/market_holidays.json` 의 `jp`, JPX 공식)으로만 본다 —
   「일요일에 받았는데 없으면 휴장」은 반영이 늦은 거래일을 휴장으로 오판한다(구현 검토 #3).
   종료일 뒤의 관측은 세지 않는다 — 다음 주 자료가 대상 주 금요일의 누락을 가리지 않게(#4).
@@ -28,9 +29,12 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 'scripts'))
 from japan.core import _japan_source  # noqa: E402
 
-TOKYO_SERIES = (('JGB 10년', lambda s: [r['date'] for r in s.get('jgb') or [] if r.get('10Y') is not None]),
+# (라벨, 관측일, 공표 지연 영업일). MOF 커브는 다음 도쿄 영업일에 올라온다 — 금요일분은 월요일에야
+# 나온다(2026-10-04 실측: 토 15시~일 22시 스냅샷 6개가 전부 목요일에서 끝났다). 일요일 루틴이
+# 금요일분을 기다리면 영원히 STALE 이다.
+TOKYO_SERIES = (('JGB 10년', lambda s: [r['date'] for r in s.get('jgb') or [] if r.get('10Y') is not None], 1),
                 ('닛케이', lambda s: [d for d, _ in ((s.get('prices') or {}).get('Nikkei 225') or {})
-                                      .get('daily') or []]))
+                                      .get('daily') or []], 0))
 
 
 def _jp_holidays():
@@ -59,8 +63,11 @@ def verdict(market, snap, key, end, jp_holidays=None):
     if bad:
         return 'STALE', '실패 소스: ' + ', '.join(bad)
     if market == 'japan':
-        want = last_tokyo_day(end, _jp_holidays() if jp_holidays is None else jp_holidays)
-        for label, dates in TOKYO_SERIES:
+        hol = _jp_holidays() if jp_holidays is None else jp_holidays
+        for label, dates, lag in TOKYO_SERIES:
+            want = last_tokyo_day(end, hol)
+            for _ in range(lag):
+                want = last_tokyo_day((want - timedelta(days=1)).isoformat(), hol)
             last = max((d for d in dates(snap) if d <= end), default=None)
             if last is None or date.fromisoformat(last) < want:
                 return 'STALE', f'{label} 마지막 관측 {last} < 도쿄 마지막 거래일 {want.isoformat()}'
