@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-03 11:42 KST",
-  "report_date": "2026-10-02",
+  "generated": "2026-10-06 08:38 KST",
+  "report_date": "2026-10-05",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": -0.062,
@@ -261,7 +261,7 @@
         "recent_avg": 50.667
       },
       "trend_cell_ko": "악화(미미) · 3개월 평균 +81K → +51K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Unemployment Rate",
@@ -284,7 +284,7 @@
         "recent_avg": 4.133
       },
       "trend_cell_ko": "개선(미미) · 3개월 평균 4.27% → 4.13%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Avg Hourly Earnings MoM",
@@ -307,7 +307,7 @@
         "recent_avg": 0.195
       },
       "trend_cell_ko": "악화(미미) · 3개월 평균 +0.21% → +0.19%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Industrial Production MoM",
@@ -353,7 +353,7 @@
         "recent_avg": 0.46
       },
       "trend_cell_ko": "악화(완만) · 3개월 평균 +1.95% → +0.46%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "New Home Sales",
@@ -655,135 +655,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Nonfarm Payrolls (chg)",
-    "Unemployment Rate",
-    "Avg Hourly Earnings MoM",
-    "Durable Goods Orders MoM"
-  ],
-  "headline_releases": [
-    {
-      "key": "employment",
-      "label": "고용상황(Employment Situation)",
-      "tier": 1,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
-      "primary": "Unemployment Rate",
-      "max_abs_z": 0.469,
-      "indicators": [
-        {
-          "name": "Nonfarm Payrolls (chg)",
-          "axis": "Labor",
-          "actual": 29.0,
-          "previous": 133.0,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.392
-        },
-        {
-          "name": "Unemployment Rate",
-          "axis": "Labor",
-          "actual": 4.2,
-          "previous": 4.1,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.469
-        },
-        {
-          "name": "Avg Hourly Earnings MoM",
-          "axis": "Labor",
-          "actual": 0.13,
-          "previous": 0.32,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.289
-        }
-      ],
-      "components": [
-        {
-          "label": "민간 고용",
-          "fred_id": "USPRIV",
-          "transform": "mom_diff",
-          "actual": 46.0,
-          "previous": 89.0,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "정부 고용",
-          "fred_id": "USGOVT",
-          "transform": "mom_diff",
-          "actual": -17.0,
-          "previous": 44.0,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "헬스케어·사회복지",
-          "fred_id": "USEHS",
-          "transform": "mom_diff",
-          "actual": 20.0,
-          "previous": 38.0,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "레저·숙박",
-          "fred_id": "USLAH",
-          "transform": "mom_diff",
-          "actual": 10.0,
-          "previous": 37.0,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "제조업",
-          "fred_id": "MANEMP",
-          "transform": "mom_diff",
-          "actual": 9.0,
-          "previous": 15.0,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "경제활동참가율",
-          "fred_id": "CIVPART",
-          "transform": "level",
-          "actual": 61.8,
-          "previous": 61.6,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "U-6 실업률",
-          "fred_id": "U6RATE",
-          "transform": "level",
-          "actual": 7.6,
-          "previous": 7.7,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "주당 노동시간",
-          "fred_id": "AWHAETP",
-          "transform": "level",
-          "actual": 34.4,
-          "previous": 34.4,
-          "ref_period": "2026-09-01"
-        }
-      ]
-    },
-    {
-      "key": "durable-goods",
-      "label": "내구재 주문",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-      "primary": "Durable Goods Orders MoM",
-      "max_abs_z": 0.72,
-      "indicators": [
-        {
-          "name": "Durable Goods Orders MoM",
-          "axis": "Activity",
-          "actual": -0.07,
-          "previous": 0.87,
-          "ref_period": "2026-08-01",
-          "momentum_z": -0.72
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",
