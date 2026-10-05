@@ -56,18 +56,18 @@
       "note": "3년물이 기준금리보다 얼마나 위인가 — 정책 경로와 기간프리미엄이 섞여 있다",
       "bp": 93.7,
       "date": "2026-10-02",
-      "sessions": 534,
+      "sessions": 531,
       "change_bp": -7.3,
       "prev_date": "2026-10-01",
       "standing": {
-        "percentile": 83.0,
-        "sessions": 534,
+        "percentile": 82.9,
+        "sessions": 531,
         "window": "2년",
         "days": null,
         "share_pct": 17,
         "side": "high",
         "short": "넓은 쪽 17% 안",
-        "text": "최근 2년(534거래일) 가운데 넓은 쪽 17% 안"
+        "text": "최근 2년(531거래일) 가운데 넓은 쪽 17% 안"
       }
     },
     "growth": {
@@ -77,18 +77,18 @@
       "note": "커브 기울기 — 장기 성장·물가 기대가 단기 정책 기대를 얼마나 웃도나",
       "bp": 42.8,
       "date": "2026-10-02",
-      "sessions": 534,
+      "sessions": 531,
       "change_bp": 0.2,
       "prev_date": "2026-10-01",
       "standing": {
-        "percentile": 81.5,
-        "sessions": 534,
+        "percentile": 81.4,
+        "sessions": 531,
         "window": "2년",
         "days": null,
         "share_pct": 19,
         "side": "high",
         "short": "넓은 쪽 19% 안",
-        "text": "최근 2년(534거래일) 가운데 넓은 쪽 19% 안"
+        "text": "최근 2년(531거래일) 가운데 넓은 쪽 19% 안"
       }
     },
     "credit": {
@@ -98,18 +98,18 @@
       "note": "같은 만기에서 신용 위험에 매겨진 값",
       "bp": 70.1,
       "date": "2026-10-02",
-      "sessions": 534,
+      "sessions": 531,
       "change_bp": 1.0,
       "prev_date": "2026-10-01",
       "standing": {
         "percentile": 97.4,
-        "sessions": 534,
+        "sessions": 531,
         "window": "2년",
         "days": 13,
         "share_pct": null,
         "side": "high",
         "short": "이보다 넓었던 날이 13일뿐",
-        "text": "최근 2년(534거래일) 가운데 이보다 넓었던 날이 13일뿐"
+        "text": "최근 2년(531거래일) 가운데 이보다 넓었던 날이 13일뿐"
       }
     }
   }
