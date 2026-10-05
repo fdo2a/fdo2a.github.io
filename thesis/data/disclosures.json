@@ -1,27 +1,14 @@
 {
-  "as_of": "2026-10-05",
+  "as_of": "2026-10-06",
   "window": {
-    "bgn": "20261002",
-    "end": "20261005"
+    "bgn": "20261005",
+    "end": "20261006"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
     "005930.KS": {
       "corp_code": "00126380",
-      "events": [
-        {
-          "rcept_no": "20261002800981",
-          "date": "2026-10-02",
-          "title": "최대주주등소유주식변동신고서",
-          "corp": "삼성전자",
-          "filer": "삼성전자",
-          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261002800981",
-          "axis": null,
-          "kind": null,
-          "correction": false,
-          "confirmed": false
-        }
-      ],
+      "events": [],
       "axes": [],
       "confirmed_count": 0
     },
