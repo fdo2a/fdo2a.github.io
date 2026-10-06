@@ -1,59 +1,33 @@
 {
-  "report_date": "2026-10-02",
+  "report_date": "2026-10-06",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "반도체와반도체장비",
-      "direction": "up",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
           "name": "SK하이닉스",
-          "change_pct": 0.44,
-          "close": 1841000,
-          "value": 3707834
+          "change_pct": -3.69,
+          "close": 1773000,
+          "value": 4833770
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": -1.45,
+          "close": 272000,
+          "value": 3495473
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "제약",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "삼성바이오로직스",
-          "change_pct": -4.61,
-          "close": 1354000,
-          "value": 70455
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "반도체와반도체장비",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "삼성전자우",
-          "change_pct": -1.71,
-          "close": 201000,
-          "value": 509257
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "석유와가스",
+      "industry": "전자장비와기기",
       "direction": "up",
       "reasons": [
         "지수 기여 상위",
@@ -61,38 +35,89 @@
       ],
       "members": [
         {
-          "name": "SK이노베이션",
-          "change_pct": 10.32,
-          "close": 154000,
-          "value": 179137
+          "name": "삼성전기",
+          "change_pct": 5.95,
+          "close": 1675000,
+          "value": 1218425
         },
         {
-          "name": "S-Oil",
-          "change_pct": 11.69,
-          "close": 166200,
-          "value": 75789
+          "name": "LG이노텍",
+          "change_pct": 12.2,
+          "close": 644000,
+          "value": 277014
+        },
+        {
+          "name": "대덕전자",
+          "change_pct": 6.83,
+          "close": 157900,
+          "value": 169172
+        },
+        {
+          "name": "코리아써키트",
+          "change_pct": 7.65,
+          "close": 88700,
+          "value": 55127
         }
       ]
     },
     {
-      "id": "g5",
-      "industry": "에너지장비및서비스",
+      "id": "g3",
+      "industry": "전기제품",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "LG에너지솔루션",
+          "change_pct": 5.12,
+          "close": 390000,
+          "value": 169709
+        },
+        {
+          "name": "삼성SDI",
+          "change_pct": 8.7,
+          "close": 575000,
+          "value": 355033
+        },
+        {
+          "name": "엘앤에프",
+          "change_pct": 8.96,
+          "close": 124100,
+          "value": 82930
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "전자제품",
       "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "한화솔루션",
-          "change_pct": 5.4,
-          "close": 36100,
-          "value": 197657
-        },
+          "name": "LG전자",
+          "change_pct": 7.64,
+          "close": 232500,
+          "value": 282459
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "복합기업",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
         {
-          "name": "HD현대에너지솔루션",
-          "change_pct": 6.25,
-          "close": 139300,
-          "value": 55620
+          "name": "두산",
+          "change_pct": 9.47,
+          "close": 1468000,
+          "value": 193119
         }
       ]
     }
