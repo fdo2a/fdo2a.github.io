@@ -1,8 +1,8 @@
 {
-  "as_of": "2026-10-06",
+  "as_of": "2026-10-07",
   "window": {
-    "bgn": "20261005",
-    "end": "20261006"
+    "bgn": "20261006",
+    "end": "20261007"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
@@ -14,7 +14,20 @@
     },
     "000660.KS": {
       "corp_code": "00164779",
-      "events": [],
+      "events": [
+        {
+          "rcept_no": "20261006000253",
+          "date": "2026-10-06",
+          "title": "동일인등출자계열회사와의상품ㆍ용역거래변경",
+          "corp": "SK하이닉스",
+          "filer": "SK하이닉스",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006000253",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
       "axes": [],
       "confirmed_count": 0
     }
