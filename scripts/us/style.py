@@ -556,7 +556,7 @@ def _desk_findings(html, texts):
     if hedges > MAX_HEDGES:
         out.append(_finding('hedge', hedges,
                             f'「가를 자료가 없다·단정하지 않는다」류 단서가 {hedges}번이다'
-                            f'({MAX_HEDGES}번까지 권장) — 한계는 섹션당 한 번, 다음 확인 자료와 '
+                            f'({MAX_HEDGES}번까지 권장) — 한계는 그 주장 옆에 한 번, 다음 확인 자료와 '
                             '묶어 쓰고 안 할 말은 그냥 안 한다', 'warn'))
 
     counts = {}

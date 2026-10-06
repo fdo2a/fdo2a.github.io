@@ -38,7 +38,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 - US: `weekly_<key>.html` / `monthly_<key>.html`
 - KR: `kr_weekly_<key>.html` / `kr_monthly_<key>.html`
 
-디자인·조판은 **시장에 맞는 `scripts/common/post_css/us.css`·`kr.css` 를 그대로 `<style>` 에 넣는다**(일간 브리프 셸과 같은 스타일시트 — `.claude/agents/brief-report-writer.md` 「HTML — 본문만 쓴다」 절의 클래스 표가 쓸 수 있는 클래스다). 문체는 그 파일의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` **두 절만** 읽는다 — US 지시문 전체(60 KB)를 읽지 않는다. 여기 다시 쓰지 않는다 — 한쪽만 고쳐지는 사고를 막기 위해서다.
+디자인·조판은 **시장에 맞는 `scripts/common/post_css/us.css`·`kr.css` 를 그대로 `<style>` 에 넣는다**(일간 브리프 셸과 같은 스타일시트 — `.claude/agents/brief-report-writer.md` 「HTML — 본문만 쓴다」 절의 클래스 표가 쓸 수 있는 클래스다). 문체는 그 파일의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` **두 절과 `.claude/agents/STYLE_EXEMPLARS.md` §9(섹션 잇기)만** 읽는다 — US 지시문 전체(60 KB)를 읽지 않는다. 여기 다시 쓰지 않는다 — 한쪽만 고쳐지는 사고를 막기 위해서다.
 
 **`<body data-layout="prose" data-register="da">` 를 반드시 단다.** `data-register="da"` 는 PM 이 읽는 `-다` 문서라는 선언이다(2026-09-24) — 어미를 `-다` 로 고정하고, 묻고 답하는 문장·작업 어휘(원장·회차·판정불가·파일명·실행 코드)·「국채 급등」을 쓰지 않는다. `check_period.py` 가 선언을 확인하고 `check_style.py` 가 내용을 막는다. 고치기 전/후 짝은 `.claude/agents/STYLE_EXEMPLARS.md`. **KR 은 노출 등급(확대·유지·축소)과 시계 라벨을 본문에 쓰지 않는다**(2026-10-04 — 원장에만 남는다). 일간의 등급을 복기할 때도 「위험 노출은 다음 세션까지 확대한다고 썼다」가 아니라 그날 무엇을 기다렸고 무엇이 판단을 바꿨는지로 쓴다. 확인 날짜·촉매 시점은 그대로 쓴다. `check_period.py --market kr` 이 선언형 등급 문장을 막는다. 생성된 「연구 판단 복기」 구간은 손대지 않는다(검사 밖이다).
 
@@ -90,6 +90,8 @@ tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 ## US 주간 인사이트 (2026-09-26~, `market=us, span=weekly`)
 
 **요약이 아니라 진단이다.** 독자는 그 주 일간을 이미 읽은 PM 이다. 5편을 다시 묶지 말고, 그 주 시장이 다툰 질문 하나를 잡아 가격에 반영된 기대·결과·해석·대안·가를 관측으로 풀고, 코드가 계산한 진단(이례적 움직임·자산 간 관계·포지션·연준 선물)으로 받친다.
+
+**절끼리 잇는다** — 위 「출력 계약」을 대체해도 문체 규칙은 그대로다(`brief-report-writer.md` 두 절과 `STYLE_EXEMPLARS.md` §9). 이야기는 `question` 이 세우고, 다른 절은 그 질문을 받치거나 어긋나는 근거로 열며, 글 전체의 다음 확인은 `next` 에 모은다. 각 절의 `data-interp`(해석과 그것을 깨는 조건)는 그 절에 남긴다.
 
 **추가 입력** — `data/weekly_ext/<KEY>.insight.json`(진단, 코드가 계산 — **여기 숫자는 인용 가능**, 새로 계산하지 않는다). 항목: `anomalies`(주간 변화 ÷ 직전 52주 주간 변동폭 = 배수, `flagged` 는 2배 이상), `regime`(커브 모양·주가-금리 상관·성장-가치·대형-소형·섹터 격차·미·일 2년 금리차), `positioning`(CFTC 레버리지 펀드 순포지션·3년 백분위, **화요일 기준**), `fed`(연방기금금리 선물 월물 내재금리와 실효금리 대비 bp — **확률이 아니다**, 「인상 확률 N%」로 바꿔 쓰지 않는다), `next_week`(다음 주 일정).
 

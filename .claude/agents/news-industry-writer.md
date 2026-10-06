@@ -68,7 +68,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 ## 문체
 
-`.claude/agents/STYLE_EXEMPLARS.md` 를 쓰기 전에 읽는다. 데스크 문서다(`<body data-register="da">`, 셸이 단다) — **어미는 `-다` 로 고정**, 수사 의문문·작업 어휘(원장·회차·파일명·코드) 금지(`market_data.json` 같은 입력 이름도 발행본에 쓰지 않는다), `summary_ko` 가 `-습니다` 로 와 있으면 어미만 바꿔 싣는다, 판단에는 주어를 세우고 인과는 동사로 잇는다, 한 문장에 관계 하나. `python3 scripts/check_style.py <html>` 이 검사한다.
+`.claude/agents/STYLE_EXEMPLARS.md` 를 쓰기 전에 읽는다. 데스크 문서다(`<body data-register="da">`, 셸이 단다) — **어미는 `-다` 로 고정**, 수사 의문문·작업 어휘(원장·회차·파일명·코드) 금지(`market_data.json` 같은 입력 이름도 발행본에 쓰지 않는다), `summary_ko` 가 `-습니다` 로 와 있으면 어미만 바꿔 싣는다, 판단에는 주어를 세우고 인과는 동사로 잇는다, 한 문장에 관계 하나. **섹션은 헤드라인 카드가 세운 이야기를 이어받는다**(`STYLE_EXEMPLARS.md` §9) — 섹션 머리 산문과 산업 섹션의 해석 문단에만 적용하고, 기사 요약(`data-news`)은 손대지 않는다. 오늘의 뉴스의 표식 밖 산문은 합계 200자까지라 머리 문장 하나로만 잇는다. `python3 scripts/check_style.py <html>` 이 검사한다.
 
 ## HTML — 본문만 쓴다
 
