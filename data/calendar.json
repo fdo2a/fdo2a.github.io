@@ -1,29 +1,15 @@
 {
-  "report_date": "2026-10-05",
-  "generated": "2026-10-06 08:43 KST",
+  "report_date": "2026-10-06",
+  "generated": "2026-10-07 08:41 KST",
   "horizon_days": 10,
   "events": [
     {
-      "key": "auction-20261006-6-Week",
+      "key": "auction-20261007-17-Week",
       "kind": "auction",
-      "name_ko": "6-Week 국채 입찰 950억 달러",
-      "date": "2026-10-06",
+      "name_ko": "17-Week 국채 입찰 750억 달러",
+      "date": "2026-10-07",
       "time_et": "11:30",
-      "time_kst": "2026-10-07 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261006-3-Year",
-      "kind": "auction",
-      "name_ko": "3-Year 국채 입찰 580억 달러",
-      "date": "2026-10-06",
-      "time_et": "13:00",
-      "time_kst": "2026-10-07 02:00",
+      "time_kst": "2026-10-08 00:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -38,6 +24,34 @@
       "date": "2026-10-07",
       "time_et": "13:00",
       "time_kst": "2026-10-08 02:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261008-4-Week",
+      "kind": "auction",
+      "name_ko": "4-Week 국채 입찰 1,100억 달러",
+      "date": "2026-10-08",
+      "time_et": "11:30",
+      "time_kst": "2026-10-09 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261008-8-Week",
+      "kind": "auction",
+      "name_ko": "8-Week 국채 입찰 1,050억 달러",
+      "date": "2026-10-08",
+      "time_et": "11:30",
+      "time_kst": "2026-10-09 00:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -86,9 +100,57 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "expiry-202610",
+      "kind": "expiry",
+      "name_ko": "지수 옵션 만기",
+      "date": "2026-10-16",
+      "time_et": null,
+      "time_kst": null,
+      "status": "confirmed",
+      "source": "셋째 금요일 규칙",
+      "assets": [
+        "주식"
+      ],
+      "watch": "만기 당일 수급"
+    },
+    {
+      "key": "release-industrial-production-20261016",
+      "kind": "release",
+      "name_ko": "산업생산(G.17)",
+      "date": "2026-10-16",
+      "time_et": "09:15",
+      "time_kst": "2026-10-16 22:15",
+      "status": "confirmed",
+      "source": "Federal Reserve 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-10-06",
+      "term": "3-Year",
+      "type": "Note",
+      "offering_amt": 58000000000.0,
+      "high_yield": 4.932,
+      "bid_to_cover": 2.62,
+      "indirect_pct": 55.3,
+      "dealer_pct": 10.3
+    },
+    {
+      "date": "2026-10-06",
+      "term": "6-Week",
+      "type": "Bill",
+      "offering_amt": 95000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.78,
+      "indirect_pct": 58.6,
+      "dealer_pct": 27.4
+    },
     {
       "date": "2026-10-05",
       "term": "26-Week",
@@ -158,26 +220,6 @@
       "bid_to_cover": 2.82,
       "indirect_pct": 58.9,
       "dealer_pct": 24.4
-    },
-    {
-      "date": "2026-09-28",
-      "term": "26-Week",
-      "type": "Bill",
-      "offering_amt": 82000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.64,
-      "indirect_pct": 53.7,
-      "dealer_pct": 26.9
-    },
-    {
-      "date": "2026-09-28",
-      "term": "13-Week",
-      "type": "Bill",
-      "offering_amt": 95000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.99,
-      "indirect_pct": 58.6,
-      "dealer_pct": 23.1
     }
   ],
   "blackout": {

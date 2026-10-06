@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-05",
+  "report_date": "2026-10-06",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
@@ -8,30 +8,37 @@
       "industry": "Semiconductors",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": 2.12,
-          "close": 238.9,
-          "value": 30193241227.91
+          "name": "Broadcom (AVGO)",
+          "change_pct": 3.67,
+          "close": 375.81,
+          "value": 11579242305.65
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": 5.81,
+          "close": 287.01,
+          "value": 14697226087.69
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Systems Software",
+      "industry": "Broadline Retail",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Microsoft (MSFT)",
-          "change_pct": 1.48,
-          "close": 525.18,
-          "value": 13805884381.26
+          "name": "Amazon (AMZN)",
+          "change_pct": 1.95,
+          "close": 256.29,
+          "value": 8731214968.46
         }
       ]
     },
@@ -44,48 +51,60 @@
       ],
       "members": [
         {
-          "name": "Intel (INTC)",
-          "change_pct": -2.63,
-          "close": 116.19,
-          "value": 9408785566.47
+          "name": "Micron Technology (MU)",
+          "change_pct": -1.73,
+          "close": 1045.56,
+          "value": 22714875917.75
         },
         {
-          "name": "Micron Technology (MU)",
-          "change_pct": -1.02,
-          "close": 1063.96,
-          "value": 19021077196.66
+          "name": "Intel (INTC)",
+          "change_pct": -3.18,
+          "close": 112.5,
+          "value": 11444695537.5
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Application Software",
-      "direction": "up",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "PTC Inc. (PTC)",
-          "change_pct": 33.49,
-          "close": 192.26,
-          "value": 5676588233.13
+          "name": "Seagate Technology (STX)",
+          "change_pct": -9.18,
+          "close": 805.63,
+          "value": 5860893835.12
+        },
+        {
+          "name": "Western Digital (WDC)",
+          "change_pct": -6.93,
+          "close": 411.04,
+          "value": 5763273756.77
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Electric Utilities",
       "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Western Digital (WDC)",
-          "change_pct": 6.34,
-          "close": 441.64,
-          "value": 4975922713.84
+          "name": "Constellation Energy (CEG)",
+          "change_pct": 12.25,
+          "close": 300.4,
+          "value": 4048377767.35
+        },
+        {
+          "name": "Vistra Corp. (VST)",
+          "change_pct": 10.77,
+          "close": 160.5,
+          "value": 2902898016.0
         }
       ]
     }
