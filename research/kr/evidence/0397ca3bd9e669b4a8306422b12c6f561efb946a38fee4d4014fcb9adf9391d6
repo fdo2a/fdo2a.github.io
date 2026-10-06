@@ -1,0 +1,159 @@
+{
+ "source": "collect_kr_data.py 네이버 지수·업종·투자자별 순매수(당일 잠정)·KRX 종가·ECOS, kr/data 커밋 76eb0c8 (2026-10-06T09:12:40Z) 발췌",
+ "report_date": "2026-10-06",
+ "indices": {
+  "KOSPI": {
+   "close": 6941.39,
+   "change_pct": -0.89
+  },
+  "KOSDAQ": {
+   "close": 919.92,
+   "change_pct": 2.98
+  }
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_KOSPI_2026-10-06": {
+  "date": "2026-10-06",
+  "individual": 7533,
+  "foreign": -17655,
+  "institution": -34
+ },
+ "flows_KOSDAQ_2026-10-06": {
+  "date": "2026-10-06",
+  "individual": -2113,
+  "foreign": 1084,
+  "institution": 1049
+ },
+ "industry": {
+  "석유와가스": {
+   "name": "석유와가스",
+   "change_pct": 0.31,
+   "total": 19,
+   "rise": 9,
+   "breadth": 0.474,
+   "no": 313,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": "좁은 상승·개별종목"
+  },
+  "전기제품": {
+   "name": "전기제품",
+   "change_pct": 6.07,
+   "total": 69,
+   "rise": 57,
+   "breadth": 0.826,
+   "no": 283,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  "전자장비와기기": {
+   "name": "전자장비와기기",
+   "change_pct": 6.38,
+   "total": 105,
+   "rise": 75,
+   "breadth": 0.714,
+   "no": 282,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  "소프트웨어": {
+   "name": "소프트웨어",
+   "change_pct": 6.66,
+   "total": 74,
+   "rise": 54,
+   "breadth": 0.73,
+   "no": 287,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  "화학": {
+   "name": "화학",
+   "change_pct": 4.96,
+   "total": 122,
+   "rise": 76,
+   "breadth": 0.623,
+   "no": 272,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  }
+ },
+ "movers_g1": {
+  "id": "g1",
+  "industry": "반도체와반도체장비",
+  "direction": "down",
+  "reasons": [
+   "지수 기여 하위"
+  ],
+  "members": [
+   {
+    "name": "SK하이닉스",
+    "change_pct": -3.69,
+    "close": 1773000,
+    "value": 4833770
+   },
+   {
+    "name": "삼성전자",
+    "change_pct": -1.45,
+    "close": 272000,
+    "value": 3495473
+   }
+  ]
+ },
+ "econ": {
+  "국고채 3년": {
+   "value": 3.933,
+   "date": "2026-10-06",
+   "unit": "연%",
+   "item_name": "국고채(3년)",
+   "prev": 3.937,
+   "prev_date": "2026-10-02",
+   "bp": -0.4
+  },
+  "국고채 10년": {
+   "value": 4.369,
+   "date": "2026-10-06",
+   "unit": "연%",
+   "item_name": "국고채(10년)",
+   "prev": 4.365,
+   "prev_date": "2026-10-02",
+   "bp": 0.4
+  },
+  "회사채 AA- 3년": {
+   "value": 4.636,
+   "date": "2026-10-06",
+   "unit": "연%",
+   "item_name": "회사채(3년, AA-)",
+   "prev": 4.638,
+   "prev_date": "2026-10-02",
+   "bp": -0.2
+  }
+ },
+ "us_prev": {
+  "as_of": "2026-10-05",
+  "rows": {
+   "S&P 500": 0.66,
+   "Nasdaq": 1.05,
+   "Dow": 0.18
+  },
+  "lag_sessions": 1
+ },
+ "us_session_2026-10-05": {
+  "US10Y_level": 5.311,
+  "US10Y_bp": 3.4,
+  "WTI_pct": -2.14,
+  "source": "data/market_data.json 커밋 b96efac (report_date 2026-10-05)"
+ },
+ "us_session_2026-10-02": {
+  "US10Y_level": 5.277,
+  "US10Y_bp": 4.3,
+  "WTI_pct": -1.73,
+  "source": "data/market_data.json 커밋 e4442f3 (report_date 2026-10-02)"
+ }
+}
