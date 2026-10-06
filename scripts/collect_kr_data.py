@@ -310,6 +310,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
         f.write(sector_html)
 
     # 「오늘의 장」 재료. 비-코어 — 실패해도 나머지 산출물은 나간다.
+    session_ctx = None
     try:
         from kr import session as kr_session
         md = None
@@ -351,7 +352,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
             pass
 
         kospi_pct = (indices.get("KOSPI") or {}).get("change_pct")
-        _write(outdir, "kr_session.json", {
+        session_ctx = {
             "report_date": report_date,
             "us_prev": kr_session.us_prev(md, report_date),
             "us_futures_during_kr": {
@@ -359,10 +360,27 @@ def main(outdir: str, assetdir: str = "kr/assets"):
                 for lab, t in kr_session.FUTURES},
             "asia_peers": kr_session.asia_peers(peers, kospi_pct),
             "usdkrw_intraday": kr_session.usdkrw_window(fx_bars, report_date),
-        })
+        }
+        _write(outdir, "kr_session.json", session_ctx)
         print(f"session: 아시아 {len(peers)}종 / 미국 선물 {len(fut)}종")
     except Exception as e:
         print(f"kr session failed: {e}")
+
+    # 펀드 참고 블록 — 같은 실행의 메모리 객체로만 조립한다(새 요청 없음). 비-코어:
+    # JSON 은 늘 쓰고, 그릴 수 없는 날은 HTML 을 지운다.
+    from fund import publish as fund_publish
+    generated = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M KST")
+    try:
+        from fund import kr_view
+        view = kr_view.build(report_date, session_ctx, econ, industry, moves, generated)
+        fund_publish.write(outdir, "kr_fund_view.json", "kr_fund_view.html", view,
+                           kr_view.html(view))
+        print(f"fund view: {view['status']} · 관측 {len(view['observations'])}건"
+              + (f" · missing {view['missing']}" if view["missing"] else ""))
+    except Exception as e:
+        print(f"fund view failed: {e}", file=sys.stderr)
+        fund_publish.write(outdir, "kr_fund_view.json", "kr_fund_view.html",
+                           fund_publish.failed(report_date, generated, e), None)
 
     print(f"report_date={report_date} complete={ok} missing={missing} "
           f"flows_date={market['flows_date']}")

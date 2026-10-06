@@ -462,3 +462,18 @@ def test_japan_gates_read_the_publish_evidence():
     assert cmd[cmd.index('--key') + 1] == '2026-W40'
     assert cmd[cmd.index('--datadir') + 1] == '/ev/japan/data'
     assert 'check_period.py' not in g_
+
+
+def test_fund_gate_failure_is_not_excused_by_the_original_failing_too():
+    from review import style_pass as sp
+    same = (1, 'FAIL 생성 블록이 오늘 자료로 다시 그린 것과 다르다')
+    assert sp.judge({'check_fund.py': same}, {'check_fund.py': same})
+    assert sp.judge({'check_weight.py': same}, {'check_weight.py': same}) == []
+
+
+def test_fund_gate_runs_on_both_daily_markets():
+    from review import style_pass as sp
+    for section in ('us', 'kr'):
+        cmds = sp.gate_commands(section, 'p.html', 'd', 'o.html', '2026-10-08', None)
+        fund = [c for c in cmds if c[1].endswith('check_fund.py')]
+        assert len(fund) == 1 and '--date' in fund[0] and section in fund[0]

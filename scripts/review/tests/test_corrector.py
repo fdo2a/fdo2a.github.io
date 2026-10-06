@@ -37,7 +37,7 @@ def setup(tmp_path, monkeypatch):
     scripts = root / 'scripts'
     scripts.mkdir()
     for name in ('macro', 'fed', 'weight', 'price_context',
-                 'session', 'movers', 'readability', 'style'):
+                 'session', 'movers', 'fund', 'readability', 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
 assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
@@ -85,8 +85,8 @@ def test_success_keeps_user_checkout(setup):
     assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
-    # Eight gates on the original (baseline) and the same eight on the correction.
-    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 16
+    # Nine gates on the original (baseline) and the same nine on the correction.
+    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 18
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -287,3 +287,39 @@ def test_kr_correction_may_not_hide_grade_talk_in_a_news_block():
     new = old.replace('</section>', '<div data-news="fake"><p>위험 노출은 유지한다.</p></div></section>')
     with pytest.raises(RuntimeError, match='exposure-grade'):
         _no_new_grade_talk(old, new)
+
+
+def test_fund_gate_failure_is_never_tolerated_even_if_original_failed():
+    from scripts.review import corrector
+    assert 'check_fund.py' in corrector.NEVER_TOLERATE
+    assert 'fund' in corrector.US_DATADIR_GATES and 'fund' in corrector.KR_DATADIR_GATES
+
+
+_FUND_STUB = '''import sys
+html = open(sys.argv[sys.argv.index('--html') + 1]).read()
+raise SystemExit('FAIL fund block mismatch' if {bad!r} in html else 0)
+'''
+
+
+def test_fund_failure_on_original_is_handed_over_as_must_fix(setup):
+    """원본이 check_fund 에 걸려도 정정은 시작한다 — 다만 「기존 실패」가 아니라 고칠 대상이다."""
+    root, remote, item, exe = setup
+    (root / 'scripts/check_fund.py').write_text(_FUND_STUB.format(bad='old'))
+    _counting(exe, "assert 'MUST pass after your correction: check_fund.py' in prompt\n"
+                   "assert 'before any correction: none' in prompt\n"
+                   "assert '--print-block' in prompt and '--market us' in prompt\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert (exe.parent / 'claude-called').exists()
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+
+
+def test_fund_failure_that_survives_correction_blocks(setup):
+    root, remote, item, exe = setup
+    (root / 'scripts/check_fund.py').write_text(_FUND_STUB.format(bad='<p>'))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error and 'check_fund.py' in error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'

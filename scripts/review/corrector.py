@@ -40,8 +40,11 @@ def _git(root, *args):
 # 2026-09-22 stance/portfolio 은퇴(c7f6540)가 두 게이트 스크립트를 지웠는데 여기 목록에
 # 남아, US 정정이 매번 「required gate missing」으로 죽었다. 목록은 test_corrector 가
 # 실제 scripts/ 와 대조한다.
-US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'session', 'movers')
-KR_DATADIR_GATES = ('session', 'weight', 'movers')
+US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'session', 'movers', 'fund')
+KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund')
+# 원본에서 이미 실패했어도 정정본에서 허용하지 않는 게이트. check_fund 는 적용일 이전 글을
+# 통과시키므로, 적용일 이후 글의 실패는 「원래 그랬다」가 아니라 막아야 할 결함이다.
+NEVER_TOLERATE = frozenset(['check_fund.py'])
 _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
                                             US_DATADIR_GATES + KR_DATADIR_GATES)])
@@ -198,6 +201,9 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
                 tar.extractall(baseline, filter='data')
             _, preexisting = _gates(root, clone, item, baseline, min(timeout, 180),
                                     allowed=_ALL_GATES)
+            # A fund-gate failure on the original is a defect to fix, not a pass.
+            tolerated = [g for g in preexisting if g not in NEVER_TOLERATE]
+            must_fix = [g for g in preexisting if g in NEVER_TOLERATE]
             skill = (root / '.claude/REVIEW_GATE.md').read_text()
             prompt = f'''Complete the authorized unattended post-publication correction.
 Target: {item.path}, reviewed blob: {item.sha}.
@@ -218,8 +224,13 @@ when only marking. Exit 1 is acceptable ONLY when every reported issue is an int
 numeric correction justified by the original evidence; explain each numeric delta.
 Any unrelated delta, markup/layout/unfinished-marker issue or other gate failure
 means stop with an error, without marking or committing.
-These gates ALREADY FAIL on the original post, before any correction: {', '.join(preexisting) or 'none'}.
+These gates ALREADY FAIL on the original post, before any correction: {', '.join(tolerated) or 'none'}.
 They are not a stop condition and not your task — do not run, study or try to satisfy them.
+These gates fail on the original and MUST pass after your correction: {', '.join(must_fix) or 'none'}.
+For check_fund.py, never hand-edit the generated fund block. If it reports the block differs,
+replace the WHOLE block with the exact stdout of
+python3 scripts/check_fund.py --html {item.path} --datadir {evidence / datadir} --market {item.section} --print-block
+Otherwise fix only the data-fund paragraphs, markers and section placement it reports.
 Allowed tracked changes: {item.path}, reviews/index.json, and {index} ONLY if its
 matching dated title/headline needs to follow a corrected heading. Preserve all
 other index entries and ledger entries. After confirming corrections and gates,
@@ -288,7 +299,7 @@ END CODEX FINDINGS
             with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
                 tar.extractall(gate_evidence, filter='data')
             report, _ = _gates(root, clone, item, gate_evidence, min(timeout, 180),
-                               allowed=preexisting)
+                               allowed=tolerated)
             output += '\n\nIndependent gate replay:\n' + report
             if item.section == 'kr':
                 _no_new_grade_talk(_git(clone, 'show', f'{base}:{item.path}'),

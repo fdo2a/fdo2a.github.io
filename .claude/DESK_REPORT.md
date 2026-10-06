@@ -1,9 +1,13 @@
 # Editorial mandate — market coverage and decision research
 
 Read before collecting, writing or reviewing a new US/KR daily, weekly or monthly
-report. The reader is a hedge-fund manager. The report serves as their S&T sales
-and research team: explain the market, identify consequential differences in
-expectations, and connect supported analysis to possible investment decisions.
+report. The reader is the portfolio manager of a **tactical global-equity fund run
+on trend units** (2026-10-06 user decision: "the US and KR reports exist to deliver
+the market information needed to run that fund — keep doing what you do, but make it
+read as the reference material such a manager uses"). The report serves as their S&T
+sales and research team: explain the market, identify consequential differences in
+expectations, and connect supported analysis to the decisions that strategy makes.
+Keep the existing sections and coverage; change the orientation, not the structure.
 This mandate applies to future reports only. Keep published reports unchanged.
 US and KR prose uses the `-다` register throughout (2026-09-24), including
 news summaries; the shell declares `<body data-register="da">` and `check_style.py`
@@ -24,11 +28,37 @@ blocks mixed endings, rhetorical Q&A, workflow vocabulary and 「국채 급등�
   practical limitations and reasons to wait. This is an editorial role, not a claim
   of access to customer orders, dealer inventory, live executable quotes or a
   real sales desk. Attribute public flow data and distinguish turnover from flows.
-- **Manager:** owns the investment decision. No actual holdings, mandate, leverage,
-  liquidity budget, hedges, risk limits or portfolio weights have been supplied.
-  Until supplied, frame asset-level views and conditional ideas, with a horizon
-  justified by the catalyst. Do not invent the reader's exposure or assume that
-  an idea is suitable for their portfolio. No automatic order or portfolio update.
+- **Manager:** owns the investment decision. The strategy is known (below); actual
+  holdings, unit weights, hedges, risk limits and leverage have **not** been
+  supplied. Frame asset-level views and conditional ideas with a horizon justified
+  by the catalyst. Do not invent the reader's exposure or assume an idea suits
+  their book. **Policy (2026-10-06): no recommendation to add, weight, buy or sell a
+  trend unit** — say how an event changes a candidate's price case and what would
+  falsify that. No automatic order or portfolio update.
+
+## The fund this report serves
+
+Overseas equities up to 100%, the rest in KRW cash / short-duration bonds. Ideas are
+top-down themes expected to drive the next ~3 months, each implemented as a basket
+screened from a **reference index**, held with a preset target, a loss-cut (half at
+the midpoint) and a 3-month time stop, then rotated. The manager's cycle and where
+the report feeds it:
+
+| Stage | What the manager needs | Where the report gives it |
+|---|---|---|
+| 1 Macro scorecard | growth, inflation, policy, liquidity; cross-asset (real rates, credit, FX, commodities, sentiment) | 매크로 section; liquidity and risk signals on the fund board |
+| 2 Market regime | bull / range / short-term bear / long-term bear | fund board (price-based, says so) |
+| 3 Trend-unit candidates | which themes' price case strengthened or weakened, and why | fund board ranks; 전략 코멘트; 주목 섹터·종목 named against the theme they bear on |
+| 4 Stock selection | factor screens inside the reference index | **not covered** — do not imitate it |
+| 5 Risk / rotation | volatility, VaR, correlation, what would end an idea | fund board risk columns; invalidation paragraphs |
+| KR session | KRW, cash-sleeve reference rates, Asian-hours observations on US candidates | KR 「아시아 세션 유닛 관측」 and 환율·금리 |
+
+When an existing section's fact bears on a candidate theme (semis, software, grid,
+industrials, defense, metals, financials, energy, defensives, regions), name the
+theme and say whether the evidence strengthens or weakens its price case. Market
+coverage still comes first (rule 6); this is orientation, not a second report. The
+fund board's numbers are price-based and the ETF VaR is not a unit's risk — never
+turn them into a target or loss-cut width.
 
 ## Daily reading path
 

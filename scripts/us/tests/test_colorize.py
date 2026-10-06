@@ -234,3 +234,10 @@ def test_trend_and_vs_prev_cells_themselves_are_not_painted():
     out = C.apply(_doc(MACRO_VS))
     assert _cls(out, '직전 대비') == [None] * 5
     assert _cls(out, '추세') == [None] * 5
+
+
+def test_fund_sections_are_left_alone():
+    body = ('<h2>트렌드 유닛 점검</h2>' + _table(_row(('전일 대비', '+0.42%')))
+            + '<h2>아시아 세션 유닛 관측</h2>' + _table(_row(('전일 대비', '-1.10%'))))
+    doc = _doc(body)
+    assert C.paint(doc) == doc

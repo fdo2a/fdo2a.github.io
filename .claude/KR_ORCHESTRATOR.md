@@ -81,9 +81,11 @@ python3 scripts/check_weight.py   --html <kr_brief 절대경로> --datadir kr/da
 python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json
 python3 scripts/check_news.py    --html <kr_brief 절대경로> --datadir kr/data --market kr --date <DATE>
 python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
+python3 scripts/check_fund.py    --html <kr_brief 절대경로> --datadir kr/data --market kr
 ```
 
 - `check_weight.py` 의 KR 계약: 시황·가격군 하한 2,200자, **판단군(전략 코멘트·기술적 분석) 하한 1,800자**, 가격 섹션의 `data-standing`, 가격 섹션의 스탠스 등급 어휘 금지.
+- `check_fund.py` — `kr/data/kr_fund_view.json` 의 `status` 가 `ok`·`partial` 이고 날짜가 오늘이면 「아시아 세션 유닛 관측」 섹션이 있어야 하고, 그 밖에는 없어야 한다. 블록(`kr_fund_view.html`)은 그대로 넣는다.
 - `check_kr_stance.py` 는 비-코어가 아니다 — 원장이 틀어지면 다음 회차의 복기가 통째로 거짓이 된다.
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**

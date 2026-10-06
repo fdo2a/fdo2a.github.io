@@ -28,6 +28,7 @@ _MARK_RE = re.compile(r'⟦(\d+)⟧')
 _P_RE = re.compile(r'<p\b([^>]*)>(.*?)</p>', re.S)
 _TAG_RE = re.compile(r'</?[a-zA-Z][^>]*>')
 _NUM_RE = re.compile(r'[+\-−]?\d[\d,]*(?:\.\d+)?%?')
+_FUND_START = re.compile(r'<div\b[^>]*\bdata-fund-(?:board|kr)=', re.I)
 _BLOCK_RE = re.compile(r'<(table|section)\b[^>]*>.*?</\1>', re.S)
 _ID_RE = re.compile(r'^\[\[(P\d{3})\]\]\s*$')
 # 산문에 나올 일이 없는 마크다운 문법 — 하나라도 보이면 그건 윤문이 아니라 재조판이다.
@@ -78,12 +79,15 @@ def _balanced_div(html, start):
 
 
 def _skip_spans(html):
-    """뽑지 않을 구역 — 표 안, 에디터 노트 안, 연준 인용·변경점 블록 안."""
+    """뽑지 않을 구역 — 표 안, 에디터 노트 안, 연준 인용·변경점 블록 안, 펀드 생성 블록 안."""
     spans = []
     for m in _BLOCK_RE.finditer(html):
         if m.group(1) == 'table' or 'data-editor-note' in m.group(0)[:400] or 'data-research-summary' in m.group(0).split('>', 1)[0]:
             spans.append((m.start(), m.end()))
     for m in _FED_START.finditer(html):
+        spans.append((m.start(), _balanced_div(html, m.start())))
+    # 펀드 점검판·KR 참고 블록은 생성물이다 — 게이트가 다시 그려 바이트로 대조한다.
+    for m in _FUND_START.finditer(html):
         spans.append((m.start(), _balanced_div(html, m.start())))
     spans.extend(_research_summaries(html))
     return spans

@@ -190,6 +190,9 @@ jobs:
           git add data/movers.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/scorecard.json 2>/dev/null || true
+          # 점검판: JSON 은 늘 있고, HTML 은 그릴 수 없는 날 지워진다 — -A 로 삭제까지 담는다.
+          git add data/fund_board.json 2>/dev/null || true
+          git add -A data/fund_board.html 2>/dev/null || true
           git add data/calendar.json 2>/dev/null || true
           git add data/fomc_dates.json 2>/dev/null || true
           git add data/releases 2>/dev/null || true

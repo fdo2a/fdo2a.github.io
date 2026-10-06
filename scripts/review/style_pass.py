@@ -151,6 +151,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_sources.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_calendar.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],
+            [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'us',
+             '--date', date],
         ]
         market = 'us'
     else:
@@ -162,6 +164,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_news.py', '--html', post, '--datadir', datadir, '--market', 'kr',
              '--date', date],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
+            [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'kr',
+             '--date', date],
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout'],
         ]
         market = 'kr'
@@ -213,6 +217,10 @@ def run_gates(cwd, cmds, timeout):
     return out
 
 
+# 원본도 실패했다는 이유로 넘기지 않는 게이트 — corrector.NEVER_TOLERATE 와 같은 뜻.
+NEVER_TOLERATE = frozenset(['check_fund.py'])
+
+
 def judge(baseline, after):
     """거부 이유 목록 — 비면 통과."""
     bad = []
@@ -220,7 +228,7 @@ def judge(baseline, after):
         if code == 0:
             continue
         was = baseline.get(name)
-        if was and was[0] != 0 and was == (code, text):
+        if was and was[0] != 0 and was == (code, text) and name not in NEVER_TOLERATE:
             continue   # 원본에서도 똑같이 실패한다 — 윤문이 만든 실패가 아니다
         bad.append(f'{name} 실패 (종료 {code}): {text[-300:]}')
     return bad

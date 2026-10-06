@@ -167,8 +167,10 @@ def collect_histories():
     # 「오늘의 장」의 글로벌 지수·참여도 다리도 여기서 함께 받는다. GROUPS에 넣으면
     # completeness()가 코어로 취급해 도쿄·홍콩 휴장일에 발행이 멈춘다.
     from us.session import HISTORY_TICKERS as SESSION_TICKERS
+    # 트렌드 유닛 점검판의 참조 ETF 도 같은 다운로드에 얹는다(티커별 요청은 늘어난다).
+    from fund.universe import tickers as fund_tickers
     tickers = sorted(set(SCORECARD_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
-                     | {t for _, t in SECTORS})
+                     | {t for _, t in SECTORS} | set(fund_tickers()))
 
     def dl():
         df = yf.download(tickers, period='3y', interval='1d', group_by='ticker',
@@ -1005,6 +1007,37 @@ def main():
               f"야간 선물 {len(sess['futures']['contracts'])}종")
     except Exception as e:
         print(f'session context failed: {e}', file=sys.stderr)
+
+    # 트렌드 유닛 점검판 — 비-코어. JSON 은 실패해도 쓰고(unavailable), HTML 은 그릴 수
+    # 있을 때만 남긴다. 어제 블록이 오늘 것으로 읽히는 길을 막는다.
+    print('building fund board...')
+    from fund import publish as fund_publish
+    try:
+        from fund import core as fund_core, render as fund_render
+        from fund.liquidity import SERIES as LIQ_SERIES
+        liq_series = {}
+        for sid in LIQ_SERIES:
+            try:
+                got = retry(lambda sid=sid: fred_series(sid), attempts=2)
+                if got:
+                    liq_series[sid] = got
+            except Exception as e:
+                print(f'  liquidity {sid} failed: {e}', file=sys.stderr)
+            time.sleep(0.3)
+        from fund.calendar import load as load_holidays
+        board = fund_core.build(closes, hist_dates, data, liq_series, report_date,
+                                data['generated'],
+                                holidays=load_holidays(os.path.join(args.outdir, 'market_holidays.json')))
+        fund_publish.write(args.outdir, 'fund_board.json', 'fund_board.html', board,
+                           fund_render.board_html(board))
+        mr = board.get('market_regime') or {}
+        print(f"  status {board['status']} · 국면 {mr.get('name')} · "
+              f"순위 {(board.get('rank_basis') or {}).get('n')}종"
+              + (f" · missing {board['missing']}" if board['missing'] else ''))
+    except Exception as e:
+        print(f'fund board failed: {e}', file=sys.stderr)
+        fund_publish.write(args.outdir, 'fund_board.json', 'fund_board.html',
+                           fund_publish.failed(report_date, data['generated'], e, universe=True), None)
 
     print('scoring the macro record...')
     try:

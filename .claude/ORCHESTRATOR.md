@@ -50,6 +50,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
+   - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok`·`partial` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다). HTML 은 그대로 넣는 생성 블록이다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
    - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
@@ -116,8 +117,10 @@ python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadi
 python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_movers.py        --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadir <workspace> --market us
 ```
 
+- `check_fund.py` — 생성 블록은 다시 그린 것과 바이트가 같아야 한다. 블록 안을 고치지 말고, 해석 문단(`data-fund`)만 고친다. 「편입·비중 확대·매수하」 같은 권고 어휘가 섹션에 있으면 막힌다.
 - `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
 - 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 
@@ -189,7 +192,7 @@ Send a PushNotification with the headline and the blog post URL, plus the 뉴스
 이미 발행된 글의 재작성 금지 가드는 그대로 유지한다. 정정은 로컬 러너가 맡는다.
 
 ## RULES
-- All prices/% changes in the published report MUST come from market_data.json / intraday.json; macro indicator values from research_notes.md. 수치 창작 절대 금지.
+- All prices/% changes in the published report MUST come from market_data.json / intraday.json; macro indicator values from research_notes.md. **Exception: the 「트렌드 유닛 점검」 block and its `data-fund` paragraphs take figures from the same day's `fund_board.json`** (the reference ETFs are not in market_data.json). 수치 창작 절대 금지.
 - **완성본만 발행 (2026-07-14 사용자 지시)**: 핵심 표(지수·섹터·채권·FX·원자재; 뉴스·산업 브리프는 메모리·AI 인프라)에 누락 항목이 있는 채로 발행 금지 — 메모리·AI 인프라가 비면 뉴스·산업 브리프만 싣지 않고 시황 브리프는 발행한다. 완성 불가 시 발행하지 말고 PushNotification으로 누락 내역을 보고할 것. 웹 리서치로 대체 수집한 시세는 발행 전 반드시 복수 출처 교차 확인 — 단일 검색 결과 수치는 신뢰하지 않는다 (7/13호에서 FX 방향·유가 등락률 오류 발생 전례).
 - **발행본에 [확인필요] 금지 (STEP 2 게이트).** 미확인 항목은 끝까지 확인하거나 삭제·재구성.
 - Web findings attributed to sources. Clear, natural report prose (근거와 판단이 분명한 자연스러운 보고서 문체).

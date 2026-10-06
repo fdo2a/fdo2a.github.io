@@ -78,6 +78,8 @@ MACRO_SECTION = '매크로'
 # 발행된 글에 조판기를 다시 돌리고, 그 글들에는 아직 그 표가 있다. 지우면 옛 발행본의
 # 「▼1단계」가 초록으로 칠해진다.
 SKIP_SECTION = '멀티에셋'
+# 펀드 섹션의 표는 생성 블록이다 — 게이트가 다시 그려 바이트로 대조하므로 칠하지 않는다.
+FUND_SECTIONS = ('트렌드 유닛 점검', '아시아 세션 유닛 관측')
 
 _H2 = re.compile(r'(?is)<h2\b[^>]*>(.*?)</h2>')
 _TD = re.compile(r'(?is)<td\b([^>]*)>(.*?)</td>')
@@ -240,7 +242,7 @@ def paint(html):
     out, cursor = [], 0
     for title, start, end in _sections(mask):
         out.append(html[cursor:start])
-        if SKIP_SECTION in title:
+        if SKIP_SECTION in title or title in FUND_SECTIONS:
             out.append(html[start:end])
         else:
             out.append(_repaint_rows(html, mask, start, end,

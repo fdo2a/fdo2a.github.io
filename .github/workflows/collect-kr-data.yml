@@ -80,6 +80,7 @@ jobs:
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add kr/data/*.json kr/data/kr_sector.html
+          git add -A kr/data/kr_fund_view.html 2>/dev/null || true
           # 차트는 날짜별로 kr/assets/ 에 나간다 — 발행본이 ../assets/ 로 참조한다.
           git add kr/assets/*.png 2>/dev/null || true
           git add kr/data/history 2>/dev/null || true

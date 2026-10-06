@@ -502,3 +502,14 @@ def test_실제_KR_W39_의_연구_요약은_추출되지_않는다():
     html = open(path, encoding='utf-8').read()
     text, _ = extract(html)
     assert '검토 대상' not in text
+
+
+def test_펀드_점검판_블록_안_문단은_뽑지_않는다():
+    html = ('<html><body><h2>트렌드 유닛 점검</h2>'
+            '<div class="fund-board" data-fund-board="abc"><div class="fb-card">'
+            '<p class="fb-line">순유동성 5,894십억 달러</p></div></div>'
+            '<div class="fund-kr" data-fund-kr="def"><p class="fk-line">원/달러 1,350.78원</p></div>'
+            '<p data-fund="shift" data-units="semis">반도체는 3.9% 올랐다.</p></body></html>')
+    text, side = payload_of(html)
+    assert sorted(side['items']) == ['P001']
+    assert '순유동성' not in text and '원/달러' not in text
