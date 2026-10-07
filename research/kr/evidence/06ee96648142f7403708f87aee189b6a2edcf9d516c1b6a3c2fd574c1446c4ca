@@ -1,0 +1,357 @@
+{
+ "source": "collect_kr_data.py 네이버 지수·업종·투자자별 순매수(당일 잠정)·KRX 종가·ECOS, kr/data 커밋 f20ffe4 (2026-10-07T09:12:36Z) 발췌; 미국 세션 값은 data/market_data.json 커밋 f93bd91",
+ "report_date": "2026-10-07",
+ "indices": {
+  "KOSPI": {
+   "close": 6803.9,
+   "change_pct": -1.98
+  },
+  "KOSDAQ": {
+   "close": 898.43,
+   "change_pct": -2.34
+  }
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_KOSPI_last3": [
+  {
+   "date": "2026-10-07",
+   "individual": 26028,
+   "foreign": -26104,
+   "institution": -7013
+  },
+  {
+   "date": "2026-10-06",
+   "individual": 7441,
+   "foreign": -17575,
+   "institution": -39
+  },
+  {
+   "date": "2026-10-02",
+   "individual": -17897,
+   "foreign": -1080,
+   "institution": 4155
+  }
+ ],
+ "flows_KOSDAQ_last3": [
+  {
+   "date": "2026-10-07",
+   "individual": 4984,
+   "foreign": -2564,
+   "institution": -2149
+  },
+  {
+   "date": "2026-10-06",
+   "individual": -2111,
+   "foreign": 1073,
+   "institution": 1047
+  },
+  {
+   "date": "2026-10-02",
+   "individual": 841,
+   "foreign": -1767,
+   "institution": 936
+  }
+ ],
+ "industry": {
+  "반도체와반도체장비": {
+   "name": "반도체와반도체장비",
+   "change_pct": -1.96,
+   "total": 172,
+   "rise": 31,
+   "breadth": 0.18,
+   "no": 278,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": ""
+  },
+  "석유와가스": {
+   "name": "석유와가스",
+   "change_pct": 0.47,
+   "total": 19,
+   "rise": 13,
+   "breadth": 0.684,
+   "no": 313,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  "전기제품": {
+   "name": "전기제품",
+   "change_pct": -1.32,
+   "total": 68,
+   "rise": 11,
+   "breadth": 0.162,
+   "no": 283,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": ""
+  },
+  "화장품": {
+   "name": "화장품",
+   "change_pct": 3.62,
+   "total": 64,
+   "rise": 46,
+   "breadth": 0.719,
+   "no": 266,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  }
+ },
+ "movers_groups": [
+  {
+   "id": "g1",
+   "industry": "반도체와반도체장비",
+   "direction": "down",
+   "reasons": [
+    "지수 기여 하위",
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "SK하이닉스",
+     "change_pct": -2.82,
+     "close": 1723000,
+     "value": 4449317
+    },
+    {
+     "name": "삼성전자",
+     "change_pct": -1.29,
+     "close": 268500,
+     "value": 4405802
+    },
+    {
+     "name": "이수페타시스",
+     "change_pct": -7.51,
+     "close": 122000,
+     "value": 168745
+    }
+   ]
+  },
+  {
+   "id": "g2",
+   "industry": "화장품",
+   "direction": "up",
+   "reasons": [
+    "지수 기여 상위",
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "에이피알",
+     "change_pct": 4.99,
+     "close": 379000,
+     "value": 138585
+    },
+    {
+     "name": "한국화장품제조",
+     "change_pct": 11.9,
+     "close": 16830,
+     "value": 97967
+    }
+   ]
+  },
+  {
+   "id": "g3",
+   "industry": "석유와가스",
+   "direction": "up",
+   "reasons": [
+    "지수 기여 상위"
+   ],
+   "members": [
+    {
+     "name": "S-Oil",
+     "change_pct": 3.21,
+     "close": 170600,
+     "value": 64009
+    }
+   ]
+  },
+  {
+   "id": "g4",
+   "industry": "전기장비",
+   "direction": "down",
+   "reasons": [
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "효성중공업",
+     "change_pct": -7.8,
+     "close": 2588000,
+     "value": 372957
+    },
+    {
+     "name": "LS ELECTRIC",
+     "change_pct": -5.52,
+     "close": 205500,
+     "value": 183182
+    },
+    {
+     "name": "가온전선",
+     "change_pct": -6.27,
+     "close": 306500,
+     "value": 163395
+    },
+    {
+     "name": "HD현대일렉트릭",
+     "change_pct": -8.05,
+     "close": 628000,
+     "value": 150130
+    },
+    {
+     "name": "대한전선",
+     "change_pct": -6.14,
+     "close": 29800,
+     "value": 117581
+    },
+    {
+     "name": "LS",
+     "change_pct": -6.51,
+     "close": 280000,
+     "value": 92871
+    }
+   ]
+  },
+  {
+   "id": "g5",
+   "industry": "전자제품",
+   "direction": "down",
+   "reasons": [
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "LG전자",
+     "change_pct": -10.54,
+     "close": 208000,
+     "value": 389532
+    }
+   ]
+  }
+ ],
+ "session": {
+  "report_date": "2026-10-07",
+  "us_prev": {
+   "as_of": "2026-10-06",
+   "rows": {
+    "S&P 500": 0.58,
+    "Nasdaq": 0.45,
+    "Dow": 0.49
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": -0.13,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.16,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -0.92,
+    "항셍": -0.62,
+    "상해종합": 0.31,
+    "대만가권": -0.03
+   },
+   "dates": {
+    "닛케이": "2026-10-07",
+    "항셍": "2026-10-07",
+    "상해종합": "2026-09-30",
+    "대만가권": "2026-10-07"
+   },
+   "avg_pct": -0.32,
+   "relative_pp": -1.67
+  },
+  "usdkrw_intraday": {
+   "high": 1341.28,
+   "high_t": "11:00",
+   "low": 1337.1,
+   "low_t": "10:00",
+   "close": 1338.78,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "econ": {
+  "국고채 3년": {
+   "value": 3.961,
+   "date": "2026-10-07",
+   "unit": "연%",
+   "item_name": "국고채(3년)",
+   "prev": 3.933,
+   "prev_date": "2026-10-06",
+   "bp": 2.8
+  },
+  "국고채 10년": {
+   "value": 4.376,
+   "date": "2026-10-07",
+   "unit": "연%",
+   "item_name": "국고채(10년)",
+   "prev": 4.369,
+   "prev_date": "2026-10-06",
+   "bp": 0.7
+  },
+  "CD 91일": {
+   "value": 3.24,
+   "date": "2026-10-07",
+   "unit": "연%",
+   "item_name": "CD(91일)",
+   "prev": 3.24,
+   "prev_date": "2026-10-06",
+   "bp": 0.0
+  },
+  "회사채 AA- 3년": {
+   "value": 4.644,
+   "date": "2026-10-07",
+   "unit": "연%",
+   "item_name": "회사채(3년, AA-)",
+   "prev": 4.636,
+   "prev_date": "2026-10-06",
+   "bp": 0.8
+  },
+  "한국은행 기준금리": {
+   "value": 3.0,
+   "date": "2026-09",
+   "unit": "연%",
+   "item_name": "한국은행 기준금리",
+   "prev": 3.0,
+   "prev_date": "2026-08",
+   "bp": 0.0
+  }
+ },
+ "us_prev_session": {
+  "report_date": "2026-10-06",
+  "10Y": {
+   "level": 5.271,
+   "date": "2026-10-06",
+   "bp": -4.0000000000000036,
+   "week_ago": 5.255,
+   "week_ago_date": "2026-09-29",
+   "source": "Naver"
+  },
+  "WTI": {
+   "last": 89.91000366210938,
+   "chg": 0.48000335693359375,
+   "pct": 0.5367363919217327,
+   "date": "2026-10-06"
+  },
+  "Brent": {
+   "last": 101.0999984741211,
+   "chg": 0.779998779296875,
+   "pct": 0.7775107472783649,
+   "date": "2026-10-06"
+  }
+ }
+}
