@@ -1,5 +1,29 @@
 {
-  "report_date": "2026-10-06",
-  "events": [],
+  "report_date": "2026-10-07",
+  "events": [
+    {
+      "key": "fomc-minutes-20261007",
+      "kind": "fomc_minutes",
+      "kind_ko": "FOMC 의사록",
+      "tier": 2,
+      "date": "2026-10-07",
+      "title": "Minutes of the Federal Open Market Committee, September 15-16, 2026",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm",
+      "speaker": null,
+      "role": null,
+      "first_seen": "2026-10-07",
+      "fresh": true,
+      "sources": [
+        {
+          "role": "primary",
+          "label": "FOMC 의사록",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm",
+          "ok": true,
+          "note": "impersonate=safari",
+          "chars": 9418
+        }
+      ]
+    }
+  ],
   "diff": null
 }

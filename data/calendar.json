@@ -1,36 +1,8 @@
 {
-  "report_date": "2026-10-06",
-  "generated": "2026-10-07 08:41 KST",
+  "report_date": "2026-10-07",
+  "generated": "2026-10-08 08:42 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261007-17-Week",
-      "kind": "auction",
-      "name_ko": "17-Week 국채 입찰 750억 달러",
-      "date": "2026-10-07",
-      "time_et": "11:30",
-      "time_kst": "2026-10-08 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261007-10-Year",
-      "kind": "auction",
-      "name_ko": "10-Year 국채 입찰 390억 달러",
-      "date": "2026-10-07",
-      "time_et": "13:00",
-      "time_kst": "2026-10-08 02:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "auction-20261008-4-Week",
       "kind": "auction",
@@ -132,6 +104,26 @@
   ],
   "recent_auctions": [
     {
+      "date": "2026-10-07",
+      "term": "10-Year",
+      "type": "Note",
+      "offering_amt": 39000000000.0,
+      "high_yield": 5.3,
+      "bid_to_cover": 2.77,
+      "indirect_pct": 77.8,
+      "dealer_pct": 2.5
+    },
+    {
+      "date": "2026-10-07",
+      "term": "17-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 3.1,
+      "indirect_pct": 53.5,
+      "dealer_pct": 27.1
+    },
+    {
       "date": "2026-10-06",
       "term": "3-Year",
       "type": "Note",
@@ -200,26 +192,6 @@
       "bid_to_cover": 2.89,
       "indirect_pct": 54.1,
       "dealer_pct": 34.0
-    },
-    {
-      "date": "2026-09-29",
-      "term": "52-Week",
-      "type": "Bill",
-      "offering_amt": 54000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 3.07,
-      "indirect_pct": 63.0,
-      "dealer_pct": 21.8
-    },
-    {
-      "date": "2026-09-29",
-      "term": "6-Week",
-      "type": "Bill",
-      "offering_amt": 85000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.82,
-      "indirect_pct": 58.9,
-      "dealer_pct": 24.4
     }
   ],
   "blackout": {
