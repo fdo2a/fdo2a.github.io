@@ -1,6 +1,14 @@
 {
-  "collected_at": "2026-10-08T00:45:03+09:00",
-  "since": "2026-10-07T00:26:06+09:00",
-  "items": [],
+  "collected_at": "2026-10-09T00:50:50+09:00",
+  "since": "2026-10-08T00:45:03+09:00",
+  "items": [
+    {
+      "ticker": "005930.KS",
+      "source": "Samsung Newsroom · Corporate",
+      "title": "Samsung Electronics Announces Earnings Guidance for Third Quarter 2026",
+      "url": "https://news.samsung.com/global/samsung-electronics-announces-earnings-guidance-for-third-quarter-2026",
+      "published": "2026-10-08T07:49:06+00:00"
+    }
+  ],
   "missing": []
 }

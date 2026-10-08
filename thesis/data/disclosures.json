@@ -1,16 +1,56 @@
 {
-  "as_of": "2026-10-08",
+  "as_of": "2026-10-09",
   "window": {
-    "bgn": "20261007",
-    "end": "20261008"
+    "bgn": "20261008",
+    "end": "20261009"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
     "005930.KS": {
       "corp_code": "00126380",
-      "events": [],
-      "axes": [],
-      "confirmed_count": 0
+      "events": [
+        {
+          "rcept_no": "20261008800028",
+          "date": "2026-10-08",
+          "title": "기업설명회(IR)개최(안내공시)",
+          "corp": "삼성전자",
+          "filer": "삼성전자",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008800028",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261008800004",
+          "date": "2026-10-08",
+          "title": "연결재무제표기준영업(잠정)실적(공정공시)",
+          "corp": "삼성전자",
+          "filer": "삼성전자",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008800004",
+          "axis": "contract",
+          "kind": "영업잠정실적",
+          "correction": false,
+          "confirmed": true
+        },
+        {
+          "rcept_no": "20261008000706",
+          "date": "2026-10-08",
+          "title": "주식등의대량보유상황보고서(일반)",
+          "corp": "삼성전자",
+          "filer": "삼성물산",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261008000706",
+          "axis": "ownership",
+          "kind": "주식등의대량보유상황보고서",
+          "correction": false,
+          "confirmed": true
+        }
+      ],
+      "axes": [
+        "contract",
+        "ownership"
+      ],
+      "confirmed_count": 2
     },
     "000660.KS": {
       "corp_code": "00164779",
