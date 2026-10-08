@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-07",
+  "report_date": "2026-10-08",
   "events": [
     {
       "key": "fomc-minutes-20261007",
@@ -12,7 +12,7 @@
       "speaker": null,
       "role": null,
       "first_seen": "2026-10-07",
-      "fresh": true,
+      "fresh": false,
       "sources": [
         {
           "role": "primary",

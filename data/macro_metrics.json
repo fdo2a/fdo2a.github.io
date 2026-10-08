@@ -1,18 +1,18 @@
 {
-  "generated": "2026-10-08 08:37 KST",
-  "report_date": "2026-10-07",
+  "generated": "2026-10-09 08:37 KST",
+  "report_date": "2026-10-08",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "growth_score": -0.062,
+  "growth_score": -0.024,
   "inflation_score": -0.869,
   "growth_diffusion": 0.429,
   "inflation_diffusion": 0.0,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.421,
+      "score": 0.535,
       "direction": "개선",
-      "strength": "미미",
+      "strength": "완만",
       "breadth_ko": "일곱 중 넷이 개선",
       "improving": 4,
       "total": 7,
@@ -22,8 +22,8 @@
           "name": "Continuing Jobless Claims",
           "direction": "개선",
           "strength": "뚜렷",
-          "actual": 1701000.0,
-          "previous": 1712000.0
+          "actual": 1716000.0,
+          "previous": 1699000.0
         },
         {
           "label_ko": "신규 실업수당 청구",
@@ -31,15 +31,15 @@
           "direction": "개선",
           "strength": "완만",
           "actual": 197000.0,
-          "previous": 198000.0
+          "previous": 199000.0
         },
         {
-          "label_ko": "실업률",
-          "name": "Unemployment Rate",
+          "label_ko": "신규 청구 4주 평균",
+          "name": "Initial Claims 4-wk MA",
           "direction": "개선",
-          "strength": "미미",
-          "actual": 4.2,
-          "previous": 4.1
+          "strength": "완만",
+          "actual": 198000.0,
+          "previous": 200500.0
         }
       ]
     },
@@ -142,7 +142,7 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.421,
+    "Labor": 0.535,
     "Activity": -0.188,
     "Consumption": -0.419,
     "Inflation": -0.869
@@ -179,43 +179,43 @@
       "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.767,
-      "signed_z": 0.767,
+      "momentum_z": -0.843,
+      "signed_z": 0.843,
       "actual": 197000.0,
-      "previous": 198000.0,
-      "ref_period": "2026-09-26",
+      "previous": 199000.0,
+      "ref_period": "2026-10-03",
       "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 207500.0,
-        "recent_avg": 200000.0
+        "prior_avg": 206250.0,
+        "recent_avg": 198000.0
       },
-      "trend_cell_ko": "개선(완만) · 4주 평균 208K → 200K",
-      "is_new": false
+      "trend_cell_ko": "개선(완만) · 4주 평균 206K → 198K",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
       "label_ko": "신규 청구 4주 평균",
       "axis": "Labor",
-      "direction": "보합",
-      "strength": "미미",
+      "direction": "개선",
+      "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.14,
-      "signed_z": 0.14,
-      "actual": 200000.0,
-      "previous": 202500.0,
-      "ref_period": "2026-09-26",
+      "momentum_z": -0.594,
+      "signed_z": 0.594,
+      "actual": 198000.0,
+      "previous": 200500.0,
+      "ref_period": "2026-10-03",
       "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 204312.5,
-        "recent_avg": 203187.5
+        "prior_avg": 205937.5,
+        "recent_avg": 201250.0
       },
-      "trend_cell_ko": "보합 · 4주 평균 204K → 203K",
-      "is_new": false
+      "trend_cell_ko": "개선(완만) · 4주 평균 206K → 201K",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -225,20 +225,20 @@
       "strength": "뚜렷",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -2.578,
-      "signed_z": 2.578,
-      "actual": 1701000.0,
-      "previous": 1712000.0,
-      "ref_period": "2026-09-19",
-      "vs_prev": "개선",
+      "momentum_z": -2.845,
+      "signed_z": 2.845,
+      "actual": 1716000.0,
+      "previous": 1699000.0,
+      "ref_period": "2026-09-26",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 1780750.0,
-        "recent_avg": 1723750.0
+        "prior_avg": 1776750.0,
+        "recent_avg": 1711000.0
       },
-      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,781K → 1,724K",
-      "is_new": false
+      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,777K → 1,711K",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -655,24 +655,65 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
+  ],
+  "headline_releases": [
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Continuing Jobless Claims",
+      "max_abs_z": 2.845,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 197000.0,
+          "previous": 199000.0,
+          "ref_period": "2026-10-03",
+          "momentum_z": -0.843
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 198000.0,
+          "previous": 200500.0,
+          "ref_period": "2026-10-03",
+          "momentum_z": -0.594
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1716000.0,
+          "previous": 1699000.0,
+          "ref_period": "2026-09-26",
+          "momentum_z": -2.845
+        }
+      ],
+      "components": []
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",
       7079.0
     ],
     "Initial Jobless Claims": [
-      "2026-09-26",
+      "2026-10-03",
       197000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-09-26",
-      200000.0
+      "2026-10-03",
+      198000.0
     ],
     "Continuing Jobless Claims": [
-      "2026-09-19",
-      1701000.0
+      "2026-09-26",
+      1716000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-09-01",

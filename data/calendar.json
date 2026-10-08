@@ -1,50 +1,8 @@
 {
-  "report_date": "2026-10-07",
-  "generated": "2026-10-08 08:42 KST",
+  "report_date": "2026-10-08",
+  "generated": "2026-10-09 08:42 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261008-4-Week",
-      "kind": "auction",
-      "name_ko": "4-Week 국채 입찰 1,100억 달러",
-      "date": "2026-10-08",
-      "time_et": "11:30",
-      "time_kst": "2026-10-09 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261008-8-Week",
-      "kind": "auction",
-      "name_ko": "8-Week 국채 입찰 1,050억 달러",
-      "date": "2026-10-08",
-      "time_et": "11:30",
-      "time_kst": "2026-10-09 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261008-30-Year",
-      "kind": "auction",
-      "name_ko": "30-Year 국채 입찰 220억 달러",
-      "date": "2026-10-08",
-      "time_et": "13:00",
-      "time_kst": "2026-10-09 02:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "release-existing-home-sales-20261013",
       "kind": "release",
@@ -58,6 +16,48 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "auction-20261013-13-Week",
+      "kind": "auction",
+      "name_ko": "13-Week 국채 입찰 950억 달러",
+      "date": "2026-10-13",
+      "time_et": "11:30",
+      "time_kst": "2026-10-14 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261013-26-Week",
+      "kind": "auction",
+      "name_ko": "26-Week 국채 입찰 820억 달러",
+      "date": "2026-10-13",
+      "time_et": "11:30",
+      "time_kst": "2026-10-14 00:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261013-6-Week",
+      "kind": "auction",
+      "name_ko": "6-Week 국채 입찰 950억 달러",
+      "date": "2026-10-13",
+      "time_et": "13:00",
+      "time_kst": "2026-10-14 02:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
       "key": "release-ppi-20261015",
@@ -103,6 +103,36 @@
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-10-08",
+      "term": "30-Year",
+      "type": "Bond",
+      "offering_amt": 22000000000.0,
+      "high_yield": 5.618,
+      "bid_to_cover": 2.54,
+      "indirect_pct": 70.4,
+      "dealer_pct": 6.6
+    },
+    {
+      "date": "2026-10-08",
+      "term": "4-Week",
+      "type": "Bill",
+      "offering_amt": 110000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.4,
+      "indirect_pct": 49.2,
+      "dealer_pct": 31.4
+    },
+    {
+      "date": "2026-10-08",
+      "term": "8-Week",
+      "type": "Bill",
+      "offering_amt": 105000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.77,
+      "indirect_pct": 62.7,
+      "dealer_pct": 20.9
+    },
     {
       "date": "2026-10-07",
       "term": "10-Year",
@@ -182,16 +212,6 @@
       "bid_to_cover": 2.7,
       "indirect_pct": 52.3,
       "dealer_pct": 33.3
-    },
-    {
-      "date": "2026-09-30",
-      "term": "17-Week",
-      "type": "Bill",
-      "offering_amt": 75000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.89,
-      "indirect_pct": 54.1,
-      "dealer_pct": 34.0
     }
   ],
   "blackout": {
