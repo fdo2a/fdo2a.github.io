@@ -1,0 +1,44 @@
+US session 2026-10-07 (Wed) — WebSearch result summaries collected 2026-10-07 ~23:20-23:46 UTC, plus collector news file data/news/2026-10-07.json (CNBC/Investing.com items).
+WebFetch of cnbc.com/finance.yahoo.com/thestreet.com/investing.com failed (DNS ENOTFOUND) in this environment; figures below are search-result summaries of the cited pages, not full-text reads.
+
+[RATES / AUCTION]
+- investingLive: "The US treasury sells $39 billion of 10 year notes at a high yield of 5.300% versus WI level of 5.317%" (stop-through 1.7bp); bid-to-cover 2.77; indirect 80.34%, direct 17.1%, dealers 2.54%. https://investinglive.com/news/the-us-treasury-sells-39-billion-of-10-year-notes-at-a-high-yield-of-5-300-versus-wi-level-of-5-317/
+- TFTC: "$39B 10-Year Auction Clears at Highest Yield Since 2000 on Near-Record Foreign Demand" https://www.tftc.io/10-year-treasury-auction-5-300-yield-record-foreign-demand-2026
+- CNBC 2026-10-07 20:09 UTC (collector news): 10Y hit 5.35% (24-year high) then pared after solid 10Y auction; indirect 80.3% vs 10-auction avg 72.4%; dealers 2.5% vs avg 9.4%; 30Y traded below 5.666% at that time; minutes signal further hike likely by year-end, timing not specified. https://www.cnbc.com/2026/10/07/treasury-yields-auction-fomc-minutes.html
+- Canonical Treasury auction row (calendar.json recent_auctions, 2026-10-07 10-Year): high_yield 5.3, bid_to_cover 2.77, indirect_pct 77.8, dealer_pct 2.5. Indirect share differs from press 80.3% — canonical file kept, discrepancy noted.
+- FXStreet 2026-10-07 14:50: "US Treasury yields hit 24-year highs as 10-year tests 5.35%"; 30Y 5.724%; December hike odds near 85%. https://www.fxstreet.com/news/us-treasury-yields-hit-24-year-highs-as-10-year-tests-535-202610071450
+- FXStreet gold piece: 10Y climbed to 5.365%, 30Y high 5.73%; DXY ~102.30. https://fxstreet.com/news/gold-falls-as-us-dollar-treasury-yields-rebound-ahead-of-fed-minutes-202610071045
+- Quartz: Dow dropped 451 points intraday as 10Y above 5.35%. https://qz.com/dow-drop-treasury-yields-24-year-high-100726
+
+[FOMC MINUTES 14:00 ET]
+- Fed press release (minutes of Sep 15-16): https://www.federalreserve.gov/newsevents/pressreleases/monetary20261007a.htm ; minutes text https://www.federalreserve.gov/monetarypolicy/fomcminutes20260916.htm (collector captured only the press-release shell, 9.4k chars).
+- Scotsman Guide: minutes say most participants judged another increase likely appropriate by year end; CME FedWatch December hike 84%, October hike 17% (as of Wednesday). https://www.scotsmanguide.com/news/fed-policymakers-saw-multiple-2026-rate-hikes-as-likely-september-fomc-minutes-show/
+- FXStreet "Fed Minutes confirm another rate hike was already in sight" https://www.fxstreet.com/news/fed-minutes-set-to-provide-some-insight-into-the-timing-of-next-rate-hikes-202610071400
+- Raisin: "Fed divided over future interest rate hikes" https://www.raisin.com/en-us/news/fomc-minutes-breakdown-rate-hike-division/
+
+[NY FED SCE, released 2026-10-07]
+- NY Fed: September SCE — 1y median 3.9% (Aug 3.6%, highest since May 2023), 3y 3.3% (3.2%), 5y 3.0% (unch). Gas 4.8%, food 5.5%, medical care 9.2%; nominal spending growth exp 5.5% (+0.3pp). Fielded Sep 1-30. https://www.newyorkfed.org/newsevents/news/research/2026/20261007
+
+[EQUITIES]
+- Investing.com close: Dow -0.66%. https://www.investing.com/news/stock-market-news/us-stocks-lower-at-close-of-trade-dow-jones-industrial-average-down-066-4937506
+- Yahoo live blog: "Dow falls, S&P 500 and Nasdaq retreat from records amid bond market jitters" https://finance.yahoo.com/markets/live/stock-market-today-wednesday-october-7-dow-sp-500-nasdaq-080241833.html
+- TheStreet Oct 7 live blog https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-07-2026
+- Benzinga midday: S&P -0.4% at 7,788, Dow -0.9%, Russell 2000 2,791.72 (-1.36%); 30Y hit 5.7%. https://www.benzinga.com/markets/equities/26/10/62226685/stock-market-today-sp-500-russell-2000-fall-bond-yields-rise
+- Reuters (via search) close S&P -0.26% 7,798.84 — differs from canonical 7,801.77 (-0.22%); canonical kept.
+- Caterpillar: Globe and Mail — fell 5.7% after downgrade to hold, ~295 Dow points; Investing.com — Zacks cut from Strong Buy to Hold, prior Truist PT cut, Q3 earnings Oct 29; Benzinga — FTC/USDA joint RFI on farm equipment names Deere, CAT possibly sympathy. https://www.investing.com/news/stock-market-news/why-is-caterpillar-stock-sliding-today-93CH-4937026 https://www.benzinga.com/trading-ideas/movers/26/10/62230656/caterpillar-stock-drops-as-ftc-and-usda-seek-comments https://theglobeandmail.com/investing/markets/stocks/NVDA-Q/pressreleases/5015952/stock-market-today-oct-7-markets-edge-lower-as-treasury-yields-surge
+- GE Vernova: Investing.com — fell ~4% in morning on profit-taking after Oppenheimer (Colin Rusch) top-pick surge on Oct 6; Q3 earnings Oct 28. TradingKey — opened -3.48%. https://www.investing.com/news/stock-market-news/why-is-ge-vernova-stock-sliding-today-93CH-4937028 https://www.tradingkey.com/news/market-movers/262204051-market-movers-gev-20261007
+- Meta: Benzinga (TradingView) — down ~2.05% at $723.77, rising Treasury yields and oil added pressure; CNBC Oct 7 — tech under pressure on worries higher borrowing costs limit AI buildout. https://www.tradingview.com/news/benzinga:7b6055e77094b:0-what-s-going-on-with-meta-platforms-stock-wednesday/
+- Micron: premarket ~-2% on Taoyuan (Taiwan) union strike-authorization vote (~99% in favour), softer NAND wafer prices (-2.9% w/w), Toshiba HDD capacity doubling (TechTimes, TipRanks); 24/7 Wall St — "SanDisk and Micron Rise 3% as Tight Memory Supply Outruns a Softer Tech Tape; Western Digital Lags". No single confirmed catalyst for the close. https://www.techtimes.com/articles/328715/20261007/memory-stocks-slip-micron-strike-risk-softer-nand-prices-toshiba-capacity-bet.htm https://247wallst.com/investing/2026/10/07/sandisk-and-micron-rise-3-as-tight-memory-supply-outruns-a-softer-tech-tape-western-digital-lags/
+- Apple, Nvidia: no confirmed same-day catalyst found (MarketBeat generic).
+- CNBC (collector news) Cramer: higher rates splitting market — credit-dependent sectors vs AI-linked borrowers. https://www.cnbc.com/2026/10/07/jim-cramer-spacex-wall-street-bull-case.html
+
+[COMMODITIES / FX]
+- FXStreet: EIA crude -3.186mb (exp +1.9mb) week to Oct 2; WTI reversed earlier gains (briefly >$90) on recovering Middle East exports and stronger dollar; US output record. https://fxstreet.com/news/wti-turns-lower-as-recovering-middle-east-exports-weigh-202610071822
+- FXStreet: IEA members back faster release of 100mb stocks. https://fxstreet.com/news/iea-members-back-faster-release-of-100-million-barrels-of-oil-stocks-202610071519
+- Gold: Reuters-sourced — spot -1.2% to $4,113.89 by 14:12 EDT after $4,066 (lowest since Aug 5). (FXStreet/Business Standard summaries)
+
+[MEMORY / KOREA]
+- Samsung Q3 preliminary (published after US close, CNBC 2026-10-07 22:58 UTC): operating profit ~107.4tn won (first >100tn), revenue ~195tn won; consensus cited 105.41tn (Yonhap) / 106.1tn / 108.1tn (FnGuide via Korea Herald). https://www.cnbc.com/2026/10/08/samsung-q3-earnings.html https://www.trendforce.com/news/2026/10/07/news-samsung-3q-preliminary-results-preview-market-sees-historic-krw-100t-profit-memory-margin-could-top-80/
+
+[CPI 10/14 EXPECTATIONS]
+- Cleveland Fed nowcast (updated Oct 6): Sep core CPI +0.20% m/m, headline 0.53% m/m — model output, not survey. Aggregator "consensus 3.7% y/y, prior 3.4%" conflicts with FRED Aug CPI YoY 3.71 — not stored as survey consensus. https://www.clevelandfed.org/indicators-and-data/inflation-nowcasting https://nowflation.com/cpi-preview/september-2026
