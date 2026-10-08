@@ -1,0 +1,132 @@
+{
+ "note": "kr/data 커밋 e5ffc86(2026-10-08T09:12:51Z) 발췌 + data/market_data.json 커밋 58a8dac(미국 2026-10-07 세션)",
+ "kr_indices": {
+  "KOSPI": {
+   "close": 6625.93,
+   "change_pct": -2.62
+  },
+  "KOSDAQ": {
+   "close": 892.27,
+   "change_pct": -0.69
+  }
+ },
+ "flows_kospi_rows": [
+  {
+   "date": "2026-10-08",
+   "individual": 29544,
+   "foreign": -20518,
+   "institution": -16573
+  },
+  {
+   "date": "2026-10-07",
+   "individual": 26183,
+   "foreign": -26188,
+   "institution": -7101
+  },
+  {
+   "date": "2026-10-06",
+   "individual": 7441,
+   "foreign": -17575,
+   "institution": -39
+  }
+ ],
+ "flows_kosdaq_rows": [
+  {
+   "date": "2026-10-08",
+   "individual": 472,
+   "foreign": 623,
+   "institution": -1061
+  },
+  {
+   "date": "2026-10-07",
+   "individual": 4871,
+   "foreign": -2495,
+   "institution": -2102
+  }
+ ],
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "industry": {
+  "반도체와반도체장비": {
+   "name": "반도체와반도체장비",
+   "change_pct": -2.06,
+   "total": 172,
+   "rise": 95,
+   "breadth": 0.552,
+   "no": 278,
+   "liquidity_backed": true,
+   "leading": false,
+   "note": ""
+  },
+  "석유와가스": {
+   "name": "석유와가스",
+   "change_pct": -1.83,
+   "total": 19,
+   "rise": 6,
+   "breadth": 0.316,
+   "no": 313,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": ""
+  }
+ },
+ "movers_g1": {
+  "id": "g1",
+  "industry": "반도체와반도체장비",
+  "direction": "down",
+  "reasons": [
+   "지수 기여 하위",
+   "이상 등락"
+  ],
+  "members": [
+   {
+    "name": "삼성전자",
+    "change_pct": -2.42,
+    "close": 262000,
+    "value": 5268271
+   },
+   {
+    "name": "SK하이닉스",
+    "change_pct": -2.44,
+    "close": 1681000,
+    "value": 5250918
+   },
+   {
+    "name": "SK스퀘어",
+    "change_pct": -8.06,
+    "close": 1050000,
+    "value": 1051444
+   }
+  ]
+ },
+ "us_2026_10_07": {
+  "10Y": {
+   "level": 5.277,
+   "date": "2026-10-07",
+   "bp": 0.6000000000000227,
+   "week_ago": 5.293,
+   "week_ago_date": "2026-09-30",
+   "source": "Naver"
+  },
+  "WTI": {
+   "last": 88.81999969482422,
+   "chg": -0.6200027465820312,
+   "pct": -0.6932051986338061,
+   "date": "2026-10-07"
+  },
+  "Nasdaq": {
+   "last": 27538.69140625,
+   "chg": -61.09765625,
+   "pct": -0.2213700116027839,
+   "date": "2026-10-07"
+  },
+  "USD/KRW": {
+   "last": 1339.739990234375,
+   "chg": -4.010009765625,
+   "pct": -0.2984193313953498,
+   "date": "2026-10-07"
+  }
+ }
+}
