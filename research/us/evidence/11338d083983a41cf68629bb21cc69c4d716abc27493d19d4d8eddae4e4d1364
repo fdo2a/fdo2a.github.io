@@ -1,0 +1,35 @@
+US session 2026-10-08 — web research evidence (WebSearch result summaries, observed 2026-10-08 23:20-23:50 UTC)
+Search snippets only; full pages were not fetched (WebFetch DNS-blocked for cnbc.com, finance.yahoo.com, newsquawk.com, metalsmine.com).
+
+[1] CNBC, "Nvidia, Oracle, CoreWeave and other AI stocks sink on OpenAI revenue report", published 2026-10-08T21:19Z
+    https://www.cnbc.com/2026/10/08/open-ai-revenue-nvidia-oracle-coreweave.html
+    OpenAI told investors it hit roughly $50 billion annualized revenue at end of September (CNBC confirmed), below the $68 billion figure widely reported late last month; the $68B figure reportedly included gross revenue from partners. FT first reported. Nvidia ~-3%, Oracle ~-6%, CoreWeave ~-8%, AMD/Broadcom/Intel/Super Micro -4~5%. OpenAI 3Q gross growth 77%, enterprise 107%; IPO targeted 2027; ~$30B new funding round in discussion.
+[2] Session wrap via WebSearch (Yahoo Finance "How major US stock indexes fared Thursday 10/8/2026"; Yahoo live blog "S&P 500, Nasdaq fall for second day in a row as AI trade takes a hit"; CNBC live blog "S&P 500 futures are little changed after OpenAI's revenue report prompts tech sector turmoil")
+    https://finance.yahoo.com/markets/world-indices/articles/major-us-stock-indexes-fared-202004175.html
+    https://finance.yahoo.com/markets/live/stock-market-today-thursday-october-8-dow-sp-500-nasdaq-080537884.html
+    https://www.cnbc.com/2026/10/08/stock-market-today-live-updates.html
+    Nasdaq biggest one-day loss since mid-August; a gauge of chip giants -3.4%; rising Treasury yields and elevated oil also cited as weighing (earlier in session).
+[3] CNBC, "Treasury yields are lower after reaching multiyear highs, traders weigh latest bond auction", published 2026-10-08T20:06Z
+    https://www.cnbc.com/2026/10/08/us-treasury-yields-30-year-bond-auction.html
+    10Y -4bp+ to 5.229%, 30Y -5bp+ to 5.602%. Yields rose early after Gov. Waller said further hikes needed to return inflation to 2% but not immediately; fell after Trump said no Iran strike before November midterms. 30Y $22B auction: indirect 72.3% vs 10-auction avg 68%; direct 20.9% vs avg 22%.
+[4] TFTC 30-year auction page "30-Year Treasury Bond Auction: 5.618% (Oct 8)" https://www.tftc.io/treasury-auctions/30-year-bond
+    High yield 5.618%, highest since Aug 2000 (per page), bid-to-cover 2.54, dealers 6.8% (competitive). WI/stop-through not found in any source reached.
+    thevaultreport.com/treasury-auctions/2026-10: 2.54 weakest bid-to-cover among the month's note/bond auctions.
+[5] investingLive, "Americas market news wrap: Trump says no attacks on Iran before the midterms" https://investinglive.com/news/investinglive-americas-market-news-wrap-trump-says-no-attacks-on-iran-before-the-midterms/
+    Waller: additional hikes likely needed though not at consecutive meetings; 10Y -5bp to 5.22%; 30Y auction 5.618%; crude bounced after Trump post.
+[6] CNBC, "Oil prices jump as Iran steps up tanker attacks, hurricane threatens U.S. Gulf production" https://www.cnbc.com/2026/10/08/oil-prices-today-brent-wti-hormuz.html
+    Brent +4% to $104.28 close, WTI +3.6% to $91.49 settle (per CNBC); nine tankers attacked in/around Hormuz over past week; ~500k b/d (25%) Gulf of Mexico output shut in for Hurricane Isaias; Kpler: 9.5 mb/d exited Hormuz week to Tuesday (~30% below pre-war).
+    Euronews https://www.euronews.com/2026/10/08/oil-prices-are-climbing-on-concerns-about-an-escalating-iran-war : Pentagon instructed CENTCOM to complete preparations for possible resumption of major combat operations; Brent >$105.2 early afternoon Europe.
+    CBS live https://www.cbsnews.com/live-updates/iran-war-nuclear-donald-trump-vance-rubio-strait-of-hormuz/ : after Trump's no-strike-before-midterms post Brent dipped to ~$103.
+    CNBC https://www.cnbc.com/2026/10/08/iran-war-trump-midterm-election.html (17:41Z): Trump Truth Social no attack on Iran before Nov 3 midterm; reversal after saying previous day he was considering renewed strikes.
+[7] Investing.com analysis "Gold Remains Near Recent Lows as Energy-Driven Inflation Raises Fed Rate Hike Bets", published 2026-10-08T11:35Z (pre-open)
+    https://www.investing.com/analysis/gold-remains-near-recent-lows-as-energydriven-inflation-raises-fed-rate-hike-bets-200689191
+    Market prices ~20% probability of an October hike and ~80% of a hike by December (instrument not specified beyond "market"; pre-session observation).
+[8] Jobless claims coverage: Breitbart https://www.breitbart.com/economy/2026/10/08/jobless-claims-october/ ; yournews https://yournews.com/2026/10/08/7220075/ ; four straight weeks below 200,000, run not matched since the 1960s (per report citing DOL). Consensus figure not found.
+[9] TradingKey premarket note (date per search summary 2026-10-08): Coherent -3%+, Lumentum and Credo -2%+ premarket, attributed to rising Treasury yields, higher crude, FOMC hike signals intensifying skepticism over AI investment sustainability.
+    https://tradingkey.com/analysis/stocks/us-stocks/262205938-stock-coherent-lumentum-crdo-lite-glw-mrvl-tradingkey
+[10] CNBC Cramer, published 2026-10-08T22:15Z https://www.cnbc.com/2026/10/08/jim-cramer-diversification-ai-selloff.html
+    Oracle -5.5%, Broadcom -4.35% after FT OpenAI report; non-AI laggards like Home Depot rose as rates fell after strong 30Y auction.
+[11] TSMC investor relations https://investor.tsmc.com/quarterly-results : 3Q26 earnings conference Thursday 2026-10-15 14:00 Taiwan / 02:00 ET; quiet period Oct 5-14; 3Q guidance revenue US$44.6-45.8B, GM 65-67%.
+[12] TrendForce 4Q26 memory outlook (secondary coverage, IT之家 2026-09-30): conventional DRAM contract +10-15% QoQ, incl. HBM +15-20%; NAND +15-20%.
+[13] Collector news summaries (data/news/2026-10-08.json): Zervos (Treasury) CNBC interview real yields "really, really high"; NY Fed tariff study (+2.9pp in 67 goods categories by Feb 2026); SpaceX 800MHz spectrum deal hits AT&T/Verizon/T-Mobile after hours; France diesel reserve release, French 10Y ~4.9%.
