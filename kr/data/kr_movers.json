@@ -2,5 +2,111 @@
   "report_date": "2026-10-08",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성전자",
+          "change_pct": -2.42,
+          "close": 262000,
+          "value": 5350036
+        },
+        {
+          "name": "SK하이닉스",
+          "change_pct": -2.44,
+          "close": 1681000,
+          "value": 5348976
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": -8.06,
+          "close": 1050000,
+          "value": 1060623
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "전기제품",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "LG에너지솔루션",
+          "change_pct": 2.56,
+          "close": 401000,
+          "value": 374288
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "화학",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "LG화학",
+          "change_pct": 3.43,
+          "close": 286500,
+          "value": 152336
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "우주항공과국방",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한화에어로스페이스",
+          "change_pct": -8.33,
+          "close": 891000,
+          "value": 302735
+        },
+        {
+          "name": "LIG디펜스앤에어로스페이스",
+          "change_pct": -6.53,
+          "close": 616000,
+          "value": 155783
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "제약",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한미약품",
+          "change_pct": -10.02,
+          "close": 480500,
+          "value": 133993
+        },
+        {
+          "name": "한미사이언스",
+          "change_pct": -5.51,
+          "close": 54900,
+          "value": 66957
+        }
+      ]
+    }
+  ]
 }
