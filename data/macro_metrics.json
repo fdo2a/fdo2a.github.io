@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-09 08:37 KST",
-  "report_date": "2026-10-08",
+  "generated": "2026-10-10 08:36 KST",
+  "report_date": "2026-10-09",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": -0.024,
@@ -192,7 +192,7 @@
         "recent_avg": 198000.0
       },
       "trend_cell_ko": "개선(완만) · 4주 평균 206K → 198K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -215,7 +215,7 @@
         "recent_avg": 201250.0
       },
       "trend_cell_ko": "개선(완만) · 4주 평균 206K → 201K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -238,7 +238,7 @@
         "recent_avg": 1711000.0
       },
       "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,777K → 1,711K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -655,49 +655,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims"
-  ],
-  "headline_releases": [
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Continuing Jobless Claims",
-      "max_abs_z": 2.845,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 197000.0,
-          "previous": 199000.0,
-          "ref_period": "2026-10-03",
-          "momentum_z": -0.843
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 198000.0,
-          "previous": 200500.0,
-          "ref_period": "2026-10-03",
-          "momentum_z": -0.594
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1716000.0,
-          "previous": 1699000.0,
-          "ref_period": "2026-09-26",
-          "momentum_z": -2.845
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",

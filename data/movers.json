@@ -1,98 +1,92 @@
 {
-  "report_date": "2026-10-08",
+  "report_date": "2026-10-09",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
-      "direction": "down",
+      "industry": "Systems Software",
+      "direction": "up",
       "reasons": [
-        "지수 기여 하위",
+        "지수 기여 상위",
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -2.94,
-          "close": 230.48,
-          "value": 27132242232.64
+          "name": "Microsoft (MSFT)",
+          "change_pct": 2.38,
+          "close": 535.07,
+          "value": 9572934825.69
         },
         {
-          "name": "Broadcom (AVGO)",
-          "change_pct": -4.35,
-          "close": 360.14,
-          "value": 9631450579.67
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": -5.34,
-          "close": 107.08,
-          "value": 12686392842.9
+          "name": "Palo Alto Networks (PANW)",
+          "change_pct": 5.09,
+          "close": 418.78,
+          "value": 1604900221.26
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Broadline Retail",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": 1.11,
-          "close": 340.42,
-          "value": 11730838939.88
+          "name": "Amazon (AMZN)",
+          "change_pct": 3.29,
+          "close": 262.43,
+          "value": 8794104109.54
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Consumer Staples Merchandise Retail",
-      "direction": "up",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Walmart (WMT)",
-          "change_pct": 2.22,
-          "close": 110.56,
-          "value": 2611048806.02
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": -1.11,
+          "close": 336.64,
+          "value": 12732114846.5
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Application Software",
+      "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
-        "이상 등락"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Oracle Corporation (ORCL)",
-          "change_pct": -5.48,
-          "close": 135.69,
-          "value": 5699717577.7
+          "name": "Nvidia (NVDA)",
+          "change_pct": -0.52,
+          "close": 229.28,
+          "value": 19330012491.65
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Communications Equipment",
-      "direction": "down",
+      "industry": "Application Software",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Lumentum (LITE)",
-          "change_pct": -5.62,
-          "close": 1048.6,
-          "value": 5091766595.05
+          "name": "Palantir Technologies (PLTR)",
+          "change_pct": 5.17,
+          "close": 209.05,
+          "value": 7816350138.05
         }
       ]
     }
