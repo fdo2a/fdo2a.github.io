@@ -26,6 +26,7 @@ from collections import Counter
 MARK = '⟦{}⟧'
 _MARK_RE = re.compile(r'⟦(\d+)⟧')
 _P_RE = re.compile(r'<p\b([^>]*)>(.*?)</p>', re.S)
+_SUMMARY_ATTR = re.compile(r'\bdata-summary\s*=', re.I)   # news_expand._SUMMARY_P 와 같은 판별
 _TAG_RE = re.compile(r'</?[a-zA-Z][^>]*>')
 _NUM_RE = re.compile(r'[+\-−]?\d[\d,]*(?:\.\d+)?%?')
 _FUND_START = re.compile(r'<div\b[^>]*\bdata-fund-(?:board|kr)=', re.I)
@@ -118,6 +119,8 @@ def _eligible(html):
             continue
         if 'caption' in m.group(1):
             continue
+        if _SUMMARY_ATTR.search(m.group(1)):
+            continue  # 수집 뉴스 요약 — 원문을 그대로 앞에 둬야 한다(news_expand.summary_violations)
         if not _NUM_RE.sub('', _TAG_RE.sub('', m.group(2))).strip():
             continue  # 글자가 없는 문단은 윤문할 것이 없다
         out.append(('P%03d' % (len(out) + 1), m))

@@ -513,3 +513,13 @@ def test_펀드_점검판_블록_안_문단은_뽑지_않는다():
     text, side = payload_of(html)
     assert sorted(side['items']) == ['P001']
     assert '순유동성' not in text and '원/달러' not in text
+
+
+def test_수집_뉴스_요약_문단은_뽑지_않는다():
+    # 요약은 수집 원문을 그대로 앞에 둬야 한다(news_expand.summary_violations). US 문체 경로에는
+    # check_news 가 없어 윤문이 요약을 바꿔도 아무 게이트도 못 본다(2026-10-10 codex 설계 검토 #4).
+    html = ('<html><body><p data-summary="g1">연준은 금리를 동결했다. 시장은 0.3% 올랐다.</p>'
+            '<p>나스닥은 1.2% 올랐다.</p></body></html>')
+    text, side = payload_of(html)
+    assert sorted(side['items']) == ['P001']
+    assert '연준은' not in text
