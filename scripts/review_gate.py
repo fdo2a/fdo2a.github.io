@@ -1315,14 +1315,17 @@ def cmd_run(args):
             return _save(root, state, errs, progressed=False)
         errs.pop(freshness.KEY, None)
 
-        todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
-            root, want_fetch=False)
-        # 큐 판정은 두 트리를 보지만 **자동으로 읽을 대상은 고정한 판만**이다. 가변
-        # `origin/main` 을 다시 읽으면 tick 도중 재발행된 판을 고정판인 양 집는다.
-        published = tree_at(root, oid) or {}
-        if getattr(args, 'correct', False):
+        if getattr(args, 'correct', False) or code_oid:
+            # 자동 tick 은 공개판 원장만 본다 — 사람의 작업 폴더(편집 중인 원장 등)를 먼저 조사하면
+            # 미완성 로컬 파일 하나가 자동 검토·정정을 전부 막는다(codex 구현 3차 #5).
             todo, published = _published_queue(root, oid)
             unavailable = []
+        else:
+            todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
+                root, want_fetch=False)
+            # 큐 판정은 두 트리를 보지만 **자동으로 읽을 대상은 고정한 판만**이다. 가변
+            # `origin/main` 을 다시 읽으면 tick 도중 재발행된 판을 고정판인 양 집는다.
+            published = tree_at(root, oid) or {}
         day = today_kst()
         # 차단 대상은 **codex 신규 검토 호출만**이다. 준비된 초안의 정정(Claude)은 계속
         # 돈다 — 공급자 한도는 codex 쪽 사정이고, 정정까지 멈추면 이미 읽어 둔 지적이

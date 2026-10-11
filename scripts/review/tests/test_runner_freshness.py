@@ -283,7 +283,8 @@ FAKE_GATE = ('import json, os, sys\n'
 
 
 def launch(repo, tmp_path, *args):
-    env = dict(os.environ, REVIEW_RUNNER_CACHE=str(tmp_path / 'cache'))
+    env = dict(os.environ, TMPDIR=str(tmp_path / 'tmp'))
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
     p = subprocess.run(['python3', LAUNCH, *args], cwd=repo, capture_output=True, text=True,
                        env=env)
     return p, (json.loads(p.stdout.strip().splitlines()[-1]) if p.returncode == 0 else None)
@@ -299,7 +300,8 @@ def test_the_launcher_runs_origin_code_whatever_the_checkout_holds(repo, tmp_pat
     assert p.returncode == 0, p.stderr
     origin = git(repo, 'rev-parse', 'origin/main').stdout.strip()
     assert got['version'] == 1 and got['code'] == origin
-    assert got['file'].startswith(str(tmp_path / 'cache' / origin))
+    assert os.path.realpath(got['file']).startswith(os.path.realpath(str(tmp_path / 'tmp')))
+    assert os.listdir(tmp_path / 'tmp') == []                     # 끝나면 사본을 지운다
     assert os.path.realpath(got['cwd']) == os.path.realpath(repo)   # 상태·원장은 site/ 그대로
     assert got['argv'] == ['run', '--correct']
     assert git(repo, 'symbolic-ref', '--short', 'HEAD').stdout.strip() == 'wip'   # 안 움직였다
@@ -341,3 +343,28 @@ def test_a_launched_tick_ignores_the_checkout_and_pins_the_snapshot_commit(repo,
     assert invoke(repo, monkeypatch, correct) == 0
     assert freshness.KEY not in state_of(repo)['errors']
     assert seen and seen[0]['scripts'] == freshness.trees(repo, 'origin/main')['scripts']
+
+
+def test_the_launcher_does_not_import_the_checkouts_modules(repo, tmp_path):
+    # 사람 폴더의 편집 중인 모듈 하나에 런처가 경보 없이 죽던 경로(codex 구현 3차 #4).
+    import shutil
+    here = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    copy = tmp_path / 'launcher_scripts'
+    shutil.copytree(here, copy, ignore=shutil.ignore_patterns('__pycache__', 'tests'))
+    (copy / 'review' / 'freshness.py').write_text('def oops(:\n')
+    (copy / 'json.py').write_text('raise RuntimeError("shadow")\n')
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'VERSION = 1\n' + FAKE_GATE},
+                        'v1')
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
+    p = subprocess.run(['python3', str(copy / 'runner_launch.py'), 'run'], cwd=repo,
+                       capture_output=True, text=True, env=dict(os.environ, TMPDIR=str(tmp_path / 'tmp')))
+    assert p.returncode == 0, p.stderr
+    assert json.loads(p.stdout.strip().splitlines()[-1])['version'] == 1
+
+
+def test_an_automated_tick_ignores_a_half_edited_local_ledger(repo, tmp_path, monkeypatch):
+    # 자동 tick 은 공개판 원장만 본다(codex 구현 3차 #5). 실제 Claude 는 부르지 않는다.
+    monkeypatch.setenv('CLAUDE_BIN', str(tmp_path / 'no-claude'))
+    write(repo, 'reviews/index.json', '{WIP')
+    out = run(repo, 'run', '--correct', codex=fake_codex(tmp_path))
+    assert 'JSONDecodeError' not in out.stdout + out.stderr
