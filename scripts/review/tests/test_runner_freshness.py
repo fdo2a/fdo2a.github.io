@@ -2,8 +2,8 @@
 
 10/03 의 staged 미완성 작업 때문에 site/ 가 81커밋 뒤에 묶였고, 러너는 그 코드로 일주일 동안
 공개판을 고쳐 푸시했다(check_fund 없는 문체 단계). 경보는 없었다. 여기서 잡는 것: 다르면
-뒤처지기만 했으면 따라잡고 그 tick 은 쉰다, 그 밖에 다르면 멈추고 알린다(사람 작업은 안 움직인다),
-맞으면 경보가 풀린다, 큐를 못 읽어도·import 가 깨져도 경보는 보인다.
+런처는 origin/main 의 사본으로 러너를 돌린다(사람 폴더와 무관), 런처 없이 돌면 다르면 멈추고 알린다
+(자동 pull 없음), 맞으면 경보가 풀린다, 큐를 못 읽어도·import 가 깨져도 경보는 보인다.
 """
 import json
 import os
@@ -45,7 +45,7 @@ def test_a_checkout_equal_to_origin_is_fresh(repo):
 def test_behind_origin_is_reported_with_the_distance(repo, tmp_path):
     push_from_elsewhere(repo, tmp_path, {'scripts/x.py': 'x = 1\n'}, 'gate')
     kind, why = freshness.status(fetched(repo))
-    assert kind == freshness.BEHIND and '1커밋 뒤' in why
+    assert kind == freshness.STALE and '1커밋 뒤' in why
 
 
 def local_commit(repo):
@@ -143,48 +143,19 @@ def test_pinning_survives_a_pull_in_the_checkout(repo, tmp_path):
         freshness.PINNED = None
 
 
-# --- 따라잡기 -------------------------------------------------------------------
-
-def test_behind_and_clean_catches_up_and_rests_for_one_tick(repo, tmp_path):
-    push_from_elsewhere(repo, tmp_path, {'scripts/x.py': 'x = 1\n'}, 'gate')
-    out = run(repo, 'run', codex=fake_codex(tmp_path))
-    assert out.returncode == 0, out.stdout + out.stderr
-    assert '따라잡았다' in out.stdout
-    assert drafts(repo) == []                                   # 옛 코드로는 아무것도 안 했다
-    assert git(repo, 'rev-parse', 'HEAD').stdout == git(repo, 'rev-parse', 'origin/main').stdout
-    assert freshness.KEY not in state_of(repo)['errors'] and 'last_ok' not in state_of(repo)
-    out = run(repo, 'run', codex=fake_codex(tmp_path))         # 다음 tick 은 새 코드로 돈다
-    assert out.returncode == 0 and len(drafts(repo)) == 2
-
-
-def test_behind_with_a_hand_edit_is_not_pulled_over(repo, tmp_path):
-    push_from_elsewhere(repo, tmp_path, {'scripts/x.py': 'x = 1\n'}, 'gate')
-    write(repo, POST, '<html>손으로 고치는 중</html>')
-    head = git(repo, 'rev-parse', 'HEAD').stdout
-    out = run(repo, 'run', codex=fake_codex(tmp_path))
-    assert out.returncode == 1 and drafts(repo) == []
-    assert git(repo, 'rev-parse', 'HEAD').stdout == head
-    assert open(os.path.join(repo, POST)).read() == '<html>손으로 고치는 중</html>'
-    alarm = _code_alarm(repo)
-    assert alarm['kind'] == '사람검토' and '따라잡지 않았다' in alarm['detail']
-
-
-def test_catch_up_ignores_merge_autostash_and_hooks(repo, tmp_path):
-    git(repo, 'config', 'merge.autoStash', 'true')
-    hooks = os.path.join(repo, '.git', 'hooks')
-    os.makedirs(hooks, exist_ok=True)
-    with open(os.path.join(hooks, 'post-merge'), 'w') as fh:
-        fh.write('#!/bin/sh\ntouch "$(git rev-parse --show-toplevel)/HOOK-RAN"\n')
-    os.chmod(os.path.join(hooks, 'post-merge'), 0o755)
-    push_from_elsewhere(repo, tmp_path, {'scripts/x.py': 'x = 1\n'}, 'gate')
-    assert freshness.catch_up(fetched(repo)) is None
-    assert not os.path.exists(os.path.join(repo, 'HOOK-RAN'))
-
-
 # --- 러너 tick ------------------------------------------------------------------
 
 def _code_alarm(repo):
     return state_of(repo)['errors'].get(freshness.KEY)
+
+
+def test_a_behind_checkout_is_not_pulled_and_stops_a_direct_run(repo, tmp_path):
+    push_from_elsewhere(repo, tmp_path, {'scripts/x.py': 'x = 1\n'}, 'gate')
+    head = git(repo, 'rev-parse', 'HEAD').stdout
+    out = run(repo, 'run', codex=fake_codex(tmp_path))
+    assert out.returncode == 1 and drafts(repo) == []
+    assert git(repo, 'rev-parse', 'HEAD').stdout == head      # 자동으로 pull 하지 않는다
+    assert '1커밋 뒤' in _code_alarm(repo)['detail']
 
 
 def test_a_stale_checkout_stops_the_tick_and_raises_the_alarm(repo, tmp_path):
@@ -299,3 +270,74 @@ def test_a_drift_during_correction_does_not_use_a_round(repo, tmp_path, monkeypa
                if k.startswith('정정'))                       # 정정 경로를 실제로 탔다
     assert after['rounds'].get(POST) == 2
     assert sum(after['correction_calls'].get(gate.today_kst(), {}).values()) == 0
+
+
+# --- 런처 -----------------------------------------------------------------------
+
+LAUNCH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                      'runner_launch.py')
+FAKE_GATE = ('import json, os, sys\n'
+             'print(json.dumps({"file": os.path.abspath(__file__), "cwd": os.getcwd(),\n'
+             '                  "code": os.environ.get("REVIEW_RUNNER_CODE"), "argv": sys.argv[1:],\n'
+             '                  "version": VERSION}))\n')
+
+
+def launch(repo, tmp_path, *args):
+    env = dict(os.environ, REVIEW_RUNNER_CACHE=str(tmp_path / 'cache'))
+    p = subprocess.run(['python3', LAUNCH, *args], cwd=repo, capture_output=True, text=True,
+                       env=env)
+    return p, (json.loads(p.stdout.strip().splitlines()[-1]) if p.returncode == 0 else None)
+
+
+def test_the_launcher_runs_origin_code_whatever_the_checkout_holds(repo, tmp_path):
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'VERSION = 1\n' + FAKE_GATE},
+                        'v1')
+    # 사람의 폴더는 뒤처져 있고, 다른 브랜치이고, scripts 를 고치는 중이다.
+    git(repo, 'checkout', '-q', '-b', 'wip')
+    write(repo, 'scripts/review_gate.py', 'VERSION = 0\n' + FAKE_GATE)
+    p, got = launch(repo, tmp_path, 'run', '--correct')
+    assert p.returncode == 0, p.stderr
+    origin = git(repo, 'rev-parse', 'origin/main').stdout.strip()
+    assert got['version'] == 1 and got['code'] == origin
+    assert got['file'].startswith(str(tmp_path / 'cache' / origin))
+    assert os.path.realpath(got['cwd']) == os.path.realpath(repo)   # 상태·원장은 site/ 그대로
+    assert got['argv'] == ['run', '--correct']
+    assert git(repo, 'symbolic-ref', '--short', 'HEAD').stdout.strip() == 'wip'   # 안 움직였다
+
+
+def test_the_launcher_follows_origin_to_the_next_commit(repo, tmp_path):
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'VERSION = 1\n' + FAKE_GATE},
+                        'v1')
+    assert launch(repo, tmp_path, 'run')[1]['version'] == 1
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'VERSION = 2\n' + FAKE_GATE},
+                        'v2')
+    assert launch(repo, tmp_path, 'run')[1]['version'] == 2
+
+
+def test_a_launcher_failure_leaves_an_alarm(repo, tmp_path):
+    git(repo, 'remote', 'set-url', 'origin', str(tmp_path / 'gone.git'))
+    git(repo, 'update-ref', '-d', 'refs/remotes/origin/main')
+    p, _ = launch(repo, tmp_path, 'run')
+    assert p.returncode == 1
+    assert '사본을 못 떴다' in state_of(repo)['errors'][freshness.KEY]['detail']
+
+
+def test_a_launched_tick_ignores_the_checkout_and_pins_the_snapshot_commit(repo, tmp_path,
+                                                                         monkeypatch):
+    # 런처가 넘긴 커밋이 기준이다 — 사람 폴더가 다른 브랜치여도 돈다.
+    from review.tests.test_run_correct import invoke
+    push_from_elsewhere(repo, tmp_path, {'scripts/x.py': 'x = 1\n'}, 'gate')
+    git(repo, 'fetch', '-q', 'origin')
+    git(repo, 'checkout', '-q', '-b', 'wip')
+    monkeypatch.setenv('REVIEW_RUNNER_CODE', git(repo, 'rev-parse', 'origin/main').stdout.strip())
+    seen = []
+
+    def correct(root, item, draft, commit, timeout):
+        seen.append(dict(freshness.PINNED))
+        return '검증 완료', None
+    out = run(repo, 'run', codex=fake_codex(tmp_path))   # 같은 환경변수 — 사본 경로로 초안을 낸다
+    assert out.returncode == 0, out.stdout + out.stderr
+    assert len(drafts(repo)) == 2
+    assert invoke(repo, monkeypatch, correct) == 0
+    assert freshness.KEY not in state_of(repo)['errors']
+    assert seen and seen[0]['scripts'] == freshness.trees(repo, 'origin/main')['scripts']

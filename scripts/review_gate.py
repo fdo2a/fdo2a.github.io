@@ -59,52 +59,19 @@ def _import_failed(exc):
         sys.exit(0 if '--hook' in argv else 1)
     if argv[:1] == ['run']:
         try:
-            _note_import_failure(root, why)
-        except OSError as exc2:
+            from review import freshness as _fresh   # stdlib 만 쓴다 — 이것까지 깨졌으면 출력만
+            _fresh.note_alarm(root, why)
+        except Exception as exc2:  # noqa: BLE001
             print(f'[러너] 경보도 못 남겼다 — {type(exc2).__name__}: {exc2}', file=sys.stderr)
     print(why, file=sys.stderr)
     sys.exit(1)
 
 
-def _note_import_failure(root, why):
-    """정상 러너와 같은 잠금을 잡고 상태에 경보만 더한다 — 잠금 없이 읽고 쓰면 그 사이 정상
-    러너가 저장한 호출 예약을 옛 값으로 덮는다(codex 구현 검토 #4). 경합하면 건드리지 않는다."""
-    reviews = os.path.join(root, 'reviews')
-    os.makedirs(reviews, exist_ok=True)
-    fd = os.open(os.path.join(reviews, '.runner.lock'), os.O_CREAT | os.O_WRONLY, 0o644)
-    try:
-        try:
-            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except OSError:
-            print('[러너] 다른 tick 이 돌고 있어 경보를 남기지 않았다', file=sys.stderr)
-            return
-        path = os.path.join(reviews, 'runner.json')
-        try:
-            with open(path, encoding='utf-8') as fh:
-                state = json.load(fh)
-        except (OSError, ValueError):
-            state = {}
-        state = state if isinstance(state, dict) else {}
-        errs = state.get('errors') if isinstance(state.get('errors'), dict) else {}
-        errs['러너-코드'] = {'kind': '사람검토', 'detail': why}   # freshness.KEY, runner.HUMAN
-        state['errors'] = errs
-        tmp_fd, tmp = tempfile.mkstemp(dir=reviews)
-        try:
-            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as fh:
-                json.dump(state, fh, ensure_ascii=False, indent=2, sort_keys=True)
-                fh.write('\n')
-            os.replace(tmp, path)
-        except BaseException:
-            os.path.exists(tmp) and os.unlink(tmp)
-            raise
-    finally:
-        os.close(fd)
-
-
 try:
     from review import freshness  # noqa: E402 — stdlib 만 쓴다
-    if sys.argv[1:2] == ['run']:
-        # 다른 레포 모듈을 읽기 **전에** 지금 HEAD 의 코드를 적어 둔다(codex 구현 검토 #1).
+    if sys.argv[1:2] == ['run'] and not os.environ.get('REVIEW_RUNNER_CODE'):
+        # 런처 없이 site/ 에서 바로 돌 때만 — 다른 레포 모듈을 읽기 **전에** 지금 HEAD 의 코드를
+        # 적어 둔다(codex 구현 검토 #1). 런처의 사본은 바뀌지 않는다.
         freshness.boot(os.getcwd())
     from review import kinds  # noqa: E402
     from review import prose as prose_mod  # noqa: E402
@@ -128,6 +95,7 @@ LOCK = 'reviews/.index.lock'
 DRAFTS = 'reviews/pending'
 STATE = 'reviews/runner.json'
 RUNNER_LOCK = 'reviews/.runner.lock'
+ENV_CODE = 'REVIEW_RUNNER_CODE'   # runner_launch.ENV_CODE — 사본의 커밋
 CORRECTION_BLOCK = 'correction_blocked_until'
 
 # 러너가 codex 에 넘길 근거 — REVIEW_GATE 2단계가 손으로 가리키던 것과 같은 자리를,
@@ -1332,25 +1300,20 @@ def cmd_run(args):
         # 이 프로세스가 import 한 코드가 origin/main 과 같을 때만 공개판을 읽고 고친다. 다르면
         # codex·정정 모두 멈춘다 — 정정도 로컬 게이트 스크립트를 돈다. 경보는 맞았음을 확인했을
         # 때만 지운다(fetch 실패로 지우면 해결을 확인하지 않은 채 사라진다).
-        kind, stale = freshness.status(root)
-        if kind == freshness.BEHIND:
-            # 뒤처지기만 했고 손댄 파일이 없으면 따라잡는다. 이미 import 한 코드는 옛 판이라
-            # 이번 tick 은 쉬고, 새 코드로 도는 것은 다음 tick 이다.
-            miss = freshness.catch_up(root)
-            if miss is None:
-                print(f'[러너] {stale} — 따라잡았다. 이번 tick 은 쉬고 다음 tick 이 새 코드로 돈다')
-                errs.pop(freshness.KEY, None)
-                return _save(root, state, errs, progressed=False)
-            kind, stale = freshness.STALE, f'{stale} — {miss}'
-        if kind == freshness.STALE:
+        code_oid = os.environ.get(ENV_CODE)
+        if code_oid:
+            # 런처(scripts/runner_launch.py)가 origin/main 을 떠 둔 사본에서 돌고 있다 — 사람의
+            # 폴더와 무관하다. 그 커밋이 비교 기준이다.
+            stale = freshness.pin_code(root, code_oid)
+        else:
+            # 런처 없이 site/ 에서 바로 돌았다(손으로 부를 때). 그 폴더가 origin/main 과 같고,
+            # import 한 뒤 바뀌지 않았을 때만 돈다.
+            stale = freshness.check(root) or freshness.pin(root)
+        if stale:
             errs[freshness.KEY] = err(HUMAN, f'러너 코드가 origin/main 과 다르다 — {stale}. '
                                              '맞출 때까지 자동 검토·문체 수정·정정을 멈춘다')
             return _save(root, state, errs, progressed=False)
         errs.pop(freshness.KEY, None)
-        moved_since_boot = freshness.pin(root)
-        if moved_since_boot:
-            print(f'[러너] {moved_since_boot}')
-            return _save(root, state, errs, progressed=False)
 
         todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
             root, want_fetch=False)

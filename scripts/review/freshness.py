@@ -4,10 +4,11 @@
 staged 로 남은 미완성 작업 때문에 아무도 pull 을 못 했고, 러너는 10/10 까지 81커밋 뒤의
 코드로 공개판을 고쳐 푸시했다 — check_fund 게이트가 없는 문체 단계였고, 경보는 없었다.
 
-- 뒤처지기만 했고 작업 폴더의 추적 파일이 하나도 안 바뀌었으면 **따라잡고 그 tick 은 쉰다.**
-  이미 import 한 코드는 옛 판이므로 새 코드로 도는 것은 다음 tick 이다(재실행은 하지 않는다).
-- 그 밖에 다르면(다른 브랜치, 앞선 커밋, 코드 변경, 미추적 모듈) **멈추고 알린다.** 사람의
-  작업을 움직이지 않는다는 원칙을 지킨다(codex 설계 검토 #2).
+- launchd 는 `scripts/runner_launch.py` 로 돈다 — 그 tick 의 origin/main 커밋을 통째로 떠 둔
+  사본에서 러너를 실행하고, 그 커밋을 `REVIEW_RUNNER_CODE` 로 넘긴다. 이때 비교 기준은 그
+  커밋이다(`pin_code`). 사람의 폴더는 읽지도 움직이지도 않는다.
+- 런처 없이 site/ 에서 바로 돌리면(손으로 부를 때) site/ 가 origin/main 과 다를 때 **멈추고
+  알린다**(`status`·`pin`). 자동 pull 은 하지 않는다(codex 설계 검토 #2).
 
 stdlib 만 쓴다 — 레포 모듈 import 가 깨진 상태에서도 돌아야 한다.
 
@@ -22,7 +23,7 @@ DRIFT = 'tick 도중 origin 의 코드가 바뀌었다'   # 재시도성 실패�
 # 빠진다. HUMANIZE_RULES 는 레포 밖이라 대상이 아니다.
 CODE_PATHS = ('scripts', '.claude/skills/review-gate', '.claude/REVIEW_GATE.md')
 
-OK, BEHIND, STALE = 'ok', 'behind', 'stale'
+OK, STALE = 'ok', 'stale'
 
 
 def _git(root, *args, raw=False):
@@ -54,7 +55,7 @@ def _listed(paths):
 
 
 def status(root, upstream='origin/main'):
-    """→ (OK | BEHIND | STALE, 이유). fetch 는 호출자가 먼저 한다."""
+    """→ (OK | STALE, 이유). fetch 는 호출자가 먼저 한다."""
     code, branch = _git(root, 'symbolic-ref', '--quiet', '--short', 'HEAD')
     if code:
         return STALE, 'site/ 가 분리된 HEAD 다 — main 을 체크아웃해야 한다'
@@ -78,38 +79,13 @@ def status(root, upstream='origin/main'):
     where = f'site/ main 이 {upstream} 보다 {behind}커밋 뒤, {ahead}커밋 앞이다'
     if ahead != '0':
         return STALE, where + ' — origin 에 없는 커밋은 사람이 푸시하거나 정리해야 한다'
-    return BEHIND, where
+    return STALE, where + ' — pull 하거나 런처(scripts/runner_launch.py)로 돌린다'
 
 
 def check(root, upstream='origin/main'):
-    """맞지 않는 이유(str) 또는 None — 뒤처짐도 이유다. 따라잡기는 `catch_up`."""
+    """맞지 않는 이유(str) 또는 None."""
     kind, why = status(root, upstream)
     return None if kind == OK else why
-
-
-def catch_up(root, upstream='origin/main'):
-    """뒤처지기만 했을 때 fast-forward → 못 한 이유(str) 또는 None(따라잡았다).
-
-    추적 파일이 **하나라도** 바뀌어 있으면 하지 않는다 — 사람이 손대는 중인 폴더다. 훅·
-    autoStash·무시 파일 덮어쓰기를 끄고(codex #5), 직전에 브랜치를 한 번 더 확인한다.
-    실패해도 아무것도 되돌리지 않는다 — ff 가 거부되면 작업 폴더는 그대로다.
-    """
-    dirty = _dirty(root, '.', untracked='no')
-    if dirty is None:
-        return 'git status 를 못 읽었다'
-    if dirty:
-        return '뒤처졌는데 작업 폴더에 커밋 안 된 변경이 있어 따라잡지 않았다 — ' + _listed(dirty)
-    code, branch = _git(root, 'symbolic-ref', '--quiet', '--short', 'HEAD')
-    if code or branch != 'main':
-        return '따라잡기 직전에 브랜치가 바뀌었다'
-    p = subprocess.run(['git', '-C', root, '-c', 'core.hooksPath=/dev/null',
-                        'merge', '--ff-only', '--no-autostash', '--no-overwrite-ignore',
-                        '--quiet', upstream], capture_output=True, text=True, timeout=120)
-    if p.returncode:
-        return 'ff 실패 — ' + (p.stderr or p.stdout).strip()[-300:]
-    _, head = _git(root, 'rev-parse', 'HEAD')
-    _, up = _git(root, 'rev-parse', upstream)
-    return None if head == up else 'ff 뒤에도 HEAD 가 origin/main 과 다르다'
 
 
 # 이 프로세스가 import 한 코드. `boot()` 은 레포 모듈을 import 하기 **전에** 부른다 — import 와
@@ -123,6 +99,13 @@ def boot(root):
     global BOOT
     BOOT = trees(root, 'HEAD')
     return BOOT
+
+
+def pin_code(root, oid):
+    """런처가 뜬 사본의 커밋을 비교 기준으로 — 사본은 바뀌지 않으므로 BOOT 검사가 필요 없다."""
+    global PINNED
+    PINNED = trees(root, oid)
+    return None if any(PINNED.values()) else f'코드 커밋 {oid[:7]} 을 못 읽었다'
 
 
 def pin(root):
@@ -147,3 +130,46 @@ def moved(root, other, ref='HEAD'):
     if diff:
         return f'{DRIFT}({", ".join(diff)}) — 다음 tick 에 새 코드로 다시 한다'
     return None
+
+
+def note_alarm(root, why):
+    """runner.json 에 `errors[KEY]`(사람검토)를 더한다 — 정상 러너와 같은 잠금을 잡고.
+
+    잠금 없이 읽고 쓰면 그 사이 정상 러너가 저장한 호출 예약을 옛 값으로 덮는다(codex 구현
+    검토 #4). 경합하면 건드리지 않는다. 런처 실패와 레포 모듈 import 실패가 쓴다.
+    """
+    import fcntl
+    import json
+    import os
+    import tempfile
+    reviews = os.path.join(root, 'reviews')
+    os.makedirs(reviews, exist_ok=True)
+    fd = os.open(os.path.join(reviews, '.runner.lock'), os.O_CREAT | os.O_WRONLY, 0o644)
+    try:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            print('[러너] 다른 tick 이 돌고 있어 경보를 남기지 않았다', file=__import__('sys').stderr)
+            return False
+        path = os.path.join(reviews, 'runner.json')
+        try:
+            with open(path, encoding='utf-8') as fh:
+                state = json.load(fh)
+        except (OSError, ValueError):
+            state = {}
+        state = state if isinstance(state, dict) else {}
+        errs = state.get('errors') if isinstance(state.get('errors'), dict) else {}
+        errs[KEY] = {'kind': '사람검토', 'detail': why}   # runner.HUMAN
+        state['errors'] = errs
+        tmp_fd, tmp = tempfile.mkstemp(dir=reviews)
+        try:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as fh:
+                json.dump(state, fh, ensure_ascii=False, indent=2, sort_keys=True)
+                fh.write('\n')
+            os.replace(tmp, path)
+        except BaseException:
+            os.path.exists(tmp) and os.unlink(tmp)
+            raise
+        return True
+    finally:
+        os.close(fd)
