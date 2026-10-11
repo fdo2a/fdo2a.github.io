@@ -10,7 +10,10 @@ WebFetch 도구도 CNBC 에 403 이다(2026-09-24 실측). 그런데 본문은 �
 그래서 본문이 있는 곳에서 요약까지 끝내고, **우리가 쓴 요약만** 커밋한다. 원문 문장을
 옮기지 않게 지시하므로 저작권 문제도 없다.
 
-모델은 `NEWS_SUMMARY_MODEL`(기본 Haiku 4.5 — 2026-09-24 사용자 선택).
+모델은 `NEWS_SUMMARY_MODEL`(기본 Haiku 5.5 — 2026-10-11 사용자 지시, 그 전은 Haiku 4.5).
+Haiku 5.5 는 thinking 이 기본으로 켜져 있고 그 토큰이 `max_tokens` 안에서 나간다 — 1024 로는
+요약이 잘릴 수 있어서 상한을 넓히고 effort 를 low 로 낮춘다. effort 는 Haiku 5.5 에만 보낸다
+(Haiku 4.5 로 되돌리면 400 이다).
 
 **자격 증명은 Workload Identity Federation 이다** (2026-09-24 사용자 선택). 레포에 정적 키를
 두지 않고, GitHub Actions 가 발급하는 OIDC 토큰을 Anthropic 토큰으로 교환한다. GitHub 토큰은
@@ -40,7 +43,9 @@ try:                        # Actions 에서만 설치한다(워크플로). 로�
 except ImportError:         # pragma: no cover - 환경에 따라
     _sdk = None
 
-DEFAULT_MODEL = 'claude-haiku-4-5'
+DEFAULT_MODEL = 'claude-haiku-5-5'
+MAX_TOKENS = 4096                   # thinking 과 요약을 합친 상한
+EFFORT_MODELS = {'claude-haiku-5-5': 'low'}     # 정확히 일치할 때만 — 접두어 판정은 effort 미지원 모델에 샌다
 AUDIENCE = 'https://api.anthropic.com'
 
 # 게이트의 요약 분량 띠(news_gate.MIN_CHARS·MAX_CHARS = 240·420, **공백 제외**)보다 안쪽을
@@ -240,18 +245,22 @@ def in_band(text):
 def summarize_one(client, model, item, body, system=None):
     """(요약, 사유). 분량이 벗어나면 한 번만 고쳐 쓰게 한다. 인증 실패는 예외로 올린다."""
     messages = [{'role': 'user', 'content': _prompt(item, body)}]
+    extra = {'output_config': {'effort': EFFORT_MODELS[model]}} if model in EFFORT_MODELS else {}
     text = ''
     try:
         for _ in range(2):
-            response = client.messages.create(model=model, max_tokens=1024,
+            response = client.messages.create(model=model, max_tokens=MAX_TOKENS,
                                               system=system or SYSTEM,
-                                              messages=messages)
+                                              messages=messages, **extra)
             if response.stop_reason == 'refusal':
                 return None, '모델 거절'
+            if response.stop_reason == 'max_tokens':    # 분량 판정보다 먼저 — 잘린 글이 띠 안에 들 수 있다
+                return None, '출력 잘림'
             text = _text(response)
             if in_band(text):
                 return text, None
-            messages += [{'role': 'assistant', 'content': text},
+            # thinking 블록까지 그대로 붙인다 — 이력을 고치지 않고 덧붙이기만 한다
+            messages += [{'role': 'assistant', 'content': response.content},
                          {'role': 'user', 'content':
                           f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 '
                           f'{TARGET_MIN}~{TARGET_MAX}자로 다시 써 주세요. 요약 문단만 '

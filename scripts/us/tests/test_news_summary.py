@@ -12,11 +12,13 @@ class Client:
         self.messages = self
 
     def create(self, **kw):
-        self.calls.append(kw)
+        # 호출 시점의 메시지를 복사해 둔다 — 재작성 턴이 같은 리스트에 덧붙여도 첫 호출 기록이 바뀌지 않게
+        self.calls.append(dict(kw, messages=list(kw['messages'])))
         text = self.replies.pop(0)
         return types.SimpleNamespace(
             stop_reason=self.stop,
-            content=[types.SimpleNamespace(type='text', text=text)])
+            content=[types.SimpleNamespace(type='thinking', thinking='', signature='sig'),
+                     types.SimpleNamespace(type='text', text=text)])
 
 
 def items(tmp_path, n=1):
@@ -48,6 +50,46 @@ def test_an_out_of_band_summary_gets_one_rewrite(tmp_path):
     c = Client(['짧다', GOOD])
     NS.summarize_items(its, str(tmp_path), model='m', client=c, log=lambda *_: None)
     assert len(c.calls) == 2 and its[0]['summary_ko'] == GOOD
+
+
+def test_the_default_model_is_haiku_5_5(tmp_path, monkeypatch):
+    monkeypatch.delenv('NEWS_SUMMARY_MODEL', raising=False)
+    its, c = items(tmp_path), Client([GOOD])
+    NS.summarize_items(its, str(tmp_path), client=c, log=lambda *_: None)
+    assert c.calls[0]['model'] == 'claude-haiku-5-5' == its[0]['summary_model']
+
+
+def test_haiku_5_5_gets_low_effort_and_room_for_thinking(tmp_path):
+    c = Client([GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='claude-haiku-5-5', client=c,
+                       log=lambda *_: None)
+    assert c.calls[0]['output_config'] == {'effort': 'low'}
+    assert c.calls[0]['max_tokens'] >= 4096
+
+
+def test_other_models_get_no_effort(tmp_path):
+    # Haiku 4.5·Sonnet 4.5 는 effort 를 받지 않는다 — Variable 로 롤백하면 전 기사가 400 이 된다
+    for model in ('claude-haiku-4-5', 'claude-sonnet-4-5'):
+        c = Client([GOOD])
+        NS.summarize_items(items(tmp_path), str(tmp_path), model=model, client=c,
+                           log=lambda *_: None)
+        assert 'output_config' not in c.calls[0]
+
+
+def test_a_truncated_reply_is_not_stored_even_in_band(tmp_path):
+    its, c = items(tmp_path), Client([GOOD], stop='max_tokens')
+    NS.summarize_items(its, str(tmp_path), model='m', client=c, log=lambda *_: None)
+    assert 'summary_ko' not in its[0] and its[0]['summary_note'] == '출력 잘림'
+    assert len(c.calls) == 1
+
+
+def test_the_rewrite_turn_keeps_the_whole_reply(tmp_path):
+    c = Client(['짧다', GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    assert len(c.calls[0]['messages']) == 1
+    prior = c.calls[1]['messages'][1]
+    assert prior['role'] == 'assistant'
+    assert [b.type for b in prior['content']] == ['thinking', 'text']
 
 
 def test_two_misses_leave_no_summary_and_a_reason(tmp_path):
