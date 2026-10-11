@@ -89,22 +89,31 @@ class _Signals:
         finally:
             signal.pthread_sigmask(signal.SIG_SETMASK, old)
 
-    def final(self):
-        """마지막 판정 — 신호를 막고, 막기 전에 기록된 것과 막힌 채 대기 중인 것을 모두 거둔 뒤
-        처리기를 되돌린다. 마지막 확인과 처리기 해제 사이에 온 신호가 성공 코드로 사라지던 틈
-        (7차 #6)이다. 대기 중인 신호는 sigwait 로 소비해 기본 처리기가 받지 않게 한다."""
+    def final(self, keep_blocked=False):
+        """마지막 판정 — 신호를 막고, 막기 전에 기록된 것과 막힌 채 대기 중인 것을 거둔다.
+
+        `keep_blocked` 는 명령줄 경로다: 막은 채로 돌아와 그대로 종료한다. 판정 뒤에 온 신호는
+        막힌 채 프로세스와 함께 버려지므로, 판정과 종료 사이의 틈이 없다(codex 구현 7·8차 #6).
+        호출형(테스트)은 처리기와 마스크를 되돌린다 — 그 뒤의 신호는 호출자의 몫이다.
+        막힌 동안 두 신호가 함께 대기하면 도착 순서를 알 수 없으므로 SIGTERM(launchd)을 앞세운다.
+        """
         old = signal.pthread_sigmask(signal.SIG_BLOCK, self.SIGS)
+        restore = True
         try:
-            for sig in signal.sigpending() & set(self.SIGS):
-                signal.sigwait([sig])       # 대기 중인 것만 거두므로 바로 돌아온다(macOS 엔 sigtimedwait 가 없다)
-                if self.got is None:
-                    self.got = sig
+            pending = signal.sigpending()
+            for sig in self.SIGS:                       # SIGTERM 먼저
+                if sig in pending:
+                    signal.sigwait([sig])   # 대기 중인 것만 거두므로 바로 돌아온다(macOS 엔 sigtimedwait 가 없다)
+                    if self.got is None:
+                        self.got = sig
             got = self.got
             for sig, handler in self._old.items():
                 signal.signal(sig, handler)
             self._old = {}
+            restore = not keep_blocked
         finally:
-            signal.pthread_sigmask(signal.SIG_SETMASK, old)
+            if restore:
+                signal.pthread_sigmask(signal.SIG_SETMASK, old)
         return got
 
     def check(self):
@@ -247,7 +256,7 @@ def _launch(root, argv, signals, work):
                       dict(os.environ, **{ENV_CODE: oid}), signals)
 
 
-def main(argv):
+def main(argv, cli=False):
     global SIGNALS
     out = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
     if out.returncode:
@@ -276,7 +285,7 @@ def main(argv):
             if work:
                 shutil.rmtree(work, ignore_errors=True)
             SIGNALS = None
-        got = signals.final()
+        got = signals.final(keep_blocked=cli)
         if got is not None:
             # 언제 왔든(사본을 뜨는 중·정리 중·경보를 쓰는 중·마지막 판정 직전) 신호로 끝났다고 보고한다.
             print(f'[런처] 신호 {got} — 정리하고 끝낸다', file=sys.stderr)
@@ -285,4 +294,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main(sys.argv[1:], cli=True))

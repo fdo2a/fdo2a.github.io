@@ -618,18 +618,35 @@ def test_a_signal_pending_at_the_final_decision_is_reported():
     assert signal.getsignal(signal.SIGTERM) is not sigs._handle
 
 
-def test_the_wait_timeout_is_wall_clock_time():
-    # 폴링 횟수로 재 0.4초 제한이 0.9초 뒤에 걸리던 것(7차 #7).
-    import time
+def test_the_wait_timeout_is_wall_clock_time(monkeypatch):
+    # 폴링 횟수로 재 0.4초 제한이 0.9초 뒤에 걸리던 것(7차 #7). 가상 시계로 대기마다 0.25초의
+    # 지연을 넣는다 — 경과 시간으로 재면 마감을 넘긴 뒤 다시 기다리지 않는다(8차 #6).
     import runner_launch
-    proc = subprocess.Popen(['python3', '-c', 'import time; time.sleep(10)'])
-    start = time.monotonic()
+    clock = [0.0]
+    monkeypatch.setattr(runner_launch.time, 'monotonic', lambda: clock[0])
+    monkeypatch.setattr(runner_launch, 'SIGNALS', None)
+
+    class Proc:
+        args = ['x']
+        waits = 0
+        killed = False
+
+        def wait(self, timeout=None):
+            if timeout is None:
+                return -9
+            self.waits += 1
+            clock[0] += timeout + 0.25
+            raise subprocess.TimeoutExpired('x', timeout)
+
+        def kill(self):
+            self.killed = True
+    proc = Proc()
     try:
         runner_launch._wait(proc, timeout=0.4)
         assert False, 'timeout expected'
     except subprocess.TimeoutExpired:
         pass
-    assert time.monotonic() - start < 1.5 and proc.poll() is not None
+    assert proc.waits == 1 and proc.killed
 
 
 def test_a_recorded_cancel_stops_before_the_next_git_step(monkeypatch):
@@ -664,3 +681,27 @@ def test_a_real_child_start_failure_and_a_signal_keep_both(repo, tmp_path, monke
     assert rl.main(['run']) == 128 + signal.SIGTERM
     assert 'temporarily' in state_of(repo)['errors'][freshness.KEY]['detail']
     assert os.listdir(tmp_path / 'tmp') == []
+
+
+def test_the_cli_exits_with_late_signals_still_blocked(repo, tmp_path):
+    # 명령줄 런처는 판정 뒤 신호를 막은 채 끝난다 — 판정과 종료 사이 신호가 기본 처리기로 넘어가
+    # 성공 판정을 뒤집던 틈(8차 #6). 사본 러너가 0 으로 끝나면 런처도 0 이다.
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'pass\n'}, 'gate')
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
+    p = subprocess.run(['python3', LAUNCH, 'pending'], cwd=repo, capture_output=True, text=True,
+                       env=dict(os.environ, TMPDIR=str(tmp_path / 'tmp')))
+    assert p.returncode == 0, p.stderr
+    assert os.listdir(tmp_path / 'tmp') == []
+
+
+def test_two_signals_pending_at_the_final_decision_prefer_sigterm():
+    import signal
+    import runner_launch
+    with runner_launch._Signals() as sigs:
+        old = signal.pthread_sigmask(signal.SIG_BLOCK, [signal.SIGTERM, signal.SIGINT])
+        try:
+            os.kill(os.getpid(), signal.SIGINT)
+            os.kill(os.getpid(), signal.SIGTERM)
+            assert sigs.final() == signal.SIGTERM
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, old)
