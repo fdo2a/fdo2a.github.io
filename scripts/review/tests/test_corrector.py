@@ -33,7 +33,9 @@ def setup(tmp_path, monkeypatch):
     git(root, 'commit', '-m', 'publish')
     git(root, 'push', '-u', 'origin', 'main')
     item = Pending('posts/2026-09-10.html', 'us', git(root, 'rev-parse', 'HEAD:posts/2026-09-10.html'), 'new')
-    # Trusted local gate scripts are deliberately absent from the origin clone.
+    # 2026-10-10: gates run from a pristine archive of the verified commit, not from the
+    # user checkout (which the runner now keeps equal to origin/main). So the gate scripts
+    # are committed and pushed; tests that change a gate go through `gate()`.
     scripts = root / 'scripts'
     scripts.mkdir()
     for name in ('macro', 'fed', 'weight', 'price_context',
@@ -42,17 +44,32 @@ def setup(tmp_path, monkeypatch):
 from pathlib import Path
 assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
 assert not any('repo/data' in x for x in sys.argv)
-with (Path(__file__).parent / 'gate-calls.txt').open('a') as f:
+with Path(%r).open('a') as f:
     f.write(Path(__file__).name + '\\n')
 print('gate passed')
-''')
+''' % str(tmp_path / 'gate-calls.txt'))
     (scripts / 'verify_post.py').write_text('''import sys
 assert sys.argv[2] == '--before' and sys.argv[1] == sys.argv[3]
 print('layout passed')
 ''')
+    git(root, 'add', 'scripts')
+    git(root, 'commit', '-m', 'gates')
+    git(root, 'push', 'origin', 'main')
     executable = tmp_path / 'claude'
     monkeypatch.setenv('CLAUDE_BIN', str(executable))
     return root, remote, item, executable
+
+
+def gate(root, rel, text=None):
+    """Change (or delete) a gate script the way it would reach the runner: committed and pushed."""
+    path = root / rel
+    if text is None:
+        path.unlink()
+    else:
+        path.write_text(text)
+    git(root, 'add', '-A', 'scripts')
+    git(root, 'commit', '-m', 'gate change')
+    git(root, 'push', 'origin', 'main')
 
 
 def fake(executable, extra='', mark=True):
@@ -86,7 +103,7 @@ def test_success_keeps_user_checkout(setup):
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
     # Nine gates on the original (baseline) and the same nine on the correction.
-    assert len((root / 'scripts/gate-calls.txt').read_text().splitlines()) == 18
+    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 18
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -146,7 +163,6 @@ subprocess.run(['git','-C',{str(root)!r},'push'],check=True)
 def test_independent_gate_blocks_push(setup, failure):
     root, remote, item, exe = setup
     fake(exe)
-    base = git(root, 'rev-parse', 'HEAD')
     if failure == 'nonzero':
         # Passes on the original, fails only on the corrected post — a regression.
         (root / 'scripts/check_macro.py').write_text(
@@ -157,6 +173,10 @@ def test_independent_gate_blocks_push(setup, failure):
         (root / 'scripts/check_macro.py').unlink()
     else:
         (root / 'scripts/verify_post.py').write_text("print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
+    git(root, 'add', '-A', 'scripts')
+    git(root, 'commit', '-m', 'gate change')
+    git(root, 'push', 'origin', 'main')
+    base = git(root, 'rev-parse', 'HEAD')
     _, error = correct_one(root, item, 'review', base, 10)
     assert error
     assert git(remote, 'rev-parse', 'main') == base
@@ -185,7 +205,7 @@ def _counting(exe, extra=''):
 def test_gate_failing_on_original_does_not_block(setup):
     """발행 뒤에 생긴 게이트는 원본부터 실패한다 — 정정을 버릴 이유가 아니다(2026-09-21 KR)."""
     root, remote, item, exe = setup
-    (root / 'scripts/check_weight.py').write_text("raise SystemExit('판단군이 하한에 못 미친다')")
+    gate(root, 'scripts/check_weight.py', "raise SystemExit('판단군이 하한에 못 미친다')")
     _counting(exe, "assert 'check_weight.py' in prompt\n")
     base = git(root, 'rev-parse', 'HEAD')
     result, error = correct_one(root, item, 'wrong value', base, 10)
@@ -218,9 +238,9 @@ def test_unrunnable_gate_stops_before_claude(setup, tmp_path, broken):
     root, remote, item, exe = setup
     _counting(exe)
     if broken == 'missing':
-        (root / 'scripts/check_style.py').unlink()
+        gate(root, 'scripts/check_style.py')
     else:
-        (root / 'scripts/verify_post.py').write_text("print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
+        gate(root, 'scripts/verify_post.py', "print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
     base = git(root, 'rev-parse', 'HEAD')
     _, error = correct_one(root, item, 'review', base, 10)
     assert error
@@ -304,7 +324,7 @@ raise SystemExit('FAIL fund block mismatch' if {bad!r} in html else 0)
 def test_fund_failure_on_original_is_handed_over_as_must_fix(setup):
     """원본이 check_fund 에 걸려도 정정은 시작한다 — 다만 「기존 실패」가 아니라 고칠 대상이다."""
     root, remote, item, exe = setup
-    (root / 'scripts/check_fund.py').write_text(_FUND_STUB.format(bad='old'))
+    gate(root, 'scripts/check_fund.py', _FUND_STUB.format(bad='old'))
     _counting(exe, "assert 'MUST pass after your correction: check_fund.py' in prompt\n"
                    "assert 'before any correction: none' in prompt\n"
                    "assert '--print-block' in prompt and '--market us' in prompt\n")
@@ -317,9 +337,45 @@ def test_fund_failure_on_original_is_handed_over_as_must_fix(setup):
 
 def test_fund_failure_that_survives_correction_blocks(setup):
     root, remote, item, exe = setup
-    (root / 'scripts/check_fund.py').write_text(_FUND_STUB.format(bad='<p>'))
+    gate(root, 'scripts/check_fund.py', _FUND_STUB.format(bad='<p>'))
     _counting(exe)
     base = git(root, 'rev-parse', 'HEAD')
     _, error = correct_one(root, item, 'wrong value', base, 10)
     assert error and 'check_fund.py' in error
     assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
+
+
+def test_a_local_gate_edit_after_verification_does_not_change_the_replay(setup, tmp_path):
+    """게이트는 검증한 판의 사본에서 돈다 — 사람이 로컬 스크립트를 바꿔도 독립 검사는 그대로다
+    (2026-10-10 codex 구현 검토 #2)."""
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_macro.py',
+         "import sys\nfrom pathlib import Path\n"
+         "post = sys.argv[sys.argv.index('--html') + 1]\n"
+         "if 'fixed' in Path(post).read_text(): raise SystemExit('invalid HTML')\n")
+    (root / 'scripts/check_macro.py').write_text('print("ok")\n')   # 커밋 안 된 로컬 변조
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error and 'check_macro.py' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_a_code_change_on_origin_since_pinning_stops_before_claude(setup, tmp_path):
+    from scripts.review import corrector
+    freshness = corrector.freshness        # 정정기가 실제로 쓰는 모듈 객체
+    root, remote, item, exe = setup
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    freshness.PINNED = freshness.trees(str(root), 'HEAD')
+    try:
+        other = tmp_path / 'other'
+        git(tmp_path, 'clone', str(remote), str(other))
+        (other / 'scripts/check_style.py').write_text('print("v2")\n')
+        git(other, 'commit', '-am', 'gate v2')
+        git(other, 'push', 'origin', 'HEAD:main')
+        _, error = correct_one(root, item, 'review', base, 10)
+    finally:
+        freshness.PINNED = None
+    assert error and freshness.DRIFT in error
+    assert _claude_calls(tmp_path) == 0

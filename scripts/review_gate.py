@@ -18,20 +18,27 @@
 설계: docs/superpowers/specs/2026-08-24-post-publish-review-gate-design.md
 """
 
-import argparse
-import dataclasses
-import errno
-import fcntl
-import io
-import json
-import os
-import re
-import shutil
-import subprocess
 import sys
-import tarfile
-import tempfile
-from datetime import datetime
+
+# 스크립트로 실행되면 파이썬이 scripts/ 를 sys.path 맨 앞에 둔다. 그러면 거기 놓인 미추적
+# json.py 가 아래 표준 모듈 import 를 가려 경보 없이 죽는다(codex 구현 검토 #5). 표준 모듈을
+# 먼저 읽고, 레포 모듈 경로는 아래에서 다시 올린다.
+if __name__ == '__main__' and not sys.flags.safe_path and sys.path:
+    sys.path.pop(0)
+
+import argparse  # noqa: E402
+import dataclasses  # noqa: E402
+import errno  # noqa: E402
+import fcntl  # noqa: E402
+import io  # noqa: E402
+import json  # noqa: E402
+import os  # noqa: E402
+import re  # noqa: E402
+import shutil  # noqa: E402
+import subprocess  # noqa: E402
+import tarfile  # noqa: E402
+import tempfile  # noqa: E402
+from datetime import datetime  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -51,30 +58,55 @@ def _import_failed(exc):
         print(f'[검토 게이트] {why}. site/scripts 를 확인할 것.')
         sys.exit(0 if '--hook' in argv else 1)
     if argv[:1] == ['run']:
-        path = os.path.join(root, 'reviews', 'runner.json')
         try:
-            with open(path, encoding='utf-8') as fh:
-                state = json.load(fh)
-            state = state if isinstance(state, dict) else {}
-        except (OSError, ValueError):
-            state = {}
-        errs = state.get('errors') if isinstance(state.get('errors'), dict) else {}
-        errs['러너-코드'] = {'kind': '사람검토', 'detail': why}   # freshness.KEY, runner.HUMAN
-        state['errors'] = errs
-        try:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            tmp = path + '.tmp'
-            with open(tmp, 'w', encoding='utf-8') as fh:
-                json.dump(state, fh, ensure_ascii=False, indent=1)
-            os.replace(tmp, path)
-        except OSError:
-            pass
+            _note_import_failure(root, why)
+        except OSError as exc2:
+            print(f'[러너] 경보도 못 남겼다 — {type(exc2).__name__}: {exc2}', file=sys.stderr)
     print(why, file=sys.stderr)
     sys.exit(1)
 
 
+def _note_import_failure(root, why):
+    """정상 러너와 같은 잠금을 잡고 상태에 경보만 더한다 — 잠금 없이 읽고 쓰면 그 사이 정상
+    러너가 저장한 호출 예약을 옛 값으로 덮는다(codex 구현 검토 #4). 경합하면 건드리지 않는다."""
+    reviews = os.path.join(root, 'reviews')
+    os.makedirs(reviews, exist_ok=True)
+    fd = os.open(os.path.join(reviews, '.runner.lock'), os.O_CREAT | os.O_WRONLY, 0o644)
+    try:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            print('[러너] 다른 tick 이 돌고 있어 경보를 남기지 않았다', file=sys.stderr)
+            return
+        path = os.path.join(reviews, 'runner.json')
+        try:
+            with open(path, encoding='utf-8') as fh:
+                state = json.load(fh)
+        except (OSError, ValueError):
+            state = {}
+        state = state if isinstance(state, dict) else {}
+        errs = state.get('errors') if isinstance(state.get('errors'), dict) else {}
+        errs['러너-코드'] = {'kind': '사람검토', 'detail': why}   # freshness.KEY, runner.HUMAN
+        state['errors'] = errs
+        tmp_fd, tmp = tempfile.mkstemp(dir=reviews)
+        try:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as fh:
+                json.dump(state, fh, ensure_ascii=False, indent=2, sort_keys=True)
+                fh.write('\n')
+            os.replace(tmp, path)
+        except BaseException:
+            os.path.exists(tmp) and os.unlink(tmp)
+            raise
+    finally:
+        os.close(fd)
+
+
 try:
-    from review import freshness, kinds  # noqa: E402
+    from review import freshness  # noqa: E402 — stdlib 만 쓴다
+    if sys.argv[1:2] == ['run']:
+        # 다른 레포 모듈을 읽기 **전에** 지금 HEAD 의 코드를 적어 둔다(codex 구현 검토 #1).
+        freshness.boot(os.getcwd())
+    from review import kinds  # noqa: E402
     from review import prose as prose_mod  # noqa: E402
     from review.queue import accept as accept_entry  # noqa: E402
     from review.queue import baselines, classify, is_watched  # noqa: E402
@@ -706,14 +738,17 @@ STYLE_PROMPT = """
 놓아서, 문장 사이의 관계를 독자가 메워야 한다. 이번 수정의 첫째 일은 그 관계를 글에 드러내는
 것이다. 아래 대상 HTML 을 먼저 처음부터 끝까지 읽어 섹션·표의 경계와 논지의 흐름을 잡은 뒤
 `prose_in.txt` 를 고친다(이름표가 이어져 있어도 사이에 제목이나 표가 있을 수 있다).
-- 문장 사이: 짧은 단문이 이어지면 이을 자리를 찾는다. 앞 문장의 말을 받는 연결어미(-고·-지만·
-  -는데·-면서)로 한 문장으로 잇거나, 문장 앞에 접속어(그런데·하지만·반면·다만·게다가)를 붙여
-  관계를 밝힌다. 원문 낱말은 그대로 두고 **잇는 말을 더하고 어미를 바꾸는 것**이 방법이다.
+- 문장 사이: 짧은 단문이 이어지면 이을 자리를 찾는다. **먼저 연결어미**(-고·-지만·-는데·-면서)로
+  두 문장을 한 문장으로 잇는다. 원문 낱말은 그대로 두고 어미를 바꾸는 것이 방법이다. 문장 앞에
+  접속어를 붙이는 것은 그다음이다.
 - 문단 사이: 같은 섹션 안에서는 문단 첫 문장이 앞 문단을 어떻게 받는지(앞 결론을 이어 가는지,
   반대 사례인지, 다음 단계인지) 보이게 한다. 지시어(이·그·이런)는 가리키는 말이 바로 앞 문장에
   있을 때만 쓴다. 섹션이 바뀌는 자리는 억지로 잇지 않는다.
-- 이을 관계가 없는 문장은 그대로 둔다. 모든 문장에 접속어를 다는 것도 끊긴 글만큼 나쁘고, 한
-  문장에 관계는 둘까지다. 「따라서·그러므로·결론적으로·즉」 같은 결산어는 쓰지 않는다.
+- 이을 관계가 없는 문장은 그대로 둔다. 접속어를 뿌리는 것도 끊긴 글만큼 나쁘다. 그래서
+  **같은 접속어(반면·다만·하지만·그런데·게다가 등)는 글 전체에서 두 번까지**, 문단 첫머리에
+  붙이는 접속어는 글 전체 문단의 다섯에 하나까지다. 한 문장에 관계는 둘까지다.
+- 「실제로」는 접속어가 아니다 — 근거를 받는 척하는 군말이라 새로 넣지 않는다.
+  「따라서·그러므로·결론적으로·즉」 같은 결산어도 쓰지 않는다.
 
 **잇는 말은 원문이 말한 관계만 드러낸다.** 접속어 하나가 새 주장이 된다.
 - 인과·선후(그래서·때문에·-아서·-니·-자·그러자·결국)는 원문이 그 인과나 선후를 말할 때만 쓴다.
@@ -744,8 +779,8 @@ STYLE_PROMPT = """
 
 **글 전체 검사** — 하나라도 어기면 **글 전체** 수정이 버려진다. 원문에서 이미 실패하던 검사도
 출력이 조금만 달라지면 새 실패로 친다. 이을 때 특히 조심한다.
-- 한 문장의 숫자는 여섯 개까지(날짜·시각·「10년물」 같은 기간 표기·한 자리 수는 빼고 센다).
-  두 문장을 합칠 때 센다.
+- 한 문장의 숫자는 여섯 개까지. 날짜·시각·연도, 「10년물·20일선·30분봉」 같은 기간 표기,
+  단위·부호 없는 한 자리 정수만 빼고 센다 — 「1bp」「3%」「-2」는 센다. 두 문장을 합칠 때 센다.
 - 한 문단에서 끝 두 글자가 같은 문장(했다·했다…)이 네 개 이어지면 안 된다 — 잇거나 동사를 바꿔 푼다.
 - 같은 낱말로 시작하는 문단은 글 전체에서 네 번까지(「하지만」「10월」도 센다).
 - 「~에 따른」「~를 통한」「~에 의한」은 합계 세 번까지.
@@ -1248,6 +1283,14 @@ def _correct_ready(root, args, state, errs):
             save_state(root, state)
             errs[key] = err(LIMIT, f'{item.path}: {why[-160:]}')
             break
+        if why and freshness.DRIFT in why:
+            # Claude 를 부르기 전에 막혔다 — 글의 결함이 아니고 토큰도 안 썼다. 회차로 세지
+            # 않고 예약을 되돌린다(codex 구현 검토 #3: 회차 3 이면 그 글의 자동 정정이 영영 선다).
+            quota = release(quota, day, item.section)
+            state['correction_calls'] = quota['calls']
+            save_state(root, state)
+            errs[key] = err(UNKNOWN, f'{item.path}: {why}')
+            break
         if why:
             # 재시도성 실패(그 사이 main 이 움직였다)는 회차로 세지 않는다 — 고칠 수
             # 없다는 신호가 아니라 다음 tick 에 다시 하라는 신호다.
@@ -1289,13 +1332,25 @@ def cmd_run(args):
         # 이 프로세스가 import 한 코드가 origin/main 과 같을 때만 공개판을 읽고 고친다. 다르면
         # codex·정정 모두 멈춘다 — 정정도 로컬 게이트 스크립트를 돈다. 경보는 맞았음을 확인했을
         # 때만 지운다(fetch 실패로 지우면 해결을 확인하지 않은 채 사라진다).
-        stale = freshness.check(root)
-        if stale:
+        kind, stale = freshness.status(root)
+        if kind == freshness.BEHIND:
+            # 뒤처지기만 했고 손댄 파일이 없으면 따라잡는다. 이미 import 한 코드는 옛 판이라
+            # 이번 tick 은 쉬고, 새 코드로 도는 것은 다음 tick 이다.
+            miss = freshness.catch_up(root)
+            if miss is None:
+                print(f'[러너] {stale} — 따라잡았다. 이번 tick 은 쉬고 다음 tick 이 새 코드로 돈다')
+                errs.pop(freshness.KEY, None)
+                return _save(root, state, errs, progressed=False)
+            kind, stale = freshness.STALE, f'{stale} — {miss}'
+        if kind == freshness.STALE:
             errs[freshness.KEY] = err(HUMAN, f'러너 코드가 origin/main 과 다르다 — {stale}. '
                                              '맞출 때까지 자동 검토·문체 수정·정정을 멈춘다')
             return _save(root, state, errs, progressed=False)
         errs.pop(freshness.KEY, None)
-        freshness.pin(root)
+        moved_since_boot = freshness.pin(root)
+        if moved_since_boot:
+            print(f'[러너] {moved_since_boot}')
+            return _save(root, state, errs, progressed=False)
 
         todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
             root, want_fetch=False)

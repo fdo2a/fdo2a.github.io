@@ -55,6 +55,9 @@ _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.p
 def _gates(root, clone, item, evidence, timeout, allowed=()):
     """Replay trusted gates independently of Claude's completion claim.
 
+    `root` is where the gate scripts come from — the pristine copy of the verified
+    commit, never the user checkout.
+
     Returns ``(report, failed)``. A gate that cannot run at all (script missing,
     no Playwright, gate edits the checkout) raises. A gate that runs and fails is
     returned in ``failed``; it raises only when it is not in ``allowed`` — the
@@ -185,6 +188,15 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
             drift = freshness.moved(str(root), str(clone))
             if drift:
                 raise RuntimeError(drift)
+            # 게이트와 절차 문서는 사람의 작업 폴더가 아니라 방금 검증한 판의 사본에서 읽는다.
+            # 검사를 통과한 뒤 사람이 로컬 check_fund.py 를 바꾸면 그 판이 독립 검사를 맡던 자리다
+            # (codex 구현 검토 #2). Claude 가 일하는 clone 과도 따로 둔다.
+            code = temp / 'code'
+            code.mkdir()
+            tree = subprocess.run(['git', 'archive', base], cwd=clone, check=True,
+                                  capture_output=True, timeout=300).stdout
+            with tarfile.open(fileobj=io.BytesIO(tree)) as tar:
+                tar.extractall(code, filter='data')
             if _git(clone, 'rev-parse', f'HEAD:{item.path}') != item.sha:
                 raise RuntimeError('published post changed before correction')
             datadir = 'kr/data' if item.section == 'kr' else 'data'
@@ -206,12 +218,12 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
             baseline.mkdir()
             with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
                 tar.extractall(baseline, filter='data')
-            _, preexisting = _gates(root, clone, item, baseline, min(timeout, 180),
+            _, preexisting = _gates(code, clone, item, baseline, min(timeout, 180),
                                     allowed=_ALL_GATES)
             # A fund-gate failure on the original is a defect to fix, not a pass.
             tolerated = [g for g in preexisting if g not in NEVER_TOLERATE]
             must_fix = [g for g in preexisting if g in NEVER_TOLERATE]
-            skill = (root / '.claude/REVIEW_GATE.md').read_text()
+            skill = (code / '.claude/REVIEW_GATE.md').read_text()
             prompt = f'''Complete the authorized unattended post-publication correction.
 Target: {item.path}, reviewed blob: {item.sha}.
 This disposable clone is your ONLY working repository. Historical publishing evidence
@@ -305,7 +317,7 @@ END CODEX FINDINGS
             gate_evidence.mkdir()
             with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
                 tar.extractall(gate_evidence, filter='data')
-            report, _ = _gates(root, clone, item, gate_evidence, min(timeout, 180),
+            report, _ = _gates(code, clone, item, gate_evidence, min(timeout, 180),
                                allowed=tolerated)
             output += '\n\nIndependent gate replay:\n' + report
             if item.section == 'kr':

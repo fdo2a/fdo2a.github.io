@@ -97,3 +97,16 @@ def test_reordering_sentences_to_join_them_is_kept_out():
               '연방기금금리 선물의 경로도 거의 움직이지 않았다. 할인율이 내려간 주에 장기 성장주가 밀렸다.')
     _, skipped = swap(CHOPPY, joined)
     assert [pid for pid, _ in skipped] == ['P001']
+
+
+def test_connective_spam_is_capped():
+    # 2026-10-10 시험 운전: 10/09 브리프에 「다만」 0→10, 「반면」 1→9, W41 에 「실제로」 1→6.
+    assert '같은 접속어' in PROMPT and '두 번까지' in PROMPT
+    assert '「실제로」는 접속어가 아니다' in PROMPT
+
+
+def test_the_figure_rule_says_unit_digits_count():
+    # readability.figures 는 단위·부호 없는 한 자리 정수만 뺀다(codex 구현 검토 #6).
+    from us import readability
+    assert readability.figures('1bp 3% 7') == ['1bp', '3%']
+    assert '단위·부호 없는 한 자리 정수만' in PROMPT and '「1bp」' in PROMPT
