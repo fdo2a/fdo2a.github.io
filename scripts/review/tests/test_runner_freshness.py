@@ -577,3 +577,90 @@ def test_a_signal_while_writing_the_alarm_keeps_the_alarm_and_the_code(repo, tmp
     assert rl.main(['run']) == 128 + signal.SIGTERM
     assert 'temporarily' in state_of(repo)['errors'][freshness.KEY]['detail']
     assert os.listdir(tmp_path / 'tmp') == []
+
+
+class _FakeChild:
+    def __init__(self):
+        self.sent = []
+
+    def poll(self):
+        return None
+
+    def send_signal(self, sig):
+        self.sent.append(sig)
+
+
+def test_the_first_signal_reaches_the_child_exactly_once():
+    # 처리기와 기동 직후 보정이 둘 다 보내 두 번째 신호가 자식의 정리를 끊던 경로(codex 구현 7차 #5).
+    import signal
+    import runner_launch
+    with runner_launch._Signals() as sigs:
+        child = _FakeChild()
+        sigs.child = child
+        sigs._handle(signal.SIGINT, None)      # 등록 직후 처리기가 받는다
+        sigs.forward()                         # 기동 직후 보정도 돈다
+        sigs._handle(signal.SIGTERM, None)     # 반복 신호
+        assert child.sent == [signal.SIGINT]
+        sigs.final()
+
+
+def test_a_signal_pending_at_the_final_decision_is_reported():
+    # 마지막 확인과 처리기 해제 사이에 온 신호가 성공 코드 0 으로 사라지던 틈(7차 #6).
+    import signal
+    import runner_launch
+    with runner_launch._Signals() as sigs:
+        old = signal.pthread_sigmask(signal.SIG_BLOCK, [signal.SIGTERM])
+        try:
+            os.kill(os.getpid(), signal.SIGTERM)   # 막힌 채 대기 중
+            assert sigs.final() == signal.SIGTERM
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, old)
+    assert signal.getsignal(signal.SIGTERM) is not sigs._handle
+
+
+def test_the_wait_timeout_is_wall_clock_time():
+    # 폴링 횟수로 재 0.4초 제한이 0.9초 뒤에 걸리던 것(7차 #7).
+    import time
+    import runner_launch
+    proc = subprocess.Popen(['python3', '-c', 'import time; time.sleep(10)'])
+    start = time.monotonic()
+    try:
+        runner_launch._wait(proc, timeout=0.4)
+        assert False, 'timeout expected'
+    except subprocess.TimeoutExpired:
+        pass
+    assert time.monotonic() - start < 1.5 and proc.poll() is not None
+
+
+def test_a_recorded_cancel_stops_before_the_next_git_step(monkeypatch):
+    # 빠르게 끝나는 git 작업이 기록된 취소를 건너뛰던 것(7차 #8).
+    import runner_launch
+
+    class Sig:
+        got = 15
+    monkeypatch.setattr(runner_launch, 'SIGNALS', Sig())
+    proc = subprocess.Popen(['true'])
+    try:
+        runner_launch._wait(proc)
+        assert False, 'cancel expected'
+    except runner_launch._Cancelled:
+        pass
+    proc.wait()
+
+
+def test_a_real_child_start_failure_and_a_signal_keep_both(repo, tmp_path, monkeypatch):
+    # 실제 Popen 실패에 신호가 겹쳐도 경보(원인)와 128+N 이 함께 남는다(7차 #4 권고).
+    import signal
+    rl = _launcher_in_process(repo, tmp_path, monkeypatch)
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'pass\n'}, 'gate')
+    real = rl.subprocess.Popen
+
+    def failing_child(args, *a, **k):
+        if any(str(x).endswith('review_gate.py') for x in args):
+            os.kill(os.getpid(), signal.SIGTERM)
+            raise OSError(35, 'Resource temporarily unavailable')
+        return real(args, *a, **k)
+    monkeypatch.setattr(rl.subprocess, 'Popen', failing_child)
+    assert rl.main(['run']) == 128 + signal.SIGTERM
+    assert 'temporarily' in state_of(repo)['errors'][freshness.KEY]['detail']
+    assert os.listdir(tmp_path / 'tmp') == []

@@ -34,6 +34,7 @@ import signal  # noqa: E402
 import subprocess  # noqa: E402
 import tarfile  # noqa: E402
 import tempfile  # noqa: E402
+import time  # noqa: E402
 
 ENV_CODE = 'REVIEW_RUNNER_CODE'      # 사본의 커밋 — review_gate 가 비교 기준으로 쓴다
 ALARM_KEY = '러너-코드'              # review.freshness.KEY
@@ -53,9 +54,12 @@ class _Signals:
     넘겨 주기만 한다. 런처는 git·자식을 기다리는 동안 짧게 끊어 확인하고(`poll`) 스스로 멈춘다.
     """
 
+    SIGS = (signal.SIGTERM, signal.SIGINT)
+
     def __init__(self):
         self.got = None
         self.child = None
+        self.forwarded = False
         self._old = {}
 
     def __enter__(self):
@@ -66,16 +70,49 @@ class _Signals:
     def _handle(self, signum, _frame):
         if self.got is None:
             self.got = signum
-            child = self.child
-            if child is not None and child.poll() is None:
-                child.send_signal(signum)
+            self._send()
+
+    def _send(self):
+        """첫 신호를 자식에게 **한 번만** 넘긴다 — 처리기와 기동 직후 보정이 둘 다 보내면 두 번째
+        신호가 자식의 정리를 끊는다(codex 구현 7차 #5)."""
+        child = self.child
+        if self.got is None or self.forwarded or child is None or child.poll() is not None:
+            return
+        self.forwarded = True
+        child.send_signal(self.got)
+
+    def forward(self):
+        """기동 직후 보정 — 확인과 전송 사이에 처리기가 끼지 않게 신호를 잠시 막는다."""
+        old = signal.pthread_sigmask(signal.SIG_BLOCK, self.SIGS)
+        try:
+            self._send()
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, old)
+
+    def final(self):
+        """마지막 판정 — 신호를 막고, 막기 전에 기록된 것과 막힌 채 대기 중인 것을 모두 거둔 뒤
+        처리기를 되돌린다. 마지막 확인과 처리기 해제 사이에 온 신호가 성공 코드로 사라지던 틈
+        (7차 #6)이다. 대기 중인 신호는 sigwait 로 소비해 기본 처리기가 받지 않게 한다."""
+        old = signal.pthread_sigmask(signal.SIG_BLOCK, self.SIGS)
+        try:
+            for sig in signal.sigpending() & set(self.SIGS):
+                signal.sigwait([sig])       # 대기 중인 것만 거두므로 바로 돌아온다(macOS 엔 sigtimedwait 가 없다)
+                if self.got is None:
+                    self.got = sig
+            got = self.got
+            for sig, handler in self._old.items():
+                signal.signal(sig, handler)
+            self._old = {}
+        finally:
+            signal.pthread_sigmask(signal.SIG_SETMASK, old)
+        return got
 
     def check(self):
         if self.got is not None:
             raise _Cancelled()
 
     def __exit__(self, *exc):
-        for sig, handler in self._old.items():
+        for sig, handler in self._old.items():      # final() 을 못 거친 경로(예외)용
             signal.signal(sig, handler)
         return False
 
@@ -87,18 +124,22 @@ POLL = 0.2
 def _wait(proc, timeout=None):
     """프로세스를 기다리되 POLL 마다 신호를 확인한다 → returncode. 신호면 그 프로세스를 끝내고
     _Cancelled. 시간을 넘기면 TimeoutExpired."""
-    waited = 0.0
+    deadline = None if timeout is None else time.monotonic() + timeout
     while True:
-        try:
-            return proc.wait(timeout=POLL)
-        except subprocess.TimeoutExpired:
-            waited += POLL
         if SIGNALS is not None and SIGNALS.got is not None:
-            raise _Cancelled()
-        if timeout is not None and waited >= timeout:
+            raise _Cancelled()          # 이미 취소됐으면 기다리지도, 결과를 받지도 않는다(7차 #8)
+        left = POLL if deadline is None else min(POLL, deadline - time.monotonic())
+        if left <= 0:                   # 폴링 횟수가 아니라 실제 경과 시간으로 잰다(7차 #7)
             proc.kill()
             proc.wait()
             raise subprocess.TimeoutExpired(proc.args, timeout)
+        try:
+            code = proc.wait(timeout=left)
+        except subprocess.TimeoutExpired:
+            continue
+        if SIGNALS is not None and SIGNALS.got is not None:
+            raise _Cancelled()
+        return code
 
 
 def _git(root, *args, timeout=60):
@@ -173,8 +214,7 @@ def _run_child(argv_child, cwd, env, signals):
     남는다(codex 구현 4차 #1). 자식(review_gate run)은 SIGTERM 을 SystemExit 로 받아 정리한다."""
     child = subprocess.Popen(argv_child, cwd=cwd, env=env)
     signals.child = child
-    if signals.got is not None and child.poll() is None:
-        child.send_signal(signals.got)      # 띄우기 직전에 온 신호 — 처리기는 아직 자식을 몰랐다
+    signals.forward()                       # 띄우기 직전에 온 신호 — 처리기는 아직 자식을 몰랐다
     try:
         return _exit_code(_wait(child))
     except _Cancelled:
@@ -236,10 +276,11 @@ def main(argv):
             if work:
                 shutil.rmtree(work, ignore_errors=True)
             SIGNALS = None
-        if signals.got is not None:
-            # 언제 왔든(사본을 뜨는 중·정리 중·경보를 쓰는 중) 신호로 끝났다고 보고한다.
-            print(f'[런처] 신호 {signals.got} — 정리하고 끝낸다', file=sys.stderr)
-            return 128 + signals.got
+        got = signals.final()
+        if got is not None:
+            # 언제 왔든(사본을 뜨는 중·정리 중·경보를 쓰는 중·마지막 판정 직전) 신호로 끝났다고 보고한다.
+            print(f'[런처] 신호 {got} — 정리하고 끝낸다', file=sys.stderr)
+            return 128 + got
         return code
 
 
