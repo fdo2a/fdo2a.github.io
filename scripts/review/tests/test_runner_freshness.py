@@ -683,15 +683,31 @@ def test_a_real_child_start_failure_and_a_signal_keep_both(repo, tmp_path, monke
     assert os.listdir(tmp_path / 'tmp') == []
 
 
+LATE_SIGNAL_HARNESS = """
+import os, signal, sys
+sys.path.insert(0, sys.argv[1])
+import runner_launch as rl
+rl._launch = lambda root, argv, signals, work: 0
+real = rl._Signals.final
+def late(self, keep_blocked=False):
+    got = real(self, keep_blocked=keep_blocked)
+    os.kill(os.getpid(), getattr(signal, sys.argv[2]))   # 판정 뒤, 종료 전
+    return got
+rl._Signals.final = late
+sys.exit(rl.main(['pending'], cli=True))
+"""
+
+
 def test_the_cli_exits_with_late_signals_still_blocked(repo, tmp_path):
     # 명령줄 런처는 판정 뒤 신호를 막은 채 끝난다 — 판정과 종료 사이 신호가 기본 처리기로 넘어가
-    # 성공 판정을 뒤집던 틈(8차 #6). 사본 러너가 0 으로 끝나면 런처도 0 이다.
-    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'pass\n'}, 'gate')
-    os.makedirs(tmp_path / 'tmp', exist_ok=True)
-    p = subprocess.run(['python3', LAUNCH, 'pending'], cwd=repo, capture_output=True, text=True,
-                       env=dict(os.environ, TMPDIR=str(tmp_path / 'tmp')))
-    assert p.returncode == 0, p.stderr
-    assert os.listdir(tmp_path / 'tmp') == []
+    # 확정 코드를 뒤집던 틈(8차 #6, 9차 #4 권고: 실제 신호로 검증).
+    scripts = os.path.dirname(LAUNCH)
+    for name in ('SIGTERM', 'SIGINT'):
+        p = subprocess.run(['python3', '-c', LATE_SIGNAL_HARNESS, scripts, name], cwd=repo,
+                           capture_output=True, text=True,
+                           env=dict(os.environ, TMPDIR=str(tmp_path)))
+        assert p.returncode == 0, (name, p.returncode, p.stderr)
+        assert 'Traceback' not in p.stderr
 
 
 def test_two_signals_pending_at_the_final_decision_prefer_sigterm():
