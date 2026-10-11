@@ -458,3 +458,61 @@ def test_a_cancelled_correction_kills_its_separate_session(tmp_path, monkeypatch
     except ProcessLookupError:
         alive = False
     assert not alive
+
+
+SLOW_CLEANUP_GATE = ('import os, signal, sys, time\n'
+                     'def bye(signum, frame):\n'
+                     '    signal.signal(signal.SIGTERM, signal.SIG_IGN)\n'
+                     '    open(os.environ["MARK"] + ".begin", "w").write("x")\n'
+                     '    time.sleep(2)\n'
+                     '    open(os.environ["MARK"], "w").write("cleaned")\n'
+                     '    sys.exit(128 + signum)\n'
+                     'signal.signal(signal.SIGTERM, bye)\n'
+                     'open(os.environ["MARK"] + ".started", "w").write("x")\n'
+                     'time.sleep(60)\n')
+
+
+def _wait_for(path, tries=200):
+    import time
+    for _ in range(tries):
+        if os.path.exists(path):
+            return True
+        time.sleep(0.05)
+    return False
+
+
+def test_a_repeated_signal_does_not_cut_the_runners_cleanup(repo, tmp_path):
+    # 두 번째 신호가 정리 대기를 끊어 러너가 정리하는 중에 사본을 지우던 경로(codex 구현 5차 #1).
+    import signal
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': SLOW_CLEANUP_GATE}, 'slow')
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
+    mark = str(tmp_path / 'mark')
+    p = subprocess.Popen(['python3', LAUNCH, 'run'], cwd=repo,
+                         env=dict(os.environ, TMPDIR=str(tmp_path / 'tmp'), MARK=mark))
+    assert _wait_for(mark + '.started')
+    p.send_signal(signal.SIGTERM)
+    assert _wait_for(mark + '.begin')
+    p.send_signal(signal.SIGTERM)
+    p.send_signal(signal.SIGINT)
+    assert p.wait(timeout=30) == 128 + signal.SIGTERM
+    assert open(mark).read() == 'cleaned'                     # 러너가 정리를 마친 뒤에야 끝났다
+    assert os.listdir(tmp_path / 'tmp') == []
+
+
+def test_a_signal_while_copying_removes_the_copy(repo, tmp_path, monkeypatch):
+    # 사본을 뜨는 중(fetch·archive)의 SIGTERM 에도 사본을 지우고 끝낸다(codex 구현 5차 #2).
+    import signal
+    import runner_launch
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
+    monkeypatch.setenv('TMPDIR', str(tmp_path / 'tmp'))
+    monkeypatch.setattr(runner_launch.tempfile, 'tempdir', None)
+    monkeypatch.chdir(repo)
+    real = runner_launch._git
+
+    def fetch_then_signal(root, *args, **kw):
+        if args[:1] == ('fetch',):
+            os.kill(os.getpid(), signal.SIGTERM)
+        return real(root, *args, **kw)
+    monkeypatch.setattr(runner_launch, '_git', fetch_then_signal)
+    assert runner_launch.main(['run']) == 128 + signal.SIGTERM
+    assert os.listdir(tmp_path / 'tmp') == []

@@ -99,36 +99,71 @@ class _Stop(Exception):
         self.signum = signum
 
 
+class _Signals:
+    """런처 전체(임시 폴더를 만들기 전부터)에 거는 SIGTERM·SIGINT 처리.
+
+    첫 신호만 예외로 흐름을 끊는다. 반복 신호는 기록만 한다 — 두 번째 신호가 자식 정리 대기를
+    다시 끊으면 러너가 정리하는 중에 사본을 지운다(codex 구현 5차 #1). 사본을 뜨는 중(fetch·
+    archive)에 온 신호도 이 처리기가 받아 사본을 지우고 끝낸다(5차 #2).
+    """
+
+    def __init__(self):
+        self.got = None
+        self.hold = False       # 자식을 띄우는 중·정리 중 — 신호를 기록만 하고 흐름을 끊지 않는다
+        self._old = {}
+
+    def __enter__(self):
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            self._old[sig] = signal.signal(sig, self._handle)
+        return self
+
+    def _handle(self, signum, _frame):
+        if self.got is not None:
+            return                      # 반복 신호 — 진행 중인 정리를 끊지 않는다
+        self.got = signum
+        if not self.hold:
+            raise _Stop(signum)
+
+    def release(self):
+        """미뤄 둔 신호가 있으면 지금 흐름을 끊는다."""
+        self.hold = False
+        if self.got is not None:
+            raise _Stop(self.got)
+
+    def __exit__(self, *exc):
+        for sig, handler in self._old.items():
+            signal.signal(sig, handler)
+        return False
+
+
 def _exit_code(returncode):
     """자식이 신호로 죽었으면(-N) 셸 관례대로 128+N — 그대로 넘기면 241 같은 엉뚱한 수가 된다."""
     return 128 - returncode if returncode < 0 else returncode
 
 
-def _run_child(argv_child, cwd, env):
-    """자식을 돌리고 기다린다. SIGTERM·SIGINT 를 받으면 자식에게 넘기고 GRACE 초까지 정리를
-    기다린 뒤에야 돌아온다 — 런처가 먼저 죽으면 사본도, 자식이 띄운 별도 세션의 Claude·게이트도
-    남는다(codex 구현 4차 #1). 자식(review_gate run)은 SIGTERM 을 SystemExit 로 받아 정리한다."""
-    child = subprocess.Popen(argv_child, cwd=cwd, env=env)
-
-    def stop(signum, _frame):
-        raise _Stop(signum)
-    old = {sig: signal.signal(sig, stop) for sig in (signal.SIGTERM, signal.SIGINT)}
+def _run_child(argv_child, cwd, env, signals):
+    """자식을 돌리고 기다린다. 신호를 받으면 자식에게 넘기고 GRACE 초까지 정리를 기다린 뒤에야
+    돌아온다 — 런처가 먼저 끝나면 사본도, 자식이 띄운 별도 세션의 Claude·게이트도 남는다(codex
+    구현 4차 #1). 자식(review_gate run)은 SIGTERM 을 SystemExit 로 받아 정리한다."""
+    child = None
     try:
+        # 띄우는 도중 끊기면 자식이 아무도 기다리지 않는 고아로 남는다 — 신호를 미뤘다가 직후에 받는다.
+        signals.hold = True
         try:
-            return _exit_code(child.wait())
-        except _Stop as got:
-            if child.poll() is None:
-                child.send_signal(got.signum)
-                try:
-                    child.wait(timeout=GRACE)
-                except subprocess.TimeoutExpired:
-                    child.kill()
-                    child.wait()
-            print(f'[런처] 신호 {got.signum} — 러너를 정리하고 끝낸다', file=sys.stderr)
-            return 128 + got.signum
-    finally:
-        for sig, handler in old.items():
-            signal.signal(sig, handler)
+            child = subprocess.Popen(argv_child, cwd=cwd, env=env)
+        finally:
+            signals.release()
+        return _exit_code(child.wait())
+    except _Stop as got:
+        if child is not None and child.poll() is None:
+            child.send_signal(got.signum)
+            try:
+                child.wait(timeout=GRACE)       # 반복 신호는 _Signals 가 삼킨다 — 대기가 끊기지 않는다
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.wait()
+        print(f'[런처] 신호 {got.signum} — 러너를 정리하고 끝낸다', file=sys.stderr)
+        return 128 + got.signum
 
 
 def main(argv):
@@ -138,34 +173,40 @@ def main(argv):
         return 2
     root = out.stdout.strip()
     work = None
-    try:
+    with _Signals() as signals:
         try:
-            work = tempfile.mkdtemp(prefix='review-runner-')   # 0700 — 이 tick 만 쓴다
-            # fetch 가 실패하면 마지막으로 받아 둔 origin/main 을 쓴다. 러너 안에서 다시 fetch 하고,
-            # 실패하면 공개판 작업 전에 멈춘다.
-            _git(root, 'fetch', '--quiet', 'origin', 'main', timeout=FETCH_TIMEOUT)
-            code, oid, err = _git(root, 'rev-parse', '--verify', '--quiet', 'origin/main')
-            oid = oid.decode().strip()
-            if code or not oid:
-                raise RuntimeError(f'origin/main 을 못 읽었다 {err[-200:]}')
-            entry = snapshot(root, oid, work)
-            sys.stdout.flush()
-            sys.stderr.flush()
-            # exec 하지 않고 기다린다 — 끝난 뒤 사본을 지워야 한다.
-            return _run_child([sys.executable, entry, *argv], root,
-                              dict(os.environ, **{ENV_CODE: oid}))
-        except (OSError, RuntimeError, subprocess.SubprocessError, tarfile.TarError) as exc:
-            why = f'러너 코드 사본을 못 떴거나 못 돌렸다 — {type(exc).__name__}: {exc}'[:400]
-            print(why, file=sys.stderr)
-            if argv[:1] == ['run']:
-                try:
-                    note_alarm(root, why)
-                except OSError as exc2:
-                    print(f'[런처] 경보도 못 남겼다 — {type(exc2).__name__}: {exc2}', file=sys.stderr)
-            return 1
-    finally:
-        if work:
-            shutil.rmtree(work, ignore_errors=True)
+            try:
+                work = tempfile.mkdtemp(prefix='review-runner-')   # 0700 — 이 tick 만 쓴다
+                # fetch 가 실패하면 마지막으로 받아 둔 origin/main 을 쓴다. 러너 안에서 다시
+                # fetch 하고, 실패하면 공개판 작업 전에 멈춘다.
+                _git(root, 'fetch', '--quiet', 'origin', 'main', timeout=FETCH_TIMEOUT)
+                code, oid, err = _git(root, 'rev-parse', '--verify', '--quiet', 'origin/main')
+                oid = oid.decode().strip()
+                if code or not oid:
+                    raise RuntimeError(f'origin/main 을 못 읽었다 {err[-200:]}')
+                entry = snapshot(root, oid, work)
+                sys.stdout.flush()
+                sys.stderr.flush()
+                # exec 하지 않고 기다린다 — 끝난 뒤 사본을 지워야 한다.
+                return _run_child([sys.executable, entry, *argv], root,
+                                  dict(os.environ, **{ENV_CODE: oid}), signals)
+            except _Stop as got:
+                print(f'[런처] 신호 {got.signum} — 사본을 뜨는 중이라 그대로 끝낸다', file=sys.stderr)
+                return 128 + got.signum
+            except (OSError, RuntimeError, subprocess.SubprocessError, tarfile.TarError) as exc:
+                why = f'러너 코드 사본을 못 떴거나 못 돌렸다 — {type(exc).__name__}: {exc}'[:400]
+                print(why, file=sys.stderr)
+                if argv[:1] == ['run']:
+                    try:
+                        note_alarm(root, why)
+                    except OSError as exc2:
+                        print(f'[런처] 경보도 못 남겼다 — {type(exc2).__name__}: {exc2}',
+                              file=sys.stderr)
+                return 1
+        finally:
+            signals.hold = True             # 정리 도중의 신호가 삭제를 끊지 않게 한다
+            if work:
+                shutil.rmtree(work, ignore_errors=True)
 
 
 if __name__ == '__main__':
