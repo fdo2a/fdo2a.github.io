@@ -11,6 +11,8 @@ import sys
 import tarfile
 import tempfile
 
+from review import freshness
+
 
 def _status(args, cwd, timeout=120, prompt=None):
     """(returncode, output) — a timeout still raises; a nonzero exit does not."""
@@ -178,6 +180,11 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
             clone, evidence = temp / 'repo', temp / 'evidence'
             _git(root, 'clone', '--no-local', '--single-branch', '--branch', 'main', remote, str(clone))
             base = _git(clone, 'rev-parse', 'HEAD')
+            # 게이트는 이 프로세스의 로컬 코드로 돈다. 그 사이 origin 에서 게이트가 바뀌었으면
+            # 옛 게이트로 검사해 밀게 된다 — 다음 tick 에 새 코드로 한다(2026-10-10).
+            drift = freshness.moved(str(root), str(clone))
+            if drift:
+                raise RuntimeError(drift)
             if _git(clone, 'rev-parse', f'HEAD:{item.path}') != item.sha:
                 raise RuntimeError('published post changed before correction')
             datadir = 'kr/data' if item.section == 'kr' else 'data'

@@ -35,20 +35,61 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from review import kinds  # noqa: E402
-from review import prose as prose_mod  # noqa: E402
-from review.queue import accept as accept_entry  # noqa: E402
-from review.queue import baselines, classify, is_watched  # noqa: E402
-from review.queue import mark as mark_entry  # noqa: E402
-from review.queue import seed, union_pending  # noqa: E402
-from review.runner import (CLAUDE_BLOCK_HORIZON_HOURS,  # noqa: E402
-                           DAILY_CAP, HUMAN, KST, LIMIT, RESHIPPED,
-                           ROUND_CAP, TIMEOUT, UNKNOWN, accept_draft,
-                           blocked_until, claude_retry_at, clear_rounds,
-                           draft_name, eligible, is_claude_limit,
-                           err, err_line, is_limit_error, may_release,
-                           note_limit, note_round, release, reserve, retry_at,
-                           stalled, today_kst)
+
+def _import_failed(exc):
+    """레포 모듈 import 가 깨졌다 — 러너도 훅도 아무 말 없이 죽던 자리(codex 설계 검토 #6).
+
+    사람의 미완성 scripts 변경에 문법 오류가 있으면 신선도 검사에 닿기 전에 죽는다. stdlib 만으로
+    훅에는 한 줄을 찍고, 러너 tick 은 상태 파일에 경보를 남긴 뒤 아무것도 하지 않고 끝낸다.
+    """
+    # repo_root() 와 같은 판정(작업 폴더 기준) — launchd 는 site/ 에서 돈다.
+    out = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
+    root = out.stdout.strip() if out.returncode == 0 else os.getcwd()
+    why = f'러너 코드를 import 하지 못했다 — {type(exc).__name__}: {exc}'[:400]
+    argv = sys.argv[1:]
+    if argv[:1] == ['pending']:
+        print(f'[검토 게이트] {why}. site/scripts 를 확인할 것.')
+        sys.exit(0 if '--hook' in argv else 1)
+    if argv[:1] == ['run']:
+        path = os.path.join(root, 'reviews', 'runner.json')
+        try:
+            with open(path, encoding='utf-8') as fh:
+                state = json.load(fh)
+            state = state if isinstance(state, dict) else {}
+        except (OSError, ValueError):
+            state = {}
+        errs = state.get('errors') if isinstance(state.get('errors'), dict) else {}
+        errs['러너-코드'] = {'kind': '사람검토', 'detail': why}   # freshness.KEY, runner.HUMAN
+        state['errors'] = errs
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            tmp = path + '.tmp'
+            with open(tmp, 'w', encoding='utf-8') as fh:
+                json.dump(state, fh, ensure_ascii=False, indent=1)
+            os.replace(tmp, path)
+        except OSError:
+            pass
+    print(why, file=sys.stderr)
+    sys.exit(1)
+
+
+try:
+    from review import freshness, kinds  # noqa: E402
+    from review import prose as prose_mod  # noqa: E402
+    from review.queue import accept as accept_entry  # noqa: E402
+    from review.queue import baselines, classify, is_watched  # noqa: E402
+    from review.queue import mark as mark_entry  # noqa: E402
+    from review.queue import seed, union_pending  # noqa: E402
+    from review.runner import (CLAUDE_BLOCK_HORIZON_HOURS,  # noqa: E402
+                               DAILY_CAP, HUMAN, KST, LIMIT, RESHIPPED,
+                               ROUND_CAP, TIMEOUT, UNKNOWN, accept_draft,
+                               blocked_until, claude_retry_at, clear_rounds,
+                               draft_name, eligible, is_claude_limit,
+                               err, err_line, is_limit_error, may_release,
+                               note_limit, note_round, release, reserve, retry_at,
+                               stalled, today_kst)
+except Exception as _exc:  # noqa: BLE001 — SyntaxError·ImportError 모두
+    _import_failed(_exc)
 
 LEDGER = 'reviews/index.json'
 LOCK = 'reviews/.index.lock'
@@ -487,6 +528,11 @@ def cmd_pending(args):
             root, want_fetch=not args.no_fetch)
     except Exception as exc:  # noqa: BLE001 — 훅에서 조용히 죽는 것이 최악이다
         msg = f'[검토 게이트] 확인 실패 — {type(exc).__name__}: {exc}'
+        # 큐를 못 읽어도 러너 경보(코드 불일치 등)는 따로 보여야 한다(codex 설계 검토 #7).
+        try:
+            msg += runner_note(repo_root(), [])
+        except Exception:  # noqa: BLE001
+            pass
         print(msg)
         return 0 if args.hook else 1
 
@@ -1240,6 +1286,16 @@ def cmd_run(args):
         if not oid:
             errs['러너'] = err(UNKNOWN, 'origin/main 을 못 찾았다')
             return _save(root, state, errs)
+        # 이 프로세스가 import 한 코드가 origin/main 과 같을 때만 공개판을 읽고 고친다. 다르면
+        # codex·정정 모두 멈춘다 — 정정도 로컬 게이트 스크립트를 돈다. 경보는 맞았음을 확인했을
+        # 때만 지운다(fetch 실패로 지우면 해결을 확인하지 않은 채 사라진다).
+        stale = freshness.check(root)
+        if stale:
+            errs[freshness.KEY] = err(HUMAN, f'러너 코드가 origin/main 과 다르다 — {stale}. '
+                                             '맞출 때까지 자동 검토·문체 수정·정정을 멈춘다')
+            return _save(root, state, errs, progressed=False)
+        errs.pop(freshness.KEY, None)
+        freshness.pin(root)
 
         todo, _typo, unavailable, _basis, _stale, _pub, _work = survey(
             root, want_fetch=False)
@@ -1330,6 +1386,7 @@ def cmd_run(args):
             print(f'[러너] 상태도 못 남겼다 — {type(exc).__name__}: {exc}')
         return 1
     finally:
+        freshness.PINNED = None   # 고정은 이 tick 동안만 — 같은 프로세스의 다음 호출로 새지 않게
         lock.__exit__(None, None, None)
 
 

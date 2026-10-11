@@ -30,7 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from review import kinds  # noqa: E402
+from review import freshness, kinds  # noqa: E402
 from us.post_check import markup_diff, token_diff  # noqa: E402
 from us.prose_swap import ProseSwapError, extract, reinsert_partial  # noqa: E402
 
@@ -284,6 +284,11 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
             now = _git(clone, 'rev-parse', f'HEAD:{item.path}', check=False).stdout.strip()
             if now != item.sha:
                 return Result(reason=f'공개판이 바뀌었다 ({item.sha[:7]} → {now[:7]})')
+            # 게이트 목록·되꽂기는 이 프로세스가 import 한 코드다. clone 한 판의 코드가 다르면
+            # 옛 게이트로 새 판을 검사하게 된다(2026-10-10 codex 설계 검토 #1).
+            drift = freshness.moved(root, clone)
+            if drift:
+                return Result(reason=drift)
             post = os.path.join(clone, item.path)
             html = Path(post).read_text(encoding='utf-8')
             _, sidecar = extract(html)
@@ -328,6 +333,9 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
             def recheck():
                 """rebase 된 코드로 원본·수정본 게이트를 다시 맞댄다. 목록 정의가 바뀌었으면
                 이 러너가 가진 옛 목록으로는 판정할 수 없다 — 다음 tick 에 맡긴다."""
+                drift = freshness.moved(root, clone)
+                if drift:
+                    return drift
                 if _git(clone, 'rev-parse', f'HEAD:{_DEFS}', check=False).stdout.strip() != defs:
                     return f'rebase 사이 게이트 목록({_DEFS})이 바뀌었다 — 이번 윤문은 버린다'
                 Path(post).write_text(html, encoding='utf-8')

@@ -371,7 +371,8 @@ def test_gates_are_replayed_on_the_rebased_code(repo, tmp_path, monkeypatch):
     before = git(repo, 'ls-remote', 'origin', 'main').split()[0]
     res = sp.apply(repo, it, edit_payload(text, '보인 것으로 나타났다', '보였다'),
                    str(work), str(tmp_path / 'ev'))
-    assert res.sha is None and 'gate_x.py' in res.reason
+    # 2026-10-10 부터는 rebase 뒤 코드 비교(freshness.moved)가 게이트 재실행보다 먼저 막는다.
+    assert res.sha is None and '코드가 바뀌었다' in res.reason
     git(repo, 'fetch', '-q', 'origin')
     assert '보였다' not in git(repo, 'show', f'origin/main:{POST}')
     assert git(repo, 'rev-parse', 'origin/main') != before   # gate v2 만 나갔다
@@ -426,7 +427,8 @@ def test_a_changed_gate_list_during_rebase_stops_the_push(repo, tmp_path, monkey
     monkeypatch.setattr(sp, '_push', race)
     res = sp.apply(repo, it, edit_payload(text, '보인 것으로 나타났다', '보였다'),
                    str(work), str(tmp_path / 'ev'))
-    assert res.sha is None and '게이트 목록' in res.reason
+    # 2026-10-10 부터는 rebase 뒤 코드 비교(freshness.moved)가 게이트 재실행보다 먼저 막는다.
+    assert res.sha is None and '코드가 바뀌었다' in res.reason
 
 
 # ── 주간·월간·일본 (2026-10-01) ───────────────────────────────────────────────
