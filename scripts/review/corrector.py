@@ -25,6 +25,15 @@ def _status(args, cwd, timeout=120, prompt=None):
         os.killpg(process.pid, signal.SIGKILL)
         process.communicate()
         raise RuntimeError(f'timeout after {timeout}s')
+    except BaseException:
+        # 취소(SIGTERM 이 바꾼 SystemExit, Ctrl-C) — 별도 세션이라 부모와 함께 죽지 않는다.
+        # 그대로 두면 러너가 끝난 뒤에도 Claude·게이트가 혼자 돈다(2026-10-10 codex 구현 4차 #1).
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+        process.wait()
+        raise
     return process.returncode, output
 
 

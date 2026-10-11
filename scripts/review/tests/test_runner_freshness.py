@@ -321,7 +321,7 @@ def test_a_launcher_failure_leaves_an_alarm(repo, tmp_path):
     git(repo, 'update-ref', '-d', 'refs/remotes/origin/main')
     p, _ = launch(repo, tmp_path, 'run')
     assert p.returncode == 1
-    assert '사본을 못 떴다' in state_of(repo)['errors'][freshness.KEY]['detail']
+    assert '사본을 못 떴' in state_of(repo)['errors'][freshness.KEY]['detail']
 
 
 def test_a_launched_tick_ignores_the_checkout_and_pins_the_snapshot_commit(repo, tmp_path,
@@ -368,3 +368,93 @@ def test_an_automated_tick_ignores_a_half_edited_local_ledger(repo, tmp_path, mo
     write(repo, 'reviews/index.json', '{WIP')
     out = run(repo, 'run', '--correct', codex=fake_codex(tmp_path))
     assert 'JSONDecodeError' not in out.stdout + out.stderr
+
+
+# --- 종료 처리 -------------------------------------------------------------------
+
+SLOW_GATE = ('import os, signal, sys, time\n'
+             'def bye(signum, frame):\n'
+             '    open(os.environ["MARK"], "w").write("cleaned")\n'
+             '    sys.exit(128 + signum)\n'
+             'signal.signal(signal.SIGTERM, bye)\n'
+             'open(os.environ["MARK"] + ".started", "w").write(os.path.abspath(__file__))\n'
+             'time.sleep(60)\n')
+
+
+def test_sigterm_reaches_the_runner_and_the_copy_is_removed(repo, tmp_path):
+    # launchd 가 런처를 끄면 러너가 정리할 기회를 얻고, 사본은 지워진다(codex 구현 4차 #1).
+    import signal
+    import time
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': SLOW_GATE}, 'slow')
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
+    mark = str(tmp_path / 'mark')
+    p = subprocess.Popen(['python3', LAUNCH, 'run'], cwd=repo,
+                         env=dict(os.environ, TMPDIR=str(tmp_path / 'tmp'), MARK=mark))
+    for _ in range(200):
+        if os.path.exists(mark + '.started'):
+            break
+        time.sleep(0.05)
+    assert os.path.exists(mark + '.started')
+    p.send_signal(signal.SIGTERM)
+    assert p.wait(timeout=30) == 128 + signal.SIGTERM
+    assert open(mark).read() == 'cleaned'
+    assert os.listdir(tmp_path / 'tmp') == []
+
+
+def test_a_child_killed_by_a_signal_is_reported_as_128_plus_n():
+    import runner_launch
+    assert runner_launch._exit_code(-15) == 143
+    assert runner_launch._exit_code(7) == 7
+
+
+def test_a_temp_folder_failure_still_leaves_an_alarm(repo, monkeypatch):
+    # 임시 폴더 생성·자식 기동 실패도 경보로 남는다(codex 구현 4차 #2).
+    import runner_launch
+    monkeypatch.chdir(repo)
+
+    def no_space(*a, **k):
+        raise OSError(28, 'No space left on device')
+    monkeypatch.setattr(runner_launch.tempfile, 'mkdtemp', no_space)
+    assert runner_launch.main(['run']) == 1
+    assert 'No space' in state_of(repo)['errors'][freshness.KEY]['detail']
+
+
+def test_a_child_start_failure_still_leaves_an_alarm(repo, tmp_path, monkeypatch):
+    import runner_launch
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'pass\n'}, 'gate')
+    monkeypatch.chdir(repo)
+
+    def busy(*a, **k):
+        raise OSError(35, 'Resource temporarily unavailable')
+    monkeypatch.setattr(runner_launch, '_run_child', busy)
+    assert runner_launch.main(['run']) == 1
+    assert 'temporarily' in state_of(repo)['errors'][freshness.KEY]['detail']
+
+
+def test_a_cancelled_correction_kills_its_separate_session(tmp_path, monkeypatch):
+    # 정정기의 하위 프로세스는 별도 세션이라 러너와 같이 죽지 않았다(codex 구현 4차 #1).
+    import time
+    from review import corrector
+    pidfile = tmp_path / 'pid'
+    real = subprocess.Popen.communicate
+
+    def cancelled(self, *a, **k):
+        for _ in range(200):
+            if pidfile.exists() and pidfile.read_text():
+                break
+            time.sleep(0.05)
+        raise SystemExit(143)
+    monkeypatch.setattr(subprocess.Popen, 'communicate', cancelled)
+    code = f"import os, time; open({str(pidfile)!r}, 'w').write(str(os.getpid())); time.sleep(60)"
+    try:
+        corrector._status(['python3', '-c', code], str(tmp_path), timeout=60)
+    except SystemExit:
+        pass
+    monkeypatch.setattr(subprocess.Popen, 'communicate', real)
+    pid = int(pidfile.read_text())
+    try:
+        os.kill(pid, 0)
+        alive = True
+    except ProcessLookupError:
+        alive = False
+    assert not alive

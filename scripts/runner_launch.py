@@ -30,6 +30,7 @@ import io  # noqa: E402
 import json  # noqa: E402
 import os  # noqa: E402
 import shutil  # noqa: E402
+import signal  # noqa: E402
 import subprocess  # noqa: E402
 import tarfile  # noqa: E402
 import tempfile  # noqa: E402
@@ -37,6 +38,7 @@ import tempfile  # noqa: E402
 ENV_CODE = 'REVIEW_RUNNER_CODE'      # 사본의 커밋 — review_gate 가 비교 기준으로 쓴다
 ALARM_KEY = '러너-코드'              # review.freshness.KEY
 FETCH_TIMEOUT = 30
+GRACE = 20                           # 신호를 넘긴 뒤 자식 정리를 기다리는 초 — plist ExitTimeOut(30) 안
 
 
 def _git(root, *args, timeout=60):
@@ -91,15 +93,54 @@ def note_alarm(root, why):
         os.close(fd)
 
 
+class _Stop(Exception):
+    def __init__(self, signum):
+        super().__init__(signum)
+        self.signum = signum
+
+
+def _exit_code(returncode):
+    """자식이 신호로 죽었으면(-N) 셸 관례대로 128+N — 그대로 넘기면 241 같은 엉뚱한 수가 된다."""
+    return 128 - returncode if returncode < 0 else returncode
+
+
+def _run_child(argv_child, cwd, env):
+    """자식을 돌리고 기다린다. SIGTERM·SIGINT 를 받으면 자식에게 넘기고 GRACE 초까지 정리를
+    기다린 뒤에야 돌아온다 — 런처가 먼저 죽으면 사본도, 자식이 띄운 별도 세션의 Claude·게이트도
+    남는다(codex 구현 4차 #1). 자식(review_gate run)은 SIGTERM 을 SystemExit 로 받아 정리한다."""
+    child = subprocess.Popen(argv_child, cwd=cwd, env=env)
+
+    def stop(signum, _frame):
+        raise _Stop(signum)
+    old = {sig: signal.signal(sig, stop) for sig in (signal.SIGTERM, signal.SIGINT)}
+    try:
+        try:
+            return _exit_code(child.wait())
+        except _Stop as got:
+            if child.poll() is None:
+                child.send_signal(got.signum)
+                try:
+                    child.wait(timeout=GRACE)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.wait()
+            print(f'[런처] 신호 {got.signum} — 러너를 정리하고 끝낸다', file=sys.stderr)
+            return 128 + got.signum
+    finally:
+        for sig, handler in old.items():
+            signal.signal(sig, handler)
+
+
 def main(argv):
     out = subprocess.run(['git', 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
     if out.returncode:
         print('git 레포 안에서 실행해야 한다.', file=sys.stderr)
         return 2
     root = out.stdout.strip()
-    work = tempfile.mkdtemp(prefix='review-runner-')   # 0700 — 이 tick 만 쓴다
+    work = None
     try:
         try:
+            work = tempfile.mkdtemp(prefix='review-runner-')   # 0700 — 이 tick 만 쓴다
             # fetch 가 실패하면 마지막으로 받아 둔 origin/main 을 쓴다. 러너 안에서 다시 fetch 하고,
             # 실패하면 공개판 작업 전에 멈춘다.
             _git(root, 'fetch', '--quiet', 'origin', 'main', timeout=FETCH_TIMEOUT)
@@ -108,19 +149,23 @@ def main(argv):
             if code or not oid:
                 raise RuntimeError(f'origin/main 을 못 읽었다 {err[-200:]}')
             entry = snapshot(root, oid, work)
+            sys.stdout.flush()
+            sys.stderr.flush()
+            # exec 하지 않고 기다린다 — 끝난 뒤 사본을 지워야 한다.
+            return _run_child([sys.executable, entry, *argv], root,
+                              dict(os.environ, **{ENV_CODE: oid}))
         except (OSError, RuntimeError, subprocess.SubprocessError, tarfile.TarError) as exc:
-            why = f'러너 코드 사본을 못 떴다 — {type(exc).__name__}: {exc}'[:400]
+            why = f'러너 코드 사본을 못 떴거나 못 돌렸다 — {type(exc).__name__}: {exc}'[:400]
             print(why, file=sys.stderr)
             if argv[:1] == ['run']:
-                note_alarm(root, why)
+                try:
+                    note_alarm(root, why)
+                except OSError as exc2:
+                    print(f'[런처] 경보도 못 남겼다 — {type(exc2).__name__}: {exc2}', file=sys.stderr)
             return 1
-        sys.stdout.flush()
-        sys.stderr.flush()
-        # exec 하지 않고 기다린다 — 끝난 뒤 사본을 지워야 한다.
-        return subprocess.run([sys.executable, entry, *argv], cwd=root,
-                              env=dict(os.environ, **{ENV_CODE: oid})).returncode
     finally:
-        shutil.rmtree(work, ignore_errors=True)
+        if work:
+            shutil.rmtree(work, ignore_errors=True)
 
 
 if __name__ == '__main__':

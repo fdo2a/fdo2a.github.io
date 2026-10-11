@@ -17,6 +17,18 @@ launchd 러너(`review_gate.py run --correct`, WorkingDirectory=site/)는 site/ 
 
 `CODE_PATHS = scripts, .claude/skills/review-gate, .claude/REVIEW_GATE.md`. 경보는 맞았음을 확인했을 때만 지운다. 멈춘 tick 은 `last_ok` 를 갱신하지 않는다.
 
+## 종료 처리
+- 런처: SIGTERM·SIGINT 를 자식에게 넘기고 `GRACE`(20초)까지 정리를 기다린 뒤 사본을 지운다. 신호 종료는 128+N.
+- 러너(`review_gate run`): CLI 진입에서 SIGTERM 을 SystemExit 로 바꾼다(두 번째 신호는 무시) — 잠금·고정 해제가 돈다.
+- 정정기 `_status`: 별도 세션으로 띄운 Claude·게이트는 부모와 함께 죽지 않으므로, 취소(SystemExit·Ctrl-C)에도 프로세스 그룹을 SIGKILL 하고 회수한다.
+- plist `ExitTimeOut` 30(GRACE 20 보다 길게). SIGKILL·전원 차단에서는 임시 사본이 남는다 — 시스템 임시 폴더 정리에 맡긴다.
+
+## launchd 전환 절차
+1. 기존 job 을 먼저 내린다(`launchctl bootout gui/$UID/com.fdo2a.review-runner`) — 진행 중 tick·정정기 하위 프로세스가 끝났는지 `pgrep -f review_gate` 로 확인.
+2. 검토된 커밋을 **origin/main** 에 반영(런처는 브랜치가 아니라 origin/main 을 고른다). site/ 는 fetch·ff 만, 실패해도 reset·clean 하지 않는다.
+3. plist 백업 → ProgramArguments 의 스크립트를 `scripts/runner_launch.py` 로, `ExitTimeOut` 30 → `plutil -lint`.
+4. `launchctl bootstrap` → `launchctl print` 로 **로드된 인자** 확인 → `launchctl kickstart` 로 첫 tick 을 돌려 사본 OID·경보·종료 코드·임시 폴더 정리를 확인.
+
 ## 거쳐 온 설계
 1. **site/ 를 검사하고 뒤처지면 ff + 재실행** — codex 설계 검토(10건)가 막았다: 확인과 ff 사이 사람의 브랜치 전환(#2), autoStash·무시 파일·post-merge 훅(#5), execv 검증(#9).
 2. **검사하고 다르면 멈추고 알리기만** — 다른 세션의 코드 푸시마다(거의 매일) 누가 pull 할 때까지 러너가 선다.

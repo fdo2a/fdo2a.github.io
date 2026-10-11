@@ -35,6 +35,7 @@ import json  # noqa: E402
 import os  # noqa: E402
 import re  # noqa: E402
 import shutil  # noqa: E402
+import signal  # noqa: E402
 import subprocess  # noqa: E402
 import tarfile  # noqa: E402
 import tempfile  # noqa: E402
@@ -1449,7 +1450,17 @@ def main():
 
 
     args = ap.parse_args()
+    if args.fn is cmd_run:
+        # launchd·런처의 SIGTERM 을 SystemExit 로 바꾼다 — 기본 동작은 finally 없이 죽어서 잠금·
+        # 고정 해제와 정정기 하위 프로세스 정리(corrector._status)가 건너뛰어진다(codex 구현 4차 #1).
+        signal.signal(signal.SIGTERM, _terminate)
     return args.fn(args)
+
+
+def _terminate(signum, _frame):
+    # 두 번째 신호(런처가 넘긴 것과 launchd 가 그룹에 보낸 것)가 정리 도중 다시 끊지 않게 한다.
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    sys.exit(128 + signum)
 
 
 if __name__ == '__main__':
