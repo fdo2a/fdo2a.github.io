@@ -516,3 +516,64 @@ def test_a_signal_while_copying_removes_the_copy(repo, tmp_path, monkeypatch):
     monkeypatch.setattr(runner_launch, '_git', fetch_then_signal)
     assert runner_launch.main(['run']) == 128 + signal.SIGTERM
     assert os.listdir(tmp_path / 'tmp') == []
+
+
+def _launcher_in_process(repo, tmp_path, monkeypatch):
+    import runner_launch
+    os.makedirs(tmp_path / 'tmp', exist_ok=True)
+    monkeypatch.setenv('TMPDIR', str(tmp_path / 'tmp'))
+    monkeypatch.setattr(runner_launch.tempfile, 'tempdir', None)
+    monkeypatch.chdir(repo)
+    return runner_launch
+
+
+def test_a_signal_right_after_the_temp_folder_is_made_still_removes_it(repo, tmp_path,
+                                                                     monkeypatch):
+    # 폴더는 생겼는데 경로를 받기 전에 끊기던 틈(codex 구현 6차 #2). 처리기는 이제 기록만 한다.
+    import signal
+    rl = _launcher_in_process(repo, tmp_path, monkeypatch)
+    real = rl.tempfile.mkdtemp
+
+    def made_then_signal(*a, **k):
+        path = real(*a, **k)
+        os.kill(os.getpid(), signal.SIGTERM)
+        return path
+    monkeypatch.setattr(rl.tempfile, 'mkdtemp', made_then_signal)
+    assert rl.main(['run']) == 128 + signal.SIGTERM
+    assert os.listdir(tmp_path / 'tmp') == []
+
+
+def test_a_signal_during_cleanup_is_reported_and_does_not_skip_it(repo, tmp_path, monkeypatch):
+    # 정리 도중의 신호가 삭제를 건너뛰거나 성공 코드로 사라지던 틈(codex 구현 6차 #3).
+    import signal
+    rl = _launcher_in_process(repo, tmp_path, monkeypatch)
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'pass\n'}, 'gate')
+    real = rl.shutil.rmtree
+
+    def signal_then_remove(path, **k):
+        os.kill(os.getpid(), signal.SIGTERM)
+        return real(path, **k)
+    monkeypatch.setattr(rl.shutil, 'rmtree', signal_then_remove)
+    assert rl.main(['run']) == 128 + signal.SIGTERM
+    assert os.listdir(tmp_path / 'tmp') == []
+
+
+def test_a_signal_while_writing_the_alarm_keeps_the_alarm_and_the_code(repo, tmp_path,
+                                                                     monkeypatch):
+    # 경보를 쓰는 도중의 신호가 traceback·종료 코드 1 로 빠져나오던 틈(codex 구현 6차 #4).
+    import signal
+    rl = _launcher_in_process(repo, tmp_path, monkeypatch)
+    push_from_elsewhere(repo, tmp_path, {'scripts/review_gate.py': 'pass\n'}, 'gate')
+
+    def busy(*a, **k):
+        raise OSError(35, 'Resource temporarily unavailable')
+    monkeypatch.setattr(rl, '_run_child', busy)
+    real = rl.os.replace
+
+    def signal_then_replace(src, dst):
+        os.kill(os.getpid(), signal.SIGTERM)
+        return real(src, dst)
+    monkeypatch.setattr(rl.os, 'replace', signal_then_replace)
+    assert rl.main(['run']) == 128 + signal.SIGTERM
+    assert 'temporarily' in state_of(repo)['errors'][freshness.KEY]['detail']
+    assert os.listdir(tmp_path / 'tmp') == []

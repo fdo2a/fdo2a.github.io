@@ -18,7 +18,7 @@ launchd 러너(`review_gate.py run --correct`, WorkingDirectory=site/)는 site/ 
 `CODE_PATHS = scripts, .claude/skills/review-gate, .claude/REVIEW_GATE.md`. 경보는 맞았음을 확인했을 때만 지운다. 멈춘 tick 은 `last_ok` 를 갱신하지 않는다.
 
 ## 종료 처리
-- 런처: SIGTERM·SIGINT 를 자식에게 넘기고 `GRACE`(20초)까지 정리를 기다린 뒤 사본을 지운다. 신호 종료는 128+N.
+- 런처: 처리기는 **첫 신호를 기록하고 자식에게 넘기기만** 한다(예외를 던지지 않는다 — 던지면 임시 폴더 생성 직후·정리 진입·경보 기록 중 어디서든 흐름이 끊겼다, codex 5·6차). git 과 자식은 0.2초마다 끊어 기다리며 기록을 확인하고 스스로 멈춘다. 자식에게는 `GRACE`(20초)까지 정리 시간을 준 뒤 사본을 지운다. 신호를 받았으면 언제 왔든 128+N 으로 끝낸다.
 - 러너(`review_gate run`): CLI 진입에서 SIGTERM 을 SystemExit 로 바꾼다(두 번째 신호는 무시) — 잠금·고정 해제가 돈다.
 - 정정기 `_status`: 별도 세션으로 띄운 Claude·게이트는 부모와 함께 죽지 않으므로, 취소(SystemExit·Ctrl-C)에도 프로세스 그룹을 SIGKILL 하고 회수한다.
 - plist `ExitTimeOut` 30(GRACE 20 보다 길게). SIGKILL·전원 차단에서는 임시 사본이 남는다 — 시스템 임시 폴더 정리에 맡긴다.
