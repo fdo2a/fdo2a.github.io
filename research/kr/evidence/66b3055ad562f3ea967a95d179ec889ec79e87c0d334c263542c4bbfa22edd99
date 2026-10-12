@@ -1,0 +1,51 @@
+{
+ "provenance": "collect_kr_data.py (Naver 지수·투자자별 순매수 당일 잠정·업종, KRX 종가) kr/data commit 7051b62; 미국 세션 값 data/market_data.json commit 1fc07df",
+ "kr_report_date": "2026-10-12",
+ "indices": {
+  "KOSPI": {
+   "close": 6384.24,
+   "change_pct": -3.65
+  },
+  "KOSDAQ": {
+   "close": 849.19,
+   "change_pct": -4.83
+  }
+ },
+ "foreign_kospi_net_eok": {
+  "2026-10-12": -19898,
+  "2026-10-08": -20704,
+  "2026-10-07": -26188,
+  "2026-10-06": -17575
+ },
+ "flows_label": "당일 잠정치",
+ "stocks": {
+  "삼성전자": -4.39,
+  "SK하이닉스": -4.52
+ },
+ "us_prev_session": {
+  "date": "2026-10-09",
+  "S&P 500 pct": 0.59,
+  "Nasdaq pct": 0.64,
+  "WTI last": 91.66,
+  "WTI pct": 0.19,
+  "Micron pct": -0.66,
+  "Nvidia pct": -0.52
+ },
+ "asia_peers": {
+  "rows": {
+   "닛케이": -0.02,
+   "항셍": 0.25,
+   "상해종합": -0.43,
+   "대만가권": -0.02
+  },
+  "dates": {
+   "닛케이": "2026-10-09",
+   "항셍": "2026-10-12",
+   "상해종합": "2026-10-12",
+   "대만가권": "2026-10-12"
+  },
+  "avg_pct": -0.06,
+  "relative_pp": -3.59
+ },
+ "industry_note": "kr_industry.json 2026-10-12 목록(60개)에 석유와가스 업종 행 없음; SK이노베이션 -5.03% (kr_stock_moves)"
+}
