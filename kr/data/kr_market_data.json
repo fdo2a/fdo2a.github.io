@@ -1,8 +1,7 @@
 {
-  "report_date": "2026-10-12",
+  "report_date": "2026-10-08",
   "complete": true,
   "missing": [
-    "econ",
     "flows_intraday"
   ],
   "indices": {
@@ -16,8 +15,8 @@
     }
   },
   "flows_date": {
-    "KOSPI": "2026-10-12",
-    "KOSDAQ": "2026-10-12"
+    "KOSPI": "2026-10-08",
+    "KOSDAQ": "2026-10-08"
   },
   "flows_provisional": {
     "KOSPI": true,
