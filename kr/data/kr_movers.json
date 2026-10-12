@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-08",
+  "report_date": "2026-10-12",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
@@ -14,97 +14,122 @@
       "members": [
         {
           "name": "삼성전자",
-          "change_pct": -2.42,
-          "close": 262000,
-          "value": 5350036
+          "change_pct": -4.39,
+          "close": 250500,
+          "value": 4415561
         },
         {
           "name": "SK하이닉스",
-          "change_pct": -2.44,
-          "close": 1681000,
-          "value": 5348976
+          "change_pct": -4.52,
+          "close": 1605000,
+          "value": 4877716
         },
         {
           "name": "SK스퀘어",
-          "change_pct": -8.06,
-          "close": 1050000,
-          "value": 1060623
+          "change_pct": -6.29,
+          "close": 984000,
+          "value": 858850
+        },
+        {
+          "name": "한미반도체",
+          "change_pct": -6.93,
+          "close": 248500,
+          "value": 145504
+        },
+        {
+          "name": "DB하이텍",
+          "change_pct": -5.12,
+          "close": 131700,
+          "value": 55944
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "전기제품",
+      "industry": "해운사",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "LG에너지솔루션",
-          "change_pct": 2.56,
-          "close": 401000,
-          "value": 374288
+          "name": "HMM",
+          "change_pct": 4.81,
+          "close": 21800,
+          "value": 69013
+        },
+        {
+          "name": "팬오션",
+          "change_pct": 6.97,
+          "close": 6450,
+          "value": 67513
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "화학",
+      "industry": "자동차",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "LG화학",
-          "change_pct": 3.43,
-          "close": 286500,
-          "value": 152336
+          "name": "기아",
+          "change_pct": 1.22,
+          "close": 108100,
+          "value": 150738
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "우주항공과국방",
+      "industry": "전자장비와기기",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "한화에어로스페이스",
-          "change_pct": -8.33,
-          "close": 891000,
-          "value": 302735
+          "name": "LG이노텍",
+          "change_pct": -16.17,
+          "close": 479500,
+          "value": 262784
         },
         {
-          "name": "LIG디펜스앤에어로스페이스",
-          "change_pct": -6.53,
-          "close": 616000,
-          "value": 155783
+          "name": "대덕전자",
+          "change_pct": -6.85,
+          "close": 146900,
+          "value": 184116
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "제약",
+      "industry": "전기장비",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "한미약품",
-          "change_pct": -10.02,
-          "close": 480500,
-          "value": 133993
+          "name": "효성중공업",
+          "change_pct": -10.1,
+          "close": 2242000,
+          "value": 217466
         },
         {
-          "name": "한미사이언스",
-          "change_pct": -5.51,
-          "close": 54900,
-          "value": 66957
+          "name": "LS ELECTRIC",
+          "change_pct": -6.09,
+          "close": 183600,
+          "value": 122215
+        },
+        {
+          "name": "대한전선",
+          "change_pct": -8.54,
+          "close": 25700,
+          "value": 72769
         }
       ]
     }

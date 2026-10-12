@@ -1,24 +1,24 @@
 [
   {
-    "label": "삼성전자",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 5350036,
-    "volume": 20157893,
-    "members": [
-      "삼성전자"
-    ]
-  },
-  {
     "label": "SK하이닉스",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 5348976,
-    "volume": 3118825,
+    "value": 4877716,
+    "volume": 3003455,
     "members": [
       "SK하이닉스"
+    ]
+  },
+  {
+    "label": "삼성전자",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 4415561,
+    "volume": 17358954,
+    "members": [
+      "삼성전자"
     ]
   },
   {
@@ -26,37 +26,37 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1943550,
-    "volume": 52412450,
+    "value": 2196176,
+    "volume": 60196242,
     "members": [
       "KODEX 반도체레버리지",
       "TIGER 반도체TOP10",
+      "KODEX 반도체",
       "SOL AI반도체TOP2플러스",
       "TIGER 반도체TOP10레버리지",
-      "KODEX 반도체",
       "SOL AI반도체소부장",
       "KODEX AI반도체TOP2플러스",
+      "HANARO Fn K-반도체",
       "KODEX AI반도체핵심장비",
       "SOL 반도체전공정",
-      "HANARO Fn K-반도체",
-      "SOL 반도체후공정",
       "TIGER 반도체",
-      "ACE AI반도체TOP3+",
       "TIGER AI반도체핵심공정",
       "TIGER 반도체TOP10커버드콜액티브",
+      "SOL 반도체후공정",
+      "ACE AI반도체TOP3+",
       "ACE K반도체TOP2+",
+      "RISE AI반도체TOP10",
       "HANARO 반도체핵심공정주도주",
       "PLUS AI반도체소부장액티브",
-      "RISE AI반도체TOP10",
-      "KODEX 반도체타겟위클리커버드콜",
       "RISE 비메모리반도체액티브",
-      "PLUS 코리아HBM반도체",
+      "KODEX 반도체타겟위클리커버드콜",
       "ACE 반도체Plus전략산업",
+      "PLUS 코리아HBM반도체",
       "KODEX 아시아AI반도체exChina액티브",
       "FOCUS AI반도체위클리고정커버드콜",
       "FOCUS 금융반도체지주채권혼합50액티브",
-      "TIGER 한중반도체(합성)",
-      "KODEX 한중반도체(합성)"
+      "KODEX 한중반도체(합성)",
+      "TIGER 한중반도체(합성)"
     ]
   },
   {
@@ -64,21 +64,10 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 1167536,
-    "volume": 1086750,
+    "value": 1211838,
+    "volume": 1127887,
     "members": [
       "KODEX CD금리액티브(합성)"
-    ]
-  },
-  {
-    "label": "SK스퀘어",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 1060623,
-    "volume": 984573,
-    "members": [
-      "SK스퀘어"
     ]
   },
   {
@@ -86,34 +75,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 872908,
-    "volume": 553778,
+    "value": 912086,
+    "volume": 599919,
     "members": [
       "삼성전기"
     ]
   },
   {
-    "label": "2차전지 테마 ETF",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": "2차전지",
-    "value": 518160,
-    "volume": 166206410,
+    "label": "SK스퀘어",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 858850,
+    "volume": 859410,
     "members": [
-      "KODEX 2차전지산업레버리지",
-      "KODEX 2차전지산업",
-      "TIGER 2차전지TOP10",
-      "SOL 전고체배터리&실리콘음극재",
-      "TIGER 2차전지소재Fn",
-      "KODEX 전고체배터리ESS TOP2플러스",
-      "TIGER 2차전지테마",
-      "TIGER 2차전지TOP10레버리지",
-      "KODEX 2차전지핵심소재10",
-      "SOL 2차전지소부장Fn",
-      "RISE 2차전지TOP10",
-      "RISE 2차전지액티브",
-      "ACE 2차전지&친환경차액티브",
-      "RISE 배터리 리사이클링"
+      "SK스퀘어"
     ]
   },
   {
@@ -121,10 +97,34 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 440396,
-    "volume": 2238816,
+    "value": 675689,
+    "volume": 3542632,
     "members": [
       "삼성전자우"
+    ]
+  },
+  {
+    "label": "2차전지 테마 ETF",
+    "kind": "sector_theme_etf",
+    "direction": "long",
+    "theme": "2차전지",
+    "value": 421080,
+    "volume": 133893984,
+    "members": [
+      "KODEX 2차전지산업레버리지",
+      "KODEX 2차전지산업",
+      "KODEX 전고체배터리ESS TOP2플러스",
+      "TIGER 2차전지TOP10",
+      "SOL 전고체배터리&실리콘음극재",
+      "TIGER 2차전지소재Fn",
+      "TIGER 2차전지테마",
+      "TIGER 2차전지TOP10레버리지",
+      "KODEX 2차전지핵심소재10",
+      "RISE 2차전지TOP10",
+      "SOL 2차전지소부장Fn",
+      "RISE 2차전지액티브",
+      "ACE 2차전지&친환경차액티브",
+      "RISE 배터리 리사이클링"
     ]
   },
   {
@@ -132,21 +132,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 397191,
-    "volume": 686889,
+    "value": 322409,
+    "volume": 560829,
     "members": [
       "삼성SDI"
     ]
   },
   {
-    "label": "LG에너지솔루션",
+    "label": "LG이노텍",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 374288,
-    "volume": 919337,
+    "value": 262784,
+    "volume": 523703,
     "members": [
-      "LG에너지솔루션"
+      "LG이노텍"
     ]
   }
 ]
