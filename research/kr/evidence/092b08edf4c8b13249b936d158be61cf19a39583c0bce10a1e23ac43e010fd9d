@@ -1,0 +1,171 @@
+{
+ "source": "collect_kr_data.py kr/data commit ba187af (2026-10-13T09:12:37Z)",
+ "kr_market_data": {
+  "report_date": "2026-10-13",
+  "complete": true,
+  "missing": [
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 6035.35,
+    "change_pct": -5.46
+   },
+   "KOSDAQ": {
+    "close": 837.03,
+    "change_pct": -1.43
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-10-13",
+   "KOSDAQ": "2026-10-13"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kospi_flows_rows": [
+  {
+   "date": "2026-10-13",
+   "individual": 22952,
+   "foreign": -45782,
+   "institution": 16842
+  },
+  {
+   "date": "2026-10-12",
+   "individual": 14857,
+   "foreign": -20103,
+   "institution": -1345
+  },
+  {
+   "date": "2026-10-08",
+   "individual": 29972,
+   "foreign": -20704,
+   "institution": -16789
+  }
+ ],
+ "kosdaq_flows_rows": [
+  {
+   "date": "2026-10-13",
+   "individual": -1913,
+   "foreign": 1367,
+   "institution": 438
+  },
+  {
+   "date": "2026-10-12",
+   "individual": 2316,
+   "foreign": -130,
+   "institution": -2196
+  }
+ ],
+ "session": {
+  "report_date": "2026-10-13",
+  "us_prev": {
+   "as_of": "2026-10-12",
+   "rows": {
+    "S&P 500": -0.06,
+    "Nasdaq": -0.44,
+    "Dow": 0.38
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.06,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.33,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -1.82,
+    "항셍": 0.3,
+    "상해종합": 0.1,
+    "대만가권": -1.95
+   },
+   "dates": {
+    "닛케이": "2026-10-13",
+    "항셍": "2026-10-13",
+    "상해종합": "2026-10-13",
+    "대만가권": "2026-10-13"
+   },
+   "avg_pct": -0.84,
+   "relative_pp": -4.62
+  },
+  "usdkrw_intraday": {
+   "high": 1345.58,
+   "high_t": "15:00",
+   "low": 1333.7,
+   "low_t": "09:30",
+   "close": 1342.98,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "memory_closes_kr_technical": {
+  "SK하이닉스": {
+   "as_of": "2026-10-13",
+   "close": 1443000.0
+  },
+  "삼성전자": {
+   "as_of": "2026-10-13",
+   "close": 232000.0
+  }
+ },
+ "movers_g1": {
+  "id": "g1",
+  "industry": "반도체와반도체장비",
+  "direction": "down",
+  "reasons": [
+   "지수 기여 하위",
+   "이상 등락"
+  ],
+  "members": [
+   {
+    "name": "삼성전자",
+    "change_pct": -11.45,
+    "close": 232000,
+    "value": 5817998
+   },
+   {
+    "name": "SK하이닉스",
+    "change_pct": -14.16,
+    "close": 1443000,
+    "value": 7843141
+   },
+   {
+    "name": "SK스퀘어",
+    "change_pct": -18.38,
+    "close": 857000,
+    "value": 1004122
+   },
+   {
+    "name": "삼성전자우",
+    "change_pct": -10.15,
+    "close": 174300,
+    "value": 910208
+   },
+   {
+    "name": "한미반도체",
+    "change_pct": -14.23,
+    "close": 229000,
+    "value": 210244
+   },
+   {
+    "name": "이수페타시스",
+    "change_pct": -6.61,
+    "close": 117200,
+    "value": 100994
+   }
+  ]
+ },
+ "note": "kr_movers/kr_stock_moves change_pct for 2026-10-13 is measured against the 2026-10-08 close (10-12 bar absent from the yfinance series): 삼성전자 232000/262000-1=-11.45%, SK하이닉스 1443000/1681000-1=-14.16%. 10-12 single-session closes per 2026-10-12 publication: 삼성전자 -4.39%, SK하이닉스 -4.52%."
+}
