@@ -1,8 +1,9 @@
 {
   "report_date": "2026-10-12",
-  "harvested": 853,
+  "harvested": 844,
   "notes": [
-    "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
+    "pool https://finance.yahoo.com/news/rssindex: HTTP 404",
+    "insight https://think.ing.com/rss/: URLError"
   ],
   "items": [
     {
@@ -93,7 +94,7 @@
       "source": "CNBC",
       "body_chars": 2746,
       "body_file": "15-ai.txt",
-      "summary_note": "분량 벗어남 464자"
+      "summary_note": "분량 벗어남 414자"
     },
     {
       "guid": "108378719",
@@ -118,7 +119,8 @@
       "source": "CNBC",
       "body_chars": 3164,
       "body_file": "17-ai.txt",
-      "summary_note": "분량 벗어남 404자"
+      "summary_ko": "Intel CEO 립부 탄과 Broadcom CEO 혹 탄은 AI 붐의 가장 큰 병목으로 자본 조달이 떠오를 수 있다고 경고했다. 12일 싱가포르 DBS 컨퍼런스에서 혹 탄은 반도체, 메모리, 전력 부족보다 자본이 더 큰 제약일 수 있다고 말했다. 립부 탄은 자본비용 상승과 AI 투자의 수익성에 대한 의문을 짚었다. 금리 상승은 데이터센터 건설과 칩 구매 비용을 높여 수년이 걸리는 프로젝트의 경제성을 압박할 수 있다. 그럼에도 수요 전망은 낙관적이다. 혹 탄은 컴퓨팅 인프라 수요가 공급을 계속 앞지르며, 이 불균형이 2029년을 넘어 2030년까지 이어질 수 있다고 봤다. 웨이퍼 부족은 2028~2029년쯤 완화될 수 있다고 예상했다. 립부 탄은 향후 2~3년간 상당한 둔화는 없을 것으로 보면서도, 그 이후 성장은 AI 도입 속도와 실질적인 경제적 효익에 달려 있다고 강조했다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108400060",
@@ -164,10 +166,10 @@
       "url": "https://www.cnbc.com/2026/10/12/cramer-gm-eyes-off-driving-2028.html",
       "title": "GM CEO: We're making leaps and bounds toward 'eyes-off, hands-off' driving",
       "summary": "General Motors CEO Mary Barra said that the automaker is still on track to introduce \"eyes-off, hands-off\" driving technology by 2028.",
-      "published": "2026-10-12T22:40:10+00:00",
+      "published": "2026-10-13T00:24:23+00:00",
       "category": "industry",
       "source": "CNBC",
-      "body_chars": 2572,
+      "body_chars": 2569,
       "body_file": "27-industry.txt",
       "summary_ko": "GM의 메리 바라 CEO는 10월 12일(현지시간) CNBC 「Mad Money」에 출연해 2028년 \"눈을 떼도 되고 손을 떼도 되는(eyes-off, hands-off)\" 자율주행 기술 출시 목표를 유지하고 있다고 밝혔다. 이 기술은 전기 캐딜락 에스컬레이드 IQ에 처음 탑재된 뒤 다른 모델로 확대될 예정이다. 기존 슈퍼크루즈는 손을 뗄 수 있지만 운전자가 계속 주의를 기울여야 하는 반면, 새 기술은 특정 조건에서 운전자가 도로에서 시선을 뗄 수 있도록 설계됐다. 바라 CEO는 지난 3월보다 기술이 크게 나아졌다고 평가했다. GM은 2024년 12월 100억 달러 넘게 투자한 크루즈 로보택시 사업을 접었고, 그 자원을 소비자가 소유한 차량의 자율주행 시스템 개발에 돌렸다. 바라 CEO는 사업 철수가 어려운 결정이었지만 옳았다고 강조했다. 아울러 자율주행이 보편화되더라도 개인 차량 소유가 줄지 않을 것이라는 입장을 밝혔다.",
       "summary_model": "claude-haiku-5-5"
@@ -238,18 +240,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/6993b122f6fbde3b9a51f1a06830c4dfcb917116?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/6993b122f6fbde3b9a51f1a06830c4dfcb917116?source=rss",
-      "title": "日本企業へのサイバー攻撃の経済損失：被害企業の売上高減少額は1,542億円、GDP損失額は557億円と試算(NRI研究員の時事解説)",
-      "summary": "足もとでは、日本企業に対するサイバー攻撃、それに伴う顧客情報の漏洩が相次いでいる。それらは、企業活動を阻害し、また個人の消費活動を萎縮させるなど、日本経済に相応の打撃を与えていると考えられる。2024",
-      "published": "2026-10-12T22:40:09+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/94049be5cf2da676c5aeb0644d39b51a4e8e758c?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/94049be5cf2da676c5aeb0644d39b51a4e8e758c?source=rss",
+      "title": "今世紀末に「世界の気温上昇は最大5.7℃」の衝撃予測も…気象学者が伝える“地球はどこまで暑くなるのか”の科学的真実(東洋経済オンライン)",
+      "summary": "地球温暖化は、この先どこまで進むのでしょうか。IPCC(気候変動に関する政府間パネル)の予測では、温室効果ガスの排出を大きく減らした場合と、排出量が多い状態が続いた場合とでは、今世紀末の世界平均気温に",
+      "published": "2026-10-13T00:00:40+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "NRI研究員の時事解説",
-      "body_chars": 903,
+      "wire": "東洋経済オンライン",
+      "body_chars": 1051,
       "body_file": "04-global.txt",
-      "summary_ko": "사이버 공격 피해는 두 유형으로 나뉜다. 업무 중단형은 랜섬웨어로 수주와 출하가 멈추는 경우로, 아사히그룹HD, 아스쿠루, ニチレイ, IDCF클라우드가 여기에 해당한다. 정보 유출형은 대량의 고객정보가 빠져나가는 경우로, 2026년 9~10월 타임즈카(최대 약 660만 건)와 스카이티켓(약 1,464만 건) 등이 꼽힌다. 두 유형 모두 위탁처나 거래처가 침입 통로가 된 사례가 많아 자사만 방어해서는 피해를 막기 어렵다는 점이 과제로 지적됐다. 아스쿠루는 공격으로 174억 엔의 영업적자로 돌아섰고, 아사히는 전 제품 출하 재개까지 약 반년이 걸렸다. ニチレイ에서는 약 5,000개 기업의 물류가 한꺼번에 영향을 받았다. 정보 유출형은 업무가 멈추지 않아 직접 손실은 잘 드러나지 않지만 사회적 비용이 크다. 타임즈카 유출 면허증 이미지 약 160만 건으로 일부 현에서 특례 재발급이 이뤄졌다. 2025년 인터넷뱅킹 부정송금은 약 104억 엔으로 역대 최악이었다.",
+      "summary_ko": "동양경제온라인은 기상학자 와타베 마사히로의 저서를 바탕으로 지구온난화 전망을 정리했다. IPCC 제6차 평가보고서에 따르면 2011~2020년 세계 평균기온은 1850~1900년 평균보다 약 1.1℃ 높았다. WMO는 2024년이 관측 사상 가장 더운 해로 약 1.55℃ 높았고, 2025년도 약 1.43℃ 높아 관측 사상 2~3번째로 더웠다고 밝혔다. 단일 연도 수치는 엘니뇨 등 자연변동의 영향을 받으므로 장기 상승 추세가 중요하다고 기사는 지적한다. 배출 시나리오에 따라 21세기 말 기온 전망이 크게 갈리며, 가장 낮은 배출 경로인 SSP1-1.9는 21세기 중반께 이산화탄소 순배출을 0 가까이 낮추는 방식이다. 제목은 금세기 말 최대 5.7℃ 상승 예측도 함께 내세웠다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -261,8 +263,8 @@
       "category": "global",
       "source": "BBC",
       "region": "europe",
-      "body_chars": 8787,
-      "body_file": "05-global.txt",
+      "body_chars": 8850,
+      "body_file": "06-global.txt",
       "summary_ko": "트럼프 미국 대통령이 러시아산 디젤 수입 계획을 발표하면서 국내외 반발에 직면했다. 트럼프는 푸틴 러시아 대통령이 30만 톤의 디젤을 즉시 풀고, 이후 11월에 50만 톤, 그 뒤 100만 톤을 공급하기로 합의했다고 밝혔다. 러시아 측 부총리 노박도 이 수치를 확인하며 향후 월 300만 톤까지 늘어날 수 있다고 말했다. 그러나 미국은 불과 몇 주 전 러시아 원유·가스 수입국에 제재와 관세를 부과하는 법안에 서명한 상태여서 논란이 크다. 공화당과 민주당 상원의원 7명은 이 거래가 미국법을 위반한다며 철회를 요구했다. 미 재무부는 러시아 디젤 수출에 대한 제재를 4월 7일까지 유예하는 것으로 알려졌다. 이란 전쟁 이후 국제 유가가 급등했고, 11월 중간선거를 앞두고 농업 주의 디젤 부담이 정치적 쟁점이 되고 있다. 다만 미국의 하루 디젤 소비량 약 360만 배럴과 비교하면 30만 톤은 절반 수준이어서 가격 하락 효과에는 의문이 제기된다. 젤렌스키 우크라이나 대통령은 이 거래를 푸틴에게 주는 선물이라고 비판했다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -276,8 +278,8 @@
       "source": "Al Jazeera",
       "region": "mideast",
       "body_chars": 6062,
-      "body_file": "06-global.txt",
-      "summary_note": "분량 벗어남 420자"
+      "body_file": "09-global.txt",
+      "summary_note": "분량 벗어남 476자"
     },
     {
       "guid": "https://news.yahoo.co.jp/articles/796af9c5efd9f0fd02fddb56427910f8d4edc9e4?source=rss",
@@ -292,57 +294,6 @@
       "body_chars": 1658,
       "body_file": "07-global.txt",
       "summary_ko": "중국의 대일 강경 기조 속에서도 젠쇼홀딩스의 회전초밥 '하마즈시'가 중국 내 입지를 빠르게 넓히고 있다고 기사는 전한다. 기사에 따르면 하마즈시는 2014년 중국에 진출했으며, 2020년 12월 중국 점포는 12곳이었다. 2024년 3월 본토 약 50곳이던 점포는 2025년 3월 말 186곳, 2026년 7월 무렵 200곳을 넘어섰다. 이 기간 일중 관계는 냉각됐지만 저렴한 가격이 절약 지향 소비자의 수요와 맞아떨어진 것으로 보인다. 기사는 중국의 경기 침체와 부동산 버블 붕괴, 청년 실업률 악화를 배경으로 든다. 8월 16~24세 학생 제외 실업률은 18.9%였다. 기사는 또 중국이 14억 명의 소비시장으로서 중요성이 커졌다며, 대중 감정론을 배제하고 현지 소비자 가치관에 맞는 마케팅이 일본 기업에 중요한 전략이 될 것이라고 짚었다. 아울러 중국의 레어어스 자석 등 대일 수출 제약으로 8월 대일 수출은 전년 동월 대비 17% 감소했다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "https://think.ing.com/articles/g10-fx-talking-october-2026/#When:10:48:00Z",
-      "url": "https://think.ing.com/articles/g10-fx-talking-october-2026/",
-      "title": "G10 FX Talking: Independent euro weakness in play",
-      "summary": "EUROPE: At a time when US economic growth appears 'solid' and the Fed is intent on tightening policy, French budget unrest has only served to soften an already weak EUR/USD. We now think it can stay pressured at the lower end of a 1.10-15 range over the next three to six months. The biggest threat to the dollar probably comes from any new White House policy post-midterms",
-      "published": "2026-10-12T10:48:00+00:00",
-      "category": "insight",
-      "source": "ING THINK",
-      "body_chars": 11620,
-      "body_file": "18-insight.txt",
-      "summary_ko": "ING는 프랑스 재정 불안이 유로를 독자적으로 약화시키고 있으며, EUR/USD가 향후 3~6개월간 1.10~1.15 범위 하단에 머물 것으로 본다. 연준의 9월 인상과 미 금리 상승으로 글로벌 금융시스템에 압박이 가해지는 가운데, 프랑스 국채가 가장 최근의 취약 고리로 지목됐다. 보고서는 이를 2012년 그리스 선별 디폴트보다 2018년 이탈리아 재정위기에 가깝다고 보며, 연말까지 OAT-Bund 스프레드 변동성이 커질 것으로 예상한다. 다만 소폭의 재정 긴축이 통과되면 대규모 매도는 막을 수 있다고 본다. 달러 측 최대 위험은 11월 중간선거 이후 백악관 정책 불확실성이다. 아울러 ING는 EUR/GBP가 0.84~0.85 범위에서 하방 편향을 보일 것으로 보며, 프랑스 위기가 OAT-Bund 250bp로 확대되고 ECB가 긴급 조치를 취하면 0.82까지 밀릴 수 있다고 덧붙인다. 영란은행의 11월 인상 가능성과 영국·EU 관계 개선 기대도 파운드 우호 요인으로 꼽았다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "https://www.investing.com/analysis/fed-rate-hike-sets-up-a-shortterm-goldilocks-trade-200689411",
-      "url": "https://www.investing.com/analysis/fed-rate-hike-sets-up-a-shortterm-goldilocks-trade-200689411",
-      "title": "Fed Rate Hike Sets Up a Short-Term Goldilocks Trade",
-      "summary": null,
-      "published": "2026-10-12T13:50:00+00:00",
-      "category": "insight",
-      "source": "Investing.com",
-      "body_chars": 12000,
-      "body_file": "19-insight.txt",
-      "summary_ko": "FOMC 대상 칼럼 필자는 9월 금리 인상 자체에는 동의하지만, 결정 당일 이유가 공개되지 않은 소통 방식은 문제라고 주장한다. 그는 결정 당일 성명서에 위원회의 판단 근거와 견해 차이를 담아야 한다고 보며, 의사록이 나오기까지 3주를 기다리는 것은 너무 길다고 지적한다. 근거로는 의사록에서 드러난 인상 이유가 주로 위험관리(보험 성격)였다는 점을 든다. 그는 당일 기자회견에서 \"경제가 강해지고 있다\"는 설명이 나왔지만 이는 여러 차례 인상을 뒷받침하는 이유인 반면, 위험관리 목적은 소폭 조정에 맞는다고 본다. 시장은 기자회견 이후 10월 인상 확률이 약 70%까지 오른 뒤, 윌리엄스와 제퍼슨의 신중 발언 이후 20%대로 급락했다. 필자는 이런 변동이 소통 불명확성에서 비롯된 것이며, 시장 금리가 위원회 의도보다 높게 형성되는 비의도적 긴축을 낳는다고 주장한다. 그는 성명서에 \"위험관리 목적이 가장 많았고, 기초 전망과 기대인플레이션 안착 우려가 뒤를 이었다\"는 식의 내용을 약 50단어 추가하는 방안을 제안한다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "https://think.ing.com/articles/fx-daily-dollar-holds-gains-as-geopolitics-heats-up/#When:06:45:00Z",
-      "url": "https://think.ing.com/articles/fx-daily-dollar-holds-gains-as-geopolitics-heats-up/",
-      "title": "FX Daily: Dollar holds gains as geopolitics heats up",
-      "summary": "News over the weekend of continued Houthi strikes in Riyadh and a supposed 'energy ceasefire' between Russia and Ukraine have had little meaningful impact on FX markets so far. The dollar remains well bid, and what could be a hot US September CPI this week will keep expectations of Fed tightening and a stronger dollar in play",
-      "published": "2026-10-12T06:45:00+00:00",
-      "category": "insight",
-      "source": "ING THINK",
-      "body_chars": 5958,
-      "body_file": "20-insight.txt",
-      "summary_note": "분량 벗어남 408자"
-    },
-    {
-      "guid": "https://www.investing.com/analysis/us-10year-treasury-yield-holds-at-524-ahead-of-cpi-200689363",
-      "url": "https://www.investing.com/analysis/us-10year-treasury-yield-holds-at-524-ahead-of-cpi-200689363",
-      "title": "US 10-Year Treasury Yield Holds at 5.24% Ahead of CPI",
-      "summary": null,
-      "published": "2026-10-12T06:24:00+00:00",
-      "category": "insight",
-      "source": "Investing.com",
-      "body_chars": 3676,
-      "body_file": "21-insight.txt",
-      "summary_ko": "미국 10년물 국채금리는 10월 9일 5.24%로 마감해 전일보다 2bp 올랐으며, 이 기사는 이번 주 발표될 9월 소비자물가지수(CPI)를 앞두고 채권시장이 압박을 받고 있다고 본다. 기사는 이 결과가 연준 금리 기대를 바꿀 수 있다고 짚는다. 2년물은 4.75%에서 4.80%로 5bp 올라 10년물보다 크게 움직였고, 두 금리 차는 47bp에서 44bp로 좁혀졌다. 기사는 단기금리가 장기금리보다 빠르게 오른 이 흐름을 통화정책 기대 변화의 신호로 읽는다. 다만 10년물은 10월 7일 장중 5.365%까지 올랐다가 물러섰고, 9월 FOMC 의사록은 금리 기대 상승의 배경을 보여줄 뿐 당일 움직임의 원인을 확정하지는 않는다고 덧붙였다. 입찰 수요는 10년물 응찰배율 2.77, 30년물 2.54로 양호했다. 기사는 CPI 결과에 따라 금리가 오르거나 내릴 수 있으며, 에너지 가격과 국채 공급 우려도 변수가 될 수 있다고 본다.",
       "summary_model": "claude-haiku-5-5"
     }
   ]
