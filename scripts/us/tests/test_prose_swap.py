@@ -523,3 +523,186 @@ def test_수집_뉴스_요약_문단은_뽑지_않는다():
     text, side = payload_of(html)
     assert sorted(side['items']) == ['P001']
     assert '연준은' not in text
+
+
+# ── 발행 뒤 문체 수정의 §10 예문 (2026-10-13, codex 구현 검토 #3·사용자 2차 피드백 2) ──────────
+# 자동 경로가 받아들이는 문장 단위 수정과, 의미가 바뀌어 원문이 유지되는 수정을 실제 되꽂기로 확인한다.
+
+S10 = """<html><body data-register="da">
+<h2>매크로</h2>
+<p>미국 경기 국면은 골디락스를 아흐레째 이어 간다. 콜럼버스데이라 새 공식 통계가 없어 좌표가 움직일 수 없다.</p>
+<p>한 주 사이 가격 근거가 가장 약해진 후보는 반도체·AI 하드웨어다. 순위가 3위에서 10위로 밀렸다.</p>
+<p>주식과 금리는 최근 60거래일 느슨하게 반대로 움직여 왔지만 오늘은 금리가 관측되지 않아 그 관계가 시험되지 않았다.</p>
+</body></html>"""
+
+
+def _swap(old, new):
+    from us.prose_swap import reinsert_partial
+    text, side = extract(S10)
+    assert text.count(old) == 1
+    return reinsert_partial(S10, text.replace(old, new), side)
+
+
+def test_s10_sentence_level_rewrite_that_keeps_meaning_is_accepted():
+    out, rejected = _swap('좌표가 움직일 수 없다', '기존 판단을 바꿀 근거도 없다')
+    assert rejected == [] and '기존 판단을 바꿀 근거도 없다' in out
+    out, rejected = _swap('가격 근거가 가장 약해진 후보는', '상대수익률이 가장 크게 약해진 업종은')
+    assert rejected == [] and '상대수익률이 가장 크게 약해진 업종은' in out
+
+
+def test_s10_new_judgment_word_is_rejected_in_the_automatic_pass():
+    # 「악화」는 보호된 판단 어휘라 자동 경로가 새로 넣을 수 없다 — 작성 단계에서만 쓴다.
+    out, rejected = _swap('가격 근거가 가장 약해진 후보는', '상대수익률이 가장 크게 악화된 업종은')
+    assert rejected and '가격 근거가 가장 약해진 후보는' in out
+
+
+def test_s10_rewrites_that_change_numbers_or_negation_keep_the_original():
+    # 「아흐레째 → 9거래일째」는 없던 수와 단위(거래일)를 만든다. 「없어 → 않아」는 부정어가 바뀐다.
+    out, rejected = _swap('골디락스를 아흐레째 이어 간다', '골디락스 판단은 9거래일째 유지되고 있다')
+    assert rejected and '아흐레째' in out
+    out, rejected = _swap('새 공식 통계가 없어 좌표가 움직일 수 없다',
+                          '새 경제지표가 발표되지 않아 기존 판단을 변경할 근거는 없었다')
+    assert rejected and '좌표가 움직일 수 없다' in out
+    out, rejected = _swap('금리가 관측되지 않아 그 관계가 시험되지 않았다',
+                          '국채시장이 쉬어 그 관계를 확인할 수 없었다')
+    assert rejected and '관측되지 않아' in out
+
+
+S10B = """<html><body data-register="da">
+<h2>주식</h2>
+<p>이 하락은 지수로는 작지만 내용은 한쪽으로 쏠렸다고 판단한다. 성장주(-0.43%)가 가치주(+0.38%)에 뒤졌고, 나스닥과 러셀2000이 저점권에서 끝나 오후의 매도가 마감까지 이어졌다. 그래도 얇은 휴일 장이라 하루 낙폭을 방향 신호로 쓰기는 이르다.</p>
+<p>콜럼버스데이라 새 공식 통계가 없어 판단 근거가 움직일 수 없다. 물가 판단은 10월 14일 9월 CPI에서 다시 점검한다.</p>
+</body></html>"""
+
+
+def _swap_b(old, new):
+    from us.prose_swap import reinsert_partial
+    text, side = extract(S10B)
+    assert text.count(old) == 1
+    return reinsert_partial(S10B, text.replace(old, new), side)
+
+
+def test_deleting_a_limitation_sentence_keeps_the_original():
+    # codex 구현 재검토 #1(2026-10-13): 수치·부정어 없는 한계 문장을 지워도 통과하던 것.
+    out, rejected = _swap_b(' 그래도 얇은 휴일 장이라 하루 낙폭을 방향 신호로 쓰기는 이르다.', '')
+    assert rejected and '한계' in rejected[0][1]
+    assert '쓰기는 이르다' in out
+
+
+def test_negation_flip_alone_is_rejected_by_the_negation_check():
+    # codex 구현 재검토 #4: 수치·판단 어휘·이름·유사도는 그대로 두고 부정어만 바꾼다.
+    out, rejected = _swap_b('판단 근거가 움직일 수 없다', '판단 근거가 움직일 수 있다')
+    assert rejected and '부정어' in rejected[0][1]
+
+
+S10C = """<html><body data-register="da"><h2>주식</h2>
+<p>반도체 업종의 약세는 중국 업체의 경쟁 심화보다 단기적인 차익실현의 영향이 큰 것으로 판단한다. 마이크론은 3.88% 내렸다.</p>
+<p>엔비디아가 내린 것은 마이크로소프트 자체 칩 발표 때문이라고 본다. 이 해석은 TSMC 실적으로 확인한다.</p>
+</body></html>"""
+
+
+def _swap_c(old, new):
+    from us.prose_swap import reinsert_partial
+    text, side = extract(S10C)
+    assert text.count(old) == 1
+    return reinsert_partial(S10C, text.replace(old, new), side)
+
+
+def test_flipping_what_is_compared_is_rejected():
+    # 2026-10-13 사용자 검토 — 숫자·어휘가 같아도 「A보다 B」를 「B보다 A」로 뒤집으면 판단이 반대다.
+    out, rejected = _swap_c('중국 업체의 경쟁 심화보다 단기적인 차익실현의 영향이',
+                            '단기적인 차익실현보다 중국 업체의 경쟁 심화의 영향이')
+    assert rejected and '비교' in rejected[0][1]
+    assert '경쟁 심화보다' in out
+
+
+def test_removing_a_causal_link_is_rejected():
+    out, rejected = _swap_c('마이크로소프트 자체 칩 발표 때문이라고 본다',
+                            '마이크로소프트 자체 칩 발표와 같은 날이었다고 본다')
+    assert rejected and '인과' in rejected[0][1]
+
+
+def test_smoothing_without_touching_comparison_or_cause_still_passes():
+    out, rejected = _swap_c('엔비디아가 내린 것은 마이크로소프트 자체 칩 발표 때문이라고 본다. 이 해석은',
+                            '엔비디아의 하락은 마이크로소프트 자체 칩 발표 때문이라고 보고, 이 해석은')
+    assert rejected == [] and '엔비디아의 하락은' in out
+
+
+S10D = """<html><body data-register="da"><h2>FX</h2>
+<p>그런데 유로/달러는 0.33% 내렸다. 엔/달러는 오전 10:30(ET) 158.25엔까지 올랐다가 그 부근에서 끝났다. 달러지수와 통화쌍 종가의 기준 시각이 달라 생긴 차이일 수 있다. 위험선호 쪽 설명도 깔끔하지 않다.</p>
+<p>마감이 하루 범위 중간이라 이 힘이 다음 세션까지 이어질지는 오늘 자료로 가늠하기 어렵다. 그래도 얇은 휴일 장이라 하루 낙폭을 방향 신호로 쓰기는 이르다.</p>
+</body></html>"""
+
+
+def _swap_d(old, new):
+    from us.prose_swap import reinsert_partial
+    text, side = extract(S10D)
+    assert text.count(old) == 1
+    return reinsert_partial(S10D, text.replace(old, new), side)
+
+
+def test_deleting_a_possibility_sentence_is_rejected():
+    # codex 구현 재검토 3차 #1 — US 10/06 FX 문단의 실제 문장.
+    out, rejected = _swap_d(' 달러지수와 통화쌍 종가의 기준 시각이 달라 생긴 차이일 수 있다.', '')
+    assert rejected and '한계' in rejected[0][1]
+
+
+def test_equivalent_inflections_of_a_limitation_still_pass():
+    # codex 구현 재검토 3차 #2 — 같은 뜻의 활용형 바꾸기는 다듬기다.
+    out, rejected = _swap_d('쓰기는 이르다', '쓰기엔 이르다')
+    assert rejected == [] and '쓰기엔 이르다' in out
+    out, rejected = _swap_d('가늠하기 어렵다', '가늠하기 어려운 상황이다')
+    assert rejected == [] and '어려운 상황이다' in out
+
+
+S10E = """<html><body data-register="da"><h2>트렌드 유닛 점검</h2>
+<p>원인이 수요 기대라면 3개월 시계 전체가 흔들리고, 포지션 정리라면 낙폭이 실적 시즌에 메워질 수 있어 판단이 정반대로 갈린다. 무역흑자에 따른 수출업체 달러 매도가 원화를 받쳤다. 변동성은 낮아 보인다. 다음 문장이다.</p>
+</body></html>"""
+
+
+def _swap_e(old, new):
+    from us.prose_swap import reinsert_partial
+    text, side = extract(S10E)
+    assert text.count(old) == 1
+    return reinsert_partial(S10E, text.replace(old, new), side)
+
+
+def test_possibility_turned_into_certainty_is_rejected():
+    # codex 구현 재검토 4차 #1 — US 10/08 실제 문장 「메워질 수 있어 → 메워져」.
+    out, rejected = _swap_e('메워질 수 있어', '메워져')
+    assert rejected and '한계' in rejected[0][1]
+
+
+def test_equivalent_causal_and_seeming_inflections_pass():
+    # 4차 #2 — 「따른 → 따라 발생한」, 「보인다. → 보이며,」는 같은 표지다.
+    out, rejected = _swap_e('무역흑자에 따른', '무역흑자에 따라 발생한')
+    assert rejected == [], rejected
+    out, rejected = _swap_e('낮아 보인다. 다음', '낮아 보이며, 다음')
+    assert rejected == [], rejected
+
+
+S10F = """<html><body data-register="da"><h2>환율·금리</h2>
+<p>뉴스1은 외국인 주식 매도에도 9월 사상 최대 무역흑자에 따른 수출업체 달러 매도가 환율을 끌어내렸다고 전했다. 테마 전체의 판단으로 넓히기 전에 장기금리 경로를 먼저 확인한다. 반도체·AI 하드웨어는 메모리가 오르고 AI 인프라가 내려 테마 안에서 갈렸다.</p>
+</body></html>"""
+
+
+def _swap_f(old, new):
+    from us.prose_swap import reinsert_partial
+    text, side = extract(S10F)
+    assert text.count(old) == 1
+    return reinsert_partial(S10F, text.replace(old, new), side)
+
+
+def test_swapping_cause_and_effect_is_rejected():
+    # codex 구현 재검토 5차 #1 — KR 10/02 실제 문장, 원인과 결과를 맞바꾼다.
+    out, rejected = _swap_f('무역흑자에 따른 수출업체 달러 매도가',
+                            '무역흑자가 수출업체 달러 매도에 따라 발생해')
+    assert rejected and '인과' in rejected[0][1]
+    out, rejected = _swap_f('무역흑자에 따른', '무역흑자에 따라 발생한')
+    assert rejected == [], rejected
+
+
+def test_confirming_is_not_a_rate_cut():
+    # 5차 #2 — 「확인하며」 안의 「인하」는 방향어가 아니다(US 10/07 실제 문장).
+    out, rejected = _swap_f('먼저 확인한다. 반도체', '먼저 확인하며, 반도체')
+    assert rejected == [], rejected

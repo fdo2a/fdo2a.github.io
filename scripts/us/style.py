@@ -483,6 +483,69 @@ MAX_HEDGES = 6
 MAX_SAME_NUMBER = 3
 _NUMBER = re.compile(r'(?<![\d.,])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+)(?![\d])')
 
+# 분석 언어 — 수집 노트·원장·점검판 지시문의 말이 독자 문장에 넘어온 것(2026-10-13 사용자 비평,
+# `STYLE_EXEMPLARS.md` §10). US 10/12 본문에 후보 14·시험 12·질문 8·관측 8번.
+# **낱말이 아니라 문형을 센다** — 관측된 상관관계·관측 시각·정책금리 경로·장중 경로·일목 기준선은
+# 정상적인 시장 용어다. 연구 체계를 가리키는 꼴(「대안 쪽 관측」「금리차 경로」「기준선을 고정」)만
+# 잡고, 대선 후보·임상시험·기자 질문은 앞뒤 문맥으로 거른다. 보조 장치일 뿐 문장 품질 판정이 아니다.
+# (이름, 패턴, 앞 문맥 제외, 뒤 문맥 제외)
+RESEARCH_TERMS = (
+    ('후보', r'(?<![가-힣])후보', r'(대선|총선|경선|선거|대통령|의장|총재|위원|당)\s*$',
+     r'^\s*(등록|지명|자|토론|단일화)'),
+    ('시험', r'(?<![가-힣])시험', r'임상\s*$',
+     r'^\s*(생산|가동|발사|비행|운행|운전|양산|판매)'),
+    ('질문', r'(?<![가-힣])질문', r'(기자|의원|청문회|회견|취재진|애널리스트|시청자)\S{0,3}\s*$',
+     r'^을\s*받'),
+    ('관측', r'관측(?=되지\s*않|이\s*없|\s*기간|으로\s*둔|이\s*들어)'
+             r'|(?:새|대안\s*쪽|우리\s*쪽|상대|새\s*증거와)\s*관측', None, None),
+    ('경로', r'(?:금리차|달러|할인율|메모리|AI\s*인프라|일곱|자산별)\s*경로', None, None),
+    ('가격 근거', r'가격\s*근거', None, None),
+    ('기준선', r'기준선을\s*(?:고정|정하|정했|잡|세우|세웠)', None, None),
+)
+_RESEARCH_RE = [(label, re.compile(p), re.compile(b) if b else None, re.compile(a) if a else None)
+                for label, p, b, a in RESEARCH_TERMS]
+# 문서 길이에 따라 허용치가 는다 — 산문 2,500자마다 하나, 최소 셋. US 일간 산문은 1만~1만6천 자다.
+RESEARCH_CHARS_PER_TERM = 2500
+MIN_RESEARCH_TERMS = 3
+# 그 자리에서 지어낸 비유 — §6 의 통용되는 이름(숨고르기·전강후약)이나 금리 인상 압력·하락을 방어했다
+# 같은 정착된 표현과 달리 독자가 풀어야 하는 암호다. 목록에 있는 꼴만 잡는다(일반 비유 탐지가 아니다).
+FIGURATIVE = (
+    r'하루를\s*정(했|한|하)', r'이름표', r'시계를\s*(늘|줄|좁|넓)', r'한\s*칸\s*(올라|내려)',
+    r'신호는\s*[^.]{0,12}쪽이다', r'판단을\s*거[두둔뒀둘]', r'질문을\s*가[리린르른]',
+    r'질문은\s*[^.]{0,40}가린다',
+)
+_FIGURATIVE_RE = [re.compile(p) for p in FIGURATIVE]
+
+
+def research_allowance(text):
+    return max(MIN_RESEARCH_TERMS, len(re.sub(r'\s', '', text)) // RESEARCH_CHARS_PER_TERM)
+
+
+# 그 문단이 선거·인터뷰·인수합병을 다루면 「후보」·「질문」은 제 뜻이다(codex 재검토 #2 — 「자민당
+# 추천 후보」, 타임 인터뷰의 「질문」, 클럽메드 인수의 다른 「후보」). 앞뒤 몇 글자로는 못 거른다.
+_PLAIN_CONTEXT = {
+    '후보': re.compile(r'선거|대선|총선|경선|총재|자민당|민주당|공화당|국민의힘|추천|공천|인수|매각|입찰|후보지'),
+    '질문': re.compile(r'인터뷰|회견|기자|청문회|취재|질의|답변|대담'),
+}
+
+
+_NEWS_ITEM = re.compile(r'<div\b[^>]*\bdata-news\b[^>]*>.*?</div\s*>', re.S | re.I)
+
+
+def _research_hits(text):
+    hits = []
+    for label, pattern, before, after in _RESEARCH_RE:
+        for m in pattern.finditer(text):
+            if before and before.search(text[max(0, m.start() - 8):m.start()]):
+                continue
+            if after and after.search(text[m.end():m.end() + 8]):
+                continue
+            ctx = _PLAIN_CONTEXT.get(label)
+            if ctx and ctx.search(text):   # 문단 단위 — 인수 이야기는 앞 문장에 있을 수 있다
+                continue
+            hits.append(label)
+    return hits
+
 
 # 판단을 자기 동사로 말했나 — 증권사 리포트 기준(2026-09-24, `STYLE_EXEMPLARS.md` §0). 전략
 # 코멘트에 하나도 없으면 판단을 「~로 보인다」로 흐렸거나 한계만 늘어놓은 것이다. 경고만 한다.
@@ -558,6 +621,26 @@ def _desk_findings(html, texts):
                             f'「가를 자료가 없다·단정하지 않는다」류 단서가 {hedges}번이다'
                             f'({MAX_HEDGES}번까지 권장) — 한계는 그 주장 옆에 한 번, 다음 확인 자료와 '
                             '묶어 쓰고 안 할 말은 그냥 안 한다', 'warn'))
+
+    # 기사 요약(KR `data-news` 블록)은 작성자의 분석 언어가 아니다 — 기사 속 후보·질문은 제 뜻이다.
+    own = [_text(p) for p in _prose_html(_NEWS_ITEM.sub(' ', html))]
+    research = [h for t in own for h in _research_hits(t)]
+    allowance = research_allowance(' '.join(own))
+    if len(research) > allowance:
+        tally = {}
+        for label in research:
+            tally[label] = tally.get(label, 0) + 1
+        shown = ', '.join(f'{k} {v}' for k, v in sorted(tally.items(), key=lambda kv: -kv[1]))
+        out.append(_finding('research_language', len(research),
+                            f'연구 체계 표현이 {len(research)}번이다(이 길이면 {allowance}번까지 권장) — '
+                            f'{shown}. 「반도체 후보의 가격 근거가 약해졌다」는 「반도체 업종의 상대수익률이 '
+                            '악화됐다」처럼 문맥에 맞게 다시 쓴다(STYLE_EXEMPLARS §10)', 'warn'))
+
+    figures = [m.group(0) for r in _FIGURATIVE_RE for m in r.finditer(' '.join(own))]
+    if figures:
+        out.append(_finding('figurative', len(figures),
+                            '뜻이 흐린 비유가 있다 — ' + ', '.join(f'「{f}」' for f in figures[:4])
+                            + '. 가리키는 것을 직접 쓴다(STYLE_EXEMPLARS §10-2)', 'warn'))
 
     counts = {}
     for n in _NUMBER.findall(whole):

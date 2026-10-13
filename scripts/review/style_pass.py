@@ -221,6 +221,15 @@ def run_gates(cwd, cmds, timeout):
 NEVER_TOLERATE = frozenset(['check_fund.py'])
 
 
+# check_weight 가 매번 찍는 분량 줄과 경고 줄(2026-10-13)은 위반이 아니다 — 윤문이 본문을 2자만 바꿔도
+# 「분량:」 줄이 달라져 같은 실패를 새 실패로 읽었다(codex 4차 #3). 위반 줄은 그대로 엄격히 비교한다.
+_INFO_LINE = re.compile(r'^(분량|경고):')
+
+
+def _violations(text):
+    return '\n'.join(l for l in (text or '').splitlines() if not _INFO_LINE.match(l))
+
+
 def judge(baseline, after):
     """거부 이유 목록 — 비면 통과."""
     bad = []
@@ -228,7 +237,8 @@ def judge(baseline, after):
         if code == 0:
             continue
         was = baseline.get(name)
-        if was and was[0] != 0 and was == (code, text) and name not in NEVER_TOLERATE:
+        if was and was[0] != 0 and was[0] == code and _violations(was[1]) == _violations(text) \
+                and name not in NEVER_TOLERATE:
             continue   # 원본에서도 똑같이 실패한다 — 윤문이 만든 실패가 아니다
         bad.append(f'{name} 실패 (종료 {code}): {text[-300:]}')
     return bad

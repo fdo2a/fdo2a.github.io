@@ -5,6 +5,7 @@
   python3 scripts/check_weight.py --html kr_brief_2026-08-30.html --datadir kr/data --market kr
 
 Exit 0 = 발행 가능. Exit 1 = 위반이 한 줄씩 찍힌다 — 그대로 writer에게 돌려주고 다시 돌린다.
+「경고:」 줄은 분량·균형 경고로 종료 코드에 영향이 없다(2026-10-13).
 """
 import argparse
 import json
@@ -13,7 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.weight import check  # noqa: E402
+from us.weight import check, narrative, warnings  # noqa: E402
 
 MARKET_FILE = {'us': 'market_data.json', 'kr': 'kr_market_data.json'}
 
@@ -55,6 +56,12 @@ def main():
 
     violations = check(doc, market=args.market, market_data=market_data,
                        macro_eval=macro_eval)
+    # 경고는 발행을 막지 않는다(2026-10-13) — 위반과 함께 찍되 종료 코드는 위반만 정한다.
+    # 분량은 매번 찍는다 — 1주 비교(10/13~10/19)를 루틴 로그와 발행본으로 다시 셀 수 있게.
+    n = narrative(doc, market=args.market)
+    print(f'분량: 본문 {n["body"]}자 · 뉴스 요약 {n["news"]}자 · 전체 {n["all"]}자 (공백 제외)')
+    for w in warnings(doc, market=args.market):
+        print(f'경고: {w}')
     if violations:
         for x in violations:
             print(x)

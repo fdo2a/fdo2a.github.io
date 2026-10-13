@@ -142,7 +142,11 @@ history; reference it rather than duplicating its contents. The writer turns thi
 packet into connected prose and retains the cycle/hypothesis markers. The editor
 checks that the opening's implications have evidence in the body and that the
 closing review agrees with the verified ledger. Filenames, internal IDs and QA
-steps belong in the handoff, not the reader's prose.
+steps belong in the handoff, not the reader's prose. So does the research vocabulary
+(candidate/후보, question/질문, test/시험, observation/관측, path/경로, price case/가격
+근거, baseline/기준선): the packet is the analysis language, the report is the delivery
+language — name the theme, the issue, the check and the date instead
+(`.claude/agents/STYLE_EXEMPLARS.md` §10, user decision 2026-10-13).
 
 ## Weekly and monthly
 

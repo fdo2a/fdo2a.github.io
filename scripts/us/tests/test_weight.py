@@ -78,22 +78,53 @@ def test_short_macro_with_content_does_not_need_padding():
     assert v == []
 
 
-def test_kr_has_floors_but_no_ratio():
-    sizes = {'오늘의 장': 700, '지수 & 장중': 900, '환율·금리': 700,
-             '전략 코멘트': 1300, '기술적 분석 & 트레이딩 전략': 500}
-    assert check_volume(measure(_doc(sizes), 'kr'), market='kr') == []
-    thin = dict(sizes, **{'지수 & 장중': 300})
-    assert any('시황·가격군' in x
-               for x in check_volume(measure(_doc(thin), 'kr'), market='kr'))
+def test_kr_absolute_floors_are_gone():
+    """2026-10-13 사용자 결정 — KR 시황군 2,200·판단군 1,800 절대 하한 폐지. 균형은 경고로 본다."""
+    thin = {'오늘의 장': 300, '지수 & 장중': 300, '환율·금리': 300,
+            '전략 코멘트': 700, '기술적 분석 & 트레이딩 전략': 300}
+    assert check_volume(measure(_doc(thin), 'kr'), market='kr') == []
 
 
-def test_kr_judgment_floor_catches_thin_judgment():
-    """시황만 채우고 판단을 줄이는 것을 막는다 (2026-09-22 독자 전환)."""
-    sizes = {'오늘의 장': 900, '지수 & 장중': 900, '환율·금리': 900,
-             '전략 코멘트': 700, '기술적 분석 & 트레이딩 전략': 500}
-    v = check_volume(measure(_doc(sizes), 'kr'), market='kr')
-    assert any('판단군이 1200자로 하한 1800자' in x for x in v)
-    assert not any('시황·가격군' in x for x in v)
+def test_recap_shorter_than_judgment_is_only_a_warning():
+    from us.weight import warnings
+    sizes = {'오늘의 장': 300, '지수 & 장중': 300, '환율·금리': 300,
+             '전략 코멘트': 900, '기술적 분석 & 트레이딩 전략': 300}
+    doc = _doc(sizes)
+    assert check_volume(measure(doc, 'kr'), market='kr') == []
+    assert any('시황군' in x and '판단군' in x for x in warnings(doc, 'kr'))
+    even = dict(sizes, **{'전략 코멘트': 300})
+    assert not any('시황군' in x for x in warnings(_doc(even), 'kr'))
+
+
+def _narrative_doc(chars, news=0):
+    body = '<section><h2>주식</h2><p>' + '가' * chars + '</p></section>'
+    if news:
+        body += '<section><h2>오늘의 뉴스</h2><p>' + '나' * news + '</p></section>'
+    return '<html><body data-register="da">' + body + '</body></html>'
+
+
+def test_narrative_over_5000_is_warned_and_under_is_not():
+    from us.weight import narrative, warnings
+    assert narrative(_narrative_doc(5000))['body'] == 5000
+    assert not any('서술형 본문' in x for x in warnings(_narrative_doc(5000), 'us'))
+    assert any('서술형 본문' in x and '5001' in x for x in warnings(_narrative_doc(5001), 'us'))
+    # 하한 경고는 없다 — 정보가 적은 날은 짧아도 된다.
+    assert not any('서술형 본문' in x for x in warnings(_narrative_doc(800), 'us'))
+
+
+def test_kr_news_is_reported_separately_not_counted_in_the_body():
+    from us.weight import narrative, warnings
+    n = narrative(_narrative_doc(4000, news=3000), 'kr')
+    assert (n['body'], n['news'], n['all']) == (4000, 3000, 7000)
+    assert not any('서술형 본문' in x for x in warnings(_narrative_doc(4000, news=3000), 'kr'))
+
+
+def test_narrative_ignores_whitespace_entities_tables_and_captions():
+    from us.weight import narrative
+    doc = ('<html><body><section><h2>주식</h2><p>S&amp;P 500 은  올랐다.</p>'
+           '<p class="caption">자료: FRED 가나다라마바사</p>'
+           '<table><tr><td>표 칸 가나다라마바사아자차카타파하</td></tr></table></section></body></html>')
+    assert narrative(doc)['body'] == len('S&P500은올랐다.')
 
 
 # --- 「지금 어디에 있나」·원인 문단 (설계 1-b) ---
@@ -129,9 +160,12 @@ def test_missing_standing_paragraph_is_a_violation():
     assert any('주식' in x and 'data-standing' in x for x in check_standing(doc, PC))
 
 
-def test_standing_paragraph_must_be_substantive():
+def test_standing_paragraph_needs_a_figure_not_a_length():
+    """2026-10-13 — 120자·「위치·경로·크기 세 층」 요구 폐지. 종가·등락률이면 된다."""
     doc = _sec('주식', '<p data-standing="equities">주식은 높습니다.</p>')
-    assert any('120자' in x for x in check_standing(doc, PC))
+    assert any('수치' in x for x in check_standing(doc, PC))
+    short = _sec('주식', '<p data-standing="equities">S&P500은 0.06% 내린 7,807로 마감했다.</p>')
+    assert check_standing(short, PC) == []
 
 
 def test_good_standing_paragraph_passes():
@@ -349,3 +383,33 @@ def test_news_and_mlcc_stay_outside_the_recall_judgment_ratio():
     from us.weight import SECTION_GROUPS
     every = SECTION_GROUPS['us']['recap'] + SECTION_GROUPS['us']['judgment']
     assert '오늘의 뉴스' not in every and 'MLCC' not in every
+
+
+def _kr_cli_doc(strategy_chars):
+    lede = ''.join(f'<p data-lede="{k}">{"가" * (strategy_chars // 6)}</p>'
+                   for k in ('event', 'gap', 'meaning', 'action', 'invalidation', 'review'))
+    secs = [('지수 & 장중', '<p data-standing="equities">코스피는 0.9% 올랐다.</p>'),
+            ('환율·금리', '<p data-standing="rates">원/달러는 1,343원이다.</p>'),
+            ('전략 코멘트', lede),
+            ('기술적 분석 & 트레이딩 전략', '<p>60일선 위다.</p>')]
+    return '<html><body>' + ''.join(_sec(t, b) for t, b in secs) + '</body></html>'
+
+
+def test_check_weight_cli_warnings_alone_exit_zero(tmp_path):
+    import subprocess
+    import sys
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[3]
+    f = tmp_path / 'kr.html'
+    f.write_text(_kr_cli_doc(6000), encoding='utf-8')
+    r = subprocess.run([sys.executable, str(root / 'scripts' / 'check_weight.py'), '--html', str(f),
+                        '--datadir', str(tmp_path), '--market', 'kr'],
+                       capture_output=True, text=True, cwd=root)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert '경고: 서술형 본문' in r.stdout and '경고: 시황군' in r.stdout
+    bad = tmp_path / 'bad.html'
+    bad.write_text(_kr_cli_doc(6000).replace('data-lede="review"', 'data-lede="x"'), encoding='utf-8')
+    r = subprocess.run([sys.executable, str(root / 'scripts' / 'check_weight.py'), '--html', str(bad),
+                        '--datadir', str(tmp_path), '--market', 'kr'],
+                       capture_output=True, text=True, cwd=root)
+    assert r.returncode == 1 and '경고:' in r.stdout and 'review' in r.stdout

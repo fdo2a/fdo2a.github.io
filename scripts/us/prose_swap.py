@@ -209,6 +209,47 @@ _DOWN = ('하락', '내리', '내렸', '내려', '내린', '떨어', '급락', '
 _POLAR = sorted(_UP + _DOWN, key=len, reverse=True)
 # 독립된 「안」(안 된다·안 올랐다)은 낱말 경계로만 센다 — 「안정」「안에서」는 부정이 아니다.
 _NEG_RE = re.compile(r'않|아니|못|없|(?<![가-힣])안(?=\s)')
+# 비교 관계와 인과 표지(2026-10-13 사용자 검토) — 「경쟁 심화보다 차익실현」을 「차익실현보다 경쟁
+# 심화」로 뒤집거나 「발표 때문」을 「발표와 같은 날」로 바꾸면 숫자·어휘가 같아도 판단이 달라진다.
+# 비교 대상(「~보다·~에 비해·~대비」 바로 앞 낱말)의 순서와 인과 표지의 개수를 원문과 맞춘다.
+_COMPARE_RE = re.compile(r'([가-힣A-Za-z0-9%]+)\s*(?:보다|에\s*비해|대비)')
+# 같은 뜻의 활용형은 같은 키로 센다 — 「따른 → 따라 발생한」은 다듬기다(4차 #2).
+_CAUSE_KEYS = (('때문', r'때문'), ('탓', r'탓'), ('덕분', r'덕분'), ('따르', r'따른|따라|따르'),
+               ('인하', r'(?<!확)(?:인해|인한|인하여)'), ('원인', r'원인'), ('영향', r'영향'))
+_CAUSE_RE = [(k, re.compile(p)) for k, p in _CAUSE_KEYS]
+
+
+def _causes(text):
+    """(표지, 바로 앞 낱말의 앞 두 글자)를 나온 순서대로 — 개수가 같아도 원인과 결과를 맞바꾸면
+    (「무역흑자에 따른 달러 매도」→「무역흑자가 달러 매도에 따라」) 앞 낱말이 달라진다(5차 #1)."""
+    plain = _plain(text)
+    hits = []
+    for k, r in _CAUSE_RE:
+        for m in r.finditer(plain):
+            prev = re.findall(r'[가-힣A-Za-z0-9]+', plain[max(0, m.start() - 20):m.start()])
+            hits.append((m.start(), k, prev[-1][:2] if prev else ''))
+    return [(k, a) for _, k, a in sorted(hits)]
+# 한계·가능성 표지 — 판단의 세기를 싣는 말. 수치·부정어가 없는 한계 문장(「얇은 휴일 장이라 하루
+# 낙폭을 방향 신호로 쓰기는 이르다」, 「기준 시각이 달라 생긴 차이일 수 있다」)을 통째로 지워도 다른
+# 검사는 다 통과했다(2026-10-13 codex 구현 재검토 #1·3차 #1). 활용형은 같은 표지로 센다 —
+# 「쓰기는 이르다 → 쓰기엔 이르다」, 「어렵다 → 어려운 상황이다」 같은 다듬기는 통과한다(3차 #2).
+# **모든 삭제를 막지는 못한다** — 이 표지가 없는 문장의 삭제는 지시와 발행 뒤 검토가 지킨다.
+_LIMIT_KEYS = (
+    ('이르', r'이르(?!면)|이른'), ('어렵', r'어렵|어려'), ('단정', r'단정'),
+    ('확인 못함', r'확인(?:되지|하지|할\s*수|이\s*안)|미확인'), ('가르지 못함', r'가르지|가를\s*수'),
+    ('알 수 없', r'알\s*수\s*없'), ('보정', r'보정하지|보정 안'), ('유보', r'유보'), ('한계', r'한계'),
+    ('잠정', r'잠정'), ('신호 가치', r'신호\s*가치'), ('가늠', r'가늠'),
+    # 「수 있」은 앞 음절을 열거하지 않는다 — 메워질·이어질·커질 수 있다를 놓쳤다(4차 #1).
+    ('수 있', r'(?<![가-힣])수\s*있'), ('가능성', r'가능성'), ('여지', r'여지'),
+    # 추정의 「보인다」만 — 「강세를 보였다」(나타냈다)는 다른 말이다.
+    ('보이', r'(?:로|어|아|해|여|게)\s*보(?:인다|이며|이지만|이고|여|인)'), ('추정', r'추정'),
+)
+_LIMIT_RE = [(k, re.compile(p)) for k, p in _LIMIT_KEYS]
+
+
+def _limits(text):
+    plain = _plain(text)
+    return Counter({k: len(r.findall(plain)) for k, r in _LIMIT_RE if r.search(plain)})
 
 
 def _number_order(text):
@@ -222,7 +263,8 @@ def _stream(text, names):
     parts += [r'(?P<l>[A-Za-z][A-Za-z&.\-]{1,})', '(?P<p>%s)' % '|'.join(_POLAR)]
     pattern = '|'.join(parts)
     out = []
-    for m in re.finditer(pattern, _plain(text)):
+    # 「확인하며」 안의 「인하」는 금리 인하가 아니다(5차 #2) — 방향어로 읽기 전에 가린다.
+    for m in re.finditer(pattern, _plain(text).replace('확인하', '확인ㅎ')):
         if m.group('p'):
             out.append('+' if m.group('p') in _UP else '-')
         else:
@@ -235,7 +277,7 @@ def _negations(text):
 
 
 def _check_strict(pid, before, after, names):
-    """문단 안의 관계 — 수치의 순서, 이름·방향어의 순서, 부정어."""
+    """문단 안의 관계 — 수치의 순서, 이름·방향어의 순서, 비교 대상, 인과 표지, 부정어, 한계 표지."""
     if _number_order(before) != _number_order(after):
         raise ProseSwapError('%s 의 수치 순서가 달라졌다' % pid)
     was, now = _stream(before, names), _stream(after, names)
@@ -245,6 +287,19 @@ def _check_strict(pid, before, after, names):
     want, got = _negations(before), _negations(after)
     if want != got:
         raise ProseSwapError('%s 의 부정어가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
+                             % (pid, sorted(want - got), sorted(got - want)))
+    was = [m.group(1) for m in _COMPARE_RE.finditer(_plain(before))]
+    now = [m.group(1) for m in _COMPARE_RE.finditer(_plain(after))]
+    if was != now:
+        raise ProseSwapError('%s 의 비교 대상이 달라졌다 — %s → %s'
+                             % (pid, ' / '.join(was) or '없음', ' / '.join(now) or '없음'))
+    want, got = _causes(before), _causes(after)
+    if want != got:
+        raise ProseSwapError('%s 의 인과 표지가 달라졌다 — %s → %s'
+                             % (pid, want or '없음', got or '없음'))
+    want, got = _limits(before), _limits(after)
+    if want != got:
+        raise ProseSwapError('%s 의 한계 표지가 달라졌다 — 사라진 것 %s, 생긴 것 %s'
                              % (pid, sorted(want - got), sorted(got - want)))
 
 

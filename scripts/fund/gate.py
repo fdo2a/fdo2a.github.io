@@ -367,7 +367,7 @@ def check(html, data, market, post_date, effective=EFFECTIVE):
     for label, pat in FORBIDDEN:
         if re.search(pat, prose):
             v.append(f'「{label}」 — 유닛 편입·비중·매매 권고를 쓰지 않는다. '
-                     '「가격 근거가 강해졌다·약해졌다」처럼 관찰로 쓴다')
+                     '「상대수익률이 개선됐다·악화됐다」처럼 관찰로 쓴다')
     return v
 
 

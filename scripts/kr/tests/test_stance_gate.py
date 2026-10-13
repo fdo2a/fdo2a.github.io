@@ -116,6 +116,15 @@ def test_review_accepts_broken_verdict_language():
     assert check(ok, STANCE, broken) == []
 
 
+def test_review_accepts_withdrawal_as_broken_verdict_language():
+    # codex 구현 검토 #2(2026-10-13): §10 이 권하는 「철회」만으로 무효화를 말해도 통과해야 한다.
+    broken = {"verdict": "무효화", "prior_date": "2026-09-21"}
+    ok = _html({"review": "9월 21일에 세운 6,904 조건이 오늘 종가로 깨져 그 해석을 철회한다. "
+                          "기관 순매수가 이어진다고 본 근거가 사라졌고, 새 근거와 레벨은 "
+                          "아래 문단에 적었다. 코스피 6,904 아래 종가가 그 판정의 근거다."})
+    assert check(ok, STANCE, broken) == []
+
+
 def test_bootstrap_verdict_language():
     boot = {"verdict": "판정불가"}
     ok = _html({"review": "어제와 비교할 직전 판단이 없어 오늘은 판정할 수 없다. "

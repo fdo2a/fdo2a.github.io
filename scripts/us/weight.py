@@ -134,12 +134,52 @@ OPTIONAL_SECTIONS = ('오늘의 장',)
 # 매크로 중복을 억제하는 상한과 필수 섹션의 존재·내용 검사는 유지한다.
 THRESHOLDS = {
     'us': {'macro_max': 4600, 'macro_max_abbrev': 2400},
-    # KR 은 2026-09-22 사용자 지시로 독자가 개인에서 **헤지펀드 매니저**로 바뀌었다.
-    # 그 전까지 KR 에는 시황 하한만 있고 판단 하한이 없어서, 2026-09-21 발행본은
-    # 시황 2,542자 대 판단 1,287자로 판단이 시황의 절반이었다. 판단 재료를 받아 보는
-    # 독자에게 그 배분은 거꾸로다 — 판단군에도 바닥을 깐다. 상한은 두지 않는다.
-    'kr': {'recap_min': 2200, 'judgment_min': 1800},
+    # KR 시황군 2,200·판단군 1,800 절대 하한은 2026-10-13 사용자 결정으로 폐지했다 — 글자
+    # 수보다 핵심 시장 정보의 누락을 먼저 본다. 균형(시황군 ≥ 판단군)은 아래 warnings() 의 경고다.
+    'kr': {},
 }
+
+# 서술형 본문 권장 분량(2026-10-13 사용자 결정, `STYLE_EXEMPLARS.md` §11). 평상시 4,000~5,000자,
+# **경고만** 하고 하한 경고는 두지 않는다 — 정보가 적은 날은 짧아도 되고, 큰 사건이 있는 날은
+# 넘어도 된다. 1주 비교 뒤 차단 여부를 다시 정한다.
+NARRATIVE_TARGET = (4000, 5000)
+# 수집 단계가 만든 기사 요약 섹션 — 작성자가 줄일 수 없어 따로 센다(US 일간에는 없다).
+NEWS_SECTIONS = ('오늘의 뉴스',)
+
+
+def narrative(html_doc, market='us'):
+    """서술형 본문 글자 수(공백 제외) — {'body', 'news', 'all'}.
+
+    범위는 `style._prose_html` 과 같다(표·제목·캡션·뉴스 요약 data-summary·근거 블록·생성 구간
+    제외). 엔티티를 디코드한 뒤 공백을 지우고 센다. US 10/12 = 7,496자가 이 기준이다.
+    """
+    from us import style
+
+    def count(fragment):
+        paras = style._prose_html('<body>' + (fragment or '') + '</body>')
+        return sum(len(re.sub(r'\s', '', _html.unescape(style._text(x)))) for x in paras)
+
+    total = count(html_doc)
+    news = sum(count(section_slice(html_doc, t)) for t in NEWS_SECTIONS
+               if section_slice(html_doc, t))
+    return {'body': total - news, 'news': news, 'all': total}
+
+
+def warnings(html_doc, market='us'):
+    """발행을 막지 않는 분량·균형 경고(2026-10-13)."""
+    out = []
+    n = narrative(html_doc, market)
+    lo, hi = NARRATIVE_TARGET
+    if n['body'] > hi:
+        news = f', 뉴스 요약 {n["news"]}자 별도' if n['news'] else ''
+        out.append(f'서술형 본문이 {n["body"]}자다(평상시 {lo:,}~{hi:,}자{news}) — 큰 사건이 있는 날이 '
+                   '아니면 반복 해석·장중 시각·변화 없는 판단부터 덜어낸다. 중요한 분석은 지우지 않는다')
+    m = measure(html_doc, market)
+    if m['judgment'] and m['recap'] < m['judgment']:
+        out.append(f'시황군 {m["recap"]}자 < 판단군 {m["judgment"]}자 — 중요한 분석이 몰린 날이 아니면 '
+                   '주요 자산의 움직임·큰 변동의 원인·자산 간 연결이 빠졌는지 점검한다(비율을 맞추려고 '
+                   '시황을 덧붙이지 않는다)')
+    return out
 
 
 def measure(html_doc, market='us'):
@@ -170,13 +210,6 @@ def check_volume(m, abbreviated=False, market='us'):
     for title, count in m['sections'].items():
         if title not in OPTIONAL_SECTIONS and title not in m['missing'] and count == 0:
             v.append(f'섹션 「{title}」의 본문이 비어 있다 — 필수 설명을 남길 것')
-
-    if t.get('recap_min') and m['recap'] < t['recap_min']:
-        v.append(f'시황·가격군이 {m["recap"]}자로 하한 {t["recap_min"]}자에 못 미친다')
-
-    if t.get('judgment_min') and m['judgment'] < t['judgment_min']:
-        v.append(f'판단군이 {m["judgment"]}자로 하한 {t["judgment_min"]}자에 못 미친다 '
-                 f'(시황 {m["recap"]}자) — 분량을 시황으로 채우고 판단을 줄이지 않는다')
 
     if market == 'us':
         day = '축약일' if abbreviated else '발표일'
@@ -259,12 +292,10 @@ def check_standing(html_doc, price_context, market='us'):
             v.append(f'{title}: 「지금 어디에 있나」 문단이 없다 — '
                      f'<p data-standing="{STANDING_KEYS[title]}">로 시작할 것')
             continue
-        text = max((t for _, t in blocks), key=len)
-        if len(text) < _MIN_BLOCK:
-            v.append(f'{title}: 「지금 어디에 있나」 문단이 {len(text)}자로 '
-                     f'{_MIN_BLOCK}자에 못 미친다 — 위치·경로·오늘의 크기 세 층을 담을 것')
-        elif not re.search(r'\d', text):
-            v.append(f'{title}: 「지금 어디에 있나」 문단에 수치가 없다')
+        # 2026-10-13 사용자 결정 — 120자·「위치·경로·오늘의 크기 세 층」 요구를 폐지했다.
+        # 평범한 날은 종가·등락률이면 되고, 위치는 극단·이례적일 때만 쓴다(§11-3).
+        if not any(re.search(r'\d', t) for _, t in blocks):
+            v.append(f'{title}: 「지금 어디에 있나」 문단에 수치가 없다 — 종가·등락률을 쓴다')
     return v
 
 
