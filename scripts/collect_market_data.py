@@ -800,13 +800,22 @@ def main():
             pass
 
     print('collecting Naver same-date curve (primary: 2Y/5Y/10Y/30Y)...')
-    yields_naver, naver_latest = naver_spot_yields(expected_date=report_date)
+    # 채권시장만 쉬는 날(콜럼버스 데이·재향군인의 날)은 그날 국채 종가가 영영 없다 —
+    # 직전 국채 마감일 커브를 그 날짜 그대로 싣는다(2026-10-12 글이 이것 때문에 빠졌다).
+    from us.naver_yields import bond_session, load_bond_closed
+    from fund.calendar import load as load_holidays
+    cal_path = os.path.join(args.outdir, 'market_holidays.json')
+    bond_date = bond_session(report_date, load_bond_closed(cal_path),
+                             (load_holidays(cal_path) or {}).get('dates') or ())
+    if bond_date != report_date:
+        print(f'  {report_date} is a US bond-market holiday — curve as of {bond_date}')
+    yields_naver, naver_latest = naver_spot_yields(expected_date=bond_date)
     # 「아직 안 나왔다」와 「못 받았다」는 다르게 다뤄야 한다. 전자는 다음 회차가 메울
     # 수 있으므로 incomplete 로 남겨 멱등 가드가 재시도를 막지 않게 하고, 후자는
     # 야후·FRED 폴백으로 발행한다 — 네이버 장애로 발행이 멈추면 안 된다.
-    naver_stale = bool(naver_latest) and yields_naver is None and naver_latest < report_date
+    naver_stale = bool(naver_latest) and yields_naver is None and naver_latest < bond_date
     if naver_stale:
-        print(f'  Naver curve is still {naver_latest} (< {report_date}) — 국채 마감 전 회차로 본다',
+        print(f'  Naver curve is still {naver_latest} (< {bond_date}) — 국채 마감 전 회차로 본다',
               file=sys.stderr)
     print('collecting Yahoo spot yields (fallback: 5Y/10Y/30Y)...')
     yields_yahoo = yahoo_spot_yields()
@@ -867,6 +876,10 @@ def main():
                        'date가 갈릴 수 있으므로 각 행의 source/date를 표·차트·캡션에 표기할 것. '
                        'yields_fred는 전 만기 FRED 동일자 대조용.',
         'yield_drivers': drivers,
+        # 채권 휴장일에만 붙는다. 작성자는 커브를 「채권시장 휴장 — <curve_date> 종가」로 쓰고
+        # 행의 bp 를 그날의 움직임으로 읽지 않는다(bp 는 curve_date 의 전일比다).
+        **({'yields_bond_holiday': {'closed': report_date, 'curve_date': bond_date}}
+           if bond_date != report_date else {}),
         'sector_performance': sector_perf,
         'sector_performance_as_of': perf_as_of,
     }

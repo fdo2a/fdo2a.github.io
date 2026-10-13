@@ -104,3 +104,34 @@ def build_curve(series, week_back=5, source='Naver', expected_date=None):
             'source': source,
         }
     return out
+
+
+def load_bond_closed(path):
+    """`data/market_holidays.json` 의 `us_bond` — NYSE 는 열고 국채 현물만 닫는 날.
+
+    파일이 없거나 깨졌으면 빈 집합이다. 그러면 예전처럼 그날을 「마감 전」으로 읽어
+    완성 게이트가 닫힐 뿐, 엉뚱한 날짜의 커브가 실리지는 않는다.
+    """
+    import json
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return set((json.load(fh).get('us_bond') or {}).get('dates') or [])
+    except (OSError, ValueError):
+        return set()
+
+
+def bond_session(report_date, bond_closed, equity_closed=()):
+    """주식 세션 `report_date` 에 실을 국채 종가의 기준일.
+
+    평소에는 같은 날이다. 채권시장만 쉬는 날(콜럼버스 데이·재향군인의 날)에는 그날
+    종가가 영영 나오지 않으므로, 주말·휴장을 건너 직전 국채 마감일로 내려간다.
+    2026-10-12 에는 이 규칙이 없어 「마감 전 회차」로 읽혔고 글이 빠졌다.
+    """
+    import datetime
+    if report_date not in bond_closed:
+        return report_date
+    closed = set(bond_closed) | set(equity_closed or ())
+    d = datetime.date.fromisoformat(report_date) - datetime.timedelta(days=1)
+    while d.weekday() >= 5 or d.isoformat() in closed:
+        d -= datetime.timedelta(days=1)
+    return d.isoformat()

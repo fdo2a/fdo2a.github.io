@@ -108,3 +108,37 @@ def test_a_stretched_comparison_window_blanks_bp_instead_of_mislabelling_it():
     assert curve is not None
     assert curve['2Y']['bp'] is None and curve['10Y']['bp'] is None
     assert curve['2Y']['level'] == 4.386          # 종가 자체는 멀쩡하므로 살린다
+
+
+# ── 채권시장만 쉬는 날 (2026-10-12 콜럼버스 데이) ─────────────────────────────
+# NYSE 는 열고 SIFMA 국채 현물은 닫는 날에는 그날 종가가 영영 나오지 않는다. 그날을
+# 「마감 전 회차」로 읽으면 완성 게이트가 끝내 닫혀 글이 빠진다.
+
+def test_bond_session_is_the_report_date_on_an_ordinary_day():
+    assert ny.bond_session('2026-10-09', {'2026-10-12'}) == '2026-10-09'
+
+
+def test_bond_session_steps_back_to_the_last_treasury_close_on_a_bond_holiday():
+    assert ny.bond_session('2026-10-12', {'2026-10-12'}) == '2026-10-09'
+
+
+def test_bond_session_also_skips_equity_holidays_and_weekends():
+    # 가상의 경우: 금요일이 주식·채권 모두 휴장이면 목요일까지 내려간다.
+    assert ny.bond_session('2026-10-12', {'2026-10-12'}, {'2026-10-09'}) == '2026-10-08'
+
+
+def test_load_bond_closed_reads_the_us_bond_calendar(tmp_path):
+    p = tmp_path / 'h.json'
+    p.write_text('{"us_bond": {"dates": ["2026-10-12", "2026-11-11"]}}', encoding='utf-8')
+    assert ny.load_bond_closed(str(p)) == {'2026-10-12', '2026-11-11'}
+    assert ny.load_bond_closed(str(tmp_path / 'missing.json')) == set()
+
+
+def test_committed_bond_calendar_lists_only_weekdays_the_nyse_trades():
+    import json, os, datetime
+    path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'market_holidays.json')
+    cal = json.load(open(path, encoding='utf-8'))
+    bond = cal['us_bond']['dates']
+    assert {'2026-10-12', '2026-11-11'} <= set(bond)
+    assert not set(bond) & set(cal['us']['dates'])
+    assert all(datetime.date.fromisoformat(d).weekday() < 5 for d in bond)
