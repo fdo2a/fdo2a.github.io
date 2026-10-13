@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-14 06:36 KST",
+  "generated": "2026-10-14 07:13 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-13",
   "indices": {
@@ -110,9 +110,9 @@
   },
   "fx": {
     "DXY": {
-      "last": 102.20600128173828,
-      "chg": -0.37400054931640625,
-      "pct": -0.36459401700184024,
+      "last": 102.21199798583984,
+      "chg": -0.36800384521484375,
+      "pct": -0.35874813671863404,
       "date": "2026-10-13"
     },
     "USD/KRW": {
@@ -122,41 +122,41 @@
       "date": "2026-10-13"
     },
     "USD/JPY": {
-      "last": 158.32200622558594,
-      "chg": 0.1190032958984375,
-      "pct": 0.07522189446134142,
+      "last": 158.3489990234375,
+      "chg": 0.14599609375,
+      "pct": 0.09228402182408502,
       "date": "2026-10-13"
     },
     "EUR/USD": {
-      "last": 1.1203227043151855,
-      "chg": -0.00015056133270263672,
-      "pct": -0.013437298088103677,
+      "last": 1.1199462413787842,
+      "chg": -0.0005270242691040039,
+      "pct": -0.047035862903810344,
       "date": "2026-10-13"
     }
   },
   "commodities": {
     "WTI": {
-      "last": 94.79000091552734,
-      "chg": 1.0500030517578125,
-      "pct": 1.120122760493092,
+      "last": 94.70999908447266,
+      "chg": 0.970001220703125,
+      "pct": 1.0347783686882606,
       "date": "2026-10-13"
     },
     "Brent": {
-      "last": 106.36000061035156,
-      "chg": -0.29000091552734375,
-      "pct": -0.2719183416579507,
+      "last": 106.2699966430664,
+      "chg": -0.3800048828125,
+      "pct": -0.3563102460156009,
       "date": "2026-10-13"
     },
     "Natural Gas": {
-      "last": 3.319000005722046,
-      "chg": 0.15199995040893555,
-      "pct": 4.799493140327971,
+      "last": 3.316999912261963,
+      "chg": 0.14999985694885254,
+      "pct": 4.7363389431334335,
       "date": "2026-10-13"
     },
     "Gold": {
-      "last": 4184.2001953125,
-      "chg": -6.39990234375,
-      "pct": -0.1527204265405646,
+      "last": 4185.2998046875,
+      "chg": -5.30029296875,
+      "pct": -0.12648052415487054,
       "date": "2026-10-13"
     }
   },
@@ -282,39 +282,36 @@
   },
   "yields": {
     "2Y": {
-      "level": 4.8,
-      "date": "2026-10-09",
-      "bp": 4.999999999999982,
-      "week_ago": 4.83,
-      "week_ago_date": "2026-10-02",
-      "source": "FRED"
+      "level": 4.793,
+      "date": "2026-10-13",
+      "bp": 0.19999999999997797,
+      "week_ago": 4.833,
+      "week_ago_date": "2026-10-05",
+      "source": "Naver"
     },
     "5Y": {
       "level": 5.007,
       "date": "2026-10-13",
-      "bp": -1.2000083923339844,
-      "week_ago": 5.028,
-      "week_ago_date": "2026-10-06",
-      "ticker": "^FVX",
-      "source": "Yahoo"
+      "bp": -1.4000000000000234,
+      "week_ago": 5.066,
+      "week_ago_date": "2026-10-05",
+      "source": "Naver"
     },
     "10Y": {
       "level": 5.217,
       "date": "2026-10-13",
-      "bp": -2.299976348876953,
-      "week_ago": 5.269,
-      "week_ago_date": "2026-10-06",
-      "ticker": "^TNX",
-      "source": "Yahoo"
+      "bp": -2.7000000000000135,
+      "week_ago": 5.311,
+      "week_ago_date": "2026-10-05",
+      "source": "Naver"
     },
     "30Y": {
       "level": 5.563,
       "date": "2026-10-13",
-      "bp": -3.4999847412109375,
-      "week_ago": 5.641,
-      "week_ago_date": "2026-10-06",
-      "ticker": "^TYX",
-      "source": "Yahoo"
+      "bp": -3.6000000000000476,
+      "week_ago": 5.664,
+      "week_ago_date": "2026-10-05",
+      "source": "Naver"
     }
   },
   "yields_fred": {
@@ -571,15 +568,13 @@
     }
   },
   "sector_performance_as_of": "2026-10-13",
-  "spread_2s10s_bp": 41.69999999999998,
-  "spread_2s10s_aligned": false,
-  "spread_2s10s_basis": "2Y FRED 2026-10-09 vs 10Y Yahoo 2026-10-13",
+  "spread_2s10s_bp": 42.39999999999995,
+  "spread_2s10s_aligned": true,
+  "spread_2s10s_basis": "2Y·10Y 모두 Naver 2026-10-13 동일 기준일",
   "spread_2s10s_fred_bp": 44.00000000000004,
   "spread_5s30s_bp": 55.60000000000001,
-  "complete": false,
-  "missing": [
-    "yields/naver_close_not_posted"
-  ],
+  "complete": true,
+  "missing": [],
   "price_context": {
     "windows": {
       "move": 60,
@@ -619,16 +614,16 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.359,
+        "change": -0.356,
         "unit": "%",
-        "multiple": -1.18,
+        "multiple": -1.17,
         "band": "보통"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": 0.066,
+        "change": 0.095,
         "unit": "%",
-        "multiple": 0.11,
+        "multiple": 0.16,
         "band": "미미"
       },
       "USD/KRW": {
@@ -640,14 +635,14 @@
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 1.12,
+        "change": 0.981,
         "unit": "%",
-        "multiple": 0.37,
+        "multiple": 0.33,
         "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -0.153,
+        "change": -0.15,
         "unit": "%",
         "multiple": -0.11,
         "band": "미미"
@@ -733,7 +728,7 @@
         }
       },
       "DXY": {
-        "value": 102.212,
+        "value": 102.215,
         "percentile": 75.0,
         "band": "높음",
         "sessions": 504,
@@ -749,7 +744,7 @@
         }
       },
       "USD/JPY": {
-        "value": 158.308,
+        "value": 158.353,
         "percentile": 77.0,
         "band": "높음",
         "sessions": 504,
@@ -781,23 +776,23 @@
         }
       },
       "WTI": {
-        "value": 94.79,
-        "percentile": 90.7,
+        "value": 94.66,
+        "percentile": 90.3,
         "band": "매우 높음",
         "sessions": 504,
         "plain": {
-          "percentile": 90.7,
+          "percentile": 90.3,
           "sessions": 504,
           "window": "2년",
-          "days": 47,
+          "days": 49,
           "share_pct": null,
           "side": "high",
-          "short": "이보다 높았던 날이 47일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 47일뿐"
+          "short": "이보다 높았던 날이 49일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 49일뿐"
         }
       },
       "Gold": {
-        "value": 4184.2,
+        "value": 4184.3,
         "percentile": 63.1,
         "band": "중간",
         "sessions": 504,
@@ -882,7 +877,7 @@
     "cohesion": {
       "n_assets": 10,
       "top1_pct": 44.4,
-      "top3_pct": 73.1,
+      "top3_pct": 73.2,
       "percentile": 59.5,
       "band": "중간",
       "history_windows": 252
@@ -894,7 +889,7 @@
       },
       "second": {
         "group_ko": "금리",
-        "share_pct": 15.7
+        "share_pct": 15.8
       },
       "companion": null,
       "prior": {
@@ -1081,9 +1076,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25259.9,
-            "pct": -0.07,
-            "date": "2026-10-13"
+            "close": 25277.68,
+            "pct": 0.76,
+            "date": "2026-10-12"
           },
           {
             "name": "FTSE100",
@@ -1095,14 +1090,14 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6167.01,
-            "pct": -0.55,
-            "date": "2026-10-13"
+            "close": 6201.21,
+            "pct": 0.45,
+            "date": "2026-10-12"
           }
         ],
         "alignment": {
           "label": "보합",
-          "avg_pct": -0.23,
+          "avg_pct": 0.38,
           "mixed": false
         }
       }
