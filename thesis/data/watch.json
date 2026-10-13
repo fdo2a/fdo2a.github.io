@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-13",
+  "as_of": "2026-10-14",
   "complete": true,
   "missing": [],
   "tickers": {
@@ -10,9 +10,9 @@
       "price_date": "2026-10-08",
       "chg_20d_pct": -2.96,
       "pct_from_52w_high": -27.64,
-      "market_cap": 1644924155985920.0,
-      "eps_fy0": 47826.945,
-      "eps_fy1": 72146.766,
+      "market_cap": 1510766020657152.0,
+      "eps_fy0": 47818.227,
+      "eps_fy1": 72180.14,
       "eps_fy1_low": 48732.0,
       "eps_fy1_high": 94075.0,
       "eps_fy1_analysts": 32.0,
@@ -24,17 +24,17 @@
       "next_earnings_date": "2026-10-28",
       "fair_value": {
         "method": "blended",
-        "bull": 678136,
-        "base": 340542,
-        "bear": 146160,
-        "weighted": 393225,
-        "band1": 314580,
-        "band2": 267393
+        "bull": 678282,
+        "base": 340614,
+        "bear": 146189,
+        "weighted": 393308,
+        "band1": 314646,
+        "band2": 267449
       },
       "position": {
         "vs_weighted_pct": -33.4,
         "vs_base_pct": -23.1,
-        "upside_bull_pct": 158.8,
+        "upside_bull_pct": 158.9,
         "downside_bear_pct": -44.2,
         "in_band1": true,
         "in_band2": true
@@ -47,8 +47,8 @@
       "price_date": "2026-10-08",
       "chg_20d_pct": -5.72,
       "pct_from_52w_high": -42.4,
-      "market_cap": 1141276158197760.0,
-      "eps_fy0": 355218.94,
+      "market_cap": 1026081981202432.0,
+      "eps_fy0": 355218.9,
       "eps_fy1": 470324.3,
       "eps_fy1_low": 325173.0,
       "eps_fy1_high": 610284.25,
@@ -80,11 +80,11 @@
     "MU": {
       "name": "Micron",
       "currency": "USD",
-      "price": 992.72,
-      "price_date": "2026-10-12",
-      "chg_20d_pct": 7.43,
-      "pct_from_52w_high": -18.18,
-      "market_cap": 1123192143872.0,
+      "price": 942.25,
+      "price_date": "2026-10-13",
+      "chg_20d_pct": 1.58,
+      "pct_from_52w_high": -22.34,
+      "market_cap": 1066083549184.0,
       "eps_fy0": 176.15115,
       "eps_fy1": 206.33243,
       "eps_fy1_low": 136.0,
@@ -93,8 +93,8 @@
       "bvps": 89.18,
       "bvps_as_of": "2026-05-31",
       "bvps_source": "yfinance",
-      "pb": 11.13,
-      "pe_fy1": 4.81,
+      "pb": 10.57,
+      "pe_fy1": 4.57,
       "next_earnings_date": "2026-12-23",
       "fair_value": {
         "method": "blended",
@@ -106,10 +106,10 @@
         "band2": 691
       },
       "position": {
-        "vs_weighted_pct": -2.3,
-        "vs_base_pct": 16.2,
-        "upside_bull_pct": 85.3,
-        "downside_bear_pct": -68.0,
+        "vs_weighted_pct": -7.3,
+        "vs_base_pct": 10.3,
+        "upside_bull_pct": 95.3,
+        "downside_bear_pct": -66.3,
         "in_band1": false,
         "in_band2": false
       }

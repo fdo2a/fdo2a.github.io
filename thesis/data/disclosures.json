@@ -1,8 +1,8 @@
 {
-  "as_of": "2026-10-13",
+  "as_of": "2026-10-14",
   "window": {
-    "bgn": "20261012",
-    "end": "20261013"
+    "bgn": "20261013",
+    "end": "20261014"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
@@ -10,24 +10,24 @@
       "corp_code": "00126380",
       "events": [
         {
-          "rcept_no": "20261012000421",
-          "date": "2026-10-12",
-          "title": "자기주식취득결과보고서",
+          "rcept_no": "20261013800651",
+          "date": "2026-10-13",
+          "title": "최대주주등소유주식변동신고서",
           "corp": "삼성전자",
           "filer": "삼성전자",
-          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012000421",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261013800651",
           "axis": null,
           "kind": null,
           "correction": false,
           "confirmed": false
         },
         {
-          "rcept_no": "20261012000021",
-          "date": "2026-10-12",
-          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "rcept_no": "20261013000379",
+          "date": "2026-10-13",
+          "title": "임원ㆍ주요주주특정증권등거래계획보고서",
           "corp": "삼성전자",
-          "filer": "김은용",
-          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012000021",
+          "filer": "이재용",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261013000379",
           "axis": null,
           "kind": null,
           "correction": false,
