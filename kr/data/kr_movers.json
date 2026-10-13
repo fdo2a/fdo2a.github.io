@@ -5,7 +5,7 @@
   "groups": [
     {
       "id": "g1",
-      "industry": "반도체와반도체장비",
+      "industry": "기타",
       "direction": "down",
       "reasons": [
         "지수 기여 하위",
@@ -13,140 +13,10 @@
       ],
       "members": [
         {
-          "name": "삼성전자",
-          "change_pct": -11.45,
-          "close": 232000,
-          "value": 5817998
-        },
-        {
-          "name": "SK하이닉스",
-          "change_pct": -14.16,
-          "close": 1443000,
-          "value": 7843141
-        },
-        {
-          "name": "SK스퀘어",
-          "change_pct": -18.38,
-          "close": 857000,
-          "value": 1004122
-        },
-        {
-          "name": "삼성전자우",
-          "change_pct": -10.15,
-          "close": 174300,
-          "value": 910208
-        },
-        {
-          "name": "한미반도체",
-          "change_pct": -14.23,
-          "close": 229000,
-          "value": 210244
-        },
-        {
-          "name": "이수페타시스",
-          "change_pct": -6.61,
-          "close": 117200,
-          "value": 100994
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "전기제품",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "LG에너지솔루션",
-          "change_pct": 2.24,
-          "close": 410000,
-          "value": 248940
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "자동차",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "기아",
-          "change_pct": 1.4,
-          "close": 108300,
-          "value": 97263
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "전자장비와기기",
-      "direction": "down",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "삼성전기",
-          "change_pct": -11.84,
-          "close": 1363000,
-          "value": 1250626
-        },
-        {
-          "name": "대덕전자",
-          "change_pct": -6.85,
-          "close": 146900,
-          "value": 167893
-        },
-        {
-          "name": "LG이노텍",
-          "change_pct": -20.89,
-          "close": 452500,
-          "value": 152559
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "전기장비",
-      "direction": "down",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "LS ELECTRIC",
-          "change_pct": -8.34,
-          "close": 179200,
-          "value": 136575
-        },
-        {
-          "name": "효성중공업",
-          "change_pct": -13.71,
-          "close": 2152000,
-          "value": 126291
-        },
-        {
-          "name": "HD현대일렉트릭",
-          "change_pct": -7.59,
-          "close": 560000,
-          "value": 90868
-        },
-        {
-          "name": "산일전기",
-          "change_pct": -5.17,
-          "close": 211000,
-          "value": 67016
-        },
-        {
-          "name": "가온전선",
-          "change_pct": -5.41,
-          "close": 279500,
-          "value": 66998
+          "name": "KIWOOM 200",
+          "change_pct": -6.13,
+          "close": 95225,
+          "value": 94595
         }
       ]
     }

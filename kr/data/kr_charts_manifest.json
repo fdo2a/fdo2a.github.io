@@ -1,12 +1,10 @@
 {
   "report_date": "2026-10-13",
   "charts": {
-    "kr_charts": {
-      "file": "kr_charts_2026-10-13.png",
-      "sha256": "10b09dc6c6bfa788d84007f27698317d263144469a62eb5aa74da7d3f13918a4",
-      "bytes": 206606
-    },
+    "kr_charts": null,
     "kr_flows_intraday": null
   },
-  "notes": {}
+  "notes": {
+    "kr_charts": "충돌 — kr/assets/kr_charts_2026-10-13.png 가 이미 다른 바이트로 있다. 발행된 그림을 지키려 두었다"
+  }
 }
