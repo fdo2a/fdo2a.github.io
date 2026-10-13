@@ -721,3 +721,31 @@ def test_two_signals_pending_at_the_final_decision_prefer_sigterm():
             assert sigs.final() == signal.SIGTERM
         finally:
             signal.pthread_sigmask(signal.SIG_SETMASK, old)
+
+
+# --- 시스템 Python ---------------------------------------------------------------
+
+SYSTEM_PY = '/usr/bin/python3'
+
+
+def _system_python_version():
+    try:
+        out = subprocess.run([SYSTEM_PY, '-c', 'import sys; print(sys.version_info[:2])'],
+                             capture_output=True, text=True, timeout=30)
+    except OSError:
+        return None
+    return out.stdout.strip() if out.returncode == 0 else None
+
+
+def test_review_gate_starts_under_the_system_python(repo):
+    # 정정 에이전트(Claude)는 launchd 의 PATH(/usr/bin 먼저)로 `python3 scripts/review_gate.py mark`
+    # 를 부른다 — macOS 시스템 Python 3.9 다. 3.11 전용 sys.flags.safe_path 가 거기서 죽어 10/12 KR
+    # 정정이 커밋을 못 했다(2026-10-13). 테스트는 3.13 으로 돌아서 못 봤다.
+    import pytest
+    if _system_python_version() is None:
+        pytest.skip('시스템 Python 이 없다')
+    gate = os.path.join(os.path.dirname(LAUNCH), 'review_gate.py')
+    for args in (['mark', '--help'], ['pending', '--hook', '--no-fetch']):
+        p = subprocess.run([SYSTEM_PY, gate, *args], cwd=repo, capture_output=True, text=True,
+                           timeout=120)
+        assert 'Traceback' not in p.stderr and 'import 하지 못했다' not in p.stdout, (args, p.stderr)

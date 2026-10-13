@@ -22,7 +22,8 @@ tick 만 쓰는 임시 폴더에 origin/main 커밋을 통째로 떠 둔 사본*
 import sys
 
 # 스크립트 옆 동명 모듈(예: scripts/json.py)이 아래 표준 모듈을 가리지 않게 한다.
-if __name__ == '__main__' and not sys.flags.safe_path and sys.path:
+# safe_path 는 3.11+ — 정정 에이전트는 launchd PATH 의 시스템 Python 3.9 로 이 파일을 부른다.
+if __name__ == '__main__' and not getattr(sys.flags, 'safe_path', False) and sys.path:
     sys.path.pop(0)
 
 import fcntl  # noqa: E402

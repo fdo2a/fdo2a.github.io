@@ -23,7 +23,8 @@ import sys
 # 스크립트로 실행되면 파이썬이 scripts/ 를 sys.path 맨 앞에 둔다. 그러면 거기 놓인 미추적
 # json.py 가 아래 표준 모듈 import 를 가려 경보 없이 죽는다(codex 구현 검토 #5). 표준 모듈을
 # 먼저 읽고, 레포 모듈 경로는 아래에서 다시 올린다.
-if __name__ == '__main__' and not sys.flags.safe_path and sys.path:
+# safe_path 는 3.11+ — 정정 에이전트는 launchd PATH 의 시스템 Python 3.9 로 이 파일을 부른다.
+if __name__ == '__main__' and not getattr(sys.flags, 'safe_path', False) and sys.path:
     sys.path.pop(0)
 
 import argparse  # noqa: E402
@@ -1447,7 +1448,9 @@ def main():
     p.set_defaults(fn=cmd_refresh)
 
     p = sub.add_parser('run', help='launchd 러너 — codex 초안을 미리 만들어 둔다 (읽기만)')
-    p.add_argument('--timeout', type=int, default=900,
+    # 2026-10-11 문체 지시문(HTML 을 끝까지 읽고 잇기)부터 900초 타임아웃이 잇달았다 — 10/12 KR 4회,
+    # 매번 하루 호출 한도를 한 칸씩 썼다.
+    p.add_argument('--timeout', type=int, default=1800,
                    help='codex 한 편의 제한 시간(초)')
     p.add_argument('--correct', action='store_true',
                    help='준비된 us/kr 초안을 Claude가 검증·정정하고 재게시')
