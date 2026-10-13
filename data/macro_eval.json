@@ -4,7 +4,7 @@
   "horizon": "3-6개월",
   "scores": {
     "growth_score": -0.024,
-    "inflation_score": -0.869,
+    "inflation_score": -0.928,
     "growth_diffusion": 0.429,
     "inflation_diffusion": 0.0
   },
@@ -13,11 +13,92 @@
     "inflation": -1,
     "name": "골디락스"
   },
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "CPI YoY",
+    "Core CPI YoY"
+  ],
+  "headline_releases": [
+    {
+      "key": "cpi",
+      "label": "소비자물가(CPI)",
+      "tier": 1,
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "primary": "CPI YoY",
+      "max_abs_z": 0.449,
+      "indicators": [
+        {
+          "name": "CPI YoY",
+          "axis": "Inflation",
+          "actual": 3.35,
+          "previous": 3.3,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.449
+        },
+        {
+          "name": "Core CPI YoY",
+          "axis": "Inflation",
+          "actual": 2.45,
+          "previous": 2.47,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.444
+        }
+      ],
+      "components": [
+        {
+          "label": "에너지",
+          "fred_id": "CPIENGSL",
+          "transform": "mom_pct",
+          "actual": 2.097,
+          "previous": -1.484,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "식품",
+          "fred_id": "CPIUFDSL",
+          "transform": "mom_pct",
+          "actual": 0.122,
+          "previous": 0.078,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "주거비(shelter)",
+          "fred_id": "CUSR0000SAH1",
+          "transform": "mom_pct",
+          "actual": 0.264,
+          "previous": 0.139,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "중고차",
+          "fred_id": "CUSR0000SETA02",
+          "transform": "mom_pct",
+          "actual": 0.365,
+          "previous": 0.398,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "의료",
+          "fred_id": "CPIMEDSL",
+          "transform": "mom_pct",
+          "actual": -0.245,
+          "previous": 0.356,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "서비스 ex-에너지",
+          "fred_id": "CUSR0000SASLE",
+          "transform": "mom_pct",
+          "actual": 0.327,
+          "previous": 0.228,
+          "ref_period": "2026-08-01"
+        }
+      ]
+    }
+  ],
   "stale": false,
-  "abbreviated": true,
-  "abbreviated_reason": null,
+  "abbreviated": false,
+  "abbreviated_reason": "tier 1 발표가 있는 날",
   "axis_directions": {
     "Labor": "개선",
     "Activity": "보합",
@@ -36,7 +117,7 @@
     "thesis": "10월 9일에는 새 공식 통계가 없어 골디락스를 여드레째 유지한다. 성장 점수 -0.024는 보합 안쪽, 물가 점수 -0.869는 여덟 지표가 모두 둔화를 가리킨다. 미시간대 10월 예비치(소비심리 46.3, 1년 기대인플레 4.7%)는 소비 약화와 높은 소비자 기대인플레를 보였지만 공식 통계 묶음 밖이라 좌표에 들지 않는다. 10월 14일 9월 CPI가 물가 좌표를, 11월 6일 10월 고용이 성장 좌표를 다시 시험한다."
   },
   "regime_change_allowed": false,
-  "regime_block": "no_new_release",
+  "regime_block": "scores_agree",
   "allowed_regimes": [
     [
       0,
@@ -51,8 +132,8 @@
     "prob_note": "10월 9일 관측치는 The Core Quant 장 전(10월 19%, 12월까지 84%), FXStreet(12월 85%), Kiplinger(10월 약 20%, 12월 약 70%)로 매체·시각이 달라 단일 수치를 확정하지 않는다. 10월 8일 관측치(Investing.com 11:35 UTC)와도 같은 조건 비교가 아니다.",
     "thesis": "9월 고용 미스 뒤 시장은 10월 인상만 지우고 12월 인상을 남겼다. 10월 9일 미시간대 예비치에서 활동은 약하고 기대인플레는 올랐는데 2년물이 3.5bp 올라, 앞쪽 금리의 한계 정보가 물가로 옮겨 갔다는 판단과 맞는다. 무살렘 총재의 추가 인상 발언 보도도 같은 방향이다. 10월 14일 9월 CPI(근원 전월비 컨센서스 0.2%)를 다음 분기점으로 둔다.",
     "falsifier": "10월 14일 9월 CPI가 컨센서스를 뚜렷이 밑돌아 보도된 12월 인상 확률이 과반 아래로 내려가거나, 11월 6일 10월 고용에서 실업률이 3월 이후 범위(4.1~4.3%) 위로 올라서면 인상 우위 판단을 거둔다. 반대로 CPI가 뚜렷이 웃돌아 보도된 10월 인상 확률이 다시 과반으로 오르면 시점을 10월 쪽으로 당긴다.",
-    "change_allowed": false,
-    "change_block": "no_new_release"
+    "change_allowed": true,
+    "change_block": null
   },
   "transmission": {
     "equities": {
@@ -63,7 +144,9 @@
       "since": "2026-08-17",
       "days_held": 41,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     },
     "bonds": {
@@ -98,7 +181,9 @@
       "since": "2026-08-17",
       "days_held": 41,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     },
     "metals": {
@@ -133,7 +218,9 @@
       "since": "2026-08-17",
       "days_held": 41,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     }
   }

@@ -1,10 +1,10 @@
 {
-  "generated": "2026-10-13 09:34 KST",
+  "generated": "2026-10-13 10:07 KST",
   "report_date": "2026-10-12",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": -0.024,
-  "inflation_score": -0.869,
+  "inflation_score": -0.928,
   "growth_diffusion": 0.429,
   "inflation_diffusion": 0.0,
   "axis_summary": {
@@ -107,7 +107,7 @@
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": -0.869,
+      "score": -0.928,
       "direction": "둔화",
       "strength": "완만",
       "breadth_ko": "여덟 중 여덟이 둔화",
@@ -145,7 +145,7 @@
     "Labor": 0.535,
     "Activity": -0.188,
     "Consumption": -0.419,
-    "Inflation": -0.869
+    "Inflation": -0.928
   },
   "indicators": [
     {
@@ -474,24 +474,24 @@
       "name": "CPI YoY",
       "label_ko": "소비자물가 전년비",
       "axis": "Inflation",
-      "direction": "교착",
+      "direction": "둔화",
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.228,
-      "signed_z": -0.228,
-      "actual": 3.71,
-      "previous": 3.54,
+      "momentum_z": -0.449,
+      "signed_z": -0.449,
+      "actual": 3.35,
+      "previous": 3.3,
       "ref_period": "2026-08-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 3.846,
-        "recent_avg": 3.66
+        "prior_avg": 3.744,
+        "recent_avg": 3.373
       },
-      "trend_cell_ko": "교착 · 3개월 평균 3.85% → 3.66%",
-      "is_new": false
+      "trend_cell_ko": "둔화(미미) · 3개월 평균 3.74% → 3.37%",
+      "is_new": true
     },
     {
       "name": "CPI MoM",
@@ -501,8 +501,8 @@
       "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -2.93,
-      "signed_z": -2.93,
+      "momentum_z": -2.922,
+      "signed_z": -2.922,
       "actual": 0.4,
       "previous": 0.07,
       "ref_period": "2026-08-01",
@@ -520,24 +520,24 @@
       "name": "Core CPI YoY",
       "label_ko": "근원 소비자물가 전년비",
       "axis": "Inflation",
-      "direction": "교착",
+      "direction": "둔화",
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.171,
-      "signed_z": -0.171,
-      "actual": 2.76,
-      "previous": 2.79,
+      "momentum_z": -0.444,
+      "signed_z": -0.444,
+      "actual": 2.45,
+      "previous": 2.47,
       "ref_period": "2026-08-01",
       "vs_prev": "하락",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 2.873,
-        "recent_avg": 2.785
+        "prior_avg": 2.723,
+        "recent_avg": 2.493
       },
-      "trend_cell_ko": "교착 · 3개월 평균 2.87% → 2.79%",
-      "is_new": false
+      "trend_cell_ko": "둔화(미미) · 3개월 평균 2.72% → 2.49%",
+      "is_new": true
     },
     {
       "name": "Core CPI MoM",
@@ -547,8 +547,8 @@
       "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.733,
-      "signed_z": -0.733,
+      "momentum_z": -0.717,
+      "signed_z": -0.717,
       "actual": 0.29,
       "previous": 0.22,
       "ref_period": "2026-08-01",
@@ -655,8 +655,89 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "CPI YoY",
+    "Core CPI YoY"
+  ],
+  "headline_releases": [
+    {
+      "key": "cpi",
+      "label": "소비자물가(CPI)",
+      "tier": 1,
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "primary": "CPI YoY",
+      "max_abs_z": 0.449,
+      "indicators": [
+        {
+          "name": "CPI YoY",
+          "axis": "Inflation",
+          "actual": 3.35,
+          "previous": 3.3,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.449
+        },
+        {
+          "name": "Core CPI YoY",
+          "axis": "Inflation",
+          "actual": 2.45,
+          "previous": 2.47,
+          "ref_period": "2026-08-01",
+          "momentum_z": -0.444
+        }
+      ],
+      "components": [
+        {
+          "label": "에너지",
+          "fred_id": "CPIENGSL",
+          "transform": "mom_pct",
+          "actual": 2.097,
+          "previous": -1.484,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "식품",
+          "fred_id": "CPIUFDSL",
+          "transform": "mom_pct",
+          "actual": 0.122,
+          "previous": 0.078,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "주거비(shelter)",
+          "fred_id": "CUSR0000SAH1",
+          "transform": "mom_pct",
+          "actual": 0.264,
+          "previous": 0.139,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "중고차",
+          "fred_id": "CUSR0000SETA02",
+          "transform": "mom_pct",
+          "actual": 0.365,
+          "previous": 0.398,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "의료",
+          "fred_id": "CPIMEDSL",
+          "transform": "mom_pct",
+          "actual": -0.245,
+          "previous": 0.356,
+          "ref_period": "2026-08-01"
+        },
+        {
+          "label": "서비스 ex-에너지",
+          "fred_id": "CUSR0000SASLE",
+          "transform": "mom_pct",
+          "actual": 0.327,
+          "previous": 0.228,
+          "ref_period": "2026-08-01"
+        }
+      ]
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",
@@ -716,7 +797,7 @@
     ],
     "CPI YoY": [
       "2026-08-01",
-      3.71
+      3.35
     ],
     "CPI MoM": [
       "2026-08-01",
@@ -724,7 +805,7 @@
     ],
     "Core CPI YoY": [
       "2026-08-01",
-      2.76
+      2.45
     ],
     "Core CPI MoM": [
       "2026-08-01",

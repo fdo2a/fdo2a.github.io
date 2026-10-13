@@ -1,13 +1,13 @@
 {
-  "report_date": "2026-10-08",
+  "report_date": "2026-10-12",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "key": "cpi",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 19972,
-      "path": "releases/claims.txt"
+      "chars": 20400,
+      "path": "releases/cpi.txt"
     }
   ]
 }
