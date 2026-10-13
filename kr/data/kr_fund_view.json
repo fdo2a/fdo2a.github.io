@@ -2,13 +2,14 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-10-13",
-  "generated_at": "2026-10-14 00:41 KST",
-  "status": "partial",
-  "missing": [
-    "cash_rates: missing"
-  ],
+  "generated_at": "2026-10-14 01:19 KST",
+  "status": "ok",
+  "missing": [],
   "source_dates": {
-    "session": "2026-10-13"
+    "session": "2026-10-13",
+    "CD 91일": "2026-10-13",
+    "국고채 3년": "2026-10-13",
+    "한국은행 기준금리": "2026-09"
   },
   "fx": {
     "last": 1342.98,
@@ -20,7 +21,26 @@
     "bars": 14,
     "source": "야후 30분봉, 한국장 시간대 마지막 관측(서울 외환시장 공식 종가 아님)"
   },
-  "cash_rates": [],
+  "cash_rates": [
+    {
+      "name": "CD 91일",
+      "value": 3.24,
+      "date": "2026-10-13",
+      "bp": 0.0
+    },
+    {
+      "name": "국고채 3년",
+      "value": 3.857,
+      "date": "2026-10-13",
+      "bp": -6.4
+    },
+    {
+      "name": "한국은행 기준금리",
+      "value": 3.0,
+      "date": "2026-09",
+      "bp": 0.0
+    }
+  ],
   "us_futures": {
     "ES": {
       "pct": 0.06,
@@ -39,8 +59,8 @@
       "unit_name": "반도체·AI 하드웨어",
       "kind": "index",
       "name": "대만가권",
-      "change_pct": -1.95,
-      "date": "2026-10-13"
+      "change_pct": -0.02,
+      "date": "2026-10-12"
     },
     {
       "unit_id": "grid",
@@ -155,16 +175,16 @@
       "unit_name": "중국",
       "kind": "index",
       "name": "항셍",
-      "change_pct": 0.3,
-      "date": "2026-10-13"
+      "change_pct": 0.25,
+      "date": "2026-10-12"
     },
     {
       "unit_id": "china",
       "unit_name": "중국",
       "kind": "index",
       "name": "상해종합",
-      "change_pct": 0.1,
-      "date": "2026-10-13"
+      "change_pct": -0.43,
+      "date": "2026-10-12"
     }
   ]
 }
