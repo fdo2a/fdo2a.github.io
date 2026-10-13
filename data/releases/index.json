@@ -1,13 +1,11 @@
 {
-  "report_date": "2026-10-08",
+  "report_date": "2026-10-13",
   "releases": [
     {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "ok": true,
-      "note": "impersonate=safari",
-      "chars": 19972,
-      "path": "releases/claims.txt"
+      "key": "existing-home-sales",
+      "url": "https://www.nar.realtor/newsroom/existing-home-sales",
+      "ok": false,
+      "note": "firefox: HTTP 404, 20976B"
     }
   ]
 }

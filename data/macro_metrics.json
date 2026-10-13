@@ -1,9 +1,9 @@
 {
-  "generated": "2026-10-13 10:16 KST",
-  "report_date": "2026-10-12",
+  "generated": "2026-10-14 06:36 KST",
+  "report_date": "2026-10-13",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "growth_score": -0.024,
+  "growth_score": -0.117,
   "inflation_score": -0.928,
   "growth_diffusion": 0.429,
   "inflation_diffusion": 0.0,
@@ -45,13 +45,21 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.188,
-      "direction": "보합",
+      "score": -0.467,
+      "direction": "악화",
       "strength": "미미",
-      "breadth_ko": "다섯 중 하나이 개선, 나머지는 반대",
+      "breadth_ko": "다섯 중 넷이 악화",
       "improving": 1,
       "total": 5,
       "leaders": [
+        {
+          "label_ko": "기존주택 판매",
+          "name": "Existing Home Sales",
+          "direction": "악화",
+          "strength": "뚜렷",
+          "actual": 3990000.0,
+          "previous": 3930000.0
+        },
         {
           "label_ko": "내구재 주문",
           "name": "Durable Goods Orders MoM",
@@ -67,14 +75,6 @@
           "strength": "미미",
           "actual": 684.0,
           "previous": 643.0
-        },
-        {
-          "label_ko": "기존주택 판매",
-          "name": "Existing Home Sales",
-          "direction": "악화",
-          "strength": "미미",
-          "actual": 3980000.0,
-          "previous": 4060000.0
         }
       ]
     },
@@ -143,7 +143,7 @@
   },
   "axis_scores": {
     "Labor": 0.535,
-    "Activity": -0.188,
+    "Activity": -0.467,
     "Consumption": -0.419,
     "Inflation": -0.928
   },
@@ -383,23 +383,23 @@
       "label_ko": "기존주택 판매",
       "axis": "Activity",
       "direction": "악화",
-      "strength": "미미",
+      "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.363,
-      "signed_z": -0.363,
-      "actual": 3980000.0,
-      "previous": 4060000.0,
-      "ref_period": "2026-08-01",
-      "vs_prev": "악화",
+      "momentum_z": -1.757,
+      "signed_z": -1.757,
+      "actual": 3990000.0,
+      "previous": 3930000.0,
+      "ref_period": "2026-09-01",
+      "vs_prev": "개선",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 4080000.0,
-        "recent_avg": 4056666.667
+        "prior_avg": 4120000.0,
+        "recent_avg": 3993333.333
       },
-      "trend_cell_ko": "악화(미미) · 3개월 평균 4,080K → 4,057K",
-      "is_new": false
+      "trend_cell_ko": "악화(뚜렷) · 3개월 평균 4,120K → 3,993K",
+      "is_new": true
     },
     {
       "name": "Real GDP Growth QoQ (ann.)",
@@ -655,8 +655,31 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Existing Home Sales"
+  ],
+  "headline_releases": [
+    {
+      "key": "existing-home-sales",
+      "label": "기존주택 판매",
+      "tier": 2,
+      "agency": "NAR",
+      "url": "https://www.nar.realtor/newsroom/existing-home-sales",
+      "primary": "Existing Home Sales",
+      "max_abs_z": 1.757,
+      "indicators": [
+        {
+          "name": "Existing Home Sales",
+          "axis": "Activity",
+          "actual": 3990000.0,
+          "previous": 3930000.0,
+          "ref_period": "2026-09-01",
+          "momentum_z": -1.757
+        }
+      ],
+      "components": []
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",
@@ -699,8 +722,8 @@
       684.0
     ],
     "Existing Home Sales": [
-      "2026-08-01",
-      3980000.0
+      "2026-09-01",
+      3990000.0
     ],
     "Real GDP Growth QoQ (ann.)": [
       "2026-04-01",

@@ -1,10 +1,42 @@
 {
-  "report_date": "2026-10-12",
+  "report_date": "2026-10-13",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
+      "industry": "Semiconductors",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": 0.97,
+          "close": 228.52,
+          "value": 19120614051.2
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Interactive Media & Services",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Meta Platforms (META)",
+          "change_pct": 2.63,
+          "close": 762.5,
+          "value": 17253691400.0
+        }
+      ]
+    },
+    {
+      "id": "g3",
       "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
@@ -12,86 +44,43 @@
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -1.29,
-          "close": 226.32,
-          "value": 15862542993.35
-        },
-        {
           "name": "Micron Technology (MU)",
-          "change_pct": -3.88,
-          "close": 989.04,
-          "value": 23451918150.99
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": 1.29,
-          "close": 340.97,
-          "value": 8813494882.55
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Systems Software",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "Microsoft (MSFT)",
-          "change_pct": 1.14,
-          "close": 541.15,
-          "value": 9898716246.58
+          "change_pct": -3.62,
+          "close": 953.19,
+          "value": 27553134210.22
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Electronic Components",
+      "industry": "Pharmaceuticals",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Johnson & Johnson (JNJ)",
+          "change_pct": -5.73,
+          "close": 248.61,
+          "value": 4128208837.73
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Semiconductor Materials & Equipment",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Coherent Corp. (COHR)",
-          "change_pct": -7.87,
-          "close": 288.02,
-          "value": 2136532278.5
-        },
-        {
-          "name": "Corning Inc. (GLW)",
-          "change_pct": -6.0,
-          "close": 147.28,
-          "value": 1176398990.25
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Application Software",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Fair Isaac (FICO)",
-          "change_pct": 10.85,
-          "close": 740.0,
-          "value": 1482664000.0
+          "name": "Applied Materials (AMAT)",
+          "change_pct": -6.69,
+          "close": 464.24,
+          "value": 5028265040.47
         }
       ]
     }
