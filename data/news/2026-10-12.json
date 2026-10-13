@@ -1,9 +1,8 @@
 {
   "report_date": "2026-10-12",
-  "harvested": 844,
+  "harvested": 854,
   "notes": [
-    "pool https://finance.yahoo.com/news/rssindex: HTTP 404",
-    "insight https://think.ing.com/rss/: URLError"
+    "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
   ],
   "items": [
     {
@@ -94,7 +93,7 @@
       "source": "CNBC",
       "body_chars": 2746,
       "body_file": "15-ai.txt",
-      "summary_note": "분량 벗어남 414자"
+      "summary_note": "분량 벗어남 415자"
     },
     {
       "guid": "108378719",
@@ -263,7 +262,7 @@
       "category": "global",
       "source": "BBC",
       "region": "europe",
-      "body_chars": 8850,
+      "body_chars": 8922,
       "body_file": "06-global.txt",
       "summary_ko": "트럼프 미국 대통령이 러시아산 디젤 수입 계획을 발표하면서 국내외 반발에 직면했다. 트럼프는 푸틴 러시아 대통령이 30만 톤의 디젤을 즉시 풀고, 이후 11월에 50만 톤, 그 뒤 100만 톤을 공급하기로 합의했다고 밝혔다. 러시아 측 부총리 노박도 이 수치를 확인하며 향후 월 300만 톤까지 늘어날 수 있다고 말했다. 그러나 미국은 불과 몇 주 전 러시아 원유·가스 수입국에 제재와 관세를 부과하는 법안에 서명한 상태여서 논란이 크다. 공화당과 민주당 상원의원 7명은 이 거래가 미국법을 위반한다며 철회를 요구했다. 미 재무부는 러시아 디젤 수출에 대한 제재를 4월 7일까지 유예하는 것으로 알려졌다. 이란 전쟁 이후 국제 유가가 급등했고, 11월 중간선거를 앞두고 농업 주의 디젤 부담이 정치적 쟁점이 되고 있다. 다만 미국의 하루 디젤 소비량 약 360만 배럴과 비교하면 30만 톤은 절반 수준이어서 가격 하락 효과에는 의문이 제기된다. 젤렌스키 우크라이나 대통령은 이 거래를 푸틴에게 주는 선물이라고 비판했다.",
       "summary_model": "claude-haiku-5-5"
@@ -279,7 +278,7 @@
       "region": "mideast",
       "body_chars": 6062,
       "body_file": "09-global.txt",
-      "summary_note": "분량 벗어남 476자"
+      "summary_note": "분량 벗어남 404자"
     },
     {
       "guid": "https://news.yahoo.co.jp/articles/796af9c5efd9f0fd02fddb56427910f8d4edc9e4?source=rss",
@@ -294,6 +293,45 @@
       "body_chars": 1658,
       "body_file": "07-global.txt",
       "summary_ko": "중국의 대일 강경 기조 속에서도 젠쇼홀딩스의 회전초밥 '하마즈시'가 중국 내 입지를 빠르게 넓히고 있다고 기사는 전한다. 기사에 따르면 하마즈시는 2014년 중국에 진출했으며, 2020년 12월 중국 점포는 12곳이었다. 2024년 3월 본토 약 50곳이던 점포는 2025년 3월 말 186곳, 2026년 7월 무렵 200곳을 넘어섰다. 이 기간 일중 관계는 냉각됐지만 저렴한 가격이 절약 지향 소비자의 수요와 맞아떨어진 것으로 보인다. 기사는 중국의 경기 침체와 부동산 버블 붕괴, 청년 실업률 악화를 배경으로 든다. 8월 16~24세 학생 제외 실업률은 18.9%였다. 기사는 또 중국이 14억 명의 소비시장으로서 중요성이 커졌다며, 대중 감정론을 배제하고 현지 소비자 가치관에 맞는 마케팅이 일본 기업에 중요한 전략이 될 것이라고 짚었다. 아울러 중국의 레어어스 자석 등 대일 수출 제약으로 8월 대일 수출은 전년 동월 대비 17% 감소했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://think.ing.com/articles/g10-fx-talking-october-2026/#When:10:48:00Z",
+      "url": "https://think.ing.com/articles/g10-fx-talking-october-2026/",
+      "title": "G10 FX Talking: Independent euro weakness in play",
+      "summary": "EUROPE: At a time when US economic growth appears 'solid' and the Fed is intent on tightening policy, French budget unrest has only served to soften an already weak EUR/USD. We now think it can stay pressured at the lower end of a 1.10-15 range over the next three to six months. The biggest threat to the dollar probably comes from any new White House policy post-midterms",
+      "published": "2026-10-12T10:48:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 11620,
+      "body_file": "18-insight.txt",
+      "summary_ko": "ING는 프랑스 재정 불안이 유로를 독자적으로 약화시키고 있어 EUR/USD가 향후 3~6개월간 1.10~1.15 박스의 하단에서 눌릴 것으로 본다. 근거는 미국 성장이 견조한 가운데 연준이 긴축 기조를 유지하고 미국 금리가 오르고 있다는 점이다. 프랑스 국채가 가장 최근 약세를 보이는 자산으로, ING는 이를 2012년 그리스 선별적 디폴트보다 선거 이후 재정 긴축 의지가 약했던 2018년 이탈리아 사태에 가깝게 본다. 연말까지 OAT-Bund 스프레드 변동성은 커질 수 있으나, 제한적인 재정 긴축안이 통과되면 프랑스 채권과 유로의 대규모 매도는 막을 것으로 예상한다. 달러에 대한 가장 큰 위험은 11월 중간선거 이후 백악관 정책의 불확실성이다. 엔화 쪽에서는 USD/JPY가 158 부근에서 조정을 받고, 10월 30일 일본은행 금리 인상 여부와 GPIF 자산 배분 뉴스가 엔에 중요한 변수가 될 것으로 짚었다. 파운드는 영란은행의 11월 인상 가능성과 2월 추가 인상을 근거로 강세 요인이 우세하다고 본다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://think.ing.com/articles/fx-daily-dollar-holds-gains-as-geopolitics-heats-up/#When:06:45:00Z",
+      "url": "https://think.ing.com/articles/fx-daily-dollar-holds-gains-as-geopolitics-heats-up/",
+      "title": "FX Daily: Dollar holds gains as geopolitics heats up",
+      "summary": "News over the weekend of continued Houthi strikes in Riyadh and a supposed 'energy ceasefire' between Russia and Ukraine have had little meaningful impact on FX markets so far. The dollar remains well bid, and what could be a hot US September CPI this week will keep expectations of Fed tightening and a stronger dollar in play",
+      "published": "2026-10-12T06:45:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 5958,
+      "body_file": "20-insight.txt",
+      "summary_ko": "ING은 이번 주 달러가 지정학적 긴장 속에서도 강세를 유지하며, 미국 9월 CPI가 연준 긴축 기대를 지지해 달러를 떠받칠 것으로 본다. 근거는 견조한 미국 성장과 목표치를 웃도는 물가이며, 근원 CPI가 전월 대비 0.2%의 컨센서스보다 높게 나올 위험을 본다. 이 필자는 긴축 기대가 내년 봄까지 시장에서 빠지지 않을 수 있다고 보고, DXY는 102 위 횡보가 상방 신호여서 102.85까지 오를 수 있다고 본다. 유로/달러는 프랑스 재정 우려와 투기적 약세 포지션을 이유로 1.1100~1.1120까지 밀릴 가능성이 높다고 판단한다. 유로/스위스프랑은 프랑스 국채 스프레드가 150bp를 뚫으면 0.9230~0.9250까지 조정될 수 있으나, 평온이 찾아오면 0.9350~0.9400으로 복귀할 수 있다고 본다. 중동부유럽 통화는 글로벌 요인에 주로 좌우되며, 코루나만 금리차 확대를 배경으로 강세를 유지해 EUR/CZK가 24.250으로 향할 것으로 전망한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://think.ing.com/articles/emea-fx-talking-october-2026/#When:10:47:00Z",
+      "url": "https://think.ing.com/articles/emea-fx-talking-october-2026/",
+      "title": "EMEA FX Talking: External headwinds up against local stories",
+      "summary": "CENTRAL AND EASTERN EUROPE: Like many emerging market currencies, those in the EMEA region have been hit by higher US Treasury yields and the stronger dollar. Yet the domestic stories look constructive for many, and a combination of some local rate hikes as well as light foreign positioning (ex Hungary) can insulate these currencies from the global bond market sell-off",
+      "published": "2026-10-12T10:47:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 11594,
+      "body_file": "22-insight.txt",
+      "summary_ko": "ING은 이번 EMEA 통화 보고서에서 미 국채금리 상승과 강달러라는 대외 악재에도, 국내 요인과 일부 국가의 금리 인상, 낮은 외국인 포지션 덕분에 지역 통화들이 글로벌 채권 매도에서 어느 정도 격리될 수 있다고 봤다. 폴란드 즈워티는 지정학 리스크 속에 유로·달러 연동성이 강해져 단기적으로 약세가 우려되지만, 견조한 GDP 성장을 근거로 중기 긍정 입장은 유지했다. 헝가리 포린트는 2027년 예산과 중기 재정 긴축안이 신뢰를 높여 EUR/HUF가 350~355 수준으로 내려갈 수 있다고 전망했다. 루마니아는 재정적자가 GDP 대비 2.89%로 줄었지만 정치 불안으로 취약성이 남아 있다고 평가했다. 터키는 9월 근원 물가 둔화를 근거로 10월과 12월에 각각 100bp 인하가 있을 것으로 예상했다. 남아공 랜드는 USD/ZAR 16.00~16.60 박스권을 제시했다.",
       "summary_model": "claude-haiku-5-5"
     }
   ]

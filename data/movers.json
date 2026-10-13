@@ -2,5 +2,98 @@
   "report_date": "2026-10-12",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "Semiconductors",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": -1.29,
+          "close": 226.32,
+          "value": 15862542993.35
+        },
+        {
+          "name": "Micron Technology (MU)",
+          "change_pct": -3.88,
+          "close": 989.04,
+          "value": 23451918150.99
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 1.29,
+          "close": 340.97,
+          "value": 8813494882.55
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Systems Software",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Microsoft (MSFT)",
+          "change_pct": 1.14,
+          "close": 541.15,
+          "value": 9898716246.58
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Electronic Components",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Coherent Corp. (COHR)",
+          "change_pct": -7.87,
+          "close": 288.02,
+          "value": 2136532278.5
+        },
+        {
+          "name": "Corning Inc. (GLW)",
+          "change_pct": -6.0,
+          "close": 147.28,
+          "value": 1176398990.25
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Application Software",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Fair Isaac (FICO)",
+          "change_pct": 10.85,
+          "close": 740.0,
+          "value": 1482664000.0
+        }
+      ]
+    }
+  ]
 }
