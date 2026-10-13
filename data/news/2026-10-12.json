@@ -1,9 +1,8 @@
 {
   "report_date": "2026-10-12",
-  "harvested": 844,
+  "harvested": 854,
   "notes": [
-    "pool https://finance.yahoo.com/news/rssindex: HTTP 404",
-    "insight https://think.ing.com/rss/: URLError"
+    "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
   ],
   "items": [
     {
@@ -280,7 +279,7 @@
       "region": "mideast",
       "body_chars": 6062,
       "body_file": "09-global.txt",
-      "summary_note": "분량 벗어남 420자"
+      "summary_note": "분량 벗어남 540자"
     },
     {
       "guid": "108373699",
@@ -297,6 +296,19 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
+      "guid": "https://think.ing.com/articles/g10-fx-talking-october-2026/#When:10:48:00Z",
+      "url": "https://think.ing.com/articles/g10-fx-talking-october-2026/",
+      "title": "G10 FX Talking: Independent euro weakness in play",
+      "summary": "EUROPE: At a time when US economic growth appears 'solid' and the Fed is intent on tightening policy, French budget unrest has only served to soften an already weak EUR/USD. We now think it can stay pressured at the lower end of a 1.10-15 range over the next three to six months. The biggest threat to the dollar probably comes from any new White House policy post-midterms",
+      "published": "2026-10-12T10:48:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 11620,
+      "body_file": "18-insight.txt",
+      "summary_ko": "ING는 유로 약세가 프랑스 재정 불안에서 비롯된 독자적 흐름이며 EUR/USD가 향후 3~6개월 1.10~1.15 범위 하단에 머물 것으로 본다. 강한 미국 성장과 연준 긴축 속에서 프랑스 국채가 최근 흔들린 자산이며, 이는 2012년 그리스 선별적 디폴트보다 2018년 이탈리아 재정 위기에 가깝다고 평가한다. 소폭의 재정 긴축이 이뤄지면 대규모 매도는 막힐 것으로 본다. 달러 최대 상방 위험은 11월 중간선거 이후 백악관 정책에서 나올 수 있다고 짚는다. USD/JPY는 158 부근 횡보가 예상되며, 150 하락에는 연준 완화와 일본의 훨씬 높은 금리가 필요해 2027년 2분기나 되어야 할 것으로 본다. 영국은행은 11월 인상이 유력하며 GBP/USD 1.35를 제시했다. EUR/CHF는 0.92~0.94, EUR/GBP는 0.84~0.85 범위를 제시했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
       "guid": "https://www.investing.com/analysis/us-10year-treasury-yield-holds-at-524-ahead-of-cpi-200689363",
       "url": "https://www.investing.com/analysis/us-10year-treasury-yield-holds-at-524-ahead-of-cpi-200689363",
       "title": "US 10-Year Treasury Yield Holds at 5.24% Ahead of CPI",
@@ -305,21 +317,33 @@
       "category": "insight",
       "source": "Investing.com",
       "body_chars": 3676,
-      "body_file": "19-insight.txt",
+      "body_file": "21-insight.txt",
       "summary_ko": "미국 10년물 국채금리가 10월 9일 5.24%로 마감했다고 Investing.com 분석 기사는 전했다. 전일보다 2bp 올랐고 2년물은 5bp 상승해 4.80%를 기록하면서 두 만기 스프레드는 47bp에서 44bp로 좁혀졌다. 필자는 단기 차입금리가 장기보다 빠르게 오른 이 평탄화 흐름이 장기 금리 상승 자체보다 더 의미 있다고 본다. 10년물은 10월 7일 장중 5.365%까지 올랐다가 국채 입찰 수요 개선으로 되밀렸으며, 9월 FOMC 의사록은 기간 중 금리 기대와 국채금리 상승을 확인해 줄 뿐 이날 개별 금리 움직임의 원인을 규명하지는 않는다고 덧붙였다. 10년물 입찰 응찰비율은 2.77배, 30년물은 2.54배로 수요가 양호했다는 평가다. 필자는 10월 14일 발표되는 9월 CPI가 다음 시험대가 될 것으로 보고, 물가 상회 시 금리 상승 압력이 재개될 수 있으며 둔화 시 채권 가격을 지지할 수 있다고 설명한다. 다만 에너지 가격, 국채 공급 우려, 위험선호 변화가 우세하면 결과는 달라질 수 있다고 유보했다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://www.investing.com/analysis/gold-cpi-data-could-decide-whether-the-rebound-extends-or-fails-200689406",
-      "url": "https://www.investing.com/analysis/gold-cpi-data-could-decide-whether-the-rebound-extends-or-fails-200689406",
-      "title": "Gold: This Week’s CPI Data Could Decide Whether the Rebound Extends or Fails",
+      "guid": "https://think.ing.com/articles/fx-daily-dollar-holds-gains-as-geopolitics-heats-up/#When:06:45:00Z",
+      "url": "https://think.ing.com/articles/fx-daily-dollar-holds-gains-as-geopolitics-heats-up/",
+      "title": "FX Daily: Dollar holds gains as geopolitics heats up",
+      "summary": "News over the weekend of continued Houthi strikes in Riyadh and a supposed 'energy ceasefire' between Russia and Ukraine have had little meaningful impact on FX markets so far. The dollar remains well bid, and what could be a hot US September CPI this week will keep expectations of Fed tightening and a stronger dollar in play",
+      "published": "2026-10-12T06:45:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 5958,
+      "body_file": "20-insight.txt",
+      "summary_note": "분량 벗어남 423자"
+    },
+    {
+      "guid": "https://www.investing.com/analysis/european-weakness-and-softer-inflation-could-push-treasury-yields-lower-200689436",
+      "url": "https://www.investing.com/analysis/european-weakness-and-softer-inflation-could-push-treasury-yields-lower-200689436",
+      "title": "European Weakness and Softer Inflation Could Push Treasury Yields Lower",
       "summary": null,
-      "published": "2026-10-12T12:28:00+00:00",
+      "published": "2026-10-12T19:05:00+00:00",
       "category": "insight",
       "source": "Investing.com",
-      "body_chars": 6729,
-      "body_file": "22-insight.txt",
-      "summary_ko": "필자는 금 가격이 바닥을 확인하기 전까지 전술적 강세로 돌아서지 않겠다고 밝혔다. 장기적으로는 금에 우호적이지만 현재 기술적 환경은 아직 강세가 아니라는 판단이다. 금은 지난주 4,080~4,100달러 지지대에서 반등했으나 4,230~4,265달러 저항을 넘지 못했고 21일 지수이동평균선 아래에 머물러 있다. 필자는 이 저항대 돌파를 전술적 강세의 전제로 보았다. 하락 시 4,000달러와 6월 저점 3,942달러, 상승 시 4,325달러와 4,400~4,500달러를 주시 구간으로 제시했다. 금이 달러 강세와 금리 상승을 상당 부분 무시하고 있으며, ETF 유입과 중국의 매입이 하방을 받치고 있다는 점도 근거로 들었다. 유가 급등에 따른 인플레이션 우려가 금의 헤지 수요를 떠받친다고 진단했다. 이번 주 수요일 발표될 9월 CPI가 달러와 금의 방향을 정할 변수로 꼽혔으며, 8월 CPI는 전년 대비 2.4%였다.",
+      "body_chars": 1829,
+      "body_file": "23-insight.txt",
+      "summary_ko": "이 칼럼의 필자는 유럽의 약세와 둔화된 물가가 미국 국채금리를 끌어내릴 수 있다고 본다. 필자는 파운드·유로 약세와 프랑스 정치 교착 등 국제 불안이 미국 국채 수요를 떠받칠 것으로 봤다. 금리 방향의 핵심 변수로는 다음 주 발표되는 9월 CPI와 PPI를 꼽았다. 시장은 두 지수가 전월 대비 0.4% 오르고 근원 CPI는 0.3%, 근원 PPI는 0.2% 상승할 것으로 예상하며, 필자는 이보다 낮게 나오면 금리가 내려갈 것이라고 주장한다. 유가는 러시아의 디젤 재고 방출에도 견조하다고 짚었다. 예멘 후티반군의 리야드 공항 미사일 공격으로 민간인 최소 13명이 숨졌고, 사우디 정유시설 5곳이 송유관 중단으로 일시 멈췄다. 이번 주 금융사 3분기 실적에서는 JP모건 등 대형은행의 호실적과 소비자 연체에 대비한 대손충당금 적립이 주목받을 것으로 봤다.",
       "summary_model": "claude-haiku-5-5"
     }
   ]

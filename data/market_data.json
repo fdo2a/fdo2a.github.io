@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-13 10:07 KST",
+  "generated": "2026-10-13 10:16 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-12",
   "indices": {
@@ -110,9 +110,9 @@
   },
   "fx": {
     "DXY": {
-      "last": 102.5530014038086,
-      "chg": 0.3430023193359375,
-      "pct": 0.33558587458009104,
+      "last": 102.48300170898438,
+      "chg": 0.27300262451171875,
+      "pct": 0.26709972307707996,
       "date": "2026-10-12"
     },
     "USD/KRW": {
@@ -136,27 +136,27 @@
   },
   "commodities": {
     "WTI": {
-      "last": 93.30999755859375,
-      "chg": 1.4599990844726562,
-      "pct": 1.5895472060176719,
+      "last": 92.91000366210938,
+      "chg": 1.0600051879882812,
+      "pct": 1.1540611928120281,
       "date": "2026-10-12"
     },
     "Brent": {
-      "last": 106.08999633789062,
-      "chg": 1.3699951171875,
-      "pct": 1.308245894974891,
+      "last": 105.68000030517578,
+      "chg": 0.9599990844726562,
+      "pct": 0.9167294435467044,
       "date": "2026-10-12"
     },
     "Natural Gas": {
-      "last": 3.1710000038146973,
-      "chg": -0.04900002479553223,
-      "pct": -1.5217398869614596,
+      "last": 3.171999931335449,
+      "chg": -0.04800009727478027,
+      "pct": -1.4906862375245855,
       "date": "2026-10-12"
     },
     "Gold": {
-      "last": 4180.39990234375,
-      "chg": -35.89990234375,
-      "pct": -0.8514551622690103,
+      "last": 4185.39990234375,
+      "chg": -30.89990234375,
+      "pct": -0.73286776973015,
       "date": "2026-10-12"
     }
   },
@@ -613,9 +613,9 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": 0.337,
+        "change": 0.262,
         "unit": "%",
-        "multiple": 1.12,
+        "multiple": 0.87,
         "band": "보통"
       },
       "USD/JPY": {
@@ -634,16 +634,16 @@
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 1.546,
+        "change": 1.1,
         "unit": "%",
-        "multiple": 0.51,
-        "band": "보통"
+        "multiple": 0.36,
+        "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -0.882,
+        "change": -0.783,
         "unit": "%",
-        "multiple": -0.66,
+        "multiple": -0.58,
         "band": "보통"
       },
       "10Y": {
@@ -727,7 +727,7 @@
         }
       },
       "DXY": {
-        "value": 102.554,
+        "value": 102.478,
         "percentile": 75.2,
         "band": "높음",
         "sessions": 504,
@@ -775,28 +775,28 @@
         }
       },
       "WTI": {
-        "value": 93.27,
-        "percentile": 88.7,
+        "value": 92.86,
+        "percentile": 87.9,
         "band": "높음",
         "sessions": 504,
         "plain": {
-          "percentile": 88.7,
+          "percentile": 87.9,
           "sessions": 504,
           "window": "2년",
           "days": null,
-          "share_pct": 12,
+          "share_pct": 13,
           "side": "high",
-          "short": "높은 쪽 12% 안",
-          "text": "최근 2년(504거래일) 가운데 높은 쪽 12% 안"
+          "short": "높은 쪽 13% 안",
+          "text": "최근 2년(504거래일) 가운데 높은 쪽 13% 안"
         }
       },
       "Gold": {
-        "value": 4179.1,
-        "percentile": 63.1,
+        "value": 4183.3,
+        "percentile": 63.3,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 63.1,
+          "percentile": 63.3,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -851,7 +851,7 @@
       {
         "key": "equity_dollar",
         "label_ko": "주식과 달러",
-        "value": -0.279,
+        "value": -0.28,
         "prior": -0.506,
         "flipped": false,
         "band": "반대로 움직임(느슨하게)"
@@ -859,7 +859,7 @@
       {
         "key": "gold_rates",
         "label_ko": "금과 금리",
-        "value": -0.287,
+        "value": -0.288,
         "prior": -0.305,
         "flipped": false,
         "band": "반대로 움직임(느슨하게)"
@@ -1159,8 +1159,8 @@
     "reason": null,
     "key_configured": true,
     "degraded": false,
-    "requests": 46,
-    "series_ok": 45,
+    "requests": 40,
+    "series_ok": 39,
     "failed": [],
     "csv_rescued": []
   }
