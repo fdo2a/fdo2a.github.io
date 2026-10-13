@@ -39,7 +39,7 @@ def setup(tmp_path, monkeypatch):
     scripts = root / 'scripts'
     scripts.mkdir()
     for name in ('macro', 'fed', 'weight', 'price_context',
-                 'session', 'movers', 'fund', 'readability', 'style'):
+                 'session', 'movers', 'fund', 'sector_perf', 'readability', 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
 assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
@@ -103,7 +103,7 @@ def test_success_keeps_user_checkout(setup):
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
     # Nine gates on the original (baseline) and the same nine on the correction.
-    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 18
+    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 20
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -379,3 +379,11 @@ def test_a_code_change_on_origin_since_pinning_stops_before_claude(setup, tmp_pa
         freshness.PINNED = None
     assert error and freshness.DRIFT in error
     assert _claude_calls(tmp_path) == 0
+
+
+def test_sector_table_gate_runs_and_is_never_tolerated():
+    # 2026-10-12: 한 글에서 섹터 수익률이 갈렸다 — 원본도 실패했다는 이유로 넘기지 않는다.
+    from scripts.review import corrector, style_pass
+    assert 'sector_perf' in corrector.US_DATADIR_GATES
+    assert 'check_sector_perf.py' in corrector.NEVER_TOLERATE
+    assert corrector.NEVER_TOLERATE == style_pass.NEVER_TOLERATE

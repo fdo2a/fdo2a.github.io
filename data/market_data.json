@@ -497,11 +497,11 @@
       "1Y": 59.33
     },
     "Communication Services": {
-      "1D": -1.51,
-      "1W": 0.05,
-      "1M": -0.08,
-      "6M": -2.56,
-      "1Y": -2.76
+      "1D": 0.97,
+      "1W": -0.14,
+      "1M": -0.7,
+      "6M": -2.36,
+      "1Y": 0.03
     },
     "Consumer Discretionary": {
       "1D": -0.51,
@@ -553,11 +553,11 @@
       "1Y": 15.91
     },
     "Real Estate": {
-      "1D": 1.86,
-      "1W": 1.96,
-      "1M": -3.34,
-      "6M": -1.15,
-      "1Y": 4.74
+      "1D": 0.75,
+      "1W": 3.07,
+      "1M": -2.64,
+      "6M": -0.88,
+      "1Y": 6.68
     }
   },
   "sector_performance_as_of": "2026-10-12",
@@ -1165,8 +1165,10 @@
       "sectors/Real Estate",
       "ai_infra/Lumentum",
       "ai_infra/GE Vernova",
-      "ai_infra/Vertiv"
+      "ai_infra/Vertiv",
+      "sector_performance/Communication Services",
+      "sector_performance/Real Estate"
     ],
-    "why": "Yahoo 일봉이 재수집 회차에 2026-10-09 로 남은 5행을 같은 세션 마감 뒤 첫 수집분으로 채움"
+    "why": "Yahoo 일봉이 재수집 회차에 2026-10-09 로 남은 5행을 같은 세션 마감 뒤 첫 수집분으로 채움 / 2026-10-13: sector_performance 두 행과 sector_performance.html 도 같은 첫 수집분으로 맞춤(섹터 표 1일 값 불일치 정정)"
   }
 }

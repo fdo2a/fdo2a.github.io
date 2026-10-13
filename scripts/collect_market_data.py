@@ -251,8 +251,11 @@ def collect_sector_performance():
             out[name] = None
             continue
         last = float(closes.iloc[-1])
-        as_of = as_of or str(closes.index[-1].date())
-        row = {}
+        # 종목마다 마지막 봉 날짜를 남긴다. 2026-10-12 재수집에서 XLC·XLRE 만 10-09 에
+        # 멈췄는데 as_of 는 첫 종목 날짜라 「1일」이 10-09 하루 수익률인 채 통과했다.
+        last_date = str(closes.index[-1].date())
+        as_of = max(as_of or last_date, last_date)
+        row = {'date': last_date}
         for key, days in PERF_HORIZONS:
             if key == '1D':
                 base = float(closes.iloc[-2])
@@ -666,6 +669,8 @@ def completeness(data, intraday, naver_stale=False, report_date=None):
         # 6M/1Y may legitimately be short for a young ETF; gate only through 1M.
         if row is None or any(row.get(k) is None for k in ('1D', '1W', '1M')):
             missing.append(f'sector_performance/{name}')
+        elif report_date and row.get('date') and row['date'] != report_date:
+            missing.append(f'sector_performance/{name}/stale:{row["date"]}')
     return missing
 
 

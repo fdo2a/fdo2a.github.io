@@ -102,7 +102,7 @@ def test_us_gate_list_matches_step_2_5():
     for want in ('check_style.py', 'check_readability.py', 'verify_post.py', 'check_macro.py',
                  'check_price_context.py', 'check_session.py', 'check_weight.py',
                  'check_research.py', 'check_fed.py', 'check_sources.py',
-                 'check_calendar.py', 'check_movers.py'):
+                 'check_calendar.py', 'check_movers.py', 'check_sector_perf.py'):
         assert want in names
 
 

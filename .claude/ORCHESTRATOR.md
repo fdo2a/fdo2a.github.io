@@ -111,6 +111,7 @@ Launch the Agent tool with subagent_type "brief-report-writer", run synchronousl
 ```bash
 python  scripts/check_macro.py         --html morning_brief_[DATE].html --datadir <workspace>
 python  scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_sector_perf.py   --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_session.py       --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
@@ -121,6 +122,7 @@ python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadi
 ```
 
 - `check_fund.py` — 생성 블록은 다시 그린 것과 바이트가 같아야 한다. 블록 안을 고치지 말고, 해석 문단(`data-fund`)만 고친다. 「편입·비중 확대·매수하」 같은 권고 어휘가 섹션에 있으면 막힌다.
+- `check_sector_perf.py` — 섹터 기간 수익률 표가 그날 섹터 등락률과 같은 회차여야 한다. 낡은 행을 손으로 채울 때 `sectors` 만 고치지 말고 **같은 회차의 `sector_performance` 행 전체와 `data/sector_performance.html`** 을 함께 옮긴다(2026-10-12 한 글에서 커뮤니케이션서비스가 +0.97%·-1.51% 로 갈렸다). 표 안 숫자를 손으로 고치지 않는다.
 - `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
 - 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 

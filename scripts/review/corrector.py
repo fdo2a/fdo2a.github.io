@@ -51,11 +51,12 @@ def _git(root, *args):
 # 2026-09-22 stance/portfolio 은퇴(c7f6540)가 두 게이트 스크립트를 지웠는데 여기 목록에
 # 남아, US 정정이 매번 「required gate missing」으로 죽었다. 목록은 test_corrector 가
 # 실제 scripts/ 와 대조한다.
-US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'session', 'movers', 'fund')
+US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'sector_perf', 'session', 'movers', 'fund')
 KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund')
 # 원본에서 이미 실패했어도 정정본에서 허용하지 않는 게이트. check_fund 는 적용일 이전 글을
 # 통과시키므로, 적용일 이후 글의 실패는 「원래 그랬다」가 아니라 막아야 할 결함이다.
-NEVER_TOLERATE = frozenset(['check_fund.py'])
+# check_sector_perf 는 한 글 안에서 섹터 수익률이 갈리는 사실 오류다(2026-10-12).
+NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py'])
 _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
                                             US_DATADIR_GATES + KR_DATADIR_GATES)])

@@ -122,6 +122,10 @@ and hypothesis attributes from `RESEARCH_WORKFLOW.md`. Use connected prose:
   weakening and undecidable outcomes. Direction alone does not prove mechanism.
 - Explain changes to the interpretation and the strongest unresolved alternative.
   Do not repeat the opening's complete market summary or reprint an entire idea.
+  For a view opened today, the strategy comment carries the reasoning; this section
+  gives only its starting value, how it will be measured (same base date, window and
+  comparators as the ledger `support`, worded identically in both places) and what
+  would leave it undecided (STYLE_EXEMPLARS §11-1, §11-8).
 - Retain every open ledger question and its next distinguishing observation or
   original deadline. Unchanged items can be brief. Include today's closed failures
   and reviewed nonexecution; a bootstrap honestly has no prior view to evaluate.

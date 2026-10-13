@@ -43,3 +43,19 @@ def test_foreign_listed_and_24h_rows_may_carry_another_date():
     data['memory']['SK hynix']['date'] = '2026-09-23'      # 한국 추석 휴장
     data['fx']['USD/JPY']['date'] = '2026-09-26'
     assert cmd.completeness(data, _INTRADAY, report_date='2026-09-25') == []
+
+
+def test_sector_performance_row_from_an_earlier_session_is_incomplete():
+    # 2026-10-12 재수집: XLC·XLRE 일봉이 10-09 에 멈췄는데 1D/1W/1M 이 다 있어 통과했고,
+    # 표의 「1일」은 10-09 하루 수익률이었다.
+    data = _full_data()
+    for n in data['sector_performance']:
+        data['sector_performance'][n]['date'] = '2026-10-12'
+    data['sector_performance']['Communication Services']['date'] = '2026-10-09'
+    missing = cmd.completeness(data, _INTRADAY, report_date='2026-10-12')
+    assert missing == ['sector_performance/Communication Services/stale:2026-10-09']
+
+
+def test_sector_performance_rows_without_a_date_are_not_judged():
+    # 날짜를 남기기 전의 옛 데이터
+    assert cmd.completeness(_full_data(), _INTRADAY, report_date='2026-10-12') == []
