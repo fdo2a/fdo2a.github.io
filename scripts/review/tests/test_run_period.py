@@ -17,6 +17,12 @@ from review.runner import today_kst
 from review.tests.test_run_cli import PAGE, git, write
 from review.tests.test_run_correct import invoke
 
+
+@pytest.fixture(autouse=True)
+def _apply_on(monkeypatch):
+    # 반영 경로의 계약 — 2026-10-13 부터 기본값은 반영 중지(test_run_style 이 본다).
+    monkeypatch.setattr(style_pass, 'APPLY', True)
+
 TODAY = date.fromisoformat(today_kst())
 WEEK = TODAY.isocalendar()
 KEY = f'{WEEK[0]}-W{WEEK[1]:02d}'

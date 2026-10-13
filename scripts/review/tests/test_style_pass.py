@@ -150,6 +150,35 @@ def test_same_skeleton_allows_words_but_not_numbers_or_tags():
 
 
 # ── 적용 (임시 레포에서 실제 git) ─────────────────────────────────────────────
+# 2026-10-13 부터 기본값은 반영 중지(APPLY=False). 아래 반영 경로 테스트는 다시 켤 때의 계약이라
+# 켠 채로 돌린다. 기본값 동작은 test_default_records_the_proposal_and_pushes_nothing 이 본다.
+
+@pytest.fixture(autouse=True)
+def _apply_on(request, monkeypatch):
+    if not request.node.name.startswith('test_default_'):
+        monkeypatch.setattr(sp, 'APPLY', True)
+
+
+def test_default_apply_is_off_in_the_source():
+    src = open(sp.__file__, encoding='utf-8').read()
+    assert '\nAPPLY = False\n' in src
+
+
+def test_default_records_the_proposal_and_pushes_nothing(repo, tmp_path, monkeypatch):
+    monkeypatch.setattr(sp, 'gate_commands', no_gates)
+    assert sp.APPLY is False
+    work, text = prepared(tmp_path, ORIG)
+    payload = edit_payload(text, '올랐고 그래서 에너지 업종이 강세를 보인 것으로 나타났다',
+                           '올랐고 그래서 에너지 업종이 강세를 보였다')
+    before = git(repo, 'rev-parse', 'origin/main')
+    res = sp.apply(repo, item(repo), payload, str(work), str(tmp_path / 'ev'))
+    assert res.sha is None and res.reason.startswith(sp.PROPOSED)
+    assert res.accepted == ('P001',)
+    git(repo, 'fetch', '-q', 'origin')
+    assert git(repo, 'rev-parse', 'origin/main') == before
+    rec = json.loads(open(res.proposal, encoding='utf-8').read())
+    assert rec['gates'] == '통과' and rec['changed'] == ['P001'] and '강세를 보였다' in rec['diff']
+    assert res.proposal.startswith(os.path.join(repo, sp.PROPOSALS))
 
 def no_gates(*_a, **_k):
     return []

@@ -100,7 +100,7 @@ python3 scripts/check_fund.py    --html <kr_brief 절대경로> --datadir kr/dat
 
 **루틴은 STEP 2 게이트를 통과하면 바로 STEP 3 으로 간다.** `humanize-korean` 윤문을 부르지 않는다 — Claude 주간 한도를 아끼려고 사용자가 뺐다.
 
-말투 손질은 **발행 뒤** 로컬 러너(`scripts/review_gate.py run --correct`, 매시)가 codex 로 한다. codex 는 발행 커밋 스냅샷에서 `prose_in.txt`(이 단계가 쓰던 `humanize_prose.py extract` 산출물)만 고치고, Python 이 `prose_swap.reinsert`(문단마다 숫자·영문 이름·판단 어휘·링크·닮은 정도)와 이 단계가 쓰던 게이트 목록 전체를 발행 커밋의 데이터로 다시 돌린 뒤에만 공개판을 교체한다. 거부되면 원본이 그대로 공개돼 있을 뿐이다. 모듈 `scripts/review/style_pass.py`, 설계 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
+말투 손질은 **발행 뒤** 로컬 러너(`scripts/review_gate.py run --correct`, 매시)가 codex 로 한다. codex 는 발행 커밋 스냅샷에서 `prose_in.txt`(이 단계가 쓰던 `humanize_prose.py extract` 산출물)만 고치고, Python 이 `prose_swap.reinsert`(문단마다 숫자·영문 이름·판단 어휘·링크·닮은 정도)와 이 단계가 쓰던 게이트 목록 전체를 발행 커밋의 데이터로 다시 돌린 뒤에만 공개판을 교체한다. 거부되면 원본이 그대로 공개돼 있을 뿐이다. **2026-10-13 부터 반영 중지** — 수정안과 검사 결과는 `reviews/style_proposals/` 와 러너 `style_log` 에만 남고 공개판은 교체하지 않는다(`style_pass.APPLY`, 판단 방향을 낱말 검사로 지킬 수 없어서 — `STYLE_EXEMPLARS.md` §10). 모듈 `scripts/review/style_pass.py`, 설계 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
 
 **그래서 초고가 곧 발행본이다.** writer 지시문의 「말하듯이 쓴다」와 STEP 2 의 `check_style` 이 첫 판의 문체를 책임진다.
 

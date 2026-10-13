@@ -37,6 +37,14 @@ from us.prose_swap import ProseSwapError, extract, reinsert_partial  # noqa: E40
 TRAILER = 'Style-Pass: codex'
 _DEFS = 'scripts/review/style_pass.py'   # 게이트 목록의 정의
 PAYLOAD = 'prose_in.txt'
+# 반영 중지(2026-10-13 사용자 결정). 낱말 검사로는 판단 방향을 지킬 수 없었다 — 10/12 해석
+# 문단에서 「우리 판단」과 「언론 설명」을 맞바꾸거나 「약해진다」를 「철회한다」로, 「16일까지」를
+# 「16일부터」로 바꿔도 되꽂기 검사를 통과했다(codex 설계 검토 DESIGN NO). 원장 기반 의미 대조가
+# 생길 때까지 codex 수정안은 만들고 검사하되 공개판에 반영하지 않고 PROPOSALS 에 남긴다.
+# 다시 켜는 것은 이 상수를 바꾸는 커밋 — 설정이 아니라 검토를 거치는 코드 변경이다.
+APPLY = False
+PROPOSALS = 'reviews/style_proposals'   # .gitignore — 러너 상태와 같은 자리
+PROPOSED = '제안만 기록 — 반영 중지'
 UNCHANGED = '고칠 문장이 없었다'
 _CYCLE = re.compile(r'data-research-cycle="([^"]+)"')
 _DATE = re.compile(r'(\d{4}-\d{2}-\d{2})\.html$')
@@ -55,6 +63,30 @@ class Result:
     sha: str = None        # 푸시된 새 blob — None 이면 아무것도 안 나갔다
     reason: str = None     # 안 나간 이유
     skipped: tuple = ()    # 검사에 걸려 원문으로 둔 문단 [(이름, 이유)]
+    proposal: str = None   # APPLY=False 일 때 남긴 수정안 기록(경로)
+    accepted: tuple = ()   # 되꽂기·게이트를 통과했을 문단 이름
+
+
+def _record(root, item, html, new, skipped, verdict):
+    """수정안을 반영하지 않고 남긴다 — 10/20 평가가 「자동 수정이 실제로 무엇을 바꾸려 했나」를 본다."""
+    import difflib
+    import json as _json
+    _, before = extract(html)
+    _, after = extract(new)
+    changed = [pid for pid in after['items']
+               if after['items'][pid]['inner'] != before['items'].get(pid, {}).get('inner')]
+    folder = os.path.join(root, PROPOSALS)
+    os.makedirs(folder, exist_ok=True)
+    stem = item.path.replace('/', '_').rsplit('.', 1)[0] + '_' + item.sha[:7]
+    rec = {'path': item.path, 'from': item.sha[:7], 'gates': verdict,
+           'changed': changed, 'skipped': [{'pid': p, 'why': w} for p, w in skipped],
+           'diff': ''.join(difflib.unified_diff(
+               [before['items'][p]['inner'] + '\n' for p in changed],
+               [after['items'][p]['inner'] + '\n' for p in changed], 'published', 'proposed'))}
+    path = os.path.join(folder, stem + '.json')
+    with open(path, 'w', encoding='utf-8') as fh:
+        _json.dump(rec, fh, ensure_ascii=False, indent=1)
+    return path, tuple(changed)
 
 
 def prepare(workdir, html):
@@ -324,6 +356,11 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
             baseline = run_gates(clone, cmds, timeout)
             Path(post).write_text(new, encoding='utf-8')
             bad = judge(baseline, run_gates(clone, cmds, timeout))
+            if not APPLY:
+                verdict = ('거부 — ' + ' / '.join(bad)) if bad else '통과'
+                path, changed = _record(root, item, html, new, skipped, verdict)
+                return Result(reason=f'{PROPOSED} · 바뀔 문단 {len(changed)}개 · 게이트 {verdict[:200]}',
+                              skipped=skipped, proposal=path, accepted=changed)
             if bad:
                 return Result(reason='게이트 거부 — ' + ' / '.join(bad), skipped=skipped)
             dirty = _git(clone, 'status', '--porcelain', '--untracked-files=no').stdout.split('\n')

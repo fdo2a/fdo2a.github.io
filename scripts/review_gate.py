@@ -1171,7 +1171,9 @@ def _note_style(state, item, result):
     log = [x for x in state.get('style_log', []) if isinstance(x, dict)]
     log.append({'at': now(), 'path': item.path, 'from': item.sha[:7],
                 'to': (result.sha or '')[:7], 'reason': (result.reason or '')[:300],
-                'kept': [pid for pid, _ in getattr(result, 'skipped', ())]})
+                'kept': [pid for pid, _ in getattr(result, 'skipped', ())],
+                'proposed': list(getattr(result, 'accepted', ()) or ()),
+                'proposal': getattr(result, 'proposal', None)})
     state['style_log'] = log[-STYLE_LOG_KEEP:]
     kept = len(getattr(result, 'skipped', ()))
     tag = (f'반영 {item.sha[:7]} → {result.sha[:7]}' + (f' (원문 유지 {kept}문단)' if kept else '')

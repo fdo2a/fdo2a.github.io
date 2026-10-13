@@ -12,6 +12,17 @@ from review.tests.test_run_cli import repo, git, POST, KR_POST, TODAY  # noqa: F
 from review.tests.test_run_correct import invoke
 
 
+import pytest  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _apply_on(request, monkeypatch):
+    """아래 반영 경로 테스트는 반영을 다시 켤 때의 계약이다. 2026-10-13 부터 기본값은
+    반영 중지(APPLY=False) — 기본값 동작은 test_default_* 가 본다."""
+    if not request.node.name.startswith('test_default_'):
+        monkeypatch.setattr(style_pass, 'APPLY', True)
+
+
 def editing_codex(tmp_path, reply):
     path = tmp_path / 'codex'
     path.write_text(
@@ -107,3 +118,21 @@ def test_a_fully_applied_edit_leaves_the_draft_as_codex_wrote_it():
 def test_a_partly_applied_edit_names_the_paragraphs_left_as_written():
     note = gate._style_note(style_pass.Result(sha='abc', skipped=(('P003', 'x'), ('P007', 'y'))))
     assert note.startswith(gate.STYLE_NOTE_HEAD) and 'P003' in note and 'P007' in note
+
+
+def test_default_runner_publishes_nothing_and_logs_the_proposal(repo, tmp_path, monkeypatch):
+    """반영 중지(2026-10-13): codex 가 고쳐도 공개판은 원문, 정정 단계에는 「공개되지 않았다」,
+    러너 로그에는 바뀌었을 문단과 기록 경로가 남는다."""
+    assert style_pass.APPLY is False
+    seed_refs(repo)
+    monkeypatch.setattr(style_pass, 'gate_commands', lambda *a: [])
+    monkeypatch.setattr(gate, 'CODEX', editing_codex(tmp_path, '검토 판본: 윤문 후\\n1. 지적'))
+    before = remote_blob(repo, POST)
+    seen = []
+    invoke(repo, monkeypatch, lambda root, item, draft, *a: seen.append(draft) or ('checked', None))
+    assert remote_blob(repo, POST) == before
+    assert seen and all('공개되지 않았다' in d for d in seen)
+    log = json.load(open(os.path.join(repo, 'reviews/runner.json')))['style_log']
+    mine = [x for x in log if x['path'] == POST]
+    assert mine and mine[-1]['to'] == '' and mine[-1]['proposed'] and mine[-1]['proposal']
+    assert os.path.isfile(mine[-1]['proposal'])
