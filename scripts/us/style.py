@@ -515,6 +515,8 @@ FIGURATIVE = (
     r'질문은\s*[^.]{0,40}가린다',
 )
 _FIGURATIVE_RE = [re.compile(p) for p in FIGURATIVE]
+# 고유어 날수 — 「아흐레째」가 아니라 「9일째」(2026-10-13 사용자 지시). 「하루」는 그대로 둔다.
+_NATIVE_DAYS = re.compile(r'(?<![가-힣])(이틀|사흘|나흘|닷새|엿새|이레|여드레|아흐레|열흘)')
 
 
 def research_allowance(text):
@@ -641,6 +643,13 @@ def _desk_findings(html, texts):
         out.append(_finding('figurative', len(figures),
                             '뜻이 흐린 비유가 있다 — ' + ', '.join(f'「{f}」' for f in figures[:4])
                             + '. 가리키는 것을 직접 쓴다(STYLE_EXEMPLARS §10-2)', 'warn'))
+
+    days = [m.group(1) for m in _NATIVE_DAYS.finditer(' '.join(own))]
+    if days:
+        out.append(_finding('native_days', len(days),
+                            '날수를 고유어로 썼다 — ' + ', '.join(f'「{d}」' for d in days[:4])
+                            + '. 「9일째」·「4거래일 연속」처럼 숫자로 쓴다(「하루」는 그대로, STYLE_EXEMPLARS §10)',
+                            'warn'))
 
     counts = {}
     for n in _NUMBER.findall(whole):

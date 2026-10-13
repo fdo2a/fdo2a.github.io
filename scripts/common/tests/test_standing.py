@@ -3,6 +3,8 @@
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from common import standing as S  # noqa: E402
@@ -24,7 +26,7 @@ def test_extreme_high_counts_the_days_instead_of_naming_a_percentile():
     p = S.plain(99.3, 522)
     assert p['side'] == 'high'
     assert p['days'] == 4
-    assert p['text'] == '최근 2년(522거래일) 가운데 이보다 높았던 날이 나흘뿐'
+    assert p['text'] == '최근 2년(522거래일) 가운데 이보다 높았던 날이 4일뿐'
     assert '백분위' not in p['text']
 
 
@@ -67,7 +69,7 @@ def test_low_side_mirrors_the_high_side():
     assert p['text'] == '최근 2년(504거래일) 가운데 낮은 쪽 20% 안'
     q = S.plain(0.5, 504)
     assert q['days'] == 3
-    assert '이보다 낮았던 날이 사흘뿐' in q['text']
+    assert '이보다 낮았던 날이 3일뿐' in q['text']
 
 
 def test_spread_speaks_of_width_not_height():
@@ -151,3 +153,10 @@ def test_counted_days_beat_a_rounded_percentile():
 def test_counted_share_is_used_when_given():
     p = S.plain(80.0, 500, above=104, below=396)
     assert p['share_pct'] == 21  # 20.8% 를 올림
+
+
+@pytest.mark.parametrize('d', range(2, 11))
+def test_day_counts_from_two_are_digits(d):
+    # 2026-10-13 사용자 지시 — 「아흐레」가 아니라 「9일」.
+    assert S._days_ko(d) == f'{d}일'
+    assert S._days_ko(1) == '하루'

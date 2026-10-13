@@ -312,3 +312,11 @@ def test_deal_context_in_an_earlier_sentence_of_the_same_paragraph_counts():
     para = ('클럽메드가 휘닉스중앙 인수를 추진 중이다. 삼일PwC 자문을 받았다. '
             '한화그룹과 소노그룹도 후보로 거론되지만 클럽메드가 가장 유력하다.')
     assert _research_hits(para) == []
+
+
+def test_native_day_counts_warn_but_haru_and_compounds_do_not():
+    # 2026-10-13 사용자 지시 — 「아흐레째」가 아니라 「9일째」.
+    hit = desk(GOOD + '<p>골디락스 판단을 아흐레째 유지한다. 매도가 나흘째 이어졌다.</p>')
+    assert 'native_days' in keys(hit, 'warn')
+    calm = GOOD + '<p>골디락스 판단을 9일째 유지한다. 하루 낙폭이 컸다. 하루이틀 사이 결론을 내지 않는다.</p>'
+    assert 'native_days' not in keys(desk(calm))
