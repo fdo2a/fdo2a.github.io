@@ -724,28 +724,58 @@ def test_two_signals_pending_at_the_final_decision_prefer_sigterm():
 
 
 # --- 시스템 Python ---------------------------------------------------------------
+# 정정 에이전트(Claude)는 launchd 의 PATH(/usr/bin 먼저)로 `python3 scripts/review_gate.py mark` 를
+# 부른다 — macOS 시스템 Python 3.9 다. 3.11 전용 sys.flags.safe_path 가 거기서 죽어 10/12 KR 정정이
+# 커밋을 못 했다(2026-10-13). 테스트는 3.13 으로 돌아서 못 봤다. 런처(runner_launch.py)는 plist 가
+# Python 3.13 절대경로로 부르므로 대상이 아니다.
 
 SYSTEM_PY = '/usr/bin/python3'
+# 이 브랜치가 바꾼, 정정 에이전트의 `mark`·훅의 `pending` 이 import 하는 모듈.
+PY39_MODULES = ('review_gate.py', 'review/freshness.py', 'review/corrector.py',
+                'review/style_pass.py', 'us/prose_swap.py')
 
 
-def _system_python_version():
+def _old_system_python():
+    """3.11 미만 시스템 Python 이 있을 때만 그 경로 — 3.11+ 에서 통과해도 3.9 호환의 증거가 아니다."""
+    import pytest
     try:
-        out = subprocess.run([SYSTEM_PY, '-c', 'import sys; print(sys.version_info[:2])'],
+        out = subprocess.run([SYSTEM_PY, '-c', 'import sys; print(sys.version_info[1])'],
                              capture_output=True, text=True, timeout=30)
     except OSError:
-        return None
-    return out.stdout.strip() if out.returncode == 0 else None
+        pytest.skip('시스템 Python 이 없다')
+    if out.returncode or int(out.stdout.strip() or 99) >= 11:
+        pytest.skip('시스템 Python 이 3.11 이상이다 — 3.9 호환을 여기서 증명할 수 없다')
+    return SYSTEM_PY
+
+
+def test_changed_modules_compile_under_the_system_python():
+    py = _old_system_python()
+    here = os.path.dirname(LAUNCH)
+    for rel in PY39_MODULES:
+        p = subprocess.run([py, '-m', 'py_compile', os.path.join(here, rel)],
+                           capture_output=True, text=True, timeout=60)
+        assert p.returncode == 0, (rel, p.stdout, p.stderr)
 
 
 def test_review_gate_starts_under_the_system_python(repo):
-    # 정정 에이전트(Claude)는 launchd 의 PATH(/usr/bin 먼저)로 `python3 scripts/review_gate.py mark`
-    # 를 부른다 — macOS 시스템 Python 3.9 다. 3.11 전용 sys.flags.safe_path 가 거기서 죽어 10/12 KR
-    # 정정이 커밋을 못 했다(2026-10-13). 테스트는 3.13 으로 돌아서 못 봤다.
-    import pytest
-    if _system_python_version() is None:
-        pytest.skip('시스템 Python 이 없다')
+    py = _old_system_python()
     gate = os.path.join(os.path.dirname(LAUNCH), 'review_gate.py')
-    for args in (['mark', '--help'], ['pending', '--hook', '--no-fetch']):
-        p = subprocess.run([SYSTEM_PY, gate, *args], cwd=repo, capture_output=True, text=True,
-                           timeout=120)
-        assert 'Traceback' not in p.stderr and 'import 하지 못했다' not in p.stdout, (args, p.stderr)
+    p = subprocess.run([py, gate, 'mark', '--help'], cwd=repo, capture_output=True, text=True,
+                       timeout=120)
+    assert p.returncode == 0, (p.stdout, p.stderr)
+    p = subprocess.run([py, gate, 'pending', '--hook', '--no-fetch'], cwd=repo,
+                       capture_output=True, text=True, timeout=120)
+    assert p.returncode == 0, (p.stdout, p.stderr)            # --hook 은 늘 0 이다
+    assert '[검토 게이트]' in p.stdout and '실패' not in p.stdout, (p.stdout, p.stderr)
+
+
+def test_mark_records_the_ledger_under_the_system_python(repo):
+    # 정정 에이전트가 실제로 부르는 기록 경로 — --help 만으로는 처리 중 import 를 다 보지 못한다.
+    py = _old_system_python()
+    gate = os.path.join(os.path.dirname(LAUNCH), 'review_gate.py')
+    p = subprocess.run([py, gate, 'mark', POST, '--findings', '0'], cwd=repo,
+                       capture_output=True, text=True, timeout=120)
+    assert p.returncode == 0, (p.stdout, p.stderr)
+    with open(os.path.join(repo, 'reviews/index.json'), encoding='utf-8') as fh:
+        ledger = json.load(fh)
+    assert POST in ledger['reviewed']
