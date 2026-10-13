@@ -389,17 +389,18 @@ ECON = [
 ]
 
 
-def _apply(vals, i, tf):
-    """transform value at index i (must be negative index into vals)."""
-    if tf == 'level':
-        return vals[i][1]
-    if tf == 'mom_pct':
-        return (vals[i][1] / vals[i - 1][1] - 1) * 100
-    if tf == 'mom_diff':
-        return vals[i][1] - vals[i - 1][1]
-    if tf == 'yoy_pct':
-        return (vals[i][1] / vals[i - 12][1] - 1) * 100
-    raise ValueError(tf)
+def _econ_pair(vals, tf):
+    """(Actual, Previous) — 최신 관측월의 변환값과 그 직전 변환값. 날짜로 맞춘
+    `transform_pairs` 를 쓴다(2025-10 CPI 결측 탓에 행 위치 계산이 13개월 YoY 를 냈다).
+    최신 관측월을 변환할 수 없으면 None — 지어내지 않고 행을 뺀다."""
+    from us.macro_metrics import _month, transform_pairs
+    pairs = transform_pairs(vals, tf)
+    if len(pairs) < 2 or pairs[-1][0] != vals[-1][0]:
+        return None
+    # Previous 도 바로 앞 달이어야 한다 — 그 달을 못 만들면 더 오래된 달을 「직전」으로 찍지 않는다.
+    if tf != 'level' and _month(pairs[-1][0]) - _month(pairs[-2][0]) != 1:
+        return None
+    return pairs[-1][1], pairs[-2][1]
 
 
 def collect_econ():
@@ -420,14 +421,13 @@ def collect_econ():
             time.sleep(0.6)
         if not vals:
             continue
-        need = 13 if tf == 'yoy_pct' else 2
-        if len(vals) < need:
-            continue
         try:
-            actual = _apply(vals, -1, tf)
-            previous = _apply(vals, -2, tf)
+            pair = _econ_pair(vals, tf)
         except Exception:
             continue
+        if pair is None:
+            continue
+        actual, previous = pair
         out.append({
             'axis': axis, 'name': name, 'fred_id': sid, 'transform': tf, 'units': units,
             'actual': round(actual, 2), 'previous': round(previous, 2),

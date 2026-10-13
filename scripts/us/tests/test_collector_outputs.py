@@ -42,3 +42,26 @@ def test_derived_blocks_run_before_market_data_is_written():
 def test_econ_rows_carry_their_vs_prev_verdict():
     assert "e['vs_prev'] = vs_prev(" in SRC
     assert SRC.index("e['vs_prev'] = vs_prev(") < SRC.index("'econ_indicators.json'")
+
+
+def test_econ_actual_previous_use_the_dated_transform_across_a_missing_month():
+    """2025-10 CPI 결측 — Actual 은 BLS 와 같은 12개월 변화여야 한다(3.71 이 아니라)."""
+    vals, y, m = [], 2024, 1
+    for i in range(32):                                   # 2024-01 .. 2026-08
+        d = f'{y:04d}-{m:02d}-01'
+        if d != '2025-10-01':
+            vals.append((d, 100.0 + i))
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    actual, previous = cmd._econ_pair(vals, 'yoy_pct')
+    assert round(actual, 4) == round((131 / 119 - 1) * 100, 4)
+    assert round(previous, 4) == round((130 / 118 - 1) * 100, 4)
+
+
+def test_econ_pair_refuses_when_the_latest_month_cannot_be_transformed():
+    vals = [('2026-07-01', 100.0), ('2026-09-01', 101.0)]   # 08 결측 -> 09 MoM 없음
+    assert cmd._econ_pair(vals, 'mom_pct') is None
+
+
+def test_econ_pair_refuses_a_previous_that_is_not_the_month_before():
+    vals = [('2026-06-01', 100.0), ('2026-07-01', 101.0), ('2026-09-01', 102.0), ('2026-10-01', 103.0)]
+    assert cmd._econ_pair(vals, 'mom_pct') is None        # 09 MoM 없음 -> 10 의 직전이 07 이 된다

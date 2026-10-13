@@ -218,18 +218,45 @@ def polarity_for(name):
     return _POLARITY.get(name, (1, 3))
 
 
+def _month(date):
+    """'YYYY-MM-..' -> 연·월 일련번호. 월간 시계열의 이웃·1년 전을 날짜로 찾는 데 쓴다."""
+    return int(date[:4]) * 12 + int(date[5:7]) - 1
+
+
+def transform_pairs(vals, tf):
+    """Raw (date, value) history -> [(date, transformed)], **날짜로 맞춘다**.
+
+    행 위치로 1칸·12칸 뒤를 집으면 한 달이 통째로 빠진 시계열에서 두 달·13개월 변화가
+    그 이름으로 찍힌다 — 2025-10 CPI(셧다운으로 미발표) 때문에 2026-08 CPI YoY 가
+    BLS 3.4% 대신 3.71% 로 나갔다. 비교 대상 달이 없으면 그 달은 만들지 않는다.
+    """
+    pairs = [(d, float(v)) for d, v in vals or []]
+    if tf == 'level':
+        return pairs
+    if tf in ('mom_pct', 'mom_diff'):
+        out = []
+        for (d0, x0), (d1, x1) in zip(pairs, pairs[1:]):
+            if _month(d1) - _month(d0) != 1:
+                continue
+            if tf == 'mom_diff':
+                out.append((d1, x1 - x0))
+            elif x0:
+                out.append((d1, (x1 / x0 - 1) * 100))
+        return out
+    if tf == 'yoy_pct':
+        by_month = {_month(d): x for d, x in pairs}
+        out = []
+        for d, x in pairs:
+            base = by_month.get(_month(d) - 12)
+            if base:
+                out.append((d, (x / base - 1) * 100))
+        return out
+    raise ValueError(tf)
+
+
 def transform_series(vals, tf):
     """Raw (date, value) history -> the transformed series the dashboard prints."""
-    xs = [float(v) for _, v in vals or []]
-    if tf == 'level':
-        return xs
-    if tf == 'mom_pct':
-        return [(xs[i] / xs[i - 1] - 1) * 100 for i in range(1, len(xs)) if xs[i - 1]]
-    if tf == 'mom_diff':
-        return [xs[i] - xs[i - 1] for i in range(1, len(xs))]
-    if tf == 'yoy_pct':
-        return [(xs[i] / xs[i - 12] - 1) * 100 for i in range(12, len(xs)) if xs[i - 12]]
-    raise ValueError(tf)
+    return [v for _, v in transform_pairs(vals, tf)]
 
 
 def momentum(values, window):

@@ -489,3 +489,42 @@ def test_compute_stamps_the_schema_and_the_caption():
     out = mm.compute({}, [])
     assert out['schema'] == mm.SCHEMA >= 2
     assert out['trend_note_ko'] == mm.TREND_NOTE_KO
+
+
+# 한 달이 통째로 없는 시계열 (2025-10 CPI 는 셧다운으로 끝내 발표되지 않았다). 행 위치로
+# 12칸 뒤를 집으면 그 뒤 12개월의 YoY 가 13개월 변화가 돼 BLS 발표치와 어긋난다
+# (2026-08 CPI YoY 3.71 vs BLS 3.4). 날짜로 맞춰 1년 전 같은 달을 찾는다.
+
+def _with_gap(values, start_year=2024, missing='2025-10-01'):
+    return [(d, v) for d, v in dated(values, start_year) if d != missing]
+
+
+def test_transform_yoy_pct_matches_the_same_month_a_year_earlier_across_a_gap():
+    vals = _with_gap([100 + i for i in range(32)])   # 2024-01 .. 2026-08, 2025-10 결측
+    pairs = mm.transform_pairs(vals, 'yoy_pct')
+    by = dict(pairs)
+    assert by['2026-08-01'] == pytest.approx((131 / 119 - 1) * 100)   # 2025-08 = 119
+    assert '2026-10-01' not in by and '2025-10-01' not in by
+
+
+def test_transform_yoy_pct_skips_a_month_whose_base_is_missing():
+    vals = _with_gap([100 + i for i in range(34)])   # .. 2026-10
+    assert '2026-10-01' not in dict(mm.transform_pairs(vals, 'yoy_pct'))
+
+
+def test_transform_mom_skips_a_two_month_step():
+    vals = _with_gap([100 + i for i in range(24)])   # 2024-01 .. 2025-12, 2025-10 결측
+    by = dict(mm.transform_pairs(vals, 'mom_pct'))
+    assert '2025-11-01' not in by                     # 09 -> 11 은 두 달 변화
+    assert by['2025-12-01'] == pytest.approx((123 / 122 - 1) * 100)
+    assert '2025-11-01' not in dict(mm.transform_pairs(vals, 'mom_diff'))
+
+
+def test_transform_series_is_the_values_of_transform_pairs():
+    vals = _with_gap([100 + i for i in range(32)])
+    assert mm.transform_series(vals, 'yoy_pct') == [v for _, v in mm.transform_pairs(vals, 'yoy_pct')]
+
+
+def test_transform_level_keeps_weekly_and_quarterly_series_untouched():
+    vals = [('2026-09-26', 220.0), ('2026-10-03', 230.0)]
+    assert mm.transform_pairs(vals, 'level') == vals
