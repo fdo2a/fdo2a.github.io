@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 5086287,
-    "volume": 3504833,
+    "value": 5168111,
+    "volume": 3562353,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4027664,
-    "volume": 17085025,
+    "value": 4097031,
+    "volume": 17382089,
     "members": [
       "삼성전자"
     ]
@@ -64,10 +64,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 791384,
-    "volume": 4505553,
+    "value": 804258,
+    "volume": 4579320,
     "members": [
       "삼성전자우"
+    ]
+  },
+  {
+    "label": "삼성전기",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 761531,
+    "volume": 549864,
+    "members": [
+      "삼성전기"
     ]
   },
   {
@@ -79,17 +90,6 @@
     "volume": 706122,
     "members": [
       "KODEX CD금리액티브(합성)"
-    ]
-  },
-  {
-    "label": "삼성전기",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 748594,
-    "volume": 540487,
-    "members": [
-      "삼성전기"
     ]
   },
   {
@@ -117,25 +117,25 @@
     ]
   },
   {
-    "label": "SK스퀘어",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 514785,
-    "volume": 597635,
-    "members": [
-      "SK스퀘어"
-    ]
-  },
-  {
     "label": "삼성SDI",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 508109,
-    "volume": 862157,
+    "value": 522448,
+    "volume": 886314,
     "members": [
       "삼성SDI"
+    ]
+  },
+  {
+    "label": "SK스퀘어",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 519393,
+    "volume": 603045,
+    "members": [
+      "SK스퀘어"
     ]
   },
   {

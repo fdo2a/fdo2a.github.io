@@ -16,25 +16,25 @@
           "name": "SK하이닉스",
           "change_pct": -1.66,
           "close": 1419000,
-          "value": 5086287
+          "value": 5168111
         },
         {
           "name": "한미반도체",
           "change_pct": -5.02,
           "close": 217500,
-          "value": 141103
+          "value": 145271
         },
         {
           "name": "이수페타시스",
           "change_pct": -5.12,
           "close": 111200,
-          "value": 73150
+          "value": 74207
         },
         {
           "name": "DB하이텍",
           "change_pct": -7.04,
           "close": 117600,
-          "value": 72044
+          "value": 73287
         }
       ]
     },
@@ -51,19 +51,19 @@
           "name": "LG에너지솔루션",
           "change_pct": 2.93,
           "close": 422000,
-          "value": 281004
+          "value": 283134
         },
         {
           "name": "삼성SDI",
           "change_pct": 5.54,
           "close": 591000,
-          "value": 508109
+          "value": 522448
         },
         {
           "name": "엘앤에프",
           "change_pct": 6.5,
           "close": 116400,
-          "value": 81452
+          "value": 82596
         }
       ]
     },
@@ -79,7 +79,7 @@
           "name": "신한지주",
           "change_pct": -4.71,
           "close": 95000,
-          "value": 161269
+          "value": 161442
         }
       ]
     },
@@ -95,13 +95,13 @@
           "name": "팬오션",
           "change_pct": 10.53,
           "close": 7240,
-          "value": 121300
+          "value": 123203
         },
         {
           "name": "HMM",
           "change_pct": 5.9,
           "close": 23350,
-          "value": 88388
+          "value": 90378
         }
       ]
     },
@@ -117,7 +117,7 @@
           "name": "한미약품",
           "change_pct": -10.71,
           "close": 404500,
-          "value": 103804
+          "value": 105082
         }
       ]
     }
