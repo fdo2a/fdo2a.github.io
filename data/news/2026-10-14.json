@@ -93,7 +93,8 @@
       "source": "CNBC",
       "body_chars": 3683,
       "body_file": "07-macro.txt",
-      "summary_note": "분량 벗어남 403자"
+      "summary_ko": "Bank of America의 2026년 3분기 순이익은 전년 대비 17% 줄어든 69억 3천만 달러(주당 91센트)였다. 12억 달러 규모의 미국 규제당국 과징금이 주당 17센트를 깎아먹었고, 과징금을 제외하면 주당순이익은 1.08달러였다. 매출은 3.2% 늘어난 301억 2천만 달러였으나 시장 예상치를 약 5억 7천만 달러 밑돌았다. 채권 트레이딩 매출은 17% 감소한 25억 5천만 달러로 추정치를 약 4억 5천만 달러 하회했고, 주식 트레이딩 매출도 예상에 못 미쳤다. 순이자이익은 7.9% 증가한 166억 달러로 예상을 소폭 웃돌았다. 회사는 금리 급등이 채권 트레이딩에 타격을 줬다고 설명했다. 재무부 관련 사안은 수십억 달러 규모의 의심 거래를 보고하지 않았다는 지적으로 내부통제 신뢰 문제를 낳았으며, 모이니핸 CEO는 규제 이슈 해결 시점을 밝히지 않았다. 이날 주가는 급락했다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108407331",
@@ -254,21 +255,6 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/4140313bbabeb0bd2a2f6fbd647ca11c7bb01a56?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/4140313bbabeb0bd2a2f6fbd647ca11c7bb01a56?source=rss",
-      "title": "欧州鉄鋼協会、26年に「1000万トンの能力再稼働」。欧州委の通商措置を「歓迎」(鉄鋼新聞)",
-      "summary": "欧州鉄鋼協会（ユーロフェル）は13日、2026年に1千万トン分の生産能力が再稼働したと発表した。EUでは7月から輸入鋼材に対する新たな関税割当制度（タリフクオータ＝TRQ）が適用され「効果を完全に評価",
-      "published": "2026-10-14T21:02:41+00:00",
-      "category": "global",
-      "source": "Yahoo!ニュース",
-      "region": "europe",
-      "wire": "鉄鋼新聞",
-      "body_chars": 836,
-      "body_file": "11-global.txt",
-      "summary_ko": "ユーロフェル（欧州鉄鋼協会）は2026年に1000万トン分の生産能力が再稼働したと13日に発表した。EUは7月から輸入鋼材に新たな関税割当制度（TRQ）を適用しており、同協会は初期の兆候は明るいとして政策を歓迎している。前日にはファン・プールヴォールデ会長ら4人の副会長がシェフチョヴィチ欧州委員と会談し、エネルギー価格や炭素国境調整措置（CBAM）の実効性などを今後も求めていく考えを示した。一方、EUの鉄鋼生産は25年に過去最低の1億2580万トンへ落ち込み、輸入は14％増えた。今年のEUの鉄鋼需要は前年比100万トン増の1億3500万トンと見込まれるものの、22年の水準には届かない。欧州北部の熱延コイル市況は先週、7月のTRQ発動後で初めて軟化した。市場関係者は、欧州はエネルギー価格が高く需要も弱いため市況上昇には限界があると指摘している。",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
       "guid": "108382720",
       "url": "https://www.cnbc.com/2026/10/14/mike-rogers-trump-tariffs-michigan-senate-election.html",
       "title": "How Trump’s tariffs and Iran war are becoming liabilities in Michigan’s Senate race",
@@ -278,8 +264,22 @@
       "source": "CNBC",
       "region": "mideast",
       "body_chars": 10886,
-      "body_file": "12-global.txt",
+      "body_file": "11-global.txt",
       "summary_ko": "트럼프 관세와 이란 전쟁이 미시간 상원 선거에서 공화당 후보 마이크 로저스의 부담이 되고 있다. 로저스는 9월까지 관세를 옹호했으나 10월 7일 공개된 광고에서는 캐나다가 적이 아니며 관세 전쟁을 끝내야 한다고 말했고, 트럼프의 이름은 빼놓았다. 이란 전쟁 종식을 요구한 광고도 같은 방식이었다. 미시간은 캐나다와 연간 약 800억 달러 규모로 교역하고, 캐나다는 주의 최대 수출시장으로 지난해 232억 달러어치를 사 주 전체 수출의 약 39%를 차지했다. 8월 미국이 캐나다산 약 200억 달러 물품에 50% 관세를 부과한 뒤 자동차업체들의 관세 비용도 늘었다. 공화당 후보의 선거 광고 중 트럼프를 언급한 비율은 4.3%로, 예비선거 때의 47.1%에서 크게 낮아졌다. 여론조사에서는 민주당 후보 아브델 엘-사예드가 로저스에 4%포인트 앞선다는 집계가 나왔다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108407250",
+      "url": "https://www.cnbc.com/2026/10/14/russia-ukraine-energy-ceasefire-power-outages.html",
+      "title": "Ukraine warns Starlink limits are disrupting military operations as Russia pounds its energy infrastructure",
+      "summary": "A ballistic missile has struck energy infrastructure supposedly covered by the \"energy ceasefire\" announced by Trump on Sunday, Zelenskyy said.",
+      "published": "2026-10-14T16:34:24+00:00",
+      "category": "global",
+      "source": "CNBC",
+      "region": "europe",
+      "body_chars": 3095,
+      "body_file": "12-global.txt",
+      "summary_ko": "우크라이나 정부는 스페이스X가 군용 등급 스타링크(스타쉴드)에 사전 통보 없이 이동 중인 단말기 속도 제한을 도입해 일부 작전에 차질이 생겼다고 주장했다. 세르히 베스크레스트노프 대통령 국방기술 고문은 해당 제한이 시속 약 160km(100mph)로 설정됐으며 정치 상황과 관련된 조치이고 트럼프 행정부의 요청 때문일 가능성이 있다고 텔레그램에 밝혔다. 스페이스X와 백악관은 논평 요청에 응하지 않았다. 한편 러시아는 밤사이 우크라이나 에너지 시설을 대규모로 공격해 키이우와 하르키우 지역에서 최소 60만 명이 정전 피해를 입었다. 젤렌스키 대통령은 전력망 26곳과 석유·가스 시설 4곳이 손상됐다고 밝히고, 트럼프 대통령이 제안한 '에너지 휴전'에 해당하는 공격이라고 비판했다. 러시아는 휴전 합의 여부를 확인하지 않은 채 협의가 진행 중이라고 밝혔다. 우크라이나는 이번 주 두 번째로 러시아 탄도미사일 발사에 대한 사전 경고를 받지 못했다고 덧붙였다.",
       "summary_model": "claude-haiku-5-5"
     },
     {

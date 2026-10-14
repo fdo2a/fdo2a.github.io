@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-15 06:54 KST",
+  "generated": "2026-10-15 07:10 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-14",
   "indices": {
@@ -197,10 +197,10 @@
     },
     "Gold": {
       "last": 4122.7998046875,
-      "chg": -63.60009765625,
-      "pct": -1.5192074130482291,
+      "chg": -63.400390625,
+      "pct": -1.5145092844817243,
       "date": "2026-10-14",
-      "prev": 4186.39990234375,
+      "prev": 4186.2001953125,
       "prev_date": "2026-10-13",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -695,7 +695,7 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -1.519,
+        "change": -1.515,
         "unit": "%",
         "multiple": -1.13,
         "band": "보통"
@@ -929,7 +929,7 @@
     ],
     "cohesion": {
       "n_assets": 10,
-      "top1_pct": 44.4,
+      "top1_pct": 44.3,
       "top3_pct": 73.9,
       "percentile": 59.1,
       "band": "중간",
@@ -938,7 +938,7 @@
     "drivers": {
       "first": {
         "group_ko": "주식",
-        "share_pct": 44.4
+        "share_pct": 44.3
       },
       "second": {
         "group_ko": "금리",
@@ -1129,9 +1129,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25298.61,
-            "pct": 0.15,
-            "date": "2026-10-14"
+            "close": 25259.9,
+            "pct": -0.07,
+            "date": "2026-10-13"
           },
           {
             "name": "FTSE100",
@@ -1143,15 +1143,15 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6190.37,
-            "pct": 0.38,
-            "date": "2026-10-14"
+            "close": 6167.01,
+            "pct": -0.55,
+            "date": "2026-10-13"
           }
         ],
         "alignment": {
-          "label": "엇갈림",
-          "avg_pct": 0.41,
-          "mixed": false
+          "label": "보합",
+          "avg_pct": 0.03,
+          "mixed": true
         }
       }
     },
