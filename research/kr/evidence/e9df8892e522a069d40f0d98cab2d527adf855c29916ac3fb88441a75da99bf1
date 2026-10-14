@@ -1,0 +1,478 @@
+{
+ "kr_market_data.json": {
+  "report_date": "2026-10-14",
+  "complete": true,
+  "missing": [
+   "econ",
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 6008.81,
+    "change_pct": -0.44
+   },
+   "KOSDAQ": {
+    "close": 823.88,
+    "change_pct": -1.57
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-10-14",
+   "KOSDAQ": "2026-10-14"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kr_session.json": {
+  "report_date": "2026-10-14",
+  "us_prev": {
+   "as_of": "2026-10-13",
+   "rows": {
+    "S&P 500": -0.02,
+    "Nasdaq": -0.15,
+    "Dow": -0.35
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.11,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.12,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -0.05,
+    "항셍": -0.13,
+    "상해종합": -0.89,
+    "대만가권": 0.59
+   },
+   "dates": {
+    "닛케이": "2026-10-14",
+    "항셍": "2026-10-14",
+    "상해종합": "2026-10-14",
+    "대만가권": "2026-10-14"
+   },
+   "avg_pct": -0.12,
+   "relative_pp": -0.32
+  },
+  "usdkrw_intraday": {
+   "high": 1341.28,
+   "high_t": "09:30",
+   "low": 1334.68,
+   "low_t": "15:30",
+   "close": 1335.32,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "kr_flows.json": {
+  "KOSPI": {
+   "rows": [
+    {
+     "date": "2026-10-14",
+     "individual": -3105,
+     "foreign": -11718,
+     "institution": 7933
+    },
+    {
+     "date": "2026-10-13",
+     "individual": 23169,
+     "foreign": -45789,
+     "institution": 16685
+    },
+    {
+     "date": "2026-10-12",
+     "individual": 14857,
+     "foreign": -20103,
+     "institution": -1345
+    },
+    {
+     "date": "2026-10-08",
+     "individual": 29972,
+     "foreign": -20704,
+     "institution": -16789
+    },
+    {
+     "date": "2026-10-07",
+     "individual": 26183,
+     "foreign": -26188,
+     "institution": -7101
+    },
+    {
+     "date": "2026-10-06",
+     "individual": 7441,
+     "foreign": -17575,
+     "institution": -39
+    },
+    {
+     "date": "2026-10-02",
+     "individual": -17897,
+     "foreign": -1080,
+     "institution": 4155
+    },
+    {
+     "date": "2026-10-01",
+     "individual": -14102,
+     "foreign": -5558,
+     "institution": 3239
+    },
+    {
+     "date": "2026-09-30",
+     "individual": 12109,
+     "foreign": -20646,
+     "institution": -7993
+    },
+    {
+     "date": "2026-09-29",
+     "individual": 12447,
+     "foreign": -29922,
+     "institution": 1041
+    }
+   ],
+   "latest_date": "2026-10-14",
+   "flows_date": "2026-10-14",
+   "flows_provisional": true,
+   "label": "당일 잠정치",
+   "stale": false
+  },
+  "KOSDAQ": {
+   "rows": [
+    {
+     "date": "2026-10-14",
+     "individual": 3904,
+     "foreign": -2182,
+     "institution": -1816
+    },
+    {
+     "date": "2026-10-13",
+     "individual": -1908,
+     "foreign": 1339,
+     "institution": 459
+    },
+    {
+     "date": "2026-10-12",
+     "individual": 2316,
+     "foreign": -130,
+     "institution": -2196
+    },
+    {
+     "date": "2026-10-08",
+     "individual": 483,
+     "foreign": 625,
+     "institution": -1075
+    },
+    {
+     "date": "2026-10-07",
+     "individual": 4871,
+     "foreign": -2495,
+     "institution": -2102
+    },
+    {
+     "date": "2026-10-06",
+     "individual": -2111,
+     "foreign": 1073,
+     "institution": 1047
+    },
+    {
+     "date": "2026-10-02",
+     "individual": 841,
+     "foreign": -1767,
+     "institution": 936
+    },
+    {
+     "date": "2026-10-01",
+     "individual": -7770,
+     "foreign": 2280,
+     "institution": 5684
+    },
+    {
+     "date": "2026-09-30",
+     "individual": 188,
+     "foreign": -713,
+     "institution": 482
+    },
+    {
+     "date": "2026-09-29",
+     "individual": 1469,
+     "foreign": -1305,
+     "institution": 66
+    }
+   ],
+   "latest_date": "2026-10-14",
+   "flows_date": "2026-10-14",
+   "flows_provisional": true,
+   "label": "당일 잠정치",
+   "stale": false
+  }
+ },
+ "kr_movers.json": {
+  "report_date": "2026-10-14",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "반도체와반도체장비",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "SK하이닉스",
+      "change_pct": -1.66,
+      "close": 1419000,
+      "value": 5086287
+     },
+     {
+      "name": "한미반도체",
+      "change_pct": -5.02,
+      "close": 217500,
+      "value": 141103
+     },
+     {
+      "name": "이수페타시스",
+      "change_pct": -5.12,
+      "close": 111200,
+      "value": 73150
+     },
+     {
+      "name": "DB하이텍",
+      "change_pct": -7.04,
+      "close": 117600,
+      "value": 72044
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "전기제품",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "LG에너지솔루션",
+      "change_pct": 2.93,
+      "close": 422000,
+      "value": 281004
+     },
+     {
+      "name": "삼성SDI",
+      "change_pct": 5.54,
+      "close": 591000,
+      "value": 508109
+     },
+     {
+      "name": "엘앤에프",
+      "change_pct": 6.5,
+      "close": 116400,
+      "value": 81452
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "은행",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위"
+    ],
+    "members": [
+     {
+      "name": "신한지주",
+      "change_pct": -4.71,
+      "close": 95000,
+      "value": 161269
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "해운사",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "팬오션",
+      "change_pct": 10.53,
+      "close": 7240,
+      "value": 121300
+     },
+     {
+      "name": "HMM",
+      "change_pct": 5.9,
+      "close": 23350,
+      "value": 88388
+     }
+    ]
+   },
+   {
+    "id": "g5",
+    "industry": "제약",
+    "direction": "down",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "한미약품",
+      "change_pct": -10.71,
+      "close": 404500,
+      "value": 103804
+     }
+    ]
+   }
+  ]
+ },
+ "kr_intraday.json": {
+  "KOSPI": [
+   {
+    "t": "09:00",
+    "close": 6073.45
+   },
+   {
+    "t": "09:30",
+    "close": 6177.38
+   },
+   {
+    "t": "10:00",
+    "close": 6128.21
+   },
+   {
+    "t": "10:30",
+    "close": 6092.99
+   },
+   {
+    "t": "11:00",
+    "close": 6113.58
+   },
+   {
+    "t": "11:30",
+    "close": 6131.39
+   },
+   {
+    "t": "12:00",
+    "close": 6136.85
+   },
+   {
+    "t": "12:30",
+    "close": 6130.47
+   },
+   {
+    "t": "13:00",
+    "close": 6117.45
+   },
+   {
+    "t": "13:30",
+    "close": 6106.48
+   },
+   {
+    "t": "14:00",
+    "close": 6091.42
+   },
+   {
+    "t": "14:30",
+    "close": 6070.15
+   },
+   {
+    "t": "15:00",
+    "close": 5979.51
+   },
+   {
+    "t": "15:30",
+    "close": 6008.81
+   }
+  ],
+  "KOSPI_ohlc": {
+   "open": 6062.08,
+   "high": 6190.65,
+   "low": 5944.65,
+   "prevClose": 6035.35
+  },
+  "KOSDAQ": [
+   {
+    "t": "09:00",
+    "close": 836.31
+   },
+   {
+    "t": "09:30",
+    "close": 837.2
+   },
+   {
+    "t": "10:00",
+    "close": 837.02
+   },
+   {
+    "t": "10:30",
+    "close": 827.29
+   },
+   {
+    "t": "11:00",
+    "close": 829.44
+   },
+   {
+    "t": "11:30",
+    "close": 837.11
+   },
+   {
+    "t": "12:00",
+    "close": 838.39
+   },
+   {
+    "t": "12:30",
+    "close": 836.34
+   },
+   {
+    "t": "13:00",
+    "close": 836.58
+   },
+   {
+    "t": "13:30",
+    "close": 834.79
+   },
+   {
+    "t": "14:00",
+    "close": 836.69
+   },
+   {
+    "t": "14:30",
+    "close": 830.78
+   },
+   {
+    "t": "15:00",
+    "close": 819.19
+   },
+   {
+    "t": "15:30",
+    "close": 823.85
+   },
+   {
+    "t": "15:32",
+    "close": 823.88
+   }
+  ],
+  "KOSDAQ_ohlc": {
+   "open": 835.9,
+   "high": 846.95,
+   "low": 813.49,
+   "prevClose": 837.03
+  }
+ }
+}
