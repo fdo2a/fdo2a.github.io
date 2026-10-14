@@ -1,11 +1,11 @@
 {
-  "report_date": "2026-10-13",
+  "report_date": "2026-10-14",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "기타",
+      "industry": "반도체와반도체장비",
       "direction": "down",
       "reasons": [
         "지수 기여 하위",
@@ -13,10 +13,111 @@
       ],
       "members": [
         {
-          "name": "KIWOOM 200",
-          "change_pct": -6.13,
-          "close": 95225,
-          "value": 94595
+          "name": "SK하이닉스",
+          "change_pct": -1.66,
+          "close": 1419000,
+          "value": 5086287
+        },
+        {
+          "name": "한미반도체",
+          "change_pct": -5.02,
+          "close": 217500,
+          "value": 141103
+        },
+        {
+          "name": "이수페타시스",
+          "change_pct": -5.12,
+          "close": 111200,
+          "value": 73150
+        },
+        {
+          "name": "DB하이텍",
+          "change_pct": -7.04,
+          "close": 117600,
+          "value": 72044
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "전기제품",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "LG에너지솔루션",
+          "change_pct": 2.93,
+          "close": 422000,
+          "value": 281004
+        },
+        {
+          "name": "삼성SDI",
+          "change_pct": 5.54,
+          "close": 591000,
+          "value": 508109
+        },
+        {
+          "name": "엘앤에프",
+          "change_pct": 6.5,
+          "close": 116400,
+          "value": 81452
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "은행",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "신한지주",
+          "change_pct": -4.71,
+          "close": 95000,
+          "value": 161269
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "해운사",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "팬오션",
+          "change_pct": 10.53,
+          "close": 7240,
+          "value": 121300
+        },
+        {
+          "name": "HMM",
+          "change_pct": 5.9,
+          "close": 23350,
+          "value": 88388
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "제약",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한미약품",
+          "change_pct": -10.71,
+          "close": 404500,
+          "value": 103804
         }
       ]
     }
