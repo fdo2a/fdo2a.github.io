@@ -1,0 +1,112 @@
+{
+  "report_date": "2026-10-14",
+  "universe": "S&P 500 중 달러 거래대금 상위 60",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "Semiconductors",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": -3.16,
+          "close": 221.3,
+          "value": 25853646162.03
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -5.73,
+          "close": 570.82,
+          "value": 12544509443.68
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": -8.73,
+          "close": 245.28,
+          "value": 6261904671.88
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Interactive Media & Services",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Alphabet Inc. (Class A) (GOOGL)",
+          "change_pct": -1.74,
+          "close": 347.64,
+          "value": 9477415268.27
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Pharmaceuticals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Lilly (Eli) (LLY)",
+          "change_pct": 3.62,
+          "close": 1208.74,
+          "value": 3780670349.18
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Consumer Staples Merchandise Retail",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Walmart (WMT)",
+          "change_pct": 3.46,
+          "close": 116.16,
+          "value": 2986904299.29
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Sandisk (SNDK)",
+          "change_pct": -5.33,
+          "close": 1403.34,
+          "value": 10118192017.42
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -11.27,
+          "close": 507.93,
+          "value": 5897869744.35
+        },
+        {
+          "name": "Hewlett Packard Enterprise (HPE)",
+          "change_pct": -8.28,
+          "close": 63.11,
+          "value": 1571065025.33
+        }
+      ]
+    }
+  ]
+}
