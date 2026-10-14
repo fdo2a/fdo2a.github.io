@@ -81,3 +81,13 @@ def test_append_jsonl_leaves_the_original_intact_when_writing_fails(tmp_path, mo
         append_jsonl(p, {"report_date": "2026-08-20", "v": 2})
 
     assert open(p, encoding="utf-8").read() == before
+
+
+def test_market_record_carries_the_price_basis_of_cut_groups():
+    from us.history import market_record
+    cut = {'last': 94.7, 'basis': 'close_1600_et'}
+    row = market_record({'report_date': '2026-10-13',
+                         'commodities': {'WTI': cut, 'Gold': dict(cut, last=4186.2)},
+                         'fx': {'DXY': {'last': 102.2}}})
+    assert row['basis'] == {'commodities': 'close_1600_et'}
+    assert row['commodities'] == {'WTI': 94.7, 'Gold': 4186.2}

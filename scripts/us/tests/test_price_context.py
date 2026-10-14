@@ -315,8 +315,12 @@ def test_sector_contributions_do_not_publish_an_estimated_weight():
 def test_sector_contributions_publish_the_part_they_cannot_explain():
     got = sector_contributions(_sector_closes(), dates_for(_sector_closes()),
                                [('Alpha', 'A'), ('Beta', 'B'), ('Gamma', 'C')], 'IDX', w=120)
+    # 잔여는 반올림 전 값으로 낸다 — 실린 값끼리의 합과는 반올림 폭(행마다 ±0.005)만큼만
+    # 다를 수 있다. 표시 반올림이 잔여로 쌓이면 안 된다(2026-10-14, codex D1).
+    slack = 0.005 * (len(got['rows']) + 2)
     assert abs(got['residual'] - (got['index_change'] - sum(r['contribution']
-                                                            for r in got['rows']))) < 0.005
+                                                            for r in got['rows']))) <= slack
+    assert all(round(r['contribution'], 2) == r['contribution'] for r in got['rows'])
 
 
 def test_sector_contributions_leave_almost_no_residual_when_sectors_span_the_index():
@@ -610,8 +614,12 @@ def test_dropped_sectors_are_named_so_the_gap_can_be_explained():
 def test_dropping_a_sector_leaves_its_effect_in_the_unexplained_part():
     got = sector_contributions(_four_sector_closes(), dates_for(_four_sector_closes()),
                                FOUR, 'IDX', w=150)
+    # 잔여는 반올림 전 값으로 낸다 — 실린 값끼리의 합과는 반올림 폭(행마다 ±0.005)만큼만
+    # 다를 수 있다. 표시 반올림이 잔여로 쌓이면 안 된다(2026-10-14, codex D1).
+    slack = 0.005 * (len(got['rows']) + 2)
     assert abs(got['residual'] - (got['index_change'] - sum(r['contribution']
-                                                            for r in got['rows']))) < 0.005
+                                                            for r in got['rows']))) <= slack
+    assert all(round(r['contribution'], 2) == r['contribution'] for r in got['rows'])
 
 
 def test_sectors_the_fit_can_identify_all_keep_their_rows():

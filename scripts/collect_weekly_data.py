@@ -31,6 +31,8 @@ US_TICKERS = {
     'Health Care': 'XLV', 'Industrials': 'XLI', 'Financials': 'XLF', 'Materials': 'XLB',
     'Real Estate': 'XLRE',
 }
+# 환율·원자재는 일봉이 아니라 16:00 ET 1시간봉 컷(`W.fetch_cut_closes`, 2026-10-14).
+CUT_NAMES = ('DXY', 'USD/KRW', 'USD/JPY', 'EUR/USD', 'WTI', 'Brent', 'Natural Gas', 'Gold')
 JP_TICKERS = {
     'Nikkei 225': '^N225', 'TOPIX ETF': '1306.T', 'TOPIX Banks ETF': '1615.T',
     'J-REIT ETF': '1343.T', 'TOPIX Autos ETF': '1622.T',
@@ -75,10 +77,14 @@ def collect(key, end, today=None):
     ctx = W.ssl_context()
     status, prices = {}, {}
     for name, tk in {**US_TICKERS, **JP_TICKERS}.items():
-        rows = _try(status, f'price:{tk}', lambda tk=tk: W.fetch_closes(tk, '2y'))
+        cut = name in CUT_NAMES
+        fetch = (lambda tk=tk: W.fetch_cut_closes(tk)) if cut else (lambda tk=tk: W.fetch_closes(tk, '2y'))
+        rows = _try(status, f'price:{tk}', fetch)
         if rows:
             prices[name] = {'ticker': tk, 'weekly': weekly_closes(rows)[-WEEKLY_KEEP:],
                             'daily': rows[-DAILY_KEEP:]}
+            if cut:
+                prices[name]['basis'] = 'close_1600_et_1h'
     fred = {}
     for sid in FRED_SERIES:
         rows = _try(status, f'fred:{sid}', lambda sid=sid: W.fetch_fred(sid))

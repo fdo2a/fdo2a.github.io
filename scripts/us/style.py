@@ -516,6 +516,32 @@ FIGURATIVE = (
 )
 _FIGURATIVE_RE = [re.compile(p) for p in FIGURATIVE]
 # 고유어 날수 — 「아흐레째」가 아니라 「9일째」(2026-10-13 사용자 지시). 「하루」는 그대로 둔다.
+# 보도 매체(2026-10-14 사용자 지시 「문장에 일일이 출처를 달지 말고 섹션 끝에 한번에 적어」).
+# 매체는 섹션 끝 `<p class="caption" data-sources>출처: …</p>` 한 줄로 모은다. 발언·전망·발표가
+# 곧 내용인 행위자(연준 인사·기업·은행·통계 기관)는 여기 없다 — 그들은 문장의 주어다.
+# 「닛케이」는 지수 이름과 겹쳐 뺐다(「닛케이는 0.5% 내렸다」).
+MEDIA_OUTLETS = (
+    'Reuters', '로이터', 'Bloomberg', '블룸버그', 'CNBC', 'WSJ', 'Wall Street Journal',
+    '월스트리트저널', 'Financial Times', '파이낸셜타임스', 'Newsquawk', 'MarketWatch',
+    "Barron's", 'Investing.com', 'Yahoo Finance', 'oilprice.com', 'OilPrice', 'Al Jazeera',
+    '알자지라', 'BBC', 'The Guardian', '가디언', 'Motley Fool', 'Seeking Alpha', 'Axios',
+    'Politico', 'The Information', 'Semafor', 'Fortune', 'Inman', '24/7 Wall St.', 'Kyodo', '교도통신', 'NHK', '니혼게이자이',
+    '연합뉴스', '연합인포맥스', '한국경제', '매일경제', '서울경제', '머니투데이', '이데일리',
+    '조선비즈', '뉴스1', '뉴시스', '헤럴드경제', '아시아경제', '파이낸셜뉴스', '전자신문',
+    '디지털타임스', '조선일보', '중앙일보', '동아일보', '한겨레',
+)
+# 매체 이름이 보통명사와 겹치는 것(「한국경제는 수출 회복에도 내수가 부진하다」)은 괄호 꼬리표만
+# 본다 — 주어 자리는 보도 문맥 없이 가릴 수 없다(codex 구현 검토 P3).
+AMBIGUOUS_OUTLETS = ('한국경제',)
+_OUTLET = '|'.join(re.escape(o) for o in sorted(MEDIA_OUTLETS, key=len, reverse=True))
+_OUTLET_SUBJ = '|'.join(re.escape(o) for o in sorted(MEDIA_OUTLETS, key=len, reverse=True)
+                        if o not in AMBIGUOUS_OUTLETS)
+# 「…했다(Reuters).」 꼬리표와 「로이터는 …라고 전했다」 주어. 「Reuters 보도」처럼 조사 없는
+# 명사 수식도 문장 안 출처다.
+_INLINE_MEDIA = re.compile(
+    rf'\(\s*(?:{_OUTLET})\b[^)]*\)|(?<![\w가-힣])(?:{_OUTLET_SUBJ})(?=\s*(?:는|은|이|가|에 따르면|의 보도|보도|에서)(?![가-힣]))')
+MAX_INLINE_MEDIA = 0
+
 _NATIVE_DAYS = re.compile(r'(?<![가-힣])(이틀|사흘|나흘|닷새|엿새|이레|여드레|아흐레|열흘)')
 
 
@@ -643,6 +669,13 @@ def _desk_findings(html, texts):
         out.append(_finding('figurative', len(figures),
                             '뜻이 흐린 비유가 있다 — ' + ', '.join(f'「{f}」' for f in figures[:4])
                             + '. 가리키는 것을 직접 쓴다(STYLE_EXEMPLARS §10-2)', 'warn'))
+
+    media = [m.group(0) for m in _INLINE_MEDIA.finditer(' '.join(own))]
+    if len(media) > MAX_INLINE_MEDIA:
+        out.append(_finding('inline_source', len(media),
+                            '문장 안에 매체 출처가 있다 — ' + ', '.join(f'「{m}」' for m in media[:4])
+                            + '. 매체는 섹션 끝 <p class="caption" data-sources>출처: …</p> 한 줄로 모으고, '
+                              '보도라는 사실만 문장에 남긴다(「~라는 보도가 나왔다」)', 'warn'))
 
     days = [m.group(1) for m in _NATIVE_DAYS.finditer(' '.join(own))]
     if days:

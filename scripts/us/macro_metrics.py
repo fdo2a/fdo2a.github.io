@@ -429,23 +429,70 @@ def _ko_count(n):
     return _KO_NUM[n] if 0 <= n < len(_KO_NUM) else str(n)
 
 
-def breadth_phrase(rows, axis):
-    """Breadth without making the reader parse a ratio: 「일곱 중 다섯이 개선」."""
+def _subj(n):
+    return '가' if n == 1 else '이'      # 하나가 · 둘이
+
+
+def _topic(n):
+    return '는' if n == 1 else '은'      # 하나는 · 둘은
+
+
+def breadth_counts(rows, axis):
+    """축 판정을 지표별 판정(`describe`, 표의 추세 열과 같은 임계)으로 센다.
+
+    부호만 세면 표에서 「교착」인 지표까지 둔화로 셌다 — 2026-10-13 발행본은 스트립에
+    「8개 중 8개」, 표에는 미시간 기대인플레 「교착」이 나란히 실렸다(외부 평가 지적).
+    support = 축 판정과 같은 방향, flat = 보합·교착, against = 반대 방향. 축 판정 자체가
+    보합이면 support 는 0 이고 up/down 으로 나눠 센다.
+    """
     scored = [r for r in rows if r['axis'] == axis and r['signed_z'] is not None]
     if not scored:
         return None
+    words = DIRECTION_WORDS['inflation' if axis == 'Inflation' else 'growth']
     mean = sum(r['signed_z'] for r in scored) / len(scored)
     direction, _ = describe(mean, axis)
+    labels = [describe(r['signed_z'], axis)[0] for r in scored]
+    up = labels.count(words[1])
+    down = labels.count(words[-1])
+    flat = labels.count(words[0])
+    if direction == words[0]:
+        support, against = 0, 0
+    else:
+        support = up if direction == words[1] else down
+        against = down if direction == words[1] else up
+    return {'direction': direction, 'total': len(scored), 'support': support,
+            'flat': flat, 'against': against, 'up': up, 'down': down}
+
+
+def breadth_phrase(rows, axis):
+    """Breadth without making the reader parse a ratio: 「일곱 중 다섯이 개선」.
+
+    셈은 `breadth_counts` 하나에서 나온다 — 스트립 숫자와 문구와 표가 같은 판정을 본다.
+    """
+    c = breadth_counts(rows, axis)
+    if c is None:
+        return None
     words = DIRECTION_WORDS['inflation' if axis == 'Inflation' else 'growth']
-    if direction == words[0]:                       # axis is going nowhere
-        up = sum(1 for r in scored if r['signed_z'] > 0)
-        return f'{_ko_count(len(scored))} 중 {_ko_count(up)}이 {words[1]}, 나머지는 반대'
+    n = _ko_count(c['total'])
+    if c['direction'] == words[0]:                     # axis is going nowhere
+        parts = []
+        if c['up']:
+            parts.append(f"{_ko_count(c['up'])}{_subj(c['up'])} {words[1]}")
+        if c['down']:
+            parts.append(f"{_ko_count(c['down'])}{_subj(c['down'])} {words[-1]}")
+        if c['flat']:
+            parts.append(f"{_ko_count(c['flat'])}{_topic(c['flat'])} {words[0]}")
+        return f"{n} 중 " + ', '.join(parts)
     # Count support for the verdict the badge shows, never against it — otherwise the
     # strip reads "물가 둔화 · 여덟 중 다섯이 재가속" and contradicts itself at a glance.
-    want = 1 if direction == words[1] else -1
-    count = sum(1 for r in scored if (r['signed_z'] > 0) == (want > 0))
-    particle = '만' if count * 2 < len(scored) else '이'
-    return f'{_ko_count(len(scored))} 중 {_ko_count(count)}{particle} {direction}'
+    k = c['support']
+    particle = '만' if k * 2 < c['total'] else _subj(k)
+    out = f"{n} 중 {_ko_count(k)}{particle} {c['direction']}"
+    if c['flat']:
+        out += f", {_ko_count(c['flat'])}{_topic(c['flat'])} {words[0]}"
+    if c['against']:
+        out += f", {_ko_count(c['against'])}{_topic(c['against'])} 반대"
+    return out
 
 
 def _axis_summary(rows):
@@ -463,6 +510,8 @@ def _axis_summary(rows):
             'direction': direction,
             'strength': strength,
             'breadth_ko': breadth_phrase(rows, axis),
+            # 스트립 「N개 중 K개」의 K — breadth_ko 와 같은 셈(`breadth_counts`).
+            'support': (breadth_counts(rows, axis) or {}).get('support'),
             'improving': sum(1 for r in scored if r['signed_z'] > 0),
             'total': len(scored),
             'leaders': [{'label_ko': r['label_ko'], 'name': r['name'],

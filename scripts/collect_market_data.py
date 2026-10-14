@@ -143,6 +143,82 @@ def fill_daily_gaps(daily, anchor=None):
     return daily
 
 
+def _bars30(sym, period='10d'):
+    import yfinance as yf
+    h = yf.Ticker(sym).history(period=period, interval='30m')
+    if h is None or not len(h):
+        return None
+    return [(i.isoformat(), r['Close']) for i, r in h.iterrows()]
+
+
+def futures_contracts():
+    """원자재 선물의 그 시점 월물 티커(CLX26.NYM 등). 못 받으면 연속 티커 그대로.
+
+    `info` 는 Ticker 객체에 캐시되므로 티커마다 새 객체를 쓴다.
+    """
+    import yfinance as yf
+    out = {}
+    for name, t in CMDTY:
+        try:
+            out[name] = (yf.Ticker(t).info or {}).get('underlyingSymbol') or t
+        except Exception:
+            out[name] = t
+    return out
+
+
+def collect_cut_rows(anchor, contracts=None):
+    """환율·원자재 행 = 그날 주식 마감 시각(평소 16:00 ET) 30분봉 종가 vs 직전 주식 세션의 같은 값.
+
+    세션 달력과 마감 시각은 S&P 500 30분봉에서 잡는다(`us/close_cut.session_ends`) — 단축장도
+    따라가고, 어느 종목의 직전 세션 봉이 빠졌으면 그 행은 None 이 된다. 일봉으로 폴백하지
+    않는다. 실패한 행은 `missing` 이 되고 발행이 멈춘다 — 시간외 거래가를 결제가 대비로
+    싣던 기준 혼합이 고치려는 바로 그 결함이다.
+    """
+    import yfinance as yf
+    from us.close_cut import bar_ends, cut_row, session_ends
+    contracts = contracts or {}
+
+    def spx_daily():
+        h = yf.Ticker(ANCHOR_TICKER).history(period='15d')['Close'].dropna()
+        return {str(i.date()): float(v) for i, v in h.items()} or None
+
+    # 세션 달력 = S&P 500 일봉(30분봉과 따로 받은 근거). 30분봉은 그 세션이 마감까지 다 있는지만
+    # 검증한다 — 잘리거나 빠진 날은 세션에서 빠지고 그 날을 쓰는 행은 None 이 된다.
+    daily = retry(spx_daily, attempts=3) or {}
+    spx = retry(lambda: _bars30(ANCHOR_TICKER), attempts=3)
+    sessions = session_ends(spx or [], daily)
+    calendar = sorted(daily)
+    out = {}
+    for group, pairs in (('fx', FX), ('commodities', CMDTY)):
+        out[group] = {}
+        for name, t in pairs:
+            sym = contracts.get(name) or t
+
+            def one(sym=sym):
+                b = _bars30(sym)
+                return cut_row(bar_ends(b), sessions, anchor, calendar=calendar,
+                               contract=sym if sym != t else None) if b else None
+
+            row = retry(one, attempts=2)
+            if row is None and sym != t:
+                # 월물 티커를 못 받으면 연속 티커로 — 롤 주간이 아니면 같은 월물이다.
+                row = retry(lambda: one(t), attempts=2)
+            out[group][name] = row
+            time.sleep(1)
+    return out
+
+
+def apply_cut_to_histories(closes, dates, cut):
+    """이력의 오늘·전일 값을 표 값으로(`close_cut.override_history`). 이력에 있는 티커만."""
+    from us.close_cut import override_history
+    for group, pairs in (('fx', FX), ('commodities', CMDTY)):
+        for name, t in pairs:
+            row = (cut.get(group) or {}).get(name)
+            if row and closes.get(t) and dates.get(t):
+                closes[t], dates[t] = override_history(closes[t], dates[t], row)
+    return closes, dates
+
+
 TAPE_TICKERS = ('^GSPC', '^IXIC', '^RUT')
 
 
@@ -532,13 +608,24 @@ def merge_yields(fred, yahoo, naver=None):
     return out
 
 
-def collect_intraday(target):
+def collect_intraday(target, symbols=None, cut_minutes=16 * 60):
+    """주요 종목의 30분봉 장중 궤적. 뉴욕 날짜·그날 주식 마감 시각까지만 — 표와 같은 구간이다.
+
+    `symbols` 로 표와 같은 월물 티커를 넘긴다(WTI → CLX26.NYM). 연속 티커를 따로 받으면
+    롤 주간에 장중 「끝」과 표의 종가가 다른 월물을 말한다(codex 구현 검토 P2). 통화쌍은
+    런던 시각으로 오고 선물은 마감 뒤에도 거래해, 전에는 「끝났다」가 표와 다른 가격이었다.
+    """
     import yfinance as yf
+    symbols = symbols or {}
     out = {}
     for n, t in INTRADAY_KEY:
-        def one(t=t):
-            h = yf.Ticker(t).history(period='7d', interval='30m')
-            d = h[[i.date() == target for i in h.index]]
+        sym = symbols.get(n) or t
+
+        def one(sym=sym):
+            h = yf.Ticker(sym).history(period='7d', interval='30m')
+            h.index = h.index.tz_convert('America/New_York')
+            d = h[[i.date() == target and i.hour * 60 + i.minute + 30 <= cut_minutes
+                   for i in h.index]]
             if len(d) < 3:
                 return None
             o, c = float(d['Open'].iloc[0]), float(d['Close'].iloc[-1])
@@ -628,10 +715,13 @@ def render_curve(yields, path):
     plt.close(fig)
 
 
+from us.close_cut import CUT_GROUPS, row_problem as cut_row_problem  # noqa: E402
+
 # 미국 상장 계열은 그날 세션 종가여야 한다. 2026-09-25 판이 섹터·스타일·메모리를 09-24
 # 날짜로 싣고도 complete:true 였다 — 수집 시각에 야후에 금요일 종가가 아직 없었고, 이 검사는
 # 행이 있는지만 봤다. 그 판이 멱등 가드에 걸리면 낡은 값이 그날의 정본으로 굳는다(codex 검토
-# 2026-09-27 #14). 환율·원자재(24시간 시장)와 한국·일본 상장 종목은 날짜가 정상적으로 다르다.
+# 2026-09-27 #14). 한국·일본 상장 종목은 날짜가 정상적으로 다르다. 환율·원자재는 2026-10-14
+# 부터 그날 16:00 ET 컷 행이어야 한다(`us/close_cut.py`) — 기준과 날짜를 따로 검사한다.
 DATE_CHECKED_GROUPS = ('indices', 'sectors', 'memory', 'ai_infra')
 
 
@@ -651,6 +741,10 @@ def completeness(data, intraday, naver_stale=False, report_date=None):
             row = data[group].get(name)
             if row is None:
                 missing.append(f'{group}/{name}')
+            elif group in CUT_GROUPS:
+                problem = cut_row_problem(row, report_date)
+                if problem:
+                    missing.append(f'{group}/{name}/{problem}')
             elif (report_date and group in DATE_CHECKED_GROUPS and _us_listed(ticker)
                   and row.get('date') and row['date'] != report_date):
                 missing.append(f'{group}/{name}/stale:{row["date"]}')
@@ -779,6 +873,16 @@ def main():
     print('collecting daily closes (batched)...')
     daily, anchor = collect_daily()
     daily = fill_daily_gaps(daily, anchor)
+    # 환율·원자재는 일봉 대신 16:00 ET 컷으로 덮는다 — 일봉 행이 남으면 completeness 가
+    # basis 로 막는다.
+    if anchor:
+        print('collecting 16:00 ET cuts for fx and commodities...')
+        contracts = futures_contracts()
+        cut = collect_cut_rows(anchor, contracts)
+        for group in ('fx', 'commodities'):
+            daily[group] = cut[group]
+    else:
+        cut, contracts = {}, {}
     report_date = None
     spx = daily['indices'].get('S&P 500')
     if spx:
@@ -860,7 +964,17 @@ def main():
     sector_perf, perf_as_of = collect_sector_performance()
     print(f'  sector perf: {sum(1 for v in sector_perf.values() if v)}/{len(SECTORS)} (as of {perf_as_of})')
     print('collecting 30m intraday bars...')
-    intraday = collect_intraday(datetime.date.fromisoformat(report_date))
+    # 표와 같은 월물·같은 마감 시각(단축장이면 13:00 ET)으로 자른다.
+    cut_m = 16 * 60
+    _w = (cut.get('commodities') or {}).get('WTI') or {}
+    if _w.get('cut_et'):
+        hh, mm = _w['cut_et'].split(':')
+        cut_m = int(hh) * 60 + int(mm)
+    intraday = collect_intraday(datetime.date.fromisoformat(report_date),
+                                # 표 행을 실제로 만든 티커(월물 폴백 포함)를 넘긴다(codex 재검토 P2).
+                                symbols={n: ((cut.get('commodities') or {}).get(n) or {}).get('contract')
+                                         for n in ('WTI', 'Gold')},
+                                cut_minutes=cut_m)
 
     data = {
         'generated': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M KST'),
@@ -925,6 +1039,7 @@ def main():
     print('collecting close-price histories (batched)...')
     try:
         closes, hist_dates, hist_as_of, hist_ohlc = collect_histories()
+        closes, hist_dates = apply_cut_to_histories(closes, hist_dates, cut)
         print(f'  histories: {sum(1 for v in closes.values() if v)}/{len(closes)} '
               f'(as of {hist_as_of})')
     except Exception as e:
@@ -1125,7 +1240,7 @@ def main():
         from us.period import build as period_build, month_key, series_from, week_key
         # 시세를 다시 받지 않는다 — 발행본이 인쇄한 스냅샷 원장만 굴린다.
         dated, yh = series_from(read_jsonl(os.path.join(args.outdir, 'history',
-                                                        'market.jsonl')))
+                                                        'market.jsonl')), as_of=report_date)
         # posts.json 은 레포 루트에 있다 — outdir 는 'data' 하위 상대/절대/중첩 어느 값도
         # 될 수 있으므로 outdir 기준 역산 대신 이 스크립트 파일 위치(scripts/ 의 부모)로
         # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.

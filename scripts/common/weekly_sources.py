@@ -214,6 +214,29 @@ def fetch_closes(ticker, period='2y'):
     return out
 
 
+def cut_rows_from_bars(bars, bar_minutes=60):
+    """[(봉 시작 ISO, 종가)] → [[뉴욕 날짜, 16:00 ET 이하 마지막 봉 종가]] 오래된→최신."""
+    from us.close_cut import cut_closes
+    cuts = cut_closes(bars, bar_minutes=bar_minutes)
+    return [[d, round(float(cuts[d]), 4)] for d in sorted(cuts)]
+
+
+def fetch_cut_closes(ticker, period='730d'):
+    """환율·원자재의 일별 값 = 뉴욕 16:00 ET 1시간봉 컷(2026-10-14).
+
+    야후 FX **일봉**은 ECB 기준환율과 날짜가 뒤바뀐 듯 어긋났고(USD/KRW 10/12·10/13),
+    선물 일봉은 확정 전까지 시간외 거래가다 — 일간 브리프는 30분봉 16:00 ET 컷으로
+    바꿨다(`us/close_cut.py`). 주간 진단도 같은 기준이어야 기간 수익률과 변동성이 같은
+    가격을 본다(codex 구현 검토 P2). 30분봉은 60일뿐이라 2년 이력은 1시간봉이다 — 선물
+    1시간봉은 정시·30분 시작이 섞여 있어 어떤 날은 15:30 에 끝나는 봉이 잡힌다.
+    """
+    import yfinance as yf
+    hist = yf.Ticker(ticker).history(period=period, interval='1h')
+    if hist is None or not len(hist):
+        return []
+    return cut_rows_from_bars([(i.isoformat(), v) for i, v in hist['Close'].items()])
+
+
 def drop_copied_rows(rows):
     """[[date, close, volume]] -> 전일과 종가·거래량이 **둘 다** 같은 행을 버린다.
 

@@ -486,13 +486,18 @@ def sector_contributions(closes, dates, sectors, index_ticker, w=WEIGHT_WINDOW):
             continue
         rows.append({'name': name,
                      'change': round(col[-1], 2),
-                     'contribution': round(weight * col[-1], 3)})
+                     '_raw': weight * col[-1]})
     # Nothing identifiable means there is no split, not an empty one. An empty rows
     # list would clear the gate exactly as a real attribution does.
     if not rows:
         return None
-    rows.sort(key=lambda r: abs(r['contribution']), reverse=True)
-    explained = sum(r['contribution'] for r in rows)
+    # 계산·정렬·잔여는 반올림 전 값으로, 실리는 값만 소수 둘째 자리로(2026-10-14). 추정
+    # 비중의 오차를 생각하면 셋째 자리는 근거 없는 정밀도이고, 반올림한 값으로 잔여를 내면
+    # 표시 반올림이 「설명되지 않는 몫」으로 둔갑한다(codex 설계 검토 D1).
+    rows.sort(key=lambda r: abs(r['_raw']), reverse=True)
+    explained = sum(r['_raw'] for r in rows)
+    for r in rows:
+        r['contribution'] = round(r.pop('_raw'), 2) + 0.0   # -0.0 → 0.0
     return {
         'index_change': round(index_change, 2),
         'estimated': True,
@@ -500,7 +505,7 @@ def sector_contributions(closes, dates, sectors, index_ticker, w=WEIGHT_WINDOW):
         'window_sessions': w,
         'rows': rows,
         'unidentified': unidentified,
-        'residual': round(index_change - explained, 3),
+        'residual': round(index_change - explained, 2) + 0.0,
     }
 
 

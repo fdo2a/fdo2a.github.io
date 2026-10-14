@@ -320,3 +320,33 @@ def test_native_day_counts_warn_but_haru_and_compounds_do_not():
     assert 'native_days' in keys(hit, 'warn')
     calm = GOOD + '<p>골디락스 판단을 9일째 유지한다. 하루 낙폭이 컸다. 하루이틀 사이 결론을 내지 않는다.</p>'
     assert 'native_days' not in keys(desk(calm))
+
+
+# 2026-10-14 사용자 지시: 출처는 문장에 달지 말고 섹션 끝에 한 번.
+def test_parenthetical_outlet_tag_is_flagged():
+    html = desk('<p>보도가 유가를 받쳤다(oilprice.com). 지수는 0.4% 올랐다.</p>')
+    assert 'inline_source' in keys(html, 'warn')
+
+
+def test_outlet_as_subject_is_flagged():
+    html = desk('<p>로이터는 공급 차질 우려가 커졌다고 전했다. 지수는 올랐다.</p>')
+    assert 'inline_source' in keys(html, 'warn')
+    html = desk('<p>Newsquawk는 원인으로 한국장의 급락을 들었다.</p>')
+    assert 'inline_source' in keys(html, 'warn')
+
+
+def test_section_end_source_caption_and_actors_are_not_flagged():
+    html = desk('<p>BMO는 주택시장이 한동안 부진할 것으로 봤다. 월러 이사는 장기금리 상승이 '
+                '긴축을 대신한다고 말했다. 닛케이는 0.5% 내렸다.</p>'
+                '<p class="caption" data-sources>출처: Reuters, oilprice.com</p>')
+    assert 'inline_source' not in keys(html)
+
+
+def test_inline_source_is_a_warning_not_a_block():
+    html = desk('<p>보도가 유가를 받쳤다(Reuters).</p>')
+    assert 'inline_source' not in keys(html, 'fail')
+
+
+def test_outlet_name_that_is_also_a_common_noun_is_only_flagged_in_brackets():
+    assert 'inline_source' not in keys(desk('<p>한국경제는 수출 회복에도 내수가 부진하다.</p>'))
+    assert 'inline_source' in keys(desk('<p>내수가 부진하다는 분석이 나왔다(한국경제).</p>'), 'warn')

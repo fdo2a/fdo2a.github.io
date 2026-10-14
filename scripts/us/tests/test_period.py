@@ -228,3 +228,39 @@ def test_build_daily_with_no_matching_bar():
     assert row["spx_pct"] is None
     # 하지만 row 는 여전히 있다 (삭제되지 않음)
     assert len(r["daily"]) == 1
+
+
+def test_series_switches_old_rows_to_the_latest_price_basis():
+    # 2026-10-14: 환율·원자재가 16:00 ET 컷으로 바뀐 뒤의 기간은 옛 행의 cut_1600 값을
+    # 기준값으로 쓴다. 그러지 않으면 W42 첫 수익률이 시간외 거래가와 16:00 가격을 잇는다.
+    from us.period import series_from
+    rows = [
+        {'report_date': '2026-10-09', 'indices': {'S&P 500': 1.0},
+         'commodities': {'WTI': 91.66}, 'cut_1600': {'commodities': {'WTI': 91.58}}},
+        {'report_date': '2026-10-12', 'indices': {'S&P 500': 1.0},
+         'commodities': {'WTI': 93.36}, 'basis': {'commodities': 'close_1600_et'}},
+    ]
+    closes, _ = series_from(rows)
+    assert closes['commodities']['WTI'] == [('2026-10-09', 91.58), ('2026-10-12', 93.36)]
+
+
+def test_series_keeps_printed_values_while_the_latest_row_is_old_basis():
+    # 지난 기간(W41)을 다시 굴려도 인쇄값 그대로여야 한다.
+    from us.period import series_from
+    rows = [{'report_date': '2026-10-09', 'commodities': {'WTI': 91.66},
+             'cut_1600': {'commodities': {'WTI': 91.58}}}]
+    closes, _ = series_from(rows)
+    assert closes['commodities']['WTI'] == [('2026-10-09', 91.66)]
+
+
+def test_replaying_a_past_period_uses_the_basis_of_its_own_end():
+    # 원장에 10/12 컷 행이 있어도 W41(10/09 끝)을 다시 굴리면 인쇄값이어야 한다.
+    from us.period import series_from
+    rows = [
+        {'report_date': '2026-10-09', 'commodities': {'WTI': 91.66},
+         'cut_1600': {'commodities': {'WTI': 91.58}}},
+        {'report_date': '2026-10-12', 'commodities': {'WTI': 93.36},
+         'basis': {'commodities': 'close_1600_et'}},
+    ]
+    closes, _ = series_from(rows, as_of='2026-10-09')
+    assert closes['commodities']['WTI'][0] == ('2026-10-09', 91.66)

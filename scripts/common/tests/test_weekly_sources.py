@@ -87,3 +87,11 @@ def test_copied_rows_are_dropped_only_when_close_and_volume_both_repeat():
     kept, dropped = W.drop_copied_rows(rows)
     assert dropped == ['2026-09-26']
     assert [d for d, _ in kept] == ['2026-09-22', '2026-09-23', '2026-09-24', '2026-09-25']
+
+
+def test_cut_rows_take_the_last_hour_ending_by_four_new_york_time():
+    # 2026-10-14: 주간 스냅샷의 환율·원자재도 16:00 ET 컷. 18:00 ET 다음 세션 봉은 빠진다.
+    bars = [('2026-10-13T14:00:00-04:00', 94.1), ('2026-10-13T15:00:00-04:00', 94.7),
+            ('2026-10-13T18:00:00-04:00', 94.6),
+            ('2026-10-12T20:00:00+01:00', 1334.6)]     # 런던 20:00 = 뉴욕 15:00
+    assert W.cut_rows_from_bars(bars) == [['2026-10-12', 1334.6], ['2026-10-13', 94.7]]

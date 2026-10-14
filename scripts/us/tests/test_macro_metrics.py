@@ -345,7 +345,7 @@ def test_axis_summary_states_breadth_in_words():
     econ = [ind(f'L{i}', 'Labor', f'L{i}') for i in range(7)]
     series = {f'L{i}': dated(jump(1 if i < 5 else -1)) for i in range(7)}
     out = mm.compute(series, econ)
-    assert out['axis_summary']['Labor']['breadth_ko'] == '일곱 중 다섯이 개선'
+    assert out['axis_summary']['Labor']['breadth_ko'] == '일곱 중 다섯이 개선, 둘은 반대'
 
 
 def rows(axis, *scores):
@@ -357,16 +357,41 @@ def test_breadth_is_counted_against_the_axis_verdict():
     beside it. Narrow support is said with 「만」."""
     # one heavy cooler outweighs three mild hotter prints
     got = mm.breadth_phrase(rows('Inflation', -4.0, 0.4, 0.4, 0.4), 'Inflation')
-    assert got == '넷 중 하나만 둔화'
+    assert got == '넷 중 하나만 둔화, 셋은 반대'
 
 
 def test_broad_support_uses_the_plain_particle():
-    assert mm.breadth_phrase(rows('Labor', 1.0, 1.0, 1.0, -1.0), 'Labor') == '넷 중 셋이 개선'
+    assert mm.breadth_phrase(rows('Labor', 1.0, 1.0, 1.0, -1.0), 'Labor') == '넷 중 셋이 개선, 하나는 반대'
 
 
 def test_a_flat_axis_says_so_rather_than_picking_a_side():
-    got = mm.breadth_phrase(rows('Labor', 1.0, -1.0), 'Labor')
-    assert '나머지는 반대' in got
+    assert mm.breadth_phrase(rows('Labor', 1.0, -1.0), 'Labor') == '둘 중 하나가 개선, 하나가 악화'
+    assert mm.breadth_phrase(rows('Labor', 1.0, -1.0, 0.0), 'Labor') == \
+        '셋 중 하나가 개선, 하나가 악화, 하나는 보합'
+
+
+def test_breadth_counts_with_the_same_cut_as_the_table():
+    # 2026-10-13: 부호만 세서 「여덟 중 여덟이 둔화」였는데 표의 미시간 기대인플레는
+    # 임계 미달이라 「교착」이었다. 이제 같은 판정(describe)으로 센다.
+    r = rows('Inflation', *([-1.0] * 7 + [-0.01]))
+    assert mm.breadth_phrase(r, 'Inflation') == '여덟 중 일곱이 둔화, 하나는 교착'
+    c = mm.breadth_counts(r, 'Inflation')
+    assert (c['total'], c['support'], c['flat'], c['against']) == (8, 7, 1, 0)
+
+
+def test_breadth_boundary_is_the_table_cut():
+    # |z| = 0.25 는 방향이 있다(describe 와 같은 경계).
+    assert mm.breadth_counts(rows('Labor', 0.25, 0.25), 'Labor')['support'] == 2
+    assert mm.breadth_counts(rows('Labor', 0.2499, 1.0), 'Labor')['flat'] == 1
+
+
+def test_breadth_of_an_unscored_axis_is_none():
+    assert mm.breadth_counts(rows('Labor', None), 'Labor') is None
+    assert mm.breadth_phrase([], 'Labor') is None
+
+
+def test_singular_support_takes_the_right_particle():
+    assert mm.breadth_phrase(rows('Labor', 1.0, 0.0), 'Labor') == '둘 중 하나가 개선, 하나는 보합'
 
 
 def test_strength_is_banded_not_a_raw_score():

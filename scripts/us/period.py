@@ -59,7 +59,7 @@ def level_change(series, start, end):
     return base, window[-1][1], window[-1][1] - base
 
 
-def series_from(rows):
+def series_from(rows, as_of=None):
     """일별 스냅샷 원장(data/history/market.jsonl) → build() 가 먹는 (closes, yields_hist).
 
     원장 한 행이 그날 발행본이 인쇄한 값이므로, 기간 수익률은 정의상 발행본 종가끼리의
@@ -79,12 +79,28 @@ def series_from(rows):
                 closes[g].setdefault(name, [])
         for tenor in (row.get('yields') or {}):
             yields_hist.setdefault(tenor, [])
-    for row in sorted(rows or [], key=lambda r: r.get('report_date') or ''):
+    ordered = sorted(rows or [], key=lambda r: r.get('report_date') or '')
+    # 가격 기준이 바뀐 그룹(환율·원자재, 2026-10-14 16:00 ET 컷)은 **최신 행의 기준**으로
+    # 계열을 통일한다. 옛 행에 같은 기준으로 다시 잰 값(`cut_1600`)이 있으면 그것을 쓴다 —
+    # 그러지 않으면 기간 첫 수익률이 수집 시각 거래가와 16:00 ET 가격을 잇는다(codex 설계
+    # 검토 A13). 옛 행에 그 값이 없으면 인쇄값 그대로다. 지난 기간 파일은 이미 확정본이라
+    # 다시 계산되지 않는다.
+    # 기준은 **집계할 기간의 끝날까지의** 최신 행에서 고른다. 원장 전체의 최신 행으로 고르면
+    # 지난 기간(W41)을 다시 굴릴 때 확정본과 다른 값이 나온다(codex 구현 검토: WTI +0.4383%
+    # → +0.0437%). 지금 기간만 쓰는 수집기는 as_of 없이 불러도 같다.
+    dated = [r for r in ordered if r.get('report_date')
+             and (as_of is None or r['report_date'] <= as_of)]
+    latest_basis = (dated[-1].get('basis') or {}) if dated else {}
+    for row in ordered:
         d = row.get('report_date')
         if not d:
             continue
         for g in GROUPS:
-            for name, v in (row.get(g) or {}).items():
+            values = dict(row.get(g) or {})
+            want = latest_basis.get(g)
+            if want and (row.get('basis') or {}).get(g) != want:
+                values.update(((row.get('cut_1600') or {}).get(g)) or {})
+            for name, v in values.items():
                 if v is None:
                     continue
                 closes[g].setdefault(name, []).append((d, float(v)))

@@ -14,7 +14,7 @@ tools: Bash, Read, Write, Glob, Grep, WebSearch, WebFetch, TodoWrite
 
 - `data/market_data.json`이 있고 `report_date`가 [DATE]와 맞고 `"complete": true`면, 세 파일을 워크스페이스 루트로 복사하고 STEP 1/1b/1c(시세·차트·장중)를 건너뛴다. 그다음 **STEP 2 웹 리서치만** 수행해 `research_notes.md`를 만든다.
 - `sector_performance.html`(섹터 1일/1주/1개월/6개월/1년 수익률 막대 섹션)은 STEP 1 인라인 스크립트로 재생성할 수 없다 — 없으면 레포의 `scripts/collect_market_data.py`를 직접 실행해 얻는다.
-- 파일이 없거나 `"complete": false`거나 `report_date`가 안 맞으면, `missing` 목록을 확인하고 아래 STEP 1~3을 (전체 또는 결측분만) 실행한다. STEP 1 스크립트는 Actions 스크립트(`scripts/collect_market_data.py`)와 동일 스키마다 — 그 스크립트를 직접 실행해도 된다.
+- 파일이 없거나 `"complete": false`거나 `report_date`가 안 맞으면, `missing` 목록을 확인하고 아래 STEP 1~3을 (전체 또는 결측분만) 실행한다. STEP 1 스크립트는 Actions 스크립트(`scripts/collect_market_data.py`)와 동일 스키마다 — 그 스크립트를 직접 실행해도 된다. **단 FX·원자재는 아래 인라인 스크립트로 채우지 않는다** — 2026-10-14 부터 두 그룹은 뉴욕 16:00 ET 30분봉 컷(`scripts/us/close_cut.py`, `basis: close_1600_et`)이고, 인라인 스크립트의 일봉 행은 기준이 달라 완결성 검사가 `…/basis` 로 막는다. 두 그룹이 비면 `python3 scripts/collect_market_data.py` 를 실행하고, 그것도 안 되면 발행하지 않는다.
 
 오케스트레이터가 "시세는 이미 있으니 리서치만" 이라고 지시하면 STEP 2만 수행한다.
 

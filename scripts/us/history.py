@@ -53,6 +53,16 @@ def market_record(data):
         row[group] = {name: float(r['last'])
                       for name, r in ((data or {}).get(group) or {}).items()
                       if isinstance(r, dict) and r.get('last') is not None}
+    # 환율·원자재의 가격 기준(2026-10-14 부터 16:00 ET 컷). 기간 집계가 기준이 바뀐 날을
+    # 넘겨 수익률을 잴 때 이 표시로 같은 기준의 값을 고른다(`period.series_from`).
+    basis = {}
+    for group in ('fx', 'commodities'):
+        rows = [r for r in ((data or {}).get(group) or {}).values() if isinstance(r, dict)]
+        kinds = {r.get('basis') for r in rows}
+        if rows and len(kinds) == 1 and None not in kinds:
+            basis[group] = kinds.pop()
+    if basis:
+        row['basis'] = basis
     row['yields'] = {tenor: float(r['level'])
                      for tenor, r in ((data or {}).get('yields') or {}).items()
                      if isinstance(r, dict) and r.get('level') is not None}
