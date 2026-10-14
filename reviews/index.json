@@ -1714,10 +1714,15 @@
       "at": "2026-10-10T13:09:50+09:00",
       "findings": 3
     },
+    "posts/2026-10-12.html": {
+      "sha": "eae5c687a6a79d5062dac1a6ad2945db64aedeb9",
+      "at": "2026-10-14T19:04:45+09:00",
+      "findings": 3
+    },
     "posts/2026-10-13.html": {
-      "sha": "9276044e295f670db55eef3766fc5f9a87cf571c",
-      "at": "2026-10-14T09:03:27+09:00",
-      "findings": 5
+      "sha": "5d16e5b49f04683c950bfcd9d03f7f93faf95f5e",
+      "at": "2026-10-14T19:04:45+09:00",
+      "findings": 11
     },
     "privacy.html": {
       "sha": "c0e4cefbbbfbd41d7d2178c31fcb41d04ad71d5a",

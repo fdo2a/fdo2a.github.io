@@ -13,7 +13,7 @@
       "score": 0.535,
       "direction": "개선",
       "strength": "완만",
-      "breadth_ko": "일곱 중 넷이 개선",
+      "breadth_ko": "일곱 중 넷이 개선, 셋은 반대",
       "improving": 4,
       "total": 7,
       "leaders": [
@@ -41,14 +41,15 @@
           "actual": 198000.0,
           "previous": 200500.0
         }
-      ]
+      ],
+      "support": 4
     },
     "Activity": {
       "label_ko": "생산·활동",
       "score": -0.467,
       "direction": "악화",
       "strength": "미미",
-      "breadth_ko": "다섯 중 넷이 악화",
+      "breadth_ko": "다섯 중 둘만 악화, 둘은 보합, 하나는 반대",
       "improving": 1,
       "total": 5,
       "leaders": [
@@ -76,14 +77,15 @@
           "actual": 684.0,
           "previous": 643.0
         }
-      ]
+      ],
+      "support": 2
     },
     "Consumption": {
       "label_ko": "소비",
       "score": -0.419,
       "direction": "악화",
       "strength": "미미",
-      "breadth_ko": "둘 중 하나이 악화",
+      "breadth_ko": "둘 중 하나가 악화, 하나는 반대",
       "improving": 1,
       "total": 2,
       "leaders": [
@@ -103,14 +105,15 @@
           "actual": 51.7,
           "previous": 55.2
         }
-      ]
+      ],
+      "support": 1
     },
     "Inflation": {
       "label_ko": "물가",
       "score": -0.928,
       "direction": "둔화",
       "strength": "완만",
-      "breadth_ko": "여덟 중 여덟이 둔화",
+      "breadth_ko": "여덟 중 일곱이 둔화, 하나는 교착",
       "improving": 0,
       "total": 8,
       "leaders": [
@@ -138,7 +141,8 @@
           "actual": 0.29,
           "previous": 0.22
         }
-      ]
+      ],
+      "support": 7
     }
   },
   "axis_scores": {

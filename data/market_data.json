@@ -110,54 +110,102 @@
   },
   "fx": {
     "DXY": {
-      "last": 102.21199798583984,
-      "chg": -0.36800384521484375,
-      "pct": -0.35874813671863404,
-      "date": "2026-10-13"
+      "last": 102.21499633789062,
+      "chg": -0.38300323486328125,
+      "pct": -0.37330477831751807,
+      "date": "2026-10-13",
+      "prev": 102.5979995727539,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": null,
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     },
     "USD/KRW": {
-      "last": 1340.1300048828125,
-      "chg": -0.7099609375,
-      "pct": -0.05294896897450885,
-      "date": "2026-10-13"
+      "last": 1340.050048828125,
+      "chg": 5.4700927734375,
+      "pct": 0.40987373957033224,
+      "date": "2026-10-13",
+      "prev": 1334.5799560546875,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": null,
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     },
     "USD/JPY": {
-      "last": 158.3489990234375,
-      "chg": 0.14599609375,
-      "pct": 0.09228402182408502,
-      "date": "2026-10-13"
+      "last": 158.3560028076172,
+      "chg": -0.3079986572265625,
+      "pct": -0.1941200615029337,
+      "date": "2026-10-13",
+      "prev": 158.66400146484375,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": null,
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     },
     "EUR/USD": {
-      "last": 1.1199462413787842,
-      "chg": -0.0005270242691040039,
-      "pct": -0.047035862903810344,
-      "date": "2026-10-13"
+      "last": 1.1200717687606812,
+      "chg": 0.004373908042907715,
+      "pct": 0.392033380802026,
+      "date": "2026-10-13",
+      "prev": 1.1156978607177734,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": null,
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     }
   },
   "commodities": {
     "WTI": {
-      "last": 94.70999908447266,
-      "chg": 0.970001220703125,
-      "pct": 1.0347783686882606,
-      "date": "2026-10-13"
+      "last": 94.69999694824219,
+      "chg": 1.339996337890625,
+      "pct": 1.4353002668490156,
+      "date": "2026-10-13",
+      "prev": 93.36000061035156,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": "CLX26.NYM",
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     },
     "Brent": {
-      "last": 106.2699966430664,
-      "chg": -0.3800048828125,
-      "pct": -0.3563102460156009,
-      "date": "2026-10-13"
+      "last": 106.13999938964844,
+      "chg": -0.0500030517578125,
+      "pct": -0.04708828572200785,
+      "date": "2026-10-13",
+      "prev": 106.19000244140625,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": "BZZ26.NYM",
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     },
     "Natural Gas": {
-      "last": 3.316999912261963,
-      "chg": 0.14999985694885254,
-      "pct": 4.7363389431334335,
-      "date": "2026-10-13"
+      "last": 3.318000078201294,
+      "chg": 0.15000009536743164,
+      "pct": 4.734851520840366,
+      "date": "2026-10-13",
+      "prev": 3.1679999828338623,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": "NGX26.NYM",
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 4185.2998046875,
-      "chg": -5.30029296875,
-      "pct": -0.12648052415487054,
-      "date": "2026-10-13"
+      "last": 4186.2001953125,
+      "chg": -7.2998046875,
+      "pct": -0.17407427417431842,
+      "date": "2026-10-13",
+      "prev": 4193.5,
+      "prev_date": "2026-10-12",
+      "basis": "close_1600_et",
+      "contract": "GCZ26.CMX",
+      "cut_et": "16:00",
+      "prev_cut_et": "16:00"
     }
   },
   "memory": {
@@ -614,37 +662,37 @@
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.356,
+        "change": -0.373,
         "unit": "%",
-        "multiple": -1.17,
+        "multiple": -1.23,
         "band": "보통"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": 0.095,
+        "change": -0.194,
         "unit": "%",
-        "multiple": 0.16,
+        "multiple": -0.33,
         "band": "미미"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": -0.053,
+        "change": 0.41,
         "unit": "%",
-        "multiple": -0.08,
-        "band": "미미"
+        "multiple": 0.63,
+        "band": "보통"
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 0.981,
+        "change": 1.435,
         "unit": "%",
-        "multiple": 0.33,
+        "multiple": 0.48,
         "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -0.15,
+        "change": -0.174,
         "unit": "%",
-        "multiple": -0.11,
+        "multiple": -0.13,
         "band": "미미"
       },
       "10Y": {
@@ -744,12 +792,12 @@
         }
       },
       "USD/JPY": {
-        "value": 158.353,
-        "percentile": 77.0,
+        "value": 158.356,
+        "percentile": 76.8,
         "band": "높음",
         "sessions": 504,
         "plain": {
-          "percentile": 77.0,
+          "percentile": 76.8,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -760,39 +808,39 @@
         }
       },
       "USD/KRW": {
-        "value": 1340.13,
-        "percentile": 0.8,
+        "value": 1340.05,
+        "percentile": 1.0,
         "band": "매우 낮음",
         "sessions": 504,
         "plain": {
-          "percentile": 0.8,
+          "percentile": 1.0,
           "sessions": 504,
           "window": "2년",
-          "days": 4,
+          "days": 5,
           "share_pct": null,
           "side": "low",
-          "short": "이보다 낮았던 날이 4일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 낮았던 날이 4일뿐"
+          "short": "이보다 낮았던 날이 5일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 낮았던 날이 5일뿐"
         }
       },
       "WTI": {
-        "value": 94.66,
-        "percentile": 90.3,
+        "value": 94.7,
+        "percentile": 90.5,
         "band": "매우 높음",
         "sessions": 504,
         "plain": {
-          "percentile": 90.3,
+          "percentile": 90.5,
           "sessions": 504,
           "window": "2년",
-          "days": 49,
+          "days": 48,
           "share_pct": null,
           "side": "high",
-          "short": "이보다 높았던 날이 49일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 49일뿐"
+          "short": "이보다 높았던 날이 48일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 48일뿐"
         }
       },
       "Gold": {
-        "value": 4184.3,
+        "value": 4186.2,
         "percentile": 63.1,
         "band": "중간",
         "sessions": 504,
@@ -877,7 +925,7 @@
     "cohesion": {
       "n_assets": 10,
       "top1_pct": 44.4,
-      "top3_pct": 73.2,
+      "top3_pct": 73.1,
       "percentile": 59.5,
       "band": "중간",
       "history_windows": 252
@@ -889,7 +937,7 @@
       },
       "second": {
         "group_ko": "금리",
-        "share_pct": 15.8
+        "share_pct": 15.7
       },
       "companion": null,
       "prior": {
@@ -980,54 +1028,54 @@
         {
           "name": "Health Care",
           "change": -1.35,
-          "contribution": -0.135
+          "contribution": -0.13
         },
         {
           "name": "Communication Services",
           "change": 0.74,
-          "contribution": 0.095
+          "contribution": 0.09
         },
         {
           "name": "Financials",
           "change": -0.42,
-          "contribution": -0.046
+          "contribution": -0.05
         },
         {
           "name": "Energy",
           "change": 1.8,
-          "contribution": 0.043
+          "contribution": 0.04
         },
         {
           "name": "Utilities",
           "change": 0.58,
-          "contribution": 0.024
+          "contribution": 0.02
         },
         {
           "name": "Industrials",
           "change": -0.28,
-          "contribution": -0.015
+          "contribution": -0.02
         },
         {
           "name": "Technology",
           "change": -0.04,
-          "contribution": -0.014
+          "contribution": -0.01
         },
         {
           "name": "Consumer Discretionary",
           "change": 0.08,
-          "contribution": 0.011
+          "contribution": 0.01
         },
         {
           "name": "Consumer Staples",
           "change": -0.26,
-          "contribution": -0.008
+          "contribution": -0.01
         }
       ],
       "unidentified": [
         "Materials",
         "Real Estate"
       ],
-      "residual": 0.022
+      "residual": 0.02
     },
     "forward_5y5y": {
       "nominal": 5.46,
