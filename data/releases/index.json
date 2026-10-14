@@ -1,11 +1,13 @@
 {
-  "report_date": "2026-10-13",
+  "report_date": "2026-10-14",
   "releases": [
     {
-      "key": "existing-home-sales",
-      "url": "https://www.nar.realtor/newsroom/existing-home-sales",
-      "ok": false,
-      "note": "firefox: HTTP 404, 20976B"
+      "key": "cpi",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 20647,
+      "path": "releases/cpi.txt"
     }
   ]
 }

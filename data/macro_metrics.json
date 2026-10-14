@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-14 07:13 KST",
-  "report_date": "2026-10-13",
+  "generated": "2026-10-15 06:37 KST",
+  "report_date": "2026-10-14",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": -0.117,
-  "inflation_score": -0.928,
+  "inflation_score": -0.305,
   "growth_diffusion": 0.429,
-  "inflation_diffusion": 0.0,
+  "inflation_diffusion": 0.25,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
@@ -14,6 +14,7 @@
       "direction": "개선",
       "strength": "완만",
       "breadth_ko": "일곱 중 넷이 개선, 셋은 반대",
+      "support": 4,
       "improving": 4,
       "total": 7,
       "leaders": [
@@ -41,8 +42,7 @@
           "actual": 198000.0,
           "previous": 200500.0
         }
-      ],
-      "support": 4
+      ]
     },
     "Activity": {
       "label_ko": "생산·활동",
@@ -50,6 +50,7 @@
       "direction": "악화",
       "strength": "미미",
       "breadth_ko": "다섯 중 둘만 악화, 둘은 보합, 하나는 반대",
+      "support": 2,
       "improving": 1,
       "total": 5,
       "leaders": [
@@ -77,8 +78,7 @@
           "actual": 684.0,
           "previous": 643.0
         }
-      ],
-      "support": 2
+      ]
     },
     "Consumption": {
       "label_ko": "소비",
@@ -86,6 +86,7 @@
       "direction": "악화",
       "strength": "미미",
       "breadth_ko": "둘 중 하나가 악화, 하나는 반대",
+      "support": 1,
       "improving": 1,
       "total": 2,
       "leaders": [
@@ -105,26 +106,18 @@
           "actual": 51.7,
           "previous": 55.2
         }
-      ],
-      "support": 1
+      ]
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": -0.928,
+      "score": -0.305,
       "direction": "둔화",
-      "strength": "완만",
-      "breadth_ko": "여덟 중 일곱이 둔화, 하나는 교착",
-      "improving": 0,
+      "strength": "미미",
+      "breadth_ko": "여덟 중 다섯이 둔화, 하나는 교착, 둘은 반대",
+      "support": 5,
+      "improving": 2,
       "total": 8,
       "leaders": [
-        {
-          "label_ko": "소비자물가 전월비",
-          "name": "CPI MoM",
-          "direction": "둔화",
-          "strength": "뚜렷",
-          "actual": 0.4,
-          "previous": 0.07
-        },
         {
           "label_ko": "생산자물가",
           "name": "PPI Final Demand MoM",
@@ -136,20 +129,27 @@
         {
           "label_ko": "근원 소비자물가 전월비",
           "name": "Core CPI MoM",
-          "direction": "둔화",
+          "direction": "재가속",
           "strength": "완만",
-          "actual": 0.29,
-          "previous": 0.22
+          "actual": 0.33,
+          "previous": 0.29
+        },
+        {
+          "label_ko": "소비자물가 전월비",
+          "name": "CPI MoM",
+          "direction": "재가속",
+          "strength": "완만",
+          "actual": 0.65,
+          "previous": 0.4
         }
-      ],
-      "support": 7
+      ]
     }
   },
   "axis_scores": {
     "Labor": 0.535,
     "Activity": -0.467,
     "Consumption": -0.419,
-    "Inflation": -0.928
+    "Inflation": -0.305
   },
   "indicators": [
     {
@@ -403,7 +403,7 @@
         "recent_avg": 3993333.333
       },
       "trend_cell_ko": "악화(뚜렷) · 3개월 평균 4,120K → 3,993K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Real GDP Growth QoQ (ann.)",
@@ -482,43 +482,43 @@
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.449,
-      "signed_z": -0.449,
-      "actual": 3.35,
-      "previous": 3.3,
-      "ref_period": "2026-08-01",
+      "momentum_z": -0.428,
+      "signed_z": -0.428,
+      "actual": 3.72,
+      "previous": 3.35,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 3.744,
-        "recent_avg": 3.373
+        "prior_avg": 3.803,
+        "recent_avg": 3.458
       },
-      "trend_cell_ko": "둔화(미미) · 3개월 평균 3.74% → 3.37%",
-      "is_new": false
+      "trend_cell_ko": "둔화(미미) · 3개월 평균 3.80% → 3.46%",
+      "is_new": true
     },
     {
       "name": "CPI MoM",
       "label_ko": "소비자물가 전월비",
       "axis": "Inflation",
-      "direction": "둔화",
-      "strength": "뚜렷",
+      "direction": "재가속",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -2.922,
-      "signed_z": -2.922,
-      "actual": 0.4,
-      "previous": 0.07,
-      "ref_period": "2026-08-01",
+      "momentum_z": 0.648,
+      "signed_z": 0.648,
+      "actual": 0.65,
+      "previous": 0.4,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 0.659,
-        "recent_avg": 0.016
+        "prior_avg": 0.23,
+        "recent_avg": 0.373
       },
-      "trend_cell_ko": "둔화(뚜렷) · 3개월 평균 +0.66% → +0.02%",
-      "is_new": false
+      "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.23% → +0.37%",
+      "is_new": true
     },
     {
       "name": "Core CPI YoY",
@@ -528,43 +528,43 @@
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.444,
-      "signed_z": -0.444,
-      "actual": 2.45,
-      "previous": 2.47,
-      "ref_period": "2026-08-01",
-      "vs_prev": "하락",
+      "momentum_z": -0.451,
+      "signed_z": -0.451,
+      "actual": 2.57,
+      "previous": 2.45,
+      "ref_period": "2026-09-01",
+      "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 2.723,
+        "prior_avg": 2.711,
         "recent_avg": 2.493
       },
-      "trend_cell_ko": "둔화(미미) · 3개월 평균 2.72% → 2.49%",
-      "is_new": false
+      "trend_cell_ko": "둔화(미미) · 3개월 평균 2.71% → 2.49%",
+      "is_new": true
     },
     {
       "name": "Core CPI MoM",
       "label_ko": "근원 소비자물가 전월비",
       "axis": "Inflation",
-      "direction": "둔화",
+      "direction": "재가속",
       "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.717,
-      "signed_z": -0.717,
-      "actual": 0.29,
-      "previous": 0.22,
-      "ref_period": "2026-08-01",
+      "momentum_z": 0.681,
+      "signed_z": 0.681,
+      "actual": 0.33,
+      "previous": 0.29,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 0.26,
-        "recent_avg": 0.163
+        "prior_avg": 0.189,
+        "recent_avg": 0.28
       },
-      "trend_cell_ko": "둔화(완만) · 3개월 평균 +0.26% → +0.16%",
-      "is_new": false
+      "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.19% → +0.28%",
+      "is_new": true
     },
     {
       "name": "PPI Final Demand MoM",
@@ -660,28 +660,104 @@
     }
   ],
   "new_releases": [
-    "Existing Home Sales"
+    "CPI YoY",
+    "CPI MoM",
+    "Core CPI YoY",
+    "Core CPI MoM"
   ],
   "headline_releases": [
     {
-      "key": "existing-home-sales",
-      "label": "기존주택 판매",
-      "tier": 2,
-      "agency": "NAR",
-      "url": "https://www.nar.realtor/newsroom/existing-home-sales",
-      "primary": "Existing Home Sales",
-      "max_abs_z": 1.757,
+      "key": "cpi",
+      "label": "소비자물가(CPI)",
+      "tier": 1,
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "primary": "Core CPI MoM",
+      "max_abs_z": 0.681,
       "indicators": [
         {
-          "name": "Existing Home Sales",
-          "axis": "Activity",
-          "actual": 3990000.0,
-          "previous": 3930000.0,
+          "name": "CPI YoY",
+          "axis": "Inflation",
+          "actual": 3.72,
+          "previous": 3.35,
           "ref_period": "2026-09-01",
-          "momentum_z": -1.757
+          "momentum_z": -0.428
+        },
+        {
+          "name": "CPI MoM",
+          "axis": "Inflation",
+          "actual": 0.65,
+          "previous": 0.4,
+          "ref_period": "2026-09-01",
+          "momentum_z": 0.648
+        },
+        {
+          "name": "Core CPI YoY",
+          "axis": "Inflation",
+          "actual": 2.57,
+          "previous": 2.45,
+          "ref_period": "2026-09-01",
+          "momentum_z": -0.451
+        },
+        {
+          "name": "Core CPI MoM",
+          "axis": "Inflation",
+          "actual": 0.33,
+          "previous": 0.29,
+          "ref_period": "2026-09-01",
+          "momentum_z": 0.681
         }
       ],
-      "components": []
+      "components": [
+        {
+          "label": "에너지",
+          "fred_id": "CPIENGSL",
+          "transform": "mom_pct",
+          "actual": 5.196,
+          "previous": 2.097,
+          "ref_period": "2026-09-01"
+        },
+        {
+          "label": "식품",
+          "fred_id": "CPIUFDSL",
+          "transform": "mom_pct",
+          "actual": 0.048,
+          "previous": 0.122,
+          "ref_period": "2026-09-01"
+        },
+        {
+          "label": "주거비(shelter)",
+          "fred_id": "CUSR0000SAH1",
+          "transform": "mom_pct",
+          "actual": 0.391,
+          "previous": 0.264,
+          "ref_period": "2026-09-01"
+        },
+        {
+          "label": "중고차",
+          "fred_id": "CUSR0000SETA02",
+          "transform": "mom_pct",
+          "actual": 0.669,
+          "previous": 0.365,
+          "ref_period": "2026-09-01"
+        },
+        {
+          "label": "의료",
+          "fred_id": "CPIMEDSL",
+          "transform": "mom_pct",
+          "actual": 0.123,
+          "previous": -0.245,
+          "ref_period": "2026-09-01"
+        },
+        {
+          "label": "서비스 ex-에너지",
+          "fred_id": "CUSR0000SASLE",
+          "transform": "mom_pct",
+          "actual": 0.369,
+          "previous": 0.327,
+          "ref_period": "2026-09-01"
+        }
+      ]
     }
   ],
   "last_seen": {
@@ -742,20 +818,20 @@
       51.7
     ],
     "CPI YoY": [
-      "2026-08-01",
-      3.35
+      "2026-09-01",
+      3.72
     ],
     "CPI MoM": [
-      "2026-08-01",
-      0.4
+      "2026-09-01",
+      0.65
     ],
     "Core CPI YoY": [
-      "2026-08-01",
-      2.45
+      "2026-09-01",
+      2.57
     ],
     "Core CPI MoM": [
-      "2026-08-01",
-      0.29
+      "2026-09-01",
+      0.33
     ],
     "PPI Final Demand MoM": [
       "2026-08-01",

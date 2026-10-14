@@ -1,22 +1,8 @@
 {
-  "report_date": "2026-10-13",
-  "generated": "2026-10-14 07:16 KST",
+  "report_date": "2026-10-14",
+  "generated": "2026-10-15 06:43 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261014-17-Week",
-      "kind": "auction",
-      "name_ko": "17-Week 국채 입찰 750억 달러",
-      "date": "2026-10-14",
-      "time_et": "11:30",
-      "time_kst": "2026-10-15 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "release-ppi-20261015",
       "kind": "release",
@@ -104,6 +90,16 @@
   ],
   "recent_auctions": [
     {
+      "date": "2026-10-14",
+      "term": "17-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": null,
+      "bid_to_cover": 2.79,
+      "indirect_pct": 49.8,
+      "dealer_pct": 34.7
+    },
+    {
       "date": "2026-10-13",
       "term": "6-Week",
       "type": "Bill",
@@ -182,26 +178,6 @@
       "bid_to_cover": 3.1,
       "indirect_pct": 53.5,
       "dealer_pct": 27.1
-    },
-    {
-      "date": "2026-10-06",
-      "term": "3-Year",
-      "type": "Note",
-      "offering_amt": 58000000000.0,
-      "high_yield": 4.932,
-      "bid_to_cover": 2.62,
-      "indirect_pct": 55.3,
-      "dealer_pct": 10.3
-    },
-    {
-      "date": "2026-10-06",
-      "term": "6-Week",
-      "type": "Bill",
-      "offering_amt": 95000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.78,
-      "indirect_pct": 58.6,
-      "dealer_pct": 27.4
     }
   ],
   "blackout": {

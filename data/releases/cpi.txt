@@ -1,25 +1,24 @@
 # 소비자물가(CPI) · BLS
 # 원문: https://www.bls.gov/news.release/cpi.nr0.htm
-# 수집: 2026-09-11 23:24 UTC (impersonate=safari)
+# 수집: 2026-10-15 06:37 KST (impersonate=safari)
 
-The Consumer Price Index for All Urban Consumers (CPI-U) increased 0.4 percent on a seasonally adjusted basis in August
-after rising 0.1 percent in July, the U.S. Bureau of Labor Statistics reported today. Over the last 12 months, the all
-items index increased 3.4 percent before seasonal adjustment.
+The Consumer Price Index for All Urban Consumers (CPI-U) increased 0.6 percent on a seasonally adjusted basis in
+September after rising 0.4 percent in August, the U.S. Bureau of Labor Statistics reported today. Over the last 12
+months, the all items index increased 3.7 percent before seasonal adjustment.
 
-The index for gasoline rose 3.9 percent in August, accounting for over one third of the monthly all items increase. The
-index for energy increased 2.1 percent over the month. The shelter index rose 0.3 percent in August after rising 0.1
-percent in July. The index for food increased 0.1 percent over the month, as the index for food away from home increased
-0.3 percent.
+The index for gasoline rose 9.1 percent in September, accounting for over half of the monthly all items increase. The
+energy index increased 5.2 percent over the month following a 2.1-percent increase in August. The shelter index rose 0.4
+percent in September after rising 0.3 percent in August. The index for food was unchanged in September, as the index for
+food away from home increased 0.2 percent and the index for food at home fell 0.1 percent.
 
-The index for all items less food and energy rose 0.3 percent after increasing 0.2 percent in July. Indexes that
-increased over the month include communication, lodging away from home, airline fares, education, and used cars and
-trucks. Conversely, the index for medical care and the index for motor vehicle insurance were among the major indexes
-that decreased in August.
+The index for all items less food and energy rose 0.3 percent in September, as it did in August. Indexes that increased
+over the month include recreation, used cars and trucks, education, airline fares, medical care, and apparel. Conversely,
+the index for communication was among the small number of major indexes that decreased in September.
 
-The all items index rose 3.4 percent for the 12 months ending August as it did for the 12 months ending July. The all
-items less food and energy index rose 2.4 percent over the year, following a 2.5-percent increase over the 12 months
-ending July. The energy index increased 16.3 percent for the 12 months ending August. The food index increased 2.7
-percent over the last year.
+The all items index rose 3.7 percent for the 12 months ending September, a larger increase than the 3.4-percent increase
+reported for the 12 months ending in August. The all items less food and energy index rose 2.6 percent over the year,
+following a 2.4-percent increase over the 12 months ending August. The energy index increased 20.4 percent for the 12
+months ending September. The food index increased 2.5 percent over the last year.
 
 Table A. Percent changes in CPI for All Urban Consumers (CPI-U): U.S. city average
 
@@ -28,10 +27,8 @@ Un-
 adjusted
 12-mos.
 ended
-Aug. 2026
+Sep. 2026
 
-Feb.
-2026
 Mar.
 2026
 Apr.
@@ -44,236 +41,238 @@ Jul.
 2026
 Aug.
 2026
+Sep.
+2026
 
 All items
 
-0.3
 0.9
 0.6
 0.5
 -0.4
 0.1
 0.4
-3.4
+0.6
+3.7
 
 Food
 
-0.4
 0.0
 0.5
 0.2
 0.2
 0.1
 0.1
-2.7
+0.0
+2.5
 
 Food at home
 
-0.4
 -0.2
 0.7
 0.1
 0.2
 -0.1
 0.0
-2.2
+-0.1
+1.8
 
 Food away from home ( 1 )
 
-0.3
 0.2
 0.2
 0.3
 0.2
 0.3
 0.3
-3.4
+0.2
+3.5
 
 Energy
 
-0.6
 10.9
 3.8
 3.9
 -5.7
 -1.5
 2.1
-16.3
+5.2
+20.4
 
 Energy commodities
 
-1.1
 21.3
 5.6
 6.7
 -9.5
 -2.9
 4.2
-28.0
+9.3
+35.3
 
 Gasoline (all types)
 
-0.8
 21.2
 5.4
 7.0
 -9.7
 -2.9
 3.9
-27.4
+9.1
+34.2
 
 Fuel oil
 
-11.1
 30.7
 5.8
 3.8
 -9.2
 -1.7
 10.1
-52.0
+15.3
+74.2
 
 Energy services
 
-0.2
 0.4
 1.6
 0.4
 -0.7
 0.3
 -0.4
-4.0
+0.1
+4.6
 
 Electricity
 
--0.7
 0.8
 2.1
 0.6
 -1.0
 0.1
 -0.2
-3.8
+0.2
+4.4
 
 Utility (piped) gas service
 
-3.1
 -0.9
 -0.1
 -0.5
 0.5
 0.7
 -1.1
-4.4
+-0.3
+5.0
 
 All items less food and energy
 
-0.2
 0.2
 0.4
 0.2
 0.0
 0.2
 0.3
-2.4
+0.3
+2.6
 
 Commodities less food and energy commodities
 
-0.1
 0.1
 0.0
 -0.1
 -0.1
 0.2
 0.1
+0.3
 0.7
 
 New vehicles
 
-0.0
 0.1
 -0.2
 -0.3
 0.0
 0.1
 0.3
+0.2
 0.6
 
 Used cars and trucks
 
--0.4
 -0.4
 0.0
 0.1
 -0.2
 0.4
 0.4
--2.3
+0.7
+-1.5
 
 Apparel
 
-1.3
 1.0
 0.6
 0.3
 -0.6
 0.1
 0.0
-3.6
+0.3
+3.4
 
 Medical care commodities ( 1 )
 
-0.0
 -1.0
 -0.4
 -0.7
 -0.2
 -0.6
 -0.2
--2.7
+-0.7
+-3.3
 
 Services less energy services
 
-0.3
 0.2
 0.5
 0.3
 0.0
 0.2
 0.3
-3.0
+0.4
+3.1
 
 Shelter
 
-0.2
 0.3
 0.6
 0.3
 0.1
 0.1
 0.3
-3.0
+0.4
+3.2
 
 Transportation services
 
-0.2
 0.6
 0.3
 -0.6
 -0.3
 0.3
 0.5
-2.4
+0.6
+2.7
 
 Medical care services
 
-0.6
 0.0
 0.0
 0.5
 -0.1
 0.6
 -0.2
+0.3
 2.5
 
 Footnotes
@@ -282,75 +281,74 @@ Footnotes
 
 Food
 
-The food index rose 0.1 percent in August, as it did in July. The index for food at home was unchanged over the month.
-Four of the six major grocery store food group indexes increased in August. The meats, poultry, fish, and eggs index
-increased 0.1 percent over the month, as the eggs index rose 2.9 percent. The index for other food at home also
-increased 0.1 percent in August. The nonalcoholic beverages index increased 0.2 percent over the month, and the dairy
-and related products index rose 0.3 percent. The index for cereals and bakery products was unchanged in August.
+The food index was unchanged in September after rising 0.1 percent in each of the preceding 2 months. The index for food
+at home decreased 0.1 percent over the month. Three of the six major grocery store food group indexes decreased in
+September, while the other three indexes increased. The meats, poultry, fish, and eggs index decreased 0.5 percent over
+the month, as the beef index fell 1.0 percent. The index for other food at home decreased 0.2 percent in September. The
+dairy and related products index decreased 0.9 percent over the month, as the milk index declined 2.0 percent.
 
-In contrast, the fruits and vegetables index declined 0.4 percent in August after falling in the preceding 2 months. The
-index for lettuce continued to fall, declining 6.2 percent in August after decreasing 16.4 percent in July.
+In contrast, the nonalcoholic beverages index increased 0.9 percent in September, as the carbonated drinks index rose 1.5
+percent. The index for fruits and vegetables rose 0.5 percent over the month, and the index for cereals and bakery
+products increased 0.1 percent.
 
-The food away from home index rose 0.3 percent in August. The index for full service meals rose 0.4 percent, and the
-index for limited service meals was unchanged over the month.
+The food away from home index rose 0.2 percent in September. The index for full service meals rose 0.3 percent, and the
+index for limited service meals increased 0.2 over the month.
 
-The food at home index rose 2.2 percent over the 12 months ending in August. The index for other food at home increased
-2.4 percent, and the index for fruits and vegetables rose 3.2 percent over the year. The nonalcoholic beverages index
-increased 3.7 percent over the 12 months ending in August, and the cereals and bakery products index rose 2.6 percent
-over the same period. The index for meats, poultry, fish, and eggs increased 1.1 percent over the last 12 months. In
-contrast, the dairy and related products index fell 0.3 percent over the year.
+The food at home index rose 1.8 percent over the 12 months ending in September. The index for fruits and vegetables
+increased 3.7 percent, and the index for other food at home rose 1.8 percent over the year. The nonalcoholic beverages
+index increased 3.8 percent over the 12 months ending in September, and the cereals and bakery products index rose 2.1
+percent over the same period. The index for meats, poultry, fish, and eggs increased 0.3 percent over the last 12 months.
+In contrast, the dairy and related products index fell 0.7 percent over the year.
 
-The food away from home index rose 3.4 percent over the last year. The index for full service meals rose 3.5 percent,
-and the index for limited service meals rose 3.2 percent over the 12 months ending in August.
+The food away from home index rose 3.5 percent over the last year. The index for full service meals rose 3.8 percent, and
+the index for limited service meals rose 3.2 percent over the 12 months ending in September.
 
 Energy
 
-The index for energy increased 2.1 percent in August after falling 1.5 percent in July. The gasoline index increased 3.9
-percent over the month. (Before seasonal adjustment, gasoline prices increased 2.5 percent in August.) Conversely, the
-index for natural gas decreased 1.1 percent in August, and the index for electricity fell 0.2 percent.
+The index for energy increased 5.2 percent in September after rising 2.1 percent in August. The gasoline index increased
+9.1 percent over the month. (Before seasonal adjustment, gasoline prices increased 6.5 percent in September.) The index
+for electricity rose 0.2 percent over the month. In contrast, the natural gas index decreased 0.3 percent in September.
 
-The index for energy increased 16.3 percent over the past 12 months due in large part to the index for gasoline rising
-27.4 percent over the same period. The natural gas index increased 4.4 percent over the 12 months ending in August, and
-the electricity index rose 3.8 percent.
+The index for energy increased 20.4 percent over the past 12 months due in large part to the index for gasoline rising
+34.2 percent over the same period. The natural gas index increased 5.0 percent over the 12 months ending in September,
+and the electricity index rose 4.4 percent.
 
 All items less food and energy
 
-The index for all items less food and energy rose 0.3 percent in August after rising 0.2 percent in July. The shelter
-index increased 0.3 percent over the month after rising 0.1 percent in July. The index for owners' equivalent rent rose
-0.2 percent in August as did the index for rent. The lodging away from home index rose 2.4 percent in August after
-falling 2.8 percent the previous month.
+The index for all items less food and energy rose 0.3 percent in September, as it did in August. The shelter index
+increased 0.4 percent over the month after rising 0.3 percent in August. The index for owners' equivalent rent rose 0.3
+percent in September, and the index for rent increased 0.2 percent. The lodging away from home index rose 2.0 percent in
+September after rising 2.4 percent the previous month.
 
-The index for communication increased 2.3 percent over the month after rising 0.6 percent in July. The airline fares
-index rose 2.7 percent in August, and the education index increased 0.8 percent. The index for used cars and trucks
-increased 0.4 percent in August, and the index for new vehicles rose 0.3 percent. The personal care index and the
-household furnishings and operations index also increased over the month.
+The index for recreation increased 0.5 percent over the month after being unchanged in August. The used cars and trucks
+index rose 0.7 percent in September, and the education index increased 0.6 percent. The index for airline fares increased
+1.2 percent in September, and the index for apparel rose 0.3 percent. The new vehicles index, the personal care index,
+and the motor vehicle insurance index also increased over the month.
 
-The medical care index decreased 0.2 percent in August after rising 0.4 percent in July. The index for dental services
-fell 0.6 percent over the month. The hospital services index, physicians' services index, and prescription drugs index
-were all unchanged in August.
+The medical care index increased 0.1 percent in September after falling 0.2 percent in August. The index for hospital
+services rose 0.7 percent over the month. In contrast, the prescription drugs index declined 1.2 percent in September.
+The index for physicians' services was unchanged over the month.
 
-The motor vehicle insurance index declined 0.8 percent in August after falling 0.3 percent in July. The index for
-apparel was unchanged in August as was the index for recreation.
+The communication index declined 0.2 percent in September after rising 2.3 percent in August. The index for household
+furnishings and operations was unchanged over the month.
 
-The index for all items less food and energy rose 2.4 percent over the past 12 months. The shelter index increased 3.0
-percent over the last year. Other indexes with notable increases over the last year include airline fares (+23.4
-percent), recreation (+2.7 percent), medical care (+1.6 percent), and personal care (+3.8 percent).
+The index for all items less food and energy rose 2.6 percent over the past 12 months. The shelter index increased 3.2
+percent over the last year. Other indexes with notable increases over the last year include airline fares (+22.4 percent),
+recreation (+2.8 percent), medical care (+1.5 percent), and education (+3.8 percent).
 
 Not seasonally adjusted CPI measures
 
-The Consumer Price Index for All Urban Consumers (CPI-U) increased 3.4 percent over the last 12 months to an index level
-of 334.980 (1982-84=100). For the month, the index rose 0.3 percent prior to seasonal adjustment.
+The Consumer Price Index for All Urban Consumers (CPI-U) increased 3.7 percent over the last 12 months to an index level
+of 336.940 (1982-84=100). For the month, the index rose 0.6 percent prior to seasonal adjustment.
 
-The Consumer Price Index for Urban Wage Earners and Clerical Workers (CPI-W) increased 3.5 percent over the last 12
-months to an index level of 328.481 (1982-84=100). For the month, the index increased 0.4 percent prior to seasonal
-adjustment.
+The Consumer Price Index for Urban Wage Earners and Clerical Workers (CPI-W) increased 3.9 percent over the last 12 months
+to an index level of 330.654 (1982-84=100). For the month, the index increased 0.7 percent prior to seasonal adjustment.
 
-The Chained Consumer Price Index for All Urban Consumers (C-CPI-U) increased 3.3 percent over the last 12 months. For
-the month, the index increased 0.3 percent on a not seasonally adjusted basis. Please note that the indexes for the past
-10 to 12 months are subject to revision.
+The Chained Consumer Price Index for All Urban Consumers (C-CPI-U) increased 3.5 percent over the last 12 months. For the
+month, the index increased 0.5 percent on a not seasonally adjusted basis. Please note that the indexes for the past 10
+to 12 months are subject to revision.
 _______________
-The Consumer Price Index news release for September 2026 is scheduled to be published on Wednesday, October 14, 2026,
-at 8:30 a.m. (ET).
+The Consumer Price Index news release for October 2026 is scheduled to be published on Tuesday, November 10, 2026, at 8:30 a.m. (ET).
 
 Technical Note
 
@@ -514,7 +512,7 @@ Supplemental Files Table of Contents
 
 Table of Contents
 
-Last Modified Date: September 11, 2026
+Last Modified Date: October 14, 2026
 
 Home
 
