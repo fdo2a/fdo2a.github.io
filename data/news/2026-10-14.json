@@ -1,9 +1,8 @@
 {
   "report_date": "2026-10-14",
-  "harvested": 848,
+  "harvested": 858,
   "notes": [
-    "pool https://finance.yahoo.com/news/rssindex: HTTP 404",
-    "insight https://think.ing.com/rss/: URLError"
+    "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
   ],
   "items": [
     {
@@ -55,7 +54,8 @@
       "source": "CNBC",
       "body_chars": 2338,
       "body_file": "04-ai.txt",
-      "summary_note": "분량 벗어남 405자"
+      "summary_ko": "CoreWeave를 비롯한 네오클라우드 종목이 14일(현지시간) 급락하는 가운데 투자자들이 하락에 베팅하는 풋옵션을 대거 사들였다. CoreWeave의 회사채 수익률이 연일 최고치를 경신한 데다 소셜캐피털의 팔리하피티야가 사모신용 버블 우려를 제기하며 수익률 15% 화면을 공유하자 주가가 15% 폭락했다. Nebius와 Iren도 최대 10% 떨어졌다. 옵션 거래량은 CoreWeave가 30일 평균의 7배 이상으로 치솟았고, 콜 10만 6,000계약에 비해 풋은 20만 건 가까이 거래됐다. 오전 10시경에는 행사가 37.5달러, 12월 18일 만기 풋 2만 6,000계약이 새로 매수된 것으로 보이며, 총 190만 달러 규모다. 이 포지션이 수익을 내려면 CoreWeave 주가가 두 달 안에 42% 더 떨어져야 한다. 한 전문가는 AI 거래의 중심 종목에 대한 헤지나 마진 목적의 베팅일 수 있다고 봤다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108409088",
@@ -93,7 +93,7 @@
       "source": "CNBC",
       "body_chars": 3683,
       "body_file": "07-macro.txt",
-      "summary_note": "분량 벗어남 432자"
+      "summary_note": "분량 벗어남 403자"
     },
     {
       "guid": "108407331",
@@ -235,21 +235,23 @@
       "source": "CNBC",
       "body_chars": 10846,
       "body_file": "32-economy.txt",
-      "summary_note": "분량 벗어남 407자"
+      "summary_ko": "Operation Metro Surge가 끝난 뒤에도 미니애폴리스 지역 경제의 피해는 계속되고 있다. 식료품점 Colonial Market의 Daniel Hernandez는 매출이 약 60% 줄어 Lake Street 점포를 닫았고, 지역 이민자 사업체들은 12~1월에만 4,600만 달러의 손실을 입었다. 시 정부는 12월부터 4월까지 약 7억 달러의 경제 활동이 사라졌다고 추산했으나, 마련한 지원금은 약 700만 달러와 300만 달러 이상의 임대료 지원에 그쳤다. 펜실베이니아대 분석에 따르면 2025년 단속 도시들은 주간 유동인구가 약 3%, 지출이 6% 넘게 줄었다. 미네소타의 2026년 계절조정 실업률은 19년 만에 전국 평균을 넘어섰다. 연방 당국은 불법 이민 대응이라고 주장하지만, 지역 상인들은 단속 재개에 대한 공포가 여전하다고 말한다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/4fb591901ce3b8789a173ae9cd05fadcb20000c3?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/4fb591901ce3b8789a173ae9cd05fadcb20000c3?source=rss",
-      "title": "秋田市に国内最大級のAIデータセンター構想 東北電力の1GW計画も浮上 再生可能エネルギー先進県が秘める可能性と懸念(FNNプライムオンライン)",
-      "summary": "秋田市で国内最大級となるAIデータセンターの整備構想が相次いで浮上している。背景にあるのは、洋上風力発電をはじめとする豊富な再生可能エネルギーと、首都圏集中を見直す国の方針だ。巨額の投資や税収増への期",
-      "published": "2026-10-14T21:00:41+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/eb90c65c4c50a3a291d67870cc263514c1241cc5?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/eb90c65c4c50a3a291d67870cc263514c1241cc5?source=rss",
+      "title": "「3％成長」でも財政赤字は拡大…税収増でも埋まらない「17兆円の赤字」とは(ビジネス＋IT)",
+      "summary": "高市首相が所信表明演説で打ち出した「責任ある積極財政」。政府支出を呼び水に企業投資を増やし、成長と税収増につなげる考えだ。日本経済では「企業の黒字」が問題との議論もあるが、名目3％成長でも財政赤字が膨",
+      "published": "2026-10-14T21:50:05+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "FNNプライムオンライン",
-      "body_chars": 891,
+      "wire": "ビジネス＋IT",
+      "body_chars": 1413,
       "body_file": "10-global.txt",
-      "summary_note": "분량 벗어남 438자"
+      "summary_ko": "고이치 다카이치 총리는 2026년 10월 5일 소신표명연설에서 대규모 장기 재정 지출로 기업의 국내 투자를 늘리겠다는 '책임 있는 적극재정'을 내세웠다. 재무성이 2026년 2월 공표한 試算에 따르면, 명목성장률이 2027년도 이후 3%로 유지되더라도 일반회계 재정적자는 2026년도 11.7조 엔에서 2029년도 17.0조 엔으로 커진다. 같은 기간 세수는 83.7조 엔에서 95.5조 엔으로 11.8조 엔 늘지만, 국채 이자 비용은 13.0조 엔에서 21.6조 엔으로 8.6조 엔 증가한다. 이 전망은 2026년도 예산 제도를 전제로 한 조건부 계산이며 새 정책의 효과는 반영되지 않았다. 한편 다카이치 정권의 경제 브레인인 아이다 다쿠지 등은 기업의 저축 초과를 일본 경제의 최대 문제로 보았다. 기사는 60여 개국을 조사한 2017년 연구와 독일 사례를 들어 일본만의 현상이 아니라고 반박한다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "https://news.yahoo.co.jp/articles/4140313bbabeb0bd2a2f6fbd647ca11c7bb01a56?source=rss",
@@ -277,7 +279,8 @@
       "region": "mideast",
       "body_chars": 10886,
       "body_file": "12-global.txt",
-      "summary_note": "분량 벗어남 457자"
+      "summary_ko": "트럼프 관세와 이란 전쟁이 미시간 상원 선거에서 공화당 후보 마이크 로저스의 부담이 되고 있다. 로저스는 9월까지 관세를 옹호했으나 10월 7일 공개된 광고에서는 캐나다가 적이 아니며 관세 전쟁을 끝내야 한다고 말했고, 트럼프의 이름은 빼놓았다. 이란 전쟁 종식을 요구한 광고도 같은 방식이었다. 미시간은 캐나다와 연간 약 800억 달러 규모로 교역하고, 캐나다는 주의 최대 수출시장으로 지난해 232억 달러어치를 사 주 전체 수출의 약 39%를 차지했다. 8월 미국이 캐나다산 약 200억 달러 물품에 50% 관세를 부과한 뒤 자동차업체들의 관세 비용도 늘었다. 공화당 후보의 선거 광고 중 트럼프를 언급한 비율은 4.3%로, 예비선거 때의 47.1%에서 크게 낮아졌다. 여론조사에서는 민주당 후보 아브델 엘-사예드가 로저스에 4%포인트 앞선다는 집계가 나왔다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "https://news.yahoo.co.jp/articles/79d9bb5a4e163f3f0654d97171ac102dddf896f6?source=rss",
@@ -309,6 +312,19 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
+      "guid": "https://think.ing.com/articles/energy-dominates-polands-cpi-dynamics-while-broader-inflation-remains-contained/#When:09:25:00Z",
+      "url": "https://think.ing.com/articles/energy-dominates-polands-cpi-dynamics-while-broader-inflation-remains-contained/",
+      "title": "Energy dominates Polish CPI, while broader inflation remains contained",
+      "summary": "CENTRAL AND EASTERN EUROPE: Poland’s September inflation was revised up to 4.1% YoY, with energy and fuel prices accounting for roughly 60% of the annual increase. Meanwhile, core inflation even eased, and there is still little evidence that the energy shock is passing through more broadly into other prices. The central bank should not rush to hike interest rates",
+      "published": "2026-10-14T09:25:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 4022,
+      "body_file": "19-insight.txt",
+      "summary_ko": "ING는 폴란드 9월 CPI 상승률이 전년비 4.1%로 상향 수정됐지만 근원 인플레이션은 둔화했고 에너지발 충격이 다른 물가로 번지는 증거도 약하다고 보며, 중앙은행이 서둘러 금리를 올릴 필요는 없다고 주장한다. 9월 연료 가격은 전월비 9.2% 올라 연간 상승률의 약 60%(약 2.5%p)를 설명했다. 반면 식품 가격은 전월비 0.1% 상승에 그쳤고, 식품과 에너지를 제외한 근원 인플레이션은 8월 3.3%에서 3.1%로 둔화한 것으로 추정됐다. ING는 정부의 연료 세금 인하 조치로 4분기 CPI가 전년비 3.5% 안팎에서 안정될 것으로 예상하며, 유가가 높게 유지되면 2027년 1~2월에도 프로그램이 연장될 가능성이 크다고 본다. 다만 내년 초 전기·가스 등 규제 가격 인상과 농산물 가격 상승이 겹칠 수 있어 위험 요인으로 꼽았다. ING는 2027년 1분기 누적 50bp 인상으로 정책금리가 4.25%까지 오를 것으로 가정했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
       "guid": "https://www.investing.com/analysis/us-cpi-hits-37-as-hot-inflation-puts-fed-rate-cuts-at-risk-200689577",
       "url": "https://www.investing.com/analysis/us-cpi-hits-37-as-hot-inflation-puts-fed-rate-cuts-at-risk-200689577",
       "title": "US CPI Hits 3.7% as Hot Inflation Puts Fed Rate Cuts at Risk",
@@ -317,7 +333,7 @@
       "category": "insight",
       "source": "Investing.com",
       "body_chars": 4336,
-      "body_file": "19-insight.txt",
+      "body_file": "20-insight.txt",
       "summary_ko": "미국 9월 CPI는 전년 대비 3.7%로 8월 3.4%에서 올랐고 전문가 예상치 3.6%를 웃돌았다. 근원 CPI도 전년 대비 2.6%로 예상 2.5%를 넘었다. 이 매체 필자는 이런 물가 지표를 근거로 연준이 금리 인하 여력이 줄었다고 보고, 물가가 연준 목표치 2%로 돌아가는 데 시간이 더 걸릴 것이라고 평가한다. 에너지 가격이 핵심 요인으로 꼽혔다. 휘발유 가격은 전월 대비 9.1%, 전년 대비 34.2% 올랐고 에너지 지수는 전월 대비 5.2% 상승했다. 필자는 운송비 상승이 기업의 생산·물류 비용을 거쳐 에너지 밖 품목으로 번질 위험도 있다고 본다. 이에 따라 필자는 연준이 당분간 긴축적 통화정책을 유지할 가능성이 크고, 조기 금리 인하는 정당화하기 어렵다고 판단한다. 시장에서는 2년물 국채금리가 4.91%, 10년물이 5.29%로 올라 금리 인하 기대가 후퇴했다. 필자는 이런 환경이 특히 고밸류에이션 성장주에 부담이 되며, 재무 구조가 탄탄하고 현금흐름이 안정적인 기업이 상대적으로 유리하다고 본다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -330,22 +346,9 @@
       "category": "insight",
       "source": "BIS",
       "body_chars": 7034,
-      "body_file": "20-insight.txt",
+      "body_file": "21-insight.txt",
       "summary_ko": "이 연설은 BIS가 게재한 포르투갈 금융부문평가프로그램(FSAP) 결과 발표 회의의 폐회 연설이다. 연설자는 주택가격이 급락하더라도 금융체계가 이를 흡수할 수 있다고 본다. 주택가격 상승이 주로 신용 확대에서 비롯되지 않았고, 차입자의 부채상환 부담이 신중하게 관리되어 큰 금리 충격에도 버틸 수 있으며, 은행의 자본 완충도 탄탄하다는 것이 근거다. FSAP 권고는 구조적 취약성에 대한 처방이 아니라 이미 견고한 체계를 개선하기 위한 로드맵으로 받아들여지며, 평가의 메시지는 시정이 아닌 지속적 개선이라고 규정한다. 연설자는 20년 전 이전 평가 이후 금융체계가 근본적으로 달라졌고 자본 확충과 적극적 감독이 회복력을 높였다고 평가한다. 다만 디지털화, 인공지능, 사이버 위험, 지정학적 불확실성이 위험의 성격과 전파 경로를 바꾸고 있어 회복력은 당연한 것이 아니라고 경고한다. 이에 대응하려면 중앙은행 내부와 금융 밖 기관까지 포함한 협력이 필요하다고 덧붙인다.",
       "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "http://www.nli-research.co.jp/report/detail/id=87014?site=nli",
-      "url": "http://www.nli-research.co.jp/report/detail/id=87014?site=nli",
-      "title": "ＩＭＦ世界経済見通し－世界経済はよく持ちこたえていると評価",
-      "summary": "10月13日、国際通貨基金（ＩＭＦ）は世界経済見通し（ＷＥＯ：World Economic Outlook）を公表し、内容は以下の通りとなった。 【世界の実質ＧＤＰ伸び率（図表1）】 ・2026年は前年比3.1％となる見通しで、26年7月時点の見通し（同3.0％）から上方修正 ・2027年は前年比3.4％となる見通しで、26年7月時点の見通し（同3.4％）と同じＩＭＦは、今回の見通しを「試される強靭性、迫られる決断（Resilience Under Strain, Urgent Choices）」と題して作成した1。 ＩＭＦは足もと、エネルギー市場の混乱や貿易摩擦による緊張が長引いているにもかかわらず、世界経済がよく持ちこたえていると評価している。その理由として、(1)エネルギーショックの軽減（エネルギー供給ルートの変更、他国でのエネルギー増産、在庫の取り崩し、再生可能エネルギーを含む代替",
-      "published": "2026-10-14T13:08:22+09:00",
-      "category": "insight",
-      "source": "ニッセイ基礎研究所",
-      "region": "japan",
-      "body_chars": 794,
-      "body_file": "21-insight.txt",
-      "summary_note": "분량 벗어남 227자"
     }
   ]
 }
