@@ -80,11 +80,11 @@
     "MU": {
       "name": "Micron",
       "currency": "USD",
-      "price": 914.13,
-      "price_date": "2026-10-14",
-      "chg_20d_pct": -1.32,
-      "pct_from_52w_high": -24.65,
-      "market_cap": 1034267918336.0,
+      "price": 862.31,
+      "price_date": "2026-10-15",
+      "chg_20d_pct": -11.77,
+      "pct_from_52w_high": -28.92,
+      "market_cap": 975637577728.0,
       "eps_fy0": 176.54659,
       "eps_fy1": 204.46593,
       "eps_fy1_low": 136.0,
@@ -93,8 +93,8 @@
       "bvps": 89.18,
       "bvps_as_of": "2026-05-31",
       "bvps_source": "yfinance",
-      "pb": 10.25,
-      "pe_fy1": 4.47,
+      "pb": 9.67,
+      "pe_fy1": 4.22,
       "next_earnings_date": "2026-12-23",
       "fair_value": {
         "method": "blended",
@@ -106,10 +106,10 @@
         "band2": 687
       },
       "position": {
-        "vs_weighted_pct": -9.5,
-        "vs_base_pct": 7.7,
-        "upside_bull_pct": 100.2,
-        "downside_bear_pct": -65.4,
+        "vs_weighted_pct": -14.6,
+        "vs_base_pct": 1.6,
+        "upside_bull_pct": 112.2,
+        "downside_bear_pct": -63.4,
         "in_band1": false,
         "in_band2": false
       }
