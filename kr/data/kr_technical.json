@@ -135,8 +135,8 @@
       "bandwidth": 0.2818
     },
     "ichimoku": {
-      "tenkan": 242000.0,
-      "kijun": 245000.0,
+      "tenkan": 242125.0,
+      "kijun": 245125.0,
       "senkou_a": 248050.0,
       "senkou_b": 276100.0,
       "cloud_top": 276100.0,
@@ -146,7 +146,7 @@
     "chikou_above_price_26ago": false,
     "swing": {
       "high_20": 285500.0,
-      "low_20": 204500.0,
+      "low_20": 204750.0,
       "high_60": 288000.0,
       "low_60": 189200.0
     }
