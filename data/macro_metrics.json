@@ -1,18 +1,18 @@
 {
-  "generated": "2026-10-15 07:21 KST",
-  "report_date": "2026-10-14",
+  "generated": "2026-10-16 08:46 KST",
+  "report_date": "2026-10-15",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "growth_score": -0.117,
-  "inflation_score": -0.305,
+  "growth_score": 0.04,
+  "inflation_score": 0.017,
   "growth_diffusion": 0.429,
-  "inflation_diffusion": 0.25,
+  "inflation_diffusion": 0.375,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.535,
+      "score": 0.405,
       "direction": "개선",
-      "strength": "완만",
+      "strength": "미미",
       "breadth_ko": "일곱 중 넷이 개선, 셋은 반대",
       "support": 4,
       "improving": 4,
@@ -23,24 +23,24 @@
           "name": "Continuing Jobless Claims",
           "direction": "개선",
           "strength": "뚜렷",
-          "actual": 1716000.0,
-          "previous": 1699000.0
-        },
-        {
-          "label_ko": "신규 실업수당 청구",
-          "name": "Initial Jobless Claims",
-          "direction": "개선",
-          "strength": "완만",
-          "actual": 197000.0,
-          "previous": 199000.0
+          "actual": 1710000.0,
+          "previous": 1714000.0
         },
         {
           "label_ko": "신규 청구 4주 평균",
           "name": "Initial Claims 4-wk MA",
           "direction": "개선",
           "strength": "완만",
-          "actual": 198000.0,
-          "previous": 200500.0
+          "actual": 198500.0,
+          "previous": 198250.0
+        },
+        {
+          "label_ko": "신규 실업수당 청구",
+          "name": "Initial Jobless Claims",
+          "direction": "개선",
+          "strength": "완만",
+          "actual": 199000.0,
+          "previous": 198000.0
         }
       ]
     },
@@ -82,22 +82,14 @@
     },
     "Consumption": {
       "label_ko": "소비",
-      "score": -0.419,
-      "direction": "악화",
+      "score": 0.181,
+      "direction": "보합",
       "strength": "미미",
-      "breadth_ko": "둘 중 하나가 악화, 하나는 반대",
-      "support": 1,
+      "breadth_ko": "둘 중 하나가 개선, 하나는 보합",
+      "support": 0,
       "improving": 1,
       "total": 2,
       "leaders": [
-        {
-          "label_ko": "소매판매",
-          "name": "Retail Sales MoM",
-          "direction": "악화",
-          "strength": "뚜렷",
-          "actual": 1.13,
-          "previous": -0.46
-        },
         {
           "label_ko": "미시간대 소비자심리",
           "name": "Michigan Consumer Sentiment",
@@ -105,27 +97,27 @@
           "strength": "미미",
           "actual": 51.7,
           "previous": 55.2
+        },
+        {
+          "label_ko": "소매판매",
+          "name": "Retail Sales MoM",
+          "direction": "보합",
+          "strength": "미미",
+          "actual": 0.77,
+          "previous": 1.29
         }
       ]
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": -0.305,
-      "direction": "둔화",
+      "score": 0.017,
+      "direction": "교착",
       "strength": "미미",
-      "breadth_ko": "여덟 중 다섯이 둔화, 하나는 교착, 둘은 반대",
-      "support": 5,
-      "improving": 2,
+      "breadth_ko": "여덟 중 셋이 재가속, 넷이 둔화, 하나는 교착",
+      "support": 0,
+      "improving": 3,
       "total": 8,
       "leaders": [
-        {
-          "label_ko": "생산자물가",
-          "name": "PPI Final Demand MoM",
-          "direction": "둔화",
-          "strength": "뚜렷",
-          "actual": 0.4,
-          "previous": 0.07
-        },
         {
           "label_ko": "근원 소비자물가 전월비",
           "name": "Core CPI MoM",
@@ -141,15 +133,23 @@
           "strength": "완만",
           "actual": 0.65,
           "previous": 0.4
+        },
+        {
+          "label_ko": "생산자물가",
+          "name": "PPI Final Demand MoM",
+          "direction": "재가속",
+          "strength": "완만",
+          "actual": 1.34,
+          "previous": 0.47
         }
       ]
     }
   },
   "axis_scores": {
-    "Labor": 0.535,
+    "Labor": 0.405,
     "Activity": -0.467,
-    "Consumption": -0.419,
-    "Inflation": -0.305
+    "Consumption": 0.181,
+    "Inflation": 0.017
   },
   "indicators": [
     {
@@ -183,20 +183,20 @@
       "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.843,
-      "signed_z": 0.843,
-      "actual": 197000.0,
-      "previous": 199000.0,
-      "ref_period": "2026-10-03",
-      "vs_prev": "개선",
+      "momentum_z": -0.562,
+      "signed_z": 0.562,
+      "actual": 199000.0,
+      "previous": 198000.0,
+      "ref_period": "2026-10-10",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 206250.0,
-        "recent_avg": 198000.0
+        "prior_avg": 204000.0,
+        "recent_avg": 198500.0
       },
-      "trend_cell_ko": "개선(완만) · 4주 평균 206K → 198K",
-      "is_new": false
+      "trend_cell_ko": "개선(완만) · 4주 평균 204K → 198K",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -206,20 +206,20 @@
       "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.594,
-      "signed_z": 0.594,
-      "actual": 198000.0,
-      "previous": 200500.0,
-      "ref_period": "2026-10-03",
-      "vs_prev": "개선",
+      "momentum_z": -0.757,
+      "signed_z": 0.757,
+      "actual": 198500.0,
+      "previous": 198250.0,
+      "ref_period": "2026-10-10",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 205937.5,
-        "recent_avg": 201250.0
+        "prior_avg": 205875.0,
+        "recent_avg": 199937.5
       },
-      "trend_cell_ko": "개선(완만) · 4주 평균 206K → 201K",
-      "is_new": false
+      "trend_cell_ko": "개선(완만) · 4주 평균 206K → 200K",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -229,20 +229,20 @@
       "strength": "뚜렷",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -2.845,
-      "signed_z": 2.845,
-      "actual": 1716000.0,
-      "previous": 1699000.0,
-      "ref_period": "2026-09-26",
-      "vs_prev": "악화",
+      "momentum_z": -2.057,
+      "signed_z": 2.057,
+      "actual": 1710000.0,
+      "previous": 1714000.0,
+      "ref_period": "2026-10-03",
+      "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 1776750.0,
-        "recent_avg": 1711000.0
+        "prior_avg": 1757000.0,
+        "recent_avg": 1708750.0
       },
-      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,777K → 1,711K",
-      "is_new": false
+      "trend_cell_ko": "개선(뚜렷) · 4주 평균 1,757K → 1,709K",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -432,24 +432,24 @@
       "name": "Retail Sales MoM",
       "label_ko": "소매판매",
       "axis": "Consumption",
-      "direction": "악화",
-      "strength": "뚜렷",
+      "direction": "보합",
+      "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -1.294,
-      "signed_z": -1.294,
-      "actual": 1.13,
-      "previous": -0.46,
-      "ref_period": "2026-08-01",
-      "vs_prev": "개선",
+      "momentum_z": -0.093,
+      "signed_z": -0.093,
+      "actual": 0.77,
+      "previous": 1.29,
+      "ref_period": "2026-09-01",
+      "vs_prev": "악화",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 1.093,
-        "recent_avg": 0.291
+        "prior_avg": 0.608,
+        "recent_avg": 0.551
       },
-      "trend_cell_ko": "악화(뚜렷) · 3개월 평균 +1.09% → +0.29%",
-      "is_new": false
+      "trend_cell_ko": "보합 · 3개월 평균 +0.61% → +0.55%",
+      "is_new": true
     },
     {
       "name": "Michigan Consumer Sentiment",
@@ -495,7 +495,7 @@
         "recent_avg": 3.458
       },
       "trend_cell_ko": "둔화(미미) · 3개월 평균 3.80% → 3.46%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "CPI MoM",
@@ -518,7 +518,7 @@
         "recent_avg": 0.373
       },
       "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.23% → +0.37%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Core CPI YoY",
@@ -541,7 +541,7 @@
         "recent_avg": 2.493
       },
       "trend_cell_ko": "둔화(미미) · 3개월 평균 2.71% → 2.49%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Core CPI MoM",
@@ -564,30 +564,30 @@
         "recent_avg": 0.28
       },
       "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.19% → +0.28%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "PPI Final Demand MoM",
       "label_ko": "생산자물가",
       "axis": "Inflation",
-      "direction": "둔화",
-      "strength": "뚜렷",
+      "direction": "재가속",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -2.072,
-      "signed_z": -2.072,
-      "actual": 0.4,
-      "previous": 0.07,
-      "ref_period": "2026-08-01",
+      "momentum_z": 0.503,
+      "signed_z": 0.503,
+      "actual": 1.34,
+      "previous": 0.47,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 0.79,
-        "recent_avg": 0.116
+        "prior_avg": 0.493,
+        "recent_avg": 0.656
       },
-      "trend_cell_ko": "둔화(뚜렷) · 3개월 평균 +0.79% → +0.12%",
-      "is_new": false
+      "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.49% → +0.66%",
+      "is_new": true
     },
     {
       "name": "PCE Price Index YoY",
@@ -660,104 +660,97 @@
     }
   ],
   "new_releases": [
-    "CPI YoY",
-    "CPI MoM",
-    "Core CPI YoY",
-    "Core CPI MoM"
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims",
+    "Retail Sales MoM",
+    "PPI Final Demand MoM"
   ],
   "headline_releases": [
     {
-      "key": "cpi",
-      "label": "소비자물가(CPI)",
+      "key": "retail-sales",
+      "label": "소매판매",
       "tier": 1,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
-      "primary": "Core CPI MoM",
-      "max_abs_z": 0.681,
+      "agency": "Census",
+      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
+      "primary": "Retail Sales MoM",
+      "max_abs_z": 0.093,
       "indicators": [
         {
-          "name": "CPI YoY",
-          "axis": "Inflation",
-          "actual": 3.72,
-          "previous": 3.35,
+          "name": "Retail Sales MoM",
+          "axis": "Consumption",
+          "actual": 0.77,
+          "previous": 1.29,
           "ref_period": "2026-09-01",
-          "momentum_z": -0.428
-        },
-        {
-          "name": "CPI MoM",
-          "axis": "Inflation",
-          "actual": 0.65,
-          "previous": 0.4,
-          "ref_period": "2026-09-01",
-          "momentum_z": 0.648
-        },
-        {
-          "name": "Core CPI YoY",
-          "axis": "Inflation",
-          "actual": 2.57,
-          "previous": 2.45,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.451
-        },
-        {
-          "name": "Core CPI MoM",
-          "axis": "Inflation",
-          "actual": 0.33,
-          "previous": 0.29,
-          "ref_period": "2026-09-01",
-          "momentum_z": 0.681
+          "momentum_z": -0.093
         }
       ],
       "components": [
         {
-          "label": "에너지",
-          "fred_id": "CPIENGSL",
+          "label": "자동차 제외",
+          "fred_id": "RSFSXMV",
           "transform": "mom_pct",
-          "actual": 5.196,
-          "previous": 2.097,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "식품",
-          "fred_id": "CPIUFDSL",
-          "transform": "mom_pct",
-          "actual": 0.048,
-          "previous": 0.122,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "주거비(shelter)",
-          "fred_id": "CUSR0000SAH1",
-          "transform": "mom_pct",
-          "actual": 0.391,
-          "previous": 0.264,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "중고차",
-          "fred_id": "CUSR0000SETA02",
-          "transform": "mom_pct",
-          "actual": 0.669,
-          "previous": 0.365,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "의료",
-          "fred_id": "CPIMEDSL",
-          "transform": "mom_pct",
-          "actual": 0.123,
-          "previous": -0.245,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "서비스 ex-에너지",
-          "fred_id": "CUSR0000SASLE",
-          "transform": "mom_pct",
-          "actual": 0.369,
-          "previous": 0.327,
+          "actual": 0.899,
+          "previous": 1.431,
           "ref_period": "2026-09-01"
         }
       ]
+    },
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Continuing Jobless Claims",
+      "max_abs_z": 2.057,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 199000.0,
+          "previous": 198000.0,
+          "ref_period": "2026-10-10",
+          "momentum_z": -0.562
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 198500.0,
+          "previous": 198250.0,
+          "ref_period": "2026-10-10",
+          "momentum_z": -0.757
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1710000.0,
+          "previous": 1714000.0,
+          "ref_period": "2026-10-03",
+          "momentum_z": -2.057
+        }
+      ],
+      "components": []
+    },
+    {
+      "key": "ppi",
+      "label": "생산자물가(PPI)",
+      "tier": 2,
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
+      "primary": "PPI Final Demand MoM",
+      "max_abs_z": 0.503,
+      "indicators": [
+        {
+          "name": "PPI Final Demand MoM",
+          "axis": "Inflation",
+          "actual": 1.34,
+          "previous": 0.47,
+          "ref_period": "2026-09-01",
+          "momentum_z": 0.503
+        }
+      ],
+      "components": []
     }
   ],
   "last_seen": {
@@ -766,16 +759,16 @@
       7079.0
     ],
     "Initial Jobless Claims": [
-      "2026-10-03",
-      197000.0
+      "2026-10-10",
+      199000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-10-03",
-      198000.0
+      "2026-10-10",
+      198500.0
     ],
     "Continuing Jobless Claims": [
-      "2026-09-26",
-      1716000.0
+      "2026-10-03",
+      1710000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-09-01",
@@ -810,8 +803,8 @@
       2.2
     ],
     "Retail Sales MoM": [
-      "2026-08-01",
-      1.13
+      "2026-09-01",
+      0.77
     ],
     "Michigan Consumer Sentiment": [
       "2026-08-01",
@@ -834,8 +827,8 @@
       0.33
     ],
     "PPI Final Demand MoM": [
-      "2026-08-01",
-      0.4
+      "2026-09-01",
+      1.34
     ],
     "PCE Price Index YoY": [
       "2026-08-01",

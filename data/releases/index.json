@@ -1,13 +1,29 @@
 {
-  "report_date": "2026-10-14",
+  "report_date": "2026-10-15",
   "releases": [
     {
-      "key": "cpi",
-      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "key": "retail-sales",
+      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 20647,
-      "path": "releases/cpi.txt"
+      "chars": 20405,
+      "path": "releases/retail-sales.txt"
+    },
+    {
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 20062,
+      "path": "releases/claims.txt"
+    },
+    {
+      "key": "ppi",
+      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 16553,
+      "path": "releases/ppi.txt"
     }
   ]
 }

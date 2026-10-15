@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-14",
+  "report_date": "2026-10-15",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
@@ -8,43 +8,37 @@
       "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
+        "지수 기여 하위"
       ],
       "members": [
         {
           "name": "Nvidia (NVDA)",
-          "change_pct": -3.16,
-          "close": 221.3,
-          "value": 25853646162.03
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -5.73,
-          "close": 570.82,
-          "value": 12544509443.68
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": -8.73,
-          "close": 245.28,
-          "value": 6261904671.88
+          "change_pct": -1.84,
+          "close": 217.23,
+          "value": 27457152428.68
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Interactive Media & Services",
-      "direction": "down",
+      "industry": "Systems Software",
+      "direction": "up",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": -1.74,
-          "close": 347.64,
-          "value": 9477415268.27
+          "name": "Microsoft (MSFT)",
+          "change_pct": 1.08,
+          "close": 539.44,
+          "value": 12666748213.81
+        },
+        {
+          "name": "ServiceNow (NOW)",
+          "change_pct": 6.14,
+          "close": 148.57,
+          "value": 2613149425.0
         }
       ]
     },
@@ -58,53 +52,48 @@
       "members": [
         {
           "name": "Lilly (Eli) (LLY)",
-          "change_pct": 3.62,
-          "close": 1208.74,
-          "value": 3780670349.18
+          "change_pct": 3.55,
+          "close": 1251.61,
+          "value": 4671913379.35
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Consumer Staples Merchandise Retail",
-      "direction": "up",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Walmart (WMT)",
-          "change_pct": 3.46,
-          "close": 116.16,
-          "value": 2986904299.29
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -6.8,
+          "close": 473.39,
+          "value": 7723286133.71
+        },
+        {
+          "name": "Hewlett Packard Enterprise (HPE)",
+          "change_pct": -7.1,
+          "close": 58.63,
+          "value": 2038228366.41
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Communications Equipment",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Sandisk (SNDK)",
-          "change_pct": -5.33,
-          "close": 1403.34,
-          "value": 10118192017.42
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -11.27,
-          "close": 507.93,
-          "value": 5897869744.35
-        },
-        {
-          "name": "Hewlett Packard Enterprise (HPE)",
-          "change_pct": -8.28,
-          "close": 63.11,
-          "value": 1571065025.33
+          "name": "Arista Networks (ANET)",
+          "change_pct": -5.04,
+          "close": 185.58,
+          "value": 1911676672.22
         }
       ]
     }

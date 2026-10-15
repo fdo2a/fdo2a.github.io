@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-15 07:21 KST",
+  "generated": "2026-10-16 08:46 KST",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
@@ -21,10 +21,10 @@
       "fred_id": "ICSA",
       "transform": "level",
       "units": "",
-      "actual": 197000.0,
-      "previous": 199000.0,
-      "ref_period": "2026-10-03",
-      "vs_prev": "개선"
+      "actual": 199000.0,
+      "previous": 198000.0,
+      "ref_period": "2026-10-10",
+      "vs_prev": "악화"
     },
     {
       "axis": "Labor",
@@ -32,10 +32,10 @@
       "fred_id": "IC4WSA",
       "transform": "level",
       "units": "",
-      "actual": 198000.0,
-      "previous": 200500.0,
-      "ref_period": "2026-10-03",
-      "vs_prev": "개선"
+      "actual": 198500.0,
+      "previous": 198250.0,
+      "ref_period": "2026-10-10",
+      "vs_prev": "악화"
     },
     {
       "axis": "Labor",
@@ -43,10 +43,10 @@
       "fred_id": "CCSA",
       "transform": "level",
       "units": "",
-      "actual": 1716000.0,
-      "previous": 1699000.0,
-      "ref_period": "2026-09-26",
-      "vs_prev": "악화"
+      "actual": 1710000.0,
+      "previous": 1714000.0,
+      "ref_period": "2026-10-03",
+      "vs_prev": "개선"
     },
     {
       "axis": "Labor",
@@ -142,10 +142,10 @@
       "fred_id": "RSAFS",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 1.13,
-      "previous": -0.46,
-      "ref_period": "2026-08-01",
-      "vs_prev": "개선"
+      "actual": 0.77,
+      "previous": 1.29,
+      "ref_period": "2026-09-01",
+      "vs_prev": "악화"
     },
     {
       "axis": "Consumption",
@@ -208,9 +208,9 @@
       "fred_id": "PPIFIS",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.4,
-      "previous": 0.07,
-      "ref_period": "2026-08-01",
+      "actual": 1.34,
+      "previous": 0.47,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승"
     },
     {
