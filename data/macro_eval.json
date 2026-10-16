@@ -1,9 +1,9 @@
 {
-  "report_date": "2026-10-15",
+  "report_date": "2026-10-16",
   "macro_date": "2026-10-14",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": 0.04,
+    "growth_score": 0.043,
     "inflation_score": 0.017,
     "growth_diffusion": 0.429,
     "inflation_diffusion": 0.375
@@ -17,6 +17,7 @@
     "Initial Jobless Claims",
     "Initial Claims 4-wk MA",
     "Continuing Jobless Claims",
+    "Industrial Production MoM",
     "Retail Sales MoM",
     "PPI Final Demand MoM"
   ],
@@ -124,7 +125,7 @@
     "inflation_label": "교착",
     "name": "교착",
     "since": "2026-10-14",
-    "days_held": 2,
+    "days_held": 3,
     "thesis": "10월 14일 9월 CPI(근원 전월비 0.33%, 다우존스 컨센서스 0.2%; 헤드라인 0.65%, 전년비 3.72%)가 물가축 점수를 -0.928에서 -0.305로 끌어올려 둔화 경계 안쪽으로 들어왔다. 성장 점수 -0.117은 보합이라 물가 좌표만 한 칸 이동(둔화→교착), 골디락스에서 교착으로 옮겼다. 소비자물가·근원 전월비의 석 달 평균이 재가속으로 돌아섰고 전년비·PCE·PPI의 석 달 평균은 아직 둔화 중이다. 10월 15일 9월 PPI가 물가 좌표를, 11월 6일 10월 고용이 성장 좌표를 다시 시험한다."
   },
   "regime_change_allowed": false,
@@ -153,7 +154,7 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         -1,
         0,
@@ -166,7 +167,7 @@
       "channel": "물가가 공식적으로 둔화 국면에 들어서면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 다만 실질금리 자체가 기간프리미엄·수급 요인으로 계속 오르고 있어 이 경로가 가격에 반영되기까지는 시차가 있다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         0,
         1
@@ -178,7 +179,7 @@
       "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 다만 안전자산 수요와 상대적으로 높은 미국 금리 수준이 이 경로에 계속 맞서는 힘으로 작용한다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         -1,
         0
@@ -190,7 +191,7 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         -1,
         0,
@@ -203,7 +204,7 @@
       "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 다만 실질금리 자체가 계속 오르는 국면에서는 이 경로가 힘을 받기 어렵다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         0,
         1
@@ -215,7 +216,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         0,
         1
@@ -227,7 +228,7 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간에서는 할인율 상승이 고성장주 밸류에이션을 압박하는 경로가 이를 상쇄한다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 3분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 44,
+      "days_held": 45,
       "allowed_directions": [
         -1,
         0,

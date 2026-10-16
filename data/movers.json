@@ -1,99 +1,127 @@
 {
-  "report_date": "2026-10-15",
+  "report_date": "2026-10-16",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
+      "industry": "Interactive Media & Services",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -1.84,
-          "close": 217.23,
-          "value": 27457152428.68
+          "name": "Alphabet Inc. (Class A) (GOOGL)",
+          "change_pct": -2.47,
+          "close": 340.59,
+          "value": 9606103114.89
+        },
+        {
+          "name": "Alphabet Inc. (Class C) (GOOG)",
+          "change_pct": -2.32,
+          "close": 336.91,
+          "value": 5511694702.77
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Systems Software",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Microsoft (MSFT)",
-          "change_pct": 1.08,
-          "close": 539.44,
-          "value": 12666748213.81
-        },
-        {
-          "name": "ServiceNow (NOW)",
-          "change_pct": 6.14,
-          "close": 148.57,
-          "value": 2613149425.0
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Pharmaceuticals",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Lilly (Eli) (LLY)",
-          "change_pct": 3.55,
-          "close": 1251.61,
-          "value": 4671913379.35
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 0.43,
+          "close": 343.46,
+          "value": 20557004395.96
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Integrated Oil & Gas",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "ExxonMobil (XOM)",
+          "change_pct": 2.46,
+          "close": 178.98,
+          "value": 2360142981.06
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위",
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -6.8,
-          "close": 473.39,
-          "value": 7723286133.71
+          "name": "Micron Technology (MU)",
+          "change_pct": -5.63,
+          "close": 878.84,
+          "value": 26492669520.84
         },
         {
-          "name": "Hewlett Packard Enterprise (HPE)",
-          "change_pct": -7.1,
-          "close": 58.63,
-          "value": 2038228366.41
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -5.95,
+          "close": 528.75,
+          "value": 11842874820.0
+        },
+        {
+          "name": "Intel (INTC)",
+          "change_pct": -5.79,
+          "close": 89.85,
+          "value": 10911720842.04
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": -5.56,
+          "close": 227.83,
+          "value": 4836519723.09
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Communications Equipment",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Arista Networks (ANET)",
-          "change_pct": -5.04,
-          "close": 185.58,
-          "value": 1911676672.22
+          "name": "Sandisk (SNDK)",
+          "change_pct": -6.85,
+          "close": 1299.3,
+          "value": 11485802037.24
+        },
+        {
+          "name": "Seagate Technology (STX)",
+          "change_pct": -7.5,
+          "close": 639.01,
+          "value": 3892334576.43
+        },
+        {
+          "name": "Western Digital (WDC)",
+          "change_pct": -6.86,
+          "close": 332.0,
+          "value": 2639412948.0
+        },
+        {
+          "name": "Hewlett Packard Enterprise (HPE)",
+          "change_pct": -5.97,
+          "close": 55.13,
+          "value": 1708829800.95
         }
       ]
     }

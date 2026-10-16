@@ -1,36 +1,8 @@
 {
-  "report_date": "2026-10-15",
-  "generated": "2026-10-16 08:51 KST",
+  "report_date": "2026-10-16",
+  "generated": "2026-10-17 08:52 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "expiry-202610",
-      "kind": "expiry",
-      "name_ko": "지수 옵션 만기",
-      "date": "2026-10-16",
-      "time_et": null,
-      "time_kst": null,
-      "status": "confirmed",
-      "source": "셋째 금요일 규칙",
-      "assets": [
-        "주식"
-      ],
-      "watch": "만기 당일 수급"
-    },
-    {
-      "key": "release-industrial-production-20261016",
-      "kind": "release",
-      "name_ko": "산업생산(G.17)",
-      "date": "2026-10-16",
-      "time_et": "09:15",
-      "time_kst": "2026-10-16 22:15",
-      "status": "confirmed",
-      "source": "Federal Reserve 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "auction-20261019-13-Week",
       "kind": "auction",
@@ -176,36 +148,6 @@
       "bid_to_cover": 2.68,
       "indirect_pct": 54.2,
       "dealer_pct": 30.2
-    },
-    {
-      "date": "2026-10-08",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 110000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.4,
-      "indirect_pct": 49.2,
-      "dealer_pct": 31.4
-    },
-    {
-      "date": "2026-10-08",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 105000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.77,
-      "indirect_pct": 62.7,
-      "dealer_pct": 20.9
-    },
-    {
-      "date": "2026-10-08",
-      "term": "30-Year",
-      "type": "Bond",
-      "offering_amt": 22000000000.0,
-      "high_yield": 5.618,
-      "bid_to_cover": 2.54,
-      "indirect_pct": 70.4,
-      "dealer_pct": 6.6
     }
   ],
   "blackout": {
