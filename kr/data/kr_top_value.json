@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 7492285,
-    "volume": 5892668,
+    "value": 5769650,
+    "volume": 4485465,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 6976758,
-    "volume": 33002824,
+    "value": 3963469,
+    "volume": 18332314,
     "members": [
       "삼성전자"
     ]
@@ -26,35 +26,35 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 3061449,
-    "volume": 107304637,
+    "value": 2450452,
+    "volume": 84830424,
     "members": [
       "TIGER 반도체TOP10",
       "KODEX 반도체",
       "KODEX 반도체레버리지",
       "SOL AI반도체TOP2플러스",
-      "KODEX AI반도체TOP2플러스",
       "TIGER 반도체TOP10레버리지",
       "SOL AI반도체소부장",
-      "HANARO Fn K-반도체",
-      "TIGER 반도체",
+      "KODEX AI반도체TOP2플러스",
       "KODEX AI반도체핵심장비",
       "SOL 반도체전공정",
+      "HANARO Fn K-반도체",
+      "SOL 반도체후공정",
+      "TIGER 반도체",
+      "TIGER AI반도체핵심공정",
       "ACE AI반도체TOP3+",
       "ACE K반도체TOP2+",
-      "SOL 반도체후공정",
       "TIGER 반도체TOP10커버드콜액티브",
-      "TIGER AI반도체핵심공정",
       "RISE AI반도체TOP10",
+      "PLUS AI반도체소부장액티브",
       "HANARO 반도체핵심공정주도주",
       "RISE 비메모리반도체액티브",
       "KODEX 반도체타겟위클리커버드콜",
       "ACE 반도체Plus전략산업",
-      "PLUS AI반도체소부장액티브",
-      "KODEX 아시아AI반도체exChina액티브",
       "PLUS 코리아HBM반도체",
-      "FOCUS 금융반도체지주채권혼합50액티브",
       "FOCUS AI반도체위클리고정커버드콜",
+      "KODEX 아시아AI반도체exChina액티브",
+      "FOCUS 금융반도체지주채권혼합50액티브",
       "KODEX 한중반도체(합성)",
       "TIGER 한중반도체(합성)"
     ]
@@ -64,8 +64,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 1451568,
-    "volume": 1239981,
+    "value": 848561,
+    "volume": 712153,
     "members": [
       "삼성전기"
     ]
@@ -75,8 +75,8 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 1113443,
-    "volume": 1035851,
+    "value": 835395,
+    "volume": 777114,
     "members": [
       "KODEX CD금리액티브(합성)"
     ]
@@ -86,32 +86,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 1079499,
-    "volume": 6778980,
+    "value": 726610,
+    "volume": 4354561,
     "members": [
       "삼성전자우"
-    ]
-  },
-  {
-    "label": "SK스퀘어",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 834210,
-    "volume": 1088932,
-    "members": [
-      "SK스퀘어"
-    ]
-  },
-  {
-    "label": "TIGER CD1년금리액티브(합성)",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": null,
-    "value": 583452,
-    "volume": 540003,
-    "members": [
-      "TIGER CD1년금리액티브(합성)"
     ]
   },
   {
@@ -119,16 +97,16 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "2차전지",
-    "value": 545894,
-    "volume": 195229430,
+    "value": 454625,
+    "volume": 160427633,
     "members": [
       "KODEX 2차전지산업레버리지",
-      "KODEX 2차전지산업",
       "KODEX 전고체배터리ESS TOP2플러스",
+      "KODEX 2차전지산업",
       "TIGER 2차전지TOP10",
       "SOL 전고체배터리&실리콘음극재",
-      "TIGER 2차전지테마",
       "TIGER 2차전지소재Fn",
+      "TIGER 2차전지테마",
       "TIGER 2차전지TOP10레버리지",
       "KODEX 2차전지핵심소재10",
       "RISE 2차전지TOP10",
@@ -139,12 +117,34 @@
     ]
   },
   {
+    "label": "TIGER CD1년금리액티브(합성)",
+    "kind": "sector_theme_etf",
+    "direction": "long",
+    "theme": null,
+    "value": 438325,
+    "volume": 405638,
+    "members": [
+      "TIGER CD1년금리액티브(합성)"
+    ]
+  },
+  {
+    "label": "SK스퀘어",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 421338,
+    "volume": 536555,
+    "members": [
+      "SK스퀘어"
+    ]
+  },
+  {
     "label": "삼성SDI",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 487426,
-    "volume": 891684,
+    "value": 284281,
+    "volume": 529526,
     "members": [
       "삼성SDI"
     ]
