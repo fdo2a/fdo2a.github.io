@@ -110,3 +110,9 @@ def test_the_figure_rule_says_unit_digits_count():
     from us import readability
     assert readability.figures('1bp 3% 7') == ['1bp', '3%']
     assert '단위·부호 없는 한 자리 정수만' in PROMPT and '「1bp」' in PROMPT
+
+
+def test_the_prompt_carries_the_judgment_verb_rule_for_every_report():
+    # 2026-10-17 W42 외부 문체 평가 → 「모든 레포트에 적용」(STYLE_EXEMPLARS §10-8~10).
+    p = g.STYLE_PROMPT
+    assert '§10-8~10' in p and '무게를 옮긴다' in p and '판단의 세기' in p

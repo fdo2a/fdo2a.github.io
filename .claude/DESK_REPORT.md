@@ -146,7 +146,10 @@ steps belong in the handoff, not the reader's prose. So does the research vocabu
 (candidate/후보, question/질문, test/시험, observation/관측, path/경로, price case/가격
 근거, baseline/기준선): the packet is the analysis language, the report is the delivery
 language — name the theme, the issue, the check and the date instead
-(`.claude/agents/STYLE_EXEMPLARS.md` §10, user decision 2026-10-13).
+(`.claude/agents/STYLE_EXEMPLARS.md` §10, user decision 2026-10-13). When a judgment
+moves, name the move — supports, weakens, revises, withdraws, defers — not 「맞는다·선다·
+갈린다·고쳐 본다·무게를 옮긴다」; no invented drama, one analytic step per sentence
+(§10-8~10, applies to every report, user decision 2026-10-17).
 
 ## Weekly and monthly
 
