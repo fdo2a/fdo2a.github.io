@@ -503,7 +503,8 @@ def _t_fed(d):
 
 def _t_next(d):
     table = d['next_table'] if 'next_table' in d else next_table(d)
-    rows = [[_e(e['date']),
+    # 날짜도 KST 로 — 13:00 ET 입찰은 다음 날 02:00 KST 라 미국 날짜를 쓰면 시각과 하루 어긋난다.
+    rows = [[_e((e.get('time_kst') or '')[:10] or e['date']),
              '발행본 예고' if e.get('source') == 'post' else _e((e.get('time_kst') or '')[-5:]),
              _e(e['name_ko']), _e(e.get('watch') or ''), _e(e.get('stake') or '')] for e in table]
     cap = None
@@ -537,10 +538,13 @@ def _t_performance(agg):
     for title, g in _PERF_GROUPS[1:]:
         out.append((title, _table(['자산', f'종가({end})', '주간 등락'], _perf_rows(agg, g))))
     baskets = []
-    for key, label in (('memory', '메모리 5종목 바스켓'), ('ai_infra', 'AI 인프라 5종목 바스켓')):
-        pct = (agg.get(key) or {}).get('basket_pct')
+    for key, name in (('memory', '메모리'), ('ai_infra', 'AI 인프라')):
+        basket = agg.get(key) or {}
+        pct = basket.get('basket_pct')
         if pct is not None:
-            baskets.append([_e(label), _c(pct, '%')])
+            # 종목 수는 구성에서 센다 — 고정 라벨이 6종목 메모리를 「5종목」이라 적었다.
+            n = sum(1 for k in basket if not k.startswith('basket_'))
+            baskets.append([_e(f'{name} {n}종목 바스켓'), _c(pct, '%')])
     if baskets:
         out.append(('테마 바스켓', _table(['바스켓', '주간 등락'], baskets)))
     body = ''.join(f'<h3>{t}</h3>{tbl}' for t, tbl in out)

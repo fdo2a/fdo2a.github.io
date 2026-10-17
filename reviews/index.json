@@ -1928,6 +1928,21 @@
       "at": "2026-09-26T04:18:32+09:00",
       "findings": 0,
       "baseline": true
+    },
+    "weekly/2026-W39.html": {
+      "sha": "c8fc2d7f95368da47b06169bbef18e2dff80e15b",
+      "at": "2026-10-17T18:43:32+09:00",
+      "findings": 1
+    },
+    "weekly/2026-W40.html": {
+      "sha": "03199b13ecca10fdb56acec1357fffb7392cba7f",
+      "at": "2026-10-17T18:43:32+09:00",
+      "findings": 3
+    },
+    "weekly/2026-W41.html": {
+      "sha": "6692180e853c172c73fdeea0bf65818a655ac6e2",
+      "at": "2026-10-17T18:43:32+09:00",
+      "findings": 6
     }
   }
 }

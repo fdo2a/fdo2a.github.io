@@ -258,3 +258,23 @@ def test_the_next_table_shows_what_judgment_each_event_carries():
 def test_without_next_events_the_table_is_the_calendar():
     html = I._t_next({'next_week': _NW})
     assert '생산자물가(PPI)' in html and '추세 확인' in html
+
+
+def test_the_next_table_dates_a_row_by_its_kst_day():
+    # 13:00 ET 입찰은 다음 날 02:00 KST 다. 날짜 칸이 미국 날짜면 시각(KST)과 하루 어긋난다(W40).
+    nw = [{'date': '2026-10-06', 'time_kst': '2026-10-07 02:00', 'kind': 'auction',
+           'name_ko': '3-Year 국채 입찰 580억 달러', 'watch': '응찰배율과 간접 낙찰 비중'}]
+    html = I._t_next({'next_week': nw})
+    assert '<td>2026-10-07</td><td>02:00</td>' in html
+    assert '2026-10-06' not in html
+
+
+def test_the_basket_label_counts_its_members():
+    # 메모리 바스켓은 6종목인데 라벨이 「5종목」으로 고정돼 있었다(W39~W41).
+    names = ['Micron', 'Western Digital', 'Seagate', 'Nvidia', 'Samsung Elec', 'SK hynix']
+    mem = {n: {'pct': 1.0} for n in names}
+    mem.update(basket_pct=1.0, basket_excess_pct=0.5)
+    ai = {n: {'pct': 1.0} for n in ['Marvell', 'Coherent', 'Lumentum', 'GE Vernova', 'Vertiv']}
+    ai.update(basket_pct=2.0, basket_excess_pct=1.5)
+    html = I._t_performance(_agg(memory=mem, ai_infra=ai))
+    assert '메모리 6종목 바스켓' in html and 'AI 인프라 5종목 바스켓' in html
