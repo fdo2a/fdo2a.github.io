@@ -30,6 +30,7 @@ warnings.filterwarnings('ignore')
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from thesis import disclosure as D  # noqa: E402
+from thesis import edgar as SEC  # noqa: E402
 from thesis import newsroom as NR  # noqa: E402
 from thesis import history as H  # noqa: E402
 from thesis import valuation as V  # noqa: E402
@@ -57,10 +58,15 @@ TICKERS = [
 # 상수로 두되, 매 수집마다 company.json 의 stock_code 와 대조한다(disclosure.verify_corp).
 # 틀린 고유번호는 오류가 아니라 «조회 결과 없음» 으로 돌아와 조용한 날과 구분되지 않는다 —
 # ECOS 항목 코드가 INFO-200 으로 조용히 실패하던 것과 같은 함정이다.
-# Micron 은 미국 상장사라 DART 에 없다.
+# Micron 은 미국 상장사라 DART 에 없다 — SEC_CIKS 가 받는다.
 DART_CORPS = {
     '005930.KS': ('00126380', '005930'),
     '000660.KS': ('00164779', '000660'),
+}
+
+# SEC CIK(10자리). 매 수집마다 submissions 의 tickers 와 대조한다(edgar.verify).
+SEC_CIKS = {
+    'MU': '0000723125',
 }
 
 # Fields recorded to history.jsonl. Kept deliberately small — this file is appended
@@ -305,6 +311,13 @@ def main():
     except Exception as e:  # noqa: BLE001 — 공시 실패가 수집 전체를 죽이지 않는다
         disclosures = {'as_of': today.isoformat(), 'tickers': {},
                        'missing': [D.scrub(e)[:200]]}
+    # SEC — 비-코어. DART 키가 없어(pending) DART 가 일찍 돌아와도 MU 는 받는다.
+    # 창은 DART 와 같은 이력(오늘 행 append 전)에서 정한다 — edgar.window.
+    try:
+        sec = SEC.collect(SEC_CIKS, history_rows, today.isoformat())
+    except Exception as e:  # noqa: BLE001 — SEC 실패가 수집 전체를 죽이지 않는다
+        sec = {'tickers': {}, 'missing': [f'SEC:{type(e).__name__}: {str(e)[:120]}']}
+    SEC.merge(disclosures, sec)
     (out_dir / 'disclosures.json').write_text(
         json.dumps(disclosures, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     confirmed = sum(t.get('confirmed_count', 0) for t in disclosures['tickers'].values())

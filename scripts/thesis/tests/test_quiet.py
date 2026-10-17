@@ -21,7 +21,9 @@ def watch(**over):
 
 def disclosures(confirmed=0, **over):
     base = {'as_of': '2026-09-23', 'missing': [],
-            'tickers': {'005930.KS': {'confirmed_count': confirmed, 'events': []}}}
+            'tickers': {'005930.KS': {'confirmed_count': confirmed, 'events': []},
+                        '000660.KS': {'confirmed_count': 0, 'events': []},
+                        'MU': {'confirmed_count': 0, 'notable_count': 0, 'events': []}}}
     base.update(over)
     return base
 
@@ -84,8 +86,37 @@ def test_earnings_window_covers_the_days_after():
         assert quiet is expect_quiet, day
 
 
+def test_an_sec_notable_filing_breaks_the_quiet():
+    """8-K 7.01 가이던스 수정은 축을 주지 않지만 리서치는 불러야 한다."""
+    d = disclosures()
+    d['tickers']['MU'] = {'confirmed_count': 0, 'notable_count': 1, 'events': [
+        {'date': '2026-09-22', 'title': '8-K Item 7.01, 9.01', 'confirmed': False,
+         'notable': True}]}
+    quiet, reasons = decide(disclosures=d)
+    assert not quiet and any('MU 확인할 공시 1건' in r and '7.01' in r for r in reasons)
+
+
+def test_a_day_of_only_form_4s_stays_quiet():
+    d = disclosures()
+    d['tickers']['MU']['events'] = [{'title': '4', 'confirmed': False, 'notable': False}]
+    assert decide(disclosures=d)[0] is True
+
+
+def test_a_feed_ticker_with_no_row_is_not_quiet():
+    """수집기가 MU 행을 조용히 빠뜨리면 그 날은 증명되지 않은 날이다."""
+    d = disclosures()
+    del d['tickers']['MU']
+    quiet, reasons = decide(disclosures=d)
+    assert not quiet and any('MU 공시 행 없음' in r for r in reasons)
+
+
+def test_filing_tickers_match_the_collectors_feeds():
+    import collect_thesis_data as C
+    assert set(Q.FILING_TICKERS) == set(C.DART_CORPS) | set(C.SEC_CIKS)
+
+
 def test_friday_is_the_full_sweep():
-    """고객사 발표와 Micron 은 피드로 기계화하지 못했다 — 주 1회는 사람처럼 다 본다."""
+    """고객사 발표와 공시 밖 Micron 보도자료는 피드가 없다 — 주 1회는 사람처럼 다 본다."""
     day = date(2026, 9, 25)
     quiet, reasons = decide(today=day, watch=watch(as_of='2026-09-25'),
                             disclosures=disclosures(as_of='2026-09-25'),

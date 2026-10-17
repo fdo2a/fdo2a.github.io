@@ -51,8 +51,11 @@ jobs:
       - name: Collect
         # DART 인증키는 **쿼리스트링**에 들어간다(ECOS는 URL 경로 — scrub 패턴이 다르다).
         # thesis/disclosure.py 의 scrub()을 거치지 않은 URL·예외를 절대 출력하지 말 것.
+        # SEC 는 UA 를 밝혀야 한다(urllib 기본 UA 는 403). 연락처가 공개 레포에 남지 않게
+        # 저장소 *변수*로 둔다 — 비어 있으면 thesis/edgar.py 의 기본 UA 를 쓴다.
         env:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: |
           python3 scripts/collect_thesis_data.py \
             ${{ inputs.force && '--force' || '' }} \

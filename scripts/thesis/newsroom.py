@@ -6,10 +6,10 @@ which the routine used to re-read by hand every evening to conclude, most days, 
 nothing was new. This module records what each feed published since the previous
 collection, so `quiet.py` can prove an empty day without a model call.
 
-Coverage limit: Micron's IR feed and SEC's submissions API refuse this client (403,
-2026-09-24), and customer newsrooms (NVIDIA, AMD) name suppliers too rarely to justify
-a daily feed. Those are left to the earnings window and the Friday full sweep in
-`quiet.py` — not to this file.
+Coverage limit: Micron's IR feed refuses this client (403, 2026-09-24 and 2026-10-17),
+and customer newsrooms (NVIDIA, AMD) name suppliers too rarely to justify a daily feed.
+Those are left to the earnings window and the Friday full sweep in `quiet.py`. Micron's
+SEC filings come through `edgar.py` into `disclosures.json`, not through this file.
 
 Non-core: a failed feed is recorded in `missing`, which makes the day "not provably
 quiet" — the safe direction. It never blocks collection.

@@ -5,12 +5,13 @@ each evening it paid for a full read of the runbook and a web sweep to reach it.
 the arithmetic version of that sweep for what the collectors already record:
 
     numeric triggers  triggers.evaluate() over watch.json + history.jsonl
-    filings           disclosures.json `confirmed_count` (DART whitelist)
+    filings           disclosures.json `confirmed_count` (DART and SEC whitelists), SEC
+                      `notable` events, and a row for every ticker in FILING_TICKERS
     announcements     events.json newsroom items since the previous collection
     earnings          any ticker within [-1, +2] days of `next_earnings_date`
 
 and two things no feed covers, which force the full sweep: Friday (customer newsrooms,
-Micron) and any input that is stale, incomplete or missing. **Anything that cannot be
+and Micron announcements that are not SEC filings) and any input that is stale, incomplete or missing. **Anything that cannot be
 proven quiet is not quiet** — a false "quiet" skips a real event; a false "not quiet"
 only costs one ordinary run.
 
@@ -25,6 +26,11 @@ KST = timezone(timedelta(hours=9))
 EARNINGS_BEFORE = 1
 EARNINGS_AFTER = 2
 FULL_SWEEP_WEEKDAY = 4      # Friday
+
+# Every ticker a filing feed covers (DART + SEC). Kept here rather than read from the
+# file, so a collector that silently drops a row cannot vouch for itself.
+# test_quiet checks it against collect_thesis_data.DART_CORPS and SEC_CIKS.
+FILING_TICKERS = ('005930.KS', '000660.KS', 'MU')
 
 
 def _kst_date(stamp):
@@ -41,7 +47,8 @@ def decide(today, watch, triggers, disclosures, events):
     """(quiet, reasons). `reasons` names every signal that broke the quiet."""
     reasons = []
     if today.weekday() == FULL_SWEEP_WEEKDAY:
-        reasons.append('금요일 전체 점검 — 고객사 발표·Micron 은 피드로 기계화되지 않았다')
+        reasons.append('금요일 전체 점검 — 고객사 발표·Micron 보도자료(SEC 공시 외)는 '
+                       '피드로 기계화되지 않았다')
 
     if not isinstance(watch, dict) or watch.get('as_of') != today.isoformat():
         reasons.append(f'watch.json 이 오늘 것이 아니다 ({(watch or {}).get("as_of")})')
@@ -55,9 +62,19 @@ def decide(today, watch, triggers, disclosures, events):
     elif disclosures.get('missing') or disclosures.get('pending'):
         reasons.append(f'공시 수집 불완전 — {disclosures.get("missing") or "키 미설정"}')
     else:
-        for sym, row in (disclosures.get('tickers') or {}).items():
+        rows = disclosures.get('tickers') or {}
+        for sym in FILING_TICKERS:
+            if sym not in rows:
+                reasons.append(f'{sym} 공시 행 없음 — 수집되지 않았다')
+        for sym, row in rows.items():
             if (row or {}).get('confirmed_count'):
                 reasons.append(f'{sym} 확정 공시 {row["confirmed_count"]}건')
+            # SEC `notable`: cannot be classified from the index (an 8-K 7.01/8.01/1.01),
+            # so it calls the research without supplying an axis. edgar.py docstring.
+            notable = [e for e in (row or {}).get('events') or () if e.get('notable')]
+            if notable:
+                titles = ', '.join(f'{e.get("date")} {e.get("title")}' for e in notable[:3])
+                reasons.append(f'{sym} 확인할 공시 {len(notable)}건 — {titles}')
 
     if not isinstance(events, dict):
         reasons.append('events.json 없음 — 뉴스룸을 확인하지 못했다')
