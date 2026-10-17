@@ -787,6 +787,71 @@
       "at": "2026-10-17T12:07:38+09:00",
       "findings": 0
     },
+    "news/2026-09-28.html": {
+      "sha": "39d5b9e330f97e0e3276a50f5d31b47140ff65d6",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 2
+    },
+    "news/2026-09-30.html": {
+      "sha": "296312468163c39eefa5ba5bed650aedf27d2885",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-01.html": {
+      "sha": "7a42f528be22962760941512ae96bfa1e4257fcb",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 1
+    },
+    "news/2026-10-02.html": {
+      "sha": "5dcac5a6e49f4bf6f2bae266aaa07b88806958b4",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-05.html": {
+      "sha": "92975a4d0af8009a7c4d415d0c490262b8b0b58f",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-06.html": {
+      "sha": "fbd29694a9f64119e5738a6f60c347c151044872",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-07.html": {
+      "sha": "0cd6ac10536285054c353a52d7e5552e41033617",
+      "at": "2026-10-17T12:28:29+09:00",
+      "findings": 2
+    },
+    "news/2026-10-08.html": {
+      "sha": "0223a7cbbdc3783b2ad2a70b24a101ca3e295ecf",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-09.html": {
+      "sha": "44177045570a2ef1e19f3ffa9d758824186c6308",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-12.html": {
+      "sha": "f6e18b85078724466614d1c2d1f06316d7b8d8ba",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-13.html": {
+      "sha": "d9334e481b9d2850fbd446126b6c173f9a3593cf",
+      "at": "2026-10-17T12:28:29+09:00",
+      "findings": 1
+    },
+    "news/2026-10-14.html": {
+      "sha": "1d28d5e9aa1891f1e7f389b8592478c1cb110f9e",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
+    "news/2026-10-15.html": {
+      "sha": "f7e32d32d3d74b987ce1cd138e877174ab989e22",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
       "at": "2026-08-24T13:32:40+09:00",
@@ -1674,6 +1739,11 @@
       "at": "2026-09-27T01:04:12+09:00",
       "findings": 1
     },
+    "posts/2026-09-17.html": {
+      "sha": "da4c043a28e2b541026b022f6aec8f0413579e8e",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
+    },
     "posts/2026-09-18.html": {
       "sha": "c943af8bf22164bf90d378dbb48ca7eac3916624",
       "at": "2026-09-26T04:18:31+09:00",
@@ -1704,6 +1774,11 @@
       "findings": 0,
       "baseline": true
     },
+    "posts/2026-09-25.html": {
+      "sha": "d55ca58bbe6ae4cf2ec983804f7784632dfcb0a3",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 3
+    },
     "posts/2026-09-28.html": {
       "sha": "0accfe1bfa4cd184d5c6ff0bdbeb097478780205",
       "at": "2026-10-02T11:44:43+07:00",
@@ -1718,6 +1793,11 @@
       "sha": "cea6904a75a7c76c5765b5f69aee6a246e6223d8",
       "at": "2026-10-17T12:09:13+09:00",
       "findings": 0
+    },
+    "posts/2026-10-01.html": {
+      "sha": "bd8a4053718ff440a40380350abe283fdf3e378f",
+      "at": "2026-10-17T12:28:27+09:00",
+      "findings": 1
     },
     "posts/2026-10-02.html": {
       "sha": "54a4aae45f09bea4f73910f376170d048b316d2e",
@@ -1792,14 +1872,13 @@
       "baseline": true
     },
     "scripts/thesis/render.py": {
-      "sha": "3d65fe9c4afe1870aa647b9688295c8a344a74ae",
-      "at": "2026-08-25T02:07:38+09:00",
-      "findings": 0,
-      "baseline": true
+      "sha": "6488bc67d3354c6a4885d8a4b545695c3e1d5bef",
+      "at": "2026-10-17T12:28:28+09:00",
+      "findings": 0
     },
     "thesis/data/thesis_state.json": {
-      "sha": "322f3efe98fa247cd6bc188f0922f84678763e91",
-      "at": "2026-09-06T02:45:09+09:00",
+      "sha": "b20bbb09d244aab1f08ac50b8c5d881ea0f3db5c",
+      "at": "2026-10-17T12:28:28+09:00",
       "findings": 0
     },
     "thesis/micron.html": {
