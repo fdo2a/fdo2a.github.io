@@ -128,6 +128,7 @@ def validate(record, prior):
     elif kind=='review':
         if record.get('hypothesis_id') not in hypotheses: raise ValueError('Unknown or cross-market hypothesis')
         if cutoff<timestamp(hypotheses[record['hypothesis_id']]['recorded_at']):raise ValueError('Review cutoff precedes hypothesis registration')
+        if date.fromisoformat(hypotheses[record['hypothesis_id']]['report_date'])>report_date:raise ValueError('Review session precedes hypothesis session')
         for key in ['direction','mechanism']: choice(record,key,{'supported','weakened','undecidable'})
         choice(record,'status',{'open','closed'});require_text(record,'rationale')
         performance=record['performance'];choice(performance,'status',{'unavailable','verified'})
@@ -150,24 +151,32 @@ def validate(record, prior):
         if any(hypotheses[i]['report_date']!=record['report_date'] for i in candidates):raise ValueError('Candidate belongs to another cycle date')
         if set(candidates)!={hid for hid,h in hypotheses.items() if h['report_date']==record['report_date']}:raise ValueError('Cycle must include every same-date hypothesis')
         if not candidates:require_text(record,'no_candidate_reason')
+        if any(timestamp(hypotheses[i]['data_cutoff'])>cutoff for i in candidates):raise ValueError('Cycle cites a candidate beyond its cutoff')
         valid_reviews={p['id']:p for p in prior if p['type']=='review' and p['market']==record['market']}
         if not isinstance(reviews,list) or len(set(reviews))!=len(reviews) or any(i not in valid_reviews for i in reviews): raise ValueError('Invalid reviewed_ids')
         for rid in reviews:
             r=valid_reviews[rid]
             latest=next(v for v in reversed(prior) if v['type']=='review' and v['hypothesis_id']==r['hypothesis_id'])
             if r['report_date']!=record['report_date'] or latest['id']!=rid:raise ValueError('Stale cycle review')
+            if timestamp(r['data_cutoff'])>cutoff:raise ValueError('Cycle cites a review beyond its cutoff')
         same_day_latest={}
         for rid,r in valid_reviews.items():
             if r['report_date']==record['report_date']:same_day_latest[r['hypothesis_id']]=rid
         if set(reviews)!=set(same_day_latest.values()):raise ValueError('Cycle must include latest same-date reviews including closed failures')
         unresolved=record.get('unresolved',[])
         if not isinstance(unresolved,list):raise ValueError('unresolved must be a list')
+        # A cycle written late for an earlier session judges the ledger as of that session:
+        # hypotheses from later sessions are neither owed a reason nor named, and status
+        # comes from reviews up to that session. Keyed on report_date, which the publish
+        # gate ties to the post, not on data_cutoff, which the author sets (codex 2026-10-17).
+        known={hid:h for hid,h in hypotheses.items() if date.fromisoformat(h['report_date'])<=report_date}
         for item in unresolved:
             if item.get('hypothesis_id') not in hypotheses:raise ValueError('Unknown unresolved hypothesis')
+            if item['hypothesis_id'] not in known:raise ValueError('Unresolved hypothesis belongs to a later session')
             require_text(item,'reason')
         addressed={valid_reviews[i]['hypothesis_id'] for i in reviews}|{i['hypothesis_id'] for i in unresolved}
-        for hid,hyp in hypotheses.items():
-            latest=next((r for r in reversed(prior) if r['type']=='review' and r['hypothesis_id']==hid),None)
+        for hid,hyp in known.items():
+            latest=next((r for r in reversed(prior) if r['type']=='review' and r['hypothesis_id']==hid and date.fromisoformat(r['report_date'])<=report_date),None)
             if (latest is None or latest['status']=='open') and hid not in addressed and hid not in candidates:
                 raise ValueError(f'Open hypothesis needs review or unresolved reason: {hid}')
 

@@ -209,7 +209,7 @@ def test_cycle_requires_latest_review_on_same_date(tmp_path):
     m.append_record(root,review(tmp_path),now=NOW)
     m.append_record(root,review(tmp_path,id='r2'),now=NOW)
     c={k:p[k] for k in ['market','report_date','data_cutoff','sources']}
-    c.update(id='c1',type='cycle',central_questions=['What changed?'],candidate_ids=['h1'],reviewed_ids=['r1'],unresolved=[])
+    c.update(id='c1',type='cycle',data_cutoff=NOW,central_questions=['What changed?'],candidate_ids=['h1'],reviewed_ids=['r1'],unresolved=[])
     with pytest.raises(ValueError):m.append_record(root,c,now=NOW)
     c['reviewed_ids']=['r2']
     assert m.append_record(root,c,now=NOW)['id']=='c1'
@@ -241,7 +241,7 @@ def test_cycle_cannot_omit_closed_failure_review(tmp_path):
     m=module();p=hypothesis(tmp_path);root=tmp_path/'r';m.append_record(root,p,now=NOW)
     m.append_record(root,review(tmp_path,status='closed',direction='weakened'),now=NOW)
     c={k:p[k] for k in ['market','report_date','data_cutoff','sources']}
-    c.update(id='c1',type='cycle',central_questions=['What changed?'],candidate_ids=['h1'],reviewed_ids=[],unresolved=[])
+    c.update(id='c1',type='cycle',data_cutoff=NOW,central_questions=['What changed?'],candidate_ids=['h1'],reviewed_ids=[],unresolved=[])
     with pytest.raises(ValueError):m.append_record(root,c,now=NOW)
     c['reviewed_ids']=['r1'];assert m.append_record(root,c,now=NOW)['id']=='c1'
     c['id']='c2';assert m.append_record(root,c,now=NOW)['id']=='c2'
@@ -251,4 +251,67 @@ def test_cycle_cannot_omit_same_day_hypothesis(tmp_path):
     m=module();p=hypothesis(tmp_path);root=tmp_path/'r';m.append_record(root,p,now=NOW)
     c={k:p[k] for k in ['market','report_date','data_cutoff','sources']}
     c.update(id='c1',type='cycle',central_questions=['What changed?'],candidate_ids=[],reviewed_ids=[],unresolved=[{'hypothesis_id':'h1','reason':'Pending'}],no_candidate_reason='No new ideas')
+    with pytest.raises(ValueError):m.append_record(root,c,now=NOW)
+
+
+def _backfill_cycle(tmp_path, unresolved):
+    # A cycle written late for an earlier session: its information ends before h1 existed.
+    source = tmp_path / 'earlier.txt'
+    source.write_text('Earlier session close', encoding='utf-8')
+    return dict(id='c0', type='cycle', market='us', report_date='2026-09-19',
+                data_cutoff='2026-09-19T21:00:00+00:00',
+                sources=[dict(id='s0', path=str(source), provenance='earlier close',
+                              published_at='2026-09-19T20:00:00+00:00', observed_at='2026-09-19T20:30:00+00:00')],
+                central_questions=['What moved the earlier session?'], candidate_ids=[], reviewed_ids=[],
+                unresolved=unresolved, no_candidate_reason='Written late; nothing can be prospective')
+
+
+def test_backfill_cycle_need_not_address_hypothesis_after_its_cutoff(tmp_path):
+    m=module();root=tmp_path/'r';m.append_record(root,hypothesis(tmp_path),now=NOW)
+    m.append_record(root,_backfill_cycle(tmp_path,[]),now='2026-09-21T12:00:00Z')
+
+
+def test_backfill_cycle_cannot_name_hypothesis_after_its_cutoff(tmp_path):
+    m=module();root=tmp_path/'r';m.append_record(root,hypothesis(tmp_path),now=NOW)
+    with pytest.raises(ValueError):
+        m.append_record(root,_backfill_cycle(tmp_path,[{'hypothesis_id':'h1','reason':'Not yet known'}]),now='2026-09-21T12:00:00Z')
+
+
+def test_current_cycle_cannot_skip_open_hypothesis_by_early_cutoff(tmp_path):
+    # codex 2026-10-17 #1: the exemption follows the session date, not a cutoff the author picks.
+    m=module();root=tmp_path/'r';m.append_record(root,hypothesis(tmp_path),now=NOW)
+    c=_backfill_cycle(tmp_path,[]);c['report_date']='2026-09-21'
+    with pytest.raises(ValueError):m.append_record(root,c,now='2026-09-21T12:00:00Z')
+
+
+def test_backfill_cycle_owes_reason_for_hypothesis_closed_only_later(tmp_path):
+    # codex 2026-10-17 #2: status is judged as of the backfilled session, not today.
+    m=module();root=tmp_path/'r';m.append_record(root,hypothesis(tmp_path),now=NOW)
+    r=review(tmp_path,status='closed',report_date='2026-09-22',data_cutoff='2026-09-22T11:00:00Z')
+    m.append_record(root,r,now='2026-09-22T12:00:00Z')
+    c=_backfill_cycle(tmp_path,[]);c['report_date']='2026-09-21'
+    c['data_cutoff']='2026-09-21T21:00:00+00:00'
+    with pytest.raises(ValueError):m.append_record(root,c,now='2026-09-23T12:00:00Z')
+    c['unresolved']=[{'hypothesis_id':'h1','reason':'Still open on that session'}]
+    m.append_record(root,c,now='2026-09-23T12:00:00Z')
+
+
+def test_session_dates_compare_as_dates_not_strings(tmp_path):
+    # codex 2026-10-17 #4: '20260920' sorts after '2026-09-21' as text but is the earlier session.
+    m=module();root=tmp_path/'r';m.append_record(root,hypothesis(tmp_path,report_date='20260920'),now=NOW)
+    c=_backfill_cycle(tmp_path,[]);c['report_date']='2026-09-21'
+    with pytest.raises(ValueError):m.append_record(root,c,now='2026-09-21T12:00:00Z')
+
+
+def test_review_cannot_precede_its_hypothesis_session(tmp_path):
+    # codex 2026-10-17 #3: an earlier-session review must not cite a later-session hypothesis.
+    m=module();root=tmp_path/'r';m.append_record(root,hypothesis(tmp_path),now=NOW)
+    with pytest.raises(ValueError):m.append_record(root,review(tmp_path,report_date='2026-09-19'),now=NOW)
+
+
+def test_cycle_cannot_cite_records_beyond_its_cutoff(tmp_path):
+    # codex 2026-10-17 #3: candidates and reviews carry information the cycle must not outrun.
+    m=module();root=tmp_path/'r';p=hypothesis(tmp_path);m.append_record(root,p,now=NOW)
+    c={k:p[k] for k in ['market','report_date','sources']}
+    c.update(id='c1',type='cycle',data_cutoff='2026-09-20T10:45:00+00:00',central_questions=['What changed?'],candidate_ids=['h1'],reviewed_ids=[],unresolved=[])
     with pytest.raises(ValueError):m.append_record(root,c,now=NOW)
