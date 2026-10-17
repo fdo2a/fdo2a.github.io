@@ -92,7 +92,7 @@ python3 scripts/build_weekly_insight.py assemble --key <KEY> \
   --body weekly_<KEY>.body.html --meta weekly_<KEY>.meta.json --out weekly_<KEY>.html
 ```
 
-조립이 exit 1 이면 목록을 writer 에게 그대로 돌려준다. 아래 US 게이트 명령에는 모두 `--insight data/weekly_ext/<KEY>.insight.json` 을 붙인다.
+조립이 exit 1 이면 목록을 writer 에게 그대로 돌려준다. 조립은 meta.json 의 `next_events`(다음 주 표에 더할 발행본 예고 일정·걸린 판단)를 진단 파일에 실으니 **진단 파일은 조립 뒤의 판을 커밋한다** — 다시 `diag` 를 돌렸으면 조립도 다시 한다. 아래 US 게이트 명령에는 모두 `--insight data/weekly_ext/<KEY>.insight.json` 을 붙인다. 게이트의 `경고:` 줄(서술 분량·자금 이동 표현·일정표 누락)은 막지 않지만 writer 에게 함께 넘겨 한 번 고칠 기회를 준다.
 
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 

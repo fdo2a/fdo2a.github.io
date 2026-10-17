@@ -43,13 +43,15 @@ from us.macro_metrics import RELEASES  # noqa: E402
 
 
 def _collect(report_date, start, end):
-    """-> (events, auctions, missing). 비-코어: 실패는 기록하고 건너뛴다."""
-    events, auctions, missing = [], [], []
+    """-> (events, auctions, missing, ambiguous). 비-코어: 실패는 기록하고 건너뛴다."""
+    events, auctions, missing, ambiguous = [], [], [], []
 
     try:
         client = FredClient()
         client.preflight()
         got, dropped = U.release_events(client.release_dates(start, end), RELEASES)
+        # 빈 결과 가드보다 먼저 남긴다 — 전부 모호해 0건이면 그 이유가 사라진다(codex 2026-10-17 #10).
+        ambiguous.extend(slug for slug, _names in dropped)
         if not got:
             # 이름 매칭이 조용히 0건이 되는 경로가 있다(FRED 가 표기를 바꾸면).
             # 빈 결과를 성공으로 적으면 그 침묵이 영원히 안 들린다.
@@ -69,7 +71,7 @@ def _collect(report_date, start, end):
         missing.append('auctions')
         print(f'국채 입찰 실패: {e}', file=sys.stderr)
 
-    return events, auctions, missing
+    return events, auctions, missing, ambiguous
 
 
 def _report_date(datadir, override):
@@ -105,10 +107,12 @@ def main():
 
     start = report_date + dt.timedelta(days=1)
     end = report_date + dt.timedelta(days=args.horizon)
-    extra, auctions, missing = (([], [], ['releases', 'auctions']) if args.offline
-                                else _collect(report_date, start, end))
+    extra, auctions, missing, ambiguous = (([], [], ['releases', 'auctions'], []) if args.offline
+                                           else _collect(report_date, start, end))
     book = build(report_date, meetings=meetings, horizon_days=args.horizon,
                  extra=extra, missing=missing, auctions=auctions)
+    # `missing`·`complete` 와 따로 둔다 — 일간 게이트의 완성도 판정은 바꾸지 않고 손실만 드러낸다.
+    book['ambiguous'] = sorted(set(ambiguous))
     out = args.out or os.path.join(args.datadir, 'calendar.json')
     os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
     with open(out, 'w', encoding='utf-8') as fh:
@@ -118,7 +122,8 @@ def main():
     for e in book['events']:
         kinds[e['kind']] = kinds.get(e['kind'], 0) + 1
     print(f"{out} — {len(book['events'])}건 " + (str(kinds) if kinds else '')
-          + (f" · 빠짐 {book['missing']}" if book['missing'] else ''))
+          + (f" · 빠짐 {book['missing']}" if book['missing'] else '')
+          + (f" · 모호해서 뺀 지표 {book['ambiguous']}" if book['ambiguous'] else ''))
     if book['recent_auctions']:
         top = book['recent_auctions'][0]
         print(f"직전 입찰 {top['date']} {top['term']} — 응찰 {top['bid_to_cover']}"

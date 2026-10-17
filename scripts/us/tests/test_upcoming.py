@@ -31,6 +31,23 @@ def test_a_slug_matching_two_releases_is_dropped_rather_than_mislabelled():
     assert dropped and dropped[0][0] == 'cpi'
 
 
+@pytest.mark.parametrize('real,lookalike,slug', [
+    # 2026-10-13~17 Actions 로그에 찍힌 실제 이름 쌍. 셋 다 슬러그째 버려져 CPI·소매판매·
+    # 실업수당청구가 일간·주간 일정표에서 조용히 사라졌다(W41 다음 주 표에 CPI 가 없었다).
+    ('Consumer Price Index', 'Research Consumer Price Index', 'cpi'),
+    ('Advance Monthly Sales for Retail and Food Services', 'Selected Real Retail Sales Series',
+     'retail-sales'),
+    ('Unemployment Insurance Weekly Claims Report',
+     'State Unemployment Insurance Weekly Claims Report', 'claims'),
+])
+def test_a_known_lookalike_release_does_not_knock_out_the_real_one(real, lookalike, slug):
+    rows = [_row('2026-10-14', 10, real), _row('2026-10-15', 999, lookalike)]
+    events, dropped = U.release_events(rows, RELEASES)
+    assert dropped == []
+    assert [e['key'].split('-20')[0] for e in events] == [f'release-{slug}']
+    assert events[0]['date'] == '2026-10-14'
+
+
 def test_an_unknown_release_is_simply_not_ours():
     rows = [_row('2026-09-16', 123, 'Beige Book')]
     assert U.release_events(rows, RELEASES) == ([], [])

@@ -38,6 +38,8 @@ def main():
     ap.add_argument('--research-as-of', help='Timezone-aware frozen review cutoff')
     ap.add_argument('--market', choices=('us', 'kr'))
     ap.add_argument('--insight', help='US 주간 인사이트 진단 (data/weekly/<KEY>.insight.json)')
+    ap.add_argument('--posts-dir', default='posts',
+                    help='US 주간: 다음 주 표의 발행본 예고 일정을 대조할 발행본 폴더 (--research-frozen 이면 건너뛴다)')
     ap.add_argument('--research-frozen', metavar='ORIGINAL',
                     help='발행 뒤 재검사: 연구 요약이 이 원본과 바이트까지 같으면 떼고 나머지를 검사한다 '
                          '(as-of 를 복원할 수 없는 codex 문체 수정용)')
@@ -85,12 +87,26 @@ def main():
     if args.insight and insight is None:
         print(f'FATAL: 진단 파일이 없다: {args.insight}', file=sys.stderr)
         return 2
+    post_texts = None
+    if insight is not None and not args.research_frozen:
+        # 발행 때만 대조한다. 발행 뒤 재검사는 그때 통과한 표를 진단 파일에서 다시 그리고, 지금
+        # 폴더의 발행본은 그 뒤 고쳐졌을 수 있다(codex 2026-10-17 #1).
+        post_texts = {}
+        for post in recap.get('posts') or []:
+            path = os.path.join(args.posts_dir, f"{post.get('date')}.html")
+            if os.path.exists(path):
+                with open(path, encoding='utf-8') as fh:
+                    post_texts[post['date']] = fh.read()
     violations = check(html, agg, load(args.scorecard), recap, args.span,
-                       research_summary=research_summary, insight=insight)
+                       research_summary=research_summary, insight=insight, post_texts=post_texts)
     if args.market == 'kr':
         # KR 은 노출 등급을 본문에 쓰지 않는다 — 원장에만(2026-10-04, scripts/kr/grade_talk.py).
         from kr import grade_talk
         violations += grade_talk.violations(html)
+    if insight is not None:
+        from us.weekly_insight_gate import warnings as insight_warnings
+        for w in insight_warnings(html, insight):
+            print(f'경고: {w}')
     if not violations:
         print('기간 리포트 게이트 통과')
         return

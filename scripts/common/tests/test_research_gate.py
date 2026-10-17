@@ -163,3 +163,25 @@ def test_frozen_summary_changed_after_publishing_is_refused():
 def test_frozen_summary_absent_on_both_sides_is_a_no_op():
     html = '<p>요약 없는 글.</p>'
     assert frozen_summary_body(html, html) == html
+
+
+def test_the_summary_names_the_recording_time_against_the_test_start():
+    """「사후 기록 0건」을 「사후 평가가 없다」로 읽었다(2026-10-17 W41 피드백)."""
+    from common.research_gate import checked_summary_body, render_summary
+    s = {'counts': {'total': 2, 'prospective': 1, 'retrospective': 1, 'open': 1, 'overdue': 0},
+         'hypotheses': []}
+    out = render_summary(s)
+    assert '검증 시작 전에 기록한 가설 1건, 시작 뒤에 기록한 가설 1건' in out and '사후 기록' not in out
+    # 옛 문형으로 발행한 글도 같은 원장 요약과 바이트로 맞는다(정확히 두 판만).
+    for frag in (out, render_summary(s, legacy=True)):
+        assert checked_summary_body(f'<p>a</p>{frag}<p>b</p>', s) == '<p>a</p><p>b</p>'
+    with pytest.raises(ValueError):
+        checked_summary_body(f'<p>a</p>{out.replace("1건", "2건", 1)}<p>b</p>', s)
+
+
+def test_style_strips_both_the_old_and_the_new_generated_summary():
+    from us import style
+    for line in ('<p>검토 대상 5건 중 사전 기록 5건, 사후 기록 0건입니다. 진행 중 3건이며 확인 기한이 지난 가설은 0건입니다.</p>',
+                 '<p>검토 대상 5건 중 검증 시작 전에 기록한 가설 5건, 시작 뒤에 기록한 가설 0건입니다. 진행 중 3건이며 확인 기한이 지난 가설은 0건입니다.</p>'):
+        html = f'<body data-register="da"><section class="card" data-research-summary="x"><h2>연구 판단 복기</h2>{line}</section></body>'
+        assert '입니다' not in style._body(html)

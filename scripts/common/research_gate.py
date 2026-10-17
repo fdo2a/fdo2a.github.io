@@ -51,24 +51,32 @@ def _fingerprint(summary):
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
-def render_summary(summary):
+# 2026-10-17 문형: 「사후 기록」을 PM 이 「사후 평가 기록」으로 읽었다(W41 외부 피드백). 원장의
+# prospective 는 「기록 시각 < 검증 시작」이지 「결과를 알기 전」이 아니다(codex 2026-10-17 #7).
+# 옛 문형(legacy)으로 발행한 글을 원장으로 다시 검사할 때도 바이트 대조가 되도록 둘 다 렌더한다.
+_LABELS = {False: ('검증 시작 전에 기록한 가설 {p}건, 시작 뒤에 기록한 가설 {r}건', '기록 시점', '시작 전', '시작 뒤'),
+           True: ('사전 기록 {p}건, 사후 기록 {r}건', '기록', '사전', '사후')}
+
+
+def render_summary(summary, legacy=False):
     """Only derived counts/outcomes go into this immutable publication fragment."""
     c = summary['counts']
+    counts_ko, col, pro, retro = _LABELS[legacy]
     parts = [f'<section class="card" id="research-review" data-research-summary="{_fingerprint(summary)}">',
              '<h2>연구 판단 복기</h2>',
-             f'<p>검토 대상 {c["total"]}건 중 사전 기록 {c["prospective"]}건, 사후 기록 {c["retrospective"]}건입니다. '
+             f'<p>검토 대상 {c["total"]}건 중 {counts_ko.format(p=c["prospective"], r=c["retrospective"])}입니다. '
              f'진행 중 {c["open"]}건이며 확인 기한이 지난 가설은 {c["overdue"]}건입니다.</p>']
     labels = {'supported': '지지', 'weakened': '약화', 'undecidable': '판단 유보',
               'not_reviewed': '미검토', 'open': '진행 중', 'closed': '종료',
               'watch': '관찰', 'planned': '검토 예정', 'not_taken': '미실행'}
     if summary['hypotheses']:
-        parts.append('<div class="tbl-scroll"><table><thead><tr><th>가설</th><th>기록</th><th>방향</th><th>설명</th><th>상태</th><th>실행</th><th>성과</th></tr></thead><tbody>')
+        parts.append('<div class="tbl-scroll"><table><thead><tr><th>가설</th><th>' + col + '</th><th>방향</th><th>설명</th><th>상태</th><th>실행</th><th>성과</th></tr></thead><tbody>')
         for row in summary['hypotheses']:
             # A numeric performance assessment stays in the evidence until its full
             # execution/cost basis has been reviewed; missing inputs never become zero.
             perf = row['performance']
             performance = '평가 불가' if perf['status'] == 'unavailable' else '근거 기록 있음'
-            fields = [row['title'], '사전' if row['prospective'] else '사후',
+            fields = [row['title'], pro if row['prospective'] else retro,
                       labels[row['direction']], labels[row['mechanism']], labels[row['status']],
                       labels[row['execution_status']], performance]
             parts.append('<tr>' + ''.join('<td>' + escape(str(x)) + '</td>' for x in fields) + '</tr>')
@@ -84,7 +92,8 @@ def checked_summary_body(html, summary):
     if len(matches) != 1:
         raise ValueError('Exactly one ledger-derived research summary is required')
     start, end, _, tag = matches[0]
-    if tag != 'section' or html[start:end].strip() != render_summary(summary):
+    if tag != 'section' or html[start:end].strip() not in (render_summary(summary),
+                                                            render_summary(summary, legacy=True)):
         raise ValueError('Research summary differs from the as-of ledger; regenerate it')
     return html[:start] + html[end:]
 

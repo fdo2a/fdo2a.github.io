@@ -121,15 +121,36 @@ def anomalies(agg, snap):
 
 
 def _anom(name, group, move, unit, sd):
-    z = round(move / sd, 1)
+    # 판정은 반올림 전 값으로 한다. W41 필수소비재 3.60÷1.82=1.978 이 반올림 2.0 으로
+    # 「설명 필요」가 붙었고 본문은 「정확히 2.0배」라고 썼다. 표시값이 판정과 어긋나는
+    # 경계(반올림하면 문턱을 넘는 값)만 소수 둘째 자리로 보여 주고, 그래도 넘으면(1.995~) 버림한다.
+    # 평균을 빼지 않은 비율이다(z-score 아님) — 이름 `z` 는 하위 호환으로 둔다.
+    raw = move / sd
+    flagged = abs(raw) >= Z_FLAG
+    z = round(raw, 1)
+    if (abs(z) >= Z_FLAG) != flagged:
+        z = round(raw, 2)
+        if (abs(z) >= Z_FLAG) != flagged:
+            z = math.trunc(raw * 100) / 100
     return {'name': name, 'label': LABEL.get(name, name), 'group': group,
             'move': round(move, 2 if unit == '%' else 1), 'unit': unit,
-            'vol': round(sd, 2 if unit == '%' else 1), 'z': z, 'flagged': abs(z) >= Z_FLAG}
+            'vol': round(sd, 2 if unit == '%' else 1), 'z': z, 'flagged': flagged}
 
 
-def curve_regime(d2, d10, flat=3.0):
+def _ratio_text(z):
+    return f'{z:+.2f}' if round(z, 1) != z else f'{z:+.1f}'
+
+
+CURVE_PARALLEL_BP = 2.0   # 2s10s 가 이보다 덜 움직이면 모양 이름을 붙이지 않는다
+
+
+def curve_regime(d2, d10, flat=3.0, parallel=CURVE_PARALLEL_BP):
     if abs(d2) < flat and abs(d10) < flat:
         return '보합'
+    # 2년물은 FRED T-1, 10년물은 당일 종가라 몇 bp 차이는 날짜 잡음 안이다(W41: -3.4·-3.3 이
+    # 「불 스티프닝」으로 인쇄됐다). 같은 방향으로 함께 움직였으면 평행 이동으로 부른다.
+    if abs(d10 - d2) < parallel and (d2 > 0) == (d10 > 0):
+        return '평행 상승' if d2 > 0 else '평행 하락'
     if d2 > 0 and d10 > 0:
         return '베어 플래트닝' if d2 > d10 else '베어 스티프닝'
     if d2 < 0 and d10 < 0:
@@ -182,6 +203,8 @@ def regime(agg, snap):
 
     out = {'curve': curve_regime(d2, d10) if d2 is not None and d10 is not None else None,
            'd2y_bp': d2, 'd10y_bp': d10,
+           # 표에 찍는 2s10s 변화는 여기서 계산해 둔다 — 게이트는 뺄셈을 추론하지 않는다(codex #9).
+           'd2s10s_bp': round(d10 - d2, 1) if d2 is not None and d10 is not None else None,
            'corr': stock_bond_corr(snap, agg['end_date'])}
     g, v = pct(idx, 'S&P 500 Growth'), pct(idx, 'S&P 500 Value')
     out['growth_minus_value'] = round(g - v, 2) if g is not None and v is not None else None
@@ -261,6 +284,75 @@ def next_week(calendar, end, days=9):
             continue
         out.append({k: e.get(k) for k in ('date', 'time_kst', 'kind', 'name_ko', 'watch')})
     return sorted(out, key=lambda e: (e['date'], e.get('time_kst') or ''))
+
+
+# ── 다음 주 표: 일정표 + 발행본이 예고한 일정 + 걸린 판단 (2026-10-17) ─────────────
+# 일정표(`next_week`)는 그대로 두고, 작성자의 meta.json `next_events` 를 진단 파일에 따로 실어
+# 렌더·게이트가 같은 함수(`merge_next`)로 합친다. 작성자 칸은 숫자를 받지 않는다 — 진단의 다른
+# 값이 우연히 같아 수치 출처 검사를 비껴가는 길을 닫는다(codex 2026-10-17 #2).
+NEXT_DAYS = 9
+_KIND_TERM = {'expiry': '만기', 'auction': '입찰', 'fomc': 'FOMC'}
+_NAME_DIGITS_OK = re.compile(r'\d{1,2}분기|\d{1,2}월')
+_GENERIC_WORD = re.compile(r'^(?:\d{1,2}분기|분기|실적|발표|주요|일정|\d{1,2}월)$')
+
+
+def event_aliases(row):
+    """그 일정을 본문이 불렀다고 볼 이름들. 「소비자물가(CPI)」→ 소비자물가·CPI."""
+    name = (row.get('name_ko') or '').strip()
+    out = {name}
+    m = re.match(r'\s*([^()]+?)\s*\(([^)]+)\)', name)
+    if m:
+        out |= {m.group(1), m.group(2)}
+    words = name.split()
+    if words:
+        out.add(words[0])
+    if row.get('source') == 'post' or row.get('kind') == 'post':
+        out |= {w for w in words if not _GENERIC_WORD.match(w)}
+    if row.get('kind') in _KIND_TERM:
+        out.add(_KIND_TERM[row['kind']])
+    return {a for a in out if len(a) >= 2}
+
+
+def merge_next(rows, events, end, days=NEXT_DAYS):
+    """-> (표 행, 오류). 같은 날짜·같은 이름이면 그 행에 볼 것·걸린 판단을 달고, 없으면
+    발행본 예고 행(source=post)을 더한다. 입력이 같으면 결과가 같다 — 재조립해도 낡은 행이 남지 않는다."""
+    table = [dict(r, source='calendar', stake='') for r in rows or []]
+    errs = []
+    if not events:
+        return table, errs
+    hi = (date.fromisoformat(end) + timedelta(days=days)).isoformat()
+    for i, ev in enumerate(events or []):
+        d, name = str(ev.get('date') or ''), str(ev.get('name') or '').strip()
+        watch, stake = str(ev.get('watch') or '').strip(), str(ev.get('stake') or '').strip()
+        tag = f'next_events[{i}]'
+        if not name:
+            errs.append(f'{tag}: name 이 비었다')
+            continue
+        if not (end < d <= hi):
+            errs.append(f'{tag}: {d} 는 다음 {days}일({end} 다음 날~{hi}) 밖이다')
+            continue
+        if re.search(r'\d', watch + stake) or re.search(r'\d', _NAME_DIGITS_OK.sub('', name)):
+            errs.append(f'{tag}: 「{name}」 칸에 숫자가 있다 — 볼 것·걸린 판단은 짧은 명사구로, 수치는 산문에서 쓴다')
+            continue
+        if len(watch) > 30 or len(stake) > 30:
+            errs.append(f'{tag}: 볼 것·걸린 판단은 30자 안으로 쓴다')
+            continue
+        hit = [r for r in table if r['date'] == d and r['source'] == 'calendar'
+               and any(a in name for a in event_aliases(r))]
+        if hit:
+            for r in hit[:1]:
+                r['watch'] = watch or r.get('watch')
+                r['stake'] = stake
+        else:
+            table.append({'date': d, 'time_kst': None, 'kind': 'post', 'name_ko': name,
+                          'watch': watch, 'stake': stake, 'source': 'post'})
+    table.sort(key=lambda r: (r['date'], r.get('time_kst') or '', r['source']))
+    return table, errs
+
+
+def next_table(d):
+    rows, _ = merge_next(d.get('next_week') or [], d.get('next_events') or [], d.get('end_date'))
+    return rows
 
 
 _DAILY_SERIES = (('equities', 'S&P 500', '%'), ('bonds', '10년물', 'bp'),
@@ -351,11 +443,12 @@ def _t_anomalies(d):
         digits = 2 if a['unit'] == '%' else 1
         bp = a['unit'] == 'bp'
         rows.append([_e(a['label']), _c(a['move'], a['unit'], digits, invert=bp),
-                     f"{a['vol']:.{digits}f}{a['unit']}", _cv(a['z'], f"{a['z']:+.1f}", invert=bp),
+                     f"{a['vol']:.{digits}f}{a['unit']}", _cv(a['z'], _ratio_text(a['z']), invert=bp),
                      '설명 필요' if a['flagged'] else ''])
-    return _table(['자산', '주간 변화', '평소 주간 변동폭', '배수(z)', ''], rows,
-                  f'평소 주간 변동폭은 직전 {d["lookback_weeks"]}주 주간 변화의 표준편차. '
-                  f'배수 {d["z_flag"]:.1f} 이상은 평소보다 두 배 넘게 움직인 자산이다.')
+    return _table(['자산', '주간 변화', '평소 주간 변동폭', '평소 대비 배수', ''], rows,
+                  f'배수는 주간 변화를 평소 주간 변동폭(직전 {d.get("lookback_weeks", LOOKBACK)}주 '
+                  '주간 변화의 표준편차)으로 나눈 값이다. 평균은 빼지 않았다. '
+                  f'반올림 전 {d["z_flag"]:.1f}배 이상이 평소의 두 배 넘게 움직인 자산이다.')
 
 
 def _t_regime(d):
@@ -363,7 +456,8 @@ def _t_regime(d):
     rows = []
     if r.get('curve'):
         rows.append(['미 국채 커브', _e(r['curve']),
-                     f"2년물 {_c(r['d2y_bp'], 'bp', 1, invert=True)} · 10년물 {_c(r['d10y_bp'], 'bp', 1, invert=True)}"])
+                     f"2년물 {_c(r['d2y_bp'], 'bp', 1, invert=True)} · 10년물 {_c(r['d10y_bp'], 'bp', 1, invert=True)}"
+                     + (f" · 2s10s {r['d2s10s_bp']:+.1f}bp" if r.get('d2s10s_bp') is not None else '')])
     c = r.get('corr') or {}
     if c.get('now') is not None:
         prev = f" (직전 {c['window']}일 {c['prev']:+.2f})" if c.get('prev') is not None else ''
@@ -408,9 +502,14 @@ def _t_fed(d):
 
 
 def _t_next(d):
-    rows = [[_e(e['date']), _e((e.get('time_kst') or '')[-5:]), _e(e['name_ko']),
-             _e(e.get('watch') or '')] for e in d['next_week']]
-    return _table(['날짜', '시각(KST)', '일정', '볼 것'], rows)
+    table = d['next_table'] if 'next_table' in d else next_table(d)
+    rows = [[_e(e['date']),
+             '발행본 예고' if e.get('source') == 'post' else _e((e.get('time_kst') or '')[-5:]),
+             _e(e['name_ko']), _e(e.get('watch') or ''), _e(e.get('stake') or '')] for e in table]
+    cap = None
+    if any(e.get('source') == 'post' for e in table):
+        cap = '「발행본 예고」는 경제지표 일정표에 없고 그 주 발행본이 날짜를 예고한 일정이다.'
+    return _table(['날짜', '시각(KST)', '일정', '볼 것', '걸린 판단'], rows, cap)
 
 
 _PERF_GROUPS = (('주식 지수', 'indices'), ('섹터', 'sectors'), ('환율', 'fx'), ('원자재', 'commodities'))

@@ -222,7 +222,7 @@ def _strip_generated_tables(html, insight, agg):
     return _TABLE_RE.sub(lambda m: ' ' if norm(m.group(0)) in expected else m.group(0), html)
 
 
-def check(html, agg, scorecard, recap, span, research_summary=None, insight=None):
+def check(html, agg, scorecard, recap, span, research_summary=None, insight=None, post_texts=None):
     # Caller derives this object from the verified ledger, never an author-edited
     # JSON. Only the exact generated block gets its own numeric provenance.
     if research_summary is not None:
@@ -314,7 +314,8 @@ def check(html, agg, scorecard, recap, span, research_summary=None, insight=None
     # US 주간 인사이트: 코드가 계산한 진단(z·상관·포지션·선물 내재금리)도 인용 소스다.
     # 진단 파일은 스냅샷과 집계에서 결정론적으로 나오고, 작성자가 손대지 않는다.
     if insight is not None:
-        allowed |= _numbers(insight)
+        # 작성자가 쓴 다음 주 표 칸(meta.json next_events)은 수치 출처가 아니다(codex 2026-10-17 #2).
+        allowed |= _numbers({k: v for k, v in insight.items() if k != 'next_events'})
     for post in ((recap or {}).get('posts') or []):
         allowed |= _numbers(post.get('figures') or [])
     allowed |= {str(y) for y in range(2020, 2036)}
@@ -342,7 +343,7 @@ def check(html, agg, scorecard, recap, span, research_summary=None, insight=None
 
     if insight is not None:
         from us.weekly_insight_gate import check as insight_check
-        v += insight_check(html, insight)
+        v += insight_check(html, insight, post_texts=post_texts)
 
     ru = (scorecard or {}).get('rollup') or {}
     if any((ru.get(k) or {}).get('insufficient') for k in ru):

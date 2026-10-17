@@ -187,7 +187,8 @@ _RESEARCH_SUMMARY = re.compile(
 # `research_gate.render_summary` 가 **만드는 것만** 걷어 낸다 — 기대값을 재현하는 쪽이다.
 _GENERATED_SUMMARY_PARTS = (
     re.compile(r'<h2>연구 판단 복기</h2>'),
-    re.compile(r'<p>검토 대상 \d+건 중 사전 기록 \d+건, 사후 기록 \d+건입니다\. '
+    # 옛 문형(「사전 기록·사후 기록」, 2026-10-17 전 발행본)도 걷어 낸다 — 다시 검사할 때 막히지 않게.
+    re.compile(r'<p>검토 대상 \d+건 중 (?:사전 기록 \d+건, 사후 기록|검증 시작 전에 기록한 가설 \d+건, 시작 뒤에 기록한 가설) \d+건입니다\. '
                r'진행 중 \d+건이며 확인 기한이 지난 가설은 \d+건입니다\.</p>'),
     re.compile(r'<p>아직 평가할 가설 기록이 없습니다\.</p>'),
     re.compile(r'<div class="tbl-scroll"><table><thead><tr><th>가설</th>.*?</table></div>', re.S),

@@ -76,6 +76,9 @@ def test_yield_anomaly_uses_bp_changes_of_fred_weekly_closes():
     (-9.0, -2.0, '불 스티프닝'), (-2.0, -9.0, '불 플래트닝'),
     (5.0, -4.0, '트위스트 플래트닝'), (-5.0, 4.0, '트위스트 스티프닝'),
     (1.0, -2.0, '보합'),
+    # 기울기 변화가 2bp 안이면 모양 이름을 붙이지 않는다 — W41 의 2년 -3.4bp·10년 -3.3bp 는
+    # 「불 스티프닝」으로 인쇄됐지만 2s10s 는 0.1bp 움직였다(2년물은 T-1 FRED 라 날짜 잡음 안이다).
+    (-3.4, -3.3, '평행 하락'), (4.0, 5.5, '평행 상승'), (-9.0, -7.0, '불 스티프닝'),
 ])
 def test_curve_regime_names_the_shape_of_the_move(d2, d10, label):
     assert I.curve_regime(d2, d10) == label
@@ -187,3 +190,71 @@ def test_daily_record_marks_a_gap_instead_of_calling_it_the_previous_day():
     rec = {r['date']: r for r in I.daily_record(agg)}
     assert 'since' not in rec['2026-09-14']['S&P 500']
     assert rec['2026-09-17']['S&P 500']['since'] == '2026-09-14'
+
+
+def test_a_ratio_just_under_the_flag_is_not_flagged_by_rounding():
+    """필수소비재 3.60% ÷ 1.82% = 1.978 — 반올림하면 2.0 이지만 문턱은 넘지 않았다(W41)."""
+    a = I._anom('Consumer Staples', 'sectors', 3.60, '%', 1.82)
+    assert not a['flagged']
+    assert a['z'] == 1.98          # 표시값이 판정과 어긋나지 않게 두 자리
+    b = I._anom('Utilities', 'sectors', 3.97, '%', 2.32)
+    assert b['z'] == 1.7 and not b['flagged']
+    c = I._anom('USD/KRW', 'fx', 4.0, '%', 2.0)
+    assert c['z'] == 2.0 and c['flagged']
+
+
+def test_the_anomaly_table_says_ratio_not_z_score():
+    diag = {'z_flag': 2.0, 'anomalies': [I._anom('Consumer Staples', 'sectors', 3.60, '%', 1.82)]}
+    html = I._t_anomalies(diag)
+    assert '배수(z)' not in html and '평소 대비 배수' in html
+    assert '+1.98' in html and '평균은 빼지 않았다' in html
+
+
+def test_the_curve_row_prints_the_2s10s_change():
+    agg = _agg(yields={'2Y': {'chg_bp': -3.4}, '10Y': {'chg_bp': -3.3}})
+    r = I.regime(agg, {'prices': {}, 'fred': {}})
+    assert r['curve'] == '평행 하락'
+    html = I._t_regime({'regime': r})
+    assert '2s10s +0.1bp' in html
+
+
+# ── 다음 주 표: 발행본이 예고한 일정과 걸린 판단 (2026-10-17) ──────────────────
+
+_NW = [{'date': '2026-10-15', 'time_kst': '2026-10-15 21:30', 'kind': 'release',
+        'name_ko': '생산자물가(PPI)', 'watch': '추세 확인'}]
+
+
+def test_next_events_annotate_a_calendar_row_and_add_a_post_row():
+    rows, errs = I.merge_next(_NW, [
+        {'date': '2026-10-15', 'name': '생산자물가', 'watch': '물가 압력 지속', 'stake': '정책금리 전망'},
+        {'date': '2026-10-15', 'name': 'TSMC 3분기 실적', 'watch': 'AI 수요 가이던스', 'stake': 'AI 수익화 기대'}],
+        '2026-10-09')
+    assert errs == []
+    ppi = next(r for r in rows if r['name_ko'].startswith('생산자물가'))
+    assert ppi['watch'] == '물가 압력 지속' and ppi['stake'] == '정책금리 전망' and ppi['source'] == 'calendar'
+    tsmc = next(r for r in rows if r['name_ko'].startswith('TSMC'))
+    assert tsmc['source'] == 'post' and tsmc['kind'] == 'post'
+
+
+def test_next_events_refuse_numbers_in_writer_cells_and_dates_outside_the_window():
+    _, errs = I.merge_next(_NW, [
+        {'date': '2026-10-15', 'name': 'TSMC 실적', 'watch': '가이던스 446억~458억 달러', 'stake': 'AI'},
+        {'date': '2026-10-26', 'name': '베라이즌 실적', 'watch': '가이던스', 'stake': '통신'},
+        {'date': '2026-10-14', 'name': '', 'watch': 'x', 'stake': 'y'}], '2026-10-09')
+    assert len(errs) == 3
+
+
+def test_the_next_table_shows_what_judgment_each_event_carries():
+    rows, _ = I.merge_next(_NW, [{'date': '2026-10-15', 'name': 'TSMC 3분기 실적',
+                                  'watch': 'AI 수요 가이던스', 'stake': 'AI 수익화 기대'}], '2026-10-09')
+    html = I._t_next({'next_week': _NW, 'next_table': rows})
+    assert I._t_next({'next_week': _NW, 'end_date': '2026-10-09', 'next_events': [
+        {'date': '2026-10-15', 'name': 'TSMC 3분기 실적', 'watch': 'AI 수요 가이던스',
+         'stake': 'AI 수익화 기대'}]}) == html
+    assert '걸린 판단' in html and 'TSMC 3분기 실적' in html and 'AI 수익화 기대' in html
+    assert '발행본 예고' in html
+
+
+def test_without_next_events_the_table_is_the_calendar():
+    html = I._t_next({'next_week': _NW})
+    assert '생산자물가(PPI)' in html and '추세 확인' in html

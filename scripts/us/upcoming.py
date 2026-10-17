@@ -41,6 +41,15 @@ RELEASE_PATTERNS = (
     ('michigan', ('surveys of consumers',)),
 )
 
+# 같은 바늘에 걸리는 **알려진** 유사 릴리스. 모호성 가드가 슬러그를 통째로 버려서
+# 2026-10-13~17 CPI·소매판매·실업수당청구가 일정표에서 조용히 사라졌다(stderr 경고뿐).
+# 이름을 알게 된 것만 적는다 — 처음 보는 유사 이름은 지금처럼 버리고 calendar.json `ambiguous` 에 남긴다.
+RELEASE_EXCLUDE = {
+    'cpi': ('research consumer price index',),
+    'retail-sales': ('real retail sales',),
+    'claims': ('state unemployment insurance',),
+}
+
 # FRED 는 **날짜만** 준다. 벽시계 시각은 발표 기관이 오래 고정해 둔 것이라 정적 표로
 # 둔다(ET 기준, 서머타임과 무관한 «벽시계»다). 표에 없으면 `None` — 날짜만 인쇄하고
 # 한국 시각을 지어내지 않는다.
@@ -65,8 +74,11 @@ def _match(name):
     low = (name or '').lower()
     for slug, needles in RELEASE_PATTERNS:
         if any(n in low for n in needles):
+            if any(x in low for x in RELEASE_EXCLUDE.get(slug, ())):
+                return None
             return slug
     return None
+
 
 
 def release_events(rows, releases_meta):
@@ -85,7 +97,8 @@ def release_events(rows, releases_meta):
     for slug, hits in by_slug.items():
         ids = {rid for _d, rid, _n in hits if rid is not None}
         if len(ids) > 1:
-            # 같은 슬러그에 릴리스 둘 — 어느 쪽이 그 지표인지 모른다.
+            # 같은 슬러그에 릴리스 둘 — 어느 쪽이 그 지표인지 모른다. 이름 위치로 고르지 않는다
+            # (codex 2026-10-17: 「Retail Sales Supplement」 같은 새 이름이 진짜를 밀어낸다).
             dropped.append((slug, sorted({n for _d, _r, n in hits})))
             continue
         meta = releases_meta.get(slug)

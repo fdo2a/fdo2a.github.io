@@ -36,7 +36,7 @@ Publishes a US equity morning brief automatically every trading day. Full histor
 - **Gate `scripts/check_period.py`**: quotable numbers are the aggregates, that period's posts and (US weekly, `--insight`) the diagnostics. **No day in the period may be missing.** Apply **`mask_dates` first** so dates are not read as figures.
 - **Authoring**: `.claude/agents/period-report-writer.md`.
 - **Pipeline**: `.claude/WEEKLY_ORCHESTRATOR.md` and `MONTHLY_ORCHESTRATOR.md`. **Most monthly runs must do nothing and exit** — STEP 0 confirms it is not a rollover and stops. The monthly scorecard uses `--spans 3,12 --no-append`.
-- **When changing this**: read `docs/superpowers/specs/2026-08-23-period-reports-design.md` before touching `recap_source.py`, `period_scorecard.py`, or `check_period.py` — the three gate holes, the difference between the two scorecards, and the short-sample rule are there; US weekly insight: `docs/superpowers/specs/2026-09-26-weekly-insight-and-japan-design.md` before `weekly_insight*.py`. The KR half lives in `scripts/kr/CLAUDE.md`.
+- **When changing this**: read `docs/superpowers/specs/2026-08-23-period-reports-design.md` before touching `recap_source.py`, `period_scorecard.py`, or `check_period.py` — the three gate holes, the difference between the two scorecards, and the short-sample rule are there; US weekly insight: `docs/superpowers/specs/2026-09-26-weekly-insight-and-japan-design.md` and `2026-10-17-weekly-insight-feedback.md` before `weekly_insight*.py`. The KR half lives in `scripts/kr/CLAUDE.md`.
 
 ## Center of gravity: market/price > judgment/positioning (US body of rule 6 in site/AGENTS.md)
 

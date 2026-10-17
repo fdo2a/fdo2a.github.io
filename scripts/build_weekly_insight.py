@@ -41,6 +41,10 @@ def cmd_diag(args):
         print(f'스냅샷 기준일({snap["end_date"]})이 집계 종료일({agg["end_date"]})보다 이르다 — 다시 수집한다')
         return 1
     diag = I.build(agg, snap, cal, fomc)
+    # 일정 수집이 모호해서 뺀 지표(2026-10 CPI). 표에 없다는 사실을 작성자·게이트가 보게 한다.
+    diag['calendar_ambiguous'] = cal.get('ambiguous') or []
+    if diag['calendar_ambiguous']:
+        print(f'  ! 일정표에서 빠진 지표(이름이 모호): {", ".join(diag["calendar_ambiguous"])}')
     out = Path(f'data/weekly_ext/{args.key}.insight.json')
     out.write_text(json.dumps(diag, ensure_ascii=False, indent=1), encoding='utf-8')
     flagged = [a['label'] for a in diag['anomalies'] if a['flagged']]
@@ -58,12 +62,22 @@ def cmd_assemble(args):
     for k in ('title', 'summary'):
         if not str(meta.get(k, '')).strip():
             errs.append(f'meta.json 에 {k} 가 없다')
+    agg = _load(f'data/weekly/{args.key}.json')
+    diag_path = Path(f'data/weekly_ext/{args.key}.insight.json')
+    diag = _load(diag_path)
+    events = meta.get('next_events') or []
+    if not isinstance(events, list):
+        errs.append('meta.json next_events 는 목록이어야 한다')
+        events = []
+    errs += [f'meta.json {e}' for e in I.merge_next(diag.get('next_week') or [], events, diag['end_date'])[1]]
     if errs:
         for e in errs:
             print(f'  - {e}')
         return 1
-    agg = _load(f'data/weekly/{args.key}.json')
-    diag = _load(f'data/weekly_ext/{args.key}.insight.json')
+    # 작성자 입력은 일정표(next_week)와 따로 진단 파일에 싣는다 — 게이트·발행 뒤 재검사가 같은 표를
+    # 다시 그린다. 매번 통째로 바꿔 지운 일정이 남지 않게 한다. 이 파일은 발행 커밋에 들어간다.
+    diag['next_events'] = events
+    diag_path.write_text(json.dumps(diag, ensure_ascii=False, indent=1), encoding='utf-8')
     Path(args.out).write_text(I.assemble(body, meta, diag, agg), encoding='utf-8')
     print(f'{args.out} 조립 완료')
     return 0
