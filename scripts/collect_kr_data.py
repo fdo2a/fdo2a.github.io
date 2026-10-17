@@ -34,25 +34,48 @@ def completeness(bundle: dict):
     return (len(missing) == 0, missing)
 
 
-def _report_date():
-    df = yf.download("^KS11", period="7d", progress=False, auto_adjust=False)
-    if len(df):
-        return df.index[-1].date().isoformat()
-    return datetime.now(KST).date().isoformat()
+def _yf_last_date():
+    try:
+        df = yf.download("^KS11", period="7d", progress=False, auto_adjust=False)
+    except Exception:  # noqa: BLE001 — 네이버 거래일이 있으면 쓰이지 않는 보조 원천
+        return None
+    return df.index[-1].date().isoformat() if len(df) else None
+
+
+def guard_session(outdir, report_date, indices):
+    """늦게 돈 실행이 지난 세션을 덮어쓰지 못하게 한다 — 무엇이든 쓰기 전에 부른다.
+
+    2026-10-13 02:27 KST 실행이 10/12 종가를 10/08 로 원장·주간·월간·뉴스에 덮어썼다.
+    문제가 있으면 StaleIndexData — 이 실행의 산출물은 전부 날짜가 틀리므로 아무것도 쓰지 않는다.
+    """
+    from kr.history import StaleIndexData, index_record, ledger_conflicts
+    from us.history import read_jsonl
+    ledger = os.path.join(outdir, "history", "kr_market.jsonl")
+    rec = index_record({"report_date": report_date, "indices": indices})
+    problems = ledger_conflicts(read_jsonl(ledger), rec)
+    if problems:
+        raise StaleIndexData("; ".join(problems))
 
 
 def main(outdir: str, assetdir: str = "kr/assets"):
+    from kr.history import resolve_report_date
     os.makedirs(outdir, exist_ok=True)
-    report_date = _report_date()
-    bizdate = report_date.replace("-", "")
 
-    # 지수 — Naver 네이티브(수급과 일치, 마감 후 공식 종가)
-    indices = {}
+    # 지수 — Naver 네이티브(수급과 일치, 마감 후 공식 종가). 거래일도 같은 응답에서 읽는다.
+    indices, naver_dates = {}, {}
     for name, code in (("KOSPI", "KOSPI"), ("KOSDAQ", "KOSDAQ")):
         try:
-            indices[name] = sources.fetch_index(code)
+            row = sources.fetch_index(code)
         except Exception:
-            pass
+            continue
+        naver_dates[name] = row.pop("trade_date", None)
+        indices[name] = row
+    report_date, notes = resolve_report_date(naver_dates, _yf_last_date(),
+                                             datetime.now(KST).date().isoformat())
+    for n in notes:
+        print(f"report_date: {n}")
+    guard_session(outdir, report_date, indices)
+    bizdate = report_date.replace("-", "")
 
     # 수급 (신선도) — 코스피·코스닥
     flows_out = {}
@@ -397,4 +420,10 @@ if __name__ == "__main__":
     ap.add_argument("--assetdir", default="kr/assets",
                     help="날짜별 차트 PNG 를 내보낼 곳. 발행본이 ../assets/ 로 참조한다")
     args = ap.parse_args()
-    main(args.outdir, args.assetdir)
+    from kr.history import StaleIndexData
+    try:
+        main(args.outdir, args.assetdir)
+    except StaleIndexData as e:
+        # 실패로 끝내야 워크플로가 커밋하지 않는다. 다음 슬롯·다음 날 수집이 정상으로 이어 간다.
+        print(f"수집 중단 — 날짜가 틀린 세션: {e}", file=sys.stderr)
+        sys.exit(2)

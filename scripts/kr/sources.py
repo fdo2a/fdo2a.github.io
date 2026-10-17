@@ -9,7 +9,7 @@
 살아남은 소스는 m.stock/api.stock 의 JSON API 다. 수급과 거래대금(코어 2종)은 여기로
 옮겼고, 프로그램 매매·장중 수급·테마(전부 비-코어)는 대체재가 없어 폐지 상태다.
 """
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import requests
 
@@ -53,7 +53,14 @@ def fetch_index(code: str) -> dict:
     if close <= 0:
         # 0 을 종가로 흘리면 지수(코어)가 비지 않은 채 0 으로 발행된다 — 빈 [] 와 같은 실패다.
         raise RuntimeError(f"지수 종가가 비었다 — {code} basic 응답 확인 필요")
-    return {"close": round(close, 2), "change_pct": chg}
+    # 거래일은 종가와 같은 응답에서 읽는다. 휴장일·주말에는 직전 거래일에 머문다
+    # (2026-10-17 토요일 실측: "2026-10-16T20:15:00+09:00"). 읽지 못하면 None.
+    traded = str(j.get("localTradedAt") or "")[:10]
+    try:
+        trade_date = date.fromisoformat(traded).isoformat()
+    except ValueError:
+        trade_date = None
+    return {"close": round(close, 2), "change_pct": chg, "trade_date": trade_date}
 
 
 def downsample_30min(bars: list) -> list:

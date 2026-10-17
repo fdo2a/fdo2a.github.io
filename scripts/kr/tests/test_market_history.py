@@ -69,3 +69,67 @@ def test_index_series_keeps_a_name_that_vanished_from_later_rows():
             {'report_date': '2026-08-28', 'indices': {'KOSPI': 6788.88}}]
     got = index_series(rows)
     assert 'KOSDAQ' in got, got
+
+
+# ── 거래일 확정과 원장 충돌 — 2026-10-13 02:27 KST 사고 재현 ─────────────────────
+# 10/12 예약 실행이 Actions 지연으로 10/13 새벽에 돌았다. yfinance ^KS11 은 아직 10/08 이
+# 마지막 행이었고 네이버는 10/12 종가를 줬다 → 10/12 종가가 10/08 행을 덮었다.
+
+import pytest
+
+from kr.history import StaleIndexData, ledger_conflicts, resolve_report_date
+
+REAL = [{'report_date': '2026-10-07', 'indices': {'KOSPI': 6803.9, 'KOSDAQ': 898.43}},
+        {'report_date': '2026-10-08', 'indices': {'KOSPI': 6625.93, 'KOSDAQ': 892.27}},
+        {'report_date': '2026-10-12', 'indices': {'KOSPI': 6384.24, 'KOSDAQ': 849.19}}]
+
+
+def test_report_date_follows_the_source_of_the_closes():
+    got, _ = resolve_report_date({'KOSPI': '2026-10-12', 'KOSDAQ': '2026-10-12'},
+                                 '2026-10-08', '2026-10-13')
+    assert got == '2026-10-12'
+
+
+def test_report_date_falls_back_to_yfinance_then_today():
+    assert resolve_report_date({'KOSPI': None}, '2026-10-08', '2026-10-13')[0] == '2026-10-08'
+    assert resolve_report_date({}, None, '2026-10-13')[0] == '2026-10-13'
+
+
+def test_report_date_notes_a_yfinance_disagreement():
+    _, notes = resolve_report_date({'KOSPI': '2026-10-12'}, '2026-10-08', '2026-10-13')
+    assert any('2026-10-08' in n for n in notes)
+
+
+def test_report_date_refuses_split_index_dates():
+    with pytest.raises(StaleIndexData):
+        resolve_report_date({'KOSPI': '2026-10-12', 'KOSDAQ': '2026-10-08'}, None, '2026-10-13')
+
+
+def test_the_october_13_run_is_refused_as_stale_and_duplicate():
+    rec = {'report_date': '2026-10-08', 'indices': {'KOSPI': 6384.24, 'KOSDAQ': 849.19}}
+    problems = ledger_conflicts(REAL, rec)
+    assert any('2026-10-12' in p and '늦' in p for p in problems)   # 원장 최신보다 이른 날짜
+    assert any('같' in p for p in problems)                          # 다른 날짜와 같은 종가
+
+
+def test_a_holiday_labelled_with_the_previous_close_is_refused():
+    rec = {'report_date': '2026-10-09', 'indices': {'KOSPI': 6625.93, 'KOSDAQ': 892.27}}
+    assert ledger_conflicts(REAL[:2], rec)
+
+
+def test_the_next_session_and_a_same_day_rerun_pass():
+    nxt = {'report_date': '2026-10-13', 'indices': {'KOSPI': 6035.35, 'KOSDAQ': 837.03}}
+    assert ledger_conflicts(REAL, nxt) == []
+    rerun = {'report_date': '2026-10-12', 'indices': {'KOSPI': 6384.5, 'KOSDAQ': 849.19}}
+    assert ledger_conflicts(REAL, rerun) == []
+    assert ledger_conflicts(REAL, REAL[-1]) == []
+
+
+def test_one_equal_index_alone_is_not_a_duplicate():
+    rec = {'report_date': '2026-10-13', 'indices': {'KOSPI': 6384.24, 'KOSDAQ': 837.03}}
+    assert ledger_conflicts(REAL, rec) == []
+
+
+def test_empty_ledger_and_closeless_record_pass():
+    assert ledger_conflicts([], REAL[0]) == []
+    assert ledger_conflicts(REAL, {'report_date': '2026-10-13', 'indices': {}}) == []

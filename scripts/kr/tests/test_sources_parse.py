@@ -105,7 +105,8 @@ def test_fetch_index_reads_close_and_ratio(monkeypatch):
     monkeypatch.setattr(sources, "fetch_json",
                         lambda url, timeout=12: {"closePrice": "7,007.72",
                                                  "fluctuationsRatio": "1.65"})
-    assert sources.fetch_index("KOSPI") == {"close": 7007.72, "change_pct": 1.65}
+    assert sources.fetch_index("KOSPI") == {"close": 7007.72, "change_pct": 1.65,
+                                            "trade_date": None}
 
 
 def test_fetch_industry_raises_when_empty(monkeypatch):
@@ -146,3 +147,22 @@ def test_fetch_industry_names_maps_every_group(monkeypatch):
     monkeypatch.setattr(sources, "fetch_json", fake)
     assert sources.fetch_industry_names() == {"299": "기계", "278": "건설"}
     assert "pageSize=100" in seen["url"]      # 업종은 79개 — 60 으로 받으면 코드가 안 풀린다
+
+
+def test_fetch_index_reads_the_trade_date_from_naver(monkeypatch):
+    """종가와 같은 응답에서 거래일을 읽는다 — 날짜를 다른 원천(yfinance)에서 가져오면
+    늦게 돈 수집이 새 종가를 옛 날짜에 적는다(2026-10-13 02:27 KST, 10/12 종가가 10/08 행으로)."""
+    monkeypatch.setattr(sources, "fetch_json",
+                        lambda url, timeout=12: {"closePrice": "5,668.05",
+                                                 "fluctuationsRatio": "2.05",
+                                                 "localTradedAt": "2026-10-16T20:15:00+09:00"})
+    assert sources.fetch_index("KOSPI")["trade_date"] == "2026-10-16"
+
+
+@pytest.mark.parametrize("raw", [None, "", "garbage"])
+def test_fetch_index_trade_date_is_none_when_unreadable(monkeypatch, raw):
+    monkeypatch.setattr(sources, "fetch_json",
+                        lambda url, timeout=12: {"closePrice": "5,668.05",
+                                                 "fluctuationsRatio": "2.05",
+                                                 "localTradedAt": raw})
+    assert sources.fetch_index("KOSPI")["trade_date"] is None
