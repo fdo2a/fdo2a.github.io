@@ -101,8 +101,9 @@ class _Reader(HTMLParser):
     div 아닌 조상의 숨김도 전파된다(2차 #5).
     """
 
-    def __init__(self):
+    def __init__(self, title=TITLE):
         super().__init__(convert_charrefs=True)
+        self.title = title
         self.stack = []          # [(tag, hidden, skip, item_or_None)]
         self.items = []          # [{'guid', 'chars', 'links', 'hidden'}]
         self.section = None      # 「오늘의 뉴스」 구간에서 모은 것
@@ -143,7 +144,7 @@ class _Reader(HTMLParser):
                 break
         if tag in ('h2', 'h3'):
             self._in_title = False
-            if self._title.strip() == TITLE and self.section_depth is None:
+            if self._title.strip() == self.title and self.section_depth is None:
                 # 구간은 **제목을 담은 요소**부터 그 요소가 닫힐 때까지다.
                 # 제목 자신의 깊이를 잡으면 바로 다음 줄에서 지워진다.
                 self.section_depth = max(self._title_depth - 1, 0)
@@ -173,8 +174,8 @@ class _Reader(HTMLParser):
             self.section_stray += len(text)
 
 
-def _read(html):
-    r = _Reader()
+def _read(html, title=TITLE):
+    r = _Reader(title)
     try:
         r.feed(html or '')
         r.close()
@@ -183,11 +184,12 @@ def _read(html):
     return r
 
 
-def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES):
+def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES, title=TITLE):
     """-> 위반 메시지 목록. 빈 목록이면 통과.
 
     `categories` 는 섹션 의무를 거는 갈래 — US 는 `us.news`, KR 은 `kr.news` 의
     `DIGEST_CATEGORIES`(2026-09-24). 나머지 검사는 시장과 무관하다.
+    `title` 은 섹션 제목 — 일본 주간은 「이번 주 뉴스」(2026-10-18).
     """
     items = (collected or {}).get('items') or []
     # guid 는 **매체 안에서만** 고유하다 — 게이트도 수집기와 같은 범위를 써야
@@ -206,7 +208,7 @@ def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES):
             v.append(f'수집분이 {got} 자다 — 오늘({report_date}) 발행본의 '
                      f'근거가 될 수 없다')
 
-    doc = _read(html)
+    doc = _read(html, title)
     hidden = [it for it in doc.items if it['hidden']]
     if hidden:
         v.append(f'숨겨진 뉴스 블록 {len(hidden)}개 — 독자가 보지 못하는 항목은 '
@@ -240,8 +242,8 @@ def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES):
     usable = [it for it in items
               if it.get('category') in categories and it.get('summary_ko')]
     if usable:
-        if TITLE not in (html or ''):
-            v.append(f'뉴스 섹션(「{TITLE}」)을 찾을 수 없다 — 수집분 {len(usable)}건')
+        if title not in (html or ''):
+            v.append(f'뉴스 섹션(「{title}」)을 찾을 수 없다 — 수집분 {len(usable)}건')
         elif not [i for i in doc.section_items if i['guid'] and not i['hidden']]:
             v.append(f'뉴스 섹션에 항목이 하나도 없다 — `data-news` 를 단 블록이 '
                      f'필요하다 (수집분 {len(usable)}건)')

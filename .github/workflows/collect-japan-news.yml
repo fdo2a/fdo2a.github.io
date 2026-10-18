@@ -1,0 +1,72 @@
+name: Collect Japan news
+
+# 일본 주간 「이번 주 뉴스」 재료(2026-10-18). Yahoo!ファイナンス 뉴스(로이터·지지통신 일본어판 등)와
+# 일본은행 발표문·연설, 닛세이기초연구소를 받아 japan/data/news/<date>.json 으로 커밋한다.
+# **끝난 JST 날짜를 모은다** — 07:00 JST 에 전날까지의 밀린 평일(최대 5일)을 받는다. 그날 저녁에 받으면
+# 그 뒤 기사가 빠지고 동결이 다시 받지 못하게 막는다(codex 2026-10-18 #3). 09:00 은 스케줄러 지연 대비,
+# 월요일 실행은 금요일분이 빠졌을 때 MOF 게시일 발행 전에 메운다. 할 일이 없으면 곧바로 끝난다.
+on:
+  schedule:
+    - cron: '0 7 * * 1-6'
+      timezone: 'Asia/Tokyo'
+    - cron: '0 9 * * 1-6'
+      timezone: 'Asia/Tokyo'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'One JST date (YYYY-MM-DD); empty = every pending weekday'
+        type: string
+        default: ''
+      refresh:
+        description: 'Re-collect frozen days too (existing summaries are reused)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  # 요약의 Claude API 인증 = Workload Identity Federation — US·KR 수집 잡과 같은 규칙·Variables.
+  id-token: write
+
+concurrency:
+  group: collect-japan-news
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        # curl_cffi = 접근 거절 때 브라우저 TLS 지문으로 한 번 더, pypdf = 일본은행 정책 발표문(PDF)
+        run: pip install --quiet certifi curl_cffi pypdf pytest 'anthropic>=1.8,<2'
+      - name: Run unit tests
+        # 공용 뉴스 게이트·확장기를 고쳤으므로 US·KR 뉴스 테스트도 함께(codex #12)
+        run: python -m pytest scripts/japan/tests scripts/us/tests/test_news_gate.py scripts/us/tests/test_news_expand.py scripts/us/tests/test_news.py scripts/us/tests/test_news_japan.py scripts/kr/tests/test_news.py -q
+      - name: Fetch Japan news
+        # 본문은 _workspace/ (gitignore) 에만 두고 여기서 한국어 요약(summary_ko)까지 만들어 요약만 커밋한다 —
+        # 기사는 상업 저작물이고 이 레포는 공개다. 실패해도 그 날만 비고, 다음 실행이 다시 받는다.
+        continue-on-error: true
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
+          IN_DATE: ${{ inputs.date }}
+          IN_REFRESH: ${{ inputs.refresh }}
+        run: |
+          ARGS=()
+          [ -n "${IN_DATE:-}" ] && ARGS+=(--date "$IN_DATE")
+          [ "${IN_REFRESH:-false}" = "true" ] && ARGS+=(--refresh)
+          python scripts/fetch_japan_news.py --datadir japan/data --bodydir _workspace/japan_news "${ARGS[@]}"
+      - name: Commit data
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add japan/data/news 2>/dev/null || true
+          bash scripts/ci/push_with_retry.sh "data: japan news $(TZ=Asia/Tokyo date +%F)"

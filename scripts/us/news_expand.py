@@ -21,6 +21,11 @@ _POLITE = re.compile(r'(습니다|니다|어요|아요|해요|세요)[.!?]?\s*$'
 LINK_MAX = 80
 
 _ORGS = (('boj.or.jp', '일본은행'), ('nli-research.co.jp', '닛세이기초연구소'))
+# 일본 매체 이름(일본 주간 뉴스, 2026-10-18). 캡션만 옮긴다 — `source` 는 게이트의 guid 범위라 그대로 둔다.
+_MEDIA_KO = {'ロイター': '로이터', '時事通信': '지지통신', '共同通信': '교도통신',
+             'ブルームバーグ': '블룸버그', '日本経済新聞': '니혼게이자이신문', '株探ニュース': '가부탄',
+             'フィスコ': '피스코', '産経新聞': '산케이신문', '毎日新聞': '마이니치신문',
+             '読売新聞': '요미우리신문', '朝日新聞': '아사히신문', '日刊工業新聞': '닛칸공업신문'}
 
 
 def caption(item):
@@ -32,6 +37,7 @@ def caption(item):
             name = f"로이터({item.get('source') or 'Investing.com'})"
         else:
             name = wire or item.get('source') or ''
+            name = _MEDIA_KO.get(name, name)
     day = (item.get('published') or '')[:10]
     if re.fullmatch(r'\d{4}-\d{2}-\d{2}', day):
         _, m, d = day.split('-')

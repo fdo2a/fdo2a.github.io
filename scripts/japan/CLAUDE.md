@@ -11,6 +11,7 @@ One post per week, on the day MOF posts Friday's JGB curve (next Tokyo business 
 | `core.py` | Core six, curve, flows, hedged proxy, positioning, equities, fixed A/B signals. Pure |
 | `render.py` | Tables, body contract (`SECTIONS`, `<!--T:name-->`), assembly |
 | `gate.py` | Publish gate; CLI `scripts/check_japan.py` |
+| `news.py` + `scripts/fetch_japan_news.py` | 「이번 주 뉴스」: Yahoo!ファイナンス category lists (`__PRELOADED_STATE__`, paged) + BOJ + NLI → `japan/data/news/<date>.json`, summaries only. Actions `collect-japan-news.yml` |
 
 ## Invariants
 
@@ -22,5 +23,8 @@ One post per week, on the day MOF posts Friday's JGB curve (next Tokyo business 
 - **Failed sources stay in `fetch_status`** and block publishing; a failed fetch is not a quiet week.
 - **Signals are fixed in code** (`SIGNALS`) — the writer must not pick thresholds.
 - Tokyo CPI dates are absent from `japan/data/calendar.json` on purpose: not confirmed from the Statistics Bureau. Add only dates checked at the source.
+- **News: only `digest: true` rows of `<KEY>.news.json` may be published** (Japan collector, week range by the article's JST time). US/KR `region=japan` rows are BOJ evidence only — old weeks (W40/W41) have no digest rows and stay exempt. `<KEY>.news.json` must stay self-contained: the review runner re-checks from it alone.
+- **Collect finished JST days**: each run fills every unfrozen weekday of the last 5; a day is frozen only when summarised **and** `complete` (every list read). Media allowlist `MEDIA_RANK`; paid pages (`_VipPurchase`) have no body.
+- The `news` section is optional in `ORDER` but always checked for order, uniqueness and title; `data-news` blocks outside it are blocked, ≤3 per category, no `same_event` pair. Flow-direction checks skip it.
 
-When changing this: read `docs/superpowers/specs/2026-09-26-weekly-insight-and-japan-design.md` before touching `core.py` or `gate.py`.
+When changing this: read `docs/superpowers/specs/2026-09-26-weekly-insight-and-japan-design.md` before touching `core.py` or `gate.py`, and `docs/superpowers/specs/2026-10-18-japan-news-design.md` before touching `news.py`, `fetch_japan_news.py` or the news part of `gate.py`.

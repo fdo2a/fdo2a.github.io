@@ -30,7 +30,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.news import (FEEDS, body_note, categorize, dedupe,  # noqa: E402
+from us.news import (FEEDS, _nli_body, body_note, categorize, dedupe,  # noqa: E402
                      extract_body, page_published, pages, parse_feed_strict, pdf_text,
                      select, title_wire, trim, wire_of)
 from us.news_summary import SYSTEM_ANALYSIS, summarize_items  # noqa: E402
@@ -120,7 +120,8 @@ def fetch_bodies(chosen, bodydir, ctx, fetch=None, fetch_bytes=None):
                 page, body = '', pdf_text(fetch_bytes(it['url'], ctx))
             else:
                 page = fetch(it['url'], ctx)
-                body = extract_body(page)
+                # 닛세이는 「■要旨」 이 없으면 본문이 아니다 — 페이지 문단으로 대체하지 않는다(codex 2026-10-18)
+                body = _nli_body(page) if 'nli-research.co.jp' in it['url'] else extract_body(page)
             if not it.get('published'):
                 it['published'] = page_published(page)
                 if it['published']:

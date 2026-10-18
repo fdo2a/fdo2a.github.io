@@ -239,3 +239,12 @@ def test_yahoo_body_stops_before_the_related_articles():
 ])
 def test_one_character_country_abbreviations_need_context(title, want):
     assert N.region(title) == want
+
+
+def test_nli_page_without_its_summary_marker_is_not_read_as_paragraphs(tmp_path):
+    """표식(■要旨)이 없는 닛세이 페이지를 일반 문단 추출로 넘기지 않는다(codex 2026-10-18 구현 #7)."""
+    page = '<html><p>' + '研究所の紹介文が続く。' * 80 + '</p></html>'
+    item = {'url': 'https://www.nli-research.co.jp/report/detail/id=1', 'category': 'insight',
+            'title': '金利の見通し', 'published': '2026-10-16T10:00:00+09:00'}
+    FN.fetch_bodies([item], str(tmp_path), None, fetch=lambda u, c: page)
+    assert item['body_chars'] == 0

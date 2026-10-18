@@ -7,10 +7,15 @@
 - 기준일 누락 — CFTC 포지션을 말하면서 화요일 기준일을 밝히지 않음
 - 한쪽 시나리오만 — 시나리오 절이 두 갈래를 다 말하지 않음
 - 못 받은 소스 — 스냅샷 실패가 남아 있음
+- 「이번 주 뉴스」 — 게재 후보(`digest`)만, 그 절 안에서만, 갈래당 3건, 같은 사건 두 번 금지(2026-10-18)
 """
 import re
+import unicodedata
+from html.parser import HTMLParser
 
-from japan.render import SECTIONS
+from japan.news import DIGEST_CATEGORIES, LABELS, PER_CATEGORY, same_event
+from japan.render import NEWS_TITLE, ORDER, SECTIONS
+from us import news_gate
 from scripts.common import commentary
 
 COMMENTARY_SECTIONS = ('curve', 'yen', 'flows', 'equity')
@@ -43,7 +48,13 @@ def _jo_eok(text):
 
 
 def _figures(html):
-    text = _jo_eok(body_text(html))
+    return _text_figures(body_text(html))
+
+
+def _text_figures(text):
+    """본문과 뉴스 원천에 **같은** 정규화를 건다 — 요약의 「2조 엔」 이 본문에선 20000억, 원천에선 2 로
+    갈려 오탐이 났다(codex 2026-10-18 #6). 일본어 제목의 전각 숫자는 NFKC 로 푼다."""
+    text = _jo_eok(unicodedata.normalize('NFKC', text or ''))
     text = _WEEKKEY.sub(' ', _KDATE.sub(' ', text))
     text = mask_dates(text).replace(',', '').replace('−', '-')
     return {_canon(m) for m in _NUM.findall(text)}
@@ -73,16 +84,119 @@ def _sign_check(sentences, pattern, weekly_word, four_word, what):
     return v
 
 
-def check(html, diag, news_texts=()):
+_JA_DATE = re.compile(r'(?:\d{1,2}月)?\d{1,2}(?:\s*[~〜\-–]\s*\d{1,2})?日|\d{1,2}月')
+
+
+def title_source(title):
+    """일본어 원제목을 수치 원천으로 넣기 전에 月·日 날짜를 가린다 — 「10月16日」 의 16 이 본문의 창작
+    「16%」 를 통과시켰다(codex 구현 #6)."""
+    return _JA_DATE.sub(' ', unicodedata.normalize('NFKC', title or ''))
+
+
+class _NewsNodes(HTMLParser):
+    """뉴스 블록과 그 조상 `data-section`, 「이번 주 뉴스」 절의 제목을 파서로 읽는다 — 정규식은 홑따옴표·
+    대문자 속성·class 변경으로 비켜 갔다(codex 구현 #1). 숨김 판정은 공용 뉴스 게이트와 같다."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack = []           # [(tag, section, hidden, item)]
+        self.items = []           # [{guid, section, hidden}]
+        self.sections = []        # <section data-section> 의 이름, 문서 순서
+        self.titles = []          # news 절 h2 의 **보이는** 글자
+        self._h2 = None
+
+    def handle_starttag(self, tag, attrs):
+        a = {k.lower(): (v or '') for k, v in attrs}
+        top = self.stack[-1] if self.stack else ('', None, False, None)
+        # 절은 <section> 요소만 정한다 — 블록이 자기 속성으로 절을 자칭하지 못한다(codex 재검토 #1)
+        section = top[1]
+        if tag == 'section' and 'data-section' in a:
+            section = a['data-section']
+            self.sections.append(section)
+        hidden = top[2] or news_gate._is_hidden(a)
+        item = top[3]
+        if item is None and news_gate._is_item(a):
+            item = {'guid': a.get('data-news') or None, 'section': section, 'hidden': hidden}
+            self.items.append(item)
+        if tag == 'h2' and section == 'news':
+            self._h2 = []
+        if tag not in ('br', 'img', 'hr', 'meta', 'link', 'input', 'wbr', 'source'):
+            self.stack.append((tag, section, hidden, item))
+
+    def handle_endtag(self, tag):
+        if tag == 'h2' and self._h2 is not None:
+            self.titles.append(''.join(self._h2).strip())
+            self._h2 = None
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i][0] == tag:
+                del self.stack[i:]
+                break
+
+    def handle_data(self, data):
+        # 자식 요소의 숨김까지 본다 — <h2><span hidden>제목</span></h2> (codex 재검토 #9)
+        if self._h2 is not None and not (self.stack and self.stack[-1][2]):
+            self._h2.append(data)
+
+
+def _news_nodes(html):
+    r = _NewsNodes()
+    try:
+        r.feed(html or '')
+        r.close()
+    except Exception:
+        pass
+    return r
+
+
+def check_news(html, secs, names, digest):
+    """「이번 주 뉴스」. 후보는 일본 전용 수집분의 `digest` 행뿐이다 — 구형 주(W40·W41)는 후보가 없어 면제."""
+    v = []
+    usable = [r for r in digest or [] if r.get('summary_ko') and r.get('category') in DIGEST_CATEGORIES]
+    nodes = _news_nodes(html)
+    outside = [it for it in nodes.items if it['section'] != 'news']
+    if outside:
+        v.append(f'`data-news` 블록 {len(outside)}개가 「이번 주 뉴스」 절 밖에 있다 — 기사는 그 절 안에만 둔다')
+    # 절 목록은 파서와 정규식이 같아야 한다 — 홑따옴표 절은 정규식이 못 보고 파서만 본다(codex 재검토 #11)
+    if nodes.sections.count('news') > 1 or [n for n in nodes.sections if n in ORDER] != \
+            [n for n in names if n in ORDER]:
+        v.append('data-section 절 표기가 표준이 아니거나 news 절이 둘 이상이다 — '
+                 '<section data-section="이름"> 꼴로 한 번씩만')
+    if 'news' not in names:
+        if usable:
+            v.append(f'data-section="news" 절이 없다 — 이번 주 뉴스 후보 {len(usable)}건')
+        return v
+    visible = [t for t in nodes.titles if t]
+    if not visible or visible[0] != NEWS_TITLE:
+        v.append(f'news 절의 제목은 보이는 <h2>「{NEWS_TITLE}」 이다')
+    v += news_gate.check(html, {'items': usable}, categories=DIGEST_CATEGORIES, title=NEWS_TITLE)
+    by_guid = {str(r.get('guid')): r for r in usable}
+    guids = [it['guid'] for it in nodes.items if it['section'] == 'news' and not it['hidden'] and it['guid']]
+    chosen = [by_guid[g] for g in dict.fromkeys(guids) if g in by_guid]
+    for cat in DIGEST_CATEGORIES:
+        n = sum(1 for r in chosen if r['category'] == cat)
+        if n > PER_CATEGORY:
+            v.append(f'{LABELS[cat]} 갈래에 {n}건 — 갈래당 {PER_CATEGORY}건까지')
+    for i, a in enumerate(chosen):
+        for b in chosen[i + 1:]:
+            if same_event(a.get('title'), b.get('title')):
+                v.append(f'같은 사건을 두 번 실었다 — 「{a.get("title")}」 · 「{b.get("title")}」')
+    return v
+
+
+def check(html, diag, news_texts=(), digest=None):
     v = []
     secs = {n: b for n, b in _SEC.findall(html)}
     names = [n for n, _ in _SEC.findall(html)]
-    present = [n for n in names if n in SECTIONS]
+    present = [n for n in names if n in ORDER]
     for s in SECTIONS:
         if s not in names:
             v.append(f'data-section="{s}" 절이 없다')
-    if present != [s for s in SECTIONS if s in present]:
+    if present != [s for s in ORDER if s in present]:
         v.append(f'절 순서가 다르다: {" → ".join(present)}')
+    for s in ORDER:
+        if names.count(s) > 1:
+            v.append(f'data-section="{s}" 절이 {names.count(s)}번 있다')
+    v += check_news(html, secs, names, digest)
     if 'data-register="da"' not in html:
         v.append('<body data-register="da"> 가 없다 — -다 로 쓰는 데스크 문서다')
 
@@ -95,7 +209,10 @@ def check(html, diag, news_texts=()):
             v.append(f'헤지 후 금리를 말하는 문단에 「근사」가 없다 — 「{p[:40]}」')
     f = diag.get('flows') or {}
     # 방향 어휘는 모든 산문 절에서 본다 — flows·core 만 보면 시나리오 절의 반대 서술이 빠졌다(#13).
-    sents = [s.strip() for name in secs for p in _prose(secs[name]) for s in _SENT.findall(p)]
+    # 「이번 주 뉴스」 는 뺀다 — 기사 요약은 기사 자신의 기준 기간을 말한다(월요일 기사의 지난 공표분 순매수,
+    # codex 2026-10-18 #5). 그 요약은 뉴스 게이트가 원천과 대조한다.
+    sents = [s.strip() for name in secs if name != 'news'
+             for p in _prose(secs[name]) for s in _SENT.findall(p)]
     v += _sign_check(sents, _BOND, f.get('res_foreign_ltdebt_word'),
                      f.get('res_foreign_ltdebt_4w_word'), '거주자 해외채권 방향')
     eq4 = f.get('nonres_jp_equity_4w')
@@ -130,7 +247,7 @@ def check(html, diag, news_texts=()):
 
     allowed = _numbers(diag)
     for t in news_texts:
-        allowed |= _numbers({'t': t})
+        allowed |= _numbers({'t': t}) | _text_figures(t)
     allowed |= {str(y) for y in range(2020, 2036)}
     united = _united_numbers(_jo_eok(html))
     for n in sorted(_figures(html) - allowed):

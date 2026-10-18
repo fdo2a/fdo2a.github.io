@@ -1,0 +1,95 @@
+# 일본 주간 — 전용 뉴스 수집 (2026-10-18)
+
+이력·실측·검토 기록. 지켜야 할 계약은 `scripts/japan/CLAUDE.md`.
+
+## 사용자 요청
+1. 「일본 시장 레포트에 뉴스 기사들을 수집하는 것도 추가해. 조사 범위나 내용 등은 미국이나 한국 방식을 똑같이 따라하고」
+2. 「일본 뉴스는 야후재팬이나 finance.yahoo.co.jp 등을 통해 가져올 수 있는지 확인 후 가능하면 거기서 가져와」
+
+## 현재 상태
+- 일본 주간(`japan/posts/<KEY>.html`, MOF 게시일 발행)은 뉴스를 **US/KR 수집분의 부산물**로만 받는다:
+  `build_japan_weekly.week_news()` 가 `data/news`·`kr/data/news` 에서 `region=japan` 행만 모아
+  `japan/data/<KEY>.news.json`(목록) 을 만들고, BOJ 절의 재료 + 수치 허용 원천으로만 쓴다.
+- W41 의 11건 중 다수가 생활 기사(税理士ドットコム 소비세, 연금 확정신고, 리스백) — US `global` 갈래의
+  Yahoo!ニュース 경제 RSS 가 생활·자동차 기사 위주라서다.
+- 일본 주간에는 「뉴스 섹션」(US/KR 의 「오늘의 뉴스」에 해당)이 없다.
+
+## 출처 실측 (2026-10-18 일 19시 KST, 로컬 IP)
+| 후보 | 결과 |
+|---|---|
+| news.yahoo.co.jp RSS business/world/domestic | 200, 각 50건, **일요일 기준 3-8시간 분량뿐**(하루 1회 수집이면 대부분 놓침). 매체: MotorFan·乗りものニュース·LIMO·くるまのニュース… 생활·자동차 위주 |
+| finance.yahoo.co.jp/news/{bus_all,market,stocks,fx,world,settlement,headline,column} | 200, SSR. `window.__PRELOADED_STATE__.mainNewsCategory.news.articles` 20건/쪽: `headline, link(/news/detail/<40hex>), mediaName, createTime("19:30"=오늘 / "10/16"=이전), isPaidArticle`. `?page=N` 으로 **50쪽·1,000건**까지(paging.totalSize). bus_all 50쪽 = 9일 전(10/9), market 10/13, world 9/30 |
+| bus_all 평일 매체 분포(10/14-16 표본 260건) | ロイター 100, 時事通信 74, CoinPost 27, NADA NEWS 23, フィスコ 19, gamebiz 9, 株探 5 … 평일 하루 약 80-100건(표본 절반 쪽만 봤으니 실제 약 2배) |
+| 기사면 /news/detail/<id> | 200. JSON-LD `datePublished`(+09:00), `author.name`. 본문은 `<p>` — ロイター 540-1,660자(첫 문단이 사진 캡션 「…REUTERS/…」), 時事通信 250-420자, 時事 유료(〔週間指標予測〕) 53자, フィスコ 유료 127자, 時事 「円相場、158円00～01銭＝16日午後5時現在」 72자 |
+| robots.txt | `/news/detail/*/photo/` 만 Disallow. 기사면 허용 |
+| Actions IP | **미실측** — US 잡이 이미 news.yahoo.co.jp 를 Actions 에서 받는다(W41 수집분). finance 는 첫 실행 notes 로 확인 |
+
+결론: **finance.yahoo.co.jp 를 주력**으로 한다(사용자 2번 지시 충족). news.yahoo.co.jp RSS 는 창이 너무 짧고 생활 기사 위주라 이 갈래에서는 쓰지 않는다(US global 갈래는 건드리지 않는다).
+
+## 결정
+- 원천: finance.yahoo.co.jp/news 카테고리 6개(`bus_all, market, stocks, fx, world, settlement`). headline·column 은 생활 매체 위주라 뺐다. news.yahoo.co.jp RSS 는 이 갈래에서 쓰지 않는다(US global 갈래는 그대로).
+- 갈래: KR 다섯(macro·policy·market·industry·global) + US insight(일본은행 연설·닛세이). 일본은행 정책 발표문은 macro. 하루 갈래당 3건, 후보 6건(본문 실패 대비).
+- 매체 허용 목록(`MEDIA_RANK`), 유료 제외, 시세 단신·일정표·종목 나열 제외(`_ROUTINE`), 해외 증시 마감 제외(`_FOREIGN_MARKET`).
+- 본문은 `ArticleDetail__body` 구간의 `<p>` 만, 캡션 제거, 하한 300자.
+- 같은 사건: 정규화 제목 유사도 0.6 이상 **그리고** 제목 숫자 집합이 같을 때.
+- 주간: `<KEY>.news.json` 의 `digest: true` 행만 「이번 주 뉴스」 후보, 조립이 `<!--NEWS:-->` 를 채운다.
+
+## 첫 로컬 실행 (10/16, 요약 자격 증명 없이)
+목록 1,580건(6개 카테고리, 중복 포함) → 10/16 기사 1,296건 → 선별 204건 → 후보 27건 → 확정 14건. 버린 사유: 유료 378, 갈래 없음·정례 376, トレーダーズ・ウェブ 182, ウエルスアドバイザー 45, アイフィス株予報 39 …
+남은 한계: 같은 날 같은 발언을 로이터·지지가 각각 쓰면 제목 숫자가 달라 둘 다 남는다(10/16 植田 발언 2건). 주간 게이트가 실은 기사끼리는 막지만 하루 후보에서는 남는다.
+
+## 검토 빚
+- Actions IP 에서 finance.yahoo.co.jp 접근 — 첫 실행 notes 로 확인.
+
+## codex 설계 검토 (gpt-6.1-sol, 중대 12)
+
+| # | 지적 | 판정 | 조치 |
+|---|---|---|---|
+| 1 | W40·W41 은 요약 13·11건 — 면제 기준이 「요약 있음」이면 기존 발행본 재검사가 깨진다 | 수용 | 다이제스트 후보는 `digest: true` 행만. 구형 파일엔 없음 → 면제. W40·W41 실파일 회귀 테스트 |
+| 2 | BOJ 근거(US/KR region=japan)와 게재 후보를 한 목록으로 취급 | 수용 | 근거 행은 수치 허용 원천으로만, 게이트·확장은 `digest` 행만 |
+| 3 | 18시 수집+동결 → 18시 이후 기사 영구 누락, 지연 실행은 날짜가 바뀐다 | 수용 | **끝난 JST 날짜**를 모은다: 화-토 07:00 JST 에 전날분, 매 실행 최근 5 평일 중 동결 안 된 날을 다시 받는다 |
+| 4 | 주간 범위·시간대 불일치, 캡션이 UTC 날짜 | 수용 | 다이제스트 행은 기사면 `datePublished`(+09:00), 범위는 `week_bounds` 월-금 JST 날짜로 판정 |
+| 5 | 뉴스 요약의 순매수·순매도가 주간 수급 방향 검사에 걸린다(재현) | 수용 | 방향 검사에서 `news` 절 제외 |
+| 6 | 「2조 엔」 본문 정규화 20000 vs 요약 원천 2 → 오탐(재현) | 수용 | 뉴스 원천에도 같은 조·억 정규화 |
+| 7 | 조건부 절 순서·유일성 미검사, 제목만으로 구간 판정 → 다른 절에 블록을 두면 통과(재현) | 수용 | `news` 는 최대 1회·`next` 뒤, `data-news` 블록은 `news` 절 안에만, 갈래별 건수는 그 절에서, `title` 인자를 `_Reader` 까지 |
+| 8 | KR 제목 유사도 0.6 을 일본어에 그대로 — 미·영 CPI 0.889 로 오접힘 | 수용 | 제목 숫자가 다르면 같은 사건이 아니다 + 본문 확인 전엔 대체 후보 유지(2단계) |
+| 9 | 일별 중복 제거로 주간 재탕을 못 막는다 | 수용 | 게이트: 실은 기사끼리 같은 사건이면 위반(같은 판정 함수) |
+| 10 | `<p>` 전체 추출 + 하한만으로는 본문 보증 안 됨, 닛세이 표식 없으면 전 페이지 | 수용 | `ArticleDetail__body` 구간만, 캡션 제외, `_VipPurchase` 면 거절. `_nli_body` 는 「■要旨」 없으면 '' (US 에도 적용되는 버그 수정) |
+| 11 | BOJ/닛세이 재사용 계약 변환 누락, `ロイター` 캡션 | 수용 | 공식 출처는 허용 목록·제목 분류 우회, 발표문 → macro, 연설·닛세이 → insight. 캡션에 일본 매체 한국어 이름 |
+| 12 | 워크플로에 curl_cffi·pypdf 없음, 일본 테스트만으론 공용 게이트 회귀 못 봄 | 수용 | 두 패키지 설치, us·kr 뉴스 테스트 + japan 테스트 실행 |
+
+## 2026-10-18 — 지시문 토큰 전수 점검 (사용자 지시 「claude.md 를 비롯해 토큰을 최적화할 수 있도록 전수검사」)
+
+측정(바이트, 9/25 대비): STYLE_EXEMPLARS 15,657→54,600, kr-report-writer 37,812→47,529, period-report-writer 8,967→21,728, brief-report-writer 67,311→73,268. US 일간 1회가 오케스트레이터·수집·작성·뉴스 네 맥락에서 지시문 약 445 KB 를 읽는다(DESK_REPORT·TRADER_LEARNING·RESEARCH_WORKFLOW 는 세 맥락이 각각 읽는다). 날짜 붙은 괄호 이력은 전 문서 합쳐 약 6 KB, 문서 간 완전 중복 문장도 수 KB — **기계적으로 걷어낼 군살은 적고, 무게는 실제 의무 문장이다.** STYLE_EXEMPLARS §10 의 러너 설명은 `review_gate.STYLE_REFS` 로 codex 문체 수정도 읽어서 작성자 전용이 아니다 — 옮기지 않았다.
+
+한 것:
+| 변경 | 효과 |
+|---|---|
+| `MEMORY.md` 색인 압축(링크 45개 유지) | 8,519→5,265 B, 로컬 세션마다 |
+| `plan.md` 10/01 까지를 `plan-archive-2026-09.md` 로 | 437,952→89,752 B, 7단계 루프 3단계마다 |
+| `site/.claude/settings.json` humanize-korean 등록 삭제 | 클라우드·러너 세션마다 플러그인 설치 시도와 스킬·에이전트 9개 설명 |
+| 오케스트레이터 4개 윤문 절 압축·정정 | 주간·월간은 10/13 반영 중지를 빠뜨려 「codex 가 공개판을 바꾼다」고 낡아 있었다 |
+| US·KR 작성자 「나머지 말투는 codex 가 맡는다」 삭제 | 반영 중지 뒤에도 작성자가 문체를 미루던 문장 |
+| AGENTS.md 규칙 5 STEP 2.5 문장 압축 | 12,394→12,207 B(예산 12,488) |
+
+남긴 후보(설계 변경이라 이번에 안 함): ① 오케스트레이터가 DESK_REPORT·TRADER_LEARNING·RESEARCH_WORKFLOW 를 통째로 읽는 대신 Handoff·Editorial 절만 읽게 ② STYLE_EXEMPLARS 를 작성자용·codex 문체 수정용으로 나누기(STYLE_REFS 수정 필요) ③ 제목의 날짜·사용자 인용 괄호를 spec 으로. 프로젝트 밖: claude.ai 동기화 플러그인(finance·data·sp-global·pdf-viewer·cowork-plugin-management·figma)은 `report/.claude/settings.json` 의 `enabledPlugins:false` 를 무시하고 여전히 실린다, `~/.claude/skills` 의 seo 스킬 33개·`~/.claude/agents` seo 에이전트 18개도 모든 세션에 실린다.
+
+
+## codex 구현 검토와 재검토
+
+### 구현 검토 (중대 7·경미 2)
+
+| # | 지적 | 판정 | 수정 |
+|---|---|---|---|
+| I1 | `data-news='…'`·대문자 속성·class 변경으로 갈래 건수·같은 사건·절 밖 검사 우회 | 수용 | 정규식 대신 HTMLParser 로 블록·조상 `data-section` 을 읽어 위치·건수·중복을 센다 |
+| I2 | 쪽 상한 소진도 `complete=True` → 덜 받은 날이 동결 | 수용 | 상한 소진 = 미완 |
+| I3 | 일본은행·닛세이 실패가 완료 판정에 안 들어간다 | 수용 | 공식 출처 실패도 미완 |
+| I4 | `--date` 가 오늘이어도 받는다 → 당일 동결 | 수용 | JST 오늘 이전만, 아니면 exit 2 |
+| I5 | 소수점을 지워 1.2% 와 12% 가 같은 사건, 괄호 안 수치 무시 | 수용 | NFKC 원제목에서 소수점 보존 숫자 비교 |
+| I6 | 일본어 제목의 「10月16日」 이 허용 수치로 섞여 창작 16% 통과 | 수용 | 제목은 月·日 날짜를 가린 뒤 원천에 넣는다 |
+| I7 | US 수집 경로는 여전히 닛세이 표식 없는 페이지를 일반 문단으로 읽는다 | 수용 | `fetch_news.fetch_bodies` 도 닛세이 URL 이면 `_nli_body` |
+| I8 | 본문 요소의 닫힘을 추적하지 않아 형제 요소 문단으로 하한을 채운다 | 수용 | HTMLParser 로 `ArticleDetail__body` 하위 `<p>` 만 |
+| I9 | `<h2 hidden>` 제목도 인정 | 수용 | 제목에도 가시성 판정 |
+
+**수정 확인(codex 재검토)**: I2·I4·I5·I7·I8 해결 확인. 미해결 I1(블록이 자기 속성 `data-section="news"` 로 위치 위장)·I3(404 를 새해에 한정 안 함)·I6(「27～28日」 범위)·I9(`<h2><span hidden>`) + 새 지적 #10(「1,200」 쉼표가 숫자를 쪼갬)·#11(홑따옴표 두 번째 news 절) → 전부 수용·수정: 절은 `<section>` 요소만 정하고 파서·정규식 절 목록 일치 요구, 404 는 1월만, 날짜 범위 가림, 제목은 보이는 글자만, 천 단위 쉼표 보존. 회귀 테스트 추가.
+**알려진 한계**: 같은 발언을 로이터·지지가 제목을 달리 쓰면 하루 후보에 둘 다 남는다(10/16 植田 3건). 한국어 요약의 「16일」 은 16 을 허용 수치로 만든다(기존 동작, 확장된 요약이 본문에 그대로 들어가므로 가릴 수 없다).

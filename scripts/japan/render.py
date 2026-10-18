@@ -11,6 +11,10 @@ from scripts.common.datelabel import range_ko
 from us.weekly_insight import _c, _cv, _e, _signed, _table
 
 SECTIONS = ('core', 'boj', 'curve', 'yen', 'flows', 'equity', 'scenario', 'next')
+# 조건부 절 — 그 주 게재 후보가 있을 때만 의무(게이트). 있으면 순서·유일성은 늘 검사한다(codex 2026-10-18 #7).
+OPTIONAL = ('news',)
+ORDER = SECTIONS + OPTIONAL
+NEWS_TITLE = '이번 주 뉴스'
 PLACEHOLDERS = {'core': ('core',), 'curve': ('curve',), 'yen': ('yen',), 'flows': ('flows',),
                 'equity': ('equity',), 'scenario': ('signals',), 'next': ('next',)}
 BRAND = 'Japan Market Weekly'
@@ -157,9 +161,12 @@ def validate_body(body):
     for s in SECTIONS:
         if s not in names:
             errs.append(f'data-section="{s}" 절이 없다')
-    present = [n for n in names if n in SECTIONS]
-    if present != [s for s in SECTIONS if s in present]:
+    present = [n for n in names if n in ORDER]
+    if present != [s for s in ORDER if s in present]:
         errs.append(f'절 순서가 다르다: {" → ".join(present)}')
+    for s in ORDER:
+        if names.count(s) > 1:
+            errs.append(f'data-section="{s}" 절이 {names.count(s)}번 있다')
     inner = dict(found)
     for sec, phs in PLACEHOLDERS.items():
         for ph in phs:

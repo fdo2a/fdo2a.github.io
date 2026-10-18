@@ -701,7 +701,10 @@ _NLI_END = ('はてなブックマーク', 'メルマガ配信中', '関連レ�
 def _nli_body(html, max_chars=DEFAULT_MAX_BODY):
     """닛세이기초연구소 리포트면 — 「■要旨」 부터 공유 버튼 앞까지를 글자로. 길면 PDF 가 본판이라
     HTML 은 앞머리만 싣는다(실측 1,500자 안팎) — 300자 요약의 재료로는 넉넉하다."""
-    seg = html[html.find('■要旨') + len('■要旨'):]
+    at = (html or '').find('■要旨')
+    if at < 0:                  # 표식이 없으면 페이지 전체 문단으로 대체하지 않는다(codex 2026-10-18 #10)
+        return ''
+    seg = html[at + len('■要旨'):]
     ends = [i for i in (seg.find(m) for m in _NLI_END) if i >= 0]
     if ends:
         seg = seg[:min(ends)]
