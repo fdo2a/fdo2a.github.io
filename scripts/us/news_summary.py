@@ -246,16 +246,18 @@ def in_band(text):
 
 
 _HANGUL = re.compile(r'[가-힣]')
-_KANA = re.compile(r'[\u3040-\u30ff]')
+# 가나와 한자. 한국어 요약에는 한 글자도 없어야 한다 — KR 요약 189건에 한자 0건, US 요약에서 한자가 든
+# 15건은 전부 일본 출처 기사의 일본어가 섞인 것이었다(「削減」「差し迫った」「东证…아니, 다시 정리합니다」,
+# 2026-10-18 일본 수집분 56건 중 12건).
+_CJK = re.compile(r'[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]')
 
 
 def is_korean(text):
-    """한국어 요약인가. 일본어 기사를 일본어로 요약해 오는 일이 있었다(2026-10-14 일본 수집분 4건,
-    US 10/13·15·16 3건) — 한글이 공백 뺀 글자의 30% 이상이고 가나가 거의 없어야 한다."""
+    """한국어 요약인가 — 한글이 공백 뺀 글자의 30% 이상이고 가나·한자가 하나도 없다."""
     n = chars(text)
     if not n:
         return False
-    return len(_HANGUL.findall(text)) >= 0.3 * n and len(_KANA.findall(text)) <= 0.02 * n
+    return len(_HANGUL.findall(text)) >= 0.3 * n and not _CJK.search(text)
 
 
 def summarize_one(client, model, item, body, system=None):
@@ -279,7 +281,7 @@ def summarize_one(client, model, item, body, system=None):
             # thinking 블록까지 그대로 붙인다 — 이력을 고치지 않고 덧붙이기만 한다
             ask = (f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 {TARGET_MIN}~{TARGET_MAX}자로 '
                    if korean else
-                   f'요약이 한국어가 아닙니다. 원문이 일본어여도 요약은 반드시 한국어로, 공백 제외 '
+                   f'요약에 한국어가 아닌 글자(일본어 가나·한자)가 있습니다. 원문이 일본어여도 고유명사까지 한글로 옮겨, 공백 제외 '
                    f'{TARGET_MIN}~{TARGET_MAX}자로 ')
             messages += [{'role': 'assistant', 'content': response.content},
                          {'role': 'user', 'content': ask + '다시 써 주세요. 요약 문단만 출력합니다.'}]

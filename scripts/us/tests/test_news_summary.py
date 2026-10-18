@@ -342,3 +342,6 @@ def test_is_korean():
     assert NS.is_korean('일본은행 총재가 16일 CPI 2% 목표에 가까워졌다고 말했다.')
     assert not NS.is_korean('日銀の植田総裁は16日、基調物価について述べた。')
     assert not NS.is_korean('')
+    # 한국어 문장에 일본어 조각이 섞인 것(2026-10-18 일본 수집분 12건)
+    assert not NS.is_korean('IMF는 13일 영국에 재정적자 削減 계획을 착실히 이행하라고 요구했다.')
+    assert not NS.is_korean('东证 성장시장... 아니, 다시 정리합니다. 도쿄증권거래소 그로스 시장 지수가 급락했다.')
