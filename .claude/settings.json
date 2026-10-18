@@ -1,11 +1,3 @@
 {
-  "$comment": "STEP 2.5(AI 티 제거)가 쓰는 humanize-korean 스킬을 클라우드 루틴 세션에도 붙이려는 best-effort 등록. 이 레포를 클론한 세션이 시작할 때 설치를 시도한다. 설치가 안 되는 경우(마켓플레이스 접근 실패, 트리거 allowed_tools에 Skill 없음)를 전제로 STEP 2.5는 스킬 없이 도는 수동 경로를 갖고 있으니, 세션이 정상 시작되기만 하면 스킬 없이 수동 경로로 계속한다. 2026-08-25.",
-  "extraKnownMarketplaces": {
-    "im-not-ai": {
-      "source": { "source": "github", "repo": "epoko77-ai/im-not-ai" }
-    }
-  },
-  "enabledPlugins": {
-    "humanize-korean@im-not-ai": true
-  }
+  "$comment": "2026-10-18: humanize-korean 플러그인 등록을 뺐다. 그 플러그인을 쓰던 루틴 STEP 2.5 는 2026-09-27~10-01 에 모든 루틴에서 없어졌는데, 이 레포를 클론한 클라우드 세션은 시작할 때마다 설치를 시도하고 스킬·에이전트 설명을 컨텍스트에 실었다. 로컬 러너가 읽는 quick-rules.md 는 사용자 전역 설치본(~/.claude/plugins)이라 이 파일과 무관하다. 되살리려면 git log -p -- .claude/settings.json."
 }

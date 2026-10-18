@@ -28,7 +28,7 @@ python3 scripts/build_japan_weekly.py diag --key <KEY>
 
 ## STEP 2 — 작성과 조립
 
-`japan-report-writer` 를 **동기**로 부른다. 넘기는 것은 경로뿐이다(`japan/data/<KEY>.json`, `<KEY>.news.json`) — 오케스트레이터가 데이터·지시문을 다시 읽지 않는다.
+`japan-report-writer` 를 **동기**로 부른다. 넘기는 것은 경로뿐이다(`japan/data/<KEY>.json`, `<KEY>.news.json`) — 오케스트레이터가 데이터·지시문을 다시 읽지 않는다. 일본 뉴스(`japan/data/news/<date>.json`)는 `collect-japan-news.yml`(Actions, 화-토·월 07:00 JST)이 받아 커밋한다 — 루틴은 받지 않고, 비어 있으면 `diag` 의 「이번 주 뉴스 후보 0」 이 그대로 면제다. 조립이 `<!--NEWS:-->` 자리표시를 요약으로 채우고, 채우지 못하면 실패 목록을 작성자에게 돌려준다.
 
 ```bash
 python3 scripts/build_japan_weekly.py assemble --key <KEY> \
@@ -44,7 +44,7 @@ python3 scripts/check_readability.py --strict $(pwd)/japan_<KEY>.html
 python3 scripts/check_style.py $(pwd)/japan_<KEY>.html
 ```
 
-위반은 목록 그대로 writer 에게 돌려준다. 윤문은 루틴에서 하지 않는다(2026-10-01) — 발행 뒤 로컬 러너가 codex 로 고치고, 위 셋(`check_japan` 은 발행 커밋의 `japan/data`)을 다시 통과할 때만 공개판을 바꾼다. US 주간 STEP 4-b 참고.
+위반은 목록 그대로 writer 에게 돌려준다. 윤문은 루틴에서 하지 않는다(2026-10-01). 발행 뒤 codex 문체 수정은 2026-10-13 부터 수정안만 기록하고 공개판을 바꾸지 않는다(`style_pass.APPLY`) — 위 셋을 통과한 판이 곧 최종본이다. US 주간 STEP 4-b 참고.
 
 ## STEP 4 — 발행
 
