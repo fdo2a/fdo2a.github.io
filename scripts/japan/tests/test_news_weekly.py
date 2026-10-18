@@ -367,3 +367,36 @@ def test_undated_rows_leave_the_feed_unread():
     pages[url('bus_all', 1)] = _list_page([_art(ID2, '日銀', created='昨日'), _art(ID1, '日銀', created='10/14')])
     _, notes, reach = F.harvest('2026-10-15', '2026-10-17', None, fetch=_fake_fetch(pages), gap=0)
     assert not F.complete_for('2026-10-16', reach) and any('날짜' in n for n in notes)
+
+
+def test_digest_rows_skip_kanji_fragments_and_self_corrections(tmp_path):
+    base = tmp_path / 'jn'
+    ok = '도쿄증권거래소 그로스 시장 지수가 15일 급락했다. ' * 8
+    rows = [{'guid': g, 'title': '東証', 'source': 'ロイター', 'category': 'market',
+             'published': '2026-10-15T15:00:00+09:00', 'summary_ko': s}
+            for g, s in ((ID1, 'G20 財務相·中央銀行総裁会議가 15일 열렸다. ' + ok),
+                         (ID2, '东证 성장시장... 아니, 다시 정리합니다.\n\n' + ok),
+                         (ID3, ok))]
+    _write_day(base, '2026-10-15', rows)
+    assert [r['guid'] for r in B.digest_rows('2026-W42', str(base))] == [ID3]
+
+
+BAD_SUMMARY = SUMMARY.replace('금융정책결정회의', '金融政策決定会合')
+
+
+def test_a_digest_row_with_kanji_cannot_be_published_or_demand_the_section():
+    d = _digest(summary=BAD_SUMMARY)
+    # 실을 수 없는 후보뿐이면 절을 요구하지 않는다
+    assert not [m for m in _check(_html(), d) if '절이 없다' in m]
+    # 실으면 사유를 대고 막는다 — 4a1500c 이전 판정으로 만든 <KEY>.news.json 이 남은 경우
+    out = _check(_html(_blocks(d)), d)
+    assert any('실을 수 없다' in m and '金融政策決定会合' in m for m in out)
+
+
+def test_numbers_of_unusable_summaries_are_not_number_sources():
+    good = _digest(summary=SUMMARY)[0]
+    bad = dict(good, guid='b' * 40, summary_ko='매출은 98765억 엔이다. 아니, 다시 정리합니다.\n\n' + SUMMARY)
+    evidence = {'title': 't', 'summary_ko': '東証 54321'}
+    texts = G.number_sources([good, bad, evidence])
+    assert SUMMARY in texts and not any('98765' in t or '54321' in t for t in texts)
+    assert G.title_source(good['title']) in texts

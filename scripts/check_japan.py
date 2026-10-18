@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'scripts'))
 sys.path.insert(0, str(ROOT))
-from japan.gate import check, title_source  # noqa: E402
+from japan.gate import check, number_sources  # noqa: E402
 
 
 def main(argv=None):
@@ -32,9 +32,8 @@ def main(argv=None):
     except (OSError, ValueError) as e:
         print(f'FATAL: {e}', file=sys.stderr)
         return 2
-    # 수치 원천은 모든 행(요약 + 일본어 원제목), 「이번 주 뉴스」 후보는 `digest` 행만
-    texts = [n.get('summary_ko') or '' for n in news] + [title_source(n.get('title')) for n in news if n.get('digest')]
-    v = check(html, diag, texts, [n for n in news if n.get('digest')])
+    # 수치 원천은 실을 수 있는 요약 + 일본어 원제목, 「이번 주 뉴스」 후보는 `digest` 행만
+    v = check(html, diag, number_sources(news), [n for n in news if n.get('digest')])
     if not v:
         print('일본 주간 게이트 통과')
         return 0

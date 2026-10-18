@@ -16,6 +16,7 @@ from html.parser import HTMLParser
 from japan.news import DIGEST_CATEGORIES, LABELS, PER_CATEGORY, same_event
 from japan.render import NEWS_TITLE, ORDER, SECTIONS
 from us import news_gate
+from us.news_summary import summary_problem
 from scripts.common import commentary
 
 COMMENTARY_SECTIONS = ('curve', 'yen', 'flows', 'equity')
@@ -151,7 +152,10 @@ def _news_nodes(html):
 def check_news(html, secs, names, digest):
     """「이번 주 뉴스」. 후보는 일본 전용 수집분의 `digest` 행뿐이다 — 구형 주(W40·W41)는 후보가 없어 면제."""
     v = []
-    usable = [r for r in digest or [] if r.get('summary_ko') and r.get('category') in DIGEST_CATEGORIES]
+    rows = [r for r in digest or [] if r.get('summary_ko') and r.get('category') in DIGEST_CATEGORIES]
+    # 실을 수 없는 요약(가나·한자·두 문단·자기 정정)은 후보가 아니다. 그래도 그 행을 실으면 뉴스 게이트가
+    # 사유를 대고 막도록 행 자체는 넘긴다 — 4a1500c 이전 판정으로 만든 <KEY>.news.json 이 남을 수 있다(2026-10-18)
+    usable = [r for r in rows if summary_problem(r['summary_ko']) is None]
     nodes = _news_nodes(html)
     outside = [it for it in nodes.items if it['section'] != 'news']
     if outside:
@@ -168,7 +172,7 @@ def check_news(html, secs, names, digest):
     visible = [t for t in nodes.titles if t]
     if not visible or visible[0] != NEWS_TITLE:
         v.append(f'news 절의 제목은 보이는 <h2>「{NEWS_TITLE}」 이다')
-    v += news_gate.check(html, {'items': usable}, categories=DIGEST_CATEGORIES, title=NEWS_TITLE)
+    v += news_gate.check(html, {'items': rows}, categories=DIGEST_CATEGORIES, title=NEWS_TITLE)
     by_guid = {str(r.get('guid')): r for r in usable}
     guids = [it['guid'] for it in nodes.items if it['section'] == 'news' and not it['hidden'] and it['guid']]
     chosen = [by_guid[g] for g in dict.fromkeys(guids) if g in by_guid]
@@ -181,6 +185,13 @@ def check_news(html, secs, names, digest):
             if same_event(a.get('title'), b.get('title')):
                 v.append(f'같은 사건을 두 번 실었다 — 「{a.get("title")}」 · 「{b.get("title")}」')
     return v
+
+
+def number_sources(news):
+    """본문 수치의 원천 — 실을 수 있는 요약(근거 행 포함)과 게재 후보의 일본어 원제목. 실을 수 없는 요약의
+    수치는 뺀다 — 「매출은 98765억 엔이다. 아니, 다시 정리합니다」 의 앞 문장이 다른 절의 근거가 됐다(codex 2026-10-18 #4)."""
+    return ([n['summary_ko'] for n in news if n.get('summary_ko') and summary_problem(n['summary_ko']) is None]
+            + [title_source(n.get('title')) for n in news if n.get('digest')])
 
 
 def check(html, diag, news_texts=(), digest=None):

@@ -345,3 +345,91 @@ def test_is_korean():
     # 한국어 문장에 일본어 조각이 섞인 것(2026-10-18 일본 수집분 12건)
     assert not NS.is_korean('IMF는 13일 영국에 재정적자 削減 계획을 착실히 이행하라고 요구했다.')
     assert not NS.is_korean('东证 성장시장... 아니, 다시 정리합니다. 도쿄증권거래소 그로스 시장 지수가 급락했다.')
+
+
+# ── 실을 수 있는 요약인가 (2026-10-18 게이트 방어) ─────────────────────
+OK = '일본은행 총재가 16일 물가 목표에 가까워졌다고 말했다. ' * 8
+
+
+def test_summary_problem_passes_a_clean_paragraph():
+    assert NS.summary_problem(OK) is None
+    # 문장 사이 단일 개행은 줄 접기다 — 확장기는 한 <p> 로 넣는다
+    assert NS.summary_problem(OK.replace('. ', '.\n', 1)) is None
+
+
+def test_summary_problem_names_every_cjk_range():
+    # 반각 가나·가나 확장·확장 B 한자·보충 호환 한자·일본어 구두점(codex 설계 검토 #1)
+    for frag in ('削減', '差し迫った', 'ニッセイ', 'ｾｲ', 'ㇰ', '\U0001B000', '\U00020000', '\U0002F800',
+                 '神', '㐀', '令和8年産', '々', '。', '、'):
+        p = NS.summary_problem(OK + frag + ' 했다.')
+        assert p and '가나·한자' in p, frag
+    assert '削減' in NS.summary_problem('재정적자 削減 계획을 이행한다. ' + OK)
+    # 「」 와 전각 ％ 는 한국어에도 쓴다
+    assert NS.summary_problem('총재는 「물가가 오른다」고 말했다. ' + OK) is None
+
+
+def test_summary_problem_rejects_two_paragraphs_and_self_corrections():
+    assert '문단' in NS.summary_problem('리슈몽, 데비어스 인수 협의 중…관계자 전언\n\n' + OK)
+    for s in ('도쿄 성장시장... 아니, 다시 정리합니다. ' + OK,
+              OK + '아니，다시 쓰겠습니다.',                  # 전각 쉼표(#7)
+              OK + '아니​, 다시 정리합니다.',            # 폭 없는 공백(#7)
+              OK + '다시 써 보겠습니다.',
+              OK + '다시 요약하겠습니다.'):
+        assert '정정' in (NS.summary_problem(s) or ''), s
+    # 기사 속 인용은 모델의 정정이 아니다(#9) — -다 형 기사 문장도 그대로 둔다(#8 일부 기각)
+    for s in (OK + '장관은 “자료를 다시 정리하겠습니다”라고 말했다.',
+              OK + '장관은 자료를 다시 정리하겠습니다라고 말했다.',
+              OK + '정부는 지침을 다시 정리한다.',
+              OK + '그는 미국은 아니다, 다시 말해 유럽의 문제라고 했다.'):
+        assert NS.summary_problem(s) is None, s
+
+
+def test_summary_problem_keeps_the_language_rule():
+    assert NS.summary_problem('') and NS.summary_problem(None)
+    assert '한국어' in NS.summary_problem('The Bank of Japan held rates steady on Thursday. ' * 5)
+    assert NS.usable_summary(OK) and not NS.usable_summary('東証')
+
+
+def test_a_two_paragraph_summary_is_rewritten(tmp_path):
+    its = items(tmp_path)
+    c = Client(['제목 머리말\n\n' + GOOD, GOOD])
+    assert NS.summarize_items(its, str(tmp_path), model='m', client=c, log=lambda *_: None) == 1
+    assert its[0]['summary_ko'] == GOOD and '문단 하나' in c.calls[1]['messages'][-1]['content']
+
+
+def test_a_summary_that_keeps_correcting_itself_is_refused(tmp_path):
+    its = items(tmp_path)
+    bad = '아니, 다시 정리합니다. ' + GOOD
+    assert NS.summarize_items(its, str(tmp_path), model='m', client=Client([bad, bad]),
+                              log=lambda *_: None) == 0
+    assert 'summary_ko' not in its[0] and '정정' in its[0]['summary_note']
+
+
+def test_codex_implementation_review_bypasses():
+    # #1 기사 속 인용 — 마침표 뒤 닫는 따옴표, 「아니, 다시 …」 인용
+    for s in (OK + '장관은 “아니, 다시 정리하겠습니다”라고 말했다.',
+              OK + '장관은 “자료를 다시 정리하겠습니다.”라고 말했다.'):
+        assert NS.summary_problem(s) is None, s
+    # 재검토 #6 — 여는 따옴표 없이 닫는 따옴표만 붙인 것은 인용이 아니다
+    for s in (OK + '아니, 다시 정리합니다.”', OK + "아니, 다시 정리합니다.'", OK + '다시 요약하겠습니다」'):
+        assert '정정' in (NS.summary_problem(s) or ''), s
+    assert NS.summary_problem(OK + '그는 「아니, 다시 쓰겠습니다」고 했다.') is None
+    assert NS.summary_problem(OK + "그는 '다시 정리하겠습니다'라고 했다.") is None
+    # #2 CRLF 빈 줄
+    assert '문단' in NS.summary_problem('제목\r\n\r\n' + OK)
+    assert '문단' in NS.summary_problem('제목\r\r' + OK)
+    # #3 호환 문자·확장 H·가나 확장 B
+    for frag in ('㍿', '㋐', '\U00031350', '\U0001AFF0'):
+        assert '가나·한자' in (NS.summary_problem(OK + frag) or ''), repr(frag)
+        assert not NS.is_korean(OK + frag)
+    # #4 보이지 않는 서식 문자
+    for s in (OK + '다시⁣정리합니다.', OK + '다시­정리합니다.'):
+        assert '정정' in (NS.summary_problem(s) or ''), repr(s)
+
+
+def test_the_final_refusal_names_the_specific_problem(tmp_path):
+    its = items(tmp_path)
+    bad = GOOD + '削減'
+    assert NS.summarize_items(its, str(tmp_path), model='m', client=Client([bad, bad]),
+                              log=lambda *_: None) == 0
+    assert its[0]['summary_note'] == '가나·한자 「削減」'

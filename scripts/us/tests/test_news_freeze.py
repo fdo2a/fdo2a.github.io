@@ -79,3 +79,16 @@ def test_a_day_summarised_only_in_japanese_is_not_frozen(tmp_path):
     p.write_text(_json.dumps({'items': [{'guid': 'g1', 'body_chars': 500,
                                          'summary_ko': '日銀の総裁は述べた。' * 20}]}))
     assert not FN.frozen(str(p))
+
+
+def test_a_day_with_a_kanji_fragment_or_a_preamble_is_not_frozen_and_not_carried(tmp_path):
+    """한자 조각·제목 머리말(빈 줄 문단)이 남은 날은 동결하지 않고, 그 요약은 옮기지 않는다(2026-10-18)."""
+    ok = '일본은행 총재가 말했다. ' * 20
+    for bad in ('재정적자 削減 계획. ' + ok, '리슈몽, 데비어스 인수 협의 중…관계자 전언\n\n' + ok):
+        p = tmp_path / 'd.json'
+        p.write_text(json.dumps({'items': [{'guid': 'g1', 'body_chars': 500, 'summary_ko': bad},
+                                           {'guid': 'g2', 'body_chars': 500, 'summary_ko': ok}]},
+                                ensure_ascii=False))
+        assert not F.frozen(str(p))
+        rows = [{'guid': 'g1'}, {'guid': 'g2'}]
+        assert F.carry_summaries(str(p), rows) == 1 and 'summary_ko' not in rows[0]

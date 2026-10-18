@@ -43,6 +43,7 @@ from difflib import SequenceMatcher
 from html.parser import HTMLParser
 
 from .news import DIGEST_CATEGORIES
+from .news_summary import cjk_runs, self_correction, summary_problem
 
 TITLE = '오늘의 뉴스'
 
@@ -113,14 +114,16 @@ class _Reader(HTMLParser):
         self.section_depth = None
         self.section_items = []
         self.section_stray = 0
+        self.section_stray_text = ''
 
     # ── 구조 ──────────────────────────────────────────────────────────
     def handle_starttag(self, tag, attrs):
         a = {k.lower(): (v or '') for k, v in attrs}
         parent = self.stack[-1] if self.stack else None
         hidden = (parent[1] if parent else False) or _is_hidden(a)
+        # 클래스는 토큰으로 맞춘다 — 부분 문자열이면 `subject`·`subtitle` 본문이 `sub` 로 빠졌다(codex 2026-10-18 #2)
         skip = (parent[2] if parent else False) or tag in _SKIP_TAGS or any(
-            c in (a.get('class') or '') for c in _SKIP_CLASSES)
+            c in (a.get('class') or '').split() for c in _SKIP_CLASSES)
         item = parent[3] if parent else None
         if _is_item(a) and item is None:
             item = {'guid': a.get('data-news'), 'chars': 0, 'text': '', 'links': [],
@@ -172,6 +175,7 @@ class _Reader(HTMLParser):
             item['text'] += text
         elif self.section_depth is not None:
             self.section_stray += len(text)
+            self.section_stray_text += text
 
 
 def _read(html, title=TITLE):
@@ -230,23 +234,41 @@ def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES, title
             continue
         seen.add(guid)
         v.extend(_check_one(guid, it, known))
+        v.extend(_leaks(f'`data-news="{guid}"` 블록', it['text']))
 
     from us.news_expand import summary_violations
     v.extend(summary_violations(html, collected))
 
+    v.extend(_leaks('뉴스 섹션의 표식 밖 산문', doc.section_stray_text))
     if doc.section_stray > STRAY_MAX:
         v.append(f'뉴스 섹션에 표식 밖 산문이 {doc.section_stray}자 있다 '
                  f'(허용 {STRAY_MAX}자) — 기사는 `data-news` 블록 안에 둔다')
 
     # 다이제스트 섹션은 **요약까지 만들어진** 갈래 기사가 있는 날에만 요구한다(1차 #5).
+    # 실을 수 없는 요약(가나·한자·두 문단·자기 정정)은 후보로 세지 않는다(2026-10-18)
     usable = [it for it in items
-              if it.get('category') in categories and it.get('summary_ko')]
+              if it.get('category') in categories and it.get('summary_ko')
+              and summary_problem(it['summary_ko']) is None]
     if usable:
         if title not in (html or ''):
             v.append(f'뉴스 섹션(「{title}」)을 찾을 수 없다 — 수집분 {len(usable)}건')
         elif not [i for i in doc.section_items if i['guid'] and not i['hidden']]:
             v.append(f'뉴스 섹션에 항목이 하나도 없다 — `data-news` 를 단 블록이 '
                      f'필요하다 (수집분 {len(usable)}건)')
+    return v
+
+
+def _leaks(where, text):
+    """독자가 보는 글자에 남은 가나·한자 조각과 모델의 자기 정정 — 요약은 깨끗해도 작성자가 붙인
+    연결 문장이나 옛 수집분으로 들어온다(2026-10-18 /news/ 8편). 제목·캡션은 보지 않는다 — 일본 매체명과
+    KR 헤드라인의 「美·中」 은 그 자리에 정상으로 있다."""
+    v = []
+    runs = cjk_runs(text)
+    if runs:
+        v.append(f'{where}에 가나·한자 {"·".join(f"「{r}」" for r in runs[:3])} — 한국어로 옮긴다')
+    fix = self_correction(text)
+    if fix:
+        v.append(f'{where}에 모델의 자기 정정 문구 「{fix}」 — 지운다')
     return v
 
 
@@ -281,6 +303,10 @@ def _check_one(guid, block, known):
         note = row.get('summary_note') or row.get('body_note') or '사유 미기재'
         return [f'`data-news="{guid}"` 는 수집 요약(summary_ko)이 없다({note}) — '
                 f'제목만 보고 요약을 쓸 수 없다']
+    problem = summary_problem(row['summary_ko'])
+    if problem:
+        return [f'`data-news="{guid}"` 의 수집 요약을 실을 수 없다({problem}) — '
+                f'다시 수집·요약한 뒤 싣는다']
 
     v = []
     n = block['chars']

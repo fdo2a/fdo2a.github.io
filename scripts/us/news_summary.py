@@ -35,6 +35,7 @@ import base64
 import json
 import os
 import re
+import unicodedata
 import urllib.parse
 import urllib.request
 
@@ -248,16 +249,95 @@ def in_band(text):
 _HANGUL = re.compile(r'[가-힣]')
 # 가나와 한자. 한국어 요약에는 한 글자도 없어야 한다 — KR 요약 189건에 한자 0건, US 요약에서 한자가 든
 # 15건은 전부 일본 출처 기사의 일본어가 섞인 것이었다(「削減」「差し迫った」「东证…아니, 다시 정리합니다」,
-# 2026-10-18 일본 수집분 56건 중 12건).
-_CJK = re.compile(r'[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]')
+# 2026-10-18 일본 수집분 56건 중 12건). 반각 가나·가나 확장·확장 B 이상 한자·보충 호환 한자와
+# 일본어 구두점 、。々〆〇 까지 본다(codex 설계 검토 #1). 「」·전각 ％ 는 한국어에도 쓰여 뺀다 —
+# 요약 677건에서 、。 50건은 전부 통째 일본어 요약 안에 있었다.
+_CJK = re.compile(r'[\u2e80-\u2fdf\u3001\u3002\u3005-\u3007\u3040-\u30ff\u31f0-\u31ff'
+                  r'\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff61-\uff9f'
+                  r'\U0001aff0-\U0001b16f\U00020000-\U000323af]+')
+# 빈 줄로 갈린 둘째 문단 — 「요약 문단만」 계약을 어긴 것. 요약 677건 중 2건이었고 둘 다 머리말
+# (자기 정정, 제목 반복)이었다. 문장 사이 단일 개행은 줄 접기라 둔다(#10). CRLF·U+2028 도 줄바꿈이다.
+_PARAGRAPHS = re.compile(r'\n[ \t\u3000]*\n')
+_NEWLINES = re.compile(r'\r\n?|[\u2028\u2029\x0b\x0c\x85]')
+# 모델이 독자에게 하는 자기 정정. 공백·서식 문자(Cf: 폭 없는 공백·U+2063·소프트 하이픈)를 지우고
+# NFKC 한 사본에 건다(#7). 존댓말만 본다 — 요약은 -다 체라 「지침을 다시 정리한다」 는 기사 문장이다
+# (#8 일부 기각). (?=(…))\1 꼴의 원자 매칭이라(3.11 전에도 돈다) 되돌아가며 따옴표 검사를 피하지 않는다.
+# 구절 끝(마침표까지) 뒤에 「라고·라며·고 말」이 붙거나, 앞에서 열린 따옴표가 닫히면 기사 속 인용이다(#9).
+_SELF_FIX = re.compile(
+    r'(?=(?P<fix>아니[,.…]+다시[가-힣]*|다시(?:정리|작성|요약|정정)(?:합니다|하겠습니다|할게요|해보겠습니다)'
+    r'|다시(?:쓰겠습니다|씁니다|써보겠습니다|쓸게요)))(?P=fix)')
+_QUOTE_TAIL = re.compile(r'[.!?…]*(?:라고|라며|고말|[”"\'’」』])')
+_QUOTE_PAIRS = (('“', '”'), ('‘', '’'), ('「', '」'), ('『', '』'))
+
+
+def _nfkc(text):
+    # 호환 문자를 펴서 본다 — 「㍿」(株式会社)·「㋐」(ア)·반각 가나가 범위를 비껴갔다(codex 구현 검토 #3)
+    return unicodedata.normalize('NFKC', text or '')
+
+
+def _squash(text):
+    return ''.join(c for c in _nfkc(text) if not c.isspace() and unicodedata.category(c) != 'Cf')
+
+
+def cjk_runs(text):
+    """가나·한자 조각 목록 — 게이트가 발행 블록 글자에도 같은 판정을 쓴다."""
+    return _CJK.findall(_nfkc(text))
+
+
+def _quoted(flat, m):
+    """기사 속 인용인가 — 「라고·라며」 가 붙거나, 앞에 열린 따옴표가 있고 뒤에서 닫힌다. 닫는 따옴표
+    하나만으로는 면제하지 않는다(codex 구현 재검토 #6: 「아니, 다시 정리합니다.”」)."""
+    tail = _QUOTE_TAIL.match(flat, m.end())
+    if not tail:
+        return False
+    if tail.group(0).endswith(('라고', '라며', '고말')):
+        return True
+    head = flat[:m.start()]
+    if any(head.count(o) > head.count(c) for o, c in _QUOTE_PAIRS):
+        return True
+    # 곧은 따옴표는 여닫이가 같아 문장 안에서만 센다 — 앞 문장의 S&P's 같은 아포스트로피가 면제를 열지 않게
+    sentence = re.split(r'[.!?…]', head)[-1]
+    return any(sentence.count(q) % 2 for q in '"\'')
+
+
+def self_correction(text):
+    """모델의 자기 정정 문구(「아니, 다시 정리합니다」) 한 토막, 없으면 None."""
+    flat = _squash(text)
+    for m in _SELF_FIX.finditer(flat):
+        if not _quoted(flat, m):
+            return m.group('fix')
+    return None
+
+
+def _hangul_enough(text):
+    n = chars(text)
+    return bool(n) and len(_HANGUL.findall(text)) >= 0.3 * n
 
 
 def is_korean(text):
     """한국어 요약인가 — 한글이 공백 뺀 글자의 30% 이상이고 가나·한자가 하나도 없다."""
-    n = chars(text)
-    if not n:
-        return False
-    return len(_HANGUL.findall(text)) >= 0.3 * n and not _CJK.search(text)
+    return _hangul_enough(text) and not cjk_runs(text)
+
+
+def summary_problem(text):
+    """실을 수 없는 요약이면 그 사유, 실을 수 있으면 None. 수집(다시 쓰기·동결·이월)과 게이트가 같이 쓴다."""
+    if not chars(text):
+        return '요약 없음'
+    if not _hangul_enough(text):
+        return '한국어 아님'
+    runs = cjk_runs(text)
+    if runs:
+        return '가나·한자 ' + '·'.join(f'「{r}」' for r in runs[:3])
+    if _PARAGRAPHS.search(_NEWLINES.sub('\n', text).strip()):
+        return '문단이 둘 이상(머리말·제목 반복)'
+    fix = self_correction(text)
+    if fix:
+        return f'자기 정정 문구 「{fix}」'
+    return None
+
+
+def usable_summary(text):
+    return summary_problem(text) is None
 
 
 def summarize_one(client, model, item, body, system=None):
@@ -275,19 +355,21 @@ def summarize_one(client, model, item, body, system=None):
             if response.stop_reason == 'max_tokens':    # 분량 판정보다 먼저 — 잘린 글이 띠 안에 들 수 있다
                 return None, '출력 잘림'
             text = _text(response)
-            korean = is_korean(text)
-            if korean and in_band(text):
+            problem = summary_problem(text)
+            if problem is None and in_band(text):
                 return text, None
             # thinking 블록까지 그대로 붙인다 — 이력을 고치지 않고 덧붙이기만 한다
-            ask = (f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 {TARGET_MIN}~{TARGET_MAX}자로 '
-                   if korean else
-                   f'요약에 한국어가 아닌 글자(일본어 가나·한자)가 있습니다. 원문이 일본어여도 고유명사까지 한글로 옮겨, 공백 제외 '
-                   f'{TARGET_MIN}~{TARGET_MAX}자로 ')
+            if problem is None:
+                ask = f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 {TARGET_MIN}~{TARGET_MAX}자로 '
+            elif problem.startswith(('가나·한자', '한국어 아님')):
+                ask = (f'요약에 한국어가 아닌 글자(일본어 가나·한자)가 있습니다. 원문이 일본어여도 고유명사까지 '
+                       f'한글로 옮겨, 공백 제외 {TARGET_MIN}~{TARGET_MAX}자로 ')
+            else:
+                ask = (f'요약 문단 하나만 씁니다 — 머리말·제목·정정 문장 없이, 공백 제외 '
+                       f'{TARGET_MIN}~{TARGET_MAX}자로 ')
             messages += [{'role': 'assistant', 'content': response.content},
                          {'role': 'user', 'content': ask + '다시 써 주세요. 요약 문단만 출력합니다.'}]
-        if not is_korean(text):
-            return None, '한국어 아님'
-        return None, f'분량 벗어남 {chars(text)}자'
+        return None, summary_problem(text) or f'분량 벗어남 {chars(text)}자'
     except Exception as e:                  # SDK 예외 계층을 가리지 않는다 — 새면 저장이 날아간다
         if is_auth_failure(e):
             raise

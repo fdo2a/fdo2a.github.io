@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from us.news import (FEEDS, _nli_body, body_note, categorize, dedupe,  # noqa: E402
                      extract_body, page_published, pages, parse_feed_strict, pdf_text,
                      select, title_wire, trim, wire_of)
-from us.news_summary import SYSTEM_ANALYSIS, is_korean, summarize_items  # noqa: E402
+from us.news_summary import SYSTEM_ANALYSIS, summarize_items, usable_summary  # noqa: E402
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
@@ -180,10 +180,11 @@ def frozen(path):
     # 본문을 받았는데 요약이 없는 기사가 남아 있으면 동결하지 않는다 — 첫 실행에서 일부 API 호출만
     # 실패한 날이 그대로 굳던 길(codex 2026-09-27 #5). 다시 받을 때 기존 요약은 carry_summaries 가
     # 재사용하므로, 이미 쓰인 요약의 문장은 바뀌지 않는다.
-    # 한국어가 아닌 요약은 없는 것과 같다 — 일본어 요약만 있는 날이 동결돼 다시 요약되지 못했다(codex 2026-10-18)
-    if any(it.get('body_chars') and not is_korean(it.get('summary_ko')) for it in items):
+    # 실을 수 없는 요약은 없는 것과 같다 — 일본어 요약만 있는 날이 동결돼 다시 요약되지 못했다(codex 2026-10-18).
+    # 한자 조각·두 문단·자기 정정도 같다(summary_problem, 2026-10-18 게이트 방어)
+    if any(it.get('body_chars') and not usable_summary(it.get('summary_ko')) for it in items):
         return False
-    return any(is_korean(it.get('summary_ko')) for it in items)
+    return any(usable_summary(it.get('summary_ko')) for it in items)
 
 
 def carry_summaries(path, chosen):
@@ -196,8 +197,8 @@ def carry_summaries(path, chosen):
     n = 0
     for it in chosen:
         prev = old.get(it.get('guid'))
-        # 한국어가 아닌 요약은 옮기지 않는다 — 다시 요약하게 둔다(2026-10-18 일본어 요약)
-        if prev and prev.get('summary_ko') and is_korean(prev['summary_ko']):
+        # 실을 수 없는 요약은 옮기지 않는다 — 다시 요약하게 둔다(2026-10-18 일본어 요약·한자 조각)
+        if prev and prev.get('summary_ko') and usable_summary(prev['summary_ko']):
             for k in ('summary_ko', 'summary_model'):
                 if prev.get(k):
                     it[k] = prev[k]

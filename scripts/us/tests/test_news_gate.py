@@ -430,3 +430,49 @@ def test_invented_figures_appended_to_the_summary_are_caught():
 def test_one_market_link_sentence_is_allowed():
     linked = REAL + ' 이 결정이 오늘 2년물이 소폭 오른 배경입니다.'
     assert check(fed_page(linked), FED) == []
+
+
+# ── 가나·한자·자기 정정 누수 (2026-10-18) ──────────────────────────────
+def _with_summary(guid, summary):
+    items = [dict(it, summary_ko=summary) if it['guid'] == guid else it for it in COLLECTED['items']]
+    return dict(COLLECTED, items=items)
+
+
+def test_a_block_whose_collected_summary_has_kanji_is_blocked():
+    bad = '가' * 290 + '削減' + '가' * 8
+    v = check(page(block('g1'), block('g2')), _with_summary('g1', bad))
+    assert any('g1' in m and '削減' in m and '실을 수 없다' in m for m in v)
+
+
+def test_a_preamble_or_self_correction_in_the_collected_summary_is_blocked():
+    for bad in ('제목 머리말\n\n' + SUMMARY, '아니, 다시 정리합니다. ' + SUMMARY):
+        v = check(page(block('g1'), block('g2')), _with_summary('g1', bad))
+        assert any('g1' in m and '실을 수 없다' in m for m in v), bad
+
+
+def test_kanji_or_self_correction_in_the_printed_block_is_blocked():
+    # 요약은 깨끗해도 작성자가 붙인 연결 문장에 섞인 것
+    for extra in ('<p>試算했다.</p>', '<p>아니, 다시 정리합니다.</p>', '<p>&#x8A66;算</p>',
+                  '<p><span class="subject">独立적으로</span></p>'):     # sub 부분 일치로 빠지던 길(#2)
+        v = check(page(block('g1', extra=extra), block('g2')), COLLECTED)
+        assert any('g1' in m and ('가나·한자' in m or '정정' in m) for m in v), extra
+
+
+def test_kanji_in_titles_and_captions_is_not_body_text():
+    head = ('<div class="news-item" data-news="g1"><p class="news-head">美 증시 '
+            '<span class="sub">ニッセイ基礎研究所</span></p>'
+            f'<p>{SUMMARY}</p><p class="caption">日経 · 10월 1일</p></div>')
+    assert check(page(head, block('g2')), COLLECTED) == []
+
+
+def test_kanji_in_stray_prose_of_the_news_section_is_blocked():
+    # 표식 밖 산문은 200자까지 허용되지만 누수는 아니다(#3)
+    v = check(page(block('g1'), block('g2'), '<p>試算했다. 아니, 다시 정리합니다.</p>'), COLLECTED)
+    assert any('표식 밖' in m and '가나·한자' in m for m in v)
+    assert any('표식 밖' in m and '정정' in m for m in v)
+
+
+def test_unusable_summaries_do_not_demand_a_section():
+    bad = {'report_date': '2026-09-19', 'items': [
+        dict(COLLECTED['items'][0], summary_ko='東証' + SUMMARY)]}
+    assert check('<html><body><p>뉴스 없음</p></body></html>', bad) == []
