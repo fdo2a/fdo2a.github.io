@@ -94,6 +94,22 @@
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .post .arrow { margin-left: auto; color: var(--text-3); font-size: 18px; flex-shrink: 0; }
+  /* 월별 묶음 — 달을 누르면 그 달 목록이 아래로 펼쳐지고, 다시 누르면 접힌다 (2026-10-18) */
+  details.month > summary {
+    list-style: none; cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 4px; border-bottom: 1px solid var(--border);
+    font-size: 14px; font-weight: 800; color: var(--text);
+  }
+  details.month > summary::-webkit-details-marker { display: none; }
+  details.month > summary::before {
+    content: '›'; display: inline-block; width: 12px; text-align: center;
+    color: var(--text-3); font-size: 18px; line-height: 1; transition: transform 120ms ease;
+  }
+  details.month[open] > summary::before { transform: rotate(90deg); color: var(--toss-blue); }
+  details.month > summary:hover { color: var(--toss-blue); }
+  details.month .m-count { font-size: 11.5px; font-weight: 700; color: var(--text-3); }
+  details.month > .post-list { padding: 10px 0 6px; }
   .empty { text-align: center; color: var(--text-3); font-size: 13px; font-weight: 600; padding: 40px 0; }
   footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 10.5px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
 </style>
@@ -165,20 +181,51 @@
     return cache[span];
   }
 
+  // 월별 묶음의 열쇠. 주간은 그 주 금요일이 속한 달(9/28~10/2 주는 10월), 월간은 연도로 묶는다.
+  function groupKey(span, p) {
+    const k = String(p.date || p.key || '');
+    if (span === 'monthly') return k.slice(0, 4);
+    const w = k.match(/^(\d{4})-W(\d{2})$/);
+    if (w) {
+      if (p.end_date) return p.end_date.slice(0, 7);
+      const jan4 = new Date(Date.UTC(+w[1], 0, 4));
+      const fri = new Date(jan4);
+      fri.setUTCDate(jan4.getUTCDate() - (jan4.getUTCDay() + 6) % 7 + (+w[2] - 1) * 7 + 4);
+      return fri.toISOString().slice(0, 7);
+    }
+    return k.slice(0, 7);
+  }
+
+  function groupTitle(g) {
+    const [y, m] = g.split('-');
+    return m ? `${y}년 ${+m}월` : `${y}년`;
+  }
+
   async function render(span) {
     const src = SOURCES[span];
     list.innerHTML = '<div class="empty">불러오는 중…</div>';
     const rows = (await load(span)).slice();
     rows.sort((a, b) => String(b.date || b.key || '').localeCompare(String(a.date || a.key || '')));
     if (!rows.length) { list.innerHTML = `<div class="empty">${src.empty}</div>`; return; }
-    list.innerHTML = rows.map(p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
+    const card = p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
         <span class="date">${label(span, p)}</span>
         <span class="body">
           <div class="title">${p.title || ''}</div>
           <div class="headline">${p.headline || ''}</div>
         </span>
         <span class="arrow">›</span>
-      </a>`).join('');
+      </a>`;
+    // 최신 달만 펼쳐 두고 나머지는 접는다. rows 가 최신순이라 같은 달은 이어 붙어 있다.
+    const groups = [];
+    for (const p of rows) {
+      const g = groupKey(span, p);
+      if (!groups.length || groups[groups.length - 1].key !== g) groups.push({ key: g, items: [] });
+      groups[groups.length - 1].items.push(p);
+    }
+    list.innerHTML = groups.map((g, i) => `<details class="month"${i === 0 ? ' open' : ''}>
+        <summary><span class="m-name">${groupTitle(g.key)}</span><span class="m-count">${g.items.length}편</span></summary>
+        <div class="post-list">${g.items.map(card).join('')}</div>
+      </details>`).join('');
   }
 
   document.querySelectorAll('.subnav button').forEach(btn => {
