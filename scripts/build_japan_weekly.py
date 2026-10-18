@@ -23,6 +23,7 @@ from japan import core as C  # noqa: E402
 from japan import news as JN  # noqa: E402
 from japan import render as R  # noqa: E402
 from us.news_expand import expand  # noqa: E402
+from us.news_summary import is_korean  # noqa: E402
 
 NEWS_DIRS = ('data/news', 'kr/data/news')
 JAPAN_NEWS_DIR = 'japan/data/news'
@@ -46,7 +47,7 @@ def digest_rows(key, base=JAPAN_NEWS_DIR):
             continue
         for r in _load(p).get('items') or []:
             day = (r.get('published') or '')[:10]
-            if not r.get('summary_ko') or r.get('category') not in JN.DIGEST_CATEGORIES:
+            if not is_korean(r.get('summary_ko')) or r.get('category') not in JN.DIGEST_CATEGORIES:
                 continue
             if not (start <= day <= end):
                 continue

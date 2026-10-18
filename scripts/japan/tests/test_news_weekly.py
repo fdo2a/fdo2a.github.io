@@ -32,14 +32,14 @@ def test_harvest_stops_at_the_oldest_day_and_marks_failures():
              url('bus_all', 2): _list_page([_art(ID2, '長期金利が上昇', created='10/15')]),
              url('bus_all', 3): _list_page([_art(ID3, 'never read', created='10/14')])}
     fetch = _fake_fetch(pages)
-    rows, notes, complete = F.harvest('2026-10-16', '2026-10-17', None, fetch=fetch, gap=0)
-    assert [r['guid'] for r in rows] == [ID1, ID2] and complete
+    rows, notes, reach = F.harvest('2026-10-16', '2026-10-17', None, fetch=fetch, gap=0)
+    assert [r['guid'] for r in rows] == [ID1, ID2] and F.complete_for('2026-10-16', reach)
     assert url('bus_all', 3) not in fetch.calls
 
     def broken(u, ctx):
         raise OSError('down')
-    _, notes, complete = F.harvest('2026-10-16', '2026-10-17', None, fetch=broken, gap=0)
-    assert not complete and notes
+    _, notes, reach = F.harvest('2026-10-16', '2026-10-17', None, fetch=broken, gap=0)
+    assert not F.complete_for('2026-10-16', reach) and notes
 
 
 def test_pending_dates_skips_frozen_complete_days(tmp_path):
@@ -239,9 +239,9 @@ def test_validate_body_accepts_the_optional_news_section_once():
 def test_page_cap_and_official_failures_leave_the_day_incomplete():
     url = lambda feed, p: F.N.LIST_URL.format(feed=feed, page=p)  # noqa: E731
     pages = {url(f, 1): _list_page([_art(ID1, '日銀、利上げ継続', created='10/16')]) for f in F.N.FEEDS}
-    _, notes, complete = F.harvest('2026-10-12', '2026-10-17', None, fetch=_fake_fetch(pages),
-                                   gap=0, max_pages=1)
-    assert not complete and any('닿지 못했다' in n for n in notes)
+    _, notes, reach = F.harvest('2026-10-12', '2026-10-17', None, fetch=_fake_fetch(pages),
+                                gap=0, max_pages=1)
+    assert not F.complete_for('2026-10-12', reach) and any('닿지 못했다' in n for n in notes)
 
     def down(u, ctx):
         raise OSError('503')
@@ -325,3 +325,45 @@ def test_boj_404_is_tolerated_only_in_january():
         return '<?xml version="1.0"?><rss><channel></channel></rss>'
     assert F.harvest_official(None, 2027, fetch=fetch, month=1)[2]
     assert not F.harvest_official(None, 2026, fetch=fetch, month=10)[2]
+
+
+def test_completeness_is_judged_per_day():
+    url = lambda feed, p: F.N.LIST_URL.format(feed=feed, page=p)  # noqa: E731
+    pages = {url(f, 1): _list_page([_art(ID1, '日銀、利上げ継続', created='10/14'),
+                                    _art(ID2, '長期金利が上昇', created='10/13')]) for f in F.N.FEEDS}
+    pages[url('market', 1)] = _list_page([_art(ID3, '日経平均が続落', created='10/15'),
+                                          _art(ID1, '日銀、利上げ継続', created='10/14')])  # 10/14 앞에 못 닿음
+    rows, notes, reach = F.harvest('2026-10-12', '2026-10-17', None, fetch=_fake_fetch(pages),
+                                   gap=0, max_pages=1)
+    assert F.complete_for('2026-10-15', reach) and not F.complete_for('2026-10-14', reach)
+    assert not F.complete_for('2026-10-12', reach)
+
+
+def test_a_feed_that_ran_out_of_pages_counts_as_read_to_the_end():
+    url = lambda feed, p: F.N.LIST_URL.format(feed=feed, page=p)  # noqa: E731
+    pages = {url(f, 1): _list_page([_art(ID1, '日銀、利上げ継続', created='10/14')]) for f in F.N.FEEDS}
+    _, _, reach = F.harvest('2026-10-12', '2026-10-17', None, fetch=_fake_fetch(pages), gap=0, max_pages=5)
+    assert F.complete_for('2026-10-12', reach)          # 2쪽이 0건 = 목록 끝
+
+
+def test_a_failed_feed_leaves_every_day_incomplete():
+    def broken(u, ctx):
+        raise OSError('down')
+    _, _, reach = F.harvest('2026-10-12', '2026-10-17', None, fetch=broken, gap=0)
+    assert not F.complete_for('2026-10-16', reach)
+
+
+def test_digest_rows_skip_non_korean_summaries(tmp_path):
+    base = tmp_path / 'jn'
+    _write_day(base, '2026-10-16', [
+        {'guid': ID1, 'title': '日銀', 'source': 'ロイター', 'category': 'macro',
+         'published': '2026-10-16T23:00:00+09:00', 'summary_ko': '日銀の総裁は述べた。' * 20}])
+    assert B.digest_rows('2026-W42', str(base)) == []
+
+
+def test_undated_rows_leave_the_feed_unread():
+    url = lambda feed, p: F.N.LIST_URL.format(feed=feed, page=p)  # noqa: E731
+    pages = {url(f, 1): _list_page([_art(ID1, '日銀', created='10/14')]) for f in F.N.FEEDS}
+    pages[url('bus_all', 1)] = _list_page([_art(ID2, '日銀', created='昨日'), _art(ID1, '日銀', created='10/14')])
+    _, notes, reach = F.harvest('2026-10-15', '2026-10-17', None, fetch=_fake_fetch(pages), gap=0)
+    assert not F.complete_for('2026-10-16', reach) and any('날짜' in n for n in notes)

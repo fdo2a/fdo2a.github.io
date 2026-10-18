@@ -195,3 +195,33 @@ def test_body_stops_where_the_body_element_closes():
 
 def test_thousands_separators_do_not_split_figures():
     assert N.same_event('日銀、国債買入額を1,200億円に縮小', '日銀、国債買入額を1200億円に縮小')
+
+
+@pytest.mark.parametrize('title,want', [
+    ('英予算案、新施策の財源は増税か歳出削減で確保', 'global'),
+    ('英大企業、コスト削減一段と重視 物価と金利の上昇予想', 'global'),
+    ('ＩＭＦ、米に財政措置求める 中国には「国内消費へ軸足移すべき」', 'global'),
+    ('米Ｊ＆Ｊ医療機器部門、第3四半期売上高が予想下回る 株価下落', None),    # 해외 기업 실적 — 증시 갈래가 아니다
+    ('国内消費が回復、日銀短観で確認', 'macro'),
+    ('英語教育の予算を拡充＝文科省', 'policy'),
+])
+def test_classify_foreign_leaks(title, want):
+    assert N.classify(title) == want
+
+
+@pytest.mark.parametrize('title,want', [
+    ('米卸大手、業績を上方修正', 'industry'),          # 쌀 도매 — 국내
+    ('石英ガラス、半導体向け需要増で増産', 'industry'),  # 석영 — 국내
+    ('米の利下げ観測が後退', 'global'),
+    ('米農務省、補助金を削減', 'global'),
+    ('英会計検査院、政府予算の見通しを公表', 'global'),
+    ('午前のドルは158円前半中心にもみ合い、米ＣＰＩ前に様子見', 'macro'),
+])
+def test_classify_single_kanji_countries_both_ways(title, want):
+    assert N.classify(title) == want
+
+
+def test_a_page_whose_links_all_fail_to_parse_is_a_shape_change():
+    page = _list_page([{'headline': 'x', 'link': '/news/other/1', 'createTime': '10/16'}])
+    with pytest.raises(ValueError):
+        N.parse_list(page, 'bus_all')

@@ -245,6 +245,19 @@ def in_band(text):
     return BAND_MIN <= chars(text) <= BAND_MAX
 
 
+_HANGUL = re.compile(r'[가-힣]')
+_KANA = re.compile(r'[\u3040-\u30ff]')
+
+
+def is_korean(text):
+    """한국어 요약인가. 일본어 기사를 일본어로 요약해 오는 일이 있었다(2026-10-14 일본 수집분 4건,
+    US 10/13·15·16 3건) — 한글이 공백 뺀 글자의 30% 이상이고 가나가 거의 없어야 한다."""
+    n = chars(text)
+    if not n:
+        return False
+    return len(_HANGUL.findall(text)) >= 0.3 * n and len(_KANA.findall(text)) <= 0.02 * n
+
+
 def summarize_one(client, model, item, body, system=None):
     """(요약, 사유). 분량이 벗어나면 한 번만 고쳐 쓰게 한다. 인증 실패는 예외로 올린다."""
     messages = [{'role': 'user', 'content': _prompt(item, body)}]
@@ -260,14 +273,18 @@ def summarize_one(client, model, item, body, system=None):
             if response.stop_reason == 'max_tokens':    # 분량 판정보다 먼저 — 잘린 글이 띠 안에 들 수 있다
                 return None, '출력 잘림'
             text = _text(response)
-            if in_band(text):
+            korean = is_korean(text)
+            if korean and in_band(text):
                 return text, None
             # thinking 블록까지 그대로 붙인다 — 이력을 고치지 않고 덧붙이기만 한다
+            ask = (f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 {TARGET_MIN}~{TARGET_MAX}자로 '
+                   if korean else
+                   f'요약이 한국어가 아닙니다. 원문이 일본어여도 요약은 반드시 한국어로, 공백 제외 '
+                   f'{TARGET_MIN}~{TARGET_MAX}자로 ')
             messages += [{'role': 'assistant', 'content': response.content},
-                         {'role': 'user', 'content':
-                          f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 '
-                          f'{TARGET_MIN}~{TARGET_MAX}자로 다시 써 주세요. 요약 문단만 '
-                          f'출력합니다.'}]
+                         {'role': 'user', 'content': ask + '다시 써 주세요. 요약 문단만 출력합니다.'}]
+        if not is_korean(text):
+            return None, '한국어 아님'
         return None, f'분량 벗어남 {chars(text)}자'
     except Exception as e:                  # SDK 예외 계층을 가리지 않는다 — 새면 저장이 날아간다
         if is_auth_failure(e):

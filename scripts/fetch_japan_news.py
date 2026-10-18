@@ -67,10 +67,16 @@ def done(path):
 
 
 def harvest(oldest, today, ctx, fetch=None, gap=GAP, max_pages=N.MAX_PAGES):
-    """(목록 행, 사유, 완주 여부). 카테고리마다 `oldest` 보다 앞선 날짜에 닿을 때까지 넘긴다."""
+    """(목록 행, 사유, 목록별 도달 범위). 카테고리마다 `oldest` 보다 앞선 날짜에 닿을 때까지 넘긴다.
+
+    도달 범위 `{feed: {ok, oldest, end}}` — 완주는 **날마다** 판정한다(`complete_for`). 밀린 5일을 한 번에
+    메우면 일부 목록이 50쪽 안에 가장 오래된 날 앞에 못 닿는데, 그것을 모든 날의 실패로 치면 매 실행이
+    5일을 다시 받는다(2026-10-18 첫 실행).
+    """
     fetch = fetch or get
-    rows, notes, complete = [], [], True
+    rows, notes, reach = [], [], {}
     for feed in N.FEEDS:
+        r = reach[feed] = {'ok': True, 'oldest': None, 'end': False}
         for page in range(1, max_pages + 1):
             if gap:
                 time.sleep(gap)
@@ -78,18 +84,32 @@ def harvest(oldest, today, ctx, fetch=None, gap=GAP, max_pages=N.MAX_PAGES):
                 got = N.parse_list(fetch(N.LIST_URL.format(feed=feed, page=page), ctx), feed)
             except Exception as e:
                 notes.append(f'{feed} {page}쪽: {_why(e)} {str(e)[:160]}')
-                complete = False
+                r['ok'] = False
                 break
             if not got:
-                notes.append(f'{feed} {page}쪽: 0건')
+                r['end'] = True           # 목록 끝 — 끝까지 읽었다
                 break
             rows.extend(got)
+            undated = [x for x in got if not N.list_day(x.get('created'), today)]
+            if undated:
+                # 날짜를 못 읽은 기사는 어느 날에도 들어가지 않는다 — 그런 목록은 다 읽은 것이 아니다(codex)
+                notes.append(f'{feed} {page}쪽: 날짜를 못 읽은 기사 {len(undated)}건(「{undated[0].get("created")}」)')
+                r['ok'] = False
+            days = [d for d in (N.list_day(x.get('created'), today) for x in got) if d]
+            if days:
+                r['oldest'] = min([r['oldest']] + days if r['oldest'] else days)
             if N.reached(got, oldest, today):
                 break
         else:
-            notes.append(f'{feed} {max_pages}쪽까지 {oldest} 이전에 닿지 못했다 — 앞쪽 기사가 빠졌을 수 있다')
-            complete = False      # 덜 받은 날을 동결하지 않는다(codex 구현 #2)
-    return rows, notes, complete
+            notes.append(f'{feed} {max_pages}쪽까지 {oldest} 이전에 닿지 못했다(가장 앞 {r["oldest"]})')
+    return rows, notes, reach
+
+
+def complete_for(day, reach):
+    """그날을 다 읽었나 — 모든 목록이 실패 없이 그날보다 앞선 날짜에 닿았거나 끝까지 읽었다.
+    덜 받은 날을 동결하지 않는다(codex 구현 #2)."""
+    return bool(reach) and all(r['ok'] and (r['end'] or (r['oldest'] or '9999') < day)
+                               for r in reach.values())
 
 
 def harvest_official(ctx, year, fetch=None, month=None):
@@ -231,7 +251,7 @@ def main(argv=None):
         return 0
     print(f'받을 날: {", ".join(days)}')
     ctx = _context()
-    rows, notes, complete = harvest(days[0], args.today, ctx)
+    rows, notes, reach = harvest(days[0], args.today, ctx)
     year = int(args.today[:4])
     month = int(args.today[5:7])
     official_rows, off_notes, off_ok = harvest_official(ctx, year, month=month)
@@ -239,13 +259,12 @@ def main(argv=None):
         more, more_notes, more_ok = harvest_official(ctx, int(days[0][:4]), month=12)
         official_rows, off_notes = official_rows + more, off_notes + more_notes
         off_ok = off_ok and more_ok
-    complete = complete and off_ok
     print(f'목록 {len(rows)}건 · 공식 {len(official_rows)}건')
     for n in notes + off_notes:
         print(f'  {n}', file=sys.stderr)
     for day in days:
-        collect_day(day, rows, official_rows, args.today, args.bodydir, ctx, complete,
-                    notes + off_notes, datadir=args.datadir)
+        collect_day(day, rows, official_rows, args.today, args.bodydir, ctx,
+                    off_ok and complete_for(day, reach), notes + off_notes, datadir=args.datadir)
     return 0 if rows else 1
 
 

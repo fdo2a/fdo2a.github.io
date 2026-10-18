@@ -319,3 +319,26 @@ def test_both_prompts_ask_for_the_desk_register():
         assert '(~다)' in system
         assert '존댓말' not in system
         assert '운용자' in system
+
+
+JA = 'あ' * 300
+
+
+def test_a_japanese_summary_is_rewritten_in_korean(tmp_path):
+    """일본어 기사를 일본어로 요약해 오는 일이 있었다(2026-10-14 일본 수집분 4건, US 10/13·15·16)."""
+    its, c = items(tmp_path), Client([JA, GOOD])
+    assert NS.summarize_items(its, str(tmp_path), model='m', client=c, log=lambda *_: None) == 1
+    assert its[0]['summary_ko'] == GOOD and '한국어' in c.calls[1]['messages'][-1]['content']
+
+
+def test_a_summary_that_stays_japanese_is_refused(tmp_path):
+    its = items(tmp_path)
+    assert NS.summarize_items(its, str(tmp_path), model='m', client=Client([JA, JA]),
+                              log=lambda *_: None) == 0
+    assert 'summary_ko' not in its[0] and its[0]['summary_note'] == '한국어 아님'
+
+
+def test_is_korean():
+    assert NS.is_korean('일본은행 총재가 16일 CPI 2% 목표에 가까워졌다고 말했다.')
+    assert not NS.is_korean('日銀の植田総裁は16日、基調物価について述べた。')
+    assert not NS.is_korean('')

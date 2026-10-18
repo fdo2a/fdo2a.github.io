@@ -58,3 +58,24 @@ def test_a_day_with_some_unsummarised_bodies_is_not_frozen(tmp_path):
     p = _write(tmp_path, [{'guid': 'a', 'summary_ko': '요약', 'body_chars': 300},
                           {'guid': 'b', 'body_chars': 400, 'summary_note': '호출 실패'}])
     assert not F.frozen(p)
+
+
+def test_carry_skips_a_summary_that_is_not_korean(tmp_path):
+    """일본어로 나온 요약은 다시 받을 때 옮기지 않는다 — 다시 요약하게 둔다(2026-10-18)."""
+    import json as _json
+    import fetch_news as FN
+    p = tmp_path / 'd.json'
+    p.write_text(_json.dumps({'items': [{'guid': 'g1', 'summary_ko': '日銀の総裁は述べた。' * 20},
+                                        {'guid': 'g2', 'summary_ko': '일본은행 총재가 말했다. ' * 20}]}))
+    rows = [{'guid': 'g1'}, {'guid': 'g2'}]
+    assert FN.carry_summaries(str(p), rows) == 1
+    assert 'summary_ko' not in rows[0] and rows[1]['summary_ko']
+
+
+def test_a_day_summarised_only_in_japanese_is_not_frozen(tmp_path):
+    import json as _json
+    import fetch_news as FN
+    p = tmp_path / 'd.json'
+    p.write_text(_json.dumps({'items': [{'guid': 'g1', 'body_chars': 500,
+                                         'summary_ko': '日銀の総裁は述べた。' * 20}]}))
+    assert not FN.frozen(str(p))
