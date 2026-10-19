@@ -23,6 +23,32 @@ def _plain(fragment):
     return body_text(f'<body>{fragment}</body>').strip()
 
 
+_HYPOTHESIS = re.compile(r'<p\b[^>]*data-hypothesis[^>]*>(.*?)</p>', re.S | re.I)
+
+
+def _cut(text, n):
+    return text if len(text) <= n else text[:n].rstrip() + '…'
+
+
+SCHEDULE_TITLE = '향후 확인 일정'   # kr.stance_gate.SCHEDULE
+_ROW = re.compile(r'<tr\b[^>]*>(.*?)</tr>', re.S | re.I)
+_CELL = re.compile(r'<(td|th)\b[^>]*>(.*?)</\1>', re.S | re.I)
+
+
+def _table_lead(block):
+    """문단 없이 표만 있는 절(KR 「향후 확인 일정」)은 본문 행을 「칸 칸 · 칸 칸」으로 잇는다.
+    머리 행(thead 안, 또는 칸이 전부 th)은 빼고, 행머리 th 는 칸으로 읽는다(codex 2차 #3)."""
+    block = re.sub(r'<!--.*?-->', '', block, flags=re.S)    # 주석 속 폐기 행(codex 3차 #2)
+    block = re.sub(r'<thead\b.*?</thead>', '', block, flags=re.S | re.I)
+    rows = []
+    for tr in _ROW.findall(block):
+        cells = _CELL.findall(tr)
+        if not cells or all(tag.lower() == 'th' for tag, _ in cells):
+            continue
+        rows.append(' '.join(_plain(c) for _, c in cells))
+    return ' · '.join(r for r in rows if r.strip())
+
+
 def post_sections(html, max_lead=220):
     out = []
     for block in _SECTION.findall(html or ''):
@@ -31,6 +57,15 @@ def post_sections(html, max_lead=220):
         if not h:
             continue
         lead = _plain(p.group(1)) if p else ''
+        # KR 「향후 확인 일정」은 표가 본문이다 — 캡션이 붙어도 표 행을 리드로(codex 2026-10-20 #5, 2차 #4).
+        # 이 절에만 쓴다: 넓히면 옛 US 지표 대시보드 58곳의 리드가 바뀐다(2026-10-20 118편 대조).
+        if _plain(h.group(1)) == SCHEDULE_TITLE:
+            lead = _table_lead(block) or lead
+        hyp = _HYPOTHESIS.search(block) if 'data-lede="review"' in block else None
+        if hyp:
+            # KR 복기(2026-10-20)는 어제 판정이 첫 문단이다 — 열린 가설 첫 문단을 함께 넘긴다
+            half = (max_lead - 5) // 2
+            lead = _cut(lead, half) + ' / ' + _cut(_plain(hyp.group(1)), half)
         if len(lead) > max_lead:
             lead = lead[:max_lead].rstrip() + '…'
         out.append({'title': _plain(h.group(1)), 'lead': lead})

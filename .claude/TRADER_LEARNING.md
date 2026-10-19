@@ -114,6 +114,9 @@ investment relevance and falsifier; the closing section reviews prior reasoning.
 
 Append one `<section class="card" data-learning="daily">` with the heading
 `시장 판단과 복기` after the existing final content section and before the disclaimer.
+**KR from 2026-10-20**: this section goes right after 「정책·정치 촉매」 (before the reference
+block and news), opens with the `<p data-lede="review">` verdict paragraph, and is followed
+by the 「향후 확인 일정」 table — `kr-report-writer.md` §13·§13-b.
 The legacy `data-learning` attribute is retained for compatibility. Add the cycle
 and hypothesis attributes from `RESEARCH_WORKFLOW.md`. Use connected prose:
 

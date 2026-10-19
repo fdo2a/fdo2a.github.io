@@ -647,3 +647,14 @@ def test_an_imitation_marker_cannot_claim_the_editor_note_exemption():
     assert R.long_sentences(page(exempt), 120) == []
     assert R.long_sentences(page(slot), 120) == []
     assert len(R.long_sentences(page(fake), 120)) == 1
+
+
+def test_kr_v2_reading_map_links_learning_instead_of_news():
+    # 2026-10-20 KR 배치 — 판단·확인 일정이 본문이고 뉴스는 참고 자료다
+    doc = "<html><body><div class='doc'><section><h1>제목</h1></section>" + "".join(
+        "<section><h2>%s</h2><p>본문이다.</p></section>" % x
+        for x in ("전략 코멘트", "지수 & 장중", "수급", "특징주·대장주", "시장 판단과 복기",
+                  "향후 확인 일정", "오늘의 뉴스")) + "</div></body></html>"
+    nav = R.inject_reading_map(doc)
+    nav = nav[:nav.index("</nav>")]
+    assert "복기·일정" in nav and ">뉴스<" not in nav

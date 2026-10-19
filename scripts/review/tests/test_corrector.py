@@ -39,7 +39,7 @@ def setup(tmp_path, monkeypatch):
     scripts = root / 'scripts'
     scripts.mkdir()
     for name in ('macro', 'fed', 'weight', 'price_context',
-                 'session', 'movers', 'fund', 'sector_perf', 'readability', 'style'):
+                 'session', 'movers', 'fund', 'sector_perf', 'kr_stance', 'readability', 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
 assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
@@ -187,7 +187,8 @@ def test_every_replayed_gate_exists_in_the_real_repo():
     from pathlib import Path
     from scripts.review import corrector
     real = Path(__file__).resolve().parents[2]
-    names = {'macro', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES}
+    names = {'macro', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES,
+             corrector.KR_STANCE_GATE}
     missing = [n for n in names if not (real / f'check_{n}.py').is_file()]
     assert missing == []
 
@@ -387,3 +388,10 @@ def test_sector_table_gate_runs_and_is_never_tolerated():
     assert 'sector_perf' in corrector.US_DATADIR_GATES
     assert 'check_sector_perf.py' in corrector.NEVER_TOLERATE
     assert corrector.NEVER_TOLERATE == style_pass.NEVER_TOLERATE
+
+
+def test_kr_replay_includes_stance_gate_with_published_ledger():
+    # 2026-10-20 배치의 review 문단·확인 일정 표는 check_kr_stance 만 본다 — 정정 재검사에서 빠지면
+    # 정정이 그것을 지워도 통과한다(codex 설계 검토 2026-10-19 #2).
+    from scripts.review import corrector
+    assert 'check_kr_stance.py' in corrector._ALL_GATES

@@ -72,8 +72,12 @@ all the old sections. The four functions below are not four mandatory new cards.
 | 전략 코멘트 | The current decision brief, before the detailed tables |
 | 오늘의 장 and asset/flow/news/macro/industry sections | The session record and evidence behind that brief, including material facts outside its central thesis |
 | 시장 판단과 복기 | What changed in prior hypotheses, what remains unresolved, and the next distinguishing observation |
+| 향후 확인 일정 (KR, 2026-10-20) | One table of dated checks and which judgment each decides — the only place the full list appears |
 
-In `전략 코멘트`, retain four connected paragraphs and the existing `data-lede`
+KR reorders these (2026-10-20): judgment, evidence, 복기 and the schedule first; daily chart,
+technical levels and news last as reference material. The KR order is in `kr-report-writer.md`.
+
+In `전략 코멘트`, retain four connected paragraphs (US; KR has five — `kr-report-writer.md` §2) and the existing `data-lede`
 order. `event`: the consequential development. `meaning`: the interpretation and
 its relation to observed expectations, including any evidence gap. `action`: the
 conditional investment implication and horizon; observation, waiting for evidence

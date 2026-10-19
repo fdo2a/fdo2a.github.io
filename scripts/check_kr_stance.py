@@ -14,7 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from kr import stance as kr_stance          # noqa: E402
-from kr.stance_gate import check, liquidity_index   # noqa: E402
+from kr.stance_gate import check, liquidity_index, parse_day   # noqa: E402
 
 
 def _load(path):
@@ -44,7 +44,19 @@ def main():
         violations += [f"원장: {x}" for x in kr_stance.validate(nxt)]
     liquidity = liquidity_index(_load(os.path.join(args.datadir, "kr_top_value.json")),
                                 _load(os.path.join(args.datadir, "kr_index_etf.json")))
-    violations += check(html_doc, nxt or {}, ev or {}, liquidity)
+    # 배치 계약(stance_gate.LAYOUT_V2_FROM)은 발행일로 고른다 — 수집 파일의 report_date 가 정본,
+    # 없으면 작성자가 낸 원장의 date.
+    md = _load(os.path.join(args.datadir, "kr_market_data.json")) or {}
+    report_date = md.get("report_date") or (nxt or {}).get("date")
+    if not report_date:
+        violations.append("report_date 를 알 수 없다(kr_market_data.json·원장 date 둘 다 없다) — "
+                          "배치 계약을 고를 수 없어 발행하지 않는다")
+    elif parse_day(report_date) is None:
+        violations.append(f"report_date 「{report_date}」가 YYYY-MM-DD 날짜가 아니다 — 배치 계약을 고를 수 없다")
+    elif nxt and md.get("report_date") and nxt.get("date") != md["report_date"]:
+        violations.append(f"원장 date 가 {nxt.get('date')} 인데 수집 데이터는 {md['report_date']} 다 — "
+                          "오늘 판단을 오늘 날짜로 적는다")
+    violations += check(html_doc, nxt or {}, ev or {}, liquidity, report_date=report_date)
 
     if violations:
         print(f"고칠 것 {len(violations)}건 — {args.html}")

@@ -256,6 +256,9 @@ LEDE_ORDER = ('event', 'meaning', 'action', 'invalidation')
 # 여기서 넷을 요구하면 check_kr_stance 와 동시에 통과할 수 없다(2026-09-23 실측).
 LEDE_ORDERS = {'us': LEDE_ORDER,
                'kr': ('event', 'gap', 'meaning', 'action', 'invalidation', 'review')}
+# 2026-10-20 부터 KR §2 는 review 를 뺀 다섯이다(review 는 「시장 판단과 복기」로). 어느 배치를
+# 요구할지는 발행일을 아는 check_kr_stance 가 정한다 — 여기서는 둘 중 하나와 정확히 같으면 된다.
+LEDE_ORDERS_ALT = {'us': (), 'kr': (LEDE_ORDERS['kr'][:-1],)}
 
 _TODAY_CUE = re.compile(r'오늘|전일 대비|마감|하루 변화')
 
@@ -419,6 +422,8 @@ def check_lede(html_doc, market='us'):
     if seg is None:
         return ['섹션 「전략 코멘트」를 찾지 못했다']
     got = [k for k, _ in _marked(seg, 'data-lede')]
+    if any(got == list(alt) for alt in LEDE_ORDERS_ALT[market]):
+        return []
     v = [f'§2: data-lede="{k}" 문단이 없다' for k in order if k not in got]
     if not v and got != list(order):
         v.append(f'§2: data-lede 순서가 {" → ".join(got)}이다 — '

@@ -614,6 +614,9 @@ def inject_reading_map(html: str) -> str:
         ("종목·섹터", r"(?:주목 섹터|특징주|업종·섹터|메모리)"),
         ("뉴스", r"^오늘의 뉴스$"),
     ]
+    # KR 2026-10-20 배치: 판단과 확인 일정이 본문, 뉴스는 맨 뒤 참고 자료 — 다섯 자리에 복기를 넣는다
+    if any(label == "향후 확인 일정" for label, _ in sections):
+        wanted[-1] = ("복기·일정", r"^시장 판단과 복기$")
     links, used = [], set()
     for short, pattern in wanted:
         for label, sid in sections:

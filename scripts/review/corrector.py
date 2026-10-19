@@ -53,13 +53,18 @@ def _git(root, *args):
 # 실제 scripts/ 와 대조한다.
 US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'sector_perf', 'session', 'movers', 'fund')
 KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund')
+# KR 판단 게이트는 `--market` 이 없고 `--next` 로 그날 낸 원장을 받는다 — 발행 커밋의 kr_stance.json 이
+# 그것이다(STEP 2.9 가 같은 커밋에 승계한다). 2026-10-20 배치(review 가 복기 첫 문단, 확인 일정 표)는
+# 이 게이트만 본다 — 정정이 그 문단·표를 지워도 다른 게이트는 모른다(codex 설계 검토 2026-10-19 #2).
+KR_STANCE_GATE = 'kr_stance'
 # 원본에서 이미 실패했어도 정정본에서 허용하지 않는 게이트. check_fund 는 적용일 이전 글을
 # 통과시키므로, 적용일 이후 글의 실패는 「원래 그랬다」가 아니라 막아야 할 결함이다.
 # check_sector_perf 는 한 글 안에서 섹터 수익률이 갈리는 사실 오류다(2026-10-12).
 NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py'])
 _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
-                                            US_DATADIR_GATES + KR_DATADIR_GATES)])
+                                            US_DATADIR_GATES + KR_DATADIR_GATES
+                                            + (KR_STANCE_GATE,))])
 
 
 def _gates(root, clone, item, evidence, timeout, allowed=()):
@@ -87,6 +92,8 @@ def _gates(root, clone, item, evidence, timeout, allowed=()):
         for name in KR_DATADIR_GATES:
             gates.append((f'check_{name}.py', ['--html', post, '--datadir', str(data),
                                              '--market', 'kr']))
+        gates.append((f'check_{KR_STANCE_GATE}.py', ['--html', post, '--datadir', str(data),
+                                                    '--next', str(data / 'kr_stance.json')]))
     gates.extend([
         ('check_readability.py', ['--strict', '--no-inline-images', post]),
         ('check_style.py', [post]),
@@ -247,7 +254,7 @@ permission. This bounded task has already had its design reviewed. Work in this 
 user checkout. Run apply_readability then applicable pipeline gates from AGENTS.md
 and the pipeline orchestrator, passing the HISTORICAL data directory above to all
 data-dependent gates (US macro --next {evidence / datadir / 'macro.json'} and
-stance --next {evidence / datadir / 'stance.json'}), then strict readability and style.
+KR stance --next {evidence / datadir / 'kr_stance.json'}), then strict readability and style.
 Run python3 scripts/verify_post.py {item.path} --before {evidence / item.path}, even
 when only marking. Exit 1 is acceptable ONLY when every reported issue is an intended
 numeric correction justified by the original evidence; explain each numeric delta.

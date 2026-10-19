@@ -251,6 +251,18 @@ def test_kr_four_block_lede_is_flagged():
     assert check_lede(LEDE_GOOD, market='kr') != []
 
 
+def test_kr_five_block_lede_passes():
+    # 2026-10-20 배치 — review 는 「시장 판단과 복기」로 옮겼다. 어느 배치인지는 check_kr_stance 가 날짜로 정한다.
+    five = KR_LEDE_GOOD.replace('<p data-lede="review">문단</p>', '')
+    assert check_lede(five, market='kr') == []
+
+
+def test_kr_five_blocks_out_of_order_is_flagged():
+    five = _sec('전략 코멘트', ''.join(f'<p data-lede="{k}">문단</p>'
+                                     for k in ('event', 'meaning', 'gap', 'action', 'invalidation')))
+    assert check_lede(five, market='kr') != []
+
+
 def test_us_rejects_kr_six_blocks():
     assert check_lede(KR_LEDE_GOOD) != []
 

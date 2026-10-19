@@ -84,7 +84,7 @@ python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/dat
 python3 scripts/check_fund.py    --html <kr_brief 절대경로> --datadir kr/data --market kr
 ```
 
-- `check_weight.py` 의 KR 계약: 필수 섹션 비어 있음 금지, §2 여섯 문단 순서, 가격 섹션의 스탠스 등급 어휘 금지. **절대 글자 수 하한은 2026-10-13 폐지** — 「경고:」 줄(서술형 본문 5,000자 초과, 시황군 < 판단군)은 발행을 막지 않으며, 그것을 맞추려고 초안을 늘리거나 줄이지 않는다(`STYLE_EXEMPLARS.md` §11).
+- `check_weight.py` 의 KR 계약: 필수 섹션 비어 있음 금지, §2 문단 순서(2026-10-20 부터 다섯 — 어제 판단의 판정은 「시장 판단과 복기」 첫 문단, 배치는 `check_kr_stance.py` 가 발행일로 고른다), 가격 섹션의 스탠스 등급 어휘 금지. **절대 글자 수 하한은 2026-10-13 폐지** — 「경고:」 줄(서술형 본문 5,000자 초과, 시황군 < 판단군)은 발행을 막지 않으며, 그것을 맞추려고 초안을 늘리거나 줄이지 않는다(`STYLE_EXEMPLARS.md` §11).
 - `check_fund.py` — `kr/data/kr_fund_view.json` 의 `status` 가 `ok`·`partial` 이고 날짜가 오늘이면 「아시아 세션 유닛 관측」 섹션이 있어야 하고, 그 밖에는 없어야 한다. 블록(`kr_fund_view.html`)은 그대로 넣는다.
 - `check_kr_stance.py` 는 비-코어가 아니다 — 원장이 틀어지면 다음 회차의 복기가 통째로 거짓이 된다.
 
