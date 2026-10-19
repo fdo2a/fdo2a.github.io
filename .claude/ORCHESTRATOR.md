@@ -70,6 +70,8 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
    **폴백이 끝나면 `report_date`와 `complete`를 다시 본다** — 날짜가 여전히 기대 세션보다 이르면 발행하지 않고 중단한다. 뒤의 completeness 게이트는 필드 존재만 보고 날짜는 보지 않으므로, 여기서 막지 않으면 전 세션 자료가 오늘 날짜로 나간다.
 
+   **`missing` 이 `yields/naver_close_not_posted` 하나뿐이면 중단하지 말고 기다린다** — 뉴욕 시각 19:30 ET 까지. 국채 마감이 아직 안 올라온 것뿐이고 나머지는 다 됐다. 2026-10-19 세션은 17:37·17:45 ET 두 번 재수집하고 13분 만에 접었는데, 18:50 ET 에는 네이버에 4만기 모두 10/19 종가가 있었다. 다음 재시도 슬롯이 09:30 KST 라 글이 3시간 늦게 나갔다. 순서: `bash scripts/ci/run_lock.sh renew "$KEY"` → Bash 한 번에 `sleep 540`(timeout 600000) → 위 방식으로 수집 재실행·대기 → `git pull` 후 다시 본다. 19:30 ET 가 지나도 그대로면 그때 completeness 게이트 규칙대로 알림을 보내고 중단한다. 다른 항목이 함께 빠졌으면 기다리지 않는다.
+
 **토큰 규율**: 이 데이터 파일들이 있으면 그 안의 수치를 웹서치로 재확인하지 않는다. 웹 리서치(STEP 1의 리서치 절반)는 뉴스·해석·컨센서스처럼 파일에 없는 것에만 쓴다. 경제지표 Actual/Previous는 econ_indicators.json이 이미 확정했다.
 
 ## STEP 1 — 데이터 수집·검증 (subagent: brief-data-collector)
