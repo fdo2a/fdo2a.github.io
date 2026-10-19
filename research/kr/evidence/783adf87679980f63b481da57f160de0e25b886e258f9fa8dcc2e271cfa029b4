@@ -1,0 +1,472 @@
+{
+ "kr_market_data": {
+  "report_date": "2026-10-19",
+  "complete": true,
+  "missing": [
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 5768.01,
+    "change_pct": 1.76
+   },
+   "KOSDAQ": {
+    "close": 808.89,
+    "change_pct": 1.78
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-10-19",
+   "KOSDAQ": "2026-10-19"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kr_flows": {
+  "KOSPI": {
+   "rows": [
+    {
+     "date": "2026-10-19",
+     "individual": -12115,
+     "foreign": 1027,
+     "institution": 5516
+    },
+    {
+     "date": "2026-10-16",
+     "individual": -5126,
+     "foreign": 3637,
+     "institution": -6815
+    },
+    {
+     "date": "2026-10-15",
+     "individual": 13967,
+     "foreign": -37637,
+     "institution": 17176
+    },
+    {
+     "date": "2026-10-14",
+     "individual": -3203,
+     "foreign": -11614,
+     "institution": 7876
+    },
+    {
+     "date": "2026-10-13",
+     "individual": 23169,
+     "foreign": -45789,
+     "institution": 16685
+    },
+    {
+     "date": "2026-10-12",
+     "individual": 14857,
+     "foreign": -20103,
+     "institution": -1345
+    },
+    {
+     "date": "2026-10-08",
+     "individual": 29972,
+     "foreign": -20704,
+     "institution": -16789
+    },
+    {
+     "date": "2026-10-07",
+     "individual": 26183,
+     "foreign": -26188,
+     "institution": -7101
+    },
+    {
+     "date": "2026-10-06",
+     "individual": 7441,
+     "foreign": -17575,
+     "institution": -39
+    },
+    {
+     "date": "2026-10-02",
+     "individual": -17897,
+     "foreign": -1080,
+     "institution": 4155
+    }
+   ],
+   "latest_date": "2026-10-19",
+   "flows_date": "2026-10-19",
+   "flows_provisional": true,
+   "label": "당일 잠정치",
+   "stale": false
+  },
+  "KOSDAQ": {
+   "rows": [
+    {
+     "date": "2026-10-19",
+     "individual": 718,
+     "foreign": -1559,
+     "institution": 692
+    },
+    {
+     "date": "2026-10-16",
+     "individual": -908,
+     "foreign": -945,
+     "institution": 1689
+    },
+    {
+     "date": "2026-10-15",
+     "individual": -748,
+     "foreign": 2228,
+     "institution": -1614
+    },
+    {
+     "date": "2026-10-14",
+     "individual": 3835,
+     "foreign": -2128,
+     "institution": -1787
+    },
+    {
+     "date": "2026-10-13",
+     "individual": -1908,
+     "foreign": 1339,
+     "institution": 459
+    },
+    {
+     "date": "2026-10-12",
+     "individual": 2316,
+     "foreign": -130,
+     "institution": -2196
+    },
+    {
+     "date": "2026-10-08",
+     "individual": 483,
+     "foreign": 625,
+     "institution": -1075
+    },
+    {
+     "date": "2026-10-07",
+     "individual": 4871,
+     "foreign": -2495,
+     "institution": -2102
+    },
+    {
+     "date": "2026-10-06",
+     "individual": -2111,
+     "foreign": 1073,
+     "institution": 1047
+    },
+    {
+     "date": "2026-10-02",
+     "individual": 841,
+     "foreign": -1767,
+     "institution": 936
+    }
+   ],
+   "latest_date": "2026-10-19",
+   "flows_date": "2026-10-19",
+   "flows_provisional": true,
+   "label": "당일 잠정치",
+   "stale": false
+  }
+ },
+ "kr_session": {
+  "report_date": "2026-10-19",
+  "us_prev": {
+   "as_of": "2026-10-16",
+   "rows": {
+    "S&P 500": -1.09,
+    "Nasdaq": -2.15,
+    "Dow": -0.34
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.23,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": 0.5,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -0.62,
+    "항셍": 0.52,
+    "상해종합": 0.39,
+    "대만가권": -0.61
+   },
+   "dates": {
+    "닛케이": "2026-10-19",
+    "항셍": "2026-10-16",
+    "상해종합": "2026-10-19",
+    "대만가권": "2026-10-19"
+   },
+   "avg_pct": -0.08,
+   "relative_pp": 1.84
+  },
+  "usdkrw_intraday": {
+   "high": 1337.38,
+   "high_t": "09:30",
+   "low": 1327.06,
+   "low_t": "14:30",
+   "close": 1330.57,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "kr_movers": {
+  "report_date": "2026-10-19",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "반도체와반도체장비",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위"
+    ],
+    "members": [
+     {
+      "name": "삼성전자",
+      "change_pct": 1.16,
+      "close": 218000,
+      "value": 3584762
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "전기제품",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "LG에너지솔루션",
+      "change_pct": 7.2,
+      "close": 432000,
+      "value": 319099
+     },
+     {
+      "name": "삼성SDI",
+      "change_pct": 11.7,
+      "close": 592000,
+      "value": 578415
+     },
+     {
+      "name": "엘앤에프",
+      "change_pct": 7.26,
+      "close": 100500,
+      "value": 60267
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "전자장비와기기",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위"
+    ],
+    "members": [
+     {
+      "name": "삼성전기",
+      "change_pct": -1.52,
+      "close": 1170000,
+      "value": 921780
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "조선",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위"
+    ],
+    "members": [
+     {
+      "name": "HD현대중공업",
+      "change_pct": -1.71,
+      "close": 345500,
+      "value": 101191
+     }
+    ]
+   },
+   {
+    "id": "g5",
+    "industry": "제약",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성바이오로직스",
+      "change_pct": 9.94,
+      "close": 1427000,
+      "value": 184287
+     },
+     {
+      "name": "유한양행",
+      "change_pct": 8.71,
+      "close": 87400,
+      "value": 83273
+     }
+    ]
+   }
+  ]
+ },
+ "kr_econ": {
+  "source": "ECOS (한국은행 경제통계시스템)",
+  "series": {
+   "국고채 3년": {
+    "value": 3.877,
+    "date": "2026-10-19",
+    "unit": "연%",
+    "item_name": "국고채(3년)",
+    "prev": 3.854,
+    "prev_date": "2026-10-16",
+    "bp": 2.3
+   },
+   "국고채 10년": {
+    "value": 4.205,
+    "date": "2026-10-19",
+    "unit": "연%",
+    "item_name": "국고채(10년)",
+    "prev": 4.182,
+    "prev_date": "2026-10-16",
+    "bp": 2.3
+   },
+   "CD 91일": {
+    "value": 3.25,
+    "date": "2026-10-19",
+    "unit": "연%",
+    "item_name": "CD(91일)",
+    "prev": 3.25,
+    "prev_date": "2026-10-16",
+    "bp": 0.0
+   },
+   "회사채 AA- 3년": {
+    "value": 4.56,
+    "date": "2026-10-19",
+    "unit": "연%",
+    "item_name": "회사채(3년, AA-)",
+    "prev": 4.541,
+    "prev_date": "2026-10-16",
+    "bp": 1.9
+   },
+   "한국은행 기준금리": {
+    "value": 3.0,
+    "date": "2026-09",
+    "unit": "연%",
+    "item_name": "한국은행 기준금리",
+    "prev": 3.0,
+    "prev_date": "2026-08",
+    "bp": 0.0
+   }
+  },
+  "missing": [],
+  "expectations": {
+   "policy": {
+    "label": "정책 기대",
+    "numerator": "국고채 3년",
+    "denominator": "한국은행 기준금리",
+    "note": "3년물이 기준금리보다 얼마나 위인가 — 정책 경로와 기간프리미엄이 섞여 있다",
+    "bp": 87.7,
+    "date": "2026-10-19",
+    "sessions": 530,
+    "change_bp": 2.3,
+    "prev_date": "2026-10-16",
+    "standing": {
+     "percentile": 79.4,
+     "sessions": 530,
+     "window": "2년",
+     "days": null,
+     "share_pct": 21,
+     "side": "high",
+     "short": "넓은 쪽 21% 안",
+     "text": "최근 2년(530거래일) 가운데 넓은 쪽 21% 안"
+    }
+   },
+   "growth": {
+    "label": "성장 기대",
+    "numerator": "국고채 10년",
+    "denominator": "국고채 3년",
+    "note": "커브 기울기 — 장기 성장·물가 기대가 단기 정책 기대를 얼마나 웃도나",
+    "bp": 32.8,
+    "date": "2026-10-19",
+    "sessions": 530,
+    "change_bp": 0.0,
+    "prev_date": "2026-10-16",
+    "standing": {
+     "percentile": 40.2,
+     "sessions": 530,
+     "window": "2년",
+     "days": null,
+     "share_pct": null,
+     "side": "mid",
+     "short": "한가운데쯤",
+     "text": "최근 2년(530거래일)의 한가운데쯤"
+    }
+   },
+   "credit": {
+    "label": "신용 가격",
+    "numerator": "회사채 AA- 3년",
+    "denominator": "국고채 3년",
+    "note": "같은 만기에서 신용 위험에 매겨진 값",
+    "bp": 68.3,
+    "date": "2026-10-19",
+    "sessions": 530,
+    "change_bp": -0.4,
+    "prev_date": "2026-10-16",
+    "standing": {
+     "percentile": 89.2,
+     "sessions": 530,
+     "window": "2년",
+     "days": null,
+     "share_pct": 10,
+     "side": "high",
+     "short": "넓은 쪽 10% 안",
+     "text": "최근 2년(530거래일) 가운데 넓은 쪽 10% 안"
+    }
+   }
+  }
+ },
+ "kr_stock_moves_selected": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": 0.39,
+   "close": 1277000,
+   "value": 4580216
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": 1.16,
+   "close": 218000,
+   "value": 3584762
+  },
+  {
+   "name": "삼성SDI",
+   "change_pct": 11.7,
+   "close": 592000,
+   "value": 578415
+  },
+  {
+   "name": "LG에너지솔루션",
+   "change_pct": 7.2,
+   "close": 432000,
+   "value": 319099
+  },
+  {
+   "name": "삼성바이오로직스",
+   "change_pct": 9.94,
+   "close": 1427000,
+   "value": 184287
+  }
+ ]
+}
