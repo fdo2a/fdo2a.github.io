@@ -12,7 +12,7 @@
     "매체 サーチナ": 3
   },
   "notes": [
-    "market 50쪽까지 2026-10-12 이전에 닿지 못했다(가장 앞 2026-10-13)",
+    "market 50쪽까지 2026-10-12 이전에 닿지 못했다(가장 앞 2026-10-14)",
     "stocks 50쪽까지 2026-10-12 이전에 닿지 못했다(가장 앞 2026-10-15)",
     "settlement 50쪽까지 2026-10-12 이전에 닿지 못했다(가장 앞 2026-10-13)"
   ],
@@ -79,7 +79,7 @@
       "feed": "bus_all",
       "body_chars": 977,
       "body_file": "07-global.txt",
-      "summary_note": "가나·한자 「向け」·「向け」·「向け」"
+      "summary_note": "분량 벗어남 446자"
     },
     {
       "guid": "005a47ec58101e54c6fbaa5f80f01abdb88a02ec",
@@ -91,7 +91,7 @@
       "feed": "bus_all",
       "body_chars": 451,
       "body_file": "08-global.txt",
-      "summary_note": "분량 벗어남 423자"
+      "summary_note": "가나·한자 「欧州委員」"
     },
     {
       "guid": "7d70ca6fcc2c63cbf486e53ba0e5b658367cc11d",
