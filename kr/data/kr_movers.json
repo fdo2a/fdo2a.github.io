@@ -5,100 +5,23 @@
   "groups": [
     {
       "id": "g1",
-      "industry": "반도체와반도체장비",
+      "industry": "기타",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "삼성전자",
-          "change_pct": 1.16,
-          "close": 218000,
-          "value": 3584762
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "전기제품",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "LG에너지솔루션",
-          "change_pct": 7.2,
-          "close": 432000,
-          "value": 319099
+          "name": "KIWOOM 200TR",
+          "change_pct": 1.14,
+          "close": 117975,
+          "value": 45708
         },
         {
-          "name": "삼성SDI",
-          "change_pct": 11.7,
-          "close": 592000,
-          "value": 578415
-        },
-        {
-          "name": "엘앤에프",
-          "change_pct": 7.26,
-          "close": 100500,
-          "value": 60267
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "전자장비와기기",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "삼성전기",
-          "change_pct": -1.52,
-          "close": 1170000,
-          "value": 921780
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "조선",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "HD현대중공업",
-          "change_pct": -1.71,
-          "close": 345500,
-          "value": 101191
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "제약",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "삼성바이오로직스",
-          "change_pct": 9.94,
-          "close": 1427000,
-          "value": 184287
-        },
-        {
-          "name": "유한양행",
-          "change_pct": 8.71,
-          "close": 87400,
-          "value": 83273
+          "name": "KIWOOM 200",
+          "change_pct": 1.25,
+          "close": 89990,
+          "value": 54069
         }
       ]
     }
