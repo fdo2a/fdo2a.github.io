@@ -1,127 +1,91 @@
 {
-  "report_date": "2026-10-16",
+  "report_date": "2026-10-19",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Interactive Media & Services",
+      "industry": "Broadline Retail",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Amazon (AMZN)",
+          "change_pct": 4.98,
+          "close": 262.45,
+          "value": 14367616745.61
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Semiconductors",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": 1.38,
+          "close": 217.09,
+          "value": 21326201369.81
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Diversified Banks",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": -2.47,
-          "close": 340.59,
-          "value": 9606103114.89
-        },
-        {
-          "name": "Alphabet Inc. (Class C) (GOOG)",
-          "change_pct": -2.32,
-          "close": 336.91,
-          "value": 5511694702.77
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": 0.43,
-          "close": 343.46,
-          "value": 20557004395.96
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Integrated Oil & Gas",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "ExxonMobil (XOM)",
-          "change_pct": 2.46,
-          "close": 178.98,
-          "value": 2360142981.06
+          "name": "JPMorgan Chase (JPM)",
+          "change_pct": -1.82,
+          "close": 333.53,
+          "value": 2308682978.0
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Semiconductors",
+      "industry": "Pharmaceuticals",
       "direction": "down",
       "reasons": [
-        "이상 등락"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Micron Technology (MU)",
-          "change_pct": -5.63,
-          "close": 878.84,
-          "value": 26492669520.84
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -5.95,
-          "close": 528.75,
-          "value": 11842874820.0
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": -5.79,
-          "close": 89.85,
-          "value": 10911720842.04
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": -5.56,
-          "close": 227.83,
-          "value": 4836519723.09
+          "name": "Lilly (Eli) (LLY)",
+          "change_pct": -1.33,
+          "close": 1240.34,
+          "value": 2427863775.22
         }
       ]
     },
     {
       "id": "g5",
       "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
           "name": "Sandisk (SNDK)",
-          "change_pct": -6.85,
-          "close": 1299.3,
-          "value": 11485802037.24
-        },
-        {
-          "name": "Seagate Technology (STX)",
-          "change_pct": -7.5,
-          "close": 639.01,
-          "value": 3892334576.43
+          "change_pct": 5.53,
+          "close": 1371.12,
+          "value": 11595882640.78
         },
         {
           "name": "Western Digital (WDC)",
-          "change_pct": -6.86,
-          "close": 332.0,
-          "value": 2639412948.0
-        },
-        {
-          "name": "Hewlett Packard Enterprise (HPE)",
-          "change_pct": -5.97,
-          "close": 55.13,
-          "value": 1708829800.95
+          "change_pct": 6.09,
+          "close": 352.21,
+          "value": 2744982380.56
         }
       ]
     }

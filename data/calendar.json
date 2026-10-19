@@ -1,36 +1,8 @@
 {
-  "report_date": "2026-10-16",
-  "generated": "2026-10-17 08:52 KST",
+  "report_date": "2026-10-19",
+  "generated": "2026-10-20 06:44 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261019-13-Week",
-      "kind": "auction",
-      "name_ko": "13-Week 국채 입찰 950억 달러",
-      "date": "2026-10-19",
-      "time_et": "11:30",
-      "time_kst": "2026-10-20 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261019-26-Week",
-      "kind": "auction",
-      "name_ko": "26-Week 국채 입찰 820억 달러",
-      "date": "2026-10-19",
-      "time_et": "11:30",
-      "time_kst": "2026-10-20 00:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "auction-20261020-6-Week",
       "kind": "auction",
@@ -74,18 +46,20 @@
       "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
-      "key": "release-michigan-20261023",
-      "kind": "release",
-      "name_ko": "미시간대 소비자심리",
-      "date": "2026-10-23",
-      "time_et": "10:00",
-      "time_kst": "2026-10-23 23:00",
+      "key": "fomc-20261028",
+      "kind": "fomc",
+      "name_ko": "FOMC 성명",
+      "date": "2026-10-28",
+      "time_et": "14:00",
+      "time_kst": "2026-10-29 03:00",
       "status": "confirmed",
-      "source": "U. Michigan 공표 일정(FRED)",
+      "source": "연준 공표 일정",
       "assets": [
-        "금리"
+        "금리",
+        "달러",
+        "주식"
       ],
-      "watch": "추세 확인"
+      "watch": "성명 문구 변화, 30분 뒤 기자회견"
     }
   ],
   "recent_auctions": [
@@ -151,10 +125,13 @@
     }
   ],
   "blackout": {
-    "active": false,
-    "meeting": null,
-    "until": null
+    "active": true,
+    "meeting": "2026-10-28",
+    "until": "2026-10-29"
   },
-  "missing": [],
-  "complete": true
+  "missing": [
+    "releases"
+  ],
+  "complete": false,
+  "ambiguous": []
 }
