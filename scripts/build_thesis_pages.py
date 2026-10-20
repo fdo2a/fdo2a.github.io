@@ -39,7 +39,7 @@ STYLE = '''  :root {
   * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--bg);
-    font-family: 'Toss Product Sans', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
     letter-spacing: -0.01em; color: var(--text); word-break: keep-all;
   }
   .wrap { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
@@ -211,6 +211,8 @@ def shell(title, description, canonical, body, current, root, ld):
 {json.dumps(ld, ensure_ascii=False)}
 </script>
 <title>{_html.escape(title)}</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 {STYLE}
 </style>

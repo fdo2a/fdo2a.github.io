@@ -650,10 +650,12 @@ def assemble(body, meta, diag, agg):
         f'<link rel="canonical" href="{url}">\n<meta property="og:type" content="article">\n'
         f'<meta property="og:title" content="US Market Brief — 주간 인사이트 {range_ko(start, end)}">\n'
         f'<meta property="og:url" content="{url}">\n<meta property="og:description" content="{summary}">\n'
-        f'{S.ADSENSE}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
+        f'{S.ADSENSE}\n{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
         '<body data-layout="prose" data-register="da">\n'
         f'<div class="topbar"><span class="brand">US Market Brief</span>'
         f'<span class="date">주간 인사이트 · {range_ko(start, end)}</span></div>\n'
+        # 목록으로 돌아가는 길이 없었다(2026-10-21 critique). 빵부스러기에는 숫자를 넣지 않는다.
+        f'{S.crumbs([("미국 시장", "../index.html"), ("주간", "../index.html?span=weekly")])}\n'
         f'<div class="container">\n{body}\n'
         '<footer class="disclaimer"><p>이 글은 그 주 발행본의 종가, 공개 시장 데이터(CFTC·연방기금금리 선물·'
         '재무성)와 계산한 진단을 바탕으로 썼다. 투자 판단의 참고 자료이며 투자 권유가 아니다.</p></footer>\n'

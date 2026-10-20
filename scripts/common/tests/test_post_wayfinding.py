@@ -225,9 +225,10 @@ def test_print_hides_the_footer_and_unsticks_the_map(browser):
 def test_contested_gate_still_trusts_posts_published_with_the_previous_shell_css():
     """News posts in the contested runner's 3-day window carry the CSS they were published with."""
     from scripts import check_contested
-    legacy = (S.CSS_DIR / 'legacy' / 'us-2026-10-20.css').read_text(encoding='utf-8')
     trusted = check_contested.trusted_styles('us', '2026-10-20')
-    assert any(legacy.strip() in s for s in trusted)
+    for legacy in S.legacy_css('news'):
+        assert any(legacy.strip() in s for s in trusted)
+    assert len(S.legacy_css('news')) == 2
     assert any(S.css('us').strip() in s for s in trusted)
 
 
@@ -255,4 +256,24 @@ def test_inline_overrides_ignore_background_and_border_colours(browser):
     page = _open(browser, R.enhance_html(S.render('us', '2026-10-16', META, body)), 1280)
     got = page.evaluate("""() => ['bg', 'bd', 'sp'].map(i => getComputedStyle(document.getElementById(i)).color)""")
     assert got == ['rgb(25, 31, 40)', 'rgb(25, 31, 40)', MUTED]
+    page.close()
+
+
+@pytest.mark.parametrize('width', [390, 1280])
+def test_reading_map_is_not_scrolled_sideways_at_the_top(browser, width):
+    """Marking the first section must not scroll the 「빠른 이동」 label out of view."""
+    page = _open(browser, _published('us'), width)
+    page.wait_for_timeout(300)
+    assert page.evaluate("document.querySelector('nav.reading-map').scrollLeft") == 0
+    page.close()
+
+
+def test_current_chip_is_scrolled_into_view_on_mobile(browser):
+    page = _open(browser, _published('us'), 390)
+    page.evaluate("document.getElementById('s5').scrollIntoView()")
+    page.wait_for_timeout(400)
+    got = page.evaluate("""() => { const a = document.querySelector('nav.reading-map a[aria-current]');
+        const r = a.getBoundingClientRect(), m = a.parentElement.getBoundingClientRect();
+        return [a.getAttribute('href'), r.left >= m.left, r.right <= m.right]; }""")
+    assert got == ['#s5', True, True]
     page.close()

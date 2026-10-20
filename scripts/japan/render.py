@@ -197,9 +197,8 @@ def assemble(body, meta, d):
     key, start, end = d['key'], d['start_date'], d['end_date']
     url = f'https://fdo2a.github.io/japan/posts/{key}.html'
     title, summary = S.escape(meta['title'].strip()), S.escape(meta['summary'].strip())
-    back = ('<div style="max-width:1120px;margin:0 auto;padding:14px 18px 0;">'
-            '<a href="../index.html" style="text-decoration:none;font-size:13px;font-weight:700;'
-            'color:#0064FF;">‹ 일본 시장 목록</a></div>')
+    # 일간·주간과 같은 빵부스러기 한 줄(2026-10-21 critique). 숫자는 넣지 않는다.
+    back = S.crumbs([('일본 시장', '../index.html'), ('주간', None)])
     return (
         '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
@@ -207,7 +206,7 @@ def assemble(body, meta, d):
         f'<link rel="canonical" href="{url}">\n<meta property="og:type" content="article">\n'
         f'<meta property="og:title" content="{BRAND} — {range_ko(start, end)}">\n'
         f'<meta property="og:url" content="{url}">\n<meta property="og:description" content="{summary}">\n'
-        f'{S.ADSENSE}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
+        f'{S.ADSENSE}\n{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
         '<body data-layout="prose" data-register="da">\n'
         f'<div class="topbar"><span class="brand">{BRAND}</span>'
         f'<span class="date">일본 시장 주간 · {range_ko(start, end)}</span></div>\n{back}\n'

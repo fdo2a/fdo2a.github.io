@@ -33,11 +33,12 @@ ADSENSE = ('<!-- adsense-loader --><script async src="https://pagead2.googlesynd
            'crossorigin="anonymous"></script>')
 WEEKDAYS = '월화수목금토일'
 
-_PILL = ('text-decoration:none;background:#fff;border:1px solid #E5E8EB;border-radius:9999px;'
-         'padding:6px 14px;font-size:12px;font-weight:700;color:#191F28;')
-_HOME = 'text-decoration:none;font-size:14px;font-weight:800;color:#0064FF;letter-spacing:-0.02em;'
-_NAV_OPEN = ('<div style="max-width:1120px;margin:0 auto;padding:14px 18px 0;display:flex;'
-             'align-items:center;gap:10px;">')
+# Pretendard is the design font (AGENTS.md rule 1) but no reader has it installed; until
+# 2026-10-21 the stack only named it and document.fonts stayed empty. The dynamic subset fetches
+# only the unicode ranges a page uses and declares font-display: swap.
+FONT_LINK = ('<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n'
+             '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9'
+             '/dist/web/variable/pretendardvariable-dynamic-subset.min.css">')
 
 MARKETS = {
     'us': {
@@ -45,14 +46,13 @@ MARKETS = {
         'og': '미국 증시 모닝브리프', 'title_prefix': '미국 증시 마감 시황 — ',
         # Published the next morning KST, after the US close.
         'published_offset': 1,
-        'extra_nav': '',
+        'home': '미국 시장', 'span': ('일간', 'daily'), 'aside': None,
     },
     'kr': {
         'brand': 'KR Market Brief', 'site': 'https://fdo2a.github.io/kr/', 'dir': 'kr/posts',
         'og': '한국 증시 마감브리프', 'title_prefix': '코스피 마감 시황 — ',
         'published_offset': 0,
-        'extra_nav': ('\n  <a href="../../index.html" style="text-decoration:none;font-size:12px;'
-                      'font-weight:700;color:#8B95A1;margin-left:auto;">🇺🇸 미국 시장 →</a>'),
+        'home': '한국 시장', 'span': ('일간', 'daily'), 'aside': ('미국 시장 →', '../../index.html'),
     },
     # 뉴스·산업 브리프(2026-09-26) — US 루틴이 브리프와 함께 쓰는 둘째 글. 오늘의 뉴스·메모리/DRAM·
     # AI 인프라·MLCC 가 브리프에서 여기로 옮겨 왔다. 조판은 US 와 같다(`css` 키).
@@ -61,8 +61,8 @@ MARKETS = {
         'og': '미국 뉴스·산업 브리프', 'title_prefix': '미국 뉴스·산업 브리프 — ',
         'published_offset': 1, 'css': 'us', 'topbar': 'us',
         # 같은 날 브리프로 돌아가는 길. 브리프가 먼저 발행되므로 링크가 끊기지 않는다.
-        'extra_nav': ('\n  <a href="../posts/{date}.html" style="text-decoration:none;font-size:12px;'
-                      'font-weight:700;color:#8B95A1;margin-left:auto;">같은 날 시황 브리프 →</a>'),
+        'home': '미국 시장', 'span': ('뉴스·산업', 'news'),
+        'aside': ('같은 날 시황 브리프 →', '../posts/{date}.html'),
     },
 }
 
@@ -95,7 +95,8 @@ def css(market):
 
 # Stylesheets earlier posts were published with. Gates that trust "what the shell renders"
 # (check_contested) must keep trusting posts still inside their correction window.
-LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css',), 'kr': ('legacy/kr-2026-10-20.css',)}
+LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css', 'legacy/us-2026-10-21.css'),
+              'kr': ('legacy/kr-2026-10-20.css', 'legacy/kr-2026-10-21.css')}
 
 
 def legacy_css(market):
@@ -130,11 +131,24 @@ var y=map.getBoundingClientRect().bottom+32,at=-1;
 secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top<=y)at=i;});
 if(at===cur)return;cur=at;
 links.forEach(function(a,i){if(i===at)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current');});
-if(at>=0)map.scrollTo({left:Math.max(0,links[at].offsetLeft-map.offsetLeft-24)});}
+if(at<0)return;var r=links[at].getBoundingClientRect(),m=map.getBoundingClientRect();
+if(r.left<m.left+16)map.scrollBy({left:r.left-m.left-16});else if(r.right>m.right-32)map.scrollBy({left:r.right-m.right+32});}
 function later(){if(!queued){queued=true;requestAnimationFrame(update);}}
 window.addEventListener('scroll',later,{passive:true});window.addEventListener('resize',later);
 map.addEventListener('scroll',later,{passive:true});update();
 })();</script>'''
+
+
+def crumbs(trail, aside=None):
+    """Where this page sits: market home › list. One row under the topbar on every generated
+    post. **No numbers** — the topbar already carries the date, and a date here would enter recap
+    evidence and widen the weekly figure allowlist (codex 2026-10-21)."""
+    sep = '<span class="crumbs-sep" aria-hidden="true">›</span>'
+    parts = [f'<a href="{escape(h)}">{escape(t)}</a>' if h else f'<span>{escape(t)}</span>'
+             for t, h in trail]
+    side = (f'<a class="crumbs-aside" href="{escape(aside[1])}">{escape(aside[0])}</a>'
+            if aside else '')
+    return f'<nav class="crumbs" aria-label="현재 위치">{sep.join(parts)}{side}</nav>'
 
 
 def footer(market, date):
@@ -230,10 +244,9 @@ def render(market, date, meta, body):
     else:
         topbar = (f'<span class="brand">{cfg["brand"]}</span>'
                   f'<span class="date">{_long_date(day)} 마감</span>')
-    nav = (f'{_NAV_OPEN}\n  <a href="../index.html" style="{_PILL}">‹ 전체 보고서</a>\n'
-           f'  <a href="../index.html" style="{_HOME}">{cfg["brand"]}</a>'
-           f'{cfg["extra_nav"].replace("{date}", date)}\n'
-           '</div>')
+    label, span = cfg['span']
+    aside = cfg['aside'] and (cfg['aside'][0], cfg['aside'][1].replace('{date}', date))
+    nav = crumbs([(cfg['home'], '../index.html'), (label, f'../index.html?span={span}')], aside)
     return (
         '<!DOCTYPE html>\n<html lang="ko">\n<head>\n'
         '<meta charset="utf-8">\n'
@@ -246,7 +259,7 @@ def render(market, date, meta, body):
         f'<meta property="og:description" content="{escape(summary)}">\n'
         f'<title>{escape(title)}</title>\n'
         f'<script type="application/ld+json">\n{ld_text}\n</script>\n'
-        f'{ADSENSE}\n{MARKER}\n<style>\n{css(market)}</style>\n{ANALYTICS}\n</head>\n'
+        f'{ADSENSE}\n{MARKER}\n{FONT_LINK}\n<style>\n{css(market)}</style>\n{ANALYTICS}\n</head>\n'
         # US·KR 일간은 PM 이 읽는 -다 문서다 — check_style 이 이 선언을 보고 데스크 검사를 건다.
         f'<body data-register="da">\n<div class="topbar">{topbar}</div>\n{nav}\n'
         f'<div class="doc">{body}</div>\n{footer(market, date)}\n</body>\n</html>\n'

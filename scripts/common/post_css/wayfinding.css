@@ -45,6 +45,16 @@ nav.reading-map a { transition:background-color .15s cubic-bezier(.23,1,.32,1), 
 nav.reading-map a[aria-current="true"] { background:#0064FF; border-color:#0064FF; color:#fff; }
 :is(.doc, .container) section { scroll-margin-top:64px; }
 
+/* Breadcrumb row under the topbar — one pattern for daily, weekly and Japan pages. */
+nav.crumbs { max-width:1120px; margin:0 auto; padding:2px var(--crumb-pad, 16px) 0; display:flex;
+  flex-wrap:wrap; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#5F6B7A; }
+nav.crumbs a { color:#4E5968; text-decoration:none; padding:8px 2px; }
+nav.crumbs a:hover { color:#0064FF; }
+nav.crumbs a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; border-radius:4px; }
+nav.crumbs .crumbs-sep { color:#B0B8C1; }
+nav.crumbs .crumbs-aside { margin-left:auto; color:#0064FF; }
+@media (max-width:560px) { nav.crumbs { --crumb-pad:14px; } }
+
 nav.post-foot { max-width:1120px; margin:8px auto 48px; padding:0 var(--pad, 16px);
   display:flex; flex-wrap:wrap; gap:8px; --pad:16px; }
 nav.post-foot a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px;

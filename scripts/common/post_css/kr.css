@@ -4,7 +4,9 @@
 /* side padding for wayfinding.css — it must equal .doc's padding below */
 body .doc { --pad:20px; }
 @media (max-width: 560px) { body .doc { --pad:14px; } }
-body { margin:0; padding:0; background:#F2F4F6; color:#191F28; font-family:'Toss Product Sans', Pretendard, 'Noto Sans CJK KR', -apple-system, sans-serif; letter-spacing:-0.01em; word-break:keep-all; overflow-wrap:break-word; line-height:1.6; }
+body nav.crumbs { --crumb-pad:20px; }
+@media (max-width: 560px) { body nav.crumbs { --crumb-pad:14px; } }
+body { margin:0; padding:0; background:#F2F4F6; color:#191F28; font-family:'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', sans-serif; letter-spacing:-0.01em; word-break:keep-all; overflow-wrap:break-word; line-height:1.6; }
 .doc { max-width:1120px; margin:0 auto; padding:20px 20px 60px; }
 .topbar { max-width:1120px; margin:0 auto; padding:14px 20px; display:flex; align-items:baseline; gap:10px; }
 .topbar .brand { color:#0064FF; font-weight:800; font-size:15px; }

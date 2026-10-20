@@ -15,6 +15,8 @@
 {"@context":"https://schema.org","@type":"Blog","name":"US Market Brief","url":"https://fdo2a.github.io/","description":"미국 증시 모닝브리프 아카이브","inLanguage":"ko"}
 </script>
 <title>미국 증시 마감 시황·모닝브리프 아카이브 | US Market Brief</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root {
     --toss-blue: #0064FF;
@@ -31,7 +33,7 @@
   body {
     margin: 0;
     background: var(--bg);
-    font-family: 'Toss Product Sans', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
     letter-spacing: -0.01em;
     color: var(--text);
   }
@@ -47,14 +49,18 @@
   .menubar a:hover { color: var(--text-2); }
   .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
   @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
-  /* 일간·주간·월간 — 메뉴바와 위계가 다르므로 별도 클래스 (2026-08-30) */
-  .subnav { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 0 14px; }
-  .subnav button { font-size: 13px; font-weight: 600; color: var(--text-3);
-    background: none; border: 0; border-bottom: 2px solid transparent;
-    padding: 8px 10px; cursor: pointer; font-family: inherit; }
+  /* 일간·주간·월간 — 메뉴바(밑줄 탭)보다 한 단계 아래라는 것이 보이게 알약형 세그먼트로 (2026-10-21) */
+  .subnav { display: inline-flex; gap: 2px; flex-wrap: wrap; margin: 0 0 14px; padding: 3px;
+    background: #fff; border: 1px solid var(--border); border-radius: 9999px; }
+  .subnav button { min-height: 36px; font-size: 13px; font-weight: 700; color: var(--text-3);
+    background: none; border: 0; border-radius: 9999px; padding: 0 14px; cursor: pointer; font-family: inherit;
+    transition: background-color 150ms cubic-bezier(.23,1,.32,1), color 150ms cubic-bezier(.23,1,.32,1); }
   .subnav button:hover { color: var(--text-2); }
-  .subnav button[aria-current="true"] { color: var(--toss-blue);
-    border-bottom-color: var(--toss-blue); }
+  .subnav button[aria-selected="true"] { background: var(--blue-bg); color: var(--toss-blue); }
+  .subnav button:focus-visible { outline: 2px solid var(--toss-blue); outline-offset: 2px; }
+  .empty .retry { display: block; margin: 12px auto 0; min-height: 40px; padding: 0 18px; border-radius: 9999px;
+    border: 1px solid var(--border); background: #fff; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { .subnav button { transition: none; } }
   .intro {
     background: var(--blue-bg);
     border-radius: 14px;
@@ -133,14 +139,14 @@
     미국 증시가 열린 다음 날 아침(화–토 09:00 KST), 전 거래일의 시장을 정리한 모닝브리프가 자동으로 올라옵니다.
     <span class="small">지수·섹터 · 채권 · FX · 원자재 · 매크로 · 경제지표 vs 컨센서스 — 뉴스와 메모리/DRAM · AI 인프라 · MLCC 는 「뉴스·산업」 탭</span>
   </div>
-  <nav class="subnav" aria-label="발행 주기">
-    <button type="button" data-span="daily" aria-current="true">일간</button>
-    <button type="button" data-span="weekly">주간</button>
-    <button type="button" data-span="monthly">월간</button>
-    <button type="button" data-span="news">뉴스·산업</button>
+  <nav class="subnav" role="tablist" aria-label="발행 주기">
+    <button type="button" role="tab" aria-controls="list" data-span="daily" aria-selected="true">일간</button>
+    <button type="button" role="tab" aria-controls="list" data-span="weekly" aria-selected="false">주간</button>
+    <button type="button" role="tab" aria-controls="list" data-span="monthly" aria-selected="false">월간</button>
+    <button type="button" role="tab" aria-controls="list" data-span="news" aria-selected="false">뉴스·산업</button>
   </nav>
   <h2 class="list-title">전체 보고서</h2>
-  <div class="post-list" id="list">
+  <div class="post-list" id="list" role="tabpanel" aria-label="보고서 목록">
     <div class="empty">불러오는 중…</div>
   </div>
   <footer>
@@ -173,12 +179,15 @@
   async function load(span) {
     if (cache[span]) return cache[span];
     const src = SOURCES[span];
-    // 목록 파일이 아직 없는 것은 오류가 아니다 — 콘솔에 흔적을 남기지 않는다.
-    const res = await fetch(src.file, { cache: 'no-store' }).catch(() => null);
-    if (!res || !res.ok) { cache[span] = []; return cache[span]; }
-    const rows = await res.json().catch(() => []);
-    cache[span] = Array.isArray(rows) ? rows : [];
-    return cache[span];
+    const res = await fetch(src.file, { cache: 'no-store' });
+    // 목록 파일이 아직 없는 것(404)은 「아직 없음」이다. 그 밖의 실패는 오류로 올려 다시 시도할 수 있게 한다 —
+    // 실패를 빈 목록으로 캐시하면 다시 불러올 길이 없었다(codex 2026-10-21).
+    if (res.status === 404) { cache[span] = []; return cache[span]; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) throw new Error('not a list');
+    cache[span] = rows;
+    return rows;
   }
 
   // 월별 묶음의 열쇠. 주간은 그 주 금요일이 속한 달(9/28~10/2 주는 10월), 월간은 연도로 묶는다.
@@ -201,10 +210,21 @@
     return m ? `${y}년 ${+m}월` : `${y}년`;
   }
 
+  // 마지막으로 고른 탭만 그린다 — 늦게 온 응답이 다른 탭 목록을 덮지 않게(codex 2026-10-21).
+  let generation = 0;
   async function render(span) {
+    const mine = ++generation;
     const src = SOURCES[span];
     list.innerHTML = '<div class="empty">불러오는 중…</div>';
-    const rows = (await load(span)).slice();
+    let rows;
+    try { rows = (await load(span)).slice(); }
+    catch (e) {
+      if (mine !== generation) return;
+      list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.<button type="button" class="retry">다시 시도</button></div>';
+      list.querySelector('.retry').addEventListener('click', () => render(span));
+      return;
+    }
+    if (mine !== generation) return;
     rows.sort((a, b) => String(b.date || b.key || '').localeCompare(String(a.date || a.key || '')));
     if (!rows.length) { list.innerHTML = `<div class="empty">${src.empty}</div>`; return; }
     const card = p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
@@ -228,16 +248,36 @@
       </details>`).join('');
   }
 
-  document.querySelectorAll('.subnav button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.subnav button')
-        .forEach(b => b.setAttribute('aria-current', String(b === btn)));
-      render(btn.dataset.span);
+  const buttons = [...document.querySelectorAll('.subnav button')];
+  function select(span) {
+    buttons.forEach(b => {
+      const on = b.dataset.span === span;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;          // 탭 순서에는 고른 탭 하나만 — 나머지는 방향키로
+    });
+    render(span);
+  }
+  function choose(btn) {
+    const span = btn.dataset.span;
+    // 고른 탭을 주소에 남긴다 — 뒤로가기·새로고침·북마크가 같은 탭으로 돌아온다(2026-10-21).
+    history.replaceState(null, '', span === 'daily' ? location.pathname : '?span=' + span);
+    select(span);
+  }
+  buttons.forEach((btn, i) => {
+    btn.addEventListener('click', () => choose(btn));
+    btn.addEventListener('keydown', e => {
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      const to = step ? buttons[(i + step + buttons.length) % buttons.length]
+        : e.key === 'Home' ? buttons[0] : e.key === 'End' ? buttons[buttons.length - 1] : null;
+      if (!to) return;
+      e.preventDefault();
+      to.focus();
+      choose(to);
     });
   });
 
-  try { await render('daily'); }
-  catch (e) { list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>'; }
+  const asked = new URLSearchParams(location.search).get('span');
+  select(Object.prototype.hasOwnProperty.call(SOURCES, asked) ? asked : 'daily');
 })();
 </script>
 </body>

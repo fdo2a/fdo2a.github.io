@@ -2,7 +2,7 @@
    scripts/render_post.py; writers do not write CSS. Source: posts/2026-09-23.html
    base block + the component rules brief-report-writer.md used to ask for.
    apply_readability.py / apply_colors.py still inject their own marked blocks. */
-body { margin:0; background:#F2F4F6; font-family:'Toss Product Sans',Pretendard,'Noto Sans CJK KR',-apple-system,sans-serif;
+body { margin:0; background:#F2F4F6; font-family:'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', sans-serif;
   letter-spacing:-0.01em; color:#191F28; word-break:keep-all; overflow-wrap:break-word; }
 .container, .doc { max-width:1120px; margin:0 auto; padding:16px; }
 .card { background:#fff; border:1px solid #F2F4F6; border-radius:14px; padding:18px 20px; margin-bottom:14px; }
