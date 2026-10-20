@@ -3,27 +3,67 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-20",
- "status": "error",
- "reason": "market_data_not_found",
- "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-20T21:54:23+00:00",
- "cutoff_at": "2026-10-20T21:54:23+00:00",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": false,
+ "attempts": 3,
+ "collected_at": "2026-10-20T22:32:12+00:00",
+ "cutoff_at": "2026-10-20T22:32:12+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
- "counts": {},
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "2ec003b8029647d444c7c9f2205595284e4f4a0d",
+  "sha256": "1025c34cea3b460afd4f7a8e5b82d0ea047bebd95b17917ab7a5082ddf5ebf8e"
+ },
+ "counts": {
+  "harvest": 199,
+  "candidates": 2,
+  "articles": [
+   2,
+   3
+  ]
+ },
  "diagnostics": {
-  "runner": "local"
+  "runner": "local",
+  "tokens": {
+   "in": 34259,
+   "out": 10619
+  },
+  "discovery": "throttled",
+  "hosts": {
+   "cnbc.com": "ok",
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "throttled",
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 7
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "트럼프의 캐나다산 제품 50% 관세(1930년 관세법 338조)에 대한 ",
+  "query": "trump canadian tariffs",
   "trigger": []
  },
- "content_hash": "175b6289c38c203c"
+ "problems": [
+  "structure:unverified",
+  "edges[0]:unverified",
+  "edges[2]:unverified",
+  "memo[2]:unverified",
+  "worry.most[0]:unverified"
+ ],
+ "content_hash": "6e3ad6fe41cda404"
 }
