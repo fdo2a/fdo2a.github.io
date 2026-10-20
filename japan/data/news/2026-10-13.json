@@ -2,11 +2,11 @@
   "report_date": "2026-10-13",
   "source": "Yahoo!ファイナンス ニュース",
   "complete": false,
-  "harvested": 413,
+  "harvested": 407,
   "dropped": {
     "갈래 없음·정례": 87,
     "매체 NADA NEWS": 14,
-    "유료": 93,
+    "유료": 90,
     "매체 CoinPost": 6,
     "매체 gamebiz": 5,
     "매체 Yahoo!ニュース オリジナル THE PAGE": 1,
@@ -16,7 +16,7 @@
     "매체 アイフィス株予報": 4
   },
   "notes": [
-    "market 50쪽까지 2026-10-13 이전에 닿지 못했다(가장 앞 2026-10-14)",
+    "market 50쪽까지 2026-10-13 이전에 닿지 못했다(가장 앞 2026-10-15)",
     "stocks 50쪽까지 2026-10-13 이전에 닿지 못했다(가장 앞 2026-10-16)",
     "settlement 50쪽까지 2026-10-13 이전에 닿지 못했다(가장 앞 2026-10-13)"
   ],
@@ -96,7 +96,7 @@
       "feed": "bus_all",
       "body_chars": 550,
       "body_file": "09-industry.txt",
-      "summary_note": "가나·한자 「罪」"
+      "summary_note": "가나·한자 「罪状」"
     },
     {
       "guid": "04e5afb32da18f0e68f881a3b25bcb01b403532b",
@@ -147,7 +147,7 @@
       "feed": "bus_all",
       "body_chars": 1006,
       "body_file": "17-global.txt",
-      "summary_note": "가나·한자 「削減」·「ヒーリー財務相」·「ヒーリー」"
+      "summary_note": "가나·한자 「削減」"
     },
     {
       "guid": "http://www.nli-research.co.jp/report/detail/id=87001?site=nli",
