@@ -379,3 +379,39 @@ def test_pick_falls_back_without_client_and_validates_model_answer():
         assert F.pick(object(), [g1, g2], run)[0] is g1 and run.diag['pick'] == 'fallback:invalid'
     finally:
         F.call = orig
+
+
+def test_gate_rejects_canonical_section_hidden_in_comment():
+    p = payload()
+    good = published(p)
+    import re as _re
+    sec = _re.search(r'<section id="contested".*?</section>', good, _re.S).group(0)
+    fake = sec.replace('노조 자체 추산', '위성사진으로 확인')
+    html = good.replace(sec, f'<!--{sec}-->\n{fake}')
+    errs = C.check(html, p, 'us', DATE, G.transforms())
+    assert errs, '주석 속 정규형으로 통과하면 안 된다'
+
+
+def test_duplicate_pair_ids_are_dropped_before_verification():
+    arts = arts3(distinct=True)
+    a0, a1 = arts[0]['article_id'], arts[1]['article_id']
+    x = {'relevant_articles': [a0, a1],
+         'claims': [{'claim_id': c, 'article_id': a, 'issue_id': 'i1', 'evidence_kind': 'none',
+                     'claim_span': '550,000 people joined protests'} for c, a in (('c1', a0), ('c2', a1))],
+         'pairs': [{'pair_id': 'p1', 'a': 'c1', 'b': 'c2'}, {'pair_id': 'p1', 'a': 'c2', 'b': 'c1'}],
+         'observations': []}
+    claims, pairs, obs = F.ground(x, arts, {})
+    assert pairs == []
+
+
+def test_duplicate_verdicts_count_as_unverified():
+    arts = arts3(distinct=True)
+    a0, a1 = arts[0]['article_id'], arts[1]['article_id']
+    claims = {'c1': {'claim_id': 'c1', 'article_id': a0, 'issue_id': 'i1', 'proposition_ko': 'x'},
+              'c2': {'claim_id': 'c2', 'article_id': a1, 'issue_id': 'i1', 'proposition_ko': 'y'}}
+    ok = {'pair_id': 'p1', 'supported_a': True, 'supported_b': True, 'incompatible': True}
+    bad = dict(ok, incompatible=False)
+    v = {'pairs': [bad, ok], 'claims': [{'claim_id': 'c1', 'evidence_supported': True},
+                                         {'claim_id': 'c2', 'evidence_supported': True}]}
+    _, q, _, _, _ = F.prune(claims, [{'pair_id': 'p1', 'a': 'c1', 'b': 'c2'}], {}, v, {}, arts)
+    assert q == []

@@ -531,9 +531,18 @@ def check(html, payload, market, date, transforms=()):
     errs = []
     if MARKER in html:
         errs.append('표식이 남아 있다 — render_contested.py 를 돌리지 않았다')
+    omitted = OMIT_RE.findall(html)
+    # 주석 안의 정규형으로 대조를 통과시키고 다른 섹션을 보이게 하는 우회(구현 검토 P1) —
+    # 생략 기록 말고는 주석을 지운 문서만 본다. 주석 속 섹션 흔적은 그 자체로 위반이다.
+    comments = re.findall(r'<!--.*?-->', html, re.S)
+    if any('data-contested' in c or 'id="contested"' in c for c in comments):
+        errs.append('주석 안에 쟁점 섹션 흔적이 있다')
+    html = re.sub(r'<!--.*?-->', '', html, flags=re.S)
+    if re.search(r'data-contested|id=["\']?contested', html) and \
+            len(re.findall(r'data-contested=', html)) != html.count('<section id="contested"'):
+        errs.append('섹션 밖에 쟁점 표지가 있다')
     loc = _Locate()
     loc.feed(html)
-    omitted = OMIT_RE.findall(html)
     if len(omitted) > 1:
         errs.append('생략 기록이 둘 이상이다')
     n = len(loc.sections)

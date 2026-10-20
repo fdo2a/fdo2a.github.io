@@ -21,6 +21,7 @@ import hashlib
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import tempfile
@@ -147,10 +148,13 @@ def query_of(group):
     return ' '.join(top + noun)
 
 
-def harvest(ctx, now, fetch=get):
+def harvest(ctx, now, fetch=get, run=None):
     rows, notes = [], []
     for cat in _NEWS_FEEDS:
         for url in FEEDS[cat]:
+            if run is not None and run.left() < 400:
+                notes.append('harvest: 시간 상한')
+                break
             try:
                 got, why = parse_feed_strict(fetch(url, ctx), cat)
             except Exception as e:
@@ -369,6 +373,8 @@ VERIFY_SYSTEM = """너는 다른 분석가가 만든 기사 비교 결과를 원
 def call(client, model, system, user, schema, max_out, run, sdk_errors=()):
     if len(system) + len(user) > MAX_IN_CHARS + 20000:
         raise ValueError('input_too_large')
+    left = max(30, run.left() - 60)
+    client = client.with_options(timeout=left, max_retries=1)
     with client.messages.stream(
             model=model, max_tokens=max_out, system=system,
             messages=[{'role': 'user', 'content': user}],
@@ -438,6 +444,11 @@ def ground(x, arts, reg):
     """span 대조와 시장 값 채우기. (주장, 쌍, 관측치) — 근거 없는 것은 여기서 떨어진다."""
     body = {a['article_id']: a['_body'] for a in arts}
     rel = set(x.get('relevant_articles') or []) & set(body)
+    x = dict(x)
+    for key, idf in (('claims', 'claim_id'), ('pairs', 'pair_id'), ('observations', 'obs_id'),
+                     ('issues', 'issue_id')):
+        n = Counter(r.get(idf) for r in x.get(key) or [])
+        x[key] = [r for r in x.get(key) or [] if n[r.get(idf)] == 1]   # 중복 ID 는 전부 버린다(P1)
     claims = {}
     for c in x.get('claims') or []:
         b = body.get(c.get('article_id'))
@@ -467,9 +478,12 @@ def ground(x, arts, reg):
 
 def prune(claims, pairs, obs, verdict, analysis, arts):
     """검증 결과를 반영해 살아남은 그래프만 남긴다(N02). (claims, pairs, obs, analysis|None, 문제)"""
-    vp = {v['pair_id']: v for v in verdict.get('pairs') or []}
-    vc = {v['claim_id']: v for v in verdict.get('claims') or []}
-    vo = {v['obs_id']: v for v in verdict.get('observations') or []}
+    def uniq(rows, idf):
+        n = Counter(v.get(idf) for v in rows or [])
+        return {v[idf]: v for v in rows or [] if n[v.get(idf)] == 1}   # 판정이 둘이면 판정 없음
+    vp = uniq(verdict.get('pairs'), 'pair_id')
+    vc = uniq(verdict.get('claims'), 'claim_id')
+    vo = uniq(verdict.get('observations'), 'obs_id')
     obs = {k: o for k, o in obs.items() if o['kind'] == 'market' or (vo.get(k) or {}).get('supported')}
     origin = {a['article_id']: a['origin_group'] for a in arts}
     keep, seen = [], set()
@@ -494,7 +508,7 @@ def prune(claims, pairs, obs, verdict, analysis, arts):
                                                and any(m in obs for m in c.get('market_obs') or [])))
               for k, c in claims.items() if k in used}
     problems = []
-    items = {v['path']: v for v in verdict.get('analysis_items') or []}
+    items = uniq(verdict.get('analysis_items'), 'path')
     ids = set(claims) | set(obs)
     an = analysis
     for path, node in _analysis_nodes(an):
@@ -620,6 +634,11 @@ def main(argv=None):
     with open(md_path, encoding='utf-8') as fh:
         md = json.load(fh)
     run = Run(args.deadline)
+    # 단계 경계만 보는 마감은 느린 피드·모델 호출 안에서 지나간다(구현 검토 P1). 알람으로 어디서든
+    # 끊고, 저장할 시간(60초)을 남긴다. 워크플로 timeout(20분)은 이보다 넉넉하다.
+    if hasattr(signal, 'SIGALRM'):
+        signal.signal(signal.SIGALRM, lambda *_: (_ for _ in ()).throw(Deadline('alarm')))
+        signal.alarm(max(60, args.deadline - 60))
     model = os.environ.get('CONTESTED_MODEL') or DEFAULT_MODEL
     now = datetime.now(timezone.utc)
     base = {'schema_version': C.SCHEMA_VERSION, 'market': args.market, 'span': 'daily',
@@ -631,6 +650,8 @@ def main(argv=None):
             'event': {'topic_ko': '', 'query': '', 'trigger': []}}
 
     def finish(status, reason, retryable, **extra):
+        if hasattr(signal, 'SIGALRM'):
+            signal.alarm(0)
         p = dict(base, status=status, reason=reason, retryable=retryable, stages=run.stages, **extra)
         run.diag['elapsed_s'] = int(time.monotonic() - run.t0)
         save(path, p)
@@ -646,7 +667,7 @@ def main(argv=None):
 
         run.stage('harvest')
         ctx = _context()
-        pool, notes = harvest(ctx, now)
+        pool, notes = harvest(ctx, now, run=run)
         groups = [g for g in cluster([r for r in pool if r.get('category') in _EVENT_CATS])
                   if len(g) >= 3 or len({r.get('source') for r in g}) >= 2]
         base['counts'].update(harvest=len(pool), candidates=len(groups))
@@ -719,6 +740,8 @@ def main(argv=None):
         sty = style_problems(C.render(p))
         if sty:
             return finish('none', 'style_failed', True, problems=sty[:20])
+        if hasattr(signal, 'SIGALRM'):
+            signal.alarm(0)
         save(path, p)
         print(f'{path} — ok · 쟁점 {len(p["issues"])} · 충돌 {len(p["pairs"])} · '
               f'출처 {p["counts"]["origins"]} · 토큰 {run.diag["tokens"]}')
