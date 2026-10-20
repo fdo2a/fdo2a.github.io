@@ -184,13 +184,23 @@ def _files(*dirs):
 
 
 def _lock_age(name, now):
+    """잠금의 마지막 갱신 이후 분. 잠금이 없거나 `released` 표시면 None — run_lock.sh 와 같은 규칙.
+
+    클라우드에서 ref 삭제가 거부돼 release 는 ref 를 지우지 않고 표시 커밋으로 바꾼다
+    (2026-10-20). 표시를 살아 있는 잠금으로 읽으면 쓰지 않고 끝난 런이 120분 동안 BUSY 를 만든다.
+    """
     ref = f'refs/heads/locks/{name}'
+    seen = f'refs/run_lock/{name}'
     if not _git('ls-remote', 'origin', ref).stdout.strip():
         return None
-    if _git('fetch', '-q', 'origin', ref).returncode:
+    if _git('fetch', '-q', 'origin', f'+{ref}:{seen}').returncode:
         return None
-    s = _git('log', '-1', '--format=%ct', 'FETCH_HEAD').stdout.strip()
-    return int((now.timestamp() - int(s)) // 60) if s else None
+    out = _git('log', '-1', '--format=%ct%n%s', seen).stdout.split('\n')
+    if len(out) < 2 or not out[0].strip().isdigit():
+        return None
+    if out[1].startswith('released '):
+        return None
+    return max(0, int((now.timestamp() - int(out[0])) // 60))
 
 
 def main(argv=None):

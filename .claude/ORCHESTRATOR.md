@@ -23,7 +23,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
    **살아 있다는 표시**: STEP 2 작성 시작 전과 STEP 3 발행 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"` 를 한다. **renew 가 exit 3 이면 잠금을 잃은 것이다 — 다른 런이 넘겨받았으니 커밋·푸시하지 말고 끝낸다.** 갱신 없이 120분이 지나면 다음 런이 넘겨받는다(한도로 죽은 런의 잠금).
 
-   **쓰지 않고 끝나는 모든 경로에서는 끝내기 전에 잠금을 푼다** — 멱등 가드로 중단(already published), 수집 뒤에도 데이터가 기대 세션보다 이르거나 불완전해 중단하는 경우 전부: `bash scripts/ci/run_lock.sh release "$(cat /tmp/us-lock-key)"`. 해제는 자기가 잡은 잠금만 지운다. 작성·발행까지 간 런은 풀지 않는다. **사람이 띄운 복구 런**은 `acquire <키> 0` 으로 즉시 넘겨받는다.
+   **쓰지 않고 끝나는 모든 경로에서는 끝내기 전에 잠금을 푼다** — 멱등 가드로 중단(already published), 수집 뒤에도 데이터가 기대 세션보다 이르거나 불완전해 중단하는 경우 전부: `bash scripts/ci/run_lock.sh release "$(cat /tmp/us-lock-key)"`. 해제는 자기가 잡은 잠금만 푼다. **release 는 ref 를 지우지 않고 `released` 표시 커밋으로 바꾼다**(클라우드는 ref 삭제 push 를 거부한다 — 2026-10-20). release 가 **exit 4·5 면 잠금이 남아 재시도 루틴이 stale 까지 BUSY 로 막힌다** — 이 가드가 평소 알리지 않고 끝나는 경로라도 release 출력을 붙여 PushNotification 으로 보고한다. exit 0 은 풀렸거나 이미 남의 것이다. 작성·발행까지 간 런은 풀지 않는다. **사람이 띄운 복구 런**은 `acquire <키> 0` 으로 즉시 넘겨받는다.
 
 0-1. **멱등 가드 — 이미 나간 글은 절대 다시 만들지 않는다.** `git -C <repo> pull` 후 `data/market_data.json` 의 `report_date` 를 읽는다. 그 값이 **오늘 기대하는 미국 세션과 같고** `posts/<report_date>.html` **과 `news/<report_date>.html` 이 둘 다** 커밋돼 있으면 즉시 중단한다: 파일을 고치지도, 커밋하지도, PushNotification 을 보내지도 말고 「already published」만 보고하고 끝낸다.
 

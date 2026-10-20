@@ -10,7 +10,7 @@ python3 scripts/ci/routine_due.py japan-key    # → <KEY> <그 주 금요일> <
 
 첫 값이 `<KEY>`(오늘보다 앞선 마지막 금요일이 속한 ISO 주), 둘째가 스냅샷 종료일인 그 금요일, 셋째가 MOF 게시일이다. 날짜 산술로 다시 만들지 않는다. `japan/posts/<KEY>.html` 이 이미 있으면 끝낸다 — **이 가드는 수집 뒤에 둔다**(STEP 1 이 끝난 다음 다시 확인).
 
-**선점 잠금 — 다른 파일을 읽기 전에.** `bash scripts/ci/run_lock.sh acquire japan-<KEY> 240` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). STEP 2 작성자를 부르기 직전과 돌아온 직후, STEP 4 커밋 직전에 `bash scripts/ci/run_lock.sh renew japan-<KEY>` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. 쓰지 않고 끝나는 경로(가드·수집 실패)에서는 `bash scripts/ci/run_lock.sh release japan-<KEY>` 로 풀고 끝낸다.
+**선점 잠금 — 다른 파일을 읽기 전에.** `bash scripts/ci/run_lock.sh acquire japan-<KEY> 240` — exit 3 이면 다른 런이 작성 중이니 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). STEP 2 작성자를 부르기 직전과 돌아온 직후, STEP 4 커밋 직전에 `bash scripts/ci/run_lock.sh renew japan-<KEY>` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. 쓰지 않고 끝나는 경로(가드·수집 실패)에서는 `bash scripts/ci/run_lock.sh release japan-<KEY>` 로 풀고 끝낸다. **release 는 ref 를 지우지 않고 `released` 표시 커밋으로 바꾼다**(클라우드는 ref 삭제 push 를 거부한다 — 2026-10-20). release 가 **exit 4·5 면 잠금이 남아 재시도 루틴이 stale 까지 BUSY 로 막힌다** — 이 가드가 평소 알리지 않고 끝나는 경로라도 release 출력을 붙여 PushNotification 으로 보고한다. exit 0 은 풀렸거나 이미 남의 것이다.
 
 ## STEP 1 — 스냅샷과 진단
 

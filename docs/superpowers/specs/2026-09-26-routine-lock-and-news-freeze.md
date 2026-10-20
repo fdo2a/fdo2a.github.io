@@ -26,3 +26,7 @@
 - 잠금 브랜치 push 도 웹훅을 부른다(뜬 런은 잠금에서 곧바로 끝난다).
 - 요약 길이가 뉴스 게이트 분량(240~420자) 밖이면 원문을 넣어도 걸린다 — 그 기사는 직접 쓴다.
 - codex 검토 빚(한도, 22:34 KST 해제).
+
+## 2026-10-20 — release 는 지우지 않는다
+
+클라우드 루틴의 git 경로가 ref 삭제 push 를 거부해 release 가 한 번도 통하지 않았다. release 는 이제 잠금을 `released` 표시 커밋으로 바꾸고, acquire·`routine_due.py` 는 그 표시를 잠금 없음으로 본다. 위 A 행의 「쓰지 않고 끝나는 경로는 푼다」의 실제 방식이 이것이다. `run_lock.sh` 를 고치기 전에 `docs/superpowers/specs/2026-10-20-run-lock-release-marker.md` 를 읽는다.

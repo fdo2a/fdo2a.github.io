@@ -17,7 +17,7 @@
    bash scripts/ci/run_lock.sh acquire "$(cat /tmp/kr-lock-key)" 120
    ```
 
-   exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고 「locked by another run」만 보고하고 끝낸다. exit 4 도 진행하지 않는다. STEP 2 작성 시작 전과 STEP 3 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/kr-lock-key)"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**(아래 가드·수집 뒤 데이터 부족)에서는 `bash scripts/ci/run_lock.sh release "$(cat /tmp/kr-lock-key)"` 로 풀고 끝낸다.
+   exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고 「locked by another run」만 보고하고 끝낸다. exit 4 도 진행하지 않는다. STEP 2 작성 시작 전과 STEP 3 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/kr-lock-key)"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**(아래 가드·수집 뒤 데이터 부족)에서는 `bash scripts/ci/run_lock.sh release "$(cat /tmp/kr-lock-key)"` 로 풀고 끝낸다. **release 는 ref 를 지우지 않고 `released` 표시 커밋으로 바꾼다**(클라우드는 ref 삭제 push 를 거부한다 — 2026-10-20). release 가 **exit 4·5 면 잠금이 남아 재시도 루틴이 stale 까지 BUSY 로 막힌다** — 이 가드가 평소 알리지 않고 끝나는 경로라도 release 출력을 붙여 PushNotification 으로 보고한다. exit 0 은 풀렸거나 이미 남의 것이다.
 
    아래 1·2 로 `report_date` 가 예상 세션과 맞고 `kr/posts/<report_date>.html` 이 이미 커밋돼 있으면 **「already published」만 보고하고 끝낸다**(잠금을 풀고, 알림 없이). 데이터가 예상 세션보다 이르면 이 가드로 멈추지 말고 3번 재수집으로 내려간다 — 어제 글이 있는 건 당연하다.
 
