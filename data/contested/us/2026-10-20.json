@@ -1,0 +1,29 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-10-20",
+ "status": "error",
+ "reason": "market_data_not_found",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-20T21:39:10+00:00",
+ "cutoff_at": "2026-10-20T21:39:10+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": null,
+ "counts": {},
+ "diagnostics": {
+  "runner": "local"
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "68d797ec52fe41a2"
+}
