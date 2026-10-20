@@ -121,6 +121,19 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
+      "guid": "108438984",
+      "url": "https://www.cnbc.com/2026/10/20/trump-musk-starlink-ukraine-zelenskyy.html",
+      "title": "Elon Musk ordered Starlink slowdown for Ukraine: Report",
+      "summary": "Musk and President Donald Trump have both recently criticized Ukrainian President Volodymyr Zelenskyy, who has also flagged disruptions in U.S. intel sharing.",
+      "published": "2026-10-20T21:52:51+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 1845,
+      "body_file": "24-politics.txt",
+      "summary_ko": "머스크가 우크라이나가 러시아와의 전쟁에서 쓰던 스타링크 일부 버전의 속도를 제한하라고 지시했다고 월스트리트저널(WSJ)이 2026년 10월 20일 미국 관리와 사정에 밝은 인물들을 인용해 보도했다. WSJ에 따르면 머스크는 지난주 우크라이나 장비가 위성망에 연결될 수 있는 속도에 상한을 두었고, 이로 인해 일부 우크라이나 드론이 사실상 작동하기 어려워졌다. 한 소식통은 머스크가 이 조치 전에 트럼프 대통령을 포함한 고위 행정부 관계자들과 논의했다고 전했다. 머스크와 트럼프는 최근 젤렌스키 대통령을 비판해 왔으며, 속도 제한이 처음 알려진 직후 두 사람이 이를 논의한 것으로 전해졌다. 트럼프는 누가 중단을 지시했는지 모른다면서도 알아보고 싶다고 말했다. WSJ는 젤렌스키의 불만 제기 이후 백악관 내부에서 비공식 조사가 진행됐다고 전했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
       "guid": "108438231",
       "url": "https://www.cnbc.com/2026/10/20/mike-bloomberg-democrats-house-trump.html",
       "title": "Mike Bloomberg spent $80M to boost Democrats in midterms: NYT",
@@ -129,7 +142,7 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 2524,
-      "body_file": "24-politics.txt",
+      "body_file": "25-politics.txt",
       "summary_ko": "블룸버그 전 뉴욕시장이 2026년 9월과 10월 민주당의 하원 다수당 탈환을 돕기 위해 8,000만 달러를 썼다고 뉴욕타임스(NYT)가 보도했다. 그의 정치고문 하워드 울프슨은 자원이 선거에서 중요하며 블룸버그가 결과를 기대한다고 밝혔다. CNBC가 연방선거위원회(FEC) 자료를 분석한 결과, 이번 지출로 블룸버그는 2025~2026년 선거주기 개인 민주당 기부자 상위 5위권에 든다. 그의 기부액은 이전까지 2,300만 달러로 확인됐다. 10월 초 기준으로는 뉴욕 12선거구 마이크 래셔 후보 지지 슈퍼팩에 1,100만 달러, 조시 샤피로 펜실베이니아 주지사 재선 캠페인에 250만 달러가 투입됐다. 같은 날 트럼프 대통령은 공화당 후보 지원에 3억 달러 이상을 썼고 11월 3일까지 4억 달러를 넘기겠다고 밝혔다. 다만 FEC에 확인되는 트럼프 진영 관련 지출은 약 2억 달러 수준이어서 공개 규모와 주장 사이에 차이가 있다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -142,21 +155,21 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 2348,
-      "body_file": "25-politics.txt",
+      "body_file": "26-politics.txt",
       "summary_ko": "영국 정부는 이란이 지원하는 예멘 후티 반군의 사우디 공격이 격화되자 왕립공군 타이푼 전투기를 투입해 사우디 영공을 지키는 방어 임무를 수행한다고 발표했다. 국방장관 웨스 스트리팅은 20일 성명에서 이 전투기들이 드론과 미사일을 막는다고 밝혔다. 후티는 최근 몇 주간 사우디 표적을 연쇄 공격했고, 리야드 공항 피격으로 다수가 숨지고 항공편이 취소되었으며 지난주에는 사우디아람코 시설도 공격받았다. 영국 국방부는 전투기가 방어 역할만 하며 후티에 대한 공세 타격은 하지 않는다고 선을 그었다. 공군 A400M 수송기는 사우디 내 국방물자 이동을 지원하고, 영국 군사고문단은 사우디 참모장교를 돕는다. 국방부는 걸프 지역 폭력 사태가 영국의 생활비와 에너지 공급, 기업 비용에 영향을 줄 수 있다고 우려했다. 한편 예멘 내전도 후티와 정부군 사이의 전면전으로 번졌으며, 알자지라는 후티의 남부 예멘 군 기지 미사일 공격으로 최소 53명이 숨졌다고 보도했으나 CNBC는 이를 독자적으로 확인하지 못했다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "108436225",
-      "url": "https://www.cnbc.com/2026/10/20/zelenskyy-witkoff-trump-ukraine-russia.html",
-      "title": "Zelenskyy to meet with U.S. envoy as tensions with Trump mount",
-      "summary": "Ukraine's President Volodymyr Zelenskyy is set to meet with U.S. special envoys on Tuesday after President Donald Trump aimed fresh criticism at the wartime leader.",
-      "published": "2026-10-20T10:30:49+00:00",
-      "category": "politics",
+      "guid": "108364835",
+      "url": "https://www.cnbc.com/2026/10/20/boeing-737-max-10-certification.html",
+      "title": "Boeing wins FAA approval for 737 Max 10 after years of delays as Duffy says certification process should be faster",
+      "summary": "The 737 Max 10, the largest model in the family, was set to start flying in 2020, but increased scrutiny and other safety issues delayed its certification.",
+      "published": "2026-10-20T22:01:11+00:00",
+      "category": "industry",
       "source": "CNBC",
-      "body_chars": 2663,
-      "body_file": "26-politics.txt",
-      "summary_ko": "젤렌스키 우크라이나 대통령은 트럼프 미 대통령의 거듭된 비판 속에 20일(현지시간) 오슬로에서 미국 특사 스티브 위트코프, 제러드 쿠슈너와 회담한다. 스퇴레 노르웨이 총리와 스투브 핀란드 대통령도 자리를 함께한다. 우크라이나의 요청으로 두 특사가 합류했으며, 노르웨이 총리는 기존 외교 노력을 더 건설적인 방향으로 전환하는 것이 목표라고 밝혔다. 트럼프는 최근 러시아 제재를 면제한 데 대한 비판에 맞서, 젤렌스키가 \"무슨 말을 하는지 모른다\"며 전쟁을 오래전에 끝냈어야 한다고 주장했다. 그는 우크라이나를 위해 다른 사람이 협상해야 할 때라고도 말했다. 푸틴 러시아 대통령, 시진핑 중국 국가주석과 종전 방안을 논의할 계획이며 여기에 젤렌스키는 빠질 수 있다고 전해졌다. 앞서 젤렌스키는 스페이스X의 군사 위성 서비스 접근 제한을 문제 삼았지만, 미국 측은 책임을 부인했다.",
+      "body_chars": 2478,
+      "body_file": "27-industry.txt",
+      "summary_ko": "미국 연방항공청(FAA)이 2026년 10월 20일(현지시간) 보잉 737 맥스 10의 형식 증명을 승인했다. 2020년 운항 예정이었으나 2018년과 2019년 맥스 추락 사고 이후 안전 점검이 강화되고 엔진 방빙 시스템 등 설계 변경이 필요해 인증이 수년간 지연됐다. 이번 승인으로 보잉의 베스트셀러 737 계열 가운데 정부 승인을 마지막으로 받은 기종이 되었다. 앞서 FAA는 항법 시스템 결함을 검토했지만 비행 안전 문제는 아니라고 판단했다. 셰이 더피 교통장관은 안전이 최우선이라면서도 미국의 인증 절차가 유럽보다 두 배 가까이 길다며 개선이 필요하다고 말했다. 맥스 10은 최대 230명을 태우며, 알래스카항공, 아메리칸항공, 유나이티드항공, 델타항공이 고객사다. 보잉은 맥스 10이 맥스 수주잔고의 약 30%를 차지한다고 밝혔다. 항공사들은 인증 직후 승객 운송을 시작할 수 있지만 운항 일정에 반영하는 데는 수개월이 걸릴 수 있다. 한편 FAA는 8월 초 가장 작은 기종인 맥스 7의 인증도 승인했다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -168,21 +181,8 @@
       "category": "industry",
       "source": "CNBC",
       "body_chars": 4180,
-      "body_file": "27-industry.txt",
-      "summary_ko": "넷플릭스가 2026년 3분기(9월 30일 종료) 실적을 발표했다. 매출은 전년 대비 약 12% 늘었고, 순이익은 36억6000만 달러(주당 87센트)로 작년 같은 기간 25억5000만 달러(주당 59센트)보다 크게 늘었다. 다만 이익 증가의 일부는 비용 집행 시점 차이에서 나왔다. 4분기 매출은 11% 넘게 증가한 134억4000만 달러로 전망됐다. 2026년 연간 매출 전망은 511억 달러로 좁혀졌는데, 이전 가이던스 범위의 하단이며 월가 예상 512억 달러에도 못 미친다. 광고 매출 전망은 약 30억 달러에서 약 27억 달러로 낮아졌다. 일부 광고 제품 기능의 출시가 예상보다 늦어진 탓이다. 회사는 지난주 직원 약 6%를 감원하고 최고콘텐츠책임자를 교체했으며, 이에 따라 4분기 영업이익률이 약 120bp 낮아질 것으로 봤다. 실적 발표 후 시간외 거래에서 주가는 약 6% 하락했다. 시청 시간 증가세 둔화에 대한 투자자 우려가 여전해 시장은 회사의 전략 구체화에 주목하고 있다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "108364835",
-      "url": "https://www.cnbc.com/2026/10/20/boeing-737-max-10-certification.html",
-      "title": "Boeing wins FAA approval for 737 Max 10 after years of delays as Duffy says certification process should be faster",
-      "summary": "The 737 Max 10, the largest model in the family, was set to start flying in 2020, but increased scrutiny and other safety issues delayed its certification.",
-      "published": "2026-10-20T20:59:32+00:00",
-      "category": "industry",
-      "source": "CNBC",
-      "body_chars": 2478,
       "body_file": "28-industry.txt",
-      "summary_ko": "미국 연방항공청(FAA)이 2026년 10월 20일(현지시간) 보잉 737 맥스 10의 형식 증명을 승인했다. 2020년 운항 예정이었으나 2018년과 2019년 맥스 추락 사고 이후 안전 점검이 강화되고 엔진 방빙 시스템 등 설계 변경이 필요해 인증이 수년간 지연됐다. 이번 승인으로 보잉의 베스트셀러 737 계열 가운데 정부 승인을 마지막으로 받은 기종이 되었다. 앞서 FAA는 항법 시스템 결함을 검토했지만 비행 안전 문제는 아니라고 판단했다. 셰이 더피 교통장관은 안전이 최우선이라면서도 미국의 인증 절차가 유럽보다 두 배 가까이 길다며 개선이 필요하다고 말했다. 맥스 10은 최대 230명을 태우며, 알래스카항공, 아메리칸항공, 유나이티드항공, 델타항공이 고객사다. 보잉은 맥스 10이 맥스 수주잔고의 약 30%를 차지한다고 밝혔다. 항공사들은 인증 직후 승객 운송을 시작할 수 있지만 운항 일정에 반영하는 데는 수개월이 걸릴 수 있다. 한편 FAA는 8월 초 가장 작은 기종인 맥스 7의 인증도 승인했다.",
+      "summary_ko": "넷플릭스가 2026년 3분기(9월 30일 종료) 실적을 발표했다. 매출은 전년 대비 약 12% 늘었고, 순이익은 36억6000만 달러(주당 87센트)로 작년 같은 기간 25억5000만 달러(주당 59센트)보다 크게 늘었다. 다만 이익 증가의 일부는 비용 집행 시점 차이에서 나왔다. 4분기 매출은 11% 넘게 증가한 134억4000만 달러로 전망됐다. 2026년 연간 매출 전망은 511억 달러로 좁혀졌는데, 이전 가이던스 범위의 하단이며 월가 예상 512억 달러에도 못 미친다. 광고 매출 전망은 약 30억 달러에서 약 27억 달러로 낮아졌다. 일부 광고 제품 기능의 출시가 예상보다 늦어진 탓이다. 회사는 지난주 직원 약 6%를 감원하고 최고콘텐츠책임자를 교체했으며, 이에 따라 4분기 영업이익률이 약 120bp 낮아질 것으로 봤다. 실적 발표 후 시간외 거래에서 주가는 약 6% 하락했다. 시청 시간 증가세 둔화에 대한 투자자 우려가 여전해 시장은 회사의 전략 구체화에 주목하고 있다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -277,21 +277,21 @@
       "region": "china",
       "body_chars": 2713,
       "body_file": "10-global.txt",
-      "summary_note": "분량 벗어남 408자"
+      "summary_ko": "미국 국토안보부(DHS)가 중국 AI 스타트업 딥시크 제품의 연방 민간 기관 사용을 금지하는 명령을 공개했다. 이 명령은 7월 24일 처음 발령됐으며, 기관들은 IT 시스템에서 딥시크 관련 기술을 제거하고 관련 제품과 서비스를 조달할 수 없다. 제3자가 딥시크 기술로 만든 제품도 적용 대상에 포함된다. 재무부, 국무부, 법무부 등 민간 기관이 대상이며 국방부는 제외됐다. DHS는 중국 당국의 민감 데이터 접근 가능성과 사이버 보안 취약점을 근거로 들었다. 정부 데이터가 중국으로 넘어가 시민과 정부 프로그램 정보가 노출될 수 있다는 우려도 제기됐다. 앞서 2025년 1월 국방정보시스템국(DISA)이 접근을 차단했고, 같은 해 3월 상무부 산하 부서가 정부 기기 사용을 금지했으며, 12월에는 의회가 정보공동체 시스템 사용을 제한했다. 중국 외교부는 국가안보의 과도한 일반화에 반대하며 자국 기업의 권익을 지키겠다고 밝혔다. 기관들은 명령 발령 후 60일 안에 서면 사유서를 내면 준수 기한 연기 등 예외를 요청할 수 있다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/4f4c82b274b9284851e9887fa10ea04ee7d81ef0?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/4f4c82b274b9284851e9887fa10ea04ee7d81ef0?source=rss",
-      "title": "保育園着サブスクに「手抜き」「親失格」の声…自身も3児の父･元銀行員が考える「育児を楽にする」先にある“真の狙い”(東洋経済オンライン)",
-      "summary": "前編では、銀行員だった関原勇喜さんが、3人の子どもを保育園へ送るなかで感じた負担をきっかけに、ナカラル株式会社を起業。保育園着のサブスク「らくらく登園® TORANOCO」を立ち上げるまでの道のりを紹",
-      "published": "2026-10-20T21:46:18+00:00",
+      "guid": "https://www.theguardian.com/world/2026/oct/19/france-hit-by-debt-sell-off-as-protests-unnerve-investors",
+      "url": "https://www.theguardian.com/world/2026/oct/19/france-hit-by-debt-sell-off-as-protests-unnerve-investors",
+      "title": "France hit by debt sell-off as violent protests unnerve investors",
+      "summary": "<p>Difference between French and German borrowing costs widens after public buildings burned and shops looted</p><p>France has been hit by a fresh wave of selling in its bond and stock markets after <a href=\"https://www.theguardian.com/world/2026/oct/18/french-government-crisis-talks-violent-unrest-policing-macron\">violent protests </a>over the weekend led to thousands of arrests and left public b",
+      "published": "2026-10-19T15:23:54+00:00",
       "category": "global",
-      "source": "Yahoo!ニュース",
-      "region": "japan",
-      "wire": "東洋経済オンライン",
-      "body_chars": 1020,
-      "body_file": "11-global.txt",
-      "summary_ko": "보육원 의류 구독 서비스 '라쿠라쿠 토코엔'을 운영하는 나카랄의 창업자 세키하라 유키 씨는 은행원 출신으로 세 자녀를 둔 아버지다. 그는 아이를 어린이집에 데려다주며 느낀 부담을 계기로 회사를 세웠다. 현재 서비스는 수도권을 중심으로 약 160개 시설, 이용자 약 7000명 규모로 성장했다. 그러나 미디어 소개 이후 SNS에서는 육아의 수고를 이렇게까지 줄일 필요가 있느냐는 비판이 나왔다. 이에 대해 세키하라 씨는 부모의 마음에 여유가 부족하면 아이와 제대로 마주하기 어렵다고 보고 있다. 그는 옷 준비와 세탁 시간을 줄여 그만큼 아이와 함께하는 시간을 늘리는 것이 서비스의 목표라고 설명했다. 손을 잡고 등원하고 보육사에게 아이의 가정 생활을 전하는 여유가 생긴다는 것이다. 그는 이렇게까지 육아를 편하게 할 필요가 있느냐고 말할 수 있는 사람이 오히려 여유가 있는 편이라고 본다. 세키하라 씨 자신도 과거 여유를 잃었던 시기가 있었다고 한다.",
+      "source": "The Guardian",
+      "region": "europe",
+      "body_chars": 5044,
+      "body_file": "12-global.txt",
+      "summary_ko": "프랑스에서 주말 폭력 시위가 번지며 국채와 주식이 동시에 매도됐다. 시위로 공공건물이 불타고 상점 수백 곳이 약탈됐으며 2,400명 이상이 체포됐다. 19일 프랑스 10년물 국채 금리는 한때 16bp 오른 4.94%까지 뛰어 24년 만의 고점에 근접했다. 독일과의 금리 차는 14년 만의 최대 수준으로 벌어져 프랑스 채무의 위험 프리미엄이 커졌음을 보여준다. 골드만삭스는 유로존 재정위기 재연 우려를 언급하며 프랑스의 재정 과제가 2011~2015년보다 어렵다고 짚었다. 2025년 프랑스 국가채무비율은 115.6%, 재정적자 비율은 5.1%로, 내년도 예산 통과와 재정 긴축이 쉽지 않다는 우려가 커지고 있다. 2027년 대선을 앞둔 정치적 불확실성도 부담이다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -305,7 +305,7 @@
       "region": "japan",
       "body_chars": 1018,
       "body_file": "18-insight.txt",
-      "summary_note": "분량 벗어남 419자"
+      "summary_note": "분량 벗어남 428자"
     },
     {
       "guid": "https://think.ing.com/articles/polands-k-shape-story-is-bad-for-the-economy-but-good-for-inflation-and-nbp-rates/#When:12:48:00Z",

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-21 06:50 KST",
+  "generated": "2026-10-21 07:05 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-20",
   "indices": {
@@ -1129,9 +1129,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25304.42,
-            "pct": -0.06,
-            "date": "2026-10-20"
+            "close": 25319.77,
+            "pct": -1.18,
+            "date": "2026-10-19"
           },
           {
             "name": "FTSE100",
@@ -1143,14 +1143,14 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6121.66,
-            "pct": -0.38,
-            "date": "2026-10-20"
+            "close": 6144.81,
+            "pct": -0.96,
+            "date": "2026-10-19"
           }
         ],
         "alignment": {
           "label": "엇갈림",
-          "avg_pct": -0.24,
+          "avg_pct": -0.81,
           "mixed": false
         }
       }
