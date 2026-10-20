@@ -13,6 +13,7 @@ tick 만 쓰는 임시 폴더에 origin/main 커밋을 통째로 떠 둔 사본*
 한꺼번에 없애려는 것이다(codex 구현 3차 #1·#2·#3). 35MB 남짓이라 매번 떠도 1~2초다.
 
   python3 scripts/runner_launch.py run --correct      # launchd ProgramArguments
+  python3 scripts/runner_launch.py contested run      # 쟁점 분석 로컬 러너(2026-10-21)
 
 **stdlib 만 쓴다** — 사람 폴더의 레포 모듈을 import 하면 그 폴더의 편집 중인 파일 하나에 런처가
 경보 없이 죽는다(codex 구현 3차 #4). 경보 기록도 여기서 직접 한다.
@@ -166,16 +167,21 @@ def _git(root, *args, timeout=60):
         return code, out.read(), err.read().decode('utf-8', 'replace').strip()
 
 
-def snapshot(root, oid, dest):
+# 첫 인자로 고르는 진입점 — 목록 밖 이름은 받지 않는다.
+ENTRIES = {'contested': 'contested_local.py'}
+DEFAULT_ENTRY = 'review_gate.py'
+
+
+def snapshot(root, oid, dest, name=DEFAULT_ENTRY):
     """`oid` 의 트리 전체를 dest 에 푼다. dest 는 이 tick 만 쓰는 빈 폴더다."""
     code, tree, err = _git(root, 'archive', oid, timeout=300)
     if code:
         raise RuntimeError(f'git archive {oid[:7]} 실패 — {err[-200:]}')
     with tarfile.open(fileobj=io.BytesIO(tree)) as tar:
         tar.extractall(dest, filter='data')
-    entry = os.path.join(dest, 'scripts', 'review_gate.py')
+    entry = os.path.join(dest, 'scripts', name)
     if not os.path.isfile(entry):
-        raise RuntimeError(f'{oid[:7]} 사본에 scripts/review_gate.py 가 없다')
+        raise RuntimeError(f'{oid[:7]} 사본에 scripts/{name} 가 없다')
     return entry
 
 
@@ -248,7 +254,10 @@ def _launch(root, argv, signals, work):
     oid = oid.decode().strip()
     if code or not oid:
         raise RuntimeError(f'origin/main 을 못 읽었다 {err[-200:]}')
-    entry = snapshot(root, oid, work)
+    name = DEFAULT_ENTRY
+    if argv[:1] and argv[0] in ENTRIES:
+        name, argv = ENTRIES[argv[0]], argv[1:]
+    entry = snapshot(root, oid, work, name)
     signals.check()
     sys.stdout.flush()
     sys.stderr.flush()

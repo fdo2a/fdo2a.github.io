@@ -30,6 +30,7 @@ PROMPT_VERSION = '2026-10-21.1'
 MARKER = '<!--CONTESTED-->'
 SECTION_ID = 'contested'
 OMIT_RE = re.compile(r'<!--contested-omitted:([a-z_]+)-->')
+PENDING = '<!--contested-pending-->'     # 결과가 아직 없을 때 발행본에 남기는 자리 — 로컬 러너가 채운다
 
 MARKETS = ('us',)                 # 1단계. kr 은 출처 어댑터(네이버 검색 API)가 붙을 때 연다
 SPANS = ('daily',)                # 주간은 2단계 — 일간 ok 파일의 결정적 연대기
@@ -50,7 +51,8 @@ WORRY_TIERS = (('most', '가장 걱정해야 할 것'),
                ('moderate', '걱정하되 공포는 불필요한 것'),
                ('unlikely', '사실상 가능성이 낮은 것'))
 
-LIMITS = {'proposition_ko': 90, 'evidence_desc_ko': 70, 'why_ko': 90, 'issue_ko': 40,
+LIMITS = {'value': 40, 'unit': 12, 'entity': 40, 'origin': 60, 'query': 80,
+          'proposition_ko': 90, 'evidence_desc_ko': 70, 'why_ko': 90, 'issue_ko': 40,
           'topic_ko': 40, 'text_ko': 220, 'condition_ko': 120, 'name_ko': 30,
           'indicator_ko': 40, 'speaker_name': 40, 'direction_ko': 60}
 MIN_ORIGINS = 3                   # 최종 기사의 독립 출처(신디케이션 묶음) 하한
@@ -121,6 +123,28 @@ def content_hash(payload):
     body = {k: v for k, v in payload.items() if k != 'content_hash'}
     raw = json.dumps(body, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
+
+
+def iso_date(s):
+    """argparse type — 실제 달력 날짜만. 경로·셸에 들어가는 값이다(구현 검토 P1)."""
+    import datetime as _dt
+    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', s or ''):
+        raise ValueError(f'날짜 형식이 아니다: {s!r}')
+    _dt.date.fromisoformat(s)
+    return s
+
+
+def settled(p, market=None, date=None):
+    """다시 돌리지 않을 결과인가 — 스키마·해시를 통과한 것만(구현 검토 P2)."""
+    if not p or validate(p, market, date):
+        return False
+    if p['status'] == 'ok' or settled_final(p):
+        return True
+    return not p.get('retryable', True) or p.get('attempts', 0) >= MAX_ATTEMPTS
+
+
+def settled_final(p):
+    return bool(p) and p.get('status') == 'none' and p.get('reason') in FINAL_NONE
 
 
 def ws(text):
@@ -222,6 +246,9 @@ def _validate_ok(p):
         errs.append(f'독립 출처 {len(origins)}곳 < {MIN_ORIGINS}')
 
     issues = {i.get('issue_id'): i for i in p.get('issues') or []}
+    if len(issues) != len(p.get('issues') or []):
+        errs.append('issue_id 중복')
+    _str(ev.get('query'), 'query', errs, 'event', empty_ok=True)
     for iid, i in issues.items():
         _str(i.get('issue_ko'), 'issue_ko', errs, f'issues[{iid}]')
 
@@ -245,6 +272,11 @@ def _validate_ok(p):
         if e.get('kind') not in EVIDENCE_KINDS:
             errs.append(f'{w}: evidence.kind {e.get("kind")!r}')
         _str(e.get('desc_ko'), 'evidence_desc_ko', errs, w)
+        _str(e.get('origin'), 'origin', errs, w, empty_ok=True)
+        if c.get('market_supported') and not any(
+                (o.get('kind') == 'market') for o in (p.get('observations') or [])
+                if o.get('obs_id') in (c.get('market_obs') or [])):
+            errs.append(f'{w}: 시장 확인인데 시장 관측치 참조가 없다')
         if (c.get('credibility'), c.get('credibility_reason_ko')) != credibility(c):
             errs.append(f'{w}: 신빙성이 루브릭과 다르다')
         for f in ('proposition_ko', ):
@@ -291,14 +323,22 @@ def _validate_ok(p):
         else:
             errs.append(f'{w}: kind {o.get("kind")!r}')
         _str(o.get('indicator_ko'), 'indicator_ko', errs, w)
-        if o.get('value') in (None, ''):
+        _str(o.get('entity') or '', 'entity', errs, w, empty_ok=True)
+        _str(o.get('unit') or '', 'unit', errs, w, empty_ok=True)
+        val = o.get('value')
+        if isinstance(val, str):
+            _str(val, 'value', errs, w)
+        elif not isinstance(val, (int, float)) or isinstance(val, bool):
             errs.append(f'{w}: 값이 없다')
-        if not o.get('as_of'):
-            errs.append(f'{w}: 기준일이 없다')
+        if not re.match(r'\d{4}-\d{2}-\d{2}', str(o.get('as_of') or '')):
+            errs.append(f'{w}: 기준일이 날짜가 아니다')
     if p.get('observations') and p.get('market_snapshot') is None and \
             any(o.get('kind') == 'market' for o in obs.values()):
         errs.append('시장 관측치가 있는데 market_snapshot 이 없다')
 
+    vids = {v.get('var_id') for v in (p.get('analysis') or {}).get('variables') or []}
+    if (set(claims) & set(obs)) or (set(claims) & vids) or (set(obs) & vids):
+        errs.append('주장·관측치·변수 ID 가 겹친다')
     errs += _validate_analysis(p.get('analysis'), set(claims), obs)
     return errs
 
@@ -481,102 +521,152 @@ def render(p):
 
 
 # ── 게이트 ───────────────────────────────────────────────────────────────
-_INERT = {'template', 'noscript', 'script', 'style', 'head', 'title', 'textarea', 'iframe', 'object'}
-_VOID = {'br', 'img', 'hr', 'meta', 'link', 'input', 'col', 'wbr', 'source'}
+_INERT = {'template', 'noscript', 'script', 'style', 'head', 'title', 'textarea', 'iframe', 'object',
+          'svg', 'math'}
+_VOID = {'br', 'img', 'hr', 'meta', 'link', 'input', 'col', 'wbr', 'source', 'area', 'base',
+         'embed', 'param', 'track'}
+# 인증된 섹션 밖에 있으면 안 되는 표지 — 주석·script·속성값·CDATA 어디에 숨겨도 글자로 걸린다
+# (구현 검토 2차 P1 두 건: 숨긴 정규형으로 인증받고 다른 섹션을 보이기, 생략 기록 + 지어낸 분석).
+_RESERVED = ('data-contested', 'data-claim', 'data-essence', 'data-worry', 'id="contested"',
+             "id='contested'", 'id=contested', MARKER, 'contested-omitted', PENDING)
 
 
 class _Locate(HTMLParser):
-    """`data-contested` 섹션의 위치·조상·중복 속성을 잡는다."""
+    """`<section … data-contested>` 의 정확한 위치(오프셋)·조상·중복 속성을 잡는다."""
 
-    def __init__(self):
+    def __init__(self, html):
         super().__init__(convert_charrefs=False)
-        self.stack, self.sections, self.dupes = [], [], []
+        self._starts = [0]
+        for m in re.finditer('\n', html):
+            self._starts.append(m.end())
+        self.stack, self.sections, self.dupes, self.styles = [], [], [], []
+        self._open = None
+        self._depth = 0
+        self.feed(html)
+        self.close()
+
+    def _off(self):
+        line, col = self.getpos()
+        return self._starts[line - 1] + col
 
     def handle_starttag(self, tag, attrs):
         names = [k for k, _ in attrs]
         if len(names) != len(set(names)):
             self.dupes.append(tag)
         d = dict(attrs)
-        if tag == 'section' and ('data-contested' in d or d.get('id') == SECTION_ID):
-            self.sections.append({'line': self.getpos()[0],
-                                  'ancestors': [(t, a) for t, a in self.stack]})
+        if tag == 'section':
+            if self._open is not None:
+                self._depth += 1
+            elif 'data-contested' in d:
+                self._open = {'start': self._off(), 'ancestors': list(self.stack), 'attrs': d}
+                self._depth = 0
         if tag not in _VOID:
             self.stack.append((tag, d))
 
+    def handle_startendtag(self, tag, attrs):
+        names = [k for k, _ in attrs]
+        if len(names) != len(set(names)):
+            self.dupes.append(tag)
+
     def handle_endtag(self, tag):
+        if tag == 'section' and self._open is not None:
+            if self._depth:
+                self._depth -= 1
+            else:
+                self._open['end'] = self._off() + len('</section>')
+                self.sections.append(self._open)
+                self._open = None
         for i in range(len(self.stack) - 1, -1, -1):
             if self.stack[i][0] == tag:
                 del self.stack[i:]
                 break
 
+    def handle_data(self, data):
+        if self.stack and self.stack[-1][0] == 'style':
+            self.styles.append(data)
+
 
 def _hidden(attrs):
-    style = (attrs.get('style') or '').replace(' ', '').lower()
+    style = re.sub(r'\s+', '', (attrs.get('style') or '')).lower()
     cls = f" {attrs.get('class') or ''} "
-    return ('hidden' in attrs or 'display:none' in style or 'visibility:hidden' in style
+    return ('hidden' in attrs or 'inert' in attrs or 'display:none' in style
+            or 'visibility:hidden' in style or 'opacity:0' in style or 'content-visibility:hidden' in style
             or ' sr-only ' in cls or attrs.get('aria-hidden') == 'true')
 
 
-def _extract(html):
-    m = re.search(r'<section\b[^>]*\bdata-contested="[^"]*"[^>]*>.*?</section>', html, re.S)
-    return m.group(0) if m else None
+def _first(html):
+    loc = _Locate(html)
+    s = loc.sections[0] if loc.sections else None
+    return html[s['start']:s['end']] if s else None
 
 
-def check(html, payload, market, date, transforms=()):
+def check(html, payload, market, date, transforms=(), trusted_styles=None):
     """위반 목록. `payload` 는 None(파일 없음 = 미도착)일 수 있다.
 
-    `transforms` 는 발행 체인이 섹션에 가하는 변형(가독성·색) — 정규형에 같은 변형을 입혀
-    비교한다(N07). 변형 전 정규형과 같아도 통과다: 둘 다 JSON 에서 찍은 것이라 지어낼 틈이 없다.
+    - ok: 섹션 정확히 하나(본문 컨테이너 바로 아래, 보이는 자리, 정규형 그대로) 또는 생략 기록 하나.
+    - 동결된 none: 섹션·자리표시·생략 기록 모두 없음.
+    - 미도착·error·재시도 가능한 none: 섹션 없음. 자리표시(`PENDING`) 하나는 허용 — 로컬 러너가
+      나중에 채운다.
+    `transforms` 는 발행 체인이 섹션에 가하는 변형(가독성·색), `trusted_styles` 는 셸·변형이 넣는
+    `<style>` 블록 목록이다. 그 밖의 `<style>` 은 섹션을 숨길 수 있어 막는다. 덮개 같은 시각 공격은
+    범위 밖이다 — 이 게이트는 작성자의 손질·실수를 막지 악의적 HTML 작성자를 막지 않는다.
     """
     errs = []
-    if MARKER in html:
-        errs.append('표식이 남아 있다 — render_contested.py 를 돌리지 않았다')
-    omitted = OMIT_RE.findall(html)
-    # 주석 안의 정규형으로 대조를 통과시키고 다른 섹션을 보이게 하는 우회(구현 검토 P1) —
-    # 생략 기록 말고는 주석을 지운 문서만 본다. 주석 속 섹션 흔적은 그 자체로 위반이다.
-    comments = re.findall(r'<!--.*?-->', html, re.S)
-    if any('data-contested' in c or 'id="contested"' in c for c in comments):
-        errs.append('주석 안에 쟁점 섹션 흔적이 있다')
-    html = re.sub(r'<!--.*?-->', '', html, flags=re.S)
-    if re.search(r'data-contested|id=["\']?contested', html) and \
-            len(re.findall(r'data-contested=', html)) != html.count('<section id="contested"'):
-        errs.append('섹션 밖에 쟁점 표지가 있다')
-    loc = _Locate()
-    loc.feed(html)
-    if len(omitted) > 1:
-        errs.append('생략 기록이 둘 이상이다')
-    n = len(loc.sections)
-    ok = payload is not None and payload.get('status') == 'ok'
     if payload is not None:
         v = validate(payload, market, date)
         if v:
-            return errs + [f'데이터: {x}' for x in v]
-    if not ok:
-        if n:
-            errs.append(f"상태 {payload.get('status') if payload else '미도착'} 인데 섹션이 있다")
-        return errs
-    if omitted and not n:
-        return errs                      # 명시적 생략 — 보고 대상이지 위반이 아니다
-    if n != 1:
-        errs.append(f'쟁점 섹션 {n}개 — 정확히 하나여야 한다(또는 명시적 생략)')
-        return errs
-    if omitted:
-        errs.append('생략 기록과 섹션이 함께 있다')
-    anc = loc.sections[0]['ancestors']
-    for tag, attrs in anc:
-        if tag in _INERT or _hidden(attrs):
-            errs.append(f'섹션이 보이지 않는 조상 <{tag}> 안에 있다')
-    chain = [t for t, _ in anc]
-    doc = [a for t, a in anc if t == 'div' and 'doc' in (a.get('class') or '').split()]
-    if not doc or chain[-1] != 'div' or 'doc' not in (anc[-1][1].get('class') or '').split():
-        errs.append('섹션이 본문 컨테이너(div.doc) 바로 아래에 있지 않다')
+            return [f'데이터: {x}' for x in v[:10]]
+    loc = _Locate(html)
+    secs = loc.sections
+    rest = html
+    for sec in reversed(secs[:1]):
+        rest = rest[:sec['start']] + rest[sec['end']:]
+    counts = {k: rest.count(k) for k in _RESERVED}
+    omitted = OMIT_RE.findall(rest)
+    pending = counts[PENDING]
+    stray = {k: n for k, n in counts.items() if n and k not in ('contested-omitted', PENDING)}
+    if len(secs) > 1:
+        errs.append(f'쟁점 섹션 {len(secs)}개')
+    if stray:
+        errs.append(f'섹션 밖에 쟁점 표지가 있다 {sorted(stray)}')
+    if counts['contested-omitted'] != len(omitted) or len(omitted) > 1:
+        errs.append('생략 기록이 형식에 맞지 않거나 둘 이상이다')
+    if pending > 1:
+        errs.append('자리표시가 둘 이상이다')
+    if trusted_styles is not None:
+        bad = [s for s in loc.styles if s.strip() and s.strip() not in trusted_styles]
+        if bad:
+            errs.append(f'신뢰하지 않는 <style> 블록 {len(bad)}개')
     if loc.dupes:
         errs.append(f'중복 속성이 있는 태그 {sorted(set(loc.dupes))}')
-    got = _extract(html)
-    canon = render(payload)
-    forms = {canon}
-    for t in transforms:
-        forms.add(_extract(t(f'<div class="doc">{canon}</div>')) or canon)
-    if got not in forms:
-        errs.append('섹션이 데이터에서 찍은 정규형과 다르다 — 손으로 고치지 않는다')
+    st = payload.get('status') if payload else None
+    if st == 'ok':
+        if pending:
+            errs.append('데이터가 ok 인데 자리표시가 남아 있다')
+        if omitted:
+            if secs:
+                errs.append('생략 기록과 섹션이 함께 있다')
+            return errs                  # 명시적 생략 — 보고 대상이지 위반이 아니다
+        if len(secs) != 1:
+            errs.append('쟁점 섹션이 없다(또는 명시적 생략 기록이 없다)')
+            return errs
+        sec = secs[0]
+        for tag, attrs in sec['ancestors']:
+            if tag in _INERT or _hidden(attrs):
+                errs.append(f'섹션이 보이지 않는 조상 <{tag}> 안에 있다')
+        anc = sec['ancestors']
+        if not anc or anc[-1][0] != 'div' or 'doc' not in (anc[-1][1].get('class') or '').split():
+            errs.append('섹션이 본문 컨테이너(div.doc) 바로 아래에 있지 않다')
+        got = html[sec['start']:sec['end']]
+        canon = render(payload)
+        forms = {canon} | {(_first(t(f'<div class="doc">{canon}</div>')) or canon) for t in transforms}
+        if got not in forms:
+            errs.append('섹션이 데이터에서 찍은 정규형과 다르다 — 손으로 고치지 않는다')
+        return errs
+    if secs:
+        errs.append(f"상태 {st or '미도착'} 인데 섹션이 있다")
+    if omitted:
+        errs.append(f"상태 {st or '미도착'} 인데 생략 기록이 있다")
+    if pending and settled_final(payload):
+        errs.append('동결된 결과인데 자리표시가 남아 있다')
     return errs
