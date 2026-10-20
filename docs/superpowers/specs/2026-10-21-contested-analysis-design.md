@@ -13,18 +13,26 @@
 - Bing 뉴스 RSS: 약관이 비상업 개인 RSS 렌더링 외 사용 금지 → 탈락. Google News RSS: 링크가 news.google.com 안에 머물러 본문 없음 → 기존 탈락 유지.
 - KR 네이버 증권 주요뉴스 풀(180): 14·10·5·5·4·4개 매체 묶음 — 비교 재료는 충분. 그러나 news.naver.com·n.news.naver.com·m.stock.naver.com robots.txt 가 `Disallow: /` 와 「AI 학습·RAG 목적 봇 접근 엄격 금지」. 사용자 결정: **네이버 검색 API**(공식, 키는 레포 Secrets `NAVER_CLIENT_ID`·`NAVER_CLIENT_SECRET`, 2026-10-21 등록 확인).
 
-## 구조 (1단계 = US 일간)
+## 구조 (1단계 = US 일간, 로컬 러너)
+
+사용자 「최대한 claude 주간한도를 사용하도록」 → 「클라우드 루틴 안에서 해보고 안되면 맥 로컬 러너로」. 루틴 환경 점검(10/21): GitHub API 말고 전부 000 — GDELT·언론 18곳·네이버 API. 본문을 루틴에 넘기려면 봉인·전송 경로가 필요해 사용자 결정 「로컬로 하자」. Actions·API(WIF) 경로는 없다.
 
 | 자리 | 하는 일 |
 |---|---|
-| `.github/workflows/collect-contested.yml` | 「Collect market data」 완료 뒤(`workflow_run`) + 수동. 기존 수집과 분리 — 늦거나 실패해도 시장·뉴스 커밋·브리프 발행에 영향 없음 |
-| `scripts/fetch_contested.py` | 피드 재수집(기존 news 파일 불변) → 사건 묶음 1개 → GDELT → 허용 매체 본문 ≤6 → 출처 묶음 → 추출 호출 → span 대조 → 검증 호출 → 가지치기 → 문체 검사 → 저장 |
+| launchd `com.fdo2a.contested-runner`(15분) → `scripts/runner_launch.py contested run` | origin/main 사본으로 러너를 돈다(검토 러너와 같은 틀) |
+| `scripts/contested_local.py` | 임시 clone → 할 일 판정(`plan`) → 수집·분석 → 결과 저장 → 발행본 자리표시 채우기·게이트 → 푸시 |
+| `scripts/collect_contested.py` | 피드 재수집(기존 news 파일 불변) → 사건 묶음 → **순위 먼저**(가벼운 모델, 제목만) → 1순위부터 GDELT·허용 매체 본문 ≤6 → 출처 묶음. 본문은 임시 폴더에만 |
+| `scripts/contested_build.py` | `claude -p`(구독, `--json-schema`, 도구·설정·MCP 끔) 추출·검증 → 원문 대조 → 가지치기 → 조립 → 문체 검사 |
 | `scripts/common/contested.py` | 스키마 검증·신빙성 루브릭·시장 레지스트리·정규 렌더·게이트(순수) |
-| `scripts/contested_ready.py` | 루틴 STEP 3.5-0-1: origin/main 결과를 확정, 없으면 워크플로 1회 + 스크립트 대기 1회(≤15분) |
-| `scripts/render_contested.py` | 작성자가 둔 `<!--CONTESTED-->` 를 정규 섹션으로(없음·none·error 면 표식 삭제, `--omit` 은 명시적 생략) |
-| `scripts/check_contested.py` | 최종 문서에서 섹션이 정확히 하나·`div.doc` 바로 아래·보이는 자리·정규형과 동일한지(가독성·색 변형을 입힌 정규형도 인정) |
+| `scripts/contested_ready.py` | 루틴 STEP 3.5-0-1: origin/main 결과를 워크스페이스로(기다리지 않는다) |
+| `scripts/render_contested.py` | 자리(표식·자리표시·섹션) 하나를 ok→섹션 / 확정 none→삭제 / 미도착·재시도→자리표시 / `--omit` |
+| `scripts/check_contested.py` | 최종 문서 게이트 |
 
-결과 파일 `data/contested/us/<date>.json` — `status` ok·none·error 중 하나를 반드시 남긴다. 동결: ok, none 중 `no_candidate`·`insufficient_sources`·`no_conflict`. 나머지는 날짜당 3회까지 재시도. 그 날짜 `news/<date>.html` 이 있으면 다시 쓰지 않는다(발행 증거 고정).
+**발행 순서.** 루틴은 기다리지 않는다. 결과가 이미 있으면 뉴스·산업 브리프에 섹션을 싣고, 없으면 자리표시(`<!--contested-pending-->`)로 발행한다. 러너가 나중에 결과를 만들면 발행본의 자리표시를 채우고 게이트(가독성·색·쟁점·가독성 검사·문체)를 다시 돌려 함께 푸시한다. 게이트를 못 넘으면 생략 기록. 확정된 non-ok 면 자리표시를 지운다. 발행본에 섹션이나 생략 기록이 있으면 그 날짜 결과는 다시 쓰지 않는다(발행 증거 고정). 푸시 직전 발행본이 바뀌었으면 버린다.
+
+결과 파일 `data/contested/us/<date>.json` — `status` ok·none·error. 동결: ok, none 중 `no_candidate`·`insufficient_sources`·`no_conflict`(모델이 충돌을 내지 않음). 재시도(날짜당 3회): 수집·본문 실패, `grounding_failed`, `verify_rejected`, `analysis_unverified`, `schema_invalid`, `style_failed`, 모델 실패. `gdelt_throttled` 는 그날 재시도 안 함. 기준일이 3일보다 오래되면 손대지 않는다.
+
+**Mac 이 꺼져 있으면** 그날 섹션은 자리표시로 남다가, 3일 안에 켜지면 채워진다.
 
 ## 계약
 
@@ -34,8 +42,8 @@
 - **신빙성(F02·N03).** 높음 = 이 리포트의 시장 데이터로 검증 호출이 지지 판정. 중간 = 기사가 이름 붙은 통계·문서·관측을 전함(원자료 미확인). 낮음 = 일화·전언·근거 없음, 또는 익명 의혹. 같은 발표를 여러 매체가 전한 것은 교차 확인이 아니다. 루브릭은 캡션에 인쇄.
 - **「사실상 가능성 낮음」.** 확률이 아니라 「필요 조건 + 지금 반대를 가리키는 관측치(counter_obs)」. 반대 관측치가 없으면 그 칸에 두지 않는다.
 - **정규 렌더(F06·N07·N08).** 섹션 전체를 JSON 에서 찍고 모든 문자열을 이스케이프한다. 게이트는 같은 JSON 의 정규형(및 가독성·색 변형을 입힌 형)과 문자열 동일성을 요구한다. `template`·`hidden`·`display:none` 조상, 중복 속성, 잔여 표식, 복수 섹션을 막는다.
-- **상한(N14).** 후보 사건 1, 본문 ≤6×12,000자, 추출 1 + 검증 1 호출(스트리밍, 구조화 출력), 출력 상한 24k/12k 토큰, 내부 마감 720초(워크플로 20분). 토큰·시간은 `diagnostics` 에. 모델 기본 `claude-opus-5-5`, 레포 변수 `CONTESTED_MODEL` 로 바꾼다. API 과금 버킷(WIF 워크스페이스)과 Claude 구독 한도의 관계는 확인하지 않았다.
-- **공개 데이터(F15).** 본문·span·로그 본문 금지. 공개 필드는 메타데이터·한국어 의역·판정뿐.
+- **상한(N14).** 순위 1(sonnet, 제목만) + 추출 1 + 검증 1(opus) `claude -p` 호출, 본문 ≤6×20,000자, GDELT 최대 2회(20초 간격, 429 한 번 식힘), 수집 마감 900초(알람), 호출당 900초. 토큰은 `diagnostics.tokens`. 모델은 환경 변수 `CONTESTED_MODEL`·`CONTESTED_PICK_MODEL`. 전부 Mac 에 로그인된 구독 한도를 쓴다(5시간·주간 한도는 루틴과 공용).
+- **공개 데이터(F15).** 본문·span·로그 본문 금지. 공개 필드는 메타데이터·한국어 의역·판정·코드형 사유뿐. 디버그 덤프(`CONTESTED_DEBUG`)는 레포 밖 로컬 폴더에만.
 
 ## 게이트가 증명하지 못하는 것
 
