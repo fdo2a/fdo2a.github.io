@@ -24,6 +24,7 @@ MODELS = {'pick': os.environ.get('CONTESTED_PICK_MODEL', 'sonnet'),
           'extract': os.environ.get('CONTESTED_MODEL', 'opus'),
           'verify': os.environ.get('CONTESTED_MODEL', 'opus')}
 CALL_TIMEOUT = 900
+TRANSIENT = ('fail', 'robots_unavailable', 'time_cap')   # 수집 사유 가운데 다시 하면 달라질 수 있는 것
 
 
 class ModelError(Exception):
@@ -344,20 +345,36 @@ def analyze(bundle, base, call=claude):
         retry = bundle.get('reason') not in C.FINAL_NONE
         return dict(base, status=bundle.get('status', 'error'), reason=bundle.get('reason', 'collect'),
                     retryable=retry)
+    # 발견 상태는 시장 공통 필드(`discovery`) — US 는 GDELT 상태, KR 은 검색 쪽넘김 완결 여부(KR 설계 K07)
+    disc = bundle.get('discovery', bundle.get('gdelt'))
+    if bundle.get('cutoff_at'):
+        base = dict(base, cutoff_at=bundle['cutoff_at'])     # KR 은 기준일 고정 시각(K04)
     cand = pick(bundle, call, diag)
     if cand is None:
         # 본문을 못 받았거나(실패·짧음·쓰레기·창 밖) 검색이 막힌 날은 다시 해 볼 수 있다(3차 P1)
-        incomplete = any(k != 'ok' for c in bundle.get('candidates') or []
+        # `blocked`(KR: robots 금지·허용 목록 밖·403)은 다시 해도 같아서 세지 않는다
+        incomplete = any(k not in ('ok', 'blocked') for c in bundle.get('candidates') or []
                          for k in (c.get('fetch') or {}))
-        if bundle.get('gdelt') == 'throttled':
+        if disc == 'throttled':
             # 15분 뒤 tick 이 다시 본다 — 날짜당 3회 상한이 같은 날 반복을 막는다
-            return dict(base, status='error', reason='gdelt_throttled', retryable=True)
-        if incomplete or bundle.get('gdelt') != 'ok':
+            return dict(base, status='error', reason='gdelt_throttled' if 'gdelt' in bundle
+                        else 'search_throttled', retryable=True)
+        if incomplete or disc != 'ok':
             return dict(base, status='error', reason='fetch_incomplete', retryable=True)
         return dict(base, status='none', reason='insufficient_sources', retryable=False)
     arts = cand['articles']
     reg = bundle['registry']
     base = dict(base, market_snapshot=bundle.get('market_snapshot'))
+    # 고른 후보에 일시 실패(네트워크·5xx·robots 조회 실패)가 남았으면 그날 결론을 동결하지 않는다 —
+    # 못 받은 기사에 반대 주장이 있었을 수 있다(KR 설계 K08). robots 금지·짧음 같은 영구 사유는 세지 않는다.
+    transient = any(k in TRANSIENT for k in (cand.get('fetch') or {}))
+    # 검색·피드가 창을 다 못 봤으면(발견 truncated, 확장 미완) 본문이 충분해도 결론을 동결하지 않는다(구현 검토 #3)
+    transient = transient or disc not in (None, 'ok') or cand.get('expanded') is False
+
+    def final_none(reason, **kw):
+        if transient:
+            return dict(base, status='error', reason='fetch_incomplete', retryable=True, **kw)
+        return dict(base, status='none', reason=reason, retryable=False, **kw)
     try:
         x = call(EXTRACT_PROMPT, {'report_date': base['report_date'], 'registry': {
             k: v['indicator_ko'] for k, v in reg.items()},
@@ -369,7 +386,7 @@ def analyze(bundle, base, call=claude):
     base['event'] = dict(base['event'], topic_ko=(x.get('topic_ko') or '')[:C.LIMITS['topic_ko']],
                          query=cand['query'])
     if not x.get('pairs'):
-        return dict(base, status='none', reason='no_conflict', retryable=False)
+        return final_none('no_conflict')
     issues, claims, pairs, obs = ground(x, arts, reg)
     diag['grounded'] = {'claims': f"{len(claims)}/{len(x.get('claims') or [])}",
                         'pairs': f"{len(pairs)}/{len(x.get('pairs') or [])}",
@@ -391,7 +408,7 @@ def analyze(bundle, base, call=claude):
                     problems=problems[:30])
     if not (len(cand['outlets_seen']) >= C.ATTENTION_ORIGINS or len(pairs) >= C.MIN_PAIRS):
         # 사용자 트리거 「세간의 주목 OR 상충이 많은」 — 둘 다 미달이면 싣지 않는다(3차 P2)
-        return dict(base, status='none', reason='below_threshold', retryable=False)
+        return final_none('below_threshold')
     qtok = set(cand['query'].split())
     attention = len(cand['outlets_seen']) >= C.ATTENTION_ORIGINS and bool(qtok)
     p = assemble(base, x, issues, arts, claims, pairs, obs, an, attention, cand['query'])

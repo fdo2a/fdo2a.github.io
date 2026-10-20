@@ -83,7 +83,10 @@ def _skip_spans(html):
     """뽑지 않을 구역 — 표 안, 에디터 노트 안, 연준 인용·변경점 블록 안, 펀드 생성 블록 안."""
     spans = []
     for m in _BLOCK_RE.finditer(html):
-        if m.group(1) == 'table' or 'data-editor-note' in m.group(0)[:400] or 'data-research-summary' in m.group(0).split('>', 1)[0]:
+        head = m.group(0).split('>', 1)[0]
+        # 쟁점 분석 섹션은 결과 JSON 에서 찍은 생성물이다 — 게이트가 정규형과 바이트로 대조한다(KR 구현 검토 #8)
+        if (m.group(1) == 'table' or 'data-editor-note' in m.group(0)[:400] or 'data-research-summary' in head
+                or 'data-contested' in head):
             spans.append((m.start(), m.end()))
     for m in _FED_START.finditer(html):
         spans.append((m.start(), _balanced_div(html, m.start())))

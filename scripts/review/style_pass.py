@@ -251,7 +251,7 @@ def run_gates(cwd, cmds, timeout):
 
 
 # 원본도 실패했다는 이유로 넘기지 않는 게이트 — corrector.NEVER_TOLERATE 와 같은 뜻.
-NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py'])
+NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py'])
 
 
 # check_weight 가 매번 찍는 분량 줄과 경고 줄(2026-10-13)은 위반이 아니다 — 윤문이 본문을 2자만 바꿔도

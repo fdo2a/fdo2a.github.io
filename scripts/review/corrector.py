@@ -60,11 +60,31 @@ KR_STANCE_GATE = 'kr_stance'
 # 원본에서 이미 실패했어도 정정본에서 허용하지 않는 게이트. check_fund 는 적용일 이전 글을
 # 통과시키므로, 적용일 이후 글의 실패는 「원래 그랬다」가 아니라 막아야 할 결함이다.
 # check_sector_perf 는 한 글 안에서 섹터 수익률이 갈리는 사실 오류다(2026-10-12).
-NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py'])
-_ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py',
+NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py'])
+_ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py', 'check_contested.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
                                             US_DATADIR_GATES + KR_DATADIR_GATES
                                             + (KR_STANCE_GATE,))])
+
+
+def _contested_gate(clone, item, post):
+    """KR 글에 그날 쟁점 결과(JSON)가 있거나 쟁점 표지가 남아 있으면 그 판의 JSON 과 대조하는 게이트 —
+    정정이 섹션을 손으로 고치거나 **통째로 지우면** 막힌다(KR 설계 검토 K06). 섹션은 고치는 대상이 아니다.
+    US 일간 글(posts/)에는 쟁점 섹션이 없다 — US 결과는 뉴스·산업 브리프(news/) 몫이라 대조하지 않는다."""
+    import re
+    m = re.search(r'(\d{4}-\d{2}-\d{2})\.html$', item.path)
+    if item.section != 'kr' or not m:
+        return None
+    data = clone / 'data' / 'contested' / 'kr' / f'{m.group(1)}.json'
+    try:
+        text = open(post, encoding='utf-8').read()
+    except OSError:
+        return None
+    if not data.exists() and not any(k in text for k in ('data-contested=', 'contested-pending',
+                                                          'contested-omitted', 'CONTESTED')):
+        return None
+    return ('check_contested.py', ['--html', post, '--json', str(data), '--market', 'kr',
+                                   '--date', m.group(1)])
 
 
 def _gates(root, clone, item, evidence, timeout, allowed=()):
@@ -94,6 +114,9 @@ def _gates(root, clone, item, evidence, timeout, allowed=()):
                                              '--market', 'kr']))
         gates.append((f'check_{KR_STANCE_GATE}.py', ['--html', post, '--datadir', str(data),
                                                     '--next', str(data / 'kr_stance.json')]))
+    contested = _contested_gate(clone, item, post)
+    if contested:
+        gates.append(contested)
     gates.extend([
         ('check_readability.py', ['--strict', '--no-inline-images', post]),
         ('check_style.py', [post]),
@@ -149,7 +172,23 @@ def _typeset_only(root, path, old_sha, new_sha):
             return None
     if prose.typography(path, text(old_sha), text(new_sha), root=str(root)) is True:
         return True
+    if _contested_only(text(old_sha), text(new_sha), path, str(root)):
+        return True
     return _after_style_pass(root, path, old_sha, new_sha, text)
+
+
+def _contested_only(old, new, path=None, root=None):
+    """발행판과 지금 판 사이가 쟁점 자리뿐인가(사이에 조판 단계가 끼어도) — 러너가 발행 뒤 자리표시를
+    채운 KR 글(구현 검토 #1·2차 N3). `publish_commit()` 이 그 단계들을 건너뛰어 발행판을 돌려주므로
+    여기서도 같은 관계를 받아야 한다. 섹션의 내용은 정정 재생의 `check_contested` 가 그 판의 JSON 으로 본다."""
+    from common import contested
+    if contested.slot_only_change(old, new) is not None:
+        return True
+    if not (old and new and contested.has_slot(old)):
+        return False
+    from review import prose
+    a, b = contested.strip_slot(old, keep=''), contested.strip_slot(new, keep='')
+    return a == b or (path is not None and prose.typography(path, a, b, root=root) is True)
 
 
 def _after_style_pass(root, path, old_sha, new_sha, text):
@@ -226,6 +265,16 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
                     if member.issym() or member.islnk() or not (member.isfile() or member.isdir()) or '..' in Path(member.name).parts or member.name.startswith('/'):
                         raise RuntimeError('unsafe evidence archive member')
                 tar.extractall(evidence, filter='data')
+            if published != item.sha:
+                # 수치·태그 대조의 기준 글은 **검토한 판**이다 — 발행판과 사이가 쟁점 자리(와 조판)뿐이면
+                # 발행판을 기준으로 두면 정상으로 채운 섹션이 「설명 없는 수치·태그 변화」로 잡혀 정정이
+                # 멈춘다(구현 검토 2차 N1). 시장 근거 데이터는 그대로 발행 커밋의 것이다.
+                def blob(sha):
+                    return subprocess.run(['git', 'cat-file', 'blob', sha], cwd=root, check=True,
+                                          capture_output=True, timeout=60).stdout.decode('utf-8')
+                old_text, new_text = blob(published), blob(item.sha)
+                if _contested_only(old_text, new_text, item.path, str(root)):
+                    (evidence / item.path).write_text(new_text, encoding='utf-8')
             ledger_path = clone / 'reviews/index.json'
             before = json.loads(ledger_path.read_text())
             index = 'kr/posts.json' if item.section == 'kr' else 'posts.json'

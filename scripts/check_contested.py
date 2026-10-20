@@ -14,25 +14,57 @@ exit 0 = 통과 · 1 = 위반
 import argparse
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common import contested as C  # noqa: E402
 
-SHELL = {'us': 'news'}
+SHELL = {m: cfg['shell'] for m, cfg in C.MARKET_CFG.items()}
 
 
-def transforms():
+def transforms(market='us'):
+    """발행 체인이 섹션에 가하는 변형 — 마지막 것이 전체 체인이다. KR 루틴은 `apply_colors` 를
+    돌리지 않는다(KR 마감 브리프 오케스트레이터)."""
     from scripts.us import colorize, readability
+    if market == 'kr':
+        return (readability.enhance_html,)
     return (readability.enhance_html, colorize.apply,
             lambda h: colorize.apply(readability.enhance_html(h)))
+
+
+def _sector_css():
+    """`kr/sectors.py` 의 막대 CSS 리터럴 — 모듈을 불러오지 않고 소스에서 읽는다(그 모듈은 pandas 를
+    불러오는데, 이 게이트는 클라우드 루틴에서도 돈다)."""
+    import ast
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kr', 'sectors.py')
+    with open(path, encoding='utf-8') as fh:
+        tree = ast.parse(fh.read())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign) and any(getattr(t, 'id', None) == 'css' for t in node.targets):
+            try:
+                return ast.literal_eval(node.value)
+            except ValueError:
+                return ''
+    return ''
+
+
+def data_styles(market):
+    """데이터 생성기가 싣고 오는 `<style>` 블록 — KR 업종 막대(`kr/sectors.py`)·아시아 세션 블록
+    (`fund/kr_view.py`)·펀드 점검판(`fund/render.py`). 정상 KR 발행본이 이것 때문에 쟁점 게이트를 못
+    넘었다(KR 설계 검토 K02). 손으로 적은 목록이 아니라 생성기의 정규 출력에서 집는다."""
+    if market != 'kr':
+        return ()
+    from fund import kr_view, render
+    return tuple(x for x in (_sector_css(), kr_view.STYLE, render.STYLE) if x)
 
 
 def trusted_styles(market, date):
     """셸·가독성·색이 넣는 `<style>` 블록 — 이 밖의 스타일은 섹션을 숨길 수 있다."""
     from scripts.common import analytics, post_shell
-    body = '<section><div class="card headline-card"><h1>제목</h1><p>본문이다.</p></div></section>'
+    body = ('<section><div class="card headline-card"><h1>제목</h1><p>본문이다.</p></div></section>'
+            + ''.join(f'<section><div class="card">{b}</div></section>' for b in data_styles(market)))
     shell = SHELL[market]
     raw = post_shell.render(shell, date, {'title': 't', 'summary': 's'}, body)
     # Posts still inside the correction window were published with an earlier stylesheet.
@@ -40,7 +72,8 @@ def trusted_styles(market, date):
     raws = [raw] + [raw.replace(current, old, 1) for old in post_shell.legacy_css(shell)]
     out = set()
     for page in raws:
-        for t in ((lambda h: h),) + transforms() + (lambda h: analytics.inject(transforms()[2](h)),):
+        chain = transforms(market)
+        for t in ((lambda h: h),) + chain + (lambda h: analytics.inject(chain[-1](h)),):
             loc = C._Locate(t(page))
             out |= {s.strip() for s in loc.styles if s.strip()} | {f'link:{h}' for h in loc.links}
     return out
@@ -63,7 +96,7 @@ def main(argv=None):
         except ValueError:
             print('FAIL 데이터 파일이 JSON 이 아니다')
             return 1
-    errs = C.check(html, payload, a.market, a.date, transforms(), trusted_styles(a.market, a.date))
+    errs = C.check(html, payload, a.market, a.date, transforms(a.market), trusted_styles(a.market, a.date))
     state = f"{payload.get('status')}({payload.get('reason') or '-'})" if payload else '미도착'
     om = C.OMIT_RE.findall(html)
     if om:

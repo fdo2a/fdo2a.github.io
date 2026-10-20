@@ -32,7 +32,17 @@ SECTION_ID = 'contested'
 OMIT_RE = re.compile(r'<!--contested-omitted:([a-z_]+)-->')
 PENDING = '<!--contested-pending-->'     # 결과가 아직 없을 때 발행본에 남기는 자리 — 로컬 러너가 채운다
 
-MARKETS = ('us',)                 # 1단계. kr 은 출처 어댑터(네이버 검색 API)가 붙을 때 연다
+MARKETS = ('us', 'kr')            # kr = 2단계(2026-10-21, 네이버 검색 API + 언론사 본문)
+# 시장마다 다른 자리 — 발행본·결과 경로, 셸 이름, 발행 체인의 변형(KR 루틴은 apply_colors 를 돌리지 않는다).
+MARKET_CFG = {
+    'us': {'page': 'news/{d}.html', 'pages_dir': 'news', 'result': 'data/contested/us/{d}.json',
+           'shell': 'news', 'market_file': 'data/market_data.json', 'extra_files': (),
+           'transforms': ('readability', 'colors', 'readability+colors')},
+    'kr': {'page': 'kr/posts/{d}.html', 'pages_dir': 'kr/posts', 'result': 'data/contested/kr/{d}.json',
+           'shell': 'kr', 'market_file': 'kr/data/kr_market_data.json',
+           'extra_files': ('kr/data/kr_econ.json', 'kr/data/kr_flows.json', 'kr/data/kr_session.json'),
+           'transforms': ('readability',)},
+}
 SPANS = ('daily',)                # 주간은 2단계 — 일간 ok 파일의 결정적 연대기
 STATUSES = ('ok', 'none', 'error')
 # 동결되는 none — 그날 다시 돌려도 결과가 같은 「편집상 결론」. 나머지는 재시도할 수 있다.
@@ -106,6 +116,70 @@ def market_registry(md):
                                   'value': round(md['spread_2s10s_bp'], 1), 'unit': 'bp',
                                   'as_of': md.get('report_date')}
     return {k: v for k, v in out.items() if v.get('as_of')}
+
+
+# ── 시장 관측치 레지스트리 (KR) ───────────────────────────────────────────
+# 열쇠는 ASCII — 모델이 고르는 값이고 ID 꼴 검사와 같은 이유로 짧고 정해진 꼴이어야 한다.
+_KR_RATES = {'국고채 3년': ('KTB3Y', '국고채 3년'), '국고채 10년': ('KTB10Y', '국고채 10년'),
+             'CD 91일': ('CD91D', 'CD 91일'), '회사채 AA- 3년': ('CORPAA3Y', '회사채 AA- 3년')}
+_KR_FLOW = {'foreign': '외국인', 'institution': '기관', 'individual': '개인'}
+_KR_US = {'S&P 500': 'SP500', 'Nasdaq': 'Nasdaq', 'Dow': 'Dow'}
+_DATE = re.compile(r'\d{4}-\d{2}-\d{2}')
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def market_registry_kr(files):
+    """{key: observation} — `files` 는 {파일 이름: 읽은 JSON}. 없거나 깨진 칸은 만들지 않는다.
+
+    날짜를 하나씩 본다(설계 검토 K03): 수집기는 단계가 실패해도 옛 파일을 지우지 않고 `complete` 는
+    코어 넷만 보증한다. 그래서 수급은 최신 행이 기준일일 때만(잠정이면 이름에 적는다), 원·달러는 세션
+    파일이 그 기준일 것이고 마지막 관측 시각이 있을 때만, 어떤 값도 기준일 뒤 날짜면 쓰지 않는다.
+    """
+    out = {}
+    d = lambda name: files.get(name) if isinstance(files.get(name), dict) else {}  # noqa: E731
+    md, econ, flows, sess = (d('kr_market_data.json'), d('kr_econ.json'), d('kr_flows.json'),
+                             d('kr_session.json'))
+    rd = md.get('report_date')
+    if not (isinstance(rd, str) and _DATE.fullmatch(rd)):
+        return out
+
+    def put(key, ko, entity, value, unit, as_of, nd=2):
+        if _num(value) and isinstance(as_of, str) and _DATE.fullmatch(as_of) and as_of <= rd:
+            out[key] = {'indicator_ko': ko, 'entity': entity, 'value': round(value, nd), 'unit': unit,
+                        'as_of': as_of}
+    for name in ('KOSPI', 'KOSDAQ'):
+        row = md['indices'].get(name) if isinstance(md.get('indices'), dict) else None
+        if isinstance(row, dict):
+            ko = '코스피' if name == 'KOSPI' else '코스닥'
+            put(f'indices.{name}.pct', f'{ko} 일간 등락률', name, row.get('change_pct'), '%', rd)
+            put(f'indices.{name}.last', f'{ko} 종가', name, row.get('close'), '', rd)
+    series = econ.get('series') if isinstance(econ.get('series'), dict) else {}
+    for ko_name, (key, ko) in _KR_RATES.items():
+        row = series.get(ko_name)
+        if isinstance(row, dict):
+            put(f'rates.{key}.level', f'{ko} 금리', key, row.get('value'), '%', row.get('date'), 3)
+            put(f'rates.{key}.bp', f'{ko} 일간 변화', key, row.get('bp'), 'bp', row.get('date'), 1)
+    kospi = flows.get('KOSPI') if isinstance(flows.get('KOSPI'), dict) else {}
+    rows = kospi.get('rows') if isinstance(kospi.get('rows'), list) else []
+    last = rows[0] if rows and isinstance(rows[0], dict) else {}
+    if last.get('date') == rd:
+        tag = '(잠정)' if md.get('flows_provisional') else ''
+        for f, ko in _KR_FLOW.items():
+            put(f'flows.KOSPI.{f}', f'코스피 {ko} 순매수{tag}', 'KOSPI', last.get(f), '억원', rd, 0)
+    if sess.get('report_date') == rd:
+        fx = sess.get('usdkrw_intraday') if isinstance(sess.get('usdkrw_intraday'), dict) else {}
+        t = fx.get('last_t')
+        if isinstance(t, str) and re.fullmatch(r'\d{2}:\d{2}', t):
+            put('fx.USDKRW.close', f'원·달러 환율({t} 기준)', 'USD/KRW', fx.get('close'), '원', rd)
+        up = sess.get('us_prev') if isinstance(sess.get('us_prev'), dict) else {}
+        rows_us = up.get('rows') if isinstance(up.get('rows'), dict) else {}
+        for name, key in _KR_US.items():
+            put(f'us_prev.{key}.pct', f'전일 미국 {_KO.get(name, name)} 등락률', name, rows_us.get(name), '%',
+                up.get('as_of'))
+    return out
 
 
 # ── 식별자·해시 ───────────────────────────────────────────────────────────
@@ -634,6 +708,33 @@ def _first(html):
     loc = _Locate(html)
     s = loc.sections[0] if loc.sections else None
     return html[s['start']:s['end']] if s else None
+
+
+_SLOT = '\x00CONTESTED-SLOT\x00'
+
+
+def strip_slot(html, keep=_SLOT):
+    """쟁점 자리(섹션·자리표시·생략 기록·표식)를 `keep` 하나로 바꾼 문서. 섹션 밖이 그대로인지 볼 때(러너),
+    「쟁점 자리만 바뀐 판」을 가를 때(사후 검토 — KR 설계 검토 K05), 검토자에게 섹션을 빼고 줄 때(K06) 쓴다."""
+    for sec in reversed(_Locate(html).sections):
+        html = html[:sec['start']] + keep + html[sec['end']:]
+    html = html.replace(MARKER, keep).replace(PENDING, keep)
+    return OMIT_RE.sub(keep, html)
+
+
+def has_slot(html):
+    """쟁점 자리(섹션·자리표시·생략 기록·표식)가 하나라도 있는가."""
+    return bool(_Locate(html).sections) or MARKER in html or PENDING in html or bool(OMIT_RE.search(html))
+
+
+def slot_only_change(old, new):
+    """(바뀌었는가, 자리가 지워졌는가) 중 **쟁점 자리만** 바뀐 경우를 가린다 → None(다른 것도 바뀜)·
+    'filled'(자리가 섹션·생략 기록·자리표시로 남음)·'removed'(자리가 사라짐). 앞판에 자리가 있어야 한다."""
+    if old is None or new is None or old == new or not has_slot(old):
+        return None
+    if strip_slot(old, keep='') != strip_slot(new, keep=''):
+        return None
+    return 'filled' if has_slot(new) else 'removed'
 
 
 def check(html, payload, market, date, transforms=(), trusted_styles=None):

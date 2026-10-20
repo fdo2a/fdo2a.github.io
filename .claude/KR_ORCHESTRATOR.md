@@ -69,6 +69,8 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 
 Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다), 그리고 **writer 스펙의 섹션 순서를 그대로 따르라**는 지시(전략 코멘트는 헤드라인 바로 다음, 테마 섹션 없음, 장중 수급·프로그램 매매는 수급 서브블록, 기술적 분석은 일봉 차트 바로 아래). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
 
+**쟁점 분석(2026-10-21)** — 작성자를 부르기 전에 `python3 scripts/contested_ready.py --market kr --date <DATE> --out <워크스페이스 루트>/contested.json` 을 돌리고 마지막 줄 `contested: …` 를 최종 보고에 옮긴다. 결과는 Mac 의 로컬 러너가 만들어 푸시한다 — **루틴은 기다리지도 수집하지도 않는다.** 작성자는 표식 `<!--CONTESTED-->` 한 줄만 둔다(writer 스펙 12-b). `render_post.py` 로 합친 직후 `python3 scripts/render_contested.py --html <kr_brief> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>` — `ok` 면 섹션, 확정된 none 이면 지움, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`, 러너가 발행 뒤 채운다). 「쟁점 자리가 0개」면 표식을 `<div class="footer-note">` 바로 앞에 넣고 다시 돌린다. **이 섹션은 고치지 않는다** — 이 섹션 때문에 `check_readability`·`check_style` 이 막히면 `render_contested.py … --omit gate_failed` 로 빼고 게이트를 다시 돌린 뒤 보고에 적는다.
+
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 
 **발행 게이트** — (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date` 와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개 이상을 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍이 있으면 발행 중단, PushNotification 으로 누락 보고.**
@@ -82,6 +84,7 @@ python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/d
 python3 scripts/check_news.py    --html <kr_brief 절대경로> --datadir kr/data --market kr --date <DATE>
 python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
 python3 scripts/check_fund.py    --html <kr_brief 절대경로> --datadir kr/data --market kr
+python3 scripts/check_contested.py --html <kr_brief 절대경로> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>
 ```
 
 - `check_weight.py` 의 KR 계약: 필수 섹션 비어 있음 금지, §2 문단 순서(2026-10-20 부터 다섯 — 어제 판단의 판정은 「시장 판단과 복기」 첫 문단, 배치는 `check_kr_stance.py` 가 발행일로 고른다), 가격 섹션의 스탠스 등급 어휘 금지. **절대 글자 수 하한은 2026-10-13 폐지** — 「경고:」 줄(서술형 본문 5,000자 초과, 시황군 < 판단군)은 발행을 막지 않으며, 그것을 맞추려고 초안을 늘리거나 줄이지 않는다(`STYLE_EXEMPLARS.md` §11).
@@ -122,7 +125,7 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 4. **커밋 직전에 가드를 한 번 더** — 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:kr/posts/[YYYY-MM-DD].html` 로 본다. 있으면(그 사이 다른 런이 발행) 아무것도 커밋하지 않고 끝낸다. 아니면 main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 거절되면 `git pull --rebase` 한다 — `kr/posts.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) 이 날짜 항목만 STEP 3 의 2·3번으로 다시 넣은 뒤 `git add` → `git rebase --continue`. 그다음 같은 확인을 하고 다시 push 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
 
 ## STEP 4 — 알림
-PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`.
+PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`. 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Notion·PDF·이메일 모두 없음. 세션에 Notion 커넥터가 붙어 있어도 쓰지 않는다 — 연결돼 있다는 사실이 사용 지시는 아니다.
 

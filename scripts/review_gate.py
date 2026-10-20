@@ -77,6 +77,7 @@ try:
         freshness.boot(os.getcwd())
     from review import kinds  # noqa: E402
     from review import prose as prose_mod  # noqa: E402
+    from common import contested as contested_mod  # noqa: E402
     from review.queue import accept as accept_entry  # noqa: E402
     from review.queue import baselines, classify, is_watched  # noqa: E402
     from review.queue import mark as mark_entry  # noqa: E402
@@ -875,6 +876,7 @@ def publish_commit(root, path, sha):
     while found and at + 1 < len(commits):
         prev = rev_parse(root, f'{commits[at + 1]}:{path}')
         if not prev or not (_style_step(root, found, path, prev, sha)
+                            or _contested_step(root, found, path, prev, sha)
                             or prose_mod.typography(path, _blob_text(root, prev),
                                                     _blob_text(root, sha), root=root) is True):
             break
@@ -883,6 +885,48 @@ def publish_commit(root, path, sha):
             at += 1
             found = commits[at]
     return found
+
+
+def _contested_step(root, commit, path, prev, sha):
+    """쟁점 자리만 바뀐 판인가 — 로컬 쟁점 러너가 발행 뒤 자리표시를 채우거나 지운 커밋.
+
+    그 판을 발행 커밋으로 치면 다음 날 덧붙인 KR 글이 다음 날 kr/data 와 맞대져 자동 검토에서 빠진다
+    (KR 설계 검토 K05). 조판 판정으로 넘기지 않는다 — 판은 검토 대상으로 남고, 근거만 원래 발행 커밋이다.
+    쟁점 섹션 자체의 근거는 결과 JSON 이고, 검토자에게는 섹션을 빼고 준다(`_drop_contested`).
+    """
+    m = re.fullmatch(r'(kr/posts|news)/(\d{4}-\d{2}-\d{2})\.html', path)
+    if not m:
+        return False                          # 쟁점 섹션은 KR 마감 브리프·US 뉴스·산업 브리프에만 있다
+    kind = contested_mod.slot_only_change(_blob_text(root, prev), _blob_text(root, sha))
+    if kind == 'filled':
+        return True
+    if kind != 'removed':
+        return False
+    # 자리가 사라진 판은 그 커밋의 결과가 확정된 non-ok 일 때만 — 러너가 자리표시를 지운 경우다.
+    # 사람이 섹션을 통째로 지운 판까지 넘기지 않는다(구현 검토 #4).
+    market = 'kr' if m.group(1) == 'kr/posts' else 'us'
+    raw = git(root, 'show', f'{commit}:data/contested/{market}/{m.group(2)}.json')
+    try:
+        payload = json.loads(raw.stdout) if raw.returncode == 0 else None
+    except ValueError:
+        payload = None
+    if not isinstance(payload, dict):
+        return False                          # 배열·문자열 JSON 이 큐 순회를 멈추지 않게(구현 검토 2차 N4)
+    return payload.get('status') != 'ok' and contested_mod.settled(payload, market, m.group(2))
+
+
+def _drop_contested(path):
+    """검토 스냅샷의 글에서 쟁점 섹션을 뺀다 — 별도 수집·검증을 거친 생성물이라 kr/data 로 대조할 것이
+    아니고, 검토자가 그 문장을 「근거 없음」으로 지적하면 정정자가 HTML 을 손대게 된다(K06)."""
+    try:
+        with open(path, encoding='utf-8') as fh:
+            text = fh.read()
+    except OSError:
+        return
+    out = contested_mod.strip_slot(text, keep='')
+    if out != text:
+        with open(path, 'w', encoding='utf-8') as fh:
+            fh.write(out)
 
 
 def _style_step(root, commit, path, prev, sha):
@@ -996,6 +1040,7 @@ def review_one(root, commit, item, timeout, style=False):
             prompt = PROMPT.format(post=item.path,
                                    market=MARKET_NAME.get(item.section, item.section),
                                    datadir=data_dir)
+            _drop_contested(os.path.join(work, item.path))
         # 문체 기준은 발행 당시 것이 아니라 **지금** 것이다. 없어도 문체 수정은 돈다.
         if style and not snapshot(root, 'origin/main', STYLE_REFS, work):
             print(f'[러너] 문체 기준을 못 꺼냈다 — {", ".join(STYLE_REFS)}')
@@ -1005,8 +1050,10 @@ def review_one(root, commit, item, timeout, style=False):
             current = _blob_text(root, item.sha)
             if current is None:
                 return None, f'{item.sha[:7]} 을 못 읽었다', UNKNOWN, ''
+            # 검토자가 읽는 글에서는 쟁점 섹션을 빼고(K06), 문단 추출은 공개판 그대로 — 되꽂기는 공개판의
+            # 문단 순서와 맞아야 한다
             with open(os.path.join(work, item.path), 'w', encoding='utf-8') as fh:
-                fh.write(current)
+                fh.write(contested_mod.strip_slot(current, keep=''))
             style_pass.prepare(work, current)
             rules = (f'\n추가 규칙(읽기만): `{HUMANIZE_RULES}`'
                      if os.path.isfile(HUMANIZE_RULES) else '')

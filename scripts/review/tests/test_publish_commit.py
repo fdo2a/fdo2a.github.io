@@ -127,3 +127,130 @@ def test_misdated_items_are_dropped_before_quota(repo):
     commit(repo, {DATA: '{"report_date": "2026-09-21"}', POST: _doc(body='<p>x</p>')}, 'fix')
     assert len(g._drop_misdated(repo, [_item(blob(repo))], errs)) == 1
     assert '근거' not in errs
+
+
+# ── 쟁점 러너가 발행 뒤 자리표시를 채운 커밋(KR 설계 검토 K05·K06) ─────────────
+KR_POST = 'kr/posts/2026-10-20.html'
+KR_DATA = 'kr/data/kr_market_data.json'
+SECTION = ('<section id="contested" data-contested="abc"><h2>쟁점 분석 — 환율</h2>'
+           '<div class="card"><p>원화 강세가 이어진다.</p></div></section>')
+
+
+def test_contested_fill_points_back_to_the_publishing_commit(repo):
+    from common import contested as C
+    base = BODY + '\n' + C.PENDING
+    published = commit(repo, {KR_POST: _doc(body=base), KR_DATA: '{"report_date": "2026-10-20"}'},
+                       'publish')
+    commit(repo, {KR_DATA: '{"report_date": "2026-10-21"}'}, 'next day data')
+    commit(repo, {KR_POST: _doc(body=BODY + '\n' + SECTION)}, 'contested fill')
+    sha = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert g.publish_commit(repo, KR_POST, sha) == published
+
+
+def test_contested_step_rejects_edits_outside_the_section(repo):
+    from common import contested as C
+    published = commit(repo, {KR_POST: _doc(body=BODY + '\n' + C.PENDING)}, 'publish')
+    edited = commit(repo, {KR_POST: _doc(body=BODY.replace('0.4%', '0.5%') + '\n' + SECTION)},
+                    'fill and edit')
+    sha = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert g.publish_commit(repo, KR_POST, sha) == edited != published
+
+
+def test_review_snapshot_drops_contested_section(tmp_path):
+    p = tmp_path / 'post.html'
+    p.write_text(_doc(body=BODY + '\n' + SECTION), encoding='utf-8')
+    g._drop_contested(str(p))
+    text = p.read_text(encoding='utf-8')
+    assert 'data-contested' not in text and '0.4%' in text
+
+
+def test_corrector_replays_contested_gate_only_when_section_present(tmp_path):
+    from pathlib import Path
+    from types import SimpleNamespace
+    from review import corrector
+    post = tmp_path / KR_POST
+    post.parent.mkdir(parents=True)
+    post.write_text(_doc(body=BODY + '\n' + SECTION), encoding='utf-8')
+    item = SimpleNamespace(path=KR_POST, section='kr')
+    name, args = corrector._contested_gate(Path(tmp_path), item, str(post))
+    assert name == 'check_contested.py'
+    assert args[args.index('--market') + 1] == 'kr' and args[args.index('--date') + 1] == '2026-10-20'
+    assert args[args.index('--json') + 1].endswith('data/contested/kr/2026-10-20.json')
+    post.write_text(_doc(), encoding='utf-8')
+    assert corrector._contested_gate(Path(tmp_path), item, str(post)) is None
+    # 결과가 있는 날 정정이 섹션을 통째로 지워도 게이트는 돈다
+    data = tmp_path / 'data' / 'contested' / 'kr' / '2026-10-20.json'
+    data.parent.mkdir(parents=True)
+    data.write_text('{}', encoding='utf-8')
+    assert corrector._contested_gate(Path(tmp_path), item, str(post))[0] == 'check_contested.py'
+    us = SimpleNamespace(path='posts/2026-10-20.html', section='us')
+    assert corrector._contested_gate(Path(tmp_path), us, str(post)) is None
+
+
+def test_next_day_placeholder_removal_points_back_only_when_result_is_final(repo):
+    from common import contested as C
+    published = commit(repo, {KR_POST: _doc(body=BODY + '\n' + C.PENDING),
+                              KR_DATA: '{"report_date": "2026-10-20"}'}, 'publish')
+    commit(repo, {KR_DATA: '{"report_date": "2026-10-21"}'}, 'next day data')
+    none = {'schema_version': 1, 'market': 'kr', 'span': 'daily', 'report_date': '2026-10-20',
+            'status': 'none', 'reason': 'no_conflict', 'retryable': False}
+    none['content_hash'] = C.content_hash(none)
+    import json
+    commit(repo, {KR_POST: _doc(body=BODY + '\n'),
+                  'data/contested/kr/2026-10-20.json': json.dumps(none)}, 'contested clear')
+    sha = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert g.publish_commit(repo, KR_POST, sha) == published
+
+
+def test_hand_deleted_section_is_a_new_publish(repo):
+    from common import contested as C
+    import json
+    commit(repo, {KR_POST: _doc(body=BODY + '\n' + SECTION),
+                  'data/contested/kr/2026-10-20.json': json.dumps({'status': 'ok'})}, 'publish')
+    deleted = commit(repo, {KR_POST: _doc(body=BODY + '\n')}, 'delete section by hand')
+    sha = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert g.publish_commit(repo, KR_POST, sha) == deleted
+
+
+def test_corrector_entry_accepts_contested_fill(repo):
+    from pathlib import Path
+    from common import contested as C
+    from review import corrector
+    commit(repo, {KR_POST: _doc(body=BODY + '\n' + C.PENDING)}, 'publish')
+    old = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    commit(repo, {KR_POST: _doc(body=BODY + '\n' + SECTION)}, 'fill')
+    new = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert corrector._typeset_only(Path(repo), KR_POST, old, new)
+    commit(repo, {KR_POST: _doc(body=BODY.replace('0.4%', '0.9%') + '\n' + SECTION)}, 'edit')
+    edited = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert not corrector._typeset_only(Path(repo), KR_POST, old, edited)
+
+
+def test_corrector_accepts_typesetting_then_fill(repo):
+    """A=자리표시·옛 조판 → B=자리표시·새 조판 → C=채움·새 조판 (구현 검토 2차 N3)."""
+    from pathlib import Path
+    from common import contested as C
+    from review import corrector
+    commit(repo, {KR_POST: _doc(css=PREV, body=BODY + '\n' + C.PENDING)}, 'publish')
+    a = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    commit(repo, {KR_POST: _doc(css=CUR, body=BODY + '\n' + C.PENDING)}, 'typeset')
+    commit(repo, {KR_POST: _doc(css=CUR, body=BODY + '\n' + SECTION)}, 'fill')
+    c = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+    assert g.publish_commit(repo, KR_POST, c) is not None
+    assert corrector._typeset_only(Path(repo), KR_POST, a, c)
+
+
+def test_contested_step_tolerates_non_object_json(repo):
+    from common import contested as C
+    commit(repo, {KR_POST: _doc(body=BODY + '\n' + C.PENDING)}, 'publish')
+    for bad in ('[1]', '"broken"', '123'):
+        commit(repo, {KR_POST: _doc(body=BODY + '\n' + C.PENDING) + bad,
+                      'data/contested/kr/2026-10-20.json': bad}, f'reset {bad}')
+        removed = commit(repo, {KR_POST: _doc(body=BODY + '\n') + bad}, f'clear {bad}')
+        sha = git(repo, 'rev-parse', f'origin/main:{KR_POST}')
+        assert g.publish_commit(repo, KR_POST, sha) == removed     # 예외 없이 새 발행으로 본다
+
+
+def test_contested_gate_is_never_tolerated():
+    from review import corrector
+    assert 'check_contested.py' in corrector.NEVER_TOLERATE

@@ -620,3 +620,47 @@ def test_malformed_nested_previous_is_normalized():
     assert C.validate(p) == ['구조가 깨졌다']
     n = L._normalize(p)
     assert n == {'attempts': 1} and L.plan(n, 'pending', DATE) == 'analyze'
+
+
+# ── KR 2단계에서 시장 공통으로 바뀐 것 (discovery·일시 실패 동결 금지) ─────────
+def test_discovery_field_is_market_neutral():
+    b = {'status': 'ok', 'discovery': 'ok', 'registry': {}, 'candidates': [
+        {'cand_id': 'k1', 'query': 'q', 'outlets_seen': [], 'articles': [], 'fetch': {'blocked': 2}}]}
+    p = Bld.analyze(b, _base(), call=_fake({}, {}))
+    assert (p['status'], p['reason'], p['retryable']) == ('none', 'insufficient_sources', False)
+    p = Bld.analyze(dict(b, discovery='truncated'), _base(), call=_fake({}, {}))
+    assert (p['reason'], p['retryable']) == ('fetch_incomplete', True)     # 창을 다 못 봤으면 동결 안 함
+    p = Bld.analyze(dict(b, discovery='throttled'), _base(), call=_fake({}, {}))
+    assert p['reason'] == 'search_throttled' and p['retryable']
+
+
+def test_transient_fetch_failure_blocks_frozen_none():
+    arts = arts3()
+    b = _bundle(arts)
+    b['candidates'][0]['fetch'] = {'ok': 3, 'fail': 1}
+    x = _fit_analysis(_x(arts, pairs=[]))
+    p = Bld.analyze(b, _base(), call=_fake(x, _verdict(x)))
+    assert (p['status'], p['reason'], p['retryable']) == ('error', 'fetch_incomplete', True)
+    b['candidates'][0]['fetch'] = {'ok': 3, 'blocked': 1, 'short': 1}      # 영구 사유는 동결을 막지 않는다
+    p = Bld.analyze(b, _base(), call=_fake(x, _verdict(x)))
+    assert (p['status'], p['reason'], p['retryable']) == ('none', 'no_conflict', False)
+
+
+def test_bundle_cutoff_overrides_run_time():
+    b = {'status': 'ok', 'discovery': 'ok', 'cutoff_at': '2026-10-20T20:00:00+09:00', 'registry': {},
+         'candidates': []}
+    p = Bld.analyze(b, _base(), call=_fake({}, {}))
+    assert p['cutoff_at'] == '2026-10-20T20:00:00+09:00'
+
+
+def test_incomplete_discovery_blocks_frozen_none_even_with_sources():
+    """출처가 셋 이상이어도 검색이 창을 다 못 봤으면 no_conflict 를 동결하지 않는다(KR 구현 검토 #3)."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts, pairs=[]))
+    b = dict(_bundle(arts), discovery='truncated')
+    p = Bld.analyze(b, _base(), call=_fake(x, _verdict(x)))
+    assert (p['status'], p['reason'], p['retryable']) == ('error', 'fetch_incomplete', True)
+    b = _bundle(arts)
+    b['candidates'][0]['expanded'] = False
+    p = Bld.analyze(b, _base(), call=_fake(x, _verdict(x)))
+    assert p['retryable'] and p['reason'] == 'fetch_incomplete'

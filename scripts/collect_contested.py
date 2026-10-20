@@ -363,7 +363,7 @@ def build(args, run, now, rank=None):
                       'fetch': dict(Counter(status))})
         if len({a['origin_group'] for a in arts}) >= C.MIN_ORIGINS:
             break                                  # 1순위부터 — 쓸 수 있는 사건을 찾으면 멈춘다
-    return {'status': 'ok', 'gdelt': gstat, 'harvest': len(pool),
+    return {'status': 'ok', 'gdelt': gstat, 'discovery': gstat, 'harvest': len(pool),
             'market_snapshot': snapshot(md_path), 'registry': C.market_registry(md),
             'candidates': cands}
 
