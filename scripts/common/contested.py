@@ -201,7 +201,17 @@ def _hangul(text):
 
 
 def validate(p, market=None, date=None):
-    """위반 목록(빈 목록 = 통과). 수집 저장·렌더·게이트 세 곳이 같은 함수를 쓴다."""
+    """위반 목록(빈 목록 = 통과). 수집 저장·렌더·게이트 세 곳이 같은 함수를 쓴다.
+
+    중첩 구조가 깨진 입력(문자열 자리에 객체 등)도 예외 없이 위반으로 돌려준다(4차 P2).
+    """
+    try:
+        return _validate(p, market, date)
+    except (AttributeError, TypeError, KeyError, ValueError):
+        return ['구조가 깨졌다']
+
+
+def _validate(p, market=None, date=None):
     errs = []
     if not isinstance(p, dict):
         return ['페이로드가 객체가 아니다']

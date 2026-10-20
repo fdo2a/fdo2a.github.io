@@ -134,7 +134,7 @@ STATE = os.path.expanduser('~/Library/Caches/fdo2a-contested-state.json')
 ANALYZE_MAX_HOURS = 36        # 기준일 발행 뒤 이만큼 지나면 분석하지 않고 자리표시를 지운다
 
 
-def _attempts_local(date, bump=False):
+def _attempts_local(date, bump=False, at_least=0):
     """날짜별 시도 횟수를 로컬에도 적는다 — 푸시가 계속 실패해도 3회 상한이 걸린다(3차 P2)."""
     try:
         with open(STATE, encoding='utf-8') as fh:
@@ -146,6 +146,7 @@ def _attempts_local(date, bump=False):
     if bump and os.environ.get('CONTESTED_DRY'):
         return n + 1                       # 시험 운행은 실제 시도 횟수를 쓰지 않는다
     if bump:
+        n = max(n, at_least)                # 원격에 적힌 횟수보다 작아지지 않게(4차 P2)
         st[date] = n + 1
         st = {k: v for k, v in st.items() if isinstance(v, int)}
         tmp = STATE + '.tmp'
@@ -159,6 +160,9 @@ def _attempts_local(date, bump=False):
 def _normalize(prev):
     if not isinstance(prev, dict):
         return None
+    if C.validate(prev) == ['구조가 깨졌다']:
+        n = prev.get('attempts')
+        return {'attempts': n if isinstance(n, int) and not isinstance(n, bool) else 0}
     if not isinstance(prev.get('attempts'), int) or isinstance(prev.get('attempts'), bool):
         prev = dict(prev, attempts=0)
     return prev
@@ -283,8 +287,7 @@ def analyze_date(clone, temp, date, md_current, prev):
     """수집·분석 한 번 → 결과 dict. 어떤 실패도 결과로 남긴다(3차 P2)."""
     from collect_contested import collect
     import contested_build as Bld
-    attempts = max((prev or {}).get('attempts', 0), _attempts_local(date)) + 1
-    _attempts_local(date, bump=True)              # 모델을 부르기 전에 적는다
+    attempts = _attempts_local(date, bump=True, at_least=(prev or {}).get('attempts', 0))   # 수집 전에 적는다
     base = _base(date, attempts)
     try:
         if md_current.get('report_date') == date and md_current.get('complete'):

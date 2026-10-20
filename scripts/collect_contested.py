@@ -260,7 +260,10 @@ def in_window(when, cutoff):
     return bool(w) and cutoff - WINDOW <= w <= cutoff + timedelta(hours=1)
 
 
-def fetch_bodies(cands, ctx, run, cutoff, fetch=get):
+def fetch_bodies(cands, ctx, run, cutoff, fetch=get, status=None):
+    """`status` 에 시도마다 결과를 쌓는다 — 후보마다 따로 남겨 다른 후보의 성공이 실패를 덮지
+    않게 한다(4차 P1)."""
+    status = status if status is not None else []
     got, per_host, tried = [], Counter(), 0
     for c in cands:
         if len(got) >= MAX_BODIES or tried >= MAX_TRIES or run.left() < 120:
@@ -273,14 +276,17 @@ def fetch_bodies(cands, ctx, run, cutoff, fetch=get):
             html = fetch(c['url'], ctx)
         except Exception as e:
             run.hosts[dom] = f'fail:{type(e).__name__}'
+            status.append('fail')
             continue
         body, why = admit(html, c['title'])
         run.hosts[dom] = why
+        status.append(why)
         if not body:
             continue
         when = page_published(html) or c.get('published') or c.get('seen_at')
         if not in_window(when, cutoff):
             run.hosts[dom] = 'out_of_window'
+            status[-1] = 'out_of_window'
             continue
         per_host[dom] += 1
         got.append({'article_id': C.article_id(c['url']), 'url': C.canonical_url(c['url']),
@@ -350,9 +356,11 @@ def build(args, run, now, rank=None):
         # 주목 트리거는 제목이 검색어와 두 낱말 이상 겹치는 발견분만 센다(구현 검토 P2)
         relevant = {outlet_of(c['url'])[1] for c in uniq
                     if len(qtok & set().union(*_toks(c['title']))) >= min(2, len(qtok))}
-        arts = fetch_bodies(uniq, ctx, run, now)
+        status = []
+        arts = fetch_bodies(uniq, ctx, run, now, status=status)
         cands.append({'cand_id': v['cand_id'], 'score': score(g), 'query': q, 'titles': v['titles'],
-                      'outlets_seen': sorted(relevant), 'articles': arts})
+                      'outlets_seen': sorted(relevant), 'articles': arts,
+                      'fetch': dict(Counter(status))})
         if len({a['origin_group'] for a in arts}) >= C.MIN_ORIGINS:
             break                                  # 1순위부터 — 쓸 수 있는 사건을 찾으면 멈춘다
     return {'status': 'ok', 'gdelt': gstat, 'harvest': len(pool),

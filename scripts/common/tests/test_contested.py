@@ -573,7 +573,7 @@ def test_linked_stylesheet_is_caught():
 
 def test_incomplete_fetch_is_retryable():
     b = _bundle(arts3()[:2])
-    b['hosts'] = {'cnbc.com': 'ok', 'bbc.com': 'fail:TimeoutError'}
+    b['candidates'][0]['fetch'] = {'ok': 2, 'fail': 1}
     p = Bld.analyze(b, _base(), call=_fake({}, {}))
     assert p['reason'] == 'fetch_incomplete' and p['retryable']
 
@@ -593,3 +593,29 @@ def test_runner_local_attempts_and_normalize(tmp_path, monkeypatch):
 
 def test_runner_interrupt_is_base_exception():
     assert not issubclass(L.Interrupted, Exception)
+
+
+def test_other_candidate_success_does_not_hide_failure():
+    arts = arts3()[:2]
+    b = _bundle(arts)
+    b['candidates'][0]['fetch'] = {'ok': 2, 'fail': 1}
+    b['candidates'].append({'cand_id': 'k2', 'query': 'x', 'titles': [], 'outlets_seen': [],
+                            'articles': [], 'fetch': {'ok': 1}})
+    b['hosts'] = {'bbc.com': 'ok'}                 # 뒤 후보의 성공이 덮어쓴 호스트 기록
+    p = Bld.analyze(b, _base(), call=_fake({}, {}))
+    assert p['reason'] == 'fetch_incomplete' and p['retryable']
+
+
+def test_attempts_never_below_remote(tmp_path, monkeypatch):
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'st.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    assert L._attempts_local(DATE, bump=True, at_least=2) == 3
+
+
+def test_malformed_nested_previous_is_normalized():
+    p = payload()
+    p['event'] = 'broken'
+    rehash(p)
+    assert C.validate(p) == ['구조가 깨졌다']
+    n = L._normalize(p)
+    assert n == {'attempts': 1} and L.plan(n, 'pending', DATE) == 'analyze'

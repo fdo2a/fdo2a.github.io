@@ -347,7 +347,8 @@ def analyze(bundle, base, call=claude):
     cand = pick(bundle, call, diag)
     if cand is None:
         # 본문을 못 받았거나(실패·짧음·쓰레기·창 밖) 검색이 막힌 날은 다시 해 볼 수 있다(3차 P1)
-        incomplete = any(v != 'ok' for v in (bundle.get('hosts') or {}).values())
+        incomplete = any(k != 'ok' for c in bundle.get('candidates') or []
+                         for k in (c.get('fetch') or {}))
         if bundle.get('gdelt') == 'throttled':
             # 15분 뒤 tick 이 다시 본다 — 날짜당 3회 상한이 같은 날 반복을 막는다
             return dict(base, status='error', reason='gdelt_throttled', retryable=True)
