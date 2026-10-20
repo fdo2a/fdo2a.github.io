@@ -1,0 +1,78 @@
+name: Collect contested analysis
+
+# 쟁점 분석(2026-10-21 사용자 지시) — 여러 매체 기사에서 서로 충돌하는 주장만 추려 본질·걱정의
+# 크기로 정리한 선택 섹션의 재료를 만든다. 기사 본문·모델 호출이 필요해 Actions 에서만 돈다.
+# **기존 수집과 분리했다**: 시장 수집이 커밋한 뒤 따로 돌므로, 이 잡이 느리거나 실패해도
+# 시장·뉴스 데이터와 브리프 발행은 늦어지지 않는다. 결과는 data/contested/us/<date>.json 하나,
+# status ok·none·error 중 하나를 반드시 남긴다(파일이 없으면 「미도착」).
+# 설계: docs/superpowers/specs/2026-10-21-contested-analysis-design.md
+
+on:
+  workflow_run:
+    workflows: ['Collect market data']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'report_date (비우면 data/market_data.json 의 날짜)'
+        required: false
+      dry_run:
+        description: 'true = 커밋하지 않고 결과만 출력'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  id-token: write          # 모델 호출 인증 = WIF (뉴스 요약과 같은 규칙)
+
+concurrency:
+  group: collect-contested-us
+  cancel-in-progress: false
+
+jobs:
+  us:
+    # 시장 수집이 실패로 끝나도 데이터는 커밋됐을 수 있다(FRED 키 점검은 커밋 뒤에 실패한다) —
+    # 결론이 아니라 market_data.json 의 report_date·complete 로 판단한다(스크립트가 본다).
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.event != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install --quiet certifi 'curl_cffi>=0.15.0' 'anthropic>=1.8,<2'
+
+      - name: Collect
+        id: run
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          CONTESTED_MODEL: ${{ vars.CONTESTED_MODEL }}
+          IN_DATE: ${{ inputs.date }}
+        run: |
+          RD="${IN_DATE:-$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")}"
+          echo "date=$RD" >> "$GITHUB_OUTPUT"
+          python scripts/fetch_contested.py --market us --date "$RD" --deadline 720
+          F="data/contested/us/$RD.json"
+          if [ -f "$F" ]; then
+            python -c "import json,sys;p=json.load(open(sys.argv[1]));print('status',p['status'],p.get('reason'),json.dumps(p.get('counts')),json.dumps(p.get('diagnostics')))" "$F"
+          fi
+
+      - name: Commit
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          F="data/contested/us/${{ steps.run.outputs.date }}.json"
+          [ -f "$F" ] || { echo "결과 파일 없음 — 커밋할 것이 없다"; exit 0; }
+          git add "$F"
+          bash scripts/ci/push_with_retry.sh "data: contested analysis us ${{ steps.run.outputs.date }}"

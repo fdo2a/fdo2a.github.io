@@ -168,12 +168,14 @@ Site base URL: https://fdo2a.github.io/
 **시황 브리프가 먼저다 — 순서로 지킨다.** 이 단계는 STEP 3 에서 브리프를 **커밋·푸시한 다음에** 시작한다. 2026-09-26 에는 9/25 브리프가 게이트를 다 통과하고도, 발행이 이 단계 뒤에 있었던 탓에 뉴스 글을 고치다 5시간 한도에 걸려 함께 사라졌다. 이 글이 게이트를 끝내 못 넘으면 이 글만 빼고 최종 보고·알림에 사유를 적는다.
 
 0. **멱등 가드** — `news/[DATE].html` 이 이미 커밋돼 있으면 이 단계를 건너뛴다.
-1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 네 가지 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절. 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것).
-2. **게이트** — 작성자가 돌린 것을 레포 클론에서 다시 돌린다. 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 오케스트레이터가 직접).
+0-1. **쟁점 분석 결과 확정**(2026-10-21) — `python3 scripts/contested_ready.py --market us --date [DATE] --out <workspace>/contested.json` 를 **Bash timeout 1,200,000 ms 로 한 번** 돌린다. 결과가 origin/main 에 없거나 재시도 가능하면 수집 워크플로를 띄우고 스크립트 안에서 한 번만 기다린다(최대 15분) — 루틴이 깨어나 반복 확인하지 않는다. 마지막 줄 `contested: …` 를 최종 보고에 그대로 옮긴다. 「미도착」·`none`·`error` 면 섹션 없이 발행한다. 이어쓰기 런도 같은 명령이다(결과 파일은 동결 뒤 바뀌지 않는다).
+1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 네 가지 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절. 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것). **쟁점 분석은 작성자가 쓰지 않는다** — 작성자는 표식 한 줄만 두고, 섹션은 다음 명령이 찍는다: `python3 scripts/render_contested.py --html news_industry_[DATE].html --json <workspace>/contested.json --market us --date [DATE]`(파일이 없으면 표식만 지운다).
+2. **게이트** — 작성자가 돌린 것을 레포 클론에서 다시 돌린다. 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 오케스트레이터가 직접). **쟁점 분석 섹션은 고치지 않는다** — 그 섹션 때문에 게이트(`check_style`·`check_readability` 포함)가 막히면 `render_contested.py … --omit gate_failed` 로 섹션을 빼고 게이트를 다시 돌린 뒤 최종 보고에 적는다.
    ```bash
    python3 scripts/apply_readability.py news_industry_[DATE].html
    python3 scripts/apply_colors.py news_industry_[DATE].html
    python3 scripts/check_news.py --html news_industry_[DATE].html --datadir <workspace> --date [DATE]
+   python3 scripts/check_contested.py --html news_industry_[DATE].html --json <workspace>/contested.json --market us --date [DATE]
    python3 scripts/check_readability.py --strict --no-inline-images news_industry_[DATE].html
    python3 scripts/check_style.py news_industry_[DATE].html
    grep -c '확인필요' news_industry_[DATE].html     # 0
@@ -184,7 +186,7 @@ Site base URL: https://fdo2a.github.io/
 
 ## STEP 4 — Notify
 
-Send a PushNotification with the headline and the blog post URL, plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures).
+Send a PushNotification with the headline and the blog post URL, plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures). 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Do NOT publish to Notion, do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email. If a Notion connector is available in the session, leave it alone — its presence is not an instruction to use it.
 
