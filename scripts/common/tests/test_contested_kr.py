@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 sys.path.insert(0, ROOT)
 
 import collect_contested_kr as K  # noqa: E402
+import json  # noqa: E402
 
 LONG = ('정부가 내놓은 주택 공급 대책을 두고 시장의 평가가 엇갈리고 있다. ' * 12).strip()
 
@@ -559,3 +560,28 @@ def test_style_pass_never_extracts_contested_paragraphs():
     html = _kr_page().replace(C.MARKER, C.render(kr_payload()))
     text, _ = prose_swap.extract(html)
     assert '재정 긴축이 거리 시위로' not in text and '참가 인원 집계 차이' not in text
+
+
+def test_incomplete_market_data_does_not_spend_attempts(tmp_path, monkeypatch):
+    """10/21 실운영: US 10/20 시장 파일이 complete:false 인 동안 tick 마다 시도를 태웠다."""
+    import subprocess
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    clone = tmp_path / 'clone'
+    (clone / 'data').mkdir(parents=True)
+    (clone / 'news').mkdir()
+    subprocess.run(['git', 'init', '-q', str(clone)], check=True)
+    md = {'report_date': '2026-10-20', 'complete': False}
+    (clone / 'data' / 'market_data.json').write_text(json.dumps(md))
+    subprocess.run(['git', '-C', str(clone), 'add', '-A'], check=True)
+    subprocess.run(['git', '-C', str(clone), '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'x'],
+                   check=True)
+
+    class Now(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return datetime(2026, 10, 21, 7, 0, tzinfo=KST)
+    monkeypatch.setattr(L, 'datetime', Now)
+    notes = []
+    assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us') is None
+    assert notes == ['us 2026-10-20 시장 데이터 미완'] and L._attempts_local('2026-10-20', market='us') == 0
+    assert L._market_ready(str(clone), '2026-10-20', dict(md, complete=True), 'us')

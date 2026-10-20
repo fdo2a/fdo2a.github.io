@@ -296,6 +296,22 @@ def _market_for(clone, date, temp, market='us'):
     return None, None
 
 
+def _market_ready(clone, date, md_current, market):
+    """그 기준일의 완성된 시장 파일이 있는가 — 지금 파일이거나 히스토리에서(분석과 같은 기준)."""
+    # KR 분석은 늘 히스토리에서 꺼내므로(`analyze_date`) KR 은 히스토리만 본다
+    if market == 'us' and md_current.get('report_date') == date and md_current.get('complete'):
+        return True
+    cfg = C.MARKET_CFG[market]
+    for oid in _git(clone, 'log', '--format=%H', '-n', '40', '--', cfg['market_file'], check=False).split():
+        try:
+            md = json.loads(_git(clone, 'show', f'{oid}:{cfg["market_file"]}', check=False))
+        except ValueError:
+            continue
+        if isinstance(md, dict) and md.get('report_date') == date and md.get('complete'):
+            return True
+    return False
+
+
 def _dates(clone, md, market='us'):
     """볼 날짜 — 현재 기준일 + 자리표시가 남은 최근 발행본(시장 기준일이 넘어가도 놓치지 않게, 3차 P1)."""
     out = []
@@ -353,6 +369,11 @@ def handle(clone, temp, date, md_current, notes, market='us'):
                 # 그날 18:00 루틴은 자리표시로 나가고 20시 뒤 tick 이 채운다.
                 notes.append(f'{market} {date} 기준 시각 전')
                 return None
+        if not stale and attempts < C.MAX_ATTEMPTS and not _market_ready(clone, date, md_current, market):
+            # 시장 파일이 그 기준일로 완성되기 전에는 시도 횟수를 쓰지 않는다 — 10/21 실운영에서 US 10/20 이
+            # `complete: false`(금리 결측)인 동안 tick 마다 market_data_not_found 로 시도를 태웠다
+            notes.append(f'{market} {date} 시장 데이터 미완')
+            return None
         if stale or attempts >= C.MAX_ATTEMPTS:
             reason = 'stale' if stale else 'attempts_exhausted'
             result = _final_error(date, prev, reason, market)
