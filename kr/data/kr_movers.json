@@ -1,27 +1,123 @@
 {
-  "report_date": "2026-10-19",
+  "report_date": "2026-10-20",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "기타",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": -4.23,
+          "close": 1223000,
+          "value": 4104771
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": -2.98,
+          "close": 211500,
+          "value": 3260652
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": -5.0,
+          "close": 741000,
+          "value": 335028
+        },
+        {
+          "name": "한미반도체",
+          "change_pct": -5.71,
+          "close": 199900,
+          "value": 103619
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "전자장비와기기",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "코리아써키트",
+          "change_pct": 12.4,
+          "close": 72500,
+          "value": 157763
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "은행",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "KIWOOM 200TR",
-          "change_pct": 1.14,
-          "close": 117975,
-          "value": 45708
+          "name": "우리금융지주",
+          "change_pct": 0.47,
+          "close": 31800,
+          "value": 63292
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "우주항공과국방",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한화에어로스페이스",
+          "change_pct": -11.71,
+          "close": 799000,
+          "value": 199907
         },
         {
-          "name": "KIWOOM 200",
-          "change_pct": 1.25,
-          "close": 89990,
-          "value": 54069
+          "name": "한화시스템",
+          "change_pct": -13.9,
+          "close": 70600,
+          "value": 135323
+        },
+        {
+          "name": "현대로템",
+          "change_pct": -13.7,
+          "close": 86900,
+          "value": 109870
+        },
+        {
+          "name": "LIG디펜스앤에어로스페이스",
+          "change_pct": -8.21,
+          "close": 548000,
+          "value": 59273
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "전기제품",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성SDI",
+          "change_pct": -6.08,
+          "close": 556000,
+          "value": 391550
         }
       ]
     }
