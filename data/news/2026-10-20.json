@@ -1,6 +1,6 @@
 {
   "report_date": "2026-10-20",
-  "harvested": 866,
+  "harvested": 886,
   "notes": [
     "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
   ],
@@ -238,18 +238,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/5731e82c50914afd12ceb457c790867166436a6f?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/5731e82c50914afd12ceb457c790867166436a6f?source=rss",
-      "title": "国債が株の配当を上回る時代に、それでも株を持つべき人・持たなくていい人 (藤村哲也 投資顧問助言業)(シェアーズカフェ・オンライン)",
-      "summary": "「金利が3%を超えたのなら、株より国債のほうが得ではないですか？」最近、こうしたご相談が目に見えて増えてきました。10年物国債の表面利率は約30年ぶりに3.1%となり、個人向け国債も固定5年で2%を超",
-      "published": "2026-10-20T21:30:45+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/9fc539262bb0dea60a19d1e339ad391cc69e7af6?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/9fc539262bb0dea60a19d1e339ad391cc69e7af6?source=rss",
+      "title": "あの1杯はなぜ別格だったのか…超一流シェフも使う“東京産食材”に眠る「土地の味」(ビジネス＋IT)",
+      "summary": "富裕層を呼び込む切り札として、地方の食やローカルガストロノミーの存在感が高まっている。一方、日本最大の消費地・東京はどうか。「東京に地のものはない」と思われがちだが、実は東京には、ミシュランで星を獲得",
+      "published": "2026-10-20T22:20:06+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "シェアーズカフェ・オンライン",
-      "body_chars": 899,
+      "wire": "ビジネス＋IT",
+      "body_chars": 1102,
       "body_file": "07-global.txt",
-      "summary_ko": "일본 재무성은 10월 6일 입찰에서 10년물 국채의 표면금리를 3.1%로 정했다. 1996년 이후 약 30년 만의 최고 수준이다. 일본은행이 9월 18일 정책금리를 1.25% 안팎으로 올리면서 장기금리가 함께 올랐다. 개인향 국채 고정 5년물도 연 2.4%로 발행됐다. 반면 도쿄증권거래소 프라임 시장의 평균 예상 배당수익률은 2%대 초반에 머문다. 닛케이에 따르면 주식 배당수익률이 장기금리를 밑도는 역전 현상이 올해 들어 17년 반 만에 나타났다. 올해 4~8월 개인향 국채 발행액은 전년 같은 기간보다 약 6할 늘어 역대 최고 속도를 보이고 있다. 필자는 국채와 주식을 같은 수익률 잣대로 비교하지 말고, 자금을 언제 쓸지에 따라 두 자산의 역할을 나눠 운용하라고 조언한다.",
+      "summary_ko": "일본 야후 뉴스의 이 기사는 부유층을 끌어들이는 지역 미식이 주목받는 가운데, 도쿄산 식재료의 가능성을 다룬다. 필자는 피렌체 남쪽 키안티 클라시코의 한 마을에서 숯불에 구운 비스테카, 그날 아침 밭에서 딴 채소, 현지 산지오베제 와인을 맛본 경험을 소개한다. 같은 와인을 일본에서도 살 수 있지만, 현지에서 마신 한 잔은 전혀 다르게 느껴졌다고 한다. 필자는 그 차이를 운송이나 분위기만으로 설명하지 않는다. 같은 땅의 햇빛과 비, 흙에서 자란 식재료들이 함께 어우러지기 때문이라고 본다. 동양의 신토후이, 즉 몸과 그것이 사는 땅은 나눌 수 없다는 사고도 함께 언급한다. 기사는 도쿄 같은 대도시에서도 이런 감각이 충분히 성립할 수 있으며, 미쉐린 별을 받은 최고급 셰프들도 도쿄산 식재료에 눈을 돌리고 있다고 전한다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -261,7 +261,7 @@
       "category": "global",
       "source": "BBC",
       "region": "europe",
-      "body_chars": 6615,
+      "body_chars": 6553,
       "body_file": "08-global.txt",
       "summary_ko": "영국 정부가 북해 잭도 가스전 개발 승인 여부를 수요일 오전 발표할 예정이라고 BBC가 보도했다. 웨스트민스터에서는 잭도가 승인될 가능성이 높다고 보지만, 셰틀랜드 인근 로즈뱅크 유전에 대한 결정은 아직 나오지 않을 것으로 알려졌다. 에너지장관 미아타 파흐누는 같은 날 오후 하원에서 발표 내용을 설명할 전망이다. 잭도는 애버딘 동쪽 약 241km 해상의 가스전으로, 운영사는 수개월 내 영국 가스망 연결이 가능하다고 밝혔다. 노동당은 2024년 총선 공약에서 북해 신규 석유·가스 면허 발급은 중단하되 기존 면허는 존중하겠다고 했다. 두 광구의 면허는 2022~2023년 보수당 정부가 승인했으나 환경단체의 법적 대응이 이어졌고, 에든버러 민사법원은 지난해 연소 시 기후 영향을 고려하지 않았다며 승인을 위법으로 판결했다. 환경단체는 추가 시추에 반대하는 반면, 산업계는 생산이 일자리와 에너지 안보에 기여한다고 주장한다.",
       "summary_model": "claude-haiku-5-5"
@@ -281,17 +281,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://www.theguardian.com/world/2026/oct/19/france-hit-by-debt-sell-off-as-protests-unnerve-investors",
-      "url": "https://www.theguardian.com/world/2026/oct/19/france-hit-by-debt-sell-off-as-protests-unnerve-investors",
-      "title": "France hit by debt sell-off as violent protests unnerve investors",
-      "summary": "<p>Difference between French and German borrowing costs widens after public buildings burned and shops looted</p><p>France has been hit by a fresh wave of selling in its bond and stock markets after <a href=\"https://www.theguardian.com/world/2026/oct/18/french-government-crisis-talks-violent-unrest-policing-macron\">violent protests </a>over the weekend led to thousands of arrests and left public b",
-      "published": "2026-10-19T15:23:54+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/9f58834e769e0dd0a9a68e6c200965031a8cfccd?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/9f58834e769e0dd0a9a68e6c200965031a8cfccd?source=rss",
+      "title": "もうお金を払うだけでは｢最強のAI｣を使えない…アンソロピックが導入した｢会員制AI｣に日本企業が入る方法(プレジデントオンライン)",
+      "summary": "最先端のAIは、もう誰でも無料で使えるものではなくなっている。今年6月、AI開発大手アンソロピックが、米政府の指示を受けて最上位モデルの外国への提供を停止したことが話題になった。10月には、高度なサイ",
+      "published": "2026-10-20T22:15:39+00:00",
       "category": "global",
-      "source": "The Guardian",
-      "region": "europe",
-      "body_chars": 5044,
-      "body_file": "12-global.txt",
-      "summary_ko": "프랑스에서 주말 폭력 시위가 번지며 국채와 주식이 동시에 매도됐다. 시위로 공공건물이 불타고 상점 수백 곳이 약탈됐으며 2,400명 이상이 체포됐다. 19일 프랑스 10년물 국채 금리는 한때 16bp 오른 4.94%까지 뛰어 24년 만의 고점에 근접했다. 독일과의 금리 차는 14년 만의 최대 수준으로 벌어져 프랑스 채무의 위험 프리미엄이 커졌음을 보여준다. 골드만삭스는 유로존 재정위기 재연 우려를 언급하며 프랑스의 재정 과제가 2011~2015년보다 어렵다고 짚었다. 2025년 프랑스 국가채무비율은 115.6%, 재정적자 비율은 5.1%로, 내년도 예산 통과와 재정 긴축이 쉽지 않다는 우려가 커지고 있다. 2027년 대선을 앞둔 정치적 불확실성도 부담이다.",
+      "source": "Yahoo!ニュース",
+      "region": "japan",
+      "wire": "プレジデントオンライン",
+      "body_chars": 1489,
+      "body_file": "11-global.txt",
+      "summary_ko": "미국 정부는 2026년 6월 12일 AI 개발사 앤트로픽에 최상위 모델 「Fable 5」와 「Mythos 5」를 외국적 이용자에게 제공하지 말라는 수출 관리 지시를 내렸다. 국가안보가 이유였고, 모델의 안전장치를 우회하는 방법이 발견된 것이 배경이었다. 지시는 회사 내 외국적 직원에게도 적용됐다. 국적을 확인할 방법이 없어 앤트로픽은 전 이용자에 대한 제공을 멈췄고, 제한된 조건에서만 작동하는 우회 수법으로 상용 모델을 회수하는 것은 부당하다며 이의를 제기했다. 6월 26일 일부 미국 조직에 대해 Mythos 5가 복구됐고, 6월 30일 규제 해제가 발표된 뒤 7월 1일 Fable 5 제공도 재개됐다. 최상위 AI가 서비스에서 빠져 있던 기간은 19일이었다. 다나카 미치아키 교수는 최첨단 AI가 누구나 쓰는 도구에서 사용자를 심사해 고르는 회원제 도구로 바뀌고 있다고 지적했다. 앤트로픽은 10월에도 고도의 사이버 능력을 쓰는 이용자를 3단계로 심사하는 제도를 확대했다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -305,7 +306,7 @@
       "region": "japan",
       "body_chars": 1018,
       "body_file": "18-insight.txt",
-      "summary_note": "분량 벗어남 428자"
+      "summary_note": "분량 벗어남 413자"
     },
     {
       "guid": "https://think.ing.com/articles/polands-k-shape-story-is-bad-for-the-economy-but-good-for-inflation-and-nbp-rates/#When:12:48:00Z",
@@ -328,7 +329,7 @@
       "published": "2026-10-20T19:39:00+00:00",
       "category": "insight",
       "source": "Investing.com",
-      "body_chars": 7820,
+      "body_chars": 7892,
       "body_file": "20-insight.txt",
       "summary_ko": "일본의 8월 헤드라인 CPI는 전년 대비 1.9%에 그쳤고, 필자는 이를 근거로 대규모 부채가 그 자체로 인플레이션을 만들지는 않는다고 주장한다. IMF 추정 일반정부 총부채는 2026년 GDP의 약 203%지만, 필자는 재정지출의 성격, 유휴 생산능력, 가계 행동, 중앙은행 정책, 수입물가가 임금·가격 순환으로 이어지는지가 관건이라고 본다. 엔화는 2021년 달러당 평균 109.8엔에서 2024년 151.4엔으로 약해졌고, 4월 수입물가는 엔화 기준 17.5% 올라 계약통화 기준 7.9%보다 높았다. 다만 기업이 마진으로 흡수하거나 가격 인상을 미루면 생산자물가 압력이 소비자물가로 곧바로 번지지 않는다고 필자는 강조한다. 일본 CPI는 2025년 말 3%에 가까웠다가 2026년 2월 1.3%로 떨어졌고, 7~8월에는 1.9%로 회복했다. 필자는 핵심 질문이 부채 규모가 아니라 재정이 노동과 생산능력을 두고 경쟁하는 추가 수요를 만드는지 여부라고 정리한다.",
       "summary_model": "claude-haiku-5-5"
