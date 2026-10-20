@@ -36,7 +36,8 @@ def trusted_styles(market, date):
     raw = post_shell.render(SHELL[market], date, {'title': 't', 'summary': 's'}, body)
     out = set()
     for t in ((lambda h: h),) + transforms() + (lambda h: analytics.inject(transforms()[2](h)),):
-        out |= {s.strip() for s in C._Locate(t(raw)).styles if s.strip()}
+        loc = C._Locate(t(raw))
+        out |= {s.strip() for s in loc.styles if s.strip()} | {f'link:{h}' for h in loc.links}
     return out
 
 

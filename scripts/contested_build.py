@@ -171,9 +171,14 @@ def pick(bundle, call=None, diag=None):
 
 
 # ── 원문 대조 ────────────────────────────────────────────────────────────
+_KIND = {'issue_id': 'issue', 'claim_id': 'claim', 'pair_id': 'pair', 'obs_id': 'obs'}
+
+
 def _uniq(rows, idf):
-    n = Counter(r.get(idf) for r in rows or [])
-    return [r for r in rows or [] if n[r.get(idf)] == 1]   # 중복 ID 는 전부 버린다
+    """중복 ID 와 꼴이 아닌 ID 는 전부 버린다."""
+    rows = [r for r in rows or [] if isinstance(r, dict) and C.id_ok(_KIND[idf], r.get(idf))]
+    n = Counter(r.get(idf) for r in rows)
+    return [r for r in rows if n[r.get(idf)] == 1]
 
 
 def ground(x, arts, reg):
@@ -181,6 +186,8 @@ def ground(x, arts, reg):
     body = {a['article_id']: a['body'] for a in arts}
     rel = set(x.get('relevant_articles') or []) & set(body)
     issues = {i['issue_id']: i for i in _uniq(x.get('issues'), 'issue_id')}
+    if not isinstance(x.get('relevant_articles'), list):
+        rel = set()
     claims = {}
     for c in _uniq(x.get('claims'), 'claim_id'):
         b = body.get(c.get('article_id'))
@@ -301,10 +308,8 @@ def assemble(base, x, issues, arts, claims, pairs, obs, an, attention, query):
                'market_obs': c['market_obs'], 'market_supported': c['market_supported']}
         row['credibility'], row['credibility_reason_ko'] = C.credibility(row)
         out_claims.append(row)
-    conflict = len({claims[q['a']]['issue_id'] for q in pairs}) >= 2
+    conflict = len(pairs) >= C.MIN_PAIRS
     trig = (['attention'] if attention else []) + (['conflict'] if conflict else [])
-    if not trig:
-        trig = ['conflict']         # 검증된 충돌이 하나라도 있으면 「상충」으로 싣는다(사용자: 주목 OR 상충)
     return dict(base, status='ok', reason='', retryable=False,
                 event={'topic_ko': (x.get('topic_ko') or '')[:C.LIMITS['topic_ko']], 'query': query,
                        'trigger': trig},
@@ -336,16 +341,18 @@ def analyze(bundle, base, call=claude):
     """묶음 → 결과 dict(status 포함). 모델·대조·가지치기·조립·문체 검사까지."""
     diag = base['diagnostics']
     if bundle.get('status') != 'ok':
-        retry = bundle.get('reason') not in C.FINAL_NONE and bundle.get('reason') != 'gdelt_throttled'
+        retry = bundle.get('reason') not in C.FINAL_NONE
         return dict(base, status=bundle.get('status', 'error'), reason=bundle.get('reason', 'collect'),
                     retryable=retry)
     cand = pick(bundle, call, diag)
     if cand is None:
-        fails = sum(str(v).startswith('fail') for v in (bundle.get('hosts') or {}).values())
+        # 본문을 못 받았거나(실패·짧음·쓰레기·창 밖) 검색이 막힌 날은 다시 해 볼 수 있다(3차 P1)
+        incomplete = any(v != 'ok' for v in (bundle.get('hosts') or {}).values())
         if bundle.get('gdelt') == 'throttled':
-            return dict(base, status='error', reason='gdelt_throttled', retryable=False)
-        if fails >= 2 or bundle.get('gdelt') != 'ok':
-            return dict(base, status='error', reason='fetch_failed', retryable=True)
+            # 15분 뒤 tick 이 다시 본다 — 날짜당 3회 상한이 같은 날 반복을 막는다
+            return dict(base, status='error', reason='gdelt_throttled', retryable=True)
+        if incomplete or bundle.get('gdelt') != 'ok':
+            return dict(base, status='error', reason='fetch_incomplete', retryable=True)
         return dict(base, status='none', reason='insufficient_sources', retryable=False)
     arts = cand['articles']
     reg = bundle['registry']
@@ -381,6 +388,9 @@ def analyze(bundle, base, call=claude):
     if an is None:
         return dict(base, status='none', reason='analysis_unverified', retryable=True,
                     problems=problems[:30])
+    if not (len(cand['outlets_seen']) >= C.ATTENTION_ORIGINS or len(pairs) >= C.MIN_PAIRS):
+        # 사용자 트리거 「세간의 주목 OR 상충이 많은」 — 둘 다 미달이면 싣지 않는다(3차 P2)
+        return dict(base, status='none', reason='below_threshold', retryable=False)
     qtok = set(cand['query'].split())
     attention = len(cand['outlets_seen']) >= C.ATTENTION_ORIGINS and bool(qtok)
     p = assemble(base, x, issues, arts, claims, pairs, obs, an, attention, cand['query'])

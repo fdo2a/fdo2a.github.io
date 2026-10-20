@@ -21,6 +21,7 @@ import fcntl
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import tempfile
@@ -125,19 +126,60 @@ def fill(clone, date, payload):
     return [rel], f'omitted({why[:120]})'
 
 
-def push(clone, files, msg, page_sha):
+class Interrupted(BaseException):
+    """launchd·런처가 보낸 SIGTERM — 일반 예외 처리에 삼켜지지 않게(3차 P2)."""
+
+
+STATE = os.path.expanduser('~/Library/Caches/fdo2a-contested-state.json')
+ANALYZE_MAX_HOURS = 36        # 기준일 발행 뒤 이만큼 지나면 분석하지 않고 자리표시를 지운다
+
+
+def _attempts_local(date, bump=False):
+    """날짜별 시도 횟수를 로컬에도 적는다 — 푸시가 계속 실패해도 3회 상한이 걸린다(3차 P2)."""
+    try:
+        with open(STATE, encoding='utf-8') as fh:
+            st = json.load(fh)
+        st = st if isinstance(st, dict) else {}
+    except (OSError, ValueError):
+        st = {}
+    n = st.get(date) if isinstance(st.get(date), int) else 0
+    if bump and os.environ.get('CONTESTED_DRY'):
+        return n + 1                       # 시험 운행은 실제 시도 횟수를 쓰지 않는다
+    if bump:
+        st[date] = n + 1
+        st = {k: v for k, v in st.items() if isinstance(v, int)}
+        tmp = STATE + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as fh:
+            json.dump(dict(sorted(st.items())[-30:]), fh)
+        os.replace(tmp, STATE)
+        return n + 1
+    return n
+
+
+def _normalize(prev):
+    if not isinstance(prev, dict):
+        return None
+    if not isinstance(prev.get('attempts'), int) or isinstance(prev.get('attempts'), bool):
+        prev = dict(prev, attempts=0)
+    return prev
+
+
+def push(clone, files, msg, page_shas):
     _git(clone, 'add', *files)
     if not _git(clone, 'status', '--porcelain', '--untracked-files=no', check=False):
         return 'nothing'
+    base = _git(clone, 'rev-parse', 'HEAD')
     _git(clone, 'commit', '-q', '-m', msg)
     if subprocess.run(['git', 'push', '-q', 'origin', 'HEAD:main'], cwd=clone).returncode == 0:
         return 'pushed'
     _git(clone, 'fetch', '-q', 'origin', 'main')
-    for f in files:
-        if f.startswith('news/'):
-            now = _git(clone, 'rev-parse', f'origin/main:{f}', check=False)
-            if now != page_sha:
-                return 'abandoned: 발행본이 그 사이 바뀌었다'
+    for f, sha in page_shas.items():
+        if _git(clone, 'rev-parse', f'origin/main:{f}', check=False) != sha:
+            return f'abandoned: {f} 가 그 사이 바뀌었다'
+    # 그 사이 게이트·러너 코드가 바뀌었으면 옛 코드로 검사한 결과를 밀지 않는다 — 다음 tick 에 새 코드로
+    moved = _git(clone, 'diff', '--name-only', base, 'origin/main', '--', 'scripts', '.claude', check=False)
+    if moved:
+        return 'abandoned: 코드가 그 사이 바뀌었다'
     if subprocess.run(['git', 'rebase', '-q', 'origin/main'], cwd=clone).returncode:
         subprocess.run(['git', 'rebase', '--abort'], cwd=clone)
         return 'abandoned: rebase 충돌'
@@ -146,78 +188,161 @@ def push(clone, files, msg, page_sha):
     return 'pushed'
 
 
+def _market_for(clone, date, temp):
+    """그 기준일의 완성된 market_data.json 을 히스토리에서 찾아 임시 폴더에 둔다 → (datadir, commit)."""
+    for oid in _git(clone, 'log', '--format=%H', '-n', '40', '--', 'data/market_data.json').split():
+        raw = _git(clone, 'show', f'{oid}:data/market_data.json', check=False)
+        try:
+            md = json.loads(raw)
+        except ValueError:
+            continue
+        if md.get('report_date') == date and md.get('complete'):
+            d = os.path.join(temp, f'data-{date}')
+            os.makedirs(d, exist_ok=True)
+            with open(os.path.join(d, 'market_data.json'), 'w', encoding='utf-8') as fh:
+                fh.write(raw)
+            return d, oid
+    return None, None
+
+
+def _dates(clone, md):
+    """볼 날짜 — 현재 기준일 + 자리표시가 남은 최근 발행본(시장 기준일이 넘어가도 놓치지 않게, 3차 P1)."""
+    out = []
+    if md.get('report_date'):
+        out.append(md['report_date'])
+    today = datetime.now(KST).date()
+    for name in sorted(os.listdir(os.path.join(clone, 'news')) if os.path.isdir(os.path.join(clone, 'news')) else []):
+        m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', name)
+        if not m or m.group(1) in out:
+            continue
+        if (today - datetime.fromisoformat(m.group(1)).date()).days > MAX_AGE_DAYS:
+            continue
+        with open(os.path.join(clone, 'news', name), encoding='utf-8') as fh:
+            if C.PENDING in fh.read():
+                out.append(m.group(1))
+    return sorted(out)
+
+
+def handle(clone, temp, date, md_current, notes):
+    """한 날짜 → (바뀐 파일, 발행본 sha, 메모) 또는 None(할 일 없음)."""
+    rel_json = f'data/contested/us/{date}.json'
+    jpath = os.path.join(clone, rel_json)
+    prev = _normalize(_load(jpath))
+    page_rel = f'news/{date}.html'
+    page_path = os.path.join(clone, page_rel)
+    html = open(page_path, encoding='utf-8').read() if os.path.exists(page_path) else None
+    shas = {page_rel: _git(clone, 'rev-parse', f'HEAD:{page_rel}', check=False)} if html else {}
+    todo = plan(prev, page_state(html), date)
+    if todo == 'skip':
+        return None
+    files = []
+    if todo == 'analyze':
+        age_h = (datetime.now(KST) - datetime.fromisoformat(date).replace(tzinfo=KST)).total_seconds() / 3600
+        attempts = max((prev or {}).get('attempts', 0), _attempts_local(date))
+        if age_h > ANALYZE_MAX_HOURS + 24 or attempts >= C.MAX_ATTEMPTS:
+            reason = 'stale' if age_h > ANALYZE_MAX_HOURS + 24 else 'attempts_exhausted'
+            result = _final_error(date, prev, reason)
+        else:
+            result = analyze_date(clone, temp, date, md_current, prev)
+        _save(jpath, result)
+        files.append(rel_json)
+        with open(os.path.expanduser('~/Library/Caches/fdo2a-contested-last.json'), 'w') as fh:
+            json.dump(result, fh, ensure_ascii=False, indent=1)
+        note = f'{result["status"]}({result.get("reason") or "-"})'
+        if html is not None and page_state(html) == 'pending' and C.settled(result, 'us', date):
+            f, n = fill(clone, date, result)
+            files += f
+            note += f' · 발행본 {n}'
+    else:
+        result = prev
+        f, n = fill(clone, date, result)
+        files += f
+        note = f'{result["status"]} · 발행본 {n}'
+    topic = ((result or {}).get('event') or {}).get('topic_ko') or ''
+    notes.append(f'{date} {note}' + (f' · {topic}' if topic else ''))
+    return files, (shas if any(f.startswith('news/') for f in files) else {})
+
+
+def _base(date, attempts):
+    import contested_build as Bld
+    now = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    return {'schema_version': C.SCHEMA_VERSION, 'market': 'us', 'span': 'daily', 'report_date': date,
+            'status': 'error', 'reason': 'unknown', 'retryable': True, 'attempts': attempts,
+            'collected_at': now, 'cutoff_at': now,
+            'model': {k: Bld.MODELS[k] for k in ('pick', 'extract', 'verify')},
+            'prompt_version': C.PROMPT_VERSION, 'market_snapshot': None, 'counts': {},
+            'diagnostics': {'runner': 'local'}, 'event': {'topic_ko': '', 'query': '', 'trigger': []}}
+
+
+def _final_error(date, prev, reason):
+    b = _base(date, max((prev or {}).get('attempts', 0), _attempts_local(date)))
+    return dict(b, status='error', reason=reason, retryable=False)
+
+
+def analyze_date(clone, temp, date, md_current, prev):
+    """수집·분석 한 번 → 결과 dict. 어떤 실패도 결과로 남긴다(3차 P2)."""
+    from collect_contested import collect
+    import contested_build as Bld
+    attempts = max((prev or {}).get('attempts', 0), _attempts_local(date)) + 1
+    _attempts_local(date, bump=True)              # 모델을 부르기 전에 적는다
+    base = _base(date, attempts)
+    try:
+        if md_current.get('report_date') == date and md_current.get('complete'):
+            datadir, oid = 'data', None
+        else:
+            datadir, oid = _market_for(clone, date, temp)
+            if not datadir:
+                return dict(base, status='error', reason='market_data_not_found', retryable=True)
+        bundle = collect(date, datadir, rank=Bld.ranker(diag=base['diagnostics']))
+        if oid and isinstance(bundle.get('market_snapshot'), dict):
+            bundle['market_snapshot'] = dict(bundle['market_snapshot'], path='data/market_data.json',
+                                             commit=oid)
+        base['counts'] = {'harvest': bundle.get('harvest'),
+                          'candidates': len(bundle.get('candidates') or []),
+                          'articles': [len(c['articles']) for c in bundle.get('candidates') or []]}
+        base['diagnostics'].update(gdelt=bundle.get('gdelt'), hosts=bundle.get('hosts'),
+                                   notes=bundle.get('notes'))
+        result = Bld.analyze(bundle, base)
+    except Interrupted:
+        raise
+    except Exception as e:
+        result = dict(base, status='error', reason=f'analyze_{type(e).__name__}'[:40], retryable=True)
+    if result.get('status') != 'ok' and attempts >= C.MAX_ATTEMPTS:
+        result['retryable'] = False                # 시도를 다 썼다 — 자리표시를 지운다
+    return result
+
+
 def tick(root, date=None, dry=False):
+    if dry:
+        os.environ['CONTESTED_DRY'] = '1'
     remote = _git(root, 'remote', 'get-url', 'origin')
     with tempfile.TemporaryDirectory(prefix='contested-') as temp:
         clone = os.path.join(temp, 'repo')
-        _git(temp, 'clone', '-q', '--no-local', '--single-branch', '--branch', 'main', '--depth', '50',
+        _git(temp, 'clone', '-q', '--no-local', '--single-branch', '--branch', 'main', '--depth', '80',
              remote, clone, timeout=300)
+        os.chdir(clone)                      # 스냅샷(git log)·게이트가 clone 기준으로 돈다
         md = _load(os.path.join(clone, 'data', 'market_data.json')) or {}
-        date = date or md.get('report_date')
-        C.iso_date(date)
-        today = datetime.now(KST).date()
-        if (today - datetime.fromisoformat(date).date()).days > MAX_AGE_DAYS:
-            return f'skip: {date} 는 오래된 기준일'
-        rel_json = f'data/contested/us/{date}.json'
-        jpath = os.path.join(clone, rel_json)
-        prev = _load(jpath)
-        page_rel = f'news/{date}.html'
-        page_path = os.path.join(clone, page_rel)
-        html = open(page_path, encoding='utf-8').read() if os.path.exists(page_path) else None
-        page_sha = _git(clone, 'rev-parse', f'HEAD:{page_rel}', check=False) if html else ''
-        todo = plan(prev, page_state(html), date)
-        if todo == 'skip':
-            return f'skip: {date} {(prev or {}).get("status", "미도착")} · 발행본 {page_state(html)}'
-        files, note = [], ''
-        result = prev
-        if todo == 'analyze':
-            if md.get('report_date') != date or not md.get('complete'):
-                return f'skip: {date} 시장 데이터 미완성'
-            os.chdir(clone)                      # 스냅샷(git log)·게이트가 clone 기준으로 돈다
-            from collect_contested import collect
-            import contested_build as Bld
-            attempts = ((prev or {}).get('attempts') or 0) + 1
-            now = datetime.now(timezone.utc).isoformat(timespec='seconds')
-            base = {'schema_version': C.SCHEMA_VERSION, 'market': 'us', 'span': 'daily',
-                    'report_date': date, 'status': 'error', 'reason': 'unknown', 'retryable': True,
-                    'attempts': attempts, 'collected_at': now, 'cutoff_at': now,
-                    'model': {k: Bld.MODELS[k] for k in ('pick', 'extract', 'verify')},
-                    'prompt_version': C.PROMPT_VERSION, 'market_snapshot': None, 'counts': {},
-                    'diagnostics': {'runner': 'local'},
-                    'event': {'topic_ko': '', 'query': '', 'trigger': []}}
-            bundle = collect(date, 'data', rank=Bld.ranker(diag=base['diagnostics']))
-            base['counts'] = {'harvest': bundle.get('harvest'),
-                              'candidates': len(bundle.get('candidates') or []),
-                              'articles': [len(c['articles']) for c in bundle.get('candidates') or []]}
-            base['diagnostics'].update(gdelt=bundle.get('gdelt'), hosts=bundle.get('hosts'),
-                                       notes=bundle.get('notes'))
-            try:
-                result = Bld.analyze(bundle, base)
-            except Exception as e:             # 결과 파일 없이 끝내지 않는다
-                result = dict(base, status='error', reason=f'analyze_{type(e).__name__}'[:40])
-            if result.get('status') != 'ok' and attempts >= C.MAX_ATTEMPTS:
-                result['retryable'] = False          # 시도를 다 썼다 — 자리표시를 지운다
-            _save(jpath, result)
-            files.append(rel_json)
-            # 마지막 결과 사본(공개 JSON 과 같은 내용, 본문 없음) — 러너 로그만으로 원인을 못 볼 때
-            with open(os.path.expanduser('~/Library/Caches/fdo2a-contested-last.json'), 'w') as fh:
-                json.dump(result, fh, ensure_ascii=False, indent=1)
-            note = f'{result["status"]}({result.get("reason") or "-"})'
-            if html is not None and page_state(html) == 'pending' and (
-                    result['status'] == 'ok' or C.settled(result, 'us', date)):
-                f, n = fill(clone, date, result)
-                files += f
-                note += f' · 발행본 {n}'
-        else:
-            f, n = fill(clone, date, result)
-            files += f
-            note = f'{result["status"]} · 발행본 {n}'
+        dates = [C.iso_date(date)] if date else _dates(clone, md)
+        files, shas, notes = [], {}, []
+        analyzed = False
+        for d in dates:
+            prev = _normalize(_load(os.path.join(clone, f'data/contested/us/{d}.json')))
+            page = os.path.join(clone, f'news/{d}.html')
+            html = open(page, encoding='utf-8').read() if os.path.exists(page) else None
+            if plan(prev, page_state(html), d) == 'analyze' and analyzed:
+                continue                       # 한 tick 에 분석은 한 날짜만 — 한도를 몰아 쓰지 않는다
+            got = handle(clone, temp, d, md, notes)
+            if got:
+                files += got[0]
+                shas.update(got[1])
+                analyzed = analyzed or any(f.startswith('data/') for f in got[0])
+        if not files:
+            return 'skip: 할 일 없음 ' + ' '.join(dates)
         if dry:
-            return f'dry-run: {date} {note}'
-        topic = ((result or {}).get('event') or {}).get('topic_ko') or ''
-        msg = (f'data: contested analysis us {date} — {note}' + (f' · {topic}' if topic else '')
-               + '\n\n로컬 러너(claude -p, 구독)가 만든 쟁점 분석 결과.')
-        return f'{date} {note} · {push(clone, files, msg, page_sha)}'
+            return 'dry-run: ' + ' / '.join(notes)
+        msg = 'data: contested analysis us — ' + ' / '.join(notes) + \
+            '\n\n로컬 러너(claude -p, 구독)가 만든 쟁점 분석 결과.'
+        return ' / '.join(notes) + ' · ' + push(clone, sorted(set(files)), msg, shas)
 
 
 def main(argv=None):
@@ -234,8 +359,14 @@ def main(argv=None):
         except OSError:
             print('[쟁점] 다른 tick 이 돌고 있다')
             return 0
+        def _term(*_):
+            raise Interrupted()
+        signal.signal(signal.SIGTERM, _term)
         try:
             print(f'[쟁점 {datetime.now(KST):%m-%d %H:%M}] {tick(root, a.date, a.dry_run)}')
+        except Interrupted:
+            print('[쟁점] SIGTERM — 정리하고 끝낸다(시도 횟수는 이미 적었다)', file=sys.stderr)
+            return 143
         except Exception as e:
             print(f'[쟁점] 실패 — {type(e).__name__}: {str(e)[:300]}', file=sys.stderr)
             return 1

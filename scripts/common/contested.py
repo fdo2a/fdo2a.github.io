@@ -36,7 +36,7 @@ MARKETS = ('us',)                 # 1단계. kr 은 출처 어댑터(네이버 �
 SPANS = ('daily',)                # 주간은 2단계 — 일간 ok 파일의 결정적 연대기
 STATUSES = ('ok', 'none', 'error')
 # 동결되는 none — 그날 다시 돌려도 결과가 같은 「편집상 결론」. 나머지는 재시도할 수 있다.
-FINAL_NONE = ('no_candidate', 'insufficient_sources', 'no_conflict')
+FINAL_NONE = ('no_candidate', 'insufficient_sources', 'no_conflict', 'below_threshold')
 MAX_ATTEMPTS = 3
 
 SPEAKER_ROLES = ('정치', '군', '시장', '전문가', '기타')
@@ -56,6 +56,14 @@ LIMITS = {'value': 40, 'unit': 12, 'entity': 40, 'origin': 60, 'query': 80,
           'topic_ko': 40, 'text_ko': 220, 'condition_ko': 120, 'name_ko': 30,
           'indicator_ko': 40, 'speaker_name': 40, 'direction_ko': 60}
 MIN_ORIGINS = 3                   # 최종 기사의 독립 출처(신디케이션 묶음) 하한
+MIN_PAIRS = 2                     # 「상충이 많은」 트리거 — 검증된 충돌 쌍 수(구현 검토 3차)
+ID_RE = {'claim': r'c\d{1,3}', 'issue': r'i\d{1,3}', 'pair': r'p\d{1,3}', 'obs': r'o\d{1,3}',
+         'var': r'v\d{1,3}'}
+
+
+def id_ok(kind, value):
+    """모델이 정한 ID 는 짧은 정해진 꼴만 — 본문을 ID 칸에 실어 공개하는 길을 막는다(3차 P1)."""
+    return isinstance(value, str) and re.fullmatch(ID_RE[kind], value) is not None
 ATTENTION_ORIGINS = 5             # 「세간의 주목」 트리거 — 후보 사건의 독립 출처 수
 
 # ── 시장 관측치 레지스트리 (US) ───────────────────────────────────────────
@@ -248,6 +256,14 @@ def _validate_ok(p):
     issues = {i.get('issue_id'): i for i in p.get('issues') or []}
     if len(issues) != len(p.get('issues') or []):
         errs.append('issue_id 중복')
+    for kind, rows, key in (('issue', p.get('issues'), 'issue_id'), ('claim', p.get('claims'), 'claim_id'),
+                            ('pair', p.get('pairs'), 'pair_id'), ('obs', p.get('observations'), 'obs_id'),
+                            ('var', (p.get('analysis') or {}).get('variables'), 'var_id')):
+        bad = [r.get(key) for r in rows or [] if not id_ok(kind, r.get(key))]
+        if bad:
+            errs.append(f'{key} 꼴이 아니다 ({len(bad)}개)')
+    if isinstance(trig, list) and not ('attention' in trig or len(p.get('pairs') or []) >= MIN_PAIRS):
+        errs.append('트리거 미달 — 주목(매체 ≥5) 또는 검증된 충돌 ≥2')
     _str(ev.get('query'), 'query', errs, 'event', empty_ok=True)
     for iid, i in issues.items():
         _str(i.get('issue_ko'), 'issue_ko', errs, f'issues[{iid}]')
@@ -539,7 +555,7 @@ class _Locate(HTMLParser):
         self._starts = [0]
         for m in re.finditer('\n', html):
             self._starts.append(m.end())
-        self.stack, self.sections, self.dupes, self.styles = [], [], [], []
+        self.stack, self.sections, self.dupes, self.styles, self.links = [], [], [], [], []
         self._open = None
         self._depth = 0
         self.feed(html)
@@ -560,13 +576,23 @@ class _Locate(HTMLParser):
             elif 'data-contested' in d:
                 self._open = {'start': self._off(), 'ancestors': list(self.stack), 'attrs': d}
                 self._depth = 0
+        if tag == 'link' and 'stylesheet' in (d.get('rel') or '').lower().split():
+            self.links.append(d.get('href') or '')
         if tag not in _VOID:
             self.stack.append((tag, d))
 
     def handle_startendtag(self, tag, attrs):
+        # 브라우저는 void 가 아닌 태그의 「/>」를 무시하고 그대로 연다 — <div hidden/> 는 열린 div 다(3차 P1)
+        if tag not in _VOID:
+            self.handle_starttag(tag, attrs)
+            return
         names = [k for k, _ in attrs]
         if len(names) != len(set(names)):
             self.dupes.append(tag)
+        if tag == 'link':
+            d = dict(attrs)
+            if 'stylesheet' in (d.get('rel') or '').lower().split():
+                self.links.append(d.get('href') or '')
 
     def handle_endtag(self, tag):
         if tag == 'section' and self._open is not None:
@@ -637,6 +663,9 @@ def check(html, payload, market, date, transforms=(), trusted_styles=None):
         bad = [s for s in loc.styles if s.strip() and s.strip() not in trusted_styles]
         if bad:
             errs.append(f'신뢰하지 않는 <style> 블록 {len(bad)}개')
+        links = [h for h in loc.links if f'link:{h}' not in trusted_styles]
+        if links:
+            errs.append(f'신뢰하지 않는 스타일시트 링크 {len(links)}개')
     if loc.dupes:
         errs.append(f'중복 속성이 있는 태그 {sorted(set(loc.dupes))}')
     st = payload.get('status') if payload else None

@@ -63,7 +63,7 @@ OUTLETS = {
 }
 _GARBAGE = ('outdated browser', 'enable javascript', 'subscribe to continue', 'sign in to read',
             'access denied', 'are you a robot', 'page not found', 'cookies are disabled')
-_EVENT_CATS = ('politics', 'economy', 'macro', 'industry', 'ai', 'global')
+_EVENT_CATS = ('politics', 'economy', 'macro', 'industry', 'ai', 'global', 'tech')
 _NEWS_FEEDS = ('politics', 'economy', 'industry', 'tech', 'global')
 
 
@@ -147,7 +147,10 @@ def harvest(ctx, now, run, fetch=get):
                 run.notes.append('harvest_time_cap')
                 break
             try:
-                got, _ = parse_feed_strict(fetch(url, ctx), cat)
+                got, why = parse_feed_strict(fetch(url, ctx), cat)
+                if why:                          # 200 으로 온 오류 페이지는 성공이 아니다(3차 P2)
+                    run.notes.append(f'feed:{cat}:malformed')
+                    continue
                 ok += 1
             except Exception as e:
                 run.notes.append(f'feed:{cat}:{type(e).__name__}')

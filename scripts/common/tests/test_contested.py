@@ -369,7 +369,8 @@ def _bundle(arts):
     return {'status': 'ok', 'gdelt': 'ok', 'registry': REG, 'hosts': {},
             'market_snapshot': {'path': 'data/market_data.json', 'commit': 'abc', 'sha256': 'def'},
             'candidates': [{'cand_id': 'k1', 'query': 'france protests', 'titles': ['t'],
-                            'outlets_seen': ['The Guardian', 'CNBC', 'The Korea Times'], 'articles': arts}]}
+                            'outlets_seen': ['The Guardian', 'CNBC', 'The Korea Times', 'BBC', 'AP'],
+                            'articles': arts}]}
 
 
 def _base():
@@ -474,11 +475,11 @@ def test_model_error_is_retryable():
     assert p['status'] == 'error' and p['retryable']
 
 
-def test_throttled_without_sources_is_terminal_for_the_day():
+def test_throttled_is_retried_by_the_next_tick_within_the_cap():
     b = _bundle(arts3()[:2])
     b['gdelt'] = 'throttled'
     p = Bld.analyze(b, _base(), call=_fake({}, {}))
-    assert p['reason'] == 'gdelt_throttled' and not p['retryable']
+    assert p['reason'] == 'gdelt_throttled' and p['retryable']
 
 
 def test_claude_cli_parsing():
@@ -535,3 +536,60 @@ def test_ranker_falls_back_to_score_order():
         raise Bld.ModelError('x')
     assert Bld.ranker(call=boom)([{'cand_id': 'k1'}]) == []
     assert Bld.ranker(call=lambda *a, **k: {'order': ['k2', 'k1']})([]) == ['k2', 'k1']
+
+
+def test_one_conflict_without_attention_is_below_threshold():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    b = _bundle(arts)
+    b['candidates'][0]['outlets_seen'] = b['candidates'][0]['outlets_seen'][:3]
+    p = Bld.analyze(b, _base(), call=_fake(x, _verdict(x)))
+    assert p['reason'] == 'below_threshold' and C.settled_final(dict(p, schema_version=1))
+
+
+def test_body_in_id_field_is_dropped():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    big = arts[0]['body']
+    x['claims'][0]['claim_id'] = big
+    x['pairs'][0]['a'] = big
+    _, claims, pairs, _ = Bld.ground(x, arts, REG)
+    assert big not in claims and pairs == []
+
+
+def test_self_closing_hidden_wrapper_is_caught():
+    p = payload()
+    html = published(p)
+    sec = _sec(html)
+    for wrap in ('<noscript/>{s}</noscript>', '<div hidden/>{s}</div>'):
+        assert gate(html.replace(sec, wrap.format(s=sec)), p)
+
+
+def test_linked_stylesheet_is_caught():
+    p = payload()
+    html = published(p).replace('</head>', '<link rel="stylesheet" href="data:text/css,%23contested%7Bdisplay%3Anone%7D"></head>')
+    assert any('링크' in x for x in gate(html, p))
+
+
+def test_incomplete_fetch_is_retryable():
+    b = _bundle(arts3()[:2])
+    b['hosts'] = {'cnbc.com': 'ok', 'bbc.com': 'fail:TimeoutError'}
+    p = Bld.analyze(b, _base(), call=_fake({}, {}))
+    assert p['reason'] == 'fetch_incomplete' and p['retryable']
+
+
+def test_runner_local_attempts_and_normalize(tmp_path, monkeypatch):
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'st.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    assert L._attempts_local(DATE) == 0
+    assert L._attempts_local(DATE, bump=True) == 1
+    assert L._attempts_local(DATE) == 1
+    monkeypatch.setenv('CONTESTED_DRY', '1')
+    L._attempts_local(DATE, bump=True)
+    assert L._attempts_local(DATE) == 1
+    assert L._normalize([1]) is None
+    assert L._normalize({'attempts': 'bad'})['attempts'] == 0
+
+
+def test_runner_interrupt_is_base_exception():
+    assert not issubclass(L.Interrupted, Exception)
