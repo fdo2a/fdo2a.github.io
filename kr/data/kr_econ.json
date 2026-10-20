@@ -1,6 +1,15 @@
 {
   "source": "ECOS (한국은행 경제통계시스템)",
   "series": {
+    "국고채 3년": {
+      "value": 3.84,
+      "date": "2026-10-20",
+      "unit": "연%",
+      "item_name": "국고채(3년)",
+      "prev": 3.877,
+      "prev_date": "2026-10-19",
+      "bp": -3.7
+    },
     "국고채 10년": {
       "value": 4.176,
       "date": "2026-10-20",
@@ -38,8 +47,70 @@
       "bp": 0.0
     }
   },
-  "missing": [
-    "국고채 3년"
-  ],
-  "expectations": {}
+  "missing": [],
+  "expectations": {
+    "policy": {
+      "label": "정책 기대",
+      "numerator": "국고채 3년",
+      "denominator": "한국은행 기준금리",
+      "note": "3년물이 기준금리보다 얼마나 위인가 — 정책 경로와 기간프리미엄이 섞여 있다",
+      "bp": 84.0,
+      "date": "2026-10-20",
+      "sessions": 531,
+      "change_bp": -3.7,
+      "prev_date": "2026-10-19",
+      "standing": {
+        "percentile": 77.2,
+        "sessions": 531,
+        "window": "2년",
+        "days": null,
+        "share_pct": 23,
+        "side": "high",
+        "short": "넓은 쪽 23% 안",
+        "text": "최근 2년(531거래일) 가운데 넓은 쪽 23% 안"
+      }
+    },
+    "growth": {
+      "label": "성장 기대",
+      "numerator": "국고채 10년",
+      "denominator": "국고채 3년",
+      "note": "커브 기울기 — 장기 성장·물가 기대가 단기 정책 기대를 얼마나 웃도나",
+      "bp": 33.6,
+      "date": "2026-10-20",
+      "sessions": 531,
+      "change_bp": 0.8,
+      "prev_date": "2026-10-19",
+      "standing": {
+        "percentile": 43.5,
+        "sessions": 531,
+        "window": "2년",
+        "days": null,
+        "share_pct": null,
+        "side": "mid",
+        "short": "한가운데쯤",
+        "text": "최근 2년(531거래일)의 한가운데쯤"
+      }
+    },
+    "credit": {
+      "label": "신용 가격",
+      "numerator": "회사채 AA- 3년",
+      "denominator": "국고채 3년",
+      "note": "같은 만기에서 신용 위험에 매겨진 값",
+      "bp": 69.4,
+      "date": "2026-10-20",
+      "sessions": 531,
+      "change_bp": 1.1,
+      "prev_date": "2026-10-19",
+      "standing": {
+        "percentile": 94.2,
+        "sessions": 531,
+        "window": "2년",
+        "days": 29,
+        "share_pct": null,
+        "side": "high",
+        "short": "이보다 넓었던 날이 29일뿐",
+        "text": "최근 2년(531거래일) 가운데 이보다 넓었던 날이 29일뿐"
+      }
+    }
+  }
 }
