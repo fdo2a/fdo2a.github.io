@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-20",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-20T22:32:12+00:00",
- "cutoff_at": "2026-10-20T22:32:12+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-20T22:39:57+00:00",
+ "cutoff_at": "2026-10-20T22:39:57+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 34259,
-   "out": 10619
+   "in": 19178,
+   "out": 5661
   },
   "discovery": "throttled",
   "hosts": {
@@ -41,29 +41,12 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "2/2",
-   "pairs": "1/1",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7
-  }
+  "gdelt": "throttled"
  },
  "event": {
   "topic_ko": "트럼프의 캐나다산 제품 50% 관세(1930년 관세법 338조)에 대한 ",
   "query": "trump canadian tariffs",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "edges[0]:unverified",
-  "edges[2]:unverified",
-  "memo[2]:unverified",
-  "worry.most[0]:unverified"
- ],
- "content_hash": "98d40783d1b275e2"
+ "content_hash": "ba1ce16efe40e814"
 }
