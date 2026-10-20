@@ -89,7 +89,68 @@ def plain(fragment):
 
 def css(market):
     name = MARKETS.get(market, {}).get('css', market)
-    return (CSS_DIR / f'{name}.css').read_text(encoding='utf-8')
+    return ((CSS_DIR / f'{name}.css').read_text(encoding='utf-8')
+            + (CSS_DIR / 'wayfinding.css').read_text(encoding='utf-8'))
+
+
+# Stylesheets earlier posts were published with. Gates that trust "what the shell renders"
+# (check_contested) must keep trusting posts still inside their correction window.
+LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css',), 'kr': ('legacy/kr-2026-10-20.css',)}
+
+
+def legacy_css(market):
+    name = MARKETS.get(market, {}).get('css', market)
+    return [(CSS_DIR / p).read_text(encoding='utf-8') for p in LEGACY_CSS.get(name, ())]
+
+
+# Post footer: previous / next post and, for US, the same day's news brief. The next post
+# and the news brief do not exist when a post is rendered, so the links are filled from the
+# archive index at read time and stay hidden if it cannot be read.
+_FOOT_JS = '''<script>(function(){
+var f=document.querySelector('nav.post-foot');if(!f)return;var key=f.getAttribute('data-key');
+function show(c,h){var a=f.querySelector('.'+c);if(a&&h){a.setAttribute('href',h);a.hidden=false;}}
+function get(u){return fetch(u,{cache:'no-cache'}).then(function(r){if(!r.ok)throw r;return r.json();});}
+function keyOf(p){return p&&(p.date||p.key);}
+get(f.getAttribute('data-index')).then(function(list){
+var keys=list.map(keyOf).filter(Boolean).sort();var i=keys.indexOf(key);if(i<0)return;
+if(i>0)show('pf-prev',keys[i-1]+'.html');if(i<keys.length-1)show('pf-next',keys[i+1]+'.html');
+}).catch(function(){});
+var news=f.getAttribute('data-news-index');
+if(news)get(news).then(function(list){
+if(list.some(function(p){return keyOf(p)===key;}))show('pf-news','../news/'+key+'.html');
+}).catch(function(){});
+var map=document.querySelector('nav.reading-map');if(!map)return;
+var links=[].slice.call(map.querySelectorAll('a[href^="#"]'));
+var secs=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});
+var cur=-1,queued=false;
+function update(){queued=false;
+if(map.scrollLeft+map.clientWidth<map.scrollWidth-2)map.setAttribute('data-more','');
+else map.removeAttribute('data-more');
+var y=map.getBoundingClientRect().bottom+32,at=-1;
+secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top<=y)at=i;});
+if(at===cur)return;cur=at;
+links.forEach(function(a,i){if(i===at)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current');});
+if(at>=0)map.scrollTo({left:Math.max(0,links[at].offsetLeft-map.offsetLeft-24)});}
+function later(){if(!queued){queued=true;requestAnimationFrame(update);}}
+window.addEventListener('scroll',later,{passive:true});window.addEventListener('resize',later);
+map.addEventListener('scroll',later,{passive:true});update();
+})();</script>'''
+
+
+def footer(market, date):
+    index = '../news.json' if market == 'news' else '../posts.json'
+    # Not `data-news`: news_gate reads any element carrying that attribute as an article.
+    news = ' data-news-index="../news.json"' if market == 'us' else ''
+    news_link = ('\n  <a class="pf-news" hidden>같은 날 뉴스·산업 →</a>' if market == 'us' else '')
+    return (f'<nav class="post-foot" aria-label="다른 글로 이동" data-index="{index}" '
+            f'data-key="{date}"{news}>\n'
+            '  <a class="pf-prev" hidden>‹ 이전 글</a>\n'
+            '  <a class="pf-next" hidden>다음 글 ›</a>'
+            f'{news_link}\n'
+            # Bare "#" scrolls to the top without an id — parsers match the topbar verbatim.
+            '  <a href="#">↑ 처음으로</a>\n'
+            '  <a href="../index.html">전체 보고서</a>\n'
+            f'</nav>\n{_FOOT_JS}')
 
 
 def _selectors(stylesheet):
@@ -188,5 +249,5 @@ def render(market, date, meta, body):
         f'{ADSENSE}\n{MARKER}\n<style>\n{css(market)}</style>\n{ANALYTICS}\n</head>\n'
         # US·KR 일간은 PM 이 읽는 -다 문서다 — check_style 이 이 선언을 보고 데스크 검사를 건다.
         f'<body data-register="da">\n<div class="topbar">{topbar}</div>\n{nav}\n'
-        f'<div class="doc">{body}</div>\n</body>\n</html>\n'
+        f'<div class="doc">{body}</div>\n{footer(market, date)}\n</body>\n</html>\n'
     )

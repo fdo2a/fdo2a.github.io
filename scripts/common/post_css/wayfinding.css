@@ -1,0 +1,64 @@
+
+/* Wayfinding and contrast — appended to every market stylesheet by post_shell.css().
+   2026-10-21 impeccable critique: muted text and gain/loss colours were 2.6-3.5:1, mobile
+   tables dropped to 11px, and a 21,731px daily post had no way to move between posts.
+   Registered blocks (readability-v5, signcolor-v1, fund and sector renderers) are replayed
+   byte for byte by the gates, so their colours are overridden here by specificity and are
+   never edited at the source. --pad must equal the container's side padding. */
+.doc, .container { --pad:16px; }
+@media (max-width:560px) { .doc, .container { --pad:14px; } }
+
+.doc td.sc-up, :is(.doc, .container) .pos, .doc .fund-board .fb-p, .doc .fund-kr .fk-p,
+.doc .spf-val.p { color:#007A45; }
+.doc td.sc-dn, :is(.doc, .container) .neg, .doc .fund-board .fb-n, .doc .fund-kr .fk-n,
+.doc .spf-val.n { color:#C8282E; }
+.doc .fund-board .fb-t, .doc .fund-board .fb-note, .doc .fund-kr .fk-note, .doc .spf-val.z,
+nav.reading-map .reading-map-label { color:#5F6B7A; }
+/* Renderers that write the colour inline (sector values, editor note, nav links). The match
+   needs a declaration boundary before `color:` so background-color/border-color do not count. */
+[style^="color:#8B95A1" i], [style^="color: #8B95A1" i], [style*=";color:#8B95A1" i], [style*=";color: #8B95A1" i], [style*=" color:#8B95A1" i], [style*=" color: #8B95A1" i]
+  { color:#5F6B7A !important; }
+[style^="color:#e5342b" i], [style^="color: #e5342b" i], [style*=";color:#e5342b" i], [style*=";color: #e5342b" i], [style*=" color:#e5342b" i], [style*=" color: #e5342b" i]
+  { color:#C8282E !important; }
+[style^="color:#00a763" i], [style^="color: #00a763" i], [style*=";color:#00a763" i], [style*=";color: #00a763" i], [style*=" color:#00a763" i], [style*=" color: #00a763" i]
+  { color:#007A45 !important; }
+
+@media (max-width:560px) {
+  .tbl-scroll table:not(.stance-tbl) :is(th, td), .tbl-scroll td .sub { font-size:13px; }
+}
+/* Scroll shadow: shows only on the side that still hides columns. The cover gradients are
+   white, so only on white cards. */
+.card:not(.headline-card) .tbl-scroll {
+  background:
+    linear-gradient(to right, #fff 30%, rgba(255,255,255,0)) left / 24px 100% no-repeat local,
+    linear-gradient(to left, #fff 30%, rgba(255,255,255,0)) right / 24px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(25,31,40,.16), transparent) left / 10px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(25,31,40,.16), transparent) right / 10px 100% no-repeat scroll;
+}
+
+nav.reading-map { position:sticky; top:0; z-index:5; background:#F2F4F6;
+  margin:-2px calc(-1 * var(--pad, 16px)) 20px; padding:10px var(--pad, 16px) 8px;
+  box-shadow:0 1px 0 #E5E8EB; }
+nav.reading-map[data-more] { -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  mask-image:linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+nav.reading-map a { transition:background-color .15s cubic-bezier(.23,1,.32,1), color .15s cubic-bezier(.23,1,.32,1); }
+nav.reading-map a[aria-current="true"] { background:#0064FF; border-color:#0064FF; color:#fff; }
+:is(.doc, .container) section { scroll-margin-top:64px; }
+
+nav.post-foot { max-width:1120px; margin:8px auto 48px; padding:0 var(--pad, 16px);
+  display:flex; flex-wrap:wrap; gap:8px; --pad:16px; }
+nav.post-foot a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px;
+  background:#fff; border:1px solid #E5E8EB; border-radius:9999px; color:#191F28;
+  font-size:14px; font-weight:700; text-decoration:none;
+  transition:border-color .15s cubic-bezier(.23,1,.32,1), transform .1s cubic-bezier(.23,1,.32,1); }
+nav.post-foot a[hidden] { display:none; }
+nav.post-foot .pf-news { color:#0064FF; border-color:#B9D5FF; background:#F5F9FF; }
+nav.post-foot a:hover { border-color:#B9D5FF; }
+nav.post-foot a:active { transform:scale(.97); }
+nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
+@media (max-width:560px) { nav.post-foot { --pad:14px; } }
+@media (prefers-reduced-motion:reduce) { nav.post-foot a, nav.reading-map a { transition:none; } }
+@media print {
+  nav.post-foot { display:none; }
+  nav.reading-map { position:static; box-shadow:none; }
+}

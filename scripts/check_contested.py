@@ -33,11 +33,16 @@ def trusted_styles(market, date):
     """셸·가독성·색이 넣는 `<style>` 블록 — 이 밖의 스타일은 섹션을 숨길 수 있다."""
     from scripts.common import analytics, post_shell
     body = '<section><div class="card headline-card"><h1>제목</h1><p>본문이다.</p></div></section>'
-    raw = post_shell.render(SHELL[market], date, {'title': 't', 'summary': 's'}, body)
+    shell = SHELL[market]
+    raw = post_shell.render(shell, date, {'title': 't', 'summary': 's'}, body)
+    # Posts still inside the correction window were published with an earlier stylesheet.
+    current = post_shell.css(shell)
+    raws = [raw] + [raw.replace(current, old, 1) for old in post_shell.legacy_css(shell)]
     out = set()
-    for t in ((lambda h: h),) + transforms() + (lambda h: analytics.inject(transforms()[2](h)),):
-        loc = C._Locate(t(raw))
-        out |= {s.strip() for s in loc.styles if s.strip()} | {f'link:{h}' for h in loc.links}
+    for page in raws:
+        for t in ((lambda h: h),) + transforms() + (lambda h: analytics.inject(transforms()[2](h)),):
+            loc = C._Locate(t(page))
+            out |= {s.strip() for s in loc.styles if s.strip()} | {f'link:{h}' for h in loc.links}
     return out
 
 
