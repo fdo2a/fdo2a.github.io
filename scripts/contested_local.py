@@ -77,8 +77,9 @@ def page_state(html):
 def plan(prev, page, date):
     """이번 tick 에 할 일 — 'analyze'·'fill'·'clear'·'skip'."""
     done = C.settled(prev, 'us', date)
-    if page in ('section', 'omitted'):
-        return 'skip'                         # 발행 증거가 묶였다 — 그 날짜 결과는 바꾸지 않는다
+    if page in ('section', 'omitted', 'absent'):
+        # 발행 증거가 묶였거나, 쟁점 자리 없이 나간 글(이 기능 전 발행본·확정 none 으로 지운 자리)
+        return 'skip'
     if not done:
         return 'analyze'
     if page == 'pending':

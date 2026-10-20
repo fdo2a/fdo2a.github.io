@@ -510,6 +510,7 @@ def test_runner_plan():
     assert L.plan(ok, 'section', DATE) == 'skip'
     assert L.plan(None, 'omitted', DATE) == 'skip'           # 발행 증거가 묶였다
     assert L.plan(ok, 'none', DATE) == 'skip'
+    assert L.plan(None, 'absent', DATE) == 'skip'          # 이 기능 전에 나간 글
     assert L.page_state(R.apply(page(), None)) == 'pending'
 
 
