@@ -212,7 +212,7 @@ ANALYZE_MAX_HOURS = 36        # 기준일 발행 뒤 이만큼 지나면 분석�
 
 
 def _attempts_local(date, bump=False, at_least=0, market='us'):
-    """날짜별 시도 횟수를 로컬에도 적는다 — 푸시가 계속 실패해도 3회 상한이 걸린다(3차 P2).
+    """날짜별 시도 횟수를 로컬에도 적는다 — 푸시가 계속 실패해도 시도 상한(MAX_ATTEMPTS)이 걸린다(3차 P2).
     열쇠는 `시장:날짜`. US 는 옛 열쇠(날짜만)도 읽는다."""
     try:
         with open(STATE, encoding='utf-8') as fh:

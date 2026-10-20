@@ -47,7 +47,7 @@ SPANS = ('daily',)                # 주간은 2단계 — 일간 ok 파일의 �
 STATUSES = ('ok', 'none', 'error')
 # 동결되는 none — 그날 다시 돌려도 결과가 같은 「편집상 결론」. 나머지는 재시도할 수 있다.
 FINAL_NONE = ('no_candidate', 'insufficient_sources', 'no_conflict', 'below_threshold')
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 5
 
 SPEAKER_ROLES = ('정치', '군', '시장', '전문가', '기타')
 MODALITIES = ('fact', 'forecast', 'allegation', 'opinion')
