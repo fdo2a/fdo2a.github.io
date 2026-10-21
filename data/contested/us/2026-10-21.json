@@ -1,0 +1,51 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-10-21",
+ "status": "error",
+ "reason": "gdelt_throttled",
+ "retryable": true,
+ "attempts": 0,
+ "collected_at": "2026-10-21T22:56:36+00:00",
+ "cutoff_at": "2026-10-21T22:56:36+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": null,
+ "counts": {
+  "harvest": 218,
+  "candidates": 3,
+  "articles": [
+   2,
+   2,
+   1
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "tokens": {
+   "in": 4917,
+   "out": 70
+  },
+  "discovery": "throttled",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok",
+   "aljazeera.com": "short"
+  },
+  "notes": [],
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "dd60050afbeabbd7"
+}
