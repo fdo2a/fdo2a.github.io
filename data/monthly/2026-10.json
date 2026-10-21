@@ -4,10 +4,8 @@
   "start_date": "2026-10-01",
   "end_date": "2026-10-21",
   "sessions": 15,
-  "complete": false,
-  "missing": [
-    "yields.2Y: 2026-10-21 값 없음 (원장 끝 2026-10-20)"
-  ],
+  "complete": true,
+  "missing": [],
   "indices": {
     "Nasdaq": {
       "start": 26861.064453125,
@@ -216,10 +214,15 @@
     "basket_excess_pct": -11.7631
   },
   "yields": {
+    "2Y": {
+      "start": 4.887,
+      "end": 4.823,
+      "chg_bp": -6.4
+    },
     "5Y": {
       "start": 5.089,
-      "end": 4.972,
-      "chg_bp": -11.7
+      "end": 4.97,
+      "chg_bp": -11.9
     },
     "10Y": {
       "start": 5.293,
@@ -228,8 +231,8 @@
     },
     "30Y": {
       "start": 5.639,
-      "end": 5.439,
-      "chg_bp": -20.0
+      "end": 5.437,
+      "chg_bp": -20.2
     }
   },
   "series": {
@@ -697,6 +700,11 @@
     ]
   },
   "curve": {
+    "spread_2s10s_bp": {
+      "start": 40.6,
+      "end": 32.3,
+      "chg": -8.3
+    },
     "spread_5s30s_bp": {
       "start": 55.0,
       "end": 46.7,

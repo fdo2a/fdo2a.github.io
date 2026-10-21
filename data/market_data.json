@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-22 06:49 KST",
+  "generated": "2026-10-22 07:44 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-21",
   "indices": {
@@ -329,33 +329,37 @@
     }
   },
   "yields": {
-    "2Y": null,
-    "5Y": {
-      "level": 4.972,
+    "2Y": {
+      "level": 4.823,
       "date": "2026-10-21",
-      "bp": 3.7000179290771484,
+      "bp": 3.6000000000000476,
+      "week_ago": 4.802,
+      "week_ago_date": "2026-10-14",
+      "source": "Naver"
+    },
+    "5Y": {
+      "level": 4.97,
+      "date": "2026-10-21",
+      "bp": 3.599999999999959,
       "week_ago": 4.992,
       "week_ago_date": "2026-10-14",
-      "ticker": "^FVX",
-      "source": "Yahoo"
+      "source": "Naver"
     },
     "10Y": {
       "level": 5.146,
       "date": "2026-10-21",
-      "bp": 2.8999805450439453,
+      "bp": 2.8999999999999915,
       "week_ago": 5.19,
       "week_ago_date": "2026-10-14",
-      "ticker": "^TNX",
-      "source": "Yahoo"
+      "source": "Naver"
     },
     "30Y": {
-      "level": 5.439,
+      "level": 5.437,
       "date": "2026-10-21",
-      "bp": 1.399993896484375,
-      "week_ago": 5.525,
+      "bp": 1.2000000000000455,
+      "week_ago": 5.524,
       "week_ago_date": "2026-10-14",
-      "ticker": "^TYX",
-      "source": "Yahoo"
+      "source": "Naver"
     }
   },
   "yields_fred": {
@@ -559,12 +563,12 @@
     }
   },
   "sector_performance_as_of": "2026-10-21",
-  "spread_5s30s_bp": 46.69999999999996,
-  "complete": false,
-  "missing": [
-    "yields/naver_close_not_posted",
-    "yields/2Y"
-  ],
+  "spread_2s10s_bp": 32.299999999999955,
+  "spread_2s10s_aligned": true,
+  "spread_2s10s_basis": "2Y·10Y 모두 Naver 2026-10-21 동일 기준일",
+  "spread_5s30s_bp": 46.70000000000005,
+  "complete": true,
+  "missing": [],
   "price_context": {
     "windows": {
       "move": 60,
@@ -1066,9 +1070,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25645.04,
-            "pct": 1.35,
-            "date": "2026-10-21"
+            "close": 25304.42,
+            "pct": -0.06,
+            "date": "2026-10-20"
           },
           {
             "name": "FTSE100",
@@ -1080,15 +1084,15 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6207.52,
-            "pct": 1.4,
-            "date": "2026-10-21"
+            "close": 6121.66,
+            "pct": -0.38,
+            "date": "2026-10-20"
           }
         ],
         "alignment": {
-          "label": "이어감",
-          "avg_pct": 0.98,
-          "mixed": false
+          "label": "보합",
+          "avg_pct": -0.08,
+          "mixed": true
         }
       }
     },

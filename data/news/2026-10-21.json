@@ -88,10 +88,10 @@
       "url": "https://www.cnbc.com/2026/10/21/ibm-q3-earnings-report-2026.html",
       "title": "IBM beats on top and bottom lines as CEO Krishna touts 'Super Intelligence' traction",
       "summary": "CEO Arvind Krishna indicated that IBM is helping clients in artificial intelligence.",
-      "published": "2026-10-21T21:21:40+00:00",
+      "published": "2026-10-21T22:03:37+00:00",
       "category": "ai",
       "source": "CNBC",
-      "body_chars": 2436,
+      "body_chars": 2500,
       "body_file": "15-ai.txt",
       "summary_ko": "IBM이 2026년 3분기 실적에서 매출과 순이익 모두 시장 예상을 웃돌았다고 CNBC가 21일(현지시간) 보도했다. 매출은 전년 대비 약 5% 늘었고 순이익은 21억9000만달러(주당 2.30달러)로 증가했다. 소프트웨어 매출은 8% 성장한 78억달러로 컨센서스를 넘었고, 인프라 매출도 4% 늘어 예상치를 상회했다. 반면 컨설팅 매출은 53억4000만달러로 보합에 그쳐 소폭 부진했으며, 매출총이익률도 전분기보다 낮아졌다. 회사는 2026년 연간 잉여현금흐름이 10억달러 이상 늘고 상수환율 기준 매출 성장률은 4~5%일 것으로 제시했다. 시간외 거래에서 주가는 올랐지만 연초 대비로는 15% 하락한 상태다.",
       "summary_model": "claude-haiku-5-5"
@@ -130,7 +130,8 @@
       "source": "CNBC",
       "body_chars": 2427,
       "body_file": "24-politics.txt",
-      "summary_note": "분량 벗어남 414자"
+      "summary_ko": "트럼프 미국 대통령은 2026년 10월 21일(현지시간) 우크라이나에서 스페이스X의 위성 인터넷 스타링크 속도가 느려진 데 자신이 관여하지 않았다고 부인했다. 그는 일론 머스크가 이를 지시했는지도 모른다고 말했다. 이번 부인은 월스트리트저널이 미국 관리 등을 인용해 머스크가 속도 제한을 지시하고 이를 트럼프와 논의했다고 보도한 다음 날 나왔다. 군용 버전인 스타실드의 장애로 일부 우크라이나 드론이 사실상 쓸모없게 되어 러시아 공격에 대한 방어력이 약해졌다. 젤렌스키 대통령은 전선 여러 곳에서 스타링크와 스타실드의 속도 제한이 계속되고 있으며 미국 측이 설명하지 않았다고 밝혔다. 저널은 속도 제한이 처음 알려진 뒤 머스크와 트럼프가 이를 논의했다고 전했다. 머스크는 스타실드가 미 정부가 소유·통제하며 속도와 사용 제한은 미군과 대통령이 결정한다고 주장했다. 다만 두 사람 모두 누가 명령했는지는 밝히지 않았다. 공화당 존 코닌 상원의원은 백악관의 묵인 없이 머스크가 속도를 제한했을 것 같지 않다고 말했다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108443323",
@@ -163,10 +164,10 @@
       "url": "https://www.cnbc.com/2026/10/21/tesla-tsla-q3-2026-earnings-report.html",
       "title": "Tesla beats on earnings and sales even as auto revenue declines",
       "summary": "Tesla reported better-than-expected third-quarter results.",
-      "published": "2026-10-21T21:15:57+00:00",
+      "published": "2026-10-21T22:35:36+00:00",
       "category": "industry",
       "source": "CNBC",
-      "body_chars": 3603,
+      "body_chars": 5264,
       "body_file": "27-industry.txt",
       "summary_ko": "테슬라가 2026년 3분기 실적을 발표했다. 21일(현지시간) 장 마감 후 공개된 결과는 시장 추정치를 웃돌았으나 자동차 매출은 줄었다. 총매출은 전년과 비슷했고, 자동차 매출은 3% 감소한 205억6000만 달러, 에너지 매출은 16% 감소한 28억8000만 달러였다. 서비스·기타 매출은 33% 늘어난 46억1000만 달러로 일부 상쇄했다. 회사는 평균 판매가격 하락과 배터리 공급 차질을 자동차 부진의 원인으로 꼽았다. 순이익은 29% 줄어 7억8700만 달러(주당 22센트)였다. 로봇과 인공지능 투자로 설비투자가 두 배 넘게 늘어 37억3000만 달러에 달했고, 잉여현금흐름은 62% 급감한 15억3000만 달러였다. 완전 자율주행 기능 FSD(감독형)의 활성 구독은 67% 늘어난 174만 건이다. 머스크 CEO는 전날 스페이스X 콘퍼런스콜에서 두 회사 합병이 \"좋은 아이디어\"라고 말했다. 양사 이사회는 특별위원회를 꾸렸으며, 테슬라 주주 과반 찬성이 필요해 넘기 힘든 장벽이라고 덧붙였다.",
       "summary_model": "claude-haiku-5-5"
@@ -265,21 +266,6 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/43ca9e3e8c1a1a1372f8363434664715e69a3447?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/43ca9e3e8c1a1a1372f8363434664715e69a3447?source=rss",
-      "title": "中国の若者が《ちいかわ》に熱狂、日中関係が悪くても「こぞってグッズを買う」その背景にある“若者の心を掴む理由”(東洋経済オンライン)",
-      "summary": "日本で大ブームを巻き起こしているちいかわは、中国語圏では「吉伊卡哇」と呼ばれ、中国の若者の間でも人気を集めている。学生や若い社会人をはじめ、アニメ文化を好む人々を中心に幅広く支持されているのだ。【写真",
-      "published": "2026-10-21T21:00:42+00:00",
-      "category": "global",
-      "source": "Yahoo!ニュース",
-      "region": "china",
-      "wire": "東洋経済オンライン",
-      "body_chars": 876,
-      "body_file": "06-global.txt",
-      "summary_ko": "중국 젊은층 사이에서 일본 캐릭터 치이카와가 인기를 끌고 있다. 중국어권에서는 '길이카와'라 불리며 학생과 젊은 직장인, 애니메이션 팬을 중심으로 폭넓은 지지를 받는다. 일본에서는 2022년 TV 애니메이션 방영 이후 인지도가 높아졌고, 이미지와 짧은 영상, 채팅용 스티커가 해외로 퍼지는 기반이 되었다. 중국에서는 2023년경부터 인기가 오르기 시작해 SNS와 애니메이션 커뮤니티를 통해 확산되었다. 전환점은 2024년 3월 29일 상하이에 문을 연 치이카와와 미니소(MINISO)의 공식 팝업스토어였다. 현지 보도에 따르면 개점 첫 3일간 매출이 약 800만 위안(약 1억 9000만 엔)에 달했고, 매장 앞 긴 줄도 화제가 되었다. 이후 청두 등 다른 도시로 관련 행사가 번졌으며, 올해 9월에는 상하이에 치이카와 라멘집이 시범 오픈했다. 캐릭터의 표정이 담긴 스티커와 이미지가 SNS에서 퍼지면서 생활 속 문화로 자리 잡고 있다고 기사는 전한다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
       "guid": "108440402",
       "url": "https://www.cnbc.com/2026/10/21/oil-price-today-wti-brent-rise-on-middle-east-worries.html",
       "title": "Oil prices mixed as traders assess Middle East developments",
@@ -289,8 +275,36 @@
       "source": "CNBC",
       "region": "mideast",
       "body_chars": 2137,
+      "body_file": "06-global.txt",
+      "summary_ko": "2026년 10월 21일(현지시간) 국제유가는 중동 공급 차질 우려 속에 혼조세로 마감했다. 브렌트유 선물은 3센트 오른 배럴당 108.82달러, 미국 WTI는 67센트 내린 97.15달러를 기록했다. 이란 혁명수비대는 자국이 정한 비인가 항로로 호르무즈 해협을 통과하려던 유조선 3척이 기뢰에 막혔다고 밝혔고, 폭발로 유조선 2척에 불이 붙어 항행이 중단됐다고 주장했다. 예멘 후티 반군도 사우디 아람코 시설과 리야드·아브하 공항을 겨냥한 공격을 자신들이 감행했다고 주장했다. 이에 해상운송비도 급등했다. 골드만삭스에 따르면 글로벌 원유 평균 운임은 배럴당 20달러를 넘어 1년 전 3달러의 약 7배 수준이다. 이 가운데 약 7달러는 호르무즈 해협 전쟁 위험 할증료, 4달러는 페르시아만 밖 선박 간 환적에서 비롯된 것으로 추산됐다. 골드만삭스는 운송비 상승이 원유 등급 간 가격 차이를 벌리고 정유사 마진을 압박해 정제연료 가격을 끌어올릴 수 있으며, 아시아 정유사 부담이 특히 크다고 경고했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108438754",
+      "url": "https://www.cnbc.com/2026/10/21/webull-us-customer-data-china-access.html",
+      "title": "House committee says Webull messages point to China access to U.S. customer data",
+      "summary": "The House Select Committee on China earlier this month said online investing platform Webull is quietly \"tied in structural ways\" to China's government.",
+      "published": "2026-10-21T11:05:18+00:00",
+      "category": "global",
+      "source": "CNBC",
+      "region": "china",
+      "body_chars": 5962,
       "body_file": "07-global.txt",
-      "summary_note": "분량 벗어남 459자"
+      "summary_ko": "하원 중국 특별위원회가 공개한 내부 메신저 기록에 따르면, Webull 직원 Zhenghan Wang은 2021년 미국 고객 계좌 승인 논의 중 중국에 머물며 미국 고객 정보에 접근할 수 있었던 정황이 있다. 위원회는 메시지 시각과 간체자 번역 설정을 근거로 Wang이 베이징에서 근무 중이었다고 분석했다. 앞서 위원회는 10월 7일 보고서에서 Webull이 중국 정부와 구조적으로 얽혀 국가안보 위협이라고 주장했고, 이후 Webull 주가는 19% 넘게 급락했다. Webull은 미국 고객 데이터가 미국 내 AWS 서버에만 저장되고 민감 정보 접근은 미국 거주 직원으로 제한된다고 반박했으며, 문제의 메시지는 종결된 2021년 FINRA 정례 사안에서 나온 것이라고 주장했다. 다만 Wang의 2021년 데이터 접근 여부에는 직접 답하지 않았다. 위원회는 Webull 자회사가 과거 중국 기반 Tencent Cloud로 일부 사용자 데이터를 호스팅했다고도 지적했으나, 해당 데이터의 범위와 종료 시점은 공개되지 않았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "http://www.nli-research.co.jp/report/detail/id=87090?site=nli",
+      "url": "http://www.nli-research.co.jp/report/detail/id=87090?site=nli",
+      "title": "貿易統計26年9月－原油輸入量の急回復を主因として7-9月期の外需寄与度はマイナスに",
+      "summary": "■要旨 26年9月の貿易収支は原数値では5,366億円の赤字、季節調整値では7,040億円の赤字となった。原油輸入は数量・価格ともに前年を上回り、貿易収支の悪化要因となっている。 26年9月の通関（入着）ベースの原油価格は1バレル＝100.5ドルと8月の101.8ドルから若干低下した。しかし、市況価格が足もとで上昇しているため、通関ベースの原油価格は10月には4ヵ月ぶりに上昇に転じることが見込まれる。 7-9月期の輸出数量指数は前期比▲0.4％と2四半期連続で減少した一方、輸入数量指数は原油輸入量の増加を主因として同3.0％の増加となった。実質ＧＤＰベースでは、輸出が前期比1％台の増加、輸入が同4％台の増加となり、外需寄与度は前期比▲0.5％程度のマイナスになると予想される。 ■目次 1．米国からの原油輸入の急増が継続 2．原油を中心に輸入数量が増加 3．7-9月期の外需寄与度は前期比▲0",
+      "published": "2026-10-21T10:16:46+09:00",
+      "category": "insight",
+      "source": "ニッセイ基礎研究所",
+      "region": "japan",
+      "body_chars": 536,
+      "body_file": "23-insight.txt",
+      "summary_note": "가나·한자 「数」"
     },
     {
       "guid": "https://think.ing.com/articles/rates-spark-welcome-to-the-5-club/#When:16:28:00Z",
@@ -301,7 +315,7 @@
       "category": "insight",
       "source": "ING THINK",
       "body_chars": 2290,
-      "body_file": "18-insight.txt",
+      "body_file": "19-insight.txt",
       "summary_ko": "ING THINK는 프랑스 10년물 국채 금리가 5%를 웃돌았지만 시장 전반은 비교적 긍정적이었다고 짚고, 유로존 채권 스프레드가 더 벌어져도 ECB에 대한 비둘기파적 재평가는 쉽게 일어나지 않을 것으로 본다. 프랑스 국채 매도는 장 초반 5% 부근의 저항을 뚫고 진행됐지만, 같은 날 주식은 오르고 유가는 소폭 하락했다. ING는 이런 괴리를 근거로 전염 위험이 여전히 미미하다고 평가한다. 유로 스왑 곡선 단기 구간이 프랑스 채권 매도에도 견조했던 점은 시장이 여전히 인플레이션 위험에 초점을 두고 있음을 보여준다는 해석이다. 월초에는 유럽 국채 매도와 함께 ECB 비둘기파 재평가가 나타났지만, 이후 유가와 가스 가격이 다시 오르며 중동 분쟁이 해결되지 않았다는 점이 부각됐다. ING는 ECB 관료들이 아직 뚜렷한 비둘기파 전환을 보이지 않았으나 성장 전망이 타격을 받으면 바뀔 수 있다고 덧붙였다. 경제지표는 아직 견조하지만 높은 차입금리와 지정학적 불확실성이 이미 취약한 전망을 짓누른다고 본다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -314,8 +328,9 @@
       "category": "insight",
       "source": "Investing.com",
       "body_chars": 8727,
-      "body_file": "19-insight.txt",
-      "summary_note": "분량 벗어남 413자"
+      "body_file": "20-insight.txt",
+      "summary_ko": "미국 10년물 국채금리는 9월 CPI·PPI가 예상보다 높게 나왔는데도 10월 14일 이후 하락했다. Investing.com은 이를 연준의 정책 실수 우려가 채권시장에 반영되기 시작한 신호로 본다. 근거로는 우선 AI 관련 기술주 이탈에 따른 안전자산 선호와 CoreWeave 등 취약 부문의 신용 스트레스를 든다. 여기에 10월 초 10년물 공매도 포지션이 크게 쌓인 뒤 7~8일 국채 입찰이 강하게 소화되면서 숏커버링이 이어졌다는 점을 더했다. 필자들은 2년물과 10년물 스프레드가 10월 7일 57bp에서 32bp로 줄어든 점을 강세 플래트닝으로 해석하며, 시장이 연준의 긴축이 둔화되는 경기를 짓누를 것으로 본다고 주장한다. 이들이 제시한 근거는 공급 충격성 물가 상승, 9월 고용 증가폭 2만 9천 명과 실업률 4.2%, 기준금리 3.75~4.00%의 중립금리 상회, 30년 모기지 금리 7.5% 부근 등이다. 다만 필자들도 연준 매파의 인플레이션 우려가 합리적이라고 인정했다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "https://www.ecb.europa.eu//press/blog/date/2026/html/ecb.blog20261021~1c5ec8f223.en.html",
@@ -327,21 +342,8 @@
       "source": "ECB",
       "region": "europe",
       "body_chars": 12000,
-      "body_file": "20-insight.txt",
-      "summary_ko": "ECB는 2026년 초 에너지 가격이 급등했음에도 유로지역 경제가 탄력성을 보였다고 평가한다. 2026년 2분기 실질 GDP(아일랜드 제외)는 2025년 4분기보다 0.6% 높았고, 최근 4분기 성장률은 약 0.3%로 안정적이었다. ECB는 이 배경으로 에너지 충격에 대한 취약성 감소를 든다. 경제의 에너지 집약도가 낮아져 석유 의존도는 1990년대 초의 절반 수준이며, 재생에너지 확대로 가스발전이 전기 가격을 정하는 시간 비중도 스페인은 약 80%에서 20% 수준으로, 프랑스는 약 60%에서 20% 수준으로 줄었다. 여기에 재정 지원 확대, 불확실성 완화, AI 관련 수출·투자, 견조한 고용이 충격을 완충했다고 짚는다. 다만 필자는 일부 재정 지원이 일시적이고 재정 여력도 제한적이어서, 향후 충격 흡수력이 같은 수준으로 유지되기는 어려울 수 있다고 본다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "https://www.bis.org/speeches/20261021-improving-cross-border-payments-changing-geopolitical-landscape",
-      "url": "https://www.bis.org/speeches/20261021-improving-cross-border-payments-changing-geopolitical-landscape",
-      "title": "Improving cross-border payments in a changing geopolitical landscape",
-      "summary": "Intervention by Ms Christina Papaconstantinou, Deputy Governor of the Bank of Greece, at a panel “Improving cross-border payments in a changing geopolitical landscape”, at the 10th Conference of Mediterranean Central Banks, organised by the Bank of Spain, Roda de Berà, 2 October 2026.",
-      "published": "2026-10-21T00:00:00+00:00",
-      "category": "insight",
-      "source": "BIS",
-      "body_chars": 6699,
       "body_file": "21-insight.txt",
-      "summary_ko": "Eurosystem 관점에서 본 이 연설의 필자는 국경간 결제 개선이 기존 인프라 개선과 신기술 도입을 함께 아우르며, 두 방식은 상황에 따라 보완적일 수도 있고 상충할 수도 있다고 짚는다. 그는 선택 기준으로 이용자 필요, 비효율의 성격, 기대 효과와 함께 자원 제약을 들며, 대만 TIPS 개선처럼 기존 인프라를 목표를 정해 고치는 방식이 큰 효과를 낼 수 있다고 본다. 반면 레거시 시스템이 점진적 개선의 한계에 이르면 기술 발전을 활용한 새 솔루션이 필요하다고 설명한다. 유로시스템은 DLT, 토큰화, 중앙은행 화폐를 다루는 Appia 이니셔티브를 통해 실무 경험을 쌓고 국제 표준 형성에 참여하는 방향을 택했으며, 상호운용성과 공통 표준을 강조한다. 필자는 공통 규칙과 메시지 형식, 거버넌스가 결제망의 효율과 회복력을 높이고, 상호운용성이 지역별 분절을 막는 전략적 안전장치라고 주장한다. 또한 G20 로드맵의 진전을 근거로 들며, 지정학적 긴장 속에서도 국제 협력을 유지하는 것이 중요하다고 강조한다.",
+      "summary_ko": "ECB는 2026년 초 에너지 가격이 급등했음에도 유로지역 경제가 탄력성을 보였다고 평가한다. 2026년 2분기 실질 GDP(아일랜드 제외)는 2025년 4분기보다 0.6% 높았고, 최근 4분기 성장률은 약 0.3%로 안정적이었다. ECB는 이 배경으로 에너지 충격에 대한 취약성 감소를 든다. 경제의 에너지 집약도가 낮아져 석유 의존도는 1990년대 초의 절반 수준이며, 재생에너지 확대로 가스발전이 전기 가격을 정하는 시간 비중도 스페인은 약 80%에서 20% 수준으로, 프랑스는 약 60%에서 20% 수준으로 줄었다. 여기에 재정 지원 확대, 불확실성 완화, AI 관련 수출·투자, 견조한 고용이 충격을 완충했다고 짚는다. 다만 필자는 일부 재정 지원이 일시적이고 재정 여력도 제한적이어서, 향후 충격 흡수력이 같은 수준으로 유지되기는 어려울 수 있다고 본다.",
       "summary_model": "claude-haiku-5-5"
     }
   ]
