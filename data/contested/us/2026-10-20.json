@@ -4,49 +4,47 @@
  "span": "daily",
  "report_date": "2026-10-20",
  "status": "error",
- "reason": "fetch_incomplete",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-20T22:39:57+00:00",
- "cutoff_at": "2026-10-20T22:39:57+00:00",
+ "collected_at": "2026-10-21T09:17:20+00:00",
+ "cutoff_at": "2026-10-21T09:17:20+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "2ec003b8029647d444c7c9f2205595284e4f4a0d",
-  "sha256": "1025c34cea3b460afd4f7a8e5b82d0ea047bebd95b17917ab7a5082ddf5ebf8e"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 199,
-  "candidates": 2,
+  "harvest": 205,
+  "candidates": 3,
   "articles": [
    2,
-   3
+   2,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 19178,
-   "out": 5661
+   "in": 5429,
+   "out": 76
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
-   "bbc.co.uk": "ok"
+   "bbc.co.uk": "ok",
+   "theguardian.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled"
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "트럼프의 캐나다산 제품 50% 관세(1930년 관세법 338조)에 대한 ",
-  "query": "trump canadian tariffs",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "ba1ce16efe40e814"
+ "content_hash": "fdb002950f5910a3"
 }
