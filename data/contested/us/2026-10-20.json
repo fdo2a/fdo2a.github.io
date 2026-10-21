@@ -7,8 +7,8 @@
  "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-21T09:17:20+00:00",
- "cutoff_at": "2026-10-21T09:17:20+00:00",
+ "collected_at": "2026-10-21T10:22:36+00:00",
+ "cutoff_at": "2026-10-21T10:22:36+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -17,7 +17,7 @@
  "prompt_version": "2026-10-21.1",
  "market_snapshot": null,
  "counts": {
-  "harvest": 205,
+  "harvest": 208,
   "candidates": 3,
   "articles": [
    2,
@@ -28,14 +28,14 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 5429,
+   "in": 5000,
    "out": 76
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "bbc.co.uk": "ok",
-   "theguardian.com": "ok"
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
@@ -46,5 +46,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "fdb002950f5910a3"
+ "content_hash": "5b9b2b3141275009"
 }
