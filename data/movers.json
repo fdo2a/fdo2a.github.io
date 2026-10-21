@@ -1,21 +1,21 @@
 {
-  "report_date": "2026-10-20",
+  "report_date": "2026-10-21",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
+      "industry": "Semiconductors",
+      "direction": "up",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": -1.0,
-          "close": 339.5,
-          "value": 12112703407.0
+          "name": "Nvidia (NVDA)",
+          "change_pct": 2.54,
+          "close": 221.97,
+          "value": 19114130693.4
         }
       ]
     },
@@ -29,57 +29,76 @@
       "members": [
         {
           "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": -1.13,
-          "close": 340.27,
-          "value": 6093513584.83
+          "change_pct": -1.62,
+          "close": 334.76,
+          "value": 9549114977.13
+        },
+        {
+          "name": "Alphabet Inc. (Class C) (GOOG)",
+          "change_pct": -1.62,
+          "close": 330.95,
+          "value": 6331085978.67
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Pharmaceuticals",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Lilly (Eli) (LLY)",
-          "change_pct": 3.49,
-          "close": 1283.66,
-          "value": 3798248631.99
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 1.32,
+          "close": 343.99,
+          "value": 12166441616.68
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": 5.27,
+          "close": 485.88,
+          "value": 3314255536.51
+        },
+        {
+          "name": "Supermicro (SMCI)",
+          "change_pct": 9.55,
+          "close": 35.57,
+          "value": 2913534371.03
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Automobile Manufacturers",
-      "direction": "up",
+      "industry": "Movies & Entertainment",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Tesla, Inc. (TSLA)",
-          "change_pct": 1.54,
-          "close": 373.71,
-          "value": 11495835804.37
+          "name": "Netflix (NFLX)",
+          "change_pct": -5.31,
+          "close": 65.04,
+          "value": 6564556429.93
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Biotechnology",
+      "industry": "Electrical Components & Equipment",
       "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Moderna (MRNA)",
-          "change_pct": 6.69,
-          "close": 242.08,
-          "value": 4066213675.4
+          "name": "Bloom Energy (BE)",
+          "change_pct": 7.13,
+          "close": 238.53,
+          "value": 2917651954.66
         }
       ]
     }

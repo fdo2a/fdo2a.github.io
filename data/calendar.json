@@ -1,36 +1,8 @@
 {
-  "report_date": "2026-10-20",
-  "generated": "2026-10-21 07:25 KST",
+  "report_date": "2026-10-21",
+  "generated": "2026-10-22 06:54 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261021-20-Year",
-      "kind": "auction",
-      "name_ko": "20-Year 국채 입찰 130억 달러",
-      "date": "2026-10-21",
-      "time_et": "13:00",
-      "time_kst": "2026-10-22 02:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "release-claims-20261022",
-      "kind": "release",
-      "name_ko": "신규 실업수당 청구",
-      "date": "2026-10-22",
-      "time_et": "08:30",
-      "time_kst": "2026-10-22 21:30",
-      "status": "confirmed",
-      "source": "DOL 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "auction-20261022-5-Year",
       "kind": "auction",
@@ -44,34 +16,6 @@
         "금리"
       ],
       "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "release-michigan-20261023",
-      "kind": "release",
-      "name_ko": "미시간대 소비자심리",
-      "date": "2026-10-23",
-      "time_et": "10:00",
-      "time_kst": "2026-10-23 23:00",
-      "status": "confirmed",
-      "source": "U. Michigan 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-new-home-sales-20261027",
-      "kind": "release",
-      "name_ko": "신규주택 판매",
-      "date": "2026-10-27",
-      "time_et": "10:00",
-      "time_kst": "2026-10-27 23:00",
-      "status": "confirmed",
-      "source": "Census 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
     },
     {
       "key": "fomc-20261028",
@@ -88,35 +32,6 @@
         "주식"
       ],
       "watch": "성명 문구 변화, 30분 뒤 기자회견"
-    },
-    {
-      "key": "release-claims-20261029",
-      "kind": "release",
-      "name_ko": "신규 실업수당 청구",
-      "date": "2026-10-29",
-      "time_et": "08:30",
-      "time_kst": "2026-10-29 21:30",
-      "status": "confirmed",
-      "source": "DOL 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-pce-20261029",
-      "kind": "release",
-      "name_ko": "개인소비지출(PCE)",
-      "date": "2026-10-29",
-      "time_et": "08:30",
-      "time_kst": "2026-10-29 21:30",
-      "status": "confirmed",
-      "source": "BEA 공표 일정(FRED)",
-      "assets": [
-        "금리",
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
     }
   ],
   "recent_auctions": [
@@ -149,36 +64,6 @@
       "bid_to_cover": 2.79,
       "indirect_pct": 49.8,
       "dealer_pct": 34.7
-    },
-    {
-      "date": "2026-10-13",
-      "term": "6-Week",
-      "type": "Bill",
-      "offering_amt": 95000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.58,
-      "indirect_pct": 59.5,
-      "dealer_pct": 28.9
-    },
-    {
-      "date": "2026-10-13",
-      "term": "26-Week",
-      "type": "Bill",
-      "offering_amt": 82000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.76,
-      "indirect_pct": 60.8,
-      "dealer_pct": 21.3
-    },
-    {
-      "date": "2026-10-13",
-      "term": "13-Week",
-      "type": "Bill",
-      "offering_amt": 95000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.68,
-      "indirect_pct": 54.2,
-      "dealer_pct": 30.2
     }
   ],
   "blackout": {
@@ -186,9 +71,9 @@
     "meeting": "2026-10-28",
     "until": "2026-10-29"
   },
-  "missing": [],
-  "complete": true,
-  "ambiguous": [
-    "gdp"
-  ]
+  "missing": [
+    "releases"
+  ],
+  "complete": false,
+  "ambiguous": []
 }
