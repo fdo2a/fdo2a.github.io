@@ -608,6 +608,8 @@ def test_throttled_discovery_refunds_the_attempt_and_cools_down(tmp_path, monkey
     import contested_build as Bld
     monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
     monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    monkeypatch.setenv('HOME', str(tmp_path))              # 마지막 결과 파일(~/Library/Caches)을 실제 홈에 쓰지 않게
+    (tmp_path / 'Library' / 'Caches').mkdir(parents=True, exist_ok=True)
     clone, md = _throttled_clone(tmp_path)
     clock = {'t': datetime(2026, 10, 21, 7, 39, tzinfo=KST)}
 
@@ -647,6 +649,8 @@ def test_throttled_but_last_attempt_still_refunds(tmp_path, monkeypatch):
     import contested_build as Bld
     monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
     monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    monkeypatch.setenv('HOME', str(tmp_path))              # 마지막 결과 파일(~/Library/Caches)을 실제 홈에 쓰지 않게
+    (tmp_path / 'Library' / 'Caches').mkdir(parents=True, exist_ok=True)
     clone, md = _throttled_clone(tmp_path)
 
     class Now(datetime):
@@ -696,3 +700,28 @@ def test_refund_cooldown_survives_a_failed_push_and_dry_runs_restore(tmp_path, m
     assert L._attempts_local('2026-10-20', bump=True, market='us') == 5
     assert L._attempts_local('2026-10-20', market='us', refund_to=4) == 4
     assert L._attempts_local('2026-10-20', market='us') == 4
+
+
+def test_push_adds_tracked_pages_under_ignored_dirs(tmp_path, monkeypatch):
+    """10/21 실운영: 레포 .gitignore 의 `/news/` 때문에 추적 중인 발행본도 `git add` 가 거부돼 tick 마다 죽었다."""
+    import subprocess
+    g = ['-c', 'user.email=t@t', '-c', 'user.name=t']
+    remote = tmp_path / 'remote.git'
+    subprocess.run(['git', 'init', '-q', '--bare', '-b', 'main', str(remote)], check=True)
+    clone = tmp_path / 'clone'
+    subprocess.run(['git', 'clone', '-q', str(remote), str(clone)], check=True, capture_output=True)
+    subprocess.run(['git', '-C', str(clone), 'checkout', '-q', '-b', 'main'], check=True)
+    (clone / '.gitignore').write_text('/news/\n')
+    (clone / 'news').mkdir()
+    (clone / 'news' / '2026-10-20.html').write_text('<p>a</p>')
+    subprocess.run(['git', '-C', str(clone), 'add', '-f', '.gitignore', 'news/2026-10-20.html'], check=True)
+    subprocess.run(['git', '-C', str(clone), *g, 'commit', '-qm', 'x'], check=True)
+    subprocess.run(['git', '-C', str(clone), 'push', '-q', 'origin', 'HEAD:main'], check=True)
+    (clone / 'news' / '2026-10-20.html').write_text('<p>b</p>')
+    for k, v in (('GIT_AUTHOR_NAME', 't'), ('GIT_AUTHOR_EMAIL', 't@t'), ('GIT_COMMITTER_NAME', 't'),
+                 ('GIT_COMMITTER_EMAIL', 't@t')):
+        monkeypatch.setenv(k, v)
+    assert L.push(str(clone), ['news/2026-10-20.html'], 'fill', {}) == 'pushed'
+    out = subprocess.run(['git', '--git-dir', str(remote), 'show', 'main:news/2026-10-20.html'],
+                         capture_output=True, text=True, check=True).stdout
+    assert out == '<p>b</p>'

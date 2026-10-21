@@ -275,7 +275,9 @@ def _normalize(prev):
 
 
 def push(clone, files, msg, page_shas):
-    _git(clone, 'add', *files)
+    # 레포 .gitignore 가 `/news/` 를 막는다 — 추적 중인 발행본도 이름으로 주면 거부된다(10/21 실운영).
+    # 넘기는 경로는 러너가 직접 쓴 파일뿐이라 `-f` 로 더해도 다른 파일이 딸려 들어가지 않는다
+    _git(clone, 'add', '-f', '--', *files)
     if not _git(clone, 'status', '--porcelain', '--untracked-files=no', check=False):
         return 'nothing'
     base = _git(clone, 'rev-parse', 'HEAD')
