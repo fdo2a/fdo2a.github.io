@@ -1,0 +1,59 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-21",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-21T11:09:53+00:00",
+ "cutoff_at": "2026-10-21T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "81db9eb48f6f58074c6b1ab182605e19df4cf826",
+  "sha256": "2007e7eb43b985b43fe9e90d6191cfb7b8db10a6e1f6aac005bfba2976717265",
+  "extra": {
+   "kr_econ.json": "9a0f0c7402d6d228aa35489b90dc825f6fb0914e43e114a9ae8fec35fb02d993",
+   "kr_flows.json": "bec484a1ac2905ba3ad19b760cbdfb17b0fc15cb601d3b5d34e880ce0503905b",
+   "kr_session.json": "5b4a3accc38db8052ae9f78855e1da3b4ede9d106b2c05635b1959af5f3e7c65"
+  }
+ },
+ "counts": {
+  "harvest": 615,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "edaily": "ok",
+   "chosun": "ok",
+   "herald": "ok",
+   "hankyung": "ok"
+  },
+  "notes": [
+   "discover:615"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 16087,
+   "out": 4994
+  }
+ },
+ "event": {
+  "topic_ko": "10월 1~20일 수출 급증과 반도체 편중",
+  "query": "수출 10월 최대",
+  "trigger": []
+ },
+ "content_hash": "6e2364c5753752fe"
+}
