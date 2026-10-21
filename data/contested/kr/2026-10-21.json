@@ -5,9 +5,9 @@
  "report_date": "2026-10-21",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-21T18:34:38+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-21T18:52:04+00:00",
  "cutoff_at": "2026-10-21T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 460,
+  "harvest": 458,
   "candidates": 1,
   "articles": [
    6
@@ -46,18 +46,18 @@
    "yna": "ok"
   },
   "notes": [
-   "discover:460"
+   "discover:458"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 31132,
-   "out": 13491
+   "in": 31301,
+   "out": 12369
   },
   "grounded": {
-   "claims": "7/7",
-   "pairs": "2/2",
-   "obs": "7/7"
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 0,
@@ -67,8 +67,8 @@
  },
  "event": {
   "topic_ko": "원·달러 환율 4거래일 연속 연저점 경신과 추가 하락 여력 논쟁",
-  "query": "환율 2원 연저점",
+  "query": "환율 1325 2원",
   "trigger": []
  },
- "content_hash": "c3eed5c62839f8c5"
+ "content_hash": "28e8177732c2f1a5"
 }
