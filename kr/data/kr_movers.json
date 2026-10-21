@@ -1,46 +1,11 @@
 {
-  "report_date": "2026-10-20",
+  "report_date": "2026-10-21",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "반도체와반도체장비",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "SK하이닉스",
-          "change_pct": -4.23,
-          "close": 1223000,
-          "value": 4231215
-        },
-        {
-          "name": "삼성전자",
-          "change_pct": -2.98,
-          "close": 211500,
-          "value": 3368742
-        },
-        {
-          "name": "SK스퀘어",
-          "change_pct": -5.0,
-          "close": 741000,
-          "value": 341864
-        },
-        {
-          "name": "한미반도체",
-          "change_pct": -5.71,
-          "close": 199900,
-          "value": 108500
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "전자장비와기기",
       "direction": "up",
       "reasons": [
         "지수 기여 상위",
@@ -48,76 +13,87 @@
       ],
       "members": [
         {
-          "name": "코리아써키트",
-          "change_pct": 12.4,
-          "close": 72500,
-          "value": 160681
+          "name": "삼성전자",
+          "change_pct": 5.67,
+          "close": 223500,
+          "value": 3647172
+        },
+        {
+          "name": "SK하이닉스",
+          "change_pct": 5.81,
+          "close": 1294000,
+          "value": 5216165
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": 5.13,
+          "close": 779000,
+          "value": 515596
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "우주항공과국방",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "LIG디펜스앤에어로스페이스",
+          "change_pct": -9.03,
+          "close": 498500,
+          "value": 270631
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "은행",
-      "direction": "up",
+      "industry": "자동차",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "우리금융지주",
-          "change_pct": 0.47,
-          "close": 31800,
-          "value": 63799
+          "name": "기아",
+          "change_pct": -1.69,
+          "close": 110500,
+          "value": 82709
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "우주항공과국방",
-      "direction": "down",
+      "industry": "전기장비",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "한화에어로스페이스",
-          "change_pct": -11.71,
-          "close": 799000,
-          "value": 202375
-        },
-        {
-          "name": "한화시스템",
-          "change_pct": -13.9,
-          "close": 70600,
-          "value": 137984
-        },
-        {
-          "name": "현대로템",
-          "change_pct": -13.7,
-          "close": 86900,
-          "value": 112174
-        },
-        {
-          "name": "LIG디펜스앤에어로스페이스",
-          "change_pct": -8.21,
-          "close": 548000,
-          "value": 60040
+          "name": "LS ELECTRIC",
+          "change_pct": 7.02,
+          "close": 166100,
+          "value": 150230
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "전기제품",
-      "direction": "down",
+      "industry": "석유와가스",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "삼성SDI",
-          "change_pct": -6.08,
-          "close": 556000,
-          "value": 403666
+          "name": "SK",
+          "change_pct": 12.62,
+          "close": 482000,
+          "value": 119925
         }
       ]
     }
