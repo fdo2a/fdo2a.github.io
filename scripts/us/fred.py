@@ -177,8 +177,18 @@ class FredClient:
         q += [(k, str(limit) if k == 'limit' and limit else v) for k, v in PINS]
         return API + '?' + urllib.parse.urlencode(q)
 
+    def _json(self, url):
+        """빈 본문·HTML 오류 페이지도 전송 실패다 — `JSONDecodeError` 가 그대로 새면
+        preflight 의 CSV 폴백을 건너뛰고 수집 전체가 죽는다(2026-10-21)."""
+        body = self._get(url)
+        try:
+            return json.loads(body.decode('utf-8'))
+        except ValueError:
+            pass
+        raise FredError(f'non-JSON response ({len(body)} bytes)', transient=True)
+
     def _api(self, sid):
-        payload = json.loads(self._get(self._api_url(sid)).decode('utf-8'))
+        payload = self._json(self._api_url(sid))
         obs = payload.get('observations') or []
         count = payload.get('count')
         if isinstance(count, int) and count > LIMIT:
@@ -219,7 +229,7 @@ class FredClient:
         return self.transport
 
     def _api_probe(self):
-        json.loads(self._get(self._api_url(PREFLIGHT_SID, limit=1)).decode('utf-8'))
+        self._json(self._api_url(PREFLIGHT_SID, limit=1))
 
     def _degrade(self, reason):
         self.transport = 'csv'

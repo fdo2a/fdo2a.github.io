@@ -170,6 +170,20 @@ def test_preflight_failure_falls_back_to_csv_without_claiming_the_api():
     assert c.transport == 'csv' and c.reason.startswith('preflight_failed')
 
 
+def test_empty_preflight_body_falls_back_to_csv_instead_of_crashing():
+    csv_body = b'observation_date,X\n2026-09-01,4.79\n'
+    c = _client(FakeOpener(b'', b'', csv_body))
+    assert c.series('X') == [('2026-09-01', 4.79)]
+    assert c.transport == 'csv' and c.reason.startswith('preflight_failed')
+
+
+def test_non_json_series_body_is_rescued_by_csv():
+    csv_body = b'observation_date,X\n2026-09-01,4.79\n'
+    c = _client(FakeOpener(_obs(('2000-01-01', '1.0')), b'<html>', csv_body))
+    assert c.series('X') == [('2026-09-01', 4.79)]
+    assert c.telemetry()['csv_rescued'] == ['X']
+
+
 # ---------------------------------------------------------------- 키 유출
 
 def test_scrub_masks_the_query_pattern_the_constructor_key_and_the_environment(monkeypatch):
