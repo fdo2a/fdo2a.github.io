@@ -209,33 +209,58 @@ class Interrupted(BaseException):
 
 STATE = os.path.expanduser('~/Library/Caches/fdo2a-contested-state.json')
 ANALYZE_MAX_HOURS = 36        # 기준일 발행 뒤 이만큼 지나면 분석하지 않고 자리표시를 지운다
+THROTTLE_COOLDOWN_MIN = 60    # 검색(GDELT·네이버)이 막혀 돌려준 시도 뒤에는 이만큼 쉰다
 
 
-def _attempts_local(date, bump=False, at_least=0, market='us'):
-    """날짜별 시도 횟수를 로컬에도 적는다 — 푸시가 계속 실패해도 시도 상한(MAX_ATTEMPTS)이 걸린다(3차 P2).
-    열쇠는 `시장:날짜`. US 는 옛 열쇠(날짜만)도 읽는다."""
+def _state_load():
     try:
         with open(STATE, encoding='utf-8') as fh:
             st = json.load(fh)
-        st = st if isinstance(st, dict) else {}
+        return st if isinstance(st, dict) else {}
     except (OSError, ValueError):
-        st = {}
+        return {}
+
+
+def _state_save(st):
+    st = {k: v for k, v in st.items() if isinstance(v, int)}
+    tmp = STATE + '.tmp'
+    with open(tmp, 'w', encoding='utf-8') as fh:
+        json.dump(dict(sorted(st.items(), key=lambda kv: kv[0].split(':')[-1])[-90:]), fh)
+    os.replace(tmp, STATE)
+
+
+def _attempts_local(date, bump=False, at_least=0, market='us', refund_to=None):
+    """날짜별 시도 횟수를 로컬에도 적는다 — 푸시가 계속 실패해도 시도 상한(MAX_ATTEMPTS)이 걸린다(3차 P2).
+    열쇠는 `시장:날짜`. US 는 옛 열쇠(날짜만)도 읽는다. `refund_to` 는 이번 시도 전 횟수로 되돌리고
+    쉬는 시각(`cool:시장:날짜`, epoch 초)을 함께 적는다 — 결과 푸시가 실패해도 쉬게(구현 검토 P2)."""
+    st = _state_load()
     key = f'{market}:{date}'
     n = st.get(key) if isinstance(st.get(key), int) else 0
     if market == 'us' and isinstance(st.get(date), int):
         n = max(n, st[date])
-    if bump and os.environ.get('CONTESTED_DRY'):
-        return n + 1                       # 시험 운행은 실제 시도 횟수를 쓰지 않는다
+    if os.environ.get('CONTESTED_DRY') and (bump or refund_to is not None):
+        return n + 1 if bump else refund_to         # 시험 운행은 실제 시도 횟수를 쓰지 않는다
     if bump:
-        n = max(n, at_least)                # 원격에 적힌 횟수보다 작아지지 않게(4차 P2)
+        n = max(n, at_least)                        # 원격에 적힌 횟수보다 작아지지 않게(4차 P2)
         st[key] = n + 1
-        st = {k: v for k, v in st.items() if isinstance(v, int)}
-        tmp = STATE + '.tmp'
-        with open(tmp, 'w', encoding='utf-8') as fh:
-            json.dump(dict(sorted(st.items(), key=lambda kv: kv[0].split(':')[-1])[-60:]), fh)
-        os.replace(tmp, STATE)
-        return n + 1
-    return n
+    elif refund_to is not None:
+        st[key] = refund_to
+        st[f'cool:{key}'] = int(datetime.now(timezone.utc).timestamp())
+        if market == 'us' and isinstance(st.get(date), int):
+            st[date] = min(st[date], refund_to)     # 옛 열쇠가 돌려준 횟수를 덮어쓰지 않게
+    else:
+        return n
+    _state_save(st)
+    return st[key]
+
+
+def _cooling(date, prev, market='us'):
+    """검색이 막혀 시도를 돌려준 뒤 THROTTLE_COOLDOWN_MIN 이 안 지났는가 — 로컬 기록과 원격 결과 중 늦은 쪽."""
+    at = _state_load().get(f'cool:{market}:{date}')
+    since = ((datetime.now(timezone.utc).timestamp() - at) / 60) if isinstance(at, int) else float('inf')
+    if ((prev or {}).get('diagnostics') or {}).get('attempt_refunded'):
+        since = min(since, _minutes_since(prev))
+    return since < THROTTLE_COOLDOWN_MIN
 
 
 def _normalize(prev):
@@ -374,6 +399,10 @@ def handle(clone, temp, date, md_current, notes, market='us'):
             # `complete: false`(금리 결측)인 동안 tick 마다 market_data_not_found 로 시도를 태웠다
             notes.append(f'{market} {date} 시장 데이터 미완')
             return None
+        if not stale and attempts < C.MAX_ATTEMPTS and _cooling(date, prev, market):
+            # 검색이 막혀 시도를 돌려준 뒤에는 한동안 다시 묻지 않는다 — 막힌 곳을 15분마다 두드리면 더 오래 막힌다
+            notes.append(f'{market} {date} 검색 제한 대기')
+            return None
         if stale or attempts >= C.MAX_ATTEMPTS:
             reason = 'stale' if stale else 'attempts_exhausted'
             result = _final_error(date, prev, reason, market)
@@ -396,6 +425,16 @@ def handle(clone, temp, date, md_current, notes, market='us'):
     topic = ((result or {}).get('event') or {}).get('topic_ko') or ''
     notes.append(f'{market} {date} {note}' + (f' · {topic}' if topic else ''))
     return files, (shas if any(f == page_rel for f in files) else {})
+
+
+def _minutes_since(prev):
+    try:
+        t = datetime.fromisoformat(prev['collected_at'])
+    except (KeyError, TypeError, ValueError):
+        return float('inf')
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    return (datetime.now(timezone.utc) - t).total_seconds() / 60
 
 
 def _base(date, attempts, market='us'):
@@ -454,6 +493,12 @@ def analyze_date(clone, temp, date, md_current, prev, market='us'):
         raise
     except Exception as e:
         result = dict(base, status='error', reason=f'analyze_{type(e).__name__}'[:40], retryable=True)
+    diag = result.get('diagnostics') or {}
+    if result.get('status') != 'ok' and result.get('retryable') and diag.get('discovery') == 'throttled':
+        # 검색(GDELT 429·네이버 한도)이 막힌 시도는 횟수에서 돌려준다(사용자 2026-10-21) — 기사 부족은 그날
+        # 사건 탓이 아니라 막힌 탓이다. 마감은 stale(기준일 + 60시간)이 맡는다
+        attempts = _attempts_local(date, market=market, refund_to=attempts - 1)
+        result = dict(result, attempts=attempts, diagnostics=dict(diag, attempt_refunded='discovery_throttled'))
     if result.get('status') != 'ok' and attempts >= C.MAX_ATTEMPTS:
         result['retryable'] = False                # 시도를 다 썼다 — 자리표시를 지운다
     return result

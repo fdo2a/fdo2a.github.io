@@ -585,3 +585,114 @@ def test_incomplete_market_data_does_not_spend_attempts(tmp_path, monkeypatch):
     assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us') is None
     assert notes == ['us 2026-10-20 시장 데이터 미완'] and L._attempts_local('2026-10-20', market='us') == 0
     assert L._market_ready(str(clone), '2026-10-20', dict(md, complete=True), 'us')
+
+
+def _throttled_clone(tmp_path):
+    import subprocess
+    clone = tmp_path / 'clone'
+    (clone / 'data').mkdir(parents=True)
+    (clone / 'news').mkdir()
+    subprocess.run(['git', 'init', '-q', str(clone)], check=True)
+    md = {'report_date': '2026-10-20', 'complete': True}
+    (clone / 'data' / 'market_data.json').write_text(json.dumps(md))
+    subprocess.run(['git', '-C', str(clone), 'add', '-A'], check=True)
+    subprocess.run(['git', '-C', str(clone), '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'x'],
+                   check=True)
+    return clone, md
+
+
+def test_throttled_discovery_refunds_the_attempt_and_cools_down(tmp_path, monkeypatch):
+    """10/21 실운영: GDELT 429 가 이어지는 동안 tick 마다 시도를 태워 US 10/20 이 상한에 닿을 뻔했다."""
+    import sys
+    import types
+    import contested_build as Bld
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    clone, md = _throttled_clone(tmp_path)
+    clock = {'t': datetime(2026, 10, 21, 7, 39, tzinfo=KST)}
+
+    class Now(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return clock['t'] if tz is None else clock['t'].astimezone(tz)
+    monkeypatch.setattr(L, 'datetime', Now)
+    fake = types.ModuleType('collect_contested')
+    fake.collect = lambda *a, **k: {'status': 'ok', 'gdelt': 'throttled', 'discovery': 'throttled'}
+    monkeypatch.setitem(sys.modules, 'collect_contested', fake)
+    monkeypatch.setattr(Bld, 'ranker', lambda diag=None: None)
+    monkeypatch.setattr(Bld, 'analyze', lambda bundle, base: dict(
+        base, status='error', reason='fetch_incomplete', retryable=True))
+    L._attempts_local('2026-10-20', bump=True, market='us')            # 앞선 시도 1회
+    notes = []
+    files, _ = L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us')
+    res = json.loads((clone / 'data' / 'contested' / 'us' / '2026-10-20.json').read_text())
+    assert res['attempts'] == 1 and res['retryable'] is True
+    assert res['diagnostics']['attempt_refunded'] == 'discovery_throttled'
+    assert L._attempts_local('2026-10-20', market='us') == 1
+    assert C.validate(res, 'us', '2026-10-20') == []
+    # 쉬는 동안은 다시 묻지 않는다 — 막힌 GDELT 를 15분마다 두드리지 않게
+    clock['t'] = datetime(2026, 10, 21, 8, 20, tzinfo=KST)
+    notes = []
+    assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us') is None
+    assert notes == ['us 2026-10-20 검색 제한 대기']
+    clock['t'] = datetime(2026, 10, 21, 8, 45, tzinfo=KST)
+    notes = []
+    assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us') is not None
+
+
+def test_throttled_but_last_attempt_still_refunds(tmp_path, monkeypatch):
+    """상한 직전 시도도 돌려준다 — 막힌 검색 탓에 그날을 최종 오류로 굳히지 않는다."""
+    import sys
+    import types
+    import contested_build as Bld
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    clone, md = _throttled_clone(tmp_path)
+
+    class Now(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            t = datetime(2026, 10, 21, 7, 54, tzinfo=KST)
+            return t if tz is None else t.astimezone(tz)
+    monkeypatch.setattr(L, 'datetime', Now)
+    fake = types.ModuleType('collect_contested')
+    fake.collect = lambda *a, **k: {'status': 'ok', 'gdelt': 'throttled', 'discovery': 'throttled'}
+    monkeypatch.setitem(sys.modules, 'collect_contested', fake)
+    monkeypatch.setattr(Bld, 'ranker', lambda diag=None: None)
+    monkeypatch.setattr(Bld, 'analyze', lambda bundle, base: dict(
+        base, status='none', reason='analysis_unverified', retryable=True))
+    for _ in range(C.MAX_ATTEMPTS - 1):
+        L._attempts_local('2026-10-20', bump=True, market='us')
+    L.handle(str(clone), str(tmp_path), '2026-10-20', md, [], 'us')
+    res = json.loads((clone / 'data' / 'contested' / 'us' / '2026-10-20.json').read_text())
+    assert res['attempts'] == C.MAX_ATTEMPTS - 1 and res['retryable'] is True
+    assert not C.settled(res, 'us', '2026-10-20')
+
+
+def test_refund_cooldown_survives_a_failed_push_and_dry_runs_restore(tmp_path, monkeypatch):
+    """구현 검토 P2 두 건: 푸시가 실패해 원격 결과가 옛것이어도 쉬고, 시험 운행은 시도 전 횟수로 돌린다."""
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    t = {'now': datetime(2026, 10, 21, 7, 39, tzinfo=KST)}
+
+    class Now(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return t['now'] if tz is None else t['now'].astimezone(tz)
+    monkeypatch.setattr(L, 'datetime', Now)
+    for _ in range(4):
+        L._attempts_local('2026-10-20', bump=True, market='us')
+    assert L._attempts_local('2026-10-20', bump=True, market='us') == 5
+    assert L._attempts_local('2026-10-20', market='us', refund_to=4) == 4
+    old_remote = {'attempts': 4, 'diagnostics': {}, 'collected_at': '2026-10-20T21:00:00+00:00'}
+    t['now'] = datetime(2026, 10, 21, 8, 20, tzinfo=KST)
+    assert L._cooling('2026-10-20', old_remote, 'us')                  # 원격엔 표시가 없어도 로컬로 쉰다
+    t['now'] = datetime(2026, 10, 21, 8, 40, tzinfo=KST)
+    assert not L._cooling('2026-10-20', old_remote, 'us')
+    assert not L._cooling('2026-10-20', old_remote, 'kr')
+    naive = {'diagnostics': {'attempt_refunded': 'discovery_throttled'}, 'collected_at': '2026-10-20T23:30:00'}
+    assert L._cooling('2026-10-21', naive, 'us')                       # 시간대 없는 시각도 UTC 로 읽는다
+    monkeypatch.setenv('CONTESTED_DRY', '1')
+    assert L._attempts_local('2026-10-20', bump=True, market='us') == 5
+    assert L._attempts_local('2026-10-20', market='us', refund_to=4) == 4
+    assert L._attempts_local('2026-10-20', market='us') == 4

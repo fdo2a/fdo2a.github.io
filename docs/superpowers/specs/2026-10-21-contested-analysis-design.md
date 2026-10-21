@@ -30,7 +30,7 @@
 
 **발행 순서.** 루틴은 기다리지 않는다. 결과가 이미 있으면 뉴스·산업 브리프에 섹션을 싣고, 없으면 자리표시(`<!--contested-pending-->`)로 발행한다. 러너가 나중에 결과를 만들면 발행본의 자리표시를 채우고 게이트(가독성·색·쟁점·가독성 검사·문체)를 다시 돌려 함께 푸시한다. 게이트를 못 넘으면 생략 기록. 확정된 non-ok 면 자리표시를 지운다. 발행본에 섹션이나 생략 기록이 있으면 그 날짜 결과는 다시 쓰지 않는다(발행 증거 고정). 푸시 직전 발행본이 바뀌었으면 버린다.
 
-결과 파일 `data/contested/us/<date>.json` — `status` ok·none·error. 동결: ok, none 중 `no_candidate`·`insufficient_sources`·`no_conflict`(모델이 충돌을 내지 않음). 재시도(날짜당 5회, 10/21 사용자 지시로 3→5): 수집·본문 실패, `grounding_failed`, `verify_rejected`, `analysis_unverified`, `schema_invalid`, `style_failed`, 모델 실패. `gdelt_throttled` 는 다음 tick(15분 뒤)에 다시 — 날짜당 5회 상한. 기준일이 3일보다 오래되면 손대지 않는다.
+결과 파일 `data/contested/us/<date>.json` — `status` ok·none·error. 동결: ok, none 중 `no_candidate`·`insufficient_sources`·`no_conflict`(모델이 충돌을 내지 않음). 재시도(날짜당 5회, 10/21 사용자 지시로 3→5): 수집·본문 실패, `grounding_failed`, `verify_rejected`, `analysis_unverified`, `schema_invalid`, `style_failed`, 모델 실패. 발견 검색이 막힌 시도(`diagnostics.discovery == throttled`, US GDELT 429)는 재시도 결과일 때 횟수에서 돌려주고(`attempt_refunded`) 60분 쉰 뒤 다시 본다 — 10/21 US 10/20 이 GDELT 429 로 5회 중 4회를 태운 뒤 사용자 지시 「고쳐」. 이때 마감은 stale(기준일 + 60시간)이 맡는다. 기준일이 3일보다 오래되면 손대지 않는다.
 
 **Mac 이 꺼져 있으면** 그날 섹션은 자리표시로 남다가, 3일 안에 켜지면 채워진다.
 
