@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-10-21",
- "status": "error",
- "reason": "fetch_incomplete",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-10-21T11:09:53+00:00",
+ "attempts": 2,
+ "collected_at": "2026-10-21T17:41:36+00:00",
  "cutoff_at": "2026-10-21T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 615,
+  "harvest": 463,
   "candidates": 1,
   "articles": [
    6
@@ -35,25 +35,40 @@
   "runner": "local",
   "discovery": "truncated",
   "hosts": {
+   "newspim": "ok",
+   "news1": "short",
+   "mt": "ok",
+   "sbs": "ok",
+   "fnnews": "short",
+   "dailian": "ok",
    "edaily": "ok",
-   "chosun": "ok",
-   "herald": "ok",
-   "hankyung": "ok"
+   "newsis": "short",
+   "yna": "ok"
   },
   "notes": [
-   "discover:615"
+   "discover:463"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 16087,
-   "out": 4994
+   "in": 29433,
+   "out": 12395
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "10/10"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 9
   }
  },
  "event": {
-  "topic_ko": "10월 1~20일 수출 급증과 반도체 편중",
-  "query": "수출 10월 최대",
+  "topic_ko": "원·달러 환율 4거래일 연속 연저점 경신과 추가 하락 여력 논쟁",
+  "query": "환율 1325 2원",
   "trigger": []
  },
- "content_hash": "6e2364c5753752fe"
+ "content_hash": "b2e6fb9737b08a62"
 }
