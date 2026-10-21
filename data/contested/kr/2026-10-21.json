@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-21T17:41:36+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-21T18:17:32+00:00",
  "cutoff_at": "2026-10-21T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 463,
+  "harvest": 460,
   "candidates": 1,
   "articles": [
    6
@@ -46,23 +46,23 @@
    "yna": "ok"
   },
   "notes": [
-   "discover:463"
+   "discover:460"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 29433,
-   "out": 12395
+   "in": 31053,
+   "out": 11533
   },
   "grounded": {
-   "claims": "4/4",
+   "claims": "5/5",
    "pairs": "2/2",
-   "obs": "10/10"
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 9
+   "obs": 6
   }
  },
  "event": {
@@ -70,5 +70,5 @@
   "query": "환율 1325 2원",
   "trigger": []
  },
- "content_hash": "b2e6fb9737b08a62"
+ "content_hash": "ff3e0d4ac79211d8"
 }
