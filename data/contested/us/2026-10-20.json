@@ -3,48 +3,59 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-20",
- "status": "error",
- "reason": "gdelt_throttled",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-21T11:25:58+00:00",
- "cutoff_at": "2026-10-21T11:25:58+00:00",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-21T17:58:49+00:00",
+ "cutoff_at": "2026-10-21T17:58:49+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "2ec003b8029647d444c7c9f2205595284e4f4a0d",
+  "sha256": "1025c34cea3b460afd4f7a8e5b82d0ea047bebd95b17917ab7a5082ddf5ebf8e"
+ },
  "counts": {
-  "harvest": 209,
-  "candidates": 3,
+  "harvest": 216,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   2
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 5067,
-   "out": 76
+   "in": 26464,
+   "out": 6890
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "bbc.co.uk": "ok",
-   "aljazeera.com": "ok"
+   "theguardian.com": "ok",
+   "politico.eu": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "프랑스 10년물 국채금리 5% 돌파와 2027년 예산안 의회 통과 가능성",
+  "query": "french unrest",
   "trigger": []
  },
- "content_hash": "b442bb04ede2a867"
+ "content_hash": "083c5840f2005af5"
 }
