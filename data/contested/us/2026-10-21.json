@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-22T00:16:22+00:00",
- "cutoff_at": "2026-10-22T00:16:22+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-22T00:33:35+00:00",
+ "cutoff_at": "2026-10-22T00:33:35+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 26124,
-   "out": 7128
+   "in": 26669,
+   "out": 8115
   },
   "discovery": "ok",
   "hosts": {
@@ -42,9 +42,9 @@
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "2/2",
+   "claims": "3/3",
    "pairs": "1/1",
-   "obs": "6/6"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 0,
@@ -53,9 +53,9 @@
   }
  },
  "event": {
-  "topic_ko": "프랑스 2027년 예산 통과 여부를 둘러싼 전망 충돌과 10년물 국채 금",
+  "topic_ko": "프랑스 2027년 예산의 의회 통과 여부를 둘러싼 전망 충돌과 10년물 ",
   "query": "french unrest",
   "trigger": []
  },
- "content_hash": "fa35aada59bbb05d"
+ "content_hash": "c860321a4172959a"
 }
