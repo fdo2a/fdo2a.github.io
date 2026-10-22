@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-21",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-22T00:51:56+00:00",
- "cutoff_at": "2026-10-22T00:51:56+00:00",
+ "collected_at": "2026-10-22T01:09:00+00:00",
+ "cutoff_at": "2026-10-22T01:09:00+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,41 +21,49 @@
   "sha256": "464536a4c3e104f599d42ac8f0492627431508164484d6f9fea9ff8b38b404e7"
  },
  "counts": {
-  "harvest": 222,
-  "candidates": 1,
+  "harvest": 223,
+  "candidates": 2,
   "articles": [
+   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 26398,
-   "out": 7556
+   "in": 32281,
+   "out": 10275
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "politico.eu": "ok"
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
    "claims": "2/2",
    "pairs": "1/1",
-   "obs": "7/7"
+   "obs": "6/6"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7
-  }
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "프랑스 2027년 예산 의회 통과 여부를 둘러싼 전망 충돌과 10년물 국",
-  "query": "french unrest",
+  "topic_ko": "트럼프의 1930년 관세법 338조 대캐나다 50% 관세가 차별 대응인지",
+  "query": "trump canada challenge",
   "trigger": []
  },
- "content_hash": "cb8f0eb50d5750e5"
+ "problems": [
+  "structure:unverified",
+  "edges[0]:unverified",
+  "edges[2]:unverified"
+ ],
+ "content_hash": "2c55a2513b6fd51f"
 }
