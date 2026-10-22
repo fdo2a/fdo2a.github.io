@@ -3,49 +3,59 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-21",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 0,
- "collected_at": "2026-10-21T22:56:36+00:00",
- "cutoff_at": "2026-10-21T22:56:36+00:00",
+ "attempts": 1,
+ "collected_at": "2026-10-21T23:59:00+00:00",
+ "cutoff_at": "2026-10-21T23:59:00+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "b01899d4a283015e51654571c615831453b26fca",
+  "sha256": "464536a4c3e104f599d42ac8f0492627431508164484d6f9fea9ff8b38b404e7"
+ },
  "counts": {
-  "harvest": 218,
-  "candidates": 3,
+  "harvest": 220,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   1
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4917,
-   "out": 70
+   "in": 27585,
+   "out": 9849
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok",
-   "aljazeera.com": "short"
+   "politico.eu": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 6
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "프랑스 예산 교착과 소요 사태 속 10년물 국채 금리 5% 돌파",
+  "query": "french unrest",
   "trigger": []
  },
- "content_hash": "dd60050afbeabbd7"
+ "content_hash": "b18a4237672eb0c6"
 }
