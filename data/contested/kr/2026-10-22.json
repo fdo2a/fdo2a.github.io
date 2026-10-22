@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-10-22",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-22T11:42:05+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-22T11:59:02+00:00",
  "cutoff_at": "2026-10-22T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 553,
+  "harvest": 547,
   "candidates": 1,
   "articles": [
    6
@@ -43,29 +43,19 @@
    "aju": "ok"
   },
   "notes": [
-   "discover:553"
+   "discover:547"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 33687,
-   "out": 10229
-  },
-  "grounded": {
-   "claims": "3/3",
-   "pairs": "1/1",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7
+   "in": 18516,
+   "out": 6706
   }
  },
  "event": {
-  "topic_ko": "한국은행 10월 기준금리 동결(연 3.00%)과 8월 인상 당시 총재 속",
+  "topic_ko": "한국은행 10월 기준금리 동결(연 3.00%)과 11월 추가 인상 여부",
   "query": "한은 인상 11월",
   "trigger": []
  },
- "content_hash": "f3f9b3bb669cf91e"
+ "content_hash": "34e646926e9786f0"
 }
