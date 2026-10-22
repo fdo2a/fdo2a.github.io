@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-21",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-22T01:09:00+00:00",
- "cutoff_at": "2026-10-22T01:09:00+00:00",
+ "collected_at": "2026-10-22T02:13:12+00:00",
+ "cutoff_at": "2026-10-22T02:13:12+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,23 +21,21 @@
   "sha256": "464536a4c3e104f599d42ac8f0492627431508164484d6f9fea9ff8b38b404e7"
  },
  "counts": {
-  "harvest": 223,
-  "candidates": 2,
+  "harvest": 224,
+  "candidates": 1,
   "articles": [
-   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32281,
-   "out": 10275
+   "in": 32684,
+   "out": 8041
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
    "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
@@ -46,24 +44,19 @@
   "grounded": {
    "claims": "2/2",
    "pairs": "1/1",
-   "obs": "6/6"
+   "obs": "5/5"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 6
+   "pairs": 0,
+   "claims": 0,
+   "obs": 5
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "트럼프의 1930년 관세법 338조 대캐나다 50% 관세가 차별 대응인지",
-  "query": "trump canada challenge",
+  "topic_ko": "트럼프의 1930년 관세법 338조 대캐나다 50% 관세가 차별에 대한 ",
+  "query": "trump canada sued",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "edges[0]:unverified",
-  "edges[2]:unverified"
- ],
- "content_hash": "2c55a2513b6fd51f"
+ "content_hash": "ae09f213e49ce167"
 }
