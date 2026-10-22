@@ -5,9 +5,9 @@
  "report_date": "2026-10-22",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-22T11:59:02+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-22T12:15:29+00:00",
  "cutoff_at": "2026-10-22T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 547,
+  "harvest": 539,
   "candidates": 1,
   "articles": [
    6
@@ -43,19 +43,19 @@
    "aju": "ok"
   },
   "notes": [
-   "discover:547"
+   "discover:539"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 18516,
-   "out": 6706
+   "in": 18574,
+   "out": 5677
   }
  },
  "event": {
   "topic_ko": "한국은행 10월 기준금리 동결(연 3.00%)과 11월 추가 인상 여부",
-  "query": "한은 인상 11월",
+  "query": "한은 인상 기준금리",
   "trigger": []
  },
- "content_hash": "34e646926e9786f0"
+ "content_hash": "caab1ee0b052e809"
 }
