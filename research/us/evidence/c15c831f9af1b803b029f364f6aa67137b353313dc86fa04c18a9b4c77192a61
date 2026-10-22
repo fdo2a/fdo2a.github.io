@@ -1,0 +1,38 @@
+# US 2026-10-22 web research session (WebSearch result summaries; WebFetch failed with DNS ENOTFOUND for every host)
+Collected 2026-10-22 22:05-22:27 UTC. Each line: claim as reported by the search summary -> URL.
+
+## Session / bonds
+- 10Y slid >17bp to 4.972% intraday, first below 5% since Sept 23; 2Y >16bp to 4.659%; flight to safety amid AI-spending selloff and oil -> https://www.cnbc.com/2026/10/22/treasurys-bonds-ai-yields.html
+- 10Y biggest daily drop since 2024 / Mar 2023 (sources differ) -> https://breakingthenews.net/Article/10-year-Treasury-yield-sees-biggest-daily-drop-since-2024/67380810
+- Themis Trading Joe Saluzzi: "classic rotation day" out of AI stocks into bonds and big Dow names; oil rising while yields fall is unusual vs recent months -> https://www.theglobeandmail.com/investing/article-us-bond-yields-plunge-as-fears-about-sustaining-ai-boom-resurface/
+- Reuters: Stocks drop as Meta dampens AI optimism; Treasury yields fall; 10Y below 5% first time since Sept 23; staples and health care biggest gainers -> https://lufkindailynews.com/news_reuters/business/stocks-drop-as-meta-dampens-ai-optimism-treasury-yields-fall/article_0365a147-4a0d-5c32-86dd-9f4b72d10300.html ; https://www.investing.com/news/economy-news/steep-bill-for-ai-buildout-punishes-meta-other-tech-favorites-4967187
+- AP: AI stocks drag markets worldwide; S&P worst day since July; most S&P 500 stocks rose but drowned by big tech; Kospi ~-3.5%, Hang Seng ~-3%, Nikkei ~-2.7% (Asia session); Lam Research ~-10%; worry data-center construction slows as borrowing costs rise -> https://www.bnnbloomberg.ca/markets/2026/10/22/ai-stocks-drag-markets-down-worldwide-as-oil-prices-climb-to-their-highest-since-may/ ; https://www.ksl.com/article/51639493/ai-stocks-tumble-and-drag-down-markets-worldwide-as-oil-prices-climb
+- Benzinga: Meta sinks 6%, 10-year below 5% -> https://www.benzinga.com/markets/equities/26/10/62539017/meta-ai-spending-10-year-yield-below-5-stock-market-today
+- Midday: consumer defensive and utilities biggest gainers -> https://www.fool.com/coverage/stock-market-today/2026/10/22/stock-market-midday-oct-22-tech-weakness-drags-nasdaq-lower-as-ai-spending-concerns-mount/
+## Fed pricing (secondary, intraday, single-source each)
+- FXStreet: CME FedWatch December hike odds 67.6%, down from ~89% earlier in the day -> https://fxstreet.com/news/gold-slides-as-safe-haven-demand-shifts-to-us-treasuries-despite-lower-yields-202610221837 (second search could not reconfirm the 67.6% figure)
+- CoinDesk live: October hike odds ~zero; odds of no more hikes this year 28% from 10% -> https://www.coindesk.com/business/2026/10/22/live-updates-bitcoin-s-round-trip-to-usd85-000-burns-traders-on-both-sides
+- Reuters poll Oct 16-20: 94/100 economists see hold at 3.75-4.00% on Oct 28; 100/100 expect December hike -> https://www.mitrade.com/insights/more/Central-Banks/fed-october-hold-december-hike-20261022J1428
+- Earlier in 10/22 (pre-US) FXStreet: gold below $4,100 as Middle East energy shock reinforces hawkish Fed outlook -> https://fxstreet.com/news/gold-slips-below-4-100-as-middle-east-energy-shock-reinforces-hawkish-fed-outlook-202610221104
+## Oil
+- Rigzone: Brent Dec settled +4% at $113.17; WTI Dec +2.4% at $99.47; Houthi drone debris at Shaybah killed two, operations unaffected; US ordered non-essential personnel out of Saudi -> https://www.rigzone.com/news/oil_surges_4_after_deadly_saudi_attacks-22-oct-2026-184912-article
+- The National: oil tops $110 after Houthi strike near Shaybah -> https://www.thenationalnews.com/business/energy/2026/10/22/oil-tops-110-as-houthi-drone-strike-near-saudi-shaybah-field-rattles-markets/
+- Iran claims seven ships hit -> https://oilprice.com/Latest-Energy-News/World-News/Iran-Claims-Seven-Ships-Hit-in-Persian-Gulf-as-Oil-Prices-Surge.html
+## Claims
+- Initial claims 194K vs 200K Bloomberg median; continuing 1.728M vs ~1.72M est -> https://www.bloomberg.com/news/articles/2026-10-22/us-initial-jobless-claims-fall-to-three-month-low ; https://investinglive.com/news/us-initial-jobless-claims-194k-vs-200k-estimate-better-than-expected/ ; https://seekingalpha.com/news/4655880-initial-jobless-claims-unexpectedly-fall-in-past-week-continuing-claims-rise
+## Meta
+- Q3 revenue $64.60B (+26%) vs $63.37B est; FCF -$2.12B first negative since 2012; capex ~$35B vs OCF ~$33B; 2026 capex $135-145B; no 2027 number; shares -6.6% morning; 6 of 7 firms raised targets -> https://www.cnbc.com/2026/10/22/meta-stock-q3-earnings-free-cash-flow.html ; https://www.benzinga.com/markets/earnings/26/10/62530530/meta-free-cash-flow-negative-first-time-since-2012-capex ; https://finbold.com/analysts-update-meta-stock-price-targets/
+## Semis / optics / memory
+- Lam Research ~-9%: supply constraints capped Dec-quarter guide at $8.6B vs record $8.22B revenue; AMAT -6%, ASML -4% -> https://247wallst.com/investing/2026/10/22/lam-research-sinks-9-as-supply-constraints-cap-outlook-applied-materials-drops-6-asml-holding-falls-4/
+- AMD/Intel mid-single-digit falls in morning; drivers oil jump, AI spending worries, financing costs for AI data-center customers -> https://stockstory.org/us/stocks/nasdaq/intc/news/why-up-down/intel-lam-research-amkor-and-kulicke-and-soffa-shares-are-falling-what-you-need-to-know ; https://invezz.com/news/2026/10/22/why-intel-amd-stocks-are-falling-on-thursday/
+- Optics: Coherent -12%, AAOI -10%, Lumentum -9% afternoon; LYTE ETF -10%; sector-wide, ahead of earnings; no company-specific cause -> https://247wallst.com/investing/2026/10/22/optics-stocks-tumble-as-tech-selloff-deepens-ahead-of-earnings-coherent-tumbles-12-applied-optoelectronics-drops-10-lumentum-falls-9/
+- Memory premarket ~-4% (TradingKey; attributes to CPI/PPI and higher yields - contradicts same-day yield fall) -> https://www.tradingkey.com/analysis/stocks/us-stocks/262231828-stock-ai-chip-memory-micron-mu-price-900-tradingkey ; https://hdfcsky.com/news/nasdaq-slumps-1-41percent-to-26326-69-on-chip-selloff-oil-surge-oct-22-2026
+- CoreWeave (CNBC, in collected news file): -36% in October, CDS 1,145bp (+39% in Oct), unsecured ~15%; HY issuance seen paused until after midterms
+## Western Digital FQ1 2027 (after close 10/22)
+- Revenue $4.38B (+55% y/y), non-GAAP EPS $4.64, GM 58.1%; FQ2 guide midpoint revenue $5.1B (+66-72% y/y), GM 60.5%, EPS $5.80; dividend +17% to $0.175; stock -6.4% regular session, -4.85% after hours -> https://www.sec.gov/Archives/edgar/data/0000106040/000162828026066882/a4ex991-pressreleaseq127.htm ; https://www.techpowerup.com/354043/wd-reports-fiscal-first-quarter-2027-financial-results ; https://ng.investing.com/news/stock-market-news/earnings-call-transcript-western-digital-beats-q1-2027-forecasts-as-stock-falls-93CH-2752889 ; https://www.benzinga.com/news/26/10/62548876/western-digital-q1-2027-earnings-call-transcript
+- Sold-out / LTA wording on the 10/22 call NOT found; latest found is earlier call (sold out CY2026, LTAs with two customers for 2027, one for 2028) -> https://www.tomshardware.com/pc-components/hdds/western-digital-is-already-sold-out-of-hard-drives-for-all-of-2026-chief-says-some-long-term-agreements-for-2027-and-2028-already-in-place
+## Schedules
+- GE Vernova Q3 results Oct 28 pre-market -> https://www.gevernova.com/news/press-releases/ge-vernova-announce-third-quarter-2026-financial-results-october-28
+- Vertiv Q3 2026 date not found. SK hynix Q3 Oct 27 per forum post only (unverified).
+## Not found (searched)
+- Cause for Apple +1.23% and Lilly +2.83% on 10/22; Dell, SanDisk, Seagate company-specific news on 10/22; telecom (VZ/TMUS/T) closes or new SpaceX/FCC action on 10/22.
