@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-22T11:24:58+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-22T11:42:05+00:00",
  "cutoff_at": "2026-10-22T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 564,
+  "harvest": 553,
   "candidates": 1,
   "articles": [
    6
@@ -43,29 +43,29 @@
    "aju": "ok"
   },
   "notes": [
-   "discover:564"
+   "discover:553"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 36746,
-   "out": 11711
+   "in": 33687,
+   "out": 10229
   },
   "grounded": {
    "claims": "3/3",
    "pairs": "1/1",
-   "obs": "10/10"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 10
+   "obs": 7
   }
  },
  "event": {
-  "topic_ko": "한국은행 10월 기준금리 동결(연 3.00%)과 8월 인상 발언 인용의 ",
+  "topic_ko": "한국은행 10월 기준금리 동결(연 3.00%)과 8월 인상 당시 총재 속",
   "query": "한은 인상 11월",
   "trigger": []
  },
- "content_hash": "16945d7866ac005e"
+ "content_hash": "f3f9b3bb669cf91e"
 }
