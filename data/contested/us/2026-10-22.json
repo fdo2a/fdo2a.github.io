@@ -7,8 +7,8 @@
  "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-10-22T22:23:13+00:00",
- "cutoff_at": "2026-10-22T22:23:13+00:00",
+ "collected_at": "2026-10-22T23:25:46+00:00",
+ "cutoff_at": "2026-10-22T23:25:46+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -17,7 +17,7 @@
  "prompt_version": "2026-10-21.1",
  "market_snapshot": null,
  "counts": {
-  "harvest": 230,
+  "harvest": 229,
   "candidates": 3,
   "articles": [
    2,
@@ -28,7 +28,7 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 5139,
+   "in": 4956,
    "out": 76
   },
   "discovery": "throttled",
@@ -47,5 +47,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "d178fce89285396b"
+ "content_hash": "e6946311ec772d14"
 }
