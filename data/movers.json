@@ -1,21 +1,46 @@
 {
-  "report_date": "2026-10-21",
+  "report_date": "2026-10-22",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "Semiconductors",
-      "direction": "up",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
           "name": "Nvidia (NVDA)",
-          "change_pct": 2.54,
-          "close": 221.97,
-          "value": 19114130693.4
+          "change_pct": -4.4,
+          "close": 212.21,
+          "value": 26390697665.45
+        },
+        {
+          "name": "Micron Technology (MU)",
+          "change_pct": -6.26,
+          "close": 856.49,
+          "value": 27120296462.14
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -8.1,
+          "close": 507.93,
+          "value": 13980091914.28
+        },
+        {
+          "name": "Intel (INTC)",
+          "change_pct": -8.04,
+          "close": 85.49,
+          "value": 11369228727.47
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": -8.7,
+          "close": 223.47,
+          "value": 5533014210.55
         }
       ]
     },
@@ -24,20 +49,21 @@
       "industry": "Interactive Media & Services",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
           "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": -1.62,
-          "close": 334.76,
-          "value": 9549114977.13
+          "change_pct": -3.15,
+          "close": 324.22,
+          "value": 8885374282.37
         },
         {
-          "name": "Alphabet Inc. (Class C) (GOOG)",
-          "change_pct": -1.62,
-          "close": 330.95,
-          "value": 6331085978.67
+          "name": "Meta Platforms (META)",
+          "change_pct": -6.98,
+          "close": 648.85,
+          "value": 26230745217.32
         }
       ]
     },
@@ -46,59 +72,64 @@
       "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
+        "지수 기여 상위"
       ],
       "members": [
         {
           "name": "Apple Inc. (AAPL)",
-          "change_pct": 1.32,
-          "close": 343.99,
-          "value": 12166441616.68
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": 5.27,
-          "close": 485.88,
-          "value": 3314255536.51
-        },
-        {
-          "name": "Supermicro (SMCI)",
-          "change_pct": 9.55,
-          "close": 35.57,
-          "value": 2913534371.03
+          "change_pct": 1.23,
+          "close": 348.22,
+          "value": 16247893720.4
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Movies & Entertainment",
+      "industry": "Pharmaceuticals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Lilly (Eli) (LLY)",
+          "change_pct": 2.83,
+          "close": 1306.69,
+          "value": 3463791990.34
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Netflix (NFLX)",
-          "change_pct": -5.31,
-          "close": 65.04,
-          "value": 6564556429.93
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Electrical Components & Equipment",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
+          "name": "Sandisk (SNDK)",
+          "change_pct": -8.51,
+          "close": 1260.93,
+          "value": 12909260665.73
+        },
         {
-          "name": "Bloom Energy (BE)",
-          "change_pct": 7.13,
-          "close": 238.53,
-          "value": 2917651954.66
+          "name": "Western Digital (WDC)",
+          "change_pct": -6.43,
+          "close": 354.19,
+          "value": 4462497219.54
+        },
+        {
+          "name": "Seagate Technology (STX)",
+          "change_pct": -7.86,
+          "close": 642.14,
+          "value": 3655687692.03
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -6.78,
+          "close": 452.95,
+          "value": 2984273385.08
         }
       ]
     }

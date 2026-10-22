@@ -1,7 +1,250 @@
 {
-  "generated": "2026-10-22 07:44 KST",
+  "generated": "2026-10-23 06:34 KST",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "indicators": []
+  "indicators": [
+    {
+      "axis": "Labor",
+      "name": "JOLTS Job Openings",
+      "fred_id": "JTSJOL",
+      "transform": "level",
+      "units": "K",
+      "actual": 7079.0,
+      "previous": 7335.0,
+      "ref_period": "2026-08-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Labor",
+      "name": "Initial Jobless Claims",
+      "fred_id": "ICSA",
+      "transform": "level",
+      "units": "",
+      "actual": 194000.0,
+      "previous": 200000.0,
+      "ref_period": "2026-10-17",
+      "vs_prev": "개선"
+    },
+    {
+      "axis": "Labor",
+      "name": "Initial Claims 4-wk MA",
+      "fred_id": "IC4WSA",
+      "transform": "level",
+      "units": "",
+      "actual": 197750.0,
+      "previous": 198750.0,
+      "ref_period": "2026-10-17",
+      "vs_prev": "개선"
+    },
+    {
+      "axis": "Labor",
+      "name": "Continuing Jobless Claims",
+      "fred_id": "CCSA",
+      "transform": "level",
+      "units": "",
+      "actual": 1728000.0,
+      "previous": 1703000.0,
+      "ref_period": "2026-10-10",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Labor",
+      "name": "Nonfarm Payrolls (chg)",
+      "fred_id": "PAYEMS",
+      "transform": "mom_diff",
+      "units": "K",
+      "actual": 29.0,
+      "previous": 133.0,
+      "ref_period": "2026-09-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Labor",
+      "name": "Unemployment Rate",
+      "fred_id": "UNRATE",
+      "transform": "level",
+      "units": "%",
+      "actual": 4.2,
+      "previous": 4.1,
+      "ref_period": "2026-09-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Labor",
+      "name": "Avg Hourly Earnings MoM",
+      "fred_id": "CES0500000003",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.13,
+      "previous": 0.32,
+      "ref_period": "2026-09-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Activity",
+      "name": "Industrial Production MoM",
+      "fred_id": "INDPRO",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.66,
+      "previous": 0.06,
+      "ref_period": "2026-09-01",
+      "vs_prev": "개선"
+    },
+    {
+      "axis": "Activity",
+      "name": "Durable Goods Orders MoM",
+      "fred_id": "DGORDER",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": -0.07,
+      "previous": 0.87,
+      "ref_period": "2026-08-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Activity",
+      "name": "New Home Sales",
+      "fred_id": "HSN1F",
+      "transform": "level",
+      "units": "K",
+      "actual": 684.0,
+      "previous": 643.0,
+      "ref_period": "2026-08-01",
+      "vs_prev": "개선"
+    },
+    {
+      "axis": "Activity",
+      "name": "Existing Home Sales",
+      "fred_id": "EXHOSLUSM495S",
+      "transform": "level",
+      "units": "",
+      "actual": 3990000.0,
+      "previous": 3930000.0,
+      "ref_period": "2026-09-01",
+      "vs_prev": "개선"
+    },
+    {
+      "axis": "Activity",
+      "name": "Real GDP Growth QoQ (ann.)",
+      "fred_id": "A191RL1Q225SBEA",
+      "transform": "level",
+      "units": "%",
+      "actual": 2.2,
+      "previous": 2.5,
+      "ref_period": "2026-04-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Consumption",
+      "name": "Retail Sales MoM",
+      "fred_id": "RSAFS",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.77,
+      "previous": 1.29,
+      "ref_period": "2026-09-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Consumption",
+      "name": "Michigan Consumer Sentiment",
+      "fred_id": "UMCSENT",
+      "transform": "level",
+      "units": "",
+      "actual": 51.7,
+      "previous": 55.2,
+      "ref_period": "2026-08-01",
+      "vs_prev": "악화"
+    },
+    {
+      "axis": "Inflation",
+      "name": "CPI YoY",
+      "fred_id": "CPIAUCSL",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 3.72,
+      "previous": 3.35,
+      "ref_period": "2026-09-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "CPI MoM",
+      "fred_id": "CPIAUCSL",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.65,
+      "previous": 0.4,
+      "ref_period": "2026-09-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Core CPI YoY",
+      "fred_id": "CPILFESL",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 2.57,
+      "previous": 2.45,
+      "ref_period": "2026-09-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Core CPI MoM",
+      "fred_id": "CPILFESL",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 0.33,
+      "previous": 0.29,
+      "ref_period": "2026-09-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "PPI Final Demand MoM",
+      "fred_id": "PPIFIS",
+      "transform": "mom_pct",
+      "units": "%",
+      "actual": 1.34,
+      "previous": 0.47,
+      "ref_period": "2026-09-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "PCE Price Index YoY",
+      "fred_id": "PCEPI",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 3.42,
+      "previous": 3.36,
+      "ref_period": "2026-08-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Core PCE YoY",
+      "fred_id": "PCEPILFE",
+      "transform": "yoy_pct",
+      "units": "%",
+      "actual": 3.01,
+      "previous": 2.98,
+      "ref_period": "2026-08-01",
+      "vs_prev": "상승"
+    },
+    {
+      "axis": "Inflation",
+      "name": "Michigan 1-Yr Inflation Exp",
+      "fred_id": "MICH",
+      "transform": "level",
+      "units": "%",
+      "actual": 4.0,
+      "previous": 4.2,
+      "ref_period": "2026-08-01",
+      "vs_prev": "하락"
+    }
+  ]
 }
