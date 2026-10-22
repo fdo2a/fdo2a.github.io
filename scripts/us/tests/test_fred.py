@@ -315,3 +315,96 @@ def test_fallback_off_also_refuses_to_degrade_in_preflight():
     with pytest.raises(fred.FredError):
         c.preflight()
     assert c.transport is None
+
+
+def test_preflight_failure_keeps_the_scrubbed_cause_in_telemetry():
+    csv_body = b'observation_date,X\n2026-09-01,4.79\n'
+    c = _client(FakeOpener(b'', b'', csv_body))
+    c.series('X')
+    err = c.telemetry()['error']
+    assert 'non-JSON response (0 bytes)' in err
+
+
+def test_degrade_error_never_carries_the_key():
+    c = _client(FakeOpener(OSError('boom api_key=SECRETKEY SECRETKEY'),
+                           OSError('boom api_key=SECRETKEY SECRETKEY'),
+                           b'observation_date,X\n2026-09-01,4.79\n'))
+    c.series('X')
+    assert 'boom' in c.error and 'SECRETKEY' not in c.error
+
+
+# ---------------------------------------------------------------- 키 건강 (2026-10-22)
+
+def test_error_is_none_on_healthy_and_keyless_clients():
+    assert _client(FakeOpener(_obs(('2000-01-01', '1.0')))).telemetry()['error'] is None
+    assert fred.FredClient(key=None, min_interval=0).telemetry()['error'] is None
+
+
+def test_maintenance_page_reports_its_title():
+    page = (b'<!DOCTYPE html><html><head><meta charset="utf-8">' + b' ' * 200
+            + b'<title>Site Maintenance | St. Louis Fed</title></head></html>')
+    csv_body = b'observation_date,X\n2026-09-01,4.79\n'
+    c = _client(FakeOpener(page, page, csv_body))
+    c.series('X')
+    assert 'Site Maintenance | St. Louis Fed' in c.telemetry()['error']
+
+
+def test_maintenance_503_that_echoes_api_key_is_not_a_rejection():
+    body = 'Maintenance. Your request ?series_id=X&api_key=SECRETKEY will be retried.'
+    csv_body = b'observation_date,X\n2026-09-01,4.79\n'
+    c = _client(FakeOpener(_http_error(503, body), _http_error(503, body), csv_body))
+    c.series('X')
+    assert c.reason == 'preflight_failed:503'
+
+
+def test_invalid_api_key_wording_without_underscore_is_a_rejection():
+    body = json.dumps({'error_code': 400, 'error_message': 'Invalid API key'})
+    csv_body = b'observation_date,X\n2026-09-01,4.79\n'
+    c = _client(FakeOpener(_http_error(400, body), csv_body))
+    c.series('X')
+    assert c.reason == 'api_key_rejected'
+
+
+def test_key_health_fails_only_on_a_rejected_key():
+    rejected = {'degraded': True, 'reason': 'api_key_rejected', 'error': 'HTTP 400: bad'}
+    level, msg = fred.key_health(rejected, key_set=True)
+    assert level == 'error' and 'api_key_rejected' in msg
+
+
+def test_key_health_downgrades_an_outage_to_a_warning():
+    outage = {'degraded': True, 'reason': 'preflight_failed:error',
+              'error': "non-JSON response (786 bytes): 'Site Maintenance | St. Louis Fed'"}
+    level, msg = fred.key_health(outage, key_set=True)
+    assert level == 'warning'
+    assert 'Site Maintenance' in msg and 'not verified' in msg
+
+
+def test_key_health_is_ok_when_the_api_was_used_or_no_key_is_set():
+    assert fred.key_health({'degraded': False, 'transport': 'api'}, key_set=True)[0] == 'ok'
+    assert fred.key_health({'degraded': True, 'reason': 'api_key_rejected'},
+                           key_set=False)[0] == 'ok'
+
+
+def test_key_straddling_the_snippet_cut_is_still_masked():
+    key = 'K' * 32
+    body = ('x' * 100 + key).encode()          # 120 B 경계가 키 한가운데를 자른다
+    c = _client(FakeOpener(body, body, b'observation_date,X\n2026-09-01,4.79\n'), key=key)
+    c.series('X')
+    assert 'KKKK' not in json.dumps(c.telemetry())
+
+
+def test_key_straddling_the_http_error_cut_is_still_masked():
+    key = 'K' * 32
+    body = 'x' * 480 + key
+    c = _client(FakeOpener(_http_error(503, body), _http_error(503, body),
+                           b'observation_date,X\n2026-09-01,4.79\n'), key=key)
+    c.series('X')
+    assert 'KKKK' not in json.dumps(c.telemetry())
+
+
+def test_key_health_message_cannot_inject_a_workflow_command():
+    f = {'degraded': True, 'reason': 'preflight_failed:503',
+         'error': 'HTTP 503: down\n::error::forged 100%'}
+    level, msg = fred.key_health(f, key_set=True)
+    assert level == 'warning'
+    assert '\n' not in msg and '\r' not in msg and '%0A::error::forged 100%25' in msg

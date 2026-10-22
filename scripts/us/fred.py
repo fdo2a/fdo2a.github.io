@@ -41,6 +41,11 @@ PINS = (('file_type', 'json'), ('sort_order', 'asc'),
         ('units', 'lin'), ('output_type', '1'), ('limit', str(LIMIT)))
 
 _KEY_IN_URL = re.compile(r'(?i)(api_key=)[^&\s\'"]+')
+# 「키가 거부됐다」로 읽을 근거. 쿼리를 되풀이하는 점검 페이지도 `api_key` 를 담으므로
+# 문자열만으로는 모자라고, 상태 코드도 같이 본다(_as_error).
+_KEY_WORDS = re.compile(r'(?i)api[_ ]key')
+_AUTH_STATUS = (400, 401, 403)
+_TITLE = re.compile(rb'(?is)<title[^>]*>(.*?)</title>')
 TRANSIENT = (408, 425, 429, 500, 502, 503, 504)
 PREFLIGHT_SID = 'DGS10'
 
@@ -102,6 +107,7 @@ class FredClient:
         self._earliest = None
         self.transport = transport
         self.reason = None if transport else ('no_key' if not self.key else None)
+        self.error = None
         if transport is None and not self.key:
             self.transport = 'csv'
         self._cache = {}
@@ -148,7 +154,8 @@ class FredClient:
     def _as_error(self, e):
         body = ''
         try:
-            body = e.read().decode('utf-8', 'replace')[:500]
+            # 지운 **뒤에** 자른다 — 자르는 경계에 걸친 키는 원래 키와 안 맞아 안 지워진다.
+            body = scrub(e.read().decode('utf-8', 'replace'), self.key)[:500]
         except Exception:
             pass
         msg = body
@@ -159,7 +166,8 @@ class FredClient:
         if e.code == 429:
             self._honor_retry_after(e)
         return FredError(scrub(f'HTTP {e.code}: {msg or e.reason}', self.key),
-                         status=e.code, auth='api_key' in (msg or '').lower(),
+                         status=e.code,
+                         auth=e.code in _AUTH_STATUS and bool(_KEY_WORDS.search(msg or '')),
                          transient=e.code in TRANSIENT)
 
     def _honor_retry_after(self, e):
@@ -185,7 +193,12 @@ class FredClient:
             return json.loads(body.decode('utf-8'))
         except ValueError:
             pass
-        raise FredError(f'non-JSON response ({len(body)} bytes)', transient=True)
+        # 점검 페이지는 앞부분이 DOCTYPE·meta 라 제목이 원인을 말한다(2026-10-22 실측
+        # 「Site Maintenance | St. Louis Fed」, 786 B).
+        m = _TITLE.search(body)
+        text = scrub((m.group(1) if m else body).decode('utf-8', 'replace'), self.key)
+        head = text.strip()[:120]
+        raise FredError(f'non-JSON response ({len(body)} bytes): {head!r}', transient=True)
 
     def _api(self, sid):
         payload = self._json(self._api_url(sid))
@@ -222,18 +235,22 @@ class FredClient:
                 if not self.fallback:
                     raise
                 if e.auth:
-                    self._degrade('api_key_rejected')
+                    self._degrade('api_key_rejected', e)
                     return self.transport
         self._degrade(f'preflight_failed:{last.status or "error"}' if last
-                      else 'preflight_failed')
+                      else 'preflight_failed', last)
         return self.transport
 
     def _api_probe(self):
         self._json(self._api_url(PREFLIGHT_SID, limit=1))
 
-    def _degrade(self, reason):
+    def _degrade(self, reason, error=None):
+        """`reason` 은 분류만 남긴다 — status 가 없는 실패(네트워크·타임아웃·빈 본문)는
+        전부 `preflight_failed:error` 하나로 뭉쳐 원인을 못 읽는다(2026-10-21~22, 6회).
+        살균된 원문을 `error` 로 같이 남긴다. 키는 FredError 가 이미 지웠고 한 번 더 지운다."""
         self.transport = 'csv'
         self.reason = reason
+        self.error = scrub(error, self.key) if error is not None else None
 
     def series(self, sid):
         """오래된→최신 `(date, float)`. 실패는 예외 — 호출부 `retry()` 가 받는다."""
@@ -261,7 +278,7 @@ class FredClient:
                 raise
             if e.auth:
                 # 키가 실행 도중 거부됐다 — 남은 수십 회를 같은 벽에 던지지 않는다.
-                self._degrade('api_key_rejected')
+                self._degrade('api_key_rejected', e)
                 return self._csv(sid)
             # 일시 실패. 시리즈를 통째로 잃는 것이 더 비싸다 — 무키 시절 경로로
             # 한 번 구제한다. 둘 다 실패하면 원래 예외를 올린다.
@@ -313,12 +330,34 @@ class FredClient:
     def telemetry(self):
         return {'transport': self.transport or 'unknown',
                 'reason': self.reason,
+                'error': self.error,
                 'key_configured': bool(self.key),
                 'degraded': bool(self.key) and self.transport != 'api',
                 'requests': self.requests,
                 'series_ok': self.series_ok,
                 'failed': sorted(self.failed),
                 'csv_rescued': sorted(self.csv_rescued)}
+
+
+def annotation(text):
+    """GitHub `::warning::`/`::error::` 한 줄로 안전하게. 응답 본문의 개행 뒤 `::error::` 가
+    별도 명령으로 실행되지 않게 `%`·CR·LF 를 공식 규칙대로 이스케이프한다."""
+    return str(text).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+
+
+def key_health(telemetry, key_set):
+    """-> (level, message). 'error' 는 **키가 거부됐을 때만**이다(사용자 지시 2026-10-22).
+    점검·장애로 API 가 안 될 때는 키를 확인할 수 없을 뿐이라 'warning' — 데이터는 CSV 로 이미
+    커밋됐고, 빨간 실행이 매일 쌓이면 진짜 거부가 그 사이에 묻힌다."""
+    f = telemetry or {}
+    if not key_set or not f.get('degraded'):
+        return 'ok', f"fred transport={f.get('transport')} ok"
+    cause = annotation(f"{f.get('reason')}: {f.get('error')}")
+    if f.get('reason') == 'api_key_rejected':
+        return 'error', (f'FRED API key rejected ({cause}) — '
+                         f'data was collected from the unofficial graph CSV')
+    return 'warning', (f'FRED API unavailable, key not verified ({cause}) — '
+                       f'data was collected from the unofficial graph CSV')
 
 
 def _pairs(rows):

@@ -809,7 +809,7 @@ def fred_check():
     끝난다. 이 레포에서 가장 비싼 실패가 「데이터가 조용히 달라지는 것」이라 전송을
     바꾸는 패치에는 이 대조가 딸려야 한다.
     """
-    from us.fred import FredClient
+    from us.fred import FredClient, annotation
     if not os.environ.get('FRED_API_KEY'):
         print('FRED_API_KEY is not set — nothing to compare', file=sys.stderr)
         return 2
@@ -824,7 +824,7 @@ def fred_check():
         try:
             a, b = api.series(sid), raw.series(sid)
         except Exception as e:
-            print(f'  {sid}: FETCH FAILED — {e}')
+            print(f'  {sid}: FETCH FAILED — {annotation(e)}')
             bad += 1
             continue
         off, notes = _diff_series(a, b)
@@ -864,8 +864,10 @@ def main():
     print(f'FRED transport: {fredc.preflight()}'
           + (f' ({fredc.reason})' if fredc.reason else ''))
     if fredc.telemetry()['degraded']:
-        print(f'::warning::FRED API key is configured but unusable ({fredc.reason}) — '
-              f'falling back to the unofficial graph CSV', file=sys.stderr)
+        from us.fred import annotation
+        print('::warning::FRED API key is configured but unusable '
+              f'({annotation(f"{fredc.reason}: {fredc.error}")}) — '
+              'falling back to the unofficial graph CSV', file=sys.stderr)
 
     os.makedirs(args.outdir, exist_ok=True)
     md_path = os.path.join(args.outdir, 'market_data.json')

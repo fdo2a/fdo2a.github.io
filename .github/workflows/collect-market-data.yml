@@ -168,12 +168,13 @@ jobs:
         run: |
           python - <<'PY'
           import json
+          from scripts.us.fred import annotation
           d = json.load(open('data/market_data.json'))
           print(f"report_date={d['report_date']} complete={d['complete']}")
           if d['missing']:
               print('missing:', ', '.join(d['missing']))
           f = d.get('fred') or {}
-          print(f"fred: transport={f.get('transport')} reason={f.get('reason')} "
+          print(f"fred: transport={f.get('transport')} reason={f.get('reason')} error={annotation(f.get('error'))} "
                 f"requests={f.get('requests')} series={f.get('series_ok')}")
           for label in ('failed', 'csv_rescued'):
               if f.get(label):
@@ -203,19 +204,20 @@ jobs:
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: market data for ${RD}"
 
-      # 키가 설정됐는데 거부당했으면 빨간 실행으로 남긴다. **커밋 뒤**인 이유는
-      # 폴백 데이터가 이미 레포에 들어가 있어야 하기 때문이다 — 죽은 키가 몇 주 동안
-      # 조용히 지나가는 것만 막으면 된다.
+      # 키가 **거부**됐을 때만 빨간 실행으로 남긴다(2026-10-22 사용자 지시). FRED 점검·장애로
+      # API 가 안 되면 키를 확인할 수 없을 뿐이라 경고다. **커밋 뒤**인 이유는 폴백 데이터가
+      # 이미 레포에 들어가 있어야 하기 때문이다 — 죽은 키가 몇 주 동안 조용히 지나가는 것만 막으면 된다.
       - name: FRED key health
+        # 수집을 건너뛴 실행은 커밋된 어제 파일을 다시 읽어 같은 경보를 또 울린다 — 건너뛴다.
+        if: steps.collect.outputs.skipped != 'true'
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           python - <<'PY'
           import json, os, sys
-          f = (json.load(open('data/market_data.json')).get('fred') or {})
-          if os.environ.get('FRED_API_KEY') and f.get('degraded'):
-              print(f"::error::FRED API key configured but unused ({f.get('reason')}) — "
-                    f"data was collected from the unofficial graph CSV")
-              sys.exit(1)
-          print(f"fred transport={f.get('transport')} ok")
+          from scripts.us.fred import key_health
+          f = json.load(open('data/market_data.json')).get('fred')
+          level, msg = key_health(f, bool(os.environ.get('FRED_API_KEY')))
+          print(f'::{level}::{msg}' if level != 'ok' else msg)
+          sys.exit(1 if level == 'error' else 0)
           PY
