@@ -1,129 +1,91 @@
 {
-  "report_date": "2026-10-22",
+  "report_date": "2026-10-23",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "반도체와반도체장비",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "삼성전자",
-          "change_pct": -4.03,
-          "close": 214500,
-          "value": 2481936
-        },
-        {
-          "name": "SK하이닉스",
-          "change_pct": -5.49,
-          "close": 1223000,
-          "value": 3169461
-        },
-        {
-          "name": "한미반도체",
-          "change_pct": -5.81,
-          "close": 191200,
-          "value": 111859
-        },
-        {
-          "name": "이수페타시스",
-          "change_pct": -5.74,
-          "close": 90400,
-          "value": 38028
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "건설",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "삼성E&A",
-          "change_pct": 16.14,
-          "close": 55400,
-          "value": 678228
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "IT서비스",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "삼성에스디에스",
-          "change_pct": 2.73,
-          "close": 207000,
-          "value": 87378
+          "name": "SK하이닉스",
+          "change_pct": 4.42,
+          "close": 1277000,
+          "value": 4507896
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": 0.47,
+          "close": 215500,
+          "value": 3336016
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "은행",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "KB금융",
+          "change_pct": -3.29,
+          "close": 153000,
+          "value": 136190
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "전자장비와기기",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성전기",
+          "change_pct": -2.01,
+          "close": 1122000,
+          "value": 819428
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "전기제품",
-      "direction": "down",
+      "industry": "건설",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "삼성SDI",
-          "change_pct": -7.58,
-          "close": 512000,
-          "value": 290161
-        },
-        {
-          "name": "LG에너지솔루션",
-          "change_pct": -5.22,
-          "close": 390000,
-          "value": 153419
-        },
-        {
-          "name": "삼화콘덴서",
-          "change_pct": -6.05,
-          "close": 111900,
-          "value": 40297
-        },
-        {
-          "name": "엘앤에프",
-          "change_pct": -8.06,
-          "close": 91200,
-          "value": 38184
+          "name": "삼성E&A",
+          "change_pct": 7.94,
+          "close": 59800,
+          "value": 765720
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "석유와가스",
-      "direction": "down",
+      "industry": "제약",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "SK이노베이션",
-          "change_pct": -8.17,
-          "close": 141700,
-          "value": 124435
-        },
-        {
-          "name": "S-Oil",
-          "change_pct": -5.48,
-          "close": 139800,
-          "value": 63012
+          "name": "삼성바이오로직스",
+          "change_pct": 7.71,
+          "close": 1466000,
+          "value": 166807
         }
       ]
     }
