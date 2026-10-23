@@ -4,47 +4,50 @@
  "span": "daily",
  "report_date": "2026-10-22",
  "status": "error",
- "reason": "gdelt_throttled",
+ "reason": "fetch_incomplete",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-23T10:55:27+00:00",
- "cutoff_at": "2026-10-23T10:55:27+00:00",
+ "collected_at": "2026-10-23T12:03:28+00:00",
+ "cutoff_at": "2026-10-23T12:03:28+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "ef3f4de5a05101dd6434c0f129321a50e499040d",
+  "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
+ },
  "counts": {
-  "harvest": 236,
-  "candidates": 3,
+  "harvest": 235,
+  "candidates": 2,
   "articles": [
    3,
-   1,
-   2
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4935,
-   "out": 73
+   "in": 22322,
+   "out": 5046
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "out_of_window"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "머스크 기업의 연방 의존과 테슬라·스페이스X 합병 논의",
+  "query": "elon spacex million",
   "trigger": []
  },
- "content_hash": "865acb42ae6ad50a"
+ "content_hash": "d37f615895203c9e"
 }
