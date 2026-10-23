@@ -3,76 +3,48 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-22",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-23T09:51:08+00:00",
- "cutoff_at": "2026-10-23T09:51:08+00:00",
+ "collected_at": "2026-10-23T10:55:27+00:00",
+ "cutoff_at": "2026-10-23T10:55:27+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "ef3f4de5a05101dd6434c0f129321a50e499040d",
-  "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 238,
-  "candidates": 1,
+  "harvest": 236,
+  "candidates": 3,
   "articles": [
-   4
+   3,
+   1,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 33204,
-   "out": 12390
+   "in": 4935,
+   "out": 73
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok"
+   "bbc.co.uk": "out_of_window"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "5/5"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 4
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "우크라이나 스타실드 속도 제한: 복구 여부와 결정권 소재 공방",
-  "query": "starlink trump slowdown",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "variables[2]:unverified",
-  "variables[2]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:unverified",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "9116c6a75c2f786a"
+ "content_hash": "865acb42ae6ad50a"
 }
