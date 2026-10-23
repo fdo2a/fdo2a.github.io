@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-22",
- "status": "error",
- "reason": "fetch_incomplete",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-23T12:03:28+00:00",
- "cutoff_at": "2026-10-23T12:03:28+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-23T13:10:00+00:00",
+ "cutoff_at": "2026-10-23T13:10:00+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,33 +21,55 @@
   "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
  },
  "counts": {
-  "harvest": 235,
-  "candidates": 2,
+  "harvest": 233,
+  "candidates": 1,
   "articles": [
-   3,
-   4
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 22322,
-   "out": 5046
+   "in": 39740,
+   "out": 15553
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "aljazeera.com": "ok",
+   "arabnews.com": "ok",
+   "dw.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "12/12",
+   "pairs": "5/5",
+   "obs": "5/5"
+  },
+  "verified": {
+   "pairs": 5,
+   "claims": 10,
+   "obs": 4
+  }
  },
  "event": {
-  "topic_ko": "머스크 기업의 연방 의존과 테슬라·스페이스X 합병 논의",
-  "query": "elon spacex million",
+  "topic_ko": "우크라이나 스타실드 속도 제한: 결정 주체와 복구 여부 공방",
+  "query": "starlink trump slowdown",
   "trigger": []
  },
- "content_hash": "d37f615895203c9e"
+ "problems": [
+  "variables[2]:dangling",
+  "edges[0]:dangling",
+  "edges[1]:dangling",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:dangling",
+  "memo[2]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "98c043a448f2788c"
 }
