@@ -1,0 +1,72 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-23",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-23T11:12:30+00:00",
+ "cutoff_at": "2026-10-23T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "690345f7bc5840df50a4c4a611c4ec00f83866a1",
+  "sha256": "1d3f34c11ee199df6b44b72c19833fda784f5576d9d425c58f03deaecce3826f",
+  "extra": {
+   "kr_econ.json": "96964569fd9f24a2d4325bb34377765eb5a77f53e114203f85ae1d28dbab633c",
+   "kr_flows.json": "dd9c4dd7ec778c6f84e94161eebf10918acd2cc90a1dca01d78dd2b1bbe28f9e",
+   "kr_session.json": "1745a513179f43e4d75cb70081fdc896df4a8438e5898d65e3f9101ba17a1af7"
+  }
+ },
+ "counts": {
+  "harvest": 545,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "chosun": "ok",
+   "khan": "ok",
+   "nocut": "ok",
+   "newsis": "ok",
+   "news1": "short",
+   "dailian": "ok",
+   "herald": "ok"
+  },
+  "notes": [
+   "discover:545"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 57053,
+   "out": 13695
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "1/1",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8
+  }
+ },
+ "event": {
+  "topic_ko": "하나금융 3분기 실적: 하나증권 3분기 순이익 수치 불일치",
+  "query": "3분기 누적 순익",
+  "trigger": []
+ },
+ "content_hash": "ee87ad0ffc87dca1"
+}
