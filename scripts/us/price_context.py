@@ -40,6 +40,10 @@ MIN_IDENTIFIABLE_WEIGHT = 0.005
 # Series quoted as a rate/spread, where the meaningful change is a difference.
 _DIFF_TICKERS = {'^FVX', '^TNX', '^TYX'}
 
+# Shown to the reader as a point change ("VIX -0.63"), not a percent (user, 2026-10-23).
+# Display only: `multiple`/`band` and every cross-series reading stay on percent returns.
+_POINT_TICKERS = {'^VIX'}
+
 _R = 10  # float-noise guard on differences
 
 
@@ -600,13 +604,17 @@ def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
         mult = move_multiple(closes, ticker)
         ch = changes(closes, ticker)
         today = ch[-1] if ch else None
+        unit = 'pp' if change_kind(ticker) == 'd' else '%'
+        if ticker in _POINT_TICKERS and _finite(today):
+            s = _series(closes, ticker)
+            today, unit = _one_change(s[-2], s[-1], 'd'), 'pt'
         if mult is None and not _finite(today):
             moves[name] = None
         else:
             moves[name] = {
                 'ticker': ticker,
                 'change': round(today, 3) if _finite(today) else None,
-                'unit': 'pp' if change_kind(ticker) == 'd' else '%',
+                'unit': unit,
                 'multiple': mult,
                 'band': move_band(mult),
             }

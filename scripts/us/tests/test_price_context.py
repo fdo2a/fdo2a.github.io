@@ -405,6 +405,17 @@ def test_compute_gives_each_move_a_band_word():
     assert got['moves']['S&P 500']['band'] in {'미미', '보통', '큼', '매우 큼'}
 
 
+def test_compute_reports_vix_change_in_points_not_percent():
+    """VIX 등락은 포인트로 싣는다(2026-10-23 사용자 지시) — 16.68 → -3.64% 가 아니라 -0.63."""
+    closes = _full_closes()
+    s = closes['^VIX']
+    got = compute(closes, {}, sectors=SECTORS_FOR_TEST, dates=dates_for(closes))
+    vix = got['moves']['VIX']
+    assert vix['unit'] == 'pt'
+    assert vix['change'] == round(s[-1] - s[-2], 3)
+    assert got['moves']['S&P 500']['unit'] == '%'
+
+
 def test_compute_reports_a_level_percentile_for_every_tracked_name():
     got = compute(_full_closes(), {}, sectors=SECTORS_FOR_TEST, dates=dates_for(_full_closes()))
     assert 0.0 <= got['levels']['VIX']['percentile'] <= 100.0
