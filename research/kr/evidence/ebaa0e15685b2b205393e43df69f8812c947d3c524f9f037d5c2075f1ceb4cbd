@@ -1,0 +1,449 @@
+{
+ "kr_market_data": {
+  "report_date": "2026-10-23",
+  "complete": true,
+  "missing": [
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 5550.3,
+    "change_pct": 0.3
+   },
+   "KOSDAQ": {
+    "close": 751.69,
+    "change_pct": -1.62
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-10-23",
+   "KOSDAQ": "2026-10-23"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kr_session": {
+  "report_date": "2026-10-23",
+  "us_prev": {
+   "as_of": "2026-10-22",
+   "rows": {
+    "S&P 500": -1.21,
+    "Nasdaq": -2.6,
+    "Dow": 0.02
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.02,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": 0.3,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -0.34,
+    "항셍": 0.69,
+    "상해종합": 0.89,
+    "대만가권": -1.81
+   },
+   "dates": {
+    "닛케이": "2026-10-23",
+    "항셍": "2026-10-23",
+    "상해종합": "2026-10-23",
+    "대만가권": "2026-10-22"
+   },
+   "avg_pct": -0.14,
+   "relative_pp": 0.44
+  },
+  "usdkrw_intraday": {
+   "high": 1326.48,
+   "high_t": "14:30",
+   "low": 1321.15,
+   "low_t": "09:30",
+   "close": 1325.98,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "kr_flows": {
+  "KOSPI": {
+   "rows": [
+    {
+     "date": "2026-10-23",
+     "individual": 392,
+     "foreign": -9778,
+     "institution": 8675
+    },
+    {
+     "date": "2026-10-22",
+     "individual": 3667,
+     "foreign": 505,
+     "institution": -4599
+    },
+    {
+     "date": "2026-10-21",
+     "individual": -11159,
+     "foreign": 6462,
+     "institution": -781
+    },
+    {
+     "date": "2026-10-20",
+     "individual": 8475,
+     "foreign": -4884,
+     "institution": -9901
+    },
+    {
+     "date": "2026-10-19",
+     "individual": -11767,
+     "foreign": 947,
+     "institution": 5302
+    },
+    {
+     "date": "2026-10-16",
+     "individual": -5126,
+     "foreign": 3637,
+     "institution": -6815
+    },
+    {
+     "date": "2026-10-15",
+     "individual": 13967,
+     "foreign": -37637,
+     "institution": 17176
+    },
+    {
+     "date": "2026-10-14",
+     "individual": -3203,
+     "foreign": -11614,
+     "institution": 7876
+    },
+    {
+     "date": "2026-10-13",
+     "individual": 23169,
+     "foreign": -45789,
+     "institution": 16685
+    },
+    {
+     "date": "2026-10-12",
+     "individual": 14857,
+     "foreign": -20103,
+     "institution": -1345
+    }
+   ],
+   "latest_date": "2026-10-23",
+   "flows_date": "2026-10-23",
+   "flows_provisional": true,
+   "label": "당일 잠정치",
+   "stale": false
+  },
+  "KOSDAQ": {
+   "rows": [
+    {
+     "date": "2026-10-23",
+     "individual": 654,
+     "foreign": -417,
+     "institution": -269
+    },
+    {
+     "date": "2026-10-22",
+     "individual": 2081,
+     "foreign": -1124,
+     "institution": -957
+    },
+    {
+     "date": "2026-10-21",
+     "individual": 553,
+     "foreign": -1752,
+     "institution": 1051
+    },
+    {
+     "date": "2026-10-20",
+     "individual": 2778,
+     "foreign": -1697,
+     "institution": -1087
+    },
+    {
+     "date": "2026-10-19",
+     "individual": 783,
+     "foreign": -1618,
+     "institution": 686
+    },
+    {
+     "date": "2026-10-16",
+     "individual": -908,
+     "foreign": -945,
+     "institution": 1689
+    },
+    {
+     "date": "2026-10-15",
+     "individual": -748,
+     "foreign": 2228,
+     "institution": -1614
+    },
+    {
+     "date": "2026-10-14",
+     "individual": 3835,
+     "foreign": -2128,
+     "institution": -1787
+    },
+    {
+     "date": "2026-10-13",
+     "individual": -1908,
+     "foreign": 1339,
+     "institution": 459
+    },
+    {
+     "date": "2026-10-12",
+     "individual": 2316,
+     "foreign": -130,
+     "institution": -2196
+    }
+   ],
+   "latest_date": "2026-10-23",
+   "flows_date": "2026-10-23",
+   "flows_provisional": true,
+   "label": "당일 잠정치",
+   "stale": false
+  }
+ },
+ "kr_movers": {
+  "report_date": "2026-10-23",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "반도체와반도체장비",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위"
+    ],
+    "members": [
+     {
+      "name": "SK하이닉스",
+      "change_pct": 4.42,
+      "close": 1277000,
+      "value": 4507896
+     },
+     {
+      "name": "삼성전자",
+      "change_pct": 0.47,
+      "close": 215500,
+      "value": 3336016
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "은행",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위"
+    ],
+    "members": [
+     {
+      "name": "KB금융",
+      "change_pct": -3.29,
+      "close": 153000,
+      "value": 136190
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "전자장비와기기",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위"
+    ],
+    "members": [
+     {
+      "name": "삼성전기",
+      "change_pct": -2.01,
+      "close": 1122000,
+      "value": 819428
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "건설",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성E&A",
+      "change_pct": 7.94,
+      "close": 59800,
+      "value": 765720
+     }
+    ]
+   },
+   {
+    "id": "g5",
+    "industry": "제약",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성바이오로직스",
+      "change_pct": 7.71,
+      "close": 1466000,
+      "value": 166807
+     }
+    ]
+   }
+  ]
+ },
+ "kr_intraday": {
+  "KOSPI": [
+   {
+    "t": "09:00",
+    "close": 5416.97
+   },
+   {
+    "t": "09:30",
+    "close": 5397.41
+   },
+   {
+    "t": "10:00",
+    "close": 5432.45
+   },
+   {
+    "t": "10:30",
+    "close": 5457.86
+   },
+   {
+    "t": "11:00",
+    "close": 5384.42
+   },
+   {
+    "t": "11:30",
+    "close": 5402.42
+   },
+   {
+    "t": "12:00",
+    "close": 5423.14
+   },
+   {
+    "t": "12:30",
+    "close": 5440.73
+   },
+   {
+    "t": "13:00",
+    "close": 5481.7
+   },
+   {
+    "t": "13:30",
+    "close": 5488.7
+   },
+   {
+    "t": "14:00",
+    "close": 5507.36
+   },
+   {
+    "t": "14:30",
+    "close": 5491.17
+   },
+   {
+    "t": "15:00",
+    "close": 5527.18
+   },
+   {
+    "t": "15:30",
+    "close": 5550.3
+   },
+   {
+    "t": "15:32",
+    "close": 5550.3
+   }
+  ],
+  "KOSPI_ohlc": {
+   "open": 5403.17,
+   "high": 5550.3,
+   "low": 5305.98,
+   "prevClose": 5533.77
+  },
+  "KOSDAQ": [
+   {
+    "t": "09:00",
+    "close": 747.61
+   },
+   {
+    "t": "09:30",
+    "close": 738.02
+   },
+   {
+    "t": "10:00",
+    "close": 744.35
+   },
+   {
+    "t": "10:30",
+    "close": 746.98
+   },
+   {
+    "t": "11:00",
+    "close": 738.04
+   },
+   {
+    "t": "11:30",
+    "close": 737.46
+   },
+   {
+    "t": "12:00",
+    "close": 739.01
+   },
+   {
+    "t": "12:30",
+    "close": 740.52
+   },
+   {
+    "t": "13:00",
+    "close": 745.21
+   },
+   {
+    "t": "13:30",
+    "close": 744.83
+   },
+   {
+    "t": "14:00",
+    "close": 751.54
+   },
+   {
+    "t": "14:30",
+    "close": 747.91
+   },
+   {
+    "t": "15:00",
+    "close": 751.23
+   },
+   {
+    "t": "15:30",
+    "close": 751.69
+   },
+   {
+    "t": "15:32",
+    "close": 751.69
+   }
+  ],
+  "KOSDAQ_ohlc": {
+   "open": 748.32,
+   "high": 753.02,
+   "low": 732.87,
+   "prevClose": 764.1
+  }
+ }
+}
