@@ -84,12 +84,12 @@
     {
       "guid": "108452461",
       "url": "https://www.cnbc.com/2026/10/23/ai-turmoil-neoclouds-struggle-credit-risks-jump-solidigm-pulls-ipo.html",
-      "title": "Turmoil hits AI buildout as neoclouds face pressure, credit risks mount and Solidigm pulls IPO",
+      "title": "Turmoil hits AI build-out as neoclouds face pressure, credit risks mount and Solidigm pulls IPO",
       "summary": "Stock slumps, pulled IPOs, and rising spreads on credit default swaps this week sets stage for hyperscaler earnings.",
-      "published": "2026-10-23T21:49:08+00:00",
+      "published": "2026-10-23T22:29:44+00:00",
       "category": "ai",
       "source": "CNBC",
-      "body_chars": 4784,
+      "body_chars": 4788,
       "body_file": "15-ai.txt",
       "summary_ko": "AI 인프라 투자에 대한 우려가 커지면서 뉴클라우드 기업들이 급락하고 신용위험 지표도 크게 올랐다. 코어위브, 네비우스, IREN은 10월 들어 모두 30% 넘게 떨어졌으며, 코어위브의 CDS 스프레드는 부실 신호로 여겨지는 11%를 넘어섰다. 메타는 3분기 잉여현금흐름이 20억 달러 넘게 적자로 돌아서고 올해 설비투자 하한을 1300억 달러에서 1350억 달러로 올리면서 주가가 7% 떨어졌고, 5년물 CDS는 사상 최고치인 124bp를 넘었다. 엔비디아와 오라클의 CDS도 사상 최고 수준을 기록했으며, 오라클은 신용등급 강등 위험에 놓였다. SK하이닉스는 자회사 솔리다임의 IPO를 시장 변동성을 이유로 철회했다. 나스닥은 이번 주 0.7% 하락 마감했다. 반면 젠슨 황 엔비디아 CEO는 뉴클라우드 수요가 매우 강하다고 강조했지만, 시장에서는 AI 투자 수익성에 대한 회의론이 커지고 있다.",
       "summary_model": "claude-haiku-5-5"
@@ -169,7 +169,8 @@
       "source": "CNBC",
       "body_chars": 3801,
       "body_file": "27-industry.txt",
-      "summary_note": "분량 벗어남 410자"
+      "summary_ko": "우크라이나 국방부는 23일(현지시간) 핀란드 기업 노키아, 위성 제조사 ICEYE와 차세대 국방·위성통신 역량을 공동 개발하는 의향서에 서명했다고 밝혔다. 스페이스X가 우크라이나에서 스타링크와 스타쉴드 사용을 제한해 빠르게 움직이는 드론이 연결이 끊겨 추락하자, 키이우는 대체 수단을 찾고 있다. 젤렌스키 대통령은 신뢰할 수 있는 통신이 국가안보의 문제라며 자국이 통제할 수 있는 역량에 의존해야 한다고 강조했다. 전문가들은 스타링크 규모를 따라잡는 데 2~3년 이상이 걸릴 것으로 본다. 우크라이나는 금요일 기준으로 시속 100마일 이상 비행체에 대한 연결 제한이 여전히 이어지고 있다고 밝혔다. 미 의회는 머스크와 스페이스X에 대한 공식 조사를 초당적으로 요구하고 있다. 러시아 침공 이후 대체 위성통신 투자금은 약 80억 달러에 이르며, 이 중 약 39억 달러가 스타링크 경쟁 후보에 몰렸다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108358450",
@@ -237,19 +238,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/b2c4ec6b4320fcc863e1ace746bef34d80de809a?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/b2c4ec6b4320fcc863e1ace746bef34d80de809a?source=rss",
-      "title": "税の自然増収を消費減税の財源にしてよいか？「赤字国債に頼らず」は本質問題ではない(ダイヤモンド・オンライン)",
-      "summary": "● 消費税減税法案の審議始まる 首相は財源「心配要らない」と言うが 高市早苗首相は10月5日の所信表明演説で、飲食料品の消費税減税について、赤字国債に頼らずに財源を確保するとの方針を示し、「ご心配には",
-      "published": "2026-10-23T21:15:31+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/468f2984214f7a63cecc51584867f8c376dc1daf?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/468f2984214f7a63cecc51584867f8c376dc1daf?source=rss",
+      "title": "奨学金の延滞理由、62.8％が「本人の低所得」 延滞者の6割は年収300万円以下(LIMO)",
+      "summary": "毎月の奨学金の返還が重く、生活費とのやりくりに悩んでいても、周りには相談しにくいものです。総務省が公表した「家計調査」2026年8月分では、二人以上の世帯の消費支出が、物価の変動を除いた実質で前年同月",
+      "published": "2026-10-23T22:10:57+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "ダイヤモンド・オンライン",
-      "body_chars": 1932,
+      "wire": "LIMO",
+      "body_chars": 464,
       "body_file": "07-global.txt",
-      "summary_ko": "세수 자연증수를 소비세 감세 재원으로 써도 되는지가 쟁점이다. 다카이치 사나에 총리는 10월 5일 소신표명연설에서 음식료품 소비세 감세를 밝히며 적자국채에 의존하지 않고 재원을 확보하겠다고 했으나 구체적 재원은 제시하지 않았다. 기사는 재원 부재 비판만으로는 본질을 짚지 못한다고 보고, 자연증수가 유력한 재원이 될 수 있다는 점에 주목한다. 그러나 인플레이션으로 늘어난 세수는 인건비, 사회보장비, 국채 이자 등 세출 증가와 시차를 두고 맞물리므로 그대로 감세에 쓸 수 있는 여유 재원으로 보기 어렵다. 예컨대 세수가 5조 엔 늘어도 세출이 3조 엔 늘면 순여력은 2조 엔에 그친다. 또 자연증수를 감세에 쓰면 적자국채를 늘리지 않더라도 감세하지 않았다면 줄였을 국채 발행 감축분을 포기하는 셈이다. 따라서 핵심은 자연증수의 규모가 아니라 세출 증가를 뺀 뒤 실제 재정 여력이 얼마나 남는지다.",
-      "summary_model": "claude-haiku-5-5"
+      "summary_note": "가나·한자 「令和」·「年度」·「奨学金の返還者に関する属性調査」"
     },
     {
       "guid": "108446957",
