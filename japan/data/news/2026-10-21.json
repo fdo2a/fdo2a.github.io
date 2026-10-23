@@ -1,25 +1,25 @@
 {
   "report_date": "2026-10-21",
   "source": "Yahoo!ファイナンス ニュース",
-  "complete": true,
-  "harvested": 1068,
+  "complete": false,
+  "harvested": 1000,
   "dropped": {
-    "갈래 없음·정례": 238,
-    "유료": 319,
+    "갈래 없음·정례": 219,
+    "유료": 293,
     "매체 NADA NEWS": 16,
     "매체 トウシル": 6,
     "매체 CoinPost": 18,
     "매체 gamebiz": 3,
     "매체 サーチナ": 4,
-    "매체 トレーダーズ・ウェブ": 180,
-    "매체 ウエルスアドバイザー": 47,
+    "매체 トレーダーズ・ウェブ": 169,
+    "매체 ウエルスアドバイザー": 38,
     "매체 財界オンライン": 1,
     "매체 JAPAN-REIT.COM": 4,
     "매체 アイフィス株予報": 27
   },
   "notes": [
-    "market 50쪽까지 2026-10-16 이전에 닿지 못했다(가장 앞 2026-10-19)",
-    "stocks 50쪽까지 2026-10-16 이전에 닿지 못했다(가장 앞 2026-10-20)"
+    "market 50쪽까지 2026-10-16 이전에 닿지 못했다(가장 앞 2026-10-20)",
+    "stocks 50쪽까지 2026-10-16 이전에 닿지 못했다(가장 앞 2026-10-21)"
   ],
   "items": [
     {
@@ -84,7 +84,7 @@
       "feed": "bus_all",
       "body_chars": 896,
       "body_file": "12-policy.txt",
-      "summary_note": "가나·한자 「同」·「债務」·「同期」"
+      "summary_note": "가나·한자 「同月」"
     },
     {
       "guid": "6703581cc3f2302770880b1d138dafd42b5f7126",
@@ -109,7 +109,7 @@
       "feed": "bus_all",
       "body_chars": 1377,
       "body_file": "14-market.txt",
-      "summary_note": "가나·한자 「下回」"
+      "summary_note": "분량 벗어남 431자"
     },
     {
       "guid": "688acdf4c14638f5ea468b66f41e142960558322",
@@ -160,7 +160,7 @@
       "feed": "bus_all",
       "body_chars": 801,
       "body_file": "23-industry.txt",
-      "summary_note": "분량 벗어남 405자"
+      "summary_note": "가나·한자 「億」"
     },
     {
       "guid": "415459359ce2e1ad48f4d6cf32c945351a28e4ff",
