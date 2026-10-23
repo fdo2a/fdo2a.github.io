@@ -3,48 +3,65 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-23",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 0,
- "collected_at": "2026-10-23T22:40:10+00:00",
- "cutoff_at": "2026-10-23T22:40:10+00:00",
+ "attempts": 1,
+ "collected_at": "2026-10-23T23:42:50+00:00",
+ "cutoff_at": "2026-10-23T23:42:50+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "e3784b7fde2768bf7d1c9afda8ecb760ba26af1d",
+  "sha256": "d03e914d30b866b82f06702716c6deeea7abeb92b4ab10b942500774c11f6c70"
+ },
  "counts": {
-  "harvest": 223,
-  "candidates": 3,
+  "harvest": 217,
+  "candidates": 1,
   "articles": [
-   3,
-   3,
-   3
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 5050,
-   "out": 76
+   "in": 34335,
+   "out": 10891
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "arabnews.com": "ok",
+   "economictimes.indiatimes.com": "ok",
+   "koreatimes.co.kr": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "11/11"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 11
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "미 대이란 재공습 우려와 후티 공격 속 브렌트유 6개월 최고치",
+  "query": "brent iran crude",
   "trigger": []
  },
- "content_hash": "a04b8b2fa187c149"
+ "problems": [
+  "edges[1]:unverified",
+  "worry.unlikely[0]:unverified"
+ ],
+ "content_hash": "a5604b4ace5d2618"
 }
