@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-23T08:29:27+00:00",
- "cutoff_at": "2026-10-23T08:29:27+00:00",
+ "collected_at": "2026-10-23T08:47:11+00:00",
+ "cutoff_at": "2026-10-23T08:47:11+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,38 +21,37 @@
   "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
  },
  "counts": {
-  "harvest": 237,
+  "harvest": 236,
   "candidates": 1,
   "articles": [
-   6
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 38300,
-   "out": 10973
+   "in": 33082,
+   "out": 10589
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok",
-   "dw.com": "ok",
-   "arabnews.com": "ok"
+   "aljazeera.com": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "7/7",
+   "claims": "6/6",
    "pairs": "3/3",
-   "obs": "6/6"
+   "obs": "4/4"
   },
   "verified": {
-   "pairs": 3,
-   "claims": 6,
-   "obs": 6
-  }
+   "pairs": 2,
+   "claims": 4,
+   "obs": 3
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "우크라이나 스타실드 속도 제한의 책임 소재와 복구 여부",
@@ -60,10 +59,12 @@
   "trigger": []
  },
  "problems": [
+  "structure:unverified",
   "structure:dangling",
-  "edges[2]:unverified",
-  "memo[2]:dangling",
+  "variables[0]:dangling",
+  "edges[0]:dangling",
+  "memo[1]:dangling",
   "worry.moderate[0]:dangling"
  ],
- "content_hash": "469bbbf7ae08f8dd"
+ "content_hash": "a0e48a9c63cf16b2"
 }
