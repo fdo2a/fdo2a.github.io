@@ -1,20 +1,60 @@
 {
-  "as_of": "2026-10-22",
+  "as_of": "2026-10-23",
   "window": {
     "bgn": "20261022",
-    "end": "20261022"
+    "end": "20261023"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
     "005930.KS": {
       "corp_code": "00126380",
-      "events": [],
-      "axes": [],
-      "confirmed_count": 0
+      "events": [
+        {
+          "rcept_no": "20261023000484",
+          "date": "2026-10-23",
+          "title": "주식등의대량보유상황보고서(일반)",
+          "corp": "삼성전자",
+          "filer": "삼성물산",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023000484",
+          "axis": "ownership",
+          "kind": "주식등의대량보유상황보고서",
+          "correction": false,
+          "confirmed": true
+        },
+        {
+          "rcept_no": "20261023000478",
+          "date": "2026-10-23",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "서경헌",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023000478",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
+      "axes": [
+        "ownership"
+      ],
+      "confirmed_count": 1
     },
     "000660.KS": {
       "corp_code": "00164779",
-      "events": [],
+      "events": [
+        {
+          "rcept_no": "20261023800002",
+          "date": "2026-10-23",
+          "title": "풍문또는보도에대한해명",
+          "corp": "SK하이닉스",
+          "filer": "SK하이닉스",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261023800002",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
       "axes": [],
       "confirmed_count": 0
     },
@@ -30,7 +70,7 @@
   "sec": {
     "window": {
       "first": "2026-10-21",
-      "last": "2026-10-22"
+      "last": "2026-10-23"
     },
     "note": "SEC filingDate(미 동부 영업일) 기준, 직전 수집 전날부터 — DART 와 같이 하루 겹친다"
   }
