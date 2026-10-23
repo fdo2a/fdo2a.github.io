@@ -1,22 +1,8 @@
 {
-  "report_date": "2026-10-22",
-  "generated": "2026-10-23 07:22 KST",
+  "report_date": "2026-10-23",
+  "generated": "2026-10-24 06:41 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-michigan-20261023",
-      "kind": "release",
-      "name_ko": "미시간대 소비자심리",
-      "date": "2026-10-23",
-      "time_et": "10:00",
-      "time_kst": "2026-10-23 23:00",
-      "status": "confirmed",
-      "source": "U. Michigan 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "release-new-home-sales-20261027",
       "kind": "release",
@@ -77,28 +63,7 @@
       "watch": "컨센서스 대비 서프라이즈"
     }
   ],
-  "recent_auctions": [
-    {
-      "date": "2026-10-15",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 105000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.26,
-      "indirect_pct": 42.7,
-      "dealer_pct": 43.1
-    },
-    {
-      "date": "2026-10-15",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 110000000000.0,
-      "high_yield": null,
-      "bid_to_cover": 2.56,
-      "indirect_pct": 55.3,
-      "dealer_pct": 27.0
-    }
-  ],
+  "recent_auctions": [],
   "blackout": {
     "active": true,
     "meeting": "2026-10-28",
