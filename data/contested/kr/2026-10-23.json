@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-10-23T11:12:30+00:00",
+ "attempts": 2,
+ "collected_at": "2026-10-23T11:29:46+00:00",
  "cutoff_at": "2026-10-23T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 545,
+  "harvest": 537,
   "candidates": 1,
   "articles": [
    6
@@ -44,13 +44,13 @@
    "herald": "ok"
   },
   "notes": [
-   "discover:545"
+   "discover:537"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 57053,
-   "out": 13695
+   "in": 30145,
+   "out": 9488
   },
   "grounded": {
    "claims": "4/4",
@@ -60,7 +60,7 @@
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 8
+   "obs": 7
   }
  },
  "event": {
@@ -68,5 +68,5 @@
   "query": "3분기 누적 순익",
   "trigger": []
  },
- "content_hash": "ee87ad0ffc87dca1"
+ "content_hash": "36a938110a7b93ea"
 }
