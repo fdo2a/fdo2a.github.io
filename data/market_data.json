@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-24 06:35 KST",
+  "generated": "2026-10-24 07:02 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-23",
   "indices": {
@@ -135,10 +135,10 @@
     },
     "USD/JPY": {
       "last": 156.83399963378906,
-      "chg": -0.0290069580078125,
-      "pct": -0.01849190490355035,
+      "chg": -0.0330047607421875,
+      "pct": -0.02103996367469607,
       "date": "2026-10-23",
-      "prev": 156.86300659179688,
+      "prev": 156.86700439453125,
       "prev_date": "2026-10-22",
       "basis": "close_1600_et",
       "contract": null,
@@ -161,10 +161,10 @@
   "commodities": {
     "WTI": {
       "last": 103.63999938964844,
-      "chg": 4.269996643066406,
-      "pct": 4.297068053782738,
+      "chg": 4.25,
+      "pct": 4.276084139349168,
       "date": "2026-10-23",
-      "prev": 99.37000274658203,
+      "prev": 99.38999938964844,
       "prev_date": "2026-10-22",
       "basis": "close_1600_et",
       "contract": "CLZ26.NYM",
@@ -674,9 +674,9 @@
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": -0.018,
+        "change": -0.021,
         "unit": "%",
-        "multiple": -0.03,
+        "multiple": -0.04,
         "band": "미미"
       },
       "USD/KRW": {
@@ -688,9 +688,9 @@
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 4.297,
+        "change": 4.276,
         "unit": "%",
-        "multiple": 1.63,
+        "multiple": 1.62,
         "band": "큼"
       },
       "Gold": {
@@ -1134,9 +1134,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25181.65,
-            "pct": -0.75,
-            "date": "2026-10-23"
+            "close": 25371.75,
+            "pct": -1.07,
+            "date": "2026-10-22"
           },
           {
             "name": "FTSE100",
@@ -1148,14 +1148,14 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6068.22,
-            "pct": -0.31,
-            "date": "2026-10-23"
+            "close": 6087.01,
+            "pct": -1.94,
+            "date": "2026-10-22"
           }
         ],
         "alignment": {
           "label": "이어감",
-          "avg_pct": -0.46,
+          "avg_pct": -1.11,
           "mixed": false
         }
       }
@@ -1171,11 +1171,11 @@
           "bars": 33
         },
         "NQ": {
-          "high": 29279.0,
-          "high_t": "04:00",
+          "high": 29276.75,
+          "high_t": "04:30",
           "low": 29006.0,
           "low_t": "09:00",
-          "range_pct": 0.94,
+          "range_pct": 0.93,
           "bars": 33
         }
       },
