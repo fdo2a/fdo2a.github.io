@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 0,
- "collected_at": "2026-10-23T05:42:35+00:00",
- "cutoff_at": "2026-10-23T05:42:35+00:00",
+ "attempts": 1,
+ "collected_at": "2026-10-23T06:48:57+00:00",
+ "cutoff_at": "2026-10-23T06:48:57+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,49 +21,50 @@
   "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
  },
  "counts": {
-  "harvest": 235,
-  "candidates": 2,
+  "harvest": 236,
+  "candidates": 1,
   "articles": [
-   1,
-   4
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 33260,
-   "out": 13080
+   "in": 37979,
+   "out": 12016
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
+   "theguardian.com": "ok",
    "aljazeera.com": "ok",
-   "theguardian.com": "ok"
+   "arabnews.com": "ok",
+   "dw.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "7/7",
-   "pairs": "3/3",
-   "obs": "7/7"
+   "claims": "8/8",
+   "pairs": "4/4",
+   "obs": "5/5"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 7
-  },
-  "attempt_refunded": "discovery_throttled"
+   "pairs": 3,
+   "claims": 6,
+   "obs": 4
+  }
  },
  "event": {
   "topic_ko": "우크라이나 스타실드 속도 제한의 책임 소재와 복구 여부",
-  "query": "trump musk slowdown",
+  "query": "starlink musk slowdown",
   "trigger": []
  },
  "problems": [
-  "edges[1]:unverified",
-  "memo[2]:unverified",
-  "worry.moderate[0]:dangling",
+  "structure:unverified",
+  "edges[1]:dangling",
+  "memo[0]:dangling",
+  "worry.most[0]:dangling",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "93c53de7a821d144"
+ "content_hash": "38500e9d395d053f"
 }
