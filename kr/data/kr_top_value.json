@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4507896,
-    "volume": 3652683,
+    "value": 4580852,
+    "volume": 3710446,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3336016,
-    "volume": 15856940,
+    "value": 3370762,
+    "volume": 16019854,
     "members": [
       "삼성전자"
     ]
@@ -65,10 +65,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 819428,
-    "volume": 748696,
+    "value": 833175,
+    "volume": 761075,
     "members": [
       "삼성전기"
+    ]
+  },
+  {
+    "label": "삼성E&A",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 780042,
+    "volume": 13099086,
+    "members": [
+      "삼성E&A"
     ]
   },
   {
@@ -83,25 +94,25 @@
     ]
   },
   {
-    "label": "삼성E&A",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 765720,
-    "volume": 12857310,
-    "members": [
-      "삼성E&A"
-    ]
-  },
-  {
     "label": "SK스퀘어",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 462921,
-    "volume": 612942,
+    "value": 467210,
+    "volume": 618557,
     "members": [
       "SK스퀘어"
+    ]
+  },
+  {
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 379697,
+    "volume": 2312654,
+    "members": [
+      "삼성전자우"
     ]
   },
   {
@@ -129,23 +140,12 @@
     ]
   },
   {
-    "label": "삼성전자우",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 369696,
-    "volume": 2252512,
-    "members": [
-      "삼성전자우"
-    ]
-  },
-  {
     "label": "삼성SDI",
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 308092,
-    "volume": 629858,
+    "value": 313836,
+    "volume": 641714,
     "members": [
       "삼성SDI"
     ]
