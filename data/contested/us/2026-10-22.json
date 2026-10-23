@@ -5,10 +5,10 @@
  "report_date": "2026-10-22",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-23T13:10:00+00:00",
- "cutoff_at": "2026-10-23T13:10:00+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-23T13:29:28+00:00",
+ "cutoff_at": "2026-10-23T13:29:28+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
  },
  "counts": {
-  "harvest": 233,
+  "harvest": 235,
   "candidates": 1,
   "articles": [
    6
@@ -30,46 +30,47 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 39740,
-   "out": 15553
+   "in": 63453,
+   "out": 16699
   },
   "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
    "aljazeera.com": "ok",
-   "arabnews.com": "ok",
-   "dw.com": "ok"
+   "independent.co.uk": "ok",
+   "cbsnews.com": "ok",
+   "koreaherald.com": "ok",
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "12/12",
-   "pairs": "5/5",
-   "obs": "5/5"
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 5,
-   "claims": 10,
-   "obs": 4
+   "pairs": 1,
+   "claims": 2,
+   "obs": 8
   }
  },
  "event": {
-  "topic_ko": "우크라이나 스타실드 속도 제한: 결정 주체와 복구 여부 공방",
-  "query": "starlink trump slowdown",
+  "topic_ko": "후티의 사우디 공격과 미국 공관 철수 범위",
+  "query": "iran saudi",
   "trigger": []
  },
  "problems": [
-  "variables[2]:dangling",
+  "structure:unverified",
+  "structure:dangling",
   "edges[0]:dangling",
+  "edges[1]:unverified",
   "edges[1]:dangling",
-  "edges[2]:dangling",
   "memo[0]:dangling",
   "memo[1]:dangling",
-  "memo[2]:unverified",
+  "worry.most[0]:unverified",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
+  "worry.moderate[0]:dangling"
  ],
- "content_hash": "98c043a448f2788c"
+ "content_hash": "d14e99be12374133"
 }
