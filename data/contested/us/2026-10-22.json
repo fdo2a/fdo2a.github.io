@@ -3,49 +3,67 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-22",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-10-23T04:40:10+00:00",
- "cutoff_at": "2026-10-23T04:40:10+00:00",
+ "collected_at": "2026-10-23T05:42:35+00:00",
+ "cutoff_at": "2026-10-23T05:42:35+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "ef3f4de5a05101dd6434c0f129321a50e499040d",
+  "sha256": "ae525a06dc316d9853c4dd0ca28188de71248c38b0ef98f0b51b0c0ecd8cd44f"
+ },
  "counts": {
-  "harvest": 234,
-  "candidates": 3,
+  "harvest": 235,
+  "candidates": 2,
   "articles": [
-   3,
-   3,
-   2
+   1,
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 5070,
-   "out": 76
+   "in": 33260,
+   "out": 13080
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
    "aljazeera.com": "ok",
-   "bbc.co.uk": "ok"
+   "theguardian.com": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "7/7",
+   "pairs": "3/3",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 7
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "우크라이나 스타실드 속도 제한의 책임 소재와 복구 여부",
+  "query": "trump musk slowdown",
   "trigger": []
  },
- "content_hash": "e6470c5110433bee"
+ "problems": [
+  "edges[1]:unverified",
+  "memo[2]:unverified",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "93c53de7a821d144"
 }
