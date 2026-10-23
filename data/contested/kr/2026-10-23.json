@@ -5,9 +5,9 @@
  "report_date": "2026-10-23",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-23T12:21:22+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-23T12:38:01+00:00",
  "cutoff_at": "2026-10-23T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 523,
+  "harvest": 520,
   "candidates": 1,
   "articles": [
    6
@@ -43,13 +43,13 @@
    "dailian": "ok"
   },
   "notes": [
-   "discover:523"
+   "discover:520"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 29203,
-   "out": 8252
+   "in": 29365,
+   "out": 8869
   },
   "grounded": {
    "claims": "3/3",
@@ -70,9 +70,7 @@
  "problems": [
   "structure:unverified",
   "edges[1]:unverified",
-  "memo[1]:unverified",
-  "worry.moderate[0]:unverified",
   "worry.unlikely[0]:unverified"
  ],
- "content_hash": "534a89774b228ccd"
+ "content_hash": "8f4e421329d83cf3"
 }
