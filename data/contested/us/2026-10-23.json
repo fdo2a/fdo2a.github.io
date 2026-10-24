@@ -5,10 +5,10 @@
  "report_date": "2026-10-23",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-24T09:36:26+00:00",
- "cutoff_at": "2026-10-24T09:36:26+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-24T10:40:45+00:00",
+ "cutoff_at": "2026-10-24T10:40:45+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -24,34 +24,36 @@
   "harvest": 213,
   "candidates": 1,
   "articles": [
-   4
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 41293,
-   "out": 12807
+   "in": 43327,
+   "out": 14918
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "bbc.co.uk": "ok",
+   "japantoday.com": "short",
+   "economictimes.indiatimes.com": "ok",
+   "aljazeera.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
    "claims": "8/8",
    "pairs": "4/4",
-   "obs": "8/8"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 2,
    "claims": 4,
    "obs": 7
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "트럼프의 캐나다산 관세 품목 면제·대체와 메인주 상원 선거",
@@ -59,16 +61,14 @@
   "trigger": []
  },
  "problems": [
-  "structure:unverified",
   "structure:dangling",
-  "variables[2]:dangling",
   "edges[1]:dangling",
-  "edges[2]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
+  "edges[2]:unverified",
+  "memo[0]:unverified",
   "memo[2]:dangling",
+  "worry.most[0]:dangling",
   "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:unverified"
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "33a37af7793aa146"
+ "content_hash": "6fd05b5666e68c2c"
 }
