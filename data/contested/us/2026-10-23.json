@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-10-24T01:24:04+00:00",
- "cutoff_at": "2026-10-24T01:24:04+00:00",
+ "collected_at": "2026-10-24T02:28:37+00:00",
+ "cutoff_at": "2026-10-24T02:28:37+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d03e914d30b866b82f06702716c6deeea7abeb92b4ab10b942500774c11f6c70"
  },
  "counts": {
-  "harvest": 214,
+  "harvest": 211,
   "candidates": 2,
   "articles": [
    3,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 41578,
-   "out": 13612
+   "in": 42291,
+   "out": 13319
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,27 +45,31 @@
   "grounded": {
    "claims": "8/8",
    "pairs": "4/4",
-   "obs": "7/7"
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 2,
    "claims": 4,
-   "obs": 6
+   "obs": 7
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "트럼프의 캐나다산 일부 품목 관세 면제와 메인주 상원 선거",
+  "topic_ko": "트럼프의 캐나다산 일부 품목 관세 면제·대체와 메인주 상원 선거",
   "query": "trump canada tariffs",
   "trigger": []
  },
  "problems": [
+  "structure:unverified",
   "structure:dangling",
-  "variables[2]:dangling",
-  "edges[1]:dangling",
+  "edges[0]:dangling",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:dangling",
   "memo[2]:dangling",
   "worry.most[0]:unverified",
-  "worry.moderate[0]:dangling"
+  "worry.most[0]:dangling"
  ],
- "content_hash": "07210426d9553c3c"
+ "content_hash": "9e3d62229fab629a"
 }
