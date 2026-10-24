@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-24T08:12:18+00:00",
- "cutoff_at": "2026-10-24T08:12:18+00:00",
+ "collected_at": "2026-10-24T08:31:24+00:00",
+ "cutoff_at": "2026-10-24T08:31:24+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -24,55 +24,51 @@
   "harvest": 212,
   "candidates": 1,
   "articles": [
-   6
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 45420,
-   "out": 12883
+   "in": 41556,
+   "out": 16834
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok",
-   "japantoday.com": "short",
-   "economictimes.indiatimes.com": "ok",
-   "aljazeera.com": "ok"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "8/8",
-   "pairs": "4/4",
+   "claims": "10/10",
+   "pairs": "5/5",
    "obs": "8/8"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 3,
+   "claims": 6,
    "obs": 7
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "트럼프의 캐나다산 일부 품목 관세 면제·대체와 메인주 상원 선거",
+  "topic_ko": "트럼프의 캐나다산 관세 품목 면제·대체와 메인주 상원 선거",
   "query": "trump canada tariffs",
   "trigger": []
  },
  "problems": [
   "structure:unverified",
   "structure:dangling",
-  "variables[1]:dangling",
+  "variables[2]:dangling",
   "edges[0]:dangling",
-  "edges[1]:unverified",
   "edges[1]:dangling",
   "edges[2]:dangling",
   "memo[0]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
   "worry.moderate[0]:dangling",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "163c0b32acbddf5f"
+ "content_hash": "4c20a97828202614"
 }
