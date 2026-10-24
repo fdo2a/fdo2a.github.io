@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-10-23T23:42:50+00:00",
- "cutoff_at": "2026-10-23T23:42:50+00:00",
+ "collected_at": "2026-10-24T00:00:21+00:00",
+ "cutoff_at": "2026-10-24T00:00:21+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,47 +21,55 @@
   "sha256": "d03e914d30b866b82f06702716c6deeea7abeb92b4ab10b942500774c11f6c70"
  },
  "counts": {
-  "harvest": 217,
-  "candidates": 1,
+  "harvest": 215,
+  "candidates": 2,
   "articles": [
-   6
+   3,
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 34335,
-   "out": 10891
+   "in": 40981,
+   "out": 13454
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "arabnews.com": "ok",
-   "economictimes.indiatimes.com": "ok",
-   "koreatimes.co.kr": "ok"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "2/2",
-   "pairs": "1/1",
-   "obs": "11/11"
+   "claims": "8/8",
+   "pairs": "4/4",
+   "obs": "7/7"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 11
-  }
+   "pairs": 2,
+   "claims": 4,
+   "obs": 7
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "미 대이란 재공습 우려와 후티 공격 속 브렌트유 6개월 최고치",
-  "query": "brent iran crude",
+  "topic_ko": "트럼프의 캐나다산 일부 품목 관세 면제와 메인주 상원 선거",
+  "query": "trump canada tariffs",
   "trigger": []
  },
  "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "edges[0]:dangling",
   "edges[1]:unverified",
-  "worry.unlikely[0]:unverified"
+  "edges[2]:dangling",
+  "memo[1]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:unverified",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "a5604b4ace5d2618"
+ "content_hash": "b4d8c64f1c05630e"
 }
