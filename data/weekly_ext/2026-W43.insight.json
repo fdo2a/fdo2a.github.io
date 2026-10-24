@@ -1,0 +1,592 @@
+{
+ "key": "2026-W43",
+ "start_date": "2026-10-19",
+ "end_date": "2026-10-23",
+ "z_flag": 2.0,
+ "lookback_weeks": 52,
+ "anomalies": [
+  {
+   "name": "Communication Services",
+   "label": "커뮤니케이션",
+   "group": "sectors",
+   "move": -4.36,
+   "unit": "%",
+   "vol": 2.11,
+   "z": -2.1,
+   "flagged": true
+  },
+  {
+   "name": "30Y",
+   "label": "30년물",
+   "group": "yields",
+   "move": -12.2,
+   "unit": "bp",
+   "vol": 7.5,
+   "z": -1.6,
+   "flagged": false
+  },
+  {
+   "name": "Gold",
+   "label": "금",
+   "group": "commodities",
+   "move": -4.21,
+   "unit": "%",
+   "vol": 3.28,
+   "z": -1.3,
+   "flagged": false
+  },
+  {
+   "name": "10Y",
+   "label": "10년물",
+   "group": "yields",
+   "move": -11.0,
+   "unit": "bp",
+   "vol": 8.7,
+   "z": -1.3,
+   "flagged": false
+  },
+  {
+   "name": "Industrials",
+   "label": "산업재",
+   "group": "sectors",
+   "move": -1.87,
+   "unit": "%",
+   "vol": 1.87,
+   "z": -1.0,
+   "flagged": false
+  },
+  {
+   "name": "Russell 2000",
+   "label": "러셀 2000",
+   "group": "indices",
+   "move": 2.0,
+   "unit": "%",
+   "vol": 2.22,
+   "z": 0.9,
+   "flagged": false
+  },
+  {
+   "name": "S&P 500 Value",
+   "label": "S&P 가치주",
+   "group": "indices",
+   "move": 1.13,
+   "unit": "%",
+   "vol": 1.23,
+   "z": 0.9,
+   "flagged": false
+  },
+  {
+   "name": "5Y",
+   "label": "5년물",
+   "group": "yields",
+   "move": -9.2,
+   "unit": "bp",
+   "vol": 9.8,
+   "z": -0.9,
+   "flagged": false
+  },
+  {
+   "name": "S&P 500 Growth",
+   "label": "S&P 성장주",
+   "group": "indices",
+   "move": -1.76,
+   "unit": "%",
+   "vol": 2.47,
+   "z": -0.7,
+   "flagged": false
+  },
+  {
+   "name": "USD/JPY",
+   "label": "엔·달러",
+   "group": "fx",
+   "move": -0.73,
+   "unit": "%",
+   "vol": 1.05,
+   "z": -0.7,
+   "flagged": false
+  },
+  {
+   "name": "Health Care",
+   "label": "헬스케어",
+   "group": "sectors",
+   "move": 1.45,
+   "unit": "%",
+   "vol": 2.26,
+   "z": 0.6,
+   "flagged": false
+  },
+  {
+   "name": "WTI",
+   "label": "WTI",
+   "group": "commodities",
+   "move": 4.76,
+   "unit": "%",
+   "vol": 8.17,
+   "z": 0.6,
+   "flagged": false
+  },
+  {
+   "name": "2Y",
+   "label": "2년물",
+   "group": "yields",
+   "move": -5.4,
+   "unit": "bp",
+   "vol": 9.4,
+   "z": -0.6,
+   "flagged": false
+  },
+  {
+   "name": "Energy",
+   "label": "에너지",
+   "group": "sectors",
+   "move": 1.6,
+   "unit": "%",
+   "vol": 3.21,
+   "z": 0.5,
+   "flagged": false
+  },
+  {
+   "name": "Real Estate",
+   "label": "부동산",
+   "group": "sectors",
+   "move": 0.97,
+   "unit": "%",
+   "vol": 2.04,
+   "z": 0.5,
+   "flagged": false
+  },
+  {
+   "name": "USD/KRW",
+   "label": "원·달러",
+   "group": "fx",
+   "move": -0.79,
+   "unit": "%",
+   "vol": 1.48,
+   "z": -0.5,
+   "flagged": false
+  },
+  {
+   "name": "EUR/USD",
+   "label": "유로·달러",
+   "group": "fx",
+   "move": -0.38,
+   "unit": "%",
+   "vol": 0.81,
+   "z": -0.5,
+   "flagged": false
+  },
+  {
+   "name": "Consumer Staples",
+   "label": "필수소비재",
+   "group": "sectors",
+   "move": 0.73,
+   "unit": "%",
+   "vol": 1.99,
+   "z": 0.4,
+   "flagged": false
+  },
+  {
+   "name": "Financials",
+   "label": "금융",
+   "group": "sectors",
+   "move": 0.68,
+   "unit": "%",
+   "vol": 1.91,
+   "z": 0.4,
+   "flagged": false
+  },
+  {
+   "name": "Nasdaq",
+   "label": "나스닥",
+   "group": "indices",
+   "move": -0.71,
+   "unit": "%",
+   "vol": 2.56,
+   "z": -0.3,
+   "flagged": false
+  },
+  {
+   "name": "S&P 500",
+   "label": "S&P 500",
+   "group": "indices",
+   "move": -0.47,
+   "unit": "%",
+   "vol": 1.67,
+   "z": -0.3,
+   "flagged": false
+  },
+  {
+   "name": "Dow",
+   "label": "다우",
+   "group": "indices",
+   "move": 0.41,
+   "unit": "%",
+   "vol": 1.5,
+   "z": 0.3,
+   "flagged": false
+  },
+  {
+   "name": "Utilities",
+   "label": "유틸리티",
+   "group": "sectors",
+   "move": 0.83,
+   "unit": "%",
+   "vol": 2.38,
+   "z": 0.3,
+   "flagged": false
+  },
+  {
+   "name": "Materials",
+   "label": "소재",
+   "group": "sectors",
+   "move": 0.77,
+   "unit": "%",
+   "vol": 2.38,
+   "z": 0.3,
+   "flagged": false
+  },
+  {
+   "name": "Brent",
+   "label": "브렌트",
+   "group": "commodities",
+   "move": 2.19,
+   "unit": "%",
+   "vol": 7.24,
+   "z": 0.3,
+   "flagged": false
+  },
+  {
+   "name": "Natural Gas",
+   "label": "천연가스",
+   "group": "commodities",
+   "move": -2.24,
+   "unit": "%",
+   "vol": 7.9,
+   "z": -0.3,
+   "flagged": false
+  },
+  {
+   "name": "Consumer Discretionary",
+   "label": "경기소비재",
+   "group": "sectors",
+   "move": 0.57,
+   "unit": "%",
+   "vol": 2.6,
+   "z": 0.2,
+   "flagged": false
+  },
+  {
+   "name": "Technology",
+   "label": "기술",
+   "group": "sectors",
+   "move": -0.13,
+   "unit": "%",
+   "vol": 3.47,
+   "z": -0.0,
+   "flagged": false
+  },
+  {
+   "name": "DXY",
+   "label": "달러지수",
+   "group": "fx",
+   "move": 0.01,
+   "unit": "%",
+   "vol": 0.78,
+   "z": 0.0,
+   "flagged": false
+  }
+ ],
+ "regime": {
+  "curve": "불 플래트닝",
+  "d2y_bp": -5.4,
+  "d10y_bp": -11.0,
+  "d2s10s_bp": -5.6,
+  "corr": {
+   "now": 0.31,
+   "prev": -0.68,
+   "window": 20
+  },
+  "growth_minus_value": -2.89,
+  "nasdaq_minus_russell": -2.71,
+  "sector_best": {
+   "name": "에너지",
+   "pct": 1.6
+  },
+  "sector_worst": {
+   "name": "커뮤니케이션",
+   "pct": -4.36
+  },
+  "sector_spread": 5.96,
+  "jgb2y_bp": -0.4,
+  "usjp_2y_spread_chg_bp": -5.0,
+  "dxy_pct": 0.0118,
+  "usdjpy_pct": -0.7323
+ },
+ "positioning": [
+  {
+   "code": "097741",
+   "label": "엔 선물",
+   "date": "2026-10-20",
+   "lev_net": -22890,
+   "lev_net_chg": 10783,
+   "pct_3y": 74,
+   "nc_net": 69878
+  },
+  {
+   "code": "042601",
+   "label": "미 2년물 선물",
+   "date": "2026-10-20",
+   "lev_net": -1285548,
+   "lev_net_chg": 81860,
+   "pct_3y": 96,
+   "nc_net": -856783
+  },
+  {
+   "code": "043602",
+   "label": "미 10년물 선물",
+   "date": "2026-10-20",
+   "lev_net": -2107224,
+   "lev_net_chg": 98713,
+   "pct_3y": 23,
+   "nc_net": -964293
+  },
+  {
+   "code": "020601",
+   "label": "미 장기채 선물",
+   "date": "2026-10-20",
+   "lev_net": -162757,
+   "lev_net_chg": -8737,
+   "pct_3y": 99,
+   "nc_net": -68419
+  },
+  {
+   "code": "13874A",
+   "label": "S&P500 E-mini",
+   "date": "2026-10-20",
+   "lev_net": -371245,
+   "lev_net_chg": 37481,
+   "pct_3y": 36,
+   "nc_net": -142671
+  }
+ ],
+ "fed": {
+  "effr": 3.88,
+  "contracts": [
+   {
+    "month": "2026-11",
+    "implied": 3.905,
+    "bp_vs_effr": 2.5,
+    "chg_1w_bp": -1.5
+   },
+   {
+    "month": "2026-12",
+    "implied": 4.04,
+    "bp_vs_effr": 16.0,
+    "chg_1w_bp": -4.0
+   },
+   {
+    "month": "2027-01",
+    "implied": 4.1,
+    "bp_vs_effr": 22.0,
+    "chg_1w_bp": -5.0
+   },
+   {
+    "month": "2027-02",
+    "implied": 4.175,
+    "bp_vs_effr": 29.5,
+    "chg_1w_bp": -6.0
+   },
+   {
+    "month": "2027-03",
+    "implied": 4.24,
+    "bp_vs_effr": 36.0,
+    "chg_1w_bp": -7.0
+   },
+   {
+    "month": "2027-04",
+    "implied": 4.325,
+    "bp_vs_effr": 44.5,
+    "chg_1w_bp": -8.0
+   }
+  ],
+  "next_meeting": "2026-10-28",
+  "following_meeting": "2026-12-09"
+ },
+ "next_week": [
+  {
+   "date": "2026-10-27",
+   "time_kst": "2026-10-27 23:00",
+   "kind": "release",
+   "name_ko": "신규주택 판매",
+   "watch": "추세 확인"
+  },
+  {
+   "date": "2026-10-28",
+   "time_kst": "2026-10-29 03:00",
+   "kind": "fomc",
+   "name_ko": "FOMC 성명",
+   "watch": "성명 문구 변화, 30분 뒤 기자회견"
+  },
+  {
+   "date": "2026-10-29",
+   "time_kst": "2026-10-29 21:30",
+   "kind": "release",
+   "name_ko": "신규 실업수당 청구",
+   "watch": "추세 확인"
+  },
+  {
+   "date": "2026-10-29",
+   "time_kst": "2026-10-29 21:30",
+   "kind": "release",
+   "name_ko": "개인소비지출(PCE)",
+   "watch": "컨센서스 대비 서프라이즈"
+  }
+ ],
+ "daily": [
+  {
+   "date": "2026-10-19",
+   "S&P 500": {
+    "level": 7690.73,
+    "chg": 0.41,
+    "unit": "%"
+   },
+   "10년물": {
+    "level": 5.136,
+    "chg": 3.8,
+    "unit": "bp"
+   },
+   "달러지수": {
+    "level": 101.995,
+    "chg": 0.2,
+    "unit": "%"
+   },
+   "WTI": {
+    "level": 98.36,
+    "chg": -0.58,
+    "unit": "%"
+   }
+  },
+  {
+   "date": "2026-10-20",
+   "S&P 500": {
+    "level": 7712.57,
+    "chg": 0.28,
+    "unit": "%"
+   },
+   "10년물": {
+    "level": 5.117,
+    "chg": -1.9,
+    "unit": "bp"
+   },
+   "달러지수": {
+    "level": 101.725,
+    "chg": -0.26,
+    "unit": "%"
+   },
+   "WTI": {
+    "level": 98.24,
+    "chg": -0.12,
+    "unit": "%"
+   }
+  },
+  {
+   "date": "2026-10-21",
+   "S&P 500": {
+    "level": 7757.17,
+    "chg": 0.58,
+    "unit": "%"
+   },
+   "10년물": {
+    "level": 5.146,
+    "chg": 2.9,
+    "unit": "bp"
+   },
+   "달러지수": {
+    "level": 101.696,
+    "chg": -0.03,
+    "unit": "%"
+   },
+   "WTI": {
+    "level": 97.7,
+    "chg": -0.55,
+    "unit": "%"
+   }
+  },
+  {
+   "date": "2026-10-22",
+   "S&P 500": {
+    "level": 7663.43,
+    "chg": -1.21,
+    "unit": "%"
+   },
+   "10년물": {
+    "level": 4.961,
+    "chg": -18.5,
+    "unit": "bp"
+   },
+   "달러지수": {
+    "level": 101.631,
+    "chg": -0.06,
+    "unit": "%"
+   },
+   "WTI": {
+    "level": 99.39,
+    "chg": 1.73,
+    "unit": "%"
+   }
+  },
+  {
+   "date": "2026-10-23",
+   "S&P 500": {
+    "level": 7623.68,
+    "chg": -0.52,
+    "unit": "%"
+   },
+   "10년물": {
+    "level": 4.988,
+    "chg": 2.7,
+    "unit": "bp"
+   },
+   "달러지수": {
+    "level": 101.799,
+    "chg": 0.17,
+    "unit": "%"
+   },
+   "WTI": {
+    "level": 103.64,
+    "chg": 4.28,
+    "unit": "%"
+   }
+  }
+ ],
+ "fetch_status": {},
+ "calendar_ambiguous": [
+  "gdp"
+ ],
+ "next_events": [
+  {
+   "date": "2026-10-26",
+   "name": "베라이즌 3분기 실적",
+   "watch": "가입자와 요금 정책",
+   "stake": "통신사 가격결정력 재평가"
+  },
+  {
+   "date": "2026-10-28",
+   "name": "FOMC 성명",
+   "watch": "연말 인상 여지 문구",
+   "stake": "앞쪽 금리 급락의 성격"
+  },
+  {
+   "date": "2026-10-28",
+   "name": "GE 버노바 실적",
+   "watch": "수주와 현금흐름",
+   "stake": "전력망·AI 공급망 현금흐름 해석"
+  },
+  {
+   "date": "2026-10-29",
+   "name": "PCE",
+   "watch": "근원 물가와 에너지 전가",
+   "stake": "연말 인상 경로"
+  }
+ ]
+}
