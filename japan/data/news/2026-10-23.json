@@ -4,8 +4,8 @@
   "complete": true,
   "harvested": 1349,
   "dropped": {
-    "갈래 없음·정례": 236,
-    "유료": 442,
+    "갈래 없음·정례": 237,
+    "유료": 443,
     "매체 CoinPost": 2,
     "매체 NADA NEWS": 15,
     "매체 gamebiz": 2,
@@ -32,7 +32,7 @@
       "feed": "bus_all",
       "body_chars": 486,
       "body_file": "04-macro.txt",
-      "summary_note": "분량 벗어남 411자"
+      "summary_note": "문단이 둘 이상(머리말·제목 반복)"
     },
     {
       "guid": "db4cd8ddd07e61ef28ca7736bc4cfb0fd8f51f81",
@@ -57,7 +57,7 @@
       "feed": "bus_all",
       "body_chars": 605,
       "body_file": "08-policy.txt",
-      "summary_note": "분량 벗어남 420자"
+      "summary_note": "분량 벗어남 424자"
     },
     {
       "guid": "bf5de1a69f4f1df898596bbd749ae58f681e86c2",
@@ -134,7 +134,7 @@
       "feed": "bus_all",
       "body_chars": 823,
       "body_file": "18-industry.txt",
-      "summary_note": "분량 벗어남 527자"
+      "summary_note": "분량 벗어남 496자"
     },
     {
       "guid": "797f822293cd6154fb2df04ae44314c40d868aa0",
@@ -159,7 +159,7 @@
       "feed": "bus_all",
       "body_chars": 747,
       "body_file": "20-industry.txt",
-      "summary_note": "분량 벗어남 454자"
+      "summary_note": "분량 벗어남 426자"
     },
     {
       "guid": "eb0ce98068e79f6d1ad5976c86f29d162cf3ba6f",
@@ -235,7 +235,8 @@
       "official": true,
       "body_chars": 997,
       "body_file": "33-insight.txt",
-      "summary_note": "분량 벗어남 406자"
+      "summary_ko": "EU의 대중국 무역 불균형은 2026년에도 확대가 이어지고 있어 대응이 시급하다고 닛세이기초연구소는 진단한다. 10월 8~9일 열린 2차 EU·중국 무역투자협의(TIC)에서 EU가 거둔 가장 큰 성과는 하이브리드차(HEV) 세이프가드 합의로 꼽힌다. 2027년 중국산 대상 수량 할당은 2026년 실적을 크게 밑도는 35만 대로 보도되었으나, 중국은 다른 수입국 할당보다 낮지 않을 것이라는 전제로 수용한 것으로 보인다. 연구소는 EU가 대상국을 특정하지 않은 형태이기는 하나 거시경제 불균형 시정을 위한 정책 수단 강화에 나서고 있으며, 중국은 이를 차별 조치로 보고 견제하고 있다고 분석한다. 이에 따라 EU의 새 움직임을 계기로 TIC 합의가 철회되거나 협의가 교착될 가능성도 충분하다고 본다. 이 같은 EU의 무역 불균형 대책은 중국을 겨냥한 것이 아니더라도 일본 기업에 공급망 재편을 요구하는 결과로 이어질 수 있어 향후 동향을 주시할 필요가 있다고 강조한다.",
+      "summary_model": "claude-haiku-5-5"
     }
   ]
 }

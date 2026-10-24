@@ -2,14 +2,14 @@
   "report_date": "2026-10-20",
   "source": "Yahoo!ファイナンス ニュース",
   "complete": false,
-  "harvested": 459,
+  "harvested": 456,
   "dropped": {
-    "유료": 83,
+    "유료": 81,
     "갈래 없음·정례": 97,
     "매체 NADA NEWS": 16,
     "매체 CoinPost": 13,
     "매체 gamebiz": 4,
-    "매체 トウシル": 4,
+    "매체 トウシル": 3,
     "매체 トレーダーズ・ウェブ": 114,
     "매체 ウエルスアドバイザー": 11,
     "매체 ザイＦＸ！": 1,
@@ -57,7 +57,7 @@
       "feed": "bus_all",
       "body_chars": 3111,
       "body_file": "03-macro.txt",
-      "summary_note": "분량 벗어남 457자"
+      "summary_note": "가나·한자 「投資ブームでインフレ圧力が強まるなか、」·「内で利上げを進めるべきかが焦点になっている。」·「利上げのコストは」"
     },
     {
       "guid": "e6e85a3958fb5d5738eca0750d2b7d3cecc0ff81",

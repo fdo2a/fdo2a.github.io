@@ -2,10 +2,10 @@
   "report_date": "2026-10-22",
   "source": "Yahoo!ファイナンス ニュース",
   "complete": false,
-  "harvested": 1097,
+  "harvested": 1092,
   "dropped": {
-    "갈래 없음·정례": 228,
-    "유료": 331,
+    "갈래 없음·정례": 225,
+    "유료": 329,
     "매체 NADA NEWS": 18,
     "매체 トウシル": 4,
     "매체 Yahoo!ニュース オリジナル THE PAGE": 1,
@@ -108,7 +108,7 @@
       "feed": "bus_all",
       "body_chars": 1407,
       "body_file": "13-market.txt",
-      "summary_note": "분량 벗어남 420자"
+      "summary_note": "가나·한자 「值」"
     },
     {
       "guid": "55b63237877db6c637e763dd3b1f04e4b7b85e3a",
