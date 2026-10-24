@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-10-24T03:33:20+00:00",
- "cutoff_at": "2026-10-24T03:33:20+00:00",
+ "collected_at": "2026-10-24T04:37:46+00:00",
+ "cutoff_at": "2026-10-24T04:37:46+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d03e914d30b866b82f06702716c6deeea7abeb92b4ab10b942500774c11f6c70"
  },
  "counts": {
-  "harvest": 211,
+  "harvest": 208,
   "candidates": 2,
   "articles": [
    3,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 40787,
-   "out": 13331
+   "in": 41536,
+   "out": 14143
   },
   "discovery": "throttled",
   "hosts": {
@@ -43,14 +43,14 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "6/6"
+   "claims": "8/8",
+   "pairs": "4/4",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 6
+   "pairs": 3,
+   "claims": 6,
+   "obs": 7
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -61,13 +61,13 @@
  },
  "problems": [
   "structure:dangling",
-  "edges[0]:unverified",
+  "variables[1]:dangling",
+  "edges[1]:dangling",
   "edges[2]:dangling",
-  "memo[2]:unverified",
+  "memo[0]:unverified",
   "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
+  "worry.most[0]:unverified",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "7acb81699a81442f"
+ "content_hash": "c80ee77289b9c990"
 }
