@@ -2,10 +2,10 @@
   "report_date": "2026-10-23",
   "source": "Yahoo!ファイナンス ニュース",
   "complete": true,
-  "harvested": 1349,
+  "harvested": 1350,
   "dropped": {
     "갈래 없음·정례": 237,
-    "유료": 443,
+    "유료": 444,
     "매체 CoinPost": 2,
     "매체 NADA NEWS": 15,
     "매체 gamebiz": 2,
@@ -13,7 +13,7 @@
     "매체 LIMO": 2,
     "매체 トレーダーズ・ウェブ": 212,
     "매체 ウエルスアドバイザー": 49,
-    "매체 アイフィス株予報": 72,
+    "매체 アイフィス株予報": 71,
     "매체 JAPAN-REIT.COM": 3,
     "매체 サーチナ": 3
   },
@@ -32,7 +32,8 @@
       "feed": "bus_all",
       "body_chars": 486,
       "body_file": "04-macro.txt",
-      "summary_note": "문단이 둘 이상(머리말·제목 반복)"
+      "summary_ko": "총무성이 23일 발표한 9월 전국 소비자물가지수에서 신선식품을 제외한 총합은 전년 동월 대비 2.1% 상승했다. 61개월 연속 상승이며, 상승률은 전월 1.7%에서 확대돼 지난해 12월 이후 9개월 만에 2%를 넘었다. 중동 정세 악화에 따른 원재료비 상승으로 식료품 등에서 가격 전가가 폭넓게 진행된 것이 배경이다. 연휴 날짜 배열로 숙박료가 오르고, 도쿄도의 수도 기본요금 무상화 종료도 물가를 끌어올렸다. 신선식품을 제외한 식료품은 2.9% 올라 조리식품과 외식 등이 두드러졌다. 반면 지난해 급등한 쌀류는 20.6% 떨어져 1971년 1월 이후 최대 낙폭을 기록했다. 에너지는 정부 보조금 효과로 0.6% 하락했으며, 전기요금과 휘발유도 각각 떨어졌다. 원재료 상승으로 외벽 도장비와 화장지도 올랐고, 반도체 가격 급등과 엔저로 PC와 TV 등 내구재 가격도 상승했다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "db4cd8ddd07e61ef28ca7736bc4cfb0fd8f51f81",
@@ -57,7 +58,7 @@
       "feed": "bus_all",
       "body_chars": 605,
       "body_file": "08-policy.txt",
-      "summary_note": "분량 벗어남 424자"
+      "summary_note": "분량 벗어남 429자"
     },
     {
       "guid": "bf5de1a69f4f1df898596bbd749ae58f681e86c2",
@@ -134,7 +135,7 @@
       "feed": "bus_all",
       "body_chars": 823,
       "body_file": "18-industry.txt",
-      "summary_note": "분량 벗어남 496자"
+      "summary_note": "문단이 둘 이상(머리말·제목 반복)"
     },
     {
       "guid": "797f822293cd6154fb2df04ae44314c40d868aa0",
@@ -159,7 +160,7 @@
       "feed": "bus_all",
       "body_chars": 747,
       "body_file": "20-industry.txt",
-      "summary_note": "분량 벗어남 426자"
+      "summary_note": "분량 벗어남 435자"
     },
     {
       "guid": "eb0ce98068e79f6d1ad5976c86f29d162cf3ba6f",
@@ -210,7 +211,7 @@
       "official": true,
       "body_chars": 982,
       "body_file": "30-insight.txt",
-      "summary_note": "가나·한자 「ニッセイ基礎研究所」"
+      "summary_note": "분량 벗어남 458자"
     },
     {
       "guid": "http://www.nli-research.co.jp/report/detail/id=87167?site=nli",
