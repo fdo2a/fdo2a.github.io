@@ -137,3 +137,19 @@ def test_check_news_cli_jp_daily(tmp_path, monkeypatch, capsys):
                                       '--date', S, '--market', 'jp-daily'])
     assert check_news.main() == 1
     assert '16:30' in capsys.readouterr().err
+
+
+def test_check_news_runs_as_script(tmp_path):
+    """독립 실행 — pytest 가 넣어 주는 경로 없이도 jp-daily 가 import 된다(2026-10-27 실측 실패)."""
+    import json
+    import subprocess
+    import sys
+    d = tmp_path / 'news' / 'daily'
+    d.mkdir(parents=True)
+    (d / f'{S}.json').write_text(json.dumps(_collected([])), encoding='utf-8')
+    html = tmp_path / 'p.html'
+    html.write_text(_html([]), encoding='utf-8')
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'check_news.py')
+    r = subprocess.run([sys.executable, script, '--html', str(html), '--datadir', str(tmp_path),
+                        '--date', S, '--market', 'jp-daily'], capture_output=True, text=True, cwd=str(tmp_path))
+    assert r.returncode == 0, r.stderr

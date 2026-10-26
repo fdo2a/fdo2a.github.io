@@ -19,6 +19,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 일본 일간 게이트는 `scripts.common` 을 쓰는 렌더러를 거친다 — 레포 뿌리도 경로에 둔다.
+sys.path.insert(1, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from kr.news import DIGEST_CATEGORIES as KR_CATEGORIES  # noqa: E402
 from us.news import DIGEST_CATEGORIES as US_CATEGORIES  # noqa: E402

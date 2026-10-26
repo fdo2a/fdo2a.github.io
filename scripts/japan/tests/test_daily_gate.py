@@ -153,3 +153,12 @@ def test_cli(tmp_path, capsys):
     assert CLI.main(['--session', S, '--root', str(tmp_path)]) == 0
     (post / f'{S}.html').write_text(html({'today': '<p>[확인필요]</p>'}), encoding='utf-8')
     assert CLI.main(['--session', S, '--root', str(tmp_path)]) == 1
+
+
+def test_breadth_counts_allowed_from_snapshot():
+    snap = copy.deepcopy(SNAP)
+    snap['sector_breadth'] = {'total': 17, 'counted': 16, 'up': 13, 'down': 3, 'flat': 0}
+    ok = html({'equity': '<p>업종 17개 가운데 13개가 올랐다.</p>'}, snap=snap)
+    assert check(ok, snap) == []
+    bad = html({'equity': '<p>업종 17개 가운데 14개가 올랐다.</p>'}, snap=snap)
+    assert any('14' in m for m in check(bad, snap))

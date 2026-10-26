@@ -149,3 +149,9 @@ def test_stocks_recorded_for_history(tmp_path):
     snap = _run(tmp_path)
     codes = {r['code'] for r in snap['stocks']}
     assert '7203' in codes and all(r['value'] == 100.0 for r in snap['stocks'])
+
+
+def test_sector_breadth_recorded(tmp_path):
+    snap = _run(tmp_path, Fake(quote={'1617.T': {'last': 50000.0, 'bar_date': P}}))
+    b = snap['sector_breadth']
+    assert b == {'total': 17, 'counted': 16, 'up': 16, 'down': 0, 'flat': 0}

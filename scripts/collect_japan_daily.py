@@ -202,6 +202,13 @@ def _macro(fetch, events_today, prev_snap, status):
     return items, periods
 
 
+def _breadth(sectors):
+    """업종 몇 개가 올랐나 — 본문이 셀 수 있게 코드가 센다(작성자가 세면 창작 수치가 된다)."""
+    chg = [s['chg_pct'] for s in sectors if s.get('ok') and s.get('chg_pct') is not None]
+    return {'total': len(sectors), 'counted': len(chg), 'up': sum(1 for c in chg if c > 0),
+            'down': sum(1 for c in chg if c < 0), 'flat': sum(1 for c in chg if c == 0)}
+
+
 def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=None):
     if os.path.exists(os.path.join(root, DAILY_DIR, f'{session}.json')):
         raise AlreadyPublished(f'{session} 은 이미 발행됐다 — 수집 후보를 덮지 않는다')
@@ -233,7 +240,7 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
         'scheduled_at': scheduled_at, 'ran_at': now.astimezone(timezone.utc).isoformat(),
         'complete': bool(nikkei['ok']), 'fetch_status': status,
         'indices': {'nikkei': nikkei, 'topix_etf': dict(topix, label=TOPIX_ETF[1])},
-        'sectors': sectors, 'stocks': stocks, 'movers': MOV.build(session, rows),
+        'sectors': sectors, 'sector_breadth': _breadth(sectors), 'stocks': stocks, 'movers': MOV.build(session, rows),
         'jgb': jgb, 'call_rate': call, 'fx': _fx(fetch, session, prev, status),
         'macro': macro, 'macro_periods': periods,
         'calendar': {'version': CAL.version(cal), 'today': today,
