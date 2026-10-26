@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4580852,
-    "volume": 3710446,
+    "value": 3066988,
+    "volume": 2381735,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3370762,
-    "volume": 16019854,
+    "value": 2365779,
+    "volume": 11072505,
     "members": [
       "삼성전자"
     ]
@@ -26,60 +26,38 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1911044,
-    "volume": 79082078,
+    "value": 1135493,
+    "volume": 44840732,
     "members": [
       "TIGER 반도체TOP10",
       "KODEX 반도체레버리지",
       "SOL AI반도체TOP2플러스",
-      "TIGER 반도체TOP10레버리지",
       "KODEX 반도체",
+      "TIGER 반도체TOP10레버리지",
       "KODEX AI반도체TOP2플러스",
+      "SOL 반도체전공정",
       "SOL AI반도체소부장",
       "HANARO Fn K-반도체",
+      "TIGER 반도체",
       "KODEX AI반도체핵심장비",
-      "SOL 반도체전공정",
-      "TIGER AI반도체핵심공정",
-      "ACE AI반도체TOP3+",
-      "TIGER 반도체TOP10커버드콜액티브",
       "ACE K반도체TOP2+",
       "SOL 반도체후공정",
-      "TIGER 반도체",
-      "RISE 비메모리반도체액티브",
+      "TIGER 반도체TOP10커버드콜액티브",
+      "TIGER AI반도체핵심공정",
+      "ACE AI반도체TOP3+",
+      "RISE 반도체소부장액티브",
+      "PLUS AI반도체소부장액티브",
+      "KODEX 반도체타겟위클리커버드콜",
       "RISE AI반도체TOP10",
       "HANARO 반도체핵심공정주도주",
-      "PLUS AI반도체소부장액티브",
-      "RISE 반도체소부장액티브",
-      "KODEX 반도체타겟위클리커버드콜",
+      "RISE 비메모리반도체액티브",
       "ACE 반도체Plus전략산업",
       "PLUS 코리아HBM반도체",
       "KODEX 아시아AI반도체exChina액티브",
       "FOCUS AI반도체위클리고정커버드콜",
       "KODEX 한중반도체(합성)",
-      "FOCUS 금융반도체지주채권혼합50액티브",
-      "TIGER 한중반도체(합성)"
-    ]
-  },
-  {
-    "label": "삼성전기",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 833175,
-    "volume": 761075,
-    "members": [
-      "삼성전기"
-    ]
-  },
-  {
-    "label": "삼성E&A",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 780042,
-    "volume": 13099086,
-    "members": [
-      "삼성E&A"
+      "TIGER 한중반도체(합성)",
+      "FOCUS 금융반도체지주채권혼합50액티브"
     ]
   },
   {
@@ -87,10 +65,43 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 773105,
-    "volume": 718722,
+    "value": 1080809,
+    "volume": 1004692,
     "members": [
       "KODEX CD금리액티브(합성)"
+    ]
+  },
+  {
+    "label": "삼성전기",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 435013,
+    "volume": 387971,
+    "members": [
+      "삼성전기"
+    ]
+  },
+  {
+    "label": "TIGER CD1년금리액티브(합성)",
+    "kind": "sector_theme_etf",
+    "direction": "long",
+    "theme": null,
+    "value": 341594,
+    "volume": 315875,
+    "members": [
+      "TIGER CD1년금리액티브(합성)"
+    ]
+  },
+  {
+    "label": "삼성E&A",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 329359,
+    "volume": 5538902,
+    "members": [
+      "삼성E&A"
     ]
   },
   {
@@ -98,8 +109,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 467210,
-    "volume": 618557,
+    "value": 296201,
+    "volume": 383048,
     "members": [
       "SK스퀘어"
     ]
@@ -109,34 +120,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 379697,
-    "volume": 2312654,
+    "value": 283065,
+    "volume": 1711892,
     "members": [
       "삼성전자우"
-    ]
-  },
-  {
-    "label": "2차전지 테마 ETF",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": "2차전지",
-    "value": 375410,
-    "volume": 162591023,
-    "members": [
-      "KODEX 2차전지산업레버리지",
-      "KODEX 2차전지산업",
-      "KODEX 전고체배터리ESS TOP2플러스",
-      "TIGER 2차전지TOP10",
-      "TIGER 2차전지소재Fn",
-      "SOL 전고체배터리&실리콘음극재",
-      "TIGER 2차전지테마",
-      "TIGER 2차전지TOP10레버리지",
-      "KODEX 2차전지핵심소재10",
-      "RISE 2차전지TOP10",
-      "SOL 2차전지소부장Fn",
-      "RISE 2차전지액티브",
-      "ACE 2차전지&친환경차액티브",
-      "RISE 배터리 리사이클링"
     ]
   },
   {
@@ -144,8 +131,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 313836,
-    "volume": 641714,
+    "value": 239953,
+    "volume": 491101,
     "members": [
       "삼성SDI"
     ]

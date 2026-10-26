@@ -1,10 +1,10 @@
 {
-  "report_date": "2026-10-23",
+  "report_date": "2026-10-26",
   "charts": {
     "kr_charts": {
-      "file": "kr_charts_2026-10-23.png",
-      "sha256": "7168332dfb1d8e659f33641c15d60b6ccbb1dfa66fd1c12116052a08f5bcc763",
-      "bytes": 206973
+      "file": "kr_charts_2026-10-26.png",
+      "sha256": "752c4a8e18111211740452200858c3d12b05a7f846367d1e4f3e74b7fb2363bb",
+      "bytes": 208425
     },
     "kr_flows_intraday": null
   },
