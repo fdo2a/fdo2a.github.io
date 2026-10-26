@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """재시도 루틴의 첫 단계 — 모델 없이 「지금 돌 일이 있는가」를 판정한다 (2026-09-27).
 
-    python3 scripts/ci/routine_due.py us|kr|weekly|japan  # 한 줄: DONE|BUSY|WAIT|DUE <이유>
-    python3 scripts/ci/routine_due.py lock-name us|kr  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
+    python3 scripts/ci/routine_due.py us|kr|weekly|japan|jp_daily  # 한 줄: DONE|BUSY|WAIT|DUE <이유>
+    python3 scripts/ci/routine_due.py lock-name us|kr|jp_daily  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
+    python3 scripts/ci/routine_due.py jp-session       # 일본 일간 세션·직전 세션 (잠금 전에 고정)
     python3 scripts/ci/routine_due.py japan-key        # 일본 주간 키·그 주 금요일·MOF 게시일 (STEP 0)
     python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
     python3 scripts/ci/routine_due.py week-end         # 달력상 그 주 마지막 US 거래일 (주간 스냅샷 기본 종료일)
@@ -35,7 +36,8 @@ from zoneinfo import ZoneInfo
 
 NY = ZoneInfo('America/New_York')
 SEOUL = ZoneInfo('Asia/Seoul')
-STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 240, 'japan': 240}
+TOKYO = ZoneInfo('Asia/Tokyo')
+STALE_MIN = {'us': 120, 'kr': 120, 'weekly': 240, 'japan': 240, 'jp_daily': 120}
 
 
 def _trading_back(d, holidays=()):
@@ -51,6 +53,16 @@ def us_session(now, holidays=()):
 
 def kr_session(now, holidays=()):
     return _trading_back((now.astimezone(SEOUL) - timedelta(hours=16)).date(), holidays).isoformat()
+
+
+def jp_session(now, holidays=()):
+    """일본 일간의 기대 세션 — 도쿄 15:30 마감 전이면 직전 거래일. 루틴이 잠금 전에 한 번 정한다."""
+    return _trading_back((now.astimezone(TOKYO) - timedelta(hours=15, minutes=30)).date(),
+                         holidays).isoformat()
+
+
+def jp_prev_session(session, holidays=()):
+    return _trading_back(date.fromisoformat(session) - timedelta(days=1), holidays).isoformat()
 
 
 def week_of(now, holidays=()):
@@ -112,6 +124,8 @@ def lock_name(kind, now, key=None, holidays=()):
         return f'kr-{kr_session(now, holidays)}'
     if kind == 'japan':
         return f'japan-{key}'
+    if kind == 'jp_daily':
+        return f'jpd-{jp_session(now, holidays)}'
     return f'weekly-{key}'
 
 
@@ -127,6 +141,11 @@ def _daily(session, files, lock_age, stale, want):
 def decide_us(now, files, lock_age, holidays=()):
     return _daily(us_session(now, holidays), files, lock_age, STALE_MIN['us'],
                   lambda d: (f'posts/{d}.html', f'news/{d}.html'))
+
+
+def decide_jp_daily(now, files, lock_age, holidays=()):
+    return _daily(jp_session(now, holidays), files, lock_age, STALE_MIN['jp_daily'],
+                  lambda d: (f'japan/daily/{d}.html',))
 
 
 def decide_kr(now, files, lock_age, holidays=()):
@@ -206,10 +225,11 @@ def _lock_age(name, now):
 def main(argv=None):
     args = argv or sys.argv[1:] or ['']
     if args[0] == 'lock-name':
-        if len(args) < 2 or args[1] not in ('us', 'kr'):
-            print('usage: routine_due.py lock-name us|kr', file=sys.stderr)
+        if len(args) < 2 or args[1] not in ('us', 'kr', 'jp_daily'):
+            print('usage: routine_due.py lock-name us|kr|jp_daily', file=sys.stderr)
             return 2
-        print(lock_name(args[1], datetime.now(timezone.utc), holidays=_holidays(args[1])))
+        market = 'jp' if args[1] == 'jp_daily' else args[1]
+        print(lock_name(args[1], datetime.now(timezone.utc), holidays=_holidays(market)))
         return 0
     if args[0] == 'week-end':
         # 주간 스냅샷 워크플로의 기본 종료일 — 달력상 그 주 마지막 US 거래일.
@@ -220,13 +240,19 @@ def main(argv=None):
         key = japan_key(datetime.now(timezone.utc))
         print(key, japan_friday(key).isoformat(), japan_post_day(key, _holidays('jp')).isoformat())
         return 0
+    if args[0] == 'jp-session':
+        # 일본 일간 STEP 0 — 잠금 전에 세션과 직전 세션을 고정한다(codex 설계 검토 #11).
+        hol = _holidays('jp')
+        s = jp_session(datetime.now(timezone.utc), hol)
+        print(s, jp_prev_session(s, hol))
+        return 0
     if args[0] == 'week-key':
         # 주간 오케스트레이터가 데이터로 정한 키와 맞대 본다 — 다르면 데이터가 밀린 것이다.
         print(week_of(datetime.now(timezone.utc), _holidays('us')))
         return 0
     kind = args[0]
-    if kind not in ('us', 'kr', 'weekly', 'japan'):
-        print('usage: routine_due.py us|kr|weekly|japan', file=sys.stderr)
+    if kind not in ('us', 'kr', 'weekly', 'japan', 'jp_daily'):
+        print('usage: routine_due.py us|kr|weekly|japan|jp_daily', file=sys.stderr)
         return 2
     if _git('fetch', '-q', 'origin', 'main').returncode:
         # 판정 불가는 DUE 로 보낸다 — 틀려도 오케스트레이터의 가드가 막는다. 반대로
@@ -242,6 +268,10 @@ def main(argv=None):
         hol = _holidays('kr')
         verdict = decide_kr(now, _files('kr/posts'),
                             _lock_age(lock_name('kr', now, holidays=hol), now), hol)
+    elif kind == 'jp_daily':
+        hol = _holidays('jp')
+        verdict = decide_jp_daily(now, _files('japan/daily'),
+                                  _lock_age(lock_name('jp_daily', now, holidays=hol), now), hol)
     elif kind == 'japan':
         key = japan_key(now)
         verdict = decide_japan(key, _files('japan/posts'),
