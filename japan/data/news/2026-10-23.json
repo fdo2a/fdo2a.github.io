@@ -5,7 +5,7 @@
   "harvested": 1350,
   "dropped": {
     "갈래 없음·정례": 237,
-    "유료": 444,
+    "유료": 443,
     "매체 CoinPost": 2,
     "매체 NADA NEWS": 15,
     "매체 gamebiz": 2,
@@ -13,12 +13,12 @@
     "매체 LIMO": 2,
     "매체 トレーダーズ・ウェブ": 212,
     "매체 ウエルスアドバイザー": 49,
-    "매체 アイフィス株予報": 71,
+    "매체 アイフィス株予報": 72,
     "매체 JAPAN-REIT.COM": 3,
     "매체 サーチナ": 3
   },
   "notes": [
-    "market 50쪽까지 2026-10-19 이전에 닿지 못했다(가장 앞 2026-10-20)",
+    "market 50쪽까지 2026-10-19 이전에 닿지 못했다(가장 앞 2026-10-21)",
     "stocks 50쪽까지 2026-10-19 이전에 닿지 못했다(가장 앞 2026-10-22)"
   ],
   "items": [
@@ -58,7 +58,7 @@
       "feed": "bus_all",
       "body_chars": 605,
       "body_file": "08-policy.txt",
-      "summary_note": "분량 벗어남 429자"
+      "summary_note": "분량 벗어남 410자"
     },
     {
       "guid": "bf5de1a69f4f1df898596bbd749ae58f681e86c2",
@@ -135,7 +135,7 @@
       "feed": "bus_all",
       "body_chars": 823,
       "body_file": "18-industry.txt",
-      "summary_note": "문단이 둘 이상(머리말·제목 반복)"
+      "summary_note": "분량 벗어남 468자"
     },
     {
       "guid": "797f822293cd6154fb2df04ae44314c40d868aa0",
@@ -160,7 +160,7 @@
       "feed": "bus_all",
       "body_chars": 747,
       "body_file": "20-industry.txt",
-      "summary_note": "분량 벗어남 435자"
+      "summary_note": "문단이 둘 이상(머리말·제목 반복)"
     },
     {
       "guid": "eb0ce98068e79f6d1ad5976c86f29d162cf3ba6f",
@@ -211,7 +211,7 @@
       "official": true,
       "body_chars": 982,
       "body_file": "30-insight.txt",
-      "summary_note": "분량 벗어남 458자"
+      "summary_note": "분량 벗어남 482자"
     },
     {
       "guid": "http://www.nli-research.co.jp/report/detail/id=87167?site=nli",
