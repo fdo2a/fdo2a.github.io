@@ -1,0 +1,54 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-10-26",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 0,
+ "collected_at": "2026-10-26T22:30:40+00:00",
+ "cutoff_at": "2026-10-26T22:30:40+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "a447e6a08bb689106543657319e71674e6f7c7db",
+  "sha256": "4bf228df732fda0de730a687b20c09b7b4ab85eae7666933ec77a2b59345448c"
+ },
+ "counts": {
+  "harvest": 166,
+  "candidates": 3,
+  "articles": [
+   2,
+   2,
+   5
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "tokens": {
+   "in": 21540,
+   "out": 5145
+  },
+  "discovery": "throttled",
+  "hosts": {
+   "cnbc.com": "ok",
+   "aljazeera.com": "ok",
+   "theguardian.com": "ok"
+  },
+  "notes": [],
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
+ },
+ "event": {
+  "topic_ko": "코미 부녀 사법 공방과 미 농촌 경제: 기사 간 충돌 주장 없음",
+  "query": "comey trump charges",
+  "trigger": []
+ },
+ "content_hash": "c4e6f82c98c37dfa"
+}
