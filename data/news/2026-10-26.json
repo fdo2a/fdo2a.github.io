@@ -1,6 +1,6 @@
 {
   "report_date": "2026-10-26",
-  "harvested": 873,
+  "harvested": 893,
   "notes": [
     "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
   ],
@@ -37,7 +37,7 @@
       "published": "2026-10-21T11:30:00+00:00",
       "category": "mlcc",
       "source": "Yahoo Finance",
-      "body_chars": 4839,
+      "body_chars": 4705,
       "body_file": "03-mlcc.txt",
       "summary_ko": "삼성전기가 엔비디아와 AI 반도체용 ABF 패키지 기판 공급을 위한 전략적 파트너십을 맺었다고 2026년 10월 21일 발표했다. 양사는 세종과 부산의 전용 생산시설 확충에 공동 투자하며, 2026년부터 다년간 공급 계약을 이행한다. 공급 대상은 엔비디아 컴퓨팅 칩셋용 패키지 기판과 데이터센터 내 칩 간 초고속 연결을 돕는 고속 네트워킹 스위치용 기판이다. 삼성전기는 2026년부터 엔비디아향 기판 공급량을 두 자릿수 연간 증가율로 늘릴 계획이며, 2028년에는 엔비디아 물량이 삼성전기 전체 패키지 기판 생산능력의 상당 부분을 차지할 것으로 예상된다. 기판이 대형화되고 임베디드 부품이 들어가면서 미세 회로 구현과 휨 제어, 기판 평탄도 기술이 중요해지는 가운데, 삼성전기는 자사의 MLCC와 실리콘 커패시터 기술을 기판 구조에 통합해 고성능·고신뢰성 제품을 제공하겠다는 입장이다. 엔비디아는 AI 인프라 확장 속도를 맞추기 위해 기판 공급망을 넓히는 계기로 이번 협력을 설명했다.",
       "summary_model": "claude-haiku-5-5"
@@ -82,6 +82,19 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
+      "guid": "108465772",
+      "url": "https://www.cnbc.com/2026/10/26/blackberry-qnx-physical-ai-robots.html",
+      "title": "BlackBerry reinvented: CEO sees big opportunities AI-powered robots",
+      "summary": "BlackBerry CEO John Giamatteo sees AI-powered robots as a major growth opportunity.",
+      "published": "2026-10-26T22:34:19+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 3091,
+      "body_file": "15-ai.txt",
+      "summary_ko": "BlackBerry의 존 지아마테오 CEO는 인공지능 기반 로봇을 회사의 주요 성장 기회로 보고 있다. 캐나다 기업 BlackBerry의 QNX 운영체제는 제동 장치 등 차량 핵심 기능의 기반 소프트웨어로, 전 세계 2억 7500만 대 이상의 차량에 탑재돼 있다. 회사는 자동차를 넘어 로봇 등 기계가 실제 세계와 상호작용하도록 하는 '물리적 AI' 시장으로 영역을 넓히고 있다. 로봇 사업은 QNX 내에서 가장 빠르게 성장하는 분야로, 회사는 자동차에서 쌓은 경험을 바탕으로 기계의 안전하고 안정적인 작동을 돕는 소프트웨어를 공급할 수 있다고 본다. QNX 로열티 수주잔고는 12억 달러를 넘었고 2개 분기 만에 2억 5000만 달러 이상 늘었다. 올해 주가는 142% 올랐지만, 시가총액은 약 54억 달러로 2008년 정점의 약 850억 달러에 크게 못 미친다. 지아마테오는 엔비디아가 자사 안전 스택의 표준 플랫폼으로 QNX를 채택했다고 밝혔다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
       "guid": "108464426",
       "url": "https://www.cnbc.com/2026/10/26/anthropic-ipo-founder-voting-control.html",
       "title": "Anthropic's IPO puts power in the hands of founders, giving everyday shareholders little voice",
@@ -90,7 +103,7 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 5585,
-      "body_file": "15-ai.txt",
+      "body_file": "16-ai.txt",
       "summary_ko": "Anthropic이 상장 신고서(S-1)에서 공동창업자 7명이 지배하는 'Founder LLC'가 의결권의 50.1%를 보유한다고 밝혔다. 다리오 아모데이 CEO와 다니엘라 아모데이 사장 등 7명이 이 법인의 유일한 구성원이며, 향후 주주총회 주요 안건 대부분을 결정할 수 있다. 이에 따라 기관과 개인 투자자의 영향력은 제한된다. 회사는 적대적 합병이나 위임장 대결을 어렵게 하는 구조라 주주가 프리미엄을 받고 주식을 팔 기회를 잃을 수 있다고 밝혔다. 이사회 과반을 선임하는 권한은 독립 기구인 장기이익신탁(LTBT)에도 있으며, 이는 의결권 없는 별도 종류주식으로 행사된다. 나스닥 기준 'controlled company'에 해당하고 상장 티커는 'ANT'로 계획돼 있다. 회사는 두 기구의 의결권이 경제적 지분과 비례하지 않으며 희석되지 않는다고 밝히고, 창업자와 신탁의 이해가 투자자와 다를 수 있다는 점도 위험으로 제시했다. 일부 투자자는 뛰어난 리더십을 전제로 이런 구조를 수용하는 분위기다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -103,20 +116,9 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 3108,
-      "body_file": "16-ai.txt",
+      "body_file": "17-ai.txt",
       "summary_ko": "Microsoft가 AI 인프라 투자 부담 속에서 자본 효율성을 높이기 위해 미국, 캐나다, 인도, 영국의 경력 70 이하 직원을 대상으로 자발적 퇴직 제안을 내놓았다. 대상자는 약 6만 명으로 전체 직원 22만 3000명의 약 27%에 해당한다. 데이터센터 투자가 크게 늘어 9월 분기 자본지출은 500억 달러를 넘을 것으로 예상되며, 지난해 같은 분기 349억 달러보다 많다. 앞서 4월에는 미국 직원 약 7%를 대상으로 첫 자발적 퇴직 프로그램을 시행했고, 7월에는 4800명 감원을 발표했다. 2분기 잉여현금흐름은 196억 4000만 달러로 흑자를 유지했지만 전년 대비 23% 줄었다. 직원들은 12월 초까지 참여 여부를 정해야 하며, 참여자는 12월 31일에 퇴사한다. 이번에는 부사장급까지 대상이 넓어졌고 목표 인원은 정하지 않았다고 전해졌다. 회사는 10월 29일 3분기 실적을 발표할 예정이다.",
       "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "108465411",
-      "url": "https://www.cnbc.com/investingclub/2026/10/26/meta-spacex-anthropic-stoke-the-ai-funding-frenzy-what-it-means-for-our-stocks.html",
-      "title": "Meta, SpaceX, Anthropic stoke the AI funding frenzy. What it means for our stocks",
-      "summary": null,
-      "published": "2026-10-26T20:26:26+00:00",
-      "category": "ai",
-      "source": "CNBC",
-      "body_chars": 0,
-      "body_note": "추출 실패"
     },
     {
       "guid": "108465785",
@@ -167,7 +169,8 @@
       "source": "CNBC",
       "body_chars": 2870,
       "body_file": "27-industry.txt",
-      "summary_note": "분량 벗어남 408자"
+      "summary_ko": "CNBC의 짐 크레이머는 10월 26일 대규모 기업공개(IPO)와 자본 조달이 이어지면 강세장을 위협할 수 있다고 경고했다. Anthropic이 이날 IPO 투자설명서를 제출하며 월가의 주목 상장 하나가 한 걸음 가까워졌고, OpenAI도 대형 상장이 기대되는 상황이다. 올해 IPO로 지금까지 1480억 달러가 조달됐으며, 크레이머는 신규 주식 공급이 투자자 수요를 넘어서 랠리를 꺾을 수 있다고 우려했다. 그는 Meta, Alphabet, SpaceX, Oracle 등의 대규모 자금 조달이 S&P 500 등으로 흘러갈 자금을 빨아들일 수 있다고 봤다. 다만 AI 사업 자체의 타당성은 문제 삼지 않았다. 현재 주요 기술기업들은 2000년 닷컴 붕괴 때의 실체 없는 인터넷 기업들과 달리 실질적 사업과 수요를 갖췄다는 것이다. 그럼에도 닷컴 시기처럼 막대한 자본 조달이 공급 과잉을 낳을 수 있다는 점이 그가 본 유사점이다. 그는 시장 고점을 예측하는 것은 아니라며 지금 상황이 마음에 들지 않을 뿐이라고 말했다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108465212",
@@ -263,17 +266,17 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://www.aljazeera.com/?t=1793028151",
-      "url": "https://www.aljazeera.com/news/2026/10/26/russian-attacks-on-ukraines-energy-infrastructure-a-war-crime-un?traffic_source=rss",
-      "title": "Russian attacks on Ukraine’s energy infrastructure a war crime: UN",
-      "summary": "UN commission notes Russian weaponisation of cold in nearly five years of attacks on heating plants and power lines.",
-      "published": "2026-10-26T17:27:34+00:00",
+      "guid": "https://www.theguardian.com/politics/video/2026/oct/26/what-makes-andy-burnham-think-we-can-rejoin-the-eu-politics-weekly",
+      "url": "https://www.theguardian.com/politics/video/2026/oct/26/what-makes-andy-burnham-think-we-can-rejoin-the-eu-politics-weekly",
+      "title": "What makes Andy Burnham think we can rejoin the EU? | Politics Weekly",
+      "summary": "<p>Andy Burnham claims revising Brexit would ‘bring people together’. The PM wants to look again at issues like free movement, but rules out joining the euro or Schengen. Would rejoining the EU bring up old wounds and risk further division? </p><p>Plus, as chancellor John Healey gears up for a tricky budget, what should you be looking out for?</p> <a href=\"https://www.theguardian.com/politics/vide",
+      "published": "2026-10-26T17:50:39+00:00",
       "category": "global",
-      "source": "Al Jazeera",
+      "source": "The Guardian",
       "region": "europe",
-      "body_chars": 3250,
+      "body_chars": 456,
       "body_file": "09-global.txt",
-      "summary_ko": "유엔 독립국제조사위원회가 2026년 10월 26일 유엔 총회에 제출한 보고서에서, 러시아가 2022년 가을 이후 난방 시설, 송전선, 가스 시설 등 우크라이나 에너지 인프라를 지속적으로 공격한 행위가 겨울 추위를 무기로 삼은 전쟁범죄에 해당한다고 밝혔다. 위원회는 특히 2025~2026년 혹한기 공격을 집중 조사했다. 기온이 영하 21도까지 떨어진 당시 수백만 명이 난방, 전기, 수도, 가스 공급 중단을 장기간 겪었다는 것이다. 위원회는 공격을 명령한 러시아 지휘관들이 표적 시설의 민간 필수성을 알고 있었다고 평가했고, 러시아 당국이 추가 공격 계획을 공식 언급한 점도 근거로 들었다. 위원장 에릭 모세는 추운 계절이 다가오며 공격이 다시 강화됐다고 우려를 나타냈다. 한편 러시아는 외국인 병력 모집 과정에서 인신매매를 저질렀다고 지적됐으며, 모집자 대다수가 사망하거나 실종됐다고 보고서는 밝혔다.",
+      "summary_ko": "가디언의 정치 영상 프로그램 「Politics Weekly」는 앤디 번햄이 브렉시트를 재검토하면 \"사람들을 하나로 모을 수 있다\"고 주장하는 배경을 다룬다. 기사 설명에 따르면 총리는 자유이동 같은 쟁점을 다시 검토하려 하지만 유로화 도입과 솅겐 조약 가입은 배제하고 있다. 방송은 EU 재가입이 오래된 상처를 다시 건드려 국론 분열을 키울 위험이 있는지를 던진다. 아울러 존 힐리 재무장관이 까다로운 예산안을 준비하고 있어 주목할 지점도 함께 다룬다. 다만 이 페이지는 방송 소개 문구여서 구체적인 수치나 날짜, 정책 일정은 담고 있지 않다. 재가입 가능성이나 시장 영향에 대한 판단은 본문 확인이 필요하다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -288,7 +291,7 @@
       "wire": "マネーポストWEB",
       "body_chars": 981,
       "body_file": "10-global.txt",
-      "summary_note": "분량 벗어남 425자"
+      "summary_note": "가나·한자 「越境」·「軸足」"
     },
     {
       "guid": "https://think.ing.com/articles/belgium-stable-rating-unresolved-fiscal-challenges/#When:07:15:00Z",
@@ -311,7 +314,7 @@
       "published": "2026-10-26T06:14:00+00:00",
       "category": "insight",
       "source": "Investing.com",
-      "body_chars": 6435,
+      "body_chars": 6507,
       "body_file": "19-insight.txt",
       "summary_ko": "금 가격이 이란전 장기화에 따른 에너지발 인플레이션 우려로 추가 하락할 수 있다는 것이 Investing.com 칼럼니스트의 견해다. 필자는 현물 금이 4% 넘게 하락해 4,000달러 선을 하회했다는 점을 근거로 든다. 금선물은 금요일 3,989.10달러까지 밀린 뒤 4,010달러에 마감했으며, 필자는 심리적 지지선인 3,980.10달러가 무너지면 다음 지지선 3,908달러를 시험할 수 있다고 본다. 미국 유엔대사 마이크 월츠가 전쟁이 1년 더 이어질 수 있다고 말한 점을 가정하면, 에너지 주도 인플레이션 압력으로 금 하락폭이 커질 수 있다는 것이다. 근거로는 브렌트유가 금요일 한때 배럴당 117달러를 넘어 전쟁 중 최고치를 기록한 점이 제시된다. 필자는 연준 회의(10월 28일) 전 3,967달러가 이탈하면 매도세가 촉발될 수 있다고 덧붙인다. 다만 이는 필자 개인의 관측이며, 원문은 투자 책임이 독자에게 있다고 명시한다.",
       "summary_model": "claude-haiku-5-5"
