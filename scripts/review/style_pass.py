@@ -220,6 +220,12 @@ def _period_gates(section, post, root, original, key):
     cmds = [[py, s + 'check_style.py', post],
             [py, s + 'check_readability.py', '--strict', post],
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout']]
+    if market == 'jp' and span == 'daily':
+        # 일본 일간 — 근거 폴더(root)에 발행 스냅샷·일간 뉴스가 레포와 같은 경로로 있다
+        cmds += [[py, s + 'check_japan_daily.py', '--html', post, '--session', key, '--root', root],
+                 [py, s + 'check_news.py', '--html', post, '--datadir', os.path.join(root, 'japan/data'),
+                  '--market', 'jp-daily', '--date', key]]
+        return cmds
     if market == 'jp':
         cmds.append([py, s + 'check_japan.py', '--html', post, '--key', key,
                      '--datadir', os.path.join(root, 'japan/data')])

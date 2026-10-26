@@ -18,10 +18,14 @@ PERIOD = {
     'monthly': ('us', 'monthly'),
     'kr/monthly': ('kr', 'monthly'),
     'japan/posts': ('jp', 'weekly'),
+    # 일본 일간(2026-10-27) — 파일명이 날짜지만 자동 Claude 정정(`DAILY`)에는 넣지 않는다. codex 검토
+    # 초안은 수동 review-gate 로 간다. 근거는 발행 스냅샷과 일간 뉴스 파일 둘로 자기완결이다.
+    'japan/daily': ('jp', 'daily'),
 }
 SECTIONS = DAILY + tuple(PERIOD)
 # 신선도(일). 주간은 토·일에 맥이 꺼져 있을 수 있고, 월간은 수집이 늦으면 1일보다 늦게 나온다.
-MAX_AGE = {'weekly': 3, 'kr/weekly': 3, 'japan/posts': 3, 'monthly': 7, 'kr/monthly': 7}
+MAX_AGE = {'weekly': 3, 'kr/weekly': 3, 'japan/posts': 3, 'monthly': 7, 'kr/monthly': 7,
+           'japan/daily': 2}
 
 _DAY = re.compile(r'(\d{4}-\d{2}-\d{2})\.html$')
 _WEEK = re.compile(r'(\d{4})-W(\d{2})\.html$')
@@ -43,7 +47,7 @@ def publish_day(path):
     section = section_of(path)
     try:
         m = _DAY.search(name)
-        if m and section in DAILY:
+        if m and (section in DAILY or (section in PERIOD and PERIOD[section][1] == 'daily')):
             return date.fromisoformat(m.group(1))
         m = _WEEK.fullmatch(name)
         if m and section in PERIOD and PERIOD[section][1] == 'weekly':
@@ -61,6 +65,8 @@ def publish_day(path):
 def evidence(section, key):
     """발행 커밋에서 꺼낼 게이트 근거 — 경로는 레포 기준."""
     market, span = PERIOD[section]
+    if market == 'jp' and span == 'daily':
+        return (f'japan/data/daily/{key}.json', f'japan/data/news/daily/{key}.json')
     if market == 'jp':
         return (f'japan/data/{key}.json', f'japan/data/{key}.news.json')
     base = 'kr/data' if market == 'kr' else 'data'
