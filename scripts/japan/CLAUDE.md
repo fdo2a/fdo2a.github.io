@@ -29,3 +29,25 @@ One post per week, on the day MOF posts Friday's JGB curve (next Tokyo business 
 - The `news` section is optional in `ORDER` but always checked for order, uniqueness and title; `data-news` blocks outside it are blocked, ≤3 per category, no `same_event` pair. Flow-direction checks skip it.
 
 When changing this: read `docs/superpowers/specs/2026-09-26-weekly-insight-and-japan-design.md` before touching `core.py` or `gate.py`, and `docs/superpowers/specs/2026-10-18-japan-news-design.md` before touching `news.py`, `fetch_japan_news.py` or the news part of `gate.py`.
+
+## Japan daily close brief (2026-10-27)
+
+Every Tokyo trading day, `/japan/daily/<session>.html`, routine `.claude/JAPAN_DAILY_ORCHESTRATOR.md` (19:00 KST, retry 21:00, **no backfill**), writer `.claude/agents/japan-daily-writer.md`. Separate from the weekly — never edit weekly files, `calendar.json` meanings, `news.py` classification or the weekly news freeze for it.
+
+| File | Does |
+|---|---|
+| `collect_japan_daily.py` + `collect-japan-daily.yml` (`30 16 * * 1-5` Asia/Tokyo) | Candidate snapshot `japan/data/daily/candidate/<s>.json`; refuses a published session |
+| `fetch_japan_news.py --daily-session` + `japan/news_daily.py` | `japan/data/news/daily/<s>.json`, economic categories only, 16:30 JST cut before the cap |
+| `japan/daily_{prices,rates,macro,movers,calendar}.py` | Pure logic; calendar overlay `japan/data/calendar_daily.json` (release vs meeting rows) |
+| `japan/daily_render.py` + `build_japan_daily.py` | Section order from `order(event_day)`, tables, BOJ credit footer; `diag`/`assemble` |
+| `japan/daily_gate.py` + `check_japan_daily.py`, `japan/daily_news_gate.py` via `check_news.py --market jp-daily` | Publish gates |
+| `publish_japan_daily.py` | Candidate → published snapshot, history `japan/data/history/jp_daily.jsonl`, `japan/daily.json`, sitemap |
+
+- **Nikkei close = official Nikkei CSV row for the session** matched to `fast_info.lastPrice` within 0.01% (`complete`); never commit the CSV. ETFs/stocks only when the last 5-minute bar is on the session. **Never `previousClose`** — a change needs a denominator dated exactly `prev_session`.
+- FX = 5-minute bar ending 16:30 JST (weekly uses 16:00 ET — values differ). JGB = MOF row for `prev_session` only; call rate = BOJ API latest observation (≤3 trading days old).
+- Macro `released` only when the BOJ series has a period newer than the previous snapshot's `macro_periods`; otherwise `pending`. No consensus anywhere.
+- Core values in prose carry `<span data-ref="field.path">`; values with a period ≠ session need that date in the paragraph. No weekly signal vocabulary, no 「지수 기여」.
+- BOJ API: no key, ≤10 calls per run, series codes cached 7 days (`japan/data/daily/boj_series.json`); the credit line is mandatory.
+- Review runner: `japan/daily` = (`jp`, `daily`) in `review/kinds.py` — codex drafts, manual review-gate correction (not in `DAILY`).
+
+When changing this: read `docs/superpowers/specs/2026-10-27-japan-daily-design.md` (§13 overrides) before touching `scripts/japan/daily_*.py`, `collect_japan_daily.py` or `publish_japan_daily.py`.

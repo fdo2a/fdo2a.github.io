@@ -43,6 +43,7 @@ Before you write new guidance, **decide where it goes.** `scripts/common/tests/t
 | Ticker thesis watch | `.claude/THESIS_ORCHESTRATOR.md` | pages are never hand-written — `scripts/thesis/content.py` |
 | Weekly / monthly | `.claude/WEEKLY_ORCHESTRATOR.md`, `MONTHLY_ORCHESTRATOR.md` | `.claude/agents/period-report-writer.md` |
 | Japan weekly | `.claude/JAPAN_ORCHESTRATOR.md` | `.claude/agents/japan-report-writer.md` |
+| Japan daily | `.claude/JAPAN_DAILY_ORCHESTRATOR.md` | `.claude/agents/japan-daily-writer.md` |
 | Post-publish review | skill `review-gate` (`.claude/REVIEW_GATE.md`) | ledger `reviews/index.json` |
 
 
