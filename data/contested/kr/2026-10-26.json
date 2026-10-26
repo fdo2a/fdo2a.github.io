@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-10-26",
  "status": "none",
- "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-26T12:05:23+00:00",
+ "reason": "analysis_unverified",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-26T12:22:13+00:00",
  "cutoff_at": "2026-10-26T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,10 +25,10 @@
   }
  },
  "counts": {
-  "harvest": 601,
+  "harvest": 596,
   "candidates": 1,
   "articles": [
-   5
+   4
   ]
  },
  "diagnostics": {
@@ -40,26 +40,25 @@
    "edaily": "ok",
    "yna": "ok",
    "dt": "short",
-   "newsis": "short",
-   "seoul": "ok"
+   "newsis": "short"
   },
   "notes": [
-   "discover:601"
+   "discover:596"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 30411,
-   "out": 9041
+   "in": 25806,
+   "out": 9906
   },
   "grounded": {
-   "claims": "4/4",
+   "claims": "3/3",
    "pairs": "1/1",
-   "obs": "6/6"
+   "obs": "7/7"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
+   "pairs": 1,
+   "claims": 2,
    "obs": 6
   }
  },
@@ -68,5 +67,12 @@
   "query": "환율 코스피 하락",
   "trigger": []
  },
- "content_hash": "d48e03d867d14ebe"
+ "problems": [
+  "variables[2]:unverified",
+  "edges[0]:dangling",
+  "edges[2]:unverified",
+  "memo[1]:unverified",
+  "worry.moderate[0]:unverified"
+ ],
+ "content_hash": "b96cd65aaf383105"
 }
