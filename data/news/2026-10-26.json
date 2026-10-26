@@ -123,10 +123,10 @@
       "url": "https://www.cnbc.com/2026/10/26/james-comey-indictment-national-defense-doj-trump.html",
       "title": "DOJ charges ex-FBI Director James Comey in new case",
       "summary": "Comey for years has been targeted by President Donald Trump, who fired him as FBI director in 2017.",
-      "published": "2026-10-26T21:57:26+00:00",
+      "published": "2026-10-26T22:24:36+00:00",
       "category": "politics",
       "source": "CNBC",
-      "body_chars": 3797,
+      "body_chars": 4956,
       "body_file": "24-politics.txt",
       "summary_ko": "제임스 코미 전 FBI 국장이 26일(현지시간) 공개된 법원 문건을 통해 세 번째 연방 범죄 혐의로 기소됐다. 워싱턴 D.C. 연방지방법원에 제출된 형사 고발장에 따르면, 코미는 국가 안보 정보를 받을 자격이 없는 사람에게 알고도 전달한 혐의와 이런 정보 공유를 금지한 법을 위반하려고 타인과 공모한 혐의를 받는다. 고발장은 코미가 하나 이상의 공모자를 통해 신원이 밝혀지지 않은 인물에게 전국 매체 기자에게 국가 안보 정보를 넘기라고 지시했다고 적시했다. 트럼프 행정부 아래 법무부가 코미를 반복적으로 겨냥해 왔다는 점도 짚였다. 코미는 노스캐롤라이나 연방법원에서 트럼프 대통령의 목숨을 위협했다는 혐의로 기소돼 기각을 요청 중이며, 앞서 의회 위증 혐의 사건은 기각된 바 있다. 이번 고발은 뉴욕 연방법원이 법무부의 코미 딸 모린 코미 해고가 위법이라고 판결한 직후 알려졌다. 코미는 여전히 무죄이며 사법부를 신뢰한다는 입장을 밝혔다.",
       "summary_model": "claude-haiku-5-5"
@@ -167,7 +167,7 @@
       "source": "CNBC",
       "body_chars": 2870,
       "body_file": "27-industry.txt",
-      "summary_note": "분량 벗어남 439자"
+      "summary_note": "분량 벗어남 408자"
     },
     {
       "guid": "108465212",
@@ -235,18 +235,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/844001d220cbf25f59738e1fe4a942ea18962b3c?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/844001d220cbf25f59738e1fe4a942ea18962b3c?source=rss",
-      "title": "米国債利回りはすでにピークを付けたのか──歴史が示すその可能性（海外）(BUSINESS INSIDER JAPAN)",
-      "summary": "米国債利回りの上昇が、ここ数カ月で市場を揺るがしている。しかし、ほぼ四半世紀ぶりの高水準に向けた急ピッチの上昇は、終わった可能性がある。ジム・ポールセン（Jim Paulsen）氏は、歴史と現在の経済",
-      "published": "2026-10-26T22:10:02+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/b1baabbadff678c2b47edbe2fe7c23cae35591ea?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/b1baabbadff678c2b47edbe2fe7c23cae35591ea?source=rss",
+      "title": "高まるガソリン補助金見直しの議論(NRI研究員の時事解説)",
+      "summary": "高市首相は10月23日に、ガソリン補助金の見直しを赤沢経済産業相に指示すると表明した。支援単価や制度の「出口」を含めて検討するが、単価や終了時期は未定であり、11月からすぐに変わるわけではなく、当面は",
+      "published": "2026-10-26T22:29:53+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "body_chars": 1150,
+      "wire": "NRI研究員の時事解説",
+      "body_chars": 871,
       "body_file": "07-global.txt",
-      "summary_ko": "미국 국채 금리가 몇 달째 시장을 흔드는 가운데, 전 루스홀드 그룹 수석 투자전략가 짐 폴센은 금리가 이미 정점에 가까울 수 있다고 봤다. 그는 10월 22일 코멘트에서 이번 달 미 10년물 금리가 24년 만의 고점에 올랐지만, 1871년 이후 155년 치 데이터를 보면 현재 금리가 과거보다 높았던 달이 전체의 76%에 이른다고 설명했다. 재정 문제와 회사채·국채의 대규모 발행에 따른 상승 압력도 인정했다. 반면 미국은 1970년대와 같은 수요 주도형 고인플레이션 국면과 거리가 멀고, 현재 물가 상승은 주로 해결 가능한 공급 제약에서 비롯된다고 주장했다. 이에 따라 금리 인상 필요성이 줄어 금리가 억제될 것이라는 견해다. 다만 그 역시 금리 상승이 계속될 가능성을 배제하지는 않았다.",
-      "summary_model": "claude-haiku-5-5"
+      "summary_note": "가나·한자 「市」"
     },
     {
       "guid": "108462470",
@@ -288,7 +288,7 @@
       "wire": "マネーポストWEB",
       "body_chars": 981,
       "body_file": "10-global.txt",
-      "summary_note": "분량 벗어남 453자"
+      "summary_note": "분량 벗어남 425자"
     },
     {
       "guid": "https://think.ing.com/articles/belgium-stable-rating-unresolved-fiscal-challenges/#When:07:15:00Z",
