@@ -1,6 +1,6 @@
 {
   "report_date": "2026-10-26",
-  "harvested": 893,
+  "harvested": 873,
   "notes": [
     "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
   ],
@@ -37,7 +37,7 @@
       "published": "2026-10-21T11:30:00+00:00",
       "category": "mlcc",
       "source": "Yahoo Finance",
-      "body_chars": 4705,
+      "body_chars": 4839,
       "body_file": "03-mlcc.txt",
       "summary_ko": "삼성전기가 엔비디아와 AI 반도체용 ABF 패키지 기판 공급을 위한 전략적 파트너십을 맺었다고 2026년 10월 21일 발표했다. 양사는 세종과 부산의 전용 생산시설 확충에 공동 투자하며, 2026년부터 다년간 공급 계약을 이행한다. 공급 대상은 엔비디아 컴퓨팅 칩셋용 패키지 기판과 데이터센터 내 칩 간 초고속 연결을 돕는 고속 네트워킹 스위치용 기판이다. 삼성전기는 2026년부터 엔비디아향 기판 공급량을 두 자릿수 연간 증가율로 늘릴 계획이며, 2028년에는 엔비디아 물량이 삼성전기 전체 패키지 기판 생산능력의 상당 부분을 차지할 것으로 예상된다. 기판이 대형화되고 임베디드 부품이 들어가면서 미세 회로 구현과 휨 제어, 기판 평탄도 기술이 중요해지는 가운데, 삼성전기는 자사의 MLCC와 실리콘 커패시터 기술을 기판 구조에 통합해 고성능·고신뢰성 제품을 제공하겠다는 입장이다. 엔비디아는 AI 인프라 확장 속도를 맞추기 위해 기판 공급망을 넓히는 계기로 이번 협력을 설명했다.",
       "summary_model": "claude-haiku-5-5"
@@ -91,7 +91,7 @@
       "source": "CNBC",
       "body_chars": 7128,
       "body_file": "15-ai.txt",
-      "summary_note": "분량 벗어남 458자"
+      "summary_note": "분량 벗어남 425자"
     },
     {
       "guid": "108465772",
@@ -107,16 +107,16 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "108464426",
-      "url": "https://www.cnbc.com/2026/10/26/anthropic-ipo-founder-voting-control.html",
-      "title": "Anthropic's IPO puts power in the hands of founders, giving everyday shareholders little voice",
-      "summary": "Founder LLC is one component of the \"novel capital and corporate governance structure\" that Anthropic outlined in its public S-1 filing.",
-      "published": "2026-10-26T21:41:26+00:00",
+      "guid": "108464652",
+      "url": "https://www.cnbc.com/2026/10/26/microsoft-msft-voluntary-buyouts.html",
+      "title": "Microsoft offers voluntary buyouts to 60,000 employees as AI leads to efficiency push",
+      "summary": "Microsoft is trying to balance a rapid AI infrastructure build-out with capital efficiency.",
+      "published": "2026-10-26T20:44:50+00:00",
       "category": "ai",
       "source": "CNBC",
-      "body_chars": 5585,
+      "body_chars": 3108,
       "body_file": "17-ai.txt",
-      "summary_ko": "Anthropic이 상장 신고서(S-1)에서 공동창업자 7명이 지배하는 'Founder LLC'가 의결권의 50.1%를 보유한다고 밝혔다. 다리오 아모데이 CEO와 다니엘라 아모데이 사장 등 7명이 이 법인의 유일한 구성원이며, 향후 주주총회 주요 안건 대부분을 결정할 수 있다. 이에 따라 기관과 개인 투자자의 영향력은 제한된다. 회사는 적대적 합병이나 위임장 대결을 어렵게 하는 구조라 주주가 프리미엄을 받고 주식을 팔 기회를 잃을 수 있다고 밝혔다. 이사회 과반을 선임하는 권한은 독립 기구인 장기이익신탁(LTBT)에도 있으며, 이는 의결권 없는 별도 종류주식으로 행사된다. 나스닥 기준 'controlled company'에 해당하고 상장 티커는 'ANT'로 계획돼 있다. 회사는 두 기구의 의결권이 경제적 지분과 비례하지 않으며 희석되지 않는다고 밝히고, 창업자와 신탁의 이해가 투자자와 다를 수 있다는 점도 위험으로 제시했다. 일부 투자자는 뛰어난 리더십을 전제로 이런 구조를 수용하는 분위기다.",
+      "summary_ko": "Microsoft는 AI 인프라 투자 부담 속에서 자본 효율성을 높이기 위해 미국, 캐나다, 인도, 영국에서 경력 70 이하 직원을 대상으로 한 자발적 퇴사 프로그램을 발표했다. 내부 사정에 밝은 소식통에 따르면 대상자는 약 6만 명으로 전체 직원 22만 3000명의 약 27%에 달한다. 회사는 AI 수요에 대응해 데이터센터 투자를 크게 늘리고 있으며, 9월 분기 자본지출이 500억 달러를 넘을 것으로 예상된다고 7월에 밝혔다. 지난해 같은 분기의 349억 달러보다 큰 폭 늘어난 규모다. 앞서 4월에는 첫 자발적 퇴직 프로그램을 시행했고 7월에는 4800명 감원을 발표했다. 이번에는 부사장급까지 대상을 넓혔으며 직원들은 12월 초까지 참여 여부를 정하고, 참여자는 12월 31일에 퇴사한다. 회사는 이번에 목표 인원을 정하지 않았다고 전해졌다. 한편 2분기 잉여현금흐름은 196억 4000만 달러로 흑자를 유지했으나 전년 대비 23% 줄었다. Microsoft는 수요일 3분기 실적을 발표할 예정이다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -248,7 +248,7 @@
       "wire": "NRI研究員の時事解説",
       "body_chars": 871,
       "body_file": "04-global.txt",
-      "summary_note": "가나·한자 「市首相」"
+      "summary_note": "분량 벗어남 417자"
     },
     {
       "guid": "108462470",
@@ -265,32 +265,31 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://www.theguardian.com/politics/video/2026/oct/26/what-makes-andy-burnham-think-we-can-rejoin-the-eu-politics-weekly",
-      "url": "https://www.theguardian.com/politics/video/2026/oct/26/what-makes-andy-burnham-think-we-can-rejoin-the-eu-politics-weekly",
-      "title": "What makes Andy Burnham think we can rejoin the EU? | Politics Weekly",
-      "summary": "<p>Andy Burnham claims revising Brexit would ‘bring people together’. The PM wants to look again at issues like free movement, but rules out joining the euro or Schengen. Would rejoining the EU bring up old wounds and risk further division? </p><p>Plus, as chancellor John Healey gears up for a tricky budget, what should you be looking out for?</p> <a href=\"https://www.theguardian.com/politics/vide",
-      "published": "2026-10-26T17:50:39+00:00",
+      "guid": "108462311",
+      "url": "https://www.cnbc.com/2026/10/27/china-fiscal-debt-gdp-imf-real-estate-.html",
+      "title": "CNBC's The China Connection newsletter: The 'cliff' beneath China's cities",
+      "summary": "Beijing has room to borrow, but heavily indebted local governments are cutting back, raising the stakes for growth and for how China manages its local debt.",
+      "published": "2026-10-26T23:10:16+00:00",
       "category": "global",
-      "source": "The Guardian",
-      "region": "europe",
-      "body_chars": 456,
+      "source": "CNBC",
+      "region": "china",
+      "body_chars": 5349,
       "body_file": "06-global.txt",
-      "summary_ko": "가디언의 정치 영상 프로그램 「Politics Weekly」는 앤디 번햄이 브렉시트를 재검토하면 \"사람들을 하나로 모을 수 있다\"고 주장하는 배경을 다룬다. 기사 설명에 따르면 총리는 자유이동 같은 쟁점을 다시 검토하려 하지만 유로화 도입과 솅겐 조약 가입은 배제하고 있다. 방송은 EU 재가입이 오래된 상처를 다시 건드려 국론 분열을 키울 위험이 있는지를 던진다. 아울러 존 힐리 재무장관이 까다로운 예산안을 준비하고 있어 주목할 지점도 함께 다룬다. 다만 이 페이지는 방송 소개 문구여서 구체적인 수치나 날짜, 정책 일정은 담고 있지 않다. 재가입 가능성이나 시장 영향에 대한 판단은 본문 확인이 필요하다.",
-      "summary_model": "claude-haiku-5-5"
+      "summary_note": "분량 벗어남 445자"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/e624d05ce17f3c1b57cdfe4e4428ec6afcdd120e?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/e624d05ce17f3c1b57cdfe4e4428ec6afcdd120e?source=rss",
-      "title": "中国発ネット通販「SHEIN」「Temu」はなぜ激安価格を実現できるのか？ 労働環境も衛生状態も良くない中、低賃金で中高年女性が働く“現地工場の実態”(マネーポストWEB)",
-      "summary": "中国発のネット通販が、破格の安さにより日本で利用者を急増させている。その代表格とされる「SHEIN（シーイン）」と「Temu（テム）」。だが、安さの裏で商品から基準値超えの有害物質が検出される事例が世",
-      "published": "2026-10-26T22:15:00+00:00",
+      "guid": "https://www.aljazeera.com/?t=1793028151",
+      "url": "https://www.aljazeera.com/news/2026/10/26/russian-attacks-on-ukraines-energy-infrastructure-a-war-crime-un?traffic_source=rss",
+      "title": "Russian attacks on Ukraine’s energy infrastructure a war crime: UN",
+      "summary": "UN commission notes Russian weaponisation of cold in nearly five years of attacks on heating plants and power lines.",
+      "published": "2026-10-26T17:27:34+00:00",
       "category": "global",
-      "source": "Yahoo!ニュース",
-      "region": "china",
-      "wire": "マネーポストWEB",
-      "body_chars": 981,
+      "source": "Al Jazeera",
+      "region": "europe",
+      "body_chars": 3250,
       "body_file": "07-global.txt",
-      "summary_note": "가나·한자 「越境」"
+      "summary_ko": "유엔 독립국제진상조사위원회(COI)는 러시아가 2022년 가을부터 우크라이나의 난방시설, 송전선, 가스시설 등 에너지 인프라를 지속 공격해 온 것이 겨울 추위를 무기화한 전쟁범죄에 해당한다고 밝혔다. 위원회는 26일 유엔총회에 제출한 보고서에서 수백 기의 드론과 미사일을 동시에 쏘는 대규모 공격의 빈도와 강도, 지리적 범위가 해마다 커졌다고 지적했다. 특히 2025~2026년 혹한기에는 기온이 영하 21도까지 떨어져 수백만 명이 난방과 전기, 물, 가스 공급이 장기간 끊긴 채 견디기 힘든 생활 여건에 놓였다. 위원회는 공격을 지시한 러시아 지휘관들이 표적 난방시설의 필수성을 알고 있었다고 평가했으며, 러시아 당국이 추가 공격 계획을 공식 언급한 점도 근거로 들었다. 에릭 모제 위원장은 추위가 다가오며 공격이 다시 강화됐다고 경고했다. 보고서는 또 해외 용병 모집 과정에서 러시아가 인신매매를 저질렀다고 지목했고, 모집자 대부분이 사망하거나 실종됐다고 밝혔다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "https://think.ing.com/articles/belgium-stable-rating-unresolved-fiscal-challenges/#When:07:15:00Z",
@@ -313,7 +312,7 @@
       "published": "2026-10-26T06:14:00+00:00",
       "category": "insight",
       "source": "Investing.com",
-      "body_chars": 6507,
+      "body_chars": 6435,
       "body_file": "19-insight.txt",
       "summary_ko": "금 가격이 이란전 장기화에 따른 에너지발 인플레이션 우려로 추가 하락할 수 있다는 것이 Investing.com 칼럼니스트의 견해다. 필자는 현물 금이 4% 넘게 하락해 4,000달러 선을 하회했다는 점을 근거로 든다. 금선물은 금요일 3,989.10달러까지 밀린 뒤 4,010달러에 마감했으며, 필자는 심리적 지지선인 3,980.10달러가 무너지면 다음 지지선 3,908달러를 시험할 수 있다고 본다. 미국 유엔대사 마이크 월츠가 전쟁이 1년 더 이어질 수 있다고 말한 점을 가정하면, 에너지 주도 인플레이션 압력으로 금 하락폭이 커질 수 있다는 것이다. 근거로는 브렌트유가 금요일 한때 배럴당 117달러를 넘어 전쟁 중 최고치를 기록한 점이 제시된다. 필자는 연준 회의(10월 28일) 전 3,967달러가 이탈하면 매도세가 촉발될 수 있다고 덧붙인다. 다만 이는 필자 개인의 관측이며, 원문은 투자 책임이 독자에게 있다고 명시한다.",
       "summary_model": "claude-haiku-5-5"
