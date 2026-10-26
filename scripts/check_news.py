@@ -27,11 +27,13 @@ from us.news_gate import check  # noqa: E402
 # KR 은 네이버증권 주요뉴스(`kr/data/news/<date>.json`, `fetch_kr_news.py`). 갈래만 다르고
 # 대조 규칙은 같다(2026-09-24).
 CATEGORIES = {'us': US_CATEGORIES, 'kr': KR_CATEGORIES}
+# 일본 일간(2026-10-27)은 `news/daily/<date>.json` 을 읽고 갈래·건수·컷까지 보는 전용 게이트를 쓴다.
+MARKETS = sorted(CATEGORIES) + ['jp-daily']
 
 
-def load_collected(datadir, report_date=None):
+def load_collected(datadir, report_date=None, sub=''):
     """그날 수집분. 날짜를 안 주면 news/ 에서 가장 최근 것을 쓴다."""
-    newsdir = os.path.join(datadir, 'news')
+    newsdir = os.path.join(datadir, 'news', sub) if sub else os.path.join(datadir, 'news')
     if report_date:
         path = os.path.join(newsdir, f'{report_date}.json')
     else:
@@ -56,14 +58,18 @@ def main():
     ap.add_argument('--date', default=None,
                     help='발행일. 주면 그날 수집분만 쓰고 날짜 불일치를 위반으로 본다 '
                          '— 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다')
-    ap.add_argument('--market', choices=sorted(CATEGORIES), default='us',
+    ap.add_argument('--market', choices=MARKETS, default='us',
                     help='섹션 의무를 거는 갈래. KR 은 --datadir kr/data 와 함께')
     args = ap.parse_args()
 
     with open(args.html, encoding='utf-8') as fh:
         html = fh.read()
 
-    collected, path = load_collected(args.datadir, args.date)
+    if args.market == 'jp-daily' and not args.date:
+        print('jp-daily 는 --date(세션)가 필요하다', file=sys.stderr)
+        return 2
+    collected, path = load_collected(args.datadir, args.date,
+                                     sub='daily' if args.market == 'jp-daily' else '')
     if not collected or not (collected.get('items') or []):
         # **검사를 건너뛰지 않는다**(2026-09-19 codex 검토 #1). 수집이 실패한 날이
         # 지어낸 뉴스가 실릴 확률이 가장 높은 날이다. 면제되는 것은 섹션을 실을
@@ -72,8 +78,12 @@ def main():
               f'표식 대조는 그대로 한다')
         collected = collected or {'items': []}
 
-    violations = check(html, collected, report_date=args.date,
-                       categories=CATEGORIES[args.market])
+    if args.market == 'jp-daily':
+        from japan import daily_news_gate
+        violations = daily_news_gate.check(html, collected, args.date)
+    else:
+        violations = check(html, collected, report_date=args.date,
+                           categories=CATEGORIES[args.market])
     if violations:
         print(f'뉴스 게이트 위반 {len(violations)}건 ({path}):', file=sys.stderr)
         for v in violations:

@@ -13,6 +13,11 @@
 
   python3 scripts/fetch_japan_news.py --datadir japan/data            # 밀린 평일 전부
   python3 scripts/fetch_japan_news.py --datadir japan/data --date 2026-10-16
+  python3 scripts/fetch_japan_news.py --datadir japan/data --daily-session 2026-10-27   # 일본 일간
+
+`--daily-session` 은 일본 일간 전용이다(2026-10-27) — 그날 16:30 JST 컷까지의 경제 기사를
+`news/daily/<session>.json` 에만 쓴다. 주간의 `news/<date>.json` 은 읽지도 쓰지도 않는다
+(동결 계약 유지). 순수 로직은 `japan/news_daily.py`.
 """
 
 import argparse
@@ -27,6 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fetch_news import _context, carry_summaries, frozen, get, get_bytes, save_json  # noqa: E402
 from japan import news as N  # noqa: E402
+from japan import news_daily as ND  # noqa: E402
 from us.news import (_nli_body, parse_boj_speeches, parse_boj_statements,  # noqa: E402
                      parse_feed_strict, pdf_text)
 from us.news import extract_body as page_body  # noqa: E402
@@ -229,6 +235,43 @@ def collect_day(day, rows, official_rows, today, bodydir, ctx, complete, notes, 
     return payload
 
 
+def _daily_path(datadir, session):
+    return os.path.join(datadir, 'news', 'daily', f'{session}.json')
+
+
+def save_daily(datadir, session, chosen, complete, notes):
+    path = _daily_path(datadir, session)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    payload = {'report_date': session, 'cut': ND.CUT, 'source': 'Yahoo!ファイナンス ニュース',
+               'complete': complete, 'notes': list(notes), 'items': chosen}
+    save_json(path, payload)
+    return payload
+
+
+def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None,
+                  summarize=summarize_items):
+    """일간 한 세션. 컷은 목록 단계(상한 전)와 기사면 시각(확정) 두 번 건다."""
+    rows, notes, reach = harvest(session, today, ctx, fetch=fetch)
+    official_rows, off_notes, off_ok = harvest_official(ctx, int(session[:4]), fetch=fetch,
+                                                        month=int(session[5:7]))
+    todays = ND.cut_filter(ND.retag(rows), session, today)
+    kept, _ = N.screen(N.dedupe(todays))
+    offs = ND.cut_filter(ND.retag(official_rows), session, today)
+    candidates = N.preselect(offs + kept)
+    print(f'{session} 일간: 컷 안 목록 {len(todays)}건 → 선별 {len(kept)}건 · 공식 {len(offs)}건 → 후보 {len(candidates)}건')
+    sub = os.path.join(bodydir, 'daily', session)
+    fetch_bodies(candidates, sub, ctx, fetch=fetch)
+    chosen = [{k: it[k] for k in _KEEP if k in it} for it in ND.finalize_daily(candidates, session)]
+    carry_summaries(_daily_path(datadir, session), chosen)
+    complete = bool(rows) and off_ok and complete_for(session, reach)
+    payload = save_daily(datadir, session, chosen, complete, notes + off_notes)
+    try:
+        summarize_chosen(chosen, sub, summarize=summarize)
+    except Exception as e:
+        payload['notes'].append(f'요약 단계 실패: {type(e).__name__}')
+    return save_daily(datadir, session, chosen, complete, payload['notes'])
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='japan/data')
@@ -236,7 +279,13 @@ def main(argv=None):
     ap.add_argument('--date', default=None, help='이 날 하나만(JST). 없으면 밀린 평일 전부')
     ap.add_argument('--today', default=datetime.now(N.JST).date().isoformat())
     ap.add_argument('--refresh', action='store_true', help='동결된 날도 다시(같은 기사는 기존 요약 재사용)')
+    ap.add_argument('--daily-session', default=None, help='일본 일간 — 이 세션의 16:30 JST 컷 파일만')
     args = ap.parse_args(argv)
+
+    if args.daily_session:
+        payload = collect_daily(args.daily_session, args.today, args.bodydir, _context(),
+                                datadir=args.datadir)
+        return 0 if payload['items'] or payload['complete'] else 1
 
     if args.date and args.date >= args.today:
         # 끝나지 않은 날을 받으면 그 뒤 기사가 빠진 채 동결된다(codex 구현 #4)
