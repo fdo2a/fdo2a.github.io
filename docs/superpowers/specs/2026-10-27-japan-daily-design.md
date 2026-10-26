@@ -1,6 +1,6 @@
 # 일본 일간 마감브리프 — 설계 (2026-10-27)
 
-상태: **초안 — codex 설계 검토 전, 커밋 안 함.** 구현 계약은 구현 뒤 `scripts/japan/CLAUDE.md` 로 옮긴다.
+상태: **구현 완료(브랜치 `jp-daily`), codex 설계·구현 검토 반영.** 계약은 `scripts/japan/CLAUDE.md` 「Japan daily close brief」. 판정 표는 `../plan.md` 「2026-10-27 — 일본 일간」.
 
 ## 사용자 요청
 1. 「지금 미국이랑 한국 하고 있는걸 일본 버전도 만들어서 보고싶어」
@@ -155,3 +155,8 @@ US/KR 과 같은 **PM 데스크 문서**: `<body data-register="da">`, `-다`, �
 14. **지침 예산.** AGENTS.md 표를 고치기 전에 US leaf 의 이력을 spec 으로 옮겨 여유를 만든다(현재 US 체인 31,727 / 31,744 B). 일간 계약은 기존 `scripts/japan/CLAUDE.md` 에 절로 — 새 leaf·LEAVES 등록 없음.
 15. **목록·sitemap.** `japan/index.html` 은 일간 기본 표시 + 주간 탐색, metadata·JSON-LD·소개문 갱신(「매주 일요일」 문구). 날짜 중복 replace·빈 목록. sitemap 은 기존 전 경로 보존, 일간 URL 추가만.
 16. **cron.** `collect-japan-daily.yml` 은 `cron: '30 16 * * 1-5'` + `timezone: 'Asia/Tokyo'`. 예약 시각·실행 시각·데이터 컷을 스냅샷에 따로 기록.
+
+### 구현 메모 (2026-10-27)
+- Playwright `scrollWidth` 검사는 클라우드 루틴에서 돌지 않는다(US·KR 루틴도 같다 — `check_readability.py` 가 레이아웃 규칙을 본다). 첫 초안(10/26 세션)은 로컬에서 390·1280 모두 통과했다.
+- 일본 일간은 검토 러너의 자동 Claude 정정(`DAILY`)에 넣지 않았다 — codex 초안 → 수동 review-gate.
+- 자정(JST)을 넘긴 뉴스 수집은 목록 시각이 날짜뿐이라 컷을 증명할 수 없어 기사가 빠진다. 루틴이 19:00 KST 에 직접 띄우므로 평소엔 해당 없음.

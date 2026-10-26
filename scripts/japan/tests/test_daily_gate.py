@@ -244,3 +244,12 @@ def test_mover_cite_must_exist_and_numbers_from_it():   # #8
     bad = p.replace('data-cite="n1"', 'data-cite="zz"')
     v = G.check(html({'equity': bad}, snap=MOVER_SNAP), MOVER_SNAP, S, filename=f'{S}.html', news=NEWS)
     assert any('zz' in m for m in v)
+
+
+def test_metadata_digits_not_citable():
+    snap = copy.deepcopy(SNAP)
+    snap['calendar']['version'] = '9909ab'
+    snap['ran_at'] = '2026-10-26T07:31:45.778812+00:00'
+    snap['sectors'][1]['why'] = '공식 62285.61 vs yfinance 77777'
+    v = check(html({'today': '<p>거래대금 9909억 엔, 778812주, 77777.</p>'}, snap=snap), snap)
+    assert any('9909' in m for m in v) and any('778812' in m for m in v) and any('77777' in m for m in v)

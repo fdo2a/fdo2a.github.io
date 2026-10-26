@@ -185,6 +185,21 @@ def _check_unbound(paras, snap):
     return v
 
 
+# 허용 수치 집합에서 뺄 메타데이터 — 해시·시각·사유 문장·시리즈 코드의 숫자를 본문이 「인용」하지 못하게.
+_META_KEYS = {'version', 'ran_at', 'scheduled_at', 'published', 'fetched_at', 'bar_start', 'bar_end',
+              'why', 'fetch_status', 'source', 'news_file', 'code', 'basis', 'tz', 'cut', 'checked_at',
+              'resolved_at', 'time_jst', 'period', 'prev_period', 'date', 'session', 'prev_session',
+              'released', 'name', 'reasons', 'universe'}
+
+
+def _data_only(obj):
+    if isinstance(obj, dict):
+        return {k: _data_only(v) for k, v in obj.items() if k not in _META_KEYS}
+    if isinstance(obj, list):
+        return [_data_only(v) for v in obj]
+    return obj
+
+
 def _figures_of(fragment):
     t = _TIME.sub(' ', _plain(_jo_eok(fragment)))
     return _text_figures(t)
@@ -242,7 +257,9 @@ def check(html, snap, session, filename=None, news=None):
         if '지수 기여' in t or '기여도' in t:
             v.append(f'「지수 기여」 는 쓰지 않는다(표본 시총 계산은 지수 기여가 아니다): 「{t[:50]}」')
 
-    allowed = _numbers(snap) | _EXTRA_OK | {str(y) for y in range(2020, 2036)}
+    allowed = _numbers(_data_only(snap)) | _EXTRA_OK | {str(y) for y in range(2020, 2036)}
+    # 업종 ETF 코드는 표 캡션·이름에 나올 수 있다 — 코드 값만 따로 허용한다
+    allowed |= {str(r.get('code')) for r in snap.get('sectors') or [] if r.get('code')}
     by_guid = {str(it.get('guid')): it for it in (news or {}).get('items') or []}
     united = _united_numbers(_jo_eok(html))
 
