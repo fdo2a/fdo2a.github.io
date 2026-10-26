@@ -168,3 +168,20 @@ def test_collect_daily_skips_published_session(tmp_path):
     got = F.collect_daily(S, '2026-10-28', str(tmp_path / 'b'), None, datadir=str(tmp_path),
                           fetch=lambda *a: (_ for _ in ()).throw(AssertionError('network')))
     assert got.get('skipped') and not (tmp_path / 'news' / 'daily' / f'{S}.json').exists()
+
+
+def _expanded(extra=''):
+    return (f'<body data-register="da"><section data-section="news"><h2>{D.TITLE}</h2>'
+            f'<div class="news-item" data-news="a"><p>{SUM}{extra}</p></div></section></body>')
+
+
+def test_news_block_added_number_blocked():   # codex 구현 검토 #4
+    rows = [_row('a', 'macro', '日銀', f'{S}T12:00:00+09:00')]
+    v = G.check(_expanded(' 거래대금은 999조 엔으로 늘었다.'), _collected(rows), S)
+    assert any('요약에 없다' in m for m in v)
+
+
+def test_news_block_added_consensus_blocked():
+    rows = [_row('a', 'macro', '日銀', f'{S}T12:00:00+09:00')]
+    v = G.check(_expanded(' 물가는 시장 예상치를 웃돌았다.'), _collected(rows), S)
+    assert any('예상' in m for m in v)

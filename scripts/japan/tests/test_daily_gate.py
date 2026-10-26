@@ -162,3 +162,85 @@ def test_breadth_counts_allowed_from_snapshot():
     assert check(ok, snap) == []
     bad = html({'equity': '<p>업종 17개 가운데 14개가 올랐다.</p>'}, snap=snap)
     assert any('14' in m for m in check(bad, snap))
+
+
+# ── codex 구현 검토 단계 B ─────────────────────────────────────────────────────
+
+def test_explicit_sign_must_match():   # #3
+    v = check(html({'today': '<p>닛케이는 <span data-ref="indices.nikkei.chg_pct">+0.8%</span> 올랐다.</p>'}))
+    assert any('부호' in m for m in v)
+
+
+def test_headline_invented_number_blocked():   # #5
+    h = html().replace('<h1>제목</h1>', '<h1>닛케이 225, 100,000포인트 돌파</h1>')
+    assert any('100000' in m for m in check(h))
+
+
+def test_writer_table_rejected_by_assemble():   # #5
+    b = body({'today': '<div class="tbl-scroll"><table><tr><td>99,999</td></tr></table></div>'})
+    assert any('표' in e for e in R.validate_body(b, R.SECTIONS))
+
+
+def test_hand_table_numbers_checked():   # #5
+    h = html().replace('<p>오후 들어 낙폭을 줄였다.</p>',
+                       '<p>오후 들어 낙폭을 줄였다.</p><table><tr><td>77,777</td></tr></table>', 1)
+    assert '77,777' in h
+    assert any('77777' in m for m in check(h))
+
+
+def test_rounded_core_value_needs_ref():   # #6
+    v = check(html({'yen': '<p>16:30 기준 달러/엔은 157.1엔이다.</p>'}))
+    assert any('data-ref' in m for m in v)
+
+
+MACRO_SNAP = copy.deepcopy(SNAP)
+MACRO_SNAP['macro'] = [{'name_ko': '기업물가지수(전체)', 'status': 'released', 'period': '2026-09', 'value': 123.45,
+                        'prev_period': '2026-08', 'prev_value': 123.0, 'yoy': 2.1, 'unit': 'CY2020 average=100'}]
+
+
+def test_macro_value_needs_ref():   # #6
+    v = check(html({'macro': '<p>9월 기업물가지수는 123.45 다.</p>'}, snap=MACRO_SNAP), MACRO_SNAP)
+    assert any('data-ref' in m for m in v)
+    ok = html({'macro': '<p>9월 기업물가지수는 <span data-ref="macro.0.value">123.45</span> 로 전년보다 '
+                        '<span data-ref="macro.0.yoy">2.1%</span> 높다.</p>'}, snap=MACRO_SNAP)
+    assert check(ok, MACRO_SNAP) == []
+
+
+def test_macro_ref_requires_released():   # #6
+    snap = copy.deepcopy(MACRO_SNAP)
+    snap['macro'][0]['status'] = 'pending'
+    v = check(html({'macro': '<p>9월 기업물가지수는 <span data-ref="macro.0.value">123.45</span> 다.</p>'}, snap=snap), snap)
+    assert any('released' in m or '발표' in m for m in v)
+
+
+def test_unit_outside_span_checked():   # #7
+    v = check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837</span>엔이다.</p>'}))
+    assert any('단위' in m for m in v)
+
+
+def test_macro_unit_from_snapshot():   # #7
+    v = check(html({'macro': '<p>9월 기업물가지수는 <span data-ref="macro.0.value">123.45엔</span> 이다.</p>'},
+                   snap=MACRO_SNAP), MACRO_SNAP)
+    assert any('단위' in m for m in v)
+
+
+MOVER_SNAP = copy.deepcopy(SNAP)
+MOVER_SNAP['movers'] = {'report_date': S, 'groups': [{'id': 'g1', 'industry': '전기·정밀', 'direction': 'down',
+                        'reasons': ['등락 하위'], 'members': [{'name': '어드밴테스트', 'change_pct': -6.2, 'close': 1.0}]}]}
+NEWS = {'report_date': S, 'items': [{'guid': 'n1', 'summary_ko': '정부가 반도체 보조금 3,000억 엔을 줄이기로 했다.',
+                                     'title': '補助金削減'}]}
+
+
+def test_mover_cause_needs_citation():   # #8
+    p = '<p data-mover="g1">어드밴테스트(-6.2%)는 정부 보조금 축소로 급락했다.</p>'
+    v = G.check(html({'equity': p}, snap=MOVER_SNAP), MOVER_SNAP, S, filename=f'{S}.html', news=NEWS)
+    assert any('data-cite' in m for m in v)
+
+
+def test_mover_cite_must_exist_and_numbers_from_it():   # #8
+    p = ('<p data-mover="g1" data-cite="n1">어드밴테스트(-6.2%)는 정부가 보조금 3,000억 엔을 줄인다는 소식에 '
+         '내렸다.</p>')
+    assert G.check(html({'equity': p}, snap=MOVER_SNAP), MOVER_SNAP, S, filename=f'{S}.html', news=NEWS) == []
+    bad = p.replace('data-cite="n1"', 'data-cite="zz"')
+    v = G.check(html({'equity': bad}, snap=MOVER_SNAP), MOVER_SNAP, S, filename=f'{S}.html', news=NEWS)
+    assert any('zz' in m for m in v)

@@ -4,6 +4,8 @@
 날짜·컷은 보지 않는다(codex 설계 검토 #6, 재현 4건 통과). 그래서 여기서 더 본다: 블록은 news 절 안에만,
 허용 갈래만, 갈래당 3건, 같은 사건 금지, 수집분 기사의 JST 시각이 세션 날 16:30 이하.
 """
+import re
+
 from japan import gate as JG
 from japan import news as N
 from japan.news_daily import CUT, DAILY_CATEGORIES, PER_CATEGORY, TITLE, published_ok
@@ -41,4 +43,24 @@ def check(html, collected, session):
         for b in chosen[i + 1:]:
             if N.same_event(a.get('title'), b.get('title')):
                 v.append(f'같은 사건을 두 번 실었다 — 「{a.get("title")}」 · 「{b.get("title")}」')
+    # 블록 안 숫자는 그 기사 요약·원제목에서만, 예상 비교는 요약에 있을 때만(codex 구현 검토 #4)
+    for it in news_gate._read(html, TITLE).items:
+        row = by_guid.get(str(it.get('guid')))
+        if it.get('hidden') or row is None:
+            continue
+        src = (row.get('summary_ko') or '') + ' ' + JG.title_source(row.get('title'))
+        own = JG._text_figures(src)
+        for n in sorted(JG._text_figures(it.get('text') or '') - own):
+            try:
+                x = abs(float(n))
+            except ValueError:
+                continue
+            if x <= 12 and x == int(x):
+                continue
+            v.append(f'`data-news="{it["guid"]}"` 블록의 수치 {n} 이 그 기사 요약에 없다')
+        if _CONSENSUS.search(it.get('text') or '') and not _CONSENSUS.search(row.get('summary_ko') or ''):
+            v.append(f'`data-news="{it["guid"]}"` 블록에 요약에 없는 예상·컨센서스 비교가 있다')
     return v
+
+
+_CONSENSUS = re.compile(r'컨센서스|예상치|시장\s*예상|전망치|예상(?:을|보다|과|에)\s*(?:크게\s*)?(?:상회|하회|웃|밑)')

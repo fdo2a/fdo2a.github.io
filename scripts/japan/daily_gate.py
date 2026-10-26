@@ -31,7 +31,7 @@ _CONSENSUS = re.compile(r'컨센서스|예상치|시장\s*예상|전망치|예�
 _SIGNALS = re.compile(r'[AB]\s*경로|신호\s*집계|임계값|인상\s*지속\s*쪽|인상\s*중단\s*쪽')
 _TODAY_RATE = re.compile(r'오늘[^.。]{0,15}(JGB|국채|콜)')
 _UNVERIFIED = ('[확인필요]', '확인 필요]', 'TODO', 'TBD', '{{')
-_EXTRA_OK = {'225'}
+_EXTRA_OK = {'225', '17', '1617', '1633', '1306'}   # 지수 이름·업종 ETF 코드 범위(표 캡션)
 
 
 def _finite(v):
@@ -65,7 +65,7 @@ def _period_of(snap, path):
     return snap.get('session')
 
 
-def _allowed_units(path):
+def _allowed_units(path, snap=None):
     last, head = path.split('.')[-1], path.split('.')[0]
     if last == 'chg_bp':
         return {'bp'}
@@ -77,6 +77,13 @@ def _allowed_units(path):
         return {'원'} if 'krw' in path else {'엔'}
     if head == 'indices':
         return {'포인트'}
+    if head == 'macro' and snap is not None:
+        unit = ((resolve(snap, '.'.join(path.split('.')[:2])) or {}).get('unit') or '').lower()
+        if '%' in unit:
+            return {'%'}
+        if 'yen' in unit:
+            return {'엔'}
+        return set()          # 지수(CY2020=100 등) — 단위를 붙이지 않는다
     return set(_UNITS)
 
 
@@ -98,21 +105,39 @@ def _matches(shown, value):
     return round(abs(value), nd) == abs(float(shown.replace(',', '')))
 
 
+_SIGNED = re.compile(r'([+\-−])?\s*(\d[\d,]*(?:\.\d+)?)')
+
+
+def _unit_of(text):
+    t = text.lstrip()
+    return next((u for u in _UNITS if t.startswith(u)), None)
+
+
 def _check_refs(paras, snap, session):
     v = []
     for p in paras:
-        for path, inner in _REF.findall(p):
+        for m in _REF.finditer(p):
+            path, inner = m.group(1), m.group(2)
             value = resolve(snap, path)
             text = _plain(inner)
             if not _finite(value):
                 v.append(f'data-ref="{path}" 는 스냅샷에 값이 없다 — 「{text}」')
                 continue
-            m = _NUM.search(text.replace('−', '-'))
-            if not m or not _matches(m.group(0).lstrip('-'), value):
+            n = _SIGNED.search(text)
+            if not n or not _matches(n.group(2), value):
                 v.append(f'data-ref="{path}" 값이 다르다 — 본문 「{text}」, 스냅샷 {value}')
-            unit = next((u for u in _UNITS if u in text), None)
-            if unit and unit not in _allowed_units(path):
-                v.append(f'data-ref="{path}" 단위가 틀렸다 — 「{text}」(허용 {"·".join(sorted(_allowed_units(path)))})')
+            elif n.group(1) and value != 0 and (n.group(1) == '+') != (value > 0):
+                v.append(f'data-ref="{path}" 부호가 반대다 — 본문 「{text}」, 스냅샷 {value}')
+            after = _plain(p[m.end():m.end() + 40])
+            unit = next((u for u in _UNITS if u in text), None) or _unit_of(after)
+            allowed = _allowed_units(path, snap)
+            if unit and unit not in allowed:
+                v.append(f'data-ref="{path}" 단위가 틀렸다 — 「{text}」 뒤 「{after[:6]}」'
+                         f'(허용 {"·".join(sorted(allowed)) or "단위 없음"})')
+            if path.startswith('macro.'):
+                item = resolve(snap, '.'.join(path.split('.')[:2])) or {}
+                if item.get('status') != 'released':
+                    v.append(f'data-ref="{path}" 는 오늘 발표(released) 값이 아니다 — 「{text}」')
             period = _period_of(snap, path)
             if period and period != session and not any(f in _plain(p) for f in _date_forms(period)):
                 v.append(f'data-ref="{path}" 는 {R.day_ko(period)} 기준 값이다 — 그 문단에 날짜를 밝힌다')
@@ -129,14 +154,18 @@ def _core_values(snap):
     out.append(('call_rate.value', (snap.get('call_rate') or {}).get('value')))
     for k, r in (snap.get('fx') or {}).items():
         out.append((f'fx.{k}.value', (r or {}).get('value')))
+    for i, m in enumerate(snap.get('macro') or []):
+        if m.get('status') == 'released':
+            out.append((f'macro.{i}.value', m.get('value')))
     return [(p, x) for p, x in out if _finite(x)]
 
 
 def _forms(x):
-    out = {f'{x:,.2f}', f'{x:.2f}', f'{x:.3f}'}
+    """(형태, 단위 문맥이 있어야만 잡는가). 1자리 반올림은 흔한 숫자라 단위가 붙을 때만 본다(codex 구현 #6)."""
+    out = {(f'{x:,.2f}', False), (f'{x:.2f}', False), (f'{x:.3f}', False), (f'{x:.1f}', True)}
     if abs(x) >= 1000:
-        out |= {f'{x:,.0f}', f'{x:,.1f}'}
-    return {f for f in out if f not in ('0.00', '0.000')}
+        out |= {(f'{x:,.0f}', False), (f'{x:,.1f}', False)}
+    return {(f, u) for f, u in out if f.strip('0.,') != ''}
 
 
 def _check_unbound(paras, snap):
@@ -145,8 +174,12 @@ def _check_unbound(paras, snap):
     for p in paras:
         rest = _plain(_REF.sub(' ', p))
         for path, x in core:
-            for f in _forms(x):
-                if re.search(r'(?<![\d.,])' + re.escape(f) + r'(?![\d])', rest):
+            units = _allowed_units(path, snap) or {''}
+            for f, need_unit in _forms(x):
+                tail = (r'\s*(?:' + '|'.join(re.escape(u) for u in units if u) + r')') if need_unit and units != {''} else ''
+                if need_unit and not tail:
+                    continue
+                if re.search(r'(?<![\d.,])' + re.escape(f) + r'(?![\d])' + tail, rest):
                     v.append(f'핵심 값 {f}({path})을 data-ref 없이 썼다 — <span data-ref="{path}"> 로 묶는다')
                     break
     return v
@@ -185,14 +218,17 @@ def check(html, snap, session, filename=None, news=None):
             v.append(f'data-section="{s}" 절이 {names.count(s)}번 있다')
 
     prose_secs = [(n, b) for n, b in found if n != 'news']
-    paras, mover_paras = [], []
+    paras, movers = [], []
     for _, b in prose_secs:
         for attrs, inner in _P.findall(_TABLE.sub(' ', b)):
-            (mover_paras if 'data-mover' in attrs else paras).append(inner)
+            (movers if 'data-mover' in attrs else paras).append((attrs, inner))
     head = re.search(r'<section class="card headline-card">(.*?)</section>', html, re.S)
-    if head:
-        paras += [inner for _, inner in _P.findall(head.group(1))]
-    allp = paras + mover_paras
+    head_html = head.group(1) if head else ''
+    for _, inner in _P.findall(head_html):
+        paras.append(('', inner))
+    for h in re.findall(r'<h1\b[^>]*>(.*?)</h1>', head_html, re.S):
+        paras.append(('', h))
+    allp = [inner for _, inner in paras + movers]
     v += _check_refs(allp, snap, session)
     v += _check_unbound(allp, snap)
     for p in allp:
@@ -207,20 +243,41 @@ def check(html, snap, session, filename=None, news=None):
             v.append(f'「지수 기여」 는 쓰지 않는다(표본 시총 계산은 지수 기여가 아니다): 「{t[:50]}」')
 
     allowed = _numbers(snap) | _EXTRA_OK | {str(y) for y in range(2020, 2036)}
-    news_ok = set()
-    for it in (news or {}).get('items') or []:
-        news_ok |= _text_figures(it.get('summary_ko') or '')
+    by_guid = {str(it.get('guid')): it for it in (news or {}).get('items') or []}
     united = _united_numbers(_jo_eok(html))
-    for group, extra in ((paras, set()), (mover_paras, news_ok)):
-        for p in group:
-            for n in sorted(_figures_of(p) - allowed - extra):
-                try:
-                    x = abs(float(n))
-                except ValueError:
-                    continue
-                if x <= 12 and x == int(x) and n not in united:
-                    continue
-                v.append(f'어느 원본에도 없는 수치가 본문에 있다: {n} — 스냅샷 값만 쓴다')
+
+    def _invented(fragment, extra=frozenset()):
+        out = []
+        for n in sorted(_figures_of(fragment) - allowed - set(extra)):
+            try:
+                x = abs(float(n))
+            except ValueError:
+                continue
+            if x <= 12 and x == int(x) and n not in united:
+                continue
+            out.append(f'어느 원본에도 없는 수치가 본문에 있다: {n} — 스냅샷 값만 쓴다')
+        return out
+
+    # 뉴스 절과 움직인 종목 문단을 뺀 보이는 글 전부 — 머리 카드·소제목·표 포함(codex 구현 검토 #5)
+    rest = re.sub(r'<section\b[^>]*\bdata-section="news"[^>]*>.*?</section>', ' ', html, flags=re.S)
+    rest = re.sub(r'<p\b[^>]*\bdata-mover\b[^>]*>.*?</p>', ' ', rest, flags=re.S)
+    rest = re.sub(r'<(script|style|head)\b.*?</\1>', ' ', rest, flags=re.S)
+    v += _invented(rest)
+    # 움직인 종목 — 원인은 인용한 기사(data-cite) 요약에서만, 아니면 「확인된 재료 없음」(codex 구현 검토 #8)
+    for attrs, inner in movers:
+        cite = re.search(r'data-cite="([^"]+)"', attrs)
+        t = _plain(inner)
+        if cite:
+            it = by_guid.get(cite.group(1))
+            if it is None:
+                v.append(f'data-cite="{cite.group(1)}" 는 일간 뉴스 파일에 없다 — 「{t[:40]}」')
+                v += _invented(inner)
+            else:
+                v += _invented(inner, _text_figures(it.get('summary_ko') or ''))
+        else:
+            if '확인된 재료 없음' not in t:
+                v.append(f'움직인 종목 문단에 원인 근거가 없다 — data-cite="guid" 를 달거나 「확인된 재료 없음」: 「{t[:40]}」')
+            v += _invented(inner)
     v += CM.check(html, snap.get('movers'), session)
     low = body_text(html).lower()
     for word in BANNED_LABELS:

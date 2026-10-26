@@ -60,7 +60,7 @@ def _t_sectors(d):
     ok.sort(key=lambda s: -(s.get('chg_pct') if s.get('chg_pct') is not None else -999))
     rows = [[_e(s['name_ko']), _c(s.get('chg_pct'), '%')] for s in ok]
     missing = len(d.get('sectors') or []) - len(ok)
-    cap = 'TOPIX-17 업종 ETF(1617-1633) 종가 기준.'
+    cap = 'TOPIX 17개 업종 ETF(1617~1633) 종가 기준.'
     if missing:
         cap += f' 세션 종가를 확인하지 못한 {missing}개 업종은 뺐다.'
     if not rows:
@@ -135,6 +135,8 @@ def validate_body(body, want):
             errs.append(f'본문에 {tag}> 가 있다 — 문서 껍데기는 조립이 만든다')
     if len(re.findall(r'<h1\b', body)) != 1:
         errs.append('<h1> 은 머리 카드에 하나만 둔다')
+    if re.search(r'<table\b', body, re.I):
+        errs.append('본문에 표(<table>)가 있다 — 표는 조립이 스냅샷으로 만든다')
     found = _SEC.findall(body)
     names = [n for n, _ in found]
     for s in SECTIONS:

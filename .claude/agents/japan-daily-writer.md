@@ -19,7 +19,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 `jpd_<S>.body.html`(절 본문만), `jpd_<S>.meta.json`(`{"title", "summary"}` — title 은 「일본 증시 마감 — 」 뒤에 그날의 답, summary 는 한 문장). 껍데기·표·크레디트는 `build_japan_daily.py assemble` 이 만든다. 표식은 **그대로** 둔다.
 
-머리 카드 `<section class="card headline-card">` 에 `<h1>` 하나(그날의 답, 80자 이내)와 리드 1-2문단. 이어서 `diag` 의 순서대로 `<section class="card" data-section="이름"><h2>제목</h2>…</section>`:
+머리 카드 `<section class="card headline-card">` 에 `<h1>` 하나(그날의 답, 80자 이내)와 리드 1-2문단. 제목·소제목의 숫자도 스냅샷 값만. **표(`<table>`)는 직접 만들지 않는다** — 조립이 거부한다. 이어서 `diag` 의 순서대로 `<section class="card" data-section="이름"><h2>제목</h2>…</section>`:
 
 | 절 | `<h2>` | 표식 | 쓸 것 |
 |---|---|---|---|
@@ -36,13 +36,14 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 닛케이 종가·등락, JGB 금리·변화, 콜금리, 환율 수준을 산문에 쓸 때는 스냅샷 필드 경로로 묶는다:
 `<span data-ref="indices.nikkei.value">62,189.65</span>`, `<span data-ref="indices.nikkei.chg_pct">-0.8%</span>`, `<span data-ref="jgb.10Y.value">2.837%</span>`, `<span data-ref="jgb.10Y.chg_bp">7.7bp</span>`, `<span data-ref="call_rate.value">1.227%</span>`, `<span data-ref="fx.usdjpy.value">157.07</span>`, `<span data-ref="fx.krw_per_100jpy.value">839.6</span>`, 매크로는 `macro.<순번>.value`·`macro.<순번>.yoy`.
-- 묶은 값은 스냅샷과 같은 숫자(반올림만 허용), 단위는 필드에 맞게(JGB·콜 `%`, 변화 `bp`, 등락 `%`). 방향은 말로 쓴다(「7.7bp 내렸다」).
+- 묶은 값은 스냅샷과 같은 숫자(반올림만 허용), 단위는 필드에 맞게(JGB·콜 `%`, 변화 `bp`, 등락 `%`, 달러/엔 `엔`, 100엔당 원 `원`, 지수형 매크로는 단위 없음) — span 바로 뒤에 붙인 단위도 검사한다. 방향은 말로 쓴다(「7.7bp 내렸다」). `+`·`-` 를 쓰면 스냅샷 부호와 같아야 한다.
+- 매크로 값은 `status` 가 `released` 인 항목만 묶어 쓴다. `pending` 은 「발표 예정·시계열 미반영」 이라고만 쓴다.
 - 기준일이 세션과 다른 값(JGB·콜·매크로 기간)은 **같은 문단에 그 날짜**를 쓴다 — 「10월 23일 기준 JGB 10년은 …」. 「오늘 JGB」 라고 쓰지 않는다.
 - 묶지 않은 채 핵심 값을 쓰면 게이트가 막는다. 그 밖의 숫자(업종 등락 등)도 스냅샷에 있는 값만.
 
 ### 움직인 종목
 
-`movers.groups` 의 묶음마다 `<p data-mover="g1">` 한 문단: 무엇이 얼마나 움직였는지(대표 종목 등락률을 괄호로 — 「(어드밴테스트 -6.2%)」), 그리고 **원인은 일간 뉴스 요약에 근거가 있을 때만**. 없으면 「확인된 재료 없음」 이라고 쓴다. 「지수 기여」 라고 쓰지 않는다 — 표본의 등락률일 뿐이다.
+`movers.groups` 의 묶음마다 `<p data-mover="g1">` 한 문단: 무엇이 얼마나 움직였는지(대표 종목 등락률을 괄호로 — 「(어드밴테스트 -6.2%)」), 그리고 **원인은 일간 뉴스 요약에 근거가 있을 때만** — 그 기사의 guid 를 `<p data-mover="g1" data-cite="<guid>">` 로 달고 그 요약에 있는 사실·숫자만 쓴다. 근거가 없으면 data-cite 없이 「확인된 재료 없음」 이라고 쓴다. 「지수 기여」 라고 쓰지 않는다 — 표본의 등락률일 뿐이다.
 
 ### 일본 경제 뉴스
 
