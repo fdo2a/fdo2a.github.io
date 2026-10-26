@@ -2,14 +2,14 @@
   "checked_at": "2026-10-27",
   "note": "원출처에서 확인한 일정만 싣는다. BOJ 일정표는 11/20 까지만 공개돼 있다(2026-10-27 확인). 단칸·CPI·GDP·임금은 부처 일정표에서 확인한 날에만 추가한다.",
   "events": [
-    {"date": "2026-10-27", "time_jst": "08:50", "name_ko": "기업 서비스가격지수(9월)", "kind": "release", "tier": "minor", "series": "sppi", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
+    {"date": "2026-10-27", "time_jst": "08:50", "name_ko": "기업 서비스가격지수(9월)", "kind": "release", "tier": "minor", "series": "sppi", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27", "period": "2026-09"},
     {"date": "2026-10-29", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(10월 29-30일)", "kind": "meeting", "tier": "major", "series": null, "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
     {"date": "2026-10-30", "time_jst": null, "name_ko": "BOJ 금융정책 결정문", "kind": "release", "tier": "major", "series": null, "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
     {"date": "2026-11-02", "time_jst": "14:00", "name_ko": "BOJ 경제·물가 전망 보고서(10월) 전문", "kind": "release", "tier": "minor", "series": null, "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
-    {"date": "2026-11-04", "time_jst": "08:50", "name_ko": "본원통화(10월)", "kind": "release", "tier": "minor", "series": "monetary_base", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
+    {"date": "2026-11-04", "time_jst": "08:50", "name_ko": "본원통화(10월)", "kind": "release", "tier": "minor", "series": "monetary_base", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27", "period": "2026-10"},
     {"date": "2026-11-05", "time_jst": "08:50", "name_ko": "BOJ 9월 회의 의사록", "kind": "release", "tier": "minor", "series": null, "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
     {"date": "2026-11-10", "time_jst": "08:50", "name_ko": "BOJ 10월 회의 의견 요약", "kind": "release", "tier": "minor", "series": null, "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
-    {"date": "2026-11-11", "time_jst": "08:50", "name_ko": "통화량 M2·M3(10월)", "kind": "release", "tier": "minor", "series": "money_stock", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"},
-    {"date": "2026-11-12", "time_jst": "08:50", "name_ko": "기업물가지수(10월)", "kind": "release", "tier": "minor", "series": "cgpi", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27"}
+    {"date": "2026-11-11", "time_jst": "08:50", "name_ko": "통화량 M2·M3(10월)", "kind": "release", "tier": "minor", "series": "money_stock", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27", "period": "2026-10"},
+    {"date": "2026-11-12", "time_jst": "08:50", "name_ko": "기업물가지수(10월)", "kind": "release", "tier": "minor", "series": "cgpi", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "checked_at": "2026-10-27", "period": "2026-10"}
   ]
 }

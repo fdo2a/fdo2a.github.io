@@ -57,11 +57,6 @@ def _finite(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
 
 
-def jgb_text(raw):
-    """MOF CSV 는 바이트로 온다(cp932). 문자열이면 그대로."""
-    return WS.decode_cp932(raw) if isinstance(raw, bytes) else raw
-
-
 def _published_history(root):
     """발행 이력 {세션: 스냅샷 요약}. 분모의 첫 원천이다 — 발행 당시 숫자가 다음 날의 기준이다."""
     out = {}
@@ -106,11 +101,13 @@ def _instrument(fetch, ticker, session, prev, hist_value, status, key):
         return {'value': value, 'chg_pct': None, 'denom': None, 'ok': True, 'why': '직전 세션 분모 없음'}
     raw = PR.change(value, denom)
     if raw is not None and abs(raw) > PR.JUMP_PCT:
-        try:
-            splits = fetch.splits(ticker)
-        except Exception as e:
-            status[key] = _why(e)
-            splits = []
+        # yfinance 일봉은 이미 분할조정이다 — 분할 보정은 발행 이력 분모에만(codex 구현 검토 #10)
+        splits = []
+        if denom['source'] == 'published':
+            try:
+                splits = fetch.splits(ticker)
+            except Exception as e:
+                status[key] = _why(e)
         jump = PR.verify_jump(value, denom, splits, session)
         if not jump['ok']:
             return {'value': None, 'chg_pct': None, 'denom': denom, 'ok': False, 'why': jump['why']}
@@ -163,15 +160,16 @@ def _fx(fetch, session, prev, status):
     return out
 
 
-def _rates(fetch, session, prev, status):
+def _rates(fetch, session, prev, status, holidays=()):
     try:
-        jgb = RT.jgb_block(WS.parse_jgb_csv(jgb_text(fetch.jgb_csv())), prev)
+        # 이력 + 이번 달 — 월초에도 직전 채권 영업일 행이 있다(codex 구현 검토 #12)
+        jgb = RT.jgb_block(fetch.jgb_rows(), prev)
         status['jgb'] = 'ok' if 'why' not in jgb else jgb['why']
     except Exception as e:
         status['jgb'] = _why(e)
         jgb = {}
     try:
-        call = RT.call_rate(fetch.boj('FM01', 'STRDCLUCON'), session)
+        call = RT.call_rate(fetch.boj('FM01', 'STRDCLUCON'), session, holidays=holidays)
         status['call_rate'] = 'ok' if call else '최신 관측이 3거래일보다 오래됐다'
     except Exception as e:
         status['call_rate'] = _why(e)
@@ -209,7 +207,15 @@ def _breadth(sectors):
             'down': sum(1 for c in chg if c < 0), 'flat': sum(1 for c in chg if c == 0)}
 
 
-def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=None):
+def _jp_holidays(root):
+    try:
+        with open(os.path.join(root, 'data', 'market_holidays.json'), encoding='utf-8') as fh:
+            return tuple((json.load(fh).get('jp') or {}).get('dates') or ())
+    except (OSError, ValueError):
+        return ()
+
+
+def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=None, holidays=None):
     if os.path.exists(os.path.join(root, DAILY_DIR, f'{session}.json')):
         raise AlreadyPublished(f'{session} 은 이미 발행됐다 — 수집 후보를 덮지 않는다')
     cal = calendar if calendar is not None else CAL.load(os.path.join(root, CAL.PATH))
@@ -232,7 +238,8 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
             stocks.append({'code': code, 'name': name, 'value': r['value'], 'chg_pct': r['chg_pct']})
         if r['ok'] and r['chg_pct'] is not None:
             rows.append({'code': code, 'name': name, 'change_pct': r['chg_pct'], 'close': r['value']})
-    jgb, call = _rates(fetch, session, prev, status)
+    hol = _jp_holidays(root) if holidays is None else holidays
+    jgb, call = _rates(fetch, session, prev, status, hol)
     today = CAL.today_events(cal, session)
     macro, periods = _macro(fetch, today, prev_snap, status)
     snap = {
@@ -306,8 +313,8 @@ class Live:
         h = yf.Ticker(ticker).history(period='5d', interval='5m')
         return [(i.isoformat(), float(v)) for i, v in h['Close'].items()]
 
-    def jgb_csv(self):
-        return WS.http_get(WS.JGB_MONTH, self.ctx)
+    def jgb_rows(self):
+        return WS.fetch_jgb(self.ctx, keep=40)
 
     def _boj_get(self, path):
         self.calls += 1

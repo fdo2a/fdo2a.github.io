@@ -38,11 +38,14 @@ def _hhmm(text):
 
 
 def published_ok(published, session, cut=CUT):
+    """세션 날 JST 00:00 이후, `cut`:00 이하. 분 단위로 자르면 16:30:59 가 통과한다(codex 구현 검토 #15)."""
     try:
         ts = datetime.fromisoformat(published).astimezone(N.JST)
     except (TypeError, ValueError):
         return False
-    return ts.date().isoformat() == session and ts.strftime('%H:%M') <= cut
+    hh, mm = map(int, cut.split(':'))
+    day = datetime.fromisoformat(session).replace(tzinfo=N.JST)
+    return day <= ts <= day.replace(hour=hh, minute=mm, second=0)
 
 
 def cut_filter(rows, session, today, cut=CUT):

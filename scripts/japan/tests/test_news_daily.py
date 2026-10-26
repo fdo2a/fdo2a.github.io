@@ -153,3 +153,18 @@ def test_check_news_runs_as_script(tmp_path):
     r = subprocess.run([sys.executable, script, '--html', str(html), '--datadir', str(tmp_path),
                         '--date', S, '--market', 'jp-daily'], capture_output=True, text=True, cwd=str(tmp_path))
     assert r.returncode == 0, r.stderr
+
+
+def test_cut_is_inclusive_to_the_second():
+    assert D.published_ok(f'{S}T16:30:00+09:00', S)
+    assert not D.published_ok(f'{S}T16:30:59+09:00', S)
+
+
+def test_collect_daily_skips_published_session(tmp_path):
+    import fetch_japan_news as F
+    pub = tmp_path / 'daily'
+    pub.mkdir()
+    (pub / f'{S}.json').write_text('{}', encoding='utf-8')
+    got = F.collect_daily(S, '2026-10-28', str(tmp_path / 'b'), None, datadir=str(tmp_path),
+                          fetch=lambda *a: (_ for _ in ()).throw(AssertionError('network')))
+    assert got.get('skipped') and not (tmp_path / 'news' / 'daily' / f'{S}.json').exists()

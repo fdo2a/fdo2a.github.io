@@ -250,7 +250,14 @@ def save_daily(datadir, session, chosen, complete, notes):
 
 def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None,
                   summarize=summarize_items):
-    """일간 한 세션. 컷은 목록 단계(상한 전)와 기사면 시각(확정) 두 번 건다."""
+    """일간 한 세션. 컷은 목록 단계(상한 전)와 기사면 시각(확정) 두 번 건다.
+
+    **발행된 세션은 다시 받지 않는다**(codex 구현 검토 #2) — 늦은 실행이 발행 근거를 덮으면 검토 러너가
+    다른 뉴스로 재검사한다. 발행 스냅샷 `<datadir>/daily/<session>.json` 이 있으면 손대지 않는다.
+    """
+    if os.path.exists(os.path.join(datadir, 'daily', f'{session}.json')):
+        print(f'{session} 은 이미 발행됐다 — 일간 뉴스 근거를 덮지 않는다')
+        return {'skipped': True, 'items': [], 'complete': True}
     rows, notes, reach = harvest(session, today, ctx, fetch=fetch)
     official_rows, off_notes, off_ok = harvest_official(ctx, int(session[:4]), fetch=fetch,
                                                         month=int(session[5:7]))

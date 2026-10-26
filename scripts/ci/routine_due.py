@@ -143,8 +143,20 @@ def decide_us(now, files, lock_age, holidays=()):
                   lambda d: (f'posts/{d}.html', f'news/{d}.html'))
 
 
+JP_LATE_HOURS = 6     # 자정을 넘긴 재시도가 어제 세션을 이어받는 창(JST)
+
+
 def decide_jp_daily(now, files, lock_age, holidays=()):
-    return _daily(jp_session(now, holidays), files, lock_age, STALE_MIN['jp_daily'],
+    """보충 발행은 없다 — 기대 세션이 오늘(JST, 06시 전이면 어제)이 아니면 SKIP(codex 구현 검토 #11).
+    휴장일·주말 저녁에 직전 미발행 세션을 DUE 로 돌려주면 루틴이 지난 세션을 발행한다."""
+    session = jp_session(now, holidays)
+    jst = now.astimezone(TOKYO)
+    allowed = {jst.date().isoformat()}
+    if jst.hour < JP_LATE_HOURS:
+        allowed.add((jst.date() - timedelta(days=1)).isoformat())
+    if session not in allowed:
+        return 'SKIP', f'{session} 세션은 오늘 발행 대상이 아니다 — 보충 발행 없음'
+    return _daily(session, files, lock_age, STALE_MIN['jp_daily'],
                   lambda d: (f'japan/daily/{d}.html',))
 
 

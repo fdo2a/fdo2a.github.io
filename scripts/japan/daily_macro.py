@@ -1,8 +1,8 @@
 """일본 일간 매크로 — 그날 달력 일정과 BOJ 시계열을 맞춘다 (2026-10-27).
 
-「오늘 발표」 는 달력에 그날 공표가 있고 **API 에 직전 스냅샷보다 새 기간이 들어왔을 때만**
-(`released`). 달력엔 있는데 API 가 아직 옛 기간이면 `pending` — 옛 값을 오늘 발표처럼 쓰지 않는다
-(codex 설계 검토 #4). 직전 기간을 모르는 첫 실행도 `pending`. 컨센서스는 없으니 비교는 직전
+「오늘 발표」 는 달력 행이 **그날 나올 관측 기간**(`period`, 예: 9월분이면 `2026-09`)을 적어 두고, 그 기간이
+API 에 들어왔을 때만이다(`released`). 없으면 `pending` — 옛 값을 오늘 발표처럼 쓰지 않는다(codex 설계 검토 #4).
+「직전 스냅샷보다 새 기간」 으로 판정하면 직전 기록이 오래됐을 때 지난달 값을 오늘 발표로 오인한다(구현 검토 #9). 컨센서스는 없으니 비교는 직전
 발표치와 전년 같은 기간뿐이다.
 
 v1 시리즈는 BOJ 시계열 API 의 것만(e-Stat 은 appId 가 생기면 v2). 코드는 이름으로 찾되
@@ -60,7 +60,7 @@ def _yoy(points, period, value):
     return round((value / base - 1) * 100, 1)
 
 
-def macro_items(events_today, series_values, session, prev_periods):
+def macro_items(events_today, series_values, session, prev_periods=None):
     out = []
     for e in events_today or []:
         if e.get('kind') != 'release':
@@ -72,11 +72,12 @@ def macro_items(events_today, series_values, session, prev_periods):
         if key:
             s = (series_values or {}).get(key)
             pts = (s or {}).get('points') or []
-            known = (prev_periods or {}).get(key)
+            want = e.get('period')
             item['status'] = 'pending'
-            if pts and known and pts[-1][0] > known:
-                period, value = pts[-1]
-                prev = pts[-2] if len(pts) > 1 else [None, None]
+            idx = next((i for i, p in enumerate(pts) if p[0] == want), None) if want else None
+            if idx is not None:
+                period, value = pts[idx]
+                prev = pts[idx - 1] if idx > 0 else [None, None]
                 item.update(status='released', period=period, value=value, prev_period=prev[0],
                             prev_value=prev[1], yoy=_yoy(pts, period, value), released=session,
                             unit=s.get('unit'))

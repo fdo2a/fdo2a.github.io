@@ -66,3 +66,17 @@ def test_jp_session_cli(capsys, monkeypatch):
 
 def test_weekly_japan_lock_unchanged():
     assert rd.lock_name('japan', utc(2026, 10, 26, 10, 0), 'W43') == 'japan-W43'
+
+
+def test_holiday_does_not_backfill_previous_session():
+    # codex 구현 검토 #11 — 11/3 휴장일 19:00 JST 에 11/2 미발행이어도 보충 발행하지 않는다
+    v, why = rd.decide_jp_daily(utc(2026, 11, 3, 10, 0), set(), None, ['2026-11-03'])
+    assert v == 'SKIP' and '2026-11-02' in why
+
+
+def test_weekend_skips():
+    assert rd.decide_jp_daily(utc(2026, 10, 24, 10, 0), set(), None)[0] == 'SKIP'
+
+
+def test_after_midnight_retry_still_due():
+    assert rd.decide_jp_daily(utc(2026, 10, 26, 15, 30), set(), None)[0] == 'DUE'

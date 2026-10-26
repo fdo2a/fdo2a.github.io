@@ -10,7 +10,7 @@ read -r S P < <(python3 scripts/ci/routine_due.py jp-session)   # 세션, 직전
 KEY=$(bash scripts/ci/run_lock.sh key jp_daily)                 # jpd-<S>
 ```
 
-`DONE`·`BUSY` 면 그 한 줄만 보고하고 끝낸다. **세션 `S` 는 여기서 한 번 정하고 끝까지 그대로 쓴다** — 자정을 넘긴 재시도가 날짜 산술로 다시 만들면 다른 세션이 된다. `bash scripts/ci/run_lock.sh acquire "$KEY" 120` — exit 3 이면 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). 수집 전후, 작성자를 부르기 직전과 돌아온 직후, 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$KEY"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**에서 `bash scripts/ci/run_lock.sh release "$KEY"` 로 푼다. release 가 exit 4·5 면 그 출력을 붙여 PushNotification 으로 보고한다.
+`DONE`·`BUSY`·`SKIP` 면 그 한 줄만 보고하고 끝낸다(`SKIP` = 오늘 발행할 세션이 아니다 — 휴장일·주말, 보충 발행 없음). **세션 `S` 는 여기서 한 번 정하고 끝까지 그대로 쓴다** — 자정을 넘긴 재시도가 날짜 산술로 다시 만들면 다른 세션이 된다. `bash scripts/ci/run_lock.sh acquire "$KEY" 120` — exit 3 이면 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). 수집 전후, 작성자를 부르기 직전과 돌아온 직후, 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$KEY"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**에서 `bash scripts/ci/run_lock.sh release "$KEY"` 로 푼다. release 가 exit 4·5 면 그 출력을 붙여 PushNotification 으로 보고한다.
 
 ## STEP 1 — 수집 (Actions 에서만)
 
@@ -19,7 +19,7 @@ KEY=$(bash scripts/ci/run_lock.sh key jp_daily)                 # jpd-<S>
 1. `git pull -q` 후 `japan/data/daily/candidate/<S>.json` 이 있고 `complete: true` 면 3 으로.
 2. `N=jpd-$(date +%s)-$RANDOM` → `gh workflow run collect-japan-daily.yml --ref main -f session=$S -f nonce=$N` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-japan-daily.yml --limit 20 --json databaseId,displayTitle --jq "[.[] | select(.displayTitle | endswith(\" $N\"))][0].databaseId")` — **nonce 로 집는다**. 비면 15초 뒤 한 번 더. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash timeout 600000) — exit 2 면 같은 명령을 한 번 더. `gh` 가 없으면 `mcp__github__actions_run_trigger`·`actions_list` 로 같은 입력·nonce.
 3. `git pull -q` 하고 **그다음에** 가드: `git cat-file -e origin/main:japan/daily/<S>.html` 이 있으면 다른 런이 발행했으니 잠금을 풀고 끝낸다.
-4. `python3 scripts/build_japan_daily.py diag --session $S` — exit 1(`complete` 거짓 — 닛케이 공식 종가 미확인)이면 발행하지 않는다. 잠금을 풀고, **재시도 회차(`TZ=Asia/Seoul date +%H` 가 21 이상)면 「<S> 일본 일간 미발행 — 보충 발행 없음」과 diag 출력을 PushNotification 으로 보낸다.** 본 회차면 알리지 않고 끝낸다(재시도가 이어받는다). 보충 발행은 하지 않는다.
+4. `python3 scripts/build_japan_daily.py diag --session $S` — exit 1(`complete` 거짓 — 닛케이 공식 종가 미확인)이면 발행하지 않는다. 잠금을 풀고, **최종 회차(`[[ "$(TZ=Asia/Seoul date +%F%H)" > "${S}20" ]]` — 세션 날 21시 KST 이후, 자정을 넘긴 재시도 포함)면 「<S> 일본 일간 미발행 — 보충 발행 없음」과 diag 출력을 PushNotification 으로 보낸다.** 본 회차면 알리지 않고 끝낸다(재시도가 이어받는다). 보충 발행은 하지 않는다.
 
 `diag` 가 절 순서(이벤트일이면 매크로가 둘째), 기준일이 다른 값(JGB 직전 세션, 콜 BOJ 최신 관측일), 뉴스 후보 수, 실패한 비-코어 원천을 알려 준다. 그대로 작성자에게 넘긴다.
 
@@ -51,7 +51,7 @@ python3 scripts/check_style.py $(pwd)/jpd_$S.html
 1. `mkdir -p japan/daily && mv jpd_$S.html japan/daily/$S.html`
 2. `python3 scripts/publish_japan_daily.py --session $S --title "<meta.title>" --headline "<meta.summary>"` — 수집 후보를 발행 스냅샷 `japan/data/daily/<S>.json` 으로 고정하고 이력·`japan/daily.json`·sitemap 을 갱신한다. exit 2 면 이미 발행된 세션이니 커밋하지 않고 끝낸다.
 3. 커밋 직전 가드: `git fetch -q origin main` — **실패하면 커밋하지 않고 끝낸다** — 성공하면 `git cat-file -e origin/main:japan/daily/$S.html` 이 없을 때만 진행. `git add japan/daily japan/data/daily japan/data/history japan/daily.json sitemap.xml && git commit -m "Add JP daily [$S]" && git push`.
-4. push 가 거절되면 `git pull --rebase`. `japan/daily.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) `python3 scripts/update_archives.py --kind jp-daily --key $S --title "<title>" --headline "<summary>"` 로 이 세션 항목만 다시 넣은 뒤 `git add` → `git rebase --continue` → 3 의 가드를 다시 하고 push. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
+4. push 가 거절되면 `git pull --rebase`. `japan/daily.json`·`sitemap.xml` 에서 충돌하면 **원격 판을 받고(`git checkout --ours <파일>` — rebase 중에는 `--ours` 가 upstream, `--theirs` 는 재적용 중인 로컬 커밋이다)** `python3 scripts/update_archives.py --kind jp-daily --key $S --title "<title>" --headline "<summary>"` 로 이 세션 항목만 다시 넣은 뒤 `git add` → `git rebase --continue` → 3 의 가드를 다시 하고 push. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
 5. 잠금 release, PushNotification 으로 `https://fdo2a.github.io/japan/daily/<S>.html`.
 
 ## 규칙

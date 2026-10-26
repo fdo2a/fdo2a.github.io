@@ -44,23 +44,25 @@ class Fake:
         return {'last': 100.0, 'bar_date': S}
 
     def daily_closes(self, ticker):
-        return [[P, 99.0], [S, float('nan')]]
+        return self.over.get('closes', {}).get(ticker) or [[P, 99.0], [S, float('nan')]]
 
     def splits(self, ticker):
-        return []
+        return self.over.get('splits', {}).get(ticker, [])
 
     def fx_bars(self, ticker):
         if self.over.get('fx_fail'):
             raise TimeoutError('fx')
         return _fx_bars(157.0, 157.55)
 
-    def jgb_csv(self):
-        return JGB
+    def jgb_rows(self):
+        from common import weekly_sources as WS
+        return self.over.get('jgb_rows') or WS.parse_jgb_csv(JGB)
 
     def boj(self, db, code):
         if code == 'STRDCLUCON':
+            d = self.over.get('call_date', 20261022)
             return {'RESULTSET': [{'SERIES_CODE': code, 'FREQUENCY': 'DAILY', 'UNIT': '%',
-                                   'VALUES': {'SURVEY_DATES': [20261022], 'VALUES': [1.227]}}]}
+                                   'VALUES': {'SURVEY_DATES': [d], 'VALUES': [1.227]}}]}
         return {'RESULTSET': [{'SERIES_CODE': code, 'FREQUENCY': 'MONTHLY', 'UNIT': 'CY2020 average=100',
                                'VALUES': {'SURVEY_DATES': [202608, 202609], 'VALUES': [100.0, 101.0]}}]}
 
@@ -140,9 +142,25 @@ def test_reconcile_never_touches_published(tmp_path):
     assert json.dumps(pub) == json.dumps({'session': P, 'indices': {'nikkei': {'value': 62693.16}}})
 
 
-def test_jgb_text_decodes_bytes():
-    raw = JGB.encode('cp932')
-    assert C.jgb_text(raw) == JGB and C.jgb_text(JGB) == JGB
+def test_split_not_reapplied_to_adjusted_daily_bars(tmp_path):
+    # codex 구현 검토 #10 — yfinance 일봉 분모는 이미 분할조정이다
+    fake = Fake(quote={'1617.T': {'last': 82.0, 'bar_date': S}}, closes={'1617.T': [[P, 100.0]]},
+                splits={'1617.T': [[S, 2.0]]})
+    row = next(r for r in _run(tmp_path, fake)['sectors'] if r['code'] == '1617')
+    assert row['chg_pct'] == -18.0
+
+
+def test_jgb_month_boundary(tmp_path):
+    rows = [{'date': '2026-09-30', '10Y': 2.8}, {'date': '2026-10-01', '10Y': 2.85}]
+    snap = C.collect('2026-10-02', '2026-10-01', Fake(jgb_rows=rows, nikkei_csv=NK), NOW,
+                     root=str(tmp_path), calendar=CAL)
+    assert snap['jgb']['10Y']['chg_bp'] == 5.0
+
+
+def test_call_rate_freshness_counts_jp_holidays(tmp_path):
+    snap = C.collect('2026-09-25', '2026-09-24', Fake(call_date=20260918), NOW, root=str(tmp_path),
+                     calendar=CAL, holidays=('2026-09-21', '2026-09-22', '2026-09-23'))
+    assert snap['call_rate'] and snap['call_rate']['period'] == '2026-09-18'
 
 
 def test_stocks_recorded_for_history(tmp_path):
