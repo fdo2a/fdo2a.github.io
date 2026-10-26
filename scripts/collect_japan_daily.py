@@ -218,9 +218,11 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
     for code, name in MOV.SECTOR17.items():
         row = _instrument(fetch, f'{code}.T', session, prev, hist_prices.get(code), status, f'sector_{code}')
         sectors.append(dict(row, code=code, name_ko=name))
-    rows = []
+    rows, stocks = [], []
     for code, name, sector in MOV.UNIVERSE:
         r = _instrument(fetch, f'{code}.T', session, prev, hist_prices.get(code), status, f'stock_{code}')
+        if r['ok'] and r['value'] is not None:
+            stocks.append({'code': code, 'name': name, 'value': r['value'], 'chg_pct': r['chg_pct']})
         if r['ok'] and r['chg_pct'] is not None:
             rows.append({'code': code, 'name': name, 'change_pct': r['chg_pct'], 'close': r['value']})
     jgb, call = _rates(fetch, session, prev, status)
@@ -231,7 +233,7 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
         'scheduled_at': scheduled_at, 'ran_at': now.astimezone(timezone.utc).isoformat(),
         'complete': bool(nikkei['ok']), 'fetch_status': status,
         'indices': {'nikkei': nikkei, 'topix_etf': dict(topix, label=TOPIX_ETF[1])},
-        'sectors': sectors, 'movers': MOV.build(session, rows),
+        'sectors': sectors, 'stocks': stocks, 'movers': MOV.build(session, rows),
         'jgb': jgb, 'call_rate': call, 'fx': _fx(fetch, session, prev, status),
         'macro': macro, 'macro_periods': periods,
         'calendar': {'version': CAL.version(cal), 'today': today,

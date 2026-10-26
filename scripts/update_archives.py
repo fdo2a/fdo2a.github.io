@@ -26,10 +26,11 @@ LISTINGS = {'daily': ('posts.json', 'posts'),
             'monthly': ('monthly.json', 'monthly'),
             'kr-weekly': ('kr/weekly.json', 'kr/weekly'),
             'kr-monthly': ('kr/monthly.json', 'kr/monthly'),
-            'news': ('news.json', 'news')}
+            'news': ('news.json', 'news'),
+            'jp-daily': ('japan/daily.json', 'japan/daily')}
 BASE = 'https://fdo2a.github.io'
 # 목록 항목의 열쇠 이름. posts.json 은 처음부터 `date` 였다(index.html 이 그 이름으로 읽는다).
-ENTRY_KEY = {'daily': 'date'}
+ENTRY_KEY = {'daily': 'date', 'jp-daily': 'date'}
 
 
 def main():

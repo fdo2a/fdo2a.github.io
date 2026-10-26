@@ -143,3 +143,9 @@ def test_reconcile_never_touches_published(tmp_path):
 def test_jgb_text_decodes_bytes():
     raw = JGB.encode('cp932')
     assert C.jgb_text(raw) == JGB and C.jgb_text(JGB) == JGB
+
+
+def test_stocks_recorded_for_history(tmp_path):
+    snap = _run(tmp_path)
+    codes = {r['code'] for r in snap['stocks']}
+    assert '7203' in codes and all(r['value'] == 100.0 for r in snap['stocks'])

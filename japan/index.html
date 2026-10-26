@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="일본 시장 주간 리포트 — BOJ 정책, JGB 금리, 엔화와 미·일 금리차, 일본 자금의 해외채권 매매, 엔 투기 포지션, 일본 주식으로 금리 정상화의 지속 가능성을 매주 점검합니다.">
+<meta name="description" content="일본 시장 리포트 — 도쿄 거래일 저녁의 마감브리프(주식·JGB·엔화·매크로·일본 경제 뉴스)와, BOJ·JGB·엔화·자금흐름으로 금리 정상화의 지속 가능성을 점검하는 주간 리포트.">
 <link rel="canonical" href="https://fdo2a.github.io/japan/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Japan Market Weekly — 일본 시장 주간">
-<meta property="og:description" content="BOJ·JGB·엔화·자금흐름으로 일본의 금리 정상화를 매주 점검하는 주간 리포트">
+<meta property="og:title" content="Japan Market — 일본 시장 일간·주간">
+<meta property="og:description" content="도쿄 거래일 저녁의 일본 시장 마감브리프와 금리 정상화를 점검하는 주간 리포트">
 <meta property="og:url" content="https://fdo2a.github.io/japan/">
 <meta property="og:locale" content="ko_KR">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Blog","name":"Japan Market Weekly","url":"https://fdo2a.github.io/japan/","description":"일본 시장 주간 리포트","inLanguage":"ko"}
+{"@context":"https://schema.org","@type":"Blog","name":"Japan Market","url":"https://fdo2a.github.io/japan/","description":"일본 시장 일간 마감브리프와 주간 리포트","inLanguage":"ko"}
 </script>
-<title>일본 시장 주간 — BOJ·JGB·엔화·자금흐름 | Japan Market Weekly</title>
+<title>일본 시장 — 일간 마감·주간 점검 | Japan Market</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -128,20 +128,25 @@
     <a href="../japan/" aria-current="page">일본 시장</a>
   </nav>
   <header class="site">
-    <span class="brand">Japan Market Weekly</span>
-    <span class="desc">일본 시장 주간 리포트 아카이브</span>
+    <span class="brand">Japan Market</span>
+    <span class="desc">일본 시장 일간·주간 리포트 아카이브</span>
   </header>
   <div class="intro">
-    매주 일요일, 일본이 금리 정상화를 계속할 수 있는지를 BOJ → JGB → 엔화·자금흐름 → 일본 기업의 순서로 점검합니다.
-    <span class="small">JGB 2·10·30·40년 · 미·일 2년 금리차 · 엔·달러 · 일본 자금의 해외채권 매매 · 엔 투기 포지션 · 은행·REIT·수출주</span>
+    도쿄 거래일 저녁에는 그날의 주식·JGB·엔화·매크로·일본 경제 뉴스를 마감브리프로, 매주 한 번은 일본이 금리 정상화를 계속할 수 있는지를 BOJ → JGB → 엔화·자금흐름 → 일본 기업의 순서로 점검합니다.
+    <span class="small">일간: 닛케이 225 · TOPIX-17 업종 · JGB · 콜금리 · 엔(16:30 JST) · 일본은행 지표 · 경제 뉴스 &nbsp;|&nbsp; 주간: 미·일 금리차 · 해외채권 매매 · 엔 투기 포지션</span>
   </div>
   
+  <nav class="subnav" aria-label="발행 주기">
+    <button type="button" data-span="daily" aria-current="true">일간</button>
+    <button type="button" data-span="weekly" aria-current="false">주간</button>
+  </nav>
   <h2 class="list-title">전체 보고서</h2>
   <div class="post-list" id="list">
     <div class="empty">불러오는 중…</div>
   </div>
   <footer>
-    데이터: 일본 재무성(JGB 금리·대외 증권투자), CFTC, FRED, 일본은행, Yahoo Finance. 헤지 후 금리는 근사입니다.<br>
+    데이터: 일본경제신문사(닛케이 225 종가), 일본 재무성(JGB 금리·대외 증권투자), 일본은행 시계열 API, CFTC, FRED, Yahoo Finance, Yahoo!ファイナンス. 헤지 후 금리는 근사입니다.<br>
+    <span lang="en">This service uses the API provided by the "Bank of Japan Time-Series Data Search." The Bank of Japan does not guarantee the content of the service.</span><br>
     본 자료는 정보 제공 목적으로 작성된 것으로, 특정 종목의 매수·매도 권유가 아닙니다.<br>
     <a href="../about.html" style="color:#5F6B7A;">소개</a> · <a href="../privacy.html" style="color:#5F6B7A;">개인정보처리방침</a>
   </footer>
@@ -151,6 +156,7 @@
   const list = document.getElementById('list');
   const days = ['일','월','화','수','목','금','토'];
   const SOURCES = {
+    daily:   { file: 'daily.json',  dir: 'daily/',  empty: '아직 발행된 일간 마감브리프가 없습니다.' },
     weekly:  { file: 'posts.json',  dir: 'posts/',  empty: '아직 발행된 주간 리포트가 없습니다.' }
   };
   const cache = {};
@@ -229,7 +235,13 @@
     });
   });
 
-  try { await render('weekly'); }
+  // 일간이 아직 없으면 주간을 먼저 보인다(빈 목록으로 첫 화면을 채우지 않는다).
+  try {
+    const first = (await load('daily')).length ? 'daily' : 'weekly';
+    document.querySelectorAll('.subnav button')
+      .forEach(b => b.setAttribute('aria-current', String(b.dataset.span === first)));
+    await render(first);
+  }
   catch (e) { list.innerHTML = '<div class="empty">목록을 불러오지 못했습니다.</div>'; }
 })();
 </script>
