@@ -51,7 +51,7 @@
       "category": "macro",
       "source": "CNBC",
       "body_chars": 4790,
-      "body_file": "04-macro.txt",
+      "body_file": "12-macro.txt",
       "summary_ko": "Treasury Secretary Scott Bessent는 월요일 워싱턴 다운타운의 Cheesecake Factory에서 식사하며, 오바마 전 대통령의 트럼프 백악관 개보수 조롱에 반박했다. 그는 Fox Business 기자에게 오바마 대통령 센터를 \"Darth Vader의 무덤\" 같다고 비꼬고, 마서즈 바인야드 엘리트층에게 이 식당을 권했다. 오바마는 토요일 오하이오 유세에서 백악관이 \"Saddam Hussein이 Cheesecake Factory를 연 것처럼 보인다\"고 말해 청중의 환호를 받았다. 이에 보수 진영은 노동계층을 깔본다고 반발했고, 트럼프 대통령도 월요일 개보수를 옹호하며 오바마가 건물 보수의 필요성을 외면했다고 주장했다. 논쟁은 11월 3일 중간선거를 며칠 앞두고 벌어졌으며, 여론조사상 민주당이 의회에서 상당한 의석을 얻을 것으로 전망된다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -64,7 +64,7 @@
       "category": "macro",
       "source": "CNBC",
       "body_chars": 4451,
-      "body_file": "05-macro.txt",
+      "body_file": "13-macro.txt",
       "summary_ko": "연방준비제도(Fed)가 10월 회의에서 기준금리를 동결할 가능성이 크다. 9월 소비자물가지수(CPI)는 전년 대비 3.7%로 다시 올랐고, 미·이란 전쟁에 따른 유가 급등이 물가 압박을 키우고 있다. Fed는 지난달 25bp 인상해 기준금리 범위를 3.75~4.00%로 올렸는데, 2023년 이후 첫 인상이다. 페드워치에 따르면 이번 회의에서 추가 인상 확률은 10% 미만이지만 연말까지 최소 한 차례 인상할 확률은 75%에 가깝다. 중간선거를 앞두고 이번 달 인상은 없을 것이라는 시각도 많다. 10년물 국채금리가 5% 가까이 머물면서 30년 고정 모기지금리는 약 7.4%에 이르렀다. 반면 신용카드 금리는 변동금리 구조라 동결 시 현 수준을 유지할 전망이며, 신규 카드의 평균 금리는 23.96%다. 예금 금리는 기준금리를 따라 움직여 고금리 예금 투자자에게는 상대적으로 유리한 환경이 이어진다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -77,9 +77,21 @@
       "category": "macro",
       "source": "CNBC",
       "body_chars": 5527,
-      "body_file": "06-macro.txt",
+      "body_file": "14-macro.txt",
       "summary_ko": "미국의 장기 국채금리가 5%를 넘고 2026 회계연도 재정적자가 1조9920억 달러로 전년보다 12% 늘어 GDP의 약 6.2%에 달한다. 10년물 국채금리는 2월 말 이후 114bp 올라 3일 기준 5.1%를 기록했고, 30년 고정 주택담보대출 금리는 7.5% 안팎에서 맴돌아 9월 주택 매매계약 건수가 전월 대비 4% 줄었다. 기사는 2월 28일 시작된 이란 전쟁으로 인한 유가 급등, 인공지능 인프라 투자에 따른 기업 채권 발행 확대, 재정적자 확대에 대한 투자자 우려를 금리 상승 요인으로 꼽았다. 베선트 재무장관은 임기 말까지 적자를 GDP의 4% 아래로 낮추겠다는 목표를 제시했지만, 기사는 달성이 거의 불가능하다고 평가했다. 의회 예산처는 금리가 기대치보다 0.5%p 높으면 향후 10년간 적자가 1조9000억 달러 늘어난다고 추정했다. 11월 3일 중간선거 이후 여야 재정 합의 가능성은 낮아 근본 해법은 수년 뒤로 밀릴 전망이다. 기사는 성장만으로는 재정 문제를 풀기 어렵고 정치적 합의가 필요하다고 결론지었다.",
       "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108360561",
+      "url": "https://www.cnbc.com/2026/10/26/anthropic-ipo-might-trigger-tech-reset-if-ipo-underperforms.html",
+      "title": "From Wall Street to Silicon Valley, Anthropic IPO poised to have massive 'trickle-down effect'",
+      "summary": "With the AI trade sputtering of late and interest rates on the rise, Anthropic's IPO is taking on outsized importance.",
+      "published": "2026-10-26T22:50:07+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 7128,
+      "body_file": "15-ai.txt",
+      "summary_note": "분량 벗어남 458자"
     },
     {
       "guid": "108465772",
@@ -90,7 +102,7 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 3091,
-      "body_file": "15-ai.txt",
+      "body_file": "16-ai.txt",
       "summary_ko": "BlackBerry의 존 지아마테오 CEO는 인공지능 기반 로봇을 회사의 주요 성장 기회로 보고 있다. 캐나다 기업 BlackBerry의 QNX 운영체제는 제동 장치 등 차량 핵심 기능의 기반 소프트웨어로, 전 세계 2억 7500만 대 이상의 차량에 탑재돼 있다. 회사는 자동차를 넘어 로봇 등 기계가 실제 세계와 상호작용하도록 하는 '물리적 AI' 시장으로 영역을 넓히고 있다. 로봇 사업은 QNX 내에서 가장 빠르게 성장하는 분야로, 회사는 자동차에서 쌓은 경험을 바탕으로 기계의 안전하고 안정적인 작동을 돕는 소프트웨어를 공급할 수 있다고 본다. QNX 로열티 수주잔고는 12억 달러를 넘었고 2개 분기 만에 2억 5000만 달러 이상 늘었다. 올해 주가는 142% 올랐지만, 시가총액은 약 54억 달러로 2008년 정점의 약 850억 달러에 크게 못 미친다. 지아마테오는 엔비디아가 자사 안전 스택의 표준 플랫폼으로 QNX를 채택했다고 밝혔다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -103,21 +115,8 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 5585,
-      "body_file": "16-ai.txt",
-      "summary_ko": "Anthropic이 상장 신고서(S-1)에서 공동창업자 7명이 지배하는 'Founder LLC'가 의결권의 50.1%를 보유한다고 밝혔다. 다리오 아모데이 CEO와 다니엘라 아모데이 사장 등 7명이 이 법인의 유일한 구성원이며, 향후 주주총회 주요 안건 대부분을 결정할 수 있다. 이에 따라 기관과 개인 투자자의 영향력은 제한된다. 회사는 적대적 합병이나 위임장 대결을 어렵게 하는 구조라 주주가 프리미엄을 받고 주식을 팔 기회를 잃을 수 있다고 밝혔다. 이사회 과반을 선임하는 권한은 독립 기구인 장기이익신탁(LTBT)에도 있으며, 이는 의결권 없는 별도 종류주식으로 행사된다. 나스닥 기준 'controlled company'에 해당하고 상장 티커는 'ANT'로 계획돼 있다. 회사는 두 기구의 의결권이 경제적 지분과 비례하지 않으며 희석되지 않는다고 밝히고, 창업자와 신탁의 이해가 투자자와 다를 수 있다는 점도 위험으로 제시했다. 일부 투자자는 뛰어난 리더십을 전제로 이런 구조를 수용하는 분위기다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "108464652",
-      "url": "https://www.cnbc.com/2026/10/26/microsoft-msft-voluntary-buyouts.html",
-      "title": "Microsoft offers voluntary buyouts to 60,000 employees as AI leads to efficiency push",
-      "summary": "Microsoft is trying to balance a rapid AI infrastructure build-out with capital efficiency.",
-      "published": "2026-10-26T20:44:50+00:00",
-      "category": "ai",
-      "source": "CNBC",
-      "body_chars": 3108,
       "body_file": "17-ai.txt",
-      "summary_ko": "Microsoft가 AI 인프라 투자 부담 속에서 자본 효율성을 높이기 위해 미국, 캐나다, 인도, 영국의 경력 70 이하 직원을 대상으로 자발적 퇴직 제안을 내놓았다. 대상자는 약 6만 명으로 전체 직원 22만 3000명의 약 27%에 해당한다. 데이터센터 투자가 크게 늘어 9월 분기 자본지출은 500억 달러를 넘을 것으로 예상되며, 지난해 같은 분기 349억 달러보다 많다. 앞서 4월에는 미국 직원 약 7%를 대상으로 첫 자발적 퇴직 프로그램을 시행했고, 7월에는 4800명 감원을 발표했다. 2분기 잉여현금흐름은 196억 4000만 달러로 흑자를 유지했지만 전년 대비 23% 줄었다. 직원들은 12월 초까지 참여 여부를 정해야 하며, 참여자는 12월 31일에 퇴사한다. 이번에는 부사장급까지 대상이 넓어졌고 목표 인원은 정하지 않았다고 전해졌다. 회사는 10월 29일 3분기 실적을 발표할 예정이다.",
+      "summary_ko": "Anthropic이 상장 신고서(S-1)에서 공동창업자 7명이 지배하는 'Founder LLC'가 의결권의 50.1%를 보유한다고 밝혔다. 다리오 아모데이 CEO와 다니엘라 아모데이 사장 등 7명이 이 법인의 유일한 구성원이며, 향후 주주총회 주요 안건 대부분을 결정할 수 있다. 이에 따라 기관과 개인 투자자의 영향력은 제한된다. 회사는 적대적 합병이나 위임장 대결을 어렵게 하는 구조라 주주가 프리미엄을 받고 주식을 팔 기회를 잃을 수 있다고 밝혔다. 이사회 과반을 선임하는 권한은 독립 기구인 장기이익신탁(LTBT)에도 있으며, 이는 의결권 없는 별도 종류주식으로 행사된다. 나스닥 기준 'controlled company'에 해당하고 상장 티커는 'ANT'로 계획돼 있다. 회사는 두 기구의 의결권이 경제적 지분과 비례하지 않으며 희석되지 않는다고 밝히고, 창업자와 신탁의 이해가 투자자와 다를 수 있다는 점도 위험으로 제시했다. 일부 투자자는 뛰어난 리더십을 전제로 이런 구조를 수용하는 분위기다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -248,8 +247,8 @@
       "region": "japan",
       "wire": "NRI研究員の時事解説",
       "body_chars": 871,
-      "body_file": "07-global.txt",
-      "summary_note": "가나·한자 「市」"
+      "body_file": "04-global.txt",
+      "summary_note": "가나·한자 「市首相」"
     },
     {
       "guid": "108462470",
@@ -261,7 +260,7 @@
       "source": "CNBC",
       "region": "mideast",
       "body_chars": 3199,
-      "body_file": "08-global.txt",
+      "body_file": "05-global.txt",
       "summary_ko": "26일 국제유가는 하락했다. 사우디아라비아 칼리드 빈 살만 국방장관이 테헤란에서 이란 지도부와 긴장 완화 회담을 가졌다. 브렌트유는 91센트 내린 배럴당 115.81달러에 마감했고, 장중 한때 117달러를 넘었다. WTI는 1.51달러 내린 101.76달러에 마감했으며 이달 상승률은 약 12%다. 예멘의 친이란 후티 반군이 최근 사우디를 반복 공격하는 가운데, 후티는 이날 리야드 공항 미사일 발사와 석유 펌프장 드론 공격을 주장했으나 사우디는 이를 확인하지 않았다. 8개월째 이어진 분쟁으로 세계 재고는 급감했고 미국 전략비축유는 1982년 이후 최저 수준이다. 알파로 Gallo Partners 최고투자책임자는 지정학 리스크가 유가에 약 20달러를 더했다고 보며, 동서 송유관이나 정제시설이 피격되면 가격이 급등할 수 있으나 120달러를 넘으면 수요가 꺾일 것이라고 말했다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -275,7 +274,7 @@
       "source": "The Guardian",
       "region": "europe",
       "body_chars": 456,
-      "body_file": "09-global.txt",
+      "body_file": "06-global.txt",
       "summary_ko": "가디언의 정치 영상 프로그램 「Politics Weekly」는 앤디 번햄이 브렉시트를 재검토하면 \"사람들을 하나로 모을 수 있다\"고 주장하는 배경을 다룬다. 기사 설명에 따르면 총리는 자유이동 같은 쟁점을 다시 검토하려 하지만 유로화 도입과 솅겐 조약 가입은 배제하고 있다. 방송은 EU 재가입이 오래된 상처를 다시 건드려 국론 분열을 키울 위험이 있는지를 던진다. 아울러 존 힐리 재무장관이 까다로운 예산안을 준비하고 있어 주목할 지점도 함께 다룬다. 다만 이 페이지는 방송 소개 문구여서 구체적인 수치나 날짜, 정책 일정은 담고 있지 않다. 재가입 가능성이나 시장 영향에 대한 판단은 본문 확인이 필요하다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -290,8 +289,8 @@
       "region": "china",
       "wire": "マネーポストWEB",
       "body_chars": 981,
-      "body_file": "10-global.txt",
-      "summary_note": "가나·한자 「越境」·「軸足」"
+      "body_file": "07-global.txt",
+      "summary_note": "가나·한자 「越境」"
     },
     {
       "guid": "https://think.ing.com/articles/belgium-stable-rating-unresolved-fiscal-challenges/#When:07:15:00Z",
