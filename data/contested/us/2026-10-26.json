@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-26",
- "status": "error",
- "reason": "fetch_incomplete",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 0,
- "collected_at": "2026-10-26T22:30:40+00:00",
- "cutoff_at": "2026-10-26T22:30:40+00:00",
+ "attempts": 1,
+ "collected_at": "2026-10-26T23:34:02+00:00",
+ "cutoff_at": "2026-10-26T23:34:02+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -17,38 +17,46 @@
  "prompt_version": "2026-10-21.1",
  "market_snapshot": {
   "path": "data/market_data.json",
-  "commit": "a447e6a08bb689106543657319e71674e6f7c7db",
-  "sha256": "4bf228df732fda0de730a687b20c09b7b4ab85eae7666933ec77a2b59345448c"
+  "commit": "a2e3cd00ad0dab7d1af78b8fe0dbeb068761ff4f",
+  "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
  },
  "counts": {
-  "harvest": 166,
-  "candidates": 3,
+  "harvest": 172,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   5
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 21540,
-   "out": 5145
+   "in": 42371,
+   "out": 10949
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
+   "dw.com": "garbage",
    "theguardian.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7
+  }
  },
  "event": {
-  "topic_ko": "코미 부녀 사법 공방과 미 농촌 경제: 기사 간 충돌 주장 없음",
-  "query": "comey trump charges",
+  "topic_ko": "브라질 대선 결선 직전 판세 평가와 룰라 역전승 이후 브라질 자산 급락",
+  "query": "lula bolsonaro wins",
   "trigger": []
  },
- "content_hash": "c4e6f82c98c37dfa"
+ "content_hash": "76488cb4c18cc58c"
 }
