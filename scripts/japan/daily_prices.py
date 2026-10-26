@@ -54,7 +54,7 @@ def nikkei_close(official, fast_last, tol_pct=TOL_PCT):
 def same_session_price(fast_last, last_bar_date, session):
     if last_bar_date != session or not _finite(fast_last) or fast_last <= 0:
         return None
-    return float(fast_last)
+    return round(float(fast_last), 4)
 
 
 def denominator(history, prev_session):

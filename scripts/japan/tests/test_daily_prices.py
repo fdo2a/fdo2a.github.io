@@ -93,3 +93,7 @@ def test_fx_cut_accepts_utc_timestamps():
 def test_fx_cut_missing_bar_none():
     assert P.fx_cut(_bars('2026-10-26', [157.0, 157.1]), '2026-10-26') is None
     assert P.fx_cut(_bars('2026-10-23', [157.0] * 8), '2026-10-26') is None
+
+
+def test_same_session_price_rounds_float_noise():
+    assert P.same_session_price(418.3999938964844, '2026-10-26', '2026-10-26') == 418.4
