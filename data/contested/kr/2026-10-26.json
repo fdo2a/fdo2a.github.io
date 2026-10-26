@@ -1,0 +1,75 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-26",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-26T11:15:02+00:00",
+ "cutoff_at": "2026-10-26T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "e0b7c0c89586ae43732e6dd1594b48c6569792f1",
+  "sha256": "5cddae910eef989be0435dfca1b05e7e48c59889299efc1b34def02efc6f81a8",
+  "extra": {
+   "kr_econ.json": "119b1dcfd6fd62d00a3b424b0f65e2524fdd16f249cf915df7ae4d5b4291d807",
+   "kr_flows.json": "3477966598bb80497904b935065a842a8fcb9e42bd6cad32fa37da7d421a087a",
+   "kr_session.json": "5fc8e2321ab08ad95a11acccc2124e90f082400b06448881e562b969fde19ed8"
+  }
+ },
+ "counts": {
+  "harvest": 623,
+  "candidates": 1,
+  "articles": [
+   4
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "kbs": "short",
+   "sbs": "ok",
+   "edaily": "ok",
+   "yna": "ok",
+   "dt": "short",
+   "newsis": "short"
+  },
+  "notes": [
+   "discover:623"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 25746,
+   "out": 9328
+  },
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 9
+  }
+ },
+ "event": {
+  "topic_ko": "10월 26일 원·달러 환율 15시 30분 기준가 수치 불일치",
+  "query": "환율 코스피 하락",
+  "trigger": []
+ },
+ "problems": [
+  "structure:unverified",
+  "structure:dangling"
+ ],
+ "content_hash": "e0c42f583961446e"
+}
