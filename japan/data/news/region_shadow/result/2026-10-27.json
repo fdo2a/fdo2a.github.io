@@ -78,7 +78,154 @@
         }
       }
     },
-    "jev": {}
+    "jev": {
+      "35e3b33ec7a6": {
+        "20c246d537018e6f": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:26+09:00"
+        },
+        "d41a45eaca6c49d2": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:26+09:00"
+        },
+        "f5aa2aba1c9a67b6": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:26+09:00"
+        },
+        "7b42b20d488d4db8": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.24,
+            "foreign_impact": 0.08,
+            "foreign": 0.68
+          },
+          "confidence": 0.52,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "8a759f3a0cae678e": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "53351356cccb9b42": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "770d557f6c34ab92": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "a6ab8fc0b8ab78fd": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.04,
+            "foreign_impact": 0.01,
+            "foreign": 0.95
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "07646ac5dbefd7b4": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "85aca19a92624368": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "68cb332a965a8b36": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.04,
+            "foreign": 0.01
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:27+09:00"
+        },
+        "e406e69048fa855c": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-10-27T21:33:28+09:00"
+        }
+      }
+    }
   },
   "runs": []
 }
