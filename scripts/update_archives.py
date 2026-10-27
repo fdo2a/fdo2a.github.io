@@ -4,7 +4,7 @@
   python3 scripts/update_archives.py --root . --kind weekly --key 2026-08-21 \
       --title "미국 증시 주간 정리 — 2026년 8월 3주" --headline "..."
 
---kind 는 daily / weekly / monthly / kr-weekly / kr-monthly / news.
+--kind 는 daily / weekly / kr-weekly / news.
 daily 는 US 브리프(`posts.json`, 항목 열쇠가 `date`), news 는 뉴스·산업 브리프(2026-09-26) —
 둘 다 키가 발행 기준일(YYYY-MM-DD)이다. US 루틴은 sitemap 을 posts.json 으로 **재생성**했는데,
 그러면 주간·KR·thesis·뉴스 URL 이 매일 지워진다 — 이 스크립트는 병합만 한다.
@@ -23,9 +23,7 @@ from us.archives import merge_sitemap, upsert_entry  # noqa: E402
 
 LISTINGS = {'daily': ('posts.json', 'posts'),
             'weekly': ('weekly.json', 'weekly'),
-            'monthly': ('monthly.json', 'monthly'),
             'kr-weekly': ('kr/weekly.json', 'kr/weekly'),
-            'kr-monthly': ('kr/monthly.json', 'kr/monthly'),
             'news': ('news.json', 'news'),
             'jp-daily': ('japan/daily.json', 'japan/daily')}
 BASE = 'https://fdo2a.github.io'
@@ -41,7 +39,7 @@ def main():
     ap.add_argument('--title', required=True)
     ap.add_argument('--headline', default='')
     ap.add_argument('--label', default='',
-                    help='목록에 보일 날짜 표시(주간·월간). 비우면 목록이 키(2026-W39)를 보인다')
+                    help='목록에 보일 날짜 표시(주간). 비우면 목록이 키(2026-W39)를 보인다')
     args = ap.parse_args()
 
     listing_rel, dir_rel = LISTINGS[args.kind]

@@ -480,11 +480,11 @@ def test_us_weekly_gates_replay_check_period_on_the_publish_evidence():
     assert 'check_weight.py' not in g_ and 'check_macro.py' not in g_
 
 
-def test_kr_monthly_gates_have_no_insight():
-    cmd = _gates('kr/monthly', '2026-09')['check_period.py']
+def test_kr_weekly_gates_have_no_insight():
+    cmd = _gates('kr/weekly', '2026-W39')['check_period.py']
     assert '--insight' not in cmd
-    assert cmd[cmd.index('--agg') + 1] == '/ev/kr/data/monthly/2026-09.json'
-    assert cmd[cmd.index('--span') + 1] == 'monthly' and cmd[cmd.index('--market') + 1] == 'kr'
+    assert cmd[cmd.index('--agg') + 1] == '/ev/kr/data/weekly/2026-W39.json'
+    assert cmd[cmd.index('--span') + 1] == 'weekly' and cmd[cmd.index('--market') + 1] == 'kr'
 
 
 def test_japan_gates_read_the_publish_evidence():

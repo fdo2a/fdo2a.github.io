@@ -20,11 +20,11 @@
 - **막힘 승격은 한 단계, 예산 안에서.** 조건은 입력이 유효하고 도구도 성공했는데 산출물이 검사를 어긴 경우뿐. 한도·네트워크·인증·데이터 미게시·잠금·원인 불명은 승격하지 않는다 — 모델을 올려도 그대로이고, 한도 상황에서 Opus 로 올리면 같은 주간 한도를 더 빨리 쓴다.
   - 뉴스 요약: Haiku 2회(작성 + 고쳐 쓰기)가 분량·언어 검사에 걸리면 Sonnet 1회, 기사당 총 3회. 기본 모델이 Haiku 일 때만, 기사마다 Haiku 에서 다시 시작, 실행당 `ESCALATE_CAP`. 거절·잘림·API 예외는 승격 없음. `summary_model` 에 실제 모델을 남긴다(게이트는 모델명을 보지 않는다).
   - 일본 일간: 작성 1 + 고치기 3 = 4회 예산(조립·게이트 공유, 기존과 같다). 작성·첫 고치기는 Sonnet, 둘째부터 Opus, 돌아가지 않는다.
-  - Opus 작성자(US·KR·주간·월간·일본 주간)는 위가 없다. Fable 은 따로 주간 한도가 있지만 품질 실측이 없어 넣지 않는다.
+  - Opus 작성자(US·KR·주간·일본 주간)는 위가 없다. Fable 은 따로 주간 한도가 있지만 품질 실측이 없어 넣지 않는다.
 
 ## 하지 않은 것과 이유
 
-- **루틴 본체 Opus→Sonnet.** 본체가 판단과 공개 문장을 맡는다 — KR STEP 1 리서치·가설(`KR_ORCHESTRATOR.md` STEP 1), US·주간·월간 Editorial acceptance(`DESK_REPORT.md`), THESIS 판단과 `fact/inference/delta/next` 문장. 내리려면 이 단계들을 Opus 에이전트로 떼는 재구성이 먼저다.
+- **루틴 본체 Opus→Sonnet.** 본체가 판단과 공개 문장을 맡는다 — KR STEP 1 리서치·가설(`KR_ORCHESTRATOR.md` STEP 1), US·주간 Editorial acceptance(`DESK_REPORT.md`), THESIS 판단과 `fact/inference/delta/next` 문장. 내리려면 이 단계들을 Opus 에이전트로 떼는 재구성이 먼저다.
 - **재시도 루틴.** US 8·KR 7회/일 Opus 로 깨어나 대부분 7초 `DONE` 으로 끝난다. Sonnet 으로 내리면 실제로 다시 써야 하는 날 본체가 Sonnet 이 된다. 줄이려면 기상 횟수나 기상 비용 쪽이다.
 - **정정 러너.** 9/24 에 재시도가 한도를 태운 자리라 승격(= 재시도 1회 추가)은 한도 차단과 실패 분류를 다시 설계해야 한다.
 - **루틴 설정을 바꿀 때는** `job_config` 가 전체 교체라(`scripts/us/CLAUDE.md`) 현재 설정 전체를 읽어 보존하고 모델만 바꾼 뒤 다시 읽는다.

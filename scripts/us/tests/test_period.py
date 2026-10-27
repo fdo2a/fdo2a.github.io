@@ -1,6 +1,6 @@
 import pytest
 
-from us.period import (BENCHMARK, build, month_key, pct_change, prev_month_key, slice_series,
+from us.period import (BENCHMARK, build, pct_change, slice_series,
                        week_key, TENORS)
 
 
@@ -12,16 +12,6 @@ def test_week_key_is_iso_and_zero_padded():
 def test_week_key_uses_iso_year_not_calendar_year():
     # 2027-01-01 은 금요일 → ISO 로는 2026년 53주차
     assert week_key("2027-01-01") == "2026-W53"
-
-
-def test_month_key():
-    assert month_key("2026-08-21") == "2026-08"
-
-
-def test_prev_month_key_is_the_month_before_and_crosses_the_year():
-    # 월간 루틴의 KEY 는 「닫힌 직전 달」이다 — month_key(오늘) 이 아니다(2026-10-27 codex 검토).
-    assert prev_month_key("2026-11-02") == "2026-10"
-    assert prev_month_key("2027-01-05") == "2026-12"
 
 
 SPX = [("2026-08-14", 100.0), ("2026-08-17", 101.0), ("2026-08-18", 102.0),

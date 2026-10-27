@@ -1,6 +1,6 @@
 # Editorial mandate — market coverage and decision research
 
-Read before collecting, writing or reviewing a new US/KR daily, weekly or monthly
+Read before collecting, writing or reviewing a new US/KR daily or weekly
 report. The reader is the portfolio manager of a **tactical global-equity fund run
 on trend units** (2026-10-06 user decision: "the US and KR reports exist to deliver
 the market information needed to run that fund — keep doing what you do, but make it
@@ -85,7 +85,7 @@ or no new idea are valid outcomes. `invalidation`: what would change our view.
 These are paragraph functions, not repeated visible labels. Expansion/maintenance/
 reduction may describe a conditional exposure choice only when its reference is
 explicit; do not require such a declaration every day or imply a position exists.
-KR (daily, weekly, monthly) keeps its exposure grade and horizon in the stance
+KR (daily, weekly) keeps its exposure grade and horizon in the stance
 ledger only and never writes them in reader prose (user decision 2026-10-04 —
 "KOSPI exposure stays maintained through the next session" reads as noise); say
 what is awaited, what would change the view and when it is checked. The KR gates
@@ -155,7 +155,7 @@ moves, name the move — supports, weakens, revises, withdraws, defers — not �
 갈린다·고쳐 본다·무게를 옮긴다」; no invented drama, one analytic step per sentence
 (§10-8~10, applies to every report, user decision 2026-10-17).
 
-## Weekly and monthly
+## Weekly
 
 Maintain the period's market narrative, performance tables and material days. Use
 only published daily reports, stored evidence and the verified ledger as specified
@@ -163,13 +163,10 @@ in `.claude/RESEARCH_WORKFLOW.md`; do not introduce new research or prices to ma
 a retrospective idea look timely. Earlier interpretations can be revised openly
 when later evidence in the period changes them; preserve what was known at the time.
 
-**Weekly:** synthesize the key market changes, deepen one or two consequential
+Synthesize the key market changes, deepen one or two consequential
 questions, compare what we expected with what occurred, and carry forward the
 conditions that matter for the next period. Include failures and non-reactions.
-**Monthly:** explain the regime and cross-asset story, then examine which reasoning
-worked or failed under which conditions. Separate untested, retrospective and
-prospective cases and measured net performance. Choose what to retain, revise or
-abandon. Counts and correct directions alone never establish an investment edge.
+Counts and correct directions alone never establish an investment edge.
 
 ## Editorial acceptance before publication
 

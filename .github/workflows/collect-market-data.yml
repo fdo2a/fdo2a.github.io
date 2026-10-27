@@ -200,7 +200,7 @@ jobs:
           git add data/news 2>/dev/null || true
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
-          git add data/weekly data/monthly 2>/dev/null || true
+          git add data/weekly 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: market data for ${RD}"
 

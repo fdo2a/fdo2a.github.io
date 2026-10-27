@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """그 기간 발행본을 총정리용 재료로 회수한다 -> recap_source.json.
 
-주간·월간 정리는 시장을 새로 취재하는 글이 아니라 이미 나간 글들을 한 편으로 묶는
+주간 정리는 시장을 새로 취재하는 글이 아니라 이미 나간 글들을 한 편으로 묶는
 글이다. 그래서 주 소스가 원천 시세가 아니라 발행본이다. HTML을 통째로 넘기지 않는다 —
 주간 5편이 34K토큰씩이라 컨텍스트가 감당하지 못한다.
 
@@ -25,7 +25,7 @@ def main():
     ap.add_argument('--listing', required=True)
     ap.add_argument('--start', required=True)
     ap.add_argument('--end', required=True)
-    ap.add_argument('--span', choices=('weekly', 'monthly'), required=True)
+    ap.add_argument('--span', choices=('weekly',), required=True)
     ap.add_argument('--key', required=True)
     ap.add_argument('--out', default='recap_source.json')
     args = ap.parse_args()

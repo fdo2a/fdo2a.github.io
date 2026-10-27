@@ -25,16 +25,6 @@ def week_key(d):
     return f'{y}-W{w:02d}'
 
 
-def month_key(d):
-    return d[:7]
-
-
-def prev_month_key(d):
-    """d 가 속한 달의 직전 달 — 월간 루틴의 KEY(닫힌 달). month_key(오늘) 을 쓰면 새 달 키가 된다."""
-    y, m = int(d[:4]), int(d[5:7])
-    return f'{y - 1}-12' if m == 1 else f'{y}-{m - 1:02d}'
-
-
 def slice_series(series, start, end):
     return [(d, v) for d, v in series if start <= d <= end]
 
@@ -125,7 +115,7 @@ def _bounds(closes, key, span):
     벤치마크 하나로 고정한다 — 다른 계열의 튄 날짜는 slice_series 가 창 밖이라
     알아서 잘라낸다.
     """
-    keyer = week_key if span == 'weekly' else month_key
+    keyer = week_key
     series = (closes.get('indices') or {}).get(BENCHMARK)
     if not series:
         return None, None, 0

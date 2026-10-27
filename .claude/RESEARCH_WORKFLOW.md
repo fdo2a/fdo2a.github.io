@@ -1,6 +1,6 @@
 # Research workflow — future reports
 
-Read before researching, writing or reviewing a new US/KR daily, weekly or monthly
+Read before researching, writing or reviewing a new US/KR daily or weekly
 report. Read `.claude/DESK_REPORT.md` first for the market-coverage and PM-facing sales/research mandate. Use alongside `TRADER_LEARNING.md` (evidence discipline) and the common
 writer (prose). Applies to newly authored reports after this change; **never
 backfill hypotheses from outcomes or rewrite published reports to add these fields**.
@@ -152,24 +152,3 @@ python3 scripts/check_research.py check --span weekly --html <draft.html> --root
 
 If the ledger is empty, display that there are no records to evaluate. Never seed
 old winning forecasts to make the scorecard look established.
-
-## Monthly — evaluate the decision method
-
-Use the same summary/check commands with `--span monthly` on the report check.
-Group the reasoning in prose by recurring research question, not by winning ticker.
-Assess direction, mechanism and implementation separately, include failures,
-undecidable cases, overdue questions and ideas deliberately not executed.
-
-Only use externally evidenced, comparable gross/cost/net/benchmark measurements
-where the record contains the full basis and interval; missing costs or execution
-leave performance unavailable. Inspect the evidence even when arithmetic validates.
-Do not average incompatible units or describe a count of correct directions as
-excess return. The generated section deliberately does not print return estimates.
-
-Before calling a method repeatable, freeze its conditions and benchmark in a new
-hypothesis's explanation, then evaluate later observations without changing those
-conditions. A revised method gets a new ID/version in the title/explanation and a
-new forward test; prior failures remain. Separate exploratory/backward-looking
-cases from future tests, check regime dependence and relevant costs, and record
-sample limitations. No automatic stage named “proven edge” exists. Decide which
-question deserves further evidence, which to retain and which to abandon.

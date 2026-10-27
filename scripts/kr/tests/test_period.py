@@ -44,7 +44,7 @@ def test_session_from_drops_provisional_flows():
 
 
 def test_session_from_backfills_older_confirmed_flow_rows():
-    # kr_flows.json 은 10일치를 들고 있다 — 지난 날짜도 같이 회수해 월간을 자가치유시킨다
+    # kr_flows.json 은 10일치를 들고 있다 — 지난 날짜도 같이 회수해 주간을 자가치유시킨다
     s = session_from(MARKET, FLOWS, INDUSTRY, TOPVAL)
     assert "2026-08-20" in s["extra_flow_dates"]
     assert s["extra_flows"]["2026-08-20"]["KOSPI"]["foreign"] == 17068

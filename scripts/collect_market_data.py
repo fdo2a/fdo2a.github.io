@@ -1239,7 +1239,7 @@ def main():
     # 기간 집계 — 기간 키로 나눠 쓰므로 주/달이 넘어가면 지난 파일이 곧 확정본이다.
     try:
         from us.history import read_jsonl
-        from us.period import build as period_build, month_key, series_from, week_key
+        from us.period import build as period_build, series_from, week_key
         # 시세를 다시 받지 않는다 — 발행본이 인쇄한 스냅샷 원장만 굴린다.
         dated, yh = series_from(read_jsonl(os.path.join(args.outdir, 'history',
                                                         'market.jsonl')), as_of=report_date)
@@ -1248,7 +1248,7 @@ def main():
         # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         heads = daily_headlines(repo_root)
-        for span, keyer, sub in (('weekly', week_key, 'weekly'), ('monthly', month_key, 'monthly')):
+        for span, keyer, sub in (('weekly', week_key, 'weekly'),):
             k = keyer(report_date)
             agg = period_build(span, k, dated, yh, heads)
             d = os.path.join(args.outdir, sub)

@@ -19,11 +19,11 @@
 - **쟁점 분석(2026-10-21)**: §12 뒤 `<!--CONTESTED-->` 자리를 `render_contested.py --market kr` 가 `data/contested/kr/<date>.json` 에서 찍는다(손으로 쓰지 않는다). 결과는 Mac 로컬 러너가 만든다 — 발견은 NAVER API HUB 검색(**약관 2.3 「AI 입력 금지」와 충돌, 사용자 결정으로 진행 — 검색 결과는 모델에 넣지 않는다**; 인증·정지·한도 오류면 그날 언론사 RSS 로 자동 전환), 본문은 언론사 사이트(robots 런타임 준수, `n.news.naver.com` 금지). When changing this: read `docs/superpowers/specs/2026-10-21-contested-analysis-design.md` before touching `scripts/collect_contested_kr.py`.
 - **미완**: ECOS 월별 지표(CPI·수출입) / 장중 수급·프로그램 매매 대체재 / US 독자 전환 여부.
 
-## 주간·월간 정리 — KR 몫
+## 주간 정리 — KR 몫
 
 - **성격**: 그 기간에 발행한 KR 마감브리프의 총정리. **웹 검색·시세 재수집 금지.** 서술은 `kr/posts/*.html`, 성과표는 집계 파일.
-- **발행물**: 토요일 `/kr/weekly/<YYYY-Www>.html`, 월 롤오버 다음날 `/kr/monthly/<YYYY-MM>.html`. 키는 `us/period.py` 의 `week_key()`·`month_key()`. 마지막 거래일은 `end_date` 필드다.
-- **저장소가 둘이다 — 섞으면 복원이 안 된다.** `kr/data/history/kr_market.jsonl`(지수 종가 원장, `upsert=True`)과 `kr/data/{weekly,monthly}/<KEY>.json` 의 **`_sessions`**(업종·거래대금·수급 세션 원장, `scripts/kr/period.py` 의 `upsert_session()`·`finalize()` — 멱등, 실패한 날은 다음 실행이 메운다). JSONL 만 백업하면 `_sessions` 는 복원되지 않는다.
+- **발행물**: 토요일 `/kr/weekly/<YYYY-Www>.html`. 키는 `us/period.py` 의 `week_key()`. 마지막 거래일은 `end_date` 필드다.
+- **저장소가 둘이다 — 섞으면 복원이 안 된다.** `kr/data/history/kr_market.jsonl`(지수 종가 원장, `upsert=True`)과 `kr/data/weekly/<KEY>.json` 의 **`_sessions`**(업종·거래대금·수급 세션 원장, `scripts/kr/period.py` 의 `upsert_session()`·`finalize()` — 멱등, 실패한 날은 다음 실행이 메운다). JSONL 만 백업하면 `_sessions` 는 복원되지 않는다.
 - **수급은 확정치만 담는다.** `leading` 플래그는 60개 업종 중 30개에 붙으므로 등락률 상위 5개만 남긴다.
-- **현황**: KR 주간은 2026-W37 부터 발행 중, 월간은 아직 없다 — 첫 회차는 롤업 표본 부족이 정상이다.
-- **고칠 때**: `scripts/kr/period.py` 를 건드리기 전에 `docs/superpowers/specs/2026-08-23-period-reports-design.md` 를 읽는다. 게이트(`check_period.py`)와 작성 사양은 US·KR 공용이다(`scripts/us/CLAUDE.md` 「주간·월간 정리 — US 몫」).
+- **현황**: KR 주간은 2026-W37 부터 발행 중이다. 월간은 2026-10-27 폐지했다.
+- **고칠 때**: `scripts/kr/period.py` 를 건드리기 전에 `docs/superpowers/specs/2026-08-23-period-reports-design.md` 를 읽는다. 게이트(`check_period.py`)와 작성 사양은 US·KR 공용이다(`scripts/us/CLAUDE.md` 「Weekly recap — US half」).

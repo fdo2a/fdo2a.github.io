@@ -286,14 +286,14 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     _write(outdir, "kr_stance_eval.json", stance_eval)
     print(f"stance: {stance_eval['verdict']} — {stance_eval['note']}")
 
-    # 기간 집계 — 세션 upsert. 과거 확정 수급 행도 함께 메워 월간이 자가치유된다.
+    # 기간 집계 — 세션 upsert. 과거 확정 수급 행도 함께 메워 주간이 자가치유된다.
     # 양쪽 시장 모두 시세를 다시 받지 않는다. US 는 data/history/market.jsonl 을 굴리고,
     # KR 은 업종·거래대금에 과거 계열이 없어 그날 스냅샷을 날짜 키로 쌓는다.
     try:
         from kr.history import index_record, index_series
         from kr.period import finalize, session_from, upsert_session
         from us.history import append_jsonl, read_jsonl
-        from us.period import month_key, week_key
+        from us.period import week_key
 
         sess = session_from(market, flows_out, industry, top_value)
 
@@ -303,8 +303,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
             print(f"history: appended {report_date} to kr_market.jsonl")
         closes = index_series(read_jsonl(ledger))
 
-        for span, keyer, sub in (("weekly", week_key, "weekly"),
-                                 ("monthly", month_key, "monthly")):
+        for span, keyer, sub in (("weekly", week_key, "weekly"),):
             k = keyer(report_date)
             d = os.path.join(outdir, sub)
             os.makedirs(d, exist_ok=True)

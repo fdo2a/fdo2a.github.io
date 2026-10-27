@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publication gate for the weekly / monthly recaps.
+"""Publication gate for the weekly recaps.
 
   python3 scripts/check_period.py --html weekly_2026-W34.html \
       --agg data/weekly/2026-W34.json --recap recap_source.json \
@@ -33,7 +33,7 @@ def main():
     ap.add_argument('--agg', required=True)
     ap.add_argument('--recap', required=True)
     ap.add_argument('--scorecard', default=None)
-    ap.add_argument('--span', choices=('weekly', 'monthly'), required=True)
+    ap.add_argument('--span', choices=('weekly',), required=True)
     ap.add_argument('--research-root', help='Verified append-only research directory')
     ap.add_argument('--research-as-of', help='Timezone-aware frozen review cutoff')
     ap.add_argument('--market', choices=('us', 'kr'))

@@ -4,7 +4,7 @@
 
 US·KR 주간 2편을 발행한다. 웹 검색은 하지 않는다. **KR 은 그 주 발행본의 총정리**, **US 는 인사이트 형식**(2026-09-26 — 발행본 + 주간 스냅샷으로 계산한 진단, STEP 4). 시세는 다시 받지 않는다 — 표 끝값은 집계, 진단은 스냅샷에서 온다.
 
-**편집 계약:** 준비 단계에서 `.claude/DESK_REPORT.md`를 읽고 writer에게 경로를 전달한다. 기간 시황과 성과표를 유지하면서 현재 판단의 함의·기대와 결과의 차이·다음 확인 조건을 연결한다. 주간은 중요한 질문의 심화, 월간은 판단 방법의 복기다. 작성 전후 그 문서의 Editorial acceptance를 적용하고 기존 연구·수치·문체 검사를 모두 수행한다.
+**편집 계약:** 준비 단계에서 `.claude/DESK_REPORT.md`를 읽고 writer에게 경로를 전달한다. 기간 시황과 성과표를 유지하면서 현재 판단의 함의·기대와 결과의 차이·다음 확인 조건을 연결한다. 주간은 중요한 질문의 심화다. 작성 전후 그 문서의 Editorial acceptance를 적용하고 기존 연구·수치·문체 검사를 모두 수행한다.
 
 ## STEP 0 — 준비와 기간 키
 
@@ -71,7 +71,7 @@ python3 scripts/build_scorecard.py --agg data/weekly/<KEY>.json --datadir data \
 
 ## 연구 복기 준비 — 작성자 호출 전
 
-`.claude/RESEARCH_WORKFLOW.md`의 기간 복기를 수행한다. 시장별 `research/us`·`research/kr` 원장과 저장 증거만 사용한다. 집계의 START·END와 실제 검토 시각 AS_OF를 고정하고 `check_research.py render`로 요약을 만든다. 작성자는 생성된 section을 그대로 삽입하고, 주간에는 가설 변화와 반증, 월간에는 반복된 설명의 한계와 다음 검증 조건을 서술한다. 초기 원장이 비어 있으면 축적 전이라고 밝힌다.
+`.claude/RESEARCH_WORKFLOW.md`의 기간 복기를 수행한다. 시장별 `research/us`·`research/kr` 원장과 저장 증거만 사용한다. 집계의 START·END와 실제 검토 시각 AS_OF를 고정하고 `check_research.py render`로 요약을 만든다. 작성자는 생성된 section을 그대로 삽입하고, 가설 변화와 반증을 서술한다. 초기 원장이 비어 있으면 축적 전이라고 밝힌다.
 
 아래 US 명령의 `<AS_OF>`는 같은 고정 시각이다. KR 실행에서는 모든 입력 경로와 `--research-root research/kr --market kr`를 함께 바꾼다. 발행 전 `check_research.py check`도 workflow대로 수행한다.
 

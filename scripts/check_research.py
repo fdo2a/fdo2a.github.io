@@ -23,7 +23,7 @@ def main(argv=None):
         if name == 'render':
             p.add_argument('--out', type=Path, required=True)
         else:
-            p.add_argument('--span', choices=('daily', 'weekly', 'monthly'), required=True)
+            p.add_argument('--span', choices=('daily', 'weekly'), required=True)
             p.add_argument('--html', type=Path, required=True)
             p.add_argument('--date')
             p.add_argument('--cycle')

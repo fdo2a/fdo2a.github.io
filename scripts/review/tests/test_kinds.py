@@ -1,6 +1,6 @@
-"""글 종류 표 — 주간·월간·일본도 발행 뒤 codex 문체 수정을 받는다 (2026-10-01 사용자 지시).
+"""글 종류 표 — 주간·일본도 발행 뒤 codex 문체 수정을 받는다 (2026-10-01 사용자 지시).
 
-주·월 키는 파일명에 날짜가 없어서 러너의 신선도 필터가 통째로 건너뛰었다.
+주 키는 파일명에 날짜가 없어서 러너의 신선도 필터가 통째로 건너뛰었다.
 """
 from datetime import date
 
@@ -13,8 +13,6 @@ def test_publish_day_of_each_kind():
     assert kinds.publish_day('weekly/2026-W39.html') == date(2026, 9, 26)        # 토
     assert kinds.publish_day('kr/weekly/2026-W39.html') == date(2026, 9, 26)
     assert kinds.publish_day('japan/posts/2026-W39.html') == date(2026, 9, 27)   # 일
-    assert kinds.publish_day('monthly/2026-09.html') == date(2026, 10, 1)
-    assert kinds.publish_day('kr/monthly/2026-12.html') == date(2027, 1, 1)
     assert kinds.publish_day('posts/2026-09-30.html') == date(2026, 9, 30)
     assert kinds.publish_day('weekly/index.html') is None
 
@@ -23,8 +21,8 @@ def test_evidence_files_per_kind():
     assert kinds.evidence('weekly', '2026-W39') == (
         'data/weekly/2026-W39.json', 'data/weekly_ext/2026-W39.insight.json',
         'recap_us.json', 'data/period_scorecard.json')
-    assert kinds.evidence('kr/monthly', '2026-09') == (
-        'kr/data/monthly/2026-09.json', 'recap_kr.json', 'data/period_scorecard.json')
+    assert kinds.evidence('kr/weekly', '2026-W39') == (
+        'kr/data/weekly/2026-W39.json', 'recap_kr.json', 'data/period_scorecard.json')
     assert kinds.evidence('japan/posts', '2026-W40') == (
         'japan/data/2026-W40.json', 'japan/data/2026-W40.news.json')
 
@@ -34,13 +32,11 @@ def item(path, section, sha='a' * 40):
 
 
 def test_period_items_are_picked_within_their_window():
-    q = [item('weekly/2026-W39.html', 'weekly'), item('japan/posts/2026-W39.html', 'japan/posts'),
-         item('monthly/2026-09.html', 'monthly')]
+    q = [item('weekly/2026-W39.html', 'weekly'), item('japan/posts/2026-W39.html', 'japan/posts')]
     pub = {i.path: i.sha for i in q}
     got = {i.path for i in eligible(q, pub, {}, '2026-09-29')}
     assert {'weekly/2026-W39.html', 'japan/posts/2026-W39.html'} <= got
-    got = {i.path for i in eligible(q, pub, {}, '2026-10-07')}
-    assert got == {'monthly/2026-09.html'}                                 # 주간은 3일 지남
+    assert eligible(q, pub, {}, '2026-10-07') == []                        # 주간은 3일 지남
 
 
 def test_daily_window_is_unchanged():

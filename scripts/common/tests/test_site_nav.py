@@ -113,7 +113,7 @@ def _home(browser, query='', fail=(), hold=None):
     page = browser.new_page(viewport={'width': 390, 'height': 800})
     html = (ROOT / 'index.html').read_text(encoding='utf-8')
     held = []
-    data = {'posts.json': DAILY, 'weekly.json': WEEKLY, 'monthly.json': [], 'news.json': []}
+    data = {'posts.json': DAILY, 'weekly.json': WEEKLY, 'news.json': []}
 
     def route(r):
         url = r.request.url
@@ -150,6 +150,12 @@ def test_span_in_the_url_opens_that_tab(browser):
 
 def test_unknown_span_falls_back_to_daily(browser):
     page, _, _ = _home(browser, '?span=<script>')
+    assert _state(page)['tab'] == 'daily' and _state(page)['titles'] == ['일간 하나']
+    page.close()
+
+
+def test_abolished_monthly_span_falls_back_to_daily(browser):
+    page, _, _ = _home(browser, '?span=monthly')
     assert _state(page)['tab'] == 'daily' and _state(page)['titles'] == ['일간 하나']
     page.close()
 
@@ -196,7 +202,7 @@ def test_subnav_is_a_tablist_distinct_from_the_menubar(browser):
                 radius: parseFloat(cs.borderTopLeftRadius), height: btn.getBoundingClientRect().height,
                 underline: parseFloat(cs.borderBottomWidth) > 0};
     }""")
-    assert got['role'] == 'tablist' and got['tabs'] == 4
+    assert got['role'] == 'tablist' and got['tabs'] == 3
     assert got['radius'] >= 12 and got['height'] >= 36 and not got['underline']
     page.close()
 
@@ -218,7 +224,7 @@ def test_tabs_follow_the_keyboard_tab_pattern(browser):
         tabindex: [...document.querySelectorAll('.subnav [role=tab]')].map(b => b.tabIndex),
         panel: document.getElementById('list').getAttribute('role'),
         controls: document.querySelector('.subnav [role=tab]').getAttribute('aria-controls')})""")
-    assert got == {'focus': 'weekly', 'tabindex': [-1, 0, -1, -1], 'panel': 'tabpanel', 'controls': 'list'}
+    assert got == {'focus': 'weekly', 'tabindex': [-1, 0, -1], 'panel': 'tabpanel', 'controls': 'list'}
     assert _state(page)['tab'] == 'weekly' and _state(page)['url'] == '?span=weekly'
     page.keyboard.press('End')
     page.wait_for_timeout(200)
