@@ -1,6 +1,6 @@
-# 일본 시장 일간 마감브리프 — 오케스트레이터 (도쿄 거래일 19:00 KST)
+# 일본 시장 일간 마감브리프 — 오케스트레이터 (도쿄 거래일 · KR 브리프 직후)
 
-도쿄 거래일 저녁마다 한 편을 `/japan/daily/<세션>.html` 로 발행한다. 본 루틴 19:00 KST, 재시도 21:00 KST. 일본 주간(`JAPAN_ORCHESTRATOR.md`)과 데이터·발행이 분리돼 있다. **웹 검색은 하지 않는다** — 숫자는 전부 수집 스냅샷에서, 뉴스는 일간 뉴스 파일에서만. 설계: `docs/superpowers/specs/2026-10-27-japan-daily-design.md`(§13 우선).
+도쿄 거래일 저녁마다 한 편을 `/japan/daily/<세션>.html` 로 발행한다. 본 루틴은 18:20 KST 에 깨어 KR 브리프 발행을 기다렸다가 시작, 재시도 21:00 KST. 일본 주간(`JAPAN_ORCHESTRATOR.md`)과 데이터·발행이 분리돼 있다. **웹 검색은 하지 않는다** — 숫자는 전부 수집 스냅샷에서, 뉴스는 일간 뉴스 파일에서만. 설계: `docs/superpowers/specs/2026-10-27-japan-daily-design.md`(§13 우선).
 
 ## STEP 0 — 세션 고정, 판정, 잠금 (다른 파일을 읽기 전에)
 
@@ -10,7 +10,11 @@ read -r S P < <(python3 scripts/ci/routine_due.py jp-session)   # 세션, 직전
 KEY=$(bash scripts/ci/run_lock.sh key jp_daily)                 # jpd-<S>
 ```
 
-`DONE`·`BUSY`·`SKIP` 면 그 한 줄만 보고하고 끝낸다(`SKIP` = 오늘 발행할 세션이 아니다 — 휴장일·주말, 보충 발행 없음). **세션 `S` 는 여기서 한 번 정하고 끝까지 그대로 쓴다** — 자정을 넘긴 재시도가 날짜 산술로 다시 만들면 다른 세션이 된다. `bash scripts/ci/run_lock.sh acquire "$KEY" 120` — exit 3 이면 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). 수집 전후, 작성자를 부르기 직전과 돌아온 직후, 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$KEY"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**에서 `bash scripts/ci/run_lock.sh release "$KEY"` 로 푼다. release 가 exit 4·5 면 그 출력을 붙여 PushNotification 으로 보고한다.
+`DONE`·`BUSY`·`SKIP` 면 그 한 줄만 보고하고 끝낸다(`SKIP` = 오늘 발행할 세션이 아니다 — 휴장일·주말, 보충 발행 없음).
+
+**KR 브리프가 올라온 뒤에 시작한다**(사용자 지시 2026-10-27 — 본 회차는 18:20 KST 에 깨어 기다린다). `DUE` 면 잠금 전에 `bash scripts/ci/wait_for_kr.sh` (Bash timeout 600000) — exit 0(`DONE` — KR 발행 완료, 한국 휴장일도 즉시 `DONE`)이면 진행, exit 2 면 같은 명령을 다시. **최대 8번(약 72분)** 까지 기다리고, 그래도 KR 이 없으면 기다리지 않고 진행한다(일본 일간을 KR 실패에 묶지 않는다). 재시도 회차(21:00)는 기다리지 않는다. 기다린 뒤에는 `routine_due.py jp_daily` 를 한 번 더 — 그사이 다른 런이 발행했으면 `DONE` 으로 끝난다.
+
+**세션 `S` 는 여기서 한 번 정하고 끝까지 그대로 쓴다** — 자정을 넘긴 재시도가 날짜 산술로 다시 만들면 다른 세션이 된다. `bash scripts/ci/run_lock.sh acquire "$KEY" 120` — exit 3 이면 「locked by another run」만 보고하고 끝낸다(exit 4 도 진행하지 않는다). 수집 전후, 작성자를 부르기 직전과 돌아온 직후, 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$KEY"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**에서 `bash scripts/ci/run_lock.sh release "$KEY"` 로 푼다. release 가 exit 4·5 면 그 출력을 붙여 PushNotification 으로 보고한다.
 
 ## STEP 1 — 수집 (Actions 에서만)
 

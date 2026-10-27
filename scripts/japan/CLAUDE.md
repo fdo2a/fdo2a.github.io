@@ -32,7 +32,7 @@ When changing this: read `docs/superpowers/specs/2026-09-26-weekly-insight-and-j
 
 ## Japan daily close brief (2026-10-27)
 
-Every Tokyo trading day, `/japan/daily/<session>.html`, routine `.claude/JAPAN_DAILY_ORCHESTRATOR.md` (19:00 KST, retry 21:00, **no backfill**), writer `.claude/agents/japan-daily-writer.md`. Separate from the weekly — never edit weekly files, `calendar.json` meanings, `news.py` classification or the weekly news freeze for it.
+Every Tokyo trading day, `/japan/daily/<session>.html`, routine `.claude/JAPAN_DAILY_ORCHESTRATOR.md` (wakes 18:20 KST and starts once the KR brief is on main — `scripts/ci/wait_for_kr.sh`, ≤72 min; retry 21:00; **no backfill**), writer `.claude/agents/japan-daily-writer.md`. Separate from the weekly — never edit weekly files, `calendar.json` meanings, `news.py` classification or the weekly news freeze for it.
 
 | File | Does |
 |---|---|
