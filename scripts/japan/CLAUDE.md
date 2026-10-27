@@ -45,7 +45,7 @@ Every Tokyo trading day, `/japan/daily/<session>.html`, routine `.claude/JAPAN_D
 
 - **Nikkei close = official Nikkei CSV row for the session** matched to `fast_info.lastPrice` within 0.01% (`complete`); never commit the CSV. ETFs/stocks only when the last 5-minute bar is on the session. **Never `previousClose`** — a change needs a denominator dated exactly `prev_session`.
 - FX = 5-minute bar ending 16:30 JST (weekly uses 16:00 ET — values differ). JGB = MOF row for `prev_session` only; call rate = BOJ API latest observation (≤3 trading days old).
-- Macro `released` only when the BOJ series has a period newer than the previous snapshot's `macro_periods`; otherwise `pending`. No consensus anywhere.
+- Macro `released` only when the calendar row's expected `period` is present in the BOJ series; otherwise `pending`. Holidays/weekends return `SKIP` (no backfill). No consensus anywhere.
 - Core values in prose carry `<span data-ref="field.path">`; values with a period ≠ session need that date in the paragraph. No weekly signal vocabulary, no 「지수 기여」.
 - BOJ API: no key, ≤10 calls per run, series codes cached 7 days (`japan/data/daily/boj_series.json`); the credit line is mandatory.
 - Review runner: `japan/daily` = (`jp`, `daily`) in `review/kinds.py` — codex drafts, manual review-gate correction (not in `DAILY`).
