@@ -104,6 +104,14 @@ def test_hanging_request_cannot_hold_the_collector():
     assert [r['guid'] for r in kept] == ['a', 'c', 'd']       # b·e 는 빠졌고(받은 판정), d 는 정규식
 
 
+def test_worker_crash_rolls_back_everything():
+    """예상 못 한 예외는 행 단위가 아니라 전체 되돌림 — 앞서 받은 「해외」 판정도 쓰지 않는다."""
+    rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
+    post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': RuntimeError('bug')})
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post)
+    assert kept == rows and meta['mode'] == 'regex' and meta['stopped'] == 'crash' and meta['dropped'] == []
+
+
 def test_secret_never_in_meta():
     from japan.jev_client import JevHTTPError
     _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'TEST_ONLY_SECRET'},

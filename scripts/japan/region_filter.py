@@ -7,7 +7,8 @@
 것이 0건이었고, 순서가 PRESELECT 자리를 바꾼다 — codex 설계 검토 #3·#6). foreign_impact(제목이 일본 영향을 명시)는 남긴다.
 라벨 정의·질문·모델(`jev-1.14.0`)은 평가한 섀도 설정 그대로(`japan/region_shadow.py`), 다른 모델의 응답은 쓰지 않는다(#8).
 
-**실패하면 그 행은 정규식** — 키 없음·인증·HTTP·형식 오류·마감. 받은 판정은 쓴다(행 단위, #2). Jev 호출은 데몬
+**실패하면 그 행은 정규식** — 키 없음·인증·HTTP·형식 오류·마감. 받은 판정은 쓴다(행 단위, #2). 예상 못 한 예외는
+스레드 안이든 밖이든 **전체 되돌림**이다. Jev 호출은 데몬
 스레드에서 돌고 본 흐름은 `deadline` 초 뒤 그때까지의 판정으로 진행한다 — 끝나지 않는 응답이 수집을 붙잡지 못한다(#1).
 """
 import threading
@@ -114,6 +115,9 @@ def run(rows, env, post=None, deadline=DEADLINE, timeout=REQUEST_TIMEOUT):
         verdicts = dict(box['verdicts'])
         stopped = box['stopped'] or ('deadline' if worker.is_alive() else 'complete')
         meta.update(asked=box['asked'], answered=len(verdicts), stopped=stopped, errors=dict(box['errors']))
+    if stopped == 'crash':
+        # 예상 못 한 예외 — 그 전 판정도 믿지 않는다. 필터 코드 예외와 같이 전체 정규식(codex 구현 검토)
+        return rows, dict(meta, mode='regex', stopped='crash', answered=0)
     kept, meta['dropped'] = apply(rows, verdicts)
     meta['mode'] = 'jev' if verdicts else 'regex'
     meta['seconds'] = round(time.monotonic() - t0, 1)
