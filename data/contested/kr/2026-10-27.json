@@ -1,0 +1,71 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-27",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-27T11:08:51+00:00",
+ "cutoff_at": "2026-10-27T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "2cee93ab69a148402d06ce57e2672a0dc9d9dd1e",
+  "sha256": "e1b2b13eda76cefdfcb45e30fe37c9c07ea8b0aea634f304334299269ae2c066",
+  "extra": {
+   "kr_econ.json": "26ed878c83867335332be235ed688a819d99cfe1c71749f481b621a4b07fd9bd",
+   "kr_flows.json": "31fa924f43a1e26411d072b298a019dc6392a256f3b8d97d1c0103f9aec4329d",
+   "kr_session.json": "74ff43c301e1046cd27e907fd5e7771658bf987afabc0e554c6477754167f071"
+  }
+ },
+ "counts": {
+  "harvest": 645,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "nocut": "ok",
+   "mk": "ok",
+   "fnnews": "ok",
+   "hankyung": "ok",
+   "sedaily": "ok",
+   "seoul": "ok"
+  },
+  "notes": [
+   "discover:645"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 29663,
+   "out": 13597
+  },
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "2/2",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 9
+  }
+ },
+ "event": {
+  "topic_ko": "신한금융 3분기 실적: 순이자마진 방향과 신한라이프 감익 폭",
+  "query": "3분기 LG이노텍 최대",
+  "trigger": []
+ },
+ "content_hash": "bce8870aaf9e4ed4"
+}
