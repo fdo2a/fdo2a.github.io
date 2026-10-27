@@ -439,6 +439,15 @@ def test_the_final_refusal_names_the_specific_problem(tmp_path):
 HAIKU, SONNET = 'claude-haiku-5-5', 'claude-sonnet-5-5'
 
 
+import pytest  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def fresh_escalation_budget(monkeypatch):
+    monkeypatch.setattr(NS, '_escalations', 0)
+    monkeypatch.setattr(NS, '_escalate_off', False)
+
+
 class ByModel(Client):
     """모델별 응답 목록. 항목은 글, (stop_reason, 글), 또는 예외."""
     def __init__(self, **replies):
@@ -529,3 +538,53 @@ def test_escalations_per_run_are_capped(tmp_path, monkeypatch):
     assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
     assert models(c) == [HAIKU, HAIKU, SONNET, HAIKU, HAIKU]
     assert 'summary_ko' not in its[1] and '분량' in its[1]['summary_note']
+
+
+def test_the_cap_is_shared_across_calls_in_one_run(tmp_path, monkeypatch):
+    # 뉴스 → 칼럼, 날짜 → 다음 날짜처럼 같은 실행이 여러 번 부른다
+    monkeypatch.setattr(NS, 'ESCALATE_CAP', 1)
+    c = ByModel(claude_haiku_5_5=['짧다'] * 4, claude_sonnet_5_5=[GOOD, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model=HAIKU, client=c, log=lambda *_: None)
+    its = items(tmp_path)
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 0
+    assert models(c) == [HAIKU, HAIKU, SONNET, HAIKU, HAIKU]
+
+
+def test_a_403_on_the_escalated_model_only_turns_escalation_off(tmp_path):
+    its = items(tmp_path, 3)
+    c = ByModel(claude_haiku_5_5=['짧다', '짧다', GOOD, '짧다', '짧다'],
+                claude_sonnet_5_5=[Boom(status_code=403)])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
+    assert models(c) == [HAIKU, HAIKU, SONNET, HAIKU, HAIKU, HAIKU]
+    assert its[0]['summary_note'] == '승격 모델 권한 없음 API 403'
+    assert its[1]['summary_model'] == HAIKU and '분량' in its[2]['summary_note']
+
+
+def test_a_failure_on_the_second_haiku_call_does_not_escalate(tmp_path):
+    for second in (('refusal', GOOD), ('max_tokens', GOOD), Boom(status_code=529)):
+        its = items(tmp_path)
+        c = ByModel(claude_haiku_5_5=['짧다', second], claude_sonnet_5_5=[GOOD])
+        NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None)
+        assert models(c) == [HAIKU, HAIKU] and 'summary_ko' not in its[0]
+
+
+def test_a_non_auth_error_on_sonnet_skips_only_that_article(tmp_path):
+    its = items(tmp_path, 2)
+    c = ByModel(claude_haiku_5_5=['짧다', '짧다', GOOD], claude_sonnet_5_5=[Boom(status_code=529)])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
+    assert its[0]['summary_note'] == 'API 529' and its[1]['summary_ko'] == GOOD
+
+
+def test_a_failed_escalation_still_spends_the_budget(tmp_path, monkeypatch):
+    monkeypatch.setattr(NS, 'ESCALATE_CAP', 1)
+    its = items(tmp_path, 2)
+    c = ByModel(claude_haiku_5_5=['짧다'] * 4, claude_sonnet_5_5=['짧다'])
+    NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None)
+    assert models(c) == [HAIKU, HAIKU, SONNET, HAIKU, HAIKU]
+
+
+def test_articles_done_before_an_auth_stop_keep_their_summary(tmp_path):
+    its = items(tmp_path, 2)
+    c = ByModel(claude_haiku_5_5=[GOOD, '짧다', '짧다'], claude_sonnet_5_5=[Boom(status_code=401)])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
+    assert its[0]['summary_ko'] == GOOD and '인증 실패' in its[1]['summary_note']

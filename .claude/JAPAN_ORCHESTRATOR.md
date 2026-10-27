@@ -28,7 +28,7 @@ python3 scripts/build_japan_weekly.py diag --key <KEY>
 
 ## STEP 2 — 작성과 조립
 
-**작성자 모델(2026-10-27)** — 작성자(`japan-report-writer`)를 부르는 모든 Agent 호출 — 첫 작성, 게이트·조립 실패로 되돌려 고치기, general-purpose 폴백 — 에 `model: "opus"` 를 적는다. 에이전트 머리말에도 같은 값이 있지만 폴백에서는 머리말이 빠진다. 수집 담당 등 다른 서브에이전트는 모델을 적지 않는다(본체 모델 상속). Agent 도구가 아예 없어 본체가 직접 쓰는 폴백은 **이 루틴의 모델이 Opus 일 때만** 한다 — 아니면 쓰지 말고 잠금을 풀고 중단을 보고한다. 설계: `docs/superpowers/specs/2026-10-27-model-routing.md`.
+**작성자 모델(2026-10-27)** — 작성자(`japan-report-writer`)를 부르는 모든 Agent 호출 — 첫 작성, 게이트·조립 실패로 되돌려 고치기, general-purpose 폴백 — 에 `model: "opus"` 를 적는다. 에이전트 머리말에도 같은 값이 있지만 폴백에서는 머리말이 빠진다. 수집 담당 등 다른 서브에이전트는 모델을 적지 않는다(본체 모델 상속). **본체가 직접 쓰거나 고치는 모든 단계는 이 루틴의 모델이 Opus 일 때만 한다** — Agent 도구가 없을 때의 폴백, 작성자 타입이 없을 때의 직접 작성, 「같은 위반 두 번 → 오케스트레이터가 직접 고친다」. 본체가 Opus 가 아니면: 작성자 타입이 없으면 general-purpose 를 `model: "opus"` 로 부르고, 직접 고치는 대신 작성자를 `model: "opus"` 로 한 번 더 부르며, Agent 도구가 없거나 그래도 남으면 잠금을 풀고 중단을 보고한다 — 이 중단은 「중단은 completeness 실패뿐」의 예외다. 설계: `docs/superpowers/specs/2026-10-27-model-routing.md`.
 
 `japan-report-writer` 를 **동기**로 부른다. 넘기는 것은 경로뿐이다(`japan/data/<KEY>.json`, `<KEY>.news.json`) — 오케스트레이터가 데이터·지시문을 다시 읽지 않는다. 일본 뉴스(`japan/data/news/<date>.json`)는 `collect-japan-news.yml`(Actions, 화-토·월 07:00 JST)이 받아 커밋한다 — 루틴은 받지 않고, 비어 있으면 `diag` 의 「이번 주 뉴스 후보 0」 이 그대로 면제다. 조립이 `<!--NEWS:-->` 자리표시를 요약으로 채우고, 채우지 못하면 실패 목록을 작성자에게 돌려준다.
 

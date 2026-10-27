@@ -51,6 +51,9 @@ EFFORT_MODELS = {'claude-haiku-5-5': 'low', 'claude-sonnet-5-5': 'low'}  # 정�
 # 다른 것으로 바꿨으면 승격하지 않는다. 실행당 상한은 밀린 날짜를 몰아 받는 날의 비용·지연을 묶는다.
 ESCALATE = {'claude-haiku-5-5': 'claude-sonnet-5-5'}
 ESCALATE_CAP = 10
+# 승격 예산은 수집 실행(프로세스) 전체가 나눠 쓴다 — 뉴스·칼럼·밀린 날짜가 summarize_items 를 따로 부른다.
+_escalations = 0
+_escalate_off = False               # 승격 모델만 403 이면 이 실행에서는 더 올리지 않는다
 AUDIENCE = 'https://api.anthropic.com'
 
 # 게이트의 요약 분량 띠(news_gate.MIN_CHARS·MAX_CHARS = 240·420, **공백 제외**)보다 안쪽을
@@ -422,7 +425,8 @@ def summarize_items(items, bodydir, model=None, client=None, log=print, system=N
             return 0
     model = model or os.environ.get('NEWS_SUMMARY_MODEL') or DEFAULT_MODEL
 
-    done = escalated = 0
+    global _escalations, _escalate_off
+    done = 0
     for it in todo:
         try:
             with open(os.path.join(bodydir, it['body_file']), encoding='utf-8') as fh:
@@ -433,11 +437,20 @@ def summarize_items(items, bodydir, model=None, client=None, log=print, system=N
         used = model                        # 기사마다 기본 모델에서 다시 시작한다
         try:
             text, why, stuck = _attempt(client, model, it, body, system, tries=2)
-            if stuck and model in ESCALATE and escalated < ESCALATE_CAP:
-                escalated += 1
-                used = ESCALATE[model]
-                log(f"  요약 승격 {model} → {used} ({why})  {(it.get('title') or '')[:50]}")
-                text, why, _ = _attempt(client, used, it, body, system, tries=1)
+            if stuck and model in ESCALATE and not _escalate_off and _escalations < ESCALATE_CAP:
+                _escalations += 1
+                up = ESCALATE[model]
+                log(f"  요약 승격 {model} → {up} ({why})  {(it.get('title') or '')[:50]}")
+                try:
+                    text, why, _ = _attempt(client, up, it, body, system, tries=1)
+                    used = up
+                except Exception as e:
+                    # 403 은 그 모델 권한 문제일 수 있다 — 기본 모델은 계속 쓴다. 401·토큰 교환 실패는 아래에서 전체 중단.
+                    if getattr(e, 'status_code', None) != 403:
+                        raise
+                    _escalate_off = True
+                    why = '승격 모델 권한 없음 API 403'
+                    log(f'  요약 승격 끔 — {up} 가 403, 남은 기사는 {model} 만 쓴다')
         except Exception as e:              # 인증 실패 — 남은 건도 같은 벽에 부딪힌다
             mark_all(f'인증 실패 {type(e).__name__}')
             log(f'  요약 중단 — 인증 실패 ({type(e).__name__}: {str(e)[:400]}) '
