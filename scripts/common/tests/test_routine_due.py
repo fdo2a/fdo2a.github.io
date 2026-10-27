@@ -176,11 +176,13 @@ def test_weekly_busy():
 # ── 월간 (2026-10-27 codex 설계 검토) ────────────────────────────────────────
 
 def monthly(files=(), today=date(2026, 11, 3), us_rd='2026-11-02', kr_rd='2026-11-02',
-            us_end='2026-10-30', kr_end='2026-10-30', us_ok=True, kr_ok=True):
-    def agg(end, ok):
-        return None if end is None else {'end_date': end, 'complete': ok}
+            us_end='2026-10-30', kr_end='2026-10-30', us_ok=True, kr_ok=True,
+            us_n=22, kr_n=20):
+    # 2026-10: 평일 22일, US 휴장 없음 · KR 10/05 대체공휴일·10/09 한글날
+    def agg(end, ok, n):
+        return None if end is None else {'end_date': end, 'complete': ok, 'sessions': n}
     return rd.decide_monthly(today, {'us': us_rd, 'kr': kr_rd},
-                             {'us': agg(us_end, us_ok), 'kr': agg(kr_end, kr_ok)},
+                             {'us': agg(us_end, us_ok, us_n), 'kr': agg(kr_end, kr_ok, kr_n)},
                              set(files), {'us': US_HOL, 'kr': KR_HOL})
 
 
@@ -218,15 +220,36 @@ def test_monthly_blocks_on_missing_or_incomplete_aggregate():
     assert monthly(kr_ok=False)[0] == 'BLOCKED'
 
 
-def test_monthly_published_side_needs_no_aggregate():
-    assert monthly({'monthly/2026-10.html'}, us_end=None, us_rd=None)[:3] == ('DUE', '2026-10', 'kr')
+def test_monthly_blocks_when_sessions_are_missing_inside_the_month():
+    """10/30 하루만 본 집계도 end_date 는 맞고 complete 다 — 거래일 수로 잡는다(codex 구현 검토 #1)."""
+    v = monthly(kr_n=1)
+    assert v[0] == 'BLOCKED' and 'kr' in v[2]
+
+
+def test_monthly_published_kr_side_needs_no_aggregate():
+    assert monthly({'kr/monthly/2026-10.html'}, kr_end=None, kr_rd=None)[:3] == ('DUE', '2026-10', 'us')
+
+
+def test_monthly_kr_resume_still_needs_the_us_aggregate_for_the_scorecard():
+    """STEP 3 스코어카드는 US 집계로 만든다 — KR 만 남아도 US 집계가 없으면 STEP 3 이 죽는다(구현 검토 #2)."""
+    assert monthly({'monthly/2026-10.html'}, us_end=None, us_rd=None)[0] == 'BLOCKED'
+    # US report_date 가 밀린 것은 KR 재개를 막지 않는다
+    assert monthly({'monthly/2026-10.html'}, us_rd='2026-10-30')[:3] == ('DUE', '2026-10', 'kr')
 
 
 def test_monthly_last_trading_day_follows_the_holiday_calendar():
     """KR 12/31 은 휴장 — 12월 집계는 12/30 에 끝나야 맞다."""
     v = monthly(today=date(2027, 1, 5), us_rd='2027-01-04', kr_rd='2027-01-04',
-                us_end='2026-12-31', kr_end='2026-12-30')
+                us_end='2026-12-31', kr_end='2026-12-30', us_n=22, kr_n=21)
     assert v == ('DUE', '2026-12', 'us,kr')
+
+
+def test_monthly_session_count_matches_the_real_september_aggregates():
+    """실제 9월 집계(US 21·KR 20 — 노동절, 추석 9/24·25)가 달력 거래일 수와 맞는다."""
+    aggs = {m: json.load(open(os.path.join(ROOT, p), encoding='utf-8'))
+            for m, p in (('us', 'data/monthly/2026-09.json'), ('kr', 'kr/data/monthly/2026-09.json'))}
+    assert rd.decide_monthly(date(2026, 10, 27), {'us': '2026-10-26', 'kr': '2026-10-27'}, aggs,
+                             set(), {'us': US_HOL, 'kr': KR_HOL}) == ('DUE', '2026-09', 'us,kr')
 
 
 def test_monthly_orchestrator_uses_the_step0_key_to_the_end():
@@ -235,6 +258,36 @@ def test_monthly_orchestrator_uses_the_step0_key_to_the_end():
     assert 'routine_due.py monthly' in doc
     assert 'month_key(' not in doc
     assert 'kr/monthly/<KEY>.html' in doc      # 시장별 완료 판정
+
+
+def test_monthly_cli_turns_git_errors_into_blocked(monkeypatch, capsys):
+    """git 시간 초과가 판정 한 줄 없이 터지면 BLOCKED 알림 경로를 건너뛴다(구현 검토 #4)."""
+    import subprocess
+
+    def boom(*a, **k):
+        raise subprocess.TimeoutExpired('git', 60)
+    monkeypatch.setattr(rd, '_git', boom)
+    assert rd.main(['monthly']) == 0
+    assert capsys.readouterr().out.startswith('BLOCKED ')
+
+
+def test_monthly_cli_reads_the_pulled_head_not_a_fresh_fetch(monkeypatch):
+    """판정과 작성이 같은 커밋을 읽어야 한다 — fetch 한 origin/main 은 작업 트리와 다를 수 있다(구현 검토 #3)."""
+    calls = []
+
+    def fake(*a, **k):
+        calls.append(a)
+        return subprocess_result()
+    monkeypatch.setattr(rd, '_git', fake)
+    rd.main(['monthly'])
+    assert not any(c[0] == 'fetch' for c in calls)
+    assert not any('origin/main' in ' '.join(c) for c in calls)
+
+
+def subprocess_result(code=1, out=''):
+    class R:
+        returncode, stdout = code, out
+    return R()
 
 
 # ── 잠금 이름은 루틴이 잡는 이름과 같아야 한다 ────────────────────────────────

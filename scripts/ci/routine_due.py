@@ -200,16 +200,22 @@ def decide_monthly(today, report_dates, aggs, files, holidays):
     early = [m for m in missing if not report_dates.get(m) or month_key(report_dates[m]) <= key]
     if early:
         return 'WAIT', key, f'데이터가 아직 {key} 를 넘지 않았다: {",".join(early)}'
-    last_day = date(*(int(x) for x in key.split('-')), 1) + timedelta(days=31)
-    last_day = last_day.replace(day=1) - timedelta(days=1)
+    first = date(*(int(x) for x in key.split('-')), 1)
+    days = [first + timedelta(days=i) for i in range(31)]
     bad = []
-    for m in missing:
+    # STEP 3 스코어카드는 US 집계로 만들므로 KR 만 남아도 US 집계는 있어야 한다(구현 검토 #2).
+    for m in [m for m in ('us', 'kr') if m in missing or m == 'us']:
         agg = aggs.get(m) or {}
-        want = _trading_back(last_day, holidays.get(m, ())).isoformat()
+        hol = set(holidays.get(m, ()))
+        want = [d.isoformat() for d in days
+                if d.month == first.month and d.weekday() < 5 and d.isoformat() not in hol]
         if not agg.get('complete'):
             bad.append(f'{m} 집계 없음·불완전')
-        elif agg.get('end_date') != want:
-            bad.append(f'{m} 집계 끝 {agg.get("end_date")} ≠ 마지막 거래일 {want}')
+        elif agg.get('end_date') != want[-1]:
+            bad.append(f'{m} 집계 끝 {agg.get("end_date")} ≠ 마지막 거래일 {want[-1]}')
+        elif agg.get('sessions') != len(want):
+            # 끝날만 맞고 중간·앞이 빈 집계도 complete 다(구현 검토 #1).
+            bad.append(f'{m} 집계 {agg.get("sessions")}거래일 ≠ 달력 {len(want)}거래일')
     if bad:
         return 'BLOCKED', key, '; '.join(bad)
     return 'DUE', key, ','.join(missing)
@@ -221,17 +227,17 @@ def _git(*args):
     return subprocess.run(['git', *args], capture_output=True, text=True, timeout=60)
 
 
-def _show_json(path):
-    out = _git('show', f'origin/main:{path}')
+def _show_json(path, ref='origin/main'):
+    out = _git('show', f'{ref}:{path}')
     try:
         return json.loads(out.stdout) if out.returncode == 0 else None
     except ValueError:
         return None
 
 
-def _holidays(market):
+def _holidays(market, ref='origin/main'):
     """달력의 그 시장 휴장일. 원격 판 → 작업 폴더 판 순. 못 읽으면 빈 목록 — 판정이 DUE 쪽으로 기운다."""
-    cal = _show_json('data/market_holidays.json')
+    cal = _show_json('data/market_holidays.json', ref)
     if cal is None:
         try:
             here = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..',
@@ -245,8 +251,8 @@ def _holidays(market):
     return tuple(days) if isinstance(days, list) else ()
 
 
-def _files(*dirs):
-    out = _git('ls-tree', '-r', '--name-only', 'origin/main', '--', *dirs)
+def _files(*dirs, ref='origin/main'):
+    out = _git('ls-tree', '-r', '--name-only', ref, '--', *dirs)
     return set(out.stdout.split())
 
 
@@ -338,21 +344,26 @@ def main(argv=None):
 
 
 def _monthly():
-    """월간은 KEY 가 있어야 진행하므로 판정 불가를 DUE 로 보내지 않는다 — BLOCKED 로 알린다."""
+    """월간은 KEY 가 있어야 진행하므로 판정 불가를 DUE 로 보내지 않는다 — BLOCKED 로 알린다.
+
+    사실은 fetch 한 origin/main 이 아니라 오케스트레이터가 pull 해 둔 HEAD 에서 읽는다 — 판정과
+    작성이 같은 커밋을 봐야 한다(구현 검토 #3). 이미 나간 글을 놓쳐도 STEP 6 의 재확인이 막는다.
+    """
     today = datetime.now(timezone.utc).astimezone(SEOUL).date()
-    if _git('fetch', '-q', 'origin', 'main').returncode:
-        print('BLOCKED - fetch 실패 — 판정 불가')
-        return 0
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
     from us.period import prev_month_key
     key = prev_month_key(today.isoformat())
-    rds = {m: (_show_json(p) or {}).get('report_date')
-           for m, p in (('us', 'data/market_data.json'), ('kr', 'kr/data/kr_market_data.json'))}
-    aggs = {'us': _show_json(f'data/monthly/{key}.json'),
-            'kr': _show_json(f'kr/data/monthly/{key}.json')}
-    verdict = decide_monthly(today, rds, aggs, _files('monthly', 'kr/monthly'),
-                             {'us': _holidays('us'), 'kr': _holidays('kr')})
-    print(' '.join(verdict))
+    try:
+        rds = {m: (_show_json(p, 'HEAD') or {}).get('report_date')
+               for m, p in (('us', 'data/market_data.json'), ('kr', 'kr/data/kr_market_data.json'))}
+        aggs = {'us': _show_json(f'data/monthly/{key}.json', 'HEAD'),
+                'kr': _show_json(f'kr/data/monthly/{key}.json', 'HEAD')}
+        files = _files('monthly', 'kr/monthly', ref='HEAD')
+        hol = {'us': _holidays('us', 'HEAD'), 'kr': _holidays('kr', 'HEAD')}
+    except (subprocess.SubprocessError, OSError) as e:
+        print(f'BLOCKED {key} git 실패 — 판정 불가: {type(e).__name__}')
+        return 0
+    print(' '.join(decide_monthly(today, rds, aggs, files, hol)))
     return 0
 
 
