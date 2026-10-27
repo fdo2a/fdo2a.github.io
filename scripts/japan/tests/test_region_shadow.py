@@ -458,8 +458,9 @@ def test_report_follows_model_override_and_splits_actual_versions(tmp_path):
     assert rep['coverage']['haiku'] == {'done': 2, 'missing': 0}
     assert rep['actual_models']['haiku'] == {'claude-haiku-4-5-actual': 2}
     assert rep['actual_models']['jev'] == {'jev-1.14.0': 1, 'jev-1.15.0': 1}
+    fp = R.regex_fingerprint()
     assert {k for k in rep['agreement'] if k.startswith('regex~jev')} == \
-        {'regex~jev [jev-1.14.0]', 'regex~jev [jev-1.15.0]'}
+        {f'regex~jev [jev-1.14.0|regex:{fp}]', f'regex~jev [jev-1.15.0|regex:{fp}]'}
 
 
 def test_report_does_not_join_a_changed_title_to_old_evidence(tmp_path):
@@ -564,3 +565,46 @@ def test_sdk_accepts_the_request_shape():
                                messages=[{'role': 'user', 'content': '[]'}],
                                output_config={'effort': 'low',
                                               'format': {'type': 'json_schema', 'schema': R.HAIKU_SCHEMA}})
+
+
+# ── codex 재검토 (ad6e338) ───────────────────────────────────────────────────
+def test_regex_baselines_are_not_pooled(tmp_path):
+    """재검토 #4 — 정규식 지문이 다른 입력은 같은 모델이어도 일치율이 갈린다."""
+    for s, fp in (('2026-10-27', 'aaa'), ('2026-10-28', 'bbb')):
+        inp = _seed(tmp_path, ['日銀会合'], session=s)
+        inp['regex_fp'] = fp
+        (tmp_path / 'news' / 'region_shadow' / 'input' / f'{s}.json').write_text(json.dumps(inp, ensure_ascii=False))
+    C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=FakeHaiku(), now=lambda: 0.0)
+    rep = C.build_report(str(tmp_path), html_root=str(tmp_path))
+    keys = {k for k in rep['agreement'] if k.startswith('regex~haiku')}
+    assert len(keys) == 2 and all(rep['agreement'][k]['n'] == 1 for k in keys)
+
+
+def test_input_records_regex_fingerprint():
+    assert R.build_input(S, [], [])['regex_fp'] == R.regex_fingerprint()
+
+
+@pytest.mark.parametrize('mutate', [
+    lambda r: r['answers']['region'].pop('type'),
+    lambda r: r['answers']['region'].pop('confidence'),
+    lambda r: r['answers']['region'].update(confidence=None),
+])
+def test_parse_jev_requires_type_and_confidence(mutate):
+    """재검토 #7"""
+    resp = _jev()
+    mutate(resp)
+    with pytest.raises(R.SchemaError):
+        R.parse_jev(resp)
+
+
+def test_stored_object_model_is_quarantined_not_a_report_crash(tmp_path):
+    """재검토 #9 — 저장된 model 이 객체면 그 세션만 빠지고 보고는 끝난다."""
+    _seed(tmp_path, ['日銀会合'], session='2026-10-28')
+    _seed(tmp_path, ['米雇用統計'])
+    d = tmp_path / 'news' / 'region_shadow' / 'result'
+    d.mkdir(parents=True)
+    cfg = R.config_id('haiku', R.HAIKU_MODEL)
+    (d / f'{S}.json').write_text(json.dumps({'results': {'haiku': {cfg: {
+        R.title_key('米雇用統計'): {'label': 'domestic', 'model': {'unexpected': 1}}}}}}))
+    rep = C.build_report(str(tmp_path), html_root=str(tmp_path))
+    assert rep['bad'] == [S] and rep['sessions'] == ['2026-10-28']

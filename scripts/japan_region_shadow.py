@@ -37,7 +37,9 @@ JEV_URL = 'https://api.typesafe.ai/v1/systemone'
 JEV_TIMEOUT = 20
 HAIKU_TIMEOUT = 30
 REQUEST_TIMEOUT = {'haiku': HAIKU_TIMEOUT, 'jev': JEV_TIMEOUT}
-BUDGETS = {'haiku': 240, 'jev': 240}       # 공급자별 초 — 한쪽이 다른 쪽의 시간을 먹지 않게(#2)
+# 공급자별 초. **부드러운 마감이다** — 새 요청을 시작할지만 정하고, 진행 중인 요청은 끊지 못한다. 실제 상한은
+# 워크플로가 공급자마다 나눈 단계의 `timeout-minutes` 다(codex 재검토 #1)
+BUDGETS = {'haiku': 240, 'jev': 240}
 TRANSIENT_STOP = {'haiku': 2, 'jev': 3}     # 연속 일시 오류가 이만큼이면 이번 실행은 그만
 SCHEMA_STOP = 5                             # Jev 400·422 연속 — 요청 모양이 틀린 것이다
 _UNSET = object()
@@ -347,9 +349,10 @@ def build_report(datadir, html_root='.', since=None, until=None, haiku_model=Non
                     by_stage[st]['haiku'][h or 'missing'] += 1
                     by_stage[st]['jev'][j or 'missing'] += 1
             # 일치율은 실제 모델별로 나눈다 — 별칭이 움직이면 다른 실험이다(#4)
-            hm, jm = hv.get('model'), jv.get('model')
-            pairs.setdefault(('regex~haiku', hm), []).append((r['regex_region'], R.binary(h)))
-            pairs.setdefault(('regex~jev', jm), []).append((r['regex_region'], R.binary(j)))
+            # 정규식 쪽은 기준선 지문으로도 나눈다 — 정규식이 바뀐 날과 섞지 않는다(재검토 #4)
+            hm, jm, fp = hv.get('model'), jv.get('model'), inp.get('regex_fp') or 'unknown'
+            pairs.setdefault(('regex~haiku', f'{hm}|regex:{fp}'), []).append((r['regex_region'], R.binary(h)))
+            pairs.setdefault(('regex~jev', f'{jm}|regex:{fp}'), []).append((r['regex_region'], R.binary(j)))
             pairs.setdefault(('haiku~jev', f'{hm}|{jm}'), []).append((h, j))
             if len({x for x in (r['regex_region'], R.binary(h), R.binary(j)) if x}) > 1 or (h and j and h != j):
                 disagree.append({'session': s, 'title': r['title'], 'regex': r['regex_region'],

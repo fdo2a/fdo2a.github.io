@@ -75,6 +75,12 @@ def regex_region(title, feed):
     return 'foreign' if foreign and not N._JAPAN.search(t) else 'domestic'
 
 
+def regex_fingerprint():
+    """정규식 기준선의 지문 — `regex_region` 이 읽는 패턴들. 정규식이 바뀐 날의 입력은 다른 기준선이다(재검토 #4)."""
+    blob = '\n'.join(rx.pattern for rx in (N._JAPAN, N._FOREIGN, N._FOREIGN_MARKET))
+    return hashlib.sha256(blob.encode('utf-8')).hexdigest()[:12]
+
+
 def binary(label):
     """정규식과의 비교는 두 칸 — 정규식에는 foreign_impact 가 없고 일본 표지가 있으면 국내로 친다."""
     return None if label is None else ('foreign' if label == 'foreign' else 'domestic')
@@ -98,7 +104,7 @@ def build_input(session, cut_rows, chosen_guids, commit=None, captured_at=None, 
                      'collector_chosen': r.get('guid') in chosen})
     return {'session': session, 'market': 'japan', 'cohort': cohort, 'labels_version': LABELS_VERSION,
             'captured_at': captured_at, 'commit': commit, 'collection_complete': collection_complete,
-            'rows': rows}
+            'regex_fp': regex_fingerprint(), 'rows': rows}
 
 
 def bootstrap_input(session, daily_news, commit=None, captured_at=None):
@@ -132,9 +138,15 @@ def valid_result(res):
         for verdicts in by_cfg.values():
             if not isinstance(verdicts, dict):
                 return False
-            if not all(isinstance(v, dict) and v.get('label') in LABELS for v in verdicts.values()):
+            if not all(isinstance(v, dict) and v.get('label') in LABELS and _opt_str(v.get('model'))
+                       and _opt_str(v.get('requested')) for v in verdicts.values()):
                 return False
     return True
+
+
+def _opt_str(v):
+    """없거나 짧은 문자열 — 보고가 모델 이름으로 묶다 죽지 않게(재검토 #9)."""
+    return v is None or (isinstance(v, str) and 0 < len(v) <= 64)
 
 
 def empty_result(session):
@@ -210,7 +222,7 @@ def parse_jev(resp):
         label, probs, conf = ans['choice'], ans['probabilities'], ans.get('confidence')
     except (KeyError, TypeError):
         raise SchemaError('shape') from None
-    if ans.get('type', 'choice') != 'choice':
+    if ans.get('type') != 'choice':
         raise SchemaError('type')
     if label not in LABELS or not isinstance(probs, dict) or set(probs) != set(LABELS):
         raise SchemaError('labels')
@@ -221,7 +233,7 @@ def parse_jev(resp):
         raise SchemaError('sum')
     if probs[label] < max(vals) - 1e-9:                 # 고른 것이 최대 확률이어야 한다(동률 허용)
         raise SchemaError('argmax')
-    if conf is not None and not _unit(conf):
+    if not _unit(conf):                                 # 문서상 Choice 는 늘 confidence 를 준다
         raise SchemaError('confidence')
     model = resp.get('model')
     if not (isinstance(model, str) and 0 < len(model) <= 64):
