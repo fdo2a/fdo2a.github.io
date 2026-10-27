@@ -42,6 +42,7 @@ Every Tokyo trading day, `/japan/daily/<session>.html`, routine `.claude/JAPAN_D
 | `japan/daily_render.py` + `build_japan_daily.py` | Section order from `order(event_day)`, tables, BOJ credit footer; `diag`/`assemble` |
 | `japan/daily_gate.py` + `check_japan_daily.py`, `japan/daily_news_gate.py` via `check_news.py --market jp-daily` | Publish gates |
 | `publish_japan_daily.py` | Candidate → published snapshot, history `japan/data/history/jp_daily.jsonl`, `japan/daily.json`, sitemap |
+| `japan/region_shadow.py` + `japan_region_shadow.py` + `region-shadow.yml` | **Shadow only** (2026-10-27): regex vs Haiku vs Jev domestic/foreign labels on cut-in headlines. Input `japan/data/news/region_shadow/input/` is written only by `collect_daily` (fail-open), results `…/result/` only by the shadow workflow. Nothing in selection, gates or review reads them; `report` prints agreement, not accuracy |
 
 - **Nikkei close = official Nikkei CSV row for the session** matched to `fast_info.lastPrice` within 0.01% (`complete`); never commit the CSV. ETFs/stocks only when the last 5-minute bar is on the session. **Never `previousClose`** — a change needs a denominator dated exactly `prev_session`.
 - FX = 5-minute bar ending 16:30 JST (weekly uses 16:00 ET — values differ). JGB = MOF row for `prev_session` only; call rate = BOJ API latest observation (≤3 trading days old).

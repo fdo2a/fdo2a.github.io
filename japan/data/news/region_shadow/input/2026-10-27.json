@@ -1,0 +1,142 @@
+{
+  "session": "2026-10-27",
+  "market": "japan",
+  "cohort": "chosen_only",
+  "labels_version": 1,
+  "captured_at": "2026-10-27T19:12:30+09:00",
+  "commit": null,
+  "rows": [
+    {
+      "guid": "308439f63b793b1fb56bb35a606ff50db26eae70",
+      "title": "アングル：債券市場の混乱やインフレ、為替変動がアジア系銀行を圧迫 収益と資本にリスク",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "20c246d537018e6f",
+      "regex_category": "macro",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "2dfdae75d1efca678a29cb7414f846a1d3e13c96",
+      "title": "特殊要因除くＣＰＩ、9月は伸び急加速 日銀の基調2％判断後押しか",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "d41a45eaca6c49d2",
+      "regex_category": "macro",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "fe03aed1ade1246c9c8c930d64378445e0491997",
+      "title": "カナダ中銀、28日に利上げの見通し エネルギー高の波及阻止へ",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "f5aa2aba1c9a67b6",
+      "regex_category": "macro",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "cf76917a6a161a1fd5765424fef01eff5ae3b039",
+      "title": "米加、中間選挙前に貿易合意も＝鉄鋼・車関税引き下げ検討―報道",
+      "source": "時事通信",
+      "feed": "bus_all",
+      "key": "7b42b20d488d4db8",
+      "regex_category": "policy",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "aa6e9ed398cd19386aab9c1a1ce5e621b9cca3c1",
+      "title": "EXCLUSIVE-米・カナダ、鉄鋼・自動車関税の緩和協議 中間選挙前の合意も＝関係筋",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "8a759f3a0cae678e",
+      "regex_category": "policy",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "e66487115e4c9b87cadb63d5e9ce49a6d74fe512",
+      "title": "消費減税の外食支援、来年4月以降も「緊要なら手を打つ」と片山財務相",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "53351356cccb9b42",
+      "regex_category": "policy",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "63283168b01b0a83dea488698a4587766d792ee7",
+      "title": "ドアダッシュ、食品宅配インスタカート買収へ最終交渉 28日合意も",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "770d557f6c34ab92",
+      "regex_category": "industry",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "061c441c6f0b2b663f57ea4c3b70b5b8d3431d69",
+      "title": "米天然ガス大手ＥＱＴ、130億ドルで同業買収 国内最大規模に",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "a6ab8fc0b8ab78fd",
+      "regex_category": "industry",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "2191cba9b46d3f965cdef6ef29f2d3d59dfd52a4",
+      "title": "ヤマダＨＤ、中間期予想を上方修正 基準改定に向けエアコン特需",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "07646ac5dbefd7b4",
+      "regex_category": "industry",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "ba5141be04217335a180b1a9f2977c92a4dcd4ca",
+      "title": "日経平均は4日ぶり反発、ＡＩ株に買い戻し 重要イベント控え伸び悩み",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "85aca19a92624368",
+      "regex_category": "market",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "84c779616c764721c0734d6e7dd55e75023bcd39",
+      "title": "午後3時のドルは157円後半、株高などでじり高 ＦＯＭＣ前の持ち高調整も",
+      "source": "ロイター",
+      "feed": "bus_all",
+      "key": "68cb332a965a8b36",
+      "regex_category": "market",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    },
+    {
+      "guid": "0e3db11160372b4a38b8a1c7ed0d617b4f9dd2b6",
+      "title": "〔東京株式〕4日ぶり反発＝AI関連に買い（27日）☆差替",
+      "source": "時事通信",
+      "feed": "market",
+      "key": "e406e69048fa855c",
+      "regex_category": "market",
+      "regex_region": "domestic",
+      "regex_routine": false,
+      "collector_chosen": true
+    }
+  ]
+}

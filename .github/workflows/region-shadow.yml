@@ -1,0 +1,57 @@
+name: Region shadow (Japan)
+
+# 국내/해외 판정 섀도(2026-10-27) — 일본 일간 후보 제목을 Haiku·Jev 로 판정해 정규식과 나란히 기록한다.
+# 발행·게이트는 이 결과를 읽지 않는다. 입력(region_shadow/input/)은 일간 수집이 쓰고, 이 잡은 판정(result/)만 쓴다 —
+# 운영 데이터 커밋과 같은 파일을 만지지 않게(codex 설계 검토 #1). 일간 수집이 끝난 뒤 따로 돌아 루틴을 늦추지 않는다(#2).
+on:
+  workflow_run:
+    workflows: ['Collect Japan daily']
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '30 10 * * 1-6'
+      timezone: 'Asia/Tokyo'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  id-token: write          # Haiku = Workload Identity Federation, 일본 뉴스 잡과 같은 Variables
+
+concurrency:
+  group: region-shadow
+  cancel-in-progress: false
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install --quiet certifi pytest 'anthropic>=1.8,<2'
+      - name: Run unit tests
+        run: python -m pytest scripts/japan/tests/test_region_shadow.py -q
+      - name: Classify
+        continue-on-error: true
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          REGION_SHADOW_MODEL: ${{ vars.REGION_SHADOW_MODEL }}
+          # 없으면 Jev 칸은 no_key 로 남는다. 키는 이 단계에만 들어간다
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: python scripts/japan_region_shadow.py classify --datadir japan/data
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add japan/data/news/region_shadow/result 2>/dev/null || true
+          git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
+          bash scripts/ci/push_with_retry.sh "data: region shadow japan $(TZ=Asia/Tokyo date +%F)"

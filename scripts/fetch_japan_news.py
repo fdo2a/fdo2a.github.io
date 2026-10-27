@@ -248,6 +248,17 @@ def save_daily(datadir, session, chosen, complete, notes):
     return payload
 
 
+def capture_shadow(datadir, session, cut_rows, chosen):
+    """국내/해외 판정 섀도의 입력(`japan/region_shadow.py`). 판정은 여기서 하지 않는다 — 네트워크 없이 파일 하나.
+    import 까지 이 안에 둔다: 섀도가 어떻게 깨져도 일간 뉴스는 그대로 나와야 한다(codex 설계 검토 #13)."""
+    from japan import region_shadow as RS
+    path = os.path.join(datadir, 'news', 'region_shadow', 'input', f'{session}.json')
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    save_json(path, RS.build_input(session, cut_rows, [c.get('guid') for c in chosen],
+                                   commit=os.environ.get('GITHUB_SHA'),
+                                   captured_at=datetime.now(N.JST).isoformat(timespec='seconds')))
+
+
 def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None,
                   summarize=summarize_items):
     """일간 한 세션. 컷은 목록 단계(상한 전)와 기사면 시각(확정) 두 번 건다.
@@ -270,6 +281,10 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
     sub = os.path.join(bodydir, 'daily', session)
     fetch_bodies(candidates, sub, ctx, fetch=fetch)
     chosen = [{k: it[k] for k in _KEEP if k in it} for it in ND.finalize_daily(candidates, session)]
+    try:
+        capture_shadow(datadir, session, todays, chosen)
+    except Exception as e:                 # 섀도 실패는 일간 뉴스·notes 에 남기지 않는다
+        print(f'  섀도 입력 실패(무시): {type(e).__name__}', file=sys.stderr)
     carry_summaries(_daily_path(datadir, session), chosen)
     complete = bool(rows) and off_ok and complete_for(session, reach)
     payload = save_daily(datadir, session, chosen, complete, notes + off_notes)

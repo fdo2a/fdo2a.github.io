@@ -80,5 +80,7 @@ jobs:
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add japan/data/daily japan/data/news/daily 2>/dev/null || true
+          # 국내/해외 판정 섀도의 입력 — 따로 더한다: 같은 줄이면 이 경로가 없는 날 위 경로까지 스테이징되지 않는다
+          git add japan/data/news/region_shadow/input 2>/dev/null || true
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
           bash scripts/ci/push_with_retry.sh "data: japan daily ${S}"
