@@ -46,7 +46,11 @@ except ImportError:         # pragma: no cover - 환경에 따라
 
 DEFAULT_MODEL = 'claude-haiku-5-5'
 MAX_TOKENS = 4096                   # thinking 과 요약을 합친 상한
-EFFORT_MODELS = {'claude-haiku-5-5': 'low'}     # 정확히 일치할 때만 — 접두어 판정은 effort 미지원 모델에 샌다
+EFFORT_MODELS = {'claude-haiku-5-5': 'low', 'claude-sonnet-5-5': 'low'}  # 정확히 일치할 때만 — 접두어 판정은 effort 미지원 모델에 샌다
+# 막힘 승격(2026-10-27): Haiku 가 고쳐 쓰기까지 검사에 걸리면 Sonnet 으로 한 번 더. 기본 모델을
+# 다른 것으로 바꿨으면 승격하지 않는다. 실행당 상한은 밀린 날짜를 몰아 받는 날의 비용·지연을 묶는다.
+ESCALATE = {'claude-haiku-5-5': 'claude-sonnet-5-5'}
+ESCALATE_CAP = 10
 AUDIENCE = 'https://api.anthropic.com'
 
 # 게이트의 요약 분량 띠(news_gate.MIN_CHARS·MAX_CHARS = 240·420, **공백 제외**)보다 안쪽을
@@ -342,22 +346,28 @@ def usable_summary(text):
 
 def summarize_one(client, model, item, body, system=None):
     """(요약, 사유). 분량이 벗어나면 한 번만 고쳐 쓰게 한다. 인증 실패는 예외로 올린다."""
+    return _attempt(client, model, item, body, system, tries=2)[:2]
+
+
+def _attempt(client, model, item, body, system, tries):
+    """(요약, 사유, 막힘). 막힘 = 모든 시도가 응답은 받았는데 분량·언어 검사에 걸린 경우뿐 —
+    거절·잘림·API 예외는 모델을 올려도 그대로라 승격 신호가 아니다."""
     messages = [{'role': 'user', 'content': _prompt(item, body)}]
     extra = {'output_config': {'effort': EFFORT_MODELS[model]}} if model in EFFORT_MODELS else {}
     text = ''
     try:
-        for _ in range(2):
+        for _ in range(tries):
             response = client.messages.create(model=model, max_tokens=MAX_TOKENS,
                                               system=system or SYSTEM,
                                               messages=messages, **extra)
             if response.stop_reason == 'refusal':
-                return None, '모델 거절'
+                return None, '모델 거절', False
             if response.stop_reason == 'max_tokens':    # 분량 판정보다 먼저 — 잘린 글이 띠 안에 들 수 있다
-                return None, '출력 잘림'
+                return None, '출력 잘림', False
             text = _text(response)
             problem = summary_problem(text)
             if problem is None and in_band(text):
-                return text, None
+                return text, None, False
             # thinking 블록까지 그대로 붙인다 — 이력을 고치지 않고 덧붙이기만 한다
             if problem is None:
                 ask = f'지금 공백 제외 {chars(text)}자입니다. 공백 제외 {TARGET_MIN}~{TARGET_MAX}자로 '
@@ -369,11 +379,11 @@ def summarize_one(client, model, item, body, system=None):
                        f'{TARGET_MIN}~{TARGET_MAX}자로 ')
             messages += [{'role': 'assistant', 'content': response.content},
                          {'role': 'user', 'content': ask + '다시 써 주세요. 요약 문단만 출력합니다.'}]
-        return None, summary_problem(text) or f'분량 벗어남 {chars(text)}자'
+        return None, summary_problem(text) or f'분량 벗어남 {chars(text)}자', True
     except Exception as e:                  # SDK 예외 계층을 가리지 않는다 — 새면 저장이 날아간다
         if is_auth_failure(e):
             raise
-        return None, describe(e)
+        return None, describe(e), False
 
 
 def summarize_items(items, bodydir, model=None, client=None, log=print, system=None):
@@ -412,7 +422,7 @@ def summarize_items(items, bodydir, model=None, client=None, log=print, system=N
             return 0
     model = model or os.environ.get('NEWS_SUMMARY_MODEL') or DEFAULT_MODEL
 
-    done = 0
+    done = escalated = 0
     for it in todo:
         try:
             with open(os.path.join(bodydir, it['body_file']), encoding='utf-8') as fh:
@@ -420,8 +430,14 @@ def summarize_items(items, bodydir, model=None, client=None, log=print, system=N
         except OSError as e:
             it['summary_note'] = f'본문 파일 없음 {type(e).__name__}'
             continue
+        used = model                        # 기사마다 기본 모델에서 다시 시작한다
         try:
-            text, why = summarize_one(client, model, it, body, system=system)
+            text, why, stuck = _attempt(client, model, it, body, system, tries=2)
+            if stuck and model in ESCALATE and escalated < ESCALATE_CAP:
+                escalated += 1
+                used = ESCALATE[model]
+                log(f"  요약 승격 {model} → {used} ({why})  {(it.get('title') or '')[:50]}")
+                text, why, _ = _attempt(client, used, it, body, system, tries=1)
         except Exception as e:              # 인증 실패 — 남은 건도 같은 벽에 부딪힌다
             mark_all(f'인증 실패 {type(e).__name__}')
             log(f'  요약 중단 — 인증 실패 ({type(e).__name__}: {str(e)[:400]}) '
@@ -431,7 +447,7 @@ def summarize_items(items, bodydir, model=None, client=None, log=print, system=N
                     '한 글자씩 대조): ' + json.dumps(last_claims, ensure_ascii=False))
             return done
         if text:
-            it['summary_ko'], it['summary_model'] = text, model
+            it['summary_ko'], it['summary_model'] = text, used
             it.pop('summary_note', None)
             done += 1
             log(f"  요약 {chars(text)}자  {(it.get('title') or '')[:50]}")

@@ -29,7 +29,7 @@ KEY=$(bash scripts/ci/run_lock.sh key jp_daily)                 # jpd-<S>
 
 ## STEP 2 — 작성과 조립
 
-`japan-daily-writer` 를 **동기**로 부른다. 넘기는 것: 세션 `S`, `diag` 출력 전문, 스냅샷·뉴스 파일 경로, 직전 일간 경로(있으면). 오케스트레이터는 데이터·지시문을 다시 읽지 않는다. 작성자 마감의 점검(번역투 포함)은 작성자가 한다 — 오케스트레이터는 대신 고치지 않는다.
+`japan-daily-writer` 를 **동기**로, Agent 호출에 `model: "sonnet"` 을 적어 부른다. 넘기는 것: 세션 `S`, `diag` 출력 전문, 스냅샷·뉴스 파일 경로, 직전 일간 경로(있으면). 오케스트레이터는 데이터·지시문을 다시 읽지 않는다. 작성자 마감의 점검(번역투 포함)은 작성자가 한다 — 오케스트레이터는 대신 고치지 않는다.
 
 ```bash
 python3 scripts/build_japan_daily.py assemble --session $S \
@@ -37,6 +37,8 @@ python3 scripts/build_japan_daily.py assemble --session $S \
 ```
 
 실패 목록이 나오면 그대로 작성자에게 돌려준다.
+
+**작성자 호출 예산과 막힘 승격(2026-10-27)** — 조립 실패와 STEP 3 게이트 위반이 **같은 예산**을 쓴다: 첫 작성 1번 + 되돌려 고치기 최대 3번, 합계 4번. 첫 작성과 첫 고치기는 `model: "sonnet"`, **두 번째 고치기부터는 `model: "opus"`** 로 부르고 그 세션 안에서는 Sonnet 으로 돌아가지 않는다. 위반 문구가 바뀌어도 예산은 다시 세지 않는다. 승격하지 않고 바로 STEP 3 의 미발행 처리로 가는 경우: 원천 데이터 부족(`diag` 의 코어 결측), 파일 경로·도구 실패, 잠금. 설계: `docs/superpowers/specs/2026-10-27-model-routing.md`.
 
 ## STEP 3 — 게이트 (순서대로, 전부 exit 0)
 
@@ -48,7 +50,7 @@ python3 scripts/check_readability.py --strict $(pwd)/jpd_$S.html
 python3 scripts/check_style.py $(pwd)/jpd_$S.html
 ```
 
-위반은 목록 그대로 작성자에게 돌려준다(최대 세 번). 그래도 남으면 발행하지 않고 잠금을 풀고 위반 목록을 PushNotification 으로 보낸다. 윤문은 하지 않는다 — 게이트를 통과한 판이 최종본이다.
+위반은 목록 그대로 작성자에게 돌려준다(STEP 2 의 예산 — 조립 실패와 합쳐 최대 세 번, 두 번째부터 Opus). 그래도 남으면 발행하지 않고 잠금을 풀고 위반 목록을 PushNotification 으로 보낸다. 윤문은 하지 않는다 — 게이트를 통과한 판이 최종본이다.
 
 ## STEP 4 — 발행
 

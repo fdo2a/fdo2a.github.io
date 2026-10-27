@@ -433,3 +433,99 @@ def test_the_final_refusal_names_the_specific_problem(tmp_path):
     assert NS.summarize_items(its, str(tmp_path), model='m', client=Client([bad, bad]),
                               log=lambda *_: None) == 0
     assert its[0]['summary_note'] == '가나·한자 「削減」'
+
+
+# ── 막힘 승격: Haiku 2회(작성+고쳐 쓰기)가 검사에 걸리면 Sonnet 1회 (2026-10-27) ──
+HAIKU, SONNET = 'claude-haiku-5-5', 'claude-sonnet-5-5'
+
+
+class ByModel(Client):
+    """모델별 응답 목록. 항목은 글, (stop_reason, 글), 또는 예외."""
+    def __init__(self, **replies):
+        super().__init__([])
+        self.by = {m.replace('_', '-'): list(r) for m, r in replies.items()}
+
+    def create(self, **kw):
+        self.calls.append(dict(kw, messages=list(kw['messages'])))
+        r = self.by[kw['model']].pop(0)
+        if isinstance(r, Exception):
+            raise r
+        stop, text = r if isinstance(r, tuple) else ('end_turn', r)
+        return types.SimpleNamespace(stop_reason=stop, content=[types.SimpleNamespace(type='text', text=text)])
+
+
+def models(c):
+    return [x['model'] for x in c.calls]
+
+
+def test_haiku_failing_twice_escalates_once_to_sonnet(tmp_path):
+    its = items(tmp_path)
+    c = ByModel(claude_haiku_5_5=['짧다', '또 짧다'], claude_sonnet_5_5=[GOOD])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
+    assert models(c) == [HAIKU, HAIKU, SONNET]
+    assert its[0]['summary_ko'] == GOOD and its[0]['summary_model'] == SONNET
+    assert len(c.calls[2]['messages']) == 1          # 새로 시작한다 — Haiku 의 실패 이력을 넘기지 않는다
+
+
+def test_sonnet_also_failing_stops_after_three_calls(tmp_path):
+    its = items(tmp_path)
+    c = ByModel(claude_haiku_5_5=['짧다', '짧다'], claude_sonnet_5_5=['짧다'])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 0
+    assert models(c) == [HAIKU, HAIKU, SONNET] and 'summary_ko' not in its[0]
+    assert '분량' in its[0]['summary_note']
+
+
+def test_refusal_truncation_and_api_errors_do_not_escalate(tmp_path):
+    for first in (('refusal', GOOD), ('max_tokens', GOOD), Boom(status_code=529)):
+        its = items(tmp_path)
+        c = ByModel(claude_haiku_5_5=[first], claude_sonnet_5_5=[GOOD])
+        NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None)
+        assert models(c) == [HAIKU] and 'summary_ko' not in its[0]
+
+
+def test_a_refusal_or_truncation_on_the_escalated_call_is_final(tmp_path):
+    for stop in ('refusal', 'max_tokens'):
+        its = items(tmp_path)
+        c = ByModel(claude_haiku_5_5=['짧다', '짧다'], claude_sonnet_5_5=[(stop, GOOD)])
+        NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None)
+        assert models(c) == [HAIKU, HAIKU, SONNET] and 'summary_ko' not in its[0]
+
+
+def test_an_auth_failure_during_escalation_stops_the_rest(tmp_path):
+    its = items(tmp_path, 2)
+    c = ByModel(claude_haiku_5_5=['짧다', '짧다'], claude_sonnet_5_5=[Boom(status_code=401)])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 0
+    assert models(c) == [HAIKU, HAIKU, SONNET]
+    assert all('인증 실패' in it['summary_note'] for it in its)
+
+
+def test_the_next_article_starts_on_haiku_again(tmp_path):
+    its = items(tmp_path, 2)
+    c = ByModel(claude_haiku_5_5=['짧다', '짧다', GOOD], claude_sonnet_5_5=[GOOD])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 2
+    assert models(c) == [HAIKU, HAIKU, SONNET, HAIKU]
+    assert [it['summary_model'] for it in its] == [SONNET, HAIKU]
+
+
+def test_escalation_keeps_the_callers_system_prompt_and_effort(tmp_path):
+    c = ByModel(claude_haiku_5_5=['짧다', '짧다'], claude_sonnet_5_5=[GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model=HAIKU, client=c, log=lambda *_: None,
+                       system='KO-SOURCE')
+    assert c.calls[2]['system'] == 'KO-SOURCE'
+    assert c.calls[2]['output_config'] == {'effort': 'low'}
+
+
+def test_only_a_haiku_base_escalates(tmp_path):
+    for base in (SONNET, 'claude-opus-5-5', 'm'):
+        c = ByModel(**{base.replace('-', '_'): ['짧다', '짧다']})
+        NS.summarize_items(items(tmp_path), str(tmp_path), model=base, client=c, log=lambda *_: None)
+        assert models(c) == [base, base]
+
+
+def test_escalations_per_run_are_capped(tmp_path, monkeypatch):
+    monkeypatch.setattr(NS, 'ESCALATE_CAP', 1)
+    its = items(tmp_path, 2)
+    c = ByModel(claude_haiku_5_5=['짧다'] * 4, claude_sonnet_5_5=[GOOD, GOOD])
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
+    assert models(c) == [HAIKU, HAIKU, SONNET, HAIKU, HAIKU]
+    assert 'summary_ko' not in its[1] and '분량' in its[1]['summary_note']

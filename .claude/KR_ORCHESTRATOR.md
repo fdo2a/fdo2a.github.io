@@ -71,6 +71,8 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 
 **쟁점 분석(2026-10-21)** — 작성자를 부르기 전에 `python3 scripts/contested_ready.py --market kr --date <DATE> --out <워크스페이스 루트>/contested.json` 을 돌리고 마지막 줄 `contested: …` 를 최종 보고에 옮긴다. 결과는 Mac 의 로컬 러너가 만들어 푸시한다 — **루틴은 기다리지도 수집하지도 않는다.** 작성자는 표식 `<!--CONTESTED-->` 한 줄만 둔다(writer 스펙 12-b). `render_post.py` 로 합친 직후 `python3 scripts/render_contested.py --html <kr_brief> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>` — `ok` 면 섹션, 확정된 none 이면 지움, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`, 러너가 발행 뒤 채운다). 「쟁점 자리가 0개」면 표식을 `<div class="footer-note">` 바로 앞에 넣고 다시 돌린다. **이 섹션은 고치지 않는다** — 이 섹션 때문에 `check_readability`·`check_style` 이 막히면 `render_contested.py … --omit gate_failed` 로 빼고 게이트를 다시 돌린 뒤 보고에 적는다.
 
+**작성자 모델(2026-10-27)** — 작성자(`kr-report-writer`)를 부르는 모든 Agent 호출 — 첫 작성, 게이트·조립 실패로 되돌려 고치기, general-purpose 폴백 — 에 `model: "opus"` 를 적는다. 에이전트 머리말에도 같은 값이 있지만 폴백에서는 머리말이 빠진다. 수집 담당 등 다른 서브에이전트는 모델을 적지 않는다(본체 모델 상속). Agent 도구가 아예 없어 본체가 직접 쓰는 폴백은 **이 루틴의 모델이 Opus 일 때만** 한다 — 아니면 쓰지 말고 잠금을 풀고 중단을 보고한다. 설계: `docs/superpowers/specs/2026-10-27-model-routing.md`.
+
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 
 **발행 게이트** — (a) `grep -c '확인필요'` = 0; (b) 수급 서술 기준일이 `flows_date` 와 일치하고 provisional/stale 라벨이 있는지; (c) 표 수치 5개 이상을 kr/data/* 원본과 대조. 실패 시 재작성. **완성본만 발행 — 코어 표에 구멍이 있으면 발행 중단, PushNotification 으로 누락 보고.**
