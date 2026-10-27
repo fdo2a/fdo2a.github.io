@@ -14,6 +14,7 @@
 Pure — 네트워크 없음.
 """
 import hashlib
+import inspect
 import json
 import math
 
@@ -76,8 +77,11 @@ def regex_region(title, feed):
 
 
 def regex_fingerprint():
-    """정규식 기준선의 지문 — `regex_region` 이 읽는 패턴들. 정규식이 바뀐 날의 입력은 다른 기준선이다(재검토 #4)."""
-    blob = '\n'.join(rx.pattern for rx in (N._JAPAN, N._FOREIGN, N._FOREIGN_MARKET))
+    """정규식 기준선의 지문 — `regex_region` 이 읽는 패턴·플래그와 술어·정규화 코드. 하나라도 바뀐 날의 입력은
+    다른 기준선이다(재검토 #4, 2차: 플래그·NFKC 변경도 잡는다)."""
+    parts = [f'{rx.pattern}\x00{rx.flags}' for rx in (N._JAPAN, N._FOREIGN, N._FOREIGN_MARKET)]
+    parts += [inspect.getsource(regex_region), inspect.getsource(N._nfkc)]
+    blob = '\n'.join(parts)
     return hashlib.sha256(blob.encode('utf-8')).hexdigest()[:12]
 
 
@@ -145,8 +149,9 @@ def valid_result(res):
 
 
 def _opt_str(v):
-    """없거나 짧은 문자열 — 보고가 모델 이름으로 묶다 죽지 않게(재검토 #9)."""
-    return v is None or (isinstance(v, str) and 0 < len(v) <= 64)
+    """없거나 비지 않은 문자열 — 보고가 모델 이름으로 묶다 죽지 않게(재검토 #9). 길이는 묻지 않는다: 쓰는 쪽과
+    읽는 쪽 규칙이 하나여야 한다 — 받아 적은 판정을 다시 읽다 세션째 격리하면 안 된다(2차 재검토)."""
+    return v is None or (isinstance(v, str) and bool(v))
 
 
 def empty_result(session):
@@ -236,7 +241,7 @@ def parse_jev(resp):
     if not _unit(conf):                                 # 문서상 Choice 는 늘 confidence 를 준다
         raise SchemaError('confidence')
     model = resp.get('model')
-    if not (isinstance(model, str) and 0 < len(model) <= 64):
+    if model is None or not _opt_str(model):
         raise SchemaError('model')
     return label, {k: round(float(v), 4) for k, v in probs.items()}, conf, model
 

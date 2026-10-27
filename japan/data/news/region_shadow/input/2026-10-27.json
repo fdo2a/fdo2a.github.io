@@ -3,10 +3,10 @@
   "market": "japan",
   "cohort": "chosen_only",
   "labels_version": 1,
-  "captured_at": "2026-10-27T20:07:39+09:00",
-  "commit": "ad6e3389bff450a4ea912d49a60d9a248baffc8d",
+  "captured_at": "2026-10-27T20:15:25+09:00",
+  "commit": "c7c5850db439ab1f48d77c0308db85a3ff402e07",
   "collection_complete": true,
-  "regex_fp": "1002373a7dc0",
+  "regex_fp": "9f4aea378fe8",
   "rows": [
     {
       "guid": "308439f63b793b1fb56bb35a606ff50db26eae70",

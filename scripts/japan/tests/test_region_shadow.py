@@ -608,3 +608,29 @@ def test_stored_object_model_is_quarantined_not_a_report_crash(tmp_path):
         R.title_key('米雇用統計'): {'label': 'domestic', 'model': {'unexpected': 1}}}}}}))
     rep = C.build_report(str(tmp_path), html_root=str(tmp_path))
     assert rep['bad'] == [S] and rep['sessions'] == ['2026-10-28']
+
+
+# ── codex 2차 재검토 (c7c5850) ───────────────────────────────────────────────
+def test_fingerprint_sees_flags_and_normalisation(monkeypatch):
+    import re
+    base = R.regex_fingerprint()
+    monkeypatch.setattr(N, '_FOREIGN', re.compile(N._FOREIGN.pattern, re.I))
+    assert R.regex_fingerprint() != base
+    monkeypatch.undo()
+    assert R.regex_fingerprint() == base
+
+
+def test_long_model_name_round_trips(tmp_path):
+    """쓰는 쪽이 적은 판정은 읽는 쪽이 받아들인다 — 긴 모델 이름이 세션을 격리하지 않는다."""
+    _seed(tmp_path, ['日銀会合'])
+    long = 'claude-haiku-5-5-' + 'x' * 80
+
+    class Long(FakeHaiku):
+        def create(self, **kw):
+            r = FakeHaiku.create(self, **kw)
+            r.model = long
+            return r
+    C.classify(str(tmp_path), providers=('haiku', 'jev'), env={'TYPESAFE_API_KEY': 'k'}, haiku_client=Long(),
+               jev_post=lambda b, k: _jev(model='jev-' + 'y' * 80), now=lambda: 0.0)
+    rep = C.build_report(str(tmp_path), html_root=str(tmp_path))
+    assert rep['bad'] == [] and rep['coverage']['haiku']['done'] == 1 and rep['coverage']['jev']['done'] == 1
