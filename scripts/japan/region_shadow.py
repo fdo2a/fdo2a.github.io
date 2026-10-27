@@ -80,8 +80,10 @@ def binary(label):
     return None if label is None else ('foreign' if label == 'foreign' else 'domestic')
 
 
-def build_input(session, cut_rows, chosen_guids, commit=None, captured_at=None, cohort='full'):
-    """컷 안 목록 행 → 섀도 입력. 운영과 같은 순서(dedupe → 유료·매체)로, 행은 새 dict 로 만든다(원본 불변)."""
+def build_input(session, cut_rows, chosen_guids, commit=None, captured_at=None, cohort='full',
+                collection_complete=None):
+    """컷 안 목록 행 → 섀도 입력. 운영과 같은 순서(dedupe → 유료·매체)로, 행은 새 dict 로 만든다(원본 불변).
+    공식 출처(일본은행·닛세이)는 넣지 않는다 — 보고의 단계 수는 이 코호트 안의 수다."""
     chosen = set(chosen_guids or ())
     rows = []
     for r in N.dedupe(cut_rows):
@@ -95,7 +97,8 @@ def build_input(session, cut_rows, chosen_guids, commit=None, captured_at=None, 
                      'regex_routine': bool(N._ROUTINE.search(N._nfkc(title))),
                      'collector_chosen': r.get('guid') in chosen})
     return {'session': session, 'market': 'japan', 'cohort': cohort, 'labels_version': LABELS_VERSION,
-            'captured_at': captured_at, 'commit': commit, 'rows': rows}
+            'captured_at': captured_at, 'commit': commit, 'collection_complete': collection_complete,
+            'rows': rows}
 
 
 def bootstrap_input(session, daily_news, commit=None, captured_at=None):
@@ -103,10 +106,37 @@ def bootstrap_input(session, daily_news, commit=None, captured_at=None):
     items = (daily_news or {}).get('items') or []
     rows = [dict(r, paid=False) for r in items if not r.get('official')]
     return build_input(session, rows, [r.get('guid') for r in rows], commit=commit,
-                       captured_at=captured_at, cohort='chosen_only')
+                       captured_at=captured_at, cohort='chosen_only',
+                       collection_complete=(daily_news or {}).get('complete'))
 
 
 # ── 판정 묶음 ─────────────────────────────────────────────────────────────
+_ROW_STR = ('guid', 'title', 'key')
+
+
+def valid_input(inp):
+    """JSON 으로는 읽혀도 모양이 틀린 입력은 그 세션만 격리한다(codex 구현 검토 #2)."""
+    if not isinstance(inp, dict) or not isinstance(inp.get('rows'), list):
+        return False
+    return all(isinstance(r, dict) and all(isinstance(r.get(k), str) and r.get(k) for k in _ROW_STR)
+               and r.get('regex_region') in ('domestic', 'foreign') for r in inp['rows'])
+
+
+def valid_result(res):
+    """판정 파일 구조 — 라벨 밖의 판정이 「다 했다」로 세지지 않게."""
+    if not isinstance(res, dict) or not isinstance(res.get('results'), dict):
+        return False
+    for provider, by_cfg in res['results'].items():
+        if provider not in PROVIDERS or not isinstance(by_cfg, dict):
+            return False
+        for verdicts in by_cfg.values():
+            if not isinstance(verdicts, dict):
+                return False
+            if not all(isinstance(v, dict) and v.get('label') in LABELS for v in verdicts.values()):
+                return False
+    return True
+
+
 def empty_result(session):
     return {'session': session, 'market': 'japan', 'results': {p: {} for p in PROVIDERS}, 'runs': []}
 
@@ -142,24 +172,26 @@ def haiku_payload(rows):
 
 
 def parse_haiku(text, rows):
-    """→ {row key: label}. 모르는 id·중복 id·라벨 밖은 묶음 전체를 버린다. 빠진 id 는 다음 실행이 다시 묻는다."""
+    """→ {row key: label}. 모르는 id·중복 id·라벨 밖은 묶음 전체를 버린다. 빠진 id 는 다음 실행이 다시 묻는다.
+    id 는 보낸 문자열 그대로만 받는다 — 「00」·「²」 를 숫자로 읽으면 같은 행에 두 라벨이 앉는다(#6)."""
     try:
         items = json.loads(text)['items']
     except (ValueError, KeyError, TypeError):
         raise SchemaError('json') from None
     if not isinstance(items, list):
         raise SchemaError('items')
+    sent = {p['id']: r for p, r in zip(haiku_payload(rows), rows)}
     out, seen = {}, set()
     for it in items:
         if not isinstance(it, dict):
             raise SchemaError('item')
         i, label = it.get('id'), it.get('label')
-        if not isinstance(i, str) or not i.isdigit() or int(i) >= len(rows) or i in seen:
+        if not isinstance(i, str) or i not in sent or i in seen:
             raise SchemaError('id')
         if label not in LABELS:
             raise SchemaError('label')
         seen.add(i)
-        out[rows[int(i)]['key']] = label
+        out[sent[i]['key']] = label
     return out
 
 
@@ -178,16 +210,28 @@ def parse_jev(resp):
         label, probs, conf = ans['choice'], ans['probabilities'], ans.get('confidence')
     except (KeyError, TypeError):
         raise SchemaError('shape') from None
+    if ans.get('type', 'choice') != 'choice':
+        raise SchemaError('type')
     if label not in LABELS or not isinstance(probs, dict) or set(probs) != set(LABELS):
         raise SchemaError('labels')
     vals = list(probs.values())
-    if not all(isinstance(v, (int, float)) and math.isfinite(v) and 0 <= v <= 1 for v in vals):
+    if not all(_unit(v) for v in vals):
         raise SchemaError('prob')
     if abs(sum(vals) - 1) > 0.02:
         raise SchemaError('sum')
-    if conf is not None and not (isinstance(conf, (int, float)) and math.isfinite(conf)):
+    if probs[label] < max(vals) - 1e-9:                 # 고른 것이 최대 확률이어야 한다(동률 허용)
+        raise SchemaError('argmax')
+    if conf is not None and not _unit(conf):
         raise SchemaError('confidence')
-    return label, {k: round(float(v), 4) for k, v in probs.items()}, conf, resp.get('model')
+    model = resp.get('model')
+    if not (isinstance(model, str) and 0 < len(model) <= 64):
+        raise SchemaError('model')
+    return label, {k: round(float(v), 4) for k, v in probs.items()}, conf, model
+
+
+def _unit(v):
+    """[0, 1] 의 유한한 실수 — bool 은 int 의 하위형이라 따로 뺀다."""
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and 0 <= v <= 1
 
 
 # ── 보고 ─────────────────────────────────────────────────────────────────

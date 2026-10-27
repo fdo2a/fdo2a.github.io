@@ -351,3 +351,216 @@ def test_report_stages_on_real_1027(tmp_path):
     assert (st['collector_chosen'], st['summary_usable'], st['published']) == (12, 6, 5)
     assert rep['coverage']['haiku']['done'] == 0 and rep['coverage']['haiku']['missing'] == 12
     assert rep['cohorts'] == {'chosen_only': 1}
+
+
+# ── codex 구현 검토 회귀 (3eb524d, 중대 5·경미 3) ─────────────────────────────
+def test_haiku_slow_call_cannot_eat_past_budget(tmp_path):
+    """#1 — 요청 하나가 1,000초를 먹으면 다음 묶음은 시작하지 않는다. 남은 시간이 요청 타임아웃보다 짧아도."""
+    _seed(tmp_path, [f'記事{i}' for i in range(60)])
+    clock = [0.0]
+
+    class Slow(FakeHaiku):
+        def create(self, **kw):
+            clock[0] += 1000
+            return FakeHaiku.create(self, **kw)
+    fake = Slow()
+    out = C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=fake, now=lambda: clock[0],
+                     budgets={'haiku': 240, 'jev': 240})
+    assert len(fake.calls) == 1 and out['haiku']['stopped'] == 'deadline'
+    none = FakeHaiku()
+    out = C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=none, now=lambda: 0.0,
+                     budgets={'haiku': C.HAIKU_TIMEOUT - 1, 'jev': 240})
+    assert none.calls == [] and out['haiku']['stopped'] == 'deadline'
+
+
+def test_haiku_client_disables_sdk_retries(monkeypatch):
+    """#1 — SDK 재시도는 Retry-After 를 그대로 기다린다. 섀도 클라이언트는 재시도 0."""
+    import us.news_summary as NS
+    seen = {}
+
+    class Client:
+        def with_options(self, **kw):
+            seen.update(kw)
+            return self
+    monkeypatch.setattr(NS, 'make_client', lambda env=None: Client())
+    C._haiku_client({})
+    assert seen == {'timeout': float(C.HAIKU_TIMEOUT), 'max_retries': 0}
+
+
+@pytest.mark.parametrize('inp,res', [
+    ({'rows': [{}]}, None),
+    ({'rows': 'x'}, None),
+    (None, []),
+    (None, {'results': {'haiku': {'cfg': {'k': {'label': 'japan'}}}}}),     # 라벨 밖 판정은 「다 했다」가 아니다
+])
+def test_wrong_shape_isolates_only_that_session(tmp_path, inp, res):
+    """#2 — JSON 으로는 읽히는 틀린 모양도 그 세션만 빠지고, 두 공급자 모두 다른 세션을 끝낸다."""
+    _seed(tmp_path, ['日銀会合'], session='2026-10-28')
+    good = _seed(tmp_path, ['米雇用統計'], session='2026-10-27')
+    if inp is not None:
+        (tmp_path / 'news' / 'region_shadow' / 'input' / '2026-10-27.json').write_text(json.dumps(inp))
+    if res is not None:
+        d = tmp_path / 'news' / 'region_shadow' / 'result'
+        d.mkdir(parents=True, exist_ok=True)
+        (d / '2026-10-27.json').write_text(json.dumps(res))
+    assert good
+    out = C.classify(str(tmp_path), providers=('haiku', 'jev'), env={'TYPESAFE_API_KEY': 'k'},
+                     haiku_client=FakeHaiku(), jev_post=lambda b, k: _jev(), now=lambda: 0.0)
+    assert out['bad_inputs'] == ['2026-10-27']
+    assert out['haiku']['done'] == 1 and out['jev']['done'] == 1
+
+
+def test_provider_crash_does_not_stop_the_other(tmp_path):
+    _seed(tmp_path, ['日銀会合'])
+
+    class Boom(FakeHaiku):
+        def create(self, **kw):
+            return object()                  # 호출 경계 밖에서 깨지는 응답(stop_reason 없음)
+    out = C.classify(str(tmp_path), providers=('haiku', 'jev'), env={'TYPESAFE_API_KEY': 'k'},
+                     haiku_client=Boom(), jev_post=lambda b, k: _jev(), now=lambda: 0.0)
+    assert out['haiku']['stopped'] == 'crash:AttributeError' and out['jev']['done'] == 1
+
+
+def _daily_file(tmp_path, s, items, complete=True):
+    d = tmp_path / 'news' / 'daily'
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f'{s}.json').write_text(json.dumps({'report_date': s, 'complete': complete, 'items': items},
+                                            ensure_ascii=False), encoding='utf-8')
+
+
+def test_report_shows_missing_and_incomplete_captures(tmp_path):
+    """#3 — 일간 근거는 있는데 캡처가 없는 날, 수집이 미완주였던 캡처를 보인다."""
+    _daily_file(tmp_path, '2026-10-26', [])
+    _daily_file(tmp_path, '2026-10-27', [])
+    inp = R.build_input(S, [_list_row('a', '日銀会合')], [], collection_complete=False)
+    d = tmp_path / 'news' / 'region_shadow' / 'input'
+    d.mkdir(parents=True)
+    (d / f'{S}.json').write_text(json.dumps(inp, ensure_ascii=False))
+    rep = C.build_report(str(tmp_path), html_root=str(tmp_path), since='2026-10-26', until='2026-10-28')
+    assert rep['no_capture'] == ['2026-10-26'] and rep['incomplete_collection'] == [S]
+
+
+def test_report_follows_model_override_and_splits_actual_versions(tmp_path):
+    """#4 — 덮어쓴 모델의 판정이 보고에서 「빠짐」이 되지 않고, 실제 모델이 다르면 일치율이 갈린다."""
+    _seed(tmp_path, ['日銀会合', '米雇用統計'])
+
+    class Versioned(FakeHaiku):
+        def create(self, **kw):
+            r = FakeHaiku.create(self, **kw)
+            r.model = 'claude-haiku-4-5-actual'
+            return r
+    C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=Versioned(), now=lambda: 0.0,
+               haiku_model='claude-haiku-4-5')
+    models = iter(['jev-1.14.0', 'jev-1.15.0'])
+    C.classify(str(tmp_path), providers=('jev',), env={'TYPESAFE_API_KEY': 'k'},
+               jev_post=lambda b, k: _jev(model=next(models)), now=lambda: 0.0)
+    rep = C.build_report(str(tmp_path), html_root=str(tmp_path), haiku_model='claude-haiku-4-5')
+    assert rep['coverage']['haiku'] == {'done': 2, 'missing': 0}
+    assert rep['actual_models']['haiku'] == {'claude-haiku-4-5-actual': 2}
+    assert rep['actual_models']['jev'] == {'jev-1.14.0': 1, 'jev-1.15.0': 1}
+    assert {k for k in rep['agreement'] if k.startswith('regex~jev')} == \
+        {'regex~jev [jev-1.14.0]', 'regex~jev [jev-1.15.0]'}
+
+
+def test_report_does_not_join_a_changed_title_to_old_evidence(tmp_path):
+    """#5 — 같은 guid 라도 제목이 다르면 요약·발행 단계로 세지 않는다."""
+    _daily_file(tmp_path, S, [{'guid': 'a', 'title': '日銀、従来の方針を維持', 'summary_ko': SUM_KO}])
+    inp = R.build_input(S, [_list_row('a', '日銀、金融政策を変更')], ['a'])
+    d = tmp_path / 'news' / 'region_shadow' / 'input'
+    d.mkdir(parents=True)
+    (d / f'{S}.json').write_text(json.dumps(inp, ensure_ascii=False))
+    html = tmp_path / 'japan' / 'daily'
+    html.mkdir(parents=True)
+    (html / f'{S}.html').write_text('<div class="news-item" data-news="a"></div>')
+    rep = C.build_report(str(tmp_path), html_root=str(tmp_path))
+    assert rep['stages']['summary_usable'] == 0 and rep['stages']['published'] == 0
+    assert rep['stale_rows'] == 1
+
+
+SUM_KO = ('일본은행은 이날 단기 정책금리를 동결했다. 우에다 총재는 기자회견에서 임금과 물가의 흐름을 더 확인하겠다고 '
+          '말했다. 시장은 12월 회의에서 인상 가능성을 놓고 엇갈린 반응을 보였다. 엔화는 회견 뒤 소폭 약세를 보였다. '
+          '채권시장에서는 2년물 금리가 하락했다. 은행주는 정책 기대 후퇴로 약세를 보였다. 총재는 하반기 임금 협상 '
+          '결과와 서비스 물가의 지속성을 판단 근거로 들었다. 일부 위원은 엔화 약세가 수입 물가를 다시 밀어 올릴 위험을 지적했다.')
+
+
+def test_capture_runs_after_daily_save(tmp_path, monkeypatch):
+    """#5 — 일간 저장이 죽으면 새 캡처도 남지 않는다."""
+    import fetch_japan_news as F
+    order = []
+    monkeypatch.setattr(F, 'save_daily', lambda *a, **k: (order.append('daily'), (_ for _ in ()).throw(OSError()))[1])
+    monkeypatch.setattr(F, 'capture_shadow', lambda *a, **k: order.append('capture'))
+    with pytest.raises(OSError):
+        _collect(tmp_path, monkeypatch, lambda *a, **k: order.append('capture'))
+    assert order == ['daily']
+
+
+@pytest.mark.parametrize('text', ['{"items":[{"id":"0","label":"foreign"},{"id":"00","label":"domestic"}]}',
+                                  '{"items":[{"id":"²","label":"foreign"}]}'])
+def test_parse_haiku_only_exact_sent_ids(text):
+    """#6"""
+    with pytest.raises(R.SchemaError):
+        R.parse_haiku(text, [{'key': 'k', 'title': 't'}])
+
+
+@pytest.mark.parametrize('mutate', [
+    lambda r: r['answers']['region'].update(confidence=50),
+    lambda r: r['answers']['region'].update(confidence=-0.1),
+    lambda r: r['answers']['region'].update(confidence=True),
+    lambda r: r.update(model=None),
+    lambda r: r.update(model={'x': 1}),
+    lambda r: r['answers']['region'].update(type='score'),
+    lambda r: r['answers']['region'].update(choice='foreign', probabilities={
+        'domestic': 0.8, 'foreign_impact': 0.1, 'foreign': 0.1}),
+    lambda r: r['answers']['region']['probabilities'].update(foreign=True, domestic=0.0, foreign_impact=0.0),
+])
+def test_parse_jev_rejects_impossible_values(mutate):
+    """#7"""
+    resp = _jev()
+    mutate(resp)
+    with pytest.raises(R.SchemaError):
+        R.parse_jev(resp)
+
+
+def test_parse_jev_accepts_tie():
+    resp = _jev(choice='domestic', probs={'domestic': 0.45, 'foreign_impact': 0.1, 'foreign': 0.45})
+    assert R.parse_jev(resp)[0] == 'domestic'
+
+
+def test_jev_saves_each_success_before_a_kill(tmp_path):
+    """#8 — 셋째 요청에서 잡이 끊겨도 앞의 둘은 파일에 있다."""
+    _seed(tmp_path, ['a', 'b', 'c', 'd'])
+    n = [0]
+
+    def post(body, key):
+        n[0] += 1
+        if n[0] == 3:
+            raise SystemExit('cancelled')
+        return _jev()
+    with pytest.raises(SystemExit):
+        C.classify(str(tmp_path), providers=('jev',), env={'TYPESAFE_API_KEY': 'k'}, jev_post=post,
+                   now=lambda: 0.0)
+    res = json.loads((tmp_path / 'news' / 'region_shadow' / 'result' / f'{S}.json').read_text())
+    assert len(res['results']['jev'][R.config_id('jev', R.JEV_MODEL)]) == 2
+
+
+def test_haiku_refusal_is_an_error(tmp_path):
+    _seed(tmp_path, ['日銀会合'])
+
+    class Refuse(FakeHaiku):
+        def create(self, **kw):
+            self.calls.append(kw)
+            return _Resp('', stop='refusal')
+    out = C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=Refuse(), now=lambda: 0.0)
+    assert out['haiku']['done'] == 0 and out['haiku']['errors'] == {'stop:refusal': 1}
+
+
+def test_sdk_accepts_the_request_shape():
+    """설치된 SDK(Actions 는 anthropic>=1.8,<2)가 output_config 형식·effort 를 받는다 — 닿지 않는 로컬 포트로
+    보내 연결 오류가 나면 요청 모양은 통과한 것이다. SDK 가 없는 로컬에서는 건너뛴다."""
+    anthropic = pytest.importorskip('anthropic')
+    client = anthropic.Anthropic(api_key='TEST_ONLY', base_url='http://127.0.0.1:9', max_retries=0, timeout=2.0)
+    with pytest.raises(anthropic.APIConnectionError):
+        client.messages.create(model=R.HAIKU_MODEL, max_tokens=64, system=R.HAIKU_SYSTEM,
+                               messages=[{'role': 'user', 'content': '[]'}],
+                               output_config={'effort': 'low',
+                                              'format': {'type': 'json_schema', 'schema': R.HAIKU_SCHEMA}})

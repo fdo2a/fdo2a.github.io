@@ -35,10 +35,11 @@ from japan import region_shadow as R  # noqa: E402
 # 공식 호스트 고정 — 덮어쓰기를 열면 Bearer 키가 엉뚱한 호스트로 간다(codex 설계 검토 #11)
 JEV_URL = 'https://api.typesafe.ai/v1/systemone'
 JEV_TIMEOUT = 20
+HAIKU_TIMEOUT = 30
+REQUEST_TIMEOUT = {'haiku': HAIKU_TIMEOUT, 'jev': JEV_TIMEOUT}
 BUDGETS = {'haiku': 240, 'jev': 240}       # 공급자별 초 — 한쪽이 다른 쪽의 시간을 먹지 않게(#2)
 TRANSIENT_STOP = {'haiku': 2, 'jev': 3}     # 연속 일시 오류가 이만큼이면 이번 실행은 그만
 SCHEMA_STOP = 5                             # Jev 400·422 연속 — 요청 모양이 틀린 것이다
-JEV_CHECKPOINT = 10
 _UNSET = object()
 _DATA_NEWS = re.compile(r'\bdata-news="([0-9a-f]+)"')
 
@@ -56,14 +57,21 @@ def _load(path):
         return json.load(fh)
 
 
+def _in_range(s, since, until):
+    return not ((since and s < since) or (until and s > until))
+
+
 def _sessions(datadir, since=None, until=None):
-    out = []
-    for p in sorted(glob.glob(os.path.join(_dir(datadir, 'input'), '*.json'))):
-        s = os.path.basename(p)[:-5]
-        if (since and s < since) or (until and s > until):
-            continue
-        out.append(s)
-    return out
+    names = (os.path.basename(p)[:-5] for p in glob.glob(os.path.join(_dir(datadir, 'input'), '*.json')))
+    return sorted(s for s in names if _in_range(s, since, until))
+
+
+def _expected_sessions(datadir, html_root, since=None, until=None):
+    """일간 뉴스·발행 HTML 이 있는 세션 — 캡처가 없으면 보고가 그 날을 「no_capture」 로 보인다(#3)."""
+    paths = glob.glob(os.path.join(datadir, 'news', 'daily', '*.json')) + \
+        glob.glob(os.path.join(html_root, 'japan', 'daily', '*.html'))
+    names = {os.path.splitext(os.path.basename(p))[0] for p in paths}
+    return sorted(s for s in names if re.fullmatch(r'\d{4}-\d{2}-\d{2}', s) and _in_range(s, since, until))
 
 
 # ── Jev 전송 ─────────────────────────────────────────────────────────────
@@ -104,8 +112,9 @@ def jev_post(body, key):
 def _haiku_client(env):
     from us.news_summary import make_client
     client = make_client(env)
-    # 요약 클라이언트의 재시도 3·60초를 물려받지 않는다 — 섀도는 실행 마감이 있다(#2)
-    return client.with_options(timeout=30.0, max_retries=1) if client is not None else None
+    # 요약 클라이언트의 재시도 3·60초를 물려받지 않는다 — SDK 재시도는 `Retry-After` 를 그대로 기다려
+    # 마감을 넘긴다(codex 구현 검토 #1). 재시도는 다음 실행이 빠진 판정으로 한다
+    return client.with_options(timeout=float(HAIKU_TIMEOUT), max_retries=0) if client is not None else None
 
 
 def _err_kind(e):
@@ -126,17 +135,14 @@ class _Book:
 
     def load(self, sessions):
         for s in sessions:
-            try:
-                inp = _load(os.path.join(_dir(self.datadir, 'input'), f'{s}.json'))
-                if not isinstance(inp.get('rows'), list):
-                    raise ValueError('rows')
-            except (OSError, ValueError, AttributeError):
-                self.bad.append(s)
-                continue
             rpath = os.path.join(_dir(self.datadir, 'result'), f'{s}.json')
             try:
+                inp = _load(os.path.join(_dir(self.datadir, 'input'), f'{s}.json'))
                 res = _load(rpath) if os.path.exists(rpath) else R.empty_result(s)
             except (OSError, ValueError):
+                inp = res = None
+            # JSON 으로 읽혀도 모양이 틀리면 그 세션만 뺀다 — 다른 세션·공급자는 계속(#2)
+            if not R.valid_input(inp) or not R.valid_result(res):
                 self.bad.append(s)
                 continue
             self.inputs[s], self.results[s] = inp, res
@@ -161,7 +167,7 @@ def _run_haiku(book, client, model, budget, now):
     for s in book.inputs:
         todo = R.missing(book.inputs[s], book.results[s], 'haiku', cfg)
         for i in range(0, len(todo), R.BATCH):
-            if now() - start >= budget:
+            if now() - start + HAIKU_TIMEOUT > budget:      # 요청 하나가 끝나기 전에 마감이 오면 시작하지 않는다
                 stat['stopped'] = 'deadline'
                 return stat
             rows = todo[i:i + R.BATCH]
@@ -189,9 +195,10 @@ def _run_haiku(book, client, model, budget, now):
             except R.SchemaError as e:
                 stat['errors'][f'schema:{e}'] += 1
                 continue
-            at = _now_iso()
+            at, used = _now_iso(), getattr(resp, 'model', None) or model   # 응답이 밝힌 실제 모델(#4)
             for key, label in got.items():
-                R.record(book.results[s], 'haiku', cfg, key, {'label': label, 'model': model, 'at': at})
+                R.record(book.results[s], 'haiku', cfg, key,
+                         {'label': label, 'model': used, 'requested': model, 'at': at})
             stat['done'] += len(got)
             book.save(s)                      # 묶음마다 저장 — 죽어도 한 일은 남는다(#4)
     return stat
@@ -205,9 +212,8 @@ def _run_jev(book, key, model, budget, now, post):
         return stat
     start, transient, schema = now(), 0, 0
     for s in book.inputs:
-        pending = 0
         for row in R.missing(book.inputs[s], book.results[s], 'jev', cfg):
-            if now() - start >= budget:
+            if now() - start + JEV_TIMEOUT > budget:
                 stat['stopped'] = 'deadline'
                 break
             try:
@@ -240,14 +246,10 @@ def _run_jev(book, key, model, budget, now, post):
                 continue
             transient = schema = 0
             R.record(book.results[s], 'jev', cfg, row['key'],
-                     {'label': label, 'p': probs, 'confidence': conf, 'model': used, 'at': _now_iso()})
+                     {'label': label, 'p': probs, 'confidence': conf, 'model': used, 'requested': model,
+                      'at': _now_iso()})
             stat['done'] += 1
-            pending += 1
-            if pending >= JEV_CHECKPOINT:
-                book.save(s)
-                pending = 0
-        if pending:
-            book.save(s)
+            book.save(s)                      # 건마다 — 잡이 끊겨도 받은 판정은 남는다(#8)
         if stat['stopped']:
             break
     return stat
@@ -260,13 +262,18 @@ def classify(datadir, providers=R.PROVIDERS, env=None, haiku_client=_UNSET, jev_
     book = _Book(datadir)
     book.load(sessions or _sessions(datadir))
     out = {'bad_inputs': list(book.bad)}
-    if 'haiku' in providers:
-        model = haiku_model or env.get('REGION_SHADOW_MODEL') or R.HAIKU_MODEL
-        client = _haiku_client(env) if haiku_client is _UNSET else haiku_client
-        out['haiku'] = _run_haiku(book, client, model, budgets['haiku'], now)
-    if 'jev' in providers:
-        model = jev_model or R.JEV_MODEL
-        out['jev'] = _run_jev(book, env.get('TYPESAFE_API_KEY'), model, budgets['jev'], now, jev_post)
+    runs = {'haiku': lambda: _run_haiku(book, _haiku_client(env) if haiku_client is _UNSET else haiku_client,
+                                        haiku_model or env.get('REGION_SHADOW_MODEL') or R.HAIKU_MODEL,
+                                        budgets['haiku'], now),
+            'jev': lambda: _run_jev(book, env.get('TYPESAFE_API_KEY'), jev_model or R.JEV_MODEL,
+                                    budgets['jev'], now, jev_post)}
+    for p in R.PROVIDERS:
+        if p not in providers:
+            continue
+        try:                                  # 한 공급자의 예상 못 한 실패가 다른 공급자를 막지 않는다(#2)
+            out[p] = runs[p]()
+        except Exception as e:
+            out[p] = {'done': 0, 'stopped': f'crash:{type(e).__name__}', 'errors': Counter()}
     for p in providers:
         st = out[p]
         st['errors'] = dict(st['errors'])
@@ -275,13 +282,13 @@ def classify(datadir, providers=R.PROVIDERS, env=None, haiku_client=_UNSET, jev_
 
 
 # ── 보고 ─────────────────────────────────────────────────────────────────
-def _usable_guids(datadir, s):
-    from us.news_summary import summary_problem
+def _daily_items(datadir, s):
+    """그날 일간 뉴스 확정분 {guid: item}. 없거나 읽을 수 없으면 None."""
     path = os.path.join(datadir, 'news', 'daily', f'{s}.json')
-    if not os.path.exists(path):
-        return set()
-    return {it.get('guid') for it in _load(path).get('items') or []
-            if it.get('summary_ko') and summary_problem(it['summary_ko']) is None}
+    try:
+        return {it.get('guid'): it for it in _load(path).get('items') or []}
+    except (OSError, ValueError, AttributeError):
+        return None
 
 
 def _published_guids(html_root, s):
@@ -292,58 +299,87 @@ def _published_guids(html_root, s):
         return set(_DATA_NEWS.findall(fh.read()))
 
 
-def build_report(datadir, html_root='.', since=None, until=None, haiku_model=R.HAIKU_MODEL,
-                 jev_model=R.JEV_MODEL):
-    """일치율·적용 범위·단계별 수. 정확도는 아니다 — 셋이 같이 틀린 행은 여기서 보이지 않는다(#10)."""
+def build_report(datadir, html_root='.', since=None, until=None, haiku_model=None, jev_model=None):
+    """일치율·적용 범위·단계별 수. 정확도는 아니다 — 셋이 같이 틀린 행은 여기서 보이지 않는다(#10).
+    단계 수는 **캡처된 비공식 코호트 안**의 수다 — 공식 출처(일본은행) 발행분은 들어가지 않는다(#3)."""
+    from us.news_summary import summary_problem
+    haiku_model = haiku_model or os.environ.get('REGION_SHADOW_MODEL') or R.HAIKU_MODEL
+    jev_model = jev_model or R.JEV_MODEL
     cfg = {'haiku': R.config_id('haiku', haiku_model), 'jev': R.config_id('jev', jev_model)}
     book = _Book(datadir)
     book.load(_sessions(datadir, since, until))
+    no_capture = [s for s in _expected_sessions(datadir, html_root, since, until)
+                  if s not in book.inputs and s not in book.bad]
     cohorts = Counter(book.inputs[s].get('cohort') for s in book.inputs)
+    incomplete = [s for s in book.inputs if book.inputs[s].get('collection_complete') is False]
     coverage = {p: {'done': 0, 'missing': 0} for p in R.PROVIDERS}
+    actual = {p: Counter() for p in R.PROVIDERS}
     stage_names = ('captured', 'collector_chosen', 'summary_usable', 'published')
-    stages = Counter()
+    stages, stale = Counter(), 0
     by_stage = {st: {'regex': Counter(), 'haiku': Counter(), 'jev': Counter()} for st in stage_names}
-    pairs = {'regex~haiku': [], 'regex~jev': [], 'haiku~jev': []}
+    pairs = {}
     disagree, other_configs = [], Counter()
     for s, inp in book.inputs.items():
         res = book.results[s]
         for p in R.PROVIDERS:
             other_configs[p] += len(set((res.get('results', {}).get(p) or {})) - {cfg[p]})
-        usable, published = _usable_guids(datadir, s), _published_guids(html_root, s)
+        daily, published = _daily_items(datadir, s), _published_guids(html_root, s)
         for r in inp['rows']:
-            h = (R.verdict_of(res, 'haiku', cfg['haiku'], r['key']) or {}).get('label')
-            j = (R.verdict_of(res, 'jev', cfg['jev'], r['key']) or {}).get('label')
-            for p, v in (('haiku', h), ('jev', j)):
+            hv = R.verdict_of(res, 'haiku', cfg['haiku'], r['key']) or {}
+            jv = R.verdict_of(res, 'jev', cfg['jev'], r['key']) or {}
+            h, j = hv.get('label'), jv.get('label')
+            for p, v in (('haiku', hv), ('jev', jv)):
                 coverage[p]['done' if v else 'missing'] += 1
+                if v:
+                    actual[p][v.get('model')] += 1
+            # 요약·발행 단계는 guid **와 제목**이 일간 근거와 같을 때만 — 다른 회차의 캡처를 옛 근거에 잇지 않는다(#5)
+            item = (daily or {}).get(r['guid'])
+            same = item is not None and item.get('title') == r['title']
+            if item is not None and not same:
+                stale += 1
+            usable = same and bool(item.get('summary_ko')) and summary_problem(item['summary_ko']) is None
             flags = {'captured': True, 'collector_chosen': r.get('collector_chosen'),
-                     'summary_usable': r['guid'] in usable, 'published': r['guid'] in published}
+                     'summary_usable': usable, 'published': same and r['guid'] in published}
             for st in stage_names:
                 if flags[st]:
                     stages[st] += 1
                     by_stage[st]['regex'][r['regex_region']] += 1
                     by_stage[st]['haiku'][h or 'missing'] += 1
                     by_stage[st]['jev'][j or 'missing'] += 1
-            pairs['regex~haiku'].append((r['regex_region'], R.binary(h)))
-            pairs['regex~jev'].append((r['regex_region'], R.binary(j)))
-            pairs['haiku~jev'].append((h, j))
+            # 일치율은 실제 모델별로 나눈다 — 별칭이 움직이면 다른 실험이다(#4)
+            hm, jm = hv.get('model'), jv.get('model')
+            pairs.setdefault(('regex~haiku', hm), []).append((r['regex_region'], R.binary(h)))
+            pairs.setdefault(('regex~jev', jm), []).append((r['regex_region'], R.binary(j)))
+            pairs.setdefault(('haiku~jev', f'{hm}|{jm}'), []).append((h, j))
             if len({x for x in (r['regex_region'], R.binary(h), R.binary(j)) if x}) > 1 or (h and j and h != j):
                 disagree.append({'session': s, 'title': r['title'], 'regex': r['regex_region'],
                                  'regex_category': r.get('regex_category'), 'haiku': h, 'jev': j,
                                  'jev_p': (R.verdict_of(res, 'jev', cfg['jev'], r['key']) or {}).get('p'),
                                  'chosen': r.get('collector_chosen'), 'published': flags['published']})
-    return {'sessions': list(book.inputs), 'bad': book.bad, 'cohorts': dict(cohorts), 'config': cfg,
-            'other_configs': dict(other_configs), 'coverage': coverage,
+    agreement = {}
+    for (name, model), v in sorted(pairs.items(), key=lambda kv: (kv[0][0], str(kv[0][1]))):
+        c = R.compare(v)
+        if c['n']:
+            agreement[f'{name} [{model}]'] = c
+    return {'sessions': list(book.inputs), 'bad': book.bad, 'no_capture': no_capture,
+            'incomplete_collection': incomplete, 'cohorts': dict(cohorts),
+            'models': {'haiku': haiku_model, 'jev': jev_model}, 'config': cfg,
+            'actual_models': {p: dict(c) for p, c in actual.items()},
+            'other_configs': dict(other_configs), 'coverage': coverage, 'stale_rows': stale,
             'stages': {st: stages[st] for st in stage_names},
             'by_stage': {st: {k: dict(v) for k, v in d.items()} for st, d in by_stage.items()},
-            'agreement': {k: R.compare(v) for k, v in pairs.items()}, 'disagreements': disagree}
+            'agreement': agreement, 'disagreements': disagree}
 
 
 def print_report(rep):
     print(f"세션 {len(rep['sessions'])}개 · 코호트 {rep['cohorts']} · 읽지 못한 세션 {rep['bad'] or '없음'}")
+    print(f"캡처 없음 {rep['no_capture'] or '없음'} · 수집 미완주 {rep['incomplete_collection'] or '없음'}"
+          f" · 제목이 바뀐 행 {rep['stale_rows']}")
     for p, c in rep['coverage'].items():
         other = rep['other_configs'].get(p)
-        print(f"  {p}: 판정 {c['done']} · 빠짐 {c['missing']}" + (f' · 다른 설정 묶음 {other}' if other else ''))
-    print('단계별 (정규식 지역 / Haiku / Jev):')
+        print(f"  {p} ({rep['models'][p]}): 판정 {c['done']} · 빠짐 {c['missing']} · 실제 모델 "
+              f"{rep['actual_models'][p] or '-'}" + (f' · 다른 설정 묶음 {other}' if other else ''))
+    print('단계별 — 캡처된 비공식 코호트 안의 수 (정규식 지역 / Haiku / Jev):')
     for st, n in rep['stages'].items():
         d = rep['by_stage'][st]
         print(f"  {st:16s} {n:4d}  regex {d['regex']}  haiku {d['haiku']}  jev {d['jev']}")
@@ -358,6 +394,18 @@ def print_report(rep):
 
 
 # ── CLI ──────────────────────────────────────────────────────────────────
+def _commit():
+    """정규식 기준선을 알아볼 커밋 — Actions 는 GITHUB_SHA, 로컬은 HEAD."""
+    if os.environ.get('GITHUB_SHA'):
+        return os.environ['GITHUB_SHA']
+    import subprocess
+    try:
+        return subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True,
+                              cwd=os.path.dirname(os.path.abspath(__file__)), timeout=10).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
 def bootstrap(datadir, session, force=False):
     path = os.path.join(_dir(datadir, 'input'), f'{session}.json')
     if os.path.exists(path) and not force:
@@ -365,8 +413,7 @@ def bootstrap(datadir, session, force=False):
         return 1
     daily = _load(os.path.join(datadir, 'news', 'daily', f'{session}.json'))
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    save_json(path, R.bootstrap_input(session, daily, commit=os.environ.get('GITHUB_SHA'),
-                                      captured_at=_now_iso()))
+    save_json(path, R.bootstrap_input(session, daily, commit=_commit(), captured_at=_now_iso()))
     print(f'{path} — 확정분만 {len(daily.get("items") or [])}건(chosen_only)')
     return 0
 
@@ -383,6 +430,8 @@ def main(argv=None):
     r.add_argument('--since')
     r.add_argument('--until')
     r.add_argument('--json', action='store_true')
+    r.add_argument('--haiku-model')
+    r.add_argument('--jev-model')
     b = sub.add_parser('bootstrap')
     b.add_argument('--datadir', default='japan/data')
     b.add_argument('--session', required=True)
@@ -391,7 +440,8 @@ def main(argv=None):
     if args.cmd == 'bootstrap':
         return bootstrap(args.datadir, args.session, args.force)
     if args.cmd == 'report':
-        rep = build_report(args.datadir, args.html_root, args.since, args.until)
+        rep = build_report(args.datadir, args.html_root, args.since, args.until,
+                           haiku_model=args.haiku_model, jev_model=args.jev_model)
         if args.json:
             print(json.dumps(rep, ensure_ascii=False, indent=2))
         else:

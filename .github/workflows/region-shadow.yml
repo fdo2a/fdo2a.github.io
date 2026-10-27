@@ -24,7 +24,7 @@ concurrency:
 jobs:
   classify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,17 +36,24 @@ jobs:
         run: pip install --quiet certifi pytest 'anthropic>=1.8,<2'
       - name: Run unit tests
         run: python -m pytest scripts/japan/tests/test_region_shadow.py -q
-      - name: Classify
+      # 공급자마다 단계를 나눠 단계 시간 제한으로 강제로 끊는다 — 한쪽이 멈춰도 다른 쪽은 돈다(codex 구현 검토 #1)
+      - name: Classify (Haiku)
         continue-on-error: true
+        timeout-minutes: 6
         env:
           ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
           ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
           ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
           ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
           REGION_SHADOW_MODEL: ${{ vars.REGION_SHADOW_MODEL }}
+        run: python scripts/japan_region_shadow.py classify --datadir japan/data --providers haiku
+      - name: Classify (Jev)
+        continue-on-error: true
+        timeout-minutes: 6
+        env:
           # 없으면 Jev 칸은 no_key 로 남는다. 키는 이 단계에만 들어간다
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
-        run: python scripts/japan_region_shadow.py classify --datadir japan/data
+        run: python scripts/japan_region_shadow.py classify --datadir japan/data --providers jev
       - name: Commit results
         if: always()
         run: |

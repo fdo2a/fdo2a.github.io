@@ -248,7 +248,7 @@ def save_daily(datadir, session, chosen, complete, notes):
     return payload
 
 
-def capture_shadow(datadir, session, cut_rows, chosen):
+def capture_shadow(datadir, session, cut_rows, chosen, complete=None):
     """국내/해외 판정 섀도의 입력(`japan/region_shadow.py`). 판정은 여기서 하지 않는다 — 네트워크 없이 파일 하나.
     import 까지 이 안에 둔다: 섀도가 어떻게 깨져도 일간 뉴스는 그대로 나와야 한다(codex 설계 검토 #13)."""
     from japan import region_shadow as RS
@@ -256,7 +256,8 @@ def capture_shadow(datadir, session, cut_rows, chosen):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     save_json(path, RS.build_input(session, cut_rows, [c.get('guid') for c in chosen],
                                    commit=os.environ.get('GITHUB_SHA'),
-                                   captured_at=datetime.now(N.JST).isoformat(timespec='seconds')))
+                                   captured_at=datetime.now(N.JST).isoformat(timespec='seconds'),
+                                   collection_complete=complete))
 
 
 def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None,
@@ -281,13 +282,14 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
     sub = os.path.join(bodydir, 'daily', session)
     fetch_bodies(candidates, sub, ctx, fetch=fetch)
     chosen = [{k: it[k] for k in _KEEP if k in it} for it in ND.finalize_daily(candidates, session)]
-    try:
-        capture_shadow(datadir, session, todays, chosen)
-    except Exception as e:                 # 섀도 실패는 일간 뉴스·notes 에 남기지 않는다
-        print(f'  섀도 입력 실패(무시): {type(e).__name__}', file=sys.stderr)
     carry_summaries(_daily_path(datadir, session), chosen)
     complete = bool(rows) and off_ok and complete_for(session, reach)
     payload = save_daily(datadir, session, chosen, complete, notes + off_notes)
+    # 섀도 입력은 일간 저장 **뒤에** — 일간 저장이 죽었는데 새 캡처만 남아 옛 근거와 엮이지 않게(codex 구현 검토 #5)
+    try:
+        capture_shadow(datadir, session, todays, chosen, complete)
+    except Exception as e:                 # 섀도 실패는 일간 뉴스·notes 에 남기지 않는다
+        print(f'  섀도 입력 실패(무시): {type(e).__name__}', file=sys.stderr)
     try:
         summarize_chosen(chosen, sub, summarize=summarize)
     except Exception as e:
