@@ -4,35 +4,32 @@
  "span": "daily",
  "report_date": "2026-10-26",
  "status": "error",
- "reason": "fetch_incomplete",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-10-27T05:54:33+00:00",
- "cutoff_at": "2026-10-27T05:54:33+00:00",
+ "collected_at": "2026-10-27T06:57:52+00:00",
+ "cutoff_at": "2026-10-27T06:57:52+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "a2e3cd00ad0dab7d1af78b8fe0dbeb068761ff4f",
-  "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 179,
-  "candidates": 2,
+  "harvest": 177,
+  "candidates": 3,
   "articles": [
    2,
-   4
+   3,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 22544,
-   "out": 5833
+   "in": 4496,
+   "out": 64
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,9 +42,9 @@
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "코미 전 FBI 국장 3차 형사 기소(국방정보 유출 혐의)와 법무부 기소",
-  "query": "comey trump charges",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "632e1f2cdaa00f9e"
+ "content_hash": "1487c99d0c46c569"
 }
