@@ -18,23 +18,20 @@ import glob
 import json
 import os
 import re
-import ssl
 import sys
 import time
 import urllib.error
-import urllib.request
 from collections import Counter
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fetch_news import save_json  # noqa: E402
+from japan import jev_client as J  # noqa: E402
 from japan import news as N  # noqa: E402
 from japan import region_shadow as R  # noqa: E402
 
-# 공식 호스트 고정 — 덮어쓰기를 열면 Bearer 키가 엉뚱한 호스트로 간다(codex 설계 검토 #11)
-JEV_URL = 'https://api.typesafe.ai/v1/systemone'
-JEV_TIMEOUT = 20
+JEV_URL, JEV_TIMEOUT = J.JEV_URL, J.JEV_TIMEOUT
 HAIKU_TIMEOUT = 30
 REQUEST_TIMEOUT = {'haiku': HAIKU_TIMEOUT, 'jev': JEV_TIMEOUT}
 # 공급자별 초. **부드러운 마감이다** — 새 요청을 시작할지만 정하고, 진행 중인 요청은 끊지 못한다. 실제 상한은
@@ -76,38 +73,12 @@ def _expected_sessions(datadir, html_root, since=None, until=None):
     return sorted(s for s in names if re.fullmatch(r'\d{4}-\d{2}-\d{2}', s) and _in_range(s, since, until))
 
 
-# ── Jev 전송 ─────────────────────────────────────────────────────────────
-class JevHTTPError(Exception):
-    """HTTP 코드만 담는다 — urllib 의 HTTPError 는 헤더·본문을 끌고 다닌다."""
-
-    def __init__(self, code):
-        super().__init__(f'HTTP {code}')
-        self.code = code
-
-
-class _NoRedirect(urllib.request.HTTPRedirectHandler):
-    """리다이렉트를 따라가지 않는다 — urllib 은 Authorization 을 새 호스트로 그대로 옮긴다(#11)."""
-
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise JevHTTPError(code)
+# ── Jev 전송 — 일간 필터와 같이 쓴다(`japan/jev_client.py`) ───────────────────
+JevHTTPError, _NoRedirect = J.JevHTTPError, J._NoRedirect
 
 
 def jev_post(body, key):
-    ctx = ssl.create_default_context()
-    try:
-        import certifi
-        ctx.load_verify_locations(certifi.where())
-    except ImportError:
-        pass
-    opener = urllib.request.build_opener(_NoRedirect, urllib.request.HTTPSHandler(context=ctx))
-    req = urllib.request.Request(JEV_URL, data=json.dumps(body, ensure_ascii=False).encode('utf-8'),
-                                 headers={'Authorization': f'Bearer {key}',
-                                          'Content-Type': 'application/json'}, method='POST')
-    try:
-        with opener.open(req, timeout=JEV_TIMEOUT) as r:
-            return json.loads(r.read().decode('utf-8'))
-    except urllib.error.HTTPError as e:
-        raise JevHTTPError(e.code) from None
+    return J.post(body, key, timeout=JEV_TIMEOUT)
 
 
 # ── 판정 ─────────────────────────────────────────────────────────────────

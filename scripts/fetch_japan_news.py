@@ -239,11 +239,13 @@ def _daily_path(datadir, session):
     return os.path.join(datadir, 'news', 'daily', f'{session}.json')
 
 
-def save_daily(datadir, session, chosen, complete, notes):
+def save_daily(datadir, session, chosen, complete, notes, region_filter=None):
     path = _daily_path(datadir, session)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     payload = {'report_date': session, 'cut': ND.CUT, 'source': 'Yahoo!ファイナンス ニュース',
                'complete': complete, 'notes': list(notes), 'items': chosen}
+    if region_filter is not None:     # 국내/해외 필터의 감사 기록 — 게이트·검토는 `items` 만 읽는다
+        payload['region_filter'] = region_filter
     save_json(path, payload)
     return payload
 
@@ -260,8 +262,17 @@ def capture_shadow(datadir, session, cut_rows, chosen, complete=None):
                                    collection_complete=complete))
 
 
+def apply_region_filter(kept, post=None):
+    """Jev 국내/해외 필터(`japan/region_filter.py`). 필터 코드가 어떻게 깨져도 정규식 결과로 되돌린다(codex 설계 검토 #2)."""
+    try:
+        from japan import region_filter as RF
+        return RF.run(kept, os.environ, post=post)
+    except Exception as e:
+        return kept, {'mode': 'regex', 'stopped': f'crash:{type(e).__name__}'}
+
+
 def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None,
-                  summarize=summarize_items):
+                  summarize=summarize_items, region_post=None):
     """일간 한 세션. 컷은 목록 단계(상한 전)와 기사면 시각(확정) 두 번 건다.
 
     **발행된 세션은 다시 받지 않는다**(codex 구현 검토 #2) — 늦은 실행이 발행 근거를 덮으면 검토 러너가
@@ -276,6 +287,10 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
     # 목록 행은 갈래가 없다 — 컷(시각만 본다) → 분류(screen) → 일간 갈래(retag) 순서여야 한다
     todays = ND.cut_filter(rows, session, today)
     kept = ND.retag(N.screen(N.dedupe(todays))[0])
+    # 정규식이 남긴 후보에서 Jev 가 conf ≥ 0.9 로 해외라고 한 것만 뺀다 — 갈래 상한(preselect) 전에
+    kept, region = apply_region_filter(kept, post=region_post)
+    print(f"{session} 지역 필터: {region.get('mode')} · 판정 {region.get('answered', 0)}/{region.get('asked', 0)}"
+          f" · 뺌 {len(region.get('dropped') or [])} · 끝 {region.get('stopped')}")
     offs = ND.cut_filter(ND.retag(official_rows), session, today)
     candidates = N.preselect(offs + kept)
     print(f'{session} 일간: 컷 안 목록 {len(todays)}건 → 선별 {len(kept)}건 · 공식 {len(offs)}건 → 후보 {len(candidates)}건')
@@ -284,7 +299,7 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
     chosen = [{k: it[k] for k in _KEEP if k in it} for it in ND.finalize_daily(candidates, session)]
     carry_summaries(_daily_path(datadir, session), chosen)
     complete = bool(rows) and off_ok and complete_for(session, reach)
-    payload = save_daily(datadir, session, chosen, complete, notes + off_notes)
+    payload = save_daily(datadir, session, chosen, complete, notes + off_notes, region)
     # 섀도 입력은 일간 저장 **뒤에** — 일간 저장이 죽었는데 새 캡처만 남아 옛 근거와 엮이지 않게(codex 구현 검토 #5)
     try:
         capture_shadow(datadir, session, todays, chosen, complete)
@@ -294,7 +309,7 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
         summarize_chosen(chosen, sub, summarize=summarize)
     except Exception as e:
         payload['notes'].append(f'요약 단계 실패: {type(e).__name__}')
-    return save_daily(datadir, session, chosen, complete, payload['notes'])
+    return save_daily(datadir, session, chosen, complete, payload['notes'], region)
 
 
 def main(argv=None):
