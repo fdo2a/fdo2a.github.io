@@ -2,23 +2,22 @@
   "report_date": "2026-10-23",
   "source": "Yahoo!ファイナンス ニュース",
   "complete": false,
-  "harvested": 1013,
+  "harvested": 887,
   "dropped": {
-    "갈래 없음·정례": 185,
-    "유료": 306,
+    "갈래 없음·정례": 157,
+    "유료": 256,
     "매체 CoinPost": 2,
     "매체 NADA NEWS": 15,
     "매체 gamebiz": 2,
     "매체 トウシル": 6,
     "매체 LIMO": 2,
-    "매체 トレーダーズ・ウェブ": 156,
-    "매체 ウエルスアドバイザー": 38,
-    "매체 アイフィス株予報": 65,
-    "매체 JAPAN-REIT.COM": 1,
+    "매체 トレーダーズ・ウェブ": 153,
+    "매체 ウエルスアドバイザー": 27,
+    "매체 アイフィス株予報": 50,
     "매체 サーチナ": 3
   },
   "notes": [
-    "market 50쪽까지 2026-10-20 이전에 닿지 못했다(가장 앞 2026-10-21)",
+    "market 50쪽까지 2026-10-20 이전에 닿지 못했다(가장 앞 2026-10-22)",
     "stocks 50쪽까지 2026-10-20 이전에 닿지 못했다(가장 앞 2026-10-23)"
   ],
   "items": [
@@ -58,7 +57,7 @@
       "feed": "bus_all",
       "body_chars": 605,
       "body_file": "08-policy.txt",
-      "summary_note": "분량 벗어남 449자"
+      "summary_note": "분량 벗어남 413자"
     },
     {
       "guid": "bf5de1a69f4f1df898596bbd749ae58f681e86c2",
@@ -135,7 +134,7 @@
       "feed": "bus_all",
       "body_chars": 823,
       "body_file": "18-industry.txt",
-      "summary_note": "분량 벗어남 479자"
+      "summary_note": "분량 벗어남 439자"
     },
     {
       "guid": "797f822293cd6154fb2df04ae44314c40d868aa0",
@@ -160,7 +159,7 @@
       "feed": "bus_all",
       "body_chars": 747,
       "body_file": "20-industry.txt",
-      "summary_note": "분량 벗어남 437자"
+      "summary_note": "분량 벗어남 434자"
     },
     {
       "guid": "eb0ce98068e79f6d1ad5976c86f29d162cf3ba6f",
@@ -211,7 +210,7 @@
       "official": true,
       "body_chars": 982,
       "body_file": "30-insight.txt",
-      "summary_note": "가나·한자 「ニッセイ基礎研究所」"
+      "summary_note": "분량 벗어남 454자"
     },
     {
       "guid": "http://www.nli-research.co.jp/report/detail/id=87167?site=nli",
