@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-27T11:44:27+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-27T12:01:18+00:00",
  "cutoff_at": "2026-10-27T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 609,
+  "harvest": 599,
   "candidates": 1,
   "articles": [
    6
@@ -43,17 +43,17 @@
    "seoul": "ok"
   },
   "notes": [
-   "discover:609"
+   "discover:599"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 27112,
-   "out": 9802
+   "in": 29448,
+   "out": 12523
   },
   "grounded": {
-   "claims": "3/3",
-   "pairs": "1/1",
+   "claims": "6/6",
+   "pairs": "2/2",
    "obs": "7/7"
   },
   "verified": {
@@ -63,9 +63,9 @@
   }
  },
  "event": {
-  "topic_ko": "신한금융 3분기 실적: 순이자마진(NIM)이 개선됐는지 하락했는지",
+  "topic_ko": "신한금융 3분기 실적: 순이자마진(NIM) 방향과 신한라이프 감익 폭",
   "query": "3분기 LG이노텍 최대",
   "trigger": []
  },
- "content_hash": "6632165f03aec8f6"
+ "content_hash": "1990c567b8f55eb0"
 }
