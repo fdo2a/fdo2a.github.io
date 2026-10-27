@@ -51,9 +51,15 @@ EFFORT_MODELS = {'claude-haiku-5-5': 'low', 'claude-sonnet-5-5': 'low'}  # 정�
 # 다른 것으로 바꿨으면 승격하지 않는다. 실행당 상한은 밀린 날짜를 몰아 받는 날의 비용·지연을 묶는다.
 ESCALATE = {'claude-haiku-5-5': 'claude-sonnet-5-5'}
 ESCALATE_CAP = 10
-# 승격 예산은 수집 실행(프로세스) 전체가 나눠 쓴다 — 뉴스·칼럼·밀린 날짜가 summarize_items 를 따로 부른다.
+# 승격 예산은 수집 실행 하나가 나눠 쓴다 — 뉴스·칼럼·밀린 날짜가 summarize_items 를 따로 부른다. 경계는 new_run().
 _escalations = 0
 _escalate_off = False               # 승격 모델만 403 이면 이 실행에서는 더 올리지 않는다
+
+
+def new_run():
+    """수집 실행의 시작 — 승격 예산과 403 차단을 비운다. 각 수집 스크립트의 main() 첫 줄에서 부른다."""
+    global _escalations, _escalate_off
+    _escalations, _escalate_off = 0, False
 AUDIENCE = 'https://api.anthropic.com'
 
 # 게이트의 요약 분량 띠(news_gate.MIN_CHARS·MAX_CHARS = 240·420, **공백 제외**)보다 안쪽을

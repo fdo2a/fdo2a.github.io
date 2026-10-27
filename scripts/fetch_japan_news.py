@@ -36,7 +36,7 @@ from japan import news_daily as ND  # noqa: E402
 from us.news import (_nli_body, parse_boj_speeches, parse_boj_statements,  # noqa: E402
                      parse_feed_strict, pdf_text)
 from us.news import extract_body as page_body  # noqa: E402
-from us.news_summary import SYSTEM, SYSTEM_ANALYSIS, summarize_items  # noqa: E402
+from us.news_summary import SYSTEM, SYSTEM_ANALYSIS, new_run, summarize_items  # noqa: E402
 
 GAP = 0.5              # 같은 호스트를 붙여 때리지 않는다
 BACK_DAYS = 5          # 목록이 닿는 깊이(bus_all 1,000건 ≈ 평일 5일 남짓) 안에서만 메운다
@@ -281,6 +281,7 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
 
 
 def main(argv=None):
+    new_run()                     # 승격 예산은 이 실행 몫부터 센다
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='japan/data')
     ap.add_argument('--bodydir', default='_workspace/japan_news')

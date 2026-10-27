@@ -588,3 +588,23 @@ def test_articles_done_before_an_auth_stop_keep_their_summary(tmp_path):
     c = ByModel(claude_haiku_5_5=[GOOD, '짧다', '짧다'], claude_sonnet_5_5=[Boom(status_code=401)])
     assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=c, log=lambda *_: None) == 1
     assert its[0]['summary_ko'] == GOOD and '인증 실패' in its[1]['summary_note']
+
+
+def test_new_run_gives_an_independent_run_its_own_budget(tmp_path, monkeypatch):
+    monkeypatch.setattr(NS, 'ESCALATE_CAP', 1)
+    a = ByModel(claude_haiku_5_5=['짧다', '짧다'], claude_sonnet_5_5=[Boom(status_code=403)])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model=HAIKU, client=a, log=lambda *_: None)
+    assert NS._escalate_off and NS._escalations == 1
+    NS.new_run()
+    b = ByModel(claude_haiku_5_5=['짧다', '짧다'], claude_sonnet_5_5=[GOOD])
+    its = items(tmp_path)
+    assert NS.summarize_items(its, str(tmp_path), model=HAIKU, client=b, log=lambda *_: None) == 1
+    assert models(b) == [HAIKU, HAIKU, SONNET]
+
+
+def test_every_collector_main_starts_a_new_run():
+    import inspect
+    import fetch_japan_news, fetch_kr_news, fetch_news
+    for mod in (fetch_news, fetch_kr_news, fetch_japan_news):
+        lines = inspect.getsource(mod.main).splitlines()[1:]
+        assert lines[0].strip().startswith('new_run()'), mod.__name__

@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from us.news import (FEEDS, _nli_body, body_note, categorize, dedupe,  # noqa: E402
                      extract_body, page_published, pages, parse_feed_strict, pdf_text,
                      select, title_wire, trim, wire_of)
-from us.news_summary import SYSTEM_ANALYSIS, summarize_items, usable_summary  # noqa: E402
+from us.news_summary import SYSTEM_ANALYSIS, new_run, summarize_items, usable_summary  # noqa: E402
 
 UA = ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/120.0 Safari/537.36')
@@ -215,6 +215,7 @@ def save_json(path, payload):
 
 
 def main():
+    new_run()                     # 승격 예산은 이 실행 몫부터 센다
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--bodydir', default='_workspace/news')

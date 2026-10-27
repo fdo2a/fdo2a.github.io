@@ -26,7 +26,7 @@ from kr.news import (KST, LIST_URL, MAX_PAGES, PAGE_SIZE, SECTION_URL,  # noqa: 
                      WORLD_SECTIONS, article_published, body_note, categorize, dedupe,
                      extract_body, older_than, on_date, parse_list, parse_section, select,
                      trim)
-from us.news_summary import SYSTEM_KO_SOURCE, summarize_items  # noqa: E402
+from us.news_summary import SYSTEM_KO_SOURCE, new_run, summarize_items  # noqa: E402
 
 GAP = 0.5              # 같은 호스트를 붙여 때리지 않는다
 
@@ -113,6 +113,7 @@ def fetch_bodies(chosen, bodydir, ctx, fetch=None):
 
 
 def main(argv=None):
+    new_run()                     # 승격 예산은 이 실행 몫부터 센다
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='kr/data')
     ap.add_argument('--bodydir', default='_workspace/kr_news')
