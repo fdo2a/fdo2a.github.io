@@ -173,6 +173,70 @@ def test_weekly_busy():
     assert weekly(set(), lock_age=5) == 'BUSY'
 
 
+# ── 월간 (2026-10-27 codex 설계 검토) ────────────────────────────────────────
+
+def monthly(files=(), today=date(2026, 11, 3), us_rd='2026-11-02', kr_rd='2026-11-02',
+            us_end='2026-10-30', kr_end='2026-10-30', us_ok=True, kr_ok=True):
+    def agg(end, ok):
+        return None if end is None else {'end_date': end, 'complete': ok}
+    return rd.decide_monthly(today, {'us': us_rd, 'kr': kr_rd},
+                             {'us': agg(us_end, us_ok), 'kr': agg(kr_end, kr_ok)},
+                             set(files), {'us': US_HOL, 'kr': KR_HOL})
+
+
+def test_monthly_key_is_the_closed_month_not_the_report_date_month():
+    """report_date 가 11/02 라도 KEY 는 10월이다 — month_key(report_date) 는 2026-11 을 냈다."""
+    assert monthly() == ('DUE', '2026-10', 'us,kr')
+
+
+def test_monthly_resumes_the_market_that_did_not_publish():
+    """US 만 나간 달에 KR 을 이어받는다 — 예전 STEP 0 은 US 글만 보고 영구히 끝냈다."""
+    assert monthly({'monthly/2026-10.html'}) == ('DUE', '2026-10', 'kr')
+    assert monthly({'kr/monthly/2026-10.html'}) == ('DUE', '2026-10', 'us')
+
+
+def test_monthly_both_published_is_done():
+    assert monthly({'monthly/2026-10.html', 'kr/monthly/2026-10.html'})[0] == 'DONE'
+
+
+def test_monthly_waits_until_that_market_data_crosses_the_month():
+    """11/02 09:30 KST 의 US 데이터는 10/30 — 9월로 소급하지 않고 기다린다."""
+    v = monthly(today=date(2026, 11, 2), us_rd='2026-10-30', kr_rd='2026-10-30')
+    assert v[:2] == ('WAIT', '2026-10')
+    # KR 만 남았으면 US 데이터가 밀린 것은 상관없다
+    assert monthly({'monthly/2026-10.html'}, us_rd='2026-10-30')[:3] == ('DUE', '2026-10', 'kr')
+
+
+def test_monthly_blocks_when_the_aggregate_stopped_before_month_end():
+    """월말 수집이 실패하고 새 달 수집만 성공하면 집계가 10/26 에 멈춘 채 complete 다(codex #1)."""
+    v = monthly(us_end='2026-10-26')
+    assert v[0] == 'BLOCKED' and 'us' in v[2]
+
+
+def test_monthly_blocks_on_missing_or_incomplete_aggregate():
+    assert monthly(kr_end=None)[0] == 'BLOCKED'
+    assert monthly(kr_ok=False)[0] == 'BLOCKED'
+
+
+def test_monthly_published_side_needs_no_aggregate():
+    assert monthly({'monthly/2026-10.html'}, us_end=None, us_rd=None)[:3] == ('DUE', '2026-10', 'kr')
+
+
+def test_monthly_last_trading_day_follows_the_holiday_calendar():
+    """KR 12/31 은 휴장 — 12월 집계는 12/30 에 끝나야 맞다."""
+    v = monthly(today=date(2027, 1, 5), us_rd='2027-01-04', kr_rd='2027-01-04',
+                us_end='2026-12-31', kr_end='2026-12-30')
+    assert v == ('DUE', '2026-12', 'us,kr')
+
+
+def test_monthly_orchestrator_uses_the_step0_key_to_the_end():
+    """STEP 0-b 가 report_date 로 KEY 를 다시 만들면 결함 1 이 돌아온다."""
+    doc = open(os.path.join(ROOT, '.claude', 'MONTHLY_ORCHESTRATOR.md'), encoding='utf-8').read()
+    assert 'routine_due.py monthly' in doc
+    assert 'month_key(' not in doc
+    assert 'kr/monthly/<KEY>.html' in doc      # 시장별 완료 판정
+
+
 # ── 잠금 이름은 루틴이 잡는 이름과 같아야 한다 ────────────────────────────────
 
 def test_lock_names_match_run_lock_rules():

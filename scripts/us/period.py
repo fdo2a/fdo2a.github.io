@@ -29,6 +29,12 @@ def month_key(d):
     return d[:7]
 
 
+def prev_month_key(d):
+    """d 가 속한 달의 직전 달 — 월간 루틴의 KEY(닫힌 달). month_key(오늘) 을 쓰면 새 달 키가 된다."""
+    y, m = int(d[:4]), int(d[5:7])
+    return f'{y - 1}-12' if m == 1 else f'{y}-{m - 1:02d}'
+
+
 def slice_series(series, start, end):
     return [(d, v) for d, v in series if start <= d <= end]
 

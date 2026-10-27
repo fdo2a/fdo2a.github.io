@@ -7,6 +7,7 @@
     python3 scripts/ci/routine_due.py japan-key        # 일본 주간 키·그 주 금요일·MOF 게시일 (STEP 0)
     python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
     python3 scripts/ci/routine_due.py week-end         # 달력상 그 주 마지막 US 거래일 (주간 스냅샷 기본 종료일)
+    python3 scripts/ci/routine_due.py monthly          # 월간 STEP 0: DONE|WAIT|BLOCKED|DUE <KEY> <남은 시장·이유>
 
 본 루틴이 5시간 한도로 죽으면 다시 띄울 장치가 없었다(9/25 US 뉴스·산업 브리프). 재시도
 루틴이 3시간마다 뜨고, 이 스크립트가 `DUE` 일 때만 오케스트레이터를 읽는다. 나머지는 곧바로
@@ -179,6 +180,41 @@ def decide_weekly(key, aggs, files, lock_age):
     return 'DUE', f'{key} 미발행: {", ".join(missing.values())}'
 
 
+MONTHLY_POSTS = {'us': 'monthly/{}.html', 'kr': 'kr/monthly/{}.html'}
+
+
+def decide_monthly(today, report_dates, aggs, files, holidays):
+    """월간 STEP 0 — (판정, KEY, 남은 시장 csv 또는 이유). 2026-10-27 codex 설계 검토.
+
+    KEY 는 서울 달력의 직전 달이다. report_date 의 달로 만들면 새 달 키가 되고(11/02 → 2026-11),
+    report_date 의 직전 달로 만들면 수집이 밀린 날 지난달보다 한 달 앞을 소급 발행한다.
+    `complete` 는 「본 세션 사이에 빈 날이 없다」일 뿐 달이 닫혔다는 뜻이 아니라서, 그 시장
+    report_date 가 KEY 를 넘었는지와 집계 end_date 가 그 달 마지막 거래일인지를 따로 본다.
+    이미 나간 시장의 데이터·집계는 보지 않는다(주간 codex #6).
+    """
+    from us.period import month_key, prev_month_key
+    key = prev_month_key(today.isoformat())
+    missing = [m for m in ('us', 'kr') if MONTHLY_POSTS[m].format(key) not in files]
+    if not missing:
+        return 'DONE', key, '발행 완료'
+    early = [m for m in missing if not report_dates.get(m) or month_key(report_dates[m]) <= key]
+    if early:
+        return 'WAIT', key, f'데이터가 아직 {key} 를 넘지 않았다: {",".join(early)}'
+    last_day = date(*(int(x) for x in key.split('-')), 1) + timedelta(days=31)
+    last_day = last_day.replace(day=1) - timedelta(days=1)
+    bad = []
+    for m in missing:
+        agg = aggs.get(m) or {}
+        want = _trading_back(last_day, holidays.get(m, ())).isoformat()
+        if not agg.get('complete'):
+            bad.append(f'{m} 집계 없음·불완전')
+        elif agg.get('end_date') != want:
+            bad.append(f'{m} 집계 끝 {agg.get("end_date")} ≠ 마지막 거래일 {want}')
+    if bad:
+        return 'BLOCKED', key, '; '.join(bad)
+    return 'DUE', key, ','.join(missing)
+
+
 # ── git 에서 사실을 모은다 ──────────────────────────────────────────────────────
 
 def _git(*args):
@@ -262,6 +298,8 @@ def main(argv=None):
         # 주간 오케스트레이터가 데이터로 정한 키와 맞대 본다 — 다르면 데이터가 밀린 것이다.
         print(week_of(datetime.now(timezone.utc), _holidays('us')))
         return 0
+    if args[0] == 'monthly':
+        return _monthly()
     kind = args[0]
     if kind not in ('us', 'kr', 'weekly', 'japan', 'jp_daily'):
         print('usage: routine_due.py us|kr|weekly|japan|jp_daily', file=sys.stderr)
@@ -295,6 +333,25 @@ def main(argv=None):
                 'kr': _show_json(f'kr/data/weekly/{key}.json')}
         verdict = decide_weekly(key, aggs, _files('weekly', 'kr/weekly'),
                                 _lock_age(lock_name('weekly', now, key), now))
+    print(' '.join(verdict))
+    return 0
+
+
+def _monthly():
+    """월간은 KEY 가 있어야 진행하므로 판정 불가를 DUE 로 보내지 않는다 — BLOCKED 로 알린다."""
+    today = datetime.now(timezone.utc).astimezone(SEOUL).date()
+    if _git('fetch', '-q', 'origin', 'main').returncode:
+        print('BLOCKED - fetch 실패 — 판정 불가')
+        return 0
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+    from us.period import prev_month_key
+    key = prev_month_key(today.isoformat())
+    rds = {m: (_show_json(p) or {}).get('report_date')
+           for m, p in (('us', 'data/market_data.json'), ('kr', 'kr/data/kr_market_data.json'))}
+    aggs = {'us': _show_json(f'data/monthly/{key}.json'),
+            'kr': _show_json(f'kr/data/monthly/{key}.json')}
+    verdict = decide_monthly(today, rds, aggs, _files('monthly', 'kr/monthly'),
+                             {'us': _holidays('us'), 'kr': _holidays('kr')})
     print(' '.join(verdict))
     return 0
 

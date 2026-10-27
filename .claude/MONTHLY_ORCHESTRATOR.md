@@ -4,33 +4,35 @@ US·KR 월간 정리 2편을 발행한다. **그 달 발행본의 총정리**이
 
 **편집 계약:** 준비 단계에서 `.claude/DESK_REPORT.md`를 읽고 writer에게 경로를 전달한다. 기간 시황과 성과표를 유지하면서 현재 판단의 함의·기대와 결과의 차이·다음 확인 조건을 연결한다. 주간은 중요한 질문의 심화, 월간은 판단 방법의 복기다. 작성 전후 그 문서의 Editorial acceptance를 적용하고 기존 연구·수치·문체 검사를 모두 수행한다.
 
-## STEP 0 — 월이 넘어갔는가 (먼저 확인하고, 아니면 즉시 끝낸다)
+## STEP 0 — 준비와 월 롤오버 판정 (먼저 확인하고, 아니면 즉시 끝낸다)
 
-이 트리거는 달 경계를 놓치지 않으려고 여러 날에 걸쳐 뜬다. **대부분의 실행은 아무것도 하지 않고 끝나야 한다.**
+이 트리거는 달 경계를 놓치지 않으려고 여러 날에 걸쳐 뜬다. **대부분의 실행은 아무것도 하지 않고 끝나야 한다.** 운영 전제: **매월 1-7일 매일 같은 시각**에 뜬다 — 1일이 주말이면 1·2일에는 US 데이터가 아직 지난달이라 WAIT 로 끝나고, 그 뒤 실행이 없으면 그 달 월간이 안 나온다(2026-10-27 codex 설계 검토 #2).
 
-`report_date`가 속한 달이 아니라 **직전 달 M이 닫혔는가**를 본다. 세 조건이 모두 참일 때만 진행한다.
-
-1. `data/market_data.json`의 `report_date`가 **M보다 뒤의 달**에 있다 — 즉 달이 넘어갔다
-2. `data/monthly/<M>.json`이 있고 `complete: true`다
-3. `monthly/<M>.html`이 아직 없다
-
-하나라도 어긋나면 「월 롤오버 아님 — 종료」를 남기고 **즉시 끝낸다.** 리서치도 파일 읽기도 더 하지 않는다 — 토큰 낭비다.
-
-**「집계 파일이 있다」만으로 판단하지 않는다** — 수집기는 당월 집계를 매일 갱신하므로 새 달 이틀째에도 1세션짜리 당월 파일이 존재한다. 그걸 롤오버로 읽으면 한 달을 이틀로 정리해 발행한다(2026-08-30 codex 검토).
-
-## STEP 0-b — 준비와 기간 키
-
-레포(`fdo2a/fdo2a.github.io`)를 클론하고 워크스페이스로 삼는다.
+레포(`fdo2a/fdo2a.github.io`)를 클론하고 워크스페이스로 삼는다. 판정 전에 `git pull -q origin main` 으로 작업 트리를 원격과 맞춘다 — 판정은 `origin/main` 을 읽고 이후 단계는 작업 트리를 읽는다(codex #4).
 
 ```bash
-python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import month_key;print(month_key(json.load(open('data/market_data.json'))['report_date']))"
+python3 scripts/ci/routine_due.py monthly
 ```
 
-이 값이 `<KEY>`(예: `2026-08`)다. **날짜 산술로 도출하지 않는다** — 2026-07-13 중복 생성 직전까지 갔던 버그와 같은 부류다.
+한 줄이 나온다: `<판정> <KEY> <남은 시장 또는 이유>`.
+
+- `DONE` — `monthly/<KEY>.html` 과 `kr/monthly/<KEY>.html` 이 **둘 다** 있다. 그 줄만 남기고 끝낸다.
+- `WAIT` — 남은 시장의 `report_date` 가 아직 `<KEY>` 달을 넘지 않았다(월 롤오버 아님). 그 줄만 남기고 끝낸다. 리서치도 파일 읽기도 더 하지 않는다 — 토큰 낭비다.
+- `BLOCKED` — 남은 시장의 집계가 없거나 불완전하거나, `end_date` 가 그 달 마지막 거래일(휴장 달력)이 아니다, 또는 fetch 실패. **발행하지 않고 그 줄을 PushNotification 으로 알린 뒤 끝낸다.** 집계는 수집기가 현재 `report_date` 의 달만 갱신하므로 월말 수집이 실패한 달은 다시 돌려도 고쳐지지 않는다.
+- `DUE` — 둘째 토큰이 `<KEY>`(예: `2026-10`), 셋째가 남은 시장(`us,kr` · `us` · `kr`).
+
+**`<KEY>` 는 이 출력의 값을 끝까지 쓴다. 다시 계산하지 않는다.** KEY 는 서울 달력의 직전 달이고(`scripts/us/period.py` `prev_month_key`), `report_date` 로 다시 만들면 새 달 키가 된다 — report_date 2026-11-02 는 `2026-11` 을 낸다(2026-10-27 codex 검토). **날짜 산술로 직접 도출하지도 않는다** — 2026-07-13 중복 생성 직전까지 갔던 버그와 같은 부류다.
+
+**「집계 파일이 있다」·`complete: true` 만으로 판정하지 않는다** — `complete` 는 「본 세션 사이에 빈 날이 없다」일 뿐이다. 수집기는 당월 집계를 매일 갱신하므로 새 달 이틀째에도 1세션짜리 당월 파일이 `complete: true` 로 존재한다. 그걸 롤오버로 읽으면 한 달을 이틀로 정리해 발행한다(2026-08-30 codex 검토). 판정 스크립트가 시장별 `report_date` 와 `end_date` 를 따로 본다.
+
+**부분 발행 이어받기** (US 만 나가고 KR 이 실패한 달을 다음 실행이 이어받는다 — 예전 STEP 0 은 US 글만 보고 영구히 끝냈다):
+
+- **남은 시장만 만든다** — US 가 이미 있으면 STEP 4 를, KR 이 이미 있으면 STEP 5 를 건너뛰고, STEP 1·2 와 STEP 6 도 **남은 시장만** 본다(이미 나간 쪽 집계는 확인하지 않는다). **STEP 3 은 남은 시장과 무관하게 항상 돈다** — KR 게이트도 `data/period_scorecard.json` 을 받으므로, 건너뛰면 다른 기간의 스코어카드가 그 자리에 남는다(codex #3).
+- STEP 6 커밋 직전에는 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:<그 글 경로>` 로 확인한다. 그 사이 생긴 쪽은 글·목록 갱신 모두 커밋에서 뺀다. push 가 거절되면 `git pull --rebase` 하고, `monthly.json`·`kr/monthly.json`·`sitemap.xml` 충돌은 원격 판을 받은 뒤 STEP 6 의 `update_archives.py` 를 이 키로 다시 돌려 `git rebase --continue` 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
 
 ## STEP 1 — 집계 파일 확인
 
-`data/monthly/<KEY>.json`과 `kr/data/monthly/<KEY>.json`이 있고 `complete: true`인지 본다.
+`data/monthly/<KEY>.json`과 `kr/data/monthly/<KEY>.json`이 있고 `complete: true`인지 본다(STEP 0 에서 한 시장이 이미 발행됐으면 남은 시장의 집계만). STEP 0 판정이 이미 확인했으니 여기서 어긋나면 작업 트리가 원격과 다른 것이다.
 
 없거나 `complete: false`면 **PushNotification으로 알리고 중단한다.** 완성본만 발행한다 — 반쪽 집계로 낸 총정리는 다음 달에 정정할 방법이 없다.
 
