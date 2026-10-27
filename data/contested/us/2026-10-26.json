@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-27T15:17:35+00:00",
- "cutoff_at": "2026-10-27T15:17:35+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-27T16:27:44+00:00",
+ "cutoff_at": "2026-10-27T16:27:44+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,45 +21,42 @@
   "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
  },
  "counts": {
-  "harvest": 187,
-  "candidates": 3,
+  "harvest": 191,
+  "candidates": 1,
   "articles": [
-   2,
-   1,
-   3
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 30609,
-   "out": 7585
+   "in": 45214,
+   "out": 10856
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "out_of_window"
+   "aljazeera.com": "ok",
+   "cbc.ca": "ok",
+   "arabnews.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
    "claims": "2/2",
    "pairs": "1/1",
-   "obs": "5/5"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 4
-  },
-  "attempt_refunded": "discovery_throttled"
+   "obs": 6
+  }
  },
  "event": {
-  "topic_ko": "영국 힐리 첫 예산안의 은행 과세 수단",
-  "query": "budget opinion",
+  "topic_ko": "이스라엘 총선(2026-10-27): 아이젠코트 야샤르당의 선거운동 초점",
+  "query": "israel netanyahu election",
   "trigger": []
  },
- "content_hash": "79a495cfe529122a"
+ "content_hash": "e34143479d5b3d6f"
 }
