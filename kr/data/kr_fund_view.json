@@ -2,7 +2,7 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-10-27",
-  "generated_at": "2026-10-27 23:09 KST",
+  "generated_at": "2026-10-28 00:05 KST",
   "status": "ok",
   "missing": [],
   "source_dates": {
@@ -67,22 +67,6 @@
     {
       "unit_id": "semis",
       "unit_name": "반도체·AI 하드웨어",
-      "kind": "stock",
-      "name": "SK하이닉스",
-      "change_pct": 5.18,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "semis",
-      "unit_name": "반도체·AI 하드웨어",
-      "kind": "stock",
-      "name": "삼성전자",
-      "change_pct": 4.23,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "semis",
-      "unit_name": "반도체·AI 하드웨어",
       "kind": "index",
       "name": "대만가권",
       "change_pct": 0.12,
@@ -109,30 +93,6 @@
       "date": "2026-10-27"
     },
     {
-      "unit_id": "grid",
-      "unit_name": "전력망",
-      "kind": "stock",
-      "name": "HD현대일렉트릭",
-      "change_pct": 0.67,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "grid",
-      "unit_name": "전력망",
-      "kind": "stock",
-      "name": "LS ELECTRIC",
-      "change_pct": 3.4,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "grid",
-      "unit_name": "전력망",
-      "kind": "stock",
-      "name": "효성중공업",
-      "change_pct": 3.29,
-      "date": "2026-10-27"
-    },
-    {
       "unit_id": "defense",
       "unit_name": "방산",
       "kind": "industry",
@@ -140,22 +100,6 @@
       "change_pct": 1.64,
       "breadth": 0.686,
       "leading": true,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "defense",
-      "unit_name": "방산",
-      "kind": "stock",
-      "name": "한화에어로스페이스",
-      "change_pct": 1.05,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "defense",
-      "unit_name": "방산",
-      "kind": "stock",
-      "name": "LIG디펜스앤에어로스페이스",
-      "change_pct": 3.26,
       "date": "2026-10-27"
     },
     {
@@ -179,30 +123,6 @@
       "date": "2026-10-27"
     },
     {
-      "unit_id": "industrials",
-      "unit_name": "산업재",
-      "kind": "stock",
-      "name": "HD현대중공업",
-      "change_pct": 0.69,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "industrials",
-      "unit_name": "산업재",
-      "kind": "stock",
-      "name": "한화오션",
-      "change_pct": 0.0,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "industrials",
-      "unit_name": "산업재",
-      "kind": "stock",
-      "name": "삼성중공업",
-      "change_pct": 0.55,
-      "date": "2026-10-27"
-    },
-    {
       "unit_id": "metals",
       "unit_name": "금속·광업",
       "kind": "industry",
@@ -220,14 +140,6 @@
       "change_pct": 2.19,
       "breadth": 0.65,
       "leading": false,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "metals",
-      "unit_name": "금속·광업",
-      "kind": "stock",
-      "name": "POSCO홀딩스",
-      "change_pct": 2.41,
       "date": "2026-10-27"
     },
     {
@@ -251,22 +163,6 @@
       "date": "2026-10-27"
     },
     {
-      "unit_id": "financials",
-      "unit_name": "금융",
-      "kind": "stock",
-      "name": "KB금융",
-      "change_pct": 0.27,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "financials",
-      "unit_name": "금융",
-      "kind": "stock",
-      "name": "신한지주",
-      "change_pct": 0.35,
-      "date": "2026-10-27"
-    },
-    {
       "unit_id": "software",
       "unit_name": "소프트웨어",
       "kind": "industry",
@@ -287,14 +183,6 @@
       "date": "2026-10-27"
     },
     {
-      "unit_id": "software",
-      "unit_name": "소프트웨어",
-      "kind": "stock",
-      "name": "NAVER",
-      "change_pct": 0.06,
-      "date": "2026-10-27"
-    },
-    {
       "unit_id": "energy",
       "unit_name": "에너지",
       "kind": "industry",
@@ -305,28 +193,12 @@
       "date": "2026-10-27"
     },
     {
-      "unit_id": "energy",
-      "unit_name": "에너지",
-      "kind": "stock",
-      "name": "S-Oil",
-      "change_pct": -1.02,
-      "date": "2026-10-27"
-    },
-    {
-      "unit_id": "energy",
-      "unit_name": "에너지",
-      "kind": "stock",
-      "name": "SK이노베이션",
-      "change_pct": 1.09,
-      "date": "2026-10-27"
-    },
-    {
       "unit_id": "japan",
       "unit_name": "일본",
       "kind": "index",
       "name": "닛케이",
-      "change_pct": 1.73,
-      "date": "2026-10-27"
+      "change_pct": -0.8,
+      "date": "2026-10-26"
     },
     {
       "unit_id": "china",
