@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-26",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-27T16:27:44+00:00",
- "cutoff_at": "2026-10-27T16:27:44+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-27T16:46:33+00:00",
+ "cutoff_at": "2026-10-27T16:46:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,33 +30,41 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 45214,
-   "out": 10856
+   "in": 44300,
+   "out": 11119
   },
   "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
+   "arabnews.com": "ok",
    "cbc.ca": "ok",
-   "arabnews.com": "ok"
+   "theguardian.com": "ok"
   },
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "2/2",
-   "pairs": "1/1",
-   "obs": "7/7"
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "6/6"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 6
+   "pairs": 1,
+   "claims": 2,
+   "obs": 5
   }
  },
  "event": {
-  "topic_ko": "이스라엘 총선(2026-10-27): 아이젠코트 야샤르당의 선거운동 초점",
-  "query": "israel netanyahu election",
+  "topic_ko": "이스라엘 총선(2026-10-27): 아이젠코트 선거운동 초점과 네타냐후",
+  "query": "israel trump election",
   "trigger": []
  },
- "content_hash": "e34143479d5b3d6f"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "edges[1]:dangling",
+  "memo[2]:unverified",
+  "worry.moderate[0]:unverified"
+ ],
+ "content_hash": "fee654b799060e88"
 }
