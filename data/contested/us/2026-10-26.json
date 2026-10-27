@@ -7,8 +7,8 @@
  "reason": "fetch_incomplete",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-10-26T23:52:50+00:00",
- "cutoff_at": "2026-10-26T23:52:50+00:00",
+ "collected_at": "2026-10-27T05:54:33+00:00",
+ "cutoff_at": "2026-10-27T05:54:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,34 +21,33 @@
   "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
  },
  "counts": {
-  "harvest": 172,
-  "candidates": 3,
+  "harvest": 179,
+  "candidates": 2,
   "articles": [
    2,
-   2,
-   5
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 23056,
-   "out": 5129
+   "in": 22544,
+   "out": 5833
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
-   "theguardian.com": "ok"
+   "theguardian.com": "ok",
+   "aljazeera.com": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "코미 전 FBI 국장 3차 형사 기소와 딸 모린 코미 해임 위법 판결",
+  "topic_ko": "코미 전 FBI 국장 3차 형사 기소(국방정보 유출 혐의)와 법무부 기소",
   "query": "comey trump charges",
   "trigger": []
  },
- "content_hash": "26f72328b485b822"
+ "content_hash": "632e1f2cdaa00f9e"
 }
