@@ -185,3 +185,19 @@ def test_news_block_added_consensus_blocked():
     rows = [_row('a', 'macro', '日銀', f'{S}T12:00:00+09:00')]
     v = G.check(_expanded(' 물가는 시장 예상치를 웃돌았다.'), _collected(rows), S)
     assert any('예상' in m for m in v)
+
+
+def test_collect_daily_classifies_list_rows_before_retag(tmp_path, monkeypatch):
+    # 목록 행은 갈래가 없다(parse_list) — retag 가 분류 전에 걸리면 전부 버린다(2026-10-27 Actions 첫 실행 0건)
+    import fetch_japan_news as F
+    rows = [{'guid': 'a', 'url': 'https://finance.yahoo.co.jp/news/detail/a', 'feed': 'bus_all',
+             'source': 'ロイター', 'created': '16:10', 'title': '日経平均は4日ぶり反発、ＡＩ株に買い戻し'},
+            {'guid': 'b', 'url': 'https://finance.yahoo.co.jp/news/detail/b', 'feed': 'bus_all',
+             'source': 'ロイター', 'created': '16:31', 'title': '日経平均は続伸、半導体株に買い'}]
+    monkeypatch.setattr(F, 'harvest', lambda *a, **k: (rows, [], {}))
+    monkeypatch.setattr(F, 'harvest_official', lambda *a, **k: ([], [], True))
+    seen = {}
+    monkeypatch.setattr(F, 'fetch_bodies', lambda chosen, *a, **k: seen.setdefault('c', list(chosen)))
+    monkeypatch.setattr(F, 'summarize_chosen', lambda *a, **k: None)
+    F.collect_daily(S, S, str(tmp_path / 'b'), None, datadir=str(tmp_path))
+    assert [(r['guid'], r['category']) for r in seen['c']] == [('a', 'market')]

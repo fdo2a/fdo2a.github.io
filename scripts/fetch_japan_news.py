@@ -261,8 +261,9 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
     rows, notes, reach = harvest(session, today, ctx, fetch=fetch)
     official_rows, off_notes, off_ok = harvest_official(ctx, int(session[:4]), fetch=fetch,
                                                         month=int(session[5:7]))
-    todays = ND.cut_filter(ND.retag(rows), session, today)
-    kept, _ = N.screen(N.dedupe(todays))
+    # 목록 행은 갈래가 없다 — 컷(시각만 본다) → 분류(screen) → 일간 갈래(retag) 순서여야 한다
+    todays = ND.cut_filter(rows, session, today)
+    kept = ND.retag(N.screen(N.dedupe(todays))[0])
     offs = ND.cut_filter(ND.retag(official_rows), session, today)
     candidates = N.preselect(offs + kept)
     print(f'{session} 일간: 컷 안 목록 {len(todays)}건 → 선별 {len(kept)}건 · 공식 {len(offs)}건 → 후보 {len(candidates)}건')
