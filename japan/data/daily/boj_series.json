@@ -1,0 +1,21 @@
+{
+ "resolved_at": "2026-10-27T07:33:35.313514+00:00",
+ "codes": {
+  "cgpi": [
+   "PR01",
+   "PRCG20_2200000000"
+  ],
+  "sppi": [
+   "PR02",
+   "PRCS20_5200000000"
+  ],
+  "money_stock": [
+   "MD02",
+   "MAM1NAM2M2MO"
+  ],
+  "monetary_base": [
+   "MD01",
+   "MABS1AN11"
+  ]
+ }
+}
