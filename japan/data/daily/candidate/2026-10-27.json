@@ -3,7 +3,7 @@
  "prev_session": "2026-10-26",
  "cut": "16:30",
  "scheduled_at": "workflow_dispatch",
- "ran_at": "2026-10-27T07:33:13.576573+00:00",
+ "ran_at": "2026-10-27T07:43:17.485017+00:00",
  "complete": true,
  "fetch_status": {
   "nikkei_csv": "ok",
@@ -643,9 +643,9 @@
    "basis": "bar_end_1630_jst",
    "label": "USD/JPY",
    "multiplier": 1,
-   "prev_value": 157.074,
+   "prev_value": 157.067,
    "prev_period": "2026-10-26",
-   "chg_pct": 0.42
+   "chg_pct": 0.43
   },
   "eurjpy": {
    "value": 176.083,
