@@ -1,0 +1,84 @@
+{
+  "session": "2026-10-27",
+  "market": "japan",
+  "results": {
+    "haiku": {
+      "b86b635bc03c": {
+        "20c246d537018e6f": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "d41a45eaca6c49d2": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "f5aa2aba1c9a67b6": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "7b42b20d488d4db8": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "8a759f3a0cae678e": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "53351356cccb9b42": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "770d557f6c34ab92": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "a6ab8fc0b8ab78fd": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "07646ac5dbefd7b4": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "85aca19a92624368": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "68cb332a965a8b36": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        },
+        "e406e69048fa855c": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-10-27T21:20:33+09:00"
+        }
+      }
+    },
+    "jev": {}
+  },
+  "runs": []
+}
