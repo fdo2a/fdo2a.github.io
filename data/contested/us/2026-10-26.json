@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-26",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-27T16:46:33+00:00",
- "cutoff_at": "2026-10-27T16:46:33+00:00",
+ "collected_at": "2026-10-27T17:05:33+00:00",
+ "cutoff_at": "2026-10-27T17:05:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,49 +22,44 @@
  },
  "counts": {
   "harvest": 191,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
-   6
+   2,
+   2,
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44300,
-   "out": 11119
+   "in": 31982,
+   "out": 10472
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
-   "arabnews.com": "ok",
-   "cbc.ca": "ok",
-   "theguardian.com": "ok"
+   "aljazeera.com": "short",
+   "theguardian.com": "ok",
+   "bbc.co.uk": "out_of_window"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "6/6"
+   "obs": "5/5"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 0,
+   "claims": 0,
    "obs": 5
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "이스라엘 총선(2026-10-27): 아이젠코트 선거운동 초점과 네타냐후",
-  "query": "israel trump election",
+  "topic_ko": "영국 힐리 첫 예산안의 은행 과세 수단과 대형은행 이탈 위험",
+  "query": "budget healey",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "edges[1]:dangling",
-  "memo[2]:unverified",
-  "worry.moderate[0]:unverified"
- ],
- "content_hash": "fee654b799060e88"
+ "content_hash": "4933263a51e24991"
 }
