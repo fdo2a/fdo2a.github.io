@@ -3,25 +3,21 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-26",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-27T18:09:40+00:00",
- "cutoff_at": "2026-10-27T18:09:40+00:00",
+ "collected_at": "2026-10-27T19:13:59+00:00",
+ "cutoff_at": "2026-10-27T19:13:59+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "a2e3cd00ad0dab7d1af78b8fe0dbeb068761ff4f",
-  "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 192,
+  "harvest": 194,
   "candidates": 3,
   "articles": [
    2,
@@ -32,34 +28,24 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32278,
-   "out": 10855
+   "in": 4426,
+   "out": 61
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "out_of_window"
+   "bbc.co.uk": "title_mismatch"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "영국 힐리 첫 예산안의 은행 과세 수단과 대형은행 이탈 위험",
-  "query": "budget healey",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "4957165e72ed9fcd"
+ "content_hash": "685457f78798b497"
 }
