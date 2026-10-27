@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-10-27T14:13:49+00:00",
- "cutoff_at": "2026-10-27T14:13:49+00:00",
+ "collected_at": "2026-10-27T15:17:35+00:00",
+ "cutoff_at": "2026-10-27T15:17:35+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,24 +21,24 @@
   "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
  },
  "counts": {
-  "harvest": 186,
+  "harvest": 187,
   "candidates": 3,
   "articles": [
    2,
-   2,
+   1,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 31008,
-   "out": 7580
+   "in": 30609,
+   "out": 7585
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
    "bbc.co.uk": "out_of_window"
   },
@@ -47,12 +47,12 @@
   "grounded": {
    "claims": "2/2",
    "pairs": "1/1",
-   "obs": "4/4"
+   "obs": "5/5"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 3
+   "obs": 4
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -61,5 +61,5 @@
   "query": "budget opinion",
   "trigger": []
  },
- "content_hash": "bbaad3fa6936e772"
+ "content_hash": "79a495cfe529122a"
 }
