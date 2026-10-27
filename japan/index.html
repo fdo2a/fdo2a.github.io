@@ -49,7 +49,7 @@
   .menubar a:hover { color: var(--text-2); }
   .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
   @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
-  /* 일간·주간·월간 — 메뉴바와 위계가 다르므로 별도 클래스 (2026-08-30) */
+  /* 일간·주간 — 메뉴바와 위계가 다르므로 별도 클래스 (2026-08-30) */
   .subnav { display: flex; gap: 4px; flex-wrap: wrap; margin: 0 0 14px; }
   .subnav button { font-size: 13px; font-weight: 600; color: var(--text-3);
     background: none; border: 0; border-bottom: 2px solid transparent;
@@ -180,10 +180,9 @@
     return cache[span];
   }
 
-  // 월별 묶음의 열쇠. 주간은 그 주 금요일이 속한 달(9/28~10/2 주는 10월), 월간은 연도로 묶는다.
+  // 월별 묶음의 열쇠. 주간은 그 주 금요일이 속한 달(9/28~10/2 주는 10월).
   function groupKey(span, p) {
     const k = String(p.date || p.key || '');
-    if (span === 'monthly') return k.slice(0, 4);
     const w = k.match(/^(\d{4})-W(\d{2})$/);
     if (w) {
       if (p.end_date) return p.end_date.slice(0, 7);
