@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-10-27T17:05:33+00:00",
- "cutoff_at": "2026-10-27T17:05:33+00:00",
+ "collected_at": "2026-10-27T18:09:40+00:00",
+ "cutoff_at": "2026-10-27T18:09:40+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
  },
  "counts": {
-  "harvest": 191,
+  "harvest": 192,
   "candidates": 3,
   "articles": [
    2,
@@ -32,13 +32,13 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 31982,
-   "out": 10472
+   "in": 32278,
+   "out": 10855
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
+   "aljazeera.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "out_of_window"
   },
@@ -47,12 +47,12 @@
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "5/5"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 5
+   "obs": 7
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -61,5 +61,5 @@
   "query": "budget healey",
   "trigger": []
  },
- "content_hash": "4933263a51e24991"
+ "content_hash": "4957165e72ed9fcd"
 }
