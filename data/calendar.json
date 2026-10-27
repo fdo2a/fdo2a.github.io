@@ -1,22 +1,8 @@
 {
-  "report_date": "2026-10-26",
-  "generated": "2026-10-27 08:25 KST",
+  "report_date": "2026-10-27",
+  "generated": "2026-10-28 06:39 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-new-home-sales-20261027",
-      "kind": "release",
-      "name_ko": "신규주택 판매",
-      "date": "2026-10-27",
-      "time_et": "10:00",
-      "time_kst": "2026-10-27 23:00",
-      "status": "confirmed",
-      "source": "Census 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "fomc-20261028",
       "kind": "fomc",
@@ -89,6 +75,22 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "release-employment-20261106",
+      "kind": "release",
+      "name_ko": "고용상황(Employment Situation)",
+      "date": "2026-11-06",
+      "time_et": "08:30",
+      "time_kst": "2026-11-06 22:30",
+      "status": "confirmed",
+      "source": "BLS 공표 일정(FRED)",
+      "assets": [
+        "금리",
+        "달러",
+        "주식"
+      ],
+      "watch": "컨센서스 대비 서프라이즈"
     }
   ],
   "recent_auctions": [],

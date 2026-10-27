@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-26",
+  "report_date": "2026-10-27",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
@@ -8,14 +8,21 @@
       "industry": "Semiconductors",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": 2.39,
-          "close": 216.0,
-          "value": 19449473112.0
+          "name": "Broadcom (AVGO)",
+          "change_pct": 4.0,
+          "close": 342.33,
+          "value": 8722763185.95
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": 5.45,
+          "close": 560.26,
+          "value": 11478614923.72
         }
       ]
     },
@@ -24,36 +31,19 @@
       "industry": "Automobile Manufacturers",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
+        "지수 기여 상위"
       ],
       "members": [
         {
           "name": "Tesla, Inc. (TSLA)",
-          "change_pct": 5.21,
-          "close": 391.62,
-          "value": 20701294935.67
+          "change_pct": 4.04,
+          "close": 407.46,
+          "value": 18343459283.56
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": -1.1,
-          "close": 343.91,
-          "value": 14534996574.92
-        }
-      ]
-    },
-    {
-      "id": "g4",
       "industry": "Interactive Media & Services",
       "direction": "down",
       "reasons": [
@@ -61,26 +51,42 @@
       ],
       "members": [
         {
-          "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": -1.06,
-          "close": 316.8,
-          "value": 7559880476.7
+          "name": "Meta Platforms (META)",
+          "change_pct": -1.64,
+          "close": 620.19,
+          "value": 31418499923.93
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Integrated Oil & Gas",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "ExxonMobil (XOM)",
+          "change_pct": -2.51,
+          "close": 179.91,
+          "value": 2522376752.08
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Communications Equipment",
-      "direction": "up",
+      "industry": "Aerospace & Defense",
+      "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Lumentum (LITE)",
-          "change_pct": 8.19,
-          "close": 818.1,
-          "value": 4913285112.08
+          "name": "Boeing (BA)",
+          "change_pct": -10.69,
+          "close": 168.18,
+          "value": 7899639112.63
         }
       ]
     }
