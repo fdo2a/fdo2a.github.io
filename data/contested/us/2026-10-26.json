@@ -3,49 +3,61 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-26",
- "status": "error",
- "reason": "gdelt_throttled",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-27T22:22:15+00:00",
- "cutoff_at": "2026-10-27T22:22:15+00:00",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-27T23:32:58+00:00",
+ "cutoff_at": "2026-10-27T23:32:58+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "780eb9f3b936d8d6febfcd05c75a2638fc6ec07e",
+  "sha256": "44ce89fc7466972fd5e290a4c422ecc712c42ac9ef9503fe4481451c1265207d"
+ },
  "counts": {
   "harvest": 200,
-  "candidates": 3,
+  "candidates": 1,
   "articles": [
-   3,
-   2,
-   3
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4756,
-   "out": 67
+   "in": 46469,
+   "out": 11317
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "bbc.co.uk": "title_mismatch",
-   "theguardian.com": "ok"
+   "aljazeera.com": "ok",
+   "cbc.ca": "ok",
+   "arabnews.com": "ok",
+   "abc.net.au": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 6
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "이스라엘 총선: 아이젠코트 선거운동의 초점과 10·7 사전 경고 의혹, ",
+  "query": "israel netanyahu election",
   "trigger": []
  },
- "content_hash": "5969476b02003daa"
+ "content_hash": "9d6547c5041cd709"
 }
