@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-26",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-10-27T12:35:01+00:00",
- "cutoff_at": "2026-10-27T12:35:01+00:00",
+ "collected_at": "2026-10-27T13:09:33+00:00",
+ "cutoff_at": "2026-10-27T13:09:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,46 +22,44 @@
  },
  "counts": {
   "harvest": 187,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
-   6
+   2,
+   2,
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 45965,
-   "out": 12116
+   "in": 50304,
+   "out": 10121
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "cbc.ca": "ok",
-   "arabnews.com": "ok"
+   "theguardian.com": "ok",
+   "bbc.co.uk": "out_of_window"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "4/4"
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "5/5"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 4
-  }
+   "pairs": 0,
+   "claims": 0,
+   "obs": 5
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "2026년 이스라엘 총선: 아이젠코트 캠페인의 초점과 네타냐후의 10·7",
-  "query": "israel netanyahu election",
+  "topic_ko": "영국 힐리 첫 예산안의 은행 과세 수단",
+  "query": "budget john",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "edges[0]:unverified",
-  "memo[2]:dangling"
- ],
- "content_hash": "3702146c418f5af1"
+ "content_hash": "532132dae7fc9472"
 }
