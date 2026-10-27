@@ -1,0 +1,65 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-10-27",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-27T22:39:50+00:00",
+ "cutoff_at": "2026-10-27T22:39:50+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "714fefb9d7feec65287b78248e7351f6e61960cb",
+  "sha256": "49e2be092351ecf2a240739911d811ee8469a828ab7511bb82f496cd5e753532"
+ },
+ "counts": {
+  "harvest": 202,
+  "candidates": 2,
+  "articles": [
+   3,
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "tokens": {
+   "in": 46106,
+   "out": 12439
+  },
+  "discovery": "ok",
+  "hosts": {
+   "cnbc.com": "ok",
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok",
+   "cbc.ca": "ok",
+   "arabnews.com": "ok",
+   "abc.net.au": "ok"
+  },
+  "notes": [],
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 6
+  }
+ },
+ "event": {
+  "topic_ko": "이스라엘 총선: 10·7 경고 의혹, 아이젠코트 선거운동의 초점, 네타냐",
+  "query": "netanyahu israel election",
+  "trigger": []
+ },
+ "content_hash": "9f010e922e5ef359"
+}
