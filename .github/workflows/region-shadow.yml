@@ -11,7 +11,14 @@ on:
   schedule:
     - cron: '30 10 * * 1-6'
       timezone: 'Asia/Tokyo'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      datadir:
+        # japan/data/eval = 정답 라벨을 붙인 평가 표본(2026-10-27) — 섀도 실험 데이터와 섞지 않는다
+        description: 'Data root'
+        type: choice
+        options: ['japan/data', 'japan/data/eval']
+        default: 'japan/data'
 
 permissions:
   contents: write
@@ -24,6 +31,8 @@ concurrency:
 jobs:
   classify:
     runs-on: ubuntu-latest
+    env:
+      DATADIR: ${{ inputs.datadir || 'japan/data' }}
     timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
@@ -46,19 +55,19 @@ jobs:
           ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
           ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
           REGION_SHADOW_MODEL: ${{ vars.REGION_SHADOW_MODEL }}
-        run: python scripts/japan_region_shadow.py classify --datadir japan/data --providers haiku
+        run: python scripts/japan_region_shadow.py classify --datadir "$DATADIR" --providers haiku
       - name: Classify (Jev)
         continue-on-error: true
         timeout-minutes: 6
         env:
           # 없으면 Jev 칸은 no_key 로 남는다. 키는 이 단계에만 들어간다
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
-        run: python scripts/japan_region_shadow.py classify --datadir japan/data --providers jev
+        run: python scripts/japan_region_shadow.py classify --datadir "$DATADIR" --providers jev
       - name: Commit results
         if: always()
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add japan/data/news/region_shadow/result 2>/dev/null || true
+          git add "$DATADIR/news/region_shadow/result" 2>/dev/null || true
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
-          bash scripts/ci/push_with_retry.sh "data: region shadow japan $(TZ=Asia/Tokyo date +%F)"
+          bash scripts/ci/push_with_retry.sh "data: region shadow japan $(TZ=Asia/Tokyo date +%F) ($DATADIR)"
