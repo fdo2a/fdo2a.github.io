@@ -253,3 +253,30 @@ def test_metadata_digits_not_citable():
     snap['sectors'][1]['why'] = '공식 62285.61 vs yfinance 77777'
     v = check(html({'today': '<p>거래대금 9909억 엔, 778812주, 77777.</p>'}, snap=snap), snap)
     assert any('9909' in m for m in v) and any('778812' in m for m in v) and any('77777' in m for m in v)
+
+
+def _naver_snap():
+    snap = copy.deepcopy(SNAP)
+    for t in ('2Y', '10Y'):
+        snap['jgb'][t].update(period=S, prev_period='2026-10-23', source='naver')
+    return snap
+
+
+def test_today_jgb_allowed_for_same_session_naver():
+    snap = _naver_snap()
+    p = {'bonds': '<p>오늘 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span> 로 '
+                  '<span data-ref="jgb.10Y.chg_bp">7.7bp</span> 내렸다.</p>'}
+    assert check(html(p, snap), snap) == []
+
+
+def test_today_wording_reverse_order_blocked_for_mof():
+    v = check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 오늘 '
+                             '<span data-ref="jgb.10Y.value">2.837%</span> 다.</p>'}))
+    assert any('오늘' in m for m in v)
+
+
+def test_today_call_rate_blocked_even_with_naver():
+    snap = _naver_snap()
+    v = check(html({'bonds': '<p>10월 22일 기준 콜금리는 오늘 '
+                             '<span data-ref="call_rate.value">1.227%</span> 다.</p>'}, snap), snap)
+    assert any('콜금리는 오늘' in m for m in v)

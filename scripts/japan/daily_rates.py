@@ -1,4 +1,10 @@
-"""일본 일간 — JGB(MOF, T+1)·BOJ 시계열 API 해석 (2026-10-27).
+"""일본 일간 — JGB(네이버증권 당일 → MOF T+1 폴백)·BOJ 시계열 API 해석 (2026-10-27, 네이버 10-29).
+
+**JGB 1순위는 네이버증권(2026-10-29 사용자 지시).** 지표물(`JP{n}YT=RR`) 일별 행은 도쿄 마감
+(15:14~15:30 JST)에서 고정되므로 저녁 발행에 **당일** 값을 싣는다. 해석은 US 와 같은
+`us.naver_yields`(전 만기 한 날짜, 닫히면서 실패). MOF 는 상수만기 커브라 정의가 다르다 —
+수준 차가 30년 최대 7.5bp(59일 실측)라 **두 원천 사이의 bp 는 만들지 않는다**(전부 네이버 아니면 전부 MOF).
+설계 docs/superpowers/specs/2026-10-29-japan-daily-naver-jgb.md.
 
 MOF 커브는 다음 도쿄 영업일에 올라온다 — 저녁 발행의 JGB 는 **직전 세션** 값이고, 그보다
 오래되면 결측이다. bp 는 그 관측일과 CSV 의 바로 앞 행(직전 채권 영업일)의 차이다.
@@ -12,7 +18,13 @@ import math
 import re
 from datetime import date, timedelta
 
+from us import naver_yields as NY
+
 TENORS = ('2Y', '5Y', '10Y', '30Y')
+NAVER_CODES = {'2Y': 'JP2YT=RR', '5Y': 'JP5YT=RR', '10Y': 'JP10YT=RR', '30Y': 'JP30YT=RR'}
+NAVER_CLOSE_FROM = '15:00'   # JST. 세션 행 스탬프가 이보다 이르면 장중 행이다(실측 마감 15:14~15:30)
+NAVER_READY = '17:45'        # JST. 2시간 지연 + 15:30 마감 + 여유 — 이 전 수집은 채택하지 않는다
+NAVER_MOF_MAX_BP = 15.0      # 직전 세션 수준 차 상한 — 넘으면 코드 매핑을 의심한다(정상 차 ≤7.5bp)
 CALL_MAX_LAG = 3          # 거래일. 2026-10-27 실측: 10/26 세션에 10/22 까지(2거래일)
 
 
@@ -20,12 +32,24 @@ def _finite(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
 
 
-def jgb_block(rows, prev_session, tenors=TENORS):
+def prev_business(day, holidays=()):
+    """도쿄 영업일 기준 바로 앞 날 — 주말·`holidays` 를 건너뛴다."""
+    d = date.fromisoformat(day) - timedelta(days=1)
+    while d.weekday() >= 5 or d.isoformat() in set(holidays or ()):
+        d -= timedelta(days=1)
+    return d.isoformat()
+
+
+def jgb_block(rows, prev_session, tenors=TENORS, holidays=None):
+    """MOF 폴백. `holidays` 를 주면 비교 행이 정확히 그 앞 영업일일 때만 bp 를 낸다 —
+    CSV 에 한 날이 빠지면 2세션 변화가 「전일」로 찍힌다(codex 설계 검토 #4)."""
     usable = [r for r in rows or [] if r.get('date', '') <= prev_session]
     if not usable or usable[-1]['date'] != prev_session:
         latest = usable[-1]['date'] if usable else None
         return {**{t: None for t in tenors}, 'why': f'MOF 커브 최신 {latest} — 직전 세션 {prev_session} 미게시'}
     last, before = usable[-1], (usable[-2] if len(usable) > 1 else None)
+    if before and holidays is not None and before['date'] != prev_business(prev_session, holidays):
+        before = None
     out = {}
     for t in tenors:
         v = last.get(t)
@@ -34,8 +58,90 @@ def jgb_block(rows, prev_session, tenors=TENORS):
             continue
         p = before.get(t) if before else None
         out[t] = {'value': v, 'period': last['date'], 'prev_period': before['date'] if before else None,
-                  'chg_bp': round((v - p) * 100, 1) if _finite(p) else None, 'unit': '%'}
+                  'chg_bp': round((v - p) * 100, 1) if _finite(p) else None, 'unit': '%', 'source': 'mof'}
     return out
+
+
+def _rows_on(payload, day):
+    """그 날짜의 원 행들 — (JST 시:분, 종가). 중복·비유한 판정은 호출부가 한다."""
+    out = []
+    for r in (payload or {}).get('result') or []:
+        stamp = str(r.get('localTradedAt') or '')
+        if stamp[:10] != day:
+            continue
+        try:
+            v = float(str(r.get('closePrice')).replace(',', ''))
+        except ValueError:
+            v = None
+        out.append((stamp[11:16] if stamp.endswith('+09:00') else None, v))
+    return out
+
+
+def naver_ready(session, fetched_jst):
+    """수집 시각이 마감 확정 뒤인가. `fetched_jst` = (YYYY-MM-DD, HH:MM) JST.
+
+    시세가 2시간 지연이라 15:30 마감 호가는 17:30 쯤 보인다 — 16:30 예약 실행은 장중 행
+    (15:00~15:2x)을 받을 수 있고 행 스탬프만으로는 그걸 가를 수 없다(codex 설계 검토 #2).
+    """
+    day, hm = fetched_jst
+    return day > session or (day == session and hm >= NAVER_READY)
+
+
+def mof_check(series, mof_rows, prev_session, tenors=TENORS):
+    """네이버 직전 세션 수준을 MOF 같은 날 행과 대조 -> 'ok' / 'mismatch: …' / 'skip: …'.
+
+    정의가 달라 정상 차가 ≤7.5bp 다 — 15bp 는 만기 매핑이 틀린 경우만 잡는다.
+    """
+    if mof_rows is None:
+        return 'skip: MOF 수집 실패'
+    row = next((r for r in mof_rows if r.get('date') == prev_session), None)
+    if not row:
+        return f'skip: MOF {prev_session} 행 없음'
+    missing = [t for t in tenors if not _finite(row.get(t))]
+    if missing:
+        return f'skip: MOF {prev_session} {",".join(missing)} 결측'
+    for t in tenors:
+        n = dict(series[t])[prev_session]
+        if abs(n - row[t]) * 100 > NAVER_MOF_MAX_BP:
+            return f'mismatch: {t} 네이버 {n} vs MOF {row[t]}'
+    return 'ok'
+
+
+def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenors=TENORS):
+    """네이버 `marketIndex/prices` 응답(만기별) -> (블록, 사유, MOF 대조).
+
+    전부-아니면-전무다. 블록이 None 이면 사유가 있고 호출부가 MOF 로 내려간다:
+    수집이 마감 확정 전 · 세션/직전 세션 행이 만기마다 정확히 하나의 유한값이 아님 ·
+    세션 행이 도쿄 마감 전 스탬프 · 직전 공통일이 달력의 직전 세션이 아님(한 날이 통째로
+    빠지면 2세션 변화가 「전일」로 찍힌다 — `build_curve` 의 공백 검사는 그걸 못 본다) ·
+    MOF 대조 불일치.
+    """
+    if not naver_ready(session, fetched_jst):
+        return None, f'수집 {fetched_jst[1]} JST — 네이버 마감 확정({NAVER_READY}) 전', None
+    for t in tenors:
+        for day in (session, prev_session):
+            got = _rows_on((payloads or {}).get(t), day)
+            if len(got) != 1 or not _finite(got[0][1]):
+                return None, f'네이버 {t} {day} 행 {len(got)}개(유한값 하나여야 한다)', None
+        hm = _rows_on(payloads[t], session)[0][0]
+        if not hm or hm < NAVER_CLOSE_FROM:
+            return None, f'네이버 {t} {session} 행 {hm} — 도쿄 마감 전', None
+    series = {t: NY.parse_prices(payloads[t]) for t in tenors}
+    shared = NY.shared_dates(series)
+    if not shared or shared[-1] != session:
+        return None, f'네이버 공통 최신일 {shared[-1] if shared else None} — 세션 {session} 아님', None
+    before = shared[-2] if len(shared) > 1 else None
+    if before != prev_session:
+        return None, f'네이버 직전 공통일 {before} ≠ 직전 세션 {prev_session}', None
+    check = mof_check(series, mof_rows, prev_session, tenors)
+    if check.startswith('mismatch'):
+        return None, f'MOF 대조 {check}', check
+    out = {}
+    for t in tenors:
+        v, p = dict(series[t])[session], dict(series[t])[prev_session]
+        out[t] = {'value': round(v, 3), 'period': session, 'prev_period': prev_session,
+                  'chg_bp': round((v - p) * 100, 1), 'unit': '%', 'source': 'naver'}
+    return out, None, check
 
 
 def period(freq, raw):

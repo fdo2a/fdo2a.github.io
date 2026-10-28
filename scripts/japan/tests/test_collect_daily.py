@@ -58,6 +58,11 @@ class Fake:
         from common import weekly_sources as WS
         return self.over.get('jgb_rows') or WS.parse_jgb_csv(JGB)
 
+    def naver_bonds(self):
+        if 'naver' not in self.over:
+            raise RuntimeError('naver 미주입')
+        return self.over['naver']
+
     def boj(self, db, code):
         if code == 'STRDCLUCON':
             d = self.over.get('call_date', 20261022)
@@ -173,3 +178,42 @@ def test_sector_breadth_recorded(tmp_path):
     snap = _run(tmp_path, Fake(quote={'1617.T': {'last': 50000.0, 'bar_date': P}}))
     b = snap['sector_breadth']
     assert b == {'total': 17, 'counted': 16, 'up': 16, 'down': 0, 'flat': 0}
+
+
+# --- 네이버 당일 JGB (2026-10-29) ---------------------------------------------------------
+NAVER_LV = {'2Y': (1.642, 1.660), '5Y': (1.872, 1.880), '10Y': (2.325, 2.350), '30Y': (3.904, 3.950)}
+LATE = datetime(2026, 10, 26, 9, 30, tzinfo=timezone.utc)      # 18:30 JST
+
+
+def _naver():
+    return {t: {'result': [{'localTradedAt': f'{S}T15:25:00+09:00', 'closePrice': str(now)},
+                           {'localTradedAt': f'{P}T15:27:00+09:00', 'closePrice': str(prev)}]}
+            for t, (prev, now) in NAVER_LV.items()}
+
+
+def test_naver_jgb_is_same_session(tmp_path):
+    snap = C.collect(S, P, Fake(naver=_naver()), LATE, root=str(tmp_path), calendar=CAL)
+    assert snap['jgb']['10Y'] == {'value': 2.35, 'period': S, 'prev_period': P, 'chg_bp': 2.5,
+                                  'unit': '%', 'source': 'naver'}
+    assert snap['fetch_status']['jgb'] == 'ok' and snap['fetch_status']['jgb_naver'] == 'ok'
+    assert snap['fetch_status']['jgb_mof_check'] == 'ok' and snap['jgb_recollect'] is False
+
+
+def test_early_run_falls_back_to_mof_and_asks_recollect(tmp_path):
+    snap = _run(tmp_path, Fake(naver=_naver()))                  # 17:00 JST
+    assert snap['jgb']['10Y']['source'] == 'mof' and snap['jgb']['10Y']['period'] == P
+    assert '확정' in snap['fetch_status']['jgb_naver'] and snap['jgb_recollect'] is True
+
+
+def test_naver_failure_falls_back_to_mof_whole_block(tmp_path):
+    snap = C.collect(S, P, Fake(), LATE, root=str(tmp_path), calendar=CAL)
+    assert {r['source'] for r in snap['jgb'].values() if r} == {'mof'}
+    assert 'naver' in snap['fetch_status']['jgb_naver'] and snap['jgb_recollect'] is False
+
+
+def test_incomplete_mof_block_is_not_ok(tmp_path):
+    from common import weekly_sources as WS
+    rows = WS.parse_jgb_csv(JGB)
+    rows[-1]['30Y'] = None
+    snap = C.collect(S, P, Fake(jgb_rows=rows), LATE, root=str(tmp_path), calendar=CAL)
+    assert snap['fetch_status']['jgb'].startswith('결측') and '30Y' in snap['fetch_status']['jgb']

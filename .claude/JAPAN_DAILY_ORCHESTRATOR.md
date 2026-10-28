@@ -20,12 +20,12 @@ KEY=$(bash scripts/ci/run_lock.sh key jp_daily)                 # jpd-<S>
 
 루틴 환경은 일경·Yahoo·MOF·BOJ 에 닿지 못한다. 수집은 `collect-japan-daily.yml` 이 하고 `japan/data/daily/candidate/<S>.json`(스냅샷)과 `japan/data/news/daily/<S>.json`(16:30 JST 컷 뉴스)을 커밋한다. **예약 실행은 2~5시간 밀리므로 직접 띄운다**(AGENTS.md 규칙 10②):
 
-1. `git pull -q` 후 `japan/data/daily/candidate/<S>.json` 이 있고 `complete: true` 면 3 으로.
+1. `git pull -q` 후 `japan/data/daily/candidate/<S>.json` 이 있고 `complete: true` 이며 `jgb_recollect` 가 참이 아니면 3 으로. `jgb_recollect: true` 는 네이버 JGB 마감 호가가 보이기 전(17:45 JST 전, 16:30 예약 실행)에 받은 후보다 — 2 로 다시 수집한다.
 2. `N=jpd-$(date +%s)-$RANDOM` → `gh workflow run collect-japan-daily.yml --ref main -f session=$S -f nonce=$N` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-japan-daily.yml --limit 20 --json databaseId,displayTitle --jq "[.[] | select(.displayTitle | endswith(\" $N\"))][0].databaseId")` — **nonce 로 집는다**. 비면 15초 뒤 한 번 더. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash timeout 600000) — exit 2 면 같은 명령을 한 번 더. `gh` 가 없으면 `mcp__github__actions_run_trigger`·`actions_list` 로 같은 입력·nonce.
 3. `git pull -q` 하고 **그다음에** 가드: `git cat-file -e origin/main:japan/daily/<S>.html` 이 있으면 다른 런이 발행했으니 잠금을 풀고 끝낸다.
 4. `python3 scripts/build_japan_daily.py diag --session $S` — exit 1(`complete` 거짓 — 닛케이 공식 종가 미확인)이면 발행하지 않는다. 잠금을 풀고, **최종 회차(`[[ "$(TZ=Asia/Seoul date +%F%H)" > "${S}20" ]]` — 세션 날 21시 KST 이후, 자정을 넘긴 재시도 포함)면 「<S> 일본 일간 미발행 — 보충 발행 없음」과 diag 출력을 PushNotification 으로 보낸다.** 본 회차면 알리지 않고 끝낸다(재시도가 이어받는다). 보충 발행은 하지 않는다.
 
-`diag` 가 절 순서(이벤트일이면 매크로가 둘째), 기준일이 다른 값(JGB 직전 세션, 콜 BOJ 최신 관측일), 뉴스 후보 수, 실패한 비-코어 원천을 알려 준다. 그대로 작성자에게 넘긴다.
+`diag` 가 절 순서(이벤트일이면 매크로가 둘째), 기준일이 다른 값(JGB 는 네이버 당일 또는 MOF 폴백 직전 세션, 콜 BOJ 최신 관측일), 뉴스 후보 수, 실패한 비-코어 원천을 알려 준다. 그대로 작성자에게 넘긴다.
 
 ## STEP 2 — 작성과 조립
 

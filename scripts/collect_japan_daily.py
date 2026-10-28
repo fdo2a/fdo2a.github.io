@@ -9,7 +9,8 @@
 - ETF·개별주: 5분봉 마지막 봉 날짜가 세션일 때만 `lastPrice`. 분모는 발행 이력 → yfinance 일봉의
   **정확히 직전 세션 행**뿐. ±15% 는 분할 검증 트리거.
 - 엔: 5분봉의 16:30 JST 에 끝난 봉. 직전 세션도 같은 컷이 있어야 등락을 낸다.
-- JGB: MOF 커브(T+1) — 직전 세션 행만. BOJ: 콜 O/N·매크로 시리즈(키 없음, 실행당 10회 이내).
+- JGB: 네이버증권 지표물 도쿄 마감(당일, 전 만기 한 날짜) → 안 되면 MOF 커브(T+1) 직전 세션 행.
+  두 원천을 섞지 않는다(`fetch_status.jgb_naver` 가 폴백 사유). BOJ: 콜 O/N·매크로 시리즈(키 없음, 실행당 10회 이내).
 - **발행된 세션은 덮지 않는다**(`AlreadyPublished`) — 발행 스냅샷은 발행 단계(`publish_japan_daily.py`)의 것이다.
 - 실패한 원천은 `fetch_status` 에 사유로 남는다. 닛케이만 코어이고, 나머지는 그 블록만 빠진다.
 
@@ -23,6 +24,7 @@ import math
 import os
 import sys
 from datetime import datetime, timedelta, timezone
+from urllib.parse import quote
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,6 +39,8 @@ DAILY_DIR = os.path.join('japan', 'data', 'daily')
 HISTORY = os.path.join('japan', 'data', 'history', 'jp_daily.jsonl')
 NIKKEI_CSV = 'https://indexes.nikkei.co.jp/nkave/historical/nikkei_stock_average_daily_en.csv'
 BOJ_API = 'https://www.stat-search.boj.or.jp/api/v1'
+NAVER_PRICES = 'https://m.stock.naver.com/front-api/marketIndex/prices'
+JST = timezone(timedelta(hours=9))
 BOJ_SERIES_CACHE = os.path.join(DAILY_DIR, 'boj_series.json')
 FX = (('usdjpy', 'JPY=X', 'USD/JPY'), ('eurjpy', 'EURJPY=X', 'EUR/JPY'),
       ('krw_per_100jpy', 'JPYKRW=X', '100엔당 원'))
@@ -160,21 +164,43 @@ def _fx(fetch, session, prev, status):
     return out
 
 
-def _rates(fetch, session, prev, status, holidays=()):
+def _jgb_status(jgb):
+    """실린 블록이 완전할 때만 ok — 결측 만기·bp 결측을 상태에 남긴다(codex 설계 검토 #4)."""
+    if 'why' in jgb:
+        return jgb['why']
+    gaps = [t for t in RT.TENORS if not jgb.get(t)] + [f'{t} bp' for t in RT.TENORS
+                                                        if jgb.get(t) and jgb[t].get('chg_bp') is None]
+    return 'ok' if not gaps else f'결측 {",".join(gaps)}'
+
+
+def _rates(fetch, session, prev, status, holidays=(), now=None):
+    mof = None
     try:
         # 이력 + 이번 달 — 월초에도 직전 채권 영업일 행이 있다(codex 구현 검토 #12)
-        jgb = RT.jgb_block(fetch.jgb_rows(), prev)
-        status['jgb'] = 'ok' if 'why' not in jgb else jgb['why']
+        mof = fetch.jgb_rows()
     except Exception as e:
-        status['jgb'] = _why(e)
-        jgb = {}
+        status['jgb_mof'] = _why(e)
+    jst = (now or datetime.now(timezone.utc)).astimezone(JST)
+    fetched = (jst.date().isoformat(), jst.strftime('%H:%M'))
+    try:
+        # 네이버 당일 1순위, MOF 는 대조 겸 폴백 — 출처를 섞지 않는다
+        jgb, why, check = RT.jgb_naver(fetch.naver_bonds(), session, prev, fetched, mof)
+    except Exception as e:
+        jgb, why, check = None, _why(e), None
+    status['jgb_naver'] = 'ok' if jgb else why
+    if check:
+        status['jgb_mof_check'] = check
+    if not jgb:
+        jgb = RT.jgb_block(mof, prev, holidays=holidays) if mof is not None else {}
+    status['jgb'] = _jgb_status(jgb) if jgb else status.get('jgb_mof', 'JGB 없음')
     try:
         call = RT.call_rate(fetch.boj('FM01', 'STRDCLUCON'), session, holidays=holidays)
         status['call_rate'] = 'ok' if call else '최신 관측이 3거래일보다 오래됐다'
     except Exception as e:
         status['call_rate'] = _why(e)
         call = None
-    return jgb, call
+    # 마감 확정 전 수집(16:30 예약 실행)의 후보는 루틴이 다시 수집한다 — 오케스트레이터 STEP 1
+    return jgb, call, not RT.naver_ready(session, fetched)
 
 
 def _macro(fetch, events_today, prev_snap, status):
@@ -239,7 +265,7 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
         if r['ok'] and r['chg_pct'] is not None:
             rows.append({'code': code, 'name': name, 'change_pct': r['chg_pct'], 'close': r['value']})
     hol = _jp_holidays(root) if holidays is None else holidays
-    jgb, call = _rates(fetch, session, prev, status, hol)
+    jgb, call, recollect = _rates(fetch, session, prev, status, hol, now)
     today = CAL.today_events(cal, session)
     macro, periods = _macro(fetch, today, prev_snap, status)
     snap = {
@@ -248,7 +274,7 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
         'complete': bool(nikkei['ok']), 'fetch_status': status,
         'indices': {'nikkei': nikkei, 'topix_etf': dict(topix, label=TOPIX_ETF[1])},
         'sectors': sectors, 'sector_breadth': _breadth(sectors), 'stocks': stocks, 'movers': MOV.build(session, rows),
-        'jgb': jgb, 'call_rate': call, 'fx': _fx(fetch, session, prev, status),
+        'jgb': jgb, 'jgb_recollect': recollect, 'call_rate': call, 'fx': _fx(fetch, session, prev, status),
         'macro': macro, 'macro_periods': periods,
         'calendar': {'version': CAL.version(cal), 'today': today,
                      'event_day': CAL.event_day(cal, session), 'upcoming': CAL.upcoming(cal, session)},
@@ -315,6 +341,14 @@ class Live:
 
     def jgb_rows(self):
         return WS.fetch_jgb(self.ctx, keep=40)
+
+    def naver_bonds(self):
+        """만기별 `marketIndex/prices` 응답. `pageSize` 는 10 미만을 거부한다(`too_small`)."""
+        out = {}
+        for tenor, code in RT.NAVER_CODES.items():
+            url = f'{NAVER_PRICES}?category=bond&reutersCode={quote(code, safe="")}&page=1&pageSize=10'
+            out[tenor] = json.loads(WS.http_get(url, self.ctx))
+        return out
 
     def _boj_get(self, path):
         self.calls += 1

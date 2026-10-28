@@ -68,6 +68,20 @@ def _t_sectors(d):
     return _table(['업종', f'{day_ko(d["prev_session"])} 대비'], rows, cap)
 
 
+def jgb_source(d):
+    """실린 JGB 행들의 출처 — 전부 'naver' 면 'naver', 아니면 'mof'(옛 스냅샷은 `source` 가 없다)."""
+    srcs = {r.get('source') for r in (d.get('jgb') or {}).values() if isinstance(r, dict)}
+    return 'naver' if srcs == {'naver'} else 'mof'
+
+
+JGB_CAPTION = {
+    'mof': 'JGB 는 재무성 커브(다음 영업일 게시), 콜은 일본은행 시계열 — 오늘 값이 아니다. 금리 상승은 빨강.',
+    'naver': ('JGB 는 네이버증권 지표물 도쿄 마감 호가(재무성 커브와 정의가 달라 수 bp 다를 수 있다), '
+              '콜은 일본은행 시계열 최신 관측일. 금리 상승은 빨강.'),
+}
+JGB_CREDIT = {'mof': 'JGB 는 재무성', 'naver': 'JGB 는 네이버증권'}
+
+
 def _t_jgb(d):
     rows = []
     for t in ('2Y', '5Y', '10Y', '30Y'):
@@ -81,8 +95,7 @@ def _t_jgb(d):
         rows.append(['무담보 콜 O/N', _num(call['value'], 3, '%'), '—', _e(day_ko(call['period']))])
     if not rows:
         return '<p class="caption">JGB·콜금리 기준 값을 확인하지 못했다.</p>'
-    return _table(['', '금리', '변화', '기준일'], rows,
-                  'JGB 는 재무성 커브(다음 영업일 게시), 콜은 일본은행 시계열 — 오늘 값이 아니다. 금리 상승은 빨강.')
+    return _table(['', '금리', '변화', '기준일'], rows, JGB_CAPTION[jgb_source(d)])
 
 
 def _t_fx(d):
@@ -184,7 +197,7 @@ def assemble(body, meta, d):
         f'<div class="topbar"><span class="brand">{BRAND}</span>'
         f'<span class="date">일본 시장 마감 · {day_ko(s)}({wd})</span></div>\n{back}\n'
         f'<div class="container">\n{body}\n'
-        '<footer class="disclaimer"><p>닛케이 225 종가는 일본경제신문사, JGB 는 재무성, 콜금리·지표는 일본은행, '
+        f'<footer class="disclaimer"><p>닛케이 225 종가는 일본경제신문사, {JGB_CREDIT[jgb_source(d)]}, 콜금리·지표는 일본은행, '
         '업종·종목·환율은 거래소 체결가(yfinance) 기준이다. 투자 판단의 참고 자료이며 투자 권유가 아니다.</p>'
         f'<p lang="en">{_e(BOJ_CREDIT)}</p></footer>\n'
         '</div>\n</body>\n</html>\n')

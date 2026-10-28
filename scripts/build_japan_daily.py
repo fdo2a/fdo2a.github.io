@@ -43,7 +43,8 @@ def cmd_diag(args):
     if d['calendar'].get('event_day'):
         print('이벤트일: ' + ', '.join(e['name_ko'] for e in d['calendar']['event_day']))
     jgb = [f'{t} {r["period"]}' for t, r in (d.get('jgb') or {}).items() if isinstance(r, dict) and r]
-    print(f'기준일 — JGB {", ".join(jgb) or "없음"} · 콜 {(d.get("call_rate") or {}).get("period")} · 엔 16:30 JST')
+    src = '네이버 당일' if R.jgb_source(d) == 'naver' else 'MOF 직전 세션'
+    print(f'기준일 — JGB({src}) {", ".join(jgb) or "없음"} · 콜 {(d.get("call_rate") or {}).get("period")} · 엔 16:30 JST')
     print(f'뉴스 후보 {len(news.get("items") or [])}건 · 움직인 종목 묶음 {len(d["movers"]["groups"])}개')
     bad = {k: v for k, v in d.get('fetch_status', {}).items() if v != 'ok'}
     for k, v in bad.items():

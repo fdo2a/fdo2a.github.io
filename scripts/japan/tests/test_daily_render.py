@@ -131,3 +131,17 @@ def test_build_assemble(tmp_path):
     (root / 'b.html').write_text(bad, encoding='utf-8')
     assert B.main(['assemble', '--session', S, '--root', str(root), '--body', str(root / 'b.html'),
                    '--meta', str(root / 'm.json'), '--out', str(out)]) == 1
+
+
+def test_jgb_caption_and_footer_follow_source():
+    old = R.render_tables(SNAP)['jgb']
+    assert R.JGB_CAPTION['mof'] in old          # 출처 없는 옛 스냅샷은 문구가 그대로다
+    nav = copy.deepcopy(SNAP)
+    for t in ('2Y', '10Y'):
+        nav['jgb'][t].update(period=S, source='naver')
+    assert R.JGB_CAPTION['naver'] in R.render_tables(nav)['jgb']
+    page = R.assemble(body(), {'title': 't', 'summary': 's'}, nav)
+    assert 'JGB 는 네이버증권' in page and 'JGB 는 재무성' not in page
+    mixed = copy.deepcopy(nav)
+    mixed['jgb']['2Y']['source'] = 'mof'
+    assert R.jgb_source(mixed) == 'mof'

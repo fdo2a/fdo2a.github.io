@@ -11,7 +11,7 @@ model: sonnet
 
 | 파일 | 쓰임 |
 |---|---|
-| `japan/data/daily/candidate/<S>.json` | 스냅샷 전부. `indices.nikkei`(일경 공식 종가·직전 세션 대비), `indices.topix_etf`(1306 ETF — **TOPIX 지수 자체가 아니다**), `sectors`(TOPIX-17 ETF, `ok:false` 는 쓰지 않는다), `movers.groups`(움직인 종목 묶음), `jgb`(MOF, **직전 세션 값** — `period` 가 기준일), `call_rate`(BOJ 최신 관측일 `period`), `fx`(16:30 JST 컷, 직전 세션 같은 컷 대비), `macro`(그날 공표 — `released`/`pending`/`event`), `calendar.upcoming` |
+| `japan/data/daily/candidate/<S>.json` | 스냅샷 전부. `indices.nikkei`(일경 공식 종가·직전 세션 대비), `indices.topix_etf`(1306 ETF — **TOPIX 지수 자체가 아니다**), `sectors`(TOPIX-17 ETF, `ok:false` 는 쓰지 않는다), `movers.groups`(움직인 종목 묶음), `jgb`(만기별 `source` — `naver` 면 **당일 도쿄 마감**, `mof` 면 **직전 세션 값**(네이버 폴백). 어느 쪽이든 `period` 가 기준일), `call_rate`(BOJ 최신 관측일 `period`), `fx`(16:30 JST 컷, 직전 세션 같은 컷 대비), `macro`(그날 공표 — `released`/`pending`/`event`), `calendar.upcoming` |
 | `japan/data/news/daily/<S>.json` | 16:30 JST 컷까지의 경제 뉴스 요약(갈래 macro·policy·industry·market). 뉴스 절의 **유일한 후보**이고, 움직인 종목의 원인 문장의 유일한 출처다 |
 | 오케스트레이터가 준 `diag` 출력 | **절 순서**(이벤트일이면 매크로가 둘째), 기준일, 실패한 비-코어 원천 |
 | 직전 일간(있으면) | 어제와 이어지는 흐름만 참고. 숫자를 옮기지 않는다 |
@@ -27,7 +27,7 @@ model: sonnet
 | `comment` | 전략 코멘트 | — | 두세 문단. 그날 무엇이 일본 시장을 움직였고 운용자에게 조건부로 무엇을 뜻하나 |
 | `today` | 오늘의 장 | — | 장 흐름. 지수·엔·금리가 같은 방향이었나, 엇갈렸나 |
 | `equity` | 주식 | `<!--T:indices-->` `<!--T:sectors-->` | 업종 강약과 움직인 종목. 묶음마다 `<p data-mover="gN">` 한 문단 |
-| `bonds` | 채권 | `<!--T:jgb-->` | JGB 는 **직전 세션 기준**이라고 날짜와 함께. 2년(정책 기대)과 30년(재정·수급) 중 무엇이 움직였나 |
+| `bonds` | 채권 | `<!--T:jgb-->` | JGB 가 `mof`(직전 세션)면 날짜와 함께, `naver`(당일)면 날짜 없이 써도 된다. 2년(정책 기대)과 30년(재정·수급) 중 무엇이 움직였나 |
 | `yen` | 엔화 | `<!--T:fx-->` | 16:30 JST 기준. 엔 방향과 수출주·은행주의 연결 |
 | `macro` | 매크로 | `<!--T:macro-->` | 그날 공표된 지표·BOJ 이벤트. 없으면 한 문단으로 접는다 |
 | `news` | 일본 경제 뉴스 | 자리표시 | 아래 |
@@ -39,7 +39,7 @@ model: sonnet
 `<span data-ref="indices.nikkei.value">62,189.65</span>`, `<span data-ref="indices.nikkei.chg_pct">-0.8%</span>`, `<span data-ref="jgb.10Y.value">2.837%</span>`, `<span data-ref="jgb.10Y.chg_bp">7.7bp</span>`, `<span data-ref="call_rate.value">1.227%</span>`, `<span data-ref="fx.usdjpy.value">157.07</span>`, `<span data-ref="fx.krw_per_100jpy.value">839.6</span>`, 매크로는 `macro.<순번>.value`·`macro.<순번>.yoy`.
 - 묶은 값은 스냅샷과 같은 숫자(반올림만 허용), 단위는 필드에 맞게(JGB·콜 `%`, 변화 `bp`, 등락 `%`, 달러/엔 `엔`, 100엔당 원 `원`, 지수형 매크로는 단위 없음) — span 바로 뒤에 붙인 단위도 검사한다. 방향은 말로 쓴다(「7.7bp 내렸다」). `+`·`-` 를 쓰면 스냅샷 부호와 같아야 한다.
 - 매크로 값은 `status` 가 `released` 인 항목만 묶어 쓴다. `pending` 은 「발표 예정·시계열 미반영」 이라고만 쓴다.
-- 기준일이 세션과 다른 값(JGB·콜·매크로 기간)은 **같은 문단에 그 날짜**를 쓴다 — 「10월 23일 기준 JGB 10년은 …」. 「오늘 JGB」 라고 쓰지 않는다.
+- 기준일이 세션과 다른 값(JGB·콜·매크로 기간)은 **같은 문단에 그 날짜**를 쓴다 — 「10월 23일 기준 JGB 10년은 …」. 「오늘」 은 JGB 가 `naver`(period = 세션)일 때만 쓰고, 콜금리에는 쓰지 않는다. 일본 주간(재무성 커브)과 같은 날 수치가 수 bp 다를 수 있다 — 두 수치를 비교하는 문장은 쓰지 않는다.
 - 묶지 않은 채 핵심 값을 쓰면 게이트가 막는다. 그 밖의 숫자(업종 등락 등)도 스냅샷에 있는 값만.
 
 ### 움직인 종목

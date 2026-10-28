@@ -6,7 +6,7 @@
 나머지 숫자는 스냅샷 집합 검사(주간 게이트와 같은 정규화). 뉴스 절은 뉴스 게이트가 따로 본다.
 
 막는 것: complete 아님·세션/파일명 불일치·코어 값 없음, da 표식 없음, 미완 표식, 절 순서(코드가 정한
-`order()`), data-ref 불일치, 기준일이 다른 값의 날짜 누락, 「오늘 JGB」, 창작 수치, 예상·컨센서스 비교,
+`order()`), data-ref 불일치, 기준일이 다른 값의 날짜 누락, 「오늘 콜」·「오늘 JGB」(MOF 폴백일 때), 창작 수치, 예상·컨센서스 비교,
 주간 신호 어휘, 「지수 기여」, BOJ 크레디트 누락, 움직인 종목 문단, buy-side.
 """
 import math
@@ -29,7 +29,10 @@ _TIME = re.compile(r'\b\d{1,2}:\d{2}\b')
 _UNITS = ('%p', '%', 'bp', '엔', '원', '포인트')
 _CONSENSUS = re.compile(r'컨센서스|예상치|시장\s*예상|전망치|예상(?:을|보다|과|에)\s*(?:크게\s*)?(?:상회|하회|웃|밑)')
 _SIGNALS = re.compile(r'[AB]\s*경로|신호\s*집계|임계값|인상\s*지속\s*쪽|인상\s*중단\s*쪽')
-_TODAY_RATE = re.compile(r'오늘[^.。]{0,15}(JGB|국채|콜)')
+# 「오늘」 과 금리 이름이 15자 안에 붙으면 — 어순 둘 다(codex 설계 검토 #7). 콜은 늘 지난 관측일이고,
+# JGB 는 네이버 당일 행(period == session)일 때만 「오늘」 이 맞다.
+_TODAY_CALL = re.compile(r'오늘[^.。]{0,15}콜|콜[^.。]{0,15}오늘')
+_TODAY_JGB = re.compile(r'오늘[^.。]{0,15}(JGB|국채)|(JGB|국채)[^.。]{0,15}오늘')
 _UNVERIFIED = ('[확인필요]', '확인 필요]', 'TODO', 'TBD', '{{')
 _EXTRA_OK = {'225', '17', '1617', '1633', '1306'}   # 지수 이름·업종 ETF 코드 범위(표 캡션)
 
@@ -189,7 +192,7 @@ def _check_unbound(paras, snap):
 _META_KEYS = {'version', 'ran_at', 'scheduled_at', 'published', 'fetched_at', 'bar_start', 'bar_end',
               'why', 'fetch_status', 'source', 'news_file', 'code', 'basis', 'tz', 'cut', 'checked_at',
               'resolved_at', 'time_jst', 'period', 'prev_period', 'date', 'session', 'prev_session',
-              'released', 'name', 'reasons', 'universe'}
+              'released', 'name', 'reasons', 'universe', 'jgb_recollect'}
 
 
 def _data_only(obj):
@@ -246,14 +249,18 @@ def check(html, snap, session, filename=None, news=None):
     allp = [inner for _, inner in paras + movers]
     v += _check_refs(allp, snap, session)
     v += _check_unbound(allp, snap)
+    rows = [r for r in (snap.get('jgb') or {}).values() if isinstance(r, dict)]
+    jgb_today = bool(rows) and all(r.get('period') == session for r in rows)
     for p in allp:
         t = _plain(p)
         if _CONSENSUS.search(t):
             v.append(f'예상·컨센서스와 비교했다 — 원천이 없다: 「{t[:50]}」')
         if _SIGNALS.search(t):
             v.append(f'주간 보고서의 신호 어휘다 — 일간은 서술만 한다: 「{t[:50]}」')
-        if _TODAY_RATE.search(t):
-            v.append(f'JGB·콜은 오늘 값이 아니다 — 「{t[:50]}」')
+        if _TODAY_CALL.search(t):
+            v.append(f'콜금리는 오늘 값이 아니다 — 「{t[:50]}」')
+        if _TODAY_JGB.search(t) and not jgb_today:
+            v.append(f'JGB 는 오늘 값이 아니다 — 「{t[:50]}」')
         if '지수 기여' in t or '기여도' in t:
             v.append(f'「지수 기여」 는 쓰지 않는다(표본 시총 계산은 지수 기여가 아니다): 「{t[:50]}」')
 
