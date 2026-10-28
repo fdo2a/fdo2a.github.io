@@ -39,7 +39,7 @@ model: sonnet
 `<span data-ref="indices.nikkei.value">62,189.65</span>`, `<span data-ref="indices.nikkei.chg_pct">-0.8%</span>`, `<span data-ref="jgb.10Y.value">2.837%</span>`, `<span data-ref="jgb.10Y.chg_bp">7.7bp</span>`, `<span data-ref="call_rate.value">1.227%</span>`, `<span data-ref="fx.usdjpy.value">157.07</span>`, `<span data-ref="fx.krw_per_100jpy.value">839.6</span>`, 매크로는 `macro.<순번>.value`·`macro.<순번>.yoy`.
 - 묶은 값은 스냅샷과 같은 숫자(반올림만 허용), 단위는 필드에 맞게(JGB·콜 `%`, 변화 `bp`, 등락 `%`, 달러/엔 `엔`, 100엔당 원 `원`, 지수형 매크로는 단위 없음) — span 바로 뒤에 붙인 단위도 검사한다. 방향은 말로 쓴다(「7.7bp 내렸다」). `+`·`-` 를 쓰면 스냅샷 부호와 같아야 한다.
 - 매크로 값은 `status` 가 `released` 인 항목만 묶어 쓴다. `pending` 은 「발표 예정·시계열 미반영」 이라고만 쓴다.
-- 기준일이 세션과 다른 값(JGB·콜·매크로 기간)은 **같은 문단에 그 날짜**를 쓴다 — 「10월 23일 기준 JGB 10년은 …」. 「오늘」 은 JGB 가 `naver`(period = 세션)일 때만 쓰고, 콜금리에는 쓰지 않는다. 일본 주간(재무성 커브)과 같은 날 수치가 수 bp 다를 수 있다 — 두 수치를 비교하는 문장은 쓰지 않는다.
+- 기준일이 세션과 다른 값(JGB·콜·매크로 기간)은 **같은 문단에 그 날짜**를 쓴다 — 「10월 23일 기준 JGB 10년은 …」. 게이트는 **문장 단위**로 본다 — 콜이 든 문장에는 「오늘」 을 쓰지 않고, JGB·국채가 든 문장에는 JGB 가 `naver`(period = 세션)일 때만 쓴다(`mof` 날 「JGB와 오늘 증시」 도 막히니 문장을 나눈다). 일본 주간(재무성 커브)과 같은 날 수치가 수 bp 다를 수 있다 — 두 수치를 비교하는 문장은 쓰지 않는다.
 - 묶지 않은 채 핵심 값을 쓰면 게이트가 막는다. 그 밖의 숫자(업종 등락 등)도 스냅샷에 있는 값만.
 
 ### 움직인 종목

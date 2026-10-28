@@ -290,10 +290,18 @@ def test_today_after_decimal_blocked_for_mof_and_call():
     assert any('콜금리는 오늘' in m for m in v)
 
 
-def test_today_about_another_subject_allowed():
-    # 「JGB와 오늘 증시」 는 금리 기준일 주장이 아니다(구현 검토 #4)
-    assert check(html({'bonds': '<p>10월 23일 기준 JGB와 오늘 증시는 다른 흐름이다.</p>'})) == []
+def test_today_in_any_jgb_sentence_blocked_for_mof():
+    # 문장 단위 — 거리·동사 목록이 놓친 재검토 #1 입력. 「JGB와 오늘 증시」 오탐은 감수한다(문장을 나눈다)
+    for text in ('10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span>이며 오늘 기준이다.',
+                 '10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span>로 장중 정책 기대를 반영하면서 오늘 올랐다.',
+                 '10월 23일 기준 JGB와 오늘 내수주는 다른 흐름이다.'):
+        assert any('JGB 는 오늘' in m for m in check(html({'bonds': f'<p>{text}</p>'}))), text
 
 
-def test_today_far_from_rate_name_allowed():
-    assert check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 정책 기대를 반영한 수준에 머물러 있고 오늘 올랐다는 근거는 없다.</p>'})) == []
+def test_today_in_other_sentence_allowed():
+    assert check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span> 다. '
+                                '오늘 증시는 다른 흐름이었다.</p>'})) == []
+
+
+def test_recall_is_not_call_rate():
+    assert check(html({'today': '<p>오늘 리콜 소식이 나왔다.</p>'})) == []
