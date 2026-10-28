@@ -1,1 +1,344 @@
-[]
+[
+  {
+    "name": "SK하이닉스",
+    "change_pct": 10.89,
+    "close": 1487000,
+    "value": 5715839
+  },
+  {
+    "name": "삼성전자",
+    "change_pct": 9.01,
+    "close": 242000,
+    "value": 4108168
+  },
+  {
+    "name": "삼성전기",
+    "change_pct": 8.74,
+    "close": 1306000,
+    "value": 1178493
+  },
+  {
+    "name": "SK스퀘어",
+    "change_pct": 11.23,
+    "close": 921000,
+    "value": 900640
+  },
+  {
+    "name": "삼성전자우",
+    "change_pct": 11.1,
+    "close": 190100,
+    "value": 864610
+  },
+  {
+    "name": "삼성E&A",
+    "change_pct": 3.22,
+    "close": 64200,
+    "value": 260985
+  },
+  {
+    "name": "삼성SDI",
+    "change_pct": 5.12,
+    "close": 534000,
+    "value": 235964
+  },
+  {
+    "name": "NAVER",
+    "change_pct": 2.12,
+    "close": 178000,
+    "value": 200985
+  },
+  {
+    "name": "HD현대중공업",
+    "change_pct": -2.06,
+    "close": 285500,
+    "value": 175180
+  },
+  {
+    "name": "LG이노텍",
+    "change_pct": -1.74,
+    "close": 368000,
+    "value": 173262
+  },
+  {
+    "name": "LG에너지솔루션",
+    "change_pct": 1.83,
+    "close": 389500,
+    "value": 159457
+  },
+  {
+    "name": "대덕전자",
+    "change_pct": 8.07,
+    "close": 138000,
+    "value": 155747
+  },
+  {
+    "name": "KB금융",
+    "change_pct": 4.34,
+    "close": 154000,
+    "value": 147848
+  },
+  {
+    "name": "LG전자",
+    "change_pct": 2.67,
+    "close": 161700,
+    "value": 140699
+  },
+  {
+    "name": "삼성물산",
+    "change_pct": 7.81,
+    "close": 324500,
+    "value": 136904
+  },
+  {
+    "name": "현대차",
+    "change_pct": 1.89,
+    "close": 296000,
+    "value": 122263
+  },
+  {
+    "name": "삼성생명",
+    "change_pct": 8.82,
+    "close": 277500,
+    "value": 119025
+  },
+  {
+    "name": "SK",
+    "change_pct": 8.54,
+    "close": 540000,
+    "value": 112898
+  },
+  {
+    "name": "신한지주",
+    "change_pct": 2.33,
+    "close": 87800,
+    "value": 112193
+  },
+  {
+    "name": "SK이노베이션",
+    "change_pct": 0.87,
+    "close": 139700,
+    "value": 102619
+  },
+  {
+    "name": "두산",
+    "change_pct": 6.41,
+    "close": 1013000,
+    "value": 99731
+  },
+  {
+    "name": "S-Oil",
+    "change_pct": -0.63,
+    "close": 125600,
+    "value": 99521
+  },
+  {
+    "name": "두산에너빌리티",
+    "change_pct": 4.24,
+    "close": 61400,
+    "value": 99387
+  },
+  {
+    "name": "한화에어로스페이스",
+    "change_pct": 2.47,
+    "close": 787000,
+    "value": 97558
+  },
+  {
+    "name": "LG씨엔에스",
+    "change_pct": 5.19,
+    "close": 79000,
+    "value": 94702
+  },
+  {
+    "name": "SK텔레콤",
+    "change_pct": 6.12,
+    "close": 78000,
+    "value": 92558
+  },
+  {
+    "name": "HD현대일렉트릭",
+    "change_pct": 2.78,
+    "close": 462500,
+    "value": 92269
+  },
+  {
+    "name": "한화오션",
+    "change_pct": -0.94,
+    "close": 52500,
+    "value": 91621
+  },
+  {
+    "name": "한미반도체",
+    "change_pct": 6.32,
+    "close": 203500,
+    "value": 90280
+  },
+  {
+    "name": "디아이",
+    "change_pct": 14.55,
+    "close": 43300,
+    "value": 83244
+  },
+  {
+    "name": "효성중공업",
+    "change_pct": 4.39,
+    "close": 1998000,
+    "value": 81906
+  },
+  {
+    "name": "셀트리온",
+    "change_pct": 0.64,
+    "close": 189800,
+    "value": 78564
+  },
+  {
+    "name": "현대모비스",
+    "change_pct": 5.86,
+    "close": 352000,
+    "value": 76459
+  },
+  {
+    "name": "KIWOOM 200TR",
+    "change_pct": 7.37,
+    "close": 125355,
+    "value": 72948
+  },
+  {
+    "name": "대우건설",
+    "change_pct": -1.25,
+    "close": 14270,
+    "value": 72918
+  },
+  {
+    "name": "하나금융지주",
+    "change_pct": 1.77,
+    "close": 115300,
+    "value": 71745
+  },
+  {
+    "name": "HD현대마린엔진",
+    "change_pct": 14.49,
+    "close": 40700,
+    "value": 68530
+  },
+  {
+    "name": "삼성중공업",
+    "change_pct": 0.73,
+    "close": 16510,
+    "value": 68336
+  },
+  {
+    "name": "삼성바이오로직스",
+    "change_pct": -0.15,
+    "close": 1372000,
+    "value": 67828
+  },
+  {
+    "name": "LS ELECTRIC",
+    "change_pct": 4.11,
+    "close": 164600,
+    "value": 66786
+  },
+  {
+    "name": "코리아써키트",
+    "change_pct": 6.64,
+    "close": 80300,
+    "value": 66703
+  },
+  {
+    "name": "한화솔루션",
+    "change_pct": 3.29,
+    "close": 26700,
+    "value": 59429
+  },
+  {
+    "name": "기아",
+    "change_pct": 1.31,
+    "close": 107900,
+    "value": 58445
+  },
+  {
+    "name": "LG화학",
+    "change_pct": 3.28,
+    "close": 236000,
+    "value": 55888
+  },
+  {
+    "name": "이수페타시스",
+    "change_pct": 8.76,
+    "close": 96800,
+    "value": 54460
+  },
+  {
+    "name": "하이브",
+    "change_pct": -0.83,
+    "close": 168000,
+    "value": 53132
+  },
+  {
+    "name": "HD한국조선해양",
+    "change_pct": -2.03,
+    "close": 241500,
+    "value": 53042
+  },
+  {
+    "name": "에이피알",
+    "change_pct": 3.96,
+    "close": 289000,
+    "value": 52781
+  },
+  {
+    "name": "OCI홀딩스",
+    "change_pct": -0.17,
+    "close": 180300,
+    "value": 52484
+  },
+  {
+    "name": "삼성화재",
+    "change_pct": 6.7,
+    "close": 637000,
+    "value": 51023
+  },
+  {
+    "name": "한화시스템",
+    "change_pct": 4.91,
+    "close": 66200,
+    "value": 50815
+  },
+  {
+    "name": "삼화콘덴서",
+    "change_pct": 4.98,
+    "close": 115900,
+    "value": 48038
+  },
+  {
+    "name": "현대건설",
+    "change_pct": 4.14,
+    "close": 95500,
+    "value": 45320
+  },
+  {
+    "name": "팬오션",
+    "change_pct": -2.22,
+    "close": 5720,
+    "value": 44226
+  },
+  {
+    "name": "포스코퓨처엠",
+    "change_pct": 5.23,
+    "close": 168900,
+    "value": 42404
+  },
+  {
+    "name": "한미약품",
+    "change_pct": 5.42,
+    "close": 369500,
+    "value": 41726
+  },
+  {
+    "name": "카카오",
+    "change_pct": 1.02,
+    "close": 29800,
+    "value": 40847
+  }
+]
