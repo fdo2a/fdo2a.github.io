@@ -3,49 +3,72 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-27",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-28T02:28:31+00:00",
- "cutoff_at": "2026-10-28T02:28:31+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-28T03:31:06+00:00",
+ "cutoff_at": "2026-10-28T03:31:06+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "714fefb9d7feec65287b78248e7351f6e61960cb",
+  "sha256": "49e2be092351ecf2a240739911d811ee8469a828ab7511bb82f496cd5e753532"
+ },
  "counts": {
-  "harvest": 204,
-  "candidates": 3,
+  "harvest": 206,
+  "candidates": 1,
   "articles": [
-   4,
-   3,
-   0
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4915,
-   "out": 64
+   "in": 46536,
+   "out": 12342
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "short"
+   "cbc.ca": "ok",
+   "arabnews.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "이스라엘 총선 출구조사 이후 우위 주장과 연정 구성 가능성, 10·7 사",
+  "query": "israel netanyahu election",
   "trigger": []
  },
- "content_hash": "73a9651e1bf7c36a"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "variables[1]:unverified",
+  "variables[2]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[2]:unverified",
+  "memo[1]:dangling",
+  "worry.most[0]:unverified",
+  "worry.moderate[0]:dangling"
+ ],
+ "content_hash": "edecd6bec04e2cab"
 }
