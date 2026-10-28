@@ -2,7 +2,7 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-10-28",
-  "generated_at": "2026-10-28 23:55 KST",
+  "generated_at": "2026-10-29 00:23 KST",
   "status": "ok",
   "missing": [],
   "source_dates": {
@@ -67,22 +67,6 @@
     {
       "unit_id": "semis",
       "unit_name": "반도체·AI 하드웨어",
-      "kind": "stock",
-      "name": "SK하이닉스",
-      "change_pct": 10.89,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "semis",
-      "unit_name": "반도체·AI 하드웨어",
-      "kind": "stock",
-      "name": "삼성전자",
-      "change_pct": 9.01,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "semis",
-      "unit_name": "반도체·AI 하드웨어",
       "kind": "index",
       "name": "대만가권",
       "change_pct": 2.04,
@@ -109,30 +93,6 @@
       "date": "2026-10-28"
     },
     {
-      "unit_id": "grid",
-      "unit_name": "전력망",
-      "kind": "stock",
-      "name": "HD현대일렉트릭",
-      "change_pct": 2.78,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "grid",
-      "unit_name": "전력망",
-      "kind": "stock",
-      "name": "LS ELECTRIC",
-      "change_pct": 4.11,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "grid",
-      "unit_name": "전력망",
-      "kind": "stock",
-      "name": "효성중공업",
-      "change_pct": 4.39,
-      "date": "2026-10-28"
-    },
-    {
       "unit_id": "defense",
       "unit_name": "방산",
       "kind": "industry",
@@ -143,14 +103,6 @@
       "date": "2026-10-28"
     },
     {
-      "unit_id": "defense",
-      "unit_name": "방산",
-      "kind": "stock",
-      "name": "한화에어로스페이스",
-      "change_pct": 2.47,
-      "date": "2026-10-28"
-    },
-    {
       "unit_id": "industrials",
       "unit_name": "산업재",
       "kind": "industry",
@@ -158,30 +110,6 @@
       "change_pct": 5.75,
       "breadth": 0.8,
       "leading": true,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "industrials",
-      "unit_name": "산업재",
-      "kind": "stock",
-      "name": "HD현대중공업",
-      "change_pct": -2.06,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "industrials",
-      "unit_name": "산업재",
-      "kind": "stock",
-      "name": "한화오션",
-      "change_pct": -0.94,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "industrials",
-      "unit_name": "산업재",
-      "kind": "stock",
-      "name": "삼성중공업",
-      "change_pct": 0.73,
       "date": "2026-10-28"
     },
     {
@@ -225,22 +153,6 @@
       "date": "2026-10-28"
     },
     {
-      "unit_id": "financials",
-      "unit_name": "금융",
-      "kind": "stock",
-      "name": "KB금융",
-      "change_pct": 4.34,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "financials",
-      "unit_name": "금융",
-      "kind": "stock",
-      "name": "신한지주",
-      "change_pct": 2.33,
-      "date": "2026-10-28"
-    },
-    {
       "unit_id": "software",
       "unit_name": "소프트웨어",
       "kind": "industry",
@@ -261,22 +173,6 @@
       "date": "2026-10-28"
     },
     {
-      "unit_id": "software",
-      "unit_name": "소프트웨어",
-      "kind": "stock",
-      "name": "NAVER",
-      "change_pct": 2.12,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "software",
-      "unit_name": "소프트웨어",
-      "kind": "stock",
-      "name": "카카오",
-      "change_pct": 1.02,
-      "date": "2026-10-28"
-    },
-    {
       "unit_id": "energy",
       "unit_name": "에너지",
       "kind": "industry",
@@ -287,28 +183,12 @@
       "date": "2026-10-28"
     },
     {
-      "unit_id": "energy",
-      "unit_name": "에너지",
-      "kind": "stock",
-      "name": "S-Oil",
-      "change_pct": -0.63,
-      "date": "2026-10-28"
-    },
-    {
-      "unit_id": "energy",
-      "unit_name": "에너지",
-      "kind": "stock",
-      "name": "SK이노베이션",
-      "change_pct": 0.87,
-      "date": "2026-10-28"
-    },
-    {
       "unit_id": "japan",
       "unit_name": "일본",
       "kind": "index",
       "name": "닛케이",
-      "change_pct": 1.08,
-      "date": "2026-10-28"
+      "change_pct": 1.73,
+      "date": "2026-10-27"
     },
     {
       "unit_id": "china",
