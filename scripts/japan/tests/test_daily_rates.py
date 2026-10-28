@@ -203,3 +203,11 @@ def test_mof_check_compares_finite_tenors_despite_one_missing():
     bad = [dict(MOF[0], **{'2Y': 1.0, '30Y': None})]   # 2년 90bp 차이 + 30년 결측(재검토 7차 #2)
     got, _, check = R.jgb_naver(_payloads(), S, P, READY, bad)
     assert got is None and check.startswith('mismatch') and '2Y' in check
+
+
+def test_naver_chain_tolerance_boundary():
+    for fluct, ok in (('0.0995', True), ('0.1005', True), ('0.0994', False), ('0.1006', False)):
+        p = _payload(1.900, 2.000)
+        p['result'][0]['fluctuations'] = fluct
+        got = R.jgb_naver(_payloads(**{'10Y': p}), S, P, READY, None)[0]
+        assert (got is not None) == ok, fluct

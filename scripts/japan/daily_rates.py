@@ -23,7 +23,7 @@ from us import naver_yields as NY
 TENORS = ('2Y', '5Y', '10Y', '30Y')
 NAVER_CODES = {'2Y': 'JP2YT=RR', '5Y': 'JP5YT=RR', '10Y': 'JP10YT=RR', '30Y': 'JP30YT=RR'}
 NAVER_CLOSE_FROM = '15:10'   # JST. 행 스탬프가 이보다 이르면 장중 행이다(실측 마감 240건 15:14~15:30)
-NAVER_CHAIN_TOL = 0.0005     # %. 세션 종가 − 네이버 등락 = 직전 행 종가(4자리 반올림 폭)
+NAVER_CHAIN_TOL = 5          # 1/10000 %p 단위 정수. 세션 종가 − 네이버 등락 = 직전 행 종가(4자리 반올림 폭 ±0.0005)
 NAVER_READY = '17:45'        # JST. 2시간 지연 + 15:30 마감 + 여유 — 이 전 수집은 채택하지 않는다
 NAVER_MOF_MAX_BP = 15.0      # 직전 세션 수준 차 상한 — 넘으면 코드 매핑을 의심한다(정상 차 ≤7.5bp)
 CALL_MAX_LAG = 3          # 거래일. 2026-10-27 실측: 10/26 세션에 10/22 까지(2거래일)
@@ -149,7 +149,8 @@ def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenor
         # 가짜 움직임)이거나 직전 행이 마감값이 아니다 — 60일 실측 236쌍 중 6쌍(재검토 7차 #1)
         _, now_v, fluct = _rows_on(payloads[t], session)[0]
         prev_v = _rows_on(payloads[t], prev_session)[0][1]
-        if not _finite(fluct) or abs(now_v - fluct - prev_v) > NAVER_CHAIN_TOL:
+        # 정수 단위로 — 부동소수점이 경계값 0.0005 를 0.000500000000000167 로 만든다(재검토 8차 #1)
+        if not _finite(fluct) or abs(round((now_v - fluct - prev_v) * 10000, 6)) > NAVER_CHAIN_TOL:
             return None, f'네이버 {t} 등락 사슬 불일치({now_v} − {fluct} ≠ {prev_v}) — 지표물 교체 의심', None
     # 날짜는 JST 로 옮긴 같은 행에서 — `parse_prices` 의 문자열 날짜와 섞지 않는다
     series = {t: sorted((d, v) for d, _, v, _ in _jst_rows(payloads[t]) if _finite(v)) for t in tenors}
