@@ -324,5 +324,19 @@ def test_recall_is_not_call_rate():
 
 def test_today_br_call_rate_blocked():
     # <br> 은 경계다 — 이어 붙이면 「오늘콜금리」 로 콜 검사를 우회한다(재검토 3차 #1)
-    v = check(html({'bonds': '<p>10월 22일 기준 오늘<br>콜금리는 <span data-ref="call_rate.value">1.227%</span>다.</p>'}))
-    assert any('콜금리는 오늘' in m for m in v)
+    for tag in ('<br>', '<wbr>', '<img src="/icon.png" alt="">', '<span>', '</span>'):
+        v = check(html({'bonds': f'<p>10월 22일 기준 오늘{tag}콜금리는 <span data-ref="call_rate.value">1.227%</span>다.</p>'}))
+        assert any('콜금리는 오늘' in m for m in v), tag
+
+
+def test_today_check_never_weaker_than_old_rule():
+    # origin/main 의 규칙(태그를 공백으로 바꾼 본문에 `오늘[^.。]{0,15}(JGB|국채|콜)`)이 막던 입력은 MOF 날 전부 막는다
+    # (재검토 3·4차 — 태그 처리를 바꿀 때마다 회귀가 났다)
+    import itertools
+    import re
+    old = re.compile(r'오늘[^.。]{0,15}(JGB|국채|콜)')
+    tags = ['', '<br>', '<wbr>', '<img alt="">', '<span>', '</span>', ' ', '&nbsp;', '<i></i>']
+    for a, b, name in itertools.product(tags, tags, ['콜금리', 'JGB', '국채', '무담보 콜']):
+        para = f'<p>10월 22일 기준{a}오늘{b}{name}는 <span data-ref="call_rate.value">1.227%</span>다.</p>'
+        if old.search(G._plain(para)):
+            assert any('오늘' in m for m in check(html({'bonds': para}))), para
