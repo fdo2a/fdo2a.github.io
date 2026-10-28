@@ -2,11 +2,12 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-10-28",
-  "generated_at": "2026-10-28 18:12 KST",
+  "generated_at": "2026-10-28 23:55 KST",
   "status": "ok",
   "missing": [],
   "source_dates": {
     "session": "2026-10-28",
+    "CD 91일": "2026-10-28",
     "국고채 3년": "2026-10-28",
     "한국은행 기준금리": "2026-09"
   },
@@ -21,6 +22,12 @@
     "source": "야후 30분봉, 한국장 시간대 마지막 관측(서울 외환시장 공식 종가 아님)"
   },
   "cash_rates": [
+    {
+      "name": "CD 91일",
+      "value": 3.27,
+      "date": "2026-10-28",
+      "bp": 0.0
+    },
     {
       "name": "국고채 3년",
       "value": 3.799,
@@ -52,8 +59,8 @@
       "unit_name": "반도체·AI 하드웨어",
       "kind": "industry",
       "name": "반도체와반도체장비",
-      "change_pct": 10.19,
-      "breadth": 0.908,
+      "change_pct": 11.24,
+      "breadth": 0.902,
       "leading": true,
       "date": "2026-10-28"
     },
@@ -86,8 +93,8 @@
       "unit_name": "전력망",
       "kind": "industry",
       "name": "전기장비",
-      "change_pct": 4.23,
-      "breadth": 0.857,
+      "change_pct": 5.27,
+      "breadth": 0.886,
       "leading": true,
       "date": "2026-10-28"
     },
@@ -96,7 +103,7 @@
       "unit_name": "전력망",
       "kind": "industry",
       "name": "전기제품",
-      "change_pct": 0.56,
+      "change_pct": 0.84,
       "breadth": 0.75,
       "leading": true,
       "date": "2026-10-28"
@@ -130,7 +137,7 @@
       "unit_name": "방산",
       "kind": "industry",
       "name": "우주항공과국방",
-      "change_pct": 2.69,
+      "change_pct": 2.93,
       "breadth": 0.857,
       "leading": true,
       "date": "2026-10-28"
@@ -148,8 +155,8 @@
       "unit_name": "산업재",
       "kind": "industry",
       "name": "기계",
-      "change_pct": 5.36,
-      "breadth": 0.771,
+      "change_pct": 5.75,
+      "breadth": 0.8,
       "leading": true,
       "date": "2026-10-28"
     },
@@ -182,8 +189,8 @@
       "unit_name": "금속·광업",
       "kind": "industry",
       "name": "철강",
-      "change_pct": 1.57,
-      "breadth": 0.636,
+      "change_pct": 1.73,
+      "breadth": 0.655,
       "leading": false,
       "date": "2026-10-28"
     },
@@ -192,8 +199,8 @@
       "unit_name": "금속·광업",
       "kind": "industry",
       "name": "비철금속",
-      "change_pct": 3.33,
-      "breadth": 0.775,
+      "change_pct": 3.65,
+      "breadth": 0.75,
       "leading": true,
       "date": "2026-10-28"
     },
@@ -202,7 +209,7 @@
       "unit_name": "금융",
       "kind": "industry",
       "name": "은행",
-      "change_pct": 2.74,
+      "change_pct": 2.57,
       "breadth": 0.909,
       "leading": true,
       "date": "2026-10-28"
@@ -212,8 +219,8 @@
       "unit_name": "금융",
       "kind": "industry",
       "name": "증권",
-      "change_pct": 4.19,
-      "breadth": 0.949,
+      "change_pct": 4.11,
+      "breadth": 0.923,
       "leading": true,
       "date": "2026-10-28"
     },
@@ -238,8 +245,8 @@
       "unit_name": "소프트웨어",
       "kind": "industry",
       "name": "소프트웨어",
-      "change_pct": 7.65,
-      "breadth": 0.676,
+      "change_pct": 8.07,
+      "breadth": 0.689,
       "leading": false,
       "date": "2026-10-28"
     },
@@ -248,7 +255,7 @@
       "unit_name": "소프트웨어",
       "kind": "industry",
       "name": "IT서비스",
-      "change_pct": 4.72,
+      "change_pct": 5.04,
       "breadth": 0.79,
       "leading": true,
       "date": "2026-10-28"
@@ -274,7 +281,7 @@
       "unit_name": "에너지",
       "kind": "industry",
       "name": "석유와가스",
-      "change_pct": 4.06,
+      "change_pct": 4.68,
       "breadth": 0.632,
       "leading": false,
       "date": "2026-10-28"
