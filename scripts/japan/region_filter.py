@@ -11,6 +11,7 @@
 스레드 안이든 밖이든 **전체 되돌림**이다. Jev 호출은 데몬
 스레드에서 돌고 본 흐름은 `deadline` 초 뒤 그때까지의 판정으로 진행한다 — 끝나지 않는 응답이 수집을 붙잡지 못한다(#1).
 """
+import http.client
 import threading
 import time
 import urllib.error
@@ -38,7 +39,17 @@ def apply(rows, verdicts, threshold=JEV_MIN_CONF):
 
 
 def _ask(titles, key, post, timeout, box, lock, halt):
-    """데몬 스레드 본체. 판정은 받는 대로 `box` 에 — 본 흐름이 마감에 그때까지를 가져간다."""
+    """데몬 스레드 본체. 예상 못 한 예외는 `crash` 로 남겨 본 흐름이 전체를 되돌리게 한다."""
+    try:
+        _ask_loop(titles, key, post, timeout, box, lock, halt)
+    except Exception as e:                        # 스레드 밖으로 새면 아무도 못 본다
+        with lock:
+            box['errors'][f'crash:{type(e).__name__}'] += 1
+            box['stopped'] = 'crash'
+
+
+def _ask_loop(titles, key, post, timeout, box, lock, halt):
+    """판정은 받는 대로 `box` 에 — 본 흐름이 마감에 그때까지를 가져간다."""
     transient = schema = 0
 
     def stop(why):
@@ -50,8 +61,9 @@ def _ask(titles, key, post, timeout, box, lock, halt):
             return
         with lock:
             box['asked'] += 1
-        try:
-            label, _, conf, model = R.parse_jev(post(R.jev_body(title), key, timeout=timeout))
+        body = R.jev_body(title)                  # 필터 코드 — 여기서 깨지면 전체 되돌림(바깥 except)
+        try:                                      # 전송 경계 — 여기의 실패만 「그 행은 정규식」
+            resp = post(body, key, timeout=timeout)
         except J.JevHTTPError as e:
             with lock:
                 box['errors'][f'http:{e.code}'] += 1
@@ -63,21 +75,20 @@ def _ask(titles, key, post, timeout, box, lock, halt):
             if transient >= TRANSIENT_STOP:
                 return stop('transient')
             continue
-        except R.SchemaError as e:
-            with lock:
-                box['errors'][f'schema:{e}'] += 1
-            continue
-        except (urllib.error.URLError, OSError, ValueError) as e:
+        except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as e:
+            # 연결·타임아웃·잘린 응답(IncompleteRead)·JSON 해독 실패 — codex 구현 검토 #2
             with lock:
                 box['errors'][f'net:{type(e).__name__}'] += 1
             transient += 1
             if transient >= TRANSIENT_STOP:
                 return stop('transient')
             continue
-        except Exception as e:                    # 스레드 밖으로 새면 아무도 못 본다 — 기록하고 멈춘다
+        try:
+            label, _, conf, model = R.parse_jev(resp)
+        except R.SchemaError as e:
             with lock:
-                box['errors'][f'crash:{type(e).__name__}'] += 1
-            return stop('crash')
+                box['errors'][f'schema:{e}'] += 1
+            continue
         transient = schema = 0
         if model != R.JEV_MODEL:                  # 평가하지 않은 버전으로는 빼지 않는다
             with lock:

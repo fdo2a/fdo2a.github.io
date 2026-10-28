@@ -112,6 +112,39 @@ def test_worker_crash_rolls_back_everything():
     assert kept == rows and meta['mode'] == 'regex' and meta['stopped'] == 'crash' and meta['dropped'] == []
 
 
+def test_filter_code_error_rolls_back_even_if_valueerror(monkeypatch):
+    """codex 구현 검토 #1 — 요청을 만드는 필터 코드의 ValueError 는 전송 실패가 아니다: 전체 되돌림."""
+    real = R.jev_body
+
+    def body(title, *a, **k):
+        if title == '米大手行、AI遮断':
+            raise ValueError('bug in body')
+        return real(title, *a, **k)
+    monkeypatch.setattr(R, 'jev_body', body)
+    rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=_poster({'カナダ中銀、利上げ': _ans('foreign')}))
+    assert kept == rows and meta['stopped'] == 'crash'
+
+
+def test_truncated_response_falls_back_only_that_row():
+    """codex 구현 검토 #2 — 잘린 응답(IncompleteRead)은 전송 실패: 앞의 판정은 남는다."""
+    import http.client
+    rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
+    post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': http.client.IncompleteRead(b'{')})
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post)
+    assert [r['guid'] for r in kept] == ['y'] and meta['errors'] == {'net:IncompleteRead': 1}
+
+
+def test_huge_confidence_is_a_schema_error_not_a_crash():
+    """codex 구현 검토 #3 — 10**400 은 OverflowError 가 아니라 형식 오류로."""
+    bad = _ans('foreign')
+    bad['answers']['region']['confidence'] = 10 ** 400
+    rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=_poster({'カナダ中銀、利上げ': _ans('foreign'),
+                                                                       '米大手行、AI遮断': bad}))
+    assert [r['guid'] for r in kept] == ['y'] and meta['errors'] == {'schema:confidence': 1}
+
+
 def test_secret_never_in_meta():
     from japan.jev_client import JevHTTPError
     _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'TEST_ONLY_SECRET'},

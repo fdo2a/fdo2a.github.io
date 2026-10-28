@@ -248,7 +248,8 @@ def parse_jev(resp):
 
 def _unit(v):
     """[0, 1] 의 유한한 실수 — bool 은 int 의 하위형이라 따로 뺀다."""
-    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and 0 <= v <= 1
+    # 범위를 먼저 — 10**400 같은 int 는 isfinite 에서 OverflowError 다(codex 구현 검토 #3)
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 1 and math.isfinite(v)
 
 
 # ── 보고 ─────────────────────────────────────────────────────────────────
