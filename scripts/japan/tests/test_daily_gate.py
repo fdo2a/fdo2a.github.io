@@ -298,9 +298,24 @@ def test_today_in_any_jgb_sentence_blocked_for_mof():
         assert any('JGB 는 오늘' in m for m in check(html({'bonds': f'<p>{text}</p>'}))), text
 
 
-def test_today_in_other_sentence_allowed():
-    assert check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span> 다. '
-                                '오늘 증시는 다른 흐름이었다.</p>'})) == []
+def test_today_elsewhere_in_jgb_paragraph_blocked_for_mof():
+    # 주어를 생략한 다음 문장·태그로 쪼갠 이름(재검토 2차 #1·#2)
+    for text in ('10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span>다. 오늘 올랐다.',
+                 '10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span>인가? 오늘 올랐다.',
+                 '10월 23일 기준 J<span>GB</span> 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span>로 오늘 올랐다.'):
+        assert any('JGB 는 오늘' in m for m in check(html({'bonds': f'<p>{text}</p>'}))), text
+
+
+def test_today_in_separate_paragraph_allowed_for_mof():
+    assert check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span> 다.</p>'
+                                '<p>오늘 증시는 다른 흐름이었다.</p>'})) == []
+
+
+def test_naver_day_jgb_and_call_in_one_paragraph_allowed():
+    snap = _naver_snap()
+    p = {'bonds': '<p>오늘 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span> 다. '
+                  '10월 22일 기준 콜금리는 <span data-ref="call_rate.value">1.227%</span> 다.</p>'}
+    assert check(html(p, snap), snap) == []
 
 
 def test_recall_is_not_call_rate():

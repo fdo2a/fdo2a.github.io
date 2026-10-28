@@ -9,6 +9,7 @@
 `order()`), data-ref 불일치, 기준일이 다른 값의 날짜 누락, 「오늘 콜」·「오늘 JGB」(MOF 폴백일 때), 창작 수치, 예상·컨센서스 비교,
 주간 신호 어휘, 「지수 기여」, BOJ 크레디트 누락, 움직인 종목 문단, buy-side.
 """
+import html as html_mod
 import math
 import re
 
@@ -31,8 +32,10 @@ _CONSENSUS = re.compile(r'컨센서스|예상치|시장\s*예상|전망치|예�
 _SIGNALS = re.compile(r'[AB]\s*경로|신호\s*집계|임계값|인상\s*지속\s*쪽|인상\s*중단\s*쪽')
 # 「오늘」 은 **문장 단위**로 본다 — 거리·동사 목록 정규식은 두 차례 검토에서 미탐·오탐을 번갈아 냈다
 # (구현 검토 #1·#4, 재검토 #1·#2). 콜은 늘 지난 관측일이라 콜이 든 문장에 「오늘」 금지, JGB·국채가 든 문장은
-# 네이버 당일 행(period == session)일 때만 허용. MOF 폴백 날 「JGB와 오늘 증시」 같은 오탐은 감수한다 —
-# 작성자가 문장을 나누면 되지만 미탐은 틀린 기준일이 그대로 나간다. 소수점(2.837)은 문장 끝이 아니다.
+# 네이버 당일 행(period == session)일 때만 허용 — MOF 폴백 날에는 **문단 단위**(「…2.837%다. 오늘 올랐다.」 처럼
+# 주어를 생략한 다음 문장, 재검토 2차 #1). 「JGB와 오늘 증시」 같은 오탐은 감수한다 — 작성자가 문단을 나누면 되지만
+# 미탐은 틀린 기준일이 그대로 나간다. 소수점(2.837)은 문장 끝이 아니다. 이 검사는 태그를 공백 없이 지운다
+# (`J<span>GB</span>`, 재검토 2차 #2). 남은 한계: 콜은 문장 단위라 주어를 생략한 다음 문장은 못 본다.
 _SENT_END = re.compile(r'[。!?]|\.(?!\d)')
 _CALL = re.compile(r'(?<![가-힣])콜')
 _JGB_NAME = re.compile(r'JGB|국채')
@@ -264,13 +267,12 @@ def check(html, snap, session, filename=None, news=None):
             v.append(f'예상·컨센서스와 비교했다 — 원천이 없다: 「{t[:50]}」')
         if _SIGNALS.search(t):
             v.append(f'주간 보고서의 신호 어휘다 — 일간은 서술만 한다: 「{t[:50]}」')
-        for x in _sentences(t):
-            if '오늘' not in x:
-                continue
-            if _CALL.search(x):
+        joined = html_mod.unescape(re.sub(r'<[^>]+>', '', p))
+        for x in _sentences(joined):
+            if '오늘' in x and _CALL.search(x):
                 v.append(f'콜금리는 오늘 값이 아니다 — 콜이 든 문장에 「오늘」 을 쓰지 않는다: 「{x.strip()[:50]}」')
-            if _JGB_NAME.search(x) and not jgb_today:
-                v.append(f'JGB 는 오늘 값이 아니다(직전 세션) — JGB 가 든 문장에 「오늘」 을 쓰지 않는다: 「{x.strip()[:50]}」')
+        if not jgb_today and '오늘' in joined and _JGB_NAME.search(joined):
+            v.append(f'JGB 는 오늘 값이 아니다(직전 세션) — JGB 가 든 문단에 「오늘」 을 쓰지 않는다: 「{joined.strip()[:50]}」')
         if '지수 기여' in t or '기여도' in t:
             v.append(f'「지수 기여」 는 쓰지 않는다(표본 시총 계산은 지수 기여가 아니다): 「{t[:50]}」')
 
