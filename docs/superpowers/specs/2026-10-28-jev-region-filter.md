@@ -16,7 +16,8 @@ confidence ≥ 0.9 로 답한 것만 **선정 전에 뺀다**. 되살리지 않�
 감사: 각 payload 최상위 `region_filter` — `dropped`, `candidates`(대상 후보 전부의 guid·제목·갈래·라벨·conf·exempt),
 `asked`·`answered`·`late`·`stopped`·`errors`·`seconds`. 게이트·검토 러너는 `items` 만 읽는다.
 - `asked` = 마감 전에 **보낼 차례를 잡은** 제목 수(전송 시작과 같지 않다 — 전송은 자물쇠 밖이라 마감 직후에 시작될 수 있다),
-  `answered` = 마감 전에 기록된 판정, `late` = 마감 뒤에 와서 버린 답.
+  `answered` = 마감 전에 기록된 판정, `late` = 마감 시각 뒤에 와서 버린 결과(판정·오류·예외) 중 **스냅숏 전에 관측된 것만** —
+  스냅숏 뒤의 결과는 기록 어디에도 나타나지 않는다. 물을 것이 남았는데 마감이면 `stopped: deadline`.
 - `candidates[].status`: `judged` · `http:…`/`net:…`/`schema:…`(그 행 실패) · `model:mismatch` · `no_answer`(차례를 잡았으나 마감까지
   답이 기록되지 않음) · `unasked`(마감 전에 차례가 오지 않음) · `exempt` · `no_key` · `rolled_back`.
 

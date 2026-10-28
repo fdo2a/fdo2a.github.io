@@ -244,7 +244,7 @@ def test_row_reserved_but_not_yet_sent_is_no_answer_and_late_answer_is_ignored()
 def _box(deadline_at, closed=False):
     from collections import Counter
     return {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0, 'status': {},
-            'closed': closed, 'late': 0, 'deadline_at': deadline_at}
+            'closed': closed, 'late': 0, 'expired': False, 'deadline_at': deadline_at}
 
 
 def test_answer_after_deadline_time_is_not_recorded():
@@ -315,6 +315,25 @@ def test_snapshot_closed_between_reservation_and_send(monkeypatch):
     time.sleep(0.1)
     assert kept == rows and meta['asked'] == 1 and meta['answered'] == 0 and meta['stopped'] == 'deadline'
     assert [c['status'] for c in meta['candidates']] == ['no_answer']
+
+
+def test_late_unexpected_exception_is_late_not_crash():
+    """재검토 5차 #1 — 마감 뒤의 예상 못 한 예외는 crash(앞 판정까지 되돌림)가 아니라 late."""
+    box, lock, halt = _box(time.monotonic() + 60), threading.Lock(), threading.Event()
+
+    def post(body, key, timeout=None):
+        box['deadline_at'] = time.monotonic() - 1
+        raise RuntimeError('late bug')
+    F._ask(([('k1', '日銀')]), 'key', post, 1, box, lock, halt, 'japan')
+    assert box['stopped'] is None and box['late'] == 1 and dict(box['errors']) == {}
+
+
+def test_deadline_with_work_left_is_not_complete():
+    """재검토 5차 #2 — 물을 것이 남았는데 마감이 이미 지났으면 complete 가 아니다."""
+    rows = [_row('x', 'カナダ中銀、利上げ')]
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=lambda *a, **k: pytest.fail('sent'), deadline=0)
+    assert kept == rows and meta['asked'] == 0 and meta['stopped'] == 'deadline'
+    assert [c['status'] for c in meta['candidates']] == ['unasked']
 
 
 def test_halt_before_reservation_sends_nothing():

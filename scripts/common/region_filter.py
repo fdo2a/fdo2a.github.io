@@ -46,8 +46,11 @@ def _ask(titles, key, post, timeout, box, lock, halt, market):
         _ask_loop(titles, key, post, timeout, box, lock, halt, market)
     except Exception as e:                        # 스레드 밖으로 새면 아무도 못 본다
         with lock:
-            box['errors'][f'crash:{type(e).__name__}'] += 1
-            box['stopped'] = 'crash'
+            if _open(box):                        # 마감 전 예외만 crash(전체 되돌림) — 마감 뒤 것은 late(재검토 5차 #1)
+                box['errors'][f'crash:{type(e).__name__}'] += 1
+                box['stopped'] = 'crash'
+            else:
+                box['late'] += 1
 
 
 _BEFORE_SEND = None      # 테스트 이음매 — 차례를 잡은 뒤 전송 전에 불린다(운영에서는 None)
@@ -87,6 +90,7 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
         body = L.jev_body(title, market)          # 필터 코드 — 여기서 깨지면 전체 되돌림(바깥 except)
         with lock:
             if halt.is_set() or not _open(box):
+                box['expired'] = True             # 물을 것이 남았는데 마감 — complete 로 적히지 않게(재검토 5차 #2)
                 return
             box['asked'] += 1
             box['status'][k] = 'no_answer'        # 끝나면 판정·실패로 바뀐다
@@ -134,7 +138,8 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
     """(남길 행, region_filter 기록). `rows` 는 전부 대상이다. 키가 없으면 호출 없이 정규식 그대로.
 
     기록: `asked` = 마감 전에 보낼 차례를 잡은 제목 수(전송 시작과 같지 않다 — 전송은 자물쇠 밖), `answered` = 마감 전에
-    기록된 판정 수, `late` = 마감 뒤에 와서 버린 답 수, `candidates[].status` 는 `_candidates` 참고."""
+    기록된 판정 수, `late` = 마감 시각 뒤에 와서 버린 결과(판정·오류·예외) 중 **스냅숏 전에 관측된 것만** — 스냅숏 뒤의
+    결과는 돌려주는 기록 어디에도 나타나지 않는다. `candidates[].status` 는 `_candidates` 참고."""
     rows, exempt = list(rows or []), set(exempt or ())
     meta = {'mode': 'regex', 'market': market, 'model': L.JEV_MODEL, 'threshold': JEV_MIN_CONF, 'asked': 0,
             'answered': 0, 'dropped': [], 'stopped': None, 'errors': {}, 'candidates': []}
@@ -152,7 +157,7 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
     lock, halt = threading.Lock(), threading.Event()
     t0 = time.monotonic()
     box = {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0, 'status': {},
-           'closed': False, 'late': 0, 'deadline_at': t0 + deadline}
+           'closed': False, 'late': 0, 'expired': False, 'deadline_at': t0 + deadline}
     worker = threading.Thread(target=_ask, args=(titles, key, post or J.post, timeout, box, lock, halt, market),
                               daemon=True)
     worker.start()
@@ -162,7 +167,7 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
     with lock:                                     # 장부를 닫고 그 순간을 스냅숏 — 이 뒤의 판정은 기록되지 않는다
         box['closed'] = True
         verdicts, status = dict(box['verdicts']), dict(box['status'])
-        stopped = box['stopped'] or ('deadline' if timed_out or box['late'] else 'complete')
+        stopped = box['stopped'] or ('deadline' if timed_out or box['late'] or box['expired'] else 'complete')
         meta.update(asked=box['asked'], answered=len(verdicts), stopped=stopped, errors=dict(box['errors']),
                     late=box['late'])
     meta['seconds'] = round(time.monotonic() - t0, 1)
