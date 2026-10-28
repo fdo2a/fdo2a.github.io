@@ -3,49 +3,60 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-27",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-28T05:55:36+00:00",
- "cutoff_at": "2026-10-28T05:55:36+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-28T06:58:01+00:00",
+ "cutoff_at": "2026-10-28T06:58:01+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "714fefb9d7feec65287b78248e7351f6e61960cb",
+  "sha256": "49e2be092351ecf2a240739911d811ee8469a828ab7511bb82f496cd5e753532"
+ },
  "counts": {
-  "harvest": 208,
-  "candidates": 3,
+  "harvest": 212,
+  "candidates": 1,
   "articles": [
-   3,
-   3,
-   1
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4676,
-   "out": 67
+   "in": 38003,
+   "out": 13174
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "title_mismatch"
+   "aljazeera.com": "ok",
+   "economictimes.indiatimes.com": "ok",
+   "arabnews.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "2/2",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "호르무즈 해협 통항 실태와 이란 전쟁 진정 여부를 둘러싼 엇갈린 보도",
+  "query": "trump iran",
   "trigger": []
  },
- "content_hash": "74999d3db18f487e"
+ "content_hash": "c2f55f97f47fa193"
 }
