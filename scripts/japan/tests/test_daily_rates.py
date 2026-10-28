@@ -174,3 +174,10 @@ def test_naver_stamp_parsed_to_jst():
     bad['2Y']['result'][0]['localTradedAt'] = f'{S}T99:99:00+09:00'
     got, why, _ = R.jgb_naver(bad, S, P, READY, MOF)
     assert got is None and '2Y' in why
+
+
+def test_naver_intraday_prev_row_rejected():
+    p = _payload(2.788, 2.825)
+    p['result'][1]['localTradedAt'] = f'{P}T10:00:00+09:00'
+    got, why, _ = R.jgb_naver(_payloads(**{'10Y': p}), S, P, READY, None)
+    assert got is None and P in why and '마감 전' in why

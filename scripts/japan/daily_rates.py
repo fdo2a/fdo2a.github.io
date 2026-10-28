@@ -137,9 +137,11 @@ def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenor
             got = _rows_on((payloads or {}).get(t), day)
             if len(got) != 1 or not _finite(got[0][1]):
                 return None, f'네이버 {t} {day} 행 {len(got)}개(유한값 하나여야 한다)', None
-        hm = _rows_on(payloads[t], session)[0][0]
-        if hm < NAVER_CLOSE_FROM:
-            return None, f'네이버 {t} {session} 행 {hm} — 도쿄 마감 전', None
+        # 직전 세션 행도 마감 행이어야 한다 — 장중 값이 분모면 bp 가 틀린다(재검토 6차 #1)
+        for day in (session, prev_session):
+            hm = _rows_on(payloads[t], day)[0][0]
+            if hm < NAVER_CLOSE_FROM:
+                return None, f'네이버 {t} {day} 행 {hm} — 도쿄 마감 전', None
     # 날짜는 JST 로 옮긴 같은 행에서 — `parse_prices` 의 문자열 날짜와 섞지 않는다
     series = {t: sorted((d, v) for d, _, v in _jst_rows(payloads[t]) if _finite(v)) for t in tenors}
     shared = NY.shared_dates(series)
