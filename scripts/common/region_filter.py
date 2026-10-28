@@ -59,12 +59,15 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
             box['stopped'] = why
 
     for k, title in titles:
-        with lock:                                # 마감 확인과 「보냄」 기록을 한 자물쇠 안에서 — 본 흐름의 스냅숏과 엇갈리지 않게
+        body = L.jev_body(title, market)          # 필터 코드 — 여기서 깨지면 전체 되돌림(바깥 except)
+        with lock:
+            # 마감 확인과 「보낼 차례」 기록을 한 자물쇠 안에서. 실제 전송은 자물쇠 밖이라(네트워크를 붙잡고 마감을 막지
+            # 않게) 마감 직후에 시작될 수도 있다 — 그래서 'asked'·'no_answer' 는 「보냈다」가 아니라 「마감 전에 보낼 차례였고
+            # 답이 기록되지 않았다」이다. 늦게 온 답은 스냅숏 뒤라 쓰이지 않는다(US·KR 재검토 2차)
             if halt.is_set():
                 return
             box['asked'] += 1
-            box['status'][k] = 'in_flight'        # 끝나면 판정·실패로 바뀐다. 마감에 이대로면 보냈지만 답이 없던 행
-        body = L.jev_body(title, market)          # 필터 코드 — 여기서 깨지면 전체 되돌림(바깥 except)
+            box['status'][k] = 'no_answer'        # 끝나면 판정·실패로 바뀐다
         try:                                      # 전송 경계 — 여기의 실패만 「그 행은 정규식」
             resp = post(body, key, timeout=timeout)
         except J.JevHTTPError as e:
@@ -153,8 +156,8 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
 
 def _candidates(rows, verdicts, exempt, status, default):
     """나중 측정용 — 대상 후보 전부와 그 판정·상태. 제목만, 본문·응답 원문 없음(설계 검토 #4).
-    상태: judged · http:/net:/schema:… (그 행 실패) · model:mismatch · in_flight(보냈으나 마감까지 답 없음) ·
-    unasked(마감 전에 보내지 못함) · exempt ·
+    상태: judged · http:/net:/schema:… (그 행 실패) · model:mismatch · no_answer(마감 전에 보낼 차례였으나 답이 기록되지
+    않음 — 전송 중이거나 직전) · unasked(마감 전에 차례가 오지 않음) · exempt ·
     no_key · rolled_back — 실패와 못 물은 것을 가른다(US·KR 구현 검토 #3)."""
     out = []
     for r in rows:

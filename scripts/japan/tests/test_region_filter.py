@@ -221,8 +221,24 @@ def test_candidate_status_separates_failed_from_unasked():
     gate.set()
     st = {c['guid']: c['status'] for c in meta['candidates']}
     assert st['a'] == 'judged' and st['c'] == 'http:500' and st['b'] == 'judged'
-    assert st['d'] == 'in_flight' and st['f'] == 'unasked'           # 보냈으나 답 없음 ≠ 보내지 못함
+    assert st['d'] == 'no_answer' and st['f'] == 'unasked'           # 보냈으나 답 없음 ≠ 보내지 못함
     assert meta['asked'] == 4
+
+
+def test_row_reserved_but_not_yet_sent_is_no_answer_and_late_answer_is_ignored():
+    """US·KR 재검토 2차 — 차례를 잡은 뒤 전송 전에 마감이 와도 그 행은 no_answer, 늦게 온 답은 결과를 바꾸지 않는다."""
+    gate, started = threading.Event(), []
+
+    def post(body, key, timeout=None):
+        gate.wait(30)                          # 차례는 잡았고, 전송(응답)은 마감 뒤
+        started.append(body['state'])
+        return _ans('foreign')
+    rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post, deadline=0.2)
+    gate.set()
+    time.sleep(0.1)
+    assert kept == rows and meta['asked'] == 1 and meta['answered'] == 0 and meta['stopped'] == 'deadline'
+    assert [c['status'] for c in meta['candidates']] == ['no_answer', 'unasked']
 
 
 def test_secret_never_in_meta():
