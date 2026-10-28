@@ -48,8 +48,12 @@ def post(body, key, timeout=JEV_TIMEOUT):
                                           'Content-Type': 'application/json'}, method='POST')
     try:
         with opener.open(req, timeout=timeout) as r:
-            return json.loads(r.read().decode('utf-8'))
+            raw = r.read()
     except urllib.error.HTTPError as e:
         raise JevHTTPError(e.code) from None
-    except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as e:
+    except (urllib.error.URLError, OSError, http.client.HTTPException) as e:
+        raise JevTransportError(type(e).__name__) from None
+    try:                       # ValueError 는 해독에서만 전송 실패다 — open() 의 ValueError 는 결함(재검토 2차 #2)
+        return json.loads(raw.decode('utf-8'))
+    except ValueError as e:
         raise JevTransportError(type(e).__name__) from None

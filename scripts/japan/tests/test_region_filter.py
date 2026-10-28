@@ -167,6 +167,18 @@ def test_client_normalises_truncated_and_undecodable_responses(monkeypatch):
         assert e.value.kind == kind
 
 
+def test_client_valueerror_outside_decode_is_not_transport(monkeypatch):
+    """재검토 2차 #2 — open() 의 ValueError 는 전송 실패로 바뀌지 않는다(결함 → 호출자가 전체 되돌림)."""
+    from japan import jev_client as J
+
+    class Opener:
+        def open(self, req, timeout=None):
+            raise ValueError('bad request setup')
+    monkeypatch.setattr(J.urllib.request, 'build_opener', lambda *a, **k: Opener())
+    with pytest.raises(ValueError):
+        J.post({'x': 1}, 'k')
+
+
 def test_unexpected_valueerror_from_post_rolls_back():
     """재검토 #1 — 정규화되지 않은 ValueError 는 결함: 앞의 판정도 버린다."""
     rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]

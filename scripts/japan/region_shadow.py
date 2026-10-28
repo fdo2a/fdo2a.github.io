@@ -54,7 +54,14 @@ HAIKU_SCHEMA = {
         'required': ['id', 'label'], 'additionalProperties': False}}},
     'required': ['items'], 'additionalProperties': False}
 QUESTION = 'region'
-_JEV_MODEL_ID = re.compile(r'jev-[0-9A-Za-z.\-]+')
+# 버전 모양만 — 응답 문자열이 커밋되는 파일로 간다. 「jev-SECRET」 같은 자유 문자열은 형식 오류(재검토 2차 #1)
+_JEV_MODEL_ID = re.compile(r'jev-\d{1,3}\.\d{1,3}\.\d{1,3}')
+_CLAUDE_MODEL_ID = re.compile(r'claude-[a-z0-9]+(?:-[a-z0-9]+){0,6}')
+
+
+def safe_claude_model(model):
+    """Haiku 응답의 model — 모델 ID 모양이 아니면 저장하지 않고 고정 표지로."""
+    return model if isinstance(model, str) and _CLAUDE_MODEL_ID.fullmatch(model) else 'other'
 
 
 def title_key(title):

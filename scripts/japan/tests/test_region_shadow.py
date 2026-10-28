@@ -623,7 +623,7 @@ def test_fingerprint_sees_flags_and_normalisation(monkeypatch):
 def test_long_model_name_round_trips(tmp_path):
     """쓰는 쪽이 적은 판정은 읽는 쪽이 받아들인다 — 긴 모델 이름이 세션을 격리하지 않는다."""
     _seed(tmp_path, ['日銀会合'])
-    long = 'claude-haiku-5-5-' + 'x' * 80
+    long = 'claude-haiku-5-5-' + 'x' * 80          # 하이픈 마디 하나가 길어도 ID 모양
 
     class Long(FakeHaiku):
         def create(self, **kw):
@@ -631,6 +631,26 @@ def test_long_model_name_round_trips(tmp_path):
             r.model = long
             return r
     C.classify(str(tmp_path), providers=('haiku', 'jev'), env={'TYPESAFE_API_KEY': 'k'}, haiku_client=Long(),
-               jev_post=lambda b, k: _jev(model='jev-' + 'y' * 80), now=lambda: 0.0)
+               jev_post=lambda b, k: _jev(model='jev-123.456.789'), now=lambda: 0.0)
     rep = C.build_report(str(tmp_path), html_root=str(tmp_path))
     assert rep['bad'] == [] and rep['coverage']['haiku']['done'] == 1 and rep['coverage']['jev']['done'] == 1
+
+
+# ── codex 재검토 2차 (aa5de05) ───────────────────────────────────────────────
+@pytest.mark.parametrize('model', ['jev-SECRET', 'jev-1.14.0 extra', 'TEST_ONLY_SECRET'])
+def test_jev_free_text_model_is_a_schema_error(model):
+    with pytest.raises(R.SchemaError):
+        R.parse_jev(_jev(model=model))
+
+
+def test_haiku_free_text_model_is_not_stored(tmp_path):
+    _seed(tmp_path, ['日銀会合'])
+
+    class Odd(FakeHaiku):
+        def create(self, **kw):
+            r = FakeHaiku.create(self, **kw)
+            r.model = 'TEST_ONLY_SECRET free text'
+            return r
+    C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=Odd(), now=lambda: 0.0)
+    text = (tmp_path / 'news' / 'region_shadow' / 'result' / f'{S}.json').read_text()
+    assert 'TEST_ONLY_SECRET' not in text and '"model": "other"' in text
