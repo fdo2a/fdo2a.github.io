@@ -1,24 +1,8 @@
 {
-  "report_date": "2026-10-27",
-  "generated": "2026-10-28 07:18 KST",
+  "report_date": "2026-10-28",
+  "generated": "2026-10-29 06:38 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "fomc-20261028",
-      "kind": "fomc",
-      "name_ko": "FOMC 성명",
-      "date": "2026-10-28",
-      "time_et": "14:00",
-      "time_kst": "2026-10-29 03:00",
-      "status": "confirmed",
-      "source": "연준 공표 일정",
-      "assets": [
-        "금리",
-        "달러",
-        "주식"
-      ],
-      "watch": "성명 문구 변화, 30분 뒤 기자회견"
-    },
     {
       "key": "release-claims-20261029",
       "kind": "release",

@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-27",
+  "report_date": "2026-10-28",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
@@ -13,80 +13,74 @@
       ],
       "members": [
         {
-          "name": "Broadcom (AVGO)",
-          "change_pct": 4.0,
-          "close": 342.33,
-          "value": 8722763185.95
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": 5.45,
-          "close": 560.26,
-          "value": 11478614923.72
+          "name": "Micron Technology (MU)",
+          "change_pct": 5.86,
+          "close": 983.23,
+          "value": 29629840956.49
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Automobile Manufacturers",
+      "industry": "Interactive Media & Services",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Tesla, Inc. (TSLA)",
-          "change_pct": 4.04,
-          "close": 407.46,
-          "value": 18343459283.56
+          "name": "Alphabet Inc. (Class C) (GOOG)",
+          "change_pct": 1.6,
+          "close": 321.89,
+          "value": 9451498130.23
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Interactive Media & Services",
+      "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Meta Platforms (META)",
-          "change_pct": -1.64,
-          "close": 620.19,
-          "value": 31418499923.93
+          "name": "Nvidia (NVDA)",
+          "change_pct": -1.17,
+          "close": 215.38,
+          "value": 19742804701.5
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Integrated Oil & Gas",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "ExxonMobil (XOM)",
-          "change_pct": -2.51,
-          "close": 179.91,
-          "value": 2522376752.08
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": -0.94,
+          "close": 343.83,
+          "value": 11829472751.0
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Aerospace & Defense",
-      "direction": "down",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Boeing (BA)",
-          "change_pct": -10.69,
-          "close": 168.18,
-          "value": 7899639112.63
+          "name": "Sandisk (SNDK)",
+          "change_pct": 7.66,
+          "close": 1404.77,
+          "value": 12667894343.8
         }
       ]
     }

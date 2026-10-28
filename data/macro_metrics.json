@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-28 07:16 KST",
-  "report_date": "2026-10-27",
+  "generated": "2026-10-29 06:33 KST",
+  "report_date": "2026-10-28",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": 0.046,
@@ -357,7 +357,7 @@
         "recent_avg": 0.946
       },
       "trend_cell_ko": "악화(미미) · 3개월 평균 +1.70% → +0.95%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "New Home Sales",
@@ -380,7 +380,7 @@
         "recent_avg": 667.667
       },
       "trend_cell_ko": "개선(미미) · 3개월 평균 652K → 668K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Existing Home Sales",
@@ -659,52 +659,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Durable Goods Orders MoM",
-    "New Home Sales"
-  ],
-  "headline_releases": [
-    {
-      "key": "durable-goods",
-      "label": "내구재 주문",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-      "primary": "Durable Goods Orders MoM",
-      "max_abs_z": 0.362,
-      "indicators": [
-        {
-          "name": "Durable Goods Orders MoM",
-          "axis": "Activity",
-          "actual": 1.84,
-          "previous": 0.12,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.362
-        }
-      ],
-      "components": []
-    },
-    {
-      "key": "new-home-sales",
-      "label": "신규주택 판매",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
-      "primary": "New Home Sales",
-      "max_abs_z": 0.308,
-      "indicators": [
-        {
-          "name": "New Home Sales",
-          "axis": "Activity",
-          "actual": 676.0,
-          "previous": 680.0,
-          "ref_period": "2026-09-01",
-          "momentum_z": 0.308
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",
