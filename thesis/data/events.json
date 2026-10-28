@@ -1,6 +1,21 @@
 {
-  "collected_at": "2026-10-27T23:53:29+09:00",
-  "since": "2026-10-27T00:26:49+09:00",
-  "items": [],
+  "collected_at": "2026-10-28T18:00:59+09:00",
+  "since": "2026-10-27T23:53:29+09:00",
+  "items": [
+    {
+      "ticker": "000660.KS",
+      "source": "SK hynix Newsroom · IR",
+      "title": "Q3 2026 Earnings Conference Call Access Details",
+      "url": "https://news.skhynix.com/en/q3-2026-earnings-conference-call/",
+      "published": "2026-10-28T00:01:48+00:00"
+    },
+    {
+      "ticker": "000660.KS",
+      "source": "SK hynix Newsroom · Press",
+      "title": "SK hynix Announces 3Q26 Financial Results",
+      "url": "https://news.skhynix.com/en/q3-2026-business-results/",
+      "published": "2026-10-27T23:29:15+00:00"
+    }
+  ],
   "missing": []
 }
