@@ -3,49 +3,67 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-27",
- "status": "error",
- "reason": "gdelt_throttled",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-28T07:15:59+00:00",
- "cutoff_at": "2026-10-28T07:15:59+00:00",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-28T08:18:29+00:00",
+ "cutoff_at": "2026-10-28T08:18:29+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "714fefb9d7feec65287b78248e7351f6e61960cb",
+  "sha256": "49e2be092351ecf2a240739911d811ee8469a828ab7511bb82f496cd5e753532"
+ },
  "counts": {
-  "harvest": 210,
-  "candidates": 3,
+  "harvest": 213,
+  "candidates": 1,
   "articles": [
-   1,
-   4,
-   3
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4821,
-   "out": 67
+   "in": 36794,
+   "out": 11924
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "cbc.ca": "out_of_window",
+   "arabnews.com": "ok",
+   "abc.net.au": "out_of_window"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "이스라엘 총선 개표 결과와 과반 확보를 둘러싼 엇갈린 주장",
+  "query": "israel netanyahu election",
   "trigger": []
  },
- "content_hash": "628c7944fc53b259"
+ "problems": [
+  "edges[0]:unverified",
+  "edges[1]:unverified",
+  "worry.most[0]:unverified",
+  "worry.moderate[0]:unverified"
+ ],
+ "content_hash": "0326fa36032e81b7"
 }
