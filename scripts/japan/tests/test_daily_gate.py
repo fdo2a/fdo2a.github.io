@@ -280,3 +280,20 @@ def test_today_call_rate_blocked_even_with_naver():
     v = check(html({'bonds': '<p>10월 22일 기준 콜금리는 오늘 '
                              '<span data-ref="call_rate.value">1.227%</span> 다.</p>'}, snap), snap)
     assert any('콜금리는 오늘' in m for m in v)
+
+
+def test_today_after_decimal_blocked_for_mof_and_call():
+    # 소수점은 문장 끝이 아니다(구현 검토 #1)
+    v = check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 <span data-ref="jgb.10Y.value">2.837%</span>로 오늘 올랐다.</p>'}))
+    assert any('JGB 는 오늘' in m for m in v)
+    v = check(html({'bonds': '<p>10월 22일 기준 콜금리는 <span data-ref="call_rate.value">1.227%</span>로 오늘 올랐다.</p>'}))
+    assert any('콜금리는 오늘' in m for m in v)
+
+
+def test_today_about_another_subject_allowed():
+    # 「JGB와 오늘 증시」 는 금리 기준일 주장이 아니다(구현 검토 #4)
+    assert check(html({'bonds': '<p>10월 23일 기준 JGB와 오늘 증시는 다른 흐름이다.</p>'})) == []
+
+
+def test_today_far_from_rate_name_allowed():
+    assert check(html({'bonds': '<p>10월 23일 기준 JGB 10년 금리는 정책 기대를 반영한 수준에 머물러 있고 오늘 올랐다는 근거는 없다.</p>'})) == []

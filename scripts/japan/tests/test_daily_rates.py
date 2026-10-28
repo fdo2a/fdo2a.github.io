@@ -163,3 +163,14 @@ def test_mof_fallback_needs_exact_previous_bond_day():
 def test_prev_business_skips_weekend_and_holiday():
     assert R.prev_business('2026-10-26') == '2026-10-23'
     assert R.prev_business('2026-10-13', ('2026-10-12',)) == '2026-10-09'
+
+
+def test_naver_stamp_parsed_to_jst():
+    # 다른 오프셋의 직전 행은 JST 날짜로 옮겨야 한다 — 23:25 -04:00 은 JST 다음 날 12:25(구현 검토 #5)
+    moved = {t: _payload(*LEVELS[t]) for t in R.TENORS}
+    moved['10Y']['result'][1]['localTradedAt'] = '2026-10-27T23:25:00-04:00'
+    assert R.jgb_naver(moved, S, P, READY, MOF)[0] is None
+    bad = {t: _payload(*LEVELS[t]) for t in R.TENORS}
+    bad['2Y']['result'][0]['localTradedAt'] = f'{S}T99:99:00+09:00'
+    got, why, _ = R.jgb_naver(bad, S, P, READY, MOF)
+    assert got is None and '2Y' in why

@@ -5,7 +5,7 @@ from japan import daily_render as R
 
 S, P = '2026-10-26', '2026-10-23'
 SNAP = {
-    'session': S, 'prev_session': P, 'cut': '16:30', 'complete': True, 'fetch_status': {},
+    'session': S, 'prev_session': P, 'cut': '16:30', 'complete': True, 'fetch_status': {}, 'jgb_recollect': False,
     'indices': {'nikkei': {'value': 62189.65, 'chg_pct': -0.8, 'ok': True,
                            'denom': {'date': P, 'value': 62693.16}},
                 'topix_etf': {'value': 418.4, 'chg_pct': 0.5, 'ok': True, 'label': 'TOPIX ETF(1306)'}},
@@ -145,3 +145,14 @@ def test_jgb_caption_and_footer_follow_source():
     mixed = copy.deepcopy(nav)
     mixed['jgb']['2Y']['source'] = 'mof'
     assert R.jgb_source(mixed) == 'mof'
+
+
+def test_build_diag_refuses_early_or_old_format_candidate(tmp_path):
+    import build_japan_daily as B
+    for flag in (True, None):
+        snap = copy.deepcopy(SNAP)
+        if flag is None:
+            snap.pop('jgb_recollect')        # 옛 형식 후보(구현 검토 #3)
+        else:
+            snap['jgb_recollect'] = flag     # 16:30 예약 실행 후보(구현 검토 #2)
+        assert B.main(['diag', '--session', S, '--root', str(_root(tmp_path / str(flag), snap))]) == 1

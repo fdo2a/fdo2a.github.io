@@ -7,7 +7,7 @@
         --body jpd.body.html --meta jpd.meta.json --out japan/daily/2026-10-26.html
 
 스냅샷은 발행 전이면 `japan/data/daily/candidate/<s>.json`, 발행 뒤면 `japan/data/daily/<s>.json`.
-`complete` 가 거짓이면 진단이 1 로 끝난다 — 오케스트레이터는 발행하지 않는다.
+`complete` 가 거짓이거나 `jgb_recollect` 가 false 가 아니면(이른 후보·옛 형식) 진단이 1 로 끝난다 — 오케스트레이터는 발행하지 않는다.
 """
 import argparse
 import json
@@ -51,6 +51,12 @@ def cmd_diag(args):
         print(f'  ! {k}: {v}')
     prev = Path(args.root) / 'japan' / 'daily' / f'{d["prev_session"]}.html'
     print(f'직전 일간: {prev if prev.exists() else "없음(첫 회)"}')
+    # 이른(16:30 예약) 후보나 필드가 없는 옛 형식 후보는 네이버 당일 JGB 를 놓쳤을 수 있다 — 다시 수집할 때까지
+    # 발행하지 않는다(codex 구현 검토 #2·#3). 재수집도 실패하면 재시도 회차가 이어받는다.
+    published = (Path(args.root) / 'japan' / 'data' / 'daily' / f'{args.session}.json').exists()
+    if not published and d.get('jgb_recollect', True) is not False:
+        print('  ! jgb_recollect: 네이버 JGB 마감 확정 전 후보 — 다시 수집해야 한다')
+        return 1
     return 0 if d['complete'] else 1
 
 

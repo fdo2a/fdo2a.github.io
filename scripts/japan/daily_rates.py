@@ -16,7 +16,7 @@ Pure — 네트워크 없음.
 """
 import math
 import re
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from us import naver_yields as NY
 
@@ -62,19 +62,33 @@ def jgb_block(rows, prev_session, tenors=TENORS, holidays=None):
     return out
 
 
-def _rows_on(payload, day):
-    """그 날짜의 원 행들 — (JST 시:분, 종가). 중복·비유한 판정은 호출부가 한다."""
+_JST = timezone(timedelta(hours=9))
+
+
+def _jst_rows(payload):
+    """원 행 -> [(JST 날짜, JST 시:분, 종가)]. 스탬프는 실제로 파싱해 JST 로 옮긴다 — 문자열 앞 10자를
+    날짜로 읽으면 다른 오프셋의 행이 엉뚱한 날로 간다(구현 검토 #5). 못 읽는 스탬프는 버리고,
+    못 읽는 종가는 None 으로 남겨 호출부의 유한값 검사가 막게 한다."""
     out = []
     for r in (payload or {}).get('result') or []:
-        stamp = str(r.get('localTradedAt') or '')
-        if stamp[:10] != day:
+        try:
+            t = datetime.fromisoformat(str(r.get('localTradedAt') or ''))
+        except ValueError:
             continue
+        if t.tzinfo is None:
+            continue
+        t = t.astimezone(_JST)
         try:
             v = float(str(r.get('closePrice')).replace(',', ''))
         except ValueError:
             v = None
-        out.append((stamp[11:16] if stamp.endswith('+09:00') else None, v))
+        out.append((t.date().isoformat(), t.strftime('%H:%M'), v))
     return out
+
+
+def _rows_on(payload, day):
+    """그 JST 날짜의 원 행들 — (시:분, 종가). 중복·비유한 판정은 호출부가 한다."""
+    return [(hm, v) for d, hm, v in _jst_rows(payload) if d == day]
 
 
 def naver_ready(session, fetched_jst):
@@ -124,9 +138,10 @@ def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenor
             if len(got) != 1 or not _finite(got[0][1]):
                 return None, f'네이버 {t} {day} 행 {len(got)}개(유한값 하나여야 한다)', None
         hm = _rows_on(payloads[t], session)[0][0]
-        if not hm or hm < NAVER_CLOSE_FROM:
+        if hm < NAVER_CLOSE_FROM:
             return None, f'네이버 {t} {session} 행 {hm} — 도쿄 마감 전', None
-    series = {t: NY.parse_prices(payloads[t]) for t in tenors}
+    # 날짜는 JST 로 옮긴 같은 행에서 — `parse_prices` 의 문자열 날짜와 섞지 않는다
+    series = {t: sorted((d, v) for d, _, v in _jst_rows(payloads[t]) if _finite(v)) for t in tenors}
     shared = NY.shared_dates(series)
     if not shared or shared[-1] != session:
         return None, f'네이버 공통 최신일 {shared[-1] if shared else None} — 세션 {session} 아님', None
