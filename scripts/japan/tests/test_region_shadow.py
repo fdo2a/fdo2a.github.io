@@ -447,7 +447,7 @@ def test_report_follows_model_override_and_splits_actual_versions(tmp_path):
     class Versioned(FakeHaiku):
         def create(self, **kw):
             r = FakeHaiku.create(self, **kw)
-            r.model = 'claude-haiku-4-5-actual'
+            r.model = 'claude-haiku-4-5-20251001'
             return r
     C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=Versioned(), now=lambda: 0.0,
                haiku_model='claude-haiku-4-5')
@@ -456,7 +456,7 @@ def test_report_follows_model_override_and_splits_actual_versions(tmp_path):
                jev_post=lambda b, k: _jev(model=next(models)), now=lambda: 0.0)
     rep = C.build_report(str(tmp_path), html_root=str(tmp_path), haiku_model='claude-haiku-4-5')
     assert rep['coverage']['haiku'] == {'done': 2, 'missing': 0}
-    assert rep['actual_models']['haiku'] == {'claude-haiku-4-5-actual': 2}
+    assert rep['actual_models']['haiku'] == {'claude-haiku-4-5-20251001': 2}
     assert rep['actual_models']['jev'] == {'jev-1.14.0': 1, 'jev-1.15.0': 1}
     fp = R.regex_fingerprint()
     assert {k for k in rep['agreement'] if k.startswith('regex~jev')} == \
@@ -623,7 +623,7 @@ def test_fingerprint_sees_flags_and_normalisation(monkeypatch):
 def test_long_model_name_round_trips(tmp_path):
     """쓰는 쪽이 적은 판정은 읽는 쪽이 받아들인다 — 긴 모델 이름이 세션을 격리하지 않는다."""
     _seed(tmp_path, ['日銀会合'])
-    long = 'claude-haiku-5-5-' + 'x' * 80          # 하이픈 마디 하나가 길어도 ID 모양
+    long = 'claude-haiku-5-5-20261001'             # 요청 모델의 날짜 스냅숏
 
     class Long(FakeHaiku):
         def create(self, **kw):
@@ -664,3 +664,11 @@ def test_japan_configuration_is_frozen_after_move_to_common():
     body = json.dumps(R.jev_body('日銀'), ensure_ascii=False, sort_keys=True).encode('utf-8')
     assert hashlib.sha256(body).hexdigest()[:16] == 'a7110eb1b536b9b7'
     assert R.regex_fingerprint() == '9f4aea378fe8'
+
+
+@pytest.mark.parametrize('model', ['claude-test-only-secret', 'claude-haiku-5-5-secret', 'claude-haiku-5-5-2026'])
+def test_haiku_model_must_be_the_requested_id_or_its_snapshot(model):
+    """US·KR 구현 검토 #1 — 「claude-…」 모양이어도 요청한 모델(또는 날짜 스냅숏)이 아니면 저장하지 않는다."""
+    assert R.safe_claude_model(model, R.HAIKU_MODEL) == 'other'
+    assert R.safe_claude_model('claude-haiku-5-5', R.HAIKU_MODEL) == 'claude-haiku-5-5'
+    assert R.safe_claude_model('claude-haiku-5-5-20261001', R.HAIKU_MODEL) == 'claude-haiku-5-5-20261001'

@@ -205,6 +205,23 @@ def test_response_text_never_reaches_audit():
     assert 'TEST_ONLY_SECRET' not in json.dumps(meta)
 
 
+def test_candidate_status_separates_failed_from_unasked():
+    """US·KR 구현 검토 #3 — 실패한 행과 마감 전에 못 물은 행을 감사에서 가른다."""
+    gate = threading.Event()
+
+    def post(body, key, timeout=None):
+        if body['state'] == '米大手行、AI遮断':
+            gate.wait(30)
+        if body['state'] == '米関税で日本車に打撃':
+            raise JevHTTPError(500)
+        return _ans('domestic')
+    from common.jev_client import JevHTTPError
+    _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'k'}, post=post, deadline=0.3)
+    gate.set()
+    st = {c['guid']: c['status'] for c in meta['candidates']}
+    assert st['a'] == 'judged' and st['c'] == 'http:500' and st['d'] == 'unasked' and st['b'] == 'judged'
+
+
 def test_secret_never_in_meta():
     from common.jev_client import JevHTTPError
     _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'TEST_ONLY_SECRET'},

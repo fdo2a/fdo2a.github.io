@@ -60,12 +60,13 @@ MARKETS = {'japan': {'definitions': _JP_DEFINITIONS, 'instructions': _JP_INSTRUC
            'kr': {'definitions': _KR_DEFINITIONS, 'instructions': _KR_INSTRUCTIONS}}
 # 버전 모양만 — 응답 문자열이 커밋되는 파일로 간다. 「jev-SECRET」 같은 자유 문자열은 형식 오류(재검토 2차 #1)
 _JEV_MODEL_ID = re.compile(r'jev-\d{1,3}\.\d{1,3}\.\d{1,3}')
-_CLAUDE_MODEL_ID = re.compile(r'claude-[a-z0-9]+(?:-[a-z0-9]+){0,6}')
-
-
-def safe_claude_model(model):
-    """Haiku 응답의 model — 모델 ID 모양이 아니면 저장하지 않고 고정 표지로."""
-    return model if isinstance(model, str) and _CLAUDE_MODEL_ID.fullmatch(model) else 'other'
+def safe_claude_model(model, requested):
+    """Haiku 응답의 model — **요청한 모델 그 자체이거나 그 날짜 스냅숏(`-YYYYMMDD`)일 때만** 저장, 아니면 'other'.
+    모양만 보면 「claude-…」 모양의 자유 문자열이 커밋된다(US·KR 구현 검토 #1)."""
+    if isinstance(model, str) and isinstance(requested, str) and (
+            model == requested or re.fullmatch(re.escape(requested) + r'-\d{8}', model)):
+        return model
+    return 'other'
 
 
 def title_key(title):

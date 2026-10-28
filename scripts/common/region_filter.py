@@ -69,6 +69,7 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
         except J.JevHTTPError as e:
             with lock:
                 box['errors'][f'http:{e.code}'] += 1
+                box['status'][k] = f'http:{e.code}'
             if e.code in (401, 403):
                 return stop('auth')
             schema, transient = (schema + 1, transient) if e.code in (400, 422) else (schema, transient + 1)
@@ -81,6 +82,7 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
             # 연결·타임아웃·잘린 응답·해독 실패 — 클라이언트가 이 한 종류로 바꿔 준다(codex 구현 검토 #2, 재검토 #1)
             with lock:
                 box['errors'][f'net:{e.kind}'] += 1
+                box['status'][k] = f'net:{e.kind}'
             transient += 1
             if transient >= TRANSIENT_STOP:
                 return stop('transient')
@@ -90,14 +92,17 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
         except L.SchemaError as e:
             with lock:
                 box['errors'][f'schema:{e}'] += 1
+                box['status'][k] = f'schema:{e}'
             continue
         transient = schema = 0
         if model != L.JEV_MODEL:                  # 평가하지 않은 버전으로는 빼지 않는다
             with lock:                            # 응답 문자열은 감사에 옮기지 않는다(재검토 #2)
                 box['errors']['model:mismatch'] += 1
+                box['status'][k] = 'model:mismatch'
             continue
         with lock:
             box['verdicts'][k] = (label, conf)
+            box['status'][k] = 'judged'
 
 
 def _newest_first(rows):
@@ -113,7 +118,7 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
     key = (env or {}).get('TYPESAFE_API_KEY')
     if not key:
         meta['stopped'] = 'no_key'
-        meta['candidates'] = _candidates(rows, {}, exempt)
+        meta['candidates'] = _candidates(rows, {}, exempt, {}, 'no_key')
         return rows, meta
     titles, seen = [], set()
     for r in (_newest_first(rows) if newest_first else rows):   # 같은 제목은 한 번만, 빼지 않을 것은 묻지 않는다
@@ -121,7 +126,7 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
         if r.get('title') and k not in seen and r.get('guid') not in exempt:
             seen.add(k)
             titles.append((k, r['title']))
-    box = {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0}
+    box = {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0, 'status': {}}
     lock, halt = threading.Lock(), threading.Event()
     t0 = time.monotonic()
     worker = threading.Thread(target=_ask, args=(titles, key, post or J.post, timeout, box, lock, halt, market),
@@ -131,28 +136,32 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
     if worker.is_alive():
         halt.set()
     with lock:
-        verdicts = dict(box['verdicts'])
+        verdicts, status = dict(box['verdicts']), dict(box['status'])
         stopped = box['stopped'] or ('deadline' if worker.is_alive() else 'complete')
         meta.update(asked=box['asked'], answered=len(verdicts), stopped=stopped, errors=dict(box['errors']))
     meta['seconds'] = round(time.monotonic() - t0, 1)
     if stopped == 'crash':
         # 예상 못 한 예외 — 그 전 판정도 믿지 않는다. 필터 코드 예외와 같이 전체 정규식
-        meta.update(mode='regex', answered=0, candidates=_candidates(rows, {}, exempt))
+        meta.update(mode='regex', answered=0, candidates=_candidates(rows, {}, exempt, {}, 'rolled_back'))
         return rows, meta
     kept, meta['dropped'] = apply(rows, verdicts, exempt=exempt)
     meta['mode'] = 'jev' if verdicts else 'regex'
-    meta['candidates'] = _candidates(rows, verdicts, exempt)
+    meta['candidates'] = _candidates(rows, verdicts, exempt, status, 'unasked')
     return kept, meta
 
 
-def _candidates(rows, verdicts, exempt):
-    """나중 측정용 — 대상 후보 전부와 그 판정(없으면 None). 제목만, 본문·응답 원문 없음(설계 검토 #4)."""
+def _candidates(rows, verdicts, exempt, status, default):
+    """나중 측정용 — 대상 후보 전부와 그 판정·상태. 제목만, 본문·응답 원문 없음(설계 검토 #4).
+    상태: judged · http:/net:/schema:… (그 행 실패) · model:mismatch · unasked(마감 전에 못 물음) · exempt ·
+    no_key · rolled_back — 실패와 못 물은 것을 가른다(US·KR 구현 검토 #3)."""
     out = []
     for r in rows:
-        v = verdicts.get(L.title_key(r.get('title')))
+        k = L.title_key(r.get('title'))
+        v = verdicts.get(k)
+        st = 'exempt' if r.get('guid') in exempt else status.get(k, default)
         out.append({'guid': r.get('guid'), 'title': r.get('title'), 'category': r.get('category'),
                     'label': v[0] if v else None, 'confidence': v[1] if v else None,
-                    'exempt': r.get('guid') in exempt})
+                    'exempt': r.get('guid') in exempt, 'status': st})
     return out
 
 

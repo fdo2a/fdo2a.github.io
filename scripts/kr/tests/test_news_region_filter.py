@@ -58,3 +58,28 @@ def test_no_key_is_todays_result(monkeypatch):
     rows = [_main('1-1', IBM), _main('1-2', KOSPI)]
     kept, meta = FK.apply_region_filter(rows, post=lambda *a, **k: (_ for _ in ()).throw(AssertionError()))
     assert kept == rows and meta['stopped'] == 'no_key'
+
+
+def test_crash_and_exempt_and_deadline(monkeypatch):
+    import threading
+    from common import region_filter as RF
+    monkeypatch.setenv('TYPESAFE_API_KEY', 'k')
+    rows = [_main('1-1', IBM), _main('1-2', KOSPI)]
+    # 이미 그날 파일에 있는 기사는 빼지 않는다
+    kept, meta = FK.apply_region_filter([dict(r) for r in rows], exempt={'1-1'}, post=_poster({IBM}))
+    assert [r['guid'] for r in kept] == ['1-1', '1-2'] and meta['dropped'] == []
+    # 마감 — 받은 판정은 쓰고, 못 물은 행은 정규식(행 단위)
+    gate = threading.Event()
+
+    def slow(body, key, timeout=None):
+        if body['state'] == KOSPI:
+            gate.wait(30)
+        return _ans('foreign') if body['state'] == IBM else _ans('domestic')
+    monkeypatch.setattr(RF, 'DEADLINE_SHORT', 0.3)
+    kept, meta = FK.apply_region_filter([dict(r) for r in rows], post=slow)
+    gate.set()
+    assert meta['stopped'] == 'deadline' and [r['guid'] for r in kept] == ['1-2']
+    # 필터 코드 예외 — 오늘 결과 그대로
+    monkeypatch.setattr(RF, 'run', lambda *a, **k: (_ for _ in ()).throw(RuntimeError('bug')))
+    kept, meta = FK.apply_region_filter(rows, post=_poster({IBM}))
+    assert kept == rows and meta['stopped'] == 'crash:RuntimeError'

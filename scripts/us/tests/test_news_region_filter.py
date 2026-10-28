@@ -98,3 +98,29 @@ def test_newest_first_asking_under_deadline(monkeypatch):
     post = _poster(set())
     FN.apply_region_filter([old, new], post=post)
     assert [b['state'] for b in post.seen] == ['New macro story', 'Old macro story']
+
+
+def test_real_deadline_keeps_received_verdicts(monkeypatch):
+    import threading
+    monkeypatch.setenv('TYPESAFE_API_KEY', 'k')
+    monkeypatch.setattr(RF, 'DEADLINE_SHORT', 0.3)
+    gate = threading.Event()
+    new = _row('n', 'Bank of Canada hikes rates', 'macro', '2026-10-28T20:00:00+00:00')
+    old = _row('o', 'Fed holds rates', 'macro', '2026-10-27T01:00:00+00:00')
+
+    def post(body, key, timeout=None):
+        if body['state'] == 'Fed holds rates':
+            gate.wait(30)
+        return _ans('foreign')
+    kept, meta = FN.apply_region_filter([old, new], post=post)
+    gate.set()
+    assert [r['guid'] for r in kept] == ['o'] and meta['stopped'] == 'deadline'
+    assert {c['guid']: c['status'] for c in meta['candidates']} == {'o': 'unasked', 'n': 'judged'}
+
+
+def test_saved_payload_guids_feed_the_exemption(tmp_path):
+    """부분 요약 뒤 재실행·--refresh 경로가 읽는 그날 파일 모양 그대로."""
+    p = tmp_path / 'd.json'
+    p.write_text(json.dumps({'report_date': 'x', 'items': [{'guid': 'g1'}, {'guid': 'g2'}],
+                             'region_filter': {'mode': 'jev'}}), encoding='utf-8')
+    assert FN.guids_in(str(p)) == {'g1', 'g2'} and FN.guids_in(str(tmp_path / 'none.json')) == set()

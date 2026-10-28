@@ -169,7 +169,7 @@ def _run_haiku(book, client, model, budget, now):
                 stat['errors'][f'schema:{e}'] += 1
                 continue
             # 응답이 밝힌 실제 모델(#4) — 모델 ID 모양일 때만, 아니면 'other'(재검토 2차 #1)
-            at, used = _now_iso(), R.safe_claude_model(getattr(resp, 'model', None) or model)
+            at, used = _now_iso(), R.safe_claude_model(getattr(resp, 'model', None) or model, model)
             for key, label in got.items():
                 R.record(book.results[s], 'haiku', cfg, key,
                          {'label': label, 'model': used, 'requested': model, 'at': at})
