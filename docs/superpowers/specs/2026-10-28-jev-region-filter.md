@@ -14,7 +14,11 @@ confidence ≥ 0.9 로 답한 것만 **선정 전에 뺀다**. 되살리지 않�
 
 코드: `scripts/common/region_filter.py`(필터), `region_labels.py`(라벨 정의·Jev 요청·응답 검증), `jev_client.py`(전송).
 감사: 각 payload 최상위 `region_filter` — `dropped`, `candidates`(대상 후보 전부의 guid·제목·갈래·라벨·conf·exempt),
-`asked`·`answered`·`stopped`·`errors`·`seconds`. 게이트·검토 러너는 `items` 만 읽는다.
+`asked`·`answered`·`late`·`stopped`·`errors`·`seconds`. 게이트·검토 러너는 `items` 만 읽는다.
+- `asked` = 마감 전에 **보낼 차례를 잡은** 제목 수(전송 시작과 같지 않다 — 전송은 자물쇠 밖이라 마감 직후에 시작될 수 있다),
+  `answered` = 마감 전에 기록된 판정, `late` = 마감 뒤에 와서 버린 답.
+- `candidates[].status`: `judged` · `http:…`/`net:…`/`schema:…`(그 행 실패) · `model:mismatch` · `no_answer`(차례를 잡았으나 마감까지
+  답이 기록되지 않음) · `unasked`(마감 전에 차례가 오지 않음) · `exempt` · `no_key` · `rolled_back`.
 
 ## 근거
 - 일본: 10/22-10/27 Yahoo 목록 고유 제목 1,220 → 층화 359, 정답 = Claude·codex 블라인드 합의 347. 정규식이 국내로 남긴
@@ -29,7 +33,7 @@ confidence ≥ 0.9 로 답한 것만 **선정 전에 뺀다**. 되살리지 않�
   「Bank of Canada hikes rates」 는 US 매크로에서 빠지고, 글로벌 갈래는 지역·정책 조건이 따로라 그것을 되살리지 않는다.
   KR 정의는 한국 투자자의 해외 투자(서학개미)를 국내로 친다.
 - 일본 정의·질문 문자열은 섀도·평가와 바이트 동일 — `japan/tests/test_region_shadow.py` 가 설정 지문·요청 해시를 고정값으로 지킨다.
-- **마감은 행 단위 실패다**: 마감 전에 받은 판정은 적용하고 못 물은 행만 정규식(감사 `status: unasked`). 마감에 전체를
+- **마감은 행 단위 실패다**: 마감 **전에 기록된** 판정만 적용하고 나머지는 정규식(감사 `no_answer`·`unasked`, 늦은 답은 `late`). 마감에 전체를
   되돌리면 가장 느린 날 맞게 뺀 것까지 버린다 — 그래서 「마감이면 오늘과 완전히 같다」는 보장은 하지 않는다(US·KR 구현 검토 #2).
 - US·KR 마감 30초: 수집 실측 US 55-470초, KR 306-1062초, 루틴 대기 `timeout 900`. 최신 순으로 물어 못 물은 행은 순위가 낮은 쪽.
 

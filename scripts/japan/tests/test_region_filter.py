@@ -241,6 +241,45 @@ def test_row_reserved_but_not_yet_sent_is_no_answer_and_late_answer_is_ignored()
     assert [c['status'] for c in meta['candidates']] == ['no_answer', 'unasked']
 
 
+def _box(deadline_at, closed=False):
+    from collections import Counter
+    return {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0, 'status': {},
+            'closed': closed, 'late': 0, 'deadline_at': deadline_at}
+
+
+def test_answer_after_deadline_time_is_not_recorded():
+    """US·KR 재검토 3차 #1 — 마감 시각 뒤에 온 답은 스냅숏 전이라도 기록하지 않는다."""
+    box, lock, halt = _box(time.monotonic() - 1), threading.Lock(), threading.Event()
+    F._ask_loop([('k1', 'カナダ中銀、利上げ')], 'key', lambda *a, **k: _ans('foreign'), 1, box, lock, halt, 'japan')
+    assert box['verdicts'] == {} and box['late'] == 1 and box['status'] == {'k1': 'no_answer'}
+
+
+def test_answer_after_book_closed_is_not_recorded():
+    box, lock, halt = _box(time.monotonic() + 60, closed=True), threading.Lock(), threading.Event()
+    F._ask_loop([('k1', 'カナダ中銀、利上げ')], 'key', lambda *a, **k: _ans('foreign'), 1, box, lock, halt, 'japan')
+    assert box['verdicts'] == {} and box['late'] == 1
+
+
+def test_reservation_is_recorded_before_post_is_called():
+    """US·KR 재검토 3차 #3 — 차례(asked·no_answer)는 post() 가 불리기 전에 기록된다."""
+    box, lock, halt = _box(time.monotonic() + 60), threading.Lock(), threading.Event()
+    seen = []
+
+    def post(body, key, timeout=None):
+        with lock:
+            seen.append((box['asked'], dict(box['status'])))
+        return _ans('domestic')
+    F._ask_loop([('k1', '日銀')], 'key', post, 1, box, lock, halt, 'japan')
+    assert seen == [(1, {'k1': 'no_answer'})] and box['status'] == {'k1': 'judged'}
+
+
+def test_halt_before_reservation_sends_nothing():
+    box, lock, halt = _box(time.monotonic() + 60), threading.Lock(), threading.Event()
+    halt.set()
+    F._ask_loop([('k1', '日銀')], 'key', lambda *a, **k: pytest.fail('sent after halt'), 1, box, lock, halt, 'japan')
+    assert box['asked'] == 0 and box['status'] == {}
+
+
 def test_secret_never_in_meta():
     from common.jev_client import JevHTTPError
     _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'TEST_ONLY_SECRET'},

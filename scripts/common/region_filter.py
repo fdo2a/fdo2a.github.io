@@ -105,6 +105,10 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
                 box['status'][k] = 'model:mismatch'
             continue
         with lock:
+            # 마감 뒤에 온 답은 쓰지 않는다 — 시각과 「장부 닫힘」을 같은 자물쇠 안에서 본다(US·KR 재검토 3차 #1)
+            if box['closed'] or time.monotonic() > box['deadline_at']:
+                box['late'] += 1
+                return
             box['verdicts'][k] = (label, conf)
             box['status'][k] = 'judged'
 
@@ -115,7 +119,10 @@ def _newest_first(rows):
 
 def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST_TIMEOUT, exempt=(),
         newest_first=False):
-    """(남길 행, region_filter 기록). `rows` 는 전부 대상이다. 키가 없으면 호출 없이 정규식 그대로."""
+    """(남길 행, region_filter 기록). `rows` 는 전부 대상이다. 키가 없으면 호출 없이 정규식 그대로.
+
+    기록: `asked` = 마감 전에 보낼 차례를 잡은 제목 수(전송 시작과 같지 않다 — 전송은 자물쇠 밖), `answered` = 마감 전에
+    기록된 판정 수, `late` = 마감 뒤에 와서 버린 답 수, `candidates[].status` 는 `_candidates` 참고."""
     rows, exempt = list(rows or []), set(exempt or ())
     meta = {'mode': 'regex', 'market': market, 'model': L.JEV_MODEL, 'threshold': JEV_MIN_CONF, 'asked': 0,
             'answered': 0, 'dropped': [], 'stopped': None, 'errors': {}, 'candidates': []}
@@ -130,19 +137,22 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
         if r.get('title') and k not in seen and r.get('guid') not in exempt:
             seen.add(k)
             titles.append((k, r['title']))
-    box = {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0, 'status': {}}
     lock, halt = threading.Lock(), threading.Event()
     t0 = time.monotonic()
+    box = {'verdicts': {}, 'errors': Counter(), 'stopped': None, 'asked': 0, 'status': {},
+           'closed': False, 'late': 0, 'deadline_at': t0 + deadline}
     worker = threading.Thread(target=_ask, args=(titles, key, post or J.post, timeout, box, lock, halt, market),
                               daemon=True)
     worker.start()
     worker.join(deadline)
-    if worker.is_alive():
-        halt.set()
-    with lock:
+    timed_out = worker.is_alive()
+    halt.set()
+    with lock:                                     # 장부를 닫고 그 순간을 스냅숏 — 이 뒤의 판정은 기록되지 않는다
+        box['closed'] = True
         verdicts, status = dict(box['verdicts']), dict(box['status'])
-        stopped = box['stopped'] or ('deadline' if worker.is_alive() else 'complete')
-        meta.update(asked=box['asked'], answered=len(verdicts), stopped=stopped, errors=dict(box['errors']))
+        stopped = box['stopped'] or ('deadline' if timed_out or box['late'] else 'complete')
+        meta.update(asked=box['asked'], answered=len(verdicts), stopped=stopped, errors=dict(box['errors']),
+                    late=box['late'])
     meta['seconds'] = round(time.monotonic() - t0, 1)
     if stopped == 'crash':
         # 예상 못 한 예외 — 그 전 판정도 믿지 않는다. 필터 코드 예외와 같이 전체 정규식
