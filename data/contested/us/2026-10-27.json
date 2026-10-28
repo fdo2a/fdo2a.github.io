@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-27",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-28T03:31:06+00:00",
- "cutoff_at": "2026-10-28T03:31:06+00:00",
+ "collected_at": "2026-10-28T03:48:55+00:00",
+ "cutoff_at": "2026-10-28T03:48:55+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,54 +21,45 @@
   "sha256": "49e2be092351ecf2a240739911d811ee8469a828ab7511bb82f496cd5e753532"
  },
  "counts": {
-  "harvest": 206,
-  "candidates": 1,
+  "harvest": 207,
+  "candidates": 3,
   "articles": [
-   6
+   4,
+   3,
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46536,
-   "out": 12342
+   "in": 35984,
+   "out": 9932
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "cbc.ca": "ok",
-   "arabnews.com": "ok"
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "9/9"
+   "claims": "5/5",
+   "pairs": "2/2",
+   "obs": "6/6"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 0,
+   "claims": 0,
    "obs": 6
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "이스라엘 총선 출구조사 이후 우위 주장과 연정 구성 가능성, 10·7 사",
-  "query": "israel netanyahu election",
+  "topic_ko": "음바페의 마오쩌둥 관련 발언 논란과 중국 내 후폭풍(CCTV 라리가 중계",
+  "query": "kylian china mbapp",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "variables[1]:unverified",
-  "variables[2]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
-  "edges[2]:unverified",
-  "memo[1]:dangling",
-  "worry.most[0]:unverified",
-  "worry.moderate[0]:dangling"
- ],
- "content_hash": "edecd6bec04e2cab"
+ "content_hash": "ff20d1a253ea580e"
 }
