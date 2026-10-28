@@ -88,7 +88,7 @@ READY = (S, '18:30')
 
 
 def _payload(prev, now, stamp='15:25:40', extra=()):
-    rows = [{'localTradedAt': f'{S}T{stamp}+09:00', 'closePrice': f'{now:.4f}'},
+    rows = [{'localTradedAt': f'{S}T{stamp}+09:00', 'closePrice': f'{now:.4f}', 'fluctuations': f'{now - prev:.4f}'},
             {'localTradedAt': f'{P}T15:28:53+09:00', 'closePrice': f'{prev:.4f}'},
             {'localTradedAt': '2026-10-26T15:29:58+09:00', 'closePrice': f'{prev - 0.01:.4f}'}]
     return {'result': list(extra) + rows}
@@ -181,3 +181,25 @@ def test_naver_intraday_prev_row_rejected():
     p['result'][1]['localTradedAt'] = f'{P}T10:00:00+09:00'
     got, why, _ = R.jgb_naver(_payloads(**{'10Y': p}), S, P, READY, None)
     assert got is None and P in why and '마감 전' in why
+
+
+def test_naver_chain_break_rejected():
+    # 지표물 교체일 — 네이버 등락이 직전 행 종가와 이어지지 않는다(재검토 7차 #1)
+    p = _payload(2.788, 2.825)
+    p['result'][0]['fluctuations'] = '0.0070'
+    got, why, _ = R.jgb_naver(_payloads(**{'10Y': p}), S, P, READY, MOF)
+    assert got is None and '사슬' in why
+
+
+def test_naver_1505_rows_rejected():
+    for idx in (0, 1):
+        p = _payload(2.788, 2.825)
+        p['result'][idx]['localTradedAt'] = p['result'][idx]['localTradedAt'][:11] + '15:05:00+09:00'
+        got, why, _ = R.jgb_naver(_payloads(**{'10Y': p}), S, P, READY, None)
+        assert got is None and '마감 전' in why
+
+
+def test_mof_check_compares_finite_tenors_despite_one_missing():
+    bad = [dict(MOF[0], **{'2Y': 1.0, '30Y': None})]   # 2년 90bp 차이 + 30년 결측(재검토 7차 #2)
+    got, _, check = R.jgb_naver(_payloads(), S, P, READY, bad)
+    assert got is None and check.startswith('mismatch') and '2Y' in check

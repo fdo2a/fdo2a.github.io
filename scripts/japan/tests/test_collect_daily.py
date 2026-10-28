@@ -186,7 +186,8 @@ LATE = datetime(2026, 10, 26, 9, 30, tzinfo=timezone.utc)      # 18:30 JST
 
 
 def _naver():
-    return {t: {'result': [{'localTradedAt': f'{S}T15:25:00+09:00', 'closePrice': str(now)},
+    return {t: {'result': [{'localTradedAt': f'{S}T15:25:00+09:00', 'closePrice': str(now),
+                            'fluctuations': f'{now - prev:.4f}'},
                            {'localTradedAt': f'{P}T15:27:00+09:00', 'closePrice': str(prev)}]}
             for t, (prev, now) in NAVER_LV.items()}
 

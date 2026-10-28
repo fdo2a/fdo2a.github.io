@@ -22,7 +22,8 @@ from us import naver_yields as NY
 
 TENORS = ('2Y', '5Y', '10Y', '30Y')
 NAVER_CODES = {'2Y': 'JP2YT=RR', '5Y': 'JP5YT=RR', '10Y': 'JP10YT=RR', '30Y': 'JP30YT=RR'}
-NAVER_CLOSE_FROM = '15:00'   # JST. 세션 행 스탬프가 이보다 이르면 장중 행이다(실측 마감 15:14~15:30)
+NAVER_CLOSE_FROM = '15:10'   # JST. 행 스탬프가 이보다 이르면 장중 행이다(실측 마감 240건 15:14~15:30)
+NAVER_CHAIN_TOL = 0.0005     # %. 세션 종가 − 네이버 등락 = 직전 행 종가(4자리 반올림 폭)
 NAVER_READY = '17:45'        # JST. 2시간 지연 + 15:30 마감 + 여유 — 이 전 수집은 채택하지 않는다
 NAVER_MOF_MAX_BP = 15.0      # 직전 세션 수준 차 상한 — 넘으면 코드 매핑을 의심한다(정상 차 ≤7.5bp)
 CALL_MAX_LAG = 3          # 거래일. 2026-10-27 실측: 10/26 세션에 10/22 까지(2거래일)
@@ -66,7 +67,7 @@ _JST = timezone(timedelta(hours=9))
 
 
 def _jst_rows(payload):
-    """원 행 -> [(JST 날짜, JST 시:분, 종가)]. 스탬프는 실제로 파싱해 JST 로 옮긴다 — 문자열 앞 10자를
+    """원 행 -> [(JST 날짜, JST 시:분, 종가, 네이버 등락)]. 스탬프는 실제로 파싱해 JST 로 옮긴다 — 문자열 앞 10자를
     날짜로 읽으면 다른 오프셋의 행이 엉뚱한 날로 간다(구현 검토 #5). 못 읽는 스탬프는 버리고,
     못 읽는 종가는 None 으로 남겨 호출부의 유한값 검사가 막게 한다."""
     out = []
@@ -78,17 +79,20 @@ def _jst_rows(payload):
         if t.tzinfo is None:
             continue
         t = t.astimezone(_JST)
-        try:
-            v = float(str(r.get('closePrice')).replace(',', ''))
-        except ValueError:
-            v = None
-        out.append((t.date().isoformat(), t.strftime('%H:%M'), v))
+        out.append((t.date().isoformat(), t.strftime('%H:%M'), _num(r.get('closePrice')), _num(r.get('fluctuations'))))
     return out
 
 
+def _num(raw):
+    try:
+        return float(str(raw).replace(',', ''))
+    except ValueError:
+        return None
+
+
 def _rows_on(payload, day):
-    """그 JST 날짜의 원 행들 — (시:분, 종가). 중복·비유한 판정은 호출부가 한다."""
-    return [(hm, v) for d, hm, v in _jst_rows(payload) if d == day]
+    """그 JST 날짜의 원 행들 — (시:분, 종가, 네이버 등락). 중복·비유한 판정은 호출부가 한다."""
+    return [(hm, v, f) for d, hm, v, f in _jst_rows(payload) if d == day]
 
 
 def naver_ready(session, fetched_jst):
@@ -111,14 +115,13 @@ def mof_check(series, mof_rows, prev_session, tenors=TENORS):
     row = next((r for r in mof_rows if r.get('date') == prev_session), None)
     if not row:
         return f'skip: MOF {prev_session} 행 없음'
+    # 값이 있는 만기는 먼저 전부 대조한다 — 한 만기 결측이 다른 만기의 큰 차이를 덮지 않게(재검토 7차 #2)
     missing = [t for t in tenors if not _finite(row.get(t))]
-    if missing:
-        return f'skip: MOF {prev_session} {",".join(missing)} 결측'
     for t in tenors:
         n = dict(series[t])[prev_session]
-        if abs(n - row[t]) * 100 > NAVER_MOF_MAX_BP:
+        if t not in missing and abs(n - row[t]) * 100 > NAVER_MOF_MAX_BP:
             return f'mismatch: {t} 네이버 {n} vs MOF {row[t]}'
-    return 'ok'
+    return f'skip: MOF {prev_session} {",".join(missing)} 결측' if missing else 'ok'
 
 
 def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenors=TENORS):
@@ -142,8 +145,14 @@ def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenor
             hm = _rows_on(payloads[t], day)[0][0]
             if hm < NAVER_CLOSE_FROM:
                 return None, f'네이버 {t} {day} 행 {hm} — 도쿄 마감 전', None
+        # 사슬: 네이버가 직전 행을 기준 종가로 쓰고 있는가. 끊기면 지표물 교체일(새 종목 오늘 − 옛 종목 어제는
+        # 가짜 움직임)이거나 직전 행이 마감값이 아니다 — 60일 실측 236쌍 중 6쌍(재검토 7차 #1)
+        _, now_v, fluct = _rows_on(payloads[t], session)[0]
+        prev_v = _rows_on(payloads[t], prev_session)[0][1]
+        if not _finite(fluct) or abs(now_v - fluct - prev_v) > NAVER_CHAIN_TOL:
+            return None, f'네이버 {t} 등락 사슬 불일치({now_v} − {fluct} ≠ {prev_v}) — 지표물 교체 의심', None
     # 날짜는 JST 로 옮긴 같은 행에서 — `parse_prices` 의 문자열 날짜와 섞지 않는다
-    series = {t: sorted((d, v) for d, _, v in _jst_rows(payloads[t]) if _finite(v)) for t in tenors}
+    series = {t: sorted((d, v) for d, _, v, _ in _jst_rows(payloads[t]) if _finite(v)) for t in tenors}
     shared = NY.shared_dates(series)
     if not shared or shared[-1] != session:
         return None, f'네이버 공통 최신일 {shared[-1] if shared else None} — 세션 {session} 아님', None
