@@ -11,10 +11,8 @@
 스레드 안이든 밖이든 **전체 되돌림**이다. Jev 호출은 데몬
 스레드에서 돌고 본 흐름은 `deadline` 초 뒤 그때까지의 판정으로 진행한다 — 끝나지 않는 응답이 수집을 붙잡지 못한다(#1).
 """
-import http.client
 import threading
 import time
-import urllib.error
 from collections import Counter
 
 from japan import jev_client as J
@@ -75,10 +73,10 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt):
             if transient >= TRANSIENT_STOP:
                 return stop('transient')
             continue
-        except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as e:
-            # 연결·타임아웃·잘린 응답(IncompleteRead)·JSON 해독 실패 — codex 구현 검토 #2
+        except J.JevTransportError as e:
+            # 연결·타임아웃·잘린 응답·해독 실패 — 클라이언트가 이 한 종류로 바꿔 준다(codex 구현 검토 #2, 재검토 #1)
             with lock:
-                box['errors'][f'net:{type(e).__name__}'] += 1
+                box['errors'][f'net:{e.kind}'] += 1
             transient += 1
             if transient >= TRANSIENT_STOP:
                 return stop('transient')
@@ -91,8 +89,8 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt):
             continue
         transient = schema = 0
         if model != R.JEV_MODEL:                  # 평가하지 않은 버전으로는 빼지 않는다
-            with lock:
-                box['errors'][f'model:{str(model)[:40]}'] += 1
+            with lock:                            # 응답 문자열은 감사에 옮기지 않는다(재검토 #2)
+                box['errors']['model:mismatch'] += 1
             continue
         with lock:
             box['verdicts'][k] = (label, conf)

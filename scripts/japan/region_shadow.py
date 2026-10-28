@@ -17,6 +17,7 @@ import hashlib
 import inspect
 import json
 import math
+import re
 
 from japan import news as N
 
@@ -53,6 +54,7 @@ HAIKU_SCHEMA = {
         'required': ['id', 'label'], 'additionalProperties': False}}},
     'required': ['items'], 'additionalProperties': False}
 QUESTION = 'region'
+_JEV_MODEL_ID = re.compile(r'jev-[0-9A-Za-z.\-]+')
 
 
 def title_key(title):
@@ -241,7 +243,8 @@ def parse_jev(resp):
     if not _unit(conf):                                 # 문서상 Choice 는 늘 confidence 를 준다
         raise SchemaError('confidence')
     model = resp.get('model')
-    if model is None or not _opt_str(model):
+    # 「jev-…」 모양만 — 응답 문자열이 커밋되는 판정·감사 파일로 간다(재검토 #2)
+    if not (isinstance(model, str) and _JEV_MODEL_ID.fullmatch(model)):
         raise SchemaError('model')
     return label, {k: round(float(v), 4) for k, v in probs.items()}, conf, model
 

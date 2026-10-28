@@ -3,6 +3,7 @@
 공식 HTTPS 호스트 고정, 리다이렉트 거부, 키는 헤더에만(codex 설계 검토 #11 — urllib 은 리다이렉트 때
 Authorization 을 새 호스트로 그대로 옮긴다). 오류는 HTTP 코드만 남긴다.
 """
+import http.client
 import json
 import ssl
 import urllib.error
@@ -18,6 +19,15 @@ class JevHTTPError(Exception):
     def __init__(self, code):
         super().__init__(f'HTTP {code}')
         self.code = code
+
+
+class JevTransportError(Exception):
+    """연결·타임아웃·잘린 응답·해독 실패 — 예외 이름만 담는다. 호출자는 이것과 JevHTTPError 만 「전송 실패」로 본다:
+    그 밖의 예외(ValueError 포함)는 호출자 코드의 결함이다(codex 재검토 #1)."""
+
+    def __init__(self, kind):
+        super().__init__(kind)
+        self.kind = kind
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -41,3 +51,5 @@ def post(body, key, timeout=JEV_TIMEOUT):
             return json.loads(r.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
         raise JevHTTPError(e.code) from None
+    except (urllib.error.URLError, OSError, http.client.HTTPException, ValueError) as e:
+        raise JevTransportError(type(e).__name__) from None

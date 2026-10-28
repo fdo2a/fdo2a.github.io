@@ -1,4 +1,5 @@
 """일본 일간 뉴스의 국내/해외 필터 — Jev conf ≥ 0.9 우선, 실패 시 정규식 (2026-10-27, codex 설계 검토 #1-#9)."""
+import http.client
 import json
 import os
 import threading
@@ -69,7 +70,7 @@ def test_model_mismatch_falls_back_for_that_row():
     """#8 — 평가한 고정 버전이 아닌 응답으로는 빼지 않는다."""
     post = _poster({'カナダ中銀、利上げ': _ans('foreign', 1.0, model='jev-1.15.0')})
     kept, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'k'}, post=post)
-    assert 'b' in [r['guid'] for r in kept] and meta['errors'] == {'model:jev-1.15.0': 1}
+    assert 'b' in [r['guid'] for r in kept] and meta['errors'] == {'model:mismatch': 1}
 
 
 def test_auth_failure_keeps_earlier_verdicts_and_regex_for_the_rest():
@@ -130,9 +131,48 @@ def test_truncated_response_falls_back_only_that_row():
     """codex 구현 검토 #2 — 잘린 응답(IncompleteRead)은 전송 실패: 앞의 판정은 남는다."""
     import http.client
     rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
-    post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': http.client.IncompleteRead(b'{')})
+    from japan import jev_client as J
+    post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': J.JevTransportError('IncompleteRead')})
     kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post)
     assert [r['guid'] for r in kept] == ['y'] and meta['errors'] == {'net:IncompleteRead': 1}
+
+
+def test_client_normalises_truncated_and_undecodable_responses(monkeypatch):
+    """클라이언트가 잘린 응답·JSON 해독 실패를 JevTransportError 로 바꾼다 — 호출자는 그것만 전송 실패로 본다."""
+    from japan import jev_client as J
+
+    class Resp:
+        def __init__(self, exc=None, data=b''):
+            self.exc, self.data = exc, data
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self):
+            if self.exc:
+                raise self.exc
+            return self.data
+
+    for resp, kind in ((Resp(http.client.IncompleteRead(b'{')), 'IncompleteRead'),
+                       (Resp(data=b'{not json'), 'JSONDecodeError')):
+        class Opener:
+            def open(self, req, timeout=None, _r=resp):
+                return _r
+        monkeypatch.setattr(J.urllib.request, 'build_opener', lambda *a, **k: Opener())
+        with pytest.raises(J.JevTransportError) as e:
+            J.post({'x': 1}, 'k')
+        assert e.value.kind == kind
+
+
+def test_unexpected_valueerror_from_post_rolls_back():
+    """재검토 #1 — 정규화되지 않은 ValueError 는 결함: 앞의 판정도 버린다."""
+    rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
+    post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': ValueError('bug')})
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post)
+    assert kept == rows and meta['stopped'] == 'crash'
 
 
 def test_huge_confidence_is_a_schema_error_not_a_crash():
@@ -143,6 +183,13 @@ def test_huge_confidence_is_a_schema_error_not_a_crash():
     kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=_poster({'カナダ中銀、利上げ': _ans('foreign'),
                                                                        '米大手行、AI遮断': bad}))
     assert [r['guid'] for r in kept] == ['y'] and meta['errors'] == {'schema:confidence': 1}
+
+
+def test_response_text_never_reaches_audit():
+    """재검토 #2 — 응답의 model 문자열(키를 담아 올 수도 있다)을 감사에 옮기지 않는다."""
+    post = _poster({'カナダ中銀、利上げ': _ans('foreign', 1.0, model='TEST_ONLY_SECRET')})
+    _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'TEST_ONLY_SECRET'}, post=post)
+    assert 'TEST_ONLY_SECRET' not in json.dumps(meta)
 
 
 def test_secret_never_in_meta():

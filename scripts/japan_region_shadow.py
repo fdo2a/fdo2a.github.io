@@ -210,7 +210,7 @@ def _run_jev(book, key, model, budget, now, post):
             except R.SchemaError as e:
                 stat['errors'][f'schema:{e}'] += 1
                 continue
-            except (urllib.error.URLError, OSError, ValueError) as e:
+            except (J.JevTransportError, urllib.error.URLError, OSError, ValueError) as e:
                 stat['errors'][f'net:{type(e).__name__}'] += 1
                 transient += 1
                 if transient >= TRANSIENT_STOP['jev']:
