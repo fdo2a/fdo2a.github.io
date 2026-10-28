@@ -1,0 +1,763 @@
+{
+ "session": "2026-10-28",
+ "prev_session": "2026-10-27",
+ "cut": "16:30",
+ "scheduled_at": "workflow_dispatch",
+ "ran_at": "2026-10-28T09:36:33.695611+00:00",
+ "complete": true,
+ "fetch_status": {
+  "nikkei_csv": "ok",
+  "nikkei": "ok",
+  "jgb": "ok",
+  "call_rate": "ok",
+  "macro": "ok",
+  "fx": "ok"
+ },
+ "indices": {
+  "nikkei": {
+   "value": 63954.19,
+   "ok": true,
+   "why": null,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 63268.37,
+    "source": "nikkei_official"
+   },
+   "chg_pct": 1.08,
+   "source": "Nikkei Inc. official close"
+  },
+  "topix_etf": {
+   "value": 420.0,
+   "chg_pct": -0.14,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 420.6,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "label": "TOPIX ETF(1306)"
+  }
+ },
+ "sectors": [
+  {
+   "value": 49130.0,
+   "chg_pct": -1.19,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 49720.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1617",
+   "name_ko": "식품"
+  },
+  {
+   "value": 36960.0,
+   "chg_pct": -1.02,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 37340.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1618",
+   "name_ko": "에너지자원"
+  },
+  {
+   "value": 43390.0,
+   "chg_pct": 0.21,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 43300.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1619",
+   "name_ko": "건설·자재"
+  },
+  {
+   "value": 37130.0,
+   "chg_pct": 0.54,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 36930.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1620",
+   "name_ko": "소재·화학"
+  },
+  {
+   "value": 31480.0,
+   "chg_pct": -1.32,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 31900.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1621",
+   "name_ko": "의약품"
+  },
+  {
+   "value": 34710.0,
+   "chg_pct": -1.56,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 35260.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1622",
+   "name_ko": "자동차·수송기"
+  },
+  {
+   "value": 55760.0,
+   "chg_pct": 1.07,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 55170.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1623",
+   "name_ko": "철강·비철"
+  },
+  {
+   "value": 79020.0,
+   "chg_pct": 1.48,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 77870.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1624",
+   "name_ko": "기계"
+  },
+  {
+   "value": 63150.0,
+   "chg_pct": 1.84,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 62010.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1625",
+   "name_ko": "전기·정밀"
+  },
+  {
+   "value": 48600.0,
+   "chg_pct": -0.86,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 49020.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1626",
+   "name_ko": "정보통신·서비스"
+  },
+  {
+   "value": 12165.0,
+   "chg_pct": -1.42,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 12340.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1627",
+   "name_ko": "전력·가스"
+  },
+  {
+   "value": 22080.0,
+   "chg_pct": -1.71,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 22465.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1628",
+   "name_ko": "운수·물류"
+  },
+  {
+   "value": 280.8,
+   "chg_pct": -1.3,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 284.5,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1629",
+   "name_ko": "상사·도매"
+  },
+  {
+   "value": 37250.0,
+   "chg_pct": -1.56,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 37840.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1630",
+   "name_ko": "소매"
+  },
+  {
+   "value": 38230.0,
+   "chg_pct": -0.05,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 38250.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1631",
+   "name_ko": "은행"
+  },
+  {
+   "value": 42850.0,
+   "chg_pct": -1.86,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 43660.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1632",
+   "name_ko": "금융(은행 제외)"
+  },
+  {
+   "value": 48880.0,
+   "chg_pct": -1.99,
+   "denom": {
+    "date": "2026-10-27",
+    "value": 49870.0,
+    "source": "published"
+   },
+   "ok": true,
+   "why": null,
+   "code": "1633",
+   "name_ko": "부동산"
+  }
+ ],
+ "sector_breadth": {
+  "total": 17,
+  "counted": 17,
+  "up": 5,
+  "down": 12,
+  "flat": 0
+ },
+ "stocks": [
+  {
+   "code": "7203",
+   "name": "도요타",
+   "value": 3051.0,
+   "chg_pct": -1.64
+  },
+  {
+   "code": "7267",
+   "name": "혼다",
+   "value": 1762.5,
+   "chg_pct": -1.45
+  },
+  {
+   "code": "6902",
+   "name": "덴소",
+   "value": 1809.0,
+   "chg_pct": -1.26
+  },
+  {
+   "code": "6758",
+   "name": "소니그룹",
+   "value": 3957.0,
+   "chg_pct": -2.78
+  },
+  {
+   "code": "6501",
+   "name": "히타치",
+   "value": 5620.0,
+   "chg_pct": 0.09
+  },
+  {
+   "code": "6861",
+   "name": "키엔스",
+   "value": 79190.0,
+   "chg_pct": 0.14
+  },
+  {
+   "code": "8035",
+   "name": "도쿄일렉트론",
+   "value": 9805.0,
+   "chg_pct": 4.42
+  },
+  {
+   "code": "6857",
+   "name": "어드밴테스트",
+   "value": 34930.0,
+   "chg_pct": 3.16
+  },
+  {
+   "code": "6981",
+   "name": "무라타제작소",
+   "value": 6701.0,
+   "chg_pct": 5.25
+  },
+  {
+   "code": "6503",
+   "name": "미쓰비시전기",
+   "value": 4811.0,
+   "chg_pct": 1.67
+  },
+  {
+   "code": "7741",
+   "name": "HOYA",
+   "value": 26415.0,
+   "chg_pct": 0.17
+  },
+  {
+   "code": "8306",
+   "name": "미쓰비시UFJ",
+   "value": 3377.0,
+   "chg_pct": 0.21
+  },
+  {
+   "code": "8316",
+   "name": "스미토모미쓰이FG",
+   "value": 3159.0,
+   "chg_pct": -0.88
+  },
+  {
+   "code": "8411",
+   "name": "미즈호FG",
+   "value": 7639.0,
+   "chg_pct": 0.62
+  },
+  {
+   "code": "8766",
+   "name": "도쿄해상",
+   "value": 555.0,
+   "chg_pct": -4.08
+  },
+  {
+   "code": "9983",
+   "name": "패스트리테일링",
+   "value": 73520.0,
+   "chg_pct": -0.33
+  },
+  {
+   "code": "9984",
+   "name": "소프트뱅크그룹",
+   "value": 4682.0,
+   "chg_pct": 4.65
+  },
+  {
+   "code": "9432",
+   "name": "NTT",
+   "value": 171.9,
+   "chg_pct": -1.21
+  },
+  {
+   "code": "9433",
+   "name": "KDDI",
+   "value": 2800.5,
+   "chg_pct": -1.75
+  },
+  {
+   "code": "9434",
+   "name": "소프트뱅크",
+   "value": 230.7,
+   "chg_pct": -1.11
+  },
+  {
+   "code": "7974",
+   "name": "닌텐도",
+   "value": 8311.0,
+   "chg_pct": -1.68
+  },
+  {
+   "code": "6098",
+   "name": "리쿠르트",
+   "value": 18800.0,
+   "chg_pct": 0.4
+  },
+  {
+   "code": "4661",
+   "name": "오리엔탈랜드",
+   "value": 3168.0,
+   "chg_pct": -1.98
+  },
+  {
+   "code": "8058",
+   "name": "미쓰비시상사",
+   "value": 4847.0,
+   "chg_pct": -1.8
+  },
+  {
+   "code": "8031",
+   "name": "미쓰이물산",
+   "value": 5042.0,
+   "chg_pct": -1.27
+  },
+  {
+   "code": "8001",
+   "name": "이토추상사",
+   "value": 2311.0,
+   "chg_pct": -2.32
+  },
+  {
+   "code": "4063",
+   "name": "신에쓰화학",
+   "value": 6004.0,
+   "chg_pct": 2.63
+  },
+  {
+   "code": "4452",
+   "name": "가오",
+   "value": 3658.0,
+   "chg_pct": -2.3
+  },
+  {
+   "code": "4568",
+   "name": "다이이치산쿄",
+   "value": 2580.0,
+   "chg_pct": -0.56
+  },
+  {
+   "code": "4502",
+   "name": "다케다약품",
+   "value": 6307.0,
+   "chg_pct": -1.56
+  },
+  {
+   "code": "4519",
+   "name": "주가이제약",
+   "value": 6614.0,
+   "chg_pct": -1.11
+  },
+  {
+   "code": "6954",
+   "name": "화낙",
+   "value": 5908.0,
+   "chg_pct": 1.51
+  },
+  {
+   "code": "6367",
+   "name": "다이킨공업",
+   "value": 21535.0,
+   "chg_pct": -0.05
+  },
+  {
+   "code": "7011",
+   "name": "미쓰비시중공업",
+   "value": 3550.0,
+   "chg_pct": 0.65
+  },
+  {
+   "code": "6146",
+   "name": "디스코",
+   "value": 52360.0,
+   "chg_pct": 5.14
+  },
+  {
+   "code": "8801",
+   "name": "미쓰이부동산",
+   "value": 1552.5,
+   "chg_pct": -1.62
+  },
+  {
+   "code": "8802",
+   "name": "미쓰비시지쇼",
+   "value": 3710.0,
+   "chg_pct": -1.85
+  },
+  {
+   "code": "5401",
+   "name": "일본제철",
+   "value": 657.5,
+   "chg_pct": -0.95
+  },
+  {
+   "code": "1605",
+   "name": "INPEX",
+   "value": 3969.0,
+   "chg_pct": -0.03
+  },
+  {
+   "code": "9020",
+   "name": "JR동일본",
+   "value": 3502.0,
+   "chg_pct": -2.96
+  },
+  {
+   "code": "9501",
+   "name": "도쿄전력",
+   "value": 487.2,
+   "chg_pct": -1.95
+  },
+  {
+   "code": "2914",
+   "name": "JT",
+   "value": 7332.0,
+   "chg_pct": -2.29
+  },
+  {
+   "code": "1925",
+   "name": "다이와하우스",
+   "value": 2243.5,
+   "chg_pct": -2.44
+  }
+ ],
+ "movers": {
+  "report_date": "2026-10-28",
+  "universe": "일본 대형주 고정 표본",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "전기·정밀",
+    "direction": "up",
+    "reasons": [
+     "등락 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "무라타제작소",
+      "change_pct": 5.25,
+      "close": 6701.0
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "기계",
+    "direction": "up",
+    "reasons": [
+     "등락 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "디스코",
+      "change_pct": 5.14,
+      "close": 52360.0
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "금융(은행 제외)",
+    "direction": "down",
+    "reasons": [
+     "등락 하위"
+    ],
+    "members": [
+     {
+      "name": "도쿄해상",
+      "change_pct": -4.08,
+      "close": 555.0
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "운수·물류",
+    "direction": "down",
+    "reasons": [
+     "등락 하위"
+    ],
+    "members": [
+     {
+      "name": "JR동일본",
+      "change_pct": -2.96,
+      "close": 3502.0
+     }
+    ]
+   }
+  ]
+ },
+ "jgb": {
+  "2Y": {
+   "value": 1.888,
+   "period": "2026-10-27",
+   "prev_period": "2026-10-26",
+   "chg_bp": 0.0,
+   "unit": "%"
+  },
+  "5Y": {
+   "value": 2.246,
+   "period": "2026-10-27",
+   "prev_period": "2026-10-26",
+   "chg_bp": 0.5,
+   "unit": "%"
+  },
+  "10Y": {
+   "value": 2.829,
+   "period": "2026-10-27",
+   "prev_period": "2026-10-26",
+   "chg_bp": 0.5,
+   "unit": "%"
+  },
+  "30Y": {
+   "value": 3.895,
+   "period": "2026-10-27",
+   "prev_period": "2026-10-26",
+   "chg_bp": 1.1,
+   "unit": "%"
+  }
+ },
+ "call_rate": {
+  "value": 1.227,
+  "period": "2026-10-26",
+  "unit": "%",
+  "code": "STRDCLUCON"
+ },
+ "fx": {
+  "usdjpy": {
+   "value": 157.903,
+   "bar_start": "2026-10-28T16:25:00+09:00",
+   "bar_end": "2026-10-28T16:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "basis": "bar_end_1630_jst",
+   "label": "USD/JPY",
+   "multiplier": 1,
+   "prev_value": 157.737,
+   "prev_period": "2026-10-27",
+   "chg_pct": 0.11
+  },
+  "eurjpy": {
+   "value": 175.594,
+   "bar_start": "2026-10-28T16:25:00+09:00",
+   "bar_end": "2026-10-28T16:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "basis": "bar_end_1630_jst",
+   "label": "EUR/JPY",
+   "multiplier": 1,
+   "prev_value": 176.083,
+   "prev_period": "2026-10-27",
+   "chg_pct": -0.28
+  },
+  "krw_per_100jpy": {
+   "value": 843.8,
+   "bar_start": "2026-10-28T16:25:00+09:00",
+   "bar_end": "2026-10-28T16:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "basis": "bar_end_1630_jst",
+   "label": "100엔당 원",
+   "multiplier": 100,
+   "prev_value": 837.2,
+   "prev_period": "2026-10-27",
+   "chg_pct": 0.79
+  }
+ },
+ "macro": [],
+ "macro_periods": {
+  "cgpi": "2026-09",
+  "sppi": "2026-09",
+  "money_stock": "2026-09",
+  "monetary_base": "2026-09"
+ },
+ "calendar": {
+  "version": "2f14c75a46b1",
+  "today": [],
+  "event_day": [],
+  "upcoming": [
+   {
+    "date": "2026-10-29",
+    "time_jst": null,
+    "name_ko": "BOJ 금융정책결정회의(10월 29-30일)",
+    "kind": "meeting",
+    "tier": "major",
+    "series": null,
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27"
+   },
+   {
+    "date": "2026-10-30",
+    "time_jst": null,
+    "name_ko": "BOJ 금융정책 결정문",
+    "kind": "release",
+    "tier": "major",
+    "series": null,
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27"
+   },
+   {
+    "date": "2026-11-02",
+    "time_jst": "14:00",
+    "name_ko": "BOJ 경제·물가 전망 보고서(10월) 전문",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27"
+   },
+   {
+    "date": "2026-11-04",
+    "time_jst": "08:50",
+    "name_ko": "본원통화(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": "monetary_base",
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27",
+    "period": "2026-10"
+   },
+   {
+    "date": "2026-11-05",
+    "time_jst": "08:50",
+    "name_ko": "BOJ 9월 회의 의사록",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27"
+   },
+   {
+    "date": "2026-11-10",
+    "time_jst": "08:50",
+    "name_ko": "BOJ 10월 회의 의견 요약",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27"
+   },
+   {
+    "date": "2026-11-11",
+    "time_jst": "08:50",
+    "name_ko": "통화량 M2·M3(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": "money_stock",
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-10-27",
+    "period": "2026-10"
+   }
+  ]
+ },
+ "news_file": "japan/data/news/daily/2026-10-28.json",
+ "published": "2026-10-28T09:40:05.234287+00:00"
+}
