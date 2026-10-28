@@ -320,3 +320,9 @@ def test_naver_day_jgb_and_call_in_one_paragraph_allowed():
 
 def test_recall_is_not_call_rate():
     assert check(html({'today': '<p>오늘 리콜 소식이 나왔다.</p>'})) == []
+
+
+def test_today_br_call_rate_blocked():
+    # <br> 은 경계다 — 이어 붙이면 「오늘콜금리」 로 콜 검사를 우회한다(재검토 3차 #1)
+    v = check(html({'bonds': '<p>10월 22일 기준 오늘<br>콜금리는 <span data-ref="call_rate.value">1.227%</span>다.</p>'}))
+    assert any('콜금리는 오늘' in m for m in v)

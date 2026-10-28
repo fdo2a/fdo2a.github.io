@@ -39,6 +39,9 @@ _SIGNALS = re.compile(r'[AB]\s*경로|신호\s*집계|임계값|인상\s*지속\
 _SENT_END = re.compile(r'[。!?]|\.(?!\d)')
 _CALL = re.compile(r'(?<![가-힣])콜')
 _JGB_NAME = re.compile(r'JGB|국채')
+# 화면에서 줄·칸을 나누는 태그는 공백으로, 나머지(span 등)는 이어 붙인다 — `오늘<br>콜금리` 가 `오늘콜금리` 가
+# 되면 콜 앞 경계가 사라진다(재검토 3차 #1)
+_BLOCK_TAG = re.compile(r'<\s*/?\s*(?:br|p|div|li|ul|ol|td|th|tr|h[1-6]|section|table)\b[^>]*>', re.I)
 
 
 def _sentences(text):
@@ -267,7 +270,7 @@ def check(html, snap, session, filename=None, news=None):
             v.append(f'예상·컨센서스와 비교했다 — 원천이 없다: 「{t[:50]}」')
         if _SIGNALS.search(t):
             v.append(f'주간 보고서의 신호 어휘다 — 일간은 서술만 한다: 「{t[:50]}」')
-        joined = html_mod.unescape(re.sub(r'<[^>]+>', '', p))
+        joined = html_mod.unescape(re.sub(r'<[^>]+>', '', _BLOCK_TAG.sub(' ', p)))
         for x in _sentences(joined):
             if '오늘' in x and _CALL.search(x):
                 v.append(f'콜금리는 오늘 값이 아니다 — 콜이 든 문장에 「오늘」 을 쓰지 않는다: 「{x.strip()[:50]}」')
