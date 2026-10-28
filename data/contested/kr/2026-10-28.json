@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-28T11:23:51+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-28T11:39:53+00:00",
  "cutoff_at": "2026-10-28T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 554,
+  "harvest": 535,
   "candidates": 1,
   "articles": [
    6
@@ -42,13 +42,13 @@
    "dailian": "ok"
   },
   "notes": [
-   "discover:554"
+   "discover:535"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 13112,
-   "out": 5267
+   "in": 13149,
+   "out": 6671
   }
  },
  "event": {
@@ -56,5 +56,5 @@
   "query": "3분기 영업익 누적",
   "trigger": []
  },
- "content_hash": "1632c8c7982835d9"
+ "content_hash": "7531f6ee67914a69"
 }
