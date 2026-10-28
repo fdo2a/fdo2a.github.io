@@ -65,7 +65,7 @@ jobs:
           ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
           ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
           NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
-          # 국내/해외 필터(japan/region_filter.py) — 없으면 정규식만, 오늘과 같다. 이 단계에만 들어간다
+          # 국내/해외 필터(common/region_filter.py) — 없으면 정규식만, 오늘과 같다. 이 단계에만 들어간다
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
           S: ${{ steps.when.outputs.session }}
         run: python scripts/fetch_japan_news.py --datadir japan/data --bodydir _workspace/japan_news --daily-session "$S"

@@ -262,13 +262,22 @@ def capture_shadow(datadir, session, cut_rows, chosen, complete=None):
                                    collection_complete=complete))
 
 
-def apply_region_filter(kept, post=None):
-    """Jev 국내/해외 필터(`japan/region_filter.py`). 필터 코드가 어떻게 깨져도 정규식 결과로 되돌린다(codex 설계 검토 #2)."""
+def _saved_guids(path):
     try:
-        from japan import region_filter as RF
-        return RF.run(kept, os.environ, post=post)
+        from common.region_filter import guids_in
+        return guids_in(path)
+    except Exception:
+        return set()
+
+
+def apply_region_filter(kept, post=None, exempt=()):
+    """Jev 국내/해외 필터(`common/region_filter.py`). 필터 코드가 어떻게 깨져도 정규식 결과로 되돌린다(codex 설계 검토 #2).
+    `exempt` = 그날 파일에 이미 있는 기사 — 재수집이 빼지 않는다."""
+    try:
+        from common import region_filter as RF
+        return RF.guard(kept, os.environ, 'japan', exempt=exempt, post=post)
     except Exception as e:
-        return kept, {'mode': 'regex', 'stopped': f'crash:{type(e).__name__}'}
+        return kept, {'mode': 'regex', 'market': 'japan', 'stopped': f'crash:{type(e).__name__}'}
 
 
 def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None,
@@ -288,7 +297,8 @@ def collect_daily(session, today, bodydir, ctx, datadir='japan/data', fetch=None
     todays = ND.cut_filter(rows, session, today)
     kept = ND.retag(N.screen(N.dedupe(todays))[0])
     # 정규식이 남긴 후보에서 Jev 가 conf ≥ 0.9 로 해외라고 한 것만 뺀다 — 갈래 상한(preselect) 전에
-    kept, region = apply_region_filter(kept, post=region_post)
+    kept, region = apply_region_filter(kept, post=region_post,
+                                       exempt=_saved_guids(_daily_path(datadir, session)))
     print(f"{session} 지역 필터: {region.get('mode')} · 판정 {region.get('answered', 0)}/{region.get('asked', 0)}"
           f" · 뺌 {len(region.get('dropped') or [])} · 끝 {region.get('stopped')}")
     offs = ND.cut_filter(ND.retag(official_rows), session, today)

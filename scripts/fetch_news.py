@@ -214,6 +214,30 @@ def save_json(path, payload):
     os.replace(tmp, path)
 
 
+US_REGION_CATEGORIES = ('economy', 'macro', 'politics')   # 사용자 결정 2026-10-28 — AI·산업은 해외 기업을 남긴다
+
+
+def apply_region_filter(rows, exempt=(), post=None):
+    """(행, region_filter 기록). 어떤 실패든 정규식 결과 그대로 — 수집을 멈추지 않는다."""
+    try:
+        from common import region_filter as RF
+        rows, meta = RF.guard(rows, os.environ, 'us', categories=US_REGION_CATEGORIES, exempt=exempt,
+                              post=post, deadline=RF.DEADLINE_SHORT, newest_first=True)
+    except Exception as e:
+        meta = {'mode': 'regex', 'market': 'us', 'stopped': f'crash:{type(e).__name__}'}
+    print(f"  지역 필터: {meta.get('mode')} · 판정 {meta.get('answered', 0)}/{meta.get('asked', 0)}"
+          f" · 뺌 {len(meta.get('dropped') or [])} · 끝 {meta.get('stopped')}")
+    return rows, meta
+
+
+def guids_in(path):
+    try:
+        from common.region_filter import guids_in as _g
+        return _g(path)
+    except Exception:
+        return set()
+
+
 def main():
     new_run()                     # 승격 예산은 이 실행 몫부터 센다
     ap = argparse.ArgumentParser()
@@ -266,7 +290,10 @@ def main():
                 continue
             harvested.extend(got)
             print(f'  {category}: {len(got)}건 ({url.split("/")[2]} 목록)')
-    chosen = select(dedupe(categorize(harvested)), per_category=args.per_category, now=now)
+    # 국내/해외 필터(common/region_filter.py) — 경제·매크로·정치에서 Jev 가 conf≥0.9 로 해외라 한 것만 뺀다.
+    # dedupe **전에**: 같은 기사의 글로벌 사본이 남는다. 그날 파일에 이미 있는 기사는 빼지 않는다
+    categorized, region = apply_region_filter(categorize(harvested), exempt=guids_in(path))
+    chosen = select(dedupe(categorized), per_category=args.per_category, now=now)
     print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건(글로벌·칼럼은 후보)')
 
     fetch_bodies(chosen, args.bodydir, ctx)
@@ -277,7 +304,7 @@ def main():
     if carried:
         print(f'  기존 요약 {carried}건 재사용')
     payload = {'report_date': args.date, 'harvested': len(harvested),
-               'notes': notes, 'items': chosen}
+               'notes': notes, 'items': chosen, 'region_filter': region}
     # 요약 **전에** 한 번 저장한다 — 요약(외부 API·인증)이 어떤 식으로 죽어도 메타데이터와
     # MLCC 행은 남아야 한다(2026-09-24 구현 검토 #2).
     save_json(path, payload)

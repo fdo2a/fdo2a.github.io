@@ -654,3 +654,13 @@ def test_haiku_free_text_model_is_not_stored(tmp_path):
     C.classify(str(tmp_path), providers=('haiku',), env={}, haiku_client=Odd(), now=lambda: 0.0)
     text = (tmp_path / 'news' / 'region_shadow' / 'result' / f'{S}.json').read_text()
     assert 'TEST_ONLY_SECRET' not in text and '"model": "other"' in text
+
+
+def test_japan_configuration_is_frozen_after_move_to_common():
+    """US·KR 설계 검토 #3 — 정의를 common 으로 옮겨도 섀도 설정 지문·Jev 요청 바이트·정규식 지문은 그대로(10/28 값)."""
+    import hashlib
+    assert R.config_id('haiku', R.HAIKU_MODEL) == 'b86b635bc03c'
+    assert R.config_id('jev', R.JEV_MODEL) == '35e3b33ec7a6'
+    body = json.dumps(R.jev_body('日銀'), ensure_ascii=False, sort_keys=True).encode('utf-8')
+    assert hashlib.sha256(body).hexdigest()[:16] == 'a7110eb1b536b9b7'
+    assert R.regex_fingerprint() == '9f4aea378fe8'

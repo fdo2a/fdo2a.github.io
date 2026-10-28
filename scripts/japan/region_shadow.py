@@ -16,32 +16,20 @@ Pure — 네트워크 없음.
 import hashlib
 import inspect
 import json
-import math
-import re
 
+from common import region_labels as L
 from japan import news as N
 
-LABELS = ('domestic', 'foreign_impact', 'foreign')
+LABELS = L.LABELS
 LABELS_VERSION = 1
 HAIKU_MODEL = 'claude-haiku-5-5'
-JEV_MODEL = 'jev-1.14.0'     # 별칭(jev-latest)은 릴리스마다 움직인다 — 비교 기간에는 고정(docs.typesafe.ai/models)
+JEV_MODEL = L.JEV_MODEL
 BATCH = 25
 PROVIDERS = ('haiku', 'jev')
 
-# 두 모델이 같은 정의를 읽는다(#8). 우선순위: 일본 주어 → 일본 영향 명시 → 그 밖의 해외.
-DEFINITIONS = {
-    'domestic': ('The main subject is Japan: the Japanese government or a minister, the Bank of Japan, '
-                 'a Japanese company, Japanese markets (Nikkei, TOPIX, JGBs, the yen) or Japanese economic data. '
-                 'Choose this even when a foreign factor is also mentioned.'),
-    'foreign_impact': ('The main subject is a foreign actor or event, and the headline explicitly states an '
-                       'effect on Japan, a Japanese company or Japanese markets.'),
-    'foreign': ('The main subject is a foreign actor or event (another government, central bank, company, '
-                'market or data release) and the headline does not mention Japan. Regional headlines about '
-                'Asia that do not name Japan are foreign.'),
-}
-INSTRUCTIONS = ('This is a Japanese financial news headline. Decide whose economy it is about. '
-                'Precedence: if the main subject is Japanese, answer domestic; otherwise, if the headline names '
-                'an effect on Japan, answer foreign_impact; otherwise answer foreign.')
+# 두 모델이 같은 정의를 읽는다(#8) — 정의·질문·Jev 요청·응답 검증은 `common/region_labels.py`(세 시장 공용).
+DEFINITIONS = L.MARKETS['japan']['definitions']
+INSTRUCTIONS = L.MARKETS['japan']['instructions']
 HAIKU_SYSTEM = (INSTRUCTIONS + '\n\nLabels:\n'
                 + '\n'.join(f'- {k}: {v}' for k, v in DEFINITIONS.items())
                 + '\n\nYou receive a JSON list of {"id", "title"}. Return one item per id with its label. '
@@ -53,19 +41,9 @@ HAIKU_SCHEMA = {
         'properties': {'id': {'type': 'string'}, 'label': {'type': 'string', 'enum': list(LABELS)}},
         'required': ['id', 'label'], 'additionalProperties': False}}},
     'required': ['items'], 'additionalProperties': False}
-QUESTION = 'region'
-# 버전 모양만 — 응답 문자열이 커밋되는 파일로 간다. 「jev-SECRET」 같은 자유 문자열은 형식 오류(재검토 2차 #1)
-_JEV_MODEL_ID = re.compile(r'jev-\d{1,3}\.\d{1,3}\.\d{1,3}')
-_CLAUDE_MODEL_ID = re.compile(r'claude-[a-z0-9]+(?:-[a-z0-9]+){0,6}')
-
-
-def safe_claude_model(model):
-    """Haiku 응답의 model — 모델 ID 모양이 아니면 저장하지 않고 고정 표지로."""
-    return model if isinstance(model, str) and _CLAUDE_MODEL_ID.fullmatch(model) else 'other'
-
-
-def title_key(title):
-    return hashlib.sha256((title or '').encode('utf-8')).hexdigest()[:16]
+QUESTION = L.QUESTION
+safe_claude_model, title_key, SchemaError, parse_jev, _unit = (
+    L.safe_claude_model, L.title_key, L.SchemaError, L.parse_jev, L._unit)
 
 
 def config_id(provider, model):
@@ -188,10 +166,6 @@ def verdict_of(result, provider, cfg, key):
 
 
 # ── Haiku ─────────────────────────────────────────────────────────────────
-class SchemaError(ValueError):
-    pass
-
-
 def haiku_payload(rows):
     """짧은 번호로 보낸다 — guid·해시를 모델이 옮겨 적다 틀리지 않게."""
     return [{'id': str(i), 'title': r['title']} for i, r in enumerate(rows)]
@@ -223,43 +197,7 @@ def parse_haiku(text, rows):
 
 # ── Jev ───────────────────────────────────────────────────────────────────
 def jev_body(title, model=JEV_MODEL):
-    return {'model': model, 'state': title,
-            'questions': {QUESTION: {'type': 'choice', 'instructions': INSTRUCTIONS,
-                                     'criteria': dict(DEFINITIONS)}}}
-
-
-def parse_jev(resp):
-    """→ (label, probabilities, confidence, 응답 모델). 모양이 다르면 SchemaError — 제3자가 아닌 공식 문서
-    형식(docs.typesafe.ai/api/system-one)이지만 방어적으로 본다."""
-    try:
-        ans = resp['answers'][QUESTION]
-        label, probs, conf = ans['choice'], ans['probabilities'], ans.get('confidence')
-    except (KeyError, TypeError):
-        raise SchemaError('shape') from None
-    if ans.get('type') != 'choice':
-        raise SchemaError('type')
-    if label not in LABELS or not isinstance(probs, dict) or set(probs) != set(LABELS):
-        raise SchemaError('labels')
-    vals = list(probs.values())
-    if not all(_unit(v) for v in vals):
-        raise SchemaError('prob')
-    if abs(sum(vals) - 1) > 0.02:
-        raise SchemaError('sum')
-    if probs[label] < max(vals) - 1e-9:                 # 고른 것이 최대 확률이어야 한다(동률 허용)
-        raise SchemaError('argmax')
-    if not _unit(conf):                                 # 문서상 Choice 는 늘 confidence 를 준다
-        raise SchemaError('confidence')
-    model = resp.get('model')
-    # 「jev-…」 모양만 — 응답 문자열이 커밋되는 판정·감사 파일로 간다(재검토 #2)
-    if not (isinstance(model, str) and _JEV_MODEL_ID.fullmatch(model)):
-        raise SchemaError('model')
-    return label, {k: round(float(v), 4) for k, v in probs.items()}, conf, model
-
-
-def _unit(v):
-    """[0, 1] 의 유한한 실수 — bool 은 int 의 하위형이라 따로 뺀다."""
-    # 범위를 먼저 — 10**400 같은 int 는 isfinite 에서 OverflowError 다(codex 구현 검토 #3)
-    return isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 1 and math.isfinite(v)
+    return L.jev_body(title, 'japan', model)
 
 
 # ── 보고 ─────────────────────────────────────────────────────────────────

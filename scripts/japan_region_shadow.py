@@ -27,7 +27,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fetch_news import save_json  # noqa: E402
-from japan import jev_client as J  # noqa: E402
+from common import jev_client as J  # noqa: E402
 from japan import news as N  # noqa: E402
 from japan import region_shadow as R  # noqa: E402
 
@@ -73,7 +73,7 @@ def _expected_sessions(datadir, html_root, since=None, until=None):
     return sorted(s for s in names if re.fullmatch(r'\d{4}-\d{2}-\d{2}', s) and _in_range(s, since, until))
 
 
-# ── Jev 전송 — 일간 필터와 같이 쓴다(`japan/jev_client.py`) ───────────────────
+# ── Jev 전송 — 국내/해외 필터와 같이 쓴다(`common/jev_client.py`) ───────────────────
 JevHTTPError, _NoRedirect = J.JevHTTPError, J._NoRedirect
 
 

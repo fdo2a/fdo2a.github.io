@@ -112,6 +112,35 @@ def fetch_bodies(chosen, bodydir, ctx, fetch=None):
     return chosen
 
 
+KR_REGION_CATEGORIES = ('macro', 'policy', 'market', 'industry')
+
+
+def apply_region_filter(main_rows, exempt=(), post=None):
+    """주요뉴스 행 → (남길 행, region_filter 기록). 갈래는 `categorize` 로 매겨 국내 갈래만 묻고, 돌려주는 것은
+    **원래 행**(갈래를 붙이지 않은) 중 빠지지 않은 것 — 뒤의 dedupe·categorize 는 그대로 돈다. 어떤 실패든 정규식."""
+    rows = list(main_rows or [])
+    try:
+        from common import region_filter as RF
+        tagged = categorize(rows)                       # 새 dict(갈래 붙임) — 원래 행은 그대로
+        kept, meta = RF.guard(tagged, os.environ, 'kr', categories=KR_REGION_CATEGORIES, exempt=exempt,
+                              post=post, deadline=RF.DEADLINE_SHORT, newest_first=True)
+        gone = {r.get('guid') for r in tagged} - {r.get('guid') for r in kept} - {None}
+        out = [r for r in rows if r.get('guid') not in gone]
+    except Exception as e:
+        out, meta = rows, {'mode': 'regex', 'market': 'kr', 'stopped': f'crash:{type(e).__name__}'}
+    print(f"  지역 필터: {meta.get('mode')} · 판정 {meta.get('answered', 0)}/{meta.get('asked', 0)}"
+          f" · 뺌 {len(meta.get('dropped') or [])} · 끝 {meta.get('stopped')}")
+    return out, meta
+
+
+def guids_in(path):
+    try:
+        from common.region_filter import guids_in as _g
+        return _g(path)
+    except Exception:
+        return set()
+
+
 def main(argv=None):
     new_run()                     # 승격 예산은 이 실행 몫부터 센다
     ap = argparse.ArgumentParser()
@@ -127,6 +156,10 @@ def main(argv=None):
     world, world_notes = harvest_world(args.date, ctx)
     notes += world_notes
     todays = on_date(harvested, args.date)
+    outdir = os.path.join(args.datadir, 'news')
+    path = os.path.join(outdir, f'{args.date}.json')
+    # 국내/해외 필터 — 주요뉴스 행에서만, dedupe **전에**: Jev 가 뺀 기사의 세계 섹션 사본은 글로벌로 남는다
+    todays, region = apply_region_filter(todays, exempt=guids_in(path))
     # 주요뉴스가 먼저 — 같은 기사가 세계 섹션에도 있으면 주요뉴스 갈래로 남는다
     chosen = select(categorize(dedupe(todays + world)), per_category=args.per_category)
     print(f'주요뉴스 {len(harvested)}건 → {args.date} {len(todays)}건 · 세계 섹션 {len(world)}건 '
@@ -137,12 +170,10 @@ def main(argv=None):
     fetch_bodies(chosen, args.bodydir, ctx)
     chosen = trim(chosen, args.date)       # 글로벌 확정 — 본문이 있고 기사면 날짜가 발행일인 것만
 
-    outdir = os.path.join(args.datadir, 'news')
     os.makedirs(outdir, exist_ok=True)
-    path = os.path.join(outdir, f'{args.date}.json')
     payload = {'report_date': args.date, 'source': '네이버증권 주요뉴스',
                'harvested': len(harvested), 'harvested_world': len(world),
-               'notes': notes, 'items': chosen}
+               'notes': notes, 'items': chosen, 'region_filter': region}
     save_json(path, payload)             # 요약이 어떻게 죽어도 수집분은 남는다
     try:
         summarized = summarize_items(chosen, args.bodydir, system=SYSTEM_KO_SOURCE)

@@ -7,7 +7,8 @@ import time
 
 import pytest
 
-from japan import region_filter as F
+from common import region_filter as F
+from common import region_labels as L
 from japan import region_shadow as R
 
 S = '2026-10-27'
@@ -75,7 +76,7 @@ def test_model_mismatch_falls_back_for_that_row():
 
 def test_auth_failure_keeps_earlier_verdicts_and_regex_for_the_rest():
     """#2 — 예상된 실패는 행 단위: 받은 판정은 쓰고 나머지는 정규식."""
-    from japan.jev_client import JevHTTPError
+    from common.jev_client import JevHTTPError
     rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断'), _row('z', 'ドアダッシュ買収')]
     post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': JevHTTPError(401)})
     kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post)
@@ -115,13 +116,13 @@ def test_worker_crash_rolls_back_everything():
 
 def test_filter_code_error_rolls_back_even_if_valueerror(monkeypatch):
     """codex 구현 검토 #1 — 요청을 만드는 필터 코드의 ValueError 는 전송 실패가 아니다: 전체 되돌림."""
-    real = R.jev_body
+    real = L.jev_body
 
     def body(title, *a, **k):
         if title == '米大手行、AI遮断':
             raise ValueError('bug in body')
         return real(title, *a, **k)
-    monkeypatch.setattr(R, 'jev_body', body)
+    monkeypatch.setattr(L, 'jev_body', body)
     rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
     kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=_poster({'カナダ中銀、利上げ': _ans('foreign')}))
     assert kept == rows and meta['stopped'] == 'crash'
@@ -131,7 +132,7 @@ def test_truncated_response_falls_back_only_that_row():
     """codex 구현 검토 #2 — 잘린 응답(IncompleteRead)은 전송 실패: 앞의 판정은 남는다."""
     import http.client
     rows = [_row('x', 'カナダ中銀、利上げ'), _row('y', '米大手行、AI遮断')]
-    from japan import jev_client as J
+    from common import jev_client as J
     post = _poster({'カナダ中銀、利上げ': _ans('foreign'), '米大手行、AI遮断': J.JevTransportError('IncompleteRead')})
     kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post)
     assert [r['guid'] for r in kept] == ['y'] and meta['errors'] == {'net:IncompleteRead': 1}
@@ -139,7 +140,7 @@ def test_truncated_response_falls_back_only_that_row():
 
 def test_client_normalises_truncated_and_undecodable_responses(monkeypatch):
     """클라이언트가 잘린 응답·JSON 해독 실패를 JevTransportError 로 바꾼다 — 호출자는 그것만 전송 실패로 본다."""
-    from japan import jev_client as J
+    from common import jev_client as J
 
     class Resp:
         def __init__(self, exc=None, data=b''):
@@ -169,7 +170,7 @@ def test_client_normalises_truncated_and_undecodable_responses(monkeypatch):
 
 def test_client_valueerror_outside_decode_is_not_transport(monkeypatch):
     """재검토 2차 #2 — open() 의 ValueError 는 전송 실패로 바뀌지 않는다(결함 → 호출자가 전체 되돌림)."""
-    from japan import jev_client as J
+    from common import jev_client as J
 
     class Opener:
         def open(self, req, timeout=None):
@@ -205,7 +206,7 @@ def test_response_text_never_reaches_audit():
 
 
 def test_secret_never_in_meta():
-    from japan.jev_client import JevHTTPError
+    from common.jev_client import JevHTTPError
     _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'TEST_ONLY_SECRET'},
                     post=_poster({'日銀、金融政策を維持': JevHTTPError(500)}))
     assert 'TEST_ONLY_SECRET' not in json.dumps(meta)

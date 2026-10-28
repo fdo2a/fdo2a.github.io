@@ -62,6 +62,8 @@ jobs:
           ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
           ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
           NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
+          # 국내/해외 필터(common/region_filter.py) — 없으면 정규식만, 오늘과 같다. 이 단계에만 들어간다
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
         run: |
           pip install --quiet certifi 'anthropic>=1.8,<2'
           RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")

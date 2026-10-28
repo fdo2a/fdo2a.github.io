@@ -1,4 +1,4 @@
-"""TypeSafe Jev 전송 — 섀도 CLI(`japan_region_shadow.py`)와 일간 필터(`japan/region_filter.py`)가 같이 쓴다.
+"""TypeSafe Jev 전송 — 섀도 CLI(`japan_region_shadow.py`)와 국내/해외 필터(`common/region_filter.py`, 일본·US·KR)가 같이 쓴다.
 
 공식 HTTPS 호스트 고정, 리다이렉트 거부, 키는 헤더에만(codex 설계 검토 #11 — urllib 은 리다이렉트 때
 Authorization 을 새 호스트로 그대로 옮긴다). 오류는 HTTP 코드만 남긴다.
