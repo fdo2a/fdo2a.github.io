@@ -115,7 +115,7 @@ def test_real_deadline_keeps_received_verdicts(monkeypatch):
     kept, meta = FN.apply_region_filter([old, new], post=post)
     gate.set()
     assert [r['guid'] for r in kept] == ['o'] and meta['stopped'] == 'deadline'
-    assert {c['guid']: c['status'] for c in meta['candidates']} == {'o': 'unasked', 'n': 'judged'}
+    assert {c['guid']: c['status'] for c in meta['candidates']} == {'o': 'in_flight', 'n': 'judged'}
 
 
 def test_saved_payload_guids_feed_the_exemption(tmp_path):

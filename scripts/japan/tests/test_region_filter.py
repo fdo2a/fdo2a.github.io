@@ -216,10 +216,13 @@ def test_candidate_status_separates_failed_from_unasked():
             raise JevHTTPError(500)
         return _ans('domestic')
     from common.jev_client import JevHTTPError
-    _, meta = F.run(list(ROWS), {'TYPESAFE_API_KEY': 'k'}, post=post, deadline=0.3)
+    rows = list(ROWS) + [_row('f', '新しい見出し')]
+    _, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=post, deadline=0.3)
     gate.set()
     st = {c['guid']: c['status'] for c in meta['candidates']}
-    assert st['a'] == 'judged' and st['c'] == 'http:500' and st['d'] == 'unasked' and st['b'] == 'judged'
+    assert st['a'] == 'judged' and st['c'] == 'http:500' and st['b'] == 'judged'
+    assert st['d'] == 'in_flight' and st['f'] == 'unasked'           # 보냈으나 답 없음 ≠ 보내지 못함
+    assert meta['asked'] == 4
 
 
 def test_secret_never_in_meta():

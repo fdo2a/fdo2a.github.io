@@ -59,10 +59,11 @@ def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
             box['stopped'] = why
 
     for k, title in titles:
-        if halt.is_set():
-            return
-        with lock:
+        with lock:                                # 마감 확인과 「보냄」 기록을 한 자물쇠 안에서 — 본 흐름의 스냅숏과 엇갈리지 않게
+            if halt.is_set():
+                return
             box['asked'] += 1
+            box['status'][k] = 'in_flight'        # 끝나면 판정·실패로 바뀐다. 마감에 이대로면 보냈지만 답이 없던 행
         body = L.jev_body(title, market)          # 필터 코드 — 여기서 깨지면 전체 되돌림(바깥 except)
         try:                                      # 전송 경계 — 여기의 실패만 「그 행은 정규식」
             resp = post(body, key, timeout=timeout)
@@ -152,7 +153,8 @@ def run(rows, env, market='japan', post=None, deadline=DEADLINE, timeout=REQUEST
 
 def _candidates(rows, verdicts, exempt, status, default):
     """나중 측정용 — 대상 후보 전부와 그 판정·상태. 제목만, 본문·응답 원문 없음(설계 검토 #4).
-    상태: judged · http:/net:/schema:… (그 행 실패) · model:mismatch · unasked(마감 전에 못 물음) · exempt ·
+    상태: judged · http:/net:/schema:… (그 행 실패) · model:mismatch · in_flight(보냈으나 마감까지 답 없음) ·
+    unasked(마감 전에 보내지 못함) · exempt ·
     no_key · rolled_back — 실패와 못 물은 것을 가른다(US·KR 구현 검토 #3)."""
     out = []
     for r in rows:
