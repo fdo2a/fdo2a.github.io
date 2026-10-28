@@ -1,0 +1,60 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-28",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-28T11:07:42+00:00",
+ "cutoff_at": "2026-10-28T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "7511d05e440dcde0a0528d1463d5c1a1cf784a59",
+  "sha256": "50cdcf7ef13885710fd7da1bd3eae60432932266c7c2f7ebbfb1abf1c7e37b5b",
+  "extra": {
+   "kr_econ.json": "c9a49cabfc72690fd44552666a2924dd2d670a42dc5019209f7322f68fda2e53",
+   "kr_flows.json": "ea087ecde5d2adea1084bff8cb8940fe0af32cefc0b9bb8563be87085fefa546",
+   "kr_session.json": "daec7587b1a4bc7f8ad8200375aa58f6d18ee8332e1176e755b8b2d70df47b0c"
+  }
+ },
+ "counts": {
+  "harvest": 564,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "hankyung": "ok",
+   "sedaily": "ok",
+   "joongang": "ok",
+   "mt": "ok",
+   "dailian": "ok"
+  },
+  "notes": [
+   "discover:564"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 13072,
+   "out": 6078
+  }
+ },
+ "event": {
+  "topic_ko": "농협금융 및 계열사 2026년 3분기 실적",
+  "query": "3분기 영업익 누적",
+  "trigger": []
+ },
+ "content_hash": "745632f1cf98b563"
+}
