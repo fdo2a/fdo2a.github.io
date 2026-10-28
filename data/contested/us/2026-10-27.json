@@ -3,63 +3,49 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-10-27",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-28T03:48:55+00:00",
- "cutoff_at": "2026-10-28T03:48:55+00:00",
+ "collected_at": "2026-10-28T04:53:02+00:00",
+ "cutoff_at": "2026-10-28T04:53:02+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "714fefb9d7feec65287b78248e7351f6e61960cb",
-  "sha256": "49e2be092351ecf2a240739911d811ee8469a828ab7511bb82f496cd5e753532"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 207,
+  "harvest": 209,
   "candidates": 3,
   "articles": [
-   4,
    3,
+   1,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 35984,
-   "out": 9932
+   "in": 4542,
+   "out": 64
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "bbc.co.uk": "title_mismatch"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "5/5",
-   "pairs": "2/2",
-   "obs": "6/6"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 6
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "음바페의 마오쩌둥 관련 발언 논란과 중국 내 후폭풍(CCTV 라리가 중계",
-  "query": "kylian china mbapp",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "ff20d1a253ea580e"
+ "content_hash": "00e50cb2ef789491"
 }
