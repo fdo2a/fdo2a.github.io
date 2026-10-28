@@ -36,15 +36,19 @@ _SIGNALS = re.compile(r'[AB]\s*경로|신호\s*집계|임계값|인상\s*지속\
 # 주어를 생략한 다음 문장, 재검토 2차 #1). 「JGB와 오늘 증시」 같은 오탐은 감수한다 — 작성자가 문단을 나누면 되지만
 # 미탐은 틀린 기준일이 그대로 나간다. 소수점(2.837)은 문장 끝이 아니다. 이 검사는 태그를 공백 없이 지운다
 # (`J<span>GB</span>`, 재검토 2차 #2). 남은 한계: 콜은 문장 단위라 주어를 생략한 다음 문장은 못 본다.
-_SENT_END = re.compile(r'[。!?]|\.(?!\d)')
-_CALL = re.compile(r'(?<![가-힣])콜|오늘콜')   # 리콜은 콜이 아니다, 붙여 쓴 「오늘콜」 은 콜이다
+# 문장 끝·콜 판정은 origin/main 규칙과 같은 문자로 — 그보다 좁히면(「?」 분리, 「리콜」 제외) 붙여 쓴
+# 「무담보콜금리」 처럼 옛 규칙이 막던 입력이 샌다(재검토 5차). 「리콜」 오탐은 옛 규칙과 같다.
+_SENT_END = re.compile(r'。|\.(?!\d)')
+_CALL = re.compile(r'콜')
 _JGB_NAME = re.compile(r'JGB|국채')
 # 태그를 공백으로 바꾼 판과 이어 붙인 판을 **둘 다** 검사한다 — 이어 붙이면 `오늘<br>콜금리`·`<wbr>`·`<img>` 가
 # 콜 앞 경계를 지우고(재검토 3·4차), 공백으로 바꾸면 `J<span>GB</span>` 가 끊긴다(2차 #2). 태그 목록은 늘 샌다.
 
 
 def _both_views(inner):
-    return {html_mod.unescape(re.sub(r'<[^>]+>', sep, inner)) for sep in (' ', '')}
+    # 셋째 판 `_plain` 은 origin/main 규칙이 보던 그대로다(엔티티를 풀지 않는다) — 새 검사가 옛 규칙의
+    # 상위집합이 되도록: 옛 창 `오늘[^.。]{0,15}이름` 은 마침표가 없으니 한 문장 안에 있다.
+    return {html_mod.unescape(re.sub(r'<[^>]+>', sep, inner)) for sep in (' ', '')} | {_plain(inner)}
 
 
 def _sentences(text):

@@ -318,10 +318,6 @@ def test_naver_day_jgb_and_call_in_one_paragraph_allowed():
     assert check(html(p, snap), snap) == []
 
 
-def test_recall_is_not_call_rate():
-    assert check(html({'today': '<p>오늘 리콜 소식이 나왔다.</p>'})) == []
-
-
 def test_today_br_call_rate_blocked():
     # <br> 은 경계다 — 이어 붙이면 「오늘콜금리」 로 콜 검사를 우회한다(재검토 3차 #1)
     for tag in ('<br>', '<wbr>', '<img src="/icon.png" alt="">', '<span>', '</span>'):
@@ -336,7 +332,8 @@ def test_today_check_never_weaker_than_old_rule():
     import re
     old = re.compile(r'오늘[^.。]{0,15}(JGB|국채|콜)')
     tags = ['', '<br>', '<wbr>', '<img alt="">', '<span>', '</span>', ' ', '&nbsp;', '<i></i>']
-    for a, b, name in itertools.product(tags, tags, ['콜금리', 'JGB', '국채', '무담보 콜']):
-        para = f'<p>10월 22일 기준{a}오늘{b}{name}는 <span data-ref="call_rate.value">1.227%</span>다.</p>'
+    names = ['콜금리', 'JGB', '국채', '무담보 콜', '무담보콜금리', '콜 O/N']
+    for a, b, name, mark in itertools.product(tags, tags, names, ['', '?', '!']):
+        para = f'<p>10월 22일 기준{a}오늘{mark}{b}{name}는 <span data-ref="call_rate.value">1.227%</span>다.</p>'
         if old.search(G._plain(para)):
             assert any('오늘' in m for m in check(html({'bonds': para}))), para
