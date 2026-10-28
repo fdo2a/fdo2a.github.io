@@ -248,15 +248,24 @@ def _box(deadline_at, closed=False):
 
 
 def test_answer_after_deadline_time_is_not_recorded():
-    """US·KR 재검토 3차 #1 — 마감 시각 뒤에 온 답은 스냅숏 전이라도 기록하지 않는다."""
-    box, lock, halt = _box(time.monotonic() - 1), threading.Lock(), threading.Event()
-    F._ask_loop([('k1', 'カナダ中銀、利上げ')], 'key', lambda *a, **k: _ans('foreign'), 1, box, lock, halt, 'japan')
+    """US·KR 재검토 3차 #1 — 차례를 잡은 뒤 답이 오기 전에 마감 시각이 지나면, 스냅숏 전이라도 기록하지 않는다."""
+    box, lock, halt = _box(time.monotonic() + 60), threading.Lock(), threading.Event()
+
+    def post(body, key, timeout=None):
+        box['deadline_at'] = time.monotonic() - 1
+        return _ans('foreign')
+    F._ask_loop([('k1', 'カナダ中銀、利上げ')], 'key', post, 1, box, lock, halt, 'japan')
     assert box['verdicts'] == {} and box['late'] == 1 and box['status'] == {'k1': 'no_answer'}
 
 
 def test_answer_after_book_closed_is_not_recorded():
-    box, lock, halt = _box(time.monotonic() + 60, closed=True), threading.Lock(), threading.Event()
-    F._ask_loop([('k1', 'カナダ中銀、利上げ')], 'key', lambda *a, **k: _ans('foreign'), 1, box, lock, halt, 'japan')
+    box, lock, halt = _box(time.monotonic() + 60), threading.Lock(), threading.Event()
+
+    def post(body, key, timeout=None):
+        with lock:
+            box['closed'] = True                 # 본 흐름이 스냅숏을 떴다
+        return _ans('foreign')
+    F._ask_loop([('k1', 'カナダ中銀、利上げ')], 'key', post, 1, box, lock, halt, 'japan')
     assert box['verdicts'] == {} and box['late'] == 1
 
 
@@ -271,6 +280,41 @@ def test_reservation_is_recorded_before_post_is_called():
         return _ans('domestic')
     F._ask_loop([('k1', '日銀')], 'key', post, 1, box, lock, halt, 'japan')
     assert seen == [(1, {'k1': 'no_answer'})] and box['status'] == {'k1': 'judged'}
+
+
+def test_no_reservation_after_deadline_time():
+    """재검토 4차 #1 — 마감 시각이 지났으면 차례를 잡지 않는다(asked·no_answer 없음)."""
+    box, lock, halt = _box(time.monotonic() - 1), threading.Lock(), threading.Event()
+    F._ask_loop([('k1', '日銀')], 'key', lambda *a, **k: pytest.fail('sent'), 1, box, lock, halt, 'japan')
+    assert box['asked'] == 0 and box['status'] == {}
+
+
+def test_late_error_does_not_touch_stopped_or_errors():
+    """재검토 4차 #2 — 마감 뒤에 온 401 은 auth 로 멈춘 것처럼 적히지 않고 late 로만 센다."""
+    box, lock, halt = _box(time.monotonic() + 60), threading.Lock(), threading.Event()
+
+    def post(body, key, timeout=None):
+        box['deadline_at'] = time.monotonic() - 1      # 응답 도착 전에 마감이 지났다
+        raise JevHTTPError(401)
+    from common.jev_client import JevHTTPError
+    F._ask_loop([('k1', '日銀')], 'key', post, 1, box, lock, halt, 'japan')
+    assert box['stopped'] is None and dict(box['errors']) == {} and box['late'] == 1
+    assert box['status'] == {'k1': 'no_answer'}
+
+
+def test_snapshot_closed_between_reservation_and_send(monkeypatch):
+    """재검토 4차 #3 — 차례를 잡은 직후·전송 전에 본 흐름이 스냅숏을 뜨면: 행은 남고, 감사는 no_answer·asked 1."""
+    closed = threading.Event()
+
+    def before_send(box, lock):
+        closed.wait(5)                         # 본 흐름이 마감으로 스냅숏을 뜰 때까지 전송 직전에서 멈춘다
+    monkeypatch.setattr(F, '_BEFORE_SEND', before_send)
+    rows = [_row('x', 'カナダ中銀、利上げ')]
+    kept, meta = F.run(rows, {'TYPESAFE_API_KEY': 'k'}, post=lambda *a, **k: _ans('foreign'), deadline=0.2)
+    closed.set()
+    time.sleep(0.1)
+    assert kept == rows and meta['asked'] == 1 and meta['answered'] == 0 and meta['stopped'] == 'deadline'
+    assert [c['status'] for c in meta['candidates']] == ['no_answer']
 
 
 def test_halt_before_reservation_sends_nothing():

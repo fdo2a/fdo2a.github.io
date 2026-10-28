@@ -50,67 +50,79 @@ def _ask(titles, key, post, timeout, box, lock, halt, market):
             box['stopped'] = 'crash'
 
 
+_BEFORE_SEND = None      # 테스트 이음매 — 차례를 잡은 뒤 전송 전에 불린다(운영에서는 None)
+
+
+def _open(box):
+    """장부가 열려 있나 — 마감 시각 전이고 본 흐름이 스냅숏을 뜨지 않았다. 자물쇠 안에서만 부른다."""
+    return not box['closed'] and time.monotonic() <= box['deadline_at']
+
+
 def _ask_loop(titles, key, post, timeout, box, lock, halt, market):
-    """판정은 받는 대로 `box` 에 — 본 흐름이 마감에 그때까지를 가져간다."""
+    """판정은 받는 대로 `box` 에 — 본 흐름이 마감에 그때까지를 가져간다.
+
+    **모든 결과(판정·실패·멈춤)는 장부가 열려 있을 때만 적는다** — 마감 시각이나 스냅숏 뒤에 온 결과는 `late` 로만 센다
+    (US·KR 재검토 3·4차). `late` 는 스냅숏 **전에** 관측된 것만 센다 — 스냅숏 뒤의 결과는 어디에도 남지 않는다.
+    차례(`asked`·`no_answer`)도 열려 있을 때만 잡는다. 실제 전송은 자물쇠 밖이라(네트워크가 마감을 붙잡지 않게)
+    차례를 잡은 직후 마감이 올 수 있다 — `no_answer` 는 「마감 전에 차례를 잡았고 답이 기록되지 않았다」이다.
+    """
     transient = schema = 0
 
-    def stop(why):
+    def record(k, status, error=None, verdict=None, stop=None):
+        """열려 있으면 적고 True, 닫혔으면 late 만 세고 False."""
         with lock:
-            box['stopped'] = why
+            if not _open(box):
+                box['late'] += 1
+                return False
+            if error:
+                box['errors'][error] += 1
+            if verdict:
+                box['verdicts'][k] = verdict
+            box['status'][k] = status
+            if stop:
+                box['stopped'] = stop
+            return True
 
     for k, title in titles:
         body = L.jev_body(title, market)          # 필터 코드 — 여기서 깨지면 전체 되돌림(바깥 except)
         with lock:
-            # 마감 확인과 「보낼 차례」 기록을 한 자물쇠 안에서. 실제 전송은 자물쇠 밖이라(네트워크를 붙잡고 마감을 막지
-            # 않게) 마감 직후에 시작될 수도 있다 — 그래서 'asked'·'no_answer' 는 「보냈다」가 아니라 「마감 전에 보낼 차례였고
-            # 답이 기록되지 않았다」이다. 늦게 온 답은 스냅숏 뒤라 쓰이지 않는다(US·KR 재검토 2차)
-            if halt.is_set():
+            if halt.is_set() or not _open(box):
                 return
             box['asked'] += 1
             box['status'][k] = 'no_answer'        # 끝나면 판정·실패로 바뀐다
+        if _BEFORE_SEND:
+            _BEFORE_SEND(box, lock)
         try:                                      # 전송 경계 — 여기의 실패만 「그 행은 정규식」
             resp = post(body, key, timeout=timeout)
         except J.JevHTTPError as e:
-            with lock:
-                box['errors'][f'http:{e.code}'] += 1
-                box['status'][k] = f'http:{e.code}'
             if e.code in (401, 403):
-                return stop('auth')
+                record(k, f'http:{e.code}', error=f'http:{e.code}', stop='auth')
+                return
             schema, transient = (schema + 1, transient) if e.code in (400, 422) else (schema, transient + 1)
-            if schema >= SCHEMA_STOP:
-                return stop('schema')
-            if transient >= TRANSIENT_STOP:
-                return stop('transient')
+            why = 'schema' if schema >= SCHEMA_STOP else 'transient' if transient >= TRANSIENT_STOP else None
+            if not record(k, f'http:{e.code}', error=f'http:{e.code}', stop=why) or why:
+                return
             continue
         except J.JevTransportError as e:
             # 연결·타임아웃·잘린 응답·해독 실패 — 클라이언트가 이 한 종류로 바꿔 준다(codex 구현 검토 #2, 재검토 #1)
-            with lock:
-                box['errors'][f'net:{e.kind}'] += 1
-                box['status'][k] = f'net:{e.kind}'
             transient += 1
-            if transient >= TRANSIENT_STOP:
-                return stop('transient')
+            why = 'transient' if transient >= TRANSIENT_STOP else None
+            if not record(k, f'net:{e.kind}', error=f'net:{e.kind}', stop=why) or why:
+                return
             continue
         try:
             label, _, conf, model = L.parse_jev(resp)
         except L.SchemaError as e:
-            with lock:
-                box['errors'][f'schema:{e}'] += 1
-                box['status'][k] = f'schema:{e}'
+            if not record(k, f'schema:{e}', error=f'schema:{e}'):
+                return
             continue
         transient = schema = 0
-        if model != L.JEV_MODEL:                  # 평가하지 않은 버전으로는 빼지 않는다
-            with lock:                            # 응답 문자열은 감사에 옮기지 않는다(재검토 #2)
-                box['errors']['model:mismatch'] += 1
-                box['status'][k] = 'model:mismatch'
-            continue
-        with lock:
-            # 마감 뒤에 온 답은 쓰지 않는다 — 시각과 「장부 닫힘」을 같은 자물쇠 안에서 본다(US·KR 재검토 3차 #1)
-            if box['closed'] or time.monotonic() > box['deadline_at']:
-                box['late'] += 1
+        if model != L.JEV_MODEL:                  # 평가하지 않은 버전으로는 빼지 않는다, 응답 문자열은 감사에 옮기지 않는다
+            if not record(k, 'model:mismatch', error='model:mismatch'):
                 return
-            box['verdicts'][k] = (label, conf)
-            box['status'][k] = 'judged'
+            continue
+        if not record(k, 'judged', verdict=(label, conf)):
+            return
 
 
 def _newest_first(rows):
