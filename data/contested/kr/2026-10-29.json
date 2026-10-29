@@ -5,9 +5,9 @@
  "report_date": "2026-10-29",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-29T12:09:30+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-29T12:45:39+00:00",
  "cutoff_at": "2026-10-29T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 579,
+  "harvest": 559,
   "candidates": 1,
   "articles": [
    6
@@ -45,23 +45,23 @@
    "sedaily": "ok"
   },
   "notes": [
-   "discover:579"
+   "discover:559"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 31570,
-   "out": 10919
+   "in": 30168,
+   "out": 10033
   },
   "grounded": {
    "claims": "3/3",
    "pairs": "1/1",
-   "obs": "11/11"
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 10
+   "obs": 9
   }
  },
  "event": {
@@ -69,5 +69,5 @@
   "query": "3분기 순익 영업익",
   "trigger": []
  },
- "content_hash": "1984773b806a7b39"
+ "content_hash": "26539acfc0e1f4ca"
 }
