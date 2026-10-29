@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-29T09:56:10+00:00",
- "cutoff_at": "2026-10-29T09:56:10+00:00",
+ "collected_at": "2026-10-29T11:17:34+00:00",
+ "cutoff_at": "2026-10-29T11:17:34+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,18 +21,19 @@
   "sha256": "7fed87a30ed4c83fa154bb2f42c6ae24f695d4c483acade1dc58543cb0bde6ae"
  },
  "counts": {
-  "harvest": 239,
-  "candidates": 2,
+  "harvest": 245,
+  "candidates": 3,
   "articles": [
    3,
+   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44641,
-   "out": 10725
+   "in": 46034,
+   "out": 10557
   },
   "discovery": "throttled",
   "hosts": {
@@ -55,9 +56,9 @@
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "영국 힐리 재무장관 첫 예산의 국방비 증액 평가",
+  "topic_ko": "영국 힐리 재무장관 첫 예산의 국방비 증액과 예산 대담성 평가",
   "query": "healey budget first",
   "trigger": []
  },
- "content_hash": "c800b3c2d464127b"
+ "content_hash": "03eb0e1d2f21be69"
 }
