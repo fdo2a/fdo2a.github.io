@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-29 07:20 KST",
+  "generated": "2026-10-30 06:34 KST",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.",
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
@@ -22,8 +22,8 @@
       "transform": "level",
       "units": "",
       "actual": 194000.0,
-      "previous": 200000.0,
-      "ref_period": "2026-10-17",
+      "previous": 195000.0,
+      "ref_period": "2026-10-24",
       "vs_prev": "개선"
     },
     {
@@ -32,9 +32,9 @@
       "fred_id": "IC4WSA",
       "transform": "level",
       "units": "",
-      "actual": 197750.0,
-      "previous": 198750.0,
-      "ref_period": "2026-10-17",
+      "actual": 196750.0,
+      "previous": 198000.0,
+      "ref_period": "2026-10-24",
       "vs_prev": "개선"
     },
     {
@@ -43,10 +43,10 @@
       "fred_id": "CCSA",
       "transform": "level",
       "units": "",
-      "actual": 1728000.0,
-      "previous": 1703000.0,
-      "ref_period": "2026-10-10",
-      "vs_prev": "악화"
+      "actual": 1701000.0,
+      "previous": 1722000.0,
+      "ref_period": "2026-10-17",
+      "vs_prev": "개선"
     },
     {
       "axis": "Labor",
@@ -131,10 +131,10 @@
       "fred_id": "A191RL1Q225SBEA",
       "transform": "level",
       "units": "%",
-      "actual": 2.2,
-      "previous": 2.5,
-      "ref_period": "2026-04-01",
-      "vs_prev": "악화"
+      "actual": 3.4,
+      "previous": 2.2,
+      "ref_period": "2026-07-01",
+      "vs_prev": "개선"
     },
     {
       "axis": "Consumption",
@@ -219,9 +219,9 @@
       "fred_id": "PCEPI",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.42,
-      "previous": 3.36,
-      "ref_period": "2026-08-01",
+      "actual": 3.65,
+      "previous": 3.44,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승"
     },
     {
@@ -230,9 +230,9 @@
       "fred_id": "PCEPILFE",
       "transform": "yoy_pct",
       "units": "%",
-      "actual": 3.01,
-      "previous": 2.98,
-      "ref_period": "2026-08-01",
+      "actual": 3.12,
+      "previous": 3.03,
+      "ref_period": "2026-09-01",
       "vs_prev": "상승"
     },
     {

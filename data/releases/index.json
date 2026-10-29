@@ -1,21 +1,29 @@
 {
-  "report_date": "2026-10-27",
+  "report_date": "2026-10-29",
   "releases": [
     {
-      "key": "durable-goods",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "key": "pce",
+      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 24879,
-      "path": "releases/durable-goods.txt"
+      "chars": 3089,
+      "path": "releases/pce.txt"
     },
     {
-      "key": "new-home-sales",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "key": "gdp",
+      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 17955,
-      "path": "releases/new-home-sales.txt"
+      "chars": 3253,
+      "path": "releases/gdp.txt"
+    },
+    {
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "ok": true,
+      "note": "impersonate=safari",
+      "chars": 20462,
+      "path": "releases/claims.txt"
     }
   ]
 }

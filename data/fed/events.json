@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-10-28",
+  "report_date": "2026-10-29",
   "events": [
     {
       "key": "fomc-statement-20261028",
@@ -12,7 +12,7 @@
       "speaker": null,
       "role": null,
       "first_seen": "2026-10-28",
-      "fresh": true,
+      "fresh": false,
       "sources": [
         {
           "role": "statement",
@@ -44,31 +44,10 @@
           "url": "https://www.federalreserve.gov/mediacenter/files/FOMCpresconf20261028.pdf",
           "ok": true,
           "note": "impersonate=safari",
-          "chars": 5836
+          "chars": 32207
         }
       ]
     }
   ],
-  "diff": {
-    "added": [
-      "The accumulation of more information will help the Committee determine the policy stance appropriate to ensure a timely return of inflation to the Committee's 2 percent goal."
-    ],
-    "removed": [
-      "Today's policy action will support a timelier return to the Committee's 2 percent goal."
-    ],
-    "changed": [
-      {
-        "before": "The Committee decided to raise the target range for the federal funds rate by 1/4 percentage point to 3-3/4 to 4 percent, in support of the Federal Reserve's dual mandate.",
-        "after": "The Committee decided to maintain the target range for the federal funds rate at 3-3/4 to 4 percent, in support of the Federal Reserve's dual mandate.",
-        "ratio": 0.891
-      },
-      {
-        "before": "Economic activity is expanding at a solid pace.",
-        "after": "Economic activity is expanding at a strong pace.",
-        "ratio": 0.926
-      }
-    ],
-    "kept": 6,
-    "previous": "2026-09-16"
-  }
+  "diff": null
 }

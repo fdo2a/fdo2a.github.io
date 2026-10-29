@@ -1,37 +1,8 @@
 {
-  "report_date": "2026-10-28",
-  "generated": "2026-10-29 07:21 KST",
+  "report_date": "2026-10-29",
+  "generated": "2026-10-30 06:40 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-claims-20261029",
-      "kind": "release",
-      "name_ko": "신규 실업수당 청구",
-      "date": "2026-10-29",
-      "time_et": "08:30",
-      "time_kst": "2026-10-29 21:30",
-      "status": "confirmed",
-      "source": "DOL 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-pce-20261029",
-      "kind": "release",
-      "name_ko": "개인소비지출(PCE)",
-      "date": "2026-10-29",
-      "time_et": "08:30",
-      "time_kst": "2026-10-29 21:30",
-      "status": "confirmed",
-      "source": "BEA 공표 일정(FRED)",
-      "assets": [
-        "금리",
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
-    },
     {
       "key": "release-jolts-20261103",
       "kind": "release",
@@ -85,7 +56,5 @@
   },
   "missing": [],
   "complete": true,
-  "ambiguous": [
-    "gdp"
-  ]
+  "ambiguous": []
 }

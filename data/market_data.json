@@ -1,157 +1,157 @@
 {
-  "generated": "2026-10-29 07:20 KST",
+  "generated": "2026-10-30 06:34 KST",
   "source": "github-actions/collect_market_data.py",
-  "report_date": "2026-10-28",
+  "report_date": "2026-10-29",
   "indices": {
     "Nasdaq": {
-      "last": 26549.8515625,
-      "chg": 72.041015625,
-      "pct": 0.2720807126309177,
-      "date": "2026-10-28"
+      "last": 26184.724609375,
+      "chg": -365.125,
+      "pct": -1.3752431948656718,
+      "date": "2026-10-29"
     },
     "S&P 500": {
-      "last": 7743.97998046875,
-      "chg": 21.3798828125,
-      "pct": 0.27684824466034375,
-      "date": "2026-10-28"
+      "last": 7720.39013671875,
+      "chg": -23.58984375,
+      "pct": -0.304621703691077,
+      "date": "2026-10-29"
     },
     "Dow": {
-      "last": 52475.1015625,
-      "chg": 97.53125,
-      "pct": 0.1862080455777182,
-      "date": "2026-10-28"
+      "last": 52342.55859375,
+      "chg": -132.54296875,
+      "pct": -0.25258258641411846,
+      "date": "2026-10-29"
     },
     "Russell 2000": {
-      "last": 2830.50927734375,
-      "chg": 11.63916015625,
-      "pct": 0.41290161207792053,
-      "date": "2026-10-28"
+      "last": 2859.216552734375,
+      "chg": 28.70654296875,
+      "pct": 1.0141827045199836,
+      "date": "2026-10-29"
     },
     "S&P 500 Growth": {
-      "last": 140.17999267578125,
-      "chg": 0.92999267578125,
-      "pct": 0.6678582949955159,
-      "date": "2026-10-28"
+      "last": 138.1300048828125,
+      "chg": -2.04998779296875,
+      "pct": -1.4623968469666848,
+      "date": "2026-10-29"
     },
     "S&P 500 Value": {
-      "last": 239.22999572753906,
-      "chg": 0.0,
-      "pct": 0.0,
-      "date": "2026-10-28"
+      "last": 241.36000061035156,
+      "chg": 2.1300048828125,
+      "pct": 0.8903586175867284,
+      "date": "2026-10-29"
     }
   },
   "sectors": {
     "Technology": {
-      "last": 191.0,
-      "chg": 1.5099945068359375,
-      "pct": 0.7968729025607635,
-      "date": "2026-10-28"
+      "last": 188.74000549316406,
+      "chg": -2.2599945068359375,
+      "pct": -1.183243197296302,
+      "date": "2026-10-29"
     },
     "Energy": {
-      "last": 68.44999694824219,
-      "chg": 0.23999786376953125,
-      "pct": 0.35185143965814625,
-      "date": "2026-10-28"
+      "last": 68.70999908447266,
+      "chg": 0.26000213623046875,
+      "pct": 0.3798424365556441,
+      "date": "2026-10-29"
     },
     "Communication Services": {
-      "last": 103.13999938964844,
-      "chg": -0.44000244140625,
-      "pct": -0.4247947804866037,
-      "date": "2026-10-28"
+      "last": 101.20999908447266,
+      "chg": -1.9300003051757812,
+      "pct": -1.8712432776778587,
+      "date": "2026-10-29"
     },
     "Consumer Discretionary": {
-      "last": 115.33000183105469,
-      "chg": -0.1199951171875,
-      "pct": -0.10393687341654356,
-      "date": "2026-10-28"
+      "last": 116.19999694824219,
+      "chg": 0.8699951171875,
+      "pct": 0.7543528165914193,
+      "date": "2026-10-29"
     },
     "Utilities": {
-      "last": 42.4900016784668,
-      "chg": -0.3599967956542969,
-      "pct": -0.840132575201169,
-      "date": "2026-10-28"
+      "last": 43.13999938964844,
+      "chg": 0.6499977111816406,
+      "pct": 1.5297662638386056,
+      "date": "2026-10-29"
     },
     "Consumer Staples": {
-      "last": 86.83999633789062,
-      "chg": -0.31000518798828125,
-      "pct": -0.35571449519278264,
-      "date": "2026-10-28"
+      "last": 88.18000030517578,
+      "chg": 1.3400039672851562,
+      "pct": 1.5430723443046412,
+      "date": "2026-10-29"
     },
     "Health Care": {
-      "last": 179.72000122070312,
-      "chg": 0.540008544921875,
-      "pct": 0.3013777023079811,
-      "date": "2026-10-28"
+      "last": 184.0399932861328,
+      "chg": 4.3199920654296875,
+      "pct": 2.4037347184994617,
+      "date": "2026-10-29"
     },
     "Industrials": {
-      "last": 168.49000549316406,
-      "chg": 0.57000732421875,
-      "pct": 0.3394517213162862,
-      "date": "2026-10-28"
+      "last": 170.1300048828125,
+      "chg": 1.6399993896484375,
+      "pct": 0.9733511402342243,
+      "date": "2026-10-29"
     },
     "Financials": {
-      "last": 56.130001068115234,
-      "chg": 0.25,
-      "pct": 0.4473872498593101,
-      "date": "2026-10-28"
+      "last": 56.939998626708984,
+      "chg": 0.80999755859375,
+      "pct": 1.4430741905933742,
+      "date": "2026-10-29"
     },
     "Materials": {
-      "last": 51.86000061035156,
-      "chg": 0.0800018310546875,
-      "pct": 0.15450334673756672,
-      "date": "2026-10-28"
+      "last": 52.529998779296875,
+      "chg": 0.6699981689453125,
+      "pct": 1.2919362920554622,
+      "date": "2026-10-29"
     },
     "Real Estate": {
-      "last": 42.130001068115234,
-      "chg": -0.30999755859375,
-      "pct": -0.730437249351501,
-      "date": "2026-10-28"
+      "last": 43.060001373291016,
+      "chg": 0.9300003051757812,
+      "pct": 2.207453789692937,
+      "date": "2026-10-29"
     }
   },
   "fx": {
     "DXY": {
-      "last": 102.12000274658203,
-      "chg": -0.1779937744140625,
-      "pct": -0.1739953669351979,
-      "date": "2026-10-28",
-      "prev": 102.2979965209961,
-      "prev_date": "2026-10-27",
+      "last": 102.03600311279297,
+      "chg": -0.0839996337890625,
+      "pct": -0.08225580839192892,
+      "date": "2026-10-29",
+      "prev": 102.12000274658203,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": null,
       "cut_et": "16:00",
       "prev_cut_et": "16:00"
     },
     "USD/KRW": {
-      "last": 1341.6300048828125,
-      "chg": 15.5,
-      "pct": 1.1688145161431462,
-      "date": "2026-10-28",
-      "prev": 1326.1300048828125,
-      "prev_date": "2026-10-27",
+      "last": 1338.9100341796875,
+      "chg": -2.719970703125,
+      "pct": -0.20273627551752327,
+      "date": "2026-10-29",
+      "prev": 1341.6300048828125,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": null,
       "cut_et": "16:00",
       "prev_cut_et": "16:00"
     },
     "USD/JPY": {
-      "last": 157.9239959716797,
-      "chg": 0.0099945068359375,
-      "pct": 0.006329082122680241,
-      "date": "2026-10-28",
-      "prev": 157.91400146484375,
-      "prev_date": "2026-10-27",
+      "last": 157.95799255371094,
+      "chg": 0.03399658203125,
+      "pct": 0.0215271794650862,
+      "date": "2026-10-29",
+      "prev": 157.9239959716797,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": null,
       "cut_et": "16:00",
       "prev_cut_et": "16:00"
     },
     "EUR/USD": {
-      "last": 1.1158223152160645,
-      "chg": 0.0018644332885742188,
-      "pct": 0.16737017788752695,
-      "date": "2026-10-28",
-      "prev": 1.1139578819274902,
-      "prev_date": "2026-10-27",
+      "last": 1.1165698766708374,
+      "chg": 0.0007475614547729492,
+      "pct": 0.0669964603305262,
+      "date": "2026-10-29",
+      "prev": 1.1158223152160645,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": null,
       "cut_et": "16:00",
@@ -160,48 +160,48 @@
   },
   "commodities": {
     "WTI": {
-      "last": 101.73999786376953,
-      "chg": 1.529998779296875,
-      "pct": 1.5267925289642603,
-      "date": "2026-10-28",
-      "prev": 100.20999908447266,
-      "prev_date": "2026-10-27",
+      "last": 102.7699966430664,
+      "chg": 1.029998779296875,
+      "pct": 1.0123833309649166,
+      "date": "2026-10-29",
+      "prev": 101.73999786376953,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": "CLZ26.NYM",
       "cut_et": "16:00",
       "prev_cut_et": "16:00"
     },
     "Brent": {
-      "last": 110.51000213623047,
-      "chg": 0.660003662109375,
-      "pct": 0.600822641126264,
-      "date": "2026-10-28",
-      "prev": 109.8499984741211,
-      "prev_date": "2026-10-27",
+      "last": 111.55999755859375,
+      "chg": 1.0499954223632812,
+      "pct": 0.9501360981505558,
+      "date": "2026-10-29",
+      "prev": 110.51000213623047,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": "BZF27.NYM",
       "cut_et": "16:00",
       "prev_cut_et": "16:00"
     },
     "Natural Gas": {
-      "last": 3.0239999294281006,
-      "chg": -0.04200005531311035,
-      "pct": -1.3698648245967115,
-      "date": "2026-10-28",
-      "prev": 3.065999984741211,
-      "prev_date": "2026-10-27",
+      "last": 2.921999931335449,
+      "chg": -0.10199999809265137,
+      "pct": -3.3730158886591477,
+      "date": "2026-10-29",
+      "prev": 3.0239999294281006,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": "NGZ26.NYM",
       "cut_et": "16:00",
       "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 4089.10009765625,
-      "chg": 14.2001953125,
-      "pct": 0.34847961061159616,
-      "date": "2026-10-28",
-      "prev": 4074.89990234375,
-      "prev_date": "2026-10-27",
+      "last": 4034.10009765625,
+      "chg": -55.199951171875,
+      "pct": -1.3498630697860836,
+      "date": "2026-10-29",
+      "prev": 4089.300048828125,
+      "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
       "cut_et": "16:00",
@@ -210,189 +210,192 @@
   },
   "memory": {
     "Micron": {
-      "last": 983.22998046875,
-      "chg": 54.469970703125,
-      "pct": 5.864805776561233,
-      "date": "2026-10-28"
+      "last": 934.27001953125,
+      "chg": -48.9599609375,
+      "pct": -4.979502447042816,
+      "date": "2026-10-29"
     },
     "Western Digital": {
-      "last": 396.4200134277344,
-      "chg": 15.540008544921875,
-      "pct": 4.080027395951946,
-      "date": "2026-10-28"
+      "last": 395.4100036621094,
+      "chg": -1.010009765625,
+      "pct": -0.25478273836170295,
+      "date": "2026-10-29"
     },
     "Seagate": {
-      "last": 697.969970703125,
-      "chg": 30.1199951171875,
-      "pct": 4.509994193046385,
-      "date": "2026-10-28"
+      "last": 700.469970703125,
+      "chg": 2.5,
+      "pct": 0.35818159877014644,
+      "date": "2026-10-29"
     },
     "Nvidia": {
-      "last": 215.3800048828125,
-      "chg": -2.55999755859375,
-      "pct": -1.1746340873250216,
-      "date": "2026-10-28"
+      "last": 213.66000366210938,
+      "chg": -1.720001220703125,
+      "pct": -0.7985890898456249,
+      "date": "2026-10-29"
     },
     "Samsung Elec": {
-      "last": 242000.0,
-      "chg": 20000.0,
-      "pct": 9.009009009009006,
-      "date": "2026-10-28"
+      "last": 232000.0,
+      "chg": -10000.0,
+      "pct": -4.1322314049586755,
+      "date": "2026-10-29"
     },
     "SK hynix": {
-      "last": 1487000.0,
-      "chg": 146000.0,
-      "pct": 10.887397464578674,
-      "date": "2026-10-28"
+      "last": 1526000.0,
+      "chg": 39000.0,
+      "pct": 2.622730329522538,
+      "date": "2026-10-29"
     }
   },
   "ai_infra": {
     "Marvell": {
-      "last": 251.64999389648438,
-      "chg": 8.079986572265625,
-      "pct": 3.317315896579287,
-      "date": "2026-10-28"
+      "last": 218.33999633789062,
+      "chg": -33.30999755859375,
+      "pct": -13.236637538841245,
+      "date": "2026-10-29"
     },
     "Coherent": {
-      "last": 239.58999633789062,
-      "chg": 3.8000030517578125,
-      "pct": 1.6116048856859244,
-      "date": "2026-10-28"
+      "last": 237.22000122070312,
+      "chg": -2.3699951171875,
+      "pct": -0.9891878431539936,
+      "date": "2026-10-29"
     },
     "Lumentum": {
-      "last": 913.9500122070312,
-      "chg": 47.77001953125,
-      "pct": 5.515022274259662,
-      "date": "2026-10-28"
+      "last": 919.530029296875,
+      "chg": 5.58001708984375,
+      "pct": 0.6105385431714128,
+      "date": "2026-10-29"
     },
     "GE Vernova": {
-      "last": 878.030029296875,
-      "chg": -17.04998779296875,
-      "pct": -1.9048562661920454,
-      "date": "2026-10-28"
+      "last": 887.8499755859375,
+      "chg": 9.8199462890625,
+      "pct": 1.118406655968962,
+      "date": "2026-10-29"
     },
     "Vertiv": {
-      "last": 242.94000244140625,
-      "chg": 34.3800048828125,
-      "pct": 16.48446743635659,
-      "date": "2026-10-28"
+      "last": 245.9199981689453,
+      "chg": 2.9799957275390625,
+      "pct": 1.226638551737813,
+      "date": "2026-10-29"
     }
   },
   "mlcc": {
     "Murata": {
-      "last": 6701.0,
-      "chg": 334.0,
-      "pct": 5.2457986492853825,
-      "date": "2026-10-28"
+      "last": 6890.0,
+      "chg": 189.0,
+      "pct": 2.820474556036423,
+      "date": "2026-10-29"
     },
     "Samsung E-M": {
-      "last": 1306000.0,
-      "chg": 105000.0,
-      "pct": 8.742714404662788,
-      "date": "2026-10-28"
+      "last": 1293000.0,
+      "chg": -13000.0,
+      "pct": -0.9954058192955584,
+      "date": "2026-10-29"
     },
     "Taiyo Yuden": {
-      "last": 9200.0,
-      "chg": 613.0,
-      "pct": 7.138698031908697,
-      "date": "2026-10-28"
+      "last": 9231.0,
+      "chg": 31.0,
+      "pct": 0.33695652173912904,
+      "date": "2026-10-29"
     },
     "Yageo": {
-      "last": 547.0,
-      "chg": 26.0,
-      "pct": 4.99040307101728,
-      "date": "2026-10-28"
+      "last": 543.0,
+      "chg": -4.0,
+      "pct": -0.7312614259597838,
+      "date": "2026-10-29"
     },
     "Walsin": {
-      "last": 398.0,
-      "chg": 25.5,
-      "pct": 6.8456375838926276,
-      "date": "2026-10-28"
+      "last": 423.0,
+      "chg": 25.0,
+      "pct": 6.281407035175879,
+      "date": "2026-10-29"
     },
     "Holy Stone": {
-      "last": 751.0,
-      "chg": 45.0,
-      "pct": 6.373937677053831,
-      "date": "2026-10-28"
+      "last": 767.0,
+      "chg": 16.0,
+      "pct": 2.130492676431417,
+      "date": "2026-10-29"
     },
     "Sanhuan": {
-      "last": 87.0,
-      "chg": 5.5,
-      "pct": 6.748466257668717,
-      "date": "2026-10-28"
+      "last": 84.54000091552734,
+      "chg": -2.4599990844726562,
+      "pct": -2.82758515456627,
+      "date": "2026-10-29"
     },
     "Fenghua": {
-      "last": 36.900001525878906,
-      "chg": 0.9800033569335938,
-      "pct": 2.7282945626118105,
-      "date": "2026-10-28"
+      "last": 34.77000045776367,
+      "chg": -2.1300010681152344,
+      "pct": -5.772360379501373,
+      "date": "2026-10-29"
     }
   },
   "yields": {
     "2Y": {
-      "level": 4.735,
+      "level": 4.67,
       "date": "2026-10-28",
-      "bp": -0.19999999999997797,
-      "week_ago": 4.823,
+      "bp": -3.000000000000025,
+      "week_ago": 4.81,
       "week_ago_date": "2026-10-21",
-      "source": "Naver"
+      "source": "FRED"
     },
     "5Y": {
-      "level": 4.871,
-      "date": "2026-10-28",
-      "bp": 3.1000000000000583,
-      "week_ago": 4.97,
-      "week_ago_date": "2026-10-21",
-      "source": "Naver"
+      "level": 4.801,
+      "date": "2026-10-29",
+      "bp": -7.000017166137695,
+      "week_ago": 4.768,
+      "week_ago_date": "2026-10-22",
+      "ticker": "^FVX",
+      "source": "Yahoo"
     },
     "10Y": {
-      "level": 5.045,
-      "date": "2026-10-28",
-      "bp": 5.19999999999996,
-      "week_ago": 5.146,
-      "week_ago_date": "2026-10-21",
-      "source": "Naver"
+      "level": 4.989,
+      "date": "2026-10-29",
+      "bp": -5.60002326965332,
+      "week_ago": 4.953,
+      "week_ago_date": "2026-10-22",
+      "ticker": "^TNX",
+      "source": "Yahoo"
     },
     "30Y": {
-      "level": 5.361,
-      "date": "2026-10-28",
-      "bp": 5.600000000000005,
-      "week_ago": 5.437,
-      "week_ago_date": "2026-10-21",
-      "source": "Naver"
+      "level": 5.329,
+      "date": "2026-10-29",
+      "bp": -3.2000064849853516,
+      "week_ago": 5.287,
+      "week_ago_date": "2026-10-22",
+      "ticker": "^TYX",
+      "source": "Yahoo"
     }
   },
   "yields_fred": {
     "2Y": {
-      "level": 4.7,
-      "date": "2026-10-27",
-      "bp": 2.000000000000046,
-      "week_ago": 4.79,
-      "week_ago_date": "2026-10-20",
+      "level": 4.67,
+      "date": "2026-10-28",
+      "bp": -3.000000000000025,
+      "week_ago": 4.81,
+      "week_ago_date": "2026-10-21",
       "source": "FRED"
     },
     "5Y": {
-      "level": 4.82,
-      "date": "2026-10-27",
-      "bp": -1.9999999999999574,
-      "week_ago": 4.94,
-      "week_ago_date": "2026-10-20",
+      "level": 4.85,
+      "date": "2026-10-28",
+      "bp": 2.999999999999936,
+      "week_ago": 4.95,
+      "week_ago_date": "2026-10-21",
       "source": "FRED"
     },
     "10Y": {
-      "level": 4.99,
-      "date": "2026-10-27",
-      "bp": -0.9999999999999787,
-      "week_ago": 5.12,
-      "week_ago_date": "2026-10-20",
+      "level": 5.05,
+      "date": "2026-10-28",
+      "bp": 5.999999999999961,
+      "week_ago": 5.13,
+      "week_ago_date": "2026-10-21",
       "source": "FRED"
     },
     "30Y": {
-      "level": 5.3,
-      "date": "2026-10-27",
-      "bp": -0.9999999999999787,
+      "level": 5.37,
+      "date": "2026-10-28",
+      "bp": 7.000000000000028,
       "week_ago": 5.42,
-      "week_ago_date": "2026-10-20",
+      "week_ago_date": "2026-10-21",
       "source": "FRED"
     }
   },
@@ -401,66 +404,66 @@
     "rows": {
       "nominal_5y": {
         "label_ko": "5년 명목금리",
-        "level": 4.82,
-        "date": "2026-10-27",
-        "chg_1d_bp": -2.0,
-        "chg_5d_bp": -12.0
+        "level": 4.85,
+        "date": "2026-10-28",
+        "chg_1d_bp": 3.0,
+        "chg_5d_bp": -10.0
       },
       "nominal_10y": {
         "label_ko": "10년 명목금리",
-        "level": 4.99,
-        "date": "2026-10-27",
-        "chg_1d_bp": -1.0,
-        "chg_5d_bp": -13.0
+        "level": 5.05,
+        "date": "2026-10-28",
+        "chg_1d_bp": 6.0,
+        "chg_5d_bp": -8.0
       },
       "nominal_30y": {
         "label_ko": "30년 명목금리",
-        "level": 5.3,
-        "date": "2026-10-27",
-        "chg_1d_bp": -1.0,
-        "chg_5d_bp": -12.0
+        "level": 5.37,
+        "date": "2026-10-28",
+        "chg_1d_bp": 7.0,
+        "chg_5d_bp": -5.0
       },
       "real_5y": {
         "label_ko": "5년 실질금리",
-        "level": 2.37,
-        "date": "2026-10-27",
-        "chg_1d_bp": 0.0,
-        "chg_5d_bp": -18.0
+        "level": 2.36,
+        "date": "2026-10-28",
+        "chg_1d_bp": -1.0,
+        "chg_5d_bp": -19.0
       },
       "real_10y": {
         "label_ko": "10년 실질금리",
-        "level": 2.64,
-        "date": "2026-10-27",
-        "chg_1d_bp": -2.0,
-        "chg_5d_bp": -13.0
+        "level": 2.67,
+        "date": "2026-10-28",
+        "chg_1d_bp": 3.0,
+        "chg_5d_bp": -9.0
       },
       "real_30y": {
         "label_ko": "30년 실질금리",
-        "level": 3.05,
-        "date": "2026-10-27",
-        "chg_1d_bp": -2.0,
-        "chg_5d_bp": -11.0
+        "level": 3.1,
+        "date": "2026-10-28",
+        "chg_1d_bp": 5.0,
+        "chg_5d_bp": -5.0
       },
       "breakeven_5y": {
         "label_ko": "5년 기대인플레",
-        "level": 2.49,
-        "date": "2026-10-28",
-        "chg_1d_bp": 4.0,
-        "chg_5d_bp": 9.0
+        "level": 2.47,
+        "date": "2026-10-29",
+        "chg_1d_bp": -2.0,
+        "chg_5d_bp": 2.0
       },
       "breakeven_10y": {
         "label_ko": "10년 기대인플레",
-        "level": 2.38,
-        "date": "2026-10-28",
-        "chg_1d_bp": 3.0,
-        "chg_5d_bp": 1.0
+        "level": 2.35,
+        "date": "2026-10-29",
+        "chg_1d_bp": -3.0,
+        "chg_5d_bp": 3.0
       },
       "breakeven_5y5y": {
         "label_ko": "5년 후 5년 기대인플레",
-        "level": 2.27,
-        "date": "2026-10-28",
-        "chg_1d_bp": 2.0,
-        "chg_5d_bp": -7.0
+        "level": 2.23,
+        "date": "2026-10-29",
+        "chg_1d_bp": -4.0,
+        "chg_5d_bp": 4.0
       },
       "term_premium_10y": {
         "label_ko": "10년 기간프리미엄",
@@ -471,158 +474,160 @@
       },
       "hy_spread": {
         "label_ko": "하이일드 스프레드",
-        "level": 3.18,
-        "date": "2026-10-27",
-        "chg_1d_bp": -12.0,
-        "chg_5d_bp": -15.0
+        "level": 3.14,
+        "date": "2026-10-28",
+        "chg_1d_bp": -4.0,
+        "chg_5d_bp": -13.0
       },
       "ig_spread": {
         "label_ko": "투자등급 스프레드",
-        "level": 0.88,
-        "date": "2026-10-27",
+        "level": 0.86,
+        "date": "2026-10-28",
         "chg_1d_bp": -2.0,
-        "chg_5d_bp": 1.0
+        "chg_5d_bp": -2.0
       },
       "tbill_3m": {
         "label_ko": "3개월 T-bill",
-        "level": 4.05,
-        "date": "2026-10-27",
-        "chg_1d_bp": 0.0,
-        "chg_5d_bp": -3.0
+        "level": 4.01,
+        "date": "2026-10-28",
+        "chg_1d_bp": -4.0,
+        "chg_5d_bp": -6.0
       },
       "sofr": {
         "label_ko": "SOFR",
-        "level": 3.95,
-        "date": "2026-10-27",
-        "chg_1d_bp": 2.0,
-        "chg_5d_bp": 7.0
+        "level": 3.94,
+        "date": "2026-10-28",
+        "chg_1d_bp": -1.0,
+        "chg_5d_bp": 6.0
       }
     },
     "decomposition": {
       "10Y": {
-        "nominal_chg_1d_bp": -1.0,
-        "real_chg_1d_bp": -2.0,
-        "breakeven_chg_1d_bp": 1.0,
-        "nominal_chg_5d_bp": -13.0,
-        "real_chg_5d_bp": -13.0,
-        "breakeven_chg_5d_bp": 0.0,
-        "driver": "real",
-        "driver_ko": "실질금리",
-        "as_of": "2026-10-27",
+        "nominal_chg_1d_bp": 6.0,
+        "real_chg_1d_bp": 3.0,
+        "breakeven_chg_1d_bp": 3.0,
+        "nominal_chg_5d_bp": -8.0,
+        "real_chg_5d_bp": -9.0,
+        "breakeven_chg_5d_bp": 1.0,
+        "driver": "mixed",
+        "driver_ko": "실질·기대인플레 동반",
+        "as_of": "2026-10-28",
         "basis": "FRED DGS10/DFII10/T10YIE 동일자 정렬"
       },
       "5Y": {
-        "nominal_chg_1d_bp": -2.0,
-        "real_chg_1d_bp": 0.0,
-        "breakeven_chg_1d_bp": -2.0,
-        "nominal_chg_5d_bp": -12.0,
-        "real_chg_5d_bp": -18.0,
-        "breakeven_chg_5d_bp": 6.0,
+        "nominal_chg_1d_bp": 3.0,
+        "real_chg_1d_bp": -1.0,
+        "breakeven_chg_1d_bp": 4.0,
+        "nominal_chg_5d_bp": -10.0,
+        "real_chg_5d_bp": -19.0,
+        "breakeven_chg_5d_bp": 9.0,
         "driver": "breakeven",
         "driver_ko": "기대인플레",
-        "as_of": "2026-10-27",
+        "as_of": "2026-10-28",
         "basis": "FRED DGS5/DFII5/T5YIE 동일자 정렬"
       }
     }
   },
   "sector_performance": {
     "Technology": {
-      "date": "2026-10-28",
-      "1D": 0.8,
-      "1W": 1.3,
-      "1M": -1.81,
-      "6M": 20.33,
-      "1Y": 27.16
+      "date": "2026-10-29",
+      "1D": -1.18,
+      "1W": 3.51,
+      "1M": -2.96,
+      "6M": 18.61,
+      "1Y": 24.75
     },
     "Energy": {
-      "date": "2026-10-28",
-      "1D": 0.35,
-      "1W": 0.43,
-      "1M": 10.23,
-      "6M": 17.49,
-      "1Y": 61.18
+      "date": "2026-10-29",
+      "1D": 0.38,
+      "1W": 1.69,
+      "1M": 11.65,
+      "6M": 16.71,
+      "1Y": 60.59
     },
     "Communication Services": {
-      "date": "2026-10-28",
-      "1D": -0.42,
-      "1W": -5.35,
-      "1M": -7.23,
-      "6M": -10.01,
-      "1Y": -10.43
+      "date": "2026-10-29",
+      "1D": -1.87,
+      "1W": -5.78,
+      "1M": -9.2,
+      "6M": -12.62,
+      "1Y": -11.89
     },
     "Consumer Discretionary": {
-      "date": "2026-10-28",
-      "1D": -0.1,
-      "1W": -0.17,
-      "1M": 5.81,
-      "6M": -0.88,
-      "1Y": -3.56
+      "date": "2026-10-29",
+      "1D": 0.75,
+      "1W": 1.03,
+      "1M": 6.46,
+      "6M": -1.4,
+      "1Y": -2.02
     },
     "Utilities": {
-      "date": "2026-10-28",
-      "1D": -0.84,
-      "1W": 1.17,
-      "1M": 8.25,
-      "6M": -5.7,
-      "1Y": -3.02
+      "date": "2026-10-29",
+      "1D": 1.53,
+      "1W": 0.63,
+      "1M": 8.64,
+      "6M": -6.65,
+      "1Y": -1.51
     },
     "Consumer Staples": {
-      "date": "2026-10-28",
-      "1D": -0.36,
-      "1W": -0.31,
-      "1M": 5.54,
-      "6M": 6.15,
-      "1Y": 13.76
+      "date": "2026-10-29",
+      "1D": 1.54,
+      "1W": -2.01,
+      "1M": 7.73,
+      "6M": 6.01,
+      "1Y": 18.31
     },
     "Health Care": {
-      "date": "2026-10-28",
-      "1D": 0.3,
-      "1W": 0.44,
-      "1M": 4.94,
-      "6M": 26.86,
-      "1Y": 25.63
+      "date": "2026-10-29",
+      "1D": 2.4,
+      "1W": 1.51,
+      "1M": 7.8,
+      "6M": 27.1,
+      "1Y": 29.96
     },
     "Industrials": {
-      "date": "2026-10-28",
-      "1D": 0.34,
-      "1W": 0.11,
-      "1M": -0.17,
-      "6M": -0.34,
-      "1Y": 10.17
+      "date": "2026-10-29",
+      "1D": 0.97,
+      "1W": 2.04,
+      "1M": 0.59,
+      "6M": -2.05,
+      "1Y": 10.96
     },
     "Financials": {
-      "date": "2026-10-28",
-      "1D": 0.45,
-      "1W": 0.16,
-      "1M": 3.58,
-      "6M": 8.87,
-      "1Y": 7.6
+      "date": "2026-10-29",
+      "1D": 1.44,
+      "1W": 0.51,
+      "1M": 5.42,
+      "6M": 10.0,
+      "1Y": 11.03
     },
     "Materials": {
-      "date": "2026-10-28",
-      "1D": 0.15,
-      "1W": 1.05,
-      "1M": 4.83,
-      "6M": 2.62,
-      "1Y": 18.53
+      "date": "2026-10-29",
+      "1D": 1.29,
+      "1W": 1.63,
+      "1M": 6.99,
+      "6M": 2.91,
+      "1Y": 22.46
     },
     "Real Estate": {
-      "date": "2026-10-28",
-      "1D": -0.73,
-      "1W": 0.17,
-      "1M": 1.89,
-      "6M": -1.79,
-      "1Y": 4.37
+      "date": "2026-10-29",
+      "1D": 2.21,
+      "1W": 1.27,
+      "1M": 4.16,
+      "6M": -1.34,
+      "1Y": 9.67
     }
   },
-  "sector_performance_as_of": "2026-10-28",
-  "spread_2s10s_bp": 30.99999999999996,
-  "spread_2s10s_aligned": true,
-  "spread_2s10s_basis": "2Y·10Y 모두 Naver 2026-10-28 동일 기준일",
-  "spread_2s10s_fred_bp": 29.000000000000004,
-  "spread_5s30s_bp": 48.99999999999993,
-  "complete": true,
-  "missing": [],
+  "sector_performance_as_of": "2026-10-29",
+  "spread_2s10s_bp": 31.899999999999995,
+  "spread_2s10s_aligned": false,
+  "spread_2s10s_basis": "2Y FRED 2026-10-28 vs 10Y Yahoo 2026-10-29",
+  "spread_2s10s_fred_bp": 37.999999999999986,
+  "spread_5s30s_bp": 52.799999999999955,
+  "complete": false,
+  "missing": [
+    "yields/naver_close_not_posted"
+  ],
   "price_context": {
     "windows": {
       "move": 60,
@@ -634,138 +639,138 @@
     "moves": {
       "S&P 500": {
         "ticker": "^GSPC",
-        "change": 0.277,
+        "change": -0.305,
         "unit": "%",
-        "multiple": 0.44,
-        "band": "미미"
+        "multiple": -0.51,
+        "band": "보통"
       },
       "Nasdaq": {
         "ticker": "^IXIC",
-        "change": 0.272,
+        "change": -1.375,
         "unit": "%",
-        "multiple": 0.27,
-        "band": "미미"
+        "multiple": -1.47,
+        "band": "보통"
       },
       "Russell 2000": {
         "ticker": "^RUT",
-        "change": 0.413,
+        "change": 1.014,
         "unit": "%",
-        "multiple": 0.49,
-        "band": "미미"
+        "multiple": 1.25,
+        "band": "보통"
       },
       "VIX": {
         "ticker": "^VIX",
-        "change": -0.61,
+        "change": 0.29,
         "unit": "pt",
-        "multiple": -0.57,
-        "band": "보통"
+        "multiple": 0.28,
+        "band": "미미"
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.174,
+        "change": -0.082,
         "unit": "%",
-        "multiple": -0.59,
-        "band": "보통"
+        "multiple": -0.28,
+        "band": "미미"
       },
       "USD/JPY": {
         "ticker": "JPY=X",
-        "change": 0.006,
+        "change": 0.022,
         "unit": "%",
-        "multiple": 0.01,
+        "multiple": 0.04,
         "band": "미미"
       },
       "USD/KRW": {
         "ticker": "KRW=X",
-        "change": 1.169,
+        "change": -0.203,
         "unit": "%",
-        "multiple": 2.0,
-        "band": "큼"
+        "multiple": -0.33,
+        "band": "미미"
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 1.527,
+        "change": 1.012,
         "unit": "%",
-        "multiple": 0.59,
-        "band": "보통"
+        "multiple": 0.41,
+        "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 0.348,
+        "change": -1.35,
         "unit": "%",
-        "multiple": 0.26,
-        "band": "미미"
+        "multiple": -1.03,
+        "band": "보통"
       },
       "10Y": {
         "ticker": "^TNX",
-        "change": 0.052,
+        "change": -0.056,
         "unit": "pp",
-        "multiple": 1.04,
+        "multiple": -1.13,
         "band": "보통"
       },
       "30Y": {
         "ticker": "^TYX",
-        "change": 0.056,
+        "change": -0.032,
         "unit": "pp",
-        "multiple": 1.28,
+        "multiple": -0.73,
         "band": "보통"
       }
     },
     "levels": {
       "S&P 500": {
-        "value": 7743.98,
-        "percentile": 96.4,
+        "value": 7720.39,
+        "percentile": 94.8,
         "band": "매우 높음",
         "sessions": 504,
         "plain": {
-          "percentile": 96.4,
+          "percentile": 94.8,
           "sessions": 504,
           "window": "2년",
-          "days": 18,
+          "days": 26,
           "share_pct": null,
           "side": "high",
-          "short": "이보다 높았던 날이 18일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 18일뿐"
+          "short": "이보다 높았던 날이 26일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 26일뿐"
         }
       },
       "Nasdaq": {
-        "value": 26549.852,
-        "percentile": 92.5,
-        "band": "매우 높음",
-        "sessions": 504,
-        "plain": {
-          "percentile": 92.5,
-          "sessions": 504,
-          "window": "2년",
-          "days": 38,
-          "share_pct": null,
-          "side": "high",
-          "short": "이보다 높았던 날이 38일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 38일뿐"
-        }
-      },
-      "Russell 2000": {
-        "value": 2830.509,
-        "percentile": 80.6,
+        "value": 26184.725,
+        "percentile": 85.9,
         "band": "높음",
         "sessions": 504,
         "plain": {
-          "percentile": 80.6,
+          "percentile": 85.9,
           "sessions": 504,
           "window": "2년",
           "days": null,
-          "share_pct": 20,
+          "share_pct": 15,
           "side": "high",
-          "short": "높은 쪽 20% 안",
-          "text": "최근 2년(504거래일) 가운데 높은 쪽 20% 안"
+          "short": "높은 쪽 15% 안",
+          "text": "최근 2년(504거래일) 가운데 높은 쪽 15% 안"
+        }
+      },
+      "Russell 2000": {
+        "value": 2859.217,
+        "percentile": 83.3,
+        "band": "높음",
+        "sessions": 504,
+        "plain": {
+          "percentile": 83.3,
+          "sessions": 504,
+          "window": "2년",
+          "days": null,
+          "share_pct": 17,
+          "side": "high",
+          "short": "높은 쪽 17% 안",
+          "text": "최근 2년(504거래일) 가운데 높은 쪽 17% 안"
         }
       },
       "VIX": {
-        "value": 16.91,
-        "percentile": 48.3,
+        "value": 17.2,
+        "percentile": 52.4,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 48.3,
+          "percentile": 52.4,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -776,12 +781,12 @@
         }
       },
       "DXY": {
-        "value": 102.12,
-        "percentile": 76.0,
+        "value": 102.036,
+        "percentile": 75.6,
         "band": "높음",
         "sessions": 504,
         "plain": {
-          "percentile": 76.0,
+          "percentile": 75.6,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -792,12 +797,12 @@
         }
       },
       "USD/JPY": {
-        "value": 157.924,
-        "percentile": 72.1,
+        "value": 157.958,
+        "percentile": 72.6,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 72.1,
+          "percentile": 72.6,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -808,44 +813,44 @@
         }
       },
       "USD/KRW": {
-        "value": 1341.63,
-        "percentile": 3.2,
+        "value": 1338.91,
+        "percentile": 1.6,
         "band": "매우 낮음",
         "sessions": 504,
         "plain": {
-          "percentile": 3.2,
+          "percentile": 1.6,
           "sessions": 504,
           "window": "2년",
-          "days": 16,
+          "days": 8,
           "share_pct": null,
           "side": "low",
-          "short": "이보다 낮았던 날이 16일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 낮았던 날이 16일뿐"
+          "short": "이보다 낮았던 날이 8일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 낮았던 날이 8일뿐"
         }
       },
       "WTI": {
-        "value": 101.74,
-        "percentile": 95.8,
+        "value": 102.77,
+        "percentile": 97.4,
         "band": "매우 높음",
         "sessions": 504,
         "plain": {
-          "percentile": 95.8,
+          "percentile": 97.4,
           "sessions": 504,
           "window": "2년",
-          "days": 21,
+          "days": 13,
           "share_pct": null,
           "side": "high",
-          "short": "이보다 높았던 날이 21일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 21일뿐"
+          "short": "이보다 높았던 날이 13일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 13일뿐"
         }
       },
       "Gold": {
-        "value": 4089.1,
-        "percentile": 55.6,
+        "value": 4034.1,
+        "percentile": 50.8,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 55.6,
+          "percentile": 50.8,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -856,35 +861,35 @@
         }
       },
       "10Y": {
-        "value": 5.045,
-        "percentile": 95.8,
+        "value": 4.989,
+        "percentile": 94.8,
         "band": "매우 높음",
         "sessions": 504,
         "plain": {
-          "percentile": 95.8,
+          "percentile": 94.8,
           "sessions": 504,
           "window": "2년",
-          "days": 21,
+          "days": 26,
           "share_pct": null,
           "side": "high",
-          "short": "이보다 높았던 날이 21일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 21일뿐"
+          "short": "이보다 높았던 날이 26일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 26일뿐"
         }
       },
       "30Y": {
-        "value": 5.361,
-        "percentile": 95.5,
+        "value": 5.329,
+        "percentile": 94.5,
         "band": "매우 높음",
         "sessions": 504,
         "plain": {
-          "percentile": 95.5,
+          "percentile": 94.5,
           "sessions": 504,
           "window": "2년",
-          "days": 22,
+          "days": 27,
           "share_pct": null,
           "side": "high",
-          "short": "이보다 높았던 날이 22일뿐",
-          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 22일뿐"
+          "short": "이보다 높았던 날이 27일뿐",
+          "text": "최근 2년(504거래일) 가운데 이보다 높았던 날이 27일뿐"
         }
       }
     },
@@ -892,8 +897,8 @@
       {
         "key": "equity_rates",
         "label_ko": "주식과 금리",
-        "value": -0.136,
-        "prior": -0.437,
+        "value": -0.125,
+        "prior": -0.428,
         "flipped": false,
         "band": "거의 무관"
       },
@@ -901,23 +906,23 @@
         "key": "equity_dollar",
         "label_ko": "주식과 달러",
         "value": -0.254,
-        "prior": -0.387,
+        "prior": -0.368,
         "flipped": false,
         "band": "반대로 움직임(느슨하게)"
       },
       {
         "key": "gold_rates",
         "label_ko": "금과 금리",
-        "value": -0.168,
-        "prior": -0.16,
+        "value": -0.138,
+        "prior": -0.161,
         "flipped": false,
         "band": "거의 무관"
       },
       {
         "key": "memory_nasdaq",
         "label_ko": "메모리와 나스닥",
-        "value": 0.53,
-        "prior": 0.627,
+        "value": 0.551,
+        "prior": 0.614,
         "flipped": false,
         "band": "같이 움직임(느슨하게)"
       }
@@ -925,8 +930,8 @@
     "cohesion": {
       "n_assets": 10,
       "top1_pct": 41.4,
-      "top3_pct": 74.4,
-      "percentile": 42.9,
+      "top3_pct": 74.7,
+      "percentile": 42.5,
       "band": "중간",
       "history_windows": 252
     },
@@ -937,13 +942,13 @@
       },
       "second": {
         "group_ko": "금리",
-        "share_pct": 21.3
+        "share_pct": 21.5
       },
       "companion": {
         "group_ko": "원자재",
-        "loading": 0.269,
-        "gap_pct": 23.4,
-        "ratio_pct": 63.6
+        "loading": 0.276,
+        "gap_pct": 26.0,
+        "ratio_pct": 65.3
       },
       "prior": {
         "first": "주식",
@@ -954,125 +959,125 @@
     },
     "factor_decomposition": {
       "memory": {
-        "excess_pct": -15.71,
-        "market_beta": 1.909,
+        "excess_pct": -19.28,
+        "market_beta": 1.91,
         "factors": {
           "style": {
             "label_ko": "성장−가치",
-            "beta": 0.234,
-            "contribution": -1.416
+            "beta": 0.265,
+            "contribution": -2.241
           },
           "size": {
             "label_ko": "대형−소형",
-            "beta": -0.764,
-            "contribution": 0.031
+            "beta": -0.754,
+            "contribution": 0.909
           },
           "semis": {
             "label_ko": "반도체",
-            "beta": 1.008,
-            "contribution": -9.136
+            "beta": 1.003,
+            "contribution": -11.499
           }
         },
-        "specific_pct": -5.189,
-        "fit_r2": 0.4572,
+        "specific_pct": -6.448,
+        "fit_r2": 0.4557,
         "window_sessions": 60,
         "horizon_sessions": 20,
         "diagnostics": {
           "long_window_sessions": 252,
           "betas_long": {
-            "style": 0.137,
+            "style": 0.138,
             "size": 0.143,
-            "semis": 1.31
+            "semis": 1.309
           },
-          "max_factor_corr": 0.782
+          "max_factor_corr": 0.768
         },
         "label_ko": "메모리"
       },
       "ai_infra": {
-        "excess_pct": -6.083,
-        "market_beta": 3.044,
+        "excess_pct": -13.022,
+        "market_beta": 3.064,
         "factors": {
           "style": {
             "label_ko": "성장−가치",
-            "beta": -0.132,
-            "contribution": 0.802
+            "beta": -0.153,
+            "contribution": 1.298
           },
           "size": {
             "label_ko": "대형−소형",
-            "beta": -0.344,
-            "contribution": 0.014
+            "beta": -0.338,
+            "contribution": 0.407
           },
           "semis": {
             "label_ko": "반도체",
-            "beta": 1.526,
-            "contribution": -13.83
+            "beta": 1.559,
+            "contribution": -17.877
           }
         },
-        "specific_pct": 6.93,
-        "fit_r2": 0.7505,
+        "specific_pct": 3.149,
+        "fit_r2": 0.7621,
         "window_sessions": 60,
         "horizon_sessions": 20,
         "diagnostics": {
           "long_window_sessions": 252,
           "betas_long": {
-            "style": 0.361,
-            "size": -0.41,
-            "semis": 1.052
+            "style": 0.369,
+            "size": -0.405,
+            "semis": 1.05
           },
-          "max_factor_corr": 0.782
+          "max_factor_corr": 0.768
         },
         "label_ko": "AI 인프라"
       }
     },
     "sector_contribution": {
-      "index_change": 0.28,
+      "index_change": -0.3,
       "estimated": true,
-      "fit_r2": 0.9747,
+      "fit_r2": 0.9746,
       "window_sessions": 252,
       "rows": [
         {
           "name": "Technology",
-          "change": 0.8,
-          "contribution": 0.27
+          "change": -1.18,
+          "contribution": -0.4
         },
         {
           "name": "Communication Services",
-          "change": -0.42,
-          "contribution": -0.05
-        },
-        {
-          "name": "Financials",
-          "change": 0.45,
-          "contribution": 0.05
-        },
-        {
-          "name": "Utilities",
-          "change": -0.84,
-          "contribution": -0.03
+          "change": -1.87,
+          "contribution": -0.24
         },
         {
           "name": "Health Care",
-          "change": 0.3,
-          "contribution": 0.03
+          "change": 2.4,
+          "contribution": 0.23
         },
         {
-          "name": "Industrials",
-          "change": 0.34,
-          "contribution": 0.02
+          "name": "Financials",
+          "change": 1.44,
+          "contribution": 0.15
         },
         {
           "name": "Consumer Discretionary",
-          "change": -0.1,
-          "contribution": -0.01
+          "change": 0.75,
+          "contribution": 0.1
+        },
+        {
+          "name": "Industrials",
+          "change": 0.97,
+          "contribution": 0.06
+        },
+        {
+          "name": "Utilities",
+          "change": 1.53,
+          "contribution": 0.06
         },
         {
           "name": "Consumer Staples",
-          "change": -0.36,
-          "contribution": -0.01
+          "change": 1.54,
+          "contribution": 0.04
         },
         {
           "name": "Energy",
-          "change": 0.35,
+          "change": 0.38,
           "contribution": 0.01
         }
       ],
@@ -1080,48 +1085,48 @@
         "Materials",
         "Real Estate"
       ],
-      "residual": 0.02
+      "residual": -0.32
     },
     "forward_5y5y": {
-      "nominal": 5.16,
-      "date": "2026-10-27",
-      "real": 2.91,
-      "chg_1d_bp": 0.0,
-      "breakeven_implied": 2.25,
+      "nominal": 5.25,
+      "date": "2026-10-28",
+      "real": 2.98,
+      "chg_1d_bp": 9.0,
+      "breakeven_implied": 2.27,
       "breakeven_gap_bp": null
     }
   },
   "session": {
-    "report_date": "2026-10-28",
+    "report_date": "2026-10-29",
     "global_close": {
       "asia": {
         "rows": [
           {
             "name": "닛케이",
             "ticker": "^N225",
-            "close": 63268.37,
-            "pct": 1.73,
-            "date": "2026-10-27"
+            "close": 63954.19,
+            "pct": 1.08,
+            "date": "2026-10-28"
           },
           {
             "name": "항셍",
             "ticker": "^HSI",
-            "close": 23041.32,
-            "pct": -0.73,
-            "date": "2026-10-27"
+            "close": 23094.83,
+            "pct": 0.23,
+            "date": "2026-10-28"
           },
           {
             "name": "상해종합",
             "ticker": "000001.SS",
-            "close": 3648.3,
-            "pct": -1.33,
-            "date": "2026-10-27"
+            "close": 3681.47,
+            "pct": 0.91,
+            "date": "2026-10-28"
           }
         ],
         "alignment": {
           "label": "엇갈림",
-          "avg_pct": -0.11,
-          "mixed": true
+          "avg_pct": 0.74,
+          "mixed": false
         }
       },
       "europe": {
@@ -1129,28 +1134,28 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 25704.02,
-            "pct": 0.44,
-            "date": "2026-10-28"
+            "close": 26039.68,
+            "pct": 1.31,
+            "date": "2026-10-29"
           },
           {
             "name": "FTSE100",
             "ticker": "^FTSE",
-            "close": 10694.5,
-            "pct": 0.07,
-            "date": "2026-10-28"
+            "close": 10722.07,
+            "pct": 0.26,
+            "date": "2026-10-29"
           },
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6167.81,
-            "pct": 0.05,
-            "date": "2026-10-28"
+            "close": 6207.07,
+            "pct": 0.64,
+            "date": "2026-10-29"
           }
         ],
         "alignment": {
-          "label": "이어감",
-          "avg_pct": 0.19,
+          "label": "엇갈림",
+          "avg_pct": 0.74,
           "mixed": false
         }
       }
@@ -1158,53 +1163,53 @@
     "futures": {
       "contracts": {
         "ES": {
-          "high": 7778.25,
-          "high_t": "08:30",
-          "low": 7752.25,
-          "low_t": "22:00",
-          "range_pct": 0.34,
+          "high": 7819.5,
+          "high_t": "16:00",
+          "low": 7740.0,
+          "low_t": "23:30",
+          "range_pct": 1.03,
           "bars": 33
         },
         "NQ": {
-          "high": 29989.25,
-          "high_t": "04:00",
-          "low": 29780.25,
-          "low_t": "16:30",
-          "range_pct": 0.7,
+          "high": 30178.0,
+          "high_t": "16:00",
+          "low": 29482.5,
+          "low_t": "22:30",
+          "range_pct": 2.36,
           "bars": 33
         }
       },
       "gap": {
-        "S&P 500": 0.17,
-        "Nasdaq": 0.22,
-        "Russell 2000": 0.04
+        "S&P 500": -0.57,
+        "Nasdaq": -1.36,
+        "Russell 2000": 0.45
       },
-      "direction": "상승 출발"
+      "direction": "하락 출발"
     },
     "participation": {
-      "gap_pp": -0.39,
-      "spy_pct": 0.34,
-      "date": "2026-10-28",
-      "band": "중립"
+      "gap_pp": 1.58,
+      "spy_pct": -0.38,
+      "date": "2026-10-29",
+      "band": "소수가 끌어내림"
     },
     "tape": {
       "S&P 500": {
-        "close_position": 74,
+        "close_position": 73,
         "band": "중단 마감"
       },
       "Nasdaq": {
-        "close_position": 85,
-        "band": "고점권 마감"
+        "close_position": 58,
+        "band": "중단 마감"
       },
       "Russell 2000": {
-        "close_position": 97,
-        "band": "고점권 마감"
+        "close_position": 65,
+        "band": "중단 마감"
       }
     },
     "tape_calibration": {
-      "sessions": 2256,
+      "sessions": 2259,
       "high": 84.7,
-      "low": 26.8,
+      "low": 27.0,
       "source": "일간 OHLC 종가 위치의 사분위"
     }
   },
@@ -1214,8 +1219,8 @@
     "error": null,
     "key_configured": true,
     "degraded": false,
-    "requests": 40,
-    "series_ok": 39,
+    "requests": 43,
+    "series_ok": 42,
     "failed": [],
     "csv_rescued": []
   }
