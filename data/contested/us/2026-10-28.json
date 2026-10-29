@@ -5,10 +5,10 @@
  "report_date": "2026-10-28",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-29T13:02:27+00:00",
- "cutoff_at": "2026-10-29T13:02:27+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-29T14:06:54+00:00",
+ "cutoff_at": "2026-10-29T14:06:54+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,44 +21,42 @@
   "sha256": "7fed87a30ed4c83fa154bb2f42c6ae24f695d4c483acade1dc58543cb0bde6ae"
  },
  "counts": {
-  "harvest": 246,
-  "candidates": 3,
+  "harvest": 249,
+  "candidates": 2,
   "articles": [
    3,
-   2,
    5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 43926,
-   "out": 10671
+   "in": 42864,
+   "out": 11119
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "7/7",
-   "pairs": "3/3",
+   "claims": "4/4",
+   "pairs": "2/2",
    "obs": "6/6"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
    "obs": 6
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "영국 힐리 재무장관 첫 예산의 국방비 증액과 예산 대담성 평가",
-  "query": "healey john budget",
+  "query": "healey budget first",
   "trigger": []
  },
- "content_hash": "412c83c4c1c95f9f"
+ "content_hash": "0a628599e7798b28"
 }
