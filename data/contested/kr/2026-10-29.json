@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-10-29",
- "status": "error",
- "reason": "fetch_incomplete",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-29T11:36:18+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-29T11:52:36+00:00",
  "cutoff_at": "2026-10-29T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 593,
+  "harvest": 585,
   "candidates": 1,
   "articles": [
    6
@@ -45,19 +45,29 @@
    "sedaily": "ok"
   },
   "notes": [
-   "discover:593"
+   "discover:585"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 16203,
-   "out": 6663
+   "in": 30080,
+   "out": 10858
+  },
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "11/11"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 11
   }
  },
  "event": {
-  "topic_ko": "KB금융 3분기 실적의 이익 동력과 수수료 이익 체력 평가",
+  "topic_ko": "KB금융 3분기 실적의 수수료 이익 체력 평가",
   "query": "3분기 순익 영업익",
   "trigger": []
  },
- "content_hash": "4b3acafb40453edf"
+ "content_hash": "e328319143694965"
 }
