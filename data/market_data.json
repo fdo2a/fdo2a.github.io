@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-30 06:51 KST",
+  "generated": "2026-10-30 07:04 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-10-29",
   "indices": {
@@ -160,9 +160,9 @@
   },
   "commodities": {
     "WTI": {
-      "last": 102.76000213623047,
-      "chg": 1.0200042724609375,
-      "pct": 1.0025597541556186,
+      "last": 102.7699966430664,
+      "chg": 1.029998779296875,
+      "pct": 1.0123833309649166,
       "date": "2026-10-29",
       "prev": 101.73999786376953,
       "prev_date": "2026-10-28",
@@ -196,11 +196,11 @@
       "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 4034.300048828125,
-      "chg": -54.800048828125,
-      "pct": -1.3401493609690451,
+      "last": 4034.10009765625,
+      "chg": -55.199951171875,
+      "pct": -1.3498630697860836,
       "date": "2026-10-29",
-      "prev": 4089.10009765625,
+      "prev": 4089.300048828125,
       "prev_date": "2026-10-28",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -688,16 +688,16 @@
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 1.003,
+        "change": 1.012,
         "unit": "%",
-        "multiple": 0.4,
+        "multiple": 0.41,
         "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -1.34,
+        "change": -1.35,
         "unit": "%",
-        "multiple": -1.02,
+        "multiple": -1.03,
         "band": "보통"
       },
       "10Y": {
@@ -829,7 +829,7 @@
         }
       },
       "WTI": {
-        "value": 102.76,
+        "value": 102.77,
         "percentile": 97.4,
         "band": "매우 높음",
         "sessions": 504,
@@ -845,7 +845,7 @@
         }
       },
       "Gold": {
-        "value": 4034.3,
+        "value": 4034.1,
         "percentile": 50.8,
         "band": "중간",
         "sessions": 504,
