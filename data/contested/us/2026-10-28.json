@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-28",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-29T06:18:58+00:00",
- "cutoff_at": "2026-10-29T06:18:58+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-29T07:25:44+00:00",
+ "cutoff_at": "2026-10-29T07:25:44+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,51 +21,42 @@
   "sha256": "7fed87a30ed4c83fa154bb2f42c6ae24f695d4c483acade1dc58543cb0bde6ae"
  },
  "counts": {
-  "harvest": 229,
+  "harvest": 230,
   "candidates": 2,
   "articles": [
-   2,
+   3,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 59627,
-   "out": 14415
+   "in": 52682,
+   "out": 12623
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "8/8",
-   "pairs": "4/4",
+   "claims": "7/7",
+   "pairs": "3/3",
    "obs": "8/8"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 8
-  },
-  "attempt_refunded": "discovery_throttled"
+   "pairs": 0,
+   "claims": 0,
+   "obs": 6
+  }
  },
  "event": {
   "topic_ko": "영국 힐리 재무장관 첫 예산안: 국방 경로 신뢰성과 생계비 대책의 충분성",
   "query": "healey budget first",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "edges[0]:dangling",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "worry.most[0]:dangling"
- ],
- "content_hash": "5d63af36fcef3180"
+ "content_hash": "608027f3cfdc485b"
 }
