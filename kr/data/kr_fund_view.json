@@ -2,14 +2,13 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-10-29",
-  "generated_at": "2026-10-30 00:00 KST",
-  "status": "ok",
-  "missing": [],
+  "generated_at": "2026-10-30 00:30 KST",
+  "status": "partial",
+  "missing": [
+    "cash_rates: missing"
+  ],
   "source_dates": {
-    "session": "2026-10-29",
-    "CD 91일": "2026-10-29",
-    "국고채 3년": "2026-10-29",
-    "한국은행 기준금리": "2026-09"
+    "session": "2026-10-29"
   },
   "fx": {
     "last": 1335.29,
@@ -21,26 +20,7 @@
     "bars": 14,
     "source": "야후 30분봉, 한국장 시간대 마지막 관측(서울 외환시장 공식 종가 아님)"
   },
-  "cash_rates": [
-    {
-      "name": "CD 91일",
-      "value": 3.29,
-      "date": "2026-10-29",
-      "bp": 2.0
-    },
-    {
-      "name": "국고채 3년",
-      "value": 3.766,
-      "date": "2026-10-29",
-      "bp": -3.3
-    },
-    {
-      "name": "한국은행 기준금리",
-      "value": 3.0,
-      "date": "2026-09",
-      "bp": 0.0
-    }
-  ],
+  "cash_rates": [],
   "us_futures": {
     "ES": {
       "pct": 0.0,
