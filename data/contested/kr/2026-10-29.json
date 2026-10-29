@@ -1,0 +1,73 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-29",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-29T11:00:12+00:00",
+ "cutoff_at": "2026-10-29T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "9cc266f8d5e06b16194563601b4561be030b41ce",
+  "sha256": "4c7ea59182f1319a6dc20e6c2ce4a3e362d6de80aff0282c815f2b1b0e89e6f6",
+  "extra": {
+   "kr_econ.json": "db124d5913775edf79b8aac09633621735baf7df1d9455c4b74929ddf6c7437b",
+   "kr_flows.json": "219afd5783f5504e85e433b6e28f26bee6a325cb2605710c3333e63ae6c23a64",
+   "kr_session.json": "5957af517538937be976efb6c980e4bf3629dffb077ba36986cda6b7f888894d"
+  }
+ },
+ "counts": {
+  "harvest": 609,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "hankook": "ok",
+   "bizwatch": "ok",
+   "yna": "short",
+   "bpost": "ok",
+   "khan": "ok",
+   "news1": "short",
+   "fnnews": "ok",
+   "sedaily": "ok"
+  },
+  "notes": [
+   "discover:609"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 31174,
+   "out": 13394
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7
+  }
+ },
+ "event": {
+  "topic_ko": "KB금융 3분기 실적의 이익 동력과 수수료 이익 체력 평가",
+  "query": "3분기 순익 영업익",
+  "trigger": []
+ },
+ "content_hash": "3585658684cda87a"
+}
