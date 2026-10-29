@@ -1,6 +1,94 @@
 {
-  "report_date": "2026-10-28",
+  "report_date": "2026-10-29",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성전자",
+          "change_pct": -4.13,
+          "close": 232000,
+          "value": 5798340
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": 2.62,
+          "close": 1526000,
+          "value": 6795558
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": 3.47,
+          "close": 953000,
+          "value": 838201
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "전기제품",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "LG에너지솔루션",
+          "change_pct": -8.6,
+          "close": 356000,
+          "value": 322553
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "기계",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "두산에너빌리티",
+          "change_pct": -7.65,
+          "close": 56700,
+          "value": 446408
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "건설",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "대우건설",
+          "change_pct": -18.57,
+          "close": 11620,
+          "value": 377536
+        }
+      ]
+    }
+  ]
 }
