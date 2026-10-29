@@ -1,6 +1,14 @@
 {
-  "collected_at": "2026-10-29T16:04:54+09:00",
-  "since": "2026-10-29T00:24:56+09:00",
-  "items": [],
+  "collected_at": "2026-10-30T00:30:50+09:00",
+  "since": "2026-10-29T16:04:54+09:00",
+  "items": [
+    {
+      "ticker": "005930.KS",
+      "source": "Samsung Newsroom · Corporate",
+      "title": "Samsung Electronics Announces Third Quarter 2026 Results",
+      "url": "https://news.samsung.com/global/samsung-electronics-announces-third-quarter-2026-results",
+      "published": "2026-10-29T10:10:00+00:00"
+    }
+  ],
   "missing": []
 }
