@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-29T11:17:34+00:00",
- "cutoff_at": "2026-10-29T11:17:34+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-29T12:26:27+00:00",
+ "cutoff_at": "2026-10-29T12:26:27+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -26,23 +26,23 @@
   "articles": [
    3,
    2,
-   6
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46034,
-   "out": 10557
+   "in": 42996,
+   "out": 9681
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
@@ -52,13 +52,12 @@
    "pairs": 0,
    "claims": 0,
    "obs": 6
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "영국 힐리 재무장관 첫 예산의 국방비 증액과 예산 대담성 평가",
-  "query": "healey budget first",
+  "query": "healey john budget",
   "trigger": []
  },
- "content_hash": "03eb0e1d2f21be69"
+ "content_hash": "16201cf19d9bdfe7"
 }
