@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-29T07:45:37+00:00",
- "cutoff_at": "2026-10-29T07:45:37+00:00",
+ "collected_at": "2026-10-29T08:50:08+00:00",
+ "cutoff_at": "2026-10-29T08:50:08+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "7fed87a30ed4c83fa154bb2f42c6ae24f695d4c483acade1dc58543cb0bde6ae"
  },
  "counts": {
-  "harvest": 232,
+  "harvest": 233,
   "candidates": 2,
   "articles": [
    3,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 52237,
-   "out": 12552
+   "in": 51959,
+   "out": 10328
   },
   "discovery": "throttled",
   "hosts": {
@@ -43,21 +43,21 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
+   "claims": "4/4",
    "pairs": "2/2",
-   "obs": "10/10"
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 10
+   "obs": 8
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "영국 힐리 재무장관 첫 예산안: 국방 경로 신뢰성과 생계비 대책의 충분성",
-  "query": "healey budget first",
+  "query": "healey john budget",
   "trigger": []
  },
- "content_hash": "20f78c59342da6a5"
+ "content_hash": "b0670ee8dba45f32"
 }
