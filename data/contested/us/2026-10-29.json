@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-10-29T22:30:44+00:00",
- "cutoff_at": "2026-10-29T22:30:44+00:00",
+ "collected_at": "2026-10-29T22:48:07+00:00",
+ "cutoff_at": "2026-10-29T22:48:07+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "29b1c7a50ce42ae1aa8ff52e5c0e92736ef344edb6ad5c828048c42de02aede5"
  },
  "counts": {
-  "harvest": 245,
+  "harvest": 244,
   "candidates": 1,
   "articles": [
    3
@@ -30,19 +30,19 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32031,
-   "out": 9484
+   "in": 32348,
+   "out": 9620
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "aljazeera.com": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "4/4",
+   "claims": "5/5",
    "pairs": "2/2",
    "obs": "5/5"
   },
@@ -50,7 +50,8 @@
    "pairs": 1,
    "claims": 2,
    "obs": 5
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "라가르드 ECB 총재 조기 퇴임과 후임 경쟁",
@@ -59,14 +60,15 @@
  },
  "problems": [
   "structure:dangling",
+  "edges[0]:unverified",
   "edges[0]:dangling",
   "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:unverified",
+  "memo[0]:dangling",
   "memo[1]:dangling",
+  "memo[2]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified"
+  "worry.moderate[0]:unverified",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "7a77a743914e990c"
+ "content_hash": "7302c596113bf8db"
 }
