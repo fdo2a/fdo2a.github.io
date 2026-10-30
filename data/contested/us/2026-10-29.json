@@ -5,10 +5,10 @@
  "report_date": "2026-10-29",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-30T04:46:50+00:00",
- "cutoff_at": "2026-10-30T04:46:50+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-30T05:05:57+00:00",
+ "cutoff_at": "2026-10-30T05:05:57+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 42829,
-   "out": 11913
+   "in": 43175,
+   "out": 11688
   },
   "discovery": "ok",
   "hosts": {
@@ -44,12 +44,12 @@
   "grounded": {
    "claims": "6/6",
    "pairs": "3/3",
-   "obs": "9/9"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 9
+   "obs": 7
   }
  },
  "event": {
@@ -57,5 +57,5 @@
   "query": "healey budget first",
   "trigger": []
  },
- "content_hash": "47cceaa4f68602bd"
+ "content_hash": "ba74b0cbcc810ffb"
 }
