@@ -1,0 +1,73 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-10-30",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-10-30T11:11:55+00:00",
+ "cutoff_at": "2026-10-30T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "e00247aa15a224845d2b4cfb64ebb3918456745a",
+  "sha256": "a40a7db0be6b28f74b3ec63259524e8566e2b6cec353eceb9d295339d84953d7",
+  "extra": {
+   "kr_econ.json": "785e6f5131e521e40289bc69780a917b1073d6573cd410c62ce958752560fbfe",
+   "kr_flows.json": "8644585ebb8fb7ce58903e9f25496f61244ae7234d4b52ed5e18a39ab1a8a45c",
+   "kr_session.json": "281f19d1663884b9f2a4515e25f772b454e318f072831ee562d899058a008db0"
+  }
+ },
+ "counts": {
+  "harvest": 513,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "bpost": "short",
+   "chosun": "ok",
+   "hankyung": "ok",
+   "etnews": "ok",
+   "ytn": "short",
+   "newspim": "ok",
+   "edaily": "ok",
+   "newsis": "ok"
+  },
+  "notes": [
+   "discover:513"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 34129,
+   "out": 16542
+  },
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "2/2",
+   "obs": "11/11"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7
+  }
+ },
+ "event": {
+  "topic_ko": "기아 3분기 실적 부진의 성격(일시 요인과 구조 요인)과 주주환원 방식",
+  "query": "3분기 기아 영업익",
+  "trigger": []
+ },
+ "content_hash": "b35a4b07f19dfb9b"
+}
