@@ -2,7 +2,7 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-10-30",
-  "generated_at": "2026-10-30 18:10 KST",
+  "generated_at": "2026-10-30 23:55 KST",
   "status": "ok",
   "missing": [],
   "source_dates": {
@@ -83,8 +83,8 @@
       "unit_name": "전력망",
       "kind": "industry",
       "name": "전기제품",
-      "change_pct": -0.23,
-      "breadth": 0.118,
+      "change_pct": -1.45,
+      "breadth": 0.044,
       "leading": false,
       "date": "2026-10-30"
     },
@@ -125,8 +125,8 @@
       "unit_name": "산업재",
       "kind": "industry",
       "name": "조선",
-      "change_pct": -0.62,
-      "breadth": 0.1,
+      "change_pct": -1.48,
+      "breadth": 0.033,
       "leading": false,
       "date": "2026-10-30"
     },
@@ -159,8 +159,8 @@
       "unit_name": "금속·광업",
       "kind": "industry",
       "name": "철강",
-      "change_pct": -1.35,
-      "breadth": 0.255,
+      "change_pct": -1.77,
+      "breadth": 0.218,
       "leading": false,
       "date": "2026-10-30"
     },
@@ -169,8 +169,8 @@
       "unit_name": "금속·광업",
       "kind": "industry",
       "name": "비철금속",
-      "change_pct": -1.18,
-      "breadth": 0.15,
+      "change_pct": -2.3,
+      "breadth": 0.125,
       "leading": false,
       "date": "2026-10-30"
     },
@@ -187,18 +187,8 @@
       "unit_name": "금융",
       "kind": "industry",
       "name": "은행",
-      "change_pct": 0.6,
-      "breadth": 0.727,
-      "leading": true,
-      "date": "2026-10-30"
-    },
-    {
-      "unit_id": "financials",
-      "unit_name": "금융",
-      "kind": "industry",
-      "name": "증권",
-      "change_pct": -2.78,
-      "breadth": 0.103,
+      "change_pct": -0.23,
+      "breadth": 0.364,
       "leading": false,
       "date": "2026-10-30"
     },
@@ -223,9 +213,9 @@
       "unit_name": "소프트웨어",
       "kind": "industry",
       "name": "소프트웨어",
-      "change_pct": 4.93,
-      "breadth": 0.297,
-      "leading": true,
+      "change_pct": 4.2,
+      "breadth": 0.257,
+      "leading": false,
       "date": "2026-10-30"
     },
     {
