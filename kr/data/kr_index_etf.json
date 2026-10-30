@@ -3,56 +3,56 @@
     "name": "KODEX 200",
     "kind": "index_etf",
     "direction": null,
-    "value": 3280064,
-    "volume": 34721789
+    "value": 2716939,
+    "volume": 30157866
   },
   {
     "name": "KODEX 레버리지",
     "kind": "index_lev",
     "direction": "long",
-    "value": 2327886,
-    "volume": 29541250
+    "value": 1660063,
+    "volume": 23223639
   },
   {
     "name": "TIGER 200",
     "kind": "index_etf",
     "direction": null,
-    "value": 2287460,
-    "volume": 24292693
+    "value": 1658489,
+    "volume": 18471282
   },
   {
     "name": "KODEX 인버스",
     "kind": "index_lev",
     "direction": "short",
-    "value": 1707090,
-    "volume": 1507155863
+    "value": 1459267,
+    "volume": 1230720080
   },
   {
     "name": "KODEX 200선물인버스2X",
     "kind": "index_lev",
     "direction": "short",
-    "value": 983872,
-    "volume": 10928010510
+    "value": 1096003,
+    "volume": 11116479591
   },
   {
     "name": "TIGER 미국나스닥100",
     "kind": "overseas_etf",
     "direction": null,
-    "value": 956723,
-    "volume": 5498614
+    "value": 672422,
+    "volume": 3949902
   },
   {
     "name": "TIGER 미국S&P500",
     "kind": "overseas_etf",
     "direction": null,
-    "value": 937007,
-    "volume": 36682513
+    "value": 655786,
+    "volume": 25890074
   },
   {
     "name": "KODEX 미국나스닥100",
     "kind": "overseas_etf",
     "direction": null,
-    "value": 826530,
-    "volume": 31812011
+    "value": 621838,
+    "volume": 24456385
   }
 ]
