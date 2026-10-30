@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-30T03:42:10+00:00",
- "cutoff_at": "2026-10-30T03:42:10+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-30T04:46:50+00:00",
+ "cutoff_at": "2026-10-30T04:46:50+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,42 +22,40 @@
  },
  "counts": {
   "harvest": 242,
-  "candidates": 2,
+  "candidates": 1,
   "articles": [
-   2,
    5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 41952,
-   "out": 10561
+   "in": 42829,
+   "out": 11913
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "7/7"
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 7
-  },
-  "attempt_refunded": "discovery_throttled"
+   "obs": 9
+  }
  },
  "event": {
   "topic_ko": "영국 힐리 예산안의 국방 3% 재원과 재정 지속가능성 논쟁",
   "query": "healey budget first",
   "trigger": []
  },
- "content_hash": "137699c51fcde180"
+ "content_hash": "47cceaa4f68602bd"
 }
