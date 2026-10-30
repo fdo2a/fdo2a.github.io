@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-10-30T11:29:41+00:00",
+ "attempts": 3,
+ "collected_at": "2026-10-30T11:47:24+00:00",
  "cutoff_at": "2026-10-30T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 506,
+  "harvest": 500,
   "candidates": 1,
   "articles": [
    6
@@ -45,18 +45,18 @@
    "newsis": "ok"
   },
   "notes": [
-   "discover:506"
+   "discover:500"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 34089,
-   "out": 16243
+   "in": 34450,
+   "out": 15840
   },
   "grounded": {
-   "claims": "5/5",
+   "claims": "7/7",
    "pairs": "2/2",
-   "obs": "11/11"
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 0,
@@ -65,9 +65,9 @@
   }
  },
  "event": {
-  "topic_ko": "기아 3분기 감익의 원인 귀속(외부 일시 요인 대 EV 경쟁 비용)과 자",
+  "topic_ko": "기아 3분기 감익 원인을 외부 일시 요인과 EV 경쟁 비용 중 어디에 귀",
   "query": "3분기 기아 영업익",
   "trigger": []
  },
- "content_hash": "07902dd461b2ef40"
+ "content_hash": "bbdb641e86cc4002"
 }
