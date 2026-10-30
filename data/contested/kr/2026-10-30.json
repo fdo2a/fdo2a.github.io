@@ -5,9 +5,9 @@
  "report_date": "2026-10-30",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-30T12:05:01+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-30T12:22:22+00:00",
  "cutoff_at": "2026-10-30T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 488,
+  "harvest": 478,
   "candidates": 1,
   "articles": [
    6
@@ -45,29 +45,29 @@
    "newsis": "ok"
   },
   "notes": [
-   "discover:488"
+   "discover:478"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 34458,
-   "out": 14079
+   "in": 34548,
+   "out": 13701
   },
   "grounded": {
-   "claims": "6/6",
+   "claims": "5/5",
    "pairs": "3/3",
-   "obs": "10/10"
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 9
+   "obs": 7
   }
  },
  "event": {
-  "topic_ko": "기아 3분기 감익의 원인(외부 일시 요인 대 EV 경쟁 비용)과 주주환원",
+  "topic_ko": "기아 3분기 감익의 원인 귀속(중동전쟁 외부 요인 대 EV 인센티브 비용",
   "query": "3분기 기아 영업익",
   "trigger": []
  },
- "content_hash": "d3dcbc6733515458"
+ "content_hash": "47d1b5086bd4ada7"
 }
