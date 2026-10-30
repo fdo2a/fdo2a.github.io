@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-10-30T11:11:55+00:00",
+ "attempts": 2,
+ "collected_at": "2026-10-30T11:29:41+00:00",
  "cutoff_at": "2026-10-30T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 513,
+  "harvest": 506,
   "candidates": 1,
   "articles": [
    6
@@ -45,29 +45,29 @@
    "newsis": "ok"
   },
   "notes": [
-   "discover:513"
+   "discover:506"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 34129,
-   "out": 16542
+   "in": 34089,
+   "out": 16243
   },
   "grounded": {
-   "claims": "6/6",
+   "claims": "5/5",
    "pairs": "2/2",
    "obs": "11/11"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 7
+   "obs": 8
   }
  },
  "event": {
-  "topic_ko": "기아 3분기 실적 부진의 성격(일시 요인과 구조 요인)과 주주환원 방식",
+  "topic_ko": "기아 3분기 감익의 원인 귀속(외부 일시 요인 대 EV 경쟁 비용)과 자",
   "query": "3분기 기아 영업익",
   "trigger": []
  },
- "content_hash": "b35a4b07f19dfb9b"
+ "content_hash": "07902dd461b2ef40"
 }
