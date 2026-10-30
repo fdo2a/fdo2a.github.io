@@ -1,0 +1,29 @@
+KR 2026-10-30 press evidence (web search index excerpts and Naver Finance main-news summaries from kr/data/news/2026-10-30.json, observed 2026-10-30 ~09:10-09:20 UTC). Article bodies were not fetched; excerpts are search-index summaries. Prices/flows in this file are press figures and are NOT canonical; canonical values are kr/data.
+
+A. 시장 전반 — 미국 빅테크 AI 투자 부담 (g1 반도체, g4 전자부품)
+1. 이투데이 https://www.etoday.co.kr/news/view/2642392 — 美 빅테크 실적 쇼크에 코스피 5700선 턱걸이 마감.
+2. MBC https://imnews.imbc.com/replay/2026/nw1200/article/6861945_36967.html — '알파벳 충격'에 코스피 급락, 매도 사이드카.
+3. 더나은미래 https://futurechosun.com/archives/165145 — 코스피 3.5% 급락, 11거래일 만에 매도 사이드카 발동.
+4. 서울파이낸스 https://www.seoulfn.com/news/articleView.html?idxno=641414 — 알파벳·인텔 더블쇼크에 3%대 급락 출발.
+5. 서울경제 https://m.sedaily.com/article/20108376 — '알파벳 쇼크', 삼성전자 3%·SK하이닉스 7% 하락.
+6. 알파경제 https://www.alphabiz.co.kr/news/articleView.html?idxno=195507 — 3.48% 급락, 장중 5600선 내줌.
+7. 네이트(원문 매체 표기) https://m.news.nate.com/view/20261030n24635 — 외국인 1.6조 매도 (press figure).
+8. 네이버증권 주요뉴스 요약(kr/data/news/2026-10-30.json): 29일 뉴욕 알파벳 -12.64%, 나스닥 -1.38%. 알파벳·아마존 3분기 잉여현금흐름 적자(각 90억6000만달러, 334억5000만달러로 보도 — 다른 기사는 아마존 424억달러). 인텔 4분기 가이던스 하회. 다음 주 美 중간선거(11월 3일) 주목. 삼성전자·SK하이닉스 3분기 영업이익 107조4405억원·83조3338억원 역대 최대에도 하락.
+9. 뉴스핌 https://www.newspim.com/news/view/20261030000060 — 美 기술주 급락에 삼전닉스 5~6% 하락 출발.
+10. 데일리안 https://www.dailian.co.kr/news/view/1701836 / 재경일보 https://news.jkn.co.kr/post/1058426 — 삼성전기 장중 급락; AI 서버용 MLCC·FC-BGA 비중이 커 AI 투자 불확실성에 민감.
+11. 재경일보 https://news.jkn.co.kr/post/1058441 — 대덕전자 장중 14%대 하락, 최근 일주일 공시·개별 뉴스 미확인(업종 조정).
+
+B. 제약 상승 (g2)
+12. 서울신문 https://seoul.co.kr/news/economy/securities/2026/10/30/20261030500268 — SK하이닉스 7% 하락, 삼성바이오 8.9% 상승.
+13. 재경일보 https://news.jkn.co.kr/post/1058989 — 삼성바이오로직스 8%대 급등 마감; 확인된 단기 호재 공시 없음, 대형 바이오주 전반 매수세 유입으로 분석. 한미약품 개별 원인 기사 미확인.
+
+C. 해운 (g3)
+14. 잡포스트 https://www.job-post.co.kr/news/articleView.html?idxno=235617 — HMM 장중 4.26% 상승, 운임과 주주환원 기대 반영(제목). 단일 호재 특정 없음.
+
+D. 방산 (g5)
+15. 뉴스핌 https://www.newspim.com/news/view/20261030000268 / 데일리안 https://www.dailian.co.kr/news/view/1708568 / 서울경제 https://m.sedaily.com/article/20108204 / 공감신문 https://www.gokorea.kr/news/articleView.html?idxno=883420 — 한화에어로스페이스 3분기 영업이익 4,520억원(전년 대비 -46%, 전망치 약 61% 하회), 매출 6조943억원(-6%). 폴란드향 K9·천무 납품 4분기 이연, 대전 사업장 사고 관련 일회성 비용. 목표가 하향(다올 246만→140만, 신한 138만→101만, 삼성 136만→100만원). 4분기 인도 집중으로 반등 기대(DB증권 K9 30문·천무 20문 이상 예상).
+
+E. 정책·정치·대외
+16. 비즈워치 https://news.bizwatch.co.kr/article/market/2026/10/26/0005/ — 11월 3일 미국 중간선거(하원 435석·상원 35석). 하나증권: 불확실성 해소 시 반등 계기 가능, 미국 장기금리·달러 강세 완화가 외국인 수급에 우호적일 수 있음.
+17. 네이버증권 주요뉴스 요약: BOJ 10-30 정책금리 1.25% 동결, 우에다 총재 기조적 물가 2% 부합 첫 판단, 추가 인상 시사. 위성락 안보실장: 호르무즈 청해부대 강화·확대 검토(미완료). 미 10년물 5% 근처(AI 회사채 발행 급증 배경, 기사 요약).
+18. 금융위원회 자기주식 공시 강화(3차 상법 개정 후속) https://fsc.go.kr/no010101/86581 — 10-30 신규 정책 발표 미확인.

@@ -1,0 +1,431 @@
+{
+ "kr_market_data.json": {
+  "report_date": "2026-10-30",
+  "complete": true,
+  "missing": [
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 5730.74,
+    "change_pct": -3.48
+   },
+   "KOSDAQ": {
+    "close": 724.38,
+    "change_pct": -3.83
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-10-30",
+   "KOSDAQ": "2026-10-30"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kr_flows.json": {
+  "KOSPI": {
+   "rows": [
+    {
+     "date": "2026-10-30",
+     "individual": 6213,
+     "foreign": -16267,
+     "institution": 7498
+    },
+    {
+     "date": "2026-10-29",
+     "individual": -429,
+     "foreign": 1221,
+     "institution": -4132
+    },
+    {
+     "date": "2026-10-28",
+     "individual": -17037,
+     "foreign": 7677,
+     "institution": 9131
+    },
+    {
+     "date": "2026-10-27",
+     "individual": -9407,
+     "foreign": 5826,
+     "institution": 2824
+    },
+    {
+     "date": "2026-10-26",
+     "individual": 331,
+     "foreign": -6827,
+     "institution": 6131
+    }
+   ]
+  },
+  "KOSDAQ": {
+   "rows": [
+    {
+     "date": "2026-10-30",
+     "individual": 1699,
+     "foreign": -259,
+     "institution": -1390
+    },
+    {
+     "date": "2026-10-29",
+     "individual": 2058,
+     "foreign": -1210,
+     "institution": -740
+    },
+    {
+     "date": "2026-10-28",
+     "individual": -273,
+     "foreign": -1904,
+     "institution": 2246
+    },
+    {
+     "date": "2026-10-27",
+     "individual": -1723,
+     "foreign": 257,
+     "institution": 1507
+    },
+    {
+     "date": "2026-10-26",
+     "individual": 801,
+     "foreign": 442,
+     "institution": -1268
+    }
+   ]
+  }
+ },
+ "kr_movers.json": {
+  "report_date": "2026-10-30",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "반도체와반도체장비",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "SK하이닉스",
+      "change_pct": -7.08,
+      "close": 1418000,
+      "value": 5200681
+     },
+     {
+      "name": "삼성전자",
+      "change_pct": -3.02,
+      "close": 225000,
+      "value": 4284398
+     },
+     {
+      "name": "삼성전자우",
+      "change_pct": -5.33,
+      "close": 174100,
+      "value": 868232
+     },
+     {
+      "name": "SK스퀘어",
+      "change_pct": -5.88,
+      "close": 897000,
+      "value": 507219
+     },
+     {
+      "name": "한미반도체",
+      "change_pct": -7.21,
+      "close": 182700,
+      "value": 170539
+     },
+     {
+      "name": "이수페타시스",
+      "change_pct": -9.07,
+      "close": 84200,
+      "value": 60915
+     },
+     {
+      "name": "디아이",
+      "change_pct": -10.34,
+      "close": 39000,
+      "value": 39190
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "제약",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성바이오로직스",
+      "change_pct": 8.86,
+      "close": 1487000,
+      "value": 142717
+     },
+     {
+      "name": "한미약품",
+      "change_pct": 6.82,
+      "close": 415000,
+      "value": 100670
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "해운사",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위"
+    ],
+    "members": [
+     {
+      "name": "HMM",
+      "change_pct": 4.71,
+      "close": 23350,
+      "value": 43161
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "전자장비와기기",
+    "direction": "down",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성전기",
+      "change_pct": -7.5,
+      "close": 1196000,
+      "value": 1009690
+     },
+     {
+      "name": "대덕전자",
+      "change_pct": -13.6,
+      "close": 119400,
+      "value": 232220
+     },
+     {
+      "name": "LG이노텍",
+      "change_pct": -6.19,
+      "close": 326000,
+      "value": 57388
+     }
+    ]
+   },
+   {
+    "id": "g5",
+    "industry": "우주항공과국방",
+    "direction": "down",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "한화에어로스페이스",
+      "change_pct": -8.42,
+      "close": 696000,
+      "value": 275512
+     },
+     {
+      "name": "한화시스템",
+      "change_pct": -6.35,
+      "close": 60500,
+      "value": 46658
+     }
+    ]
+   }
+  ]
+ },
+ "kr_session.json": {
+  "report_date": "2026-10-30",
+  "us_prev": {
+   "as_of": "2026-10-29",
+   "rows": {
+    "S&P 500": -0.3,
+    "Nasdaq": -1.38,
+    "Dow": -0.25
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": -0.17,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.19,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -2.12,
+    "항셍": 1.46,
+    "상해종합": -1.44,
+    "대만가권": -2.49
+   },
+   "dates": {
+    "닛케이": "2026-10-30",
+    "항셍": "2026-10-30",
+    "상해종합": "2026-10-30",
+    "대만가권": "2026-10-30"
+   },
+   "avg_pct": -1.15,
+   "relative_pp": -2.33
+  },
+  "usdkrw_intraday": {
+   "high": 1340.18,
+   "high_t": "09:30",
+   "low": 1334.2,
+   "low_t": "15:30",
+   "close": 1334.2,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "kr_econ.json": {
+  "series": {
+   "국고채 3년": {
+    "value": 3.715,
+    "date": "2026-10-30",
+    "unit": "연%",
+    "item_name": "국고채(3년)",
+    "prev": 3.766,
+    "prev_date": "2026-10-29",
+    "bp": -5.1
+   },
+   "국고채 10년": {
+    "value": 4.008,
+    "date": "2026-10-30",
+    "unit": "연%",
+    "item_name": "국고채(10년)",
+    "prev": 4.081,
+    "prev_date": "2026-10-29",
+    "bp": -7.3
+   },
+   "CD 91일": {
+    "value": 3.32,
+    "date": "2026-10-30",
+    "unit": "연%",
+    "item_name": "CD(91일)",
+    "prev": 3.29,
+    "prev_date": "2026-10-29",
+    "bp": 3.0
+   },
+   "회사채 AA- 3년": {
+    "value": 4.407,
+    "date": "2026-10-30",
+    "unit": "연%",
+    "item_name": "회사채(3년, AA-)",
+    "prev": 4.449,
+    "prev_date": "2026-10-29",
+    "bp": -4.2
+   },
+   "한국은행 기준금리": {
+    "value": 3.0,
+    "date": "2026-09",
+    "unit": "연%",
+    "item_name": "한국은행 기준금리",
+    "prev": 3.0,
+    "prev_date": "2026-08",
+    "bp": 0.0
+   }
+  }
+ },
+ "kr_stock_moves.json(selected)": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": -7.08,
+   "close": 1418000,
+   "value": 5200681
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": -3.02,
+   "close": 225000,
+   "value": 4284398
+  },
+  {
+   "name": "삼성전기",
+   "change_pct": -7.5,
+   "close": 1196000,
+   "value": 1009690
+  },
+  {
+   "name": "삼성전자우",
+   "change_pct": -5.33,
+   "close": 174100,
+   "value": 868232
+  },
+  {
+   "name": "한화에어로스페이스",
+   "change_pct": -8.42,
+   "close": 696000,
+   "value": 275512
+  },
+  {
+   "name": "삼성바이오로직스",
+   "change_pct": 8.86,
+   "close": 1487000,
+   "value": 142717
+  },
+  {
+   "name": "두산에너빌리티",
+   "change_pct": -3.35,
+   "close": 54800,
+   "value": 136109
+  },
+  {
+   "name": "대우건설",
+   "change_pct": -6.02,
+   "close": 10920,
+   "value": 75931
+  }
+ ],
+ "history/kr_market.jsonl(tail)": [
+  {
+   "report_date": "2026-10-27",
+   "indices": {
+    "KOSPI": 5638.34,
+    "KOSDAQ": 743.83
+   }
+  },
+  {
+   "report_date": "2026-10-28",
+   "indices": {
+    "KOSPI": 6012.44,
+    "KOSDAQ": 771.28
+   }
+  },
+  {
+   "report_date": "2026-10-29",
+   "indices": {
+    "KOSPI": 5937.66,
+    "KOSDAQ": 753.23
+   }
+  },
+  {
+   "report_date": "2026-10-30",
+   "indices": {
+    "KOSPI": 5730.74,
+    "KOSDAQ": 724.38
+   }
+  }
+ ],
+ "prior_closes_from_ledger": {
+  "삼성전자 2026-10-28": 242000,
+  "두산에너빌리티 2026-10-29": 56700,
+  "SK하이닉스 2026-10-29": 1526000
+ }
+}
