@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-30 07:22 KST",
-  "report_date": "2026-10-29",
+  "generated": "2026-10-31 06:33 KST",
+  "report_date": "2026-10-30",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "growth_score": 0.009,
@@ -196,7 +196,7 @@
         "recent_avg": 196750.0
       },
       "trend_cell_ko": "개선(미미) · 4주 평균 200K → 197K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -219,7 +219,7 @@
         "recent_avg": 197937.5
       },
       "trend_cell_ko": "개선(완만) · 4주 평균 203K → 198K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -242,7 +242,7 @@
         "recent_avg": 1710000.0
       },
       "trend_cell_ko": "개선(완만) · 4주 평균 1,723K → 1,710K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -426,7 +426,7 @@
         "recent_avg": 3.4
       },
       "trend_cell_ko": null,
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Retail Sales MoM",
@@ -610,7 +610,7 @@
         "recent_avg": 3.489
       },
       "trend_cell_ko": "교착 · 3개월 평균 3.62% → 3.49%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Core PCE YoY",
@@ -633,7 +633,7 @@
         "recent_avg": 3.05
       },
       "trend_cell_ko": "교착 · 3개월 평균 3.10% → 3.05%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Michigan 1-Yr Inflation Exp",
@@ -659,117 +659,8 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "Real GDP Growth QoQ (ann.)",
-    "PCE Price Index YoY",
-    "Core PCE YoY"
-  ],
-  "headline_releases": [
-    {
-      "key": "pce",
-      "label": "개인소비지출(PCE)",
-      "tier": 1,
-      "agency": "BEA",
-      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "primary": "PCE Price Index YoY",
-      "max_abs_z": 0.226,
-      "indicators": [
-        {
-          "name": "PCE Price Index YoY",
-          "axis": "Inflation",
-          "actual": 3.65,
-          "previous": 3.44,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.226
-        },
-        {
-          "name": "Core PCE YoY",
-          "axis": "Inflation",
-          "actual": 3.12,
-          "previous": 3.03,
-          "ref_period": "2026-09-01",
-          "momentum_z": -0.123
-        }
-      ],
-      "components": [
-        {
-          "label": "내구재",
-          "fred_id": "PCEDG",
-          "transform": "mom_pct",
-          "actual": -0.558,
-          "previous": 1.81,
-          "ref_period": "2026-09-01"
-        },
-        {
-          "label": "실질 개인소비",
-          "fred_id": "PCEC96",
-          "transform": "mom_pct",
-          "actual": 0.015,
-          "previous": 0.55,
-          "ref_period": "2026-09-01"
-        }
-      ]
-    },
-    {
-      "key": "gdp",
-      "label": "GDP",
-      "tier": 1,
-      "agency": "BEA",
-      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
-      "primary": "Real GDP Growth QoQ (ann.)",
-      "max_abs_z": 0.122,
-      "indicators": [
-        {
-          "name": "Real GDP Growth QoQ (ann.)",
-          "axis": "Activity",
-          "actual": 3.4,
-          "previous": 2.2,
-          "ref_period": "2026-07-01",
-          "momentum_z": 0.122
-        }
-      ],
-      "components": []
-    },
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 0.684,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 194000.0,
-          "previous": 195000.0,
-          "ref_period": "2026-10-24",
-          "momentum_z": -0.389
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 196750.0,
-          "previous": 198000.0,
-          "ref_period": "2026-10-24",
-          "momentum_z": -0.684
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1701000.0,
-          "previous": 1722000.0,
-          "ref_period": "2026-10-17",
-          "momentum_z": -0.567
-        }
-      ],
-      "components": []
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-08-01",
