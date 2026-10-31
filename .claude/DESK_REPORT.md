@@ -187,6 +187,24 @@ A draft is ready only when all applicable checks below pass:
 - No claim assumes access to private flows or the reader's holdings. Numbers and
   causal certainty survive editing. Prose reads as an analytical report, with
   short contextual definitions when useful and no compulsory lessons or exercises.
+- Causal claims are as strong as their evidence. Each 「drove/caused/만들었다/주도했다」
+  can name the observation that favours it over the main alternative; otherwise fix it
+  as an accuracy error (not by mechanically softening every verb). Explanations that can
+  be cause and transmission are not set against each other; one phenomenon does not get
+  two different "preferred" explanations; a rebuttal states its reason; an explanation
+  is introduced before it is dismissed. A newly set check that both explanations would
+  pass is a price condition, not a test of the cause; existing ledger criteria are never
+  rewritten during editing.
+- Each judgment is explained in one home (headline = conclusion, strategy = interpretation and its
+  grounds, asset section = that asset's data, cause analysis and new facts, review =
+  what changed); other sections name
+  it without re-arguing it, while keeping their own independent judgments and every
+  marker-required number. Each paragraph does one job: its first sentence carries the
+  point and its last sentence belongs to it, not to the next paragraph. Section
+  contracts (markers, positions, counts, minimum content) outrank this edit
+  (`.claude/agents/STYLE_EXEMPLARS.md` §12, user decision 2026-10-31; applies to the
+  prose writers compose — generated summaries, contested analysis and code-rendered
+  thesis pages are out of scope).
 
 Repair failed items before applying the existing final publication gates. Do not
 publish a daily idea merely to fill a section; do not remove source or research

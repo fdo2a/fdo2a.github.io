@@ -39,7 +39,7 @@ model: opus
 - US: `weekly_<key>.html`
 - KR: `kr_weekly_<key>.html`
 
-디자인·조판은 **시장에 맞는 `scripts/common/post_css/us.css`·`kr.css` 를 그대로 `<style>` 에 넣는다**(일간 브리프 셸과 같은 스타일시트 — `.claude/agents/brief-report-writer.md` 「HTML — 본문만 쓴다」 절의 클래스 표가 쓸 수 있는 클래스다). 문체는 그 파일의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` **두 절과 `.claude/agents/STYLE_EXEMPLARS.md` §9(섹션 잇기)·§10(분석 언어와 전달 언어, 8~10 판단 서술어·절제·한 문장 한 단계 포함)만** 읽는다 — US 지시문 전체(60 KB)를 읽지 않는다. 여기 다시 쓰지 않는다 — 한쪽만 고쳐지는 사고를 막기 위해서다.
+디자인·조판은 **시장에 맞는 `scripts/common/post_css/us.css`·`kr.css` 를 그대로 `<style>` 에 넣는다**(일간 브리프 셸과 같은 스타일시트 — `.claude/agents/brief-report-writer.md` 「HTML — 본문만 쓴다」 절의 클래스 표가 쓸 수 있는 클래스다). 문체는 그 파일의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` **두 절과 `.claude/agents/STYLE_EXEMPLARS.md` §9(섹션 잇기)·§10(분석 언어와 전달 언어, 8~10 판단 서술어·절제·한 문장 한 단계 포함)·§12(구조 편집)와 「마감 점검표」만** 읽는다 — US 지시문 전체(60 KB)를 읽지 않는다. 여기 다시 쓰지 않는다 — 한쪽만 고쳐지는 사고를 막기 위해서다.
 
 **`<body data-layout="prose" data-register="da">` 를 반드시 단다.** `data-register="da"` 는 PM 이 읽는 `-다` 문서라는 선언이다(2026-09-24) — 어미를 `-다` 로 고정하고, 묻고 답하는 문장·작업 어휘(원장·회차·판정불가·파일명·실행 코드)·「국채 급등」을 쓰지 않는다. `check_period.py` 가 선언을 확인하고 `check_style.py` 가 내용을 막는다. 고치기 전/후 짝은 `.claude/agents/STYLE_EXEMPLARS.md`. **KR 은 노출 등급(확대·유지·축소)과 시계 라벨을 본문에 쓰지 않는다**(2026-10-04 — 원장에만 남는다). 일간의 등급을 복기할 때도 「위험 노출은 다음 세션까지 확대한다고 썼다」가 아니라 그날 무엇을 기다렸고 무엇이 판단을 바꿨는지로 쓴다. 확인 날짜·촉매 시점은 그대로 쓴다. `check_period.py --market kr` 이 선언형 등급 문장을 막는다. 생성된 「연구 판단 복기」 구간은 손대지 않는다(검사 밖이다).
 
