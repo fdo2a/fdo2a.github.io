@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-30",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-31T15:31:15+00:00",
- "cutoff_at": "2026-10-31T15:31:15+00:00",
+ "collected_at": "2026-10-31T16:35:34+00:00",
+ "cutoff_at": "2026-10-31T16:35:34+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "cf85b3752b92c402e925e6f61ae5a33d88548f8c89df970fc55ed29606220a94"
  },
  "counts": {
-  "harvest": 210,
+  "harvest": 207,
   "candidates": 2,
   "articles": [
    2,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44539,
-   "out": 11323
+   "in": 74925,
+   "out": 14962
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,12 +45,12 @@
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "9/9"
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 9
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -59,16 +59,5 @@
   "query": "binance korea hack",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "edges[1]:dangling",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.unlikely[0]:unverified",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "043581566acfa67b"
+ "content_hash": "d9c0da5ecab7eaa0"
 }
