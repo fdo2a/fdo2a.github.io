@@ -147,3 +147,45 @@ def test_schedule_lead_ignores_commented_rows():
             '<tr><td>10월 21일 마감</td><td>외국인 수급</td></tr></tbody></table></section></body></html>')
     lead = post_sections(html)[0]["lead"]
     assert "10월 21일 마감" in lead and "폐기" not in lead
+
+
+def test_learning_lead_reads_the_first_hypothesis_row_when_the_review_is_a_table():
+    # 2026-11-02 KR: 열린 판단이 표 행(<tr data-hypothesis>)이 된다 — 칸을 띄어 읽고 머리 행은 뺀다
+    html = ('<html><body><section class="card" data-learning="daily"><h2>시장 판단과 복기</h2>'
+            '<p data-lede="review">하루짜리 반발 해석은 철회한다.</p><div class="tbl-scroll"><table>'
+            '<thead><tr><th>판단(세운 날)</th><th>오늘 결과</th><th>상태</th></tr></thead><tbody>'
+            '<tr data-hypothesis="h1"><td>외국인 매도 = 비중 축소(10/26)</td><td>1조5,046억원 순매도</td>'
+            '<td>뒷받침</td></tr><tr data-hypothesis="h2"><td>두 번째 판단</td><td>-</td><td>보류</td></tr>'
+            '</tbody></table></div><p>단서 문장이다.</p></section></body></html>')
+    lead = post_sections(html)[0]["lead"]
+    assert "철회한다" in lead and "비중 축소(10/26) 1조5,046억원 순매도 뒷받침" in lead
+    assert "두 번째" not in lead and "판단(세운 날)" not in lead and "단서" not in lead
+
+
+def test_learning_lead_prefers_hypothesis_paragraph_over_row():
+    html = ('<html><body><section class="card" data-learning="daily"><h2>시장 판단과 복기</h2>'
+            '<p data-lede="review">판정 문단이다.</p><p data-hypothesis="h1">문단 가설.</p>'
+            '<table><tbody><tr data-hypothesis="h2"><td>표 가설</td></tr></tbody></table></section></body></html>')
+    lead = post_sections(html)[0]["lead"]
+    assert "문단 가설" in lead and "표 가설" not in lead
+
+
+def test_commented_old_hypothesis_does_not_win_over_the_table():
+    # codex 구현 검토 2026-10-31 #2
+    html = ('<html><body><section><h2>시장 판단과 복기</h2><p data-lede="review">판정 문단이다.</p>'
+            '<!-- <p data-hypothesis="old">폐기한 가설</p> --><table><tbody>'
+            '<tr data-hypothesis="new"><td>실제 판단</td><td>결과</td><td>뒷받침</td></tr></tbody></table>'
+            '</section></body></html>')
+    lead = post_sections(html)[0]["lead"]
+    assert "실제 판단" in lead and "폐기" not in lead
+
+
+def test_long_hypothesis_row_keeps_status_and_date():
+    # codex 구현 검토 2026-10-31 #3 — 세 칸 40자씩이면 상태·판정일이 잘렸다
+    a, b = '가' * 40, '나' * 40
+    status = '판단 보류 — 11월 5일 KRX 종가로 판정한다' + '다' * 13
+    html = ('<html><body><section><h2>시장 판단과 복기</h2><p data-lede="review">판정 문단이다.</p><table><tbody>'
+            f'<tr data-hypothesis="h1"><td>{a}</td><td></td><td>{b}</td><td>{status}</td></tr></tbody></table>'
+            '</section></body></html>')
+    lead = post_sections(html)[0]["lead"]
+    assert '11월 5일' in lead and len(lead) <= 220

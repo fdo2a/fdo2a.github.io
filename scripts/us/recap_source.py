@@ -26,6 +26,30 @@ def _plain(fragment):
 _HYPOTHESIS = re.compile(r'<p\b[^>]*data-hypothesis[^>]*>(.*?)</p>', re.S | re.I)
 
 
+_HYPOTHESIS_ROW = re.compile(r'<tr\b[^>]*data-hypothesis[^>]*>(.*?)</tr>', re.S | re.I)
+
+
+def _hypothesis_lead(block, n):
+    """열린 가설의 첫 문단, 없으면 첫 표 행(KR 2026-11-02). 주석 속 폐기 가설은 읽지 않는다
+    (codex 구현 검토 2026-10-31 #2). 행은 마지막 칸(상태·다음 판정일)을 지키고 앞 칸을 줄여
+    n 자에 맞춘다(#3)."""
+    block = re.sub(r'<!--.*?-->', '', block, flags=re.S)
+    hyp = _HYPOTHESIS.search(block)
+    if hyp:
+        return _cut(_plain(hyp.group(1)), n)
+    row = _HYPOTHESIS_ROW.search(block)
+    if not row:
+        return ''
+    cells = [t for t in (_plain(c) for _, c in _CELL.findall(row.group(1))) if t]
+    if not cells or len(' '.join(cells)) <= n:
+        return ' '.join(cells)
+    last = _cut(cells[-1], n // 2)
+    rest = cells[:-1]
+    room = max(0, n - len(last) - len(rest))           # 칸 사이 공백
+    share = room // len(rest) if rest else 0
+    return ' '.join([_cut(c, share) for c in rest] + [last])
+
+
 def _cut(text, n):
     return text if len(text) <= n else text[:n].rstrip() + '…'
 
@@ -61,11 +85,11 @@ def post_sections(html, max_lead=220):
         # 이 절에만 쓴다: 넓히면 옛 US 지표 대시보드 58곳의 리드가 바뀐다(2026-10-20 118편 대조).
         if _plain(h.group(1)) == SCHEDULE_TITLE:
             lead = _table_lead(block) or lead
-        hyp = _HYPOTHESIS.search(block) if 'data-lede="review"' in block else None
+        half = (max_lead - 5) // 2
+        hyp = _hypothesis_lead(block, half) if 'data-lede="review"' in block else ''
         if hyp:
-            # KR 복기(2026-10-20)는 어제 판정이 첫 문단이다 — 열린 가설 첫 문단을 함께 넘긴다
-            half = (max_lead - 5) // 2
-            lead = _cut(lead, half) + ' / ' + _cut(_plain(hyp.group(1)), half)
+            # KR 복기(2026-10-20)는 어제 판정이 첫 문단이다 — 열린 가설 첫 문단(또는 첫 행)을 함께 넘긴다
+            lead = _cut(lead, half) + ' / ' + hyp
         if len(lead) > max_lead:
             lead = lead[:max_lead].rstrip() + '…'
         out.append({'title': _plain(h.group(1)), 'lead': lead})

@@ -1,0 +1,136 @@
+/* Post shell — KR base stylesheet, verbatim from kr/posts/2026-09-23.html (identical
+   in every KR brief since 2026-09-04). Rendered by scripts/render_post.py. */
+* { box-sizing: border-box; }
+/* side padding for wayfinding.css — it must equal .doc's padding below */
+body .doc { --pad:20px; }
+@media (max-width: 560px) { body .doc { --pad:14px; } }
+body nav.crumbs { --crumb-pad:20px; }
+@media (max-width: 560px) { body nav.crumbs { --crumb-pad:14px; } }
+body { margin:0; padding:0; background:#F2F4F6; color:#191F28; font-family:'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR', sans-serif; letter-spacing:-0.01em; word-break:keep-all; overflow-wrap:break-word; line-height:1.6; }
+.doc { max-width:1120px; margin:0 auto; padding:20px 20px 60px; }
+.topbar { max-width:1120px; margin:0 auto; padding:14px 20px; display:flex; align-items:baseline; gap:10px; }
+.topbar .brand { color:#0064FF; font-weight:800; font-size:15px; }
+.topbar .date { color:#5F6B7A; font-size:13px; }
+.card { background:#fff; border-radius:14px; border:1px solid #F2F4F6; padding:20px 22px; margin-bottom:14px; page-break-inside:avoid; }
+.headline-card { background:#E8F2FF; border:1px solid #D6E8FF; }
+h1 { font-size:22px; margin:0 0 6px; line-height:1.35; color:#191F28; font-weight:800; }
+h2 { font-size:18.5px; margin:0 0 12px; color:#191F28; font-weight:800; display:flex; align-items:center; gap:8px; }
+h2::before { content:''; display:inline-block; width:6px; height:18px; background:#0064FF; border-radius:6px; }
+h3 { font-size:16px; margin:16px 0 8px; color:#191F28; font-weight:800; }
+h4 { font-size:15px; margin:10px 0 6px; color:#191F28; font-weight:700; }
+p { font-size:16px; color:#191F28; }
+.muted { color:#4E5968; }
+.sub { color:#5F6B7A; font-size:13px; }
+.caption { color:#5F6B7A; font-size:12.5px; margin:6px 0 0; line-height:1.5; }
+section { break-inside: avoid-page; page-break-inside: avoid; margin-bottom:6px; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+thead th { background:#F2F4F6; border-bottom:2px solid #0064FF; text-align:right; padding:9px 11px; font-weight:700; color:#191F28; white-space:nowrap; }
+thead th:first-child, td:first-child { text-align:left; }
+tbody td { padding:9px 11px; border-bottom:1px solid #F2F4F6; text-align:right; white-space:nowrap; }
+tbody tr:last-child td { border-bottom:none; }
+.tbl-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:10px; border:1px solid #F2F4F6; margin-bottom:6px; page-break-inside:avoid; break-inside:avoid-page; }
+.up { color:#007A45; font-weight:700; }
+.down { color:#C8282E; font-weight:700; }
+.pill { display:inline-block; padding:2px 9px; border-radius:9999px; font-size:12.5px; font-weight:700; }
+.pill-long { background:#E8F8EE; color:#007A45; }
+.pill-short { background:#FFE8E8; color:#C8282E; }
+.pill-info { background:#E8F2FF; color:#0064FF; }
+.box-label { display:inline-block; font-size:12.5px; font-weight:800; color:#0064FF; background:#E8F2FF; border-radius:6px; padding:2px 8px; margin-bottom:8px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+img.chart { width:100%; display:block; border-radius:10px; }
+.footer-note { font-size:12.5px; color:#5F6B7A; line-height:1.6; margin-top:18px; }
+.tbl-scroll table { margin:0; }
+@media (max-width: 560px) {
+  .doc, .topbar { padding-left:14px; padding-right:14px; }
+  .grid-2 { grid-template-columns:1fr; }
+  table { font-size:13px; }
+  th, td { padding:5px 7px; white-space:nowrap; }
+  th:first-child, td:first-child { white-space:normal; }
+  th:last-child, td:last-child { white-space:normal; }
+}
+
+/* 오늘의 뉴스 — 기사 하나를 한 덩어리로 (2026-09-24 사용자 지시: 앞 기사 본문이 끝나자마자
+   다음 기사 제목이 붙어 어느 본문이 어느 제목의 것인지 흐렸다). 기사마다 상자, 제목은 굵게,
+   매체·날짜는 제목 아래 줄, 기사·갈래 사이는 넉넉히. */
+.news-item { background:#F9FAFB; border:1px solid #EEF0F3; border-radius:12px; padding:16px 18px; margin:0 0 14px; }
+.news-item:last-child { margin-bottom:0; }
+.news-item .news-head { font-size:16.5px; font-weight:800; line-height:1.5; color:#191F28; margin:0 0 10px; }
+.news-item .news-head .sub { display:block; margin-top:3px; font-size:12.5px; font-weight:500; color:#5F6B7A; }
+.news-item p { margin:0 0 10px; }
+.news-item p:last-child { margin-bottom:0; }
+.card h3 + .news-item { margin-top:10px; }
+.news-item + h3 { margin-top:30px; }
+
+/* Wayfinding and contrast — appended to every market stylesheet by post_shell.css().
+   2026-10-21 impeccable critique: muted text and gain/loss colours were 2.6-3.5:1, mobile
+   tables dropped to 11px, and a 21,731px daily post had no way to move between posts.
+   Registered blocks (readability-v5, signcolor-v1, fund and sector renderers) are replayed
+   byte for byte by the gates, so their colours are overridden here by specificity and are
+   never edited at the source. --pad must equal the container's side padding. */
+.doc, .container { --pad:16px; }
+@media (max-width:560px) { .doc, .container { --pad:14px; } }
+
+.doc td.sc-up, :is(.doc, .container) .pos, .doc .fund-board .fb-p, .doc .fund-kr .fk-p,
+.doc .spf-val.p { color:#007A45; }
+.doc td.sc-dn, :is(.doc, .container) .neg, .doc .fund-board .fb-n, .doc .fund-kr .fk-n,
+.doc .spf-val.n { color:#C8282E; }
+.doc .fund-board .fb-t, .doc .fund-board .fb-note, .doc .fund-kr .fk-note, .doc .spf-val.z,
+nav.reading-map .reading-map-label { color:#5F6B7A; }
+/* Renderers that write the colour inline (sector values, editor note, nav links). The match
+   needs a declaration boundary before `color:` so background-color/border-color do not count. */
+[style^="color:#8B95A1" i], [style^="color: #8B95A1" i], [style*=";color:#8B95A1" i], [style*=";color: #8B95A1" i], [style*=" color:#8B95A1" i], [style*=" color: #8B95A1" i]
+  { color:#5F6B7A !important; }
+[style^="color:#e5342b" i], [style^="color: #e5342b" i], [style*=";color:#e5342b" i], [style*=";color: #e5342b" i], [style*=" color:#e5342b" i], [style*=" color: #e5342b" i]
+  { color:#C8282E !important; }
+[style^="color:#00a763" i], [style^="color: #00a763" i], [style*=";color:#00a763" i], [style*=";color: #00a763" i], [style*=" color:#00a763" i], [style*=" color: #00a763" i]
+  { color:#007A45 !important; }
+
+@media (max-width:560px) {
+  .tbl-scroll table:not(.stance-tbl) :is(th, td), .tbl-scroll td .sub { font-size:13px; }
+}
+/* Scroll shadow: shows only on the side that still hides columns. The cover gradients are
+   white, so only on white cards. */
+.card:not(.headline-card) .tbl-scroll {
+  background:
+    linear-gradient(to right, #fff 30%, rgba(255,255,255,0)) left / 24px 100% no-repeat local,
+    linear-gradient(to left, #fff 30%, rgba(255,255,255,0)) right / 24px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(25,31,40,.16), transparent) left / 10px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(25,31,40,.16), transparent) right / 10px 100% no-repeat scroll;
+}
+
+nav.reading-map { position:sticky; top:0; z-index:5; background:#F2F4F6;
+  margin:-2px calc(-1 * var(--pad, 16px)) 20px; padding:10px var(--pad, 16px) 8px;
+  box-shadow:0 1px 0 #E5E8EB; }
+nav.reading-map[data-more] { -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  mask-image:linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+nav.reading-map a { transition:background-color .15s cubic-bezier(.23,1,.32,1), color .15s cubic-bezier(.23,1,.32,1); }
+nav.reading-map a[aria-current="true"] { background:#0064FF; border-color:#0064FF; color:#fff; }
+:is(.doc, .container) section { scroll-margin-top:64px; }
+
+/* Breadcrumb row under the topbar — one pattern for daily, weekly and Japan pages. */
+nav.crumbs { max-width:1120px; margin:0 auto; padding:2px var(--crumb-pad, 16px) 0; display:flex;
+  flex-wrap:wrap; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#5F6B7A; }
+nav.crumbs a { color:#4E5968; text-decoration:none; padding:8px 2px; }
+nav.crumbs a:hover { color:#0064FF; }
+nav.crumbs a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; border-radius:4px; }
+nav.crumbs .crumbs-sep { color:#B0B8C1; }
+nav.crumbs .crumbs-aside { margin-left:auto; color:#0064FF; }
+@media (max-width:560px) { nav.crumbs { --crumb-pad:14px; } }
+
+nav.post-foot { max-width:1120px; margin:8px auto 48px; padding:0 var(--pad, 16px);
+  display:flex; flex-wrap:wrap; gap:8px; --pad:16px; }
+nav.post-foot a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px;
+  background:#fff; border:1px solid #E5E8EB; border-radius:9999px; color:#191F28;
+  font-size:14px; font-weight:700; text-decoration:none;
+  transition:border-color .15s cubic-bezier(.23,1,.32,1), transform .1s cubic-bezier(.23,1,.32,1); }
+nav.post-foot a[hidden] { display:none; }
+nav.post-foot .pf-news { color:#0064FF; border-color:#B9D5FF; background:#F5F9FF; }
+nav.post-foot a:hover { border-color:#B9D5FF; }
+nav.post-foot a:active { transform:scale(.97); }
+nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
+@media (max-width:560px) { nav.post-foot { --pad:14px; } }
+@media (prefers-reduced-motion:reduce) { nav.post-foot a, nav.reading-map a { transition:none; } }
+@media print {
+  nav.post-foot { display:none; }
+  nav.reading-map { position:static; box-shadow:none; }
+}

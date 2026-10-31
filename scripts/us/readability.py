@@ -606,6 +606,18 @@ def inject_reading_map(html: str) -> str:
     if len(sections) < 2:
         return out
 
+    # 층 머리(`common/post_parts.py`, 2026-11-02 부터 셸이 넣는다)가 있으면 빠른 이동은 층을 가리킨다.
+    # 첫 칸은 판단이 있는 전략 코멘트 — 1층에는 머리가 없다.
+    live = _blank_inert(out)
+    layer_heads = re.findall(r'<div class="part-head" id="(part-\d)" data-part="\d">([^<]+)</div>', live)
+    # 주석 밖의 실제 섹션에서 id 를 읽는다 — 주석 속 사본이 같은 id 를 써도 끌려가지 않는다(codex 재검토 #2).
+    found = re.search(r'<section\b[^>]*\bid="([^"]+)"[^>]*>(?:(?!</section>).)*?'
+                      r'<h2\b[^>]*>\s*전략 코멘트\s*</h2>', live, re.S)
+    strategy = found.group(1) if found else None
+    if layer_heads and strategy:
+        links = [("요약·판단", strategy)] + [(label, pid) for pid, label in layer_heads]
+        return _place_reading_map(out, links)
+
     wanted = [
         ("전략 코멘트", r"전략 코멘트"),
         ("시장 흐름", r"^(?:주식|지수.*장중|지수)$"),
@@ -646,6 +658,10 @@ def inject_reading_map(html: str) -> str:
             links.append((short_label(label), sid))
             used.add(sid)
 
+    return _place_reading_map(out, links)
+
+
+def _place_reading_map(out: str, links) -> str:
     nav = (
         "\n" + READING_MAP_MARKER + "\n"
         '<nav class="reading-map" aria-label="보고서 빠른 이동">'

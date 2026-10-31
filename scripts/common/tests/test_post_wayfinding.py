@@ -228,7 +228,7 @@ def test_contested_gate_still_trusts_posts_published_with_the_previous_shell_css
     trusted = check_contested.trusted_styles('us', '2026-10-20')
     for legacy in S.legacy_css('news'):
         assert any(legacy.strip() in s for s in trusted)
-    assert len(S.legacy_css('news')) == 2
+    assert len(S.legacy_css('news')) == 3
     assert any(S.css('us').strip() in s for s in trusted)
 
 

@@ -68,6 +68,12 @@ nav.post-foot a:active { transform:scale(.97); }
 nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
 @media (max-width:560px) { nav.post-foot { --pad:14px; } }
 @media (prefers-reduced-motion:reduce) { nav.post-foot a, nav.reading-map a { transition:none; } }
+/* Reading layers (common/post_parts.py): a rule-and-label header where each layer starts.
+   It belongs to the section after it, so print keeps the two together. */
+.doc .part-head { margin:40px 0 12px; padding-top:12px; border-top:2px solid #191F28;
+  font-size:14px; font-weight:800; color:#191F28; scroll-margin-top:64px;
+  break-after:avoid-page; page-break-after:avoid; }
+
 @media print {
   nav.post-foot { display:none; }
   nav.reading-map { position:static; box-shadow:none; }

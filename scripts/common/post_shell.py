@@ -24,6 +24,7 @@ import re
 from datetime import date as _date, timedelta
 from pathlib import Path
 
+from scripts.common import post_parts
 from scripts.common.analytics import SNIPPET as ANALYTICS
 
 CSS_DIR = Path(__file__).resolve().parent / 'post_css'
@@ -95,8 +96,8 @@ def css(market):
 
 # Stylesheets earlier posts were published with. Gates that trust "what the shell renders"
 # (check_contested) must keep trusting posts still inside their correction window.
-LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css', 'legacy/us-2026-10-21.css'),
-              'kr': ('legacy/kr-2026-10-20.css', 'legacy/kr-2026-10-21.css')}
+LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css', 'legacy/us-2026-10-21.css', 'legacy/us-2026-10-31.css'),
+              'kr': ('legacy/kr-2026-10-20.css', 'legacy/kr-2026-10-21.css', 'legacy/kr-2026-10-31.css')}
 
 
 def legacy_css(market):
@@ -222,6 +223,8 @@ def validate(market, date, meta, body):
 def render(market, date, meta, body):
     """The complete document. Call `validate` first; this does not re-check."""
     cfg = MARKETS[market]
+    if post_parts.applies(market, date):
+        body = post_parts.mark(body, market)
     day = _date.fromisoformat(date)
     url = f'https://fdo2a.github.io/{cfg["dir"]}/{date}.html'
     # 독자가 보는 날짜는 모두 거래일(키)이다 — 2026-10-04 사용자 지시로 한국 발행일 표시를 되돌렸다.

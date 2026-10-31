@@ -74,6 +74,8 @@ all the old sections. The four functions below are not four mandatory new cards.
 | 시장 판단과 복기 | What changed in prior hypotheses, what remains unresolved, and the next distinguishing observation |
 | 향후 확인 일정 (KR, 2026-10-20) | One table of dated checks and which judgment each decides — the only place the full list appears |
 
+From 2026-11-02 the shell labels these as layers (오늘 확인된 것 / 해석 / 판단과 복기 or 복기와 확인 일정 / KR 참고 자료); the judgment stays first and writers keep the section order.
+
 KR reorders these (2026-10-20): judgment, evidence, 복기 and the schedule first; daily chart,
 technical levels and news last as reference material. The KR order is in `kr-report-writer.md`.
 

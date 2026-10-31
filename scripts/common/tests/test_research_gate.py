@@ -185,3 +185,22 @@ def test_style_strips_both_the_old_and_the_new_generated_summary():
                  '<p>검토 대상 5건 중 검증 시작 전에 기록한 가설 5건, 시작 뒤에 기록한 가설 0건입니다. 진행 중 3건이며 확인 기한이 지난 가설은 0건입니다.</p>'):
         html = f'<body data-register="da"><section class="card" data-research-summary="x"><h2>연구 판단 복기</h2>{line}</section></body>'
         assert '입니다' not in style._body(html)
+
+
+def test_daily_hypotheses_may_be_table_rows():
+    # KR 2026-11-02: 열린 판단을 표로 — <tr data-hypothesis> 도 같은 ID 계약을 진다
+    g = gate()
+    rows = [{'id': 'c1', 'type': 'cycle', 'market': 'kr', 'report_date': '2026-11-02',
+             'candidate_ids': ['h1', 'h2'], 'reviewed_ids': [], 'unresolved': []}]
+    def page(trs):
+        return ('<section data-research-cycle="c1"><p data-lede="review">판정 문단이다.</p><div class="tbl-scroll">'
+                '<table><thead><tr><th>판단</th><th>오늘 결과</th><th>상태</th></tr></thead><tbody>'
+                + trs + '</tbody></table></div></section>')
+    h1 = '<tr data-hypothesis="h1"><td>외국인 매도 연장</td><td>1조원 순매도</td><td>뒷받침</td></tr>'
+    h2 = '<tr data-hypothesis="h2"><td>반도체 심리 충격</td><td>출발 값</td><td>새로 세움</td></tr>'
+    assert g.check_daily(page(h1 + h2), rows, 'c1', 'kr', '2026-11-02') == []
+    assert g.check_daily(page(h1), rows, 'c1', 'kr', '2026-11-02')                       # 빠진 판단
+    extra = h2.replace('h2', 'h3')
+    assert g.check_daily(page(h1 + h2 + extra), rows, 'c1', 'kr', '2026-11-02')          # 묶음 밖 판단
+    empty = '<tr data-hypothesis="h2"><td></td><td> </td><td></td></tr>'
+    assert g.check_daily(page(h1 + empty), rows, 'c1', 'kr', '2026-11-02')               # 빈 행
