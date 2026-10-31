@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-31T14:26:24+00:00",
- "cutoff_at": "2026-10-31T14:26:24+00:00",
+ "collected_at": "2026-10-31T15:31:15+00:00",
+ "cutoff_at": "2026-10-31T15:31:15+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,35 +21,36 @@
   "sha256": "cf85b3752b92c402e925e6f61ae5a33d88548f8c89df970fc55ed29606220a94"
  },
  "counts": {
-  "harvest": 218,
-  "candidates": 1,
+  "harvest": 210,
+  "candidates": 2,
   "articles": [
+   2,
    4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 74752,
-   "out": 16278
+   "in": 44539,
+   "out": 11323
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "bbc.co.uk": "ok",
+   "theguardian.com": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
+   "claims": "4/4",
    "pairs": "2/2",
    "obs": "9/9"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 8
+   "obs": 9
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -59,16 +60,15 @@
   "trigger": []
  },
  "problems": [
+  "structure:unverified",
   "structure:dangling",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
   "edges[1]:dangling",
+  "edges[2]:dangling",
   "memo[0]:dangling",
-  "memo[1]:unverified",
   "worry.most[0]:unverified",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:unverified",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "e88132ec62e04c90"
+ "content_hash": "043581566acfa67b"
 }
