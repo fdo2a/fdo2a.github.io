@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-10-31T18:44:15+00:00",
- "cutoff_at": "2026-10-31T18:44:15+00:00",
+ "attempts": 4,
+ "collected_at": "2026-10-31T19:48:19+00:00",
+ "cutoff_at": "2026-10-31T19:48:19+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,29 +21,26 @@
   "sha256": "cf85b3752b92c402e925e6f61ae5a33d88548f8c89df970fc55ed29606220a94"
  },
  "counts": {
-  "harvest": 199,
-  "candidates": 3,
+  "harvest": 196,
+  "candidates": 1,
   "articles": [
-   1,
-   2,
    4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44379,
-   "out": 10508
+   "in": 44464,
+   "out": 9334
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "bbc.co.uk": "ok",
-   "theguardian.com": "ok"
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
@@ -53,22 +50,24 @@
    "pairs": 1,
    "claims": 2,
    "obs": 7
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "바이낸스 63억달러 해킹: 손실 보전 약속의 신뢰성과 비트겟 피해액 수치",
-  "query": "binance north hack",
+  "query": "binance korea hack",
   "trigger": []
  },
  "problems": [
   "structure:unverified",
   "structure:dangling",
   "edges[1]:dangling",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
   "memo[0]:dangling",
-  "memo[1]:unverified",
+  "worry.most[0]:unverified",
   "worry.most[0]:dangling",
-  "worry.unlikely[0]:dangling"
+  "worry.moderate[0]:unverified",
+  "worry.unlikely[0]:unverified"
  ],
- "content_hash": "c4ff78e9db480434"
+ "content_hash": "6647293cfc07385d"
 }
