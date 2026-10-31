@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-30",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-10-31T00:56:35+00:00",
- "cutoff_at": "2026-10-31T00:56:35+00:00",
+ "collected_at": "2026-10-31T02:00:53+00:00",
+ "cutoff_at": "2026-10-31T02:00:53+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "cf85b3752b92c402e925e6f61ae5a33d88548f8c89df970fc55ed29606220a94"
  },
  "counts": {
-  "harvest": 225,
+  "harvest": 223,
   "candidates": 2,
   "articles": [
    2,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44694,
-   "out": 12302
+   "in": 45691,
+   "out": 14279
   },
   "discovery": "throttled",
   "hosts": {
@@ -44,33 +44,21 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "4/4",
+   "claims": "6/6",
    "pairs": "2/2",
    "obs": "9/9"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 0,
+   "claims": 0,
    "obs": 9
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "바이낸스 63억달러 해킹: 피해 보전 약속의 신뢰성과 관련 수치 충돌",
-  "query": "binance korea hack",
+  "topic_ko": "바이낸스 63억달러 해킹: 손실 보전 약속의 신뢰성과 관련 수치 충돌",
+  "query": "binance north hack",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "variables[2]:unverified",
-  "edges[1]:dangling",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.unlikely[0]:unverified"
- ],
- "content_hash": "deb762635291df51"
+ "content_hash": "bc06a0dcf12ccc80"
 }
