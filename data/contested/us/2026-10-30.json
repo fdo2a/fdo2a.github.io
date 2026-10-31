@@ -5,10 +5,10 @@
  "report_date": "2026-10-30",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-10-31T19:48:19+00:00",
- "cutoff_at": "2026-10-31T19:48:19+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-10-31T20:05:31+00:00",
+ "cutoff_at": "2026-10-31T20:05:31+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,52 +22,52 @@
  },
  "counts": {
   "harvest": 196,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
+   1,
+   2,
    4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44464,
-   "out": 9334
+   "in": 44304,
+   "out": 8924
   },
   "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "aljazeera.com": "short",
+   "bbc.co.uk": "ok",
+   "theguardian.com": "ok"
   },
   "notes": [],
   "gdelt": "ok",
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "7/7"
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 7
+   "obs": 8
   }
  },
  "event": {
   "topic_ko": "바이낸스 63억달러 해킹: 손실 보전 약속의 신뢰성과 비트겟 피해액 수치",
-  "query": "binance korea hack",
+  "query": "binance north hack",
   "trigger": []
  },
  "problems": [
-  "structure:unverified",
   "structure:dangling",
   "edges[1]:dangling",
-  "edges[2]:unverified",
   "edges[2]:dangling",
   "memo[0]:dangling",
-  "worry.most[0]:unverified",
   "worry.most[0]:dangling",
   "worry.moderate[0]:unverified",
   "worry.unlikely[0]:unverified"
  ],
- "content_hash": "6647293cfc07385d"
+ "content_hash": "5ff5e29fc2af8cac"
 }
