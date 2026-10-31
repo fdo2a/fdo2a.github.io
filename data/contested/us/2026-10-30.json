@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-10-30",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-10-31T16:35:34+00:00",
- "cutoff_at": "2026-10-31T16:35:34+00:00",
+ "collected_at": "2026-10-31T17:40:08+00:00",
+ "cutoff_at": "2026-10-31T17:40:08+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "cf85b3752b92c402e925e6f61ae5a33d88548f8c89df970fc55ed29606220a94"
  },
  "counts": {
-  "harvest": 207,
+  "harvest": 203,
   "candidates": 2,
   "articles": [
    2,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 74925,
-   "out": 14962
+   "in": 44380,
+   "out": 10487
   },
   "discovery": "throttled",
   "hosts": {
@@ -48,16 +48,26 @@
    "obs": "8/8"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7
+   "pairs": 1,
+   "claims": 2,
+   "obs": 8
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "바이낸스 63억달러 해킹: 손실 보전 약속의 신뢰성과 비트겟 피해액 수치",
-  "query": "binance korea hack",
+  "query": "binance north hack",
   "trigger": []
  },
- "content_hash": "d9c0da5ecab7eaa0"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "edges[1]:dangling",
+  "edges[2]:unverified",
+  "memo[0]:dangling",
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:unverified",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "53f792eea26261a8"
 }
