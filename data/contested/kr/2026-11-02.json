@@ -1,0 +1,37 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-02",
+ "status": "error",
+ "reason": "search_failed",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-02T11:34:28+00:00",
+ "cutoff_at": "2026-11-02T11:34:28+00:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": null,
+ "counts": {
+  "harvest": null,
+  "candidates": 0,
+  "articles": []
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "failed",
+  "hosts": {},
+  "notes": [],
+  "source": "naver",
+  "source_switch": ""
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "d32106aed194a63e"
+}
