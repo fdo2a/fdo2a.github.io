@@ -3,35 +3,79 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-11-02",
- "status": "error",
- "reason": "search_failed",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-02T14:46:47+00:00",
- "cutoff_at": "2026-11-02T14:46:47+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-02T15:21:17+00:00",
+ "cutoff_at": "2026-11-02T20:00:00+09:00",
  "model": {
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "72b79c34644cff6973a7c77f8570d7cb524308b7",
+  "sha256": "c3a79a108cd35eafdefb3f64d3a4633eeb78929c91a8e0c2f9e5dfd23e93542b",
+  "extra": {
+   "kr_econ.json": "9a4baf24df47334c2bcddc2667492f1e4624c20ae3c5751adf12d1d285765bae",
+   "kr_flows.json": "b69fb31831f9f460f39cfe0ecf8939d64ba98fe42d960689dcf7504b0e02a34e",
+   "kr_session.json": "7f051c7651df875e26ea1ed05093e1c42b380566282c9ebabb893a786da4f81c"
+  }
+ },
  "counts": {
-  "harvest": null,
-  "candidates": 0,
-  "articles": []
+  "harvest": 451,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
  },
  "diagnostics": {
   "runner": "local",
-  "discovery": "failed",
-  "hosts": {},
-  "notes": [],
+  "discovery": "truncated",
+  "hosts": {
+   "newsis": "ok",
+   "fnnews": "ok",
+   "chosun": "ok",
+   "hankook": "ok",
+   "bpost": "ok",
+   "hankyung": "ok"
+  },
+  "notes": [
+   "discover:451"
+  ],
   "source": "naver",
-  "source_switch": ""
+  "source_switch": "",
+  "tokens": {
+   "in": 33572,
+   "out": 9869
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 6
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "국내 주식 결제주기 T+1 단축 로드맵(2028년 목표)의 도입 시점 적",
+  "query": "주식 결제주기 받는다",
   "trigger": []
  },
- "content_hash": "9c6171e8686bedee"
+ "problems": [
+  "variables[0]:unverified",
+  "variables[2]:unverified",
+  "edges[0]:unverified",
+  "edges[1]:unverified",
+  "edges[2]:unverified",
+  "memo[0]:unverified",
+  "worry.most[0]:unverified",
+  "worry.unlikely[0]:unverified"
+ ],
+ "content_hash": "5c16c9bae7f8d069"
 }
