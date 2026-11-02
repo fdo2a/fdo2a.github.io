@@ -1,0 +1,955 @@
+{
+  "report_date": "2026-11-02",
+  "harvested": 867,
+  "notes": [
+    "pool https://finance.yahoo.com/news/rssindex: HTTP 404"
+  ],
+  "items": [
+    {
+      "guid": "b821910a-d1bc-355d-aa3c-ea769ac44b3d",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/murata-manufacturing-tse-6981-stock-210852373.html?.tsrc=rss",
+      "title": "Murata Manufacturing (TSE:6981) Stock Price Ignores Strong Q2 Earnings Results",
+      "summary": "Murata Manufacturing entered this Q2 2027 earnings release with a battered share price, down 25.3% over the past month and 14.3% over three months, yet still carrying a rich 40x P/E and a growth-heavy reputation. The print did not back that caution. Quarterly revenue reached ¥588,500m and basic earnings per share landed at ¥57.77, with trailing 12 month profit margins holding at 14.2%. The stock c",
+      "published": "2026-10-31T21:08:52+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 3874,
+      "body_file": "01-mlcc.txt",
+      "summary_ko": "Murata Manufacturing(TSE:6981)의 2027년 2분기(2026년 7~9월 기준 실적으로 보임) 매출은 5,885억 엔으로 전년 동기 대비 약 20.9% 늘었고, 순이익은 1,048억 엔으로 약 26.8% 증가했다. 기본 주당순이익(EPS)도 57.77엔으로 28.4% 올랐다. 최근 12개월 순이익률은 14.2%로 전년보다 0.8%포인트 개선됐다. 그럼에도 주가는 최근 30일과 90일 동안 하락했고, 한 달 새 25.3% 밀렸다. 기사는 이를 전자부품 경기 사이클이나 재고 조정에 대한 우려가 반영된 결과일 수 있다고 짚었다. 현재 주가수익비율(P/E)은 40배 수준이다. 기사는 실적 흐름상 재무적 압박보다는 이익 창출력이 유지되고 있다고 평가하면서도, 주가 변동성이 더 깊은 취약성의 신호인지는 추가로 확인할 필요가 있다고 덧붙였다. 아울러 초소형 MLCC, 서미스터, RF 커넥터 신제품 출시가 소개됐다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "19b35768-ebe8-3513-8acd-81b10c1c42b9",
+      "url": "https://finance.yahoo.com/technology/articles/murata-raises-full-outlook-ai-060503329.html?.tsrc=rss",
+      "title": "Murata raises full-year outlook as AI demand drives 41% profit growth",
+      "summary": "Investing.com -- Murata Mfg Co (TYO:6981) raised its full-year earnings forecast on Friday after stronger demand for data-centre components drove a sharp increase in first-half profit, with higher production volumes and an improved product mix supporting its performance.",
+      "published": "2026-10-30T06:05:03+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 2331,
+      "body_file": "02-mlcc.txt",
+      "summary_ko": "Murata Manufacturing은 7~9월 분기 매출이 5885억 엔으로 전년 대비 20.9% 늘었고, 영업이익은 42.4% 증가한 1474억 엔, 귀속순이익은 26.7% 늘어난 1048억 엔을 기록했다. 4~9월 누적 매출은 1.09조 엔(20.8%↑), 영업이익은 2459억 엔(48.9%↑)이다. 회사는 연간 매출 전망을 2.11조 엔에서 2.26조 엔으로, 영업이익 전망을 4300억 엔에서 5200억 엔으로 올렸다. 데이터센터 수요 확대와 생산량 증가, 제품 믹스 개선이 배경으로 제시됐으며, 설비투자 계획도 2550억 엔에서 2700억 엔으로 상향됐다. 주가는 일본 기술주 전반의 매도세에 밀려 9.52% 하락한 6234엔에 마감했다. 투자자들이 AI 투자의 지속성과 수익성에 의문을 제기한 영향이다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "9081d905-6202-30e3-8ae4-d557f215fe30",
+      "url": "https://finance.yahoo.com/technology/articles/murata-launches-world-smallest-rf-020000936.html?.tsrc=rss",
+      "title": "Murata Launches World’s Smallest RF / Microwave Coaxial Connectors with a Switch, Cutting PCB Mounting Area by Approximately 40%",
+      "summary": "KYOTO, Japan, October 29, 2026--Murata Launches World’s Smallest RF / Microwave Coaxial Connectors with a Switch, Cutting PCB Mounting Area by Approximately 40%.",
+      "published": "2026-10-29T02:00:00+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 2357,
+      "body_file": "03-mlcc.txt",
+      "summary_ko": "Murata가 세계에서 가장 작은 스위치 내장형 RF/마이크로파 동축 커넥터 'SWL 시리즈'를 출시했다고 2026년 10월 29일 보도됐다. 크기는 1.0mm×1.0mm×0.55mm로, 기존 SWJ 시리즈(1.4mm×1.2mm×0.65mm)보다 작다. 회로 측정 시 필요한 프로브 접근 공간이 줄어들어 RF 측정에 필요한 기판 면적을 약 40% 줄일 수 있다고 회사는 설명했다. 전용 자동·수동 프로브는 2026년 12월 양산에 들어갈 예정이다. 이 시리즈는 DC부터 15GHz까지 지원하며 공칭 임피던스는 50Ω이다. 제품은 MM8330-2600RJ5(5,000개 릴)와 MM8330-2600RK20(20,000개 릴) 두 가지 형태로 공급된다. 회사는 한정된 PCB 공간을 더 효율적으로 쓰게 해 고성능·소형 스마트폰과 웨어러블 기기를 지원하겠다는 방침이다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108504030",
+      "url": "https://www.cnbc.com/2026/11/02/oracle-files-to-sell-20-billion-in-new-stock-bonds-to-finance-ai-buildout.html",
+      "title": "Oracle files to sell $20 billion in new stock, bonds to finance AI buildout",
+      "summary": "Oracle filed plans on Monday to issue new shares and more debt to finance its artificial intelligence buildout.",
+      "published": "2026-11-02T21:10:34+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 2805,
+      "body_file": "04-ai.txt",
+      "summary_note": "가나·한자 「委」"
+    },
+    {
+      "guid": "108503877",
+      "url": "https://www.cnbc.com/2026/11/02/marvell-lumentum-ai-deal.html",
+      "title": "Lumentum CEO touts 'enormous' opportunity in massive AI connectivity deal with Marvell",
+      "summary": "The AI infrastructure deal is expected to close during the first half of 2028.",
+      "published": "2026-11-02T21:00:59+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 3296,
+      "body_file": "05-ai.txt",
+      "summary_ko": "Marvell Technology가 광통신 부품업체 Lumentum을 인수하는 거래를 발표했다. Lumentum CEO Michael Hurlston은 AI 인프라 확대로 늘어나는 연결성 수요에 대응할 \"엄청난\" 기회가 열렸다고 말했다. 거래는 현금 없이 고정 비율로 주식을 교환하는 방식으로, Lumentum의 내재 기업가치는 1,150억 달러다. Lumentum 주주는 보유 1주당 Marvell 주식 4.5주를 받으며, 거래는 2028년 상반기 종결될 예정이다. 거래 가치는 Marvell 주가에 따라 달라진다. 발표 당일 Marvell은 13%, Lumentum은 19% 가까이 급락했으나, 두 종목 모두 최근 1년간 AI 열풍에 크게 올랐다. Marvell은 전기 및 광 기술을 결합해 AI 연결 수요에 대응하겠다는 구상이다. Nvidia의 순환적 투자 방식에 대한 우려에는 Marvell CEO Matt Murphy가 선을 그었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108464920",
+      "url": "https://www.cnbc.com/2026/11/02/midterm-election-stocks-defense-healthcare-crypto-ai.html",
+      "title": "Defense, healthcare, crypto and AI: How the midterm election could affect stocks",
+      "summary": "Democratic gains in Congress could bring tougher oversight of major companies and shift billions of dollars in federal spending and regulatory policy.",
+      "published": "2026-11-02T18:59:48+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 9373,
+      "body_file": "06-ai.txt",
+      "summary_ko": "CNBC는 11월 중간선거에서 민주당이 상·하원 중 한쪽이라도 차지하면 기업 조사, 연방 지출 견제, 입법 양보 요구 등에서 새로운 영향력을 얻게 되지만 트럼프 대통령의 거부권과 관세·규제 권한은 유지된다고 짚었다. 모건스탠리에 따르면 공화당 대통령 아래 의회가 분점일 때 S&P500은 중간선거 후 1년간 평균 23% 올라 민주당이 양원을 장악했을 때의 16%를 웃돌았지만, 이번에는 이 공식이 통하지 않을 수 있다는 신중론도 있다. 정부 매출 비중이 큰 업종이 특히 민감하다. 몰리나헬스케어는 2025년 보험료 수익의 75%인 322억 달러를 메디케이드에서 거뒀고, 민주당은 필수 예산 협상에서 메디케이드 삭감 완화를 요구할 수 있다. 록히드마틴의 F-35 850대 기본합의는 의회 승인과 재원 마련이 필요하다. 가상자산 시장구조법인 클래리티법은 9월 상원에서 좌초됐고, 데이터센터는 전력비 부담 규제가 쟁점이다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "108505405",
+      "url": "https://www.cnbc.com/2026/11/02/remote-work-in-office-mandate-new-york-fed.html",
+      "title": "Feeling isolated? Half of in-office workers describe their desk jobs as 'remote,' NY Fed survey finds",
+      "summary": "Employees describing jobs as 'remote' are now often in-office, as companies fail to create the collaboration they claim is critical, NY Fed research shows.",
+      "published": "2026-11-02T22:34:07+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 4561,
+      "body_file": "15-macro.txt",
+      "summary_ko": "미국 뉴욕 연방준비은행(NY Fed) 연구진이 2026년 9월 대졸 이상 근로자 1,835명을 조사했다. 출근 근로자의 절반가량이 실제 업무 경험은 원격 근무와 다르지 않다고 답했고, 조사 대상의 48.8%는 최근 출근일에 팀원이든 외부인이든 대면 회의가 전혀 없었다고 응답했다. 출근일에도 팀원 중 최소 1명이 사무실에 없었다는 비율은 70.6%였다. 같은 사무실에 있으면서도 화상회의를 연 경우가 37%에 달했다. 미 노동통계국 자료상 전면 원격 근무자는 전체 근로자의 약 4분의 1이다. 연구진은 팀이 여러 사무실에 흩어진 조직 구조와 느슨한 출근 관리가 이런 괴리의 원인이라고 분석했다. 다만 고객 등 외부 대면 접촉은 조사에 포함하지 않았다. 갤럽 조사에서 근로자 정서가 15년 만의 최저로 나타난 점도 언급됐다. 연구진은 출근 정책을 폐기하기보다 실제로 준수시키는 것이 대면 접촉 확보에 도움이 된다고 결론지었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108504162",
+      "url": "https://www.cnbc.com/2026/11/02/fed-rate-votes-consumer-borrowing-costs.html",
+      "title": "Fed will vote on rates less often. What that could mean for borrowers",
+      "summary": "Fed Chairman Kevin Warsh said he plans to reduce the number of rate-setting votes, a move some economists say could delay relief for borrowers.",
+      "published": "2026-11-02T19:21:15+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 4423,
+      "body_file": "16-macro.txt",
+      "summary_ko": "연방준비제도(Fed)는 지난 10월 28일 기준금리를 연 3.75~4%로 동결했다. 케빈 워시 의장은 향후 2년간 금리 결정 투표 횟수를 줄이겠다고 밝혔다. 내년에는 연 8차례 회의 중 1회가 금리 투표와 사후 성명 없이 진행되고, 내후년에는 '전략' 회의가 2회로 늘어 금리 조정 기회는 연 6회로 줄어든다. 비상 회의는 예외다. 전문가들은 이로 인해 소비자가 대출 금리 변화를 체감하기까지 시간이 더 걸릴 수 있다고 본다. 금융사는 연준 일정과 무관하게 금리를 바꿀 수 있지만, Post Oak Group의 제임스 브라크스는 소비자에게는 회의 횟수보다 대출 금리 인하가 인상만큼 빨리 전가되는지가 더 중요하다고 짚었다. 신용카드 금리는 동결 중에도 금융사의 위험 회피로 오르는 추세다. 워시 의장이 선제 안내를 줄이면서 연준의 향후 방향을 읽기 어려워졌다는 우려도 나온다. 전문가들은 당분간 고금리 예금 상품을 비교해 가입하는 것이 소비자의 최선의 방어책이라고 조언했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108486861",
+      "url": "https://www.cnbc.com/2026/11/01/election-municipal-bonds.html",
+      "title": "The midterm election could reshape the muni bond market. Here’s what investors need to know",
+      "summary": "The 2026 election could affect municipal bonds through state tax measures, new bond supply and the makeup of Congress.",
+      "published": "2026-11-01T12:30:48+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 5768,
+      "body_file": "17-macro.txt",
+      "summary_ko": "11월 4일 미국 중간선거의 주 단위 투표 결과가 지방채 시장을 흔들 수 있다는 분석이다. 캘리포니아에서는 자산 10억 달러 이상 납세자에게 일회성으로 부과하는 억만장자세와, 고소득자 한시 증세를 영구화하는 안건이 올라와 있다. 누빈의 달 클로즈는 증세가 통과되면 세금 면제 혜택의 가치가 커져 지방채 가격이 오를 것으로 봤다. 플로리다는 주택 면세 한도를 높이는 안건이 걸려 있어, 일부 지방정부가 세입을 다른 곳에서 메우지 못하면 신용이 나빠질 수 있다. 발행 물량도 부담이다. 2026년 9월까지 발행액은 4738억 달러로 전년보다 7.8% 늘었다. 워싱턴주는 연소득 100만 달러 초과자에게 9.9% 세금을 물리는 법의 폐지 여부를 유권자가 가리게 됐다. 전문가들은 지방채 지수의 약 70%가 AAA 또는 AA 등급이라 신용 품질이 양호하고 수익률도 매력적이라고 평가한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108505552",
+      "url": "https://www.cnbc.com/2026/11/02/trump-midterm-election-speech-reflecting-pool.html",
+      "title": "Trump focuses on Reflecting Pool in final public speech before midterms",
+      "summary": "Trump seemed to acknowledge that Democrats had an advantage heading into Election Day. \"But we gave this a very strong shot,\" he said.",
+      "published": "2026-11-02T21:15:13+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 3030,
+      "body_file": "24-politics.txt",
+      "summary_ko": "트럼프 대통령은 화요일 투표일을 앞두고 가진 마지막 대면 연설에서 링컨기념관 리플렉팅 풀 개보수 성과를 길게 언급하며 연설을 시작했다. 그는 풀을 공식 재개장한다고 밝혔고, 이 시설은 문제 많은 공사로 수개월간 울타리가 쳐져 있었다. 트럼프는 풀이 그 어느 때보다 아름다워졌다고 강조하며 훼손과 공사 지연의 책임을 파괴 행위자에게 돌렸다. 그러나 연방검사 지니핀 피로는 7월 31일 법원에서 시공업체의 잘못된 설치가 손상의 원인이라고 진술한 바 있다. 연설 약 23분 무렵에야 중간선거를 언급한 트럼프는 민주당이 미국 역사상 가장 극단적이고 위험한 후보들을 내세웠다고 비판했다. 그는 공화당이 승리하면 모두가 5000달러를 받게 될 것이라는 논쟁적 주장을 되풀이했다. 한편 그는 대통령 소속 정당이 중간선거에서 부진한 경향이 있다는 역사적 흐름을 인정하며 민주당의 우위를 암시했다. 연설은 이후 개선문 건설, 포토맥강 산책로, 국가영웅정원 계획으로 이어졌다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108504882",
+      "url": "https://www.cnbc.com/2026/11/02/supreme-court-california-mail-ballots-election.html",
+      "title": "DOJ asks Supreme Court to block California counting disputed mail-in ballots",
+      "summary": "The Department of Justice's request to the Supreme Court in the California case comes as it appeals dismissal of a lawsuit over Alaska's Senate election.",
+      "published": "2026-11-02T19:38:58+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 3696,
+      "body_file": "25-politics.txt",
+      "summary_ko": "트럼프 행정부 법무부(DOJ)가 2일(현지시간) 연방대법원에 캘리포니아주가 시민권이 없을 가능성이 있는 유권자 약 2만 명의 우편투표를 집계하지 못하도록 임시로 막아 달라고 청구했다. 앞서 9써킷 항소법원은 지난달 30일 DOJ가 하급심 판결을 뒤집어 달라는 요청을 2대1로 기각했다. 하급심 판사 데이비드 카터는 지난달 28일 DOJ의 요청을 거부하며, 선거를 앞두고 연방 행정부가 주정부의 선거 절차를 바꾸려 한다고 비판했다. DOJ는 10월 15일 로스앤젤레스 연방지방법원에 소송을 냈고, 로스앤젤레스 카운티 관계자에게 비시민권자로 의심되는 유권자 명단을 담은 USB를 전달한 바 있다. 존 사워 법무차관보는 연방이 항소에서 승소할 가능성이 크다고 주장했다. 대법원의 결정 시한은 정해져 있지 않다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108504605",
+      "url": "https://www.cnbc.com/2026/11/02/fbi-hunter-biden-doj-case-dismissed.html",
+      "title": "Judge tosses DOJ case against ex-FBI officials accused of lying about Hunter Biden probe",
+      "summary": "Judge Zia Faruqui suggested the prosecution of ex-officials Nikki Floris and Bradley Benavides was rushed to come out ahead of the midterm election.",
+      "published": "2026-11-02T19:19:17+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 2883,
+      "body_file": "26-politics.txt",
+      "summary_ko": "미국 연방 치안판사 지아 파루키는 2일(현지시간) 헌터 바이든 수사와 관련해 전 FBI 간부 2명이 의회에서 거짓말했다는 혐의로 법무부가 제기한 사건을 기각했다. 그는 법무부가 이 사건을 '무기화(weaponization)'했다고 강하게 비판했다. 파루키는 정부가 상당한 이유(probable cause)를 입증하지 못했고, 2023년 하원 법사위원회 진술이 알고도 거짓이었다는 증거도 제시하지 못했다고 밝혔다. 법무부가 중간선거를 앞두고 사건을 서둘러 추진한 점도 문제로 지적됐다. 그는 사건을 떠맡은 정부 측 변호인들에게 \"부당하다\"며 사과하기도 했다. 기소 대상은 니키 플로리스와 브래들리 베나비데스로, 법무부는 10월 23일 혐의를 공개했다. 대배심 기소 대신 체포영장 발부에 쓰이는 형사고소장을 활용했는데, 파루키는 이 방식이 이례적이라고 지적하며 지난주 추가 고소장 서명을 거부했다. 법무부는 판결에 이의를 제기하며 대응 방안을 검토 중이라고 밝혔다. (약 330자)",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108505005",
+      "url": "https://www.cnbc.com/2026/11/02/palantir-pltr-earnings-q3-2026.html",
+      "title": "Palantir reports booming U.S. commercial revenue growth, topping government for first time",
+      "summary": "Palantir's commercial revenue jumped 148% to $984 million, surpassing government revenue of $953 million.",
+      "published": "2026-11-02T22:22:00+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 2034,
+      "body_file": "27-industry.txt",
+      "summary_ko": "Palantir가 11월 2일(현지시각) 장 마감 후 발표한 3분기 실적이 월가 예상치를 웃돌았다. 매출은 전년 대비 거의 두 배로 늘어 사상 처음 20억 달러를 넘었고, 순이익은 11억 3,000만 달러(주당 44센트)로 전년의 약 4억 7,600만 달러(주당 18센트)에서 두 배 넘게 뛰었다. 특히 미국 상업 매출이 148% 급증한 9억 8,400만 달러로 정부 매출 9억 5,300만 달러를 처음 앞질렀다. 회사는 연간 미국 상업 매출 전망치를 기존 34억 2,000만 달러에서 35억 6,000만 달러 이상으로 올렸고, 4분기 매출은 약 26억 5,000만 달러, 2026년 연간 매출은 약 85억 3,000만 달러를 예상했다. 알렉스 카프 CEO는 기업들의 AI 도구 도입이 성장을 이끌고 있으며 영업 인력 없이도 사업이 커지고 있다고 설명했다. 한편 카프는 AI 연구소의 국유화 필요성을 다시 주장하며 업계 규제 논쟁에도 목소리를 냈다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108490442",
+      "url": "https://www.cnbc.com/2026/11/02/intel-foundry-faces-critical-test-after-stocks-45percent-plunge-in-october.html",
+      "title": "Intel foundry push faces critical test after stock's 45% plunge in October",
+      "summary": "Intel’s turnaround now hinges on proving its foundry strategy can deliver, as customers look for signs the company will add fab capacity and catch TSMC",
+      "published": "2026-11-02T21:59:48+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 6010,
+      "body_file": "28-industry.txt",
+      "summary_ko": "인텔이 10월 한 달간 주가가 45% 급락해 FactSet 기준 월간 역대 최대 하락을 기록했다. PC 시장 악화가 직접적 계기다. 인텔은 이번 분기 매출이 애널리스트 추정치보다 10억~20억 달러 낮을 것이라고 밝혔고, PC 부문이 매출의 약 절반을 차지하는 만큼 타격이 컸다. 주가는 금요일 29% 폭락해 1970년대 이후 최악의 하루를 기록했다. 미국 정부의 지분 인수와 엔비디아 투자 이후 6배 가까이 올랐던 주가는 6월 고점을 찍고 흘러내렸다. 인텔은 파운드리 사업에서 아직 대형 고객을 확보하지 못했다. 설비 부족을 이유로 오리건 공장 생산능력의 일부를 데이터센터용 구형 공정으로 돌리기로 해, 최신 18A 공정의 외부 고객 유치에 차질이 생길 수 있다는 지적이 나온다. 하버드 경영대학원의 데이비드 요피는 1년 안에 대형 고객을 찾지 못하면 회사 경제성 압박이 더 뚜렷해질 것이라고 경고했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108504251",
+      "url": "https://www.cnbc.com/2026/11/02/fanatics-nhl-hometown-remix-jerseys.html",
+      "title": "Fanatics takes bigger NHL design role with all-32 team Hometown Remix jerseys",
+      "summary": "Fanatics and the NHL debuted Hometown Remix, a special-edition uniform and apparel program covering all 32 teams.",
+      "published": "2026-11-02T17:28:16+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 6109,
+      "body_file": "29-industry.txt",
+      "summary_ko": "Fanatics가 NHL과 함께 전 32개 구단의 'Hometown Remix' 유니폼 프로그램을 11월 2일(현지시간) 공개했다. 각 디자인은 구단의 도시와 팬층에 초점을 맞췄으며, 리그 전체 유니폼 프로그램을 Fanatics가 직접 디자인하고 개발한 것은 이번이 처음이다. NFL과 MLB에서는 선수 유니폼 디자인을 Nike가 맡아 왔다는 점에서 차이가 있다. Fanatics는 2024년 확장 계약 발효 이후 작업을 진행했으며, 2024-25 시즌부터는 공식 선수 유니폼에 자사 브랜드가 노출되고 있다. 맞춤 이름과 번호가 들어간 프리미엄 유니폼은 275달러, 선수 착용과 같은 오센틱 유니폼은 500달러다. 한정 물량으로 출시되어 연말 쇼핑 시즌을 앞둔 시점이라는 점도 주목된다. 각 구단은 이번 시즌 남은 기간 일정 경기에서 이 유니폼을 착용하며, 프로그램 자체는 2026-27 시즌용이다. NHL은 특별 유니폼 경기가 티켓 판매와 후원 활성화에 긍정적이라고 보지만 구체적인 목표치는 밝히지 않았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108443488",
+      "url": "https://www.cnbc.com/2026/10/22/trump-economic-approval-rating-midterms-poll.html",
+      "title": "Trump's approval rating on economy hits all-time low as midterm looms: CNBC survey",
+      "summary": "Eight out of 10 Americans now rate the economy as fair or poor, one of several findings in a CNBC poll that show why Republican candidates face uphill battles.",
+      "published": "2026-10-23T20:49:42+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 6879,
+      "body_file": "30-economy.txt",
+      "summary_ko": "CNBC 올아메리칸 경제조사에 따르면 중간선거를 약 2주 앞둔 시점에서 트럼프 대통령의 경제 지지율은 역대 최저치인 34%로 떨어졌고, 반대는 65%로 올랐다. 경제 순지지율은 -31%p로 트럼프 두 임기를 통틀어 가장 낮다. 현재 상황을 \"부정적\"이라고 본 응답자는 80%에 달했는데, 공화당 지지층의 비관론도 35%로 올라 두 임기 중 가장 높았다. 이번 조사는 등록 유권자 1,000명을 대상으로 했고 오차범위는 ±3.1%p다. 연방 의회 통제권에서는 민주당 선호가 52%대 45%로 앞섰다. 물가가 가장 큰 걱정거리로 꼽혔으며 식료품 가격 우려는 민주당 우위가 +16%p로 벌어졌다. 이란 전쟁이 핵 능력 저지에 값어치가 있었다는 응답은 46%로, 4월의 53%에서 줄었다. 공화당 측 여론조사 기관은 민주당의 대규모 승리는 장담하기 어렵다고 보았다. 다만 이번 결과는 공화당 텃밭에서도 이반이 나타나고 있다는 점에서 선거 판세에 적지 않은 부담이 될 것으로 평가된다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108413959",
+      "url": "https://www.cnbc.com/2026/10/15/september-producer-price-index-retail-sales-data.html",
+      "title": "Wholesale prices jumped 6.3% annually in September, biggest gain since 2022",
+      "summary": "September producer prices were expected to increase 0.6% month over month and 5.5% annually, according to the consensus estimate by Dow Jones.",
+      "published": "2026-10-15T16:15:44+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 3177,
+      "body_file": "31-economy.txt",
+      "summary_ko": "2026년 9월 미국 생산자물가지수(PPI)는 전월 대비 1.3%, 전년 대비 6.3% 올라 각각 2022년 3월과 12월 이후 최대 상승폭을 기록했다. 다우존스 전문가 예상치(전월 0.6%, 전년 대비 5.5%)를 크게 웃돌았다. 식품과 에너지를 뺀 근원 PPI도 전월 대비 0.7%, 전년 대비 5% 상승했다. 미국과 이란의 전쟁으로 중동 원유 공급이 줄면서 에너지 가격이 급등한 것이 주된 원인이다. 노동통계국에 따르면 가공식품 가격 상승분의 거의 절반이 디젤 가격 상승과 연관된다. 같은 날 발표된 9월 소비자물가지수(CPI)도 전년 대비 3.7% 올라 예상치를 웃돌았다. 9월 소매판매는 0.8% 늘었으나 자동차와 주유소를 제외하면 0.25% 증가에 그쳐, 연료비 부담으로 소비자가 다른 지출을 줄이기 시작했다는 신호로 풀이된다. 금리선물 시장에서는 10월 28일 금리 인상 확률이 약 34%로 일주일 전보다 올랐고, 올해 한 차례 이상 인상을 예상하는 비율은 약 90%다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108408250",
+      "url": "https://www.cnbc.com/2026/10/14/cpi-inflation-report-september-2026.html",
+      "title": "Consumer prices rose 3.7% annually in September as gas prices skyrocket",
+      "summary": "The consumer price index was expected to increase 0.6% in September on a monthly basis and 3.6% from a year ago, according to the Dow Jones consensus forecast.",
+      "published": "2026-10-14T13:53:28+00:00",
+      "category": "economy",
+      "source": "CNBC",
+      "body_chars": 4197,
+      "body_file": "32-economy.txt",
+      "summary_ko": "9월 소비자물가지수(CPI)는 전월 대비 0.6%, 전년 동월 대비 3.7% 올라 다우존스 전문가 예상치를 웃돌았다. 식품과 에너지를 뺀 근원 CPI도 전년 대비 2.6%로 예상보다 높았다. 에너지 지수는 5.2% 뛰었고 휘발유 가격은 한 달 새 9.1% 급등해 전체 상승분의 절반가량을 차지했다. 2월 말 시작된 미국과 이란의 전쟁이 끝날 기미를 보이지 않으면서 에너지 가격 압박이 이어지고 있다. 연준은 9월 금리를 0.25%포인트 올려 목표 범위를 3.75~4%로 높였는데, 3년여 만의 첫 인상이다. 선물시장은 10월 27~28일 FOMC에서 추가 인상 가능성을 약 54%로 보고 있으며, 연말 전 인상 확률은 96%를 넘는다. 발표 직후 증시 선물은 하락 전환했고 채권 금리는 크게 올랐다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://news.yahoo.co.jp/articles/1ca81b1accfb7cd57cafa2593ab55747f64a7502?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/1ca81b1accfb7cd57cafa2593ab55747f64a7502?source=rss",
+      "title": "「お詫びをしているのにボタン開けてどうする」と担当者には服装注意したが…GMO不正アクセス会見で「おしゃれスーツ姿」が与えてしまった“違和感”(東洋経済オンライン)",
+      "summary": "GMOインターネットグループのサービス「お名前.com デスクトップクラウド」がサイバー攻撃を受け、顧客情報が流出した問題で、熊谷正寿グループ代表らが記者会見を開きました。【写真を見る】「GMO不正ア",
+      "published": "2026-11-02T22:30:41+00:00",
+      "category": "global",
+      "source": "Yahoo!ニュース",
+      "region": "japan",
+      "wire": "東洋経済オンライン",
+      "body_chars": 995,
+      "body_file": "07-global.txt",
+      "summary_note": "한국어 아님"
+    },
+    {
+      "guid": "108502453",
+      "url": "https://www.cnbc.com/2026/11/02/openai-abu-dhabi-ai-deals.html",
+      "title": "OpenAI deepens Abu Dhabi foothold as Sam Altman inks deals spanning energy, government and investment",
+      "summary": "OpenAI signed four Abu Dhabi agreements spanning energy, government and investment as Sam Altman met the emirate’s crown prince.",
+      "published": "2026-11-02T11:02:08+00:00",
+      "category": "global",
+      "source": "CNBC",
+      "region": "mideast",
+      "body_chars": 2056,
+      "body_file": "08-global.txt",
+      "summary_ko": "OpenAI가 아랍에미리트(UAE)에서 에너지, 투자, 정부 분야에 걸쳐 계약을 잇달아 맺었다. 샘 올트먼 CEO는 아부다비 왕세자 칼레드 빈 모하메드 빈 자이드 알 나흐얀을 만났고, 아부다비 미디어오피스는 2일 여러 분야가 OpenAI 모델을 쓰기로 했다고 밝혔다. OpenAI는 200억 달러 규모 펀딩 라운드를 추진 중이며, UAE 투자자들이 공동 주도하는 것으로 알려졌다. 국영석유회사 ADNOC와 G42는 OpenAI의 최첨단 기술을 도입하기로 했고, 국부펀드 무바달라와 Inception42, OpenAI는 투자 분석에 고도화된 AI를 적용하기로 했다. 아부다비 정부는 정책과 규제를 기계가 읽을 수 있는 형식으로 바꾸는 사업을 추진하며, Inception42와 OpenAI는 정부·기업·교육 전반에 최첨단 AI를 도입하는 5년 계약도 맺었다. 중동이 미국 빅테크의 데이터센터 투자로 AI 허브로 떠올랐지만 분쟁이 이런 매력을 시험하고 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://news.yahoo.co.jp/articles/dc163daae11ddfe33b2a44699e5dd856ead68f43?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/dc163daae11ddfe33b2a44699e5dd856ead68f43?source=rss",
+      "title": "有害物質検出事例が相次ぐ中国発ネット通販「SHEIN」「Temu」の商品 日本の税関当局も「危険性のある物品が販売されていることは承知」 消費者はどう対応すべきか(マネーポストWEB)",
+      "summary": "中国発のネット通販が、破格の安さにより日本で利用者を急増させている。その代表格とされる「SHEIN（シーイン）」と「Temu（テム）」。だが、安さの裏で商品から基準値超えの有害物質が検出される事例が世",
+      "published": "2026-11-02T22:15:00+00:00",
+      "category": "global",
+      "source": "Yahoo!ニュース",
+      "region": "china",
+      "wire": "マネーポストWEB",
+      "body_chars": 1407,
+      "body_file": "09-global.txt",
+      "summary_ko": "중국발 해외 직구 플랫폼 SHEIN과 Temu 상품에서 기준치를 넘는 유해물질이 검출되는 사례가 각국에서 잇따르고 있다. 서울시는 2024년 8월 SHEIN 모자에서 기준치의 2배 넘는 포름알데히드를, Temu 샌들 깔창에서 11배 넘는 납을 확인했다고 발표했다. 한국 정부는 올해 9월 해외 직구 제품 900점 중 189점이 안전기준을 위반했고 이 가운데 94점이 두 플랫폼 상품이라고 밝혔다. 영국에서는 9월 30일 SHEIN의 목제 어린이 장난감이 석면 혼입으로 리콜됐다. 일본 재무성 관세국은 위험 물품이 판매되는 사실을 알고 있다면서도, 해외에서 문제가 된 상품의 일본 수입 여부와 물량은 집계하지 않아 답할 수 없다고 했다. SHEIN 일본법인은 불만을 알게 되면 즉시 상품을 삭제하겠다고만 답했고, Temu 측은 2026년 1월 소비자청 주도의 제품안전 서약에 서명했다는 공식 입장으로 갈음했다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "https://www.aljazeera.com/?t=1793634938",
+      "url": "https://www.aljazeera.com/news/2026/11/2/iran-pushing-accelerated-plan-for-ceasefire-talks-with-us?traffic_source=rss",
+      "title": "Iran pushing accelerated plan for ceasefire talks with US",
+      "summary": "Tehran says plan has been condensed and can be implemented within two days as it continues talks with mediators.",
+      "published": "2026-11-02T18:49:26+00:00",
+      "category": "global",
+      "source": "Al Jazeera",
+      "region": "mideast",
+      "body_chars": 2567,
+      "body_file": "11-global.txt",
+      "summary_ko": "이란 외무부 대변인 에스마일 바가이는 2일(현지시간) 지난달 미국에 제시한 7단계 휴전 계획의 골자는 그대로이되 2일 안에 시행할 수 있도록 압축했다고 밝혔다. 이 계획에는 호르무즈 해협의 신속한 재개방과 핵 프로그램을 둘러싼 협상 재개가 포함된다. 이란은 카타르와 파키스탄 중재를 통해 간접 협상을 이어가고 있으며, 최고지도자 모즈타바 하메네이가 정부에 협상 가속화 권한을 부여했다고 국영 IRNA통신이 전했다. 이란은 미국이 해상 봉쇄 해제, 제재 철폐, 공습 중단 보장, 특히 레바논을 포함한 역내 전면 휴전을 수용하면 해협이 열리고 협상이 재개될 것이라는 입장이다. 다만 바가이 대변인은 요구 조건을 바꿨다는 신호나 미국이 제안을 받아들였다는 징후는 내놓지 않았다. 한편 트럼프 대통령은 협상이 「잘 진행되고 있다」면서도 11월 3일 중간선거 이후 이란을 공격할 수 있다는 시사를 여러 차례 했다. 트럼프는 전쟁이 「매우 곧」 끝날 것이며 이란이 합의하거나 전쟁을 끝내게 될 것이라고 말했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://think.ing.com/snaps/us-manufacturing-benefiting-from-a-strong-economy-tech-investment-tariffs-and-energy-security/#When:15:38:00Z",
+      "url": "https://think.ing.com/snaps/us-manufacturing-benefiting-from-a-strong-economy-tech-investment-tariffs-and-energy-security/",
+      "title": "US manufacturing benefiting from a strong economy, tech investment, tariffs and energy security",
+      "summary": "NORTH AMERICA: The manufacturing sector continues to power ahead, boosted by a strong US economy. Other factors are supportive. There is a clear split in performance between fast-growing tech, pharma and transportation sectors versus more labour-intensive, commoditised sectors. Construction activity suggests interest-rate-sensitive sectors are struggling",
+      "published": "2026-11-02T15:38:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 3070,
+      "body_file": "18-insight.txt",
+      "summary_ko": "ING는 미국 제조업이 강한 경기와 기술 투자, 관세, 에너지 안보 덕분에 계속 확장세를 보일 것으로 본다. 10월 ISM 제조업 지수는 전월 54.5에서 55.5로 올랐고, 생산지수는 56.7에서 59.0으로 높아져 5년 만의 최고치를 기록했다. 신규주문(55.5)과 수주잔고(54.6)도 50을 웃돌아 전망이 여전히 양호하다고 평가했다. 고부가가치 제조업, 즉 기술·전자·운송·전력 관련 업종은 다른 업종을 크게 앞질러 왔고, ING는 이 흐름이 이어질 것으로 본다. 반면 노동집약적이고 상품화된 전통 제조업은 해외 경쟁에 밀려 계속 위축될 것으로 내다봤다. 건설업은 9월 건설지출이 전월 대비 1.9% 줄어드는 등 주택 건설이 금리 부담으로 하락 추세에 있으며, 데이터센터를 제외한 비주거 건설은 정체 상태라 금리에 민감한 업종이 어려움을 겪기 시작했다고 짚었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.investing.com/analysis/usdjpy-under-pressure-as-yen-rises-and-december-rate-hike-expectations-grow-200690666",
+      "url": "https://www.investing.com/analysis/usdjpy-under-pressure-as-yen-rises-and-december-rate-hike-expectations-grow-200690666",
+      "title": "USD/JPY Under Pressure as Yen Rises and December Rate Hike Expectations Grow",
+      "summary": null,
+      "published": "2026-11-02T07:50:00+00:00",
+      "category": "insight",
+      "source": "Investing.com",
+      "body_chars": 3739,
+      "body_file": "19-insight.txt",
+      "summary_ko": "RoboForex 분석팀은 USD/JPY가 157.48 부근에서 출발해 엔화 강세와 12월 일본은행(BoJ) 금리 인상 기대 확대로 하방 압력을 받는다고 본다. BoJ가 기준금리 1.25%를 동결하면서 근원 인플레이션이 2% 목표에 마침내 도달했다고 밝힌 것이 근거다. 금리 결정은 8대 1로 가결됐고, 다카타 하지메 위원은 1.5%로의 즉시 인상을 주장했다. 기술주 실적 부진과 AI 투자 우려에 따른 안전자산 수요, 글로벌 자산운용사의 일본 채권 복귀도 엔화를 지지하는 요인으로 꼽힌다. 이 필자는 4시간 차트상 상승 조정 구조가 이어지며 지지 157.38에서 조정이 마무리되면 상승이 재개될 것으로 예상한다. 저항 158.08을 넘으면 158.63, 159.16을 거쳐 160.08까지 열린다고 봤다. 반면 157.14를 하향 이탈하면 156.07까지 밀릴 수 있다고 주장한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.bis.org/speeches/20261102-sustainable-revenue-streams-financing-future-eswatinis-local-authorities-and-unlocking-local-government-financing",
+      "url": "https://www.bis.org/speeches/20261102-sustainable-revenue-streams-financing-future-eswatinis-local-authorities-and-unlocking-local-government-financing",
+      "title": "Sustainable revenue streams - financing the future of Eswatini's local authorities and unlocking local government financing",
+      "summary": "Talking points by Mr Phil Mnisi, Governor of the Central Bank of Eswatini, at the Eswatini Urban Development Forum, Ezulwini, 26 October 2026.",
+      "published": "2026-11-02T00:00:00+00:00",
+      "category": "insight",
+      "source": "BIS",
+      "body_chars": 12000,
+      "body_file": "20-insight.txt",
+      "summary_ko": "BIS가 게시한 에스와티니 관련 연설에서 연설자는 지방정부 재원 확충이 지자체 회계가 아니라 경제성장의 문제라고 주장했다. 그는 아프리카 도시들이 늘어나는 인프라 수요와 지자체 재원 사이의 불일치에 직면해 있다는 2025년 아프리카도시연구컨소시엄 보고서를 근거로 들었다. 연금·보험·은행 등 국내 기관투자가의 자금은 충분하므로 문제는 신뢰할 만한 투자처의 부족이라고 보았다. 해법으로 인프라채, 지방채, 민관협력(PPP), 녹색금융을 제시했고, PPP 사례로 응샤카빌리 도로 연결 사업을 들었다. 요하네스버그와 케이프타운, 츠와네의 채권 발행을 선례로 언급하며 수입 징수와 재무 투명성 등 거버넌스 강화가 전제라고 했다. 또한 차입은 재정 안정을 해치지 않는 범위에서 책임 있게 해야 한다고 밝혔다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "https://www.ecb.europa.eu//press/blog/date/2026/html/ecb.blog20261102~871cc494e2.en.html",
+      "url": "https://www.ecb.europa.eu//press/blog/date/2026/html/ecb.blog20261102~871cc494e2.en.html",
+      "title": "Catching the repricing wave: insights from daily online supermarket prices",
+      "summary": null,
+      "published": "2026-11-02T11:00:00+01:00",
+      "category": "insight",
+      "source": "ECB",
+      "region": "europe",
+      "body_chars": 11463,
+      "body_file": "21-insight.txt",
+      "summary_ko": "ECB 블로그는 최근 에너지 충격 이후 식품 가격 재조정(repricing) 물결이 2022년보다 약하다고 분석했다. ECB는 온라인 슈퍼마켓의 일별 가격을 AI 분류기로 HICP 소비 항목에 매핑한 Daily Price Dataset(DPD)을 근거로 들었다. 2026년 3월 식품 가격 인상 빈도가 에너지 충격 직후 올랐지만 2022년 우크라이나 침공 당시보다 훨씬 작았고, 이후 상승세가 안정됐다는 것이다. 인상과 인하 빈도의 격차도 작았고 평균 인상폭은 2022년과 비교해 비교적 작게 변했다. 10% 이상 품목이 오른 범주가 식품 바스켓에서 차지하는 비중도 2022년에는 여러 달 확대됐으나 2026년에는 그렇지 않았다. 필자들은 이를 근거로 2026년 에너지 충격 이후 소매업체의 식품 재가격 결정 빈도가 지속적으로 바뀌었다는 증거는 아직 적다고 판단했다. 다만 이는 현재까지의 초기 지표이며, 충격의 성격과 발생 시점의 경제 여건에 따라 효과가 달라진다는 점도 함께 짚었다.",
+      "summary_model": "claude-haiku-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "us",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 60,
+    "answered": 60,
+    "dropped": [
+      {
+        "guid": "108502646",
+        "title": "Fake nuclear warnings in Ukraine as Moscow, Kyiv report separate cyberattacks on emergency apps",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "108479317",
+        "title": "French Senate backs ‘Rioters Pay’ bill that could make protesters pay $11,000 fines",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "108419421",
+        "title": "India’s finance minister says market liquidity makes it easier for investors to exit",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "108406564",
+        "title": "'Godzilla El Niño' is wreaking havoc with Philippine central bank's inflation forecasts",
+        "label": "foreign",
+        "confidence": 1.0
+      }
+    ],
+    "stopped": "complete",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "108505552",
+        "title": "Trump focuses on Reflecting Pool in final public speech before midterms",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108504605",
+        "title": "Judge tosses DOJ case against ex-FBI officials accused of lying about Hunter Biden probe",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108504882",
+        "title": "DOJ asks Supreme Court to block California counting disputed mail-in ballots",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108502646",
+        "title": "Fake nuclear warnings in Ukraine as Moscow, Kyiv report separate cyberattacks on emergency apps",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108498460",
+        "title": "Judge dismisses Alaska Senate election lawsuit; DOJ vows appeal",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108498327",
+        "title": "Connecticut Sen. Chris Murphy hospitalized after stroke, office says",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108498328",
+        "title": "Democratic Rep. Stevens endorses Republican Rogers over rival El-Sayed in Michigan Senate election",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108497708",
+        "title": "Alaska Sen. Sullivan says he'll accept election results, slams Peltola campaign’s reported recruitment of 2nd Sullivan",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108378114",
+        "title": "These Senate races may help determine the fate of Social Security",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108471194",
+        "title": "Social Security may have to cut retirement benefits in six years. Here's how much money is at stake for beneficiaries",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108486861",
+        "title": "The midterm election could reshape the muni bond market. Here’s what investors need to know",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108493414",
+        "title": "Trump defamation suit against Murdoch, WSJ over Epstein letter dismissed with prejudice",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108482132",
+        "title": "Crypto industry pours more than $200 million into 2026 midterms to pressure Congress on favorable rules",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108464911",
+        "title": "‘Pop-up’ super PACs pour $637 million into 2026 midterm races",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108487011",
+        "title": "Reid Hoffman gives millions to Dems in late spending spree as Epstein fight spills into election",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108487097",
+        "title": "Alaska Senate election: DOJ wants to 'segregate' all ballots for 2nd Sullivan candidate",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108481076",
+        "title": "Gamble on democracy: Inside suspicious election-contracts trading on prediction markets",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108469080",
+        "title": "Wall Street braces for Democratic gains as 2026 midterm election nears",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108484647",
+        "title": "Trump rallies in Kansas and Iowa are back on after RNC said they were canceled: Source",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108484422",
+        "title": "Iran claims four tankers struck mines in Hormuz as strike fears grow after U.S. midterms",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 0.33,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108462393",
+        "title": "How elections worldwide are testing Trump’s influence abroad",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.19,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108481363",
+        "title": "DOJ escalates Alaska Senate lawsuit over dueling Sullivan candidacies",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108476538",
+        "title": "Warren urges DOJ criminal probe of Bank of America over anti-money-laundering violations",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108398465",
+        "title": "It's a 'socialist' bank — and North Dakota Republicans love it",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108479317",
+        "title": "French Senate backs ‘Rioters Pay’ bill that could make protesters pay $11,000 fines",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108480097",
+        "title": "Third-quarter U.S. GDP increases a better-than-expected 3.4% as September inflation accelerates",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108477606",
+        "title": "Analysis: Kevin Warsh is keeping Wall Street guessing. It may be his most powerful tool",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108476332",
+        "title": "Here are five key takeaways from the Fed rate decision and Warsh news conference",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108475125",
+        "title": "Bessent says 'not necessarily' a mistake if the Fed hikes again",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108465396",
+        "title": "Fed rate hikes are coming, but not this week: CNBC survey",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108446576",
+        "title": "Jobless claims near the lowest since the 1960s as low-fire trend continues",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108443488",
+        "title": "Trump's approval rating on economy hits all-time low as midterm looms: CNBC survey",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108435175",
+        "title": "Car buyers are demanding lower prices and better tech. Automakers must deliver both",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108437551",
+        "title": "Housing is flashing warning signs just as the Fed weighs more interest rate hikes",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108419421",
+        "title": "India’s finance minister says market liquidity makes it easier for investors to exit",
+        "category": "economy",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108398823",
+        "title": "U.S. budget deficit swells to almost $2 trillion for fiscal 2026, up 12% in a single year",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108420026",
+        "title": "Analysis: Everyone expects the Fed to hold rates in October. Kevin Warsh could surprise us all",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108414488",
+        "title": "Economists: Hot PPI shows Fed's work is not done",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108413623",
+        "title": "U.S. Treasury dismisses IMF debt warning and 'messy' forecasting",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108413959",
+        "title": "Wholesale prices jumped 6.3% annually in September, biggest gain since 2022",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108409995",
+        "title": "Analysis: Why a $2 trillion deficit and 5% Treasury yields are becoming America's biggest economic challenge",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108404343",
+        "title": "How high inflation became a 'fact of life' in the U.S.",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108408250",
+        "title": "Consumer prices rose 3.7% annually in September as gas prices skyrocket",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108406564",
+        "title": "'Godzilla El Niño' is wreaking havoc with Philippine central bank's inflation forecasts",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108403708",
+        "title": "The latest inflation data is expected to show price increases are accelerating",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108469244",
+        "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.67,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108469236",
+        "title": "Trump promised to slash energy costs — but gasoline, diesel and jet fuel all soared instead",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108487479",
+        "title": "Cramer’s week ahead: Expect more volatility as tech earnings, midterms loom",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108469244",
+        "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.67,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108459703",
+        "title": "Audi defends plans for a $4 billion Georgia plant amid VW restructuring, tariffs",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.18,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108469063",
+        "title": "Early third-quarter earnings show a 'resilient' U.S. consumer, with signs of strain",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108505405",
+        "title": "Feeling isolated? Half of in-office workers describe their desk jobs as 'remote,' NY Fed survey finds",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108487479",
+        "title": "Cramer’s week ahead: Expect more volatility as tech earnings, midterms loom",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108504162",
+        "title": "Fed will vote on rates less often. What that could mean for borrowers",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108403840",
+        "title": "Halloween gets pricier as chocolate costs climb — Hershey may feel the pinch",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108486860",
+        "title": "Fed officials are already saying they’ll need to get back to hiking rates",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108475914",
+        "title": "Bond investor Jeff Gundlach on Fed's rate pause: 'What are you waiting for?'",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108475404",
+        "title": "Here is what changed in the new Fed statement",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108474730",
+        "title": "Fed holds rates steady despite concerns over inflation",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108464732",
+        "title": "Fed expected to hold rates steady, but Warsh may point way to more hikes",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108447002",
+        "title": "Bill Ackman says 2027 will be an amazing year for stocks as wars, inflation ease",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108438644",
+        "title": "CoreWeave’s market confidence erodes as bond yields spike and stock sinks",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      }
+    ],
+    "late": 0,
+    "seconds": 6.7,
+    "categories": [
+      "economy",
+      "macro",
+      "politics"
+    ]
+  }
+}

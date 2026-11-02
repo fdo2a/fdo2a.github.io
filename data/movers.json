@@ -1,11 +1,27 @@
 {
-  "report_date": "2026-10-30",
+  "report_date": "2026-11-02",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
+      "industry": "Systems Software",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Microsoft (MSFT)",
+          "change_pct": -2.83,
+          "close": 507.12,
+          "value": 17216328280.63
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "down",
       "reasons": [
         "지수 기여 하위",
@@ -13,67 +29,55 @@
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -4.22,
-          "close": 204.64,
-          "value": 33954646126.09
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": -1.83,
+          "close": 338.32,
+          "value": 19679156287.23
         },
         {
-          "name": "Intel (INTC)",
-          "change_pct": -28.58,
-          "close": 65.76,
-          "value": 29650160816.95
+          "name": "Sandisk (SNDK)",
+          "change_pct": -6.59,
+          "close": 1075.08,
+          "value": 11122422448.96
         },
         {
-          "name": "Micron Technology (MU)",
-          "change_pct": -5.3,
-          "close": 884.74,
-          "value": 27005026660.2
+          "name": "Seagate Technology (STX)",
+          "change_pct": -7.88,
+          "close": 593.76,
+          "value": 3226290608.42
         },
         {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -10.88,
-          "close": 504.8,
-          "value": 19953234165.49
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -7.43,
+          "close": 392.78,
+          "value": 2555049210.48
         },
         {
-          "name": "Broadcom (AVGO)",
-          "change_pct": -5.48,
-          "close": 326.08,
-          "value": 11873235231.71
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": -10.05,
-          "close": 196.4,
-          "value": 8380497134.36
-        },
-        {
-          "name": "Qualcomm (QCOM)",
-          "change_pct": -11.12,
-          "close": 164.79,
-          "value": 3965592254.02
+          "name": "Western Digital (WDC)",
+          "change_pct": -7.52,
+          "close": 338.59,
+          "value": 2449113878.58
         }
       ]
     },
     {
-      "id": "g2",
-      "industry": "Pharmaceuticals",
+      "id": "g3",
+      "industry": "Broadline Retail",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Lilly (Eli) (LLY)",
-          "change_pct": 3.19,
-          "close": 1417.54,
-          "value": 7134114708.81
+          "name": "Amazon (AMZN)",
+          "change_pct": 2.2,
+          "close": 245.63,
+          "value": 14214800710.86
         }
       ]
     },
     {
-      "id": "g3",
+      "id": "g4",
       "industry": "Consumer Staples Merchandise Retail",
       "direction": "up",
       "reasons": [
@@ -82,77 +86,43 @@
       "members": [
         {
           "name": "Walmart (WMT)",
-          "change_pct": 1.86,
-          "close": 123.51,
-          "value": 3656033035.82
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Sandisk (SNDK)",
-          "change_pct": -13.47,
-          "close": 1150.89,
-          "value": 19956551395.68
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -10.77,
-          "close": 424.3,
-          "value": 4442318191.6
-        },
-        {
-          "name": "Seagate Technology (STX)",
-          "change_pct": -7.98,
-          "close": 644.58,
-          "value": 3719151282.75
-        },
-        {
-          "name": "Western Digital (WDC)",
-          "change_pct": -7.41,
-          "close": 366.11,
-          "value": 3254580478.53
+          "change_pct": 3.38,
+          "close": 127.69,
+          "value": 3175473126.99
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Semiconductor Materials & Equipment",
+      "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Lam Research (LRCX)",
-          "change_pct": -6.01,
-          "close": 239.11,
-          "value": 4446564412.78
+          "name": "Micron Technology (MU)",
+          "change_pct": -5.78,
+          "close": 833.59,
+          "value": 24417113941.9
         },
         {
-          "name": "Applied Materials (AMAT)",
-          "change_pct": -7.49,
-          "close": 390.09,
-          "value": 3998634671.42
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -7.52,
+          "close": 466.84,
+          "value": 14825863054.94
         },
         {
-          "name": "KLA Corporation (KLAC)",
-          "change_pct": -5.69,
-          "close": 157.91,
-          "value": 3537653548.47
+          "name": "Intel (INTC)",
+          "change_pct": -8.8,
+          "close": 59.97,
+          "value": 13644188950.64
         },
         {
-          "name": "Teradyne (TER)",
-          "change_pct": -7.38,
-          "close": 274.37,
-          "value": 2363911242.16
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": -12.72,
+          "close": 171.41,
+          "value": 10465085183.21
         }
       ]
     }
