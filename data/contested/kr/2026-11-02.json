@@ -5,9 +5,9 @@
  "report_date": "2026-11-02",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-02T15:21:17+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-02T15:45:03+00:00",
  "cutoff_at": "2026-11-02T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 451,
+  "harvest": 429,
   "candidates": 1,
   "articles": [
    6
@@ -43,22 +43,22 @@
    "hankyung": "ok"
   },
   "notes": [
-   "discover:451"
+   "discover:429"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 33572,
-   "out": 9869
+   "in": 35428,
+   "out": 12812
   },
   "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
+   "claims": "6/6",
+   "pairs": "3/3",
    "obs": "6/6"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
+   "pairs": 1,
+   "claims": 2,
    "obs": 6
   }
  },
@@ -68,14 +68,22 @@
   "trigger": []
  },
  "problems": [
+  "structure:dangling",
   "variables[0]:unverified",
-  "variables[2]:unverified",
-  "edges[0]:unverified",
+  "edges[0]:dangling",
   "edges[1]:unverified",
+  "edges[1]:dangling",
   "edges[2]:unverified",
+  "edges[2]:dangling",
   "memo[0]:unverified",
+  "memo[0]:dangling",
+  "memo[1]:unverified",
+  "memo[2]:unverified",
+  "memo[2]:dangling",
   "worry.most[0]:unverified",
-  "worry.unlikely[0]:unverified"
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "5c16c9bae7f8d069"
+ "content_hash": "a0b74d2fb1658793"
 }
