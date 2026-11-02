@@ -45,6 +45,19 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
+      "guid": "108500272",
+      "url": "https://www.cnbc.com/2026/11/02/cnbcs-the-china-connection-newsletter-nvidias-humanoid-push-relies-on-china-made-robot-hands.html",
+      "title": "CNBC's The China Connection newsletter: Nvidia's humanoid push relies on China-made robot hands",
+      "summary": "The U.S. chipmaker's humanoid robot systems feature mechanical hands from China-linked startups.",
+      "published": "2026-11-02T23:00:01+00:00",
+      "category": "ai",
+      "source": "CNBC",
+      "body_chars": 4296,
+      "body_file": "04-ai.txt",
+      "summary_ko": "엔비디아가 최근 몇 달 사이 중국 기업이 만든 로봇 손을 쓴 휴머노이드 학습 패키지를 두 차례 선보이며, 중국 로봇 부품에 대한 의존이 커지고 있다고 CNBC가 11월 2일 전했다. 첫 번째는 싱가포르 본사 샤프파(Sharpa)의 손을 쓴 시스템이고, 두 번째는 중국 우지(Wuji)의 손을 단 'Agile One SN'이다. 젠슨 황 CEO는 10월 21일 베를린에서 이 하드웨어를 공개했으며, 로봇 몸체는 독일·중국·미국에 사무실을 둔 Agile Robots가 맡았다. 스탠퍼드대와 취리히연방공대는 2027년 초부터 이를 쓸 수 있을 것으로 보인다. 앞서 5월 31일 발표된 첫 기준 휴머노이드는 중국 유니트리의 몸체에 샤프파의 손을 결합했으며, 2026년 말 인도가 예정돼 있다. 구글 딥마인드 연구자는 샤프파가 더 강하고 우지 손은 사람 손 크기에 가깝다고 평가했다. 한편 메타도 중국 푸리에와 휴머노이드 시제품을 협업 중이라고 보도됐다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
       "guid": "108504030",
       "url": "https://www.cnbc.com/2026/11/02/oracle-files-to-sell-20-billion-in-new-stock-bonds-to-finance-ai-buildout.html",
       "title": "Oracle files to sell $20 billion in new stock, bonds to finance AI buildout",
@@ -53,7 +66,7 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 2805,
-      "body_file": "04-ai.txt",
+      "body_file": "05-ai.txt",
       "summary_ko": "오라클이 2일(현지시간) 미 증권거래위원회에 보통주 100억 달러어치와 선순위 채권 100억 달러어치, 합계 200억 달러를 발행하겠다는 서류를 제출했다. 조달 자금은 설비투자와 부채 상환, 향후 투자 등 일반 기업 목적에 쓰인다. 이 계획은 지난주 수요일 투자자의 날에 이미 밝힌 내용이지만 이날 주가는 8.8% 급락했다. 당시 오라클은 2027~2030 회계연도 투자 주기의 추가 자본시장 조달을 이 200억 달러로 제한하겠다고 했고, 2030 회계연도 매출 목표는 최소 2,250억 달러로 제시했다. 벤더 금융과 고객 선결제 등으로 2028년 하반기에 잉여현금흐름 흑자 전환을 예상한다. 올해 주가는 33% 하락했고, 5년물 CDS 스프레드는 292로 1년 새 265% 올랐다. S&P는 7월 신용등급을 BBB-로 내렸으며, 8월 31일 기준 부채는 1,253억 4,000만 달러다.",
       "summary_model": "claude-sonnet-5-5"
     },
@@ -66,22 +79,9 @@
       "category": "ai",
       "source": "CNBC",
       "body_chars": 3296,
-      "body_file": "05-ai.txt",
+      "body_file": "06-ai.txt",
       "summary_ko": "Marvell Technology가 광통신 부품업체 Lumentum을 인수하는 거래를 발표했다. Lumentum CEO Michael Hurlston은 AI 인프라 확대로 늘어나는 연결성 수요에 대응할 \"엄청난\" 기회가 열렸다고 말했다. 거래는 현금 없이 고정 비율로 주식을 교환하는 방식으로, Lumentum의 내재 기업가치는 1,150억 달러다. Lumentum 주주는 보유 1주당 Marvell 주식 4.5주를 받으며, 거래는 2028년 상반기 종결될 예정이다. 거래 가치는 Marvell 주가에 따라 달라진다. 발표 당일 Marvell은 13%, Lumentum은 19% 가까이 급락했으나, 두 종목 모두 최근 1년간 AI 열풍에 크게 올랐다. Marvell은 전기 및 광 기술을 결합해 AI 연결 수요에 대응하겠다는 구상이다. Nvidia의 순환적 투자 방식에 대한 우려에는 Marvell CEO Matt Murphy가 선을 그었다.",
       "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "108464920",
-      "url": "https://www.cnbc.com/2026/11/02/midterm-election-stocks-defense-healthcare-crypto-ai.html",
-      "title": "Defense, healthcare, crypto and AI: How the midterm election could affect stocks",
-      "summary": "Democratic gains in Congress could bring tougher oversight of major companies and shift billions of dollars in federal spending and regulatory policy.",
-      "published": "2026-11-02T18:59:48+00:00",
-      "category": "ai",
-      "source": "CNBC",
-      "body_chars": 9373,
-      "body_file": "06-ai.txt",
-      "summary_ko": "CNBC는 11월 중간선거에서 민주당이 상·하원 중 한쪽이라도 차지하면 기업 조사, 연방 지출 견제, 입법 양보 요구 등에서 새로운 영향력을 얻게 되지만 트럼프 대통령의 거부권과 관세·규제 권한은 유지된다고 짚었다. 모건스탠리에 따르면 공화당 대통령 아래 의회가 분점일 때 S&P500은 중간선거 후 1년간 평균 23% 올라 민주당이 양원을 장악했을 때의 16%를 웃돌았지만, 이번에는 이 공식이 통하지 않을 수 있다는 신중론도 있다. 정부 매출 비중이 큰 업종이 특히 민감하다. 몰리나헬스케어는 2025년 보험료 수익의 75%인 322억 달러를 메디케이드에서 거뒀고, 민주당은 필수 예산 협상에서 메디케이드 삭감 완화를 요구할 수 있다. 록히드마틴의 F-35 850대 기본합의는 의회 승인과 재원 마련이 필요하다. 가상자산 시장구조법인 클래리티법은 9월 상원에서 좌초됐고, 데이터센터는 전력비 부담 규제가 쟁점이다.",
-      "summary_model": "claude-sonnet-5-5"
     },
     {
       "guid": "108505405",
@@ -127,10 +127,10 @@
       "url": "https://www.cnbc.com/2026/11/02/supreme-court-california-mail-ballots-election.html",
       "title": "Supreme Court rejects DOJ's bid to block California from counting disputed ballots",
       "summary": "The Department of Justice's request to the Supreme Court in the California case came as it appeals dismissal of a lawsuit over Alaska's Senate election.",
-      "published": "2026-11-02T23:04:09+00:00",
+      "published": "2026-11-02T23:23:56+00:00",
       "category": "politics",
       "source": "CNBC",
-      "body_chars": 3912,
+      "body_chars": 4346,
       "body_file": "24-politics.txt",
       "summary_ko": "트럼프 행정부 법무부(DOJ)가 2일(현지시간) 연방대법원에 캘리포니아주가 시민권이 없을 가능성이 있는 유권자 약 2만 명의 우편투표를 집계하지 못하도록 임시로 막아 달라고 청구했다. 앞서 9써킷 항소법원은 지난달 30일 DOJ가 하급심 판결을 뒤집어 달라는 요청을 2대1로 기각했다. 하급심 판사 데이비드 카터는 지난달 28일 DOJ의 요청을 거부하며, 선거를 앞두고 연방 행정부가 주정부의 선거 절차를 바꾸려 한다고 비판했다. DOJ는 10월 15일 로스앤젤레스 연방지방법원에 소송을 냈고, 로스앤젤레스 카운티 관계자에게 비시민권자로 의심되는 유권자 명단을 담은 USB를 전달한 바 있다. 존 사워 법무차관보는 연방이 항소에서 승소할 가능성이 크다고 주장했다. 대법원의 결정 시한은 정해져 있지 않다.",
       "summary_model": "claude-haiku-5-5"
@@ -249,9 +249,9 @@
       "source": "Yahoo!ニュース",
       "region": "japan",
       "wire": "東洋経済オンライン",
-      "body_chars": 1094,
+      "body_chars": 1095,
       "body_file": "07-global.txt",
-      "summary_note": "가나·한자 「インターネットグループは」·「お名前」·「デスクトップクラウド」"
+      "summary_note": "한국어 아님"
     },
     {
       "guid": "108502453",
@@ -324,17 +324,17 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://www.bis.org/speeches/20261102-sustainable-revenue-streams-financing-future-eswatinis-local-authorities-and-unlocking-local-government-financing",
-      "url": "https://www.bis.org/speeches/20261102-sustainable-revenue-streams-financing-future-eswatinis-local-authorities-and-unlocking-local-government-financing",
-      "title": "Sustainable revenue streams - financing the future of Eswatini's local authorities and unlocking local government financing",
-      "summary": "Talking points by Mr Phil Mnisi, Governor of the Central Bank of Eswatini, at the Eswatini Urban Development Forum, Ezulwini, 26 October 2026.",
+      "guid": "https://www.bis.org/speeches/20261102-ai-adoption-europe",
+      "url": "https://www.bis.org/speeches/20261102-ai-adoption-europe",
+      "title": "AI adoption in Europe",
+      "summary": "Keynote speech by Philip R Lane, Member of the Executive Board of the European Central Bank, at the Federal Reserve Bank of San Francisco Economic Research Symposium on “AI and the economy”, San Francisco, 30 October 2026.",
       "published": "2026-11-02T00:00:00+00:00",
       "category": "insight",
       "source": "BIS",
-      "body_chars": 12000,
+      "body_chars": 2521,
       "body_file": "20-insight.txt",
-      "summary_ko": "이 연설에서 연설자는 에스와티니 지방정부의 재원 확충이 단순한 지방재정 문제가 아니라 국가 경제성장의 문제라고 주장한다. 그는 아프리카 도시연구컨소시엄의 2025년 보고서를 들어, 도시 인프라 수요는 늘지만 지자체가 쓸 수 있는 재원은 부족하다고 짚는다. 이 격차는 정부 재원만으로 메울 수 없다고 보면서도, 연기금·보험사·은행이 운용하는 국내 자금이 충분하므로 문제는 자금 부족이 아니라 신뢰할 만한 투자처의 부재라고 진단한다. 해법으로 인프라채, 지방채, 민관협력(PPP), 녹색금융을 제시하고, Ntshakabili 도로 연결 사업을 PPP 사례로 든다. 요하네스버그·케이프타운·츠와니의 채권 발행 경험을 근거로, 지자체가 자본시장에 접근하려면 징수 체계와 재무 보고의 투명성, 거버넌스가 갖춰져야 한다고 강조한다. 다만 차입은 재정 안정을 해치지 않는 범위에서 책임 있게 해야 한다고 덧붙인다.",
-      "summary_model": "claude-sonnet-5-5"
+      "summary_ko": "BIS 연설문 「AI adoption in Europe」에서 발표자는 유로지역 경제가 AI로 재편되고 있다고 보고, 그 과정을 설명하겠다고 밝혔다. 그는 프런티어 모델 개발은 미국과 중국에 집중돼 있지만 AI 도입 속도가 향후 유럽 생산성 증가를 좌우하며, 도입 지출 자체가 현재 경제를 자극하고 있다고 본다. 근거로는 유로지역 디지털 투자가 2014년 이후 실질 기준 73% 늘어 GDP 대비 2.3%에서 3.3%로 높아졌고, 2024년 이후 증가세가 뚜렷해진 것으로 추정된다는 점을 들었다. 미국보다 느리지만 구조 변화를 보여준다는 평가다. 다만 투자는 주로 무형자산에 쏠려 있고 데이터센터 비중은 작다고 밝혔다. 연설은 ECB 설문을 중심으로 금융시스템에 대한 함의도 다룬다고 덧붙였다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "https://www.ecb.europa.eu//press/blog/date/2026/html/ecb.blog20261102~871cc494e2.en.html",
@@ -491,7 +491,7 @@
         "title": "Trump defamation suit against Murdoch, WSJ over Epstein letter dismissed with prejudice",
         "category": "politics",
         "label": "domestic",
-        "confidence": 1.0,
+        "confidence": 0.98,
         "exempt": false,
         "status": "judged"
       },
@@ -536,7 +536,7 @@
         "title": "Gamble on democracy: Inside suspicious election-contracts trading on prediction markets",
         "category": "politics",
         "label": "domestic",
-        "confidence": 0.74,
+        "confidence": 0.67,
         "exempt": false,
         "status": "judged"
       },
@@ -563,7 +563,7 @@
         "title": "Iran claims four tankers struck mines in Hormuz as strike fears grow after U.S. midterms",
         "category": "politics",
         "label": "foreign",
-        "confidence": 0.18,
+        "confidence": 0.24,
         "exempt": false,
         "status": "judged"
       },
@@ -572,7 +572,7 @@
         "title": "How elections worldwide are testing Trump’s influence abroad",
         "category": "politics",
         "label": "domestic",
-        "confidence": 0.18,
+        "confidence": 0.24,
         "exempt": false,
         "status": "judged"
       },
@@ -832,8 +832,8 @@
         "guid": "108459703",
         "title": "Audi defends plans for a $4 billion Georgia plant amid VW restructuring, tariffs",
         "category": "macro",
-        "label": "domestic",
-        "confidence": 0.18,
+        "label": "foreign",
+        "confidence": 0.16,
         "exempt": false,
         "status": "judged"
       },
@@ -956,7 +956,7 @@
       }
     ],
     "late": 0,
-    "seconds": 9.2,
+    "seconds": 8.5,
     "categories": [
       "economy",
       "macro",
