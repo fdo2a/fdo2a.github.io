@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-03 08:04 KST",
+  "generated": "2026-11-03 08:18 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-02",
   "indices": {
@@ -733,7 +733,7 @@
         }
       },
       "Nasdaq": {
-        "value": 25164.316,
+        "value": 25164.363,
         "percentile": 76.4,
         "band": "높음",
         "sessions": 504,

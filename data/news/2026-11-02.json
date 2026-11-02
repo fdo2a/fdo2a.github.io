@@ -240,19 +240,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/41209c5357ba3193fd3fa50c8802c6dd5e3a45d0?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/41209c5357ba3193fd3fa50c8802c6dd5e3a45d0?source=rss",
-      "title": "え、ベンツも対象なの!? メルセデスに迫る米国の新規制って!? 自動車メーカーに広がる波紋が衝撃(ベストカーWeb)",
-      "summary": "アメリカと中国の摩擦で思わぬとばっちりだ。アメリカで、中国企業から一定以上の出資を受ける自動車メーカーが製造するコネクテッドカーの輸入・販売を禁じる法案を可決したところ、まさかのベンツが含まれてしまっ",
-      "published": "2026-11-02T23:00:55+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/2b6401f151a6582cd9b2d65e30f08e9843d58240?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/2b6401f151a6582cd9b2d65e30f08e9843d58240?source=rss",
+      "title": "「令和の野々村」「ポエム会見」GMO会見が《完全な失敗》だったと言える理由…“カリスマトップを止められない”組織の弱さ(東洋経済オンライン)",
+      "summary": "GMOインターネットが提供する「お名前.com デスクトップクラウド」へのサイバー攻撃による情報流出問題に関して、親会社のGMOインターネットグループが11月2日に記者会見を開いた。これが、思わぬ形で",
+      "published": "2026-11-02T23:20:28+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "ベストカーWeb",
-      "body_chars": 715,
+      "wire": "東洋経済オンライン",
+      "body_chars": 1094,
       "body_file": "07-global.txt",
-      "summary_ko": "미국 상원 상업위원회가 중국 기업으로부터 합산 15% 넘는 출자를 받은 자동차 메이커의 커넥티드카 수입·판매를 금지하는 법안을 가결했다. 중국산 전기차와 소프트웨어를 통한 정보 유출과 사이버 공격을 막는 것이 목적이지만, 이 그물에 독일 메르세데스 벤츠까지 걸려들었다. 메르세데스 주식은 중국 베이징자동차그룹(BAIC)이 9.98%, 지리자동차 창업자 리수푸 측이 9.69%를 보유해 합계 19.67%에 이른다. 두 주주 모두 단독으로는 10% 미만이며, 메르세데스 측은 경영 지배나 의사결정 관여 권한이 없다고 설명하고 있다. 미국에서는 공장과 부품사, 판매점을 통해 16만 명의 고용을 떠받치고 있어 금지되면 영향이 클 전망이다. 다만 법안이 성립하려면 상원 본회의 가결과 하원안과의 조정이 필요하고, 규제 완화의 여지도 남아 있다. 국경을 넘은 자본 제휴가 안보의 벽에 가로막힌다는 점에서 미중 대립의 여파가 미중 기업을 넘어 확산되고 있음을 보여 주는 사례다.",
-      "summary_model": "claude-haiku-5-5"
+      "summary_note": "가나·한자 「インターネットグループは」·「お名前」·「デスクトップクラウド」"
     },
     {
       "guid": "108502453",
@@ -284,18 +283,19 @@
       "summary_model": "claude-sonnet-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/1ca81b1accfb7cd57cafa2593ab55747f64a7502?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/1ca81b1accfb7cd57cafa2593ab55747f64a7502?source=rss",
-      "title": "「お詫びをしているのにボタン開けてどうする」と担当者には服装注意したが…GMO不正アクセス会見で「おしゃれスーツ姿」が与えてしまった“違和感”(東洋経済オンライン)",
-      "summary": "GMOインターネットグループのサービス「お名前.com デスクトップクラウド」がサイバー攻撃を受け、顧客情報が流出した問題で、熊谷正寿グループ代表らが記者会見を開きました。【写真を拡大して見る】「GM",
-      "published": "2026-11-02T22:30:41+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/ab1c3f72e7a346725dcd059fc75fb6ad5ffd4250?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/ab1c3f72e7a346725dcd059fc75fb6ad5ffd4250?source=rss",
+      "title": "NISMO 400Rは大森のニスモ本社工場(当時)で生産 NISMOロードカー＆コンプリートカーの軌跡 第3話(MotorFan)",
+      "summary": "ニスモのロードカーとコンプリートカーの軌跡を追うシリーズ第3話はNISMO 400R。1996年に車両本体価格1200万円(消費税3％別)で発売された。生産台数はわずか44台。【写真】NISMO 40",
+      "published": "2026-11-02T23:05:00+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "東洋経済オンライン",
-      "body_chars": 999,
+      "wire": "MotorFan",
+      "body_chars": 1132,
       "body_file": "10-global.txt",
-      "summary_note": "한국어 아님"
+      "summary_ko": "모터팬(REVSPEED)이 연재 중인 니스모 로드카·컴플리트카 시리즈 제3화로 NISMO 400R을 다뤘다. 이 차는 1996년 차량 본체 가격 1200만 엔(소비세 3% 별도)에 출시됐으며, 1994년 S14 실비아 K's 기반 'NISMO 270R'에 이은 컴플리트카 2탄이다. R33 GT-R V·spec 신차를 바탕으로 당시 오모리의 니스모 본사 공장에서 만들었고, 완성차는 모두 닛산 오이카와 테스트 코스에서 길들이기 운전과 성능 확인을 거쳤다. 닛산공기가 개발한 2.8L RB-X GT2 엔진에 메탈 N1 터빈을 얹어 400ps, 47.8kg-m를 냈고, 카본 프로펠러 샤프트와 풀 티타늄 머플러, 빌슈타인 전용 댐퍼를 갖췄다. 계획 대수는 99대였으나 실제로는 44대만 생산된 것으로 알려졌다.",
+      "summary_model": "claude-sonnet-5-5"
     },
     {
       "guid": "https://think.ing.com/snaps/us-manufacturing-benefiting-from-a-strong-economy-tech-investment-tariffs-and-energy-security/#When:15:38:00Z",
@@ -536,7 +536,7 @@
         "title": "Gamble on democracy: Inside suspicious election-contracts trading on prediction markets",
         "category": "politics",
         "label": "domestic",
-        "confidence": 0.73,
+        "confidence": 0.74,
         "exempt": false,
         "status": "judged"
       },
@@ -563,7 +563,7 @@
         "title": "Iran claims four tankers struck mines in Hormuz as strike fears grow after U.S. midterms",
         "category": "politics",
         "label": "foreign",
-        "confidence": 0.3,
+        "confidence": 0.18,
         "exempt": false,
         "status": "judged"
       },
@@ -572,7 +572,7 @@
         "title": "How elections worldwide are testing Trump’s influence abroad",
         "category": "politics",
         "label": "domestic",
-        "confidence": 0.22,
+        "confidence": 0.18,
         "exempt": false,
         "status": "judged"
       },
@@ -680,7 +680,7 @@
         "title": "Car buyers are demanding lower prices and better tech. Automakers must deliver both",
         "category": "economy",
         "label": "domestic",
-        "confidence": 0.79,
+        "confidence": 0.85,
         "exempt": false,
         "status": "judged"
       },
@@ -734,7 +734,7 @@
         "title": "U.S. Treasury dismisses IMF debt warning and 'messy' forecasting",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "exempt": false,
         "status": "judged"
       },
@@ -788,7 +788,7 @@
         "title": "The latest inflation data is expected to show price increases are accelerating",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.8,
+        "confidence": 0.85,
         "exempt": false,
         "status": "judged"
       },
@@ -797,7 +797,7 @@
         "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
         "category": "macro",
         "label": "foreign",
-        "confidence": 0.83,
+        "confidence": 0.79,
         "exempt": false,
         "status": "judged"
       },
@@ -824,7 +824,7 @@
         "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
         "category": "macro",
         "label": "foreign",
-        "confidence": 0.83,
+        "confidence": 0.79,
         "exempt": false,
         "status": "judged"
       },
@@ -833,7 +833,7 @@
         "title": "Audi defends plans for a $4 billion Georgia plant amid VW restructuring, tariffs",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.2,
+        "confidence": 0.18,
         "exempt": false,
         "status": "judged"
       },
@@ -941,7 +941,7 @@
         "title": "Bill Ackman says 2027 will be an amazing year for stocks as wars, inflation ease",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "exempt": false,
         "status": "judged"
       },
@@ -956,7 +956,7 @@
       }
     ],
     "late": 0,
-    "seconds": 6.7,
+    "seconds": 9.2,
     "categories": [
       "economy",
       "macro",
