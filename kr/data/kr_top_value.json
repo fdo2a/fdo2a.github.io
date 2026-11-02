@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 5330988,
-    "volume": 3769922,
+    "value": 3619423,
+    "volume": 2490829,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4336878,
-    "volume": 19485781,
+    "value": 3193031,
+    "volume": 14126614,
     "members": [
       "삼성전자"
     ]
@@ -26,38 +26,38 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 2084237,
-    "volume": 82193893,
+    "value": 1798783,
+    "volume": 68934508,
     "members": [
       "TIGER 반도체TOP10",
       "TIGER 반도체TOP10레버리지",
       "SOL AI반도체TOP2플러스",
       "KODEX 반도체레버리지",
-      "KODEX 반도체",
       "KODEX AI반도체TOP2플러스",
-      "HANARO Fn K-반도체",
+      "KODEX 반도체",
       "SOL AI반도체소부장",
+      "HANARO Fn K-반도체",
       "KODEX AI반도체핵심장비",
       "TIGER 반도체TOP10커버드콜액티브",
-      "SOL 반도체후공정",
-      "ACE AI반도체TOP3+",
-      "SOL 반도체전공정",
       "ACE K반도체TOP2+",
+      "SOL 반도체전공정",
+      "ACE AI반도체TOP3+",
+      "SOL 반도체후공정",
       "TIGER AI반도체핵심공정",
       "TIGER 반도체",
       "PLUS AI반도체소부장액티브",
+      "RISE 반도체소부장액티브",
       "KODEX 반도체타겟위클리커버드콜",
       "RISE AI반도체TOP10",
       "HANARO 반도체핵심공정주도주",
-      "RISE 반도체소부장액티브",
-      "RISE 비메모리반도체액티브",
       "ACE 반도체Plus전략산업",
-      "PLUS 코리아HBM반도체",
+      "RISE 비메모리반도체액티브",
       "KODEX 아시아AI반도체exChina액티브",
+      "PLUS 코리아HBM반도체",
       "FOCUS AI반도체위클리고정커버드콜",
-      "KODEX 한중반도체(합성)",
+      "TIGER 한중반도체(합성)",
       "FOCUS 금융반도체지주채권혼합50액티브",
-      "TIGER 한중반도체(합성)"
+      "KODEX 한중반도체(합성)"
     ]
   },
   {
@@ -65,21 +65,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 1039169,
-    "volume": 877969,
+    "value": 684577,
+    "volume": 573407,
     "members": [
       "삼성전기"
-    ]
-  },
-  {
-    "label": "삼성전자우",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 893054,
-    "volume": 5154642,
-    "members": [
-      "삼성전자우"
     ]
   },
   {
@@ -87,10 +76,21 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 594424,
-    "volume": 553735,
+    "value": 621002,
+    "volume": 578445,
     "members": [
       "KODEX CD금리액티브(합성)"
+    ]
+  },
+  {
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 536469,
+    "volume": 3071827,
+    "members": [
+      "삼성전자우"
     ]
   },
   {
@@ -98,32 +98,36 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 515993,
-    "volume": 576953,
+    "value": 439608,
+    "volume": 474739,
     "members": [
       "SK스퀘어"
     ]
   },
   {
-    "label": "삼성SDI",
-    "kind": "stock",
-    "direction": null,
+    "label": "TIGER CD1년금리액티브(합성)",
+    "kind": "sector_theme_etf",
+    "direction": "long",
     "theme": null,
-    "value": 422539,
-    "volume": 778915,
+    "value": 312286,
+    "volume": 288571,
     "members": [
-      "삼성SDI"
+      "TIGER CD1년금리액티브(합성)"
     ]
   },
   {
-    "label": "에이피알",
-    "kind": "stock",
-    "direction": null,
+    "label": "SK하이닉스 레버리지",
+    "kind": "single_stock_lev",
+    "direction": "long",
     "theme": null,
-    "value": 310851,
-    "volume": 1233160,
+    "value": 252839,
+    "volume": 40046158,
     "members": [
-      "에이피알"
+      "KODEX SK하이닉스단일종목레버리지",
+      "TIGER SK하이닉스단일종목레버리지",
+      "SOL SK하이닉스단일종목레버리지",
+      "ACE SK하이닉스단일종목레버리지",
+      "RISE SK하이닉스단일종목레버리지"
     ]
   },
   {
@@ -131,23 +135,23 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "2차전지",
-    "value": 278607,
-    "volume": 130709784,
+    "value": 250558,
+    "volume": 108886883,
     "members": [
       "KODEX 2차전지산업레버리지",
-      "KODEX 전고체배터리ESS TOP2플러스",
       "KODEX 2차전지산업",
+      "KODEX 전고체배터리ESS TOP2플러스",
       "TIGER 2차전지TOP10",
-      "SOL 전고체배터리&실리콘음극재",
       "TIGER 2차전지소재Fn",
+      "RISE 2차전지액티브",
+      "SOL 전고체배터리&실리콘음극재",
       "TIGER 2차전지테마",
       "TIGER 2차전지TOP10레버리지",
       "KODEX 2차전지핵심소재10",
       "RISE 2차전지TOP10",
-      "RISE 2차전지액티브",
       "SOL 2차전지소부장Fn",
-      "RISE 배터리 리사이클링",
-      "ACE 2차전지&친환경차액티브"
+      "ACE 2차전지&친환경차액티브",
+      "RISE 배터리 리사이클링"
     ]
   }
 ]
