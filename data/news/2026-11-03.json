@@ -49,10 +49,10 @@
       "url": "https://www.cnbc.com/2026/11/03/amd-amd-q3-earnings-report-2026-.html",
       "title": "AMD stock jumps 8% on earnings as data center revenue nearly doubles",
       "summary": "AMD reported better-than-expected third-quarter results, driven by booming sales of AI chips",
-      "published": "2026-11-03T22:10:55+00:00",
+      "published": "2026-11-03T22:50:33+00:00",
       "category": "ai",
       "source": "CNBC",
-      "body_chars": 4239,
+      "body_chars": 4350,
       "body_file": "12-ai.txt",
       "summary_ko": "AMD는 3분기 실적에서 매출이 전년 대비 45% 늘었고 데이터센터 매출은 거의 두 배로 뛰었다고 발표했다. 데이터센터 사업부는 전체 매출의 64%를 차지해 1년 전 47%에서 비중이 커졌다. 리사 수 CEO는 서버 CPU 수요가 에이전틱 AI 앱 확산으로 살아나고 있어 데이터센터 프로세서 성장이 더 빨라질 것으로 내다봤다. 반면 PC·게임 부문 매출은 8% 감소한 37억 달러였고 게임 매출은 40% 줄었다. 4분기 매출 가이던스는 약 170억 달러로 LSEG 평균 추정치 162억 달러를 웃돌았지만, 매출총이익률 55%는 추정치 55.3%를 살짝 밑돌았다. 실적 발표 후 시간외 거래에서 주가는 8% 올랐으며, 최근 3일 연속 하락 뒤 AI 과잉투자 우려 속 업종 매도세에서 반등한 흐름이다.",
       "summary_model": "claude-haiku-5-5"
@@ -121,6 +121,19 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
+      "guid": "108512923",
+      "url": "https://www.cnbc.com/2026/11/03/strand-bookstore-ppp-loan-ron-wyden-wife-settlement.html",
+      "title": "Strand bookstore to pay nearly $1.5 million over Covid loan tied to Sen. Wyden's wife",
+      "summary": "Nancy Bass Wyden, whose grandfather founded the New York City bookstore, had signed off on the PPP, which was off-limits because she is a senator's wife.",
+      "published": "2026-11-03T22:38:38+00:00",
+      "category": "politics",
+      "source": "CNBC",
+      "body_chars": 3903,
+      "body_file": "24-politics.txt",
+      "summary_ko": "Strand 서점이 코로나19 정부 대출을 잘못 받은 혐의로 약 150만 달러에 가까운 금액을 내기로 민사 합의했다고 미국 워싱턴 D.C. 연방검찰청이 밝혔다. 서점 소유주인 낸시 배스 와이덴은 론 와이덴 상원의원의 배우자로, 의원 배우자가 지배 지분을 가진 기업은 대출 대상에서 제외된다. 서점은 2021년 2월 중소기업청의 급여보호프로그램(PPP)으로 93만2350달러를 신청하며 이 자격 요건을 충족한다는 증명서를 냈고, 검찰은 이를 고의적이고 중대한 허위로 판단했다. 서점은 148만2560달러를 지급하되 책임은 인정하지 않았다. 서점 측은 실수였다며, 의회가 1차와 2차 대출 사이에 제한 조항을 바꾼 사실을 회계사와 은행이 몰랐다고 해명했다. 이번 사건은 내부고발자가 정부를 대신해 제기하는 허위청구방지법 소송으로 처리됐고, 원고 측은 합의금의 약 14만8000달러를 받게 된다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
       "guid": "108505403",
       "url": "https://www.cnbc.com/2026/11/03/trump-doj-election-lawsuits-monitors-2026-midterms.html",
       "title": "Trump DOJ sends target letters to Democrats in Alaska Senate criminal probe: Reports",
@@ -129,7 +142,7 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 8937,
-      "body_file": "24-politics.txt",
+      "body_file": "25-politics.txt",
       "summary_ko": "트럼프 행정부 법무부(DOJ)가 2026년 11월 3일 선거일을 맞아 민주당 인사 약 20명에게 알래스카 상원 선거 관련 형사 수사의 표적 가능성을 알리는 서한을 보냈다고 뉴욕타임스(NYT)가 보도했다. 수신자에는 유명 선거 변호사 마크 엘리아스와 민주상원선거위원회 관계자 최소 1명이 포함됐다. NYT는 기부자 사기와 공모 혐의를 조사 중이라고 전했다. 다만 표적 서한을 받았다고 해서 곧 기소되는 것은 아니다. 앞서 법무부는 공화당 현역 댄 설리번 상원의원과 이름이 같은 후보가 알래스카 상원 선거 투표용지에 오른 경위를 문제 삼았다. 연방 법원은 일요일 설리번 의원이 혼선 탓에 패배할 경우 선거 결과 인증을 늦추려는 법무부 소송을 기각했고, 법무부는 항소했다. 같은 날 법무부는 전국 투표소에 약 1,000명의 선거 감시단을 배치한다고 밝혔다. 2024년 약 100명이던 것에서 크게 늘어난 규모다. 캘리포니아 법무장관 롭 봉타는 행정부의 선거 개입 시도가 2028년 대선까지 이어질 것으로 내다봤다.",
       "summary_model": "claude-haiku-5-5"
     },
@@ -142,21 +155,8 @@
       "category": "politics",
       "source": "CNBC",
       "body_chars": 1417,
-      "body_file": "25-politics.txt",
-      "summary_ko": "크리스 머피 상원의원이 주말 사이 뇌졸중을 겪은 뒤 여전히 입원 중이라고 그의 사무실이 3일(현지시간) 확인했다. 사무실 측은 머피 의원이 회복되고 있으며 많은 응원을 받아 힘을 얻고 있다고 전했다. 머피 의원은 토요일 아들의 하키 경기를 보던 중 뇌졸중 증상을 보였고, 현지 병원을 거쳐 존스홉킨스로 옮겨져 치료를 받고 있다고 비서실장 앨리슨 허윗이 밝혔다. 다만 현재 상태와 회복 전망에 대해서는 추가 설명이 없었다. 머피 의원은 이번 선거에서 재선 도전 대상은 아니지만, 가을 내내 민주당 후보들을 지원하며 여러 지역을 순회해 왔다. 상원은 화요일 중간선거 이후 월요일에 회기를 재개할 예정이다. 그는 2013년 상원에 입성했으며 2028년 대선 잠재 후보로도 거론돼 왔다.",
-      "summary_model": "claude-haiku-5-5"
-    },
-    {
-      "guid": "108505249",
-      "url": "https://www.cnbc.com/2026/11/03/midterm-elections-congress-trump-democrats-republicans.html",
-      "title": "What the 2026 midterm elections could mean for Trump's final two years",
-      "summary": "Oddsmakers and public polls place Democrats in a favorable position ahead of Election Day.",
-      "published": "2026-11-03T18:29:24+00:00",
-      "category": "politics",
-      "source": "CNBC",
-      "body_chars": 4494,
       "body_file": "26-politics.txt",
-      "summary_ko": "2026년 11월 3일 중간선거는 트럼프 대통령의 남은 임기 2년 동안 의회 주도권을 누가 쥐느냐를 가린다. 공화당이 양원을 유지하면 트럼프는 의회 저항을 거의 받지 않고 주요 정책을 추진할 수 있다. 반면 민주당이 한 원이라도 차지하면 예산조정법안을 통한 단독 입법이 불가능해져 정부 운영까지 교착에 빠질 수 있다. 여론조사와 전문가 예측은 특히 하원 탈환 가능성에서 민주당에 유리하다고 보았다. 다만 개표에 며칠에서 몇 주가 걸릴 수 있고, 상원은 접전이 예상되며 알래스카 결과에 따라 발표가 늦어질 수 있다. 스티펠 워싱턴정책전략그룹은 민주당의 하원 승리와 상원 박빙을 예측하며, 선거 직후 시장이 급등락하더라도 어느 경우든 교착이 가장 유력한 정책 결과라 보고 그 반전이 이어질 수 있다고 분석했다. 민주당이 의회를 장악하면 백악관과 기업에 대한 조사와 소환장 발부가 활발해질 것으로 보이며, 행정명령 사용은 여야 구도와 상관없이 늘어날 것으로 예상된다.",
+      "summary_ko": "크리스 머피 상원의원이 주말 사이 뇌졸중을 겪은 뒤 여전히 입원 중이라고 그의 사무실이 3일(현지시간) 확인했다. 사무실 측은 머피 의원이 회복되고 있으며 많은 응원을 받아 힘을 얻고 있다고 전했다. 머피 의원은 토요일 아들의 하키 경기를 보던 중 뇌졸중 증상을 보였고, 현지 병원을 거쳐 존스홉킨스로 옮겨져 치료를 받고 있다고 비서실장 앨리슨 허윗이 밝혔다. 다만 현재 상태와 회복 전망에 대해서는 추가 설명이 없었다. 머피 의원은 이번 선거에서 재선 도전 대상은 아니지만, 가을 내내 민주당 후보들을 지원하며 여러 지역을 순회해 왔다. 상원은 화요일 중간선거 이후 월요일에 회기를 재개할 예정이다. 그는 2013년 상원에 입성했으며 2028년 대선 잠재 후보로도 거론돼 왔다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -249,7 +249,8 @@
       "wire": "ダイヤモンド・オンライン",
       "body_chars": 1595,
       "body_file": "04-global.txt",
-      "summary_note": "가나·한자 「微小」"
+      "summary_ko": "일본 다이아몬드 온라인 기사에 따르면, 경제학자 이토 오사무는 일본의 '잃어버린 30년'이 디플레이션 때문만은 아니라고 본다. 기업 이익은 약 3배, 주주 배당은 약 9배로 늘었지만 인건비와 설비투자는 거의 제자리였고 실질임금도 오르지 않았다. 기사에 따르면 1990년대 말부터 2022년 인플레이션 전환 전까지 일본의 물가 하락률은 대개 1% 미만이었으며, 이는 대공황기의 대폭적인 물가 하락과는 성격이 다른 '미세한 디플레이션'이었다. 기사는 이 디플레이션이 금융정책 실패로만 설명되지 않는다고 지적한다. 2010년 경제재정백서는 수요 부족, 자산가격 침체, 저임금국과의 교역 비중 확대를 물가 하락 요인으로 꼽았고, 일본에서는 임금 정체와 서비스 가격 상승 부진이 핵심이라는 견해가 학계에서 공유되고 있다고 전한다. 또 비정규직 증가와 기업의 구매 독점력 강화, 노동자 교섭력 약화가 임금 정체의 원인으로 거론되며, 이는 세계적 현상과도 맞닿아 있다고 설명한다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "108502453",
@@ -280,18 +281,18 @@
       "summary_model": "claude-haiku-5-5"
     },
     {
-      "guid": "https://news.yahoo.co.jp/articles/9e6df917febf16ef083b6a6167ed1f4b882403ea?source=rss",
-      "url": "https://news.yahoo.co.jp/articles/9e6df917febf16ef083b6a6167ed1f4b882403ea?source=rss",
-      "title": "「負の遺産」と揶揄された異次元緩和には「何の反省もない」日銀前総裁・黒田東彦氏が振り返る“デフレとの闘い”の裏側と、後任・植田和男総裁への期待(文春オンライン)",
-      "summary": "長く日銀総裁の座を務め、2023年に退任した黒田東彦氏。当時、記者会見では異次元緩和と呼ばれた金融緩和について「負の遺産」と揶揄されることもあった。しかし、黒田氏は「何の反省もしていないし、今でもそう",
-      "published": "2026-11-03T22:00:39+00:00",
+      "guid": "https://news.yahoo.co.jp/articles/6c4da064d12a2bb5dc051f96e1c619f92aeeb489?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/6c4da064d12a2bb5dc051f96e1c619f92aeeb489?source=rss",
+      "title": "【肉代の節約】2026年8月、牛肉（輸入品）の物価指数は前年同月比11.4％上昇。二人以上の世帯の生鮮肉は年「8万3265円」(LIMO)",
+      "summary": "豚こまや鶏むね肉、牛肉の切り落としなど、肉は夕食のおかずの中心になりやすく、食費のなかでも金額の大きい食材です。◆生鮮肉への支出と物価の動き総務省統計局の「家計調査（家計収支編）2025年」によると、",
+      "published": "2026-11-03T22:50:48+00:00",
       "category": "global",
       "source": "Yahoo!ニュース",
       "region": "japan",
-      "wire": "文春オンライン",
-      "body_chars": 1232,
+      "wire": "LIMO",
+      "body_chars": 924,
       "body_file": "08-global.txt",
-      "summary_ko": "전 일본은행 총재 구로다 하루히코는 최근 신간에서 이른바 이차원 금융완화에 대해 \"반성할 점은 전혀 없다\"고 밝혔다. 그는 2023년 3월 9~10일 열린 마지막 금융정책결정회의에서 이 완화를 전원 일치로 유지하기로 결정했으며, 당시 기자회견에서 디플레이션 탈피, 고용 400만 명 이상 증가, 임금 인상 복원 등을 들어 금융완화가 성공했다고 평가했다. 일본은행이 매입한 국채 500조 엔과 상장지수펀드(ETF) 35조 엔은 후임 우에다 가즈오 총재에게 넘어가는 부의 유산으로 지목됐지만, 구로다는 이를 부정하며 ETF는 연간 약 2조 엔의 배당을 가져다주는 플러스 유산이라고 주장했다. 또 금융정상화 과정에서 일본은행이 채무초과에 빠질 수 있다는 우려에 대해서도 문제없다고 일축했다.",
+      "summary_ko": "2025년 가계조사에 따르면 two인 이상 가구가 1년간 생선육에 쓴 돈은 8만3265엔으로, 육류 전체 10만2244엔의 대부분을 차지했다. 품목별로는 돼지고기가 3만5416엔으로 가장 많고, 소고기 2만880엔과 닭고기 2만182엔이 뒤를 이었다. 생선육 구입량은 약 50.6kg이며, 100g당 평균 가격은 소고기 386.60엔, 돼지고기 159.95엔, 닭고기 108.16엔이다. 소고기는 구입량이 5401g으로 적지만 단가가 높아 지출액이 닭고기와 거의 비슷한 수준이다. 총무성 소비자물가지수(2025년 기준)에서 2026년 8월 생선육은 전년 동월 대비 4.2% 올랐고, 육류 전체는 3.3% 상승했다. 품목별로는 수입 소고기가 11.4%, 국산 소고기가 5.6% 올라 수입산의 상승폭이 두드러진다. 돼지고기는 수입품 3.0%, 국산품 2.8%, 닭고기는 2.8% 상승했다. 반면 가공육은 전체적으로 0.6% 하락했으며, 햄은 1.3%, 소시지는 1.8% 떨어졌다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -353,8 +354,8 @@
     "market": "us",
     "model": "jev-1.14.0",
     "threshold": 0.9,
-    "asked": 59,
-    "answered": 59,
+    "asked": 50,
+    "answered": 50,
     "dropped": [
       {
         "guid": "108502646",
@@ -379,31 +380,40 @@
     "errors": {},
     "candidates": [
       {
-        "guid": "108512495",
-        "title": "Sen. Chris Murphy still hospitalized after suffering a stroke over the weekend",
+        "guid": "108512923",
+        "title": "Strand bookstore to pay nearly $1.5 million over Covid loan tied to Sen. Wyden's wife",
         "category": "politics",
         "label": "domestic",
         "confidence": 1.0,
         "exempt": false,
         "status": "judged"
+      },
+      {
+        "guid": "108512495",
+        "title": "Sen. Chris Murphy still hospitalized after suffering a stroke over the weekend",
+        "category": "politics",
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108505249",
         "title": "What the 2026 midterm elections could mean for Trump's final two years",
         "category": "politics",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108505403",
         "title": "Trump DOJ sends target letters to Democrats in Alaska Senate criminal probe: Reports",
         "category": "politics",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108476446",
@@ -572,7 +582,7 @@
         "title": "Gamble on democracy: Inside suspicious election-contracts trading on prediction markets",
         "category": "politics",
         "label": "domestic",
-        "confidence": 0.68,
+        "confidence": 0.73,
         "exempt": false,
         "status": "judged"
       },
@@ -586,22 +596,13 @@
         "status": "judged"
       },
       {
-        "guid": "108484647",
-        "title": "Trump rallies in Kansas and Iowa are back on after RNC said they were canceled: Source",
-        "category": "politics",
-        "label": "domestic",
-        "confidence": 0.98,
-        "exempt": false,
-        "status": "judged"
-      },
-      {
         "guid": "108511422",
         "title": "Job openings posted big September gain in positive sign for labor market ahead of payrolls report",
         "category": "macro",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108506848",
@@ -670,17 +671,17 @@
         "guid": "108443488",
         "title": "Trump's approval rating on economy hits all-time low as midterm looms: CNBC survey",
         "category": "economy",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108435175",
         "title": "Car buyers are demanding lower prices and better tech. Automakers must deliver both",
         "category": "economy",
         "label": "domestic",
-        "confidence": 0.82,
+        "confidence": 0.85,
         "exempt": false,
         "status": "judged"
       },
@@ -734,7 +735,7 @@
         "title": "U.S. Treasury dismisses IMF debt warning and 'messy' forecasting",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.98,
+        "confidence": 0.97,
         "exempt": false,
         "status": "judged"
       },
@@ -742,10 +743,10 @@
         "guid": "108413959",
         "title": "Wholesale prices jumped 6.3% annually in September, biggest gain since 2022",
         "category": "economy",
-        "label": "domestic",
-        "confidence": 0.94,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108409995",
@@ -769,17 +770,17 @@
         "guid": "108408250",
         "title": "Consumer prices rose 3.7% annually in September as gas prices skyrocket",
         "category": "economy",
-        "label": "domestic",
-        "confidence": 0.91,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108469244",
         "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
         "category": "macro",
         "label": "foreign",
-        "confidence": 0.83,
+        "confidence": 0.66,
         "exempt": false,
         "status": "judged"
       },
@@ -796,10 +797,10 @@
         "guid": "108505940",
         "title": "Jim Cramer says lower oil prices are giving stocks a boost. Can it last?",
         "category": "macro",
-        "label": "domestic",
-        "confidence": 0.98,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108487479",
@@ -815,7 +816,7 @@
         "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
         "category": "macro",
         "label": "foreign",
-        "confidence": 0.83,
+        "confidence": 0.66,
         "exempt": false,
         "status": "judged"
       },
@@ -823,8 +824,8 @@
         "guid": "108459703",
         "title": "Audi defends plans for a $4 billion Georgia plant amid VW restructuring, tariffs",
         "category": "macro",
-        "label": "foreign",
-        "confidence": 0.19,
+        "label": "domestic",
+        "confidence": 0.24,
         "exempt": false,
         "status": "judged"
       },
@@ -841,28 +842,28 @@
         "guid": "108505940",
         "title": "Jim Cramer says lower oil prices are giving stocks a boost. Can it last?",
         "category": "macro",
-        "label": "domestic",
-        "confidence": 0.98,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108505405",
         "title": "Feeling isolated? Half of in-office workers describe their desk jobs as 'remote,' NY Fed survey finds",
         "category": "macro",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108511422",
         "title": "Job openings posted big September gain in positive sign for labor market ahead of payrolls report",
         "category": "macro",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "108403840",
@@ -923,7 +924,7 @@
         "title": "Bill Ackman says 2027 will be an amazing year for stocks as wars, inflation ease",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.97,
+        "confidence": 0.98,
         "exempt": false,
         "status": "judged"
       },
@@ -938,7 +939,7 @@
       }
     ],
     "late": 0,
-    "seconds": 9.0,
+    "seconds": 7.6,
     "categories": [
       "economy",
       "macro",
