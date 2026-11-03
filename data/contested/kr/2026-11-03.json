@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-11-03",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-03T11:02:58+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-03T11:19:52+00:00",
  "cutoff_at": "2026-11-03T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 616,
+  "harvest": 604,
   "candidates": 1,
   "articles": [
    6
@@ -43,29 +43,19 @@
    "segye": "ok"
   },
   "notes": [
-   "discover:616"
+   "discover:604"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 26631,
-   "out": 11143
-  },
-  "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "8/8"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 8
+   "in": 13690,
+   "out": 5046
   }
  },
  "event": {
-  "topic_ko": "카카오페이증권 3분기 실적의 직전 분기 대비 감소율 보도 차이",
+  "topic_ko": "카카오페이증권 2026년 3분기 실적",
   "query": "3분기 영업익 제주항공",
   "trigger": []
  },
- "content_hash": "e3a26d0458b047e0"
+ "content_hash": "6210560d535dff54"
 }
