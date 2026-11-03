@@ -3,60 +3,49 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-02",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-03T07:36:57+00:00",
- "cutoff_at": "2026-11-03T07:36:57+00:00",
+ "collected_at": "2026-11-03T08:41:02+00:00",
+ "cutoff_at": "2026-11-03T08:41:02+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "25ff6444ded5f300de1311d24db863700c29960d",
-  "sha256": "0534cf5fb1e7863d2e4ef9f72d4793050443b2913427a5c3d38e08a7dacba5a2"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 173,
-  "candidates": 1,
+  "harvest": 174,
+  "candidates": 3,
   "articles": [
-   4
+   3,
+   2,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 31572,
-   "out": 11378
+   "in": 4931,
+   "out": 73
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
+   "aljazeera.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "short"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "8/8"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 6
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "미국의 이란 케심섬 타격과 중간선거 후 추가 공습 여부",
-  "query": "island qeshm strikes",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "4f08947f6d1207d4"
+ "content_hash": "b526deadb95986d5"
 }
