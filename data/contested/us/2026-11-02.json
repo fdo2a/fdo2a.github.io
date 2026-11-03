@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-02",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-03T02:48:44+00:00",
- "cutoff_at": "2026-11-03T02:48:44+00:00",
+ "collected_at": "2026-11-03T03:54:47+00:00",
+ "cutoff_at": "2026-11-03T03:54:47+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "0534cf5fb1e7863d2e4ef9f72d4793050443b2913427a5c3d38e08a7dacba5a2"
  },
  "counts": {
-  "harvest": 167,
+  "harvest": 168,
   "candidates": 3,
   "articles": [
    2,
@@ -32,8 +32,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 36777,
-   "out": 11310
+   "in": 38553,
+   "out": 9730
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,13 +45,13 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
-   "pairs": "2/2",
+   "claims": "3/3",
+   "pairs": "1/1",
    "obs": "6/6"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 0,
+   "claims": 0,
    "obs": 6
   },
   "attempt_refunded": "discovery_throttled"
@@ -61,11 +61,5 @@
   "query": "binance north hack",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "memo[2]:dangling"
- ],
- "content_hash": "a4fa36b2cb89b4be"
+ "content_hash": "2c8ab1f959fc457e"
 }
