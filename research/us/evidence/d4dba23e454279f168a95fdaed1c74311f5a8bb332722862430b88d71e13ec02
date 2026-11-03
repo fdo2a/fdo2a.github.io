@@ -1,0 +1,46 @@
+# US 2026-11-03 session — WebSearch result summaries
+
+Collected 2026-11-03 23:05–23:29 UTC via WebSearch (result summaries only; WebFetch unavailable — DNS ENOTFOUND for kiplinger.com and finance.yahoo.com in this session). Figures are as reported by each outlet at its own timestamp; canonical prices live in market_data.json.
+
+## Session drivers
+- Kiplinger, "Nasdaq Bounces as Chips Lead AI Revival: Stock Market Today" (2026-11-03): Nasdaq +0.8% to 25,372, S&P 500 +0.4% to 7,568, Dow lower; Nvidia +2.3%; "investors treated chipmakers as AI-boom plays rather than AI-bust traps"; Palantir -1.7% on slowing total commercial contract value growth. https://www.kiplinger.com/investing/stocks/nasdaq-bounces-as-chips-lead-ai-revival-stock-market-today
+- Benzinga, "Nasdaq 100 Gets Lift, Nvidia Overtakes Apple: Stock Market Today" (2026-11-03, midday): Nvidia $5.01T vs Apple $4.83T; Apple -2.2% midday on Dec-quarter margin guidance (memory costs); AMD +4.9% ahead of earnings; Microsoft, Amazon, Meta each up more than 2%; 10Y +4bp to 4.95% at the time. https://www.benzinga.com/markets/equities/26/11/62832505/stock-market-today-nvidia-overtakes-apple-chip-rally-nasdaq-jolts-yields
+- BNN Bloomberg/AP, "Nvidia and other Big Tech stocks lift the U.S. market despite drops for Apple and much of Wall Street" (2026-11-03). https://www.bnnbloomberg.ca/markets/dow-jones/2026/11/03/us-stocks-drift-in-mixed-early-trading-on-wall-street-as-apple-falls/
+- CNBC live, "S&P 500 snaps 3-day skid on Election Day as chip stocks rebound": six of 11 S&P sectors lower, materials -1.5% and consumer staples -1.3% led losses (CNBC sector index basis); S&P 500 +0.36% to 7,568.92. https://www.cnbc.com/2026/11/02/stock-market-today-live-updates.html
+- Benzinga, "Growth And Cyclical Lead Sectors Tuesday" (midday): XLP -1.58%, Walmart -1.73%, PepsiCo -1.42% at the time. https://www.benzinga.com/etfs/sector-etfs/26/11/62838995/growth-and-cyclical-lead-sectors-tuesday
+- CNBC (news file): AMD Q3 revenue +45% y/y, data center nearly doubled (64% of revenue); Q4 revenue guide ~$17bn vs LSEG $16.2bn; GM guide 55% vs 55.3%; shares +8% after hours. https://www.cnbc.com/2026/11/03/amd-amd-q3-earnings-report-2026-.html
+- CNBC (news file): Apple Dec-quarter gross margin guide 45–46% vs 46.3% consensus; memory prices and Siri AI costs cited; Ternus expects memory purchase prices to keep rising; purchase obligations up $33bn q/q. https://www.cnbc.com/2026/11/03/apple-earnings-john-ternus-faces-first-test-amid-high-memory-costs.html
+- Apple reported FQ4 2026 on Monday 2026-11-02 after the close (9to5Mac "Apple sets Q4 2026 earnings release for November 2"). https://9to5mac.com/2026/10/06/apple-sets-q4-2026-earnings-release-for-november-2/
+
+## Rates / Fed pricing
+- CNBC, "Treasury yields rise as investors weigh midterm vote, jobs data and Iran tensions" (2026-11-03): 10Y +6bp+ to 4.96%, 30Y ~5.33%; ISM services and ADP due Wednesday, October payrolls Friday; oil initially traded higher after reported U.S. strikes on Iran's Qeshm Island. https://www.cnbc.com/2026/11/03/us-treasury-yields-bonds.html
+- fnnews (citing CNBC post-close): 10Y 4.958%; stronger-than-expected labor data cited. https://en.fnnews.com/news/202611040641585157
+- Search-summary of rallies.ai / Babypips / FXStreet: JOLTS 7.523M vs ~7.10–7.13M consensus; 2Y 4.625% +4.2bp, 30Y 5.331% +6.2bp at one snapshot; December hike odds cited "rise to 79%". https://rallies.ai/news/treasury-yields-rise-with-falling-oil-strong-data-and-midterm-elections-in-focus-d80c5d0940009623 ; https://www.babypips.com/news/daily-financial-forex-market-recap-2026-11-03 ; https://www.fxstreet.com/news/gold-falls-near-3-900-amid-rising-us-yields-and-fed-hawkish-bets-202611031909
+- Schwab pre-open (2026-11-03): CME FedWatch December hike 77%; JOLTS expected 7.13M. https://www.schwab.com/learn/story/stock-market-update-open
+- Reuters via ad-hoc-news: 73% implied December hike probability. https://www.ad-hoc-news.de/boerse/news/unternehmensnachrichten/gold-treads-water-at-3-900-as-voters-head-to-the-polls-and-december-rate-fears-loom/70452540
+- FatTail (secondary tool on CME fed funds futures): 80.8% December 9 hike as of 16:38 ET Nov 3; 76.3% Nov 2. https://fattail.ai/inflation-solved-claim-election-day/
+- CNBC (news file): JOLTS 7.52M, +333k vs August, Dow Jones consensus 7.15M; quits 3.36M highest since Mar-2025; layoffs/discharges 1.64M lowest since Mar-2025; October payroll consensus +59k (Sept +29k). https://www.cnbc.com/2026/11/03/job-openings-posted-big-september-gain-in-positive-sign-for-labor-market-ahead-of-payrolls-report.html
+- investingLive: September factory orders +1.8% vs +1.2% expected; durable goods revised to +1.9% from +1.8%; core capex orders revised +0.6% from +0.5%. https://investinglive.com/news/us-september-factory-orders-1-8-vs-1-2-expected/
+
+## Oil / Iran
+- CNBC, "Crude oil prices fall for second day as market hopes for diplomatic resolution to Iran war" (URL slug: oil-prices-climb-after-us-reportedly-strikes-irans-qeshm-island): WTI settled -$0.37 at $96.09, Brent -$1.17 at $103.60. https://www.cnbc.com/2026/11/03/oil-prices-climb-after-us-reportedly-strikes-irans-qeshm-island.html
+- Invezz: Brent/WTI rose after reported U.S. attacks on Qeshm Island; not confirmed by Trump/US military. https://invezz.com/sg/news/2026/11/03/crude-oil-analysis-us-iran-attacks-pushes-brent-wti-higher-goldman-raises-targets/
+- Iran Foreign Ministry (as reported): no final agreement / Hormuz reopening unless U.S. naval blockade ends.
+
+## Memory / Korea
+- Benzinga, "Apple's Margin Problem Is Micron's Pricing Power" (2026-11-03): mid-morning STX ~+3.9%, WDC ~+3.8%, MU ~+3.1%, attributed to Apple's warning that memory costs keep rising. https://www.benzinga.com/markets/tech/26/11/62828023/memory-stocks-apple-margin-micron-sandisk-pricing-power
+- 24/7 Wall St., "SanDisk Surges 7% as Memory Stocks Rebound From Kioxia Selloff; Micron and Western Digital Rise 4%" (2026-11-03). https://247wallst.com/investing/2026/11/03/sandisk-surges-7-as-memory-stocks-rebound-from-kioxia-selloff-micron-and-western-digital-rise-4/
+- BigGo Finance / Korea Exchange data: KOSPI 5,648.79 (-3.59%), Samsung Elec -4.15%, SK hynix -5.03% on 2026-11-03; coverage cites AI investment cost/profitability doubts after the U.S. 11/2 selloff. https://finance.biggo.com/news/a59ec2f2-706f-4843-81eb-94362411dd24 ; https://en.sedaily.com/finance/2026/11/03/samsung-sk-hynix-slide-on-us-ai-selloff-kospi-tests-5700 ; https://koreajoongangdaily.com/business/kospi-slides-at-open-336-on-concerns-over-ai-infrastructure-spending/12951953
+- TradingKey: Japan markets closed 2026-11-03 (holiday). https://www.tradingkey.com/analysis/stocks/more/262265677-japan-korea-stocks-skhy-kospi-nikkei-samsung-mrvl-orcl-ai-tradingkey
+
+## AI infrastructure / movers
+- 24/7 Wall St., "GE Vernova Rallies 7% as Bernstein Calls Election-Day Data Center Fears Overblown; Eaton Climbs 6%, Vertiv Gains 5%" (2026-11-03). https://247wallst.com/investing/2026/11/03/ge-vernova-rallies-7-as-bernstein-calls-election-day-data-center-fears-overblown-eaton-climbs-6-vertiv-gains-5/
+- MarketBeat, "GE Vernova (NYSE:GEV) Shares Climb 6.4% - Here's Why" (2026-11-03). https://www.marketbeat.com/instant-alerts/price-ge-vernova-nyse-gev-shares-climb-64-heres-why-2026-11-03/
+- CNBC Investing Club: "Eaton's strong quarter should mark a bottom for shares of the AI buildout winner" (2026-11-03). https://www.cnbc.com/investingclub/2026/11/03/eatons-strong-quarter-should-mark-a-bottom-for-shares-of-the-ai-buildout-winner.html
+- TIKR: Coherent reports FQ1 after the close Wed 2026-11-04; Lumentum reports 2026-11-05. https://www.tikr.com/blog/coherent-stock-fell-11-as-intel-and-amazon-earnings-hit-ai-hardware-stocks-heres-where-the-stock-could-go
+- 24/7 Wall St., "Oracle Rallies 6% as $20 Billion Stock and Bond Sale Clears Funding Overhang; CoreWeave Climbs 7%, Microsoft Gains 2%" (2026-11-03); JKN: Oracle closed $126.19 vs $119.22, 86,206,897 shares priced at $116.00; notes 2029–2046, coupons 7%–8.65%; closing 2026-11-04. https://247wallst.com/investing/2026/11/03/oracle-rallies-6-as-20-billion-stock-and-bond-sale-clears-funding-overhang-coreweave-climbs-7-microsoft-gains-2/ ; https://news.jkn.co.kr/editions/english/post/1068376
+- Monolithic Power (MPWR): no dated 2026-11-03 cause found in search results.
+- Walmart (WMT): no Walmart-specific 2026-11-03 catalyst found; staples sector weakness reported (Benzinga, CNBC above).
+
+## Politics
+- CNBC (news file): midterm election day; DOJ ~1,000 election monitors; prediction-market snapshots (DeFi Rate, early Oct) showed Democrats ~92% to win House, Senate ~65% Democrats — not a same-day observation. https://defirate.com/news/democrats-85-percent-to-flip-house-2026-midterms-senate-still-toss-up/
