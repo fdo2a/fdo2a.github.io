@@ -3,33 +3,37 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-02",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-03T01:46:09+00:00",
- "cutoff_at": "2026-11-03T01:46:09+00:00",
+ "collected_at": "2026-11-03T02:48:44+00:00",
+ "cutoff_at": "2026-11-03T02:48:44+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "25ff6444ded5f300de1311d24db863700c29960d",
+  "sha256": "0534cf5fb1e7863d2e4ef9f72d4793050443b2913427a5c3d38e08a7dacba5a2"
+ },
  "counts": {
-  "harvest": 164,
+  "harvest": 167,
   "candidates": 3,
   "articles": [
    2,
-   3,
-   2
+   2,
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4395,
-   "out": 67
+   "in": 36777,
+   "out": 11310
   },
   "discovery": "throttled",
   "hosts": {
@@ -40,12 +44,28 @@
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "5/5",
+   "pairs": "2/2",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "바이낸스 63억 달러 해킹: 북한 배후 여부와 피해 규모",
+  "query": "binance north hack",
   "trigger": []
  },
- "content_hash": "1735301c3a35fa6d"
+ "problems": [
+  "structure:dangling",
+  "memo[1]:dangling",
+  "memo[2]:unverified",
+  "memo[2]:dangling"
+ ],
+ "content_hash": "a4fa36b2cb89b4be"
 }
