@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-03T11:19:52+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-03T11:35:51+00:00",
  "cutoff_at": "2026-11-03T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 604,
+  "harvest": 597,
   "candidates": 1,
   "articles": [
    6
@@ -43,13 +43,13 @@
    "segye": "ok"
   },
   "notes": [
-   "discover:604"
+   "discover:597"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 13690,
-   "out": 5046
+   "in": 13747,
+   "out": 4973
   }
  },
  "event": {
@@ -57,5 +57,5 @@
   "query": "3분기 영업익 제주항공",
   "trigger": []
  },
- "content_hash": "6210560d535dff54"
+ "content_hash": "cd2922bc78b46795"
 }
