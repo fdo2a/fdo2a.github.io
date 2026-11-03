@@ -1,0 +1,71 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-03",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-03T11:02:58+00:00",
+ "cutoff_at": "2026-11-03T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-10-21.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "c6c8eea37e52e567c33d90a4e8c8b30586b4384d",
+  "sha256": "c8afc782af4d2a972becd0cad2b9d31e08a5faf5df2558504f3b806a015bcc4b",
+  "extra": {
+   "kr_econ.json": "499e1c11e959dc7bf037dbed64d50129a53dd6e79d43ba46f8bac35335c248da",
+   "kr_flows.json": "85fe92c92b4b0f3c70e10999ca2eac7a9b8fc1acd54e6072e92691a39e8c2e6c",
+   "kr_session.json": "7380ab89966ebb21ac4003c90ec7f033df5e437ef6bdd9539a76676ed08a0b24"
+  }
+ },
+ "counts": {
+  "harvest": 616,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "newsis": "ok",
+   "herald": "ok",
+   "sedaily": "ok",
+   "chosun": "ok",
+   "etoday": "ok",
+   "segye": "ok"
+  },
+  "notes": [
+   "discover:616"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 26631,
+   "out": 11143
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8
+  }
+ },
+ "event": {
+  "topic_ko": "카카오페이증권 3분기 실적의 직전 분기 대비 감소율 보도 차이",
+  "query": "3분기 영업익 제주항공",
+  "trigger": []
+ },
+ "content_hash": "e3a26d0458b047e0"
+}
