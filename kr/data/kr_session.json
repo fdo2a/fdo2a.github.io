@@ -12,13 +12,13 @@
   "us_futures_during_kr": {
     "ES": {
       "pct": -0.43,
-      "bars": 13,
+      "bars": 14,
       "first_t": "09:00",
       "last_t": "15:30"
     },
     "NQ": {
       "pct": -0.46,
-      "bars": 13,
+      "bars": 14,
       "first_t": "09:00",
       "last_t": "15:30"
     }
