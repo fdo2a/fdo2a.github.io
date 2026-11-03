@@ -1,0 +1,1283 @@
+{
+  "report_date": "2026-11-03",
+  "source": "네이버증권 주요뉴스",
+  "harvested": 160,
+  "harvested_world": 144,
+  "notes": [],
+  "items": [
+    {
+      "guid": "009-0005758436",
+      "url": "https://n.news.naver.com/mnews/article/009/0005758436",
+      "title": "고금리가 바꾼 M&A 공식…차입 대신 현금으로",
+      "summary": "8%대 인수금융 이자부담에 차입 25% 수준으로 낮추고 기존 출자자 공동펀드 활용 금융사 인수금융 경쟁 치열 무리한 주선 부메랑 될수도 국내 대표적인 토종 사모펀드(PEF) 운용사인 IMM프라이빗에쿼티(PE)가 최근",
+      "published": "2026-11-03T17:35:11+09:00",
+      "source": "매일경제",
+      "category": "macro",
+      "body_chars": 1427,
+      "body_file": "01-macro.txt",
+      "summary_ko": "고금리로 인수금융 이자 부담이 커지자 국내 사모펀드(PEF) 운용사들이 차입매수(LBO) 대신 현금 비중을 높이는 방식으로 인수 구조를 바꾸고 있다. IMM프라이빗에쿼티는 지난 8월 이화다이아몬드공업 지분 65%를 4000억원대에 인수하면서 인수금융 비중을 25% 수준으로 낮추고, 2024년 결성한 블라인드펀드 로즈골드5호에 코인베스트 펀드를 더해 자금을 마련했다. 인수금융 금리가 연 8%까지 치솟아 LP에 약속한 기준수익률과 비슷해지면서 레버리지 효과가 사라진 것이 배경이다. 스톤브릿지캐피탈과 코스톤아시아도 코인베스트를 활용하거나 인수금융 비중을 10% 수준으로 낮췄다. 반면 M&A 거래가 줄고 차환 수요까지 사라지면서 은행과 증권사의 인수금융 경쟁은 치열해졌다. 하나은행과 하나증권은 베인캐피탈의 센트럴터미널코리아 인수금융 약 4700억원을 단독으로 맡았으나, 담보인정비율이 80%에 달해 셀다운이 어려운 것으로 전해졌다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005758425",
+      "url": "https://n.news.naver.com/mnews/article/009/0005758425",
+      "title": "원화값 강세 주춤하자 달러 ETF 회복세",
+      "summary": "외인 주식매도자금 송금에 원화 강세폭 일부 축소 \"장기투자는 신중해야\" 원화값 상승세가 주춤해지면서 약세를 면치 못하던 달러 투자 상장지수펀드(ETF) 수익률이 반등할 조짐을 보이고 있다. 다만 달러당 원화값 전망이",
+      "published": "2026-11-03T17:27:43+09:00",
+      "source": "매일경제",
+      "category": "macro",
+      "body_chars": 1214,
+      "body_file": "02-macro.txt",
+      "summary_ko": "외국인의 주식 매도 대금 송금과 연기금의 해외 투자 수요로 원화 강세가 주춤하면서 달러 ETF가 반등 조짐을 보이고 있다. 3일 기준 KODEX 미국달러선물 ETF는 최근 1주 새 1.35%로 돌아섰고, 달러 하락에 베팅하는 인버스 상품은 같은 기간 -1.42%로 밀렸다. 원화값은 지난달 말 달러당 1320원대까지 올랐다가 11월 첫 거래일인 2일 1343.8원으로 일주일 새 20.7원 내렸다. 연말까지는 미국 기술주 급락에 따른 외국인 자금 이탈로 단기 하락이 예상되지만, 반도체 수출업체의 달러 매도가 맞물려 1330원대 초반에서 지지될 전망이다. 내년 환율 전망은 상상인증권 연평균 1400원대, 한화투자증권 연평균 1300원대로 증권사별 격차가 커서 장기 투자에는 신중할 필요가 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005758404",
+      "url": "https://n.news.naver.com/mnews/article/009/0005758404",
+      "title": "유가·美국채금리 호재, AI 회의론에 묻혀 … 코스피 3% 넘게 하락",
+      "summary": "美·이란 협상 가능성 커졌지만 AI수익성 논란 美기술주 약세 반도체 중심으로 코스피 급락 국제유가와 미국 국채 금리가 동시 하락했다는 희소식도 인공지능(AI) 투자 수익성에 대한 의구심을 이겨내지 못했다. 3일 한국",
+      "published": "2026-11-03T17:21:05+09:00",
+      "source": "매일경제",
+      "category": "macro",
+      "body_chars": 1373,
+      "body_file": "03-macro.txt",
+      "summary_ko": "3일 코스피는 전 거래일보다 3.59% 하락한 5648.79에 마감해 전날 회복한 5800선을 하루 만에 내줬다. 미국과 이란의 협상 재개 가능성이 부각되며 2일(현지시간) WTI와 브렌트유 선물이 각각 7.63%, 7.36% 급락했고 미국 10년물 국채 금리도 약 2개월 만의 최저 수준으로 내려갔지만, 시장은 AI 투자 수익성과 자금 조달 능력에 대한 의구심에 더 크게 반응했다. 오라클이 AI 인프라 투자 재원으로 주식과 회사채 총 200억달러 발행 계획을 밝힌 뒤 주가가 8.8% 급락한 점이 불안을 키웠다. 삼성전자(3.93%)와 SK하이닉스(5.1%)가 내린 가운데 두 종목은 코스피 하락폭의 63%를 차지했다. 외국인은 1조7368억원, 기관은 3648억원을 순매도했고 개인은 1조7357억원을 순매수했다. 다만 AI 기업의 자금 부담이 곧 반도체 업황 악화는 아니므로 실제 투자 축소 여부를 확인해야 한다는 의견도 나온다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "016-0002718313",
+      "url": "https://n.news.naver.com/mnews/article/016/0002718313",
+      "title": "AI 빚잔치·美중간선거에 코스피 또 ‘털썩’…3.6% 급락 [투자360]",
+      "summary": "미국 빅테크의 AI 투자 확대를 둘러싼 의구심이 국내 증시를 덮쳤다. 코스피가 미국 기술주 약세와 미국 중간선거를 앞둔 경계심리에 3% 넘게 급락하며 5600대로 내려앉았다. AI 인프라 투자 확대에 따른 자금 조달",
+      "published": "2026-11-03T16:54:10+09:00",
+      "source": "헤럴드경제",
+      "category": "policy",
+      "body_chars": 1395,
+      "body_file": "04-policy.txt",
+      "summary_ko": "3일 코스피는 전 거래일보다 3.59% 내린 5648.79에 마감했다. 장중 한때 4.15% 하락해 5600선 초반까지 밀렸다. 미국 빅테크의 AI 투자 확대에 대한 우려가 번지면서 반도체주가 집중 매도 대상이 됐다. 전날 뉴욕증시에서 필라델피아 반도체지수가 3.37% 떨어졌고, 오라클이 AI 인프라 구축을 위해 200억달러 규모의 주식·채권 발행을 추진한다고 밝힌 데 이어 앤트로픽의 대규모 인프라 지출 계획이 알려졌다. 삼성전자는 4.15%, SK하이닉스는 5.03% 하락했다. 외국인은 유가증권시장에서 1조5298억원을 순매도했고, 그중 SK하이닉스와 삼성전자가 각각 6376억원, 2062억원으로 순매도 상위 1·2위에 올랐다. 개인은 1조6644억원을 순매수했으나 지수 하락을 막지 못했다. 코스닥도 4.08% 내린 704.39에 마감해 700선을 간신히 지켰다. 미국 중간선거를 앞둔 불확실성과 데이터센터 규제 강화 가능성도 투자심리를 더 위축시킨 요인으로 꼽혔다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "008-0005436004",
+      "url": "https://n.news.naver.com/mnews/article/008/0005436004",
+      "title": "하루 만에 '반등 반납'…美 선거·AMD 실적발표 후 투심 회복할까",
+      "summary": "전날 2%대 반등한 코스피가 하루 만에 3%대 하락세로 돌아섰다. AI(인공지능) 투자 수익성 우려에 기술주를 중심으로 투자심리가 위축됐고 외국인과 기관이 2조원어치 넘게 동반 순매도했다. 이날 밤(한국시간) 미국에",
+      "published": "2026-11-03T16:48:07+09:00",
+      "source": "머니투데이",
+      "category": "policy",
+      "body_chars": 3058,
+      "body_file": "05-policy.txt",
+      "summary_ko": "코스피는 전날 2%대 반등 후 하루 만에 3%대 하락해 5648.79로 마감했다. 외국인과 기관이 합쳐 2조원이 넘게 순매도했다. 오라클이 AI 인프라 투자 재원으로 200억달러(약 27조원) 조달 계획을 밝히자 오라클 주가가 8.8% 급락했고 반도체주도 동반 하락했다. 앤트로픽은 3분기 매출이 전년 동기의 12배를 웃돌았다고 밝혔으나 총지출 약정이 8954억달러(약 1200조원)에 달한다는 사실이 알려져 투자 부담 우려가 커졌다. 국제유가와 장기금리가 내렸음에도 기술주가 약세를 보여 시장은 투자비 회수와 자금조달 부담에 주목하는 분위기다. 코스닥도 4.08% 하락했다. 4일에는 미국 중간선거 투표와 AMD 실적 발표가 변수로 꼽히며, 정규장 중 투표가 진행돼 변동성 확대가 예상된다. 연준 기조 변화 기대가 낮아 과거보다 덜 흔들릴 것이라는 전망과, 중간선거 후 11월 코스피가 평균 상승했다는 점을 근거로 한 반등 기대가 함께 나온다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "008-0005435969",
+      "url": "https://n.news.naver.com/mnews/article/008/0005435969",
+      "title": "코스피 개장 때 美 선거결과 우르르…증권가 관전포인트는",
+      "summary": "미국 중간선거 본투표가 임박한 가운데 한국증시가 주요국 시장 중 가장 먼저 선거결과를 마주하는 '첫 타자'로 시험대에 오른다. 출구조사 공표시점이 국내증시 개장시간대와 겹쳐 거센 변동성이 우려된다. 3일(이하 한국시",
+      "published": "2026-11-03T16:16:01+09:00",
+      "source": "머니투데이",
+      "category": "policy",
+      "body_chars": 2155,
+      "body_file": "06-policy.txt",
+      "summary_ko": "미국 중간선거 본투표를 하루 앞두고 한국증시가 출구조사 공표 시점과 겹쳐 선거결과를 가장 먼저 반영하는 시장이 될 것이라는 점이 주목받는다. 통상 중간선거 이후 200일간 S&P500과 코스피가 각각 18%대 상승했다는 유안타증권 집계가 있으나, 측정기간과 선거 전 낙폭, 통화정책에 따라 결과가 다르다는 반론도 존재한다. 블루웨이브든 분점이든 트럼프 2기 행정부 기조를 뒤집기 어렵다는 전망이 우세하며, 이에 따라 반도체·에너지·배터리 기업은 재정 지원과 세액공제 변수에 영향을 받을 수 있다고 분석된다. 증권가는 상하원보다 데이터센터 규제를 내세운 주지사 선거에 더 주목하고 있다. 연방 AI 규제가 없어 주지사 권한이 강하고, 상위 20개 데이터센터 주 가운데 12곳에서 선거가 치러지기 때문이다. 선거 불복이나 대이란 확전 같은 테일 리스크도 경계 대상으로 꼽혔다. 증권사들은 다수당 확정이 지연되면 현금 비중을 늘리고 레버리지를 낮추는 전략을 제시했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "015-0005349845",
+      "url": "https://n.news.naver.com/mnews/article/015/0005349845",
+      "title": "\"너무 비싸게 샀나\"…마벨, 루멘텀 인수발표 후 급락",
+      "summary": "한국경제신문의 투자 전문 유료 플랫폼 '한경 프리미엄9'에 실린 기사입니다. 한경 프리미엄9(www.hankyung.com/premium9)을 구독하시면 더 많은 글로벌 투자 기사를 찾아볼 수 있습니다. 미국 반도체",
+      "published": "2026-11-03T17:55:20+09:00",
+      "source": "한국경제",
+      "category": "market",
+      "body_chars": 1296,
+      "body_file": "07-market.txt",
+      "summary_ko": "마벨테크놀로지가 광통신 부품 업체 루멘텀홀딩스를 1150억달러(약 154조4000억원) 규모로 인수한다고 2일(현지시간) 발표했다. 루멘텀 1주당 마벨 4.5주를 지급하는 전액 주식 교환 방식이며, 2028년 상반기까지 주주와 규제당국의 승인 절차를 마칠 계획이다. 마벨은 이를 통해 루멘텀의 레이저 부품 공급망을 확보하고 광학 패키징 기술 도입을 앞당겨 연간 10억달러 이상의 비용을 줄일 수 있을 것으로 기대한다. 브로드컴과 경쟁하려면 루멘텀의 광부품이 필수적이라는 분석도 나온다. 그러나 발표 직후 마벨 주가는 12.72% 하락한 171.41달러로 마감했고 루멘텀 주가는 18.59% 급락했다. 신주 발행으로 기존 주식 수가 49.3% 늘어 주식 가치가 희석될 수 있는 데다, AI 투자 회수와 수익성에 대한 우려가 커진 시점의 고점 인수라는 점, 장기간 이어질 반독점 심사 부담이 투자심리를 위축시킨 것으로 보인다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "421-0009267857",
+      "url": "https://n.news.naver.com/mnews/article/421/0009267857",
+      "title": "'따상' 보고 들어간 개미들 '무덤'…코스닥 새내기주 '우수수'",
+      "summary": "코스닥 새내기주들이 상장 직후부터 급격한 주가 조정을 받고 있다. 첫날 공모가를 밑돌거나 장중 급등분을 반납하는 사례가 잇따르고 있다. 3일 한국거래소에 따르면 이날 코스닥에 상장한 래래블업(0147B0)은 공모가",
+      "published": "2026-11-03T17:04:13+09:00",
+      "source": "뉴스1",
+      "category": "market",
+      "body_chars": 0,
+      "body_note": "TimeoutError"
+    },
+    {
+      "guid": "018-0006402975",
+      "url": "https://n.news.naver.com/mnews/article/018/0006402975",
+      "title": "“20조 쏟아붓는 SK하이닉스\"…주가 반등 열쇠는 '이것'",
+      "summary": "SK하이닉스가 20조원 규모의 추가 자사주 매입에 나서면서 외국인 매도세에 따른 증시 하락 압력을 완화할 수 있을지 주목된다. 앞서 삼성전자와 SK하이닉스가 대규모 자사주를 동시에 매입한 기간에는 외국인의 집중 매도",
+      "published": "2026-11-03T16:52:12+09:00",
+      "source": "이데일리",
+      "category": "market",
+      "body_chars": 2033,
+      "body_file": "09-market.txt",
+      "summary_ko": "SK하이닉스가 지난달 29일부터 내년 1월 28일까지 약 20조원 규모의 자사주를 추가 매입한다. 앞서 삼성전자와 SK하이닉스가 동시에 매입한 8월 24일부터 10월 6일 동안 외국인은 두 종목을 합쳐 약 26조6000억원을 순매도했지만, 양사 매입액이 46조5000억원에 달해 코스피는 0.41% 올랐다. 삼성전자 매입이 끝난 10월 7일부터 21일에는 외국인이 10조6676억원을 순매도하고 SK하이닉스의 일평균 매입액도 줄면서 코스피가 17.37% 급락했다. 신규 매입 후 이달 2일까지도 외국인 순매도가 이어져 코스피는 직전 종가보다 2.55% 낮다. 증권가는 자사주 매입이 하방을 지지하더라도 추세적 반등에는 반도체 실적 회복과 외국인 수급 개선이 필요하다고 본다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "015-0005349825",
+      "url": "https://n.news.naver.com/mnews/article/015/0005349825",
+      "title": "두산에너빌리티, 연중 최저가…체코 원전 지연 악재",
+      "summary": "한국경제신문의 투자 전문 유료 플랫폼 '한경 프리미엄9'에 실린 기사입니다. 한경 프리미엄9(www.hankyung.com/premium9)을 구독하시면 더 많은 주식 투자 기사를 찾아볼 수 있습니다. 국내 대표 원",
+      "published": "2026-11-03T17:45:15+09:00",
+      "source": "한국경제",
+      "category": "industry",
+      "body_chars": 1140,
+      "body_file": "10-industry.txt",
+      "summary_ko": "두산에너빌리티 주가가 3일 6.28% 하락한 5만2200원에 마감하며 52주 최저 수준으로 떨어졌다. 지난 5월 최고가 대비 60% 넘게 빠진 것이다. 지난달 29일 한국수력원자력이 대우건설·두산에너빌리티 컨소시엄과의 체코 두코바니 원전 시공계약 협상을 종료한 것이 가장 큰 악재다. 설계 변경 비용 분담에 합의하지 못한 탓이며, 다른 원전 수출에서도 같은 문제가 반복될 수 있다는 우려가 번졌다. 에픽AI에 따르면 평균 목표주가는 한 달 새 22.03% 낮아진 10만1615원이다. 올해 3분기까지 원자력 수주가 4000억원에 그치자 회사는 연간 전망치를 4조9000억원에서 1조2000억원으로 낮췄다. 반면 체코 주기기·터빈발전기 공급계약은 유지되고 3분기 말 수주잔액은 사상 최대인 26조6000억원이다. 증권가는 4분기 추가 원전 수주가 주가 반등의 분수령이 될 것으로 보고 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005758369",
+      "url": "https://n.news.naver.com/mnews/article/009/0005758369",
+      "title": "JTBC 9일 매각 공고...인수전 흥행 청신호",
+      "summary": "회생법원, 공고안 하루만에 인가 11월 말까지 LOI 접수 예정 스토킹호스 대신 공개경쟁입찰 [본 기사는 11월 03일(16:51) 매일경제 자본시장 전문 유료매체인 ‘레이더M’에 보도 된 기사입니다] 기업회생 절차",
+      "published": "2026-11-03T16:55:08+09:00",
+      "source": "매일경제",
+      "category": "industry",
+      "body_chars": 1205,
+      "body_file": "11-industry.txt",
+      "summary_ko": "JTBC가 신청한 매각 공고안이 서울회생법원에서 신청 당일 허가를 받았고, 매각 절차는 9일 공고와 함께 본격화될 전망이다. 당초 11월 셋째 주로 예상됐던 공고 시점을 일주일 이상 앞당긴 것이어서 업계는 매각전에 청신호가 켜진 것으로 본다. JTBC는 공고 후 4주간 인수의향서(LOI)를 접수하고 예비 실사 등을 거쳐 이달 말 예비입찰을 진행할 계획이다. 매각 방식은 예상됐던 스토킹호스 대신 처음부터 여러 원매자를 경쟁시키는 공개경쟁입찰로 바뀌었다. 이는 흥행에 대한 매각 측의 자신감으로 읽힌다. JTBC는 6월 전자단기사채를 상환하지 못해 유동성 위기가 커졌고, 8월 말 회생절차에 들어갔다. 회생계획안 제출 기한은 내년 1월 29일이다. 인수 구도의 변수는 방송법상 소유 규제다. 종합편성채널의 1인 지분 상한은 40%이며 외국인 상한은 20%여서 컨소시엄 형태의 인수가 거론된다. 최대주주가 바뀌면 방송미디어통신위원회의 승인도 받아야 한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "018-0006402959",
+      "url": "https://n.news.naver.com/mnews/article/018/0006402959",
+      "title": "‘따따블’ 찍고도 공모가 아래로…AI 새내기주, 투자심리 ‘싸늘’",
+      "summary": "공모주 청약에서 수천 대 1의 경쟁률을 기록하고 상장 첫날 주가가 급등했던 인공지능(AI) 기업들이 이후 상승분을 반납하며 공모가 아래로 내려앉았다. 기관 수요예측과 일반청약에서 확인한 높은 관심이 상장 후 주가를",
+      "published": "2026-11-03T16:36:14+09:00",
+      "source": "이데일리",
+      "category": "industry",
+      "body_chars": 2235,
+      "body_file": "12-industry.txt",
+      "summary_ko": "올해 상장한 AI 기업 9곳 가운데 7곳의 주가가 3일 종가 기준 공모가를 밑돌았다. 래블업은 공모가 1만9000원보다 25.16% 낮은 1만4220원에 마감했고, 장중에는 49.21% 오른 2만8350원까지 올랐으나 상승분을 지키지 못했다. 마키나락스는 5월 일반청약에서 2807.8대 1의 경쟁률을 기록하고 상장 첫날 공모가의 4배인 6만원에 마감했지만, 이날 종가는 1만3960원으로 공모가를 6.93% 밑돌았다. 첫날 종가에 산 투자자는 투자금의 4분의 3 이상을 잃은 셈이다. 매드업과 네오사피엔스도 첫날 종가 대비 40~80%대 하락률을 보였다. 반면 인텔리빅스는 공모가보다 147.78% 높은 2만2300원에 마감했으나 상장 첫날 종가보다는 28.06% 내렸다. 전문가들은 중소형주 유동성 위축으로 후속 매수세가 약해졌다고 진단하며, AI 기업들은 실적 시즌마다 수익성을 입증해야 하는 부담이 이어질 것으로 보고 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "001-0016419321",
+      "url": "https://n.news.naver.com/mnews/article/001/0016419321",
+      "title": "'전쟁안하는 나라' 지키자…日전국에 '평화헌법 기념비' 100여개",
+      "summary": "작년 이후만 44개 설치…'개헌' 추진에 위기 느낀 시민들 건립 나서 다카이치, '내년 2월' 목표 개헌 박차…\"평화주의 사라져선 안돼\" 다카이치 사나에 내각이 헌법 개정에 의욕을 보이고 있는 가운데, 일본 전역에",
+      "published": "2026-11-03T16:48:32+09:00",
+      "source": "연합뉴스",
+      "feed": "world",
+      "category": "global",
+      "region": "japan",
+      "body_chars": 1381,
+      "body_file": "13-global.txt",
+      "summary_ko": "일본 전국에 설치된 '헌법 9조의 비'(평화헌법 기념비)가 3일 기준 100개를 넘어섰다고 아사히신문이 전했다. 지난달 말 95곳이던 것이 헌법 공포 80년을 맞은 이날 6곳 추가 설치돼 집계됐다. 1985년 오키나와 나하시에 첫 비가 세워진 뒤 2022년 이후 급증했고, 작년부터 올해까지 새로 세워진 것만 44개다. 다카이치 사나에 내각이 내년 2월을 목표로 개헌에 나서면서 전쟁 포기와 전력 보유 금지를 담은 헌법 9조가 흔들릴 수 있다는 위기감이 건립 배경으로 꼽혔다. 2022년 말 정부가 안보 문서를 개정해 반격 능력 도입 근거를 마련한 것도 시민 대응을 키웠다. 저널리스트 이토 치히로 씨는 개헌 추진과 방위력 강화에 대한 위기감이 비 건립을 이어가게 한다고 설명했다. 다만 기사에는 개헌안의 구체적 내용이나 향후 국회 일정, 시장 영향에 대한 언급은 없다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "011-0004678239",
+      "url": "https://n.news.naver.com/mnews/article/011/0004678239",
+      "title": "‘유로존 부채 4위’ 벨기에, 예산 협상 결렬에 정부 붕괴 위기",
+      "summary": "프랑스 등 주요 유럽 국가들이 재정난에 허덕이는 가운데 벨기에도 재정적자 축소를 위한 예산안에 합의하지 못하면서 정부 붕괴 위기에 빠졌다. 지출 삭감과 부유층 증세를 둘러싼 연립정부 내부의 갈등에 총리가 사의를 표명",
+      "published": "2026-11-03T15:58:14+09:00",
+      "source": "서울경제",
+      "feed": "world",
+      "category": "global",
+      "region": "europe",
+      "body_chars": 1747,
+      "body_file": "14-global.txt",
+      "summary_ko": "벨기에 연립정부가 내년도 예산안과 2029년까지 약 100억 유로 규모의 재정 개선 방안을 놓고 합의에 실패해 정부 붕괴 위기에 놓였다. 2일(현지 시간) 바르트 더베버르 총리가 필립 국왕에게 사의를 표명했으며, 왕실은 사임 수락 여부를 보류하고 연정 참여 정당 지도자들과 협의하기로 했다. 쟁점은 재정적자 축소 방식이다. 우파 정당들은 의료 등 분야의 지출 축소를 주장하고, 다른 연정 정당들은 부유층 과세 강화를 요구하고 있다. 벨기에의 올해 국가부채 비율은 GDP 대비 110.5%로 전망되며 유로존에서 그리스, 이탈리아, 프랑스에 이어 네 번째로 높다. 재정적자는 GDP의 5.2%로 예상돼 2029년까지 3% 미만으로 낮춰야 하는 EU 시정 절차 부담도 있다. 지난해에도 비슷한 갈등 끝에 92억 유로 규모 절감안에 합의한 전례가 있다. 국왕은 6일 총리와 다시 면담할 예정이며, 사임이 수락되면 연립정부 구성 요청이나 조기 총선이 거론된다. 부총리는 조기 총선 가능성을 50 대 50으로 평가했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "032-0003480383",
+      "url": "https://n.news.naver.com/mnews/article/032/0003480383",
+      "title": "‘중간선거 D-1’ 미국, 이란 케슘섬 공격···카타르는 종전 협상 중재 나서",
+      "summary": "미국 중간선거를 하루 앞둔 2일(현지시간) 미군이 호르무즈 해협에 있는 이란의 요충지 케슘섬을 타격했다는 보도가 나왔다. 월스트리트저널(WSJ)은 미 정부 관계자들을 인용해 이같이 전했다. 앞서 이란 국영 IRNA통",
+      "published": "2026-11-03T15:48:00+09:00",
+      "source": "경향신문",
+      "feed": "world",
+      "category": "global",
+      "region": "mideast",
+      "body_chars": 1957,
+      "body_file": "15-global.txt",
+      "summary_ko": "미국 중간선거를 하루 앞둔 2일(현지시간) 미군이 호르무즈 해협의 이란 요충지 케슘섬을 타격했다는 보도가 나왔다. WSJ는 미 정부 관계자를 인용해 이를 전했고, 이란 국영 IRNA통신은 섬 인근에서 폭발음과 전투기 목격이 있었다고 밝혔다. 미군은 최근 몇 주간 이런 소규모 공격을 본격적 전투 재개로 비치지 않도록 은밀히 이어온 것으로 전해졌다. 트럼프 대통령은 선거 직후 대이란 공습을 재개할 수 있다며 전면전 가능성을 거론해 왔다. 이란은 최고지도자 명의로 지리적 제한 없는 보복을 예고했고, 걸프국들은 보안 훈련과 학교 온라인 수업 전환 등 대비에 나섰다. 카타르 대표단은 테헤란을 찾아 8일간 이어진 합의 초안 논의를 계속했다. 이란은 미국이 7개 조건을 수용하면 이틀 안에 호르무즈 해협을 열 수 있다고 밝혔다. 밴스 부통령은 합의 가능성을 낙관하면서도 공습 재개에 시한은 없다고 말했다. 이스라엘은 공습 재개를 촉구하며 높은 경계태세를 유지 중이다. 종전 협상의 향방과 재개 여부가 선거 이후 중동 정세를 가를 변수로 꼽힌다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "018-0006402963",
+      "url": "https://n.news.naver.com/mnews/article/018/0006402963",
+      "title": "“내년까지 6조원 갚아야”…중국 국유 부동산기업도 자금난",
+      "summary": "중국 부동산 시장 침체가 장기화하는 가운데 관련 국유기업도 채무불이행(디폴트) 상황에 놓였다. 지금까지 헝다(에버그란데), 비구이위안(컨트리가든) 등 민간 대형 개발업체에 이어 경영 위기가 지속 확산될 것이란 우려가",
+      "published": "2026-11-03T16:40:19+09:00",
+      "source": "이데일리",
+      "feed": "world",
+      "category": "global",
+      "region": "china",
+      "body_chars": 1793,
+      "body_file": "19-global.txt",
+      "summary_ko": "중국 광둥성 주하이시 최대 국유기업인 화파그룹이 일부 신탁상품 원리금을 기한 내 갚지 못하거나 일부만 지급했고, 여러 은행과 대출 만기 연장을 협의 중이라는 소식이 3일 전해졌다. 부동산 침체로 지난해 순손실이 170억위안(약 3조4000억원)에 이르렀고 올해 상반기에도 51억8000만위안의 손실을 냈다. 본사 채권 잔액 648억위안(약 13조원) 가운데 연내 59억위안, 내년 269억위안이 만기를 맞는데, 6월말 현금성 자산은 3월말보다 줄었다. 지난달 발행한 초단기채 한 건은 청약이 부진해 주관사가 3억8000만위안을 떠안았고, 일부 채권 가격은 하루 만에 9~12% 하락했다. 회사는 3~4일 예정된 약 5500만위안의 이자를 지급하겠다고 밝혔으며 자산 유동화와 지분 매각으로 현금을 확보 중이다. 시장은 갑작스러운 도산 가능성을 낮게 보지만, 1~9월 부동산 개발 투자가 20.6% 감소해 시장 회복 여부가 관건이다.",
+      "summary_model": "claude-sonnet-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "kr",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 106,
+    "answered": 106,
+    "dropped": [
+      {
+        "guid": "011-0004678333",
+        "title": "잘 팔리는 테슬라, 주가 하락 왜[투자의 창]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "215-0001271493",
+        "title": "\"공모가 밑으로 주가 떨어지면 어떡해...\" 결국 특단 카드 꺼낸 中정부",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "215-0001271437",
+        "title": "팔란티어 실적 터졌는데…'독설' 내뿜은 CEO 왜 [글로벌 pick]",
+        "label": "foreign",
+        "confidence": 0.97
+      },
+      {
+        "guid": "018-0006402482",
+        "title": "애플, '아이폰 효과' 분기 매출 1145억달러…예상치 상회[뉴스새벽배송]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "016-0002717900",
+        "title": "“몸값 2000조원 AI 공룡” 앤트로픽, 3분기 순손실 65% 급감 [투자360]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "215-0001271423",
+        "title": "美 중간선거 D-1...주요 변수는?-[굿모닝 글로벌 이슈]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "215-0001271421",
+        "title": "국제유가, 8% 급락…트럼프 “종전 원해”",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "277-0005836993",
+        "title": "美 중간선거 끝나면 주식 오를까…'불복·확전' 두 복병[클릭 e시장]",
+        "label": "foreign",
+        "confidence": 0.91
+      },
+      {
+        "guid": "119-0003150434",
+        "title": "\"미국 중간선거 D-day\"…삼전·닉스 운명도 달렸다?",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "277-0005836991",
+        "title": "\"비트코인, 내년 회복기…최고 15만달러 간다\"[크립토 레이더]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "277-0005836988",
+        "title": "이란 수뇌부, 정부 협상 일부 위임에…국제유가 7% 급락(종합)",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "018-0006402445",
+        "title": "유가 급락도 못 막은 AI 불안…나스닥 1.1%↓[월스트리트in]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "018-0006402439",
+        "title": "[속보]유가 급락에도 기술주 약세…나스닥↓·다우↑",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "025-0003562322",
+        "title": "“미 중간선거 뒤엔 늘 반등” vs “AI 의구심, 금리도 높아”",
+        "label": "foreign",
+        "confidence": 0.96
+      }
+    ],
+    "stopped": "complete",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "015-0005349845",
+        "title": "\"너무 비싸게 샀나\"…마벨, 루멘텀 인수발표 후 급락",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678333",
+        "title": "잘 팔리는 테슬라, 주가 하락 왜[투자의 창]",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005349825",
+        "title": "두산에너빌리티, 연중 최저가…체코 원전 지연 악재",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005758436",
+        "title": "고금리가 바꾼 M&A 공식…차입 대신 현금으로",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.38,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005758425",
+        "title": "원화값 강세 주춤하자 달러 ETF 회복세",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005758404",
+        "title": "유가·美국채금리 호재, AI 회의론에 묻혀 … 코스피 3% 넘게 하락",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005436032",
+        "title": "증시 조정에 채권 향한 자금…국채 10년물 한달반새 57bp 하락",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009267857",
+        "title": "'따상' 보고 들어간 개미들 '무덤'…코스닥 새내기주 '우수수'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005758369",
+        "title": "JTBC 9일 매각 공고...인수전 흥행 청신호",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002718313",
+        "title": "AI 빚잔치·美중간선거에 코스피 또 ‘털썩’…3.6% 급락 [투자360]",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402975",
+        "title": "“20조 쏟아붓는 SK하이닉스\"…주가 반등 열쇠는 '이것'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005436004",
+        "title": "하루 만에 '반등 반납'…美 선거·AMD 실적발표 후 투심 회복할까",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 0.25,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271520",
+        "title": "'무섭게 치솟더니' 11% 급락에 질린 개미들…더 크게 흔들렸다",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001071865",
+        "title": "코스피 3% 급락 마감⋯외인·기관 2조 '매도 공세'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402959",
+        "title": "‘따따블’ 찍고도 공모가 아래로…AI 새내기주, 투자심리 ‘싸늘’",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "029-0003056905",
+        "title": "한투·KB·IBK까지…뒤늦은 삼전닉스 목표가 낮추기",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435988",
+        "title": "코스닥에 더 준 '큰손' 배정 기회…정작 중소기업엔 '그림의 떡'?",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435986",
+        "title": "잘 굴려도 퇴출…상관계수 발목잡힌 액티브ETF 또 상폐",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001202295",
+        "title": "이익 늘었는데 주가는 내리막… 현대차·기아에 쏟아지는 경고",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005758349",
+        "title": "“한국 휴장인데 하이닉스 1053달러에 거래, 뭐지?”…주말 가격표의 ‘정체’",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "029-0003056895",
+        "title": "\"올해 여섯 번째\"… 기준 미달로 상폐된 ETF, ‘완전 액티브’ 도입 해결책?",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001202289",
+        "title": "AI 자본 제약 우려에… 코스피 3.6% 급락[마켓뷰]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435969",
+        "title": "코스피 개장 때 美 선거결과 우르르…증권가 관전포인트는",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.58,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435964",
+        "title": "겁없는 개미는 \"지금이야\" 줍줍...코스피 3%대 하락 마감",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016419186",
+        "title": "코스피, 美기술주 하락 영향에 3.6% 급락…코스닥도 4%↓(종합)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435963",
+        "title": "마이크론도 삼전닉스도 미끌…반도체 대신 이 ETF 뛰었다",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.25,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "138-0002247111",
+        "title": "“하루 반등, 하루 폭락”…롤러코스터 코스피, 3.59% 급락에 5600선 후퇴",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "243-0000105165",
+        "title": "코스피 3%↓'뚝' 5600선까지 밀려…'AI 자금난·국제유가 하락' 직격탄[오늘의증시]",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629-0000548350",
+        "title": "코스피, 외인 매도 폭탄에 3.59% 급락, 5650선 내줘…AI 우려에 반도체株 '휘청'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005349702",
+        "title": "코스피, 3%대 급락해 5600선으로 밀려…삼전닉스↓",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005758302",
+        "title": "“외국인 던질 때 연기금은 주웠다”…급락장서 엇갈린 종목 성적표",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435905",
+        "title": "'상장 후 따상 찍고 급락' 막는다…코너스톤 투자자 13일 도입",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678219",
+        "title": "금융권 해킹에 보안주 급등…한싹 상한가·파수AI 15%대↑[이런국장 저런주식]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678215",
+        "title": "“내년 코스피 최고 1만 500 간다”…현대차證 “하반기 반도체 반등” [줍줍 리포트]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271494",
+        "title": "미 국채 공급 부담 더 줄일 듯…약세장 숨통 틔일까 [딥시그널]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271493",
+        "title": "\"공모가 밑으로 주가 떨어지면 어떡해...\" 결국 특단 카드 꺼낸 中정부",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271489",
+        "title": "'빚투' 10조 증발…\"코스피, 매물 공백 구간 진입\" [마켓딥다이브]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001071752",
+        "title": "IPO '확약 공백' 메우는 증권사들⋯'코너스톤' 역부족 우려",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001071746",
+        "title": "삼성전기 '코스피 4위' 굳히기⋯LG엔솔 시총 격차 더 커졌다",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435830",
+        "title": "\"주식창 켰더니 이럴 수가\" 韓증시 와르르...4%대 동반 급락",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014297941",
+        "title": "자회사 시총 6분의 1 불과한 하이트진로홀딩스…주주환원·유통주식 부족에 저평가[저PBR 기업분석③]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005349634",
+        "title": "\"7개월만 버티면\" 등돌린 외국인 결국…'파격 전망' 또 나왔다 [분석+]",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678172",
+        "title": "하락한 삼성전자 담는 초고수…한국전력도 ‘사자’ [주식 초고수는 지금]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005349613",
+        "title": "\"반도체 겨울 다시 오나\"…日 경고음에 삼전닉스도 '긴장'",
+        "category": "industry",
+        "label": "foreign_impact",
+        "confidence": 0.49,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002718170",
+        "title": "한진칼 지분 경쟁에 주가 ‘상한가’…호반 맞불에 더 뛸 수도 [경영권 분쟁 불붙은 대한항공]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271459",
+        "title": "외국인·기관 동반 매도에 코스피 '휘청'…개미는 '사자'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629-0000548176",
+        "title": "선거 끝나면 무조건 상승?…美 중간선거 100% 공식, 국장 통할까",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 0.28,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002718100",
+        "title": "“현대차 시총, 저평가·정책지원에 반등 기대”",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629-0000548170",
+        "title": "日 4.7조원 vs 韓 0원…앤트로픽 IPO서 또 소외된 서학개미",
+        "category": "market",
+        "label": "foreign_impact",
+        "confidence": 0.66,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005598545",
+        "title": "\"삼성전자 57만→44만원\" 목표가 하향했지만 '매수 추천'…포스코퓨처엠, LFP 양극재로 성장 본격화 [株토피아]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014297262",
+        "title": "韓 주식 22조 팔아치운 외국인, 채권은 7조 샀다…왜?",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.6,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678123",
+        "title": "美·이란 협상 기대에 유가 급락…S-OIL 11%대·SK이노 8%대↓[이런국장 저런주식]",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.31,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678121",
+        "title": "조원태, 한진칼 370억 추가 매입 예고…지분 경쟁에 주가 25% 급등[마켓시그널]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005598506",
+        "title": "[단독] '비철계 M&A 큰손' 풍전비철, 정안철강 인수 유력 [fn마켓워치]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005837207",
+        "title": "40년간 한 번도 안 떨어졌다…美 중간선거가 코스피 구원할까",
+        "category": "policy",
+        "label": "foreign_impact",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009266276",
+        "title": "유가 7% 급락, 정유주 '뚝'…에쓰오일 12%·SK이노 9%↓[핫종목]",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004678080",
+        "title": "美 AI주 한파에 삼전 4%·닉스 5%대↓…코스피 5700선 위태[이런국장 저런주식]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.38,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "138-0002247025",
+        "title": "“어제 2% 올랐는데 하루 만에 급락”…코스피 3.3%↓, 반도체주 와르르",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001071637",
+        "title": "AI 투자 부담에 반도체株 '털썩'⋯코스피 5600선 밀려",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009266236",
+        "title": "키움證 \"현대모비스, 4분기 사상 첫 1조 영업익 기대…목표가 64만 원\"",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009266227",
+        "title": "달러·원 환율 1346원 출발…외국인 증시 이탈에 상승 압력",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435625",
+        "title": "코스피, 장 중 3%대 '뚝'… AI 수익성 우려에 美 기술주 급락 여파",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005598439",
+        "title": "목표주가 깎인 포스코홀딩스 4%대 하락..리튬·철강 회복 지연 부담[종목NOW]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271437",
+        "title": "팔란티어 실적 터졌는데…'독설' 내뿜은 CEO 왜 [글로벌 pick]",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014296760",
+        "title": "삼성전자 21만원대로 '뚝'…SK하이닉스도 140만원선 붕괴[핫스탁]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "029-0003056743",
+        "title": "AI 수익성 우려에 코스피 5700선 급락…삼전·하닉 5% 안팎↓",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005349521",
+        "title": "코스피, 3%대 하락해 5700선 아래로…삼전닉스 동반 급락",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402541",
+        "title": "\"HD현대마린엔진, 3분기 어닝 서프라이즈…중장기 증설에 주목\" -현대차證",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402531",
+        "title": "[속보]'AI 수익성 우려'에 코스피 3%대 하락…삼전닉스 동반 약세",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005598410",
+        "title": "\"삼성전자 19만원·SK하닉 90만원이 바닥\"...'손절' 말라는 전문가, \"이때 더 사라\"",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001202112",
+        "title": "대신證 “한화오션, 美 군함 추가 수주 기대…목표가 10만2000원”",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005837070",
+        "title": "'KODEX 전고체배터리ESS TOP2플러스' ETF, 순자산 3000억 돌파",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402514",
+        "title": "성호전자, AI 데이터센터 장비 수주 확대…2027년 영업익 748억 전망-메리츠",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016417308",
+        "title": "한투증권, 삼성전자 목표가 57만→44만원…\"추가 상승동력 필요\"",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001202102",
+        "title": "한투證 “삼성전자, 지금 가격 매력은 연말이 마지막…목표가 44만원”",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005598389",
+        "title": "140만원선도 위태로운데...\"SK하이닉스 320만원 간다. 지금 살 때\"",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023-0004007459",
+        "title": "정부 압박에 저PBR 떴지만… ‘싼 이유’ 안 풀리면 또 바닥",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402482",
+        "title": "애플, '아이폰 효과' 분기 매출 1145억달러…예상치 상회[뉴스새벽배송]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002717900",
+        "title": "“몸값 2000조원 AI 공룡” 앤트로픽, 3분기 순손실 65% 급감 [투자360]",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435578",
+        "title": "\"SK하이닉스, 비중확대 전략 유효… 목표가 320만\"-한투",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "029-0003056731",
+        "title": "AI 수익성 우려에 프리마켓 약세…삼전·하닉 3%대↓",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016417261",
+        "title": "전날은 선방했지만…AI 수익성 우려 지속, 코스피 향방은[마켓뷰]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402473",
+        "title": "포스코퓨처엠, LFP 양극재 생산 본격화…목표가 15%↑-하나",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435567",
+        "title": "\"'어닝 서프라이즈' 포스코퓨처엠, 실적 성장 지속\"-키움",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402470",
+        "title": "POSCO홀딩스, 악재 충분히 반영된 주가...리튬가치만 10조원-iM",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005349480",
+        "title": "\"SK하이닉스, 4분기 영업익 112조 전망…목표가 320만원\"-한투",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014296493",
+        "title": "코스피, 美 AI 투심 위축에 다시 위기감…유가 급락이 낙폭 막을까[오늘의 증시]",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271423",
+        "title": "美 중간선거 D-1...주요 변수는?-[굿모닝 글로벌 이슈]",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271421",
+        "title": "국제유가, 8% 급락…트럼프 “종전 원해”",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001271419",
+        "title": "\"11월 계절적 랠리 온다\"… BofA가 지목한 실적 시즌 매수 유망주 4선 [ 글로벌 IB리포트 ]",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005836998",
+        "title": "반토막났던 조선株 하룻새 8% 급등…반등의 서막?",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005836994",
+        "title": "하루에 11곳...현대차 목표주가 줄하향, 왜?[클릭 e종목]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005836993",
+        "title": "美 중간선거 끝나면 주식 오를까…'불복·확전' 두 복병[클릭 e시장]",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "119-0003150434",
+        "title": "\"미국 중간선거 D-day\"…삼전·닉스 운명도 달렸다?",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005836991",
+        "title": "\"비트코인, 내년 회복기…최고 15만달러 간다\"[크립토 레이더]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005836988",
+        "title": "이란 수뇌부, 정부 협상 일부 위임에…국제유가 7% 급락(종합)",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402445",
+        "title": "유가 급락도 못 막은 AI 불안…나스닥 1.1%↓[월스트리트in]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006402439",
+        "title": "[속보]유가 급락에도 기술주 약세…나스닥↓·다우↑",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004677981",
+        "title": "돌아온 조갑주號 순항…이지스운용, 광화문 케이트윈타워 1조 인수 [시그널]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014296412",
+        "title": "이틀간 1.8조 '사자'…'인텔쇼크' 소방수 등판한 연기금·SK하닉",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009265836",
+        "title": "같은 반도체 ETF인데 수익률 천차만별…편입 종목 따져봐야[ETF 업&다운]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.64,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009265833",
+        "title": "'저PBR' 딱지 붙자 오히려 주가 급등…\"기업가치 개선 노력 살펴야\"",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009265826",
+        "title": "외국인 매도세 막아선 연기금…급락장서 9000억 '사자' 증시 버팀목",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435508",
+        "title": "외풍에도 꿋꿋… 코스피 올린 '기관의 힘'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005435501",
+        "title": "\"실적은 좋은데 왜 불안하지?\"…삼전닉스 주가 언제까지 출렁일까[부꾸미]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.55,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "025-0003562322",
+        "title": "“미 중간선거 뒤엔 늘 반등” vs “AI 의구심, 금리도 높아”",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      }
+    ],
+    "late": 0,
+    "seconds": 20.0,
+    "categories": [
+      "industry",
+      "macro",
+      "market",
+      "policy"
+    ]
+  }
+}

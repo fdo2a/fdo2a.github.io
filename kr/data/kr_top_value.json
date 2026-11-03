@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3696906,
-    "volume": 2543239,
+    "value": 3150964,
+    "volume": 2249283,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3259005,
-    "volume": 14414473,
+    "value": 2890357,
+    "volume": 13148660,
     "members": [
       "삼성전자"
     ]
@@ -26,38 +26,38 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "반도체",
-    "value": 1798783,
-    "volume": 68934508,
+    "value": 1527381,
+    "volume": 61832798,
     "members": [
       "TIGER 반도체TOP10",
       "TIGER 반도체TOP10레버리지",
       "SOL AI반도체TOP2플러스",
       "KODEX 반도체레버리지",
-      "KODEX AI반도체TOP2플러스",
       "KODEX 반도체",
-      "SOL AI반도체소부장",
+      "KODEX AI반도체TOP2플러스",
       "HANARO Fn K-반도체",
+      "SOL AI반도체소부장",
       "KODEX AI반도체핵심장비",
-      "TIGER 반도체TOP10커버드콜액티브",
-      "ACE K반도체TOP2+",
-      "SOL 반도체전공정",
       "ACE AI반도체TOP3+",
+      "ACE K반도체TOP2+",
+      "TIGER 반도체TOP10커버드콜액티브",
+      "HANARO 반도체핵심공정주도주",
+      "SOL 반도체전공정",
+      "TIGER 반도체",
       "SOL 반도체후공정",
       "TIGER AI반도체핵심공정",
-      "TIGER 반도체",
       "PLUS AI반도체소부장액티브",
       "RISE 반도체소부장액티브",
-      "KODEX 반도체타겟위클리커버드콜",
       "RISE AI반도체TOP10",
-      "HANARO 반도체핵심공정주도주",
+      "KODEX 반도체타겟위클리커버드콜",
       "ACE 반도체Plus전략산업",
+      "PLUS 코리아HBM반도체",
       "RISE 비메모리반도체액티브",
       "KODEX 아시아AI반도체exChina액티브",
-      "PLUS 코리아HBM반도체",
       "FOCUS AI반도체위클리고정커버드콜",
-      "TIGER 한중반도체(합성)",
       "FOCUS 금융반도체지주채권혼합50액티브",
-      "KODEX 한중반도체(합성)"
+      "KODEX 한중반도체(합성)",
+      "TIGER 한중반도체(합성)"
     ]
   },
   {
@@ -65,8 +65,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 698220,
-    "volume": 584743,
+    "value": 683791,
+    "volume": 607098,
     "members": [
       "삼성전기"
     ]
@@ -76,21 +76,10 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": null,
-    "value": 621002,
-    "volume": 578445,
+    "value": 479201,
+    "volume": 446320,
     "members": [
       "KODEX CD금리액티브(합성)"
-    ]
-  },
-  {
-    "label": "삼성전자우",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 550674,
-    "volume": 3151870,
-    "members": [
-      "삼성전자우"
     ]
   },
   {
@@ -98,36 +87,32 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 451400,
-    "volume": 487034,
+    "value": 417411,
+    "volume": 462328,
     "members": [
       "SK스퀘어"
     ]
   },
   {
-    "label": "TIGER CD1년금리액티브(합성)",
-    "kind": "sector_theme_etf",
-    "direction": "long",
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
     "theme": null,
-    "value": 312286,
-    "volume": 288571,
+    "value": 392227,
+    "volume": 2285058,
     "members": [
-      "TIGER CD1년금리액티브(합성)"
+      "삼성전자우"
     ]
   },
   {
-    "label": "SK하이닉스 레버리지",
-    "kind": "single_stock_lev",
-    "direction": "long",
+    "label": "삼성SDI",
+    "kind": "stock",
+    "direction": null,
     "theme": null,
-    "value": 252839,
-    "volume": 40046158,
+    "value": 384777,
+    "volume": 756362,
     "members": [
-      "KODEX SK하이닉스단일종목레버리지",
-      "TIGER SK하이닉스단일종목레버리지",
-      "SOL SK하이닉스단일종목레버리지",
-      "ACE SK하이닉스단일종목레버리지",
-      "RISE SK하이닉스단일종목레버리지"
+      "삼성SDI"
     ]
   },
   {
@@ -135,23 +120,34 @@
     "kind": "sector_theme_etf",
     "direction": "long",
     "theme": "2차전지",
-    "value": 250558,
-    "volume": 108886883,
+    "value": 364402,
+    "volume": 167157230,
     "members": [
       "KODEX 2차전지산업레버리지",
       "KODEX 2차전지산업",
-      "KODEX 전고체배터리ESS TOP2플러스",
       "TIGER 2차전지TOP10",
+      "KODEX 전고체배터리ESS TOP2플러스",
       "TIGER 2차전지소재Fn",
-      "RISE 2차전지액티브",
       "SOL 전고체배터리&실리콘음극재",
       "TIGER 2차전지테마",
       "TIGER 2차전지TOP10레버리지",
       "KODEX 2차전지핵심소재10",
       "RISE 2차전지TOP10",
+      "RISE 2차전지액티브",
       "SOL 2차전지소부장Fn",
       "ACE 2차전지&친환경차액티브",
       "RISE 배터리 리사이클링"
+    ]
+  },
+  {
+    "label": "대덕전자",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 215596,
+    "volume": 2093536,
+    "members": [
+      "대덕전자"
     ]
   }
 ]
