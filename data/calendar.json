@@ -1,22 +1,8 @@
 {
-  "report_date": "2026-11-02",
-  "generated": "2026-11-03 08:40 KST",
+  "report_date": "2026-11-03",
+  "generated": "2026-11-04 07:42 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-jolts-20261103",
-      "kind": "release",
-      "name_ko": "JOLTS 구인·이직",
-      "date": "2026-11-03",
-      "time_et": "10:00",
-      "time_kst": "2026-11-04 00:00",
-      "status": "confirmed",
-      "source": "BLS 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "release-claims-20261105",
       "kind": "release",
@@ -86,6 +72,20 @@
       "time_kst": "2026-11-13 00:00",
       "status": "confirmed",
       "source": "NAR 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-ppi-20261113",
+      "kind": "release",
+      "name_ko": "생산자물가(PPI)",
+      "date": "2026-11-13",
+      "time_et": "08:30",
+      "time_kst": "2026-11-13 22:30",
+      "status": "confirmed",
+      "source": "BLS 공표 일정(FRED)",
       "assets": [
         "금리"
       ],

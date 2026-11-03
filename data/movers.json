@@ -1,128 +1,92 @@
 {
-  "report_date": "2026-11-02",
+  "report_date": "2026-11-03",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
+      "industry": "Semiconductors",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": 2.29,
+          "close": 206.69,
+          "value": 18664766974.95
+        },
+        {
+          "name": "Monolithic Power Systems (MPWR)",
+          "change_pct": 6.78,
+          "close": 1328.3,
+          "value": 1738715541.31
+        }
+      ]
+    },
+    {
+      "id": "g2",
       "industry": "Systems Software",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Microsoft (MSFT)",
+          "change_pct": 2.74,
+          "close": 520.99,
+          "value": 10374305916.76
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Microsoft (MSFT)",
-          "change_pct": -2.83,
-          "close": 507.12,
-          "value": 17216328280.63
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
-      ],
-      "members": [
-        {
           "name": "Apple Inc. (AAPL)",
-          "change_pct": -1.83,
-          "close": 338.32,
-          "value": 19679156287.23
-        },
-        {
-          "name": "Sandisk (SNDK)",
-          "change_pct": -6.59,
-          "close": 1075.08,
-          "value": 11122422448.96
-        },
-        {
-          "name": "Seagate Technology (STX)",
-          "change_pct": -7.88,
-          "close": 593.76,
-          "value": 3226290608.42
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -7.43,
-          "close": 392.78,
-          "value": 2555049210.48
-        },
-        {
-          "name": "Western Digital (WDC)",
-          "change_pct": -7.52,
-          "close": 338.59,
-          "value": 2449113878.58
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Broadline Retail",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "Amazon (AMZN)",
-          "change_pct": 2.2,
-          "close": 245.63,
-          "value": 14214800710.86
+          "change_pct": -1.9,
+          "close": 331.9,
+          "value": 20367043457.36
         }
       ]
     },
     {
       "id": "g4",
       "industry": "Consumer Staples Merchandise Retail",
-      "direction": "up",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위"
       ],
       "members": [
         {
           "name": "Walmart (WMT)",
-          "change_pct": 3.38,
-          "close": 127.69,
-          "value": 3175473126.99
+          "change_pct": -2.22,
+          "close": 124.86,
+          "value": 2621684683.66
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Semiconductors",
-      "direction": "down",
+      "industry": "Application Software",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Micron Technology (MU)",
-          "change_pct": -5.78,
-          "close": 833.59,
-          "value": 24417113941.9
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -7.52,
-          "close": 466.84,
-          "value": 14825863054.94
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": -8.8,
-          "close": 59.97,
-          "value": 13644188950.64
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": -12.72,
-          "close": 171.41,
-          "value": 10465085183.21
+          "name": "Oracle Corporation (ORCL)",
+          "change_pct": 5.85,
+          "close": 126.19,
+          "value": 10573514187.7
         }
       ]
     }

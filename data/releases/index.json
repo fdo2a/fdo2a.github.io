@@ -1,29 +1,21 @@
 {
-  "report_date": "2026-10-29",
+  "report_date": "2026-11-03",
   "releases": [
     {
-      "key": "pce",
-      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+      "key": "durable-goods",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 3089,
-      "path": "releases/pce.txt"
+      "chars": 24879,
+      "path": "releases/durable-goods.txt"
     },
     {
-      "key": "gdp",
-      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
+      "key": "jolts",
+      "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 3253,
-      "path": "releases/gdp.txt"
-    },
-    {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "ok": true,
-      "note": "impersonate=safari",
-      "chars": 20462,
-      "path": "releases/claims.txt"
+      "chars": 5834,
+      "path": "releases/jolts.txt"
     }
   ]
 }
