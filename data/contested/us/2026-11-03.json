@@ -3,47 +3,61 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-03",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-04T05:51:54+00:00",
- "cutoff_at": "2026-11-04T05:51:54+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-04T07:08:42+00:00",
+ "cutoff_at": "2026-11-04T07:08:42+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "312a1837f5351ec40cc17a00576990b63879846d",
+  "sha256": "ee6a934510f49f0eb47a226f7cdf1386c36803a6e0f67d067a3c2a1cf16bb1ea"
+ },
  "counts": {
-  "harvest": 212,
-  "candidates": 3,
+  "harvest": 214,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   2
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4855,
-   "out": 76
+   "in": 44025,
+   "out": 10391
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok"
+   "aljazeera.com": "ok",
+   "abc.net.au": "ok",
+   "economictimes.indiatimes.com": "ok",
+   "dw.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "10/10"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "2026 미국 중간선거 결과와 의회 권력 이동",
+  "query": "democratic party midterm",
   "trigger": []
  },
- "content_hash": "f6b9ee94eb240215"
+ "content_hash": "8cb57d194fbb6c22"
 }
