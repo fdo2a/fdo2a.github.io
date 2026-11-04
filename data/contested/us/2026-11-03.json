@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-04T09:32:47+00:00",
- "cutoff_at": "2026-11-04T09:32:47+00:00",
+ "collected_at": "2026-11-04T10:37:07+00:00",
+ "cutoff_at": "2026-11-04T10:37:07+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -24,14 +24,14 @@
   "harvest": 214,
   "candidates": 1,
   "articles": [
-   5
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46581,
-   "out": 12327
+   "in": 46776,
+   "out": 10144
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,14 +42,14 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
+   "claims": "4/4",
    "pairs": "2/2",
-   "obs": "6/6"
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 6
+   "obs": 9
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -58,5 +58,5 @@
   "query": "democrats congress midterm",
   "trigger": []
  },
- "content_hash": "272e4195f0a5e8e7"
+ "content_hash": "71a9fbcd49c53e52"
 }
