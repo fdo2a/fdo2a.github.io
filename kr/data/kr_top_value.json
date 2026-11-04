@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 6117317,
-    "volume": 4464132,
+    "value": 6260708,
+    "volume": 4565326,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4619687,
-    "volume": 21416677,
+    "value": 4780877,
+    "volume": 22148662,
     "members": [
       "삼성전자"
     ]
@@ -65,8 +65,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 909488,
-    "volume": 828574,
+    "value": 935878,
+    "volume": 852127,
     "members": [
       "삼성전기"
     ]
@@ -76,8 +76,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 708257,
-    "volume": 800404,
+    "value": 723779,
+    "volume": 817496,
     "members": [
       "SK스퀘어"
     ]
@@ -87,10 +87,32 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 687122,
-    "volume": 1357945,
+    "value": 712308,
+    "volume": 1404098,
     "members": [
       "삼성SDI"
+    ]
+  },
+  {
+    "label": "한화솔루션",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 697139,
+    "volume": 26322673,
+    "members": [
+      "한화솔루션"
+    ]
+  },
+  {
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 677596,
+    "volume": 3979190,
+    "members": [
+      "삼성전자우"
     ]
   },
   {
@@ -115,28 +137,6 @@
       "SOL 2차전지소부장Fn",
       "ACE 2차전지&친환경차액티브",
       "RISE 배터리 리사이클링"
-    ]
-  },
-  {
-    "label": "한화솔루션",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 662257,
-    "volume": 25094270,
-    "members": [
-      "한화솔루션"
-    ]
-  },
-  {
-    "label": "삼성전자우",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 657384,
-    "volume": 3862269,
-    "members": [
-      "삼성전자우"
     ]
   },
   {
