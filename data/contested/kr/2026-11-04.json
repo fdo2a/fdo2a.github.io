@@ -5,9 +5,9 @@
  "report_date": "2026-11-04",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-04T15:40:04+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-04T15:56:11+00:00",
  "cutoff_at": "2026-11-04T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 469,
+  "harvest": 464,
   "candidates": 1,
   "articles": [
    6
@@ -42,19 +42,19 @@
    "dt": "ok"
   },
   "notes": [
-   "discover:469"
+   "discover:464"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 18376,
-   "out": 5609
+   "in": 18427,
+   "out": 7000
   }
  },
  "event": {
-  "topic_ko": "SK텔레콤·고려아연 3분기 실적과 대규모 투자·주주환원 여력",
+  "topic_ko": "SK텔레콤·고려아연 3분기 실적과 투자 부담, 주주환원 여력",
   "query": "3분기 영업익 고려아연",
   "trigger": []
  },
- "content_hash": "3730e6dd42c07b21"
+ "content_hash": "ea6c4485e80c76b1"
 }
