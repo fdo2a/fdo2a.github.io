@@ -3,60 +3,48 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-03",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-04T02:06:04+00:00",
- "cutoff_at": "2026-11-04T02:06:04+00:00",
+ "collected_at": "2026-11-04T02:23:45+00:00",
+ "cutoff_at": "2026-11-04T02:23:45+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "312a1837f5351ec40cc17a00576990b63879846d",
-  "sha256": "ee6a934510f49f0eb47a226f7cdf1386c36803a6e0f67d067a3c2a1cf16bb1ea"
- },
+ "market_snapshot": null,
  "counts": {
   "harvest": 208,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
-   4
+   2,
+   3,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 37788,
-   "out": 12108
+   "in": 5150,
+   "out": 76
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "straitstimes.com": "ok",
-   "abc.net.au": "ok"
+   "aljazeera.com": "ok",
+   "theguardian.com": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "10/10"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 10
-  }
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "2026 미국 중간선거 상원 판세와 시장 반응",
-  "query": "democrats congress final",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "8a015b2cb27c42cb"
+ "content_hash": "a906eef05fb21c46"
 }
