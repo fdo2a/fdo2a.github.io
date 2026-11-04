@@ -1,0 +1,60 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-04",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-04T11:10:52+00:00",
+ "cutoff_at": "2026-11-04T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "86b7fbdb2fceb3a43ac9f09df326d7e6d00455e4",
+  "sha256": "d31336505727ed025a160bbeb5c07f1292ed2845fa218f85118da8fc5f6d85c6",
+  "extra": {
+   "kr_econ.json": "049fedc62bb9c893e549316b876a87b557863d4b85212bd6b705f14f9d17e0d7",
+   "kr_flows.json": "8700606943f5f25c8b3837257853fdac2c53390f22e49a11bca24c141c27a516",
+   "kr_session.json": "477d03e92fefb4ff8a8e520dfa41d8f54c8ebf85254914e108a46f69068da23a"
+  }
+ },
+ "counts": {
+  "harvest": 588,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "nocut": "ok",
+   "yna": "ok",
+   "chosun": "ok",
+   "mk": "ok",
+   "dt": "ok"
+  },
+  "notes": [
+   "discover:588"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 18386,
+   "out": 4816
+  }
+ },
+ "event": {
+  "topic_ko": "SK텔레콤·고려아연 3분기 실적과 대규모 투자·주주환원 여력",
+  "query": "3분기 영업익 고려아연",
+  "trigger": []
+ },
+ "content_hash": "a787e9039a779d90"
+}
