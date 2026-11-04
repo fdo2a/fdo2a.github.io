@@ -337,7 +337,8 @@ def _x(arts, **over):
               'modality': 'fact', 'speaker_role': '기타', 'speaker_name': '노조',
               'evidence_kind': 'anecdote', 'evidence_origin': '노조', 'evidence_desc_ko': '노조 추산',
               'claim_span': 'more than one million marched', 'evidence_span': 'Unions said more than', 'market_obs': []}],
-         'pairs': [{'pair_id': 'p1', 'a': 'c1', 'b': 'c2', 'why_ko': '같은 날 인원이 두 배 차이 난다'}],
+         'pairs': [{'pair_id': 'p1', 'a': 'c1', 'b': 'c2', 'question_ko': '시위 참가 인원은 몇 명인가',
+                    'why_ko': '같은 날 인원이 두 배 차이 난다'}],
          'observations': [
              {'obs_id': 'o1', 'kind': 'market', 'registry_key': 'indices.S&P 500.pct', 'article_id': '',
               'indicator_ko': '', 'entity': '', 'value_text': '99', 'unit': '', 'as_of': '', 'span': ''},
@@ -354,7 +355,9 @@ REG = {'indices.S&P 500.pct': {'indicator_ko': 'S&P 500 일간 등락률', 'enti
 
 
 def _verdict(x, **over):
-    v = {'pairs': [{'pair_id': q['pair_id'], 'supported_a': True, 'supported_b': True, 'incompatible': True,
+    v = {'topic_supported': True,
+         'issues': [{'issue_id': i['issue_id'], 'supported': True} for i in x['issues']],
+         'pairs': [{'pair_id': q['pair_id'], 'supported_a': True, 'supported_b': True, 'incompatible': True,
                     'divergent': True, 'same_statistic': False}
                    for q in x['pairs']],
          'claims': [{'claim_id': c['claim_id'], 'evidence_supported': True, 'market_supported': False}
@@ -951,10 +954,102 @@ def test_repaired_counter_obs_with_claim_id_fails_schema_not_ok():
     bad['worry']['unlikely'][0]['counter_obs'] = ['c1']       # 존재하지만 관측치가 아니다
     seq = _Seq(x, [v1, _verdict(dict(x, analysis=bad))], repaired=bad)
     p = Bld.analyze(_bundle(arts), _base(), call=seq)
-    assert p['status'] != 'ok'
+    assert p['status'] == 'none' and p['reason'] == 'schema_invalid', p.get('reason')
+    assert p['problems']
 
 
 def test_render_copy_says_divergence():
     html = C.render(payload())
     assert '검증된 충돌' not in html and '서로 충돌하는 주장' not in html
     assert '엇갈린 쌍 1건' in html and '엇갈리는 주장' in html
+
+
+def test_unsupported_topic_or_issue_name_is_rejected():
+    """공개되는 섹션 제목·쟁점명도 원문 대조 대상이다(codex 구현 검토 1)."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    for mut in (lambda v: v.update(topic_supported=False), lambda v: v.pop('topic_supported'),
+                lambda v: v['issues'][0].update(supported=False), lambda v: v.update(issues=[])):
+        v = _verdict(x)
+        mut(v)
+        p = Bld.analyze(_bundle(arts), _base(), call=_fake(x, v))
+        assert p['reason'] == 'verify_rejected' and p['retryable']
+
+
+def test_topic_goes_to_verifier():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    seq = _Seq(x, [_verdict(x)])
+    Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert seq.payloads[1][1]['result']['topic_ko'] == '프랑스 시위'
+
+
+def test_duplicate_var_id_from_extraction_fails_validate():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    x['analysis']['variables'][1]['var_id'] = 'v1'
+    x['analysis']['edges'][0]['to_var'] = 'outcome'
+    p = Bld.analyze(_bundle(arts), _base(), call=_fake(x, _verdict(x)))
+    assert p['status'] == 'none' and p['reason'] == 'schema_invalid'
+
+
+def test_repair_callback_cannot_mutate_the_original():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+
+    class Sneaky(_Seq):
+        def __call__(self, prompt, payload_, schema, model, diag=None):
+            if schema is Bld.REPAIR_SCHEMA:
+                payload_['analysis']['memo'][0]['text_ko'] = '검증 대상 밖 문장을 바꿨다.'
+                return copy.deepcopy(payload_['analysis'])
+            return super().__call__(prompt, payload_, schema, model, diag)
+    seq = Sneaky(x, [_fail(_verdict(x), 'memo[1]'), _verdict(x)])
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['reason'] == 'analysis_unverified'
+    assert p['diagnostics']['repair']['outcome'] == 'rejected'
+
+
+def test_dangling_left_after_repair_is_not_ok():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    bad = copy.deepcopy(x['analysis'])
+    bad['memo'][1]['support'] = ['c999']
+    seq = _Seq(x, [v1, _verdict(dict(x, analysis=bad))], repaired=bad)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['reason'] == 'analysis_unverified'
+    assert 'memo[1]:dangling' in p['diagnostics']['repair']['remaining']
+
+
+def test_reverify_payload_holds_only_survivors():
+    arts = arts3()
+    a0, a1, a2 = (a['article_id'] for a in arts)
+    x = _fit_analysis(_x(arts))
+    x['claims'] += [dict(x['claims'][0], claim_id='c3'), dict(x['claims'][1], claim_id='c4')]
+    x['pairs'].append({'pair_id': 'p2', 'a': 'c3', 'b': 'c4', 'question_ko': '다른 질문인가', 'why_ko': '다른 쌍'})
+    v1 = _fail(_verdict(x), 'memo[1]')
+    v1['pairs'][1]['divergent'] = False
+    seq = _Seq(x, [v1, _verdict(x)], repaired=copy.deepcopy(x['analysis']))
+    Bld.analyze(_bundle(arts), _base(), call=seq)
+    r = seq.payloads[3][1]['result']
+    assert {c['claim_id'] for c in r['claims']} == {'c1', 'c2'}
+    assert [q['pair_id'] for q in r['pairs']] == ['p1']
+    assert {o['obs_id'] for o in r['observations']} == {'o1', 'o2'}
+
+
+def test_trim_dropping_origins_below_three_is_schema_invalid():
+    """수선이 관측치 참조를 바꿔 독립 출처가 3곳 아래로 줄면 발행하지 않는다."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'variables[0]')
+    fixed = copy.deepcopy(x['analysis'])
+    fixed['variables'][0]['obs'] = ['o1']                       # 세 번째 매체(o2)를 아무도 안 쓴다
+    fixed['edges'][0]['support'] = ['o1']
+    fixed['memo'][1]['support'] = ['o1']
+    fixed['worry']['unlikely'][0]['counter_obs'] = ['o1']
+    v1 = _verdict(x)
+    for pth in ('variables[0]', 'edges[0]', 'memo[1]', 'worry.unlikely[0]'):
+        _fail(v1, pth)
+    seq = _Seq(x, [v1, _verdict(dict(x, analysis=fixed))], repaired=fixed)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] == 'none' and p['reason'] == 'schema_invalid', (p.get('reason'), p.get('problems'))

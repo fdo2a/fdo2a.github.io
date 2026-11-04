@@ -467,6 +467,8 @@ def _validate_analysis(an, claims, obs):
     vids = set()
     for v in vs:
         w = f"variables[{v.get('var_id')}]"
+        if v.get('var_id') in vids:              # 렌더가 ID 로 이름을 찾으므로 중복은 엣지 뜻을 바꾼다(codex 11/04)
+            errs.append(f'{w}: var_id 중복')
         vids.add(v.get('var_id'))
         _str(v.get('name_ko'), 'name_ko', errs, w)
         if not v.get('obs') or any(o not in obs for o in v['obs']):
