@@ -96,8 +96,8 @@ def css(market):
 
 # Stylesheets earlier posts were published with. Gates that trust "what the shell renders"
 # (check_contested) must keep trusting posts still inside their correction window.
-LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css', 'legacy/us-2026-10-21.css', 'legacy/us-2026-10-31.css'),
-              'kr': ('legacy/kr-2026-10-20.css', 'legacy/kr-2026-10-21.css', 'legacy/kr-2026-10-31.css')}
+LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css', 'legacy/us-2026-10-21.css', 'legacy/us-2026-10-31.css', 'legacy/us-2026-11-04.css'),
+              'kr': ('legacy/kr-2026-10-20.css', 'legacy/kr-2026-10-21.css', 'legacy/kr-2026-10-31.css', 'legacy/kr-2026-11-04.css')}
 
 
 def legacy_css(market):
