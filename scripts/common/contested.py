@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""쟁점 분석 — 기사끼리 충돌하는 주장만 추려 본질과 걱정의 크기로 정리한 선택 섹션의 순수 로직.
+"""쟁점 분석 — 기사끼리 판단이 엇갈리는 주장만 추려 본질과 걱정의 크기로 정리한 선택 섹션의 순수 로직.
 
 2026-10-21 사용자 지시: 「기존의 뉴스 정리 방식은 그대로 진행하되, 세간의 주목을 받고 있는
 내용이라던가 서로 상충되는 부분이 많은 주제만 저 방식대로 추가로 정리해서 레포트에 반영해」.
@@ -26,7 +26,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
 SCHEMA_VERSION = 1
-PROMPT_VERSION = '2026-10-21.1'
+PROMPT_VERSION = '2026-11-04.1'
 MARKER = '<!--CONTESTED-->'
 SECTION_ID = 'contested'
 OMIT_RE = re.compile(r'<!--contested-omitted:([a-z_]+)-->')
@@ -66,7 +66,7 @@ LIMITS = {'value': 40, 'unit': 12, 'entity': 40, 'origin': 60, 'query': 80,
           'topic_ko': 40, 'text_ko': 220, 'condition_ko': 120, 'name_ko': 30,
           'indicator_ko': 40, 'speaker_name': 40, 'direction_ko': 60}
 MIN_ORIGINS = 3                   # 최종 기사의 독립 출처(신디케이션 묶음) 하한
-MIN_PAIRS = 2                     # 「상충이 많은」 트리거 — 검증된 충돌 쌍 수(구현 검토 3차)
+MIN_PAIRS = 2                     # 「상충이 많은」 트리거 — 검증된 엇갈림 쌍 수(구현 검토 3차, 11/04 기준 확대)
 ID_RE = {'claim': r'c\d{1,3}', 'issue': r'i\d{1,3}', 'pair': r'p\d{1,3}', 'obs': r'o\d{1,3}',
          'var': r'v\d{1,3}'}
 
@@ -552,8 +552,8 @@ def render(p):
            f'<h2>쟁점 분석 — {e(ev["topic_ko"])}</h2>',
            '<div class="card">',
            f'<p class="caption">{e(" · ".join(trig))} · 독립 출처 {n_origin}곳 · '
-           f'검증된 충돌 {len(p["pairs"])}건</p>',
-           '<h3>서로 충돌하는 주장</h3>',
+           f'엇갈린 쌍 {len(p["pairs"])}건</p>',
+           '<h3>엇갈리는 주장</h3>',
            '<div class="tbl-scroll"><table><thead><tr><th>쟁점</th><th>주장</th><th>출처</th>'
            '<th>근거</th></tr></thead><tbody>']
     for cid in order:

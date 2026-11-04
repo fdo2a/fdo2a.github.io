@@ -83,3 +83,13 @@
 ## 이력
 
 설계 검토 2회(치명 1·중대 14 → 치명 1·중대 13)와 판정 표: `../plan.md` 「2026-10-21 — 쟁점 분석」.
+
+## 2026-11-04 — 「엇갈린 시각」 기준 확대 + 분석 1회 수선 (`PROMPT_VERSION 2026-11-04.1`)
+
+**왜.** 10/21-11/03 US 11·KR 10회 실행에 발행 0. `CONTESTED_DEBUG` 재현(US·KR 11/03)으로 두 원인을 확인했다. ① 추출은 의견·전망 차이를 충돌로 내는데 검증은 「동시에 참일 수 없는가」로 판정해 거절했다(verify_rejected 11회 — US 11/03: 「교착이 가장 유력」 vs 「완만한 부양 확률↑」, 주장·근거 판정은 모두 참, incompatible 만 거짓). ② 분석 노드 하나만 실패해도 분석 전체를 버렸다(analysis_unverified 7회 — KR 11/03 재현: 12 노드 중 2 실패). 사용자 결정 「엇갈린 시각까지」(11/04).
+
+**기준.** 쌍마다 추출이 공통 질문 `question_ko` 를 적고, 검증은 `divergent`(그 질문에 반대 방향으로 답하는가 — 모순뿐 아니라 전망·견해의 반대 답도 참; 시점·범위·단위 차, 같은 방향·정도 차, 실제로는 다른 질문, 보완 관계는 거짓 — 최빈 시나리오와 확률 변화는 다른 질문)·`same_statistic`(같은 측정 주체의 같은 지표가 잠정·확정·전재 차로 갈렸는가 — 다른 주체의 따로 센 값은 거짓)를 판정한다. 통과식 `supported_a is True and supported_b is True and divergent is True and same_statistic is False`, 누락은 거절. `incompatible` 은 `diagnostics.verified.strict_pairs` 로만 센다 — 신호 저하를 재는 지표.
+
+**수선.** 분석 문제가 있고 임계(주목 ≥5 또는 쌍 ≥2)를 넘으면 실패 경로만 한 번 고쳐 쓰게 하고(`REPAIR_PROMPT`, 기사 본문 없이 살아남은 주장·관측치만), 고칠 경로 밖 노드가 바뀌었거나 var_id 순서·개수가 바뀌면 거부, 병합한 분석 **전체**를 한 번 다시 검증한다(쌍·주장 판정은 1차 고정). 실패 경로가 노드의 절반을 넘으면 하지 않는다(`REPAIR_MAX_RATIO`). 임계 미달이면 수선하지 않고 `analysis_unverified`(재시도)로 남긴다 — 영구 동결하지 않는다. `CONTESTED_REPAIR=0` 이면 끈다. 진단 `diagnostics.repair`.
+
+**남은 위험.** 전망 대 견해 쌍은 신빙성 「낮음·낮음」으로 나갈 수 있다 — strict_pairs 비율을 2주 본다. review-gate 는 쟁점 섹션을 떼고 보므로(`review_gate._drop_contested`) 사후 안전장치가 아니다 — 첫 ok 결과들은 JSON 과 섹션을 직접 읽어 확인한다.

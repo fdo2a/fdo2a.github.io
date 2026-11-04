@@ -354,7 +354,8 @@ REG = {'indices.S&P 500.pct': {'indicator_ko': 'S&P 500 일간 등락률', 'enti
 
 
 def _verdict(x, **over):
-    v = {'pairs': [{'pair_id': q['pair_id'], 'supported_a': True, 'supported_b': True, 'incompatible': True}
+    v = {'pairs': [{'pair_id': q['pair_id'], 'supported_a': True, 'supported_b': True, 'incompatible': True,
+                    'divergent': True, 'same_statistic': False}
                    for q in x['pairs']],
          'claims': [{'claim_id': c['claim_id'], 'evidence_supported': True, 'market_supported': False}
                     for c in x['claims']],
@@ -412,13 +413,51 @@ def test_invented_span_drops_claim_and_marks_retryable():
     assert p['status'] == 'none' and p['reason'] == 'grounding_failed' and p['retryable']
 
 
-def test_verifier_rejection_and_duplicate_verdicts():
+def test_duplicate_verdicts_are_no_verdict():
     arts = arts3()
     x = _fit_analysis(_x(arts))
     v = _verdict(x)
-    v['pairs'] = [dict(v['pairs'][0], incompatible=False), v['pairs'][0]]    # 같은 ID 판정 둘
+    v['pairs'] = [v['pairs'][0], dict(v['pairs'][0])]    # 같은 ID 판정 둘 — 둘 다 통과여도 판정 없음
     p = Bld.analyze(_bundle(arts), _base(), call=_fake(x, v))
     assert p['reason'] == 'verify_rejected' and p['retryable']
+
+
+@pytest.mark.parametrize('field,value', [
+    ('divergent', False), ('divergent', None), ('same_statistic', True), ('same_statistic', None),
+    ('supported_a', False), ('supported_b', False), ('supported_a', None)])
+def test_single_pair_verdict_rejects(field, value):
+    """2026-11-04 — 통과식은 supported_a·supported_b·divergent 가 True 이고 same_statistic 이 False 일 때뿐.
+    누락(None)도 통과가 아니다(codex 설계 검토 3)."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v = _verdict(x)
+    if value is None:
+        del v['pairs'][0][field]
+    else:
+        v['pairs'][0][field] = value
+    p = Bld.analyze(_bundle(arts), _base(), call=_fake(x, v))
+    assert p['reason'] == 'verify_rejected' and p['retryable']
+
+
+def test_divergent_pair_passes_without_incompatible():
+    """엇갈린 시각(같은 질문에 반대 방향의 답)은 논리적 모순이 아니어도 통과한다. 엄격 판정은 진단에만 남는다."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v = _verdict(x)
+    v['pairs'][0]['incompatible'] = False
+    p = Bld.analyze(_bundle(arts), _base(), call=_fake(x, v))
+    assert p['status'] == 'ok', p.get('reason')
+    assert p['diagnostics']['verified']['strict_pairs'] == 0
+
+
+def test_same_statistic_drop_is_counted():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v = _verdict(x)
+    v['pairs'][0]['same_statistic'] = True
+    p = Bld.analyze(_bundle(arts), _base(), call=_fake(x, v))
+    assert p['reason'] == 'verify_rejected'
+    assert p['diagnostics']['verified']['same_statistic_dropped'] == 1
 
 
 def test_duplicate_pair_ids_dropped():
@@ -664,3 +703,258 @@ def test_incomplete_discovery_blocks_frozen_none_even_with_sources():
     b['candidates'][0]['expanded'] = False
     p = Bld.analyze(b, _base(), call=_fake(x, _verdict(x)))
     assert p['retryable'] and p['reason'] == 'fetch_incomplete'
+
+
+# ── 2026-11-04 「엇갈린 시각」·분석 1회 수선 ─────────────────────────────────
+class _Seq:
+    """추출 → 1차 검증 → (수선 → 재검증) 순서 fake. 스키마로 갈래를 고르고 호출을 센다."""
+
+    def __init__(self, x, verdicts, repaired=None, boom_at=None):
+        self.x, self.verdicts, self.repaired, self.boom_at = x, list(verdicts), repaired, boom_at
+        self.calls, self.payloads = [], []
+
+    def __call__(self, prompt, payload_, schema, model, diag=None):
+        kind = ('extract' if schema is Bld.EXTRACT_SCHEMA else
+                'repair' if schema is Bld.REPAIR_SCHEMA else 'verify')
+        self.calls.append(kind)
+        self.payloads.append((kind, copy.deepcopy(payload_)))
+        if self.boom_at == len(self.calls):
+            raise Bld.ModelError('timeout')
+        if kind == 'extract':
+            return self.x
+        if kind == 'repair':
+            return copy.deepcopy(self.repaired)
+        return self.verdicts.pop(0)
+
+
+def _fail(v, path, **flags):
+    for it in v['analysis_items']:
+        if it['path'] == path:
+            it.update(flags or {'grounded': False})
+    return v
+
+
+def test_prompt_version_bumped_and_prompts_name_divergence():
+    assert C.PROMPT_VERSION != '2026-10-21.1'
+    for f in ('divergent', 'same_statistic', 'question_ko'):
+        assert f in Bld.VERIFY_PROMPT or f in Bld.EXTRACT_PROMPT
+    assert 'divergent' in Bld.VERIFY_SCHEMA['properties']['pairs']['items']['properties']
+    assert 'same_statistic' in Bld.VERIFY_SCHEMA['properties']['pairs']['items']['properties']
+    assert 'question_ko' in Bld.EXTRACT_SCHEMA['properties']['pairs']['items']['properties']
+
+
+def test_failed_node_is_repaired_once():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    fixed = copy.deepcopy(x['analysis'])
+    fixed['memo'][1] = {'text_ko': '체포 인원이 늘어나는 조건에서는 정책 후퇴 압력이 커진다.', 'support': ['o2']}
+    seq = _Seq(x, [v1, _verdict(dict(x, analysis=fixed))], repaired=fixed)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] == 'ok', (p.get('reason'), p.get('problems'))
+    assert seq.calls == ['extract', 'verify', 'repair', 'verify']
+    assert p['diagnostics']['repair']['outcome'] == 'fixed'
+    assert p['analysis']['memo'][1]['text_ko'].startswith('체포 인원이 늘어나는')
+    # 재검증은 병합된 분석 전체를 본다(codex 설계 검토 1)
+    re_paths = seq.payloads[3][1]['result']['analysis_paths']
+    assert re_paths == [pth for pth, _ in Bld.analysis_nodes(fixed)]
+
+
+def test_repair_input_has_no_article_bodies_and_only_failed_paths():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    seq = _Seq(x, [v1, _verdict(x)], repaired=copy.deepcopy(x['analysis']))
+    Bld.analyze(_bundle(arts), _base(), call=seq)
+    rp = next(pl for k, pl in seq.payloads if k == 'repair')
+    assert rp['failed_paths'] == ['memo[1]']
+    assert 'body' not in json.dumps(rp) and 'articles' not in rp
+
+
+def test_dangling_after_pair_prune_is_repaired():
+    arts = arts3()
+    a0, a1, a2 = (a['article_id'] for a in arts)
+    x = _fit_analysis(_x(arts))
+    x['claims'] += [dict(x['claims'][0], claim_id='c3', claim_span='550,000 people joined protests'),
+                    dict(x['claims'][1], claim_id='c4', claim_span='more than one million marched')]
+    x['pairs'].append({'pair_id': 'p2', 'a': 'c3', 'b': 'c4', 'why_ko': '다른 쌍'})
+    x['analysis']['memo'][0]['support'] = ['c3']          # 거절될 쌍의 주장을 인용
+    v1 = _verdict(x)
+    v1['pairs'][1]['divergent'] = False
+    fixed = copy.deepcopy(x['analysis'])
+    fixed['memo'][0]['support'] = ['c1']
+    seq = _Seq(x, [v1, _verdict(dict(x, analysis=fixed))], repaired=fixed)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] == 'ok', (p.get('reason'), p.get('problems'))
+    assert seq.calls.count('repair') == 1
+    assert seq.payloads[2][1]['failed_paths'] == ['memo[0]']
+
+
+def test_repair_that_touches_passing_node_is_rejected():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    bad = copy.deepcopy(x['analysis'])
+    bad['memo'][1]['text_ko'] = '체포 인원이 늘면 압력이 커진다.'
+    bad['memo'][0]['text_ko'] = '바꾸면 안 되는 문장을 바꿨다.'
+    seq = _Seq(x, [v1], repaired=bad)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['reason'] == 'analysis_unverified' and p['retryable']
+    assert seq.calls == ['extract', 'verify', 'repair']          # 거부된 수선은 재검증하지 않는다
+    assert p['diagnostics']['repair']['outcome'] == 'rejected'
+
+
+@pytest.mark.parametrize('mut', [
+    lambda an: an['memo'].pop(),                                              # 개수
+    lambda an: an['variables'].__setitem__(0, dict(an['variables'][0], var_id='v9')),   # ID 바뀜
+    lambda an: [an['variables'][0].update(var_id='v2'), an['variables'][1].update(var_id='v1')],  # 교환
+    lambda an: an['variables'][1].update(var_id='v1'),                       # 중복
+])
+def test_repair_must_keep_counts_and_var_ids(mut):
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_fail(_verdict(x), 'variables[0]'), 'variables[1]')
+    bad = copy.deepcopy(x['analysis'])
+    mut(bad)
+    seq = _Seq(x, [v1], repaired=bad)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['reason'] == 'analysis_unverified'
+    assert p['diagnostics']['repair']['outcome'] == 'rejected'
+
+
+def test_reverify_missing_or_duplicate_item_is_not_a_pass():
+    """1차에서 통과였던 노드라도 2차 판정이 없거나 둘이면 통과가 아니다(codex 설계 검토 2)."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    for edit in ('drop', 'dup'):
+        v2 = _verdict(x)
+        if edit == 'drop':
+            v2['analysis_items'] = [i for i in v2['analysis_items'] if i['path'] != 'memo[0]']
+        else:
+            v2['analysis_items'].append(dict(v2['analysis_items'][0]))
+        seq = _Seq(x, [copy.deepcopy(v1), v2], repaired=copy.deepcopy(x['analysis']))
+        p = Bld.analyze(_bundle(arts), _base(), call=seq)
+        assert p['reason'] == 'analysis_unverified', edit
+        assert p['diagnostics']['repair']['outcome'] == 'partial'
+
+
+def test_reverify_graph_verdicts_are_ignored():
+    """재검증 응답의 쌍·주장 판정이 뒤집혀도 1차 판정이 고정이다."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    v2 = _verdict(x)
+    v2['pairs'][0]['divergent'] = False
+    v2['claims'][0]['evidence_supported'] = False
+    seq = _Seq(x, [v1, v2], repaired=copy.deepcopy(x['analysis']))
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] == 'ok', p.get('reason')
+    assert len(p['pairs']) == 1
+
+
+def test_still_failing_after_repair():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'memo[1]')
+    v2 = _fail(_verdict(x), 'memo[1]')
+    seq = _Seq(x, [v1, v2], repaired=copy.deepcopy(x['analysis']))
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['reason'] == 'analysis_unverified' and p['retryable']
+    assert 'memo[1]:unverified' in p['problems']
+    assert p['diagnostics']['repair']['remaining'] == ['memo[1]:unverified']
+
+
+def test_repair_skipped_above_ratio_counts_unique_paths():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    n = len(list(Bld.analysis_nodes(x['analysis'])))           # 10
+    paths = [pth for pth, _ in Bld.analysis_nodes(x['analysis'])]
+    # 정확히 절반은 수선한다
+    v_half = _verdict(x)
+    for pth in paths[:n // 2]:
+        _fail(v_half, pth)
+    seq = _Seq(x, [v_half, _verdict(x)], repaired=copy.deepcopy(x['analysis']))
+    Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert seq.calls.count('repair') == 1
+    # 절반 초과면 건너뛴다 — 같은 경로의 unverified·dangling 은 한 경로로 센다
+    v_over = _verdict(x)
+    for pth in paths[:n // 2 + 1]:
+        _fail(v_over, pth)
+    x2 = copy.deepcopy(x)
+    x2['analysis']['memo'][0]['support'] = ['c9']              # memo[0] 은 unverified 이자 dangling
+    seq = _Seq(x2, [v_over])
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert seq.calls == ['extract', 'verify']
+    assert p['diagnostics']['repair']['outcome'] == 'skipped_ratio'
+
+
+def test_below_threshold_skips_repair_but_stays_retryable():
+    """임계 미달이면 수선 호출을 아끼되, 분석 실패의 재시도 상태는 그대로 둔다(codex 설계 검토 5)."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    b = _bundle(arts)
+    b['candidates'][0]['outlets_seen'] = ['The Guardian', 'CNBC', 'The Korea Times']
+    seq = _Seq(x, [_fail(_verdict(x), 'memo[1]')])
+    p = Bld.analyze(b, _base(), call=seq)
+    assert seq.calls == ['extract', 'verify']
+    assert p['reason'] == 'analysis_unverified' and p['retryable']
+    assert p['diagnostics']['repair']['outcome'] == 'skipped_threshold'
+    # 문제 없는 분석의 임계 미달은 지금처럼 확정 none
+    seq = _Seq(x, [_verdict(x)])
+    p = Bld.analyze(b, _base(), call=seq)
+    assert p['reason'] == 'below_threshold' and not p['retryable']
+
+
+def test_repair_reaches_supported_but_unreferenced_obs():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    x['observations'].append({'obs_id': 'o3', 'kind': 'article', 'registry_key': '', 'article_id': x['claims'][0]['article_id'],
+                              'indicator_ko': '참가 인원', 'entity': '프랑스', 'value_text': '550,000', 'unit': '명',
+                              'as_of': '2026-10-19', 'span': '550,000 people joined protests'})
+    v1 = _fail(_verdict(x), 'memo[1]')
+    fixed = copy.deepcopy(x['analysis'])
+    fixed['memo'][1]['support'] = ['o3']
+    seq = _Seq(x, [v1, _verdict(dict(x, analysis=fixed))], repaired=fixed)
+    rp_obs = None
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    rp_obs = next(pl for k, pl in seq.payloads if k == 'repair')['observations']
+    assert 'o3' in {o['obs_id'] for o in rp_obs}
+    assert p['status'] == 'ok', (p.get('reason'), p.get('problems'))
+    assert 'o3' in {o['obs_id'] for o in p['observations']}
+
+
+@pytest.mark.parametrize('at', [3, 4])
+def test_repair_model_error_is_retryable(at):
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    seq = _Seq(x, [_fail(_verdict(x), 'memo[1]'), _verdict(x)], repaired=copy.deepcopy(x['analysis']), boom_at=at)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] == 'error' and p['retryable'] and p['reason'].startswith('model_repair_')
+
+
+def test_repair_env_switch_off(monkeypatch):
+    monkeypatch.setenv('CONTESTED_REPAIR', '0')
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    seq = _Seq(x, [_fail(_verdict(x), 'memo[1]')])
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert seq.calls == ['extract', 'verify'] and p['reason'] == 'analysis_unverified'
+    assert p['diagnostics']['repair']['outcome'] == 'off'
+
+
+def test_repaired_counter_obs_with_claim_id_fails_schema_not_ok():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    v1 = _fail(_verdict(x), 'worry.unlikely[0]')
+    bad = copy.deepcopy(x['analysis'])
+    bad['worry']['unlikely'][0]['counter_obs'] = ['c1']       # 존재하지만 관측치가 아니다
+    seq = _Seq(x, [v1, _verdict(dict(x, analysis=bad))], repaired=bad)
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] != 'ok'
+
+
+def test_render_copy_says_divergence():
+    html = C.render(payload())
+    assert '검증된 충돌' not in html and '서로 충돌하는 주장' not in html
+    assert '엇갈린 쌍 1건' in html and '엇갈리는 주장' in html
