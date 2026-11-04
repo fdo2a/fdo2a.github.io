@@ -51,7 +51,7 @@
 
 ## 2단계 — KR 마감 브리프 (2026-10-21)
 
-**출처와 약관.** 발견 = NAVER API HUB 뉴스 검색(`naverapihub.apigw.ntruss.com/search/v1/news`, 헤더 `X-NCP-APIGW-API-KEY-ID`·`X-NCP-APIGW-API-KEY`, 키는 Mac 키체인 `fdo2a-naver-client-id`·`-secret`, 일 25,000). 옛 개발자센터 엔드포인트는 2026-07-31 신규 신청이 막혀 401 이다. **검색 API 특약 2.1(검색결과 표시 목적만)·2.2(가공 없이 노출)·2.3(「데이터를 AI에 입력하거나 학습, 개선, 평가 및 노출 등에 활용하는 행위」 금지)과 충돌한다**(개발자센터 약관 원문 10/21 확인, HUB 는 2026-09-20 같은 개정 적용 보도 — HUB 원문은 미확인). 대안(언론사 RSS 18곳 실측)을 올렸고 **사용자 결정 「약관 무시하고 진행해」(2026-10-21)**, HUB 적용 보도와 키 정지 위험을 다시 올린 뒤 **최종 「네이버로 진행해보고 키 정지가 되면 그때 rss로 전환하는 방법으로 해보자」(2026-10-21)**. 근거 링크: 약관 https://developers.naver.com/products/intro/terms/terms.md · 이관 공지 https://developers.naver.com/notice/article/32530 · 보도 https://www.newsway.co.kr/news/view?ud=2026090215314059117 , https://www.dataeconomy.co.kr/news/articleView.html?idxno=42307 , https://www.tokenpost.kr/news/ai/403521 . 위험: 키 정지·이용 해지.
+**출처.** 발견 = NAVER API HUB 뉴스 검색(`naverapihub.apigw.ntruss.com/search/v1/news`, 헤더 `X-NCP-APIGW-API-KEY-ID`·`X-NCP-APIGW-API-KEY`, 키는 Mac 키체인 `fdo2a-naver-client-id`·`-secret`, 일 25,000). 옛 개발자센터 엔드포인트는 2026-07-31 신규 신청이 막혀 401 이다. 키 정지·한도 초과에 대비해 언론사 RSS 18곳(실측)을 대체 경로로 둔다(아래 「자동 대체」).
 
 **자동 대체.** `NaverSource` 1순위, `RssSource`(언론사 자체 RSS 18곳) 대체 — 같은 `discover`·`expand` 경계. 사전 점검·수집 중 `naver_auth`(401·403)·`naver_throttled`(429·한도)·`naver_keys_missing` 이면 그날(KST) RSS 로 바꾸고 사유를 `diagnostics.source_switch` 에, 그날 다음 tick 은 네이버를 부르지 않는다(Mac 로컬 상태 파일). 네트워크·5xx 는 바꾸지 않는다(재시도). RSS 는 최근 N건만 싣는다 — 발견 창 앞쪽을 덮지 못한 피드가 있으면 `truncated`(그날 결론을 동결하지 않음). 줄이는 조치: 검색 결과(제목·요약)는 모델에 넣지 않는다 — 사건 고르기는 코드(발행사 수·논쟁 신호 가점·시황 묶음 감점), 모델은 언론사 사이트에서 받은 본문만 본다. 공개 JSON 의 제목도 언론사 면의 것. 
 
@@ -73,7 +73,7 @@
 
 **사후 검토.** 쟁점 자리만 바뀐 판(자리 정규화 뒤 앞판과 같음; 자리가 사라진 판은 그 커밋 결과가 확정 non-ok 일 때만)은 발행 커밋으로 치지 않는다 — 근거는 원래 발행 커밋의 kr/data. 판은 검토 대상으로 남고(조판으로 넘기지 않는다), 검토자에게는 섹션을 뺀 글을 준다. 정정 재생 게이트에 그 판의 JSON 으로 `check_contested`, 정정 진입 검사도 쟁점 자리만 다른 판을 받는다. 문체 패스는 쟁점 섹션 문단을 뽑지 않는다(`prose_swap`).
 
-**남은 위험.** 약관(위). 순위가 코드라 「엇갈릴 만한 사건」을 모델보다 못 고를 수 있다(시황 감점·논쟁 가점으로 보정, 10/20 실측 1순위 = 원·달러 연저점). 출력 토큰 상한은 CLI 에 없다. US 는 기준 시각 고정·일시 실패 동결 금지 가운데 앞의 것을 아직 쓰지 않는다(후속).
+**남은 위험.** 순위가 코드라 「엇갈릴 만한 사건」을 모델보다 못 고를 수 있다(시황 감점·논쟁 가점으로 보정, 10/20 실측 1순위 = 원·달러 연저점). 출력 토큰 상한은 CLI 에 없다. US 는 기준 시각 고정·일시 실패 동결 금지 가운데 앞의 것을 아직 쓰지 않는다(후속).
 
 ## 다음 단계의 조건
 
