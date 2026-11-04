@@ -1,0 +1,644 @@
+{
+ "kr_market_data.json": {
+  "report_date": "2026-11-04",
+  "complete": true,
+  "missing": [
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 5683.8,
+    "change_pct": 0.62
+   },
+   "KOSDAQ": {
+    "close": 714.95,
+    "change_pct": 1.5
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-11-04",
+   "KOSDAQ": "2026-11-04"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kr_flows.json": {
+  "KOSPI": {
+   "rows": [
+    {
+     "date": "2026-11-04",
+     "individual": 10986,
+     "foreign": -24841,
+     "institution": 10394
+    },
+    {
+     "date": "2026-11-03",
+     "individual": 16388,
+     "foreign": -15086,
+     "institution": -4941
+    },
+    {
+     "date": "2026-11-02",
+     "individual": -13303,
+     "foreign": -3845,
+     "institution": 12257
+    },
+    {
+     "date": "2026-10-30",
+     "individual": 6028,
+     "foreign": -16149,
+     "institution": 7540
+    }
+   ],
+   "flows_provisional": true,
+   "label": "당일 잠정치"
+  },
+  "KOSDAQ": {
+   "rows": [
+    {
+     "date": "2026-11-04",
+     "individual": -574,
+     "foreign": 15,
+     "institution": 678
+    },
+    {
+     "date": "2026-11-03",
+     "individual": 3180,
+     "foreign": -713,
+     "institution": -2359
+    },
+    {
+     "date": "2026-11-02",
+     "individual": -223,
+     "foreign": -366,
+     "institution": 627
+    },
+    {
+     "date": "2026-10-30",
+     "individual": 1649,
+     "foreign": -211,
+     "institution": -1391
+    }
+   ],
+   "flows_provisional": true,
+   "label": "당일 잠정치"
+  }
+ },
+ "kr_movers.json": {
+  "report_date": "2026-11-04",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "반도체와반도체장비",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위"
+    ],
+    "members": [
+     {
+      "name": "삼성전자",
+      "change_pct": -0.68,
+      "close": 218000,
+      "value": 4619687
+     },
+     {
+      "name": "SK하이닉스",
+      "change_pct": -0.14,
+      "close": 1396000,
+      "value": 6117317
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "전기제품",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성SDI",
+      "change_pct": 11.57,
+      "close": 545000,
+      "value": 687122
+     },
+     {
+      "name": "LG에너지솔루션",
+      "change_pct": 5.03,
+      "close": 355000,
+      "value": 369116
+     },
+     {
+      "name": "엘앤에프",
+      "change_pct": 12.84,
+      "close": 91400,
+      "value": 81854
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "에너지장비및서비스",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "한화솔루션",
+      "change_pct": 18.64,
+      "close": 28000,
+      "value": 662257
+     },
+     {
+      "name": "HD현대에너지솔루션",
+      "change_pct": 12.47,
+      "close": 88400,
+      "value": 115534
+     },
+     {
+      "name": "씨에스윈드",
+      "change_pct": 7.59,
+      "close": 44650,
+      "value": 109269
+     },
+     {
+      "name": "SK이터닉스",
+      "change_pct": 8.06,
+      "close": 38900,
+      "value": 78318
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "항공사",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "한진칼",
+      "change_pct": 5.19,
+      "close": 184300,
+      "value": 379536
+     }
+    ]
+   },
+   {
+    "id": "g5",
+    "industry": "화학",
+    "direction": "up",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "OCI홀딩스",
+      "change_pct": 10.38,
+      "close": 200000,
+      "value": 206696
+     },
+     {
+      "name": "포스코퓨처엠",
+      "change_pct": 10.81,
+      "close": 181400,
+      "value": 125522
+     }
+    ]
+   }
+  ]
+ },
+ "kr_session.json": {
+  "report_date": "2026-11-04",
+  "us_prev": {
+   "as_of": "2026-11-03",
+   "rows": {
+    "S&P 500": 0.36,
+    "Nasdaq": 0.83,
+    "Dow": -0.38
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.05,
+    "bars": 13,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": 0.24,
+    "bars": 13,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -1.42,
+    "항셍": 1.67,
+    "상해종합": 2.16,
+    "대만가권": -0.83
+   },
+   "dates": {
+    "닛케이": "2026-11-04",
+    "항셍": "2026-11-04",
+    "상해종합": "2026-11-04",
+    "대만가권": "2026-11-04"
+   },
+   "avg_pct": 0.4,
+   "relative_pp": 0.22
+  },
+  "usdkrw_intraday": {
+   "high": 1346.98,
+   "high_t": "09:00",
+   "low": 1335.78,
+   "low_t": "11:30",
+   "close": 1341.5,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "kr_econ.json": {
+  "series": {
+   "국고채 3년": {
+    "value": 3.714,
+    "date": "2026-11-04",
+    "unit": "연%",
+    "item_name": "국고채(3년)",
+    "prev": 3.736,
+    "prev_date": "2026-11-03",
+    "bp": -2.2
+   },
+   "국고채 10년": {
+    "value": 3.968,
+    "date": "2026-11-04",
+    "unit": "연%",
+    "item_name": "국고채(10년)",
+    "prev": 4.001,
+    "prev_date": "2026-11-03",
+    "bp": -3.3
+   },
+   "CD 91일": {
+    "value": 3.34,
+    "date": "2026-11-04",
+    "unit": "연%",
+    "item_name": "CD(91일)",
+    "prev": 3.35,
+    "prev_date": "2026-11-03",
+    "bp": -1.0
+   },
+   "회사채 AA- 3년": {
+    "value": 4.4,
+    "date": "2026-11-04",
+    "unit": "연%",
+    "item_name": "회사채(3년, AA-)",
+    "prev": 4.422,
+    "prev_date": "2026-11-03",
+    "bp": -2.2
+   },
+   "한국은행 기준금리": {
+    "value": 3.0,
+    "date": "2026-09",
+    "unit": "연%",
+    "item_name": "한국은행 기준금리",
+    "prev": 3.0,
+    "prev_date": "2026-08",
+    "bp": 0.0
+   }
+  }
+ },
+ "kr_intraday.json": {
+  "KOSPI": [
+   {
+    "t": "09:00",
+    "close": 5789.98
+   },
+   {
+    "t": "09:30",
+    "close": 5746.8
+   },
+   {
+    "t": "10:00",
+    "close": 5722.53
+   },
+   {
+    "t": "10:30",
+    "close": 5583.23
+   },
+   {
+    "t": "11:00",
+    "close": 5562.06
+   },
+   {
+    "t": "11:30",
+    "close": 5498.5
+   },
+   {
+    "t": "12:00",
+    "close": 5459.45
+   },
+   {
+    "t": "12:30",
+    "close": 5454.87
+   },
+   {
+    "t": "13:00",
+    "close": 5437.79
+   },
+   {
+    "t": "13:30",
+    "close": 5454.66
+   },
+   {
+    "t": "14:00",
+    "close": 5565.4
+   },
+   {
+    "t": "14:30",
+    "close": 5631.72
+   },
+   {
+    "t": "15:00",
+    "close": 5648.44
+   },
+   {
+    "t": "15:30",
+    "close": 5683.67
+   },
+   {
+    "t": "15:32",
+    "close": 5683.8
+   }
+  ],
+  "KOSPI_ohlc": {
+   "open": 5786.13,
+   "high": 5828.13,
+   "low": 5421.72,
+   "prevClose": 5648.79
+  },
+  "KOSDAQ_ohlc": {
+   "open": 715.74,
+   "high": 718.34,
+   "low": 683.66,
+   "prevClose": 704.39
+  }
+ },
+ "kr_stock_moves.json": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": -0.14,
+   "close": 1396000,
+   "value": 6117317
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": -0.68,
+   "close": 218000,
+   "value": 4619687
+  },
+  {
+   "name": "삼성SDI",
+   "change_pct": 11.57,
+   "close": 545000,
+   "value": 687122
+  },
+  {
+   "name": "한화솔루션",
+   "change_pct": 18.64,
+   "close": 28000,
+   "value": 662257
+  },
+  {
+   "name": "한진칼",
+   "change_pct": 5.19,
+   "close": 184300,
+   "value": 379536
+  },
+  {
+   "name": "LG에너지솔루션",
+   "change_pct": 5.03,
+   "close": 355000,
+   "value": 369116
+  },
+  {
+   "name": "OCI홀딩스",
+   "change_pct": 10.38,
+   "close": 200000,
+   "value": 206696
+  },
+  {
+   "name": "두산에너빌리티",
+   "change_pct": 0.96,
+   "close": 52700,
+   "value": 157412
+  },
+  {
+   "name": "포스코퓨처엠",
+   "change_pct": 10.81,
+   "close": 181400,
+   "value": 125522
+  },
+  {
+   "name": "HD현대에너지솔루션",
+   "change_pct": 12.47,
+   "close": 88400,
+   "value": 115534
+  },
+  {
+   "name": "씨에스윈드",
+   "change_pct": 7.59,
+   "close": 44650,
+   "value": 109269
+  },
+  {
+   "name": "HD현대중공업",
+   "change_pct": -1.39,
+   "close": 283500,
+   "value": 102912
+  },
+  {
+   "name": "SK이노베이션",
+   "change_pct": 3.86,
+   "close": 123700,
+   "value": 91010
+  },
+  {
+   "name": "삼성중공업",
+   "change_pct": 1.04,
+   "close": 17460,
+   "value": 83557
+  },
+  {
+   "name": "엘앤에프",
+   "change_pct": 12.84,
+   "close": 91400,
+   "value": 81854
+  },
+  {
+   "name": "SK이터닉스",
+   "change_pct": 8.06,
+   "close": 38900,
+   "value": 78318
+  },
+  {
+   "name": "한화오션",
+   "change_pct": -1.86,
+   "close": 52800,
+   "value": 66880
+  },
+  {
+   "name": "HD한국조선해양",
+   "change_pct": -1.56,
+   "close": 252500,
+   "value": 61771
+  }
+ ],
+ "kr_industry.json": [
+  {
+   "name": "에너지장비및서비스",
+   "change_pct": 12.9,
+   "total": 35,
+   "rise": 25,
+   "breadth": 0.714,
+   "no": 295,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "전기제품",
+   "change_pct": 6.96,
+   "total": 68,
+   "rise": 59,
+   "breadth": 0.868,
+   "no": 283,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "화학",
+   "change_pct": 6.0,
+   "total": 122,
+   "rise": 94,
+   "breadth": 0.77,
+   "no": 272,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "석유와가스",
+   "change_pct": 3.33,
+   "total": 19,
+   "rise": 12,
+   "breadth": 0.632,
+   "no": 313,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": "좁은 상승·개별종목"
+  },
+  {
+   "name": "전기장비",
+   "change_pct": 2.81,
+   "total": 35,
+   "rise": 29,
+   "breadth": 0.829,
+   "no": 306,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "항공사",
+   "change_pct": 2.07,
+   "total": 9,
+   "rise": 8,
+   "breadth": 0.889,
+   "no": 305,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "반도체와반도체장비",
+   "change_pct": 0.29,
+   "total": 173,
+   "rise": 137,
+   "breadth": 0.792,
+   "no": 278,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  }
+ ],
+ "kr_technical.json": {
+  "코스피": {
+   "as_of": "2026-11-04",
+   "close": 5683.8,
+   "ma": {
+    "ma20": 5860.07,
+    "ma60": 6475.32,
+    "ma120": 7074.77
+   },
+   "ma_alignment": "역배열",
+   "disparity": {
+    "vs_ma20": -3.01,
+    "vs_ma60": -12.22,
+    "vs_ma120": -19.66
+   },
+   "bollinger": {
+    "upper": 6578.34,
+    "mid": 5860.07,
+    "lower": 5141.79,
+    "pct_b": 0.377,
+    "bandwidth": 0.2451
+   },
+   "ichimoku": {
+    "tenkan": 5703.04,
+    "kijun": 6185.94,
+    "senkou_a": 6831.49,
+    "senkou_b": 6483.85,
+    "cloud_top": 6831.49,
+    "cloud_bottom": 6483.85,
+    "price_vs_cloud": "below"
+   },
+   "chikou_above_price_26ago": false,
+   "swing": {
+    "high_20": 6977.77,
+    "low_20": 5305.98,
+    "high_60": 7216.62,
+    "low_60": 5305.98
+   }
+  }
+ },
+ "kr_stance_eval.json": {
+  "verdict": "유효",
+  "prior_date": "2026-11-03",
+  "prior_exposure": "축소",
+  "prior_horizon": "다음 세션",
+  "prior_thesis": "직전 11월 2일 미국 세션에서 오라클이 AI 인프라 재원 200억달러 조달 계획을 밝히고 필라델피아 반도체지수가 3.37% 내렸다는 보도 뒤, 코스피는 3.59% 내린 5,648.79로 마감했다. 외국인은 1조5,165억원을, 전날 반등을 받친 기관도 5,022억원을 순매도했다(당일 잠정). AI 투자 자금조달 우려가 이어지는 동안 외국인 매도가 지수 방향을 좌우하고, 국내 기관 매수는 하단을 하루 받치는 데 그친다고 본다.",
+  "metric": "KOSPI",
+  "level": 5923.0,
+  "side": "above",
+  "observed": 5683.8,
+  "note": "KOSPI 종가 5,683.80 로 5,923.00 를 위로 깨지 않았다"
+ },
+ "history/kr_market.jsonl (closes)": {
+  "2026-10-29": 5937.66,
+  "2026-10-30": 5730.74,
+  "2026-11-02": 5859.08,
+  "2026-11-03": 5648.79,
+  "2026-11-04": 5683.8
+ },
+ "note": "S-Oil 11-04 KRX 종가는 kr/data 에 없음(거래대금 상위 60 밖)"
+}

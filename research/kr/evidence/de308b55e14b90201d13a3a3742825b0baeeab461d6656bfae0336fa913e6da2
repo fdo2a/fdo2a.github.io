@@ -1,0 +1,44 @@
+# 2026-11-04 KR 시황 웹 검색 색인 발췌·네이버증권 주요뉴스 요약 (관측 2026-11-04 09:20 UTC)
+
+원문 페이지는 이 세션에서 열리지 않았다(네이버·개별 매체 도메인 차단). 아래는 웹 검색 결과 색인에 나온 제목·발췌와 수집 잡의 kr/data/news/2026-11-04.json summary_ko 다. 수치는 kr/data 가 정본이며, 아래 매체 수치는 교차 확인용이다.
+
+## 지수·수급 (11-04 한국 정규장)
+- 헤럴드경제 「美 중간선거에 코스피 '롤러코스터'…4% 급락 딛고 상승 마감」 https://biz.heraldcorp.com/article/10925974 — 5786.13 출발, 장초 5828.13 고점, 이후 하락 전환해 5421.72(-4.02%) 저점, 오후 반등. 급락 계기는 민주당 상·하원 장악 가능성 부각과 AI 데이터센터 규제 우려. 「AI 규제는 일부 전력과 관련한 환경세 부과 수준에 그칠 것」이라는 분석이 나오며 진정. 유안타증권 이재원: 착공 지연과 서버·메모리 발주 취소는 구분해야.
+- 굿모닝경제 「코스피, 美 중간선거에 급등락…외국인 2.5조 매도에도 5680선 반등」 https://www.goodkyung.com/news/articleView.html?idxno=293112 — 개인 1조1442억·기관 1조137억 순매수, 외국인 2조5072억 순매도. 오후 연기금 중심 기관 매수 유입이 반등에 힘을 보탰다는 평가.
+- 비즈워치 「美 중간선거, 예상된 민주당 승리에도 코스피는 왜 출렁였나」 https://news.bizwatch.co.kr/article/market/2026/11/04/0030
+- 미디어펜 「코스피, 외국인 2.5조 매도에도 0.62% 상승…5680선 회복」 https://www.mediapen.com/news/view/1135217
+- 뉴스웨이 「"빨간불 지켰다" 4% 낙폭 만회한 코스피···코스닥도 상승 마감」 https://newsway.co.kr/news/view?ud=2026110415425221208
+- 브릿지경제 「[마감시황] 코스피 장중 5500선 밑돌다 반등⋯0.62% 상승 마감」 https://www.viva100.com/article/20261104501253
+- 서울경제(네이버 주요뉴스 요약) 「당분간 변동성 이어져…외인 수급·美금리·실적이 반등 변수」 https://n.news.naver.com/mnews/article/011/0004678770 — 외국인 2조4998억원 순매도, 이달 4조4042억원, 7개월째 순매도. 민주당 AI 데이터센터 규제 강화 시 빅테크 설비투자 지연→HBM 수요 둔화 우려. 미래에셋 박연주: AI 투자 흐름 쉽게 안 꺾이고 반도체 공급 부족. 미 10년물 4.90%, 달러인덱스 9월 말 이후 최저.
+- 한국금융신문 「AI 믿고 샀는데…삼성전자·SK하이닉스 주가 흔드는 '반전'」 https://www.fntimes.com/html/view.php?ud=2026110416384368682a735e27af_18
+- 네이트(뉴스1 등) 「外人 매도에 삼전 0.7%↓닉스 약보합 마감[핫스탁](종합)」 https://m.news.nate.com/view/20261104n26124 — 외국인 SK하이닉스 1조1657억·삼성전자 8083억 순매도(보도치). 장중 6~7% 낙폭 확대. 전일 필라델피아 반도체지수 2.63% 상승.
+- 네이트 「장중 급등락하며 '출렁'…삼전닉스, 약보합 마감(종합)」 https://m.news.nate.com/view/20261104n26901
+
+## 미국 중간선거(11-03 현지) 결과·해석
+- CBS News live updates 「Democrats decisively win control of House and Senate」 https://www.cbsnews.com/live-updates/election-day-2026-midterms/ — 일부 상원 경합 미확정(알래스카·미시시피·네브래스카 등).
+- CNBC live 「Stock futures … Democrats win big in midterms, traders bet they will slow data center buildout」 https://www.cnbc.com/2026/11/03/stock-market-today-live-updates.html
+- CNBC 「AI stocks slide as Texas governor result raises data center risks」 https://www.cnbc.com/2026/11/04/ai-stocks-texas-governor-data-centers.html — 텍사스 주지사 민주당 지나 이노호사 당선(데이터센터 개발 제한 공약). Wells Fargo: 계획된 데이터센터 GW 의 27%가 텍사스. 조지아·오하이오 민주당 당선인도 데이터센터 착공 중단 요구. 나스닥100 선물 한때 -2.1%(보도). JPMorgan: 데이터센터 제한·법인/고소득 증세는 기술주 역풍, 헬스케어·청정에너지는 상대 수혜. Wells Fargo: 트럼프 거부권으로 의회 법안 저지 가능.
+- 한국경제TV 「'블루 쓰나미' 덮쳤다..."선거 뒤 증시 올랐다"」 https://n.news.naver.com/mnews/article/215/0001271669
+- 매일경제 「"美민주당 승리, 신재생·헬스케어 수혜… AI株 분할매수를"」 https://n.news.naver.com/mnews/article/009/0005759094 — 美친환경 정책 확산 기대에 한화솔루션·OCI홀딩스 강세. "AI·반도체 투자 안 꺾일듯".
+- 헤럴드경제 「"AI 투자 멈추면 한국 큰 충격" 블룸버그, GDP 3% 증발 경고」 https://n.news.naver.com/mnews/article/016/0002718915
+
+## AMD 3분기 실적(11-03 미국 장 마감 후)
+- AMD Newsroom 「AMD Reports Third Quarter 2026 Financial Results」 https://newsroom.amd.com/news/amd-reports-third-quarter-2026-earnings/ — 매출 약 134억달러(+45% YoY), 데이터센터 85.46억달러(+97% YoY). 4분기 매출 가이던스 약 170억달러 ±3%.
+- Benzinga 실적 콜 https://www.benzinga.com/news/26/11/62849372/advanced-micro-devices-q3-2026-earnings-call-transcript — 4분기 데이터센터 매출 전분기 대비 50% 성장 가이던스, 2027년 데이터센터 비중 80% 초과 기대.
+- CNBC 「AMD stock jumps 8% on earnings as data center revenue nearly doubles」 https://www.cnbc.com/2026/11/03/amd-amd-q3-earnings-report-2026-.html
+
+## 움직인 종목
+- g2 2차전지: 와이드경제 「[특징주] 삼성SDI, 美 '블루웨이브' 수혜·ESS 수주 겹경사에 11%대 급등」 https://www.widedaily.com/news/articleView.html?idxno=302857 ; CBC뉴스 「[특징주] 삼성SDI·LG에너지솔루션 등 이차전지주 껑충…미국 민주당 중간선거 강세 전망」 https://www.cbci.co.kr/news/articleView.html?idxno=623128 ; 재경일보 마감분석 https://news.jkn.co.kr/post/1070028 (직접 공시 재료는 확인 안 됨). 엘앤에프: 와이드경제 관련기사 제목 「엘앤에프, LG엔솔과 1조원대 LFP 양극재 장기 계약에 12%대 급등」(본문·날짜 미확인).
+- g3 태양광·풍력: 뉴스1 「美 '블루웨이브' 친환경주 급등…한화솔루션 18%↑[핫종목](종합)」 https://www.news1.kr/finance/general-stock/6343064 ; 아주경제 「美 민주당 압승에 반도체주 출렁…태양광·배터리주는 급등」 https://www.ajunews.com/view/20261104155822600 ; 아주경제 「[특징주]美 민주당 하원 4년만에 탈환 '유력'…태양광·이차전지 급등 전환」 https://ajunews.com/view/20261104132200001 ; 재경일보 https://news.jkn.co.kr/post/1070019 (직접 호재 명시 없음, 과열 주의).
+- g4 한진칼: 아주경제 「[특징주]한진칼 지분경쟁 소식에 한진칼 9%·한진칼우 25% '상승'」 https://www.ajunews.com/view/20261103090413091 ; 중앙이코노미뉴스 https://www.joongangenews.com/news/articleView.html?idxno=561050 — 호반그룹·한진그룹 지분 경쟁, 11-03 한진칼·한진칼우 상한가, 한진칼우 11-04 장중 상한가. 호반 7월 기준 지분 20.15%, 공정위 기업결합 신고(보도). 최대주주 변경은 미확인.
+- g5 OCI홀딩스·포스코퓨처엠: CBC뉴스 「OCI홀딩스 10%대 급등, 20만원 눈앞…미국 중간선거·폴리실리콘 가격 상승 주목」 https://www.cbci.co.kr/news/articleView.html?idxno=623132 ; 서울경제(네이버 요약) 「영업익 기대치의 4.6배인데…포스코퓨처엠 목표가 놓고 證 '동상이몽'」 https://n.news.naver.com/mnews/article/011/0004678784 — 3분기 영업이익 821억원(시장 예상 179억원의 4.6배), 보상금 약 500억원이 영업이익의 61%(LS증권).
+- g1 반도체: 위 「外人 매도에 삼전 0.7%↓닉스 약보합」, 한국금융신문 기사.
+
+## 열린 판단 관련
+- 두산에너빌리티: CBC뉴스 https://www.cbci.co.kr/news/articleView.html?idxno=623014 — 체코 원전 불확실성과 연관 지을 수 있으나 당일 직접 원인 단정 근거 없음. 잡포스트 https://www.job-post.co.kr/news/articleView.html?idxno=236437 — SMR 계약 이후 수급 숨고르기.
+- 한화오션: 중앙이코노미뉴스 https://www.joongangenews.com/news/articleView.html?idxno=561165 — 52주 최저 48,600원 근접.
+- 유가: 뉴스핌 「美·이란 종전 협상 기대에 국제유가 이틀째 급락…WTI 95달러 '하회'」 https://www.newspim.com/news/view/20261103001419 ; 겟뉴스 https://www.getnews.co.kr/news/articleView.html?idxno=885902 — 11-03(현지) 브렌트 12월물 -1.12% 103.60달러, WTI -0.38% 96.09달러(보도). 카타르 중재 간접협상 진전, 미국의 이란 케슘섬 공격 등 제한적 군사작전 지속. 노컷뉴스(네이버 요약) — 이란 의회의장, 선거 결과를 전쟁 반대 여론으로 해석하며 트럼프 행정부에 경고.
+
+## 국내 정책 일정
+- 한은 금통위: 2026년 남은 회의 11월 26일(목) — marketlog https://marketlog.co.kr/rate-decision-calendar-2026/ , easyzetec https://www.easyzetec.com/blog/bok-base-rate-announcement-date-2026-remaining-2027-schedule ; 10-22 연 3.00% 동결, 「추가 인상 시기와 속도」 문구 유지, 11월 인상 전망 엇갈림 — 파이낸셜뉴스 https://www.fnnews.com/news/202610221909169005 , 비즈워치 https://news.bizwatch.co.kr/article/finance/2026/10/23/0025
+- 미·러·우크라이나 종전 실무협상 11월 10~11일 아부다비 재개 예정(뉴스1 네이버 요약, 블룸버그 인용). APEC 정상회의 이달 중순 중국 선전(뉴스1).
