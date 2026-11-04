@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-04T11:27:13+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-04T15:23:57+00:00",
  "cutoff_at": "2026-11-04T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 622,
+  "harvest": 477,
   "candidates": 1,
   "articles": [
    6
@@ -42,13 +42,13 @@
    "dt": "ok"
   },
   "notes": [
-   "discover:622"
+   "discover:477"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 18368,
-   "out": 6191
+   "in": 18400,
+   "out": 5410
   }
  },
  "event": {
@@ -56,5 +56,5 @@
   "query": "3분기 영업익 고려아연",
   "trigger": []
  },
- "content_hash": "644644e1f9d17d96"
+ "content_hash": "aeeac7b4fffc9657"
 }
