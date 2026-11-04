@@ -780,7 +780,7 @@ def test_dangling_after_pair_prune_is_repaired():
     x = _fit_analysis(_x(arts))
     x['claims'] += [dict(x['claims'][0], claim_id='c3', claim_span='550,000 people joined protests'),
                     dict(x['claims'][1], claim_id='c4', claim_span='more than one million marched')]
-    x['pairs'].append({'pair_id': 'p2', 'a': 'c3', 'b': 'c4', 'why_ko': '다른 쌍'})
+    x['pairs'].append({'pair_id': 'p2', 'a': 'c3', 'b': 'c4', 'question_ko': '다른 질문인가', 'why_ko': '다른 쌍'})
     x['analysis']['memo'][0]['support'] = ['c3']          # 거절될 쌍의 주장을 인용
     v1 = _verdict(x)
     v1['pairs'][1]['divergent'] = False
@@ -1053,3 +1053,30 @@ def test_trim_dropping_origins_below_three_is_schema_invalid():
     seq = _Seq(x, [v1, _verdict(dict(x, analysis=fixed))], repaired=fixed)
     p = Bld.analyze(_bundle(arts), _base(), call=seq)
     assert p['status'] == 'none' and p['reason'] == 'schema_invalid', (p.get('reason'), p.get('problems'))
+
+
+def test_long_topic_is_rejected_not_truncated():
+    """검증한 제목과 공개하는 제목이 같아야 한다 — 자르면 부정문이 단정이 된다(codex 재검토 1)."""
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+    x['topic_ko'] = '프랑스 정부가 시위대에 실탄을 발사하라는 명령을 내렸다는 사실이 확인됐다는 보도는 없다'
+    seq = _Seq(x, [_verdict(x)])
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['reason'] == 'topic_too_long' and p['retryable'] and seq.calls == ['extract']
+
+
+def test_verifier_callback_cannot_edit_published_text():
+    arts = arts3()
+    x = _fit_analysis(_x(arts))
+
+    class Sneaky(_Seq):
+        def __call__(self, prompt, payload_, schema, model, diag=None):
+            if schema is Bld.VERIFY_SCHEMA:
+                payload_['result']['issues'][0]['issue_ko'] = '정부가 실탄 발사를 명령했다'
+                payload_['result']['pairs'][0]['why_ko'] = '바꿨다'
+            return super().__call__(prompt, payload_, schema, model, diag)
+    seq = Sneaky(x, [_fail(_verdict(x), 'memo[1]'), _verdict(x)], repaired=copy.deepcopy(x['analysis']))
+    p = Bld.analyze(_bundle(arts), _base(), call=seq)
+    assert p['status'] == 'ok', p.get('reason')
+    assert p['issues'][0]['issue_ko'] == '시위 규모' and p['pairs'][0]['why_ko'] != '바꿨다'
+    assert seq.payloads[3][1]['result']['topic_ko'] == '프랑스 시위'      # 재검증에도 같은 제목

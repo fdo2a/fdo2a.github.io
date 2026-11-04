@@ -357,7 +357,7 @@ def merge_repair(orig, repaired, failed):
     return repaired
 
 
-def repair(an, problems, issues, claims, pairs, obs, arts, report_date, call, diag):
+def repair(an, problems, issues, claims, pairs, obs, arts, report_date, call, diag, topic=''):
     """실패 경로만 한 번 고쳐 쓰고, 병합한 분석 전체를 한 번 다시 검증한다(2026-11-04). → (분석|None, 문제)."""
     failed = sorted({pb.rsplit(':', 1)[0] for pb in problems})
     total = len(list(analysis_nodes(an)))
@@ -378,7 +378,7 @@ def repair(an, problems, issues, claims, pairs, obs, arts, report_date, call, di
     if merged is None:
         rep['outcome'] = 'rejected'
         return None, problems
-    v2 = call(VERIFY_PROMPT, verify_payload(issues, claims, pairs, obs, copy.deepcopy(merged), arts),
+    v2 = call(VERIFY_PROMPT, copy.deepcopy(verify_payload(issues, claims, pairs, obs, merged, arts, topic)),
               VERIFY_SCHEMA, MODELS['verify'], diag=diag)
     left = analysis_problems(merged, v2, claims, obs)        # 쌍·주장 판정은 1차 고정 — 2차 것은 쓰지 않는다
     rep['remaining'] = left
@@ -404,7 +404,7 @@ def assemble(base, x, issues, arts, claims, pairs, obs, an, attention, query):
     conflict = len(pairs) >= C.MIN_PAIRS
     trig = (['attention'] if attention else []) + (['conflict'] if conflict else [])
     return dict(base, status='ok', reason='', retryable=False,
-                event={'topic_ko': (x.get('topic_ko') or '')[:C.LIMITS['topic_ko']], 'query': query,
+                event={'topic_ko': x.get('topic_ko') or '', 'query': query,
                        'trigger': trig},
                 articles=[{k: a.get(k) for k in ('article_id', 'url', 'title', 'source', 'wire',
                                                  'published_at', 'origin_group')} for a in arts],
@@ -475,7 +475,11 @@ def analyze(bundle, base, call=claude):
     except ModelError as e:
         return dict(base, status='error', reason=f'model_extract_{e}'[:40], retryable=True)
     _dump('extract.json', x)
-    base['event'] = dict(base['event'], topic_ko=(x.get('topic_ko') or '')[:C.LIMITS['topic_ko']],
+    topic = x.get('topic_ko') or ''
+    if len(topic) > C.LIMITS['topic_ko']:
+        # 자르면 검증한 문장과 공개하는 문장이 달라진다 — 부정문이 단정문이 될 수 있다(codex 재검토 1)
+        return dict(base, status='none', reason='topic_too_long', retryable=True)
+    base['event'] = dict(base['event'], topic_ko=topic,
                          query=cand['query'])
     if not x.get('pairs'):
         return final_none('no_conflict')
@@ -486,8 +490,8 @@ def analyze(bundle, base, call=claude):
     if not pairs:
         return dict(base, status='none', reason='grounding_failed', retryable=True)
     try:
-        v = call(VERIFY_PROMPT, verify_payload(issues, claims, pairs, obs, x.get('analysis'), arts,
-                                               x.get('topic_ko') or ''),
+        v = call(VERIFY_PROMPT, copy.deepcopy(verify_payload(issues, claims, pairs, obs, x.get('analysis'), arts,
+                                                             topic)),
                  VERIFY_SCHEMA, MODELS['verify'], diag=diag)
     except ModelError as e:
         return dict(base, status='error', reason=f'model_verify_{e}'[:40], retryable=True)
@@ -509,7 +513,7 @@ def analyze(bundle, base, call=claude):
                         problems=problems[:30])
         try:
             an, problems = repair(an, problems, issues, claims, pairs, obs, arts, base['report_date'],
-                                  call, diag)
+                                  call, diag, topic)
         except ModelError as e:
             return dict(base, status='error', reason=f'model_repair_{e}'[:40], retryable=True)
         _dump('repair.json', diag.get('repair'))
