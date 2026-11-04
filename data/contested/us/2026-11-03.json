@@ -3,49 +3,60 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-03",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-04T07:26:07+00:00",
- "cutoff_at": "2026-11-04T07:26:07+00:00",
+ "collected_at": "2026-11-04T08:28:29+00:00",
+ "cutoff_at": "2026-11-04T08:28:29+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-10-21.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "312a1837f5351ec40cc17a00576990b63879846d",
+  "sha256": "ee6a934510f49f0eb47a226f7cdf1386c36803a6e0f67d067a3c2a1cf16bb1ea"
+ },
  "counts": {
-  "harvest": 214,
-  "candidates": 3,
+  "harvest": 215,
+  "candidates": 1,
   "articles": [
-   3,
-   2,
-   2
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4883,
-   "out": 76
+   "in": 40983,
+   "out": 11690
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
-   "theguardian.com": "short",
-   "bbc.co.uk": "ok"
+   "theguardian.com": "ok",
+   "aljazeera.com": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "11/11"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 10
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "2026 미국 중간선거 민주당 의회 장악 이후 단기 정책 변화 가능성",
+  "query": "democrats congress midterm",
   "trigger": []
  },
- "content_hash": "b82b224589939ecf"
+ "content_hash": "06f7dc7ff94cf185"
 }
