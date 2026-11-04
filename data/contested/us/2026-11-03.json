@@ -4,59 +4,89 @@
  "span": "daily",
  "report_date": "2026-11-03",
  "status": "none",
- "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-04T10:37:07+00:00",
- "cutoff_at": "2026-11-04T10:37:07+00:00",
+ "reason": "analysis_unverified",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-04T15:03:40+00:00",
+ "cutoff_at": "2026-11-04T15:03:40+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
- "prompt_version": "2026-10-21.1",
+ "prompt_version": "2026-11-04.1",
  "market_snapshot": {
   "path": "data/market_data.json",
   "commit": "312a1837f5351ec40cc17a00576990b63879846d",
   "sha256": "ee6a934510f49f0eb47a226f7cdf1386c36803a6e0f67d067a3c2a1cf16bb1ea"
  },
  "counts": {
-  "harvest": 214,
+  "harvest": 216,
   "candidates": 1,
   "articles": [
-   4
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46776,
-   "out": 10144
+   "in": 76314,
+   "out": 20424
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
-   "aljazeera.com": "ok"
+   "theguardian.com": "short",
+   "aljazeera.com": "ok",
+   "abc.net.au": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "9/9"
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 9
+   "pairs": 1,
+   "claims": 2,
+   "obs": 8,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
   },
-  "attempt_refunded": "discovery_throttled"
+  "repair": {
+   "paths": [
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "structure",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "structure:unverified",
+    "edges[1]:unverified",
+    "edges[2]:unverified",
+    "memo[0]:unverified",
+    "worry.most[0]:unverified",
+    "worry.unlikely[0]:unverified"
+   ]
+  }
  },
  "event": {
-  "topic_ko": "미국 중간선거 민주당 양원 장악 이후 입법 교착과 부양책 통과 가능성",
-  "query": "democrats congress midterm",
+  "topic_ko": "미 중간선거 민주당 압승 뒤 대이란 전쟁 제약과 공격 재개 가능성",
+  "query": "democrats trump midterm",
   "trigger": []
  },
- "content_hash": "71a9fbcd49c53e52"
+ "problems": [
+  "structure:unverified",
+  "edges[1]:unverified",
+  "edges[2]:unverified",
+  "memo[0]:unverified",
+  "worry.most[0]:unverified",
+  "worry.unlikely[0]:unverified"
+ ],
+ "content_hash": "c9d814c6f0598421"
 }
