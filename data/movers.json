@@ -1,11 +1,11 @@
 {
-  "report_date": "2026-11-03",
+  "report_date": "2026-11-04",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
+      "industry": "Systems Software",
       "direction": "up",
       "reasons": [
         "지수 기여 상위",
@@ -13,80 +13,112 @@
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": 2.29,
-          "close": 206.69,
-          "value": 18664766974.95
-        },
-        {
-          "name": "Monolithic Power Systems (MPWR)",
-          "change_pct": 6.78,
-          "close": 1328.3,
-          "value": 1738715541.31
+          "name": "Microsoft (MSFT)",
+          "change_pct": 6.68,
+          "close": 555.8,
+          "value": 28177907207.73
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Systems Software",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Microsoft (MSFT)",
-          "change_pct": 2.74,
-          "close": 520.99,
-          "value": 10374305916.76
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 5.31,
+          "close": 349.51,
+          "value": 31091772962.49
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": -1.9,
-          "close": 331.9,
-          "value": 20367043457.36
+          "name": "Nvidia (NVDA)",
+          "change_pct": -3.17,
+          "close": 200.13,
+          "value": 29580096894.74
+        },
+        {
+          "name": "Micron Technology (MU)",
+          "change_pct": -7.0,
+          "close": 795.23,
+          "value": 28000226539.05
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": -7.08,
+          "close": 159.8,
+          "value": 7380852448.55
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Consumer Staples Merchandise Retail",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "Walmart (WMT)",
-          "change_pct": -2.22,
-          "close": 124.86,
-          "value": 2621684683.66
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Application Software",
+      "industry": "Broadline Retail",
       "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Oracle Corporation (ORCL)",
-          "change_pct": 5.85,
-          "close": 126.19,
-          "value": 10573514187.7
+          "name": "Amazon (AMZN)",
+          "change_pct": 6.12,
+          "close": 266.03,
+          "value": 24735812199.17
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Sandisk (SNDK)",
+          "change_pct": -7.91,
+          "close": 1037.4,
+          "value": 11756713390.28
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -8.82,
+          "close": 372.36,
+          "value": 3990358174.66
+        },
+        {
+          "name": "Seagate Technology (STX)",
+          "change_pct": -8.13,
+          "close": 557.06,
+          "value": 3765402488.7
+        },
+        {
+          "name": "Supermicro (SMCI)",
+          "change_pct": -5.7,
+          "close": 29.6,
+          "value": 2606791965.6
+        },
+        {
+          "name": "Western Digital (WDC)",
+          "change_pct": -6.77,
+          "close": 323.83,
+          "value": 2336257189.61
         }
       ]
     }
