@@ -13,8 +13,10 @@
       "published": "2026-11-04T17:55:08+09:00",
       "source": "서울경제",
       "category": "macro",
-      "body_chars": 0,
-      "body_note": "TimeoutError"
+      "body_chars": 2447,
+      "body_file": "01-macro.txt",
+      "summary_ko": "미국 중간선거에서 민주당이 압승하면서 4일 코스피는 장중 4% 넘게 밀렸다가 낙폭을 만회해 0.62% 오른 5683.80에 마감했다. 시장은 민주당이 AI 데이터센터 규제를 강화하면 빅테크 설비투자가 지연되고 HBM·D램 등 서버용 반도체 수요가 둔화할 수 있다고 우려했다. 삼성전자와 SK하이닉스는 각각 0.68%, 0.14% 내렸고, 외국인은 이날 2조 4998억 원, 이달 들어 4조 4042억 원을 순매도했다. 반면 미중 AI 경쟁을 고려하면 미국의 투자가 꺾이기 어렵다는 반론도 있다. 이에 증권가는 업종별 차별화에 대비한 분산투자를 권했고, 2차전지·태양광주는 큰 폭으로 올랐다. 회복 변수로는 미국 금리, 기업 실적, 외국인 수급이 꼽힌다.",
+      "summary_model": "claude-sonnet-5-5"
     },
     {
       "guid": "009-0005759032",
@@ -24,8 +26,10 @@
       "published": "2026-11-04T17:33:09+09:00",
       "source": "매일경제",
       "category": "macro",
-      "body_chars": 0,
-      "body_note": "TimeoutError"
+      "body_chars": 2204,
+      "body_file": "02-macro.txt",
+      "summary_ko": "반도체 호황으로 쌓인 현금이 국내 채권시장의 새로운 변수로 떠올랐다. KB증권 분석에 따르면 올해 말 순현금은 삼성전자 210조원, SK하이닉스 181조원으로 추정되며, 지난해 말 대비 삼성전자는 2배, SK하이닉스는 16배 이상 불어난다. 두 회사가 올해 주주환원에 각각 100조원 안팎을 쓰기로 했지만 그 뒤에도 큰 현금이 남아 운용 방식이 채권 수급을 흔들 수 있다는 관측이다. SK하이닉스는 NH아문디·KB·신한·우리·미래에셋·한국투자신탁운용 등 자산운용사 6곳에 5000억원씩 총 3조원을 맡겼고, 이 가운데 9000억원이 집행됐다. 주로 은행계 카드사 등 AA급 이상 여전채에 투자하고 있으며, 지난달 말 여전채(AA+) 3년물 금리는 연 4.298%로 국고채 3년물보다 0.59%포인트 높다. 반면 삼성전자는 은행 예금 위주로 운용하며 단기채 일부만 편입하고 있다. 국고채 투자는 12월 2년물 발행 물량이 1조원 미만에 그쳐 연내 실행이 어려울 전망이다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "016-0002718915",
@@ -37,7 +41,7 @@
       "category": "macro",
       "body_chars": 2036,
       "body_file": "03-macro.txt",
-      "summary_ko": "블룸버그 이코노믹스의 톰 오를릭 수석이코노미스트는 금융투자협회 웨비나에서 AI 인프라 투자가 1년간 중단되고 미국 증시가 20% 떨어지는 상황을 가정한 분석을 내놨다. 그 결과 기준 전망 대비 한국의 GDP 감소폭은 약 3%, 대만은 약 5%로 추산되며 두 나라가 최대 타격국으로 꼽혔다. 오를릭은 시장이 AI 관련주를 무차별 매수하던 단계를 지나 대규모 자본지출이 실제 수익으로 이어질지 따지는 옥석 가리기 국면에 들어섰다고 진단했다. 선거 이후 지역사회 비용 부담을 이유로 미국 데이터센터 규제가 강화될 수 있고, 반도체 공급망의 핵심인 한국과 대만이 특히 취약하다는 설명이다. 반면 권효성 이코노미스트는 데이터센터 부지가 대안 지역으로 옮겨갈 수 있어 수요가 급감하지는 않을 것이라고 반박했다. 중간선거 이후 분점정부가 되면 정책 불확실성이 줄어 증시에 우호적일 수 있다는 관측도 나왔다.",
+      "summary_ko": "블룸버그 이코노믹스의 톰 오를릭 수석이코노미스트는 금융투자협회 웨비나에서 AI 인프라 투자가 1년간 중단되고 미국 증시가 20% 하락하는 상황을 가정한 분석을 내놓았다. 이 시나리오에서 한국의 GDP 감소폭은 기준 전망 대비 약 3%, 대만은 약 5%로 추산됐다. 이미 레버리지 부담과 AI 산업 수익성 재평가로 조정을 겪는 코스피가 대만과 함께 최대 타격국으로 지목된 것이다. 오를릭은 시장이 AI 관련주를 가리지 않고 사들이던 단계를 벗어나 대규모 자본지출이 실제 이익으로 이어질지 따지기 시작했다고 진단했다. 선거 이후 데이터센터의 전력·용수 소비에 따른 지역사회 반발로 규제가 강화될 수 있는데, 반도체 공급망의 핵심인 한국과 대만이 특히 취약하다는 설명이다. 반면 권효성 블룸버그 이코노미스트는 데이터센터 부지가 대안 지역으로 옮겨갈 수 있어 수요가 급감할 가능성은 낮다고 반박했다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -50,7 +54,7 @@
       "category": "policy",
       "body_chars": 3474,
       "body_file": "04-policy.txt",
-      "summary_ko": "미국 중간선거에서 민주당이 상·하원 다수당 지위를 확보하며 이른바 '블루 쓰나미'가 국내외 증시를 흔들었다. 11월 4일 코스피는 장중 4%대까지 밀렸다가 막판 저가매수세에 0.6% 상승 마감했다. 역대 중간선거 뒤 미국 S&P500과 코스피가 대체로 상승했다는 통계가 제시되지만, 금리 인상기에는 반등이 1년 뒤 반납된 전례가 있어 낙관만은 어렵다는 분석이 나온다. 반도체 쪽에서는 민주당이 우위를 점한 주지사 관할 데이터센터 비중이 늘어나 인프라 속도 조절 위험이 커졌다는 진단이 나온다. 업종별로는 메모리 대형주보다 반도체 장비, 전력망·건설, 소프트웨어에 관심이 옮겨갈 수 있다는 의견이 있다. 방산은 예산 조정을 통한 국방비 확대가 제동 걸릴 가능성 때문에 숨고르기가 예상된다. 다만 관세 정책과 대중국 기술 통제 기조는 의회 구도와 무관하게 유지될 것이라는 것이 월가의 공통된 시각이며, 우리 기업의 대미 투자 압박은 선거 이후에도 이어질 전망이다.",
+      "summary_ko": "미국 중간선거에서 민주당이 상·하원 다수당을 차지하는 '블루 쓰나미'가 나타나면서 국내외 증시가 롤러코스터 장세를 보였다. 4일 코스피는 장중 4%대까지 밀렸다가 저가매수세에 힘입어 0.6% 상승 마감했다. 역사적으로 미 중간선거 이후 증시가 강세를 보였다는 분석이 많지만, 올해는 장기 금리와 AI 자본 조달 문제가 변수로 꼽힌다. 민주당이 주지사 선거에서도 우위를 점하면서 데이터센터 건설 제동과 인프라 투자 속도 조절 위험이 커졌다는 평가다. 업종별로는 소부장, 전력망·건설, AI 소프트웨어, 조선 등이 주목받는 반면, 국방비 확대에 제동이 걸려 방산주는 숨고르기가 예상된다. 다만 관세와 대중국 기술 통제 기조는 의회 구도와 관계없이 유지될 전망이어서, 삼성전자와 SK하이닉스의 대미 투자 압박은 이어질 것으로 보인다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -63,7 +67,7 @@
       "category": "policy",
       "body_chars": 2418,
       "body_file": "05-policy.txt",
-      "summary_ko": "미국 중간선거에서 민주당이 압승하자 4일 코스피는 장중 한때 4.02% 급락했다가 트럼프 대통령의 선거 승복 발언 이후 0.62% 상승한 5683.80에 마감했다. 외국인은 이날 코스피에서 약 2조5000억원을 순매도했다. 민주당의 친환경 정책 강화 기대에 배터리와 태양광 관련주가 강세를 보였으며, 한화솔루션은 18.64%, OCI홀딩스는 10.38% 올랐다. 전문가들은 신재생에너지와 헬스케어가 수혜 업종이 될 것으로 내다봤다. 반면 AI·반도체는 선거 결과가 구조적 성장을 바꾸지 않을 것이라는 관측이 우세했다. 다만 금리, 국제유가, 중동전쟁의 종결 시점, 연준의 12월 기준금리 결정과 물가가 주요 변수로 꼽혔다. 전문가들은 특정 업종보다 미국 대표지수 ETF를 중심에 두고 실적이 뒷받침되는 반도체·AI 분야를 분할 매수하는 전략이 적절하다고 조언했다.",
+      "summary_ko": "2026년 11월 3일(현지시간) 치러진 미국 중간선거에서 민주당이 압승하자 국내 증시가 요동쳤다. 4일 코스피는 장중 한때 4.02% 급락했다가 트럼프 대통령의 선거 승복 발언 이후 반등해 0.62% 오른 5683.80에 마감했고, 외국인은 2조5000억원가량을 순매도했다. 배터리와 태양광 관련주는 민주당의 친환경 정책 강화 기대에 강세를 보였으며, 한화솔루션은 18.64% 급등했다. 증권가에서는 AI 산업의 구조적 성장은 바뀌지 않는다는 진단이 우세했다. 신재생에너지와 헬스케어가 수혜 업종으로 꼽혔고, 반도체·AI 분야는 단기 변동성에도 불구하고 중장기 성장이 이어질 것이라는 관측이 나왔다. 다만 금리, 국제유가, 중동전쟁의 향방, 민주당의 행정부 견제 강도가 향후 변수로 제시됐다. 전문가들은 연말까지 대표지수 ETF를 중심에 두고 실적이 뒷받침되는 반도체·AI 주식을 분할 매수하는 접근이 적절하다고 조언했다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -76,7 +80,7 @@
       "category": "policy",
       "body_chars": 2754,
       "body_file": "06-policy.txt",
-      "summary_ko": "미국 중간선거를 앞두고 코스피 변동성지수(VKOSPI)가 3일 54.08까지 치솟아 지난달 15일 이후 최고 수준을 기록했다. 올해는 선거 전 미국 증시 조정 폭이 평균 18%보다 작은 약 9%에 그쳐, 선거 이후 기대되는 반등 여력도 제한적일 수 있다는 분석이 나온다. 미국 증시의 경기조정주가수익비율(CAPE)은 40.7배로 1998년 고점(33.8배)을 웃돌아 밸류에이션 부담도 크다. 2018년에는 선거 이후에도 나스닥이 약 23% 하락한 사례가 있어, 금리와 경기 여건이 함께 봐야 할 변수로 꼽힌다. 삼성증권은 중동 정세가 불안하고 고유가·고금리가 이어질 경우 코스피가 일시적으로 5000선까지 내려갈 수 있다고 봤으나, ROE 20% 이상 전망을 근거로 실제 하회 가능성은 낮다고 진단했다. 국내 증권가는 11월 코스피 밴드를 5100~7100으로 제시하며 중장기 반등을 기대하는 가운데, 선거 불확실성 해소와 외국인 자금 유입이 이어질지가 관건으로 지목된다.",
+      "summary_ko": "미국 중간선거를 앞두고 코스피 변동성지수(VKOSPI)가 4일 전날 54.08까지 치솟아 지난달 15일 이후 최고 수준을 기록했다. 과거 중간선거 해에는 연중 고점 대비 평균 18%가량 조정받았지만 올해 조정 폭은 약 9%에 그쳐, 선거 이후 반등 여력도 제한적일 수 있다는 분석이다. 미국 증시의 경기조정주가수익비율(CAPE)은 10월 기준 40.7배로 1998년 고점(33.8배)을 웃돌고, 2018년에는 선거 뒤에도 나스닥이 금리 인상과 무역갈등 여파로 8월 고점 대비 약 23% 떨어졌다. 키움증권은 블루웨이브 기대가 이미 선반영됐을 수 있다고 봤고, 삼성증권은 중동 정세가 불안해지면 코스피가 일시적으로 5000선까지 내려갈 수 있다고 전망했다. 국내 증권가는 4일 시초가 기준 5786.13포인트를 밴드 하단 기준으로 잡았다. 대신증권은 올해 4분기 5200~6700, 내년 1분기 6000~7500을 제시하며 내년 코스피 상장사 주당순이익(EPS) 34% 증가 전망을 근거로 들었다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -98,10 +102,8 @@
       "published": "2026-11-04T19:20:00+09:00",
       "source": "한국경제TV",
       "category": "market",
-      "body_chars": 2056,
-      "body_file": "08-market.txt",
-      "summary_ko": "미국 중간선거 개표가 진행된 4일 코스피는 장중 400포인트 넘게 출렁이며 한때 5400선까지 밀렸다가 결국 전 거래일 대비 0.62% 오른 5683.80으로 마감했다. 장 초반 3% 넘게 올라 5800선을 넘었지만 오전 10시 이후 하락 전환해 낙폭을 키웠다. 민주당이 하원 다수당을 차지하면 AI 데이터센터 규제가 강화되고 건설이 둔화될 수 있다는 우려가 번졌고, 외국인이 2조5115억원어치를 순매도하며 하방 압력을 키웠다. 개인과 기관이 매수로 방어했으나 하락을 막지는 못했다. 삼성전자와 SK하이닉스는 장중 각각 5.24%, 6.80% 하락했다가 대부분 회복했다. 민주당의 연방 의회 장악이 이어지면서 이차전지주와 태양광 관련주는 급등했다. 한화솔루션은 18%대 올랐다. 한편 AI 규제가 전력 관련 환경세 수준에 그칠 것이라는 분석이 나오면서 급락세는 진정됐다. 증권가에서는 선거 직후 반등의 지속 여부가 기업 실적과 AI 산업 불안 완화, 지정학적 리스크 해소에 달렸다고 보고 있다.",
-      "summary_model": "claude-haiku-5-5"
+      "body_chars": 0,
+      "body_note": "TimeoutError"
     },
     {
       "guid": "015-0005350416",
@@ -113,7 +115,7 @@
       "category": "market",
       "body_chars": 1979,
       "body_file": "09-market.txt",
-      "summary_ko": "SM엔터테인먼트가 4일 발표한 올해 3분기 연결 매출은 2911억원, 영업이익은 355억원으로 전년 동기보다 각각 9.5%, 26.4% 줄었다. 당기순이익은 원화 강세에 따른 외화 손실 등의 영향으로 적자로 돌아섰다. 회사는 해외 공연과 소규모 팬 소통 공연을 늘리는 과정에서 국내 신보 활동이 줄었다고 설명했다. 반면 MD·라이선싱 매출은 621억원으로 23.5% 늘었고, 출연 매출도 21.3% 증가했다. 회사는 내년 1분기 라이즈 정규앨범과 하츠투하츠 미니앨범을 발매하고, NCT 위시는 고척돔 공연을 매진시켰으며 에스파는 유럽 9개 도시를 순회할 예정이다. 리딩투자증권은 2027년 연결 매출을 1조3900억원, 영업이익을 2200억원으로 추정했다. 다만 해외 시장 확대에 따른 단기 마케팅 비용과 일본 음반 제작비, 소규모 공연 비중은 하반기 수익성의 제약 요인으로 꼽혔다.",
+      "summary_ko": "SM엔터테인먼트가 4일 발표한 올해 3분기 연결 매출은 2911억원, 영업이익은 355억원으로 전년 동기보다 각각 9.5%, 26.4% 줄었다. 당기순이익은 원화 강세에 따른 외화 손실 등의 영향으로 적자로 전환했다. 회사 측은 해외 공연과 소규모 팬 소통 공연에 집중하면서 국내 신보 활동이 줄었고, 음반·음원과 콘서트 매출 감소에 일부 종속법인의 수익성 악화가 겹쳤다고 설명했다. 반면 MD·라이선싱 매출은 621억원으로 23.5% 늘었고, 출연 매출도 광고·행사 활동 증가로 21.3% 증가했다. 회사는 내년 1분기 라이즈 정규앨범과 하츠투하츠 미니앨범을 발매하고, NCT 위시는 고척돔 매진 공연을 기록했으며 에스파는 유럽 9개 도시 투어에 나설 예정이다. 증권가는 2027년 공연 규모 확대와 하츠투하츠 성장에 주목하며 리딩투자증권과 삼성증권이 2027년 영업이익을 각각 2200억원, 2157억원으로 추정했다. 다만 해외 마케팅 비용과 제작비 부담이 하반기 수익성의 제약 요인으로 꼽혔다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -126,8 +128,8 @@
       "category": "industry",
       "body_chars": 1933,
       "body_file": "10-industry.txt",
-      "summary_ko": "미국 중간선거에서 민주당이 상·하원을 모두 장악할 가능성이 커지면서 업종별 명암이 갈리고 있다. 3일(현지시간) 개표 중 나스닥100 선물이 한때 2.4%, S&P500 선물이 1.4% 떨어졌고, 4일 MSCI 아시아태평양지수는 장중 2.3% 하락해 6개월여 만의 최저로 밀렸다. 코스피는 장중 4% 넘게 급락했으나 낙폭을 만회해 0.62% 상승한 5683.80에 마감했다. AI 업계는 데이터센터 건설 제한과 세제 혜택 축소, 의회 조사 강화를 경계하고, 가상자산은 클래리티법 통과가 2년간 어렵다는 전망이 나왔다. 반면 오바마케어 보조금 복원과 메디케이드 삭감 철회 기대로 병원·건강보험사가 주목받는다. 다만 대통령 거부권이 입법의 변수이며, 한 전략가는 연말 시장의 주된 동력이 AI와 지정학이라고 짚었다.",
-      "summary_model": "claude-sonnet-5-5"
+      "summary_ko": "미국 중간선거에서 민주당이 상·하원을 장악할 가능성이 커지자 3일(현지시간) 미국 주가지수 선물이 하락했다. S&P500 선물은 한때 1.4%, 나스닥100 선물은 2.4%까지 밀렸다가 4일 새벽 무렵 각각 0.3%, 0.4% 낙폭을 줄였다. 아시아에서는 기술주 약세로 MSCI 아시아태평양지수가 6개월여 만의 최저치로 떨어졌고, 코스피는 장중 4% 넘게 급락했다가 0.62% 오른 채 마감했다. 업종별로는 AI와 가상자산이 규제와 의회 조사 강화를 우려하는 반면, 병원과 건강보험 업계는 의료보장 지원 확대를 기대한다. 민주당이 오바마케어 보험료 보조금 복원과 메디케이드 삭감 되돌리기를 추진할 것으로 관측돼 HCA헬스케어와 유나이티드헬스 등이 주목받는다. 다만 트럼프 대통령의 거부권이 입법을 제약할 수 있어 연말 시장은 AI와 지정학적 상황이 주로 움직일 것으로 분석된다.",
+      "summary_model": "claude-haiku-5-5"
     },
     {
       "guid": "014-0005599576",
@@ -139,7 +141,7 @@
       "category": "industry",
       "body_chars": 1777,
       "body_file": "11-industry.txt",
-      "summary_ko": "다우키움그룹과 CJ그룹이 중앙일보에 총 5200억원을 제3자배정 유상증자로 투입해 공동경영에 나선다. 다우기술·사람인·CJ·신세계 이사회는 4일 조건부 신주인수계약 체결을 승인했고, 계약은 5일 맺을 예정이다. 출자액은 다우키움 측 약 2610억원, CJ·신세계 측 약 2590억원으로 지분 균형을 맞췄다. 감자 없이 주당 5000원에 신주 1억400만주를 발행하는 구조라 홍석현 회장 측 지분율은 80%대에서 4%대로 낮아진다. 다우기술이 인수자금 2500억원을 전액 차입하면 별도 기준 순차입금은 1007억원에서 3507억원으로 늘고, 한국신용평가는 죽전 데이터센터 신축과 겹치는 이 차입부담을 감내 가능한 수준으로 봤다. 중앙일보는 증자대금을 채무 상환과 재무구조 개선에 쓸 계획이며, 6월 발생한 1370억원 회사채의 기한이익상실 사유 해소 방식이 관심사다.",
+      "summary_ko": "다우키움그룹과 CJ그룹이 중앙일보에 총 5200억원을 제3자배정 유상증자 방식으로 투입해 공동경영에 나선다. 4일 양측 이사회가 조건부 신주인수계약 체결을 승인했고, 계약은 5일 맺어질 예정이다. 다우키움 측은 약 2610억원, CJ·신세계 측은 약 2590억원을 출자하며, 감자 없이 신주 1억400만주를 발행하는 구조여서 홍석현 회장 측 지분율은 80%대에서 4%대로 낮아진다. 인수자금 2500억원을 다우기술이 전액 차입하면 별도 기준 순차입금이 1007억원에서 3507억원으로 늘어난다는 것이 한국신용평가의 추산이다. 중앙일보는 지난 6월 1370억원 규모 회사채에서 기한이익상실 사유가 발생해 7월부터 워크아웃을 밟고 있으며, 증자대금은 채무 상환과 재무구조 개선에 쓰일 예정이다. 회사는 연내 거래 종결과 워크아웃 졸업을 목표로 하고 있다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -150,8 +152,10 @@
       "published": "2026-11-04T16:42:17+09:00",
       "source": "이데일리",
       "category": "industry",
-      "body_chars": 0,
-      "body_note": "TimeoutError"
+      "body_chars": 1488,
+      "body_file": "12-industry.txt",
+      "summary_ko": "한국거래소 자료를 보면 4일 기준 최근 6개월간 KRX 300 헬스케어 지수는 27.97% 내려 KRX 반도체 지수(-13.72%)보다 낙폭이 컸고, 두 지수의 일간 등락률 상관계수는 0.36으로 같은 방향 흐름이 나타났다. 반도체가 3% 넘게 급락한 37일 중 헬스케어가 오른 날은 11일뿐이었으며, 반대로 움직인 시기는 레버리지 상품 투자 요건 강화로 자금이 흩어진 7월 31일~8월 11일 2주 정도에 그쳤다. 9월 30일 이후에는 반도체가 25.83% 급락하는 동안 헬스케어는 3.93% 하락에 머물렀고, 셀트리온과 삼성바이오로직스 등 실적이 확인된 대형주는 올랐다. 증권가는 이를 역상관이 아닌 AI 쏠림 완화에 따른 방어주 부상으로 풀이했다. 한미약품과 펩트론처럼 실적 뒷받침이 부족한 종목은 부진했고, 중소형 바이오텍으로 수급이 확산할지는 불투명하다고 봤다.",
+      "summary_model": "claude-sonnet-5-5"
     },
     {
       "guid": "421-0009270851",
@@ -165,7 +169,7 @@
       "region": "japan",
       "body_chars": 2268,
       "body_file": "13-global.txt",
-      "summary_ko": "미국 중간선거에서 민주당이 상·하원을 탈환하면서 트럼프 대통령의 통상정책이 시험대에 올랐다고 로이터가 보도했다. 한국과 일본은 지난해 무역 합의에 따라 각각 3500억 달러와 5500억 달러의 대미 투자를 약속했지만, 관세 압박을 피할 명분이 약해져 투자 속도를 늦추거나 협상 전략을 바꿀 수 있다는 관측이 나온다. 한국은 지난달 텍사스 엔시날 가스복합화력발전소를 첫 사업으로 발표했으나, 알래스카 LNG 사업에서는 상업적 합리성을 원하는 한국과 500억 달러 투자를 일방적으로 밝힌 트럼프 대통령의 입장 차가 남아 있다. 인도는 최대 50%의 관세를 맞은 뒤 잠정 합의한 18% 관세 인하가 러시아산 원유와 농산물 문제로 교착 상태에 빠졌다. 전문가들은 민주당 의회가 협상국에 시간적 여유를 줄 수 있다고 보았다. 반면 트럼프 대통령이 성과를 부각하려 동맹국에 투자 압박을 더할 가능성도 있다. 중국은 내년 1월 10일까지 연장된 무역 휴전을 바탕으로 협상력을 키울 수 있으나, 민주당이 대중 양보를 견제할 것이라는 전망도 나온다.",
+      "summary_ko": "미국 중간선거에서 민주당이 상·하원을 탈환하면서 트럼프 대통령의 통상정책이 시험대에 올랐다고 로이터가 4일(현지시간) 보도했다. 한국과 일본은 지난해 미국과의 무역 합의에 따라 각각 3500억 달러, 5500억 달러 규모의 대미 투자를 약속했는데, 관세 압박을 피하려던 명분이 약해져 투자 이행 속도를 늦추거나 협상 전략을 재검토할 수 있다는 관측이 나왔다. 한국은 지난달 텍사스주 엔시날 가스복합화력발전소 건설을 첫 사업으로 발표했으나, 알래스카 액화천연가스(LNG) 사업에 대해서는 상업적 합리성을 요구하는 한국과 500억 달러 투자를 일방적으로 밝힌 트럼프 대통령 사이에 입장 차이가 남아 있다. 인도도 관망에 나설 수 있다고 로이터는 분석했다. 다만 전문가들은 트럼프 대통령이 성과를 부각하려 동맹국에 투자 압박을 오히려 강화할 가능성도 있다고 내다봤다. 중국은 무역 휴전 연장 시한인 내년 1월 10일을 앞두고 협상력을 높일 방안을 모색할 수 있다는 분석이 나온다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -180,7 +184,7 @@
       "region": "china",
       "body_chars": 1254,
       "body_file": "14-global.txt",
-      "summary_ko": "홍콩 통계처가 발표한 2026년 3분기 GDP 속보치는 전년 동기 대비 5.2% 증가해 시장 예상치 3.7%를 크게 웃돌았다. 2분기 성장률 4.2%보다 확대된 수치이며, 15분기 연속 성장세를 이어갔다. 성장을 이끈 것은 상품 수출로, 수출액이 전년 동기보다 30.4% 급증해 2분기 28.9%보다 가속했다. 상품 수입도 29.9% 늘어 높은 증가세를 유지했다. 내수에서는 민간소비 증가율이 2.8%로 둔화된 반면, 국내 고정자본형성은 7.3%로 확대되어 투자가 힘을 보탰다. 서비스 수출도 4.3% 늘었다. 홍콩 정부는 AI 투자 확대가 상품 수출을 계속 뒷받침할 것으로 보면서도, 중동 지정학적 긴장과 주요 중앙은행의 통화긴축 정책은 계속 주시해야 한다고 밝혔다. 같은 날 S&P 글로벌이 발표한 10월 구매관리자지수(PMI)는 50.2로 전월보다 1.0포인트 올라 3개월 만에 경기확장 국면으로 복귀했다. 홍콩 정부는 13일 3분기 GDP 확정치와 2026년 연간 성장률 전망을 발표할 예정이다.",
+      "summary_ko": "홍콩 통계처가 발표한 2026년 3분기 GDP 속보치는 전년 동기 대비 5.2% 증가해 시장 예상치 3.7%를 크게 웃돌았다. 2분기 성장률 4.2%보다 확대된 수치이며, 1분기 5.9%에 이어 연속 성장세가 이어졌다. 성장을 주도한 것은 상품 수출로, 수출액이 전년 동기보다 30.4% 급증했다. 상품 수입도 29.9% 늘어 높은 증가세를 유지했다. 내수에서는 민간소비 증가율이 2.8%로 둔화했지만 국내 고정자본형성은 7.3%로 확대됐다. 서비스 수출은 4.3% 늘었다. 홍콩 정부는 전 세계 인공지능 분야의 투자가 상품 수출을 계속 뒷받침할 것으로 보면서도, 중동의 지정학적 긴장과 주요 중앙은행의 통화긴축 정책은 계속 주시해야 한다고 밝혔다. 같은 날 발표된 10월 구매관리자지수(PMI)는 50.2로 전월보다 1.0포인트 올라 3개월 만에 경기 확장 국면에 복귀했다. 홍콩 정부는 3분기 GDP 확정치와 2026년 연간 성장률 전망을 13일 발표할 예정이다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -195,7 +199,7 @@
       "region": "europe",
       "body_chars": 1145,
       "body_file": "15-global.txt",
-      "summary_ko": "헝가리가 미국의 대러시아 제재 예외 조치 만료(21일)에 대비해 러시아산 원유를 대체할 공급처를 찾고 있다고 외무장관 아니타 오르반이 4일 밝혔다. 미국은 헝가리가 러시아 석유기업 루코일과 로스네프티로부터 원유를 사도록 한시적으로 제재를 면제해 왔다. 헝가리 정유사 MOL은 크로아티아 송유관 운영사 야나프를 통해 비러시아산 원유를 들여오기 위해 정유시설 개조 방안을 검토 중이다. 러시아산 천연가스는 EU 규정에 따라 2027년 가을까지 수입을 끊어야 한다. EU는 러시아산 LNG 장기계약 수입을 2027년 1월 1일부터, 가스관 수입을 같은 해 9월 30일까지 금지하기로 확정했으며, 저장시설 충전 등 예외 상황에서는 가스관 수입 중단 시점을 11월 1일까지 미룰 수 있다. 헝가리는 2022년 내륙국 에너지 안보를 이유로 드루즈바 송유관을 통한 러시아산 원유 수입 예외를 인정받아 왔으나, 미국의 예외 조치가 연장되지 않으면 원유 구매에 차질이 생길 수 있어 대비에 나선 상황이다.",
+      "summary_ko": "헝가리가 미국의 대러 제재 예외 만료(21일)에 대비해 러시아산 원유 대체 공급처를 찾고 있다고 4일(현지시간) 알려졌다. 아니타 오르반 외무장관은 자국 매체 인터뷰에서 석유·가스기업 MOL이 크로아티아 송유관 운영사 야나프를 통해 비러시아산 원유를 들여올 수 있도록 정유시설 개조 방안을 검토 중이라고 밝혔다. 미국은 헝가리가 루코일과 로스네프티로부터 원유를 사들이도록 한시적으로 제재를 면제해 왔다. 헝가리는 2022년 내륙국 에너지 안보를 이유로 드루즈바 송유관 원유 수입 예외를 인정받았지만, 미국 제재는 별도로 적용받아 예외가 연장되지 않으면 구매에 차질이 생길 수 있다. 천연가스는 EU가 정한 단계적 수입금지에 따라 2027년 가을까지 수입을 끊어야 해 대체 공급망 확보가 불가피해졌다.",
       "summary_model": "claude-haiku-5-5"
     },
     {
@@ -210,7 +214,7 @@
       "region": "mideast",
       "body_chars": 692,
       "body_file": "16-global.txt",
-      "summary_ko": "갈리바프 이란 의회 의장은 4일 SNS를 통해 미국 중간선거에서 공화당이 패배한 결과를 미국 국민의 전쟁 반대 여론이 반영된 것으로 해석하며 트럼프 행정부에 경고했다. 그는 미국인들이 양심이나 생활비 부담 때문에 '전쟁 반대'를 택했다며 이 메시지를 지지한다고 밝혔다. 이어 미국 정부가 국민의 뜻을 저버리고 국제적 돈줄과 협박 세력에 봉사한다면 이란의 반대에 '악몽'이 뒤따를 것이라고 강조했다. 다만 그가 지목한 세력이 구체적으로 밝혀지지는 않았고, 과거 발언을 고려하면 미국 정치권에 영향력을 행사하는 친이스라엘 세력과 이스라엘 정부를 겨냥한 것으로 해석될 여지가 있다는 분석이 나온다. 이번 발언은 미국과 이란의 종전 협상이 진행되는 가운데 나와, 이란이 중간선거 결과를 대미 외교·정치 메시지에 활용하려는 움직임으로 풀이된다.",
+      "summary_ko": "갈리바프 이란 의회 의장은 4일 SNS를 통해 미국 중간선거에서 공화당이 패배한 결과를 미국인들의 전쟁 반대 여론이 반영된 것으로 해석하고 이 메시지를 지지한다고 밝혔다. 그는 미국 정부가 국민의 뜻을 저버리고 국제적 돈줄과 협박 세력에 봉사한다면 이란의 반대에 '악몽'이 뒤따를 것이라고 경고했다. 다만 그가 지목한 세력이 누구인지는 명확히 드러나지 않았다. 과거 발언과 대미 비판 기조를 감안하면 미국 정치권에 영향력을 행사하는 친이스라엘 세력과 이스라엘 정부를 겨냥했을 가능성이 제기된다. 이번 발언은 미국과 이란의 종전 협상이 진행되는 가운데 나와, 이란이 중간선거 결과를 대미 외교·정치 메시지에 활용하려는 움직임으로 풀이된다. 중간선거 이후 미·이란 갈등이 새로운 변수로 떠오른 셈이다.",
       "summary_model": "claude-haiku-5-5"
     }
   ],
@@ -238,7 +242,7 @@
         "guid": "018-0006403576",
         "title": "美 민주당 우세에…日 키옥시아 등 반도체주 13% 급락",
         "label": "foreign",
-        "confidence": 0.98
+        "confidence": 0.96
       },
       {
         "guid": "023-0004007724",
@@ -262,7 +266,7 @@
         "guid": "018-0006403253",
         "title": "AMD, 매출 45% 폭증·시간외 7%↑…AI株 랠리 다시 시작되나[MUST KNOW5]",
         "label": "foreign",
-        "confidence": 0.98
+        "confidence": 1.0
       },
       {
         "guid": "003-0014299624",
@@ -280,7 +284,7 @@
         "guid": "018-0006403251",
         "title": "AMD, 데이터센터 매출 2배 가까이↑…시간외서 주가 8% 급등",
         "label": "foreign",
-        "confidence": 0.98
+        "confidence": 1.0
       },
       {
         "guid": "277-0005837622",
@@ -292,7 +296,7 @@
         "guid": "018-0006403239",
         "title": "[속보]반도체 반등에 나스닥 0.8%↑…애플 약세에 다우 하락",
         "label": "foreign",
-        "confidence": 0.96
+        "confidence": 0.98
       },
       {
         "guid": "417-0001163149",
@@ -308,53 +312,53 @@
         "guid": "009-0005759149",
         "title": "급등과 급락 반복한 코스피…무엇이 흔들었나 [Visual]",
         "category": "market",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "018-0006403791",
         "title": "AI·가상자산 긴장…헬스케어株는 반색",
         "category": "industry",
-        "label": "domestic",
-        "confidence": 0.3,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "215-0001271681",
         "title": "장중 400P 출렁인 '롤러코스피'…\"하루 만에 18% 올랐다\" 엇갈린 희비",
         "category": "market",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "015-0005350416",
         "title": "라이즈·NCT 위시…SM, 5세대 앞세워 반등 노린다 [엔터X스탁]",
         "category": "market",
-        "label": "domestic",
-        "confidence": 1.0,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "014-0005599576",
         "title": "중앙일보 5200억 인수, 다우·CJ 공동경영…홍석현 측 지분 4%대로 [fn마켓워치]",
         "category": "industry",
-        "label": "domestic",
-        "confidence": 0.97,
-        "exempt": false,
-        "status": "judged"
+        "label": null,
+        "confidence": null,
+        "exempt": true,
+        "status": "exempt"
       },
       {
         "guid": "014-0005599488",
         "title": "\"똑같은 나스닥 아니었어?\"… AI·반도체 쏠린 ETF 16% 뚝",
         "category": "market",
         "label": "foreign",
-        "confidence": 0.64,
+        "confidence": 0.56,
         "exempt": false,
         "status": "judged"
       },
@@ -362,28 +366,28 @@
         "guid": "011-0004678784",
         "title": "영업익 기대치의 4.6배인데…포스코퓨처엠 목표가 놓고 證 ‘동상이몽’",
         "category": "market",
-        "label": null,
-        "confidence": null,
-        "exempt": true,
-        "status": "exempt"
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
       },
       {
         "guid": "011-0004678783",
         "title": "수익성 먹구름 낀 현대차·기아…시총 13조 증발에 목표가도 ‘뚝’",
         "category": "market",
-        "label": null,
-        "confidence": null,
-        "exempt": true,
-        "status": "exempt"
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
       },
       {
         "guid": "011-0004678776",
         "title": "K뷰티도 실적 눈높이 낮춘다…LG생건·에이피알 목표가 줄하향",
         "category": "market",
-        "label": null,
-        "confidence": null,
-        "exempt": true,
-        "status": "exempt"
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
       },
       {
         "guid": "011-0004678770",
@@ -435,7 +439,7 @@
         "title": "같은 장기채 ETF인데 수익률 달라…비결은 이것[ETFvsETF]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.73,
+        "confidence": 0.76,
         "exempt": false,
         "status": "judged"
       },
@@ -462,7 +466,7 @@
         "title": "털 만큼 털었나…삼전닉스 공매도 비중 '뚝'",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.3,
+        "confidence": 0.44,
         "exempt": false,
         "status": "judged"
       },
@@ -480,7 +484,7 @@
         "title": "“판 뒤집혔다”…美 민주당 압승에 삼전닉스 주춤, 급등한 이 주식",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.31,
+        "confidence": 0.13,
         "exempt": false,
         "status": "judged"
       },
@@ -489,7 +493,7 @@
         "title": "“민주당이 의석 절반 이상 갖고간다” 미 소식에…하루만에 10%대 오른 친환경주",
         "category": "policy",
         "label": "foreign_impact",
-        "confidence": 0.3,
+        "confidence": 0.37,
         "exempt": false,
         "status": "judged"
       },
@@ -498,7 +502,7 @@
         "title": "민주당 압승 후 코스피는…\"AI 투자 안 꺾여…취소보다는 지연\"",
         "category": "policy",
         "label": "domestic",
-        "confidence": 0.86,
+        "confidence": 0.68,
         "exempt": false,
         "status": "judged"
       },
@@ -534,7 +538,7 @@
         "title": "美 중간선거 ‘블루웨이브‘…코스피 롤러코스터[마켓뷰]",
         "category": "policy",
         "label": "foreign_impact",
-        "confidence": 0.5,
+        "confidence": 0.42,
         "exempt": false,
         "status": "judged"
       },
@@ -551,8 +555,8 @@
         "guid": "648-0000052289",
         "title": "민주당 압승 전망에도 반도체 美 투자 압박 지속...AI 규제는 변수",
         "category": "policy",
-        "label": "foreign_impact",
-        "confidence": 0.2,
+        "label": "domestic",
+        "confidence": 0.22,
         "exempt": false,
         "status": "judged"
       },
@@ -569,8 +573,8 @@
         "guid": "029-0003057142",
         "title": "美 민주당 약진에 400포인트 출렁인 코스피…日·대만은 하락 마감",
         "category": "policy",
-        "label": "foreign_impact",
-        "confidence": 0.34,
+        "label": "domestic",
+        "confidence": 0.26,
         "exempt": false,
         "status": "judged"
       },
@@ -579,7 +583,7 @@
         "title": "삼전닉스 배당금 '17조' 빠져나간다는데…환율 전망은 '대반전'",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.43,
+        "confidence": 0.37,
         "exempt": false,
         "status": "judged"
       },
@@ -588,7 +592,7 @@
         "title": "널뛰는 코스피, 日변동성 3개월래 최대…VI 발동도 증가세(종합)",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.94,
+        "confidence": 0.92,
         "exempt": false,
         "status": "judged"
       },
@@ -596,8 +600,8 @@
         "guid": "421-0009270270",
         "title": "美 '블루웨이브' 친환경주 급등…한화솔루션 18%↑[핫종목](종합)",
         "category": "market",
-        "label": "domestic",
-        "confidence": 0.34,
+        "label": "foreign_impact",
+        "confidence": 0.28,
         "exempt": false,
         "status": "judged"
       },
@@ -606,7 +610,7 @@
         "title": "저PBR 낙인에 상장유지 부담까지…아즈텍WB·우리엔터·무림SP ‘겹악재’",
         "category": "market",
         "label": "domestic",
-        "confidence": 1.0,
+        "confidence": 0.98,
         "exempt": false,
         "status": "judged"
       },
@@ -615,7 +619,7 @@
         "title": "데이터센터 규제? 美선거에 울고 웃은 코스피…출렁이다 0.62%↑(종합)",
         "category": "policy",
         "label": "domestic",
-        "confidence": 0.33,
+        "confidence": 0.43,
         "exempt": false,
         "status": "judged"
       },
@@ -623,10 +627,10 @@
         "guid": "001-0016421910",
         "title": "테슬라·스페이스X 합병시 주식 안팔아도 양도소득세?…서학개미 비상",
         "category": "industry",
-        "label": null,
-        "confidence": null,
-        "exempt": true,
-        "status": "exempt"
+        "label": "foreign_impact",
+        "confidence": 0.52,
+        "exempt": false,
+        "status": "judged"
       },
       {
         "guid": "009-0005758939",
@@ -668,10 +672,10 @@
         "guid": "009-0005758913",
         "title": "“AI야, AI야, 가장 저평가된 반도체 종목이 뭐니?”…증권사 MTS ‘투자비서’ 경쟁",
         "category": "industry",
-        "label": null,
-        "confidence": null,
-        "exempt": true,
-        "status": "exempt"
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
       },
       {
         "guid": "015-0005350238",
@@ -696,7 +700,7 @@
         "title": "[속보]美 블루웨이브에 코스피 하루에 7%p 널뛰다 결국엔 강보합",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.49,
+        "confidence": 0.53,
         "exempt": false,
         "status": "judged"
       },
@@ -723,7 +727,7 @@
         "title": "한 달 새 ETF 17종 ‘봇물’…약세장에서 인기는 ‘시들’",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.91,
+        "confidence": 0.89,
         "exempt": false,
         "status": "judged"
       },
@@ -732,7 +736,7 @@
         "title": "'블루 웨이브'에 반도체 개미 우울…\"내 주식은 급등\" 환호 터진 종목들",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.5,
+        "confidence": 0.42,
         "exempt": false,
         "status": "judged"
       },
@@ -741,7 +745,7 @@
         "title": "주식형 펀드 34조 줄 때 채권형은 100조 돌파…엇갈린 희비",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.98,
+        "confidence": 0.97,
         "exempt": false,
         "status": "judged"
       },
@@ -750,7 +754,7 @@
         "title": "'블루쓰나미' 삼전닉스 3~4%대 하락…데이터센터 규제 강화 우려",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.31,
+        "confidence": 0.18,
         "exempt": false,
         "status": "judged"
       },
@@ -759,7 +763,7 @@
         "title": "더시에나는 인수 준비하는데…골프존홀딩스, MBK 매각에 또 반발",
         "category": "industry",
         "label": "domestic",
-        "confidence": 0.89,
+        "confidence": 0.91,
         "exempt": false,
         "status": "judged"
       },
@@ -768,7 +772,7 @@
         "title": "\"한국 경제에 큰 충격줄 수도\"…美 '블루웨이브', K반도체에 불똥?",
         "category": "industry",
         "label": "foreign_impact",
-        "confidence": 0.86,
+        "confidence": 0.88,
         "exempt": false,
         "status": "judged"
       },
@@ -813,7 +817,7 @@
         "title": "프리미어, 한국펀드파트너스 85% 인수 눈앞…ETF 성장에 '베팅' [fn마켓워치]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.8,
+        "confidence": 0.77,
         "exempt": false,
         "status": "judged"
       },
@@ -822,7 +826,7 @@
         "title": "美 민주당 우세에…日 키옥시아 등 반도체주 13% 급락",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.98,
+        "confidence": 0.96,
         "exempt": false,
         "status": "judged"
       },
@@ -831,7 +835,7 @@
         "title": "美 민주·공화, AI 데이터센터 전력비용 기업 부담 압박…블룸에너지 수혜 부상 [美 중간선거]",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.85,
+        "confidence": 0.86,
         "exempt": false,
         "status": "judged"
       },
@@ -840,7 +844,7 @@
         "title": "'최다 IPO 10월' 하락장 복병⋯'새내기주' 상승 탄력 꺾였다",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.89,
+        "confidence": 0.91,
         "exempt": false,
         "status": "judged"
       },
@@ -849,7 +853,7 @@
         "title": "'블루 웨이브' 공포에 증시도 파란불…외국인 매도 행렬 이유는",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.43,
+        "confidence": 0.42,
         "exempt": false,
         "status": "judged"
       },
@@ -876,7 +880,7 @@
         "title": "'美민주당, AI 규제할라'…나스닥 선물·亞증시 일제히 급락",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.68,
+        "confidence": 0.53,
         "exempt": false,
         "status": "judged"
       },
@@ -885,7 +889,7 @@
         "title": "美 반도체 반등도 못 버텼다…코스피 3%대 급락세로 전환",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.79,
+        "confidence": 0.83,
         "exempt": false,
         "status": "judged"
       },
@@ -893,8 +897,8 @@
         "guid": "243-0000105193",
         "title": "애플·AMD '지원사격'에도 반도체 투심 회복 역부족[오늘의 삼전닉스]",
         "category": "industry",
-        "label": "domestic",
-        "confidence": 0.18,
+        "label": "foreign",
+        "confidence": 0.2,
         "exempt": false,
         "status": "judged"
       },
@@ -903,7 +907,7 @@
         "title": "증시 변동성 확대…美 선거 뒤도 ‘롤러코스피’",
         "category": "policy",
         "label": "domestic",
-        "confidence": 0.24,
+        "confidence": 0.48,
         "exempt": false,
         "status": "judged"
       },
@@ -930,7 +934,7 @@
         "title": "반도체 호황 올라탄 에어퍼스트…1.8조 투자금 몰린다",
         "category": "industry",
         "label": "domestic",
-        "confidence": 0.88,
+        "confidence": 0.91,
         "exempt": false,
         "status": "judged"
       },
@@ -948,7 +952,7 @@
         "title": "금값 30% 급락하자 다시 ‘사자’…금 ETF 담는 개미들 [코주부]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.55,
+        "confidence": 0.62,
         "exempt": false,
         "status": "judged"
       },
@@ -957,7 +961,7 @@
         "title": "549억 흑자 낸 이 항공사…증권가 \"주가 50% 더 오른다\" [주주클럽]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.89,
+        "confidence": 0.91,
         "exempt": false,
         "status": "judged"
       },
@@ -975,7 +979,7 @@
         "title": "주식 판 돈 빨리 받으려 받는 '매담대', 금리 더 내려갈까",
         "category": "macro",
         "label": "domestic",
-        "confidence": 0.74,
+        "confidence": 0.72,
         "exempt": false,
         "status": "judged"
       },
@@ -1002,7 +1006,7 @@
         "title": "‘외인 이번엔 진짜 돌아올까’ 美 기술주 반등에 코스피 장 초반 3% 급등…삼전·닉스 강세 [투자360]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.26,
+        "confidence": 0.31,
         "exempt": false,
         "status": "judged"
       },
@@ -1020,7 +1024,7 @@
         "title": "금값 너무 떨어졌나…금 ETF 다시 사는 개미들",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.67,
+        "confidence": 0.7,
         "exempt": false,
         "status": "judged"
       },
@@ -1029,7 +1033,7 @@
         "title": "미 반도체 훈풍에 외인·기관 줍줍...코스피 5800선 터치",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.6,
+        "confidence": 0.62,
         "exempt": false,
         "status": "judged"
       },
@@ -1047,7 +1051,7 @@
         "title": "코스피, 美기술주 반등에 1%대↑…장중 상승탄력 둔화(종합)",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.97,
+        "confidence": 0.96,
         "exempt": false,
         "status": "judged"
       },
@@ -1056,7 +1060,7 @@
         "title": "“엔비디아·AMD 강세에 코스피 5800선 탈환”…삼성전자·SK하이닉스 동반 상승",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.91,
+        "confidence": 0.88,
         "exempt": false,
         "status": "judged"
       },
@@ -1065,7 +1069,7 @@
         "title": "\"밤사이 미국서 무슨 일이?\"…'삼전닉스' 주가 급등에 '들썩'",
         "category": "market",
         "label": "foreign",
-        "confidence": 0.24,
+        "confidence": 0.2,
         "exempt": false,
         "status": "judged"
       },
@@ -1119,7 +1123,7 @@
         "title": "\"외국인 코스피 복귀, 당장은 어렵다… 최소 3개월 더 필요\"",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.88,
+        "confidence": 0.86,
         "exempt": false,
         "status": "judged"
       },
@@ -1200,7 +1204,7 @@
         "title": "KB證 “삼전닉스, 내년 영업익 1000조 넘긴다…AI 우려 압도할 실적” [줍줍 리포트]",
         "category": "industry",
         "label": "domestic",
-        "confidence": 0.61,
+        "confidence": 0.49,
         "exempt": false,
         "status": "judged"
       },
@@ -1209,7 +1213,7 @@
         "title": "‘어제는 3.59% 급락했는데’ 하루만에 분위기 반전하나…美반도체주 강세에 코스피 반등 기대감 [투자360]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.7,
+        "confidence": 0.58,
         "exempt": false,
         "status": "judged"
       },
@@ -1218,7 +1222,7 @@
         "title": "\"충분히 싸졌는데 美 AI주 강세까지\"…韓증시 반등 전망[굿모닝증시]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.64,
+        "confidence": 0.76,
         "exempt": false,
         "status": "judged"
       },
@@ -1227,7 +1231,7 @@
         "title": "\"삼전닉스 1100조 돈방석 앉는다\"…AI 거품론에도 장밋빛 전망",
         "category": "industry",
         "label": "foreign",
-        "confidence": 0.24,
+        "confidence": 0.22,
         "exempt": false,
         "status": "judged"
       },
@@ -1236,7 +1240,7 @@
         "title": "주가 방치하면 대주주도 손해?…음식료 지주사 달라진 계산법[클릭 e산업]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.94,
+        "confidence": 0.96,
         "exempt": false,
         "status": "judged"
       },
@@ -1272,7 +1276,7 @@
         "title": "美선거날 증시 혼조…반도체주 반등·애플은 하락[뉴스새벽배송]",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.82,
+        "confidence": 0.86,
         "exempt": false,
         "status": "judged"
       },
@@ -1281,7 +1285,7 @@
         "title": "美중간선거 결과 주시…코스피, 美반도체 강세에 반등하나[마켓뷰]",
         "category": "policy",
         "label": "domestic",
-        "confidence": 0.44,
+        "confidence": 0.37,
         "exempt": false,
         "status": "judged"
       },
@@ -1335,7 +1339,7 @@
         "title": "현금흐름 문제에도 실적 나오자마자 급등…안도 랠리 신호인가 [마켓무버의 국장 힌트]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.52,
+        "confidence": 0.46,
         "exempt": false,
         "status": "judged"
       },
@@ -1353,7 +1357,7 @@
         "title": "\"주가 7% 빠지면 팔고, 8% 오르면 사고\"…절대 돈 못번다는 존리, '장투'가 답이다?",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.5,
+        "confidence": 0.35,
         "exempt": false,
         "status": "judged"
       },
@@ -1362,7 +1366,7 @@
         "title": "\"주가 흔들려도 걱정 없다?\"…삼전닉스 '역대급 전망'에 깜짝 [종목+]",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.43,
+        "confidence": 0.58,
         "exempt": false,
         "status": "judged"
       },
@@ -1371,7 +1375,7 @@
         "title": "‘저PBR’ 꼬리표 붙었다…낙인 효과에 ‘밸류업 압박’ 통할까",
         "category": "policy",
         "label": "domestic",
-        "confidence": 0.97,
+        "confidence": 0.96,
         "exempt": false,
         "status": "judged"
       },
@@ -1380,7 +1384,7 @@
         "title": "\"삼전·닉스 팔아치운 외인\"…바이오·K뷰티 담았다",
         "category": "industry",
         "label": "domestic",
-        "confidence": 0.61,
+        "confidence": 0.64,
         "exempt": false,
         "status": "judged"
       },
@@ -1389,7 +1393,7 @@
         "title": "우울한 내러티브에 떨떠름한 숫자…증시 횡보 연말까지?",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.6,
+        "confidence": 0.53,
         "exempt": false,
         "status": "judged"
       },
@@ -1407,7 +1411,7 @@
         "title": "AMD, 매출 45% 폭증·시간외 7%↑…AI株 랠리 다시 시작되나[MUST KNOW5]",
         "category": "industry",
         "label": "foreign",
-        "confidence": 0.98,
+        "confidence": 1.0,
         "exempt": false,
         "status": "judged"
       },
@@ -1434,7 +1438,7 @@
         "title": "누가 이겨도 '반도체·조선·바이오' 수혜…'블루스윕'이면 이차전지·태양광 뜬다",
         "category": "industry",
         "label": "domestic",
-        "confidence": 0.72,
+        "confidence": 0.64,
         "exempt": false,
         "status": "judged"
       },
@@ -1443,7 +1447,7 @@
         "title": "AMD, 데이터센터 매출 2배 가까이↑…시간외서 주가 8% 급등",
         "category": "market",
         "label": "foreign",
-        "confidence": 0.98,
+        "confidence": 1.0,
         "exempt": false,
         "status": "judged"
       },
@@ -1461,7 +1465,7 @@
         "title": "고금리 늪에 빠진 리츠株, 줄줄이 52주 신저가",
         "category": "macro",
         "label": "foreign",
-        "confidence": 0.38,
+        "confidence": 0.68,
         "exempt": false,
         "status": "judged"
       },
@@ -1479,7 +1483,7 @@
         "title": "'너무 떨어졌나' 기술주 숨통 트였다…엔비디아·AMD 줄줄이 반등",
         "category": "market",
         "label": "foreign",
-        "confidence": 0.53,
+        "confidence": 0.73,
         "exempt": false,
         "status": "judged"
       },
@@ -1488,7 +1492,7 @@
         "title": "[속보]반도체 반등에 나스닥 0.8%↑…애플 약세에 다우 하락",
         "category": "market",
         "label": "foreign",
-        "confidence": 0.96,
+        "confidence": 0.98,
         "exempt": false,
         "status": "judged"
       },
@@ -1497,7 +1501,7 @@
         "title": "\"계좌만 녹아 내린다\"...급등 좋아했는데 하루 지나면 제자리",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.89,
+        "confidence": 0.85,
         "exempt": false,
         "status": "judged"
       },
@@ -1506,7 +1510,7 @@
         "title": "日 키옥시아도 실적둔화 우려 커졌지만…증권가 \"삼전·닉스 역사적 저평가\"",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.58,
+        "confidence": 0.6,
         "exempt": false,
         "status": "judged"
       },
@@ -1533,7 +1537,7 @@
         "title": "외인·기관 던지자, 코스피 휘청",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.76,
+        "confidence": 0.83,
         "exempt": false,
         "status": "judged"
       },
@@ -1542,7 +1546,7 @@
         "title": "코스닥 사전배정 한도 높여도… 中企엔 '그림의 떡'",
         "category": "market",
         "label": "domestic",
-        "confidence": 0.96,
+        "confidence": 0.94,
         "exempt": false,
         "status": "judged"
       },
@@ -1551,7 +1555,7 @@
         "title": "“AI주 팔고 헬스케어 살까?”…美민주당 승리 시나리오",
         "category": "policy",
         "label": "foreign",
-        "confidence": 0.18,
+        "confidence": 0.2,
         "exempt": false,
         "status": "judged"
       },
@@ -1566,7 +1570,7 @@
       }
     ],
     "late": 0,
-    "seconds": 24.8,
+    "seconds": 20.7,
     "categories": [
       "industry",
       "macro",
