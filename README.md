@@ -28,7 +28,8 @@
 
 | 데이터 | 출처 |
 |---|---|
-| 미국 금리 및 경제지표 | FRED 공식 API |
+| 미국 국채 금리 | 네이버 증권 (FRED·Yahoo Finance는 대체 및 대조용) |
+| 미국 경제지표 | FRED 공식 API |
 | 주요 경제지표 발표 원문 | BLS, BEA, Census 등 공식 발표 기관 |
 | 주요 지수, 원자재, 환율 | Yahoo Finance |
 | 한국 국고채 금리 및 기준금리 | 한국은행 ECOS API |
