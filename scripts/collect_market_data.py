@@ -964,6 +964,43 @@ def fred_check():
     return 1 if bad else 0
 
 
+def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
+    """French 요인 zip 을 이 러너에서 받을 수 있는가 — 받기만 하고 버린다.
+
+    `curl -fsS --connect-timeout 10 --max-time 60 -A Mozilla/5.0` 과 같은 뜻: 2xx 가
+    아니거나(4xx·5xx 실패) 전체 시간이 max_time 을 넘으면 1. 소켓 대기 하나는
+    min(connect_timeout, max_time) 에서 끊고, 본문은 청크마다 전체 마감을 본다.
+    「code bytes seconds」를 한 줄 찍는다. 아무 파일도 쓰지 않는다."""
+    import socket
+    import urllib.error
+    from fund.factors_check import FRENCH_URL
+    url = url or FRENCH_URL
+    t0 = time.monotonic()
+    deadline = t0 + max_time
+    code, size = 0, 0
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=min(connect_timeout, max_time),
+                                    context=_SSL if url.startswith('https') else None) as resp:
+            code = resp.status
+            while True:
+                left = deadline - time.monotonic()
+                if left <= 0:
+                    raise TimeoutError(f'max-time {max_time}s exceeded')
+                chunk = resp.read(65536)
+                if not chunk:
+                    break
+                size += len(chunk)
+    except urllib.error.HTTPError as e:
+        code = e.code
+    except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as e:
+        print(f'000 {size} {time.monotonic() - t0:.3f} ({e})')
+        return 1
+    elapsed = time.monotonic() - t0
+    print(f'{code} {size} {elapsed:.3f}')
+    return 0 if 200 <= code < 300 and elapsed <= max_time else 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--outdir', default='data')
@@ -972,10 +1009,17 @@ def main():
     ap.add_argument('--fred-check', action='store_true',
                     help='공식 API 와 graph CSV 를 전 생산 시리즈에 대해 대조하고 끝낸다 '
                          '(아무 파일도 쓰지 않는다)')
+    ap.add_argument('--ff-probe', action='store_true',
+                    help='French 요인 파일을 이 러너에서 받을 수 있는지만 보고 끝낸다 '
+                         '(아무 파일도 쓰지 않는다)')
+    ap.add_argument('--ff-probe-url', default=None, help=argparse.SUPPRESS)
+    ap.add_argument('--max-time', type=float, default=60.0, help=argparse.SUPPRESS)
     args = ap.parse_args()
     # 진단은 정상 경로에 얹지 않는다 — makedirs 앞에서 갈라져야 산출물을 안 건드린다.
     if args.fred_check:
         sys.exit(fred_check())
+    if args.ff_probe:
+        sys.exit(ff_probe(args.ff_probe_url, args.max_time))
 
     set_fred_client(None)          # 재진입 실행이 지난 열화 상태를 물려받지 않게
     fredc = fred_client()
@@ -1274,6 +1318,14 @@ def main():
     from fund import pipeline as fund_pipeline
     fund_pipeline.run(closes, hist_dates, data, fund_in['liq'], report_date, data['generated'],
                       args.outdir, fund_holidays)
+    # FF3 시운전 — 보드가 다 쓰인 **뒤**, 자기 try 안에서 data/fund_factors.json 만 쓴다.
+    # 여기서 무엇이 터져도 fund_board.* 는 이미 끝난 파일이다.
+    try:
+        from fund import factors_pipeline
+        factors_pipeline.run_trial(closes, hist_dates, fund_in['rf'], report_date,
+                                   data['generated'], args.outdir, fund_holidays)
+    except Exception as e:
+        print(f'fund factors trial failed: {e}', file=sys.stderr)
 
     print('scoring the macro record...')
     try:

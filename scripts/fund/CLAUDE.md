@@ -16,11 +16,15 @@ The US and KR dailies are reference material for the PM of a tactical global-equ
 | `render.py` / `kr_view.py` | Deterministic blocks `data-fund-board` / `data-fund-kr`; KR view built from the KR collector's in-memory objects |
 | `kr_links.py` | Static map: KR industries / stocks / Asian indices → US reference index. Not a lead-lag model |
 | `gate.py` | CLI `scripts/check_fund.py --market us|kr`; registered in ORCHESTRATOR, KR_ORCHESTRATOR, `review/corrector.py`, `review/style_pass.py` |
+| `pipeline.py` | Board assembly the collector calls (build → render → publish; crash → `publish.failed`). Drops `factors.FACTOR_ONLY` legs before `core.build` |
+| `factors.py` / `factors_pipeline.py` | FF3 **trial**: proxy 3-factor OLS (SVD, fixed check order) → `data/fund_factors.json`, written after the board in its own try |
+| `factors_check.py` | Monthly check vs the French daily factors (`scripts/collect_fund_factors.py`, `check-fund-factors.yml`); commits the slice, inputs and result only, with attribution |
 
 ## Invariants
 
 - **JSON always, HTML only when renderable** (`publish.write`); an unavailable day deletes yesterday's HTML. Section owed iff `status` ∈ {ok, partial} and `report_date` == post date; otherwise it must be absent.
 - **The block is byte-compared with a fresh render.** Nothing downstream may rewrite it: `colorize` skips the two section titles, `prose_swap` skips the blocks, block lines are `<div>` not `<p>` (readability counts `<p>` as prose).
+- **FF3 trial never touches the board**: `fund_board.json`/`.html` stay byte-identical (`tests/test_pipeline.py` freezes 11/03·11/04); `core.SCHEMA_VERSION`, `render.py`, `gate.py` change only in the merge step.
 - **No `macro_eval` on the board** — it is written after collection, so it would be yesterday's call.
 - **Session calendar** = NYSE weekdays minus `data/market_holidays.json` (`calendar.py`, only inside its `valid_from`..`valid_through`; else a strict-majority vote of the 28 fund ETFs, `board.sessions`). It anchors every reading, the regime included: returns are close-on-anchor / close-on-anchor, a missing anchor price blanks the value; risk windows, SMAs and the 52-week high need a price on every session of the window; a session SPY lacks is a `None` raw regime call (breaks the 3-run). Series with unsorted or duplicate dates are rejected. A row whose last session ≠ the calendar's is stale and blank.
 - **Regime `since`** is exact only after an observed transition; the opening state of the 260-call window prints 「최소 N거래일」.

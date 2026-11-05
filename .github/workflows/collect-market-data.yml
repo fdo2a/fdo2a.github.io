@@ -26,6 +26,10 @@ on:
         description: '수집 대신 FRED 공식 API 와 graph CSV 를 대조만 하고 끝낸다 (아무것도 커밋하지 않는다)'
         type: boolean
         default: false
+      ff_probe:
+        description: '수집 대신 French 요인 파일을 이 러너에서 받을 수 있는지만 본다 (아무것도 커밋하지 않는다, fred_check 가 우선)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -44,6 +48,8 @@ jobs:
   fred_check:
     if: github.event.inputs.fred_check == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -55,8 +61,24 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/collect_market_data.py --fred-check
 
+  # FF3 시운전: 러너가 French 요인 파일에 닿는가(UA 차단 여부). 아무것도 쓰지 않는다.
+  # 두 진단 입력이 함께 켜지면 fred_check 만 돈다.
+  ff_probe:
+    if: github.event.inputs.ff_probe == 'true' && github.event.inputs.fred_check != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet certifi
+      - name: Fetch the French factor file once and discard it
+        run: python scripts/collect_market_data.py --ff-probe
+
   collect:
-    if: github.event.inputs.fred_check != 'true'
+    if: github.event.inputs.fred_check != 'true' && github.event.inputs.ff_probe != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,6 +100,8 @@ jobs:
 
       - name: Collect
         id: collect
+        # 상한: 최근 실행은 1-8분. FF3 시운전이 티커 5개·FRED 1개를 더한다.
+        timeout-minutes: 30
         # FRED_API_KEY 는 **스텝 단위**로만 준다(ECOS 선례). 키가 없거나 거부당하면
         # 수집기가 예전 graph CSV 로 내려가 그대로 발행한다 — 데이터는 절대 안 멈춘다.
         env:
@@ -283,6 +307,8 @@ jobs:
           # 점검판: JSON 은 늘 있고, HTML 은 그릴 수 없는 날 지워진다 — -A 로 삭제까지 담는다.
           git add data/fund_board.json 2>/dev/null || true
           git add -A data/fund_board.html 2>/dev/null || true
+          # FF3 시운전 파일 — 보드와 따로 쓴다(병합 전까지 렌더에 들어가지 않는다).
+          git add data/fund_factors.json 2>/dev/null || true
           git add data/calendar.json 2>/dev/null || true
           # 입찰 표는 입찰 없는 날·실패한 날 지워진다 — -A 로 삭제까지 담는다.
           git add data/auctions.json 2>/dev/null || true
