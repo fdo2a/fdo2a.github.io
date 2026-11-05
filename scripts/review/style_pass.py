@@ -191,6 +191,7 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_session.py', '--html', post, '--datadir', datadir, '--market', 'us'],
             [py, s + 'check_weight.py', '--html', post, '--datadir', datadir, '--market', 'us'],
             [py, s + 'check_fed.py', '--html', post, '--datadir', datadir],
+            [py, s + 'check_auction.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_sources.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_calendar.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],

@@ -5,7 +5,7 @@
   python3 scripts/build_calendar.py --datadir data --date 2026-09-11
 
 네 가지를 싣는다 — 지수 만기(셋째 금요일 규칙)와 연준 블랙아웃은 **계산**이고, 경제지표
-일정(FRED)과 국채 입찰(Treasury FiscalData)은 **수집**이다. 수집이 실패하면 그 항목을
+일정(FRED)과 국채 입찰(TreasuryDirect TA_WS, FiscalData 폴백)은 **수집**이다. 수집이 실패하면 그 항목을
 빼고 `missing` 에 적는다. `--offline` 은 수집을 아예 건너뛴다.
 
 **키가 없는 날 경제지표 일정은 빈다.** FRED 폴백(graph CSV)에는 릴리스 일정표가 없다.
@@ -36,6 +36,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us import fomc_official as F  # noqa: E402
+from us import auctions as A  # noqa: E402
 from us import upcoming as U  # noqa: E402
 from us.calendar import HORIZON_DAYS, build  # noqa: E402
 from us.fred import FredClient, FredError  # noqa: E402
@@ -64,7 +65,7 @@ def _collect(report_date, start, end):
         print(f'경제지표 일정 실패: {e}', file=sys.stderr)
 
     try:
-        rows = U.fetch_auctions(report_date - dt.timedelta(days=7), end)
+        rows = _auction_rows(report_date, end)
         events += U.auction_events(rows, start, end)
         auctions = U.auction_results(rows, report_date)
     except Exception as e:
@@ -72,6 +73,49 @@ def _collect(report_date, start, end):
         print(f'국채 입찰 실패: {e}', file=sys.stderr)
 
     return events, auctions, missing, ambiguous
+
+
+def _fresh(rows, report_date, date_of, btc_of):
+    """기준일까지 7일 안에 **결과가 붙은** 행이 있는가. 공고 행의 미래 날짜나 8일 넘은
+    결과로는 신선하다고 보지 않는다(codex 구현 검토 #6)."""
+    floor = (report_date - dt.timedelta(days=7)).isoformat()
+    top = report_date.isoformat()
+    return any(floor <= (date_of(r) or '') <= top and A._num(btc_of(r)) for r in rows)
+
+
+def _auction_rows(report_date, end):
+    """입찰 행(FiscalData 모양). 정본은 TreasuryDirect TA_WS 다.
+
+    FiscalData `auctions_query` 는 2026-10-22 입찰 뒤로 행이 끊겼고, 빈 목록이 예외가
+    아니라서 일정표와 `recent_auctions` 가 2주 동안 조용히 비었다. 그래서 두 원천 모두
+    **기준일까지 7일 안에 결과가 붙은 행이 없으면 실패로 센다.**
+    """
+    try:
+        span = max((dt.date.today() - report_date).days, 0) + 14
+        rows = A.fetch_results(span) + A.fetch_announced(span + 10)
+        if not _fresh(rows, report_date,
+                      lambda r: (r.get('competitiveAuctionCloseDate') or '')[:10],
+                      lambda r: r.get('bidToCoverRatio')):
+            raise RuntimeError('TA_WS 에 기준일까지 7일 안의 결과가 없다')
+        # 결과 목록과 공고 목록이 같은 입찰을 둘 다 담는다 — 결과가 붙은 행을 남긴다.
+        best = {}
+        for r in rows:
+            k = (r.get('cusip'), (r.get('competitiveAuctionCloseDate') or '')[:10])
+            if k not in best or (A._num(r.get('bidToCoverRatio'))
+                                 and not A._num(best[k].get('bidToCoverRatio'))):
+                best[k] = r
+        return [A.to_fiscal(r) for r in best.values()]
+    except Exception as e:
+        print(f'TA_WS 입찰 실패 — FiscalData 로 물러선다: {e}', file=sys.stderr)
+    rows = U.fetch_auctions(report_date - dt.timedelta(days=7), end)
+    if not _fresh(rows, report_date, lambda r: r.get('auction_date'),
+                  lambda r: r.get('bid_to_cover_ratio')):
+        raise RuntimeError('FiscalData 에 기준일까지 7일 안의 결과가 없다 — 원천이 멈췄다')
+    # FiscalData 의 `total_accepted` 는 비경쟁·SOMA 를 포함한다. 작성자에게 넘기는 비중은
+    # 경쟁입찰 낙찰액 기준이므로, 분모가 다른 폴백에서는 비중을 싣지 않는다(#7).
+    for r in rows:
+        r['indirect_bidder_accepted'] = r['primary_dealer_accepted'] = None
+    return rows
 
 
 def _report_date(datadir, override):

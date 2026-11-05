@@ -50,6 +50,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
+   - 국채 입찰: `data/auctions.json` 은 **늘** `<workspace>/auctions.json` 으로, `data/auction_table.html` 은 있을 때만 복사한다. `ok: true`·`report_date` 오늘·`today` 비지 않음일 때만 writer 가 「국채 입찰」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다).
    - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok`·`partial` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다). HTML 은 그대로 넣는 생성 블록이다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
    - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
@@ -118,6 +119,7 @@ python  scripts/check_price_context.py --html morning_brief_[DATE].html --datadi
 python3 scripts/check_sector_perf.py   --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_session.py       --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_auction.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
@@ -128,6 +130,7 @@ python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadi
 - `check_fund.py` — 생성 블록은 다시 그린 것과 바이트가 같아야 한다. 블록 안을 고치지 말고, 해석 문단(`data-fund`)만 고친다. 「편입·비중 확대·매수하」 같은 권고 어휘가 섹션에 있으면 막힌다.
 - `check_sector_perf.py` — 섹터 기간 수익률 표가 그날 섹터 등락률과 같은 회차여야 한다. 낡은 행을 손으로 채울 때 `sectors` 만 고치지 말고 **같은 회차의 `sector_performance` 행 전체와 `data/sector_performance.html`** 을 함께 옮긴다(2026-10-12 한 글에서 커뮤니케이션서비스가 +0.97%·-1.51% 로 갈렸다). 표 안 숫자를 손으로 고치지 않는다.
 - `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
+- `check_auction.py` — 「국채 입찰」도 침묵이 기본값이다. 그날 이표채 결과가 없거나 `auctions.json` 이 낡았으면 섹션을 열면 막히고, 결과가 있는데 섹션이 없어도 막힌다. 표는 `auction_table.html` 그대로.
 - 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
