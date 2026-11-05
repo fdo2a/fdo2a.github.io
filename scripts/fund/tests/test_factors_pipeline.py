@@ -114,3 +114,46 @@ def test_collector_runs_the_trial_after_the_board_in_its_own_try():
     assert board < trial
     between = src[board:trial]
     assert 'try:' in between
+
+
+# --- codex impl review 1 #4: official_meta survives every failure ----------------------------
+
+META_KEYS = {'french_through', 'checked_at', 'window', 'slice_sha256', 'reason'}
+
+
+def test_codex_sign_mismatch_dict_keeps_daily_rows_and_meta(tmp_path):
+    from fund.tests.test_factors_check import run as monthly
+    assert monthly(tmp_path, W.make())[0] == 0
+    path = tmp_path / factors_check.CHECK
+    c = json.loads(path.read_text(encoding='utf-8'))
+    c['rows'][0]['sign_mismatch'] = [{}]
+    path.write_text(json.dumps(c), encoding='utf-8')
+    board_and_trial(tmp_path, daily_world())
+    d = read(tmp_path)
+    assert d['status'] == 'ok' and len(d['rows']) == 28
+    assert d['official'] is None
+    assert set(d['official_meta']) == META_KEYS and d['official_meta']['reason'] == 'invalid_types'
+
+
+def test_compute_daily_exception_keeps_official_meta(tmp_path, monkeypatch):
+    def boom(*a, **k):
+        raise RuntimeError('factor boom')
+    monkeypatch.setattr(factors, 'compute_daily', boom)
+    w = daily_world()
+    factors_pipeline.run_trial(w['closes'], w['dates'], w['rf_obs'], w['days'][-1], 't',
+                               str(tmp_path), W.HOLIDAYS)
+    d = read(tmp_path)
+    assert d['status'] == 'unavailable'
+    assert set(d['official_meta']) == META_KEYS and d['official_meta']['reason'] == 'missing_file'
+
+
+def test_validation_exception_keeps_official_meta_and_daily_rows(tmp_path, monkeypatch):
+    def boom(*a, **k):
+        raise TypeError('validator boom')
+    monkeypatch.setattr(factors_check, 'validate_file', boom)
+    board_and_trial(tmp_path, daily_world())
+    d = read(tmp_path)
+    assert d['status'] == 'ok' and len(d['rows']) == 28
+    assert d['official'] is None
+    assert set(d['official_meta']) == META_KEYS and d['official_meta']['reason'] == 'invalid_types'
+    assert any('validator boom' in m for m in d['missing'])

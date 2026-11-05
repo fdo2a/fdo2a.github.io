@@ -430,8 +430,8 @@ def test_ok_row_infinite_loading_rejected():
 
 def test_status_must_agree_with_rows():
     c = good_check()
-    c['rows'][0] = {**c['rows'][0], 'status': 'unavailable',
-                    **{k: None for k in fc.ROW_FLOATS}}
+    c['rows'][0] = {**c['rows'][0], 'status': 'unavailable', 'reason': 'short_window',
+                    'n': None, **{k: None for k in fc.ROW_FLOATS}}
     assert fc.check_structure(c, W.HOLIDAYS) == (False, 'status_mismatch')
     c['status'] = 'partial'
     assert fc.check_structure(c, W.HOLIDAYS) == (True, 'none')
@@ -442,7 +442,8 @@ def test_status_must_agree_with_rows():
 def test_meta_survives_when_official_none():
     c = good_check()
     c['status'] = 'partial'
-    c['rows'][0] = {**c['rows'][0], 'status': 'unavailable', **{k: None for k in fc.ROW_FLOATS}}
+    c['rows'][0] = {**c['rows'][0], 'status': 'unavailable', 'reason': 'short_window',
+                    'n': None, **{k: None for k in fc.ROW_FLOATS}}
     official, meta = fc.validate(c, '2026-11-04', W.HOLIDAYS)
     assert official is None
     assert meta == {'french_through': '2026-09-30', 'checked_at': '2026-10-05 10:00 KST',
@@ -547,3 +548,122 @@ def test_cli_without_holiday_file_fails_and_writes_nothing(tmp_path):
     import collect_fund_factors as cli
     assert cli.main(['--outdir', str(tmp_path)]) == 1
     assert files(tmp_path) == {}
+
+
+# --- codex impl review 1 #3·#4: per-row required fields, element types --------------------
+
+def _committed_check():
+    with open(os.path.join(DATA, fc.CHECK), encoding='utf-8') as fh:
+        return json.load(fh)
+
+
+def test_codex_committed_first_row_reason_removed_and_n_1_rejected():
+    """codex #3 exact input: committed result, first row without `reason` and with n=1."""
+    hol = W.HOLIDAYS
+    c = _committed_check()
+    assert fc.check_structure(c, hol) == (True, 'none')
+    del c['rows'][0]['reason']
+    c['rows'][0]['n'] = 1
+    ok, reason = fc.check_structure(c, hol)
+    assert not ok
+    assert fc.validate(c, '2026-11-04', hol)[1]['reason'] == reason != 'none'
+
+
+def test_ok_row_missing_reason_key_is_invalid_types():
+    c = good_check()
+    del c['rows'][0]['reason']
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+def test_ok_row_reason_must_be_null():
+    c = good_check()
+    c['rows'][0]['reason'] = 'short_window'
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+@pytest.mark.parametrize('n', [1, 251, 253])
+def test_ok_row_n_must_equal_window(n):
+    c = good_check()
+    c['rows'][0]['n'] = n
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'window_mismatch')
+
+
+@pytest.mark.parametrize('n', [None, 252.0, True, '252'])
+def test_ok_row_n_must_be_int(n):
+    c = good_check()
+    c['rows'][0]['n'] = n
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+@pytest.mark.parametrize('k', ['b_mkt_official', 'r2_proxy_m', 'fit_rmse'])
+def test_ok_row_missing_float_key_or_null_is_invalid_types(k):
+    c = good_check()
+    c['rows'][2][k] = None
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+    c = good_check()
+    del c['rows'][2][k]
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+def test_ok_row_missing_optional_key_is_invalid_types():
+    c = good_check()
+    del c['rows'][2]['scale_mkt']
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+def _unavailable(c, i=0, **over):
+    c['status'] = 'partial'
+    row = {**c['rows'][i], 'status': 'unavailable', 'reason': 'short_window', 'n': None,
+           **{k: None for k in fc.ROW_FLOATS + fc.ROW_OPTIONAL}}
+    row.update(over)
+    c['rows'][i] = row
+    return c
+
+
+def test_unavailable_row_with_reason_passes():
+    assert fc.check_structure(_unavailable(good_check()), W.HOLIDAYS) == (True, 'none')
+
+
+@pytest.mark.parametrize('reason', ['absent', None, 3, ''])
+def test_unavailable_row_reason_must_be_nonempty_str(reason):
+    c = _unavailable(good_check())
+    if reason == 'absent':
+        del c['rows'][0]['reason']
+    else:
+        c['rows'][0]['reason'] = reason
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+def test_unavailable_row_n_null_or_int():
+    c = _unavailable(good_check(), n='x')
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+    c = _unavailable(good_check(), n=120)
+    assert fc.check_structure(c, W.HOLIDAYS) == (True, 'none')
+
+
+def test_unavailable_row_non_finite_float_rejected():
+    c = _unavailable(good_check(), b_mkt_official=float('nan'))
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+
+
+@pytest.mark.parametrize('sm', [[{}], [['mkt']], [None], [1], ['mkt', 'mkt'], ['xyz']])
+def test_codex_sign_mismatch_elements_type_checked_never_raises(sm):
+    """codex #4 exact input `sign_mismatch=[{}]`: invalid_types, not TypeError."""
+    c = good_check()
+    c['rows'][0]['sign_mismatch'] = sm
+    assert fc.check_structure(c, W.HOLIDAYS) == (False, 'invalid_types')
+    assert fc.validate(c, '2026-11-04', W.HOLIDAYS)[1]['reason'] == 'invalid_types'
+
+
+def test_codex_sign_mismatch_dict_in_file_validate_file(tmp_path):
+    shutil.copy(os.path.join(DATA, fc.SLICE), tmp_path / fc.SLICE)
+    c = _committed_check()
+    c['rows'][0]['sign_mismatch'] = [{}]
+    (tmp_path / fc.CHECK).write_text(json.dumps(c), encoding='utf-8')
+    official, meta = fc.validate_file(str(tmp_path), '2026-11-04', W.HOLIDAYS)
+    assert official is None and meta['reason'] == 'invalid_types'
+
+
+@pytest.mark.parametrize('junk', [[], 'x', 7, None, {'rows': 'x'}])
+def test_check_structure_never_raises_on_junk(junk):
+    assert fc.check_structure(junk, W.HOLIDAYS)[0] is False

@@ -277,6 +277,48 @@ def _is_float(x):
     return isinstance(x, float) and math.isfinite(x)
 
 
+def _is_int(x):
+    return isinstance(x, int) and not isinstance(x, bool)
+
+
+def _row_problem(r):
+    """None, or the reason one row breaks the per-status contract (codex impl review 1 #3·#4).
+
+    Every row: `status` ok|unavailable, the keys `reason`, `n`, `sign_mismatch` and every
+    ROW_FLOATS / ROW_OPTIONAL key present; `sign_mismatch` a list of distinct factor names
+    (elements type-checked before any set is built). ok rows: `reason` null, `n` an int
+    equal to the window (else window_mismatch), every ROW_FLOATS value a finite float,
+    ROW_OPTIONAL null or finite. unavailable rows: `reason` a non-empty str, `n` null or
+    int, every float null or finite."""
+    st = r.get('status')
+    if st not in ('ok', 'unavailable'):
+        return 'invalid_types'
+    for k in ('reason', 'n', 'sign_mismatch') + ROW_FLOATS + ROW_OPTIONAL:
+        if k not in r:
+            return 'invalid_types'
+    sm = r['sign_mismatch']
+    if (not isinstance(sm, list) or not all(isinstance(x, str) and x in FACTORS for x in sm)
+            or len(set(sm)) != len(sm)):
+        return 'invalid_types'
+    for k in ROW_FLOATS + ROW_OPTIONAL:
+        v = r[k]
+        if v is None and (k in ROW_OPTIONAL or st == 'unavailable'):
+            continue
+        if not _is_float(v):
+            return 'invalid_types'
+    if st == 'ok':
+        if r['reason'] is not None or not _is_int(r['n']):
+            return 'invalid_types'
+        if r['n'] != factors.WINDOW:
+            return 'window_mismatch'
+    else:
+        if not (isinstance(r['reason'], str) and r['reason']):
+            return 'invalid_types'
+        if r['n'] is not None and not _is_int(r['n']):
+            return 'invalid_types'
+    return None
+
+
 def check_structure(obj, holidays):
     """(ok, reason). Structure only — a partial result is structurally fine. The producer
     runs this on its own output and writes nothing when it fails."""
@@ -309,19 +351,9 @@ def check_structure(obj, holidays):
     if set(ids) != {u for u, _, _, _ in UNITS}:
         return False, 'missing_row'
     for r in rows:
-        if r.get('status') not in ('ok', 'unavailable'):
-            return False, 'invalid_types'
-        sm = r.get('sign_mismatch')
-        if not isinstance(sm, list) or not set(sm) <= set(FACTORS):
-            return False, 'invalid_types'
-        for k in ROW_FLOATS + ROW_OPTIONAL:
-            v = r.get(k, 'absent')
-            if v is None and (k in ROW_OPTIONAL or r['status'] == 'unavailable'):
-                continue
-            if not _is_float(v):
-                return False, 'invalid_types'
-        if r['status'] == 'ok' and (not isinstance(r.get('n'), int) or isinstance(r['n'], bool)):
-            return False, 'invalid_types'
+        bad = _row_problem(r)
+        if bad:
+            return False, bad
     if obj['status'] != factors.status_of(rows):
         return False, 'status_mismatch'
     return True, 'none'
