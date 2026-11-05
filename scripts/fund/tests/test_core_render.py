@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 
 import pytest
 
@@ -136,7 +137,21 @@ def test_vix_window_label_follows_sessions():
 
 def test_caption_grammar():
     a = render.board_html(build())
-    assert '바뀌었나다' not in a and '바뀌었는지를 뜻한다' in a
+    assert '바뀌었나다' not in a
+    assert '<span class="fb-nl">대비 변화:</span> SPY 대비 3개월 초과수익이 그사이 얼마나 바뀌었는지' in a
+
+
+def test_labels_carry_a_colon_and_notes_break_per_item():
+    """2026-11-05 사용자 지시 — 어디까지가 제목이고 어디부터가 값인지 콜론으로 가른다.
+    출처·정의 각주는 항목마다 한 줄이다."""
+    a = render.board_html(build())
+    for label in ('지속', 'SPY', '50일선', '200일선', '3개월', '52주 고점 대비'):
+        assert f'<span class="fb-l">{label}:</span> ' in a
+    for label in ('기준', '기간', '순위', '대비 변화', '변동성', 'VaR', '방어 스타일'):
+        assert f'<span class="fb-nl">{label}:</span> ' in a
+    # 한 각주 줄에 정의가 두 개 이상 몰리지 않는다
+    notes = re.findall(r'<div class="fb-note">(.*?)</div>', a)
+    assert notes and all(n.count('fb-nl') <= 1 for n in notes)
 
 
 # --- codex 구현 재검토 재현: 독립 달력 ---

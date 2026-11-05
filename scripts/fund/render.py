@@ -21,6 +21,10 @@ STYLE = (
     '.fund-board .fb-big { font-size: 22px; font-weight: 800; color: #191F28; margin: 0 0 4px; }\n'
     '.fund-board .fb-line { font-size: 14px; color: #333D4B; margin: 2px 0; }\n'
     '.fund-board .fb-note { font-size: 12.5px; color: #8B95A1; font-weight: 600; margin: 6px 2px 0; }\n'
+    '.fund-board .fb-l { color: #6B7684; font-weight: 600; }\n'
+    '.fund-board .fb-note + .fb-note { margin-top: 2px; }\n'
+    '.fund-board .fb-nl { color: #6B7684; font-weight: 700; }\n'
+    '.fund-board .fb-notes { margin-top: 10px; }\n'
     '.fund-board .fb-h { font-size: 14px; font-weight: 800; color: #191F28; margin: 14px 2px 6px; }\n'
     '.fund-board table { font-size: 13px; }\n'
     '.fund-board td, .fund-board th { white-space: nowrap; }\n'
@@ -57,28 +61,46 @@ def _md(d):
     return escape(str(d)) if d else DASH
 
 
+def _kv(label, value):
+    """One 'label: value' line — the label is muted so the eye finds the value first."""
+    return f'<div class="fb-line"><span class="fb-l">{label}:</span> {value}</div>'
+
+
+def _notes(items):
+    """Footnotes one per line: (label, text) pairs, or a bare string for an unlabeled line."""
+    out = []
+    for it in items:
+        if isinstance(it, tuple):
+            out.append(f'<div class="fb-note"><span class="fb-nl">{it[0]}:</span> {it[1]}</div>')
+        else:
+            out.append(f'<div class="fb-note">{it}</div>')
+    return ''.join(out)
+
+
 def _regime_card(mr):
     if not mr:
         return ('<div class="fb-card"><div class="fb-k">시장 국면</div>'
                 '<div class="fb-line">국면을 가를 S&amp;P 500 이력이 부족하다.</div></div>')
     held = (f'{_md(mr["since"])}부터 {mr["sessions_held"]}거래일' if mr['since_exact']
             else f'최소 {mr["sessions_held"]}거래일')
-    lines = [f'<div class="fb-big">{escape(mr["name"])}</div>',
-             f'<div class="fb-line">{held}'
-             + (f' · 직전 {escape(mr["prev"])}' if mr.get('prev') else '') + '</div>']
+    lines = [f'<div class="fb-big">{escape(mr["name"])}</div>', _kv('지속', held)]
+    if mr.get('prev'):
+        lines.append(_kv('직전 국면', escape(mr['prev'])))
     if mr.get('pending_name'):
-        lines.append(f'<div class="fb-line">오늘 판정 {escape(mr["pending_name"])} '
-                     f'{mr["pending_sessions"]}거래일째 — '
-                     f'{mr["rules"]["confirm_sessions"]}거래일 이어지면 전환</div>')
+        lines.append(_kv('오늘 판정', f'{escape(mr["pending_name"])} '
+                                    f'{mr["pending_sessions"]}거래일째 — '
+                                    f'{mr["rules"]["confirm_sessions"]}거래일 이어지면 전환'))
     i = mr['inputs']
-    lines.append(f'<div class="fb-line">SPY {_num(i["close"], 2)} · 50일선 {_num(i["sma50"], 2)}'
-                 f' · 200일선 {_num(i["sma200"], 2)}(20거래일 전 {_num(i["sma200_prev"], 2)})</div>')
-    lines.append(f'<div class="fb-line">3개월 {_num(i["ret_3m"], 1, True, "%")}'
-                 f' · 52주 고점 대비 {_num(i["drawdown"], 1, True, "%")}</div>')
-    lines.append(f'<div class="fb-note">{escape(mr["basis"])}. 52주 고점 대비 '
-                 f'{_num(mr["rules"]["drawdown_pct"], 0)}% 이하이면서 50일선 아래면 단기 약세, '
-                 f'200일선 아래이고 200일선이 내려가면 장기 약세. '
-                 f'{escape(mr["residual_note"])}.</div>')
+    lines += [_kv('SPY', _num(i['close'], 2)),
+              _kv('50일선', _num(i['sma50'], 2)),
+              _kv('200일선', f'{_num(i["sma200"], 2)}(20거래일 전 {_num(i["sma200_prev"], 2)})'),
+              _kv('3개월', _num(i['ret_3m'], 1, True, '%')),
+              _kv('52주 고점 대비', _num(i['drawdown'], 1, True, '%'))]
+    lines.append(_notes([
+        ('판정 근거', escape(mr['basis'])),
+        ('단기 약세', f'52주 고점 대비 {_num(mr["rules"]["drawdown_pct"], 0)}% 이하이면서 50일선 아래'),
+        ('장기 약세', '200일선 아래이고 200일선이 내려갈 때'),
+        escape(mr['residual_note'])]))
     return '<div class="fb-card"><div class="fb-k">시장 국면</div>' + ''.join(lines) + '</div>'
 
 
@@ -87,36 +109,35 @@ def _risk_card(liq, risk):
     net = (liq or {}).get('net')
     nf = (liq or {}).get('nfci')
     if net:
-        lines.append(f'<div class="fb-line">순유동성 {_num(net["level_bn"], 0)}십억 달러'
-                     f'({_md(net["date"])}) · 4주 {_num(net["chg_4w_bn"], 0, True)}</div>')
+        lines.append(_kv('순유동성', f'{_num(net["level_bn"], 0)}십억 달러({_md(net["date"])})'
+                                    f' · 4주 변화 {_num(net["chg_4w_bn"], 0, True)}'))
     if nf:
-        lines.append(f'<div class="fb-line">NFCI {_num(nf["level"], 2)}({_md(nf["date"])})'
-                     f' · 4주 {_num(nf["chg_4w"], 2, True)}'
-                     + (' · 평균보다 느슨' if nf.get('looser_than_average') else ' · 평균보다 빡빡')
-                     + '</div>')
+        lines.append(_kv('NFCI', f'{_num(nf["level"], 2)}({_md(nf["date"])})'
+                                f' · 4주 변화 {_num(nf["chg_4w"], 2, True)}'
+                                + (' · 평균보다 느슨' if nf.get('looser_than_average')
+                                   else ' · 평균보다 빡빡')))
     if liq and liq.get('direction'):
-        lines.append(f'<div class="fb-line">유동성 방향 <b>{escape(liq["direction"])}</b></div>')
+        lines.append(_kv('유동성 방향', f'<b>{escape(liq["direction"])}</b>'))
     vix = (risk or {}).get('vix')
     if vix:
         n = vix.get('sessions')
         span = '최근 2년' if isinstance(n, int) and n >= 504 else (
             f'최근 {n}거래일' if isinstance(n, int) else None)
-        lines.append(f'<div class="fb-line">VIX {_num(vix["level"], 1)}'
-                     + (f' · {span} 중 {_num(vix["percentile_2y"], 0)}% 위치' if span else '')
-                     + '</div>')
+        lines.append(_kv('VIX', _num(vix['level'], 1)
+                         + (f' · {span} 중 {_num(vix["percentile_2y"], 0)}% 위치' if span else '')))
     hy = (risk or {}).get('hy_spread')
     if hy:
-        lines.append(f'<div class="fb-line">하이일드 스프레드 {_num(hy["level"], 2)}%'
-                     f'({_md(hy["date"])}) · 5거래일 {_num(hy["chg_5d_bp"], 0, True)}bp</div>')
+        lines.append(_kv('하이일드 스프레드', f'{_num(hy["level"], 2)}%({_md(hy["date"])})'
+                                         f' · 5거래일 변화 {_num(hy["chg_5d_bp"], 0, True)}bp'))
     rr = (risk or {}).get('real_10y')
     if rr:
-        lines.append(f'<div class="fb-line">10년 실질금리 {_num(rr["level"], 2)}%'
-                     f'({_md(rr["date"])}) · 5거래일 {_num(rr["chg_5d_bp"], 0, True)}bp</div>')
+        lines.append(_kv('10년 실질금리', f'{_num(rr["level"], 2)}%({_md(rr["date"])})'
+                                      f' · 5거래일 변화 {_num(rr["chg_5d_bp"], 0, True)}bp'))
     if not lines:
         lines.append('<div class="fb-line">유동성·위험 신호 자료가 없다.</div>')
-    note = ('<div class="fb-note">순유동성은 연준 총자산에서 재무부 일반계정과 역레포를 뺀 '
-            '수요일 기준 단순 대리 지표다. 유동성 방향은 순유동성과 NFCI의 4주 변화가 '
-            '같은 쪽일 때만 완화·긴축으로 부른다.</div>') if liq else ''
+    note = _notes([
+        ('순유동성', '연준 총자산에서 재무부 일반계정과 역레포를 뺀 수요일 기준 단순 대리 지표'),
+        ('유동성 방향', '순유동성과 NFCI의 4주 변화가 같은 쪽일 때만 완화·긴축으로 부른다')]) if liq else ''
     return ('<div class="fb-card"><div class="fb-k">유동성·위험 신호</div>'
             + ''.join(lines) + note + '</div>')
 
@@ -173,13 +194,16 @@ def board_html(data):
     if not data or data.get('status') == 'unavailable':
         return None
     basis = data['rank_basis']
-    note = (f'<div class="fb-note">수정종가, {_md(basis["date"])} 마감, 거래일 기준(1개월 21·3개월 63·'
-            f'12-1 모멘텀은 252거래일 전부터 21거래일 전까지). 순위는 위험선호·방어 스타일·지역 '
-            f'{basis["n"]}종의 3개월 수익률 순서이고 괄호는 5거래일 전({_md(basis["date_5d"])}) 순위, '
-            f'「대비 변화」는 SPY 대비 3개월 초과수익이 그사이 얼마나 바뀌었는지를 뜻한다. '
-            f'변동성은 최근 60거래일 일간 수익률의 연율, VaR는 최근 60거래일 표본의 1일 VaR'
-            f'(역사적 방식)로 ETF 기준이며 종목을 골라 만든 묶음의 위험과 같지 않다. '
-            f'방어 스타일은 손실 회피나 헤지 성능을 뜻하지 않는다.</div>')
+    note = '<div class="fb-notes">' + _notes([
+        ('기준', f'수정종가, {_md(basis["date"])} 마감, 거래일 기준'),
+        ('기간', '1개월 21·3개월 63거래일, 12-1 모멘텀은 252거래일 전부터 21거래일 전까지'),
+        ('순위', f'위험선호·방어 스타일·지역 {basis["n"]}종의 3개월 수익률 순서, '
+                f'괄호는 5거래일 전({_md(basis["date_5d"])}) 순위'),
+        ('대비 변화', 'SPY 대비 3개월 초과수익이 그사이 얼마나 바뀌었는지'),
+        ('변동성', '최근 60거래일 일간 수익률의 연율'),
+        ('VaR', '최근 60거래일 표본의 1일 VaR(역사적 방식), ETF 기준이며 종목을 골라 만든 '
+                '묶음의 위험과 같지 않다'),
+        ('방어 스타일', '손실 회피나 헤지 성능을 뜻하지 않는다')]) + '</div>'
     return (f'<div class="fund-board" data-fund-board="{digest(data)}" '
             f'data-report-date="{escape(data["report_date"])}">\n'
             + STYLE
