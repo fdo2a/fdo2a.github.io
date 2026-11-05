@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-05",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-05T11:35:51+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-05T11:52:33+00:00",
  "cutoff_at": "2026-11-05T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 556,
+  "harvest": 540,
   "candidates": 1,
   "articles": [
    6
@@ -43,26 +43,42 @@
    "herald": "ok"
   },
   "notes": [
-   "discover:556"
+   "discover:540"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 29990,
-   "out": 9733
+   "in": 51026,
+   "out": 14995
   },
   "grounded": {
-   "claims": "2/2",
+   "claims": "3/3",
    "pairs": "1/1",
    "obs": "8/8"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
+   "pairs": 1,
+   "claims": 2,
    "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[2]",
+    "memo[2]",
+    "structure",
+    "worry.most[0]",
+    "worry.unlikely[1]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "edges[2]:unverified",
+    "memo[2]:unverified",
+    "worry.most[0]:unverified",
+    "worry.unlikely[1]:unverified"
+   ]
   }
  },
  "event": {
@@ -70,5 +86,11 @@
   "query": "3분기 한국투자증권 전년",
   "trigger": []
  },
- "content_hash": "658c052600fbdfdf"
+ "problems": [
+  "edges[2]:unverified",
+  "memo[2]:unverified",
+  "worry.most[0]:unverified",
+  "worry.unlikely[1]:unverified"
+ ],
+ "content_hash": "54273356287be18e"
 }
