@@ -233,6 +233,10 @@ spec §4.4. 한국 증시는 정책·정치 변수가 밸류에이션을 직접 
 
 쓸 수 있는 클래스: `.card`·`.headline-card` · 본문 보조 `.muted` · 캡션 `.caption`·`.sub`·`.footer-note` · 등락 `.up`·`.down` · 알약 `.pill` + `.pill-long`·`.pill-short`·`.pill-info` · 라벨 `.box-label` · 2단 `.grid-2` · 표 래퍼 `.tbl-scroll`(모든 `<table>` 을 감싼다) · 차트 `<img class="chart">`. 섹션은 `<section>` 으로 감싸고 `<h2>`·`<h3>`·`<h4>` 를 쓴다. When changing this: read `docs/superpowers/specs/2026-09-24-post-shell.md` before touching `scripts/common/post_css/kr.css`.
 
+## 번역투 점검 — 마감의 첫 단계 (2026-10-22)
+
+사용자 지시 「발간 직전에 번역투만 점검·수정」. 넘기기 전 마지막 편집으로 `python3 scripts/scan_translationese.py <산출 HTML>` 을 돌린다 — 종료 코드는 늘 0 이고 게이트가 아니다. 걸린 문장마다 출력 머리의 기준대로 **뜻을 그대로 둔 채 고칠 수 있을 때만** 그 문장을 고친다. 귀띔은 힌트다 — 맞는 꼴이 없거나 고치면 수식·시점·대상 관계가 흔들리면 그대로 둔다. 숫자·이름·방향·부정·인과·단서 표현은 바꾸지 않는다. 고친 뒤 아래 점검·게이트는 고친 판으로 돈다. 마지막 줄 `translationese: …` 를 최종 보고에 적는다.
+
 ## 팩트체크 마감 (발행 게이트)
 
 브리프 완성 후 아래를 모두 확인한다(입력에 없는 값은 새로 웹서치하지 않는다 — 없으면 그 행·주장을 빼고 재구성한다, 삭제 > 창작):

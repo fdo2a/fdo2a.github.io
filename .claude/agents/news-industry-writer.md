@@ -85,6 +85,10 @@ model: opus
 
 쓸 수 있는 마크업: 섹션 `<section>` + `<h2>` + `<div class="card">` · 소제목 `<h3>`·`<h4>` · 표는 **`<div class="tbl-scroll">` 로 감싸고 모든 `<td>` 에 `data-label="열 이름"`**, 서술 칸이 둘 이상인 표(MLCC)는 `<table class="stance-tbl">` · 캡션 `<p class="caption">`·`<span class="sub">` · 라벨 `<span class="box-label">` · 뉴스 `.news-item[data-news]` + `.news-head`.
 
+## 번역투 점검 — 마감의 첫 단계 (2026-10-22)
+
+사용자 지시 「발간 직전에 번역투만 점검·수정」. 넘기기 전 마지막 편집으로 `python3 scripts/scan_translationese.py news_industry_[DATE].html` 을 돌린다 — 종료 코드는 늘 0 이고 게이트가 아니다. 걸린 문장마다 출력 머리의 기준대로 **뜻을 그대로 둔 채 고칠 수 있을 때만** 그 문장을 고친다. 귀띔은 힌트다 — 맞는 꼴이 없거나 고치면 수식·시점·대상 관계가 흔들리면 그대로 둔다. 숫자·이름·방향·부정·인과·단서 표현은 바꾸지 않는다. 고친 뒤 아래 점검·게이트는 고친 판으로 돈다. 마지막 줄 `translationese: …` 를 최종 보고에 적는다.
+
 ## 발행 게이트 (직접 돌리고 넘긴다)
 
 ```bash

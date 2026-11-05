@@ -345,6 +345,24 @@ def test_generated_research_summary_is_not_sent_for_humanization():
     assert reinsert(html, text, side) == html
 
 
+@pytest.mark.parametrize('opening', [
+    '<section data-contested>',          # 값 없는 속성 — HTMLParser 가 None 을 준다
+    '<SECTION DATA-CONTESTED>',          # 대문자 + 값 없음
+    '<SECTION DATA-CONTESTED="1">',
+])
+def test_쟁점_분석은_속성_꼴과_상관없이_윤문_대상에서_빠진다(opening):
+    html = (f'<section><p>시장 설명은 다듬는다.</p>{opening}<p>충돌 주장 두 건이다.</p>'
+            '</SECTION></section>').replace('</SECTION></section>', '</section></section>')
+    text, side = extract(html)
+    assert '시장 설명' in text
+    assert '충돌 주장' not in text
+
+
+def test_쟁점_분석_구조를_못_읽으면_대문자_표식부터_끝까지_뺀다():
+    html = '<p>앞 문단이다.</p><div><SECTION DATA-CONTESTED><p>충돌 주장이다.</p></div>'
+    text, _ = extract(html)
+    assert '충돌 주장' not in text
+
 # ── 문단 단위 되꽂기 (발행 뒤 codex 문체 수정, 2026-09-27 사용자 지시) ─────────────
 # 한 문단이 닮은 정도 0.79 로 걸려 수십 문단의 수정이 통째로 버려졌다. 걸린 문단만
 # 원문으로 두고 나머지는 반영한다. 문단마다의 검사는 그대로다.
@@ -706,3 +724,9 @@ def test_confirming_is_not_a_rate_cut():
     # 5차 #2 — 「확인하며」 안의 「인하」는 방향어가 아니다(US 10/07 실제 문장).
     out, rejected = _swap_f('먼저 확인한다. 반도체', '먼저 확인하며, 반도체')
     assert rejected == [], rejected
+
+
+def test_구조를_못_읽을_때_폴백_위치는_원문_기준이다():
+    from us.prose_swap import _nested
+    html = 'İ' * 80 + '<div><section data-contested="1"><p>실적에 대한 우려.</p></div>'
+    assert _nested(html, 'data-contested') == [(html.index('data-contested'), len(html))]

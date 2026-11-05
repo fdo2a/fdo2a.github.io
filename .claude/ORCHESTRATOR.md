@@ -140,13 +140,11 @@ python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadi
 
 각 게이트가 막는 조건의 상세와 이력: `docs/superpowers/specs/2026-09-24-instruction-history-archive.md` 「STEP 2」.
 
-## STEP 2.5 — 윤문은 루틴에서 하지 않는다 (2026-09-27)
+## STEP 2.5 — 번역투 점검은 작성자 마감에서 한다 (2026-10-22)
 
-**루틴은 STEP 2 게이트를 통과하면 바로 STEP 3 으로 간다.** `humanize-korean` 윤문을 부르지 않는다 — Claude 주간 한도를 아끼려고 사용자가 뺐다.
+**루틴에 따로 윤문하는 단계는 없다** — Claude 윤문(humanize-korean)은 9/27 에 뺐고, 발행 뒤 로컬 러너의 codex 문체 수정은 2026-10-13 부터 수정안만 기록한다(`style_pass.APPLY`).
 
-발행 뒤 로컬 러너(`scripts/review_gate.py run --correct`, 매시)의 codex 문체 수정은 **2026-10-13 부터 수정안만 기록하고 공개판을 바꾸지 않는다**(`style_pass.APPLY`). 러너 동작은 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
-
-**그래서 초고가 곧 최종본이다.** writer 지시문의 「말하듯이 쓴다」와 STEP 2 의 `check_style` 이 문체를 책임진다.
+2026-10-22 사용자 지시 「발간 직전에 번역투만 점검·수정」은 **작성자 지시문의 「번역투 점검 — 마감의 첫 단계」** 가 맡는다. 작성자가 `scripts/scan_translationese.py` 로 자리를 찾아 자기 문장을 고치고, 그 판이 STEP 2 게이트를 지난다. **오케스트레이터는 대신 고치지 않는다** — 근거와 문맥을 가진 작성자만 「에 대한」을 지워도 뜻이 그대로인지 안다. 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계와 거절된 세 안: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
 
 ## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 
@@ -183,7 +181,7 @@ Site base URL: https://fdo2a.github.io/
    grep -c '확인필요' news_industry_[DATE].html     # 0
    ```
    `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다. `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」는 의무다. 하나도 없으면 섹션 없이 발행하되 **최종 보고에 사유(`summary_note`)를 적는다.** **루틴에서 기사 본문을 다시 받지 않는다**(클라우드는 CNBC·Yahoo 에 403).
-3. **윤문은 이 글에 하지 않는다** — 뉴스 블록은 `summary_ko` 에 묶여 있어(유사도 게이트) 윤문이 걸리고, 산업 세 섹션은 짧다. 발행 뒤 codex 문체 수정도 `posts/` 일간만 본다. 문체 검사(`check_style`)는 위에서 돈다.
+3. **윤문은 이 글에 하지 않는다** — 뉴스 블록은 `summary_ko` 에 묶여 있어(유사도 게이트) 윤문이 걸리고, 산업 세 섹션은 짧다. 발행 뒤 codex 문체 수정도 `posts/` 일간만 본다. 문체 검사(`check_style`)는 위에서 돈다. **번역투는 작성자가 마감에서 고친다**(2026-10-22, 기사 요약·제목은 대상 밖) — 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py news_industry_[DATE].html | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다.
 4. **발행 (이 글만의 커밋)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 STEP 3-1 과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 그리고 `git add news/ news.json sitemap.xml && git commit -m "Add [YYYY-MM-DD] news-industry brief" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다.
 
 ## STEP 4 — Notify

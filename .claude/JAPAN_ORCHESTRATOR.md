@@ -46,7 +46,7 @@ python3 scripts/check_readability.py --strict $(pwd)/japan_<KEY>.html
 python3 scripts/check_style.py $(pwd)/japan_<KEY>.html
 ```
 
-위반은 목록 그대로 writer 에게 돌려준다. 윤문은 루틴에서 하지 않는다(2026-10-01). 발행 뒤 codex 문체 수정은 2026-10-13 부터 수정안만 기록하고 공개판을 바꾸지 않는다(`style_pass.APPLY`) — 위 셋을 통과한 판이 곧 최종본이다. US 주간 STEP 4-b 참고.
+위반은 목록 그대로 writer 에게 돌려준다. 윤문은 루틴에서 하지 않는다(2026-10-01). 발행 뒤 codex 문체 수정은 2026-10-13 부터 수정안만 기록하고 공개판을 바꾸지 않는다(`style_pass.APPLY`). 번역투는 writer 가 마감에서 고친다(2026-10-22, `scripts/scan_translationese.py`) — 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다. US 주간 STEP 4-b 참고.
 
 ## STEP 4 — 발행
 

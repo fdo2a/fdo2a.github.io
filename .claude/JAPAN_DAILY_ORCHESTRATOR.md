@@ -50,7 +50,7 @@ python3 scripts/check_readability.py --strict $(pwd)/jpd_$S.html
 python3 scripts/check_style.py $(pwd)/jpd_$S.html
 ```
 
-위반은 목록 그대로 작성자에게 돌려준다(STEP 2 의 예산 — 조립 실패와 합쳐 최대 세 번, 두 번째부터 Opus). 그래도 남으면 발행하지 않고 잠금을 풀고 위반 목록을 PushNotification 으로 보낸다. 윤문은 하지 않는다 — 게이트를 통과한 판이 최종본이다.
+위반은 목록 그대로 작성자에게 돌려준다(STEP 2 의 예산 — 조립 실패와 합쳐 최대 세 번, 두 번째부터 Opus). 그래도 남으면 발행하지 않고 잠금을 풀고 위반 목록을 PushNotification 으로 보낸다. 윤문은 하지 않는다 — 게이트를 통과한 판이 최종본이다. 번역투는 작성자가 마감에서 고친다(2026-10-22) — 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py jpd_$S.html | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다).
 
 ## STEP 4 — 발행
 

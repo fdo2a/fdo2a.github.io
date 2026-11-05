@@ -93,24 +93,41 @@ def _skip_spans(html):
     # 펀드 점검판·KR 참고 블록은 생성물이다 — 게이트가 다시 그려 바이트로 대조한다.
     for m in _FUND_START.finditer(html):
         spans.append((m.start(), _balanced_div(html, m.start())))
-    spans.extend(_research_summaries(html))
+    spans.extend(_nested(html, 'data-research-summary'))
+    spans.extend(_nested(html, 'data-contested'))
     return spans
 
 
-def _research_summaries(html):
-    """연구 요약(원장에서 생성한 구역)은 중첩돼 있어도 뺀다.
+def _nested(html, attr):
+    """생성 구역(연구 요약·쟁점 분석)은 중첩돼 있어도 뺀다.
 
-    `_BLOCK_RE` 는 바깥 section 을 먼저 잡으므로 그 안의 요약 section 을 못 본다 — KR W39 주간의
-    요약 문단이 윤문 대상으로 넘어갔다(2026-10-01 codex 설계 검토에서 재현). 균형 매칭으로
-    찾고, 구조를 못 읽으면 첫 요약부터 문서 끝까지 뺀다(넘기는 것보다 덜 넘기는 쪽이 안전하다).
+    `_BLOCK_RE` 는 바깥 section 을 먼저 잡으므로 그 안의 section 을 못 본다 — KR W39 주간의
+    요약 문단이 윤문 대상으로 넘어갔고(2026-10-01), 쟁점 분석도 같은 꼴로 뽑혔다(2026-10-22 codex
+    설계 검토에서 재현). 균형 매칭으로 찾고, 구조를 못 읽으면 첫 표식부터 문서 끝까지 뺀다(넘기는
+    것보다 덜 넘기는 쪽이 안전하다).
     """
-    if 'data-research-summary' not in html:
+    first = re.search(re.escape(attr), html, re.I)   # 원문 좌표 — lower() 는 길이를 바꿀 수 있다(İ)
+    if not first:
         return []
-    from common.research_gate import Elements
     try:
-        return [(start, end) for start, end, _, _ in Elements(html, 'data-research-summary').matches]
+        return [(start, end) for start, end, _, _ in _present(html, attr).matches]
     except ValueError:
-        return [(html.index('data-research-summary'), len(html))]
+        return [(first.start(), len(html))]
+
+
+def _present(html, attr):
+    """Elements, but a valueless attribute (`<section data-contested>`) counts as present.
+
+    HTMLParser hands a valueless attribute None, which Elements reads as "not this element".
+    research_gate keeps its own rule; only the skip here needs presence alone.
+    """
+    from common.research_gate import Elements
+
+    class Present(Elements):
+        def handle_starttag(self, tag, attrs):
+            super().handle_starttag(tag, [(k, '' if v is None else v) for k, v in attrs])
+
+    return Present(html, attr)
 
 
 def _eligible(html):

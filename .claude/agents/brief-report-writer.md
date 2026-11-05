@@ -433,6 +433,10 @@ US·KR 일간·주간, 일본 주간, 뉴스·산업 브리프에 적용한다. 
 
 When changing this: read `docs/superpowers/specs/2026-09-24-post-shell.md` before touching `scripts/common/post_css/us.css` or the class table above — the width, type-size, label and mobile rules and their incident history live there.
 
+## 번역투 점검 — 마감의 첫 단계 (2026-10-22)
+
+사용자 지시 「발간 직전에 번역투만 점검·수정」. 넘기기 전 마지막 편집으로 `python3 scripts/scan_translationese.py morning_brief_[DATE].html` 을 돌린다 — 종료 코드는 늘 0 이고 게이트가 아니다. 걸린 문장마다 출력 머리의 기준대로 **뜻을 그대로 둔 채 고칠 수 있을 때만** 그 문장을 고친다. 귀띔은 힌트다 — 맞는 꼴이 없거나 고치면 수식·시점·대상 관계가 흔들리면 그대로 둔다. 숫자·이름·방향·부정·인과·단서 표현은 바꾸지 않는다. 고친 뒤 아래 점검·게이트는 고친 판으로 돈다. 마지막 줄 `translationese: …` 를 최종 보고에 적는다.
+
 ## 팩트체크 마감 (발행 게이트, 필수)
 
 입력 데이터(market_data.json·intraday.json·econ_indicators.json은 FRED/yfinance 확정치, research_notes.md는 수집 담당이 이미 검증)는 **이미 신뢰 가능**하다 — 팩트체크는 "데이터를 옮겨 적을 때 생긴 오류"를 잡는 것이지 **수치를 웹으로 재수집하는 단계가 아니다**. 토큰 절약을 위해 재리서치는 하지 않는다. 초안 완성 후:

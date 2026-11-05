@@ -63,4 +63,4 @@ model: sonnet
 
 ## 마감
 
-「마감 점검표」의 구조 다섯을 해 보고 열두 줄을 훑은 뒤 넘긴다. 레포에 `scripts/scan_translationese.py` 가 있으면 `python3 scripts/scan_translationese.py jpd_<S>.body.html` 로 번역투 자리를 찾아 근거를 보고 직접 고친다(바꿔도 뜻이 그대로일 때만).
+「마감 점검표」의 구조 다섯을 해 보고 열두 줄을 훑은 뒤 넘긴다. `python3 scripts/scan_translationese.py jpd_<S>.body.html` 로 번역투 자리를 찾아 근거를 보고 직접 고친다(바꿔도 뜻이 그대로일 때만).

@@ -101,13 +101,11 @@ python3 scripts/check_contested.py --html <kr_brief 절대경로> --json <워크
 
 가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다. 중단은 데이터 정본의 completeness 실패뿐이다.
 
-## STEP 2.5 — 윤문은 루틴에서 하지 않는다 (2026-09-27)
+## STEP 2.5 — 번역투 점검은 작성자 마감에서 한다 (2026-10-22)
 
-**루틴은 STEP 2 게이트를 통과하면 바로 STEP 3 으로 간다.** `humanize-korean` 윤문을 부르지 않는다 — Claude 주간 한도를 아끼려고 사용자가 뺐다.
+**루틴에 따로 윤문하는 단계는 없다** — Claude 윤문(humanize-korean)은 9/27 에 뺐고, 발행 뒤 로컬 러너의 codex 문체 수정은 2026-10-13 부터 수정안만 기록한다(`style_pass.APPLY`).
 
-발행 뒤 로컬 러너(`scripts/review_gate.py run --correct`, 매시)의 codex 문체 수정은 **2026-10-13 부터 수정안만 기록하고 공개판을 바꾸지 않는다**(`style_pass.APPLY`). 러너 동작은 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
-
-**그래서 초고가 곧 최종본이다.** writer 지시문의 「말하듯이 쓴다」와 STEP 2 의 `check_style` 이 문체를 책임진다.
+2026-10-22 사용자 지시 「발간 직전에 번역투만 점검·수정」은 **작성자 지시문의 「번역투 점검 — 마감의 첫 단계」** 가 맡는다. 작성자가 `scripts/scan_translationese.py` 로 자리를 찾아 자기 문장을 고치고, 그 판이 STEP 2 게이트를 지난다. **오케스트레이터는 대신 고치지 않는다** — 근거와 문맥을 가진 작성자만 「에 대한」을 지워도 뜻이 그대로인지 안다. 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계와 거절된 세 안: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
 
 ## STEP 2.9 — 판단 원장 승계
 
