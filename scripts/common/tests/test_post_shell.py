@@ -34,8 +34,9 @@ def test_round_trip_keeps_the_body_and_fixes_the_head(market, date, path):
     # 손으로 쓴 head 는 description·canonical·og 를 두 번씩 실었다(2026-09-23 US).
     for tag in ('name="description"', 'rel="canonical"', 'property="og:title"',
                 'property="og:url"', 'property="og:description"', '<title>',
-                'application/ld+json', 'adsense-loader', 'post-shell-v1'):
+                'application/ld+json', 'post-shell-v1'):
         assert head.count(tag) == 1, tag
+    assert 'adsbygoogle' not in out  # 2026-11-05 광고 로더 제거
     ld = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>',
                               head, re.S).group(1))
     assert ld['@type'] == 'NewsArticle' and ld['inLanguage'] == 'ko'

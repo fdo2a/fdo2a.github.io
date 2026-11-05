@@ -169,9 +169,6 @@ STYLE = '''  :root {
            font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
   footer a { color: #5F6B7A; }'''
 
-ADSENSE = ('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
-           '?client=ca-pub-9240461016907498" crossorigin="anonymous"></script>')
-
 FOOTER = '''  <footer>
     데이터: Yahoo Finance. 각 사 공시·IR·실적자료를 1차 출처로 삼으며, 언론 보도는 추론으로 분리해 표기합니다.<br>
     본 자료는 투자 판단 보조용 정리로, 특정 종목의 매수·매도 권유가 아닙니다. 적정가치는 명시된 가정 위에서 도출한 모델 추정치이며 목표주가가 아닙니다.<br>
@@ -216,7 +213,6 @@ def shell(title, description, canonical, body, current, root, ld):
 <style>
 {STYLE}
 </style>
-{ADSENSE}
 {ANALYTICS}
 </head>
 <body>

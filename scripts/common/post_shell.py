@@ -1,6 +1,6 @@
 """Post shell — the part of a daily brief that is the same every day.
 
-Writers used to hand-write the whole document: head, SEO meta, JSON-LD, AdSense loader,
+Writers used to hand-write the whole document: head, SEO meta, JSON-LD,
 ~6 KB of CSS, top bar. The orchestrator then hand-injected the nav block and the SEO
 meta a second time. Every day that cost output tokens and a long CSS spec in the
 writer prompt, and it produced defects no gate looked at — the 2026-09-23 US post
@@ -29,9 +29,6 @@ from scripts.common.analytics import SNIPPET as ANALYTICS
 
 CSS_DIR = Path(__file__).resolve().parent / 'post_css'
 MARKER = '<!-- post-shell-v1 -->'
-ADSENSE = ('<!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com'
-           '/pagead/js/adsbygoogle.js?client=ca-pub-9240461016907498" '
-           'crossorigin="anonymous"></script>')
 WEEKDAYS = '월화수목금토일'
 
 # Pretendard is the design font (AGENTS.md rule 1) but no reader has it installed; until
@@ -262,7 +259,7 @@ def render(market, date, meta, body):
         f'<meta property="og:description" content="{escape(summary)}">\n'
         f'<title>{escape(title)}</title>\n'
         f'<script type="application/ld+json">\n{ld_text}\n</script>\n'
-        f'{ADSENSE}\n{MARKER}\n{FONT_LINK}\n<style>\n{css(market)}</style>\n{ANALYTICS}\n</head>\n'
+        f'{MARKER}\n{FONT_LINK}\n<style>\n{css(market)}</style>\n{ANALYTICS}\n</head>\n'
         # US·KR 일간은 PM 이 읽는 -다 문서다 — check_style 이 이 선언을 보고 데스크 검사를 건다.
         f'<body data-register="da">\n<div class="topbar">{topbar}</div>\n{nav}\n'
         f'<div class="doc">{body}</div>\n{footer(market, date)}\n</body>\n</html>\n'

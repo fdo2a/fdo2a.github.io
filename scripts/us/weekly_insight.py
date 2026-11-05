@@ -650,7 +650,7 @@ def assemble(body, meta, diag, agg):
         f'<link rel="canonical" href="{url}">\n<meta property="og:type" content="article">\n'
         f'<meta property="og:title" content="US Market Brief — 주간 인사이트 {range_ko(start, end)}">\n'
         f'<meta property="og:url" content="{url}">\n<meta property="og:description" content="{summary}">\n'
-        f'{S.ADSENSE}\n{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
+        f'{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
         '<body data-layout="prose" data-register="da">\n'
         f'<div class="topbar"><span class="brand">US Market Brief</span>'
         f'<span class="date">주간 인사이트 · {range_ko(start, end)}</span></div>\n'

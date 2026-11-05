@@ -192,7 +192,7 @@ def assemble(body, meta, d):
         f'<link rel="canonical" href="{url}">\n<meta property="og:type" content="article">\n'
         f'<meta property="og:title" content="{BRAND} — {s}">\n'
         f'<meta property="og:url" content="{url}">\n<meta property="og:description" content="{summary}">\n'
-        f'{S.ADSENSE}\n{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
+        f'{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
         '<body data-layout="prose" data-register="da">\n'
         f'<div class="topbar"><span class="brand">{BRAND}</span>'
         f'<span class="date">일본 시장 마감 · {day_ko(s)}({wd})</span></div>\n{back}\n'

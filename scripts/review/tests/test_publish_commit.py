@@ -254,3 +254,16 @@ def test_contested_step_tolerates_non_object_json(repo):
 def test_contested_gate_is_never_tolerated():
     from review import corrector
     assert 'check_contested.py' in corrector.NEVER_TOLERATE
+
+
+def test_adsense_removal_points_back_to_the_publishing_commit(repo):
+    """2026-11-05 AdSense 로더 제거도 방문 통계 소급처럼 건너뛴다 — 안 그러면 미검토 글의
+    「발행 커밋」이 제거 커밋이 되어 그날 데이터와 맞대진다."""
+    from common import adsense
+    loader = ('<!-- adsense-loader --><script async src="https://pagead2.googlesyndication.com'
+              '/pagead/js/adsbygoogle.js?client=ca-pub-1" crossorigin="anonymous"></script>\n')
+    page = analytics.inject(_doc()).replace('</style>\n', '</style>\n' + loader)
+    published = commit(repo, {POST: page, DATA: '{"day": "09-21"}'}, 'publish')
+    commit(repo, {DATA: '{"day": "11-05"}'}, 'collect')
+    commit(repo, {POST: adsense.strip(page)}, 'remove adsense')
+    assert g.publish_commit(repo, POST, blob(repo)) == published

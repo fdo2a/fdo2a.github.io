@@ -6,7 +6,9 @@ https://fdo2a.goatcounter.com. The script itself skips localhost and file:// pag
 local Playwright/PDF renders do not count.
 
 One rule places it: **immediately before the first `</head>`**. The three early posts
-that have no `<head>` wrapper get it right after their AdSense loader. Generators that
+that have no `<head>` wrapper got it right after their AdSense loader — that loader was
+removed on 2026-11-05 (`common.adsense`), but `_ADSENSE` stays so the review gate can still
+replay this insertion on versions reviewed before it. Generators that
 write the head themselves (`post_shell`, `build_thesis_pages`) put `SNIPPET` in that same
 spot, so `inject()` of their output is a no-op — and the review gate can tell a backfill
 from an edit by replaying `inject()` on the reviewed version (`review.prose.typography`).
