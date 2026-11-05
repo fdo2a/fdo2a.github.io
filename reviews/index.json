@@ -18,6 +18,21 @@
         }
       ]
     },
+    "japan/daily/2026-11-02.html": {
+      "sha": "e600479984278fdad3e4eedb9d1dc10a9463873d",
+      "at": "2026-11-06T02:53:12+09:00",
+      "findings": 1
+    },
+    "japan/daily/2026-11-04.html": {
+      "sha": "25c837af4a6cfc9ce4db67c1082175c28b3debc2",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 1
+    },
+    "japan/daily/2026-11-05.html": {
+      "sha": "9af6b1a6cb298a79461114786c48c8729ebdbc9f",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 2
+    },
     "japan/posts/2026-W40.html": {
       "sha": "08eff391ae0a035483d71a0b64e7b71cf50d368b",
       "at": "2026-10-17T12:08:38+09:00",
@@ -51,6 +66,11 @@
           "reason": "typography"
         }
       ]
+    },
+    "japan/posts/2026-W44.html": {
+      "sha": "6a74f771e0915e2bf96c21a003d8da218bb76be0",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 2
     },
     "kr/posts/2026-07-22.html": {
       "sha": "6f9dfa57e998b3c77a2e82e203407d33c8722a2a",
@@ -1497,6 +1517,11 @@
         }
       ]
     },
+    "kr/posts/2026-11-02.html": {
+      "sha": "17efc4437d88aee951135d4bc8b71d78c716ef28",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 1
+    },
     "kr/posts/2026-11-03.html": {
       "sha": "c4305cc7b39a80c91b4e61863478192606629bb5",
       "at": "2026-11-04T02:04:04+09:00",
@@ -1530,6 +1555,11 @@
           "reason": "typography"
         }
       ]
+    },
+    "kr/posts/2026-11-05.html": {
+      "sha": "9358424337b71d65a148c70c4d76b55249e9c8b6",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 2
     },
     "kr/weekly/2026-W37.html": {
       "sha": "fa51d8d70a2ae2f0c87b9c72dd01f51c6be3c9e2",
@@ -1599,6 +1629,11 @@
           "reason": "typography"
         }
       ]
+    },
+    "kr/weekly/2026-W44.html": {
+      "sha": "652cf090bc97686f4bb264a3bc2b598c94ace1fd",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 2
     },
     "news/2026-09-28.html": {
       "sha": "e0c91ec84f0fdaf3a0cd4e71da057b9240f679f4",
@@ -1820,6 +1855,21 @@
           "reason": "typography"
         }
       ]
+    },
+    "news/2026-11-02.html": {
+      "sha": "d02e3a583384d9bfc1f3f8eaab696f436f072d1c",
+      "at": "2026-11-06T02:53:12+09:00",
+      "findings": 4
+    },
+    "news/2026-11-03.html": {
+      "sha": "8caa10d7651666a73f2b1660ca06b60e4ea26af7",
+      "at": "2026-11-06T02:53:12+09:00",
+      "findings": 1
+    },
+    "news/2026-11-04.html": {
+      "sha": "f592b31f6d59004b744b44059a8b15cec8d14f0f",
+      "at": "2026-11-06T02:53:12+09:00",
+      "findings": 4
     },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
@@ -3860,9 +3910,9 @@
       ]
     },
     "privacy.html": {
-      "sha": "c0e4cefbbbfbd41d7d2178c31fcb41d04ad71d5a",
-      "at": "2026-09-27T01:05:02+09:00",
-      "findings": 2
+      "sha": "2aa8d1ac997b2bc21cf86ed8283ddd2c6d6fb41c",
+      "at": "2026-11-06T02:53:12+09:00",
+      "findings": 0
     },
     "scripts/thesis/content.py": {
       "sha": "96854ac4cef633439f371968e1d9c4d2a21e555c",
@@ -3882,8 +3932,8 @@
       "findings": 0
     },
     "thesis/data/thesis_state.json": {
-      "sha": "b20bbb09d244aab1f08ac50b8c5d881ea0f3db5c",
-      "at": "2026-10-17T12:28:28+09:00",
+      "sha": "8f043d7f5daa65c521fb95f05e695087c3a96922",
+      "at": "2026-11-06T02:53:12+09:00",
       "findings": 0
     },
     "thesis/micron.html": {
@@ -4018,6 +4068,11 @@
           "reason": "typography"
         }
       ]
+    },
+    "weekly/2026-W44.html": {
+      "sha": "c5de9f9fc108529eea9d4cb8d4bd4ace0b51edfd",
+      "at": "2026-11-06T02:53:11+09:00",
+      "findings": 2
     }
   }
 }
