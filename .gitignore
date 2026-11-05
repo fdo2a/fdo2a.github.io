@@ -50,6 +50,7 @@ reviews/.index.lock
 reviews/pending/
 reviews/runner.json
 reviews/style_proposals/
+reviews/style_findings/
 reviews/.runner.lock
 
 # 차트는 날짜별로 kr/assets/ 에 나간다 — 무날짜 판은 매일 새 blob 을 만들었다(49회 커밋)

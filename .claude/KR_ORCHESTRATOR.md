@@ -105,9 +105,13 @@ python3 scripts/check_contested.py --html <kr_brief 절대경로> --json <워크
 
 ## STEP 2.5 — 번역투 점검은 작성자 마감에서 한다 (2026-10-22)
 
-**루틴에 따로 윤문하는 단계는 없다** — Claude 윤문(humanize-korean)은 9/27 에 뺐고, 발행 뒤 로컬 러너의 codex 문체 수정은 2026-10-13 부터 수정안만 기록한다(`style_pass.APPLY`).
+**루틴에 따로 윤문하는 단계는 없다** — Claude 윤문(humanize-korean)은 9/27 에 뺐고, 발행 뒤 로컬 러너의 codex 문체 몫은 2026-11-06 부터 지적만 남긴다(`review_gate.STYLE_REWRITE`). 발행 전 흐름 편집은 STEP 2.6(기본 꺼짐)이다.
 
 2026-10-22 사용자 지시 「발간 직전에 번역투만 점검·수정」은 **작성자 지시문의 「번역투 점검 — 마감의 첫 단계」** 가 맡는다. 작성자가 `scripts/scan_translationese.py` 로 자리를 찾아 자기 문장을 고치고, 그 판이 STEP 2 게이트를 지난다. **오케스트레이터는 대신 고치지 않는다** — 근거와 문맥을 가진 작성자만 「에 대한」을 지워도 뜻이 그대로인지 안다. 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계와 거절된 세 안: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
+
+## STEP 2.6 — 문체 마감 (꺼져 있으면 건너뛴다, 2026-11-06)
+
+`python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 2.9 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=kr_brief_[DATE].html`·`M=kr` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 작성자 재호출(edits JSON) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
 
 ## STEP 2.9 — 판단 원장 승계
 
@@ -124,6 +128,7 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 1. 리포트 HTML을 `kr/posts/[YYYY-MM-DD].html`로 복사한다. **아무것도 주입하지 않는다** — 네비게이션과 SEO 메타(description·canonical·og)는 `scripts/render_post.py` 가 이미 한 번 넣었다. 다시 넣으면 head 태그가 두 벌이 된다(2026-09-23 US 발행본). 파일에 `post-shell-v1` 이 없으면 작성자가 셸을 건너뛴 것이다 — head 를 손으로 고치지 말고 렌더로 돌려보낸다.
 2. `kr/posts.json`에 `{date,title,headline}` 추가(같은 날짜는 REPLACE, 중복 금지). 유효 JSON 유지.
 3. `sitemap.xml`에 `https://fdo2a.github.io/kr/posts/DATE.html` url 추가(전체 재생성, US 항목 보존).
+**STEP 2.6 이 돌았으면**(`close: on`) 4 의 커밋 전에 `.claude/STYLE_CLOSE.md` B 의 verify·staged-scan 을, rebase 뒤·push 앞뒤로 같은 B 의 verify 를 한다.
 4. **커밋 직전에 가드를 한 번 더** — 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:kr/posts/[YYYY-MM-DD].html` 로 본다. 있으면(그 사이 다른 런이 발행) 아무것도 커밋하지 않고 끝낸다. 아니면 main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 거절되면 `git pull --rebase` 한다 — `kr/posts.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) 이 날짜 항목만 STEP 3 의 2·3번으로 다시 넣은 뒤 `git add` → `git rebase --continue`. 그다음 같은 확인을 하고 다시 push 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
 
 ## STEP 3.5 — KR 뉴스 글 (subagent: kr-news-writer) — 브리프를 발행한 **뒤에** (2026-11-06 부터)

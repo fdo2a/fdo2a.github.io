@@ -22,6 +22,7 @@ from review.tests.test_run_correct import invoke
 def _apply_on(monkeypatch):
     # 반영 경로의 계약 — 2026-10-13 부터 기본값은 반영 중지(test_run_style 이 본다).
     monkeypatch.setattr(style_pass, 'APPLY', True)
+    monkeypatch.setattr(gate, 'STYLE_REWRITE', True)   # 옛 고쳐 쓰기 경로(2026-11-06 부터 기본은 지적만)
 
 TODAY = date.fromisoformat(today_kst())
 WEEK = TODAY.isocalendar()

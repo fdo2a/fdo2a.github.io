@@ -774,6 +774,71 @@ STYLE_PROMPT = """
 """
 
 
+# 발행 뒤 codex 문체 몫은 **지적만**(2026-11-06 C안 — 문체 수정은 발행 전 작성자 마감 STEP 2.6 이 맡는다).
+# 고쳐 쓰는 옛 경로(STYLE_PROMPT·style_pass.apply)는 코드만 남긴다 — 다시 켜는 것은 이 상수를 바꾸는
+# 커밋이다. 지적은 사실 오류가 아니라서 정정(corrector)으로 보내지 않고 `reviews/style_findings/`(git
+# 제외)에 둔다 → 주간 `scripts/review/style_digest.py` → 사람.
+STYLE_REWRITE = False
+STYLE_FINDINGS = 'reviews/style_findings'
+STYLE_FINDINGS_HEAD = '=== 문체 지적 ==='
+STYLE_FINDINGS_MAX = 5
+STYLE_KINDS = ('판단 세기 흐림', '원문에 없는 관계', '끊긴 흐름', '번역투', '반복', '기타')
+STYLE_FINDINGS_PROMPT = """
+
+**문체 지적(지적만 — 고친 문장을 쓰지 않는다).** 위 검토와 별도로, 이 글을 PM 이 읽는 데스크 문서로
+보고 문체 문제를 **최대 {n}건** 고른다. 문장 표본은 `.claude/agents/STYLE_EXEMPLARS.md`(읽기만). 분류는
+{kinds} 중 하나. 「판단 세기 흐림」은 판단·전망의 세기가 근거보다 강하거나 흐린 곳, 「원문에 없는 관계」는
+근거가 말하지 않는 인과·대조를 문장이 만든 곳이다. 고친 문장·대안 문장은 쓰지 않는다 — 고칠 방향 한 줄만.
+답의 **맨 끝**에 `{head}` 한 줄을 쓰고, 그 아래 한 줄에 하나씩
+`- [분류] 「문장 인용 40자 이내」 — 문제 / 고칠 방향` 꼴로 적는다. 없으면 그 아래에 `없음` 한 줄.
+이 부분은 사실 오류 목록과 섞지 않는다.
+"""
+
+
+@dataclasses.dataclass
+class StyleFindings:
+    """발행 뒤 codex 문체 지적 — 공개판은 바뀌지 않는다."""
+    findings: tuple = ()      # [{kind, quote, note}]
+    path: str = None          # 기록 파일(git 제외)
+
+
+_FINDING_RE = re.compile(r'^\s*[-*]\s*\[([^\]]+)\]\s*(?:「(.*?)」)?\s*(?:[—\-:]\s*)?(.*)$')
+
+
+def split_style_findings(text):
+    """codex 답 → (사실 검토 부분, 문체 지적 목록). 표식이 없으면 지적 0, 답 그대로."""
+    text = text or ''
+    at = text.rfind(STYLE_FINDINGS_HEAD)
+    if at < 0:
+        return text, []
+    head, tail = text[:at].rstrip() + '\n', text[at + len(STYLE_FINDINGS_HEAD):]
+    out = []
+    for line in tail.splitlines():
+        m = _FINDING_RE.match(line)
+        if not m:
+            continue
+        kind = m.group(1).strip()
+        out.append({'kind': kind if kind in STYLE_KINDS else '기타',
+                    'quote': (m.group(2) or '').strip()[:80], 'note': m.group(3).strip()[:300]})
+        if len(out) >= STYLE_FINDINGS_MAX:
+            break
+    return head, out
+
+
+def _save_findings(root, item, findings):
+    folder = os.path.join(root, STYLE_FINDINGS)
+    os.makedirs(folder, exist_ok=True)
+    name = item.path.replace('/', '_').rsplit('.', 1)[0] + '_' + item.sha[:7] + '.json'
+    path = os.path.join(folder, name)
+    fd, tmp = tempfile.mkstemp(dir=folder)
+    with os.fdopen(fd, 'w', encoding='utf-8') as fh:
+        json.dump({'at': now(), 'path': item.path, 'sha': item.sha, 'findings': findings},
+                  fh, ensure_ascii=False, indent=1)
+    os.replace(tmp, path)
+    os.chmod(path, 0o600)
+    return path
+
+
 class RunnerLock:
     """tick 겹침 방지. **advisory lock 이어야 한다** — `mkdir` 락은 강제 종료나 전원
     차단 뒤 남아서, 이후 모든 tick 이 「이미 실행 중」으로 조용히 끝난다. 그러면 러너가
@@ -1041,10 +1106,15 @@ def review_one(root, commit, item, timeout, style=False):
                                    market=MARKET_NAME.get(item.section, item.section),
                                    datadir=data_dir)
             _drop_contested(os.path.join(work, item.path))
-        # 문체 기준은 발행 당시 것이 아니라 **지금** 것이다. 없어도 문체 수정은 돈다.
+        # 문체 기준은 발행 당시 것이 아니라 **지금** 것이다. 없어도 문체 몫은 돈다.
         if style and not snapshot(root, 'origin/main', STYLE_REFS, work):
             print(f'[러너] 문체 기준을 못 꺼냈다 — {", ".join(STYLE_REFS)}')
-        if style:
+        rewrite = style and STYLE_REWRITE
+        if style and not rewrite:
+            prompt = prompt + STYLE_FINDINGS_PROMPT.format(
+                n=STYLE_FINDINGS_MAX, kinds='·'.join(f'「{k}」' for k in STYLE_KINDS),
+                head=STYLE_FINDINGS_HEAD)
+        if rewrite:
             from review import style_pass
             # 고치는 판은 **지금 공개된 판**이다. 발행 커밋의 판과는 조판만 다를 수 있다.
             current = _blob_text(root, item.sha)
@@ -1062,7 +1132,7 @@ def review_one(root, commit, item, timeout, style=False):
                 '검토 부분은 지적만 목록으로 돌려줘.')
         try:
             out = subprocess.run(
-                [CODEX, 'exec', '--sandbox', 'workspace-write' if style else 'read-only',
+                [CODEX, 'exec', '--sandbox', 'workspace-write' if rewrite else 'read-only',
                  '--skip-git-repo-check', '-C', work, '-'],
                 input=prompt, capture_output=True, text=True, timeout=timeout)
         except FileNotFoundError:
@@ -1085,8 +1155,11 @@ def review_one(root, commit, item, timeout, style=False):
             else:
                 kind = UNKNOWN
             return None, why + (f' — {tail[0][:200]}' if tail else ''), kind, raw
-        if style:
+        if rewrite:
             return out.stdout, None, None, _apply_style(root, commit, item, work)
+        if style:
+            text, findings = split_style_findings(out.stdout)
+            return text, None, None, StyleFindings(findings=tuple(findings))
         return out.stdout, None, None, ''
     finally:
         shutil.rmtree(work, ignore_errors=True)
@@ -1229,6 +1302,19 @@ def _note_style(state, item, result):
     tag = (f'반영 {item.sha[:7]} → {result.sha[:7]}' + (f' (원문 유지 {kept}문단)' if kept else '')
            if result.sha else f'미반영 — {result.reason}')
     print(f'문체 — [{item.section}] {item.path}: {tag}')
+    return state
+
+
+def _note_findings(root, state, item, result):
+    """지적만 남긴다 — style_log 새 행 {ts, path, sha, findings, by_kind}. 문장은 git 제외 파일에만."""
+    from collections import Counter
+    path = _save_findings(root, item, list(result.findings))
+    log = [x for x in state.get('style_log', []) if isinstance(x, dict)]
+    by = Counter(f['kind'] for f in result.findings)
+    log.append({'ts': now(), 'path': item.path, 'sha': item.sha[:7], 'findings': len(result.findings),
+                'by_kind': dict(by)})
+    state['style_log'] = log[-STYLE_LOG_KEEP:]
+    print(f'문체 — [{item.section}] {item.path}: 지적 {len(result.findings)}건 → {path}')
     return state
 
 
@@ -1440,7 +1526,9 @@ def cmd_run(args):
             # 문체 수정이 **푸시까지 끝났을 때만** 초안이 새 판의 이름을 받는다. 그 전에
             # 새 이름을 붙이면 푸시가 실패한 날 공개판(옛 SHA)과 초안이 어긋나 정정이 못 집는다.
             target = item
-            if style and raw is not None and hasattr(raw, 'sha'):
+            if isinstance(raw, StyleFindings):
+                state = _note_findings(root, state, item, raw)
+            elif style and raw is not None and hasattr(raw, 'sha'):
                 state = _note_style(state, item, raw)
                 text = _style_note(raw) + text
                 if raw.sha:

@@ -29,7 +29,7 @@ pull하거나 수정하지 않는다. 아래 수동 절차의 main 수정·push 
 Codex 초안 존재만으로 완료 처리하지 않는다. 지적 없음도 Claude가 확인한 뒤 기록한다.
 
 **문체 수정(2026-09-27)**: 같은 Codex 호출이 `prose_in.txt` 의 문장을 고친다(루틴 STEP 2.5 대체, US·KR 일간).
-**2026-10-13 부터 반영 중지(`style_pass.APPLY=False`)** — 러너는 수정안을 `reviews/style_proposals/` 에 기록만 하고 공개판 SHA 를 그대로 둔다. 초안 앞에는 「윤문은 공개되지 않았다」 안내가 붙으니, 인용이 공개판과 다르다는 이유로 지적을 기각하지 말고 공개판의 같은 자리 문장으로 확인한다. 아래는 반영을 다시 켰을 때의 절차다. 러너가 되꽂기·STEP 2.5 게이트를 통과시켜 `Style-Pass: codex` 트레일러로 먼저 푸시하고, 초안은 그 새 판의 이름을
+**2026-11-06 부터 codex 문체 몫은 지적만**(`review_gate.STYLE_REWRITE=False`) — 러너는 수정안을 만들지 않고, 문체 지적은 초안에서 떼어 `reviews/style_findings/`(git 제외)에 둔다. 정정 단계는 문체 지적을 받지 않는다. 그 전 2026-10-13-11-05 의 판은 **반영 중지(`style_pass.APPLY=False`)** — 러너는 수정안을 `reviews/style_proposals/` 에 기록만 하고 공개판 SHA 를 그대로 둔다. 초안 앞에는 「윤문은 공개되지 않았다」 안내가 붙으니, 인용이 공개판과 다르다는 이유로 지적을 기각하지 말고 공개판의 같은 자리 문장으로 확인한다. 아래는 반영을 다시 켰을 때의 절차다. 러너가 되꽂기·STEP 2.5 게이트를 통과시켜 `Style-Pass: codex` 트레일러로 먼저 푸시하고, 초안은 그 새 판의 이름을
 받는다. 정정은 새 판을 원래 발행 커밋의 데이터로 본다. 원장은 문체 커밋이 건드리지 않는다.
 설계 `docs/superpowers/specs/2026-09-27-post-publish-codex-style-pass.md`.
 **주간·일본(2026-10-01)**도 같은 문체 수정을 받지만 Claude 자동 정정은 없다 — 그 초안(`<발행일>-weekly|kr_weekly|japan_posts-<sha7>.md`)은 아래 수동 절차로 처리한다. 설계 `docs/superpowers/specs/2026-10-01-period-codex-style-pass.md`.

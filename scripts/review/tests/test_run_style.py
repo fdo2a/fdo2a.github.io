@@ -19,8 +19,9 @@ import pytest  # noqa: E402
 def _apply_on(request, monkeypatch):
     """아래 반영 경로 테스트는 반영을 다시 켤 때의 계약이다. 2026-10-13 부터 기본값은
     반영 중지(APPLY=False) — 기본값 동작은 test_default_* 가 본다."""
-    if not request.node.name.startswith('test_default_'):
+    if not request.node.name.startswith(('test_default_', 'test_findings_only_')):
         monkeypatch.setattr(style_pass, 'APPLY', True)
+        monkeypatch.setattr(gate, 'STYLE_REWRITE', True)   # 옛 고쳐 쓰기 경로 — 코드는 남겼다(2026-11-06)
 
 
 def editing_codex(tmp_path, reply):
@@ -124,6 +125,7 @@ def test_default_runner_publishes_nothing_and_logs_the_proposal(repo, tmp_path, 
     """반영 중지(2026-10-13): codex 가 고쳐도 공개판은 원문, 정정 단계에는 「공개되지 않았다」,
     러너 로그에는 바뀌었을 문단과 기록 경로가 남는다."""
     assert style_pass.APPLY is False
+    monkeypatch.setattr(gate, 'STYLE_REWRITE', True)
     seed_refs(repo)
     monkeypatch.setattr(style_pass, 'gate_commands', lambda *a: [])
     monkeypatch.setattr(gate, 'CODEX', editing_codex(tmp_path, '검토 판본: 윤문 후\\n1. 지적'))
@@ -136,3 +138,70 @@ def test_default_runner_publishes_nothing_and_logs_the_proposal(repo, tmp_path, 
     mine = [x for x in log if x['path'] == POST]
     assert mine and mine[-1]['to'] == '' and mine[-1]['proposed'] and mine[-1]['proposal']
     assert os.path.isfile(mine[-1]['proposal'])
+
+
+# ---- 2026-11-06 C안: 발행 뒤 codex 문체 몫은 지적만
+
+
+def findings_codex(tmp_path, reply):
+    path = tmp_path / 'codex'
+    path.write_text(
+        '#!/bin/sh\n'
+        'echo "$@" | grep -q read-only || { echo "읽기 전용이 아니다" >&2; exit 5; }\n'
+        'cd "$(echo "$@" | tr " " "\\n" | grep -A1 -x -- -C | tail -1)" || exit 9\n'
+        'test ! -f prose_in.txt || { echo "고쳐 쓰기 파일이 준비됐다" >&2; exit 7; }\n'
+        f'printf "{reply}"\n')
+    path.chmod(0o755)
+    return str(path)
+
+
+def test_findings_only_is_the_default():
+    assert gate.STYLE_REWRITE is False
+
+
+def test_findings_only_publishes_nothing_and_keeps_findings_out_of_the_draft(repo, tmp_path, monkeypatch):
+    seed_refs(repo)
+    called = []
+    monkeypatch.setattr(style_pass, 'apply', lambda *a, **k: called.append(1))
+    reply = ('1. 사실 지적\\n%s\\n- [끊긴 흐름] 「유가가 올랐다」 — 짧은 문장이 이어진다 / 이유와 잇는다\\n'
+             '- [이상한분류] 「x」 — y\\n' % gate.STYLE_FINDINGS_HEAD)
+    monkeypatch.setattr(gate, 'CODEX', findings_codex(tmp_path, reply))
+    before = remote_blob(repo, POST)
+    seen = []
+    invoke(repo, monkeypatch, lambda root, item, draft, *a: seen.append((item.path, item.sha, draft)) or ('checked', None))
+    assert remote_blob(repo, POST) == before and not called
+    mine = [d for p, sha, d in seen if p == POST]
+    assert mine and all(gate.STYLE_FINDINGS_HEAD not in d and '사실 지적' in d and '끊긴 흐름' not in d
+                        for d in mine)
+    assert all(sha == before for p, sha, _ in seen if p == POST)
+    log = json.load(open(os.path.join(repo, 'reviews/runner.json')))['style_log']
+    row = [x for x in log if x['path'] == POST][-1]
+    assert set(row) == {'ts', 'path', 'sha', 'findings', 'by_kind'}
+    assert row['findings'] == 2 and row['by_kind'] == {'끊긴 흐름': 1, '기타': 1}
+    files = os.listdir(os.path.join(repo, gate.STYLE_FINDINGS))
+    assert files
+    rec = json.load(open(os.path.join(repo, gate.STYLE_FINDINGS, sorted(files)[0])))
+    assert rec['findings'][0]['quote'] == '유가가 올랐다'
+    assert not os.path.isdir(os.path.join(repo, style_pass.PROPOSALS))
+
+
+def test_findings_only_without_marker_counts_zero(repo, tmp_path, monkeypatch):
+    seed_refs(repo)
+    monkeypatch.setattr(gate, 'CODEX', findings_codex(tmp_path, '지적 없음'))
+    seen = []
+    invoke(repo, monkeypatch, lambda root, item, draft, *a: seen.append(draft) or ('checked', None))
+    assert seen and all(d.strip() == '지적 없음' for d in seen)
+    log = json.load(open(os.path.join(repo, 'reviews/runner.json')))['style_log']
+    assert all(x['findings'] == 0 for x in log)
+
+
+def test_findings_only_caps_at_five():
+    text = gate.STYLE_FINDINGS_HEAD + '\n' + '\n'.join('- [반복] 「a%d」 — b' % i for i in range(9))
+    _, f = gate.split_style_findings(text)
+    assert len(f) == gate.STYLE_FINDINGS_MAX
+
+
+def test_findings_dir_is_git_ignored():
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    with open(os.path.join(root, '.gitignore'), encoding='utf-8') as fh:
+        assert 'reviews/style_findings/' in fh.read().split()

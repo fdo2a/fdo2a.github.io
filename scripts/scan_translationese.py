@@ -6,6 +6,13 @@
 걸린 자리마다 그 문장과 고칠 꼴의 귀띔을 찍는다. **글은 바꾸지 않는다** — 작성자가 자기 초안
 (`.body.html`)에서 그 문장을 직접 고치고 다시 조립한다. 마지막 줄은 늘 `translationese: flagged N`
 이고 종료 코드는 늘 0 이다 — 게이트가 아니다(문체 경고는 발행을 막지 않는다).
+
+  python3 scripts/scan_translationese.py --flow <pre.html> --out <$CLOSE_DIR/candidates.json>
+        [--market us|kr] [--date YYYY-MM-DD]
+
+STEP 2.6 문체 마감의 흐름 후보(`scripts/close/flow.py`)를 JSON 으로 쓴다. 이 모드만 **예외·잘못된
+인자·레포 안 출력 경로에서 종료 2** 다 — 오케스트레이터가 편집 0 으로 넘어간다. 마지막 줄
+`flow: candidates N`.
 """
 
 import os
@@ -72,8 +79,39 @@ def _say(line):
                 pass
 
 
+def flow_main(argv):
+    """--flow 모드 → 종료 코드(0 정상, 2 실패)."""
+    import argparse
+    import json
+    try:
+        ap = argparse.ArgumentParser(prog='scan_translationese.py --flow')
+        ap.add_argument('html')
+        ap.add_argument('--out', required=True)
+        ap.add_argument('--market', choices=('us', 'kr'), default='us')
+        ap.add_argument('--date', default='2099-12-31')
+        ap.add_argument('--root', default=None, help='연구 원장을 읽을 레포 루트(기본: 이 스크립트의 레포)')
+        try:
+            args = ap.parse_args(argv)
+        except SystemExit:
+            return 2
+        from close import flow, locks, paths
+        paths.check_out(args.out)
+        with open(args.html, 'rb') as fh:
+            html = fh.read().decode('utf-8')
+        ledger = locks.Ledger.load(args.root or paths.REPO, args.market, args.date)
+        out = flow.scan(html, ledger)
+        paths.write_atomic(args.out, json.dumps(out, ensure_ascii=False, indent=1))
+        _say('flow: candidates %d' % len(out['items']))
+        return 0
+    except Exception as exc:
+        _say('flow: failed (%s: %s)' % (type(exc).__name__, exc))
+        return 2
+
+
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ['--flow']:
+        return flow_main(argv[1:])
     if len(argv) != 1:
         _say(__doc__)
         _say('translationese: flagged 0 (사용법)')

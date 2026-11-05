@@ -142,9 +142,13 @@ python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadi
 
 ## STEP 2.5 — 번역투 점검은 작성자 마감에서 한다 (2026-10-22)
 
-**루틴에 따로 윤문하는 단계는 없다** — Claude 윤문(humanize-korean)은 9/27 에 뺐고, 발행 뒤 로컬 러너의 codex 문체 수정은 2026-10-13 부터 수정안만 기록한다(`style_pass.APPLY`).
+**루틴에 따로 윤문하는 단계는 없다** — Claude 윤문(humanize-korean)은 9/27 에 뺐고, 발행 뒤 로컬 러너의 codex 문체 몫은 2026-11-06 부터 지적만 남긴다(`review_gate.STYLE_REWRITE`). 발행 전 흐름 편집은 STEP 2.6(기본 꺼짐)이다.
 
 2026-10-22 사용자 지시 「발간 직전에 번역투만 점검·수정」은 **작성자 지시문의 「번역투 점검 — 마감의 첫 단계」** 가 맡는다. 작성자가 `scripts/scan_translationese.py` 로 자리를 찾아 자기 문장을 고치고, 그 판이 STEP 2 게이트를 지난다. **오케스트레이터는 대신 고치지 않는다** — 근거와 문맥을 가진 작성자만 「에 대한」을 지워도 뜻이 그대로인지 안다. 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계와 거절된 세 안: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
+
+## STEP 2.6 — 문체 마감 (꺼져 있으면 건너뛴다, 2026-11-06)
+
+`python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 작성자 재호출(edits JSON) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
 
 ## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 
@@ -157,6 +161,7 @@ Site base URL: https://fdo2a.github.io/
 3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
 4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
    `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
+   **STEP 2.6 이 돌았으면**(`close: on`) 3·4 뒤 커밋 전에 `.claude/STYLE_CLOSE.md` B 의 verify·staged-scan 을, push 앞뒤로 같은 B 의 verify 를 한다.
 5. Commit and push to main — **뉴스·산업 브리프를 쓰기 전에** 이 커밋부터 올린다:
    git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.

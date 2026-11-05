@@ -118,7 +118,7 @@ python3 scripts/check_style.py $(pwd)/weekly_<KEY>.html
 
 **`check_weight.py`는 돌리지 않는다.** (US 인사이트의 무게중심은 `--insight` 가 대신 본다 — 이례적 움직임 언급.) 그 게이트는 일간의 섹션 제목(「주식」·「채권」·「매크로」)을 검사하는데, 총정리는 5섹션 구조라 그 잣대가 맞지 않는다. 기간용 무게중심 판정은 아직 없다(2026-08-30 codex 검토에서 확인).
 
-**STEP 4-b — 윤문은 루틴에서 하지 않는다 (2026-10-01), 번역투는 작성자가 마감에서 고친다 (2026-10-22).** Claude 윤문(humanize-korean)은 부르지 않고, 발행 뒤 로컬 러너의 codex 문체 수정은 **2026-10-13 부터 수정안만 기록한다**(`style_pass.APPLY`, 러너 동작 `docs/superpowers/specs/2026-10-01-period-codex-style-pass.md`). 번역투는 writer 지시문의 「번역투 점검 — 마감의 첫 단계」가 고친다(`scripts/scan_translationese.py`) — 오케스트레이터는 대신 고치지 않는다. 위 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
+**STEP 4-b — 윤문은 루틴에서 하지 않는다 (2026-10-01), 번역투는 작성자가 마감에서 고친다 (2026-10-22).** Claude 윤문(humanize-korean)은 부르지 않고, 발행 뒤 로컬 러너의 codex 문체 몫은 **2026-11-06 부터 지적만 남긴다**(`review_gate.STYLE_REWRITE`, 옛 수정 경로 러너 동작 `docs/superpowers/specs/2026-10-01-period-codex-style-pass.md`). 번역투는 writer 지시문의 「번역투 점검 — 마감의 첫 단계」가 고친다(`scripts/scan_translationese.py`) — 오케스트레이터는 대신 고치지 않는다. 위 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
 
 통과하면 `weekly/<KEY>.html`로 옮긴다.
 
