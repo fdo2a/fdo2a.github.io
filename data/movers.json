@@ -14,69 +14,75 @@
       "members": [
         {
           "name": "Nvidia (NVDA)",
-          "change_pct": -8.65,
-          "close": 182.82,
-          "value": 33791712475.08
+          "change_pct": -9.26,
+          "close": 181.6,
+          "value": 54773800495.33
         },
         {
           "name": "Micron Technology (MU)",
-          "change_pct": -14.66,
-          "close": 678.64,
-          "value": 33983791818.71
+          "change_pct": -17.46,
+          "close": 656.39,
+          "value": 49976538002.51
         },
         {
           "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -15.39,
-          "close": 413.58,
-          "value": 18606154590.55
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": -7.52,
-          "close": 53.89,
-          "value": 8561720086.37
+          "change_pct": -17.26,
+          "close": 404.4,
+          "value": 28356855540.42
         },
         {
           "name": "Broadcom (AVGO)",
-          "change_pct": -8.63,
-          "close": 297.4,
-          "value": 8487026821.43
+          "change_pct": -10.43,
+          "close": 291.53,
+          "value": 15559572037.74
+        },
+        {
+          "name": "Intel (INTC)",
+          "change_pct": -10.33,
+          "close": 52.25,
+          "value": 13882186766.25
         },
         {
           "name": "Marvell Technology (MRVL)",
-          "change_pct": -14.27,
-          "close": 137.0,
-          "value": 5419963038.0
+          "change_pct": -16.43,
+          "close": 133.55,
+          "value": 8770416071.06
         },
         {
           "name": "Qualcomm (QCOM)",
-          "change_pct": -9.97,
-          "close": 155.93,
-          "value": 3121229807.9
+          "change_pct": -9.49,
+          "close": 156.75,
+          "value": 6266203515.0
         },
         {
           "name": "Texas Instruments (TXN)",
-          "change_pct": -7.35,
-          "close": 288.6,
-          "value": 2476138701.77
+          "change_pct": -10.7,
+          "close": 278.15,
+          "value": 5274466544.76
         },
         {
           "name": "Analog Devices (ADI)",
-          "change_pct": -7.48,
-          "close": 375.87,
-          "value": 1626928842.32
+          "change_pct": -11.13,
+          "close": 361.01,
+          "value": 4718331874.72
+        },
+        {
+          "name": "NXP Semiconductors (NXPI)",
+          "change_pct": -7.77,
+          "close": 244.43,
+          "value": 3033443182.92
         },
         {
           "name": "Monolithic Power Systems (MPWR)",
-          "change_pct": -7.44,
-          "close": 1167.24,
-          "value": 1225842441.18
+          "change_pct": -10.28,
+          "close": 1131.43,
+          "value": 2972667277.34
         },
         {
           "name": "Microchip Technology (MCHP)",
-          "change_pct": -10.01,
-          "close": 67.79,
-          "value": 1201616445.43
+          "change_pct": -13.92,
+          "close": 64.85,
+          "value": 2830054711.61
         }
       ]
     },
@@ -91,9 +97,9 @@
       "members": [
         {
           "name": "Tesla, Inc. (TSLA)",
-          "change_pct": -11.66,
-          "close": 340.29,
-          "value": 17661692549.86
+          "change_pct": -10.77,
+          "close": 343.69,
+          "value": 26935936137.88
         }
       ]
     },
@@ -108,9 +114,9 @@
       "members": [
         {
           "name": "AppLovin (APP)",
-          "change_pct": 28.86,
-          "close": 350.19,
-          "value": 5921014312.23
+          "change_pct": 31.04,
+          "close": 356.1,
+          "value": 7877969810.43
         }
       ]
     },
@@ -124,9 +130,9 @@
       "members": [
         {
           "name": "Costco (COST)",
-          "change_pct": 1.91,
-          "close": 1066.49,
-          "value": 2641575192.44
+          "change_pct": 1.83,
+          "close": 1065.59,
+          "value": 4811948544.05
         }
       ]
     },
@@ -140,27 +146,27 @@
       "members": [
         {
           "name": "Sandisk (SNDK)",
-          "change_pct": -19.43,
-          "close": 835.8,
-          "value": 17601308355.93
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -12.79,
-          "close": 324.73,
-          "value": 2961250135.53
-        },
-        {
-          "name": "Seagate Technology (STX)",
-          "change_pct": -14.91,
-          "close": 474.01,
-          "value": 2901501065.59
+          "change_pct": -22.26,
+          "close": 806.43,
+          "value": 24111545509.75
         },
         {
           "name": "Western Digital (WDC)",
-          "change_pct": -15.47,
-          "close": 273.73,
-          "value": 2734782067.49
+          "change_pct": -17.35,
+          "close": 267.63,
+          "value": 4791757870.98
+        },
+        {
+          "name": "Seagate Technology (STX)",
+          "change_pct": -16.25,
+          "close": 466.53,
+          "value": 4474186906.85
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -14.89,
+          "close": 316.91,
+          "value": 4465742704.07
         }
       ]
     }
