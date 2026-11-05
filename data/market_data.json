@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-06 07:34 KST",
+  "generated": "2026-11-06 07:58 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-05",
   "indices": {
@@ -197,10 +197,10 @@
     },
     "Gold": {
       "last": 4108.89990234375,
-      "chg": 34.5,
-      "pct": 0.8467504620779609,
+      "chg": 34.599853515625,
+      "pct": 0.8492220283475849,
       "date": "2026-11-05",
-      "prev": 4074.39990234375,
+      "prev": 4074.300048828125,
       "prev_date": "2026-11-04",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -695,9 +695,9 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 0.847,
+        "change": 0.849,
         "unit": "%",
-        "multiple": 0.62,
+        "multiple": 0.63,
         "band": "보통"
       },
       "10Y": {
@@ -1171,11 +1171,11 @@
           "bars": 33
         },
         "NQ": {
-          "high": 28649.75,
-          "high_t": "16:30",
+          "high": 28668.5,
+          "high_t": "18:00",
           "low": 28167.75,
           "low_t": "00:30",
-          "range_pct": 1.71,
+          "range_pct": 1.78,
           "bars": 33
         }
       },
