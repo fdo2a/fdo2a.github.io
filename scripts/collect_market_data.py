@@ -919,7 +919,7 @@ def fund_board_step(closes, hist_dates, data, report_date, outdir):
         holidays = load_holidays(os.path.join(outdir, 'market_holidays.json'))
         from fund import pipeline as fund_pipeline
         fund_pipeline.run(closes, hist_dates, data, liq_series, report_date, data['generated'],
-                          outdir, holidays)
+                          outdir, holidays, handle_errors=False)
         return holidays
     except Exception as e:
         print(f'fund board failed: {e}', file=sys.stderr)
@@ -1052,11 +1052,9 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
     worker.start()
     worker.join(max(0.0, deadline - time.monotonic()))
     if worker.is_alive():
-        try:                                      # unblock the worker; it is a daemon either way
-            if st['resp'] is not None:
-                st['resp'].close()
-        except Exception:
-            pass
+        # 응답을 닫지 않는다: close() 가 작업 스레드의 읽기 잠금을 기다려 마감을 넘기고,
+        # 읽기와 경합해 traceback 을 낸다(codex impl review 2 #1). 작업 스레드는 daemon 이라
+        # 프로세스 종료를 막지 않는다.
         print(f"000 {st['size']} {time.monotonic() - t0:.3f} (max-time {max_time}s exceeded)")
         return 1
     elapsed = time.monotonic() - t0

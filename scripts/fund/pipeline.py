@@ -32,7 +32,11 @@ def board_inputs(closes, dates):
             {t: d for t, d in (dates or {}).items() if t not in FACTOR_ONLY})
 
 
-def run(closes, hist_dates, data, liq_series, report_date, generated_at, outdir, holidays):
+def run(closes, hist_dates, data, liq_series, report_date, generated_at, outdir, holidays,
+        handle_errors=True):
+    """handle_errors=False: 예외를 그대로 올린다 — collect_market_data.fund_board_step 의
+    바깥 except 하나만 실패 JSON 을 쓰게 해 ed17327 인라인과 쓰기 횟수·기록 원인을 맞춘다
+    (codex impl review 2 #2)."""
     try:
         from fund import core, render
         b_closes, b_dates = board_inputs(closes, hist_dates)
@@ -46,6 +50,8 @@ def run(closes, hist_dates, data, liq_series, report_date, generated_at, outdir,
               + (f" · missing {board['missing']}" if board['missing'] else ''))
         return board
     except Exception as e:
+        if not handle_errors:
+            raise
         print(f'fund board failed: {e}', file=sys.stderr)
         failed = publish.failed(report_date, generated_at, e, universe=True)
         publish.write(outdir, 'fund_board.json', 'fund_board.html', failed, None)

@@ -187,3 +187,39 @@ def test_codex_read_returning_late_is_cut_at_max_time(monkeypatch, capsys):
     t0 = time.monotonic()
     assert cmd.ff_probe('http://example.invalid/x.zip', max_time=0.1) == 1
     assert time.monotonic() - t0 < 0.1 + 0.3
+
+
+def test_close_waiting_on_read_lock_does_not_extend_deadline(monkeypatch, capsys):
+    """codex impl review 2 #1: close() that waits on the reader's lock must not hold the
+    probe past max_time, and the worker must not print a traceback."""
+    import threading
+    import time
+    import urllib.request
+
+    lock = threading.Lock()
+
+    class Resp:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self, n=-1):
+            with lock:
+                time.sleep(0.7)
+                return b'x'
+        read1 = read
+
+        def close(self):
+            with lock:
+                pass
+
+    monkeypatch.setattr(urllib.request, 'urlopen', lambda *a, **k: Resp())
+    t0 = time.monotonic()
+    assert cmd.ff_probe('http://example.invalid/x.zip', max_time=0.1) == 1
+    assert time.monotonic() - t0 < 0.1 + 0.3
+    err = capsys.readouterr().err
+    assert 'Traceback' not in err

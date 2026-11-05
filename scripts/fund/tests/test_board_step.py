@@ -177,3 +177,35 @@ def test_leg_list_import_error_falls_back_to_pre_trial_set(env, monkeypatch, cap
     a, b = both(env, closes, dates, desk=True)
     assert a == b and 'fund_board.html' in b
     assert 'fund factors trial failed' in capsys.readouterr().err
+
+
+def test_failed_write_error_propagates_like_original(env, monkeypatch):
+    """codex impl review 2 #2: build fails, then the failure-JSON write raises once.
+    ed17327 writes once and lets the write error escape; the new step must do the same
+    (no second write that would record the write error instead of the build error)."""
+    from fund import publish
+    real = publish.write
+
+    def boom(*a, **k):
+        raise RuntimeError('boom')
+    monkeypatch.setattr(core, 'build', boom)
+    closes, dates = hist(BASE)
+    rd = dates['QQQ'][-1]
+    ref, new = env
+    for target, d in ((original_block, ref), (cmd.fund_board_step, new)):
+        calls = []
+
+        def flaky(*a, **k):
+            calls.append(1)
+            if len(calls) == 1:
+                raise OSError('disk')
+            return real(*a, **k)
+        monkeypatch.setattr(publish, 'write', flaky)
+        if target is original_block:
+            with pytest.raises(OSError):
+                target(closes, dates, DATA, rd, str(d))
+        else:
+            with pytest.raises(OSError):
+                target(closes, dates, DATA, rd, str(d))
+        assert len(calls) == 1
+    assert files(ref) == files(new)
