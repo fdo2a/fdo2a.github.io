@@ -63,6 +63,30 @@ def test_production_sids_cover_yields_dashboard_and_yield_drivers():
     from scripts.us.yield_drivers import ROWS
     for row in ROWS:
         assert row[1] in sids
+    # FF3 시운전의 무위험 금리 — ECON·yield_drivers 로는 들어오지 않아 목록에 직접 적었다
+    assert 'DGS1MO' in sids
+
+
+def test_fund_fred_inputs_fetches_dgs1mo(monkeypatch):
+    """보드의 유동성 넷과 요인 시운전의 DGS1MO 를 같은 헬퍼가 받는다."""
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    stub = cmd.set_fred_client(Stub())
+    out = cmd.fund_fred_inputs()
+    from fund.liquidity import SERIES as LIQ_SERIES
+    assert 'DGS1MO' in stub.calls
+    assert set(LIQ_SERIES) <= set(stub.calls) and len(LIQ_SERIES) == 4
+    assert set(out['liq']) == set(LIQ_SERIES)
+    assert out['rf'] == [('2026-09-01', 1.0)]
+
+
+def test_fund_fred_inputs_never_raises(monkeypatch):
+    class Boom(Stub):
+        def series(self, sid):
+            self.calls.append(sid)
+            raise RuntimeError('down')
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    cmd.set_fred_client(Boom())
+    assert cmd.fund_fred_inputs() == {'liq': {}, 'rf': []}
 
 
 def test_fred_check_refuses_without_a_key_and_writes_nothing(monkeypatch, tmp_path):

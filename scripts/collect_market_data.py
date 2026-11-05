@@ -222,6 +222,27 @@ def apply_cut_to_histories(closes, dates, cut):
 TAPE_TICKERS = ('^GSPC', '^IXIC', '^RUT')
 
 
+def base_history_tickers():
+    """The history download set before the FF3 trial — the board's inputs come from it."""
+    from us.price_context import HISTORY_TICKERS as PC_TICKERS
+    from us.scorecard import HISTORY_TICKERS as SCORECARD_TICKERS
+    # 「오늘의 장」의 글로벌 지수·참여도 다리도 여기서 함께 받는다. GROUPS에 넣으면
+    # completeness()가 코어로 취급해 도쿄·홍콩 휴장일에 발행이 멈춘다.
+    from us.session import HISTORY_TICKERS as SESSION_TICKERS
+    # 트렌드 유닛 점검판의 참조 ETF 도 같은 다운로드에 얹는다(티커별 요청은 늘어난다).
+    from fund.universe import tickers as fund_tickers
+    return (set(SCORECARD_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
+            | {t for _, t in SECTORS} | set(fund_tickers()))
+
+
+def history_tickers():
+    """Download set = pre-trial set ∪ the factor legs. The legs only the factor model
+    reads (`fund.factors.FACTOR_ONLY`) are filtered out again before the board sees them
+    (`fund.pipeline.board_inputs`)."""
+    from fund.factors import FACTOR_TICKERS
+    return sorted(base_history_tickers() | set(FACTOR_TICKERS))
+
+
 def collect_histories():
     """Close-price histories for the scorecard and the price-context readings.
 
@@ -238,15 +259,7 @@ def collect_histories():
     on stale prices.
     """
     import yfinance as yf
-    from us.price_context import HISTORY_TICKERS as PC_TICKERS
-    from us.scorecard import HISTORY_TICKERS as SCORECARD_TICKERS
-    # 「오늘의 장」의 글로벌 지수·참여도 다리도 여기서 함께 받는다. GROUPS에 넣으면
-    # completeness()가 코어로 취급해 도쿄·홍콩 휴장일에 발행이 멈춘다.
-    from us.session import HISTORY_TICKERS as SESSION_TICKERS
-    # 트렌드 유닛 점검판의 참조 ETF 도 같은 다운로드에 얹는다(티커별 요청은 늘어난다).
-    from fund.universe import tickers as fund_tickers
-    tickers = sorted(set(SCORECARD_TICKERS) | set(PC_TICKERS) | set(SESSION_TICKERS)
-                     | {t for _, t in SECTORS} | set(fund_tickers()))
+    tickers = history_tickers()
 
     def dl():
         df = yf.download(tickers, period='3y', interval='1d', group_by='ticker',
@@ -849,8 +862,10 @@ def completeness(data, intraday, naver_stale=False, report_date=None):
 
 
 def production_sids():
-    """한 실행이 실제로 받는 FRED 시리즈 전부 — 수익률 4 + 대시보드 22 + 금리 분해."""
-    sids = ['DGS2', 'DGS5', 'DGS10', 'DGS30'] + [row[2] for row in ECON]
+    """한 실행이 실제로 받는 FRED 시리즈 전부 — 수익률 4 + DGS1MO(펀드 요인 시운전) + 대시보드 22 + 금리 분해."""
+    # DGS1MO: the FF3 trial's risk-free leg (fund_fred_inputs). ECON and the yield drivers
+    # do not carry it, so it is named here or --fred-check would never compare it.
+    sids = ['DGS2', 'DGS5', 'DGS10', 'DGS30', 'DGS1MO'] + [row[2] for row in ECON]
     try:
         from us.yield_drivers import ROWS as YD_ROWS
         sids += [r[1] for r in YD_ROWS]
@@ -861,6 +876,29 @@ def production_sids():
         if sid not in out:
             out.append(sid)
     return out
+
+
+def fund_fred_inputs():
+    """FRED legs of the fund desk: the board's liquidity series and the FF3 trial's
+    risk-free rate. Each series is fetched on its own and a failure only drops it —
+    this never raises, as the loop it replaces sat inside the board's try."""
+    from fund.factors import RF_SERIES
+    from fund.liquidity import SERIES as LIQ_SERIES
+    liq = {}
+    for sid in LIQ_SERIES:
+        try:
+            got = retry(lambda sid=sid: fred_series(sid), attempts=2)
+            if got:
+                liq[sid] = got
+        except Exception as e:
+            print(f'  liquidity {sid} failed: {e}', file=sys.stderr)
+        time.sleep(0.3)
+    rf = []
+    try:
+        rf = retry(lambda: fred_series(RF_SERIES), attempts=2) or []
+    except Exception as e:
+        print(f'  risk-free {RF_SERIES} failed: {e}', file=sys.stderr)
+    return {'liq': liq, 'rf': rf}
 
 
 def _diff_series(a, b):
@@ -1227,33 +1265,15 @@ def main():
     # 트렌드 유닛 점검판 — 비-코어. JSON 은 실패해도 쓰고(unavailable), HTML 은 그릴 수
     # 있을 때만 남긴다. 어제 블록이 오늘 것으로 읽히는 길을 막는다.
     print('building fund board...')
-    from fund import publish as fund_publish
     try:
-        from fund import core as fund_core, render as fund_render
-        from fund.liquidity import SERIES as LIQ_SERIES
-        liq_series = {}
-        for sid in LIQ_SERIES:
-            try:
-                got = retry(lambda sid=sid: fred_series(sid), attempts=2)
-                if got:
-                    liq_series[sid] = got
-            except Exception as e:
-                print(f'  liquidity {sid} failed: {e}', file=sys.stderr)
-            time.sleep(0.3)
-        from fund.calendar import load as load_holidays
-        board = fund_core.build(closes, hist_dates, data, liq_series, report_date,
-                                data['generated'],
-                                holidays=load_holidays(os.path.join(args.outdir, 'market_holidays.json')))
-        fund_publish.write(args.outdir, 'fund_board.json', 'fund_board.html', board,
-                           fund_render.board_html(board))
-        mr = board.get('market_regime') or {}
-        print(f"  status {board['status']} · 국면 {mr.get('name')} · "
-              f"순위 {(board.get('rank_basis') or {}).get('n')}종"
-              + (f" · missing {board['missing']}" if board['missing'] else ''))
+        fund_in = fund_fred_inputs()
     except Exception as e:
-        print(f'fund board failed: {e}', file=sys.stderr)
-        fund_publish.write(args.outdir, 'fund_board.json', 'fund_board.html',
-                           fund_publish.failed(report_date, data['generated'], e, universe=True), None)
+        print(f'  fund FRED inputs failed: {e}', file=sys.stderr)
+        fund_in = {'liq': {}, 'rf': []}
+    fund_holidays = load_holidays(os.path.join(args.outdir, 'market_holidays.json'))
+    from fund import pipeline as fund_pipeline
+    fund_pipeline.run(closes, hist_dates, data, fund_in['liq'], report_date, data['generated'],
+                      args.outdir, fund_holidays)
 
     print('scoring the macro record...')
     try:
