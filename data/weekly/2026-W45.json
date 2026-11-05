@@ -216,8 +216,8 @@
   "yields": {
     "2Y": {
       "start": 4.581,
-      "end": 4.58,
-      "chg_bp": -0.1
+      "end": 4.477,
+      "chg_bp": -10.4
     },
     "5Y": {
       "start": 4.722,
@@ -394,8 +394,8 @@
   "curve": {
     "spread_2s10s_bp": {
       "start": 34.8,
-      "end": 25.7,
-      "chg": -9.1
+      "end": 36.0,
+      "chg": 1.2
     },
     "spread_5s30s_bp": {
       "start": 58.7,
