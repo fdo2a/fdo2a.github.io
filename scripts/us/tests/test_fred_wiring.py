@@ -90,7 +90,7 @@ def test_board_step_fetches_the_four_liquidity_series(monkeypatch, tmp_path):
     stub = cmd.set_fred_client(Stub())
     from fund import pipeline
     seen = {}
-    monkeypatch.setattr(pipeline, 'run', lambda c, d, data, liq, *a: seen.setdefault('liq', liq))
+    monkeypatch.setattr(pipeline, 'run', lambda c, d, data, liq, *a, **k: seen.setdefault('liq', liq))
     cmd.fund_board_step({}, {}, {'generated': 't'}, '2026-10-05', str(tmp_path))
     from fund.liquidity import SERIES as LIQ_SERIES
     assert stub.calls == list(LIQ_SERIES) and set(seen['liq']) == set(LIQ_SERIES)
