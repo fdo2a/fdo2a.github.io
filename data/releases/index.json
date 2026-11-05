@@ -1,21 +1,13 @@
 {
-  "report_date": "2026-11-03",
+  "report_date": "2026-11-05",
   "releases": [
     {
-      "key": "durable-goods",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "key": "claims",
+      "url": "https://www.dol.gov/ui/data.pdf",
       "ok": true,
       "note": "impersonate=safari",
-      "chars": 24879,
-      "path": "releases/durable-goods.txt"
-    },
-    {
-      "key": "jolts",
-      "url": "https://www.bls.gov/news.release/jolts.nr0.htm",
-      "ok": true,
-      "note": "impersonate=safari",
-      "chars": 5834,
-      "path": "releases/jolts.txt"
+      "chars": 20115,
+      "path": "releases/claims.txt"
     }
   ]
 }

@@ -1,19 +1,19 @@
 {
-  "generated": "2026-11-05 08:04 KST",
-  "report_date": "2026-11-04",
+  "generated": "2026-11-06 03:30 KST",
+  "report_date": "2026-11-05",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
-  "growth_score": 0.016,
+  "growth_score": -0.017,
   "inflation_score": 0.003,
   "growth_diffusion": 0.5,
   "inflation_diffusion": 0.375,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.173,
+      "score": 0.076,
       "direction": "보합",
       "strength": "미미",
-      "breadth_ko": "일곱 중 넷이 개선, 둘이 악화, 하나는 보합",
+      "breadth_ko": "일곱 중 셋이 개선, 둘이 악화, 둘은 보합",
       "support": 0,
       "improving": 4,
       "total": 7,
@@ -23,16 +23,8 @@
           "name": "Initial Claims 4-wk MA",
           "direction": "개선",
           "strength": "완만",
-          "actual": 196750.0,
-          "previous": 198000.0
-        },
-        {
-          "label_ko": "계속 실업수당 청구",
-          "name": "Continuing Jobless Claims",
-          "direction": "개선",
-          "strength": "완만",
-          "actual": 1701000.0,
-          "previous": 1722000.0
+          "actual": 194750.0,
+          "previous": 197000.0
         },
         {
           "label_ko": "실업률",
@@ -41,6 +33,14 @@
           "strength": "미미",
           "actual": 4.2,
           "previous": 4.1
+        },
+        {
+          "label_ko": "비농업 고용",
+          "name": "Nonfarm Payrolls (chg)",
+          "direction": "악화",
+          "strength": "미미",
+          "actual": 29.0,
+          "previous": 133.0
         }
       ]
     },
@@ -146,7 +146,7 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.173,
+    "Labor": 0.076,
     "Activity": -0.376,
     "Consumption": 0.249,
     "Inflation": 0.003
@@ -183,20 +183,20 @@
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.389,
-      "signed_z": 0.389,
-      "actual": 194000.0,
+      "momentum_z": -0.377,
+      "signed_z": 0.377,
+      "actual": 189000.0,
       "previous": 195000.0,
-      "ref_period": "2026-10-24",
+      "ref_period": "2026-10-31",
       "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 200500.0,
-        "recent_avg": 196750.0
+        "prior_avg": 198250.0,
+        "recent_avg": 194750.0
       },
-      "trend_cell_ko": "개선(미미) · 4주 평균 200K → 197K",
-      "is_new": false
+      "trend_cell_ko": "개선(미미) · 4주 평균 198K → 195K",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -206,43 +206,43 @@
       "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.684,
-      "signed_z": 0.684,
-      "actual": 196750.0,
-      "previous": 198000.0,
-      "ref_period": "2026-10-24",
+      "momentum_z": -0.54,
+      "signed_z": 0.54,
+      "actual": 194750.0,
+      "previous": 197000.0,
+      "ref_period": "2026-10-31",
       "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 203312.5,
-        "recent_avg": 197937.5
+        "prior_avg": 201312.5,
+        "recent_avg": 197125.0
       },
-      "trend_cell_ko": "개선(완만) · 4주 평균 203K → 198K",
-      "is_new": false
+      "trend_cell_ko": "개선(완만) · 4주 평균 201K → 197K",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
       "label_ko": "계속 실업수당 청구",
       "axis": "Labor",
-      "direction": "개선",
-      "strength": "완만",
+      "direction": "보합",
+      "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.567,
-      "signed_z": 0.567,
-      "actual": 1701000.0,
-      "previous": 1722000.0,
-      "ref_period": "2026-10-17",
-      "vs_prev": "개선",
+      "momentum_z": -0.043,
+      "signed_z": 0.043,
+      "actual": 1718000.0,
+      "previous": 1695000.0,
+      "ref_period": "2026-10-24",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 1723250.0,
-        "recent_avg": 1710000.0
+        "prior_avg": 1710500.0,
+        "recent_avg": 1709500.0
       },
-      "trend_cell_ko": "개선(완만) · 4주 평균 1,723K → 1,710K",
-      "is_new": false
+      "trend_cell_ko": "보합 · 4주 평균 1,710K → 1,710K",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -659,24 +659,65 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
+  ],
+  "headline_releases": [
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "primary": "Initial Claims 4-wk MA",
+      "max_abs_z": 0.54,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 189000.0,
+          "previous": 195000.0,
+          "ref_period": "2026-10-31",
+          "momentum_z": -0.377
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 194750.0,
+          "previous": 197000.0,
+          "ref_period": "2026-10-31",
+          "momentum_z": -0.54
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1718000.0,
+          "previous": 1695000.0,
+          "ref_period": "2026-10-24",
+          "momentum_z": -0.043
+        }
+      ],
+      "components": []
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-09-01",
       7523.0
     ],
     "Initial Jobless Claims": [
-      "2026-10-24",
-      194000.0
+      "2026-10-31",
+      189000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-10-24",
-      196750.0
+      "2026-10-31",
+      194750.0
     ],
     "Continuing Jobless Claims": [
-      "2026-10-17",
-      1701000.0
+      "2026-10-24",
+      1718000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-09-01",
