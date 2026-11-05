@@ -800,6 +800,13 @@ class StyleFindings:
     """발행 뒤 codex 문체 지적 — 공개판은 바뀌지 않는다."""
     findings: tuple = ()      # [{kind, quote, note}]
     path: str = None          # 기록 파일(git 제외)
+    marker: bool = True       # 답에 STYLE_FINDINGS_HEAD 가 있었나
+
+
+# 표식이 빠진 답은 문체 지적이 사실 지적 사이에 섞였을 수 있다 — 초안 머리에 알려 정정 단계가 문체 지적을
+# 사실 오류로 다루지 않게 한다(codex 구현 검토 #4). 다시 부르지는 않는다 — 같은 한도로 사실 검토를 한 번 더 산다.
+STYLE_MARKER_MISSING = ('[문체 지적 표식 없음] 이 초안에는 문체 지적이 사실 지적 사이에 섞였을 수 있다. '
+                        '문장·흐름·말투에 대한 지적은 정정하지 말고, 근거와 대조해 틀린 사실만 정정한다.\n\n')
 
 
 _FINDING_RE = re.compile(r'^\s*[-*]\s*\[([^\]]+)\]\s*(?:「(.*?)」)?\s*(?:[—\-:]\s*)?(.*)$')
@@ -1159,7 +1166,10 @@ def review_one(root, commit, item, timeout, style=False):
             return out.stdout, None, None, _apply_style(root, commit, item, work)
         if style:
             text, findings = split_style_findings(out.stdout)
-            return text, None, None, StyleFindings(findings=tuple(findings))
+            marker = STYLE_FINDINGS_HEAD in (out.stdout or '')
+            if not marker:
+                text = STYLE_MARKER_MISSING + text
+            return text, None, None, StyleFindings(findings=tuple(findings), marker=marker)
         return out.stdout, None, None, ''
     finally:
         shutil.rmtree(work, ignore_errors=True)
@@ -1311,8 +1321,11 @@ def _note_findings(root, state, item, result):
     path = _save_findings(root, item, list(result.findings))
     log = [x for x in state.get('style_log', []) if isinstance(x, dict)]
     by = Counter(f['kind'] for f in result.findings)
-    log.append({'ts': now(), 'path': item.path, 'sha': item.sha[:7], 'findings': len(result.findings),
-                'by_kind': dict(by)})
+    row = {'ts': now(), 'path': item.path, 'sha': item.sha[:7], 'findings': len(result.findings),
+           'by_kind': dict(by)}
+    if not result.marker:
+        row['marker_missing'] = True
+    log.append(row)
     state['style_log'] = log[-STYLE_LOG_KEEP:]
     print(f'문체 — [{item.section}] {item.path}: 지적 {len(result.findings)}건 → {path}')
     return state

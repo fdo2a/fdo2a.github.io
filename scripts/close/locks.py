@@ -121,6 +121,18 @@ def ctrl_order(text):
     return _CTRL.findall(_plain(text))
 
 
+_ZONE_NAMES = ('data-research-cycle', 'data-learning', 'data-research-summary')
+
+
+def zone_attrs(attrs):
+    """파싱된 속성으로 판정 — 따옴표 꼴(큰·작은·없음)에 상관없이(codex 구현 검토 #8)."""
+    for k, v in attrs:
+        k = (k or '').lower()
+        if k in _ZONE_NAMES or (k == 'data-section' and (v or '').strip().lower() == 'review'):
+            return True
+    return False
+
+
 class _Zones(HTMLParser):
     """판단 구역(Z)의 (시작, 끝) 문자 오프셋. 못 닫힌 구역은 문서 끝까지 — 덜 거는 쪽이 안전하다."""
 
@@ -141,8 +153,7 @@ class _Zones(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag != 'section':
             return
-        raw = self.get_starttag_text() or ''
-        self.stack.append((tag, self._here(), bool(ZONE_SEC.search(raw))))
+        self.stack.append((tag, self._here(), zone_attrs(attrs)))
 
     def handle_endtag(self, tag):
         if tag != 'section' or not self.stack:

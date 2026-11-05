@@ -229,10 +229,14 @@ def test_duplicate_ids_fatal():
     assert guard.build(pre, cand, {})['fatal']
 
 
-def test_unknown_id_rejected():
+def test_unknown_id_zeroes_everything():
+    """모르는 id 가 하나라도 있으면 다른 편집도 버린다(codex 구현 검토 #6)."""
     pre, cand = setup(P1, P3)
-    res = guard.build(pre, cand, {'C77': 'x'})
-    assert res['edits']['C77']['status'] == 'rejected' and res['bundles'] == []
+    edits = {'C01': '유가가 2% 올랐고 금리가 내렸다. 달러는 보합권에서 움직이며 장을 마쳤다는 점이 눈에 띄었다.',
+             'C99': 'x'}
+    res = guard.build(pre, cand, edits)
+    assert res['fatal'] and 'C99' in res['fatal'] and res['bundles'] == []
+    assert guard.decide(res, {})[0] == 'zero'
 
 
 def test_edits_must_be_object():

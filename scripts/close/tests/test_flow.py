@@ -50,7 +50,8 @@ def test_byte_offsets_with_multibyte_prefix():
     '<blockquote>%s</blockquote>', '<section data-contested="x">%s</section>',
     '<div data-editor-note="1">%s</div>', '<table><tr><td>%s</td></tr></table>',
     '<section data-research-cycle="c1">%s</section>', '<section data-learning>%s</section>',
-    '<section data-section="review">%s</section>',
+    '<section data-section="review">%s</section>', "<section data-section='review'>%s</section>",
+    '<section data-section=review>%s</section>', '<section DATA-LEARNING>%s</section>',
 ])
 def test_protected_and_zone_regions_excluded(wrap):
     assert ids(page('<p>%s</p>' % SHORT2, wrap=wrap)) == []

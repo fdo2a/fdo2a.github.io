@@ -190,9 +190,10 @@ def test_findings_only_without_marker_counts_zero(repo, tmp_path, monkeypatch):
     monkeypatch.setattr(gate, 'CODEX', findings_codex(tmp_path, '지적 없음'))
     seen = []
     invoke(repo, monkeypatch, lambda root, item, draft, *a: seen.append(draft) or ('checked', None))
-    assert seen and all(d.strip() == '지적 없음' for d in seen)
+    # 표식이 없으면 문체 지적이 섞였을 수 있다고 초안 머리에 알린다(codex 구현 검토 #4)
+    assert seen and all(d.startswith(gate.STYLE_MARKER_MISSING) and d.strip().endswith('지적 없음') for d in seen)
     log = json.load(open(os.path.join(repo, 'reviews/runner.json')))['style_log']
-    assert all(x['findings'] == 0 for x in log)
+    assert all(x['findings'] == 0 and x['marker_missing'] for x in log)
 
 
 def test_findings_only_caps_at_five():

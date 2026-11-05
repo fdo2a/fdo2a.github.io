@@ -33,6 +33,7 @@ AGENTS = os.path.join(REPO, '.claude', 'agents')
 WRITER = {'us': 'brief-report-writer.md', 'kr': 'kr-report-writer.md'}
 CHECKER = 'close-meaning-checker.md'
 MODEL = os.environ.get('TRIAL_MODEL', 'opus')
+MIN_REAL = 40   # 실제 작성자 표본 반영 편집 최소(v4.2 F')
 
 
 def _front(path):
@@ -89,6 +90,16 @@ LEAN_SYS = ('너는 이 시황 보고서(PM 이 읽는 데스크 문서, 어미 
             '프롬프트의 규칙과 후보 문단만 보고 JSON 하나로 답한다. 파일을 읽거나 쓰지 않는다.')
 
 
+GUARD = os.path.join(REPO, 'scripts', 'close_guard.py')
+
+
+def _guard(*args):
+    """close_guard.py 를 운영 그대로 부른다 → 마지막 줄. 종료 코드가 0 이 아니면 그 줄을 그대로 돌려준다."""
+    r = subprocess.run([sys.executable, GUARD, *args], capture_output=True, text=True)
+    lines = (r.stdout or '').strip().splitlines()
+    return lines[-1] if lines else 'close: error (exit %d)' % r.returncode
+
+
 def run_post(path, out, sandbox, lean=False):
     market, date = market_of(path), date_of(path)
     key = '%s_%s' % (market, date)
@@ -122,10 +133,18 @@ def run_post(path, out, sandbox, lean=False):
         return rec
     rec['writer_edits'] = sum(1 for k, v in edits.items() if isinstance(v, str))
     json.dump(edits, open(os.path.join(d, 'edits.json'), 'w'), ensure_ascii=False, indent=1)
-    write = guard.write_stage(market)
-    exclude = ()
+    pre_path = os.path.join(d, 'pre.html')
+    open(pre_path, 'wb').write(pre)
+    cand_path, edits_path = os.path.join(d, 'candidates.json'), os.path.join(d, 'edits.json')
+    exclude = []
     for round_no in (1, 2):
-        res = guard.build(pre, cand, edits, market=market, ledger=ledger, exclude=exclude, write=write)
+        # 운영과 같은 경로 — close_guard.py check/apply 를 그대로 부른다(codex 구현 검토 #7)
+        pairs = os.path.join(d, 'pairs_%d.json' % round_no)
+        verdicts = os.path.join(d, 'verdicts_%d.json' % round_no)
+        ex = ['--exclude', ','.join(exclude)] if exclude else []
+        common = ['--market', market, '--date', date] + ex
+        _guard('check', pre_path, cand_path, edits_path, '--out', pairs, *common)
+        res = json.load(open(pairs, encoding='utf-8'))
         info = {'round': round_no, 'exclude': list(exclude), 'edits': res['edits'], 'fatal': res.get('fatal'),
                 'bundles': res['bundles']}
         if res.get('fatal') or not res['bundles']:
@@ -133,26 +152,30 @@ def run_post(path, out, sandbox, lean=False):
             rec['rounds'].append(info)
             rec['outcome'] = 'zero:' + (res.get('fatal') or 'no_bundles')
             break
-        cin = guard.checker_input(res)
+        cin = open(os.path.join(d, 'checker_input.txt'), encoding='utf-8').read()
         open(os.path.join(d, 'checker_input_%d.txt' % round_no), 'w').write(cin)
         c = claude(csys, cin, '', sandbox)
         _log(out, {'post': path, 'role': 'checker', 'round': round_no,
                    **{k: c[k] for k in ('usage', 'cost', 'ms', 'ok', 'error')}, 'turns': c.get('turns'),
                    'bundles': len(res['bundles'])})
-        open(os.path.join(d, 'checker_reply_%d.txt' % round_no), 'w').write(c['text'])
-        status, excl, per = guard.decide(res, c['text'] if c['ok'] else None, round_no)
+        open(verdicts, 'w').write(c['text'] if c['ok'] else '')
+        last = _guard('apply', pre_path, cand_path, edits_path, pairs, verdicts,
+                      '--out', os.path.join(d, 'approved.html'), '--audit', os.path.join(d, 'audit.json'),
+                      '--round', str(round_no), *common)
         doc = guard.parse_verdicts(c['text']) or {}
-        info.update({'status': status, 'decided': per, 'verdicts': doc.get('verdicts') or {}})
+        audit = json.load(open(os.path.join(d, 'audit.json'), encoding='utf-8'))
+        per = audit['rounds'][-1].get('decided') or {}
+        info.update({'status': last, 'decided': per, 'verdicts': doc.get('verdicts') or {}})
         rec['rounds'].append(info)
-        if status == 'applied':
+        if last.startswith('close: applied'):
             rec['outcome'] = 'applied'
             rec['applied'] = [b for b in res['bundles']]
-            open(os.path.join(d, 'approved.html'), 'w').write(res['proposed_written'])
             break
-        if status == 'zero':
-            rec['outcome'] = 'checker_rejected' if per and '_' not in per else 'zero:verdicts'
-            break
-        exclude = tuple(excl)
+        if last.startswith('close: recheck'):
+            exclude = last.split('exclude=', 1)[1].strip().split(',')
+            continue
+        rec['outcome'] = audit.get('outcome') or 'zero'
+        break
     return rec
 
 
@@ -187,6 +210,7 @@ def _load(out):
 
 def cmd_report(args):
     out = os.path.abspath(args.out)
+    paths.check_out(out, close_dir=None)
     posts, calls = _load(out)
     per = {}
     for c in calls:
@@ -272,6 +296,7 @@ def _items(out, artificial=None, rejected_sample=10, seed=20261106):
 
 def cmd_sheets(args):
     out = os.path.abspath(args.out)
+    paths.check_out(out, close_dir=None)
     items = _items(out, args.artificial)
     rnd = random.Random(7)
     key, cards = [], []
@@ -303,6 +328,7 @@ def wilson(k, n, z=1.96):
 
 def cmd_score(args):
     out = os.path.abspath(args.out)
+    paths.check_out(out, close_dir=None)
     key = {k['id']: k for k in json.load(open(os.path.join(out, 'key.json'), encoding='utf-8'))}
     ans = json.load(open(args.answers, encoding='utf-8'))
     res = {'real_applied': {'n': 0, 'changed': 0, 'better': 0, 'same': 0, 'worse': 0},
@@ -314,6 +340,8 @@ def cmd_score(args):
         meaning = a.get('meaning')           # same | changed
         pick = a.get('read')                 # A | B | none
         if k['src'] == 'real_applied':
+            if not meaning or not pick:
+                continue
             r = res['real_applied']
             r['n'] += 1
             r['changed'] += meaning == 'changed'
@@ -331,6 +359,11 @@ def cmd_score(args):
             g['n'] += 1
             g['blocked'] += bool(m.get('blocked'))
     ra = res['real_applied']
+    real_ids = [k for k, v in key.items() if v['src'] == 'real_applied']
+    missing = [q for q in real_ids if not (ans.get(q) or {}).get('meaning') or not (ans.get(q) or {}).get('read')]
+    art_missing = [k for k, v in key.items() if v['src'] != 'real_applied' and not (ans.get(k) or {}).get('meaning')]
+    res['missing'] = {'real_applied': missing, 'other': art_missing}
+    ra['min_n'] = MIN_REAL
     if ra['n']:
         ra['better_rate'] = ra['better'] / ra['n']
         ra['worse_rate'] = ra['worse'] / ra['n']
@@ -338,6 +371,13 @@ def cmd_score(args):
         ra['changed_upper95'] = wilson(ra['changed'], ra['n'])[1]
         ra['pass'] = (ra['changed'] == 0 and ra['better_rate'] >= 0.6 and ra['worse_rate'] <= 0.1
                       and ra['unneeded_rate'] <= 0.4)
+    # 다 답하지 않았거나 표본이 모자라면 통과를 계산하지 않는다(codex 구현 검토 #5)
+    if missing or art_missing:
+        ra['pass'] = None
+        ra['verdict'] = 'incomplete — 답이 빠진 문항 %d개' % (len(missing) + len(art_missing))
+    elif ra['n'] < MIN_REAL:
+        ra['pass'] = None
+        ra['verdict'] = 'insufficient — 반영 편집 %d개 < %d' % (ra['n'], MIN_REAL)
     for g in res['artificial'].values():
         g['blocked_rate'] = g['blocked'] / g['n'] if g['n'] else 0
         g['ci95'] = wilson(g['blocked'], g['n'])

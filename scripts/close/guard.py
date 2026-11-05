@@ -202,6 +202,10 @@ def build(pre, cand, edits, *, market='us', names=(), ledger=locks.NO_LEDGER, ex
     _, side = extract(html)
     known = side['items']
     order = [pid for pid, _ in _eligible(html)]
+    unknown = sorted(str(k) for k in edits if k not in items)
+    if unknown:
+        result['fatal'] = '모르는 후보 id — %s' % ', '.join(unknown)[:200]
+        return result
     accepted = []
     for eid in sorted(edits, key=str):
         text = edits[eid]

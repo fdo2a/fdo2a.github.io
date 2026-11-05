@@ -161,7 +161,7 @@ Site base URL: https://fdo2a.github.io/
 3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
 4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
    `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
-   **STEP 2.6 이 돌았으면**(`close: on`) 3·4 뒤 커밋 전에 `.claude/STYLE_CLOSE.md` B 의 verify·staged-scan 을, push 앞뒤로 같은 B 의 verify 를 한다.
+   **STEP 2.6 이 돌았으면**(`close: on`) 아래 커밋 명령을 한 줄로 돌리지 말고 `.claude/STYLE_CLOSE.md` B 의 순서(add → verify → staged-scan → commit → push 전 verify → push → push 뒤 verify)로 나눠 돈다 — 검사가 exit 0 이 아니면 커밋·push 하지 않는다.
 5. Commit and push to main — **뉴스·산업 브리프를 쓰기 전에** 이 커밋부터 올린다:
    git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
