@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-05",
  "status": "none",
- "reason": "schema_invalid",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-05T11:18:13+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-05T11:35:51+00:00",
  "cutoff_at": "2026-11-05T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 571,
+  "harvest": 556,
   "candidates": 1,
   "articles": [
    6
@@ -43,48 +43,32 @@
    "herald": "ok"
   },
   "notes": [
-   "discover:571"
+   "discover:556"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 51914,
-   "out": 16031
+   "in": 29990,
+   "out": 9733
   },
   "grounded": {
-   "claims": "4/4",
+   "claims": "2/2",
    "pairs": "1/1",
    "obs": "8/8"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 0,
+   "claims": 0,
    "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[1]",
-    "edges[2]",
-    "memo[2]",
-    "structure",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "fixed",
-   "remaining": []
   }
  },
  "event": {
-  "topic_ko": "한국투자증권 3분기 운용부문 수익성 둔화의 지속 여부",
+  "topic_ko": "한국투자증권 3분기 운용부문 수익성 둔화가 일시적인지 여부",
   "query": "3분기 한국투자증권 전년",
   "trigger": []
  },
- "problems": [
-  "claims",
-  "독립 출처 2곳 < 3"
- ],
- "content_hash": "27e7a71c64331a14"
+ "content_hash": "658c052600fbdfdf"
 }
