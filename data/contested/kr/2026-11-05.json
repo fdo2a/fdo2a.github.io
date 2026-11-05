@@ -5,9 +5,9 @@
  "report_date": "2026-11-05",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-05T11:52:33+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-05T12:10:06+00:00",
  "cutoff_at": "2026-11-05T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 540,
+  "harvest": 526,
   "candidates": 1,
   "articles": [
    6
@@ -43,23 +43,23 @@
    "herald": "ok"
   },
   "notes": [
-   "discover:540"
+   "discover:526"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 51026,
-   "out": 14995
+   "in": 50669,
+   "out": 13830
   },
   "grounded": {
    "claims": "3/3",
    "pairs": "1/1",
-   "obs": "8/8"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 8,
+   "obs": 7,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -68,16 +68,11 @@
    "paths": [
     "edges[2]",
     "memo[2]",
-    "structure",
-    "worry.most[0]",
-    "worry.unlikely[1]"
+    "worry.unlikely[0]"
    ],
    "outcome": "partial",
    "remaining": [
-    "edges[2]:unverified",
-    "memo[2]:unverified",
-    "worry.most[0]:unverified",
-    "worry.unlikely[1]:unverified"
+    "worry.moderate[0]:unverified"
    ]
   }
  },
@@ -87,10 +82,7 @@
   "trigger": []
  },
  "problems": [
-  "edges[2]:unverified",
-  "memo[2]:unverified",
-  "worry.most[0]:unverified",
-  "worry.unlikely[1]:unverified"
+  "worry.moderate[0]:unverified"
  ],
- "content_hash": "54273356287be18e"
+ "content_hash": "7d660f9cb4a09da0"
 }
