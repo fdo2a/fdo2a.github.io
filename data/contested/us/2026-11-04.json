@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-04",
  "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-05T03:04:30+00:00",
- "cutoff_at": "2026-11-05T03:04:30+00:00",
+ "reason": "no_conflict",
+ "retryable": false,
+ "attempts": 3,
+ "collected_at": "2026-11-05T04:09:02+00:00",
+ "cutoff_at": "2026-11-05T04:09:02+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -24,84 +24,30 @@
   "harvest": 219,
   "candidates": 1,
   "articles": [
-   4
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 63626,
-   "out": 15023
+   "in": 24859,
+   "out": 7411
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "short",
-   "aljazeera.com": "short"
+   "aljazeera.com": "short",
+   "abc.net.au": "ok",
+   "dw.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[1]",
-    "memo[2]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:unverified",
-    "structure:dangling",
-    "edges[0]:unverified",
-    "edges[0]:dangling",
-    "edges[1]:unverified",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[1]:dangling",
-    "memo[2]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling"
-   ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "미 중간선거 민주당 압승이 AI 투자·기술주·거시 경로에 미치는 영향",
+  "topic_ko": "미 중간선거 민주당 압승이 AI 투자·기술주·시장에 미치는 영향",
   "query": "democrats trump midterm",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "edges[0]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling"
- ],
- "content_hash": "347fe856ff0ef51d"
+ "content_hash": "06db755e901dee08"
 }
