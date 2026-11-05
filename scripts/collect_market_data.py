@@ -1012,37 +1012,59 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
     """French 요인 zip 을 이 러너에서 받을 수 있는가 — 받기만 하고 버린다.
 
     `curl -fsS --connect-timeout 10 --max-time 60 -A Mozilla/5.0` 과 같은 뜻: 2xx 가
-    아니거나(4xx·5xx 실패) 전체 시간이 max_time 을 넘으면 1. 소켓 대기 하나는
-    min(connect_timeout, max_time) 에서 끊고, 본문은 청크마다 전체 마감을 본다.
-    「code bytes seconds」를 한 줄 찍는다. 아무 파일도 쓰지 않는다."""
+    아니거나(4xx·5xx 실패) 전체 시간이 max_time 을 넘으면 1. **전체 마감은 벽시계로
+    강제한다**(codex impl review 1 #5): 받기는 작업 스레드에서 돌고, 본체는 마감까지만
+    기다린 뒤 응답을 닫고 1 로 끝낸다 — 한 바이트씩 흘려 보내는 서버(소켓 대기 시간
+    제한에 걸리지 않는다)나 늦게 돌아오는 read() 도 max_time 을 넘기지 못한다. 작업
+    스레드 안에서도 read1 청크마다 마감을 본다. 「code bytes seconds」를 한 줄 찍는다.
+    아무 파일도 쓰지 않는다."""
     import socket
+    import threading
     import urllib.error
     from fund.factors_check import FRENCH_URL
     url = url or FRENCH_URL
     t0 = time.monotonic()
     deadline = t0 + max_time
-    code, size = 0, 0
-    try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=min(connect_timeout, max_time),
-                                    context=_SSL if url.startswith('https') else None) as resp:
-            code = resp.status
-            while True:
-                left = deadline - time.monotonic()
-                if left <= 0:
-                    raise TimeoutError(f'max-time {max_time}s exceeded')
-                chunk = resp.read(65536)
-                if not chunk:
-                    break
-                size += len(chunk)
-    except urllib.error.HTTPError as e:
-        code = e.code
-    except (urllib.error.URLError, TimeoutError, socket.timeout, OSError) as e:
-        print(f'000 {size} {time.monotonic() - t0:.3f} ({e})')
+    st = {'code': 0, 'size': 0, 'err': None, 'resp': None}
+
+    def fetch():
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=min(connect_timeout, max_time),
+                                        context=_SSL if url.startswith('https') else None) as resp:
+                st['resp'] = resp
+                st['code'] = resp.status
+                read = getattr(resp, 'read1', None) or resp.read
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError(f'max-time {max_time}s exceeded')
+                    chunk = read(65536)
+                    if not chunk:
+                        break
+                    st['size'] += len(chunk)
+        except urllib.error.HTTPError as e:
+            st['code'] = e.code
+            e.close()
+        except (urllib.error.URLError, TimeoutError, socket.timeout, OSError, ValueError) as e:
+            st['err'] = e
+
+    worker = threading.Thread(target=fetch, daemon=True)
+    worker.start()
+    worker.join(max(0.0, deadline - time.monotonic()))
+    if worker.is_alive():
+        try:                                      # unblock the worker; it is a daemon either way
+            if st['resp'] is not None:
+                st['resp'].close()
+        except Exception:
+            pass
+        print(f"000 {st['size']} {time.monotonic() - t0:.3f} (max-time {max_time}s exceeded)")
         return 1
     elapsed = time.monotonic() - t0
-    print(f'{code} {size} {elapsed:.3f}')
-    return 0 if 200 <= code < 300 and elapsed <= max_time else 1
+    if st['err'] is not None:
+        print(f"000 {st['size']} {elapsed:.3f} ({st['err']})")
+        return 1
+    print(f"{st['code']} {st['size']} {elapsed:.3f}")
+    return 0 if 200 <= st['code'] < 300 and elapsed <= max_time else 1
 
 
 def main():

@@ -61,6 +61,58 @@ def silent_socket():
     s.close()
 
 
+@pytest.fixture
+def drip_server():
+    """codex #5: answers 200 at once, then drips the body one byte every 50 ms (never stalls
+    long enough for a per-socket timeout). `headers_too` drips the header block instead."""
+    s = socket.socket()
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind(('127.0.0.1', 0))
+    s.listen(4)
+    stop = threading.Event()
+
+    def serve(c, path):
+        head = b'HTTP/1.1 200 OK\r\nContent-Length: 100000\r\nX-Pad: ' + b'p' * 200 + b'\r\n\r\n'
+        try:
+            if path.startswith(b'/headers'):
+                for i in range(len(head)):
+                    if stop.is_set():
+                        return
+                    c.sendall(head[i:i + 1])
+                    stop.wait(0.05)
+            else:
+                c.sendall(head)
+            for _ in range(100000):
+                if stop.is_set():
+                    return
+                c.sendall(b'x')
+                stop.wait(0.05)
+        except OSError:
+            pass
+        finally:
+            c.close()
+
+    def accept():
+        s.settimeout(0.2)
+        while not stop.is_set():
+            try:
+                c, _ = s.accept()
+            except OSError:
+                continue
+            c.settimeout(5)
+            try:
+                req = c.recv(4096)
+            except OSError:
+                c.close()
+                continue
+            path = req.split(b' ')[1] if b' ' in req else b'/'
+            threading.Thread(target=serve, args=(c, path), daemon=True).start()
+    threading.Thread(target=accept, daemon=True).start()
+    yield f'http://127.0.0.1:{s.getsockname()[1]}'
+    stop.set()
+    s.close()
+
+
 def probe(monkeypatch, tmp_path, *args):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(sys, 'argv', ['collect_market_data.py', '--ff-probe', *args])
@@ -93,3 +145,45 @@ def test_ff_probe_default_url_is_the_french_file():
     from fund.factors_check import FRENCH_URL
     assert FRENCH_URL.endswith('/F-F_Research_Data_Factors_daily_CSV.zip')
     assert FRENCH_URL.startswith('https://mba.tuck.dartmouth.edu/')
+
+
+@pytest.mark.parametrize('path', ['/body.zip', '/headers.zip'])
+def test_codex_slow_drip_exits_1_within_max_time(monkeypatch, tmp_path, drip_server, capsys,
+                                                 path):
+    """codex #5: a server that keeps sending a byte at a time must not outlive --max-time."""
+    import time
+    t0 = time.monotonic()
+    assert probe(monkeypatch, tmp_path, '--ff-probe-url', drip_server + path,
+                 '--max-time', '1') == 1
+    took = time.monotonic() - t0
+    assert took < 1 + 0.75, took
+    assert capsys.readouterr().out.startswith('000 ')
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_codex_read_returning_late_is_cut_at_max_time(monkeypatch, capsys):
+    """codex #5 injection: read() returns only after 0.5 s, max_time 0.1 → exit 1 near 0.1 s."""
+    import time
+    import urllib.request
+
+    class Resp:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self, n=-1):
+            time.sleep(0.5)
+            return b'x'
+        read1 = read
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(urllib.request, 'urlopen', lambda *a, **k: Resp())
+    t0 = time.monotonic()
+    assert cmd.ff_probe('http://example.invalid/x.zip', max_time=0.1) == 1
+    assert time.monotonic() - t0 < 0.1 + 0.3
