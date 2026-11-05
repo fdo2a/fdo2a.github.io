@@ -1,0 +1,379 @@
+{
+ "commit": "91433c8",
+ "report_date": "2026-11-05",
+ "indices": {
+  "KOSPI": {
+   "close": 5383.8,
+   "change_pct": -5.28
+  },
+  "KOSDAQ": {
+   "close": 678.41,
+   "change_pct": -5.11
+  }
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_1105": {
+  "KOSPI": {
+   "date": "2026-11-05",
+   "individual": 22864,
+   "foreign": -34185,
+   "institution": 8525
+  },
+  "KOSDAQ": {
+   "date": "2026-11-05",
+   "individual": 1713,
+   "foreign": -728,
+   "institution": -1027
+  }
+ },
+ "kospi_ohlc": {
+  "open": 5580.09,
+  "high": 5586.46,
+  "low": 5336.88,
+  "prevClose": 5683.8
+ },
+ "stocks": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": -9.46,
+   "close": 1264000,
+   "value": 5350113
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": -7.57,
+   "close": 201500,
+   "value": 4918603
+  },
+  {
+   "name": "삼성전기",
+   "change_pct": -15.34,
+   "close": 944000,
+   "value": 1339830
+  },
+  {
+   "name": "삼성SDI",
+   "change_pct": -6.61,
+   "close": 509000,
+   "value": 497239
+  },
+  {
+   "name": "셀트리온",
+   "change_pct": 7.5,
+   "close": 215000,
+   "value": 424259
+  },
+  {
+   "name": "한화솔루션",
+   "change_pct": -3.75,
+   "close": 26950,
+   "value": 402082
+  },
+  {
+   "name": "현대차",
+   "change_pct": 3.53,
+   "close": 293500,
+   "value": 309379
+  },
+  {
+   "name": "NAVER",
+   "change_pct": 8.26,
+   "close": 184900,
+   "value": 265404
+  },
+  {
+   "name": "대덕전자",
+   "change_pct": -19.8,
+   "close": 79800,
+   "value": 244224
+  },
+  {
+   "name": "KB금융",
+   "change_pct": 3.63,
+   "close": 157000,
+   "value": 154593
+  },
+  {
+   "name": "카카오",
+   "change_pct": 10.65,
+   "close": 32200,
+   "value": 153687
+  },
+  {
+   "name": "두산에너빌리티",
+   "change_pct": -6.45,
+   "close": 49300,
+   "value": 138314
+  },
+  {
+   "name": "한미약품",
+   "change_pct": 9.8,
+   "close": 465000,
+   "value": 126515
+  },
+  {
+   "name": "SK바이오팜",
+   "change_pct": 12.27,
+   "close": 90600,
+   "value": 79892
+  },
+  {
+   "name": "S-Oil",
+   "change_pct": -6.15,
+   "close": 108300,
+   "value": 74759
+  },
+  {
+   "name": "한화오션",
+   "change_pct": -6.72,
+   "close": 49250,
+   "value": 54190
+  }
+ ],
+ "movers_groups": [
+  {
+   "id": "g1",
+   "industry": "반도체와반도체장비",
+   "direction": "down",
+   "reasons": [
+    "지수 기여 하위",
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "삼성전자",
+     "change_pct": -7.57,
+     "close": 201500,
+     "value": 4918603
+    },
+    {
+     "name": "SK하이닉스",
+     "change_pct": -9.46,
+     "close": 1264000,
+     "value": 5350113
+    },
+    {
+     "name": "삼성전자우",
+     "change_pct": -6.58,
+     "close": 160400,
+     "value": 631365
+    },
+    {
+     "name": "SK스퀘어",
+     "change_pct": -10.01,
+     "close": 809000,
+     "value": 572398
+    },
+    {
+     "name": "한미반도체",
+     "change_pct": -9.13,
+     "close": 169100,
+     "value": 128810
+    }
+   ]
+  },
+  {
+   "id": "g2",
+   "industry": "제약",
+   "direction": "up",
+   "reasons": [
+    "지수 기여 상위",
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "셀트리온",
+     "change_pct": 7.5,
+     "close": 215000,
+     "value": 424259
+    },
+    {
+     "name": "한미약품",
+     "change_pct": 9.8,
+     "close": 465000,
+     "value": 126515
+    },
+    {
+     "name": "SK바이오팜",
+     "change_pct": 12.27,
+     "close": 90600,
+     "value": 79892
+    }
+   ]
+  },
+  {
+   "id": "g3",
+   "industry": "양방향미디어와서비스",
+   "direction": "up",
+   "reasons": [
+    "지수 기여 상위",
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "NAVER",
+     "change_pct": 8.26,
+     "close": 184900,
+     "value": 265404
+    },
+    {
+     "name": "카카오",
+     "change_pct": 10.65,
+     "close": 32200,
+     "value": 153687
+    }
+   ]
+  },
+  {
+   "id": "g4",
+   "industry": "전자장비와기기",
+   "direction": "down",
+   "reasons": [
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "삼성전기",
+     "change_pct": -15.34,
+     "close": 944000,
+     "value": 1339830
+    },
+    {
+     "name": "대덕전자",
+     "change_pct": -19.8,
+     "close": 79800,
+     "value": 244224
+    },
+    {
+     "name": "LG이노텍",
+     "change_pct": -7.77,
+     "close": 285000,
+     "value": 63494
+    }
+   ]
+  },
+  {
+   "id": "g5",
+   "industry": "전기제품",
+   "direction": "down",
+   "reasons": [
+    "이상 등락"
+   ],
+   "members": [
+    {
+     "name": "삼성SDI",
+     "change_pct": -6.61,
+     "close": 509000,
+     "value": 497239
+    },
+    {
+     "name": "엘앤에프",
+     "change_pct": -6.24,
+     "close": 85700,
+     "value": 58399
+    }
+   ]
+  }
+ ],
+ "session": {
+  "report_date": "2026-11-05",
+  "us_prev": {
+   "as_of": "2026-11-04",
+   "rows": {
+    "S&P 500": 1.58,
+    "Nasdaq": 1.44,
+    "Dow": 3.03
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": -0.22,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.89,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -1.79,
+    "항셍": 3.67,
+    "상해종합": 0.1,
+    "대만가권": -3.2
+   },
+   "dates": {
+    "닛케이": "2026-11-05",
+    "항셍": "2026-11-05",
+    "상해종합": "2026-11-05",
+    "대만가권": "2026-11-05"
+   },
+   "avg_pct": -0.31,
+   "relative_pp": -4.98
+  },
+  "usdkrw_intraday": {
+   "high": 1344.63,
+   "high_t": "12:00",
+   "low": 1337.58,
+   "low_t": "09:30",
+   "close": 1341.17,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "econ": {
+  "국고채 3년": {
+   "value": 3.669,
+   "date": "2026-11-05",
+   "unit": "연%",
+   "item_name": "국고채(3년)",
+   "prev": 3.714,
+   "prev_date": "2026-11-04",
+   "bp": -4.5
+  },
+  "국고채 10년": {
+   "value": 3.887,
+   "date": "2026-11-05",
+   "unit": "연%",
+   "item_name": "국고채(10년)",
+   "prev": 3.968,
+   "prev_date": "2026-11-04",
+   "bp": -8.1
+  },
+  "CD 91일": {
+   "value": 3.34,
+   "date": "2026-11-05",
+   "unit": "연%",
+   "item_name": "CD(91일)",
+   "prev": 3.34,
+   "prev_date": "2026-11-04",
+   "bp": 0.0
+  },
+  "회사채 AA- 3년": {
+   "value": 4.358,
+   "date": "2026-11-05",
+   "unit": "연%",
+   "item_name": "회사채(3년, AA-)",
+   "prev": 4.4,
+   "prev_date": "2026-11-04",
+   "bp": -4.2
+  },
+  "한국은행 기준금리": {
+   "value": 3.0,
+   "date": "2026-09",
+   "unit": "연%",
+   "item_name": "한국은행 기준금리",
+   "prev": 3.0,
+   "prev_date": "2026-08",
+   "bp": 0.0
+  }
+ }
+}
