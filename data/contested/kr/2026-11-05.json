@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-05",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "schema_invalid",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-05T11:01:14+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-05T11:18:13+00:00",
  "cutoff_at": "2026-11-05T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 589,
+  "harvest": 571,
   "candidates": 1,
   "articles": [
    6
@@ -43,32 +43,48 @@
    "herald": "ok"
   },
   "notes": [
-   "discover:589"
+   "discover:571"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 29738,
-   "out": 11107
+   "in": 51914,
+   "out": 16031
   },
   "grounded": {
-   "claims": "3/3",
+   "claims": "4/4",
    "pairs": "1/1",
-   "obs": "7/7"
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7,
+   "pairs": 1,
+   "claims": 2,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[1]",
+    "edges[2]",
+    "memo[2]",
+    "structure",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "fixed",
+   "remaining": []
   }
  },
  "event": {
-  "topic_ko": "한국투자증권·한국금융지주 3분기 실적 둔화와 운용부문 전망",
+  "topic_ko": "한국투자증권 3분기 운용부문 수익성 둔화의 지속 여부",
   "query": "3분기 한국투자증권 전년",
   "trigger": []
  },
- "content_hash": "c16d0498c8f94c24"
+ "problems": [
+  "claims",
+  "독립 출처 2곳 < 3"
+ ],
+ "content_hash": "27e7a71c64331a14"
 }
