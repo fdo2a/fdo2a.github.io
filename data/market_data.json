@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-06 07:58 KST",
+  "generated": "2026-11-06 08:10 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-05",
   "indices": {
@@ -197,10 +197,10 @@
     },
     "Gold": {
       "last": 4108.89990234375,
-      "chg": 34.599853515625,
-      "pct": 0.8492220283475849,
+      "chg": 34.5,
+      "pct": 0.8467504620779609,
       "date": "2026-11-05",
-      "prev": 4074.300048828125,
+      "prev": 4074.39990234375,
       "prev_date": "2026-11-04",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -695,9 +695,9 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 0.849,
+        "change": 0.847,
         "unit": "%",
-        "multiple": 0.63,
+        "multiple": 0.62,
         "band": "보통"
       },
       "10Y": {
@@ -1134,9 +1134,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 26325.01,
-            "pct": -0.43,
-            "date": "2026-11-05"
+            "close": 26437.67,
+            "pct": 2.22,
+            "date": "2026-11-04"
           },
           {
             "name": "FTSE100",
@@ -1148,15 +1148,15 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6231.54,
-            "pct": -0.55,
-            "date": "2026-11-05"
+            "close": 6265.71,
+            "pct": 1.97,
+            "date": "2026-11-04"
           }
         ],
         "alignment": {
-          "label": "이어감",
-          "avg_pct": -0.47,
-          "mixed": false
+          "label": "엇갈림",
+          "avg_pct": 1.25,
+          "mixed": true
         }
       }
     },
@@ -1171,11 +1171,11 @@
           "bars": 33
         },
         "NQ": {
-          "high": 28668.5,
-          "high_t": "18:00",
+          "high": 28649.75,
+          "high_t": "16:30",
           "low": 28167.75,
           "low_t": "00:30",
-          "range_pct": 1.78,
+          "range_pct": 1.71,
           "bars": 33
         }
       },
