@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-05T01:22:24+00:00",
- "cutoff_at": "2026-11-05T01:22:24+00:00",
+ "collected_at": "2026-11-05T01:40:26+00:00",
+ "cutoff_at": "2026-11-05T01:40:26+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,69 +30,74 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 36434,
-   "out": 13569
+   "in": 37331,
+   "out": 14252
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "short",
    "aljazeera.com": "short"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "7/7",
-   "pairs": "2/2",
+   "claims": "9/9",
+   "pairs": "4/4",
    "obs": "9/9"
   },
   "verified": {
    "pairs": 2,
    "claims": 4,
    "obs": 9,
-   "strict_pairs": 1,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
     "edges[0]",
+    "edges[1]",
+    "edges[2]",
     "memo[1]",
     "structure",
-    "variables[0]",
     "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "worry.most[0]"
    ],
    "outcome": "skipped_ratio",
    "remaining": [
     "structure:unverified",
     "structure:dangling",
-    "variables[0]:unverified",
     "edges[0]:unverified",
     "edges[0]:dangling",
+    "edges[1]:unverified",
+    "edges[2]:dangling",
+    "memo[1]:unverified",
     "memo[1]:dangling",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
+    "worry.moderate[0]:unverified",
+    "worry.moderate[0]:dangling"
    ]
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "미 중간선거 민주당 압승이 시장·거시경제·AI 투자에 미치는 영향",
+  "topic_ko": "미 중간선거 민주당 압승의 시장·거시·AI 투자 영향",
   "query": "democrats trump midterm",
   "trigger": []
  },
  "problems": [
   "structure:unverified",
   "structure:dangling",
-  "variables[0]:unverified",
   "edges[0]:unverified",
   "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[2]:dangling",
+  "memo[1]:unverified",
   "memo[1]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
+  "worry.moderate[0]:unverified",
+  "worry.moderate[0]:dangling"
  ],
- "content_hash": "e9099a9d34853ae7"
+ "content_hash": "fb053335e4aa1821"
 }
