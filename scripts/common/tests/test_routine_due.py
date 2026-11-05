@@ -132,6 +132,30 @@ def test_kr_busy():
     assert kr(set(), lock_age=10) == 'BUSY'
 
 
+# KR 뉴스 글(2026-11-06 부터) — 실을 기사가 있는 날만 둘째 글을 기다린다
+NOV6 = utc(2026, 11, 6, 12, 0)       # 21:00 KST 금요일 → 세션 11/06
+
+
+def test_kr_news_post_is_awaited_after_the_split_when_there_is_news():
+    got = rd.decide_kr(NOV6, {'kr/posts/2026-11-06.html'}, None, KR_HOL, lambda d: True)
+    assert got[0] == 'DUE' and 'kr/news/2026-11-06.html' in got[1]
+    assert rd.decide_kr(NOV6, {'kr/posts/2026-11-06.html', 'kr/news/2026-11-06.html'}, None, KR_HOL,
+                        lambda d: True)[0] == 'DONE'
+
+
+def test_kr_news_post_is_not_awaited_without_news_or_before_the_split():
+    assert rd.decide_kr(NOV6, {'kr/posts/2026-11-06.html'}, None, KR_HOL, lambda d: False)[0] == 'DONE'
+    assert rd.decide_kr(utc(2026, 11, 5, 12, 0), {'kr/posts/2026-11-05.html'}, None, KR_HOL,
+                        lambda d: True)[0] == 'DONE'
+
+
+def test_kr_news_expected_reads_the_collected_file():
+    assert rd.kr_news_expected({'items': [{'category': 'politics', 'summary_ko': '요약'}]})
+    assert not rd.kr_news_expected({'items': [{'category': 'market', 'summary_ko': '요약'}]})
+    assert not rd.kr_news_expected({'items': [{'category': 'macro'}]})
+    assert not rd.kr_news_expected(None) and not rd.kr_news_expected([])
+
+
 # ── 주간 ──────────────────────────────────────────────────────────────────────
 
 def test_week_key_comes_from_the_calendar_not_the_data():
@@ -221,3 +245,27 @@ def test_japan_done_busy_due():
     assert rd.decide_japan('2026-W40', set(), 30, today, ())[0] == 'BUSY'
     assert rd.decide_japan('2026-W40', set(), 300, today, ())[0] == 'DUE'
     assert rd.lock_name('japan', None, key='2026-W40') == 'japan-2026-W40'
+
+
+def test_brief_news_input_reads_the_brief_publish_commit(tmp_path, monkeypatch):
+    """발행 뒤 재수집이 뉴스 파일을 바꿔도 판정·입력은 브리프 발행 커밋의 판이다(codex 구현 검토 2026-11-06 #2·#3)."""
+    import json as _j
+    import subprocess as sp
+    g = lambda *a: sp.run(['git', *a], cwd=tmp_path, check=True, capture_output=True)
+    g('init', '-q'); g('config', 'user.email', 't@t'); g('config', 'user.name', 't')
+    (tmp_path / 'kr/data/news').mkdir(parents=True); (tmp_path / 'kr/posts').mkdir(parents=True)
+    f = tmp_path / 'kr/data/news/2026-11-06.json'
+    f.write_text(_j.dumps({'items': [{'category': 'policy', 'summary_ko': '요약'}]}), encoding='utf-8')
+    (tmp_path / 'kr/posts/2026-11-06.html').write_text('x', encoding='utf-8')
+    g('add', '-A'); g('commit', '-qm', 'brief')
+    f.write_text(_j.dumps({'items': []}), encoding='utf-8')
+    g('add', '-A'); g('commit', '-qm', 're-collect')
+    monkeypatch.chdir(tmp_path)
+    assert rd.kr_news_expected(rd.brief_news_input('2026-11-06', ref='HEAD'))
+    assert rd.brief_news_input('2026-11-07', ref='HEAD') is None
+    # git 조회 실패는 「뉴스 없음」이 아니다 — 판정은 기다리는 쪽(codex 재확인 #2)
+    import pytest as _p
+    with _p.raises(rd.GitLookupError):
+        rd.brief_news_input('2026-11-06', ref='no-such-ref')
+    monkeypatch.setattr(rd, 'brief_news_input', lambda d: (_ for _ in ()).throw(rd.GitLookupError('x')))
+    assert rd._kr_news_expected_at('2026-11-06') is True

@@ -22,13 +22,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 # 일본 일간 게이트는 `scripts.common` 을 쓰는 렌더러를 거친다 — 레포 뿌리도 경로에 둔다.
 sys.path.insert(1, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from kr.news import DIGEST_CATEGORIES as KR_CATEGORIES  # noqa: E402
+from kr.news import (DIGEST_CATEGORIES as KR_CATEGORIES, LEGACY_CATEGORIES as KR_LEGACY,  # noqa: E402
+                     MIN as KR_MIN, REQUIRED as KR_REQUIRED)
 from us.news import DIGEST_CATEGORIES as US_CATEGORIES  # noqa: E402
 from us.news_gate import check  # noqa: E402
 
 # KR 은 네이버증권 주요뉴스(`kr/data/news/<date>.json`, `fetch_kr_news.py`). 갈래만 다르고
 # 대조 규칙은 같다(2026-09-24).
-CATEGORIES = {'us': US_CATEGORIES, 'kr': KR_CATEGORIES}
+# kr-news(2026-11-05) = KR 뉴스 글(`kr/news/<date>.html`) — KR 과 같은 수집분, 필수 갈래마다 하한 3건.
+# kr = 2026-11-05 까지의 마감브리프(옛 갈래 그대로 — 정정 러너가 옛 글을 다시 검사한다).
+CATEGORIES = {'us': US_CATEGORIES, 'kr': KR_LEGACY, 'kr-news': KR_CATEGORIES}
+FLOOR = {'kr-news': (KR_REQUIRED, KR_MIN)}
 # 일본 일간(2026-10-27)은 `news/daily/<date>.json` 을 읽고 갈래·건수·컷까지 보는 전용 게이트를 쓴다.
 MARKETS = sorted(CATEGORIES) + ['jp-daily']
 
@@ -85,7 +89,7 @@ def main():
         violations = daily_news_gate.check(html, collected, args.date)
     else:
         violations = check(html, collected, report_date=args.date,
-                           categories=CATEGORIES[args.market])
+                           categories=CATEGORIES[args.market], floor=FLOOR.get(args.market))
     if violations:
         print(f'뉴스 게이트 위반 {len(violations)}건 ({path}):', file=sys.stderr)
         for v in violations:

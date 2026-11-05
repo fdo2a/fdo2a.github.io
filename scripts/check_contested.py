@@ -21,7 +21,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common import contested as C  # noqa: E402
 
-SHELL = {m: cfg['shell'] for m, cfg in C.MARKET_CFG.items()}
 
 
 def transforms(market='us'):
@@ -65,7 +64,7 @@ def trusted_styles(market, date):
     from scripts.common import analytics, post_shell
     body = ('<section><div class="card headline-card"><h1>제목</h1><p>본문이다.</p></div></section>'
             + ''.join(f'<section><div class="card">{b}</div></section>' for b in data_styles(market)))
-    shell = SHELL[market]
+    shell = C.cfg_for(market, date)['shell']
     raw = post_shell.render(shell, date, {'title': 't', 'summary': 's'}, body)
     # Posts still inside the correction window were published with an earlier stylesheet.
     current = post_shell.css(shell)

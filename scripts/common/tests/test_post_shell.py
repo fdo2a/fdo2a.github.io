@@ -171,3 +171,31 @@ def test_every_shown_date_is_the_session_date(market, date, published):
     assert f'{d.month}월 {d.day}일' in topbar and '미국' not in topbar
     assert f'/{date}.html' in head
     assert _BODY in out
+
+
+# --- KR 뉴스(2026-11-05) — 「한국 레포트 칸에도 미국처럼 뉴스탭」 ------------------------------
+KR_NEWS_META = {'title': '한국 시장 뉴스 — 미래대응기금 공방 | 2026-11-05', 'summary': '요약'}
+
+
+def test_kr_news_post_lives_under_kr_news_and_links_back_to_the_brief():
+    out = S.render('kr-news', '2026-11-05', KR_NEWS_META, '<h1>미래대응기금 공방</h1>')
+    assert 'href="https://fdo2a.github.io/kr/news/2026-11-05.html"' in out
+    assert 'href="../posts/2026-11-05.html"' in out                  # 같은 날 마감브리프
+    assert 'href="../index.html?span=news"' in out
+    assert 'data-index="../news.json"' in out                         # 이전·다음 글은 kr/news.json
+    assert S.validate('kr-news', '2026-11-05', KR_NEWS_META, '<h1>a</h1>') == []
+
+
+def test_kr_news_post_reuses_the_kr_stylesheet_and_is_a_desk_document():
+    import sys
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    from us.style import is_desk_register
+    assert S.css('kr-news') == S.css('kr')
+    assert is_desk_register(S.render('kr-news', '2026-11-05', KR_NEWS_META, '<h1>a</h1>'))
+
+
+def test_kr_brief_footer_points_at_the_same_day_news():
+    foot = S.footer('kr', '2026-11-05')
+    assert 'data-news-index="../news.json"' in foot and '같은 날 뉴스 →' in foot
+    assert '뉴스·산업' in S.footer('us', '2026-11-05')
+    assert 'data-news-index=' not in S.footer('kr-news', '2026-11-05')

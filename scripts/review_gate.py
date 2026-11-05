@@ -894,9 +894,9 @@ def _contested_step(root, commit, path, prev, sha):
     (KR 설계 검토 K05). 조판 판정으로 넘기지 않는다 — 판은 검토 대상으로 남고, 근거만 원래 발행 커밋이다.
     쟁점 섹션 자체의 근거는 결과 JSON 이고, 검토자에게는 섹션을 빼고 준다(`_drop_contested`).
     """
-    m = re.fullmatch(r'(kr/posts|news)/(\d{4}-\d{2}-\d{2})\.html', path)
+    m = re.fullmatch(r'(kr/posts|kr/news|news)/(\d{4}-\d{2}-\d{2})\.html', path)
     if not m:
-        return False                          # 쟁점 섹션은 KR 마감 브리프·US 뉴스·산업 브리프에만 있다
+        return False                          # 쟁점 섹션은 KR 마감 브리프(11/05 까지)·KR 뉴스·US 뉴스·산업 브리프에만
     kind = contested_mod.slot_only_change(_blob_text(root, prev), _blob_text(root, sha))
     if kind == 'filled':
         return True
@@ -904,7 +904,7 @@ def _contested_step(root, commit, path, prev, sha):
         return False
     # 자리가 사라진 판은 그 커밋의 결과가 확정된 non-ok 일 때만 — 러너가 자리표시를 지운 경우다.
     # 사람이 섹션을 통째로 지운 판까지 넘기지 않는다(구현 검토 #4).
-    market = 'kr' if m.group(1) == 'kr/posts' else 'us'
+    market = 'kr' if m.group(1).startswith('kr/') else 'us'
     raw = git(root, 'show', f'{commit}:data/contested/{market}/{m.group(2)}.json')
     try:
         payload = json.loads(raw.stdout) if raw.returncode == 0 else None

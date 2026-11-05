@@ -95,10 +95,10 @@ def test_dedupe_folds_the_same_story_from_different_outlets():
 
 
 def test_select_caps_each_category_and_does_not_backfill():
-    rows = [dict(guid=str(i), category='market', published=f'2026-09-25T1{i}:00:00+09:00')
+    rows = [dict(guid=str(i), category='policy', published=f'2026-09-25T1{i}:00:00+09:00')
             for i in range(5)] + [dict(guid='m', category='macro', published='2026-09-25T09:00:00+09:00')]
     got = N.select(rows, per_category=3)
-    assert [r['guid'] for r in got] == ['m', '4', '3', '2']
+    assert [r['guid'] for r in got] == ['4', '3', '2', 'm']       # 갈래 순서: 정치·정책·매크로·산업
 
 
 # ── 본문 ─────────────────────────────────────────────────────────────────
@@ -161,6 +161,7 @@ def test_harvest_records_why_the_list_failed(monkeypatch):
 def test_main_writes_metadata_and_exits_red_when_the_list_is_dead(tmp_path, monkeypatch):
     monkeypatch.setattr(F, 'harvest', lambda d, ctx: ([], ['주요뉴스 1쪽: HTTP 403']))
     monkeypatch.setattr(F, 'harvest_world', lambda d, ctx: ([], []))     # 네트워크를 타지 않는다
+    monkeypatch.setattr(F, 'harvest_politics', lambda d, ctx: ([], []))
     monkeypatch.setattr(F, 'summarize_items', lambda *a, **k: 0)
     assert F.main(['--datadir', str(tmp_path), '--bodydir', str(tmp_path / 'b'),
                    '--date', '2026-09-25']) == 1
@@ -169,9 +170,10 @@ def test_main_writes_metadata_and_exits_red_when_the_list_is_dead(tmp_path, monk
 
 
 def test_main_summarizes_with_the_korean_source_prompt(tmp_path, monkeypatch):
-    rows = N.parse_list(payload(row('1', '외국인 코스피 순매수', '20260925160000')))
+    rows = N.parse_list(payload(row('1', '한은 금통위, 기준금리 동결', '20260925160000')))
     monkeypatch.setattr(F, 'harvest', lambda d, ctx: (rows, []))
     monkeypatch.setattr(F, 'harvest_world', lambda d, ctx: ([], []))
+    monkeypatch.setattr(F, 'harvest_politics', lambda d, ctx: ([], []))
     monkeypatch.setattr(F.time, 'sleep', lambda s: None)
     monkeypatch.setattr(F, 'get', lambda url, ctx: page(PARA))
     calls = {}
@@ -186,7 +188,7 @@ def test_main_summarizes_with_the_korean_source_prompt(tmp_path, monkeypatch):
                    '--date', '2026-09-25']) == 0
     assert calls['system'] is F.SYSTEM_KO_SOURCE
     (it,) = json.loads((tmp_path / 'news' / '2026-09-25.json').read_text(encoding='utf-8'))['items']
-    assert it['category'] == 'market' and it['summary_ko'] == '요약' and it['body_chars'] > 0
+    assert it['category'] == 'macro' and it['summary_ko'] == '요약' and it['body_chars'] > 0
     assert (tmp_path / 'b' / it['body_file']).exists()
 
 

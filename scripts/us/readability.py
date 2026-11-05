@@ -991,10 +991,24 @@ def loosely_precise(html: str) -> list:
     return out
 
 
+# 수집분 기사 요약 문단(`expand_news_items.py` 가 채운 `<p data-summary>`). 서로 다른 매체의 기사가 같은
+# 수치(「4%」)를 각각 말하는 것은 작성자의 되풀이가 아니고, 작성자는 그 문단을 고칠 수 없다(유사도 게이트).
+# 뉴스만으로 된 KR 뉴스 글(2026-11-05)에서 요약 열다섯 개가 「4%」를 네 번 말해 --strict 가 막았다.
+_SUMMARY_P = re.compile(r'<p\b[^>]*\bdata-summary="[^"]*"[^>]*>.*?</p>', re.S | re.I)
+
+
+# 면제는 뉴스 글에만 — 셸이 찍는 canonical 로 가린다(작성자가 바꿀 수 없다). 브리프에서 `data-summary` 를
+# 붙여 반복 검사를 피하는 길을 막는다(codex 구현 검토 2026-11-06 #6).
+_NEWS_POST = re.compile(r'<link rel="canonical" href="https://fdo2a\.github\.io/(?:kr/)?news/')
+
+
 def echoed_figures(html: str, limit: int = 3) -> list:
-    """산문에서 같은 수치가 몇 번 되풀이됐나. 표 1회 + 본문 1~2회가 정상."""
+    """산문에서 같은 수치가 몇 번 되풀이됐나. 표 1회 + 본문 1~2회가 정상. 뉴스 글의 기사 요약 문단은 세지 않는다."""
     c = Counter()
-    for s in sentences(html):
+    doc = html or ''
+    if _NEWS_POST.search(doc):
+        doc = _SUMMARY_P.sub('', doc)
+    for s in sentences(doc):
         for tok in set(figures(s)):
             c[tok] += 1
     return sorted(

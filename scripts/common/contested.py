@@ -43,6 +43,30 @@ MARKET_CFG = {
            'extra_files': ('kr/data/kr_econ.json', 'kr/data/kr_flows.json', 'kr/data/kr_session.json'),
            'transforms': ('readability',)},
 }
+# KR 뉴스 글 분리(2026-11-05) — 이 날부터 KR 쟁점 분석은 마감브리프(kr/posts)가 아니라 뉴스 글(kr/news)에
+# 실린다. 그 전 날짜는 예전 자리 그대로다(러너가 옛 자리표시를 계속 채울 수 있게). 값은 `kr.news` 의 것.
+KR_NEWS_FROM = '2026-11-06'
+_KR_NEWS = {'page': 'kr/news/{d}.html', 'pages_dir': 'kr/news', 'shell': 'kr-news'}
+
+
+def cfg_for(market, date=None):
+    """그 날짜의 발행 자리. 날짜가 없으면 시장 기본값(결과·시장 파일 경로는 날짜와 무관하다)."""
+    cfg = MARKET_CFG[market]
+    if market == 'kr' and date and str(date) >= KR_NEWS_FROM:
+        return dict(cfg, **_KR_NEWS)
+    return cfg
+
+
+def pages_dirs(market):
+    """자리표시를 찾아볼 폴더 — KR 은 분리 전후 둘 다."""
+    return (MARKET_CFG[market]['pages_dir'],) + ((_KR_NEWS['pages_dir'],) if market == 'kr' else ())
+
+
+def is_news_page(market, date):
+    """그 날짜 KR 자리가 뉴스 글인가 — 마감브리프 전용 데이터 게이트를 돌리지 않는다."""
+    return market == 'kr' and cfg_for(market, date) is not MARKET_CFG[market]
+
+
 SPANS = ('daily',)                # 주간은 2단계 — 일간 ok 파일의 결정적 연대기
 STATUSES = ('ok', 'none', 'error')
 # 동결되는 none — 그날 다시 돌려도 결과가 같은 「편집상 결론」. 나머지는 재시도할 수 있다.

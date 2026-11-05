@@ -160,9 +160,25 @@ def decide_jp_daily(now, files, lock_age, holidays=()):
                   lambda d: (f'japan/daily/{d}.html',))
 
 
-def decide_kr(now, files, lock_age, holidays=()):
-    return _daily(kr_session(now, holidays), files, lock_age, STALE_MIN['kr'],
-                  lambda d: (f'kr/posts/{d}.html',))
+KR_NEWS_FROM = '2026-11-06'     # KR 뉴스 글 분리 — `kr.news.SPLIT_FROM` 과 같다(테스트)
+KR_NEWS_CATEGORIES = ('politics', 'policy', 'macro', 'industry', 'global')
+
+
+def kr_news_expected(collected):
+    """그날 KR 뉴스 글이 나와야 하는가 — 요약까지 된 갈래 기사가 하나라도 있으면. 수집분이 없거나 비면
+    오케스트레이터가 글을 내지 않으므로(STEP 3.5) 재시도 루틴이 그 글을 영영 기다리지 않게 한다."""
+    items = (collected or {}).get('items') if isinstance(collected, dict) else None
+    return any(isinstance(it, dict) and it.get('summary_ko') and it.get('category') in KR_NEWS_CATEGORIES
+               for it in items or [])
+
+
+def decide_kr(now, files, lock_age, holidays=(), news_expected=lambda d: False):
+    """마감브리프, 그리고 2026-11-06 부터 뉴스 글(실을 기사가 있는 날만). US 처럼 두 글이 다 나와야 DONE —
+    브리프 뒤 한도로 죽어 뉴스 글이 빠진 날을 재시도가 잇는다(Fable 설계 검토 M2)."""
+    def want(d):
+        news = (f'kr/news/{d}.html',) if d >= KR_NEWS_FROM and news_expected(d) else ()
+        return (f'kr/posts/{d}.html',) + news
+    return _daily(kr_session(now, holidays), files, lock_age, STALE_MIN['kr'], want)
 
 
 def decide_weekly(key, aggs, files, lock_age):
@@ -207,6 +223,40 @@ def _holidays(market, ref='origin/main'):
     got = (cal or {}).get(market) or {}
     days = got.get('dates')
     return tuple(days) if isinstance(days, list) else ()
+
+
+class GitLookupError(RuntimeError):
+    """git 조회 자체가 실패했다 — 「수집분 없음」과 다르다. 판정 불가는 DUE 쪽으로 보낸다."""
+
+
+def brief_news_input(day, ref='origin/main'):
+    """그날 KR 마감브리프 **발행 커밋**의 뉴스 수집분 — 뉴스 글의 근거이자 「뉴스 글이 나와야 하나」의 판정 근거.
+    발행 뒤 재수집이 파일을 바꿔도 이 판이 정본이다(codex 구현 검토 2026-11-06 #2·#3). 브리프가 없으면 None,
+    그 커밋에 수집분이 없으면 {}. git 이 실패하면 GitLookupError(codex 재확인 #2 — 실패를 「뉴스 없음」으로
+    읽으면 뉴스 글을 건너뛰고 재시도도 DONE 이 된다)."""
+    out = _git('log', ref, '--diff-filter=A', '--format=%H', '-1', '--', f'kr/posts/{day}.html')
+    if out.returncode:
+        raise GitLookupError(out.stderr.strip()[:200])
+    commit = out.stdout.strip()
+    if not commit:
+        return None
+    path = f'kr/data/news/{day}.json'
+    if _git('cat-file', '-e', f'{commit}:{path}').returncode:
+        return {}                                 # 그 커밋에 파일이 없다 — 수집이 그날 실패한 것
+    shown = _git('show', f'{commit}:{path}')
+    if shown.returncode:
+        raise GitLookupError(shown.stderr.strip()[:200])
+    try:
+        return json.loads(shown.stdout)
+    except ValueError:
+        return {}
+
+
+def _kr_news_expected_at(day):
+    try:
+        return kr_news_expected(brief_news_input(day))
+    except GitLookupError:
+        return True                               # 판정 불가 → 기다린다(DUE) — 틀려도 오케스트레이터 가드가 막는다
 
 
 def _files(*dirs, ref='origin/main'):
@@ -258,6 +308,33 @@ def main(argv=None):
         s = jp_session(datetime.now(timezone.utc), hol)
         print(s, jp_prev_session(s, hol))
         return 0
+    if args[0] == 'kr-news-input':
+        # KR STEP 0·3.5 — 브리프 발행 커밋의 뉴스 수집분을 <outdir>/news/<day>.json 으로 꺼내고 한 단어로 답한다:
+        # expected(실을 기사 있음) · none(파일 없음·실을 기사 없음 — 뉴스 글을 내지 않는다) · no-brief.
+        # 잠금을 쥔 런도 쓸 수 있게 잠금을 보지 않는다(codex #1 — `kr` 판정은 자기 잠금에 BUSY 를 낸다).
+        if len(args) != 3:
+            print('usage: routine_due.py kr-news-input DAY OUTDIR', file=sys.stderr)
+            return 2
+        day, outdir = args[1], args[2]
+        # 조회 실패는 `error` — 오케스트레이터는 그 런에서 뉴스 글을 건너뛰고 보고한다. 재시도 판정은
+        # 같은 실패를 DUE 로 읽어 다음 회차가 다시 본다(codex 재확인 #2).
+        if _git('fetch', '-q', 'origin', 'main').returncode:
+            print('error fetch 실패')
+            return 0
+        try:
+            data = brief_news_input(day)
+        except GitLookupError as e:
+            print(f'error {e}')
+            return 0
+        if data is None:
+            print('no-brief')
+            return 0
+        if data is not None:
+            os.makedirs(os.path.join(outdir, 'news'), exist_ok=True)
+            with open(os.path.join(outdir, 'news', f'{day}.json'), 'w', encoding='utf-8') as fh:
+                json.dump(data, fh, ensure_ascii=False, indent=2)
+        print('expected' if kr_news_expected(data) else 'none')
+        return 0
     if args[0] == 'week-key':
         # 주간 오케스트레이터가 데이터로 정한 키와 맞대 본다 — 다르면 데이터가 밀린 것이다.
         print(week_of(datetime.now(timezone.utc), _holidays('us')))
@@ -278,8 +355,9 @@ def main(argv=None):
                             _lock_age(lock_name('us', now, holidays=hol), now), hol)
     elif kind == 'kr':
         hol = _holidays('kr')
-        verdict = decide_kr(now, _files('kr/posts'),
-                            _lock_age(lock_name('kr', now, holidays=hol), now), hol)
+        verdict = decide_kr(now, _files('kr/posts', 'kr/news'),
+                            _lock_age(lock_name('kr', now, holidays=hol), now), hol,
+                            _kr_news_expected_at)
     elif kind == 'jp_daily':
         hol = _holidays('jp')
         verdict = decide_jp_daily(now, _files('japan/daily'),

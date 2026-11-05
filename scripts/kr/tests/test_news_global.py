@@ -135,11 +135,12 @@ def test_trim_keeps_same_day_bodied_rows_and_caps_at_four():
                                          ('中 수출 급감', 'china')])]
     rows.append(g('yday', '英 예산안', 'europe', body_chars=900, published='2026-09-24T23:00:00+09:00'))
     rows.append(g('nobody', '獨 재정', 'europe', body_chars=0, published='2026-09-25T09:00:00+09:00'))
-    rows.append({'guid': 'm', 'title': '코스피', 'category': 'market', 'published': '2026-09-25T09:00:00+09:00'})
+    rows.append({'guid': 'p', 'title': '금융위 공매도 제도', 'category': 'policy', 'body_chars': 900,
+                 'published': '2026-09-25T09:00:00+09:00'})
     got = N.trim(rows, '2026-09-25')
     gl = [r['guid'] for r in got if r['category'] == 'global']
     assert len(gl) == 4 and 'yday' not in gl and 'nobody' not in gl
-    assert 'm' in [r['guid'] for r in got]
+    assert 'p' in [r['guid'] for r in got]        # 2026-11-05: 필수 갈래도 trim 에서 확정한다
 
 
 def test_article_published_reads_the_naver_article_stamp():

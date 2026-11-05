@@ -32,9 +32,27 @@ PAGE_SIZE = 20          # 100 은 400 이다(2026-09-24 실측). 20 은 된다.
 MAX_PAGES = 12          # 당일 수집이면 4~5쪽에서 멈춘다. 연휴 뒤 전 거래일분은 8쪽(160건)으로
                         # 모자랐다(2026-09-24 run 35981964976, 9/23 76건까지).
 
-LABELS = {'macro': '매크로', 'policy': '정책·정치', 'market': '증시', 'industry': '산업·기업',
-          'global': '글로벌'}
-DIGEST_CATEGORIES = ('macro', 'policy', 'market', 'industry', 'global')
+# 2026-11-05 뉴스 글 분리 — 사용자 지시 「정치, 매크로, 특정 이슈가 있는 산업으로 각각 최소 3개씩」,
+# 역인터뷰 답 「정치와 정책 따로」. 증시(market)는 마감브리프 본문 몫이라 싣지 않는다 — 분류에는 남아
+# 증시 기사가 정책·산업으로 새지 않게 붙잡는 버림 칸이다.
+LABELS = {'politics': '정치', 'policy': '정책', 'macro': '매크로', 'industry': '산업', 'global': '글로벌',
+          'market': '증시'}
+DIGEST_CATEGORIES = ('politics', 'policy', 'macro', 'industry', 'global')
+# 2026-11-05 까지 마감브리프 §12 의 갈래 — 옛 글을 다시 검사하는 `check_news.py --market kr` 몫(codex #8)
+LEGACY_CATEGORIES = ('macro', 'policy', 'market', 'industry', 'global')
+# 이 날 발행분부터 「오늘의 뉴스」·쟁점 분석은 마감브리프가 아니라 뉴스 글(`kr/news/`)에 있다.
+# 그 전 마감브리프는 예전 계약 그대로 검사한다. `common/contested.KR_NEWS_FROM` 과 같아야 한다(테스트).
+SPLIT_FROM = '2026-11-06'
+
+
+def brief_carries_news(date):
+    """그 날짜 KR 마감브리프에 「오늘의 뉴스」가 있어야 하는가."""
+    return str(date or '') < SPLIT_FROM
+
+
+REQUIRED = ('politics', 'policy', 'macro', 'industry')   # 하한 MIN 을 거는 갈래
+MIN, FINAL = 3, 4       # 하한·상한. 상한 4 는 본문·요약 실패 한 건을 메울 여유다
+PRESELECT = 6           # 본문을 받기 전 후보 — 11/04 실측 본문 실패 2/3(404·Timeout)이 하한을 깼다
 
 DEFAULT_PER_CATEGORY = 3
 MAX_SUMMARY = 200       # 목록의 `body` 발췌 — 앞머리 150자 안팎이 온다
@@ -50,19 +68,32 @@ TITLE_DUP = 0.6         # 같은 기사를 매체마다 다시 쓴 제목. 실�
 _MACRO = re.compile(
     r'한은|한국은행|금통위|기준금리|금리|환율|원[·/-]?달러|달러|물가|CPI|PCE|연준|\bFed\b|FOMC|'
     r'파월|국채|국고채|채권|수출|수입|무역수지|경상수지|GDP|성장률|고용|실업률|유가|인플레')
+# 정책 = 정부·당국·제도. 「트럼프·시진핑·선거·정상회담」은 11/04 미국 중간선거 증시 기사를 끌어와 뺐다.
 _POLICY = re.compile(
-    r'정부|국회|대통령|여당|야당|민주당|국민의힘|금융위|금감원|금융당국|기재부|기획재정부|산업부|'
-    r'공정위|국세청|세법|세제|과세|법안|개정안|상법|밸류업|규제|정책|추경|예산|관세|통상|'
-    r'정상회담|트럼프|시진핑|선거')
+    r'정부|금융위|금감원|금융당국|기재부|기획재정부|산업부|공정위|국세청|세법|세제|과세|양도세|법안|'
+    r'개정안|상법|밸류업|규제|정책|추경|예산|관세|통상')
+# 정치 = 국내 정치 주체. 「민주당」은 美 민주당과 겹쳐 해외 표지가 없을 때만 센다(`_FOREIGN_POL`).
+_POLITICS = re.compile(
+    r'국회|국민의힘|여야|여당|야당|與|野|청와대|靑|대통령실|국정감사|국감|본회의|법사위|예결위|'
+    r'李\s?대통령|이\s?대통령|민주당')
+_FOREIGN_POL = re.compile(r'美|미국|트럼프|중간선거|백악관|공화당|머스크')
 _MARKET = re.compile(
     r'코스피|코스닥|증시|지수|외국인|기관|개인|순매수|순매도|수급|공매도|ETF|상장|IPO|시총|'
     r'시가총액|증권가|목표가|주가|급등|급락|반등|박스피')
+# 증시 마감·전망 기사의 표지. 정책·정치 어휘보다 먼저 본다 — 「美선거 후폭풍에 코스피 5380선 털썩」은
+# 정치 기사가 아니다.
+_WRAP = re.compile(r'코스피|코스닥|증시|사이드카|프리마켓|장\s?초반|박스피|롤러코스|투심')
+# 기업 실적·계약. 매크로보다 먼저 본다 — 「LG화학 영업익…고유가」의 유가, 「기술수출 계약금」의 수출.
+# 나라 단위 「수출 실적」은 매크로로 남긴다.
+_EARNINGS = re.compile(r'영업익|영업이익|순이익|(?<!수출 )(?<!수출)실적|수주|계약금|기술수출|인수|합병|M&A')
 _INDUSTRY = re.compile(
     r'반도체|HBM|메모리|D램|낸드|파운드리|\bAI\b|인공지능|데이터센터|전력|2차전지|배터리|자동차|'
     r'조선|방산|원전|바이오|제약|철강|화학|정유|건설|수주|실적|영업이익|매출|출시|공장|인수|'
     r'합병|M&A|삼성|SK|현대|LG')
-_ORDER = (('macro', _MACRO), ('policy', _POLICY), ('market', _MARKET), ('industry', _INDUSTRY))
-
+# 업종 이름 — 산업 칸에서 「특정 이슈가 있는 산업」 기사를 앞에 세우는 순위 키
+_SECTOR = re.compile(
+    r'반도체|HBM|메모리|D램|낸드|파운드리|\bAI\b|인공지능|데이터센터|전력|2차전지|배터리|자동차|전기차|'
+    r'조선|방산|원전|바이오|제약|철강|화학|석유화학|정유|건설|항공|해운|게임|통신|플랫폼|로봇')
 # 해외 증시 마감 기사는 US 리포트의 몫이다(「유가↑·금리↑ 3대지수 하락」이 매크로로 들어왔다,
 # 2026-09-24 실측). 코스피·국내를 함께 말하면 남긴다.
 _FOREIGN = re.compile(r'(?:日|中|美|뉴욕|유럽|홍콩|대만|일본|중국)\s*증시|닛케이|상하이종합|3대\s*지수|월가')
@@ -72,16 +103,104 @@ _LIFESTYLE = re.compile(r'절세|전세|월세|용돈|청약|재테크|노후|\[
 
 
 def classify(title):
-    """제목 -> 갈래. 어디에도 안 맞거나 걸러야 할 기사는 None."""
+    """주요뉴스 제목 -> 갈래. 어디에도 안 맞거나 걸러야 할 기사는 None.
+
+    순서가 우선순위다(11/04-05 실측으로 다시 세웠다): 증시 마감 → 기업 실적 → 매크로 → 정책 → 정치 →
+    증시 일반 → 산업. 정책이 정치보다 앞서는 이유: 「상법 개정안 국회 통과」는 제도가 주인공이다.
+    """
     t = title or ''
     if _LIFESTYLE.search(t):
         return None
     if _FOREIGN.search(t) and not _DOMESTIC.search(t):
         return None
-    for name, rx in _ORDER:
-        if rx.search(t):
-            return name
+    if _WRAP.search(t):
+        return 'market'
+    if _EARNINGS.search(t):
+        return 'industry'
+    if _MACRO.search(t):
+        return 'macro'
+    if _POLICY.search(t):
+        return 'policy'
+    if _POLITICS.search(t) and not _FOREIGN_POL.search(t):
+        return 'politics'
+    if _MARKET.search(t):
+        return 'market'
+    if _INDUSTRY.search(t):
+        return 'industry'
     return None
+
+
+# ── 정치 섹션 ─────────────────────────────────────────────────────────────
+# 네이버 뉴스 정치 섹션(대통령실·국회/정당·정치일반). 주요뉴스에는 국내 정치 기사가 거의 없다.
+# 2026-11-04 실측: 섹션당 36건, 대부분 정쟁(특검·공천)과 같은 소식의 재탕(집값 발언 6건).
+# 시장 데스크가 읽을 기사만 남긴다 — 경제·제도·안보 어휘 묶음이 하나는 걸려야 하고, 정쟁·의전·
+# 사진·여론조사·묶음 기사 표지가 있으면 버린다.
+POLITICS_SECTIONS = ((100, 264, '대통령실'), (100, 265, '국회/정당'), (100, 269, '정치일반'))
+_POL_ECON = (
+    re.compile(r'경제|성장|물가|금리|환율|수출|무역|관세|통상'),
+    re.compile(r'예산|세수|세법|세제|세금|과세|감세|증세|기금|재정|추경|국채'),
+    re.compile(r'부동산|집값|주택|아파트|공급|재개발|재건축|분양|토지|농지'),
+    re.compile(r'규제|법안|특별법|개정안|입법|상법|시행령'),
+    re.compile(r'원전|방산|반도체|배터리|조선|에너지|전력|발전사|\bAI\b|인공지능|플랫폼|SNS|핵심광물|공급망'),
+    re.compile(r'기업|재계|투자|노동|임금|고용|연금|금융|은행|증시|코스피|가상자산'),
+    re.compile(r'북한|北|김정은|김여정|미사일|도발|핵실험'),
+    re.compile(r'MOU|협정|정상회담|FTA'),
+)
+_POL_DROP = re.compile(
+    r'\[포토\]|\[사진\]|\[투나잇이슈\]|오늘뉴스|여사|영부인|조문|빈소|추모|별세|여론조사|지지율|'
+    r'당대표|전당대회|공천|특검|기소|무죄|유죄|구속|사과|위원장\s?(?:당선|선출)')
+
+
+def politics_score(title):
+    return sum(1 for rx in _POL_ECON if rx.search(title or ''))
+
+
+def classify_politics(title):
+    t = title or ''
+    if _POL_DROP.search(t) or not politics_score(t):
+        return None
+    return 'politics'
+
+
+_TOKEN = re.compile(r'[가-힣A-Za-z]{2,}')
+
+
+def _tokens(title):
+    return _TOKEN.findall(re.sub(r'\[[^\]]*\]', '', title or ''))
+
+
+def _alike(x, y):
+    """같은 낱말인가 — 같거나, 앞머리 셋 이상이 같다(조사만 다른 꼴: 대미투자는·대미투자도)."""
+    if x == y:
+        return True
+    n = 0
+    for p, q in zip(x, y):
+        if p != q:
+            break
+        n += 1
+    return n >= 3 or (n >= 2 and n == min(len(x), len(y)))
+
+
+def same_topic(a, b, need=2):
+    """같은 소식인가 — 제목 낱말이 둘 이상 겹치면.
+
+    `dedupe` 의 글자 유사도 0.6 은 「韓-튀르키예 원전 MOU」와 「李대통령, 튀르키예와 원전·방산 협력」을
+    둘로 남긴다 — 정치 섹션은 같은 일정을 열 꼴로 다시 쓴다(11/03 튀르키예 정상회담 14건).
+    """
+    tb = set(_tokens(b))
+    return sum(1 for x in set(_tokens(a)) if any(_alike(x, y) for y in tb)) >= need
+
+
+def _distinct(rows, cap, pad=MIN):
+    """소식이 겹치지 않게 앞에서부터. 서로 다른 소식이 `pad` 에 못 미치면 겹치는 것으로 채운다.
+    후보 단계(`select`)는 pad=cap — 겹치는 기사를 버리지 않고 뒤로 미뤄, 본문 실패를 메울 대체가 남는다
+    (codex 구현 검토 2026-11-06 #5). 확정 단계(`trim`)는 pad=MIN."""
+    out, rest = [], []
+    for r in rows:
+        (rest if any(same_topic(r.get('title'), o.get('title')) for o in out) else out).append(r)
+    if len(out) < pad:
+        out += rest[:pad - len(out)]
+    return out[:cap]
 
 
 # ── 목록 ─────────────────────────────────────────────────────────────────
@@ -156,13 +275,38 @@ def dedupe(items):
     return out
 
 
+def with_spares(rows, chosen, per=1):
+    """`dedupe` 가 접은 같은 소식의 다른 매체 기사를, 고른 후보 하나당 `per` 건까지 대체 후보로 붙인다.
+    본문을 받기 전에 접으면 남긴 쪽 본문이 실패할 때 대체가 없다(codex 재확인 2026-11-06 #1).
+    붙인 행에는 `spare_for`(원래 후보 guid)가 있고, `trim()` 이 원래 후보가 살아 있으면 버린다. 글로벌은 제외."""
+    picked = {c.get('guid') for c in chosen}
+    keys = [(c, _title_key(c.get('title'))) for c in chosen if c.get('category') in REQUIRED]
+    used, out = {}, []
+    for r in rows or []:
+        if r.get('guid') in picked or r.get('category') not in REQUIRED:
+            continue
+        key = _title_key(r.get('title'))
+        for c, ck in keys:
+            if (c.get('category') == r.get('category') and key and ck and used.get(c['guid'], 0) < per
+                    and SequenceMatcher(None, key, ck).ratio() >= TITLE_DUP):
+                out.append(dict(r, spare_for=c['guid']))
+                used[c['guid']] = used.get(c['guid'], 0) + 1
+                picked.add(r.get('guid'))
+                break
+    return out
+
+
 def categorize(items):
-    """주요뉴스 행은 예전 규칙, 세계 섹션 행(`feed == 'world'`)은 글로벌 규칙."""
+    """주요뉴스 행은 `classify`, 세계 섹션 행(`feed == 'world'`)은 글로벌, 정치 섹션 행은 `classify_politics`."""
     out = []
     for it in items or []:
         if it.get('feed') == 'world':
             if classify_global(it.get('title')):
                 out.append(dict(it, category='global', region=region(it.get('title'))))
+            continue
+        if it.get('feed') == 'politics':
+            if classify_politics(it.get('title')):
+                out.append(dict(it, category='politics'))
             continue
         cat = classify(it.get('title'))
         if cat:
@@ -170,8 +314,30 @@ def categorize(items):
     return out
 
 
-def select(items, per_category=DEFAULT_PER_CATEGORY):
-    """갈래별 상한. 얇은 갈래를 다른 갈래로 채우지 않는다(US `select` 와 같은 이유)."""
+def digestible(rows):
+    """뉴스 글에 실을 수 있는 갈래만 — 버림 칸(증시)을 dedupe **전에** 걷어 낸다. 버릴 기사가 같은 소식의
+    다른 갈래 기사를 먼저 지우지 않게(codex 구현 검토 2026-11-06 #4: 「코스피 하락…정부 대책」이 정치
+    섹션의 「정부 대책」을 지우고 자신도 증시로 빠져 0건)."""
+    return [r for r in rows or [] if r.get('category') in DIGEST_CATEGORIES]
+
+
+def _newest(rows):
+    return sorted(rows, key=lambda r: r.get('published') or '', reverse=True)
+
+
+def _ranked(cat, rows):
+    """갈래 안의 순서. 정치는 경제 어휘 묶음 수, 산업은 업종 이름이 있는 기사를 앞에(그다음 최신순)."""
+    rows = _newest(rows)
+    if cat == 'politics':
+        return _distinct(sorted(rows, key=lambda r: -politics_score(r.get('title'))), len(rows), pad=len(rows))
+    if cat == 'industry':
+        return sorted(rows, key=lambda r: not _SECTOR.search(r.get('title') or ''))
+    return rows
+
+
+def select(items, per_category=PRESELECT):
+    """갈래별 후보. 필수 갈래는 PRESELECT 건 — 본문을 받은 뒤 `trim()` 이 FINAL 로 줄인다.
+    얇은 갈래를 다른 갈래로 채우지 않는다(US `select` 와 같은 이유). 증시(market)는 고르지 않는다."""
     buckets = {}
     for it in items or []:
         buckets.setdefault(it['category'], []).append(it)
@@ -180,8 +346,7 @@ def select(items, per_category=DEFAULT_PER_CATEGORY):
         if cat == 'global':          # 후보만 — 날짜는 기사면에서 읽고 `trim()` 이 확정한다
             out.extend(_spread(_rank(buckets.get(cat, [])), PRESELECT_GLOBAL))
             continue
-        rows = sorted(buckets.get(cat, []), key=lambda r: r.get('published') or '', reverse=True)
-        out.extend(rows[:per_category])
+        out.extend(_ranked(cat, buckets.get(cat, []))[:per_category])
     return out
 
 
@@ -343,14 +508,26 @@ def _spread(rows, cap):
 
 
 def trim(items, report_date):
-    """본문을 받은 뒤 글로벌을 확정한다 — 본문이 있고 기사면 날짜가 발행일인 것만. 다른 갈래는 그대로."""
-    out, pool = [], []
-    for it in items or []:
-        if it.get('category') != 'global':
-            out.append(it)
-        elif it.get('body_chars') and (it.get('published') or '')[:10] == report_date:
-            pool.append(it)
-    return out + _spread(_rank(pool), FINAL_GLOBAL)
+    """본문을 받은 뒤 확정한다 — 본문이 있고 기사면 날짜가 발행일인 것만.
+    필수 갈래는 갈래 순서를 지켜 FINAL 건, 글로벌은 지역을 돌아 FINAL_GLOBAL 건."""
+    ok = [it for it in items or []
+          if it.get('body_chars') and (it.get('published') or '')[:10] == report_date]
+    alive = {it.get('guid') for it in ok if not it.get('spare_for')}
+    pools = {}
+    for it in ok:
+        if it.get('spare_for') in alive:
+            continue                    # 원래 후보가 살아 있다 — 대체는 쓰지 않는다
+        pools.setdefault(it.get('category'), []).append(it)
+    out = []
+    for cat in DIGEST_CATEGORIES:
+        rows = pools.get(cat, [])
+        if cat == 'global':
+            out.extend(_spread(_rank(rows), FINAL_GLOBAL))
+        elif cat == 'politics':
+            out.extend(_distinct(rows, FINAL))      # select 가 이미 순위를 매겼다
+        else:
+            out.extend(_ranked(cat, rows)[:FINAL])
+    return out
 
 
 _DATE_TIME = re.compile(r'_ARTICLE_DATE_TIME"[^>]*data-date-time="([^"]+)"|'

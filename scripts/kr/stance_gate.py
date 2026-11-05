@@ -278,6 +278,28 @@ def check_expression(stance: dict, liquidity: dict) -> list:
     return []
 
 
+_NEWS_LEFTOVER = ((re.compile(r"\bdata-news\s*=", re.I), "`data-news` 기사 블록"),
+                  (re.compile(r"\bdata-summary\s*=", re.I), "`data-summary` 기사 요약 문단"),
+                  (re.compile(r"<!--\s*CONTESTED\s*-->", re.I), "쟁점 분석 표식"),
+                  (re.compile(r"\bdata-contested\s*=", re.I), "쟁점 분석 섹션"),
+                  (re.compile(r"contested-(?:pending|omitted)", re.I), "쟁점 분석 자리표시"))
+
+
+def news_split_violations(html_doc: str, report_date=None) -> list:
+    """2026-11-06 부터 「오늘의 뉴스」와 쟁점 분석은 뉴스 글(kr/news) 몫이다 — 마감브리프에 다시 들어오면 막는다.
+    속성은 HTML 이 허용하는 공백·대소문자까지 본다(codex 구현 검토 2026-11-06 #7). 그 전 글(정정 러너가 다시
+    검사하는 옛 글)은 예전 계약 그대로다. 날짜가 없으면 새 계약으로 본다."""
+    from kr.news import brief_carries_news
+    if report_date and brief_carries_news(report_date):
+        return []
+    doc = html_doc or ""
+    v = [f"마감브리프에 {what}이 있다 — {NEWS}·쟁점 분석은 뉴스 글에 싣는다"
+         for rx, what in _NEWS_LEFTOVER if rx.search(doc)]
+    if _headed(_Doc(doc, "data-no-block"), NEWS):
+        v.append(f"마감브리프에 「{NEWS}」 섹션이 있다 — 뉴스 글에 싣는다")
+    return v
+
+
 def check(html_doc: str, stance: dict, stance_eval: dict, liquidity=None,
           report_date=None) -> list:
     seg = section_slice(html_doc)
@@ -312,6 +334,7 @@ def check(html_doc: str, stance: dict, stance_eval: dict, liquidity=None,
             v.append(f"{label}: {need}자에 못 미친다 — 자리만 채웠다")
 
     v += grade_talk.violations(html_doc, exempt_news=True)
+    v += news_split_violations(html_doc, report_date)
 
     level = ((stance or {}).get("invalidation") or {}).get("level")
     if level is not None:

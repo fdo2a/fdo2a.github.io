@@ -157,6 +157,16 @@ def same_skeleton(before, after):
     return not markup_diff(before, after) and not diff['added'] and not diff['removed']
 
 
+def _kr_brief_carries_news(date):
+    """2026-11-06 부터 KR 뉴스는 뉴스 글(kr/news)에 있다 — 마감브리프에 뉴스 게이트를 걸지 않는다."""
+    try:
+        from kr.news import brief_carries_news
+    except ImportError:
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        from kr.news import brief_carries_news
+    return brief_carries_news(date)
+
+
 def gate_commands(section, post, datadir, original, date, cycle, research_root=None):
     """STEP 2.5 finalize 의 게이트 목록 그대로 (.claude/ORCHESTRATOR.md·KR_ORCHESTRATOR.md).
 
@@ -194,8 +204,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_weight.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
             [py, s + 'check_kr_stance.py', '--html', post, '--datadir', datadir,
              '--next', os.path.join(datadir, 'kr_stance.json')],   # STEP 2.9 가 옮겨 둔 자리
-            [py, s + 'check_news.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date],
+            *([[py, s + 'check_news.py', '--html', post, '--datadir', datadir, '--market', 'kr',
+                '--date', date]] if _kr_brief_carries_news(date) else []),
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'kr',
              '--date', date],

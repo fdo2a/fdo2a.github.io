@@ -132,7 +132,7 @@ def _evidence_dir(clone, rel, temp):
     return os.path.join(d, 'kr', 'data')
 
 
-def kr_data_gates(clone, rel, before_html, date, temp):
+def kr_data_gates(clone, rel, before_html, date, temp, news=False):
     """KR 데이터 게이트를 앞판·뒷판에 같은 근거로 → 새로 생긴 실패 목록(빈 목록 = 통과).
 
     발행 뒤 데이터가 바뀌어 원래도 실패하는 게이트(10/20 의 check_news 처럼)는 섹션 탓이 아니다 —
@@ -147,12 +147,14 @@ def kr_data_gates(clone, rel, before_html, date, temp):
         fh.write(before_html)
     apath = os.path.join(clone, rel)
     bad = []
-    for g in KR_DATA_GATES:
+    # 뉴스 글(2026-11-05 분리 뒤)에는 마감브리프 게이트가 해당하지 않는다 — 뉴스 게이트만, 하한까지 건다
+    for g in (('check_news.py',) if news else KR_DATA_GATES):
         extra = ['--date', date] if g == 'check_news.py' else []
+        mk = 'kr-news' if news else 'kr'
         outs = []
         for path in (bpath, apath):
             p = subprocess.run([sys.executable, f'scripts/{g}', '--html', path, '--datadir', data,
-                                '--market', 'kr', *extra], cwd=clone, capture_output=True, text=True,
+                                '--market', mk, *extra], cwd=clone, capture_output=True, text=True,
                                timeout=300)
             outs.append((p.returncode, (p.stdout + p.stderr).replace(path, '<post>')))
         (rb, ob), (ra, oa) = outs
@@ -170,7 +172,7 @@ def fill(clone, date, payload, market='us', temp=None):
     """발행본의 자리표시를 채운다(또는 지운다) → 바뀐 파일 목록과 메모."""
     sys.path.insert(0, os.path.join(clone, 'scripts'))
     import render_contested as R
-    cfg = C.MARKET_CFG[market]
+    cfg = C.cfg_for(market, date)
     rel = cfg['page'].format(d=date)
     path = os.path.join(clone, rel)
     with open(path, encoding='utf-8') as fh:
@@ -190,7 +192,8 @@ def fill(clone, date, payload, market='us', temp=None):
             now = fh.read()
         if outside_section(now) != outside_section(before):
             return False, '섹션 밖 본문이 바뀌었다'
-        bad = kr_data_gates(clone, rel, before, date, temp or tempfile.gettempdir())
+        bad = kr_data_gates(clone, rel, before, date, temp or tempfile.gettempdir(),
+                            news=C.is_news_page(market, date))
         return (False, '; '.join(bad)[:400]) if bad else (True, '')
     ok, why = check()
     if ok:
@@ -345,16 +348,19 @@ def _dates(clone, md, market='us'):
     if md.get('report_date'):
         out.append(md['report_date'])
     today = datetime.now(KST).date()
-    pdir = os.path.join(clone, C.MARKET_CFG[market]['pages_dir'])
-    for name in sorted(os.listdir(pdir) if os.path.isdir(pdir) else []):
-        m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', name)
-        if not m or m.group(1) in out:
-            continue
-        if (today - datetime.fromisoformat(m.group(1)).date()).days > MAX_AGE_DAYS:
-            continue
-        with open(os.path.join(pdir, name), encoding='utf-8') as fh:
-            if C.PENDING in fh.read():
-                out.append(m.group(1))
+    for sub in C.pages_dirs(market):
+        pdir = os.path.join(clone, sub)
+        for name in sorted(os.listdir(pdir) if os.path.isdir(pdir) else []):
+            m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', name)
+            if not m or m.group(1) in out:
+                continue
+            if C.cfg_for(market, m.group(1))['pages_dir'] != sub:
+                continue                    # 그 날짜의 자리가 아니다(분리 전후의 다른 폴더)
+            if (today - datetime.fromisoformat(m.group(1)).date()).days > MAX_AGE_DAYS:
+                continue
+            with open(os.path.join(pdir, name), encoding='utf-8') as fh:
+                if C.PENDING in fh.read():
+                    out.append(m.group(1))
     return sorted(out)
 
 
@@ -373,7 +379,7 @@ def naver_keys():
 
 def handle(clone, temp, date, md_current, notes, market='us'):
     """한 날짜 → (바뀐 파일, 발행본 sha, 메모) 또는 None(할 일 없음)."""
-    cfg = C.MARKET_CFG[market]
+    cfg = C.cfg_for(market, date)
     rel_json = cfg['result'].format(d=date)
     jpath = os.path.join(clone, rel_json)
     prev = _normalize(_load(jpath))
@@ -544,7 +550,7 @@ def tick(root, date=None, dry=False, markets=None):
             looked += [f'{market}:{d}' for d in dates]
             for d in dates:
                 prev = _normalize(_load(os.path.join(clone, cfg['result'].format(d=d))))
-                page = os.path.join(clone, cfg['page'].format(d=d))
+                page = os.path.join(clone, C.cfg_for(market, d)['page'].format(d=d))
                 html = open(page, encoding='utf-8').read() if os.path.exists(page) else None
                 if plan(prev, page_state(html), d, market) == 'analyze' and analyzed:
                     continue                   # 한 tick 에 분석은 한 건만 — 한도를 몰아 쓰지 않는다

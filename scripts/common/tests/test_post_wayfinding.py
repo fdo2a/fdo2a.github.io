@@ -198,13 +198,14 @@ def test_current_section_is_marked_in_the_reading_map(browser):
 
 
 @pytest.mark.parametrize('market,index', [('us', '../posts.json'), ('kr', '../posts.json'),
-                                          ('news', '../news.json')])
+                                          ('news', '../news.json'), ('kr-news', '../news.json')])
 def test_footer_is_rendered_for_daily_markets(market, index):
     title = S.MARKETS[market]['title_prefix'] + '테스트 | 2026-10-16'
     out = S.render(market, '2026-10-16', dict(META, title=title), BODY)
     foot = re.search(r'<nav class="post-foot".*?</nav>', out, re.S).group(0)
     assert f'data-index="{index}"' in foot and 'data-key="2026-10-16"' in foot
-    assert ('data-news-index=' in foot) == (market == 'us')
+    # 같은 날 뉴스 글로 가는 길 — US 는 2026-09-26, KR 은 2026-11-05 뉴스 글 분리부터
+    assert ('data-news-index=' in foot) == (market in ('us', 'kr'))
     assert '<a href="#">' in foot
     # The footer must not add a single reader-visible number.
     assert R.visible_numeric_tokens(foot) == []

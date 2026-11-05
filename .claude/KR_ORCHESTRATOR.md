@@ -19,7 +19,7 @@
 
    exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고 「locked by another run」만 보고하고 끝낸다. exit 4 도 진행하지 않는다. STEP 2 작성 시작 전과 STEP 3 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/kr-lock-key)"` — exit 3 이면 잠금을 잃었으니 커밋하지 않고 끝낸다. **쓰지 않고 끝나는 모든 경로**(아래 가드·수집 뒤 데이터 부족)에서는 `bash scripts/ci/run_lock.sh release "$(cat /tmp/kr-lock-key)"` 로 풀고 끝낸다. **release 는 ref 를 지우지 않고 `released` 표시 커밋으로 바꾼다**(클라우드는 ref 삭제 push 를 거부한다 — 2026-10-20). release 가 **exit 4·5 면 잠금이 남아 재시도 루틴이 stale 까지 BUSY 로 막힌다** — 이 가드가 평소 알리지 않고 끝나는 경로라도 release 출력을 붙여 PushNotification 으로 보고한다. exit 0 은 풀렸거나 이미 남의 것이다.
 
-   아래 1·2 로 `report_date` 가 예상 세션과 맞고 `kr/posts/<report_date>.html` 이 이미 커밋돼 있으면 **「already published」만 보고하고 끝낸다**(잠금을 풀고, 알림 없이). 데이터가 예상 세션보다 이르면 이 가드로 멈추지 말고 3번 재수집으로 내려간다 — 어제 글이 있는 건 당연하다.
+   아래 1·2 로 `report_date` 가 예상 세션과 맞고 `kr/posts/<report_date>.html` 이 이미 커밋돼 있으면 **「already published」만 보고하고 끝낸다**(잠금을 풀고, 알림 없이). **단 2026-11-06 부터는 뉴스 글도 본다** — 브리프가 있고 `kr/news/<report_date>.html` 이 origin 에 없으면 `python3 scripts/ci/routine_due.py kr-news-input <report_date> <워크스페이스 루트>/kr_news_data` 를 돌린다. `expected` 면(브리프 발행 뒤 한도로 죽은 런) STEP 1~3 을 건너뛰고 **STEP 3.5 만** 한다. `none` 이면 「already published」다. `error …` 면 판정할 수 없으니 쓰지 않고 잠금을 풀고 그 줄을 붙여 PushNotification 으로 보고한다(재시도 루틴이 다음 회차에 다시 본다). 이 명령은 잠금을 보지 않으므로 잠금을 쥔 채 돌려도 된다(`routine_due.py kr` 은 자기 잠금에 BUSY 를 낸다 — 이 판단에 쓰지 않는다). 잠금은 잡은 그대로다. 데이터가 예상 세션보다 이르면 이 가드로 멈추지 말고 3번 재수집으로 내려간다 — 어제 글이 있는 건 당연하다.
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
 2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices·flows·top_value·sectors)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §6 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
@@ -61,7 +61,7 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 - **정책·정치 촉매 — 리서치 비중 최우선 (2026-07-29 사용자 지시로 섹션 확대)**: 밸류업·기업지배구조(상법·자사주)·금투세·대주주 양도세·배당 분리과세·한은 금통위·반도체/2차전지/바이오 보조금·통상(대미 관세·수출규제)·환율당국·국민연금·부동산 규제·지정학·국회 일정 중 그날 해당분. writer가 블록당 **사실 → 전달 경로(수급/이익/멀티플) → 수혜·피해 업종 → 다음 일정·확인 트리거** 4요소를 쓸 수 있도록 각 재료마다 이 네 가지를 채워서 넘긴다. 신규 재료가 없으면 중요한 계류 정책의 변화 여부를 확인하고, 변화가 없다는 사실만 짧게 쓴다. 분량을 채우기 위한 재서술은 하지 않는다.
 - **움직인 종목의 「왜」 (§9 특징주용, 2026-09-24)** — `kr/data/kr_movers.json` 의 `groups`(최대 5묶음: 지수 기여 상·하위 2 + |등락| ≥ 5%, 업종·방향으로 묶음)마다 **원인 검색 1회**(「대표 종목명 + 날짜 + 특징주/급등/급락」, 묶음이면 업종명도). `research_notes.md` 의 「움직인 종목의 이유」 절에 묶음 id(`g1`…)별로 **원인 한 줄 + 출처 매체**를 적는다. 출처 있는 원인을 못 찾으면 「확인된 재료 없음」 — 추측으로 채우지 않는다. 종목 등락률은 검색 결과가 아니라 파일 값이 정본이다(장중 기사 숫자는 종가와 다르다).
 - 출처 귀속 필수. 복수 출처 교차 확인(단일 검색 수치 불신 — US 전례).
-- **§12 오늘의 뉴스는 리서치 대상이 아니다** — 수집 잡이 만든 `kr/data/news/<DATE>.json`(네이버증권 주요뉴스 + `summary_ko`)이 유일한 재료다. 그 요약은 촉매 리서치의 출발점으로 읽어도 되지만, 웹에서 찾은 기사를 §12 에 넣지 않는다(`check_news.py --market kr` 가 막는다).
+- **오늘의 뉴스는 리서치 대상이 아니다** — 수집 잡이 만든 `kr/data/news/<DATE>.json`(네이버증권 주요뉴스·네이버 뉴스 정치·세계 섹션 + `summary_ko`)이 유일한 재료다. 그 요약은 촉매 리서치의 출발점으로 읽어도 되지만, 웹에서 찾은 기사를 뉴스 칸에 넣지 않는다(`check_news.py` 가 막는다). **2026-11-06 부터 오늘의 뉴스는 마감브리프가 아니라 뉴스 글(STEP 3.5)에 싣는다.**
 
 **테마 리서치는 폐지** (2026-07-29 사용자 지시로 테마 섹션 삭제). `kr_theme.json`은 리서치·작성 어디서도 쓰지 않는다.
 
@@ -69,7 +69,9 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 
 Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다), 그리고 **writer 스펙의 섹션 순서를 그대로 따르라**는 지시(전략 코멘트는 헤드라인 바로 다음, 테마 섹션 없음, 장중 수급·프로그램 매매는 수급 서브블록, 기술적 분석은 일봉 차트 바로 아래). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
 
-**쟁점 분석(2026-10-21)** — 작성자를 부르기 전에 `python3 scripts/contested_ready.py --market kr --date <DATE> --out <워크스페이스 루트>/contested.json` 을 돌리고 마지막 줄 `contested: …` 를 최종 보고에 옮긴다. 결과는 Mac 의 로컬 러너가 만들어 푸시한다 — **루틴은 기다리지도 수집하지도 않는다.** 작성자는 표식 `<!--CONTESTED-->` 한 줄만 둔다(writer 스펙 12-b). `render_post.py` 로 합친 직후 `python3 scripts/render_contested.py --html <kr_brief> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>` — `ok` 면 섹션, 확정된 none 이면 지움, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`, 러너가 발행 뒤 채운다). 「쟁점 자리가 0개」면 표식을 `<div class="footer-note">` 바로 앞에 넣고 다시 돌린다. **이 섹션은 고치지 않는다** — 이 섹션 때문에 `check_readability`·`check_style` 이 막히면 `render_contested.py … --omit gate_failed` 로 빼고 게이트를 다시 돌린 뒤 보고에 적는다.
+**2026-11-06 부터 아래 쟁점 분석 문단과 게이트 목록의 `check_news.py`·`check_contested.py` 는 마감브리프에 돌리지 않는다** — 둘 다 STEP 3.5 뉴스 글로 옮겼다. 작성자에게도 §12·12-b 를 쓰지 말라고 넘긴다(writer 스펙). 브리프에 뉴스·쟁점 표식이 남으면 `check_kr_stance.py` 가 막는다. 2026-11-05 까지의 글(정정)은 아래 그대로다.
+
+**쟁점 분석(2026-10-21, 2026-11-05 까지)** — 작성자를 부르기 전에 `python3 scripts/contested_ready.py --market kr --date <DATE> --out <워크스페이스 루트>/contested.json` 을 돌리고 마지막 줄 `contested: …` 를 최종 보고에 옮긴다. 결과는 Mac 의 로컬 러너가 만들어 푸시한다 — **루틴은 기다리지도 수집하지도 않는다.** 작성자는 표식 `<!--CONTESTED-->` 한 줄만 둔다(writer 스펙 12-b). `render_post.py` 로 합친 직후 `python3 scripts/render_contested.py --html <kr_brief> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>` — `ok` 면 섹션, 확정된 none 이면 지움, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`, 러너가 발행 뒤 채운다). 「쟁점 자리가 0개」면 표식을 `<div class="footer-note">` 바로 앞에 넣고 다시 돌린다. **이 섹션은 고치지 않는다** — 이 섹션 때문에 `check_readability`·`check_style` 이 막히면 `render_contested.py … --omit gate_failed` 로 빼고 게이트를 다시 돌린 뒤 보고에 적는다.
 
 **작성자 모델(2026-10-27)** — 작성자(`kr-report-writer`)를 부르는 모든 Agent 호출 — 첫 작성, 게이트·조립 실패로 되돌려 고치기, general-purpose 폴백 — 에 `model: "opus"` 를 적는다. 에이전트 머리말에도 같은 값이 있지만 폴백에서는 머리말이 빠진다. 수집 담당 등 다른 서브에이전트는 모델을 적지 않는다(본체 모델 상속). **본체가 직접 쓰거나 고치는 모든 단계는 이 루틴의 모델이 Opus 일 때만 한다** — Agent 도구가 없을 때의 폴백, 작성자 타입이 없을 때의 직접 작성, 「같은 위반 두 번 → 오케스트레이터가 직접 고친다」. 본체가 Opus 가 아니면: 작성자 타입이 없으면 general-purpose 를 `model: "opus"` 로 부르고, 직접 고치는 대신 작성자를 `model: "opus"` 로 한 번 더 부르며, Agent 도구가 없거나 그래도 남으면 잠금을 풀고 중단을 보고한다 — 이 중단은 「중단은 completeness 실패뿐」의 예외다. 설계: `docs/superpowers/specs/2026-10-27-model-routing.md`.
 
@@ -124,8 +126,27 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 3. `sitemap.xml`에 `https://fdo2a.github.io/kr/posts/DATE.html` url 추가(전체 재생성, US 항목 보존).
 4. **커밋 직전에 가드를 한 번 더** — 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:kr/posts/[YYYY-MM-DD].html` 로 본다. 있으면(그 사이 다른 런이 발행) 아무것도 커밋하지 않고 끝낸다. 아니면 main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 거절되면 `git pull --rebase` 한다 — `kr/posts.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) 이 날짜 항목만 STEP 3 의 2·3번으로 다시 넣은 뒤 `git add` → `git rebase --continue`. 그다음 같은 확인을 하고 다시 push 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
 
+## STEP 3.5 — KR 뉴스 글 (subagent: kr-news-writer) — 브리프를 발행한 **뒤에** (2026-11-06 부터)
+
+2026-11-05 사용자 지시 「한국 레포트 칸에도 미국처럼 뉴스탭을 새로 만들어 분리해서 발행하자. 미국처럼 정치, 매크로, 특정 이슈가 있는 산업으로 각각 최소 3개씩」. US STEP 3.5 와 같은 모양이다. **브리프가 먼저다** — 이 단계는 STEP 3 커밋·푸시 다음에 시작하고, 이 글이 게이트를 끝내 못 넘으면 이 글만 빼고 최종 보고·알림에 사유를 적는다. 브리프를 다시 열지 않는다.
+
+0. **멱등 가드·입력** — `kr/news/[DATE].html` 이 이미 커밋돼 있으면 건너뛴다. 아니면 `python3 scripts/ci/routine_due.py kr-news-input [DATE] <workspace>/kr_news_data` 로 **브리프 발행 커밋의** 뉴스 수집분을 `<workspace>/kr_news_data/news/[DATE].json` 에 꺼낸다(발행 뒤 재수집이 `kr/data` 를 바꿔도 이 판이 근거다). 출력이 `expected` 가 아니면 이 글을 만들지 않고, 최종 보고에 그 줄과 수집분의 `summary_note`·`notes` 를 옮긴다(`error …` 는 근거를 못 읽은 것이다 — 재시도 루틴이 다음 회차에 다시 본다)(재시도 판정도 같은 판으로 그날 뉴스 글을 기다리지 않는다). 아래에서 `<NEWSDATA>` = `<workspace>/kr_news_data`.
+0-1. **쟁점 분석 결과** — `python3 scripts/contested_ready.py --market kr --date [DATE] --out <workspace>/contested.json`, 마지막 줄 `contested: …` 를 최종 보고에 옮긴다. 루틴은 기다리지도 수집하지도 않는다.
+1. Agent 도구로 subagent_type `kr-news-writer` 를 `model: "opus"` 로 동기 실행한다(없으면 general-purpose 에 `.claude/agents/kr-news-writer.md` 를 읽으라고 경로를 주어 `model: "opus"` 로). 프롬프트: 기준일, 레포 경로, 뉴스 데이터 폴더 `<NEWSDATA>`(파일은 `<NEWSDATA>/news/[DATE].json`), 산출 `kr_news_[DATE].html`. 합친 직후 `python3 scripts/render_contested.py --html kr_news_[DATE].html --json <workspace>/contested.json --market kr --date [DATE]`.
+2. **게이트** — 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 STEP 2 의 「작성자 모델」 규칙대로). 쟁점 섹션은 고치지 않는다 — 그 섹션 때문에 막히면 `render_contested.py … --omit gate_failed` 로 빼고 다시 돌린다.
+   ```bash
+   python3 scripts/apply_readability.py kr_news_[DATE].html
+   python3 scripts/check_news.py --html kr_news_[DATE].html --datadir <NEWSDATA> --market kr-news --date [DATE]
+   python3 scripts/check_contested.py --html kr_news_[DATE].html --json <workspace>/contested.json --market kr --date [DATE]
+   python3 scripts/check_readability.py --strict --no-inline-images kr_news_[DATE].html
+   python3 scripts/check_style.py kr_news_[DATE].html
+   grep -c '확인필요' kr_news_[DATE].html     # 0
+   ```
+   `--market kr-news` 는 정치·정책·매크로·산업에 **하한 3건**을 건다(그날 실을 수 있는 기사가 3건 이상인 갈래만). 색은 칠하지 않는다(KR). `python3 scripts/scan_translationese.py kr_news_[DATE].html | tail -1` 을 최종 보고에 옮긴다.
+3. **발행 (이 글만의 커밋)** — `kr_news_[DATE].html` 을 `kr/news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인) `python3 scripts/update_archives.py --root . --kind kr-news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 커밋 직전 `git fetch -q origin main && ! git cat-file -e origin/main:kr/news/[YYYY-MM-DD].html` 일 때만 `git add kr/news/ kr/news.json sitemap.xml && git commit -m "Add KR news [YYYY-MM-DD]" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다(`kr/news.json`·`sitemap.xml` 충돌은 STEP 3 의 4번과 같은 방법).
+
 ## STEP 4 — 알림
-PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`. 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
+PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`, 그리고 KR 뉴스 글 URL(`https://fdo2a.github.io/kr/news/YYYY-MM-DD.html`) 또는 내지 않은 사유. 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Notion·PDF·이메일 모두 없음. 세션에 Notion 커넥터가 붙어 있어도 쓰지 않는다 — 연결돼 있다는 사실이 사용 지시는 아니다.
 

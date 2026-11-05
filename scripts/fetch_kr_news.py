@@ -22,9 +22,9 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fetch_news import _context, get, save_json  # noqa: E402
-from kr.news import (KST, LIST_URL, MAX_PAGES, PAGE_SIZE, SECTION_URL,  # noqa: E402
-                     WORLD_SECTIONS, article_published, body_note, categorize, dedupe,
-                     extract_body, older_than, on_date, parse_list, parse_section, select,
+from kr.news import (KST, LIST_URL, MAX_PAGES, PAGE_SIZE, POLITICS_SECTIONS, PRESELECT,  # noqa: E402
+                     SECTION_URL, WORLD_SECTIONS, article_published, body_note, categorize, dedupe,
+                     digestible, extract_body, with_spares, older_than, on_date, parse_list, parse_section, select,
                      trim)
 from us.news_summary import SYSTEM_KO_SOURCE, new_run, summarize_items  # noqa: E402
 
@@ -77,6 +77,26 @@ def harvest_world(report_date, ctx, fetch=None, gap=GAP):
     return rows, notes
 
 
+def harvest_politics(report_date, ctx, fetch=None, gap=GAP):
+    """(정치 섹션 행, 사유 목록). 세계 섹션과 같은 목록 모양이라 `parse_section` 을 쓰고 `feed` 만 바꾼다.
+    섹션 하나가 죽어도 나머지는 읽는다 — 정치 칸이 얇아질 뿐이다(최종 보고에 사유가 남는다)."""
+    fetch = fetch or get
+    rows, notes = [], []
+    day = report_date.replace('-', '')
+    for i, (sid1, sid2, name) in enumerate(POLITICS_SECTIONS):
+        if i and gap:
+            time.sleep(gap)
+        try:
+            got = parse_section(fetch(SECTION_URL.format(sid1=sid1, sid2=sid2, date=day), ctx))
+        except Exception as e:
+            notes.append(f'정치 {name}: {_why(e)} {str(e)[:160]}')
+            continue
+        if not got:
+            notes.append(f'정치 {name}: 0건')
+        rows.extend(dict(r, feed='politics') for r in got)
+    return rows, notes
+
+
 def fetch_bodies(chosen, bodydir, ctx, fetch=None):
     """선정 기사 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 적고 넘어간다.
 
@@ -112,7 +132,7 @@ def fetch_bodies(chosen, bodydir, ctx, fetch=None):
     return chosen
 
 
-KR_REGION_CATEGORIES = ('macro', 'policy', 'market', 'industry')
+KR_REGION_CATEGORIES = ('politics', 'macro', 'policy', 'industry')   # 증시는 버리는 칸 — Jev 를 쓰지 않는다
 
 
 def apply_region_filter(main_rows, exempt=(), post=None):
@@ -148,32 +168,52 @@ def main(argv=None):
     ap.add_argument('--bodydir', default='_workspace/kr_news')
     ap.add_argument('--date', default=datetime.now(KST).date().isoformat(),
                     help='발행일(KST). 수집 잡은 kr_market_data.json 의 report_date 를 준다')
-    ap.add_argument('--per-category', type=int, default=3)
+    ap.add_argument('--per-category', type=int, default=PRESELECT)
     args = ap.parse_args(argv)
 
     ctx = _context()
     harvested, notes = harvest(args.date, ctx)
     world, world_notes = harvest_world(args.date, ctx)
-    notes += world_notes
+    politics, politics_notes = harvest_politics(args.date, ctx)
+    notes += world_notes + politics_notes
     todays = on_date(harvested, args.date)
     outdir = os.path.join(args.datadir, 'news')
     path = os.path.join(outdir, f'{args.date}.json')
     # 국내/해외 필터 — 주요뉴스 행에서만, dedupe **전에**: Jev 가 뺀 기사의 세계 섹션 사본은 글로벌로 남는다
     todays, region = apply_region_filter(todays, exempt=guids_in(path))
-    # 주요뉴스가 먼저 — 같은 기사가 세계 섹션에도 있으면 주요뉴스 갈래로 남는다
-    chosen = select(categorize(dedupe(todays + world)), per_category=args.per_category)
+    # 주요뉴스가 먼저 — 같은 기사가 세계·정치 섹션에도 있으면 주요뉴스 갈래로 남는다
+    rows = digestible(categorize(todays + world + politics))
+    chosen = select(dedupe(rows), per_category=args.per_category)
+    chosen += with_spares(rows, chosen)    # 같은 소식의 다른 매체 기사 — 본문 실패 때 대체
     print(f'주요뉴스 {len(harvested)}건 → {args.date} {len(todays)}건 · 세계 섹션 {len(world)}건 '
-          f'→ 선정 {len(chosen)}건(글로벌은 후보)')
+          f'· 정치 섹션 {len(politics)}건 → 후보 {len(chosen)}건')
     for n in notes:
         print(f'  {n}', file=sys.stderr)
 
     fetch_bodies(chosen, args.bodydir, ctx)
-    chosen = trim(chosen, args.date)       # 글로벌 확정 — 본문이 있고 기사면 날짜가 발행일인 것만
+    candidates = chosen
+    chosen = trim(chosen, args.date)       # 확정 — 본문이 있고 기사면 날짜가 발행일인 것만, 갈래당 상한
+    kept = {it.get('guid') for it in chosen}
+    # 상한에 밀린 것 말고 **실패로 빠진 것**만 — 본문 실패, 기사면 날짜 미확인·불일치(codex #9)
+    dropped = []
+    for it in candidates:
+        if it.get('guid') in kept:
+            continue
+        if not it.get('body_chars'):
+            why = it.get('body_note') or '본문 없음'
+        elif not it.get('published'):
+            why = '날짜 미확인'
+        elif it['published'][:10] != args.date:
+            why = f"날짜 불일치 {it['published'][:10]}"
+        else:
+            continue
+        dropped.append({'guid': it.get('guid'), 'category': it.get('category'), 'why': why})
 
     os.makedirs(outdir, exist_ok=True)
     payload = {'report_date': args.date, 'source': '네이버증권 주요뉴스',
                'harvested': len(harvested), 'harvested_world': len(world),
-               'notes': notes, 'items': chosen, 'region_filter': region}
+               'harvested_politics': len(politics),
+               'notes': notes, 'items': chosen, 'dropped': dropped, 'region_filter': region}
     save_json(path, payload)             # 요약이 어떻게 죽어도 수집분은 남는다
     try:
         summarized = summarize_items(chosen, args.bodydir, system=SYSTEM_KO_SOURCE)

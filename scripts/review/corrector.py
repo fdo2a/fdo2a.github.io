@@ -53,6 +53,7 @@ def _git(root, *args):
 # 실제 scripts/ 와 대조한다.
 US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'sector_perf', 'session', 'movers', 'fund')
 KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund')
+KR_NEWS_FROM = '2026-11-06'   # `kr.news.SPLIT_FROM` 과 같다(테스트) — 이 모듈은 레포 밖 사본에서도 돈다
 # KR 판단 게이트는 `--market` 이 없고 `--next` 로 그날 낸 원장을 받는다 — 발행 커밋의 kr_stance.json 이
 # 그것이다(STEP 2.9 가 같은 커밋에 승계한다). 2026-10-20 배치(review 가 복기 첫 문단, 확인 일정 표)는
 # 이 게이트만 본다 — 정정이 그 문단·표를 지워도 다른 게이트는 모른다(codex 설계 검토 2026-10-19 #2).
@@ -75,6 +76,8 @@ def _contested_gate(clone, item, post):
     m = re.search(r'(\d{4}-\d{2}-\d{2})\.html$', item.path)
     if item.section != 'kr' or not m:
         return None
+    if m.group(1) >= KR_NEWS_FROM:
+        return None      # 2026-11-06 부터 KR 쟁점 분석은 뉴스 글(kr/news) 몫이다 — 마감브리프에는 없다
     data = clone / 'data' / 'contested' / 'kr' / f'{m.group(1)}.json'
     try:
         text = open(post, encoding='utf-8').read()

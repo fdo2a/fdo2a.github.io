@@ -5,7 +5,7 @@ from pathlib import Path
 AGENTS = Path(__file__).resolve().parents[3] / '.claude' / 'agents'
 EXPECTED = {'brief-data-collector': None,          # 본체 모델 상속 — 해석·가설 인계를 쓴다(codex #2)
             'brief-report-writer': 'opus', 'kr-report-writer': 'opus',
-            'news-industry-writer': 'opus', 'period-report-writer': 'opus',
+            'news-industry-writer': 'opus', 'kr-news-writer': 'opus', 'period-report-writer': 'opus',
             'japan-report-writer': 'opus', 'japan-daily-writer': 'sonnet'}
 
 

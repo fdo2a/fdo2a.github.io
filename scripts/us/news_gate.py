@@ -188,8 +188,13 @@ def _read(html, title=TITLE):
     return r
 
 
-def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES, title=TITLE):
+def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES, title=TITLE,
+          floor=None):
     """-> 위반 메시지 목록. 빈 목록이면 통과.
+
+    `floor` = (갈래 묶음, 하한) — KR 뉴스(2026-11-05, 「각각 최소 3개씩」). 그 갈래에 실을 수 있는
+    기사가 하한 이상 있는데 실은 것이 하한보다 적으면 위반이다. 수집분이 모자란 날은 있는 만큼이면 된다 —
+    다른 날짜나 기억으로 채우지 않는다.
 
     `categories` 는 섹션 의무를 거는 갈래 — US 는 `us.news`, KR 은 `kr.news` 의
     `DIGEST_CATEGORIES`(2026-09-24). 나머지 검사는 시장과 무관하다.
@@ -249,6 +254,19 @@ def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES, title
     usable = [it for it in items
               if it.get('category') in categories and it.get('summary_ko')
               and summary_problem(it['summary_ko']) is None]
+    if floor and usable:
+        cats, need = floor
+        shown = {}
+        for it in doc.section_items:
+            ref = it['guid'] and not it['hidden'] and known.get(_key(None, it['guid']))
+            if ref:
+                shown[ref.get('category')] = shown.get(ref.get('category'), 0) + 1
+        for cat in cats:
+            have = sum(1 for it in usable if it.get('category') == cat)
+            want = min(need, have)
+            if shown.get(cat, 0) < want:
+                v.append(f'「{cat}」 갈래가 {shown.get(cat, 0)}건이다 — 실을 수 있는 기사가 {have}건이니 '
+                         f'{want}건 이상 싣는다')
     if usable:
         if title not in (html or ''):
             v.append(f'뉴스 섹션(「{title}」)을 찾을 수 없다 — 수집분 {len(usable)}건')

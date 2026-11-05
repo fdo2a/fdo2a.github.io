@@ -4,7 +4,8 @@
   python3 scripts/update_archives.py --root . --kind weekly --key 2026-08-21 \
       --title "미국 증시 주간 정리 — 2026년 8월 3주" --headline "..."
 
---kind 는 daily / weekly / kr-weekly / news.
+--kind 는 daily / weekly / kr-weekly / news / kr-news / jp-daily.
+kr-news 는 KR 뉴스(2026-11-05, `kr/news.json`, 키는 발행 기준일).
 daily 는 US 브리프(`posts.json`, 항목 열쇠가 `date`), news 는 뉴스·산업 브리프(2026-09-26) —
 둘 다 키가 발행 기준일(YYYY-MM-DD)이다. US 루틴은 sitemap 을 posts.json 으로 **재생성**했는데,
 그러면 주간·KR·thesis·뉴스 URL 이 매일 지워진다 — 이 스크립트는 병합만 한다.
@@ -25,6 +26,7 @@ LISTINGS = {'daily': ('posts.json', 'posts'),
             'weekly': ('weekly.json', 'weekly'),
             'kr-weekly': ('kr/weekly.json', 'kr/weekly'),
             'news': ('news.json', 'news'),
+            'kr-news': ('kr/news.json', 'kr/news'),
             'jp-daily': ('japan/daily.json', 'japan/daily')}
 BASE = 'https://fdo2a.github.io'
 # 목록 항목의 열쇠 이름. posts.json 은 처음부터 `date` 였다(index.html 이 그 이름으로 읽는다).

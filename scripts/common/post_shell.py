@@ -62,6 +62,15 @@ MARKETS = {
         'home': '미국 시장', 'span': ('뉴스·산업', 'news'),
         'aside': ('같은 날 시황 브리프 →', '../posts/{date}.html'),
     },
+    # KR 뉴스(2026-11-05) — KR 루틴이 마감브리프 뒤에 쓰는 둘째 글. 「오늘의 뉴스」와 쟁점 분석이 브리프에서
+    # 여기로 옮겨 왔다. 조판은 KR 과 같다(`css` 키). 사용자 지시 「한국 레포트 칸에도 미국처럼 뉴스탭」.
+    'kr-news': {
+        'brand': 'KR News', 'site': 'https://fdo2a.github.io/kr/', 'dir': 'kr/news',
+        'og': '한국 시장 뉴스', 'title_prefix': '한국 시장 뉴스 — ',
+        'published_offset': 0, 'css': 'kr', 'topbar': 'kr',
+        'home': '한국 시장', 'span': ('뉴스', 'news'),
+        'aside': ('같은 날 마감브리프 →', '../posts/{date}.html'),
+    },
 }
 
 _FORBIDDEN = (('<!doctype', 'DOCTYPE'), ('<html', '<html>'), ('<head', '<head>'),
@@ -151,11 +160,16 @@ def crumbs(trail, aside=None):
     return f'<nav class="crumbs" aria-label="현재 위치">{sep.join(parts)}{side}</nav>'
 
 
+# Daily briefs that have a same-day news post, and the footer label for it. US and KR lay their
+# directories out the same way (posts/ beside news/), so the relative paths are shared.
+NEWS_LINK = {'us': '같은 날 뉴스·산업 →', 'kr': '같은 날 뉴스 →'}
+
+
 def footer(market, date):
-    index = '../news.json' if market == 'news' else '../posts.json'
+    index = '../news.json' if market in ('news', 'kr-news') else '../posts.json'
     # Not `data-news`: news_gate reads any element carrying that attribute as an article.
-    news = ' data-news-index="../news.json"' if market == 'us' else ''
-    news_link = ('\n  <a class="pf-news" hidden>같은 날 뉴스·산업 →</a>' if market == 'us' else '')
+    news = ' data-news-index="../news.json"' if market in NEWS_LINK else ''
+    news_link = (f'\n  <a class="pf-news" hidden>{NEWS_LINK[market]}</a>' if market in NEWS_LINK else '')
     return (f'<nav class="post-foot" aria-label="다른 글로 이동" data-index="{index}" '
             f'data-key="{date}"{news}>\n'
             '  <a class="pf-prev" hidden>‹ 이전 글</a>\n'
