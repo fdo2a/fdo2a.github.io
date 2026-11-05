@@ -61,3 +61,4 @@ kr/data/kr_flows_intraday.png
 .research-drafts/
 research/**/.lock
 .unlazy/
+reviews/seen.json

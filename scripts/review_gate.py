@@ -97,6 +97,12 @@ LEDGER = 'reviews/index.json'
 LOCK = 'reviews/.index.lock'
 DRAFTS = 'reviews/pending'
 STATE = 'reviews/runner.json'
+# 공개판 sha 를 이 기계가 처음 본 날 — 만료 나이를 커밋 시각만으로 재지 않으려고(로컬, 추적 안 함).
+SEEN = 'reviews/seen.json'
+# 이 기록을 시작하기 직전의 공개판. **그때 이미 공개돼 있던 판**만 기록이 없어도 커밋 날짜를
+# 공개일로 본다(쌓여 있던 21건). 날짜로 가르면 그 전에 만들어 묵힌 커밋을 나중에 푸시한 판이
+# 바로 만료된다(codex 재검토 2026-11-06).
+SEEN_BASE = 'f94040ca'
 RUNNER_LOCK = 'reviews/.runner.lock'
 ENV_CODE = 'REVIEW_RUNNER_CODE'   # runner_launch.ENV_CODE — 사본의 커밋
 CORRECTION_BLOCK = 'correction_blocked_until'
@@ -527,7 +533,7 @@ def runner_note(root, queue):
 def cmd_pending(args):
     try:
         root = repo_root()
-        todo, typo, unavailable, basis, stale, _, _ = survey(
+        todo, typo, unavailable, basis, stale, published, _ = survey(
             root, want_fetch=not args.no_fetch)
     except Exception as exc:  # noqa: BLE001 — 훅에서 조용히 죽는 것이 최악이다
         msg = f'[검토 게이트] 확인 실패 — {type(exc).__name__}: {exc}'
@@ -539,27 +545,33 @@ def cmd_pending(args):
         print(msg)
         return 0 if args.hook else 1
 
-    queue = todo + unavailable
+    whole = todo + unavailable
+    # 러너가 닿지 않는 오래된 신규는 세지 않는다 — 목록으로는 남긴다(`review/expiry.py`).
+    queue, expired = _split_expired(root, whole, published)
+    gone = (f' 만료 {len(expired)}건은 세지 않았다(발행 뒤 기한 경과 — '
+            f'`review_gate.py pending` 꼬리에 목록).') if expired else ''
 
     if args.json:
+        # 'pending' = 지금 볼 것(만료 제외), 'expired' = 기한이 지나 세지 않은 신규.
         print(json.dumps({'basis': basis, 'stale': stale,
                           'pending': [p.__dict__ for p in queue],
+                          'expired': [p.__dict__ for p in expired],
                           'typography': [p.__dict__ for p in typo],
                           'unavailable': [p.__dict__ for p in unavailable]},
                          ensure_ascii=False))
         return 0 if (args.hook or not queue) else 1
 
     if args.hook:
-        note = runner_note(root, queue)
+        note = runner_note(root, whole)   # 초안 수는 원래 큐로 센다(codex 설계 검토 #4·#5)
         if queue:
             items = ', '.join(f'{p.path}({p.reason})' for p in queue[:5])
             more = f' 외 {len(queue) - 5}건' if len(queue) > 5 else ''
             print(f'[검토 게이트] codex 미검토 발행본 {len(queue)}건 — {items}{more}. '
-                  f'기준 {basis}. 절차는 .claude/REVIEW_GATE.md.{note}')
+                  f'기준 {basis}. 절차는 .claude/REVIEW_GATE.md.{gone}{note}')
         elif stale:
-            print(f'[검토 게이트] 미검토 없음 — 단 {STALE_NOTE} (기준 {basis}).{note}')
+            print(f'[검토 게이트] 미검토 없음 — 단 {STALE_NOTE} (기준 {basis}).{gone}{note}')
         else:
-            print(f'[검토 게이트] 미검토 없음.{note}')
+            print(f'[검토 게이트] 미검토 없음.{gone}{note}')
         return 0
 
     if not queue:
@@ -572,7 +584,115 @@ def cmd_pending(args):
     # 조용히 사라지지 않게 꼬리에 남긴다.
     if typo:
         print('  ' + TYPO_NOTE % len(typo))
+    if expired:
+        print(f'  만료 {len(expired)}건 — 발행 뒤 기한이 지나 세지 않았다(러너가 읽지 않는다). '
+              '손으로 읽으려면 review-gate 절차대로:')
+        for p in expired:
+            print(f'    - [{p.section}] {p.path} @ {p.sha[:7]}')
     return 1 if queue else 0
+
+
+def first_published(root, path, sha, tz):
+    """이 판의 내용이 origin/main 에 처음 공개된 날(tz). 모르면 None.
+
+    `publish_commit` 을 쓰지 않는다 — 그것은 근거 자료를 찾으려고 쟁점 채움·문체 수정 커밋까지
+    거슬러 올라가, 오늘 내용이 바뀐 판에 예전 날짜를 준다(codex 구현 검토 2026-11-06 #2).
+    여기서는 **조판만 바뀐 단계**(`prose.typography` True)만 건너뛴다. 그것마저 세면 조판 판 올림
+    한 번(readability v6, 8efae976 — 199편)이 모든 글의 공개일을 그날로 되돌린다.
+    """
+    from datetime import datetime
+    out = git(root, 'log', '--format=%H %cI', '-n', '200', 'origin/main', '--', path)
+    if out.returncode:
+        return None
+    rows = [line.partition(' ')[::2] for line in out.stdout.splitlines()]
+    if not rows or rev_parse(root, f'{rows[0][0]}:{path}') != sha:
+        return None                             # 최신 커밋이 이 판이 아니다 — 공개판이 아니다
+    found, cur = rows[0][1], sha
+    for commit, stamp in rows[1:]:
+        prev = rev_parse(root, f'{commit}:{path}')
+        if prev == cur:
+            found = stamp
+            continue
+        if not prev or prose_mod.typography(path, _blob_text(root, prev), _blob_text(root, cur),
+                                            root=root) is not True:
+            break
+        found, cur = stamp, prev
+    try:
+        return datetime.fromisoformat(found.strip()).astimezone(tz).date()
+    except ValueError:
+        return None
+
+
+def note_seen(root, queue, published, today, tz):
+    """공개판 sha 를 처음 본 날을 남기고 그 표를 돌려준다. 쓰기 실패는 조용히 넘긴다.
+
+    러너(매시)와 `pending` 이 같이 쓴다. 두 쓰기가 겹쳐 하나가 지워져도 다음 번에 더 늦은
+    날로 다시 적힐 뿐이다 — 늦은 날은 덜 만료시키는 쪽이라 안전하다. 기록을 시작할 때
+    (SEEN_BASE) 이미 공개돼 있던 판은 커밋 날짜로 적는다. 저장에 실패하면 디스크에 있던
+    기록만 돌려준다 — 적지 못한 판은 「처음 본 날」을 모르는 것이므로 만료되지 않는다.
+    """
+    full = os.path.join(root, SEEN)
+    try:
+        with open(full, encoding='utf-8') as fh:
+            seen = json.load(fh)
+        if not isinstance(seen, dict):
+            seen = {}
+    except (OSError, ValueError):
+        seen = {}
+    disk = dict(seen)
+    changed = False
+    for it in queue:
+        if published.get(it.path) != it.sha:
+            continue
+        rec = seen.get(it.path)
+        if isinstance(rec, dict) and rec.get('sha') == it.sha:
+            continue
+        legacy = rev_parse(root, f'{SEEN_BASE}:{it.path}') == it.sha
+        when = first_published(root, it.path, it.sha, tz) if legacy else None
+        at = when if when is not None else today
+        seen[it.path] = {'sha': it.sha, 'at': at.isoformat()}
+        changed = True
+    if changed:
+        try:
+            os.makedirs(os.path.dirname(full), exist_ok=True)
+            fd, tmp = tempfile.mkstemp(dir=os.path.dirname(full))
+            with os.fdopen(fd, 'w', encoding='utf-8') as fh:
+                json.dump(seen, fh, ensure_ascii=False, indent=1, sort_keys=True)
+            os.replace(tmp, full)
+        except OSError:
+            return disk
+    return seen
+
+
+def _split_expired(root, queue, published):
+    """(지금 볼 것, 만료). 무엇이든 실패하면 만료 없이 원래 큐 — 숨기는 쪽으로 틀리지 않는다."""
+    try:
+        from datetime import date, datetime
+        from review import expiry
+        from review.runner import KST, draft_name
+        try:
+            have = set(os.listdir(os.path.join(root, DRAFTS)))
+        except FileNotFoundError:
+            have = set()
+        # 읽다 실패했으면 「초안 없음」이 아니라 「모른다」 — 아래 except 로 원래 큐(codex #1).
+
+        today = date.fromisoformat(today_kst())
+        seen = note_seen(root, queue, published, today, KST)
+
+        def published_on(path, sha):
+            # 커밋 시각은 공개 시각이 아니다 — 며칠 묵힌 커밋을 오늘 푸시하면 예전 날짜가 된다
+            # (codex 구현 재검토 2026-11-06). 이 기계가 처음 본 날과 둘 중 늦은 쪽.
+            when = first_published(root, path, sha, KST)
+            rec = seen.get(path) or {}
+            if when is None or rec.get('sha') != sha:
+                return None
+            return max(when, date.fromisoformat(rec['at']))
+
+        return expiry.split(queue, today=today, published=published,
+                            published_on=published_on,
+                            has_draft=lambda it: draft_name(it) in have)
+    except Exception:  # noqa: BLE001
+        return queue, []
 
 
 def cmd_mark(args):
@@ -1500,6 +1620,12 @@ def cmd_run(args):
                                          errs)
             picks = eligible(ready, published, state, day, have=_drafts_on_disk(root),
                              dated=dated)
+        try:
+            # 매시 tick 이 공개판을 처음 본 날을 남긴다 — 만료 나이의 하한(`_split_expired`).
+            from datetime import date as _date
+            note_seen(root, todo + unavailable, published, _date.fromisoformat(day), KST)
+        except Exception:  # noqa: BLE001 — 기록 실패가 tick 을 막으면 안 된다
+            pass
         if not picks and not getattr(args, 'correct', False):
             # 남아 있는 섹션 오류는 그대로 둔다. 고를 것이 없다는 이유로 지우면, 한도만
             # 태우고 초안은 없는 상태가 「방금 성공」으로 보인다.
