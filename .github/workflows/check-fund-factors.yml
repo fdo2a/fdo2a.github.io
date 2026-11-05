@@ -1,0 +1,51 @@
+name: Check fund factors (monthly French file)
+
+# FF3 trial: compares the ETF proxy factors of the fund board with the official
+# Kenneth R. French daily factors (Copyright Eugene F. Fama and Kenneth R. French).
+# Only the slice the check uses (~2 years), the regression inputs and the result are
+# committed — never the whole French file. The French file is updated about monthly on
+# no fixed day, so this runs every Sunday and is a no-op unless the slice, the
+# calculation version or the model changed, or the previous result was not ok
+# (fund/factors_check.py). Dispatch it by hand when a new French month appears midweek.
+
+on:
+  schedule:
+    - cron: '0 11 * * 0'
+      timezone: 'Asia/Seoul'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: check-fund-factors
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python deps
+        run: pip install --quiet yfinance pandas certifi
+
+      - name: Check against the French file
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python scripts/collect_fund_factors.py --outdir data
+
+      - name: Commit the monthly files
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/fund_factors_french.csv data/fund_factors_inputs.json data/fund_factors_check.json 2>/dev/null || true
+          FT=$(python -c "import json;print(json.load(open('data/fund_factors_check.json'))['french_through'])" 2>/dev/null || echo unknown)
+          bash scripts/ci/push_with_retry.sh "data: fund factor check — French through ${FT}"
