@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 7,004로 7,000선 회복…중국 석유제품 수출 중단에 정유주 급등, 반도체는 제자리</h1>
+    <h1><tl-s>코스피 7,004로 7,000선 회복…</tl-s><tl-s>중국 석유제품 수출 중단에 정유주 급등, 반도체는 제자리</tl-s></h1>
     <p class="muted">연휴 전 마지막 거래일에 코스피가 5거래일 만에 7,000선을 되찾았다. 지수를 올린 것은 정유와 방산이었고, 반도체 대형주는 움직이지 않았다.</p>
     <p class="muted">국고채 금리는 7bp 넘게 내렸지만 신용 금리차는 오히려 넓어져, 우리는 오늘을 위험선호 복귀가 아닌 업종 교체로 본다.</p>
   </div>

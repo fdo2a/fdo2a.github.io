@@ -154,11 +154,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -187,7 +189,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -199,7 +201,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.52% 급락해 5,534…자사주 매입 끝난 반도체 수급 공백에 아시아보다 1.28%p 더 약했다</h1>
+    <h1><tl-s>코스피 3.52% 급락해 5,534…</tl-s><tl-s>자사주 매입 끝난 반도체 수급 공백에 아시아보다 1.28%p 더 약했다</tl-s></h1>
     <p class="muted">직전 미국장은 올랐지만 아시아 증시가 AI·반도체 매도로 함께 내렸고, 코스피는 그 평균보다 더 밀려 전날 반등분을 하루 만에 반납했다. SK하이닉스·삼성전자가 낙폭을 이끌었고, CATL 실적 부진에 2차전지와 정유주도 크게 내렸다.</p>
     <p class="muted">아시아 평균을 넘는 낙폭은 두 회사의 자사주 매입이 끝나 매수 주체가 비어 버린 국내 수급 공백의 몫으로 판단한다. 외국인은 순매수를 지켰고(당일 잠정), 이 공백을 메울 재료는 10월 28일 SK하이닉스 실적과 주주환원 발표에서 확인한다.</p>
   </div>

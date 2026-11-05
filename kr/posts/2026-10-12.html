@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.65% 급락, 외국인 1조9,898억원 순매도…미국 메모리가 반등할 때 한국이 따라가는지가 관건</h1>
+    <h1><tl-s>코스피 3.65% 급락, 외국인 1조9,898억원 순매도…</tl-s><tl-s>미국 메모리가 반등할 때 한국이 따라가는지가 관건</tl-s></h1>
     <p class="muted">한글날 휴장 사이 미국에서 쌓인 메모리 약세가 한 번에 넘어와 코스피는 하루 저가 근처인 6,384에서 끝났다. 같은 정보를 처음 받은 대만가권은 거의 움직이지 않았고, 메모리 비중이 낮은 코스닥은 코스피보다 더 밀렸다.</p>
     <p class="muted">우리는 메모리 대형주의 하락을 미국 이틀치의 전이로, 코스닥과 업종 전반의 하락을 한국 고유의 위험 회피로 본다. 미국 메모리가 반등하는 10월 13~15일 세션에 코스피가 아시아를 따라 오르는지가 이 판단을 가른다.</p>
   </div>

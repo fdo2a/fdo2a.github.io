@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.73% 급락해 5,553…솔리다임 발언·방산 실적 부진에 2거래일 반등 반납</h1>
+    <h1><tl-s>코스피 3.73% 급락해 5,553…</tl-s><tl-s>솔리다임 발언·방산 실적 부진에 2거래일 반등 반납</tl-s></h1>
     <p class="muted">직전 미국장이 오르고 한국장 동안 미국 선물도 올랐지만, 코스피는 2거래일 반등분을 하루 만에 모두 내줬다. 외국인과 기관이 함께 팔았고, 금융감독원장의 솔리다임 발언 뒤 SK그룹주가, 현대로템 실적 부진 뒤 방산주가 크게 내렸다.</p>
     <p class="muted">하락의 상당 부분은 해외 요인보다 국내 개별 재료와 기관 매도에서 왔다고 본다. 10월 21일 마감까지의 외국인 수급과 10월 23일 SK하이닉스·삼성전자의 상대 수익률이 다음 판단 기준이다.</p>
   </div>

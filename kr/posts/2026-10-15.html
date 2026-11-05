@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 7.57% 급락해 5,554…미 근원 물가·AI 신용 우려에 외국인 3.76조원 매도, 두 시장 서킷브레이커</h1>
+    <h1><tl-s>코스피 7.57% 급락해 5,554…</tl-s><tl-s>미 근원 물가·AI 신용 우려에 외국인 3.76조원 매도, 두 시장 서킷브레이커</tl-s></h1>
     <p class="muted">미국 근원 물가가 예상을 웃돌고 AI 인프라 기업의 조달 비용 우려가 커진 밤이 지나자, 코스피는 7거래일 연속 내려 7월 30일 이후 처음 6,000선 아래에서 마감했다. 코스피와 코스닥에 같은 날 서킷브레이커가 걸렸고, 메모리뿐 아니라 기판·전력기기 대형주까지 10% 넘게 빠졌다.</p>
     <p class="muted">우리는 아시아 평균보다 4.84%포인트 더 내린 몫에 메모리 비중만이 아니라 국내 매수 주체의 공백이 얹혔다고 본다. 메모리 급락을 한 번의 수급 해소로 본 10월 14일 판단은 철회하고, 10월 16일 마감과 10월 27·29일 메모리 실적에서 다음 방향을 확인한다.</p>
   </div>

@@ -59,11 +59,13 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -92,7 +94,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -109,7 +111,7 @@ section { scroll-margin-top: 20px; }
 <div class="doc">
 <section>
   <div class="card headline-card">
-    <h1>코스피, 미국-이란 리스크에 출렁이다 방어주 힘으로 0.26% 강보합…코스닥은 800선 붕괴</h1>
+    <h1><tl-s>코스피, 미국-이란 리스크에 출렁이다 방어주 힘으로 0.26% 강보합…</tl-s><tl-s>코스닥은 800선 붕괴</tl-s></h1>
     <p class="muted">코스피는 오늘 장중 한때 1.8% 넘게 올랐다가 미국-이란 교전 재격화로 오후 한때 -1.9%까지 밀렸고, 결국 0.26% 오른 6,579.48로 마감했다. 손해보험·조선·건설 등 방어·경기민감 업종이 폭넓게 오르며 지수를 지켰다.</p>
     <p class="muted">코스닥은 하루 종일 부진에서 벗어나지 못하고 1.71% 내린 790.21로 800선을 반납했다. 코스피에서는 기관이 9,143억원 순매수, 개인이 9,552억원 순매도했다(당일 잠정).</p>
   </div>

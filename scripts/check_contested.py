@@ -76,6 +76,10 @@ def trusted_styles(market, date):
         for t in ((lambda h: h),) + chain + (lambda h: analytics.inject(chain[-1](h)),):
             loc = C._Locate(t(page))
             out |= {s.strip() for s in loc.styles if s.strip()} | {f'link:{h}' for h in loc.links}
+    # readability v6 이주(2026-11-05) 전에 나간 판은 같은 자리에 v5 블록을 들고 있다.
+    from scripts.us import readability
+    v6, v5 = readability.CSS.strip('\n'), readability.V5_CSS.strip('\n')
+    out |= {s.replace(v6, v5) for s in out if v6 in s}
     return out
 
 

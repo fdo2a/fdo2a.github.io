@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 1.76% 올라 5,768…3% 갭하락 지우고 2차전지·바이오가 반등 주도, 반도체는 뒤처져</h1>
+    <h1><tl-s>코스피 1.76% 올라 5,768…</tl-s><tl-s>3% 갭하락 지우고 2차전지·바이오가 반등 주도, 반도체는 뒤처져</tl-s></h1>
     <p class="muted">코스피는 미국 반도체 급락 여파로 3% 넘게 낮게 출발했지만, 그날 저점에서 출발해 고가에 마감했다. 기관이 순매수했고, 반도체 대형주보다 2차전지·제약·화학이 더 크게 올랐다.</p>
     <p class="muted">이 반등은 외국인 매수 회복보다 기관 순매수와 반도체 밖 업종의 강세가 만든 것으로 본다. 10월 21일까지의 외국인 수급과 10월 22일 2차전지 종가가 다음 판단 기준이다.</p>
   </div>

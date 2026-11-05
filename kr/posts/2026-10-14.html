@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 6,009로 6,000선 턱걸이…외국인 매도 줄었지만 ASML 실적 뒤 반도체 소부장 밀려</h1>
+    <h1><tl-s>코스피 6,009로 6,000선 턱걸이…</tl-s><tl-s>외국인 매도 줄었지만 ASML 실적 뒤 반도체 소부장 밀려</tl-s></h1>
     <p class="muted">코스피는 오전 6,190선까지 반등했다가 ASML 실적 발표 뒤 반도체 장비·소부장주가 밀리며 6거래일 연속 하락했다. 그래도 외국인 순매도는 전일의 4분의 1로 줄었고, 오른 쪽은 2차전지와 해운이었다.</p>
     <p class="muted">우리는 전일 메모리 급락을 수급 해소로 본 판단을 이어간다. 오늘 밤 미국 9월 소비자물가와 10월 16일 마감까지의 SK하이닉스 대 마이크론 흐름이 이 판단을 가른다.</p>
   </div>

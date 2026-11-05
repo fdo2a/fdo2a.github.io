@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 1.95% 올라 6,971 마감…미국 장기금리 상승에도 반도체 이익 재료가 끈 반등</h1>
+    <h1><tl-s>코스피 1.95% 올라 6,971 마감…</tl-s><tl-s>미국 장기금리 상승에도 반도체 이익 재료가 끈 반등</tl-s></h1>
     <p class="muted">마이크론 실적과 9월 반도체 수출이 같은 날 나왔다. 코스피는 장 초반 하락을 딛고 하루 고가에서 마감했고, 코스닥에서는 소부장·바이오가 함께 뛰었다. 외국인 코스피 순매도는 연휴 뒤 처음 1조원 아래로 줄었다(당일 잠정).</p>
     <p class="muted">미국 10년물이 더 오른 날에도 반등해 우리는 할인율이 반도체를 일방적으로 누르던 국면이 약해졌다고 본다. 코스피 노출은 유지하고 반도체 비중 확대는 금리가 오르는 날 하루를 더 확인한 뒤로 미룬다.</p>
   </div>

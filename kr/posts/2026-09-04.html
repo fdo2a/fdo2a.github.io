@@ -58,11 +58,13 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -91,7 +93,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -108,7 +110,7 @@ section { scroll-margin-top: 20px; }
 <div class="doc">
 <section>
   <div class="card headline-card">
-    <h1>코스피 1.64%·코스닥 2.95% 동반 급등…금리 부담 풀리자 외국인·기관 쌍끌이 매수</h1>
+    <h1><tl-s>코스피 1.64%·코스닥 2.95% 동반 급등…</tl-s><tl-s>금리 부담 풀리자 외국인·기관 쌍끌이 매수</tl-s></h1>
     <p class="muted">코스피는 오늘 1.64% 올라 6,687로, 코스닥은 2.95% 올라 814로 마감했다. 간밤 크리스토퍼 월러 연준 이사의 비둘기파 발언에 미국 금리가 내리자 삼성전자·SK하이닉스가 반등을 이끌었다.</p>
     <p class="muted">코스피에서는 외국인이 4,796억원, 기관이 1조6,694억원을 순매수했고 개인이 3조7,229억원을 순매도했다(당일 잠정). 60개 업종 중 56개가 오르며 업종 전반이 고르게 강했다.</p>
   </div>

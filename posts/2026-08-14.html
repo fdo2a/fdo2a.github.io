@@ -87,11 +87,13 @@
     h2 { font-size: 16.5px; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -113,13 +115,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -143,7 +146,7 @@ td.sc-dn { color: #FF4040; }
 
   <div class="headline-card">
     <span class="tag">헤드라인</span>
-    <h1>나스닥(-0.28%)·S&amp;P500(-0.17%)·다우(-0.20%)는 소폭 하락했지만 러셀2000은 +0.51%로 사상 최고치를 새로 쓰며 대형 기술주와 소형주가 뚜렷하게 갈렸다. 7월 소매판매(-0.58%)와 8월 미시간 소비자심리지수 예비치(51.0, 뉴스 기준)가 나란히 예상을 밑돌며 소비 냉각 신호를 냈고, 미국의 대이란 압박 강화로 WTI(+1.42%)·Brent(+1.75%)가 급등하며 에너지주와 금(+1.57%)이 동반 강세를 보였다. 씨게이트(+5.65%)·웨스턴디지털(+4.41%) 등 메모리·스토리지주는 급등했지만 브로드컴발 AI 파이낸싱 부채 우려(뉴스 인용)로 대형 기술주는 흔들렸다.</h1>
+    <h1><tl-s>나스닥(-0.28%)·S&amp;P500(-0.17%)·다우(-0.20%)는 소폭 하락했지만 러셀2000은 +0.51%로 사상 최고치를 새로 쓰며 대형 기술주와 소형주가 뚜렷하게 갈렸다.</tl-s> <tl-s>7월 소매판매(-0.58%)와 8월 미시간 소비자심리지수 예비치(51.0, 뉴스 기준)가 나란히 예상을 밑돌며 소비 냉각 신호를 냈고, 미국의 대이란 압박 강화로 WTI(+1.42%)·Brent(+1.75%)가 급등하며 에너지주와 금(+1.57%)이 동반 강세를 보였다.</tl-s> <tl-s>씨게이트(+5.65%)·웨스턴디지털(+4.41%) 등 메모리·스토리지주는 급등했지만 브로드컴발 AI 파이낸싱 부채 우려(뉴스 인용)로 대형 기술주는 흔들렸다.</tl-s></h1>
   </div>
 <!-- reading-map-v1 -->
 <nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#buyside-view">전략 코멘트</a><a href="#equities">시장 흐름</a><a href="#bonds">금리·수급</a><a href="#strategy">거시·포트폴리오</a><a href="#movers">종목·섹터</a></nav>

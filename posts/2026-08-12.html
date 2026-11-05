@@ -87,11 +87,13 @@
     h2 { font-size: 16.5px; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -113,13 +115,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -143,7 +146,7 @@ td.sc-dn { color: #FF4040; }
 
   <div class="headline-card">
     <span class="tag">헤드라인</span>
-    <h1>7월 CPI가 헤드라인·근원 모두 컨센서스에 정확히 부합하며 9월 금리 인상 우려를 진정시킨 가운데, CoreWeave·Super Micro·Nebius발 AI 인프라 실적 서프라이즈에 힘입어 나스닥과 러셀2000이 강세를 보였다. 루멘텀·코히런트 등 광인프라주와 마이크론·씨게이트 등 메모리주가 동반 급등한 반면, 넷플릭스 가이던스 실망과 알파벳 인재 이탈 우려로 커뮤니케이션서비스는 하루 최대 낙폭 섹터로 밀렸다.</h1>
+    <h1><tl-s>7월 CPI가 헤드라인·근원 모두 컨센서스에 정확히 부합하며 9월 금리 인상 우려를 진정시킨 가운데, CoreWeave·Super Micro·Nebius발 AI 인프라 실적 서프라이즈에 힘입어 나스닥과 러셀2000이 강세를 보였다.</tl-s> <tl-s>루멘텀·코히런트 등 광인프라주와 마이크론·씨게이트 등 메모리주가 동반 급등한 반면, 넷플릭스 가이던스 실망과 알파벳 인재 이탈 우려로 커뮤니케이션서비스는 하루 최대 낙폭 섹터로 밀렸다.</tl-s></h1>
   </div>
 <!-- reading-map-v1 -->
 <nav class="reading-map" aria-label="보고서 빠른 이동"><span class="reading-map-label">빠른 이동</span><a href="#buyside-view">전략 코멘트</a><a href="#equities">시장 흐름</a><a href="#bonds">금리·수급</a><a href="#strategy">거시·포트폴리오</a><a href="#movers">종목·섹터</a></nav>

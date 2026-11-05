@@ -160,11 +160,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -193,7 +195,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -205,7 +207,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 2.24% 반등…기관 1조2,282억원 순매수가 받친 하루, 외국인 복귀는 중간선거 개표 뒤 확인</h1>
+    <h1><tl-s>코스피 2.24% 반등…</tl-s><tl-s>기관 1조2,282억원 순매수가 받친 하루, 외국인 복귀는 중간선거 개표 뒤 확인</tl-s></h1>
     <p class="muted">직전 미국장에서 나스닥이 인텔 급락에 크게 내렸는데도, 코스피는 갭 하락으로 출발한 뒤 낙폭을 지우고 5,859.08로 마감했다. 기관이 순매수를 이끌었고 외국인은 2거래일째 순매도했다(당일 잠정).</p>
     <p class="muted">10월 30일 한국만 더 내린 몫이 이날 대부분 되돌려져, 그 하락을 심리 충격으로 본 판단을 이어 간다. 반등을 받친 것이 국내 기관이었으므로, 외국인이 돌아오는지는 11월 4일 미국 중간선거 개표 뒤 수급으로 확인한다.</p>
   </div>

@@ -64,11 +64,13 @@
   table { font-variant-numeric: tabular-nums; }
   @media (max-width: 560px) { .card p, .doc p, p { line-height: 1.72; margin-bottom: 13px; } }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -90,13 +92,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -114,7 +117,7 @@ section { scroll-margin-top: 20px; }
 
 <section>
   <div class="card headline-card">
-    <h1>코스피, 장중 4%대 급락 딛고 +0.68% 반등 마감…개인·기관이 외국인 매도 방어</h1>
+    <h1><tl-s>코스피, 장중 4%대 급락 딛고 +0.68% 반등 마감…</tl-s><tl-s>개인·기관이 외국인 매도 방어</tl-s></h1>
     <p class="muted">코스피는 개장 직후 급락해 장중 한때 전일 대비 4%대까지 밀렸다. 오후 들어 반등하며 코스피는 +0.68%, 코스닥은 +1.70%로 마감했다. 미국 반도체주가 조정을 받으며 갭다운으로 출발했지만 개인과 기관이 저가 매수에 나서 낙폭을 되돌렸다.</p>
     <p class="muted">외국인은 코스피에서 3조8,140억원 넘게 순매도(당일 잠정)했지만 개인과 기관이 이를 상쇄하며 지수를 방어했다. 다음 세션에서는 이 저가 매수세가 이어지는지가 관건이다.</p>
   </div>

@@ -160,11 +160,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -193,7 +195,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -205,7 +207,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.59% 급락, AI 투자 자금조달 우려에 반등 하루 만에 반납…외국인 매도 멈출지 개표 뒤 확인</h1>
+    <h1><tl-s>코스피 3.59% 급락, AI 투자 자금조달 우려에 반등 하루 만에 반납…</tl-s><tl-s>외국인 매도 멈출지 개표 뒤 확인</tl-s></h1>
     <p class="muted">직전 미국장에서 오라클의 대규모 AI 재원 조달 계획에 반도체주가 내리자, 코스피는 갭 하락으로 출발해 전날 되찾은 5,800선을 내줬다. 외국인은 1조5,165억원을 순매도했고 전날 반등을 받친 기관도 매도로 돌아섰다(당일 잠정).</p>
     <p class="muted">기관 매수만으로 만든 반등을 10월 30일 낙폭의 되돌림으로 본 전날 판단은 철회한다. 외국인 매도가 멈추는지는 미국 중간선거 개표와 겹치는 11월 4일 정규장에서 확인한다.</p>
   </div>

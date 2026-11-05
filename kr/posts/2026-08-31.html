@@ -59,11 +59,13 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -92,7 +94,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -109,7 +111,7 @@ section { scroll-margin-top: 20px; }
 <div class="doc">
 <section>
   <div class="card headline-card">
-    <h1>코스피 3% 급락 출발했다 반등 마감…자사주 매입 공시가 장을 되돌렸다</h1>
+    <h1><tl-s>코스피 3% 급락 출발했다 반등 마감…</tl-s><tl-s>자사주 매입 공시가 장을 되돌렸다</tl-s></h1>
     <p class="muted">코스피는 간밤 미국 반도체주 급락 여파로 -2.58% 낮은 6,614에 출발해 장중 6,548까지 밀렸다. 오후 들어 낙폭을 모두 되돌리고 +0.46% 오른 6,820.02로 마감했다.</p>
     <p class="muted">코스닥은 -0.49% 내린 834.29로 마감해 코스피와 갈렸다. 개인·외국인·기관이 코스피에서 모두 순매도였는데도(당일 잠정) 지수가 오른 하루다.</p>
   </div>

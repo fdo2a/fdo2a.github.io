@@ -154,11 +154,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -187,7 +189,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -199,7 +201,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.48% 급락…빅테크 AI 투자 우려에 외국인 1조6,267억원 순매도, 반도체 재평가 여부는 중간선거 뒤 수급으로 확인</h1>
+    <h1><tl-s>코스피 3.48% 급락…</tl-s><tl-s>빅테크 AI 투자 우려에 외국인 1조6,267억원 순매도, 반도체 재평가 여부는 중간선거 뒤 수급으로 확인</tl-s></h1>
     <p class="muted">알파벳·아마존의 AI 설비투자 현금흐름 부담과 인텔의 부진한 가이던스가 전해진 다음 날, 외국인 매도가 반도체·전자부품 대형주에 몰리며 매도 사이드카가 발동됐다. 삼성전자·SK하이닉스가 역대 최대 3분기 실적을 확인한 직후였다.</p>
     <p class="muted">이번 하락은 메모리 수요 전망을 고친 재평가보다 외국인 위험 회피가 만든 심리 충격에 가깝다고 판단한다. 이 판단은 11월 4일 미국 중간선거 개표 뒤 외국인 수급과 11월 6일까지 SK하이닉스의 상대 수익률로 확인한다.</p>
   </div>

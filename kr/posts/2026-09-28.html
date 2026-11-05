@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 2.7% 급락해 6,890 마감…휴장 중 오른 미국 금리에 반도체 대형주 5%대 하락</h1>
+    <h1><tl-s>코스피 2.7% 급락해 6,890 마감…</tl-s><tl-s>휴장 중 오른 미국 금리에 반도체 대형주 5%대 하락</tl-s></h1>
     <p class="muted">추석 연휴 뒤 첫 세션에 코스피는 하루 저가에서 마감했고, 외국인은 코스피에서 3조원 넘게 순매도했다(당일 잠정). 그래도 코스닥은 올랐고 WICS 12개 섹터 가운데 7개가 상승해, 매도는 반도체에 몰렸다.</p>
     <p class="muted">우리는 이 하락을 휴장 동안 쌓인 미국 장기금리 상승을 한꺼번에 반영한 할인율 충격으로 판단한다. 코스피 노출은 유지하되 반도체 되돌림은 금리가 멈춘 것을 확인한 뒤로 미룬다.</p>
   </div>

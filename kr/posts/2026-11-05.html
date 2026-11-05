@@ -167,11 +167,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -200,7 +202,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -212,7 +214,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 5.28% 급락해 5,383…미국 데이터센터 규제 우려에 외국인 3.4조 매도, 수요 자료 나올 때까지 반도체 판단 보류</h1>
+    <h1><tl-s>코스피 5.28% 급락해 5,383…</tl-s><tl-s>미국 데이터센터 규제 우려에 외국인 3.4조 매도, 수요 자료 나올 때까지 반도체 판단 보류</tl-s></h1>
     <p class="muted">미국 중간선거 뒤 AI 데이터센터 규제 우려가 번지며 외국인이 코스피에서 3조4,185억원을 순매도했고(당일 잠정), 반도체·AI 서버 부품·전력기기 대형주가 함께 급락했다. 개인과 기관이 3조원 넘게 샀지만 코스피는 5.28% 내린 5,383.80으로 마감해 종가로 5,400선을 내줬다.</p>
     <p class="muted">규제는 아직 공약 단계이고 메모리 수요가 줄었다는 1차 자료는 없어, 이 매도는 수요 전망의 하향보다 정책 불확실성이 부른 위험 축소로 본다. 이 판단은 11월 6일 SK하이닉스 종가와 11월 17일(미국 시간) 엔비디아 실적에서 확인한다.</p>
   </div>

@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 0.27% 내린 6,871 마감…외국인 3조원 가까이 팔았지만 반도체 소부장은 반등</h1>
+    <h1><tl-s>코스피 0.27% 내린 6,871 마감…</tl-s><tl-s>외국인 3조원 가까이 팔았지만 반도체 소부장은 반등</tl-s></h1>
     <p class="muted">미국 10년물 금리가 더 오른 날 코스피는 장중 60일선 아래까지 밀렸다가 마지막 한 시간에 낙폭 대부분을 되찾았다. 외국인은 이틀째 3조원 안팎을 팔았고(당일 잠정), 매도는 반도체 대형주에 몰린 반면 장비·기판주는 올랐다.</p>
     <p class="muted">우리는 대형주 매도를 미국 금리 이월 하나로 설명하기 어려워졌다고 판단한다. 코스피 노출은 유지하고, 반도체 대형주 되돌림은 미국 8월 PCE(9월 30일) 뒤 금리 방향을 확인할 때까지 미룬다.</p>
   </div>

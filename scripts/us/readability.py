@@ -21,15 +21,28 @@ v5는 그 폭 제한마저 데스크톱에서 걷어낸다 (2026-08-28 사용자
 카드에서 여전히 오른쪽 230px을 비웠다. 단어가 줄 끝에서 잘리지 않는 것은
 `word-break: keep-all`이 이미 보장한다. 함께: 문단 첫머리 라벨을 제 줄로 올려
 제목 옆에 본문이 이어 붙지 않게 한다(`box-label`·`p-label`).
+
+v6은 제목(h1)의 폭 제한을 데스크톱에서 걷어내고, 넘칠 때만 문장에서 줄을 바꾼다
+(2026-11-05 사용자 지시 — ① 제목은 칸에 최대한 한 줄로 ② 둘째 줄이 문장 중간에서 끊길 것
+같으면 그 문장을 둘째 줄 처음부터 쓴다). v5는 1024px 이상에서 h1을 30em(750px)으로 막았는데
+그 아래 리드 문단은 카드 폭을 다 써서, 11/03 US 제목이 「…오르며 / 커브 가팔라져」로 갈렸다.
+문장 경계는 CSS가 볼 수 없으므로 `split_title_sentences()`가 제목의 문장마다
+`<tl-s>`(사용자 정의 원소)를 씌우고, CSS가 그것을 `inline-block`으로 세운다 — 남은 줄에 들어가는
+문장은 이어 쓰고, 안 들어가는 문장은 통째로 다음 줄로 내려간다. 한 줄보다 긴 문장은 줄
+처음부터 칸을 채우며 접힌다. `text-wrap: wrap`은 11/05 이틀 동안 셸 CSS가 실었던
+`text-wrap: balance`(고른 두 줄)를 덮는다 — 그 규칙은 문장을 줄 끝까지 채우지 않는다.
+나머지는 v5와 바이트 그대로다.
 """
 import html as _html
 import re
 from collections import Counter
 
-MARKER = "/* readability-v5 */"
+MARKER = "/* readability-v6 */"
+V5_MARKER = "/* readability-v5 */"
 V4_MARKER = "/* readability-v4 */"
 V3_MARKER = "/* readability-v3 */"
 OLD_MARKER = "/* readability-v2 */"
+_V6_MARKER_RE = re.compile(r"/\*\s*readability-v6\s*\*/", re.I)
 _V5_MARKER_RE = re.compile(r"/\*\s*readability-v5\s*\*/", re.I)
 _V4_MARKER_RE = re.compile(r"/\*\s*readability-v4\s*\*/", re.I)
 _V3_MARKER_RE = re.compile(r"/\*\s*readability-v3\s*\*/", re.I)
@@ -108,8 +121,20 @@ _LABEL_CSS = """
 .box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 """
 
-CSS = (_V3_CSS.replace(V3_MARKER, MARKER).rstrip("\n")
-       + _LABEL_CSS + _DESKTOP_CSS)
+# v5 — 발행본 다수가 아직 들고 있는 판. v6 이주가 정확히 이 글자를 찾아 바꾼다.
+V5_CSS = (_V3_CSS.replace(V3_MARKER, V5_MARKER).rstrip("\n")
+          + _LABEL_CSS + _DESKTOP_CSS)
+# v5 의 앞선 모양 — 2026-08-26~28 발행분이 들고 있다(라벨 인쇄 줄이 없다).
+V5_PREV_CSS = V5_CSS.replace(
+    ".box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }\n", "", 1)
+
+_H1_BASE = "h1 { max-width: 34em; }"
+_H1_DESKTOP = "h1 { font-size: 25px; max-width: 30em; }"
+assert V5_CSS.count(_H1_BASE) == 1 and V5_CSS.count(_H1_DESKTOP) == 1
+CSS = (V5_CSS.replace(V5_MARKER, MARKER, 1)
+       .replace(_H1_BASE, "h1 { max-width: 34em; }\nh1 tl-s { display: inline-block; }"
+                "\n.headline-card h1 { text-wrap: wrap; }", 1)
+       .replace(_H1_DESKTOP, "h1 { font-size: 25px; max-width: none; }", 1))
 
 # 편집자 노트는 계측에서 통째로 빠진다 — 사람이 쓴 문장은 게이트가 다듬을 대상이
 # 아니기 때문이다. 그래서 이 표식을 «흉내내면» 검사 전체를 피할 수 있다:
@@ -293,7 +318,7 @@ def _find_in_head_css(html: str, marker_re):
 
 
 def has_override(html: str) -> bool:
-    return _find_in_head_css(html, _V5_MARKER_RE) is not None
+    return _find_in_head_css(html, _V6_MARKER_RE) is not None
 
 
 def inject_css(html: str) -> str:
@@ -303,6 +328,19 @@ def inject_css(html: str) -> str:
     것을 찾으면 카드 한복판에 끼어든다. 반드시 head의 `<style>` 안에서만 찾는다.
     """
     if has_override(html):
+        return html
+    found = _find_in_head_css(html, _V5_MARKER_RE)
+    if found:
+        # v5 뒤에는 색 규칙(signcolor)이 같은 `<style>` 에 붙어 있다. 마커부터 끝까지 갈아
+        # 끼우면 그것이 지워지므로, v5 블록 글자를 정확히 찾아 그 자리만 바꾼다. 두 모양
+        # 어느 것과도 맞지 않으면 손대지 않는다 — `check_readability` 가 미적용으로 잡는다.
+        (span_start, span_end), _ = found
+        style_css = html[span_start:span_end]
+        for old in (V5_CSS, V5_PREV_CSS):
+            old = old.strip("\n")
+            if old in style_css:
+                return (html[:span_start] + style_css.replace(old, CSS.strip("\n"), 1)
+                        + html[span_end:])
         return html
     for marker_re, block in ((_V4_MARKER_RE, None), (_V3_MARKER_RE, _V3_CSS),
                              (_V2_MARKER_RE, _V2_CSS)):
@@ -792,6 +830,72 @@ def unpin_inline_labels(html: str) -> str:
     return _LABEL_EL.sub(sub, html)
 
 
+# 제목의 문장 경계. 말줄임표는 그 자체로 경계다(「…끝… JOLTS…」, 「…받아…외국인…」).
+# 마침표·물음표·느낌표는 **한글 뒤 + 공백 앞**만 — 「3.59%」「U.S.」를 가르지 않는다.
+# 이어진 부호(「……」「?!」)는 경계 하나다 — 부호만 따로 한 줄에 서지 않게.
+_TITLE_BREAK = re.compile(r"((?:…|\.\.\.)+|(?<=[가-힣])[.?!]+(?=\s))(\s*)")
+# 화면에 마크업으로 그려지지 않는 원소 — 안의 `<h1>` 은 글자다(codex 11/05 #2).
+_TITLE_MASKED = re.compile(
+    r"""(?is)<(style|textarea|title|noscript)\b(?:"[^"]*"|'[^']*'|[^>"'])*>.*?</\1\s*>""")
+_HAS_WORD = re.compile(r"\w")
+# 문장 하나를 싸는 원소. `span` 이 아니라 사용자 정의 원소인 것은 발행본 CSS 의 `span` 규칙
+# (`.doc span{…}`, `span[class=…]`)이 닿지 못하게 하려는 것이다(codex 11/05 재검토 #2).
+# 이름 앞토막이 실제 태그가 아니어야 한다 — `<h1-s>` 는 `<h1\b` 가 잡아 제목이 셋으로 세진다.
+TITLE_SENTENCE_TAG = "tl-s"
+
+
+def split_title_sentences(html: str) -> str:
+    """제목(첫 h1)의 문장마다 `<tl-s>`를 씌운다. 보이는 글자는 그대로다.
+
+    CSS(v6)가 그 span을 `inline-block`으로 세워, 제목이 한 줄에 들어가면 한 줄로 두고, 넘치면
+    문장 중간이 아니라 다음 문장 처음에서 줄을 바꾼다. 문장 사이 공백은 원소 밖에 남긴다 —
+    평문으로 뽑으면 원래 제목이 그대로 나온다.
+
+    제목은 **태그 토큰을 따라** 찾는다 — 다른 태그의 속성값이나 style·textarea·스크립트·주석
+    안의 `<h1>` 은 글자다(codex 11/05 #1·#2, 재검토 #1). `<template>` 이 있는 문서는 중첩을
+    가늠하지 않고 통째로 건너뛴다(재검토 #5). 태그가 든 제목(일본 일간의 `data-ref` 등)과
+    문장이 하나뿐인 제목도 건드리지 않는다. 이미 씌운 제목은 태그가 들어 있어 다시 잡히지
+    않는다(멱등).
+    """
+    masked = _TITLE_MASKED.sub(lambda m: " " * (m.end() - m.start()), _blank_inert(html))
+    if re.search(r"(?i)<template\b", masked):
+        return html
+    body = re.search(r"(?i)<body\b", masked)
+    tokens = TAG_RE.finditer(masked, body.start() if body else 0)
+    for tok in tokens:
+        if re.match(r"(?i)<h1[\s>/]", tok.group(0)):
+            break
+    else:
+        return html
+    close = next(tokens, None)
+    if close is None or not re.match(r"(?i)</h1\s*>", close.group(0)):
+        return html  # 제목 안에 태그가 있다
+    start, end = tok.end(), close.start()
+    text = html[start:end]
+    lead = text[:len(text) - len(text.lstrip())]
+    parts, at = [], 0
+    for b in _TITLE_BREAK.finditer(text, len(lead)):
+        piece = [text[at or len(lead):b.end(1)], b.group(2)]
+        if parts and not _HAS_WORD.search(piece[0]):
+            parts[-1][0] += parts[-1][1] + piece[0]  # 부호만 남은 조각은 앞 문장에 붙인다
+            parts[-1][1] = piece[1]
+        else:
+            parts.append(piece)
+        at = b.end()
+    tail = text[at or len(lead):]
+    if _HAS_WORD.search(tail):
+        stripped = tail.rstrip()
+        parts.append([stripped, tail[len(stripped):]])
+    elif parts:
+        parts[-1][0] += parts[-1][1] + tail.rstrip()
+        parts[-1][1] = tail[len(tail.rstrip()):]
+    if len(parts) < 2:
+        return html
+    inner = lead + "".join('<%s>%s</%s>%s' % (TITLE_SENTENCE_TAG, s, TITLE_SENTENCE_TAG, ws)
+                           for s, ws in parts)
+    return html[:start] + inner + html[end:]
+
+
 def enhance_html(html: str) -> str:
     """조판·문단·빠른 이동을 한 번에 적용한다. 보이는 숫자는 반드시 불변이다."""
     before = visible_numeric_tokens(html)
@@ -799,6 +903,7 @@ def enhance_html(html: str) -> str:
     out = demote_card_p_font(out)
     out = block_labels(out)
     out = unpin_inline_labels(out)
+    out = split_title_sentences(out)
     out = split_dense_paragraphs(out)
     out = inject_reading_map(out)
     out = move_strategy_first(out)

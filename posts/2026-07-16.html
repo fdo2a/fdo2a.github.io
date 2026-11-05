@@ -145,11 +145,13 @@
     th:last-child, td:last-child { white-space: normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -171,13 +173,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -249,7 +252,7 @@ td.sc-dn { color: #FF4040; }
 
     <div class="card" style="margin-top:14px;">
       <h3>장중 흐름</h3>
-      <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;">지수 3종(나스닥·S&amp;P500·러셀2000)은 공통적으로 개장 직후~오전 10시대에 세션 고점을 찍고 이후 오후 내내 미끄러지는 동일한 궤적을 그렸다. 나스닥은 10:30 ET에 시가 대비 +0.06% 고점을 찍은 뒤 반도체·메모리 매도가 강도를 더해가며 장 마감 직전인 15:30에 시가 대비 -1.46%의 세션 저점을 기록, 낙폭을 거의 회복하지 못한 채 마감했다. S&amp;P500도 같은 10:30에 +0.16% 고점을 찍었지만 15:30 저점(-0.72%)까지 미끄러졌고, 러셀2000은 오전 10:00에 +0.88%까지 오르며 셋 중 가장 강한 반등을 보였으나 역시 15:30 저점(-0.23%)에서 상당폭을 반납했다 — 다만 대형 반도체·메모리 비중이 낮아 낙폭은 상대적으로 작았다.</h1>
+      <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;"><tl-s>지수 3종(나스닥·S&amp;P500·러셀2000)은 공통적으로 개장 직후~오전 10시대에 세션 고점을 찍고 이후 오후 내내 미끄러지는 동일한 궤적을 그렸다.</tl-s> <tl-s>나스닥은 10:30 ET에 시가 대비 +0.06% 고점을 찍은 뒤 반도체·메모리 매도가 강도를 더해가며 장 마감 직전인 15:30에 시가 대비 -1.46%의 세션 저점을 기록, 낙폭을 거의 회복하지 못한 채 마감했다.</tl-s> <tl-s>S&amp;P500도 같은 10:30에 +0.16% 고점을 찍었지만 15:30 저점(-0.72%)까지 미끄러졌고, 러셀2000은 오전 10:00에 +0.88%까지 오르며 셋 중 가장 강한 반등을 보였으나 역시 15:30 저점(-0.23%)에서 상당폭을 반납했다 — 다만 대형 반도체·메모리 비중이 낮아 낙폭은 상대적으로 작았다.</tl-s></h1>
 <p>엔비디아는 개별적으로 더 큰 진폭을 보여 11:00에 시가 대비 -2.10% 저점을 찍은 뒤 정오 무렵 +1.06% 고점까지 반등했다가 다시 밀려 마감했는데, 이는 TSMC 콘퍼런스콜 이후 반도체 업종 전반에 걸친 CAPEX 부담 재평가와 CXMT IPO발 D램 공급과잉 헤드라인이 오전~정오 사이 연이어 소화되며 변동성을 키웠다.</p>
 <p>오후 들어 매도가 재차 강해진 흐름은 뉴욕 마감을 앞두고 반도체·메모리 롱 포지션의 리스크 축소(디레버리징)가 집중된 정황과 부합한다.</p>
     </div>

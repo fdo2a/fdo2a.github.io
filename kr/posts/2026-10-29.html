@@ -154,11 +154,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -187,7 +189,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -199,7 +201,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 1.24% 내려 6,000선 반납…삼성전자 환원 연기에 4% 급락, 외국인 매수는 946억원으로 줄어</h1>
+    <h1><tl-s>코스피 1.24% 내려 6,000선 반납…</tl-s><tl-s>삼성전자 환원 연기에 4% 급락, 외국인 매수는 946억원으로 줄어</tl-s></h1>
     <p class="muted">삼성전자가 사상 최대 3분기 확정 실적을 내고도 구체적 추가 환원을 내년 1월 이사회로 미루자 주가가 급락했고, 코스피는 전날 상승분의 일부를 하루 만에 반납했다. 같은 메모리 업황에서 환원 규모를 확정한 SK하이닉스는 올랐다.</p>
     <p class="muted">확정된 환원이 대형 반도체 두 종목의 주가를 갈랐다고 판단한다. 전날 급등이 외국인 비중 회복으로 이어지는지는 10월 30일 외국인 수급으로 확인한다.</p>
   </div>

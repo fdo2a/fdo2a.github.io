@@ -58,11 +58,13 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -91,7 +93,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -108,7 +110,7 @@ section { scroll-margin-top: 20px; }
 <div class="doc">
 <section>
   <div class="card headline-card">
-    <h1>코스피, 33거래일 만에 7000 재탈환…원전·유가 랠리에 외국인은 팔았다</h1>
+    <h1><tl-s>코스피, 33거래일 만에 7000 재탈환…</tl-s><tl-s>원전·유가 랠리에 외국인은 팔았다</tl-s></h1>
     <p class="muted">오늘 코스피는 1.40% 오른 7,052로 마감해 33거래일 만에 종가 기준 7,000선을 다시 넘어섰다. 코스닥도 2.28% 오른 830으로 강하게 올랐다.</p>
     <p class="muted">한미 원전·전력 투자 협상과 중동발 유가 급등이 전기장비·화학·조선을 폭넓게 밀어 올렸고 반도체도 동반 강세였다. 다만 코스피에서는 기관이 순매수한 반면 외국인은 순매도로 돌아서(당일 잠정) 매수 주체가 엇갈렸다.</p>
   </div>

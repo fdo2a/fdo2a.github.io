@@ -33,7 +33,7 @@ from us.colorize import paint  # noqa: E402
 from us.readability import _blank_inert as blank_inert  # noqa: E402
 from us.readability import _head_style_spans as head_style_spans  # noqa: E402
 from us.readability import (block_labels, demote_card_p_font,  # noqa: E402
-                            unpin_inline_labels)
+                            split_title_sentences, unpin_inline_labels)
 
 _MARKER = re.compile(r'/\*\s*readability-v\d+\s*\*/', re.I)
 
@@ -59,6 +59,277 @@ _VISIBILITY = re.compile(
     r'(?i)(?:^|[;{])\s*(display|visibility|opacity|content|position)\s*:')
 _FONT_SIZE = re.compile(r'(?i)(?:^|[;{])\s*font-size\s*:')
 _LABEL_SEL = re.compile(r'(?i)(?:box|p)-label')
+# 제목 문장 원소(`split_title_sentences` 의 `<tl-s>`)에 닿을 수 있는 CSS 는 **보수적으로** 막는다.
+# 감추는 선언을 나열하는 방식은 두 번 뚫렸다(codex 11/05 재검토 #2·#3 — `content-visibility`,
+# `opacity:.0`, `:nth-child(2n + 1)`, `:has(span)`). 그래서 방향을 뒤집었다 — 그 원소에 닿을 수
+# 있는 선택자(전칭 주어 `*`·`:…`, 원소 이름, 그것을 품는 `:has()`)가 있으면, 선언이 아래
+# 허용 목록 안일 때만 통과시키고 나머지는 판정 불가로 보낸다. `.doc span` 같은 흔한 규칙은 원소
+# 이름이 달라 닿지 않는다.
+_SAFE_UNIVERSAL_PROP = re.compile(
+    r'(?i)^(?:box-sizing|font-family|-webkit-font-smoothing'
+    r'|-moz-osx-font-smoothing|text-rendering|-webkit-tap-highlight-color'
+    r'|-webkit-text-size-adjust|text-size-adjust)$')
+_NON_REACHING_PSEUDO = re.compile(
+    r'(?i)^(?::root|::?(?:-webkit-scrollbar[a-z-]*|selection|-moz-selection|placeholder))$')
+_FUNC_PSEUDO = re.compile(r'(?i):(is|where|not|has|matches|-webkit-any|-moz-any)\(')
+
+
+def _paren_end(text, i):
+    """`text[i]` 가 `(` 일 때 짝 `)` 다음 위치. 짝이 없으면 None."""
+    depth = 0
+    for j in range(i, len(text)):
+        if text[j] == '(':
+            depth += 1
+        elif text[j] == ')':
+            depth -= 1
+            if depth == 0:
+                return j + 1
+    return None
+
+
+def _split_top(text):
+    """괄호 밖의 쉼표로만 가른다 — `:is(.doc, .container) .pos` 는 선택자 하나다."""
+    out, depth, at = [], 0, 0
+    for i, ch in enumerate(text):
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth -= 1
+        elif ch == ',' and depth == 0:
+            out.append(text[at:i])
+            at = i + 1
+    out.append(text[at:])
+    return out
+
+
+def _reaches_title_element(selector):
+    """True 닿을 수 있다 · False 닿지 않는다 · None 읽을 수 없다."""
+    sel = selector.strip()
+    if not sel:
+        return False
+    if re.search(r'(?i)\btl-s\b', sel):
+        return True
+    inner, flat, at = [], [], 0
+    while True:
+        m = _FUNC_PSEUDO.search(sel, at)
+        if not m:
+            flat.append(sel[at:])
+            break
+        end = _paren_end(sel, m.end() - 1)
+        if end is None:
+            return None
+        kind = m.group(1).lower()
+        flat.append(sel[at:m.start()] + (':x' if kind in ('not', 'has') else '.x'))
+        inner.append(sel[m.end():end - 1])
+        at = end
+    flat = ''.join(flat)
+    # 그 밖의 괄호(`:nth-child(2n + 1)`, `:lang(ko)`)는 인자를 비운다 — 공백이 결합자로 읽히지 않게.
+    while '(' in flat:
+        i = flat.index('(')
+        end = _paren_end(flat, i)
+        if end is None:
+            return None
+        flat = flat[:i] + flat[end:]
+    for compound in re.split(r'\s*[\s>+~]\s*', flat.strip()):
+        # 속성만 있는 복합 선택자(`[data-axis]`)는 닿지 않는다 — `<tl-s>` 에는 속성이 없다.
+        # `:root` 는 html 만, 스크롤바·선택 영역 의사 원소는 글자를 감추지 못한다.
+        if compound and compound[0] in '*:' and not _NON_REACHING_PSEUDO.match(compound):
+            return True
+    for arg in inner:
+        for part in _split_top(arg):
+            part = re.sub(r'^\s*[>+~]', '', part)
+            got = _reaches_title_element(part)
+            if got is None or got:
+                return got
+    return False
+
+
+# 페이지에 실려 오는 외부 자원 중 내용을 아는 것. 그 밖의 스타일시트·스크립트는 `<tl-s>` 에
+# 무엇을 할지 알 수 없으므로 판정 불가다(codex 11/05 3차 #4·#5). 2026-11-05 발행본 197편 실측.
+_KNOWN_STYLESHEETS = frozenset({
+    'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/'
+    'pretendardvariable-dynamic-subset.min.css'})
+_KNOWN_SCRIPT_HOSTS = frozenset({'pagead2.googlesyndication.com', 'gc.zgo.at'})
+_RAW_TEXT_ELEMENTS = ('textarea', 'title')
+_ATTR = re.compile(r"""(?is)\b([a-z-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))""")
+# `inherit` 는 상속 속성에서만 «부모와 같게»다 — `opacity:inherit` 는 곱해진다.
+_INHERITED_PROP = re.compile(
+    r'(?i)^(?:color|font(?:-[a-z]+)?|line-height|letter-spacing|word-spacing|word-break'
+    r'|overflow-wrap|text-align|visibility|white-space)$')
+_SCRIPT_EL = re.compile(r"""(?is)<script\b((?:"[^"]*"|'[^']*'|[^>"'])*)>(.*?)</script\s*>""")
+_FIRST_PSEUDO = re.compile(r'(?i)([^\s>+~,]*):?:first-(?:letter|line)\b')
+# 제목을 품을 수 없는 원소의 첫 글자·첫 줄은 제목과 무관하다(4차 #4 과잉 보류).
+_LEAF_TYPE = re.compile(r'(?i)^(?:p|li|td|th|dt|dd|h[2-6]|a|span|strong|em|b|i|label|button|caption|figcaption)\b')
+# 제목 자신이 flex·grid 가 되면 문장 원소가 따로 배치된다 — 순서·간격이 바뀐다(4차 #1).
+_TITLE_LAYOUT = re.compile(
+    r'(?i)(?:^|[;{\s])(?:display\s*:\s*(?:inline-)?(?:flex|grid)\b|display\s*:\s*contents\b'
+    r'|(?:flex-direction|flex-wrap|flex-flow|grid-template[a-z-]*|grid-auto-flow|order|direction'
+    r'|unicode-bidi|writing-mode)\s*:)')
+
+
+def _may_select_title(selector, h1_attrs):
+    """선택자의 주어(마지막 복합 선택자)가 그 h1 일 수 있는가 — 배치 검사용(5차 #1).
+
+    타입 `h1`, 전칭 주어, 또는 그 h1 이 실제로 가진 class·id·속성을 가리키는 주어만 «그렇다».
+    그 밖의 클래스(`.grid-2`, `nav.reading-map`)는 그 h1 에 닿지 않는다.
+    """
+    classes = set(h1_attrs.get('class', '').split())
+    for part in _split_top(selector):
+        flat = re.sub(r'\([^()]*\)', '', part).strip()
+        subject = re.split(r'\s*[\s>+~]\s*', flat)[-1] if flat else ''
+        if not subject:
+            continue
+        typed = re.match(r'(?i)^([a-z][a-z0-9-]*)', subject)
+        if typed and typed.group(1).lower() != 'h1':
+            continue
+        if typed or subject[0] in '*:':
+            return True
+        if any(c in classes for c in re.findall(r'\.([\w-]+)', subject)):
+            return True
+        if '#' in subject and h1_attrs.get('id') in re.findall(r'#([\w-]+)', subject):
+            return True
+        if any(a.lower() in h1_attrs for a in re.findall(r'\[\s*([\w-]+)', subject)):
+            return True
+    return False
+
+
+def _attrs(tag):
+    """속성 사전. 이름이 겹치면 **첫 값**을 쓴다 — 브라우저가 그렇게 읽는다(4차 #6)."""
+    out = {}
+    for m in _ATTR.finditer(tag):
+        out.setdefault(m.group(1).lower(), next(g for g in m.groups()[1:] if g is not None))
+    return out
+
+
+_KNOWN_SCRIPTS = None
+
+
+def _known_inline_scripts():
+    """셸이 넣는 실행 스크립트 본문 — 이 밖의 인라인 스크립트는 DOM 을 읽어 제목을 바꿀 수 있다(4차 #2).
+
+    `post_shell` 을 불러오지 않고 소스에서 `_FOOT_JS` 리터럴만 읽는다 — 그 모듈은 `scripts.` 접두
+    경로로 이웃을 불러와, 검토 게이트(`scripts/` 만 경로에 둔다)에서 불러오면 ImportError 가 나고
+    그 예외가 판정 불가로 삼켜졌다(2026-11-05 실측 21편).
+    """
+    global _KNOWN_SCRIPTS
+    if _KNOWN_SCRIPTS is None:
+        import ast
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            'common', 'post_shell.py')
+        with open(path, encoding='utf-8') as fh:
+            tree = ast.parse(fh.read())
+        foot = next(ast.literal_eval(n.value) for n in tree.body if isinstance(n, ast.Assign)
+                    and any(getattr(t, 'id', None) == '_FOOT_JS' for t in n.targets))
+        _KNOWN_SCRIPTS = frozenset(m.group(2).strip() for m in _SCRIPT_EL.finditer(foot))
+    return _KNOWN_SCRIPTS
+
+
+def _mask_raw_text(html):
+    """textarea·title 안을 덮는다. **태그 토큰을 따라** 여닫음을 찾는다 — 속성값 속 `<textarea>`
+    흉내로 그 사이의 진짜 style 을 덮을 수 없게(4차 #5). 스크립트·주석은 먼저 덮는다."""
+    from common.numbers import TAG_RE
+    masked = blank_inert(html)
+    out, at = [], 0
+    for tok in TAG_RE.finditer(masked):
+        if tok.start() < at:
+            continue  # 이미 덮은 구간 안의 토큰 — 미리 소비하지 않는다(5차 #4)
+        name = re.match(r'(?i)<\s*([a-z0-9-]+)', tok.group(0))
+        if not name or name.group(1).lower() not in _RAW_TEXT_ELEMENTS:
+            continue
+        close = re.compile(r'(?i)</%s\s*>' % name.group(1)).search(masked, tok.end())
+        end = close.end() if close else len(masked)
+        out.append(masked[at:tok.start()] + ' ' * (end - tok.start()))
+        at = end
+    out.append(masked[at:])
+    return ''.join(out)
+
+
+def _safe_declaration(decl):
+    if ':' not in decl:
+        return not decl.strip()
+    prop, value = (x.strip() for x in decl.split(':', 1))
+    value = re.sub(r'(?i)\s*!important$', '', value).strip()
+    if re.match(r'(?i)^(?:margin|padding)(?:-[a-z]+)?$', prop):
+        return bool(re.match(r'^(?:0(?:px|em|rem|%)?\s*)+$', value))  # 음수 margin 은 글자를 밀어낸다
+    if value.lower() in ('inherit', 'unset') and _INHERITED_PROP.match(prop):
+        return True
+    if re.match(r'(?i)^(?:border|outline)(?:-[a-z]+)?$', prop):
+        return value.lower() in ('0', 'none', '0 none', 'none 0')
+    return bool(_SAFE_UNIVERSAL_PROP.match(prop))
+
+
+def _title_css_risky(html, block):
+    """`<tl-s>` 를 씌우는 것만으로 무엇이 보이고 안 보일지가 바뀔 수 있는가.
+
+    **태그 토큰을 따라** 실제 `<style>`·`<link>`·`<script>` 만 본다 — 속성값 안의 `<style>` 흉내나
+    textarea 안의 글자는 CSS 가 아니다(3차 #1). head 만이 아니라 body 의 style 도 본다(재검토 #4).
+    등록된 조판 블록 안은 보지 않는다. 아래는 전부 판정 불가로 보낸다:
+    - `<tl-s>` 에 닿는 선택자의 선언이 허용 목록 밖(margin·padding 은 0 만 — 3차 #2)
+    - `::first-letter`·`::first-line` — inline-block 안 글자는 조상의 첫 글자가 아니게 된다(3차 #3)
+    - 내용을 모르는 스타일시트 링크·`@import`(3차 #4)
+    - `customElements`·`tl-s` 를 말하는 스크립트, 모르는 호스트의 외부 스크립트(3차 #5)
+    """
+    from common.numbers import TAG_RE
+    masked = _mask_raw_text(html)
+    title = next((t for t in TAG_RE.finditer(masked) if re.match(r'(?i)<h1[\s>/]', t.group(0))), None)
+    h1_attrs = _attrs(title.group(0)) if title else {}
+    for tok in TAG_RE.finditer(masked):
+        tag = tok.group(0)
+        name = re.match(r'(?i)<\s*([a-z0-9-]+)', tag)
+        name = name.group(1).lower() if name else ''
+        if name == 'noscript':
+            return True  # 스크립트를 끈 독자에게만 켜지는 CSS 가 있을 수 있다(4차 #3)
+        if name and re.search(r'(?i)\son[a-z]+\s*=', tag):
+            return True  # 인라인 이벤트 처리기(4차 #2)
+        if name == 'h1':
+            if _TITLE_LAYOUT.search(';' + _attrs(tag).get('style', '')):
+                return True  # 인라인 배치 — 값까지 본다(5차 #3, `display:block` 은 통과)
+        if name == 'link':
+            attrs = _attrs(tag)
+            if 'stylesheet' in attrs.get('rel', '').lower() and attrs.get('href') not in _KNOWN_STYLESHEETS:
+                return True
+        elif name == 'style':
+            close = re.compile(r'(?i)</style\s*>').search(masked, tok.end())
+            if close is None:
+                return True
+            start = tok.end()
+            css = _mask_css(html[start:close.start()])
+            if _CSS_EXOTIC.search(css) or re.search(r'(?i)@import', css):
+                return True
+            for rule in _RULE.finditer(css):
+                # 선언부의 자리로 가린다 — 블록 첫 규칙의 선택자 앞 공백은 마커보다 앞에서 시작한다.
+                if block is not None and block.start <= start + rule.start(2) < block.end:
+                    continue
+                for first in _FIRST_PSEUDO.finditer(rule.group(1)):
+                    if not _LEAF_TYPE.match(first.group(1)):
+                        return True
+                if (_TITLE_LAYOUT.search('{' + rule.group(2))
+                        and _may_select_title(rule.group(1), h1_attrs)):
+                    return True
+                reach = None
+                for part in _split_top(rule.group(1)):
+                    got = _reaches_title_element(part)
+                    if got is None:
+                        return True
+                    reach = reach or got
+                if reach and not all(_safe_declaration(d) for d in rule.group(2).split(';')):
+                    return True
+    # 스크립트는 `blank_inert` 가 원소째 덮으므로 원문에서 따로 찾는다. 주석·속성값 속 흉내까지
+    # 잡히지만 그 오탐은 판정 불가 쪽이라 안전하다.
+    for m in _SCRIPT_EL.finditer(html):
+        src = _attrs(m.group(1)).get('src')
+        if src is not None:
+            host = re.match(r'(?i)^https://([^/]+)/', src)
+            if not host or host.group(1).lower() not in _KNOWN_SCRIPT_HOSTS:
+                return True
+        if re.search(r'(?i)customElements|tl-s', m.group(2)):
+            return True
+        kind = _attrs(m.group(1)).get('type', '').lower()
+        if src is None and kind != 'application/ld+json' and m.group(2).strip() not in _known_inline_scripts():
+            return True
+    return False
+
+
 _RULE = re.compile(r'([^{}]*)\{([^{}]*)\}')
 
 # 주석과 문자열은 **규칙을 자르기 전에** 덮어야 한다. 나중에 지우면
@@ -181,7 +452,11 @@ def transformed(old_html, new_html):
         # 순서는 `enhance_html()` 과 같다. `inject_css` 자리를 위의 이식이 대신한다.
         # 색칠(`apply_colors.py`)은 그다음 단계라 여기서도 뒤에 온다. 값에서 결정론적으로
         # 다시 계산하므로, 손으로 바꿔 넣은 색은 이 변환을 통과하지 못한다.
-        out = paint(unpin_inline_labels(block_labels(demote_card_p_font(grafted))))
+        staged = unpin_inline_labels(block_labels(demote_card_p_font(grafted)))
+        titled = split_title_sentences(staged)
+        if titled != staged and _title_css_risky(old_html, stale):
+            return None  # 제목 원소에 닿는 CSS — 감춤·드러남을 확정할 수 없다
+        out = paint(titled)
         if _inert(out) != _inert(grafted):
             return None  # 변환이 스크립트·주석을 건드렸다
     except Exception:  # noqa: BLE001 — 못 다루는 페이지는 미검토로 남기는 것이 안전하다

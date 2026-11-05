@@ -43,8 +43,12 @@ _DAY_OPENER = re.compile(r'^\s*(?:\d{4}-\d{2}-\d{2}|\d{1,2}월\s*\d{1,2}일)?\s*
                          r'(월|화|수|목|금)요일')
 
 
+_TITLE_SPAN = re.compile(r'<tl-s>([^<]*)</tl-s>')
+
+
 def _norm(fragment):
-    return re.sub(r'\s+', ' ', _TAG.sub(' ', fragment)).strip()
+    # 제목 문장 원소 `<tl-s>`(readability v6)는 글자 사이에 공백을 넣지 않는다 — 「받아…외국인」.
+    return re.sub(r'\s+', ' ', _TAG.sub(' ', _TITLE_SPAN.sub(r'\1', fragment))).strip()
 
 
 def _all_prose(html, secs):

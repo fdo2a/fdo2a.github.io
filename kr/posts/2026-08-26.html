@@ -64,11 +64,13 @@
   table { font-variant-numeric: tabular-nums; }
   @media (max-width: 560px) { .card p, .doc p, p { line-height: 1.72; margin-bottom: 13px; } }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -90,13 +92,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -114,7 +117,7 @@ section { scroll-margin-top: 20px; }
 
 <section>
   <div class="card headline-card">
-    <h1>코스피, 미 반도체 훈풍에 6,808선 회복…개인 매도 속 기관이 지수 방어</h1>
+    <h1><tl-s>코스피, 미 반도체 훈풍에 6,808선 회복…</tl-s><tl-s>개인 매도 속 기관이 지수 방어</tl-s></h1>
     <p class="muted">코스피는 미국 반도체주 강세와 국채금리·유가 하락에 힘입어 0.97% 오른 6,808.21로 마감했다. 코스닥은 826.87(-0.03%)로 보합권에서 장을 마쳤다.</p>
     <p class="muted">개인은 코스피에서 2조2,426억원을 순매도했지만(당일 잠정) 기관이 7,594억원을 순매수하며 지수를 방어했다. 외국인은 1,162억원 소폭 순매도에 그쳐 전날의 대량 매도세가 크게 누그러졌다.</p>
   </div>

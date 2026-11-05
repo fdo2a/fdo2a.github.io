@@ -154,11 +154,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -187,7 +189,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -199,7 +201,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.29% 올라 5,736…외국인 6,393억원 순매수에 반도체 반등, 두 달 만의 매수 사이드카</h1>
+    <h1><tl-s>코스피 3.29% 올라 5,736…</tl-s><tl-s>외국인 6,393억원 순매수에 반도체 반등, 두 달 만의 매수 사이드카</tl-s></h1>
     <p class="muted">직전 미국장 나스닥이 보합이고 한국장 동안 미국 선물이 내렸는데도 코스피는 전날 낙폭의 대부분을 되찾았다. 외국인 매수가 삼성전자·SK하이닉스에 몰렸고, 행동주의 펀드의 지분 공개로 SK가 급등했다.</p>
     <p class="muted">해외 재료보다 국내 외국인 수급의 몫이 큰 반등으로 판단한다. 이 매수가 이어지는지는 10월 22일 금융통화위원회를 지난 뒤 세 세션의 외국인 수급으로 확인한다.</p>
   </div>

@@ -141,11 +141,13 @@
     th:last-child, td:last-child { white-space: normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -167,13 +169,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -202,7 +205,7 @@ td.sc-dn { color: #FF4040; }
 
   <section>
     <div class="headline-card">
-      <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;">미·이란 군사충돌이 9일째 격화되고 이란의 쿠웨이트 담수화·발전시설 공격, 미군 사상자 발생 소식까지 겹치며 지정학 리스크 프리미엄이 재부각된 가운데, 중국 Moonshot AI의 초대형 모델 '키미 K3' 공개로 촉발된 AI·반도체 밸류에이션 재평가 경계 심리가 더해지며 다우(-0.59%)·러셀2000(-0.67%)이 하락했다. 코스피가 4%대 폭락하며 삼성전자(-4.31%)·SK하이닉스(-4.23%)가 나란히 급락한 것과 대조적으로 마이크론(+1.94%)·웨스턴디지털(+2.14%) 등 미국 메모리주는 오히려 상승, 한·미 메모리주 디커플링이 뚜렷했다.</h1>
+      <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;"><tl-s>미·이란 군사충돌이 9일째 격화되고 이란의 쿠웨이트 담수화·발전시설 공격, 미군 사상자 발생 소식까지 겹치며 지정학 리스크 프리미엄이 재부각된 가운데, 중국 Moonshot AI의 초대형 모델 '키미 K3' 공개로 촉발된 AI·반도체 밸류에이션 재평가 경계 심리가 더해지며 다우(-0.59%)·러셀2000(-0.67%)이 하락했다.</tl-s> <tl-s>코스피가 4%대 폭락하며 삼성전자(-4.31%)·SK하이닉스(-4.23%)가 나란히 급락한 것과 대조적으로 마이크론(+1.94%)·웨스턴디지털(+2.14%) 등 미국 메모리주는 오히려 상승, 한·미 메모리주 디커플링이 뚜렷했다.</tl-s></h1>
     </div>
   </section>
 <!-- reading-map-v1 -->

@@ -154,11 +154,13 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   nav.reading-map { position:static; box-shadow:none; }
 }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -187,7 +189,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -199,7 +201,7 @@ section { scroll-margin-top: 20px; }
 <nav class="crumbs" aria-label="현재 위치"><a href="../index.html">한국 시장</a><span class="crumbs-sep" aria-hidden="true">›</span><a href="../index.html?span=daily">일간</a><a class="crumbs-aside" href="../../index.html">미국 시장 →</a></nav>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 3.09% 올라 5,638 마감…외국인 순매수 전환, 반도체 반등은 SK하이닉스 발표가 시험대</h1>
+    <h1><tl-s>코스피 3.09% 올라 5,638 마감…</tl-s><tl-s>외국인 순매수 전환, 반도체 반등은 SK하이닉스 발표가 시험대</tl-s></h1>
     <p class="muted">앤트로픽의 상장 신고서 공개와 SK하이닉스 추가 주주환원 기대가 겹쳐 반도체 대형주와 SK 계열이 급등했다. 외국인은 2거래일 매도 뒤 순매수로 돌았지만, 코스피는 장 초반 고점에서 밀려 하루 범위의 아래쪽에서 마감했다.</p>
     <p class="muted">같은 AI 재료에 대만 증시와 미국 선물은 거의 반응하지 않아, 코스피의 초과 상승은 국내 환원 기대를 미리 산 몫이 크다고 판단한다. 외국인 매수가 이어지는지는 10월 28일 SK하이닉스 발표와 10월 29일과 30일 수급으로 확인한다.</p>
   </div>

@@ -73,11 +73,13 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -106,7 +108,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -122,7 +124,7 @@ section { scroll-margin-top: 20px; }
 </div>
 <div class="doc"><section>
   <div class="card headline-card">
-    <h1>코스피 2.05% 반등해 5,668…외국인 순매수 전환에도 고점서 140포인트 밀려</h1>
+    <h1><tl-s>코스피 2.05% 반등해 5,668…</tl-s><tl-s>외국인 순매수 전환에도 고점서 140포인트 밀려</tl-s></h1>
     <p class="muted">코스피는 서킷브레이커가 걸린 전날 급락 뒤 7거래일 만에 올랐고, 외국인은 코스피를 순매수로 돌아섰다(당일 잠정). 그러나 오후 들어 5,800선까지 올랐던 지수는 마감까지 상승분의 절반 넘게 반납했다.</p>
     <p class="muted">우리는 이 반등을 매도 소진의 시작보다 하루짜리 과매도 반발에 가깝다고 본다. 10월 19일 신용융자 관리 시행부터 21일까지 세 세션의 외국인 수급과 코스피 종가가 이 판단을 가른다.</p>
   </div>

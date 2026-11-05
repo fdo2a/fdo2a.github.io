@@ -59,11 +59,13 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -92,7 +94,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -109,7 +111,7 @@ section { scroll-margin-top: 20px; }
 <div class="doc">
 <section>
   <div class="card headline-card">
-    <h1>코스피 -3.99% 급락, 코스닥도 -2.1%…중동 리스크·미 금리에 반도체 매도 집중</h1>
+    <h1><tl-s>코스피 -3.99% 급락, 코스닥도 -2.1%…</tl-s><tl-s>중동 리스크·미 금리에 반도체 매도 집중</tl-s></h1>
     <p class="muted">코스피는 오늘 3.99% 내려 6,562.72로 마감했다. 호르무즈 해협에서 재점화된 미·이란 무력충돌로 유가가 급등했고, 미 국채 금리 급등과 반도체 투심 위축이 겹쳤다.</p>
     <p class="muted">외국인과 기관이 코스피에서 각각 1조9,173억원, 2조361억원을 순매도했다(당일 잠정). 개인이 2조3,029억원을 순매수하며 낙폭 일부를 흡수했지만, 60개 업종 중 항공사만 올랐다.</p>
   </div>

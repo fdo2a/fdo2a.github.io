@@ -74,13 +74,6 @@ nav.post-foot a:focus-visible { outline:2px solid #0064FF; outline-offset:2px; }
   font-size:14px; font-weight:800; color:#191F28; scroll-margin-top:64px;
   break-after:avoid-page; page-break-after:avoid; }
 
-/* Headline width. The shell and readability-v5 both cap h1 at 30em (750px) on desktop while
-   the lede under it runs the full card, so a title a few words too long dropped its last two
-   words onto a line of their own (2026-11-04). readability-v5 is a registered block, so the
-   cap is lifted here by specificity; balance keeps a title that still wraps from orphaning. */
-.headline-card h1 { text-wrap:balance; }
-@media (min-width:1024px) { .headline-card h1 { max-width:none; } }
-
 @media print {
   nav.post-foot { display:none; }
   nav.reading-map { position:static; box-shadow:none; }

@@ -75,11 +75,13 @@
     h1{font-size:19px;} h2{font-size:16.5px;}
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -101,13 +103,14 @@ section { scroll-margin-top: 20px; }
 }
 .box-label { display: block; width: fit-content; margin-bottom: 6px; }
 .p-label { display: block; margin-bottom: 2px; }
+.box-label, .p-label { break-after: avoid-page; page-break-after: avoid; }
 
 @media (min-width: 1024px) {
   .card p, .doc p, .panel p, p,
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -135,7 +138,7 @@ td.sc-dn { color: #FF4040; }
 
   <section id="headline">
     <div class="card headline-card">
-      <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;">이란-미국 긴장완화 기대에 유가가 급락(WTI -8.22%, Brent -9.25%)하며 다우(+0.96%)가 반등했지만, 중국 CXMT발 메모리주 급락(마이크론 -9.09%, 웨스턴디지털 -10.81%)과 엔비디아(-5.87%) 개별 악재가 나스닥(-0.82%)을 끌어내렸다. 밸류주(S&amp;P500 Value +1.35%) 대 성장주(S&amp;P500 Growth -0.94%) 로테이션이 하루짜리 장을 관통했다.</h1>
+      <h1 style="font-size:17px;font-weight:700;margin:0;line-height:1.55;color:inherit;"><tl-s>이란-미국 긴장완화 기대에 유가가 급락(WTI -8.22%, Brent -9.25%)하며 다우(+0.96%)가 반등했지만, 중국 CXMT발 메모리주 급락(마이크론 -9.09%, 웨스턴디지털 -10.81%)과 엔비디아(-5.87%) 개별 악재가 나스닥(-0.82%)을 끌어내렸다.</tl-s> <tl-s>밸류주(S&amp;P500 Value +1.35%) 대 성장주(S&amp;P500 Growth -0.94%) 로테이션이 하루짜리 장을 관통했다.</tl-s></h1>
     </div>
   </section>
 <!-- reading-map-v1 -->

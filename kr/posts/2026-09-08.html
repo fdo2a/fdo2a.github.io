@@ -58,11 +58,13 @@
     th:last-child, td:last-child { white-space:normal; }
   }
 
-/* readability-v5 */
+/* readability-v6 */
 .card p, .doc p, .panel p, p { line-height: 1.78; margin: 0 0 15px; max-width: 42em; }
 .card p:last-child, .doc p:last-child, .panel p:last-child, p:last-child { margin-bottom: 0; }
 .card { padding: 20px 22px; }
 h1 { max-width: 34em; }
+h1 tl-s { display: inline-block; }
+.headline-card h1 { text-wrap: wrap; }
 h2 { line-height: 1.45; margin-bottom: 14px; }
 h3, h4 { line-height: 1.45; }
 .caption, .sub, .footer-note, .note, .lead, li { max-width: 42em; }
@@ -91,7 +93,7 @@ section { scroll-margin-top: 20px; }
   .caption, .sub, .footer-note, .note, .lead, li { max-width: none; }
   .card p:not([class]), .doc p:not([class]), .panel p:not([class]), p:not([class]),
   .doc li { font-size: 17px; line-height: 1.8; }
-  h1 { font-size: 25px; max-width: 30em; }
+  h1 { font-size: 25px; max-width: none; }
   h2 { font-size: 20px; }
   h3 { font-size: 17px; }
 }
@@ -108,7 +110,7 @@ section { scroll-margin-top: 20px; }
 <div class="doc">
 <section>
   <div class="card headline-card">
-    <h1>코스피, 7,172까지 치솟았다 개인 매도에 밀려 0.58% 하락 마감…추격매수는 아직</h1>
+    <h1><tl-s>코스피, 7,172까지 치솟았다 개인 매도에 밀려 0.58% 하락 마감…</tl-s><tl-s>추격매수는 아직</tl-s></h1>
     <p class="muted">코스피는 오늘 장중 한때 7,172까지 오르며 반도체 랠리 이틀째를 이어갔지만, 정규장은 6,955로 0.58% 밀려 마감했다. 코스닥도 1.25% 내린 812로 마쳐 두 시장 모두 상승분을 반납했다.</p>
     <p class="muted">외국인과 기관은 코스피에서 나란히 순매수했지만(각각 6,316억원·6,427억원, 당일 잠정) 개인이 3조329억원을 순매도하며 지수를 끌어내렸다. 60개 업종 중 17개만 올라 상승은 좁았다.</p>
   </div>

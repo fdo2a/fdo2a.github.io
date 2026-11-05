@@ -1,3 +1,5 @@
+import pytest
+
 from scripts.us import readability as R
 
 
@@ -658,3 +660,46 @@ def test_kr_v2_reading_map_links_learning_instead_of_news():
     nav = R.inject_reading_map(doc)
     nav = nav[:nav.index("</nav>")]
     assert "복기·일정" in nav and ">뉴스<" not in nav
+
+
+# --- v6: 제목 문장 원소 (2026-11-05) -------------------------------------------------
+
+@pytest.mark.parametrize('src, want', [
+    ('<h1>하락 끝… JOLTS 호조</h1>', '<h1><tl-s>하락 끝…</tl-s> <tl-s>JOLTS 호조</tl-s></h1>'),
+    ('<h1>받아…외국인 매도</h1>', '<h1><tl-s>받아…</tl-s><tl-s>외국인 매도</tl-s></h1>'),
+    ('<h1>끝났다. 다음 문장이다.</h1>', '<h1><tl-s>끝났다.</tl-s> <tl-s>다음 문장이다.</tl-s></h1>'),
+    ('<h1>반등…… 다음?! 또</h1>', '<h1><tl-s>반등……</tl-s> <tl-s>다음?!</tl-s> <tl-s>또</tl-s></h1>'),
+])
+def test_title_sentences_are_wrapped(src, want):
+    out = R.split_title_sentences(src)
+    assert out == want
+    assert R.split_title_sentences(out) == out  # 멱등
+    assert R._TAG.sub('', out) == R._TAG.sub('', src)  # 보이는 글자 불변
+
+
+@pytest.mark.parametrize('src', [
+    '<h1>한 문장 3.59% 급락, 쉼표만</h1>',          # 소수점·쉼표는 경계가 아니다
+    '<h1>U.S. stocks rally</h1>',
+    '<h1>말줄임으로 끝…</h1>',
+    '<h1>반등……</h1>',                               # 부호만 남는 조각은 문장이 아니다
+    '<h1>닛케이 <span data-ref="x">-2.12%</span>, 밀렸다. 다음</h1>',  # 태그 든 제목
+    '<template><h1>가…나</h1></template><h1>진짜…제목</h1>',
+])
+def test_titles_left_alone(src):
+    assert R.split_title_sentences(src) == src
+
+
+def test_fake_titles_in_attributes_styles_and_textareas_are_text():
+    for fake in ('<div data-copy="<h1>가. 나</h1>">', '<style>.x::before{content:"<h1>가…나</h1>"}</style>',
+                 '<textarea><h1>가. 나</h1></textarea>'):
+        src = '<body>%s<h1>진짜…제목</h1>' % fake
+        out = R.split_title_sentences(src)
+        assert out == src.replace('<h1>진짜…제목</h1>', '<h1><tl-s>진짜…</tl-s><tl-s>제목</tl-s></h1>')
+
+
+def test_v5_block_is_migrated_in_place_keeping_signcolor():
+    from scripts.us import colorize
+    old = '<html><head><style>%s%s</style></head><body><h1>a</h1></body></html>' % (R.V5_CSS, colorize.CSS)
+    out = R.inject_css(old)
+    assert R.CSS.strip('\n') in out and colorize.CSS.strip('\n') in out
+    assert 'readability-v5' not in out and R.inject_css(out) == out

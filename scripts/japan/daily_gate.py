@@ -61,8 +61,12 @@ def _finite(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
 
 
+_TITLE_SPAN = re.compile(r'<tl-s>([^<]*)</tl-s>')
+
+
 def _plain(fragment):
-    return re.sub(r'\s+', ' ', _TAG.sub(' ', fragment)).strip()
+    # 제목 문장 원소 `<tl-s>`(readability v6)는 글자 사이에 공백을 넣지 않는다 — 「받아…외국인」.
+    return re.sub(r'\s+', ' ', _TAG.sub(' ', _TITLE_SPAN.sub(r'\1', fragment))).strip()
 
 
 def resolve(snap, path):
