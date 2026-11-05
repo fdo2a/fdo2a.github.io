@@ -1,0 +1,74 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-05",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-05T11:01:14+00:00",
+ "cutoff_at": "2026-11-05T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "91433c8d71f87b5774c009368e98d6914e0dda49",
+  "sha256": "5c744705f46e034e13b7917918ec572343f9a1b03bada5b3b149f8bd1b6513ee",
+  "extra": {
+   "kr_econ.json": "679749cacdfcc6d3cb034f8d54c45b51b9273703fc35538845288d65f0a939ce",
+   "kr_flows.json": "553a6f441eb2a6d7ca83923bdebae836f7e1a52a841ef545e13e93a868681d78",
+   "kr_session.json": "50b336684081b661f92fde93bc7e069362bffabf5cd290184e8240c78b45d1be"
+  }
+ },
+ "counts": {
+  "harvest": 589,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "sedaily": "ok",
+   "bpost": "ok",
+   "dailian": "ok",
+   "dt": "ok",
+   "chosun": "ok",
+   "herald": "ok"
+  },
+  "notes": [
+   "discover:589"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 29738,
+   "out": 11107
+  },
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
+ },
+ "event": {
+  "topic_ko": "한국투자증권·한국금융지주 3분기 실적 둔화와 운용부문 전망",
+  "query": "3분기 한국투자증권 전년",
+  "trigger": []
+ },
+ "content_hash": "c16d0498c8f94c24"
+}
