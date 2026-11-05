@@ -12,8 +12,8 @@ session calendar first (a gap is None, never a two-day move read as one) and joi
 date; any None in the 252-return window blanks the row. Any RF gap blanks every row —
 a varying RF moves both sides of the regression, so there is no "loadings only" mode.
 
-numpy is imported inside the functions: `pipeline.py` imports FACTOR_ONLY from here and
-the board must not depend on numpy.
+numpy is imported inside the functions. The board never imports this module: its ticker
+filter reads `factor_legs.py` (codex impl review 1 #1).
 """
 
 import datetime
@@ -25,15 +25,12 @@ MODEL = 'ff3_proxy_v1'
 FACTORS_SCHEMA_VERSION = 1
 FACTORS_CALCULATION_VERSION = '2026-11-05'
 WINDOW = 252
-RF_SERIES = 'DGS1MO'
 RF_MAX_AGE_DAYS = 7
 KAPPA_MAX = 1e6
 
-FACTOR_TICKERS = ('VTI', 'IWB', 'IWM', 'IWD', 'IWF', 'IWN', 'IWO')
-# Factor legs the collector did not download before the trial. Fixed as a list, not
-# computed at import: a test checks it against the pre-trial download set, so a ticker
-# moving into the board's own inputs shows up as a failing test, not a silent change.
-FACTOR_ONLY = ('IWB', 'IWD', 'IWF', 'IWN', 'VTI')
+# RF_SERIES, FACTOR_TICKERS, FACTOR_ONLY live in factor_legs.py (no imports) so the board
+# path never needs this module to import.
+from fund.factor_legs import FACTOR_ONLY, FACTOR_TICKERS, RF_SERIES  # noqa: E402,F401
 
 PROXIES = {'mkt': 'VTI−RF', 'smb': 'IWM−IWB', 'hml': '½[(IWD−IWF)+(IWN−IWO)]'}
 RF_CONVENTION = '(1+y/100/12)^(1/N)−1'

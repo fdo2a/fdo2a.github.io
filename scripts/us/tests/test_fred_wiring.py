@@ -67,26 +67,33 @@ def test_production_sids_cover_yields_dashboard_and_yield_drivers():
     assert 'DGS1MO' in sids
 
 
-def test_fund_fred_inputs_fetches_dgs1mo(monkeypatch):
-    """보드의 유동성 넷과 요인 시운전의 DGS1MO 를 같은 헬퍼가 받는다."""
-    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+def test_fund_rf_input_fetches_dgs1mo(monkeypatch):
+    """요인 시운전의 DGS1MO 는 보드 뒤, 시운전 try 안에서 따로 받는다(codex impl review 1 #2 —
+    보드의 유동성 넷은 ed17327 인라인 그대로 fund_board_step 안에)."""
     stub = cmd.set_fred_client(Stub())
-    out = cmd.fund_fred_inputs()
-    from fund.liquidity import SERIES as LIQ_SERIES
-    assert 'DGS1MO' in stub.calls
-    assert set(LIQ_SERIES) <= set(stub.calls) and len(LIQ_SERIES) == 4
-    assert set(out['liq']) == set(LIQ_SERIES)
-    assert out['rf'] == [('2026-09-01', 1.0)]
+    assert cmd.fund_rf_input() == [('2026-09-01', 1.0)]
+    assert stub.calls == ['DGS1MO']
 
 
-def test_fund_fred_inputs_never_raises(monkeypatch):
+def test_fund_rf_input_never_raises(monkeypatch):
     class Boom(Stub):
         def series(self, sid):
             self.calls.append(sid)
             raise RuntimeError('down')
     monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
     cmd.set_fred_client(Boom())
-    assert cmd.fund_fred_inputs() == {'liq': {}, 'rf': []}
+    assert cmd.fund_rf_input() == []
+
+
+def test_board_step_fetches_the_four_liquidity_series(monkeypatch, tmp_path):
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    stub = cmd.set_fred_client(Stub())
+    from fund import pipeline
+    seen = {}
+    monkeypatch.setattr(pipeline, 'run', lambda c, d, data, liq, *a: seen.setdefault('liq', liq))
+    cmd.fund_board_step({}, {}, {'generated': 't'}, '2026-10-05', str(tmp_path))
+    from fund.liquidity import SERIES as LIQ_SERIES
+    assert stub.calls == list(LIQ_SERIES) and set(seen['liq']) == set(LIQ_SERIES)
 
 
 def test_fred_check_refuses_without_a_key_and_writes_nothing(monkeypatch, tmp_path):

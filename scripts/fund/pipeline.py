@@ -5,19 +5,29 @@ JSON is always written; HTML only when renderable; a crash leaves the unavailabl
 and removes yesterday's HTML.
 
 The board sees exactly the tickers it saw before the factor trial: histories that were
-downloaded **only** for the factor model (`factors.FACTOR_ONLY`) are dropped here, so a
-bad factor leg can never change the board's `missing`, status or digest. This file must
-not import numpy — the board cannot depend on the factor model's toolchain.
+downloaded **only** for the factor model (`factor_legs.FACTOR_ONLY`) are dropped here, so
+a bad factor leg can never change the board's `missing`, status or digest. This file must
+not import `fund.factors` (or numpy) — the board cannot depend on the factor model
+importing cleanly. The leg list is read lazily and an import failure drops nothing: the
+collector's download set falls back to the pre-trial set on the same failure.
 """
 
 import sys
 
 from fund import publish
-from fund.factors import FACTOR_ONLY
+
+
+def _factor_only():
+    try:
+        from fund.factor_legs import FACTOR_ONLY
+        return frozenset(FACTOR_ONLY)
+    except Exception:
+        return frozenset()
 
 
 def board_inputs(closes, dates):
     """The board's view of the histories: everything except the factor-only legs."""
+    FACTOR_ONLY = _factor_only()
     return ({t: c for t, c in (closes or {}).items() if t not in FACTOR_ONLY},
             {t: d for t, d in (dates or {}).items() if t not in FACTOR_ONLY})
 

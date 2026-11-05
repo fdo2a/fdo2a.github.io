@@ -237,10 +237,16 @@ def base_history_tickers():
 
 def history_tickers():
     """Download set = pre-trial set ∪ the factor legs. The legs only the factor model
-    reads (`fund.factors.FACTOR_ONLY`) are filtered out again before the board sees them
-    (`fund.pipeline.board_inputs`)."""
-    from fund.factors import FACTOR_TICKERS
-    return sorted(base_history_tickers() | set(FACTOR_TICKERS))
+    reads (`fund.factor_legs.FACTOR_ONLY`) are filtered out again before the board sees
+    them (`fund.pipeline.board_inputs`). If the leg list cannot be imported the set is the
+    pre-trial one — a factor-module failure never reaches the price download."""
+    base = base_history_tickers()
+    try:
+        from fund.factor_legs import FACTOR_TICKERS
+    except Exception as e:
+        print(f'  factor legs unavailable, pre-trial download set: {e}', file=sys.stderr)
+        return sorted(base)
+    return sorted(base | set(FACTOR_TICKERS))
 
 
 def collect_histories():
@@ -863,7 +869,7 @@ def completeness(data, intraday, naver_stale=False, report_date=None):
 
 def production_sids():
     """한 실행이 실제로 받는 FRED 시리즈 전부 — 수익률 4 + DGS1MO(펀드 요인 시운전) + 대시보드 22 + 금리 분해."""
-    # DGS1MO: the FF3 trial's risk-free leg (fund_fred_inputs). ECON and the yield drivers
+    # DGS1MO: the FF3 trial's risk-free leg (fund_rf_input). ECON and the yield drivers
     # do not carry it, so it is named here or --fred-check would never compare it.
     sids = ['DGS2', 'DGS5', 'DGS10', 'DGS30', 'DGS1MO'] + [row[2] for row in ECON]
     try:
@@ -878,27 +884,65 @@ def production_sids():
     return out
 
 
-def fund_fred_inputs():
-    """FRED legs of the fund desk: the board's liquidity series and the FF3 trial's
-    risk-free rate. Each series is fetched on its own and a failure only drops it —
-    this never raises, as the loop it replaces sat inside the board's try."""
-    from fund.factors import RF_SERIES
-    from fund.liquidity import SERIES as LIQ_SERIES
-    liq = {}
-    for sid in LIQ_SERIES:
-        try:
-            got = retry(lambda sid=sid: fred_series(sid), attempts=2)
-            if got:
-                liq[sid] = got
-        except Exception as e:
-            print(f'  liquidity {sid} failed: {e}', file=sys.stderr)
-        time.sleep(0.3)
-    rf = []
+def fund_rf_input():
+    """The FF3 trial's risk-free leg (DGS1MO). Fetched after the board, inside the trial's
+    try; a failure leaves an empty list (the trial then reports the RF gap)."""
+    from fund.factor_legs import RF_SERIES
     try:
-        rf = retry(lambda: fred_series(RF_SERIES), attempts=2) or []
+        return retry(lambda: fred_series(RF_SERIES), attempts=2) or []
     except Exception as e:
         print(f'  risk-free {RF_SERIES} failed: {e}', file=sys.stderr)
-    return {'liq': liq, 'rf': rf}
+        return []
+
+
+def fund_board_step(closes, hist_dates, data, report_date, outdir):
+    """트렌드 유닛 점검판 — ed17327 의 main() 인라인 블록 그대로(codex impl review 1 #1·#2).
+
+    FRED 유동성 준비, 휴장일 로딩, 조립이 **한 try 안**에 있어 어디서 터져도
+    `publish.failed` 를 쓴다. 조립·렌더·발행만 `fund.pipeline.run` 으로 옮겼다(그 함수도
+    같은 실패 처리를 한다). 요인 모듈은 여기서 import 하지 않는다. 반환: 보드가 읽은
+    휴장일(시운전이 다시 쓴다) — 블록이 실패했으면 None."""
+    print('building fund board...')
+    from fund import publish as fund_publish
+    try:
+        from fund.liquidity import SERIES as LIQ_SERIES
+        liq_series = {}
+        for sid in LIQ_SERIES:
+            try:
+                got = retry(lambda sid=sid: fred_series(sid), attempts=2)
+                if got:
+                    liq_series[sid] = got
+            except Exception as e:
+                print(f'  liquidity {sid} failed: {e}', file=sys.stderr)
+            time.sleep(0.3)
+        from fund.calendar import load as load_holidays
+        holidays = load_holidays(os.path.join(outdir, 'market_holidays.json'))
+        from fund import pipeline as fund_pipeline
+        fund_pipeline.run(closes, hist_dates, data, liq_series, report_date, data['generated'],
+                          outdir, holidays)
+        return holidays
+    except Exception as e:
+        print(f'fund board failed: {e}', file=sys.stderr)
+        fund_publish.write(outdir, 'fund_board.json', 'fund_board.html',
+                           fund_publish.failed(report_date, data['generated'], e, universe=True), None)
+        return None
+
+
+def fund_desk(closes, hist_dates, data, report_date, outdir):
+    """Board, then the FF3 trial in its own try. Never raises past the board's own
+    `fund_publish` import (as before the trial), so collection continues."""
+    holidays = fund_board_step(closes, hist_dates, data, report_date, outdir)
+    # FF3 시운전 — 보드가 다 쓰인 **뒤**, 자기 try 안에서 data/fund_factors.json 만 쓴다.
+    # 여기서 무엇이 터져도 fund_board.* 는 이미 끝난 파일이다.
+    try:
+        from fund import factors_pipeline
+        if holidays is None:
+            from fund.calendar import load as load_holidays
+            holidays = load_holidays(os.path.join(outdir, 'market_holidays.json'))
+        factors_pipeline.run_trial(closes, hist_dates, fund_rf_input(), report_date,
+                                   data['generated'], outdir, holidays)
+    except Exception as e:
+        print(f'fund factors trial failed: {e}', file=sys.stderr)
 
 
 def _diff_series(a, b):
@@ -1308,24 +1352,7 @@ def main():
 
     # 트렌드 유닛 점검판 — 비-코어. JSON 은 실패해도 쓰고(unavailable), HTML 은 그릴 수
     # 있을 때만 남긴다. 어제 블록이 오늘 것으로 읽히는 길을 막는다.
-    print('building fund board...')
-    try:
-        fund_in = fund_fred_inputs()
-    except Exception as e:
-        print(f'  fund FRED inputs failed: {e}', file=sys.stderr)
-        fund_in = {'liq': {}, 'rf': []}
-    fund_holidays = load_holidays(os.path.join(args.outdir, 'market_holidays.json'))
-    from fund import pipeline as fund_pipeline
-    fund_pipeline.run(closes, hist_dates, data, fund_in['liq'], report_date, data['generated'],
-                      args.outdir, fund_holidays)
-    # FF3 시운전 — 보드가 다 쓰인 **뒤**, 자기 try 안에서 data/fund_factors.json 만 쓴다.
-    # 여기서 무엇이 터져도 fund_board.* 는 이미 끝난 파일이다.
-    try:
-        from fund import factors_pipeline
-        factors_pipeline.run_trial(closes, hist_dates, fund_in['rf'], report_date,
-                                   data['generated'], args.outdir, fund_holidays)
-    except Exception as e:
-        print(f'fund factors trial failed: {e}', file=sys.stderr)
+    fund_desk(closes, hist_dates, data, report_date, args.outdir)
 
     print('scoring the macro record...')
     try:

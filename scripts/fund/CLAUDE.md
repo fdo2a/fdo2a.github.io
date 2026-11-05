@@ -16,7 +16,8 @@ The US and KR dailies are reference material for the PM of a tactical global-equ
 | `render.py` / `kr_view.py` | Deterministic blocks `data-fund-board` / `data-fund-kr`; KR view built from the KR collector's in-memory objects |
 | `kr_links.py` | Static map: KR industries / stocks / Asian indices → US reference index. Not a lead-lag model |
 | `gate.py` | CLI `scripts/check_fund.py --market us|kr`; registered in ORCHESTRATOR, KR_ORCHESTRATOR, `review/corrector.py`, `review/style_pass.py` |
-| `pipeline.py` | Board assembly the collector calls (build → render → publish; crash → `publish.failed`). Drops `factors.FACTOR_ONLY` legs before `core.build` |
+| `pipeline.py` | Board assembly the collector calls (build → render → publish; crash → `publish.failed`). Drops `factor_legs.FACTOR_ONLY` legs before `core.build`; never imports `fund.factors` |
+| `factor_legs.py` | Leg tickers + `RF_SERIES`, constants only — the board path's sole factor import |
 | `factors.py` / `factors_pipeline.py` | FF3 **trial**: proxy 3-factor OLS (SVD, fixed check order) → `data/fund_factors.json`, written after the board in its own try |
 | `factors_check.py` | Monthly check vs the French daily factors (`scripts/collect_fund_factors.py`, `check-fund-factors.yml`); commits the slice, inputs and result only, with attribution |
 
