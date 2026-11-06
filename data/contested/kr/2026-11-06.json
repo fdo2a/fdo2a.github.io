@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-11-06",
- "status": "none",
- "reason": "topic_too_long",
+ "status": "error",
+ "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-06T11:43:11+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-06T12:19:24+00:00",
  "cutoff_at": "2026-11-06T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 546,
+  "harvest": 524,
   "candidates": 1,
   "articles": [
    6
@@ -35,27 +35,29 @@
   "runner": "local",
   "discovery": "truncated",
   "hosts": {
-   "kbs": "ok",
-   "sedaily": "ok",
-   "hankyung": "ok",
-   "mk": "ok",
+   "news1": "short",
+   "edaily": "ok",
+   "hankook": "ok",
+   "dailian": "ok",
+   "newsis": "ok",
+   "mt": "ok",
    "aju": "ok",
-   "kmib": "ok"
+   "chosun": "ok"
   },
   "notes": [
-   "discover:546"
+   "discover:524"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 19849,
-   "out": 9876
+   "in": 17779,
+   "out": 4023
   }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "미국 중간선거 후 코스피 급락과 당정 긴급 간담회 대응",
+  "query": "긴급 코스피 간담회",
   "trigger": []
  },
- "content_hash": "a8a538e8508e6043"
+ "content_hash": "586b1d517f83bbe3"
 }
