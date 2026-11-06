@@ -136,7 +136,7 @@ def check(html, movers, report_date):
         texts = visible.get(g["id"])
         if not texts:
             v.append(f'움직인 종목 {where} 문단이 없다 — <p data-mover="{g["id"]}"> 로 '
-                     '무엇이 움직였고 왜인지(출처 없으면 「확인된 재료 없음」)를 쓴다')
+                     '무엇이 움직였고 왜인지(출처 없으면 「확인된 재료는 없다」)를 쓴다')
             continue
         pattern = re.compile(r'(?<![\d.])(' + '|'.join(re.escape(x) for x in
                                                         _variants(lead["change_pct"])) + r')(?![\d])')
