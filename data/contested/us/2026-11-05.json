@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-05",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-06T06:34:32+00:00",
- "cutoff_at": "2026-11-06T06:34:32+00:00",
+ "collected_at": "2026-11-06T07:38:25+00:00",
+ "cutoff_at": "2026-11-06T07:38:25+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,17 +21,18 @@
   "sha256": "e00d17908763c0094a70fefbc9e24471a3718923878c4e9bd679c3fa36aee0da"
  },
  "counts": {
-  "harvest": 215,
-  "candidates": 1,
+  "harvest": 216,
+  "candidates": 2,
   "articles": [
+   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32667,
-   "out": 9391
+   "in": 32337,
+   "out": 9416
   },
   "discovery": "throttled",
   "hosts": {
@@ -47,12 +48,23 @@
    "obs": "8/8"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
+   "pairs": 1,
+   "claims": 2,
    "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[1]",
+    "memo[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "edges[1]:unverified",
+    "memo[0]:unverified"
+   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -61,5 +73,9 @@
   "query": "bank england interest",
   "trigger": []
  },
- "content_hash": "7fda57445fe2d7dd"
+ "problems": [
+  "edges[1]:unverified",
+  "memo[0]:unverified"
+ ],
+ "content_hash": "4cefc99f736c64f3"
 }
