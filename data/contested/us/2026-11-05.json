@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-06T07:38:25+00:00",
- "cutoff_at": "2026-11-06T07:38:25+00:00",
+ "collected_at": "2026-11-06T08:42:22+00:00",
+ "cutoff_at": "2026-11-06T08:42:22+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,18 +21,17 @@
   "sha256": "e00d17908763c0094a70fefbc9e24471a3718923878c4e9bd679c3fa36aee0da"
  },
  "counts": {
-  "harvest": 216,
-  "candidates": 2,
+  "harvest": 217,
+  "candidates": 1,
   "articles": [
-   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32337,
-   "out": 9416
+   "in": 33785,
+   "out": 13392
   },
   "discovery": "throttled",
   "hosts": {
@@ -43,27 +42,44 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "2/2",
+   "claims": "6/6",
    "pairs": "1/1",
-   "obs": "8/8"
+   "obs": "10/10"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 8,
-   "strict_pairs": 0,
+   "obs": 10,
+   "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
+    "edges[0]",
     "edges[1]",
-    "memo[0]"
+    "edges[2]",
+    "memo[0]",
+    "memo[2]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "edges[1]:unverified",
-    "memo[0]:unverified"
+    "structure:dangling",
+    "edges[0]:dangling",
+    "edges[1]:dangling",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "memo[2]:unverified",
+    "memo[2]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:unverified",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:unverified",
+    "worry.unlikely[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
@@ -74,8 +90,18 @@
   "trigger": []
  },
  "problems": [
-  "edges[1]:unverified",
-  "memo[0]:unverified"
+  "structure:dangling",
+  "edges[0]:dangling",
+  "edges[1]:dangling",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[2]:unverified",
+  "memo[2]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:unverified",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:unverified",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "4cefc99f736c64f3"
+ "content_hash": "74245818f160b44d"
 }
