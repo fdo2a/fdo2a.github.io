@@ -107,6 +107,8 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 **시황 브리프에는 오늘의 뉴스·메모리/DRAM·AI 인프라·MLCC 가 없다**(2026-09-26 사용자 지시) — 네 섹션은 STEP 3.5 의 둘째 글 「뉴스·산업 브리프」로 옮겨 갔다. 작성자에게 그 섹션을 쓰라고 하지 않는다.
 
+**텔레그램 스냅샷(2026-11-06) — 작성자를 부르기 직전에 한 번, 어느 경로로 왔든 같은 방법으로:** `D=<report_date>; rm -f <workspace>/telegram.json; C=$(git -C <repo> rev-parse --verify HEAD) && [ -n "$C" ] && git -C <repo> show "$C:data/market_data.json" | cmp -s - <workspace>/market_data.json && { git -C <repo> show "$C:data/telegram/$D.json" > <workspace>/telegram.json 2>/dev/null || rm -f <workspace>/telegram.json; }`. 워크스페이스의 시장 데이터가 그 커밋의 것과 **바이트까지 같을 때만** 그 커밋의 텔레그램을 쓴다 — 로컬 수집 폴백, 복사 뒤 재수집처럼 판이 어긋나면 텔레그램 없음이다. 파일의 `report_date` 가 `$D` 가 아니면 지운다(다른 날짜로 대체하지 않는다). 이 한 판을 작성자와 `check_telegram.py` 가 같이 쓴다. 없으면 작성자 프롬프트에 「텔레그램 없음」이라고 적고, 있으면 경로를 입력 목록에 넣는다. `stats`(항목·요약·실패 채널) 한 줄을 최종 보고에 옮긴다. 규칙: `.claude/agents/brief-report-writer.md` 「텔레그램 견해·의견」, 설계 `docs/superpowers/specs/2026-11-06-telegram-source.md`.
+
 Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
 **발행 게이트** — 아래를 레포 클론에서 돌린다. 하나라도 실패하면 **출력에 찍힌 위반을 그대로** writer 에게 넘겨 다시 돌린다(게이트가 무엇을 막는지는 출력이 말한다 — 게이트 소스를 읽지 않는다). 표식을 지우거나 게이트를 우회하지 않는다.
@@ -122,6 +124,7 @@ python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadi
 python3 scripts/check_auction.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_telegram.py      --html morning_brief_[DATE].html --tg <workspace>/telegram.json --date [DATE]
 python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_movers.py        --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadir <workspace> --market us
@@ -152,6 +155,8 @@ python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadi
 ## STEP 2.6 — 문체 마감 (꺼져 있으면 건너뛴다, 2026-11-06)
 
 `python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 작성자 재호출(edits JSON) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
+
+**STEP 2.6 이 돌았으면** 마감한 판으로 `check_telegram.py` 를 한 번 더 돌린다 — 흐름 편집이 표식 밖으로 문장을 옮길 수 있다.
 
 ## STEP 3 — Publish to the blog (GitHub Pages 루트 사이트)
 

@@ -68,6 +68,22 @@ jobs:
           pip install --quiet certifi 'anthropic>=1.8,<2'
           RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
           python scripts/fetch_kr_news.py --datadir kr/data --bodydir _workspace/kr_news --date "$RD"
+      - name: Fetch Telegram channels (non-core)
+        # 텔레그램 공개 채널 8개 → kr/data/telegram/<date>.json (2026-11-06 사용자 지시 — 증권사 글은 그 증권사
+        # 견해로, 나머지는 「이런 의견도 있었다」·원문 출처로 인용). 원문은 _workspace/ 에만, 요약만 커밋한다.
+        # 요약이 있는 날 파일은 동결된다(17:30 재수집이 17:00 판을 바꾸지 않는다). 실패해도 브리프는 그대로.
+        # 설계: docs/superpowers/specs/2026-11-06-telegram-source.md
+        continue-on-error: true
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
+        run: |
+          pip install --quiet certifi 'anthropic>=1.8,<2'
+          RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
+          python scripts/fetch_telegram.py --market kr --datadir kr/data --bodydir _workspace/telegram --date "$RD"
       - name: Report status
         run: |
           python - <<'PY'
@@ -88,5 +104,7 @@ jobs:
           git add kr/data/history 2>/dev/null || true
           git add kr/data/weekly 2>/dev/null || true
           git add kr/data/news 2>/dev/null || true
+          # 하위 폴더라 위의 kr/data/*.json 이 잡지 못한다 — 따로 담는다
+          git add kr/data/telegram 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: kr market data for ${RD}"

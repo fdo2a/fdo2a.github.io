@@ -141,6 +141,23 @@ jobs:
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])" 2>/dev/null || date -u +%F)
           python scripts/fetch_news.py --datadir data --bodydir _workspace/news --date "$RD"
 
+      - name: Fetch Telegram channels
+        if: steps.collect.outputs.skipped != 'true'
+        # Non-core (2026-11-06 사용자 지시): 텔레그램 공개 채널 8개 → data/telegram/<date>.json. 증권사 글은 그
+        # 증권사 견해로, 나머지는 「이런 의견도 있었다」·원문 출처로 인용한다. 원문은 _workspace/ 에만, 요약만
+        # 커밋한다. 요약이 있는 날 파일은 동결된다. 설계: docs/superpowers/specs/2026-11-06-telegram-source.md
+        continue-on-error: true
+        env:
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          NEWS_SUMMARY_MODEL: ${{ vars.NEWS_SUMMARY_MODEL }}
+        run: |
+          pip install --quiet 'anthropic>=1.8,<2'
+          RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])" 2>/dev/null || date -u +%F)
+          python scripts/fetch_telegram.py --market us --datadir data --bodydir _workspace/telegram --date "$RD"
+
       - name: Fetch Fed events
         if: steps.collect.outputs.skipped != 'true'
         # Non-core: finds today's FOMC statement / chair speech / Jackson Hole remarks and
@@ -222,6 +239,7 @@ jobs:
           # -A: a release that failed today is *deleted* from the directory — commit that too.
           git add -A data/releases 2>/dev/null || true
           git add data/news 2>/dev/null || true
+          git add data/telegram 2>/dev/null || true
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
           git add data/weekly 2>/dev/null || true

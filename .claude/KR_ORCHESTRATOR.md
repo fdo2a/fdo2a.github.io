@@ -67,6 +67,8 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
 
+**텔레그램(2026-11-06)** — 작성자를 부르기 직전에 한 번, 어느 경로로 왔든 같은 방법으로: `W=<워크스페이스 루트>; rm -f $W/kr_telegram.json; C=$(git -C <repo> rev-parse --verify HEAD) && [ -n "$C" ] && git -C <repo> show "$C:kr/data/kr_market_data.json" | cmp -s - <repo>/kr/data/kr_market_data.json && { git -C <repo> show "$C:kr/data/telegram/<DATE>.json" > $W/kr_telegram.json 2>/dev/null || rm -f $W/kr_telegram.json; }`. 작성자가 읽는 `kr/data/kr_market_data.json` 이 그 커밋의 것과 **바이트까지 같을 때만** 쓴다(로컬 `collect_kr_data.py` 폴백이면 텔레그램 없음). `report_date` 가 `<DATE>` 가 아니면 지운다(다른 날짜로 대체 금지). 이 스냅샷 경로를 작성자 프롬프트에 **명시**하고 게이트도 같은 파일을 쓴다. `stats` 한 줄을 최종 보고에 옮긴다. 규칙: `.claude/agents/kr-report-writer.md` 「텔레그램 견해·의견」.
+
 Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다), 그리고 **writer 스펙의 섹션 순서를 그대로 따르라**는 지시(전략 코멘트는 헤드라인 바로 다음, 테마 섹션 없음, 장중 수급·프로그램 매매는 수급 서브블록, 기술적 분석은 일봉 차트 바로 아래). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
 
 **2026-11-06 부터 아래 쟁점 분석 문단과 게이트 목록의 `check_news.py`·`check_contested.py` 는 마감브리프에 돌리지 않는다** — 둘 다 STEP 3.5 뉴스 글로 옮겼다. 작성자에게도 §12·12-b 를 쓰지 말라고 넘긴다(writer 스펙). 브리프에 뉴스·쟁점 표식이 남으면 `check_kr_stance.py` 가 막는다. 2026-11-05 까지의 글(정정)은 아래 그대로다.
@@ -87,6 +89,7 @@ python3 scripts/check_weight.py   --html <kr_brief 절대경로> --datadir kr/da
 python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json
 python3 scripts/check_news.py    --html <kr_brief 절대경로> --datadir kr/data --market kr --date <DATE>
 python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
+python3 scripts/check_telegram.py --html <kr_brief 절대경로> --tg <워크스페이스 루트>/kr_telegram.json --date <DATE>
 python3 scripts/check_fund.py    --html <kr_brief 절대경로> --datadir kr/data --market kr
 python3 scripts/check_contested.py --html <kr_brief 절대경로> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>
 ```

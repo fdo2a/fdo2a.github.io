@@ -21,6 +21,8 @@
 - **쟁점 분석(2026-10-21)**: §12 뒤 `<!--CONTESTED-->` 자리를 `render_contested.py --market kr` 가 `data/contested/kr/<date>.json` 에서 찍는다(손으로 쓰지 않는다). 결과는 Mac 로컬 러너가 만든다 — 발견은 NAVER API HUB 검색(검색 결과는 모델에 넣지 않는다; 인증·정지·한도 오류면 그날 언론사 RSS 로 자동 전환), 본문은 언론사 사이트(robots 런타임 준수, `n.news.naver.com` 금지). When changing this: read `docs/superpowers/specs/2026-10-21-contested-analysis-design.md` before touching `scripts/collect_contested_kr.py`.
 - **미완**: ECOS 월별 지표(CPI·수출입) / 장중 수급·프로그램 매매 대체재 / US 독자 전환 여부.
 
+- **텔레그램 견해·의견(US·KR 공통, 2026-11-06)**: `fetch_telegram.py` → `kr/data/telegram/<date>.json`·`data/telegram/<date>.json`, 요약만 커밋·요약 있으면 동결, 작성자와 `check_telegram.py` 는 같은 워크스페이스 스냅샷을 본다. **고칠 때**: `scripts/fetch_telegram.py`·`scripts/common/telegram*.py`·`tg_*.py` 를 건드리기 전에 `docs/superpowers/specs/2026-11-06-telegram-source.md` 를 읽는다.
+
 ## 주간 정리 — KR 몫
 
 - **성격**: 그 기간에 발행한 KR 마감브리프의 총정리. **웹 검색·시세 재수집 금지.** 서술은 `kr/posts/*.html`, 성과표는 집계 파일.
