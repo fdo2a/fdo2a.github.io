@@ -38,7 +38,7 @@ def setup(tmp_path, monkeypatch):
     # are committed and pushed; tests that change a gate go through `gate()`.
     scripts = root / 'scripts'
     scripts.mkdir()
-    for name in ('macro', 'fed', 'weight', 'price_context',
+    for name in ('macro', 'sources', 'fed', 'weight', 'price_context',
                  'session', 'movers', 'fund', 'sector_perf', 'kr_stance', 'readability', 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
@@ -103,7 +103,7 @@ def test_success_keeps_user_checkout(setup):
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
     # Nine gates on the original (baseline) and the same nine on the correction.
-    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 20
+    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 22   # 11 US gates (check_sources added 2026-11-06) x before/after
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -187,7 +187,7 @@ def test_every_replayed_gate_exists_in_the_real_repo():
     from pathlib import Path
     from scripts.review import corrector
     real = Path(__file__).resolve().parents[2]
-    names = {'macro', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES,
+    names = {'macro', 'sources', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES,
              corrector.KR_STANCE_GATE}
     missing = [n for n in names if not (real / f'check_{n}.py').is_file()]
     assert missing == []

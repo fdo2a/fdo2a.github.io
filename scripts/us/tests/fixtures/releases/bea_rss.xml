@@ -1,0 +1,192 @@
+<?xml version="1.0"?><rss><channel><item name="U.S. International Trade in Goods and Services">
+      <dbId>102</dbId>
+      <title>U.S. International Trade in Goods and Services, September 2026</title>
+      <link>https://www.bea.gov/news/2026/us-international-trade-goods-and-services-september-2026</link>
+      <guid isPermaLink="true">https://www.bea.gov/news/2026/us-international-trade-goods-and-services-september-2026</guid>
+      <description><![CDATA[<p>The U.S. goods and services trade deficit decreased in September 2026 according to the U.S. Bureau of Economic Analysis and the U.S. Census Bureau. The deficit decreased from $105.7 billion in August (revised) to $105.0 billion in September, as exports increased more than imports. The goods deficit decreased $0.7 billion in September to $135.9 billion. The services surplus decreased less than $0.1 billion in September to $30.9 billion.</p>]]></description>
+      <data>
+        <main>
+          <current>
+            <infoDate>September 2026</infoDate>
+            <percentChange>-$105.0 billion</percentChange>
+            <rateChange>
+            </rateChange>
+          </current>
+          <previous>
+            <infoDate>August 2026</infoDate>
+            <percentChange>-$105.7 billion</percentChange>
+          </previous>
+        </main>
+      </data>
+      <NextReleaseDate>December 8, 2026</NextReleaseDate>
+      <unitsOfMeasure>BLN$</unitsOfMeasure>
+      <changeUnit>PCT</changeUnit>
+      <linkHistoric>https://apps.bea.gov/histdata/</linkHistoric>
+      <linkArchive>https://www.bea.gov/news/archive</linkArchive>
+      <pdf>https://www.bea.gov/sites/default/files/2026-11/trad0926.pdf</pdf>
+      <pubDate>Wed, 04 Nov 2026 08:30:00 EST</pubDate>
+    </item><item name="GDP">
+      <dbId>101</dbId>
+      <title>GDP (Advance Estimate), 3rd Quarter 2026</title>
+      <link>https://www.bea.gov/news/2026/gdp-advance-estimate-3rd-quarter-2026</link>
+      <guid isPermaLink="true">https://www.bea.gov/news/2026/gdp-advance-estimate-3rd-quarter-2026</guid>
+      <description><![CDATA[<p>Real gross domestic product (GDP) increased at an annual rate of 3.4 percent in the third quarter of 2026 (July, August, and September), according to the advance estimate released today by the U.S. Bureau of Economic Analysis (BEA). In the second quarter, real GDP increased 2.2 percent. The contributors to the increase in real GDP in the third quarter were increases in investment, consumer spending, and government spending that were partly offset by a decrease in exports. Imports, which are a subtraction in the calculation of GDP, increased. </p>]]></description>
+      <vintage>adv</vintage>
+      <data>
+        <main>
+          <current>
+            <infoDate>Q3 2026</infoDate>
+            <percentChange>+3.4</percentChange>
+            <rateChange>
+            </rateChange>
+          </current>
+          <previous>
+            <infoDate>Q2 2026</infoDate>
+            <percentChange>+2.2</percentChange>
+          </previous>
+        </main>
+      </data>
+      <NextReleaseDate>November 25, 2026</NextReleaseDate>
+      <unitsOfMeasure>BLN$</unitsOfMeasure>
+      <changeUnit>PCT</changeUnit>
+      <linkHistoric>https://apps.bea.gov/histdata/</linkHistoric>
+      <linkArchive>https://www.bea.gov/news/archive</linkArchive>
+      <pdf>https://www.bea.gov/sites/default/files/2026-10/gdp3q26-adv.pdf</pdf>
+      <pubDate>Thu, 29 Oct 2026 08:30:00 EDT</pubDate>
+    </item><item name="Personal Income and Outlays">
+      <dbId>100</dbId>
+      <title>Personal Income and Outlays, September 2026</title>
+      <link>https://www.bea.gov/news/2026/personal-income-and-outlays-september-2026</link>
+      <guid isPermaLink="true">https://www.bea.gov/news/2026/personal-income-and-outlays-september-2026</guid>
+      <description><![CDATA[<p>Personal income increased $54.5 billion (0.2 percent at a monthly rate) in September, according to estimates released today by the U.S. Bureau of Economic Analysis (BEA). Disposable personal income (DPI)&ndash;personal income less personal current taxes&ndash;increased $52.7 billion (0.2 percent), and personal consumption expenditures (PCE) increased $113.1 billion (0.5 percent). Personal outlays&ndash;the sum of PCE, personal interest payments, and personal current transfer payments&ndash;increased $113.0 billion in September. Personal saving was $911.1 billion, and the personal saving rate&ndash;personal saving as a percentage of DPI&ndash;was 3.8 percent.
+</p>]]></description>
+      <data>
+        <main>
+          <current>
+            <infoDate>September 2026</infoDate>
+            <percentChange>+0.2</percentChange>
+            <rateChange>
+            </rateChange>
+          </current>
+          <previous>
+            <infoDate>August 2026</infoDate>
+            <percentChange>+0.3</percentChange>
+          </previous>
+        </main>
+        <supplemental name="Personal Consumption Expenditures">
+          <current>
+            <percentChange>0.5</percentChange>
+            <rateChange>113.1</rateChange>
+          </current>
+        </supplemental>
+      </data>
+      <NextReleaseDate>November 25, 2026</NextReleaseDate>
+      <unitsOfMeasure>BLN$</unitsOfMeasure>
+      <changeUnit>PCT</changeUnit>
+      <linkHistoric>https://apps.bea.gov/histdata/</linkHistoric>
+      <linkArchive>https://www.bea.gov/news/archive</linkArchive>
+      <pdf>https://www.bea.gov/sites/default/files/2026-10/pi0926.pdf</pdf>
+      <pubDate>Thu, 29 Oct 2026 08:30:00 EDT</pubDate>
+    </item><item name="U.S. International Transactions and Investment Position">
+      <dbId>105</dbId>
+      <title>U.S. International Transactions and Investment Position, 2nd Quarter 2026</title>
+      <link>https://bea.gov/news/2026/us-international-transactions-and-investment-position-2nd-quarter-2026</link>
+      <guid isPermaLink="true">https://bea.gov/news/2026/us-international-transactions-and-investment-position-2nd-quarter-2026</guid>
+      <description><![CDATA[<p>The U.S. current-account deficit resulting from international economic transactions widened by $33.4 billion, or 15.7 percent, to $246.0 billion in the second quarter of 2026, according to statistics released today by the U.S. Bureau of Economic Analysis. The revised first-quarter deficit was $212.6 billion. The second-quarter deficit was 3.0 percent of current-dollar gross domestic product, up from 2.7 percent in the first quarter.</p>
+      <p>The U.S. net international investment position, the difference between U.S. residents' foreign financial assets and liabilities, was &ndash;$22.42 trillion at the end of the second quarter of 2026. Assets totaled $46.97 trillion, and liabilities totaled $69.39 trillion. At the end of the first quarter of 2026, the net investment position was &ndash;$21.27 trillion (revised).</p>]]></description>
+      <data>
+        <main>
+          <current>
+            <infoDate>Q2 2026</infoDate>
+            <percentChange>-$246.0 B</percentChange>
+            <rateChange>
+            </rateChange>
+          </current>
+          <previous>
+            <infoDate>Q1 2026</infoDate>
+            <percentChange>-$212.6 B</percentChange>
+          </previous>
+        </main>
+        <supplemental name="International Investment Position">
+          <current>
+            <position>End of Q2 2026: -$22.42 T</position>
+          </current>
+          <previous>
+            <position>End of Q1 2026: -$21.27 T</position>
+          </previous>
+        </supplemental>
+      </data>
+      <NextReleaseDate>December 18, 2026</NextReleaseDate>
+      <unitsOfMeasure>BLN$</unitsOfMeasure>
+      <changeUnit>PCT</changeUnit>
+      <linkHistoric>https://apps.bea.gov/histdata/</linkHistoric>
+      <linkArchive>https://www.bea.gov/news/archive</linkArchive>
+      <pdf>https://www.bea.gov/sites/default/files/2026-09/ita-iip226.pdf</pdf>
+      <pubDate>Thu, 24 Sep 2026 08:30:00 EDT</pubDate>
+    </item><item name="Personal Income and Outlays">
+      <dbId>100</dbId>
+      <title>Personal Income and Outlays, July 2026</title>
+      <link>https://www.bea.gov/news/2026/personal-income-and-outlays-july-2026</link>
+      <guid isPermaLink="true">https://www.bea.gov/news/2026/personal-income-and-outlays-july-2026</guid>
+      <description><![CDATA[<p>Personal income increased $115.1 billion (0.4 percent at a monthly rate) in July, according to estimates released today by the U.S. Bureau of Economic Analysis (BEA). Disposable personal income (DPI)-personal income less personal current taxes-increased $125.9 billion (0.5 percent), and personal consumption expenditures (PCE) increased $36.3 billion (0.2 percent). Personal outlays-the sum of PCE, personal interest payments, and personal current transfer payments-increased $36.6 billion in July. Personal saving was $712.0 billion in July, and the personal saving rate-personal saving as a percentage of DPI-was 3.0 percent.</p>]]></description>
+      <data>
+        <main>
+          <current>
+            <infoDate>July 2026</infoDate>
+            <percentChange>+0.4</percentChange>
+            <rateChange>
+            </rateChange>
+          </current>
+          <previous>
+            <infoDate>June 2026</infoDate>
+            <percentChange>+0.2</percentChange>
+          </previous>
+        </main>
+        <supplemental name="Personal Consumption Expenditures">
+          <current>
+            <percentChange>0.2</percentChange>
+            <rateChange>36.3</rateChange>
+          </current>
+        </supplemental>
+      </data>
+      <NextReleaseDate>September 30, 2026</NextReleaseDate>
+      <unitsOfMeasure>BLN$</unitsOfMeasure>
+      <changeUnit>PCT</changeUnit>
+      <linkHistoric>https://apps.bea.gov/histdata/</linkHistoric>
+      <linkArchive>https://www.bea.gov/news/archive</linkArchive>
+      <pdf>https://www.bea.gov/sites/default/files/2026-08/pi0726.pdf</pdf>
+      <pubDate>Wed, 26 Aug 2026 08:30:00 EDT</pubDate>
+    </item><item name="Personal Income and Outlays">
+      <dbId>100</dbId>
+      <title>Personal Income and Outlays, June 2026</title>
+      <link>https://www.bea.gov/news/2026/personal-income-and-outlays-june-2026</link>
+      <guid isPermaLink="true">https://www.bea.gov/news/2026/personal-income-and-outlays-june-2026</guid>
+      <description>Personal income increased $54.9 billion (0.2 percent at a monthly rate) in June, according to estimates released today by the U.S. Bureau of Economic Analysis (BEA). Disposable personal income (DPI)-personal income less personal current taxes-increased $48.3 billion (0.2 percent), and personal consumption expenditures (PCE) increased $65.2 billion (0.3 percent). Personal outlays-the sum of PCE, personal interest payments, and personal current transfer payments-increased $70.0 billion in June. Personal saving was $646.1 billion in June, and the personal saving rate-personal saving as a percentage of DPI-was 2.7 percent.&lt;!--Full Text Link--&gt;&lt;a href='https://www.bea.gov/news/2026/personal-income-and-outlays-june-2026'&gt;Full Text&lt;/a&gt;&lt;!--Full Text Link--&gt;</description>
+      <data>
+        <main>
+          <current>
+            <infoDate>June 2026</infoDate>
+            <percentChange>+0.2%</percentChange>
+            <rateChange>
+            </rateChange>
+          </current>
+          <previous>
+            <infoDate>May 2026</infoDate>
+            <percentChange>+0.7%</percentChange>
+          </previous>
+        </main>
+        <supplemental name="Personal Consumption Expenditures">
+          <current>
+            <percentChange>0.3</percentChange>
+            <rateChange>65.2</rateChange>
+          </current>
+        </supplemental>
+      </data>
+      <NextReleaseDate>August 26, 2026</NextReleaseDate>
+      <unitsOfMeasure>BLN$</unitsOfMeasure>
+      <changeUnit>PCT</changeUnit>
+      <linkHistoric>https://apps.bea.gov/histdata/</linkHistoric>
+      <linkArchive>https://www.bea.gov/news/archive</linkArchive>
+      <pdf>https://www.bea.gov/sites/default/files/2026-07/pi0626.pdf</pdf>
+      <pubDate>Thu, 30 Jul 2026 08:30:00 EDT</pubDate>
+    </item></channel></rss>

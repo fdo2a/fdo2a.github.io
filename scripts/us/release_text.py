@@ -37,8 +37,12 @@ _LEDE = re.compile(
 DEFAULT_MAX_CHARS = 40000
 
 
-def to_text(raw, max_chars=DEFAULT_MAX_CHARS):
-    """Release HTML -> flat text, one logical row per line."""
+def to_text(raw, max_chars=DEFAULT_MAX_CHARS, trim=True):
+    """Release HTML -> flat text, one logical row per line.
+
+    `trim=False, max_chars=None` keeps the whole document — `release_verify` reads the
+    identity sentence and the PIO title above the lede, so it must see the untrimmed
+    text (2026-11-06)."""
     if not raw:
         return ''
     s = _DROP.sub(' ', raw)
@@ -51,11 +55,12 @@ def to_text(raw, max_chars=DEFAULT_MAX_CHARS):
     s = '\n'.join(line.strip() for line in s.splitlines())
     s = _BLANKS.sub('\n\n', s).strip()
 
-    for line in s.splitlines():
-        if _LEDE.match(line.strip()):
-            s = s[s.index(line):].strip()
-            break
+    if trim:
+        for line in s.splitlines():
+            if _LEDE.match(line.strip()):
+                s = s[s.index(line):].strip()
+                break
 
-    if len(s) > max_chars:
+    if max_chars is not None and len(s) > max_chars:
         s = s[:max_chars].rstrip() + '\n' + TRUNCATED
     return s

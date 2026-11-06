@@ -686,3 +686,103 @@ def test_a_timing_move_within_the_same_event_still_uses_the_jump_rule():
     v = []
     MG._check_policy(_policy_html('57.6'), prev, {}, _nxt(timing='10월'), v)
     assert not any('같은 사건이 아니다' in x for x in v)
+
+
+# --- 원문이 없는 날의 해부 블록 (2026-11-06 계약) ------------------------------------
+
+from us.macro_gate import _cited_distinct, raw_release_available, structured_figures  # noqa: E402
+
+NO_RAW = {'report_date': '2026-08-14', 'status': 'complete',
+          'releases': [{'key': 'cpi', 'ok': False, 'note': 'period_mismatch'}]}
+WITH_RAW = {'report_date': '2026-08-14', 'status': 'complete',
+            'releases': [{'key': 'cpi', 'ok': True, 'url': 'u'}]}
+DATED = dict(RELEASES[0], components=[
+    {'label': '에너지', 'actual': -1.484, 'ref_period': '2026-07-01'},
+    {'label': '주거비(shelter)', 'actual': 0.139, 'ref_period': '2026-07-01'},
+    {'label': '중고차', 'actual': 0.9, 'ref_period': '2026-06-01'}])   # other month
+
+
+def test_raw_availability_reads_the_index():
+    assert raw_release_available(None, 'cpi')                      # no index: old strict reading
+    assert raw_release_available({'releases': [{'key': 'cpi', 'ok': True}]}, 'cpi')   # old schema
+    assert raw_release_available(WITH_RAW, 'cpi')
+    assert not raw_release_available(NO_RAW, 'cpi')
+    assert not raw_release_available({'status': 'aborted', 'releases': []}, 'cpi')
+    assert not raw_release_available({'status': 'complete', 'releases': []}, 'cpi')
+
+
+def test_structured_figures_keep_only_the_primarys_month_and_distinct_values():
+    figs = structured_figures(DATED, DATED['indicators'][0])
+    assert figs == [3.54, 3.73, -1.484, 0.139]
+    same = dict(DATED, indicators=[{'name': 'CPI YoY', 'actual': 3.54, 'previous': 3.54,
+                                    'ref_period': '2026-07-01'}], components=[])
+    assert structured_figures(same, same['indicators'][0]) == [3.54]
+
+
+def test_without_raw_text_the_block_owes_the_structured_figures():
+    block = ('<div data-release="cpi"><p>7월 CPI는 3.54%로 전월 3.73%에서 내려왔다. '
+             '에너지는 -1.5%였다. 출처 BLS.</p></div>')
+    assert check(build_html(anatomy=block), macro_file(), rel_eval([DATED]), next_file(),
+                 releases=NO_RAW) == []
+
+
+def test_without_raw_text_a_headline_only_block_still_fails():
+    block = '<div data-release="cpi"><p>7월 CPI는 3.54%였다. 출처 BLS.</p></div>'
+    out = check(build_html(anatomy=block), macro_file(), rel_eval([DATED]), next_file(),
+                releases=NO_RAW)
+    assert any('구조 수치' in x for x in out)
+
+
+def test_without_raw_text_two_figures_are_enough_when_only_two_exist():
+    rel = dict(DATED, components=[])
+    block = '<div data-release="cpi"><p>7월 CPI는 3.54%, 전월 3.73%. 출처 BLS.</p></div>'
+    assert check(build_html(anatomy=block), macro_file(), rel_eval([rel]), next_file(),
+                 releases=NO_RAW) == []
+
+
+def test_with_raw_text_the_old_breakdown_rule_holds():
+    block = '<div data-release="cpi"><p>7월 CPI는 3.54%, 전월 3.73%. 출처 BLS.</p></div>'
+    out = check(build_html(anatomy=block), macro_file(), rel_eval([DATED]), next_file(),
+                releases=WITH_RAW)
+    assert any('구성 항목' in x for x in out)
+
+
+def test_a_figure_inside_a_bigger_number_does_not_count():
+    assert _cited_distinct('지수는 10.5에서 0.55로', [0.5]) == 0
+    assert _cited_distinct('지수는 0.5', [0.5]) == 1
+
+
+def test_one_printed_figure_cannot_stand_for_two_values():
+    # -0.5 and 0.5 are two structured values; one 「0.5%」 in the text is one citation.
+    assert _cited_distinct('에너지는 0.5% 내렸다', [-0.5, 0.5]) == 1
+    assert _cited_distinct('에너지는 0.5% 내렸고 식품은 0.5% 올랐다', [-0.5, 0.5]) == 2
+
+
+def test_thousands_separator_is_a_spelling_of_the_value():
+    assert _cited_distinct('청구는 194,750건', [194750.0]) == 1
+    assert _cited_distinct('청구는 194,750건', [194.0, 750.0]) == 0
+
+
+def test_rounded_spelling_counts():
+    # number_forms gives one- and two-decimal spellings: -1.484 is cited as -1.5 or 1.48.
+    assert _cited_distinct('에너지 -1.5%', [-1.484]) == 1
+    assert _cited_distinct('에너지 1.48%', [-1.484]) == 1
+
+
+def test_primary_missing_from_indicators_is_a_violation():
+    rel = dict(RELEASES[0], primary='Core CPI YoY')
+    out = check(build_html(anatomy=ANATOMY), macro_file(), rel_eval([rel]), next_file())
+    assert any('대표 지표' in x for x in out)
+
+
+def test_weekly_components_must_be_the_same_week():
+    rel = {'key': 'claims', 'components': [{'actual': 1.0, 'ref_period': '2026-10-24'},
+                                           {'actual': 2.0, 'ref_period': '2026-10-31'}]}
+    prim = {'actual': 189000.0, 'previous': 196000.0, 'ref_period': '2026-10-31'}
+    assert structured_figures(rel, prim) == [189000.0, 196000.0, 2.0]
+
+
+def test_cited_respects_number_boundaries():
+    from us.macro_gate import _cited
+    assert not _cited('블록에는 10.5 만 있다', 0.5)
+    assert _cited('블록에는 0.5 가 있다', 0.5)

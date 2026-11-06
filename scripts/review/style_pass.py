@@ -185,14 +185,14 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
         cmds = head + [
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout'],
             [py, s + 'check_macro.py', '--html', post, '--datadir', datadir,
-             '--next', os.path.join(datadir, 'macro.json')],
+             '--next', os.path.join(datadir, 'macro.json'), '--legacy-releases'],
             [py, s + 'check_price_context.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_sector_perf.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_session.py', '--html', post, '--datadir', datadir, '--market', 'us'],
             [py, s + 'check_weight.py', '--html', post, '--datadir', datadir, '--market', 'us'],
             [py, s + 'check_fed.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_auction.py', '--html', post, '--datadir', datadir],
-            [py, s + 'check_sources.py', '--html', post, '--datadir', datadir],
+            [py, s + 'check_sources.py', '--html', post, '--datadir', datadir, '--legacy-releases'],
             [py, s + 'check_calendar.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'us',
@@ -268,7 +268,8 @@ def run_gates(cwd, cmds, timeout):
 
 
 # 원본도 실패했다는 이유로 넘기지 않는 게이트 — corrector.NEVER_TOLERATE 와 같은 뜻.
-NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py'])
+NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py',
+                            'check_sources.py'])
 
 
 # check_weight 가 매번 찍는 분량 줄과 경고 줄(2026-10-13)은 위반이 아니다 — 윤문이 본문을 2자만 바꿔도

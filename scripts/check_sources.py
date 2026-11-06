@@ -56,10 +56,34 @@ def _fresh(book, report_date, path):
     return book
 
 
+def _releases_contract(book, legacy, path):
+    """-> book | None. Since 2026-11-06 `fetch_releases.py` stamps the index with the run
+    that wrote it and `status`; only a finished run's index authorises a link. An index
+    without `status` predates the contract — accepted only when re-checking a past
+    post's own commit (`--legacy-releases`), never for a post being published now."""
+    if book is None:
+        return None
+    status = book.get('status')
+    if status is None:
+        if legacy:
+            return book
+        print(f'WARN: {path} has no status (pre-2026-11-06 schema) — treating it as empty',
+              file=sys.stderr)
+        return None
+    if status != 'complete':
+        print(f'WARN: {path} status is {status!r}, not complete — treating it as empty',
+              file=sys.stderr)
+        return None
+    return book
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='data')
+    ap.add_argument('--legacy-releases', action='store_true',
+                    help="re-checking a past post against its own commit's data: accept a "
+                         'releases index written before the 2026-11-06 contract')
     args = ap.parse_args()
 
     try:
@@ -75,7 +99,8 @@ def main():
     rel_path = os.path.join(args.datadir, 'releases', 'index.json')
     fed_path = os.path.join(args.datadir, 'fed', 'events.json')
     # Nothing readable and current -> the empty book, which authorises nothing.
-    releases = _fresh(_load(rel_path), report_date, rel_path) or {'releases': []}
+    releases = _releases_contract(_fresh(_load(rel_path), report_date, rel_path),
+                                  args.legacy_releases, rel_path) or {'releases': []}
     fed = _fresh(_load(fed_path), report_date, fed_path) or {'events': []}
 
     violations = check(html, releases, fed)

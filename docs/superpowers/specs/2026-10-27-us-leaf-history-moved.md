@@ -21,3 +21,8 @@ US 체인 31,631 / 31,744 B 에서 입찰 섹션 안내가 들어가지 않아 �
 - 무게중심 게이트가 막으려던 실패(판단·포지션에 분량을 쓰고 `price_context` 의 위치 어휘를 매일 버린 것)는
   `2026-08-30-recap-weight-rebalance-design.md` 에 있다.
 - 2Y 만 FRED DGS2 인 이유: Yahoo 에 쓸 만한 2년 현물 지수가 없다(`2026-09-05-us-fred-api-design.md`).
+
+## 2026-11-06 — 원문 수집 계약 한 줄을 넣으려고 더 옮긴 것
+
+- US 브리프의 전체 이력은 프로젝트 메모리 `us-morning-brief-project` 에 있다(잎사귀 머리에서 뺀 문장).
+- 원문 수집의 TLS 위장 이유(bls.gov·dol.gov 가 일반 클라이언트에 403)는 `scripts/fetch_releases.py` 머리 주석에 있다.

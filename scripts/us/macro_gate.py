@@ -150,7 +150,8 @@ def parse_transmission_cells(section):
 
 
 def _cited(text, value):
-    return any(f in text for f in number_forms(value))
+    # 2026-11-06 (codex 구현 검토 #7): a whole number only — 0.5 is not cited by 10.5.
+    return bool(_cite_spans(text, value))
 
 
 def _check_regime(section, text, macro_eval, v):
@@ -238,7 +239,89 @@ def _check_groups(section, v, abbreviated=False):
                      '「추이 확인 필요」류 무판정 문구는 금지')
 
 
-def _check_releases(html, macro_eval, v):
+def raw_release_available(releases, key):
+    """Did the writer have today's verified release text for `key`?
+
+    `releases` is data/releases/index.json. Since 2026-11-06 an index carries `status`;
+    without one (absent, or an older commit's index) we cannot tell, and keep the old
+    strict reading — so re-checking a past post gives the same verdict it always did.
+    """
+    if releases is None or releases.get('status') is None:
+        return True
+    if releases.get('status') != 'complete':
+        return False
+    return any((r or {}).get('key') == key and (r or {}).get('ok')
+               for r in releases.get('releases') or [])
+
+
+def _cite_spans(text, value):
+    """Every place `value` is printed as a whole number — 0.5 is not found inside 10.5
+    or 0.55, 1 is not found inside 10. Thousands separators are a spelling of it."""
+    forms = set(number_forms(value))
+    try:
+        f = float(value)
+        if f == int(f) and abs(f) >= 1000:
+            forms |= {f'{int(f):,}', f'{abs(int(f)):,}'}
+    except (TypeError, ValueError):
+        pass
+    spans = set()
+    for form in forms:
+        for m in re.finditer(rf'(?<![\d.,]){re.escape(form)}(?![\d]|[.,]\d)', text or ''):
+            spans.add((m.start(), m.end()))
+    return spans
+
+
+def _cited_distinct(text, values):
+    """How many of `values` are printed, each matched to a place of its own."""
+    options = sorted(((v, _cite_spans(text, v)) for v in values), key=lambda x: len(x[1]))
+    used, n = set(), 0
+    for _, spans in options:
+        free = [s for s in sorted(spans) if not any(s[0] < u[1] and u[0] < s[1] for u in used)]
+        if free:
+            used.add(free[0])
+            n += 1
+    return n
+
+
+def structured_figures(rel, primary):
+    """The figures a writer has without the release text: the primary print, its
+    previous value when it differs, and the breakdown lines dated like the primary."""
+    out, seen = [], set()
+
+    def add(x):
+        if x is None:
+            return
+        k = round(float(x), 1)
+        if k not in seen:
+            seen.add(k)
+            out.append(x)
+    add(primary.get('actual'))
+    add(primary.get('previous'))
+    want = _period_key(primary.get('ref_period'), rel.get('key'))
+    for c in rel.get('components') or []:
+        if c.get('actual') is not None and want is not None \
+                and _period_key(c.get('ref_period'), rel.get('key')) == want:
+            add(c['actual'])
+    return out
+
+
+# Weekly releases compare the exact week, quarterly ones the quarter, the rest the month.
+PERIOD_KIND = {'claims': 'week', 'gdp': 'quarter'}
+
+
+def _period_key(ref_period, key):
+    s = str(ref_period or '')
+    if not re.match(r'\d{4}-\d{2}-\d{2}', s):
+        return None
+    kind = PERIOD_KIND.get(key, 'month')
+    if kind == 'week':
+        return s[:10]
+    if kind == 'quarter':
+        return (s[:4], (int(s[5:7]) - 1) // 3)
+    return s[:7]
+
+
+def _check_releases(html, macro_eval, v, releases=None):
     """A new print must be taken apart, not just quoted.
 
     The dashboard already prints the headline number; this section exists to say what
@@ -261,8 +344,13 @@ def _check_releases(html, macro_eval, v):
 
         primary = next((i for i in rel.get('indicators') or []
                         if i.get('name') == rel.get('primary')), None)
-        if primary and primary.get('actual') is not None \
-                and not _cited(text, primary['actual']):
+        if primary is None or primary.get('actual') is None:
+            # 2026-11-06: was skipped silently. The headline is the one figure every
+            # block owes; a release we cannot name it for is a data fault, not a pass.
+            v.append(f'§8 {key}: 「{label}」 대표 지표 {rel.get("primary")!r}의 실제값을 '
+                     'macro_eval.json 에서 찾을 수 없다')
+            continue
+        if not _cited(text, primary['actual']):
             v.append(f'§8 {key}: 「{label}」 블록에 {primary["name"]} 실제값 '
                      f'{primary["actual"]}이 없다')
 
@@ -272,6 +360,19 @@ def _check_releases(html, macro_eval, v):
             agency = rel.get('agency') or '발표 기관'
             v.append(f'§8 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
                      f'{agency}의 릴리스를 근거로 밝힐 것')
+
+        if not raw_release_available(releases, key):
+            # No verified release text today (2026-11-06 contract): the block is written
+            # from the structured figures alone, and owes as many of them as exist —
+            # up to the usual three — rather than a breakdown it had no source for.
+            figs = structured_figures(rel, primary)
+            need = min(MIN_RELEASE_FIGURES, len(figs))
+            got = _cited_distinct(text, figs)
+            if got < need:
+                shown = ', '.join(str(x) for x in figs)
+                v.append(f'§8 {key}: 「{label}」 원문이 없는 날이라 구조 수치({shown}) 중 '
+                         f'{need}개를 써야 하는데 {got}개만 있다')
+            continue
 
         # When the breakdown was collected deterministically we can ask the precise
         # question — did the writer actually name the lines that moved? — instead of
@@ -520,7 +621,7 @@ def same_event(a, b):
 
 
 def check(html, prev_macro, macro_eval, next_macro, *, econ=None, metrics=None,
-          report_date=None):
+          report_date=None, releases=None):
     section = section_macro(html)
     if section is None:
         return ['§8(매크로) 섹션을 찾을 수 없다']
@@ -531,7 +632,7 @@ def check(html, prev_macro, macro_eval, next_macro, *, econ=None, metrics=None,
     regime_cell = _check_regime(section, text, macro_eval, v)
     _check_axis_strip(section, v)
     _check_quiet_day(section, macro_eval, v)
-    _check_releases(html, macro_eval, v)
+    _check_releases(html, macro_eval, v, releases)
     trans_cells = _check_transmission(section, macro_eval, v)
     v.extend(check_falsifier(html, next_macro))
     _check_policy(text, prev_macro, macro_eval, next_macro, v)

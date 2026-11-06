@@ -71,9 +71,12 @@ RELEASES = {
                       'https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf'),
     'new-home-sales': (2, 'Census', '신규주택 판매',
                        'https://www.census.gov/construction/nrs/pdf/newressales.pdf'),
+    # 2026-11-06: the old newsroom URL is a 404 — the release is reached by following
+    # 「Read the full news release」 from this page (us.release_resolve). PCE·GDP stay on
+    # BEA's landing pages as *landing* URLs; the dated release comes off BEA's RSS feed.
     'existing-home-sales': (2, 'NAR', '기존주택 판매',
-                            'https://www.nar.realtor/newsroom/existing-home-sales'),
-    'michigan': (2, 'U. Michigan', '미시간대 소비자심리', 'http://www.sca.isr.umich.edu/'),
+                            'https://www.nar.realtor/research-and-statistics/housing-statistics/existing-home-sales'),
+    'michigan': (2, 'U. Michigan', '미시간대 소비자심리', 'https://www.sca.isr.umich.edu/'),
 }
 
 INDICATOR_RELEASE = {

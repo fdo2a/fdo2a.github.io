@@ -45,3 +45,11 @@ def test_short_text_is_not_marked():
 def test_empty_input_is_empty_output():
     assert rt.to_text('') == ''
     assert rt.to_text(None) == ''
+
+
+def test_untrimmed_text_keeps_what_sits_above_the_lede():
+    html = ('<nav>Home</nav><h1>Personal Income and Outlays, September 2026</h1>'
+            '<p>Personal income increased $54.5 billion in September.</p>' + '<p>x</p>' * 5)
+    full = rt.to_text(html, max_chars=None, trim=False)
+    assert 'Personal Income and Outlays, September 2026' in full
+    assert rt.TRUNCATED not in rt.to_text('<p>' + 'a' * 50000 + '</p>', max_chars=None, trim=False)

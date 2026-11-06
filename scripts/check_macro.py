@@ -38,6 +38,9 @@ def main():
                          'macro_next.json')
     ap.add_argument('--next', dest='next_path', default=None,
                     help='override the macro_next.json path')
+    ap.add_argument('--legacy-releases', action='store_true',
+                    help="re-checking a past post against its own commit's data: a missing "
+                         'releases index keeps the pre-2026-11-06 strict reading')
     args = ap.parse_args()
 
     try:
@@ -68,8 +71,18 @@ def main():
     if econ and metrics and metrics.get('report_date') != market.get('report_date'):
         print(f"WARN: macro_metrics.json report_date={metrics.get('report_date')}, "
               f"세션 {market.get('report_date')} — 추세 칸은 「—」만 허용", file=sys.stderr)
+    # 원문 index (2026-11-06 계약): 오늘 세션 것이 아니면 「원문 없음」으로 — 낡은 원문을
+    # 근거로 해부 블록을 요구하지 않는다. status 없는 옛 index 는 그대로 넘겨 옛 판정을 유지.
+    releases = load(os.path.join(d, 'releases', 'index.json'))
+    if not args.legacy_releases and (releases is None or releases.get('status') is None):
+        # Publishing now: no readable index — or one from before the 2026-11-06 contract,
+        # which check_sources and the writer also treat as empty — means no release text.
+        releases = {'status': 'missing' if releases is None else 'legacy', 'releases': []}
+    elif releases and releases.get('status') is not None \
+            and releases.get('report_date') != market.get('report_date'):
+        releases = {'status': 'stale', 'releases': []}
     violations = check(html, prev, ev, nxt, econ=econ, metrics=metrics,
-                       report_date=market.get('report_date'))
+                       report_date=market.get('report_date'), releases=releases)
     if not violations:
         print('매크로 게이트 통과')
         return

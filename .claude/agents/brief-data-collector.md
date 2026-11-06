@@ -213,7 +213,7 @@ print(json.dumps(out, default=str))
    - tradingeconomics 캘린더 페이지 **통째 WebFetch 금지**(토큰 과다) — 필요한 항목만 타겟 WebSearch.
 5b. **신규 발표 원문 해부 (2026-08-18 사용자 지시 — 원문을 직접 열어 읽고 숫자를 분석할 것)**: `data/macro_metrics.json`의 `headline_releases`(최대 3건)가 오늘 새로 나온 **발표문**과 기관·URL·그 발표문이 담은 지표들을 지목한다. 항목은 지표가 아니라 발표문 단위다 — CPI YoY와 CPI MoM은 한 건으로 묶여 있다. 목록이 비면 이 항목 전체를 건너뛴다.
 
-   **원문은 이미 받아져 있다.** Actions가 `scripts/fetch_releases.py`로 각 발표문을 받아 `data/releases/<key>.txt`에 커밋해 둔다(`releases/index.json`에 성공 여부). BLS·DOL은 일반 클라이언트에 403을 주므로 TLS 지문 위장이 필요한데, 그 일은 Actions에서 이미 끝났다. **너는 그 파일을 Read해서 읽고 숫자를 분석한다.** 커밋된 파일이 없거나 `ok:false`면 그때만 `url`을 WebFetch하고, 그것도 막히면 `[기관] [지표] release [기준월]`로 WebSearch한다.
+   **원문은 이미 받아져 있다.** Actions가 `scripts/fetch_releases.py`로 각 발표문을 받아 `data/releases/<key>.txt`에 커밋해 둔다(`releases/index.json`에 성공 여부). BLS·DOL은 일반 클라이언트에 403을 주므로 TLS 지문 위장이 필요한데, 그 일은 Actions에서 이미 끝났다. **너는 그 파일을 Read해서 읽고 숫자를 분석한다.** 단 `releases/index.json` 의 `report_date` 가 오늘이고 `status` 가 `complete` 이고 그 키의 행이 `ok:true` 일 때만 그 행의 `path` 를 읽는다 — 수집기가 그 회차 발표문인지(첫 문단의 기간·헤드라인 값) 검증한 문서다. 그 밖에는 **원문이 없는 것**이다. `url`·`landing_url` 을 WebFetch 하거나 WebSearch 로 원문을 찾지 않는다(검증되지 않은 문서다, 2026-11-06). ⑧절에 「원문 없음 — <index 의 note>」 한 줄만 적는다.
 
    **읽을 때 무엇을 찾는가** — 헤드라인 숫자는 이미 `econ_indicators.json`에 있다. 원문에서 건져야 할 것은 **FRED가 주지 못하는 것들**이다:
    - **기여도 귀속** — "shelter rose 0.1 percent, accounting for roughly two-thirds of the monthly all items increase" 같은 문장. 어느 항목이 헤드라인의 몇 할을 만들었는지

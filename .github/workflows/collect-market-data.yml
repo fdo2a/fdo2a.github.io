@@ -102,6 +102,14 @@ jobs:
         continue-on-error: true
         run: python scripts/fetch_releases.py --datadir data
 
+      - name: Sanitize primary releases
+        # 2026-11-06: data/releases must be *this run's* and complete, or empty. Runs even
+        # when the macro evaluation or the fetch above failed or crashed half-way — a
+        # stale release left behind would be read as today's (the run id ties the index
+        # to this run, so a same-day forced re-collection does not inherit the last one).
+        if: always() && steps.collect.outputs.skipped != 'true'
+        run: python scripts/fetch_releases.py --datadir data --sanitize
+
       - name: Fetch market news
         if: steps.collect.outputs.skipped != 'true'
         # Non-core (2026-09-19 사용자 지시, 2026-09-24 갈래 개편): CNBC·Yahoo 피드를 받아
@@ -211,7 +219,8 @@ jobs:
           git add data/auctions.json 2>/dev/null || true
           git add -A data/auction_table.html 2>/dev/null || true
           git add data/fomc_dates.json 2>/dev/null || true
-          git add data/releases 2>/dev/null || true
+          # -A: a release that failed today is *deleted* from the directory — commit that too.
+          git add -A data/releases 2>/dev/null || true
           git add data/news 2>/dev/null || true
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
