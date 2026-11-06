@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-06T17:29:40+00:00",
- "cutoff_at": "2026-11-06T17:29:40+00:00",
+ "collected_at": "2026-11-06T18:33:55+00:00",
+ "cutoff_at": "2026-11-06T18:33:55+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,17 +21,18 @@
   "sha256": "0e52076f74882f13f130013d9cfa347b3e424e2d5fbd3e79210f260519ee049a"
  },
  "counts": {
-  "harvest": 219,
-  "candidates": 1,
+  "harvest": 221,
+  "candidates": 2,
   "articles": [
+   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32777,
-   "out": 9239
+   "in": 33955,
+   "out": 11838
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,51 +43,63 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "4/4",
+   "claims": "6/6",
    "pairs": "1/1",
-   "obs": "9/9"
+   "obs": "10/10"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 9,
+   "obs": 10,
    "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
+    "edges[0]",
     "edges[1]",
     "edges[2]",
     "memo[0]",
+    "memo[2]",
     "structure",
-    "worry.moderate[0]",
-    "worry.most[0]"
+    "worry.most[0]",
+    "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
     "structure:dangling",
+    "edges[0]:unverified",
+    "edges[0]:dangling",
     "edges[1]:dangling",
     "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[0]:unverified",
     "memo[0]:dangling",
+    "memo[2]:dangling",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling"
+    "worry.unlikely[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "영란은행 금리 인상(4%) 이후 추가 긴축이 필요한지",
-  "query": "bank england rate",
+  "query": "bank england interest",
   "trigger": []
  },
  "problems": [
   "structure:dangling",
+  "edges[0]:unverified",
+  "edges[0]:dangling",
   "edges[1]:dangling",
   "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:unverified",
   "memo[0]:dangling",
+  "memo[2]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling"
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "34297b19c6732bfc"
+ "content_hash": "26a2f9f1ff58370a"
 }
