@@ -1,0 +1,61 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-06",
+ "status": "none",
+ "reason": "topic_too_long",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-06T11:10:20+00:00",
+ "cutoff_at": "2026-11-06T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "d1cfa027b650005934c4d3652c1a2902848e90d3",
+  "sha256": "62c6db784aa7e52fa1d2e292ba44b62359c0bbc41c8bd5c78919f26e85a769db",
+  "extra": {
+   "kr_econ.json": "27bc578dc9040dffa72071985593c61af150755d7070910241942a2fdc0050c5",
+   "kr_flows.json": "9e57844e155cdda8e4257fe89ea926afa67d88ee53351b51a771abbc6e050e6d",
+   "kr_session.json": "7179a51f331d4b21a82cb7eaa0c1e8f0bcac024150374c1a681ba238ef10fc2c"
+  }
+ },
+ "counts": {
+  "harvest": 572,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "kbs": "ok",
+   "sedaily": "ok",
+   "hankyung": "ok",
+   "mk": "ok",
+   "aju": "ok",
+   "kmib": "ok"
+  },
+  "notes": [
+   "discover:572"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 19894,
+   "out": 8177
+  }
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "b0a27c0d6dc6ad80"
+}
