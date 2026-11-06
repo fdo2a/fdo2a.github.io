@@ -1,11 +1,11 @@
 {
-  "report_date": "2026-11-05",
+  "report_date": "2026-11-06",
   "macro_date": "2026-11-05",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": -0.017,
+    "growth_score": 0.152,
     "inflation_score": 0.003,
-    "growth_diffusion": 0.5,
+    "growth_diffusion": 0.643,
     "inflation_diffusion": 0.375
   },
   "implied": {
@@ -13,13 +13,119 @@
     "inflation": 0,
     "name": "교착"
   },
-  "new_releases": [],
-  "headline_releases": [],
+  "new_releases": [
+    "Nonfarm Payrolls (chg)",
+    "Unemployment Rate",
+    "Avg Hourly Earnings MoM"
+  ],
+  "headline_releases": [
+    {
+      "key": "employment",
+      "label": "고용상황(Employment Situation)",
+      "tier": 1,
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+      "primary": "Avg Hourly Earnings MoM",
+      "max_abs_z": 1.677,
+      "indicators": [
+        {
+          "name": "Nonfarm Payrolls (chg)",
+          "axis": "Labor",
+          "actual": 165.0,
+          "previous": 60.0,
+          "ref_period": "2026-10-01",
+          "momentum_z": 1.404
+        },
+        {
+          "name": "Unemployment Rate",
+          "axis": "Labor",
+          "actual": 4.1,
+          "previous": 4.2,
+          "ref_period": "2026-10-01",
+          "momentum_z": -0.251
+        },
+        {
+          "name": "Avg Hourly Earnings MoM",
+          "axis": "Labor",
+          "actual": 0.37,
+          "previous": 0.26,
+          "ref_period": "2026-10-01",
+          "momentum_z": 1.677
+        }
+      ],
+      "components": [
+        {
+          "label": "민간 고용",
+          "fred_id": "USPRIV",
+          "transform": "mom_diff",
+          "actual": 159.0,
+          "previous": 78.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "정부 고용",
+          "fred_id": "USGOVT",
+          "transform": "mom_diff",
+          "actual": 6.0,
+          "previous": -18.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "헬스케어·사회복지",
+          "fred_id": "USEHS",
+          "transform": "mom_diff",
+          "actual": 53.0,
+          "previous": 21.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "레저·숙박",
+          "fred_id": "USLAH",
+          "transform": "mom_diff",
+          "actual": -13.0,
+          "previous": 13.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "제조업",
+          "fred_id": "MANEMP",
+          "transform": "mom_diff",
+          "actual": 19.0,
+          "previous": 13.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "경제활동참가율",
+          "fred_id": "CIVPART",
+          "transform": "level",
+          "actual": 61.9,
+          "previous": 61.8,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "U-6 실업률",
+          "fred_id": "U6RATE",
+          "transform": "level",
+          "actual": 7.9,
+          "previous": 7.6,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "주당 노동시간",
+          "fred_id": "AWHAETP",
+          "transform": "level",
+          "actual": 34.4,
+          "previous": 34.4,
+          "ref_period": "2026-10-01"
+        }
+      ]
+    }
+  ],
   "stale": false,
-  "abbreviated": true,
-  "abbreviated_reason": null,
+  "abbreviated": false,
+  "abbreviated_reason": "tier 1 발표가 있는 날",
   "axis_directions": {
-    "Labor": "보합",
+    "Labor": "개선",
     "Activity": "악화",
     "Consumption": "보합",
     "Inflation": "교착"
@@ -32,11 +138,11 @@
     "inflation_label": "교착",
     "name": "교착",
     "since": "2026-10-14",
-    "days_held": 17,
+    "days_held": 18,
     "thesis": "교착 유지(10월 14일부터 17영업일째). 11월 5일 신규 발표는 주간 실업수당 청구뿐이었다. 신규 청구 189,000건·4주 평균 194,750건은 해고가 적은 상태를 확인했지만 계절 요인의 몫이 컸고, 성장 점수 -0.017·물가 점수 0.003이 그대로 중립 범위라 implied 좌표도 교착이다. 11월 6일 10월 고용과 11월 10일 10월 CPI가 다음 점검이다."
   },
   "regime_change_allowed": false,
-  "regime_block": "no_new_release",
+  "regime_block": "scores_agree",
   "allowed_regimes": [
     [
       0,
@@ -51,8 +157,8 @@
     "prob_note": "11월 5일 12월 인상 확률은 「시장이 80% 이상 반영」(CNBC, 바킨 인터뷰 기사, 측정 상품·시각 미기재)이라는 보도뿐이고 장 마감 CME FedWatch 값은 찾지 못했다. 11월 4일 장 전·초반 보도치는 79~81%였다. 하루 변화는 15%p 기준에 못 미친다.",
     "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 5일 반도체·AI 하드웨어 급락 속에 네이버 2년물이 10.4bp 내린 4.477%로 단기물 주도의 강세 스티프닝이 나왔지만, 보도는 이를 안전자산 이동으로 설명했고 같은 날 바킨 리치먼드 연은 총재는 추가 인상을 예상한다고 말했다. 신규 실업수당 청구 189,000건은 노동시장이 단단하다는 인상 근거를 남긴다.",
     "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 수정한다. 11월 6일 10월 고용에서 실업률이 3월 이후 범위(4.1~4.3%) 위로 올라서면 인상 우위 판단을 철회한다.",
-    "change_allowed": false,
-    "change_block": "no_new_release"
+    "change_allowed": true,
+    "change_block": null
   },
   "transmission": {
     "equities": {
@@ -61,9 +167,11 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     },
     "bonds": {
@@ -72,7 +180,7 @@
       "channel": "물가가 공식적으로 둔화 국면에 들어서면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 다만 실질금리 자체가 기간프리미엄·수급 요인으로 계속 오르고 있어 이 경로가 가격에 반영되기까지는 시차가 있다.",
       "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
         0,
         1
@@ -84,7 +192,7 @@
       "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 다만 안전자산 수요와 상대적으로 높은 미국 금리 수준이 이 경로에 계속 맞서는 힘으로 작용한다.",
       "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
         -1,
         0
@@ -96,9 +204,11 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     },
     "metals": {
@@ -107,7 +217,7 @@
       "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 다만 실질금리 자체가 계속 오르는 국면에서는 이 경로가 힘을 받기 어렵다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
         0,
         1
@@ -119,7 +229,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
         0,
         1
@@ -131,9 +241,11 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화가 하이퍼스케일러 지출 여력에 대한 의문을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 59,
+      "days_held": 60,
       "allowed_directions": [
-        0
+        -1,
+        0,
+        1
       ]
     }
   }

@@ -1,111 +1,11 @@
 {
-  "report_date": "2026-11-05",
+  "report_date": "2026-11-06",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "Semiconductors",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -9.26,
-          "close": 181.6,
-          "value": 55053658090.34
-        },
-        {
-          "name": "Micron Technology (MU)",
-          "change_pct": -17.46,
-          "close": 656.39,
-          "value": 50371697919.13
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -17.26,
-          "close": 404.4,
-          "value": 28491556729.98
-        },
-        {
-          "name": "Broadcom (AVGO)",
-          "change_pct": -10.43,
-          "close": 291.53,
-          "value": 15624317060.58
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": -10.33,
-          "close": 52.25,
-          "value": 13972465100.0
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": -16.43,
-          "close": 133.55,
-          "value": 8805058541.2
-        },
-        {
-          "name": "Qualcomm (QCOM)",
-          "change_pct": -9.49,
-          "close": 156.75,
-          "value": 6280549275.0
-        },
-        {
-          "name": "Texas Instruments (TXN)",
-          "change_pct": -10.7,
-          "close": 278.15,
-          "value": 5336252002.91
-        },
-        {
-          "name": "Analog Devices (ADI)",
-          "change_pct": -11.13,
-          "close": 361.01,
-          "value": 4729556036.94
-        },
-        {
-          "name": "NXP Semiconductors (NXPI)",
-          "change_pct": -7.77,
-          "close": 244.43,
-          "value": 3047088731.7
-        },
-        {
-          "name": "Monolithic Power Systems (MPWR)",
-          "change_pct": -10.28,
-          "close": 1131.43,
-          "value": 2976226756.29
-        },
-        {
-          "name": "Microchip Technology (MCHP)",
-          "change_pct": -13.92,
-          "close": 64.85,
-          "value": 2856493277.79
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "Automobile Manufacturers",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Tesla, Inc. (TSLA)",
-          "change_pct": -10.77,
-          "close": 343.69,
-          "value": 27197220963.2
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Advertising",
       "direction": "up",
       "reasons": [
         "지수 기여 상위",
@@ -113,60 +13,116 @@
       ],
       "members": [
         {
-          "name": "AppLovin (APP)",
-          "change_pct": 31.04,
-          "close": 356.1,
-          "value": 7894523475.31
+          "name": "Nvidia (NVDA)",
+          "change_pct": 2.78,
+          "close": 186.64,
+          "value": 33466179764.64
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": 11.04,
+          "close": 449.04,
+          "value": 20479758783.56
+        },
+        {
+          "name": "Micron Technology (MU)",
+          "change_pct": 5.12,
+          "close": 690.0,
+          "value": 30824200260.0
+        },
+        {
+          "name": "Intel (INTC)",
+          "change_pct": 7.71,
+          "close": 56.28,
+          "value": 9754036912.32
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": 5.73,
+          "close": 141.2,
+          "value": 4711462940.57
+        },
+        {
+          "name": "Qualcomm (QCOM)",
+          "change_pct": 5.52,
+          "close": 165.41,
+          "value": 3253890179.69
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Systems Software",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Microsoft (MSFT)",
+          "change_pct": -0.99,
+          "close": 530.61,
+          "value": 13979478265.79
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": -0.52,
+          "close": 342.37,
+          "value": 14978982066.94
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Consumer Staples Merchandise Retail",
+      "industry": "Semiconductor Materials & Equipment",
       "direction": "up",
-      "reasons": [
-        "지수 기여 상위"
-      ],
-      "members": [
-        {
-          "name": "Costco (COST)",
-          "change_pct": 1.83,
-          "close": 1065.59,
-          "value": 5043224190.23
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Sandisk (SNDK)",
-          "change_pct": -22.26,
-          "close": 806.43,
-          "value": 24276284641.52
+          "name": "Lam Research (LRCX)",
+          "change_pct": 8.23,
+          "close": 200.44,
+          "value": 3593615843.61
         },
         {
-          "name": "Western Digital (WDC)",
-          "change_pct": -17.35,
-          "close": 267.63,
-          "value": 4888262039.18
+          "name": "KLA Corporation (KLAC)",
+          "change_pct": 6.69,
+          "close": 138.49,
+          "value": 2123553533.5
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Communications Equipment",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Lumentum (LITE)",
+          "change_pct": 5.67,
+          "close": 538.59,
+          "value": 2898032828.93
         },
         {
-          "name": "Seagate Technology (STX)",
-          "change_pct": -16.25,
-          "close": 466.53,
-          "value": 4486152468.26
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -14.89,
-          "close": 316.91,
-          "value": 4474008667.7
+          "name": "Arista Networks (ANET)",
+          "change_pct": 7.31,
+          "close": 170.8,
+          "value": 2045462748.15
         }
       ]
     }

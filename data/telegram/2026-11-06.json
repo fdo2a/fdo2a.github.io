@@ -1,0 +1,295 @@
+{
+ "report_date": "2026-11-06",
+ "market": "us",
+ "collected_utc": "2026-11-06T23:04:41+00:00",
+ "window_from": {},
+ "window_note": [
+  "hedgecat0301: 직전 커서 없음 — 24시간",
+  "kwusa: 직전 커서 없음 — 24시간",
+  "lim_econ: 직전 커서 없음 — 24시간",
+  "d_ticker: 직전 커서 없음 — 24시간",
+  "aethersemiconductor: 직전 커서 없음 — 24시간",
+  "FastStockNews: 직전 커서 없음 — 24시간",
+  "FastStockNewsUSA: 직전 커서 없음 — 24시간",
+  "insidertracking: 직전 커서 없음 — 24시간"
+ ],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": null,
+   "last_dt": null,
+   "read": 0
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 61695,
+   "last_dt": "2026-11-06T22:29:57+00:00",
+   "read": 4
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 2126,
+   "last_dt": "2026-11-06T13:30:53+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 4093,
+   "last_dt": "2026-11-06T23:03:03+00:00",
+   "read": 4
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 15,
+   "truncated": true,
+   "hole": [
+    null,
+    26389
+   ],
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 26688,
+   "last_dt": "2026-11-06T15:38:13+00:00",
+   "read": 292
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 127560,
+   "last_dt": "2026-11-06T13:21:00+00:00",
+   "read": 55
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 24233,
+   "last_dt": "2026-11-06T17:41:49+00:00",
+   "read": 13
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 6,
+   "truncated": false,
+   "from_dt": "2026-11-05T23:04:41.752368+00:00",
+   "last_id": 68594,
+   "last_dt": "2026-11-06T22:36:46+00:00",
+   "read": 100
+  }
+ },
+ "items": [
+  {
+   "id": "d_ticker/4091",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-06T07:19:27+00:00",
+   "url": "https://t.me/d_ticker/4091",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "앤스로픽의 10월 말 연환산 매출이 800억 달러를 넘었다는 월스트리트저널의 단독 보도가 나왔다. 글쓴이는 이 수치가 절대 규모로는 크지만, 3분기 분기 성장률 47%를 월 단위로 환산한 약 14%를 기준으로 보면 성장 속도가 둔화된 것으로 해석하는 시각을 제시했다. 같은 성장 속도를 10월에도 적용하면 870억~880억 달러가 나온다는 계산도 함께 소개했다. 앤스로픽이 상장보고서에서 밝힌 런레이트 산정 방식은 소비형 매출에 13을 곱하고 월 구독료에 12를 곱해 더하는 것이다."
+  },
+  {
+   "id": "kwusa/61690",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-06T08:31:02+00:00",
+   "url": "https://t.me/kwusa/61690",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진구",
+   "source": null,
+   "summary_ko": "필자는 유니티 소프트웨어가 FY3Q26 매출 6억 2,200만 달러로 컨센서스 5억 6,700만 달러를 10% 웃돌아 어닝 서프라이즈를 냈다고 진단했다. 핵심 부문인 Strategic Grow Solutions가 가이던스 중간값 +69%YoY를 크게 넘어 +90%YoY 성장했고, 상장 후 처음으로 분기 흑자전환을 이룬 점도 긍정적으로 봤다. 필자는 이 부문의 4분기 가이던스 +105~107%YoY가 추가 기업가치 상승의 주요 트리거가 될 수 있다고 보았다. 이 중간값을 적용하면 FY2026 연간 성장률이 컨센서스 +20%YoY를 웃도는 +28%YoY에 이를 수 있다고 기대했다."
+  },
+  {
+   "id": "kwusa/61691",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-06T08:39:25+00:00",
+   "url": "https://t.me/kwusa/61691",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "글로벌리서치팀",
+   "source": null,
+   "summary_ko": "원문에는 키움 차주 트렌드(키차트) 11월 1주차 자료가 있다는 사실과 자료 링크, 앱 안내만 담겨 있을 뿐 필자의 판단이나 근거, 수치가 전혀 없습니다. 따라서 애널리스트의 견해를 요약할 내용이 없어, 원문에 없는 전망이나 해석을 덧붙이지 않고는 60자 이상의 요약문을 작성할 수 없습니다. 본문 내용을 확인하려면 원문에 제시된 자료 링크를 직접 열어 보시기 바랍니다."
+  },
+  {
+   "id": "FastStockNewsUSA/24228",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-06T13:21:00+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24228",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "Silicon Data는 11월 5일 기준 GPU 시간당 임대료가 B300 $7.56, B200 $6.70, H200 $3.51, H100 $2.97, A100 $1.58을 기록했다고 전했다. 특히 B200은 연초 약 $4.5에서 약 49% 올랐고, H200도 5월 약 $2.7에서 상승해 최신 GPU 중심으로 수요가 강하다는 점을 보여준다고 짚었다. 이 회사는 최근 주식시장의 우려가 현재의 GPU 수급보다는 향후 수년간 수급이 어떻게 바뀔지와 이미 주가에 반영된 성장 기대에 있다는 시각을 내놓았다."
+  },
+  {
+   "id": "FastStockNewsUSA/24229",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-06T13:46:52+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24229",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 개인 투자자들이 목요일 장 마감 직전 매도에서 매수로 돌아섰다는 내용이 밴다 리서치 자료를 인용해 전해졌다. 마감 기준 순 매도액은 1억 5,100만 달러였으며, 장 마감 전 한 시간만 보면 2020년 팬데믹 이후 최고 기록인 순 매도액 5억 200만 달러에 근접할 것처럼 보였다는 점이 함께 소개됐다. 그러나 마지막 10분 동안 순 매수액이 1억 달러를 넘어서며 흐름이 뒤집혔다는 시각이다. 이는 급락장에서 개인 투자자들이 저가 매수에 적극 나섰다는 의견으로 읽힌다."
+  },
+  {
+   "id": "FastStockNewsUSA/24231",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-06T13:47:18+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24231",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국의 10월 고용자 수가 16만 5천 명 늘어 예상치 5만 9천 명의 거의 세 배에 달했고 실업률은 4.1%로 내려갔다. 이에 시장에서는 12월 연준 금리 인상 가능성을 기존 67%에서 79%로 끌어올렸고 금리 동결 가능성은 22%로 낮아졌다. 고용 증가세가 강해 연준의 긴축 정책에 대한 압력이 다시 커지고 있다는 시각이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/26683",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-06T14:11:29+00:00",
+   "url": "https://t.me/aethersemiconductor/26683",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": "2026-11-06",
+   "summary_ko": "앤트로픽의 IPO를 앞두고 잠재 투자자들이 기업가치를 1.2조~1.3조 달러 수준으로 낮춰 논의하고 있다. 선거 이후 AI 관련 매도세와 변동성 확대가 배경으로 꼽히며, 앞서 거론된 1.4조~1.5조 달러에서 하향된 흐름이다. 최종 결정은 나지 않았고 회사는 논평을 거부했다. 전문가들의 평가는 엇갈린다. 일부는 1.2조 달러면 투자자 확보에 무리가 없다고 보는 반면, 약 1조 달러가 상장 후 변동성을 줄이는 현실적 수준이라는 의견과 상장 직후 급등락을 피해야 한다는 시각도 나온다."
+  },
+  {
+   "id": "aethersemiconductor/26687",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-06T15:36:49+00:00",
+   "url": "https://t.me/aethersemiconductor/26687",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "CNBC",
+    "url": "https://www.cnbc.com/2026/11/06/scottish-mortgage-tesla-spacex.html",
+    "basis": "link"
+   },
+   "article_date": "2026-11-06",
+   "summary_ko": "스코티시 모기지 인베스트먼트 트러스트는 2013년부터 이어온 테슬라 투자를 4월에 전량 매각했다고 밝혔다. 투자금 약 4억7000만 달러로 실현이익 약 62억 달러, 투자금의 13배를 거뒀다. 다만 주가에 자율주행과 로보틱스 기대가 상당 부분 반영됐다고 보고, 중국을 중심으로 한 본업 자동차 경쟁 심화도 매각 배경으로 꼽았다. 스페이스X 지분은 9월 30일 15%에서 11.1%로 줄었다. 이 회사는 2018년 12월 약 310억 달러 기업가치 시점에 투자를 시작했으며, 상장 후 락업 해제에 맞춰 단계적으로 매도해 왔다. 지난 6개월 순자산가치(NAV) 수익률은 31.5%로 FTSE 올월드 지수의 16%를 웃돌았고, 스페이스X는 수익률에 8%포인트를 보탰다. 한편 스페이스X와 테슬라 주가는 목요일 각각 약 9%, 11% 하락했으며, 중간선거 이후 머스크 CEO에 대한 의회 조사 가능성이 우려 요인으로 거론됐다."
+  },
+  {
+   "id": "aethersemiconductor/26688",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-06T15:38:13+00:00",
+   "url": "https://t.me/aethersemiconductor/26688",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-06",
+   "summary_note": "분량 벗어남 261자"
+  },
+  {
+   "id": "insidertracking/68581",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-06T21:51:42+00:00",
+   "url": "https://t.me/insidertracking/68581",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_note": "분량 벗어남 279자"
+  },
+  {
+   "id": "insidertracking/68582",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-06T21:52:28+00:00",
+   "url": "https://t.me/insidertracking/68582",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "모더나의 2026년 3분기 어닝콜에서 매출은 13억달러로 29% 늘었고 GAAP 기준 흑자를 냈으며, 연간 매출 전망도 상향됐다. 비용 절감과 0% 금리 전환사채 발행으로 현금 약 80억달러를 확보한 점은 긍정적으로 평가됐다. 독감 백신 미국 승인과 암 백신 임상 3상 성공은 중장기 성장 동력으로 꼽혔다. 반면 노로바이러스 백신 임상 실패와 약 9억5,000만달러의 소송 합의금 지급, 매출원가 상승은 부담 요인으로 지목됐다. 향후 12~18개월 기업가치는 암 백신 허가와 독감 백신 매출 확대에 달렸다는 시각이 제시됐으며, 당일 주가는 5% 상승 마감했다."
+  },
+  {
+   "id": "kwusa/61694",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-06T21:59:37+00:00",
+   "url": "https://t.me/kwusa/61694",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "원문에는 날짜와 해시태그, 링크만 있을 뿐 실제 마감 시황의 내용이 담겨 있지 않습니다. 해시태그에 BIG7, AI데이터센터, 블루웨이브, 되돌림, MSFT 등이 보이지만 이것만으로는 증시 흐름이나 시장 참가자들의 시각을 확인할 수 없어, 요약할 수 있는 시장 소식이나 논평 본문을 함께 전달해 주시면 정리해 드리겠습니다."
+  },
+  {
+   "id": "insidertracking/68584",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-06T22:00:00+00:00",
+   "url": "https://t.me/insidertracking/68584",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "차주 한국시간 기준 주요 경제지표 일정은 11월 10일 화요일 미국 소비자물가지수(CPI)와 근원 CPI 발표가 가장 큰 이벤트라는 점을 짚었다. 이 지표는 연준의 금리 정책에 큰 영향을 주는 핵심 물가 지표로, 인플레이션이 둔화되고 있는지 확인할 수 있는 중요한 일정이라는 시각이다. 특히 변동성이 큰 식품과 에너지를 뺀 근원 CPI에 시장의 관심이 쏠릴 것으로 전망했다. 예상치를 크게 웃돌면 금리 인하 기대가 약해지고, 낮으면 인하 기대가 커질 수 있어 미국 증시, 국채금리, 달러 등 금융시장의 변동성이 커질 수 있다는 의견이다."
+  },
+  {
+   "id": "d_ticker/4093",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-06T23:03:03+00:00",
+   "url": "https://t.me/d_ticker/4093",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디인포메이션",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "TSMC가 엔비디아의 요청에 따라 3D DRAM 생산 계획 수립에 착수했다는 소식이 두 명의 소식통을 통해 전해졌다. 3D DRAM은 메모리 셀을 수직으로 쌓아 용량을 키우는 기술이다. 생산 시작 시점과 생산 시설 확보 방식은 아직 알려지지 않았으나, 신규 공장 건설이나 마이크로소프트의 기존 공장 인수 후 메모리 시설로 전환하는 방안이 거론된다. 이에 대해 TSMC가 메모리 사업에 뛰어들면 경기 변동에 민감한 메모리 산업의 불안정성이 세계 반도체 업계에서 더 커질 수 있다는 시각이 제시됐다."
+  }
+ ],
+ "stats": {
+  "items": 14,
+  "summarized": 12,
+  "summary_failed": 2,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": [
+   "aethersemiconductor"
+  ]
+ }
+}

@@ -1,0 +1,47 @@
+{
+ "report_date": "2026-11-06",
+ "effective": "2026-11-06T17:30:00-05:00",
+ "h41": {
+  "candidates": [],
+  "pool": [],
+  "pending": [],
+  "overdue": []
+ },
+ "qra": {
+  "round": "2026Q4",
+  "round_name": "2026 - 4th Quarter",
+  "candidates": {},
+  "guidance": {
+   "change": "changed",
+   "words": [
+    "at",
+    "least"
+   ],
+   "prev": "Treasury anticipates maintaining nominal coupon and FRN auction sizes for at least the next several quarters.",
+   "cur": "Treasury anticipates maintaining nominal coupon and FRN auction sizes for the next several quarters.",
+   "prev_round": "2026Q3"
+  },
+  "superseded_unpublished": [],
+  "confirmed": "2026Q4"
+ },
+ "ledger": {
+  "h41": [],
+  "qra": []
+ },
+ "notes": [],
+ "today": false,
+ "run_id": "42305438802-1",
+ "generated": "2026-11-07 08:06 KST",
+ "checked": {
+  "h41": false,
+  "qra": true
+ },
+ "schedule": {
+  "qra_next": {
+   "borrowing": "2027-02-01",
+   "refunding": "2027-02-03"
+  },
+  "h41_next": "2026-11-12"
+ },
+ "status": "complete"
+}

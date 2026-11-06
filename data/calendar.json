@@ -1,24 +1,8 @@
 {
-  "report_date": "2026-11-05",
-  "generated": "2026-11-06 18:13 KST",
+  "report_date": "2026-11-06",
+  "generated": "2026-11-07 08:06 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-employment-20261106",
-      "kind": "release",
-      "name_ko": "고용상황(Employment Situation)",
-      "date": "2026-11-06",
-      "time_et": "08:30",
-      "time_kst": "2026-11-06 22:30",
-      "status": "confirmed",
-      "source": "BLS 공표 일정(FRED)",
-      "assets": [
-        "금리",
-        "달러",
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
-    },
     {
       "key": "auction-20261109-13-Week",
       "kind": "auction",
@@ -222,36 +206,6 @@
       "bid_to_cover": 2.89,
       "indirect_pct": 64.6,
       "dealer_pct": 24.4
-    },
-    {
-      "date": "2026-10-29",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 115000000000.0,
-      "high_yield": 3.976,
-      "bid_to_cover": 3.1,
-      "indirect_pct": 69.8,
-      "dealer_pct": 24.4
-    },
-    {
-      "date": "2026-10-29",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 110000000000.0,
-      "high_yield": 4.101,
-      "bid_to_cover": 2.63,
-      "indirect_pct": 62.7,
-      "dealer_pct": 31.5
-    },
-    {
-      "date": "2026-10-29",
-      "term": "7-Year",
-      "type": "Note",
-      "offering_amt": 44000000000.0,
-      "high_yield": 4.894,
-      "bid_to_cover": 2.46,
-      "indirect_pct": 57.8,
-      "dealer_pct": 9.4
     }
   ],
   "blackout": {

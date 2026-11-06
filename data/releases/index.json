@@ -1,6 +1,27 @@
 {
-  "report_date": "2026-11-05",
-  "run_id": "42192614946-1",
+  "report_date": "2026-11-06",
+  "run_id": "42305438802-1",
   "status": "complete",
-  "releases": []
+  "releases": [
+    {
+      "key": "employment",
+      "landing_url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+      "ok": true,
+      "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+      "resolver": "fixed",
+      "verified": true,
+      "doc_kind": "html",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": null,
+        "primary_checked": false,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "chars": 10246,
+      "path": "releases/employment.txt"
+    }
+  ]
 }
