@@ -1,5 +1,5 @@
 {
-  "verdict": "유효",
+  "verdict": "무효화",
   "prior_date": "2026-11-05",
   "prior_exposure": "축소",
   "prior_horizon": "다음 세션",
@@ -7,6 +7,6 @@
   "metric": "KOSPI",
   "level": 5306.0,
   "side": "below",
-  "observed": 5383.8,
-  "note": "KOSPI 종가 5,383.80 로 5,306.00 를 아래로 깨지 않았다"
+  "observed": 5059.69,
+  "note": "KOSPI 종가 5,059.69 가 5,306.00 를 밑돌아 무효화 조건이 발동했다"
 }
