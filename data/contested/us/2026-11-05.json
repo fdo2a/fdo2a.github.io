@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-06T09:46:45+00:00",
- "cutoff_at": "2026-11-06T09:46:45+00:00",
+ "collected_at": "2026-11-06T10:50:52+00:00",
+ "cutoff_at": "2026-11-06T10:50:52+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,9 +21,10 @@
   "sha256": "0e52076f74882f13f130013d9cfa347b3e424e2d5fbd3e79210f260519ee049a"
  },
  "counts": {
-  "harvest": 219,
-  "candidates": 2,
+  "harvest": 218,
+  "candidates": 3,
   "articles": [
+   2,
    2,
    3
   ]
@@ -31,12 +32,13 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32837,
-   "out": 10972
+   "in": 36164,
+   "out": 11881
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
@@ -50,7 +52,7 @@
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 8,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -59,8 +61,8 @@
  },
  "event": {
   "topic_ko": "영란은행 금리 인상(4%) 이후 추가 긴축 필요성",
-  "query": "bank england rate",
+  "query": "bank england interest",
   "trigger": []
  },
- "content_hash": "bfa4b37051369bb4"
+ "content_hash": "84ea54de5fbac4d8"
 }
