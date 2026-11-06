@@ -45,7 +45,8 @@ RELEASE_PATTERNS = (
 # 2026-10-13~17 CPI·소매판매·실업수당청구가 일정표에서 조용히 사라졌다(stderr 경고뿐).
 # 이름을 알게 된 것만 적는다 — 처음 보는 유사 이름은 지금처럼 버리고 calendar.json `ambiguous` 에 남긴다.
 RELEASE_EXCLUDE = {
-    'cpi': ('research consumer price index',),
+    'cpi': ('research consumer price index',
+            'consumer price index excluding energy commodities'),   # 2026-11-04 등장
     'retail-sales': ('real retail sales',),
     'claims': ('state unemployment insurance',),
 }

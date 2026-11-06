@@ -39,6 +39,8 @@ def test_a_slug_matching_two_releases_is_dropped_rather_than_mislabelled():
      'retail-sales'),
     ('Unemployment Insurance Weekly Claims Report',
      'State Unemployment Insurance Weekly Claims Report', 'claims'),
+    # 2026-11-04~05 Actions 로그. 11/10 10월 CPI 가 일간 일정표에서 빠졌다.
+    ('Consumer Price Index', 'Consumer Price Index Excluding Energy Commodities', 'cpi'),
 ])
 def test_a_known_lookalike_release_does_not_knock_out_the_real_one(real, lookalike, slug):
     rows = [_row('2026-10-14', 10, real), _row('2026-10-15', 999, lookalike)]
