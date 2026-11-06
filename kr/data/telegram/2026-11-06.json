@@ -1,0 +1,193 @@
+{
+ "report_date": "2026-11-06",
+ "market": "kr",
+ "collected_utc": "2026-11-06T15:48:50+00:00",
+ "window_from": {},
+ "window_note": [
+  "hedgecat0301: 직전 커서 없음 — 24시간",
+  "kwusa: 직전 커서 없음 — 24시간",
+  "lim_econ: 직전 커서 없음 — 24시간",
+  "d_ticker: 직전 커서 없음 — 24시간",
+  "aethersemiconductor: 직전 커서 없음 — 24시간",
+  "FastStockNews: 직전 커서 없음 — 24시간",
+  "FastStockNewsUSA: 직전 커서 없음 — 24시간",
+  "insidertracking: 직전 커서 없음 — 24시간"
+ ],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 2992,
+   "last_dt": "2026-11-05T22:40:13+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 61691,
+   "last_dt": "2026-11-06T08:39:25+00:00",
+   "read": 7
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 2126,
+   "last_dt": "2026-11-06T13:30:53+00:00",
+   "read": 2
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 4092,
+   "last_dt": "2026-11-06T10:21:49+00:00",
+   "read": 5
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 15,
+   "truncated": true,
+   "hole": [
+    null,
+    26389
+   ],
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 26688,
+   "last_dt": "2026-11-06T15:38:13+00:00",
+   "read": 292
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 127560,
+   "last_dt": "2026-11-06T13:21:00+00:00",
+   "read": 63
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 24231,
+   "last_dt": "2026-11-06T13:47:18+00:00",
+   "read": 24
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-05T15:48:50.061397+00:00",
+   "last_id": 68567,
+   "last_dt": "2026-11-06T14:00:08+00:00",
+   "read": 97
+  }
+ },
+ "items": [
+  {
+   "id": "lim_econ/2125",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-05T22:18:15+00:00",
+   "url": "https://t.me/lim_econ/2125",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "AI 규제 우려 속에 나스닥 100지수는 6.4% 급락하고 필라델피아 반도체지수는 12% 떨어졌다는 소식이다. 이에 달러-원 환율은 1356원 부근까지 올라 50일 이동평균선을 넘어섰으며, BofA는 AI 주가 급락이 원화 약세 압력을 키울 수 있다는 시각을 내놓았다. 영란은행은 기준금리를 4%로 25bp 올리며 추가 긴축 가능성을 열어뒀고, 마이크로소프트의 네오클라우드 거래 신중론에 아이렌과 네비우스 주가는 장중 한때 약 20% 급락했다."
+  },
+  {
+   "id": "FastStockNews/127500",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-05T22:34:11+00:00",
+   "url": "https://t.me/FastStockNews/127500",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "뉴스핌",
+    "url": "https://www.newspim.com/news/view/20261106000036",
+    "basis": "link"
+   },
+   "article_date": "2026-11-06",
+   "summary_ko": "에어비앤비가 5일(현지시간) 2026년 매출 성장률 전망을 '높은 10%대'로 상향했다. 기존 '최소 중간 10%대'에서 올린 것이다. 같은 날 최대 120억달러 규모의 자사주 매입 프로그램도 승인했고, 이 소식에 주가는 시간 외 거래에서 12% 가까이 올랐다. 3분기 전 세계 숙박·체험 예약 건수는 1억5500만건으로 전년 동기 대비 16% 늘었다. 북미는 낮은 두 자릿수, 유럽·중동·아프리카(EMEA)는 중간 10%대 증가율을 보였다. 3분기 매출은 48억7000만달러로 19% 증가했고, 희석 주당순이익은 3.16달러로 전년 동기 2.21달러에서 올랐다. 예약 건당 고객 지원 비용은 17% 넘게 줄었다. 반면 힐튼, 메리어트, 익스피디아, 부킹홀딩스 등 업계는 이란 전쟁 여파로 높은 항공료와 유럽 일부 불안이 이어지며 4분기 수요에 신중한 시각을 보이고 있다."
+  },
+  {
+   "id": "hedgecat0301/2992",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-05T22:40:13+00:00",
+   "url": "https://t.me/hedgecat0301/2992",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시의 급락이 AI 투자 축소 우려에서 비롯됐지만 2028년 프로젝트에 규제 영향이 크게 나타날 것이어서 현 시점의 AI주 투매는 과매도 수준이라고 본다. 이에 따라 하이퍼스케일러의 CAPEX 계획 변경과 2028년 반도체 컨센서스 하향 여부를 확인하며 관망하는 것이 낫다고 진단했다. 국내 증시는 반도체 쏠림 속에서도 다른 업종으로 충격이 번지지 않을 가능성을 열어두고, 은행, 지주, 건설, 운송, 바이오 등으로 수급이 분산될 수 있다고 제시했다."
+  },
+  {
+   "id": "FastStockNews/127544",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-06T04:08:28+00:00",
+   "url": "https://t.me/FastStockNews/127544",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "바클레이즈 연구팀은 데이터센터 업계 서밋 참석 후 AI 인프라 병목이 전력 부족에서 인허가, 인력, 보험·자금, 동적 부하 관리로 넓어졌다는 시각을 내놓았다. 중간선거에서 드러난 지역사회 반대가 프로젝트 실행 리스크를 키운다는 평가다. 인허가 효율 저하와 승인·계통연계 미완료 프로젝트가 많아 발표 규모와 실제 가동 용량 사이에 격차가 생길 수 있다는 의견도 제기됐다. 공사 지연에 따른 보험 연장 요청, 숙련 인력 고령화, 대형 프로젝트의 보험 수요 한계, 대규모 부하 이탈 등도 주요 위험으로 꼽혔다."
+  },
+  {
+   "id": "aethersemiconductor/26602",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-06T07:19:50+00:00",
+   "url": "https://t.me/aethersemiconductor/26602",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "매일경제",
+    "url": "https://www.mk.co.kr/news/business/12195152",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "삼성전자가 미국 텍사스주 테일러 파운드리 2공장에서 AMD향 HBM 베이스다이 물량을 대부분 수주하며 대규모 고객 물량을 확보했다. 이 공장은 2나노 공정을 적용해 2029년부터 2030년 사이 양산에 들어갈 예정이며, 이달 본격 착공에 들어간다. 엔비디아는 NVHBM 베이스다이의 제조 공정을 TSMC로 일원화하도록 요구하고 있어, 전환 과정에서 표준형 HBM과 NVHBM이 병행될 수 있고 삼성전자의 추가 수주에도 제약이 될 수 있다는 분석이 나온다. 업계에서는 빅테크발 수주가 장기 공급망 강화와 첨단 공정 경쟁력의 계기가 될 것으로 보고 있으며, 엔비디아의 조달 기준이 차세대 HBM 공급 체계에 미칠 영향도 주시하고 있다."
+  },
+  {
+   "id": "FastStockNews/127560",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-06T13:21:00+00:00",
+   "url": "https://t.me/FastStockNews/127560",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "Silicon Data는 11월 5일 기준 GPU 시간당 임대료가 B300 $7.56, B200 $6.70, H200 $3.51, H100 $2.97, A100 $1.58로 집계됐다고 전했다. 특히 B200은 연초 약 $4.5에서 $6.7로 약 49% 뛰었고, H200도 5월 약 $2.7에서 $3.51로 올라 최신 GPU에 대한 수요가 강하다는 점이 확인됐다는 시각이다. 이에 더해 최근 주식시장의 우려는 현재의 GPU 수급보다 향후 수년간 수급이 어떻게 바뀔지와 주가에 이미 반영된 성장 기대에 있다는 의견도 함께 제시됐다."
+  }
+ ],
+ "stats": {
+  "items": 6,
+  "summarized": 6,
+  "summary_failed": 0,
+  "stale_dropped": 2,
+  "channels_failed": [],
+  "holes": [
+   "aethersemiconductor"
+  ]
+ }
+}

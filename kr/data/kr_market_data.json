@@ -2,7 +2,6 @@
   "report_date": "2026-11-06",
   "complete": true,
   "missing": [
-    "econ",
     "flows_intraday"
   ],
   "indices": {
