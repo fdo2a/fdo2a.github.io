@@ -15,3 +15,21 @@ def test_a_new_violation_line_is_still_a_new_failure():
     after = {'check_weight.py': (1, '분량: 본문 9032자\n매크로가 3770자로 축약일 상한 2400자를 넘는다\n'
                                     '§2: data-lede="action" 문단이 없다')}
     assert judge(base, after)
+
+
+def test_numbers_exit2_is_not_tolerated_even_if_original_was_2():
+    from scripts.review import style_pass as sp
+    base = {'check_numbers.py': (2, 'FATAL: x')}
+    assert sp.judge(base, {'check_numbers.py': (2, 'FATAL: x')})
+
+
+def test_numbers_warning_and_summary_lines_do_not_count_as_new():
+    from scripts.review import style_pass as sp
+    base = {'check_numbers.py': (1, '[채권] 2Y — 데이터 4.477\nnumber audit: 수치 700')}
+    after = {'check_numbers.py': (1, '경고(문장): 새 경고\n[채권] 2Y — 데이터 4.477\nnumber audit: 수치 702')}
+    assert sp.judge(base, after) == []
+
+
+def test_numbers_timeout_is_not_tolerated():
+    from scripts.review import style_pass as sp
+    assert sp.judge({'check_numbers.py': (124, '180초 초과')}, {'check_numbers.py': (124, '180초 초과')})

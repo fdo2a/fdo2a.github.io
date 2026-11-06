@@ -113,7 +113,7 @@ Launch the Agent tool with subagent_type "brief-report-writer", run synchronousl
 
 **발행 게이트** — 아래를 레포 클론에서 돌린다. 하나라도 실패하면 **출력에 찍힌 위반을 그대로** writer 에게 넘겨 다시 돌린다(게이트가 무엇을 막는지는 출력이 말한다 — 게이트 소스를 읽지 않는다). 표식을 지우거나 게이트를 우회하지 않는다.
 
-(a) `grep -c '확인필요' <html>` = 0. (b) 수치 5개 이상을 `grep -o '4\.62' <html>` 식으로 `market_data.json`·`intraday.json`·`econ_indicators.json` 원본과 대조 — HTML 전체(~34K 토큰)를 읽지 않는다. 수치 창작 금지, 미확인은 삭제·재구성.
+(a) `grep -c '확인필요' <html>` = 0. (b) **수치 대조는 `check_numbers.py` 가 한다**(2026-11-07) — 시장 표 6종의 칸은 전수로 막고, 문장 수치는 자산·단위로 정해지는 것만 대조한다. 문장 층이 경고(`경고(문장)`)인 동안(`config/number_audit.json`, 2026-11-21 재측정까지)은 **문장 수치 5개 이상**을 `grep -o '4\.62' <html>` 식으로 원본과 계속 대조한다 — HTML 전체(~34K 토큰)를 읽지 않는다. 수치 창작 금지, 미확인은 삭제·재구성.
 
 ```bash
 python  scripts/check_macro.py         --html morning_brief_[DATE].html --datadir <workspace>
@@ -128,11 +128,13 @@ python3 scripts/check_telegram.py      --html morning_brief_[DATE].html --tg <wo
 python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_movers.py        --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadir <workspace> --market us
+python3 scripts/check_numbers.py       --html morning_brief_[DATE].html --datadir <workspace>
 ```
 
 - `check_fund.py` — 생성 블록은 다시 그린 것과 바이트가 같아야 한다. 블록 안을 고치지 말고, 해석 문단(`data-fund`)만 고친다. 「편입·비중 확대·매수하」 같은 권고 어휘가 섹션에 있으면 막힌다.
 - `check_sector_perf.py` — 섹터 기간 수익률 표가 그날 섹터 등락률과 같은 회차여야 한다. 낡은 행을 손으로 채울 때 `sectors` 만 고치지 말고 **같은 회차의 `sector_performance` 행 전체와 `data/sector_performance.html`** 을 함께 옮긴다(2026-10-12 한 글에서 커뮤니케이션서비스가 +0.97%·-1.51% 로 갈렸다). 표 안 숫자를 손으로 고치지 않는다.
 - `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
+- `check_numbers.py` — 표 칸 하나하나가 행·열이 가리키는 데이터 값을 인쇄 자릿수로 반올림한 것이어야 한다. 표의 행 이름·열 이름을 바꾸거나 행·열을 더하면 막힌다(지도에 없는 표). 위반 줄이 가리킨 칸만 데이터 값으로 고친다. `경고(문장)` 줄은 막지 않지만 그 문장을 원본과 다시 본다. 집계 줄의 「미검증」은 프로그램이 대조하지 못한 수치 수다. exit 2 는 통과가 아니다(데이터 날짜가 글 날짜와 다르면 2).
 - `check_auction.py` — 「국채 입찰」도 침묵이 기본값이다. 그날 이표채 결과가 없거나 `auctions.json` 이 낡았으면 섹션을 열면 막히고, 결과가 있는데 섹션이 없어도 막힌다. 표는 `auction_table.html` 그대로.
 - 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 

@@ -1,0 +1,4 @@
+{
+  "prose": "warn",
+  "note": "문장 층 차단 여부. 2026-11-21 재측정에서 정상 글 경고 0 이면 block 으로. 표 층은 늘 차단한다. spec docs/superpowers/specs/2026-11-07-number-audit.md"
+}

@@ -197,6 +197,7 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'us',
              '--date', date],
+            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir],
         ]
         market = 'us'
     else:
@@ -274,7 +275,10 @@ NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_cont
 
 # check_weight 가 매번 찍는 분량 줄과 경고 줄(2026-10-13)은 위반이 아니다 — 윤문이 본문을 2자만 바꿔도
 # 「분량:」 줄이 달라져 같은 실패를 새 실패로 읽었다(codex 4차 #3). 위반 줄은 그대로 엄격히 비교한다.
-_INFO_LINE = re.compile(r'^(분량|경고):')
+_INFO_LINE = re.compile(r'^(분량|경고):|^경고\(|^number audit:')
+# 0·1 밖의 종료(판정 불가 2, 시간 초과 124)는 원본과 같아도 넘기지 않는다 — 대조하지 못한 숫자를
+# 윤문이 바꿨을 수 있다(2026-11-07, codex 구현 검토 #8)
+NO_TOLERATE_EXIT2 = frozenset(['check_numbers.py'])
 
 
 def _violations(text):
@@ -288,6 +292,9 @@ def judge(baseline, after):
         if code == 0:
             continue
         was = baseline.get(name)
+        if name in NO_TOLERATE_EXIT2 and code not in (0, 1):
+            bad.append(f'{name} 판정 불가 (종료 {code}): {text[-300:]}')   # 2·시간 초과(124) 모두
+            continue
         if was and was[0] != 0 and was[0] == code and _violations(was[1]) == _violations(text) \
                 and name not in NEVER_TOLERATE:
             continue   # 원본에서도 똑같이 실패한다 — 윤문이 만든 실패가 아니다

@@ -43,7 +43,7 @@ Publishes a US equity morning brief automatically every trading day.
 
 **A gate measures how much of the post is market and price coverage.**
 
-- **Price sections say "where are we now" within their first two paragraphs** — §4, §6, §7 and §8 each carry a `<p data-standing="equities|bonds|fx|commodities">` (at least one figure — a plain day needs only close and change). Not necessarily the opener: article style leads with the day's biggest event, and the gate never enforced the position anyway. Position (percentile/band; not "2 years" when `sessions` < 504), path and size go in only when extreme or they change the reading (`STYLE_EXEMPLARS.md` §11); lead with whatever matters that day.
+- **Price sections say "where are we now" within their first two paragraphs** — §4, §6, §7 and §8 each carry a `<p data-standing="equities|bonds|fx|commodities">` (at least one figure — a plain day needs only close and change). Position (percentile/band; not "2 years" when `sessions` < 504), path and size go in only when extreme or they change the reading (`STYLE_EXEMPLARS.md` §11); lead with whatever matters that day.
 - Only assets whose `band` is `큼` or `매우 큼` get a `<p data-cause>` digging into the cause. `미미` and `보통` are exempt — **this is why there is no fixed character-count floor**.
 - **Fold §9 on a day that overlaps the previous one** (`abbreviated` in `macro_eval.json`). Folding it into a uniform "same as yesterday" is the same disease as before folding. **If the transmission-block check is not relaxed on folded days, publishing is blocked on most days.**
 - **Gate** `scripts/check_weight.py` — nonempty required sections (no total-character or ratio minimum), `data-standing`, `data-cause`, position vocabulary inside price sections, and the §2 `data-lede` order; `경고:` lines (narrative > 5,000 chars, recap < judgment) exit 0. It also counts narrative table cells (over 40 characters) to block pushing prose into tables. Transmission blocks are compared **directly between the asset section and §9**, not against `market_data` (the post's own rendering diverges from the source value). A bare 「중립」 is not checked.
@@ -53,8 +53,9 @@ Publishes a US equity morning brief automatically every trading day.
 
 ## Desk prose gate (US/KR, rule 5 in site/AGENTS.md)
 
-`style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (2 × 600 chars, advisory). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py` — the old 「~다」 run limit is what pushed writers into rhetorical questions.
+`style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (2 × 600 chars, advisory). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py`.
 
+**Number audit** (every figure, by table cell or asset+field; prose warns until re-measured): read `docs/superpowers/specs/2026-11-07-number-audit.md` before touching `us/number_audit.py`.
 **Jev region filter** (economy·macro·politics, before dedupe): read `docs/superpowers/specs/2026-10-28-jev-region-filter.md` before touching it in `fetch_news.py`.
 **Run lock, news freeze**: read `docs/superpowers/specs/2026-09-26-routine-lock-and-news-freeze.md` before touching `run_lock.sh`, `fetch_news.py` or `news_expand.py`.
 **Contested analysis**: read `docs/superpowers/specs/2026-10-21-contested-analysis-design.md` before touching `scripts/contested_local.py` or `scripts/common/contested.py`.

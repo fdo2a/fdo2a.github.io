@@ -51,7 +51,8 @@ def _git(root, *args):
 # 2026-09-22 stance/portfolio 은퇴(c7f6540)가 두 게이트 스크립트를 지웠는데 여기 목록에
 # 남아, US 정정이 매번 「required gate missing」으로 죽었다. 목록은 test_corrector 가
 # 실제 scripts/ 와 대조한다.
-US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'sector_perf', 'session', 'movers', 'fund')
+US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'sector_perf', 'session', 'movers', 'fund',
+                    'numbers')
 KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund')
 KR_NEWS_FROM = '2026-11-06'   # `kr.news.SPLIT_FROM` 과 같다(테스트) — 이 모듈은 레포 밖 사본에서도 돈다
 # KR 판단 게이트는 `--market` 이 없고 `--next` 로 그날 낸 원장을 받는다 — 발행 커밋의 kr_stance.json 이
@@ -65,6 +66,15 @@ KR_STANCE_GATE = 'kr_stance'
 # link under the same gate name — posts rarely link, so a failing original simply stops here.
 NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py',
                             'check_sources.py'])
+# 원본에서 실패해도 정정을 막지 않되 **위반 줄 단위로** 비교하는 게이트(2026-11-07). 이름으로 허용하면
+# 원본의 위반 하나가 정정본의 새 틀린 숫자를 덮는다(codex 설계 검토 #5). exit 2(판정 불가)는 허용하지 않는다.
+VIOLATION_DIFF = frozenset(['check_numbers.py'])
+
+
+def _violation_lines(output):
+    """게이트 출력에서 위반 줄만 — 경고·집계·FATAL 은 뺀다."""
+    return [x.strip() for x in output.splitlines()
+            if x.strip() and not x.startswith(('경고', 'number audit:', 'FATAL'))]
 _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py', 'check_contested.py',
                         'check_sources.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
@@ -94,7 +104,7 @@ def _contested_gate(clone, item, post):
                                    '--date', m.group(1)])
 
 
-def _gates(root, clone, item, evidence, timeout, allowed=()):
+def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseline=None):
     """Replay trusted gates independently of Claude's completion claim.
 
     `root` is where the gate scripts come from — the pristine copy of the verified
@@ -106,6 +116,9 @@ def _gates(root, clone, item, evidence, timeout, allowed=()):
     gates that already failed on the ORIGINAL post. Those postdate the post or
     flag something the review did not ask to fix, and discarding a verified
     correction over them wasted every retry (2026-09-21 KR, check_weight).
+
+    For `VIOLATION_DIFF` gates the allowance is per violation line: `record` collects the
+    original's lines, and with `baseline` a line the original did not have raises.
     """
     post = str(clone / item.path)
     data = evidence / ('kr/data' if item.section == 'kr' else 'data')
@@ -147,6 +160,18 @@ def _gates(root, clone, item, evidence, timeout, allowed=()):
         if name == 'verify_post.py' and 'Playwright가 없어' in result:
             raise RuntimeError('required Playwright layout verification unavailable')
         if code:
+            if name in VIOLATION_DIFF:
+                if code != 1:
+                    raise RuntimeError(f'{name} exited {code} (cannot judge): {result[-4000:]}')
+                lines = _violation_lines(result)
+                if record is not None:
+                    record[name] = lines
+                if baseline is not None and name in allowed:
+                    from collections import Counter
+                    added = Counter(lines) - Counter(baseline.get(name, []))
+                    if added:
+                        raise RuntimeError(f'{name}: correction added violations: '
+                                           + ' | '.join(sorted(added))[-4000:])
             if name not in allowed:
                 raise RuntimeError(f'{name} exited {code}: {result[-4000:]}')
             failed.append(name)
@@ -295,8 +320,9 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
             baseline.mkdir()
             with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
                 tar.extractall(baseline, filter='data')
+            original_lines = {}
             _, preexisting = _gates(code, clone, item, baseline, min(timeout, 180),
-                                    allowed=_ALL_GATES)
+                                    allowed=_ALL_GATES, record=original_lines)
             # A fund-gate failure on the original is a defect to fix, not a pass.
             tolerated = [g for g in preexisting if g not in NEVER_TOLERATE]
             must_fix = [g for g in preexisting if g in NEVER_TOLERATE]
@@ -395,7 +421,7 @@ END CODEX FINDINGS
             with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
                 tar.extractall(gate_evidence, filter='data')
             report, _ = _gates(code, clone, item, gate_evidence, min(timeout, 180),
-                               allowed=tolerated)
+                               allowed=tolerated, baseline=original_lines)
             output += '\n\nIndependent gate replay:\n' + report
             if item.section == 'kr':
                 _no_new_grade_talk(_git(clone, 'show', f'{base}:{item.path}'),

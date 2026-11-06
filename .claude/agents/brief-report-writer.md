@@ -469,7 +469,7 @@ When changing this: read `docs/superpowers/specs/2026-09-24-post-shell.md` befor
 1. [확인필요]·빈 셀·근거 없는 추정 표현을 전수 스캔.
 2. 그런 표현이 있으면, 대응하는 입력 파일(수치=json, 뉴스·해석=research_notes.md)에서 값을 찾아 채운다. **입력에 없는 값을 새로 웹서치하지 않는다** — 입력에 없으면 그 행·주장을 빼고 문장을 재구성한다(삭제 > 창작). research_notes.md '미확정 항목'에 있는 것도 동일하게 삭제·재구성. 예외: 초안에서 명백한 사실 오류가 의심되고 research_notes에도 근거가 없을 때에 한해 1회 확인 검색 허용.
 3. 최종 HTML을 grep해 '확인필요' 0건 확인. 1건이라도 있으면 발행 중단하고 위를 반복.
-4. HTML의 표 수치 중 5개 이상을 무작위로 골라 market_data.json / intraday.json / econ_indicators.json 원본과 대조 — 불일치 시 수정.
+4. 수치 대조 — 레포 클론이 있으면 `python3 scripts/check_numbers.py --html morning_brief_[DATE].html --datadir <workspace>` 를 돌린다. 시장 표 6종(오늘의 장·주식 지수·섹터·채권·FX·원자재)은 칸마다 데이터 값과 맞춰 막는다 — **행·열 이름은 지금 쓰는 그대로** 두고, 표에 새 행·열을 더하지 않는다. 문장 수치는 「S&P는 4.36% 내린 7,354」처럼 자산 이름 바로 뒤에 쓴 수치를 그 자산의 등락·종가와 맞춘다(지금은 경고). 그 밖의 문장 수치 5개 이상은 원본과 직접 대조한다 — 불일치 시 수정.
 5. **승계 섹션 자체 점검** — 레포 클론이 있으면 발행 전에 직접 돌려본다. 오케스트레이터도 같은 게이트를 돌리므로, 여기서 통과시켜두면 재작성 왕복이 준다.
    `python scripts/check_macro.py --html morning_brief_[DATE].html --datadir <workspace>`
    `python scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>`

@@ -39,7 +39,8 @@ def setup(tmp_path, monkeypatch):
     scripts = root / 'scripts'
     scripts.mkdir()
     for name in ('macro', 'sources', 'fed', 'weight', 'price_context',
-                 'session', 'movers', 'fund', 'sector_perf', 'kr_stance', 'readability', 'style'):
+                 'session', 'movers', 'fund', 'sector_perf', 'numbers', 'kr_stance', 'readability',
+                 'style'):
         (scripts / f'check_{name}.py').write_text('''import sys
 from pathlib import Path
 assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
@@ -103,7 +104,7 @@ def test_success_keeps_user_checkout(setup):
     assert (root / item.path).read_text() == 'user unsaved work'
     assert git(root, 'rev-parse', 'HEAD') == base
     # Nine gates on the original (baseline) and the same nine on the correction.
-    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 22   # 11 US gates (check_sources added 2026-11-06) x before/after
+    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 24   # 12 US gates (check_sources 2026-11-06, check_numbers 2026-11-07) x before/after
 
 
 @pytest.mark.parametrize('extra,mark,reason', [
@@ -395,3 +396,51 @@ def test_kr_replay_includes_stance_gate_with_published_ledger():
     # 정정이 그것을 지워도 통과한다(codex 설계 검토 2026-10-19 #2).
     from scripts.review import corrector
     assert 'check_kr_stance.py' in corrector._ALL_GATES
+
+
+# ── check_numbers: 위반 줄 단위 비교(2026-11-07) ─────────────────────────
+
+def _numbers_stub(body):
+    return ("import sys\nfrom pathlib import Path\n"
+            "post = Path(sys.argv[sys.argv.index('--html') + 1]).read_text()\n" + body)
+
+
+def test_numbers_same_violation_on_original_and_correction_is_tolerated(setup):
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_numbers.py', _numbers_stub(
+        "print('[주식] 「같은 줄」 — 데이터 1')\nprint('number audit: x')\nraise SystemExit(1)\n"))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert 'check_numbers.py: pre-existing' in result
+
+
+def test_numbers_new_violation_line_blocks(setup):
+    root, remote, item, exe = setup
+    # 원본도 실패하지만(old), 정정본은 다른 줄(fixed)로 실패한다 — 이름으로 허용하면 통과했을 자리
+    gate(root, 'scripts/check_numbers.py', _numbers_stub(
+        "w = 'old' if 'old' in post else 'fixed'\n"
+        "print(f'[주식] 「{w}」 — 데이터 1')\nraise SystemExit(1)\n"))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error and 'correction added violations' in error and 'fixed' in error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
+
+
+def test_numbers_exit2_is_never_tolerated(setup):
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_numbers.py', _numbers_stub(
+        "if 'fixed' in post: raise SystemExit(2)\n"
+        "print('[주식] 「old」 — 데이터 1')\nraise SystemExit(1)\n"))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error and 'cannot judge' in error
+
+
+def test_violation_lines_drop_warnings_and_summary():
+    from scripts.review import corrector
+    out = '경고(문장): x\n[채권] 2Y — 데이터 4.477\nnumber audit: 수치 3\n'
+    assert corrector._violation_lines(out) == ['[채권] 2Y — 데이터 4.477']
