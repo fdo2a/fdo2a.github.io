@@ -1,0 +1,160 @@
+{
+ "commit": "d1cfa02",
+ "report_date": "2026-11-06",
+ "indices": {
+  "KOSPI": {
+   "close": 5059.69,
+   "change_pct": -6.02
+  },
+  "KOSDAQ": {
+   "close": 644.27,
+   "change_pct": -5.03
+  }
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_1106": {
+  "KOSPI": {
+   "date": "2026-11-06",
+   "individual": 5532,
+   "foreign": -27211,
+   "institution": 17050
+  },
+  "KOSDAQ": {
+   "date": "2026-11-06",
+   "individual": -1175,
+   "foreign": -917,
+   "institution": 2046
+  }
+ },
+ "session": {
+  "report_date": "2026-11-06",
+  "us_prev": {
+   "as_of": "2026-11-05",
+   "rows": {
+    "S&P 500": -4.36,
+    "Nasdaq": -5.52,
+    "Dow": -3.44
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.01,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": 0.48,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -5.96,
+    "항셍": -1.27,
+    "상해종합": -1.1,
+    "대만가권": -4.51
+   },
+   "dates": {
+    "닛케이": "2026-11-06",
+    "항셍": "2026-11-06",
+    "상해종합": "2026-11-06",
+    "대만가권": "2026-11-06"
+   },
+   "avg_pct": -3.21,
+   "relative_pp": -2.81
+  },
+  "usdkrw_intraday": {
+   "high": 1361.93,
+   "high_t": "14:30",
+   "low": 1353.98,
+   "low_t": "09:00",
+   "close": 1356.37,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "stocks": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": -10.44,
+   "close": 1132000,
+   "value": 8730799
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": -6.35,
+   "close": 188700,
+   "value": 6472451
+  },
+  {
+   "name": "삼성전기",
+   "change_pct": -7.84,
+   "close": 870000,
+   "value": 1309109
+  },
+  {
+   "name": "삼성SDI",
+   "change_pct": -8.06,
+   "close": 468000,
+   "value": 407458
+  },
+  {
+   "name": "NAVER",
+   "change_pct": 2.87,
+   "close": 190200,
+   "value": 369526
+  },
+  {
+   "name": "한화솔루션",
+   "change_pct": -3.34,
+   "close": 26050,
+   "value": 216202
+  },
+  {
+   "name": "효성중공업",
+   "change_pct": -11.95,
+   "close": 1577000,
+   "value": 205331
+  },
+  {
+   "name": "대덕전자",
+   "change_pct": -10.78,
+   "close": 71200,
+   "value": 181170
+  },
+  {
+   "name": "LS ELECTRIC",
+   "change_pct": -10.25,
+   "close": 116500,
+   "value": 150916
+  },
+  {
+   "name": "삼성에스디에스",
+   "change_pct": 6.34,
+   "close": 218000,
+   "value": 101330
+  },
+  {
+   "name": "HD현대일렉트릭",
+   "change_pct": -8.72,
+   "close": 366500,
+   "value": 89557
+  }
+ ],
+ "prior_closes": {
+  "SK하이닉스_1030": 1418000,
+  "KOSPI_1030": 5730.74,
+  "한화솔루션_1104": 28000,
+  "KOSPI_1104": 5683.8,
+  "삼성전기_1105": 944000,
+  "KOSPI_1105": 5383.8
+ },
+ "stance_eval": "KOSPI 종가 5,059.69 가 5,306.00 를 밑돌아 무효화 조건이 발동했다"
+}
