@@ -1,7 +1,7 @@
 {
   "as_of": "2026-11-06",
   "window": {
-    "bgn": "20261105",
+    "bgn": "20261106",
     "end": "20261106"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
@@ -10,12 +10,60 @@
       "corp_code": "00126380",
       "events": [
         {
-          "rcept_no": "20261105000566",
-          "date": "2026-11-05",
+          "rcept_no": "20261106000193",
+          "date": "2026-11-06",
           "title": "임원ㆍ주요주주특정증권등소유상황보고서",
           "corp": "삼성전자",
-          "filer": "박세근",
-          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261105000566",
+          "filer": "송호영",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000193",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261106000100",
+          "date": "2026-11-06",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "우준명",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000100",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261106000098",
+          "date": "2026-11-06",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "손왕익",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000098",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261106000093",
+          "date": "2026-11-06",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "이병현",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000093",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261106000022",
+          "date": "2026-11-06",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "홍희일",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261106000022",
           "axis": null,
           "kind": null,
           "correction": false,
@@ -33,16 +81,36 @@
     },
     "MU": {
       "cik": "0000723125",
-      "events": [],
+      "events": [
+        {
+          "rcept_no": "0001104659-26-123389",
+          "date": "2026-11-05",
+          "title": "8-K Item 5.02, 9.01",
+          "corp": "MICRON TECHNOLOGY INC",
+          "filer": null,
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000110465926123389/tm2629062d1_8k.htm",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "9.01"
+          ],
+          "accepted_et": "2026-11-05 11:33:48 ET",
+          "axis": null,
+          "kind": "8-K 5.02",
+          "correction": false,
+          "confirmed": false,
+          "notable": true
+        }
+      ],
       "axes": [],
       "confirmed_count": 0,
-      "notable_count": 0
+      "notable_count": 1
     }
   },
   "missing": [],
   "sec": {
     "window": {
-      "first": "2026-11-04",
+      "first": "2026-11-05",
       "last": "2026-11-06"
     },
     "note": "SEC filingDate(미 동부 영업일) 기준, 직전 수집 전날부터 — DART 와 같이 하루 겹친다"
