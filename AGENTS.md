@@ -1,8 +1,5 @@
-<!-- This file is where shared rules live. codex walks project docs from the git repo
-     root (site/) down to cwd and never above it, so report/CLAUDE.md is NOT loaded when
-     working inside site/ (measured; see report/CLAUDE.md).
-     This file + one leaf must fit codex's chain limit, which drops the tail with no
-     marker. Byte budget and what to do when it goes red: rule 4 below.
+<!-- Shared rules. codex reads docs from the git root (site/) down to cwd only,
+     so report/CLAUDE.md is NOT loaded inside site/. Budget: rule 4.
      Gate: scripts/common/tests/test_agent_docs.py -->
 
 ## Getting started (where to work, what to run)
@@ -72,7 +69,7 @@ Rationale and history live in the documents each rule points to. Only the rule i
 
 ## Work routine — 7 steps per command (user instruction, 2026-09-04)
 
-**Applies to everything**, whether it is a one-line "fix this" or a new pipeline.
+**Triage first — "who notices if this is wrong?"** Light (typo, wording, lookup): just do it. Normal (existing-module behaviour change, reproduced bug): steps 4–6. Heavy (new judgment logic, gates, data contracts, published figures, costly to undo): all 7. Constant or model-ID swaps: TDD + full tests, no codex. Unsure → heavy.
 
 1. **Design** — write the spec. **Keep it in context; do not save it.**
 2. **Design review** — hand it to codex (`/codex:rescue`) before implementing. **Read-only.**
