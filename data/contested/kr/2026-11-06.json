@@ -5,9 +5,9 @@
  "report_date": "2026-11-06",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-06T12:19:24+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-06T12:35:19+00:00",
  "cutoff_at": "2026-11-06T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 524,
+  "harvest": 517,
   "candidates": 1,
   "articles": [
    6
@@ -45,19 +45,19 @@
    "chosun": "ok"
   },
   "notes": [
-   "discover:524"
+   "discover:517"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 17779,
-   "out": 4023
+   "in": 17759,
+   "out": 7661
   }
  },
  "event": {
   "topic_ko": "미국 중간선거 후 코스피 급락과 당정 긴급 간담회 대응",
-  "query": "긴급 코스피 간담회",
+  "query": "긴급 간담회 코스피",
   "trigger": []
  },
- "content_hash": "586b1d517f83bbe3"
+ "content_hash": "a67e4b7d99d6ba72"
 }
