@@ -6,8 +6,8 @@
  "status": "none",
  "reason": "topic_too_long",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-06T11:10:20+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-06T11:26:47+00:00",
  "cutoff_at": "2026-11-06T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 572,
+  "harvest": 555,
   "candidates": 1,
   "articles": [
    6
@@ -43,13 +43,13 @@
    "kmib": "ok"
   },
   "notes": [
-   "discover:572"
+   "discover:555"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 19894,
-   "out": 8177
+   "in": 19845,
+   "out": 7333
   }
  },
  "event": {
@@ -57,5 +57,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "b0a27c0d6dc6ad80"
+ "content_hash": "5d42e779d14f88e1"
 }
