@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-05",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-06T08:42:22+00:00",
- "cutoff_at": "2026-11-06T08:42:22+00:00",
+ "collected_at": "2026-11-06T09:46:45+00:00",
+ "cutoff_at": "2026-11-06T09:46:45+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -17,91 +17,50 @@
  "prompt_version": "2026-11-04.1",
  "market_snapshot": {
   "path": "data/market_data.json",
-  "commit": "0b144d1771d09d9958602ae0c95ffbbdf4719611",
-  "sha256": "e00d17908763c0094a70fefbc9e24471a3718923878c4e9bd679c3fa36aee0da"
+  "commit": "7c97be9b6419d83c226c2a8c2cb0b599df44fe0d",
+  "sha256": "0e52076f74882f13f130013d9cfa347b3e424e2d5fbd3e79210f260519ee049a"
  },
  "counts": {
-  "harvest": 217,
-  "candidates": 1,
+  "harvest": 219,
+  "candidates": 2,
   "articles": [
+   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 33785,
-   "out": 13392
+   "in": 32837,
+   "out": 10972
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "out_of_window"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
+   "claims": "4/4",
    "pairs": "1/1",
-   "obs": "10/10"
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 10,
-   "strict_pairs": 1,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[2]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:dangling",
-    "edges[0]:dangling",
-    "edges[1]:dangling",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[2]:unverified",
-    "memo[2]:dangling",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:unverified",
-    "worry.unlikely[0]:dangling"
-   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "영란은행 기준금리 4% 인상과 추가 긴축 필요성",
-  "query": "bank england interest",
+  "topic_ko": "영란은행 금리 인상(4%) 이후 추가 긴축 필요성",
+  "query": "bank england rate",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "edges[0]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[2]:unverified",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:unverified",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "74245818f160b44d"
+ "content_hash": "bfa4b37051369bb4"
 }
