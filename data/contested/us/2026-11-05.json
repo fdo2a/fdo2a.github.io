@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-05T23:50:47+00:00",
- "cutoff_at": "2026-11-05T23:50:47+00:00",
+ "collected_at": "2026-11-06T00:54:41+00:00",
+ "cutoff_at": "2026-11-06T00:54:41+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,17 +22,16 @@
  },
  "counts": {
   "harvest": 216,
-  "candidates": 2,
+  "candidates": 1,
   "articles": [
-   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 32291,
-   "out": 8914
+   "in": 33148,
+   "out": 10557
   },
   "discovery": "throttled",
   "hosts": {
@@ -43,25 +42,41 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "2/2",
+   "claims": "5/5",
    "pairs": "1/1",
-   "obs": "9/9"
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 9,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "memo[0]"
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "memo[0]:unverified"
+    "structure:dangling",
+    "edges[0]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:dangling",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:unverified",
+    "worry.unlikely[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
@@ -72,7 +87,16 @@
   "trigger": []
  },
  "problems": [
-  "memo[0]:unverified"
+  "structure:dangling",
+  "edges[0]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:dangling",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:unverified",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "3efe28b4f255f291"
+ "content_hash": "7ac900fe1a368947"
 }
