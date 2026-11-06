@@ -37,7 +37,32 @@ LAYOUT_V2_FROM = "2026-10-20"
 # 표의 첫 칸은 독자가 달력에 옮길 수 있는 시점이어야 한다 — 「곧」「다음에」는 일정이 아니다.
 _WHEN = re.compile(r"\d{1,2}월|\d{1,2}/\d{1,2}|\d{4}-\d{2}|이달|다음 달|다음 주|이번 주|월말|연내|연말|"
                    r"분기|실적 발표|일정 미확정|마감|개장")
-MIN_CHARS = {"gap": 80, "review": 80}
+# gap·review 는 길이가 아니라 내용으로 본다(2026-11-06 사용자 결정 「60자로 충분히 설명되는
+# 내용을 80자로 늘리면 문장만 길어진다」 — 옛 하한은 각 80자). 자리 채움은 「두 어절 이상에
+# -다 로 끝나는 문장」이 하나도 없는 것이고, 판정 근거는 아래 `_basis_violation` 이 본다.
+PROSE_KEYS = ("gap", "review")
+# 「-다」 앞에 글자가 있어야 하고(「시장 다」는 문장이 아니다), 닫는 따옴표·괄호와 꼬리 괄호
+# (「…부담이다」.·「…이다(추정).」)는 받는다(codex 구현 검토 #1).
+_SENTENCE = re.compile(r"\S+\s+\S*[가-힣]다[.!]?[」』\"'’”)\]]*(?:\([^)]*\))?[.!]?(?=\s|$)")
+# 판정 근거는 지수 레벨이다 — 금액·비율·건수 단위가 붙은 수는 레벨이 아니다
+# (「외국인 6,904억원 매도」가 6,904 레벨로 통과하던 길, codex 구현 검토 #2). 「6,904일 때」의
+# 「일」은 날수가 아니다(codex 5차).
+_LEVEL_NUM = re.compile(r"(?<![\d.,])(\d[\d,]*(?:\.\d+)?)(?![\d,]|\.\d)(?!\s*(?:억|조|만|천|원|%|bp|배|주|건|명|달러|엔|위안|개|곳|일(?!\s*(?:때|경우))|거래일|종목))")
+METRIC_NAMES = {"KOSPI": ("코스피", "KOSPI"), "KOSDAQ": ("코스닥", "KOSDAQ"),
+                "KOSPI200": ("코스피200", "KOSPI200")}
+# 레벨이 지수와 같은 자릿수일 수 있는 다른 시장 — 기준선 단어만 있는 문장이 이 이름을 부르면
+# 그 수는 판정한 지수의 값으로 받지 않는다(codex 최종 검토 C 「미국 증시는 전일 고점 6,904」).
+# 금리·유가는 자릿수가 달라 넣지 않는다.
+OTHER_MARKETS = ("미국", "뉴욕", "S&P", "나스닥", "다우", "러셀", "필라델피아", "SOX", "유럽",
+                 "유로스톡스", "DAX", "닥스", "FTSE", "닛케이", "니케이", "토픽스", "TOPIX", "일본",
+                 "상하이", "중국", "항셍", "홍콩", "대만", "자취안", "인도", "환율", "원달러",
+                 "달러", "엔화", "위안")
+# 「코스피 200」「코스닥 150」처럼 띄어 쓴 하위 지수를 붙여 쓴 꼴로 맞춘다.
+_SUB_INDEX = re.compile(r"(코스피|KOSPI|코스닥|KOSDAQ)\s+(200|150|100|50)(?![\d,])")
+# 기준선을 부르는 말 — 「무효화 선」「철회 기준」「60일 이동평균」「볼린저 밴드 하단」「20일 저점」.
+LEVEL_CUES = ("무효화", "철회 기준", "반증", "기준선", "이동평균", "밴드", "전환선", "저점", "고점", "선인", "선을", "선 ")
+# 반올림한 산문 값을 받는다 — 지수는 정수로 쓴다(STYLE_EXEMPLARS 「산문 수치는 반올림」).
+BASIS_TOLERANCE = 0.5
 _TAG = re.compile(r"<[^>]+>")
 _NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
 # 판정이 「유효」면 유지·수정, 「무효화」면 수정·폐기를 말해야 한다. 어느 쪽이든
@@ -220,6 +245,64 @@ def marked(seg: str) -> list:
     return out
 
 
+def _names_re(names, longer):
+    """이름 정규식 — 「코스피」는 「코스피200」의 앞부분일 때 잡지 않는다."""
+    parts = []
+    for n in sorted(names, key=len, reverse=True):
+        tails = [e[len(n):] for e in longer if e != n and e.startswith(n)]
+        parts.append(re.escape(n) + "".join(f"(?!{re.escape(t)})" for t in tails))
+    return re.compile("|".join(parts) or r"(?!)")
+
+
+def _market_patterns(metric):
+    """(판정한 지수 이름, 다른 시장 이름) 정규식."""
+    mine = METRIC_NAMES.get(metric, ())
+    others = [n for k, ns in METRIC_NAMES.items() if k != metric for n in ns if n not in mine]
+    others += OTHER_MARKETS
+    return _names_re(mine, others), _names_re(others, mine)
+
+
+def _basis_violation(where: str, review: str, stance_eval: dict) -> list:
+    """유효·무효화 판정이면 그 판정을 만든 값(무효화 레벨·오늘 종가)이 복기에 있어야 한다.
+
+    아무 숫자나 받지 않는다 — 「외국인 3,120억원」은 판정의 근거가 아니다(codex 설계 2차 #2).
+    판정불가는 댈 값이 없으므로 보지 않는다(#1). 평가에 값이 없으면(옛 원장) 보지 않는다.
+    """
+    if (stance_eval or {}).get("verdict") not in ("유효", "무효화"):
+        return []
+    refs = {}
+    for key, name in (("level", "무효화 레벨"), ("observed", "오늘 종가")):
+        try:
+            refs[name] = float(stance_eval[key])
+        except (KeyError, TypeError, ValueError):
+            continue
+    if not refs:
+        return []
+    # 그 수가 판정한 지수나 그 기준선을 말하는 문장에 있어야 한다 — 「원달러 환율은 6,904로
+    # 마감했다」는 근거가 아니다(codex 구현 재검토 #1).
+    # 판정한 지수 이름이 있는 문장, 또는 기준선 단어가 있고 다른 시장을 부르지 않는 문장의 수만
+    # 받는다. 문장 안에서 수의 주인까지 가리지는 않는다 — 이 검사는 근거를 빠뜨린 복기를 잡는
+    # 것이고, 다른 시장의 수가 판정 값과 ±0.5 안에서 같은 문장에 오는 우연까지 막으려다 정상
+    # 문장(「코스피는 미국 증시와 달리 6,904에 마감했다」)을 막았다(codex 4차, 사용자 원칙
+    # 「문장은 필자의 재량」).
+    mine, other = _market_patterns(stance_eval.get("metric"))
+    said = set()
+    for sentence in re.split(r"(?<=[.!?])\s+", review):
+        sentence = _SUB_INDEX.sub(r"\1\2", sentence)
+        if not (mine.search(sentence)
+                or (any(c in sentence for c in LEVEL_CUES) and not other.search(sentence))):
+            continue
+        for tok in _LEVEL_NUM.findall(sentence):
+            try:
+                said.add(float(tok.replace(",", "")))
+            except ValueError:
+                continue
+    if any(abs(n - r) <= BASIS_TOLERANCE for n in said for r in refs.values()):
+        return []
+    shown = " 이나 ".join(f"{name} {r:,.0f}" for name, r in refs.items())
+    return [f"{where} review: 판정 근거가 없다 — {shown} 를 문장에 쓴다"]
+
+
 def numbers(text: str) -> set:
     """산문의 수를 float 집합으로. 천단위 콤마를 걷어낸다."""
     out = set()
@@ -326,12 +409,12 @@ def check(html_doc: str, stance: dict, stance_eval: dict, liquidity=None,
         lv, body["review"] = check_layout_v2(html_doc)
         v += lv
     where = LEARNING if v2 else "§2"
-    for key, need in MIN_CHARS.items():
+    for key in PROSE_KEYS:
         if key == "review" and v2 and not body.get(key):
             continue                    # 없는 것은 위에서 이미 말했다
-        if len(body.get(key, "")) < need:
+        if not _SENTENCE.search(body.get(key, "")):
             label = f"「{LEARNING}」 review" if key == "review" and v2 else f"§2 {key}"
-            v.append(f"{label}: {need}자에 못 미친다 — 자리만 채웠다")
+            v.append(f"{label}: 문장이 없다 — 자리만 채웠다")
 
     v += grade_talk.violations(html_doc, exempt_news=True)
     v += news_split_violations(html_doc, report_date)
@@ -353,6 +436,8 @@ def check(html_doc: str, stance: dict, stance_eval: dict, liquidity=None,
         review = body.get("review", "")
         if review and not any(cue in review for cue in VERDICT_CUES.get(verdict, ())):
             v.append(f"{where} review: 어제 판정이 「{verdict}」인데 산문이 그것을 말하지 않는다")
+        elif review:
+            v += _basis_violation(where, review, stance_eval)
         elif not review and not v2:
             v.append(f"§2 review: 어제 판정이 「{verdict}」인데 산문이 그것을 말하지 않는다")
     return v

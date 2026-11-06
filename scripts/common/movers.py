@@ -142,5 +142,5 @@ def check(html, movers, report_date):
                                                         _variants(lead["change_pct"])) + r')(?![\d])')
         if not any(pattern.search(t) for t in texts):
             v.append(f'움직인 종목 {where} 문단에 대표 종목 등락률 {lead["change_pct"]}% 가 없다 — '
-                     '괄호 근거로 보인다(「(현대건설 -7.77%)」)')
+                     '문장 속이든 괄호든 그 값을 쓴다(「현대건설은 7.77% 내렸다」·「(현대건설 -7.77%)」)')
     return v

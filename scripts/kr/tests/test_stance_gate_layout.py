@@ -70,9 +70,11 @@ def test_review_still_must_speak_verdict():
     assert any("review" in x and "유효" in x for x in v)
 
 
-def test_thin_review_is_caught():
-    v = check(_doc({"review": "판단은 그대로 유지한다."}), STANCE, EVAL, report_date=LAYOUT_V2_FROM)
-    assert any("review" in x and "80자" in x for x in v)
+def test_review_without_its_basis_is_caught():
+    # 2026-11-06 부터 80자 하한 대신 판정 근거(무효화 레벨·오늘 종가)를 본다.
+    kept = dict(EVAL, level=6904.0, observed=7008.25)
+    v = check(_doc({"review": "판단은 그대로 유지한다."}), STANCE, kept, report_date=LAYOUT_V2_FROM)
+    assert any("review" in x and "근거" in x for x in v)
 
 
 def test_schedule_section_required():

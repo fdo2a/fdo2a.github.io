@@ -35,9 +35,10 @@ def test_plain_da_prose_passes_even_with_many_da_endings():
     assert findings(desk(GOOD)) == []
 
 
-def test_same_two_syllable_ending_run_is_monotone():
+def test_same_two_syllable_ending_run_is_not_checked_any_more():
+    # 2026-11-06 — 자연스러운 문장이 네 번 「했다」로 끝나면 그대로 둔다(test_style_desk_discretion).
     html = desk('<p>지수가 올랐다. 금리가 올랐다. 달러가 올랐다. 유가가 올랐다.</p>')
-    assert 'monotone' in keys(html)
+    assert 'monotone' not in keys(html)
 
 
 def test_old_monotone_rule_still_applies_without_declaration():
@@ -70,7 +71,7 @@ def test_rhetorical_questions():
     two = desk('<p>나머지 업종은 어땠을까? 대부분 내렸다. 그럼 무엇을 기다릴까? '
                '정상회담이다.</p>')
     one = desk('<p>이 상승을 넓은 위험선호로 읽을 수 있을까? 아직 아니다.</p>')
-    assert 'question' in keys(two, 'fail')
+    assert 'question' in keys(two, 'warn')          # 2026-11-06 부터 경고만
     assert 'question' not in keys(one)
 
 
@@ -99,7 +100,7 @@ def test_provenance_block_may_hold_the_calculation():
 def test_provenance_block_is_not_a_hiding_place_for_prose():
     long_text = '코스피는 오늘 올랐다. ' * 80
     html = desk(GOOD + f'<details data-provenance><p>{long_text}</p></details>')
-    assert 'provenance' in keys(html, 'fail')
+    assert 'provenance' in keys(html, 'warn')       # 2026-11-06 부터 경고만
 
 
 def test_bond_rally_wording_is_ambiguous_even_in_the_headline():
@@ -118,7 +119,7 @@ def test_warnings_do_not_fail():
     assert 'hedge' in keys(hedges, 'warn')
     repeat = desk('<p>시가는 7,154였다.</p><p>7,154가 고가였다.</p>'
                   '<p>지수는 7,154에서 밀렸다.</p><p>다시 7,154를 못 봤다.</p>')
-    assert 'repeat_number' in keys(repeat, 'warn')
+    assert 'repeat_number' not in keys(repeat)      # 2026-11-06 에 뺐다
 
 
 def test_pm_reader_needs_no_gloss_but_plain_transliterations_still_count():
@@ -182,21 +183,11 @@ def test_polite_endings_without_a_period_or_inside_quotes_count():
     assert 'question' in keys(qs)
 
 
-# --- 판단 동사 (2026-09-24, 증권사 리포트 기준) ---
+# --- 판단 동사 경고는 2026-11-06 에 뺐다 — 판단은 사실과 논리 속에 드러나도 된다 ---
 
-def test_strategy_comment_without_an_owned_judgment_is_warned():
-    hedged = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 어느 쪽이 밀었는지는 내일 갈린다. '
-                  '정책 재가격화에 가까워 보인다.</p><h2>오늘의 장</h2>' + GOOD)
-    owned = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 정책 재가격화에 가깝다고 판단한다. '
-                 '어느 쪽이 밀었는지는 내일 갈린다.</p><h2>오늘의 장</h2>' + GOOD)
-    assert 'judgment_verb' in keys(hedged, 'warn')
-    assert 'judgment_verb' not in keys(owned)
-    assert 'judgment_verb' not in keys(desk(GOOD))          # 섹션이 없으면 보지 않는다
-
-
-def test_watching_is_not_a_judgment():
-    html = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 내일 실질금리를 지켜본다.</p><h2>x</h2>')
-    assert 'judgment_verb' in keys(html, 'warn')
+def test_strategy_comment_is_not_asked_for_a_judgment_verb():
+    hedged = desk('<h2>전략 코멘트</h2><p>금리가 급등했다. 내일 실질금리를 지켜본다.</p><h2>x</h2>')
+    assert 'judgment_verb' not in keys(hedged)
 
 
 # ── 분석 언어 ↔ 전달 언어 (2026-10-13 사용자 문체 비평, STYLE_EXEMPLARS §10) ──────────

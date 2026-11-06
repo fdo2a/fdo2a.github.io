@@ -8,6 +8,8 @@
 (style_log 17건 중 7건이 지시문에 없던 규칙으로 전체 거부였다). 상수를 지시문에 꽂지 않고
 여기서 맞대는 것은 러너의 import 결합을 늘리지 않으려는 것이다.
 """
+import pytest
+
 import check_readability as readability
 import review_gate as g
 from us import prose_swap, style
@@ -33,11 +35,28 @@ def test_connectives_may_not_invent_causes():
     assert '원문이 말한 관계' in PROMPT
 
 
+# 옛 한도를 상수와 맞대는 단언은 고쳐 쓰는 경로가 꺼져 있는 동안만 의미가 있다. 켜면 아래
+# 가드가 대신 돈다 — 그 한도들은 2026-11-06 부터 발행을 막지 않는다.
+_OLD_PATH_ONLY = pytest.mark.skipif(g.STYLE_REWRITE, reason='STYLE_REWRITE 를 켜면 가드가 대신 본다')
+
+OLD_LIMIT_PHRASES = ('개 이어지면 안 된다', '문단은 글 전체에서', '합계 세 번까지', '숫자는 여섯 개까지')
+
+
+def test_reenabling_the_rewrite_requires_the_loosened_rules():
+    if not g.STYLE_REWRITE:
+        assert any(p in PROMPT for p in OLD_LIMIT_PHRASES)   # 지금은 옛 지시문 그대로다 — 가드가 볼 대상
+        return
+    left = [p for p in OLD_LIMIT_PHRASES if p in PROMPT]
+    assert not left, f'STYLE_PROMPT 에 2026-11-06 에 푼 한도가 남아 있다: {left}'
+
+
+@_OLD_PATH_ONLY
 def test_figure_limit_matches_the_strict_gate():
     # --strict 는 warn 도 반려라 FAIL 이 아니라 WARN 이 실제 한도다.
     assert f'숫자는 {COUNT[readability.FIG_WARN]} 개까지' in PROMPT
 
 
+@_OLD_PATH_ONLY
 def test_whole_post_limits_match_the_style_gate():
     # 음차 용어 한도는 적지 않는다 — jargon_stack 은 COMMON 을 세지 않아서, 적으면 게이트가
     # 허용하는 「밸류에이션과 모멘텀」까지 막는다(2026-10-10 codex 설계 검토 #2).

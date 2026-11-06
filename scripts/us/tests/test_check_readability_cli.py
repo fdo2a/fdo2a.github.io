@@ -72,14 +72,15 @@ def test_a_long_sentence_no_longer_blocks_publishing(tmp_path):
     assert 'FAIL' not in r.stdout
 
 
-def test_figure_density_still_blocks(tmp_path):
-    """길이는 풀되 수치 밀도는 남긴다 — 기사도 한 문장에 수치 여섯이면 안 읽힌다."""
+def test_figure_density_is_a_note_not_a_block(tmp_path):
+    """2026-11-06 — 문장당 수치 여섯을 넘어도 막지 않는다. 읽기 어려우면 표로 옮기라는 참고다
+    (test_check_readability_style_notes)."""
     dense = ('S&P 500은 6,584.29로 0.85% 올랐고 나스닥은 22,141.10으로 0.72%, '
              '다우는 45,883.45로 1.36%, 러셀은 2,391.05로 2.11%, '
              '10년물은 4.06%로 3.2bp 움직였습니다.')
     p = _post(tmp_path, '<p>%s</p>' % dense)
     r = _run(p, '--strict')
-    assert r.returncode == 1, r.stdout
+    assert r.returncode == 0, r.stdout
     assert '수치' in r.stdout
 
 
@@ -120,8 +121,8 @@ def test_output_states_the_limits_so_nobody_reads_the_gate_source(tmp_path):
     echo = "".join("<p>코스피는 오늘 7,017 에서 마감했고 거래가 이어졌다 %d.</p>" % i
                    for i in range(4))
     r = _run(_post(tmp_path, dense + echo), "--strict")
-    assert r.returncode == 1
+    assert r.returncode == 0                    # 문체 참고는 막지 않는다(2026-11-06)
     out = r.stdout
-    assert "한도 6" in out                      # 문장당 수치: 경고선
-    assert "4회 이상" in out or "한도 3" in out  # 반복 수치
+    assert "6개 넘음" in out                    # 문장당 수치: 참고선
+    assert "되풀이" not in out                  # 반복 수치 검사는 뺐다
     assert "기준" in out and "표" in out        # 무엇을 세는지(표는 제외)

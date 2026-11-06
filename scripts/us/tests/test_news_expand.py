@@ -48,9 +48,11 @@ def _runs(html):
 
 def test_summary_paragraph_is_exempt_from_the_ending_run_check():
     out, _ = X.expand('<!--NEWS:g1|연준 인상-->', NEWS)
-    wrap = '<body data-register="da"><section><h2>오늘의 뉴스</h2>{}</section></body>'
+    # 데스크 문서는 2026-11-06 부터 어미 반복을 세지 않는다 — 면제가 표시에 묶여 있는지는
+    # 반복 검사가 아직 도는 선언 없는 문서로 본다(면제는 `_prose_html` 이라 문서 종류와 무관).
+    wrap = '<body><section><h2>오늘의 뉴스</h2>{}</section></body>'
     assert not _runs(wrap.format(out))
-    # 같은 문단을 작성자가 직접 쓰면(표시 없음) 「했다」 4연속으로 걸린다 — 면제가 표시에 묶여 있다.
+    # 같은 문단을 작성자가 직접 쓰면(표시 없음) 「~다」 연속으로 걸린다 — 면제가 표시에 묶여 있다.
     assert _runs(wrap.format(out.replace(' data-summary="g1"', '')))
 
 
@@ -65,7 +67,7 @@ def test_single_quoted_marker_is_neither_exempt_nor_unchecked():
     fake = ('<section><h2>오늘의 뉴스</h2><div class="news-item" data-news="g1">'
             "<p class=\"news-head\">제목</p><p data-summary='g1'>지어낸 문장이다.</p></div></section>")
     assert any('data-summary' in v for v in news_check(fake, NEWS, '2026-09-25'))
-    wrap = '<body data-register="da">{}</body>'
+    wrap = '<body>{}</body>'
     runs = ('<p data-summary=\'g1\'>연준이 결정했다. 시장이 반영했다. 금리는 상승했다. '
             '주가는 하락했다.</p>')
     assert _runs(wrap.format(runs))

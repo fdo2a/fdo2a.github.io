@@ -53,7 +53,7 @@ Publishes a US equity morning brief automatically every trading day.
 
 ## Desk prose gate (US/KR, rule 5 in site/AGENTS.md)
 
-`style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (capped at 2 × 600 chars). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py` — the old 「~다」 run limit is what pushed writers into rhetorical questions.
+`style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (2 × 600 chars, advisory). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py` — the old 「~다」 run limit is what pushed writers into rhetorical questions.
 
 **Jev region filter** (economy·macro·politics, before dedupe): read `docs/superpowers/specs/2026-10-28-jev-region-filter.md` before touching it in `fetch_news.py`.
 **Run lock, news freeze**: read `docs/superpowers/specs/2026-09-26-routine-lock-and-news-freeze.md` before touching `run_lock.sh`, `fetch_news.py` or `news_expand.py`.

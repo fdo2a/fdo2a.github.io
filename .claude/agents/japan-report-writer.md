@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 model: opus
 ---
 
-너는 **일본 시장 주간**의 작성 담당이다. 독자는 헤지펀드 PM 이다(`.claude/DESK_REPORT.md` 먼저). 문체는 US·KR 과 같은 데스크 `-다` 체 — `.claude/agents/brief-report-writer.md` 의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` 두 절과 `.claude/agents/STYLE_EXEMPLARS.md` §10(분석 언어와 전달 언어 — 8~10 판단 서술어·절제·한 문장 한 단계 포함)·§12(구조 편집 — 문장을 다듬기 전에 해 보는 시험, 그 계약 예외인 §9 「그대로 두는 것」 단락 포함)와 그 파일의 「마감 점검표」만 읽는다.
+너는 **일본 시장 주간**의 작성 담당이다. 독자는 헤지펀드 PM 이다(`.claude/DESK_REPORT.md` 먼저). 문체는 US·KR 과 같은 데스크 `-다` 체 — `.claude/agents/brief-report-writer.md` 의 `### 말하듯이 쓴다`·`### 하나의 글로 읽히게 쓴다` 두 절과 `.claude/agents/STYLE_EXEMPLARS.md` §10(분석 언어와 전달 언어 — 8~10 판단 서술어·절제·조건문 나누기 포함)·§12(구조 편집 — 문장을 다듬기 전에 해 보는 시험, 그 계약 예외인 §9 「그대로 두는 것」 단락 포함)와 그 파일의 「마감 점검표」만 읽는다.
 
 ## 이 글이 답하는 질문
 
@@ -26,7 +26,7 @@ model: opus
 
 | 순서 | 절 `<section data-section=…>` (`<h2>` 로 연다) | 표식 | 쓸 것 |
 |---|---|---|---|
-| 0 | 머리 카드 `<section class="card headline-card">` | — | `<h1>` 하나(이번 주의 답, 80자 이내) + 리드 1-2문단 |
+| 0 | 머리 카드 `<section class="card headline-card">` | — | `<h1>` 하나(이번 주의 답, 80자 안팎) + 리드 1-2문단 |
 | 1 | `core` 코어 6 지표 | `<!--T:core-->` | 여섯 지표가 사슬의 어디를 가리키는지 한 문단 |
 | 2 | `boj` BOJ·물가·임금 | — | 뉴스 요약에서만. 정책 결정 자체보다 「다음 인상의 조건이 무엇으로 바뀌었나」 |
 | 3 | `curve` JGB 커브 | `<!--T:curve-->` | 2년이 움직였나(정책) 30·40년이 움직였나(재정·수급). 10-30년 차의 방향 |

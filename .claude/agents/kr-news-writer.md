@@ -40,7 +40,7 @@ model: opus
 
 ## 문체
 
-`.claude/agents/STYLE_EXEMPLARS.md` 를 쓰기 전에 읽는다. 데스크 문서다(`<body data-register="da">`, 셸이 단다) — **어미는 `-다` 로 고정**, 수사 의문문·작업 어휘(원장·회차·파일명·코드, 입력 파일 이름) 금지, 판단에는 주어를 세우고 인과는 동사로 잇는다, 한 문장에 관계 하나. 기사 요약(`data-summary`)은 손대지 않는다. `python3 scripts/check_style.py <html>` 이 검사한다.
+`.claude/agents/STYLE_EXEMPLARS.md` 를 쓰기 전에 읽는다. 데스크 문서다(`<body data-register="da">`, 셸이 단다) — **어미는 `-다` 로 고정**, 수사 의문문·작업 어휘(원장·회차·파일명·코드, 입력 파일 이름) 금지, 판단에는 주어를 세우고 인과는 동사로 잇는다, 하나의 논리 흐름이면 복문도 좋다(문체 참고는 발행을 막지 않는다 — 다시 읽어 보고 자연스러우면 그대로, 2026-11-06). 기사 요약(`data-summary`)은 손대지 않는다. `python3 scripts/check_style.py <html>` 이 검사한다.
 
 ## HTML — 본문만 쓴다
 

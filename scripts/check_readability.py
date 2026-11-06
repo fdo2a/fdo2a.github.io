@@ -26,11 +26,15 @@ ROOT = Path(__file__).resolve().parent.parent
 # 58%는 수치가 넷 이하라 **수치 밀도 검사로는 잡히지 않는다** — 길이 검사를 없애면
 # 그만큼이 아무 데도 안 걸린다(codex 설계 검토 2026-09-14).
 LEN_INFO = 120
-# 기사체로 가면서 넷 → 여섯으로 풀었다. 기사도 한 문장에 수치 여섯이면 안 읽히므로
-# 없애지는 않는다.
+# 기사체로 가면서 넷 → 여섯으로 풀었다. 2026-11-06 부터는 여섯을 넘어도 막지 않는다 —
+# 경제지표를 견주는 문장은 수치가 많을 수 있다. 읽기 어려우면 표로 옮기라는 참고다.
 FIG_WARN, FIG_FAIL = 6, 8
-ECHO_LIMIT = 3
 H1_WARN, H1_FAIL = 80, 110
+# 문체 참고(notes)는 **발행을 막지 않는다** — `--strict` 도 세지 않는다(2026-11-06 사용자 결정
+# 「경고 문구가 아니라 발행 차단 조건을 바꿔야 한다」). 모든 발행 경로가 `--strict` 로 돌아
+# 경고가 곧 반려였고, 반려를 피하려 자연스러운 문장을 고쳐 쓰는 것이 AI 문체를 만들었다.
+# 막는 것은 조판이 깨지는 구조 문제뿐이다. 같은 수치 반복 검사는 이날 뺐다(핵심 수치는
+# 논거라 되풀이될 수 있다).
 # 헤드라인은 본문과 따로 센다. 2026-09-14 에 본문 임계를 넷 → 여섯으로 풀 때 이 검사가
 # 같은 상수를 쓰고 있어서 제목 규칙까지 조용히 함께 풀렸다 — 계약은 그대로 「수치 넷
 # 이내」다(`brief-report-writer.md` 구조 1번).
@@ -45,10 +49,11 @@ LEGEND = (
     "muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.\n"
     "        수치: 숫자 토큰(%%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, "
     "「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.\n"
-    "        문장당 수치 %d개 초과 warn · %d개 초과 FAIL. 같은 수치는 %d개 문장까지(한 문장 안 중복은 1회).\n"
-    "        과잉 정밀(FAIL): 원 단위 소수, 백만 이상 값의 소수. 천 단위+소수(warn): 호가가 아니면 반올림.\n"
-    "        헤드라인 %d자 초과 warn · %d자 초과 FAIL · 수치 %d개 이하. --strict 에서는 warn 도 반려다."
-    % (FIG_WARN, FIG_FAIL, ECHO_LIMIT, H1_WARN, H1_FAIL, H1_FIG_WARN))
+    "        note(문체 참고): 문장당 수치 %d개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·"
+    "천 단위+소수, 헤드라인 %d자 초과·수치 %d개 초과.\n"
+    "        note 는 발행을 막지 않는다(--strict 도 세지 않는다) — 다시 읽어 보고, 자연스러우면 그대로 둔다.\n"
+    "        FAIL 은 조판이 깨지는 구조 문제뿐이다: 섹션 경계를 넘는 div, 인라인 이미지(--no-inline-images), 조판 미적용."
+    % (FIG_WARN, H1_WARN, H1_FIG_WARN))
 
 
 def clip(s, n=90):
@@ -58,31 +63,25 @@ def clip(s, n=90):
 def audit(path, no_inline_images=False):
     html = Path(path).read_text(encoding="utf-8")
     m = R.measure(html)
-    fails, warns, infos = [], [], []
+    fails, warns, notes, infos = [], [], [], []
 
     # 헤드라인은 «전부» 본다. 첫 개만 보면 짧은 미끼 h1 을 앞에 두는 것으로
     # 길이·수치 검사를 통째로 피할 수 있다(발행본 78편은 전부 h1 이 하나다).
     for h1 in R.headings(html):
-        if len(h1) > H1_FAIL:
-            fails.append("헤드라인 %d자 · 한도 %d자 초과" % (len(h1), H1_FAIL))
-        elif len(h1) > H1_WARN:
-            warns.append("헤드라인 %d자 · %d자 안으로 줄일 것" % (len(h1), H1_WARN))
+        if len(h1) > H1_WARN:
+            notes.append("헤드라인 %d자 (%d자 넘음)" % (len(h1), H1_WARN))
         h1_figures = len(R.figures(h1))
         if h1_figures > H1_FIG_WARN:
-            warns.append("헤드라인 수치 %d개 · 한도 %d개" % (h1_figures, H1_FIG_WARN))
+            notes.append("헤드라인 수치 %d개 (%d개 넘음)" % (h1_figures, H1_FIG_WARN))
 
     for s, n in R.long_sentences(html, LEN_INFO):
         infos.append("%d자 문장 · %s" % (n, clip(s)))
     for s, n in R.dense_sentences(html, FIG_WARN):
-        (fails if n > FIG_FAIL else warns).append(
-            "수치 %d개 문장 (한도 %d, %d 초과는 FAIL) · %s" % (n, FIG_WARN, FIG_FAIL, clip(s)))
+        notes.append("수치 %d개 문장 (%d개 넘음 — 읽기 어려우면 표로) · %s" % (n, FIG_WARN, clip(s)))
     for tok in sorted(set(R.overprecise(html))):
-        fails.append("산문 과잉 정밀 %s — 반올림할 것" % tok)
+        notes.append("산문 과잉 정밀 %s — 판정 경계 값이 아니면 반올림을 생각해 본다" % tok)
     for tok in sorted(set(R.loosely_precise(html))):
-        warns.append("산문 소수점 %s — 호가가 아니면 반올림" % tok)
-    for tok, n in R.echoed_figures(html, ECHO_LIMIT):
-        warns.append("같은 수치 %s가 산문에서 %d회 되풀이 (한도 %d회 — 문장 단위로 센다)"
-                     % (tok, n, ECHO_LIMIT))
+        notes.append("산문 소수점 %s — 호가가 아니면 반올림을 생각해 본다" % tok)
 
     for sid, why in R.section_div_breaks(html):
         # 2026-09-03 발행본: §3이 div를 연 채 끝나고 §8에 짝 없는 </div>가 있어,
@@ -100,7 +99,7 @@ def audit(path, no_inline_images=False):
 
     if not R.has_override(html):
         fails.append("조판 오버라이드 미적용 — apply_readability.py를 돌릴 것")
-    return m, fails, warns, infos
+    return m, fails, warns, notes, infos
 
 
 def main(argv):
@@ -112,7 +111,7 @@ def main(argv):
         return 2
     bad = 0
     for p in paths:
-        m, fails, warns, infos = audit(p, no_inline_images=no_inline)
+        m, fails, warns, notes, infos = audit(p, no_inline_images=no_inline)
         print("== %s" % p)
         # 문장이 없으면 `measure()` 는 개수만 돌려준다. 그것을 모르고 분포 키를
         # 인덱싱하던 판은 산문 없는 문서에서 KeyError 로 죽었고, 죽은 자리가
@@ -133,6 +132,8 @@ def main(argv):
             print("   FAIL %s" % f)
         for w in warns:
             print("   warn %s" % w)
+        for x in notes:
+            print("   note %s" % x)
         # info 는 **종료 코드에 들어가지 않는다.** 여기를 warns 로 두면 모든 발행
         # 경로가 `--strict` 로 도는 탓에 경고 한 줄이 곧 발행 중단이 되고, 길이
         # 제약을 푼다는 변경이 아무것도 바꾸지 못한다(codex 검토 2026-09-14 치명).
@@ -140,11 +141,9 @@ def main(argv):
             print("   info %s" % x)
         if len(infos) > 5:
             print("   info 길이 표시 %d건 중 5건만 출력 — 막지 않는다" % len(infos))
-        if fails or warns:
-            print(
-                "   repair 헤드라인 압축 → 긴 문장 분리 → 정확값은 표로 이동 → "
-                "산문 반올림 → 반복 수치 제거 후 재검사"
-            )
+        if fails:
+            print("   repair 섹션 div 짝 맞춤 → 인라인 이미지는 파일로 → apply_readability.py 재실행 후 재검사")
+        if fails or warns or notes:
             print(LEGEND)
         if fails or (strict and warns):
             bad += 1

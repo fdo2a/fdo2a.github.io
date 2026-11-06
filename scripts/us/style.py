@@ -305,18 +305,48 @@ def findings(html):
                                 f'({MAX_SAME_OPENER}번까지)'))
 
     desk = is_desk_register(html)
-    worst, tail_word = (_same_ending_run(texts) if desk else (_da_run(texts), '~다'))
-    if worst > MAX_SAME_ENDING_RUN:
-        out.append(_finding('monotone', worst,
-                            f'한 문단에서 「{tail_word}」로 끝나는 문장이 {worst}개 이어졌다'
-                            f'({MAX_SAME_ENDING_RUN}개까지). '
-                            + ('동사를 바꾸거나 문장을 합친다 — 어미는 -다 그대로 둔다'
-                               if desk else '종결을 섞는다')))
+    # 데스크 문서는 어미 반복을 세지 않는다(2026-11-06) — 자연스러운 문장이 네 번 「했다」로
+    # 끝나면 그대로 둔다. 반복을 없애려 「진행됐다·관측됐다」로 바꾸는 것이 더 어색하다.
+    if not desk:
+        worst = _da_run(texts)
+        if worst > MAX_SAME_ENDING_RUN:
+            out.append(_finding('monotone', worst,
+                                f'한 문단에서 「~다」로 끝나는 문장이 {worst}개 이어졌다'
+                                f'({MAX_SAME_ENDING_RUN}개까지). 종결을 섞는다'))
 
     out += _plain_language(texts, whole, gloss=not desk)
     if desk:
         out += _desk_findings(html, texts)
-    return out
+    return [_as_style_note(f) for f in out]
+
+
+# 발행을 막는 것은 이 셋뿐이다(2026-11-06 사용자 결정 「수치·사실·출처는 엄격하게 통제하고,
+# 문장·구성·리듬은 필자의 재량을 넓혀야 한다」). -다 위반, 독자 문장의 작업 어휘, 금리와
+# 가격을 헷갈리게 하는 「국채 급등」 — 셋 다 데스크 문서에서만 도는 검사다. 나머지 문체
+# 지적은 모든 문서에서 경고로만 보이고, 경고는 고치라는 명령이 아니라 다시 읽어 보라는
+# 표시다 — 경고를 없애려고 자연스러운 문장을 고쳐 쓰면 그것이 AI 문체를 만든다.
+# 완화는 지적을 줄이기만 하므로 교정 러너가 다시 검사하는 옛 글을 새로 막지 않는다.
+BLOCKING = frozenset({'register', 'internal', 'bond_ambiguous'})
+STYLE_NOTE = ' — 다시 읽어 보고, 자연스러우면 그대로 둔다'
+_LIMIT_NOTE = re.compile(r'\([^()]*까지[^()]*\)')
+
+
+# 줄표 뒤가 지시문인 메시지(codex 구현 검토 #3). 다른 메시지의 줄표 뒤는 관찰(예시·목록·
+# 「X → 「Y」」)이라 남긴다 — 지시문을 문형으로 가려내면 따옴표 속 예시를 함께 자른다.
+_ORDER_AFTER_DASH = frozenset({'emdash', 'hedge', 'provenance'})
+
+
+def _as_style_note(f):
+    """관찰만 남기고 재독 안내를 붙인다 — 「~한다」 지시문은 뗀다."""
+    if f['key'] in BLOCKING:
+        return f
+    # 메시지의 첫 문장이 관찰이고 그 뒤는 지시문이다(「…. 숫자로 쓴다」「…. 한 줄로 모으고 …」,
+    # codex 구현 재검토 #4). 관찰 속 예시는 한 문장 조각이라 「. 」를 품지 않는다.
+    msg = f['message'].split('. ', 1)[0]
+    msg = _LIMIT_NOTE.sub('', msg).rstrip(' .')
+    if f['key'] in _ORDER_AFTER_DASH:
+        msg = msg.rsplit(' — ', 1)[0]
+    return dict(f, level='warn', message=msg + STYLE_NOTE)
 
 
 def _da_run(texts):
@@ -631,11 +661,8 @@ def _desk_findings(html, texts):
                             f'({MAX_PROVENANCE_BLOCKS}개·{MAX_PROVENANCE_CHARS}자까지) — '
                             '입력·공식·결과만 둔다. 줄글은 본문으로'))
 
-    m = _STRATEGY.search(body)
-    if m and not _JUDGMENT.search(_text(m.group(1))):
-        out.append(_finding('judgment_verb', 0,
-                            '전략 코멘트에 판단 동사(판단한다·본다·전망한다·예상한다)가 없다 — '
-                            '판단을 섹션 첫머리에 자기 동사로 말한다', 'warn'))
+    # 전략 코멘트의 판단 동사 경고는 2026-11-06 에 뺐다 — 판단은 사실과 논리 속에 드러나도
+    # 된다. 확신 수준의 구분(사실·보도·추론·가능성)은 작성 지시문이 지킨다.
 
     whole = ' '.join(texts)
     dashes = whole.count('—')
@@ -684,15 +711,5 @@ def _desk_findings(html, texts):
                             '날수를 고유어로 썼다 — ' + ', '.join(f'「{d}」' for d in days[:4])
                             + '. 「9일째」·「4거래일 연속」처럼 숫자로 쓴다(「하루」는 그대로, STYLE_EXEMPLARS §10)',
                             'warn'))
-
-    counts = {}
-    for n in _NUMBER.findall(whole):
-        counts[n] = counts.get(n, 0) + 1
-    repeated = sorted((k for k, v in counts.items() if v > MAX_SAME_NUMBER),
-                      key=lambda k: -counts[k])
-    if repeated:
-        shown = ', '.join(f'{k}({counts[k]}회)' for k in repeated[:4])
-        out.append(_finding('repeat_number', len(repeated),
-                            f'같은 수치가 {MAX_SAME_NUMBER}번 넘게 나온다 — {shown}. '
-                            '다시 부를 때는 수치 없이 「시가가 곧 고가」처럼', 'warn'))
+    # 같은 수치 반복 경고는 2026-11-06 에 뺐다 — 핵심 수치는 논거라 되풀이될 수 있다.
     return out

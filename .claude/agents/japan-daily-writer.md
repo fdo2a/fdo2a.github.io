@@ -20,7 +20,7 @@ model: sonnet
 
 `jpd_<S>.body.html`(절 본문만), `jpd_<S>.meta.json`(`{"title", "summary"}` — title 은 「일본 증시 마감 — 」 뒤에 그날의 답, summary 는 한 문장). 껍데기·표·크레디트는 `build_japan_daily.py assemble` 이 만든다. 표식은 **그대로** 둔다.
 
-머리 카드 `<section class="card headline-card">` 에 `<h1>` 하나(그날의 답, 80자 이내)와 리드 1-2문단. 제목·소제목의 숫자도 스냅샷 값만. **표(`<table>`)는 직접 만들지 않는다** — 조립이 거부한다. 이어서 `diag` 의 순서대로 `<section class="card" data-section="이름"><h2>제목</h2>…</section>`:
+머리 카드 `<section class="card headline-card">` 에 `<h1>` 하나(그날의 답, 80자 안팎)와 리드 1-2문단. 제목·소제목의 숫자도 스냅샷 값만. **표(`<table>`)는 직접 만들지 않는다** — 조립이 거부한다. 이어서 `diag` 의 순서대로 `<section class="card" data-section="이름"><h2>제목</h2>…</section>`:
 
 | 절 | `<h2>` | 표식 | 쓸 것 |
 |---|---|---|---|

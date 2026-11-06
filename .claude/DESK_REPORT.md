@@ -201,8 +201,10 @@ A draft is ready only when all applicable checks below pass:
   grounds, asset section = that asset's data, cause analysis and new facts, review =
   what changed); other sections name
   it without re-arguing it, while keeping their own independent judgments and every
-  marker-required number. Each paragraph does one job: its first sentence carries the
-  point and its last sentence belongs to it, not to the next paragraph. Section
+  marker-required number. Each paragraph does one job and its last sentence belongs to it,
+  not to the next paragraph. Conclusion-first is a section rule (user decision 2026-11-06):
+  the section's opening carries its conclusion; later paragraphs may open with a figure or
+  with what the previous paragraph established. Section
   contracts (markers, positions, counts, minimum content) outrank this edit
   (`.claude/agents/STYLE_EXEMPLARS.md` §12, user decision 2026-10-31; applies to the
   prose writers compose — generated summaries, contested analysis and code-rendered

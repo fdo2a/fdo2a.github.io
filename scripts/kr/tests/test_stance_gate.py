@@ -48,9 +48,10 @@ def test_wrong_order_is_reported():
     assert any("문단 순서가" in x for x in v)
 
 
-def test_thin_gap_is_reported():
-    v = check(_html({"gap": "기대가 다르다."}), STANCE, EVAL)
-    assert any("§2 gap" in x for x in v)
+def test_placeholder_gap_is_reported():
+    # 2026-11-06 부터 80자 하한 대신 문장 여부를 본다(test_stance_gate_content).
+    v = check(_html({"gap": "기대 차이."}), STANCE, EVAL)
+    assert any("§2 gap" in x and "문장" in x for x in v)
 
 
 def test_action_without_grade_passes():

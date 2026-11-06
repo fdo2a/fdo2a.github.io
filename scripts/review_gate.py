@@ -898,6 +898,9 @@ STYLE_PROMPT = """
 # 고쳐 쓰는 옛 경로(STYLE_PROMPT·style_pass.apply)는 코드만 남긴다 — 다시 켜는 것은 이 상수를 바꾸는
 # 커밋이다. 지적은 사실 오류가 아니라서 정정(corrector)으로 보내지 않고 `reviews/style_findings/`(git
 # 제외)에 둔다 → 주간 `scripts/review/style_digest.py` → 사람.
+# 다시 켜기 전에 STYLE_PROMPT 를 2026-11-06 문체 완화에 맞춘다 — 어미 반복·같은 첫 낱말·
+# 번역투 횟수·문장당 수치 여섯은 이제 발행을 막지 않는다. 옛 한도가 남은 채 켜면
+# `test_style_prompt.test_reenabling_the_rewrite_requires_the_loosened_rules` 가 빨갛게 된다.
 STYLE_REWRITE = False
 STYLE_FINDINGS = 'reviews/style_findings'
 STYLE_FINDINGS_HEAD = '=== 문체 지적 ==='
