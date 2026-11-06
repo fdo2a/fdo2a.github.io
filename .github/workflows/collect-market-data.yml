@@ -201,6 +201,32 @@ jobs:
         continue-on-error: true
         run: python scripts/build_auctions.py --datadir data
 
+      - name: Fed H.4.1 and Treasury refunding (liquidity)
+        # Non-core (2026-11-07, spec docs/superpowers/specs/2026-11-07-us-liquidity-section.md). Runs on
+        # every collection, but opens the Fed/Treasury pages only once a scheduled release date has come
+        # (H.4.1: Thursday or the next federal business day; QRA: the landing's 「next release」 dates) and
+        # keeps checking until that round is found. Runs even when the market collection was skipped, and
+        # the published posts decide what is still unprinted. Pending releases are warnings (exit 0).
+        id: liquidity
+        continue-on-error: true
+        run: python scripts/build_liquidity.py --datadir data --repo .
+
+      - name: Sanitize liquidity
+        # data/liquidity/{table.html,qra/*.txt} must be this run's and complete, or empty (same contract
+        # as data/releases). state.json is kept — it holds only verified rounds.
+        if: always()
+        run: python scripts/build_liquidity.py --datadir data --sanitize
+
+      - name: Commit liquidity (market data already complete)
+        if: always() && steps.collect.outputs.skipped == 'true'
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A data/liquidity 2>/dev/null || true
+          if git diff --cached --quiet; then echo 'liquidity: nothing new'; exit 0; fi
+          RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
+          bash scripts/ci/push_with_retry.sh "data: liquidity for ${RD}"
+
       - name: Report status
         run: |
           python - <<'PY'
@@ -235,6 +261,8 @@ jobs:
           # 입찰 표는 입찰 없는 날·실패한 날 지워진다 — -A 로 삭제까지 담는다.
           git add data/auctions.json 2>/dev/null || true
           git add -A data/auction_table.html 2>/dev/null || true
+          # 유동성: 표·QRA 원문은 이 실행 것만 남는다 — -A 로 삭제까지.
+          git add -A data/liquidity 2>/dev/null || true
           git add data/fomc_dates.json 2>/dev/null || true
           # -A: a release that failed today is *deleted* from the directory — commit that too.
           git add -A data/releases 2>/dev/null || true

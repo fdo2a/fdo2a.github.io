@@ -591,6 +591,20 @@ def _delegations(html, doc, sections, data, market, rd):
         if rd >= F_EFF and board.get('report_date') == rd and not fund_check(html, board, 'us', rd):
             out += [(n, 'check_fund') for n in doc.nodes
                     if 'data-fund-board' in n.attrs and _inside(n, fund)]
+    liq = by_title.get('유동성·수급')
+    lbook = data.get('liquidity')
+    if liq is not None and isinstance(lbook, dict) and lbook.get('status') == 'complete':
+        # 책이 계산한 원장으로 대조한다(원장 변경은 check_liquidity 가 따로 막는다). 게이트는 표 칸과
+        # 표식 문단의 **모든** 수치 토큰을 데이터와 맞추고 다른 토큰은 거부하므로 요소 단위 위임이 정직하다.
+        from us import liquidity_gate as lg
+        led = lbook.get('ledger') or {}
+        if not lg.check(html, lbook, rd, (set(led.get('h41') or []), set(led.get('qra') or []))):
+            out += [(n, 'check_liquidity') for n in doc.nodes
+                    if _inside(n, liq) and (
+                        (n.tag == 'table' and ('data-h41-release' in n.attrs or 'data-qra-table' in n.attrs))
+                        or (n.tag == 'div' and 'caption' in _cls(n))
+                        or (n.tag == 'p' and any(a in n.attrs for a in ('data-liq', 'data-qra-doc',
+                                                                         'data-qra-guidance'))))]
     mac = by_title.get('매크로')
     econ = data.get('econ_indicators')
     if mac is not None and isinstance(econ, dict):

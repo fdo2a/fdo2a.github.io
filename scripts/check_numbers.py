@@ -64,6 +64,13 @@ def main(argv=None):
         except ValueError as e:
             print(f'FATAL: {k}.json 을 읽지 못했다: {e}', file=sys.stderr)
             return 2
+    try:
+        data['liquidity'] = _read(os.path.join(args.datadir, 'liquidity', 'liquidity.json'))
+    except OSError:
+        pass
+    except ValueError as e:
+        print(f'FATAL: liquidity.json 을 읽지 못했다: {e}', file=sys.stderr)
+        return 2
     # 글 날짜와 데이터 날짜가 다르면 다른 날 값으로 대조하게 된다 — 판정할 수 없다(발행 커밋의 data 가
     # 다음 세션인 경우가 있다: 10/15 글 → 10/16 data)
     rd = (data['market_data'] or {}).get('report_date') if isinstance(data['market_data'], dict) else None

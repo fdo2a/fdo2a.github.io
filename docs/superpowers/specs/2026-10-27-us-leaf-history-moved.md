@@ -26,3 +26,16 @@ US 체인 31,631 / 31,744 B 에서 입찰 섹션 안내가 들어가지 않아 �
 
 - US 브리프의 전체 이력은 프로젝트 메모리 `us-morning-brief-project` 에 있다(잎사귀 머리에서 뺀 문장).
 - 원문 수집의 TLS 위장 이유(bls.gov·dol.gov 가 일반 클라이언트에 403)는 `scripts/fetch_releases.py` 머리 주석에 있다.
+
+
+## 2026-11-07 — 「유동성·수급」 항목을 넣으려고 옮긴 근거 문장
+
+US 체인이 31,744 B 를 넘어 잎사귀의 근거·이력 문장을 여기로 옮겼다(의무 문장은 잎사귀에 그대로).
+
+- §4 (yield moves) used to say only "how much" and leave the cause blank; that is why it is decomposed.
+- Fed transcript: the failure being prevented is invented quotes, not invented numbers.
+- Macro falsifier: the reader must be able to distinguish the policy hypothesis from its falsifier.
+- macro_next.axis_directions: miss it and a day whose axes actually flipped still folds.
+- data-cause exemption for 미미/보통 is why there is no fixed character-count floor.
+- fred_series full history: macro_metrics computes 60-point momentum and 12-point YoY from it.
+- Weekly trigger check: the routine file existing is not the same as it being scheduled.

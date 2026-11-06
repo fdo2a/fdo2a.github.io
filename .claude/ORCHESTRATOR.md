@@ -43,7 +43,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
    이 루틴은 하루에 여러 번 뜰 수 있다 — 수집 커밋에 걸린 웹훅(레포의 **모든** push 에 반응하고, 현재 두 벌이 걸려 있다)과 예약 크론이 함께 있고, GitHub 예약 실행이 2~5시간씩 밀리므로 순서도 보장되지 않는다. 가드가 없으면 그 여분의 회차가 같은 날 글을 다시 쓴다.
 
-   **발행 커밋 직전에 이 검사를 한 번 더 한다.** 웹훅이 여러 벌이라 두 회차가 거의 동시에 시작할 수 있고, STEP 0 의 검사만으로는 둘 다 통과해 둘 다 쓰게 된다. 커밋 직전에 `git pull` 하고 `posts/<report_date>.html` 이 그 사이 생겼으면 **아무것도 커밋하지 말고 중단한다**. push 가 거절되면(이 레포는 KR·thesis 수집이 함께 쓰므로 **우리와 무관한 커밋 때문에도 거절된다**) 강제로 밀지 말고 `git pull --rebase` 후 `posts/<report_date>.html` 이 원격에 생겼는지 확인한다 — 생겼으면 다른 회차가 발행한 것이니 중단하고, 아니면 그대로 다시 push 한다.
+   **발행 커밋 직전에 이 검사를 한 번 더 한다.** 웹훅이 여러 벌이라 두 회차가 거의 동시에 시작할 수 있고, STEP 0 의 검사만으로는 둘 다 통과해 둘 다 쓰게 된다. 커밋 직전에 `git pull` 하고 `posts/<report_date>.html` 이 그 사이 생겼으면 **아무것도 커밋하지 말고 중단한다**. 그 `git pull` 바로 뒤와 push 거절 뒤 `git pull --rebase` 할 때마다 `check_liquidity.py --html posts/<report_date>.html --datadir <workspace> --repo .` 를 다시 돌린다 — 그사이 다른 글이 같은 H.4.1 회차·QRA 문서를 실었으면 `ledger_changed` 로 실패하고, 위 게이트 절의 재계산 고리로 섹션만 다시 써서 커밋한다. push 가 거절되면(이 레포는 KR·thesis 수집이 함께 쓰므로 **우리와 무관한 커밋 때문에도 거절된다**) 강제로 밀지 말고 `git pull --rebase` 후 `posts/<report_date>.html` 이 원격에 생겼는지 확인한다 — 생겼으면 다른 회차가 발행한 것이니 중단하고, 아니면 그대로 다시 push 한다.
 
 1. `git -C <repo> pull` (or re-clone) to get the latest committed data, then Read `data/market_data.json`.
 2. If it exists, `report_date` matches today's expected US session (most recent US weekday; if it looks stale by >1 trading day, note it), and `"complete": true` — **copy the five data files to the workspace root** (`market_data.json`, `intraday.json`, `econ_indicators.json`, `sector_performance.html`, `yield_curve.png`) and skip STEP 1's market-data collection entirely. Proceed to STEP 1 for research_notes.md only (the web-research half).
@@ -51,6 +51,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
    - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
    - 국채 입찰: `data/auctions.json` 은 **늘** `<workspace>/auctions.json` 으로, `data/auction_table.html` 은 있을 때만 복사한다. `ok: true`·`report_date` 오늘·`today` 비지 않음일 때만 writer 가 「국채 입찰」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다).
+   - 유동성·수급: **`data/liquidity/` 디렉터리 전체**를 `<workspace>/liquidity/` 로 복사한다(`liquidity.json`·`table.html`(있을 때)·`state.json`·`qra/*.txt`). `status: complete`·`report_date` 오늘·`today: true` 일 때만 writer 가 「유동성·수급」 섹션을 쓴다. 실을 회차는 책이 아니라 발행본 원장(`posts/*.html` 의 `data-h41-release`·`data-qra-doc`)이 정한다 — 늦게 확인된 회차도 다음 글이 싣는다.
    - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok`·`partial` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다). HTML 은 그대로 넣는 생성 블록이다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
    - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
@@ -122,6 +123,7 @@ python3 scripts/check_sector_perf.py   --html morning_brief_[DATE].html --datadi
 python3 scripts/check_session.py       --html morning_brief_[DATE].html --datadir <workspace> --market us
 python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_auction.py       --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/check_liquidity.py     --html morning_brief_[DATE].html --datadir <workspace> --repo <repo>
 python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
 python3 scripts/check_telegram.py      --html morning_brief_[DATE].html --tg <workspace>/telegram.json --date [DATE]
@@ -136,6 +138,7 @@ python3 scripts/check_numbers.py       --html morning_brief_[DATE].html --datadi
 - `check_fed.py` — **침묵이 기본값이다.** 신선한 tier-1 연준 이벤트가 없는 날 섹션을 열면 막힌다.
 - `check_numbers.py` — 표 칸 하나하나가 행·열이 가리키는 데이터 값을 인쇄 자릿수로 반올림한 것이어야 한다. 표의 행 이름·열 이름을 바꾸거나 행·열을 더하면 막힌다(지도에 없는 표). 위반 줄이 가리킨 칸만 데이터 값으로 고친다. `경고(문장)` 줄은 막지 않지만 그 문장을 원본과 다시 본다. 집계 줄의 「미검증」은 프로그램이 대조하지 못한 수치 수다. exit 2 는 통과가 아니다(데이터 날짜가 글 날짜와 다르면 2).
 - `check_auction.py` — 「국채 입찰」도 침묵이 기본값이다. 그날 이표채 결과가 없거나 `auctions.json` 이 낡았으면 섹션을 열면 막히고, 결과가 있는데 섹션이 없어도 막힌다. 표는 `auction_table.html` 그대로.
+- `check_liquidity.py` — 「유동성·수급」도 침묵이 기본값이다. 실을 H.4.1 회차·분기조달계획 문서가 없으면 섹션을 열면 막히고, 있으면 없어도 막힌다. 표는 `liquidity/table.html` 그대로, 해석은 표식 문단으로만. **첫 위반 줄이 `ledger_changed:` 면** 수집 뒤 다른 글이 같은 회차를 실은 것이다 — `python3 scripts/build_liquidity.py --datadir <workspace> --repo <repo> --recompute` 를 돌리고 writer 에게 **「유동성·수급」 섹션만** 새 `liquidity/table.html` 로 다시 쓰게 한 뒤 게이트를 전부 다시 돈다. 이 고리는 최대 2회, 그래도 `ledger_changed` 면 중단·보고(회차는 원장에 없는 채로 남아 다음 글이 싣는다).
 - 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
