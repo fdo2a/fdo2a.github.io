@@ -1,0 +1,45 @@
+# WebSearch result summaries — US session 2026-11-05 (collected 2026-11-05 23:20-23:50 UTC)
+WebFetch unavailable in this session (DNS ENOTFOUND for finance.yahoo.com, nbcnews.com, cnbc.com). Items below are search-result summaries, not full-article reads.
+
+1. Yahoo Finance live blog "Stock market today: Dow plunges 1,800 points, Nasdaq enters correction in AI trade meltdown"
+   https://finance.yahoo.com/markets/live/stock-market-today-thursday-november-5-dow-sp-500-nasdaq-plunge-chip-stocks-melt-down-193726491.html
+   - Nasdaq Composite closing -5.5% in correction territory; Philadelphia Semiconductor Index -12%; earlier intraday note Nasdaq about -4%.
+2. NBC News "Stocks plunge as election outcome and AI worries crush tech shares"
+   https://www.nbcnews.com/business/markets/tech-stocks-plunge-ai-midterms-rcna607650
+   - SOX -12.3%, worst day since March 2020; attributes selloff partly to Qualcomm and Arm results reported the prior evening, viewed as mixed.
+3. Benzinga "Chip Stocks Worst Day Since 2020: 28 of 30 in Bear Market"
+   https://www.benzinga.com/markets/equities/26/11/62961405/chip-stocks-worst-day-since-2020-soxx-bear-market
+   - SOX -12.3% worst since 2020-03-16; iShares Semiconductor ETF -12.8%; Micron -17.5%; Nasdaq 100 -6.4%; about $2.2 trillion AI-related market value lost.
+4. InvestingLive "Nasdaq 100 suffers worst day since 2020"
+   https://investinglive.com/stocks/nasdaq-100-suffers-worst-day-since-2020/
+   - Nasdaq 100 -6.36%; top losers Sandisk -22.26%, Micron -17.46%, AMD -17.26%.
+5. Seeking Alpha "AI and chip stocks slide, with Qualcomm facing its worst day since 2020" (10:20 ET)
+   https://seekingalpha.com/news/4666706-ai-and-chip-stocks-slide-with-qualcomm-facing-worst-day-since-2020
+   - Qualcomm opened about 13% lower; SOX about -7% at that time.
+6. CNBC live updates "Dow drops 1,800 points; Nasdaq tumbles into correction territory on AI tech wreck"
+   https://www.cnbc.com/2026/11/04/stock-market-today-live-updates.html
+   - Nasdaq Composite -5.52% to 24,315.00; Qualcomm beat estimates but fell about 9% on weaker-than-expected outlook.
+7. Star-Advertiser (wire) "Nasdaq heads for correction as AI stocks plunge after midterms"
+   https://www.staradvertiser.com/2026/11/05/breaking-news/nasdaq-heads-for-correction-as-ai-stocks-plunge-after-midterms/
+   The National "Nasdaq plunges 5% as investors dump AI stocks after midterms"
+   https://www.thenationalnews.com/business/markets/2026/11/05/ai-fears-overtake-democratic-sweep-as-nasdaq-enters-correction-territory/
+   Quartz "Nasdaq plunges 4%, on pace for correction, as AI and chip stocks sell off"
+   https://qz.com/nasdaq-correction-ai-chip-stocks-midterms-selloff-110526
+   - Selling tied to whether Democratic control of both chambers brings more oversight/regulation of the data-center buildout; also reported that the election alone did not create the selloff — AI/semis were already under pressure on return-on-capex questions. Nasdaq-100 had confirmed a correction on Monday 11/2; Nasdaq Composite on track to confirm a 10% drop from its 10/6 record close. Nvidia, Broadcom, Oracle among hardest hit in midday copy.
+8. Kiplinger "Nasdaq Plunges 1,421 Points, Dow Slides 1,833 Points in Tech Rout"
+   https://www.kiplinger.com/investing/stocks/nasdaq-plunges-1-421-points-in-massive-tech-rout-stock-market-today
+   FXStreet "The memory trade collapses as Sandisk sheds 17%, Micron sinks to May levels" (2026-11-05 15:50)
+   https://www.fxstreet.com/news/the-memory-trade-collapses-as-sandisk-sheds-17-micron-sinks-to-may-levels-202611051550
+   24/7 Wall St. "SanDisk Slides 7%, Micron and Western Digital Fall 5% as Lawmaker's Call for AI Pause Extends Memory Rout"
+   https://247wallst.com/investing/2026/11/05/sandisk-slides-7-micron-and-western-digital-fall-5-as-lawmakers-call-for-ai-pause-extends-memory-rout/
+   - Memory selloff tied to midterm results / fear of tighter AI data-center regulation; analysts cite slower AI buildout as a threat to memory pricing; Micron and Sandisk had roughly tripled/quadrupled YTD (Kiplinger). Identity of the lawmaker in the 24/7 headline not confirmed.
+9. CNBC "10-year Treasury yield falls as traders exit tech stocks, look ahead to jobs data"
+   https://cnbc.com/2026/11/05/treasury-yields-bonds-interest-rates.html
+   - 2-year yield fell more than 11bp to 4.466% as investors moved into safe havens amid tech selloff and looked to Friday's October jobs report. (intraday figure; canonical close in market_data.json)
+10. AppLovin Q3 2026 8-K exhibit 99.1 (dated 2026-11-04)
+   https://www.sec.gov/Archives/edgar/data/0001751008/000175100826000068/exhibit991-3q26earningspre.htm
+   - Revenue $2.18bn (+55% y/y), net income $1.44bn (+72%), diluted EPS $4.30.
+11. Lumentum IR "Lumentum Announces First Quarter of Fiscal Year 2027 Financial Results" (after close 2026-11-05)
+   https://investor.lumentum.com/financial-news-releases/news-details/2026/Lumentum-Announces-First-Quarter-of-Fiscal-Year-2027-Financial-Results/default.aspx
+   - Revenue $1.26bn; non-GAAP EPS $4.57; FQ2 guide revenue $1.575-1.625bn, non-GAAP EPS $5.90-6.20. After-hours reaction not found.
+12. Not found by search: stock-specific causes for Tesla (-10.77%), Costco (+1.83%), Dell (-14.89%) on 11/5; oil's +2.3% driver; CME FedWatch December probability snapshot for 11/5 (only CNBC Barkin article "market prices >80% December hike", see news file).
