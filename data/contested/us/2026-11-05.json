@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-05",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-11-06T14:44:01+00:00",
- "cutoff_at": "2026-11-06T14:44:01+00:00",
+ "collected_at": "2026-11-06T15:03:29+00:00",
+ "cutoff_at": "2026-11-06T15:03:29+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -31,59 +31,36 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 35738,
-   "out": 9637
+   "in": 33959,
+   "out": 10513
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "2/2",
+   "claims": "6/6",
    "pairs": "1/1",
-   "obs": "9/9"
+   "obs": "10/10"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 9,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 10,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[2]",
-    "memo[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "edges[0]:unverified",
-    "edges[2]:unverified",
-    "memo[0]:unverified",
-    "worry.most[0]:unverified",
-    "worry.unlikely[0]:unverified"
-   ]
-  }
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "영란은행 금리 인상(4%) 이후 추가 긴축이 필요한지",
-  "query": "bank england interest",
+  "query": "bank england rate",
   "trigger": []
  },
- "problems": [
-  "edges[0]:unverified",
-  "edges[2]:unverified",
-  "memo[0]:unverified",
-  "worry.most[0]:unverified",
-  "worry.unlikely[0]:unverified"
- ],
- "content_hash": "649d33b6f2b3e0d0"
+ "content_hash": "492e9d2400e711ae"
 }
