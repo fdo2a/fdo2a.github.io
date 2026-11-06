@@ -5,10 +5,10 @@
  "report_date": "2026-11-05",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-06T18:33:55+00:00",
- "cutoff_at": "2026-11-06T18:33:55+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-06T19:38:08+00:00",
+ "cutoff_at": "2026-11-06T19:38:08+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,67 +21,48 @@
   "sha256": "0e52076f74882f13f130013d9cfa347b3e424e2d5fbd3e79210f260519ee049a"
  },
  "counts": {
-  "harvest": 221,
-  "candidates": 2,
+  "harvest": 222,
+  "candidates": 1,
   "articles": [
-   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 33955,
-   "out": 11838
+   "in": 32704,
+   "out": 9074
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "6/6",
+   "claims": "2/2",
    "pairs": "1/1",
-   "obs": "10/10"
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 10,
+   "obs": 8,
    "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[2]",
-    "structure",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "edges[2]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "structure:dangling",
-    "edges[0]:unverified",
-    "edges[0]:dangling",
-    "edges[1]:dangling",
-    "edges[2]:unverified",
-    "edges[2]:dangling",
-    "memo[0]:unverified",
-    "memo[0]:dangling",
-    "memo[2]:dangling",
-    "worry.most[0]:dangling",
-    "worry.unlikely[0]:dangling"
+    "edges[2]:unverified"
    ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "영란은행 금리 인상(4%) 이후 추가 긴축이 필요한지",
@@ -89,17 +70,7 @@
   "trigger": []
  },
  "problems": [
-  "structure:dangling",
-  "edges[0]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:unverified",
-  "memo[0]:dangling",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.unlikely[0]:dangling"
+  "edges[2]:unverified"
  ],
- "content_hash": "26a2f9f1ff58370a"
+ "content_hash": "351ae210ed86d141"
 }
