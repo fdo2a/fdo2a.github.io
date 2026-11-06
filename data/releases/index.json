@@ -1,13 +1,6 @@
 {
   "report_date": "2026-11-05",
-  "releases": [
-    {
-      "key": "claims",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "ok": true,
-      "note": "impersonate=safari",
-      "chars": 20115,
-      "path": "releases/claims.txt"
-    }
-  ]
+  "run_id": "42192614946-1",
+  "status": "complete",
+  "releases": []
 }

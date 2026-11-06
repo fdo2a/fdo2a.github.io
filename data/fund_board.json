@@ -3,7 +3,7 @@
   "calculation_version": "2026-10-06",
   "universe_version": "2026-10-06",
   "report_date": "2026-11-05",
-  "generated_at": "2026-11-06 08:41 KST",
+  "generated_at": "2026-11-06 18:12 KST",
   "var_meta": {
     "lookback_sessions": 60,
     "holding_sessions": 1,
@@ -209,9 +209,9 @@
       "status": "ok",
       "rel_3m_5d": 0.67,
       "rel_3m_chg_pp": -18.86,
-      "rank": 22,
+      "rank": 25,
       "rank_5d": 6,
-      "rank_chg": -16
+      "rank_chg": -19
     },
     {
       "id": "software",
@@ -237,9 +237,9 @@
       "status": "ok",
       "rel_3m_5d": 10.91,
       "rel_3m_chg_pp": -9.52,
-      "rank": 9,
+      "rank": 10,
       "rank_5d": 2,
-      "rank_chg": -7
+      "rank_chg": -8
     },
     {
       "id": "megacap",
@@ -265,9 +265,9 @@
       "status": "ok",
       "rel_3m_5d": 0.46,
       "rel_3m_chg_pp": -1.78,
-      "rank": 13,
+      "rank": 14,
       "rank_5d": 7,
-      "rank_chg": -6
+      "rank_chg": -7
     },
     {
       "id": "grid",
@@ -293,9 +293,9 @@
       "status": "ok",
       "rel_3m_5d": -8.08,
       "rel_3m_chg_pp": -5.25,
-      "rank": 20,
+      "rank": 21,
       "rank_5d": 22,
-      "rank_chg": 2
+      "rank_chg": 1
     },
     {
       "id": "industrials",
@@ -321,9 +321,9 @@
       "status": "ok",
       "rel_3m_5d": -8.39,
       "rel_3m_chg_pp": 1.33,
-      "rank": 18,
+      "rank": 19,
       "rank_5d": 23,
-      "rank_chg": 5
+      "rank_chg": 4
     },
     {
       "id": "discretionary",
@@ -377,9 +377,9 @@
       "status": "ok",
       "rel_3m_5d": -5.03,
       "rel_3m_chg_pp": 4.26,
-      "rank": 12,
+      "rank": 13,
       "rank_5d": 15,
-      "rank_chg": 3
+      "rank_chg": 2
     },
     {
       "id": "metals",
@@ -405,9 +405,9 @@
       "status": "ok",
       "rel_3m_5d": -2.78,
       "rel_3m_chg_pp": -14.07,
-      "rank": 21,
+      "rank": 24,
       "rank_5d": 11,
-      "rank_chg": -10
+      "rank_chg": -13
     },
     {
       "id": "financials",
@@ -461,37 +461,37 @@
       "status": "ok",
       "rel_3m_5d": -7.28,
       "rel_3m_chg_pp": 7.43,
-      "rank": 11,
+      "rank": 12,
       "rank_5d": 21,
-      "rank_chg": 10
+      "rank_chg": 9
     },
     {
       "id": "defense",
       "name": "방산",
       "ticker": "ITA",
       "kind": "risk_on",
-      "ret_1m": -66.55,
-      "ret_3m": -72.81,
-      "ret_6m": -69.33,
-      "ret_12m": -67.76,
-      "rel_3m": -67.83,
+      "ret_1m": 0.36,
+      "ret_3m": -18.42,
+      "ret_6m": -8.0,
+      "ret_12m": -3.27,
+      "rel_3m": -13.45,
       "mom_12_1": -3.61,
-      "vol_60": 233.74,
+      "vol_60": 20.94,
       "var_1d_90": 1.94,
       "var_1d_95": 2.24,
-      "beta_60": 6.75,
+      "beta_60": 0.61,
       "above_50": false,
       "above_200": false,
-      "drawdown_52w": -73.07,
+      "drawdown_52w": -19.21,
       "as_of": "2026-11-05",
       "observations": 753,
       "missing_reason": [],
       "status": "ok",
       "rel_3m_5d": -13.72,
-      "rel_3m_chg_pp": -54.11,
-      "rank": 23,
+      "rel_3m_chg_pp": 0.28,
+      "rank": 22,
       "rank_5d": 24,
-      "rank_chg": 1
+      "rank_chg": 2
     },
     {
       "id": "energy",
@@ -545,9 +545,9 @@
       "status": "ok",
       "rel_3m_5d": -5.46,
       "rel_3m_chg_pp": 0.52,
-      "rank": 16,
+      "rank": 17,
       "rank_5d": 18,
-      "rank_chg": 2
+      "rank_chg": 1
     },
     {
       "id": "small_growth",
@@ -573,37 +573,37 @@
       "status": "ok",
       "rel_3m_5d": -6.08,
       "rel_3m_chg_pp": -2.49,
-      "rank": 19,
+      "rank": 20,
       "rank_5d": 20,
-      "rank_chg": 1
+      "rank_chg": 0
     },
     {
       "id": "momentum",
       "name": "모멘텀 팩터",
       "ticker": "MTUM",
       "kind": "risk_on",
-      "ret_1m": -80.58,
-      "ret_3m": -79.72,
-      "ret_6m": -78.63,
-      "ret_12m": -74.71,
-      "rel_3m": -74.75,
+      "ret_1m": -22.34,
+      "ret_3m": -18.89,
+      "ret_6m": -14.54,
+      "ret_12m": 1.15,
+      "rel_3m": -13.91,
       "mom_12_1": 30.25,
-      "vol_60": 302.21,
+      "vol_60": 29.84,
       "var_1d_90": 2.64,
       "var_1d_95": 3.21,
-      "beta_60": 8.17,
+      "beta_60": 1.57,
       "above_50": false,
       "above_200": false,
-      "drawdown_52w": -81.83,
+      "drawdown_52w": -27.32,
       "as_of": "2026-11-05",
       "observations": 753,
       "missing_reason": [],
       "status": "ok",
       "rel_3m_5d": -3.46,
-      "rel_3m_chg_pp": -71.29,
-      "rank": 25,
+      "rel_3m_chg_pp": -10.45,
+      "rank": 23,
       "rank_5d": 14,
-      "rank_chg": -11
+      "rank_chg": -9
     },
     {
       "id": "lowvol",
@@ -666,28 +666,28 @@
       "name": "퀄리티 팩터",
       "ticker": "QUAL",
       "kind": "risk_off",
-      "ret_1m": -75.75,
-      "ret_3m": -75.67,
-      "ret_6m": -73.74,
-      "ret_12m": -71.57,
-      "rel_3m": -70.7,
+      "ret_1m": -2.98,
+      "ret_3m": -2.68,
+      "ret_6m": 5.04,
+      "ret_12m": 13.7,
+      "rel_3m": 2.29,
       "mom_12_1": 17.2,
-      "vol_60": 291.52,
+      "vol_60": 12.02,
       "var_1d_90": 0.74,
       "var_1d_95": 0.81,
-      "beta_60": 7.73,
+      "beta_60": 0.79,
       "above_50": false,
-      "above_200": false,
-      "drawdown_52w": -75.94,
+      "above_200": true,
+      "drawdown_52w": -3.76,
       "as_of": "2026-11-05",
       "observations": 753,
       "missing_reason": [],
       "status": "ok",
       "rel_3m_5d": -0.57,
-      "rel_3m_chg_pp": -70.13,
-      "rank": 24,
+      "rel_3m_chg_pp": 2.85,
+      "rank": 9,
       "rank_5d": 9,
-      "rank_chg": -15
+      "rank_chg": 0
     },
     {
       "id": "staples",
@@ -797,9 +797,9 @@
       "status": "ok",
       "rel_3m_5d": -5.71,
       "rel_3m_chg_pp": 6.4,
-      "rank": 10,
+      "rank": 11,
       "rank_5d": 19,
-      "rank_chg": 9
+      "rank_chg": 8
     },
     {
       "id": "japan",
@@ -825,9 +825,9 @@
       "status": "ok",
       "rel_3m_5d": -0.48,
       "rel_3m_chg_pp": -3.46,
-      "rank": 15,
+      "rank": 16,
       "rank_5d": 8,
-      "rank_chg": -7
+      "rank_chg": -8
     },
     {
       "id": "china",
@@ -853,9 +853,9 @@
       "status": "ok",
       "rel_3m_5d": -15.5,
       "rel_3m_chg_pp": 12.47,
-      "rank": 14,
+      "rank": 15,
       "rank_5d": 25,
-      "rank_chg": 11
+      "rank_chg": 10
     },
     {
       "id": "em",
@@ -881,9 +881,9 @@
       "status": "ok",
       "rel_3m_5d": -5.38,
       "rel_3m_chg_pp": -1.21,
-      "rank": 17,
+      "rank": 18,
       "rank_5d": 17,
-      "rank_chg": 0
+      "rank_chg": -1
     }
   ],
   "rank_basis": {
