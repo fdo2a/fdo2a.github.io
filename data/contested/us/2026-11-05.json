@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-06T04:26:22+00:00",
- "cutoff_at": "2026-11-06T04:26:22+00:00",
+ "collected_at": "2026-11-06T05:30:19+00:00",
+ "cutoff_at": "2026-11-06T05:30:19+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,18 +21,17 @@
   "sha256": "e00d17908763c0094a70fefbc9e24471a3718923878c4e9bd679c3fa36aee0da"
  },
  "counts": {
-  "harvest": 214,
-  "candidates": 2,
+  "harvest": 215,
+  "candidates": 1,
   "articles": [
-   2,
    3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 33465,
-   "out": 9734
+   "in": 33185,
+   "out": 10613
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,12 +44,12 @@
   "grounded": {
    "claims": "5/5",
    "pairs": "1/1",
-   "obs": "8/8"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 8,
+   "obs": 7,
    "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
@@ -61,20 +60,27 @@
     "edges[1]",
     "edges[2]",
     "memo[0]",
-    "memo[1]",
+    "memo[2]",
     "structure",
+    "variables[1]",
+    "worry.moderate[0]",
     "worry.most[0]",
     "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
     "structure:dangling",
+    "variables[1]:unverified",
     "edges[0]:dangling",
     "edges[1]:dangling",
     "edges[2]:unverified",
+    "memo[0]:unverified",
     "memo[0]:dangling",
-    "memo[1]:dangling",
+    "memo[2]:dangling",
+    "worry.most[0]:unverified",
     "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:unverified",
     "worry.unlikely[0]:dangling"
    ]
   },
@@ -87,13 +93,18 @@
  },
  "problems": [
   "structure:dangling",
+  "variables[1]:unverified",
   "edges[0]:dangling",
   "edges[1]:dangling",
   "edges[2]:unverified",
+  "memo[0]:unverified",
   "memo[0]:dangling",
-  "memo[1]:dangling",
+  "memo[2]:dangling",
+  "worry.most[0]:unverified",
   "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:unverified",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "246d5829d2ec6fd8"
+ "content_hash": "87957722df63e8fc"
 }
