@@ -54,7 +54,7 @@ model: opus
 
 ## 번역투 점검 — 마감의 첫 단계
 
-넘기기 전 마지막 편집으로 `python3 scripts/scan_translationese.py kr_news_[DATE].html` 을 돌린다 — 게이트가 아니다. 걸린 문장 중 **내가 쓴 문장(제목·연결 문장·머리 산문·카드)** 만, 뜻을 그대로 둔 채 고칠 수 있을 때 고친다. 기사 요약은 대상 밖이다. 마지막 줄 `translationese: …` 를 최종 보고에 적는다.
+아래 발행 게이트를 돌리기 전에 `python3 scripts/scan_translationese.py kr_news_[DATE].html` 을 돌린다 — 게이트가 아니다. 걸린 문장 중 **내가 쓴 문장(제목·연결 문장·머리 산문·카드)** 만, 뜻을 그대로 둔 채 고칠 수 있을 때 고친다. 기사 요약은 대상 밖이다. 마지막 줄 `translationese: …` 를 최종 보고에 적는다.
 
 ## 발행 게이트 (직접 돌리고 넘긴다)
 
