@@ -1,101 +1,102 @@
 {
-  "start_date": "2026-10-26",
-  "end_date": "2026-10-30",
-  "key": "2026-W44",
+  "start_date": "2026-11-02",
+  "end_date": "2026-11-06",
+  "key": "2026-W45",
   "assets": {
     "equities": {
       "grade": 0,
-      "realized": -0.572,
+      "realized": -2.6808,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
+          "from": "2026-11-02",
+          "to": "2026-11-06"
         }
       ]
     },
     "bonds": {
       "grade": 1,
-      "realized": 5.9,
+      "realized": 7.0,
       "verdict": "적중",
       "score": 1.0,
       "segments": [
         {
           "grade": 1,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
+          "from": "2026-11-02",
+          "to": "2026-11-06"
         }
       ]
     },
     "fx": {
       "grade": -1,
-      "realized": 0.0933,
-      "verdict": "무판정",
+      "realized": 0.3798,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
           "grade": -1,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
+          "from": "2026-11-02",
+          "to": "2026-11-06"
         }
       ]
     },
     "energy": {
       "grade": 0,
-      "realized": -0.4824,
+      "realized": -12.1679,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
+          "from": "2026-11-02",
+          "to": "2026-11-06"
         }
       ]
     },
     "metals": {
       "grade": 1,
-      "realized": -3.0025,
-      "verdict": "미스",
-      "score": -1.0,
-      "segments": [
-        {
-          "grade": 1,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
-        }
-      ]
-    },
-    "memory": {
-      "grade": 1,
-      "realized": 4.2449,
+      "realized": 4.6753,
       "verdict": "적중",
       "score": 1.0,
       "segments": [
         {
           "grade": 1,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
+          "from": "2026-11-02",
+          "to": "2026-11-06"
+        }
+      ]
+    },
+    "memory": {
+      "grade": 1,
+      "realized": -17.9096,
+      "verdict": "미스",
+      "score": -1.0,
+      "segments": [
+        {
+          "grade": 1,
+          "from": "2026-11-02",
+          "to": "2026-11-06"
         }
       ]
     },
     "ai_infra": {
       "grade": 0,
-      "realized": 5.0774,
+      "realized": -18.0154,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-10-26",
-          "to": "2026-10-30"
+          "from": "2026-11-02",
+          "to": "2026-11-06"
         }
       ]
     }
   },
-  "judged": 3,
+  "judged": 4,
   "neutral": 3,
   "total": 7,
   "neutral_share": 0.4286,
-  "weighted": 0.3333,
+  "weighted": 0.0,
   "span": "weekly",
   "regime": {
     "verdict": "판정불가",
@@ -104,24 +105,24 @@
       "growth": 0,
       "inflation": 0,
       "since": "2026-10-14",
-      "thesis": "교착 유지(10월 14일부터 12영업일째). 10월 29일 3분기 GDP(연율 3.4%, 예상 3.1%)·9월 PCE(전년비 3.65%, 근원 3.12%)·주간 실업수당 청구가 새로 나왔지만 성장 점수 0.009·물가 점수 0.003은 두 축 모두 보합·교착 범위 안이고 implied 좌표도 교착이다. 성장은 7~9월에 강했지만 9월 실질 소비가 멈췄고, 근원 PCE는 예상 경로 안이다. 11월 6일 10월 고용이 다음 점검이다."
+      "thesis": "교착 유지(10월 14일부터 17영업일째). 11월 5일 신규 발표는 주간 실업수당 청구뿐이었다. 신규 청구 189,000건·4주 평균 194,750건은 해고가 적은 상태를 확인했지만 계절 요인의 몫이 컸고, 성장 점수 -0.017·물가 점수 0.003이 그대로 중립 범위라 implied 좌표도 교착이다. 11월 6일 10월 고용과 11월 10일 10월 CPI가 다음 점검이다."
     },
     "note": "기간 중 신규 발표 없음"
   },
   "rollup": {
     "last_4": {
       "periods": 4,
-      "weighted": 0.1666,
+      "weighted": 0.0833,
       "insufficient": false
     },
     "last_12": {
-      "periods": 8,
-      "weighted": -0.0667,
+      "periods": 9,
+      "weighted": -0.0593,
       "insufficient": true
     },
     "all": {
-      "periods": 8,
-      "weighted": -0.0667,
+      "periods": 9,
+      "weighted": -0.0593,
       "insufficient": false
     }
   },
