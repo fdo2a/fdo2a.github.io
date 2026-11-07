@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-07T04:11:37+00:00",
- "cutoff_at": "2026-11-07T04:11:37+00:00",
+ "collected_at": "2026-11-07T04:29:01+00:00",
+ "cutoff_at": "2026-11-07T04:29:01+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,28 +21,28 @@
   "sha256": "af31f60f45668fb2a97b27fd3b589e2dede5015fb8083c3a9bf90e67768f6344"
  },
  "counts": {
-  "harvest": 205,
+  "harvest": 204,
   "candidates": 1,
   "articles": [
-   4
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 35912,
-   "out": 10219
+   "in": 33128,
+   "out": 10008
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "2/2",
+   "claims": "4/4",
    "pairs": "1/1",
    "obs": "10/10"
   },
@@ -56,13 +56,22 @@
   },
   "repair": {
    "paths": [
-    "edges[1]"
+    "edges[1]",
+    "edges[2]",
+    "memo[2]",
+    "worry.moderate[0]",
+    "worry.most[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "edges[1]:unverified"
+    "edges[1]:dangling",
+    "edges[2]:unverified",
+    "memo[2]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling"
    ]
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "영란은행 4% 금리 인상 이후 추가 긴축 필요성",
@@ -70,7 +79,11 @@
   "trigger": []
  },
  "problems": [
-  "edges[1]:unverified"
+  "edges[1]:dangling",
+  "edges[2]:unverified",
+  "memo[2]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling"
  ],
- "content_hash": "4c181b7c35fe655f"
+ "content_hash": "2f043c0c5f0ccaa4"
 }
