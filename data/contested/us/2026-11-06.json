@@ -1,0 +1,85 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-06",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-07T03:54:10+00:00",
+ "cutoff_at": "2026-11-07T03:54:10+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "9ed94046b805daa107ff1f005eb68a0d95949756",
+  "sha256": "af31f60f45668fb2a97b27fd3b589e2dede5015fb8083c3a9bf90e67768f6344"
+ },
+ "counts": {
+  "harvest": 205,
+  "candidates": 1,
+  "articles": [
+   4
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "tokens": {
+   "in": 38764,
+   "out": 10089
+  },
+  "discovery": "ok",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 9,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[0]",
+    "structure"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:unverified",
+    "edges[0]:unverified",
+    "edges[2]:unverified",
+    "memo[0]:unverified"
+   ]
+  }
+ },
+ "event": {
+  "topic_ko": "영란은행 4% 금리 인상 이후 추가 긴축 필요성",
+  "query": "bank england interest",
+  "trigger": []
+ },
+ "problems": [
+  "structure:unverified",
+  "edges[0]:unverified",
+  "edges[2]:unverified",
+  "memo[0]:unverified"
+ ],
+ "content_hash": "412672cf58750391"
+}
