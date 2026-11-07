@@ -101,6 +101,23 @@ def used(state, day, section):
     return n if isinstance(n, int) and n > 0 else 0
 
 
+def drop_resolved(errs, live_sections):
+    """큐에 글이 남지 않은 섹션의 오류(그 섹션의 정정 오류 포함)를 뺀 사본.
+
+    섹션 오류는 그 섹션이 초안을 낼 때만 풀린다. 그런데 그 글이 손 검토로 원장에 들어가거나
+    만료돼 큐에서 빠지면 낼 초안이 없어 오류가 영영 남고, 오류가 하나라도 있으면 `last_ok` 가
+    멈춰 훅이 러너를 죽은 것처럼 보인다(2026-11-07 실측: 일본 주간 W44). 러너 전체의 오류
+    (`러너`·`근거`·코드 불일치)는 섹션 키가 아니라 여기서 건드리지 않는다.
+    """
+    out = {}
+    for key, val in (errs or {}).items():
+        section = key[len('정정-'):] if key.startswith('정정-') else key
+        if section in SECTIONS and section not in live_sections:
+            continue
+        out[key] = val
+    return out
+
+
 def eligible(queue, published, state, day, have=(), sections=SECTIONS, cap=DAILY_CAP,
              max_age_days=MAX_AGE_DAYS, dated=None):
     """자동으로 읽을 항목 — 섹션·공개판 일치·신선도·한도를 전부 통과한 것만.

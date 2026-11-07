@@ -86,7 +86,7 @@ try:
                                DAILY_CAP, HUMAN, KST, LIMIT, RESHIPPED,
                                ROUND_CAP, TIMEOUT, UNKNOWN, accept_draft,
                                blocked_until, claude_retry_at, clear_rounds,
-                               draft_name, eligible, is_claude_limit,
+                               draft_name, drop_resolved, eligible, is_claude_limit,
                                err, err_line, is_limit_error, may_release,
                                note_limit, note_round, release, reserve, retry_at,
                                stalled, today_kst)
@@ -1609,6 +1609,11 @@ def cmd_run(args):
             # 큐 판정은 두 트리를 보지만 **자동으로 읽을 대상은 고정한 판만**이다. 가변
             # `origin/main` 을 다시 읽으면 tick 도중 재발행된 판을 고정판인 양 집는다.
             published = tree_at(root, oid) or {}
+        # 큐에서 빠진 섹션(손 검토·만료)의 오류는 여기서 푼다 — 안 그러면 낼 초안이 없어 영영
+        # 남고 `last_ok` 가 멈춘다(2026-11-07 일본 주간 W44). 만료 판정이 실패하면 원래 큐라
+        # 오류를 숨기는 쪽으로 틀리지 않는다.
+        live, _expired = _split_expired(root, todo + unavailable, published)
+        errs = drop_resolved(errs, {i.section for i in live})
         day = today_kst()
         # 차단 대상은 **codex 신규 검토 호출만**이다. 준비된 초안의 정정(Claude)은 계속
         # 돈다 — 공급자 한도는 codex 쪽 사정이고, 정정까지 멈추면 이미 읽어 둔 지적이
