@@ -99,3 +99,21 @@ def test_a_genitive_does_not_cut_the_quantified_phrase():
     before = '일부 미국의 반도체 업종은 강세였다. 모든 미국의 반도체 종목은 부진했다고 본다.' + CTX
     ok, _ = check_scope(before, '일부 미국의 반도체 종목은 강세였다. 모든 미국의 반도체 업종은 부진했다고 본다.' + CTX, True)
     assert not ok
+
+
+def test_the_writer_is_shown_the_marks_the_guard_will_hold():
+    # 11/06 US 시험: 작성자가 「앞단 재가격」을 풀며 「쪽으로」를 새로 써 뼈대에서 기각됐다 — 무엇이 표지인지 몰랐다
+    text = ('우리는 이 평탄화를 앞단 재가격으로 본다. 임금이 올라 연준이 미룰 근거가 줄었다. '
+            '가장 강한 반론은 2년물이 일부 되돌아왔다는 설명이다.')
+    cand = {'items': [{'id': 'C01', 'hint': '번역투: 풀어 쓴다', 'relax': 'translationese', 'masked': text}]}
+    shown = guard.writer_input(cand, '규칙')
+    for mark in ('「으로 본다」', '「근거가」', '「반론」', '「우리」', '「일부」', '「가장」'):
+        assert mark in shown
+    assert '새로 쓰지 않는다' in shown and '문장 수' in shown
+
+
+def test_the_writer_is_shown_what_a_quantifier_covers():
+    """codex 구현 #3 — guard 는 「일부:반도체 업종은」을 비교한다. 대상 명사구까지 보여야 그것을 고치지 않는다."""
+    text = '일부 반도체 업종은 앞단 재가격 끝에 내렸다고 본다.'
+    cand = {'items': [{'id': 'C01', 'hint': '번역투: 풀어 쓴다', 'relax': 'translationese', 'masked': text}]}
+    assert '「일부 반도체 업종은」' in guard.writer_input(cand, '규칙')

@@ -3,6 +3,7 @@ import subprocess
 
 import pytest
 
+import review_gate as gate
 from prepub import bundle
 
 
@@ -58,3 +59,19 @@ def test_an_unknown_market_or_date_is_refused(repo, tmp_path):
 def test_request_ids_have_the_shape_the_private_runner_accepts():
     import re
     assert re.fullmatch(r'(us|kr|jp)-\d{4}-\d{2}-\d{2}-[0-9a-f]{12}', bundle.request_id('kr', '2026-11-07'))
+
+
+def test_the_prepublish_prompt_asks_only_for_translationese_and_confidence(repo, tmp_path):
+    bundle.build(str(repo), 'us', '2026-11-07', draft(tmp_path), tmp_path / 'b')
+    text = (tmp_path / 'b/prompt.txt').read_text(encoding='utf-8')
+    tail = text[text.index('문체 지적(') :]
+    for kind in ('「번역투」', '「판단 세기 흐림」', '「원문에 없는 관계」'):
+        assert kind in tail
+    for kind in ('「반복」', '「끊긴 흐름」', '「기타」'):
+        assert kind not in tail
+    assert gate.STYLE_FINDINGS_HEAD in tail
+
+
+def test_the_post_publish_prompt_is_unchanged():
+    assert '「반복」' in gate.STYLE_FINDINGS_PROMPT.format(
+        n=8, kinds='·'.join(f'「{k}」' for k in gate.STYLE_KINDS), head=gate.STYLE_FINDINGS_HEAD)

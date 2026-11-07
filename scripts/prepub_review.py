@@ -134,12 +134,13 @@ def cmd_split(a):
     with open(os.path.join(a.out, 'facts.md'), 'w', encoding='utf-8') as fh:
         fh.write('\n'.join(lines) + '\n')
     _write(os.path.join(a.out, 'candidates.json'), got['candidates'])
-    summary = {k: got[k] for k in ('accuracy', 'unplaced', 'excluded')}
+    summary = {k: got[k] for k in ('accuracy', 'unplaced', 'excluded', 'dropped')}
     summary['candidates'] = len(got['candidates']['items'])
     summary['style_findings'] = got['style']
     _write(os.path.join(a.out, 'split.json'), summary)
     print(f"prepub: accuracy {len(got['accuracy'])} · style candidates {summary['candidates']} · "
-          f"excluded {len(got['excluded'])} · unplaced {len(got['unplaced'])}")
+          f"excluded {len(got['excluded'])} · unplaced {len(got['unplaced'])} · "
+          f"dropped {len(got['dropped'])} (번역투만 고친다)")
     return 0
 
 
@@ -234,6 +235,7 @@ def cmd_record(a):
            'style_candidates': split.get('candidates', 0),
            'style_excluded': len(split.get('excluded', [])),
            'style_unplaced': len(split.get('unplaced', [])),
+           'style_dropped': len(split.get('dropped', [])),
            'facts_applied': a.facts_applied, 'facts_rejected': a.facts_rejected,
            'style_applied': a.style_applied, 'style_rejected': a.style_rejected,
            'skeleton_rejected': a.skeleton_rejected, 'checker_rejected': a.checker_rejected,

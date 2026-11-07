@@ -41,14 +41,32 @@ NOTES_LINE = ('\n작성자가 읽은 리서치 노트: `research_notes.md` — �
               '없는 원인·보도 설명은 여기서 찾고, 여기에도 없을 때만 「근거 없는 단정」으로 지적한다.\n')
 
 
+# 발행 전에는 번역투만 고친다(2026-11-07 사용자 결정 「번역투 고치는것만 검토하는걸로 하자」). 확신도 두 분류는
+# 문체가 아니라 정확성 몫이라 그대로 묻는다(`split.ACCURACY_KINDS`). 반복·끊긴 흐름은 문장을 지우거나 옮겨야
+# 풀리는데 발행 전 편집 계약(STYLE_CLOSE §13)이 막으므로 묻지 않는다 — 발행 뒤 검토의 프롬프트는 그대로다.
+PREPUB_KINDS = ('번역투', '판단 세기 흐림', '원문에 없는 관계')
+PREPUB_STYLE_PROMPT = """
+
+**문체 지적(지적만 — 고친 문장을 쓰지 않는다).** 위 검토와 별도로, 이 글을 PM 이 읽는 데스크 문서로 보고
+**최대 {n}건** 고른다. 문장 표본은 `.claude/agents/STYLE_EXEMPLARS.md`(읽기만). 분류는 {kinds} 셋뿐이다.
+「번역투」는 한 문장 안에서 낱말·어순만 바꿔 고칠 수 있는 번역한 말의 흔적이다 — 문장을 지우거나 옮겨야
+풀리는 반복·흐름 문제는 고르지 않는다. 「판단 세기 흐림」은 판단·전망의 세기가 근거보다 강하거나 흐린 곳,
+「원문에 없는 관계」는 근거가 말하지 않는 인과·대조를 문장이 만든 곳이다. 인용은 **글에 있는 글자 그대로**,
+그 문장에만 있는 대목을 고른다. 고친 문장·대안 문장은 쓰지 않는다 — 고칠 방향 한 줄만.
+답의 **맨 끝**에 `{head}` 한 줄을 쓰고, 그 아래 한 줄에 하나씩
+`- [분류] 「문장 인용 40자 이내」 — 문제 / 고칠 방향` 꼴로 적는다. 없으면 그 아래에 `없음` 한 줄.
+이 부분은 사실 오류 목록과 섞지 않는다.
+"""
+
+
 def prompt(section, post_path, notes=False):
-    """발행 뒤 검토와 같은 프롬프트 — 사실 검토 + 문체 지적(지적만). 리서치 노트가 있으면 그 자리를 알린다."""
+    """발행 뒤 검토와 같은 사실 검토 + 발행 전 문체 지적(번역투·확신도만). 리서치 노트가 있으면 그 자리를 알린다."""
     body = gate.PROMPT.format(post=post_path, market=gate.MARKET_NAME.get(section, section),
                               datadir=gate.SNAPSHOT[section])
     if notes:
         body += NOTES_LINE
-    return body + gate.STYLE_FINDINGS_PROMPT.format(
-        n=gate.STYLE_FINDINGS_MAX, kinds='·'.join(f'「{k}」' for k in gate.STYLE_KINDS),
+    return body + PREPUB_STYLE_PROMPT.format(
+        n=gate.STYLE_FINDINGS_MAX, kinds='·'.join(f'「{k}」' for k in PREPUB_KINDS),
         head=gate.STYLE_FINDINGS_HEAD)
 
 

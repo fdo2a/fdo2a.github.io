@@ -442,6 +442,30 @@ def closing_rules(path):
     return m.group(0).strip()
 
 
+def _held_marks(text, marks=None):
+    """guard 가 지킬 표지를 작성자에게 미리 보인다 — 11/06 US 시험에서 작성자가 번역투를 풀며 「쪽으로」를 새로
+    써 뼈대에서 기각됐다(무엇이 판단 표지인지 몰랐다).
+
+    `marks` 는 split 이 원장을 쥐고 뽑은 뼈대다(`item['held']`) — 원장 문턱·날짜가 든 문장도 판단 문장으로 잠기므로
+    원장 없이 다시 세면 guard 가 비교하는 표지가 빠진다(codex 구현 #4). 수량어는 대상 명사구까지 보인다 — guard 는
+    「일부:반도체 업종은」을 비교한다(codex 구현 #3).
+    """
+    if marks is None:
+        _, marks = locks.judgment_skeleton(text)
+    judged = [m.split(':', 1)[1] if m[:2] in ('A:', 'T:', 'L:') else m for m in marks]
+    scope = locks.scope_marks(text)
+    quants = [m for m in scope if ':' in m]
+    words = [m for m in scope if ':' not in m]
+    out = (' · 문장 수를 그대로 두고, 판단 표지 %s 는 같은 순서·개수로 남긴다'
+           % (''.join(f'「{m}」' for m in judged) or '(없음)'))
+    if words:
+        out += ' · 범위 낱말 %s 도 같은 순서·개수로' % ''.join(f'「{m}」' for m in words)
+    if quants:
+        out += (' · 수량어가 걸린 말 %s 은 대상까지 글자 그대로'
+                % ''.join('「%s」' % ' '.join(x for x in m.split(':', 1) if x) for m in quants))
+    return out + ' · 이 목록에 없는 판단·범위 낱말(쪽·본다·근거·가능성·일부·기대 …)은 새로 쓰지 않는다'
+
+
 def writer_input(cand, rules):
     """작성자에게 줄 글 — 규칙 절과 후보 문단 텍스트뿐(파일 경로를 주지 않는다).
 
@@ -458,7 +482,7 @@ def writer_input(cand, rules):
         if it.get('hint'):
             keep = ''
             if it.get('relax') == 'translationese':
-                keep = ' · 판단 문장은 판단 어휘·날짜·수치를 같은 순서로 남기고 낱말만 고친다'
+                keep = ' · 판단 문장은 판단 어휘·날짜·수치를 같은 순서로 남기고 낱말만 고친다' + _held_marks(it['masked'], it.get('held'))
             elif it.get('opened'):
                 keep = ' · 판단 문장(판단·해석·근거·본다·쪽이다·확인 기준 …이 든 문장)은 글자 그대로 둔다'
             lines.append('[%s] (지적 — %s%s) %s' % (it['id'], it['hint'], keep, it['masked']))
