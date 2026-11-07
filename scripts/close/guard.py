@@ -107,8 +107,12 @@ def _norm(text):
 
 # ---------------------------------------------------------------- one edit
 
-def check_edit(pid, before, after, known, names=(), ledger=locks.NO_LEDGER):
-    """한 편집 → 새 inner(str). 어기면 ProseSwapError(이유)."""
+def check_edit(pid, before, after, known, names=(), ledger=locks.NO_LEDGER, relax=False, scope=False):
+    """한 편집 → 새 inner(str). 어기면 ProseSwapError(이유).
+
+    `relax` 는 발행 전 codex 검토의 「번역투」 후보뿐이다(후보의 `relax: "translationese"`): 판단 문장을
+    글자 그대로 두는 대신 뼈대(`locks.judgment_skeleton`)만 같으면 된다. 나머지 검사는 그대로다.
+    """
     if not isinstance(after, str) or not after.strip():
         raise ProseSwapError('빈 편집')
     after = _norm(after)
@@ -128,7 +132,16 @@ def check_edit(pid, before, after, known, names=(), ledger=locks.NO_LEDGER):
         raise ProseSwapError('지시어 개수가 달라졌다(D)')
     if locks.ctrl_order(before) != locks.ctrl_order(after):
         raise ProseSwapError('판단 어휘 순서가 달라졌다(C)')
-    if locks.locked(before, ledger) != locks.locked(after, ledger):
+    if scope and locks.scope_marks(before) != locks.scope_marks(after):
+        raise ProseSwapError('범위·세기·한계 낱말(일부·모든·일시적·지속적·다만·불확실 …)의 순서·개수가 달라졌다')
+    if relax:
+        # 쪼개기·합치기 금지 — 「…기본 경로로 굳어지는 앞단 재가격으로 본다」를 「…기본 경로다. 앞단 재가격으로
+        # 본다.」로 나누면 판단 어휘 없는 단정문이 생겨 뼈대 검사만으로는 안 걸린다(2026-11-07 시험).
+        if len(locks.sentences(before)) != len(locks.sentences(after)):
+            raise ProseSwapError('번역투 수정은 문장 수를 바꾸지 않는다(쪼개기·합치기 금지)')
+        if locks.judgment_skeleton(before, ledger) != locks.judgment_skeleton(after, ledger):
+            raise ProseSwapError('판단 문장의 뼈대(판단 어휘·기간·원장 앵커의 순서·개수, 문장 수)가 달라졌다')
+    elif locks.locked(before, ledger) != locks.locked(after, ledger):
         raise ProseSwapError('판단·기간·원장 문장이 생기거나 바뀌었다(V·L·T)')
     return _check_one(pid, after, known)
 
@@ -221,7 +234,9 @@ def build(pre, cand, edits, *, market='us', names=(), ledger=locks.NO_LEDGER, ex
             result['edits'][eid] = {'status': 'unchanged'}
             continue
         try:
-            new_inner = check_edit(it['pid'], before, text, known, names, ledger)
+            new_inner = check_edit(it['pid'], before, text, known, names, ledger,
+                                   relax=it.get('relax') == 'translationese',
+                                   scope=bool(it.get('opened') or it.get('relax')))
         except ProseSwapError as exc:
             result['edits'][eid] = {'status': 'rejected', 'reason': str(exc), 'after': _norm(str(text))}
             continue
@@ -306,6 +321,8 @@ def bundles(pre_w, prop_w, accepted_items, order, pre_html):
         prev_pid = order[first - 1] if first > 0 else None
         next_pid = order[last + 1] if last + 1 < len(order) else None
         b = {'id': 'B%02d' % n, 'edits': [it['id'] for it in g], 'pids': [it['pid'] for it in g],
+             # 판단 문장 낱말까지 바뀔 수 있는 묶음 — 의미 검사를 두 번 받는다(PREPUB_REVIEW 3)
+             'judgment': any(it.get('relax') == 'translationese' for it in g),
              'title': _title_before(pre_html, pre_pos[g[0]['pid']]),
              'prev': text(after_ps, prev_pid) if prev_pid else '',
              'next': text(after_ps, next_pid) if next_pid else '',
@@ -426,11 +443,27 @@ def closing_rules(path):
 
 
 def writer_input(cand, rules):
-    """작성자에게 줄 글 — 규칙 절과 후보 문단 텍스트뿐(파일 경로를 주지 않는다)."""
-    lines = ['문체 마감(STEP 2.6). 아래 규칙대로 후보 문단을 다듬어 JSON 하나로만 답한다. 파일을 읽거나 쓰지 않는다.',
-             '', rules, '', '--- 후보 문단 ---']
+    """작성자에게 줄 글 — 규칙 절과 후보 문단 텍스트뿐(파일 경로를 주지 않는다).
+
+    발행 전 codex 검토가 만든 후보(`hint` 가 있다)는 그 지적만 고치게 한다 — 짧은 문장 잇기가 아니다.
+    뜻을 지키는 규칙(§13 의 1·4·5·6)은 그대로 걸린다.
+    """
+    hinted = any(it.get('hint') for it in cand.get('items', []))
+    head = ('발행 전 검토가 짚은 문체 문제를 고친다. 문단마다 붙은 지적만 고치고, 뜻(사실·수치·출처·판단의 방향과 '
+            '세기·한계)은 아래 규칙대로 그대로 둔다. 고치면 뜻이 바뀌는 지적은 고치지 않는다. JSON 하나로만 답한다. '
+            '파일을 읽거나 쓰지 않는다.' if hinted else
+            '문체 마감(STEP 2.6). 아래 규칙대로 후보 문단을 다듬어 JSON 하나로만 답한다. 파일을 읽거나 쓰지 않는다.')
+    lines = [head, '', rules, '', '--- 후보 문단 ---']
     for it in cand.get('items', []):
-        lines.append('[%s] %s' % (it['id'], it['masked']))
+        if it.get('hint'):
+            keep = ''
+            if it.get('relax') == 'translationese':
+                keep = ' · 판단 문장은 판단 어휘·날짜·수치를 같은 순서로 남기고 낱말만 고친다'
+            elif it.get('opened'):
+                keep = ' · 판단 문장(판단·해석·근거·본다·쪽이다·확인 기준 …이 든 문장)은 글자 그대로 둔다'
+            lines.append('[%s] (지적 — %s%s) %s' % (it['id'], it['hint'], keep, it['masked']))
+        else:
+            lines.append('[%s] %s' % (it['id'], it['masked']))
     lines.append('')
     lines.append('답: {"C01": "<바꾼 글>", ...} — 고친 문단만, 없으면 {}.')
     return '\n'.join(lines)

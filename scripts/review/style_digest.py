@@ -3,8 +3,8 @@
 
   python3 scripts/review/style_digest.py [--since 7d] [--root .]
 
-`reviews/style_findings/*.json`(git 제외, 러너가 쓴다)만 읽는다. 분류별 건수와 예시(인용·방향)를
-찍는다. **아무것도 고치지 않는다** — 지시문을 자동으로 바꾸는 경로는 없다(2026-11-06 C안).
+`reviews/style_findings/*.json`(git 제외, 발행 뒤 러너가 쓴다)과 `reviews/prepublish/*/*.json`(발행 전 검토,
+발행 커밋에 함께 들어간다)의 `style_findings` 를 읽는다. 분류별 건수와 예시(인용·방향)를 찍는다. **아무것도 고치지 않는다** — 지시문을 자동으로 바꾸는 경로는 없다(2026-11-06 C안).
 """
 
 import argparse
@@ -16,6 +16,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 
 FOLDER = 'reviews/style_findings'
+PREPUB = 'reviews/prepublish'
 
 
 def _since(spec):
@@ -47,6 +48,19 @@ def collect(root, since):
         for f in rec.get('findings') or ():
             if isinstance(f, dict):
                 rows.append(dict(f, path=rec.get('path', ''), at=rec.get('at')))
+    for path in sorted(glob.glob(os.path.join(root, PREPUB, '*', '*.json'))):
+        try:
+            with open(path, encoding='utf-8') as fh:
+                rec = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        at = _at(rec.get('recorded_at'))
+        if at is None or at < since:
+            continue
+        where = f"{rec.get('section', '')} {rec.get('date', '')} (발행 전)"
+        for f in rec.get('style_findings') or ():
+            if isinstance(f, dict):
+                rows.append(dict(f, path=where, at=rec.get('recorded_at')))
     return rows
 
 

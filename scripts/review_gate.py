@@ -904,7 +904,7 @@ STYLE_PROMPT = """
 STYLE_REWRITE = False
 STYLE_FINDINGS = 'reviews/style_findings'
 STYLE_FINDINGS_HEAD = '=== 문체 지적 ==='
-STYLE_FINDINGS_MAX = 5
+STYLE_FINDINGS_MAX = 8   # 2026-11-07 5→8 — 「번역투나 문체수정에 더 무게」(발행 전 검토와 공유)
 STYLE_KINDS = ('판단 세기 흐림', '원문에 없는 관계', '끊긴 흐름', '번역투', '반복', '기타')
 STYLE_FINDINGS_PROMPT = """
 

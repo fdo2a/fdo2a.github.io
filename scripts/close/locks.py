@@ -113,6 +113,55 @@ def locked(text, ledger=NO_LEDGER):
     return [s for s in sentences(text) if v_lock(s) or t_lock(s) or ledger.lock(s)]
 
 
+# 판단의 주인 — 누가 그렇게 봤나·말했나. 10/13 「언론은 … 우리는 …」 맞바꾸기가 판단 어휘만으로는 안 걸렸다.
+ATTR_RE = re.compile(r'우리|언론|보도|시장(?:은|이|에서는)|증권가|애널리스트|연준|의장|정부|당국|회사|'
+                     r'전했다|밝혔다|말했다|설명했다|주장했다|보도했다|평가했다|분석했다|판단한다')
+
+
+def judgment_skeleton(text, ledger=NO_LEDGER):
+    """판단 문장의 뼈대 — (판단 문장 수, 판단 어휘·기간·원장 앵커가 나온 순서).
+
+    발행 전 codex 검토의 「번역투」 후보만 이것으로 본다(`guard.check_edit(relax=True)`): 판단 문장의 낱말은
+    고칠 수 있되, 판단 문장을 합치거나 쪼개지 않고 판단을 싣는 표지(본다·쪽이다·약해·철회·확인 기준 …,
+    「N일 … 까지」, 원장 문턱·날짜, 판단의 주인 — 우리·언론·보도·전했다 …)를 같은 순서·개수로 남겨야 한다.
+    「약해진다→철회한다」·「본다→다」·「언론은 … 우리는 …」 맞바꾸기는 여기서 걸린다. 그 밖의 뼈대(수치·이름·방향·부정·비교·인과·한계·판단 어휘·지시어)는 guard 가 따로 본다.
+    """
+    marks = []
+    sents = locked(text, ledger)
+    for sent in sents:
+        hits = [(m.start(), m.group(0)) for m in V_RE.finditer(sent)]
+        hits += [(m.start(), 'T:' + m.group(0)) for m in T_RE.finditer(sent)]
+        hits += [(m.start(), 'A:' + m.group(0)) for m in ATTR_RE.finditer(sent)]
+        squeezed = sent.replace(' ', '').replace('%포인트', '%p')
+        hits += [(10 ** 6, 'L:' + n) for n in sorted(ledger.nums) if n in squeezed]
+        marks.extend(h for _, h in sorted(hits))
+    return len(sents), marks
+
+
+# 범위·세기·한계 낱말 — 판단 문단(발행 전 검토가 연 문단)에서는 문단 전체에서 순서·개수가 같아야 한다.
+# 「일시적→지속적」「일부→모든」「다만 … 불확실하다 → … 확실하다」가 판단 문장을 그대로 둔 채 뜻을 바꿨다
+# (codex 구현 검토 #5). 「불확실」은 「확실」보다 먼저 맞춘다.
+SCOPE_RE = re.compile(r'일부|모든|전부|전체|대부분|대체로|일시적|일시|지속적|지속|불확실|확실|아직|이미|여전히|'
+                      r'다만|반면|그러나|하지만|그래도|적어도|최소|최대|상당|소폭|크게|다소|약간|가장|'
+                      r'가능성|우려|기대|예상|추정|잠정')
+
+
+# 수량어 + 조사가 붙는 데까지의 명사구(네 어절까지) — 「일부 반도체 업종은」 전체가 한 표지다(재검토 3차 #2).
+_QUANT = re.compile(r'(일부|모든|전부|전체|대부분)\s*((?:[^\s.,]+\s+){0,3}?[^\s.,]*?'
+                    r'(?:은|는|이|가|을|를|에서|에|도|만)(?=[\s.,]|$)|[^\s.,]+)?')   # 「의」「과·와」는 명사구 안이다
+
+
+def scope_marks(text):
+    """범위·세기·한계 낱말의 순서 — 수량어(일부·모든·전부·전체·대부분)는 바로 뒤 낱말까지 붙인다.
+
+    「일부 업종은 … 모든 종목은」 → 「일부 종목은 … 모든 업종은」 대상 맞바꾸기(codex 구현 재검토 #5).
+    """
+    plain = _plain(text)
+    marks = SCOPE_RE.findall(plain)
+    quants = [f'{q}:{w or ""}' for q, w in _QUANT.findall(plain)]
+    return marks + quants
+
+
 def demonstratives(text):
     return Counter(DEM_RE.findall(_plain(text)))
 

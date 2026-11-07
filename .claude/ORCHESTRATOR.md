@@ -157,6 +157,10 @@ python3 scripts/check_numbers.py       --html morning_brief_[DATE].html --datadi
 
 2026-10-22 사용자 지시 「발간 직전에 번역투만 점검·수정」은 **작성자 지시문의 「번역투 점검 — 마감의 첫 단계」** 가 맡는다. 작성자가 `scripts/scan_translationese.py` 로 자리를 찾아 자기 문장을 고치고, 그 판이 STEP 2 게이트를 지난다. **오케스트레이터는 대신 고치지 않는다** — 근거와 문맥을 가진 작성자만 「에 대한」을 지워도 뜻이 그대로인지 안다. 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py <html> | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다). 설계와 거절된 세 안: `docs/superpowers/specs/2026-10-22-pre-publish-translationese.md`.
 
+## STEP 2.7 — 발행 전 codex 검토 (STEP 2.6 보다 먼저, 2026-11-07 시범)
+
+`.claude/PREPUB_REVIEW.md` 를 따른다 — 초안을 비공개 레포 `fdo2a/review-runner` 의 codex 검토에 보내고(REST 로 띄운다), 받은 지적을 근거와 대조해 고친 뒤 발행한다. **실패·한도·25분 마감은 발행을 막지 않는다**(`fallback` → 기록만 하고 다음 단계). 기다리는 동안 9분마다 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"`. STEP 2.7 에서 STYLE_CLOSE 를 탔으면 STEP 2.6 은 건너뛴다.
+
 ## STEP 2.6 — 문체 마감 (꺼져 있으면 건너뛴다, 2026-11-06)
 
 `python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 작성자 재호출(edits JSON) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
