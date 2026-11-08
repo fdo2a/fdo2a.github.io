@@ -41,10 +41,11 @@ def cmd_diag(args):
         print(f'스냅샷 기준일({snap["end_date"]})이 집계 종료일({agg["end_date"]})보다 이르다 — 다시 수집한다')
         return 1
     diag = I.build(agg, snap, cal, fomc)
-    # 일정 수집이 모호해서 뺀 지표(2026-10 CPI). 표에 없다는 사실을 작성자·게이트가 보게 한다.
-    diag['calendar_ambiguous'] = cal.get('ambiguous') or []
+    # 일정 수집이 확인하지 못해 비운 지표(2026-10 CPI·GDP). 표에 없다는 사실을 작성자·게이트가
+    # 보게 한다. `unresolved` 는 2026-11-07 부터, `ambiguous` 는 그 전 파일.
+    diag['calendar_ambiguous'] = sorted(set(cal.get('unresolved') or []) | set(cal.get('ambiguous') or []))
     if diag['calendar_ambiguous']:
-        print(f'  ! 일정표에서 빠진 지표(이름이 모호): {", ".join(diag["calendar_ambiguous"])}')
+        print(f'  ! 일정표에서 빠진 지표(확인 못 함): {", ".join(diag["calendar_ambiguous"])}')
     out = Path(f'data/weekly_ext/{args.key}.insight.json')
     out.write_text(json.dumps(diag, ensure_ascii=False, indent=1), encoding='utf-8')
     flagged = [a['label'] for a in diag['anomalies'] if a['flagged']]

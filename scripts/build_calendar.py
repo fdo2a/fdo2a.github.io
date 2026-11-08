@@ -37,32 +37,94 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us import fomc_official as F  # noqa: E402
 from us import auctions as A  # noqa: E402
+from us import census_calendar as CC  # noqa: E402
 from us import upcoming as U  # noqa: E402
 from us.calendar import HORIZON_DAYS, build  # noqa: E402
-from us.fred import FredClient, FredError  # noqa: E402
+from us.fred import FredClient, FredError, annotation, scrub  # noqa: E402
 from us.macro_metrics import RELEASES  # noqa: E402
 
 
+def _warn_unresolved(reasons, key):
+    """이유에는 FRED 응답의 이름이 들어간다 — 응답은 무엇이든 담을 수 있다. 키를 가리고
+    (codex 11/07 구현 #2), 개행 뒤 `::warning::` 이 Actions 명령으로 읽히지 않게 한 줄로
+    만든다(구현 2회 #1)."""
+    for slug, why in sorted(reasons.items()):
+        print(f'경고: {slug} 일정을 비웠다 — {annotation(scrub(why, key))}', file=sys.stderr)
+
+
+def _add_reason(info, slug, why):
+    """비운 이유를 **덧붙인다** — FRED 쪽과 Census 쪽 이유가 둘 다 남아야 원인을 찾는다
+    (codex 11/08 구현 #5)."""
+    old = info['unresolved'].get(slug)
+    if old and why not in old:
+        info['unresolved'][slug] = f'{old}; {why}'
+    elif not old:
+        info['unresolved'][slug] = why
+
+
+def _census_get(url):
+    """Census 목록 페이지 본문. 원문 수집기와 같은 브라우저 흉내 GET 을 쓴다(census.gov 는 봇을 막는다)."""
+    from fetch_releases import http_get
+    resp, note = http_get(url)
+    if resp is None:
+        raise CC.CensusError(note)
+    return resp.text
+
+
 def _collect(report_date, start, end):
-    """-> (events, auctions, missing, ambiguous). 비-코어: 실패는 기록하고 건너뛴다."""
-    events, auctions, missing, ambiguous = [], [], [], []
+    """-> (events, auctions, missing, info). 비-코어: 실패는 기록하고 건너뛴다.
+
+    `info` = {'release_ids': {slug: id}, 'unresolved': {slug: 이유}} — 확인하지 못해 일정표에서
+    **비운** 지표와 그 이유. `missing` 의 `releases` 는 FRED 일정 수집 전체가, `census` 는 Census
+    일정표 전체가 실패한 경우다.
+
+    Census 지표(소매·신규주택·내구재·주택착공·무역수지·건설지출·공장주문)는 Census 날짜를 FRED
+    로 확인해 싣는다(`upcoming.census_events`). 둘 중 하나라도 못 읽으면 그 지표는 빈다.
+    """
+    events, auctions, missing = [], [], []
+    info = {'release_ids': {}, 'unresolved': {}}
+
+    census = CC.collect(_census_get, start, end)
+    if all(slot['why'] for slot in census.values()):
+        missing.append('census')
 
     try:
         client = FredClient()
         client.preflight()
-        got, dropped = U.release_events(client.release_dates(start, end), RELEASES)
-        # 빈 결과 가드보다 먼저 남긴다 — 전부 모호해 0건이면 그 이유가 사라진다(codex 2026-10-17 #10).
-        ambiguous.extend(slug for slug, _names in dropped)
-        if not got:
-            # 이름 매칭이 조용히 0건이 되는 경로가 있다(FRED 가 표기를 바꾸면).
+        resolved, unresolved = U.resolve_releases(client.series_release)
+        info['release_ids'] = {slug: rid for slug, (rid, _n) in resolved.items()}
+        # 빈 결과 가드보다 먼저 남긴다 — 전부 실패해 0건이면 그 이유가 사라진다(codex 2026-10-17 #10).
+        info['unresolved'].update(unresolved)
+        # 일정 조회 **전에** 찍는다 — 그 조회가 죽으면 실제 릴리스 이름이 로그에서 사라진다
+        # (codex 11/07 구현 2회 #2).
+        _warn_unresolved(unresolved, client.key)
+        rows = client.release_dates(start, end)
+        got, held = U.release_events(rows, RELEASES, resolved)
+        c_got, c_held, c_notes = U.census_events(census, rows, resolved, RELEASES)
+        for slug, why in sorted(c_notes.items()):
+            print(f'경고: {slug} 시각을 비웠다 — {annotation(scrub(why, client.key))}', file=sys.stderr)
+        held = {**held, **c_held}
+        for slug, why in held.items():
+            _add_reason(info, slug, why)
+            info['release_ids'].pop(slug, None)
+        _warn_unresolved(held, client.key)
+        if not (got or c_got):
+            # 조용히 0건이 되는 경로가 있다(FRED 가 시리즈를 옮기거나 키가 거부되면).
             # 빈 결과를 성공으로 적으면 그 침묵이 영원히 안 들린다.
             raise FredError('release calendar matched nothing in the window')
-        events += got
-        for slug, names in dropped:
-            print(f'경고: {slug} 이(가) 여러 릴리스에 걸려 버렸다 — {names}', file=sys.stderr)
+        events += got + c_got
     except Exception as e:
         missing.append('releases')
-        print(f'경제지표 일정 실패: {e}', file=sys.stderr)
+        # FRED 가 죽으면 Census 지표도 확인할 수 없다 — 비-Census 와 따로, 이유를 남긴다.
+        # Census 쪽 이유도 로그에 남긴다 — calendar.json 에는 지표 이름만 간다(codex 11/08 구현 2회 #2).
+        _warn_unresolved({k: v['why'] for k, v in census.items() if v['why']}, None)
+        for slug in CC.CENSUS_NAMES:
+            if census[slug]['why']:
+                _add_reason(info, slug, census[slug]['why'])
+            _add_reason(info, slug, f'FRED 일정 확인 실패: {scrub(str(e))}')
+            info['release_ids'].pop(slug, None)
+        # 예외 문자열에도 응답 조각이 들어 있을 수 있다 — 키를 가리고 한 줄로(codex 11/08 구현 #6).
+        print(f'경제지표 일정 실패: {annotation(scrub(str(e)))}', file=sys.stderr)
 
     try:
         rows = _auction_rows(report_date, end)
@@ -70,9 +132,9 @@ def _collect(report_date, start, end):
         auctions = U.auction_results(rows, report_date)
     except Exception as e:
         missing.append('auctions')
-        print(f'국채 입찰 실패: {e}', file=sys.stderr)
+        print(f'국채 입찰 실패: {annotation(scrub(str(e)))}', file=sys.stderr)
 
-    return events, auctions, missing, ambiguous
+    return events, auctions, missing, info
 
 
 def _fresh(rows, report_date, date_of, btc_of):
@@ -151,12 +213,16 @@ def main():
 
     start = report_date + dt.timedelta(days=1)
     end = report_date + dt.timedelta(days=args.horizon)
-    extra, auctions, missing, ambiguous = (([], [], ['releases', 'auctions'], []) if args.offline
-                                           else _collect(report_date, start, end))
+    offline_info = {'release_ids': {}, 'unresolved': {}}
+    extra, auctions, missing, info = (([], [], ['releases', 'auctions'], offline_info) if args.offline
+                                      else _collect(report_date, start, end))
     book = build(report_date, meetings=meetings, horizon_days=args.horizon,
                  extra=extra, missing=missing, auctions=auctions)
     # `missing`·`complete` 와 따로 둔다 — 일간 게이트의 완성도 판정은 바꾸지 않고 손실만 드러낸다.
-    book['ambiguous'] = sorted(set(ambiguous))
+    # `unresolved` = 발표 번호를 못 얻어 비운 지표(「일정 없음」이 아니라 「확인 못 함」).
+    # 2026-11-07 전 파일의 `ambiguous`(이름이 모호해 뺀 지표)를 대신한다.
+    book['unresolved'] = sorted(info['unresolved'])
+    book['release_ids'] = dict(sorted(info['release_ids'].items()))
     out = args.out or os.path.join(args.datadir, 'calendar.json')
     os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
     with open(out, 'w', encoding='utf-8') as fh:
@@ -167,7 +233,7 @@ def main():
         kinds[e['kind']] = kinds.get(e['kind'], 0) + 1
     print(f"{out} — {len(book['events'])}건 " + (str(kinds) if kinds else '')
           + (f" · 빠짐 {book['missing']}" if book['missing'] else '')
-          + (f" · 모호해서 뺀 지표 {book['ambiguous']}" if book['ambiguous'] else ''))
+          + (f" · 확인 못 해 비운 지표 {book['unresolved']}" if book['unresolved'] else ''))
     if book['recent_auctions']:
         top = book['recent_auctions'][0]
         print(f"직전 입찰 {top['date']} {top['term']} — 응찰 {top['bid_to_cover']}"

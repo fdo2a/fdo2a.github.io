@@ -109,6 +109,9 @@ _RELEASE_TERMS = {
     '소매판매': '소매판매', 'GDP': 'GDP', 'PPI': '생산자물가', '생산자물가': '생산자물가',
     '실업수당': '실업수당', 'JOLTS': 'JOLTS', '산업생산': '산업생산', '내구재': '내구재',
     '신규주택': '신규주택', '기존주택': '기존주택', '미시간': '미시간', '고용상황': '고용상황',
+    # Census 일정 지표(2026-11-08) — 이름은 `upcoming.CALENDAR_ONLY` 의 한글명.
+    '주택착공': '주택착공', '착공': '주택착공', '무역수지': '무역수지', '무역적자': '무역수지',
+    '건설지출': '건설지출', '공장주문': '공장주문',
 }
 _SENT = re.compile(r'(?<=[.!?。])\s+')
 _DATE = re.compile(r'(\d{4})-(\d{2})-(\d{2})|(\d{1,2})월\s*(\d{1,2})일')
@@ -292,7 +295,7 @@ def warnings(html, diag=None):
     out = []
     amb = (diag or {}).get('calendar_ambiguous') or []
     if amb:
-        out.append(f'일정 수집이 이름이 모호한 지표를 뺐다({", ".join(amb)}) — 다음 주 표에 그 지표가 없다. '
+        out.append(f'일정 수집이 확인하지 못한 지표를 뺐다({", ".join(amb)}) — 다음 주 표에 그 지표가 없다. '
                    '그 지표를 본문에서 다음 주 변수로 꼽으면 게이트가 막는다')
     secs = {n: body for n, body in _SEC.findall(_SUMMARY.sub(' ', html))}
     for p in _all_prose(html, secs):

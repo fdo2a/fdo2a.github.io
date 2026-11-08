@@ -376,3 +376,29 @@ def test_a_lookalike_summary_attribute_is_not_exempt():
         '<h2>복기</h2>', '<h2>복기</h2><SECTION data-research-summary-note="x"><h3>참고</h3></section>'
                        '<table><tr><td>가짜</td></tr></table>')
     assert any('다른 <section>' in v for v in G.check(html, d))
+
+
+# ── Census 일정 지표 넷도 같은 검사 대상이다 (2026-11-08 설계 검토 #7) ──
+
+_CENSUS_NEXT = [
+    {'date': '2026-10-13', 'kind': 'release', 'name_ko': '주택착공', 'watch': '추세 확인'},
+    {'date': '2026-10-14', 'kind': 'release', 'name_ko': '무역수지', 'watch': '추세 확인'},
+    {'date': '2026-10-15', 'kind': 'release', 'name_ko': '건설지출', 'watch': '추세 확인'},
+    {'date': '2026-10-16', 'kind': 'release', 'name_ko': '공장주문', 'watch': '추세 확인'}]
+
+
+@pytest.mark.parametrize('term,right,wrong', [
+    ('주택착공', '10월 13일', '10월 14일'), ('무역수지', '10월 14일', '10월 13일'),
+    ('건설지출', '10월 15일', '10월 16일'), ('공장주문', '10월 16일', '10월 15일')])
+def test_a_census_release_named_on_the_wrong_day_is_blocked(term, right, wrong):
+    d = _period(next_week=_CENSUS_NEXT)
+    ok = f'다음 주에는 {right} {term}를 본다.'
+    bad = f'다음 주에는 {wrong} {term}를 본다.'
+    assert G.check(_hn(d, next_p=ok), d) == []
+    assert any(term in v for v in G.check(_hn(d, next_p=bad), d))
+
+
+def test_a_census_release_left_out_of_the_table_is_blocked():
+    """일정표가 비운(unresolved) 지표를 날짜와 함께 꼽으면 막는다 — 짐작한 날짜다."""
+    d = _period(next_week=[r for r in _CENSUS_NEXT if r['name_ko'] != '무역수지'])
+    assert any('무역수지' in v for v in G.check(_hn(d, next_p='10월 14일 무역수지를 본다.'), d))

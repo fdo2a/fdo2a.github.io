@@ -28,6 +28,8 @@ CSV = 'https://fred.stlouisfed.org/graph/fredgraph.csv'
 # 키가 없는 날은 일정이 빈다. 없는 것을 없다고 적는 쪽이 지난 일정을 오늘 것처럼
 # 인쇄하는 쪽보다 낫다.
 RELEASES_DATES = 'https://api.stlouisfed.org/fred/releases/dates'
+# 시리즈가 속한 릴리스(id·이름). 일정 행을 이름 대신 id 로 거르는 데 쓴다(us.upcoming).
+SERIES_RELEASE = 'https://api.stlouisfed.org/fred/series/release'
 # 한 번에 몇 건이나 오는가. 열흘 창이면 수십 건이라 넉넉하다 — 그래도 잘림은 센다.
 DATES_LIMIT = 1000
 
@@ -326,6 +328,29 @@ class FredClient:
             except ValueError:
                 continue
         return sorted(out, key=lambda r: (r[0], str(r[2])))
+
+    def series_release(self, sid):
+        """-> (release_id, release_name). 시리즈가 속한 릴리스 **하나**.
+
+        0개·2개 이상·id 가 정수가 아님·이름이 비었음은 전부 `FredError` — 어느 릴리스인지
+        모르는 채로 일정을 그 지표 이름에 붙이지 않는다.
+        """
+        if self.transport != 'api':
+            raise FredError(f'series release needs the official API '
+                            f'(transport={self.transport or "unknown"})')
+        q = [('series_id', sid), ('api_key', self.key or ''), ('file_type', 'json')]
+        # `_json` 은 파싱 실패를 except **밖에서** 살균해 던진다 — 원문이 `__context__` 에
+        # 매달리지 않는다(codex 2026-11-07 구현 #3).
+        payload = self._json(SERIES_RELEASE + '?' + urllib.parse.urlencode(q))
+        rels = payload.get('releases') if isinstance(payload, dict) else None
+        if not isinstance(rels, list) or len(rels) != 1 or not isinstance(rels[0], dict):
+            raise FredError(scrub(f'{sid}: expected one release, got '
+                                  f'{len(rels) if isinstance(rels, list) else "none"}', self.key))
+        rid, name = rels[0].get('id'), rels[0].get('name')
+        if type(rid) is not int or not isinstance(name, str) or not name.strip():
+            # 응답에서 온 값은 무엇이든 담을 수 있다 — 키까지(codex 2026-11-07 구현 #2).
+            raise FredError(scrub(f'{sid}: malformed release ({rid!r}, {name!r})', self.key))
+        return rid, name
 
     def telemetry(self):
         return {'transport': self.transport or 'unknown',
