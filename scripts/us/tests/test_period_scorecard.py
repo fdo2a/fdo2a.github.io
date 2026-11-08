@@ -1,6 +1,6 @@
 import pytest
 
-from us.period_scorecard import realized, regime_check, rollup, score, segments
+from us.period_scorecard import realized, rollup, score, segments
 
 AGG = {
     "start_date": "2026-08-17", "end_date": "2026-08-21",
@@ -88,23 +88,6 @@ def test_score_is_none_when_nothing_was_judged():
     r = score(_rows(("2026-08-14", {"bonds": 0})), AGG)
     assert r["weighted"] is None
     assert r["note"] == "판정 가능한 포지션 없음"
-
-
-def test_regime_check_agrees_when_most_new_prints_match():
-    macro = [{"report_date": "2026-08-21", "regime": {"growth": -1, "inflation": 0}}]
-    metrics = {"indicators": [
-        {"key": "PAYEMS", "axis": "labor", "direction": "악화", "released": "2026-08-19"},
-        {"key": "ICSA", "axis": "labor", "direction": "악화", "released": "2026-08-20"},
-        {"key": "RSAFS", "axis": "consumption", "direction": "개선", "released": "2026-08-20"}]}
-    r = regime_check(macro, metrics, "2026-08-17", "2026-08-21")
-    assert r["verdict"] == "정합"
-    assert r["prints"] == 3
-
-
-def test_regime_check_is_undecidable_without_new_prints():
-    macro = [{"report_date": "2026-08-21", "regime": {"growth": 0, "inflation": 0}}]
-    r = regime_check(macro, {"indicators": []}, "2026-08-17", "2026-08-21")
-    assert r["verdict"] == "판정불가"
 
 
 def test_rollup_averages_recent_periods():

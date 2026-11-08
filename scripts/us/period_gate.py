@@ -36,7 +36,9 @@ def _canon(v):
 _DATE_KEY = re.compile(r'^\d{4}-\d{2}(-\d{2})?$|^\d{4}-W\d{2}$')
 
 _DATE_FIELDS = ('date', 'start_date', 'end_date', 'since', 'released', 'ref_period',
-                'generated', 'key', 'bvps_as_of', 'flows_date')
+                'generated', 'key', 'bvps_as_of', 'flows_date',
+                # 레짐 점검(2026-11-08): 날짜 목록·발표일
+                'missing_days', 'official_date', 'detected_on')
 
 
 def _numbers(obj, out=None):

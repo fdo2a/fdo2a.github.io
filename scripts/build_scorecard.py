@@ -21,6 +21,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us.history import append_jsonl, read_jsonl  # noqa: E402
+from us import release_ledger  # noqa: E402
 from us.period_scorecard import regime_check, rollup, score  # noqa: E402
 
 
@@ -49,14 +50,31 @@ def main():
 
     hist_dir = os.path.join(args.datadir, 'history')
     macro_rows = read_jsonl(os.path.join(hist_dir, 'macro.jsonl'))
-    metrics = _load(os.path.join(args.datadir, 'macro_metrics.json'), {})
+    # 레짐 점검은 오늘 macro_metrics.json 이 아니라 **기간 전체의 새 발표 원장**을 읽는다 —
+    # 오늘 파일만 보면 월요일 발표가 금요일에 사라진다(2026-11-08).
+    try:
+        ledger = release_ledger.load(os.path.join(args.datadir, release_ledger.LEDGER))
+    except (OSError, ValueError) as e:
+        # 손상된 원장으로 세면 빠진 줄이 「발표 없음」으로 읽힌다 — 통째로 판정불가.
+        print(f'경고: 새 발표 원장을 읽지 못했다 — {e}', file=sys.stderr)
+        ledger = None
+    holidays = _load(os.path.join(args.datadir, 'market_holidays.json'))
 
     start, end = agg.get('start_date'), agg.get('end_date')
     out = score(macro_rows, agg)
     out['span'] = agg.get('span')
     out['key'] = agg.get('key')
     out['start_date'], out['end_date'] = start, end
-    out['regime'] = regime_check(macro_rows, metrics, start, end)
+    if ledger is None:
+        # 원장을 못 읽은 주는 축마다 같은 사유로 판정불가 — 빈 원장으로 세면 「수집 누락」으로
+        # 읽혀 사유가 틀린다(codex 구현 #4).
+        out['regime'] = regime_check(macro_rows, [], start, end, holidays)
+        note = '새 발표 기록을 읽지 못했다'
+        out['regime'].update({'verdict': '판정불가', 'partial': False, 'note': note, 'prints': []})
+        for key in ('growth', 'inflation'):
+            out['regime'][key].update({'verdict': '판정불가', 'note': note})
+    else:
+        out['regime'] = regime_check(macro_rows, ledger, start, end, holidays)
 
     spans = tuple(int(x) for x in args.spans.split(',') if x.strip())
     path = args.history or os.path.join(hist_dir, 'period_scorecard.jsonl')
