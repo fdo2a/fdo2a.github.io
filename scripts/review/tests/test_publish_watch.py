@@ -586,3 +586,14 @@ def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):
     before = state.read_bytes()
     CLI.main(['--no-fetch', '--preview', 'kr', '2026-11-09'])
     assert state.read_bytes() == before                              # 있는 상태도 그대로
+
+
+
+def test_unknown_unverified_count_is_not_complete(tmp_path):
+    # codex 6회 #3 — 미검증 숫자 값이 빠지면 0 으로 보지 않는다
+    from review import prepub_view as V
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', numbers={'table_cells': 40, 'prose_judged': 5})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert V.unverified_numbers(v) is None and not V.fully_verified(v)
+    assert '미검증 숫자 수 모름' in '\n'.join(V.digest_lines(v))

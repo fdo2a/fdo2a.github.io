@@ -200,13 +200,14 @@ def clean(v):
 
 
 def unverified_numbers(v):
+    """미검증 숫자 수 — 값이 없거나 정수가 아니면 None(모른다). 0 으로 바꾸지 않는다(codex 6회 #3)."""
     n = (v.get('recorded') or {}).get('numbers') or {}
     u = n.get('unverified')
-    return u if isinstance(u, int) else 0
+    return u if isinstance(u, int) and not isinstance(u, bool) and u >= 0 else None
 
 
 def fully_verified(v):
-    """검증 완료 — 경고·빈칸 없는 pass 이고 미검증 숫자도 없다(KR 은 숫자 대조 자체가 없으니 완료가 아니다)."""
+    """검증 완료 — 경고·빈칸 없는 pass 이고 미검증 숫자가 0 으로 확인됐다(모르면 완료 아님, KR 은 숫자 대조가 없어 완료 아님)."""
     rec = v.get('recorded') or {}
     return bool(rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass'
                 and rec.get('numbers') and unverified_numbers(v) == 0)
@@ -315,10 +316,13 @@ def digest_lines(v):
         bits = [f'판정 {STATUS.get(rec["status"], rec["status"])}', f'검증 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
             bits.append('실행 안 함·일부만 ' + ', '.join((rec['not_run'] + rec['partial'])[:4]))
-        if unverified_numbers(v):
-            bits.append(f'미검증 숫자 {unverified_numbers(v)}')            # codex 5회 #3
-        elif not rec.get('numbers'):
+        u = unverified_numbers(v)
+        if not rec.get('numbers'):
             bits.append('숫자 자동 대조 없음')
+        elif u is None:
+            bits.append('미검증 숫자 수 모름')                            # codex 6회 #3
+        elif u:
+            bits.append(f'미검증 숫자 {u}')                               # codex 5회 #3
         out.append('   - ' + ' · '.join(bits))
     out += [x.replace(' · 그 뒤', '   - 그 뒤', 1) for x in correction_line(v)]
     return out
