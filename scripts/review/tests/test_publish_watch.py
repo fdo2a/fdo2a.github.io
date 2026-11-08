@@ -47,14 +47,47 @@ def test_no_change_no_new_event(tmp_path):
     assert len(st['events']) == n
 
 
-def test_resolved_before_publish(tmp_path):
+def _mark_sent(st):
+    W.deliver(st, lambda text: None, lambda s: None, at(11, 10, 13))
+
+
+def test_resolved_before_publish_after_warning_was_sent(tmp_path):
     repo = F.init(tmp_path)
     F.publish(repo, 'us', '2026-11-09')
     st = run(W.new_state('x'), repo, at(11, 10, 13))
+    _mark_sent(st)                                                   # 미발행 경고를 실제로 보냈다
     F.publish(repo, 'kr', '2026-11-09')
     run(st, repo, at(11, 10, 13, 5))
     assert kinds(st)[-2:] == ['resolved', 'publish']
+    assert '앞서 보낸 미발행 경고' in st['events'][-2]['text']
     assert st['sessions']['kr:2026-11-09'] == 'resolved'
+
+
+def test_pending_warning_becomes_late_not_resolved(tmp_path):
+    # 받은 적 없는 경고의 「해소」를 보내지 않는다
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09')
+    st = run(W.new_state('x'), repo, at(11, 10, 13))                # KR 경고는 아직 pending(전송 실패 중)
+    F.publish(repo, 'kr', '2026-11-09')
+    run(st, repo, at(11, 10, 13, 5))
+    warn = next(e for e in st['events'] if e['kind'] == 'missing')
+    assert warn['status'] == 'cancelled' and warn not in W.pending(st)
+    assert 'resolved' not in kinds(st) and kinds(st)[-2:] == ['late', 'publish']
+    assert '보내기 전에 해소돼 보내지 않았어요' in st['events'][-2]['text']
+
+
+def test_late_publish_seen_first_after_deadline_without_warning(tmp_path):
+    # 맥이 기준 시각에 못 봤고, 깨어 보니 이미 올라와 있다 — 늦었다는 것만, 경고가 있었다고 하지 않는다
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', when='2026-11-10T15:30:00+09:00')     # 기준 11/10 12:00 뒤
+    F.publish(repo, 'kr', '2026-11-09', when='2026-11-09T18:30:00+09:00')     # 기준 안
+    st = run(W.new_state('x'), repo, at(11, 10, 16))
+    late = [e for e in st['events'] if e['kind'] == 'late']
+    assert len(late) == 1 and late[0]['key'] == 'us:2026-11-09'
+    assert '커밋 시각 11/10 15:30 기준' in late[0]['text'] and '미발행 경고는 보내지 않았어요' in late[0]['text']
+    assert st['sessions'] == {'us:2026-11-09': 'late', 'kr:2026-11-09': 'ok'}
+    run(st, repo, at(11, 10, 16, 5))
+    assert [e['kind'] for e in st['events']].count('late') == 1         # 한 번만
 
 
 def test_fetch_failure_is_not_missing_and_keeps_baseline(tmp_path):
@@ -89,6 +122,7 @@ def test_missed_events_recovered_after_long_sleep(tmp_path):
 def test_unresolved_missing_kept_beyond_any_window(tmp_path):
     repo = F.init(tmp_path)
     st = run(W.new_state('x'), repo, at(11, 10, 13))
+    _mark_sent(st)
     assert st['sessions']['us:2026-11-09'] == 'missing'
     run(st, repo, at(12, 20, 13))                                    # 한 달 넘게 지나도
     F.publish(repo, 'us', '2026-11-09')
@@ -173,7 +207,7 @@ def test_record_arriving_later_is_state_change(tmp_path):
 
 
 def test_same_events_regenerate_with_same_ids(tmp_path):
-    # 저장이 실패해 같은 회차를 다시 계산해도 같은 식별자 — 사건이 두 번 쌓이지 않고, 유실도 없다
+    # 저장이 실패해 같은 회차를 다시 계산해도 같은 식별자 — 사건이 두 번 쌓이지 않고 빠지지도 않는다
     repo = F.init(tmp_path)
     F.publish(repo, 'us', '2026-11-09')
     a = run(W.new_state('x'), repo, at(11, 10, 13))
@@ -219,7 +253,7 @@ def test_save_failure_after_send_means_resend_not_loss(tmp_path):
     assert W.pending(again)[0]['id'] == W.pending(W.load_state(path))[0]['id']
     resent = []
     W.deliver(again, resent.append, lambda s: W.save_state(path, s), at(11, 10, 13, 5))
-    assert resent[0] == sent[0]                                    # 중복 가능 — 유실 없음
+    assert resent[0] == sent[0]                                    # 중복 가능 — 상태 파일이 살아 있으면 다시 보낸다
     assert not W.pending(W.load_state(path))
 
 
@@ -244,3 +278,32 @@ def test_summary_lines(tmp_path):
 
 def test_separate_from_daily_digest():
     assert W.DEFAULT_STATE != D.DEFAULT_STATE and W.STATE_ENV != D.STATE_ENV
+
+
+def test_crash_before_save_does_not_advance_baseline(tmp_path):
+    # 사건을 찾고 저장하기 전에 꺼지면 — 디스크의 기준점은 옛 것이라 다음 회차가 같은 사건을 다시 찾는다
+    repo = F.init(tmp_path)
+    path = str(tmp_path / 'state.json')
+    st = run(W.new_state('x'), repo, at(11, 9, 8))
+    W.save_state(path, st)
+    old_base = st['last_seen']
+    F.publish(repo, 'us', '2026-11-09')
+    lost = run(W.load_state(path), repo, at(11, 9, 8, 5))           # 저장 없이 꺼짐
+    eid = next(e['id'] for e in lost['events'] if e['kind'] == 'publish')
+    disk = W.load_state(path)
+    assert disk['last_seen'] == old_base                              # 기준점만 앞서 가지 않았다
+    again = run(disk, repo, at(11, 9, 8, 10))
+    assert [e['id'] for e in W.pending(again) if e['kind'] == 'publish'] == [eid]
+
+
+def test_crash_after_save_before_send_sends_next_time(tmp_path):
+    repo = F.init(tmp_path)
+    path = str(tmp_path / 'state.json')
+    F.publish(repo, 'us', '2026-11-09')
+    st = run(W.new_state('x'), repo, at(11, 9, 8))
+    W.save_state(path, st)                                            # 저장 뒤, 보내기 전에 꺼짐
+    disk = W.load_state(path)
+    run(disk, repo, at(11, 9, 8, 5))                                  # 새 사건 없음
+    sent = []
+    W.deliver(disk, sent.append, lambda s: W.save_state(path, s), at(11, 9, 8, 5))
+    assert any(x.startswith('[발행] US 일간 11/09') for x in sent) and not W.pending(W.load_state(path))

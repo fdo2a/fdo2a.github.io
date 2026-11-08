@@ -25,9 +25,17 @@ def write(repo, rel, text):
         fh.write(text)
 
 
-def commit(repo, msg):
+FIXED = '2026-11-09T06:00:00+09:00'      # 커밋 시각을 고정한다 — 실제 시계로 찍으면 날짜가 지나며 「늦은 발행」이 끼어든다
+
+
+def commit(repo, msg, when=None):
     git(repo, 'add', '-A')
-    git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '-m', msg, '--allow-empty')
+    when = when or FIXED
+    env = dict(os.environ, GIT_COMMITTER_DATE=when, GIT_AUTHOR_DATE=when)
+    out = subprocess.run(['git', '-C', str(repo), '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '-m',
+                          msg, '--allow-empty'], capture_output=True, text=True, env=env)
+    if out.returncode:
+        raise RuntimeError(out.stderr)
     return git(repo, 'rev-parse', 'HEAD')
 
 
@@ -59,7 +67,7 @@ def summary(**kw):
 
 
 def publish(repo, market='us', date='2026-11-09', body='<p>글</p>', workspace=True, summ=None,
-            gate_status=None, record=True, numbers=None):
+            gate_status=None, record=True, numbers=None, when=None):
     """글과 기록을 같은 커밋에 넣는다(루틴 STEP 3 모양). → 커밋."""
     cfg = CONFIG
     pp = cfg['markets'][market]['post'].format(date=date)
@@ -86,4 +94,4 @@ def publish(repo, market='us', date='2026-11-09', body='<p>글</p>', workspace=T
                'inputs': {'files': files}, 'gates': gates, 'summary': summ or summary(),
                'code': {'python': '3.11.9'}}
         write(repo, R.record_path(market, date), json.dumps(rec, ensure_ascii=False))
-    return commit(repo, f'Add {market} {date}')
+    return commit(repo, f'Add {market} {date}', when)

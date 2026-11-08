@@ -9,8 +9,10 @@
 - 조회 실패는 미발행이 아니다. 조회에 실패한 회차는 미발행 판정을 하지 않고 기준점도 옮기지 않는다.
 - 휴장 달력을 못 읽으면 그 시장의 미발행 판정을 멈춘다(빈 달력으로 휴일을 거래일로 보지 않는다).
 - 사건 식별자는 내용에서 정해진다 — 저장 실패로 같은 사건이 다시 만들어져도 같은 식별자라 한 번만 쌓인다.
-  전송은 pending → (보냄) → sent. 보낸 뒤 저장이 실패하면 다음 회차에 다시 보낸다: **재전송 시 중복 가능**,
-  유실보다 낫다.
+  전송은 pending → (보냄) → sent. 보낸 뒤 저장이 실패하면 다음 회차에 다시 보낸다. 계약: 로컬 상태가 보존되고
+  Git 이력에 접근할 수 있는 한 미전송 사건을 재시도하며, 중복 전송을 허용한다(그 밖은 보장하지 않는다).
+- 사건 추가와 기준점 갱신은 메모리에서 함께 하고 **한 번에 원자적으로** 저장한다(`verify_publish.main`) — 기준점만
+  앞서 가는 순간이 없다. 그 전에 꺼지면 둘 다 안 남고, 다음 회차가 옛 기준점에서 같은 사건(같은 식별자)을 다시 만든다.
 설계: docs/superpowers/specs/2026-11-08-telegram-prepub-records.md
 """
 import hashlib
@@ -190,6 +192,27 @@ def _target_of_any(path):
     return None
 
 
+def _when(dl):
+    return f'{dl.month}/{dl.day:02d} {dl:%H:%M} KST'
+
+
+def _late_or_ok(st, root, tip, market, s, path, dl, now):
+    try:
+        adds = V._adding(root, tip, path)
+        if len(adds) != 1:
+            return 'ok'
+        ct = datetime.fromisoformat(V._git(root, 'log', '-1', '--format=%cI', adds[0]).decode().strip())
+    except (V.GitError, ValueError):
+        return 'ok'
+    if ct <= dl:
+        return 'ok'
+    ct = ct.astimezone(KST)
+    add_event(st, 'late', f'{market}:{s}', f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각({_when(dl)}) 뒤에 '
+                                           f'올라온 것으로 보여요(커밋 시각 {ct.month}/{ct.day:02d} {ct:%H:%M} 기준 — 실제 '
+                                           '공개 시각과 다를 수 있어요). 미발행 경고는 보내지 않았어요.', now)
+    return 'late'
+
+
 def step(st, root, now, fetched, ref=REF):
     """사건을 pending 으로 쌓는다. 조회·읽기에 실패하면 기준점을 옮기지 않는다."""
     if st.get('reset'):
@@ -231,15 +254,27 @@ def step(st, root, now, fetched, ref=REF):
         for s in sessions_due(market, now, hol):
             key, path = f'{market}:{s}', V.post_path(market, s)
             seen = st['sessions'].get(key)
+            dl = deadline(market, s)
             if path in tree:
                 if seen == 'missing':
-                    add_event(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} 세션 보고서가 올라왔어요.', now)
+                    warn = next((e for e in st['events'] if e.get('kind') == 'missing' and e.get('key') == key), None)
+                    if warn is not None and warn.get('status') == 'pending':
+                        # 경고를 아직 못 보냈다 — 보내지 않고 「늦은 발행」 하나로 바꾼다(받은 적 없는 경고의 해소를 보내지 않는다)
+                        warn['status'] = 'cancelled'
+                        add_event(st, 'late', key, f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각'
+                                                   f'({_when(dl)}) 뒤에 올라왔어요 — 미발행 경고는 보내기 전에 해소돼 '
+                                                   '보내지 않았어요.', now)
+                    else:
+                        add_event(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} 세션 보고서가 올라왔어요 '
+                                                       f'— 앞서 보낸 미발행 경고(기준 {_when(dl)})가 풀렸어요.', now)
                     st['sessions'][key] = 'resolved'
-            elif seen is None and now >= deadline(market, s):
-                dl = deadline(market, s)
+                elif seen is None and now >= dl:
+                    # 기준 시각을 넘겨 처음 봤다 — 그때 맥이 못 봤을 수 있다. 커밋 시각으로 늦었는지만 추정한다
+                    st['sessions'][key] = _late_or_ok(st, root, tip, market, s, path, dl, now)
+            elif seen is None and now >= dl:
                 add_event(st, 'missing', key,
                           f'[미발행] {_label(market, s)} 세션 보고서 미발행 확인\n'
-                          f'기준 시각: {dl.month}/{dl.day:02d} {dl:%H:%M} KST\n'
+                          f'기준 시각: {_when(dl)}\n'
                           '원인: 확인 불가 — 발행 루틴·데이터 수집 상태 점검 필요', now)
                 st['sessions'][key] = 'missing'
 
@@ -276,7 +311,7 @@ def deliver(st, send, save, now):
             return False
         e['status'], e['sent'] = 'sent', now.isoformat()
         st['send_fail'] = 0
-        save(st)                    # 여기서 실패하면 다음 회차에 다시 보낸다 — 중복 가능, 유실 없음
+        save(st)                    # 여기서 실패하면 다음 회차에 다시 보낸다 — 중복 가능(상태 파일이 살아 있는 한 다시 보낸다)
     return True
 
 
