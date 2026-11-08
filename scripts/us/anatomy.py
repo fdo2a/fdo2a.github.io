@@ -474,12 +474,20 @@ def cite_forms(base, precision, unit):
     shown = round(shown, min(digits, 3))
     shown = int(shown) if float(shown).is_integer() else shown
     forms = [(shown, '')]
+    scales = ()
     if unit in ('명', '건', '채'):
-        for d, word in ((1e3, '천'), (1e4, '만'), (1e6, '백만')):
-            if abs(rounded) >= d:
-                forms.append((round(rounded / d, 3), word))
-    if unit == '$B':
-        forms.append((round(rounded / 1e8, 1), '억'))           # 억 달러
+        scales = ((1e3, '천'), (1e4, '만'), (1e6, '백만'))
+    elif unit == '$B':
+        scales = ((1e8, '억'),)                                 # 억 달러
+    for d, word in scales:
+        if abs(rounded) < d:
+            continue
+        v = rounded / d
+        # Only an exact conversion — 321.567 billion is 3,215.67억, never 3,215.7억
+        # (codex 구현 3회 #3). Three decimals at most, or the form is not offered.
+        exact = round(v, 3)
+        if abs(exact - v) <= 1e-9 * max(1.0, abs(v)):
+            forms.append((exact, word))
     out, seen = [], set()
     for v, word in forms:
         v = int(v) if float(v).is_integer() else v

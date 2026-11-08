@@ -240,3 +240,51 @@ def test_a_converted_figure_needs_its_unit_word(text, ok):
     comp = {'label': '헬스케어', 'aliases': ['헬스케어'], 'actual': shown, 'unit': '명',
             'transform': 'mom_diff', 'cite_forms': [list(f) for f in forms]}
     assert (G.evidenced(text, {'components': [comp], 'indicators': []}) == ['헬스케어']) is ok
+
+
+# ------------------------------------------------ codex 구현 검토 3회 (11/08)
+
+@pytest.mark.parametrize('text,ok', [
+    ('주거비는 +0.4% 하락해 상승세가 꺾였다.', False),
+    ('주거비는 +0.4% 올라 하락세를 멈췄다.', True),        # the word next to the figure
+    ('주거비는 0.4% 올라 하락세를 멈췄다.', True),
+    ('주거비는 하락 우려 속에 0.4% 상승했다.', True),
+])
+def test_the_direction_tied_to_the_figure_decides(text, ok):
+    rel = {'components': [_chg('주거비', 0.4)], 'indicators': []}
+    assert (G.evidenced(text, rel) == ['주거비']) is ok
+
+
+@pytest.mark.parametrize('text,ok', [
+    ('헬스케어는 4.2만 3천 명 늘었다.', False),
+    ('헬스케어는 42,000달러 늘었다.', False),
+    ('헬스케어는 42,000개 일자리가 늘었다.', True),
+])
+def test_a_count_must_end_where_it_says_and_be_a_count(text, ok):
+    from us import anatomy as A
+    shown, forms = A.cite_forms(42000, 1000, '명')
+    comp = {'label': '헬스케어', 'aliases': ['헬스케어'], 'actual': shown, 'unit': '명',
+            'transform': 'mom_diff', 'cite_forms': [list(f) for f in forms]}
+    assert (G.evidenced(text, {'components': [comp], 'indicators': []}) == ['헬스케어']) is ok
+
+
+@pytest.mark.parametrize('text,ok', [
+    ('수출은 3,215억 달러였다.', True),
+    ('수출은 321.5B였다.', True),
+    ('수출은 321.5였다.', False),
+    ('수출은 3,215억 명이었다.', False),
+])
+def test_dollar_figures_need_dollar_units(text, ok):
+    from us import anatomy as A
+    shown, forms = A.cite_forms(321.5e9, 1e8, '$B')
+    comp = {'label': '수출', 'aliases': ['수출'], 'actual': shown, 'unit': '$B',
+            'transform': 'level', 'cite_forms': [list(f) for f in forms]}
+    assert (G.evidenced(text, {'components': [comp], 'indicators': []}) == ['수출']) is ok
+
+
+def test_a_conversion_is_offered_only_when_exact():
+    from us import anatomy as A
+    _, forms = A.cite_forms(321.567e9, 1e6, '$B')
+    assert (3215.67, '억') in forms and (3215.7, '억') not in forms
+    _, forms = A.cite_forms(321.56712e9, 1e4, '$B')
+    assert [w for _, w in forms] == ['']

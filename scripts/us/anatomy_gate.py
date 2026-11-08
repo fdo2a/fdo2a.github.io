@@ -106,27 +106,66 @@ def _sign_ok(clause, comp, start, end, tok):
         return printed_negative == (actual < 0)
     if actual == 0:
         return explicit is None
-    up, down = bool(UP_WORDS.search(clause)), bool(DOWN_WORDS.search(clause))
+    direction = _direction(clause, end)
     if explicit:
         if (explicit == '+') != (actual > 0):
             return False
-        # 「+0.4% 하락」: the sign and the verb disagree — not evidence (codex 구현 2회).
-        return not (up != down and up != (actual > 0))
-    if up == down:
+        # 「+0.4% 하락」: the sign and the verb disagree (codex 구현 2회). With both words
+        # in the clause and none tied to the figure, we cannot tell (3회 #1).
+        if direction == 'both':
+            return False
+        return direction is None or direction == ('up' if actual > 0 else 'down')
+    if direction in (None, 'both'):
         return False                       # no direction, or both: cannot tell
-    return up == (actual > 0)
+    return direction == ('up' if actual > 0 else 'down')
+
+
+NEAR = 12
+
+
+def _direction(clause, end):
+    """'up' | 'down' | 'both' | None — the direction tied to the figure ending at `end`:
+    the words right after it decide when they are one-sided, else the whole clause."""
+    after = clause[end:end + NEAR]
+    u, d = UP_WORDS.search(after), DOWN_WORDS.search(after)
+    if u or d:                                   # the first word after the figure
+        if u and d:
+            return 'up' if u.start() < d.start() else 'down'
+        return 'up' if u else 'down'
+    up, down = bool(UP_WORDS.search(clause)), bool(DOWN_WORDS.search(clause))
+    return 'both' if up and down else 'up' if up else 'down' if down else None
 
 
 _SCALE_WORDS = ('백만', '천', '만', '억')
 
 
-def _unit_ok(clause, end, word):
+# What may follow a count, and what may not (codex 구현 3회 #2): 「42,000달러」 is not
+# 42,000 jobs, and 「4.2만 3천 명」 is 4만 5천, not 4.2만.
+_WRONG_AFTER = {
+    'count': ('달러', '원', '%', '배', '포인트', 'bp', '억', '조'),
+    'dollars': ('명', '건', '채', '%', '배', '포인트', 'bp'),
+}
+
+
+def _unit_ok(clause, end, word, unit=''):
     """The figure is followed by its unit word: 4.2 only as 「4.2만」 (codex 구현 2회).
-    A bare form must not be followed by a scale word (「42,000만」 is not 42,000)."""
+    A bare form must not be followed by a scale word (「42,000만」 is not 42,000), the
+    quantity must not go on (「4.2만 3천」), and the unit kind must fit."""
     rest = clause[end:].lstrip()
     if word:
-        return rest.startswith(word)
-    return not rest.startswith(_SCALE_WORDS)
+        if not rest.startswith(word):
+            return False
+        rest = rest[len(word):].lstrip()
+    elif rest.startswith(_SCALE_WORDS):
+        return False
+    if rest[:1].isdigit():
+        return False
+    kind = 'count' if unit in ('명', '건', '채') else 'dollars' if unit in ('$B', '달러') else None
+    if kind and rest.startswith(_WRONG_AFTER[kind]):
+        return False
+    if unit == '$B' and not word and not re.match(r'(?:B(?![A-Za-z])|billion|십억)', rest):
+        return False                       # 321.5 alone is not 321.5 billion dollars
+    return True
 
 
 def _value_in(clause, comp, numbers):
@@ -141,7 +180,8 @@ def _value_in(clause, comp, numbers):
     for start, end, tok in numbers:
         bare = tok.lstrip('+−-')
         words = by_text.get(bare) or by_text.get(tok.replace('−', '-'))
-        if not words or not any(_unit_ok(clause, end, w) for w in words):
+        if not words or not any(_unit_ok(clause, end, w, comp.get('unit') or '')
+                                for w in words):
             continue
         if comp.get('unit') == '%' and not re.match(r'\s*%(?!p|포인트)', clause[end:]):
             continue
