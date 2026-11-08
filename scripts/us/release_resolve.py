@@ -29,7 +29,13 @@ RESOLVERS = {
     'pce': ('bea_rss', ('Personal Income and Outlays',)),
     'gdp': ('bea_rss', ('GDP', 'Gross Domestic Product')),
     'existing-home-sales': ('nar_page', ()),
+    # 2026-11-08: the Philadelphia Fed's monthly report lives at mbos-YYYY-MM; the survey
+    # page itself only links data files. Built from the reference month — a wrong month
+    # fails release_verify, which checks the month in the lede.
+    'philly-fed': ('philly_month', ()),
 }
+PHILLY_REPORT = ('https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/'
+                 'mbos-{y:04d}-{m:02d}')
 FRESH_DAYS = 10
 
 _ITEM = re.compile(r'<item\b.*?</item>', re.S)
@@ -88,6 +94,12 @@ def nar_from_page(html, base=NAR_PAGE):
     if not m:
         return None
     return urllib.parse.urljoin(base, m.group(1))
+
+
+def philly_url(ref_period):
+    """'2026-10-01' -> the October 2026 MBOS report URL, or None."""
+    m = re.match(r'(\d{4})-(\d{2})', str(ref_period or ''))
+    return PHILLY_REPORT.format(y=int(m.group(1)), m=int(m.group(2))) if m else None
 
 
 def today_utc():

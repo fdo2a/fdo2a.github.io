@@ -30,6 +30,11 @@ CSV = 'https://fred.stlouisfed.org/graph/fredgraph.csv'
 RELEASES_DATES = 'https://api.stlouisfed.org/fred/releases/dates'
 # 시리즈가 속한 릴리스(id·이름). 일정 행을 이름 대신 id 로 거르는 데 쓴다(us.upcoming).
 SERIES_RELEASE = 'https://api.stlouisfed.org/fred/series/release'
+# 한 릴리스의 발표일 목록(2026-11-08 A단계 — 해부 구성요소의 회차 D 를 고른다).
+RELEASE_DATES = 'https://api.stlouisfed.org/fred/release/dates'
+# 회차 조회의 실시간 창. D 에 시작하는 행을 찾는 것이라 D 가 창 안쪽이기만 하면 된다 —
+# 시작 경계(D−40)에 걸린 행의 realtime_start 는 최초 시작일이 아니다(codex 5회).
+VINTAGE_DAYS = 40
 # 한 번에 몇 건이나 오는가. 열흘 창이면 수십 건이라 넉넉하다 — 그래도 잘림은 센다.
 DATES_LIMIT = 1000
 
@@ -351,6 +356,67 @@ class FredClient:
             # 응답에서 온 값은 무엇이든 담을 수 있다 — 키까지(codex 2026-11-07 구현 #2).
             raise FredError(scrub(f'{sid}: malformed release ({rid!r}, {name!r})', self.key))
         return rid, name
+
+    def vintage(self, sid, obs_start, obs_end, as_of):
+        """-> [{date, realtime_start, realtime_end, value}] — `output_type=1` 의 실시간
+        이력 행. 관측 구간 `obs_start..obs_end`, 실시간 창 `as_of−40일..as_of`.
+
+        값이 `.` 인 행은 value None 으로 남긴다(그날 「값 없음」이었다는 사실도 이력이다).
+        CSV 경로에는 이력이 없다 — 공식 API 만.
+        """
+        if self.transport != 'api':
+            raise FredError(f'vintage rows need the official API '
+                            f'(transport={self.transport or "unknown"})')
+        end = dt.date.fromisoformat(str(as_of)[:10])
+        q = [('series_id', sid), ('api_key', self.key or ''), ('file_type', 'json'),
+             ('observation_start', str(obs_start)), ('observation_end', str(obs_end)),
+             ('realtime_start', (end - dt.timedelta(days=VINTAGE_DAYS)).isoformat()),
+             ('realtime_end', end.isoformat()), ('output_type', '1'), ('units', 'lin'),
+             ('sort_order', 'asc'), ('limit', str(LIMIT))]
+        payload = self._json(API + '?' + urllib.parse.urlencode(q))
+        count = payload.get('count') if isinstance(payload, dict) else None
+        if isinstance(count, int) and count > LIMIT:
+            raise FredError(f'{sid}: truncated vintage response ({count} > limit {LIMIT})')
+        out = []
+        for o in (payload.get('observations') or []) if isinstance(payload, dict) else []:
+            day, rs, re_ = o.get('date'), o.get('realtime_start'), o.get('realtime_end')
+            if not (day and rs and re_):
+                continue
+            raw = o.get('value')
+            try:
+                value = None if raw in ('.', '', None) else float(raw)
+            except (TypeError, ValueError):
+                value = None
+            out.append({'date': day, 'realtime_start': rs, 'realtime_end': re_,
+                        'value': value})
+        return out
+
+    def last_release_date(self, release_id, as_of):
+        """-> 'YYYY-MM-DD' | None. `release_id` 의 `as_of` 이하 가장 최근 발표일.
+
+        상한을 **요청에** 넣는다(`realtime_end=as_of`) — 내림차순 상위 몇 개를 받은 뒤
+        거르면 미래 일정이 섞인 응답에서 오늘 이하가 잘려 나갈 수 있다(codex 5회 #6).
+        데이터 없이 일정만 있는 날(`include_release_dates_with_no_data`)은 빼고 받는다.
+        """
+        if self.transport != 'api':
+            raise FredError(f'release dates need the official API '
+                            f'(transport={self.transport or "unknown"})')
+        end = dt.date.fromisoformat(str(as_of)[:10])
+        q = [('release_id', str(release_id)), ('api_key', self.key or ''), ('file_type', 'json'),
+             ('realtime_start', (end - dt.timedelta(days=400)).isoformat()),
+             ('realtime_end', end.isoformat()), ('sort_order', 'desc'), ('limit', '20'),
+             ('include_release_dates_with_no_data', 'false')]
+        payload = self._json(RELEASE_DATES + '?' + urllib.parse.urlencode(q))
+        rows = (payload.get('release_dates') or []) if isinstance(payload, dict) else []
+        days = []
+        for row in rows:
+            try:
+                d = dt.date.fromisoformat(str(row.get('date'))[:10])
+            except ValueError:
+                continue
+            if d <= end:
+                days.append(d)
+        return max(days).isoformat() if days else None
 
     def telemetry(self):
         return {'transport': self.transport or 'unknown',

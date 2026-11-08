@@ -19,6 +19,8 @@ from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
                     TRANSMISSION_LABELS, conflicts, regime_name)
 from .section import locate_section, number_forms, strip_tags
 from .macro_table_gate import check_tables
+from . import anatomy_gate, release_blocks
+from .macro_metrics import LABELS_KO
 
 _REGIME = re.compile(
     r'<span\b(?P<attrs>[^>]*\bdata-macro\s*=\s*"regime"[^>]*)>(?P<text>.*?)</span>', re.S)
@@ -75,7 +77,8 @@ _YEAR = re.compile(r'^(?:19|20)\d{2}$')
 # Known statistical agencies — naming one (or linking the release) is how the block
 # shows it went to the source rather than paraphrasing the dashboard row.
 AGENCIES = ('BLS', 'BEA', 'Census', 'DOL', 'NAR', 'Federal Reserve', 'U. Michigan',
-            '노동통계국', '경제분석국', '센서스국', '노동부', '연준')
+            'Philadelphia Fed', '노동통계국', '경제분석국', '센서스국', '노동부', '연준',
+            '필라델피아 연은', '필라델피아 연준', '인구조사국')
 
 # Headline + at least two component figures. A block that names one number has not
 # taken anything apart; it has restated the dashboard.
@@ -331,8 +334,17 @@ def _check_releases(html, macro_eval, v, releases=None):
     wanted = (macro_eval or {}).get('headline_releases') or []
     if not wanted:
         return
-    scope = section_econ(html) or html
-    blocks = parse_release_blocks(scope)
+    legacy = section_econ(html)
+    scope = legacy or section_macro(html) or html
+    # 2026-11-08: a block is its matched <div>, not everything up to the next marker —
+    # the last block in an axis card used to swallow the next axis's table.
+    parsed, problems = release_blocks.parse(scope, require_card=legacy is None)
+    for p in problems:
+        v.append(f'§9: {p}')
+    blocks = {k: b['text'] for k, b in parsed.items()}
+    stray = set(release_blocks.parse(html, require_card=False)[0]) - set(parsed)
+    for key in sorted(stray):
+        v.append(f'§9: data-release="{key}" 가 매크로 섹션 밖에 있다')
     for rel in wanted:
         key = rel.get('key')
         label = rel.get('label') or key
@@ -360,6 +372,13 @@ def _check_releases(html, macro_eval, v, releases=None):
             agency = rel.get('agency') or '발표 기관'
             v.append(f'§8 {key}: 「{label}」 블록에 원본 발표 출처가 없다 — '
                      f'{agency}의 릴리스를 근거로 밝힐 것')
+
+        if rel.get('anatomy_status') is not None:
+            # 2026-11-08 (A단계): what the block owes follows the cross-checked status.
+            v.extend(anatomy_gate.check_block(
+                key, label, text, rel, len(_figures(text)), structured_figures(rel, primary),
+                _cited_distinct, LABELS_KO))
+            continue
 
         if not raw_release_available(releases, key):
             # No verified release text today (2026-11-06 contract): the block is written

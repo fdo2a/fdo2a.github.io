@@ -183,6 +183,11 @@ def _abbreviated(macro, metrics, allowed, directions):
     return True, None
 
 
+def _anatomy_gaps(headline_releases):
+    from .anatomy import gaps
+    return gaps(headline_releases)
+
+
 def evaluate(macro, metrics, report_date, max_gap_bd=3):
     """Yesterday's macro book + today's metrics -> what today's writer may do."""
     m = metrics or {}
@@ -209,6 +214,9 @@ def evaluate(macro, metrics, report_date, max_gap_bd=3):
         # The prints worth taking apart today. Empty on a quiet day, which is exactly
         # when the anatomy block should not appear at all.
         'headline_releases': list(m.get('headline_releases') or []),
+        # 해부가 덜 된 발표(구성 1개 또는 0개·원문 없음). 지면에는 쓰지 않는다 — 첫 2주
+        # 동안 이 목록으로 회차·원문 대조가 얼마나 자주 구성을 빼는지 본다.
+        'anatomy_gaps': _anatomy_gaps(m.get('headline_releases')),
     }
 
     prev_regime = (macro or {}).get('regime')

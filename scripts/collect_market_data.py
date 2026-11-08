@@ -515,6 +515,56 @@ def collect_econ():
     return out, seen
 
 
+
+def _release_date(client, sid, report_date, cache):
+    """-> the latest release date (≤ report_date) of the FRED release `sid` belongs to."""
+    if sid in cache:
+        return cache[sid]
+    out = None
+    try:
+        if client.transport == 'api':
+            rid, _ = client.series_release(sid)
+            out = client.last_release_date(rid, report_date)
+    except Exception as e:
+        print(f'  release date for {sid} failed: {e}', file=sys.stderr)
+    cache[sid] = out
+    return out
+
+
+def _anatomy_round(mm, econ, econ_series, last_seen, book_state, book_date, report_date,
+                   compute):
+    """Introduced rows that released after the book was written, then FRED's side of
+    every promoted release's components (us.anatomy.produce)."""
+    from us import anatomy
+    client = fred_client()
+    if not client.transport:
+        client.preflight()
+    sids = {e['name']: e['fred_id'] for e in econ}
+    cache = {}
+    if mm.get('introduced') and book_date:
+        fresh = {n for n in mm['introduced']
+                 if (_release_date(client, sids.get(n), report_date, cache) or '') > book_date}
+        if fresh:
+            print(f"  도입일 신규 발표: {', '.join(sorted(fresh))}")
+            mm = compute(econ_series, econ, last_seen, book_state=book_state,
+                         introduced_new=fresh)
+    for rel in mm['headline_releases']:
+        primary = next((i for i in rel.get('indicators') or []
+                        if i.get('name') == rel.get('primary')), {}) or {}
+        sid = primary.get('fred_id') or sids.get(rel.get('primary'))
+        day = _release_date(client, sid, report_date, cache) if sid else None
+        head = None
+        if day and primary.get('ref_period'):
+            try:
+                ref = str(primary['ref_period'])[:10]
+                head = client.vintage(sid, ref, ref, day)
+            except Exception as e:
+                print(f'  headline vintage {sid} failed: {e}', file=sys.stderr)
+                head = []
+        anatomy.produce(rel, lambda fid, a, b, day=day: client.vintage(fid, a, b, day),
+                        day, head if day else None)
+    return mm
+
 def yahoo_spot_yields():
     """Same-day CBOE spot yield indices — the PRIMARY source for 5Y/10Y/30Y (2026-07-28
     사용자 지시). These settle on the same date as the equity close, unlike FRED's T-1 DGS
@@ -1070,26 +1120,19 @@ def main():
         print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
               f"신규 발표 {len(mm['new_releases'])}건")
 
-        # Only the promoted releases pull their breakdown, so a quiet day costs nothing
-        # and a CPI day costs six extra CSVs. The issuing agencies 403 their own press
-        # releases to non-browser clients; FRED redistributes the same components.
-        from us.macro_metrics import attach_components, component_specs
-        specs = component_specs(mm['headline_releases'])
-        comp_series = {}
-        for spec in specs:
-            sid = spec['fred_id']
-            if sid in comp_series or sid in econ_series:
-                continue
-            try:
-                comp_series[sid] = retry(lambda sid=sid: fred_series(sid), attempts=2)
-            except Exception as e:
-                print(f'  component {sid} failed: {e}', file=sys.stderr)
-            time.sleep(0.4)
-        comp_series.update(econ_series)
-        attach_components(mm['headline_releases'], comp_series)
+        # 2026-11-08 (A단계): a component is printed only when FRED as of the release
+        # date and the agency's own text agree on it. Step one here — the FRED side;
+        # step two (`xcheck_components.py`) runs after the release texts are fetched.
+        # Without the official API there is no vintage history, so every component is
+        # left out and the anatomy falls back to the text or the headline.
+        mm = _anatomy_round(mm, econ, econ_series, last_seen, book_state, book_date,
+                            report_date, compute_macro_metrics)
         for rel in mm['headline_releases']:
-            print(f"    해부 {rel['key']}: {rel['label']} "
-                  f"({len(rel.get('components') or [])}개 구성 항목)")
+            anat = rel.get('anatomy') or {}
+            ok = sum(1 for c in anat.get('candidates') or [] if c.get('round_ok'))
+            print(f"    해부 {rel['key']}: {rel['label']} ({rel.get('role')}) "
+                  f"발표일 {anat.get('release_date')} · FRED 회차 {anat.get('round')} · "
+                  f"후보 {ok}/{len(anat.get('candidates') or [])}")
         json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
                   open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
                   indent=2, default=str, ensure_ascii=False)

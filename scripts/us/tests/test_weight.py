@@ -1,4 +1,4 @@
-from us.weight import (THRESHOLDS, check_volume, measure, prose_chars,  # noqa: F401
+from us.weight import (THRESHOLDS, check_volume, measure, prose_chars, warnings,  # noqa: F401
                        section_slice)
 
 DOC = '''<h1>주식이 오른 하루</h1>
@@ -57,12 +57,24 @@ def test_full_day_passes_thresholds():
     assert check_volume(measure(_doc(US_FULL), 'us'), False, 'us') == []
 
 
-def test_measured_2026_08_27_shape_is_blocked():
+def test_measured_2026_08_27_shape_is_only_a_warning_now():
+    """2026-11-08 사용자 지시: 발표일 4,600자는 작성자 재량 — 경고로 남고 막지 않는다."""
     sizes = {'오늘의 장': 0, '주식': 1278, '채권': 1581, 'FX': 360, '원자재': 457,
              '전략 코멘트': 392, '매크로': 4788}
     v = check_volume(measure(_doc(sizes), 'us'), False, 'us')
-    assert not any('비율' in x or '÷' in x for x in v)
-    assert any('매크로' in x for x in v)
+    assert not any('매크로' in x for x in v)
+    assert any('매크로' in x and '4,600' in x for x in warnings(_doc(sizes), 'us'))
+
+
+def test_abbreviated_cap_does_not_count_the_anatomy_blocks():
+    from us.weight import check_volume as cv
+    body = '<p>' + '가' * 2000 + '</p>'
+    block = '<div class="card"><div data-release="cpi"><p>' + '나' * 1500 + '</p></div></div>'
+    doc = _doc(dict(US_FULL, **{'매크로': 0})).replace(
+        '<h2>매크로</h2>', '<h2>매크로</h2>' + body + block, 1)
+    m = measure(doc, 'us')
+    assert m['sections']['매크로'] >= 3500 and m['macro_ex_anatomy'] < 2400
+    assert not any('매크로' in x and '상한' in x for x in cv(m, True, 'us'))
 
 
 def test_abbreviated_day_caps_macro():
@@ -325,7 +337,7 @@ def test_real_post_is_blocked_on_every_designed_axis():
     v = check(_real_post(), market='us', market_data=_real_market_data(),
               macro_eval={'abbreviated': False})
     assert not any('÷' in x for x in v)                   # 비율은 진단용
-    assert any('매크로' in x and '상한' in x for x in v)   # 매크로 상한
+    assert not any('매크로' in x and '상한' in x for x in v)   # 발표일 상한은 경고(11/08)
     assert any('data-standing' in x for x in v)            # 「지금 어디에 있나」
     assert any('포지션 등급 어휘' in x for x in v)             # 스탠스 되풀이
     assert any('data-lede' in x for x in v)                # §2 순서

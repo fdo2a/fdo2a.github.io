@@ -162,3 +162,73 @@ def test_unchanged_is_not_any_value():
     got = verify(text, rel('industrial-production', 'Industrial Production MoM',
                            ('Industrial Production MoM', 9.0, '2026-08-01')))
     assert got['note'] == 'value_mismatch'
+
+
+# ------------------------------------------------- 2026-11-08 (A단계) additions
+
+import os as _os
+
+_AFX = _os.path.join(_os.path.dirname(__file__), 'fixtures', 'anatomy')
+
+
+def _afx(key):
+    with open(_os.path.join(_AFX, f'{key}.txt'), encoding='utf-8') as fh:
+        return fh.read()
+
+
+def _rel(key, primary, *inds):
+    return {'key': key, 'primary': primary,
+            'indicators': [{'name': n, 'actual': a, 'ref_period': r} for n, a, r in inds]}
+
+
+EMP = (('Nonfarm Payrolls (chg)', 165.0, '2026-10-01'), ('Unemployment Rate', 4.1, '2026-10-01'),
+       ('Avg Hourly Earnings MoM', 0.37, '2026-10-01'))
+
+
+def test_employment_headline_values_are_checked_whichever_is_primary():
+    for name, _, _ in EMP:
+        out = verify(_afx('employment'), _rel('employment', name, *EMP))
+        assert out['ok'] and out['primary_checked'], name
+
+
+def test_a_wrong_payroll_figure_is_a_wrong_round():
+    inds = (('Nonfarm Payrolls (chg)', 120.0, '2026-10-01'),) + EMP[1:]
+    out = verify(_afx('employment'), _rel('employment', 'Nonfarm Payrolls (chg)', *inds))
+    assert out['ok'] is False and out['note'] == 'primary_value_mismatch'
+
+
+@pytest.mark.parametrize('key,name,actual,ok', [
+    ('housing-starts', 'Housing Starts', 1221.0, True),
+    ('housing-starts', 'Housing Starts', 1288.0, False),
+    ('trade-balance', 'Trade Balance', -105.05, True),
+    ('trade-balance', 'Trade Balance', 105.05, False),       # a deficit is negative
+    ('construction-spending', 'Construction Spending MoM', -1.85, True),
+    ('construction-spending', 'Construction Spending MoM', 1.85, False),
+    ('factory-orders', 'Factory Orders MoM', 1.84, True),
+    ('factory-orders', 'Factory Orders MoM', 0.3, False),
+])
+def test_census_identity_sentences_check_the_value_and_its_sign(key, name, actual, ok):
+    out = verify(_afx(key), _rel(key, name, (name, actual, '2026-09-01')))
+    assert out['identity'] and out['period']
+    assert out['ok'] is ok
+    if ok:
+        assert out['value'] is True
+
+
+def test_a_census_release_of_another_month_is_refused():
+    out = verify(_afx('housing-starts'), _rel('housing-starts', 'Housing Starts',
+                                              ('Housing Starts', 1221.0, '2026-08-01')))
+    assert out['ok'] is False and out['note'] == 'period_mismatch'
+
+
+# Philadelphia Fed — a paraphrased sentence in the bank's shape, not its text.
+PHILLY = ('Manufacturing Business Outlook Survey March 2026 Report. The diffusion index for '
+          'current general activity fell for a third month, sliding from 4.4 in February to '
+          '-3.4 in March.')
+
+
+@pytest.mark.parametrize('actual,ok', [(-3.4, True), (3.4, False), (4.4, False)])
+def test_philly_identity_keeps_the_sign_of_a_negative_index(actual, ok):
+    name = 'Philly Fed Manufacturing'
+    out = verify(PHILLY, _rel('philly-fed', name, (name, actual, '2026-03-01')))
+    assert out['ok'] is ok

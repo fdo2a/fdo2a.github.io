@@ -147,3 +147,29 @@ def test_yesterdays_metrics_name_no_release_today(tmp_path):
     FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
     assert index(d)['releases'] == [] and index(d)['metrics'] == 'stale'
     assert list((d / 'releases').glob('*.txt')) == []
+
+
+def test_the_whole_verified_text_is_kept_for_the_cross_check(tmp_path):
+    """2026-11-08: the component cross-check reads the untrimmed text in the same job."""
+    d = setup(tmp_path, [CPI])
+    FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
+    full = tmp_path / '_workspace' / 'releases' / 'cpi.txt'
+    assert full.exists() and len(full.read_text()) >= len((d / 'releases' / 'cpi.txt').read_text()) - 200
+    assert index(d)['releases'][0]['published'] is True
+
+
+def test_a_private_release_is_verified_but_never_committed(tmp_path, monkeypatch):
+    monkeypatch.setattr(FR, 'PRIVATE_TEXT', frozenset({'cpi'}))
+    d = setup(tmp_path, [CPI])
+    FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
+    row = index(d)['releases'][0]
+    assert row['ok'] is True and row['published'] is False and 'path' not in row
+    assert not (d / 'releases' / 'cpi.txt').exists()
+    assert (tmp_path / '_workspace' / 'releases' / 'cpi.txt').exists()
+
+
+def test_sanitize_also_wipes_the_private_copies(tmp_path):
+    d = setup(tmp_path, [CPI])
+    FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
+    FR.sanitize(str(d), 'other-run')
+    assert not list((tmp_path / '_workspace' / 'releases').glob('*.txt'))

@@ -54,3 +54,11 @@ def test_nar_page_link_is_followed():
 
 def test_nar_page_without_the_link_resolves_to_nothing():
     assert nar_from_page('<html><a href="/x">Other</a></html>') is None
+
+
+def test_philly_report_url_is_built_from_the_reference_month():
+    from us import release_resolve as rr
+    assert rr.philly_url('2026-10-01') == ('https://www.philadelphiafed.org/surveys-and-data/'
+                                           'regional-economic-analysis/mbos-2026-10')
+    assert rr.philly_url(None) is None
+    assert rr.RESOLVERS['philly-fed'][0] == 'philly_month'

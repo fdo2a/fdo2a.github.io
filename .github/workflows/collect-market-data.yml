@@ -85,14 +85,6 @@ jobs:
         run: |
           python scripts/collect_market_data.py --outdir data ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
 
-      - name: Evaluate macro regime
-        if: steps.collect.outputs.skipped != 'true'
-        # Non-core: judges yesterday's macro book
-        # against today's axis scores so §8 inherits a regime instead of re-reading the
-        # cycle every morning. Never fail the collection job on it.
-        continue-on-error: true
-        run: python scripts/eval_macro_regime.py --datadir data
-
       - name: Record new releases (weekly regime ledger)
         # Non-core (2026-11-08, docs/superpowers/specs/2026-11-08-weekly-regime-ledger.md). Appends
         # today's first-seen prints to data/history/releases.jsonl for the weekly regime check.
@@ -115,11 +107,32 @@ jobs:
 
       - name: Sanitize primary releases
         # 2026-11-06: data/releases must be *this run's* and complete, or empty. Runs even
-        # when the macro evaluation or the fetch above failed or crashed half-way — a
+        # when the fetch above failed or crashed half-way — a
         # stale release left behind would be read as today's (the run id ties the index
         # to this run, so a same-day forced re-collection does not inherit the last one).
         if: always() && steps.collect.outputs.skipped != 'true'
         run: python scripts/fetch_releases.py --datadir data --sanitize
+
+      - name: Cross-check release components
+        # 2026-11-08 (A단계): keeps only the components the agency's own text confirms for
+        # this round (FRED's side was done in Collect). Must run after the texts are in
+        # and before the macro evaluation, which copies the result into macro_eval.json.
+        # It resets every release first, so a failure here leaves no components, never
+        # yesterday's. Never fail the collection job on it.
+        if: ${{ !cancelled() && steps.collect.outcome == 'success' && steps.collect.outputs.skipped != 'true' }}
+        continue-on-error: true
+        run: python scripts/xcheck_components.py --datadir data
+
+      - name: Evaluate macro regime
+        # After the release texts and the component cross-check (2026-11-08): the
+        # evaluation copies headline_releases — with their usable components — into
+        # macro_eval.json for the writer and the gate.
+        if: ${{ !cancelled() && steps.collect.outcome == 'success' && steps.collect.outputs.skipped != 'true' }}
+        # Non-core: judges yesterday's macro book
+        # against today's axis scores so §8 inherits a regime instead of re-reading the
+        # cycle every morning. Never fail the collection job on it.
+        continue-on-error: true
+        run: python scripts/eval_macro_regime.py --datadir data
 
       - name: Fetch market news
         if: steps.collect.outputs.skipped != 'true'

@@ -28,6 +28,12 @@ Contract (2026-11-06 — spec docs/superpowers/specs/2026-11-07-release-fetch-co
   registrable domain only); `landing_url` is where we started. `source_gate` authorises
   `url` of ok rows only.
 
+2026-11-08 (A단계): the whole verified text also goes to `_workspace/releases/<key>.txt`
+(gitignored), where `xcheck_components.py` reads it in the same job to confirm each
+component against the agency's own sentence. A release in `anatomy.PRIVATE_TEXT` (the
+Philadelphia Fed: 「All rights reserved」) gets only that private copy — nothing is
+committed and the index row says `published: false`.
+
 Non-core by design: every failure is reported and skipped. A missing release means the
 brief writes the block from the structured figures, never that it invents the
 composition.
@@ -47,12 +53,18 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us import release_resolve as rr  # noqa: E402
+from us.anatomy import PRIVATE_TEXT  # noqa: E402
 from us.release_text import to_text  # noqa: E402
 from us.release_verify import verify  # noqa: E402
 
 # Ordered by how often each disguise gets through; the first success wins.
 IMPERSONATE = ('safari', 'chrome131', 'chrome119', 'safari_ios', 'firefox')
 TIMEOUT = 30
+
+
+def fulldir_for(datadir):
+    """`<repo>/_workspace/releases` next to `<repo>/data` — gitignored, this job only."""
+    return os.path.join(os.path.dirname(os.path.abspath(datadir)), '_workspace', 'releases')
 MIN_BYTES = 1000      # an empty shell; real decisions are release_verify's
 
 
@@ -132,6 +144,11 @@ def candidates(rel, get, today):
             return [], f'nar page: {note}'
         found = rr.nar_from_page(resp.text)
         return ([(found, 'nar_page')], '') if found else ([], 'nar page: no release link')
+    if kind == 'philly_month':
+        primary = next((i for i in rel.get('indicators') or []
+                        if i.get('name') == rel.get('primary')), {}) or {}
+        found = rr.philly_url(primary.get('ref_period'))
+        return ([(found, 'philly_month')], '') if found else ([], '기준월 없음')
     return ([(url, 'fixed')] if url else []), '' if url else '원문 URL 없음'
 
 
@@ -161,6 +178,7 @@ def fetch_one(rel, get, today):
         row.update({'ok': True, 'url': final, 'resolver': resolver, 'verified': True,
                     'doc_kind': 'pdf' if _is_pdf(resp, final) else 'html',
                     'checks': checks, 'note': how})
+        row['_full'] = whole
         return row, to_text(html)
     row['note'] = '; '.join(n for n in notes if n) or 'no candidate'
     return row, None
@@ -178,9 +196,12 @@ def _write_index(outdir, index):
     os.replace(tmp, os.path.join(outdir, 'index.json'))
 
 
-def run(datadir, rid, get=http_get, today=None):
+def run(datadir, rid, get=http_get, today=None, fulldir=None):
+    fulldir = fulldir or fulldir_for(datadir)
     outdir = os.path.join(datadir, 'releases')
     os.makedirs(outdir, exist_ok=True)
+    os.makedirs(fulldir, exist_ok=True)
+    _wipe(fulldir)
     market = load(os.path.join(datadir, 'market_data.json')) or {}
     index = {'report_date': market.get('report_date'), 'run_id': rid,
              'status': 'running', 'releases': []}
@@ -199,7 +220,15 @@ def run(datadir, rid, get=http_get, today=None):
     today = today or rr.today_utc()
     for rel in releases:
         row, text = fetch_one(rel, get, today)
-        if text is not None:
+        full = row.pop('_full', None)
+        if full is not None:
+            with open(os.path.join(fulldir, f'{row["key"]}.txt'), 'w', encoding='utf-8') as fh:
+                fh.write(full)
+        if text is not None and row['key'] in PRIVATE_TEXT:
+            row['published'] = False
+            print(f'  {row["key"]}: 확인됨, 원문은 커밋하지 않는다(비공개 사본만)')
+        elif text is not None:
+            row['published'] = True
             path = os.path.join(outdir, f'{row["key"]}.txt')
             with open(path, 'w', encoding='utf-8') as fh:
                 fh.write(f'# {rel.get("label") or row["key"]} · {rel.get("agency") or ""}\n'
@@ -227,6 +256,8 @@ def sanitize(datadir, rid):
         return True
     market = load(os.path.join(datadir, 'market_data.json')) or {}
     _wipe(outdir)
+    if os.path.isdir(fulldir_for(datadir)):
+        _wipe(fulldir_for(datadir))
     _write_index(outdir, {'report_date': market.get('report_date'), 'run_id': rid,
                           'status': 'aborted', 'releases': []})
     print('원문 디렉터리를 비웠다 — 이 실행의 완료된 index 가 아니다', file=sys.stderr)
@@ -238,12 +269,13 @@ def main():
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--sanitize', action='store_true')
     ap.add_argument('--run-id', default=None)
+    ap.add_argument('--fulldir', default=None)
     args = ap.parse_args()
     rid = args.run_id or run_id()
     if args.sanitize:
         sanitize(args.datadir, rid)
     else:
-        run(args.datadir, rid)
+        run(args.datadir, rid, fulldir=args.fulldir)
 
 
 if __name__ == '__main__':

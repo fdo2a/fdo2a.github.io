@@ -405,10 +405,18 @@ def test_merged_layout_keeps_the_dissection_with_the_axis_tables():
     There is no separate 경제지표 대시보드 section any more, so the dissection that used
     to live at the back now sits inside the macro section, still next to its numbers.
     """
-    html = build_html(extra=ANATOMY).replace(
+    html = build_html(extra='<div class="card"><h3>물가</h3>' + ANATOMY + '</div>').replace(
         '<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table></section>', '')
     assert '경제지표 대시보드' not in html
     assert check(html, macro_file(), rel_eval(), next_file()) == []
+
+
+def test_merged_layout_wants_the_block_inside_an_axis_card():
+    """2026-11-08: outside a card the block is not attached to any axis table."""
+    html = build_html(extra=ANATOMY).replace(
+        '<section><h2>13. 경제지표 대시보드</h2><table><tr><td>CPI YoY</td></tr></table></section>', '')
+    out = check(html, macro_file(), rel_eval(), next_file())
+    assert any('카드' in x for x in out)
 
 
 def test_merged_layout_still_demands_the_dissection():

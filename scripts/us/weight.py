@@ -175,6 +175,11 @@ def warnings(html_doc, market='us'):
         out.append(f'서술형 본문이 {n["body"]}자다(평상시 {lo:,}~{hi:,}자{news}) — 큰 사건이 있는 날이 '
                    '아니면 반복 해석·장중 시각·변화 없는 판단부터 덜어낸다. 중요한 분석은 지우지 않는다')
     m = measure(html_doc, market)
+    macro = m['sections'].get('매크로', 0)
+    hi = THRESHOLDS[market].get('macro_max')
+    if hi and macro > hi:
+        out.append(f'매크로가 {macro}자로 평소 상한 {hi:,}자를 넘는다 — 발표가 몰린 날이면 괜찮다. '
+                   '해부가 아닌 반복 해석부터 덜어낸다(2026-11-08 사용자 지시로 차단 → 경고)')
     if m['judgment'] and m['recap'] < m['judgment']:
         out.append(f'시황군 {m["recap"]}자 < 판단군 {m["judgment"]}자 — 중요한 분석이 몰린 날이 아니면 '
                    '주요 자산의 움직임·큰 변동의 원인·자산 간 연결이 빠졌는지 점검한다(비율을 맞추려고 '
@@ -197,8 +202,15 @@ def measure(html_doc, market='us'):
                 sections[title] = prose_chars(seg)
     recap = sum(sections[t] for t in groups['recap'])
     judgment = sum(sections[t] for t in groups['judgment'])
-    return {'sections': sections, 'recap': recap, 'judgment': judgment,
-            'ratio': (recap / judgment) if judgment else None, 'missing': missing}
+    out = {'sections': sections, 'recap': recap, 'judgment': judgment,
+           'ratio': (recap / judgment) if judgment else None, 'missing': missing}
+    if market == 'us':
+        # 축약일 2,400자는 발표 해부 블록을 빼고 잰다(2026-11-08) — 발표가 겹친 날 필수 해부가
+        # 접힌 §9 를 넘기지 않게. 블록 경계는 게이트와 같은 파서(us.release_blocks).
+        from us.release_blocks import without_blocks
+        seg = section_slice(html_doc, '매크로')
+        out['macro_ex_anatomy'] = prose_chars(without_blocks(seg)) if seg is not None else 0
+    return out
 
 
 def check_volume(m, abbreviated=False, market='us'):
@@ -211,12 +223,12 @@ def check_volume(m, abbreviated=False, market='us'):
         if title not in OPTIONAL_SECTIONS and title not in m['missing'] and count == 0:
             v.append(f'섹션 「{title}」의 본문이 비어 있다 — 필수 설명을 남길 것')
 
-    if market == 'us':
-        day = '축약일' if abbreviated else '발표일'
-        macro = m['sections'].get('매크로', 0)
-        hi = t['macro_max_abbrev'] if abbreviated else t['macro_max']
+    if market == 'us' and abbreviated:
+        # 발표일 4,600자는 2026-11-08 사용자 지시로 경고가 됐다(warnings()). 차단은 축약일뿐이다.
+        macro = m.get('macro_ex_anatomy', m['sections'].get('매크로', 0))
+        hi = t['macro_max_abbrev']
         if macro > hi:
-            v.append(f'매크로가 {macro}자로 {day} 상한 {hi}자를 넘는다')
+            v.append(f'매크로가 발표 해부를 빼고 {macro}자로 축약일 상한 {hi}자를 넘는다')
 
     return v
 

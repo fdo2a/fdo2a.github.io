@@ -74,6 +74,8 @@ def main():
               + ', '.join(ev['new_releases']))
     else:
         print('  no new releases — regime and policy path are frozen')
+    for gap in ev.get('anatomy_gaps') or []:
+        print(f"  해부 미완 {gap['key']}: {gap['status']} ({gap['reason']})")
     allowed = ' / '.join(f"[{g},{i}]" for g, i in ev['allowed_regimes'])
     block = f" blocked:{ev['regime_block']}" if ev['regime_block'] else ''
     print(f'  allowed regimes: {allowed}{block}')

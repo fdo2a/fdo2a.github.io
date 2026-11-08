@@ -32,8 +32,8 @@ QUARTERS = {'first': 1, 'second': 2, 'third': 3, 'fourth': 4}
 
 _DIR = (r'(?P<dir>increased|rose|decreased|fell|declined|was unchanged|were unchanged|'
         r'edged up|edged down)')
-_UP = ('increased', 'rose', 'edged up')
-_DOWN = ('decreased', 'fell', 'declined', 'edged down')
+_UP = ('increased', 'rose', 'edged up', 'up', 'above')
+_DOWN = ('decreased', 'fell', 'declined', 'edged down', 'down', 'below')
 
 # key -> [(indicator, pattern, period kind, unit scales)]. The first entry is the
 # document's identity: it must match, and its period must equal that indicator's
@@ -56,6 +56,16 @@ SPEC = {
         ('Nonfarm Payrolls (chg)', r'nonfarm payroll employment\b[^.]{0,200}? in (?P<m>[A-Z][a-z]+)\b',
          'month', (1,)),
         ('Unemployment Rate', r'unemployment rate \((?P<v>\d+\.\d) percent\)', 'month', (1,)),
+        # 2026-11-08: the headline value itself, so the release can serve the component
+        # cross-check (us.anatomy.text_usable wants the headline checked, not just dated).
+        ('Unemployment Rate', r'unemployment rate (?:changed little|was little changed|was unchanged|'
+         r'edged up|edged down|rose|fell|increased|decreased|declined) (?:at|to) (?P<v>\d+\.\d) percent',
+         'month', (1,)),
+        ('Nonfarm Payrolls (chg)', r'Total nonfarm payroll employment (?P<dir>rose|increased|declined|fell|'
+         r'decreased|edged up|edged down) by (?P<v>[\d,]+) in (?P<m>[A-Z][a-z]+)', 'month', (1e3,)),
+        ('Avg Hourly Earnings MoM', r'average hourly earnings for all employees on private nonfarm '
+         r'payrolls (?P<dir>increased|rose|decreased|fell|edged up|edged down) by \d+ cents?, or '
+         r'(?P<v>\d+\.\d) percent', 'month', (1,)),
     ],
     'claims': [
         ('Initial Jobless Claims', r'In the week ending (?P<m>[A-Z][a-z]+) (?P<d>\d{1,2}), the advance '
@@ -82,6 +92,32 @@ SPEC = {
     'retail-sales': [
         ('Retail Sales MoM', r'advance estimates of U\.S\. retail and food services sales for '
          r'(?P<m>[A-Z][a-z]+) (?P<y>\d{4})', 'month', (1,)),
+        ('Retail Sales MoM', r'were \$[\d.,]+ billion, (?P<dir>up|down) (?P<v>\d+\.\d) percent '
+         r'\(±[\d.]+ percent\)\*? from the previous month', 'month', (1,)),
+    ],
+    # 2026-11-08 (A단계) — Census 4 and the Philadelphia Fed. Values are the dashboard's:
+    # starts in thousands (x1e3 = units), the trade balance in $ billions with the sign the
+    # word 「deficit」/「surplus」 carries, the two MoM rows in percent.
+    'housing-starts': [
+        ('Housing Starts', r'Privately-owned housing starts in (?P<m>[A-Z][a-z]+) were at a seasonally '
+         r'adjusted annual rate of (?P<v>[\d,]+)', 'month', (1e3,)),
+    ],
+    'trade-balance': [
+        ('Trade Balance', r'the goods and services (?P<bal>deficit|surplus) was \$(?P<v>[\d.]+) billion in '
+         r'(?P<m>[A-Z][a-z]+)', 'month', (1,)),
+    ],
+    'construction-spending': [
+        ('Construction Spending MoM', r'Construction spending during (?P<m>[A-Z][a-z]+) (?P<y>\d{4}) was '
+         r'estimated at a seasonally adjusted annual rate of \$[\d,.]+ billion, (?P<v>\d+\.\d) percent '
+         r'\(±[\d.]+ percent\)\*? (?P<dir>above|below)', 'month', (1,)),
+    ],
+    'factory-orders': [
+        ('Factory Orders MoM', r'New orders for manufactured goods in (?P<m>[A-Z][a-z]+)\b[^$]{0,120}?'
+         r'(?P<dir>increased|decreased) \$[\d.]+ billion or (?P<v>\d+\.\d) percent', 'month', (1,)),
+    ],
+    'philly-fed': [
+        ('Philly Fed Manufacturing', r'diffusion index for current general activity(?:[^.]|\.(?=\d)){0,160}?'
+         r'(?:to|at|was) (?P<v>[-−]?\d+\.\d) in (?P<m>[A-Z][a-z]+)', 'month', (1,)),
     ],
     'gdp': [
         ('Real GDP Growth QoQ (ann.)', r'Real gross domestic product \(GDP\) (?P<dir>increased|decreased) '
@@ -169,11 +205,21 @@ def _value_ok(m, actual, scales):
     if captured is None:
         return None
     try:
-        c = float(captured.replace(',', ''))
+        c = float(captured.replace(',', '').replace('−', '-'))
     except ValueError:
         return None
     decimals = len(captured.split('.')[1]) if '.' in captured else 0
     tol = 0.5 * 10 ** -decimals + 1e-9
+    bal = g.get('bal')
+    if bal is not None:
+        # 「deficit」 is a negative balance, 「surplus」 a positive one (2026-11-08).
+        if (bal == 'deficit') != (a < 0):
+            return False
+        return any(abs(round(abs(a) * s, 6) - c) <= tol for s in scales)
+    if verb is None:
+        # No verb: the figure is a level and carries its own sign (the Philadelphia Fed's
+        # index goes below zero; every other level here is positive).
+        return any(abs(round(a * s, 6) - c) <= tol for s in scales)
     if verb in _UP and not a > 0:
         return False
     if verb in _DOWN and not a < 0:
