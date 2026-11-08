@@ -502,7 +502,7 @@ def test_baseline_still_alerts_problem_posts(tmp_path):
     st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 10, 13))
     pubs = [e for e in st['events'] if e['kind'] == 'publish']
     assert [e['key'] for e in pubs] == ['kr/posts/2026-11-09.html']
-    assert '문제가 있는 글 1편만' in next(e for e in st['events'] if e['kind'] == 'reset')['text']
+    assert '이상이 있는 글 1편만' in next(e for e in st['events'] if e['kind'] == 'reset')['text']
 
 
 def test_flash_publish_after_warning_keeps_warning_state(tmp_path):
@@ -522,13 +522,44 @@ def test_flash_publish_after_warning_keeps_warning_state(tmp_path):
     assert any(e['kind'] == 'resolved' and e['key'] == 'kr:2026-11-09' for e in st['events'])
 
 
-def test_baseline_alerts_warned_or_split_commit_posts(tmp_path):
-    # 재검토 3회 #8
+def test_baseline_alerts_anomalies_not_mere_gaps(tmp_path):
+    # 사용자 11/08 — 「검증 완료 아님」과 「즉시 확인이 필요한 이상」을 가른다
     repo = F.init(tmp_path)
     F.publish(repo, 'us', '2026-11-09', summ=F.summary(status='pass_with_warnings', warned=['check_weight']))
+    F.publish(repo, 'us', '2026-11-10', summ=F.summary(status='pass_with_gaps', verified=False, not_run=['g1']),
+              gate_status={'g1': 'not_run'})
+    F.publish(repo, 'us', '2026-11-11', summ=F.summary(status='fail', publish_ok=False, blocking=['g1']),
+              gate_status={'g1': 'fail'})
+    F.publish(repo, 'us', '2026-11-12', summ=F.summary(status='indeterminate', publish_ok=False, blocking=['g1']),
+              gate_status={'g1': 'indeterminate'})
     F.write(repo, 'kr/posts/2026-11-09.html', '<p>글</p>')
     F.commit(repo, 'post only')
-    F.publish(repo, 'kr', '2026-11-09')                              # 기록은 뒤 커밋
-    st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 10, 13))
-    assert sorted(e['key'] for e in st['events'] if e['kind'] == 'publish') == \
-        ['kr/posts/2026-11-09.html', 'posts/2026-11-09.html']
+    F.publish(repo, 'kr', '2026-11-09')                              # 기록은 뒤 커밋 — 짝의 이상
+    st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 13, 13))
+    keys = sorted(e['key'] for e in st['events'] if e['kind'] == 'publish')
+    assert keys == ['kr/posts/2026-11-09.html', 'posts/2026-11-11.html', 'posts/2026-11-12.html']
+    reset = next(e for e in st['events'] if e['kind'] == 'reset')['text']
+    assert '이상이 있는 글 3편만' in reset and '검증 완료가 아닌 글(경고·미실행·미검증 숫자) 2편' in reset
+
+
+def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):
+    # 시범이 기준점·전송 상태를 바꾸면 자동 실행을 켰을 때 첫 사건을 이미 처리한 것으로 본다
+    import verify_publish as CLI
+    repo = F.init(tmp_path)
+    F.publish(repo, 'kr', '2026-11-09')
+    F.git(repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    state = tmp_path / 'st' / 'state.json'
+    monkeypatch.setenv(W.STATE_ENV, str(state))
+    monkeypatch.chdir(repo)
+    assert CLI.main(['--no-fetch', '--preview', 'kr', '2026-11-09']) == 0
+    assert not state.parent.exists()                                 # 만들지도 않는다
+    out = capsys.readouterr().out
+    assert '[맥이 직접 확인]' in out and 'KR 은 표 숫자를 기계로 대조하는 검사가 없어요' in out
+    assert '작업 공간 전용 입력: 대조 불가' in out and '조용히 기준선으로 잡는다' in out
+    state.parent.mkdir()
+    st = W.new_state('x')
+    st['last_seen'] = 'abc'
+    W.save_state(str(state), st)
+    before = state.read_bytes()
+    CLI.main(['--no-fetch', '--preview', 'kr', '2026-11-09'])
+    assert state.read_bytes() == before                              # 있는 상태도 그대로

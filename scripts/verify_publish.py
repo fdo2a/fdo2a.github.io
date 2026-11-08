@@ -38,14 +38,44 @@ def fetch(root):
     return out.returncode == 0
 
 
+def preview(root, market, date, fetched):
+    """상태 파일을 읽지도 쓰지도 않는다 — 시범이 기준점을 옮기면 자동 실행을 켰을 때 첫 사건을 이미 처리한 것으로 본다."""
+    from review import prepub_view as V
+    if market not in V.TARGETS:
+        print(f'시장은 {", ".join(V.TARGETS)} 중 하나', file=sys.stderr)
+        return 2
+    if not fetched:
+        print('⚠ fetch 실패 — 마지막으로 받아 둔 origin/main 기준', file=sys.stderr)
+    try:
+        v = V.view(root, W.REF, market, date)
+    except V.GitError as exc:
+        print(f'읽지 못함: {exc}', file=sys.stderr)
+        return 1
+    print('── 발행 건별 알림 ──')
+    print(V.render_publish(v))
+    print('\n── 매일 요약의 [발행 전 기록] 줄 ──')
+    print('\n'.join(V.digest_lines(v)))
+    bad = V.anomalies(v)
+    print('\n── 첫 실행(기준선)이라면 ──')
+    print('알림을 보낸다 — 이상: ' + ', '.join(bad) if bad else
+          '조용히 기준선으로 잡는다' + ('' if V.fully_verified(v) else '(검증 완료 아님 — 아침 요약에 보인다)'))
+    print(f'\n기준: 기록 커밋 {(v.get("record_commit") or "-")[:10]} · 글 추가 커밋 '
+          f'{", ".join(c[:10] for c in v.get("post_adds") or []) or "-"}')
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--no-fetch', action='store_true')
+    ap.add_argument('--preview', nargs=2, metavar=('MARKET', 'DATE'),
+                    help='글 하나의 알림을 미리 본다 — 상태 파일·기준점·전송을 건드리지 않는다(시범용)')
     args = ap.parse_args(argv)
     now = D.now_kst()
     path = W.state_path()
     root = repo_root()
+    if args.preview:
+        return preview(root, *args.preview, fetched=args.no_fetch or fetch(root))
 
     lock = None
     if not args.dry_run:

@@ -157,13 +157,46 @@ def view(root, ref, market, date):
     return v
 
 
-def clean(v):
-    """알릴 문제가 없는 상태 — 짝이 맞고(대조 불가는 작업 공간 입력뿐) 루틴 기록이 발행 가능·검증 완료."""
+def anomalies(v):
+    """즉시 확인이 필요한 이상 — 「검증 완료 아님」(미실행·일부만·경고·미검증 숫자)과 다르다(사용자 11/08).
+
+    이상: 기록 없음, 기준 판을 못 정함, 짝 불일치, 맥이 레포 안 것을 대조하지 못함(작업 공간 입력 말고),
+    글과 기록이 다른 커밋, 기록 요약을 읽지 못함, 기록이 발행 불가라고 함(필수 검사 실패·판정 불가 — 그런데 올라왔다),
+    필수 검사의 판정 불가, 무결성 경보."""
+    out = []
+    if v.get('kind') == NO_RECORD:
+        return ['발행 전 기록 없음']
+    if v.get('kind') != OK:
+        return ['기준 판을 정하지 못함']
     chk, rec = v.get('check') or {}, v.get('recorded') or {}
-    return (v.get('kind') == OK and v.get('same_commit') is True and chk.get('overall') in (C.MATCH, C.PARTIAL)
-            and set(chk.get('unknown') or []) <= {'workspace_inputs'}
-            and rec.get('readable') and rec.get('publish_ok') and rec.get('verified')
-            and rec.get('status') == 'pass')       # 경고·빈칸이 있는 판정은 기준선에서도 알린다(codex 재검토 3회 #8)
+    if chk.get('overall') == C.MISMATCH:
+        out.append('짝 불일치')
+    if set(chk.get('unknown') or []) - {'workspace_inputs'} or chk.get('overall') == C.UNKNOWN:
+        out.append('레포 안 대조 불가')
+    if v.get('same_commit') is not True:
+        out.append('글과 기록이 다른 커밋')
+    if not rec.get('readable'):
+        out.append('기록 요약을 읽지 못함')
+    else:
+        if not rec.get('publish_ok'):
+            out.append('기록이 발행 불가라고 함')
+        if rec.get('indeterminate'):
+            out.append('판정 불가 검사')
+        if rec.get('integrity'):
+            out.append('무결성 경보')
+    return out
+
+
+def clean(v):
+    """기준선(첫 실행)에서 조용히 넘겨도 되는가 — 이상이 없으면. 「검증 완료 아님」만으로는 이상이 아니다
+    (미검증 숫자가 있다고 지난 글을 전부 이상으로 보내면 첫 실행이 알림으로 넘친다 — 사용자 11/08). 숨기지는 않는다:
+    그런 글 수는 기준선 안내에 따로 센다."""
+    return not anomalies(v)
+
+
+def fully_verified(v):
+    rec = v.get('recorded') or {}
+    return bool(rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass')
 
 
 def fingerprint(v):
@@ -229,6 +262,10 @@ def recorded_lines(v):
     if n:
         out.append(f' · 숫자: 표 칸 {n.get("table_cells", "?")} 대조 · 문장 판정 {n.get("prose_judged", "?")} · '
                    f'미검증 {n.get("unverified", "?")}')
+    elif v.get('market') == 'kr':
+        out.append(' · 숫자: KR 은 표 숫자를 기계로 대조하는 검사가 없어요(발행 전·후 모두) — 이 결과에 숫자 검증은 들어 있지 않아요')
+    else:
+        out.append(' · 숫자: 기록에 숫자 대조 결과가 없어요')
     return out
 
 
@@ -258,6 +295,9 @@ def digest_lines(v):
     """매일 요약의 [발행 전 기록] 줄 — 짧게."""
     rec = v.get('recorded') or {}
     out = [f' · [발행 전 기록] {headline(v)}']
+    bad = anomalies(v) if v.get('kind') else []
+    if bad:
+        out.append('   - 즉시 확인: ' + ', '.join(bad))
     if rec.get('readable'):
         bits = [f'판정 {STATUS.get(rec["status"], rec["status"])}', f'검증 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
