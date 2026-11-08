@@ -51,18 +51,14 @@ SHARED_RELEASE_OK = frozenset({'durable-goods', 'factory-orders'})
 # `census_events` 가 FRED 쪽에만 있는 날을 「설명된 날」로 칠 수 있는 유일한 근거다.
 FRED_CO_RELEASE = {'housing-starts': ('new-home-sales',)}
 
-# 일정에만 나오는 Census 지표 — `macro_metrics.RELEASES` 에 없어 4축 표·발표 해부의 대상이 아니다
-# (2026-11-08 설계 검토 #8). (티어, 기관, 한글명, 원문 URL) — `RELEASES` 와 같은 모양.
-CALENDAR_ONLY = {
-    'housing-starts': (2, 'Census', '주택착공',
-                       'https://www.census.gov/construction/nrc/pdf/newresconst.pdf'),
-    'trade-balance': (2, 'Census·BEA', '무역수지',
-                      'https://www.census.gov/foreign-trade/Press-Release/current_press_release/ft900.pdf'),
-    'construction-spending': (2, 'Census', '건설지출',
-                              'https://www.census.gov/construction/c30/pdf/release.pdf'),
-    'factory-orders': (2, 'Census', '공장주문',
-                       'https://www.census.gov/manufacturing/m3/prel/pdf/s-i-o.pdf'),
-}
+# 일정에만 나오는 지표. 2026-11-08 A단계에서 Census 4(주택착공·무역수지·건설지출·공장주문)가
+# `macro_metrics.RELEASES` 로 옮겨 4축 표·발표 해부의 대상이 됐다 — 지금은 비어 있다.
+# (티어, 기관, 한글명, 원문 URL) — `RELEASES` 와 같은 모양.
+CALENDAR_ONLY = {}
+
+# 해부 대상이지만 이 일정표에 싣지 않는 지표. 필라델피아 연은은 자기 일정표를 따로 내고 FRED 릴리스
+# 이름을 확인하지 않았다 — 이름이 틀리면 매일 `unresolved` 만 쌓인다. 일정 편입은 B단계.
+NOT_CALENDARED = frozenset({'philly-fed'})
 
 # 풀린 릴리스 이름의 **확인 관문** — FRED 가 쓰는 릴리스 이름과 **정확히** 같아야 한다
 # (대소문자·공백만 무시). 부분 문자열은 「Gross Domestic Product by Industry」 같은 유사

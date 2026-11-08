@@ -169,7 +169,8 @@ def test_only_newly_released_indicators_become_headline_releases():
     econ = [ind('CPI YoY', 'Inflation', 'CPIAUCSL', actual=3.5, ref='2026-07-01'),
             ind('Retail Sales MoM', 'Consumption', 'RSAFS', actual=0.4, ref='2026-07-01')]
     series = {'CPIAUCSL': dated(jump(1)), 'RSAFS': dated(jump(1))}
-    out = mm.compute(series, econ, last_seen={'CPI YoY': ['2026-07-01', 3.5]})
+    out = mm.compute(series, econ, last_seen={'CPI YoY': ['2026-07-01', 3.5],
+                                              'Retail Sales MoM': ['2026-06-01', 0.2]})
     assert [r['key'] for r in out['headline_releases']] == ['retail-sales']
 
 

@@ -20,7 +20,7 @@ SRC = inspect.getsource(cmd.main)
 
 
 def test_macro_metrics_are_computed_and_written():
-    assert 'compute_macro_metrics(econ_series, econ, last_seen)' in SRC
+    assert 'compute_macro_metrics(econ_series, econ, last_seen, book_state=book_state' in SRC
     assert "'macro_metrics.json'" in SRC
 
 

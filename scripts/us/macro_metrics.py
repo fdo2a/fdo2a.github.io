@@ -44,6 +44,13 @@ _POLARITY = {
     'PCE Price Index YoY': (1, 3),
     'Core PCE YoY': (1, 3),
     'Michigan 1-Yr Inflation Exp': (1, 3),
+    # 2026-11-08 Census 4. 무역수지는 「명목 무역수지 모멘텀」이다 — 적자가 줄면 +.
+    'Housing Starts': (1, 3),
+    'Trade Balance': (1, 3),
+    'Construction Spending MoM': (1, 3),
+    'Factory Orders MoM': (1, 3),
+    # anatomy 행(점수 밖). 표의 「직전 대비」 극성만 쓴다.
+    'Philly Fed Manufacturing': (1, 3),
 }
 
 # Where the number actually comes from. The dashboard prints FRED's copy, but FRED only
@@ -77,6 +84,19 @@ RELEASES = {
     'existing-home-sales': (2, 'NAR', '기존주택 판매',
                             'https://www.nar.realtor/research-and-statistics/housing-statistics/existing-home-sales'),
     'michigan': (2, 'U. Michigan', '미시간대 소비자심리', 'https://www.sca.isr.umich.edu/'),
+    # 2026-11-08 (A단계) — Census 4 + 필라델피아 연은. 필라는 달마다 주소가 바뀐다
+    # (mbos-YYYY-MM, us.release_resolve 가 기준월로 만든다). 여기 URL 은 출발점이다.
+    'housing-starts': (2, 'Census', '주택착공',
+                       'https://www.census.gov/construction/nrc/pdf/newresconst.pdf'),
+    'trade-balance': (2, 'Census·BEA', '무역수지',
+                      'https://www.census.gov/foreign-trade/Press-Release/current_press_release/ft900.pdf'),
+    'construction-spending': (2, 'Census', '건설지출',
+                              'https://www.census.gov/construction/c30/pdf/release.pdf'),
+    'factory-orders': (2, 'Census', '공장주문',
+                       'https://www.census.gov/manufacturing/m3/prel/pdf/s-i-o.pdf'),
+    'philly-fed': (2, 'Philadelphia Fed', '필라델피아 연은 제조업 경기',
+                   'https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/'
+                   'manufacturing-business-outlook-survey'),
 }
 
 INDICATOR_RELEASE = {
@@ -95,7 +115,17 @@ INDICATOR_RELEASE = {
     'New Home Sales': 'new-home-sales',
     'Existing Home Sales': 'existing-home-sales',
     'Michigan Consumer Sentiment': 'michigan', 'Michigan 1-Yr Inflation Exp': 'michigan',
+    'Housing Starts': 'housing-starts', 'Trade Balance': 'trade-balance',
+    'Construction Spending MoM': 'construction-spending',
+    'Factory Orders MoM': 'factory-orders',
+    'Philly Fed Manufacturing': 'philly-fed',
 }
+
+# 공장주문 발표(전체 보고서)는 같은 달 내구재 주문을 수정해 다시 낸다. 두 행이 같은 날
+# 같은 기준월로 새로 나오면 그것은 공장주문 날이다 — 내구재는 공장주문 블록 안에서
+# 「수정」으로 다룬다. 기준월이 다르면 내구재 속보치이고 따로 쓴다(codex 1회 #4).
+MERGE_INTO = {'Durable Goods Orders MoM': ('Factory Orders MoM', 'factory-orders')}
+FIXED_PRIMARY = {'factory-orders': 'Factory Orders MoM'}
 
 # What actually moved underneath the headline. The issuing agencies sit behind bot
 # protection (bls.gov and dol.gov return 403 even to a real browser UA from a
@@ -134,11 +164,14 @@ RELEASE_COMPONENTS = {
     ),
 }
 
-# Tier-1 prints are never dropped — those are the ones the brief exists to explain, and
-# in practice at most two or three land on the same morning. The cap applies only to the
-# context releases, which is what keeps the first run (every indicator reads as new) from
-# sending the collector after a dozen press releases.
+# Tier-1 prints are never dropped. The cap on the context releases exists only for the
+# first run — no book, so every indicator reads as new and the collector would chase a
+# dozen press releases (0f5c60d2). With a book in hand a day's releases are what the
+# economy published and all of them get a block (2026-11-08 사용자 지시 「하루 최대 2개
+# 정할 이유 없어」). The book state is passed in explicitly: absent, corrupt and empty
+# books are all 「first run」, and only `ok` lifts the cap (codex 1회 #3).
 MAX_SECONDARY_RELEASES = 2
+BOOK_STATES = ('absent', 'corrupt', 'empty', 'ok')
 
 # The dashboard table keeps the English series names (that is how they are published),
 # but prose has to read in Korean. Without this the §8 paragraphs turn into a list of
@@ -166,6 +199,11 @@ LABELS_KO = {
     'PCE Price Index YoY': 'PCE 물가 전년비',
     'Core PCE YoY': '근원 PCE 전년비',
     'Michigan 1-Yr Inflation Exp': '미시간대 1년 기대인플레',
+    'Housing Starts': '주택착공',
+    'Trade Balance': '무역수지',
+    'Construction Spending MoM': '건설지출',
+    'Factory Orders MoM': '공장주문',
+    'Philly Fed Manufacturing': '필라델피아 연은 제조업지수',
 }
 
 # Direction is the polarity-adjusted read, never the raw z. The 2026-08-17 brief printed
@@ -355,29 +393,49 @@ def release_key(name):
     return ''.join(out).strip('-')
 
 
-def _headline_releases(rows, releases):
-    """New prints grouped by the document that announced them, most market-moving first."""
-    new = [r for r in rows if r['name'] in set(releases)]
+def _headline_releases(rows, releases, roles=None, capped=True):
+    """New prints grouped by the document that announced them, most market-moving first.
+
+    `roles` maps each new name to `scored` or `anatomy`; a release is `scored` when any
+    of its new prints is. `capped` keeps the first-run cap on tier-2 releases.
+    """
+    wanted = set(releases)
+    new = [r for r in rows if r['name'] in wanted]
+    by_name = {r['name']: r for r in new}
     grouped = {}
     for r in new:
         key = INDICATOR_RELEASE.get(r['name']) or release_key(r['name'])
+        target = MERGE_INTO.get(r['name'])
+        if target and target[0] in by_name and \
+                by_name[target[0]].get('ref_period') == r.get('ref_period'):
+            key = target[1]
         grouped.setdefault(key, []).append(r)
 
+    roles = roles or {}
     out = []
     for key, items in grouped.items():
         tier, agency, label, url = RELEASES.get(key, (3, None, items[0]['name'], None))
         ranked = sorted(items, key=lambda r: -abs(r['signed_z'] or 0.0))
+        fixed = FIXED_PRIMARY.get(key)
+        primary = fixed if fixed in {r['name'] for r in items} else ranked[0]['name']
+        role = ('scored' if any(roles.get(r['name'], 'scored') == 'scored' for r in items)
+                else 'anatomy')
         out.append({
             'key': key, 'label': label, 'tier': tier, 'agency': agency, 'url': url,
-            'primary': ranked[0]['name'],
+            'role': role,
+            'primary': primary,
             'max_abs_z': abs(ranked[0]['signed_z'] or 0.0),
             'indicators': [{'name': r['name'], 'axis': r['axis'], 'actual': r['actual'],
                             'previous': r.get('previous'), 'ref_period': r['ref_period'],
-                            'momentum_z': r['momentum_z']} for r in items],
+                            'momentum_z': r['momentum_z'],
+                            'fred_id': r.get('fred_id'), 'transform': r.get('transform'),
+                            'units': r.get('units')} for r in items],
         })
     out.sort(key=lambda r: (r['tier'], -r['max_abs_z']))
     primary = [r for r in out if r['tier'] <= 1]
-    secondary = [r for r in out if r['tier'] > 1][:MAX_SECONDARY_RELEASES]
+    secondary = [r for r in out if r['tier'] > 1]
+    if capped:
+        secondary = secondary[:MAX_SECONDARY_RELEASES]
     return primary + secondary
 
 
@@ -543,18 +601,49 @@ def _diffusion(rows, axes):
     return round(sum(1 for z in zs if z > 0) / len(zs), _R3)
 
 
-def compute(series_by_id, econ_indicators, last_seen=None):
+def _book_state(last_seen, book_state):
+    if book_state is not None:
+        if book_state not in BOOK_STATES:
+            raise ValueError(f'book_state: {book_state!r}')
+        return book_state
+    if last_seen is None:
+        return 'absent'
+    return 'ok' if last_seen else 'empty'
+
+
+def compute(series_by_id, econ_indicators, last_seen=None, book_state=None,
+            introduced_new=None):
     """Full history + today's dashboard rows -> axis scores, diffusion, new releases.
 
     `last_seen` is yesterday's {name: [ref_period, actual]} carried in macro.json. An
     indicator whose reading is byte-identical to yesterday's did not release today, and
     a day with no releases cannot move the regime.
+
+    2026-11-08 (A단계):
+
+    * `role` on an econ row: `scored` (default) moves the axes; `anatomy` is on the page
+      and gets an anatomy block, never a score. `new_releases` is scored prints only —
+      the regime gate, the policy gate and the transmission read it — and
+      `anatomy_releases` the rest. `headline_releases` is both.
+    * `book_state` (absent|corrupt|empty|ok, inferred from `last_seen` when not given)
+      decides the first-run cap.
+    * A row the book has never seen while the book is `ok` is **introduced**: it is kept
+      out of the scores that day, so a composition change cannot move an axis on its
+      own, and it is seeded into `last_seen`. It is a release only when the collector
+      established that its own release came after the book was written
+      (`introduced_new`) — then it is dissected, still unscored.
+    * A row missing today keeps yesterday's `last_seen` reading, so a failed fetch does
+      not make tomorrow read an unchanged print as new.
     """
-    rows, releases, seen_now = [], [], {}
+    state = _book_state(last_seen, book_state)
+    seen_before = last_seen or {}
+    introduced_new = set(introduced_new or ())
+    rows, releases, anatomy, introduced, seen_now, roles = [], [], [], [], {}, {}
 
     for item in econ_indicators or []:
         name = item.get('name')
         axis = item.get('axis')
+        role = item.get('role') or 'scored'
         pol, window = polarity_for(name)
         values = transform_series(series_by_id.get(item.get('fred_id')),
                                   item.get('transform', 'level'))
@@ -565,10 +654,16 @@ def compute(series_by_id, econ_indicators, last_seen=None):
         trend = None if means is None else {
             'window': window, 'label_ko': window_label(window),
             'prior_avg': round(means[0], _R3), 'recent_avg': round(means[1], _R3)}
+        is_intro = state == 'ok' and name not in seen_before
         rows.append({
             'name': name,
             'label_ko': LABELS_KO.get(name, name),
             'axis': axis,
+            'role': role,
+            'introduced': is_intro,
+            'fred_id': item.get('fred_id'),
+            'transform': item.get('transform', 'level'),
+            'units': item.get('units'),
             'direction': direction,
             'strength': strength,
             'polarity': pol,
@@ -586,25 +681,46 @@ def compute(series_by_id, econ_indicators, last_seen=None):
         })
 
         seen_now[name] = [item.get('ref_period'), item.get('actual')]
-        if last_seen is None or seen_now[name] != (last_seen.get(name) or None):
-            releases.append(name)
+        if is_intro:
+            introduced.append(name)
+            if name in introduced_new:
+                anatomy.append(name)
+                roles[name] = 'anatomy'
+            continue
+        if last_seen is None or seen_now[name] != (seen_before.get(name) or None):
+            if role == 'scored':
+                releases.append(name)
+            else:
+                anatomy.append(name)
+            roles[name] = role
 
+    for name, reading in seen_before.items():
+        seen_now.setdefault(name, reading)
+
+    shown = set(releases) | set(anatomy)
     for r in rows:
-        r['is_new'] = r['name'] in releases
+        r['is_new'] = r['name'] in shown
 
+    # Scores see the scored rows the book already knew — never anatomy, never a row on
+    # the day it is introduced.
+    scored = [r for r in rows if r['role'] == 'scored' and not r['introduced']]
     return {
         'schema': SCHEMA,
         'trend_note_ko': TREND_NOTE_KO,
-        'growth_score': _group_score(rows, GROWTH_AXES),
-        'inflation_score': _group_score(rows, INFLATION_AXES),
-        'growth_diffusion': _diffusion(rows, GROWTH_AXES),
-        'inflation_diffusion': _diffusion(rows, INFLATION_AXES),
-        'axis_summary': _axis_summary(rows),
-        'axis_scores': {a: (round(_axis_mean(rows, a), _R3)
-                            if _axis_mean(rows, a) is not None else None)
+        'book_state': state,
+        'growth_score': _group_score(scored, GROWTH_AXES),
+        'inflation_score': _group_score(scored, INFLATION_AXES),
+        'growth_diffusion': _diffusion(scored, GROWTH_AXES),
+        'inflation_diffusion': _diffusion(scored, INFLATION_AXES),
+        'axis_summary': _axis_summary(scored),
+        'axis_scores': {a: (round(_axis_mean(scored, a), _R3)
+                            if _axis_mean(scored, a) is not None else None)
                         for a in GROWTH_AXES + INFLATION_AXES},
         'indicators': rows,
         'new_releases': releases,
-        'headline_releases': _headline_releases(rows, releases),
+        'anatomy_releases': anatomy,
+        'introduced': introduced,
+        'headline_releases': _headline_releases(rows, releases + anatomy, roles,
+                                                capped=state != 'ok'),
         'last_seen': seen_now,
     }

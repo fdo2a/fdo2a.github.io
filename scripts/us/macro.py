@@ -168,7 +168,9 @@ def _abbreviated(macro, metrics, allowed, directions):
     위해서지만, 그 상태가 이어지면 조건이 무력해진다 — 그래서 작성 담당의 macro_next.json
     계약에 `axis_directions`를 넣고 게이트가 그 존재를 검사한다.
     """
-    tiers = [r.get('tier') for r in ((metrics or {}).get('headline_releases') or [])]
+    # anatomy 발표(점수 밖 — 필라 연은, 도입일의 새 행)는 축약을 풀지 않는다.
+    tiers = [r.get('tier') for r in ((metrics or {}).get('headline_releases') or [])
+             if (r.get('role') or 'scored') == 'scored']
     if 1 in tiers:
         return False, 'tier 1 발표가 있는 날'
     if len(allowed) > 1:

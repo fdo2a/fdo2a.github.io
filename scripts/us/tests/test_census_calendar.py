@@ -265,17 +265,17 @@ def test_a_fred_row_naming_another_release_unconfirms_the_slug():
     assert events == [] and 'retail-sales' in unresolved
 
 
-def test_new_census_slugs_are_calendar_only():
-    """일정에만 나온다 — 헤드라인 해부·4축 표의 대상이 아니다(설계 검토 #8)."""
-    new = set(C.CENSUS_NAMES) - set(RELEASES)
-    assert new == {'housing-starts', 'trade-balance', 'construction-spending', 'factory-orders'}
-    assert new <= set(U.CALENDAR_ONLY)
+def test_census_slugs_are_all_dissected_releases_now():
+    """2026-11-08 A단계: Census 4 가 4축 표·발표 해부로 들어왔다 — 일정 전용 지표는 없다."""
+    assert set(C.CENSUS_NAMES) <= set(RELEASES)
     assert not (set(U.CALENDAR_ONLY) & set(RELEASES))
+    for slug in ('housing-starts', 'trade-balance', 'construction-spending', 'factory-orders'):
+        assert RELEASES[slug][0] == 2 and RELEASES[slug][1].startswith('Census')
 
 
 def test_census_and_fred_paths_cover_every_release_once():
     assert not (set(C.CENSUS_NAMES) & set(U.RELEASE_SERIES))
-    assert set(RELEASES) <= set(C.CENSUS_NAMES) | set(U.RELEASE_SERIES)
+    assert set(RELEASES) <= set(C.CENSUS_NAMES) | set(U.RELEASE_SERIES) | U.NOT_CALENDARED
 
 
 def test_every_census_series_resolves_to_the_fred_names_seen_on_2026_11_08():

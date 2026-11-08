@@ -1054,12 +1054,19 @@ def main():
     print('computing macro axis scores...')
     try:
         from us.macro_metrics import compute as compute_macro_metrics
-        last_seen = None
-        try:
-            last_seen = json.load(open(os.path.join(args.outdir, 'macro.json'))).get('last_seen')
-        except Exception:
-            print('  no committed macro.json — treating every indicator as new', file=sys.stderr)
-        mm = compute_macro_metrics(econ_series, econ, last_seen)
+        last_seen, book_state, book_date = None, 'absent', None
+        book_path = os.path.join(args.outdir, 'macro.json')
+        if os.path.exists(book_path):
+            try:
+                book = json.load(open(book_path))
+                last_seen = book.get('last_seen')
+                book_date = book.get('report_date')
+                book_state = 'ok' if last_seen else 'empty'
+            except Exception:
+                book_state = 'corrupt'
+        if book_state != 'ok':
+            print(f'  macro.json {book_state} — treating every indicator as new', file=sys.stderr)
+        mm = compute_macro_metrics(econ_series, econ, last_seen, book_state=book_state)
         print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
               f"신규 발표 {len(mm['new_releases'])}건")
 

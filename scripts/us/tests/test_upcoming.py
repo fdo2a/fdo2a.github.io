@@ -2,6 +2,7 @@ import datetime as dt
 
 import pytest
 
+from us import census_calendar as C
 from us import upcoming as U
 from us.fred import FredClient, FredError
 from us.macro_metrics import RELEASES
@@ -154,7 +155,7 @@ def test_every_slug_has_a_series_the_dashboard_already_fetches():
         owned.setdefault(sid, set()).add(INDICATOR_RELEASE[label])
     assert set(U.ALL_SERIES) == set(U.RELEASE_NAMES)
     # Census 경로로 간 지표만 FRED 일정 경로에서 빠진다(2026-11-08).
-    assert set(RELEASES) - set(U.RELEASE_SERIES) == {'retail-sales', 'new-home-sales', 'durable-goods'}
+    assert set(RELEASES) - set(U.RELEASE_SERIES) - U.NOT_CALENDARED == set(C.CENSUS_NAMES)
     for slug, sid in U.RELEASE_SERIES.items():
         assert owned.get(sid) == {slug}, (slug, sid)
 
