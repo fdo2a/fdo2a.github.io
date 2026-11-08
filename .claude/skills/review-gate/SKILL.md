@@ -306,3 +306,5 @@ git branch -d fix/<topic>
 ## 매일 검증 알림 (2026-11-08)
 
 이 절차의 결과(원장·초안·만료)는 매일 아침 텔레그램으로 사용자에게 간다 — `scripts/verify_digest.py`(launchd `com.fdo2a.verify-digest`). 원장 형식·분류 규칙·`check_numbers.py --json` 출력을 바꾸면 알림이 거짓을 말할 수 있다. When changing those: read `docs/superpowers/specs/2026-11-08-daily-verify-digest.md` before touching `scripts/review/digest.py`.
+
+발행 건별 알림(`scripts/verify_publish.py`, launchd `com.fdo2a.verify-publish` 5분)은 US·KR 일간의 발행 전 기록(`verification/<m>/<D>.json`)을 읽는다 — 기록 형식이나 `verification/record.py` 의 다이제스트를 바꾸면 맥의 짝 확인이 거짓 불일치를 낸다. When changing those: read `docs/superpowers/specs/2026-11-08-telegram-prepub-records.md` before touching `scripts/review/publish_watch.py` or `scripts/verification/repo_check.py`.

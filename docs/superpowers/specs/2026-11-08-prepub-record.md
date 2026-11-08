@@ -84,4 +84,6 @@ US·KR 각각: 글과 `verification/<market>/<D>.json` 이 같은 커밋인가, 
   말하지 않는다.
 - `workspace-only` 입력의 원본 보관(비공개 저장소, 민감도 확인 뒤).
 
+기록을 읽는 쪽(발행 건별 알림·매일 요약의 [발행 전 기록] 줄)은 `2026-11-08-telegram-prepub-records.md`. 기록 형식(`FORMAT`)·`repo_digest` 를 바꾸면 그쪽 `verification/repo_check.py` 도 함께 본다.
+
 When changing this: read this spec before touching `scripts/verification/record.py`, `scripts/run_gates.py` or `config/prepub_gates.json`.

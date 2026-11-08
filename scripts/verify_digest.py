@@ -21,6 +21,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from review import digest as D  # noqa: E402
+from review import prepub_view as V  # noqa: E402
+from review import publish_watch as W  # noqa: E402
 
 CHECKER = os.path.join(HERE, 'check_numbers.py')
 # 숫자 재검사 결과를 바꾸는 파일 — 캐시 키. 검사기가 부르는 묶음(us·fund·common)까지 통째로 —
@@ -81,8 +83,15 @@ def build(state, now, args, notes):
                 number['checker'] = code_id[:8]
             if number.get('kind') != 'error':       # 일시 오류는 기억하지 않는다 — 다음에 다시
                 numbers[path] = {'sha': sha, 'code': code_id, 'result': number}
-        posts.append({'path': path, 'sha': sha, 'state': st, 'findings': findings,
-                      'number': number, 'auto': D.auto_reviewed(path), 'draft': path in drafts})
+        post = {'path': path, 'sha': sha, 'state': st, 'findings': findings,
+                'number': number, 'auto': D.auto_reviewed(path), 'draft': path in drafts}
+        target = V.target_of(path)
+        if target:                       # 발행 전 기록(2단계) — 대상 글에만 키를 둔다
+            try:
+                post['prepub'] = V.view(root, 'origin/main', *target)
+            except V.GitError as exc:
+                post['prepub'] = {'error': str(exc)}
+        posts.append(post)
     # KR 주간 지수 누락 — 자동 보완하지 않으므로 사람에게 알린다(2026-11-10). 실패해도 알림은 계속
     try:
         notes.extend(D.kr_index_gap_notes(D.kr_weekly_aggs(root)))
@@ -157,7 +166,7 @@ def main(argv=None):
         try:
             posts, numbers, published = build(state, now, args, notes)
             lines, more, tracked = D.reconcile(posts, state, published, now.date())
-            text, lines = D.render(posts, lines, now, notes + more)
+            text, lines = D.render(posts, lines, now, notes + more, W.summary_lines(W.state_path(), now))
             if args.dry_run:
                 print(text)
                 return 0

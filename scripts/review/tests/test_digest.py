@@ -680,3 +680,38 @@ def test_unread_count_in_footer():
     text, _ = D.render([post(state='읽지 않음', findings=None), post('kr/posts/2026-11-06.html')], {},
                        at(2026, 11, 9))
     assert '읽지 않고 범위에 넣은 글 1편(90일 안' in text and '아직 안 끝난 글' not in text
+
+
+# ── 2단계: 발행 전 기록 줄(2026-11-08) ─────────────────────────────────────
+
+def _post(path, **kw):
+    p = {'path': path, 'sha': 's', 'state': '완료', 'findings': 0, 'number': None, 'auto': True, 'draft': False}
+    p.update(kw)
+    return p
+
+
+def test_target_post_separates_prepub_and_recheck(tmp_path):
+    from review import prepub_view as V
+    from review.tests import prepub_fixture as F
+    repo = F.init(tmp_path)
+    F.publish(repo, 'kr', '2026-11-09', workspace=False)
+    p = _post('kr/posts/2026-11-09.html', prepub=V.view(str(repo), 'HEAD', 'kr', '2026-11-09'))
+    text = D.block(p)
+    assert '[발행 전 기록] 발행 전 기록 일치' in text
+    assert '[발행 뒤 재검사] 숫자: 자동 재검사 없음(US 일간만 해요)' in text
+
+
+def test_old_post_block_unchanged():
+    # 대상이 아닌 글의 문장이 바뀌면 다음 요약에서 90일치가 「바뀜」으로 다시 온다
+    p = _post('posts/2026-11-06.html')
+    assert D.block(p).splitlines()[1] == ' · 숫자: 자동 검사 없음'
+
+
+def test_prepub_read_error_line():
+    p = _post('posts/2026-11-09.html', prepub={'error': 'fatal: bad object'})
+    assert '[발행 전 기록] 읽지 못했어요' in D.block(p)
+
+
+def test_publish_watch_tail_is_shown():
+    text, _ = D.render([], {}, at(2026, 11, 10), extra_tail=['아직 안 올라온 세션: KR 일간 11/09'])
+    assert '아직 안 올라온 세션: KR 일간 11/09' in text

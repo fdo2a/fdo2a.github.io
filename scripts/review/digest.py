@@ -451,10 +451,27 @@ def _review_line(p):
     }.get(state, f' · codex 검토: {state}')
 
 
+def _prepub_lines(p):
+    """발행 전 기록 대상(US·KR 일간, 2026-11-09~)만 — 다른 글의 문장은 그대로 둔다(바꾸면 90일치가 「바뀜」으로 다시 온다)."""
+    from review import prepub_view as V
+    pv = p.get('prepub')
+    if isinstance(pv, dict) and pv.get('error'):
+        return [f' · [발행 전 기록] 읽지 못했어요 — {pv["error"][:100]}']
+    lines = V.digest_lines(pv)
+    num = _number_line(p.get('number'))
+    if not p.get('number'):
+        num = ' · [발행 뒤 재검사] 숫자: 자동 재검사 없음(US 일간만 해요)'
+    else:
+        num = num.replace(' · 숫자(발행 뒤 재검사):', ' · [발행 뒤 재검사] 숫자:', 1)
+    return lines + [num]
+
+
 def block(p, changed_body=False):
     mark = ' (글 내용이 바뀜)' if changed_body else ''
-    return '\n'.join([f'■ {_day_label(p["path"])} — {verdict(p)}{mark}', _number_line(p.get('number')),
-                      _review_line(p)])
+    head = f'■ {_day_label(p["path"])} — {verdict(p)}{mark}'
+    if 'prepub' in p:
+        return '\n'.join([head] + _prepub_lines(p) + [_review_line(p)])
+    return '\n'.join([head, _number_line(p.get('number')), _review_line(p)])
 
 
 def _totals(posts):
@@ -473,7 +490,7 @@ def _header(now):
     return f'[검증 알림] {now.month}월 {now.day}일({WEEKDAY[now.weekday()]}) {now:%H:%M}'
 
 
-def render(posts, prev_lines, now, notes=()):
+def render(posts, prev_lines, now, notes=(), extra_tail=()):
     """(보낼 글, 기록할 문장표). 바뀐 글만 자세히, 끝나지 않은 글은 꼬리에 이름만."""
     posts = sorted(posts, key=lambda p: (post_day(p['path']) or date.min, p['path']))
     head = [_header(now)] + [f'⚠ {n}' for n in notes]
@@ -487,6 +504,7 @@ def render(posts, prev_lines, now, notes=()):
     unread = sum(1 for p in posts if p['state'] == '읽지 않음')
     if unread:
         tail.append(f'읽지 않고 범위에 넣은 글 {unread}편(90일 안, 게이트 도입 전 글, 검토 대상 아님)')
+    tail += list(extra_tail)          # 발행 건별 알림의 상태(읽기만) — 미발행·관측 멈춤·미전송
     tail += [_totals([p for p in posts if in_window(p['path'], now.date())]), CAVEAT]
 
     # 문장과 공개판 blob 을 함께 비교한다 — 상태 문장이 같아도 내용이 바뀌면 알린다(codex 구현 검토 #2).
