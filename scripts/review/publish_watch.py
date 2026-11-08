@@ -235,6 +235,11 @@ def _mark_gone(st, key):
         st['sessions'][key] = 'gone'
 
 
+def _short(path):
+    t = V.target_of(path)
+    return f'{V.LABEL[t[0]]} {int(t[1][5:7])}/{t[1][8:]}' if t else path
+
+
 def _when(dl):
     return f'{dl.month}/{dl.day:02d} {dl:%H:%M} KST'
 
@@ -338,7 +343,7 @@ def step(st, root, now, fetched, ref=REF):
                           f'기준 시각: {_when(dl)}\n'
                           '원인: 확인 불가 — 발행 루틴·데이터 수집 상태 점검 필요', now)
 
-    flagged = unverified = 0
+    flagged, unverified = 0, []
     for path, v in views.items():
         fp = V.fingerprint(v)
         prev = st['posts'].get(path)
@@ -346,7 +351,8 @@ def step(st, root, now, fetched, ref=REF):
             # 기준선(첫 실행)이어도 문제가 있는 글은 알린다 — 조용히 저장하면 그 경로가 다시 안 바뀌는 한 영영 안 나온다(#8)
             (add_event if quiet and not V.clean(v) else emit)(st, 'publish', path, V.render_publish(v), now, extra=fp)
             flagged += quiet and not V.clean(v)
-            unverified += quiet and V.clean(v) and not V.fully_verified(v)
+            if quiet and V.clean(v) and not V.fully_verified(v):
+                unverified.append(path)
             st['posts'][path] = {'fp': fp, 'first_seen': tip}
         else:
             if prev.get('gone'):
@@ -375,8 +381,11 @@ def step(st, root, now, fetched, ref=REF):
     if reset and rid:
         ev = next(e for e in st['events'] if e['id'] == rid)
         ev['text'] = (f'[발행 알림] {reset} — 이미 올라온 글·세션은 기준선으로만 잡았어요. 즉시 확인이 필요한 이상이 있는 '
-                      f'글 {flagged}편만 따로 알려요. 이상은 아니지만 검증 완료가 아닌 글(경고·미실행·미검증 숫자) '
-                      f'{unverified}편은 아침 요약의 [발행 전 기록] 줄에 보여요. 아직 안 올라온 세션도 아침 요약에 있어요.'
+                      f'글 {flagged}편만 따로 알려요. 이상은 아니지만 검증 완료가 아닌 글(경고·미실행·미검증 숫자·숫자 대조 없음) '
+                      f'{len(unverified)}편' + (': ' + ', '.join(_short(p) for p in unverified[:10])
+                                                 + (f' 외 {len(unverified) - 10}편' if len(unverified) > 10 else '')
+                                                 if unverified else '')
+                      + ' — 최근 7일 안 글은 아침 요약의 [발행 전 기록] 줄에도 보여요. 아직 안 올라온 세션은 아침 요약에 있어요.'
                       if quiet else
                       f'[발행 알림] {reset} — {V.EFFECTIVE} 이후 글을 전부 다시 계산해요(이미 받은 알림이 다시 올 수 있어요).')
     if st['fetch'].get('alerted'):

@@ -539,7 +539,30 @@ def test_baseline_alerts_anomalies_not_mere_gaps(tmp_path):
     keys = sorted(e['key'] for e in st['events'] if e['kind'] == 'publish')
     assert keys == ['kr/posts/2026-11-09.html', 'posts/2026-11-11.html', 'posts/2026-11-12.html']
     reset = next(e for e in st['events'] if e['kind'] == 'reset')['text']
-    assert '이상이 있는 글 3편만' in reset and '검증 완료가 아닌 글(경고·미실행·미검증 숫자) 2편' in reset
+    assert '이상이 있는 글 3편만' in reset and '숫자 대조 없음) 2편: US 일간 11/09, US 일간 11/10' in reset
+
+
+def test_baseline_flags_note_allowed_required_fail_not_reference_indeterminate(tmp_path):
+    # codex 5회 #1·#2 — 노트 때문에 허용된 필수 실패는 이상, 참고 검사의 판정 불가는 이상 아님
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', summ=F.summary(note_format=['g1']), gate_status={'g1': 'fail'})
+    st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 10, 13))
+    assert [e['key'] for e in st['events'] if e['kind'] == 'publish'] == ['posts/2026-11-09.html']
+    from review import prepub_view as V
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert any(x.startswith('필수 검사 실패') for x in V.anomalies(v))
+    v['recorded'] = dict(v['recorded'], required_failed=[], indeterminate=['ref_only'], required_indeterminate=[])
+    assert not V.anomalies(v)
+
+
+def test_unverified_numbers_counted_as_not_fully_verified(tmp_path):
+    # codex 5회 #3
+    from review import prepub_view as V
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', numbers={'table_cells': 40, 'prose_judged': 5, 'unverified': 12})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert V.clean(v) and not V.fully_verified(v)
+    assert '미검증 숫자 12' in '\n'.join(V.digest_lines(v))
 
 
 def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):

@@ -113,6 +113,8 @@ def recorded(rec):
         'not_run': [g['name'] for g in by if g.get('status') == 'not_run'],
         'partial': [g['name'] for g in by if g.get('status') == 'partial'],
         'indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate'],
+        'required_indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate' and g.get('required', True)],
+        'required_failed': [g['name'] for g in by if g.get('status') == 'fail' and g.get('required', True)],
         'ref_failed': [g['name'] for g in by if g.get('status') == 'fail' and not g.get('required', True)],
         'note_numbers': list(s.get('note_numbers') or []), 'note_format': list(s.get('note_format') or []),
         'warned': list(s.get('warned') or []), 'integrity': list(s.get('integrity') or []),
@@ -180,8 +182,11 @@ def anomalies(v):
     else:
         if not rec.get('publish_ok'):
             out.append('기록이 발행 불가라고 함')
-        if rec.get('indeterminate'):
-            out.append('판정 불가 검사')
+        if rec.get('required_failed'):
+            # 노트 때문에 허용된 필수 실패도 publish_ok 는 참이다 — 그래도 필수 검사가 실패한 글이다(codex 5회 #1)
+            out.append('필수 검사 실패(' + ', '.join(rec['required_failed'][:4]) + ')')
+        if rec.get('required_indeterminate'):
+            out.append('필수 검사 판정 불가(' + ', '.join(rec['required_indeterminate'][:4]) + ')')   # 참고 검사는 이상 아님(#2)
         if rec.get('integrity'):
             out.append('무결성 경보')
     return out
@@ -194,9 +199,17 @@ def clean(v):
     return not anomalies(v)
 
 
+def unverified_numbers(v):
+    n = (v.get('recorded') or {}).get('numbers') or {}
+    u = n.get('unverified')
+    return u if isinstance(u, int) else 0
+
+
 def fully_verified(v):
+    """검증 완료 — 경고·빈칸 없는 pass 이고 미검증 숫자도 없다(KR 은 숫자 대조 자체가 없으니 완료가 아니다)."""
     rec = v.get('recorded') or {}
-    return bool(rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass')
+    return bool(rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass'
+                and rec.get('numbers') and unverified_numbers(v) == 0)
 
 
 def fingerprint(v):
@@ -302,6 +315,10 @@ def digest_lines(v):
         bits = [f'판정 {STATUS.get(rec["status"], rec["status"])}', f'검증 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
             bits.append('실행 안 함·일부만 ' + ', '.join((rec['not_run'] + rec['partial'])[:4]))
+        if unverified_numbers(v):
+            bits.append(f'미검증 숫자 {unverified_numbers(v)}')            # codex 5회 #3
+        elif not rec.get('numbers'):
+            bits.append('숫자 자동 대조 없음')
         out.append('   - ' + ' · '.join(bits))
     out += [x.replace(' · 그 뒤', '   - 그 뒤', 1) for x in correction_line(v)]
     return out
