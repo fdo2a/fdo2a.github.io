@@ -118,13 +118,17 @@ def check(repo, market, date, rev):
 
     # 검사 코드
     states = []
+    builtin = {g['name'] for g in R.gates_of(cfg, market) if g.get('builtin')} if cfg else set()
     for g in gates or []:
         if not isinstance(g, dict):
             states.append(UNKNOWN)
             continue
         argv = g.get('argv') or []
-        if not argv:
-            continue                      # 내장 검사(`unconfirmed`) — 대조할 파일이 없다
+        if g.get('name') in builtin and not argv:
+            continue                      # 설정이 내장 검사라고 한 것(`unconfirmed`)만 — 대조할 파일이 없다
+        if not argv or not isinstance(argv[0], str):
+            states.append(UNKNOWN)        # 파일 검사인데 실행 정보가 없다(codex 재검토 #7)
+            continue
         if not isinstance(g.get('script_sha256'), str) or not g['script_sha256']:
             states.append(UNKNOWN)        # 파일 검사인데 해시가 없다 — 건너뛰면 「일치」로 보인다(#7)
             continue

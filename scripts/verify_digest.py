@@ -21,8 +21,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from review import digest as D  # noqa: E402
-from review import prepub_view as V  # noqa: E402
-from review import publish_watch as W  # noqa: E402
 
 CHECKER = os.path.join(HERE, 'check_numbers.py')
 # 숫자 재검사 결과를 바꾸는 파일 — 캐시 키. 검사기가 부르는 묶음(us·fund·common)까지 통째로 —
@@ -61,6 +59,17 @@ def _published_view(G, root, want_fetch):
     return published, buckets, reviewed, stale, drafts
 
 
+def _prepub_target(path):
+    """2단계 모듈을 못 불러와도 매일 요약은 나간다(codex 재검토) — 그때는 대상 글을 「읽지 못함」으로."""
+    try:
+        from review import prepub_view as V
+    except Exception:  # noqa: BLE001
+        import re
+        m = re.match(r'^(?:posts|kr/posts)/(\d{4}-\d{2}-\d{2})\.html$', path)
+        return None if not m or m.group(1) < '2026-11-09' else ('?', m.group(1))
+    return V.target_of(path)
+
+
 def build(state, now, args, notes):
     import review_gate as G
     root = G.repo_root()
@@ -85,9 +94,10 @@ def build(state, now, args, notes):
                 numbers[path] = {'sha': sha, 'code': code_id, 'result': number}
         post = {'path': path, 'sha': sha, 'state': st, 'findings': findings,
                 'number': number, 'auto': D.auto_reviewed(path), 'draft': path in drafts}
-        target = V.target_of(path)
+        target = _prepub_target(path)
         if target:                       # 발행 전 기록(2단계) — 대상 글에만 키를 둔다
             try:
+                from review import prepub_view as V
                 post['prepub'] = V.view(root, 'origin/main', *target)
             except Exception as exc:  # noqa: BLE001 — 기록을 못 읽어도 매일 요약은 나가야 한다(codex 구현 검토 #6)
                 post['prepub'] = {'error': f'{type(exc).__name__}: {exc}'}
@@ -167,6 +177,7 @@ def main(argv=None):
             posts, numbers, published = build(state, now, args, notes)
             lines, more, tracked = D.reconcile(posts, state, published, now.date())
             try:
+                from review import publish_watch as W
                 tail = W.summary_lines(W.state_path(), now)
             except Exception:  # noqa: BLE001
                 tail = ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']

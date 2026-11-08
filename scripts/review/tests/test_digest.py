@@ -723,3 +723,13 @@ def test_prepub_error_keeps_number_line():
            'counts': {'table_cells': 10, 'prose_judged': 3, 'unverified': 5}}
     text = D.block(_post('posts/2026-11-09.html', prepub={'error': 'x'}, number=num))
     assert '[발행 전 기록] 읽지 못했어요' in text and '[발행 뒤 재검사] 숫자: 표 칸 10' in text and '위반 2' in text
+
+
+def test_digest_survives_stage2_import_failure(monkeypatch):
+    import sys as _sys
+    import verify_digest as VD
+    import review
+    monkeypatch.setitem(_sys.modules, 'review.prepub_view', None)
+    monkeypatch.delattr(review, 'prepub_view', raising=False)
+    assert VD._prepub_target('posts/2026-11-09.html') == ('?', '2026-11-09')
+    assert VD._prepub_target('posts/2026-11-06.html') is None

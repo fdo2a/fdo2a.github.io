@@ -100,7 +100,7 @@ def recorded(rec):
     if (not isinstance(s, dict) or not isinstance(gates, list) or not gates
             or not isinstance(s.get('publish_ok'), bool) or not isinstance(s.get('verified'), bool)
             or not isinstance(s.get('status'), str)
-            or any(not isinstance(s.get(k, []), list) for k in lists)
+            or any(not isinstance(s.get(k), list) for k in lists)          # 빠진 칸을 빈 목록으로 읽지 않는다
             or any(not isinstance(g, dict) or not isinstance(g.get('name'), str)
                    or not isinstance(g.get('status'), str) for g in gates)):
         return {'readable': False}        # 문자열 "false" 를 참으로 읽지 않는다(codex 구현 검토 #7)
@@ -155,6 +155,14 @@ def view(root, ref, market, date):
         v['corrections'] = corrections(root, ref, path, base)
     v['check_light'] = None if v['check'] is None else {k: v['check'][k] for k in ('cats', 'overall', 'why')}
     return v
+
+
+def clean(v):
+    """알릴 문제가 없는 상태 — 짝이 맞고(대조 불가는 작업 공간 입력뿐) 루틴 기록이 발행 가능·검증 완료."""
+    chk, rec = v.get('check') or {}, v.get('recorded') or {}
+    return (v.get('kind') == OK and chk.get('overall') in (C.MATCH, C.PARTIAL)
+            and set(chk.get('unknown') or []) <= {'workspace_inputs'}
+            and rec.get('readable') and rec.get('publish_ok') and rec.get('verified'))
 
 
 def fingerprint(v):

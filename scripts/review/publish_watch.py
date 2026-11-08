@@ -210,9 +210,10 @@ def _is_ancestor(root, old, new):
 
 def _changed(root, old, new):
     """두 시점의 트리 비교가 아니라 사이 커밋마다의 변경 — 그 사이에 올라왔다 사라진 글도 잡는다(codex 구현 검토 #2)."""
-    raw = V._git(root, 'log', '--format=', '--name-only', '-z', f'{old}..{new}', '--', 'posts', 'kr/posts',
-                 'verification')
-    return {p.strip() for p in raw.decode('utf-8', 'replace').split('\0') if p.strip()}
+    # -m: merge 커밋의 변경도 부모마다, --no-renames: 옮긴 글의 옛 경로를 삭제로 남긴다(codex 재검토 #2).
+    raw = V._git(root, 'log', '-m', '--no-renames', '--format=', '--name-only', '-z', f'{old}..{new}', '--',
+                 'posts', 'kr/posts', 'verification')
+    return {p.strip('\n') for p in raw.decode('utf-8', 'replace').split('\0') if p.strip('\n')}
 
 
 def _target_of_any(path):
@@ -281,12 +282,10 @@ def step(st, root, now, fetched, ref=REF):
 
     quiet = bool(st.get('baseline')) and last is None
     emit = (lambda *a, **k: None) if quiet else add_event
-    if st.get('reset'):
-        msg = (f'[발행 알림] {st["reset"]} — 이미 올라온 글·세션은 기준선으로만 잡았어요(따로 알리지 않아요). '
-               '아직 안 올라온 세션은 아침 요약에 보여요.' if quiet else
-               f'[발행 알림] {st["reset"]} — {V.EFFECTIVE} 이후 글을 전부 다시 계산해요(이미 받은 알림이 다시 올 수 있어요).')
-        add_event(st, 'reset', f'{st["reset"]}|{now.date().isoformat()}', msg, now)
+    reset = st.get('reset')
+    if reset:
         st['reset'] = None
+        rid = add_event(st, 'reset', f'{reset}|{now.date().isoformat()}', '', now)
     st['baseline'] = False
 
     # 미발행·해소 먼저 — 「해소」가 그 글의 발행 알림보다 앞에 오게
@@ -332,11 +331,14 @@ def step(st, root, now, fetched, ref=REF):
                           f'기준 시각: {_when(dl)}\n'
                           '원인: 확인 불가 — 발행 루틴·데이터 수집 상태 점검 필요', now)
 
+    flagged = 0
     for path, v in views.items():
         fp = V.fingerprint(v)
         prev = st['posts'].get(path)
         if prev is None:
-            emit(st, 'publish', path, V.render_publish(v), now, extra=fp)
+            # 기준선(첫 실행)이어도 문제가 있는 글은 알린다 — 조용히 저장하면 그 경로가 다시 안 바뀌는 한 영영 안 나온다(#8)
+            (add_event if quiet and not V.clean(v) else emit)(st, 'publish', path, V.render_publish(v), now, extra=fp)
+            flagged += quiet and not V.clean(v)
             st['posts'][path] = {'fp': fp, 'first_seen': tip}
         else:
             if prev.get('gone'):
@@ -353,13 +355,20 @@ def step(st, root, now, fetched, ref=REF):
         prev = st['posts'].get(path)
         if prev is not None and not prev.get('gone'):
             prev['gone'] = True
+            st['sessions'][f'{market}:{d}'] = 'gone'          # 기준 시각 전에 지워져도 「미발행」이 아니라 「사라짐」(#5)
             emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 지금 공개 판에 없어요 '
                                   '— 발행됐던 글이에요. 루틴·정정 이력 확인 필요.', now, extra=tip)
         elif prev is None and path in paths:
             st['posts'][path] = {'fp': None, 'first_seen': None, 'gone': True}
+            st['sessions'][f'{market}:{d}'] = 'gone' 
             emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 맥이 확인하기 전에 '
                                   '올라왔다가 지금은 없어요 — 루틴·정정 이력 확인 필요.', now, extra=tip)
 
+    if reset and rid:
+        ev = next(e for e in st['events'] if e['id'] == rid)
+        ev['text'] = (f'[발행 알림] {reset} — 이미 올라온 글·세션은 기준선으로만 잡았어요. 문제가 있는 글 {flagged}편만 '
+                      '따로 알려요. 아직 안 올라온 세션은 아침 요약에 보여요.' if quiet else
+                      f'[발행 알림] {reset} — {V.EFFECTIVE} 이후 글을 전부 다시 계산해요(이미 받은 알림이 다시 올 수 있어요).')
     if st['fetch'].get('alerted'):
         add_event(st, 'fetch_ok', st['fetch'].get('since', ''), '[발행 알림] GitHub 조회가 다시 돼요 — 밀린 판정을 이어서 해요.', now)
     st['fetch'] = {}

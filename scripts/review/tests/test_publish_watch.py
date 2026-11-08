@@ -451,3 +451,55 @@ def test_cli_corrupt_state_is_copied_and_survives_failed_save(tmp_path, monkeypa
         CLI.main(['--no-fetch'])
     assert state.read_text() == '{broken'
     assert len([p for p in os.listdir(state.parent) if '.corrupt-' in p]) == 1
+
+
+# ── codex 재검토 2회 반영 ──────────────────────────────────────────────────
+
+def test_post_added_only_in_merge_then_deleted(tmp_path):
+    repo = F.init(tmp_path)
+    st = run(W.new_state('x'), repo, at(11, 9, 8))
+    F.git(repo, 'checkout', '-q', '-b', 'side')
+    F.write(repo, 'data/x.json', '1')
+    F.commit(repo, 'side')
+    F.git(repo, 'checkout', '-q', 'main')
+    F.write(repo, 'data/y.json', '1')
+    F.commit(repo, 'main')
+    F.git(repo, 'merge', '-q', '--no-commit', 'side', check=False)
+    F.write(repo, 'posts/2026-11-09.html', '<p>merge 에서만</p>')
+    F.commit(repo, 'merge with post')
+    F.git(repo, 'rm', '-q', 'posts/2026-11-09.html')
+    F.commit(repo, 'rm')
+    run(st, repo, at(11, 9, 9))
+    assert any(e['kind'] == 'gone' and e['key'] == 'posts/2026-11-09.html' for e in st['events'])
+
+
+def test_renamed_away_post_is_gone(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', workspace=False)
+    st = run(W.new_state('x'), repo, at(11, 9, 8))
+    F.git(repo, 'mv', 'posts/2026-11-09.html', 'posts/old-2026-11-09.html')
+    F.commit(repo, 'rename')
+    run(st, repo, at(11, 9, 9))
+    assert kinds(st).count('gone') == 1
+
+
+def test_deleted_before_deadline_is_gone_not_missing(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', workspace=False)
+    st = run(W.new_state('x'), repo, at(11, 10, 8))                # 기준 시각(11/10 12:00) 전
+    F.git(repo, 'rm', '-q', 'posts/2026-11-09.html')
+    F.commit(repo, 'rm')
+    run(st, repo, at(11, 10, 9))
+    run(st, repo, at(11, 10, 13))                                    # 기준 시각 뒤
+    assert st['sessions']['us:2026-11-09'] == 'gone'
+    assert not any(e['kind'] == 'missing' and e['key'] == 'us:2026-11-09' for e in st['events'])
+
+
+def test_baseline_still_alerts_problem_posts(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09')                              # 정상(작업 공간 입력만 대조 불가)
+    F.publish(repo, 'kr', '2026-11-09', record=False)               # 기록 없음 — 문제
+    st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 10, 13))
+    pubs = [e for e in st['events'] if e['kind'] == 'publish']
+    assert [e['key'] for e in pubs] == ['kr/posts/2026-11-09.html']
+    assert '문제가 있는 글 1편만' in next(e for e in st['events'] if e['kind'] == 'reset')['text']

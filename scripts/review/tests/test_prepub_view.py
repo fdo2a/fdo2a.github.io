@@ -177,3 +177,21 @@ def test_gate_without_script_hash_is_unknown(tmp_path):
 def test_string_false_is_not_verified(tmp_path):
     rec = {'summary': F.summary(verified='false', publish_ok='true'), 'gates': [{'name': 'g1', 'status': 'pass'}]}
     assert V.recorded(rec) == {'readable': False}
+
+
+def test_file_gate_without_argv_is_unknown(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False)
+    rec = json.load(open(repo / 'verification/us/2026-11-09.json'))
+    rec['gates'][0]['argv'] = []
+    F.write(repo, 'verification/us/2026-11-09.json', json.dumps(rec))
+    F.git(repo, 'add', '-A')
+    F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['check']['cats']['scripts'] == C.UNKNOWN
+
+
+def test_missing_summary_lists_are_unreadable():
+    s = F.summary()
+    del s['blocking']
+    assert V.recorded({'summary': s, 'gates': [{'name': 'g1', 'status': 'pass'}]}) == {'readable': False}
