@@ -60,10 +60,10 @@ def _adding(root, ref, path):
 
 
 def _blob(root, rev, path):
-    try:
-        return _git(root, 'show', f'{rev}:{path}')
-    except GitError:
+    """없으면(삭제) None, 못 읽으면 GitError."""
+    if not _git(root, 'ls-tree', '-z', rev, '--', path):
         return None
+    return _git(root, 'show', f'{rev}:{path}')
 
 
 def corrections(root, ref, path, base):
@@ -96,14 +96,20 @@ def recorded(rec):
     """루틴이 남긴 검사 결과 — 기록 그대로. 필수 필드가 없으면 「읽지 못함」."""
     s = rec.get('summary') if isinstance(rec, dict) else None
     gates = rec.get('gates') if isinstance(rec, dict) else None
-    if not isinstance(s, dict) or not isinstance(gates, list) or 'publish_ok' not in s or 'verified' not in s:
-        return {'readable': False}
+    lists = ('blocking', 'note_numbers', 'note_format', 'warned', 'integrity', 'not_run')
+    if (not isinstance(s, dict) or not isinstance(gates, list) or not gates
+            or not isinstance(s.get('publish_ok'), bool) or not isinstance(s.get('verified'), bool)
+            or not isinstance(s.get('status'), str)
+            or any(not isinstance(s.get(k, []), list) for k in lists)
+            or any(not isinstance(g, dict) or not isinstance(g.get('name'), str)
+                   or not isinstance(g.get('status'), str) for g in gates)):
+        return {'readable': False}        # 문자열 "false" 를 참으로 읽지 않는다(codex 구현 검토 #7)
     by = [g for g in gates if isinstance(g, dict)]
     numbers = next((g.get('numbers') for g in by if g.get('name') == 'check_numbers'
                     and isinstance(g.get('numbers'), dict)), None)
     return {
-        'readable': True, 'status': s.get('status'), 'publish_ok': bool(s.get('publish_ok')),
-        'verified': bool(s.get('verified')), 'blocking': list(s.get('blocking') or []),
+        'readable': True, 'status': s['status'], 'publish_ok': s['publish_ok'],
+        'verified': s['verified'], 'blocking': list(s.get('blocking') or []),
         'not_run': [g['name'] for g in by if g.get('status') == 'not_run'],
         'partial': [g['name'] for g in by if g.get('status') == 'partial'],
         'indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate'],
@@ -137,7 +143,10 @@ def view(root, ref, market, date):
     if v['kind'] is None:
         rc = recs[0]
         v['kind'], v['record_commit'], v['same_commit'] = OK, rc, rc == adds[0]
-        v['check'] = C.check(root, market, date, rc)
+        try:
+            v['check'] = C.check(root, market, date, rc)
+        except C.ReadError as exc:
+            raise GitError(str(exc)) from exc
         v['recorded'] = recorded(v['check'].get('rec'))
         base = rc
     elif v['kind'] == NO_RECORD:

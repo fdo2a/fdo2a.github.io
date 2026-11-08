@@ -715,3 +715,11 @@ def test_prepub_read_error_line():
 def test_publish_watch_tail_is_shown():
     text, _ = D.render([], {}, at(2026, 11, 10), extra_tail=['아직 안 올라온 세션: KR 일간 11/09'])
     assert '아직 안 올라온 세션: KR 일간 11/09' in text
+
+
+def test_prepub_error_keeps_number_line():
+    # codex 구현 검토 #11 — 기록 조회 오류가 숫자 재검사 결과를 가리지 않는다
+    num = {'kind': 'violation', 'violations': 2, 'warnings': 0,
+           'counts': {'table_cells': 10, 'prose_judged': 3, 'unverified': 5}}
+    text = D.block(_post('posts/2026-11-09.html', prepub={'error': 'x'}, number=num))
+    assert '[발행 전 기록] 읽지 못했어요' in text and '[발행 뒤 재검사] 숫자: 표 칸 10' in text and '위반 2' in text

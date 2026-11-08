@@ -52,9 +52,11 @@ def state_path():
     return os.environ.get(STATE_ENV) or DEFAULT_STATE
 
 
-def new_state(reason):
+def new_state(reason, baseline=False):
+    """baseline=True(처음 실행): 이미 있는 글·세션은 알리지 않고 기준선으로만 잡는다(설계 v3 #4, codex 구현 검토 #8).
+    손상 복구는 baseline=False — 전부 다시 계산해 보낸다(중복이 유실보다 낫다)."""
     return {'format': FORMAT, 'last_seen': None, 'last_ok': None, 'posts': {}, 'sessions': {},
-            'events': [], 'fetch': {}, 'calendar': {}, 'send_fail': 0, 'reset': reason}
+            'events': [], 'fetch': {}, 'calendar': {}, 'send_fail': 0, 'reset': reason, 'baseline': baseline}
 
 
 def load_state(path):
@@ -66,12 +68,43 @@ def load_state(path):
         return None
     except (OSError, ValueError) as exc:
         raise StateError(f'{type(exc).__name__}: {exc}') from exc
-    if not isinstance(obj, dict) or obj.get('format') != FORMAT or not isinstance(obj.get('events'), list):
-        raise StateError('상태 파일 형식이 다르다')
-    for k, empty in (('posts', {}), ('sessions', {}), ('fetch', {}), ('calendar', {})):
-        if not isinstance(obj.get(k), dict):
-            obj[k] = empty
+    try:
+        _validate(obj)
+    except (TypeError, ValueError) as exc:
+        raise StateError(f'상태 파일 내용이 이상하다 — {exc}') from exc
     return obj
+
+
+def _validate(obj):
+    """형식이 맞아 보여도 안이 틀리면 손상이다 — 매일 요약까지 넘어지지 않게 여기서 거른다(codex 구현 검토 #6)."""
+    def bad(why):
+        raise StateError(f'상태 파일 내용이 이상하다 — {why}')
+    if not isinstance(obj, dict) or obj.get('format') != FORMAT:
+        bad('형식')
+    for k in ('posts', 'sessions', 'fetch', 'calendar'):
+        if not isinstance(obj.get(k), dict):
+            bad(k)
+    if not isinstance(obj.get('events'), list):
+        bad('events')
+    for e in obj['events']:
+        if not (isinstance(e, dict) and all(isinstance(e.get(f), str) for f in ('id', 'kind', 'key', 'text', 'status',
+                                                                             'created'))):
+            bad('사건')
+        datetime.fromisoformat(e['created'])
+    for k in ('last_ok',):
+        if obj.get(k) is not None:
+            try:
+                datetime.fromisoformat(obj[k])
+            except (TypeError, ValueError):
+                bad(k)
+    if obj.get('last_seen') is not None and not isinstance(obj['last_seen'], str):
+        bad('last_seen')
+    if not all(isinstance(v, str) for v in obj['sessions'].values()):
+        bad('sessions')
+    if not all(isinstance(v, dict) for v in obj['posts'].values()):
+        bad('posts')
+    if not isinstance(obj.get('send_fail', 0), int):
+        bad('send_fail')
 
 
 def save_state(path, st):
@@ -176,8 +209,10 @@ def _is_ancestor(root, old, new):
 
 
 def _changed(root, old, new):
-    raw = V._git(root, 'diff', '--name-only', '-z', old, new, '--', 'posts', 'kr/posts', 'verification')
-    return {p for p in raw.decode('utf-8', 'replace').split('\0') if p}
+    """두 시점의 트리 비교가 아니라 사이 커밋마다의 변경 — 그 사이에 올라왔다 사라진 글도 잡는다(codex 구현 검토 #2)."""
+    raw = V._git(root, 'log', '--format=', '--name-only', '-z', f'{old}..{new}', '--', 'posts', 'kr/posts',
+                 'verification')
+    return {p.strip() for p in raw.decode('utf-8', 'replace').split('\0') if p.strip()}
 
 
 def _target_of_any(path):
@@ -196,7 +231,8 @@ def _when(dl):
     return f'{dl.month}/{dl.day:02d} {dl:%H:%M} KST'
 
 
-def _late_or_ok(st, root, tip, market, s, path, dl, now):
+def _late_or_ok(st, root, tip, market, s, path, dl, now, emit=None):
+    emit = emit or add_event
     try:
         adds = V._adding(root, tip, path)
         if len(adds) != 1:
@@ -207,7 +243,7 @@ def _late_or_ok(st, root, tip, market, s, path, dl, now):
     if ct <= dl:
         return 'ok'
     ct = ct.astimezone(KST)
-    add_event(st, 'late', f'{market}:{s}', f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각({_when(dl)}) 뒤에 '
+    emit(st, 'late', f'{market}:{s}', f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각({_when(dl)}) 뒤에 '
                                            f'올라온 것으로 보여요(커밋 시각 {ct.month}/{ct.day:02d} {ct:%H:%M} 기준 — 실제 '
                                            '공개 시각과 다를 수 있어요). 미발행 경고는 보내지 않았어요.', now)
     return 'late'
@@ -215,11 +251,6 @@ def _late_or_ok(st, root, tip, market, s, path, dl, now):
 
 def step(st, root, now, fetched, ref=REF):
     """사건을 pending 으로 쌓는다. 조회·읽기에 실패하면 기준점을 옮기지 않는다."""
-    if st.get('reset'):
-        add_event(st, 'reset', f'{st["reset"]}|{now.date().isoformat()}',
-                  f'[발행 알림] {st["reset"]} — {V.EFFECTIVE} 이후 글을 전부 다시 계산해요'
-                  '(이미 받은 알림이 다시 올 수 있어요).', now)
-        st['reset'] = None
     if not fetched:
         _fetch_failed(st, now, 'git fetch 실패')
         return st
@@ -234,7 +265,10 @@ def step(st, root, now, fetched, ref=REF):
                       f'할 수 없어요. {V.EFFECTIVE} 이후 글을 전부 다시 계산해요.', now)
             full = True
         paths = tree if full else _changed(root, last, tip)
-        targets = sorted({t for t in map(_target_of_any, paths) if t})
+        targets = {t for t in map(_target_of_any, paths) if t}
+        if full:                                     # 전부 다시 볼 때는 알던 글(지금 없을 수 있다)도
+            targets |= {t for t in map(_target_of_any, st['posts']) if t}
+        targets = sorted(targets)
         views = {}
         for market, d in targets:
             path = V.post_path(market, d)
@@ -244,6 +278,16 @@ def step(st, root, now, fetched, ref=REF):
     except V.GitError as exc:
         _fetch_failed(st, now, f'읽기 실패 — {exc}')
         return st
+
+    quiet = bool(st.get('baseline')) and last is None
+    emit = (lambda *a, **k: None) if quiet else add_event
+    if st.get('reset'):
+        msg = (f'[발행 알림] {st["reset"]} — 이미 올라온 글·세션은 기준선으로만 잡았어요(따로 알리지 않아요). '
+               '아직 안 올라온 세션은 아침 요약에 보여요.' if quiet else
+               f'[발행 알림] {st["reset"]} — {V.EFFECTIVE} 이후 글을 전부 다시 계산해요(이미 받은 알림이 다시 올 수 있어요).')
+        add_event(st, 'reset', f'{st["reset"]}|{now.date().isoformat()}', msg, now)
+        st['reset'] = None
+    st['baseline'] = False
 
     # 미발행·해소 먼저 — 「해소」가 그 글의 발행 알림보다 앞에 오게
     for market, hol in cals.items():
@@ -256,37 +300,65 @@ def step(st, root, now, fetched, ref=REF):
             seen = st['sessions'].get(key)
             dl = deadline(market, s)
             if path in tree:
-                if seen == 'missing':
+                if seen == 'gone':
+                    st['sessions'][key] = 'ok'                     # 다시 올라왔다 — 글 쪽 알림이 따로 간다
+                elif seen == 'missing_quiet':
+                    # 기준선(첫 실행)에서 경고 없이 잡아 둔 세션 — 경고를 보낸 적이 없으니 「해소」가 아니다
+                    emit(st, 'late', key, f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각({_when(dl)}) 뒤에 '
+                                          '올라왔어요 — 이 세션의 미발행 경고는 보낸 적이 없어요(처음 실행 때 기준선).', now)
+                    st['sessions'][key] = 'resolved'
+                elif seen == 'missing':
                     warn = next((e for e in st['events'] if e.get('kind') == 'missing' and e.get('key') == key), None)
-                    if warn is not None and warn.get('status') == 'pending':
+                    # 한 번이라도 보내려 했으면 텔레그램이 받았을 수 있다 — 「안 보냈다」고 하지 않는다(codex 구현 검토 #3)
+                    if warn is not None and warn.get('status') == 'pending' and not warn.get('attempted'):
                         # 경고를 아직 못 보냈다 — 보내지 않고 「늦은 발행」 하나로 바꾼다(받은 적 없는 경고의 해소를 보내지 않는다)
                         warn['status'] = 'cancelled'
-                        add_event(st, 'late', key, f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각'
+                        emit(st, 'late', key, f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각'
                                                    f'({_when(dl)}) 뒤에 올라왔어요 — 미발행 경고는 보내기 전에 해소돼 '
                                                    '보내지 않았어요.', now)
                     else:
-                        add_event(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} 세션 보고서가 올라왔어요 '
+                        emit(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} 세션 보고서가 올라왔어요 '
                                                        f'— 앞서 보낸 미발행 경고(기준 {_when(dl)})가 풀렸어요.', now)
                     st['sessions'][key] = 'resolved'
                 elif seen is None and now >= dl:
                     # 기준 시각을 넘겨 처음 봤다 — 그때 맥이 못 봤을 수 있다. 커밋 시각으로 늦었는지만 추정한다
-                    st['sessions'][key] = _late_or_ok(st, root, tip, market, s, path, dl, now)
+                    st['sessions'][key] = _late_or_ok(st, root, tip, market, s, path, dl, now, emit)
+            elif seen in ('ok', 'late', 'resolved'):
+                st['sessions'][key] = 'gone'                       # 올라갔던 글이 없다 — 글 쪽 「사라짐」 알림이 간다(#5)
             elif seen is None and now >= dl:
-                add_event(st, 'missing', key,
+                st['sessions'][key] = 'missing_quiet' if quiet else 'missing'
+                emit(st, 'missing', key,
                           f'[미발행] {_label(market, s)} 세션 보고서 미발행 확인\n'
                           f'기준 시각: {_when(dl)}\n'
                           '원인: 확인 불가 — 발행 루틴·데이터 수집 상태 점검 필요', now)
-                st['sessions'][key] = 'missing'
 
     for path, v in views.items():
         fp = V.fingerprint(v)
         prev = st['posts'].get(path)
         if prev is None:
-            add_event(st, 'publish', path, V.render_publish(v), now, extra=fp)
+            emit(st, 'publish', path, V.render_publish(v), now, extra=fp)
             st['posts'][path] = {'fp': fp, 'first_seen': tip}
-        elif prev.get('fp') != fp:
-            add_event(st, 'changed', path, V.render_publish(v, head='[상태 바뀜]'), now, extra=fp)
-            prev['fp'] = fp
+        else:
+            if prev.get('gone'):
+                prev['gone'] = False
+                emit(st, 'back', path, f'[다시 올라옴] {path} 가 다시 공개 판에 있어요.', now, extra=tip)
+            if prev.get('fp') != fp:
+                emit(st, 'changed', path, V.render_publish(v, head='[상태 바뀜]'), now, extra=fp)
+                prev['fp'] = fp
+    # 공개 판에서 사라진 글 — 알던 글이든, 맥이 보기 전에 올라왔다 사라진 글이든(codex 구현 검토 #2·#5)
+    for market, d in targets:
+        path = V.post_path(market, d)
+        if path in tree:
+            continue
+        prev = st['posts'].get(path)
+        if prev is not None and not prev.get('gone'):
+            prev['gone'] = True
+            emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 지금 공개 판에 없어요 '
+                                  '— 발행됐던 글이에요. 루틴·정정 이력 확인 필요.', now, extra=tip)
+        elif prev is None and path in paths:
+            st['posts'][path] = {'fp': None, 'first_seen': None, 'gone': True}
+            emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 맥이 확인하기 전에 '
+                                  '올라왔다가 지금은 없어요 — 루틴·정정 이력 확인 필요.', now, extra=tip)
 
     if st['fetch'].get('alerted'):
         add_event(st, 'fetch_ok', st['fetch'].get('since', ''), '[발행 알림] GitHub 조회가 다시 돼요 — 밀린 판정을 이어서 해요.', now)
@@ -301,9 +373,11 @@ def step(st, root, now, fetched, ref=REF):
 def deliver(st, send, save, now):
     """pending 을 차례로 보낸다. 한 건이 실패하면 거기서 멈춘다(순서 유지) — 다음 회차에 같은 식별자로 다시."""
     for e in pending(st):
+        e['attempted'] = True        # 보내려 한 사실을 먼저 남긴다 — 이 뒤로는 텔레그램이 받았을 수 있다(#3)
+        save(st)
         try:
             send(f'{e["text"]}\n#{e["id"]}')
-        except SendError as exc:
+        except Exception as exc:     # noqa: BLE001 — 시간 초과(TimeoutExpired) 등도 실패로 센다(codex 구현 검토 #10)
             e['tries'] = e.get('tries', 0) + 1
             e['last_error'] = str(exc)[:160]
             st['send_fail'] = st.get('send_fail', 0) + 1
@@ -325,7 +399,10 @@ def summary_lines(path, now):
         return ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
     if st is None:
         return ['발행 알림: 아직 실행 기록이 없어요']
-    return summary_lines_from(st, now)
+    try:
+        return summary_lines_from(st, now)
+    except Exception:  # noqa: BLE001 — 발행 알림 상태가 이상해도 매일 요약은 나가야 한다(#6)
+        return ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
 
 
 def summary_lines_from(st, now):
@@ -337,9 +414,12 @@ def summary_lines_from(st, now):
         gap = now - datetime.fromisoformat(ok)
         if gap > FETCH_STALE:
             out.append(f'발행 알림: 마지막 정상 확인이 {int(gap.total_seconds() // 3600)}시간 전이에요 — 그 뒤 사건은 못 봤어요')
-    open_ = sorted(k for k, s in st['sessions'].items() if s == 'missing')
+    open_ = sorted(k for k, s in st['sessions'].items() if s in ('missing', 'missing_quiet'))
     if open_:
         out.append('아직 안 올라온 세션: ' + ', '.join(_label(*k.split(':', 1)) for k in open_[:6]))
+    gone = sorted(k for k, s in st['sessions'].items() if s == 'gone')
+    if gone:
+        out.append('올라갔다가 지금 없는 세션: ' + ', '.join(_label(*k.split(':', 1)) for k in gone[:6]))
     if st['calendar']:
         out.append('휴장 달력을 못 읽어 미발행 판정을 멈춘 시장: ' + ', '.join(sorted(st['calendar'])))
     n = len(pending(st))

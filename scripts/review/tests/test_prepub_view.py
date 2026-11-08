@@ -159,3 +159,21 @@ def test_every_summary_status_has_a_label():
     src = inspect.getsource(R.summarize)
     names = set(re.findall(r"status = '([a-z_]+)'", src))
     assert names and names <= set(V.STATUS), names - set(V.STATUS)
+
+
+def test_gate_without_script_hash_is_unknown(tmp_path):
+    # codex 구현 검토 #7 — 해시가 빠진 파일 검사를 건너뛰면 「일치」로 보인다
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False)
+    rec = json.load(open(repo / 'verification/us/2026-11-09.json'))
+    rec['gates'][0]['script_sha256'] = None
+    F.write(repo, 'verification/us/2026-11-09.json', json.dumps(rec))
+    F.git(repo, 'add', '-A')
+    F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['check']['cats']['scripts'] == C.UNKNOWN and V.headline(v) != '발행 전 기록 일치'
+
+
+def test_string_false_is_not_verified(tmp_path):
+    rec = {'summary': F.summary(verified='false', publish_ok='true'), 'gates': [{'name': 'g1', 'status': 'pass'}]}
+    assert V.recorded(rec) == {'readable': False}

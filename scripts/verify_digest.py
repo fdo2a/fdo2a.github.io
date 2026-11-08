@@ -89,8 +89,8 @@ def build(state, now, args, notes):
         if target:                       # 발행 전 기록(2단계) — 대상 글에만 키를 둔다
             try:
                 post['prepub'] = V.view(root, 'origin/main', *target)
-            except V.GitError as exc:
-                post['prepub'] = {'error': str(exc)}
+            except Exception as exc:  # noqa: BLE001 — 기록을 못 읽어도 매일 요약은 나가야 한다(codex 구현 검토 #6)
+                post['prepub'] = {'error': f'{type(exc).__name__}: {exc}'}
         posts.append(post)
     # KR 주간 지수 누락 — 자동 보완하지 않으므로 사람에게 알린다(2026-11-10). 실패해도 알림은 계속
     try:
@@ -166,7 +166,11 @@ def main(argv=None):
         try:
             posts, numbers, published = build(state, now, args, notes)
             lines, more, tracked = D.reconcile(posts, state, published, now.date())
-            text, lines = D.render(posts, lines, now, notes + more, W.summary_lines(W.state_path(), now))
+            try:
+                tail = W.summary_lines(W.state_path(), now)
+            except Exception:  # noqa: BLE001
+                tail = ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
+            text, lines = D.render(posts, lines, now, notes + more, tail)
             if args.dry_run:
                 print(text)
                 return 0

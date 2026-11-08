@@ -20,10 +20,20 @@ CATEGORY_LABEL = {
 }
 
 
+class ReadError(RuntimeError):
+    """git 을 읽지 못했다 — 「그 커밋에 없다」와 다르다. 일시 오류를 대조 불가로 굳히지 않게 올린다(codex 구현 검토 #4)."""
+
+
 def _show(repo, rev, path):
+    """그 커밋의 파일 내용. 없으면 None, git 을 못 읽으면 ReadError."""
+    ls = R._git(repo, 'ls-tree', '-z', rev, '--', path)
+    if ls is None or ls.returncode != 0:
+        raise ReadError(f'ls-tree {rev[:7]} {path}')
+    if not ls.stdout:
+        return None
     out = R._git(repo, 'show', f'{rev}:{path}')
     if out is None or out.returncode != 0:
-        return None
+        raise ReadError(f'show {rev[:7]}:{path}')
     return out.stdout
 
 
@@ -113,7 +123,10 @@ def check(repo, market, date, rev):
             states.append(UNKNOWN)
             continue
         argv = g.get('argv') or []
-        if not argv or not g.get('script_sha256'):
+        if not argv:
+            continue                      # 내장 검사(`unconfirmed`) — 대조할 파일이 없다
+        if not isinstance(g.get('script_sha256'), str) or not g['script_sha256']:
+            states.append(UNKNOWN)        # 파일 검사인데 해시가 없다 — 건너뛰면 「일치」로 보인다(#7)
             continue
         cur = _show(repo, rev, argv[0])
         if cur is None:
@@ -128,6 +141,8 @@ def check(repo, market, date, rev):
     # 레포 안 코드·설정·원장
     ri = rec.get('repo_inputs') if isinstance(rec.get('repo_inputs'), dict) else {}
     digest, _n = R.repo_digest(repo, market, pp, rev) if pp else (None, 0)
+    if pp and digest is None:
+        raise ReadError(f'repo_digest {rev[:7]}')          # rev 판 다이제스트는 git 실패일 때만 None
     if not digest or not ri.get('digest'):
         cats['repo_digest'] = UNKNOWN
     elif digest != ri['digest']:

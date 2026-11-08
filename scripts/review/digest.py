@@ -456,8 +456,12 @@ def _prepub_lines(p):
     from review import prepub_view as V
     pv = p.get('prepub')
     if isinstance(pv, dict) and pv.get('error'):
-        return [f' · [발행 전 기록] 읽지 못했어요 — {pv["error"][:100]}']
-    lines = V.digest_lines(pv)
+        lines = [f' · [발행 전 기록] 읽지 못했어요 — {pv["error"][:100]}']   # 숫자 재검사 줄은 그대로 낸다(#11)
+    else:
+        try:
+            lines = V.digest_lines(pv)
+        except Exception as exc:  # noqa: BLE001
+            lines = [f' · [발행 전 기록] 읽지 못했어요 — {type(exc).__name__}']
     num = _number_line(p.get('number'))
     if not p.get('number'):
         num = ' · [발행 뒤 재검사] 숫자: 자동 재검사 없음(US 일간만 해요)'

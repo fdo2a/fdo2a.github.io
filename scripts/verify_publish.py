@@ -12,6 +12,7 @@ US·KR 일간이 올라오면 그 발행의 발행 전 기록을 읽어, 맥이 
 import argparse
 import fcntl
 import os
+import shutil
 import subprocess
 import sys
 
@@ -60,12 +61,14 @@ def main(argv=None):
         try:
             st = W.load_state(path)
             if st is None:
-                st = W.new_state('처음 실행했어요')
+                st = W.new_state('처음 실행했어요', baseline=True)
         except W.StateError as exc:
             print(f'상태 파일 손상: {exc}', file=sys.stderr)
             if not args.dry_run:
-                os.replace(path, f'{path}.corrupt-{now:%Y%m%d%H%M}')
-            st = W.new_state('상태 파일이 손상돼 따로 옮겨 두고 새로 시작했어요')
+                # 옮기지 않고 복사한다 — 새 상태 저장이 실패하면 손상 파일이 그대로 남아 다음 회차가 다시 복구에 들어간다
+                # (옮겼다가 저장이 실패하면 「처음 실행」으로 보여 복구 안내가 사라진다 — codex 구현 검토 #9). 백업은 덮어쓰지 않는다.
+                shutil.copy2(path, f'{path}.corrupt-{now:%Y%m%d%H%M%S}-{os.getpid()}')
+            st = W.new_state('상태 파일이 손상돼 복사해 두고 새로 시작했어요')
         fetched = True if args.no_fetch else fetch(root)
         W.step(st, root, now, fetched)
         if args.dry_run:
