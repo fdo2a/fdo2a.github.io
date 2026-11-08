@@ -106,22 +106,42 @@ def _sign_ok(clause, comp, start, end, tok):
         return printed_negative == (actual < 0)
     if actual == 0:
         return explicit is None
-    if explicit:
-        return (explicit == '+') == (actual > 0)
     up, down = bool(UP_WORDS.search(clause)), bool(DOWN_WORDS.search(clause))
+    if explicit:
+        if (explicit == '+') != (actual > 0):
+            return False
+        # 「+0.4% 하락」: the sign and the verb disagree — not evidence (codex 구현 2회).
+        return not (up != down and up != (actual > 0))
     if up == down:
         return False                       # no direction, or both: cannot tell
     return up == (actual > 0)
 
 
+_SCALE_WORDS = ('백만', '천', '만', '억')
+
+
+def _unit_ok(clause, end, word):
+    """The figure is followed by its unit word: 4.2 only as 「4.2만」 (codex 구현 2회).
+    A bare form must not be followed by a scale word (「42,000만」 is not 42,000)."""
+    rest = clause[end:].lstrip()
+    if word:
+        return rest.startswith(word)
+    return not rest.startswith(_SCALE_WORDS)
+
+
 def _value_in(clause, comp, numbers):
-    forms = set()
-    for v in comp.get('cite_values') or [comp.get('actual')]:
-        if v is not None:
-            forms |= _forms(v)
+    pairs = comp.get('cite_forms') or [[v, ''] for v in
+                                       (comp.get('cite_values') or [comp.get('actual')])]
+    by_text = {}
+    for v, word in pairs:
+        if v is None:
+            continue
+        for f in _forms(v):
+            by_text.setdefault(f, set()).add(word or '')
     for start, end, tok in numbers:
         bare = tok.lstrip('+−-')
-        if bare not in forms and tok.replace('−', '-') not in forms:
+        words = by_text.get(bare) or by_text.get(tok.replace('−', '-'))
+        if not words or not any(_unit_ok(clause, end, w) for w in words):
             continue
         if comp.get('unit') == '%' and not re.match(r'\s*%(?!p|포인트)', clause[end:]):
             continue

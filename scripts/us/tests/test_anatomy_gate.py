@@ -62,7 +62,8 @@ COMPS = [
      'unit': '%'},
     {'label': '에너지', 'aliases': ['에너지'], 'actual': 5.2, 'cite_values': [5.2], 'unit': '%'},
     {'label': '헬스케어', 'aliases': ['헬스케어'], 'actual': 42000,
-     'cite_values': [42000, 42, 4.2], 'unit': '명'},
+     'cite_values': [42000, 42, 4.2], 'unit': '명',
+     'cite_forms': [[42000, ''], [42, '천'], [4.2, '만']]},
 ]
 REL = {'key': 'cpi', 'label': '소비자물가(CPI)', 'components': COMPS,
        'indicators': [{'name': 'CPI MoM', 'actual': 0.6, 'previous': 0.4}]}
@@ -215,3 +216,27 @@ def test_last_periods_figure_in_a_longer_clause_is_not_this_periods(text, actual
 def test_month_on_month_wording_is_this_month():
     rel = {'components': [_chg('주거비', 0.4)], 'indicators': []}
     assert G.evidenced('주거비는 전월 대비 0.4% 올랐다.', rel) == ['주거비']
+
+
+# ------------------------------------------------ codex 구현 검토 2회 (11/08)
+
+def test_a_sign_and_a_verb_that_disagree_are_not_evidence():
+    rel = {'components': [_chg('주거비', 0.4)], 'indicators': []}
+    assert G.evidenced('주거비는 +0.4% 하락했다.', rel) == []
+    assert G.evidenced('주거비는 +0.4% 상승했다.', rel) == ['주거비']
+
+
+@pytest.mark.parametrize('text,ok', [
+    ('헬스케어는 4.2만 명 늘었다.', True),
+    ('헬스케어는 4.2명 늘었다.', False),
+    ('헬스케어는 42천 명 늘었다.', True),
+    ('헬스케어는 42명 늘었다.', False),
+    ('헬스케어는 42,000명 늘었다.', True),
+    ('헬스케어는 42,000만 명 늘었다.', False),
+])
+def test_a_converted_figure_needs_its_unit_word(text, ok):
+    from us import anatomy as A
+    shown, forms = A.cite_forms(42000, 1000, '명')
+    comp = {'label': '헬스케어', 'aliases': ['헬스케어'], 'actual': shown, 'unit': '명',
+            'transform': 'mom_diff', 'cite_forms': [list(f) for f in forms]}
+    assert (G.evidenced(text, {'components': [comp], 'indicators': []}) == ['헬스케어']) is ok

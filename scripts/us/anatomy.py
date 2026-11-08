@@ -464,8 +464,8 @@ def agrees(fred_base, text_base, precision, step=None):
 _DIVISOR = {'$B': 1e9}
 
 
-def cite_values(base, precision, unit):
-    """-> (shown, [values the gate accepts]). `base` is FRED's value in the text's base
+def cite_forms(base, precision, unit):
+    """-> (shown, [(value, unit word)] the gate accepts — 4.2 only as 4.2만, codex 구현 2회). `base` is FRED's value in the text's base
     unit, rounded to the text's precision first — the agency prints 42,000, not 41,600."""
     rounded = round(base / precision) * precision if precision else base
     div = _DIVISOR.get(unit, 1.0)
@@ -473,19 +473,30 @@ def cite_values(base, precision, unit):
     digits = max(0, -int(math.floor(math.log10(precision / div)))) if precision else 2
     shown = round(shown, min(digits, 3))
     shown = int(shown) if float(shown).is_integer() else shown
-    vals = [shown]
+    forms = [(shown, '')]
     if unit in ('명', '건', '채'):
-        for d in (1e3, 1e4, 1e6):
+        for d, word in ((1e3, '천'), (1e4, '만'), (1e6, '백만')):
             if abs(rounded) >= d:
-                vals.append(round(rounded / d, 3))
+                forms.append((round(rounded / d, 3), word))
     if unit == '$B':
-        vals.append(round(rounded / 1e8, 1))           # 억 달러
-    out = []
-    for v in vals:
+        forms.append((round(rounded / 1e8, 1), '억'))           # 억 달러
+    out, seen = [], set()
+    for v, word in forms:
         v = int(v) if float(v).is_integer() else v
-        if v not in out:
-            out.append(v)
+        if (v, word) not in seen:
+            seen.add((v, word))
+            out.append((v, word))
     return shown, out
+
+
+def cite_values(base, precision, unit):
+    """-> (shown, [values]) — the values alone (for messages and the figure counts)."""
+    shown, forms = cite_forms(base, precision, unit)
+    vals = []
+    for v, _ in forms:
+        if v not in vals:
+            vals.append(v)
+    return shown, vals
 
 
 # -------------------------------------------------------------- pipeline
@@ -579,12 +590,14 @@ def cross_check(rel, text, index_row):
         # Print the agency's own figure. FRED agreed with it to the text's precision, and
         # rounding FRED again could land elsewhere (42,500 → 42,000 under round-half-even
         # while the text says 43,000 — codex 구현 1회 #1).
-        shown, cites = cite_values(tval, prec, reg['unit'])
+        shown, forms = cite_forms(tval, prec, reg['unit'])
+        cites = [v for v, _ in forms]
         cand.update({'text_ok': True, 'reason': 'ok', 'text_value': tval})
         comps.append({'label': reg['label'], 'fred_id': reg['fred_id'],
                       'transform': reg['transform'], 'unit': reg['unit'],
                       'aliases': list(reg['aliases']),
-                      'actual': shown, 'cite_values': cites, 'text_value': tval,
+                      'actual': shown, 'cite_values': cites,
+                      'cite_forms': [list(f) for f in forms], 'text_value': tval,
                       'ref_period': cand.get('observation')})
     rel['components'] = comps
     publishable = usable_text and rel.get('key') not in PRIVATE_TEXT
