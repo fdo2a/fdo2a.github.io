@@ -288,3 +288,29 @@ def test_a_conversion_is_offered_only_when_exact():
     assert (3215.67, '억') in forms and (3215.7, '억') not in forms
     _, forms = A.cite_forms(321.56712e9, 1e4, '$B')
     assert [w for _, w in forms] == ['']
+
+
+# ------------------------------------------------ codex 구현 검토 4회 (11/08)
+
+@pytest.mark.parametrize('text,actual,ok', [
+    ('주거비는 0.4% 올랐으나 이번 달 0.2% 내렸다.', 0.4, False),
+    ('주거비는 0.4% 올랐으나 에너지는 내렸다.', 0.4, True),
+    ('주거비는 0.4% 오르면서 상승을 이끌었다.', 0.4, True),
+    ('주거비는 0.2% 올랐으나 이번 달 0.4% 올랐다.', 0.4, False),   # the name is elsewhere
+])
+def test_a_contrast_ending_splits_the_clause(text, actual, ok):
+    rel = {'components': [_chg('주거비', actual)], 'indicators': []}
+    assert (G.evidenced(text, rel) == ['주거비']) is ok
+
+
+def test_a_dollar_figure_in_won_is_not_evidence():
+    from us import anatomy as A
+    shown, forms = A.cite_forms(321.5e9, 1e8, '$B')
+    comp = {'label': '수출', 'aliases': ['수출'], 'actual': shown, 'unit': '$B',
+            'transform': 'level', 'cite_forms': [list(f) for f in forms]}
+    assert G.evidenced('수출은 3,215억원이었다.', {'components': [comp], 'indicators': []}) == []
+
+
+def test_a_sentence_that_marks_this_month_on_a_named_clause_stays_whole():
+    rel = {'components': [_chg('주거비', 0.4), _chg('에너지', 5.2)], 'indicators': []}
+    assert G.evidenced('이번 달 주거비는 0.4% 올랐고, 에너지는 5.2% 뛰었다.', rel) == ['주거비', '에너지']

@@ -26,11 +26,14 @@ import re
 from .section import number_forms
 
 _SENT = re.compile(r'(?<=[.!?。])\s+|\n+')
-_CLAUSE = re.compile(r'[,;]\s+|(?<=[가-힣])(?:며|고|지만|는데|반면)\s+')
+_CLAUSE = re.compile(r'[,;]\s+|(?<=[가-힣])(?:으나|면서|며|고|지만|는데|반면|데다)\s+')
 # A clause segment that speaks of last period: 「전월에는 0.4%였고」. 「전월 대비」 is this
 # month's change and does not count (codex 구현 1회 #4).
 PREV_CONTEXT = re.compile(r'(?:전월|지난달|지난 달|직전|앞서|이전|전분기|지난 분기|previous|prior)'
                           r'(?!\s*대비)')
+# 「이번 달」 marks which clause is this round. When a sentence marks one, the clauses it
+# does not mark speak of another period (codex 구현 4회: 「0.4% 올랐으나 이번 달 0.2%」).
+CURRENT = re.compile(r'이번 달|이번달|이번 회차|이번 분기|이번 주|이달|금월|당월|이번에는')
 UP_WORDS = re.compile(r'올|오르|오름|상승|증가|늘|확대|개선|반등|뛰|급등|웃돌|플러스')
 DOWN_WORDS = re.compile(r'내리|내렸|내림|내려|떨어|하락|감소|줄|축소|악화|급락|밑돌|마이너스|빠지|빠졌')
 FORECAST = re.compile(r'예상|전망|컨센서스|예측|시장 기대|expected|forecast|consensus', re.I)
@@ -143,7 +146,7 @@ _SCALE_WORDS = ('백만', '천', '만', '억')
 # 42,000 jobs, and 「4.2만 3천 명」 is 4만 5천, not 4.2만.
 _WRONG_AFTER = {
     'count': ('달러', '원', '%', '배', '포인트', 'bp', '억', '조'),
-    'dollars': ('명', '건', '채', '%', '배', '포인트', 'bp'),
+    'dollars': ('명', '건', '채', '%', '배', '포인트', 'bp', '원', '엔', '유로'),
 }
 
 
@@ -218,7 +221,13 @@ def evidenced(text, rel, labels_ko=None):
             bare = bare.replace(n, ' ')
         if FORECAST.search(bare):
             continue
-        for clause in _CLAUSE.split(sentence):
+        clauses = _CLAUSE.split(sentence)
+        # Only when the marked clause has no item of its own does it point back at an item
+        # named in another clause — 「이번 달 주거비는 0.4%, 에너지는 5.2%」 stays whole.
+        marked = any(CURRENT.search(c) and not _find_names(c, comps) for c in clauses)
+        for clause in clauses:
+            if marked and not CURRENT.search(clause):
+                continue
             names = _find_names(clause, comps)
             if len({i for _, _, i in names}) != 1:
                 continue
