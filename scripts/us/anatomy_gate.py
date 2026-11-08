@@ -47,7 +47,10 @@ def _forms(value):
 
 
 def _names(comp):
-    return [n for n in {comp.get('label'), *(comp.get('aliases') or ())} if n]
+    """Longest first — 「6개월 뒤 전망」 must be taken out before 「6개월 뒤」, or the
+    leftover 「전망」 reads as a forecast (a set's order changes with the hash seed)."""
+    names = {n for n in (comp.get('label'), *(comp.get('aliases') or ())) if n}
+    return sorted(names, key=lambda n: (-len(n), n))
 
 
 def _find_names(clause, comps):
@@ -116,9 +119,8 @@ def evidenced(text, rel, labels_ko=None):
     got = []
     for sentence in _SENT.split(text or ''):
         bare = sentence
-        for c in comps:
-            for n in _names(c):
-                bare = bare.replace(n, ' ')
+        for n in sorted({n for c in comps for n in _names(c)}, key=lambda n: (-len(n), n)):
+            bare = bare.replace(n, ' ')
         if FORECAST.search(bare):
             continue
         for clause in _CLAUSE.split(sentence):
