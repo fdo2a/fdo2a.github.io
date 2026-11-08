@@ -1,0 +1,434 @@
+{
+ "format": "prepub-gates/1",
+ "_doc": "발행 게이트의 현재 실행 목록 — 루틴의 반복 고리(run_gates.py check)와 최종 기록(run_gates.py record)이 이 목록만 돌린다. required=false 는 참고(발행을 막지 않음). effective = 검사기의 적용일 — 그 전 글은 not_run. kind: format 표현·형식 / numbers 수치 대조 / structure 구조·필수 표식(편집자 노트 때문인 실패의 처리가 갈린다). 설계 docs/superpowers/specs/2026-11-08-prepub-record.md",
+ "markets": {
+  "us": {
+   "post": "posts/{date}.html",
+   "gates": [
+    {
+     "name": "unconfirmed",
+     "builtin": "unconfirmed",
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_macro",
+     "argv": [
+      "scripts/check_macro.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "structure",
+     "required": true,
+     "partial_patterns": [
+      "econ_indicators\\.json 이 없거나 읽을 수 없다",
+      "둘 다 없다 — 부트스트랩"
+     ]
+    },
+    {
+     "name": "check_price_context",
+     "argv": [
+      "scripts/check_price_context.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "indeterminate_patterns": [
+      "^no .+\\.json — nothing to check",
+      "^WARN: could not read"
+     ]
+    },
+    {
+     "name": "check_sector_perf",
+     "argv": [
+      "scripts/check_sector_perf.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "numbers",
+     "required": true
+    },
+    {
+     "name": "check_session",
+     "argv": [
+      "scripts/check_session.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "us"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "indeterminate_patterns": [
+      "^no .+\\.json — nothing to check"
+     ]
+    },
+    {
+     "name": "check_fed",
+     "argv": [
+      "scripts/check_fed.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_auction",
+     "argv": [
+      "scripts/check_auction.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_liquidity",
+     "argv": [
+      "scripts/check_liquidity.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--repo",
+      "{repo}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_calendar",
+     "argv": [
+      "scripts/check_calendar.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_sources",
+     "argv": [
+      "scripts/check_sources.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_telegram",
+     "argv": [
+      "scripts/check_telegram.py",
+      "--html",
+      "{html}",
+      "--tg",
+      "{tg}",
+      "--date",
+      "{date}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_weight",
+     "argv": [
+      "scripts/check_weight.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "us"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_movers",
+     "argv": [
+      "scripts/check_movers.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "indeterminate_patterns": [
+      "^FATAL: 움직인 종목 문단이 있는데"
+     ]
+    },
+    {
+     "name": "check_fund",
+     "argv": [
+      "scripts/check_fund.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "us"
+     ],
+     "kind": "structure",
+     "required": true,
+     "effective": {
+      "module": "fund.gate",
+      "attr": "EFFECTIVE"
+     }
+    },
+    {
+     "name": "check_numbers",
+     "argv": [
+      "scripts/check_numbers.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "json": true
+    },
+    {
+     "name": "check_research",
+     "argv": [
+      "scripts/check_research.py",
+      "check",
+      "--span",
+      "daily",
+      "--html",
+      "{html}",
+      "--root",
+      "research/us",
+      "--market",
+      "us",
+      "--date",
+      "{date}",
+      "--cycle",
+      "{cycle}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_style",
+     "argv": [
+      "scripts/check_style.py",
+      "{html}"
+     ],
+     "kind": "format",
+     "required": true
+    },
+    {
+     "name": "check_readability",
+     "argv": [
+      "scripts/check_readability.py",
+      "--strict",
+      "--no-inline-images",
+      "{html}"
+     ],
+     "kind": "structure",
+     "required": true,
+     "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)"
+    },
+    {
+     "name": "apply_colors_check",
+     "argv": [
+      "scripts/apply_colors.py",
+      "--check",
+      "{html}"
+     ],
+     "kind": "format",
+     "required": false
+    }
+   ]
+  },
+  "kr": {
+   "post": "kr/posts/{date}.html",
+   "gates": [
+    {
+     "name": "unconfirmed",
+     "builtin": "unconfirmed",
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_session",
+     "argv": [
+      "scripts/check_session.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "kr"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "indeterminate_patterns": [
+      "^no .+\\.json — nothing to check"
+     ]
+    },
+    {
+     "name": "check_weight",
+     "argv": [
+      "scripts/check_weight.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "kr"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_kr_stance",
+     "argv": [
+      "scripts/check_kr_stance.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--next",
+      "{stance_next}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_movers",
+     "argv": [
+      "scripts/check_movers.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "kr"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "indeterminate_patterns": [
+      "^FATAL: 움직인 종목 문단이 있는데"
+     ]
+    },
+    {
+     "name": "check_telegram",
+     "argv": [
+      "scripts/check_telegram.py",
+      "--html",
+      "{html}",
+      "--tg",
+      "{tg}",
+      "--date",
+      "{date}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_fund",
+     "argv": [
+      "scripts/check_fund.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "kr"
+     ],
+     "kind": "structure",
+     "required": true,
+     "effective": {
+      "module": "fund.gate",
+      "attr": "EFFECTIVE"
+     }
+    },
+    {
+     "name": "check_research",
+     "argv": [
+      "scripts/check_research.py",
+      "check",
+      "--span",
+      "daily",
+      "--html",
+      "{html}",
+      "--root",
+      "research/kr",
+      "--market",
+      "kr",
+      "--date",
+      "{date}",
+      "--cycle",
+      "{cycle}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_style",
+     "argv": [
+      "scripts/check_style.py",
+      "{html}"
+     ],
+     "kind": "format",
+     "required": true
+    },
+    {
+     "name": "check_readability",
+     "argv": [
+      "scripts/check_readability.py",
+      "--strict",
+      "--no-inline-images",
+      "{html}"
+     ],
+     "kind": "structure",
+     "required": true,
+     "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)"
+    }
+   ]
+  }
+ },
+ "disabled": {
+  "kr": [
+   {
+    "name": "check_news",
+    "since": "2026-11-06",
+    "why": "KR 뉴스가 /kr/news/ 로 분리돼 마감브리프에는 뉴스 블록이 없다(KR_ORCHESTRATOR)"
+   },
+   {
+    "name": "check_contested",
+    "since": "2026-11-06",
+    "why": "쟁점 분석이 KR 뉴스 글로 옮겨 갔다(KR_ORCHESTRATOR)"
+   }
+  ],
+  "us": [
+   {
+    "name": "check_news",
+    "since": "2026-09-26",
+    "why": "뉴스·산업 브리프(STEP 3.5) 전용 — 시황 브리프 목록 밖"
+   }
+  ]
+ }
+}

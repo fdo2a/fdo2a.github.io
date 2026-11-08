@@ -49,8 +49,13 @@ def main():
         sys.exit(2)
 
     pc = blob.get('price_context') if args.market == 'us' else None
-    violations = check(html, blob.get(key) if key else blob,
-                       market=args.market, price_context=pc)
+    session = blob.get(key) if key else blob
+    if not session:
+        # 비-코어라 통과하는 것은 같다. 다만 「검사해서 OK」와 「볼 것이 없어 통과」를 출력으로 가른다 —
+        # 발행 전 검증 기록이 이 줄을 「실행 안 함」으로 읽는다(2026-11-08).
+        print(f'session block absent in {fname} — nothing to check')
+        return
+    violations = check(html, session, market=args.market, price_context=pc)
     if violations:
         for line in violations:
             print(line)

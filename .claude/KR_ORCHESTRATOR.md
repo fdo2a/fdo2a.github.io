@@ -84,15 +84,11 @@ Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/
 아래 게이트는 실패하면 **출력에 찍힌 위반을 그대로** writer 에게 넘겨 다시 돌린다(게이트 소스를 읽지 않는다).
 
 ```bash
-python3 scripts/check_session.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
-python3 scripts/check_weight.py   --html <kr_brief 절대경로> --datadir kr/data --market kr
-python3 scripts/check_kr_stance.py --html <kr_brief 절대경로> --datadir kr/data --next <워크스페이스 루트>/kr_stance_next.json
-python3 scripts/check_news.py    --html <kr_brief 절대경로> --datadir kr/data --market kr --date <DATE>
-python3 scripts/check_movers.py  --html <kr_brief 절대경로> --datadir kr/data --market kr
-python3 scripts/check_telegram.py --html <kr_brief 절대경로> --tg <워크스페이스 루트>/kr_telegram.json --date <DATE>
-python3 scripts/check_fund.py    --html <kr_brief 절대경로> --datadir kr/data --market kr
-python3 scripts/check_contested.py --html <kr_brief 절대경로> --json <워크스페이스 루트>/contested.json --market kr --date <DATE>
+python3 scripts/run_gates.py check --market kr --date <DATE> --html <kr_brief 절대경로> --datadir kr/data --repo . \
+        --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json --cycle <CYCLE_ID>
 ```
+
+**실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사가 실패했거나 **판정 불가**(통과가 아니다). `check_news`·`check_contested` 는 2026-11-06 부터 목록의 `disabled` 에 있다 — 따로 돌리지 않는다. 표 수치 수기 대조((c))는 자동 기록 대상이 아니다.
 
 - `check_weight.py` 의 KR 계약: 필수 섹션 비어 있음 금지, §2 문단 순서(2026-10-20 부터 다섯 — 어제 판단의 판정은 「시장 판단과 복기」 첫 문단, 배치는 `check_kr_stance.py` 가 발행일로 고른다), 가격 섹션의 스탠스 등급 어휘 금지. **절대 글자 수 하한은 2026-10-13 폐지** — 「경고:」 줄(서술형 본문 5,000자 초과, 시황군 < 판단군)은 발행을 막지 않으며, 그것을 맞추려고 초안을 늘리거나 줄이지 않는다(`STYLE_EXEMPLARS.md` §11).
 - `check_fund.py` — `kr/data/kr_fund_view.json` 의 `status` 가 `ok`·`partial` 이고 날짜가 오늘이면 「아시아 세션 유닛 관측」 섹션이 있어야 하고, 그 밖에는 없어야 한다. 블록(`kr_fund_view.html`)은 그대로 넣는다.
@@ -132,7 +128,16 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 2. `kr/posts.json`에 `{date,title,headline}` 추가(같은 날짜는 REPLACE, 중복 금지). 유효 JSON 유지.
 3. `sitemap.xml`에 `https://fdo2a.github.io/kr/posts/DATE.html` url 추가(전체 재생성, US 항목 보존).
 **STEP 2.6 이 돌았으면**(`close: on`) 아래 커밋 명령을 한 줄로 돌리지 말고 `.claude/STYLE_CLOSE.md` B 의 순서(add → verify → staged-scan → commit → push 전 verify → push → push 뒤 verify)로 나눠 돈다 — 검사가 exit 0 이 아니면 커밋·push 하지 않는다.
-4. **커밋 직전에 가드를 한 번 더** — 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:kr/posts/[YYYY-MM-DD].html` 로 본다. 있으면(그 사이 다른 런이 발행) 아무것도 커밋하지 않고 끝낸다. 아니면 main에 커밋·푸시: `git add -A && git commit -m "Add KR brief [YYYY-MM-DD]" && git push`. 거절되면 `git pull --rebase` 한다 — `kr/posts.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) 이 날짜 항목만 STEP 3 의 2·3번으로 다시 넣은 뒤 `git add` → `git rebase --continue`. 그다음 같은 확인을 하고 다시 push 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
+4. **커밋 직전에 가드를 한 번 더** — 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:kr/posts/[YYYY-MM-DD].html` 로 본다. 있으면(그 사이 다른 런이 발행) 아무것도 커밋하지 않고 끝낸다. 아니면 5 로 간다.
+5. **최종 검증 기록 (2026-11-08)** — 4 의 가드를 통과한 뒤, 커밋 전에 **실제로 올릴 파일**로:
+   `python3 scripts/run_gates.py record --market kr --date [YYYY-MM-DD] --html kr/posts/[YYYY-MM-DD].html --datadir kr/data --repo . --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json --cycle <CYCLE_ID> --out verification/kr/[YYYY-MM-DD].json`
+   - exit 0 → 6. **기록한 뒤에는 글을 고치지 않는다** — 고쳤으면 record 를 다시 돈다.
+   - exit 1(필수 검사 실패·판정 불가) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-3 → record, 최대 2회. 그래도 1이면 **커밋하지 않고** 잠금 해제, 알림에 막은 검사기를 적고 중단. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 다시 하고 record — 그 판도 1이면 중단.
+   - exit 4(검사는 다 돌았고 발행 가능, **레포 안 기록 저장만** 실패) → 찍힌 `fallback_record=<경로>`(레포 밖 같은 기록)를 적어 두고 발행한다. 아래 verify 에 `--record-file <그 경로>` 를 붙인다 — 기록이 레포에 없어도 글·검사 코드·원장·입력이 바뀌면 막는다. 알림에 「검증 기록 없음 — 저장 실패」(2026-11-22 까지 시험 운영).
+   - exit 5(기록 도구 자체 오류, 또는 대체 기록도 못 남김) → 최종 판이 검사됐다는 근거가 없다. **커밋하지 않고** 잠금 해제, 알림에 「검증 도구 오류 — 발행 보류」와 오류 줄을 적고 중단(필수 검사를 못 돌린 것과 같다).
+6. **커밋·푸시** — 명령을 `&&` 로 잇지 말고 한 줄씩 돌려 종료 코드를 본다: `git add -A` → `python3 scripts/run_gates.py verify --market kr --date [YYYY-MM-DD] --repo . --index --datadir kr/data --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json` — exit 0 이면 `git commit -m "Add KR brief [YYYY-MM-DD]"`. exit 1 이면 5 의 record → `git add -A` → verify 다시. **exit 4(기록 없음)는 5 의 record 가 4 였을 때만** 넘어간다 — 그때는 `--record-file <fallback_record 경로>` 를 붙여 0 이어야 commit. **exit 2(git 을 읽지 못함)는 커밋하지 않고 중단**.
+   **모든 `git push` 직전**(`pull --rebase`·충돌 해결 뒤 포함) `python3 scripts/run_gates.py verify --market kr --date [YYYY-MM-DD] --repo . --rev HEAD --datadir kr/data --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json` — exit 0 → `git push`. exit 1 → record → `git add -A` → `git commit --amend --no-edit` → 다시 verify. exit 4 → record 가 4 였을 때만, `--record-file <fallback_record 경로>` 를 붙여 0 이면 push. exit 2 → push 하지 않고 중단.
+   push 거절되면 `git pull --rebase` 한다 — `kr/posts.json`·`sitemap.xml` 에서 충돌하면 원격 판을 받고(`git checkout --theirs <파일>`) 이 날짜 항목만 STEP 3 의 2·3번으로 다시 넣은 뒤 `git add` → `git rebase --continue`. 그다음 같은 확인을 하고 다시 push 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다. 푸시 실패 시 나머지 진행 후 최종 메시지·푸시알림에 명확히 보고(클라우드 푸시는 GitHub App Installed 권한 필요).
 
 ## STEP 3.5 — KR 뉴스 글 (subagent: kr-news-writer) — 브리프를 발행한 **뒤에** (2026-11-06 부터)
 
@@ -151,10 +156,10 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
    grep -c '확인필요' kr_news_[DATE].html     # 0
    ```
    `--market kr-news` 는 정치·정책·매크로·산업에 **하한 3건**을 건다(그날 실을 수 있는 기사가 3건 이상인 갈래만). 색은 칠하지 않는다(KR). `python3 scripts/scan_translationese.py kr_news_[DATE].html | tail -1` 을 최종 보고에 옮긴다.
-3. **발행 (이 글만의 커밋)** — `kr_news_[DATE].html` 을 `kr/news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인) `python3 scripts/update_archives.py --root . --kind kr-news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 커밋 직전 `git fetch -q origin main && ! git cat-file -e origin/main:kr/news/[YYYY-MM-DD].html` 일 때만 `git add kr/news/ kr/news.json sitemap.xml && git commit -m "Add KR news [YYYY-MM-DD]" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다(`kr/news.json`·`sitemap.xml` 충돌은 STEP 3 의 4번과 같은 방법).
+3. **발행 (이 글만의 커밋)** — `kr_news_[DATE].html` 을 `kr/news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인) `python3 scripts/update_archives.py --root . --kind kr-news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 커밋 직전 `git fetch -q origin main && ! git cat-file -e origin/main:kr/news/[YYYY-MM-DD].html` 일 때만 `git add kr/news/ kr/news.json sitemap.xml && git commit -m "Add KR news [YYYY-MM-DD]" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다(`kr/news.json`·`sitemap.xml` 충돌은 STEP 3 의 6번과 같은 방법).
 
 ## STEP 4 — 알림
-PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`, 그리고 KR 뉴스 글 URL(`https://fdo2a.github.io/kr/news/YYYY-MM-DD.html`) 또는 내지 않은 사유. 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
+PushNotification으로 헤드라인 + `https://fdo2a.github.io/kr/posts/YYYY-MM-DD.html`, `검증 기록:` 한 줄(record 의 「판정 … · 발행 …」, 없으면 「검증 기록 없음 — 사유」), 그리고 KR 뉴스 글 URL(`https://fdo2a.github.io/kr/news/YYYY-MM-DD.html`) 또는 내지 않은 사유. 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Notion·PDF·이메일 모두 없음. 세션에 Notion 커넥터가 붙어 있어도 쓰지 않는다 — 연결돼 있다는 사실이 사용 지시는 아니다.
 

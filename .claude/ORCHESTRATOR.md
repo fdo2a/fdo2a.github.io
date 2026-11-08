@@ -117,21 +117,11 @@ Launch the Agent tool with subagent_type "brief-report-writer", run synchronousl
 (a) `grep -c '확인필요' <html>` = 0. (b) **수치 대조는 `check_numbers.py` 가 한다**(2026-11-07) — 시장 표 6종의 칸은 전수로 막고, 문장 수치는 자산·단위로 정해지는 것만 대조한다. 문장 층이 경고(`경고(문장)`)인 동안(`config/number_audit.json`, 2026-11-21 재측정까지)은 **문장 수치 5개 이상**을 `grep -o '4\.62' <html>` 식으로 원본과 계속 대조한다 — HTML 전체(~34K 토큰)를 읽지 않는다. 수치 창작 금지, 미확인은 삭제·재구성.
 
 ```bash
-python  scripts/check_macro.py         --html morning_brief_[DATE].html --datadir <workspace>
-python  scripts/check_price_context.py --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_sector_perf.py   --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_session.py       --html morning_brief_[DATE].html --datadir <workspace> --market us
-python3 scripts/check_fed.py           --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_auction.py       --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_liquidity.py     --html morning_brief_[DATE].html --datadir <workspace> --repo <repo>
-python3 scripts/check_calendar.py      --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_sources.py       --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_telegram.py      --html morning_brief_[DATE].html --tg <workspace>/telegram.json --date [DATE]
-python3 scripts/check_weight.py        --html morning_brief_[DATE].html --datadir <workspace> --market us
-python3 scripts/check_movers.py        --html morning_brief_[DATE].html --datadir <workspace>
-python3 scripts/check_fund.py          --html morning_brief_[DATE].html --datadir <workspace> --market us
-python3 scripts/check_numbers.py       --html morning_brief_[DATE].html --datadir <workspace>
+python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/morning_brief_[DATE].html \
+        --datadir <workspace> --repo <repo> --tg <workspace>/telegram.json --cycle <CYCLE_ID>
 ```
+
+**실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사가 실패했거나 **판정 불가**(검사기가 돌지 못함 — 통과가 아니다). 검사기를 따로 하나씩 돌려 목록을 대신하지 않는다. 아래 설명은 검사기별 계약이다.
 
 - `check_fund.py` — 생성 블록은 다시 그린 것과 바이트가 같아야 한다. 블록 안을 고치지 말고, 해석 문단(`data-fund`)만 고친다. 「편입·비중 확대·매수하」 같은 권고 어휘가 섹션에 있으면 막힌다.
 - `check_sector_perf.py` — 섹터 기간 수익률 표가 그날 섹터 등락률과 같은 회차여야 한다. 낡은 행을 손으로 채울 때 `sectors` 만 고치지 말고 **같은 회차의 `sector_performance` 행 전체와 `data/sector_performance.html`** 을 함께 옮긴다(2026-10-12 한 글에서 커뮤니케이션서비스가 +0.97%·-1.51% 로 갈렸다). 표 안 숫자를 손으로 고치지 않는다.
@@ -179,8 +169,15 @@ Site base URL: https://fdo2a.github.io/
 4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
    `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
    **STEP 2.6 이 돌았으면**(`close: on`) 아래 커밋 명령을 한 줄로 돌리지 말고 `.claude/STYLE_CLOSE.md` B 의 순서(add → verify → staged-scan → commit → push 전 verify → push → push 뒤 verify)로 나눠 돈다 — 검사가 exit 0 이 아니면 커밋·push 하지 않는다.
-5. Commit and push to main — **뉴스·산업 브리프를 쓰기 전에** 이 커밋부터 올린다:
-   git add -A && git commit -m "Add [YYYY-MM-DD] brief" && git push
+5. **최종 검증 기록 (2026-11-08)** — STEP 0 의 커밋 직전 가드(pull·중복 확인·유동성 재검사)를 먼저 하고, **실제로 올릴 파일**(노트까지 붙은 `posts/[DATE].html`)로:
+   `python3 scripts/run_gates.py record --market us --date [DATE] --html posts/[DATE].html --datadir <workspace> --repo . --tg <workspace>/telegram.json --cycle <CYCLE_ID> --out verification/us/[DATE].json`
+   - exit 0 → 6. **기록한 뒤에는 글을 고치지 않는다** — 고쳤으면 record 를 다시 돈다.
+   - exit 1(필수 검사 실패·판정 불가) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-4 → record. 최대 2회, 그래도 1이면 **커밋하지 않고** `run_lock.sh release`, PushNotification 으로 막은 검사기와 함께 중단. **편집자 노트는 고치지 않는다** — 노트 때문에 막혔으면(출력의 「노트를 뺀 사본」 줄) 고치지 말고 중단·보고. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 STEP 3 1-4 를 다시 하고 record — 그 판도 1이면 중단.
+   - exit 4(검사는 다 돌았고 발행 가능, **레포 안 기록 저장만** 실패) → 찍힌 `fallback_record=<경로>`(레포 밖 같은 기록)를 적어 두고 발행한다. 아래 verify 에 `--record-file <그 경로>` 를 붙인다 — 기록이 레포에 없어도 글·검사 코드·원장·입력이 바뀌면 막는다. 알림에 「검증 기록 없음 — 저장 실패」(2026-11-22 까지 시험 운영).
+   - exit 5(기록 도구 자체 오류, 또는 대체 기록도 못 남김) → 최종 판이 검사됐다는 근거가 없다. **커밋하지 않고** 잠금 해제, 알림에 「검증 도구 오류 — 발행 보류」와 오류 줄을 적고 중단(필수 검사를 못 돌린 것과 같다).
+6. Commit and push to main — **뉴스·산업 브리프를 쓰기 전에** 이 커밋부터 올린다. 글과 기록이 **같은 커밋**에 든다. 명령을 `&&` 로 잇지 말고 한 줄씩 돌려 종료 코드를 본다:
+   `git add -A` → `python3 scripts/run_gates.py verify --market us --date [DATE] --repo . --index --datadir <workspace> --tg <workspace>/telegram.json` — exit 0 이면 `git commit -m "Add [YYYY-MM-DD] brief"`. exit 1 이면 5 의 record → `git add -A` → verify 다시. **exit 4(기록 없음)는 5 의 record 가 4 였을 때만** 넘어간다 — 그때는 `--record-file <fallback_record 경로>` 를 붙여 0 이어야 commit. 그 밖의 4 는 record 부터 다시. **exit 2(git 을 읽지 못함)는 커밋하지 않고 중단**.
+   **모든 `git push` 직전**(pull --rebase 뒤 포함) `python3 scripts/run_gates.py verify --market us --date [DATE] --repo . --rev HEAD --datadir <workspace> --tg <workspace>/telegram.json` — 밀어 올릴 커밋 안의 글·검사 코드와 지금 입력이 기록과 짝인지 본다. exit 0 → push. exit 1 → record → `git add -A` → `git commit --amend --no-edit` → 다시 verify. exit 4 → record 가 4 였을 때만, `--record-file <fallback_record 경로>` 를 붙여 0 이면 push. exit 2 → push 하지 않고 중단.
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
 
 ## STEP 3.5 — 뉴스·산업 브리프 (subagent: news-industry-writer) — 브리프를 발행한 **뒤에**
@@ -208,7 +205,7 @@ Site base URL: https://fdo2a.github.io/
 
 ## STEP 4 — Notify
 
-Send a PushNotification with the headline and the blog post URL, plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures). 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
+Send a PushNotification with the headline and the blog post URL, a `검증 기록:` line (record 의 「판정 … · 발행 …」 줄, 없으면 「검증 기록 없음 — 사유」), plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures). 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Do NOT publish to Notion, do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email. If a Notion connector is available in the session, leave it alone — its presence is not an instruction to use it.
 
