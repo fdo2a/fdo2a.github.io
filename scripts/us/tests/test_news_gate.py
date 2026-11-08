@@ -476,3 +476,33 @@ def test_unusable_summaries_do_not_demand_a_section():
     bad = {'report_date': '2026-09-19', 'items': [
         dict(COLLECTED['items'][0], summary_ko='東証' + SUMMARY)]}
     assert check('<html><body><p>뉴스 없음</p></body></html>', bad) == []
+
+
+def test_the_gate_ceiling_leaves_room_for_the_longest_kept_summary_plus_a_link():
+    # 수집이 받아 준 요약(최대 BAND_MAX)에 연결 문장(최대 LINK_MAX)이 붙어도 게이트가 막지 않아야 한다
+    from us.news_expand import LINK_MAX
+    from us.news_summary import BAND_MAX
+    assert MAX_CHARS >= BAND_MAX + LINK_MAX
+
+
+def test_the_longest_kept_summary_expanded_with_a_link_passes_the_whole_gate():
+    # 확장기를 실제로 거친 블록으로 길이·유사도·요약 몫(85%)을 모두 본다(codex #2). 연결 문장 길이는
+    # 요약 몫 하한이 정한다 — 450자 요약이면 79자까지(80자면 84.9%, 이 변경 전에도 같은 제약)
+    from us.news_expand import expand
+    from us.news_summary import BAND_MAX
+    news = {'report_date': '2026-09-19', 'items': [dict(COLLECTED['items'][0], summary_ko='가' * BAND_MAX)]}
+    html, errors = expand(page('<!--NEWS:g1|알파 제목|' + '나' * 79 + '-->'), news)
+    assert errors == []
+    assert check(html, news) == []
+
+
+def test_a_block_one_past_the_ceiling_is_too_long():
+    assert not any('길' in m for m in check(page(block('g1', chars=MAX_CHARS)), COLLECTED))
+    assert any('길' in m for m in check(page(block('g1', chars=MAX_CHARS + 1)), COLLECTED))
+
+
+def test_the_ceiling_matches_what_the_summary_share_floor_allows():
+    # 요약 몫 하한(MIN_COVERAGE)이 허용하는 가장 긴 블록 = BAND_MAX / MIN_COVERAGE ≈ 529자
+    from us.news_gate import MIN_COVERAGE
+    from us.news_summary import BAND_MAX
+    assert MAX_CHARS >= BAND_MAX / MIN_COVERAGE

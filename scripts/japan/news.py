@@ -41,7 +41,7 @@ DIGEST_CATEGORIES = ('macro', 'policy', 'market', 'industry', 'global', 'insight
 
 PER_CATEGORY = 3        # US·KR `DEFAULT_PER_CATEGORY`
 PRESELECT = 6           # 본문이 실패해도 3건을 채울 대체 후보(US `TWO_PHASE` 와 같은 2단계)
-MIN_BODY = 300          # KR 과 같다. 지지 단신(250자)은 요약 240-420자의 재료가 못 된다
+MIN_BODY = 300          # KR 과 같다. 지지 단신(250자)은 요약 240-530자의 재료가 못 된다
 MAX_BODY = 12000
 TITLE_DUP = 0.6
 

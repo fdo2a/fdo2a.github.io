@@ -662,13 +662,33 @@ def test_a_whole_japanese_reply_still_gets_a_named_rewrite(tmp_path):
 
 
 def test_an_over_long_rewrite_says_what_to_cut(tmp_path):
-    c = Client(['가' * 450, GOOD])
+    c = Client(['가' * 470, GOOD])
     NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
     ask = last_ask(c)
-    assert '450자' in ask and '빼' in ask
+    assert '470자' in ask and '빼' in ask
 
 
 def test_a_short_rewrite_does_not_ask_to_cut(tmp_path):
     c = Client(['가' * 200, GOOD])
     NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
     assert '빼' not in last_ask(c)
+
+
+# ── 수집 상한 400 → 450 (2026-11-08 사용자 「상한 올리기」) ──
+# US·KR 승격 62건 중 53건이 분량 초과였고 그중 47건이 401-450자였다. Haiku 는 목표 상한 근처(통과분
+# 중앙값 364자)에 쓰므로 목표는 두고 받아 주는 꼬리만 넓힌다.
+
+def test_a_slightly_long_summary_is_kept_without_a_rewrite(tmp_path):
+    its, c = items(tmp_path), Client(['가' * 440])
+    assert NS.summarize_items(its, str(tmp_path), model='m', client=c, log=lambda *_: None) == 1
+    assert len(c.calls) == 1
+
+
+def test_beyond_the_new_ceiling_still_gets_a_rewrite(tmp_path):
+    c = Client(['가' * 460, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    assert len(c.calls) == 2
+
+
+def test_the_target_stays_where_haiku_already_writes():
+    assert (NS.TARGET_MIN, NS.TARGET_MAX) == (270, 370)

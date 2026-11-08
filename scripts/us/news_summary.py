@@ -62,10 +62,13 @@ def new_run():
     _escalations, _escalate_off = 0, False
 AUDIENCE = 'https://api.anthropic.com'
 
-# 게이트의 요약 분량 띠(news_gate.MIN_CHARS·MAX_CHARS = 240·420, **공백 제외**)보다 안쪽을
-# 겨눈다 — 작성 담당이 문장을 다듬어도 띠 밖으로 나가지 않게. 세는 방식도 게이트와 같다.
+# 게이트의 요약 분량 띠(news_gate.MIN_CHARS·MAX_CHARS = 240·530, **공백 제외**)보다 안쪽을
+# 겨눈다 — 작성 담당이 연결 문장(news_expand.LINK_MAX)을 붙여도 띠 밖으로 나가지 않게. 세는 방식도 게이트와 같다.
+# 상한 400 → 450(2026-11-08 사용자 「상한 올리기」): US·KR 승격 62건 중 53건이 분량 초과, 그중 47건이
+# 401-450자였다. Haiku 는 목표 상한 근처(통과분 중앙값 364자)에 쓰므로 목표는 그대로 두고 꼬리만 받는다 —
+# 목표를 올리면 새 목표의 위쪽을 겨냥해 또 넘친다.
 TARGET_MIN, TARGET_MAX = 270, 370
-BAND_MIN, BAND_MAX = 250, 400
+BAND_MIN, BAND_MAX = 250, 450
 MAX_BODY_CHARS = 12000
 
 # 검사(`cjk_runs`)는 한자 한 글자에도 요약을 버리는데 지시문에는 그 금지가 없었다. 일본 일간 요약의
