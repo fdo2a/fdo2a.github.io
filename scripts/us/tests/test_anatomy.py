@@ -398,3 +398,25 @@ def test_last_release_date_is_none_when_there_is_nothing():
     c = _client(FakeOpener(json.dumps({'release_dates': []}).encode()))
     c.transport = 'api'
     assert c.last_release_date(10, '2026-10-15') is None
+
+
+# ------------------------------------------------ codex 구현 검토 1회 (11/08)
+
+def test_the_last_printed_digit_is_the_precision():
+    """「$280 billion」 is to the billion: FRED's 284 billion does not agree."""
+    _, prec = A._number(__import__('re').match(A.V, '280 billion'))
+    assert prec == 1e9
+    assert not A.agrees(284e9, 280e9, prec)
+
+
+def test_the_printed_figure_is_the_agencys_not_a_rerounded_fred():
+    comp = _comp('employment', '헬스케어')
+    rel = {'key': 'employment', 'primary': 'P',
+           'indicators': [{'name': 'P', 'ref_period': '2026-10-01'}]}
+    rows = {'CES6562000101': 42.5}
+    rel = A.produce(rel, lambda sid, a, b: [_row(b, RD, RD, 1000 + rows.get(sid, 0)),
+                                            _row(a, '2026-09-01', RD, 1000.0)],
+                    RD, [_row('2026-10-01', RD, RD, 1.0)])
+    A.cross_check(rel, 'Health care added 43,000 jobs in October.', OK_ROW)
+    hc = next(c for c in rel['components'] if c['label'] == comp['label'])
+    assert hc['actual'] == 43000 and 43 in hc['cite_values']

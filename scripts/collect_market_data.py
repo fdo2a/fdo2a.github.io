@@ -560,13 +560,24 @@ def _anatomy_round(mm, econ, econ_series, last_seen, book_state, book_date, repo
         client.preflight()
     sids = {e['name']: e['fred_id'] for e in econ}
     cache = {}
-    if mm.get('introduced') and book_date:
-        fresh = {n for n in mm['introduced']
-                 if (_release_date(client, sids.get(n), report_date, cache) or '') > book_date}
+    if mm.get('introduced'):
+        fresh, unknown = set(), set()
+        for n in mm['introduced']:
+            since = (mm.get('introduced_since') or {}).get(n) or book_date
+            day = _release_date(client, sids.get(n), report_date, cache)
+            if day is None or not since:
+                unknown.add(n)          # judged again tomorrow — never seeded blind
+            elif day > since:
+                fresh.add(n)
         if fresh:
             print(f"  도입일 신규 발표: {', '.join(sorted(fresh))}")
+        if unknown:
+            print(f"  도입일 발표일 미확인(내일 다시 본다): {', '.join(sorted(unknown))}",
+                  file=sys.stderr)
+        if fresh or unknown:
             mm = compute(econ_series, econ, last_seen, book_state=book_state,
-                         introduced_new=fresh)
+                         introduced_new=fresh, introduced_unknown=unknown,
+                         book_date=book_date)
     for rel in mm['headline_releases']:
         primary = next((i for i in rel.get('indicators') or []
                         if i.get('name') == rel.get('primary')), {}) or {}
@@ -1135,7 +1146,8 @@ def main():
                 book_state = 'corrupt'
         if book_state != 'ok':
             print(f'  macro.json {book_state} — treating every indicator as new', file=sys.stderr)
-        mm = compute_macro_metrics(econ_series, econ, last_seen, book_state=book_state)
+        mm = compute_macro_metrics(econ_series, econ, last_seen, book_state=book_state,
+                                   book_date=book_date)
         print(f"  growth {mm['growth_score']} / inflation {mm['inflation_score']} · "
               f"신규 발표 {len(mm['new_releases'])}건")
 

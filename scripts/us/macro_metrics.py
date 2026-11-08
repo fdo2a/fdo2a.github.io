@@ -545,8 +545,18 @@ def _book_state(last_seen, book_state):
     return 'ok' if last_seen else 'empty'
 
 
+PENDING = 'pending'
+
+
+def _pending_since(reading):
+    """`last_seen` entry ['pending', since] -> since, else None."""
+    if isinstance(reading, (list, tuple)) and len(reading) == 2 and reading[0] == PENDING:
+        return reading[1]
+    return None
+
+
 def compute(series_by_id, econ_indicators, last_seen=None, book_state=None,
-            introduced_new=None):
+            introduced_new=None, introduced_unknown=None, book_date=None):
     """Full history + today's dashboard rows -> axis scores, diffusion, new releases.
 
     `last_seen` is yesterday's {name: [ref_period, actual]} carried in macro.json. An
@@ -568,11 +578,18 @@ def compute(series_by_id, econ_indicators, last_seen=None, book_state=None,
       (`introduced_new`) — then it is dissected, still unscored.
     * A row missing today keeps yesterday's `last_seen` reading, so a failed fetch does
       not make tomorrow read an unchanged print as new.
+    * When the collector could not tell when an introduced row was released
+      (`introduced_unknown` — no key, a failed lookup), the row is **not** seeded: it is
+      kept as `['pending', since]`, `since` the book date it was first seen against, and
+      judged again the next day against that date (codex 구현 1회 #5). `introduced_since`
+      in the output gives the date each introduced row is to be compared with.
     """
     state = _book_state(last_seen, book_state)
     seen_before = last_seen or {}
     introduced_new = set(introduced_new or ())
+    introduced_unknown = set(introduced_unknown or ())
     rows, releases, anatomy, introduced, seen_now, roles = [], [], [], [], {}, {}
+    since_of = {}
 
     for item in econ_indicators or []:
         name = item.get('name')
@@ -588,7 +605,8 @@ def compute(series_by_id, econ_indicators, last_seen=None, book_state=None,
         trend = None if means is None else {
             'window': window, 'label_ko': window_label(window),
             'prior_avg': round(means[0], _R3), 'recent_avg': round(means[1], _R3)}
-        is_intro = state == 'ok' and name not in seen_before
+        pending = _pending_since(seen_before.get(name))
+        is_intro = state == 'ok' and (name not in seen_before or pending is not None)
         rows.append({
             'name': name,
             'label_ko': LABELS_KO.get(name, name),
@@ -617,7 +635,10 @@ def compute(series_by_id, econ_indicators, last_seen=None, book_state=None,
         seen_now[name] = [item.get('ref_period'), item.get('actual')]
         if is_intro:
             introduced.append(name)
-            if name in introduced_new:
+            since_of[name] = pending or book_date
+            if name in introduced_unknown:
+                seen_now[name] = [PENDING, since_of[name]]
+            elif name in introduced_new:
                 anatomy.append(name)
                 roles[name] = 'anatomy'
             continue
@@ -654,6 +675,7 @@ def compute(series_by_id, econ_indicators, last_seen=None, book_state=None,
         'new_releases': releases,
         'anatomy_releases': anatomy,
         'introduced': introduced,
+        'introduced_since': since_of,
         'headline_releases': _headline_releases(rows, releases + anatomy, roles,
                                                 capped=state != 'ok'),
         'last_seen': seen_now,

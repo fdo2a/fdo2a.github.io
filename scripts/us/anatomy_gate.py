@@ -26,7 +26,13 @@ import re
 from .section import number_forms
 
 _SENT = re.compile(r'(?<=[.!?。])\s+|\n+')
-_CLAUSE = re.compile(r'[,;]\s+|(?<=[가-힣])(?:며|지만|는데|반면)\s+')
+_CLAUSE = re.compile(r'[,;]\s+|(?<=[가-힣])(?:며|고|지만|는데|반면)\s+')
+# A clause segment that speaks of last period: 「전월에는 0.4%였고」. 「전월 대비」 is this
+# month's change and does not count (codex 구현 1회 #4).
+PREV_CONTEXT = re.compile(r'(?:전월|지난달|지난 달|직전|앞서|이전|전분기|지난 분기|previous|prior)'
+                          r'(?!\s*대비)')
+UP_WORDS = re.compile(r'올|오르|오름|상승|증가|늘|확대|개선|반등|뛰|급등|웃돌|플러스')
+DOWN_WORDS = re.compile(r'내리|내렸|내림|내려|떨어|하락|감소|줄|축소|악화|급락|밑돌|마이너스|빠지|빠졌')
 FORECAST = re.compile(r'예상|전망|컨센서스|예측|시장 기대|expected|forecast|consensus', re.I)
 PREV_BEFORE_NAME = re.compile(r'(?:전월|지난달|지난 달|지난 분기|직전|전분기|previous|prior)\s*$')
 PREV_BEFORE_VALUE = re.compile(r'(?:전월|지난달|지난 달|직전|앞서|이전|previous|prior)\s*[+−-]?$')
@@ -70,15 +76,42 @@ def _find_names(clause, comps):
 
 def _current_numbers(clause):
     """Number tokens in the clause that can be a current value -> [(start, end, text)]."""
-    out = []
+    out, last = [], 0
     for m in _NUM.finditer(clause):
         before, after = clause[:m.start()], clause[m.end():]
+        lead = clause[last:m.start()]
+        last = m.end()
         if AFTER_FROM.match(after) or AFTER_CHANGE.match(after):
             continue
-        if PREV_BEFORE_VALUE.search(before[-8:]):
+        if PREV_BEFORE_VALUE.search(before[-8:]) or PREV_CONTEXT.search(lead):
             continue
         out.append((m.start(), m.end(), m.group(0)))
     return out
+
+
+def _sign_ok(clause, comp, start, end, tok):
+    """The printed figure must carry the confirmed figure's sign (codex 구현 1회 #3).
+
+    A change (MoM %, a level difference) needs a matching explicit sign or a matching
+    direction word in the clause; a level needs an explicit minus (or 마이너스) exactly when
+    it is negative."""
+    try:
+        actual = float(comp.get('actual'))
+    except (TypeError, ValueError):
+        return False
+    explicit = tok[0] if tok[0] in '+-−' else None
+    negative_word = '마이너스' in clause[max(0, start - 6):start]
+    if (comp.get('transform') or 'level') == 'level':
+        printed_negative = explicit in ('-', '−') or negative_word
+        return printed_negative == (actual < 0)
+    if actual == 0:
+        return explicit is None
+    if explicit:
+        return (explicit == '+') == (actual > 0)
+    up, down = bool(UP_WORDS.search(clause)), bool(DOWN_WORDS.search(clause))
+    if up == down:
+        return False                       # no direction, or both: cannot tell
+    return up == (actual > 0)
 
 
 def _value_in(clause, comp, numbers):
@@ -91,6 +124,8 @@ def _value_in(clause, comp, numbers):
         if bare not in forms and tok.replace('−', '-') not in forms:
             continue
         if comp.get('unit') == '%' and not re.match(r'\s*%(?!p|포인트)', clause[end:]):
+            continue
+        if not _sign_ok(clause, comp, start, end, tok):
             continue
         return True
     return False

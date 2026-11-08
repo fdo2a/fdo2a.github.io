@@ -390,12 +390,10 @@ def _number(m):
         val = float(raw)
     except ValueError:
         return None, None
-    if '.' in raw:
-        precision = 10 ** -len(raw.split('.')[1])
-    else:
-        digits = raw.lstrip('-')
-        zeros = len(digits) - len(digits.rstrip('0')) if digits.strip('0') else 0
-        precision = min(10 ** zeros, 1000)
+    # The last printed digit is the precision — 「$280 billion」 is to the billion, not the
+    # ten billion (codex 구현 1회 #2). A release that rounds coarser than it prints (BLS
+    # payroll changes, to the thousand) says so with the component's `step`.
+    precision = 10 ** -len(raw.split('.')[1]) if '.' in raw else 1
     return val * mult, precision * mult
 
 
@@ -578,7 +576,10 @@ def cross_check(rel, text, index_row):
             cand.update({'reason': 'fred_text_disagree', 'text_value': tval})
             continue
         prec = max(precision or 0.1, reg['step'] or 0)
-        shown, cites = cite_values(fbase, prec, reg['unit'])
+        # Print the agency's own figure. FRED agreed with it to the text's precision, and
+        # rounding FRED again could land elsewhere (42,500 → 42,000 under round-half-even
+        # while the text says 43,000 — codex 구현 1회 #1).
+        shown, cites = cite_values(tval, prec, reg['unit'])
         cand.update({'text_ok': True, 'reason': 'ok', 'text_value': tval})
         comps.append({'label': reg['label'], 'fred_id': reg['fred_id'],
                       'transform': reg['transform'], 'unit': reg['unit'],

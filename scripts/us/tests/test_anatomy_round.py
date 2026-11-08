@@ -105,3 +105,39 @@ def test_census_four_and_philly_are_on_the_dashboard(monkeypatch):
     assert series['BOPGSTB'][-1] == ('2026-09-01', -109.0)
     assert by['Philly Fed Manufacturing']['role'] == 'anatomy'
     assert 'role' not in by['Housing Starts']
+
+
+# ------------------------------------------------ codex 구현 검토 1회 #5 (11/08)
+
+HOUST_ROW = [ind('Housing Starts', 'Activity', 'HOUST', actual=1221.0, ref='2026-09-01')]
+SEEN = {'New Home Sales': ['2026-09-01', 676.0]}
+
+
+def test_an_unknown_release_date_keeps_the_row_pending_not_seeded(monkeypatch):
+    out = _run(monkeypatch, Client({}), HOUST_ROW, {'HOUST': dated(jump(1))}, SEEN,
+               book_date='2026-10-14')
+    assert out['headline_releases'] == []
+    assert out['last_seen']['Housing Starts'] == ['pending', '2026-10-14']
+
+
+def test_a_pending_row_is_judged_against_the_date_it_was_first_seen(monkeypatch):
+    seen = dict(SEEN, **{'Housing Starts': ['pending', '2026-10-14']})
+    # Today's book is from 10-15; the release (10-15) is after the first sighting (10-14).
+    out = _run(monkeypatch, Client({27: '2026-10-15'}), HOUST_ROW, {'HOUST': dated(jump(1))},
+               seen, book_date='2026-10-15')
+    assert [r['key'] for r in out['headline_releases']] == ['housing-starts']
+    assert out['last_seen']['Housing Starts'] == ['2026-09-01', 1221.0]
+
+
+def test_a_pending_row_released_before_it_was_first_seen_is_seeded(monkeypatch):
+    seen = dict(SEEN, **{'Housing Starts': ['pending', '2026-10-14']})
+    out = _run(monkeypatch, Client({27: '2026-10-01'}), HOUST_ROW, {'HOUST': dated(jump(1))},
+               seen, book_date='2026-10-15')
+    assert out['headline_releases'] == []
+    assert out['last_seen']['Housing Starts'] == ['2026-09-01', 1221.0]
+
+
+def test_a_pending_entry_is_never_read_as_a_reading():
+    out = mm.compute({'HOUST': dated(jump(1))}, HOUST_ROW,
+                     last_seen=dict(SEEN, **{'Housing Starts': ['pending', '2026-10-14']}))
+    assert out['new_releases'] == [] and out['introduced'] == ['Housing Starts']

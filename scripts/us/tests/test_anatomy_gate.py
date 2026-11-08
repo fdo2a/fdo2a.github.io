@@ -166,3 +166,52 @@ def test_check_blocks_values_without_their_items():
              '움직였다.</p></div>')
     out = check(_merged(block), macro_file(), _rel_eval('complete', COMPS[:2]), next_file())
     assert any('근거' in x for x in out)
+
+
+# ------------------------------------------------ codex 구현 검토 1회 (11/08)
+
+def _chg(label, actual):
+    return {'label': label, 'aliases': [label], 'actual': actual, 'cite_values': [actual],
+            'unit': '%', 'transform': 'mom_pct'}
+
+
+@pytest.mark.parametrize('text,actual,ok', [
+    ('주거비는 0.4% 올랐다.', 0.4, True),
+    ('주거비는 -0.4%였다.', 0.4, False),          # wrong explicit sign
+    ('주거비는 0.4% 줄었다.', 0.4, False),         # wrong direction word
+    ('주거비는 0.4%였다.', 0.4, False),            # a change with no direction at all
+    ('주거비는 0.4% 내렸다.', -0.4, True),
+    ('주거비는 -0.4%였다.', -0.4, True),
+    ('주거비는 +0.4%였다.', -0.4, False),
+])
+def test_a_change_component_needs_its_sign(text, actual, ok):
+    rel = {'components': [_chg('주거비', actual)], 'indicators': []}
+    assert (G.evidenced(text, rel) == ['주거비']) is ok
+
+
+@pytest.mark.parametrize('text,ok', [
+    ('신규주문 지수는 -8.0으로 떨어졌다.', True),
+    ('신규주문 지수는 마이너스 8.0으로 떨어졌다.', True),
+    ('신규주문 지수는 8.0으로 떨어졌다.', False),   # a negative level printed positive
+])
+def test_a_negative_level_must_be_printed_negative(text, ok):
+    comp = {'label': '신규주문', 'aliases': ['신규주문'], 'actual': -8.0,
+            'cite_values': [-8.0], 'unit': '', 'transform': 'level'}
+    assert (G.evidenced(text, {'components': [comp], 'indicators': []}) == ['신규주문']) is ok
+
+
+@pytest.mark.parametrize('text,actual,ok', [
+    ('주거비는 전월에는 0.4% 올랐고 이번에는 0.2% 올랐다.', 0.4, False),
+    # The name sits in the first clause only — conservative miss, not a false pass.
+    ('주거비는 전월에는 0.4% 올랐고 이번에는 0.2% 올랐다.', 0.2, False),
+    ('주거비는 지난달 0.4%보다 낮은 0.2% 올랐다.', 0.4, False),
+    ('주거비는 지난달 0.4%보다 낮은 0.2% 올랐다.', 0.2, True),
+])
+def test_last_periods_figure_in_a_longer_clause_is_not_this_periods(text, actual, ok):
+    rel = {'components': [_chg('주거비', actual)], 'indicators': []}
+    assert (G.evidenced(text, rel) == ['주거비']) is ok
+
+
+def test_month_on_month_wording_is_this_month():
+    rel = {'components': [_chg('주거비', 0.4)], 'indicators': []}
+    assert G.evidenced('주거비는 전월 대비 0.4% 올랐다.', rel) == ['주거비']
