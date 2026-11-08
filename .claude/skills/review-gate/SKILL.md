@@ -302,3 +302,7 @@ git branch -d fix/<topic>
 ```
 
 `.claude/worktrees/`는 gitignore 대상이라 루틴의 `git add -A`에 딸려가지 않는다.
+
+## 매일 검증 알림 (2026-11-08)
+
+이 절차의 결과(원장·초안·만료)는 매일 아침 텔레그램으로 사용자에게 간다 — `scripts/verify_digest.py`(launchd `com.fdo2a.verify-digest`). 원장 형식·분류 규칙·`check_numbers.py --json` 출력을 바꾸면 알림이 거짓을 말할 수 있다. When changing those: read `docs/superpowers/specs/2026-11-08-daily-verify-digest.md` before touching `scripts/review/digest.py`.

@@ -447,6 +447,34 @@ def test_cli_date_mismatch_is_2(tmp_path, post):
     assert r.returncode == 2 and '다르다' in r.stderr
 
 
+def test_cli_json_separates_warnings_and_violations(tmp_path, post):
+    # 매일 검증 알림(2026-11-08)이 경고와 위반을 줄 모양으로 가르지 않게 — 종료 코드는 그대로
+    bad = sub(post, 'S&amp;P는 4.36% 내린', 'S&amp;P는 4.37% 내린').replace('>4.477%<', '>4.478%<', 1)
+    p = tmp_path / 'morning_brief_2026-11-05.html'
+    p.write_text(bad, encoding='utf-8')
+    d = tmp_path / 'ws'
+    d.mkdir()
+    for k in ('market_data', 'econ_indicators', 'macro_metrics', 'fund_board'):
+        (d / f'{k}.json').write_text(json.dumps(load(f'{k}.json')), encoding='utf-8')
+    r = subprocess.run([sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html', str(p),
+                        '--datadir', str(d), '--prose', 'warn', '--json'], capture_output=True, text=True)
+    out = json.loads(r.stdout)
+    assert r.returncode == 1
+    assert out['skipped'] is False and out['violations'] and out['warnings']
+    assert any('2Y' in v for v in out['violations'])
+    assert out['summary'].startswith('number audit:')
+    for k in ('table_cells', 'prose_judged', 'unverified', 'delegated', 'excluded'):
+        assert isinstance(out['counts'][k], int)
+
+
+def test_cli_json_old_post_reports_skipped(tmp_path):
+    p = tmp_path / '2026-09-10.html'
+    p.write_text('<p>x</p>', encoding='utf-8')
+    r = subprocess.run([sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html', str(p),
+                        '--datadir', str(tmp_path / 'none'), '--json'], capture_output=True, text=True)
+    assert r.returncode == 0 and json.loads(r.stdout)['skipped'] is True
+
+
 def test_cli_old_post_skips_before_reading_inputs(tmp_path):
     p = tmp_path / '2026-09-10.html'
     p.write_text('<p>x</p>', encoding='utf-8')

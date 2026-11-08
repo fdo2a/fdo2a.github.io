@@ -6,6 +6,8 @@
 시장 표 칸은 행·열이 가리키는 데이터 값과, 문장 수치는 자산·단위로 정해지는 필드와 맞춘다.
 문장 층의 차단 여부는 `config/number_audit.json` 의 `prose`(warn|block), `--prose` 로 덮는다.
 Exit 0 = 발행 가능(경고는 0), 1 = 위반(한 줄에 하나), 2 = 입력을 읽지 못함(통과로 치지 않는다).
+`--json` 은 같은 판정을 stdout 한 줄 JSON 으로 낸다(종료 코드 동일) — 매일 검증 알림이 경고와
+위반을 줄 모양으로 짐작하지 않게(2026-11-08). 입력 오류(2)는 여전히 stderr 다.
 로직 `scripts/us/number_audit.py`.
 """
 import argparse
@@ -42,12 +44,20 @@ def main(argv=None):
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--prose', choices=('warn', 'block'))
+    ap.add_argument('--json', action='store_true')
     args = ap.parse_args(argv)
+
+    def skipped():
+        if args.json:
+            print(json.dumps({'skipped': True, 'effective': N.EFFECTIVE}, ensure_ascii=False))
+        else:
+            print(f'number audit: 적용일({N.EFFECTIVE}) 전 글이라 검사하지 않는다')
+        return 0
+
     # 적용일 전 글은 입력을 읽기 전에 끝낸다 — 정정기가 옛 글에 다시 돌릴 때 판정 불가(2)로 막지 않게
     m = re.search(r'\d{4}-\d{2}-\d{2}', os.path.basename(args.html))
     if m and m.group(0) < N.EFFECTIVE:
-        print(f'number audit: 적용일({N.EFFECTIVE}) 전 글이라 검사하지 않는다')
-        return 0
+        return skipped()
     try:
         with open(args.html, encoding='utf-8') as fh:
             html = fh.read()
@@ -84,8 +94,13 @@ def main(argv=None):
         print(f'FATAL: {e}', file=sys.stderr)
         return 2
     if r.skipped:
-        print(f'number audit: 적용일({N.EFFECTIVE}) 전 글이라 검사하지 않는다')
-        return 0
+        return skipped()
+    if args.json:
+        keys = ('tokens_seen', 'table_cells', 'prose_judged', 'unverified', 'delegated', 'excluded')
+        print(json.dumps({'skipped': False, 'warnings': list(r.warnings),
+                          'violations': list(r.violations), 'summary': r.summary(),
+                          'counts': {k: int(getattr(r, k)) for k in keys}}, ensure_ascii=False))
+        return 1 if r.violations else 0
     for w in r.warnings:
         print(w)
     for v in r.violations:
