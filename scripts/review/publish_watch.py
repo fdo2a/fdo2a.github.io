@@ -228,6 +228,13 @@ def _target_of_any(path):
     return None
 
 
+def _mark_gone(st, key):
+    """기준 시각 전에 지워진 글은 「미발행」이 아니라 「사라짐」. 이미 미발행 경고가 걸린 세션은 그대로 둔다 — 덮어쓰면
+    나중에 다시 올라와도 그 경고를 해소·취소하지 않는다(codex 재검토 3회 #5)."""
+    if st['sessions'].get(key) not in ('missing', 'missing_quiet'):
+        st['sessions'][key] = 'gone'
+
+
 def _when(dl):
     return f'{dl.month}/{dl.day:02d} {dl:%H:%M} KST'
 
@@ -323,7 +330,7 @@ def step(st, root, now, fetched, ref=REF):
                     # 기준 시각을 넘겨 처음 봤다 — 그때 맥이 못 봤을 수 있다. 커밋 시각으로 늦었는지만 추정한다
                     st['sessions'][key] = _late_or_ok(st, root, tip, market, s, path, dl, now, emit)
             elif seen in ('ok', 'late', 'resolved'):
-                st['sessions'][key] = 'gone'                       # 올라갔던 글이 없다 — 글 쪽 「사라짐」 알림이 간다(#5)
+                _mark_gone(st, key)                                # 올라갔던 글이 없다 — 글 쪽 「사라짐」 알림이 간다(#5)
             elif seen is None and now >= dl:
                 st['sessions'][key] = 'missing_quiet' if quiet else 'missing'
                 emit(st, 'missing', key,
@@ -355,12 +362,12 @@ def step(st, root, now, fetched, ref=REF):
         prev = st['posts'].get(path)
         if prev is not None and not prev.get('gone'):
             prev['gone'] = True
-            st['sessions'][f'{market}:{d}'] = 'gone'          # 기준 시각 전에 지워져도 「미발행」이 아니라 「사라짐」(#5)
+            _mark_gone(st, f'{market}:{d}')
             emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 지금 공개 판에 없어요 '
                                   '— 발행됐던 글이에요. 루틴·정정 이력 확인 필요.', now, extra=tip)
         elif prev is None and path in paths:
             st['posts'][path] = {'fp': None, 'first_seen': None, 'gone': True}
-            st['sessions'][f'{market}:{d}'] = 'gone' 
+            _mark_gone(st, f'{market}:{d}')
             emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 맥이 확인하기 전에 '
                                   '올라왔다가 지금은 없어요 — 루틴·정정 이력 확인 필요.', now, extra=tip)
 

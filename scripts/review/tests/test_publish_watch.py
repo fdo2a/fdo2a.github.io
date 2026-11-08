@@ -503,3 +503,32 @@ def test_baseline_still_alerts_problem_posts(tmp_path):
     pubs = [e for e in st['events'] if e['kind'] == 'publish']
     assert [e['key'] for e in pubs] == ['kr/posts/2026-11-09.html']
     assert '문제가 있는 글 1편만' in next(e for e in st['events'] if e['kind'] == 'reset')['text']
+
+
+def test_flash_publish_after_warning_keeps_warning_state(tmp_path):
+    # 재검토 3회 #5 — 경고 뒤 잠깐 올라왔다 지워져도 경고 상태를 덮지 않는다 → 다시 올라오면 해소
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09')
+    st = run(W.new_state('x'), repo, at(11, 10, 13))
+    _mark_sent(st)
+    F.publish(repo, 'kr', '2026-11-09')
+    F.git(repo, 'rm', '-q', 'kr/posts/2026-11-09.html')
+    F.commit(repo, 'rm')
+    run(st, repo, at(11, 10, 14))
+    assert st['sessions']['kr:2026-11-09'] == 'missing' and 'gone' in kinds(st)
+    F.write(repo, 'kr/posts/2026-11-09.html', '<p>다시</p>')
+    F.commit(repo, 're-add')
+    run(st, repo, at(11, 10, 15))
+    assert any(e['kind'] == 'resolved' and e['key'] == 'kr:2026-11-09' for e in st['events'])
+
+
+def test_baseline_alerts_warned_or_split_commit_posts(tmp_path):
+    # 재검토 3회 #8
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', '2026-11-09', summ=F.summary(status='pass_with_warnings', warned=['check_weight']))
+    F.write(repo, 'kr/posts/2026-11-09.html', '<p>글</p>')
+    F.commit(repo, 'post only')
+    F.publish(repo, 'kr', '2026-11-09')                              # 기록은 뒤 커밋
+    st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 10, 13))
+    assert sorted(e['key'] for e in st['events'] if e['kind'] == 'publish') == \
+        ['kr/posts/2026-11-09.html', 'posts/2026-11-09.html']

@@ -160,9 +160,10 @@ def view(root, ref, market, date):
 def clean(v):
     """알릴 문제가 없는 상태 — 짝이 맞고(대조 불가는 작업 공간 입력뿐) 루틴 기록이 발행 가능·검증 완료."""
     chk, rec = v.get('check') or {}, v.get('recorded') or {}
-    return (v.get('kind') == OK and chk.get('overall') in (C.MATCH, C.PARTIAL)
+    return (v.get('kind') == OK and v.get('same_commit') is True and chk.get('overall') in (C.MATCH, C.PARTIAL)
             and set(chk.get('unknown') or []) <= {'workspace_inputs'}
-            and rec.get('readable') and rec.get('publish_ok') and rec.get('verified'))
+            and rec.get('readable') and rec.get('publish_ok') and rec.get('verified')
+            and rec.get('status') == 'pass')       # 경고·빈칸이 있는 판정은 기준선에서도 알린다(codex 재검토 3회 #8)
 
 
 def fingerprint(v):
