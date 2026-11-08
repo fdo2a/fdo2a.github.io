@@ -207,11 +207,11 @@ print(json.dumps(out, default=str))
 3. Micron Western Digital Seagate memory DRAM news [DATE]
 4. Marvell Coherent Lumentum GE Vernova Vertiv AI data center infrastructure news [DATE]
 4b. **움직인 종목의 「왜」 (2026-09-24)** — `movers.json` 의 `groups`(최대 5묶음: S&P 500 달러 거래대금 상위 60 중 지수 기여 상·하위 2 + |등락| ≥ 5%, GICS 하위 업종·방향으로 묶음)마다 **원인 검색 1회**(「대표 종목 티커 + stock + [DATE] + why」). `research_notes.md` 「움직인 종목의 이유」 절에 묶음 id(`g1`…)별로 원인 한 줄 + 출처. 출처 있는 원인이 없으면 「확인된 재료 없음」 — 추측으로 채우지 않는다. 등락률은 파일 값이 정본이다.
-5. **경제지표 (토큰 절약 — 웹서치 최소화)**: 지표 Actual/Previous/기준월의 **1차 출처는 커밋된 `data/econ_indicators.json`**(FRED 확정치, 22종). 이 파일을 읽어 그대로 사용하고 **개별 지표를 웹서치로 재확인하지 않는다**. 웹은 아래 두 경우에만 쓴다:
+5. **경제지표 (토큰 절약 — 웹서치 최소화)**: 지표 Actual/Previous/기준월의 **1차 출처는 커밋된 `data/econ_indicators.json`**(FRED 확정치, 27종 — 필라 연은은 해부만, 점수 밖). 이 파일을 읽어 그대로 사용하고 **개별 지표를 웹서치로 재확인하지 않는다**. 웹은 아래 두 경우에만 쓴다:
    - (a) **컨센서스(Forecast)와 정확한 발표일**: `econ_indicators.json`에는 없다. `ref_period`가 가장 최근(≈최근 1~2주 내 발표)인 지표에 한해서만 컨센서스·발표일을 타겟 검색한다 — 하루에 보통 1~3개뿐. 오래된 기준월 지표는 Forecast 칸을 비우고 발표일은 기준월로 갈음(웹서치 낭비 금지).
-   - (b) **FRED에 없는 지표** — ISM Mfg/Services PMI, S&P Global PMI, ADP, CB Consumer Confidence, Philadelphia Fed, NY Fed 1-Yr Inflation Exp. 이 중 **최근 7일 내 발표된 것만** 검색해 Actual/Forecast/Previous를 채운다. 최근 발표가 아니면 생략 가능.
+   - (b) **FRED에 없는 지표** — ISM Mfg/Services PMI, S&P Global PMI, ADP, CB Consumer Confidence, NY Fed 1-Yr Inflation Exp.(필라델피아 연은은 2026-11-08 부터 `econ_indicators.json` 에 있다) 이 중 **최근 7일 내 발표된 것만** 검색해 Actual/Forecast/Previous를 채운다. 최근 발표가 아니면 생략 가능.
    - tradingeconomics 캘린더 페이지 **통째 WebFetch 금지**(토큰 과다) — 필요한 항목만 타겟 WebSearch.
-5b. **신규 발표 원문 해부 (2026-08-18 사용자 지시 — 원문을 직접 열어 읽고 숫자를 분석할 것)**: `data/macro_metrics.json`의 `headline_releases`(최대 3건)가 오늘 새로 나온 **발표문**과 기관·URL·그 발표문이 담은 지표들을 지목한다. 항목은 지표가 아니라 발표문 단위다 — CPI YoY와 CPI MoM은 한 건으로 묶여 있다. 목록이 비면 이 항목 전체를 건너뛴다.
+5b. **신규 발표 원문 해부 (2026-08-18 사용자 지시 — 원문을 직접 열어 읽고 숫자를 분석할 것)**: `data/macro_metrics.json`의 `headline_releases`(그날 새로 나온 발표 전부)가 오늘 새로 나온 **발표문**과 기관·URL·그 발표문이 담은 지표들을 지목한다. 항목은 지표가 아니라 발표문 단위다 — CPI YoY와 CPI MoM은 한 건으로 묶여 있다. 목록이 비면 이 항목 전체를 건너뛴다.
 
    **원문은 이미 받아져 있다.** Actions가 `scripts/fetch_releases.py`로 각 발표문을 받아 `data/releases/<key>.txt`에 커밋해 둔다(`releases/index.json`에 성공 여부). BLS·DOL은 일반 클라이언트에 403을 주므로 TLS 지문 위장이 필요한데, 그 일은 Actions에서 이미 끝났다. **너는 그 파일을 Read해서 읽고 숫자를 분석한다.** 단 `releases/index.json` 의 `report_date` 가 오늘이고 `status` 가 `complete` 이고 그 키의 행이 `ok:true` 일 때만 그 행의 `path` 를 읽는다 — 수집기가 그 회차 발표문인지(첫 문단의 기간·헤드라인 값) 검증한 문서다. 그 밖에는 **원문이 없는 것**이다. `url`·`landing_url` 을 WebFetch 하거나 WebSearch 로 원문을 찾지 않는다(검증되지 않은 문서다, 2026-11-06). ⑧절에 「원문 없음 — <index 의 note>」 한 줄만 적는다.
 
@@ -226,18 +226,9 @@ print(json.dumps(out, default=str))
 
    `research_notes.md`에 **⑧ 신규 발표 해부** 절을 만들어 발표문별로 적는다: 발표문 이름·기준월·헤드라인 수치, **원문에서 인용한 세부 수치 최소 2개**(가능하면 기여도 문장 그대로), 수정폭·특이 요인, 원문 URL과 기관명, 그리고 시장·연준 관점에서 이 구성이 무엇을 뜻하는지 한두 문장. **원문에 없는 구성 항목 수치는 절대 만들지 않는다** — 못 구했으면 그 사실과 사유를 쓴다(삭제 > 창작). 원문에 닿지 못했으면 반드시 그렇게 명기한다. 이 절이 §8 발행 게이트의 근거다.
 
-   **비FRED 지표도 원본이 있다.** `headline_releases`는 FRED 기반 지표만 감지하므로, 아래 6종은 STEP 2-5(b)에서 **최근 7일 내 발표된 것**을 확인했을 때 같은 방식으로 원문까지 들어가 ⑧절에 추가한다(자동 감지 대상이 아니므로 네가 판단한다). 여기도 헤드라인만 옮기지 말고 세부 구성까지 본다.
+   **비FRED 지표(ISM·S&P Global·ADP·CB·NY Fed)는 B단계 전까지 표 한 줄만**(2026-11-08) — STEP 2-5(b)의 Actual/Forecast/Previous 까지. 그 원문 사이트에 들어가 세부를 옮기지 않는다(약관·접근 제한). 사용자가 기사·PDF 를 주는 날은 로컬 세션이 따로 덧붙인다.
 
-   | 지표 | 기관 | 원문 | 볼 것 |
-   |---|---|---|---|
-   | ISM Manufacturing / Services PMI | ISM | ismworld.org 보도자료 | 신규주문·생산·고용·가격지불 서브지수, 응답자 코멘트 |
-   | S&P Global US PMI | S&P Global | pmi.spglobal.com | 제조/서비스 분해, 투입·산출 가격 |
-   | ADP National Employment | ADP Research | adpemploymentreport.com | 기업규모별·업종별 증감, 임금 상승률 |
-   | CB Consumer Confidence | Conference Board | conference-board.org | 현재상황 대 기대지수 격차, 노동시장 차이(jobs plentiful−hard to get) |
-   | Philadelphia Fed Mfg Survey | Philadelphia Fed | philadelphiafed.org | 신규주문·출하·6개월 기대, 가격 서브지수 |
-   | NY Fed Inflation Expectations | NY Fed | newyorkfed.org/microeconomics/sce | 1년·3년·5년 기대, 소득·지출 기대 |
-
-   보조로 `macro_metrics.json`의 `headline_releases[].components`에 FRED에서 계산한 구성 항목(에너지·주거비·산업별 고용 등)의 MoM이 들어 있다. 원문과 **교차 확인**용이고, 원문 서술을 대체하지 않는다.
+   `headline_releases[].components` 에는 **FRED(발표일 기준)와 원문이 같은 값을 낸 구성 항목만** 들어 있다(2026-11-08, `scripts/xcheck_components.py`). 이미 두 원천이 확인한 값이라 다시 대조하지 않는다. 빠진 항목은 둘 중 하나가 확인하지 못한 것이다 — 원문에서 그 값을 옮겨 적지 말고 ⑧절에 원문 서술로만 다룬다.
 
 5c. **연준 이벤트 반응 (2026-09-02 사용자 지시)**: `data/fed/events.json`에 `fresh: true`이고 `tier: 1`인 이벤트가 있으면 — FOMC 성명·기자회견 전문·잭슨홀 연설·의장 증언 — `research_notes.md`에 **⑨ 연준 이벤트 반응** 절을 만든다. **발언 자체를 옮겨 적을 필요는 없다.** 원문은 이미 `data/fed/<key>.txt`에 전문으로 커밋돼 있고 작성 담당이 거기서 직접 인용한다. 네가 채울 것은 **원문에 없는 것** 셋이다: ① 발표 시각 전후 시장 반응(어느 자산이 언제 얼마나 — 수치는 intraday.json이 정본이고 여기서는 어떤 뉴스가 그 스윙을 만들었는지) ② 시장·기관이 그 발언을 어떻게 읽었는지(출처 명기) ③ FedWatch 등 정책 확률이 발표 전후로 얼마나 움직였는지. **발언 내용을 요약해 오지 않는다** — 요약을 거친 말은 인용으로 못 쓰고, 원문이 이미 있는데 요약을 만들면 작성 담당이 그것을 인용할 위험만 커진다.
 

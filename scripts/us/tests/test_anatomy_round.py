@@ -85,3 +85,23 @@ def test_an_introduced_row_released_before_the_book_is_only_seeded(monkeypatch):
     seen = {'New Home Sales': ['2026-09-01', 676.0]}
     out = _run(monkeypatch, Client({27: '2026-10-01'}), econ, {'HOUST': dated(jump(1))}, seen)
     assert out['headline_releases'] == [] and out['introduced'] == ['Housing Starts']
+
+
+def test_census_four_and_philly_are_on_the_dashboard(monkeypatch):
+    rows = {r[1]: r for r in cmd.ECON}
+    for name in ('Housing Starts', 'Trade Balance', 'Construction Spending MoM',
+                 'Factory Orders MoM', 'Philly Fed Manufacturing'):
+        assert name in rows and rows[name][0] == 'Activity'
+        assert name in mm.INDICATOR_RELEASE and name in mm.LABELS_KO
+    assert rows['Philly Fed Manufacturing'][5] == {'role': 'anatomy'}
+
+    hist = [(f'2026-{m:02d}-01', -100000.0 - m * 1000) for m in range(1, 10)]
+    monkeypatch.setattr(cmd, 'fred_series', lambda sid: hist)
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    econ, series = cmd.collect_econ()
+    by = {e['name']: e for e in econ}
+    tb = by['Trade Balance']
+    assert tb['actual'] == -109.0 and tb['previous'] == -108.0 and tb['units'] == '$B'
+    assert series['BOPGSTB'][-1] == ('2026-09-01', -109.0)
+    assert by['Philly Fed Manufacturing']['role'] == 'anatomy'
+    assert 'role' not in by['Housing Starts']

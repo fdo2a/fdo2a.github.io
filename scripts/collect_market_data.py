@@ -440,8 +440,11 @@ def fred_yields():
 
 # 4-axis economic dashboard indicators available on FRED (Actual/Previous/ref-period,
 # deterministic). transform: level | mom_pct | yoy_pct | mom_diff. units label is what the
-# report prints. Series NOT on FRED (ISM, S&P Global PMI, ADP, CB Confidence, Philly Fed,
-# NY Fed inflation exp) stay web-sourced — the agent only needs consensus/forecast anyway.
+# report prints. An optional sixth element: `role` ('anatomy' = on the page and dissected,
+# never scored; default scored) and `scale` (FRED value x scale = the printed value).
+# Not here, so a table line only until stage B (2026-11-08): ISM, S&P Global PMI, CB
+# Confidence, NY Fed inflation expectations. ADP and the Philadelphia Fed are on FRED;
+# ADP stays out of stage A (its release text is not ours to read, so no components).
 ECON = [
     ('Labor', 'JOLTS Job Openings', 'JTSJOL', 'level', 'K'),
     ('Labor', 'Initial Jobless Claims', 'ICSA', 'level', ''),
@@ -465,6 +468,16 @@ ECON = [
     ('Inflation', 'PCE Price Index YoY', 'PCEPI', 'yoy_pct', '%'),
     ('Inflation', 'Core PCE YoY', 'PCEPILFE', 'yoy_pct', '%'),
     ('Inflation', 'Michigan 1-Yr Inflation Exp', 'MICH', 'level', '%'),
+    # 2026-11-08 (A단계) — Census 4 join the Activity axis. The trade balance is printed in
+    # $ billions (FRED: millions) — history, table, trend and the release check all see the
+    # scaled value. Its +1 polarity reads nominal trade-balance momentum: a smaller deficit.
+    ('Activity', 'Housing Starts', 'HOUST', 'level', 'K'),
+    ('Activity', 'Trade Balance', 'BOPGSTB', 'level', '$B', {'scale': 1e-3}),
+    ('Activity', 'Construction Spending MoM', 'TTLCONS', 'mom_pct', '%'),
+    ('Activity', 'Factory Orders MoM', 'AMTMNO', 'mom_pct', '%'),
+    # Dissected, not scored: a regional survey must not move the national regime.
+    ('Activity', 'Philly Fed Manufacturing', 'GACDFSA066MSFRBPHI', 'level', '',
+     {'role': 'anatomy'}),
 ]
 
 
@@ -492,10 +505,13 @@ def collect_econ():
     """
     out = []
     seen = {}
-    for axis, name, sid, tf, units in ECON:
+    for axis, name, sid, tf, units, *rest in ECON:
+        opts = rest[0] if rest else {}
         vals = seen.get(sid)
         if vals is None:
             vals = retry(lambda sid=sid: fred_series(sid), attempts=3, base_sleep=2)
+            if vals and opts.get('scale'):
+                vals = [(d, v * opts['scale']) for d, v in vals]
             seen[sid] = vals
             time.sleep(0.6)
         if not vals:
@@ -507,11 +523,14 @@ def collect_econ():
         if pair is None:
             continue
         actual, previous = pair
-        out.append({
+        row = {
             'axis': axis, 'name': name, 'fred_id': sid, 'transform': tf, 'units': units,
             'actual': round(actual, 2), 'previous': round(previous, 2),
             'ref_period': vals[-1][0],  # observation month (reference period), not release date
-        })
+        }
+        if opts.get('role'):
+            row['role'] = opts['role']
+        out.append(row)
     return out, seen
 
 
@@ -1317,7 +1336,8 @@ def main():
                        'Forecast/consensus and release dates are NOT here — the agent adds '
                        'those from web only for recently-released indicators. '
                        'Indicators absent from this list (ISM, S&P Global PMI, ADP, CB '
-                       'Confidence, Philly Fed, NY Fed inflation exp) are web-sourced.',
+                       'Confidence, NY Fed inflation exp) are web-sourced. role=anatomy rows '
+                       '(Philly Fed) are dissected but never scored.',
                'trend_note_ko': TREND_NOTE_KO,
                'indicators': econ},
               open(os.path.join(args.outdir, 'econ_indicators.json'), 'w'),

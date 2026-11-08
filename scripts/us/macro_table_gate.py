@@ -48,6 +48,8 @@ _BARE_SCALES = (1.0, 1e3)
 def norm(html):
     text = _html.unescape(strip_tags(html or ''))
     text = text.replace('\xa0', ' ').replace('−', '-').replace('－', '-')
+    # 「−$105.0B」(무역수지, 2026-11-08) — 달러 기호가 부호와 숫자 사이에 끼면 부호를 잃는다.
+    text = re.sub(r'([+-])\s*\$', r'\1', text).replace('$', '')
     return re.sub(r'\s+', ' ', text).strip()
 
 
@@ -68,7 +70,7 @@ def _matches(cell, canon, units):
     if got is None:
         return False
     value, half, scale = got
-    base = float(canon) * (1e3 if units == 'K' else 1.0)     # 정본을 기본 단위로
+    base = float(canon) * {'K': 1e3, '$B': 1e9}.get(units, 1.0)   # 정본을 기본 단위로
     if scale is not None:
         return abs(value * scale - base) <= half * scale + 1e-9
     return any(abs(value * s - base) <= half * s + 1e-9 for s in _BARE_SCALES) \

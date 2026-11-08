@@ -151,7 +151,7 @@ def test_every_slug_has_a_series_the_dashboard_already_fetches():
     import collect_market_data as cmd
     from us.macro_metrics import INDICATOR_RELEASE
     owned = {}
-    for _axis, label, sid, _tf, _u in cmd.ECON:
+    for _axis, label, sid, _tf, _u, *_ in cmd.ECON:
         owned.setdefault(sid, set()).add(INDICATOR_RELEASE[label])
     assert set(U.ALL_SERIES) == set(U.RELEASE_NAMES)
     # Census 경로로 간 지표만 FRED 일정 경로에서 빠진다(2026-11-08).
