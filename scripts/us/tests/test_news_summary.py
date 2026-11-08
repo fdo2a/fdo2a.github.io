@@ -608,3 +608,67 @@ def test_every_collector_main_starts_a_new_run():
     for mod in (fetch_news, fetch_kr_news, fetch_japan_news):
         lines = inspect.getsource(mod.main).splitlines()[1:]
         assert lines[0].strip().startswith('new_run()'), mod.__name__
+
+
+# ── 한자·가나 금지와 다시 쓰기 지시 (2026-11-08) ──
+# 일본 일간 요약의 48% 가 Haiku 2회를 넘기지 못하고 Sonnet 으로 올라갔다(10/28-11/06). 승격 41건 중
+# 27건이 「期」「市」「米」 같은 한자 한두 글자가 남은 것, 14건이 418-490자 분량 초과였다. 지시문에
+# 금지가 없었고, 다시 쓰기 요청은 어느 글자인지 짚지 않았다.
+
+def test_every_prompt_forbids_hanja_and_kana_up_front():
+    for system in (NS.SYSTEM, NS.SYSTEM_KO_SOURCE, NS.SYSTEM_ANALYSIS):
+        assert '한자·가나는 한 글자도' in system
+        assert '高市→다카이치' in system
+        # 기간·용어는 문맥에 따라 옮긴다 — 「今期→이번 회계연도」 같은 고정 대응은 분기 기사를 틀리게 만든다(codex #1)
+        assert '문맥' in system and '今期→' not in system and '米→' not in system
+
+
+def last_ask(c):
+    return c.calls[-1]['messages'][-1]['content']
+
+
+def test_the_hanja_rewrite_names_the_leftover_characters(tmp_path):
+    c = Client([GOOD + ' 이번期 실적', GOOD])
+    assert NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c,
+                              log=lambda *_: None) == 1
+    ask = last_ask(c)
+    assert '「期」' in ask
+    assert '」가' not in ask and '」이' not in ask       # 받침과 무관한 조사를 붙이지 않는다(codex #2)
+    assert '今期→' not in ask and '米→' not in ask
+
+
+def test_named_runs_are_capped_in_number_and_length(tmp_path):
+    long_run = 'あ' * 40
+    bad = GOOD + ' '.join([long_run, '期', '市', '米', '度', '績', '向け'])
+    c = Client([bad, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    ask = last_ask(c)
+    assert ask.count('「') == 5
+    assert long_run not in ask
+
+
+def test_an_english_reply_is_asked_for_korean_not_for_missing_kana(tmp_path):
+    c = Client(['The Bank of Japan kept rates unchanged. ' * 10, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    ask = last_ask(c)
+    assert '한국어로' in ask and '가나·한자' not in ask
+
+
+def test_a_whole_japanese_reply_still_gets_a_named_rewrite(tmp_path):
+    c = Client([JA, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    ask = last_ask(c)
+    assert '한국어가 아닌 글자' in ask and '「' + 'あ' * NS.RUN_CHARS + '…」' in ask
+
+
+def test_an_over_long_rewrite_says_what_to_cut(tmp_path):
+    c = Client(['가' * 450, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    ask = last_ask(c)
+    assert '450자' in ask and '빼' in ask
+
+
+def test_a_short_rewrite_does_not_ask_to_cut(tmp_path):
+    c = Client(['가' * 200, GOOD])
+    NS.summarize_items(items(tmp_path), str(tmp_path), model='m', client=c, log=lambda *_: None)
+    assert '빼' not in last_ask(c)
