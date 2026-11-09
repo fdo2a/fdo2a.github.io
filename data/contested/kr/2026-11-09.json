@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-09T11:44:15+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-09T12:00:34+00:00",
  "cutoff_at": "2026-11-09T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 599,
+  "harvest": 588,
   "candidates": 1,
   "articles": [
    6
@@ -42,13 +42,13 @@
    "khan": "ok"
   },
   "notes": [
-   "discover:599"
+   "discover:588"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 16310,
-   "out": 7058
+   "in": 16356,
+   "out": 4951
   }
  },
  "event": {
@@ -56,5 +56,5 @@
   "query": "연장 유예 24",
   "trigger": []
  },
- "content_hash": "400940252918f5c5"
+ "content_hash": "76eeaa9dcb205e4b"
 }
