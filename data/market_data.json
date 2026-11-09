@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10 08:05 KST",
+  "generated": "2026-11-10 08:17 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-09",
   "indices": {
@@ -330,39 +330,36 @@
   },
   "yields": {
     "2Y": {
-      "level": 4.51,
-      "date": "2026-11-06",
-      "bp": 4.999999999999982,
-      "week_ago": 4.56,
-      "week_ago_date": "2026-10-30",
-      "source": "FRED"
+      "level": 4.547,
+      "date": "2026-11-09",
+      "bp": 2.4999999999999467,
+      "week_ago": 4.583,
+      "week_ago_date": "2026-11-02",
+      "source": "Naver"
     },
     "5Y": {
       "level": 4.659,
       "date": "2026-11-09",
-      "bp": 1.100015640258789,
+      "bp": 1.100000000000012,
       "week_ago": 4.693,
       "week_ago_date": "2026-11-02",
-      "ticker": "^FVX",
-      "source": "Yahoo"
+      "source": "Naver"
     },
     "10Y": {
-      "level": 4.864,
+      "level": 4.862,
       "date": "2026-11-09",
-      "bp": 0.49996376037597656,
+      "bp": 0.30000000000001137,
       "week_ago": 4.894,
       "week_ago_date": "2026-11-02",
-      "ticker": "^TNX",
-      "source": "Yahoo"
+      "source": "Naver"
     },
     "30Y": {
       "level": 5.256,
       "date": "2026-11-09",
-      "bp": -0.40001869201660156,
+      "bp": -0.39999999999995595,
       "week_ago": 5.269,
       "week_ago_date": "2026-11-02",
-      "ticker": "^TYX",
-      "source": "Yahoo"
+      "source": "Naver"
     }
   },
   "yields_fred": {
@@ -619,15 +616,13 @@
     }
   },
   "sector_performance_as_of": "2026-11-09",
-  "spread_2s10s_bp": 35.400000000000006,
-  "spread_2s10s_aligned": false,
-  "spread_2s10s_basis": "2Y FRED 2026-11-06 vs 10Y Yahoo 2026-11-09",
+  "spread_2s10s_bp": 31.50000000000004,
+  "spread_2s10s_aligned": true,
+  "spread_2s10s_basis": "2Y·10Y 모두 Naver 2026-11-09 동일 기준일",
   "spread_2s10s_fred_bp": 35.00000000000006,
   "spread_5s30s_bp": 59.700000000000045,
-  "complete": false,
-  "missing": [
-    "yields/naver_close_not_posted"
-  ],
+  "complete": true,
+  "missing": [],
   "price_context": {
     "windows": {
       "move": 60,
