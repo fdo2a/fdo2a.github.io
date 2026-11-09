@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-11-09",
- "status": "error",
- "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-09T12:00:34+00:00",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-09T12:16:42+00:00",
  "cutoff_at": "2026-11-09T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 588,
+  "harvest": 576,
   "candidates": 1,
   "articles": [
    6
@@ -42,13 +42,26 @@
    "khan": "ok"
   },
   "notes": [
-   "discover:588"
+   "discover:576"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 16356,
-   "out": 4951
+   "in": 32756,
+   "out": 9985
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
   }
  },
  "event": {
@@ -56,5 +69,5 @@
   "query": "연장 유예 24",
   "trigger": []
  },
- "content_hash": "76eeaa9dcb205e4b"
+ "content_hash": "93bc581565f32a30"
 }
