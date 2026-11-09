@@ -1,0 +1,194 @@
+{
+ "report_date": "2026-11-09",
+ "market": "kr",
+ "collected_utc": "2026-11-09T09:17:03+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-05T22:40:13+00:00",
+  "kwusa": "2026-11-06T08:39:25+00:00",
+  "lim_econ": "2026-11-06T13:30:53+00:00",
+  "d_ticker": "2026-11-06T10:21:49+00:00",
+  "aethersemiconductor": "2026-11-06T15:38:13+00:00",
+  "FastStockNews": "2026-11-06T13:21:00+00:00",
+  "FastStockNewsUSA": "2026-11-06T13:47:18+00:00",
+  "insidertracking": "2026-11-06T14:00:08+00:00"
+ },
+ "window_note": [
+  "hedgecat0301: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "kwusa: 직전 커서가 72시간보다 오래돼 72시간만 읽음"
+ ],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-06T09:17:03.868553+00:00",
+   "last_id": 2993,
+   "last_dt": "2026-11-08T22:46:02+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-06T09:17:03.868553+00:00",
+   "last_id": 61730,
+   "last_dt": "2026-11-09T08:55:11+00:00",
+   "read": 35
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-06T13:30:53+00:00",
+   "last_id": 2127,
+   "last_dt": "2026-11-08T22:36:17+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-06T10:21:49+00:00",
+   "last_id": 4103,
+   "last_dt": "2026-11-09T06:46:34+00:00",
+   "read": 10
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-06T15:38:13+00:00",
+   "last_id": 26734,
+   "last_dt": "2026-11-09T04:12:51+00:00",
+   "read": 44
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-06T13:21:00+00:00",
+   "last_id": 127639,
+   "last_dt": "2026-11-09T08:27:32+00:00",
+   "read": 79
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-06T13:47:18+00:00",
+   "last_id": 24287,
+   "last_dt": "2026-11-09T08:09:10+00:00",
+   "read": 49
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 11,
+   "truncated": false,
+   "from_dt": "2026-11-06T14:00:08+00:00",
+   "last_id": 68775,
+   "last_dt": "2026-11-09T09:12:35+00:00",
+   "read": 191
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/26720",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-08T14:53:30+00:00",
+   "url": "https://t.me/aethersemiconductor/26720",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "플루토 리서치는 중기적으로는 장이 녹록지 않다고 보면서도 단기적으로는 바닥을 모색할 만한 시점이라는 시각을 내놓았다. 5000~5300 구간은 트레이딩이 가능한 구간이라는 의견이다. 중기 부담의 근거로는 데이터센터 관련 정책 의구심, LTA에 대한 불신이 반박되지 않고 있는 점, 하이퍼스케일러의 Capex/FCF 논쟁이 해소되지 않은 점이 꼽혔다. 이 중 Capex/FCF 문제가 풀리기 전까지는 의미 있는 상방을 기대하기 어렵다고 보며, 이를 대차대조표 이슈로 규정해 쉽게 해소되지 않을 것으로 판단했다."
+  },
+  {
+   "id": "hedgecat0301/2993",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-08T22:46:02+00:00",
+   "url": "https://t.me/hedgecat0301/2993",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "키움증권 전략 보고서는 최근 역대급 속도의 급락장 이후 이번 주 코스피가 낙폭을 얼마나 만회할 수 있을지가 관건이라는 시각을 제시했다. 보고서는 11월 중간선거 이후 데이터센터 규제 우려가 겹치며 2거래일 동안 사이드카와 서킷브레이크가 연속 발동됐으나, 지금의 지수대에서는 추가 매도의 실익이 크지 않아 반등 확률이 높아졌다고 판단했다. 아울러 이번 주 미국 CPI와 코어위브, 어플라이드 머티리얼즈 등 AI 관련 실적이 시장 방향을 가를 변수로 꼽혔으며, 코스피 선행 PBR이 낮아 진입 메리트가 커졌으니 기존 포지션을 유지하거나 낙폭이 큰 업종을 중심으로 분할 매수를 고려할 필요가 있다는 의견을 밝혔다."
+  },
+  {
+   "id": "aethersemiconductor/26728",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-09T00:09:57+00:00",
+   "url": "https://t.me/aethersemiconductor/26728",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "SK증권 한동희 연구원은 메모리 주가가 고점 형성 후 3개월 뒤 오더컷(생산 축소 주문), 그로부터 다시 3개월 뒤 가격 하락이 이어진다는 과거 패턴이 이번에는 나타나지 않고 있다는 점을 근거로, 현재 주가가 다운턴 하단에 가깝다는 시각을 밝혔다. 삼성전자와 SK하이닉스의 12개월 선행 P/E가 낮은 수준이라는 점을 들어, 시장이 메모리 실적 전망 자체를 신뢰하지 않는 것으로 해석했다. 또한 HBM 가격 인상과 모바일 D램 가격 인상이 맞물려 블렌디드 ASP가 상승할 것이라는 전망과 함께, 데이터센터 건설 차질은 완화될 것이라는 의견을 제시했다. 이에 비중확대 의견을 유지했다."
+  },
+  {
+   "id": "aethersemiconductor/26730",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-09T00:48:38+00:00",
+   "url": "https://t.me/aethersemiconductor/26730",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "일본 정부 측이 2032년 이후 월 웨이퍼 100만 장 규모의 대규모 양산 공장을 목표로 하며, 그중 메모리 70만 장, 로직 30만 장을 할당하겠다는 방침을 올해 가을 비공식적으로 전했다는 보도가 나왔다. 로직 생산에는 인텔이 기술 협력하는 방향으로 조율 중이며, 메모리 쪽에서는 대만 기업과의 기술 협력 구상이 떠오르고 있다는 것이 전해졌다. 이에 대해 메모리 협력 상대로는 LPDDR5까지 생산이 가능한 난야테크가 유력할 것이라는 의견도 제시됐다."
+  },
+  {
+   "id": "FastStockNews/127593",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-09T00:56:51+00:00",
+   "url": "https://t.me/FastStockNews/127593",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "머니투데이",
+    "url": "https://www.mt.co.kr/world/2026/11/09/2026110908514767162",
+    "basis": "link"
+   },
+   "article_date": "2026-11-09",
+   "summary_note": "분량 벗어남 104자"
+  },
+  {
+   "id": "FastStockNews/127623",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-09T05:35:59+00:00",
+   "url": "https://t.me/FastStockNews/127623",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "엘앤씨바이오가 잠정 개별 실적으로 매출 313억 원을 기록했다고 전했다. 매출은 전분기 대비 19.4% 줄었지만 전년 동기 대비로는 38.4% 늘었고, 컨센서스는 25.2% 밑돌았다. 반면 영업이익은 104억 원으로 연중 최고치를 찍었으며 컨센서스를 3.3% 웃돈 것으로 나타났다. 순이익은 52억 원으로 전분기와 전년 동기 모두 적자에서 흑자로 돌아섰다. 이를 두고 매출 둔화에도 수익성은 개선됐다는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNews/127627",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-09T06:32:28+00:00",
+   "url": "https://t.me/FastStockNews/127627",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "원익머트리얼즈의 2026년 3분기 잠정실적은 매출 1,029억원, 영업이익 203억원, 순이익 145억원으로 집계됐다. 영업이익은 직전 분기 대비 39.3% 늘어 최근 기간 중 가장 높은 수준이라고 전해졌다. 다만 순이익은 컨센서스를 8.2% 밑돌았다. 이를 두고 실적 개선세가 이어지고 있다는 시각과 함께, 순이익 측면에서는 기대에 못 미쳤다는 의견도 함께 제시됐다."
+  }
+ ],
+ "stats": {
+  "items": 7,
+  "summarized": 6,
+  "summary_failed": 1,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
