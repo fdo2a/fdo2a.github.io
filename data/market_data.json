@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10 07:52 KST",
+  "generated": "2026-11-10 08:05 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-09",
   "indices": {
@@ -185,10 +185,10 @@
     },
     "Natural Gas": {
       "last": 3.2070000171661377,
-      "chg": 0.2369999885559082,
-      "pct": 7.979797517605047,
+      "chg": 0.23799991607666016,
+      "pct": 8.016163960025668,
       "date": "2026-11-09",
-      "prev": 2.9700000286102295,
+      "prev": 2.9690001010894775,
       "prev_date": "2026-11-06",
       "basis": "close_1600_et",
       "contract": "NGZ26.NYM",
@@ -196,9 +196,9 @@
       "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 4150.7001953125,
-      "chg": 75.900146484375,
-      "pct": 1.8626716789748476,
+      "last": 4151.0,
+      "chg": 76.199951171875,
+      "pct": 1.8700292102379112,
       "date": "2026-11-09",
       "prev": 4074.800048828125,
       "prev_date": "2026-11-06",
@@ -695,9 +695,9 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 1.863,
+        "change": 1.87,
         "unit": "%",
-        "multiple": 1.37,
+        "multiple": 1.38,
         "band": "보통"
       },
       "10Y": {
@@ -845,7 +845,7 @@
         }
       },
       "Gold": {
-        "value": 4150.7,
+        "value": 4151.0,
         "percentile": 60.1,
         "band": "중간",
         "sessions": 504,
@@ -1134,9 +1134,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 26267.19,
-            "pct": 1.73,
-            "date": "2026-11-09"
+            "close": 25820.36,
+            "pct": -1.92,
+            "date": "2026-11-06"
           },
           {
             "name": "FTSE100",
@@ -1148,15 +1148,15 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6290.45,
-            "pct": 1.94,
-            "date": "2026-11-09"
+            "close": 6170.49,
+            "pct": -0.98,
+            "date": "2026-11-06"
           }
         ],
         "alignment": {
-          "label": "이어감",
-          "avg_pct": 1.56,
-          "mixed": false
+          "label": "엇갈림",
+          "avg_pct": -0.63,
+          "mixed": true
         }
       }
     },
