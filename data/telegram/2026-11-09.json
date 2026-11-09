@@ -1,0 +1,346 @@
+{
+ "report_date": "2026-11-09",
+ "market": "us",
+ "collected_utc": "2026-11-09T22:38:59+00:00",
+ "window_from": {
+  "hedgecat0301": null,
+  "kwusa": "2026-11-06T22:29:57+00:00",
+  "lim_econ": "2026-11-06T13:30:53+00:00",
+  "d_ticker": "2026-11-06T23:03:03+00:00",
+  "aethersemiconductor": "2026-11-06T15:38:13+00:00",
+  "FastStockNews": "2026-11-06T13:21:00+00:00",
+  "FastStockNewsUSA": "2026-11-06T17:41:49+00:00",
+  "insidertracking": "2026-11-06T22:36:46+00:00"
+ },
+ "window_note": [
+  "hedgecat0301: 직전 커서 없음 — 24시간",
+  "kwusa: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "lim_econ: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "aethersemiconductor: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "FastStockNews: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "FastStockNewsUSA: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "insidertracking: 직전 커서가 72시간보다 오래돼 72시간만 읽음"
+ ],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-08T22:38:59.718969+00:00",
+   "last_id": 2994,
+   "last_dt": "2026-11-09T22:37:37+00:00",
+   "read": 2
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-06T22:38:59.718969+00:00",
+   "last_id": 61746,
+   "last_dt": "2026-11-09T22:20:51+00:00",
+   "read": 49
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-06T22:38:59.718969+00:00",
+   "last_id": 2127,
+   "last_dt": "2026-11-08T22:36:17+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-06T23:03:03+00:00",
+   "last_id": 4111,
+   "last_dt": "2026-11-09T22:06:45+00:00",
+   "read": 17
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-06T22:38:59.718969+00:00",
+   "last_id": 26749,
+   "last_dt": "2026-11-09T22:10:52+00:00",
+   "read": 59
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-06T22:38:59.718969+00:00",
+   "last_id": 127643,
+   "last_dt": "2026-11-09T22:38:20+00:00",
+   "read": 83
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-06T22:38:59.718969+00:00",
+   "last_id": 24301,
+   "last_dt": "2026-11-09T22:34:47+00:00",
+   "read": 61
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 12,
+   "truncated": false,
+   "from_dt": "2026-11-06T22:38:59.718969+00:00",
+   "last_id": 68828,
+   "last_dt": "2026-11-09T22:34:59+00:00",
+   "read": 215
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/26691",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-07T04:10:55+00:00",
+   "url": "https://t.me/aethersemiconductor/26691",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "스페이스XAI가 허가 없이 사우스헤이븐 데이터센터 부지 공사를 시작해 미시시피주 수질오염법을 위반했다며, 주 환경당국이 허가 없이 공사가 이어진 날마다 법정 최고액을 물리겠다고 예고했다. 현장은 우수 및 비산먼지 대책이 미비한 것으로 나타났다. 회사 측은 당국과 협력해 단일 합의명령으로 사안을 마무리하는 방향을 논의 중이라고 밝혔다. 한편 연방법원은 임시 천연가스 터빈의 무허가 가동 허용이 청정대기법을 잘못 해석했다고 판단했으나, 당국은 자신들이 소송 당사자가 아니라 명령에 구속되지 않는다는 입장이다. 소송이 아직 항소 가능성을 안고 있어 사안이 확정되지 않았다는 시각도 제기됐다."
+  },
+  {
+   "id": "FastStockNewsUSA/24240",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-07T10:05:40+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24240",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "골드만삭스의 변동성 공포지수가 9.57까지 올라 만점에 근접했고, 하루 상승폭은 역대 세 번째이며 이틀간 합산 변동성은 사상 최고치를 갈아치웠다는 소식이다. 과거 이 지수가 9.5 임계값을 15차례 넘었을 때 이후 S&P500이 3개월 평균 4.6% 올랐고 상승 확률은 80%였다는 점이 반등 가능성을 시사한다는 시각이 제시됐다. 다만 강제 청산이 아직 끝나지 않았고 시장은 여전히 바닥을 찾는 중이라는 점에서, 하락 국면이 완전히 끝났다고 보기는 이르다는 의견도 함께 담겼다. 글쓴이는 이 와중에 다른 방향의 기회가 점점 무시하기 어려워지고 있다고 짚었다."
+  },
+  {
+   "id": "aethersemiconductor/26700",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-07T11:52:15+00:00",
+   "url": "https://t.me/aethersemiconductor/26700",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": "2026-11-06",
+   "summary_ko": "앤트로픽 IPO 투자자들이 예상 기업가치를 1.1조 달러까지 낮춰 보고 있다는 소식이 전해졌다. 중간선거 이후 매도세와 나스닥100의 급락, 데이터센터 규제 강화 가능성, VIX 급등 등이 겹치면서 잠재 투자자들이 가치 평가를 잇달아 하향 조정했다는 것이다. 오픈AI와의 가치 경쟁도 부담으로 꼽혔다. HSBC의 막스 케트너는 상장 후 변동성 위험을 줄이기 위해 약 1조 달러가 더 적절할 수 있다고 봤다. 반면 모닝스타의 마이클 필드는 상장 연기의 비용이 더 크다는 이유로, 시장이 현 수준을 유지하면 앤트로픽이 다소 낮은 가치에도 상장을 강행할 것이라는 시각을 내놨다."
+  },
+  {
+   "id": "d_ticker/4097",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-08T00:48:28+00:00",
+   "url": "https://t.me/d_ticker/4097",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜타임스",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "젠슨 황 엔비디아 CEO와 관련한 스캔들이 불거졌다. 싱가포르 AI 인프라 기업 메가스피드 임원 앨리스 황이 중국 정보기관의 스파이로 고용됐고, 두 사람이 연인 관계라는 사실이 사실상 드러났다는 소식이다. 미국 정부는 트럼프 대통령의 시진핑 주석과의 정상회담을 앞두고 베이징으로 떠나기 직전 고위 관리로부터 이를 전해 듣고 상황을 파악했다고 전해졌다. 여기에 엔비디아 AI칩을 수출 제재를 어기고 중국으로 밀수입했다는 의혹이 더해져 미국 정부가 메가스피드를 조사 중이라는 시각이다. 상원 외교위원장을 맡을 예정인 크리스 쿤스 의원은 조사에 착수하겠다는 입장을 밝혔다."
+  },
+  {
+   "id": "aethersemiconductor/26718",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-08T12:51:57+00:00",
+   "url": "https://t.me/aethersemiconductor/26718",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜타임스",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "앤트로픽이 텍사스 샌안토니오의 장비 공급업체 원파워 솔루션즈로부터 1.7기가와트 규모 발전기 약정을 34억 달러에 사들였다고 전해졌다. 이는 AI 연구소의 단일 발전 장비 구매 가운데 알려진 최대 규모다. 가스터빈 수요가 치솟아 제조 기간이 길어지자 AI 기업들이 자금력을 바탕으로 중개자를 건너뛰고 장비를 직접 확보하려 한다는 시각이 제시됐다. 앤트로픽은 원파워를 인수하지 않았으나 설치에 필요한 엔지니어링과 건설 역량은 계약에 포함됐다. 인프라 통제력을 높이려는 움직임이라는 해석도 나온다. 한편 상장을 준비 중인 앤트로픽에는 투기 등급 신용등급 가능성이 장애물로 지목됐다는 의견이다."
+  },
+  {
+   "id": "lim_econ/2127",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-08T22:36:17+00:00",
+   "url": "https://t.me/lim_econ/2127",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "미국 10월 고용이 16만5000명 늘고 실업률이 4.1%로 내려오면서 연준 추가 인상 가능성이 거론됐고, 앤트로픽 기업가치는 당초 2조달러에서 1.1~1.3조달러 수준으로 낮춰 논의되는 흐름이다. 미국과 이란의 핵 문제 재협상 진전에 브렌트유는 100달러 아래로 밀렸지만, 후티의 리야드 공격으로 역내 불안은 남아 있다는 시각이다. 백악관에서는 스티븐 밀러 기용으로 강경 노선 유지 신호가 읽히며 민주당 의회와의 대립이 깊어질 것이라는 의견도 나왔다. 유럽에서는 ECB 차기 총재 후보가 크노트와 에르난데스 데코스 2명으로 좁혀졌다는 소식이다."
+  },
+  {
+   "id": "kwusa/61699",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-08T23:00:06+00:00",
+   "url": "https://t.me/kwusa/61699",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_ko": "필자는 11월 6일 종가 기준 미국 증시가 필라델피아 반도체 지수 4.21% 급등에 힘입어 나스닥이 1.09% 오르고 S&P500도 0.31% 상승했다고 정리했다. 반도체 및 장비와 자동차 및 부품 업종이 강세를 보였고 보험과 내구소비재 업종은 약세였다. 필자는 모멘텀과 고베타 팩터의 상대 강세에 주목하며, 나스닥이 4주 연속 하락 마감한 흐름 속에서도 AI 관련 수급이 시장을 떠받치고 있다고 진단했다. 다만 AI 버블 우려가 부각되고 있다는 점을 함께 짚었다."
+  },
+  {
+   "id": "kwusa/61705",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T04:35:34+00:00",
+   "url": "https://t.me/kwusa/61705",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진영",
+   "source": null,
+   "summary_note": "분량 벗어남 282자"
+  },
+  {
+   "id": "kwusa/61709",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T05:07:02+00:00",
+   "url": "https://t.me/kwusa/61709",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_note": "분량 벗어남 390자"
+  },
+  {
+   "id": "FastStockNewsUSA/24289",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-09T12:46:27+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24289",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "오펜하이머는 AMD 데이터센터 부문이 2027년에 성장세가 한층 더 빨라질 것이라는 시각을 내놓았다. 최근 실적과 경영진 면담 내용을 반영해 실적 전망치를 올렸고, 3분기 데이터센터 매출이 두 배로 늘어난 점과 EPYC CPU 및 MI455 칩·Helios 서버랙의 초기 출하가 강하다는 점을 근거로 들었다. 데이터센터용 AI GPU 매출이 EPYC 매출을 웃돌 것이라는 의견도 함께 제시됐다. 투자의견은 marketperform에서 outperform으로 올려 잡고 목표주가는 600달러로 제시했다."
+  },
+  {
+   "id": "FastStockNewsUSA/24290",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-09T12:51:13+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24290",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_note": "분량 벗어남 275자"
+  },
+  {
+   "id": "kwusa/61740",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T13:10:10+00:00",
+   "url": "https://t.me/kwusa/61740",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "엔비디아는 젠슨 황 CEO가 중국 스파이로 추정되는 인물과 부적절한 관계에 있어 조사가 진행 중이라는 보도 속에 주가가 5.0% 내렸다. 드래프트킹스는 UBS가 매출 가이던스 하향과 규제 불확실성을 이유로 투자의견을 중립으로 낮췄다는 시각이 전해지며 2.5% 밀렸다. 버크셔 해서웨이는 3분기에 자사주매입을 확대한 것으로 나타나 프리마켓에서 0.4% 내렸고, 일라이 릴리는 캐나다 당국의 알츠하이머 치료제 키순라 건강보험 적용 긍정 권고 소식에 1.4% 올랐다."
+  },
+  {
+   "id": "kwusa/61743",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T14:40:10+00:00",
+   "url": "https://t.me/kwusa/61743",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_note": "분량 벗어남 298자"
+  },
+  {
+   "id": "insidertracking/68803",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-09T21:20:24+00:00",
+   "url": "https://t.me/insidertracking/68803",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜타임스",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "엔비디아 스파이 혐의의 핵심 인물로 거론되는 앨리스 황이 2025년 동남아시아 데이터센터 프로젝트를 위해 중국 투자자 유치를 추진했다는 소식이 전해졌다. 파이낸셜타임즈 보도에 따르면 그는 엔비디아 GPU를 확보할 수 있다고 주장하며 알리바바를 잠재 고객사로 제시했고, 사업 파트너 캉웨이와 함께 수억 달러 규모의 이 사업을 투자자들에게 제안했다. 이는 민감한 반도체 접근성을 둘러싼 논란이 이어지는 상황에서 주목할 만한 움직임이라는 시각이 제기된다."
+  },
+  {
+   "id": "kwusa/61744",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T22:02:08+00:00",
+   "url": "https://t.me/kwusa/61744",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "스코샤뱅크 애널리스트는 리튬 가격 상승세가 강하기 어렵다는 시각을 내놓으며 알버말의 목표주가를 190달러에서 165달러로 낮췄다. 2027년 탄산리튬환산 기준 리튬 가격 전망치는 kg당 19달러에서 15달러 미만으로 하향됐고, 이에 따라 2027년 EBITDA 전망치도 23억 달러로 낮아졌다. 이 회사는 현재 알버말 주가가 kg당 약 13달러를 가정한 것으로 보인다고 보고, 15달러 미만 가정에 기반한 23억 달러 전망이 더 신뢰할 만하다는 의견을 밝혔다. 다만 적정 밸류에이션 배수는 8.5배에서 9.5배로 높여 목표주가를 산출했으며, 투자의견은 아웃퍼폼으로 유지됐다."
+  },
+  {
+   "id": "hedgecat0301/2994",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-09T22:37:37+00:00",
+   "url": "https://t.me/hedgecat0301/2994",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시가 급등했어도 젠슨 황 스캔들을 AI 투자 사이클과 구분해 받아들이는 분위기이며, 중동 지정학 완화와 함께 악재에 대한 시장 민감도가 낮아질 수 있다고 본다. 다만 어제 국내 증시가 장중 급등분을 모두 반납한 모습에서 투자자들이 반등을 매도 기회로 여기는 경향이 강하다고 짚었다. 「약속의 2시」 밈은 통계적 근거가 약하지만 국내 투자심리의 취약성을 보여준다고 평가했다. 과거 대형 위기급 조정을 이례적으로 빠르게 겪은 점을 들어 기존 악재가 상당 부분 주가에 반영됐다고 보고, 국내 증시의 진입 매력이 높아졌다는 전제를 전략의 우선순위에 두는 것이 적절하다고 제시했다."
+  }
+ ],
+ "stats": {
+  "items": 16,
+  "summarized": 12,
+  "summary_failed": 4,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

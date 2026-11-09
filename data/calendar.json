@@ -1,64 +1,8 @@
 {
-  "report_date": "2026-11-06",
-  "generated": "2026-11-07 08:19 KST",
+  "report_date": "2026-11-09",
+  "generated": "2026-11-10 07:41 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261109-13-Week",
-      "kind": "auction",
-      "name_ko": "13-Week 국채 입찰 950억 달러",
-      "date": "2026-11-09",
-      "time_et": "11:30",
-      "time_kst": "2026-11-10 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261109-26-Week",
-      "kind": "auction",
-      "name_ko": "26-Week 국채 입찰 820억 달러",
-      "date": "2026-11-09",
-      "time_et": "11:30",
-      "time_kst": "2026-11-10 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261109-3-Year",
-      "kind": "auction",
-      "name_ko": "3-Year 국채 입찰 580억 달러",
-      "date": "2026-11-09",
-      "time_et": "13:00",
-      "time_kst": "2026-11-10 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261109-6-Week",
-      "kind": "auction",
-      "name_ko": "6-Week 국채 입찰 1,000억 달러",
-      "date": "2026-11-09",
-      "time_et": "13:00",
-      "time_kst": "2026-11-10 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "release-cpi-20261110",
       "kind": "release",
@@ -144,9 +88,105 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "release-retail-sales-20261117",
+      "kind": "release",
+      "name_ko": "소매판매",
+      "date": "2026-11-17",
+      "time_et": "08:30",
+      "time_kst": "2026-11-17 22:30",
+      "status": "confirmed",
+      "source": "Census 공표 일정(Census·FRED 대조)",
+      "assets": [
+        "주식"
+      ],
+      "watch": "컨센서스 대비 서프라이즈"
+    },
+    {
+      "key": "release-industrial-production-20261117",
+      "kind": "release",
+      "name_ko": "산업생산(G.17)",
+      "date": "2026-11-17",
+      "time_et": "09:15",
+      "time_kst": "2026-11-17 23:15",
+      "status": "confirmed",
+      "source": "Federal Reserve 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-housing-starts-20261118",
+      "kind": "release",
+      "name_ko": "주택착공",
+      "date": "2026-11-18",
+      "time_et": "08:30",
+      "time_kst": "2026-11-18 22:30",
+      "status": "confirmed",
+      "source": "Census 공표 일정(Census·FRED 대조)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-claims-20261119",
+      "kind": "release",
+      "name_ko": "신규 실업수당 청구",
+      "date": "2026-11-19",
+      "time_et": "08:30",
+      "time_kst": "2026-11-19 22:30",
+      "status": "confirmed",
+      "source": "DOL 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-11-09",
+      "term": "3-Year",
+      "type": "Note",
+      "offering_amt": 58000000000.0,
+      "high_yield": 4.627,
+      "bid_to_cover": 2.53,
+      "indirect_pct": 55.5,
+      "dealer_pct": 9.5
+    },
+    {
+      "date": "2026-11-09",
+      "term": "6-Week",
+      "type": "Bill",
+      "offering_amt": 100000000000.0,
+      "high_yield": 4.064,
+      "bid_to_cover": 2.59,
+      "indirect_pct": 67.1,
+      "dealer_pct": 30.2
+    },
+    {
+      "date": "2026-11-09",
+      "term": "13-Week",
+      "type": "Bill",
+      "offering_amt": 95000000000.0,
+      "high_yield": 4.159,
+      "bid_to_cover": 2.67,
+      "indirect_pct": 55.9,
+      "dealer_pct": 35.4
+    },
+    {
+      "date": "2026-11-09",
+      "term": "26-Week",
+      "type": "Bill",
+      "offering_amt": 82000000000.0,
+      "high_yield": 4.293,
+      "bid_to_cover": 2.92,
+      "indirect_pct": 56.7,
+      "dealer_pct": 34.0
+    },
     {
       "date": "2026-11-05",
       "term": "4-Week",
@@ -215,5 +255,24 @@
   },
   "missing": [],
   "complete": true,
-  "ambiguous": []
+  "unresolved": [],
+  "release_ids": {
+    "claims": 180,
+    "construction-spending": 229,
+    "cpi": 10,
+    "durable-goods": 95,
+    "employment": 50,
+    "existing-home-sales": 291,
+    "factory-orders": 95,
+    "gdp": 53,
+    "housing-starts": 27,
+    "industrial-production": 13,
+    "jolts": 192,
+    "michigan": 91,
+    "new-home-sales": 97,
+    "pce": 54,
+    "ppi": 46,
+    "retail-sales": 9,
+    "trade-balance": 51
+  }
 }
