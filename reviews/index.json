@@ -33,6 +33,11 @@
       "at": "2026-11-06T02:53:11+09:00",
       "findings": 2
     },
+    "japan/daily/2026-11-06.html": {
+      "sha": "304ff887fc7b9905912d0184e9dd13da24a7349f",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 5
+    },
     "japan/posts/2026-W40.html": {
       "sha": "08eff391ae0a035483d71a0b64e7b71cf50d368b",
       "at": "2026-10-17T12:08:38+09:00",
@@ -71,6 +76,11 @@
       "sha": "6a74f771e0915e2bf96c21a003d8da218bb76be0",
       "at": "2026-11-06T02:53:11+09:00",
       "findings": 2
+    },
+    "kr/news/2026-11-06.html": {
+      "sha": "144031b5d76791f992df3a4f40be82b355a3c6a2",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 5
     },
     "kr/posts/2026-07-22.html": {
       "sha": "6f9dfa57e998b3c77a2e82e203407d33c8722a2a",
@@ -1640,6 +1650,11 @@
       "at": "2026-11-06T02:53:11+09:00",
       "findings": 2
     },
+    "kr/weekly/2026-W45.html": {
+      "sha": "f7376502968f61e5acd9120c53a9d21290a9bb5f",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 4
+    },
     "news/2026-09-28.html": {
       "sha": "e0c91ec84f0fdaf3a0cd4e71da057b9240f679f4",
       "at": "2026-10-18T22:11:34+09:00",
@@ -1875,6 +1890,16 @@
       "sha": "f592b31f6d59004b744b44059a8b15cec8d14f0f",
       "at": "2026-11-06T02:53:12+09:00",
       "findings": 4
+    },
+    "news/2026-11-05.html": {
+      "sha": "008b9de32136580d4fa3937e1f5b7c445386c9b8",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 7
+    },
+    "news/2026-11-06.html": {
+      "sha": "de8c0d5e6d60e7343c9782c801364709564b7222",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 6
     },
     "posts/2026-07-10.html": {
       "sha": "afe212aa5f493fa2efeea109156528af3c8e8a88",
@@ -3947,9 +3972,9 @@
       "findings": 0
     },
     "thesis/data/thesis_state.json": {
-      "sha": "8f043d7f5daa65c521fb95f05e695087c3a96922",
-      "at": "2026-11-06T02:53:12+09:00",
-      "findings": 0
+      "sha": "e613aac785d15475346f9413ffebe2b922b9f48b",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 4
     },
     "thesis/micron.html": {
       "sha": "b58d53c30f213ec02be28a4dbb0c2d44f23a04ea",
@@ -4088,6 +4113,11 @@
       "sha": "c5de9f9fc108529eea9d4cb8d4bd4ace0b51edfd",
       "at": "2026-11-06T02:53:11+09:00",
       "findings": 2
+    },
+    "weekly/2026-W45.html": {
+      "sha": "55a618529139385620e2cc4afe6f8af25995b2b2",
+      "at": "2026-11-09T10:10:08+09:00",
+      "findings": 3
     }
   }
 }
