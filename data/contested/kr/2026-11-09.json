@@ -1,0 +1,73 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-09",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-09T11:11:17+00:00",
+ "cutoff_at": "2026-11-09T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "2a11d5e8b44e27bb34e833ba156c75a585728043",
+  "sha256": "d791df52669ff7c8eda44e04c0095236c61ac85ba5c0297421cab7702d150f05",
+  "extra": {
+   "kr_econ.json": "63a5680b532a10100314983d96307e14464174a33874a99bff9c99fe9a71c257",
+   "kr_flows.json": "c45d0594d86d9f0b285e471a92a28c2ad3580a8dc3be83c54d8ad9eaecd9f3d0",
+   "kr_session.json": "f138d283b19c1c918ae8bd5437520fc9a1511ec38f13000edac64164c494fd59"
+  }
+ },
+ "counts": {
+  "harvest": 618,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "hankyung": "ok",
+   "yna": "ok",
+   "newsis": "ok",
+   "mt": "ok",
+   "khan": "ok"
+  },
+  "notes": [
+   "discover:618"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 33000,
+   "out": 10756
+  },
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
+ },
+ "event": {
+  "topic_ko": "중국의 대미 24% 추가관세·희토류 수출통제 유예 2개월 연장",
+  "query": "연장 유예 24",
+  "trigger": []
+ },
+ "content_hash": "c6c52289564a7fb9"
+}
