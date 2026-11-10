@@ -5,9 +5,9 @@
  "report_date": "2026-11-10",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-10T12:19:21+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-10T12:52:35+00:00",
  "cutoff_at": "2026-11-10T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 505,
+  "harvest": 485,
   "candidates": 1,
   "articles": [
    6
@@ -39,23 +39,23 @@
    "dt": "ok",
    "aju": "ok",
    "dailian": "ok",
-   "etnews": "ok",
-   "chosun": "ok"
+   "chosun": "ok",
+   "etnews": "ok"
   },
   "notes": [
-   "discover:505"
+   "discover:485"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 19684,
-   "out": 4780
+   "in": 19671,
+   "out": 5186
   }
  },
  "event": {
   "topic_ko": "미국 중간선거 이후 대미 통상 압박 전망 (대한상의 보고서)",
-  "query": "대한상의 관세·투자·입법 압박",
+  "query": "관세·투자·입법 대한상의 압박",
   "trigger": []
  },
- "content_hash": "b0407e1ece6a6478"
+ "content_hash": "ca26762e924cd7d6"
 }
