@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-10T17:45:14+00:00",
- "cutoff_at": "2026-11-10T17:45:14+00:00",
+ "collected_at": "2026-11-10T18:49:44+00:00",
+ "cutoff_at": "2026-11-10T18:49:44+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 38707,
-   "out": 11890
+   "in": 39777,
+   "out": 12346
   },
   "discovery": "throttled",
   "hosts": {
@@ -43,15 +43,15 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "1/1",
-   "obs": "6/6"
+   "claims": "7/7",
+   "pairs": "2/2",
+   "obs": "5/5"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 6,
-   "strict_pairs": 1,
+   "pairs": 2,
+   "claims": 4,
+   "obs": 5,
+   "strict_pairs": 2,
    "same_statistic_dropped": 0,
    "topic": true
   },
@@ -68,20 +68,16 @@
     "worry.most[0]",
     "worry.unlikely[0]"
    ],
-   "outcome": "skipped_threshold",
+   "outcome": "skipped_ratio",
    "remaining": [
-    "structure:unverified",
     "structure:dangling",
     "edges[0]:dangling",
     "edges[1]:dangling",
-    "edges[2]:unverified",
     "edges[2]:dangling",
-    "memo[0]:unverified",
     "memo[0]:dangling",
     "memo[1]:dangling",
     "memo[2]:dangling",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
     "worry.moderate[0]:dangling",
     "worry.unlikely[0]:dangling"
    ]
@@ -94,20 +90,16 @@
   "trigger": []
  },
  "problems": [
-  "structure:unverified",
   "structure:dangling",
   "edges[0]:dangling",
   "edges[1]:dangling",
-  "edges[2]:unverified",
   "edges[2]:dangling",
-  "memo[0]:unverified",
   "memo[0]:dangling",
   "memo[1]:dangling",
   "memo[2]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
   "worry.moderate[0]:dangling",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "6bccab7181e495a5"
+ "content_hash": "a790982f25ea925f"
 }
