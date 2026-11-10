@@ -211,6 +211,52 @@ def test_short_summary_band_and_copy_rejection(monkeypatch):
     assert (done, failed) == (1, 1)
 
 
+def test_short_summary_accepts_tail_above_target(monkeypatch):
+    """Prompt targets 60-260 chars but the model overshoots on long analyst memos (11/09: 275-390,
+    two Kiwoom views lost). Accept up to ACCEPT_MAX on the first answer; reject beyond it."""
+    monkeypatch.setattr(tg_summary.ns, '_text', lambda r: r.content[0].text)
+    assert tg_summary.BAND == (60, 260) and tg_summary.ACCEPT_MAX == 400
+    unit = '필자는 반도체 업황이 바닥을 지났다고 보고 재고 조정이 끝나 간다고 진단했다. '
+    def sized(n):
+        t = ''
+        while tg_summary.ns.chars(t) < n:
+            t += unit
+        return t.strip()
+    over = sized(330)
+    assert 260 < tg_summary.ns.chars(over) <= 400
+    too_long = sized(420)
+    assert tg_summary.ns.chars(too_long) > 400
+    body = '키움 메모: 반도체 재고 조정 마무리 국면. 업황 저점 통과 판단. ' * 30
+    items = [{'id': 'k/1', 'kind': 'view'}, {'id': 'k/2', 'kind': 'view'}]
+    client = FakeClient([over, too_long, too_long])
+    done, failed = tg_summary.summarize(items, {'k/1': body, 'k/2': body}, client=client,
+                                        model='m', log=lambda *a: None)
+    assert items[0]['summary_ko'] == over
+    assert items[1]['summary_note'].startswith('분량 벗어남')
+    assert (done, failed) == (1, 1) and client.calls == 3
+
+
+def test_short_summary_accept_boundary_and_retry(monkeypatch):
+    """Exactly ACCEPT_MAX passes, ACCEPT_MAX+1 does not; a too-long first answer followed by a
+    261-400 retry is kept (codex review 11/11)."""
+    monkeypatch.setattr(tg_summary.ns, '_text', lambda r: r.content[0].text)
+    head, tail = '필자는 반도체 업황이 바닥을 지났다고 보고 ', '재고 조정이 끝나 간다고 진단했다.'
+    def exact(n):
+        pad = n - tg_summary.ns.chars(head + tail)
+        return head + '메모리' * (pad // 3) + '칩' * (pad % 3) + ' ' + tail
+    at, over, mid = exact(400), exact(401), exact(330)
+    assert [tg_summary.ns.chars(t) for t in (at, over, mid)] == [400, 401, 330]
+    body = '키움 메모: 반도체 재고 조정 마무리 국면. 업황 저점 통과 판단. ' * 30
+    items = [{'id': f'k/{i}', 'kind': 'view'} for i in range(3)]
+    client = FakeClient([at, over, over, over, mid])
+    done, failed = tg_summary.summarize(items, {it['id']: body for it in items}, client=client,
+                                        model='m', log=lambda *a: None)
+    assert items[0]['summary_ko'] == at
+    assert items[1]['summary_note'] == '분량 벗어남 401자'
+    assert items[2]['summary_ko'] == mid
+    assert (done, failed) == (2, 1) and client.calls == 5
+
+
 def test_summary_without_client_marks_every_item(monkeypatch):
     monkeypatch.setattr(tg_summary.ns, 'make_client', lambda: (_ for _ in ()).throw(RuntimeError('no key')))
     monkeypatch.setattr(tg_summary.ns, 'credential_source', lambda: 'key')

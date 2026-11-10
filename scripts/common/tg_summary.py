@@ -12,7 +12,12 @@ from difflib import SequenceMatcher
 
 from us import news_summary as ns
 
-BAND = (60, 260)              # chars without spaces, for short posts
+BAND = (60, 260)              # chars without spaces, for short posts — the target the prompt states
+# Accepted length is wider than the target (same shape as news_summary TARGET vs BAND, 11/08):
+# on long analyst memos the model overshoots — 11/06·11/09 lost 6 of ~44 short-band items at
+# 261-390 chars, two of them Kiwoom views. Keep the prompt at BAND (raising it makes the model aim
+# at the new top and overshoot again) and take the tail. No gate checks this length downstream.
+ACCEPT_MAX = 400
 COPY_LIMIT = 0.8              # share of the summary that may match the source verbatim
 
 _RULES = (
@@ -54,7 +59,7 @@ def _short(client, model, item, body):
             return None, '모델 거절' if r.stop_reason == 'refusal' else '출력 잘림'
         text = ns._text(r)
         problem = ns.summary_problem(text)
-        if problem is None and BAND[0] <= ns.chars(text) <= BAND[1]:
+        if problem is None and BAND[0] <= ns.chars(text) <= ACCEPT_MAX:
             return text, None
         messages += [{'role': 'assistant', 'content': r.content},
                      {'role': 'user', 'content': f'공백 제외 {BAND[0]}~{BAND[1]}자, 한 문단으로 다시 써 주세요.'}]
