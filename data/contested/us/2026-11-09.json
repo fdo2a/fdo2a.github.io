@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-09",
  "status": "none",
- "reason": "topic_too_long",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-10T12:01:07+00:00",
- "cutoff_at": "2026-11-10T12:01:07+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-10T12:35:22+00:00",
+ "cutoff_at": "2026-11-10T12:35:22+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 19614,
-   "out": 7371
+   "in": 31756,
+   "out": 8229
   },
   "discovery": "ok",
   "hosts": {
@@ -40,12 +40,46 @@
    "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
-  "gdelt": "ok"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "1/1",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 8,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[2]",
+    "memo[2]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "edges[2]:unverified",
+    "memo[2]:dangling",
+    "worry.most[0]:dangling",
+    "worry.unlikely[0]:unverified"
+   ]
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "미 중간선거 이후 미·이란 분쟁 향방과 유가",
+  "query": "iran august since",
   "trigger": []
  },
- "content_hash": "f12aff1fe85fcb76"
+ "problems": [
+  "edges[2]:unverified",
+  "memo[2]:dangling",
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:unverified"
+ ],
+ "content_hash": "a9406c22d768590a"
 }
