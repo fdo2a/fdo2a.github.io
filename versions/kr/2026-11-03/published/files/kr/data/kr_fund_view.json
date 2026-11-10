@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "calculation_version": "2026-10-06",
+  "report_date": "2026-11-03",
+  "generated_at": "2026-11-03 18:11 KST",
+  "status": "ok",
+  "missing": [],
+  "source_dates": {
+    "session": "2026-11-03",
+    "CD 91일": "2026-11-03",
+    "국고채 3년": "2026-11-03",
+    "한국은행 기준금리": "2026-09"
+  },
+  "fx": {
+    "last": 1340.58,
+    "last_t": "15:30",
+    "high": 1345.88,
+    "high_t": "09:00",
+    "low": 1337.28,
+    "low_t": "11:30",
+    "bars": 14,
+    "source": "야후 30분봉, 한국장 시간대 마지막 관측(서울 외환시장 공식 종가 아님)"
+  },
+  "cash_rates": [
+    {
+      "name": "CD 91일",
+      "value": 3.35,
+      "date": "2026-11-03",
+      "bp": 1.0
+    },
+    {
+      "name": "국고채 3년",
+      "value": 3.736,
+      "date": "2026-11-03",
+      "bp": -0.4
+    },
+    {
+      "name": "한국은행 기준금리",
+      "value": 3.0,
+      "date": "2026-09",
+      "bp": 0.0
+    }
+  ],
+  "us_futures": {
+    "ES": {
+      "pct": -0.43,
+      "first_t": "09:00",
+      "last_t": "15:30"
+    },
+    "NQ": {
+      "pct": -0.46,
+      "first_t": "09:00",
+      "last_t": "15:30"
+    }
+  },
+  "observations": [
+    {
+      "unit_id": "semis",
+      "unit_name": "반도체·AI 하드웨어",
+      "kind": "stock",
+      "name": "SK하이닉스",
+      "change_pct": -5.03,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "semis",
+      "unit_name": "반도체·AI 하드웨어",
+      "kind": "stock",
+      "name": "삼성전자",
+      "change_pct": -4.15,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "semis",
+      "unit_name": "반도체·AI 하드웨어",
+      "kind": "index",
+      "name": "대만가권",
+      "change_pct": -3.59,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "grid",
+      "unit_name": "전력망",
+      "kind": "stock",
+      "name": "HD현대일렉트릭",
+      "change_pct": -1.68,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "grid",
+      "unit_name": "전력망",
+      "kind": "stock",
+      "name": "LS ELECTRIC",
+      "change_pct": -5.67,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "grid",
+      "unit_name": "전력망",
+      "kind": "stock",
+      "name": "효성중공업",
+      "change_pct": -3.85,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "defense",
+      "unit_name": "방산",
+      "kind": "industry",
+      "name": "우주항공과국방",
+      "change_pct": -1.15,
+      "breadth": 0.143,
+      "leading": false,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "defense",
+      "unit_name": "방산",
+      "kind": "stock",
+      "name": "한화에어로스페이스",
+      "change_pct": 0.0,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "industrials",
+      "unit_name": "산업재",
+      "kind": "industry",
+      "name": "조선",
+      "change_pct": -0.15,
+      "breadth": 0.226,
+      "leading": false,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "industrials",
+      "unit_name": "산업재",
+      "kind": "stock",
+      "name": "HD현대중공업",
+      "change_pct": -0.17,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "industrials",
+      "unit_name": "산업재",
+      "kind": "stock",
+      "name": "한화오션",
+      "change_pct": -2.0,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "industrials",
+      "unit_name": "산업재",
+      "kind": "stock",
+      "name": "삼성중공업",
+      "change_pct": 0.93,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "metals",
+      "unit_name": "금속·광업",
+      "kind": "industry",
+      "name": "비철금속",
+      "change_pct": -0.89,
+      "breadth": 0.325,
+      "leading": false,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "metals",
+      "unit_name": "금속·광업",
+      "kind": "stock",
+      "name": "POSCO홀딩스",
+      "change_pct": -5.83,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "financials",
+      "unit_name": "금융",
+      "kind": "industry",
+      "name": "은행",
+      "change_pct": -0.89,
+      "breadth": 0.0,
+      "leading": false,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "financials",
+      "unit_name": "금융",
+      "kind": "industry",
+      "name": "증권",
+      "change_pct": -1.48,
+      "breadth": 0.077,
+      "leading": false,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "financials",
+      "unit_name": "금융",
+      "kind": "stock",
+      "name": "KB금융",
+      "change_pct": -1.3,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "financials",
+      "unit_name": "금융",
+      "kind": "stock",
+      "name": "신한지주",
+      "change_pct": -1.38,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "software",
+      "unit_name": "소프트웨어",
+      "kind": "industry",
+      "name": "소프트웨어",
+      "change_pct": -2.25,
+      "breadth": 0.276,
+      "leading": false,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "software",
+      "unit_name": "소프트웨어",
+      "kind": "stock",
+      "name": "NAVER",
+      "change_pct": -3.65,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "energy",
+      "unit_name": "에너지",
+      "kind": "stock",
+      "name": "S-Oil",
+      "change_pct": -11.77,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "energy",
+      "unit_name": "에너지",
+      "kind": "stock",
+      "name": "SK이노베이션",
+      "change_pct": -9.36,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "japan",
+      "unit_name": "일본",
+      "kind": "index",
+      "name": "닛케이",
+      "change_pct": -0.33,
+      "date": "2026-11-02"
+    },
+    {
+      "unit_id": "china",
+      "unit_name": "중국",
+      "kind": "index",
+      "name": "항셍",
+      "change_pct": 0.57,
+      "date": "2026-11-03"
+    },
+    {
+      "unit_id": "china",
+      "unit_name": "중국",
+      "kind": "index",
+      "name": "상해종합",
+      "change_pct": -0.82,
+      "date": "2026-11-03"
+    }
+  ]
+}

@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4052626,
-    "volume": 3339282,
+    "value": 4148691,
+    "volume": 3418909,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 2961490,
-    "volume": 14885492,
+    "value": 3035527,
+    "volume": 15259184,
     "members": [
       "삼성전자"
     ]
@@ -65,8 +65,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 590659,
-    "volume": 667460,
+    "value": 611511,
+    "volume": 691261,
     "members": [
       "삼성전기"
     ]
@@ -76,8 +76,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 467049,
-    "volume": 2927423,
+    "value": 483818,
+    "volume": 3033117,
     "members": [
       "삼성전자우"
     ]
@@ -87,8 +87,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 465037,
-    "volume": 611083,
+    "value": 473139,
+    "volume": 621832,
     "members": [
       "SK스퀘어"
     ]
@@ -109,34 +109,10 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 330718,
-    "volume": 740457,
+    "value": 337488,
+    "volume": 755459,
     "members": [
       "삼성SDI"
-    ]
-  },
-  {
-    "label": "2차전지 테마 ETF",
-    "kind": "sector_theme_etf",
-    "direction": "long",
-    "theme": "2차전지",
-    "value": 292574,
-    "volume": 171246994,
-    "members": [
-      "KODEX 2차전지산업레버리지",
-      "KODEX 2차전지산업",
-      "TIGER 2차전지TOP10",
-      "KODEX 전고체배터리ESS TOP2플러스",
-      "SOL 전고체배터리&실리콘음극재",
-      "TIGER 2차전지소재Fn",
-      "TIGER 2차전지테마",
-      "TIGER 2차전지TOP10레버리지",
-      "KODEX 2차전지핵심소재10",
-      "RISE 2차전지액티브",
-      "RISE 2차전지TOP10",
-      "SOL 2차전지소부장Fn",
-      "ACE 2차전지&친환경차액티브",
-      "RISE 배터리 리사이클링"
     ]
   },
   {
@@ -144,10 +120,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 289821,
-    "volume": 1249347,
+    "value": 298712,
+    "volume": 1286776,
     "members": [
       "한진칼"
+    ]
+  },
+  {
+    "label": "대한항공",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 292646,
+    "volume": 9114789,
+    "members": [
+      "대한항공"
     ]
   }
 ]

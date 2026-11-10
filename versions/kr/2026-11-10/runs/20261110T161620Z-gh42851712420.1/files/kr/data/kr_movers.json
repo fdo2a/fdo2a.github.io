@@ -1,0 +1,23 @@
+{
+  "report_date": "2026-11-10",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "기타",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "KIWOOM 200TR",
+          "change_pct": 4.34,
+          "close": 107850,
+          "value": 60822
+        }
+      ]
+    }
+  ]
+}

@@ -5,136 +5,17 @@
   "groups": [
     {
       "id": "g1",
-      "industry": "반도체와반도체장비",
+      "industry": "기타",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
+        "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "SK하이닉스",
-          "change_pct": 6.69,
-          "close": 1212000,
-          "value": 4052626
-        },
-        {
-          "name": "삼성전자",
-          "change_pct": 4.74,
-          "close": 198900,
-          "value": 2961490
-        },
-        {
-          "name": "삼성전자우",
-          "change_pct": 5.37,
-          "close": 159000,
-          "value": 467049
-        },
-        {
-          "name": "SK스퀘어",
-          "change_pct": 5.26,
-          "close": 760000,
-          "value": 465037
-        },
-        {
-          "name": "한미반도체",
-          "change_pct": 7.9,
-          "close": 173400,
-          "value": 88990
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "제약",
-      "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "삼성바이오로직스",
-          "change_pct": -2.78,
-          "close": 1468000,
-          "value": 100364
-        },
-        {
-          "name": "셀트리온",
-          "change_pct": -3.33,
-          "close": 203000,
-          "value": 177937
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "항공사",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "한진칼",
-          "change_pct": 15.18,
-          "close": 239000,
-          "value": 289821
-        },
-        {
-          "name": "대한항공",
-          "change_pct": 11.51,
-          "close": 32450,
-          "value": 279239
-        },
-        {
-          "name": "진에어",
-          "change_pct": 29.92,
-          "close": 7990,
-          "value": 79362
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "전기제품",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "삼성SDI",
-          "change_pct": 9.88,
-          "close": 456000,
-          "value": 330718
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "전기장비",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "HD현대일렉트릭",
-          "change_pct": 10.67,
-          "close": 394000,
-          "value": 104760
-        },
-        {
-          "name": "효성중공업",
-          "change_pct": 12.72,
-          "close": 1746000,
-          "value": 99652
-        },
-        {
-          "name": "LS ELECTRIC",
-          "change_pct": 8.33,
-          "close": 121000,
-          "value": 90527
+          "name": "KIWOOM 200TR",
+          "change_pct": 4.34,
+          "close": 107850,
+          "value": 60822
         }
       ]
     }

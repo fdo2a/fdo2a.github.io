@@ -1,0 +1,26 @@
+{
+  "report_date": "2026-10-28",
+  "complete": true,
+  "missing": [
+    "econ",
+    "flows_intraday"
+  ],
+  "indices": {
+    "KOSPI": {
+      "close": 6012.44,
+      "change_pct": 6.63
+    },
+    "KOSDAQ": {
+      "close": 771.28,
+      "change_pct": 3.69
+    }
+  },
+  "flows_date": {
+    "KOSPI": "2026-10-28",
+    "KOSDAQ": "2026-10-28"
+  },
+  "flows_provisional": {
+    "KOSPI": true,
+    "KOSDAQ": true
+  }
+}

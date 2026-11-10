@@ -1,0 +1,130 @@
+{
+  "report_date": "2026-11-04",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성전자",
+          "change_pct": -0.68,
+          "close": 218000,
+          "value": 4619687
+        },
+        {
+          "name": "SK하이닉스",
+          "change_pct": -0.14,
+          "close": 1396000,
+          "value": 6117317
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "전기제품",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성SDI",
+          "change_pct": 11.57,
+          "close": 545000,
+          "value": 687122
+        },
+        {
+          "name": "LG에너지솔루션",
+          "change_pct": 5.03,
+          "close": 355000,
+          "value": 369116
+        },
+        {
+          "name": "엘앤에프",
+          "change_pct": 12.84,
+          "close": 91400,
+          "value": 81854
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "에너지장비및서비스",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한화솔루션",
+          "change_pct": 18.64,
+          "close": 28000,
+          "value": 662257
+        },
+        {
+          "name": "HD현대에너지솔루션",
+          "change_pct": 12.47,
+          "close": 88400,
+          "value": 115534
+        },
+        {
+          "name": "씨에스윈드",
+          "change_pct": 7.59,
+          "close": 44650,
+          "value": 109269
+        },
+        {
+          "name": "SK이터닉스",
+          "change_pct": 8.06,
+          "close": 38900,
+          "value": 78318
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "항공사",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한진칼",
+          "change_pct": 5.19,
+          "close": 184300,
+          "value": 379536
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "화학",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "OCI홀딩스",
+          "change_pct": 10.38,
+          "close": 200000,
+          "value": 206696
+        },
+        {
+          "name": "포스코퓨처엠",
+          "change_pct": 10.81,
+          "close": 181400,
+          "value": 125522
+        }
+      ]
+    }
+  ]
+}

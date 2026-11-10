@@ -1,0 +1,1585 @@
+{
+  "report_date": "2026-10-28",
+  "source": "네이버증권 주요뉴스",
+  "harvested": 220,
+  "harvested_world": 144,
+  "notes": [],
+  "items": [
+    {
+      "guid": "008-0005433075",
+      "url": "https://n.news.naver.com/mnews/article/008/0005433075",
+      "title": "\"땡큐 SK하이닉스\" 코스피, 6000 탈환…美 FOMC 다음 관문",
+      "summary": "코스피가 10거래일 만에 6000선 탈환에 성공했다. 앤트로픽이 AI(인공지능) 수익성 우려를 누그러트리고, SK하이닉스가 시장 기대치에 부합하는 실적과 주주환원 확대를 발표해서다. 미국 FOMC(연방공개시장위원회)",
+      "published": "2026-10-28T16:31:38+09:00",
+      "source": "머니투데이",
+      "category": "macro",
+      "body_chars": 2010,
+      "body_file": "01-macro.txt",
+      "summary_ko": "코스피가 28일 전날보다 374.1포인트(6.63%) 오른 6012.44에 마감하며 10거래일 만에 6000선을 되찾았다. 앤트로픽의 AI 수익성 우려 완화와 브로드컴·앤트로픽 간 AI 반도체 계약 소식이 반도체주 투자심리를 끌어올린 가운데, SK하이닉스가 시장 기대치에 부합하는 3분기 실적과 60조원 이상의 추가 주주환원 계획을 내놓았다. 올해 주주환원 규모는 8월 결의분 40조원을 포함해 100조원에 이를 전망이다. 외국인과 기관은 각각 8228억원, 9609억원을 순매수했고 개인은 1조8016억원을 순매도했다. 전기·전자 업종은 9.02% 올랐고 SK하이닉스와 삼성전자는 10%와 9% 넘게 급등했다. 시장의 관심은 29일 새벽 발표될 10월 미국 FOMC로 옮겨갔다. 동결이 유력한 가운데 케빈 워시 연준 의장이 12월 금리 인상 가능성과 긴축 속도를 어떻게 제시할지가 관건으로 꼽힌다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "014-0005595681",
+      "url": "https://n.news.naver.com/mnews/article/014/0005595681",
+      "title": "HD현대일렉트릭, 환율·수주 둔화에 이익률↓…\"LG이노텍, 악재는 대부분 노출\"",
+      "summary": "10월 28일 오전, 주요 증권사 리포트를 정리해드립니다. HD현대일렉트릭은 3분기 사상 최대 매출에도 원화 강세와 수주 감소로 이익률이 후퇴했지만, 빅테크 신규 공급계약이 확정되면 수주 모멘텀이 회복될 것이라는 전",
+      "published": "2026-10-28T11:08:13+09:00",
+      "source": "파이낸셜뉴스",
+      "category": "macro",
+      "body_chars": 3228,
+      "body_file": "02-macro.txt",
+      "summary_ko": "HD현대일렉트릭은 3분기 사상 최대 매출에도 원화 강세와 수주 감소로 이익률이 떨어졌다. 신한투자증권은 영업이익 2845억원이 시장 기대치를 7% 밑돌았다며 목표주가를 85만원으로 낮췄다. 3분기 수주는 9억8000만달러로 전년 대비 19% 줄었으나, 빅테크 신규 공급계약이 11월 말 확정되면 수주 흐름이 회복될 것으로 봤다. LG이노텍은 SK증권이 3분기 영업이익 948억원을 발표하며 시장 눈높이 3000억원을 크게 밑돌았다고 분석했다. 환율 영향으로 약 2000억원의 차이가 났고, 4분기 역시 기대치 3900억원에 못 미치는 1849억원이 예상된다. 목표주가는 60만원으로 40% 내렸지만, 악재가 대부분 반영된 만큼 컨센서스 하향이 마무리될 때 저점을 고려할 시점이라고 평가했다. 셀트리온은 현대차증권이 3개 분기 연속 시장 기대를 웃도는 실적을 냈다고 짚고 목표주가를 30만원으로 올렸다. 3분기 매출액과 영업이익은 전년 대비 각각 53%, 74% 늘었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "001-0016405197",
+      "url": "https://n.news.naver.com/mnews/article/001/0016405197",
+      "title": "브라질 국채값·헤알화 폭락에 '삼바 채권' 투자자들 '악'",
+      "summary": "고금리 기대에 국내 투자자, 브라질 채권 보관금액 연초비 20%↑ 룰라 당선 후 증시·채권가격·헤알화 '3중' 폭락 루이스 이나시우 룰라 다시우바 브라질 대통령의 당선 후 브라질 증시가 17% 급락하면서 브라질 채권",
+      "published": "2026-10-28T09:48:50+09:00",
+      "source": "연합뉴스",
+      "category": "macro",
+      "body_chars": 1382,
+      "body_file": "03-macro.txt",
+      "summary_ko": "룰라 다시우바 대통령이 당선된 뒤 브라질 보베스파 지수가 26일 17.00% 급락해 코로나19 이후 6년 7개월 만에 서킷브레이커가 발동됐다. 같은 날 달러당 헤알화 환율은 10.26% 급등한 5.498헤알을 기록했고, 10년물 국채 금리는 전 거래일 대비 약 2.4% 뛰어 15.4%가 됐다. 금리 상승은 채권값 하락을 뜻하므로 채권값은 약 11% 떨어진 것으로 추산된다. 연 10% 이자에 이자소득세가 붙지 않아 고액 자산가들이 선호해 온 브라질 채권은 국내 투자자들에게 채권과 환율을 합쳐 약 18%의 손실이 예상된다. 선거 전 우파 후보 승리를 기대해 국내 투자자들의 순매수가 지난달 552만달러로 전월보다 4배 가까이 늘었고, 보관금액도 연초 대비 20.2% 불었던 터라 충격이 더 컸다. 미래에셋증권은 재정 우려가 커졌다고 진단했고, JP모건은 통화와 채권 투자의견을 하향했다. 반면 유진투자증권은 고금리 매력과 자원 가치가 재정적 약점을 상쇄할 수 있다고 평가했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005755563",
+      "url": "https://n.news.naver.com/mnews/article/009/0005755563",
+      "title": "李대통령도 운띄운 의무공개매수제…국회처리 앞두고 곳곳서 반발",
+      "summary": "찬반 논란 뜨거운 의무공개매수 법안 ‘50%+1주’ 의무공개매수 법안 국회 처리 앞두고 곳곳서 반발 의무공개 매수비율·배분 방식 이재명 대통령, 공개 의견수렴 국회 본회의 문턱에서 ‘일단 멈춤’을 했던 의무공개매수",
+      "published": "2026-10-28T17:58:06+09:00",
+      "source": "매일경제",
+      "category": "policy",
+      "body_chars": 2068,
+      "body_file": "04-policy.txt",
+      "summary_ko": "의무공개매수 법안은 '50%+1주' 최소 매수 수량을 두고 찬반이 맞서며 국회 처리를 앞두고 업계 반발이 이어지고 있다. 법안은 의무공개매수 때 대주주 지분을 먼저 사들인 뒤 나머지를 안분비례로 매수하도록 해, 대주주 지분율이 높을수록 일반주주 몫이 줄어 경영권 프리미엄 공유가 어려워진다는 지적을 받는다. 일부 자산운용사는 소액주주 지분이 오히려 저평가될 수 있다고 우려했다. 해외에서는 모든 주주가 같은 공개매수에 참여하거나 잔여 주식 전량에 매수를 제안하도록 하는 것이 일반적이다. 반면 전량 매수를 강제하면 인수 자금 부담으로 M&A가 위축되고, 대주주가 지분을 전부 팔지 못하는 구조 역시 M&A를 줄일 수 있다는 반론이 나온다. 이재명 대통령은 28일 소셜미디어를 통해 매수 비율과 대주주·소액주주 이해관계의 조화 방안에 대해 각계 의견을 듣겠다고 밝혔다. 한국기업거버넌스포럼은 독립주주 과반 승인을 조건으로 대주주 우선 부분매수를 허용하고, 반대 주주도 같은 조건으로 응모하게 하자는 절충안을 내놓았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "648-0000052033",
+      "url": "https://n.news.naver.com/mnews/article/648/0000052033",
+      "title": "'주가 누르기' 방지책 실효성 논란…정부 \"보완 방안 검토\"",
+      "summary": "정부의 '주가 누르기' 방지책이 대주주의 절세 유인을 충분히 없애지 못한다는 지적이 나왔다. 장기 저평가 기업을 선별해 주식 평가기간을 늘리는 방안을 마련했지만 주가를 낮게 유지할수록 세금이 줄어드는 구조는 여전하다",
+      "published": "2026-10-28T16:53:08+09:00",
+      "source": "비즈워치",
+      "category": "policy",
+      "body_chars": 2934,
+      "body_file": "05-policy.txt",
+      "summary_ko": "정부가 내놓은 '주가 누르기' 방지책이 대주주의 절세 유인을 충분히 막지 못한다는 비판이 나왔다. 현행 상속·증여세법은 상장주식을 상속·증여일 전후 각 2개월 주가 평균으로 평가해, 주가를 낮게 유지할수록 대주주의 세 부담이 줄어든다. 정부는 8월 장기 저평가 기업에 최대 6년 6개월간 주가를 반영하는 개정안을 마련했지만, 업종 내 상대평가에 의존하고 시가 중심 과세를 유지한다는 한계가 지적된다. 이훈기 더불어민주당 의원은 세법상 순자산가치의 80%를 하한으로 두는 안을 8월 5일 발의했다. 서울가스 사례에서 9월 30일 기준 시가총액은 2688억원으로 순자산의 약 25%였으나, 정부안 적용은 2029년 하반기 이후에나 가능할 것으로 분석됐다. 상속세도 평가 방식에 따라 현행 약 585억원, 의원안 약 1579억원, 정부안 약 760억원으로 차이가 컸다. 재정경제부는 자본시장법상 규율 보완도 검토하며 국회 조세소위 전에 합리적 방안을 마련하겠다는 입장이다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "119-0003148212",
+      "url": "https://n.news.naver.com/mnews/article/119/0003148212",
+      "title": "코인 과세 시계 결국 멈추나…업계는 기대 속 ‘신중’",
+      "summary": "내년 가상자산 과세 시행을 두 달여 앞두고 국회에서 추가 유예 전망이 나오면서 가상자산 업계의 기대가 커지고 있다. 업계는 해외 거래소와의 과세 형평성과 투자자의 신고 부담 등을 고려하면 유예가 필요하다는 입장이다.",
+      "published": "2026-10-28T15:11:11+09:00",
+      "source": "데일리안",
+      "category": "policy",
+      "body_chars": 2156,
+      "body_file": "06-policy.txt",
+      "summary_ko": "내년 가상자산 과세 시행을 두 달여 앞둔 28일 정부·여당이 당정협의회에서 시행 여부를 결론 내리지 못하고 당 차원의 추가 점검을 거쳐 최종 판단하기로 했다. 국회에서는 추가 유예 전망이 나오고 있으나 민주당 내부에서는 예정대로 시행하자는 의견과 제도 보완이 먼저라는 의견이 엇갈린다. 쟁점은 해외 거래소 거래정보 확보, 디지털자산기본법 미제정, 과세 인프라 미비 등이다. 미국의 암호화자산 보고체계(CARF) 참여 시점이 2029년이라는 점도 논의됐다. 거래소 업계는 과세가 강행되면 해외 거래소나 개인지갑으로 자산이 빠져나가 국내 거래가 위축되고 시세에도 영향을 줄 수 있다고 우려하며 유예를 기대한다. 투자자의 취득가액 확인과 신고 부담도 남아 있다. 다만 시행일을 늦추려면 소득세법 개정안이 국회를 통과해야 하므로 업계는 법 개정까지 지켜봐야 한다는 입장이다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "011-0004676229",
+      "url": "https://n.news.naver.com/mnews/article/011/0004676229",
+      "title": "맥쿼리 공개매수 발표에…KINX 상한가, 가비아 26% 급등[시그널]",
+      "summary": "맥쿼리자산운용그룹이 가비아(079940)와 자회사 케이아이엔엑스(093320)(KINX) 대주주 측 지분을 인수하고 일반 주주 보유 지분까지 모두 사들이겠다는 공개매수 계획을 발표하면서 관련 주가가 급등했다. 28일",
+      "published": "2026-10-28T18:01:07+09:00",
+      "source": "서울경제",
+      "category": "market",
+      "body_chars": 1116,
+      "body_file": "07-market.txt",
+      "summary_ko": "맥쿼리그룹이 가비아와 자회사 KINX의 대주주 지분을 인수하고, 일반 주주 보유분까지 공개매수해 상장폐지하겠다는 계획을 28일 발표했다. 이 소식에 가비아는 전 거래일보다 25.94% 오른 5만 500원에, KINX는 상한가인 15만 6600원에 장을 마쳤다. 맥쿼리는 얼라인파트너스와 미리캐피털이 보유한 가비아 지분을 주당 5만 3000원에, KINX 지분을 주당 19만 원에 인수하기로 했다. 가비아 공개매수가는 지난 7월 1차 시도 때의 4만 8000원보다 10.4% 높다. 1차 공개매수는 주요 주주들이 일반 주주 대상 전량 공개매수를 매각 조건으로 내걸면서 9월 청약 미달로 무산됐다. 이번 계획은 정부 승인 등 선행조건 충족을 전제로 하며, 충족되면 일반 주주도 주요 주주와 같은 가격에 지분을 팔 수 있다. 공개매수 후에도 가비아 경영진은 경영을 이어갈 방침이다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "011-0004676228",
+      "url": "https://n.news.naver.com/mnews/article/011/0004676228",
+      "title": "외국인 귀환에 다시 자사주 방패…힘받는 코스피 바닥론",
+      "summary": "코스피가 이틀 연속 매수 사이드카 발동 속에 10거래일 만에 6000선을 회복했다. 반도체 업황 우려 완화에 외국인과 기관의 쌍끌이 효과가 컸고 반도체 대장주의 자사주 매입 재개가 ‘수급 방어막’으로 작용할 것이라는",
+      "published": "2026-10-28T18:00:09+09:00",
+      "source": "서울경제",
+      "category": "market",
+      "body_chars": 2636,
+      "body_file": "08-market.txt",
+      "summary_ko": "코스피가 이틀 연속 매수 사이드카 발동 속에 10거래일 만에 6000선을 회복했다. 28일 종가는 6012.44로 전일보다 6.63% 올랐다. 반도체 업황 우려가 완화된 가운데 외국인이 8229억 원, 기관이 9608억 원을 순매수하며 지수를 끌어올렸고, 삼성전자와 SK하이닉스는 각각 9%대, 10%대 급등했다. 시장에서는 AI 투자 수익화 우려가 일부 누그러진 데다 SK하이닉스가 제시한 2029년까지의 물량 완판 소식과 장기공급계약 비중 등이 신뢰를 회복시켰다는 평가가 나온다. 삼성전자와 SK하이닉스가 자사주 매입을 재개하는 점도 수급 공백을 메울 요인으로 꼽힌다. 다만 추세 상승을 위해서는 후속 실적과 외국인 매수의 지속성을 확인해야 한다는 신중론도 함께 제기된다. 같은 날 원·달러 환율은 환헤지 수요와 쇼트커버가 겹치며 14.0원 오른 1337.7원에 마감했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "011-0004676227",
+      "url": "https://n.news.naver.com/mnews/article/011/0004676227",
+      "title": "고점서 반토막 난 증권 ETF…작년말 가격으로 돌아갔다",
+      "summary": "올 상반기 증시 활황에 힘입어 급등했던 증권 업종 상장지수펀드(ETF)가 고점 대비 반 토막 수준으로 떨어졌다. 최근 코스피 반등에도 증권 ETF 가격은 지난해 말 수준에서 벗어나지 못하고 있다. 거래 대금 급감으로",
+      "published": "2026-10-28T17:58:09+09:00",
+      "source": "서울경제",
+      "category": "market",
+      "body_chars": 1357,
+      "body_file": "09-market.txt",
+      "summary_ko": "증권 업종 ETF가 올해 5월 고점 대비 반 토막 났다. 28일 한국거래소에 따르면 KODEX 증권은 5월 6일 3만 3271원에서 이날 1만 5425원으로 53.64% 떨어졌고, TIGER 증권과 HANARO 증권고배당TOP3플러스도 각각 53.55%, 51.27% 하락했다. 최근 코스피가 반등했으나 KODEX 증권과 TIGER 증권은 지난해 말 종가 수준을 회복하지 못했다. 3분기 코스피·코스닥 일평균 거래대금은 34조 6948억 원으로 2분기보다 38.0% 줄었고, 이에 따라 위탁매매 수수료 수익이 악화됐다. 신한투자증권의 3분기 순이익은 전 분기보다 77.4% 감소한 653억 원이다. 에프앤가이드 전망으로는 키움증권, 삼성증권, 한국금융지주의 순이익도 전 분기보다 22.6~43.9% 줄어들 것으로 예상되며, 미래에셋증권은 적자 전환 가능성이 거론된다. 증권주는 시장보다 변동이 커 거래대금이 회복되지 않으면 반등도 제한적일 수 있다는 평가다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005755541",
+      "url": "https://n.news.naver.com/mnews/article/009/0005755541",
+      "title": "\"M&A 위축 우려\" … \"개미 차별 안돼\"",
+      "summary": "찬반 논란 뜨거운 의무공개매수 법안 '50%+1주' 의무공개매수 법안 국회 처리 앞두고 곳곳서 반발 의무공개 매수비율·배분 방식 이재명 대통령, 공개 의견수렴 국회 본회의 문턱에서 '일단 멈춤'을 했던 의무공개매수",
+      "published": "2026-10-28T17:45:17+09:00",
+      "source": "매일경제",
+      "category": "industry",
+      "body_chars": 1646,
+      "body_file": "10-industry.txt",
+      "summary_ko": "이재명 대통령이 28일 엑스를 통해 의무공개매수 제도에 대한 각계 의견을 청취하겠다고 밝히면서, 국회 본회의에서 멈춰 섰던 관련 법안을 둘러싼 업계 논의가 다시 달아오를 전망이다. 계류 중인 법안은 의무공개매수 최소 수량을 '50%+1주'로 정하고, 기존 대주주 지분을 먼저 매수한 뒤 나머지를 안분비례로 사도록 했다. 소액주주 차별을 법제화해서는 안 된다는 주장과 M&A를 위해 대주주 우대가 필요하다는 관점이 맞서고 있다. 해외에서는 대부분 모든 주주가 같은 공개매수에 참여하거나 잔여 주식 전부에 대한 매수 제안을 의무화하고 있어, 소액주주 지분이 저평가될 수 있다는 우려가 제기된다. 반면 전량 매수 강제는 인수 측 자금 부담을 키워 M&A를 위축시키고, 대주주의 매각 유인을 떨어뜨려 구조조정도 어렵게 만들 수 있다는 지적이 나온다. 한국기업거버넌스포럼은 대주주 우선 부분매수를 허용하되 독립주주 과반의 승인을 요건으로 하는 절충안을 내놓았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005755539",
+      "url": "https://n.news.naver.com/mnews/article/009/0005755539",
+      "title": "삼성전기·삼성물산 \"생큐, AI\" … 3분기 매출도 영업이익도 '쑥'",
+      "summary": "주요 상장사 실적 분석 삼성전기, MLCC·기판 효자 물산, 반도체 시설 수주 확대 SKC, 동박 사업이 매출 견인 OCI는 실적 호조에 흑자전환 삼성전기·삼성물산이 인공지능(AI) 인프라 확산과 주력 사업부 수익성",
+      "published": "2026-10-28T17:45:11+09:00",
+      "source": "매일경제",
+      "category": "industry",
+      "body_chars": 1195,
+      "body_file": "11-industry.txt",
+      "summary_ko": "삼성전기는 3분기 연결기준 매출 3조7633억원, 영업이익 6910억원을 기록해 전년 동기 대비 각각 30%, 165% 늘며 역대 최대 분기 실적을 냈다. AI 데이터센터용 MLCC와 서버·AI 가속기용 고부가 기판 공급이 늘고 전기차용 카메라 모듈 매출도 증가한 덕분이다. 회사는 AI 서버용 최첨단 MLCC 수급이 당분간 타이트할 것으로 보고 고객사 약 50곳과 장기공급계약을 체결했거나 협의 중이라고 밝혔다. 삼성물산은 3분기 매출 12조80억원, 영업이익 1조1428억원으로 전년 동기보다 각각 18.3%, 15.2% 늘었다. 건설부문은 반도체 생산시설 등 하이테크 공사와 해외 건축 프로젝트 확대로 영업이익이 149.5% 늘었다. SKC는 3분기 매출 6389억원으로 26% 늘었으나 영업손실 496억원을 냈다. OCI는 3분기 영업이익 303억원으로 전년 동기 대비 흑자 전환했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "009-0005755467",
+      "url": "https://n.news.naver.com/mnews/article/009/0005755467",
+      "title": "데이터센터 사모투자, 외국계에 다 내줄 판",
+      "summary": "'낡은' 공정거래법 시행령에 리츠·부동산펀드로 투자땐 대기업집단 지정 가능성 규제에 국내 PEF 주춤한 새 외국계가 AIDC 투자 싹쓸이 국내 사모펀드(PEF)가 미래 먹거리인 인공지능 데이터센터(AIDC) 같은 실",
+      "published": "2026-10-28T17:32:08+09:00",
+      "source": "매일경제",
+      "category": "industry",
+      "body_chars": 1211,
+      "body_file": "12-industry.txt",
+      "summary_ko": "국내 사모펀드(PEF)가 인공지능 데이터센터(AIDC) 같은 실물자산 투자를 꺼리는 이유는 공정거래법 시행령 때문이다. 2021년 자본시장법 개정으로 길은 열렸지만, 시행령은 PEF의 대기업집단 지정 예외를 PEF전업집단에만 인정해 리츠·부동산펀드·프로젝트금융투자회사(PFV)를 쓰면 예외가 적용되지 않는다. 데이터센터는 통상 이런 기구로 보유하므로 수천억 원대 투자 한 건만으로도 집단 전체가 대기업집단으로 묶일 수 있다. 지정되면 운용사 대표가 동일인이 되고 포트폴리오 기업이 계열사로 편입돼 내부거래 신고와 사익편취 규제를 받는다. 반면 외국계 PEF는 이런 제약 없이 KKR의 SK호라이즌 약 3조800억원 투자 등 AIDC 투자를 주도하고 있다. 올해 상반기에도 5000억원 이상 국내 기업 인수의 약 80%를 외국계가 차지했다. 국내 PEF가 인프라 투자를 확대하려면 실물투자기구가 필요하지만, 일반 법인을 세우면 지정 예외는 유지되는 대신 리츠의 세제 혜택을 포기해야 한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "003-0014285429",
+      "url": "https://n.news.naver.com/mnews/article/003/0014285429",
+      "title": "美日국방장관, 中견제 공조…훈련·탄약 생산 강화 논의",
+      "summary": "미국과 일본 국방장관이 중국을 견제하기 위한 방위 협력을 확인했다. 일본 난세이 제도에서 대만, 필리핀으로 이어지는 제1도련선의 방어 태세를 강화하는 데 뜻을 모았다. 제1도련선은 일본 열도에서 대만·필리핀 등으로",
+      "published": "2026-10-28T16:48:15+09:00",
+      "source": "뉴시스",
+      "feed": "world",
+      "category": "global",
+      "region": "japan",
+      "body_chars": 1359,
+      "body_file": "13-global.txt",
+      "summary_ko": "미국과 일본의 국방장관이 28일 필리핀 세부에서 회담해 중국 견제를 위한 방위 협력을 확인했다. 양측은 일본 난세이 제도에서 대만, 필리핀으로 이어지는 제1도련선의 방어 태세를 강화하기로 뜻을 모았다. 상대가 공격해도 목표를 달성하기 어렵게 만드는 '거부를 통한 억지'를 강화하는 방안도 논의했다. 헤그세스 미국 국방장관은 실전적인 훈련, 시설과 지역 접근 확대, 탄약 생산 강화가 필요하다고 강조했다. 이번 회담은 29일 열리는 아세안 확대 국방장관회의를 앞두고 이뤄졌다. 양국은 방위산업 협력을 넓히고 첨단 미사일의 공동 생산 시점을 앞당기는 방안도 추진하며, 탄약 생산 협력을 주요 의제로 다뤘다. 대규모 개인정보 유출 등에 대응하기 위한 사이버공격 대응 협력에도 합의했다. 일본은 연말까지 국가안보전략 등 3대 안보 문서를 개정할 예정이어서 방위력 강화에 필요한 재원을 어떻게 마련할지가 과제로 남았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "003-0014285177",
+      "url": "https://n.news.naver.com/mnews/article/003/0014285177",
+      "title": "이란은 왜 협상 서두르지 않나…美 불신·중간선거·호르무즈 카드",
+      "summary": "이란이 미국의 재공격 우려에도 협상 조건에서 물러서지 않는 모습이다. 미국에 대한 불신 속에 호르무즈해협 통항과 미국 중간선거를 지렛대 삼아 양보를 끌어내려는 전략이라는 분석이 나왔다. 중동 매체 알자지라는 27일(",
+      "published": "2026-10-28T15:54:18+09:00",
+      "source": "뉴시스",
+      "feed": "world",
+      "category": "global",
+      "region": "mideast",
+      "body_chars": 2197,
+      "body_file": "14-global.txt",
+      "summary_ko": "이란이 미국의 재공격 우려에도 협상 조건을 낮추지 않는 배경에는 미국에 대한 불신과 호르무즈해협 카드가 있다는 분석이다. 알자지라에 따르면 이란은 해협의 정상 통항 대가로 제재 완화, 동결자산 해제, 항만 봉쇄 해제, 재공격 방지 보장을 요구했다. 미국은 핵 프로그램 양보를 바라지만 이란은 전쟁 종결이 먼저라고 맞서고 있다. 과거 합의와 휴전이 공격을 막지 못했다는 인식이 깔려 있다. 해협은 전쟁 전 세계 원유·LNG 물동량의 약 5분의 1이 지나던 곳으로, 통항 차질은 에너지 가격을 끌어올려 미국에도 부담이 됐다. 11월3일 중간선거를 앞두고 이란이 협상을 서두르지 않는다는 해석도 나온다. 이스라엘 총선 결과 역시 변수지만 야권 지도자도 이란 공격을 지지해 와 압박이 줄지는 불확실하다. 협상의 향방은 해협 통항, 제재 해제, 핵 협상의 순서에 달려 있으며 선거 이후에도 이견이 좁혀지지 않으면 교착이 이어질 수 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "011-0004676177",
+      "url": "https://n.news.naver.com/mnews/article/011/0004676177",
+      "title": "인민은행 하루 최대 1조 위안 공급…中 5년물 금리 최저로",
+      "summary": "중국 중앙은행인 인민은행(PBOC)이 역대 최대 규모의 단기 유동성을 공급하면서 중국 국채 5년물 금리가 사상 최저로 떨어졌다. 28일 블룸버그에 따르면 중국 국채 5년물 금리는 전일보다 2.69bp 하락한 1.34",
+      "published": "2026-10-28T17:17:07+09:00",
+      "source": "서울경제",
+      "feed": "world",
+      "category": "global",
+      "region": "china",
+      "body_chars": 1456,
+      "body_file": "15-global.txt",
+      "summary_ko": "중국 인민은행이 21일부터 다음 달 2일까지 매일 최대 1조 위안의 익일물 역레포를 공급하기로 하면서 국채 5년물 금리가 사상 최저인 1.340%까지 떨어졌다. 전날 순유동성 공급액은 1조 100억 위안으로 일일 순공급 기준 역대 최대다. 27일에는 공급 한도 1조 위안이 모두 소진됐다. 자금 수요 확대는 27일 만기가 된 중기유동성지원창구(MLF) 9000억 위안과 월말 자금 수요, 정부채 발행 대금이 겹친 데서 비롯됐다. 시중 자금이 채권시장으로 흘러들면서 국채 가격이 오르고 금리가 내려갔다는 분석이다. 인민은행이 7일물 정책금리를 1.40%로 유지한 채 물량만 늘린 만큼, 단기 금리 급등과 자금난을 막는 안정화 조치로 풀이된다. 경기 둔화와 디플레이션 압력에 대응하려는 의지로도 해석된다. 전문가들은 내수 부진과 부동산 침체가 이어지는 한 유동성이 국채로 쏠리는 현상이 당분간 계속될 것으로 보고 있다. 다만 은행권의 단기 자금난은 완화되더라도 실물경제 회복으로 이어질지는 불확실하다는 것이 중론이다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "421-0009256184",
+      "url": "https://n.news.naver.com/mnews/article/421/0009256184",
+      "title": "EU, 하이브리드車 이어 '위안화' 협상 타진…\"고위급 방중 검토\"",
+      "summary": "중국과 중국산 하이브리드 자동차 수출 상한제(쿼터제)를 합의한 유럽연합(EU)이 이번엔 '저평가'된 위안화 문제를 두고 본격적인 협상에 나설 것으로 관측된다. 홍콩 사우스차이나모닝포스트(SCMP)는 28일(현지시간)",
+      "published": "2026-10-28T16:30:50+09:00",
+      "source": "뉴스1",
+      "feed": "world",
+      "category": "global",
+      "region": "europe",
+      "body_chars": 1946,
+      "body_file": "16-global.txt",
+      "summary_ko": "EU가 중국과 하이브리드 자동차 수출 상한제에 합의한 데 이어, 이번에는 저평가된 위안화 문제를 놓고 협상에 나설 전망이다. 홍콩 SCMP는 28일 마르틴 베르웨이 EU 경제총국장이 이끄는 고위 경제 당국자들이 11월 하순 중국과 거시경제 대화를 진행한다고 보도했다. 연말이나 내년 초에는 라가르드 ECB 총재 등 3명의 방중도 검토되고 있다. 이들은 판궁성 인민은행장, 란포안 재정부장과 환율과 글로벌 경제 불균형을 논의할 것으로 보인다. 논의는 이달 초 방콕 IMF·세계은행 연차총회와 G20 회의를 계기로 시작됐으며, 실질적 돌파구는 없었지만 실무 논의의 발판이 마련됐다. EU에서는 위안화 저평가로 중국 제품의 가격 경쟁력이 높아져 유럽 제조업이 타격을 입고 있다는 인식이 커지고 있다. IMF는 위안화가 최대 21% 저평가됐다고 보지만, 중국은 올해 유로 대비 10% 상승을 들어 이를 부인한다. 전문가들은 중국의 양보 여부가 관건이며, 미국의 지원 없이는 설득이 어렵다고 본다.",
+      "summary_model": "claude-haiku-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "kr",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 142,
+    "answered": 142,
+    "dropped": [
+      {
+        "guid": "018-0006398191",
+        "title": "'인도 재벌' 암바니의 IT기업 '성공적 상장'…첫날 주가 23% '쑥'",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "215-0001270809",
+        "title": "\"비트코인 600달러때 화폐 혁명은 예고됐다\" [B급기자의 B급리포트]",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "119-0003147905",
+        "title": "비트코인, 숏 청산에 8만 달러 회복[코인뉴스]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "023-0004006363",
+        "title": "‘자동차주’ 꼬리표 떼고 싶은 GM, 115년 만에 나스닥행… 먼저 옮긴 기업들 주가는",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "215-0001270733",
+        "title": "이란 최고지도자, 종전 의지 강조…WTI 100달러 아래로 [글로벌 머니플로우]",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "016-0002715237",
+        "title": "‘AI 위기론’ 넘어설까…앤트로픽발 훈풍에 나스닥 1.2%↑[투자360]",
+        "label": "foreign",
+        "confidence": 0.95
+      },
+      {
+        "guid": "119-0003147817",
+        "title": "美 금리 동결 기대에도…비트코인은 왜 못 오르나",
+        "label": "foreign",
+        "confidence": 0.95
+      },
+      {
+        "guid": "018-0006397517",
+        "title": "앤스로픽 기대감에 나스닥 1.2%↑…시선은 빅테크 실적으로[월스트리트in]",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "018-0006397513",
+        "title": "[속보]앤스로픽發 AI 랠리 이틀째…나스닥 1.2% 상승",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "023-0004006281",
+        "title": "“美 국채 금리 5%에도… 경제 성장 타격 없어”",
+        "label": "foreign",
+        "confidence": 0.98
+      }
+    ],
+    "stopped": "complete",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "011-0004676229",
+        "title": "맥쿼리 공개매수 발표에…KINX 상한가, 가비아 26% 급등[시그널]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.53,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004676228",
+        "title": "외국인 귀환에 다시 자사주 방패…힘받는 코스피 바닥론",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004676227",
+        "title": "고점서 반토막 난 증권 ETF…작년말 가격으로 돌아갔다",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755563",
+        "title": "李대통령도 운띄운 의무공개매수제…국회처리 앞두고 곳곳서 반발",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834849",
+        "title": "\"HD현대일렉트릭, 현재 할인폭 과도…목표가↓\"[클릭 e종목]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347660",
+        "title": "삼전닉스 나란히 '불기둥'…코스피, 2주 만에 '6천피' 복귀",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755541",
+        "title": "\"M&A 위축 우려\" … \"개미 차별 안돼\"",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755539",
+        "title": "삼성전기·삼성물산 \"생큐, AI\" … 3분기 매출도 영업이익도 '쑥'",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755467",
+        "title": "데이터센터 사모투자, 외국계에 다 내줄 판",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "648-0000052033",
+        "title": "'주가 누르기' 방지책 실효성 논란…정부 \"보완 방안 검토\"",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755417",
+        "title": "“ETF 투자 불안? 우린 올해 88% 올랐는데”…개미가 6000억 사들인 상품",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "648-0000052032",
+        "title": "실적에 반박당한 메모리 정점론...삼전닉스 급등에 코스피 6000 탈환",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.61,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016407023",
+        "title": "앤트로픽이 끌고 SK하이닉스가 밀고…반도체 투심 되살아나나(종합)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005433079",
+        "title": "\"와~ 역대급이다!\" 하이닉스에 탄성…주가 14만원 올라 140만원대 탈환",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005433075",
+        "title": "\"땡큐 SK하이닉스\" 코스피, 6000 탈환…美 FOMC 다음 관문",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005433066",
+        "title": "\"반바지 왜 없어요\" 증시업종 개편…패시브 수급 지각변동",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006398191",
+        "title": "'인도 재벌' 암바니의 IT기업 '성공적 상장'…첫날 주가 23% '쑥'",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009256158",
+        "title": "피지컬AI 기대에 로봇주 급등…레인보우 15%·로보티즈 10%↑[핫종목]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014285350",
+        "title": "삼성전자·SK하이닉스 폭등…外人 7600억원 쓸어 담았다[핫스탁](종합)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005433050",
+        "title": "시총 미달 코스닥 '코넥스 퇴로' 열었지만…절반은 못 간다",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "138-0002246372",
+        "title": "“하이닉스 83조 실적에 100조 주주환원”…코스피 6.6% 폭등, 6000선 탈환",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "243-0000104840",
+        "title": "삼전 9%, SK하닉 10%대 폭등, '이런 불기둥 얼마만인가'[오늘의증시]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "654-0000207995",
+        "title": "코스피 10거래일 만에 6000선 탈환…6.63% 오른 6012.44",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014285187",
+        "title": "코스피, 반도체 날개 달고 6000선 안착…삼전·닉스 10% 안팎 급등",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001200966",
+        "title": "“2030년에도 메모리 부족”… AI 고점론 후퇴에 증시 폭등[마켓뷰]",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.48,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001070144",
+        "title": "'6000피' 귀환⋯삼전닉스 급등에 코스피 6.6% 상승 마감",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.51,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023-0004006443",
+        "title": "“메모리 부족 2030년까지”…삼전·하이닉스 급등에 코스피 6000선 회복",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595896",
+        "title": "83조 실적에 '지속성' 더했다…100조 환원에 SK하이닉스 반등",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347550",
+        "title": "'삼전닉스' 폭등에 코스피 6000선 탈환…6.63% 급등",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755327",
+        "title": "“실적잔치에 돈 좀 만졌었는데”…개미만 운 게 아니었다, 증권가 이익 ‘뚝’",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006398138",
+        "title": "“바닥 다졌나” SK하이닉스 훈풍에 코스피 석 달 만에 최대 폭등…6000선 재탈환",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005432993",
+        "title": "최저가에도 카카오에 등돌린 증권가…매수지만 목표가 30% '뚝'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001270809",
+        "title": "\"비트코인 600달러때 화폐 혁명은 예고됐다\" [B급기자의 B급리포트]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "119-0003148212",
+        "title": "코인 과세 시계 결국 멈추나…업계는 기대 속 ‘신중’",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016406470",
+        "title": "삼성전기 \"AI 부품 공급 부족 지속\"…MLCC·기판 생산 확대(종합2보)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006398081",
+        "title": "박현주, 日 이어 中 증권사 M&A 속도…美·싱가포르까지 '증권업' 확장 구상",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001200925",
+        "title": "실적보다 강했던 ‘2030년 청사진’… SK하이닉스, ‘AI 고점론’ 잠재웠다",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006398072",
+        "title": "“지수보다 10%P 더 벌었는데”…상장폐지 걱정하는 액티브 ETF",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001070069",
+        "title": "앤트로픽 IPO 들뜬 코스피⋯스페이스X 경험에 자금 이탈 '경계'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.56,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001270792",
+        "title": "SK하닉, 추가로 60조원 더 쏜다...주당 2만원 현금배당",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715560",
+        "title": "‘라이선스 장벽’ M&A로 넘는다…미래에셋, 일본 증권사 인수 발표",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715559",
+        "title": "화성공장 심리스 튜브 양산 채비…율촌 주가부양 속도전 [투자360]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595792",
+        "title": "파인텍, '삼성디스플레이 베트남'서 OLED 100억원 추가 수주",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006398016",
+        "title": "삼전닉스 8~9%대 강세에 코스피 6000선 돌파",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.49,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004676051",
+        "title": "MLCC 수요 심상치않더니…‘깜짝 실적’ 삼성전기 10% 급등 [줍줍 리포트]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834680",
+        "title": "\"외국인·기관 조 단위로 사들였다\"…삼전닉스 급등에 코스피 6000 탈환",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014284458",
+        "title": "과세 준비는 덜 됐는데 시행 코앞…가상자산도 '레버리지 ETF 악몽'?",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023-0004006410",
+        "title": "사상 최대 규모의 앤스로픽 상장…투자자 6대 유의점",
+        "category": "market",
+        "label": "foreign_impact",
+        "confidence": 0.35,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755206",
+        "title": "인수가격 올린 맥쿼리, 가비아 인수 합의…주요주주 얼라인도 지분 넘긴다",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715502",
+        "title": "‘300만닉스’ 재돌파 정조준 [SK하이닉스 3분기 실적]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004676025",
+        "title": "‘어닝 서프라이즈’ 기대되는 두산, 순매수 1위 [주식 초고수는 지금]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "243-0000104826",
+        "title": "SK하닉, '실적·완판물량·주주환원' 삼박자로 AI 고점론 반박[오늘의 삼전닉스]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629-0000546359",
+        "title": "하이닉스가 쏜 주주환원 기대감에 '6000피'…삼성전자도 힘 보탤까",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715465",
+        "title": "원화강세에 서학개미, 美주식 순매수 연중 최대",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014283906",
+        "title": "인니·프랑스 이어 브라질도…환차손·증시급락에 투자자 '비상'",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.34,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009255024",
+        "title": "'삼전닉스 불기둥'…코스피, 10거래일 만에 장중 6000선 터치",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397919",
+        "title": "“코스피 8100 간다고?”…증권사가 찍은 반등 시점은",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016405671",
+        "title": "SK하닉 3분기 영업익 83조 역대 최대…분기매출 100조 첫 돌파(종합2보)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016405670",
+        "title": "코스피, 장중 상승폭 커져 6%대 급등…6,000선 '터치'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014283819",
+        "title": "반도체株 급등에 코스피 6000선 터치…外人·기관 '쌍끌이'(종합)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595681",
+        "title": "HD현대일렉트릭, 환율·수주 둔화에 이익률↓…\"LG이노텍, 악재는 대부분 노출\"",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005432783",
+        "title": "앤트로픽이 끌고 하닉이 밀고…코스피, 상승 이어질까?",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715399",
+        "title": "‘AI 고점론’ 우려 끝?…삼전닉스 나란히 8%대 폭등 [종목Pick]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016405509",
+        "title": "앤트로픽이 끌고 SK하이닉스가 밀고…반도체 투심 되살아나나",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014283690",
+        "title": "A2O LITE 'NEON' 흥행 돌풍인데…엔터株 주가는 '한파'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629-0000546300",
+        "title": "2720억이 3조5000억으로…앤트로픽 IPO에 SKT 주주도 '잭팟' 터질까",
+        "category": "market",
+        "label": "foreign_impact",
+        "confidence": 0.52,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014283612",
+        "title": "반도체 '투톱' 8%대 급등…삼성전자 24만원 돌파·SK하이닉스 145만원 육박",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014283609",
+        "title": "SK하이닉스 '83조 실적·100조 환원' 잭팟…증권가 \"반등 분수령\"",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834550",
+        "title": "\"오늘 되는 날이네\" 코스피 5%대 급등…앤스로픽 기대감에 하이닉스 주주환원까지",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "648-0000052012",
+        "title": "메타 훈풍+SK하이닉스 '역대급 실적'…코스피 5% 급등하며 6000선 근접",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755115",
+        "title": "앤트로픽·하이닉스발 훈풍에 반도체 소부장도 ‘꿈틀’…훈풍 이어질까",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.56,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "138-0002246278",
+        "title": "박현주 “29일 M&A 발표”…미래에셋, 日 증권사 인수·中 금융사도 노린다",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "138-0002246277",
+        "title": "“하이닉스 주주환원 100조원”…코스피 5% 급등, 이틀 연속 매수 사이드카",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009254675",
+        "title": "코스피 이틀 연속 매수 사이드카…삼전 6%·SK하닉 5% 급등(상보)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "138-0002246276",
+        "title": "“이틀 새 350포인트 급등”…코스피 5800선 탈환, 하이닉스 시총 1000조 재돌파",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715330",
+        "title": "앤트로픽 이어 SK하이닉스도 압도적 실적…코스피 3%대 상승 [투자360]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016405197",
+        "title": "브라질 국채값·헤알화 폭락에 '삼바 채권' 투자자들 '악'",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "031-0001069930",
+        "title": "코스피 5800 탈환⋯SK하이닉스 호실적·美 기술주 강세 '훈풍'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004675943",
+        "title": "삼성전자 5% 뛸 때 우선주 8%…괴리율·소각 요구에 주가 ‘쑥’ [줍줍 리포트]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016405149",
+        "title": "SK하이닉스 3분기 영업익 역대 최대 83조…매출 100조 첫 돌파(종합)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014283343",
+        "title": "삼성전자, 23만원선 재탈환…SK하이닉스도 사상 최대 실적에 2%대↑[핫스탁]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "119-0003147905",
+        "title": "비트코인, 숏 청산에 8만 달러 회복[코인뉴스]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009254524",
+        "title": "한투證, '영업익 반토막' LG이노텍 목표가 29%↓…\"환율 부담\"",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347386",
+        "title": "美선 펄펄 나는데 한국선 '돈 벌어도 상폐'…액티브 ETF 역설",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.51,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001200790",
+        "title": "AI 투자 심리 회복… 코스피, 3% 넘게 급등 중",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005432698",
+        "title": "미국 반도체 훈풍+SK하이닉스 호실적...5800피 회복",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009254509",
+        "title": "'깜짝 실적·60조 추가 환원' SK하이닉스 3%↑…삼전도 4% 급등[핫종목]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347381",
+        "title": "삼전 110조·하이닉스 100조 '역대급 주주환원'에…주가 '훨훨'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629-0000546221",
+        "title": "코스피 2%대 급등하며 5760선 회복…美 AI 훈풍에 반도체주 '활짝'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347369",
+        "title": "코스피, 2%대 상승해 5700선 회복…삼전닉스 동반 강세",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755060",
+        "title": "“목표주가 내릴게요, 87%만 오르는걸로”…HD현대일렉 그래도 사라는데 [오늘 나온 보고서]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595515",
+        "title": "\"자회사 지분으로 빚 갚고 투자하고\"…HD현대그룹 EB의 다른 셈법 [fn마켓워치]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397641",
+        "title": "코스피 5800선 돌파…하이닉스발 훈풍에 되살아난 투심",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834383",
+        "title": "SK닉스 손자회사 솔리다임, 美 60조원 투자 협상",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595507",
+        "title": "ETF 생겨도 안 오르는 알트코인…'가격 반등' 전에 봐야 할 2가지 [크립토 브리핑]",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004675912",
+        "title": "셀트리온, 3분기 연속 ‘어닝 서프라이즈’에 목표주가 상향[Why 바이오]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004675911",
+        "title": "주주에 연 30조 쏜다…역대급 환원 SK하이닉스, 2% ‘쑥’ [줍줍 리포트]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366-0001200763",
+        "title": "한화證 “코스피, 지금은 팔 때 아닌 살 때…외국인 매도 정점 지났다”",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016404931",
+        "title": "키움증권 \"코스피, 이익 지속성 증명의 시간…7,100 안착 관건\"",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001270739",
+        "title": "“주가 40만원 간다”는 이유…AI 신사업 우려 걷혔다 [주식R]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023-0004006363",
+        "title": "‘자동차주’ 꼬리표 떼고 싶은 GM, 115년 만에 나스닥행… 먼저 옮긴 기업들 주가는",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397614",
+        "title": "\"삼성전자, 메모리 10년 계약 시대 온다…기업가치 재평가 기대\"",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595488",
+        "title": "캐나다 수주 놓친 한화오션…목표가 18% 낮춘 이유",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347326",
+        "title": "셀트리온, 신제품 성장에 최대 실적…증권가 목표가 '줄상향'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397608",
+        "title": "유가 내리고·AI 반도체 랠리…뉴욕증시 상승에 코스피도 훈풍?[뉴스새벽배송]",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397600",
+        "title": "“네이버 40만원 간다?”…12조 AI 계약에 증권사 '강력 매수'",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397599",
+        "title": "LS, 비상장사 할인 확대에 목표가 39만원으로 하향-메리츠",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "009-0005755043",
+        "title": "“신한지주, 3분기 실적 아쉽지만 연간 최대 실적 기정사실”…목표가는↓",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347315",
+        "title": "미국 이어 中 빅테크 삼성전자 찾는 이유…메모리 '10년 전쟁'",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.62,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "029-0003055680",
+        "title": "앤트로픽·반도체 랠리 …삼전·SK하닉 프리마켓 3%대 폭풍 질주",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001270733",
+        "title": "이란 최고지도자, 종전 의지 강조…WTI 100달러 아래로 [글로벌 머니플로우]",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "001-0016404812",
+        "title": "하이닉스 주주환원책 기대…코스피 상승 이어갈까[마켓뷰]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "016-0002715237",
+        "title": "‘AI 위기론’ 넘어설까…앤트로픽발 훈풍에 나스닥 1.2%↑[투자360]",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397573",
+        "title": "“목표가 깎아도 두 배 간다?”…HD현대일렉트릭에 무슨 일",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397568",
+        "title": "“지금이 살 때”…외국인 매도 정점 지났다, 삼전닉스가 반전 방아쇠",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.46,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397566",
+        "title": "“주가 빠질 때 사라?”…RFHIC, 증권사가 53% 상승 본 이유",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834320",
+        "title": "\"한화오션, 4분기도 쉽지 않다…목표가 하향\"[클릭 e종목]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014282949",
+        "title": "KB證 \"삼성전자, AI 수익화 확산과 초장기 계약까지…재평가 기대\"",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397565",
+        "title": "셀트리온, 바이오시밀러 신제품 판매 확대…목표가 11%↑-NH",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397561",
+        "title": "“고점서 65% 빠졌는데 또?”…한화오션 목표가 28% 뚝",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397560",
+        "title": "LG이노텍, 3분기 수익성 악화…목표가 85만→56만원 '뚝'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215-0001270726",
+        "title": "기술주 투심 변곡점...실적 앞둔 SK하이닉스, ADR은 일단 올랐다 [마켓무버의 국장 힌트]",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347304",
+        "title": "\"LG이노텍, 환율 급락에 '어닝 쇼크'…목표가↓\"-대신",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "119-0003147817",
+        "title": "美 금리 동결 기대에도…비트코인은 왜 못 오르나",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014282914",
+        "title": "\"하이닉스 실적 앞두고 엇갈린 外人\"…삼성 사고 SK 팔았다",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "119-0003147810",
+        "title": "\"80조 벌어도 주가는 폭락?\"…SK하닉 개미 달랠 카드 꺼낼까",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834297",
+        "title": "커버드콜ETF인데 '액티브'라고?…상품 줄줄이 나오는 이유",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.38,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "277-0005834296",
+        "title": "미 국채금리 내려가는데…코스피는 왜 아직 휘청일까",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.66,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "648-0000051997",
+        "title": "[단독]두나무 품는 네이버파이낸셜, 상장 땐 네이버에 '주주보호 의무'",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "015-0005347289",
+        "title": "\"코스피 7500 간다는데\"…외국인이 '삼전닉스' 던지는 이유 [분석+]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "011-0004675856",
+        "title": "“AI 버블 붕괴? 수요 안 꺾였다”…SK證 “코스피 사모을 때”[줍줍리포트]",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "014-0005595439",
+        "title": "엔스로픽 IPO에 등장한 K반도체…\"보장할수 없다\"는 이유",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "003-0014282857",
+        "title": "삼전·닉스 120조 역대급 주주환원 온다…증시 반등 계기될까",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.61,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "421-0009254133",
+        "title": "박진영 없는 JYP '너무 쉽다'…'지분 15%' 적대적 M&A '먹잇감'",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397517",
+        "title": "앤스로픽 기대감에 나스닥 1.2%↑…시선은 빅테크 실적으로[월스트리트in]",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397513",
+        "title": "[속보]앤스로픽發 AI 랠리 이틀째…나스닥 1.2% 상승",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005432587",
+        "title": "앤트로픽 소식에… 반도체 소부장 ETF 살아나나",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.28,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "008-0005432564",
+        "title": "AI 수익화 기대감에 반도체 '껑충'… 외인·기관 쌍끌이",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018-0006397488",
+        "title": "국민연금이 국내주식 33조 팔았다면…김성주 “증시 충격 컸을 것\"",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023-0004006281",
+        "title": "“美 국채 금리 5%에도… 경제 성장 타격 없어”",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023-0004006280",
+        "title": "1주 전만해도 삼바춤 췄는데… 브라질 국채 투자자, 하루 새 18% 손실",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "005-0001881297",
+        "title": "미래에셋, 日 증권사 인수 예고… “반도체 고점론, 틀릴 가능성”",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.95,
+        "exempt": false,
+        "status": "judged"
+      }
+    ],
+    "late": 0,
+    "seconds": 23.8,
+    "categories": [
+      "industry",
+      "macro",
+      "market",
+      "policy"
+    ]
+  }
+}
