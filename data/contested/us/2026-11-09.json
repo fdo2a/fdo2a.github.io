@@ -3,83 +3,48 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-09",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-10T22:04:13+00:00",
- "cutoff_at": "2026-11-10T22:04:13+00:00",
+ "collected_at": "2026-11-10T23:09:34+00:00",
+ "cutoff_at": "2026-11-10T23:09:34+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "bc160111e33012a3fe7a4eb781218fd562cd7593",
-  "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 217,
+  "harvest": 215,
   "candidates": 3,
   "articles": [
    2,
    1,
-   6
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 78245,
-   "out": 17036
+   "in": 4613,
+   "out": 67
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "short",
-   "bbc.co.uk": "ok"
+   "aljazeera.com": "short"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "5/5"
-  },
-  "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 5,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "memo[1]",
-    "variables[0]",
-    "variables[1]",
-    "worry.most[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "variables[1]:unverified",
-    "edges[1]:unverified"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "엔비디아 젠슨 황 CEO의 중국 스파이 의혹 연루와 안보·수출통제 논쟁",
-  "query": "nvidia jensen affair",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "variables[1]:unverified",
-  "edges[1]:unverified"
- ],
- "content_hash": "099bea1b0e5510a3"
+ "content_hash": "449144b99302639c"
 }
