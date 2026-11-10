@@ -261,6 +261,44 @@ def number_result(code, stdout, stderr, timed_out):
             'counts': obj.get('counts') or {}, 'lines': (violations + warnings)[:3]}
 
 
+_INDEX_GAP = re.compile(r'indices\.[A-Z]+\.\d{4}-\d{2}-\d{2}')
+
+
+def kr_index_gaps(agg):
+    """주간 집계 missing 에서 「세션 날짜 × 지수」 빈 칸만(kr.period.finalize 가 적는 키)."""
+    return sorted(m for m in (agg or {}).get('missing') or [] if _INDEX_GAP.fullmatch(m))
+
+
+def kr_index_gap_notes(aggs):
+    """{주 키: 주간 집계} → 알림 머리 줄. 발행 때 빠진 지수는 자동 보완하지 않는다(2026-11-10)."""
+    notes = []
+    for key in sorted(aggs or {}):
+        gaps = kr_index_gaps(aggs[key])
+        if not gaps:
+            continue
+        what = ', '.join(f'{g.split(".")[1]} {g.split(".")[2]}' for g in gaps[:6])
+        notes.append(f'KR 주간 {key} 지수 누락: {what} — 새벽 재수집으로 자동 보완하지 않아요. '
+                     f'원자료를 확인해 글을 정정한 뒤 수동 승격(versions.py promote)해야 주간이 나가요')
+    return notes
+
+
+def kr_weekly_aggs(root, rev='origin/main', last=2):
+    """원격 판의 최근 KR 주간 집계 두 개 — 읽지 못하면 빈 dict(알림은 계속)."""
+    r = _git_bytes(root, 'ls-tree', '--name-only', rev, 'kr/data/weekly/')
+    if r.returncode != 0:
+        return {}
+    names = sorted(n for n in r.stdout.decode().split() if re.search(r'\d{4}-W\d{2}\.json$', n))[-last:]
+    out = {}
+    for n in names:
+        b = _git_bytes(root, 'show', f'{rev}:{n}')
+        if b.returncode == 0:
+            try:
+                out[os.path.basename(n)[:-5]] = json.loads(b.stdout)
+            except ValueError:
+                continue
+    return out
+
+
 def _git_bytes(root, *args):
     return subprocess.run(['git', '-C', root, *args], capture_output=True, timeout=60)
 

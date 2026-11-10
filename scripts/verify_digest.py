@@ -83,6 +83,11 @@ def build(state, now, args, notes):
                 numbers[path] = {'sha': sha, 'code': code_id, 'result': number}
         posts.append({'path': path, 'sha': sha, 'state': st, 'findings': findings,
                       'number': number, 'auto': D.auto_reviewed(path), 'draft': path in drafts})
+    # KR 주간 지수 누락 — 자동 보완하지 않으므로 사람에게 알린다(2026-11-10). 실패해도 알림은 계속
+    try:
+        notes.extend(D.kr_index_gap_notes(D.kr_weekly_aggs(root)))
+    except Exception as exc:  # noqa: BLE001
+        print(f'KR 주간 지수 누락 확인 실패: {exc}', file=sys.stderr)
     return posts, numbers, dict(published)
 
 

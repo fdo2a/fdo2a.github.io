@@ -35,6 +35,8 @@ jobs:
         # (2026-09-24 run 35935382006). 시작 시점의 main 을 받는다.
         with:
           ref: main
+          # 판 관리(scripts/common/versions.py)가 발행 커밋 P 를 이력에서 찾는다 — 얕은 checkout 에는 없다.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -94,17 +96,27 @@ jobs:
               print('missing:', ', '.join(d['missing']))
           PY
       - name: Commit data
+        # 판 관리 1단계(2026-11-10): 오늘과 같은 경로로 커밋 O 를 만든 뒤 원격 최신 위에 다시 세워 push 한다.
+        # 실행 원본은 versions/kr/<D>/runs/<run_id>/ 에 남는다. 모드는 레포 Variable KR_VERSIONS_MODE —
+        # 없으면 shadow(고정 경로는 오늘과 같은 바이트, 기록만). enforce 는 발행된 날의 값을 발행 커밋으로
+        # 둔다 — 켜는 것은 사용자 확인 뒤. 판정이 실패하면 오늘 방식(push_with_retry.sh)으로 내려가고
+        # ::warning:: 과 폴백 기록을 남긴다(보호 비활성). spec: docs/superpowers/specs/2026-11-10-kr-data-versions.md
+        env:
+          KR_VERSIONS_MODE: ${{ vars.KR_VERSIONS_MODE || 'shadow' }}
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add kr/data/*.json kr/data/kr_sector.html
-          git add -A kr/data/kr_fund_view.html 2>/dev/null || true
-          # 차트는 날짜별로 kr/assets/ 에 나간다 — 발행본이 ../assets/ 로 참조한다.
-          git add kr/assets/*.png 2>/dev/null || true
-          git add kr/data/history 2>/dev/null || true
-          git add kr/data/weekly 2>/dev/null || true
-          git add kr/data/news 2>/dev/null || true
-          # 하위 폴더라 위의 kr/data/*.json 이 잡지 못한다 — 따로 담는다
-          git add kr/data/telegram 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
-          bash scripts/ci/push_with_retry.sh "data: kr market data for ${RD}"
+          FORCE=""
+          if [ "${{ inputs.force }}" = "true" ]; then FORCE="--force"; fi
+          python scripts/common/versions.py commit --market kr --mode "$KR_VERSIONS_MODE" \
+            --message "data: kr market data for ${RD}" $FORCE
+      - name: Keep run copy (artifact)
+        # 커밋·push 가 실패해도 이 실행의 원본이 남는다(보존 90일).
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kr-versions-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/versions
+          if-no-files-found: ignore
+          retention-days: 90

@@ -11,6 +11,7 @@ US 와 달리 업종·거래대금은 그날 스냅샷만 있고 과거 계열�
 LEADING_CAP = 5
 
 MARKETS = ('KOSPI', 'KOSDAQ')
+INDEX_NAMES = MARKETS          # 원장 지수 이름(kr_market_data.json indices 키와 같다)
 SIDES = ('foreign', 'institution', 'individual')
 
 
@@ -144,6 +145,17 @@ def finalize(agg, index_closes):
             continue
         idx[name] = {'pct': round(p, 4), 'end': window[-1][1]}
     out['indices'] = idx
+
+    # 세션 날짜 × 지수의 빈 칸. 위 검사는 끝값·기준값만 보므로 중간 날 누락과 원장에 아예
+    # 없는 지수는 complete 를 바꾸지 않은 채 지나간다. 발행 때 빠진 지수는 새벽 재수집으로
+    # 자동 보완하지 않고 사람이 정정하므로 빈 칸을 이름 붙여 남긴다.
+    # 기록만 — complete 는 그대로(미발행일의 일시 결측까지 막지 않는다). 「발행된 날」의 빈 칸에 대한
+    # 주간 보류는 판 관리 enforce 가 건다(scripts/kr/versions_kr.hold_published_gaps). 매일 검증 알림이 읽는다.
+    for name in sorted(set(INDEX_NAMES) | set(index_closes or {})):
+        have = {d for d, v in (index_closes or {}).get(name) or [] if v is not None}
+        for d in dates:
+            if d not in have:
+                out['missing'].append(f'indices.{name}.{d}')
 
     out['daily'] = [{'date': d,
                      'leading_industries': sess[d].get('leading_industries') or []}

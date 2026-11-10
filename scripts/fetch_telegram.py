@@ -65,6 +65,31 @@ def previous_file(outdir, date):
         return None
 
 
+def with_run_cursors(prev, datadir, market):
+    """직전 파일의 채널 커서를 그날 실행 원본(versions/<market>/<D>/runs/*) 중 가장 앞선 ok 커서로 당긴다.
+
+    발행된 날의 파일은 발행판 그대로 동결되고(2026-11-10), 발행 뒤 재수집의 커서는 실행 원본에만
+    남는다 — 그 커서를 버리면 주말을 건너 72시간 상한에 걸릴 수 있다.
+    spec: docs/superpowers/specs/2026-11-10-kr-data-versions.md
+    """
+    d = (prev or {}).get('report_date')
+    if not prev or not d:
+        return prev
+    pat = os.path.join('versions', market, d, 'runs', '*', 'files', os.path.normpath(datadir),
+                       'telegram', f'{d}.json')
+    out = json.loads(json.dumps(prev))
+    for p in sorted(glob.glob(pat)):
+        run = load(p) or {}
+        for ch, st in (run.get('channels') or {}).items():
+            if st.get('status') != 'ok' or st.get('last_id') is None:
+                continue
+            cur = out.setdefault('channels', {}).get(ch) or {}
+            if cur.get('last_id') is None or st['last_id'] > cur['last_id']:
+                out['channels'][ch] = {**cur, 'last_id': st['last_id'], 'last_dt': st.get('last_dt'),
+                                       'status': 'ok', 'cursor_from': 'run'}
+    return out
+
+
 def load(path):
     try:
         with open(path, encoding='utf-8') as f:
@@ -226,7 +251,7 @@ def main(argv=None):
         print(f'{path} — 이미 요약이 있어 동결(다시 받으려면 --refresh)')
         return 0
     now = datetime.now(timezone.utc)
-    prev = previous_file(outdir, a.date)
+    prev = with_run_cursors(previous_file(outdir, a.date), a.datadir, a.market)
     cands, chans, notes = collect(a.market, prev, now)
     chosen = tg.select(cands)
 
