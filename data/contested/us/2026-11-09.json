@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-10T13:08:40+00:00",
- "cutoff_at": "2026-11-10T13:08:40+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-10T14:13:48+00:00",
+ "cutoff_at": "2026-11-10T14:13:48+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,98 +21,86 @@
   "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
  },
  "counts": {
-  "harvest": 200,
-  "candidates": 3,
+  "harvest": 205,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   6
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 51598,
-   "out": 14983
+   "in": 33829,
+   "out": 9097
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok",
-   "bbc.co.uk": "ok"
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "7/7",
-   "pairs": "2/2",
-   "obs": "7/7"
+   "claims": "4/4",
+   "pairs": "1/1",
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 7,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[0]",
     "edges[1]",
     "edges[2]",
     "memo[0]",
     "memo[1]",
     "memo[2]",
     "structure",
-    "variables[0]",
     "worry.moderate[0]",
     "worry.most[0]",
     "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "structure:unverified",
     "structure:dangling",
-    "variables[0]:unverified",
-    "edges[0]:dangling",
-    "edges[1]:unverified",
     "edges[1]:dangling",
     "edges[2]:unverified",
     "edges[2]:dangling",
-    "memo[0]:dangling",
+    "memo[0]:unverified",
     "memo[1]:dangling",
+    "memo[2]:unverified",
     "memo[2]:dangling",
+    "worry.most[0]:unverified",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
     "worry.moderate[0]:dangling",
     "worry.unlikely[0]:dangling"
    ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
-  "topic_ko": "엔비디아 젠슨 황 CEO와 중국 스파이 의혹 인물의 관계 논란",
-  "query": "nvidia jensen affair",
+  "topic_ko": "미 중간선거 이후 미·이란 분쟁의 확전 여부와 브렌트유 하락",
+  "query": "august iran since",
   "trigger": []
  },
  "problems": [
-  "structure:unverified",
   "structure:dangling",
-  "variables[0]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
   "edges[1]:dangling",
   "edges[2]:unverified",
   "edges[2]:dangling",
-  "memo[0]:dangling",
+  "memo[0]:unverified",
   "memo[1]:dangling",
+  "memo[2]:unverified",
   "memo[2]:dangling",
+  "worry.most[0]:unverified",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
   "worry.moderate[0]:dangling",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "6070e6bf75d9b73a"
+ "content_hash": "e6005084e36d595e"
 }
