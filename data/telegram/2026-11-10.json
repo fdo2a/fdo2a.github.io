@@ -1,0 +1,307 @@
+{
+ "report_date": "2026-11-10",
+ "market": "us",
+ "collected_utc": "2026-11-10T22:39:15+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-09T22:37:37+00:00",
+  "kwusa": "2026-11-09T22:20:51+00:00",
+  "lim_econ": "2026-11-08T22:36:17+00:00",
+  "d_ticker": "2026-11-09T22:06:45+00:00",
+  "aethersemiconductor": "2026-11-09T22:10:52+00:00",
+  "FastStockNews": "2026-11-09T22:38:20+00:00",
+  "FastStockNewsUSA": "2026-11-09T22:34:47+00:00",
+  "insidertracking": "2026-11-09T22:34:59+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:37:37+00:00",
+   "last_id": 2994,
+   "last_dt": "2026-11-09T22:37:37+00:00",
+   "read": 0
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:20:51+00:00",
+   "last_id": 61752,
+   "last_dt": "2026-11-10T22:23:43+00:00",
+   "read": 6
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-08T22:36:17+00:00",
+   "last_id": 2129,
+   "last_dt": "2026-11-10T13:33:25+00:00",
+   "read": 2
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:06:45+00:00",
+   "last_id": 4117,
+   "last_dt": "2026-11-10T14:24:44+00:00",
+   "read": 6
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:10:52+00:00",
+   "last_id": 26785,
+   "last_dt": "2026-11-10T22:00:49+00:00",
+   "read": 34
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:38:20+00:00",
+   "last_id": 127700,
+   "last_dt": "2026-11-10T22:36:01+00:00",
+   "read": 56
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:34:47+00:00",
+   "last_id": 24335,
+   "last_dt": "2026-11-10T22:05:58+00:00",
+   "read": 34
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 7,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:34:59+00:00",
+   "last_id": 68960,
+   "last_dt": "2026-11-10T22:25:23+00:00",
+   "read": 127
+  }
+ },
+ "items": [
+  {
+   "id": "lim_econ/2128",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-09T22:40:44+00:00",
+   "url": "https://t.me/lim_econ/2128",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "트럼프 대통령이 이란에 대한 대규모 공격 가능성이 매우 낮다고 밝히면서 브렌트유가 장중 8% 가까이 급락해 배럴당 90.56달러로 8월 말 이후 최저 수준을 기록했다는 소식이 전해졌다. 아울러 연준 인사들이 인플레이션과 과열 우려를 다시 거론하며 추가 금리 인상 가능성에 대한 경계가 이어지고 있고, 헤지펀드의 기술주 디레버리징에도 월가는 AI 강세론을 유지하고 있다. 구글의 신형 TPU와 앤트로픽의 새 모델 공개도 주목을 받았다는 내용이다. 이 가운데 TD증권은 확전 회피 신호가 유가에 하방 압력을 주더라도 구체적 합의 전까지는 추가 하락이 제한적일 것으로 본다는 시각을 밝혔다."
+  },
+  {
+   "id": "kwusa/61747",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T22:58:59+00:00",
+   "url": "https://t.me/kwusa/61747",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_ko": "필자는 11월 9일 종가 기준 미국 증시가 주요 지수 모두 상승 마감했다고 정리했다. 특히 필라델피아 반도체 지수가 6.85% 급등하며 시장 강세를 이끌었다고 진단했다. 업종에서는 자동차 및 부품, 자본재, 하드웨어가 상위권에 올랐고, 팩터 측면에서는 모멘텀과 고베타 성향이 우세했다고 짚었다. 반면 음식료 및 담배, 상업 및 전문서비스, 에너지는 상대적으로 부진했다고 덧붙였다. 종목별로는 엔비디아가 4.27% 하락해 반도체 강세 속에서도 대조를 보였다고 평가했다."
+  },
+  {
+   "id": "kwusa/61748",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-09T23:00:24+00:00",
+   "url": "https://t.me/kwusa/61748",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진영",
+   "source": null,
+   "summary_ko": "필자는 11월 9일 종가 기준 미국 증시에서 QQQ(3.54%)와 IWM(3.23%) 등 주요 ETF가 크게 오르고 산업재·기술 업종이 강세를 보였다고 정리했다. 금·은 채굴 ETF와 항공 ETF가 상승률 상위에 오른 반면, 원유 유조선 운임 선물 ETF는 하락폭이 컸다고 짚었다. 신규 상장 소식으로는 Lazard의 채권형 액티브 ETF 3종과 Lyrical의 가치주 ETF 2종을 소개하며, 운용팀과 전략이 유지되는 점을 주목할 만한 특징으로 봤다. 아울러 최근 한 달간 인도 증시가 강세를 보이며 국내 인도 ETF가 두 자릿수 상승을 기록한 배경으로, AI 비중이 낮은 인도가 대안으로 부각된 점과 국제유가 하락에 따른 기대를 꼽았다."
+  },
+  {
+   "id": "insidertracking/68841",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-10T01:02:33+00:00",
+   "url": "https://t.me/insidertracking/68841",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": "2026-11-09",
+   "summary_ko": "엔비디아 법무총괄 팀 테터가 2025년 미국 상무부 고위 관계자에게 연락해, 싱가포르 당국이 메가스피드 임원 앨리스 황을 구금하는 데 미 상무부가 관여했는지 물었다는 것이 블룸버그 보도의 내용이다. 당시 싱가포르 경찰은 AI 반도체 밀수 의혹을 조사하면서 앨리스 황을 심문하고 출국을 금지한 상태였다. 이번 보도는 엔비디아가 미국의 메가스피드 관련 수사에 개입했다는 시각을 제기하고 있다."
+  },
+  {
+   "id": "insidertracking/68887",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-10T10:47:21+00:00",
+   "url": "https://t.me/insidertracking/68887",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디인포메이션",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "디인포메이션 보도를 인용해, 엔비디아 CEO 젠슨 황과 앨리스 황의 오랜 관계가 2023년 이후 중국으로의 엔비디아 칩 판매를 가능하게 했고 그 규모가 최소 75억 달러에 이른다는 내용이 전해졌다. 이 소식은 두 사람의 관계가 판매 과정에서 상당한 역할을 했다는 시각을 담고 있으며, 판매 규모는 보도에서 제시된 최소치로 이해하는 것이 적절하다."
+  },
+  {
+   "id": "aethersemiconductor/26768",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-10T11:14:08+00:00",
+   "url": "https://t.me/aethersemiconductor/26768",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디인포메이션",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "디인포메이션 보도에 따르면 엔비디아 CEO 젠슨 황과 앨리스 황의 오랜 관계가 바탕이 되어 2023년 이후 최소 75억 달러 규모의 엔비디아 칩이 중국에 팔린 것으로 전해졌다. 이 소식은 두 사람의 관계가 칩 판매 과정에 영향을 미쳤다는 점을 짚고 있어, 해당 거래의 경위에 관심이 쏠릴 것으로 보인다는 시각이 담겼다."
+  },
+  {
+   "id": "kwusa/61749",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-10T11:37:31+00:00",
+   "url": "https://t.me/kwusa/61749",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "글로벌리서치팀",
+   "source": null,
+   "summary_ko": "필자는 2027년 글로벌 증시를 머니게임 국면으로 보며, 미국은 밸류에이션 확장보다 이익 성장이 주가를 끌어올리는 흐름을 기대했다. 금리보다 AI 설비투자의 자금조달 양극화와 전력 병목이 핵심 변수라고 짚고, AI 연동 IT 하드웨어·규제 유틸리티·전력 관련 산업재를 비중확대, AI 대체 위험이 큰 소프트웨어와 고평가 필수소비재를 비중축소할 것을 제시했다. 중국은 2027년 GDP 4.5% 성장을 전망하면서 내수 회복은 제한적으로 보고, 반도체 국산화와 AI 인프라, 피지컬 AI를 중심으로 한 기술주와 고배당주의 바벨 전략을 권했다."
+  },
+  {
+   "id": "aethersemiconductor/26782",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-10T14:51:51+00:00",
+   "url": "https://t.me/aethersemiconductor/26782",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 10월 근원 CPI가 전월 대비 0.3%로 컨센서스 0.2%를 웃돌았고 헤드라인도 0.4%로 예상보다 강하게 나왔다는 소식이 전해졌다. 물가 상승이 특정 품목에 몰리지 않고 여러 항목에 걸쳐 나타난 점은 연준에 더 부담스러운 신호일 수 있다는 시각이 제시됐다. 이를 계기로 미 국채가 급락해 단기물 금리가 당일 11bp 넘게 올랐고, 12월 50bp 인상 가능성이 이미 가격에 반영된 상태에서 OIS 시장은 1월 인상 가능성을 반반으로 보고 2027년 최종금리 반영 폭은 약 65bp까지 높아졌다. 달러는 DXY가 102.002로 0.34% 올랐고, 미국 주가지수 선물은 하락 전환해 ES는 약 0.7%, NQ는 1.4% 넘게 떨어진 것으로 나타났다. 이날 로건, 슈미드, 보우먼, 폴슨 등 연준 인사들의 발언도 주목받을 것으로 보인다는 의견이다."
+  },
+  {
+   "id": "FastStockNewsUSA/24330",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-10T20:17:22+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24330",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "에드 야데니는 급증한 실적 전망치와 최근 주가 하락으로 반도체 기업의 밸류에이션이 낮아졌다고 보고, 반도체 산업의 예상 PER이 13.1로 S&P 500(18.7)과 IT 섹터(18.4)보다 크게 낮다는 점을 짚었다. 그는 역사적으로 반도체 PER이 실적 성장률 정점에서 저점을 찍고 성장률 기대가 바닥을 치고 반등할 때 다시 오르는 경향이 있었다는 점을 근거로, 예상 실적 성장률이 지속 가능한 수준으로 둔화되면 이러한 반등이 주가 변동을 다소 누그러뜨릴 수 있다는 시각을 제시했다. 아울러 그 과정의 여러 어려움이 AI 투자 붐을 둔화시키겠지만 멈추게 하지는 않을 것이라는 의견을 밝혔다."
+  },
+  {
+   "id": "FastStockNewsUSA/24331",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-10T21:31:31+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24331",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "OpenAI가 투자자들에게 3분기 매출이 50% 늘어난 약 100억 달러였다고 알렸다는 소식이다. 최근 출시된 GPT5.6과 Astra 모델, 이미지 모델에 대한 수요가 커지면서 API를 통한 모델 판매가 호조를 보였고, 광고 매출이 꾸준히 늘어난 것도 성장에 힘을 보탰다는 시각이 제시됐다."
+  },
+  {
+   "id": "insidertracking/68956",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-10T21:31:47+00:00",
+   "url": "https://t.me/insidertracking/68956",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "이 글은 11월 11일 미주인 브리핑 팟캐스트 안내문으로, 10월 소비자물가(CPI)가 예상을 웃돌았고 10년물 국채금리가 장중 5%를 넘었다는 소식을 먼저 전한다. 이어 코어위브의 매출이 168% 늘고 수주잔고가 1,325억 달러라는 실적 소식, 앤트로픽의 IPO 추진과 빅테크·반도체 기업들의 대규모 투자 소식, 호르무즈 해협 유조선 사고와 이란의 탄도미사일 시험, 러시아와 우크라이나의 아부다비 협상 및 우크라이나 에너지 시설 공격 등 주요 이슈를 나열한다. 글은 구체적인 해석이나 전망은 제시하지 않고 주요 이슈를 짚는 데 그친다."
+  },
+  {
+   "id": "FastStockNewsUSA/24334",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-10T21:32:53+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24334",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "CoreWeave는 3분기 매출이 36억 6천만 달러로 애널리스트 예상치 35억 6천만 달러를 웃돌았다고 발표했다. 순손실은 7억 900만 달러로 예상 손실 8억 5,040만 달러보다 적었고, 9월 30일 기준 수주 잔고는 약 1,325억 달러로 집계됐다. 이에 회사는 연간 매출 전망치를 기존 120억~130억 달러에서 130억~133억 달러로 올렸으며, 이 소식에 시간외 거래에서 주가가 5.9% 상승했고 Nebius Group NV도 3% 올랐다. 실적 호조와 전망 상향이 AI 인프라 관련주 전반에 대한 투자 심리를 끌어올렸다는 시각이 나온다."
+  },
+  {
+   "id": "aethersemiconductor/26785",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-10T22:00:49+00:00",
+   "url": "https://t.me/aethersemiconductor/26785",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "CoreWeave의 FY3Q26 실적은 매출 37억 달러로 전분기 대비 42%, 전년 대비 168% 늘었고, 조정 EBITDA는 23억 달러였다. 매출은 컨센서스를 3% 웃돌았지만 영업이익률 6.0%는 컨센서스보다 낮았다는 점이 함께 전해졌다. 회사는 FY26 매출 가이던스를 130~133억 달러로, 조정 영업이익 가이던스를 12억 7500만~13억 7500만 달러로 올렸고, 연간 CapEx는 하단을 높여 370~390억 달러로 제시했다. 3분기 매출이 전분기보다 10억 달러 이상 늘었고 해당 분기 수익성이 계획보다 빠르게 두 자릿수 진입했다는 점, 수주잔고 약 1325억 달러와 향후 3개월 선결제·예치금 약 90억 달러 유입 전망도 강조됐다. 이를 두고 높은 매출 가시성과 자금조달 다변화가 성장을 뒷받침한다는 시각이 제시됐지만, 2026년 4분기 이자비용 전망이 여전히 큰 부담 요인이라는 의견도 함께 언급됐다."
+  },
+  {
+   "id": "kwusa/61750",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-10T22:08:11+00:00",
+   "url": "https://t.me/kwusa/61750",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "엔비디아가 11월 17일 발표할 FY27 3분기(8~10월) 실적에서는 당기 수익보다 내년 이후의 성장 가시성이 핵심 쟁점이 될 것이라는 시각이 제시됐다. 씨티는 EPS가 컨센서스를 소폭 상회하고 매출 성장 전망이 강할 것으로 보면서도, HBM 가격 상승이 매출총이익률을 낮출 수 있으나 성장세가 이를 상쇄할 것이라는 의견을 냈다. 경영진이 제시한 FY28 매출 증가율 70% 전망이 재확인될지, 공급 병목과 생산능력 문제가 어떻게 다뤄질지가 주목된다는 견해도 나왔다. 웰스파고는 투자자들이 AI 투자 사이클의 지속 가능성에 더 관심을 두고 있다고 보며, 젠슨 황 CEO 조사가 주가의 잠재적 부담(오버행)이 될 수 있지만 현재 주가의 리스크 대비 보상 비율은 매력적이라는 의견을 밝혔다. 두 증권사 모두 투자의견 매수를 유지했으며, 씨티는 목표주가를 285달러로, 웰스파고는 300달러로 각각 낮췄다."
+  },
+  {
+   "id": "kwusa/61751",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-10T22:22:12+00:00",
+   "url": "https://t.me/kwusa/61751",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "GE 베르노바가 SoftBank의 데이터센터 장비 조달 전략 조정으로 수요 감소 우려에 직면했다는 보도가 나왔다. SoftBank는 전력 장비 공급 부족에 대비해 사전 발주했던 발전 장비의 조달 계획을 조정하면서 37억 달러의 비용을 인식했다고 밝혔고, 이 조정이 인공지능 인프라 투자 축소로 이어질 수 있다는 시각이 제기됐다. 이에 가스터빈 부문 수요가 타격을 받을 수 있다는 분석이 나오며 GE 베르노바 주가는 10일 개장 직후 10% 가까이 하락했다. JP모건체이스의 Julian Mitchell 애널리스트는 오하이오주 데이터센터 프로젝트의 가스터빈 기반 발전 수요가 영향을 받을 수 있다는 의견을 내놓으면서도, SoftBank의 발표가 GE 베르노바 주문 수정을 뜻하는지는 아직 불분명하다고 봤다. 그는 비중확대 의견과 목표주가 1,035달러를 유지했다."
+  }
+ ],
+ "stats": {
+  "items": 15,
+  "summarized": 15,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

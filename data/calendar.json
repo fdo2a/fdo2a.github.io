@@ -1,38 +1,8 @@
 {
-  "report_date": "2026-11-09",
-  "generated": "2026-11-10 08:18 KST",
+  "report_date": "2026-11-10",
+  "generated": "2026-11-11 07:40 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-cpi-20261110",
-      "kind": "release",
-      "name_ko": "소비자물가(CPI)",
-      "date": "2026-11-10",
-      "time_et": "08:30",
-      "time_kst": "2026-11-10 22:30",
-      "status": "confirmed",
-      "source": "BLS 공표 일정(FRED)",
-      "assets": [
-        "금리",
-        "달러",
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
-    },
-    {
-      "key": "auction-20261110-10-Year",
-      "kind": "auction",
-      "name_ko": "10-Year 국채 입찰 420억 달러",
-      "date": "2026-11-10",
-      "time_et": "13:00",
-      "time_kst": "2026-11-11 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "release-claims-20261112",
       "kind": "release",
@@ -60,6 +30,48 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "auction-20261112-4-Week",
+      "kind": "auction",
+      "name_ko": "4-Week 국채 입찰 1,150억 달러",
+      "date": "2026-11-12",
+      "time_et": "11:30",
+      "time_kst": "2026-11-13 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261112-8-Week",
+      "kind": "auction",
+      "name_ko": "8-Week 국채 입찰 1,100억 달러",
+      "date": "2026-11-12",
+      "time_et": "11:30",
+      "time_kst": "2026-11-13 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261112-17-Week",
+      "kind": "auction",
+      "name_ko": "17-Week 국채 입찰 750억 달러",
+      "date": "2026-11-12",
+      "time_et": "13:00",
+      "time_kst": "2026-11-13 03:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
       "key": "auction-20261112-30-Year",
@@ -144,9 +156,47 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "expiry-202611",
+      "kind": "expiry",
+      "name_ko": "지수 옵션 만기",
+      "date": "2026-11-20",
+      "time_et": null,
+      "time_kst": null,
+      "status": "confirmed",
+      "source": "셋째 금요일 규칙",
+      "assets": [
+        "주식"
+      ],
+      "watch": "만기 당일 수급"
+    },
+    {
+      "key": "release-michigan-20261120",
+      "kind": "release",
+      "name_ko": "미시간대 소비자심리",
+      "date": "2026-11-20",
+      "time_et": "10:00",
+      "time_kst": "2026-11-21 00:00",
+      "status": "confirmed",
+      "source": "U. Michigan 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-11-10",
+      "term": "10-Year",
+      "type": "Note",
+      "offering_amt": 42000000000.0,
+      "high_yield": 5.02,
+      "bid_to_cover": 2.46,
+      "indirect_pct": 61.2,
+      "dealer_pct": 9.8
+    },
     {
       "date": "2026-11-09",
       "term": "3-Year",
@@ -226,26 +276,6 @@
       "bid_to_cover": 2.88,
       "indirect_pct": 61.0,
       "dealer_pct": 33.4
-    },
-    {
-      "date": "2026-11-02",
-      "term": "13-Week",
-      "type": "Bill",
-      "offering_amt": 95000000000.0,
-      "high_yield": 4.138,
-      "bid_to_cover": 2.88,
-      "indirect_pct": 55.9,
-      "dealer_pct": 34.0
-    },
-    {
-      "date": "2026-11-02",
-      "term": "26-Week",
-      "type": "Bill",
-      "offering_amt": 82000000000.0,
-      "high_yield": 4.298,
-      "bid_to_cover": 2.89,
-      "indirect_pct": 64.6,
-      "dealer_pct": 24.4
     }
   ],
   "blackout": {

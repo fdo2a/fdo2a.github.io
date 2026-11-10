@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-11-09",
+  "report_date": "2026-11-10",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
@@ -8,146 +8,79 @@
       "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
           "name": "Nvidia (NVDA)",
-          "change_pct": -4.27,
-          "close": 178.67,
-          "value": 81608741979.75
+          "change_pct": -5.47,
+          "close": 168.89,
+          "value": 71770611859.27
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Semiconductors",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Broadcom (AVGO)",
-          "change_pct": 8.78,
-          "close": 319.48,
-          "value": 11679506153.4
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": 13.26,
-          "close": 508.58,
-          "value": 25866855673.67
-        },
-        {
-          "name": "Micron Technology (MU)",
-          "change_pct": 6.25,
-          "close": 733.15,
-          "value": 23320948748.34
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": 5.49,
-          "close": 59.37,
-          "value": 8549173692.63
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": 9.49,
-          "close": 154.6,
-          "value": 5166381416.57
-        },
-        {
-          "name": "Texas Instruments (TXN)",
-          "change_pct": 6.62,
-          "close": 295.73,
-          "value": 3039048165.34
-        },
-        {
-          "name": "Analog Devices (ADI)",
-          "change_pct": 8.55,
-          "close": 394.66,
-          "value": 2574439032.01
-        },
-        {
-          "name": "Monolithic Power Systems (MPWR)",
-          "change_pct": 16.6,
-          "close": 1388.05,
-          "value": 2307276477.31
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": 2.43,
-          "close": 350.69,
-          "value": 16657596264.07
-        },
-        {
-          "name": "Sandisk (SNDK)",
-          "change_pct": 6.16,
-          "close": 886.51,
-          "value": 12239899203.7
-        },
-        {
-          "name": "Seagate Technology (STX)",
-          "change_pct": 9.79,
-          "close": 506.14,
-          "value": 3066919988.96
-        },
-        {
-          "name": "Western Digital (WDC)",
-          "change_pct": 9.86,
-          "close": 289.78,
-          "value": 2427400985.11
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": 5.41,
-          "close": 346.31,
-          "value": 2311708927.99
-        }
-      ]
-    },
-    {
-      "id": "g4",
-      "industry": "Integrated Oil & Gas",
+      "industry": "Systems Software",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "ExxonMobil (XOM)",
-          "change_pct": -0.69,
-          "close": 164.73,
-          "value": 2829456438.05
+          "name": "Microsoft (MSFT)",
+          "change_pct": -2.2,
+          "close": 533.16,
+          "value": 14221291061.23
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Semiconductors",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Broadcom (AVGO)",
+          "change_pct": 3.91,
+          "close": 331.98,
+          "value": 9370747317.27
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Broadline Retail",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Amazon (AMZN)",
+          "change_pct": 1.48,
+          "close": 270.87,
+          "value": 10463456814.89
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Automobile Manufacturers",
-      "direction": "up",
+      "industry": "Biotechnology",
+      "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Tesla, Inc. (TSLA)",
-          "change_pct": 5.54,
-          "close": 378.05,
-          "value": 13686013303.94
+          "name": "Moderna (MRNA)",
+          "change_pct": -6.75,
+          "close": 250.83,
+          "value": 2787677233.48
         }
       ]
     }

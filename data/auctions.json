@@ -1,12 +1,54 @@
 {
-  "report_date": "2026-11-09",
-  "generated": "2026-11-10 08:18 KST",
+  "report_date": "2026-11-10",
+  "generated": "2026-11-11 07:40 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
   "complete": true,
   "pending": [],
   "today": [
+    {
+      "date": "2026-11-10",
+      "key": "nominal-10y",
+      "kind": "nominal",
+      "years": 10,
+      "reopening": false,
+      "label_ko": "10년물",
+      "term": "10-Year",
+      "cusip": "91282CRX1",
+      "offering_amt": 42000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.46,
+      "indirect_pct": 61.2,
+      "direct_pct": 29.0,
+      "dealer_pct": 9.8,
+      "high_yield": 5.02,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.6,
+        "indirect_pct": 76.6,
+        "direct_pct": 15.9,
+        "dealer_pct": 7.5
+      },
+      "prev_offering_amt": 39000000000.0,
+      "prev_date": "2026-10-07",
+      "btc_vs_avg": -0.14,
+      "dealer_vs_avg_pp": 2.3,
+      "indirect_vs_avg_pp": -15.4,
+      "insufficient": false,
+      "demand_ko": "수요 약함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": {
+        "tenor": "10Y",
+        "level": 4.983,
+        "bp": 11.9,
+        "date": "2026-11-10",
+        "source": "Yahoo"
+      }
+    }
+  ],
+  "recent": [
     {
       "date": "2026-11-09",
       "key": "nominal-3y",
@@ -42,16 +84,7 @@
       "yield_ref": null
     }
   ],
-  "recent": [],
   "next": [
-    {
-      "date": "2026-11-10",
-      "key": "nominal-10y",
-      "label_ko": "10년물",
-      "offering_amt": 42000000000.0,
-      "close_time_et": "01:00 PM",
-      "reopening": false
-    },
     {
       "date": "2026-11-12",
       "key": "nominal-30y",

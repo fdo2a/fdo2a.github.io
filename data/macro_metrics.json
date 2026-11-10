@@ -1,13 +1,13 @@
 {
-  "generated": "2026-11-10 08:17 KST",
-  "report_date": "2026-11-09",
+  "generated": "2026-11-11 07:34 KST",
+  "report_date": "2026-11-10",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
-  "growth_score": 0.152,
-  "inflation_score": 0.003,
-  "growth_diffusion": 0.643,
-  "inflation_diffusion": 0.375,
+  "growth_score": 0.1,
+  "inflation_score": 0.451,
+  "growth_diffusion": 0.556,
+  "inflation_diffusion": 0.5,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
@@ -47,14 +47,22 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.376,
+      "score": -0.531,
       "direction": "악화",
-      "strength": "미미",
-      "breadth_ko": "다섯 중 둘만 악화, 둘은 보합, 하나는 반대",
-      "support": 2,
-      "improving": 2,
-      "total": 5,
+      "strength": "완만",
+      "breadth_ko": "아홉 중 다섯이 악화, 둘은 보합, 둘은 반대",
+      "support": 5,
+      "improving": 3,
+      "total": 9,
       "leaders": [
+        {
+          "label_ko": "무역수지",
+          "name": "Trade Balance",
+          "direction": "악화",
+          "strength": "뚜렷",
+          "actual": -105.05,
+          "previous": -105.74
+        },
         {
           "label_ko": "기존주택 판매",
           "name": "Existing Home Sales",
@@ -64,20 +72,12 @@
           "previous": 3930000.0
         },
         {
-          "label_ko": "내구재 주문",
-          "name": "Durable Goods Orders MoM",
+          "label_ko": "주택착공",
+          "name": "Housing Starts",
           "direction": "악화",
-          "strength": "미미",
-          "actual": 1.91,
-          "previous": 0.14
-        },
-        {
-          "label_ko": "신규주택 판매",
-          "name": "New Home Sales",
-          "direction": "개선",
-          "strength": "미미",
-          "actual": 676.0,
-          "previous": 680.0
+          "strength": "완만",
+          "actual": 1221.0,
+          "previous": 1288.0
         }
       ]
     },
@@ -111,29 +111,29 @@
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": 0.003,
-      "direction": "교착",
+      "score": 0.451,
+      "direction": "재가속",
       "strength": "미미",
-      "breadth_ko": "여덟 중 셋이 재가속, 셋이 둔화, 둘은 교착",
-      "support": 0,
+      "breadth_ko": "여섯 중 셋이 재가속, 둘은 교착, 하나는 반대",
+      "support": 3,
       "improving": 3,
-      "total": 8,
+      "total": 6,
       "leaders": [
-        {
-          "label_ko": "근원 소비자물가 전월비",
-          "name": "Core CPI MoM",
-          "direction": "재가속",
-          "strength": "완만",
-          "actual": 0.33,
-          "previous": 0.29
-        },
         {
           "label_ko": "소비자물가 전월비",
           "name": "CPI MoM",
           "direction": "재가속",
-          "strength": "완만",
-          "actual": 0.65,
-          "previous": 0.4
+          "strength": "뚜렷",
+          "actual": 0.35,
+          "previous": 0.65
+        },
+        {
+          "label_ko": "근원 소비자물가 전월비",
+          "name": "Core CPI MoM",
+          "direction": "재가속",
+          "strength": "뚜렷",
+          "actual": 0.3,
+          "previous": 0.33
         },
         {
           "label_ko": "미시간대 1년 기대인플레",
@@ -148,9 +148,9 @@
   },
   "axis_scores": {
     "Labor": 0.582,
-    "Activity": -0.376,
+    "Activity": -0.531,
     "Consumption": 0.249,
-    "Inflation": 0.003
+    "Inflation": 0.451
   },
   "indicators": [
     {
@@ -546,34 +546,6 @@
       "is_new": false
     },
     {
-      "name": "CPI YoY",
-      "label_ko": "소비자물가 전년비",
-      "axis": "Inflation",
-      "role": "scored",
-      "introduced": false,
-      "fred_id": "CPIAUCSL",
-      "transform": "yoy_pct",
-      "units": "%",
-      "direction": "둔화",
-      "strength": "미미",
-      "polarity": 1,
-      "window": 3,
-      "momentum_z": -0.428,
-      "signed_z": -0.428,
-      "actual": 3.72,
-      "previous": 3.35,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승",
-      "trend": {
-        "window": 3,
-        "label_ko": "3개월 평균",
-        "prior_avg": 3.803,
-        "recent_avg": 3.458
-      },
-      "trend_cell_ko": "둔화(미미) · 3개월 평균 3.80% → 3.46%",
-      "is_new": false
-    },
-    {
       "name": "CPI MoM",
       "label_ko": "소비자물가 전월비",
       "axis": "Inflation",
@@ -583,51 +555,23 @@
       "transform": "mom_pct",
       "units": "%",
       "direction": "재가속",
-      "strength": "완만",
+      "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.648,
-      "signed_z": 0.648,
-      "actual": 0.65,
-      "previous": 0.4,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승",
+      "momentum_z": 1.863,
+      "signed_z": 1.863,
+      "actual": 0.35,
+      "previous": 0.65,
+      "ref_period": "2026-10-01",
+      "vs_prev": "하락",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 0.23,
-        "recent_avg": 0.373
+        "prior_avg": 0.041,
+        "recent_avg": 0.465
       },
-      "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.23% → +0.37%",
-      "is_new": false
-    },
-    {
-      "name": "Core CPI YoY",
-      "label_ko": "근원 소비자물가 전년비",
-      "axis": "Inflation",
-      "role": "scored",
-      "introduced": false,
-      "fred_id": "CPILFESL",
-      "transform": "yoy_pct",
-      "units": "%",
-      "direction": "둔화",
-      "strength": "미미",
-      "polarity": 1,
-      "window": 3,
-      "momentum_z": -0.451,
-      "signed_z": -0.451,
-      "actual": 2.57,
-      "previous": 2.45,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승",
-      "trend": {
-        "window": 3,
-        "label_ko": "3개월 평균",
-        "prior_avg": 2.711,
-        "recent_avg": 2.493
-      },
-      "trend_cell_ko": "둔화(미미) · 3개월 평균 2.71% → 2.49%",
-      "is_new": false
+      "trend_cell_ko": "재가속(뚜렷) · 3개월 평균 +0.04% → +0.46%",
+      "is_new": true
     },
     {
       "name": "Core CPI MoM",
@@ -639,23 +583,23 @@
       "transform": "mom_pct",
       "units": "%",
       "direction": "재가속",
-      "strength": "완만",
+      "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.681,
-      "signed_z": 0.681,
-      "actual": 0.33,
-      "previous": 0.29,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승",
+      "momentum_z": 1.273,
+      "signed_z": 1.273,
+      "actual": 0.3,
+      "previous": 0.33,
+      "ref_period": "2026-10-01",
+      "vs_prev": "하락",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 0.189,
-        "recent_avg": 0.28
+        "prior_avg": 0.136,
+        "recent_avg": 0.307
       },
-      "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.19% → +0.28%",
-      "is_new": false
+      "trend_cell_ko": "재가속(뚜렷) · 3개월 평균 +0.14% → +0.31%",
+      "is_new": true
     },
     {
       "name": "PPI Final Demand MoM",
@@ -774,7 +718,7 @@
       "label_ko": "주택착공",
       "axis": "Activity",
       "role": "scored",
-      "introduced": true,
+      "introduced": false,
       "fred_id": "HOUST",
       "transform": "level",
       "units": "K",
@@ -802,7 +746,7 @@
       "label_ko": "무역수지",
       "axis": "Activity",
       "role": "scored",
-      "introduced": true,
+      "introduced": false,
       "fred_id": "BOPGSTB",
       "transform": "level",
       "units": "$B",
@@ -830,7 +774,7 @@
       "label_ko": "건설지출",
       "axis": "Activity",
       "role": "scored",
-      "introduced": true,
+      "introduced": false,
       "fred_id": "TTLCONS",
       "transform": "mom_pct",
       "units": "%",
@@ -858,7 +802,7 @@
       "label_ko": "공장주문",
       "axis": "Activity",
       "role": "scored",
-      "introduced": true,
+      "introduced": false,
       "fred_id": "AMTMNO",
       "transform": "mom_pct",
       "units": "%",
@@ -886,7 +830,7 @@
       "label_ko": "필라델피아 연은 제조업지수",
       "axis": "Activity",
       "role": "anatomy",
-      "introduced": true,
+      "introduced": false,
       "fred_id": "GACDFSA066MSFRBPHI",
       "transform": "level",
       "units": "",
@@ -910,23 +854,279 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
-  "anatomy_releases": [],
-  "introduced": [
-    "Housing Starts",
-    "Trade Balance",
-    "Construction Spending MoM",
-    "Factory Orders MoM",
-    "Philly Fed Manufacturing"
+  "new_releases": [
+    "CPI MoM",
+    "Core CPI MoM"
   ],
-  "introduced_since": {
-    "Housing Starts": "2026-11-06",
-    "Trade Balance": "2026-11-06",
-    "Construction Spending MoM": "2026-11-06",
-    "Factory Orders MoM": "2026-11-06",
-    "Philly Fed Manufacturing": "2026-11-06"
-  },
-  "headline_releases": [],
+  "anatomy_releases": [],
+  "introduced": [],
+  "introduced_since": {},
+  "headline_releases": [
+    {
+      "key": "cpi",
+      "label": "소비자물가(CPI)",
+      "tier": 1,
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "role": "scored",
+      "primary": "CPI MoM",
+      "max_abs_z": 1.863,
+      "indicators": [
+        {
+          "name": "CPI MoM",
+          "axis": "Inflation",
+          "actual": 0.35,
+          "previous": 0.65,
+          "ref_period": "2026-10-01",
+          "momentum_z": 1.863,
+          "fred_id": "CPIAUCSL",
+          "transform": "mom_pct",
+          "units": "%"
+        },
+        {
+          "name": "Core CPI MoM",
+          "axis": "Inflation",
+          "actual": 0.3,
+          "previous": 0.33,
+          "ref_period": "2026-10-01",
+          "momentum_z": 1.273,
+          "fred_id": "CPILFESL",
+          "transform": "mom_pct",
+          "units": "%"
+        }
+      ],
+      "components": [
+        {
+          "label": "에너지",
+          "fred_id": "CPIENGSL",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "에너지"
+          ],
+          "actual": 0.7,
+          "cite_values": [
+            0.7
+          ],
+          "cite_forms": [
+            [
+              0.7,
+              ""
+            ]
+          ],
+          "text_value": 0.7,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "식품",
+          "fred_id": "CPIUFDSL",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "식품",
+            "먹거리"
+          ],
+          "actual": 0.5,
+          "cite_values": [
+            0.5
+          ],
+          "cite_forms": [
+            [
+              0.5,
+              ""
+            ]
+          ],
+          "text_value": 0.5,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "주거비",
+          "fred_id": "CUSR0000SAH1",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "주거비",
+            "주거",
+            "shelter"
+          ],
+          "actual": 0.3,
+          "cite_values": [
+            0.3
+          ],
+          "cite_forms": [
+            [
+              0.3,
+              ""
+            ]
+          ],
+          "text_value": 0.3,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "중고차",
+          "fred_id": "CUSR0000SETA02",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "중고차"
+          ],
+          "actual": -1.2,
+          "cite_values": [
+            -1.2
+          ],
+          "cite_forms": [
+            [
+              -1.2,
+              ""
+            ]
+          ],
+          "text_value": -1.2,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "의료",
+          "fred_id": "CPIMEDSL",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "의료"
+          ],
+          "actual": 0.3,
+          "cite_values": [
+            0.3
+          ],
+          "cite_forms": [
+            [
+              0.3,
+              ""
+            ]
+          ],
+          "text_value": 0.3,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "휘발유",
+          "fred_id": "CUSR0000SETB01",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "휘발유",
+            "가솔린"
+          ],
+          "actual": 1,
+          "cite_values": [
+            1
+          ],
+          "cite_forms": [
+            [
+              1,
+              ""
+            ]
+          ],
+          "text_value": 1.0,
+          "ref_period": "2026-10-01"
+        }
+      ],
+      "anatomy": {
+        "release_date": "2026-11-10",
+        "round": "ok",
+        "candidates": [
+          {
+            "label": "에너지",
+            "fred_id": "CPIENGSL",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 0.6994559458195493,
+            "text_ok": true,
+            "text_value": 0.7
+          },
+          {
+            "label": "식품",
+            "fred_id": "CPIUFDSL",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 0.4727842340581656,
+            "text_ok": true,
+            "text_value": 0.5
+          },
+          {
+            "label": "주거비",
+            "fred_id": "CUSR0000SAH1",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 0.30469451827703775,
+            "text_ok": true,
+            "text_value": 0.3
+          },
+          {
+            "label": "중고차",
+            "fred_id": "CUSR0000SETA02",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": -1.224090988933768,
+            "text_ok": true,
+            "text_value": -1.2
+          },
+          {
+            "label": "의료",
+            "fred_id": "CPIMEDSL",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 0.3384057702479071,
+            "text_ok": true,
+            "text_value": 0.3
+          },
+          {
+            "label": "휘발유",
+            "fred_id": "CUSR0000SETB01",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 1.0383526574923474,
+            "text_ok": true,
+            "text_value": 1.0
+          }
+        ]
+      },
+      "anatomy_status": "complete",
+      "anatomy_reason": null
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-09-01",
@@ -984,21 +1184,13 @@
       "2026-09-01",
       48.1
     ],
-    "CPI YoY": [
-      "2026-09-01",
-      3.72
-    ],
     "CPI MoM": [
-      "2026-09-01",
-      0.65
-    ],
-    "Core CPI YoY": [
-      "2026-09-01",
-      2.57
+      "2026-10-01",
+      0.35
     ],
     "Core CPI MoM": [
-      "2026-09-01",
-      0.33
+      "2026-10-01",
+      0.3
     ],
     "PPI Final Demand MoM": [
       "2026-09-01",
@@ -1035,6 +1227,14 @@
     "Philly Fed Manufacturing": [
       "2026-10-01",
       20.9
+    ],
+    "CPI YoY": [
+      "2026-09-01",
+      3.72
+    ],
+    "Core CPI YoY": [
+      "2026-09-01",
+      2.57
     ]
   },
   "anatomy_gaps": []

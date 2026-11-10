@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10 08:17 KST",
+  "generated": "2026-11-11 07:34 KST",
   "source": "FRED via collect_market_data.py",
   "note": "Actual/Previous/ref_period are authoritative FRED values. Forecast/consensus and release dates are NOT here — the agent adds those from web only for recently-released indicators. Indicators absent from this list (ISM, S&P Global PMI, ADP, CB Confidence, NY Fed inflation exp) are web-sourced. role=anatomy rows (Philly Fed) are dissected but never scored.",
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
@@ -160,36 +160,14 @@
     },
     {
       "axis": "Inflation",
-      "name": "CPI YoY",
-      "fred_id": "CPIAUCSL",
-      "transform": "yoy_pct",
-      "units": "%",
-      "actual": 3.72,
-      "previous": 3.35,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승"
-    },
-    {
-      "axis": "Inflation",
       "name": "CPI MoM",
       "fred_id": "CPIAUCSL",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.65,
-      "previous": 0.4,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승"
-    },
-    {
-      "axis": "Inflation",
-      "name": "Core CPI YoY",
-      "fred_id": "CPILFESL",
-      "transform": "yoy_pct",
-      "units": "%",
-      "actual": 2.57,
-      "previous": 2.45,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승"
+      "actual": 0.35,
+      "previous": 0.65,
+      "ref_period": "2026-10-01",
+      "vs_prev": "하락"
     },
     {
       "axis": "Inflation",
@@ -197,10 +175,10 @@
       "fred_id": "CPILFESL",
       "transform": "mom_pct",
       "units": "%",
-      "actual": 0.33,
-      "previous": 0.29,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승"
+      "actual": 0.3,
+      "previous": 0.33,
+      "ref_period": "2026-10-01",
+      "vs_prev": "하락"
     },
     {
       "axis": "Inflation",

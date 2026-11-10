@@ -1,6 +1,28 @@
 {
-  "report_date": "2026-11-09",
-  "run_id": "42719024970-1",
+  "report_date": "2026-11-10",
+  "run_id": "42915487216-1",
   "status": "complete",
-  "releases": []
+  "releases": [
+    {
+      "key": "cpi",
+      "landing_url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "ok": true,
+      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+      "resolver": "fixed",
+      "verified": true,
+      "doc_kind": "html",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": true,
+        "primary_checked": true,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "published": true,
+      "chars": 20028,
+      "path": "releases/cpi.txt"
+    }
+  ]
 }
