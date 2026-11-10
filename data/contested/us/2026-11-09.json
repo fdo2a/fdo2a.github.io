@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-09",
  "status": "none",
- "reason": "topic_too_long",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-10T15:35:48+00:00",
- "cutoff_at": "2026-11-10T15:35:48+00:00",
+ "collected_at": "2026-11-10T16:40:47+00:00",
+ "cutoff_at": "2026-11-10T16:40:47+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,18 +21,17 @@
   "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
  },
  "counts": {
-  "harvest": 206,
-  "candidates": 2,
+  "harvest": 209,
+  "candidates": 1,
   "articles": [
-   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 55862,
-   "out": 14999
+   "in": 37516,
+   "out": 11233
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,12 +41,56 @@
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "5/5",
+   "pairs": "1/1",
+   "obs": "4/4"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 4,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[0]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.most[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:dangling",
+    "edges[0]:dangling",
+    "edges[2]:unverified",
+    "memo[0]:unverified",
+    "memo[0]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "헤그세스 국방장관 탄핵 추진의 정당성과 가결 전망",
+  "query": "nvidia jensen affair",
   "trigger": []
  },
- "content_hash": "d8c7f7c461c92b76"
+ "problems": [
+  "structure:dangling",
+  "edges[0]:dangling",
+  "edges[2]:unverified",
+  "memo[0]:unverified",
+  "memo[0]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling"
+ ],
+ "content_hash": "b5613d0bcd3fcf93"
 }
