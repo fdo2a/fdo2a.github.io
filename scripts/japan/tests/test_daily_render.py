@@ -71,7 +71,37 @@ def test_missing_noncore_block_omitted_with_note():
 
 
 def test_macro_table_without_items():
-    assert '발표된' in R.render_tables(SNAP)['macro']
+    # 빈 표를 「오늘 일본 지표 발표 없음」으로 일반화하면 일정표 밖 발표(내각부 경기동향지수)가 있던 날
+    # 본문과 모순된다(2026-11-09 발행본). 문구는 일정표 범위로만 말한다.
+    t = R.render_tables(SNAP)['macro']
+    assert '일정표' in t and '없다' in t
+    assert '오늘 발표된 일본 지표가 없다' not in t
+
+
+def test_macro_table_meeting_only_day():
+    snap = copy.deepcopy(SNAP)
+    snap['macro'] = []
+    snap['calendar'] = dict(snap.get('calendar') or {}, today=[
+        {'date': snap['session'], 'name_ko': 'BOJ 금융정책결정회의', 'kind': 'meeting', 'series': None}])
+    assert '일정표에 오늘 잡힌 일본 지표가 없다' in R.render_tables(snap)['macro']
+
+
+def test_macro_table_old_snapshot_emptied_by_fetch_failure():
+    # 옛 수집기는 BOJ 조회 실패 때 행을 비웠다 — 일정표에 오늘 발표가 있으면 「없다」고 쓰지 않는다.
+    snap = copy.deepcopy(SNAP)
+    snap['macro'] = []
+    snap['calendar'] = dict(snap.get('calendar') or {}, today=[
+        {'date': snap['session'], 'name_ko': 'BOJ 10월 회의 의견 요약', 'kind': 'release', 'series': None}])
+    t = R.render_tables(snap)['macro']
+    assert '싣지 못했다' in t and '없다' not in t
+
+
+def test_macro_fetch_failed_row():
+    snap = copy.deepcopy(SNAP)
+    snap['macro'] = [{'name_ko': '기업물가지수(10월)', 'status': 'fetch_failed', 'value': None,
+                      'period': None, 'yoy': None, 'prev_value': None, 'prev_period': None}]
+    t = R.render_tables(snap)['macro']
+    assert '조회 실패' in t and '미반영' not in t
 
 
 def test_macro_pending_row():

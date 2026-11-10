@@ -204,23 +204,31 @@ def _rates(fetch, session, prev, status, holidays=(), now=None):
 
 
 def _macro(fetch, events_today, prev_snap, status):
-    values = {}
+    # 조회에 실패한 시계열의 발표 행은 pending(「시계열 미반영」)이 아니라 fetch_failed 다 — 발표됐는지 모른다.
+    # 코드 목록이 실패해도 일정 행은 남긴다(비우면 렌더러가 「오늘 일정에 발표 없음」으로 읽는다).
+    values, failed = {}, set()
+    prev_periods = dict((prev_snap or {}).get('macro_periods') or {})
     try:
         codes = fetch.boj_codes()
     except Exception as e:
         status['macro'] = _why(e)
-        return [], {}
-    for key, (db, code) in codes.items():
+        codes, failed = None, set(MAC.SERIES)
+    for key, (db, code) in (codes or {}).items():
         try:
             got = RT.boj_values(fetch.boj(db, code))
             if got:
                 values[key] = got[0]
         except Exception as e:
             status[f'macro_{key}'] = _why(e)
-    status.setdefault('macro', 'ok')
-    prev_periods = (prev_snap or {}).get('macro_periods') or {}
+            failed.add(key)
+    if codes is not None:
+        failed |= set(MAC.SERIES) - set(codes)
+        status.setdefault('macro', 'ok')
     items = MAC.macro_items(events_today, values, events_today[0]['date'] if events_today else None,
                             prev_periods) if events_today else []
+    for it in items:
+        if it['status'] == 'pending' and it.get('series') in failed:
+            it['status'] = 'fetch_failed'
     periods = dict(prev_periods)
     periods.update(MAC.latest_periods(values))
     return items, periods

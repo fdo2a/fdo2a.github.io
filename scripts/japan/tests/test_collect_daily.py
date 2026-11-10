@@ -218,3 +218,36 @@ def test_incomplete_mof_block_is_not_ok(tmp_path):
     rows[-1]['30Y'] = None
     snap = C.collect(S, P, Fake(jgb_rows=rows), LATE, root=str(tmp_path), calendar=CAL)
     assert snap['fetch_status']['jgb'].startswith('결측') and '30Y' in snap['fetch_status']['jgb']
+
+
+def test_macro_rows_survive_boj_code_failure():
+    # BOJ 코드 조회가 실패해도 오늘 일정 행은 남긴다 — 빈 표가 「오늘 일정에 발표 없음」으로 읽히지 않게
+    # (2026-11-10 codex 구현 검토). 시계열 지표는 발표 여부를 모르므로 fetch_failed, 시계열 없는 발표는 event 행이다.
+    class Boom:
+        def boj_codes(self):
+            raise TimeoutError('boj')
+    today = [{'date': S, 'name_ko': '기업물가지수(10월)', 'kind': 'release', 'series': 'cgpi', 'period': '2026-10'},
+             {'date': S, 'name_ko': 'BOJ 10월 회의 의견 요약', 'kind': 'release', 'series': None},
+             {'date': S, 'name_ko': 'BOJ 금융정책결정회의', 'kind': 'meeting', 'series': None}]
+    status = {}
+    items, periods = C._macro(Boom(), today, {'macro_periods': {'cgpi': '2026-09'}}, status)
+    assert status['macro'] != 'ok'
+    assert [(i['name_ko'], i['status']) for i in items] == [('기업물가지수(10월)', 'fetch_failed'),
+                                                            ('BOJ 10월 회의 의견 요약', 'event')]
+    assert periods == {'cgpi': '2026-09'}
+
+
+def test_macro_single_series_failure_is_fetch_failed():
+    # 코드 목록은 받았지만 개별 시계열 조회가 실패한 경우(2026-11-10 codex 4회차)
+    class Partial:
+        def boj_codes(self):
+            return {'cgpi': ('PR01', 'X'), 'sppi': ('PR02', 'Y')}
+
+        def boj(self, db, code):
+            raise TimeoutError('boj')
+    today = [{'date': S, 'name_ko': '기업물가지수(10월)', 'kind': 'release', 'series': 'cgpi', 'period': '2026-10'},
+             {'date': S, 'name_ko': '통화량 M2(10월)', 'kind': 'release', 'series': 'money_stock', 'period': '2026-10'}]
+    status = {}
+    items, _ = C._macro(Partial(), today, None, status)
+    assert [i['status'] for i in items] == ['fetch_failed', 'fetch_failed']
+    assert status['macro'] == 'ok' and 'macro_cgpi' in status

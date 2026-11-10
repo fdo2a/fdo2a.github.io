@@ -119,10 +119,18 @@ def _t_macro(d):
                          _num(m.get('prev_value'), 2), _c(m.get('yoy'), '%', 1)])
         elif m['status'] == 'pending':
             rows.append([_e(m['name_ko']), '—', '발표 예정·시계열 미반영', '—', '—'])
+        elif m['status'] == 'fetch_failed':
+            rows.append([_e(m['name_ko']), '—', '시계열 조회 실패', '—', '—'])
         else:
             rows.append([_e(m['name_ko']), '—', '일정', '—', '—'])
     if not rows:
-        return '<p class="caption">오늘 발표된 일본 지표가 없다.</p>'
+        # 빈 표는 「일본에 발표가 없었다」가 아니다 — 행은 확인해 둔 일정표(calendar_daily.json)의 오늘 release 행에서만
+        # 나오고, BOJ 조회가 실패해도 그 행은 남는다(collect_japan_daily._macro). 그 범위를 넘어 단정하면 내각부
+        # 경기동향지수가 나온 날 본문과 모순된다(2026-11-09 발행본). 옛 수집기는 조회 실패 때 행을 비웠으므로
+        # 일정표에 오늘 발표가 있는데 행이 없으면 「없다」고 쓰지 않는다(옛 스냅샷 재조립).
+        if any(e.get('kind') == 'release' for e in (d.get('calendar') or {}).get('today') or []):
+            return '<p class="caption">오늘 일정표에 잡힌 발표를 이 표에 싣지 못했다.</p>'
+        return '<p class="caption">확인해 둔 발표 일정표에 오늘 잡힌 일본 지표가 없다.</p>'
     return _table(['지표', '기간', '값', '직전', '전년 대비'], rows,
                   '일본은행 시계열 기준. 시장 예상치는 싣지 않는다.')
 
