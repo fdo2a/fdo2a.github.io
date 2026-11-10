@@ -3,47 +3,87 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-09",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-10T06:20:23+00:00",
- "cutoff_at": "2026-11-10T06:20:23+00:00",
+ "collected_at": "2026-11-10T07:23:04+00:00",
+ "cutoff_at": "2026-11-10T07:23:04+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "bc160111e33012a3fe7a4eb781218fd562cd7593",
+  "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
+ },
  "counts": {
-  "harvest": 181,
-  "candidates": 3,
+  "harvest": 190,
+  "candidates": 2,
   "articles": [
    3,
-   3,
-   2
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4715,
-   "out": 64
+   "in": 78160,
+   "out": 22051
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok"
+   "aljazeera.com": "ok",
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "10/10"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 10,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "structure:unverified",
+    "edges[0]:unverified",
+    "edges[2]:unverified",
+    "worry.unlikely[0]:unverified"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "엔비디아 젠슨 황 CEO와 중국 스파이 의혹 인물의 관계 파문",
+  "query": "nvidia huang affair",
   "trigger": []
  },
- "content_hash": "21cd41ea08bc2266"
+ "problems": [
+  "structure:unverified",
+  "edges[0]:unverified",
+  "edges[2]:unverified",
+  "worry.unlikely[0]:unverified"
+ ],
+ "content_hash": "309724e1030ce1d1"
 }
