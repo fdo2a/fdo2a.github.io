@@ -1,6 +1,6 @@
 {
   "report_date": "2026-11-10",
-  "generated": "2026-11-11 08:06 KST",
+  "generated": "2026-11-11 08:19 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
@@ -42,9 +42,9 @@
       "yield_ref": {
         "tenor": "10Y",
         "level": 4.983,
-        "bp": 11.9,
+        "bp": 12.1,
         "date": "2026-11-10",
-        "source": "Yahoo"
+        "source": "Naver"
       }
     }
   ],
