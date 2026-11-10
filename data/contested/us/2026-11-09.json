@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-10T08:28:48+00:00",
- "cutoff_at": "2026-11-10T08:28:48+00:00",
+ "collected_at": "2026-11-10T08:48:53+00:00",
+ "cutoff_at": "2026-11-10T08:48:53+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -31,10 +31,10 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 54077,
-   "out": 16136
+   "in": 51660,
+   "out": 12203
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "short",
@@ -42,17 +42,17 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "8/8"
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 8,
-   "strict_pairs": 1,
+   "obs": 9,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
@@ -60,30 +60,30 @@
    "paths": [
     "edges[0]",
     "edges[1]",
+    "edges[2]",
+    "memo[0]",
     "memo[1]",
-    "memo[2]",
     "structure",
+    "variables[0]",
     "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "worry.most[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "structure:unverified",
     "structure:dangling",
-    "edges[0]:unverified",
+    "variables[0]:unverified",
     "edges[0]:dangling",
     "edges[1]:unverified",
+    "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[0]:unverified",
+    "memo[0]:dangling",
     "memo[1]:unverified",
-    "memo[1]:dangling",
-    "memo[2]:unverified",
-    "worry.most[0]:unverified",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:unverified"
+    "worry.moderate[0]:dangling"
    ]
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "엔비디아 젠슨 황 CEO와 중국 스파이 의혹 인물의 관계 파문",
@@ -91,19 +91,17 @@
   "trigger": []
  },
  "problems": [
-  "structure:unverified",
   "structure:dangling",
-  "edges[0]:unverified",
+  "variables[0]:unverified",
   "edges[0]:dangling",
   "edges[1]:unverified",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:unverified",
+  "memo[0]:dangling",
   "memo[1]:unverified",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "worry.most[0]:unverified",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:unverified"
+  "worry.moderate[0]:dangling"
  ],
- "content_hash": "6a4e18ce08857639"
+ "content_hash": "c14de5b3423be5ba"
 }
