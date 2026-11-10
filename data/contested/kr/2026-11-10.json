@@ -1,0 +1,61 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-10",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-10T11:13:12+00:00",
+ "cutoff_at": "2026-11-10T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "89d40b470db8388d8750a06f56abb0da0796412b",
+  "sha256": "8d652493ab00c2a4d0a86afbe621ebdebf22ae914a87a53eff2a9de8b701395d",
+  "extra": {
+   "kr_econ.json": "e599b4ebce2c8fe9c35b61096fd1589904b5dc4b3216f9322cd0478877fa3606",
+   "kr_flows.json": "7b89a0b1c4812d124e946523e9472c142cc21ae6ad9a2929be7122a0bb9aef50",
+   "kr_session.json": "22d561103dcea8e689baeb80e77e6cf0acf11b2413c47a07d3f543b750979fc1"
+  }
+ },
+ "counts": {
+  "harvest": 561,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "nocut": "ok",
+   "dt": "ok",
+   "aju": "ok",
+   "dailian": "ok",
+   "etnews": "ok",
+   "chosun": "ok"
+  },
+  "notes": [
+   "discover:561"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 19601,
+   "out": 4746
+  }
+ },
+ "event": {
+  "topic_ko": "미국 중간선거 이후 대미 통상 압박 전망 (대한상의 보고서)",
+  "query": "관세·투자·입법 대한상의 압박",
+  "trigger": []
+ },
+ "content_hash": "1d52f89d2749fadf"
+}
