@@ -1,0 +1,178 @@
+{
+ "report_date": "2026-11-10",
+ "market": "kr",
+ "collected_utc": "2026-11-10T09:14:59+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-08T22:46:02+00:00",
+  "kwusa": "2026-11-09T08:55:11+00:00",
+  "lim_econ": "2026-11-08T22:36:17+00:00",
+  "d_ticker": "2026-11-09T06:46:34+00:00",
+  "aethersemiconductor": "2026-11-09T04:12:51+00:00",
+  "FastStockNews": "2026-11-09T08:27:32+00:00",
+  "FastStockNewsUSA": "2026-11-09T08:09:10+00:00",
+  "insidertracking": "2026-11-09T09:12:35+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-08T22:46:02+00:00",
+   "last_id": 2994,
+   "last_dt": "2026-11-09T22:37:37+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T08:55:11+00:00",
+   "last_id": 61748,
+   "last_dt": "2026-11-09T23:00:24+00:00",
+   "read": 18
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-08T22:36:17+00:00",
+   "last_id": 2128,
+   "last_dt": "2026-11-09T22:40:44+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T06:46:34+00:00",
+   "last_id": 4113,
+   "last_dt": "2026-11-10T01:37:21+00:00",
+   "read": 10
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-09T04:12:51+00:00",
+   "last_id": 26766,
+   "last_dt": "2026-11-10T08:17:34+00:00",
+   "read": 31
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-09T08:27:32+00:00",
+   "last_id": 127689,
+   "last_dt": "2026-11-10T08:16:17+00:00",
+   "read": 50
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T08:09:10+00:00",
+   "last_id": 24306,
+   "last_dt": "2026-11-10T06:00:47+00:00",
+   "read": 19
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 6,
+   "truncated": false,
+   "from_dt": "2026-11-09T09:12:35+00:00",
+   "last_id": 68880,
+   "last_dt": "2026-11-10T09:13:55+00:00",
+   "read": 98
+  }
+ },
+ "items": [
+  {
+   "id": "hedgecat0301/2994",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-09T22:37:37+00:00",
+   "url": "https://t.me/hedgecat0301/2994",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "키움 한지영 애널리스트는 미국 증시 급등에도 젠슨 황 스캔들이 엔비디아 외 반도체·AI주로 번지지 않았다고 보고, 시장이 AI 투자사이클과 CEO 리스크를 구분하고 있다고 진단했다. 중동 지정학 불안 완화와 중간선거 이후 데이터센터 규제 우려 축소도 같은 맥락에서 해석했다. 다만 국내 증시가 반등 때마다 매도 기회로 인식되는 경향과 '약속의 2시' 밈에서 드러난 투자심리 취약성은 경계할 대목으로 짚었다. 그럼에도 과거 대형 위기급 조정을 빠르게 겪으며 악재가 상당 부분 주가에 반영됐다고 보고, 국내 증시의 진입 매력이 높아졌다는 전제를 전략의 우선순위에 두는 것이 적절하다고 결론지었다."
+  },
+  {
+   "id": "aethersemiconductor/26750",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-09T23:22:21+00:00",
+   "url": "https://t.me/aethersemiconductor/26750",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "AI가 메모리 산업의 구조를 바꿨지만 여전히 진폭이 7배에 달하는 시클리컬 업종이라는 것이 해당 글의 전제다. 글쓴이는 이 특성을 먼저 가격에 반영한 투자자가 시장에서 계속 보상받고 있다고 본다. 투자 심리는 크게 약세로 돌아섰고 밸류에이션에도 실적 지속성에 대한 우려가 이미 상당 부분 담겨 있다고 평가한다. 그럼에도 지금은 후기 사이클이어서 수익을 내기가 더 어렵고, 규모와 자본력이 큰 스케일드 테크 리더가 상대적으로 유리하다는 것이 글쓴이의 시각이다. 이러한 판단을 근거로 삼성전자를 새로운 Top Pick으로 제시했다."
+  },
+  {
+   "id": "d_ticker/4113",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-10T01:37:21+00:00",
+   "url": "https://t.me/d_ticker/4113",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "모건스탠리의 숀킴 연구원이 10일 발간한 메모리 리포트에서 SK하이닉스의 2029~2035년 D램 영업이익률 가정을 60%에서 32%로 낮췄고, 삼성전자도 같은 기간 D램 영업이익률 전망을 60%에서 39%로 하향했다는 소식이 전해졌다. 이를 두고 메모리 업계 경쟁이 과열되는 '치킨게임'이 시작됐다는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNews/127665",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-10T03:11:03+00:00",
+   "url": "https://t.me/FastStockNews/127665",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜뉴스",
+    "url": "https://www.fnnews.com/news/202611101003391320CMVP%EB%8A%94",
+    "basis": "link"
+   },
+   "article_date": "2026-11-10",
+   "summary_ko": "파수 AI가 공급망 데이터 보안 협업 플랫폼 '랩소디 에코'에 미국 암호모듈검증(CMVP) 인증을 받은 암호모듈을 탑재했다. CMVP는 미국 국립표준기술연구소(NIST)와 캐나다 통신보안국(CSE)이 운영하는 암호모듈 검증 프로그램으로, 미국과 캐나다 연방정부 및 공공기관 조달에서 주요 보안 요건으로 쓰인다. 랩소디 에코는 외부 협력업체나 연구기관과 문서를 공유할 때 유출을 막는 플랫폼으로, 사용자별 접근 권한을 설정하고 공유 후에도 권한을 바꾸거나 회수할 수 있다. 문서 사용 이력을 추적하고 열람 시 최신 버전으로 자동 동기화하는 기능도 갖췄다. 기존 국가정보원 암호모듈검증(KCMVP)에 이어 CMVP 모듈까지 적용되면서 국내외 보안 요구에 함께 대응하게 됐다. 회사는 북미 정부기관과 방산업계의 엄격한 데이터 보안 기준을 겨냥해, 설계도면과 시험문서 등 민감 자료를 해외 협력사와 공유해야 하는 국내 방산기업의 해외 사업 확대를 지원하겠다는 방침이다. 강봉호 서비스사업본부장은 데이터 보호 역량이 글로벌 공급망 진입의 필수 조건이라고 강조했다."
+  },
+  {
+   "id": "FastStockNews/127669",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-10T04:15:24+00:00",
+   "url": "https://t.me/FastStockNews/127669",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "케이씨텍이 SK하이닉스와 반도체 제조 장비 공급계약을 체결했다는 공시가 전해졌다. 계약총액은 211억 원이며, 납품 후 90%, 검수 완료 후 10%를 받는 조건이다. 계약 기간은 2026년 11월 9일부터 2027년 4월 1일까지로 약 5개월이고, 공시에 표시된 규모는 매출 대비 5.52%다. 이번 계약이 회사 실적에 의미 있는 기여를 한다는 시각이 함께 제시됐다."
+  },
+  {
+   "id": "FastStockNews/127682",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-10T05:52:29+00:00",
+   "url": "https://t.me/FastStockNews/127682",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "PS일렉트로닉스가 글로벌 GPU·서버 플랫폼 업체와 협력해 AI 서버와 HPC 서버, 데이터센터 인프라를 공급하고 있으며, 추가 공급을 위한 사업을 검토 중이라는 소식이다. 올해 3분기 누적 연결 매출 2098억원 가운데 고성능 서버 매출이 1093억원으로 52.1%를 차지해 서버 사업이 핵심 수익원으로 자리 잡았다는 점이 강조됐다. 이에 따라 서버 공급을 넘어 ODM과 유지보수, 데이터센터 구축 지원으로 사업을 넓힐 수 있다는 시각도 제시됐다. 다만 검토 중인 사업의 계약 규모와 공급 시점은 아직 확정되지 않은 것으로 전해졌다."
+  }
+ ],
+ "stats": {
+  "items": 6,
+  "summarized": 6,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
