@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-10T16:40:47+00:00",
- "cutoff_at": "2026-11-10T16:40:47+00:00",
+ "collected_at": "2026-11-10T17:45:14+00:00",
+ "cutoff_at": "2026-11-10T17:45:14+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
  },
  "counts": {
-  "harvest": 209,
+  "harvest": 211,
   "candidates": 1,
   "articles": [
    6
@@ -30,49 +30,60 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 37516,
-   "out": 11233
+   "in": 38707,
+   "out": 11890
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok"
+   "aljazeera.com": "short",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
+   "claims": "6/6",
    "pairs": "1/1",
-   "obs": "4/4"
+   "obs": "6/6"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 4,
-   "strict_pairs": 0,
+   "obs": 6,
+   "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
     "edges[0]",
+    "edges[1]",
     "edges[2]",
     "memo[0]",
+    "memo[1]",
+    "memo[2]",
     "structure",
     "worry.moderate[0]",
-    "worry.most[0]"
+    "worry.most[0]",
+    "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
+    "structure:unverified",
     "structure:dangling",
     "edges[0]:dangling",
+    "edges[1]:dangling",
     "edges[2]:unverified",
+    "edges[2]:dangling",
     "memo[0]:unverified",
     "memo[0]:dangling",
-    "worry.most[0]:unverified",
+    "memo[1]:dangling",
+    "memo[2]:dangling",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling"
+    "worry.moderate[0]:unverified",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
@@ -83,14 +94,20 @@
   "trigger": []
  },
  "problems": [
+  "structure:unverified",
   "structure:dangling",
   "edges[0]:dangling",
+  "edges[1]:dangling",
   "edges[2]:unverified",
+  "edges[2]:dangling",
   "memo[0]:unverified",
   "memo[0]:dangling",
-  "worry.most[0]:unverified",
+  "memo[1]:dangling",
+  "memo[2]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling"
+  "worry.moderate[0]:unverified",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "b5613d0bcd3fcf93"
+ "content_hash": "6bccab7181e495a5"
 }
