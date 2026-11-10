@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-11 07:52 KST",
+  "generated": "2026-11-11 08:05 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-10",
   "indices": {
@@ -196,11 +196,11 @@
       "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 4038.89990234375,
-      "chg": -112.10009765625,
-      "pct": -2.700556435949164,
+      "last": 4038.800048828125,
+      "chg": -111.900146484375,
+      "pct": -2.6959342091425142,
       "date": "2026-11-10",
-      "prev": 4151.0,
+      "prev": 4150.7001953125,
       "prev_date": "2026-11-09",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -695,9 +695,9 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -2.701,
+        "change": -2.696,
         "unit": "%",
-        "multiple": -1.96,
+        "multiple": -1.95,
         "band": "큼"
       },
       "10Y": {
@@ -845,12 +845,12 @@
         }
       },
       "Gold": {
-        "value": 4038.9,
-        "percentile": 50.9,
+        "value": 4038.8,
+        "percentile": 50.8,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 50.9,
+          "percentile": 50.8,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -1134,9 +1134,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 26347.45,
-            "pct": 0.31,
-            "date": "2026-11-10"
+            "close": 26267.19,
+            "pct": 1.73,
+            "date": "2026-11-09"
           },
           {
             "name": "FTSE100",
@@ -1148,14 +1148,14 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6327.87,
-            "pct": 0.59,
-            "date": "2026-11-10"
+            "close": 6290.45,
+            "pct": 1.94,
+            "date": "2026-11-09"
           }
         ],
         "alignment": {
           "label": "엇갈림",
-          "avg_pct": 0.2,
+          "avg_pct": 1.13,
           "mixed": true
         }
       }
