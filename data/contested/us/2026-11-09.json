@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-09",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "schema_invalid",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-10T19:54:18+00:00",
- "cutoff_at": "2026-11-10T19:54:18+00:00",
+ "collected_at": "2026-11-10T20:59:44+00:00",
+ "cutoff_at": "2026-11-10T20:59:44+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
  },
  "counts": {
-  "harvest": 213,
+  "harvest": 216,
   "candidates": 1,
   "articles": [
    6
@@ -30,14 +30,13 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 91036,
-   "out": 19264
+   "in": 46335,
+   "out": 11136
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
@@ -45,40 +44,25 @@
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "5/5"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 2,
    "claims": 4,
-   "obs": 5,
-   "strict_pairs": 2,
+   "obs": 7,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[2]",
-    "structure",
-    "worry.moderate[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[2]:unverified",
-    "worry.moderate[0]:unverified",
-    "worry.unlikely[0]:unverified"
-   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "헤그세스 국방장관 탄핵 추진의 정당성과 가결 전망",
+  "topic_ko": "엔비디아 젠슨 황 CEO의 중국 스파이 의혹 연루와 안보·수출통제 논쟁",
   "query": "nvidia jensen affair",
   "trigger": []
  },
  "problems": [
-  "edges[2]:unverified",
-  "worry.moderate[0]:unverified",
-  "worry.unlikely[0]:unverified"
+  "claims"
  ],
- "content_hash": "7dbb7dd0cb5901c7"
+ "content_hash": "b99f4ff55ccbfcc9"
 }
