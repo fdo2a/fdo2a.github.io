@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
-"""매일 검증 알림 — 발행본마다 숫자 재검사·codex 검토 상태를 텔레그램 한 통으로 (2026-11-08).
+"""매일 검증 알림 — 발행본마다 숫자 재검사·codex 검토 상태를 하루 한 통으로 (2026-11-08, 2.5단계 2026-11-10).
 
   /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 scripts/runner_launch.py digest
                                                    # launchd(매시) — origin/main 사본. 3.9 는 런처가 못 푼다
-  python3 scripts/verify_digest.py --dry-run       # 보내지 않고 출력만(기록도 안 남긴다)
-  python3 scripts/verify_digest.py --force         # 오늘 보냈어도 다시 보낸다
-  python3 scripts/verify_digest.py --setup-chat    # 봇에게 메시지를 보낸 뒤 한 번
-  python3 scripts/verify_digest.py --status        # 세션 시작 훅 한 줄(멈춘 알림 표시)
+  python3 scripts/verify_digest.py --dry-run       # 제출하지 않고 출력만(기록·열쇠고리·Worker 를 안 건드린다)
+  python3 scripts/verify_digest.py --force         # 오늘 접수됐어도 수정본(v2…)으로 다시 제출
+  python3 scripts/verify_digest.py --status        # 세션 시작 훅(멈춘 알림 + Worker 공개 /health 의 설정 오류, 키 없이 5초)
 
-매시 깨어나도 KST 9시 이후 그날 처음 한 번만 보낸다 — launchd 시각이 Mac 시간대를 따르고, 잠자기
-중엔 깨어날 때 돌기 때문이다. 발행본·발행 루틴은 건드리지 않고, AI 를 부르지 않는다.
+맥은 텔레그램에 직접 보내지 않는다. 요약을 Cloudflare Worker 에 제출하고(`POST /digest`) Worker 가 보낸다.
+맥이 읽는 값은 둘뿐이고 사람이 직접 넣는다(값을 파일·명령 인자에 적지 않는다 — `-w` 뒤를 비우면 물어본다):
+
+  security add-generic-password -U -s fdo2a-alerts -a digest_key -w     # 제출 키(Worker 의 DIGEST_SUBMIT_KEY)
+  security add-generic-password -U -s fdo2a-alerts -a worker_url -w     # https://<worker 주소> (경로 없이)
+
+매시 깨어나 (1) 접수된 요약이 실제로 전송됐는지 Worker `/status` 로 확인하고 (2) 접수 안 된 제출본을 같은
+본문으로 다시 내고 (3) KST 9시 이후 그날 치가 아직 접수되지 않았으면 새 요약을 만들어 제출한다.
+「무엇을 이미 알렸나」는 전송이 확인된 뒤에만 전진한다. 발행본·발행 루틴은 건드리지 않고, AI 를 부르지 않는다.
 로직 `scripts/review/digest.py`.
 """
 import argparse
@@ -75,7 +81,7 @@ def build(state, now, args, notes):
     root = G.repo_root()
     published, buckets, reviewed, stale, drafts = _published_view(G, root, not args.no_fetch)
     if stale:
-        notes.append('최신 판을 못 받았어요 — 마지막으로 받아 둔 판 기준이에요')
+        notes.append(D.NOTE_STALE)
     code_id = D.checker_version(_checker_files(), base=os.path.dirname(HERE))
     cache = state.get('numbers') if isinstance(state.get('numbers'), dict) else {}
     numbers, posts = {}, []
@@ -110,13 +116,131 @@ def build(state, now, args, notes):
     return posts, numbers, dict(published)
 
 
+def _fail(path, state, kind, detail=''):
+    """실패는 종류만 기록한다 — 자세한 문장은 이 맥의 stderr(launchd 로그)에만."""
+    print(f'알림 실패: {kind}' + (f' — {detail}' if detail else ''), file=sys.stderr)
+    state.update(last_error=kind, last_attempt=D.now_kst().isoformat())
+    D.save_state(path, state)
+    return 1
+
+
+def _text(state, now, args, notes, health_tail, v=1):
+    """(제출본, 글 수). 상태를 바꾸지 않는다."""
+    import review_gate as G
+    notes = list(notes) + D.carry_notes(state)
+    if not state.get('last_sent'):
+        notes.append(D.NOTE_FIRST)
+    if state.get('last_error'):
+        notes.append(f'지난 알림 실패 — {D.error_kind(state["last_error"])}')
+    posts, numbers, published = build(state, now, args, notes)
+    lines, more, tracked = D.reconcile(posts, state, published, now.date())
+    tail = D.carry_lines(state, now.date()) \
+        + D.publish_tail(G.repo_root(), now, fetch=not args.no_fetch) + list(health_tail)
+    return D.compose(posts, lines, now, notes + more, tail, numbers, tracked, published, v), len(posts)
+
+
+def _tick(path, state, now, args, notes):
+    def save(st):
+        D.save_state(path, st)
+
+    def lookup(sid):
+        try:
+            return D.fetch_status(sid)['events'].get(sid)
+        except D.AuthError:
+            D.auth_failed(state, now)
+            raise
+
+    def archive(p, outcome):         # 접수되지 못한 제출본은 지우지 않는다 — 기록 파일 옆에 30일
+        entry = {'archived_at': now.isoformat(), 'outcome': outcome, 'pending': p}
+        try:
+            D.append_archive(path, [entry], now)
+        except OSError as exc:
+            # 보관에 실패하면 원문을 기록 파일 안에 남긴다 — pending 을 지운 뒤에도 원문이 사라지지 않게(codex 구현 2회 #2)
+            state.setdefault('unarchived', []).append(entry)
+            print(f'접수 안 된 제출본을 보관하지 못했다 — 기록 파일에 남겼다({type(exc).__name__}: {exc})',
+                  file=sys.stderr)
+
+    today = now.date()
+    before = repr(sorted(state.items(), key=lambda kv: kv[0]))
+    if state.get('unarchived'):      # 지난번에 못 옮긴 원문 — 다시 보관. 스냅숏 뒤라 성공하면 저장된다(codex 3회 #2)
+        try:
+            D.append_archive(path, state['unarchived'], now)
+            state.pop('unarchived')
+        except OSError as exc:
+            print(f'남겨 둔 제출본 보관 재시도 실패 — {type(exc).__name__}: {exc}', file=sys.stderr)
+
+    want = args.force or D.due(now, state)
+    status = None
+    if want or D.pending_of(state) or D.unconfirmed(state):
+        try:
+            status = D.fetch_status()
+        except D.ConfigError as exc:
+            return _fail(path, state, '제출 키 없음', str(exc))
+        except D.AuthError:
+            D.auth_failed(state, now)            # 키가 Worker 와 다르다 — 세션 훅·다음 요약 머리에 보인다
+            status = None
+        except D.TransportError:
+            status = None                        # 확인은 다음 tick 에. 제출은 그대로 해 본다
+        if status:
+            D.auth_ok(state)
+            D.confirm(state, status['events'], now)
+
+    p = D.pending_of(state)
+    if p:
+        day = D.date.fromisoformat(p['date'])
+        age = (today - day).days
+        # 기한: 어제 치는 오늘 요약을 만들 때(9시 이후 첫 tick)까지 다시 낸다. 그보다 오래된 날짜는 Worker 가 안 받는다.
+        expired = age > 1 or (age == 1 and (now.hour >= D.SEND_HOUR or args.force))
+        known = status is not None and p['id'] in status['events']
+        if expired:
+            D.settle(state, now, (lambda sid: status['events'][sid]) if known else lookup, True, archive)
+        # 기한 전에는 /status 에 id 가 보여도 같은 본문을 다시 낸다 — 200 이면 내 본문, 409 면 남의 본문이다.
+        # 상태만 믿으면 (기록을 잃고 새로 만든 본문 + 무응답) 때 가지 않은 본문의 기준이 적용된다.
+        elif D.attempt(state, now, save, D.post_digest) == 'conflict':
+            D.settle(state, now, lookup, False, archive)
+        save(state)
+        if D.pending_of(state):                  # 아직 접수 안 됨 — 다음 tick 에 같은 본문으로
+            print(f'알림 실패: {state.get("last_error")}', file=sys.stderr)
+            return 1
+        want = D.due(now, state)                 # 밀린 제출본을 정리한 tick 에는 --force 로 새 판을 만들지 않는다
+
+    if not want:
+        if repr(sorted(state.items(), key=lambda kv: kv[0])) != before:
+            save(state)
+        return 0
+
+    v = 1
+    last = state.get('submitted') if isinstance(state.get('submitted'), dict) else {}
+    if last.get('date') == today.isoformat():    # --force 로 같은 날 다시 — 같은 id 에 다른 본문은 409 다
+        v = int(last.get('v') or 1) + 1
+        if v > 9:
+            return _fail(path, state, '요약 만들기 오류', '오늘 수정본을 9개까지 냈다')
+    try:
+        health = D.health_lines(status['health'] if status else None, now)
+        pending, count = _text(state, now, args, notes, health, v)
+    except D.SizeError as exc:
+        return _fail(path, state, '크기 초과', str(exc))
+    except Exception as exc:  # noqa: BLE001 — 어떤 실패든 기록해야 세션 훅이 보인다(codex 구현 검토 #4)
+        return _fail(path, state, '요약 만들기 오류', f'{type(exc).__name__}: {exc}'[:300])
+    state['pending'] = pending                   # 제출본을 먼저 고정한다(설계 v7 #1) — attempt 가 보내기 전에 저장
+    state['carry'] = []
+    result = D.attempt(state, now, save, D.post_digest)
+    if result == 'conflict':
+        D.settle(state, now, lookup, False, archive)
+        save(state)
+    if D.pending_of(state):
+        print(f'알림 실패: {state.get("last_error")} — 다음 tick 에 같은 본문으로 다시 낸다', file=sys.stderr)
+        return 1
+    print(f'접수됐다 — 글 {count}편, {len(pending["text"])}자 ({pending["id"]}, {result})')
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--no-fetch', action='store_true')
     ap.add_argument('--no-replay', action='store_true', help='숫자 재검사를 건너뛴다(시험용)')
-    ap.add_argument('--setup-chat', action='store_true')
     ap.add_argument('--status', action='store_true')
     args = ap.parse_args(argv)
     path = D.state_path()
@@ -126,14 +250,12 @@ def main(argv=None):
         note = D.digest_note(path, now)
         if note:
             print(note)
-        return 0
-    if args.setup_chat:
-        try:
-            D.setup_chat()
-        except D.SendError as exc:
-            print(exc, file=sys.stderr)
-            return 1
-        print('대화 번호를 열쇠고리에 넣었어요.')
+        try:                 # 전송기 설정 오류는 텔레그램으로 알릴 수 없다 — 공개 /health 를 여기서 본다(키 없이, 5초)
+            worker = D.worker_note(path)
+        except Exception:  # noqa: BLE001 — 훅 한 줄 때문에 세션 시작이 깨지면 안 된다
+            worker = ''
+        if worker:
+            print(worker)
         return 0
 
     notes = []
@@ -149,11 +271,10 @@ def main(argv=None):
             return 0
         except OSError as exc:      # 경합이 아닌 잠금 실패는 실패다 — 세션 훅이 보게 기록한다(codex 재검토 #3)
             lock.close()
-            why = f'잠금 — {type(exc).__name__}: {exc}'[:200]
-            print(f'알림 실패: {why}', file=sys.stderr)
+            print(f'알림 실패: 잠금 — {type(exc).__name__}: {exc}'[:200], file=sys.stderr)
             try:
                 st = D.load_state(path)
-                st.update(last_error=why, last_attempt=now.isoformat())
+                st.update(last_error='잠금 오류', last_attempt=now.isoformat())
                 D.save_state(path, st)
             except (D.StateError, OSError):
                 pass
@@ -162,46 +283,20 @@ def main(argv=None):
         try:
             state = D.load_state(path)
         except D.StateError as exc:
-            notes.append('기록 파일이 손상돼 새로 시작했어요 — 지난 상태와 비교하지 못했어요')
+            notes.append(D.NOTE_CORRUPT)
             if not args.dry_run:
                 os.replace(path, f'{path}.corrupt-{now:%Y%m%d%H%M}')
             print(f'기록 파일 손상: {exc}', file=sys.stderr)
             state = {}
-        if not (args.dry_run or args.force) and not D.due(now, state):
+        D.migrate(state)
+        if args.dry_run:                         # 열쇠고리·Worker 를 건드리지 않는다 — 전송기 줄은 없다
+            pending, _count = _text(state, now, args, notes, [])
+            print(pending['text'])
             return 0
-        if not state.get('last_sent'):
-            notes.append(f'첫 알림이라 최근 {D.WINDOW_DAYS}일 글과 끝나지 않은 옛 글을 담았어요')
-        if state.get('last_error'):
-            notes.append(f'지난번 알림이 실패했어요 — {state["last_error"]}')
         try:
-            posts, numbers, published = build(state, now, args, notes)
-            lines, more, tracked = D.reconcile(posts, state, published, now.date())
-            try:
-                from review import publish_watch as W
-                tail = W.summary_lines(W.state_path(), now)
-            except Exception:  # noqa: BLE001
-                tail = ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
-            text, lines = D.render(posts, lines, now, notes + more, tail)
-            if args.dry_run:
-                print(text)
-                return 0
-            D.send_telegram(text)
-        except Exception as exc:  # noqa: BLE001 — 어떤 실패든 기록해야 세션 훅이 보인다(codex 구현 검토 #4)
-            why = str(exc) if isinstance(exc, D.SendError) else f'{type(exc).__name__}: {exc}'[:200]
-            print(f'알림 실패: {why}', file=sys.stderr)
-            if not args.dry_run:
-                state.update(last_error=why, last_attempt=now.isoformat())
-                D.save_state(path, state)
-            return 1
-        # 전송 뒤 저장이 실패하면 다음 tick 에 한 번 더 보낸다 — 중복은 유실보다 낫다.
-        state.update(last_sent=now.isoformat(), last_sent_day=now.date().isoformat(),
-                     last_attempt=now.isoformat(), last_error=None, lines=lines, numbers=numbers,
-                     open=sorted(p['path'] for p in posts if not D.resolved(p)), tracked=tracked,
-                     all=sorted(p for p in published if D.post_day(p)))
-        state.pop('seen', None)
-        D.save_state(path, state)
-        print(f'보냈다 — 글 {len(posts)}편, {len(text)}자')
-        return 0
+            return _tick(path, state, now, args, notes)
+        except D.ConfigError as exc:
+            return _fail(path, state, '제출 키 없음', str(exc))
     finally:
         if lock:
             lock.close()
