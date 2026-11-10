@@ -352,7 +352,7 @@ def test_totals_line():
     ps = [post(number={'kind': 'violation', 'violations': 2, 'warnings': 1, 'counts': COUNTS}),
           post('kr/posts/2026-11-06.html', findings=5)]
     text, _ = D.render(ps, {}, at(2026, 11, 9))
-    assert '최근 7일: 글 2편 · 숫자 위반 2 · 숫자 경고 1 · codex 지적 7건' in text
+    assert '최근 7일: 글 2편 · 숫자 위반 2·경고 1(US 일간 자동 검사 범위 안) · codex 지적 7건(사실 오류로 확인된 수 아님)' in text
 
 
 def test_totals_show_unchecked_and_unfinished():
@@ -697,7 +697,7 @@ def test_target_post_separates_prepub_and_recheck(tmp_path):
     F.publish(repo, 'kr', '2026-11-09', workspace=False)
     p = _post('kr/posts/2026-11-09.html', prepub=V.view(str(repo), 'HEAD', 'kr', '2026-11-09'))
     text = D.block(p)
-    assert '[발행 전 기록] 발행 전 기록 일치' in text
+    assert '[발행 전 기록] 발행본과 검사 기록 일치' in text
     assert '[발행 뒤 재검사] 숫자: 자동 재검사 없음(US 일간만 해요)' in text
 
 

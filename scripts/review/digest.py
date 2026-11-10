@@ -486,8 +486,8 @@ def _totals(posts):
     bad = sum(1 for n in nums if n.get('kind') == 'error')
     todo = sum(1 for p in posts if p['state'] != '완료')
     # 못 본 것을 0건처럼 보이지 않게 함께 센다(codex 구현 검토 #5)
-    return (f'최근 {WINDOW_DAYS}일: 글 {len(posts)}편 · 숫자 위반 {v} · 숫자 경고 {w} · '
-            f'codex 지적 {f}건 · 숫자 판정 불가 {bad} · 검토 미완료 {todo}')
+    return (f'최근 {WINDOW_DAYS}일: 글 {len(posts)}편 · 숫자 위반 {v}·경고 {w}(US 일간 자동 검사 범위 안) · '
+            f'codex 지적 {f}건(사실 오류로 확인된 수 아님) · 숫자 판정 불가 {bad} · 검토 미완료 {todo}')
 
 
 def _header(now):

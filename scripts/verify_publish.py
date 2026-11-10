@@ -280,7 +280,7 @@ def preview(root, market, date, fetched):
     bad = V.anomalies(v)
     print('\n── 첫 실행(기준선)이라면 ──')
     print('알림을 보낸다 — 이상: ' + ', '.join(bad) if bad else
-          '조용히 기준선으로 잡는다' + ('' if V.fully_verified(v) else '(검증 완료 아님 — 아침 요약에 보인다)'))
+          '조용히 기준선으로 잡는다' + ('' if V.fully_verified(v) else '(설정된 검사 완료 아님 — 아침 요약에 보인다)'))
     print(f'\n기준: 기록 커밋 {(v.get("record_commit") or "-")[:10]} · 글 추가 커밋 '
           f'{", ".join(c[:10] for c in v.get("post_adds") or []) or "-"}')
     return 0

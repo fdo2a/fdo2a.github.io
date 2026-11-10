@@ -245,9 +245,9 @@ def headline(v, who=MAC):
         return '발행 전 기록 없음(있어야 하는데 없어요)'
     o = v['check']['overall']
     if o == C.MATCH:
-        return '발행 전 기록 일치'
+        return '발행본과 검사 기록 일치'
     if o == C.PARTIAL:
-        return f'발행 전 기록 — {subject(who)} 확인한 범위는 일치, 대조 불가 {len(v["check"]["unknown"])}칸'
+        return f'발행본과 검사 기록 — {subject(who)} 확인한 범위는 일치, 대조 불가 {len(v["check"]["unknown"])}칸'
     if o == C.UNKNOWN:
         return '발행 전 기록을 읽지 못했어요 — 확인 필요'
     return '기록 불일치, 확인 필요'
@@ -279,9 +279,9 @@ def recorded_lines(v):
     st = STATUS.get(rec['status'], f'{rec["status"]}(모르는 판정)')
     out = ['[루틴이 남긴 검사 결과]',
            f' · 판정 {st} · 발행 {"가능" if rec["publish_ok"] else "불가"} · '
-           f'검증 {"완료" if rec["verified"] else "완료 아님"} · 필수 {rec["required_pass"]}/{rec["required"]} 통과']
+           f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"} · 필수 검사 {rec["required_pass"]}/{rec["required"]} 통과']
     for key, label in (('blocking', '막은 것'), ('indeterminate', '판정 불가'), ('not_run', '실행 안 함'),
-                       ('partial', '일부만 검사'), ('note_numbers', '노트 때문인 숫자 실패(검증 완료 아님)'),
+                       ('partial', '일부만 검사'), ('note_numbers', '노트 때문인 숫자 실패(설정된 검사 완료 아님)'),
                        ('note_format', '노트 때문인 형식 실패(허용)'), ('ref_failed', '참고 검사 실패'),
                        ('warned', '경고'), ('integrity', '무결성')):
         if rec.get(key):
@@ -289,7 +289,7 @@ def recorded_lines(v):
     n = rec.get('numbers')
     if n:
         out.append(f' · 숫자: 표 칸 {n.get("table_cells", "?")} 대조 · 문장 판정 {n.get("prose_judged", "?")} · '
-                   f'미검증 {n.get("unverified", "?")}')
+                   f'자동 대조하지 못한 수치 {n.get("unverified", "?")}개')
     elif v.get('market') == 'kr':
         out.append(' · 숫자: KR 은 표 숫자를 기계로 대조하는 검사가 없어요(발행 전·후 모두) — 이 결과에 숫자 검증은 들어 있지 않아요')
     else:
@@ -306,7 +306,9 @@ def correction_line(v):
 
 
 def footer(who=MAC):
-    return '※ 검사 결과는 클라우드 루틴이 남긴 기록 기준이에요. ' + _WHO[who]['foot']
+    # 「설정된 검사」의 실행 기록일 뿐 — 보고서 전체의 사실 정확성까지 말하지 않는다(사용자 11/11)
+    return ('※ 검사 결과는 클라우드 루틴이 남긴 기록 기준이에요. ' + _WHO[who]['foot']
+            + ' 보고서 전체가 사실로 맞다는 뜻은 아니에요.')
 
 
 FOOTER = footer(MAC)
@@ -330,16 +332,16 @@ def digest_lines(v, who=MAC):
     if bad:
         out.append('   - 즉시 확인: ' + ', '.join(bad))
     if rec.get('readable'):
-        bits = [f'판정 {STATUS.get(rec["status"], rec["status"])}', f'검증 {"완료" if rec["verified"] else "완료 아님"}']
+        bits = [f'판정 {STATUS.get(rec["status"], rec["status"])}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
             bits.append('실행 안 함·일부만 ' + ', '.join((rec['not_run'] + rec['partial'])[:4]))
         u = unverified_numbers(v)
         if not rec.get('numbers'):
             bits.append('숫자 자동 대조 없음')
         elif u is None:
-            bits.append('미검증 숫자 수 모름')                            # codex 6회 #3
+            bits.append('자동 대조하지 못한 수치 수 모름')                            # codex 6회 #3
         elif u:
-            bits.append(f'미검증 숫자 {u}')                               # codex 5회 #3
+            bits.append(f'자동 대조하지 못한 수치 {u}개')                               # codex 5회 #3
         out.append('   - ' + ' · '.join(bits))
     out += [x.replace(' · 그 뒤', '   - 그 뒤', 1) for x in correction_line(v)]
     return out

@@ -374,7 +374,7 @@ def test_transient_read_error_does_not_freeze_unknown(tmp_path, monkeypatch):
     monkeypatch.setattr(C, '_show', real)
     run(st, repo, at(11, 9, 8, 10))
     pub = next(e for e in st['events'] if e['kind'] == 'publish')
-    assert '검사 코드: 일치' in pub['text'] and '발행 전 기록 일치' in pub['text']
+    assert '검사 코드: 일치' in pub['text'] and '발행본과 검사 기록 일치' in pub['text']
 
 
 def test_published_then_deleted_is_gone_and_back(tmp_path):
@@ -543,7 +543,7 @@ def test_unverified_numbers_counted_as_not_fully_verified(tmp_path):
     F.publish(repo, 'us', '2026-11-09', numbers={'table_cells': 40, 'prose_judged': 5, 'unverified': 12})
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     assert V.clean(v) and not V.fully_verified(v)
-    assert '미검증 숫자 12' in '\n'.join(V.digest_lines(v))
+    assert '자동 대조하지 못한 수치 12개' in '\n'.join(V.digest_lines(v))
 
 
 def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):
@@ -577,4 +577,4 @@ def test_unknown_unverified_count_is_not_complete(tmp_path):
     F.publish(repo, 'us', '2026-11-09', numbers={'table_cells': 40, 'prose_judged': 5})
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     assert V.unverified_numbers(v) is None and not V.fully_verified(v)
-    assert '미검증 숫자 수 모름' in '\n'.join(V.digest_lines(v))
+    assert '자동 대조하지 못한 수치 수 모름' in '\n'.join(V.digest_lines(v))

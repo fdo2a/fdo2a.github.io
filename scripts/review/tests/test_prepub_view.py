@@ -29,8 +29,8 @@ def test_normal_publish_separates_pair_and_recorded(tmp_path):
     text = V.render_publish(v)
     assert '[맥이 직접 확인]' in text and '[루틴이 남긴 검사 결과]' in text
     assert '작업 공간 전용 입력: 대조 불가 1개' in text
-    assert '확인 완료' not in text and '발행 전 기록 일치' not in text      # 대조 불가가 있으면
-    assert '미검증 30' in text and '루틴 파이썬 3.11.9' in text
+    assert '확인 완료' not in text and '발행본과 검사 기록 일치' not in text      # 대조 불가가 있으면
+    assert '자동 대조하지 못한 수치 30개' in text and '루틴 파이썬 3.11.9' in text
 
 
 def test_not_run_and_partial_are_not_verified(tmp_path):
@@ -38,9 +38,9 @@ def test_not_run_and_partial_are_not_verified(tmp_path):
     F.publish(repo, workspace=False, summ=F.summary(verified=False, not_run=['g1']),
               gate_status={'g1': 'not_run', 'check_numbers': 'partial'})
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
-    assert V.headline(v) == '발행 전 기록 일치'                    # 짝은 맞다
+    assert V.headline(v) == '발행본과 검사 기록 일치'                    # 짝은 맞다
     text = V.render_publish(v)
-    assert '검증 완료 아님' in text and '실행 안 함: g1' in text and '일부만 검사: check_numbers' in text
+    assert '설정된 검사 완료 아님' in text and '실행 안 함: g1' in text and '일부만 검사: check_numbers' in text
 
 
 def _fake_typography(monkeypatch):
@@ -171,7 +171,7 @@ def test_gate_without_script_hash_is_unknown(tmp_path):
     F.git(repo, 'add', '-A')
     F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
-    assert v['check']['cats']['scripts'] == C.UNKNOWN and V.headline(v) != '발행 전 기록 일치'
+    assert v['check']['cats']['scripts'] == C.UNKNOWN and V.headline(v) != '발행본과 검사 기록 일치'
 
 
 def test_string_false_is_not_verified(tmp_path):

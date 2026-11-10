@@ -439,7 +439,7 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
     if reset and rid:
         ev = next(e for e in st['events'] if e['id'] == rid)
         _set_text(ev, f'[발행 알림] {reset} — 이미 올라온 글·세션은 기준선으로만 잡았어요. 즉시 확인이 필요한 이상이 있는 '
-                      f'글 {flagged}편만 따로 알려요. 이상은 아니지만 검증 완료가 아닌 글(경고·미실행·미검증 숫자·숫자 대조 없음) '
+                      f'글 {flagged}편만 따로 알려요. 이상은 아니지만 설정된 검사 완료가 아닌 글(경고·미실행·자동 대조하지 못한 수치·숫자 대조 없음) '
                       f'{len(unverified)}편' + (': ' + ', '.join(_short(p) for p in unverified[:10])
                                                  + (f' 외 {len(unverified) - 10}편' if len(unverified) > 10 else '')
                                                  if unverified else '')
