@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-09",
  "status": "none",
- "reason": "schema_invalid",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-10T20:59:44+00:00",
- "cutoff_at": "2026-11-10T20:59:44+00:00",
+ "collected_at": "2026-11-10T22:04:13+00:00",
+ "cutoff_at": "2026-11-10T22:04:13+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,22 +21,25 @@
   "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
  },
  "counts": {
-  "harvest": 216,
-  "candidates": 1,
+  "harvest": 217,
+  "candidates": 3,
   "articles": [
+   2,
+   1,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46335,
-   "out": 11136
+   "in": 78245,
+   "out": 17036
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
+   "aljazeera.com": "short",
    "bbc.co.uk": "ok"
   },
   "notes": [],
@@ -44,15 +47,28 @@
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "7/7"
+   "obs": "5/5"
   },
   "verified": {
    "pairs": 2,
    "claims": 4,
-   "obs": 7,
+   "obs": 5,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "memo[1]",
+    "variables[0]",
+    "variables[1]",
+    "worry.most[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "variables[1]:unverified",
+    "edges[1]:unverified"
+   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -62,7 +78,8 @@
   "trigger": []
  },
  "problems": [
-  "claims"
+  "variables[1]:unverified",
+  "edges[1]:unverified"
  ],
- "content_hash": "b99f4ff55ccbfcc9"
+ "content_hash": "099bea1b0e5510a3"
 }
