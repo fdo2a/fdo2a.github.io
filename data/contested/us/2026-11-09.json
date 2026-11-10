@@ -3,48 +3,49 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-09",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "topic_too_long",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-10T10:55:38+00:00",
- "cutoff_at": "2026-11-10T10:55:38+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-10T12:01:07+00:00",
+ "cutoff_at": "2026-11-10T12:01:07+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "bc160111e33012a3fe7a4eb781218fd562cd7593",
+  "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
+ },
  "counts": {
-  "harvest": 194,
-  "candidates": 3,
+  "harvest": 199,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   2
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4714,
-   "out": 67
+   "in": 19614,
+   "out": 7371
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "theguardian.com": "ok"
+   "theguardian.com": "ok",
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
   "topic_ko": "",
   "query": "",
   "trigger": []
  },
- "content_hash": "2c2e9362f39aee0b"
+ "content_hash": "f12aff1fe85fcb76"
 }
