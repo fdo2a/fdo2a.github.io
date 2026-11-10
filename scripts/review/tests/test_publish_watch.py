@@ -229,7 +229,7 @@ def test_send_failure_keeps_pending_and_order(tmp_path):
     sent = []
 
     def bad(text):
-        raise D.SendError('curl 실패(코드 28)')
+        raise RuntimeError('curl 실패(코드 28)')
     assert W.deliver(st, bad, lambda s: None, at(11, 10, 13)) is False
     first = W.pending(st)[0]
     assert first['tries'] == 1 and st['send_fail'] == 1 and len(W.pending(st)) == 3
@@ -432,25 +432,6 @@ def test_send_timeout_counts_as_failure(tmp_path):
         raise subprocess.TimeoutExpired('curl', 60)
     assert W.deliver(st, slow, lambda s: None, at(11, 10, 13)) is False
     assert st['send_fail'] == 1 and W.pending(st)[0]['tries'] == 1
-
-
-def test_cli_corrupt_state_is_copied_and_survives_failed_save(tmp_path, monkeypatch):
-    # #9 — 손상 파일을 옮기지 않는다: 새 상태 저장이 실패해도 다음 회차가 다시 복구에 들어간다
-    import verify_publish as CLI
-    repo = F.init(tmp_path)
-    state = tmp_path / 'st' / 'state.json'
-    state.parent.mkdir()
-    state.write_text('{broken')
-    monkeypatch.setenv(W.STATE_ENV, str(state))
-    monkeypatch.chdir(repo)
-
-    def boom(path, st):
-        raise OSError('disk full')
-    monkeypatch.setattr(W, 'save_state', boom)
-    with pytest.raises(OSError):
-        CLI.main(['--no-fetch'])
-    assert state.read_text() == '{broken'
-    assert len([p for p in os.listdir(state.parent) if '.corrupt-' in p]) == 1
 
 
 # ── codex 재검토 2회 반영 ──────────────────────────────────────────────────

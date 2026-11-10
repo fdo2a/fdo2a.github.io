@@ -195,3 +195,23 @@ def test_missing_summary_lists_are_unreadable():
     s = F.summary()
     del s['blocking']
     assert V.recorded({'summary': s, 'gates': [{'name': 'g1', 'status': 'pass'}]}) == {'readable': False}
+
+
+# ── 2.5단계: 확인 주체(who) ────────────────────────────────────────────────
+
+def test_who_changes_wording_only(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo)
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    mac, gh = V.render_publish(v), V.render_publish(v, who=V.GITHUB)
+    assert '[맥이 직접 확인]' in mac and '맥이 확인한 범위는 일치' in mac and mac.endswith(V.FOOTER)
+    assert '맥이 증명하지는 못해요' in V.FOOTER and 'GitHub' not in mac
+    assert '[GitHub이 직접 대조]' in gh and 'GitHub 이 확인한 범위는 일치' in gh and '맥' not in gh
+    assert gh.endswith(V.footer(V.GITHUB)) and 'GitHub 이 짝만 다시 확인했어요' in V.footer(V.GITHUB)
+    assert '증명하지는 못해요' in V.footer(V.GITHUB)                  # 검사가 실제로 돌았다고 하지 않는다
+    assert mac.replace('맥이', 'X').count('\n') == gh.count('\n')      # 줄 구성은 같다
+    assert 'GitHub 이 확인한 범위' in V.digest_lines(v, who=V.GITHUB)[0] and '맥이 확인한 범위' in V.digest_lines(v)[0]
+    import inspect
+    assert 'who' not in inspect.signature(V.fingerprint).parameters   # 같은 사건인지는 주체와 무관
+    with pytest.raises(KeyError):
+        V.render_publish(v, who='cloud')

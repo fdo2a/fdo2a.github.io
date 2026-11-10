@@ -169,9 +169,9 @@ def _git(root, *args, timeout=60):
 
 
 # 첫 인자로 고르는 진입점 — 목록 밖 이름은 받지 않는다.
+# 발행 건별 알림(`verify_publish.py`)은 여기 없다 — 2.5단계(2026-11-10)부터 GitHub Actions `publish-watch.yml` 이 돌린다.
 ENTRIES = {'contested': 'contested_local.py',
-           'digest': 'verify_digest.py',   # 매일 검증 알림(2026-11-08)
-           'publish': 'verify_publish.py'}  # 발행 건별 알림, 5분(2026-11-08)
+           'digest': 'verify_digest.py'}   # 매일 검증 알림(2026-11-08)
 DEFAULT_ENTRY = 'review_gate.py'
 
 

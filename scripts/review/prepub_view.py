@@ -1,7 +1,9 @@
 """발행 전 기록을 읽어 알림 문장으로 — 발행 건별 알림과 매일 요약이 함께 쓰는 계산(2단계, 2026-11-08).
 
-두 사실을 따로 낸다(codex 설계 검토 #3): ① 맥이 직접 확인한 짝(`verification.repo_check`) ② 루틴이 남긴 검사 결과.
+두 사실을 따로 낸다(codex 설계 검토 #3): ① 직접 확인한 짝(`verification.repo_check`) ② 루틴이 남긴 검사 결과.
 짝이 맞아도 기록 안에 실행 안 함·일부만 검사·노트 수치가 있을 수 있다.
+짝을 누가 다시 봤는지는 `who` 로 받는다(2.5단계) — 발행 건별 알림은 GitHub Actions 가 계산하므로 `GITHUB`,
+맥의 미리보기·매일 요약은 `MAC`(기본값). 판단(`fingerprint`·`anomalies`)은 `who` 와 무관하다.
 
 기준 커밋은 「그 날짜 기록 파일을 **처음 담은** 커밋」이다. 「처음 공개된 판」이라고 부르지 않는다 — git 그래프만으로는
 공개 시점을 증명하지 못한다(설계 검토 #1). 그 뒤 판은 짝 경보를 만들지 않고 「조판 외 변경 n회」로만 센다.
@@ -24,6 +26,18 @@ STATUS = {'pass': '통과', 'warn': '경고', 'fail': '실패', 'indeterminate':
           'pass_with_warnings': '통과(경고 있음)', 'pass_with_gaps': '통과(검증 빈칸 있음)'}
 
 OK, NO_RECORD, AMBIGUOUS = 'ok', 'no_record', 'ambiguous'
+
+MAC, GITHUB = 'mac', 'github'                 # 짝을 다시 확인한 주체
+_WHO = {MAC: {'subj': '맥이', 'pair': '[맥이 직접 확인]',
+              'foot': '맥이 직접 확인한 범위는 따로 적었어요 — 검사가 실제로 돌았다는 것까지 맥이 증명하지는 못해요.'},
+        GITHUB: {'subj': 'GitHub 이', 'pair': '[GitHub이 직접 대조]',
+                 'foot': 'GitHub 이 짝만 다시 확인했어요(범위는 따로 적었어요) — 검사가 실제로 돌았다는 것까지 '
+                         '증명하지는 못해요.'}}
+
+
+def subject(who=MAC):
+    """문장 주어 — 「맥이」 / 「GitHub 이」. 모르는 주체는 KeyError(조용히 맥이라고 쓰지 않는다)."""
+    return _WHO[who]['subj']
 
 
 class GitError(RuntimeError):
@@ -224,7 +238,7 @@ def fingerprint(v):
 
 # ── 문장 ─────────────────────────────────────────────────────────────────
 
-def headline(v):
+def headline(v, who=MAC):
     if v['kind'] == AMBIGUOUS:
         return '판정 불가 — ' + '; '.join(v['why'])
     if v['kind'] == NO_RECORD:
@@ -233,18 +247,18 @@ def headline(v):
     if o == C.MATCH:
         return '발행 전 기록 일치'
     if o == C.PARTIAL:
-        return f'발행 전 기록 — 맥이 확인한 범위는 일치, 대조 불가 {len(v["check"]["unknown"])}칸'
+        return f'발행 전 기록 — {subject(who)} 확인한 범위는 일치, 대조 불가 {len(v["check"]["unknown"])}칸'
     if o == C.UNKNOWN:
         return '발행 전 기록을 읽지 못했어요 — 확인 필요'
     return '기록 불일치, 확인 필요'
 
 
-def pair_lines(v):
+def pair_lines(v, who=MAC):
     chk = v.get('check')
     if not chk:
         return []
     cats = chk['cats']
-    out = ['[맥이 직접 확인]']
+    out = [_WHO[who]['pair']]
     for k, label in C.CATEGORY_LABEL.items():
         if k in cats and cats[k] != C.NONE:
             extra = f' {chk.get("workspace_only")}개' if k == 'workspace_inputs' and cats[k] == C.UNKNOWN else ''
@@ -291,24 +305,27 @@ def correction_line(v):
             '발행 전 기록은 이전 판 기준, 지금 판은 발행 뒤 재검사 몫(숫자는 US 일간만)']
 
 
-FOOTER = ('※ 검사 결과는 클라우드 루틴이 남긴 기록 기준이에요. 맥이 직접 확인한 범위는 따로 적었어요 — 검사가 실제로 '
-          '돌았다는 것까지 맥이 증명하지는 못해요.')
+def footer(who=MAC):
+    return '※ 검사 결과는 클라우드 루틴이 남긴 기록 기준이에요. ' + _WHO[who]['foot']
 
 
-def render_publish(v, head='[발행]'):
+FOOTER = footer(MAC)
+
+
+def render_publish(v, head='[발행]', who=MAC):
     d = v['date']
-    lines = [f'{head} {LABEL[v["market"]]} {int(d[5:7])}/{d[8:]} — {headline(v)}']
-    lines += pair_lines(v) + recorded_lines(v) + correction_line(v)
+    lines = [f'{head} {LABEL[v["market"]]} {int(d[5:7])}/{d[8:]} — {headline(v, who)}']
+    lines += pair_lines(v, who) + recorded_lines(v) + correction_line(v)
     rec = v.get('recorded') or {}
     if rec.get('python'):
         lines.append(f' · 루틴 파이썬 {rec["python"]}')
-    return '\n'.join(lines + [FOOTER])
+    return '\n'.join(lines + [footer(who)])
 
 
-def digest_lines(v):
+def digest_lines(v, who=MAC):
     """매일 요약의 [발행 전 기록] 줄 — 짧게."""
     rec = v.get('recorded') or {}
-    out = [f' · [발행 전 기록] {headline(v)}']
+    out = [f' · [발행 전 기록] {headline(v, who)}']
     bad = anomalies(v) if v.get('kind') else []
     if bad:
         out.append('   - 즉시 확인: ' + ', '.join(bad))

@@ -13,7 +13,7 @@
 | `scripts/verification/repo_check.py` | 맥이 직접 하는 짝 확인. 루틴의 `record.verify` 와 **다른 함수**(루틴 경로 무변경) |
 | `scripts/review/prepub_view.py` | 글 하나의 상태 계산·문장 — 발행 건별 알림과 매일 요약이 함께 쓴다 |
 | `scripts/review/publish_watch.py` | 5분 회차의 판단: 기준점·사건·미발행·전송 |
-| `scripts/verify_publish.py` | 진입점(`runner_launch.py publish`), 상태 `~/Library/Application Support/fdo2a/verify_publish.json` |
+| `scripts/verify_publish.py` | 진입점. 2.5단계부터 GitHub Actions(`--github`), 상태는 `alerts-state` 브랜치 — 아래 「2.5단계」 절 |
 
 매일 요약(`verify_digest.py`)과 **상태 파일·실행 경로·전송 이력이 따로**다. 요약은 발행 상태를 읽기만 한다(꼬리 줄).
 
@@ -73,4 +73,40 @@
 `scripts/verification/tests/test_repo_check.py`, `scripts/review/tests/test_prepub_view.py`, `test_publish_watch.py`,
 `test_digest.py`(2단계 절). 첫 실자료는 11/9 KR·11/10 US 기록 — 거기서 문제가 보이면 알림 코드로 감추지 말고 1단계 기록부터 본다.
 
-When changing this: read this spec before touching `scripts/review/publish_watch.py`, `scripts/review/prepub_view.py` or `scripts/verification/repo_check.py`.
+## 2.5단계 — 계산은 GitHub, 전송은 Cloudflare (2026-11-10)
+
+원칙(사용자 결정): **AI 가 고칠 수 있는 코드에는 텔레그램 토큰을 주지 않는다.** 그래서 위 「5분 회차」의 맥 실행·맥 전송은 없어졌다.
+위 절들의 판단 규칙(기준점·미발행·사라짐·기준선)은 그대로이고, 아래만 바뀐다. 형식의 정본은 레포 밖 계약 문서
+`alerts-contract-2.5.md`(프로젝트 루트), 설계는 같은 자리의 `design-2.5-github-cloudflare.md`(뒤 판이 우선).
+
+| 자리 | 몫 |
+|---|---|
+| `.github/workflows/publish-watch.yml` | 발행 push(`posts/**`·`kr/posts/**`·`verification/**`) + 기준 시각 맞춤 예약(12:10·13:40·23:10·00:40 KST) + 3시간 심장 박동 → `verify_publish.py --github`. `contents: write` 만, 비밀값·pip 없음 |
+| 상태 브랜치 `alerts-state` | `verify_publish.json`(계산 상태) + `outbox.json`(Worker 가 읽는 계약 `alerts-outbox/1`) — 한 커밋, 강제 push 없음 |
+| Cloudflare Worker(레포 밖) | outbox 검증·전송·순서·이력. 토큰은 여기에만. `/acks`·`/failed` 로 끝난 사건의 (id, 보낸 본문 해시)를 공개한다 |
+| 맥 | `--preview`·`--dry-run`(쓰기 없음)만. `runner_launch.py` 의 `publish` 진입점은 지웠다 |
+
+- **id** = sha256(`kind|key|extra`) 앞 32 hex, 사건마다 `hash` = sha256(문장). `key` 는 순서 단위: 글 경로 / `us:2026-11-10` / `sys:<kind>`.
+- **outbox 에 실린 사건은 전송됐을 수 있다.** 대기 중 미발행 경고를 취소하고 「늦은 발행」으로 바꾸는 길은 GitHub 계산에서 쓰지 않는다.
+  경고 뒤 글이 오면 언제나 「앞서 생성된 미발행 경고(기준 …)가 풀렸어요」 — 받았다고 단정하지 않는다.
+- **outbox 에서 빠지는 것은 Worker `/acks`·`/failed`(`alerts-acks/2`·`alerts-failed/2`)에 id 와 본문 해시가 둘 다 나온 사건뿐.**
+  못 읽거나, 주소가 비어 있거나, 모르는 판(옛 `/1` 포함)이면 아무것도 빼지 않는다. **같은 id·다른 해시는 남긴다** — Worker 가 보낸 것은
+  옛 본문이고 지금 본문은 간 적이 없다(codex 구현 1회 #3). 그런 사건은 outbox 에 계속 실리고 Worker 가 거부·경보한다(사람이 본다).
+  빠진 사건은 상태에 `sent`·`failed` 로 확인 시점부터 60일 남는다(같은 사건을 다시 만들지 않게). 상태를 새로 시작해도
+  계산 **뒤에** 전송 확인을 적용해, 문장이 그대로인 알림은 다시 싣지 않는다. 문장이 달라진 것(정정 횟수 줄 등)은 위 규칙대로 남는다.
+- **상한**(사건 500·문장 3,900자·파일 256 KB)은 outbox 로 옮길 때 지킨다. 자르지 않는다: 양이 넘으면 오래된 쪽을 싣고 나머지는
+  상태에 대기로 남기며, 너무 긴 문장은 `oversize` 로 상태에만 둔다. 둘 다 `sys:overflow` 사건 하나로 알린다.
+  계약의 kind 목록에 overflow 가 없어 지금은 `gap` 으로 싣는다(`publish_watch.OVERFLOW_KIND`) — 계약이 정해지면 그 상수만 바꾼다.
+- **push 거절** = 다른 실행이 먼저 올림 → main·상태 브랜치를 둘 다 다시 받아 처음부터 계산(거절 3회까지). 인증·네트워크·원격 거부·
+  「브랜치 조회 실패」는 바로 실패(0 아닌 종료). 조회 실패를 「브랜치 없음 = 처음 실행」으로 읽지 않는다(`ls-remote --exit-code`).
+- 브랜치가 없으면 첫 실행 = 기준선. 브랜치는 있는데 상태 파일이 없거나 손상이면 전부 다시 계산하고, 손상본은
+  `verify_publish.corrupt-<시각>.json` 으로 브랜치에 남긴다.
+- `last_ok` 는 계산이 정상 끝난 회차에만 전진하고 push 돼야 보인다. Worker 로의 `POST /poke` 는 push 성공 뒤에만, 실패해도 기록만.
+- 문장의 확인 주체는 `who`: GitHub 계산은 「[GitHub이 직접 대조]」·「GitHub 이 짝만 다시 확인했어요」, 맥 미리보기는 「맥」. 지문은 주체와 무관.
+- 매일 요약은 `origin/alerts-state:verify_publish.json` 을 읽어 `publish_watch.summary_lines_from(st, now)` 에 넘긴다
+  (GitHub 상태에는 `stale=GITHUB_STALE` 9시간 — 2시간 기준이면 심장 박동 간격만으로 매일 「n시간 전」이 뜬다).
+- 한계: 한 실행은 그 시점 최신 main 의 **최종 상태**를 알린다(실행 사이 A→B→A 는 안 보일 수 있다). 예약은 2~5시간 늦을 수 있어
+  미발행 경보도 그만큼 늦는다. 계산 코드는 AI 가 고칠 수 있다 — 거짓 알림·누락은 가능하고, 토큰은 못 가져간다.
+- 시험: `scripts/review/tests/test_publish_github.py`(원격은 로컬 bare 레포).
+
+When changing this: read this spec before touching `scripts/verify_publish.py`, `scripts/review/publish_watch.py`, `scripts/review/prepub_view.py` or `scripts/verification/repo_check.py`.
