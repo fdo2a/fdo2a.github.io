@@ -1,0 +1,155 @@
+{
+ "commit": "89d40b4",
+ "indices": {
+  "KOSPI": {
+   "close": 5239.13,
+   "change_pct": 4.39
+  },
+  "KOSDAQ": {
+   "close": 667.61,
+   "change_pct": 4.48
+  }
+ },
+ "flows_KOSPI_1110": {
+  "date": "2026-11-10",
+  "individual": -13672,
+  "foreign": 4143,
+  "institution": 4643
+ },
+ "flows_KOSDAQ_1110": {
+  "date": "2026-11-10",
+  "individual": -561,
+  "foreign": -1477,
+  "institution": 2150
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "session": {
+  "report_date": "2026-11-10",
+  "us_prev": {
+   "as_of": "2026-11-09",
+   "rows": {
+    "S&P 500": 2.35,
+    "Nasdaq": 2.74,
+    "Dow": 2.15
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.14,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.26,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": 2.87,
+    "항셍": 0.44,
+    "상해종합": 0.08,
+    "대만가권": 2.52
+   },
+   "dates": {
+    "닛케이": "2026-11-10",
+    "항셍": "2026-11-10",
+    "상해종합": "2026-11-10",
+    "대만가권": "2026-11-10"
+   },
+   "avg_pct": 1.48,
+   "relative_pp": 2.91
+  },
+  "usdkrw_intraday": {
+   "high": 1347.6,
+   "high_t": "11:30",
+   "low": 1334.8,
+   "low_t": "15:00",
+   "close": 1337.1,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "stocks": {
+  "SK하이닉스": {
+   "name": "SK하이닉스",
+   "change_pct": 6.69,
+   "close": 1212000,
+   "value": 4052626
+  },
+  "삼성전자": {
+   "name": "삼성전자",
+   "change_pct": 4.74,
+   "close": 198900,
+   "value": 2961490
+  },
+  "삼성전기": {
+   "name": "삼성전기",
+   "change_pct": 4.63,
+   "close": 882000,
+   "value": 590659
+  },
+  "삼성SDI": {
+   "name": "삼성SDI",
+   "change_pct": 9.88,
+   "close": 456000,
+   "value": 330718
+  },
+  "한진칼": {
+   "name": "한진칼",
+   "change_pct": 15.18,
+   "close": 239000,
+   "value": 289821
+  },
+  "대한항공": {
+   "name": "대한항공",
+   "change_pct": 11.51,
+   "close": 32450,
+   "value": 279239
+  },
+  "한화솔루션": {
+   "name": "한화솔루션",
+   "change_pct": 0.62,
+   "close": 24400,
+   "value": 144990
+  },
+  "HD현대일렉트릭": {
+   "name": "HD현대일렉트릭",
+   "change_pct": 10.67,
+   "close": 394000,
+   "value": 104760
+  },
+  "효성중공업": {
+   "name": "효성중공업",
+   "change_pct": 12.72,
+   "close": 1746000,
+   "value": 99652
+  },
+  "LS ELECTRIC": {
+   "name": "LS ELECTRIC",
+   "change_pct": 8.33,
+   "close": 121000,
+   "value": 90527
+  },
+  "진에어": {
+   "name": "진에어",
+   "change_pct": 29.92,
+   "close": 7990,
+   "value": 79362
+  },
+  "SK이노베이션": {
+   "name": "SK이노베이션",
+   "change_pct": 2.81,
+   "close": 109700,
+   "value": 47145
+  }
+ },
+ "note": "S-Oil(010950) 은 코스피 거래대금 상위 60 수집 범위 밖이라 11-10 종가 없음"
+}
