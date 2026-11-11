@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-11T05:46:54+00:00",
- "cutoff_at": "2026-11-11T05:46:54+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-11T06:04:33+00:00",
+ "cutoff_at": "2026-11-11T06:04:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,45 +21,44 @@
   "sha256": "9b23397cf15f0b4cfa834d79e67c26998fc9b720940e107376ca756ba65a0c56"
  },
  "counts": {
-  "harvest": 220,
+  "harvest": 221,
   "candidates": 1,
   "articles": [
-   6
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 41984,
-   "out": 11599
+   "in": 34586,
+   "out": 10501
   },
   "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok",
-   "bbc.co.uk": "ok"
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "6/6"
+   "claims": "6/6",
+   "pairs": "1/1",
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 6,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   }
  },
  "event": {
-  "topic_ko": "엔비디아 CEO 스파이 연루 의혹",
-  "query": "nvidia huang affair",
+  "topic_ko": "미·이란 분쟁 종전 기대와 유가·물가 경로",
+  "query": "iran august since",
   "trigger": []
  },
- "content_hash": "7f614478c2b11994"
+ "content_hash": "d58c75006e1105c8"
 }
