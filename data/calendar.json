@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-11-10",
-  "generated": "2026-11-11 08:19 KST",
+  "report_date": "2026-11-11",
+  "generated": "2026-11-12 07:41 KST",
   "horizon_days": 10,
   "events": [
     {
@@ -266,16 +266,6 @@
       "bid_to_cover": 3.26,
       "indirect_pct": 49.4,
       "dealer_pct": 42.5
-    },
-    {
-      "date": "2026-11-03",
-      "term": "6-Week",
-      "type": "Bill",
-      "offering_amt": 100000000000.0,
-      "high_yield": 4.013,
-      "bid_to_cover": 2.88,
-      "indirect_pct": 61.0,
-      "dealer_pct": 33.4
     }
   ],
   "blackout": {

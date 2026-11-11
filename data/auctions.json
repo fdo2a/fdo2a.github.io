@@ -1,12 +1,13 @@
 {
-  "report_date": "2026-11-10",
-  "generated": "2026-11-11 08:19 KST",
+  "report_date": "2026-11-11",
+  "generated": "2026-11-12 07:41 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
   "complete": true,
   "pending": [],
-  "today": [
+  "today": [],
+  "recent": [
     {
       "date": "2026-11-10",
       "key": "nominal-10y",
@@ -39,16 +40,8 @@
       "demand_ko": "수요 약함",
       "tail_bp": null,
       "tail_status": "no_wi_source",
-      "yield_ref": {
-        "tenor": "10Y",
-        "level": 4.983,
-        "bp": 12.1,
-        "date": "2026-11-10",
-        "source": "Naver"
-      }
-    }
-  ],
-  "recent": [
+      "yield_ref": null
+    },
     {
       "date": "2026-11-09",
       "key": "nominal-3y",

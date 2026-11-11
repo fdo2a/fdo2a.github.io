@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-11-10",
-  "macro_date": "2026-11-09",
+  "report_date": "2026-11-11",
+  "macro_date": "2026-11-10",
   "horizon": "3-6개월",
   "scores": {
     "growth_score": 0.1,
@@ -13,280 +13,12 @@
     "inflation": 1,
     "name": "비용압박"
   },
-  "new_releases": [
-    "CPI MoM",
-    "Core CPI MoM"
-  ],
-  "headline_releases": [
-    {
-      "key": "cpi",
-      "label": "소비자물가(CPI)",
-      "tier": 1,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
-      "role": "scored",
-      "primary": "CPI MoM",
-      "max_abs_z": 1.863,
-      "indicators": [
-        {
-          "name": "CPI MoM",
-          "axis": "Inflation",
-          "actual": 0.35,
-          "previous": 0.65,
-          "ref_period": "2026-10-01",
-          "momentum_z": 1.863,
-          "fred_id": "CPIAUCSL",
-          "transform": "mom_pct",
-          "units": "%"
-        },
-        {
-          "name": "Core CPI MoM",
-          "axis": "Inflation",
-          "actual": 0.3,
-          "previous": 0.33,
-          "ref_period": "2026-10-01",
-          "momentum_z": 1.273,
-          "fred_id": "CPILFESL",
-          "transform": "mom_pct",
-          "units": "%"
-        }
-      ],
-      "components": [
-        {
-          "label": "에너지",
-          "fred_id": "CPIENGSL",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "에너지"
-          ],
-          "actual": 0.7,
-          "cite_values": [
-            0.7
-          ],
-          "cite_forms": [
-            [
-              0.7,
-              ""
-            ]
-          ],
-          "text_value": 0.7,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "식품",
-          "fred_id": "CPIUFDSL",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "식품",
-            "먹거리"
-          ],
-          "actual": 0.5,
-          "cite_values": [
-            0.5
-          ],
-          "cite_forms": [
-            [
-              0.5,
-              ""
-            ]
-          ],
-          "text_value": 0.5,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "주거비",
-          "fred_id": "CUSR0000SAH1",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "주거비",
-            "주거",
-            "shelter"
-          ],
-          "actual": 0.3,
-          "cite_values": [
-            0.3
-          ],
-          "cite_forms": [
-            [
-              0.3,
-              ""
-            ]
-          ],
-          "text_value": 0.3,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "중고차",
-          "fred_id": "CUSR0000SETA02",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "중고차"
-          ],
-          "actual": -1.2,
-          "cite_values": [
-            -1.2
-          ],
-          "cite_forms": [
-            [
-              -1.2,
-              ""
-            ]
-          ],
-          "text_value": -1.2,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "의료",
-          "fred_id": "CPIMEDSL",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "의료"
-          ],
-          "actual": 0.3,
-          "cite_values": [
-            0.3
-          ],
-          "cite_forms": [
-            [
-              0.3,
-              ""
-            ]
-          ],
-          "text_value": 0.3,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "휘발유",
-          "fred_id": "CUSR0000SETB01",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "휘발유",
-            "가솔린"
-          ],
-          "actual": 1,
-          "cite_values": [
-            1
-          ],
-          "cite_forms": [
-            [
-              1,
-              ""
-            ]
-          ],
-          "text_value": 1.0,
-          "ref_period": "2026-10-01"
-        }
-      ],
-      "anatomy": {
-        "release_date": "2026-11-10",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "에너지",
-            "fred_id": "CPIENGSL",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 0.6994559458195493,
-            "text_ok": true,
-            "text_value": 0.7
-          },
-          {
-            "label": "식품",
-            "fred_id": "CPIUFDSL",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 0.4727842340581656,
-            "text_ok": true,
-            "text_value": 0.5
-          },
-          {
-            "label": "주거비",
-            "fred_id": "CUSR0000SAH1",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 0.30469451827703775,
-            "text_ok": true,
-            "text_value": 0.3
-          },
-          {
-            "label": "중고차",
-            "fred_id": "CUSR0000SETA02",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": -1.224090988933768,
-            "text_ok": true,
-            "text_value": -1.2
-          },
-          {
-            "label": "의료",
-            "fred_id": "CPIMEDSL",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 0.3384057702479071,
-            "text_ok": true,
-            "text_value": 0.3
-          },
-          {
-            "label": "휘발유",
-            "fred_id": "CUSR0000SETB01",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 1.0383526574923474,
-            "text_ok": true,
-            "text_value": 1.0
-          }
-        ]
-      },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "anatomy_gaps": [],
   "stale": false,
-  "abbreviated": false,
-  "abbreviated_reason": "tier 1 발표가 있는 날",
+  "abbreviated": true,
+  "abbreviated_reason": null,
   "axis_directions": {
     "Labor": "개선",
     "Activity": "악화",
@@ -296,36 +28,32 @@
   "bootstrap": false,
   "regime": {
     "growth": 0,
-    "inflation": 0,
+    "inflation": 1,
     "growth_label": "보합",
-    "inflation_label": "교착",
-    "name": "교착",
-    "since": "2026-10-14",
-    "days_held": 20,
-    "thesis": "교착 유지(10월 14일부터 19영업일째). 11월 9일 새 경제지표 발표가 없어 성장 점수 0.152·물가 점수 0.003이 그대로이고 implied 좌표도 교착이다. 11월 10일 10월 CPI가 다음 점검이다."
+    "inflation_label": "재가속",
+    "name": "비용압박",
+    "since": "2026-11-10",
+    "days_held": 2,
+    "thesis": "비용압박으로 이동(11월 10일, 1일째). 10월 CPI(헤드라인 전월비 0.4%·근원 0.3%, 다우존스 예상 0.3%·0.2%)로 물가 점수가 0.003에서 0.451로 올라 재가속 쪽을 가리켰고, 성장 점수 0.1은 보합 범위에 머물렀다. 마지막 변경(10월 14일) 뒤 20영업일이 지나 물가 좌표만 한 칸 이동(교착→재가속), 대각선 이동 없음. 근원 3개월 연속 0.3%와 식품·서비스로 넓어진 상승이 근거다. 다음 점검은 11월 13일 PPI와 11월 17일 소매판매·산업생산이다."
   },
-  "regime_change_allowed": true,
-  "regime_block": null,
+  "regime_change_allowed": false,
+  "regime_block": "no_new_release",
   "allowed_regimes": [
-    [
-      0,
-      0
-    ],
     [
       0,
       1
     ]
   ],
   "policy": {
-    "stance": "인상 리스크 우위 — 12월 인상이 중심, 10월 고용으로 근거 강화",
-    "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 6일 고용보고서 뒤 CME FedWatch 12월 인상 확률은 76.8%(CNBC)로 보도됐고, 발표 전 같은 상품 값은 확보하지 못했다.",
+    "stance": "인상 리스크 우위 — 12월 인상이 중심, 10월 CPI로 50bp 가능성까지 열림",
+    "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 10일 10월 CPI 뒤 CME FedWatch 기준 25bp 인상 89%·50bp 인상 11%로 보도됐다(IBTimes). 발표 전 12월 인상 확률은 11월 9일 84%(Reuters via Yahoo)로 보도됐으나 같은 상품·같은 시각의 쌍은 아니다.",
     "prob_pct": null,
     "prob_status": "unverified",
-    "prob_note": "11월 6일 12월 인상 확률은 고용보고서 뒤 76.8%(CNBC, CME FedWatch, 관측 시각 미기재)로 보도됐다. 다른 보도는 발표 전 67%→74%(Bloomberg 기반), 70% 아래→77~80%(Invezz)로 엇갈리고, 같은 상품·같은 시각의 발표 전후 쌍을 저장하지 못해 하루 변화가 15%p를 넘었는지 확인하지 못했다. 11월 9일에는 보도마다 85%(77%에서), 84%(76%에서), 약 82%로 엇갈렸고 같은 상품·같은 시각의 쌍이 없다.",
-    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 9일 브렌트 -5.27%의 유가 급락과 주식 급반등에도 네이버 2년물은 2.5bp 오른 4.547%, 2s10s는 31.5bp로 평탄해져 앞단은 인상 경로 쪽에 머물렀다. 반대 근거는 고용의 질(경제적 이유 시간제 +339K, U-6 7.9%)과 에너지 가격 하락이다.",
-    "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 11월 10일 10월 소비자물가에서 근원 전월비가 9월(0.33%)보다 낮게 나오고 CME FedWatch 12월 인상 확률이 고용보고서 전 보도치(67%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
-    "change_allowed": true,
-    "change_block": null
+    "prob_note": "11월 10일 CPI 뒤 12월 인상 확률은 CME FedWatch 기준 25bp 89%·50bp 11%(IBTimes)로 보도됐고, 50bp 확률은 Reuters 10.5%, MPA 1.4%, 다른 출처 14%로 엇갈렸다. Kalshi는 약 97%. 발표 전 같은 상품 값은 11월 9일 84%(Reuters via Yahoo) 보도뿐이라 같은 상품·같은 시각의 발표 전후 쌍을 확보하지 못했다.",
+    "thesis": "12월 인상이 중심이라는 판단을 유지하고 근거를 강화한다. 10월 CPI 근원이 3개월 연속 전월비 0.3%이고 식품·교통 서비스로 상승이 넓어져 에너지 둔화 경로가 약해졌다. 네이버 2년물이 18.0bp 오른 4.727%, 2s10s 25.6bp로 앞단이 커브를 이끌었다. 월러 이사는 더 뜨거우면 50bp 검토, 로건 총재는 최소 두 차례 인상을 언급했다. 반대 근거는 고용의 질과 유가 하락이다.",
+    "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 11월 13일 10월 생산자물가와 11월 17일 10월 소매판매가 모두 예상을 밑돌고 CME FedWatch 12월 인상 확률이 소비자물가 발표 전 보도치(84%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
+    "change_allowed": false,
+    "change_block": "no_new_release"
   },
   "transmission": {
     "equities": {
@@ -334,34 +62,30 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 62,
+      "days_held": 63,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "bonds": {
-      "direction": 1,
-      "label": "우호",
-      "channel": "물가가 공식적으로 둔화 국면에 들어서면 실질금리 정점 통과와 정책 완화 재개 기대가 장기물 총수익을 지지하는 경로다. 다만 실질금리 자체가 기간프리미엄·수급 요인으로 계속 오르고 있어 이 경로가 가격에 반영되기까지는 시차가 있다.",
-      "confirm": "Core PCE YoY가 3.0% 하회로 추가 둔화되거나 30Y가 5.05% 하회",
-      "since": "2026-08-17",
-      "days_held": 62,
+      "direction": 0,
+      "label": "중립",
+      "channel": "물가가 재가속으로 바뀌고 12월 인상 뒤 추가 인상까지 거론되면서 실질금리 정점 통과와 완화 재개 기대가 더 뒤로 밀렸다. 장기물에는 인상이 먼 미래 물가 기대를 눌러 준다는 근거가 남아 우호와 비우호가 맞선다.",
+      "confirm": "근원 CPI 전월비가 0.2% 이하로 내려오거나 30Y가 5.05% 하회하면 우호, 30Y가 5.4% 상회하면 비우호",
+      "since": "2026-11-10",
+      "days_held": 2,
       "allowed_directions": [
-        0,
-        1
+        0
       ]
     },
     "fx": {
-      "direction": -1,
-      "label": "비우호",
-      "channel": "성장 정체 속 물가 둔화가 이어지면 실질금리 스프레드 축소 기대가 달러 약세 경로를 지지한다. 다만 안전자산 수요와 상대적으로 높은 미국 금리 수준이 이 경로에 계속 맞서는 힘으로 작용한다.",
-      "confirm": "DXY 20일 -3% 이상 추가 하락 또는 FedWatch 인하 확률 확대",
-      "since": "2026-08-17",
-      "days_held": 62,
+      "direction": 0,
+      "label": "중립",
+      "channel": "물가 둔화가 실질금리 차를 좁혀 달러를 약하게 한다는 경로가 물가 재가속과 12월 인상 경로로 막혔다. 미국 정책금리 경로가 위로 옮겨 가 달러 강세 쪽을 받치지만, 금리차 자체와 다른 중앙은행 경로는 재지 않았고 달러 레벨도 이미 높아 우호까지는 올리지 않는다.",
+      "confirm": "DXY 20일 -3% 이상 하락 또는 FedWatch 인하 확률 재등장 시 비우호, 12월 50bp 인상 확률 50% 상회 시 우호",
+      "since": "2026-11-10",
+      "days_held": 2,
       "allowed_directions": [
-        -1,
         0
       ]
     },
@@ -371,23 +95,20 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 62,
+      "days_held": 63,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "metals": {
-      "direction": 1,
-      "label": "우호",
-      "channel": "물가 둔화·달러 약세 구조가 실질금리 하락 기대를 통해 금 보유비용을 낮추는 경로이며, 지정학·재정 헤지 수요가 병존한다. 다만 실질금리 자체가 계속 오르는 국면에서는 이 경로가 힘을 받기 어렵다.",
+      "direction": 0,
+      "label": "중립",
+      "channel": "물가 재가속과 인상 경로가 실질금리 하락 기대를 늦춰 금 보유비용 하락 경로가 약해졌다. 지정학·재정 헤지 수요가 남아 비우호까지는 내리지 않는다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
-      "since": "2026-08-17",
-      "days_held": 62,
+      "since": "2026-11-10",
+      "days_held": 2,
       "allowed_directions": [
-        0,
-        1
+        0
       ]
     },
     "memory": {
@@ -396,7 +117,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 62,
+      "days_held": 63,
       "allowed_directions": [
         0,
         1
@@ -405,14 +126,12 @@
     "ai_infra": {
       "direction": 0,
       "label": "중립",
-      "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화가 하이퍼스케일러 지출 여력에 대한 의문을 더했다.",
+      "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화에 이어 11월 10일 소프트뱅크의 발전설비 선급금 손상(37억 달러)과 조달 재검토가 고객 쪽 부담을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 62,
+      "days_held": 63,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     }
   }
