@@ -1,0 +1,35 @@
+{
+ "section": "us",
+ "date": "2026-11-11",
+ "request_id": "us-2026-11-11-9796e240e1ea",
+ "draft_sha": "36baef06d46fde0c4c299d02ed8bdbd710939be5",
+ "state": "fix_failed",
+ "reason": "고치다 막혀 원래 판으로 발행",
+ "auth_saved": null,
+ "accuracy_findings": 2,
+ "style_candidates": 3,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 0,
+ "facts_rejected": 1,
+ "style_applied": 0,
+ "style_rejected": 3,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [
+  {
+   "kind": "번역투",
+   "quote": "확인 시계는 11월 17일 종가까지 4거래일이고"
+  },
+  {
+   "kind": "번역투",
+   "quote": "기술 하나에 기댄 상승이라 믿음의 폭은 좁다."
+  },
+  {
+   "kind": "번역투",
+   "quote": "이보다 낮았던 날이 11일뿐인 레벨이다."
+  }
+ ],
+ "recorded_at": "2026-11-11T23:05:54Z"
+}
