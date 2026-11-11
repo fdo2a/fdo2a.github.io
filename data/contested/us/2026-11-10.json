@@ -3,48 +3,82 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-10",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-11T06:22:14+00:00",
- "cutoff_at": "2026-11-11T06:22:14+00:00",
+ "collected_at": "2026-11-11T07:24:46+00:00",
+ "cutoff_at": "2026-11-11T07:24:46+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "c83610b0ca8ef4e188b876baa5300acc05248274",
+  "sha256": "9b23397cf15f0b4cfa834d79e67c26998fc9b720940e107376ca756ba65a0c56"
+ },
  "counts": {
   "harvest": 221,
-  "candidates": 3,
+  "candidates": 2,
   "articles": [
    2,
-   2,
-   2
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4861,
-   "out": 70
+   "in": 78746,
+   "out": 20026
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "5/5",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 7,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[0]",
+    "structure",
+    "variables[1]",
+    "worry.moderate[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "edges[2]:unverified"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "엔비디아 CEO 스파이 연루 의혹과 칩 우회·수출통제 논쟁",
+  "query": "nvidia jensen affair",
   "trigger": []
  },
- "content_hash": "36019f62d1aefbf3"
+ "problems": [
+  "edges[2]:unverified"
+ ],
+ "content_hash": "4ca5424a2d397992"
 }
