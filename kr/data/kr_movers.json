@@ -1,21 +1,123 @@
 {
-  "report_date": "2026-11-10",
+  "report_date": "2026-11-11",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "기타",
+      "industry": "반도체와반도체장비",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "KIWOOM 200TR",
-          "change_pct": 4.34,
-          "close": 107850,
-          "value": 60822
+          "name": "SK하이닉스",
+          "change_pct": 5.36,
+          "close": 1277000,
+          "value": 3921752
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": 3.57,
+          "close": 206000,
+          "value": 3133687
+        },
+        {
+          "name": "한미반도체",
+          "change_pct": 6.11,
+          "close": 184000,
+          "value": 135868
+        },
+        {
+          "name": "이수페타시스",
+          "change_pct": 19.36,
+          "close": 82000,
+          "value": 107374
+        },
+        {
+          "name": "DB하이텍",
+          "change_pct": 12.2,
+          "close": 98400,
+          "value": 48807
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "항공사",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한진칼",
+          "change_pct": -14.64,
+          "close": 204000,
+          "value": 250619
+        },
+        {
+          "name": "대한항공우",
+          "change_pct": -24.77,
+          "close": 28700,
+          "value": 68104
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "제약",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성바이오로직스",
+          "change_pct": -2.59,
+          "close": 1430000,
+          "value": 114069
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "전자장비와기기",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "대덕전자",
+          "change_pct": 13.87,
+          "close": 91100,
+          "value": 182123
+        },
+        {
+          "name": "코리아써키트",
+          "change_pct": 25.58,
+          "close": 86400,
+          "value": 124349
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "손해보험",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성화재",
+          "change_pct": -5.51,
+          "close": 566000,
+          "value": 119347
         }
       ]
     }
