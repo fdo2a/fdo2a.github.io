@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-10",
  "status": "none",
- "reason": "topic_too_long",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-11T03:18:21+00:00",
- "cutoff_at": "2026-11-11T03:18:21+00:00",
+ "collected_at": "2026-11-11T03:36:33+00:00",
+ "cutoff_at": "2026-11-11T03:36:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,30 +22,47 @@
  },
  "counts": {
   "harvest": 221,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
-   5
+   2,
+   2,
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 20424,
-   "out": 7639
+   "in": 41843,
+   "out": 12131
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "economictimes.indiatimes.com": "ok"
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok"
+  "gdelt": "throttled",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "엔비디아 CEO 스파이 연루 의혹 파장",
+  "query": "nvidia huang affair",
   "trigger": []
  },
- "content_hash": "8e83d8747790e001"
+ "content_hash": "7bd456d46c573101"
 }
