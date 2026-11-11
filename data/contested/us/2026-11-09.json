@@ -3,48 +3,100 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-09",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-11T01:22:25+00:00",
- "cutoff_at": "2026-11-11T01:22:25+00:00",
+ "collected_at": "2026-11-11T02:28:54+00:00",
+ "cutoff_at": "2026-11-11T02:28:54+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "bc160111e33012a3fe7a4eb781218fd562cd7593",
+  "sha256": "022d197044b92fce2d02e285498f83557f11c590bb33c63fc082b49981b3e32c"
+ },
  "counts": {
-  "harvest": 218,
+  "harvest": 220,
   "candidates": 3,
   "articles": [
    2,
-   1,
-   2
+   2,
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 4688,
-   "out": 70
+   "in": 44233,
+   "out": 11960
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "short"
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[1]",
+    "structure",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:dangling",
+    "edges[0]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[1]:dangling",
+    "worry.most[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "엔비디아 CEO 젠슨 황 스파이 연루 의혹과 국가안보·수출통제 논란",
+  "query": "nvidia huang affair",
   "trigger": []
  },
- "content_hash": "a79f06c7f4895ec0"
+ "problems": [
+  "structure:dangling",
+  "edges[0]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[1]:dangling",
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "15234f62e3664565"
 }
