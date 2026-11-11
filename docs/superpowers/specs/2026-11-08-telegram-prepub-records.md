@@ -110,3 +110,16 @@
 - 시험: `scripts/review/tests/test_publish_github.py`(원격은 로컬 bare 레포).
 
 When changing this: read this spec before touching `scripts/verify_publish.py`, `scripts/review/publish_watch.py`, `scripts/review/prepub_view.py` or `scripts/verification/repo_check.py`.
+
+## 이유를 붙인다(2026-11-11 사용자 지시)
+
+「대조 불가 6개」 알림을 받고 그게 뭔지 물어야 했다 — 사용자: 「실패했다고만 말하지 말고 그 이유까지 첨부해줘」.
+발행 건별 알림(`prepub_view.render_publish`)은 상태어 옆에 항목과 이유를 둔다: 칸마다 `repo_check.cat_why` 의 첫 이유,
+작업 공간 전용 입력은 파일 이름(최대 8 + 외 N)과 「원본을 보관하지 않았다」, 검사기마다 기록의 `reason` 또는 상태에 맞는
+`items` 2개(100자), 자동 대조하지 못한 수치는 `numbers.unverified_by`(check_numbers 의 고정 분류 이름·정수) 상위 4개.
+이유가 없으면 「이유가 기록에 없어요」. 이유 문장 상한 1,800자(사건 3,900자 안). **쓰는 값은 공개 레포 기록에 이미 있는 것뿐**
+(outbox 도 공개 브랜치). 맥 요약 줄(`digest_lines`)은 기존 계약대로 칸 이름·고정 분류만 — 검사기 원문을 싣지 않는다.
+판정(`anomalies`·`clean`·`fingerprint`)은 바꾸지 않았다 — 표시용은 `anomaly_labels`. 이미 만든 사건의 본문은 다시 쓰지 않는다.
+`publish_watch`: 미발행은 그 시각 레포 수집 판(`report_date`·`complete`)으로 갈래를 나누되 원인을 단정하지 않는다, 사라짐은
+지운 커밋, 기준점 끊김은 조상 아님/객체 없음, 요약 꼬리는 휴장 달력 못 읽은 이유·마지막 실패 사유·미전송 앞 3건.
+Worker 경보 문구와 맥 아침 요약의 이유는 별도 계약·배포가 필요해 이번 범위 밖(남은 일).

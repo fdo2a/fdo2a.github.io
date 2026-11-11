@@ -99,7 +99,10 @@ def main(argv=None):
         keys = ('tokens_seen', 'table_cells', 'prose_judged', 'unverified', 'delegated', 'excluded')
         print(json.dumps({'skipped': False, 'warnings': list(r.warnings),
                           'violations': list(r.violations), 'summary': r.summary(),
-                          'counts': {k: int(getattr(r, k)) for k in keys}}, ensure_ascii=False))
+                          'counts': {k: int(getattr(r, k)) for k in keys},
+                          # 자동 대조하지 못한 수치의 이유별 개수 — 알림이 「243개」만 말하지 않게(11/11)
+                          'unverified_by': {str(k): int(v) for k, v in r.unverified_by.items() if v}},
+                         ensure_ascii=False))
         return 1 if r.violations else 0
     for w in r.warnings:
         print(w)

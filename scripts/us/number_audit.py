@@ -818,7 +818,17 @@ def _flag(res, mode, msg):
         ('' if mode == 'block' else '경고(문장): ') + msg)
 
 
+# 자동 대조하지 못한 이유의 고정 분류 — 발행 전 기록·알림이 이 이름만 싣는다(scripts/review/prepub_view.py
+# UNVERIFIED_KINDS 와 같아야 한다, 시험이 강제). 새 이유를 더하면 두 곳 다.
+UNVERIFIED_KINDS = frozenset({
+    '보도·인용 문장', '사전 밖 자산', '자산과 수치 사이가 멀다', '자산 후보 둘 이상', '자산 없음', '시점·구간 단서', '어림수',
+    '단위로 필드를 못 정함', '데이터에 없는 자산', '매크로 칸(수치 둘 이상·형식 불일치)', '매크로 표(예상치·표식 없는 행)',
+    '연구 원장', '지표 해부'})
+UNVERIFIED_OTHER = '기타 분류'
+
+
 def _unverified(res, why, n=1):
+    why = why if why in UNVERIFIED_KINDS else UNVERIFIED_OTHER
     res.unverified += n
     res.unverified_by[why] = res.unverified_by.get(why, 0) + n
 

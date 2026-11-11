@@ -176,7 +176,8 @@ def test_gate_without_script_hash_is_unknown(tmp_path):
 
 def test_string_false_is_not_verified(tmp_path):
     rec = {'summary': F.summary(verified='false', publish_ok='true'), 'gates': [{'name': 'g1', 'status': 'pass'}]}
-    assert V.recorded(rec) == {'readable': False}
+    r = V.recorded(rec)
+    assert r['readable'] is False and 'publish_ok' in r['unreadable_why'] and 'verified' in r['unreadable_why']
 
 
 def test_file_gate_without_argv_is_unknown(tmp_path):
@@ -194,7 +195,8 @@ def test_file_gate_without_argv_is_unknown(tmp_path):
 def test_missing_summary_lists_are_unreadable():
     s = F.summary()
     del s['blocking']
-    assert V.recorded({'summary': s, 'gates': [{'name': 'g1', 'status': 'pass'}]}) == {'readable': False}
+    r = V.recorded({'summary': s, 'gates': [{'name': 'g1', 'status': 'pass'}]})
+    assert r['readable'] is False and 'blocking' in r['unreadable_why']
 
 
 # ── 2.5단계: 확인 주체(who) ────────────────────────────────────────────────

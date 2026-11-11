@@ -46,6 +46,7 @@ _FATAL = re.compile(r'^\s*(FATAL|RESEARCH_ERROR)\b')     # 입력·실행 오류
 _PLACE = re.compile(r'\{([a-z_]+)\}')
 _ABS = re.compile(r'(?<![\w<])/(?:Users|private|tmp|var|home|root|opt|mnt|workspace)[^\s:"\'),]*')
 KINDS = ('format', 'numbers', 'structure')
+MAX_UNVERIFIED_KINDS = 12
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -162,6 +163,12 @@ def _classify(spec, code, out, err, ctx, res):
             return 'indeterminate'
         res['numbers'] = {k: counts.get(k) for k in ('tokens_seen', 'table_cells', 'prose_judged',
                                                       'unverified', 'delegated', 'excluded')}
+        by = obj.get('unverified_by')
+        if isinstance(by, dict):        # 이유별 개수 — 검사기의 고정 분류 이름, 정수만(없으면 칸을 두지 않는다)
+            res['numbers']['unverified_by'] = dict(sorted(
+                ((_mask(str(k), ctx)[:60], v) for k, v in by.items()
+                 if isinstance(v, int) and not isinstance(v, bool) and v > 0),
+                key=lambda kv: -kv[1])[:MAX_UNVERIFIED_KINDS])
         res['items'] = [_mask(str(x), ctx)[:MAX_ITEM_LEN] for x in viols + warns][:MAX_ITEMS]
         res['warn_count'] = len(warns)
         if (code == 1) != bool(viols) or code not in (0, 1):
@@ -542,11 +549,46 @@ def _ref_candidates(path, ctx):
             out.append(os.path.join('data', rel))
             if os.path.basename(rel) in _SPECIAL_REF:
                 out.append(_SPECIAL_REF[os.path.basename(rel)])
+        if os.path.basename(rel) == 'telegram.json':     # US 루틴이 data/telegram/<D>.json 을 작업 공간에 복사한 판
+            out += [f'data/telegram/{date}.json', f'kr/data/telegram/{date}.json']
     elif key == 'tg':
         out += [f'data/telegram/{date}.json', f'kr/data/telegram/{date}.json']
     elif key == 'stance_next':
         out.append('kr/data/kr_stance.json')
     return out
+
+
+# 작업 공간 사본이 기록 전에 레포에서 덮이는 입력 → 이력에서 찾을 레포 경로. 승격된 책(macro_next → data/macro.json)
+# 때문에 기록 시점의 워크트리와는 어긋나지만, 루틴이 복사해 온 판은 origin 에 이미 있다(11/10 US 실측).
+# 입력 전부를 이력에서 찾지 않는다 — 수천 개 × git 호출로 기록이 멈춘다(codex 설계 검토 #2).
+_HISTORY_REF = {'<datadir>/macro.json': 'data/macro.json'}
+_HISTORY_DEPTH = 5
+_HISTORY_BASE = 'refs/remotes/origin/main'
+
+
+def _history_ref(path, want, ctx):
+    """`git:<커밋>:<경로>` — 그 커밋의 파일 바이트가 입력과 같을 때만. 커밋은 HEAD 와 로컬 origin/main 추적 이력의
+    조상이어야 한다(미푸시 커밋은 rebase 로 sha 가 바뀐다). 바이트 일치는 복원 가능성의 증거이지 그 파일을 원본으로
+    썼다는 증거는 아니다. git 이 실패하면 None — 기록을 막지 않고 workspace-only 로 둔다."""
+    rel = _HISTORY_REF.get(path)
+    repo = ctx['repo']
+    if not rel:
+        return None
+    base = _git(repo, 'rev-parse', '--verify', '--quiet', _HISTORY_BASE)
+    if base is None or base.returncode != 0:
+        return None
+    revs = _git(repo, 'rev-list', f'--max-count={_HISTORY_DEPTH}', 'HEAD', '--', rel)
+    if revs is None or revs.returncode != 0:
+        return None
+    for c in revs.stdout.decode().split():
+        got = _git(repo, 'show', f'{c}:{rel}')
+        if got is None or got.returncode != 0 or sha256_bytes(got.stdout) != want:
+            continue                                   # C 에서 바뀐 뒤의 바이트만 C 의 파일이다(codex 설계 검토 #1)
+        anc = _git(repo, 'merge-base', '--is-ancestor', c, _HISTORY_BASE)
+        if anc is not None and anc.returncode == 0:
+            return f'git:{c}:{rel}'
+        # 미푸시 커밋이 같은 바이트를 담았으면 건너뛰고 더 앞 커밋을 본다(codex 구현 검토 #1)
+    return None
 
 
 def _preservation(inputs, ctx):
@@ -561,12 +603,14 @@ def _preservation(inputs, ctx):
                     break
             except OSError:
                 pass
+        ref = ref or _history_ref(f['path'], f['sha256'], ctx)
         f['ref'] = ref or 'workspace-only'
         if not ref:
             lost.append(f['path'])
     return {'workspace_only': len(lost), 'workspace_only_files': lost[:200],
-            'note': '같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로> 로 참조한다. workspace-only 는 '
-                    '해시만 남는다 — 원본은 보관하지 않았다'}
+            'note': '같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로>, 로컬 origin/main 추적 이력의 앞 커밋에 있으면 '
+                    'git:<커밋>:<경로> 로 참조한다(복원 가능성 — 그 파일을 원본으로 썼다는 증거는 아니다). '
+                    'workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다'}
 
 
 def _rel_post(html, repo):

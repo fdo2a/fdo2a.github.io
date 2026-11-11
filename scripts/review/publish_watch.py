@@ -124,21 +124,37 @@ def _validate(obj):
             bad(k)
     if not isinstance(obj.get('events'), list):
         bad('events')
+    # 11/11 추가 — 칸이 없는 옛 상태만 받는다. 있으면 문자열 사전이어야 한다(null 도 손상, codex 재검토 #1)
+    if 'calendar_why' in obj and not (isinstance(obj['calendar_why'], dict) and all(
+            isinstance(k, str) and isinstance(v, str) for k, v in obj['calendar_why'].items())):
+        bad('calendar_why')
     for e in obj['events']:
         if not (isinstance(e, dict) and all(isinstance(e.get(f), str) for f in ('id', 'kind', 'key', 'text', 'status',
                                                                              'created'))):
             bad('사건')
-        datetime.fromisoformat(e['created'])
+        if datetime.fromisoformat(e['created']).tzinfo is None:
+            bad('사건')                       # 시간대 없는 시각은 지금과 빼면 TypeError(codex 재검토 8회 #3)
     for k in ('last_ok',):
         if obj.get(k) is not None:
             try:
-                datetime.fromisoformat(obj[k])
+                if datetime.fromisoformat(obj[k]).tzinfo is None:
+                    bad(k)
             except (TypeError, ValueError):
                 bad(k)
-    if obj.get('last_seen') is not None and not isinstance(obj['last_seen'], str):
-        bad('last_seen')
+    if obj.get('last_seen') is not None and not (isinstance(obj['last_seen'], str)
+                                                 and re.fullmatch(r'[0-9a-f]{40}', obj['last_seen'])):
+        bad('last_seen')                      # git 인자로 넘어간다 — 커밋 id 모양만(재검토 9회 #3)
+    since = obj['fetch'].get('since')
+    if since is not None:
+        try:
+            if datetime.fromisoformat(since).tzinfo is None:
+                bad('fetch')
+        except (TypeError, ValueError):
+            bad('fetch')                      # 조회 실패 처리에서 지금과 뺀다(재검토 9회 #1)
     if not all(isinstance(v, str) for v in obj['sessions'].values()):
         bad('sessions')
+    if not all(_SESSION_KEY.fullmatch(str(k)) and _real_date(k[3:]) for k in obj['sessions']):
+        bad('sessions')                       # 요약 꼬리가 「시장:날짜」로 쪼갠다(codex 재검토 8회 #3)
     if not all(isinstance(v, dict) for v in obj['posts'].values()):
         bad('posts')
     if not isinstance(obj.get('send_fail', 0), int):
@@ -207,14 +223,68 @@ def deadline(market, session):
 
 def load_holidays(root, market, rev):
     """그 커밋의 휴장 달력. 못 읽거나 형식이 다르면 None(빈 목록으로 바꾸지 않는다 — 설계 검토 #9)."""
+    return _holidays(root, market, rev)[0]
+
+
+def _holiday_reasons(market):
+    """`_holidays` 가 만드는 문장 전부 — 요약 꼬리는 이 밖의 값을 싣지 않는다(codex 재검토 3회 #1)."""
+    return {'그 커밋에서 data/market_holidays.json 을 읽지 못했어요', 'data/market_holidays.json 이 JSON 이 아니에요',
+            f'data/market_holidays.json 에 {market}.dates 목록이 없어요', '이유를 몰라요'}
+
+
+def _holidays(root, market, rev):
+    """(달력 | None, 못 읽은 이유) — 이유는 요약 꼬리에 붙는다(사용자 11/11 「이유까지」)."""
     try:
-        cal = json.loads(V._git(root, 'show', f'{rev}:data/market_holidays.json').decode('utf-8'))
-    except (V.GitError, ValueError, UnicodeDecodeError):
-        return None
-    dates = (cal.get(market) or {}).get('dates') if isinstance(cal, dict) else None
+        raw = V._git(root, 'show', f'{rev}:data/market_holidays.json')
+    except V.GitError:
+        return None, '그 커밋에서 data/market_holidays.json 을 읽지 못했어요'
+    try:
+        cal = json.loads(raw.decode('utf-8'))
+    except (ValueError, UnicodeDecodeError):
+        return None, 'data/market_holidays.json 이 JSON 이 아니에요'
+    mk = cal.get(market) if isinstance(cal, dict) else None
+    dates = mk.get('dates') if isinstance(mk, dict) else None          # 시장 값이 객체가 아니어도 달력 오류로(재검토 9회 #2)
     if not isinstance(dates, list) or not all(isinstance(x, str) for x in dates):
-        return None
-    return tuple(dates)
+        return None, f'data/market_holidays.json 에 {market}.dates 목록이 없어요'
+    return tuple(dates), None
+
+
+def _real_date(x):
+    """있는 날짜(YYYY-MM-DD)인가 — 형식만 보면 2026-99-99 가 「다음 판」이 된다(codex 재검토 6회)."""
+    if not isinstance(x, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}', x):
+        return False
+    try:
+        date.fromisoformat(x)
+    except ValueError:
+        return False
+    return True
+
+
+def _collection_note(root, rev, market, session):
+    """미발행 사건의 「원인」 줄 — 그 시각 레포의 수집 판만 보고, 원인을 단정하지 않는다(codex 설계 검토 #4)."""
+    path = {'us': 'data/market_data.json', 'kr': 'kr/data/kr_market_data.json'}[market]
+    try:
+        d = json.loads(V._git(root, 'show', f'{rev}:{path}').decode('utf-8'))
+        rd, done = d.get('report_date'), d.get('complete')
+    except (V.GitError, ValueError, UnicodeDecodeError, AttributeError):
+        return f'원인: 확정하지 못했어요 — 레포의 수집 데이터({path})를 읽지 못했어요. 발행 루틴·데이터 수집 상태 점검 필요'
+    if not _real_date(rd):
+        # 원문을 싣지 않는다 — 긴 값이면 사건이 3,900자를 넘어 경고 자체가 안 나간다(codex 재검토 5회 #2)
+        return '원인: 확정하지 못했어요 — 수집 데이터의 report_date 가 없거나 날짜 형식이 아니에요. 발행 루틴·데이터 수집 상태 점검 필요'
+    if rd == session and done is True:
+        return ('원인: 확정하지 못했어요 — 이 세션의 완전한 수집 데이터는 레포에 있어요'
+                f'(report_date {rd}). 데이터는 있으니 작성 루틴이 돌지 않았거나 도중에 멈췄을 수 있어요')
+    if rd == session and done is False:
+        return ('원인: 확정하지 못했어요 — 이 세션 수집 데이터가 완전하지 않아요'
+                f'(report_date {rd}, complete false). 루틴은 불완전한 데이터로는 발행하지 않아요')
+    if rd == session:
+        return ('원인: 확정하지 못했어요 — 이 세션 수집 데이터는 있는데 완전한지 표시(complete)를 읽지 못했어요'
+                f'(report_date {rd}). 발행 루틴·데이터 수집 상태 점검 필요')
+    if rd < session:
+        return ('원인: 확정하지 못했어요 — 레포의 최신 수집 데이터가 이 세션보다 앞선 판이에요'
+                f'(report_date {rd}). 이 세션 수집이 아직 안 됐거나 실패했을 수 있어요')
+    return ('원인: 확정하지 못했어요 — 레포의 최신 수집 데이터가 이미 다음 판이에요'
+            f'(report_date {rd}). 이 세션 데이터가 수집됐었는지는 이 파일로 알 수 없어요')
 
 
 def sessions_due(market, now, holidays):
@@ -250,11 +320,36 @@ def _tree(root, rev):
 
 
 def _is_ancestor(root, old, new):
+    return _ancestry(root, old, new)[0]
+
+
+def _ancestry(root, old, new):
+    """(조상인가, 아니면 그 이유) — gap 알림에 붙는다."""
     import subprocess
     out = subprocess.run(['git', '-C', root, 'merge-base', '--is-ancestor', old, new], capture_output=True, timeout=60)
-    if out.returncode in (0, 1):
-        return out.returncode == 0
-    return False                                   # 객체가 없다(gc·강제 push) — 조상이라고 하지 않는다
+    if out.returncode == 0:
+        return True, None
+    if out.returncode == 1:
+        return False, '기준점이 지금 이력의 조상이 아니에요(이력이 다시 쓰였을 수 있어요)'
+    have = subprocess.run(['git', '-C', root, 'rev-parse', '--verify', '--quiet', f'{old}^{{commit}}'],
+                          capture_output=True, timeout=60)
+    if have.returncode == 1:
+        return False, '기준점 커밋이 이 클론에 없어요(강제 push·이력 정리 가능)'
+    return False, f'git 이 조상 관계를 판단하지 못했어요(종료 코드 {out.returncode})'   # 조상이라고 하지 않는다
+
+
+def _deleted_by(root, tip, path):
+    """사라진 글을 지운 커밋 — 짧은 sha·제목(공개 이력). 못 찾으면 그렇다고."""
+    try:
+        out = V._git(root, 'log', '-1', '--diff-filter=D', '--format=%h %s', tip, '--', path).decode('utf-8', 'replace')
+    except V.GitError:
+        return '지운 커밋을 읽지 못했어요.'
+    out = out.strip()
+    if not out:
+        return '지운 커밋을 찾지 못했어요(이력이 다시 쓰였을 수 있어요).'
+    h, _, subj = out.partition(' ')
+    subj = ' '.join(subj.split())
+    return f'지운 커밋 {h}「{subj[:60]}{"…" if len(subj) > 60 else ""}」.'
 
 
 def _changed(root, old, new):
@@ -325,9 +420,10 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
         tree = _tree(root, tip)
         last = st.get('last_seen')
         full = last is None
-        if last and not _is_ancestor(root, last, tip):
+        anc, anc_why = _ancestry(root, last, tip) if last else (True, None)
+        if not anc:
             add_event(st, 'gap', 'sys:gap',
-                      f'[발행 알림] 지난 확인 기준점({last[:7]})을 지금 이력에서 못 찾았어요 — 그 사이 사건을 다 봤다고 '
+                      f'[발행 알림] 지난 확인 기준점({last[:7]})을 지금 이력에서 못 찾았어요 — {anc_why}. 그 사이 사건을 다 봤다고 '
                       f'할 수 없어요. {V.EFFECTIVE} 이후 글을 전부 다시 계산해요.', now, extra=f'{last}->{tip}')
             full = True
         paths = tree if full else _changed(root, last, tip)
@@ -340,7 +436,10 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
             path = V.post_path(market, d)
             if path in tree:
                 views[path] = V.view(root, tip, market, d)
-        cals = {m: load_holidays(root, m, tip) for m in V.TARGETS}
+        cal_why = {}
+        cals = {}
+        for m in V.TARGETS:
+            cals[m], cal_why[m] = _holidays(root, m, tip)
     except V.GitError as exc:
         _fetch_failed(st, now, f'읽기 실패 — {exc}')
         return st
@@ -357,8 +456,10 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
     for market, hol in cals.items():
         if hol is None:
             st['calendar'].setdefault(market, now.isoformat())
+            st.setdefault('calendar_why', {})[market] = cal_why.get(market) or '이유를 몰라요'
             continue
         st['calendar'].pop(market, None)
+        (st.get('calendar_why') or {}).pop(market, None)
         for s in sessions_due(market, now, hol):
             key, path = f'{market}:{s}', V.post_path(market, s)
             seen = st['sessions'].get(key)
@@ -395,10 +496,11 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
                 _mark_gone(st, key)                                # 올라갔던 글이 없다 — 글 쪽 「사라짐」 알림이 간다(#5)
             elif seen is None and now >= dl:
                 st['sessions'][key] = 'missing_quiet' if quiet else 'missing'
+                note = _collection_note(root, tip, market, s)
+                # 원인 줄은 그 시각 수집 판에 따라 바뀐다 — id 에 넣어 같은 id·다른 본문이 되지 않게(Fable #4)
                 emit(st, 'missing', key,
                           f'[미발행] {_label(market, s)} 세션 보고서 미발행 확인\n'
-                          f'기준 시각: {_when(dl)}\n'
-                          '원인: 확인 불가 — 발행 루틴·데이터 수집 상태 점검 필요', now)
+                          f'기준 시각: {_when(dl)}\n' + note, now, extra=text_hash(note))
 
     flagged, unverified = 0, []
     for path, v in views.items():
@@ -406,8 +508,12 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
         prev = st['posts'].get(path)
         if prev is None:
             # 기준선(첫 실행)이어도 문제가 있는 글은 알린다 — 조용히 저장하면 그 경로가 다시 안 바뀌는 한 영영 안 나온다(#8)
-            (add_event if quiet and not V.clean(v) else emit)(st, 'publish', path, V.render_publish(v, who=who), now,
-                                                              extra=fp)
+            text = V.render_publish(v, who=who)
+            # 본문 해시도 id 에 — 문구가 바뀐 뒤 상태를 새로 시작해도 같은 id·다른 본문이 되지 않게(codex 최종 검토)
+            # 해시는 GitHub 판 문장으로 — 확인 주체(맥/GitHub)가 달라도 같은 사건은 같은 id(전환 계약)
+            canon = text if who == V.GITHUB else V.render_publish(v, who=V.GITHUB)
+            (add_event if quiet and not V.clean(v) else emit)(st, 'publish', path, text, now,
+                                                              extra=f'{fp}|{text_hash(canon)}')
             flagged += quiet and not V.clean(v)
             if quiet and V.clean(v) and not V.fully_verified(v):
                 unverified.append(path)
@@ -417,7 +523,9 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
                 prev['gone'] = False
                 emit(st, 'back', path, f'[다시 올라옴] {path} 가 다시 공개 판에 있어요.', now, extra=tip)
             if prev.get('fp') != fp:
-                emit(st, 'changed', path, V.render_publish(v, head='[상태 바뀜]', who=who), now, extra=fp)
+                text = V.render_publish(v, head='[상태 바뀜]', who=who)
+                canon = text if who == V.GITHUB else V.render_publish(v, head='[상태 바뀜]', who=V.GITHUB)
+                emit(st, 'changed', path, text, now, extra=f'{fp}|{text_hash(canon)}')
                 prev['fp'] = fp
     # 공개 판에서 사라진 글 — 알던 글이든, 맥이 보기 전에 올라왔다 사라진 글이든(codex 구현 검토 #2·#5)
     for market, d in targets:
@@ -429,12 +537,14 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
             prev['gone'] = True
             _mark_gone(st, f'{market}:{d}')
             emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 지금 공개 판에 없어요 '
-                                  '— 발행됐던 글이에요. 루틴·정정 이력 확인 필요.', now, extra=tip)
+                                  f'— 발행됐던 글이에요. {_deleted_by(root, tip, path)} 루틴·정정 이력 확인 필요.', now,
+                 extra=tip)
         elif prev is None and path in paths:
             st['posts'][path] = {'fp': None, 'first_seen': None, 'gone': True}
             _mark_gone(st, f'{market}:{d}')
             emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 {V.subject(who)} 확인하기 전에 '
-                                  '올라왔다가 지금은 없어요 — 루틴·정정 이력 확인 필요.', now, extra=tip)
+                                  f'올라왔다가 지금은 없어요 — {_deleted_by(root, tip, path)} 루틴·정정 이력 확인 필요.', now,
+                 extra=tip)
 
     if reset and rid:
         ev = next(e for e in st['events'] if e['id'] == rid)
@@ -571,13 +681,38 @@ def summary_lines(path, now):
     try:
         st = load_state(path)
     except StateError:
-        return ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
+        return ['발행 알림: 상태를 못 읽었어요(상태 파일을 읽지 못했거나 내용 검증 실패) — 미발행·전송 여부를 몰라요']
     if st is None:
         return ['발행 알림: 아직 실행 기록이 없어요']
     try:
         return summary_lines_from(st, now)
-    except Exception:  # noqa: BLE001 — 발행 알림 상태가 이상해도 매일 요약은 나가야 한다(#6)
-        return ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
+    except Exception as exc:  # noqa: BLE001 — 발행 알림 상태가 이상해도 매일 요약은 나가야 한다(#6)
+        # 원문은 싣지 않는다 — 예외 종류 이름만(맥 요약 계약)
+        return [f'발행 알림: 상태를 못 읽었어요(상태 파일 내용 형식 오류: {type(exc).__name__}) — 미발행·전송 여부를 몰라요']
+
+
+def _fetch_kind(why):
+    """요약 꼬리용 고정 분류 — git 오류 원문은 싣지 않는다(맥 요약 계약, codex 재검토 #2)."""
+    if not why:
+        return None
+    if str(why).startswith('git fetch 실패'):
+        return 'git fetch 실패'
+    if str(why).startswith('읽기 실패'):
+        return '레포를 읽지 못함(git 읽기 오류)'
+    return '기타 실패'
+
+
+_SESSION_KEY = re.compile(r'(us|kr):(\d{4}-\d{2}-\d{2})')
+
+
+def _key_label(key):
+    """사건 key → 사람이 읽는 이름. 알려진 모양(글 경로·세션·sys)만 — 나머지는 고정 문구(codex 재검토 4회 #3)."""
+    if V.target_of(key):
+        return _short(key)
+    m = _SESSION_KEY.fullmatch(str(key))
+    if m:
+        return f'{_label(m.group(1), m.group(2))} 세션'
+    return '시스템 알림' if str(key).startswith('sys:') else '알 수 없는 항목'
 
 
 def summary_lines_from(st, now, stale=FETCH_STALE):
@@ -590,7 +725,9 @@ def summary_lines_from(st, now, stale=FETCH_STALE):
     else:
         gap = now - datetime.fromisoformat(ok)
         if gap > stale:
-            out.append(f'발행 알림: 마지막 정상 확인이 {int(gap.total_seconds() // 3600)}시간 전이에요 — 그 뒤 사건은 못 봤어요')
+            why = _fetch_kind((st.get('fetch') or {}).get('why'))
+            out.append(f'발행 알림: 마지막 정상 확인이 {int(gap.total_seconds() // 3600)}시간 전이에요 — 그 뒤 사건은 못 봤어요'
+                       + (f'(마지막 실패: {why})' if why else '(그 뒤 실패 기록이 없어요 — 계산이 돌지 않았을 수 있어요)'))
     open_ = sorted(k for k, s in st['sessions'].items() if s in ('missing', 'missing_quiet'))
     if open_:
         out.append('아직 안 올라온 세션: ' + ', '.join(_label(*k.split(':', 1)) for k in open_[:6]))
@@ -598,8 +735,18 @@ def summary_lines_from(st, now, stale=FETCH_STALE):
     if gone:
         out.append('올라갔다가 지금 없는 세션: ' + ', '.join(_label(*k.split(':', 1)) for k in gone[:6]))
     if st['calendar']:
-        out.append('휴장 달력을 못 읽어 미발행 판정을 멈춘 시장: ' + ', '.join(sorted(st['calendar'])))
-    n = len(pending(st))
-    if n:
-        out.append(f'발행 알림 미전송 {n}건(연속 실패 {st.get("send_fail", 0)}회)')
+        why = st.get('calendar_why') or {}
+        def reason(m):
+            w = why.get(m)
+            if m not in V.LABEL:                       # us·kr 밖의 코드로 문장을 만들지 않는다(codex 재검토 4회 #2)
+                return '기타 사유'
+            return '이유 기록 없음' if not w else w if w in _holiday_reasons(m) else '기타 사유'
+        out.append('휴장 달력을 못 읽어 미발행 판정을 멈춘 시장: ' + ', '.join(
+            f'{V.LABEL.get(m, "모르는 시장")}({reason(m)})' for m in sorted(st['calendar'])))
+    pend = pending(st)
+    if pend:
+        names = ', '.join(_key_label(e['key']) for e in pend[:3]) + (f' 외 {len(pend) - 3}건' if len(pend) > 3 else '')
+        # GitHub 모드에서 send_fail 은 늘 0 이다(전송은 Worker 몫) — 맥 모드에서만 연속 실패를 적는다
+        tail = f', 연속 실패 {st["send_fail"]}회' if st.get('send_fail') else ''
+        out.append(f'발행 알림 미전송 {len(pend)}건({names}{tail}) — 전송 결과는 Worker 쪽 줄을 보세요')
     return out

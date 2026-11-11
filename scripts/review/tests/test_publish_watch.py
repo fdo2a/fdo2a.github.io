@@ -35,7 +35,7 @@ def test_first_run_reports_publish_and_missing(tmp_path):
     assert kinds(st) == ['reset', 'missing', 'publish']             # KR 11/09 은 23:00 기준을 넘겼다
     miss = next(e for e in st['events'] if e['kind'] == 'missing')
     assert 'KR 일간 11/09 세션 보고서 미발행 확인' in miss['text'] and '11/09 23:00 KST' in miss['text']
-    assert '원인: 확인 불가' in miss['text'] and '보류' not in miss['text']
+    assert '원인: 확정하지 못했어요' in miss['text'] and '읽지 못했어요' in miss['text'] and '보류' not in miss['text']
 
 
 def test_no_change_no_new_event(tmp_path):
@@ -267,7 +267,7 @@ def test_corrupt_state_is_not_assumed_fine(tmp_path):
     path.write_text('{broken')
     with pytest.raises(W.StateError):
         W.load_state(str(path))
-    assert W.summary_lines(str(path), at(11, 10, 9)) == ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
+    assert W.summary_lines(str(path), at(11, 10, 9)) == ['발행 알림: 상태를 못 읽었어요(상태 파일을 읽지 못했거나 내용 검증 실패) — 미발행·전송 여부를 몰라요']
 
 
 def test_summary_lines(tmp_path):
@@ -407,7 +407,7 @@ def test_valid_json_with_bad_contents_is_corrupt(tmp_path):
     path.write_text(json.dumps(st))
     with pytest.raises(W.StateError):
         W.load_state(str(path))
-    assert W.summary_lines(str(path), at(11, 10, 9)) == ['발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요']
+    assert W.summary_lines(str(path), at(11, 10, 9)) == ['발행 알림: 상태를 못 읽었어요(상태 파일을 읽지 못했거나 내용 검증 실패) — 미발행·전송 여부를 몰라요']
 
 
 def test_first_run_is_baseline_only(tmp_path):

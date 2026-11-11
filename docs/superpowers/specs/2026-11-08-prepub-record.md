@@ -29,6 +29,15 @@
   (`scripts/<p>/AGENTS.md`)가 git blob 과 달라 record → verify 가 영영 맴돈다(실제 검사기 모의 발행에서 나온 결함).
 - 입력마다 같은 바이트가 이 커밋의 레포 경로에 있으면 `repo:<경로>` 로 참조(복원 가능), 없으면 `workspace-only`(해시만 —
   원본 보관은 다음 단계).
+- **이력 참조 `git:<커밋 40자>:<경로>`(2026-11-11)** — 11/09·11/10 US 기록의 workspace-only 6개 중 2개는 레포에 같은 바이트가
+  있었다. ① `<datadir>/telegram.json` 은 ORCHESTRATOR 가 `data/telegram/<D>.json` 을 복사한 판 → tg 와 같은 후보를 본다.
+  ② `<datadir>/macro.json` 은 루틴이 복사해 온 어제 책인데, record 전에 `macro_next.json` 이 `data/macro.json` 으로 승격돼
+  워크트리와 어긋난다 → `_HISTORY_REF`(지금은 이 파일 하나)만 `rev-list -n 5 HEAD -- data/macro.json` 의 커밋 C 마다
+  **`C:path` 바이트의 sha256** 을 보고(log --raw 의 옛 blob 은 C 의 파일이 아니다), C 가 로컬 `origin/main` 추적 이력의
+  조상일 때만 참조한다(미푸시 커밋은 rebase 로 sha 가 바뀐다). git 이 실패하면 workspace-only — 기록을 막지 않는다.
+  바이트 일치는 **복원 가능성**의 증거이지 그 파일을 원본으로 썼다는 증거가 아니다. 맥 쪽 `repo_check` 는 C 가 이 클론에
+  없거나 기록 커밋의 조상이 아니면 대조 불가(이유), git 을 못 읽으면 ReadError. FORMAT 은 올리지 않았다(옛 기록이 전부
+  「다른 형식」이 된다). 지난 기록은 고치지 않았다. 남은 진짜 작업 공간 전용은 원고 3개와 `research_notes.md`.
 - 글과 기록은 **같은 커밋**. `verify --index`(커밋 직전), `verify --rev HEAD`(모든 push 직전 — rebase 뒤 포함)가 그 판의
   글·검사 코드·레포 다이제스트와 지금 입력이 기록과 짝인지 본다. record 와 **같은 입력 인자**(--tg·--stance-next)를 줘야 한다.
   어긋나면 record → add → `commit --amend`. 지시문은 verify 와 commit·push 를 `&&` 로 잇지 않는다(exit 4 에서 사슬이 멈춘다).

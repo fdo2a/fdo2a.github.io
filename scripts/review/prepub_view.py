@@ -106,8 +106,11 @@ def corrections(root, ref, path, base):
     return out
 
 
-def recorded(rec):
-    """루틴이 남긴 검사 결과 — 기록 그대로. 필수 필드가 없으면 「읽지 못함」."""
+def recorded(rec, allowed=None):
+    """루틴이 남긴 검사 결과 — 기록 그대로. 필수 필드가 없으면 「읽지 못함」.
+    allowed = 그 커밋 설정의 검사기 이름 — **표시할 때만** 밖의 이름을 고정 문구로 바꾼다(맥 요약 계약, codex 재검토 4회 #1).
+    판정용 값(이름·상태)은 기록 그대로 둔다 — 표시 정규화가 fully_verified·anomalies 를 바꾸면 안 된다(재검토 11회)."""
+    allowed = frozenset(x for x in (allowed or ()) if isinstance(x, str))     # 설정 이름이 목록·사전이어도(Fable #3)
     s = rec.get('summary') if isinstance(rec, dict) else None
     gates = rec.get('gates') if isinstance(rec, dict) else None
     lists = ('blocking', 'note_numbers', 'note_format', 'warned', 'integrity', 'not_run')
@@ -117,26 +120,94 @@ def recorded(rec):
             or any(not isinstance(s.get(k), list) for k in lists)          # 빠진 칸을 빈 목록으로 읽지 않는다
             or any(not isinstance(g, dict) or not isinstance(g.get('name'), str)
                    or not isinstance(g.get('status'), str) for g in gates)):
-        return {'readable': False}        # 문자열 "false" 를 참으로 읽지 않는다(codex 구현 검토 #7)
+        # 문자열 "false" 를 참으로 읽지 않는다(codex 구현 검토 #7). 무엇이 빠졌는지는 적는다(사용자 11/11)
+        return {'readable': False, 'unreadable_why': _unreadable_why(s, gates, lists)}
     by = [g for g in gates if isinstance(g, dict)]
     numbers = next((g.get('numbers') for g in by if g.get('name') == 'check_numbers'
                     and isinstance(g.get('numbers'), dict)), None)
     return {
-        'readable': True, 'status': s['status'], 'publish_ok': s['publish_ok'],
-        'verified': s['verified'], 'blocking': list(s.get('blocking') or []),
+        'readable': True, 'status': s['status'], 'publish_ok': s['publish_ok'],   # status 는 원래 값 — 지문이 쓴다(표시는 STATUS 밖이면 「모르는 판정」, 재검토 10회)
+        'verified': s['verified'], 'blocking': [_as_str(x) for x in s.get('blocking') or []],
         'not_run': [g['name'] for g in by if g.get('status') == 'not_run'],
         'partial': [g['name'] for g in by if g.get('status') == 'partial'],
         'indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate'],
         'required_indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate' and g.get('required', True)],
         'required_failed': [g['name'] for g in by if g.get('status') == 'fail' and g.get('required', True)],
         'ref_failed': [g['name'] for g in by if g.get('status') == 'fail' and not g.get('required', True)],
-        'note_numbers': list(s.get('note_numbers') or []), 'note_format': list(s.get('note_format') or []),
-        'warned': list(s.get('warned') or []), 'integrity': list(s.get('integrity') or []),
+        'note_numbers': [_as_str(x) for x in s.get('note_numbers') or []],
+        'note_format': [_as_str(x) for x in s.get('note_format') or []],
+        'warned': [_as_str(x) for x in s.get('warned') or []],
+        'integrity': [x if isinstance(x, str) else '형식이 다른 무결성 항목' for x in s.get('integrity') or []],
+        'allowed': allowed,
         'required': sum(1 for g in by if g.get('required', True)),
         'required_pass': sum(1 for g in by if g.get('required', True) and g.get('status') in ('pass', 'warn')),
-        'numbers': numbers, 'python': (rec.get('code') or {}).get('python'),
-        'created': (rec.get('created_at') or {}).get('kst'),
+        'numbers': numbers, 'python': _str(_dict(rec.get('code')).get('python')),
+        'created': _str(_dict(rec.get('created_at')).get('kst')),
+        'reasons': {g['name']: gate_reasons(g) for g in by if g.get('status') not in ('pass',)},
     }
+
+
+def _as_str(x):
+    return x if isinstance(x, str) else '형식이 다른 항목'      # join 에서 멈추지 않게 — 판정 의미는 그대로
+
+
+def _disp(x, rec):
+    """표시용 검사기 이름."""
+    return _safe_name(x, rec.get('allowed') or frozenset())
+
+
+def _safe_name(x, allowed):
+    """요약 목록의 항목 — 그 커밋 설정에 있는 검사기 이름이나 `integrity`(기록이 쓰는 고정 낱말)만."""
+    return x if isinstance(x, str) and (x in allowed or x == 'integrity') else '이름 모를 검사기'
+
+
+def _dict(x):
+    return x if isinstance(x, dict) else {}
+
+
+def _str(x):
+    return x[:40] if isinstance(x, str) else None
+
+
+def _unreadable_why(s, gates, lists):
+    if not isinstance(s, dict):
+        return '요약 칸(summary)이 없어요'
+    if not isinstance(gates, list) or not gates:
+        return '검사기 목록(gates)이 없어요'
+    bad = [k for k in ('publish_ok', 'verified') if not isinstance(s.get(k), bool)]
+    bad += ['status'] if not isinstance(s.get('status'), str) else []
+    bad += [k for k in lists if not isinstance(s.get(k), list)]
+    if bad:
+        return '요약에 빠졌거나 형식이 다른 칸: ' + ', '.join(bad)
+    return '검사기 항목 중 이름·상태가 없는 것이 있어요'
+
+
+_WARN_LINE = re.compile(r'^\s*(경고|warn|WARN)')
+REASON_LEN, REASON_ITEMS = 100, 2
+
+
+def gate_reasons(g):
+    """검사기 하나가 통과가 아닌 이유 — 공개 레포 기록(verification/*.json)에 이미 있는 마스킹된 문장만 쓴다.
+    `reason` 이 있으면 그것, 없으면 `items` 중 상태에 맞는 줄. 없으면 빈 목록(→ 「이유가 기록에 없어요」)."""
+    if isinstance(g.get('reason'), str) and g['reason'].strip():
+        return [_cut(g['reason'])]
+    raw = g.get('items')
+    items = [x for x in raw if isinstance(x, str) and x.strip()] if isinstance(raw, list) else []   # 손상 형식은 이유 없음
+    if g.get('status') == 'warn':
+        items = [x for x in items if _WARN_LINE.match(x)] or items
+        items = [_WARN_LINE.sub('', x).lstrip(' :：') for x in items]
+    return [_cut(x) for x in items]
+
+
+def _cut(x, n=REASON_LEN):
+    x = ' '.join(x.split())
+    return x if len(x) <= n else x[:n - 1] + '…'
+
+
+def _more(items, n, unit='건'):
+    """앞 n 개 + 「외 N건」."""
+    head = '; '.join(items[:n])
+    return head + (f' (외 {len(items) - n}{unit})' if len(items) > n else '')
 
 
 def view(root, ref, market, date):
@@ -163,7 +234,11 @@ def view(root, ref, market, date):
             v['check'] = C.check(root, market, date, rc)
         except C.ReadError as exc:
             raise GitError(str(exc)) from exc
-        v['recorded'] = recorded(v['check'].get('rec'))
+        try:
+            cfg = C._config_at(root, rc, market)
+        except C.ReadError as exc:
+            raise GitError(str(exc)) from exc
+        v['recorded'] = recorded(v['check'].get('rec'), [g['name'] for g in R.gates_of(cfg, market)] if cfg else None)
         base = rc
     elif v['kind'] == NO_RECORD:
         base = adds[0]
@@ -203,6 +278,44 @@ def anomalies(v):
             out.append('필수 검사 판정 불가(' + ', '.join(rec['required_indeterminate'][:4]) + ')')   # 참고 검사는 이상 아님(#2)
         if rec.get('integrity'):
             out.append('무결성 경보')
+    return out
+
+
+INTEGRITY_KINDS = {
+    '검사기가 검사 사본을 바꿨다': '검사기가 검사 사본을 바꿈',
+    '검사 중에 원본 글이 바뀌었다': '검사 중 원본 글이 바뀜',
+    '검사 뒤 원본 글을 읽지 못했다': '검사 뒤 원본 글을 못 읽음',
+    '검사 중에 입력 파일이 바뀌었다': '검사 중 입력 파일이 바뀜',
+    '레포 안 코드·원장의 다이제스트를 읽지 못했다': '레포 다이제스트를 못 읽음',
+    '검사 중에 레포 안 코드·설정·원장이 바뀌었다': '검사 중 레포 안 코드가 바뀜',
+}
+
+
+def anomaly_labels(v):
+    """표시용 — `anomalies()` 의 이름 뒤에 어느 칸·어느 검사기인지(고정 이름만: 맥 요약은 검사기 원문을 싣지 않는다).
+    판정(`clean`)은 `anomalies()` 그대로 — 표시를 바꿔도 기준선이 흔들리지 않게(codex 설계 검토 #9)."""
+    out = []
+    chk, rec = v.get('check') or {}, v.get('recorded') or {}
+    cats = chk.get('cats') or {}
+    for a in anomalies(v):
+        if a == '짝 불일치':
+            a += '(' + ', '.join(C.CATEGORY_LABEL.get(k, k) for k, s in cats.items() if s == C.MISMATCH) + ')'
+        elif a == '레포 안 대조 불가':
+            ks = [k for k in (chk.get('unknown') or []) if k != 'workspace_inputs']
+            a += '(' + (', '.join(C.CATEGORY_LABEL.get(k, k) for k in ks) or '기록 전체') + ')'
+        elif a == '무결성 경보':
+            # 기록이 쓰는 고정 문장만(verification/record.py) — 나머지는 묶는다(codex 재검토 #3)
+            ks = [INTEGRITY_KINDS.get(str(x).split(' — ')[0], '기타 무결성 경보') for x in rec.get('integrity') or []]
+            a += '(' + ', '.join(dict.fromkeys(ks)) + ')'
+        elif a == '기록 요약을 읽지 못함' and rec.get('unreadable_why'):
+            a += f'({rec["unreadable_why"]})'
+        elif a.startswith('필수 검사 실패('):
+            a = '필수 검사 실패(' + ', '.join(_disp(x, rec) for x in rec['required_failed'][:4]) + ')'
+        elif a.startswith('필수 검사 판정 불가('):
+            a = '필수 검사 판정 불가(' + ', '.join(_disp(x, rec) for x in rec['required_indeterminate'][:4]) + ')'
+        elif a == '기준 판을 정하지 못함' and v.get('why'):
+            a += f'({v["why"][0]})'
+        out.append(a)
     return out
 
 
@@ -247,7 +360,9 @@ def headline(v, who=MAC):
     if o == C.MATCH:
         return '발행본과 검사 기록 일치'
     if o == C.PARTIAL:
-        return f'발행본과 검사 기록 — {subject(who)} 확인한 범위는 일치, 대조 불가 {len(v["check"]["unknown"])}칸'
+        unk = v['check']['unknown']
+        return (f'발행본과 검사 기록 — {subject(who)} 확인한 범위는 일치, 대조 불가 {len(unk)}칸'
+                f'({", ".join(C.CATEGORY_LABEL.get(k, k) for k in unk)})')
     if o == C.UNKNOWN:
         return '발행 전 기록을 읽지 못했어요 — 확인 필요'
     return '기록 불일치, 확인 필요'
@@ -259,15 +374,44 @@ def pair_lines(v, who=MAC):
         return []
     cats = chk['cats']
     out = [_WHO[who]['pair']]
+    cw = chk.get('cat_why') or {}
     for k, label in C.CATEGORY_LABEL.items():
-        if k in cats and cats[k] != C.NONE:
-            extra = f' {chk.get("workspace_only")}개' if k == 'workspace_inputs' and cats[k] == C.UNKNOWN else ''
-            out.append(f' · {label}: {cats[k]}{extra}')
+        if k not in cats or cats[k] == C.NONE:
+            continue
+        if k == 'workspace_inputs' and cats[k] == C.UNKNOWN and chk.get('workspace_files') is not None \
+                and not cw.get(k):
+            files = [_input_name(x) for x in chk.get('workspace_files') or []]
+            out.append(f' · {label}: {cats[k]} {chk.get("workspace_only")}개 — 루틴 작업 공간에만 있던 파일이라 '
+                       '원본을 보관하지 않았어요(지문만 남아 내용을 다시 볼 수 없어요)')
+            if files:
+                out.append('   - ' + _more(files, WS_FILES, '개').replace('; ', ', '))
+            continue
+        line = f' · {label}: {cats[k]}'
+        if cats[k] in (C.UNKNOWN, C.MISMATCH):
+            rs = [_cut(x, 120) for x in cw.get(k) or []]
+            line += ' — ' + (_more(rs, 1) if rs else '이유가 기록되지 않았어요')
+        out.append(line)
     if not v.get('same_commit'):
         out.append(' · 기록이 글을 추가한 커밋이 아닌 뒤 커밋에 들어 있어요(기록 커밋 기준으로 대조)')
-    for w in chk['why'][:3]:
-        out.append(f'   - {w[:120]}')
     return out
+
+
+WS_FILES = 8
+# us/number_audit.UNVERIFIED_KINDS 와 같다(시험이 강제) — 맥 요약에 실어도 되는 고정 분류 이름
+UNVERIFIED_KINDS = frozenset({
+    '보도·인용 문장', '사전 밖 자산', '자산과 수치 사이가 멀다', '자산 후보 둘 이상', '자산 없음', '시점·구간 단서', '어림수',
+    '단위로 필드를 못 정함', '데이터에 없는 자산', '매크로 칸(수치 둘 이상·형식 불일치)', '매크로 표(예상치·표식 없는 행)',
+    '연구 원장', '지표 해부', '기타 분류'})
+
+
+def _input_name(path):
+    """`<datadir>/macro.json` → `macro.json`, `<tg>/telegram.json` → `텔레그램 입력 telegram.json`."""
+    root, _, rel = str(path).partition('>/')
+    root = root.lstrip('<')
+    if not rel:
+        return _cut(str(path), 60)
+    pre = {'datadir': '', 'tg': '텔레그램 입력 ', 'stance_next': '판단 원장 입력 '}.get(root, f'{root} 입력 ')
+    return pre + _cut(rel, 60)
 
 
 def recorded_lines(v):
@@ -275,21 +419,25 @@ def recorded_lines(v):
     if rec is None:
         return []
     if not rec.get('readable'):
-        return ['[루틴이 남긴 검사 결과]', ' · 기록의 요약을 읽지 못했어요 — 「통과」로 보지 않아요']
-    st = STATUS.get(rec['status'], f'{rec["status"]}(모르는 판정)')
+        return ['[루틴이 남긴 검사 결과]',
+                f' · 기록의 요약을 읽지 못했어요 — {rec.get("unreadable_why") or "이유를 몰라요"}. 「통과」로 보지 않아요']
+    st = STATUS.get(rec['status'], '모르는 판정')
     out = ['[루틴이 남긴 검사 결과]',
            f' · 판정 {st} · 발행 {"가능" if rec["publish_ok"] else "불가"} · '
            f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"} · 필수 검사 {rec["required_pass"]}/{rec["required"]} 통과']
+    budget = [REASON_BUDGET]                 # 갈래 전체가 나눠 쓰는 이유 예산(codex 구현 검토 #1)
     for key, label in (('blocking', '막은 것'), ('indeterminate', '판정 불가'), ('not_run', '실행 안 함'),
                        ('partial', '일부만 검사'), ('note_numbers', '노트 때문인 숫자 실패(설정된 검사 완료 아님)'),
                        ('note_format', '노트 때문인 형식 실패(허용)'), ('ref_failed', '참고 검사 실패'),
                        ('warned', '경고'), ('integrity', '무결성')):
         if rec.get(key):
-            out.append(f' · {label}: {", ".join(rec[key][:6])}')
+            out += _gate_lines(label, rec[key], rec.get('reasons') or {}, budget, rec)
+    if budget[0] < 0:
+        out.append(' · 이유 일부는 길이 제한으로 줄였어요 — 전체는 기록 파일(verification/…)에 있어요')
     n = rec.get('numbers')
     if n:
         out.append(f' · 숫자: 표 칸 {n.get("table_cells", "?")} 대조 · 문장 판정 {n.get("prose_judged", "?")} · '
-                   f'자동 대조하지 못한 수치 {n.get("unverified", "?")}개')
+                   f'자동 대조하지 못한 수치 {n.get("unverified", "?")}개{_unverified_why(n)}')
     elif v.get('market') == 'kr':
         out.append(' · 숫자: KR 은 표 숫자를 기계로 대조하는 검사가 없어요(발행 전·후 모두) — 이 결과에 숫자 검증은 들어 있지 않아요')
     else:
@@ -297,11 +445,64 @@ def recorded_lines(v):
     return out
 
 
+GATE_LINES = 6            # 한 갈래(경고·막은 것…)에 이름을 적는 검사기 수
+REASON_BUDGET = 1800      # 이유 문장 전체 상한(글자) — 한 사건 3,900자 안에 머리·짝 줄·꼬리를 남긴다
+
+
+def _gate_lines(label, names, reasons, budget, rec):
+    """` · 경고: check_weight — 이유; 이유` — 검사기마다 한 줄. 이유가 없으면 그렇다고 적는다.
+    budget = [남은 글자] — 다 쓰면 이유를 빼고 이름만(맨 끝에 한 번 알린다)."""
+    out = []
+    for nm in names[:GATE_LINES]:
+        nm = nm if isinstance(nm, str) else '형식이 다른 항목'
+        key = nm if nm in reasons else nm.split('(')[0].strip()
+        # 건별 알림은 공개 기록 값을 그대로 실어도 된다 — 이름을 가리면 「무엇이」가 사라진다(Fable #5).
+        # 맥 요약(digest_lines·anomaly_labels)만 _disp 로 가린다.
+        shown = _cut(nm, 60)
+        rs = reasons.get(key)
+        if rs is None:
+            why = ''
+        elif not rs:
+            why = ' — 이유가 기록에 없어요'
+        else:
+            why = ' — ' + _more(rs, REASON_ITEMS)
+        if rs and len(why) > budget[0]:
+            why, budget[0] = '', -1
+        elif budget[0] >= 0:
+            budget[0] -= len(why)
+        else:
+            why = '' if rs else why
+        out.append(f' · {label}: {shown}{why}')
+    if len(names) > GATE_LINES:
+        out.append(f' · {label}: 외 {len(names) - GATE_LINES}개')
+    return out
+
+
+def _unverified_why(n, top=4):
+    """` — 자산 없음 129 · 시점·구간 단서 34 …(외 N종)`. 이유별 내역이 없는 옛 기록은 그렇다고 적는다."""
+    u = n.get('unverified')
+    if not isinstance(u, int) or u <= 0:
+        return ''
+    by = n.get('unverified_by')
+    if not isinstance(by, dict) or not by:
+        return ' — 이 기록에는 이유별 내역이 없어요'
+    agg = {}
+    for k, v in by.items():
+        if isinstance(v, int) and not isinstance(v, bool) and v > 0:
+            # 고정 분류만 — 바뀐 기록의 자유 문장이 맥 요약에 실리지 않게(codex 구현 검토 #4)
+            k = k if k in UNVERIFIED_KINDS else '분류 밖 이유'
+            agg[k] = agg.get(k, 0) + v
+    items = [f'{k} {v}' for k, v in sorted(agg.items(), key=lambda kv: -kv[1])]
+    if not items:
+        return ' — 이 기록에는 이유별 내역이 없어요'
+    return ' — ' + ' · '.join(items[:top]) + (f' (외 {len(items) - top}종)' if len(items) > top else '')
+
+
 def correction_line(v):
     c = v.get('corrections')
     if not c or not any(c.values()):
         return []
-    return [f' · 그 뒤 조판 외 변경 {c["other"]}회(조판 {c["typeset"]}회·판정 불가 {c["unknown"]}회) — '
+    return [f' · 그 뒤 조판 외 변경 {c["other"]}회(조판 {c["typeset"]}회·조판인지 가리지 못한 변경 {c["unknown"]}회) — '
             '발행 전 기록은 이전 판 기준, 지금 판은 발행 뒤 재검사 몫(숫자는 US 일간만)']
 
 
@@ -314,6 +515,9 @@ def footer(who=MAC):
 FOOTER = footer(MAC)
 
 
+TEXT_LIMIT = 3800          # outbox 한 건 3,900자(publish_watch.MAX_TEXT)보다 조금 아래 — 넘으면 그 사건은 전송되지 않는다
+
+
 def render_publish(v, head='[발행]', who=MAC):
     d = v['date']
     lines = [f'{head} {LABEL[v["market"]]} {int(d[5:7])}/{d[8:]} — {headline(v, who)}']
@@ -321,27 +525,40 @@ def render_publish(v, head='[발행]', who=MAC):
     rec = v.get('recorded') or {}
     if rec.get('python'):
         lines.append(f' · 루틴 파이썬 {rec["python"]}')
-    return '\n'.join(lines + [footer(who)])
+    return _fit(lines, footer(who))
+
+
+def _fit(lines, foot, limit=TEXT_LIMIT):
+    """전체 길이 상한 — 넘으면 뒤에서부터 줄을 빼고 몇 줄을 뺐는지 적는다(머리·맺음말은 남긴다)."""
+    lines = [x if len(x) <= 600 else x[:599] + '…' for x in lines]
+    text = '\n'.join(lines + [foot])
+    cut = 0
+    while len(text) > limit and len(lines) > 1:
+        lines.pop()
+        cut += 1
+        text = '\n'.join(lines + [f' · 길이 제한으로 줄 {cut}개를 뺐어요 — 전체는 기록 파일에 있어요', foot])
+    return text
 
 
 def digest_lines(v, who=MAC):
     """매일 요약의 [발행 전 기록] 줄 — 짧게."""
     rec = v.get('recorded') or {}
     out = [f' · [발행 전 기록] {headline(v, who)}']
-    bad = anomalies(v) if v.get('kind') else []
+    bad = anomaly_labels(v) if v.get('kind') else []
     if bad:
         out.append('   - 즉시 확인: ' + ', '.join(bad))
     if rec.get('readable'):
-        bits = [f'판정 {STATUS.get(rec["status"], rec["status"])}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
+        bits = [f'판정 {STATUS.get(rec["status"], "모르는 판정")}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
-            bits.append('실행 안 함·일부만 ' + ', '.join((rec['not_run'] + rec['partial'])[:4]))
+            bits.append('실행 안 함·일부만 ' + ', '.join(_disp(x, rec) for x in (rec['not_run'] + rec['partial'])[:4]))
         u = unverified_numbers(v)
         if not rec.get('numbers'):
-            bits.append('숫자 자동 대조 없음')
+            bits.append('숫자 자동 대조 없음(KR 은 표 숫자 검사가 없어요)' if v.get('market') == 'kr'
+                        else '숫자 자동 대조 없음(기록에 숫자 대조 결과가 없어요)')
         elif u is None:
             bits.append('자동 대조하지 못한 수치 수 모름')                            # codex 6회 #3
         elif u:
-            bits.append(f'자동 대조하지 못한 수치 {u}개')                               # codex 5회 #3
+            bits.append(f'자동 대조하지 못한 수치 {u}개{_unverified_why(rec["numbers"], top=3)}')   # codex 5회 #3
         out.append('   - ' + ' · '.join(bits))
     out += [x.replace(' · 그 뒤', '   - 그 뒤', 1) for x in correction_line(v)]
     return out

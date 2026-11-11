@@ -105,6 +105,17 @@ def read_branch(root):
     return parent, blob, _must(root, 'cat-file', 'blob', blob)
 
 
+_STATE_FIELDS = ('형식', 'posts', 'sessions', 'fetch', 'calendar', 'events', '사건', 'calendar_why')
+
+
+def _corrupt_why(exc):
+    """손상 사유 — 고정 문구만(상태 파일의 원시 값이 공개 outbox 에 실리지 않게, codex 구현 검토 #2)."""
+    if isinstance(exc.__cause__, (ValueError, UnicodeDecodeError)) and not str(exc).startswith('상태 파일 내용이'):
+        return 'JSON 으로 읽지 못함'
+    tail = str(exc).rsplit(' — ', 1)[-1].strip()
+    return f'{tail} 칸이 이상함' if tail in _STATE_FIELDS else '내용 검증 실패'
+
+
 def compute(root, now, acked, failed):
     """받아 둔 origin/main 과 상태 브랜치에서 **순수하게** 다시 계산한다 — 거절된 push 뒤에도 이 함수만 다시 부른다.
     → (상태, outbox, 부모 커밋, 그대로 둘 파일 {이름: blob id})."""
@@ -120,8 +131,10 @@ def compute(root, now, acked, failed):
         except W.StateError as exc:
             print(f'상태 파일 손상: {exc}', file=sys.stderr)
             # 손상본을 브랜치에 그대로 남긴다(같은 blob 을 다른 이름으로) — 새 상태가 덮어도 원인을 볼 수 있다
-            keep[f'verify_publish.corrupt-{now:%Y%m%d%H%M%S}.json'] = blob
-            st = W.new_state('상태 파일이 손상돼 복사해 두고 새로 시작했어요')
+            name = f'verify_publish.corrupt-{now:%Y%m%d%H%M%S}.json'
+            keep[name] = blob
+            why = _corrupt_why(exc)
+            st = W.new_state(f'상태 파일이 손상돼({why}) 상태 브랜치의 {name} 로 복사해 두고 새로 시작했어요')
     W.step(st, root, now, True, who=V.GITHUB)
     # 계산 뒤에 뺀다 — 상태를 새로 시작해 같은 id 가 다시 만들어져도, 이미 전송된 것은 outbox 에 다시 싣지 않는다
     W.apply_acks(st, acked, failed, now)
