@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-11",
  "status": "none",
- "reason": "topic_too_long",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-11T22:44:44+00:00",
- "cutoff_at": "2026-11-11T22:44:44+00:00",
+ "collected_at": "2026-11-11T23:48:43+00:00",
+ "cutoff_at": "2026-11-11T23:48:43+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,34 +21,86 @@
   "sha256": "c76a46a3b3632f96ca05e8b38de0d1272f9fc4fb6308071291be9071d6072d7e"
  },
  "counts": {
-  "harvest": 209,
-  "candidates": 2,
+  "harvest": 205,
+  "candidates": 1,
   "articles": [
-   2,
    5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 24731,
-   "out": 8536
+   "in": 46258,
+   "out": 15694
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
    "theguardian.com": "short",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "10/10",
+   "pairs": "3/3",
+   "obs": "11/11"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 10,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "structure",
+    "variables[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "variables[0]:dangling",
+    "edges[0]:dangling",
+    "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "memo[1]:unverified",
+    "memo[1]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 CEO의 중국 스파이 의혹 인물과의 관계와 Nvidia 리스크",
+  "query": "nvidia jensen affair",
   "trigger": []
  },
- "content_hash": "6ca345e1977f3598"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "variables[0]:dangling",
+  "edges[0]:dangling",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:unverified",
+  "memo[1]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "b5049c2b38a1efb0"
 }
