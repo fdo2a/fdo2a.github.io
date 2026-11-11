@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-10",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "schema_invalid",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-11T03:36:33+00:00",
- "cutoff_at": "2026-11-11T03:36:33+00:00",
+ "collected_at": "2026-11-11T04:41:05+00:00",
+ "cutoff_at": "2026-11-11T04:41:05+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "9b23397cf15f0b4cfa834d79e67c26998fc9b720940e107376ca756ba65a0c56"
  },
  "counts": {
-  "harvest": 221,
+  "harvest": 222,
   "candidates": 3,
   "articles": [
    2,
@@ -32,8 +32,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 41843,
-   "out": 12131
+   "in": 72001,
+   "out": 21005
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,24 +45,39 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
+   "claims": "6/6",
+   "pairs": "3/3",
    "obs": "7/7"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
+   "pairs": 2,
+   "claims": 4,
    "obs": 7,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[1]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.most[0]"
+   ],
+   "outcome": "fixed",
+   "remaining": []
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "엔비디아 CEO 스파이 연루 의혹 파장",
+  "topic_ko": "엔비디아 CEO 스파이 연루 의혹",
   "query": "nvidia huang affair",
   "trigger": []
  },
- "content_hash": "7bd456d46c573101"
+ "problems": [
+  "claims"
+ ],
+ "content_hash": "d5209f062cc2cfea"
 }
