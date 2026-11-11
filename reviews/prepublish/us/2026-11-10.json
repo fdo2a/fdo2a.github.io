@@ -1,0 +1,27 @@
+{
+ "section": "us",
+ "date": "2026-11-10",
+ "request_id": "us-2026-11-10-c277f2a465f0",
+ "draft_sha": "7fbc15af79cc8b309140c2a48a11ec7e16bd1041",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 4,
+ "style_candidates": 1,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 5,
+ "facts_rejected": 3,
+ "style_applied": 1,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [
+  {
+   "kind": "번역투",
+   "quote": "12월 인상은 사실상 다 가격에 들어갔고"
+  }
+ ],
+ "recorded_at": "2026-11-11T00:12:20Z"
+}
