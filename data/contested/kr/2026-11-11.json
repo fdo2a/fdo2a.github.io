@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-11",
  "status": "none",
- "reason": "topic_too_long",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-11T11:07:10+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-11T11:23:55+00:00",
  "cutoff_at": "2026-11-11T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 587,
+  "harvest": 582,
   "candidates": 1,
   "articles": [
    6
@@ -44,19 +44,77 @@
    "chosun": "ok"
   },
   "notes": [
-   "discover:587"
+   "discover:582"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 17490,
-   "out": 10141
+   "in": 37830,
+   "out": 14469
+  },
+  "grounded": {
+   "claims": "7/7",
+   "pairs": "3/3",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 9,
+   "strict_pairs": 2,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[2]",
+    "structure",
+    "variables[2]",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_ratio",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "variables[2]:unverified",
+    "edges[0]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "edges[1]:dangling",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "memo[2]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:unverified",
+    "worry.unlikely[0]:unverified"
+   ]
   }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "국고채 전문딜러(PD) 입찰 담합 과징금 1.6조원 제재 논란",
+  "query": "국고채 과징금 담합",
   "trigger": []
  },
- "content_hash": "b33b014cf312af22"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "variables[2]:unverified",
+  "edges[0]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[1]:dangling",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[2]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:unverified",
+  "worry.unlikely[0]:unverified"
+ ],
+ "content_hash": "ce1309a79833d834"
 }
