@@ -183,6 +183,8 @@ def _unreadable_why(s, gates, lists):
 
 
 _WARN_LINE = re.compile(r'^\s*(경고|warn|WARN)')
+_COUNT_HEAD = re.compile(r'^\s*(경고|위반|warn|WARN)\s*\d+\s*건')
+_BULLET = re.compile(r'^\s*[·•\-]\s*')
 REASON_LEN, REASON_ITEMS = 100, 2
 
 
@@ -193,9 +195,10 @@ def gate_reasons(g):
         return [_cut(g['reason'])]
     raw = g.get('items')
     items = [x for x in raw if isinstance(x, str) and x.strip()] if isinstance(raw, list) else []   # 손상 형식은 이유 없음
+    items = [x for x in items if not _COUNT_HEAD.match(x)]      # 「경고 1건(…) — <html>」 머리줄은 이유가 아니다
     if g.get('status') == 'warn':
-        items = [x for x in items if _WARN_LINE.match(x)] or items
-        items = [_WARN_LINE.sub('', x).lstrip(' :：') for x in items]
+        items = ([x for x in items if _WARN_LINE.match(x)] or [x for x in items if _BULLET.match(x)] or items)
+        items = [_BULLET.sub('', _WARN_LINE.sub('', x)).lstrip(' :：') for x in items]
     return [_cut(x) for x in items]
 
 

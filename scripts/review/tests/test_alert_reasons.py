@@ -625,3 +625,10 @@ def test_publish_event_id_includes_body_hash(tmp_path, monkeypatch):
     W.step(st2, str(repo), now, True, ref='HEAD', who=V.GITHUB)
     b = {e['id']: e['hash'] for e in st2['events'] if e['kind'] == 'publish'}
     assert a and b and not set(a) & set(b)
+
+
+def test_count_header_is_skipped_for_the_detail_line():
+    # KR 11/11 check_style: 머리줄 「경고 1건(발행은 막지 않는다) — <html>」 대신 아래 줄이 이유다
+    g = {'status': 'warn', 'reason': '', 'items': ['경고 1건(발행은 막지 않는다) — <html>',
+                                                     '· 날수를 고유어로 썼다 — 「이틀」 — 다시 읽어 보고, 자연스러우면 그대로 둔다']}
+    assert V.gate_reasons(g) == ['날수를 고유어로 썼다 — 「이틀」 — 다시 읽어 보고, 자연스러우면 그대로 둔다']
