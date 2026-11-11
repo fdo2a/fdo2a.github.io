@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-10",
  "status": "none",
- "reason": "schema_invalid",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-11T04:41:05+00:00",
- "cutoff_at": "2026-11-11T04:41:05+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-11T05:46:54+00:00",
+ "cutoff_at": "2026-11-11T05:46:54+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,21 +21,19 @@
   "sha256": "9b23397cf15f0b4cfa834d79e67c26998fc9b720940e107376ca756ba65a0c56"
  },
  "counts": {
-  "harvest": 222,
-  "candidates": 3,
+  "harvest": 220,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 72001,
-   "out": 21005
+   "in": 41984,
+   "out": 11599
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
@@ -43,41 +41,25 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "7/7"
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "6/6"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 7,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 6,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[2]",
-    "memo[1]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]"
-   ],
-   "outcome": "fixed",
-   "remaining": []
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "엔비디아 CEO 스파이 연루 의혹",
   "query": "nvidia huang affair",
   "trigger": []
  },
- "problems": [
-  "claims"
- ],
- "content_hash": "d5209f062cc2cfea"
+ "content_hash": "7f614478c2b11994"
 }
