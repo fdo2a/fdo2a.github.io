@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-10",
  "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-11T07:24:46+00:00",
- "cutoff_at": "2026-11-11T07:24:46+00:00",
+ "reason": "schema_invalid",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-11T08:30:15+00:00",
+ "cutoff_at": "2026-11-11T08:30:15+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,63 +22,55 @@
  },
  "counts": {
   "harvest": 221,
-  "candidates": 2,
+  "candidates": 1,
   "articles": [
-   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 78746,
-   "out": 20026
+   "in": 86327,
+   "out": 22920
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
    "theguardian.com": "ok",
+   "aljazeera.com": "short",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "5/5",
-   "pairs": "2/2",
-   "obs": "7/7"
+   "claims": "10/10",
+   "pairs": "5/5",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 7,
-   "strict_pairs": 1,
+   "pairs": 5,
+   "claims": 10,
+   "obs": 8,
+   "strict_pairs": 3,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[0]",
-    "edges[2]",
-    "memo[0]",
-    "structure",
-    "variables[1]",
+    "memo[2]",
     "worry.moderate[0]"
    ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[2]:unverified"
-   ]
-  },
-  "attempt_refunded": "discovery_throttled"
+   "outcome": "fixed",
+   "remaining": []
+  }
  },
  "event": {
-  "topic_ko": "엔비디아 CEO 스파이 연루 의혹과 칩 우회·수출통제 논쟁",
-  "query": "nvidia jensen affair",
+  "topic_ko": "엔비디아 CEO 스파이 연루 의혹과 대중 칩 수출통제 논쟁",
+  "query": "nvidia huang affair",
   "trigger": []
  },
  "problems": [
-  "edges[2]:unverified"
+  "claims"
  ],
- "content_hash": "4ca5424a2d397992"
+ "content_hash": "3d87dc6ff0c99def"
 }
