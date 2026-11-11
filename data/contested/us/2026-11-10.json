@@ -3,62 +3,48 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-10",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-11T06:04:33+00:00",
- "cutoff_at": "2026-11-11T06:04:33+00:00",
+ "collected_at": "2026-11-11T06:22:14+00:00",
+ "cutoff_at": "2026-11-11T06:22:14+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "c83610b0ca8ef4e188b876baa5300acc05248274",
-  "sha256": "9b23397cf15f0b4cfa834d79e67c26998fc9b720940e107376ca756ba65a0c56"
- },
+ "market_snapshot": null,
  "counts": {
   "harvest": 221,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
-   5
+   2,
+   2,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 34586,
-   "out": 10501
+   "in": 4861,
+   "out": 70
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "economictimes.indiatimes.com": "ok"
+   "aljazeera.com": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "1/1",
-   "obs": "9/9"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 9,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  }
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "미·이란 분쟁 종전 기대와 유가·물가 경로",
-  "query": "iran august since",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "d58c75006e1105c8"
+ "content_hash": "36019f62d1aefbf3"
 }
