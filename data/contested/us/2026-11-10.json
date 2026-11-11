@@ -7,8 +7,8 @@
  "reason": "topic_too_long",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-11T00:48:53+00:00",
- "cutoff_at": "2026-11-11T00:48:53+00:00",
+ "collected_at": "2026-11-11T01:54:49+00:00",
+ "cutoff_at": "2026-11-11T01:54:49+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,10 +21,10 @@
   "sha256": "9b23397cf15f0b4cfa834d79e67c26998fc9b720940e107376ca756ba65a0c56"
  },
  "counts": {
-  "harvest": 218,
+  "harvest": 219,
   "candidates": 3,
   "articles": [
-   1,
+   2,
    2,
    6
   ]
@@ -32,14 +32,14 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 25336,
-   "out": 8268
+   "in": 57444,
+   "out": 13275
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
    "theguardian.com": "ok",
+   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
@@ -51,5 +51,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "ae962288ee9fcf3b"
+ "content_hash": "a5272cf8f460f80c"
 }
