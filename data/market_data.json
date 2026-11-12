@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-13 07:51 KST",
+  "generated": "2026-11-13 08:05 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-12",
   "indices": {
@@ -197,10 +197,10 @@
     },
     "Gold": {
       "last": 3879.5,
-      "chg": -112.60009765625,
-      "pct": -2.8205730042279553,
+      "chg": -112.699951171875,
+      "pct": -2.823003670915658,
       "date": "2026-11-12",
-      "prev": 3992.10009765625,
+      "prev": 3992.199951171875,
       "prev_date": "2026-11-11",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -695,7 +695,7 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -2.821,
+        "change": -2.823,
         "unit": "%",
         "multiple": -2.05,
         "band": "큼"
@@ -1134,9 +1134,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 26771.88,
-            "pct": 0.41,
-            "date": "2026-11-12"
+            "close": 26662.77,
+            "pct": 1.2,
+            "date": "2026-11-11"
           },
           {
             "name": "FTSE100",
@@ -1148,14 +1148,14 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6398.98,
-            "pct": 0.09,
-            "date": "2026-11-12"
+            "close": 6393.39,
+            "pct": 1.04,
+            "date": "2026-11-11"
           }
         ],
         "alignment": {
           "label": "엇갈림",
-          "avg_pct": 0.25,
+          "avg_pct": 0.83,
           "mixed": false
         }
       }
