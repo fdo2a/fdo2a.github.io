@@ -76,6 +76,23 @@ def _prepub_target(path):
     return V.target_of(path)
 
 
+def _prepub(root, target):
+    """발행 전 기록 한 건. 실패는 **그 자리에서 고정 코드로** 바꾼다(module·read·other) — 예외 문장은 이 맥의 stderr 에만.
+    기록을 못 읽어도 매일 요약은 나가야 한다(codex 구현 검토 #6)."""
+    try:
+        from review import prepub_view as V
+    except Exception as exc:  # noqa: BLE001
+        print(f'발행 전 기록 모듈을 못 불러왔다: {type(exc).__name__}: {exc}'[:300], file=sys.stderr)
+        return {'error': 'module'}
+    try:
+        return V.view(root, 'origin/main', *target)
+    except Exception as exc:  # noqa: BLE001
+        # GitError = git 실행 실패·시간 초과·기록 파일 읽기 실패가 모두 이 클래스로 온다
+        code = 'read' if isinstance(exc, V.GitError) else 'other'
+        print(f'발행 전 기록을 못 읽었다({code}): {type(exc).__name__}: {exc}'[:300], file=sys.stderr)
+        return {'error': code}
+
+
 def build(state, now, args, notes):
     import review_gate as G
     root = G.repo_root()
@@ -102,11 +119,7 @@ def build(state, now, args, notes):
                 'number': number, 'auto': D.auto_reviewed(path), 'draft': path in drafts}
         target = _prepub_target(path)
         if target:                       # 발행 전 기록(2단계) — 대상 글에만 키를 둔다
-            try:
-                from review import prepub_view as V
-                post['prepub'] = V.view(root, 'origin/main', *target)
-            except Exception as exc:  # noqa: BLE001 — 기록을 못 읽어도 매일 요약은 나가야 한다(codex 구현 검토 #6)
-                post['prepub'] = {'error': f'{type(exc).__name__}: {exc}'}
+            post['prepub'] = _prepub(root, target)
         posts.append(post)
     # KR 주간 지수 누락 — 자동 보완하지 않으므로 사람에게 알린다(2026-11-10). 실패해도 알림은 계속
     try:
@@ -116,12 +129,26 @@ def build(state, now, args, notes):
     return posts, numbers, dict(published)
 
 
-def _fail(path, state, kind, detail=''):
-    """실패는 종류만 기록한다 — 자세한 문장은 이 맥의 stderr(launchd 로그)에만."""
+def _fail(path, state, kind, detail='', why=None):
+    """실패는 종류와 이유 코드만 기록한다 — 자세한 문장은 이 맥의 stderr(launchd 로그)에만."""
     print(f'알림 실패: {kind}' + (f' — {detail}' if detail else ''), file=sys.stderr)
-    state.update(last_error=kind, last_attempt=D.now_kst().isoformat())
+    D.set_error(state, kind, why)
+    state['last_attempt'] = D.now_kst().isoformat()
     D.save_state(path, state)
     return 1
+
+
+def _log_trimmed(sid, lines):
+    """요약에서 줄이거나 뺀 줄의 원문을 맥 로그(stderr)에 남긴다 — 쓰기만 하고 다시 읽지 않는다.
+    「되면 좋은」 일이다: 찍다 실패해도 요약은 그대로 만들어 제출한다."""
+    try:
+        if not lines:
+            return
+        for line in [f'줄인 안내 원문 — {sid}'] + list(lines):
+            sys.stderr.write(str(line).encode('utf-8', 'backslashreplace').decode('utf-8') + '\n')
+        sys.stderr.flush()
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def _text(state, now, args, notes, health_tail, v=1):
@@ -131,12 +158,16 @@ def _text(state, now, args, notes, health_tail, v=1):
     if not state.get('last_sent'):
         notes.append(D.NOTE_FIRST)
     if state.get('last_error'):
-        notes.append(f'지난 알림 실패 — {D.error_kind(state["last_error"])}')
+        notes.append(D.ERROR_NOTE + D.error_text(state))
     posts, numbers, published = build(state, now, args, notes)
     lines, more, tracked = D.reconcile(posts, state, published, now.date())
-    tail = D.carry_lines(state, now.date()) \
-        + D.publish_tail(G.repo_root(), now, fetch=not args.no_fetch) + list(health_tail)
-    return D.compose(posts, lines, now, notes + more, tail, numbers, tracked, published, v), len(posts)
+    trimmed = []
+    # 접수 결과·전송기 줄은 꼭 싣는 줄이다. 발행 알림 꼬리는 publish_tail 이 줄마다 붙인 표시를 그대로 넘긴다
+    tail = [D.Must(x) for x in D.carry_lines(state, now.date(), trimmed)] \
+        + list(D.publish_tail(G.repo_root(), now, fetch=not args.no_fetch)) + [D.Must(x) for x in health_tail]
+    pending = D.compose(posts, lines, now, notes + more, tail, numbers, tracked, published, v, trimmed=trimmed)
+    _log_trimmed(pending['id'], trimmed)
+    return pending, len(posts)
 
 
 def _tick(path, state, now, args, notes):
@@ -171,19 +202,23 @@ def _tick(path, state, now, args, notes):
 
     want = args.force or D.due(now, state)
     status = None
+    unread = (None, None)                        # 전송기 상태를 못 읽은 이유(코드, HTTP 코드) — 요약의 전송기 줄에만 쓴다
     if want or D.pending_of(state) or D.unconfirmed(state):
         try:
             status = D.fetch_status()
         except D.ConfigError as exc:
-            return _fail(path, state, '제출 키 없음', str(exc))
+            return _fail(path, state, '제출 키 없음', str(exc), why=D.config_why(exc))
         except D.AuthError:
             D.auth_failed(state, now)            # 키가 Worker 와 다르다 — 세션 훅·다음 요약 머리에 보인다
-            status = None
-        except D.TransportError:
+            status, unread = None, ('auth', None)
+        except D.TransportError as exc:
             status = None                        # 확인은 다음 tick 에. 제출은 그대로 해 본다
+            unread = (getattr(exc, 'why', None), getattr(exc, 'status', None))
         if status:
             D.auth_ok(state)
             D.confirm(state, status['events'], now)
+            if status['health'] is None:         # 사건 목록은 정상 — 사건 확인은 위에서 그대로 했다
+                unread = ('health', None)
 
     p = D.pending_of(state)
     if p:
@@ -214,14 +249,14 @@ def _tick(path, state, now, args, notes):
     if last.get('date') == today.isoformat():    # --force 로 같은 날 다시 — 같은 id 에 다른 본문은 409 다
         v = int(last.get('v') or 1) + 1
         if v > 9:
-            return _fail(path, state, '요약 만들기 오류', '오늘 수정본을 9개까지 냈다')
+            return _fail(path, state, '요약 만들기 오류', '오늘 수정본을 9개까지 냈다', why='max_versions')
     try:
-        health = D.health_lines(status['health'] if status else None, now)
+        health = D.health_lines(status['health'] if status else None, now, why=unread[0], status=unread[1])
         pending, count = _text(state, now, args, notes, health, v)
     except D.SizeError as exc:
-        return _fail(path, state, '크기 초과', str(exc))
+        return _fail(path, state, '크기 초과', str(exc), why='size')
     except Exception as exc:  # noqa: BLE001 — 어떤 실패든 기록해야 세션 훅이 보인다(codex 구현 검토 #4)
-        return _fail(path, state, '요약 만들기 오류', f'{type(exc).__name__}: {exc}'[:300])
+        return _fail(path, state, '요약 만들기 오류', f'{type(exc).__name__}: {exc}'[:300], why='exception')
     state['pending'] = pending                   # 제출본을 먼저 고정한다(설계 v7 #1) — attempt 가 보내기 전에 저장
     state['carry'] = []
     result = D.attempt(state, now, save, D.post_digest)
@@ -233,6 +268,18 @@ def _tick(path, state, now, args, notes):
         return 1
     print(f'접수됐다 — 글 {count}편, {len(pending["text"])}자 ({pending["id"]}, {result})')
     return 0
+
+
+def _lock_failed(path, now, why):
+    """잠금 실패를 세션 훅이 보게 적는다. 잠금 없이 쓰는 자리라 migrate 를 부르지 않고, 못 쓰면 조용히 넘어간다
+    (폴더를 못 만든 경우는 저장도 실패한다 — stderr 에만 남는다)."""
+    try:
+        st = D.load_state(path)
+        D.set_error(st, '잠금 오류', why)
+        st['last_attempt'] = now.isoformat()
+        D.save_state(path, st)
+    except (D.StateError, OSError):
+        pass
 
 
 def main(argv=None):
@@ -261,8 +308,13 @@ def main(argv=None):
     notes = []
     lock = None
     if not args.dry_run:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        lock = open(path + '.lock', 'w')
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            lock = open(path + '.lock', 'w')
+        except OSError as exc:      # 폴더·잠금 파일을 못 열었다 — 예전에는 기록 없이 죽었다
+            print(f'알림 실패: 잠금 파일 — {type(exc).__name__}: {exc}'[:200], file=sys.stderr)
+            _lock_failed(path, now, 'lock_open')
+            return 1
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
@@ -272,12 +324,7 @@ def main(argv=None):
         except OSError as exc:      # 경합이 아닌 잠금 실패는 실패다 — 세션 훅이 보게 기록한다(codex 재검토 #3)
             lock.close()
             print(f'알림 실패: 잠금 — {type(exc).__name__}: {exc}'[:200], file=sys.stderr)
-            try:
-                st = D.load_state(path)
-                st.update(last_error='잠금 오류', last_attempt=now.isoformat())
-                D.save_state(path, st)
-            except (D.StateError, OSError):
-                pass
+            _lock_failed(path, now, 'lock_set')
             return 1
     try:
         try:
@@ -296,7 +343,7 @@ def main(argv=None):
         try:
             return _tick(path, state, now, args, notes)
         except D.ConfigError as exc:
-            return _fail(path, state, '제출 키 없음', str(exc))
+            return _fail(path, state, '제출 키 없음', str(exc), why=D.config_why(exc))
     finally:
         if lock:
             lock.close()

@@ -732,12 +732,12 @@ def test_expiry_outcomes():
     for lookup in (_none, _down):
         st = {'pending': _tried('rejected', 'rejected')}
         assert D.settle(st, now, lookup, True) == 'failed' and 'pending' not in st
-        assert D.carry_lines(st, now.date()) == ['어제 요약 접수 실패']
+        assert D.carry_lines(st, now.date()) == ['어제 요약 접수 실패(제출 시도 2번: 거절 2)']       # 3a §G — 시도 내역이 붙는다
     # 5xx·무응답이 하나라도 → 확인 불가(v9 #1·v10 #1)
     for tries in (('rejected', 'server'), ('noresp',), ('rejected', 'noresp', 'rejected')):
         st = {'pending': _tried(*tries)}
         assert D.settle(st, now, _none, True) == 'unknown'
-        assert D.carry_lines(st, now.date()) == ['어제 요약 접수 여부 확인 불가']
+        assert D.carry_lines(st, now.date())[0].startswith('어제 요약 접수 여부 확인 불가(제출 시도 ')
     # 조회가 「접수 이후」로 돌려주면 접수로 기록 — 안내 없음, 전송 확인을 기다린다
     st = {'pending': _tried('noresp')}
     assert D.settle(st, now, lambda sid: {'id': sid, 'state': 'queued', 'hash': D.text_hash('요약')}, True) == 'accepted'
@@ -760,7 +760,8 @@ def test_expiry_outcomes():
     # 더 오래된 날짜는 날짜로 적는다
     st = {'pending': _tried('noresp', day='2026-11-06')}
     D.settle(st, now, _none, True)
-    assert D.carry_lines(st, now.date()) == ['11/06 요약 접수 여부 확인 불가']
+    assert D.carry_lines(st, now.date()) == \
+        ['11/06 요약 접수 여부 확인 불가(제출 시도 1번: 응답 못 받음 1 · Worker 상태 목록에 그 사건이 없었어요)']
 
 
 def test_migrate_old_direct_send_state():
@@ -888,21 +889,21 @@ def test_publish_tail_with_the_real_summary_function():
 def test_publish_tail_missing_and_unreadable(monkeypatch):
     now = at(2026, 11, 10, 9)
     assert D.publish_tail('/repo', now, run=FakeGit(ls=2)) == [D.TAIL_MISSING]          # 원격에 브랜치 없음
-    assert D.publish_tail('/repo', now, fetch=False, run=FakeGit(ref=False)) == [D.TAIL_MISSING]
-    # 네트워크 실패를 「아직 없어요」로 읽지 않는다
-    assert D.publish_tail('/repo', now, run=FakeGit(ls=128, ref=False)) == [D.TAIL_UNREAD]
-    assert D.publish_tail('/repo', now, run=FakeGit(show=None)) == [D.TAIL_UNREAD]
-    assert D.publish_tail('/repo', now, run=FakeGit(show=b'{broken')) == [D.TAIL_UNREAD]
-    assert D.publish_tail('/repo', now, run=FakeGit(show=b'{"format": "other"}')) == [D.TAIL_UNREAD]
-    assert D.publish_tail('/repo', now, run=FakeGit(show=b'{"format": "verify-publish/1"}')) == [D.TAIL_UNREAD]
+    # 원격을 안 봤으면 「아직 없어요」라고 단정하지 않는다(3a §E)
+    assert D.publish_tail('/repo', now, fetch=False, run=FakeGit(ref=False)) == [D.TAIL_NO_COPY]
+    # 네트워크 실패를 「아직 없어요」로 읽지 않는다 — 3a 부터 어디서 막혔는지 고정 낱말로 붙는다
+    assert D.publish_tail('/repo', now, run=FakeGit(ls=128, ref=False)) == [D.tail_unread('원격 확인 실패', '받아 둔 사본 없음')]
+    assert D.publish_tail('/repo', now, run=FakeGit(show=None)) == [D.tail_unread('받아 둔 사본에서 파일을 못 읽음')]
+    for broken in (b'{broken', b'{"format": "other"}', b'{"format": "verify-publish/1"}'):
+        assert D.publish_tail('/repo', now, run=FakeGit(show=broken)) == [D.tail_unread('상태 파일 내용 검증 실패')]
 
     def boom(args, **kw):
         raise subprocess.TimeoutExpired(args, 60)
-    assert D.publish_tail('/repo', now, run=boom) == [D.TAIL_UNREAD]
-    # 원격이 안 닿아도 받아 둔 판이 있으면 그것으로(오래됐는지는 그 상태의 last_ok 가 말한다)
+    assert D.publish_tail('/repo', now, run=boom) == [D.tail_unread('원격 확인 실패', '받아 둔 사본을 확인하지 못함')]
+    # 원격이 안 닿아도 받아 둔 판이 있으면 그것으로(오래됐는지는 그 상태의 last_ok 가 말한다) — 사본으로 읽었다고 밝힌다
     from review import publish_watch as W
     monkeypatch.setattr(W, 'summary_lines_from', lambda st, now, stale=None: ['x'])
-    assert D.publish_tail('/repo', now, run=FakeGit(_publish_state(), ls=128)) == ['x']
+    assert D.publish_tail('/repo', now, run=FakeGit(_publish_state(), ls=128)) == [f'{D.TAIL_COPY}(원격 확인 실패)', 'x']
     assert 'GitHub 계산 기록이 아직 없어요' in D.TAIL_MISSING and '상태를 못 읽었어요' in D.TAIL_UNREAD
 
 
@@ -1437,7 +1438,7 @@ def test_health_line_mentions_config_error():
     assert D.health_lines(ok, now) == []
     bad = dict(ok, backlog=2, config_error={'code': 401, 'kind': 'token /Users/x', 'since': '2026-11-10T00:00:00Z'})
     assert D.health_lines(bad, now) == \
-        ['전송기: 설정 오류 — 텔레그램으로 못 보내는 중(Cloudflare 상태 확인) · 밀린 알림 2건']   # Worker 가 준 글자는 안 옮긴다
+        ['전송기: 설정 오류 — 텔레그램으로 못 보내는 중(11/10 09:00 부터 · Cloudflare 설정 확인) · 밀린 알림 2건']   # Worker 가 준 글자는 안 옮긴다(3a §D — 모르는 분류는 빼고 시각만)
 
 
 def test_worker_note_reports_config_error_without_the_key(tmp_path):
@@ -1514,7 +1515,7 @@ def test_confirm_needs_matching_hash_to_apply_base():
         assert D.confirm(st, {u['id']: ev}, at(2026, 11, 10, 9))
         assert st['lines'] == {} and 'applied' not in st and st['last_error'] == '확인 불가'
         assert D.carry_lines(st, date(2026, 11, 10)) == \
-            ['어제 요약 전송 확인 불가 — Worker 가 본문 대조 값을 주지 않았어요']
+            ['어제 요약 전송 확인 불가 — Worker 응답에서 본문 대조 값을 확인하지 못했어요']     # 3a §G — 「주지 않았다」 단정을 뺐다
         waiting = {'unconfirmed': [dict(u)], 'lines': {}}       # 전송 전에는 그냥 기다린다
         assert not D.confirm(waiting, {u['id']: dict(ev, state='queued')}, at(2026, 11, 9, 10))
     legacy = dict(u)
@@ -1543,7 +1544,8 @@ def test_settle_compares_hash_not_presence():
     st = {'pending': _tried('noresp')}
     assert D.settle(st, now, lambda sid: {'id': sid, 'state': 'sent'}, False) is None and 'pending' in st
     assert D.settle(st, now, lambda sid: {'id': sid, 'state': 'sent'}, True) == 'unknown'
-    assert not st.get('unconfirmed') and D.carry_lines(st, now.date()) == ['어제 요약 접수 여부 확인 불가']
+    assert not st.get('unconfirmed') and D.carry_lines(st, now.date()) == \
+        ['어제 요약 접수 여부 확인 불가(제출 시도 1번: 응답 못 받음 1 · Worker 응답에서 본문 대조 값을 확인하지 못했어요)']
 
 
 def test_cli_lost_state_new_body_no_response_then_expiry_does_not_apply_base(cli_env):

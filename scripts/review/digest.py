@@ -475,17 +475,35 @@ def _review_line(p):
     }.get(state, f' · codex 검토: {state}')
 
 
+PREPUB_UNREAD = ' · [발행 전 기록] 읽지 못했어요'
+PREPUB_WHY = {'module': '기록을 읽는 모듈을 불러오지 못했어요', 'read': 'git 이나 기록 파일을 읽지 못했어요',
+              'render': '기록을 문장으로 옮기지 못했어요'}
+
+
+def _prepub_unread(code=None):
+    """고정 줄 — 예외 문장은 싣지 않는다. 모르는 코드·옛 꼴 문자열·str 아닌 값은 이유 없이."""
+    why = PREPUB_WHY.get(code) if isinstance(code, str) else None
+    return PREPUB_UNREAD + (f'({why})' if why else '')
+
+
 def _prepub_lines(p):
-    """발행 전 기록 대상(US·KR 일간, 2026-11-09~)만 — 다른 글의 문장은 그대로 둔다(바꾸면 90일치가 「바뀜」으로 다시 온다)."""
-    from review import prepub_view as V
+    """발행 전 기록 대상(US·KR 일간, 2026-11-09~)만 — 다른 글의 문장은 그대로 둔다(바꾸면 90일치가 「바뀜」으로 다시 온다).
+    예외를 올리지 않는다. 숫자 재검사 줄은 어느 경우에도 그대로 붙는다(#11)."""
     pv = p.get('prepub')
-    if isinstance(pv, dict) and pv.get('error'):
-        lines = [' · [발행 전 기록] 읽지 못했어요']       # 예외 문장은 싣지 않는다. 숫자 재검사 줄은 그대로(#11)
+    if isinstance(pv, dict) and pv.get('error'):         # import 보다 먼저 본다 — 모듈이 없어도 이 줄은 나간다
+        lines = [_prepub_unread(pv['error'])]
     else:
         try:
-            lines = V.digest_lines(pv)
+            from review import prepub_view as V
         except Exception:  # noqa: BLE001
-            lines = [' · [발행 전 기록] 읽지 못했어요']
+            V = None
+        if V is None:
+            lines = [_prepub_unread('module')]
+        else:
+            try:
+                lines = V.digest_lines(pv)
+            except Exception:  # noqa: BLE001
+                lines = [_prepub_unread('render')]
     num = _number_line(p.get('number'))
     if not p.get('number'):
         num = ' · [발행 뒤 재검사] 숫자: 자동 재검사 없음(US 일간만 해요)'
@@ -510,7 +528,9 @@ def _totals(posts):
     bad = sum(1 for n in nums if n.get('kind') == 'error')
     todo = sum(1 for p in posts if p['state'] != '완료')
     # 못 본 것을 0건처럼 보이지 않게 함께 센다(codex 구현 검토 #5)
-    return (f'최근 {WINDOW_DAYS}일: 글 {len(posts)}편 · 숫자 위반 {v}·경고 {w}(US 일간 자동 검사 범위 안) · '
+    # 집계는 그대로 두고 찍을 때만 상한을 건다 — 정상 입력의 문장은 한 글자도 다르지 않다(3a §A 6)
+    n, v, w, f, bad, todo = (shown(x, TOTAL_CAP) or '?' for x in (len(posts), v, w, f, bad, todo))
+    return (f'최근 {WINDOW_DAYS}일: 글 {n}편 · 숫자 위반 {v}·경고 {w}(US 일간 자동 검사 범위 안) · '
             f'codex 지적 {f}건(사실 오류로 확인된 수 아님) · 숫자 판정 불가 {bad} · 검토 미완료 {todo}')
 
 
@@ -518,38 +538,145 @@ def _header(now):
     return f'[검증 알림] {now.month}월 {now.day}일({WEEKDAY[now.weekday()]}) {now:%H:%M}'
 
 
+# ── 꼭 싣는 줄의 정수·실패 종류와 이유(3a, 2026-11-12) ───────────────────────────────────
+
+TOTAL_CAP = 99999            # render 가 만드는 줄·합계
+HEALTH_CAP = 9999            # 전송기 줄
+TRY_CAP = 999                # 접수 결과 줄의 시도 횟수
+
+
+def shown(n, cap, unit=''):
+    """꼭 싣는 줄의 정수는 전부 이 함수로 찍는다 — 줄 길이에 상한이 생긴다. 정수가 아니거나 음수·bool 이면 None."""
+    if type(n) is not int or n < 0:
+        return None
+    return f'{n}{unit}' if n <= cap else f'{cap}{unit} 넘음'
+
+
+ERRORS = ('접수 오류', '연결 오류', '제출 키 없음', '제출 키 오류', '전송 오류', '전송 보류', '충돌', '요약 만들기 오류',
+          '크기 초과', '잠금 오류', '확인 불가', '기타 오류')
+# (종류, 이유 코드) → 문장. 그 분기에서 맥이 아는 사실만 적는다 — 표에 없는 쌍은 이유 없이 종류만.
+ERROR_WHY = {
+    ('접수 오류', 'rejected'): 'Worker 가 제출을 거절했어요',
+    ('연결 오류', 'server'): '약속에 없는 응답을 받았어요',
+    ('연결 오류', 'noresp'): '응답을 받지 못했어요',
+    ('충돌', 'conflict'): '409 응답을 받았어요 — 같은 id 에 다른 본문이 먼저 접수돼 있다는 뜻이에요',
+    ('전송 오류', 'failed_permanent'): 'Worker 가 이 요약을 영구 실패로 처리했어요 — 이유는 Worker 가 보내는 경보에서 확인해 주세요',
+    ('전송 보류', 'held'): 'Worker 가 접수만 하고 보내지 않았어요(보류 — Worker 는 하루 두 판까지만 보내요)',
+    ('확인 불가', 'nohash_mac'): '맥의 접수 기록에 본문 대조 값이 없어 대조하지 못했어요',
+    ('확인 불가', 'nohash_worker'): 'Worker 응답에서 본문 대조 값을 확인하지 못했어요',
+    ('확인 불가', 'nohash'): '본문 대조 값을 확인하지 못했어요',
+    ('확인 불가', 'absent'): f'Worker 상태 목록(최근 {STATUS_DAYS}일)에 그 사건이 없어 전송을 확인하지 못했어요',
+    ('제출 키 없음', 'cfg_read'): '키체인을 읽는 명령을 끝내지 못했어요',
+    ('제출 키 없음', 'cfg_url'): '키체인에서 읽은 Worker 주소가 비었거나 https 주소 모양이 아니에요',
+    ('제출 키 없음', 'cfg_key'): '키체인에서 읽은 제출 키가 비었거나 모양이 달라요',
+    ('제출 키 없음', 'cfg'): '키체인의 제출 키나 Worker 주소를 확인해 주세요',
+    ('요약 만들기 오류', 'max_versions'): '오늘 낼 수 있는 판 번호(v9)를 다 썼어요',
+    ('요약 만들기 오류', 'exception'): '요약을 만드는 중 오류가 났어요(자세한 내용은 맥 로그)',
+    ('크기 초과', 'size'): '요약이 길이·요청 크기 한도 안에 들어가지 않았어요',
+    ('잠금 오류', 'lock_set'): '기록 파일 잠금을 설정하지 못했어요',
+    ('잠금 오류', 'lock_open'): '잠금 파일을 열지 못했어요',
+}
+ERROR_NOTE = '지난 알림 실패 — '
+
+
+def error_kind(value):
+    """실패 사유는 종류만 남긴다 — 예외 문장에는 맥 경로가 섞일 수 있다(설계 v4·v7 #6)."""
+    return value if isinstance(value, str) and value in ERRORS else '기타 오류'
+
+
+def set_error(state, kind, why=None):
+    """실패 종류와 이유 코드를 **함께** 쓴다 — `last_error` 를 쓰는 자리는 이 함수와 clear_error 뿐이다(시험이 소스를 본다)."""
+    state['last_error'] = kind
+    if isinstance(why, str):
+        state['last_error_why'] = {'kind': kind, 'why': why}
+    else:
+        state.pop('last_error_why', None)
+
+
+def clear_error(state):
+    state['last_error'] = None
+    state.pop('last_error_why', None)
+
+
+def error_reason(state):
+    """이유 문장 | None. 이유 칸의 종류가 지금 종류와 같고 (종류, 코드)가 표에 있을 때만 — 그 밖은 예외 없이 None.
+    옛 코드가 종류만 바꿔도 낡은 이유가 다른 종류에 붙지 않는다."""
+    w = state.get('last_error_why')
+    if not isinstance(w, dict):
+        return None
+    kind, why = w.get('kind'), w.get('why')
+    if not (isinstance(kind, str) and isinstance(why, str)) or kind != error_kind(state.get('last_error')):
+        return None
+    return ERROR_WHY.get((kind, why))
+
+
+def error_text(state):
+    """`종류` 또는 `종류 — 이유 문장` — 요약 머리와 세션 훅이 함께 쓴다."""
+    reason = error_reason(state)
+    return error_kind(state.get('last_error')) + (f' — {reason}' if reason else '')
+
+
 # ── 기밀: 구조로 먼저, 정규식은 보조 검사(설계 v6 #4·v7 #6) ─────────────────────
+
+class Must(str):
+    """꼭 싣는 줄 — 길이·개수에 상한이 있는 고정 문구. 예산이 빠듯해도 빼지 않는다(만드는 쪽이 붙인다)."""
+    __slots__ = ()
+
+
+class Soft(str):
+    """줄일 수 있는 줄 — 이름·개수에 상한이 없다. 표시 없는 꼬리 입력도 이쪽으로 다룬다."""
+    __slots__ = ()
+
 
 _NAMES = '|'.join(sorted(re.escape(v) for v in LABEL.values()))
 _NAME_LIST = rf'(?:{_NAMES}) \d{{1,2}}/\d{{2}}(?:, (?:{_NAMES}) \d{{1,2}}/\d{{2}})*'
+TRIM_SUFFIX = '(이름은 맥 로그에서 확인)'
+# 이름 목록 뒤: 통째 / 이름 경계에서 줄인 꼴(`A, B 외 n건(…)`) / 이름 0개 꼴(`…n건(…)`). n 은 실제 이름 수라 상한이 없다.
+_NAME_TAIL = rf'(?:: {_NAME_LIST}(?: 외 \d+건{re.escape(TRIM_SUFFIX)})?|{re.escape(TRIM_SUFFIX)})'
 NOTE_FIRST = f'첫 알림이라 최근 {WINDOW_DAYS}일 글과 끝나지 않은 옛 글을 담았어요'
 NOTE_STALE = '최신 판을 못 받았어요 — 마지막으로 받아 둔 판 기준이에요'
 NOTE_CORRUPT = '기록 파일이 손상돼 새로 시작했어요 — 지난 상태와 비교하지 못했어요'
+AUTH_NOTE = '요약 제출 키 오류가 있었어요 — Worker 가 제출을 거부했어요(키체인 digest_key 와 Worker Secret 확인)'
 # 머리 안내는 이 목록의 문구만 나간다. 그 밖은 「기타 안내 n건」 — 내용은 맥에서 본다.
-NOTE_PATTERNS = tuple(re.compile(x) for x in (
-    re.escape(NOTE_FIRST), re.escape(NOTE_STALE), re.escape(NOTE_CORRUPT),
-    r'요약 제출 키 오류가 있었어요 — Worker 가 제출을 거부했어요\(키체인 digest_key 와 Worker Secret 확인\)',
-    r'지난 알림 실패 — [가-힣 ]{2,12}',
-    rf'공개판에서 사라진 글 \d+건: {_NAME_LIST}',
-    rf'\d+일이 지나 추적을 멈춘 글 \d+건\(안 끝났거나 못 보낸 글\): {_NAME_LIST}',
-    rf'\d+일보다 오래된 날짜의 글이 새로 올라왔어요\(검사 안 함\) \d+건: {_NAME_LIST}',
+# 어느 묶음에 맞았는지가 분류다(§A 1): _MUST_NOTES = 꼭 싣는 줄, 이름 목록·KR 지수 누락 = 줄일 수 있는 줄.
+_MUST_NOTES = tuple(re.compile(re.escape(x)) for x in (
+    [NOTE_FIRST, NOTE_STALE, NOTE_CORRUPT, AUTH_NOTE]
+    + [ERROR_NOTE + k for k in ERRORS]
+    + [f'{ERROR_NOTE}{k} — {sentence}' for (k, _why), sentence in ERROR_WHY.items()]))
+_NAME_NOTES = tuple(re.compile(x + _NAME_TAIL) for x in (
+    r'공개판에서 사라진 글 \d+건',
+    r'\d+일이 지나 추적을 멈춘 글 \d+건\(안 끝났거나 못 보낸 글\)',
+    r'\d+일보다 오래된 날짜의 글이 새로 올라왔어요\(검사 안 함\) \d+건'))
+_KR_NOTE = re.compile(
     r'KR 주간 \d{4}-W\d{2} 지수 누락: [A-Z0-9]+ \d{4}-\d{2}-\d{2}(?:, [A-Z0-9]+ \d{4}-\d{2}-\d{2})* — '
     r'새벽 재수집으로 자동 보완하지 않아요\. 원자료를 확인해 글을 정정한 뒤 수동 승격\(versions\.py promote\)해야 '
-    r'주간이 나가요',
-))
+    r'주간이 나가요')
+NOTE_PATTERNS = _MUST_NOTES + _NAME_NOTES + (_KR_NOTE,)
+
+
+def _classified_notes(notes):
+    """[(문장, 'must' | 'names' | 'kr')] — 정해진 문구만. 나머지는 개수만 센 꼭 싣는 줄 하나로."""
+    out, other = [], 0
+    for n in notes:
+        if not isinstance(n, str):
+            other += 1
+        elif any(p.fullmatch(n) for p in _NAME_NOTES):
+            out.append((n, 'names'))
+        elif _KR_NOTE.fullmatch(n):
+            out.append((n, 'kr'))
+        elif any(p.fullmatch(n) for p in _MUST_NOTES):
+            out.append((n, 'must'))
+        else:
+            other += 1
+    if other:
+        count = shown(other, TOTAL_CAP, '건') or '?건'
+        out.append((f'기타 안내 {count} — 맥에서 확인', 'must'))
+    return out
 
 
 def safe_notes(notes):
     """정해진 문구만 통과시킨다. 나머지는 개수만 — 예외 문장·경로가 안내 줄로 새지 않게."""
-    out, other = [], 0
-    for n in notes:
-        if isinstance(n, str) and any(p.fullmatch(n) for p in NOTE_PATTERNS):
-            out.append(n)
-        else:
-            other += 1
-    if other:
-        out.append(f'기타 안내 {other}건 — 맥에서 확인')
-    return out
+    return [n for n, _cls in _classified_notes(notes)]
 
 
 REDACTED = '(내부 정보 — 생략)'
@@ -571,33 +698,161 @@ def scrub(text):
     return '\n'.join(out), n
 
 
-def render(posts, prev_lines, now, notes=(), extra_tail=(), limit=LIMIT):
+class _NameNote:
+    """이름 목록 안내 하나 — 이름 경계에서 뒤부터 던다. 길이는 조립하지 않고 센다(이름이 십만 개여도 걸음마다 O(1))."""
+
+    def __init__(self, note):
+        self.full = note
+        self.raw = note.endswith(TRIM_SUFFIX)            # 이미 줄여 들어온 문장 — 더 덜 이름이 없다(통째로만 뺀다)
+        self.prefix, _, rest = note.partition(': ')
+        self.names = [] if self.raw else rest.split(', ')
+        self.keep = len(self.names)
+        self._cum = [0]
+        for x in self.names:
+            self._cum.append(self._cum[-1] + len(x))
+
+    @property
+    def cut(self):
+        return not self.raw and self.keep < len(self.names)
+
+    def text(self):
+        if self.raw or not self.cut:
+            return self.full
+        if not self.keep:
+            return self.prefix + TRIM_SUFFIX
+        return f'{self.prefix}: {", ".join(self.names[:self.keep])} 외 {len(self.names) - self.keep}건{TRIM_SUFFIX}'
+
+    def __len__(self):
+        if self.raw or not self.cut:
+            return len(self.full)
+        if not self.keep:
+            return len(self.prefix) + len(TRIM_SUFFIX)
+        return (len(self.prefix) + 2 + self._cum[self.keep] + 2 * (self.keep - 1)
+                + len(f' 외 {len(self.names) - self.keep}건') + len(TRIM_SUFFIX))
+
+
+def _dropped_line(n):
+    count = shown(n, TOTAL_CAP, '줄') or '?줄'
+    return f'길어서 줄인 안내 {count} — 맥 로그에서 확인'
+
+
+class _Budget:
+    """머리·꼬리의 줄을 「꼭 싣는 줄」과 「줄일 수 있는 줄」로 들고, 자르기 전에 예산을 맞춘다(3a §A).
+
+    길이는 `'\n\n'.join(머리 + 본문 줄 + 꼬리 + 맺음) + 120` — 3a 전 코드의 `fixed` 와 같은 식이다(머리 줄 사이를
+    두 칸으로 세어 실제보다 조금 넉넉하다). 식을 그대로 둬야 줄이지 않는 입력의 전송본이 예전과 글자 하나 다르지 않다.
+    """
+    SLACK = 120                                           # 「…외 n건은 다음 알림에」·「n줄 생략」 자리
+
+    def __init__(self, head, body_line, tail, closing):
+        # head·tail 항목: {'text': 실을 문장, 'cls': must|names|kr|soft, 'orig': 줄이기 전 문장, 'k': 보조 검사에 걸린 줄 수}
+        self.head, self.body_line, self.tail, self.closing = head, body_line, tail, closing
+        for x in head + tail:
+            x['on'] = True
+        self.dropped = 0
+
+    def _items(self):
+        return [x for x in self.head + self.tail if x['on']]
+
+    @staticmethod
+    def _len(x):
+        return len(x['note']) + 2 if x['cls'] == 'names' else len(x['text'])     # 2 = '⚠ '
+
+    def measure(self):
+        sizes = [self._len(x) for x in self._items()] + [len(self.body_line)] + [len(x) for x in self.closing]
+        if self.dropped:
+            sizes.append(len(_dropped_line(self.dropped)))
+        return sum(sizes) + 2 * (len(sizes) - 1) + self.SLACK
+
+    def end_measure(self):
+        """줄일 수 있는 줄을 0줄까지 뺀 끝 상태의 길이 — 뺀 줄이 있으면 「길어서 줄인 안내」 줄이 들어 있다."""
+        must = [x for x in self._items() if x['cls'] == 'must']
+        soft = self.dropped + len(self._items()) - len(must)
+        sizes = [self._len(x) for x in must] + [len(self.body_line)] + [len(x) for x in self.closing]
+        if soft:
+            sizes.append(len(_dropped_line(soft)))
+        return sum(sizes) + 2 * (len(sizes) - 1) + self.SLACK
+
+    def steps(self):
+        """한 걸음씩 줄인다(걸음마다 yield). ① 이름을 경계에서 — 그때 가장 긴 안내부터 ② 줄일 수 있는 꼬리 줄을 뒤에서부터
+        ③ KR 지수 누락 안내를 뒤에서부터 ④ 이름 0개까지 줄인 안내를 뒤에서부터."""
+        names = [x for x in self.head if x['cls'] == 'names']
+        while True:
+            left = [x for x in names if x['note'].keep > 0]
+            if not left:
+                break
+            max(left, key=lambda x: len(x['note']))['note'].keep -= 1
+            yield
+        for group in ([x for x in self.tail if x['cls'] == 'soft'], [x for x in self.head if x['cls'] == 'kr'], names):
+            for x in reversed(group):
+                x['on'] = False
+                self.dropped += 1
+                yield
+
+    def fit(self, limit, first=None):
+        """줄이는 조건은 둘뿐이다. (가) 고정 부분만으로 넘칠 때 — 들어가는 첫 상태까지. (나) 첫 글 블록을 위해 —
+        **다 줄인 끝 상태에서 블록이 들어갈 때만**, 블록이 들어가는 첫 상태까지. 끝 상태에서도 안 들어가면 한 걸음도 더
+        줄이지 않는다(안내를 빼고도 글을 못 싣는 일이 없게 — codex 설계 12·13회)."""
+        walk = self.steps()
+        if self.measure() > limit:
+            for _ in walk:
+                if self.measure() <= limit:
+                    break
+        if first is not None and self.measure() + first + 2 > limit and self.end_measure() + first + 2 <= limit:
+            for _ in walk:
+                if self.measure() + first + 2 <= limit:
+                    break
+
+    def lines(self, trimmed=None):
+        """(머리 줄, 꼬리 줄, 보조 검사에 걸린 줄 수). 줄이거나 뺀 줄의 줄이기 전 문장은 `trimmed` 에 덧붙인다."""
+        head, tail, hidden = [], [], 0
+        for group, out in ((self.head, head), (self.tail, tail)):
+            for x in group:
+                if x['cls'] == 'names' and x['on']:
+                    x['text'], x['k'] = scrub('⚠ ' + x['note'].text())
+                if x['on']:
+                    out.append(x['text'])
+                    hidden += x['k']
+                if trimmed is not None and (not x['on'] or (x['cls'] == 'names' and x['note'].cut)):
+                    trimmed.append(x['orig'])
+        if self.dropped:
+            tail.append(_dropped_line(self.dropped))
+        return head, tail, hidden
+
+
+def render(posts, prev_lines, now, notes=(), extra_tail=(), limit=LIMIT, trimmed=None):
     """(보낼 글, 기록할 문장표). 바뀐 글만 자세히, 끝나지 않은 글은 꼬리에 이름만.
 
-    `limit` 을 낮추면 글을 더 많이 다음 알림으로 미룬다(요청 16 KB 를 넘을 때 — 줄 중간에서 자르지 않는다).
+    줄 중간에서 자르지 않는다(3a). 넘치면 줄일 수 있는 줄(이름 목록·KR 지수 누락 안내·`Must` 표시 없는 꼬리 줄)을
+    줄이고, 그래도 넘치면 글을 다음 알림으로 미룬다. `limit` 은 줄일 수 있는 줄과 글 블록의 예산이다 — 꼭 싣는 줄은
+    limit 이 낮아도 빼지 않고, 그 줄들만으로 LIMIT 을 넘으면 SizeError(자르지 않는다).
+    `trimmed`(목록)를 주면 줄이거나 뺀 줄의 줄이기 전 문장을 덧붙인다 — 맥 로그용, 다시 읽지 않는다.
     보조 검사에 걸린 글은 그 줄을 바꿔 싣되 문장표에 적지 않는다 — 다음 요약에서 다시 확인하게.
     """
     posts = sorted(posts, key=lambda p: (post_day(p['path']) or date.min, p['path']))
-    hidden = 0
-    head = [_header(now)]
-    for n in safe_notes(notes):
-        line, k = scrub(f'⚠ {n}')
-        head.append(line)
-        hidden += k
+    head = [{'text': _header(now), 'cls': 'must', 'k': 0}]
+    for n, cls in _classified_notes(notes):
+        if cls == 'names':
+            head.append({'note': _NameNote(n), 'cls': cls, 'orig': n, 'k': 0})
+        else:
+            line, k = scrub(f'⚠ {n}')
+            head.append({'text': line, 'cls': cls, 'orig': n, 'k': k})
     open_ = sorted((p for p in posts if not resolved(p)),       # 최신부터 — 이름이 10개에서 잘린다
                    key=lambda p: -(post_day(p['path']) or date.min).toordinal())
     tail = []
     if open_:
         names = [_day_label(p['path']) for p in open_]
-        more = f' 외 {len(names) - 10}건' if len(names) > 10 else ''
-        tail.append(f'아직 안 끝난 글 {len(open_)}건: ' + ', '.join(names[:10]) + more)
+        more = f' 외 {shown(len(names) - 10, TOTAL_CAP, "건")}' if len(names) > 10 else ''
+        tail.append({'text': f'아직 안 끝난 글 {shown(len(open_), TOTAL_CAP, "건")}: ' + ', '.join(names[:10]) + more,
+                     'cls': 'must', 'k': 0})
     unread = sum(1 for p in posts if p['state'] == '읽지 않음')
     if unread:
-        tail.append(f'읽지 않고 범위에 넣은 글 {unread}편(90일 안, 게이트 도입 전 글, 검토 대상 아님)')
+        tail.append({'text': f'읽지 않고 범위에 넣은 글 {shown(unread, TOTAL_CAP, "편")}'
+                             f'(90일 안, 게이트 도입 전 글, 검토 대상 아님)', 'cls': 'must', 'k': 0})
     for x in extra_tail:              # 어제 요약 접수 결과·발행 건별 알림 상태·전송기 상태(읽기만)
+        cls = 'must' if isinstance(x, Must) else 'soft'          # 분류는 만든 쪽의 표시로만 — 길이로 바꾸지 않는다
         line, k = scrub(str(x))
-        tail.append(line)
-        hidden += k
+        tail.append({'text': line, 'cls': cls, 'orig': str(x), 'k': k})
     closing = [_totals([p for p in posts if in_window(p['path'], now.date())]), CAVEAT]
 
     # 문장과 공개판 blob 을 함께 비교한다 — 상태 문장이 같아도 내용이 바뀌면 알린다(codex 구현 검토 #2).
@@ -615,16 +870,18 @@ def render(posts, prev_lines, now, notes=(), extra_tail=(), limit=LIMIT):
                                 -(post_day(x[0]['path']) or date.min).toordinal(), x[0]['path']))
     # 따라가지 않는 글의 전달 기록도 그대로 둔다 — 지우면 다음 날 「처음 보는 글」로 되살아난다
     lines = {k: v for k, v in prev_lines.items() if isinstance(v, dict)}
-    if not changed:
-        body = ['새로 나온 글이나 바뀐 상태가 없어요.']
-    else:
-        body = [f'새로 나온 글·바뀐 상태 {len(changed)}건']
-        fixed = len('\n\n'.join(head + body + tail + closing)) + 120      # 「외 n건」·「n줄 생략」 자리
+    body = [f'새로 나온 글·바뀐 상태 {shown(len(changed), TOTAL_CAP, "건")}'] if changed \
+        else ['새로 나온 글이나 바뀐 상태가 없어요.']
+    budget = _Budget(head, body[0], tail, closing)
+    budget.fit(limit, len(scrub(changed[0][1])[0]) if changed else None)
+    head, tail, hidden = budget.lines(trimmed)
+    if changed:
+        fixed = len('\n\n'.join(head + body + tail + closing)) + _Budget.SLACK
         used = 0
         for i, (p, text) in enumerate(changed):
             text, k = scrub(text)
             if fixed + used + len(text) + 2 > limit:
-                body.append(f'…외 {len(changed) - i}건은 다음 알림에 이어서 보낼게요.')
+                body.append(f'…외 {shown(len(changed) - i, TOTAL_CAP, "건")}은 다음 알림에 이어서 보낼게요.')
                 break
             body.append(text)
             used += len(text) + 2
@@ -632,10 +889,11 @@ def render(posts, prev_lines, now, notes=(), extra_tail=(), limit=LIMIT):
             if not k:
                 lines[p['path']] = {'sha': p.get('sha'), 'text': block(p)}
     if hidden:
-        tail.append(f'{hidden}줄 생략 — 맥에서 확인')
+        count = shown(hidden, TOTAL_CAP, '줄') or '?줄'
+        tail.append(f'{count} 생략 — 맥에서 확인')
     text = '\n\n'.join(['\n'.join(head)] + body + tail + closing)
-    if len(text) > limit:                                      # 꼬리 자체가 넘치는 극단
-        text = text[:limit - 1] + '…'
+    if len(text) > LIMIT:             # 꼭 싣는 줄만으로 넘친다 — 줄 중간에서 자르지 않고 실패로 올린다
+        raise SizeError('꼭 싣는 줄만으로 글 길이 한도를 넘는다')
     return text, lines
 
 
@@ -678,15 +936,6 @@ def save_state(path, state):
 
 # ── 세션 시작 한 줄 ────────────────────────────────────────────────────────
 
-ERRORS = ('접수 오류', '연결 오류', '제출 키 없음', '제출 키 오류', '전송 오류', '전송 보류', '충돌', '요약 만들기 오류',
-          '크기 초과', '잠금 오류', '확인 불가', '기타 오류')
-
-
-def error_kind(value):
-    """실패 사유는 종류만 남긴다 — 예외 문장에는 맥 경로가 섞일 수 있다(설계 v4·v7 #6)."""
-    return value if value in ERRORS else '기타 오류'
-
-
 def parse_iso(value):
     """시간대가 있는 ISO 시각. Worker(JS)의 `…Z`·밀리초도 읽는다 — 3.9 의 fromisoformat 은 `Z` 를 못 읽는다."""
     if not isinstance(value, str):
@@ -716,12 +965,12 @@ def digest_note(path, now):
     if st.get('auth_error'):
         return AUTH_HOOK
     if st.get('last_error'):
-        return f'[검증 알림] 마지막 시도 실패 — {error_kind(st["last_error"])}'
+        return f'[검증 알림] 마지막 시도 실패 — {error_text(st)}'
     late = 0
     for u in unconfirmed(st):
         try:
             late += _hours(now, u.get('accepted_at')) >= UNCONFIRMED_HOURS
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError):
             late += 1
     if late:
         return f'[검증 알림] 접수된 요약 {late}건이 {UNCONFIRMED_HOURS}시간 넘게 전송 확인이 안 돼요'
@@ -730,7 +979,7 @@ def digest_note(path, now):
         return '' if unconfirmed(st) else '[검증 알림] 아직 한 번도 안 보냈어요'
     try:
         hours = _hours(now, sent)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return '[검증 알림] 마지막 전송 시각을 못 읽었어요'
     return f'[검증 알림] 마지막 전송 {hours}시간 전' if hours > STALE_HOURS else ''
 
@@ -745,11 +994,25 @@ _ID = re.compile(r'(\d{4}-\d{2}-\d{2}):morning-digest:v([1-9])')
 
 
 class ConfigError(Exception):
-    """열쇠고리에 제출 키·Worker 주소가 없거나 모양이 이상하다."""
+    """열쇠고리에 제출 키·Worker 주소가 없거나 모양이 이상하다. `why` = 이유 코드(cfg_read·cfg_url·cfg_key)."""
+
+    def __init__(self, message='', why=None):
+        super().__init__(message)
+        self.why = why
+
+
+def config_why(exc):
+    """ConfigError → `ERROR_WHY` 의 코드. 메시지 문자열을 다시 읽어 분류하지 않는다 — 모르면 cfg."""
+    why = getattr(exc, 'why', None)
+    return why if isinstance(why, str) and ('제출 키 없음', why) in ERROR_WHY else 'cfg'
 
 
 class TransportError(Exception):
-    """응답을 못 받았거나 약속과 다른 응답 — 「없음」으로 읽지 않는다."""
+    """응답을 못 받았거나 약속과 다른 응답 — 「없음」으로 읽지 않는다. `why` = `HEALTH_WHY` 의 코드, `status` = HTTP 코드."""
+
+    def __init__(self, message='', why=None, status=None):
+        super().__init__(message)
+        self.why, self.status = why, status
 
 
 class AuthError(TransportError):
@@ -772,11 +1035,11 @@ def _endpoint(run):
         url = _keychain('worker_url', run).rstrip('/')
         key = _keychain('digest_key', run)
     except (OSError, subprocess.SubprocessError):
-        raise ConfigError('열쇠고리를 못 읽었어요') from None
+        raise ConfigError('열쇠고리를 못 읽었어요', why='cfg_read') from None
     if not _URL.fullmatch(url):
-        raise ConfigError('열쇠고리의 Worker 주소가 없거나 https 주소가 아니에요')
+        raise ConfigError('열쇠고리의 Worker 주소가 없거나 https 주소가 아니에요', why='cfg_url')
     if not _KEY.fullmatch(key):
-        raise ConfigError('열쇠고리의 제출 키가 없거나 모양이 이상해요')
+        raise ConfigError('열쇠고리의 제출 키가 없거나 모양이 이상해요', why='cfg_key')
     return url, key
 
 
@@ -848,20 +1111,20 @@ def fetch_status(sid=None, run=subprocess.run):
         raise TransportError('id')
     code, text = _curl(url + '/status' + (f'?id={sid}' if sid else ''), key, run)
     if code == 401:
-        raise AuthError('HTTP 401')
+        raise AuthError('HTTP 401', why='auth', status=401)
     if code != 200:
-        raise TransportError(f'HTTP {code}' if code else '응답 없음')
+        raise TransportError(f'HTTP {code}' if code else '응답 없음', why='http' if code else 'noresp', status=code)
     try:
         obj = json.loads(text)
     except ValueError:
-        raise TransportError('JSON') from None
+        raise TransportError('JSON', why='json') from None
     if not isinstance(obj, dict) or obj.get('format') != 'digest-status/1' \
             or not isinstance(obj.get('events'), list):
-        raise TransportError('형식')
+        raise TransportError('형식', why='format')
     events = {}
     for e in obj['events']:
         if not (isinstance(e, dict) and isinstance(e.get('id'), str) and e.get('state') in STATES):
-            raise TransportError('사건')
+            raise TransportError('사건', why='event')
         events[e['id']] = e
     return {'events': events, 'health': obj['health'] if isinstance(obj.get('health'), dict) else None}
 
@@ -873,8 +1136,10 @@ def migrate(state):
     if 'last_sent_day' in state:
         old = state.pop('last_sent_day')
         state.setdefault('last_submitted_day', old)
-    if state.get('last_error') and state['last_error'] not in ERRORS:
-        state['last_error'] = '기타 오류'
+    if state.get('last_error') and error_kind(state['last_error']) != state['last_error']:
+        set_error(state, '기타 오류')
+    if not state.get('last_error'):
+        state.pop('last_error_why', None)                # 종류 없이 남은 이유 칸
     if 'pending' in state and pending_of(state) is None:
         state.pop('pending')
     return state
@@ -913,7 +1178,8 @@ def mark_accepted(state, now):
         {'id': p['id'], 'date': p['date'], 'v': p['v'], 'base': p['base'], 'accepted_at': now.isoformat(),
          'hash': text_hash(p['text'])}]
     _mark_day(state, p)
-    state.update(last_submitted=now.isoformat(), last_error=None)
+    state['last_submitted'] = now.isoformat()
+    clear_error(state)
 
 
 def attempt(state, now, save, post):
@@ -928,9 +1194,9 @@ def attempt(state, now, save, post):
     save(state)
     try:
         result = post(request_body(p), p['id'])
-    except ConfigError:                 # 열쇠고리에서 막혔다 — 요청이 나가지 않았으니 시도로 세지 않는다
+    except ConfigError as exc:          # 열쇠고리에서 막혔다 — 요청이 나가지 않았으니 시도로 세지 않는다
         p['tries'].pop()
-        state['last_error'] = '제출 키 없음'
+        set_error(state, '제출 키 없음', config_why(exc))
         save(state)
         raise
     if result == 'unauthorized':
@@ -947,7 +1213,7 @@ def attempt(state, now, save, post):
     if result in ('accepted', 'dup'):
         mark_accepted(state, now)
     elif not unauthorized:
-        state['last_error'] = {'rejected': '접수 오류', 'conflict': '충돌'}.get(result, '연결 오류')
+        set_error(state, {'rejected': '접수 오류', 'conflict': '충돌'}.get(result, '연결 오류'), result)
     save(state)
     return result
 
@@ -963,8 +1229,25 @@ def _event_hash(ev):
     return h.lower() if isinstance(h, str) and re.fullmatch(r'[0-9a-fA-F]{64}', h) else None
 
 
-def _carry(state, day, kind):
-    state['carry'] = [c for c in state.get('carry') or [] if isinstance(c, dict)] + [{'date': day, 'kind': kind}]
+def _carry(state, day, kind, **more):
+    """다음 요약 꼬리에 한 번 실을 접수 결과. `more` = 그 분기에서 아는 사실(why·tries·lookup) — 판정에는 안 쓴다."""
+    state['carry'] = [c for c in state.get('carry') or [] if isinstance(c, dict)] \
+        + [dict({'date': day, 'kind': kind}, **more)]
+
+
+TRY_WORDS = (('rejected', '거절'), ('server', '약속에 없는 응답'), ('noresp', '응답 못 받음'), ('conflict', '409'),
+             ('other', '기타'))
+
+
+def _try_counts(tries):
+    """시도 기록 → {결과: 횟수}(0 은 뺀다). 결과가 넷 밖이거나 str 이 아니거나 항목이 dict 가 아니면 other."""
+    known = {k for k, _ in TRY_WORDS[:4]}
+    out = {}
+    for t in tries:
+        r = t.get('result') if isinstance(t, dict) else None
+        k = r if isinstance(r, str) and r in known else 'other'
+        out[k] = out.get(k, 0) + 1
+    return out
 
 
 def confirm(state, events, now):
@@ -983,8 +1266,10 @@ def confirm(state, events, now):
         if st is not None and theirs and mine and theirs != mine:
             _carry(state, u['date'], 'conflict')
         elif st == 'sent' and not (theirs and mine):
-            _carry(state, u['date'], 'unverified')
-            state['last_error'] = '확인 불가'
+            # 어느 쪽 값이 없는지까지만 안다(§B) — 「Worker 가 주지 않았다」고 단정하지 않는다
+            why = 'nohash_mac' if theirs else 'nohash_worker' if mine else 'nohash'
+            _carry(state, u['date'], 'unverified', why=why)
+            set_error(state, '확인 불가', why)
         elif st == 'sent':
             if (u['date'], u['v']) > _applied(state):
                 state.update({k: u['base'][k] for k in BASE_KEYS if k in u['base']})
@@ -1001,11 +1286,11 @@ def confirm(state, events, now):
                 newer = True
             if newer:
                 state['last_sent'] = sent_at
-            state['last_error'] = None
+            clear_error(state)
         elif st in ('failed_permanent', 'held'):
-            state['last_error'] = '전송 오류' if st == 'failed_permanent' else '전송 보류'
+            set_error(state, '전송 오류' if st == 'failed_permanent' else '전송 보류', st)
         elif st is None and _too_old(u, now):
-            state['last_error'] = '확인 불가'                  # Worker 가 14일 지난 사건은 안 돌려준다
+            set_error(state, '확인 불가', 'absent')            # Worker 가 14일 지난 사건은 안 돌려준다(날짜를 못 읽은 것도 여기)
         else:
             left.append(u)
             continue
@@ -1038,18 +1323,21 @@ def settle(state, now, lookup, expired, archive=None):
     돌려주는 값: 'accepted' | 'conflict' | 'failed' | 'unknown' | None(그대로).
     """
     p = state['pending']
-    results = {t.get('result') for t in p['tries'] if isinstance(t, dict)}
+    # 판정용 집합 — str 이 아닌 결과(손상)는 'other' 로. 예전에는 배열·객체가 들어 있으면 TypeError 로 끝나
+    # 기한 정리가 영영 안 됐다. 정상 기록(str 결과만)에서는 집합이 예전과 같다.
+    results = {t['result'] if isinstance(t.get('result'), str) else 'other' for t in p['tries'] if isinstance(t, dict)}
+    unread = False
     try:
         ev = lookup(p['id'])
     except (TransportError, ConfigError):
-        ev = None
+        ev, unread = None, True
     theirs = _event_hash(ev)
     if ev is not None and theirs == text_hash(p['text']):
         mark_accepted(state, now)
         return 'accepted'
     if ev is not None and (theirs or 'conflict' in results):
         _mark_day(state, p)
-        state['last_error'] = None
+        clear_error(state)
         outcome = 'conflict'
     elif not expired:
         return None
@@ -1060,7 +1348,12 @@ def settle(state, now, lookup, expired, archive=None):
     if archive:
         archive(p, outcome)
     state.pop('pending')
-    _carry(state, p['date'], outcome)
+    more = {}
+    if outcome in ('failed', 'unknown'):                 # 문구용 — 범위를 밝힌 사실만(§G)
+        more['tries'] = _try_counts(p['tries'])
+    if outcome == 'unknown':
+        more['lookup'] = 'nohash' if ev is not None else 'unread' if unread else 'absent'
+    _carry(state, p['date'], outcome, **more)
     return outcome
 
 
@@ -1117,15 +1410,20 @@ def append_archive(path, entries, now):
 
 CARRY = {'failed': '요약 접수 실패', 'unknown': '요약 접수 여부 확인 불가',
          'conflict': '요약 접수됨 — 다른 본문이 먼저 접수돼 있었어요',
-         'unverified': '요약 전송 확인 불가 — Worker 가 본문 대조 값을 주지 않았어요'}
-AUTH_NOTE = '요약 제출 키 오류가 있었어요 — Worker 가 제출을 거부했어요(키체인 digest_key 와 Worker Secret 확인)'
+         'unverified': '요약 전송 확인 불가'}
+CARRY_MAX = 6                                             # 접수 결과 줄 — 넘으면 최근 6줄 + 「외 n건」
+NO_TRY = '제출을 한 번도 내보내지 못했어요'
+LOOKUP_WORDS = {'nohash': 'Worker 응답에서 본문 대조 값을 확인하지 못했어요',
+                'unread': '마지막 확인 때 Worker 상태를 읽지 못했어요',
+                'absent': 'Worker 상태 목록에 그 사건이 없었어요'}
+UNVERIFIED_WHY = ('nohash_mac', 'nohash_worker', 'nohash')
 AUTH_HOOK = '[검증 알림] 요약 제출 키 오류 — Worker 가 제출을 거부해요(키체인 digest_key 와 Worker Secret 확인)'
 
 
 def auth_failed(state, now):
     """`/digest`·`/status` 가 401 — 맥의 키와 Worker Secret 이 다르다. 세션 훅과 다음 요약 머리에 보인다."""
     state.setdefault('auth_error', now.isoformat())
-    state['last_error'] = '제출 키 오류'
+    set_error(state, '제출 키 오류')
     if not any(isinstance(c, dict) and c.get('kind') == 'auth' for c in state.get('carry') or []):
         _carry(state, now.date().isoformat(), 'auth')
 
@@ -1140,31 +1438,72 @@ def carry_notes(state):
                               for c in state.get('carry') or []) else []
 
 
-def carry_lines(state, today):
-    """지난 요약의 접수 결과 — 다음 요약 꼬리에 한 번 싣는다(고정 문구)."""
+def _tries_phrase(tries):
+    """carry 의 시도 칸 → 문구 | None(칸이 없거나 쓸 수 있는 항이 없다). 모양이 맞는 항만 쓴다 — 예외를 내지 않는다."""
+    if not isinstance(tries, dict):
+        return None
+    terms = [(w, tries[k]) for k, w in TRY_WORDS if k in tries and type(tries[k]) is int and tries[k] >= 0]
+    total = sum(n for _, n in terms)
+    if not total:
+        # 「한 번도 못 냈다」는 빠진 항이 하나도 없을 때만 참이다(빈 dict 로 **기록된** 경우 — 판정은 「접수 실패」여도
+        # 거절을 암시하지 않는다). 모르는 열쇠·모양이 다른 값이 섞였으면 그 항이 몇 번인지 모르므로 횟수 문구를 뺀다.
+        return NO_TRY if len(terms) == len(tries) else None
+    terms = sorted((t for t in terms if t[1]), key=lambda t: -t[1])        # 많은 것부터(같으면 표 순서)
+    return f'제출 시도 {shown(total, TRY_CAP, "번")}: ' + ' · '.join(f'{w} {shown(n, TRY_CAP)}' for w, n in terms)
+
+
+def _carry_line(c, who):
+    kind = c['kind']
+    if kind == 'unverified':
+        why = c.get('why')
+        why = why if isinstance(why, str) and why in UNVERIFIED_WHY else 'nohash'     # why 없는 옛 기록 포함
+        return f'{who} {CARRY[kind]} — {ERROR_WHY[("확인 불가", why)]}'
+    line = f'{who} {CARRY[kind]}'
+    if kind in ('failed', 'unknown'):
+        look = c.get('lookup')
+        bits = [_tries_phrase(c.get('tries')),
+                LOOKUP_WORDS.get(look) if kind == 'unknown' and isinstance(look, str) else None]
+        bits = [x for x in bits if x]
+        if bits:
+            line += '(' + ' · '.join(bits) + ')'
+    return line
+
+
+def carry_lines(state, today, trimmed=None):
+    """지난 요약의 접수 결과 — 다음 요약 꼬리에 한 번 싣는다(고정 문구). 6줄을 넘으면 최근 6줄 + 「외 n건」 한 줄,
+    넘친 줄의 문장은 `trimmed`(맥 로그용 목록)에 덧붙인다."""
     out = []
     for c in state.get('carry') or []:
-        if not isinstance(c, dict) or c.get('kind') not in CARRY:     # 'auth' 는 머리로(carry_notes)
-            continue
+        if not isinstance(c, dict) or not isinstance(c.get('kind'), str) or c['kind'] not in CARRY:
+            continue                                     # 'auth' 는 머리로(carry_notes)
         try:
             d = date.fromisoformat(c.get('date'))
         except (TypeError, ValueError):
             continue
         who = '어제' if (today - d).days == 1 else '오늘' if d == today else f'{d.month}/{d.day:02d}'
-        out.append(f'{who} {CARRY[c["kind"]]}')
+        out.append(_carry_line(c, who))
+    if len(out) > CARRY_MAX:
+        over, out = out[:-CARRY_MAX], out[-CARRY_MAX:]
+        out.append(f'지난 요약 접수 결과 외 {shown(len(over), TOTAL_CAP, "건")} — 맥 로그에서 확인')
+        if trimmed is not None:
+            trimmed.extend(over)
     return out
 
 
-def compose(posts, prev_lines, now, notes, tail, numbers, tracked, published, v=1):
-    """제출본(`pending`)을 만든다 — 글 3,900자·요청 16 KB 안. 넘으면 글을 더 미룬다(자르지 않는다)."""
+def compose(posts, prev_lines, now, notes, tail, numbers, tracked, published, v=1, trimmed=None):
+    """제출본(`pending`)을 만든다 — 글 3,900자·요청 16 KB 안. 넘으면 글을 더 미룬다(자르지 않는다).
+    `trimmed`(목록)에는 채택한 판에서 줄이거나 뺀 줄의 원문만 담는다. render 의 SizeError 는 그대로 올린다."""
     day = now.date().isoformat()
     for limit in range(LIMIT, 900, -500):
-        text, lines = render(posts, prev_lines, now, notes, tail, limit=limit)
+        cut = []
+        text, lines = render(posts, prev_lines, now, notes, tail, limit=limit, trimmed=cut)
         base = {'lines': lines, 'numbers': numbers, 'tracked': tracked,
                 'open': sorted(p['path'] for p in posts if not resolved(p)),
                 'all': sorted(p for p in published if post_day(p))}
         p = {'id': f'{day}:morning-digest:v{v}', 'date': day, 'v': v, 'text': text, 'base': base, 'tries': []}
         if 1 <= len(text) <= LIMIT and len(request_body(p).encode('utf-8')) <= MAX_BODY:
+            if trimmed is not None:
+                trimmed.extend(cut)
             return p
     raise SizeError('요약이 요청 크기 안에 들어가지 않는다')
 
@@ -1174,62 +1513,141 @@ def compose(posts, prev_lines, now, notes, tail, numbers, tracked, published, v=
 STATE_BRANCH = 'alerts-state'
 TAIL_UNREAD = '발행 알림: 상태를 못 읽었어요 — 미발행·전송 여부를 몰라요'
 TAIL_MISSING = '발행 알림: GitHub 계산 기록이 아직 없어요'
+TAIL_NO_COPY = '발행 알림: 받아 둔 사본이 없어요(원격 확인 안 함)'
+TAIL_COPY = '발행 알림: 최신 상태를 받지 못해 받아 둔 사본으로 읽었어요'
 HEALTH_STALE_HOURS = 9
+HEALTH_UNREAD = '전송기: 상태를 못 읽었어요 — 전송 여부를 몰라요'
+HEALTH_WHY = {'auth': 'Worker 가 제출 키를 받지 않았어요(401)', 'noresp': '응답을 받지 못했어요',
+              'json': '응답이 JSON 이 아니었어요', 'format': '응답 형식이 약속과 달랐어요',
+              'event': '사건 목록에 약속과 다른 항목이 있었어요', 'health': '응답에 전송기 상태가 없거나 형식이 달랐어요'}
 CONFIG_ERROR = '설정 오류 — 텔레그램으로 못 보내는 중(Cloudflare 상태 확인)'
+# Worker 가 붙인 분류 이름 → 고정 낱말. 맥이 토큰·대화 번호를 읽는 코드가 아니다(그런 문자열 리터럴을 두지 않는 시험이 있어 dict() 로 쓴다)
+CONFIG_KINDS = dict(token='봇 토큰', chat='대화 번호', forbidden='봇이 대화에서 차단·강퇴됨')
 HEALTH_TIMEOUT = 5
 HEALTH_FAILS = 3
 
 
+def tail_unread(*reasons):
+    """「상태를 못 읽었어요(이유 · 이유) — …」. 이유는 이 파일의 고정 낱말만 넘긴다 — 반환 코드·예외 이름은 stderr 에만."""
+    if not reasons:
+        return TAIL_UNREAD
+    head, _, rest = TAIL_UNREAD.partition(' — ')
+    return f'{head}({" · ".join(reasons)}) — {rest}'
+
+
 def publish_tail(root, now, fetch=True, run=subprocess.run):
-    """`origin/alerts-state:verify_publish.json`(GitHub 이 계산한 공개 상태)을 읽어 꼬리 줄로. 읽기만 한다."""
+    """`origin/alerts-state:verify_publish.json`(GitHub 이 계산한 공개 상태)을 읽어 꼬리 줄로. 읽기만 한다.
+
+    돌려주는 줄마다 분류를 붙인다(3a §A 1·§E 8): 이 함수가 만든 고정 한 줄은 `Must`, summary_lines_from 이 돌려준
+    줄만 `Soft`. 어떤 실패도 예외로 올리지 않는다 — 발행 알림 상태가 이상해도 매일 요약은 나가야 한다.
+    """
     remote = f'refs/remotes/origin/{STATE_BRANCH}'
 
-    def git(*args):
-        return run(['git', '-C', root, *args], capture_output=True, timeout=60)
+    def step(*args):
+        """git 한 번 — 실행 예외(시간 초과 포함)는 None(「실패」), 반환 코드는 그대로."""
+        try:
+            return run(['git', '-C', root, *args], capture_output=True, timeout=60)
+        except (OSError, subprocess.SubprocessError) as exc:
+            print(f'발행 알림 꼬리: git {args[0]} 실행 실패 — {type(exc).__name__}', file=sys.stderr)
+            return None
+
+    remote_fail = None
+    if fetch:
+        ls = step('ls-remote', '--exit-code', 'origin', f'refs/heads/{STATE_BRANCH}')
+        if ls is not None and ls.returncode == 2:        # 원격에 그 브랜치가 없다(네트워크 실패와 구분) — 옛 사본도 읽지 않는다
+            return [Must(TAIL_MISSING)]
+        if ls is not None and ls.returncode == 0:        # 러너 사본이 main 만 받는 설정이어도 받게 refspec 을 적는다
+            got = step('fetch', '--quiet', 'origin', f'+refs/heads/{STATE_BRANCH}:{remote}')
+            if got is None or got.returncode:
+                remote_fail = 'git fetch 실패'
+        else:
+            remote_fail = '원격 확인 실패'
+
+    def unread(reason):
+        return [Must(tail_unread(*([remote_fail] if remote_fail else []), reason))]
+
+    ref = step('rev-parse', '--verify', '--quiet', remote)
+    if ref is None:
+        return unread('받아 둔 사본을 확인하지 못함')
+    if ref.returncode:
+        if remote_fail:
+            return unread('받아 둔 사본 없음')
+        return [Must(TAIL_MISSING if fetch else TAIL_NO_COPY)]       # 원격을 안 봤으면 「아직 없다」고 단정하지 않는다
+    show = step('show', f'{remote}:verify_publish.json')
+    if show is None or show.returncode:
+        return unread('받아 둔 사본에서 파일을 못 읽음')
     try:
-        reachable = None
-        if fetch:
-            ls = git('ls-remote', '--exit-code', 'origin', f'refs/heads/{STATE_BRANCH}')
-            if ls.returncode == 2:                       # 원격에 그 브랜치가 없다(네트워크 실패와 구분)
-                return [TAIL_MISSING]
-            reachable = ls.returncode == 0
-            if reachable:                                # 러너 사본이 main 만 받는 설정이어도 받게 refspec 을 적는다
-                git('fetch', '--quiet', 'origin', f'+refs/heads/{STATE_BRANCH}:{remote}')
-        if git('rev-parse', '--verify', '--quiet', remote).returncode:
-            return [TAIL_UNREAD if reachable is False else TAIL_MISSING]
-        show = git('show', f'{remote}:verify_publish.json')
-        if show.returncode:
-            return [TAIL_UNREAD]
         from review import publish_watch as W
-        st = W.loads_state(show.stdout)                  # 형식·내용 검사까지 — 이상하면 StateError → 못 읽음
+    except Exception as exc:  # noqa: BLE001
+        print(f'발행 알림 꼬리: 모듈을 못 불러왔다 — {type(exc).__name__}', file=sys.stderr)
+        return unread('요약 꼬리 계산 오류')
+    try:
+        st = W.loads_state(show.stdout)                  # 형식·내용 검사까지 — 이상하면 StateError
+    except W.StateError:
+        return unread('상태 파일 내용 검증 실패')
+    except Exception as exc:  # noqa: BLE001
+        print(f'발행 알림 꼬리: 상태를 못 읽었다 — {type(exc).__name__}', file=sys.stderr)
+        return unread('요약 꼬리 계산 오류')
+    try:
         # GitHub 계산은 3시간 심장 박동이라 맥 시절의 2시간 기준을 쓰면 매일 「n시간 전」이 뜬다
-        return [str(x) for x in W.summary_lines_from(st, now, stale=W.GITHUB_STALE)]
-    except Exception:  # noqa: BLE001 — 발행 알림 상태가 이상해도 매일 요약은 나가야 한다
-        return [TAIL_UNREAD]
+        lines = [Soft(str(x)) for x in W.summary_lines_from(st, now, stale=W.GITHUB_STALE)]
+    except Exception as exc:  # noqa: BLE001
+        print(f'발행 알림 꼬리: 문장을 못 만들었다 — {type(exc).__name__}', file=sys.stderr)
+        return unread('요약 꼬리 계산 오류')
+    if remote_fail:                                      # 읽기는 됐지만 최신인지 모른다
+        lines.insert(0, Must(f'{TAIL_COPY}({remote_fail})'))
+    return lines
 
 
-def health_lines(health, now):
-    """Worker `/status.health` — 이상할 때만 한 줄. `health=None` 은 조회 실패다(정상으로 읽지 않는다)."""
+def _config_error_bit(ce):
+    """`/status.health.config_error` → 문구. Worker 가 준 글자는 옮기지 않는다 — 분류는 고정 낱말로, 시각은 KST 로."""
+    if not isinstance(ce, dict):
+        return CONFIG_ERROR
+    kind = ce.get('kind')
+    bits = [f'Worker 분류: {CONFIG_KINDS[kind]}'] if isinstance(kind, str) and kind in CONFIG_KINDS else []
+    try:                                                 # 읽기·KST 변환·문자열 만들기를 한데 — 넘치는 시각도 여기서 걸린다
+        t = parse_iso(ce.get('since')).astimezone(KST)
+        bits.append(f'{t.month}/{t.day:02d} {t:%H:%M} 부터')
+    except (TypeError, ValueError, OverflowError):
+        pass
+    if not bits:
+        return CONFIG_ERROR
+    return f'설정 오류 — 텔레그램으로 못 보내는 중({", ".join(bits)} · Cloudflare 설정 확인)'
+
+
+def health_lines(health, now, why=None, status=None):
+    """Worker `/status.health` — 이상할 때만 한 줄. `health=None` 은 조회 실패다(정상으로 읽지 않는다).
+    `why`(`HEALTH_WHY` 의 코드)·`status`(HTTP 코드)를 주면 못 읽은 이유를 괄호로 붙인다. 어떤 값으로도 예외를 올리지 않는다."""
     if not isinstance(health, dict):
-        return ['전송기: 상태를 못 읽었어요 — 전송 여부를 몰라요']
+        reason = None
+        if isinstance(why, str):
+            if why == 'http':
+                reason = f'HTTP {status} 응답을 받았어요' if type(status) is int and 100 <= status <= 599 \
+                    else HEALTH_WHY['format']
+            else:
+                reason = HEALTH_WHY.get(why)
+        return [HEALTH_UNREAD + (f'({reason})' if reason else '')]
     bits = []
-    if health.get('config_error') is not None:          # null | {code, kind, since} — 내용은 옮겨 적지 않는다
-        bits.append(CONFIG_ERROR)
+    if health.get('config_error') is not None:          # null | {code, kind, since} — code 는 싣지 않는다
+        bits.append(_config_error_bit(health['config_error']))
     for key, label in (('backlog', '밀린 알림'), ('failed', '영구 실패')):
         n = health.get(key)
-        if type(n) is not int or n < 0:
+        count = shown(n, HEALTH_CAP, '건')
+        if count is None:
             bits.append(f'{label} 수를 못 읽었어요')
         elif n:
-            bits.append(f'{label} {n}건')
+            bits.append(f'{label} {count}')
     ok = health.get('last_outbox_ok')
     if ok is None:
         bits.append('GitHub 계산 기록을 아직 정상으로 읽은 적이 없어요')
     else:
         try:
             hours = _hours(now, ok)
-            if hours >= HEALTH_STALE_HOURS:
+            if hours > HEALTH_CAP:
+                bits.append(f'GitHub 계산 기록 마지막 정상 {shown(hours, HEALTH_CAP, "시간")}')
+            elif hours >= HEALTH_STALE_HOURS:
                 bits.append(f'GitHub 계산 기록 마지막 정상 {hours}시간 전')
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError):
             bits.append('GitHub 계산 기록 시각을 못 읽었어요')
     return ['전송기: ' + ' · '.join(bits)] if bits else []
 
