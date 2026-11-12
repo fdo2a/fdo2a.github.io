@@ -7,8 +7,8 @@
  "reason": "topic_too_long",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-12T01:10:51+00:00",
- "cutoff_at": "2026-11-12T01:10:51+00:00",
+ "collected_at": "2026-11-12T01:28:24+00:00",
+ "cutoff_at": "2026-11-12T01:28:24+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -24,29 +24,29 @@
   "harvest": 205,
   "candidates": 1,
   "articles": [
-   6
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 25840,
-   "out": 11083
+   "in": 24985,
+   "out": 11112
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "short",
-   "bbc.co.uk": "ok",
-   "cbsnews.com": "ok"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok"
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "",
   "query": "",
   "trigger": []
  },
- "content_hash": "685dadb6a251a62d"
+ "content_hash": "0896e2462583f3b5"
 }
