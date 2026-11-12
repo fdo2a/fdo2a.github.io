@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-11",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-12T05:18:21+00:00",
- "cutoff_at": "2026-11-12T05:18:21+00:00",
+ "collected_at": "2026-11-12T06:34:58+00:00",
+ "cutoff_at": "2026-11-12T06:34:58+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "c76a46a3b3632f96ca05e8b38de0d1272f9fc4fb6308071291be9071d6072d7e"
  },
  "counts": {
-  "harvest": 206,
+  "harvest": 205,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 50763,
-   "out": 14416
+   "in": 48784,
+   "out": 15907
   },
   "discovery": "throttled",
   "hosts": {
@@ -43,43 +43,17 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "10/10",
-   "pairs": "4/4",
-   "obs": "7/8"
+   "claims": "8/8",
+   "pairs": "3/3",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 4,
-   "claims": 8,
-   "obs": 7,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[2]",
-    "memo[0]",
-    "memo[2]",
-    "structure",
-    "variables[1]",
-    "worry.moderate[0]",
-    "worry.most[0]"
-   ],
-   "outcome": "skipped_ratio",
-   "remaining": [
-    "structure:unverified",
-    "variables[1]:unverified",
-    "variables[1]:dangling",
-    "edges[0]:unverified",
-    "edges[0]:dangling",
-    "edges[2]:unverified",
-    "memo[0]:dangling",
-    "memo[2]:unverified",
-    "memo[2]:dangling",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified"
-   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -88,18 +62,5 @@
   "query": "nvidia jensen affair",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "variables[1]:unverified",
-  "variables[1]:dangling",
-  "edges[0]:unverified",
-  "edges[0]:dangling",
-  "edges[2]:unverified",
-  "memo[0]:dangling",
-  "memo[2]:unverified",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified"
- ],
- "content_hash": "12566c921b127e2d"
+ "content_hash": "206e0aaa639e86f9"
 }
