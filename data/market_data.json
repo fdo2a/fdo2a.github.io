@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-13 08:05 KST",
+  "generated": "2026-11-13 08:18 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-12",
   "indices": {
@@ -197,10 +197,10 @@
     },
     "Gold": {
       "last": 3879.5,
-      "chg": -112.699951171875,
-      "pct": -2.823003670915658,
+      "chg": -112.60009765625,
+      "pct": -2.8205730042279553,
       "date": "2026-11-12",
-      "prev": 3992.199951171875,
+      "prev": 3992.10009765625,
       "prev_date": "2026-11-11",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -624,10 +624,8 @@
   "spread_2s10s_basis": "2Y FRED 2026-11-10 vs 10Y Yahoo 2026-11-12",
   "spread_2s10s_fred_bp": 25.0,
   "spread_5s30s_bp": 48.799999999999955,
-  "complete": false,
-  "missing": [
-    "yields/naver_close_not_posted"
-  ],
+  "complete": true,
+  "missing": [],
   "price_context": {
     "windows": {
       "move": 60,
@@ -695,7 +693,7 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -2.823,
+        "change": -2.821,
         "unit": "%",
         "multiple": -2.05,
         "band": "큼"
