@@ -260,6 +260,50 @@ def _real_date(x):
     return True
 
 
+KR_CORE = {'indices': '지수', 'flows': '수급', 'top_value': '거래대금', 'sectors': '섹터'}
+KR_FLOW_WHY = {'blocked': '최신 날짜 수급을 못 읽음', 'error': '수급 요청 실패'}
+
+
+def _kr_block_reasons(d):
+    """KR 미발행 줄 꼬리 — 빠진 코어 토큰과 검사 status 를 고정 문구로(2026-11-12). 원문·긴 값은 싣지 않는다.
+    사전 밖 값은 「알 수 없는 상태/항목」. 읽을 것이 없으면 빈 문자열(지금 문구 그대로)."""
+    from review.digest import KR_IDX, KR_PCT_WHY
+    parts = []
+    miss = d.get('missing') if isinstance(d.get('missing'), list) else []
+    core = [KR_CORE[m] for m in KR_CORE if m in miss]
+    if any(isinstance(m, str) and m not in KR_CORE and m not in ('econ', 'themes', 'flows_intraday') for m in miss):
+        core.append('알 수 없는 항목')
+    ck = d.get('checks') if isinstance(d.get('checks'), dict) else {}
+    ip = ck.get('index_pct') if isinstance(ck.get('index_pct'), dict) else {}
+    for name, label in KR_IDX.items():
+        st = (ip.get(name) or {}).get('status') if isinstance(ip.get(name), dict) else None
+        if st is None or st in ('ok', 'ok_flat'):
+            continue
+        if st == 'mismatch':
+            why = '종가로 계산한 값과 어긋남' + (' — 차단 켜짐' if ip.get('mode') == 'block' else '(기록만)')
+        else:
+            why = KR_PCT_WHY.get(st, '알 수 없는 상태')
+        parts.append(f'{label} 등락률 — {why}')
+    fl = ck.get('flows') if isinstance(ck.get('flows'), dict) else {}
+    for name, label in KR_IDX.items():
+        st = (fl.get(name) or {}).get('state') if isinstance(fl.get(name), dict) else None
+        if st is None or st == 'ok':
+            continue
+        parts.append(f'{label} 수급 — {KR_FLOW_WHY.get(st, "알 수 없는 상태")}')
+    tv = ck.get('top_value')
+    if isinstance(tv, dict):
+        if 'error' in tv:
+            parts.append('거래대금 — 수집 실패')
+        elif isinstance(tv.get('positive_rows'), int) and tv['positive_rows'] < 10:
+            parts.append('거래대금 — 상위 표가 10행이 안 됨')
+    out = ''
+    if core:
+        out += f'. 빠진 코어: {"·".join(core)}'
+    if parts:
+        out += f' ({"; ".join(parts)})'
+    return out
+
+
 def _collection_note(root, rev, market, session):
     """미발행 사건의 「원인」 줄 — 그 시각 레포의 수집 판만 보고, 원인을 단정하지 않는다(codex 설계 검토 #4)."""
     path = {'us': 'data/market_data.json', 'kr': 'kr/data/kr_market_data.json'}[market]
@@ -276,7 +320,8 @@ def _collection_note(root, rev, market, session):
                 f'(report_date {rd}). 데이터는 있으니 작성 루틴이 돌지 않았거나 도중에 멈췄을 수 있어요')
     if rd == session and done is False:
         return ('원인: 확정하지 못했어요 — 이 세션 수집 데이터가 완전하지 않아요'
-                f'(report_date {rd}, complete false). 루틴은 불완전한 데이터로는 발행하지 않아요')
+                f'(report_date {rd}, complete false). 루틴은 불완전한 데이터로는 발행하지 않아요'
+                + (_kr_block_reasons(d) if market == 'kr' else ''))
     if rd == session:
         return ('원인: 확정하지 못했어요 — 이 세션 수집 데이터는 있는데 완전한지 표시(complete)를 읽지 못했어요'
                 f'(report_date {rd}). 발행 루틴·데이터 수집 상태 점검 필요')

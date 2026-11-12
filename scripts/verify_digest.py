@@ -93,6 +93,11 @@ def _prepub(root, target):
         return {'error': code}
 
 
+# build 가 이번 판에 낸 KR 검사 줄의 (키, 줄) — _text 가 비우고 읽는다. build 의 호출 모양을 바꾸지 않으려고
+# 모듈 변수로 둔다(시험이 build 를 네 인자 람다로 바꿔 끼운다).
+KR_KEYS = []
+
+
 def build(state, now, args, notes):
     import review_gate as G
     root = G.repo_root()
@@ -126,6 +131,15 @@ def build(state, now, args, notes):
         notes.extend(D.kr_index_gap_notes(D.kr_weekly_aggs(root)))
     except Exception as exc:  # noqa: BLE001
         print(f'KR 주간 지수 누락 확인 실패: {exc}', file=sys.stderr)
+    # KR 수집 검사 기록(실행 manifest 의 checks, 최근 3거래일) — 경고까지 전부 다음 날 아침에(2026-11-12).
+    # 이미 알린 (거래일, 항목, status) 는 빼고, 키는 접수가 확인된 뒤에만 기억한다(mark_accepted)
+    try:
+        lines, keys = D.kr_check_notes(root, seen=state.get('kr_checks_seen'))
+        notes.extend(lines)
+        KR_KEYS.extend(keys)
+    except Exception as exc:  # noqa: BLE001 — 읽기 실패는 조용히 넘기지 않는다
+        print(f'KR 수집 검사 기록 확인 실패: {exc}', file=sys.stderr)
+        notes.append(D.KR_CHECK_UNREAD)
     return posts, numbers, dict(published)
 
 
@@ -159,6 +173,7 @@ def _text(state, now, args, notes, health_tail, v=1):
         notes.append(D.NOTE_FIRST)
     if state.get('last_error'):
         notes.append(D.ERROR_NOTE + D.error_text(state))
+    del KR_KEYS[:]
     posts, numbers, published = build(state, now, args, notes)
     lines, more, tracked = D.reconcile(posts, state, published, now.date())
     trimmed = []
@@ -166,6 +181,7 @@ def _text(state, now, args, notes, health_tail, v=1):
     tail = [D.Must(x) for x in D.carry_lines(state, now.date(), trimmed)] \
         + list(D.publish_tail(G.repo_root(), now, fetch=not args.no_fetch)) + [D.Must(x) for x in health_tail]
     pending = D.compose(posts, lines, now, notes + more, tail, numbers, tracked, published, v, trimmed=trimmed)
+    pending['kr_checks'] = D.surviving_kr_keys(KR_KEYS, pending['text'])     # 실린 줄만 — 빠진 줄은 다음에 다시
     _log_trimmed(pending['id'], trimmed)
     return pending, len(posts)
 

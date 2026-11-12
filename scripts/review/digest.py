@@ -327,6 +327,204 @@ def _git_bytes(root, *args):
     return subprocess.run(['git', '-C', root, *args], capture_output=True, timeout=60)
 
 
+# ── KR 수집 검사 기록(2026-11-12) ─────────────────────────────────────────
+# 실행 manifest 의 `checks` 만 읽는다(같은 날 뒤 재수집이 고정 경로를 덮어도 남는다). 줄은 아래 고정 문구만 —
+# 원문·긴 값은 싣지 않고, 사전 밖의 값은 「알 수 없는 상태」. 차단 사유의 당일 전달은 미발행 감시가 맡는다.
+# spec: docs/superpowers/specs/2026-11-12-kr-missing-vs-zero.md
+
+KR_CHECK_UNREAD = 'KR 수집 검사 기록을 읽지 못했어요'
+KR_CHECK_DAYS = 3
+KR_CHECK_KEEP_DAYS = 14
+KR_IDX = {'KOSPI': '코스피', 'KOSDAQ': '코스닥'}
+KR_SIDES = {'individual': '개인', 'foreign': '외국인', 'institution': '기관'}
+KR_PCT_WHY = {'ratio_missing': '등락률을 못 읽음', 'unverified': '등락률을 검증할 전일 종가를 못 읽음',
+              'flat_unverified': '보합(0.00%)을 확인하지 못함', 'flat_contradicted': '보합(0.00%)인데 전일 종가와 어긋남',
+              'fetch_error': '지수를 못 읽음'}
+KR_CFG_WHY = {'missing_default': '설정 파일이 없음 — 경고만(warn)으로 읽음',
+              'invalid_block': '설정을 읽지 못함 — 차단(block)으로 읽음'}
+_KR_STOP = '발행 멈춤'
+_MD = r'\d{1,2}/\d{2}'
+_PCT = r'[+-]\d+\.\d{2}%'
+_KR_CHECK_NOTE = re.compile('|'.join([
+    rf'KR {_MD} (?:코스피|코스닥) 등락률: 네이버 {_PCT} vs 종가로 계산 {_PCT} — 같은 응답 안에서 어긋남'
+    r'\((?:기록만, 차단 꺼짐|차단 켜짐 — 발행 멈춤)\)',
+    rf'KR {_MD} (?:코스피|코스닥) 등락률: (?:' + '|'.join(re.escape(x) for x in KR_PCT_WHY.values())
+    + r') — 등락률 결측으로 발행 멈춤',
+    rf'KR {_MD} (?:코스피|코스닥) 등락률: 알 수 없는 상태 — 맥에서 확인',
+    rf'KR {_MD} (?:코스피|코스닥) 등락률: 전일 종가가 두 응답에서 어긋남\(같은 응답 안 계산은 일치\) — 기록만',
+    rf'KR {_MD} 등락률 검증 설정: (?:' + '|'.join(re.escape(x) for x in KR_CFG_WHY.values()) + ')',
+    rf'KR {_MD} (?:코스피|코스닥) 수급: (?:개인|외국인|기관)(?:·(?:개인|외국인|기관))* 값을 못 읽음\((?:당일|{_MD})\)'
+    r' — 수급 결측으로 발행 멈춤',
+    rf'KR {_MD} (?:코스피|코스닥) 수급: 요청 실패 — 수급 결측으로 발행 멈춤',
+    rf'KR {_MD} (?:코스피|코스닥) 수급: 알 수 없는 상태 — 맥에서 확인',
+    rf'KR {_MD} (?:코스피|코스닥) 수급: {_MD} (?:개인|외국인|기관)(?:·(?:개인|외국인|기관))* 값을 못 읽음'
+    r' — 그 날만 주간 집계에서 빠짐\(기록만\)',
+    rf'KR {_MD} 거래대금: (?:수집 실패|상위 표의 양수 행이 10개 미만) — 거래대금 결측으로 발행 멈춤',
+    rf'KR {_MD} 거래대금: 빈 값\(-\) 비율 \d{{1,3}}% — 부분 장애일 수 있음\(기록만\)',
+    rf'KR {_MD} 판 기록 없이 올라간 수집 \d{{1,4}}건',
+]))
+
+
+def _md(d):
+    return f'{int(d[5:7])}/{d[8:10]}'
+
+
+def _fnum(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and x == x and abs(x) != float('inf')
+
+
+def _sides(fields):
+    names = [KR_SIDES[f] for f in (fields or []) if f in KR_SIDES]
+    return '·'.join(names) if names else None
+
+
+def kr_check_items(date, checks):
+    """한 실행의 checks → [(항목, status, 줄)]. 정상(ok·ok_flat, cross_note 없음)은 줄을 내지 않는다."""
+    out, md = [], _md(date)
+    if not isinstance(checks, dict):
+        return out
+    ip = checks.get('index_pct') if isinstance(checks.get('index_pct'), dict) else {}
+    mode = ip.get('mode')
+    cfg = ip.get('config_status')
+    if cfg in KR_CFG_WHY:
+        out.append(('index_pct.config', cfg, f'KR {md} 등락률 검증 설정: {KR_CFG_WHY[cfg]}'))
+    for name, label in KR_IDX.items():
+        e = ip.get(name)
+        if not isinstance(e, dict):
+            continue
+        st = e.get('status')
+        head = f'KR {md} {label} 등락률: '
+        if st == 'mismatch':
+            r, d = e.get('naver_pct'), e.get('derived_pct')
+            tail = '차단 켜짐 — 발행 멈춤' if mode == 'block' else '기록만, 차단 꺼짐'
+            if _fnum(r) and _fnum(d):
+                out.append((f'index_pct.{name}', st,
+                            f'{head}네이버 {r:+.2f}% vs 종가로 계산 {d:+.2f}% — 같은 응답 안에서 어긋남({tail})'))
+            else:
+                out.append((f'index_pct.{name}', st, f'{head}알 수 없는 상태 — 맥에서 확인'))
+        elif st in KR_PCT_WHY:
+            out.append((f'index_pct.{name}', st, f'{head}{KR_PCT_WHY[st]} — 등락률 결측으로 {_KR_STOP}'))
+        elif st not in ('ok', 'ok_flat'):
+            out.append((f'index_pct.{name}', 'unknown', f'{head}알 수 없는 상태 — 맥에서 확인'))
+        if e.get('cross_note') is True:
+            out.append((f'index_pct.{name}', 'cross_note',
+                        f'{head}전일 종가가 두 응답에서 어긋남(같은 응답 안 계산은 일치) — 기록만'))
+    fl = checks.get('flows') if isinstance(checks.get('flows'), dict) else {}
+    for name, label in KR_IDX.items():
+        e = fl.get(name)
+        if not isinstance(e, dict):
+            continue
+        st, faults = e.get('state'), [f for f in e.get('faults') or [] if isinstance(f, dict)]
+        head = f'KR {md} {label} 수급: '
+        if st == 'error':
+            out.append((f'flows.{name}', 'error', f'{head}요청 실패 — 수급 결측으로 {_KR_STOP}'))
+        elif st == 'blocked':
+            f0 = faults[0] if faults else {}
+            who, fd = _sides(f0.get('fields')), f0.get('date')
+            when = '당일' if fd == date else (_md(fd) if isinstance(fd, str) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', fd)
+                                             else None)
+            if who and when:
+                out.append((f'flows.{name}', f'blocked@{fd}', f'{head}{who} 값을 못 읽음({when}) — 수급 결측으로 {_KR_STOP}'))
+            else:
+                out.append((f'flows.{name}', 'blocked', f'{head}알 수 없는 상태 — 맥에서 확인'))
+        elif st != 'ok':
+            out.append((f'flows.{name}', 'unknown', f'{head}알 수 없는 상태 — 맥에서 확인'))
+        if st == 'ok':
+            for f in faults:
+                who, fd = _sides(f.get('fields')), f.get('date')
+                if who and isinstance(fd, str) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', fd):
+                    out.append((f'flows.{name}', f'{f.get("status")}@{fd}',
+                                f'{head}{_md(fd)} {who} 값을 못 읽음 — 그 날만 주간 집계에서 빠짐(기록만)'))
+    tv = checks.get('top_value')
+    if isinstance(tv, dict):
+        if 'error' in tv:
+            out.append(('top_value', 'error', f'KR {md} 거래대금: 수집 실패 — 거래대금 결측으로 {_KR_STOP}'))
+        else:
+            pos, rows, dash = tv.get('positive_rows'), tv.get('rows'), tv.get('dash')
+            if isinstance(pos, int) and pos < 10:
+                out.append(('top_value', 'positive_lt_10',
+                            f'KR {md} 거래대금: 상위 표의 양수 행이 10개 미만 — 거래대금 결측으로 {_KR_STOP}'))
+            if isinstance(rows, int) and rows > 0 and isinstance(dash, int) and dash > rows * 0.15:
+                out.append(('top_value', 'dash_gt_15',
+                            f'KR {md} 거래대금: 빈 값(-) 비율 {round(dash * 100 / rows)}% — 부분 장애일 수 있음(기록만)'))
+    return out
+
+
+_KR_RUN = re.compile(r'^versions/kr/(\d{4}-\d{2}-\d{2})/(runs|fallback)/([^/]+?)(/manifest\.json|\.json)$')
+
+
+def kr_check_notes(root, rev='origin/main', seen=None):
+    """원격 판 `versions/kr/` 최근 3개 거래일 폴더의 실행 manifest `checks` → (줄 목록, [(키, 줄)]).
+
+    키 = 「거래일|항목|status」. `seen`(알림 상태 파일의 kr_checks_seen)에 있는 키는 다시 내지 않는다 — 기록은
+    접수가 확인된 뒤 `mark_accepted` 가 한다. 폴백만 있는 날은 「판 기록 없이 올라간 수집 N건」과
+    `kr/data/kr_market_data.json` 의 checks(그 거래일일 때만)로 보완한다. 읽기 실패는 한 줄(KR_CHECK_UNREAD).
+    """
+    seen = seen if isinstance(seen, dict) else {}
+    try:
+        r = _git_bytes(root, 'ls-tree', '-r', '--name-only', rev, 'versions/kr/')
+        if r.returncode != 0:
+            return [KR_CHECK_UNREAD], []
+        runs, falls = {}, {}
+        for path in r.stdout.decode().split('\n'):
+            m = _KR_RUN.match(path.strip())
+            if not m:
+                continue
+            d, kind, rid, tail = m.groups()
+            if kind == 'runs' and tail == '/manifest.json':
+                runs.setdefault(d, []).append((rid, path.strip()))
+            elif kind == 'fallback' and tail == '.json':
+                falls.setdefault(d, []).append(rid)
+        days = sorted(set(runs) | set(falls))[-KR_CHECK_DAYS:]
+        items, md_cache = [], None
+        for d in days:
+            for rid, path in sorted(runs.get(d, [])):
+                b = _git_bytes(root, 'show', f'{rev}:{path}')
+                if b.returncode != 0:
+                    return [KR_CHECK_UNREAD], []
+                man = json.loads(b.stdout)
+                if not isinstance(man, dict):
+                    return [KR_CHECK_UNREAD], []
+                if isinstance(man.get('checks'), dict):          # 이 변경 전 manifest 에는 없다 — 건너뛴다
+                    items += [(d, *x) for x in kr_check_items(d, man['checks'])]
+            orphan = [f for f in falls.get(d, []) if f not in {rid for rid, _ in runs.get(d, [])}]
+            if orphan:
+                items.append((d, 'fallback', str(len(orphan)), f'KR {_md(d)} 판 기록 없이 올라간 수집 {len(orphan)}건'))
+                if md_cache is None:
+                    b = _git_bytes(root, 'show', f'{rev}:kr/data/kr_market_data.json')
+                    md_cache = json.loads(b.stdout) if b.returncode == 0 else {}
+                if isinstance(md_cache, dict) and md_cache.get('report_date') == d:
+                    items += [(d, *x) for x in kr_check_items(d, md_cache.get('checks'))]
+    except (subprocess.SubprocessError, OSError, ValueError, UnicodeDecodeError):
+        return [KR_CHECK_UNREAD], []
+    lines, keys, done = [], [], set()
+    for d, item, status, line in items:
+        key = f'{d}|{item}|{status}'
+        if key in done or key in seen:
+            continue
+        done.add(key)
+        lines.append(line)
+        keys.append((key, line))
+    return lines, keys
+
+
+def surviving_kr_keys(keys, text):
+    """요약에 실제로 실린 줄의 키만 — 줄어서 빠진 줄은 다음 요약에 다시 낸다."""
+    return [k for k, line in keys if f'⚠ {line}' in text]
+
+
+def remember_kr_checks(state, p, now):
+    """접수가 확인된 제출본의 KR 검사 키를 기억한다(14일 지난 키는 지운다)."""
+    seen = state.get('kr_checks_seen') if isinstance(state.get('kr_checks_seen'), dict) else {}
+    for k in p.get('kr_checks') or []:
+        if isinstance(k, str):
+            seen[k] = p['date']
+    cutoff = (now.date() - timedelta(days=KR_CHECK_KEEP_DAYS)).isoformat()
+    seen = {k: v for k, v in seen.items() if isinstance(v, str) and v >= cutoff}
+    if seen or 'kr_checks_seen' in state:
+        state['kr_checks_seen'] = seen
+
+
 def _report_date(root, commit):
     got = _git_bytes(root, 'show', f'{commit}:{REQUIRED_DATA}')
     if got.returncode:
@@ -640,7 +838,7 @@ AUTH_NOTE = '요약 제출 키 오류가 있었어요 — Worker 가 제출을 �
 # 머리 안내는 이 목록의 문구만 나간다. 그 밖은 「기타 안내 n건」 — 내용은 맥에서 본다.
 # 어느 묶음에 맞았는지가 분류다(§A 1): _MUST_NOTES = 꼭 싣는 줄, 이름 목록·KR 지수 누락 = 줄일 수 있는 줄.
 _MUST_NOTES = tuple(re.compile(re.escape(x)) for x in (
-    [NOTE_FIRST, NOTE_STALE, NOTE_CORRUPT, AUTH_NOTE]
+    [NOTE_FIRST, NOTE_STALE, NOTE_CORRUPT, AUTH_NOTE, KR_CHECK_UNREAD]
     + [ERROR_NOTE + k for k in ERRORS]
     + [f'{ERROR_NOTE}{k} — {sentence}' for (k, _why), sentence in ERROR_WHY.items()]))
 _NAME_NOTES = tuple(re.compile(x + _NAME_TAIL) for x in (
@@ -651,7 +849,7 @@ _KR_NOTE = re.compile(
     r'KR 주간 \d{4}-W\d{2} 지수 누락: [A-Z0-9]+ \d{4}-\d{2}-\d{2}(?:, [A-Z0-9]+ \d{4}-\d{2}-\d{2})* — '
     r'새벽 재수집으로 자동 보완하지 않아요\. 원자료를 확인해 글을 정정한 뒤 수동 승격\(versions\.py promote\)해야 '
     r'주간이 나가요')
-NOTE_PATTERNS = _MUST_NOTES + _NAME_NOTES + (_KR_NOTE,)
+NOTE_PATTERNS = _MUST_NOTES + _NAME_NOTES + (_KR_NOTE, _KR_CHECK_NOTE)
 
 
 def _classified_notes(notes):
@@ -662,7 +860,7 @@ def _classified_notes(notes):
             other += 1
         elif any(p.fullmatch(n) for p in _NAME_NOTES):
             out.append((n, 'names'))
-        elif _KR_NOTE.fullmatch(n):
+        elif _KR_NOTE.fullmatch(n) or _KR_CHECK_NOTE.fullmatch(n):
             out.append((n, 'kr'))
         elif any(p.fullmatch(n) for p in _MUST_NOTES):
             out.append((n, 'must'))
@@ -1178,6 +1376,7 @@ def mark_accepted(state, now):
         {'id': p['id'], 'date': p['date'], 'v': p['v'], 'base': p['base'], 'accepted_at': now.isoformat(),
          'hash': text_hash(p['text'])}]
     _mark_day(state, p)
+    remember_kr_checks(state, p, now)              # KR 검사 줄은 접수가 확인된 뒤에만 기억한다(2026-11-12)
     state['last_submitted'] = now.isoformat()
     clear_error(state)
 
