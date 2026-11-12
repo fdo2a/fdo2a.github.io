@@ -2,7 +2,7 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-11-12",
-  "generated_at": "2026-11-13 01:40 KST",
+  "generated_at": "2026-11-13 02:02 KST",
   "status": "partial",
   "missing": [
     "cash_rates: missing"
@@ -23,12 +23,12 @@
   "cash_rates": [],
   "us_futures": {
     "ES": {
-      "pct": -0.08,
+      "pct": -0.07,
       "first_t": "09:00",
       "last_t": "15:30"
     },
     "NQ": {
-      "pct": -0.16,
+      "pct": -0.15,
       "first_t": "09:00",
       "last_t": "15:30"
     }
