@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-12T05:00:24+00:00",
- "cutoff_at": "2026-11-12T05:00:24+00:00",
+ "collected_at": "2026-11-12T05:18:21+00:00",
+ "cutoff_at": "2026-11-12T05:18:21+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,10 +30,10 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 47869,
-   "out": 13325
+   "in": 50763,
+   "out": 14416
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
@@ -41,15 +41,15 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "7/7",
-   "pairs": "3/3",
-   "obs": "8/8"
+   "claims": "10/10",
+   "pairs": "4/4",
+   "obs": "7/8"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 4,
+   "claims": 8,
    "obs": 7,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
@@ -58,10 +58,8 @@
   "repair": {
    "paths": [
     "edges[0]",
-    "edges[1]",
     "edges[2]",
     "memo[0]",
-    "memo[1]",
     "memo[2]",
     "structure",
     "variables[1]",
@@ -70,19 +68,20 @@
    ],
    "outcome": "skipped_ratio",
    "remaining": [
-    "structure:dangling",
+    "structure:unverified",
+    "variables[1]:unverified",
     "variables[1]:dangling",
+    "edges[0]:unverified",
     "edges[0]:dangling",
-    "edges[1]:dangling",
-    "edges[2]:dangling",
+    "edges[2]:unverified",
     "memo[0]:dangling",
-    "memo[1]:dangling",
+    "memo[2]:unverified",
     "memo[2]:dangling",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling"
+    "worry.moderate[0]:unverified"
    ]
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "젠슨 황 엔비디아 CEO의 중국 스파이 의혹 연루 스캔들과 CEO 거취",
@@ -90,17 +89,17 @@
   "trigger": []
  },
  "problems": [
-  "structure:dangling",
+  "structure:unverified",
+  "variables[1]:unverified",
   "variables[1]:dangling",
+  "edges[0]:unverified",
   "edges[0]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:dangling",
+  "edges[2]:unverified",
   "memo[0]:dangling",
-  "memo[1]:dangling",
+  "memo[2]:unverified",
   "memo[2]:dangling",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling"
+  "worry.moderate[0]:unverified"
  ],
- "content_hash": "d9408a0792e45181"
+ "content_hash": "12566c921b127e2d"
 }
