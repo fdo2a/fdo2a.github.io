@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-12",
  "status": "error",
- "reason": "model_extract_success",
+ "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-12T11:28:09+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-12T11:43:30+00:00",
  "cutoff_at": "2026-11-12T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 657,
+  "harvest": 645,
   "candidates": 1,
   "articles": [
    6
@@ -42,19 +42,19 @@
    "dailian": "ok"
   },
   "notes": [
-   "discover:657"
+   "discover:645"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 0,
-   "out": 0
+   "in": 14396,
+   "out": 8480
   }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "금융사 3분기 실적: 시장 변동성에 따른 투자손익 감소와 보험 본업 이익",
+  "query": "3분기 순익 삼성증권",
   "trigger": []
  },
- "content_hash": "d04674dc5b6b9e3a"
+ "content_hash": "cf7c2291b4fe01b3"
 }
