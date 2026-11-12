@@ -1,0 +1,296 @@
+{
+ "report_date": "2026-11-12",
+ "market": "us",
+ "collected_utc": "2026-11-12T22:38:18+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-10T22:43:37+00:00",
+  "kwusa": "2026-11-11T22:25:28+00:00",
+  "lim_econ": "2026-11-10T22:39:09+00:00",
+  "d_ticker": "2026-11-11T13:58:08+00:00",
+  "aethersemiconductor": "2026-11-11T22:05:59+00:00",
+  "FastStockNews": "2026-11-11T22:30:17+00:00",
+  "FastStockNewsUSA": "2026-11-11T22:35:42+00:00",
+  "insidertracking": "2026-11-11T22:38:23+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-10T22:43:37+00:00",
+   "last_id": 2996,
+   "last_dt": "2026-11-11T22:45:37+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:25:28+00:00",
+   "last_id": 61759,
+   "last_dt": "2026-11-12T22:24:17+00:00",
+   "read": 3
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-10T22:39:09+00:00",
+   "last_id": 2131,
+   "last_dt": "2026-11-11T22:41:37+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-11T13:58:08+00:00",
+   "last_id": 4135,
+   "last_dt": "2026-11-12T14:58:46+00:00",
+   "read": 11
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:05:59+00:00",
+   "last_id": 26894,
+   "last_dt": "2026-11-12T16:23:19+00:00",
+   "read": 60
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:30:17+00:00",
+   "last_id": 127832,
+   "last_dt": "2026-11-12T22:30:51+00:00",
+   "read": 67
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:35:42+00:00",
+   "last_id": 24419,
+   "last_dt": "2026-11-12T22:32:28+00:00",
+   "read": 49
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:38:23+00:00",
+   "last_id": 69175,
+   "last_dt": "2026-11-12T22:29:38+00:00",
+   "read": 96
+  }
+ },
+ "items": [
+  {
+   "id": "lim_econ/2131",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-11T22:41:37+00:00",
+   "url": "https://t.me/lim_econ/2131",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "달러-원 1300~1400원 콜옵션 수요가 급증했고, BI는 단기 급등 탓에 반대 방향 헤지 수요가 더 커질 수 있다고 봤다. 베어드는 정부 조치와 CEO 리스크를 이유로 엔비디아 투자의견을 중립으로 낮췄지만, 주가 하락으로 PER이 낮아졌다는 점은 상반된 경고로 남았다. AI 투자 과열 속에 식스스트리트는 반도체 재고와 보험사 한도 도달에 따른 조달비용 상승을 우려했으나, JP모건은 보험사의 AI 채권 비중이 낮아 추가 매수 여력이 있다고 반박했다. 마시는 신용위험보험으로 AI·데이터센터 대출의 규제 자본 부담을 덜어야 한다고 주장했고, 사우디 원유 생산은 전쟁 이전 수준을 회복해 브렌트유가 이달 약 21% 하락했다."
+  },
+  {
+   "id": "hedgecat0301/2996",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-11T22:45:37+00:00",
+   "url": "https://t.me/hedgecat0301/2996",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "키움증권 한지영 애널리스트는 미국 AI주 강세와 코어위브 실적 및 앤스로픽 IPO 수요예측 흥행을 근거로 국내 증시의 반등 가능성을 긍정적으로 봤다. 외국인이 반도체·IT하드웨어 중심으로 순매수에 나서며 악재보다 호재에 반응하기 시작했다고 진단했다. 다만 엔비디아 시간외 약세와 옵션 만기 등 수급 부담, 누적 외국인 순매도 규모를 감안하면 단기 속도조절은 불가피하다고 보았다. 과매도 국면인 만큼 호재 반응력이 높아질 수 있어, 조정이 와도 주식 비중 축소보다는 보유 관점을 우선하는 것이 적절하다는 입장이다."
+  },
+  {
+   "id": "d_ticker/4125",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-11T22:48:08+00:00",
+   "url": "https://t.me/d_ticker/4125",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "엔비디아 이사회가 이르면 당일 회의를 열어 젠슨 황 최고경영자를 해임하는 방안을 준비 중이라는 속보가 전해졌다. 보도는 황 CEO가 중국 공작원으로 의심되는 여성과 부적절한 관계를 맺었고, 사내 임원과도 관계를 가져 혼외정사가 두 차례에 걸쳤다는 점을 해임 사유로 제시했다. 다만 이는 해당 매체가 전한 내용일 뿐 확인된 사실로 보기는 어렵다는 점에서 신중한 접근이 필요하다는 의견도 함께 읽힌다."
+  },
+  {
+   "id": "kwusa/61757",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-11T23:00:20+00:00",
+   "url": "https://t.me/kwusa/61757",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_ko": "미국 증시는 11월 11일 종가 기준으로 S&P500이 1.31%, 나스닥이 1.60% 올랐고, 필라델피아 반도체 지수는 5.66% 급등했다. 필자는 코어위브(CoreWeave) 실적이 AI 투자 둔화 우려를 누그러뜨린 것이 상승을 이끌었다고 봤다. 다만 시장 급락 이후 바닥을 확인했다고 보기에는 이르다는 신호가 나온다고 짚었다. 반도체·하드웨어 등 기술 업종이 강세를 보인 반면 유통과 호텔·레저는 약세를 나타냈다. 금리 측면에서는 연준 인사들의 인플레이션 경고 속에 12월 금리 인상 베팅이 커지며 달러가 강세를 보인다고 정리했다."
+  },
+  {
+   "id": "kwusa/61758",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-11T23:03:28+00:00",
+   "url": "https://t.me/kwusa/61758",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진영",
+   "source": null,
+   "summary_ko": "키움 김진영 애널리스트는 11일 종가 기준 미국 시장이 기술주 강세로 상승했다고 전했다. 그는 AI 기업 신용위험을 겨냥한 액티브 ETF 상장 신청, 팩터 결합 액티브 ETF 4종 출시, AI 투자 부담 속에서 현금흐름이 탄탄한 기업에 투자하는 캐시카우 ETF의 상대적 강세를 주요 동향으로 꼽았다. 필자는 AI 인프라 투자에 따른 변동성 확대 국면에서 재무구조가 우량한 기업의 방어력이 주목받는 흐름으로 보고 있다."
+  },
+  {
+   "id": "aethersemiconductor/26839",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-12T00:47:58+00:00",
+   "url": "https://t.me/aethersemiconductor/26839",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-11",
+   "summary_ko": "월가 애널리스트들은 젠슨 황 엔비디아 CEO가 중국 스파이로 지목된 여성과 불륜 관계였다는 보도 이후 그의 거취가 불투명해졌고, 이사회가 해임을 준비한다는 소식에 주가가 8% 하락했다고 전했다. 이들은 젠슨 황이 떠날 경우 주가가 20% 안팎 급락할 수 있다는 시각을 내놓았으며, 특히 그가 직속 보고 라인을 70명으로 두고 회사의 중심에 서도록 조직을 짜놓은 점을 들어 하락폭이 더 클 수 있다는 의견도 나왔다. 반면 여러 애널리스트는 엔비디아가 견고한 사업 기반을 갖췄고 승계 계획이 질서 있게 이뤄진다면 장기적 영향은 제한적일 것이라는 견해를 밝혔다."
+  },
+  {
+   "id": "FastStockNewsUSA/24388",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-12T08:54:49+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24388",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "폭스콘이 목요일(현지시간) 발표한 3분기 실적에서 인공지능 수요 호조에 힘입어 순이익이 전년 동기보다 34% 늘었다는 소식이 전해졌다. 3분기 순이익은 775억 대만달러로, LSEG 집계 전망치 696억 대만달러와 전년 동기 577억 대만달러를 모두 웃돌았다. 이를 두고 AI 관련 수요가 실적을 끌어올리고 있다는 시각이 제시됐다."
+  },
+  {
+   "id": "d_ticker/4131",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-12T14:09:52+00:00",
+   "url": "https://t.me/d_ticker/4131",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 이사회가 2026년 11월 11일부로 젠슨 황의 CEO 및 이사직 사임을 즉각 수리했다는 공식 공시 내용이 전해졌다. 이에 따라 2013년부터 CFO를 맡아 온 콜레트 크레스(59세)가 신임 CEO를 선임할 때까지 임시 CEO직을 겸임하고, 1993년부터 이사회에 몸담아 온 하비 존스(73세)가 신임 이사회 의장으로 선임됐다. 이번 소식은 SEC 8-K 보고서를 통해 확인된 것으로 알려졌다."
+  },
+  {
+   "id": "aethersemiconductor/26890",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-12T15:26:15+00:00",
+   "url": "https://t.me/aethersemiconductor/26890",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "젠슨 황 없이도 엔비디아가 엔비디아일 수 있는지가 핵심이라는 시각이다. 30년 넘게 쌓은 GPU 기술과 CUDA 생태계, 경영진 체계가 경쟁력의 바탕이어서 황이 떠나도 사업이 사라지지는 않는다는 의견이다. 다만 황에게 직접 보고하는 수평적 조직 탓에 그를 대신할 2인자가 없어 조직 개편이 필요할 수 있다고 본다. 후임으로는 CFO 콜레트 크레스가 과도기 CEO를 맡을 가능성이 가장 높다는 평가다. 대형 고객의 주문이 급감하기는 어렵고, 오히려 경쟁사와 신생 AI 기업에 변화가 생길 수 있다는 전망이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/26891",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-12T15:29:08+00:00",
+   "url": "https://t.me/aethersemiconductor/26891",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "CNBC",
+    "url": "https://www.cnbc.com/2026/11/11/nvidia-jensen-huang-ai-financial-system-risk.html",
+    "basis": "link"
+   },
+   "article_date": "2026-11-11",
+   "summary_ko": "엔비디아 젠슨 황 최고경영자의 갑작스러운 사임으로 AI 붐을 떠받치는 엔비디아의 금융 연결망을 통해 문제가 번질지에 대한 우려가 커졌다. 엔비디아는 업계 성장을 돕기 위해 다른 기업들에 수천억 달러 규모의 금융 약정을 해 「AI의 중앙은행」이라는 별명을 얻었다. 다만 전문가들은 2007~2008년 같은 금융위기 재연 가능성은 낮다고 본다. 셰일러 베어 전 미국 예금보험공사 총재는 엔비디아가 은행처럼 신뢰 상실에 취약하지 않고 막대한 자기자본이 완충 역할을 한다며, 규제 당국은 은행과 금융권의 엔비디아 노출 정도를 면밀히 살펴야 한다고 말했다. 엔비디아 주가는 10월 6일 고점 대비 33% 떨어졌다. 그럼에도 엔비디아 칩 가치가 하락하면 칩을 담보로 돈을 빌린 기업들의 상환 능력이 의문시되고, 이런 순환 금융 구조가 흔들리면 차입 기업과 대출 은행으로 파장이 번질 수 있다. 다만 엔비디아의 보증 약정은 시점과 형태가 제각각이라 한꺼번에 돌아오기 어렵다는 분석도 있다."
+  },
+  {
+   "id": "insidertracking/69159",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-12T21:14:52+00:00",
+   "url": "https://t.me/insidertracking/69159",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "시스코의 2027회계연도 1분기 실적은 매출 185억 달러(전년 대비 24% 증가)와 비GAAP 주당순이익 1.40달러로 시장 예상을 웃돌았다고 전해졌다. 특히 네트워킹 매출이 43% 늘어 제품군 중 가장 높은 성장률을 보였고, AI 인프라 주문은 90억 달러로 전년보다 2배 넘게 확대됐다. 이에 따라 연간 매출 가이던스도 748억~758억 달러로 상향됐다. 경영진은 다년간 이어질 네트워킹 슈퍼사이클이 아직 초기 단계라는 시각을 밝히며 수십억 달러 규모의 기회를 지속 확보할 수 있다고 전망했다."
+  },
+  {
+   "id": "insidertracking/69171",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-12T21:27:43+00:00",
+   "url": "https://t.me/insidertracking/69171",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "젠슨 황 전 엔비디아 CEO가 두 번째 직원과도 부적절한 관계를 맺었다는 사실을 로이터가 사안에 정통한 관계자 2명을 인용해 보도했다. 이는 그의 사임으로 이어진 기존 2건의 혼외 관계 외에 추가로 확인된 내용이다. 기존에 알려진 상대는 미국 정보당국이 중국 스파이로 의심하는 앨리스 황과 엔비디아 헬스케어 부문 부사장 킴벌리 파월이며, 두 번째 직원의 신원은 공개되지 않았다. 엔비디아는 논평을 거부했고, 젠슨 황과 파월, 이사회 측은 응답하지 않았으며 앨리스 황과는 연락이 닿지 않은 것으로 나타났다. 젠슨 황은 앞서 11월 8일 성명에서 불륜을 인정했으나 상대의 이름은 밝히지 않았다. 이사회는 최고재무책임자 콜레트 크레스를 임시 CEO로 선임해 후임을 물색 중이며, 황 전 CEO가 외국 정보기관의 공작 대상이었는지를 가리는 조사도 사외이사와 외부 법률 자문단 주도로 시작했다는 시각이 제기된다."
+  },
+  {
+   "id": "FastStockNewsUSA/24415",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-12T21:29:44+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24415",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "세레브라스 시스템즈의 2026년 3분기 실적에서 핵심 투자는 2억 3,090만 달러로 예상치를 웃돌았고, 핵심 하드웨어 매출도 예상보다 많았다. 반면 핵심 클라우드 매출은 예상에 못 미쳤으며, 전체 매출총이익률은 20%로 예상치 35.7%를 크게 밑돌았다. 다만 핵심 사업 기준 매출총이익률은 41%로 예상을 넘어섰다. 회사는 4분기 핵심 사업 매출을 3억 1,000만~3억 3,000만 달러로 전망했는데, 이는 예상치 2억 7,120만 달러보다 높은 수준이라는 점에서 향후 성장세가 강해질 것이라는 시각이 나온다. 회계연도 핵심 사업 매출 전망 역시 상향 조정된 것으로 전해졌다."
+  },
+  {
+   "id": "insidertracking/69174",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-12T21:41:45+00:00",
+   "url": "https://t.me/insidertracking/69174",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "11월 13일 브리핑은 젠슨 황의 전격 사임 소식에 엔비디아 주가가 장중 급락한 뒤 4% 하락 마감했다고 전했다. 미 법무부와 의회가 엔비디아 조사를 확대하면서 대중국 반도체 규제도 주목받고 있다고 짚었다. 거시 변수로는 연준의 추가 긴축 발언과 10년물 국채금리 5.10%, WTI 상승과 호르무즈 해협 긴장이 언급됐다. 어플라이드머티리얼즈와 시스코의 호실적은 AI 인프라 투자가 이어진다는 시각을 뒷받침하는 것으로 제시됐고, 네비우스는 자본투자 부담이 부각되며 17% 떨어졌다고 전했다."
+  },
+  {
+   "id": "FastStockNewsUSA/24417",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-12T21:43:56+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24417",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "로이터 통신은 두 명의 소식통을 인용해 엔비디아 전 CEO 젠슨 황이 회사 직원과 불륜 관계였다고 보도했다. 이는 엔비디아 헬스케어 부사장 킴벌리 파월, 그리고 미국 정보기관이 간첩 혐의로 수사 중인 중국인 임원 앨리스 황과의 불륜 의혹이 먼저 보도된 뒤 나온 세 번째 연루 의혹이다. 앞선 스캔들의 여파로 황 CEO가 11월 12일 사임한 것으로 알려졌다. 엔비디아는 논평을 거부했고, 황 CEO와 이사회도 로이터의 문의에 응답하지 않았다."
+  }
+ ],
+ "stats": {
+  "items": 15,
+  "summarized": 15,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

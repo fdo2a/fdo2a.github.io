@@ -1,9 +1,91 @@
 {
- "report_date": "2026-11-11",
+ "report_date": "2026-11-12",
  "effective": "2026-11-06T17:30:00-05:00",
  "h41": {
-  "candidates": [],
-  "pool": [],
+  "candidates": [
+   {
+    "release_date": "2026-11-12",
+    "week_ended": "2026-11-11",
+    "wednesday": "2026-11-11",
+    "url": "https://www.federalreserve.gov/releases/h41/20261112/",
+    "rows": {
+     "reserves": {
+      "avg": 2960603,
+      "chg_wk": 30515,
+      "chg_yr": 105573,
+      "wed": 2969977
+     },
+     "tga": {
+      "avg": 914370,
+      "chg_wk": -42805,
+      "chg_yr": -39446,
+      "wed": 912134
+     },
+     "rrp_others": {
+      "avg": 162,
+      "chg_wk": -2583,
+      "chg_yr": -6360,
+      "wed": 152
+     },
+     "rrp_foreign": {
+      "avg": 336357,
+      "chg_wk": -1848,
+      "chg_yr": -13364,
+      "wed": 336101
+     },
+     "treasuries": {
+      "avg": 4583294,
+      "chg_wk": 4950,
+      "chg_yr": 390388,
+      "wed": 4586607
+     },
+     "mbs": {
+      "avg": 1883522,
+      "chg_wk": 0,
+      "chg_yr": -186441,
+      "wed": 1883522
+     }
+    },
+    "late": false,
+    "flags": {
+     "rows": {
+      "reserves": {
+       "wed_chg": 7173,
+       "z": 0.06,
+       "big": false
+      },
+      "tga": {
+       "wed_chg": -24114,
+       "z": -0.33,
+       "big": false
+      },
+      "rrp_others": {
+       "wed_chg": -73,
+       "z": 0.12,
+       "big": false
+      },
+      "rrp_foreign": {
+       "wed_chg": 1823
+      },
+      "treasuries": {
+       "wed_chg": 7830
+      },
+      "mbs": {
+       "wed_chg": 0
+      }
+     },
+     "window": {
+      "first": "2025-10-29",
+      "last": "2026-11-04",
+      "n": 52
+     },
+     "prior_mismatch": []
+    }
+   }
+  ],
+  "pool": [
+   "2026-11-12"
+  ],
   "pending": [],
   "overdue": []
  },
@@ -29,11 +111,11 @@
   "qra": []
  },
  "notes": [],
- "today": false,
- "run_id": "43146802717-1",
- "generated": "2026-11-12 12:15 KST",
+ "today": true,
+ "run_id": "43320742327-1",
+ "generated": "2026-11-13 07:40 KST",
  "checked": {
-  "h41": false,
+  "h41": true,
   "qra": false
  },
  "schedule": {
@@ -41,7 +123,7 @@
    "borrowing": "2027-02-01",
    "refunding": "2027-02-03"
   },
-  "h41_next": "2026-11-12"
+  "h41_next": "2026-11-19"
  },
  "status": "complete"
 }
