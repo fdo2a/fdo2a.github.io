@@ -1,0 +1,725 @@
+{
+ "code": {
+  "dirty": false,
+  "dirty_sha256": null,
+  "head": "807d17638b328039e2f2aa4c280339b70679c189",
+  "python": "3.11.18"
+ },
+ "created_at": {
+  "kst": "2026-11-12T18:30:52+09:00",
+  "utc": "2026-11-12T09:30:52+00:00"
+ },
+ "date": "2026-11-12",
+ "disabled": [
+  {
+   "name": "check_news",
+   "since": "2026-11-06",
+   "why": "KR 뉴스가 /kr/news/ 로 분리돼 마감브리프에는 뉴스 블록이 없다(KR_ORCHESTRATOR)"
+  },
+  {
+   "name": "check_contested",
+   "since": "2026-11-06",
+   "why": "쟁점 분석이 KR 뉴스 글로 옮겨 갔다(KR_ORCHESTRATOR)"
+  }
+ ],
+ "format": "prepub-record/1",
+ "gates": [
+  {
+   "argv": [],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "unconfirmed",
+   "note": null,
+   "output_sha256": null,
+   "reason": "",
+   "required": true,
+   "script_sha256": null,
+   "seconds": 0.0,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_session.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "session gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_session",
+   "note": null,
+   "output_sha256": "b48111753af34051b1878f227f883fe95706998e0b3dadd74250368fddf2aa45",
+   "reason": "",
+   "required": true,
+   "script_sha256": "5f1750f7a8d1a38512f41110cf065ff12160e0bf0ac16149c823ab31cb76a2e8",
+   "seconds": 0.04,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_weight.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "분량: 본문 5876자 · 뉴스 요약 0자 · 전체 5876자 (공백 제외)",
+    "경고: 서술형 본문이 5876자다(평상시 4,000~5,000자) — 큰 사건이 있는 날이 아니면 반복 해석·장중 시각·변화 없는 판단부터 덜어낸다. 중요한 분석은 지우지 않는다",
+    "경고: 시황군 1309자 < 판단군 1611자 — 중요한 분석이 몰린 날이 아니면 주요 자산의 움직임·큰 변동의 원인·자산 간 연결이 빠졌는지 점검한다(비율을 맞추려고 시황을 덧붙이지 않는다)",
+    "OK — 무게중심 게이트 통과 (발표일)"
+   ],
+   "kind": "structure",
+   "name": "check_weight",
+   "note": null,
+   "output_sha256": "0df270daa5f863870c9ce8b8cbb545d2e4a71257f47cf18c1f2f0216580d3802",
+   "reason": "",
+   "required": true,
+   "script_sha256": "b8cbaad2816efb897d327c756caa33d34511e2d0cbaa64bf8b65fffd67263b75",
+   "seconds": 0.05,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 2
+  },
+  {
+   "argv": [
+    "scripts/check_kr_stance.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--next",
+    "{stance_next}"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "§2·판단 원장 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_kr_stance",
+   "note": null,
+   "output_sha256": "50063084c61a0c1a6b0fa81f797ff7dbf4f55a50e7bc2e8083aa1bfeecca14f5",
+   "reason": "",
+   "required": true,
+   "script_sha256": "7974d9eebe54f47da2796cf02f0dadfb45324a2d6c4afb06338e108df462b927",
+   "seconds": 0.11,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_movers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "움직인 종목 이상 없음 — <html>"
+   ],
+   "kind": "numbers",
+   "name": "check_movers",
+   "note": null,
+   "output_sha256": "4363513512a9bcfe24e72c236e5a80688bdc5a3dcae331454b1089d918a5c6cf",
+   "reason": "",
+   "required": true,
+   "script_sha256": "e99503591fb2c4f74ab37d0889d5b1c6bbcb25fdea72900b75de8795e70d1612",
+   "seconds": 0.04,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_telegram.py",
+    "--html",
+    "{html}",
+    "--tg",
+    "{tg}",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "텔레그램 인용 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_telegram",
+   "note": null,
+   "output_sha256": "5504476a7286809fe43bd09b233142498d0efb087a70e1d679726ad46ad64fe7",
+   "reason": "",
+   "required": true,
+   "script_sha256": "c2cf9f429ac47b992b332fd0dd5c6e86276ee159a2445065328e8cae961edab5",
+   "seconds": 0.21,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_fund.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "펀드 섹션 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_fund",
+   "note": null,
+   "output_sha256": "20c5793e8e1e09346d055a38b46e25dbf465307a18892234b477ee46088f897a",
+   "reason": "",
+   "required": true,
+   "script_sha256": "aeed2493c3394d3cb59b7662d032e7854bbada5b97f627e8b43f61d94001f7dc",
+   "seconds": 0.08,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_research.py",
+    "check",
+    "--span",
+    "daily",
+    "--html",
+    "{html}",
+    "--root",
+    "research/kr",
+    "--market",
+    "kr",
+    "--date",
+    "{date}",
+    "--cycle",
+    "{cycle}"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "RESEARCH_OK"
+   ],
+   "kind": "structure",
+   "name": "check_research",
+   "note": null,
+   "output_sha256": "b07ae556f94f4f1cfa887f6909d5974d37234606485396e81f20c0f23646bbde",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d54dcf4ef6d44931fe5fc7bb03f625616884aa4bda1f649ed69f9fcfe7c96afd",
+   "seconds": 0.07,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_style.py",
+    "{html}"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "말투 이상 없음 — <html>"
+   ],
+   "kind": "format",
+   "name": "check_style",
+   "note": null,
+   "output_sha256": "f6efeaaa534c4472d7b685e8d4909a5cb197e7831f18d8859f77df0fb850887c",
+   "reason": "",
+   "required": true,
+   "script_sha256": "4ffd7ef01b1b78a44d60afab21a10479758e3b54404214f30baf75077484a4a9",
+   "seconds": 0.07,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_readability.py",
+    "--strict",
+    "--no-inline-images",
+    "{html}"
+   ],
+   "ended": "2026-11-12T18:30:52+09:00",
+   "exit": 0,
+   "items": [
+    "== <html>",
+    "문장 123 · 중앙 55자 · P90 98자 · 120자 초과 1문장 · 수치 중앙 1개/P90 4개 · 문단 P90 300자",
+    "note 산문 과잉 정밀 1,326.91원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 과잉 정밀 1,332.33원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 과잉 정밀 1,336.98원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,326.91 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,332.33 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,336.98 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 5,293.05 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 5,342.73 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 5,375.36 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 5,385.94 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 5,458.84 — 호가가 아니면 반올림을 생각해 본다",
+    "info 134자 문장 · TPG가 롯데그룹이 가진 롯데렌탈 지분 61.17%를 인수한 뒤 대주주와 같은 주당 5만9,000원에 남은 38.83%를 공개매수하고 있고(11월 6일~12월 3…",
+    "기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.",
+    "수치: 숫자 토큰(%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, 「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.",
+    "note(문체 참고): 문장당 수치 6개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·천 단위+소수, 헤드라인 80자 초과·수치 4개 초과.",
+    "note 는 발행을 막지 않는다(--strict 도 세지 않는다) — 다시 읽어 보고, 자연스러우면 그대로 둔다.",
+    "FAIL 은 조판이 깨지는 구조 문제뿐이다: 섹션 경계를 넘는 div, 인라인 이미지(--no-inline-images), 조판 미적용."
+   ],
+   "kind": "structure",
+   "name": "check_readability",
+   "note": null,
+   "output_sha256": "55d58b0b2dc7b0ea445234fadfff9f16d9223702f6b197208013d3210863cc44",
+   "reason": "",
+   "required": true,
+   "script_sha256": "3f22b4ab8f65c4ff7cea28b1e73696a556c8d11afc9462d427f502881e35c165",
+   "seconds": 0.05,
+   "started": "2026-11-12T18:30:52+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  }
+ ],
+ "generator": {
+  "prepub_gates.json": "addaa489f4001adae992b7b220bb0958b073a2c7ac4aa2b4ca8f4dc986442988",
+  "record.py": "ccd59345a9a3371d0048eafa5ecd8d20f0d195ec9063bfd7da417e6a0c4c0dcb",
+  "run_gates.py": "7d5ccf05d63243fc52a49e2aa370acf387a4b512062cf3b760a49862ac88952c"
+ },
+ "inputs": {
+  "capped": false,
+  "count": 72,
+  "files": [
+   {
+    "path": "<datadir>/kr_charts_manifest.json",
+    "ref": "repo:kr/data/kr_charts_manifest.json",
+    "sha256": "ecb00ececf43d8215713ea6563d4e06a3e0eb9cc5db1099cc89998d263e65bd4"
+   },
+   {
+    "path": "<datadir>/kr_econ.json",
+    "ref": "repo:kr/data/kr_econ.json",
+    "sha256": "73f644da1f615429ee58017aa73012cf2c16f9ea57cf84ade8d3413f0aa0a9d3"
+   },
+   {
+    "path": "<datadir>/kr_flows.json",
+    "ref": "repo:kr/data/kr_flows.json",
+    "sha256": "4bca9f0686b0efb13bf5146a7d9a7d54d788d6c44b619a9c335784def45db67d"
+   },
+   {
+    "path": "<datadir>/kr_flows_intraday.json",
+    "ref": "repo:kr/data/kr_flows_intraday.json",
+    "sha256": "2895157f76d30f97ac24647a236e153e8357972933ff80d4e17678ec7ba0ea57"
+   },
+   {
+    "path": "<datadir>/kr_fund_view.html",
+    "ref": "repo:kr/data/kr_fund_view.html",
+    "sha256": "cabf2919d2d602fd4a66305bda53e21c11ae75ab304ab73ec11b5fdf66492c62"
+   },
+   {
+    "path": "<datadir>/kr_fund_view.json",
+    "ref": "repo:kr/data/kr_fund_view.json",
+    "sha256": "6ddab004a2cfad799be2635ec1209f10846d77900294bd72fe89bf8f03ea64c9"
+   },
+   {
+    "path": "<datadir>/kr_index_etf.json",
+    "ref": "repo:kr/data/kr_index_etf.json",
+    "sha256": "087f970890e7c4bc9478a4a37a7eae0946c760fcf019b5049a8d6ed19d617466"
+   },
+   {
+    "path": "<datadir>/kr_industry.json",
+    "ref": "repo:kr/data/kr_industry.json",
+    "sha256": "a05dda387b7c5c27d418bc6f8286cd8d734ea8dabceb684c90892e0e2fe6b031"
+   },
+   {
+    "path": "<datadir>/kr_intraday.json",
+    "ref": "repo:kr/data/kr_intraday.json",
+    "sha256": "265c4e3d1300aa31ad7613bab48cd6a3c475d31b3264cda07a5ec6129aeb2d3b"
+   },
+   {
+    "path": "<datadir>/kr_market_data.json",
+    "ref": "repo:kr/data/kr_market_data.json",
+    "sha256": "5b8e86becf0ad7cb6488be4af31ae082485543ccdebcc4c0e675385c61d500ca"
+   },
+   {
+    "path": "<datadir>/kr_movers.json",
+    "ref": "repo:kr/data/kr_movers.json",
+    "sha256": "c29167a27e03abf9aa918c75478d754f455912689f2788632f6c4b23c79a7350"
+   },
+   {
+    "path": "<datadir>/kr_program.json",
+    "ref": "repo:kr/data/kr_program.json",
+    "sha256": "f4e9ba2fe1eacef0815dd13217fc82f6f03f965f6cc7e8d468032230b3617b40"
+   },
+   {
+    "path": "<datadir>/kr_sector.html",
+    "ref": "repo:kr/data/kr_sector.html",
+    "sha256": "7055f390d0e5343ea2dbc0cd98ff6ab3dd9aa565a4cd0f5e7688af20be748995"
+   },
+   {
+    "path": "<datadir>/kr_session.json",
+    "ref": "repo:kr/data/kr_session.json",
+    "sha256": "cab223077e191e222dc7bfcf7c99a5291fd0f9a48e6fd9ea66300583c5764474"
+   },
+   {
+    "path": "<datadir>/kr_stance.json",
+    "ref": "repo:kr/data/kr_stance.json",
+    "sha256": "5b4bfbf4294905daa3076f4ab3d09ddfbea94abeef50c2a5ca9e29233d021490"
+   },
+   {
+    "path": "<datadir>/kr_stance_eval.json",
+    "ref": "repo:kr/data/kr_stance_eval.json",
+    "sha256": "f7518b7d05b625142e1ed0203a6eadb354849ed0ca9faddb16d77d5e7fe863b3"
+   },
+   {
+    "path": "<datadir>/kr_stock_moves.json",
+    "ref": "repo:kr/data/kr_stock_moves.json",
+    "sha256": "5d61155a6d991d2846b784251d155e9e0f8f5ef9089978462c8484b1f9597477"
+   },
+   {
+    "path": "<datadir>/kr_technical.json",
+    "ref": "repo:kr/data/kr_technical.json",
+    "sha256": "a3759d8a77fb9843632bd38cab94a427c245b177dca65dfac37d73317fc7ea2d"
+   },
+   {
+    "path": "<datadir>/kr_theme.json",
+    "ref": "repo:kr/data/kr_theme.json",
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+   },
+   {
+    "path": "<datadir>/kr_top_value.json",
+    "ref": "repo:kr/data/kr_top_value.json",
+    "sha256": "c71ede2d21cefd0c9b36fe508b15ce6c56a707d3d56abbb6937a8f1f38c7347a"
+   },
+   {
+    "path": "<datadir>/history/kr_market.jsonl",
+    "ref": "repo:kr/data/history/kr_market.jsonl",
+    "sha256": "1c65456e53244d5318624989223dd4400ff336de508f94366f2ff155546b1d12"
+   },
+   {
+    "path": "<datadir>/news/2026-09-23.json",
+    "ref": "repo:kr/data/news/2026-09-23.json",
+    "sha256": "8f72450df5e20fa1e7d5ce2a88de232f899d601d0cf60c143ca4ae87b74b6899"
+   },
+   {
+    "path": "<datadir>/news/2026-09-28.json",
+    "ref": "repo:kr/data/news/2026-09-28.json",
+    "sha256": "81708755319628ba04f035d749e060887a5dd716ca9e6a41ae47c3ce9b61542a"
+   },
+   {
+    "path": "<datadir>/news/2026-09-29.json",
+    "ref": "repo:kr/data/news/2026-09-29.json",
+    "sha256": "4d435c5a468a056d3bdbe82eb672efda6b53d8d3e476fb32b4fa9a1d689f76be"
+   },
+   {
+    "path": "<datadir>/news/2026-09-30.json",
+    "ref": "repo:kr/data/news/2026-09-30.json",
+    "sha256": "9c85d7719043511683e1dd37c39f215effbf05fad942a3e01fec83065bd774b8"
+   },
+   {
+    "path": "<datadir>/news/2026-10-01.json",
+    "ref": "repo:kr/data/news/2026-10-01.json",
+    "sha256": "4699bc0797e2712e4a6162e0cd00332d148dd2d3dd854d076671586ecb1b0ab3"
+   },
+   {
+    "path": "<datadir>/news/2026-10-02.json",
+    "ref": "repo:kr/data/news/2026-10-02.json",
+    "sha256": "569433220ef1352a1b29fd79cc455fe292279301e049b191c9323f4b3e466fc6"
+   },
+   {
+    "path": "<datadir>/news/2026-10-06.json",
+    "ref": "repo:kr/data/news/2026-10-06.json",
+    "sha256": "58846176f3a0ff2179812a7c73a004ba531fde9749c5c497587ea64d68a14c52"
+   },
+   {
+    "path": "<datadir>/news/2026-10-07.json",
+    "ref": "repo:kr/data/news/2026-10-07.json",
+    "sha256": "463efa9bde1bd27fa188b2b48f0267271424781eda64d09f163a94d5a361de9c"
+   },
+   {
+    "path": "<datadir>/news/2026-10-08.json",
+    "ref": "repo:kr/data/news/2026-10-08.json",
+    "sha256": "a8230b2eeb94d6bed9fc5f389abd660cd384d848859e78173db14f5474cc9303"
+   },
+   {
+    "path": "<datadir>/news/2026-10-12.json",
+    "ref": "repo:kr/data/news/2026-10-12.json",
+    "sha256": "cd86abc7028c9a8c6777d578f65af9b68470ca02f455ecfe8a421d008559397f"
+   },
+   {
+    "path": "<datadir>/news/2026-10-13.json",
+    "ref": "repo:kr/data/news/2026-10-13.json",
+    "sha256": "518efbc5e067fe323cc0cf4d1d0152fad684cb297cb1342108dd0ea5a821175e"
+   },
+   {
+    "path": "<datadir>/news/2026-10-14.json",
+    "ref": "repo:kr/data/news/2026-10-14.json",
+    "sha256": "20e03efe0ad82f6d08cc3acb4b6f747237552ba5b876e4361f6dfac492750057"
+   },
+   {
+    "path": "<datadir>/news/2026-10-15.json",
+    "ref": "repo:kr/data/news/2026-10-15.json",
+    "sha256": "de37f33bb229599bcb0f1759bc750eaa915589287cc625e0137815841e6e49a4"
+   },
+   {
+    "path": "<datadir>/news/2026-10-16.json",
+    "ref": "repo:kr/data/news/2026-10-16.json",
+    "sha256": "c50d58ecbe5d3b9e0cb4034baa1898672a2e0d758ab92f2ff7f72e1950f12b6d"
+   },
+   {
+    "path": "<datadir>/news/2026-10-19.json",
+    "ref": "repo:kr/data/news/2026-10-19.json",
+    "sha256": "ab791f25b41c27232f70253abae51e49e981ab97a1a1c1c1038ce14ac27a050b"
+   },
+   {
+    "path": "<datadir>/news/2026-10-20.json",
+    "ref": "repo:kr/data/news/2026-10-20.json",
+    "sha256": "95b7575e4f92893e7c7cb8d6720bc8aad002950808d08ad21b05e84c60b5bbf6"
+   },
+   {
+    "path": "<datadir>/news/2026-10-21.json",
+    "ref": "repo:kr/data/news/2026-10-21.json",
+    "sha256": "ee24ba1908ec27c7eeeb6810fa7f61469f14771cbcde2a8fbec29d597162d928"
+   },
+   {
+    "path": "<datadir>/news/2026-10-22.json",
+    "ref": "repo:kr/data/news/2026-10-22.json",
+    "sha256": "5481f5f525da3b3b2eae378a47483379a8a340d6e97590b7644ddf4c6e5f14ba"
+   },
+   {
+    "path": "<datadir>/news/2026-10-23.json",
+    "ref": "repo:kr/data/news/2026-10-23.json",
+    "sha256": "d651ffa26df22039baa954bcf7d9adeaca3f0aca04102e669cda5f6ff1d98926"
+   },
+   {
+    "path": "<datadir>/news/2026-10-26.json",
+    "ref": "repo:kr/data/news/2026-10-26.json",
+    "sha256": "35924d9977177a9b60af35fb2d92952a547c16d50fbd90aa0fec52eb426739d7"
+   },
+   {
+    "path": "<datadir>/news/2026-10-27.json",
+    "ref": "repo:kr/data/news/2026-10-27.json",
+    "sha256": "e8c96ff2aa0b7878105a7d0eb22a430621d9d48b9cd45108b74b798dd1162bdb"
+   },
+   {
+    "path": "<datadir>/news/2026-10-28.json",
+    "ref": "repo:kr/data/news/2026-10-28.json",
+    "sha256": "fff3de93dbb45d3712afc872497e7a89c10207da1fce135d5dafb98dca5208fa"
+   },
+   {
+    "path": "<datadir>/news/2026-10-29.json",
+    "ref": "repo:kr/data/news/2026-10-29.json",
+    "sha256": "ea99deb6dd33687a8f641255c71549310e88835f524ec85e6afde0ea78e5f1cf"
+   },
+   {
+    "path": "<datadir>/news/2026-10-30.json",
+    "ref": "repo:kr/data/news/2026-10-30.json",
+    "sha256": "91bec997933a2c39942126b3d13c7f316317e25686b6ae272c92a3e38d13afb5"
+   },
+   {
+    "path": "<datadir>/news/2026-11-02.json",
+    "ref": "repo:kr/data/news/2026-11-02.json",
+    "sha256": "1c083b0a4df3542db9be798d8be8eab342c27c5f754977b5d49823c78216a7d0"
+   },
+   {
+    "path": "<datadir>/news/2026-11-03.json",
+    "ref": "repo:kr/data/news/2026-11-03.json",
+    "sha256": "8a225b07a57daf0fd9094710c7301d8e003a97f76825ec4a65328b12c0c21621"
+   },
+   {
+    "path": "<datadir>/news/2026-11-04.json",
+    "ref": "repo:kr/data/news/2026-11-04.json",
+    "sha256": "5719fc96e4ad44178883c815e735d51ee1752ac9b8ddda4ad2f910227a908344"
+   },
+   {
+    "path": "<datadir>/news/2026-11-05.json",
+    "ref": "repo:kr/data/news/2026-11-05.json",
+    "sha256": "1b53f5c9d88acbd37f327fc1d943d9960562ad81dbe9fc6fef24db4e2134a982"
+   },
+   {
+    "path": "<datadir>/news/2026-11-06.json",
+    "ref": "repo:kr/data/news/2026-11-06.json",
+    "sha256": "374a3ff26e4562e657e4adb5f465798d934a2f77ce4060922c2d86d61bdf2810"
+   },
+   {
+    "path": "<datadir>/news/2026-11-09.json",
+    "ref": "repo:kr/data/news/2026-11-09.json",
+    "sha256": "16e987a5e66aedeb85e36744f7bdfa07d79e142a97bbe120bf9a5768ad706d0c"
+   },
+   {
+    "path": "<datadir>/news/2026-11-10.json",
+    "ref": "repo:kr/data/news/2026-11-10.json",
+    "sha256": "221dddb0c2200051ecd461ee86cd36167ae8c3963c90ad02125e37b2be9131a6"
+   },
+   {
+    "path": "<datadir>/news/2026-11-11.json",
+    "ref": "repo:kr/data/news/2026-11-11.json",
+    "sha256": "1de9517580f158bd1cd7a5db78c44e35a167b9554529670777900f05163d6597"
+   },
+   {
+    "path": "<datadir>/news/2026-11-12.json",
+    "ref": "repo:kr/data/news/2026-11-12.json",
+    "sha256": "3242230a13d222a5de616c2674626a9f0df501527da248a21db9b13419c8e1d0"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-06.json",
+    "ref": "repo:kr/data/telegram/2026-11-06.json",
+    "sha256": "753967fec8dc81c2441f47cf12e6aaa8bb73f19b184420e8b732d6de978eea33"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-09.json",
+    "ref": "repo:kr/data/telegram/2026-11-09.json",
+    "sha256": "5a58ecd942416a155f7d3c2271b872fdfb18130ea6d7d969661bee80618bc71a"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-10.json",
+    "ref": "repo:kr/data/telegram/2026-11-10.json",
+    "sha256": "0f8c2d321bf15e8a748659ce4f517c5e1ef89836c9648e33bb881f34bc909a50"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-11.json",
+    "ref": "repo:kr/data/telegram/2026-11-11.json",
+    "sha256": "aca0b95a1900dca576e5ed61ba2b81665367b38c5977f6167e0804b13d54c340"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-12.json",
+    "ref": "repo:kr/data/telegram/2026-11-12.json",
+    "sha256": "13a7c5b1930021a6fbd72f90751bd7ec2a9a323b4d8d5cf9f6b1a2849488e6ea"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W36.json",
+    "ref": "repo:kr/data/weekly/2026-W36.json",
+    "sha256": "5469d2562d3f155d4ba07648b8c78918f1b40d0b489e72bad3a32acfa73cdf7c"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W37.json",
+    "ref": "repo:kr/data/weekly/2026-W37.json",
+    "sha256": "28413910d7c247eecdb6ee4fbe6368c4c8090a04ccc108ea0092b32d8bce9c32"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W38.json",
+    "ref": "repo:kr/data/weekly/2026-W38.json",
+    "sha256": "7310027486d5cd6cd8f6ca70c7b57a0f95605da41c625e342bb39a5532288f22"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W39.json",
+    "ref": "repo:kr/data/weekly/2026-W39.json",
+    "sha256": "2a8010077101c7e7d5aaf313db1d727d69462c9c76c61b242c63cc7b594fac85"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W40.json",
+    "ref": "repo:kr/data/weekly/2026-W40.json",
+    "sha256": "352debe99586768d3c38a135fd221926aef207c42cab1a21228a6df7f3380be8"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W41.json",
+    "ref": "repo:kr/data/weekly/2026-W41.json",
+    "sha256": "aabde9086c754da739195b02e0c090577cc765b8a1d2cccf8a19bf8a7bc99143"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W42.json",
+    "ref": "repo:kr/data/weekly/2026-W42.json",
+    "sha256": "5ecae4eda20c532da47596ab72ec71f5782f946c35fe07ee17bc40c91e32ad49"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W43.json",
+    "ref": "repo:kr/data/weekly/2026-W43.json",
+    "sha256": "a9c44182878fb864a426861512367d5d538da27b0b684d45cc83f9fe1fd18736"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W44.json",
+    "ref": "repo:kr/data/weekly/2026-W44.json",
+    "sha256": "700187ea48268bfc81b13f9642082870010e7c99a20ff742cc740be3960b654e"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W45.json",
+    "ref": "repo:kr/data/weekly/2026-W45.json",
+    "sha256": "a2508cfb240e0f72edc14492e8283333e0f6dbc7849b8010e95637cf5cbe3d89"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W46.json",
+    "ref": "repo:kr/data/weekly/2026-W46.json",
+    "sha256": "8dbcb9e1b891d3c2bc8c34f30f4a33c8f5cfc7c3c5e32c7505d0cbde0ef27761"
+   },
+   {
+    "path": "<tg>/kr_telegram.json",
+    "ref": "repo:kr/data/telegram/2026-11-12.json",
+    "sha256": "13a7c5b1930021a6fbd72f90751bd7ec2a9a323b4d8d5cf9f6b1a2849488e6ea"
+   },
+   {
+    "path": "<stance_next>/kr_stance_next.json",
+    "ref": "repo:kr/data/kr_stance.json",
+    "sha256": "5b4bfbf4294905daa3076f4ab3d09ddfbea94abeef50c2a5ca9e29233d021490"
+   }
+  ],
+  "incomplete": false,
+  "unreadable": 0
+ },
+ "manual": "수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다",
+ "market": "kr",
+ "post": {
+  "blob": "6d6a267c94618bbb9c0bbc70574e7c06b2565921",
+  "path": "kr/posts/2026-11-12.html",
+  "sha256": "56f8849080c8bfa41651368cf98f051cfbeb8d50cb21349c9e418c24352d0834"
+ },
+ "preservation": {
+  "note": "같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로>, 로컬 origin/main 추적 이력의 앞 커밋에 있으면 git:<커밋>:<경로> 로 참조한다(복원 가능성 — 그 파일을 원본으로 썼다는 증거는 아니다). workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다",
+  "workspace_only": 0,
+  "workspace_only_files": []
+ },
+ "repo_inputs": {
+  "digest": "ab48f7c57b7fe66cae502e4c7673d5e147da44a6c0b24f4037094ff5e822344a",
+  "files": 705,
+  "paths": [
+   "scripts",
+   "config",
+   "research/kr"
+  ]
+ },
+ "summary": {
+  "blocking": [],
+  "integrity": [],
+  "not_run": [],
+  "note_format": [],
+  "note_numbers": [],
+  "publish_ok": true,
+  "status": "pass_with_warnings",
+  "verified": true,
+  "warned": [
+   "check_weight"
+  ]
+ }
+}
