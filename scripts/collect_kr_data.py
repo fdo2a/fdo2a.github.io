@@ -74,19 +74,39 @@ def _yf_last_date():
     return df.index[-1].date().isoformat() if len(df) else None
 
 
-def guard_session(outdir, report_date, indices):
+def guard_session(outdir, report_date, indices, verified_flat=None):
     """늦게 돈 실행이 지난 세션을 덮어쓰지 못하게 한다 — 무엇이든 쓰기 전에 부른다.
 
     2026-10-13 02:27 KST 실행이 10/12 종가를 10/08 로 원장·주간·월간·뉴스에 덮어썼다.
     문제가 있으면 StaleIndexData — 이 실행의 산출물은 전부 날짜가 틀리므로 아무것도 쓰지 않는다.
+    `verified_flat` 은 `ledger_conflicts` 로 그대로 넘긴다(진짜 보합일의 종가 중복만 푼다).
     """
     from kr.history import StaleIndexData, index_record, ledger_conflicts
     from us.history import read_jsonl
     ledger = os.path.join(outdir, "history", "kr_market.jsonl")
     rec = index_record({"report_date": report_date, "indices": indices})
-    problems = ledger_conflicts(read_jsonl(ledger), rec)
+    problems = ledger_conflicts(read_jsonl(ledger), rec, verified_flat=verified_flat)
     if problems:
         raise StaleIndexData("; ".join(problems))
+
+
+def _check_indices(indices, prev_diffs, report_date):
+    """→ (ohlc, index_checks, mode). integration 은 지수별 독립 try — 실패하면 없음으로 본다."""
+    index_mode, config_status = index_check.load_mode()
+    ohlc = {}
+    index_checks = {"mode": index_mode, "config_status": config_status}
+    for name in INDEX_NAMES:
+        try:
+            ohlc[name] = sources.fetch_index_ohlc(name)
+        except Exception:  # noqa: BLE001 — integration 없음으로 본다
+            ohlc[name] = None
+        row = indices.get(name)
+        if row is None:
+            index_checks[name] = {"status": "fetch_error"}
+            continue
+        index_checks[name] = index_check.check_pct(row.get("close"), row.get("change_pct"), prev_diffs.get(name),
+                                                   ohlc[name], report_date, index_mode)
+    return ohlc, index_checks, index_mode
 
 
 def main(outdir: str, assetdir: str = "kr/assets"):
@@ -109,25 +129,28 @@ def main(outdir: str, assetdir: str = "kr/assets"):
                                              datetime.now(KST).date().isoformat())
     for n in notes:
         print(f"report_date: {n}")
-    guard_session(outdir, report_date, indices)
+    from kr.history import StaleIndexData
+    checked = None
+    try:
+        guard_session(outdir, report_date, indices)
+    except StaleIndexData:
+        # 종가 중복만 걸렸고 두 지수가 모두 이 실행에서 「이 세션의 보합」으로 검증되면 진짜 보합일이다
+        # (codex 구현 검토 1회 #1). 한 지수만 남은 실행은 보수적으로 그대로 멈춘다 — 증거가 약하고 어차피 발행 불가.
+        # 이른 날짜 문제는 여기서 풀리지 않는다(verified_flat 을 줘도 남는다).
+        if set(indices) != set(INDEX_NAMES):
+            raise
+        guard_session(outdir, report_date, indices, verified_flat=set(INDEX_NAMES))   # 종가 중복 말고도 문제가 있으면 여기서 멈춘다
+        checked = _check_indices(indices, prev_diffs, report_date)
+        flat = {n for n in INDEX_NAMES
+                if checked[1][n].get("status") == "ok_flat" and checked[1][n].get("matched") is True}
+        guard_session(outdir, report_date, indices, verified_flat=flat)
+        print(f"::warning::KR {report_date} 종가가 원장의 다른 날과 같다 — 두 지수 모두 이 세션의 보합으로 "
+              "검증돼 진행한다")
     bizdate = report_date.replace("-", "")
 
     # 지수 등락률 검증 — 같은 basic 응답(C·R·D)이 1차, 보합은 integration 전일 종가로 확인. 원장은 보지 않는다.
     # 못 읽었거나 검증하지 못한 지수는 완결성을 막는다. 계산값으로 바꾸지 않는다(2026-11-12).
-    index_mode, config_status = index_check.load_mode()
-    ohlc = {}
-    index_checks = {"mode": index_mode, "config_status": config_status}
-    for name in INDEX_NAMES:
-        try:
-            ohlc[name] = sources.fetch_index_ohlc(name)
-        except Exception:  # noqa: BLE001 — integration 없음으로 본다
-            ohlc[name] = None
-        row = indices.get(name)
-        if row is None:
-            index_checks[name] = {"status": "fetch_error"}
-            continue
-        index_checks[name] = index_check.check_pct(row.get("close"), row.get("change_pct"), prev_diffs.get(name),
-                                                   ohlc[name], report_date, index_mode)
+    ohlc, index_checks, index_mode = checked or _check_indices(indices, prev_diffs, report_date)
     for name in INDEX_NAMES:
         ck = index_checks[name]
         if ck["status"] not in ("ok", "ok_flat") or ck.get("cross_note"):

@@ -253,12 +253,13 @@ def fetch_industry() -> list:
     for it in groups:
         nm = it.get("name") or it.get("groupName")
         cr = num_or_none(it.get("changeRate"))        # NaN 도 None — 업종 행에서 빠진다
-        total = it.get("totalCount", 0) or 0
-        rise = it.get("riseCount", 0) or 0
-        breadth = (rise / total) if total else 0.0
+        # 종목 수를 못 읽으면 결측 — 0 으로 채우면 「좁은 상승」으로 읽힌다(2026-11-12, codex 구현 검토 1회 #2)
+        total = num_or_none(it.get("totalCount"), "int")
+        rise = num_or_none(it.get("riseCount"), "int")
+        breadth = round(rise / total, 3) if (rise is not None and total) else None
         if nm and cr is not None:
             out.append({"name": nm, "change_pct": cr, "total": total,
-                        "rise": rise, "breadth": round(breadth, 3), "no": it.get("no")})
+                        "rise": rise, "breadth": breadth, "no": it.get("no")})
     if not out:
         raise RuntimeError("업종 목록이 비었다 — industry 응답 확인 필요")
     return out

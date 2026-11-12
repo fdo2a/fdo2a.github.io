@@ -38,6 +38,10 @@ KR 수집기가 못 읽은 값을 0 으로 채웠다. 지수 등락률(`fluctuat
 - TOL 0.01%p 근거: R 반올림 반폭 0.005 + C·D 반올림분(코스닥 700 기준 약 0.0015).
 - 11/12 실측(KOSPI basic C 5,342.73 · R −0.61 · D −32.63, integration lastClosePrice 5,375.36 = C−D) → `ok`.
 
+**원장 가드와 진짜 보합일(codex 구현 검토 1회 #1)** — 2026-10-17 가드(`history.ledger_conflicts`)는 「다른 날과 모든 지수 종가가 같으면 한 세션이 두 날짜에 적혔다」로 멈춘다. 진짜 보합일은 여기에 걸린다. 종가 중복만 걸렸고 **두 지수 모두** 이 실행에서 `ok_flat` 이면서 `matched`(integration 이 이 세션 값이라는 표식)이면 그 검사만 건너뛴다(`verified_flat`). 이른 날짜 문제는 그대로 막는다. 한 지수만 남은 실행은 보합이 검증돼도 멈춘다 — 증거가 약하고 그 실행은 어차피 발행할 수 없어(complete=false) 재수집을 기다리는 쪽이 보수적이다.
+
+**업종 상승 종목 수(구현 검토 1회 #2)** — `riseCount`·`totalCount` 를 못 읽으면(또는 전체 0) `breadth=None`. `leadership.flag_leadership` 은 None 을 판정하지 않는다(`liquidity_backed=None`, `leading=False`, note 없음 — 좁은 상승으로도 주도로도 부르지 않는다). 중앙값은 읽은 값만으로 잰다.
+
 **설정** — `config/kr_index_check.json` `{"format": "kr-index-check/1", "mismatch": "warn"}`. 없으면 warn(`missing_default`), 깨졌거나 모르는 값이면 block(`invalid_block`) — 오타가 차단을 조용히 끄지 않게. 켜는 절차: `python3 scripts/kr/index_check.py --report`(origin/main 의 실행 manifest 로 거래일·실행별 status 표, 읽기 전용)로 10거래일 이상 mismatch·cross_note 0건을 사람이 확인한 뒤 `block` 으로 바꿔 커밋. 같은 커밋에서 `scripts/kr/tests/test_index_check.py::test_committed_config_is_warn` 을 고친다(커밋된 값을 고정하는 시험은 이것 하나다 — 수집 전 시험이 빨개지면 그날 수집이 멈춘다).
 
 **완결성** — `indices` 는 코스피·코스닥 **둘 다** 종가·등락률이 수이고 status 가 차단이 아닐 때만 통과. 아니면 기존 토큰 `"indices"`(새 토큰 없음 — `KR_ORCHESTRATOR.md` 의 허용 목록이 그대로 맞는다). 차단이어도 `indices.<지수>.change_pct` 는 네이버 값 그대로(None 포함). 종가는 원장에 들어간다.

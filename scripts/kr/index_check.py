@@ -108,7 +108,7 @@ def load_mode(path=None):
     except FileNotFoundError:
         print(f"::warning::kr_index_check 설정 파일이 없다({os.path.basename(path)}) — mismatch 는 경고만(warn)")
         return "warn", "missing_default"
-    except OSError:
+    except (OSError, UnicodeDecodeError):              # 비 UTF-8 도 깨진 설정 → block(구현 검토 1회 #5)
         raw = None
     try:
         cfg = json.loads(raw) if raw is not None else None
@@ -150,11 +150,22 @@ def run_manifests(root, rev="origin/main", dates=None):
     return sorted(out, key=lambda x: (x[0], x[1]))
 
 
+VALID = STATUSES - {"fetch_error"}      # 이 실행이 그 지수를 실제로 검사했다
+
+
 def report_rows(manifests):
-    """manifest 목록 → 거래일·실행별 행. `checks` 가 없는 옛 manifest 는 건너뛴다."""
+    """manifest 목록 → 거래일·실행별 행. `checks` 가 없는 옛 manifest 는 건너뛴다.
+
+    못 읽은 manifest·`checks={"error": ...}`·두 지수 중 하나라도 유효한 검사 status 가 없는 실행은
+    `unreadable=True` 로 남긴다 — 관찰 일수에 세지 않는다(codex 구현 검토 1회 #3)."""
     rows = []
     for date, rid, man in manifests:
-        ck = (man or {}).get("checks")
+        if man is None:
+            rows.append({"date": date, "run_id": rid, "unreadable": True, "mode": None, "config_status": None,
+                         **{k: v for i in ("KOSPI", "KOSDAQ")
+                            for k, v in ((i, None), (f"{i}_cross_note", False), (f"{i}_diff", None))}})
+            continue
+        ck = man.get("checks")
         if not isinstance(ck, dict):
             continue
         ip = ck.get("index_pct") if isinstance(ck.get("index_pct"), dict) else {}
@@ -166,16 +177,22 @@ def report_rows(manifests):
             row[f"{idx}_diff"] = (round(abs(e["naver_pct"] - e["derived_pct"]), 4)
                                   if _fin(e.get("naver_pct")) is not None and _fin(e.get("derived_pct")) is not None
                                   else None)
+        row["unreadable"] = "error" in ck or not all(row[i] in VALID for i in ("KOSPI", "KOSDAQ"))
         rows.append(row)
     return rows
 
 
 def summary(rows):
-    days = sorted({r["date"] for r in rows})
-    bad = [r for r in rows if "mismatch" in (r["KOSPI"], r["KOSDAQ"])
+    """관찰 거래일 = 두 지수 모두 유효한 검사가 있는 실행이 하나라도 있는 날. 읽지 못한 날은 따로."""
+    ok = [r for r in rows if not r.get("unreadable")]
+    days = sorted({r["date"] for r in ok})
+    bad = [r for r in ok if "mismatch" in (r["KOSPI"], r["KOSDAQ"])
            or r["KOSPI_cross_note"] or r["KOSDAQ_cross_note"]]
-    return {"trade_days": len(days), "runs": len(rows), "mismatch_or_cross_note_runs": len(bad),
-            "mismatch_or_cross_note_days": sorted({r["date"] for r in bad})}
+    unread = [r for r in rows if r.get("unreadable")]
+    return {"trade_days": len(days), "runs": len(ok), "mismatch_or_cross_note_runs": len(bad),
+            "mismatch_or_cross_note_days": sorted({r["date"] for r in bad}),
+            "unreadable_runs": len(unread),
+            "unreadable_days": sorted({r["date"] for r in unread} - set(days))}
 
 
 def main(argv=None):
@@ -191,12 +208,17 @@ def main(argv=None):
         return 1
     print("date        run_id                               mode/config        KOSPI(diff,cross)          KOSDAQ(diff,cross)")
     for r in rows:
+        if r.get("unreadable") and r["KOSPI"] is None and r["KOSDAQ"] is None:
+            print(f"{r['date']}  {r['run_id'][:36]:36s} 읽지 못함(관찰에 세지 않음)")
+            continue
         cells = [f"{r[i]}({r[i + '_diff']},{'X' if r[i + '_cross_note'] else '-'})" for i in ("KOSPI", "KOSDAQ")]
         print(f"{r['date']}  {r['run_id'][:36]:36s} {str(r['mode'])}/{str(r['config_status']):14s} "
-              f"{cells[0]:26s} {cells[1]}")
+              f"{cells[0]:26s} {cells[1]}" + ("  ← 검사 불완전(관찰에 세지 않음)" if r.get("unreadable") else ""))
     s = summary(rows)
-    print(f"거래일 {s['trade_days']} · 실행 {s['runs']} · mismatch/cross_note 실행 {s['mismatch_or_cross_note_runs']}"
-          + (f" ({', '.join(s['mismatch_or_cross_note_days'])})" if s["mismatch_or_cross_note_days"] else ""))
+    print(f"관찰 거래일 {s['trade_days']} · 실행 {s['runs']} · mismatch/cross_note 실행 {s['mismatch_or_cross_note_runs']}"
+          + (f" ({', '.join(s['mismatch_or_cross_note_days'])})" if s["mismatch_or_cross_note_days"] else "")
+          + f" · 읽지 못한 실행 {s['unreadable_runs']} · 읽지 못한 날 {len(s['unreadable_days'])}"
+          + (f" ({', '.join(s['unreadable_days'])})" if s["unreadable_days"] else ""))
     print("block 전환은 사람이 판단한다 — 10거래일 이상 0건이면 config/kr_index_check.json 의 mismatch 를 block 으로.")
     return 0
 

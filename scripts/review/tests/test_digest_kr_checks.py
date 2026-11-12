@@ -136,7 +136,8 @@ def test_every_line_survives_the_note_whitelist(tmp_path):
     lines.append(D.KR_CHECK_UNREAD)
     assert len(lines) >= 6
     assert D.safe_notes(lines) == lines
-    assert all(c == "kr" for _n, c in D._classified_notes(lines[:-1]))
+    # 폴백 보완 자료(kr_market_data.json)가 이 레포에 없어 읽지 못한 줄도 나온다 — 그 줄만 꼭 싣는 줄
+    assert all(c == ("must" if n == D.KR_CHECK_UNREAD else "kr") for n, c in D._classified_notes(lines))
 
 
 def test_dedupe_by_date_item_status(tmp_path):
@@ -219,6 +220,46 @@ def test_report_cli_reads_runs(tmp_path, capsys):
     assert IC.main(["--report", "--root", root, "--rev", "HEAD"]) == 0
     out = capsys.readouterr().out
     assert "mismatch" in out and "실행 1" in out
+
+
+def test_report_counts_only_days_with_both_indices_checked(tmp_path):
+    # 구현 검토 1회 #3 — 읽지 못한 검사는 관찰 일수가 아니다(block 전환 근거가 부풀면 안 된다)
+    days = [f"2026-10-{d:02d}" for d in (20, 21, 22, 23, 24, 27, 28, 29, 30)]
+    runs = [(d, "r1", manifest(checks(), date=d)) for d in days]
+    runs.append(("2026-10-31", "r1", manifest({"error": "unreadable"}, date="2026-10-31")))
+    runs.append(("2026-11-02", "r1", manifest(checks(ip(kosdaq={"status": "fetch_error"})), date="2026-11-02")))
+    root = repo_with(tmp_path, runs=runs, raw={"versions/kr/2026-11-03/runs/r1/manifest.json": "{broken"})
+    s = IC.summary(IC.report_rows(IC.run_manifests(root, "HEAD")))
+    assert s["trade_days"] == 9
+    assert s["unreadable_days"] == ["2026-10-31", "2026-11-02", "2026-11-03"]
+
+
+def test_report_cli_shows_unreadable_days(tmp_path, capsys):
+    root = repo_with(tmp_path, runs=[(DAY, "r1", manifest({"error": "unreadable"}))])
+    assert IC.main(["--report", "--root", root, "--rev", "HEAD"]) == 0
+    out = capsys.readouterr().out
+    assert "관찰 거래일 0" in out and "읽지 못한 날 1" in out and DAY in out
+
+
+def test_fallback_market_data_unreadable_keeps_other_lines(tmp_path):
+    # 구현 검토 1회 #4 — 보완 자료를 못 읽은 사실도, 앞서 읽은 다른 실행의 경고도 남긴다
+    k = {"status": "mismatch", "naver_pct": -1.22, "derived_pct": 0.35}
+    root = repo_with(tmp_path, runs=[(DAY, "r1", manifest(checks(ip(kosdaq=k))))],
+                     fallbacks=[("2026-11-11", "f1")])                     # kr_market_data.json 없음
+    lines, _ = notes(root)
+    assert D.KR_CHECK_UNREAD in lines
+    assert "KR 11/11 판 기록 없이 올라간 수집 1건" in lines
+    assert any(l.startswith("KR 11/12 코스닥 등락률: 네이버") for l in lines)
+
+
+def test_fallback_market_data_broken_keeps_other_lines(tmp_path):
+    k = {"status": "mismatch", "naver_pct": -1.22, "derived_pct": 0.35}
+    root = repo_with(tmp_path, runs=[(DAY, "r1", manifest(checks(ip(kosdaq=k))))],
+                     fallbacks=[("2026-11-11", "f1")], raw={"kr/data/kr_market_data.json": "{broken"})
+    lines, _ = notes(root)
+    assert D.KR_CHECK_UNREAD in lines and lines.count(D.KR_CHECK_UNREAD) == 1
+    assert "KR 11/11 판 기록 없이 올라간 수집 1건" in lines
+    assert any(l.startswith("KR 11/12 코스닥 등락률: 네이버") for l in lines)
 
 
 def test_report_cli_read_failure(tmp_path, capsys):

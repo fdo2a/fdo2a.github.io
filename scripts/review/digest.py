@@ -497,9 +497,15 @@ def kr_check_notes(root, rev='origin/main', seen=None):
             if orphan:
                 items.append((d, 'fallback', str(len(orphan)), f'KR {_md(d)} 판 기록 없이 올라간 수집 {len(orphan)}건'))
                 if md_cache is None:
+                    # 보완 자료를 못 읽으면(없음·깨짐) 그 사실을 한 줄로 — 다른 실행의 줄은 그대로(구현 검토 1회 #4)
                     b = _git_bytes(root, 'show', f'{rev}:kr/data/kr_market_data.json')
-                    md_cache = json.loads(b.stdout) if b.returncode == 0 else {}
-                if isinstance(md_cache, dict) and md_cache.get('report_date') == d:
+                    try:
+                        md_cache = json.loads(b.stdout) if b.returncode == 0 else None
+                    except (ValueError, UnicodeDecodeError):
+                        md_cache = None
+                    if not isinstance(md_cache, dict):
+                        unread, md_cache = True, {}
+                if md_cache.get('report_date') == d:
                     items += [(d, *x) for x in kr_check_items(d, md_cache.get('checks'))]
     except (subprocess.SubprocessError, OSError, ValueError, UnicodeDecodeError):
         return [KR_CHECK_UNREAD], []
