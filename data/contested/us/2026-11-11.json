@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-12T04:42:19+00:00",
- "cutoff_at": "2026-11-12T04:42:19+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-12T05:00:24+00:00",
+ "cutoff_at": "2026-11-12T05:00:24+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 51195,
-   "out": 15100
+   "in": 47869,
+   "out": 13325
   },
   "discovery": "ok",
   "hosts": {
@@ -43,14 +43,14 @@
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "10/10",
-   "pairs": "4/4",
-   "obs": "9/9"
+   "claims": "7/7",
+   "pairs": "3/3",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 9,
+   "pairs": 1,
+   "claims": 2,
+   "obs": 7,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -62,22 +62,25 @@
     "edges[2]",
     "memo[0]",
     "memo[1]",
+    "memo[2]",
     "structure",
     "variables[1]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "worry.moderate[0]",
+    "worry.most[0]"
    ],
    "outcome": "skipped_ratio",
    "remaining": [
     "structure:dangling",
-    "variables[1]:unverified",
+    "variables[1]:dangling",
     "edges[0]:dangling",
     "edges[1]:dangling",
     "edges[2]:dangling",
     "memo[0]:dangling",
     "memo[1]:dangling",
+    "memo[2]:dangling",
     "worry.most[0]:dangling",
-    "worry.unlikely[0]:dangling"
+    "worry.moderate[0]:unverified",
+    "worry.moderate[0]:dangling"
    ]
   }
  },
@@ -88,14 +91,16 @@
  },
  "problems": [
   "structure:dangling",
-  "variables[1]:unverified",
+  "variables[1]:dangling",
   "edges[0]:dangling",
   "edges[1]:dangling",
   "edges[2]:dangling",
   "memo[0]:dangling",
   "memo[1]:dangling",
+  "memo[2]:dangling",
   "worry.most[0]:dangling",
-  "worry.unlikely[0]:dangling"
+  "worry.moderate[0]:unverified",
+  "worry.moderate[0]:dangling"
  ],
- "content_hash": "16313e15702d7db7"
+ "content_hash": "d9408a0792e45181"
 }
