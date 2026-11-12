@@ -38,7 +38,7 @@ KR 수집기가 못 읽은 값을 0 으로 채웠다. 지수 등락률(`fluctuat
 - TOL 0.01%p 근거: R 반올림 반폭 0.005 + C·D 반올림분(코스닥 700 기준 약 0.0015).
 - 11/12 실측(KOSPI basic C 5,342.73 · R −0.61 · D −32.63, integration lastClosePrice 5,375.36 = C−D) → `ok`.
 
-**설정** — `config/kr_index_check.json` `{"format": "kr-index-check/1", "mismatch": "warn"}`. 없으면 warn(`missing_default`), 깨졌거나 모르는 값이면 block(`invalid_block`) — 오타가 차단을 조용히 끄지 않게. 켜는 절차: `python3 scripts/kr/index_check.py --report`(origin/main 의 실행 manifest 로 거래일·실행별 status 표, 읽기 전용)로 10거래일 이상 mismatch·cross_note 0건을 사람이 확인한 뒤 `block` 으로 바꿔 커밋.
+**설정** — `config/kr_index_check.json` `{"format": "kr-index-check/1", "mismatch": "warn"}`. 없으면 warn(`missing_default`), 깨졌거나 모르는 값이면 block(`invalid_block`) — 오타가 차단을 조용히 끄지 않게. 켜는 절차: `python3 scripts/kr/index_check.py --report`(origin/main 의 실행 manifest 로 거래일·실행별 status 표, 읽기 전용)로 10거래일 이상 mismatch·cross_note 0건을 사람이 확인한 뒤 `block` 으로 바꿔 커밋. 같은 커밋에서 `scripts/kr/tests/test_index_check.py::test_committed_config_is_warn` 을 고친다(커밋된 값을 고정하는 시험은 이것 하나다 — 수집 전 시험이 빨개지면 그날 수집이 멈춘다).
 
 **완결성** — `indices` 는 코스피·코스닥 **둘 다** 종가·등락률이 수이고 status 가 차단이 아닐 때만 통과. 아니면 기존 토큰 `"indices"`(새 토큰 없음 — `KR_ORCHESTRATOR.md` 의 허용 목록이 그대로 맞는다). 차단이어도 `indices.<지수>.change_pct` 는 네이버 값 그대로(None 포함). 종가는 원장에 들어간다.
 

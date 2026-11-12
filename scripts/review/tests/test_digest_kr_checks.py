@@ -51,6 +51,7 @@ def repo_with(tmp_path, runs=(), fallbacks=(), market_data=None, raw=None):
 
 def notes(root, seen=None):
     lines, keys = D.kr_check_notes(root, rev="HEAD", seen=seen or {})
+    assert D.safe_notes(lines) == lines          # 줄 모양이 허용 목록 밖이면 「기타 안내」로 뭉개진다
     return lines, keys
 
 
@@ -184,6 +185,16 @@ def test_git_failure_is_one_line(tmp_path):
 def test_broken_manifest_is_one_line(tmp_path):
     root = repo_with(tmp_path, raw={f"versions/kr/{DAY}/runs/r1/manifest.json": "{broken"})
     assert notes(root)[0] == [D.KR_CHECK_UNREAD]
+
+
+def test_one_broken_manifest_does_not_hide_other_lines(tmp_path):
+    k = {"status": "ratio_missing"}
+    root = repo_with(tmp_path, runs=[(DAY, "r2", manifest(checks(ip(kosdaq=k)))),
+                                     (DAY, "r3", manifest({"error": "unreadable"}))],
+                     raw={f"versions/kr/{DAY}/runs/r1/manifest.json": "{broken"})
+    lines, _ = notes(root)
+    assert lines[0] == D.KR_CHECK_UNREAD and lines.count(D.KR_CHECK_UNREAD) == 1
+    assert any(l.startswith("KR 11/12 코스닥 등락률:") for l in lines)
 
 
 def test_first_run_record_survives_a_clean_rerun(tmp_path):

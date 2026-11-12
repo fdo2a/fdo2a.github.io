@@ -476,17 +476,23 @@ def kr_check_notes(root, rev='origin/main', seen=None):
             elif kind == 'fallback' and tail == '.json':
                 falls.setdefault(d, []).append(rid)
         days = sorted(set(runs) | set(falls))[-KR_CHECK_DAYS:]
-        items, md_cache = [], None
+        items, md_cache, unread = [], None, False
         for d in days:
             for rid, path in sorted(runs.get(d, [])):
+                # 한 실행을 못 읽어도 나머지 실행의 줄은 낸다 — 못 읽은 사실은 한 줄로(KR_CHECK_UNREAD)
                 b = _git_bytes(root, 'show', f'{rev}:{path}')
-                if b.returncode != 0:
-                    return [KR_CHECK_UNREAD], []
-                man = json.loads(b.stdout)
+                try:
+                    man = json.loads(b.stdout) if b.returncode == 0 else None
+                except (ValueError, UnicodeDecodeError):
+                    man = None
                 if not isinstance(man, dict):
-                    return [KR_CHECK_UNREAD], []
-                if isinstance(man.get('checks'), dict):          # 이 변경 전 manifest 에는 없다 — 건너뛴다
-                    items += [(d, *x) for x in kr_check_items(d, man['checks'])]
+                    unread = True
+                    continue
+                ck = man.get('checks')
+                if isinstance(ck, dict) and 'error' in ck:       # 수집 실행이 검사 기록을 못 남겼다
+                    unread = True
+                elif isinstance(ck, dict):                       # 이 변경 전 manifest 에는 없다 — 건너뛴다
+                    items += [(d, *x) for x in kr_check_items(d, ck)]
             orphan = [f for f in falls.get(d, []) if f not in {rid for rid, _ in runs.get(d, [])}]
             if orphan:
                 items.append((d, 'fallback', str(len(orphan)), f'KR {_md(d)} 판 기록 없이 올라간 수집 {len(orphan)}건'))
@@ -497,7 +503,7 @@ def kr_check_notes(root, rev='origin/main', seen=None):
                     items += [(d, *x) for x in kr_check_items(d, md_cache.get('checks'))]
     except (subprocess.SubprocessError, OSError, ValueError, UnicodeDecodeError):
         return [KR_CHECK_UNREAD], []
-    lines, keys, done = [], [], set()
+    lines, keys, done = ([KR_CHECK_UNREAD] if unread else []), [], set()
     for d, item, status, line in items:
         key = f'{d}|{item}|{status}'
         if key in done or key in seen:
