@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-12T03:37:28+00:00",
- "cutoff_at": "2026-11-12T03:37:28+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-12T04:42:19+00:00",
+ "cutoff_at": "2026-11-12T04:42:19+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "c76a46a3b3632f96ca05e8b38de0d1272f9fc4fb6308071291be9071d6072d7e"
  },
  "counts": {
-  "harvest": 205,
+  "harvest": 206,
   "candidates": 1,
   "articles": [
    6
@@ -30,10 +30,10 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 50021,
-   "out": 14488
+   "in": 51195,
+   "out": 15100
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
@@ -41,16 +41,16 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "8/8",
+   "claims": "10/10",
    "pairs": "4/4",
-   "obs": "8/8"
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 8,
+   "pairs": 2,
+   "claims": 4,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -59,25 +59,27 @@
    "paths": [
     "edges[0]",
     "edges[1]",
+    "edges[2]",
+    "memo[0]",
     "memo[1]",
-    "memo[2]",
-    "variables[2]",
-    "worry.moderate[0]"
+    "structure",
+    "variables[1]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
    ],
-   "outcome": "skipped_threshold",
+   "outcome": "skipped_ratio",
    "remaining": [
-    "variables[2]:unverified",
-    "edges[0]:unverified",
+    "structure:dangling",
+    "variables[1]:unverified",
     "edges[0]:dangling",
-    "edges[1]:unverified",
     "edges[1]:dangling",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
     "memo[1]:dangling",
-    "memo[2]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling"
+    "worry.most[0]:dangling",
+    "worry.unlikely[0]:dangling"
    ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
   "topic_ko": "젠슨 황 엔비디아 CEO의 중국 스파이 의혹 연루 스캔들과 CEO 거취",
@@ -85,15 +87,15 @@
   "trigger": []
  },
  "problems": [
-  "variables[2]:unverified",
-  "edges[0]:unverified",
+  "structure:dangling",
+  "variables[1]:unverified",
   "edges[0]:dangling",
-  "edges[1]:unverified",
   "edges[1]:dangling",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
   "memo[1]:dangling",
-  "memo[2]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling"
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "ed02830a4d115936"
+ "content_hash": "16313e15702d7db7"
 }
