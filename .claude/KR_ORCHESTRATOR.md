@@ -22,7 +22,7 @@
    아래 1·2 로 `report_date` 가 예상 세션과 맞고 `kr/posts/<report_date>.html` 이 이미 커밋돼 있으면 **「already published」만 보고하고 끝낸다**(잠금을 풀고, 알림 없이). **단 2026-11-06 부터는 뉴스 글도 본다** — 브리프가 있고 `kr/news/<report_date>.html` 이 origin 에 없으면 `python3 scripts/ci/routine_due.py kr-news-input <report_date> <워크스페이스 루트>/kr_news_data` 를 돌린다. `expected` 면(브리프 발행 뒤 한도로 죽은 런) STEP 1~3 을 건너뛰고 **STEP 3.5 만** 한다. `none` 이면 「already published」다. `error …` 면 판정할 수 없으니 쓰지 않고 잠금을 풀고 그 줄을 붙여 PushNotification 으로 보고한다(재시도 루틴이 다음 회차에 다시 본다). 이 명령은 잠금을 보지 않으므로 잠금을 쥔 채 돌려도 된다(`routine_due.py kr` 은 자기 잠금에 BUSY 를 낸다 — 이 판단에 쓰지 않는다). 잠금은 잡은 그대로다. 데이터가 예상 세션보다 이르면 이 가드로 멈추지 말고 3번 재수집으로 내려간다 — 어제 글이 있는 건 당연하다.
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
-2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices·flows·top_value·sectors)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §6 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
+2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices = 코스피·코스닥 두 지수 모두 종가·검증된 등락률, flows = 코스피·코스닥 두 시장 모두, top_value·sectors. 2026-11-12 부터 못 읽은 값은 0 이 아니라 결측이라 등락률을 못 읽거나 검증하지 못한 날은 `indices` 결측이다 — 계산값으로 채워 발행하지 않는다)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §6 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
 3. 없거나 stale/`complete:false`면 **수집 워크플로를 직접 돌린다**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려(cron 08:00·08:30 UTC 가 실제로는 12:40·12:57 UTC) **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**. 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
