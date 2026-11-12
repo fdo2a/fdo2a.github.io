@@ -12,8 +12,8 @@ spec: docs/superpowers/specs/2026-11-10-kr-data-versions.md
 import copy
 import os
 
-from kr.history import index_record, index_series
-from kr.period import finalize, session_from
+from kr.history import index_record, index_series, merge_index_record
+from kr.period import finalize, merge_session, session_from
 from us.period import week_key
 
 MARKET = 'kr'
@@ -111,11 +111,12 @@ def merge_week(remote_agg, run_files, p_files, date, published, promotions, ledg
 
     if run is not None and week_key(date) == key:
         body = {k: v for k, v in run.items() if k != 'date'}
+        # 미발행일도 같은 날 재수집이 있던 값을 지우지 않는다(collect_kr_data 의 upsert_session 과 같은 규칙, 2026-11-12)
         if not published:
-            sessions[date] = body
+            sessions[date] = merge_session(sessions.get(date), body)
             prov[date] = {'industry': 'run', 'top_value': 'run', 'flows': 'run'}
         elif p_files is None:
-            sessions[date] = body                      # P 를 못 찾음 — 오늘처럼(「같음」)
+            sessions[date] = merge_session(sessions.get(date), body)   # P 를 못 찾음 — 오늘처럼(「같음」)
             prov[date] = {'industry': 'run_no_publish_commit', 'top_value': 'run_no_publish_commit',
                           'flows': 'run_no_publish_commit'}
     if published and p_files is not None and week_key(date) == key:
@@ -157,15 +158,16 @@ def merge_week(remote_agg, run_files, p_files, date, published, promotions, ledg
 
 
 def merge_ledger(remote_rows, run_row, p_row, date, published, promotions):
-    """원장 D 행: 발행됐으면 P 트리 값(빈 지수는 빈 채), 아니면 이번 실행 값. 승격이 맨 마지막."""
+    """원장 D 행: 발행됐으면 P 트리 값(빈 지수는 빈 채), 아니면 이번 실행 값을 기존 행에 지수별로 합친 것
+    (재수집이 못 읽은 지수를 지우지 않는다 — 2026-11-12). 승격이 맨 마지막."""
     rows = [dict(r) for r in (remote_rows or []) if r.get('report_date') != date]
     existing = next((r for r in (remote_rows or []) if r.get('report_date') == date), None)
     if not published:
-        row = run_row or existing
+        row = merge_index_record(existing, run_row)
     elif p_row is not None:
         row = p_row
     else:
-        row = run_row or existing
+        row = merge_index_record(existing, run_row)
     row = copy.deepcopy(row) if row else None
     for p in (promotions or {}).get(date) or []:
         f = p.get('field') or ''

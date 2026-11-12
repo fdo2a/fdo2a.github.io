@@ -52,12 +52,43 @@ def session_from(kr_market, kr_flows, kr_industry, kr_top_value):
     return out
 
 
+def _empty(v):
+    return v in (None, {}, [], '')
+
+
+def merge_session(existing, new):
+    """같은 날 세션 재수집 — 있던 값을 지우지 않는다(2026-11-12). 결과는 new 세션이되:
+
+    - new 의 flows 에 없는 시장은 existing 의 그 시장 flows 를 유지한다. flows 가 비지 않으면 flows_note 를 뺀다.
+    - 업종 묶음(industry + leading_industries)은 new 의 industry 하나로 고른다 — 비었으면 둘 다 existing,
+      비지 않으면 둘 다 new(new 의 leading 이 빈 목록이어도 — 주도 업종이 없는 날은 정상이다).
+    - 거래대금 묶음(top_value)은 new 가 비었으면 existing, 아니면 new 로 통째 교체.
+    수집 실패는 빈 값([]·{})으로 오므로, 실패한 재실행이 앞선 정상 실행의 값을 지우지 못한다.
+    확정 여부는 따로 보지 않는다 — 당일 잠정 수급은 애초에 세션에 들어오지 않는다(session_from).
+    """
+    if not existing:
+        return new
+    out = dict(new)
+    flows = dict(existing.get('flows') or {})
+    flows.update(new.get('flows') or {})
+    out['flows'] = flows
+    if flows:
+        out.pop('flows_note', None)
+    if _empty(new.get('industry')) and not _empty(existing.get('industry')):
+        out['industry'] = existing.get('industry')
+        out['leading_industries'] = existing.get('leading_industries') or []
+    if _empty(new.get('top_value')) and not _empty(existing.get('top_value')):
+        out['top_value'] = existing.get('top_value')
+    return out
+
+
 def upsert_session(agg, session):
     agg.setdefault('sessions', {})
     d = session.get('date')
     if d is None:
         return agg
-    agg['sessions'][d] = {k: v for k, v in session.items() if k != 'date'}
+    body = {k: v for k, v in session.items() if k != 'date'}
+    agg['sessions'][d] = merge_session(agg['sessions'].get(d), body)
     return agg
 
 

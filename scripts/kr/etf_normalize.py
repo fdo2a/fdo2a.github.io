@@ -117,7 +117,7 @@ def dropped_products(rows: list, top_n: int = 8) -> list:
         if c["kind"] not in DROP_KINDS:
             continue
         out.append({"name": r["name"], "kind": c["kind"], "direction": c["direction"],
-                    "value": r.get("value", 0), "volume": r.get("volume", 0)})
+                    "value": r.get("value") or 0, "volume": r.get("volume")})
     return sorted(out, key=lambda x: -x["value"])[:top_n]
 
 
@@ -145,8 +145,10 @@ def normalize_top_value(rows: list, top_n: int = 10) -> list:
         g = groups.setdefault(key, {"label": label, "kind": kind, "direction": d,
                                     "theme": theme, "value": 0, "volume": 0,
                                     "members": []})
-        g["value"] += r.get("value", 0)
-        g["volume"] += r.get("volume", 0)
+        g["value"] += r.get("value") or 0
+        # 거래량을 못 읽은 구성원이 있으면 묶음 거래량은 결측 — 0 으로 더하지 않는다(2026-11-12)
+        vol = r.get("volume")
+        g["volume"] = None if (vol is None or g["volume"] is None) else g["volume"] + vol
         g["members"].append(r["name"])
 
     # 한 종목뿐인 테마는 병합이 일어나지 않았으므로 '테마 ETF'라 부르지 않는다.

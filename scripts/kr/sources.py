@@ -13,6 +13,8 @@ from datetime import date, datetime, timedelta
 
 import requests
 
+from kr.parse import num_or_none
+
 NAVER_HDRS = {
     "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                    "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"),
@@ -22,20 +24,6 @@ MARKETVALUE_URL = "https://m.stock.naver.com/api/stocks/marketValue/all"
 _RETIRED = ("Naver 레거시 페이지 폐지(2026-09-17 SPA 개편) — 대체 소스 없음: {}")
 
 
-def _to_int(s) -> int:
-    try:
-        return int(str(s).replace(",", ""))
-    except (TypeError, ValueError):
-        return 0
-
-
-def _to_float(s) -> float:
-    try:
-        return float(str(s).replace(",", ""))
-    except (TypeError, ValueError):
-        return 0.0
-
-
 def fetch_json(url: str, timeout: int = 12):
     r = requests.get(url, headers=NAVER_HDRS, timeout=timeout)
     r.raise_for_status()
@@ -43,15 +31,15 @@ def fetch_json(url: str, timeout: int = 12):
 
 
 def fetch_index(code: str) -> dict:
-    """KR 지수 현재/종가 — Naver 네이티브(수급 소스와 일치). code: KOSPI|KOSDAQ."""
+    """KR 지수 현재/종가 — Naver 네이티브(수급 소스와 일치). code: KOSPI|KOSDAQ.
+
+    → {close, change_pct, trade_date, prev_diff}. 등락률·전일 대비를 못 읽으면 None(0 이 아니다 —
+    2026-11-12). prev_diff(compareToPreviousClosePrice)는 수집기가 꺼내 등락률 검증에만 쓴다.
+    """
     j = fetch_json(f"https://m.stock.naver.com/api/index/{code}/basic")
-    close = float(str(j.get("closePrice", "0")).replace(",", ""))
-    try:
-        chg = float(j.get("fluctuationsRatio"))
-    except (TypeError, ValueError):
-        chg = 0.0
-    if close <= 0:
-        # 0 을 종가로 흘리면 지수(코어)가 비지 않은 채 0 으로 발행된다 — 빈 [] 와 같은 실패다.
+    close = num_or_none(j.get("closePrice"))
+    if close is None or close <= 0:
+        # 0·NaN 을 종가로 흘리면 지수(코어)가 비지 않은 채 0 으로 발행된다 — 빈 [] 와 같은 실패다.
         raise RuntimeError(f"지수 종가가 비었다 — {code} basic 응답 확인 필요")
     # 거래일은 종가와 같은 응답에서 읽는다. 휴장일·주말에는 직전 거래일에 머문다
     # (2026-10-17 토요일 실측: "2026-10-16T20:15:00+09:00"). 읽지 못하면 None.
@@ -60,7 +48,8 @@ def fetch_index(code: str) -> dict:
         trade_date = date.fromisoformat(traded).isoformat()
     except ValueError:
         trade_date = None
-    return {"close": round(close, 2), "change_pct": chg, "trade_date": trade_date}
+    return {"close": round(close, 2), "change_pct": num_or_none(j.get("fluctuationsRatio")),
+            "trade_date": trade_date, "prev_diff": num_or_none(j.get("compareToPreviousClosePrice"))}
 
 
 def downsample_30min(bars: list) -> list:
@@ -88,52 +77,90 @@ def fetch_intraday(code: str) -> list:
 
 
 def fetch_index_ohlc(code: str) -> dict:
-    """당일 시가·고가·저가·전일종가 — 장중 궤적 서술용."""
+    """당일 시가·고가·저가·전일종가 — 장중 궤적 서술용. `flow_bizdate`(dealTrendInfo.bizdate)는
+    등락률 검증의 세션 표식으로만 쓰고 kr_intraday.json 에는 싣지 않는다(수집기가 뺀다)."""
     j = fetch_json(f"https://m.stock.naver.com/api/index/{code}/integration")
-    ti = {x.get("code"): x.get("value") for x in j.get("totalInfos", [])}
-
-    def num(k):
-        try:
-            return float(str(ti.get(k, "")).replace(",", ""))
-        except (TypeError, ValueError):
-            return None
-    return {"open": num("openPrice"), "high": num("highPrice"),
-            "low": num("lowPrice"), "prevClose": num("lastClosePrice")}
+    ti = {x.get("code"): x.get("value") for x in j.get("totalInfos", []) if isinstance(x, dict)}
+    biz = (j.get("dealTrendInfo") or {}).get("bizdate") if isinstance(j.get("dealTrendInfo"), dict) else None
+    return {"open": num_or_none(ti.get("openPrice")), "high": num_or_none(ti.get("highPrice")),
+            "low": num_or_none(ti.get("lowPrice")), "prevClose": num_or_none(ti.get("lastClosePrice")),
+            "flow_bizdate": str(biz) if biz not in (None, "") else None}
 
 
-def fetch_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 25) -> list:
-    """시장 수급 최근 N거래일 — m.stock JSON. code: KOSPI|KOSDAQ.
+class FlowsFetchError(RuntimeError):
+    """수급 요청 실패 또는 소급 범위 안에 유효 행 0 — 그때까지 모은 진단을 싣는다."""
 
-    이 API 는 한 번에 하루치만 준다. 레거시 표가 주던 10거래일을 맞추려고 bizdate 를
-    하루씩 거슬러 호출한다. 휴장일도 200 을 주되 세 주체가 전부 0 이라
-    `flows.parse_flows_row` 가 걸러낸다. 과거 일자를 받을 수 있어야 `period.py` 의
-    extra_flows 자가치유가 산다.
+    def __init__(self, msg, diagnostics=None):
+        super().__init__(msg)
+        self.diagnostics = list(diagnostics or [])
+
+
+def walk_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 25) -> dict:
+    """시장 수급 최근 N거래일 + 진단 → {"rows", "diagnostics", "blocked"}.
+
+    report_date 부터 하루씩 거슬러 간다(이 API 는 한 번에 하루치). 관측된 0 셋(휴장·미래·아직 안 올라온
+    당일)은 건너뛴다. 못 읽은 날(unreadable·partial)은 그 날만 빼고 진단에 남기되, **첫 ok 행에 닿기 전에**
+    만나면 `blocked="unreadable_before_latest"` — 남은 가장 최근 행을 「전 거래일」이라 부를 수 없다.
+    요청 하나가 실패하면 그 시장 전체가 실패다(FlowsFetchError).
     """
-    from kr.flows import parse_flows_row
+    from kr.flows import classify_row
     day = datetime.strptime(bizdate, "%Y%m%d")
-    rows = []
+    rows, diags, blocked = [], [], None
     for _ in range(max_back):
         if len(rows) >= days:
             break
-        row = parse_flows_row(
-            fetch_json(f"https://m.stock.naver.com/api/index/{code}/trend"
-                       f"?bizdate={day.strftime('%Y%m%d')}"))
-        if row:
+        biz = day.strftime("%Y%m%d")
+        try:
+            payload = fetch_json(f"https://m.stock.naver.com/api/index/{code}/trend?bizdate={biz}")
+        except Exception as e:  # noqa: BLE001 — 네트워크·HTTP·JSON 모두 그 시장 실패
+            raise FlowsFetchError(f"수급 요청 실패 — {code} {biz}: {str(e)[:80]}", diags) from e
+        status, row, fields = classify_row(payload, requested=biz)
+        if status == "ok":
             rows.append(row)
+        elif status in ("unreadable", "partial"):
+            diags.append({"date": f"{biz[:4]}-{biz[4:6]}-{biz[6:]}", "status": status, "fields": fields})
+            if not rows:
+                blocked = "unreadable_before_latest"
+                break
         day -= timedelta(days=1)
+    if blocked:
+        return {"rows": [], "diagnostics": diags, "blocked": blocked}
     if not rows:
-        raise RuntimeError(f"수급 응답에 유효한 행이 없다 — {code} {bizdate} 기준 {max_back}일 소급")
-    return rows
+        raise FlowsFetchError(f"수급 응답에 유효한 행이 없다 — {code} {bizdate} 기준 {max_back}일 소급", diags)
+    return {"rows": rows, "diagnostics": diags, "blocked": None}
 
 
-def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
-    """거래대금 상위 — 시총 순 전체 목록을 받아 거래대금으로 다시 정렬한다.
+def fetch_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 25) -> list:
+    """시장 수급 최근 N거래일 — m.stock JSON. code: KOSPI|KOSDAQ. 반환형(list)은 그대로다.
+
+    이 API 는 한 번에 하루치만 준다. 레거시 표가 주던 10거래일을 맞추려고 bizdate 를
+    하루씩 거슬러 호출한다(`walk_market_flows`). 과거 일자를 받을 수 있어야 `period.py` 의
+    extra_flows 자가치유가 산다. 막히거나 비면 예외 — 빈 결과를 성공으로 취급하지 않는다.
+    """
+    w = walk_market_flows(code, bizdate, days=days, max_back=max_back)
+    if not w["rows"]:
+        raise FlowsFetchError(f"수급 최신 행을 못 읽었다 — {code} {bizdate} ({w['blocked']})", w["diagnostics"])
+    return w["rows"]
+
+
+TOP_BAD_MIN = 5            # 형식 오류 허용: max(5, 시장 행의 1%)
+TOP_BAD_SHARE = 0.01
+TOP_DASH_SHARE = 0.30      # `-` 가 시장 행의 30% 초과면 전체 장애로 본다(11/11 실측 약 7%) — 근사치
+TOP_WATCH = 100            # 시총 상위 감시: 처음 100행 중 `-`+형식 오류 5 초과면 예외(실측 0건)
+TOP_WATCH_MAX = 5
+
+
+def fetch_top_value_stats(sosok: str = "0", pages: int = 60):
+    """거래대금 상위 + 통계 → (rows, {rows, dash, bad, dash_top100}).
 
     대체 API 에 거래대금 정렬이 없어 시총 순 전체를 훑고 이쪽에서 정렬한다. 한 페이지
     100종목이 상한이고, 새 종목이 안 나오면 멈춘다. sosok 은 레거시와 같은 뜻 —
     "0"=코스피, "1"=코스닥. 거래대금 단위는 백만원으로 레거시 컬럼과 같다.
+    거래대금이 `-`·빈 값이면 거래 없음(dash), 그 밖의 변환 불가는 bad — 둘 다 순위에서 뺀다(0 으로 넣지 않는다).
+    네이버가 「거래 없음」과 「값 없음」을 같은 `-` 로 주므로 비율·상위 감시로 장애를 근사한다.
     """
     rows, seen = [], set()
+    n = dash = bad = top_bad = 0
     for page in range(1, pages + 1):
         stocks = fetch_json(f"{MARKETVALUE_URL}?page={page}&pageSize=100",
                             timeout=15).get("stocks") or []
@@ -144,20 +171,43 @@ def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
         for s in fresh:
             if s.get("sosok") != sosok or not s.get("stockName"):
                 continue
+            n += 1
+            raw = s.get("accumulatedTradingValue")
+            value = num_or_none(raw, "int")
+            if value is None:
+                is_dash = raw is None or str(raw).strip() in ("", "-")
+                dash += is_dash
+                bad += not is_dash
+                top_bad += n <= TOP_WATCH
+                continue
             rows.append({
                 "name": s["stockName"],
                 "code": s.get("itemCode"),
-                # 시가총액(원) — 움직인 종목의 지수 기여 순위에만 쓴다(통합가 기준 근사)
-                "cap": _to_int(s.get("marketValueRaw")),
-                "value": _to_int(s.get("accumulatedTradingValue")),
-                "volume": _to_int(s.get("accumulatedTradingVolume")),
+                # 시가총액(원) — 움직인 종목의 지수 기여 순위에만 쓴다(통합가 기준 근사). 못 읽으면 None
+                "cap": num_or_none(s.get("marketValueRaw"), "int"),
+                "value": value,
+                "volume": num_or_none(s.get("accumulatedTradingVolume"), "int"),
                 # 넥스트레이드 애프터마켓까지 섞인 통합가 기준이다 — KRX 종가 등락이 아니다.
-                "change_pct": _to_float(s.get("fluctuationsRatio")),
+                "change_pct": num_or_none(s.get("fluctuationsRatio")),
             })
+    stats = {"rows": n, "dash": dash, "bad": bad, "dash_top100": top_bad}
+    if not n:
+        raise RuntimeError(f"거래대금 목록이 비었다 — marketValue 응답 확인 필요(sosok={sosok})")
+    if bad > max(TOP_BAD_MIN, n * TOP_BAD_SHARE):
+        raise RuntimeError(f"거래대금 형식 오류 {bad}건/{n}행 — marketValue 응답 확인 필요(sosok={sosok})")
+    if dash > n * TOP_DASH_SHARE:
+        raise RuntimeError(f"거래대금 빈 값 {dash}건/{n}행(30% 초과) — 전체 장애로 본다(sosok={sosok})")
+    if top_bad > TOP_WATCH_MAX:
+        raise RuntimeError(f"거래대금 시총 상위 {TOP_WATCH}행 중 빈 값·형식 오류 {top_bad}건 — 장애로 본다(sosok={sosok})")
     if not rows:
         raise RuntimeError(f"거래대금 목록이 비었다 — marketValue 응답 확인 필요(sosok={sosok})")
     rows.sort(key=lambda r: r["value"], reverse=True)
-    return rows
+    return rows, stats
+
+
+def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
+    """거래대금 상위 목록(list) — `fetch_top_value_stats` 의 래퍼(통계는 버린다)."""
+    return fetch_top_value_stats(sosok, pages)[0]
 
 
 def fetch_industry_names() -> dict:
@@ -202,10 +252,7 @@ def fetch_industry() -> list:
     out = []
     for it in groups:
         nm = it.get("name") or it.get("groupName")
-        try:
-            cr = float(it.get("changeRate"))
-        except (TypeError, ValueError):
-            cr = None
+        cr = num_or_none(it.get("changeRate"))        # NaN 도 None — 업종 행에서 빠진다
         total = it.get("totalCount", 0) or 0
         rise = it.get("riseCount", 0) or 0
         breadth = (rise / total) if total else 0.0

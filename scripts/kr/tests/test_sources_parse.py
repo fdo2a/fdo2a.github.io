@@ -105,8 +105,9 @@ def test_fetch_index_reads_close_and_ratio(monkeypatch):
     monkeypatch.setattr(sources, "fetch_json",
                         lambda url, timeout=12: {"closePrice": "7,007.72",
                                                  "fluctuationsRatio": "1.65"})
+    # prev_diff(전일 대비)는 등락률 검증에만 쓴다 — 응답에 없으면 None(2026-11-12)
     assert sources.fetch_index("KOSPI") == {"close": 7007.72, "change_pct": 1.65,
-                                            "trade_date": None}
+                                            "trade_date": None, "prev_diff": None}
 
 
 def test_fetch_industry_raises_when_empty(monkeypatch):

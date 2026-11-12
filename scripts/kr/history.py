@@ -17,6 +17,29 @@ def index_record(kr_market):
                         if isinstance(row, dict) and row.get('close') is not None}}
 
 
+def _close_ok(v):
+    import math
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v > 0
+
+
+def merge_index_record(existing, new):
+    """같은 날 재수집 — 있던 지수 종가를 지우지 않는다(2026-11-12).
+
+    지수별로 new 에 유한 양수 종가가 있으면 그 값, 없으면 existing 값. existing 이 없으면 new.
+    `us.history.append_jsonl(upsert=True)` 는 행을 통째로 바꾸므로 쓰기 전에 이것으로 합친다.
+    발행 여부는 보지 않는다 — 발행된 날의 동결은 `common/versions.py`(enforce)가 맡는다.
+    """
+    if not existing:
+        return new
+    if not new:
+        return existing
+    merged = {k: v for k, v in (existing.get('indices') or {}).items() if _close_ok(v)}
+    for k, v in (new.get('indices') or {}).items():
+        if _close_ok(v):
+            merged[k] = v
+    return {**existing, **{k: v for k, v in new.items() if k != 'indices'}, 'indices': merged}
+
+
 def index_series(rows):
     """원장 → {지수: [(date, close), ...]} — finalize() 가 먹는 모양."""
     out = {}
