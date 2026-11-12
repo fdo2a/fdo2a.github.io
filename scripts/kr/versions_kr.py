@@ -78,6 +78,41 @@ def ledger_row(files):
     return index_record(files[MARKET_DATA])
 
 
+def run_checks(files):
+    """그 실행의 `kr_market_data.json.checks` 전체 사본 — manifest 에 기록만 한다(2026-11-12).
+    manifest 는 실행마다 추가만 되므로, 같은 날 뒤의 정상 재수집이 고정 경로를 덮어도 이 기록은 남는다.
+    알림과 `kr/index_check.py --report` 는 이것만 읽는다. 없거나 깨졌으면 {"error": "unreadable"}."""
+    import json
+    try:
+        md = json.loads((files or {}).get(MARKET_DATA) or b'')
+    except (ValueError, TypeError):
+        md = None
+    ck = md.get('checks') if isinstance(md, dict) else None
+    return copy.deepcopy(ck) if isinstance(ck, dict) else {'error': 'unreadable'}
+
+
+def checks_field_status(checks):
+    """manifest field_status 에 얹는 요약 — 세부는 manifest['checks'] 에."""
+    if not isinstance(checks, dict) or 'error' in checks:
+        return {'checks': 'unreadable'}
+    out = {}
+    ip = checks.get('index_pct') if isinstance(checks.get('index_pct'), dict) else {}
+    for name in ('KOSPI', 'KOSDAQ'):
+        if isinstance(ip.get(name), dict):
+            out[f'index_pct.{name}'] = ip[name].get('status')
+    if ip:
+        out['index_pct.mode'] = f"{ip.get('mode')}/{ip.get('config_status')}"
+    fl = checks.get('flows') if isinstance(checks.get('flows'), dict) else {}
+    for mkt in ('KOSPI', 'KOSDAQ'):
+        if isinstance(fl.get(mkt), dict):
+            out[f'flows.{mkt}'] = fl[mkt].get('state')
+    tv = checks.get('top_value')
+    if isinstance(tv, dict):
+        out['top_value'] = 'error' if 'error' in tv else \
+            f"rows={tv.get('rows')}/dash={tv.get('dash')}/bad={tv.get('bad')}"
+    return out
+
+
 def _nonempty(v):
     return v not in (None, {}, [], '')
 

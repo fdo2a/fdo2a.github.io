@@ -390,6 +390,9 @@ def reconcile(repo, wt, A, market, date, O, base, rid, mode, collected_utc, tmpd
         'field_status': field_status(run_files, date, collected_utc),
         'diff_vs_published': diff_files(p_files, run_files) if p_files else None,
     }
+    if hasattr(A, 'run_checks'):                       # 검사 기록 사본 — 기록만(고정 경로·동결 불변, 2026-11-12)
+        manifest['checks'] = A.run_checks(run_files)
+        manifest['field_status'].update(A.checks_field_status(manifest['checks']))
     rdir = f'versions/{market}/{date}/runs/{rid}/'
     if exists(repo, target, rdir + 'manifest.json'):
         raise Fallback(f'같은 실행 ID 의 원본이 이미 있다: {rid}')
