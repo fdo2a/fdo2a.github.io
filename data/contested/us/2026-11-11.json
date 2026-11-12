@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-11",
- "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-12T09:50:22+00:00",
- "cutoff_at": "2026-11-12T09:50:22+00:00",
+ "status": "error",
+ "reason": "model_extract_success",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-12T10:55:19+00:00",
+ "cutoff_at": "2026-11-12T10:55:19+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,88 +21,32 @@
   "sha256": "c76a46a3b3632f96ca05e8b38de0d1272f9fc4fb6308071291be9071d6072d7e"
  },
  "counts": {
-  "harvest": 206,
+  "harvest": 205,
   "candidates": 1,
   "articles": [
-   4
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 49653,
-   "out": 16681
+   "in": 0,
+   "out": 0
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "out_of_window"
+   "bbc.co.uk": "ok",
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "9/9",
-   "pairs": "3/3",
-   "obs": "9/9"
-  },
-  "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 9,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[1]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_ratio",
-   "remaining": [
-    "structure:unverified",
-    "structure:dangling",
-    "edges[0]:dangling",
-    "edges[1]:unverified",
-    "edges[1]:dangling",
-    "edges[2]:unverified",
-    "edges[2]:dangling",
-    "memo[1]:dangling",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
-   ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "젠슨 황 엔비디아 CEO 스캔들과 칩 유출 의혹, 거취 논쟁",
-  "query": "nvidia jensen affair",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
-  "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[1]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "d07138e3e137cf1b"
+ "content_hash": "0b5f1ccde3bbc326"
 }
