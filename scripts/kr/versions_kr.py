@@ -37,7 +37,7 @@ git add kr/data/telegram 2>/dev/null || true
 
 SESSION_INPUTS = ('kr/data/kr_market_data.json', 'kr/data/kr_flows.json',
                   'kr/data/kr_industry.json', 'kr/data/kr_top_value.json')
-PUBLISHED_PART = ('industry', 'top_value', 'leading_industries', 'leading_undecided')
+PUBLISHED_PART = ('industry', 'top_value', 'leading_industries', 'leading_all', 'leading_undecided')
 
 
 def dated_paths(date):

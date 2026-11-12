@@ -186,3 +186,42 @@ def test_run_manifests_survives_one_show_exception(monkeypatch):
     monkeypatch.setattr(IC, "_git", fake)
     got = IC.run_manifests("x", "HEAD")
     assert [(d, m is None) for d, _, m in got] == [("2026-11-11", True), ("2026-11-12", False)]
+
+
+# ── 3회차 #5: 표시용 상위 5개에서 밀린 앞 실행의 주도 판정도 다음 재수집까지 남는다 ────────
+
+def _ind(*rows):
+    return [{"name": n, "change_pct": c, "breadth": (None if lead is None else 0.5), "leading": lead}
+            for n, c, lead in rows]
+
+
+def test_carried_leader_cut_by_cap_survives_a_third_run():
+    r1 = _body(session_from(MKT, {}, _ind(("A", 1.0, True), ("Z", -1.0, False)), []))
+    r2 = _body(session_from(MKT, {}, _ind(("A", 1.0, None), *[(f"L{i}", 9.0 - i, True) for i in range(5)]), []))
+    r3 = _body(session_from(MKT, {}, _ind(("A", 1.0, None), *[(f"L{i}", -1.0, False) for i in range(5)]), []))
+    s2 = merge_session(r1, r2)
+    assert s2["leading_industries"] == ["L0", "L1", "L2", "L3", "L4"]      # 표시는 상위 5개
+    assert s2["leading_all"][-1] == "A" and "leading_undecided" not in s2  # 판정 상태는 따로 남는다
+    s3 = merge_session(s2, r3)
+    assert s3["leading_industries"] == ["A"] and "leading_undecided" not in s3
+    assert "leading_all" not in s3                                         # 5개 이하면 표시 목록이 전부다
+
+
+def test_leader_beyond_cap_in_first_run_survives_an_undecided_rerun():
+    r1 = _body(session_from(MKT, {}, _ind(*[(f"L{i}", 9.0 - i, True) for i in range(6)]), []))
+    assert r1["leading_industries"] == ["L0", "L1", "L2", "L3", "L4"] and r1["leading_all"][-1] == "L5"
+    r2 = _body(session_from(MKT, {}, _ind(("L5", 3.0, None), *[(f"L{i}", -1.0, False) for i in range(5)]), []))
+    s2 = merge_session(r1, r2)
+    assert s2["leading_industries"] == ["L5"] and "leading_undecided" not in s2
+
+
+def test_failed_industry_recollection_keeps_full_leading_state():
+    r1 = _body(session_from(MKT, {}, _ind(*[(f"L{i}", 9.0 - i, True) for i in range(6)]), []))
+    out = merge_session(r1, _body(session_from(MKT, {}, [], [])))
+    assert out["leading_all"] == r1["leading_all"] and out["leading_industries"] == r1["leading_industries"]
+
+
+def test_decided_rerun_drops_stale_full_state():
+    r1 = _body(session_from(MKT, {}, _ind(*[(f"L{i}", 9.0 - i, True) for i in range(6)]), []))
+    out = merge_session(r1, _body(session_from(MKT, {}, _ind(("L0", 1.0, True), ("L5", -1.0, False)), [])))
+    assert out["leading_industries"] == ["L0"] and "leading_all" not in out
