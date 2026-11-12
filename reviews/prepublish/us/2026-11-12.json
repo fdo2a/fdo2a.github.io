@@ -1,0 +1,22 @@
+{
+ "section": "us",
+ "date": "2026-11-12",
+ "request_id": "us-2026-11-12-594ed939f56d",
+ "draft_sha": "c5e07b27a8bc43f0fbb6e4378c36c42f9b4594af",
+ "state": "submit_failed",
+ "reason": "초안을 올리거나 검토를 띄우지 못했다",
+ "auth_saved": null,
+ "accuracy_findings": 0,
+ "style_candidates": 0,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 0,
+ "facts_rejected": 0,
+ "style_applied": 0,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-12T23:42:29Z"
+}
