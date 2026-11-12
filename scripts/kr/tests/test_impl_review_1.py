@@ -15,6 +15,8 @@ from kr.tests.test_collect_missing import D, D0, World, env  # noqa: F401
 
 
 # ── #1 검증된 진짜 보합일이 2026-10-17 원장 가드(종가 중복)에 막힌다 ────────────
+# 2회차에서 뒤집었다: 1회차가 넣은 보합 예외(verified_flat)는 전 세션 종가가 새 날짜로 적히는 길을 다시 열었다
+# (보합 검증은 「오늘 종가」의 증거가 아니다). 예외를 뺐고 가드는 엄격하다 — 고정 시험은 test_impl_review_2.py.
 
 def _flat_world(biz_ok=True):
     w = World()
@@ -29,15 +31,6 @@ def _seed_ledger(env_, row):
     p = env_["outdir"] / "history"
     p.mkdir(parents=True, exist_ok=True)
     (p / "kr_market.jsonl").write_text(json.dumps({"report_date": D0, "indices": row}) + "\n")
-
-
-def test_verified_flat_day_passes_the_duplicate_close_guard(env):
-    _seed_ledger(env, {"KOSPI": 1000.0, "KOSDAQ": 500.0})
-    m = env["run"](_flat_world())
-    assert m["checks"]["index_pct"]["KOSPI"]["status"] == "ok_flat"
-    assert m["checks"]["index_pct"]["KOSDAQ"]["status"] == "ok_flat"
-    assert m["complete"] is True
-    assert env["ledger"]()[D] == {"KOSPI": 1000.0, "KOSDAQ": 500.0}
 
 
 def test_duplicate_closes_without_flat_verification_still_stop(env):
@@ -66,14 +59,13 @@ def test_single_surviving_index_equal_to_other_day_stays_stopped(env):
         env["run"](w)
 
 
-def test_ledger_conflicts_verified_flat_only_skips_the_duplicate_check():
+def test_ledger_conflicts_duplicate_and_early_date():
     rows = [{"report_date": "2026-11-11", "indices": {"KOSPI": 1.0, "KOSDAQ": 2.0}}]
     rec = {"report_date": "2026-11-12", "indices": {"KOSPI": 1.0, "KOSDAQ": 2.0}}
     assert ledger_conflicts(rows, rec)
-    assert ledger_conflicts(rows, rec, verified_flat={"KOSPI", "KOSDAQ"}) == []
-    assert ledger_conflicts(rows, rec, verified_flat={"KOSPI"})
+    assert ledger_conflicts(rows, {"report_date": "2026-11-12", "indices": {"KOSPI": 1.0, "KOSDAQ": 2.5}}) == []
     early = {"report_date": "2026-11-10", "indices": {"KOSPI": 9.0, "KOSDAQ": 9.0}}
-    assert ledger_conflicts(rows, early, verified_flat={"KOSPI", "KOSDAQ"})   # 이른 날짜는 그대로 막는다
+    assert ledger_conflicts(rows, early)                                      # 이른 날짜는 그대로 막는다
 
 
 # ── #2 업종 상승 종목 수 결측이 0 으로 ───────────────────────────────────
@@ -92,16 +84,17 @@ def test_fetch_industry_missing_counts_stay_missing(monkeypatch):
 
 
 def test_leadership_with_missing_breadth_is_neither_leading_nor_narrow():
+    # 2회차 #2: 오른 업종의 결측은 leading None(미판정) — False(비주도)가 아니다
     items = [{"name": "A", "change_pct": 2.0, "breadth": None},
              {"name": "B", "change_pct": 1.0, "breadth": 0.8},
              {"name": "C", "change_pct": 0.5, "breadth": 0.2}]
     out = {r["name"]: r for r in flag_leadership(items, ret_key="change_pct", value_key="breadth",
                                                   strong_note="폭넓은 상승 주도", weak_note="좁은 상승·개별종목")}
-    assert out["A"]["leading"] is False and out["A"]["liquidity_backed"] is None and out["A"]["note"] == ""
+    assert out["A"]["leading"] is None and out["A"]["liquidity_backed"] is None and out["A"]["note"] == ""
     assert out["B"]["leading"] is True
     assert out["C"]["note"] == "좁은 상승·개별종목"
     assert flag_leadership([{"name": "A", "change_pct": 1.0, "breadth": None}],
-                           ret_key="change_pct", value_key="breadth")[0]["leading"] is False
+                           ret_key="change_pct", value_key="breadth")[0]["leading"] is None
 
 
 # ── #5 비 UTF-8 설정이 수집을 멈춘다 ─────────────────────────────────────

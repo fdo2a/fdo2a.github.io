@@ -139,13 +139,13 @@ def run_manifests(root, rev="origin/main", dates=None):
         m = _RUN_MANIFEST.match(path.strip())
         if not m or (dates is not None and m.group(1) not in dates):
             continue
-        b = _git(root, "show", f"{rev}:{path.strip()}")
         man = None
-        if b.returncode == 0:
-            try:
+        try:                                    # 한 실행을 못 읽어도(시간 초과 포함) 나머지 실행은 읽는다
+            b = _git(root, "show", f"{rev}:{path.strip()}")
+            if b.returncode == 0:
                 man = json.loads(b.stdout)
-            except ValueError:
-                man = None
+        except (ValueError, subprocess.SubprocessError, OSError):
+            man = None
         out.append((m.group(1), m.group(2), man if isinstance(man, dict) else None))
     return sorted(out, key=lambda x: (x[0], x[1]))
 
@@ -183,14 +183,19 @@ def report_rows(manifests):
 
 
 def summary(rows):
-    """관찰 거래일 = 두 지수 모두 유효한 검사가 있는 실행이 하나라도 있는 날. 읽지 못한 날은 따로."""
+    """관찰 거래일 = 두 지수 모두 유효한 검사가 있는 실행이 하나라도 있는 날. 읽지 못한 날은 따로.
+
+    mismatch·cross_note 는 **모든** 실행에서 센다 — 한 지수를 못 읽어 관찰 일수에 들지 못한 실행이라도
+    다른 지수에서 확인한 어긋남은 사실이다(빼면 block 전환 판단이 0건으로 보인다, codex 구현 검토 2회 #3).
+    그 가운데 불완전 실행의 몫은 `mismatch_or_cross_note_incomplete_runs` 로 따로 보인다."""
     ok = [r for r in rows if not r.get("unreadable")]
     days = sorted({r["date"] for r in ok})
-    bad = [r for r in ok if "mismatch" in (r["KOSPI"], r["KOSDAQ"])
+    bad = [r for r in rows if "mismatch" in (r["KOSPI"], r["KOSDAQ"])
            or r["KOSPI_cross_note"] or r["KOSDAQ_cross_note"]]
     unread = [r for r in rows if r.get("unreadable")]
     return {"trade_days": len(days), "runs": len(ok), "mismatch_or_cross_note_runs": len(bad),
             "mismatch_or_cross_note_days": sorted({r["date"] for r in bad}),
+            "mismatch_or_cross_note_incomplete_runs": len([r for r in bad if r.get("unreadable")]),
             "unreadable_runs": len(unread),
             "unreadable_days": sorted({r["date"] for r in unread} - set(days))}
 
@@ -217,6 +222,8 @@ def main(argv=None):
     s = summary(rows)
     print(f"관찰 거래일 {s['trade_days']} · 실행 {s['runs']} · mismatch/cross_note 실행 {s['mismatch_or_cross_note_runs']}"
           + (f" ({', '.join(s['mismatch_or_cross_note_days'])})" if s["mismatch_or_cross_note_days"] else "")
+          + (f" [검사 불완전 실행 {s['mismatch_or_cross_note_incomplete_runs']}건 포함]"
+             if s["mismatch_or_cross_note_incomplete_runs"] else "")
           + f" · 읽지 못한 실행 {s['unreadable_runs']} · 읽지 못한 날 {len(s['unreadable_days'])}"
           + (f" ({', '.join(s['unreadable_days'])})" if s["unreadable_days"] else ""))
     print("block 전환은 사람이 판단한다 — 10거래일 이상 0건이면 config/kr_index_check.json 의 mismatch 를 block 으로.")

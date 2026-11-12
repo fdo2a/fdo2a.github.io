@@ -38,9 +38,9 @@ KR 수집기가 못 읽은 값을 0 으로 채웠다. 지수 등락률(`fluctuat
 - TOL 0.01%p 근거: R 반올림 반폭 0.005 + C·D 반올림분(코스닥 700 기준 약 0.0015).
 - 11/12 실측(KOSPI basic C 5,342.73 · R −0.61 · D −32.63, integration lastClosePrice 5,375.36 = C−D) → `ok`.
 
-**원장 가드와 진짜 보합일(codex 구현 검토 1회 #1)** — 2026-10-17 가드(`history.ledger_conflicts`)는 「다른 날과 모든 지수 종가가 같으면 한 세션이 두 날짜에 적혔다」로 멈춘다. 진짜 보합일은 여기에 걸린다. 종가 중복만 걸렸고 **두 지수 모두** 이 실행에서 `ok_flat` 이면서 `matched`(integration 이 이 세션 값이라는 표식)이면 그 검사만 건너뛴다(`verified_flat`). 이른 날짜 문제는 그대로 막는다. 한 지수만 남은 실행은 보합이 검증돼도 멈춘다 — 증거가 약하고 그 실행은 어차피 발행할 수 없어(complete=false) 재수집을 기다리는 쪽이 보수적이다.
+**원장 가드와 진짜 보합일(codex 구현 검토 1회 #1 → 2회 #1 에서 뒤집음)** — 2026-10-17 가드(`history.ledger_conflicts`)는 「다른 날과 모든 지수 종가가 같으면 한 세션이 두 날짜에 적혔다」로 멈춘다. **예외가 없다.** 1회차 뒤 「두 지수 모두 `ok_flat`·`matched` 면 건너뛴다」는 예외(`verified_flat`)를 넣었다가 2회차에서 뺐다 — 전 세션 종가가 R=0·D=0 과 함께 새 날짜로 오고 integration 전일 종가·수급 날짜·고저 범위가 맞는 응답은 진짜 보합일과 입력이 같아, 이 실행 안에는 「그 종가가 오늘 것」이라는 날짜 붙은 독립 증거가 없다(10/17 사고가 다시 들어온다). 치르는 값: 두 지수가 **모두** 원장의 다른 날과 소수 둘째 자리까지 같은 진짜 보합일은 수집이 `StaleIndexData` 로 멈춘다(아무것도 쓰지 않는다 — `complete=false` 도 남지 않고 Actions 실행이 실패한다). 재수집으로 풀리지 않고 우회 스위치도 없다 — 사람이 그날 종가를 확인해 처리한다. 사용자 결정 2(검증 못 하면 발행하지 않는다)와 같은 방향이고, 한 지수만 같은 날·보합이지만 원장과 종가가 다른 날은 걸리지 않는다. 고정 시험: `scripts/kr/tests/test_impl_review_2.py::test_both_closes_equal_to_another_row_stop_even_when_ok_flat`.
 
-**업종 상승 종목 수(구현 검토 1회 #2)** — `riseCount`·`totalCount` 를 못 읽으면(또는 전체 0) `breadth=None`. `leadership.flag_leadership` 은 None 을 판정하지 않는다(`liquidity_backed=None`, `leading=False`, note 없음 — 좁은 상승으로도 주도로도 부르지 않는다). 중앙값은 읽은 값만으로 잰다.
+**업종 상승 종목 수(구현 검토 1회 #2, 2회 #2)** — `riseCount`·`totalCount` 를 못 읽으면(또는 전체 0) `breadth=None`. `leadership.flag_leadership` 은 None 을 판정하지 않는다(`liquidity_backed=None`, note 없음 — 좁은 상승으로도 주도로도 부르지 않는다). **`leading` 은 세 값이다**: 오른 업종의 결측은 `None`(미판정), 오르지 않은 업종은 비율 없이도 주도가 아니므로 `False`. 중앙값은 읽은 값만으로 잰다. 주간 세션은 미판정 업종 이름을 `leading_undecided`(있을 때만)에 남기고, 같은 날 재수집 병합(`period.merge_session`)은 새 실행이 판정하지 못한 업종 가운데 앞 실행이 주도로 적은 것을 주도로 남긴다(판정이 된 재수집의 「주도 없음」은 그대로 교체). 주간 `daily[]` 에는 `leading_undecided_count`(있을 때만). 작성자 입력 `kr_industry.json` 과 펀드 관측에는 `leading: null` 로 간다 — 비주도(`false`)로 읽지 않는다.
 
 **설정** — `config/kr_index_check.json` `{"format": "kr-index-check/1", "mismatch": "warn"}`. 없으면 warn(`missing_default`), 깨졌거나 모르는 값이면 block(`invalid_block`) — 오타가 차단을 조용히 끄지 않게. 켜는 절차: `python3 scripts/kr/index_check.py --report`(origin/main 의 실행 manifest 로 거래일·실행별 status 표, 읽기 전용)로 10거래일 이상 mismatch·cross_note 0건을 사람이 확인한 뒤 `block` 으로 바꿔 커밋. 같은 커밋에서 `scripts/kr/tests/test_index_check.py::test_committed_config_is_warn` 을 고친다(커밋된 값을 고정하는 시험은 이것 하나다 — 수집 전 시험이 빨개지면 그날 수집이 멈춘다).
 
@@ -57,6 +57,7 @@ KR 수집기가 못 읽은 값을 0 으로 채웠다. 지수 등락률(`fluctuat
 
 **기록과 알림**
 - `kr_market_data.json.checks` = `{index_pct: {mode, config_status, KOSPI, KOSDAQ}, flows: {시장: {state, faults}}, top_value: {rows, dash, bad, dash_top100, positive_rows} | {error}}`. 작성자는 본문에 옮기지 않는다. `kr_flows.json[시장].diagnostics`.
+- `--report` 합계(구현 검토 2회 #3): 관찰 거래일은 두 지수 모두 유효한 검사가 있는 실행만 세지만, mismatch·cross_note 는 한 지수를 못 읽은 불완전 실행에서 확인된 것도 합계·날짜 목록에 넣는다(그 몫은 「검사 불완전 실행 N건 포함」으로 표시). 알림(`digest.kr_check_notes`)은 파일 하나를 읽는 호출이 예외(시간 초과 등)를 올려도 앞서 읽은 줄과 키를 남기고 읽기 실패 한 줄을 더한다(2회 #4) — 목록(`ls-tree`) 실패만 전체 실패다.
 - 실행 manifest(`common/versions.reconcile`)에 `checks` 전체 사본 + `field_status` 요약 — 기록만. manifest 는 실행마다 추가만 되므로 같은 날 뒤 정상 재수집이 고정 경로를 덮어도 앞 실행의 기록이 남는다. 알림과 `--report` 는 이것만 읽는다.
 - 당일 저녁: 차단은 complete=false → 루틴이 멈추고 미발행 감시(`review/publish_watch._collection_note`)가 빠진 코어와 status 를 고정 문구로 붙인다.
 - 다음 날 09:00 이후: `verify_digest` 가 origin/main `versions/kr/` 최근 3거래일 폴더의 manifest checks 로 줄을 낸다(경고 포함). 폴백만 있는 날은 「판 기록 없이 올라간 수집 N건」 + `kr_market_data.json` 보완. 읽기 실패는 한 줄. 키 (거래일|항목|status)는 요약에 실린 줄만 제출본에 싣고, 접수 확인 뒤 `kr_checks_seen` 에 기록(14일 보관). enforce 보류(push 없음)는 원격에 없어 Actions `::warning::` 만.
@@ -65,6 +66,7 @@ KR 수집기가 못 읽은 값을 0 으로 채웠다. 지수 등락률(`fluctuat
 
 - 시총 100위 밖·전체 30% 미만의 거래대금 부분 장애는 구분할 수 없다(네이버가 「거래 없음」과 「값 없음」을 같은 `-` 로 준다). 통계를 매 실행 남기고 15% 초과는 경고.
 - 진짜 보합일에 integration 이 늦거나 실패하면 그 실행은 막힌다(재수집이 푼다).
+- 두 지수 종가가 모두 원장의 다른 날과 같은 진짜 보합일은 수집 자체가 멈춘다(재수집으로 풀리지 않는다 — 위 「원장 가드와 진짜 보합일」).
 - 네이버가 휴장일을 `"0"` 이 아니라 빈 값으로 주기 시작하면 연휴 뒤 첫날이 `unreadable_before_latest` 로 막힌다(닫힌 쪽 실패).
 - shadow 의 발행일 재수집 자동 보완은 이 변경 전과 같은 상태로 남는다(보호는 enforce 의 몫, 전환은 사용자 확인).
 

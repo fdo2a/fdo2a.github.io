@@ -356,3 +356,43 @@ def test_collection_note_without_checks_keeps_todays_text(tmp_path):
     note = _note(tmp_path, body)
     assert note == ('원인: 확정하지 못했어요 — 이 세션 수집 데이터가 완전하지 않아요'
                     f'(report_date {DAY}, complete false). 루틴은 불완전한 데이터로는 발행하지 않아요')
+
+
+# ── 구현 검토 2회 #4 — 읽는 호출 자체가 예외를 올려도 앞서 읽은 줄을 버리지 않는다 ─────────
+
+def _raising(monkeypatch, match, exc):
+    real = D._git_bytes
+
+    def fake(root, *args):
+        if args[0] == "show" and match in args[1]:
+            raise exc
+        return real(root, *args)
+    monkeypatch.setattr(D, "_git_bytes", fake)
+
+
+def test_fallback_market_data_call_exception_keeps_other_lines_and_keys(tmp_path, monkeypatch):
+    import subprocess
+    k = {"status": "mismatch", "naver_pct": -1.22, "derived_pct": 0.35}
+    md = {"report_date": "2026-11-11", "checks": checks(ip(kosdaq={"status": "ratio_missing"}))}
+    root = repo_with(tmp_path, runs=[(DAY, "r1", manifest(checks(ip(kosdaq=k))))],
+                     fallbacks=[("2026-11-11", "f1")], market_data=md)
+    for exc in (subprocess.TimeoutExpired("git", 60), OSError("boom")):
+        _raising(monkeypatch, "kr_market_data.json", exc)
+        lines, keys = notes(root)
+        assert lines.count(D.KR_CHECK_UNREAD) == 1
+        assert "KR 11/11 판 기록 없이 올라간 수집 1건" in lines
+        assert any(l.startswith("KR 11/12 코스닥 등락률: 네이버") for l in lines)
+        assert {k_ for k_, _ in keys} == {f"{DAY}|index_pct.KOSDAQ|mismatch", "2026-11-11|fallback|1"}
+        monkeypatch.undo()
+
+
+def test_one_manifest_call_exception_keeps_other_runs(tmp_path, monkeypatch):
+    import subprocess
+    k = {"status": "mismatch", "naver_pct": -1.22, "derived_pct": 0.35}
+    root = repo_with(tmp_path, runs=[(DAY, "r1", manifest(checks(ip(kosdaq=k)))),
+                                     (DAY, "r2", manifest(checks()))])
+    _raising(monkeypatch, "runs/r2/manifest.json", subprocess.TimeoutExpired("git", 60))
+    lines, keys = notes(root)
+    assert lines[0] == D.KR_CHECK_UNREAD and lines.count(D.KR_CHECK_UNREAD) == 1
+    assert any(l.startswith("KR 11/12 코스닥 등락률: 네이버") for l in lines)
+    assert [k_ for k_, _ in keys] == [f"{DAY}|index_pct.KOSDAQ|mismatch"]

@@ -45,6 +45,12 @@ def session_from(kr_market, kr_flows, kr_industry, kr_top_value):
     lead = [r for r in (kr_industry or []) if r.get('leading') and r.get('name')]
     lead.sort(key=lambda r: -(r.get('change_pct') or 0))
     out['leading_industries'] = [r['name'] for r in lead[:LEADING_CAP]]
+    # 미판정(leading None — 올랐지만 상승 종목 비율을 못 읽었다)은 「주도 없음」과 다르다. 이름을 남겨 두어야
+    # 같은 날 재수집 병합이 앞 실행의 판정을 지우지 않는다. 있을 때만 싣는다(평소 세션 모양은 그대로).
+    und = [r for r in (kr_industry or []) if r.get('leading') is None and 'leading' in r and r.get('name')]
+    und.sort(key=lambda r: -(r.get('change_pct') or 0))
+    if und:
+        out['leading_undecided'] = [r['name'] for r in und]
 
     for row in (kr_top_value or []):
         if row.get('label') is not None:
@@ -60,8 +66,10 @@ def merge_session(existing, new):
     """같은 날 세션 재수집 — 있던 값을 지우지 않는다(2026-11-12). 결과는 new 세션이되:
 
     - new 의 flows 에 없는 시장은 existing 의 그 시장 flows 를 유지한다. flows 가 비지 않으면 flows_note 를 뺀다.
-    - 업종 묶음(industry + leading_industries)은 new 의 industry 하나로 고른다 — 비었으면 둘 다 existing,
-      비지 않으면 둘 다 new(new 의 leading 이 빈 목록이어도 — 주도 업종이 없는 날은 정상이다).
+    - 업종 묶음(industry + leading_industries + leading_undecided)은 new 의 industry 하나로 고른다 — 비었으면
+      전부 existing, 비지 않으면 전부 new(new 의 leading 이 빈 목록이어도 — 주도 업종이 없는 날은 정상이다).
+      단 new 가 판정하지 못한 업종(leading_undecided) 가운데 existing 이 주도로 적어 둔 것은 그대로 주도로
+      남긴다 — 미판정 재수집이 앞 실행의 판정을 지우지 못한다(순서는 new 등락률, 상위 LEADING_CAP).
     - 거래대금 묶음(top_value)은 new 가 비었으면 existing, 아니면 new 로 통째 교체.
     수집 실패는 빈 값([]·{})으로 오므로, 실패한 재실행이 앞선 정상 실행의 값을 지우지 못한다.
     확정 여부는 따로 보지 않는다 — 당일 잠정 수급은 애초에 세션에 들어오지 않는다(session_from).
@@ -77,6 +85,22 @@ def merge_session(existing, new):
     if _empty(new.get('industry')) and not _empty(existing.get('industry')):
         out['industry'] = existing.get('industry')
         out['leading_industries'] = existing.get('leading_industries') or []
+        out.pop('leading_undecided', None)
+        if existing.get('leading_undecided'):
+            out['leading_undecided'] = existing['leading_undecided']
+    elif new.get('leading_undecided'):
+        was = existing.get('leading_industries') or []
+        kept = [n for n in new['leading_undecided'] if n in was]
+        if kept:
+            ind = new.get('industry') or {}
+            lead = list(dict.fromkeys(list(new.get('leading_industries') or []) + kept))
+            lead.sort(key=lambda n: -(ind.get(n) or 0))
+            out['leading_industries'] = lead[:LEADING_CAP]
+            rest = [n for n in new['leading_undecided'] if n not in kept]
+            if rest:
+                out['leading_undecided'] = rest
+            else:
+                out.pop('leading_undecided', None)
     if _empty(new.get('top_value')) and not _empty(existing.get('top_value')):
         out['top_value'] = existing.get('top_value')
     return out
@@ -188,7 +212,10 @@ def finalize(agg, index_closes):
             if d not in have:
                 out['missing'].append(f'indices.{name}.{d}')
 
+    # leading_undecided_count: 그날 주도 여부를 판정하지 못한 업종 수(있을 때만) — 「주도 없음」과 구분한다.
     out['daily'] = [{'date': d,
-                     'leading_industries': sess[d].get('leading_industries') or []}
+                     'leading_industries': sess[d].get('leading_industries') or [],
+                     **({'leading_undecided_count': len(sess[d]['leading_undecided'])}
+                        if sess[d].get('leading_undecided') else {})}
                     for d in dates]
     return out

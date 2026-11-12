@@ -46,7 +46,7 @@ model: opus
 - `kr_flows.json` — 코스피·코스닥 각각 rows(개인·외국인·기관 순매수, 억원) + label/stale
 - `kr_top_value.json` — 거래대금 상위 10(ETF 정규화 완료, 단위 백만원). label/kind/direction/**theme**/value/volume/members. **`volume` 이 null 이면 거래량을 못 읽은 것이다 — 그 칸을 비운다(0 으로 쓰지 않는다)**
 - `kr_market_data.json` 의 `checks`·`kr_flows.json` 의 `diagnostics` 는 수집 검사 기록이다 — 본문에 옮기지 않는다
-- `kr_industry.json` — 업종별 change_pct·breadth·leading·note(주도 크로스체크 결과)
+- `kr_industry.json` — 업종별 change_pct·breadth·leading·note(주도 크로스체크 결과). `leading: null`·`breadth: null` 은 상승 종목 수를 못 읽어 **판정하지 못한 업종**이다 — 주도로도 좁은 상승으로도 쓰지 않는다(`false` 와 다르다)
 - `kr_sector.html` — 섹터 멀티기간(1D~1Y) 가로 막대 스니펫
 - `kr_intraday.json` — 코스피·코스닥 30분봉 궤적 + 각 당일 OHLC(`KOSPI`/`KOSPI_ohlc`/`KOSDAQ`/`KOSDAQ_ohlc`)
 - `kr_flows_intraday.json` — 코스피·코스닥 **장중 누적 순매수 궤적**(억원). 시장별 `points`(30분 앵커 13개, 개인·외국인·기관계 + 금융투자·보험·투신·은행·기타금융·연기금등·기타법인)·`extremes`(주체별 max/min과 시각)·`turns`(의미 있는 방향 전환: t·from·to·peak)·`session_last`(정규장 마지막 관측)·`first_t`/`last_t`/`obs_count`/`stale`. **누적값이지 구간값이 아니다.** 비-코어

@@ -453,6 +453,17 @@ def kr_check_items(date, checks):
 _KR_RUN = re.compile(r'^versions/kr/(\d{4}-\d{2}-\d{2})/(runs|fallback)/([^/]+?)(/manifest\.json|\.json)$')
 
 
+def _show_json(root, rev, path):
+    """`git show rev:path` 의 JSON(dict) 또는 None — 비정상 종료·깨진 JSON·호출 예외(시간 초과·OSError) 모두 None.
+    한 파일을 못 읽은 일이 앞서 읽은 줄을 버리게 두지 않는다(codex 구현 검토 2회 #4)."""
+    try:
+        b = _git_bytes(root, 'show', f'{rev}:{path}')
+        obj = json.loads(b.stdout) if b.returncode == 0 else None
+    except (subprocess.SubprocessError, OSError, ValueError):
+        return None
+    return obj if isinstance(obj, dict) else None
+
+
 def kr_check_notes(root, rev='origin/main', seen=None):
     """원격 판 `versions/kr/` 최근 3개 거래일 폴더의 실행 manifest `checks` → (줄 목록, [(키, 줄)]).
 
@@ -480,12 +491,8 @@ def kr_check_notes(root, rev='origin/main', seen=None):
         for d in days:
             for rid, path in sorted(runs.get(d, [])):
                 # 한 실행을 못 읽어도 나머지 실행의 줄은 낸다 — 못 읽은 사실은 한 줄로(KR_CHECK_UNREAD)
-                b = _git_bytes(root, 'show', f'{rev}:{path}')
-                try:
-                    man = json.loads(b.stdout) if b.returncode == 0 else None
-                except (ValueError, UnicodeDecodeError):
-                    man = None
-                if not isinstance(man, dict):
+                man = _show_json(root, rev, path)
+                if man is None:
                     unread = True
                     continue
                 ck = man.get('checks')
@@ -498,12 +505,8 @@ def kr_check_notes(root, rev='origin/main', seen=None):
                 items.append((d, 'fallback', str(len(orphan)), f'KR {_md(d)} 판 기록 없이 올라간 수집 {len(orphan)}건'))
                 if md_cache is None:
                     # 보완 자료를 못 읽으면(없음·깨짐) 그 사실을 한 줄로 — 다른 실행의 줄은 그대로(구현 검토 1회 #4)
-                    b = _git_bytes(root, 'show', f'{rev}:kr/data/kr_market_data.json')
-                    try:
-                        md_cache = json.loads(b.stdout) if b.returncode == 0 else None
-                    except (ValueError, UnicodeDecodeError):
-                        md_cache = None
-                    if not isinstance(md_cache, dict):
+                    md_cache = _show_json(root, rev, 'kr/data/kr_market_data.json')
+                    if md_cache is None:
                         unread, md_cache = True, {}
                 if md_cache.get('report_date') == d:
                     items += [(d, *x) for x in kr_check_items(d, md_cache.get('checks'))]

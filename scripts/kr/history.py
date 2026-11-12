@@ -77,13 +77,14 @@ def resolve_report_date(naver_dates, yf_date, today):
     return (yf_date or today), notes
 
 
-def ledger_conflicts(rows, record, verified_flat=None):
+def ledger_conflicts(rows, record):
     """이 행을 원장에 쓰면 역사를 고쳐 쓰게 되는가. 문제 목록(빈 목록 = 통과).
 
     - 원장 최신일보다 이른 날짜: 늦게 돈 실행이 지난 세션을 덮어쓴다(같은 날 재실행은 정상).
     - 다른 날짜와 모든 지수 종가가 같다: 한 세션이 두 날짜에 적혔다(어느 방향이든).
-      단 `verified_flat`(이 실행에서 integration 이 이 세션 값임을 표식으로 확인한 보합 지수)이 이 행의
-      **모든** 지수를 덮으면 진짜 보합일이라 이 검사만 건너뛴다(2026-11-12, codex 구현 검토 1회 #1).
+      예외가 없다 — 보합 검증(`ok_flat`)은 등락률이 0 이라는 증거일 뿐 그 종가가 오늘 것이라는 증거가 아니다.
+      전 세션 종가가 R=0·D=0 과 함께 새 날짜로 오는 응답과 진짜 보합일은 입력이 같다. 두 지수가 모두
+      다른 날과 소수 둘째 자리까지 같은 진짜 보합일은 멈추고 사람이 본다(2026-11-12, codex 구현 검토 2회 #1).
     직전 종가 연속성은 보지 않는다 — 하루만 수집을 놓쳐도 그 뒤 날마다 막힌다.
     """
     d = (record or {}).get('report_date')
@@ -94,7 +95,7 @@ def ledger_conflicts(rows, record, verified_flat=None):
     if d and latest and d < latest:
         problems.append(f"report_date {d} 가 원장 최신 {latest} 보다 이르다 — 늦게 돈 실행이 "
                         "지난 세션을 덮어쓰려 한다")
-    if closes and not (verified_flat and set(closes) <= set(verified_flat)):
+    if closes:
         for r in rows or []:
             other = r.get('report_date')
             ix = r.get('indices') or {}
