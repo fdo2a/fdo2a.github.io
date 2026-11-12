@@ -1,0 +1,100 @@
+{
+  "report_date": "2026-11-12",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": -1.8,
+          "close": 1254000,
+          "value": 5183365
+        },
+        {
+          "name": "DB하이텍",
+          "change_pct": -16.36,
+          "close": 82300,
+          "value": 136998
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "삼성전자",
+          "change_pct": 0.97,
+          "close": 208000,
+          "value": 3998997
+        },
+        {
+          "name": "삼성전자우",
+          "change_pct": 2.0,
+          "close": 168300,
+          "value": 793608
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "전자장비와기기",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성전기",
+          "change_pct": -4.01,
+          "close": 886000,
+          "value": 828102
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "양방향미디어와서비스",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "NAVER",
+          "change_pct": -6.43,
+          "close": 181800,
+          "value": 298364
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "손해보험",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성화재",
+          "change_pct": -7.24,
+          "close": 525000,
+          "value": 184060
+        }
+      ]
+    }
+  ]
+}

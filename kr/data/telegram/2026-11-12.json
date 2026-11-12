@@ -1,0 +1,190 @@
+{
+ "report_date": "2026-11-12",
+ "market": "kr",
+ "collected_utc": "2026-11-12T09:16:55+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-10T22:43:37+00:00",
+  "kwusa": "2026-11-10T23:07:43+00:00",
+  "lim_econ": "2026-11-10T22:39:09+00:00",
+  "d_ticker": "2026-11-11T07:20:48+00:00",
+  "aethersemiconductor": "2026-11-11T07:21:28+00:00",
+  "FastStockNews": "2026-11-11T09:11:35+00:00",
+  "FastStockNewsUSA": "2026-11-11T05:31:30+00:00",
+  "insidertracking": "2026-11-11T09:07:19+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-10T22:43:37+00:00",
+   "last_id": 2996,
+   "last_dt": "2026-11-11T22:45:37+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-10T23:07:43+00:00",
+   "last_id": 61758,
+   "last_dt": "2026-11-11T23:03:28+00:00",
+   "read": 4
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-10T22:39:09+00:00",
+   "last_id": 2131,
+   "last_dt": "2026-11-11T22:41:37+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-11T07:20:48+00:00",
+   "last_id": 4127,
+   "last_dt": "2026-11-12T03:00:39+00:00",
+   "read": 6
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-11T07:21:28+00:00",
+   "last_id": 26849,
+   "last_dt": "2026-11-12T08:57:13+00:00",
+   "read": 38
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-11T09:11:35+00:00",
+   "last_id": 127828,
+   "last_dt": "2026-11-12T09:01:28+00:00",
+   "read": 69
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-11T05:31:30+00:00",
+   "last_id": 24388,
+   "last_dt": "2026-11-12T08:54:49+00:00",
+   "read": 41
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 6,
+   "truncated": false,
+   "from_dt": "2026-11-11T09:07:19+00:00",
+   "last_id": 69124,
+   "last_dt": "2026-11-12T09:03:38+00:00",
+   "read": 101
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/26816",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-11T12:52:12+00:00",
+   "url": "https://t.me/aethersemiconductor/26816",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "샘 올트먼 OpenAI CEO가 10월 31일 삼성 계열사 사장단과의 만남에서 AI 메모리 수요가 단기적으로 흔들릴 수 있다고 경고했다는 소식이 전해졌다. 그는 네오클라우드 버블 논란을 언급하며 수요 집계에 이중집계가 섞여 있다고 지적했고, 실질적으로 대규모 수요를 이끄는 곳은 OpenAI와 Anthropic뿐이라 공급 쇼크와 불안정기가 찾아올 수 있다는 시각을 내놓았다. 반면 장기적으로는 칩 공급망과 데이터센터 인프라가 최대 병목이 될 것이라며 투자 확대를 주문했다는 의견도 함께 제시됐다. 이 소식을 두고 메모리 업종에는 단기 밸류에이션 부담 요인이 될 수 있다는 해석과, 중장기 수요 자체는 유효하다는 해석이 엇갈린다는 견해가 나온다."
+  },
+  {
+   "id": "lim_econ/2131",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-11T22:41:37+00:00",
+   "url": "https://t.me/lim_econ/2131",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "원화 상방 헤지 수요가 급증해 달러당 1300~1400원 콜옵션 명목가치가 지난해 12월 이후 3배 넘게 늘었다는 소식이다. BI는 금리차 축소로 원화가 강세를 보였으나 단기 급등으로 반대 방향 헤지 수요가 커질 수 있다는 시각을 내놨다. 엔비디아는 베어드가 투자의견을 중립으로 낮춰 불확실성이 제기됐지만 애널리스트 다수는 여전히 매수 의견이다. AI 투자에 대해 식스스트리트는 과열과 조달비용 상승을 경고했고 JP모건은 이를 반박했다. 사우디 원유 생산은 전쟁 전 수준을 회복했고 브렌트유는 이달 약 21% 떨어졌다."
+  },
+  {
+   "id": "hedgecat0301/2996",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-11T22:45:37+00:00",
+   "url": "https://t.me/hedgecat0301/2996",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 AI주 랠리와 코어위브의 자금조달 신뢰 회복을 계기로 국내 증시도 악재보다 호재에 반응하기 시작했다고 진단했다. 외국인이 반도체와 IT하드웨어 중심으로 순매수에 나서며 반등을 이끈 점을 근거로 들었다. 다만 단기 급등에 따른 차익실현과 개인 포지션 정리 압력은 남아 있다고 보았다. 코스피와 코스닥이 여전히 과매도 상태인 만큼 호재에 대한 반응력이 커질 수 있다고 판단하며, 속도 조절이 나오더라도 주식 비중 축소 대응은 후순위에 두는 것이 적절하다고 제시했다."
+  },
+  {
+   "id": "FastStockNews/127813",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-12T05:28:30+00:00",
+   "url": "https://t.me/FastStockNews/127813",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "원문은 짧은 댓글 두 줄로, 엔비디아만 빠지고 나머지는 오른 종목이 있었다는 관찰과, 반대로 AI 생태계 전체가 불확실성 때문에 함께 빠질 것 같다는 전망을 담고 있습니다. 두 견해가 엇갈리는 상황을 정리하면 됩니다. 글쓴이는 시장 흐름이 종목별로 갈릴 수도, 업종 전체로 번질 수도 있다고 보는 것으로 읽힙니다."
+  },
+  {
+   "id": "FastStockNews/127815",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-12T06:02:14+00:00",
+   "url": "https://t.me/FastStockNews/127815",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "HMM이 2026년 3분기 분기보고서를 공시했다. 3분기 매출은 41,271억 원, 영업이익은 13,946억 원, 순이익은 15,352억 원으로 시장 예상치를 웃돌았다. 직전 2분기 영업이익 3,541억 원과 비교하면 증가폭이 커서, 실적 개선세가 뚜렷해졌다는 시각이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/26842",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-12T06:08:04+00:00",
+   "url": "https://t.me/aethersemiconductor/26842",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아가 Apollo, BlackRock 등과 500억 달러 이상 규모의 AI 인프라 금융 플랫폼을 추진하며, 단순 GPU 판매자를 넘어 금융 제공자 역할까지 넓히고 있다는 소식이다. 고객이 자체 자금으로 GPU를 사던 구조에서 엔비디아의 신용보강을 받은 SPV나 Neocloud가 자금을 조달해 GPU를 사는 구조로 바뀌면, GPU 매출에 실수요뿐 아니라 금융으로 만들어진 수요까지 포함될 수 있다는 시각이다. 이 글은 이것이 단기적으로는 AI 반도체 사이클에 우호적이지만, 매출의 질이 달라져 GPU 출하량을 곧바로 실수요로 보기 어렵게 되므로 자생 수요와 엔비디아 금융 지원 수요를 구분해 봐야 한다는 의견을 내놓고 있다."
+  },
+  {
+   "id": "FastStockNews/127825",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-12T07:13:09+00:00",
+   "url": "https://t.me/FastStockNews/127825",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "엘티씨가 2026년 3분기 분기보고서를 통해 실적을 공시했다. 매출액은 1,143억 원으로 예상치 1,214억 원보다 5.9% 낮았으나, 영업이익은 294억 원으로 예상치 200억 원보다 47.2% 높았다. 순이익은 227억 원이다. 직전 분기인 2분기 매출 1,409억 원과 비교하면 외형은 줄었지만, 영업이익은 232억 원에서 늘어난 점이 눈에 띈다."
+  }
+ ],
+ "stats": {
+  "items": 7,
+  "summarized": 7,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

@@ -1,0 +1,174 @@
+{
+ "report_date": "2026-11-11",
+ "market": "kr",
+ "collected_utc": "2026-11-11T09:16:42+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-09T22:37:37+00:00",
+  "kwusa": "2026-11-09T23:00:24+00:00",
+  "lim_econ": "2026-11-09T22:40:44+00:00",
+  "d_ticker": "2026-11-10T01:37:21+00:00",
+  "aethersemiconductor": "2026-11-10T08:17:34+00:00",
+  "FastStockNews": "2026-11-10T08:16:17+00:00",
+  "FastStockNewsUSA": "2026-11-10T06:00:47+00:00",
+  "insidertracking": "2026-11-10T09:13:55+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:37:37+00:00",
+   "last_id": 2995,
+   "last_dt": "2026-11-10T22:43:37+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T23:00:24+00:00",
+   "last_id": 61754,
+   "last_dt": "2026-11-10T23:07:43+00:00",
+   "read": 6
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-09T22:40:44+00:00",
+   "last_id": 2130,
+   "last_dt": "2026-11-10T22:39:09+00:00",
+   "read": 2
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-10T01:37:21+00:00",
+   "last_id": 4121,
+   "last_dt": "2026-11-11T07:20:48+00:00",
+   "read": 8
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-10T08:17:34+00:00",
+   "last_id": 26809,
+   "last_dt": "2026-11-11T07:21:28+00:00",
+   "read": 40
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-10T08:16:17+00:00",
+   "last_id": 127759,
+   "last_dt": "2026-11-11T09:11:35+00:00",
+   "read": 69
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-10T06:00:47+00:00",
+   "last_id": 24347,
+   "last_dt": "2026-11-11T05:31:30+00:00",
+   "read": 41
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 7,
+   "truncated": false,
+   "from_dt": "2026-11-10T09:13:55+00:00",
+   "last_id": 69016,
+   "last_dt": "2026-11-11T09:07:19+00:00",
+   "read": 132
+  }
+ },
+ "items": [
+  {
+   "id": "hedgecat0301/2995",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-10T22:43:37+00:00",
+   "url": "https://t.me/hedgecat0301/2995",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 10월 CPI가 헤드라인과 근원 모두 컨센서스를 웃돌았지만, 12월 50bp 인상은 연준 내 소수 의견이라 시장 금리 급등과 증시 부담이 현실화될 가능성은 낮다고 진단했다. 근거로 Fed Watch상 50bp 인상 확률이 11%에 그치고 다른 연준 인사들이 이를 지지하지 않은 점을 들었다. 아울러 유가가 80달러대 중반으로 내려온 점도 긍정적으로 보았다. 국내 증시는 금리 상승과 엔비디아 노이즈로 상승분을 일부 반납하겠지만 반도체 지수 낙폭 축소를 감안해 장중 하방 경직성이 나타날 것으로 전망했다. 또 코어위브 실적과 수주잔고 확대를 중립 이상으로 평가하면서도 시간외 변동성을 고려해 본장 주가를 확인한 뒤 대응할 것을 권했다. 수급은 아직 정상화되지 않았으나 주력업종이 낙폭 과대 구간에 있다는 점에서 주가 복원력을 대응 전략의 중심에 둘 필요가 있다고 제시했다."
+  },
+  {
+   "id": "aethersemiconductor/26791",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-11T00:09:23+00:00",
+   "url": "https://t.me/aethersemiconductor/26791",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 민주당이 중간선거 승리로 확보한 감독 권한을 활용해 내년 초 일론 머스크를 의회 증언대에 세울 계획이라는 소식이 전해졌다. 질문 목록에는 우크라이나에서의 스페이스X 위성 인터넷 서비스 제한, DOGE 재직 시절의 정부 프로그램 축소와 공무원 해고, 푸틴 대통령 및 엡스타인과의 접촉, 성적 딥페이크 제작에 쓰인 AI 소프트웨어 개발 관여 등이 포함된 것으로 알려졌다. 머스크 측은 논평에 응하지 않았으나 스페이스X의 정부 계약은 최고 제품에 최저 가격이라고 반박했다. 또한 민주당이 소환장 집행과 법안 통과에서 트럼프 행정부의 협조와 다수 확보가 필요해 난관이 따를 수 있다는 시각도 제시됐다. 머스크가 과거 선서 증언 후 재판에서 불리한 판결을 받았던 점을 짚으며 이번 증언의 무게를 강조하는 견해도 함께 전해졌다."
+  },
+  {
+   "id": "FastStockNews/127732",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-11T03:20:49+00:00",
+   "url": "https://t.me/FastStockNews/127732",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "프로브카드 수출금액이 크게 늘었으며, 중량 기준 수출단가도 전월 동기 대비 64.0% 올랐다는 점이 함께 제시됐습니다. 이를 근거로 단순한 물량 증가를 넘어 고부가 제품 중심으로 수출 구성이 나아지고 있다는 시각입니다."
+  },
+  {
+   "id": "FastStockNews/127739",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-11T04:21:39+00:00",
+   "url": "https://t.me/FastStockNews/127739",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "도우인시스의 2026년 3분기 연결 실적은 매출 679억 원, 영업이익 134억 원으로 집계됐고, 영업이익은 연중 최고치라고 전해졌다. 순이익은 18억 원으로 직전 분기보다 크게 줄었으며 컨센서스를 밑돌았다. 이에 대해 영업이익률 개선이 두드러졌지만 순이익 감소 요인을 함께 살펴봐야 한다는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNews/127750",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-11T05:16:39+00:00",
+   "url": "https://t.me/FastStockNews/127750",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "일진전기의 2026년 3분기 분기보고서 실적이 공시됐다. 매출액은 6,376억 원으로 시장 예상치 5,753억 원을 웃돌았고, 영업이익 700억 원과 순이익 514억 원도 예상치를 각각 상회했다. 직전 분기인 2분기와 비교하면 매출은 비슷한 수준을 유지했으며 영업이익은 720억 원에서 소폭 줄었고, 순이익은 499억 원에서 늘었다. 이를 두고 실적 흐름이 견조하다는 시각이 나온다."
+  },
+  {
+   "id": "aethersemiconductor/26807",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-11T07:00:26+00:00",
+   "url": "https://t.me/aethersemiconductor/26807",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "테라팹이 2032년까지 월 약 100만 장의 웨이퍼 생산을 계획하고 있으며, 그중 메모리가 약 70만 장, 컴퓨트가 30만 장 이상이라는 내용이 닛케이를 통해 전해졌다. 조달팀은 2028년 하반기 양산을 준비하기 위해 장비업체들에 수개월 내 납품을 요청한 것으로 알려졌다. 이를 두고 조달 계획이 실제로 진행 중일 가능성이 높으며, 장비 공급사에는 물론 테라팹 수요가 장비 공급을 앞지를 경우 다른 팹 고객사에도 영향이 미칠 수 있다는 시각이 제시됐다. 반면 테라팹의 야망이 전반적으로 과하다는 회의론도 함께 나왔다. 구체화되지 않은 제품과 수요를 근거로 완전히 새로운 공정의 팹을 짓는 것은 벅차며, 특히 IP 라이선스 없이 메모리를 성공적으로 만들 수 있을지에 대해 의문이 크다는 의견이다. 이 뉴스가 액면 그대로 받아들여질 경우 메모리 업체들에 미칠 잠재적 영향이 주목할 만하다는 것이 글쓴이의 관심사로 보인다."
+  }
+ ],
+ "stats": {
+  "items": 6,
+  "summarized": 6,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
