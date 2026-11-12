@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-11",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 4,
- "collected_at": "2026-11-12T06:34:58+00:00",
- "cutoff_at": "2026-11-12T06:34:58+00:00",
+ "collected_at": "2026-11-12T07:39:50+00:00",
+ "cutoff_at": "2026-11-12T07:39:50+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "c76a46a3b3632f96ca05e8b38de0d1272f9fc4fb6308071291be9071d6072d7e"
  },
  "counts": {
-  "harvest": 205,
+  "harvest": 207,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 48784,
-   "out": 15907
+   "in": 94225,
+   "out": 22583
   },
   "discovery": "throttled",
   "hosts": {
@@ -44,16 +44,32 @@
   "gdelt": "throttled",
   "grounded": {
    "claims": "8/8",
-   "pairs": "3/3",
-   "obs": "8/8"
+   "pairs": "4/4",
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 8,
+   "pairs": 2,
+   "claims": 4,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[2]",
+    "memo[1]",
+    "structure",
+    "worry.moderate[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "structure:unverified",
+    "edges[0]:unverified",
+    "edges[2]:unverified",
+    "memo[1]:unverified",
+    "worry.moderate[0]:unverified"
+   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -62,5 +78,12 @@
   "query": "nvidia jensen affair",
   "trigger": []
  },
- "content_hash": "206e0aaa639e86f9"
+ "problems": [
+  "structure:unverified",
+  "edges[0]:unverified",
+  "edges[2]:unverified",
+  "memo[1]:unverified",
+  "worry.moderate[0]:unverified"
+ ],
+ "content_hash": "c84a8d15264365dc"
 }
