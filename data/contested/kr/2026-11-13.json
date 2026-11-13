@@ -1,0 +1,62 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-13",
+ "status": "none",
+ "reason": "topic_too_long",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-13T11:13:25+00:00",
+ "cutoff_at": "2026-11-13T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "31c4de03fe34deaa4797b6ed916f0a378e0df349",
+  "sha256": "994c586dbae23ec1ccc55bbd29d6f2fd54b3391b51c7a29a2799805a8573e3e6",
+  "extra": {
+   "kr_econ.json": "4d8429ca75da7ca085af46a2ad352f38dd323e4d9d86174af87c2daeae1a9f7b",
+   "kr_flows.json": "d9a2bb53827fcd2cf4583171ddcceba6693989d3898512a78790ae5b19869d70",
+   "kr_session.json": "d27a9a1b434fc1f1cfb976fd556e0e38a99992e2887b25d70764300f2d50fcc1"
+  }
+ },
+ "counts": {
+  "harvest": 508,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "edaily": "ok",
+   "newspim": "ok",
+   "dailian": "ok",
+   "etoday": "ok",
+   "khan": "ok",
+   "news1": "ok",
+   "mt": "ok"
+  },
+  "notes": [
+   "discover:508"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 14923,
+   "out": 4448
+  }
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "276cfbf7bffc9588"
+}
