@@ -432,6 +432,17 @@ def test_mapped_table_in_closed_details_is_violation(post, data):
     assert has(run(h, data), '[KR 지수]')
 
 
+def test_wrong_copy_of_mapped_table_in_open_details(post, data):
+    # codex 설계 검토 #5 재현 — 열린 details 는 제외가 아니다. 지도 섹션 안이면 표 2개, 밖이면 「다른 섹션」
+    m = re.search(r'<table>\s*<thead><tr><th>지수</th>.*?</table>', post, re.S)
+    wrong = m.group(0).replace('5,342.73', '5,999.99')
+    h = sub(post, '<h2>지수 &amp; 장중</h2>', '<h2>지수 &amp; 장중</h2><details open><summary>원자료</summary>'
+            + wrong + '</details>')
+    assert has(run(h, data), '[KR 지수]', '표가 2개')
+    h = sub(post, '<h2>향후 확인 일정</h2>', '<h2>향후 확인 일정</h2><details open>' + wrong + '</details>')
+    assert has(run(h, data), '[KR 지수]', '다른 섹션')
+
+
 # ── 숨김·SVG·쪼갠 수치 ──────────────────────────────────────────────────
 
 @pytest.mark.parametrize('cell', ['+416<span hidden>9</span>', '+416<span style="display:none">9</span>',
