@@ -1,0 +1,472 @@
+{
+ "report_date": "2026-11-13",
+ "market": "us",
+ "collected_utc": "2026-11-13T22:39:09+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-11T22:45:37+00:00",
+  "kwusa": "2026-11-12T22:24:17+00:00",
+  "lim_econ": "2026-11-11T22:41:37+00:00",
+  "d_ticker": "2026-11-12T14:58:46+00:00",
+  "aethersemiconductor": "2026-11-12T16:23:19+00:00",
+  "FastStockNews": "2026-11-12T22:30:51+00:00",
+  "FastStockNewsUSA": "2026-11-12T22:32:28+00:00",
+  "insidertracking": "2026-11-12T22:29:38+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:45:37+00:00",
+   "last_id": 2999,
+   "last_dt": "2026-11-12T22:47:30+00:00",
+   "read": 3
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-12T22:24:17+00:00",
+   "last_id": 61763,
+   "last_dt": "2026-11-13T15:08:09+00:00",
+   "read": 4
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-11T22:41:37+00:00",
+   "last_id": 2133,
+   "last_dt": "2026-11-13T08:29:41+00:00",
+   "read": 2
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-12T14:58:46+00:00",
+   "last_id": 4149,
+   "last_dt": "2026-11-13T15:14:31+00:00",
+   "read": 13
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-12T16:23:19+00:00",
+   "last_id": 26934,
+   "last_dt": "2026-11-13T16:38:00+00:00",
+   "read": 39
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-12T22:30:51+00:00",
+   "last_id": 127902,
+   "last_dt": "2026-11-13T10:25:40+00:00",
+   "read": 69
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-12T22:32:28+00:00",
+   "last_id": 24457,
+   "last_dt": "2026-11-13T17:39:51+00:00",
+   "read": 36
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-12T22:29:38+00:00",
+   "last_id": 69231,
+   "last_dt": "2026-11-13T22:35:53+00:00",
+   "read": 56
+  }
+ },
+ "items": [
+  {
+   "id": "lim_econ/2132",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-12T22:38:59+00:00",
+   "url": "https://t.me/lim_econ/2132",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "엔비디아가 젠슨 황 CEO의 퇴진과 함께 콜레트 크레스 임시 CEO 체제로 전환한 소식이 시장 충격의 중심에 있었다는 내용이다. 이에 대해 번스타인은 투자의견을 낮추며 경영 공백의 불확실성을 경계했고, 스톤엑스는 실적 영향이 2028년까지 제한적이라면서도 보유로 낮췄으며, 레이먼드 제임스와 로젠블랫은 최근 매도가 감정적이라며 펀더멘털 변화는 작다는 시각을 내놓았다. 한편 이란이 합의 불필요 발언으로 중동 리스크가 되살아나 유가에 상방 압력이 가해지고, 트럼프의 멕시코 관세 2배 위협에 페소가 장중 저점을 갱신했다는 소식도 함께 전해졌다. 연준 인사들은 2% 목표 복귀를 위해 추가 인상 가능성을 언급했다는 의견이다."
+  },
+  {
+   "id": "hedgecat0301/2999",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-12T22:47:30+00:00",
+   "url": "https://t.me/hedgecat0301/2999",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시가 엔비디아 CEO 사임, 네비우스 실적 부진, 유가와 금리 상승 등 악재에도 AMD·브로드컴 같은 경쟁업체 수혜 기대와 12월 인상폭에 대한 낙관으로 하방이 지지됐다고 진단했다. 엔비디아 수장 교체가 AI 수요 훼손으로 번지기보다 수요 분산 가능성을 보여준 것으로 해석하며, 주가가 이미 악재를 상당 부분 반영했다고 봤다. 필자는 국내 증시도 업종 차별화 속에 지수 하단이 제한될 것으로 전망했고, 외국인 매도 압력 완화와 코스피 신용잔고 감소를 근거로 수급이 점차 정상화될 것이라고 판단했다."
+  },
+  {
+   "id": "kwusa/61760",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-12T22:54:04+00:00",
+   "url": "https://t.me/kwusa/61760",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_ko": "필자는 11월 12일 미국 증시가 S&P500 -0.35%, 나스닥 -0.39%로 약보합 마감했다고 짚고, 엔비디아 CEO 사임 소식이 AI 관련주 투자심리를 흔든 것을 하락의 주된 배경으로 봤다. 반면 에너지 업종은 1.50% 올라 낙폭을 일부 상쇄했고, 종목별로는 AMD와 브로드컴이 5% 넘게 강세를 보였다. 필자는 어플라이드 머티리얼즈와 시스코가 AI 수요를 근거로 실적 전망을 상향한 점도 눈여겨볼 흐름으로 평가했다. 금리에 대해서는 데일리 총재가 금리 인상 폭을 조절할 시간이 있다고 말한 점을 함께 전했다."
+  },
+  {
+   "id": "kwusa/61761",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-12T22:55:36+00:00",
+   "url": "https://t.me/kwusa/61761",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진영",
+   "source": null,
+   "summary_ko": "키움 글로벌 ETF 메모는 11월 12일 종가 기준 미국 증시가 소폭 하락했다고 전하면서 에너지만 오르고 원자재·통신·산업재·금융 등은 약세였다고 짚었다. 이어 주요 신규 상장 ETF로 한국 화장품 밸류체인을 담은 KBTY, 비상장 AI 기업을 스왑으로 편입한 MAGP, 신흥국 채권 액티브 ETF VEMB, 일본 대형주 중심 액티브 ETF NJPN을 소개했다. 필자는 국내 투자자에게 미국 상장 테마형 ETF의 다양화 흐름이 빨라지고 있다고 진단한 것으로 보인다."
+  },
+  {
+   "id": "aethersemiconductor/26902",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-13T02:56:37+00:00",
+   "url": "https://t.me/aethersemiconductor/26902",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": "2026-11-13",
+   "summary_ko": "젠슨 황 엔비디아 CEO가 중국 스파이 의심 인물과의 관계 논란 끝에 사임했다는 블룸버그 보도가 전해졌다. 이사회가 조사 결과를 근거로 그를 물러나게 했고, 콜레트 크레스 CFO가 임시 CEO를 맡게 됐다. 기사는 그가 평소의 주도성을 잃고 스스로를 자책하는 모습을 보였다고 전하며, 후임을 찾기 어려운 만큼 엔비디아가 앞으로 더 평범한 방식으로 운영될 것이라는 시각을 제시한다. 아울러 그가 의회에서 기밀 문제에 대해 증언할 것으로 예상된다는 점도 함께 짚는다."
+  },
+  {
+   "id": "insidertracking/69198",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-13T04:34:58+00:00",
+   "url": "https://t.me/insidertracking/69198",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "조선비즈",
+    "url": "https://biz.chosun.com/international/international_economy/2026/11/13/WJ5POQMZZ5G3FALHFLA2VX5VMU/",
+    "basis": "link"
+   },
+   "article_date": "2026-11-13",
+   "summary_ko": "황러는 젠슨 황 엔비디아 CEO와 사적 친분을 쌓은 뒤 중국 국가안전부의 반도체 공작 조직 '칩 팀' 소속으로 활동했다는 의혹을 받고 있다. 대만 자유시보는 11일 중국 공산당 중앙판공청이 미국과의 AI 패권 경쟁을 위해 범정부 특별조직을 결성했으며, 천이신 국가안전부장이 황러를 직접 지휘했다고 보도했다. 미국 디인포메이션은 황러가 수출 제한 품목인 엔비디아 첨단 반도체 약 24만 개, 최소 75억 달러 규모의 중국 반입에 깊이 관여했다고 전했다. 황러는 해외 제3국 페이퍼컴퍼니를 활용하고 젠슨 황을 통해 대중국 수출 규제 완화를 유도하려 한 것으로 알려졌다. 상하이 센추리리퉁이 우회 공급망의 핵심 거점으로 지목됐으나, 회사 측은 황러와 사업 거래가 없었고 자원은 합법적으로 확보했다고 반박했다. 한편 황러가 간호사 출신이라는 새로운 증언도 나왔다. 다만 이 내용들은 언론 보도와 익명 관계자 증언에 기반한 것으로, 중국 정부와 엔비디아 측의 공식 확인은 아직 확인되지 않았다."
+  },
+  {
+   "id": "aethersemiconductor/26916",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-13T07:03:20+00:00",
+   "url": "https://t.me/aethersemiconductor/26916",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "젠슨 황이 올여름 재무 임원 회의에서 후임 임시 CEO 콜렛 크레스를 \"헤드라이트 불빛에 얼어붙은 사슴\"이라 부르며 깎아내렸다는 WSJ 보도가 전해졌다. 보도는 크레스가 엔비디아의 공격적인 보증·신용 지원 거래에 제동을 걸어 왔으며, 이것이 황과의 갈등 배경이었다는 시각을 제시한다. 크레스는 이후 거래 규모를 절반으로 줄였고, 황은 주가 배수 하락에 불만을 품었다고 한다. 다만 이런 해석은 보도 내용에 따른 견해로 봐야 한다는 의견도 함께 담겼다."
+  },
+  {
+   "id": "d_ticker/4140",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-13T07:14:36+00:00",
+   "url": "https://t.me/d_ticker/4140",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "젠슨 황의 후임으로 거론되는 콜레트 그레스를 두고 의구심이 제기됐다는 소식이다. 보도에 따르면 올해 8월 경영진 회의에서 고객 이탈 방지, 메모리칩 비용 급증 대응, 고객의 칩 구매 자금 보증 방안이 논의됐는데, 이 과제들을 맡고 있던 콜레트는 회의 자리에서 젠슨 황에게 강하게 질책을 받았다고 한다. 당시 그가 꼼짝 못 하는 모습이었다는 전언도 함께 전해졌다. 이러한 정황을 근거로 젠슨 황이 콜레트를 보고를 받는 최고재무책임자일 뿐 전략을 세우고 의사결정을 내릴 인물로는 보지 않았다는 시각이 나온다."
+  },
+  {
+   "id": "kwusa/61762",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-13T09:07:23+00:00",
+   "url": "https://t.me/kwusa/61762",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진구",
+   "source": null,
+   "summary_ko": "키움증권 김진구 애널리스트는 코어위브에 대해 규제 리스크가 커질수록 액티브 파워를 보유한 업체의 협상력이 강해져 가격 상승 요인으로 작용할 수 있다고 봤다. 동사의 진행 계약 가격을 환산하면 kWh당 4.6달러와 2.9달러 수준이며, 3분기 평균 액티브 파워 가격 1.04달러와 4분기 가이던스 연계 가격 1.24달러 근접 수준을 근거로 가격 탄력성이 확인된다고 진단했다. 필자는 30년 순이익 61억달러에 PER 15배, 할인율 15%를 적용해 올해 기준 현재가치를 520억달러로 제시했다. 최근 채권수익률 급등이 할인율에 반영됐으나, 수익률이 안정되면 기업가치를 끌어올릴 추가 요인이 될 수 있다고 덧붙였다. 30년 가격은 kWh당 1.35달러로 전망했으며, 최근 계약 상황과 차세대 GPU 믹스 변화를 고려할 때 합리적인 수준이라고 판단했다."
+  },
+  {
+   "id": "aethersemiconductor/26921",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-13T11:54:59+00:00",
+   "url": "https://t.me/aethersemiconductor/26921",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "JP모건 트레이딩 데스크 코멘터리는 오늘 장이 상당히 강세라는 진단과 함께, 엔비디아 핵심 인물 이탈에 따른 자금조달 우려에도 시장이 이 이슈를 털어내고 네오클라우드·마이너 종목이 오히려 상승하고 있다고 전했다. 리테일의 엔비디아 저가 매수와 대규모 디레버리징 이후 숏 커버링이 주도한 포지셔닝 변화를 근거로 페인 트레이드는 위쪽이라는 시각이 제시됐다. 아울러 브로드컴과 AMD가 엔비디아 약세의 수혜주로 꼽혔고, 구글은 TPU 프로그램 관련 수혜가 거론됐다. 한편 임시 CEO 콜렛 크레스가 황 CEO 주도의 일부 자금조달 딜에 반대해 온 것으로 전해져, 젠슨 황 이탈 이후 자금조달 리스크가 분명하다는 의견도 함께 실렸다."
+  },
+  {
+   "id": "FastStockNewsUSA/24442",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-13T12:04:48+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24442",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 직원들이 젠슨 황 복직을 요구하며 집단 이직을 경고했다는 X(구 트위터) 게시물이 퍼졌다. 게시물은 이사회의 황 CEO 해임 결정에 수백 명의 핵심 경영진과 엔지니어가 반발해 연서명 서한을 보냈고, 서명자에는 빌 달리, 이안 벅, 마이클 케이건 등이 포함된다고 주장한다. 또 서한이 일론 머스크의 테라팹으로 집단 이직하겠다는 내용을 담았다며, 2023년 오픈AI 샘 올트먼 사태를 떠올리게 하는 전개라는 시각을 함께 전한다. 다만 원문은 익명의 게시물을 옮긴 것으로, 해임 사실이나 서한의 실재 여부는 원문만으로는 확인되지 않는다."
+  },
+  {
+   "id": "d_ticker/4141",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-13T12:10:09+00:00",
+   "url": "https://t.me/d_ticker/4141",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "세레브라스(CBRS)는 3Q26 실적 발표에서 마이크로소프트를 새 고객으로 확보했다고 밝혀 하이퍼스케일러 고객이 AWS·오라클과 합쳐 3곳으로 늘었다는 소식이 전해졌다. 마이크로소프트 수주 내용은 1H27에 상세히 공개될 예정이다. 한편 세레브라스 칩은 HBM 대신 SRAM만 사용해 메모리 병목 같은 공급망 제약에서 비교적 자유롭다는 평가가 나오며, 핵심 파트너 TSMC로부터 2027년까지 웨이퍼 물량 확약도 받은 상태다. 다만 칩·랙·자재 공급에는 큰 문제가 없지만, 고객사의 데이터센터 부지와 전력, 건물(LPS) 준비가 늦어지면서 매출 인식 시점이 밀리고 있다는 점이 걸림돌이라는 시각이 제시됐다. 오픈AI와 맺은 총 750MW 규모 연산 용량 계약도 LPS 차질로 초기 물량 가동이 약속 기한을 넘겨 납기가 지연된 상태라고 전했다."
+  },
+  {
+   "id": "d_ticker/4142",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-13T12:16:33+00:00",
+   "url": "https://t.me/d_ticker/4142",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "AI 섹터가 그동안 속도 경쟁을 바탕으로 멀티플 프리미엄을 받아 왔다면, 앞으로는 WSE나 CPO 같은 혁신 기술이 가져오는 TCO와 성능 개선이 그 프리미엄을 흡수하게 될 것이라는 시각이다. 코어위브와 네비우스가 외부 신용 확대 대신 고객 선급금으로만 투자하겠다고 밝힌 점을 근거로, 사업자에게는 AI 속도 경쟁보다 파산을 피하고 투자자를 안심시키는 일이 더 중요해질 수밖에 없다는 의견도 함께 제시됐다. 신용 사용을 줄이는 만큼 AI 속도는 둔화되고, 이 흐름이 심화될수록 속도에 붙던 프리미엄은 줄어들며 같은 투자 대비 가성비가 높은 혁신 기술 기반 기업이 그 프리미엄을 가져갈 것이라는 전망이다."
+  },
+  {
+   "id": "aethersemiconductor/26926",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-13T13:14:50+00:00",
+   "url": "https://t.me/aethersemiconductor/26926",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "베선트 미 재무장관은 첨단 칩 유출이 매우 실망스럽다고 밝히고, 수출 통제는 재무부도 추진해 왔다고 설명했다. 블랙리스트 지정은 상무부에 문의하라고 답했다. 그는 중국이 H100을 넘는 칩을 받아서는 안 된다는 점이 분명했다고 말하며, 칩 수출에서 유출이 많다고 지적했다. 아울러 엔비디아가 고객을 제대로 파악하고 유출을 막으려 했는지, 칩이 어디로 가는지 통제할 능력이 있었는지에 의문을 제기했다는 시각이 전해졌다."
+  },
+  {
+   "id": "d_ticker/4145",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-13T13:55:22+00:00",
+   "url": "https://t.me/d_ticker/4145",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "아마존이 '월드 프로덕트 그래프'라는 대형 AI 프로젝트를 비밀리에 추진 중이라는 소식이 전해졌다. 이 프로젝트는 지구상에서 판매되는 모든 상품의 데이터를 모으는 것을 목표로 하며, 이를 바탕으로 이커머스용 AI 에이전트를 만들어 이용자의 쇼핑 경험을 자율화하겠다는 구상이다. 첫 시행 시점은 2027년 10월로 잡혀 있다는 내용이다."
+  },
+  {
+   "id": "kwusa/61763",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-13T15:08:09+00:00",
+   "url": "https://t.me/kwusa/61763",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합인포맥스",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "벤징가는 젠슨 황 CEO가 논란 속에 사임한 뒤 엔비디아에 대한 정부 감독이 강화될 수 있다고 전했다. 벤처 캐피털리스트 Chamath Palihapitiya는 과거 마이크로소프트가 2002년 판결 이후 법무부의 엄격한 감독을 받으며 주가가 부진했던 사례와 비슷한 부작용이 나타날 수 있다는 시각을 밝혔다. 그는 엔비디아의 의사결정이 크게 제약되면 미국의 인공지능 기술 우위가 경쟁국으로 넘어갈 수 있다는 의견도 내놓았다. 한편 미국 하원 중국특별위원회의 John Moolenaar 위원장은 미국 기업이 중국 기업에 첨단 반도체를 공급하는 길을 열어서는 안 된다며, 엔비디아가 관행을 개선하고 국가안보를 우선하는 경영진을 선임해야 한다는 입장을 밝혔다."
+  },
+  {
+   "id": "aethersemiconductor/26931",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-13T15:10:22+00:00",
+   "url": "https://t.me/aethersemiconductor/26931",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "JP모건은 어플라이드 머티리얼즈의 회계연도 4분기 실적이 시장 예상을 웃돌고 2027년 수주가 거의 찬 상태라며 수요 강세를 짚었다. 반도체 시스템 매출은 사상 최대를 기록했고, CY26 성장률 전망이 40% 초과로 올라간 만큼 CY27 성장률 추정치에도 상향 여지가 있다는 시각이다. 이익 레버리지가 CY27까지 이어질 것으로 보는 의견도 제시됐다. 다만 장비주 전반의 멀티플 하락을 반영해 목표주가는 500달러로 낮췄고, 성장성과 고성장 분야 노출을 감안하면 상단 멀티플이 정당하다는 견해를 유지했다."
+  },
+  {
+   "id": "d_ticker/4149",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-13T15:14:31+00:00",
+   "url": "https://t.me/d_ticker/4149",
+   "market_basis": "keyword",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "CNBC",
+    "url": "https://www.cnbc.com/2026/11/13/openai-chatgpt-wallet-dot-purchases.html",
+    "basis": "link"
+   },
+   "article_date": "2026-11-13",
+   "summary_ko": "OpenAI가 AI 에이전트 '닷(dots)'이 사용자를 대신해 구매할 수 있는 결제 기능 'ChatGPT Wallet'을 발표했다. 아메리칸익스프레스, 마스터카드, 비자와 협력해 만든 이 기능은 카드 정보를 에이전트에 직접 넘기지 않고, 거래마다 일회용 결제 토큰으로 처리한다. 사용자는 상품 검색을 닷에게 맡긴 뒤 구매 건마다 보안 확인으로 승인한다. 현재는 미국의 만 18세 이상 ChatGPT 프로 구독자에게 제한적으로 출시됐다. 오픈AI는 거래 수수료를 당분간 받지 않으며, 판매자와의 관계를 다지는 데 주력하고 있다. 다만 유나이티드항공과 아마존은 에이전트의 자사 시스템 접근이나 구매를 막고 있어 업계 대응은 엇갈린다."
+  },
+  {
+   "id": "FastStockNewsUSA/24449",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-13T15:47:35+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24449",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "필라델피아 반도체 지수가 하락폭을 키우며 5% 가까이 밀렸다는 소식이 전해졌다. 개별 종목별로는 AMD가 9.2%, 마벨이 7.6% 떨어졌고, 브로드컴과 인텔은 5% 이상, 엔비디아는 3.3% 하락한 것으로 나타났다."
+  },
+  {
+   "id": "FastStockNewsUSA/24450",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-13T16:28:00+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24450",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국의 10월 생산자물가지수(PPI)는 전월대비 0.3% 올라 시장 예상치(0.4%)를 밑돌았고, 9월 상승률은 1.3%에서 1.4%로 상향 수정됐다. 전년대비로는 6.5%로 예상치 6.6%에 못 미쳤지만 9월의 6.3%보다는 높았다. 식품과 에너지를 뺀 근원 PPI는 전월대비 0.3% 올라 예상에 부합했으나 9월 0.8%에 비해 상승폭이 줄었고, 전년 동월 대비로는 5.0%로 예상과 같고 전월 수준을 유지했다. 이를 근거로 전월대비 생산자물가 상승세는 둔화했지만 전년 대비 상승률은 여전히 높다는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNewsUSA/24454",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-13T17:12:42+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24454",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 최고경영자 젠슨 황의 사임 불확실성과 금리 상승 우려가 겹치며 기술주가 다시 타격을 입었다는 소식이 전해졌다. 개장 두 시간여 뒤 나스닥은 2%, S&P 500은 거의 1% 하락했고 S&P 500 기술주는 2.9% 떨어져 손실 폭이 가장 컸다. 이에 투자자들이 필수소비재, 유틸리티, 헬스케어 같은 방어적 업종으로 이동하고 있다는 분석이다. 글쓴이는 황 CEO 후임 문제가 AI 관련 기업 전반의 부담으로 작용한다는 시각을 보였다. 10월 도매물가는 예상치 0.4%를 밑도는 0.3% 상승으로 나왔지만, 연준의 매파적 기조에 대한 기대로 10년물 금리가 5.13%까지 올랐다는 의견이다."
+  },
+  {
+   "id": "FastStockNewsUSA/24457",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-13T17:39:51+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24457",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "젠슨 황 전 CEO의 사임이 신용시장에 광범위한 충격을 주지는 않았지만, AI 인프라 자금 조달자로서 엔비디아의 역할이 시험대에 올랐다는 시각이 제시됐다. 골드만삭스는 엔비디아가 기존 약정은 이행하겠지만 과거처럼 대규모 다자간 투자를 새로 협상하기는 어려워질 것으로 분석했다. 이 과정에서 기술 기업 채권 금리가 오르고 CDS 스프레드가 확대됐으며, 엔비디아 2031년 만기 채권 수익률은 주간 기준 6% 가까이 상승한 5.77%를 기록했다. 엔비디아의 정책 변화에 가장 취약한 쪽은 중소형 네오클라우드 기업이라는 우려도 나왔다. 크레딧사이츠는 황 전 CEO의 공격적 거래 역량이 빠지면서 순환 금융과 지원이 완화될 것으로 보는 반면, 코어위브 CEO는 양사 협력이 지속될 것이라고 강조했다. 한편 일각에서는 거대 기업들이 잉여현금흐름을 AI 대출에 얼마나 배분하느냐가 핵심 변수라는 의견도 제기됐다."
+  },
+  {
+   "id": "insidertracking/69224",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-13T22:23:38+00:00",
+   "url": "https://t.me/insidertracking/69224",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 증시가 2026년 11월 14일 마감 기준으로 엇갈린 흐름을 보였다. S&P 500은 0.40% 내린 7,561.67, 나스닥은 0.91% 내린 25,136.27로 마감했고, 다우 30은 0.10% 오른 52,347.55를 기록했다. 채권 시장에서는 10년물 국채 금리가 5.15로 1.00% 올랐으며, 변동성 지수 VIX도 19.30으로 3.21% 상승했다. 가상자산 비트코인은 4.34% 하락한 68,229.62달러였다. 이 글은 수치만 전할 뿐 흐름의 원인이나 향후 전망은 다루지 않는다."
+  },
+  {
+   "id": "insidertracking/69227",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-13T22:26:54+00:00",
+   "url": "https://t.me/insidertracking/69227",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 증시는 AI·반도체 매도와 금리 상승 부담이 겹쳐 혼조 마감했고, 나스닥과 엔비디아·데이터센터주의 약세가 두드러졌다는 내용이다. 글쓴이는 연준의 긴축 경계가 양호한 물가 지표를 압도했다고 보며, 재무장관은 물가 상승을 이란발 에너지 충격으로 보고 과도한 금리 인상을 경계한다는 상반된 시각을 제시했다. 또한 AI 투자의 자금조달 구조와 자본집약도에 대한 우려가 커지며 시장의 관심이 옮겨가고 있다는 의견이다. 원자재에서는 금과 구리가 약세인 반면 WTI는 상승했고, 항공 운영 차질 가능성도 단기 변수로 꼽혔다."
+  },
+  {
+   "id": "insidertracking/69228",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-13T22:28:24+00:00",
+   "url": "https://t.me/insidertracking/69228",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 기업 소식을 섹터별로 모은 이 글은 AI·클라우드 분야에서 마이크로소프트 365 장애가 해킹이 아닌 서버 상태 점검 실패에서 비롯됐다는 설명과, 아마존의 페르미 데이터센터 전력 용량 예비 합의 및 디지 파워 X의 세레브라스 코로케이션 계약 등을 전한다. 반도체 분야에서는 엔비디아의 로봇 AI 모델 GR00T 2 공개와 차기 CEO 후보 관련 보도에 대한 이사회의 부인, 슈퍼마이크로의 우회 반출 의혹 관련 입장을 소개한다. 글쓴이는 이 같은 소식들이 기업별 사업 확장과 리스크 대응이 동시에 진행되고 있다는 흐름으로 읽힐 수 있다는 시각을 담고 있으나, 이에 대한 구체적인 전망은 제시되지 않는다."
+  },
+  {
+   "id": "insidertracking/69230",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-13T22:35:03+00:00",
+   "url": "https://t.me/insidertracking/69230",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "서학개미의 11월 1일부터 13일까지 미국 주식 순매수 상위 50종목을 정리한 자료가 전해졌다. 1위는 반도체 3배 레버리지 ETF로 전체 순매수의 31.70%를 차지했고, 알파벳(CL A)과 나스닥 관련 레버리지 ETF가 뒤를 이었다. 총 순매수 금액은 약 48억 6,796만 달러로 제시됐다. 작성자는 이를 근거로 국내 투자자들이 반도체와 대형 기술주에 집중하고 있다는 시각을 내놓았다."
+  }
+ ],
+ "stats": {
+  "items": 26,
+  "summarized": 26,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

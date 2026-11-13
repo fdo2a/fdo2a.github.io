@@ -1,34 +1,28 @@
 {
-  "report_date": "2026-11-12",
-  "run_id": "43327417246-1",
+  "report_date": "2026-11-13",
+  "run_id": "43520010748-1",
   "status": "complete",
   "releases": [
     {
-      "key": "existing-home-sales",
-      "landing_url": "https://www.nar.realtor/research-and-statistics/housing-statistics/existing-home-sales",
-      "ok": false,
-      "note": "https://www.nar.realtor/newsroom/existing-home-sales-decreased-5-5-percent-october-nar-report: identity_not_found"
-    },
-    {
-      "key": "claims",
-      "landing_url": "https://www.dol.gov/ui/data.pdf",
+      "key": "ppi",
+      "landing_url": "https://www.bls.gov/news.release/ppi.nr0.htm",
       "ok": true,
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
       "resolver": "fixed",
       "verified": true,
-      "doc_kind": "pdf",
+      "doc_kind": "html",
       "checks": {
         "ok": true,
         "identity": true,
         "period": true,
         "value": true,
-        "primary_checked": false,
+        "primary_checked": true,
         "note": "verified"
       },
       "note": "impersonate=safari",
       "published": true,
-      "chars": 20142,
-      "path": "releases/claims.txt"
+      "chars": 21136,
+      "path": "releases/ppi.txt"
     }
   ]
 }

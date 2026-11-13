@@ -1,22 +1,8 @@
 {
-  "report_date": "2026-11-12",
-  "generated": "2026-11-13 08:19 KST",
+  "report_date": "2026-11-13",
+  "generated": "2026-11-14 07:41 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-ppi-20261113",
-      "kind": "release",
-      "name_ko": "생산자물가(PPI)",
-      "date": "2026-11-13",
-      "time_et": "08:30",
-      "time_kst": "2026-11-13 22:30",
-      "status": "confirmed",
-      "source": "BLS 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "auction-20261116-13-Week",
       "kind": "auction",
@@ -262,26 +248,6 @@
       "bid_to_cover": 2.92,
       "indirect_pct": 56.7,
       "dealer_pct": 34.0
-    },
-    {
-      "date": "2026-11-05",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 115000000000.0,
-      "high_yield": 3.956,
-      "bid_to_cover": 2.46,
-      "indirect_pct": 47.8,
-      "dealer_pct": 48.4
-    },
-    {
-      "date": "2026-11-05",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 110000000000.0,
-      "high_yield": 4.055,
-      "bid_to_cover": 2.68,
-      "indirect_pct": 65.3,
-      "dealer_pct": 31.3
     }
   ],
   "blackout": {

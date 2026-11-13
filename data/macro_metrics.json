@@ -1,11 +1,11 @@
 {
-  "generated": "2026-11-13 08:18 KST",
-  "report_date": "2026-11-12",
+  "generated": "2026-11-14 07:33 KST",
+  "report_date": "2026-11-13",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
   "growth_score": 0.065,
-  "inflation_score": 0.451,
+  "inflation_score": 0.647,
   "growth_diffusion": 0.5,
   "inflation_diffusion": 0.5,
   "axis_summary": {
@@ -111,9 +111,9 @@
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": 0.451,
+      "score": 0.647,
       "direction": "재가속",
-      "strength": "미미",
+      "strength": "완만",
       "breadth_ko": "여섯 중 셋이 재가속, 둘은 교착, 하나는 반대",
       "support": 3,
       "improving": 3,
@@ -128,20 +128,20 @@
           "previous": 0.65
         },
         {
+          "label_ko": "생산자물가",
+          "name": "PPI Final Demand MoM",
+          "direction": "재가속",
+          "strength": "뚜렷",
+          "actual": 0.35,
+          "previous": 1.41
+        },
+        {
           "label_ko": "근원 소비자물가 전월비",
           "name": "Core CPI MoM",
           "direction": "재가속",
           "strength": "뚜렷",
           "actual": 0.3,
           "previous": 0.33
-        },
-        {
-          "label_ko": "미시간대 1년 기대인플레",
-          "name": "Michigan 1-Yr Inflation Exp",
-          "direction": "둔화",
-          "strength": "완만",
-          "actual": 4.6,
-          "previous": 4.0
         }
       ]
     }
@@ -150,7 +150,7 @@
     "Labor": 0.564,
     "Activity": -0.618,
     "Consumption": 0.249,
-    "Inflation": 0.451
+    "Inflation": 0.647
   },
   "indicators": [
     {
@@ -207,7 +207,7 @@
         "recent_avg": 195250.0
       },
       "trend_cell_ko": "개선(미미) · 4주 평균 199K → 195K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -235,7 +235,7 @@
         "recent_avg": 196375.0
       },
       "trend_cell_ko": "개선(미미) · 4주 평균 200K → 196K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -263,7 +263,7 @@
         "recent_avg": 1707750.0
       },
       "trend_cell_ko": "보합 · 4주 평균 1,707K → 1,708K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -459,7 +459,7 @@
         "recent_avg": 3883333.333
       },
       "trend_cell_ko": "악화(뚜렷) · 3개월 평균 4,127K → 3,883K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Real GDP Growth QoQ (ann.)",
@@ -611,23 +611,23 @@
       "transform": "mom_pct",
       "units": "%",
       "direction": "재가속",
-      "strength": "완만",
+      "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.503,
-      "signed_z": 0.503,
-      "actual": 1.34,
-      "previous": 0.47,
-      "ref_period": "2026-09-01",
-      "vs_prev": "상승",
+      "momentum_z": 1.678,
+      "signed_z": 1.678,
+      "actual": 0.35,
+      "previous": 1.41,
+      "ref_period": "2026-10-01",
+      "vs_prev": "하락",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 0.493,
-        "recent_avg": 0.656
+        "prior_avg": 0.165,
+        "recent_avg": 0.723
       },
-      "trend_cell_ko": "재가속(완만) · 3개월 평균 +0.49% → +0.66%",
-      "is_new": false
+      "trend_cell_ko": "재가속(뚜렷) · 3개월 평균 +0.17% → +0.72%",
+      "is_new": true
     },
     {
       "name": "PCE Price Index YoY",
@@ -855,179 +855,83 @@
     }
   ],
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "Existing Home Sales"
+    "PPI Final Demand MoM"
   ],
   "anatomy_releases": [],
   "introduced": [],
   "introduced_since": {},
   "headline_releases": [
     {
-      "key": "existing-home-sales",
-      "label": "기존주택 판매",
+      "key": "ppi",
+      "label": "생산자물가(PPI)",
       "tier": 2,
-      "agency": "NAR",
-      "url": "https://www.nar.realtor/research-and-statistics/housing-statistics/existing-home-sales",
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
       "role": "scored",
-      "primary": "Existing Home Sales",
-      "max_abs_z": 2.543,
+      "primary": "PPI Final Demand MoM",
+      "max_abs_z": 1.678,
       "indicators": [
         {
-          "name": "Existing Home Sales",
-          "axis": "Activity",
-          "actual": 3750000.0,
-          "previous": 3970000.0,
+          "name": "PPI Final Demand MoM",
+          "axis": "Inflation",
+          "actual": 0.35,
+          "previous": 1.41,
           "ref_period": "2026-10-01",
-          "momentum_z": -2.543,
-          "fred_id": "EXHOSLUSM495S",
-          "transform": "level",
-          "units": ""
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": null,
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "none",
-      "anatomy_reason": "no_verified_text"
-    },
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "role": "scored",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 0.48,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 200000.0,
-          "previous": 191000.0,
-          "ref_period": "2026-11-07",
-          "momentum_z": -0.386,
-          "fred_id": "ICSA",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 195250.0,
-          "previous": 195250.0,
-          "ref_period": "2026-11-07",
-          "momentum_z": -0.48,
-          "fred_id": "IC4WSA",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1697000.0,
-          "previous": 1717000.0,
-          "ref_period": "2026-10-31",
-          "momentum_z": 0.032,
-          "fred_id": "CCSA",
-          "transform": "level",
-          "units": ""
+          "momentum_z": 1.678,
+          "fred_id": "PPIFIS",
+          "transform": "mom_pct",
+          "units": "%"
         }
       ],
       "components": [
         {
-          "label": "계절조정 전 청구",
-          "fred_id": "ICNSA",
-          "transform": "level",
-          "unit": "건",
-          "aliases": [
-            "계절조정 전",
-            "원계열"
-          ],
-          "actual": 206982,
-          "cite_values": [
-            206982,
-            206.982
-          ],
-          "cite_forms": [
-            [
-              206982,
-              ""
-            ],
-            [
-              206.982,
-              "천"
-            ]
-          ],
-          "text_value": 206982.0,
-          "ref_period": "2026-11-07"
-        },
-        {
-          "label": "보험 실업률",
-          "fred_id": "IURSA",
-          "transform": "level",
+          "label": "식품·에너지·무역서비스 제외",
+          "fred_id": "WPSFD49116",
+          "transform": "mom_pct",
           "unit": "%",
           "aliases": [
-            "보험 실업률",
-            "피보험 실업률"
+            "무역서비스 제외",
+            "식품·에너지·무역서비스 제외",
+            "근원 생산자물가"
           ],
-          "actual": 1.1,
+          "actual": 0.5,
           "cite_values": [
-            1.1
+            0.5
           ],
           "cite_forms": [
             [
-              1.1,
+              0.5,
               ""
             ]
           ],
-          "text_value": 1.1,
-          "ref_period": "2026-10-31"
+          "text_value": 0.5,
+          "ref_period": "2026-10-01"
         }
       ],
       "anatomy": {
-        "release_date": "2026-11-12",
+        "release_date": "2026-11-13",
         "round": "ok",
         "candidates": [
           {
-            "label": "계절조정 전 청구",
-            "fred_id": "ICNSA",
-            "transform": "level",
-            "unit": "건",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-07",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 206982.0,
-            "text_ok": true,
-            "text_value": 206982.0
-          },
-          {
-            "label": "보험 실업률",
-            "fred_id": "IURSA",
-            "transform": "level",
+            "label": "식품·에너지·무역서비스 제외",
+            "fred_id": "WPSFD49116",
+            "transform": "mom_pct",
             "unit": "%",
             "round_ok": true,
             "reason": "ok",
-            "observation": "2026-10-31",
+            "observation": "2026-10-01",
             "changed": [
-              "current"
+              "current",
+              "previous"
             ],
-            "fred_value": 1.1,
+            "fred_value": 0.48609666458636624,
             "text_ok": true,
-            "text_value": 1.1
+            "text_value": 0.5
           }
         ]
       },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
+      "anatomy_status": "partial",
+      "anatomy_reason": "components_short"
     }
   ],
   "last_seen": {
@@ -1096,8 +1000,8 @@
       0.3
     ],
     "PPI Final Demand MoM": [
-      "2026-09-01",
-      1.34
+      "2026-10-01",
+      0.35
     ],
     "PCE Price Index YoY": [
       "2026-09-01",
@@ -1142,10 +1046,10 @@
   },
   "anatomy_gaps": [
     {
-      "key": "existing-home-sales",
-      "status": "none",
-      "reason": "no_verified_text",
-      "components": 0
+      "key": "ppi",
+      "status": "partial",
+      "reason": "components_short",
+      "components": 1
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-11-12",
+  "report_date": "2026-11-13",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
@@ -8,48 +8,32 @@
       "industry": "Semiconductors",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
           "name": "Nvidia (NVDA)",
-          "change_pct": -4.34,
-          "close": 166.19,
-          "value": 122983839354.08
+          "change_pct": -2.01,
+          "close": 162.85,
+          "value": 59031553592.92
         },
         {
-          "name": "Micron Technology (MU)",
-          "change_pct": -1.59,
-          "close": 798.44,
-          "value": 21523634974.21
+          "name": "Broadcom (AVGO)",
+          "change_pct": -4.76,
+          "close": 347.01,
+          "value": 10936227622.74
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -8.75,
+          "close": 534.06,
+          "value": 26123892987.7
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Semiconductors",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Broadcom (AVGO)",
-          "change_pct": 5.54,
-          "close": 364.36,
-          "value": 15850521802.88
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": 5.86,
-          "close": 585.3,
-          "value": 32200212104.23
-        }
-      ]
-    },
-    {
-      "id": "g3",
       "industry": "Interactive Media & Services",
       "direction": "up",
       "reasons": [
@@ -57,10 +41,26 @@
       ],
       "members": [
         {
-          "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": 1.79,
-          "close": 298.7,
-          "value": 10504261160.98
+          "name": "Meta Platforms (META)",
+          "change_pct": 2.9,
+          "close": 641.69,
+          "value": 9682112650.86
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 0.39,
+          "close": 356.27,
+          "value": 13930151226.38
         }
       ]
     },
@@ -73,26 +73,38 @@
       ],
       "members": [
         {
-          "name": "Supermicro (SMCI)",
-          "change_pct": -11.3,
-          "close": 26.99,
-          "value": 3081957629.14
+          "name": "Sandisk (SNDK)",
+          "change_pct": -5.59,
+          "close": 885.01,
+          "value": 10721393582.62
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -7.18,
+          "close": 344.53,
+          "value": 3298755186.4
+        },
+        {
+          "name": "Western Digital (WDC)",
+          "change_pct": -5.0,
+          "close": 295.65,
+          "value": 1414550404.4
         }
       ]
     },
     {
       "id": "g5",
       "industry": "Communications Equipment",
-      "direction": "up",
+      "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Arista Networks (ANET)",
-          "change_pct": 5.06,
-          "close": 206.63,
-          "value": 1912856607.2
+          "name": "Cisco (CSCO)",
+          "change_pct": -6.24,
+          "close": 95.64,
+          "value": 2718546706.97
         }
       ]
     }

@@ -1,10 +1,10 @@
 {
-  "report_date": "2026-11-12",
-  "macro_date": "2026-11-11",
+  "report_date": "2026-11-13",
+  "macro_date": "2026-11-12",
   "horizon": "3-6개월",
   "scores": {
     "growth_score": 0.065,
-    "inflation_score": 0.451,
+    "inflation_score": 0.647,
     "growth_diffusion": 0.5,
     "inflation_diffusion": 0.5
   },
@@ -14,184 +14,88 @@
     "name": "비용압박"
   },
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "Existing Home Sales"
+    "PPI Final Demand MoM"
   ],
   "headline_releases": [
     {
-      "key": "existing-home-sales",
-      "label": "기존주택 판매",
+      "key": "ppi",
+      "label": "생산자물가(PPI)",
       "tier": 2,
-      "agency": "NAR",
-      "url": "https://www.nar.realtor/research-and-statistics/housing-statistics/existing-home-sales",
+      "agency": "BLS",
+      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
       "role": "scored",
-      "primary": "Existing Home Sales",
-      "max_abs_z": 2.543,
+      "primary": "PPI Final Demand MoM",
+      "max_abs_z": 1.678,
       "indicators": [
         {
-          "name": "Existing Home Sales",
-          "axis": "Activity",
-          "actual": 3750000.0,
-          "previous": 3970000.0,
+          "name": "PPI Final Demand MoM",
+          "axis": "Inflation",
+          "actual": 0.35,
+          "previous": 1.41,
           "ref_period": "2026-10-01",
-          "momentum_z": -2.543,
-          "fred_id": "EXHOSLUSM495S",
-          "transform": "level",
-          "units": ""
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": null,
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "none",
-      "anatomy_reason": "no_verified_text"
-    },
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "role": "scored",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 0.48,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 200000.0,
-          "previous": 191000.0,
-          "ref_period": "2026-11-07",
-          "momentum_z": -0.386,
-          "fred_id": "ICSA",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 195250.0,
-          "previous": 195250.0,
-          "ref_period": "2026-11-07",
-          "momentum_z": -0.48,
-          "fred_id": "IC4WSA",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1697000.0,
-          "previous": 1717000.0,
-          "ref_period": "2026-10-31",
-          "momentum_z": 0.032,
-          "fred_id": "CCSA",
-          "transform": "level",
-          "units": ""
+          "momentum_z": 1.678,
+          "fred_id": "PPIFIS",
+          "transform": "mom_pct",
+          "units": "%"
         }
       ],
       "components": [
         {
-          "label": "계절조정 전 청구",
-          "fred_id": "ICNSA",
-          "transform": "level",
-          "unit": "건",
-          "aliases": [
-            "계절조정 전",
-            "원계열"
-          ],
-          "actual": 206982,
-          "cite_values": [
-            206982,
-            206.982
-          ],
-          "cite_forms": [
-            [
-              206982,
-              ""
-            ],
-            [
-              206.982,
-              "천"
-            ]
-          ],
-          "text_value": 206982.0,
-          "ref_period": "2026-11-07"
-        },
-        {
-          "label": "보험 실업률",
-          "fred_id": "IURSA",
-          "transform": "level",
+          "label": "식품·에너지·무역서비스 제외",
+          "fred_id": "WPSFD49116",
+          "transform": "mom_pct",
           "unit": "%",
           "aliases": [
-            "보험 실업률",
-            "피보험 실업률"
+            "무역서비스 제외",
+            "식품·에너지·무역서비스 제외",
+            "근원 생산자물가"
           ],
-          "actual": 1.1,
+          "actual": 0.5,
           "cite_values": [
-            1.1
+            0.5
           ],
           "cite_forms": [
             [
-              1.1,
+              0.5,
               ""
             ]
           ],
-          "text_value": 1.1,
-          "ref_period": "2026-10-31"
+          "text_value": 0.5,
+          "ref_period": "2026-10-01"
         }
       ],
       "anatomy": {
-        "release_date": "2026-11-12",
+        "release_date": "2026-11-13",
         "round": "ok",
         "candidates": [
           {
-            "label": "계절조정 전 청구",
-            "fred_id": "ICNSA",
-            "transform": "level",
-            "unit": "건",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-07",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 206982.0,
-            "text_ok": true,
-            "text_value": 206982.0
-          },
-          {
-            "label": "보험 실업률",
-            "fred_id": "IURSA",
-            "transform": "level",
+            "label": "식품·에너지·무역서비스 제외",
+            "fred_id": "WPSFD49116",
+            "transform": "mom_pct",
             "unit": "%",
             "round_ok": true,
             "reason": "ok",
-            "observation": "2026-10-31",
+            "observation": "2026-10-01",
             "changed": [
-              "current"
+              "current",
+              "previous"
             ],
-            "fred_value": 1.1,
+            "fred_value": 0.48609666458636624,
             "text_ok": true,
-            "text_value": 1.1
+            "text_value": 0.5
           }
         ]
       },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
+      "anatomy_status": "partial",
+      "anatomy_reason": "components_short"
     }
   ],
   "anatomy_gaps": [
     {
-      "key": "existing-home-sales",
-      "status": "none",
-      "reason": "no_verified_text",
-      "components": 0
+      "key": "ppi",
+      "status": "partial",
+      "reason": "components_short",
+      "components": 1
     }
   ],
   "stale": false,
@@ -211,8 +115,8 @@
     "inflation_label": "재가속",
     "name": "비용압박",
     "since": "2026-11-10",
-    "days_held": 3,
-    "thesis": "비용압박 유지(11월 10일부터, 2일째). 11월 11일은 연방 공휴일(재향군인의 날)로 신규 발표가 없어 성장 점수 0.1·물가 점수 0.451이 그대로다. 근원 CPI 3개월 연속 전월비 0.3%와 식품·서비스로 넓어진 상승이 근거다. 다음 점검은 11월 13일 PPI와 11월 17일 소매판매·산업생산이다."
+    "days_held": 4,
+    "thesis": "비용압박 유지(11월 10일부터, 3일째). 11월 12일 신규 실업수당 청구(20만 건, 4주 평균 195,250건 불변)와 10월 기존주택 판매(375만 건, 전월 397만 건)가 나와 성장 점수가 0.1에서 0.065로 조금 내려왔지만 보합 범위 안이고, 물가 점수 0.451은 그대로다. 마지막 변경 후 5영업일 잠금 중. 다음 점검은 11월 13일 PPI와 11월 17일 소매판매·산업생산이다."
   },
   "regime_change_allowed": false,
   "regime_block": "lock_5bd",
@@ -240,7 +144,7 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 64,
+      "days_held": 65,
       "allowed_directions": [
         -1,
         0,
@@ -253,7 +157,7 @@
       "channel": "물가가 재가속으로 바뀌고 12월 인상 뒤 추가 인상까지 거론되면서 실질금리 정점 통과와 완화 재개 기대가 더 뒤로 밀렸다. 장기물에는 인상이 먼 미래 물가 기대를 눌러 준다는 근거가 남아 우호와 비우호가 맞선다.",
       "confirm": "근원 CPI 전월비가 0.2% 이하로 내려오거나 30Y가 5.05% 하회하면 우호, 30Y가 5.4% 상회하면 비우호",
       "since": "2026-11-10",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         -1,
         0,
@@ -266,7 +170,7 @@
       "channel": "물가 둔화가 실질금리 차를 좁혀 달러를 약하게 한다는 경로가 물가 재가속과 12월 인상 경로로 막혔다. 미국 정책금리 경로가 위로 옮겨 가 달러 강세 쪽을 받치지만, 금리차 자체와 다른 중앙은행 경로는 재지 않았고 달러 레벨도 이미 높아 우호까지는 올리지 않는다.",
       "confirm": "DXY 20일 -3% 이상 하락 또는 FedWatch 인하 확률 재등장 시 비우호, 12월 50bp 인상 확률 50% 상회 시 우호",
       "since": "2026-11-10",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         -1,
         0,
@@ -279,7 +183,7 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 64,
+      "days_held": 65,
       "allowed_directions": [
         -1,
         0,
@@ -292,7 +196,7 @@
       "channel": "물가 재가속과 인상 경로가 실질금리 하락 기대를 늦춰 금 보유비용 하락 경로가 약해졌다. 지정학·재정 헤지 수요가 남아 비우호까지는 내리지 않는다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-11-10",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         -1,
         0,
@@ -305,7 +209,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 64,
+      "days_held": 65,
       "allowed_directions": [
         0,
         1
@@ -317,7 +221,7 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화에 이어 11월 10일 소프트뱅크의 발전설비 선급금 손상(37억 달러)과 조달 재검토가 고객 쪽 부담을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 64,
+      "days_held": 65,
       "allowed_directions": [
         -1,
         0,
