@@ -3,11 +3,11 @@
  "market": "kr",
  "span": "daily",
  "report_date": "2026-11-13",
- "status": "none",
- "reason": "topic_too_long",
+ "status": "error",
+ "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-13T11:13:25+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-13T11:29:22+00:00",
  "cutoff_at": "2026-11-13T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 508,
+  "harvest": 497,
   "candidates": 1,
   "articles": [
    6
@@ -44,19 +44,19 @@
    "mt": "ok"
   },
   "notes": [
-   "discover:508"
+   "discover:497"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 14923,
-   "out": 4448
+   "in": 14940,
+   "out": 3407
   }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 사임 뒤 엔비디아의 한국 GPU 공급과 협력 유지 여부",
+  "query": "GPU 젠슨 26만장",
   "trigger": []
  },
- "content_hash": "276cfbf7bffc9588"
+ "content_hash": "4275b808f7051f64"
 }
