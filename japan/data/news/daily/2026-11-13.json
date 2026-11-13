@@ -1,0 +1,5061 @@
+{
+  "report_date": "2026-11-13",
+  "cut": "16:30",
+  "source": "Yahoo!ファイナンス ニュース",
+  "complete": false,
+  "notes": [
+    "stocks 50쪽까지 2026-11-13 이전에 닿지 못했다(가장 앞 2026-11-13)",
+    "settlement 50쪽까지 2026-11-13 이전에 닿지 못했다(가장 앞 2026-11-13)"
+  ],
+  "items": [
+    {
+      "guid": "58a5d481b8e898175efb51f9390d09b4de10d2a8",
+      "url": "https://finance.yahoo.co.jp/news/detail/58a5d481b8e898175efb51f9390d09b4de10d2a8",
+      "title": "為替、足元で一方的に急激な動きみられる＝片山財務相",
+      "source": "ロイター",
+      "published": "2026-11-13T10:06:08+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 324,
+      "body_file": "01-macro.txt",
+      "summary_ko": "2026년 11월 13일 가타야마 사쓰키 재무상은 각의 후 기자회견에서 외환시장이 최근 일방적이고 급격하게 움직이고 있다고 진단했다. 그는 미국 재무부와 긴밀히 협력하며 적절히 대응하겠다고 밝혔다. 뉴욕연방준비은행이 공개한 외환시장 개입 분기보고서에 따르면, 뉴욕연준은 7월 31일 유로화 대비 엔화 매입 개입을 794억 엔 규모로 실시했다. 일본의 같은 시기 개입 규모보다 작다는 지적에 대해 가타야마 재무상은 양국이 각각 공동성명을 냈고, 베선트 재무장관이 경제 펀더멘털을 반영한 강한 엔화가 바람직하다고 여러 차례 말해 왔다고 설명했다. 한일·미일 정상회담에서도 정상들의 견해가 일치했다며, 이 부분에 대해 특별히 문제 삼을 것은 없다고 말했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "92e31e0e148bbe055a9a497caceb8ebb8b1e54d2",
+      "url": "https://finance.yahoo.co.jp/news/detail/92e31e0e148bbe055a9a497caceb8ebb8b1e54d2",
+      "title": "午後3時のドルは159円後半、一時160円に強含み 米利上げ思惑が支援",
+      "source": "ロイター",
+      "published": "2026-11-13T15:24:31+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 1036,
+      "body_file": "03-macro.txt",
+      "summary_ko": "13일 오후 3시 도쿄 외환시장에서 달러·엔 환율은 159엔 후반에서 움직였고, 한때 160엔을 넘어섰다. 미국의 조기 금리 인상 기대가 달러 매수를 이끌었고, 소비자물가지수(CPI)가 예상을 웃돈 점과 연준 당국자들의 매파적 발언이 이를 뒷받침했다. 다만 160엔은 외환 개입 경계선으로 여겨져 그 위에 머문 시간은 짧았다. 가타야마 사쓰키 재무상과 다카이치 사나에 총리가 급격한 움직임을 견제하고 한·미가 아닌 일본과 미국 재무당국이 질서 있는 시장 관리에 나설 것이라고 말했지만, 시장 반응은 제한적이었다. 160엔 아래에서 거래됐고 단호한 조치라는 강한 표현이 없어 실제 개입이 임박했다는 인식은 많지 않았다. 실수요 거래도 활발하지 않았다. 이날 해외 장에서는 미국 생산자물가지수 발표가 예정돼 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "4730b414554635278f38359947b18d44d775d4e2",
+      "url": "https://finance.yahoo.co.jp/news/detail/4730b414554635278f38359947b18d44d775d4e2",
+      "title": "保有ＥＴＦ売却、現時点でさらなる見直しは想定していない＝氷見野日銀副総裁",
+      "source": "ロイター",
+      "published": "2026-11-13T14:15:00+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 357,
+      "body_file": "04-macro.txt",
+      "summary_ko": "일본은행 히미노 료조 부총재는 13일 참의원 특별위원회에서 보유 중인 상장투자신탁(ETF) 매각과 관련해 현 시점에서 추가 재검토는 생각하지 않는다고 밝혔다. 입헌민주당 쿠마가이 히로토 의원의 질의에 대한 답변이다. 일본은행은 지난 10월 금융정책 결정회의에서 내년 1월부터 ETF 매각 속도를 높이기로 결정한 바 있다. 한편 2025년도 결산에서는 당좌예금 초과준비금에 대한 이자 지급액이 보유 국채의 이자 수입을 웃돌아 역마진이 발생했다. 히미노 부총재는 정책금리를 인상하면 역마진이 확대될 가능성이 있다고 일반론을 전제하면서도, 향후 수익은 시장금리 동향과 정책 운영에 따라 달라질 수 있어 단언하기 어렵다고 말했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "c28807d22be924a6b37cf9d3284ba3419a0fd5de",
+      "url": "https://finance.yahoo.co.jp/news/detail/c28807d22be924a6b37cf9d3284ba3419a0fd5de",
+      "title": "公的ファンド、ＡＩ投資で経済変革主導へ＝ＰｗＣ",
+      "source": "ロイター",
+      "published": "2026-11-13T14:43:03+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 984,
+      "body_file": "13-industry.txt",
+      "summary_ko": "공적 펀드가 AI와 인프라 투자를 키우면서 2030년까지 정부계 펀드(SWF) 자산이 50% 가까이 늘어 22조 4000억 달러에 이를 것이라는 PwC 보고서가 13일 공개되었다. 보고서는 대형 SWF와 공적연금이 수동적 투자자에서 직접 투자 안건을 이끄는 프린시펄 투자자로 바뀌며 실물경제에 미치는 영향력을 키우고 있다고 분석했다. 자금은 소수 기관에 집중되고 있어 상위 10곳이 SWF와 공적연금 합산 자산의 41%를 보유하고 있다. 2025년 정부계 투자자의 AI·디지털 투자 약 660억 달러는 대부분 미국으로 향했고, 중국 투자는 약 40억 달러로 줄었다. 걸프 지역 펀드도 미국 쪽으로 기울고 있으나, 사우디아라비아의 PIF는 국내 중심으로 전환하며 해외 배분 비중을 약 30%에서 약 20%로 낮췄다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "04f1bb628f8969aeee2050b5e47d4b93ca3052e8",
+      "url": "https://finance.yahoo.co.jp/news/detail/04f1bb628f8969aeee2050b5e47d4b93ca3052e8",
+      "title": "国内3メガ、今期純利益上方修正 前年比2割増の6.3兆円に",
+      "source": "ロイター",
+      "published": "2026-11-13T15:47:31+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 1524,
+      "body_file": "16-industry.txt",
+      "summary_ko": "일본 3대 메가뱅크인 미쓰비시UFJ·미즈호·미쓰이스미토모 금융그룹이 13일 2027년 3월 결산 연간 순이익 전망을 일제히 상향 수정했다. 3사 합계 전망치는 전년 대비 19.8% 증가한 6조3000억 엔으로, 종전 전망치 5조8000억 엔보다 5000억 엔 늘었다. 일본은행의 금리 인상 효과와 법인 대출 확대가 이익을 끌어올린 것으로 분석됐다. 미쓰비시UFJ는 연결 순이익 전망을 2조7000억 엔에서 2조8000억 엔으로 올렸으며, 모건스탠리 지분법 투자 성과도 기여했다. 미즈호는 1조4000억 엔에서 1조6000억 엔으로 올려 7월에 이어 두 번째 상향이 이뤄졌고, 미쓰이스미토모는 1조9000억 엔(전년 대비 20.0% 증가)으로 상향했다. 다만 데이터센터 투자가 예상보다 크게 둔화하면 세계 경제에 영향을 줄 수 있다는 리스크도 제기됐다. 예금 경쟁도 치열해져 미쓰이스미토모 국내 예금은 1조4000억 엔 늘었지만, 미쓰비시UFJ 예금은 6조1000억 엔 줄었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "c1c07c205576930042fffbfa318b916872e0969d",
+      "url": "https://finance.yahoo.co.jp/news/detail/c1c07c205576930042fffbfa318b916872e0969d",
+      "title": "データセンターに12兆円投資＝地元配慮も強調―米スペースX",
+      "source": "時事通信",
+      "published": "2026-11-13T15:00:32+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 322,
+      "body_file": "18-industry.txt",
+      "summary_ko": "SpaceX는 12일 텍사스주와 애리조나주에 740억달러(약 12조엔) 이상을 투입해 데이터센터를 건설한다고 발표했다. 회사는 두 곳 모두에서 지역의 전력 부담과 수자원 문제에 신경 쓰겠다는 방침을 강조했다. 텍사스에서는 필요한 전력을 자체적으로 조달하고, 상하수도 인프라에 투자해 지역의 급수 능력을 높이겠다고 밝혔다. 애리조나에서도 이번 계획이 지역 에너지 인프라를 강화하고 일자리와 세수를 늘린다고 주장했다. 이번 발표는 이달 미국 중간선거에서 AI 확산에 필수적인 데이터센터 규제 강화를 주장한 민주당이 크게 이긴 뒤에 나왔다. 규제가 강화될 수 있다는 우려가 커지자 지역 공헌 의지를 내세워 계획 추진에 힘을 실으려는 것으로 보인다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "8ffdcfc8c50f2c6155843aba8d29fb6e694459d0",
+      "url": "https://finance.yahoo.co.jp/news/detail/8ffdcfc8c50f2c6155843aba8d29fb6e694459d0",
+      "title": "〔東京株式〕反発＝半導体関連の一角を中心に買い戻し（13日）☆差替",
+      "source": "時事通信",
+      "published": "2026-11-13T15:48:39+09:00",
+      "category": "market",
+      "feed": "market",
+      "body_chars": 328,
+      "body_file": "09-market.txt",
+      "summary_ko": "11월 13일 도쿄증시에서 닛케이평균주가는 전날보다 322엔 99전 오른 6만 1142엔 35전에 마감하며 반등했다. 전날 하락에 따른 반동으로 반도체 관련주 일부를 중심으로 저가 매수가 들어왔다. 장중에는 1000엔 넘게 오르기도 했으나 차익 매물에 밀려 상승폭이 줄었다. 도픽스는 4.24포인트 상승한 3941.57로 마감했다. 프라임 시장에서는 값이 오른 종목이 57%, 값이 내린 종목이 40%였다. 거래량은 25억 4092만 주, 거래대금은 8조 4082억 엔이었다. 33개 업종별 지수에서는 서비스업, 소매업, 창고·운수 관련업 등이 올랐고, 비철금속, 기계, 정밀기기 등은 내렸다. 스탠더드 시장의 TOP20 지수도 반등했으며 거래량은 3억 2148만 주였다. 그로스 시장의 그로스250과 그로스Core 지수는 이틀 연속 하락세를 이어갔다.",
+      "summary_model": "claude-haiku-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "japan",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 439,
+    "answered": 438,
+    "dropped": [
+      {
+        "guid": "a69d10e817205cdb3ecf3f15539f28d2ae6a7e19",
+        "title": "ステランティスＣＥＯ、コスト上昇に警鐘 零跑汽車との提携確認",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "db42f1b0919cfeca6c8ebd5044b850491e4cb304",
+        "title": "ＡＩ機器・知財支出、来年末までに1.4兆ドルで企業投資主導へ＝ゴールドマン",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "91d657868c0944d00cdb8c1e395ff6d3036e4bc7",
+        "title": "オープンＡＩやグーグルを提訴、非営利団体 最先端ＡＩ開発の停止要求",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "9b9f2378a8d93777462e809449e16e1a9dac43ee",
+        "title": "ＡＩ半導体・クラウドの米セレブラス、堅調な業績見通しで株価17％高",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "2c7da09297bb4688592ff0b2e744541bb2db88bf",
+        "title": "米アプライド、売上高見通し予想超え 強いＡＩ需要が追い風",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "c49cbbb91e01bb0be2bfb185e236ba10dd3ac361",
+        "title": "焦点：「ＡＩの銀行」エヌビディア、ブームへ資金供給後退なら深刻な事態に",
+        "label": "foreign",
+        "confidence": 0.94
+      },
+      {
+        "guid": "683e94c63b92aad9a333b98439409374c82e8a0e",
+        "title": "米財務省、7月31日に市場で794億円買い入れ＝ＮＹ連銀報告",
+        "label": "foreign",
+        "confidence": 0.92
+      },
+      {
+        "guid": "3c5b47458999bb5baa9e940b235c2bb672905092",
+        "title": "米失業保険申請、前週比0．9万件増の20万件＝労働省",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "47e826d7766ce5c3523acd97653c9a48639a4fa1",
+        "title": "11月12日のNY為替概況",
+        "label": "foreign",
+        "confidence": 0.98
+      }
+    ],
+    "stopped": "deadline",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "23bc9a54913bb37cdc93b622e399a8dc74fd13b1",
+        "title": "ヤマハ、視覚体験イベント技術の英社を461億円で買収 カーライルが過半保有",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "01f2ddef8a2f6e0257e3852cf40541f48f85470f",
+        "title": "322円高の6万1142円35銭＝13日の平均株価",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "594fbb3f8d9048dc0de6c607049c147eb2acb213",
+        "title": "楽天Ｇ、1－9月期は736億円の赤字 前年比776億円上振れ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "04f1bb628f8969aeee2050b5e47d4b93ca3052e8",
+        "title": "国内3メガ、今期純利益上方修正 前年比2割増の6.3兆円に",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "92e31e0e148bbe055a9a497caceb8ebb8b1e54d2",
+        "title": "午後3時のドルは159円後半、一時160円に強含み 米利上げ思惑が支援",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ea6c660038845558f6e0c16d9ae80874de16e634",
+        "title": "ヤクルト、通期営業益見通し小幅下方修正 旧本社ビルなど譲渡へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c1c07c205576930042fffbfa318b916872e0969d",
+        "title": "データセンターに12兆円投資＝地元配慮も強調―米スペースX",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c28807d22be924a6b37cf9d3284ba3419a0fd5de",
+        "title": "公的ファンド、ＡＩ投資で経済変革主導へ＝ＰｗＣ",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ac7639a5f8aae35b7d4d0a8f37cae3f531f6a973",
+        "title": "ＳＭＣ、今期純利益予想を2380億円に上方修正 市場予測上回る",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4730b414554635278f38359947b18d44d775d4e2",
+        "title": "保有ＥＴＦ売却、現時点でさらなる見直しは想定していない＝氷見野日銀副総裁",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "13957ff55ddd261b3e8d8bdb935670fb3ea57bb1",
+        "title": "三井住友ＦＧ、今期純利益を上方修正し達成に自信 今後中計見直しも",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "30fb8e4c6b1242ac87dcd801cd65df3840db84da",
+        "title": "大企業の6割、オープン型ＡＩの利用拡大へ コスト抑制狙う",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b23382e83d9ce630b62152ef66512c0a2f9da047",
+        "title": "円相場、159円90～91銭＝13日正午現在",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "accd7553ca6bc6e56f7a54b8cb78ffb5dddeedb4",
+        "title": "大林組、今期純利益を上方修正 国内建築の工程前倒しが寄与",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a69d10e817205cdb3ecf3f15539f28d2ae6a7e19",
+        "title": "ステランティスＣＥＯ、コスト上昇に警鐘 零跑汽車との提携確認",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3e60e7f74f8f68430bbb28616cd63af672eda984",
+        "title": "997円高の6万1816円72銭＝13日午前の平均株価",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "db42f1b0919cfeca6c8ebd5044b850491e4cb304",
+        "title": "ＡＩ機器・知財支出、来年末までに1.4兆ドルで企業投資主導へ＝ゴールドマン",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "58a5d481b8e898175efb51f9390d09b4de10d2a8",
+        "title": "為替、足元で一方的に急激な動きみられる＝片山財務相",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "482315dda3bc908a7ae66cd5185a5b1705952481",
+        "title": "エヌビディアの動向注視、フアン氏は大変な業績で敬意＝赤沢経産相",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "91d657868c0944d00cdb8c1e395ff6d3036e4bc7",
+        "title": "オープンＡＩやグーグルを提訴、非営利団体 最先端ＡＩ開発の停止要求",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8e65b3046a1eab885a52167af85429212a52df16",
+        "title": "独メルセデス、追加投資凍結に続き国内工場の閉鎖検討＝社内メモ",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.26,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "129ab2ec245dab7f00a54ffb9fb1f30257d4c2b8",
+        "title": "日経平均のＳＱは6万1414円10銭＝市場推計",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b9f2378a8d93777462e809449e16e1a9dac43ee",
+        "title": "ＡＩ半導体・クラウドの米セレブラス、堅調な業績見通しで株価17％高",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9d43229be80db6d30ce087caa75e91df214b382b",
+        "title": "米シスコ、通期売上高見通し上げ 堅調なＡＩネットワーク需要で",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2c7da09297bb4688592ff0b2e744541bb2db88bf",
+        "title": "米アプライド、売上高見通し予想超え 強いＡＩ需要が追い風",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c49cbbb91e01bb0be2bfb185e236ba10dd3ac361",
+        "title": "焦点：「ＡＩの銀行」エヌビディア、ブームへ資金供給後退なら深刻な事態に",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "683e94c63b92aad9a333b98439409374c82e8a0e",
+        "title": "米財務省、7月31日に市場で794億円買い入れ＝ＮＹ連銀報告",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "461c93bf04859707f0f10c1900912d34863f0d6b",
+        "title": "氷見野日銀副総裁、午後1時26分から参院特別委に出席＝関係筋",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b643c2f381c6a52d362852419f00ffd631d85e29",
+        "title": "〔アングル〕ＡＩ企業、元「スパイ」採用活発化 エヌビディア問題でリスク認識",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.53,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3c5b47458999bb5baa9e940b235c2bb672905092",
+        "title": "米失業保険申請、前週比0．9万件増の20万件＝労働省",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b224009a4d9abac58dc9c4113eebc47384fe9278",
+        "title": "東証グロース市場250指数先物概況：反発も週末のポジション調整や戻り売りで上げ幅を縮小",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "418fd4cc6f9e8a4911cf02194d4c9273cc6c3df0",
+        "title": "日経平均は反発、半導体株の買い戻し先行も後場に上げ幅縮小／相場概況",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cdfa6f26c5c48765ea0f165be2972bf90dc044b7",
+        "title": "東京為替：ドル・円は反落、160円上抜け後に失速",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b0e43d7d68a95b847af2f2f14e725ae738009c5d",
+        "title": "〔新興株式〕グロース250は続落＝前週の急落でリスク取りづらく（13日）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8ffdcfc8c50f2c6155843aba8d29fb6e694459d0",
+        "title": "〔東京株式〕反発＝半導体関連の一角を中心に買い戻し（13日）☆差替",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b945634bb6debdbaf4141c0948182c840fe1598c",
+        "title": "明日の決算発表予定 データセク、フェローテクなど51社 (11月13日)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ea8b7367fb07bb20c05caccb15306c96246ecc93",
+        "title": "11月13日日本国債市場：債券先物は126円33銭で取引終了",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cce13713239f58621db4dd2999e232173fbc905d",
+        "title": "東証グロース（大引け）＝値下がり優勢、ＪＳＨ、Ｇ－ＦＡＣがS高",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "25efd5941d35c3f62a8a1a645e8021d59594d31d",
+        "title": "日経平均13日大引け＝反発、322円高の6万1142円",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6ba15f73b6a23e4256ab95c9491ba959d442a6a6",
+        "title": "東証スタンダード（大引け）＝値上がり優勢、森組、児玉化がS高",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4d318a8210c6ffc362e2bc2b0734629ea92418ca",
+        "title": "日経平均、322円99銭高の6万1142円35銭で終了＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6ff61d277d37d343941c6f03de8ee1cae19d7bb8",
+        "title": "日経平均大引け：前日比322.99円高の61142.35円",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1425365b864950f8e7133de87ae477d801549979",
+        "title": "東京為替：ドル・円は160円台、上値は重い",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d250903139b871da46fd9d31553e0169bbe35ba0",
+        "title": "15時の日経平均は333円高の6万1152円、ファストリが190.94円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0d3d4f1135ea703a1feedd9dedcd2070be47b670",
+        "title": "日経平均は328円高、企業決算や米PPIなどに関心",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6a3556dec1c56926ebcc64c48d84aa2a45c8324d",
+        "title": "東京為替：ドル・円は節目で攻防、ドル買い地合いで",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0de135eba03876a63ca4dbfc78af450a27d14d2a",
+        "title": "日経平均VIは小幅に低下、強弱材料混在し市場心理は一方向に傾かず",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1d8bf55334f1749064e9864cba943df96b0477d9",
+        "title": "東京為替：ドル・円は高値圏、ドル買いは継続",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5b745a85b177831a87eca429b5535ebf6768bd06",
+        "title": "〔東京株式〕上値重い＝半導体関連に戻り待ちの売り（13日後場中盤）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "03e4cfa3cf4509b397d1a93426731ae79bc6266b",
+        "title": "14時の日経平均は425円高の6万1244円、アドテストが203.88円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5e91a2c870520af725adb2b87a180f1e2964e833",
+        "title": "日経平均は498円高、韓国株軟調で東京市場の株価の重しに",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "71aed562234864e800af59ea0c422585d7b75bcd",
+        "title": "東京為替：ドル・円は小動き、上値の重さを意識",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "32f4bfe8fa0946c954fbcf1428560997b2829648",
+        "title": "東京為替：ドル・円は伸び悩み、160円手前で足踏み",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d55b18c005a1d45b42bfd4ed95a877d062285d8b",
+        "title": "13時の日経平均は398円高の6万1217円、アドテストが180.15円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b346aa7eb07b43b980ad216d78fad01693ee2b5",
+        "title": "後場に注目すべき3つのポイント～エヌビディア懸念の一服で半導体株に買い戻し",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.42,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6bae33e6d2f43def9cab37d9c0de5604ed8aa621",
+        "title": "日経平均は反発、エヌビディア懸念の一服で半導体株に買い戻し／ランチタイムコメント",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8e00e77342fb36bdb41582b4b44b4349570da2bd",
+        "title": "日経平均、757円31銭高の6万1576円67銭で始まる＝東京株式後場",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cd782b26a803412ff8a7cc2544b22bd9c315931a",
+        "title": "日経平均、757円31銭高の6万1576円67銭で始まる＝東京株式後場",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e82efafc20ab4c3e5d6ccbf705359fbfeb218e60",
+        "title": "東京為替：ドル・円は小高い、160円を目指す展開",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b177a79b76464d906d0b5a67c6f3d2d0afe46976",
+        "title": "11時の日経平均は1038円高の6万1857円、アドテストが380.79円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "deafb47190671c307f981730bbfc1a3af1a54634",
+        "title": "東京為替：ドル・円はじり高、一時159円94銭付近に上昇",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f4e94539a58a1ecebd0636c7080426d053f57e8a",
+        "title": "日経平均の上げ幅が1000円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b7ae620e5ea65ee584494c1d6d41293ea9bbeed8",
+        "title": "日経平均、1000円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c6b7515248c6ac253d2dcc0f480fb7dd092aa656",
+        "title": "東京為替：ドル・円は伸び悩み、159円80銭台で小動き",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e85a04e178d26e48de6ec35469c85210caff944a",
+        "title": "10時の日経平均は850円高の6万1669円、アドテストが344.12円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "403446ab9c107df9397c1d9153a1e549b649ff2e",
+        "title": "東京為替：ドル・円は小動き、159円80銭台で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d93b0474d61b253baed2d4dbd6c2a28159d162f4",
+        "title": "日経平均の上げ幅が900円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "104e2fa014befca2ffd376dae7380dd9b7ef7b1c",
+        "title": "日経平均、900円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c83df5c185b11a0789a8620bba52ceef02f2ce6c",
+        "title": "日経平均の上げ幅が800円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bb2cbbe0c484149d1d1e9fe490b4ae7b5f879627",
+        "title": "日経平均、800円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "97e5c26ce031526830abe30c96c900cafc5a77c3",
+        "title": "日経平均は766円高、寄り後は上げ幅拡大",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e38687514c6b30a8be3292ca7c764254a63ea577",
+        "title": "日経平均の上げ幅が700円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "333952e90005bc431b768d8abcfe9e5d02b5e63d",
+        "title": "〔東京外為〕ドル、159円台後半＝米金利上昇で強含み（13日午前9時）",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e54a88f7911fcf87c3508c99453b53a05f735b4d",
+        "title": "日経平均、700円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0be5aabb2d80eb736b17ec5cd7290d8605b37d6f",
+        "title": "日経平均、400円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fd8673c9120dbbb1ca8edab99fa4e8e5262140c0",
+        "title": "カスタムAI半導体へのシフトも／オープニングコメント",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.33,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0d3a79d7305e28b9ece3feb66f4e904873437216",
+        "title": "今日の為替市場ポイント：米国のインフレ圧力が意識され、ドル高円安の流れは継続する可能性",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.25,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "aaf3b1cc9c0104cdad5f6c0a566b6d5209655519",
+        "title": "伊藤智洋が読む「日経平均株価・短期シナリオ」 (11月13日記）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "018299dc2c61d96ffcdbca19114a3a27a461a291",
+        "title": "東証グロース市場250指数先物見通し：売り買い交錯か",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b01f5f93db01fe9f576979708c800b4d342fccea",
+        "title": "シカゴ日経平均先物 大取終値比 520円高 （11月12日）",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a83327ea130ccba4e8d62cde2da743ee327e0350",
+        "title": "NY金：大幅続落で3889.05ドル、追加利上げ観測による長期金利上昇とドル高が重し",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "47e826d7766ce5c3523acd97653c9a48639a4fa1",
+        "title": "11月12日のNY為替概況",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2ad3906065bce9aa184ad945096096b1351a44d9",
+        "title": "NY外為：ドル・円再び心理的節目160円試す、FOMCの追加利上げを織り込み長期金利が上昇",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.52,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7c9c9e4dcdc04503ffa6d1d4aa2535ef9bc74961",
+        "title": "【日経平均の値位置を知る！】 上値・下値テクニカル・ポイント(13日現在)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b9e7853a7c0ff6e8b315bc5d9e6962f44c6070b",
+        "title": "株式会社ランディックス：2027年３月期第２四半期決算 決算説明文字起こし（4）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f9c4b8e50d012c89abf44bdb4696d3e00d8fe071",
+        "title": "株式会社ランディックス：2027年３月期第２四半期決算 決算説明文字起こし（3）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "11b27a000a4e4f34f56867e6bfb04fb3190df3c3",
+        "title": "【決算速報】三菱ＵＦＪ、今期最終を4％上方修正・最高益予想を上乗せ、配当も4円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d5a710a060df89f77ebc58ac653bd1ff3163f5ee",
+        "title": "株式会社ランディックス：2027年３月期第２四半期決算 決算説明文字起こし（2）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0cdb5a705be9c207ef77e6acb1abaf30c370f5b2",
+        "title": "【決算速報】ジャニス、上期経常は一転黒字浮上で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fc4724f7c0b7e01a7307c8e1d3ad49e819b26153",
+        "title": "株式会社ランディックス：2027年３月期第２四半期決算 決算説明文字起こし（1）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "462447971a10c79eb32a7584e7d9f6895ba174dd",
+        "title": "【決算速報】エアトリ、前期最終は29％減益で着地、10円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "98a338a47e20d9488a677d71717e52b42deb6380",
+        "title": "【決算速報】アクセルＭ、今期最終は赤字縮小へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5769b91510e7465164d9b0c1c3d28ec4ffd9bf76",
+        "title": "【決算速報】イード、7-9月期(1Q)経常は81％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7e19ba5a50459e9af7bae7d427ae00425738c746",
+        "title": "三菱ＵＦＪ、自社株買いの実施を発表",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c2b7bac9d4cb105cb6f93cde6f84edf6ddbd3cff",
+        "title": "【決算速報】ＲＩＺＡＰ、上期最終が黒字浮上で着地・7-9月期は84％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "edeb9736e8cbd1d66b9b0d191e6fa921434ab29c",
+        "title": "【決算速報】京都ホ、上期経常が8％増益で着地・7-9月期は赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "86579b3a67fa6bb95b81229f5a54bf2b7e4e81b6",
+        "title": "【決算速報】日本調理機、今期経常は49％減益、30円減配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "10105b9ce41deebf0c7969882750b68e589a83cb",
+        "title": "【決算速報】フジコピアン、7-9月期(3Q)経常は2.9倍増益、今期配当を30円減額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "98e9c70dee07a301ad1d7e439937439847a8a5b0",
+        "title": "【決算速報】ＳＨＯＥＩ、今期経常は6％減益、前期配当増額も今期減配",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "13df1a808dd7f34baa30f8babc918e7b8937dcea",
+        "title": "【決算速報】アンジェス、今期最終を赤字縮小に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0b02b0334401216c5a19961de826df324e433b51",
+        "title": "【決算速報】アドベンチャ、7-9月期(1Q)最終は9％増益で着地、未定だった上期配当は無配継続",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "23a92273452de1d6743c1c6e46894f36c9aa703c",
+        "title": "【決算速報】ＶＰＪ、今期経常を5％上方修正・最高益予想を上乗せ、未定だった配当は19円実施",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9521f7a5a317c5d84fe4fe4e12f03d198a441a09",
+        "title": "【決算速報】東北化学、今期経常は22％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ff508dd25c8102a422379591099166557965d731",
+        "title": "【決算速報】ティアフォー、今期最終は41億円の赤字～48億円の赤字へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6c0da5fc9e329cfa06a935928eaaeaefa7c214db",
+        "title": "【決算速報】アスア、7-9月期(1Q)経常は87％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "021a5d658e0515f1b1b910d63cb824ff8a580eb9",
+        "title": "【決算速報】ヘッドウォ、1-9月期(3Q累計)経常は3.9倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "87323869469c186417991324e5c6ee77ec3f2a59",
+        "title": "【決算速報】アトラスＴ、1-9月期(3Q累計)経常は黒字浮上・通期計画を超過",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ecc7b4df49105fde45763d30c314dfab062d6534",
+        "title": "【決算速報】エフ・コード、1-9月期(3Q累計)最終が29％増益で着地・7-9月期も19％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0b9ce19d0e198e9f5436438bb32f6de7e0d89faf",
+        "title": "【決算速報】テモナ、今期経常は3.7倍増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.64,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "275f180c4af4d9ca4794b1ed4e2d0db192031ae8",
+        "title": "【決算速報】Ｄｅｆコン、上期経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "37fb641264cdd37c6871a85a701cb55e073ee8b5",
+        "title": "【決算速報】エムアップ、上期経常が18％増益で着地・7-9月期も15％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ef0f9dbf8d429261110c80d06d9f12fe60fa863f",
+        "title": "【決算速報】ＣＡＰＩＴＡ、上期経常は一転赤字転落で下振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6fb2a817fd28c614730a176e761be53b5ed95b5b",
+        "title": "【決算速報】アドバネクス、上期経常が26％減益で着地・7-9月期も78％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b0db4b35c0f71ae813f5c1a1512bea3b7425c602",
+        "title": "【決算速報】フュージック、7-9月期(1Q)経常は43％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d2e50d727a8e83144213af8325a5331e2b11f7ec",
+        "title": "【決算速報】ビジ太田昭、上期最終は12％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7801d05f10cc19ab770383c9d56ee1c5cbe23d98",
+        "title": "【決算速報】ツバキナカ、今期最終を一転赤字に下方修正、対純資産で35％の赤字",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "279d52949302efe7ebb95f6d4043d0f71dd7d232",
+        "title": "【決算速報】アスモ、上期経常が12％減益で着地・7-9月期も23％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "507f3d65b82d81050acf4bf5a934f408b00b225c",
+        "title": "【決算速報】かんなん丸、7-9月期(1Q)経常は赤字縮小で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "40f88bd42f6a97bb60bf26a6ec5f644ba765dc21",
+        "title": "【決算速報】京写、今期経常を75％上方修正・2期ぶり最高益、配当も10円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "95a9f20fdc2c3c36976b39286b176fab28573c7c",
+        "title": "【決算速報】ＵＴ、今期経常を一転2％増益に上方修正・最高益、配当も1.64円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4a98d5a2fb63d1cfe56ac9c68c0fbf7e41d91b21",
+        "title": "【決算速報】木村工機、今期経常を11％上方修正・最高益予想を上乗せ、配当も40円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e5157f5737ec201b1403c83d269e5574a0df7b36",
+        "title": "【決算速報】サイバーセキ、今期経常を8％下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "12240263ab8722e0e2e8c150af74a208516793f1",
+        "title": "【決算速報】ＴＯＲＥＸ、今期経常を31％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5fbbee3531b9e785f15e608229245091e846a2a5",
+        "title": "【決算速報】ポラリスＨＤ、上期経常が36％減益で着地・7-9月期も32％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "da38b099adf6d5f5b06aaf2d603b71ebcd7f5446",
+        "title": "【決算速報】明治機、上期経常が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e9e64d2001abaa55cd5ac9f5cb771890ba88db17",
+        "title": "【決算速報】ＤＮＨＤ、7-9月期(1Q)経常は赤字縮小で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f4663aa25926c6b778c81d7aa9c671d09acc3369",
+        "title": "【決算速報】フォーサイド、1-9月期(3Q累計)経常は62％減益・通期計画を超過",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "899f399b5337478ab4770b61e18e4703646f3a18",
+        "title": "【決算速報】マイポックス、今期経常を33％上方修正、配当も5円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "06f3840315ed2b2072bf582cd20be7988c84a3c5",
+        "title": "【決算速報】Ｇモンスター、7-9月期(1Q)経常は赤字拡大で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "46e185394ad6e5a97cfe9731e795a9ade1448c0b",
+        "title": "【決算速報】ｍｏｎｏＡＩ、今期最終を赤字拡大に下方修正、対純資産で38％の赤字",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "94cece425457584eb06e64952aed18e2fdfccd17",
+        "title": "【決算速報】ＥＭシステム、今期経常を25％下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e5b74df0f609a606977c8c637263ec7361755637",
+        "title": "【決算速報】高見サイ、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cbaca2777c32ad515644eaf949d31d117ec23561",
+        "title": "【決算速報】ＰＲＩＳＭバ、前期最終は赤字拡大で着地、今期業績は非開示",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4f18f740c06e40160943ee8812386e7227537187",
+        "title": "【決算速報】システムソフ、今期経常は7％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "013066c080101f40fb36a7fc192d3a0cf8e8e1c7",
+        "title": "【決算速報】Ｔ．Ｓ．Ｉ、1-9月期(3Q累計)営業が黒字浮上で着地・7-9月期は5.4倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5739f7f57fab5de34825959abd9154fa94f561c1",
+        "title": "【決算速報】セルシード、今期最終を赤字縮小に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "73c8eed8e3d3f92cae6dabeb43e4c83cb09f1b29",
+        "title": "【決算速報】モンラボ、1-9月期(3Q累計)最終が88％減益で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "993c4fded939fab0cbed59dceb8455fc69f1e82a",
+        "title": "【決算速報】ベイシス、7-9月期(1Q)経常は赤字転落で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9991767c8cf999249c55e923197faca92a45095e",
+        "title": "【決算速報】三井松島ＨＤ、上期経常は4％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2f5e24f74f4ff42bd1b8b0a5a67171dff019616d",
+        "title": "【決算速報】サン電子、今期最終を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6d106faff2f78bca32edd470858231f5ff40bade",
+        "title": "【決算速報】アクセスＨＤ、上期経常が38％減益で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "56e21624332bd8eb00697ff75172ff7fd9c820f2",
+        "title": "【決算速報】Ｃａｒｅｅｒ、今期経常は黒字浮上へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b9b47c95a17273561eb90a4c1dfa950086cd587d",
+        "title": "【決算速報】リフォームＴ、今期経常を33％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1debe3b95d1e963bc4b5ffc19429b839a2a205e3",
+        "title": "【決算速報】アディッシュ、1-9月期(3Q累計)経常が黒字浮上で着地・7-9月期は2倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fd4aa59224bb2b3c0e23be32f71928a4741f5300",
+        "title": "【決算速報】サカイＨＤ、今期経常は11％増で7期ぶり最高益、5円減配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3eaa5b9513e6da212086b3a9d53fc57cf1f403cc",
+        "title": "【決算速報】ナブテスコ、1-9月期(3Q累計)最終が44％増益で着地・7-9月期は12％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1f5006d4dca5a01eb900b56a1892ecf1a4b6fc10",
+        "title": "【決算速報】ＭＲＴ、1-9月期(3Q累計)最終は50％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6cf45ce8fefe76b4a4c4a0d88053359b34547e91",
+        "title": "【決算速報】Ｋ＆Ｏエナジ、1-9月期(3Q累計)経常が6％増益で着地・7-9月期も21％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a079a28d220e99e51c6240faca59557bc6640439",
+        "title": "【決算速報】テイン、上期経常は77％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c4718118039e8c519dde74436ee0d22636cb905d",
+        "title": "【決算速報】東京一番、前期経常が一転減益で下振れ着地・今期は27％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5852b464d1e6195282599d0fd242aa99562e0010",
+        "title": "【決算速報】イリソ電子、今期経常を19％上方修正、未定だった配当は100円実施",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "77e50fdfdcc5f373c56e36cd1d08c102716fab35",
+        "title": "【決算速報】ｅｓｔｉｅ、1-9月期(3Q累計)経常は1.9億円で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d5f02e182c3aa83fcd00d75259d853857ab2a045",
+        "title": "【決算速報】黒田グループ、今期最終を32％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6299ecd0e18782539e88f52d747d02af8fd58429",
+        "title": "【決算速報】フージャース、上期経常が黒字浮上で着地・7-9月期は17％増益",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1c358d99c06d8617a5215db86566dfc68a991e07",
+        "title": "【決算速報】フレアス、上期経常が47％増益で着地・7-9月期は25％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f05be7c4cd1c35d6e09f9107e877aa14e495d145",
+        "title": "【決算速報】ガリレイ、上期経常は17％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e9832fc8e9d9cf20b996ebe1e11a60f08771584e",
+        "title": "【決算速報】イー・ギャラ、上期経常が7％増益で着地・7-9月期も5％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "39256d1808269518ffa050fb7f97d30a0edc1918",
+        "title": "【決算速報】ｉ－ｐｌｕｇ、7-9月期(2Q)経常は51％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d9842a95ccae7455a08bb4804259c86aa0ab49a4",
+        "title": "【決算速報】スタメン、1-9月期(3Q累計)経常が2.6倍増益で着地・7-9月期も3.8倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a443ed89fef6a10a74c94bcc8fe3a28b19bd9590",
+        "title": "【決算速報】誠建設、上期経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8a94da6c15d2a4b39df3b9c1ceb66d8e232fa44f",
+        "title": "【決算速報】アクシスＣ、7-9月期(1Q)経常は黒字浮上で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "338ea26e73c95d7de993fe72331ed7501c316795",
+        "title": "【決算速報】アズパートナ、上期経常は22％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b2d39df6660d7499898fbc7b7b0d040244c5d08c",
+        "title": "【決算速報】ＣＧＳＨＤ、1-9月期(3Q累計)経常は26％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.55,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9ca7cbc03ddef4452c0406901e3cc2b09a6ab24b",
+        "title": "【決算速報】大阪油化、前期経常が上振れ着地・今期は微増益、前期配当を6円増額・今期は16円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "286ff55997cb039993c521f4fba3f886c8d8d6c3",
+        "title": "【決算速報】チエル、今期最終を20％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a9d701d959c669d0aaf2694764d312c2b5b33745",
+        "title": "【決算速報】ＣＣＴ、1-9月期(3Q累計)経常は10％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.68,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a220d6613e16444bdbaf6510a4b06cf84e8b8459",
+        "title": "【決算速報】ヨータイ、今期経常を一転5％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.48,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9ea2665373ac5b7a049dc98928ff6a9d3a4a5dd0",
+        "title": "【決算速報】一パン、今期経常を一転26％増益に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5a4baeb810cb67b05288404dc90042101859fc76",
+        "title": "【決算速報】ギミック、上期経常は50％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a291e580fe6c2dc854b72881819ae8a8504eef1e",
+        "title": "【決算速報】アイダ、今期経常を一転23％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1a2c5914a1c3cc062c6905c6a016a5143b2ec1bb",
+        "title": "【決算速報】クエスト、上期経常が27％増益で着地・7-9月期も54％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "78fc7e2499aacbfe147937dbd24febe423ab4100",
+        "title": "【決算速報】オーイズミ、上期経常が44％減益で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "71f0b63b322591e6db97856712436abdc88e4f3d",
+        "title": "【決算速報】光村印、上期最終は赤字転落で下振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a5fc10a8ea4c90ea455d3d77ef613687cfc060b7",
+        "title": "【決算速報】ミラタップ、今期経常は4.6倍増で4期ぶり最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2cac20dcf43c5d35d7f707aa4ee75da7e7305974",
+        "title": "【決算速報】ブルーミーム、4-6月期(1Q)経常は赤字転落で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "287cb45ff35848da588913378b56383b7ce29bc2",
+        "title": "【決算速報】インフォネＧ、上期経常が赤字縮小で着地・7-9月期は黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4cd6f4c42d8f37d4aeba4ee9efd86b89f55b1da6",
+        "title": "【決算速報】Ｗｅｌｂｙ、1-9月期(3Q累計)最終が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.28,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a82b42f743b2c17651b32aabd941b3211b4eaec4",
+        "title": "【決算速報】笹徳印刷、7-9月期(1Q)経常は79％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "57925f4b6ad51759553fa9ceee857c32e1701f73",
+        "title": "【決算速報】リベルタ、1-9月期(3Q累計)最終が赤字拡大で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9a322d6336a0adba8f5bba543330649e51039ef0",
+        "title": "【決算速報】フクビ、上期経常は27％増益で着地、今期配当を2円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "327271657dc9fbd09ec6452764399d8f83b7649a",
+        "title": "【決算速報】ホシデン、上期経常は一転1％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "09a4c58c7b7da8408380e6e8b936913cb66bf087",
+        "title": "【決算速報】リリカラ、今期経常を一転50％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1ca8f2556e9a9a05a48e173693bf30f61488c44d",
+        "title": "【決算速報】福留ハ、今期経常を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bba80643e0591742e8f9c0a69122daacf7686c27",
+        "title": "【決算速報】フジックス、今期経常を一転黒字に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c51171fe3302bc4019e784d13aca04874bce0865",
+        "title": "【決算速報】アルマード、上期経常が赤字縮小で着地・7-9月期は19％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b67ed5546b32b44e0c58cc23679bb1bda6fbe717",
+        "title": "【決算速報】ＰＳＳ、7-9月期(1Q)経常は2.3倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7dae98de0ff289d1aedf613e5fbfc0ec1547beda",
+        "title": "【決算速報】ユトリ、上期経常が30％増益で着地・7-9月期も2.8倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8948ecebf30f86746e5f7228a681aea656e9c2fc",
+        "title": "【決算速報】ラオックス、1-9月期(3Q累計)経常が赤字縮小で着地・7-9月期は赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b1bc8c2c66d36b8720ad8d3ed8c462952d3cb6c5",
+        "title": "【決算速報】オーバル、上期経常は36％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "468cf91204ddf9eda216c777a5c45763066403da",
+        "title": "【決算速報】ピクスタ、7-9月期(3Q)経常は赤字転落、今期配当を15円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "12789a375dbe29c8154e6f6bd98f78bac722e3dc",
+        "title": "【決算速報】ＶＴＨＤ、上期最終は一転22％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cf4c80e5de6a95b634bc35b6351ed4518810b7ef",
+        "title": "【決算速報】ヤシマキザイ、上期経常が40％増益で着地・7-9月期も14％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3ee15e55de5e510ef3ad59d0b472dd382034cb0f",
+        "title": "【決算速報】ＡＫＩＢＡ、非開示だった今期経常は20％増で2期連続最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2a36747a403d28ac0d3b7df61b33a655a413abeb",
+        "title": "【決算速報】人・夢・技術、今期経常は12％増益、2円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ce39b618c261b9ed3ee3bc1de719de3d691c3b47",
+        "title": "【決算速報】レスター、今期経常を21％上方修正・最高益予想を上乗せ、配当も5円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "83ca9b29edc27cd2946a6052c3225239afdd4b10",
+        "title": "【決算速報】ｅｎｉｓｈ、1-9月期(3Q累計)最終が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b0356597691c8085f760cb7434a5f3abb6a5135e",
+        "title": "【決算速報】リズム、今期経常を一転7％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "60384d8d9fc8cd2c689940434c152290b943b4ec",
+        "title": "【決算速報】三和油化工業、今期経常を一転29％増益に上方修正・4期ぶり最高益、配当も10円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "feb2944f002e52d83366d0e9b4e15edf2645bace",
+        "title": "【決算速報】Ｊトラスト、1-9月期(3Q累計)最終は2.8倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2c1b9961321a03eac45fb4c6baae3e3e5dd163a5",
+        "title": "【決算速報】エンバイオＨ、上期経常が7％増益で着地・7-9月期は64％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3544a9bd4de11880f14c43530647b5d847ef0b94",
+        "title": "【決算速報】ＢＴＭ、上期経常が58％増益で着地・7-9月期も31％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5399917b204b761efdc0a765a3050b5b4a7c26f5",
+        "title": "【決算速報】ヒラノテク、上期経常が97％増益で着地・7-9月期も6.1倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "98486222a5aa16ea8e81bd16d3f062c27877c593",
+        "title": "【決算速報】ＮＦＫＨＤ、今期経常を21％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8b6267941ce8e12fcde9dfdf1a9aa76dfaceee27",
+        "title": "【決算速報】ＲＳテクノ、1-9月期(3Q累計)経常が10％増益で着地・7-9月期は12％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6f0ef038bcf424153c8f9941a2099b7405780413",
+        "title": "【決算速報】コマースワン、上期経常は17％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "94bc9dfc740fdfe2dcb63f59adc8082aef589595",
+        "title": "【決算速報】大石産業、上期経常は5％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e49e2828e714be21dea759c6243fcc67c6512e61",
+        "title": "【決算速報】インフォメテ、1-9月期(3Q累計)最終が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b4bf45624b71e91af4f9017119e2c0e7fd7f1947",
+        "title": "【決算速報】ユビＡＩ、上期経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "639d12ebe186f765b68f1d3198a5ffe1fb999ace",
+        "title": "【決算速報】オーディオＳ、今期経常は25％増で4期連続最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a4669991f721b9365f30666fa6a916785439ddef",
+        "title": "【決算速報】新コスモス、上期経常が32％減益で着地・7-9月期も29％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e9ded1932f063e7817870846b50ffa65cb05c1d5",
+        "title": "【決算速報】日本精密、上期経常は21％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c34471f9fce9ba433d817b23c4809618bb147b02",
+        "title": "【決算速報】ピクセラ、前期最終は赤字拡大で着地、今期業績は非開示",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3327a7aa83ac71f4f351999f7bdf7f565015535b",
+        "title": "【決算速報】精工技研、今期経常を16％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1eaaf976f15856974a228be536f6f92c05eb449d",
+        "title": "【決算速報】ユカリア、1-9月期(3Q累計)経常は25％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4749686acc64f4458531a52d1f9177a6e20796e1",
+        "title": "【決算速報】ＪＨＤ、1-9月期(3Q累計)最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e173e4e6a67e2539705c226c803b26424d90b51f",
+        "title": "【決算速報】技術承継機構、1-9月期(3Q累計)経常が3.8倍増益で着地・7-9月期も3.6倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e294fe01db95544fef52f016b4fc55e1c14a0a6a",
+        "title": "【決算速報】大垣共立、今期経常を20％上方修正・最高益予想を上乗せ、配当も実質23％増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4ec24a5584e7de9e81b48ac08638bf52ff12b89b",
+        "title": "【決算速報】サンデン、今期経常を一転55％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fe73f14d4c34a2d661f32e79919f65e4f2d5788d",
+        "title": "【決算速報】アオバＢＢＴ、上期経常が68％増益で着地・7-9月期も65％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d130b83768b6098c6899aef9c84e9af1f532b3c1",
+        "title": "【決算速報】ＡＩＰＦ、上期経常が23倍増益で着地・7-9月期も3.5倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3f9d32d2f0c6c2295edab8cbcda5fa54d63cfcc3",
+        "title": "【決算速報】ＧＷ、上期経常は3.6倍増益・通期計画を超過",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d30ed58b56aa540e28102165d6497050576c2996",
+        "title": "【決算速報】フリュー、上期経常が14％増益で着地・7-9月期は11％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "499d9679761b98bf4b244ef5083a7c4866bf558b",
+        "title": "【決算速報】オーネックス、7-9月期(1Q)経常は62％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "59d77779b454eff159f490916ec6ada5e1d6b546",
+        "title": "【決算速報】ＣＫＤ、今期経常を35％上方修正・最高益予想を上乗せ、配当も42円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c2104a8d7ddbb75656a0a7a07bad58d80b817d29",
+        "title": "【決算速報】エイシアンＳ、今期経常を一転88％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "47a23b571072d91c5719a10da7c6039822df56fc",
+        "title": "【決算速報】ホープ、上期経常が赤字転落で着地・7-9月期は35％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ce9ddcf9000e4f48a3e364749f3c7cce2ffc0858",
+        "title": "【決算速報】ＣＲＡＶＩＡ、1-9月期(3Q累計)最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c56df4e5f83a24350709e9932e2a7102edf431ba",
+        "title": "【決算速報】ＯＫＷＥＢ、7-9月期(1Q)最終は赤字拡大で着地、27年6月期業績を未定に変更",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b36c2a73cbd785a3953d0e3e53ff14ed848da258",
+        "title": "【決算速報】関門海、上期経常は赤字拡大で下振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f87061d9df103249f5ef92831d8f3f5838f5612e",
+        "title": "【決算速報】イワキポンプ、上期経常が42％増益で着地・7-9月期も56％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "58543a09225c3577e69a8604e7232b945c54d2f9",
+        "title": "【決算速報】ダイイチ、今期経常は2％増益、6円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "765d7c30222e3e8b88264b5c9f913a157d99f80f",
+        "title": "【決算速報】アライドアキ、今期最終を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6af9d96da46816a352104f5a47e17a7a428c5433",
+        "title": "【決算速報】ハーバー研、上期経常が90％減益で着地・7-9月期も62％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f63143bc6d94b3498ecafba249349c7e4e6630af",
+        "title": "【決算速報】日本創発Ｇ、1-9月期(3Q累計)経常が5％減益で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a12b825ac7be5012a7d3be4a9bb578e8606e7bf5",
+        "title": "【決算速報】天昇電、今期経常を一転43％増益に上方修正・3期ぶり最高益、配当も5円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2a649b8b56a8f54511020d83dc613d153e713f22",
+        "title": "【決算速報】東プレ、今期最終を20％上方修正、配当も25円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c55a51be9f25b9a630ae06f63a09df9cef395e10",
+        "title": "【決算速報】紀文食品、上期経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3d7c9f2622f49e99184a3550bb68669866ab0eb7",
+        "title": "【決算速報】ピーエイ、7-9月期(3Q)経常は50％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4b429b822e9c116ab25ad6793c9e3a6f983e9642",
+        "title": "【決算速報】シンシア、今期経常を25％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.5,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b8a356b229fd620b495bd511feb2f9816cd0dda1",
+        "title": "【決算速報】ユニカフェ、7-9月期(3Q)経常は4倍増益、未定だった今期配当は1円増配",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "40d719768c45a0f5c16c34b2c725594fc6b52316",
+        "title": "【決算速報】ＭＣＰｓ、今期経常は52％増で4期ぶり最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "595fd5390b94757d23d5f4edbae9c0e60f6065ef",
+        "title": "【決算速報】ｃｏｔｔａ、今期経常は微増で2期連続最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3d7c4e96e4813294cdb6ba2feb5131f4a3adb9d7",
+        "title": "【決算速報】ニデック、未定だった上期配当は無配継続",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f267bff326166ae785bc7962a6e388dda8a815f1",
+        "title": "【決算速報】スペースマ、今期経常は1億4000万～1億7000万円へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b07e804864dca3a71b6491680574283d7a685e9d",
+        "title": "【決算速報】Ａクリエイト、前期最終は赤字縮小も下振れ着地、今期業績は非開示",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9cb39f2db080bb5e1c302d40e223fc8f5991778e",
+        "title": "【決算速報】Ａｉロボ、今期営業を60億円に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2a8eecebdd07ba154ca7d26e23c11e3b1965b6fc",
+        "title": "【決算速報】ＪＡＬＣＯ、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2b24876548c55e87884a4d80d2f90b28c400852f",
+        "title": "【決算速報】大豊建、上期経常は91％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9d9fbf249d225a65997fb087392ff31bb4acc27b",
+        "title": "【決算速報】ライトアップ、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "29f5e180fda3eaf8b6d4c277da6a10df15ecaac2",
+        "title": "【決算速報】川岸工、今期経常は29％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e785efc40f39d36138801c9589b051933809def9",
+        "title": "【決算速報】ＧＭＯプラ、今期配当を1円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "078f9e84721a0fdd383444d5e159c37d522f7568",
+        "title": "【決算速報】日本和装、今期経常を5.4億～5.9億円に上方修正、配当を3円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0ee4949c882df5eaa5e1848d9f63959600c6c0a3",
+        "title": "【決算速報】ＬＴＳ、今期経常を14億～15億円に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0c4142abe71e002a7ddd789110bc368036ebfefa",
+        "title": "【決算速報】ｋｕｂｅｌｌ、今期経常を9.4億円に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "84a2aa2784d3e3c06d9bbfa4941fe0bd3ab1531f",
+        "title": "【決算速報】ギフティＧ、1-9月期(3Q累計)経常が30％増益で着地・7-9月期も82％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "75e064c0033245c0d61e50280392f6b9a79be05c",
+        "title": "【決算速報】要興業、上期最終は3％減益で着地、未定だった今期配当は29円実施",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7935d9016e05157757df84a6028e453cf8c2d55c",
+        "title": "【決算速報】ココルポート、7-9月期(1Q)経常は7％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4f2b490353dbd98c4c7b16a82d36669703ce3fd4",
+        "title": "【決算速報】内外テック、今期経常を4％上方修正・最高益予想を上乗せ、配当を増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "032eda15f1bd2925b299a3c0d28326dd93510511",
+        "title": "【決算速報】アイスペース、上期最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f299a4f7baefdec0176e3ef55e42def15f99fdbd",
+        "title": "【決算速報】ミンカブ、上期最終が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "aa9ad2062ff6dc3cf3bdd82f25eed6a0d1067901",
+        "title": "【決算速報】大森屋、今期経常は98％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f79c2ccc987fa71dffbb523db1ddca64baf8cb68",
+        "title": "【決算速報】宮入バ、上期経常は一転13％減益で下振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8d43673053a1f57a4f94b73c6285b2efc6933b26",
+        "title": "【決算速報】東洋ドライ、7-9月期(1Q)経常は13％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "55c4f1214987acb236f850e7d0c11ea7422bb325",
+        "title": "【決算速報】倉元、1-9月期(3Q累計)最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "302380b3dfd5ad5e603802211e0dced10ef2dc1c",
+        "title": "【決算速報】マーケットＥ、7-9月期(1Q)経常は赤字縮小で着地",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.43,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a60e5061e5b94ac6143398c8fc77f10298f8acf8",
+        "title": "【決算速報】日理化、今期経常を53％上方修正・36期ぶり最高益、配当も1.5円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0e2c731fc2045aae9ea91122c04ec85d4dbee261",
+        "title": "【決算速報】ＮＥＷＡＲＴ、上期経常は19％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "02cb776a6a77cf0b2e8a16e91fdefb155023d85f",
+        "title": "【決算速報】エコシステム、今期経常は17％増で2期連続最高益、1円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b179bbff5da177c2c9be472145491fee4e59cb0b",
+        "title": "【決算速報】ペットゴー、上期経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c8fe98428b7e5af73ecad0ad62f49eac5a7b38f7",
+        "title": "【決算速報】エアーテック、7-9月期(3Q)経常は93％増益、今期配当を5円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3a829c0bbb0661a8c31ffcfce655afa424cd0375",
+        "title": "【決算速報】フェニクスＢ、今期経常を71％下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.64,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "24a5a93ccd9419ae33acea13708b26a188066f2e",
+        "title": "【決算速報】清和中央ＨＤ、1-9月期(3Q累計)経常が55％増益で着地・7-9月期は黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6da9c4cf38106ee3b40f69cbd8c8c8eb43d10017",
+        "title": "【決算速報】あいちＦＧ、上期経常が39％増益で着地・7-9月期は40％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fdd73a75be63685d52654e8a1785a438961b8cba",
+        "title": "【決算速報】久世、上期経常は21％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "45ebeba738e73c1d8d87101dd23b5cc0b066c654",
+        "title": "【決算速報】リバーエレク、今期経常を2倍上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a67f2905e8189212d70abeb42d489a419a683713",
+        "title": "【決算速報】ヤマイチ、上期経常が黒字浮上で着地・7-9月期は赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "26ba56d7debef5135ac2f61c964a55ae90d9b12b",
+        "title": "【決算速報】ＣＡＮＢＡＳ、7-9月期(1Q)最終は赤字拡大で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7d95188c010be65a374687dcb5b7e9ad178f4696",
+        "title": "【決算速報】ロジザード、7-9月期(1Q)経常は14％増益で着地、27年6月期業績を未定に変更（訂正）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cdb3562b2e1770bc5eadbcad3f4c341976a1469a",
+        "title": "【決算速報】デルタフライ、上期最終が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.55,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7dcd3028e9cbc9b49df020a4cec9c8cf4cdb9466",
+        "title": "【決算速報】ラックランド、今期経常を一転82％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.28,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "83edb27a2cf87e908251aa5bd5c5ed5b5c366e8d",
+        "title": "【決算速報】ＫＬＡＳＳ、今期経常は56％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "80c0a66b155fa078cad9093ec85cd1228c0ba0fc",
+        "title": "【決算速報】ＡＩメカ、7-9月期(1Q)経常は54倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ed80b7cadcc3737eb31c6ddcb4b75a5fbb41f252",
+        "title": "【決算速報】ＦＩＧ、1-9月期(3Q累計)経常が8％増益で着地・7-9月期は87％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "85dfa54b1801b519789521468be948cba9885279",
+        "title": "【決算速報】スマバ、7-9月期(1Q)営業は黒字浮上・上期計画を超過",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.68,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9eb4d39c14022cf5c4613f5f5c253939d5e8769e",
+        "title": "【決算速報】ＧＭＯペパボ、1-9月期(3Q累計)経常が17％減益で着地・7-9月期も28％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "52aa8167bee89069c27466e3d883ce31a2fa44f5",
+        "title": "【決算速報】ベルトラ、1-9月期(3Q累計)経常は40％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "56f8a6d2fba9b5c846f948383775e6f6777acf24",
+        "title": "【決算速報】ロイブ、上期営業が赤字転落で着地・7-9月期は26％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5dd4bb78472cbc115dd85fc090a6284ab6fa7576",
+        "title": "【決算速報】ブライトパス、上期最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "58a2a9df1cbb26d246bbb57d5555b684fd4f2c68",
+        "title": "【決算速報】ＧＭＯ、1-9月期(3Q累計)最終が27％増益で着地・7-9月期も68％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e10bbb61818da083e0e8f19b24b2b2a03eb4efaf",
+        "title": "【決算速報】ＰＲＯＮＩ、1-9月期(3Q累計)経常は67％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1722752b76fb880165a220e0732ca9077ed58c28",
+        "title": "【決算速報】クレステック、7-9月期(1Q)経常は28％増益で着地、株式分割に伴い配当予想を修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "41656286e13fd242ebf081d56a6412e07384f97a",
+        "title": "【決算速報】ＧＭＯ－ＰＧ、今期最終は7％増で2期連続最高益、前期配当を17円増額・今期は8円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6c4c9e9eb2522583acdc9af3055bf71c4a69fbd5",
+        "title": "【決算速報】ＧＭＯインタ、1-9月期(3Q累計)経常が27％増益で着地・7-9月期も11％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9edcd2e1f755f40f770406ffb8bf794ef17ea43f",
+        "title": "【決算速報】ナルネット、上期経常は19％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "92dcb7cb2535e85bb5ab7bf743bc97a8b7117777",
+        "title": "【決算速報】Ｇキッズ、今期経常は13％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "08c6b946b74fa664b508a4fe3aa09db19d57c6d3",
+        "title": "【決算速報】ブリーチ、7-9月期(1Q)経常は16％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5e86b05978a6ebf5fecb14a67a100a3e839d4d94",
+        "title": "【決算速報】ビズメイツ、1-9月期(3Q累計)経常が29％減益で着地・7-9月期も26％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3972f97f208b6def9a44d71c3343034baec36dca",
+        "title": "【決算速報】ノイル、1-9月期(3Q累計)経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.67,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3627e539cfccbd09683f813a525137a225838175",
+        "title": "【決算速報】バードマン、7-9月期(1Q)最終は赤字拡大で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.53,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1b6ec78e885dfc5c129b15df89da8b613755cdbb",
+        "title": "【決算速報】ベクターＨＤ、上期経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b16826539e4451ffe25c794cc4d4c9171e361953",
+        "title": "【決算速報】ホットランド、今期最終を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c8b1eb630f358bf87aeea21a390633bfc64163dc",
+        "title": "【決算速報】エキサイト、上期経常が3.1倍増益で着地・7-9月期も4.7倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1b020be21ca6f8dc2ceae242ee2ec626e3eb7ba9",
+        "title": "【決算速報】フリークＨＤ、今期経常は24％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "365352997da158d01d72f88a65034d6708c04e37",
+        "title": "【決算速報】ヴィクトン、今期最終を赤字拡大に下方修正",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.62,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "000efc123b3961b1035c7f5769fee9418fcf4c58",
+        "title": "【決算速報】ＳＤエンター、上期経常が黒字浮上で着地・7-9月期は2倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d40f815896b51e3a017b6cae15767a2de80899c2",
+        "title": "【決算速報】ｕｎｂａｎｋ、上期経常が赤字転落で着地・7-9月期は81％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "85963d79ef6c910d8aba10e24fac85624f3a5709",
+        "title": "【決算速報】ＣＳ－Ｃ、今期経常は赤字縮小へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "93728996bd9ba3f1260dcb101e850960ce7541f0",
+        "title": "【決算速報】フルッタ、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "40273b155ab3fa4979a547b2a8e99908a03d3ef6",
+        "title": "【決算速報】かっこ、7-9月期(3Q)最終は赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c0ee2f8efdabfc848f04753a61e816f94b5b41dc",
+        "title": "【決算速報】ｆｏｎｆｕｎ、上期経常が27％増益で着地・7-9月期も53％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5a500e20c7a25227ce6a2167b17504873019fb41",
+        "title": "【決算速報】デジプラ、前期最終は赤字拡大で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e74acf597bc37d65a180bc546aebc678b66dc3fd",
+        "title": "【決算速報】クレセゾン、今期最終を19％上方修正・最高益予想を上乗せ、配当も15円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e0d35207fc9112f7684b5c17ca2a4503bb4904b6",
+        "title": "【決算速報】ミーク、上期経常が19％増益で着地・7-9月期も20％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "00decda420826db039fca377bc1fb58d77b7b1a8",
+        "title": "【決算速報】秋川牧園、今期営業を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "211c811131d37cebe217c9f7dc83edb50c7195a8",
+        "title": "【決算速報】ＭＨＴ、1-9月期(3Q累計)経常は11％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "170e644081c9238fe747e12a403ee2d2b8010900",
+        "title": "【決算速報】まぐまぐ、前期経常が一転赤字で下振れ着地・今期は黒字浮上へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "298f319b9099ffd1b4bb8fba4cfa8581666168d2",
+        "title": "【決算速報】ガンホー、1-9月期(3Q累計)経常が56％増益で着地・7-9月期も86％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "35c79172ace18f088abae6b36d26c164fffae4a0",
+        "title": "【決算速報】ライオン事務、今期経常は25％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1339fadeba321d1a48e407f744c6dcc7c6c424d9",
+        "title": "【決算速報】ＢＲＵＮＯ、7-9月期(1Q)経常は4.4倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ebd440ef49acb5607b66811e366e64e442f1e920",
+        "title": "【決算速報】冨士ダイス、今期経常を2.7倍上方修正・9期ぶり最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ec91399cad5d7a97a5a4cd173f9205142e0ce15e",
+        "title": "【決算速報】シャノン、1-9月期(3Q累計)経常は4.6億円で着地、今期配当を20円に修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "275dff3271c12dac07a827ea9458834f00ccc12f",
+        "title": "【決算速報】ラクス、今期経常を7％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ab3ca244f816f20ee030d71b09d4eae30e33b62a",
+        "title": "【決算速報】ＩＢＪ、1-9月期(3Q累計)経常が30％増益で着地・7-9月期も22％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a275a5333f8c69824fe5890bde8d7d50a541df96",
+        "title": "【決算速報】オプティム、上期経常が11％増益で着地・7-9月期も4％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6deedd97d012b7a4c53ee5f5a98baac5e31ea435",
+        "title": "【決算速報】オリオン、上期経常は6％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5fbb8774a7ee0afe40405477e8a468af251681e3",
+        "title": "【決算速報】ＧＥＮＯＶＡ、上期経常が黒字浮上で着地・7-9月期は93％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "eb53681368d16d2432c1e36fbfa1966658db7f33",
+        "title": "【決算速報】クオリプス、7-9月期(2Q)経常は赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "26f2153e4ec9d0660ec9de82a737b62b5b3441b1",
+        "title": "【決算速報】レッティ、今期経常は16倍増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.67,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ee6ab63cefd13e6c87a3674f60e26544a781dc2b",
+        "title": "【決算速報】リベース、今期経常を一転80％増益に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "778df4add19ada63c9fa77d4cdcd986170ec6ee2",
+        "title": "【決算速報】旅工房、7-9月期(1Q)経常は赤字転落で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8ce9ed3ed5a9dd7998ae57b083be6f8b4e532b13",
+        "title": "【決算速報】シェアテク、前期最終は79％増で2期ぶり最高益、今期業績は非開示",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8986eff62e834483d5b436ea0742aef164d73bda",
+        "title": "【決算速報】一家ＨＤ、上期経常が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "70b6f68d454303bf0da1f3994e6e70caad939cda",
+        "title": "【決算速報】クオンツ総研、前期最終が上振れ着地・今期は8％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0688dad19b10fb6dbd551e66118cb799ad8ad7a7",
+        "title": "【決算速報】グロームＨＤ、今期経常を1％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6abec9c393aad66ec3be1f1b4ce3a37f43bbb0a2",
+        "title": "【決算速報】極楽湯ＨＤ、上期経常が33％減益で着地・7-9月期も27％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "08ce65cab6cd1d0ba9437f64ee1c41a1abea8bc2",
+        "title": "【決算速報】テスＨＤ、7-9月期(1Q)経常は赤字転落で着地",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.4,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "edc66c01219c2ab2a1fed7f97a66ede5e14eeacf",
+        "title": "【決算速報】ＰＣＩ、上期経常が39％減益で着地・7-9月期も30％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.49,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "105a092af77b1a21a5167a5a06a8043b264bad0a",
+        "title": "【決算速報】ＬＴＶＸ、上期経常は9100万円で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3d45a65b94b4cc15ad413dc53b5b970ba818708b",
+        "title": "【決算速報】サイフューズ、7-9月期(3Q)経常は赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d68d12f833ad2eeecba65f4293bc50afc7c6dd3f",
+        "title": "外為：1ドル159円77銭前後と小幅なドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b3a35231f61c0529a1eec9cd8b7f3c5b8d3a4575",
+        "title": "外為：1ドル159円96銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ae09848fe27860889ddc0144e7d5c9be89ba8a40",
+        "title": "外為：1ドル159円91銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b971833eed17677264ac65d30674ed425c95823e",
+        "title": "外為：南アランド、9円5400銭前後と小幅なランド安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.6,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7c5e4dac5e047bf477fbc732724ffe52336ba4bc",
+        "title": "外為：ブラジルレアル、28円34銭前後とレアル安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.52,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6d0ccc705f4b3c6ebe3d0e65df2ff76bbf97a9a2",
+        "title": "外為：英ポンド、211円55銭前後とポンド安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.37,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e8198482b0205fd3db1c61411503020ba8cbfc42",
+        "title": "外為：スイスフラン、191円40銭前後と大幅なフラン安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.38,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "562300b39261579a5f223454736eee60899bbffa",
+        "title": "外為：カナダドル、112円14銭前後と小幅なカナダドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.48,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ab90f6f6bbe86e0c91a6e983e33d01b096d44293",
+        "title": "外為：NZドル、88円61銭前後と小幅なNZドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.31,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "31eae2096610054bdc63d09bafb3e514c946ff81",
+        "title": "外為：豪ドル、108円77銭前後と豪ドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.46,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ea8d10dd8b1d92fa3e15a56a5d7798a03a297883",
+        "title": "外為：1ドル159円89銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f74a9d4bf8c5a661b9bef6a05b200ab2f299affc",
+        "title": "外為：1ドル159円91銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2d582ad11fb5f6a47af0a9f36ce73c54668aded9",
+        "title": "外為：1ドル159円89銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9fcd25be1ee3da46c54c35e3f10b4e18cf68b24e",
+        "title": "外為：南アランド、9円5455銭前後と小幅なランド安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.56,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "111030ad09473df249bf2074cc9a80d6d08d8b58",
+        "title": "外為：英ポンド、211円64銭前後とポンド安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.35,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5d2f2c047a52bb5d1eb9908fcbdc1cfcf02500ec",
+        "title": "外為：ブラジルレアル、28円33銭前後とレアル安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "db4cb495cc845f1962eba3e4c5cf5313e009f2ca",
+        "title": "外為：スイスフラン、191円39銭前後と大幅なフラン安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.35,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a8b7559c9e0b8b824fb915d278211544b6b02500",
+        "title": "外為：豪ドル、108円94銭前後と小幅な豪ドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.49,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7d62f1a962ea3617730c82299119064dc29916c6",
+        "title": "外為：カナダドル、112円17銭前後とカナダドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.18,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a79f672cb0f2f531da0058b54b2c2ffabbad0680",
+        "title": "外為：1ドル159円86銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "05220c646ce781781103513975ec0a40032d5228",
+        "title": "外為：1ドル159円88銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "24721ecdaaa810f53c1d5db6273c0640625f4f8c",
+        "title": "外為：1ドル159円86銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a29d3bccc51e26e129280471a87b3c6ce83d6153",
+        "title": "【決算速報】ＡＰＨＤ、上期経常が37％減益で着地・7-9月期も28％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2828d4170404904a159f0f7baebeeb746fbd79e3",
+        "title": "【決算速報】スタートＬ、上期経常は34％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cf75f89845babddde3cbc8a28b259dc69bcacdc5",
+        "title": "【決算速報】クラスター、上期経常は56％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c9286d01e79a5c1b17c99eca97fc1e1d5ecb1516",
+        "title": "【決算速報】寺崎電気、上期経常は一転11％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9d5d54491b18fb74e7f6a38971cbe537263e1892",
+        "title": "【決算速報】オリコンＨＤ、今期経常は8％増で2期ぶり最高益、5円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b6a57ee591cb127d8f143b0e20bb369a48e9c8b",
+        "title": "【決算速報】ダイコク電、上期経常は41％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "867d6be41a5ecc55bf2b1fe0281c173f5d6375df",
+        "title": "【決算速報】サンアスタ、1-9月期(3Q累計)経常が87％増益で着地・7-9月期も24％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "023d61c871877540c02da796402ccb1633786925",
+        "title": "【決算速報】平田機工、今期経常を24％上方修正・9期ぶり最高益、配当も20円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9871363340eb4028edde0447b0fa678e50f294a1",
+        "title": "【決算速報】ハイパー、1-9月期(3Q累計)経常は19％減益・通期計画を超過",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0c567b9e9ae79120f3cedaa830d240c39abb18fb",
+        "title": "【決算速報】アヴィレン、1-9月期(3Q累計)経常が40％増益で着地・7-9月期も2.1倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6232c7f63a9f65a0ad1d0b3c9e5406cc90db96d4",
+        "title": "【決算速報】窪田製薬ＨＤ、1-9月期(3Q累計)最終が赤字拡大で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bf766980f95d9f072fe6d4fe8bffeef23fdeaac5",
+        "title": "【決算速報】ＣＲＧＨＤ、今期経常は3倍増益、1円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d8ab16bbcce68c8a64adbb0d3f7e4ad8bd68fcf4",
+        "title": "【決算速報】ブリッジＧ、今期経常は19％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "117318fd3ec8148c4b556e6c34bd4087c10e0c31",
+        "title": "【決算速報】バイセル、1-9月期(3Q累計)経常が82％増益で着地・7-9月期も52％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "679f15266590fffc3691df9427e8af0cb2a4af79",
+        "title": "【決算速報】バルテスＨＤ、上期最終が赤字転落で着地・7-9月期は3％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.52,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "296dae70c386a4c8d83e1047ba1e5f6cbae07ea1",
+        "title": "【決算速報】ヌーラボ、上期経常は36％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0e0d74274146be3118b4b6f23c2cf099fc14f5af",
+        "title": "【決算速報】ＭＲＫＨＬＤ、上期経常は75％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3743f76727646089105c5de1f07e6158b25da4bd",
+        "title": "【決算速報】Ｓｙｎｓ、1-9月期(3Q累計)経常が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.68,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a6ba7960bc6e67761b10a219d223fbb7665611db",
+        "title": "【決算速報】フジオフード、1-9月期(3Q累計)経常が41％減益で着地・7-9月期も24％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e3fe23a2601f26236f0159e8affa10eaff5f45bd",
+        "title": "【決算速報】ワシントンＨ、上期経常が10％増益で着地・7-9月期も24％増益",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "629209f96787664a6c321bcfe5bb24b65b37b855",
+        "title": "【決算速報】メタプラ、今期営業を一転52％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c56851552a9171904e43e17ec537ae68cf17a771",
+        "title": "【決算速報】アズジェント、上期経常が赤字転落で着地・7-9月期は86％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c6a3f3d7946ecee13acce56de00c0d6359bedd59",
+        "title": "【決算速報】ＷＩＺＥ、1-9月期(3Q累計)経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.4,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "46f12c0dfc9c4ac2ec501d0a4a528d8cbaddabbb",
+        "title": "【決算速報】モバファク、今期最終を68％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "678b9ea42fdc6ac1b20e9ce71e563a6aebdd2d4f",
+        "title": "【決算速報】ＡｎｄＤｏ、7-9月期(1Q)経常は2.1倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3393ed6cafc1443de5f2041cb88f3867fbaad166",
+        "title": "【決算速報】ＲＶＨ、上期経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1d7ae731388c180a28eb2c3ecece7d389dc88c68",
+        "title": "【決算速報】アジア航、今期経常は7％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b746c4c6b8e0905899c48447d148e3604bd9eba",
+        "title": "【決算速報】夢展望、上期最終は赤字縮小で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b3ae0b002bad8c7a91f1147a45ab57b88159f849",
+        "title": "【決算速報】トライアイズ、7-9月期(3Q)経常は4.4倍増益、今期配当を1円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8b505fdabdfe20567b70dc7d7beae3d1d4b73b55",
+        "title": "【決算速報】トリドリ、今期経常を一転5％減益に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8c19c38ce65e4ed91dca0db1f4e65cc6870fe547",
+        "title": "【決算速報】リビングＰＦ、上期経常が74％増益で着地・7-9月期も49％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "05742387086842008a7f95458b53b5713619630b",
+        "title": "【決算速報】ビューテＨＤ、7-9月期(1Q)最終は赤字拡大で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "681a2d4eb8cadd130e71ddc7319d22eea140a4dd",
+        "title": "【決算速報】ＤＬＥ、今期経常を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "61bbf13488f0a3bdfd2b9efc7267927fce15fb5f",
+        "title": "【決算速報】学研ＨＤ、今期経常は15％増益、4円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "48a132f02b9359a39e76ddb4109d77b99a23bd01",
+        "title": "【決算速報】セカンドＸ、1-9月期(3Q累計)経常が52％増益で着地・7-9月期も3.2倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9090f20532c4d0cd6b0ff4bb8111c3dbc89e90e5",
+        "title": "【決算速報】トレンダ、上期経常が39％減益で着地・7-9月期も46％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4348339a3f3f51e5e8488e509d48bfc0db2026a6",
+        "title": "【決算速報】はごろも、上期経常は8％減益で着地、今期配当を10円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "84372e5c9295b18f5cfb5d1e60597e51317d3597",
+        "title": "【決算速報】フェイスＮＷ、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "729608b3d4a77838242b05bdbe22e45b8921cda4",
+        "title": "【決算速報】クラサス、今期経常を一転43％増益に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9afae6ae9603d171483e509393546cb6f0874f01",
+        "title": "【決算速報】エアクロ、7-9月期(1Q)経常は赤字縮小で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "caedacc37c07430b20bd749f246e23283b31acdf",
+        "title": "【決算速報】アイリック、7-9月期(1Q)経常は赤字転落で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fc06ccdc63b9c12b971f227ca810e1da292b1b77",
+        "title": "【決算速報】グロバルＬＭ、今期経常を7％上方修正・最高益予想を上乗せ、配当も10円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "470c9052a7eb2a92577cf738dc9536d0bdd1c34a",
+        "title": "【決算速報】ＴＨＫ、今期最終を7％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e7b54df6507acf876adaa78d5cc3ceced915da7b",
+        "title": "【決算速報】Ｄｍミックス、1-9月期(3Q累計)最終が63％増益で着地・7-9月期も82％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8639fc0dc8453dfc80b19687aa6e4894827cce79",
+        "title": "【決算速報】ビーグリー、1-9月期(3Q累計)経常が35％減益で着地・7-9月期も58％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ae6882bf06510f35de618dddc9f13a7e194c89a1",
+        "title": "【決算速報】ＡＣＳＬ、1-9月期(3Q累計)最終が赤字縮小で着地・7-9月期は黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fa4d0f4e6457d987765690d473f628dc7c81db43",
+        "title": "【決算速報】恵和、1-9月期(3Q累計)経常が31％減益で着地・7-9月期も90％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fa912a255cc54959dbfebc1ba410134d07ae7cf4",
+        "title": "【決算速報】エイビック、今期経常は33％増で4期連続最高益、12円で初配当へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "62b9bf68ca8081e50ef0f470f9f6a7c6a6c16ede",
+        "title": "【決算速報】ドリムアーツ、7-9月期(3Q)経常は22％増益、今期配当を10円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e841e3cfcc50b95b5905f4f28c41a4baa947d9df",
+        "title": "【決算速報】ＷＴＯＫＹＯ、7-9月期(1Q)経常は5.1倍増益で着地、今期は上場来初配当33円実施へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "946a6ca0888a6a12605e971dcefc3f1159fd2dd7",
+        "title": "【決算速報】ビーロット、1-9月期(3Q累計)経常が8％増益で着地・7-9月期も21％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.79,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9f6a5832d95a02921f28e15ade744cecc40340bf",
+        "title": "【決算速報】リプライオリ、今期経常は25％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ec9c85605254ac46dd3ca609e698cb22c97bbd78",
+        "title": "【決算速報】デュアルＴ、7-9月期(1Q)経常は赤字拡大で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e7dfa9db62efdaf5f7c8befbe59f47b9a8e9b6e4",
+        "title": "【決算速報】ユーグレナ、今期経常を7％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0bfc90bda3353d038dddff166c0306b3953ec034",
+        "title": "【決算速報】スピー、今期経常は赤字拡大へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6763a934ccf5a0c4e7351677388b17f05a2bc830",
+        "title": "【決算速報】ブルーイノベ、1-9月期(3Q累計)最終は赤字縮小で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "215779a65088b65213a0dc5df1bff943ff6b7c72",
+        "title": "【決算速報】ＴＲＥＨＤ、上期経常が73％減益で着地・7-9月期も71％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "74649c90776a5bcbf7ae84aeba4552fec9c99e30",
+        "title": "【決算速報】シンカ、1-9月期(3Q累計)最終が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "af9592129f6e143c531551395007db38d6957de3",
+        "title": "【決算速報】ウェルネス、上期経常が45％増益で着地・7-9月期も31％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2ce6b1ec2a0b7c35f3f12f88adf2ddf138ed5505",
+        "title": "【決算速報】神戸天然物化、上期経常が28倍増益で着地・7-9月期も12倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6bb4e72108a1fdac0c21972e3c27f01dd84828d9",
+        "title": "【決算速報】トグルＨＤ、今期経常は2.3倍増で4期連続最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8a2aa9751977429fa403d98b63011bf7559b8a21",
+        "title": "【決算速報】ダイブＧ、7-9月期(1Q)経常は1％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ea5cb4424137bab68b5c6b3f3455860d3c0f657a",
+        "title": "【決算速報】サンコール、今期経常を13％上方修正・最高益予想を上乗せ、配当も5円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a47c5e070b1aba62ec5bb7a47a631fc030325e34",
+        "title": "【決算速報】オプテクスＧ、今期経常を4％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "dd8dec9becc45e7572846c592289b08062b747d9",
+        "title": "【決算速報】Ｇオイスター、上期経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bb70ed7ab445a7c5f85b1910096fe1d3c33c7eb3",
+        "title": "【決算速報】林兼、上期営業が赤字転落で着地・7-9月期は52％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1ffe3dc5acc9dfd76f1979c68bebc27711ed0d80",
+        "title": "【決算速報】ラバブルＭＧ、上期経常は1億1000万円の赤字で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2e3b4b68af2f6a831c6a2bac7d137dd69b0fb23d",
+        "title": "【決算速報】エフビー介護、上期経常が8％増益で着地・7-9月期も17％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bef8cc29a00e92b583cede830d00dc8ea9857952",
+        "title": "【決算速報】エルイズビー、1-9月期(3Q累計)経常が76％増益で着地・7-9月期も2.2倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1dfb70693ad3fade189ecf17ff6674fff95b5ae3",
+        "title": "【決算速報】第一カッタ、7-9月期(1Q)経常は61％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2c2ef9631f4fa81db207cffc0d2ff8fd680fc8ec",
+        "title": "【決算速報】ジーネクスト、上期経常が赤字縮小で着地・7-9月期は赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5463dd67df33af9ac3dfacdbaecd2b243074bb21",
+        "title": "【決算速報】アイズ、今期最終を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "841a24e3757e800889ed18d11e747cae732b42d7",
+        "title": "【決算速報】ユニバー園芸、7-9月期(1Q)経常は53％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a2fcd7052e4e65ad2baab996aebb067ba542d2dc",
+        "title": "【決算速報】アライドＨＤ、1-9月期(3Q累計)経常が31％減益で着地・7-9月期も71％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b677735bc998042835f035f0327f36f20c2fd801",
+        "title": "【決算速報】ＫｅｙＨ、1-9月期(3Q累計)最終が45％増益で着地・7-9月期も9％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "efc9ae51fe806be77cc2143b2a5cabcc687c7564",
+        "title": "【決算速報】ラクオリア、1-9月期(3Q累計)経常が赤字縮小で着地・7-9月期は黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "79c1fa812c51a87780891eb47b89d4eb2b0527fa",
+        "title": "【決算速報】日産東ＨＤ、上期経常が45％増益で着地・7-9月期も2.4倍増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b3b424f3b1472fc0a98b1d4beeff7ce772dde86e",
+        "title": "【決算速報】タツモ、1-9月期(3Q累計)経常が69％減益で着地・7-9月期も46％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "33010548d731457f4ab7cdc9abbfa863cfa593d9",
+        "title": "【決算速報】ＳＤＳＨＤ、上期経常が赤字転落で着地・7-9月期は58％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2f5310466bbd0abfc6665e6ec2a23581ffdabd16",
+        "title": "【決算速報】セーフィー、1-9月期(3Q累計)経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "74e317757226d1c620015eabe6b7bc79df42ee45",
+        "title": "【決算速報】ＪＤＳＣ、7-9月期(1Q)経常は2.1倍増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7e75bdabf17cf9084316a5961b1d1ec10c628fe5",
+        "title": "【決算速報】セプテニＨＤ、1-9月期(3Q累計)最終が77％増益で着地・7-9月期は50％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "no_answer"
+      },
+      {
+        "guid": "0431b0dee5bc593cc2eeddfc01bf0870ecf3fccd",
+        "title": "【決算速報】グラッドＣ、1-9月期(3Q累計)経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c2b36f2406d00bf342b2f37a509cf955afc45299",
+        "title": "【決算速報】ビースタイル、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "59c2f0af4365b4319aaec1222c6c2e4a76db7207",
+        "title": "【決算速報】日本郵政、上期経常が25％増益で着地・7-9月期も5％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "8873781c69e6bdb782c6d23f46be2aba382d5f42",
+        "title": "【決算速報】ベース、7-9月期(3Q)経常は10％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "42bcafc282f682dd9259ba87ae8d5b843444b7d0",
+        "title": "【決算速報】ネクスウェア、上期最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "1d9c90f3e85025ed59cdc93ba95fb11b1f1ad009",
+        "title": "【決算速報】ライドオンＥ、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "10bf30d58eb72f2c712cdc950637196c1357bc0f",
+        "title": "【決算速報】堀場製、今期経常を4％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "2c5df550052bcb139893311aec5b57482ecedbc7",
+        "title": "【決算速報】ニトリＨＤ、上期最終が7％増益で着地・7-9月期も21％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "9ee5a9355bfa725cfb37385f8cd592f149ea16b1",
+        "title": "【決算速報】井関農、1-9月期(3Q累計)経常は5％増益・通期計画を超過",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a016f5feeacab1e9f89733a70e58c7a9ff073470",
+        "title": "【決算速報】野村マイクロ、上期経常は赤字転落で下振れ着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "d0a5cb428e4234b41fc8aed6085ad7e9f05fec57",
+        "title": "【決算速報】Ａパーチェス、1-9月期(3Q累計)経常が1％増益で着地・7-9月期は13％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "24348a7ccee3ff5bff887200a4234fc982447a21",
+        "title": "【決算速報】ヒトトヒトＨ、7-9月期(2Q)最終は38％減益、今期配当を0.01円増額修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "b622dde5d3a30193cd130575108131ae3856eae0",
+        "title": "【決算速報】ダントーＨＤ、7-9月期(3Q)最終は赤字縮小",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "f636b643b84f8ef5b2a6e85587ab0d7a63fe32bd",
+        "title": "【決算速報】ジィ・シィ、7-9月期(1Q)営業は黒字浮上で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "53b2e020d99ad611fbb30699b2e0cdeb88ccac97",
+        "title": "【決算速報】エスユーエス、今期経常は20％増で4期連続最高益、前期配当を12円増額・今期は1円増配へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a4adc994adc3967413237f57340095382f49e70e",
+        "title": "【決算速報】ひとまいる、上期経常が60％減益で着地・7-9月期も82％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "7d9faeeafdc7530803a3bf39506d5df24ab24ba5",
+        "title": "【決算速報】物語コーポ、7-9月期(1Q)経常は28％増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "0484dfc26d8b62c5297074931e6a59664469f3bd",
+        "title": "【決算速報】ジェイエイシ、1-9月期(3Q累計)経常が15％増益で着地・7-9月期も15％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "1e6d1c5ab4861e245694b0be118bc201e5ab29cc",
+        "title": "【決算速報】寿屋、7-9月期(1Q)経常は赤字転落で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "6ed4d97d8ea3b9267a0a160a18421c7dc74a8ca3",
+        "title": "【決算速報】ａｒｔｉｅｎ、今期経常を22％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "1e875ae016f311aefbcb3fc8c76dd5a51547a247",
+        "title": "【決算速報】コンバム、今期経常を44％上方修正、配当も10円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "2c2a4331c0f012271f153d2264b82e27955e20ee",
+        "title": "【決算速報】富士山ＭＳ、1-9月期(3Q累計)経常が18％増益で着地・7-9月期も3.5倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "4a42403ff3dca7360ece2881b672f552a0d6df49",
+        "title": "【決算速報】サトー、今期経常を3％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "3b5fa7968796cf9fa82a85e2cbb81e9a7707069c",
+        "title": "【決算速報】インバウＴ、今期経常は黒字浮上へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "faf452eed1699edd578e483836b71d5f2b230025",
+        "title": "【決算速報】レオクラン、今期経常は14％増益、5円増配へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "87231a75815f564df80b4ba725f1ed7b84d53819",
+        "title": "【決算速報】プラコー、上期経常が黒字浮上で着地・7-9月期は4.2倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "b71f883b688705cae387d5fcd6af98c75f95a78f",
+        "title": "【決算速報】ホットリンク、1-9月期(3Q累計)最終が赤字縮小で着地・7-9月期は黒字浮上",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "5d65e283f49baf8b997fe22383d510ab9396c115",
+        "title": "【決算速報】ＵＮＩＣＯＮ、7-9月期(1Q)最終は50％減益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a783b4e515adffbbac47700b156a59c886a4783d",
+        "title": "【決算速報】メディネット、今期最終は赤字縮小へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "9c908c7870da053f145eb9a63d8ec4c66cb086a0",
+        "title": "【決算速報】アンビＤＸ、7-9月期(1Q)経常は3％増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "78c95c456b8fbfd72fb3b20e7db0040f3e13509d",
+        "title": "【決算速報】ケイ・ウノ、今期経常は2.6倍増益へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "27fdec12fb080b0a970dc99e3ab06c26d51a5e99",
+        "title": "【決算速報】ピアラ、今期経常を一転52％減益に下方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "41d22dc360edce547b2a316a998f9dbf238e8504",
+        "title": "【決算速報】ウィルスマ、7-9月期(3Q)最終は赤字縮小",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "8e3e6a5bd69b76d539f7154f043953bd1edc1e3f",
+        "title": "【決算速報】インバＰＦ、今期経常は20％増で4期ぶり最高益更新へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c4ce22e0286234a4aa30b7567e96f483f1075d7c",
+        "title": "【決算速報】ナイル、1-9月期(3Q累計)最終が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a784b9b9e029b9541f973f2004b0b7f165f2bbb3",
+        "title": "【決算速報】ＨＣＨ、今期経常は3％増益、2円増配へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "e66d08e0d9cc78050b1a0bfa9f5495be421d6c61",
+        "title": "【決算速報】セイファート、7-9月期(3Q)最終は赤字縮小",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "83a0dc946d6397f920c9504085ad2aadfc231e98",
+        "title": "【決算速報】フィスコ、1-9月期(3Q累計)経常は赤字転落で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "29b86b342a91fc5beecaf15de3b16fb1fb89f524",
+        "title": "【決算速報】ＮＡＮＯＨＤ、上期経常が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c2eb71ac40e84ff30972f8494cd63f7c0ea71053",
+        "title": "【決算速報】かんぽ生命、今期経常を20％下方修正、配当は2円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "7c64ff409ecd883c2b4b828748a8a3f4ac1c75ca",
+        "title": "【決算速報】鈴茂器工、上期経常が10倍増益で着地・7-9月期も7.8倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "e94200744a4ea7fe672306e21f9e086aed888018",
+        "title": "【決算速報】クリアル、上期経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "677a36fd20dc1a325d0fb925a6d22b177f9da0c4",
+        "title": "【決算速報】フーディソン、上期経常が78％減益で着地・7-9月期も36％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "8aec9ccac07a725759609d77e5ed07c2b0c6a226",
+        "title": "【決算速報】セキュアヴェ、7-9月期(2Q)経常は3.3倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "fb25a68c8a421b79f2ce91aa0427b141d13110b4",
+        "title": "【決算速報】Ｈｍｃｏｍｍ、1-9月期(3Q累計)経常が5倍増益で着地・7-9月期は26％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "e8f210494c3c525c5040c88b961a5f2359a5446b",
+        "title": "【決算速報】東北新社、非開示だった今期経常は77％減益へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "dcd66a327a413edf3a62835b38731f3f2da4f7c4",
+        "title": "【決算速報】ＤＩシステム、今期経常は13％減益、3円増配へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "3edc37e507c33c2bb8e79078aed16d829d990702",
+        "title": "【決算速報】日本ホスピス、1-9月期(3Q累計)経常が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "98cab2115d9c4f89b1cf598e657b0469c93bc002",
+        "title": "【決算速報】ＴＯＰＰＡＮ、今期経常を11％上方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "55e1e884c2573ac11ce194b1a44fbec813d9c714",
+        "title": "【決算速報】京都ＦＧ、今期経常を13％上方修正、配当も20円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c2c223cef3956c7feecfe5c25df512489712614b",
+        "title": "【決算速報】ビジョン、今期経常を10％下方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "719b98ddd14ff0998698297d9d6fed3ee0651911",
+        "title": "【決算速報】東京産、今期最終を一転赤字に下方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "2e4ef0f31336884876bcf5a9f6a870512f364791",
+        "title": "【決算速報】イノベーショ、上期経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "ae5cb49dbd4df15e0bf6e9d6d73f3a79e0c4ba67",
+        "title": "【決算速報】ヨロズ、上期経常は28％増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "6605145a8a336c0675c3dc8b7d07e4c613a25c4a",
+        "title": "【決算速報】アビックス、上期経常が40％増益で着地・7-9月期も2.1倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "193726307a737f5fa5b0af0a3ba057f6bbe323e7",
+        "title": "【決算速報】スカイフォル、今期経常は16％増で2期連続最高益更新へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "f8a4b8dec20bddd98da927e2007c35909c4ce642",
+        "title": "【決算速報】フォーカス、上期経常が8％増益で着地・7-9月期も19％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a8595ec35f42373a39bee81efa5a8103efd1d8d3",
+        "title": "【決算速報】モスフード、今期経常を5％上方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "fb9fecec6507f150e6e2cedb9daf47fdda9a6286",
+        "title": "【決算速報】高圧ガス、今期経常を19％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "3381adb819a297bb245a05a1b39d84c6a59172dc",
+        "title": "【決算速報】ユーソナー、1-9月期(3Q累計)経常は10％増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "07eb4244f4d43cc40b8c52d96bb3ec5580b47b73",
+        "title": "【決算速報】日工、上期経常は80％増益で上振れ着地、今期配当を2円増額修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "dcae6254d016f515b45a78f80479dadd49800407",
+        "title": "【決算速報】スプリックス、今期経常は27％増で2期連続最高益、6円増配へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "5463fc7e77e283d560c347368f1520a6f0764082",
+        "title": "【決算速報】サンドラッグ、7-9月期(2Q)経常は8％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "eba6d77f9393c0d52dfa084875245e48a639d1ae",
+        "title": "【決算速報】ヒット、7-9月期(1Q)経常は35％減益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "f1350fe9a46adbcad069b57bb97363b9ffe26dc8",
+        "title": "【決算速報】ヒロタＧＨＤ、今期最終を50％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "0704f90fb7f2d50ed53407b2683be6ceaa9e7494",
+        "title": "【決算速報】アイスコ、今期経常を47％下方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "950b2452e3d96f29d91fe3e3ff8e4771d7d9b774",
+        "title": "【決算速報】ムーンバット、今期経常を一転33％減益に下方修正、配当も19円減額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "65a10b1ab191ea6dd43f801dcb45a64ecf74e9f5",
+        "title": "【決算速報】テックファム、7-9月期(1Q)経常は31％増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "8823f96aa7f83820cde00091ec5ceaa287184c1e",
+        "title": "【決算速報】フィーチャ、7-9月期(1Q)経常は黒字浮上で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "72a903438ec8e111046243c760537c26e0252cce",
+        "title": "【決算速報】駒井ハルテク、上期営業が赤字転落で着地・7-9月期も赤字転落",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "863751b5f31c88e20c232e2e02d241b603b548c9",
+        "title": "【決算速報】アトラＧ、今期経常を91％上方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "9a363f9b0b7330e78dc65727507e0a9d043ba7d5",
+        "title": "【決算速報】大日印、今期経常を8％上方修正・21期ぶり最高益、配当も3円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "ca53c10d8d8c463c7a0e4ba7f3764422774d1727",
+        "title": "【決算速報】ミラティブ、1-9月期(3Q累計)経常が3.3倍増益で着地・7-9月期も5.7倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "ce42b9d0108cb59bcdd7df592d063a55b5099597",
+        "title": "【決算速報】日本ＩＳＫ、1-9月期(3Q累計)経常が1％減益で着地・7-9月期も64％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "61aced30a383cdb60eab0d62075af0c8aadc4ba2",
+        "title": "【決算速報】揚羽、前期経常が一転黒字で上振れ着地・今期は13倍増益へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "de327053c15d621868c16d99bf59a550bb5bf11b",
+        "title": "【決算速報】ＨＰＣシス、7-9月期(1Q)経常は35％減益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "9c132a8ec94d48905360cb69214ccdc573c73181",
+        "title": "【決算速報】Ａｐｐｉｅｒ、今期最終を21％上方修正・最高益予想を上乗せ、配当も0.2円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "8e4b5549d807716e3a7d2359fd1d762538fc4bef",
+        "title": "【決算速報】山口ＦＧ、上期経常は32％増益で上振れ着地、今期配当を4円増額修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "7ed27be036bc0914c35096c8062ce48ce284eb47",
+        "title": "【決算速報】ブランドＴ、上期経常が3.5倍増益で着地・7-9月期も2.1倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "1d7fb1cace0745ee24fcbab8826597810789ac3f",
+        "title": "【決算速報】ココペリ、上期経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "720bb9634397b7ec5ca78c2a917036a02dc8c4ce",
+        "title": "【決算速報】パワーソリュ、1-9月期(3Q累計)経常は10％減益・通期計画を超過",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c729d8826ca2426107a8ce17e45356bf740316b2",
+        "title": "【決算速報】リスキル、今期経常を一転9％増益に上方修正・最高益更新へ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "ba94cdfac6d90d5e19cf395ad08a2fb5a9eb9e2e",
+        "title": "【決算速報】ノーリツ鋼機、今期最終を6％上方修正、配当も9円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "ae6c5833d7c4d9a397bdca9352c970363b633eee",
+        "title": "【決算速報】ＣＫサンエツ、今期経常を30％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "fc5391475fb55effc72cd170d64cf0c7c3910557",
+        "title": "【決算速報】ヒューマン、上期経常が3％減益で着地・7-9月期も26％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "0b31f99174287da75cfb8afb75fcc485c677b9d7",
+        "title": "【決算速報】ダブスタ、上期経常が微増益で着地・7-9月期は5％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "7337dbbc80bb902bbcf03010b5656fcfceb289b8",
+        "title": "【決算速報】Ｋラーニング、1-9月期(3Q累計)経常は2.1倍増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "5339894a4978ead36f5ad3076abbe7eb6e1411f5",
+        "title": "【決算速報】コミニックス、今期経常を50％上方修正・最高益予想を上乗せ、配当も10円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c1b63dd9a5ef203e3b04d89cb6ec89b6ca73b834",
+        "title": "【決算速報】テクニスコ、7-9月期(1Q)経常は赤字拡大で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "bbef24e0a9ab58f2356b22b51fc08ecce7e55599",
+        "title": "【決算速報】ゆうちょ銀、今期経常を6％上方修正・最高益予想を上乗せ、配当も6円増額",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "e98b0fc7d8aa3ae26fefa8e9bcddd24274eef47f",
+        "title": "【決算速報】東映、上期経常は12％減益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "d420e6f446a5e8d735456bb3990d6b735646deaa",
+        "title": "【決算速報】じもとＨＤ、上期経常は56％増益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a66808311269fb3bd19146a9506b49796fc930af",
+        "title": "【決算速報】バトンズ、上期経常は71％減益で着地",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a7e025ba25fea16c29f9219e12ed3d25a73b4d53",
+        "title": "【決算速報】ソースネクス、7-9月期(3Q)経常は黒字浮上",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "2c0cb16a66d5cd48ec29ee96c53d59d51613e863",
+        "title": "【決算速報】アエリア、1-9月期(3Q累計)経常が76％増益で着地・7-9月期も5.4倍増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "f2d76335f77810f9c3c256326ddc883314ba2670",
+        "title": "【決算速報】キットア、1-9月期(3Q累計)経常が9％減益で着地・7-9月期も18％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "c138c8b3f91f67bc204001f9fa3b97f7e1ea26d7",
+        "title": "【決算速報】中越パ、今期最終を44％上方修正",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "63330e52782ce5bac1dbe0dcaf3cc0a12431760e",
+        "title": "【決算速報】魚力、上期経常が12％減益で着地・7-9月期も51％減益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "a586fb922a1c1cd026a117553208c793582dba26",
+        "title": "【決算速報】ＡＩクロス、1-9月期(3Q累計)経常が90％増益で着地・7-9月期も73％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      },
+      {
+        "guid": "90256b159115fb657e440f4d9c11ca314f51b36a",
+        "title": "【決算速報】スマイルＨＤ、上期経常が42％増益で着地・7-9月期も40％増益",
+        "category": "industry",
+        "label": null,
+        "confidence": null,
+        "exempt": false,
+        "status": "unasked"
+      }
+    ],
+    "late": 0,
+    "seconds": 60.0,
+    "categories": null
+  }
+}
