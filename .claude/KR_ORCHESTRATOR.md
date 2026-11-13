@@ -145,17 +145,21 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 
 0. **멱등 가드·입력** — `kr/news/[DATE].html` 이 이미 커밋돼 있으면 건너뛴다. 아니면 `python3 scripts/ci/routine_due.py kr-news-input [DATE] <workspace>/kr_news_data` 로 **브리프 발행 커밋의** 뉴스 수집분을 `<workspace>/kr_news_data/news/[DATE].json` 에 꺼낸다(발행 뒤 재수집이 `kr/data` 를 바꿔도 이 판이 근거다). 출력이 `expected` 가 아니면 이 글을 만들지 않고, 최종 보고에 그 줄과 수집분의 `summary_note`·`notes` 를 옮긴다(`error …` 는 근거를 못 읽은 것이다 — 재시도 루틴이 다음 회차에 다시 본다)(재시도 판정도 같은 판으로 그날 뉴스 글을 기다리지 않는다). 아래에서 `<NEWSDATA>` = `<workspace>/kr_news_data`.
 0-1. **쟁점 분석 결과** — `python3 scripts/contested_ready.py --market kr --date [DATE] --out <workspace>/contested.json`, 마지막 줄 `contested: …` 를 최종 보고에 옮긴다. 루틴은 기다리지도 수집하지도 않는다.
-1. Agent 도구로 subagent_type `kr-news-writer` 를 `model: "opus"` 로 동기 실행한다(없으면 general-purpose 에 `.claude/agents/kr-news-writer.md` 를 읽으라고 경로를 주어 `model: "opus"` 로). 프롬프트: 기준일, 레포 경로, 뉴스 데이터 폴더 `<NEWSDATA>`(파일은 `<NEWSDATA>/news/[DATE].json`), 산출 `kr_news_[DATE].html`. 합친 직후 `python3 scripts/render_contested.py --html kr_news_[DATE].html --json <workspace>/contested.json --market kr --date [DATE]`.
+0-2. **텔레그램 입력**(2026-11-12) — `python3 scripts/tg_news.py input --market kr --date [DATE] --repo . --news <NEWSDATA>/news/[DATE].json --out <workspace>/kr_telegram_news.json`. 브리프 **발행 커밋**의 텔레그램 파일에 뉴스 글용 표시(`news_use`)를 달아 꺼낸다 — 같은 런이든 재개든 이 명령 하나다(워크스페이스의 `telegram.json` 을 넘기지 않는다). `--news` 는 **이 단계의 작성자와 `check_news.py` 가 쓰는 바로 그 파일**이다. 마지막 줄 `tg-news: …` 를 최종 보고에 옮긴다. **그 줄이 `tg-news: 쓸 수 있는 …` 일 때만** `<workspace>/kr_telegram_news.json` 경로를 작성자 프롬프트에 적는다. `none`·`error` 면 「텔레그램 없음」이라고 적는다 — 이 글을 막지 않는다. 종료 코드 1(옛 출력 파일을 못 지움)이면 그 파일이 남아 있다: 「텔레그램 없음」으로 하고, 아래 `check_telegram.py` 의 `--tg` 에는 그 파일 대신 없는 경로(`<workspace>/kr_telegram_news.json.none`)를 준다.
+1. Agent 도구로 subagent_type `kr-news-writer` 를 `model: "opus"` 로 동기 실행한다(없으면 general-purpose 에 `.claude/agents/kr-news-writer.md` 를 읽으라고 경로를 주어 `model: "opus"` 로). 프롬프트: 기준일, 레포 경로, 뉴스 데이터 폴더 `<NEWSDATA>`(파일은 `<NEWSDATA>/news/[DATE].json`), `kr_telegram_news.json`(0-2 에서 생겼으면 경로, 아니면 「텔레그램 없음」), 산출 `kr_news_[DATE].html`. 합친 직후 `python3 scripts/render_contested.py --html kr_news_[DATE].html --json <workspace>/contested.json --market kr --date [DATE]`.
 2. **게이트** — 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 STEP 2 의 「작성자 모델」 규칙대로). 쟁점 섹션은 고치지 않는다 — 그 섹션 때문에 막히면 `render_contested.py … --omit gate_failed` 로 빼고 다시 돌린다.
    ```bash
    python3 scripts/apply_readability.py kr_news_[DATE].html
    python3 scripts/check_news.py --html kr_news_[DATE].html --datadir <NEWSDATA> --market kr-news --date [DATE]
+   python3 scripts/check_telegram.py --html kr_news_[DATE].html --tg <workspace>/kr_telegram_news.json --news <NEWSDATA>/news/[DATE].json --date [DATE] --layout news
    python3 scripts/check_contested.py --html kr_news_[DATE].html --json <workspace>/contested.json --market kr --date [DATE]
    python3 scripts/check_readability.py --strict --no-inline-images kr_news_[DATE].html
    python3 scripts/check_style.py kr_news_[DATE].html
    grep -c '확인필요' kr_news_[DATE].html     # 0
    ```
    `--market kr-news` 는 정치·정책·매크로·산업에 **하한 3건**을 건다(그날 실을 수 있는 기사가 3건 이상인 갈래만). 색은 칠하지 않는다(KR). `python3 scripts/scan_translationese.py kr_news_[DATE].html | tail -1` 을 최종 보고에 옮긴다.
+2-1. **텔레그램 섹션 — 실패 처리와 다시 읽기**(2026-11-12) — `check_telegram.py … --layout news` 가 실패하면 출력을 작성자에게 넘겨 지목된 문단만 고치게 한다(최대 2회). 그래도 실패하면 `python3 scripts/tg_news.py strip --html kr_news_[DATE].html` 로 「증권사 견해·시장 의견」 섹션만 빼고 **같은 `<workspace>/kr_telegram_news.json` 로 위 게이트를 전부 다시** 돌린다. 섹션을 빼고도 「표식 밖 문장이 텔레그램 요약과 겹친다」가 남으면 그 문장을 작성자가 지운다 — 그래도 안 되면 이 글은 내지 않는다. 섹션을 뺐으면 최종 보고에 적는다.
+   **다시 읽기는 발행 직전 마지막 일이다.** 게이트를 전부 통과한 최종판에서 `check_telegram.py` 가 찍은 `문단 / 요약` 쌍을 오케스트레이터가 직접 읽는다(작성자에게 맡기지 않는다). 뜻이 다르거나 요약에 없는 평가를 덧붙인 문단은 그 `<p>` 를 지우고(마지막 문단이면 `strip`) 게이트 전부 → 다시 읽기. 읽은 뒤에는 파일을 건드리지 않고 발행한다. 이 글은 발행 뒤 자동 검토 대상이 아니라 이 읽기가 유일한 뜻 확인이다.
 3. **발행 (이 글만의 커밋)** — `kr_news_[DATE].html` 을 `kr/news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인) `python3 scripts/update_archives.py --root . --kind kr-news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 커밋 직전 `git fetch -q origin main && ! git cat-file -e origin/main:kr/news/[YYYY-MM-DD].html` 일 때만 `git add kr/news/ kr/news.json sitemap.xml && git commit -m "Add KR news [YYYY-MM-DD]" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다(`kr/news.json`·`sitemap.xml` 충돌은 STEP 3 의 6번과 같은 방법).
 
 ## STEP 4 — 알림

@@ -188,24 +188,28 @@ Site base URL: https://fdo2a.github.io/
 
 0. **멱등 가드** — `news/[DATE].html` 이 이미 커밋돼 있으면 이 단계를 건너뛴다.
 0-1. **쟁점 분석 결과 가져오기**(2026-10-21) — `python3 scripts/contested_ready.py --market us --date [DATE] --out <workspace>/contested.json`. 결과는 Mac 의 로컬 러너가 만들어 푸시한다 — **루틴은 기다리지도 수집하지도 않는다.** 마지막 줄 `contested: …` 를 최종 보고에 옮긴다.
-1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 네 가지 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절. 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것). **쟁점 분석은 작성자가 쓰지 않는다** — 작성자는 표식 한 줄만 두고, 다음 명령이 그 자리를 채운다: `python3 scripts/render_contested.py --html news_industry_[DATE].html --json <workspace>/contested.json --market us --date [DATE]`. 결과가 `ok` 면 섹션, 확정된 none 이면 지우고, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`)를 남긴다 — 로컬 러너가 발행 뒤에 채운다.
+0-2. **텔레그램 입력**(2026-11-12) — `python3 scripts/tg_news.py input --market us --date [DATE] --repo . --news <workspace>/news/[DATE].json --out <workspace>/telegram_news.json`. 브리프 **발행 커밋**의 텔레그램 파일에 뉴스 글용 표시(`news_use`)를 달아 꺼낸다 — 같은 런이든 재개든 이 명령 하나다(워크스페이스의 `telegram.json` 을 넘기지 않는다). `--news` 는 **이 단계의 작성자와 `check_news.py` 가 쓰는 바로 그 파일**이다. 마지막 줄 `tg-news: …` 를 최종 보고에 옮긴다. **그 줄이 `tg-news: 쓸 수 있는 …` 일 때만** `<workspace>/telegram_news.json` 경로를 작성자 프롬프트에 적는다. `none`·`error` 면 「텔레그램 없음」이라고 적는다 — 이 글을 막지 않는다. 종료 코드 1(옛 출력 파일을 못 지움)이면 그 파일이 남아 있다: 「텔레그램 없음」으로 하고, 아래 `check_telegram.py` 의 `--tg` 에는 그 파일 대신 없는 경로(`<workspace>/telegram_news.json.none`)를 준다.
+1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절, `telegram_news.json`(0-2 에서 생겼으면 경로, 아니면 「텔레그램 없음」). 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것). **쟁점 분석은 작성자가 쓰지 않는다** — 작성자는 표식 한 줄만 두고, 다음 명령이 그 자리를 채운다: `python3 scripts/render_contested.py --html news_industry_[DATE].html --json <workspace>/contested.json --market us --date [DATE]`. 결과가 `ok` 면 섹션, 확정된 none 이면 지우고, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`)를 남긴다 — 로컬 러너가 발행 뒤에 채운다.
 2. **게이트** — 작성자가 돌린 것을 레포 클론에서 다시 돌린다. 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 오케스트레이터가 직접). **쟁점 분석 섹션은 고치지 않는다** — 그 섹션 때문에 게이트(`check_style`·`check_readability` 포함)가 막히면 `render_contested.py … --omit gate_failed` 로 섹션을 빼고 게이트를 다시 돌린 뒤 최종 보고에 적는다.
    ```bash
    python3 scripts/apply_readability.py news_industry_[DATE].html
    python3 scripts/apply_colors.py news_industry_[DATE].html
    python3 scripts/check_news.py --html news_industry_[DATE].html --datadir <workspace> --date [DATE]
+   python3 scripts/check_telegram.py --html news_industry_[DATE].html --tg <workspace>/telegram_news.json --news <workspace>/news/[DATE].json --date [DATE] --layout news
    python3 scripts/check_contested.py --html news_industry_[DATE].html --json <workspace>/contested.json --market us --date [DATE]
    python3 scripts/check_readability.py --strict --no-inline-images news_industry_[DATE].html
    python3 scripts/check_style.py news_industry_[DATE].html
    grep -c '확인필요' news_industry_[DATE].html     # 0
    ```
    `check_news.py` 에는 **`--date [DATE]` 를 반드시 준다** — 없으면 최신 파일을 집어 어제 수집분이 오늘의 근거가 된다. `summary_ko` 가 있는 갈래 기사가 하나라도 있으면 「오늘의 뉴스」는 의무다. 하나도 없으면 섹션 없이 발행하되 **최종 보고에 사유(`summary_note`)를 적는다.** **루틴에서 기사 본문을 다시 받지 않는다**(클라우드는 CNBC·Yahoo 에 403).
+2-1. **텔레그램 섹션 — 실패 처리와 다시 읽기**(2026-11-12) — `check_telegram.py … --layout news` 가 실패하면 출력을 작성자에게 넘겨 지목된 문단만 고치게 한다(최대 2회). 그래도 실패하면 `python3 scripts/tg_news.py strip --html news_industry_[DATE].html` 로 「증권사 견해·시장 의견」 섹션만 빼고 **같은 `<workspace>/telegram_news.json` 로 위 게이트를 전부 다시** 돌린다. 섹션을 빼고도 「표식 밖 문장이 텔레그램 요약과 겹친다」가 남으면 그 문장을 작성자가 지운다 — 그래도 안 되면 이 글은 내지 않는다. 섹션을 뺐으면 최종 보고에 적는다.
+   **다시 읽기는 발행 직전 마지막 일이다.** 게이트를 전부 통과한 최종판에서 `check_telegram.py` 가 찍은 `문단 / 요약` 쌍을 오케스트레이터가 직접 읽는다(작성자에게 맡기지 않는다). 뜻이 다르거나 요약에 없는 평가를 덧붙인 문단은 그 `<p>` 를 지우고(마지막 문단이면 `strip`) 게이트 전부 → 다시 읽기. 읽은 뒤에는 파일을 건드리지 않고 발행한다. 이 글은 발행 뒤 자동 검토 대상이 아니라 이 읽기가 유일한 뜻 확인이다.
 3. **윤문은 이 글에 하지 않는다** — 뉴스 블록은 `summary_ko` 에 묶여 있어(유사도 게이트) 윤문이 걸리고, 산업 세 섹션은 짧다. 발행 뒤 codex 문체 수정도 `posts/` 일간만 본다. 문체 검사(`check_style`)는 위에서 돈다. **번역투는 작성자가 마감에서 고친다**(2026-10-22, 기사 요약·제목은 대상 밖) — 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py news_industry_[DATE].html | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다.
 4. **발행 (이 글만의 커밋)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 STEP 3-1 과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 그리고 `git add news/ news.json sitemap.xml && git commit -m "Add [YYYY-MM-DD] news-industry brief" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다.
 
 ## STEP 4 — Notify
 
-Send a PushNotification with the headline and the blog post URL, a `검증 기록:` line (record 의 「판정 … · 발행 …」 줄, 없으면 「검증 기록 없음 — 사유」), plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures). 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다.
+Send a PushNotification with the headline and the blog post URL, a `검증 기록:` line (record 의 「판정 … · 발행 …」 줄, 없으면 「검증 기록 없음 — 사유」), plus the 뉴스·산업 브리프 URL (`https://fdo2a.github.io/news/[DATE].html`) or why it was not published (mention any failures). 쟁점 분석은 `contested: …` 한 줄(실렸으면 주제, 아니면 상태·사유)을 붙인다. 뉴스 글의 텔레그램은 `tg-news: …` 한 줄과 실은 건수(섹션을 뺐으면 그 사유).
 
 **발행 채널은 블로그 하나뿐이다 (2026-08-18 사용자 지시로 Notion 발행 중지).** Do NOT publish to Notion, do NOT generate a PDF, do NOT use SendUserFile, and do NOT send email. If a Notion connector is available in the session, leave it alone — its presence is not an instruction to use it.
 

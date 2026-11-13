@@ -295,12 +295,7 @@ def main(argv=None):
                'window_from': {ch: st.get('last_dt') for ch, st in (prev or {}).get('channels', {}).items()},
                'window_note': notes, 'channels': chans, 'items': items}
     os.makedirs(outdir, exist_ok=True)
-    old = {it['id']: it for it in (load(path) or {}).get('items', []) if it.get('summary_ko')}
-    for it in items:                          # same post, same summary: re-collection must not churn
-        o = old.get(it['id'])
-        if o and o.get('kind') == it['kind'] and o.get('source') == it.get('source'):
-            it['summary_ko'] = o['summary_ko']
-            it.pop('summary_note', None)
+    carry_summaries(items, {it['id']: it for it in (load(path) or {}).get('items', []) if it.get('summary_ko')})
     _save(path, payload)                      # metadata first: a summary crash must not lose it
     from common.tg_summary import summarize   # noqa: E402
     done, failed = summarize(items, bodies)
@@ -312,6 +307,18 @@ def main(argv=None):
     print(f'{path} — 후보 {len(cands)} → {len(items)}건, 요약 {done} 실패 {failed}, '
           f'실패 채널 {payload["stats"]["channels_failed"] or "없음"}')
     return 1 if payload['stats']['channels_failed'] or (items and not done) else 0
+
+
+def carry_summaries(items, old):
+    """Same post, same summary: re-collection must not churn. An old summary that is not one
+    (a refusal, the polite register — tg_summary.unusable) is not carried; it is written again."""
+    from common.tg_summary import unusable
+    for it in items:
+        o = old.get(it['id'])
+        if (o and o.get('kind') == it['kind'] and o.get('source') == it.get('source')
+                and not unusable(o.get('summary_ko'))):
+            it['summary_ko'] = o['summary_ko']
+            it.pop('summary_note', None)
 
 
 def _save(path, payload):

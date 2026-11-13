@@ -229,15 +229,22 @@ class GitLookupError(RuntimeError):
     """git 조회 자체가 실패했다 — 「수집분 없음」과 다르다. 판정 불가는 DUE 쪽으로 보낸다."""
 
 
+def brief_publish_commit(post_path, ref='origin/main', git=None):
+    """그 글을 처음 넣은 커밋(발행 커밋)의 해시, 없으면 None. git 이 실패하면 GitLookupError.
+    KR 뉴스 입력(아래)과 뉴스 글의 텔레그램 입력(scripts/tg_news.py)이 같이 쓴다 — `git` 은 다른
+    작업 폴더에서 부를 때 넘기는 실행기다."""
+    out = (git or _git)('log', ref, '--diff-filter=A', '--format=%H', '-1', '--', post_path)
+    if out.returncode:
+        raise GitLookupError(out.stderr.strip()[:200])
+    return out.stdout.strip() or None
+
+
 def brief_news_input(day, ref='origin/main'):
     """그날 KR 마감브리프 **발행 커밋**의 뉴스 수집분 — 뉴스 글의 근거이자 「뉴스 글이 나와야 하나」의 판정 근거.
     발행 뒤 재수집이 파일을 바꿔도 이 판이 정본이다(codex 구현 검토 2026-11-06 #2·#3). 브리프가 없으면 None,
     그 커밋에 수집분이 없으면 {}. git 이 실패하면 GitLookupError(codex 재확인 #2 — 실패를 「뉴스 없음」으로
     읽으면 뉴스 글을 건너뛰고 재시도도 DONE 이 된다)."""
-    out = _git('log', ref, '--diff-filter=A', '--format=%H', '-1', '--', f'kr/posts/{day}.html')
-    if out.returncode:
-        raise GitLookupError(out.stderr.strip()[:200])
-    commit = out.stdout.strip()
+    commit = brief_publish_commit(f'kr/posts/{day}.html', ref)
     if not commit:
         return None
     path = f'kr/data/news/{day}.json'

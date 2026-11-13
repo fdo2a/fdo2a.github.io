@@ -7,7 +7,8 @@ Three kinds of item, decided by code:
   opinion — everything else; written as 「…라는 의견도 나왔다」, naming the outlet the post
             itself credits (「*연합인포맥스*」, 「- 블룸버그」) when there is one
 Channel names, 「텔레그램」 and t.me never reach a post (check_telegram.py).
-Design: docs/superpowers/specs/2026-11-06-telegram-source.md
+Design: docs/superpowers/specs/2026-11-06-telegram-source.md; candidate selection across channels
+and the news posts: docs/superpowers/specs/2026-11-12-telegram-news-posts.md
 """
 import re
 
@@ -32,8 +33,16 @@ CHANNELS = {
 CHANNEL_WORDS = tuple(CHANNELS) + ('딘스티커', "Dean's Ticker", '급등일보', '에테르의', '미국 주식 인사이더',
                                     'US Stocks Insider', '키움증권 미국주식 톡톡')
 
-MAX_VIEWS, MAX_OPINIONS = 6, 12          # collected per market per run
-MAX_PER_CHANNEL = 3                       # non-view items per channel per run
+# Collected per market per run. Widened 2026-11-12 from 6·12·3 (사용자 지시 「뉴스 개수를 한정하지 말고 오늘
+# 시장을 지배한 이슈나 중요도가 높다고 보여지는 내용들은 포함할 수 있도록」): the news posts have no cap on
+# how many they quote, so what limits them is how many candidates get a summary here. Each one is a
+# summariser call in the collection job (시장당 하루 최대 18 → 34).
+MAX_VIEWS, MAX_OPINIONS = 10, 24
+MAX_PER_CHANNEL = 5                       # non-view items per channel per run
+# A post from an individual channel that names no market (11/12 실측: d_ticker 10건 중 8건 — 코어위브
+# 실적 풀이, 지멘스에너지 가스터빈 병목) is offered to both markets when it has this much text or links an
+# original. The writer decides whether it touches that market (`market_basis: 'default'`).
+SUBSTANTIVE = 200
 # Paywalled: a fetch returns the subscription page, not the article (11/06 실측 Bloomberg·FT).
 # Never summarised from the page — the post becomes an opinion crediting that outlet.
 PAYWALLED = ('bloomberg.com', 'ft.com', 'wsj.com', 'economist.com', 'theinformation.com',
@@ -183,10 +192,15 @@ def classify_post(channel, post, market):
     if chatter(post):
         return None
     pm = market_of(post.get('text'), cfg['market'])
-    if pm == 'unknown' or not in_market(pm, market):
+    basis = 'channel' if cfg['market'] in ('kr', 'us') else 'keyword'
+    if pm == 'unknown':
+        if cfg['group'] != 'individual' or not (len(post.get('text') or '') >= SUBSTANTIVE or origin_link(post)):
+            return None
+        pm, basis = 'both', 'default'
+    if not in_market(pm, market):
         return None
     base = {'id': f'{channel}/{post["id"]}', 'channel': channel, 'group': cfg['group'],
-            'dt_utc': post['dt_utc'], 'url': post['url']}
+            'dt_utc': post['dt_utc'], 'url': post['url'], 'market_basis': basis}
     v = view_of(channel, post)
     if v:
         return dict(base, kind='view', firm=v[0], analyst=v[1], source=None)
@@ -216,7 +230,8 @@ def _score(item, post, shared):
 
 
 def select(candidates):
-    """candidates: [(item, post)]. Dedupe by original link key (keep the earliest), then cap."""
+    """candidates: [(item, post)]. Dedupe by original link key (keep the earliest), then cap:
+    views newest first, the rest by seats per channel."""
     by_key, out = {}, []
     for item, post in sorted(candidates, key=lambda c: c[0]['dt_utc']):
         key = None
@@ -232,13 +247,26 @@ def select(candidates):
     views = [r for r in out if r[0]['kind'] == 'view']
     others = [r for r in out if r[0]['kind'] != 'view']
     views = sorted(views, key=lambda r: r[0]['dt_utc'], reverse=True)[:MAX_VIEWS]
-    ranked, per = [], {}
-    for r in sorted(others, key=lambda r: (_score(r[0], r[1], r[2]), r[0]['dt_utc']), reverse=True):
-        ch = r[0]['channel']
-        if per.get(ch, 0) >= MAX_PER_CHANNEL:
-            continue
-        per[ch] = per.get(ch, 0) + 1
-        ranked.append(r)
+    # Seats go round by round (2026-11-12): every channel's best, then every channel's second, then
+    # third, until MAX_OPINIONS. Ranked in one line by score, the two relay channels (후보 109·38) took
+    # every seat and an individual channel with 2 candidates got none.
+    # Inside a channel: its best keyword-placed post, then its best `default` post (market only
+    # assumed), then the rest by score. With keyword posts strictly first a `default` post got a seat
+    # only when the channel had few keyword posts, and with score alone it loses too (_score counts
+    # market words, which is exactly what such a post lacks).
+    def rank(r):
+        return _score(r[0], r[1], r[2]), r[0]['dt_utc']
+    by_ch = {}
+    for r in sorted(others, key=rank, reverse=True):
+        by_ch.setdefault(r[0]['channel'], []).append(r)
+    per = {}
+    for ch, rows in by_ch.items():
+        kw = [r for r in rows if r[0].get('market_basis') != 'default']
+        df = [r for r in rows if r[0].get('market_basis') == 'default']
+        per[ch] = (kw[:1] + df[:1] + sorted(kw[1:] + df[1:], key=rank, reverse=True))[:MAX_PER_CHANNEL]
+    ranked = []
+    for n in range(MAX_PER_CHANNEL):
+        ranked += sorted((seats[n] for seats in per.values() if len(seats) > n), key=rank, reverse=True)
     others = ranked[:MAX_OPINIONS]
     return [(r[0], r[1]) for r in sorted(views + others, key=lambda r: r[0]['dt_utc'])]
 

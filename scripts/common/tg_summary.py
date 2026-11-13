@@ -12,6 +12,8 @@ from difflib import SequenceMatcher
 
 from us import news_summary as ns
 
+from .tg_junk import polite, refusal, unusable  # noqa: F401 — re-exported
+
 BAND = (60, 260)              # chars without spaces, for short posts — the target the prompt states
 # Accepted length is wider than the target (same shape as news_summary TARGET vs BAND, 11/08):
 # on long analyst memos the model overshoots — 11/06·11/09 lost 6 of ~44 short-band items at
@@ -19,6 +21,7 @@ BAND = (60, 260)              # chars without spaces, for short posts — the ta
 # at the new top and overshoot again) and take the tail. No gate checks this length downstream.
 ACCEPT_MAX = 400
 COPY_LIMIT = 0.8              # share of the summary that may match the source verbatim
+
 
 _RULES = (
     '- 원문 문장을 그대로 옮기거나 어미만 바꿔 이어 붙이지 않습니다. 내용을 소화해 문장 구조부터 새로 씁니다.\n'
@@ -58,12 +61,12 @@ def _short(client, model, item, body):
         if r.stop_reason in ('refusal', 'max_tokens'):
             return None, '모델 거절' if r.stop_reason == 'refusal' else '출력 잘림'
         text = ns._text(r)
-        problem = ns.summary_problem(text)
+        problem = ns.summary_problem(text) or unusable(text)
         if problem is None and BAND[0] <= ns.chars(text) <= ACCEPT_MAX:
             return text, None
         messages += [{'role': 'assistant', 'content': r.content},
-                     {'role': 'user', 'content': f'공백 제외 {BAND[0]}~{BAND[1]}자, 한 문단으로 다시 써 주세요.'}]
-    return None, ns.summary_problem(text) or f'분량 벗어남 {ns.chars(text)}자'
+                     {'role': 'user', 'content': f'공백 제외 {BAND[0]}~{BAND[1]}자, 평서문(~다) 한 문단으로 다시 써 주세요.'}]
+    return None, ns.summary_problem(text) or unusable(text) or f'분량 벗어남 {ns.chars(text)}자'
 
 
 def summarize(items, bodies, client=None, model=None, log=print):
@@ -95,8 +98,13 @@ def summarize(items, bodies, client=None, model=None, log=print):
         try:
             if it['kind'] == 'report':
                 ko = bool(re.search(r'[가-힣]', body[:400]))
-                text, why = ns.summarize_one(client, model, {'title': '', 'source': it['source'].get('name') or ''},
-                                             body, system=ns.SYSTEM_KO_SOURCE if ko else None)
+                for _ in range(2):                    # the article summariser has no register check
+                    text, why = ns.summarize_one(client, model, {'title': '', 'source': it['source'].get('name') or ''},
+                                                 body, system=ns.SYSTEM_KO_SOURCE if ko else None)
+                    bad = unusable(text) if text else None
+                    if not bad:
+                        break
+                    text, why = None, bad
             else:
                 text, why = _short(client, model, it, body)
         except Exception as e:                       # noqa: BLE001 — auth failure stops the rest

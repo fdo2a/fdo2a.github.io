@@ -19,12 +19,14 @@ model: opus
 | `market_data.json` 의 `price_context.factor_decomposition`·`correlations` | 메모리·AI 인프라 해석 문단(아래 규칙) |
 | `news/<DATE>.json` | 오늘의 뉴스, MLCC 산업 뉴스(`category: "mlcc"`) |
 | `research_notes.md` ③ 메모리/DRAM 뉴스 · ④ AI 인프라 뉴스 | 메모리·AI 인프라의 업계 뉴스 층 |
+| `telegram_news.json`(오케스트레이터가 줄 때만) | 「증권사 견해·시장 의견」 — `news_use: true` 항목만 |
 
 ## 구조 (순서 고정)
 
 1. **헤드라인 카드** — `<section><div class="card headline-card"><h1>…</h1><p>…</p></div></section>`. `<h1>` 은 이것 하나뿐이다. 그날 뉴스·산업에서 가장 중요한 한 가지(40자 안팎, 수치 둘 이내). 카드 본문은 두 문장 이내 — 네 섹션의 목차가 아니라 한 가지 이야기. **제목의 주인공은 본문이 가장 자세히 다루는 사건이다.** 섹션 순서가 고정이라 그 사건이 뒤 섹션(MLCC 등)에 있으면, 독자가 거기까지 가지 않아도 되게 카드 본문 첫 문장이 그 사건의 판단을 말한다(2026-10-30: 제목은 무라타인데 본문은 정치·선거·가상자산을 지나 맨 끝에서 무라타를 다뤘다 — `STYLE_EXEMPLARS.md` §12-1). 제목 수치가 기사 인용 수치와 다르면 제목에는 수집 데이터 값을 쓰고, 두 값을 각각의 출처로 캡션에 남긴다 — 차이의 기준(시각·종가/장중)은 확인됐을 때만 쓴다.
 2. **오늘의 뉴스** — 아래 상세 사양.
 2-1. **쟁점 분석 표식** — 오늘의 뉴스 `</section>` 다음 줄에 `<!--CONTESTED-->` 한 줄만 쓴다(데이터가 있든 없든 늘). 이 섹션은 쓰지 않는다 — 오케스트레이터가 `render_contested.py` 로 수집 데이터에서 찍고, 게이트가 한 글자라도 다르면 막는다. 헤드라인 카드도 이 섹션을 근거로 삼지 않는다.
+2-2. **증권사 견해·시장 의견** — 쟁점 표식 다음 줄. `telegram_news.json` 을 받았고 실을 것이 있을 때만 쓴다. 아래 상세 사양.
 3. **메모리/DRAM** — 표 + 업계 뉴스 + 투자 관점.
 4. **AI 인프라** — 표(분야 컬럼) + 업계 동향 + 투자 관점.
 5. **MLCC** — 표 + 산업 뉴스 + 투자 관점. 아래 상세 사양.
@@ -49,6 +51,20 @@ model: opus
 **무엇을 쓰는가** — 확장되는 기사는 **제목과 (필요하면) 연결 한 문장뿐**이다. 본문은 `summary_ko` 원문이 들어간다. 직접 쓰는 예외 블록만 `summary_ko` 를 다듬어 쓴다(어순·어미·군더더기 정리는 자유). **사실은 `summary_ko` 에 있는 것만** — 수치·인물·발언을 보태지 않는다. 그날 시세와 연결되는 건은 마지막 한 문장(40자 안팎)을 그 연결로 바꿔도 된다(수치는 그날 `market_data.json` 의 것). 연결을 지어내지 않는다. 게이트는 블록과 `summary_ko` 의 글자 유사도 0.5 미만, 요약에서 온 몫 85% 미만을 막는다.
 
 **비-코어다.** `news/<date>.json` 이 없거나 `summary_ko` 가 있는 갈래 기사가 하나도 없으면 섹션을 넣지 않는다 — **하나라도 있으면 섹션은 의무다.** 기억에서 뉴스를 꺼내지 않는다.
+
+### 증권사 견해·시장 의견 — 상세 사양 (2026-11-12 사용자 지시)
+
+입력: 오케스트레이터가 프롬프트에 적어 준 `telegram_news.json`(「텔레그램 없음」이면 이 섹션을 쓰지 않고, 텔레그램에서 온 문장을 어디에도 쓰지 않는다). `items[]` 가운데 **`news_use: true` 인 항목만** 쓴다 — `false` 는 시황 브리프가 이미 인용했거나(`cited`), 요약이 없거나 요약이 아니거나, 출처 없이 인물의 의혹을 다루거나, 매체를 모르는 기사이거나, 오늘의 뉴스와 같은 기사다(`news_skip`). 출처가 없다는 것만으로는 빠지지 않는다. **사실·수치의 근거는 그 항목의 `summary_ko` 뿐이다.**
+
+- **자리·모양 — 게이트가 태그 순서까지 본다.** `<!--CONTESTED-->` 다음 줄에 `<section data-tg-section><h2>증권사 견해·시장 의견</h2><div class="card"><p><span data-tg="ID">문장</span></p>…</div></section>`. 문단 하나에 표식 하나, 문단의 글 전체가 표식 안이다. 링크·강조·줄바꿈 같은 다른 태그, 머리말, 캡션을 넣지 않는다. **실을 것이 없으면 섹션을 쓰지 않는다**(빈 섹션·자리표시 금지).
+- **고르는 기준 — 개수 상한은 없다, 기준은 중요도다**(2026-11-12 사용자 지시 「뉴스 개수를 한정하지 말고 오늘 시장을 지배한 이슈나 중요도가 높다고 보여지는 내용들은 포함할 수 있도록 하자. 분량은 좀 길어져도 괜찮아」). **그날 시장을 지배한 이슈와 중요도가 높은 내용은 싣는다** — 오늘의 뉴스에 이미 실은 사건이어도 새 사실·수치·견해를 보태면 싣는다. 빼는 것: 오늘의 뉴스의 내용을 되풀이만 하는 항목, 미국 시장·산업과 닿지 않는 항목, 같은 얘기를 하는 다른 항목(하나만). 증권사·개인·속보 세 묶음(`group`)을 다 훑은 뒤 고른다. 개수를 맞추려고 넣지도, 줄이려고 빼지도 않는다. 한 항목은 한 번만 인용한다. 순서는 중요한 것부터 — 그날 시장을 지배한 이슈를 다룬 항목이 앞이다. `market_basis: "default"` 는 시장을 가리키는 낱말이 없어 양쪽 시장에 다 올라온 글이다 — 미국 시장·산업과 닿을 때만 쓴다.
+- **문장** — 한 문단 300자 이내, 세 문장까지(게이트가 300자를 넘으면 막는다). 요약의 낱말로 쓰고, 요약에 없는 평가·수치를 덧붙이지 않는다.
+  - `view` — 「{firm} {analyst} 연구원은 …로 봤다/진단했다/전망했다」(팀이면 「키움증권 글로벌리서치팀은 …」). 견해를 사실로 단정하지 않는다.
+  - `report` — 「{source.name}에 따르면 …」·「{source.name}는 …라고 보도했다」.
+  - `opinion` — 「…라는 의견도 나왔다」·「…라는 시각도 있었다」·「…라는 소식도 전해졌다」. `source.name` 이 있으면 문장 안에 단다(「블룸버그를 인용해 …라는 시각도 나왔다」), 없으면 「시장 일각에서는 …」. 출처가 없는 항목의 내용을 확인된 사실처럼 단정하지 않는다.
+  - 출처 없는 글(`opinion`, `source` 없음)로는 특정 인물의 비위·사생활·거취를 쓰지 않는다.
+- **「텔레그램」·채널 이름·`t.me`·링크는 어디에도 쓰지 않는다. 이 섹션 밖에는 텔레그램 요약의 내용을 쓰지 않는다** — 헤드라인 카드, 뉴스의 연결 문장, 다른 섹션 모두. 게이트가 요약과 겹치는 표식 밖 문장을 막는다.
+- 게이트: `python3 scripts/check_telegram.py --html news_industry_[DATE].html --tg telegram_news.json --news news/[DATE].json --date [DATE] --layout news`. 실패 출력이 지목한 문단만 고친다. 통과하면 문단과 요약이 나란히 찍힌다 — 오케스트레이터가 뜻이 같은지 한 번 더 읽는다.
 
 ### 메모리/DRAM · AI 인프라 — 해석 규칙
 
@@ -95,6 +111,7 @@ model: opus
 python3 scripts/apply_readability.py news_industry_[DATE].html
 python3 scripts/apply_colors.py news_industry_[DATE].html
 python3 scripts/check_news.py --html news_industry_[DATE].html --datadir <workspace> --date [DATE]
+python3 scripts/check_telegram.py --html news_industry_[DATE].html --tg telegram_news.json --news news/[DATE].json --date [DATE] --layout news
 python3 scripts/check_readability.py --strict --no-inline-images news_industry_[DATE].html
 python3 scripts/check_style.py news_industry_[DATE].html
 grep -c '확인필요' news_industry_[DATE].html      # 0
@@ -104,4 +121,4 @@ grep -c '확인필요' news_industry_[DATE].html      # 0
 
 ## 최종 보고
 
-산출 HTML 경로, 헤드라인 한 줄, `meta.json` 의 title, 게이트 통과 여부, 갈래별 뉴스 건수, 비운 층(업계 뉴스 없음 등)과 사유.
+산출 HTML 경로, 헤드라인 한 줄, `meta.json` 의 title, 게이트 통과 여부, 갈래별 뉴스 건수, 비운 층(업계 뉴스 없음 등)과 사유, 「증권사 견해·시장 의견」에 실은 항목 id(없으면 「없음」과 사유).
