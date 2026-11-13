@@ -112,7 +112,7 @@ def _t_fx(d):
 
 
 def _t_macro(d):
-    rows = []
+    rows, sched = [], False
     for m in d.get('macro') or []:
         if m['status'] == 'released':
             rows.append([_e(m['name_ko']), _e(day_ko(m['period'])), _num(m['value'], 2),
@@ -123,6 +123,7 @@ def _t_macro(d):
             rows.append([_e(m['name_ko']), '—', '시계열 조회 실패', '—', '—'])
         else:
             rows.append([_e(m['name_ko']), '—', '일정', '—', '—'])
+            sched = True
     if not rows:
         # 빈 표는 「일본에 발표가 없었다」가 아니다 — 행은 확인해 둔 일정표(calendar_daily.json)의 오늘 release 행에서만
         # 나오고, BOJ 조회가 실패해도 그 행은 남는다(collect_japan_daily._macro). 그 범위를 넘어 단정하면 내각부
@@ -131,8 +132,9 @@ def _t_macro(d):
         if any(e.get('kind') == 'release' for e in (d.get('calendar') or {}).get('today') or []):
             return '<p class="caption">오늘 일정표에 잡힌 발표를 이 표에 싣지 못했다.</p>'
         return '<p class="caption">확인해 둔 발표 일정표에 오늘 잡힌 일본 지표가 없다.</p>'
-    return _table(['지표', '기간', '값', '직전', '전년 대비'], rows,
-                  '일본은행 시계열 기준. 시장 예상치는 싣지 않는다.')
+    # 일정 행(series 없음)은 총무성 CPI·내각부 GDP 처럼 일본은행 밖 발표일 수 있다 — 값의 출처와 일정의 출처를 가른다
+    note = ('값은 일본은행 시계열, 「일정」 행은 각 기관 공표 일정 기준.' if sched else '일본은행 시계열 기준.')
+    return _table(['지표', '기간', '값', '직전', '전년 대비'], rows, note + ' 시장 예상치는 싣지 않는다.')
 
 
 def _t_next(d):

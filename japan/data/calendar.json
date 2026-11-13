@@ -1,12 +1,26 @@
 {
-  "checked_at": "2026-09-26",
-  "note": "원출처에서 확인한 일정만 싣는다. 도쿄 CPI 공표일은 총무성 일정표에서 확인하지 못해 넣지 않았다(추측 금지).",
+  "checked_at": "2026-11-13",
+  "note": "원출처에서 확인한 일정만 싣는다. 2026-11-13 확인: BOJ 회의 일정, 총무성 CPI(전국·도쿄도 구부), 내각부 GDP, e-Stat 임금, 단칸은 BOJ 통계 공표 일정표(2026-06-30판, 변경될 수 있음). 갱신 장치가 없다 — 마지막 일정이 2주 안으로 들어오면 매일 검증 알림이 알린다.",
   "events": [
     {"date": "2026-10-01", "time_jst": "08:50", "name_ko": "BOJ 9월 회의 의견 요약", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "watch": "추가 인상 조건을 어떻게 적었는가"},
     {"date": "2026-10-01", "time_jst": "08:50", "name_ko": "단칸(9월 조사)", "source": "https://www.boj.or.jp/en/about/calendar/index.htm", "watch": "대기업 제조업·비제조업 업황, 설비투자 계획, 기업 물가 전망"},
     {"date": "2026-10-29", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(10월 29-30일)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "정책금리와 다음 인상의 조건"},
     {"date": "2026-10-30", "time_jst": null, "name_ko": "BOJ 전망 보고서", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "물가·성장 전망 경로"},
     {"date": "2026-11-10", "time_jst": "08:50", "name_ko": "BOJ 10월 회의 의견 요약", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "추가 인상 조건"},
-    {"date": "2026-12-17", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(12월 17-18일)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "정책금리"}
+    {"date": "2026-11-16", "time_jst": "08:50", "name_ko": "GDP 1차 속보(7-9월기)", "source": "https://www.esri.cao.go.jp/jp/sna/kouhyou/kouhyou_top.html", "watch": "개인소비와 설비투자, 성장률이 인상을 견딜 만한가"},
+    {"date": "2026-11-20", "time_jst": "08:30", "name_ko": "전국 소비자물가지수(10월)", "source": "https://www.stat.go.jp/english/data/cpi/1582.html", "watch": "신선식품 제외 근원 물가와 서비스 물가"},
+    {"date": "2026-11-27", "time_jst": "08:30", "name_ko": "도쿄도 구부 소비자물가지수(11월 중순 속보)", "source": "https://www.stat.go.jp/english/data/cpi/1582.html", "watch": "전국 물가의 선행 신호"},
+    {"date": "2026-12-08", "time_jst": "08:30", "name_ko": "매월근로통계 속보(10월)", "source": "https://www.e-stat.go.jp/release-calendar", "watch": "명목·실질 임금"},
+    {"date": "2026-12-08", "time_jst": "08:50", "name_ko": "GDP 2차 속보(7-9월기)", "source": "https://www.esri.cao.go.jp/jp/sna/kouhyou/kouhyou_top.html", "watch": "1차 속보 대비 수정 방향"},
+    {"date": "2026-12-14", "time_jst": "08:50", "name_ko": "단칸(12월 조사)", "source": "https://www.boj.or.jp/en/statistics/outline/tkohyos.xlsx", "watch": "대기업 제조업·비제조업 업황, 설비투자 계획, 기업 물가 전망"},
+    {"date": "2026-12-17", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(12월 17-18일)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "정책금리"},
+    {"date": "2026-12-18", "time_jst": "08:30", "name_ko": "전국 소비자물가지수(11월)", "source": "https://www.stat.go.jp/english/data/cpi/1582.html", "watch": "결정 당일 아침에 나오는 근원 물가"},
+    {"date": "2026-12-25", "time_jst": "08:30", "name_ko": "도쿄도 구부 소비자물가지수(12월 중순 속보)", "source": "https://www.stat.go.jp/english/data/cpi/1582.html", "watch": "전국 물가의 선행 신호"},
+    {"date": "2026-12-28", "time_jst": "08:50", "name_ko": "BOJ 12월 회의 의견 요약", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "추가 인상 조건"},
+    {"date": "2027-01-07", "time_jst": "08:30", "name_ko": "매월근로통계 속보(11월)", "source": "https://www.e-stat.go.jp/release-calendar", "watch": "명목·실질 임금"},
+    {"date": "2027-01-21", "time_jst": null, "name_ko": "BOJ 금융정책결정회의(1월 21-22일)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "정책금리와 다음 인상의 조건"},
+    {"date": "2027-01-22", "time_jst": null, "name_ko": "BOJ 전망 보고서(1월)", "source": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm", "watch": "물가·성장 전망 경로"},
+    {"date": "2027-01-22", "time_jst": "08:30", "name_ko": "전국 소비자물가지수(12월)", "source": "https://www.stat.go.jp/english/data/cpi/1582.html", "watch": "결정 당일 아침에 나오는 근원 물가"},
+    {"date": "2027-01-29", "time_jst": "08:30", "name_ko": "도쿄도 구부 소비자물가지수(1월 중순 속보)", "source": "https://www.stat.go.jp/english/data/cpi/1582.html", "watch": "전국 물가의 선행 신호"}
   ]
 }

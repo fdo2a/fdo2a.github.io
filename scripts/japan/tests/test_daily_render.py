@@ -186,3 +186,15 @@ def test_build_diag_refuses_early_or_old_format_candidate(tmp_path):
         else:
             snap['jgb_recollect'] = flag     # 16:30 예약 실행 후보(구현 검토 #2)
         assert B.main(['diag', '--session', S, '--root', str(_root(tmp_path / str(flag), snap))]) == 1
+
+
+def test_macro_caption_names_other_agencies_when_a_schedule_row_is_present():
+    # 총무성 CPI·내각부 GDP 일정 행이 「일본은행 시계열 기준」 아래 붙으면 출처가 틀린다(2026-11-13)
+    from japan import daily_render as DR
+    boj = {'name_ko': '기업물가지수(전체)', 'status': 'released', 'period': '2026-10', 'value': 136.8,
+           'prev_value': 135.8, 'yoy': 7.1}
+    sched = {'name_ko': '전국 소비자물가지수(10월)', 'status': 'event'}
+    only_boj = DR._t_macro({'macro': [boj]})
+    mixed = DR._t_macro({'macro': [boj, sched]})
+    assert '일본은행 시계열 기준.' in only_boj and '각 기관' not in only_boj
+    assert '「일정」 행은 각 기관 공표 일정 기준' in mixed

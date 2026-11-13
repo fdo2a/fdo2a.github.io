@@ -323,6 +323,59 @@ def kr_weekly_aggs(root, rev='origin/main', last=2):
     return out
 
 
+# ── 일본 일정표 바닥(2026-11-13) ─────────────────────────────────────────
+# 일본 일정표 두 개는 원출처에서 확인한 날짜를 사람이 손으로 넣는다(추측 금지). 갱신하는 장치가 없어
+# 일간 일정표가 11/12 에서 끝난 뒤 조용히 비었다 — 일간은 일정표에 「오늘 발표」 줄이 있어야 지표를 싣고
+# 결정일을 올리므로(collect_japan_daily), 표 하나가 아니라 매크로 절이 통째로 멈춘다. 마지막 일정이 2주 안으로
+# 들어오면 매일 아침 알린다. 날짜를 채우는 것은 사람 몫이다 — 이 코드는 알리기만 한다.
+JP_CALENDARS = (('일간', 'japan/data/calendar_daily.json', '지표 표·결정일 표시·다음 일정 표가 멈춰요'),
+                ('주간', 'japan/data/calendar.json', '다음 일정 표가 비어요'))
+JP_CAL_RUNWAY = 14
+_ISO_DAY = re.compile(r'\d{4}-\d{2}-\d{2}')
+JP_CAL_UNREAD = '일본 일정표를 읽지 못했어요'
+
+
+def jp_calendar_notes(cals, today, runway=JP_CAL_RUNWAY):
+    """{이름: 일정표 dict 또는 None} → 마지막 일정이 today+runway 이하(또는 일정 없음)인 일정표마다 한 줄."""
+    notes = []
+    limit = today + timedelta(days=runway)
+    for name, _path, effect in JP_CALENDARS:
+        if name not in (cals or {}):
+            continue
+        cal = cals[name]
+        if not isinstance(cal, dict) or not isinstance(cal.get('events'), list):
+            notes.append(JP_CAL_UNREAD)
+            continue
+        days = []
+        for e in cal['events']:
+            # 소비 코드(daily_calendar·core.next_events)는 'YYYY-MM-DD' 문자열로 비교한다 — 그 꼴이 아닌 날짜는 거기서도
+            # 안 잡히므로 바닥 계산에서도 뺀다(20270129 를 유효로 읽으면 알림이 늦는다)
+            d = e.get('date') if isinstance(e, dict) else None
+            if isinstance(d, str) and _ISO_DAY.fullmatch(d):
+                try:
+                    days.append(date.fromisoformat(d))
+                except ValueError:
+                    continue
+        last = max(days) if days else None
+        if last is not None and last > limit:
+            continue
+        where = f'마지막 일정이 {_md(last.isoformat())}예요' if last else '일정이 하나도 없어요'
+        notes.append(f'일본 {name} 일정표 {where} — 원출처에서 확인한 일정을 더하지 않으면 {effect}')
+    return list(dict.fromkeys(notes))
+
+
+def jp_calendars(root, rev='origin/main'):
+    """원격 판의 일본 일정표 둘 — 파일이 없거나 JSON 이 아니면 None(알림에 「읽지 못했어요」)."""
+    out = {}
+    for name, path, _effect in JP_CALENDARS:
+        b = _git_bytes(root, 'show', f'{rev}:{path}')
+        try:
+            out[name] = json.loads(b.stdout) if b.returncode == 0 else None
+        except ValueError:
+            out[name] = None
+    return out
+
+
 def _git_bytes(root, *args):
     return subprocess.run(['git', '-C', root, *args], capture_output=True, timeout=60)
 
@@ -853,7 +906,7 @@ AUTH_NOTE = '요약 제출 키 오류가 있었어요 — Worker 가 제출을 �
 # 머리 안내는 이 목록의 문구만 나간다. 그 밖은 「기타 안내 n건」 — 내용은 맥에서 본다.
 # 어느 묶음에 맞았는지가 분류다(§A 1): _MUST_NOTES = 꼭 싣는 줄, 이름 목록·KR 지수 누락 = 줄일 수 있는 줄.
 _MUST_NOTES = tuple(re.compile(re.escape(x)) for x in (
-    [NOTE_FIRST, NOTE_STALE, NOTE_CORRUPT, AUTH_NOTE, KR_CHECK_UNREAD]
+    [NOTE_FIRST, NOTE_STALE, NOTE_CORRUPT, AUTH_NOTE, KR_CHECK_UNREAD, JP_CAL_UNREAD]
     + [ERROR_NOTE + k for k in ERRORS]
     + [f'{ERROR_NOTE}{k} — {sentence}' for (k, _why), sentence in ERROR_WHY.items()]))
 _NAME_NOTES = tuple(re.compile(x + _NAME_TAIL) for x in (
@@ -864,6 +917,10 @@ _KR_NOTE = re.compile(
     r'KR 주간 \d{4}-W\d{2} 지수 누락: [A-Z0-9]+ \d{4}-\d{2}-\d{2}(?:, [A-Z0-9]+ \d{4}-\d{2}-\d{2})* — '
     r'새벽 재수집으로 자동 보완하지 않아요\. 원자료를 확인해 글을 정정한 뒤 수동 승격\(versions\.py promote\)해야 '
     r'주간이 나가요')
+_JP_CAL_NOTE = re.compile(
+    rf'일본 (?:일간|주간) 일정표 (?:마지막 일정이 {_MD}예요|일정이 하나도 없어요) — 원출처에서 확인한 일정을 더하지 않으면 '
+    r'(?:지표 표·결정일 표시·다음 일정 표가 멈춰요|다음 일정 표가 비어요)')
+_MUST_NOTES = _MUST_NOTES + (_JP_CAL_NOTE,)      # 짧은 고정 문구 둘뿐 — 줄이지 않는다
 NOTE_PATTERNS = _MUST_NOTES + _NAME_NOTES + (_KR_NOTE, _KR_CHECK_NOTE)
 
 

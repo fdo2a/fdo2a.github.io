@@ -140,6 +140,12 @@ def build(state, now, args, notes):
     except Exception as exc:  # noqa: BLE001 — 읽기 실패는 조용히 넘기지 않는다
         print(f'KR 수집 검사 기록 확인 실패: {exc}', file=sys.stderr)
         notes.append(D.KR_CHECK_UNREAD)
+    # 일본 일정표 바닥 — 손으로 채우는 일정표가 2주 안에 끝나면 매일 알린다(2026-11-13)
+    try:
+        notes.extend(D.jp_calendar_notes(D.jp_calendars(root), today))
+    except Exception as exc:  # noqa: BLE001 — 읽기 실패는 조용히 넘기지 않는다
+        print(f'일본 일정표 확인 실패: {exc}', file=sys.stderr)
+        notes.append(D.JP_CAL_UNREAD)
     return posts, numbers, dict(published)
 
 

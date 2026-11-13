@@ -22,7 +22,7 @@ One post per week, on the day MOF posts Friday's JGB curve (next Tokyo business 
 - **Never `ZQ=F`** — it rolled silently from Sep to Nov on 2026-09-25. Name contract months.
 - **Failed sources stay in `fetch_status`** and block publishing; a failed fetch is not a quiet week.
 - **Signals are fixed in code** (`SIGNALS`) — the writer must not pick thresholds.
-- Tokyo CPI dates are absent from `japan/data/calendar.json` on purpose: not confirmed from the Statistics Bureau. Add only dates checked at the source.
+- Both calendars (`calendar.json`, `calendar_daily.json`) are hand-filled from the original source only (BOJ, Statistics Bureau, Cabinet Office, e-Stat); nothing refreshes them. `review/digest.py` `jp_calendar_notes` alerts daily once the last row is ≤14 days away — refill then, never guess a date.
 - **News: only `digest: true` rows of `<KEY>.news.json` may be published** (Japan collector, week range by the article's JST time). US/KR `region=japan` rows are BOJ evidence only — old weeks (W40/W41) have no digest rows and stay exempt. `<KEY>.news.json` must stay self-contained: the review runner re-checks from it alone.
 - **A summary is publishable only when `us.news_summary.summary_problem()` is None** (no kana/kanji, one paragraph, no self-correction). Collector, `digest_rows`, `news_gate` and `check_news`/`number_sources` share it — never re-implement it.
 - **Collect finished JST days**: each run fills every unfrozen weekday of the last 5; a day is frozen only when summarised **and** `complete` (every list read). Media allowlist `MEDIA_RANK`; paid pages (`_VipPurchase`) have no body.
