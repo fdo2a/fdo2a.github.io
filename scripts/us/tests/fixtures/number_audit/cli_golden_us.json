@@ -1,0 +1,47 @@
+{
+ "date_mismatch": {
+  "exit": 2,
+  "stderr": "FATAL: 데이터 report_date 2026-11-05 가 글 날짜 2026-11-06 와 다르다 — 그 날 판으로 다시 돌린다\n",
+  "stdout": ""
+ },
+ "missing_market_data": {
+  "exit": 2,
+  "stderr": "FATAL: 입력을 읽지 못했다: [Errno 2] No such file or directory: '<DIR>/ws/market_data.json'\n",
+  "stdout": ""
+ },
+ "ok_json": {
+  "exit": 0,
+  "stderr": "",
+  "stdout": "{\"skipped\": false, \"warnings\": [], \"violations\": [], \"summary\": \"number audit: 수치 728 — 표 칸 69 대조 · 문장 판정 27 · 미검증 219(자산 없음 110, 연구 원장 35, 사전 밖 자산 18, 시점·구간 단서 18, 지표 해부 16, 자산과 수치 사이가 멀다 10, 매크로 표(예상치·표식 없는 행) 8, 자산 후보 둘 이상 4, 매크로 칸(수치 둘 이상·형식 불일치) 0) · 위임 408(check_fund 269, check_sector_perf 55, macro_table_gate 84) · 제외(접힌 계산 근거) 5\", \"counts\": {\"tokens_seen\": 728, \"table_cells\": 69, \"prose_judged\": 27, \"unverified\": 219, \"delegated\": 408, \"excluded\": 5}, \"unverified_by\": {\"사전 밖 자산\": 18, \"시점·구간 단서\": 18, \"자산 없음\": 110, \"자산과 수치 사이가 멀다\": 10, \"자산 후보 둘 이상\": 4, \"매크로 표(예상치·표식 없는 행)\": 8, \"지표 해부\": 16, \"연구 원장\": 35}}\n"
+ },
+ "ok_text": {
+  "exit": 0,
+  "stderr": "",
+  "stdout": "number audit: 수치 728 — 표 칸 69 대조 · 문장 판정 27 · 미검증 219(자산 없음 110, 연구 원장 35, 사전 밖 자산 18, 시점·구간 단서 18, 지표 해부 16, 자산과 수치 사이가 멀다 10, 매크로 표(예상치·표식 없는 행) 8, 자산 후보 둘 이상 4, 매크로 칸(수치 둘 이상·형식 불일치) 0) · 위임 408(check_fund 269, check_sector_perf 55, macro_table_gate 84) · 제외(접힌 계산 근거) 5\n"
+ },
+ "old_post_json": {
+  "exit": 0,
+  "stderr": "",
+  "stdout": "{\"skipped\": true, \"effective\": \"2026-10-01\"}\n"
+ },
+ "old_post_text": {
+  "exit": 0,
+  "stderr": "",
+  "stdout": "number audit: 적용일(2026-10-01) 전 글이라 검사하지 않는다\n"
+ },
+ "prose_block_json": {
+  "exit": 1,
+  "stderr": "",
+  "stdout": "{\"skipped\": false, \"warnings\": [], \"violations\": [\"[주식] 「S&P는 4.37% 내린 7,35」 — S&P 500 등락 데이터 -4.3557\"], \"summary\": \"number audit: 수치 728 — 표 칸 69 대조 · 문장 판정 27 · 미검증 219(자산 없음 110, 연구 원장 35, 사전 밖 자산 18, 시점·구간 단서 18, 지표 해부 16, 자산과 수치 사이가 멀다 10, 매크로 표(예상치·표식 없는 행) 8, 자산 후보 둘 이상 4, 매크로 칸(수치 둘 이상·형식 불일치) 0) · 위임 408(check_fund 269, check_sector_perf 55, macro_table_gate 84) · 제외(접힌 계산 근거) 5\", \"counts\": {\"tokens_seen\": 728, \"table_cells\": 69, \"prose_judged\": 27, \"unverified\": 219, \"delegated\": 408, \"excluded\": 5}, \"unverified_by\": {\"사전 밖 자산\": 18, \"시점·구간 단서\": 18, \"자산 없음\": 110, \"자산과 수치 사이가 멀다\": 10, \"자산 후보 둘 이상\": 4, \"매크로 표(예상치·표식 없는 행)\": 8, \"지표 해부\": 16, \"연구 원장\": 35}}\n"
+ },
+ "table_violation_json": {
+  "exit": 1,
+  "stderr": "",
+  "stdout": "{\"skipped\": false, \"warnings\": [], \"violations\": [\"[채권] 「2Y」 종가 칸 「4.478%」 — 데이터 4.477\"], \"summary\": \"number audit: 수치 728 — 표 칸 69 대조 · 문장 판정 27 · 미검증 219(자산 없음 110, 연구 원장 35, 사전 밖 자산 18, 시점·구간 단서 18, 지표 해부 16, 자산과 수치 사이가 멀다 10, 매크로 표(예상치·표식 없는 행) 8, 자산 후보 둘 이상 4, 매크로 칸(수치 둘 이상·형식 불일치) 0) · 위임 408(check_fund 269, check_sector_perf 55, macro_table_gate 84) · 제외(접힌 계산 근거) 5\", \"counts\": {\"tokens_seen\": 728, \"table_cells\": 69, \"prose_judged\": 27, \"unverified\": 219, \"delegated\": 408, \"excluded\": 5}, \"unverified_by\": {\"사전 밖 자산\": 18, \"시점·구간 단서\": 18, \"자산 없음\": 110, \"자산과 수치 사이가 멀다\": 10, \"자산 후보 둘 이상\": 4, \"매크로 표(예상치·표식 없는 행)\": 8, \"지표 해부\": 16, \"연구 원장\": 35}}\n"
+ },
+ "table_violation_text": {
+  "exit": 1,
+  "stderr": "",
+  "stdout": "[채권] 「2Y」 종가 칸 「4.478%」 — 데이터 4.477\nnumber audit: 수치 728 — 표 칸 69 대조 · 문장 판정 27 · 미검증 219(자산 없음 110, 연구 원장 35, 사전 밖 자산 18, 시점·구간 단서 18, 지표 해부 16, 자산과 수치 사이가 멀다 10, 매크로 표(예상치·표식 없는 행) 8, 자산 후보 둘 이상 4, 매크로 칸(수치 둘 이상·형식 불일치) 0) · 위임 408(check_fund 269, check_sector_perf 55, macro_table_gate 84) · 제외(접힌 계산 근거) 5\n"
+ }
+}
