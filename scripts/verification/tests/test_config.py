@@ -61,7 +61,10 @@ def test_required_and_kinds_are_what_we_decided(cfg):
         assert m['check_style']['required'] and m['check_style']['kind'] == 'format'
         assert m['unconfirmed']['required']
         assert m['check_research']['required']
-    assert 'check_numbers' not in kr                            # KR 에는 자동 숫자 검사가 없다 — 그렇게 기록된다
+    # KR 표 숫자 대조(2026-11-13) — 표 네 종만, 문장은 범위 밖. 날짜는 --date 로(초안 파일명에 날짜가 없을 수 있다)
+    assert kr['check_numbers']['required'] and kr['check_numbers']['kind'] == 'numbers' and kr['check_numbers']['json']
+    assert kr['check_numbers']['argv'][-4:] == ['--market', 'kr', '--date', '{date}']
+    assert '--market' not in us['check_numbers']['argv']           # US 명령은 그대로
     assert cfg['markets']['kr']['post'] == 'kr/posts/{date}.html'
 
 

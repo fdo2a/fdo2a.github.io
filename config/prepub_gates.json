@@ -366,6 +366,23 @@
      }
     },
     {
+     "name": "check_numbers",
+     "argv": [
+      "scripts/check_numbers.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--market",
+      "kr",
+      "--date",
+      "{date}"
+     ],
+     "kind": "numbers",
+     "required": true,
+     "json": true
+    },
+    {
      "name": "check_research",
      "argv": [
       "scripts/check_research.py",
