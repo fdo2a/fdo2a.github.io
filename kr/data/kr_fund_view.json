@@ -2,7 +2,7 @@
   "schema_version": 1,
   "calculation_version": "2026-10-06",
   "report_date": "2026-11-13",
-  "generated_at": "2026-11-14 00:58 KST",
+  "generated_at": "2026-11-14 01:42 KST",
   "status": "ok",
   "missing": [],
   "source_dates": {
@@ -69,8 +69,8 @@
       "unit_name": "반도체·AI 하드웨어",
       "kind": "index",
       "name": "대만가권",
-      "change_pct": 1.35,
-      "date": "2026-11-13"
+      "change_pct": -2.63,
+      "date": "2026-11-12"
     },
     {
       "unit_id": "grid",
@@ -185,16 +185,16 @@
       "unit_name": "중국",
       "kind": "index",
       "name": "항셍",
-      "change_pct": -1.55,
-      "date": "2026-11-13"
+      "change_pct": -1.26,
+      "date": "2026-11-12"
     },
     {
       "unit_id": "china",
       "unit_name": "중국",
       "kind": "index",
       "name": "상해종합",
-      "change_pct": -0.59,
-      "date": "2026-11-13"
+      "change_pct": -0.67,
+      "date": "2026-11-12"
     }
   ]
 }
