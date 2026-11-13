@@ -444,3 +444,13 @@ def test_violation_lines_drop_warnings_and_summary():
     from scripts.review import corrector
     out = '경고(문장): x\n[채권] 2Y — 데이터 4.477\nnumber audit: 수치 3\n'
     assert corrector._violation_lines(out) == ['[채권] 2Y — 데이터 4.477']
+
+
+def test_kr_numbers_gate_gets_the_post_date():
+    # KR 표 숫자 대조(2026-11-13)는 --date 가 없으면 판정 불가(2) — 정정기가 글 경로의 날짜를 넘긴다
+    from scripts.review import corrector
+    assert 'numbers' in corrector.KR_DATADIR_GATES and 'check_numbers.py' in corrector.VIOLATION_DIFF
+    args = corrector._kr_datadir_args('numbers', '/c/kr/posts/2026-11-16.html', '/e/kr/data', 'kr/posts/2026-11-16.html')
+    assert args == ['--html', '/c/kr/posts/2026-11-16.html', '--datadir', '/e/kr/data', '--market', 'kr',
+                    '--date', '2026-11-16']
+    assert '--date' not in corrector._kr_datadir_args('fund', 'p', 'd', 'kr/posts/2026-11-16.html')

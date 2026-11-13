@@ -508,3 +508,12 @@ def test_fund_gate_runs_on_both_daily_markets():
         cmds = sp.gate_commands(section, 'p.html', 'd', 'o.html', '2026-10-08', None)
         fund = [c for c in cmds if c[1].endswith('check_fund.py')]
         assert len(fund) == 1 and '--date' in fund[0] and section in fund[0]
+
+
+def test_kr_numbers_gate_runs_with_date_and_exit2_is_never_tolerated():
+    from review import style_pass as sp
+    cmds = sp.gate_commands('kr', 'p.html', 'd', 'o.html', '2026-11-16', None)
+    num = [c for c in cmds if c[1].endswith('check_numbers.py')]
+    assert len(num) == 1 and num[0][-4:] == ['--market', 'kr', '--date', '2026-11-16']
+    same = (2, 'FATAL: x')
+    assert sp.judge({'check_numbers.py': same}, {'check_numbers.py': same})

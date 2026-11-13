@@ -53,7 +53,7 @@ def _git(root, *args):
 # 실제 scripts/ 와 대조한다.
 US_DATADIR_GATES = ('fed', 'weight', 'price_context', 'sector_perf', 'session', 'movers', 'fund',
                     'numbers')
-KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund')
+KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund', 'numbers')   # numbers = 표 숫자 대조(2026-11-13)
 KR_NEWS_FROM = '2026-11-06'   # `kr.news.SPLIT_FROM` 과 같다(테스트) — 이 모듈은 레포 밖 사본에서도 돈다
 # KR 판단 게이트는 `--market` 이 없고 `--next` 로 그날 낸 원장을 받는다 — 발행 커밋의 kr_stance.json 이
 # 그것이다(STEP 2.9 가 같은 커밋에 승계한다). 2026-10-20 배치(review 가 복기 첫 문단, 확인 일정 표)는
@@ -104,6 +104,16 @@ def _contested_gate(clone, item, post):
                                    '--date', m.group(1)])
 
 
+def _kr_datadir_args(name, post, data, path):
+    """KR 근거 폴더 게이트의 인자. 표 숫자 대조는 글 날짜를 `--date` 로 받는다 — 없으면 판정 불가(2)라
+    정정이 늘 막힌다. 날짜는 글 경로(kr/posts/<D>.html)에서. 적용일 전 글은 게이트가 skipped(0)로 끝낸다."""
+    args = ['--html', post, '--datadir', str(data), '--market', 'kr']
+    m = re.search(r'(\d{4}-\d{2}-\d{2})\.html$', path)
+    if name == 'numbers' and m:
+        args += ['--date', m.group(1)]
+    return args
+
+
 def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseline=None):
     """Replay trusted gates independently of Claude's completion claim.
 
@@ -134,8 +144,7 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
                                            '--legacy-releases']))
     else:
         for name in KR_DATADIR_GATES:
-            gates.append((f'check_{name}.py', ['--html', post, '--datadir', str(data),
-                                             '--market', 'kr']))
+            gates.append((f'check_{name}.py', _kr_datadir_args(name, post, data, item.path)))
         gates.append((f'check_{KR_STANCE_GATE}.py', ['--html', post, '--datadir', str(data),
                                                     '--next', str(data / 'kr_stance.json')]))
     contested = _contested_gate(clone, item, post)

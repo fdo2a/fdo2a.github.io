@@ -211,6 +211,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'kr',
              '--date', date],
+            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir, '--market', 'kr',
+             '--date', date],
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout'],
         ]
         market = 'kr'
