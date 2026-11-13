@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-13T12:00:18+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-13T12:16:09+00:00",
  "cutoff_at": "2026-11-13T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 473,
+  "harvest": 469,
   "candidates": 1,
   "articles": [
    6
@@ -44,19 +44,19 @@
    "mt": "ok"
   },
   "notes": [
-   "discover:473"
+   "discover:469"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 15011,
-   "out": 3482
+   "in": 15102,
+   "out": 4342
   }
  },
  "event": {
   "topic_ko": "젠슨 황 사임 뒤 엔비디아의 한국 GPU 공급과 협력 유지 여부",
-  "query": "젠슨 GPU 26만장",
+  "query": "GPU 젠슨 26만장",
   "trigger": []
  },
- "content_hash": "5cd8e21a14f5eb00"
+ "content_hash": "0c5262eb75734259"
 }
