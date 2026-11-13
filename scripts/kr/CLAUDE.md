@@ -27,6 +27,8 @@
 
 - **텔레그램 견해·의견(US·KR 공통, 2026-11-06)**: `fetch_telegram.py` → `kr/data/telegram/<date>.json`·`data/telegram/<date>.json`, 요약만 커밋·요약 있으면 동결, 작성자와 `check_telegram.py` 는 같은 워크스페이스 스냅샷을 본다. 뉴스 글(`/news/`·`/kr/news/`)은 `scripts/tg_news.py input` 이 브리프 발행 커밋의 판에 `news_use` 를 달아 넘기고 `check_telegram.py --layout news` 가 본다. **고칠 때**: `scripts/fetch_telegram.py`·`scripts/tg_news.py`·`scripts/common/telegram*.py`·`tg_*.py` 를 건드리기 전에 `docs/superpowers/specs/2026-11-06-telegram-source.md` 와 `docs/superpowers/specs/2026-11-12-telegram-news-posts.md` 를 읽는다.
 
+- **Table number audit (2026-11-13)**: `check_numbers.py --market kr --date D` (required in `config/prepub_gates.json`, from `kr.number_audit.EFFECTIVE` 2026-11-16) matches every cell of the four market tables (지수 & 장중, 수급 ×2, 거래대금 상위, 환율·금리) against `kr/data/*` by a per-column grammar on `Decimal` data; prose numbers are counted unverified, so a KR post is never fully verified. When changing this: read `docs/superpowers/specs/2026-11-13-kr-number-audit.md` before touching `scripts/kr/number_audit.py`.
+
 ## 주간 정리 — KR 몫
 
 - **성격**: 그 기간에 발행한 KR 마감브리프의 총정리. **웹 검색·시세 재수집 금지.** 서술은 `kr/posts/*.html`, 성과표는 집계 파일.
