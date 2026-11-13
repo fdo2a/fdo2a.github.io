@@ -125,6 +125,8 @@ def recorded(rec, allowed=None):
     by = [g for g in gates if isinstance(g, dict)]
     numbers = next((g.get('numbers') for g in by if g.get('name') == 'check_numbers'
                     and isinstance(g.get('numbers'), dict)), None)
+    # 숫자 결과가 없을 때 왜 없는지 — 검사기 항목이 없다(도입 전) / 실행 안 함 / 판정 불가 / 돌았는데 결과가 빠졌다(손상)
+    ngate = next((g for g in by if g.get('name') == 'check_numbers'), None)
     return {
         'readable': True, 'status': s['status'], 'publish_ok': s['publish_ok'],   # status 는 원래 값 — 지문이 쓴다(표시는 STATUS 밖이면 「모르는 판정」, 재검토 10회)
         'verified': s['verified'], 'blocking': [_as_str(x) for x in s.get('blocking') or []],
@@ -141,7 +143,7 @@ def recorded(rec, allowed=None):
         'allowed': allowed,
         'required': sum(1 for g in by if g.get('required', True)),
         'required_pass': sum(1 for g in by if g.get('required', True) and g.get('status') in ('pass', 'warn')),
-        'numbers': numbers, 'python': _str(_dict(rec.get('code')).get('python')),
+        'numbers': numbers, 'numbers_gate': None if ngate is None else ngate.get('status'), 'python': _str(_dict(rec.get('code')).get('python')),
         'created': _str(_dict(rec.get('created_at')).get('kst')),
         'reasons': {g['name']: gate_reasons(g) for g in by if g.get('status') not in ('pass',)},
     }
@@ -337,9 +339,10 @@ def unverified_numbers(v):
 
 
 def fully_verified(v):
-    """검증 완료 — 경고·빈칸 없는 pass 이고 미검증 숫자가 0 으로 확인됐다(모르면 완료 아님, KR 은 숫자 대조가 없어 완료 아님)."""
+    """검증 완료 — 경고·빈칸 없는 pass 이고 미검증 숫자가 0 으로 확인됐다(모르면 완료 아님). KR 은 표만 대조하고
+    문장 숫자는 대조하지 않으므로 완료가 아니다(2026-11-13 — 미검증 0 이 찍혀도)."""
     rec = v.get('recorded') or {}
-    return bool(rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass'
+    return bool(v.get('market') != 'kr' and rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass'
                 and rec.get('numbers') and unverified_numbers(v) == 0)
 
 
@@ -442,11 +445,33 @@ def recorded_lines(v):
     if n:
         out.append(f' · 숫자: 표 칸 {n.get("table_cells", "?")} 대조 · 문장 판정 {n.get("prose_judged", "?")} · '
                    f'자동 대조하지 못한 수치 {n.get("unverified", "?")}개{_unverified_why(n)}')
+        if v.get('market') == 'kr':
+            out.append(f' · KR 숫자 범위: {_kr_scope(n)} — 문장 숫자는 자동 대조 밖이라 숫자 검증 완료가 아니에요')
     elif v.get('market') == 'kr':
-        out.append(' · 숫자: KR 은 표 숫자를 기계로 대조하는 검사가 없어요(발행 전·후 모두) — 이 결과에 숫자 검증은 들어 있지 않아요')
+        out.append(' · 숫자: ' + KR_NO_NUMBERS[_kr_no_numbers(rec)][0] + ' — 이 결과에 숫자 검증은 들어 있지 않아요')
     else:
         out.append(' · 숫자: 기록에 숫자 대조 결과가 없어요')
     return out
+
+
+# KR 기록에 숫자 결과가 없는 이유(codex 설계 검토 #10) — (건별 알림 문장, 매일 요약 꼬리)
+KR_NO_NUMBERS = {
+    'before': ('이 기록에는 표 숫자 검사가 없어요(검사 도입 전 기록)', '도입 전'),
+    'not_run': ('표 숫자 검사를 실행 안 함(적용일 전 글이거나 건너뜀)', '실행 안 함'),
+    'indeterminate': ('표 숫자 검사가 판정 불가로 끝났어요', '판정 불가'),
+    'corrupt': ('표 숫자 검사는 돌았는데 결과가 기록에서 빠졌어요(기록 손상)', '기록 손상'),
+}
+
+
+def _kr_no_numbers(rec):
+    st = rec.get('numbers_gate')
+    if st is None:
+        return 'before'
+    return st if st in ('not_run', 'indeterminate') else 'corrupt'
+
+
+def _kr_scope(n):
+    return f'표 {n.get("table_cells", "?")}칸 대조, 미검증 {n.get("unverified", "?")}개'
 
 
 GATE_LINES = 6            # 한 갈래(경고·막은 것…)에 이름을 적는 검사기 수
@@ -556,8 +581,10 @@ def digest_lines(v, who=MAC):
         if rec.get('not_run') or rec.get('partial'):
             bits.append('실행 안 함·일부만 ' + ', '.join(_disp(x, rec) for x in (rec['not_run'] + rec['partial'])[:4]))
         u = unverified_numbers(v)
+        if rec.get('numbers') and v.get('market') == 'kr':
+            bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤
         if not rec.get('numbers'):
-            bits.append('숫자 자동 대조 없음(KR 은 표 숫자 검사가 없어요)' if v.get('market') == 'kr'
+            bits.append(f'표 숫자 대조 없음({KR_NO_NUMBERS[_kr_no_numbers(rec)][1]})' if v.get('market') == 'kr'
                         else '숫자 자동 대조 없음(기록에 숫자 대조 결과가 없어요)')
         elif u is None:
             bits.append('자동 대조하지 못한 수치 수 모름')                            # codex 6회 #3

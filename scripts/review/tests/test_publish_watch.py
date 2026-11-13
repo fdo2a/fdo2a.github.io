@@ -558,7 +558,7 @@ def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):
     assert CLI.main(['--no-fetch', '--preview', 'kr', '2026-11-09']) == 0
     assert not state.parent.exists()                                 # 만들지도 않는다
     out = capsys.readouterr().out
-    assert '[맥이 직접 확인]' in out and 'KR 은 표 숫자를 기계로 대조하는 검사가 없어요' in out
+    assert '[맥이 직접 확인]' in out and '표 숫자 검사가 없어요(검사 도입 전 기록)' in out
     assert '작업 공간 전용 입력: 대조 불가' in out and '조용히 기준선으로 잡는다' in out
     state.parent.mkdir()
     st = W.new_state('x')
