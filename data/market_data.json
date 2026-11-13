@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-14 08:05 KST",
+  "generated": "2026-11-14 08:17 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-13",
   "indices": {
@@ -196,9 +196,9 @@
       "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 3881.5,
-      "chg": 2.0,
-      "pct": 0.051553035184936924,
+      "last": 3881.800048828125,
+      "chg": 2.300048828125,
+      "pct": 0.05928724908170757,
       "date": "2026-11-13",
       "prev": 3879.5,
       "prev_date": "2026-11-12",
@@ -695,7 +695,7 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": 0.052,
+        "change": 0.059,
         "unit": "%",
         "multiple": 0.04,
         "band": "미미"
@@ -845,7 +845,7 @@
         }
       },
       "Gold": {
-        "value": 3881.5,
+        "value": 3881.8,
         "percentile": 44.4,
         "band": "중간",
         "sessions": 504,
