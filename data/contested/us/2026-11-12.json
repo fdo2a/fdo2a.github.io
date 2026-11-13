@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-12T23:48:13+00:00",
- "cutoff_at": "2026-11-12T23:48:13+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-13T00:08:07+00:00",
+ "cutoff_at": "2026-11-13T00:08:07+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 90860,
-   "out": 17905
+   "in": 89121,
+   "out": 17017
   },
   "discovery": "ok",
   "hosts": {
@@ -45,38 +45,42 @@
   "grounded": {
    "claims": "4/4",
    "pairs": "2/2",
-   "obs": "8/8"
+   "obs": "7/7"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 8,
+   "obs": 7,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[1]",
-    "edges[2]",
-    "memo[2]",
+    "edges[0]",
+    "memo[1]",
     "structure",
-    "worry.moderate[0]",
-    "worry.unlikely[0]"
+    "worry.moderate[0]"
    ],
    "outcome": "partial",
    "remaining": [
+    "structure:unverified",
+    "edges[0]:unverified",
+    "memo[1]:unverified",
     "worry.moderate[0]:unverified"
    ]
   }
  },
  "event": {
-  "topic_ko": "젠슨 황 엔비디아 CEO 사임과 알리스 황 스파이 의혹의 안보·사업 파장",
-  "query": "nvidia jensen affair",
+  "topic_ko": "젠슨 황 엔비디아 CEO 사임과 알리스 황 스파이 의혹의 사업·안보 파장",
+  "query": "nvidia huang affair",
   "trigger": []
  },
  "problems": [
+  "structure:unverified",
+  "edges[0]:unverified",
+  "memo[1]:unverified",
   "worry.moderate[0]:unverified"
  ],
- "content_hash": "9d237ebc5f5e9608"
+ "content_hash": "cdc3c6972d908d7d"
 }
