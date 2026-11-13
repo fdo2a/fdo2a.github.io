@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-13T00:08:07+00:00",
- "cutoff_at": "2026-11-13T00:08:07+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-13T00:26:40+00:00",
+ "cutoff_at": "2026-11-13T00:26:40+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "2781836fbc16e995cbd1e91b5f06fa1a0620aea196704b64d97922d6e9dd61e8"
  },
  "counts": {
-  "harvest": 200,
+  "harvest": 199,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 89121,
-   "out": 17017
+   "in": 95510,
+   "out": 23411
   },
   "discovery": "ok",
   "hosts": {
@@ -43,36 +43,37 @@
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "7/7"
+   "claims": "9/9",
+   "pairs": "4/4",
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7,
-   "strict_pairs": 0,
+   "pairs": 3,
+   "claims": 6,
+   "obs": 9,
+   "strict_pairs": 2,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
     "edges[0]",
+    "memo[0]",
     "memo[1]",
     "structure",
-    "worry.moderate[0]"
+    "worry.most[0]"
    ],
    "outcome": "partial",
    "remaining": [
     "structure:unverified",
     "edges[0]:unverified",
     "memo[1]:unverified",
-    "worry.moderate[0]:unverified"
+    "worry.most[0]:unverified"
    ]
   }
  },
  "event": {
-  "topic_ko": "젠슨 황 엔비디아 CEO 사임과 알리스 황 스파이 의혹의 사업·안보 파장",
+  "topic_ko": "젠슨 황 엔비디아 CEO 사임과 앨리스 황 스파이 의혹의 안보·사업 파장",
   "query": "nvidia huang affair",
   "trigger": []
  },
@@ -80,7 +81,7 @@
   "structure:unverified",
   "edges[0]:unverified",
   "memo[1]:unverified",
-  "worry.moderate[0]:unverified"
+  "worry.most[0]:unverified"
  ],
- "content_hash": "cdc3c6972d908d7d"
+ "content_hash": "0e21113052261598"
 }
