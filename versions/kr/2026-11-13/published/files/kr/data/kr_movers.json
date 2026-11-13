@@ -1,0 +1,100 @@
+{
+  "report_date": "2026-11-13",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": -3.03,
+          "close": 1216000,
+          "value": 3919705
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": -0.96,
+          "close": 206000,
+          "value": 2608742
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "은행",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "KB금융",
+          "change_pct": 4.74,
+          "close": 159000,
+          "value": 102455
+        },
+        {
+          "name": "신한지주",
+          "change_pct": 5.65,
+          "close": 89800,
+          "value": 81242
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "항공사",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한진칼우",
+          "change_pct": -15.41,
+          "close": 112000,
+          "value": 304478
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "양방향미디어와서비스",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "NAVER",
+          "change_pct": -5.12,
+          "close": 172500,
+          "value": 280119
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "이수페타시스",
+          "change_pct": 5.23,
+          "close": 88500,
+          "value": 169693
+        }
+      ]
+    }
+  ]
+}

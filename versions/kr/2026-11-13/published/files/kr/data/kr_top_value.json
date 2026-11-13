@@ -1,0 +1,144 @@
+[
+  {
+    "label": "SK하이닉스",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 3919705,
+    "volume": 3139509,
+    "members": [
+      "SK하이닉스"
+    ]
+  },
+  {
+    "label": "삼성전자",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 2608742,
+    "volume": 12445638,
+    "members": [
+      "삼성전자"
+    ]
+  },
+  {
+    "label": "반도체 테마 ETF",
+    "kind": "sector_theme_etf",
+    "direction": "long",
+    "theme": "반도체",
+    "value": 1735587,
+    "volume": 77186696,
+    "members": [
+      "KODEX 반도체레버리지",
+      "TIGER 반도체TOP10",
+      "SOL AI반도체TOP2플러스",
+      "TIGER 반도체TOP10레버리지",
+      "KODEX 반도체",
+      "SOL AI반도체소부장",
+      "KODEX AI반도체TOP2플러스",
+      "KODEX AI반도체핵심장비",
+      "SOL 반도체전공정",
+      "HANARO Fn K-반도체",
+      "SOL 반도체후공정",
+      "TIGER 반도체TOP10커버드콜액티브",
+      "TIGER AI반도체핵심공정",
+      "ACE K반도체TOP2+",
+      "TIGER 반도체",
+      "ACE AI반도체TOP3+",
+      "PLUS AI반도체소부장액티브",
+      "HANARO 반도체핵심공정주도주",
+      "RISE 반도체소부장액티브",
+      "RISE AI반도체TOP10",
+      "KODEX 반도체타겟위클리커버드콜",
+      "PLUS 코리아HBM반도체",
+      "RISE 비메모리반도체액티브",
+      "ACE 반도체Plus전략산업",
+      "FOCUS AI반도체위클리고정커버드콜",
+      "KODEX 아시아AI반도체exChina액티브",
+      "FOCUS 금융반도체지주채권혼합50액티브",
+      "TIGER 한중반도체(합성)",
+      "KODEX 한중반도체(합성)"
+    ]
+  },
+  {
+    "label": "삼성전기",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 692987,
+    "volume": 781484,
+    "members": [
+      "삼성전기"
+    ]
+  },
+  {
+    "label": "삼성전자우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 588478,
+    "volume": 3429767,
+    "members": [
+      "삼성전자우"
+    ]
+  },
+  {
+    "label": "SK스퀘어",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 488388,
+    "volume": 632078,
+    "members": [
+      "SK스퀘어"
+    ]
+  },
+  {
+    "label": "KODEX CD금리액티브(합성)",
+    "kind": "sector_theme_etf",
+    "direction": "long",
+    "theme": null,
+    "value": 435595,
+    "volume": 405261,
+    "members": [
+      "KODEX CD금리액티브(합성)"
+    ]
+  },
+  {
+    "label": "한진칼우",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 304478,
+    "volume": 2167005,
+    "members": [
+      "한진칼우"
+    ]
+  },
+  {
+    "label": "NAVER",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 280119,
+    "volume": 1579236,
+    "members": [
+      "NAVER"
+    ]
+  },
+  {
+    "label": "SK하이닉스 레버리지",
+    "kind": "single_stock_lev",
+    "direction": "long",
+    "theme": null,
+    "value": 240558,
+    "volume": 51599913,
+    "members": [
+      "KODEX SK하이닉스단일종목레버리지",
+      "TIGER SK하이닉스단일종목레버리지",
+      "SOL SK하이닉스단일종목레버리지",
+      "RISE SK하이닉스단일종목레버리지",
+      "ACE SK하이닉스단일종목레버리지"
+    ]
+  }
+]

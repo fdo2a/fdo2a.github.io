@@ -1,0 +1,23 @@
+{
+  "report_date": "2026-11-13",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "기타",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "TIME 미국나스닥100액티브",
+          "change_pct": 1.06,
+          "close": 37275,
+          "value": 60722
+        }
+      ]
+    }
+  ]
+}
