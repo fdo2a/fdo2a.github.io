@@ -22,16 +22,19 @@ import json
 import os
 import ssl
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
+from collections import Counter
 from datetime import date as _date
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.news import (FEEDS, _nli_body, body_note, categorize, dedupe,  # noqa: E402
-                     extract_body, page_published, pages, parse_feed_strict, pdf_text,
+from us.news import (EXTRA_FEEDS, FEEDS, ROTATE, TWO_PHASE, Stop, _nli_body,  # noqa: E402
+                     body_note, candidates, categorize, confirm, dedupe, extract_body, identify,
+                     legacy_fill, page_published, pages, parse_feed_strict, pdf_text, reconcile,
                      select, title_wire, trim, wire_of)
 from us.news_summary import SYSTEM_ANALYSIS, new_run, summarize_items, usable_summary  # noqa: E402
 
@@ -80,13 +83,13 @@ def _impersonated(url):
     return None
 
 
-def get(url, ctx, retries=2, impersonated=_impersonated):
+def get(url, ctx, retries=2, impersonated=_impersonated, timeout=TIMEOUT):
     req = urllib.request.Request(
         url, headers={'User-Agent': UA,
                       'Accept': 'application/rss+xml,application/xml;q=0.9,*/*;q=0.8'})
     for attempt in range(retries + 1):
         try:
-            with urllib.request.urlopen(req, timeout=TIMEOUT, context=ctx) as r:
+            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
                 return r.read().decode('utf-8', 'replace')
         except urllib.error.HTTPError as e:
             if e.code in (403, 429):
@@ -99,29 +102,97 @@ def get(url, ctx, retries=2, impersonated=_impersonated):
             raise
 
 
-def get_bytes(url, ctx):
+def get_bytes(url, ctx, timeout=TIMEOUT):
     """PDF 처럼 글자로 풀면 깨지는 응답(일본은행 정책 발표문)."""
     req = urllib.request.Request(url, headers={'User-Agent': UA})
-    with urllib.request.urlopen(req, timeout=TIMEOUT, context=ctx) as r:
+    with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
         return r.read()
 
 
-def fetch_bodies(chosen, bodydir, ctx, fetch=None, fetch_bytes=None):
+# ── 시간 상한 (2026-11-12, 매체 넓히기) ────────────────────────────────────
+# When changing this: read `docs/superpowers/specs/2026-11-12-us-news-source-spread.md` first.
+# 새 매체 18곳은 Actions 에서 열리는지 재 본 적이 없다. 느리거나 막힌 매체가 수집을 붙잡으면
+# 루틴(`timeout 900 gh run watch`)이 먼저 끊긴다. 그래서 새로 더한 일에는 벽시계 마감을 건다.
+EXTRA_TIMEOUT = 10          # 새 매체 요청 한 건
+EXTRA_FEED_BUDGET = 60      # 새 매체 피드 18개 합계
+SPREAD_BUDGET = 150         # 미국 다섯 갈래를 매체 돌려 뽑기로 고르는 시간
+STAGE_BUDGET = 240          # 그 단계 전체(돌려 뽑기 + 시간이 다 됐을 때의 옛 길)
+BLOCK_AFTER = 2             # 한 실행에서 이만큼 요청이 실패한 매체는 더 묻지 않는다
+
+
+class Late(Exception):
+    """요청이 마감 안에 끝나지 않았다. 결과는 버린다."""
+
+
+class Budget:
+    """단조 시계 마감. `clock` 은 시험이 갈아 끼운다."""
+
+    def __init__(self, seconds, clock=time.monotonic):
+        self.clock, self.end = clock, clock() + seconds
+
+    def left(self):
+        return max(0.0, self.end - self.clock())
+
+    def over(self):
+        return self.left() <= 0
+
+
+def bounded(fn, budget, per=EXTRA_TIMEOUT):
+    """`fn()` 을 데몬 스레드에서 돌리고 min(per, 남은 시간)만 기다린다. 못 끝내면 `Late`.
+
+    **`fn` 은 부작용이 없는 요청이어야 한다** — 늦은 스레드는 버려 둘 뿐 멈추지 못하므로, 그 안에서
+    행을 고치거나 파일을 쓰면 마감 뒤에 결과가 바뀐다(codex 설계 검토 3회차 3-4). 소켓 timeout 은
+    읽기 한 번의 상한이지 요청 전체의 상한이 아니고, 403·429 의 브라우저 지문 재시도는 요청을
+    두 번 더 한다 — 그래서 요청마다 timeout 을 줄이는 대신 여기서 기다림을 끊는다
+    (`common/region_filter.py` 와 같은 방식).
+    """
+    wait = min(per, budget.left())
+    if wait <= 0:
+        raise Late()
+    box = {}
+
+    def run():
+        try:
+            box['value'] = fn()
+        except BaseException as e:          # 스레드 밖으로 새면 아무도 못 본다
+            box['error'] = e
+
+    worker = threading.Thread(target=run, daemon=True)
+    worker.start()
+    worker.join(wait)
+    if worker.is_alive():
+        raise Late()
+    if 'error' in box:
+        raise box['error']
+    return box['value']
+
+
+def _host_of(url):
+    parts = (url or '').split('/')
+    return parts[2] if len(parts) > 2 else ''
+
+
+def fetch_bodies(chosen, bodydir, ctx, fetch=None, fetch_bytes=None, start=1, hosted=False):
     """선정된 기사의 본문을 bodydir 에 떨어뜨린다. 실패는 건별로 기록하고 넘어간다.
 
     피드에 날짜가 없던 기사(Investing.com 뉴스)는 기사면의 발행 시각을 적는다 — 글로벌·칼럼
     확정(`trim`)이 그 날짜로 창을 본다. 피드 날짜는 덮지 않는다.
+
+    `start` 는 본문 파일 번호의 시작이다 — 미국 다섯 갈래는 한 건씩 여러 번 부르므로 부르는 쪽이
+    번호를 전진시킨다(같은 번호를 두 번 쓰면 요약이 다른 기사의 본문을 읽는다). `hosted` 는
+    매체별 안내문 거르기를 켠다.
     """
     fetch, fetch_bytes = fetch or get, fetch_bytes or get_bytes
     os.makedirs(bodydir, exist_ok=True)
-    for i, it in enumerate(chosen, 1):
+    for i, it in enumerate(chosen, start):
         try:
             if it['url'].lower().endswith('.pdf'):
                 page, body = '', pdf_text(fetch_bytes(it['url'], ctx))
             else:
                 page = fetch(it['url'], ctx)
                 # 닛세이는 「■要旨」 이 없으면 본문이 아니다 — 페이지 문단으로 대체하지 않는다(codex 2026-10-18)
-                body = _nli_body(page) if 'nli-research.co.jp' in it['url'] else extract_body(page)
+                body = (_nli_body(page) if 'nli-research.co.jp' in it['url']
+                        else extract_body(page, host=_host_of(it['url']) if hosted else None))
             if not it.get('published'):
                 it['published'] = page_published(page)
                 if it['published']:
@@ -153,6 +224,171 @@ def fetch_bodies(chosen, bodydir, ctx, fetch=None, fetch_bytes=None):
         it['body_chars'], it['body_file'] = len(body), name
         print(f'  [{i}] {it["category"]:8s} 본문 {len(body):5d}자  {title[:52]}')
     return chosen
+
+
+def _why(e):
+    return f'HTTP {e.code}' if isinstance(e, urllib.error.HTTPError) else type(e).__name__
+
+
+def _fast_get(url, ctx):
+    return get(url, ctx, retries=0, timeout=EXTRA_TIMEOUT)
+
+
+def _fast_bytes(url, ctx):
+    return get_bytes(url, ctx, timeout=EXTRA_TIMEOUT)
+
+
+def harvest_extra(ctx, budget, notes, fetch=None, feeds=None):
+    """새 매체 피드(`EXTRA_FEEDS`)를 받는다. 실패·시간 초과는 `notes` 에 적고 넘어간다.
+
+    돌려주는 행은 `identify()` 를 거쳤다 — guid 가 URL 이다.
+    """
+    fetch = fetch or _fast_get
+    rows = []
+    for hint, urls in (EXTRA_FEEDS if feeds is None else feeds).items():
+        for url in urls:
+            if budget.over():
+                notes.append('extra_time_cap: 새 매체 피드를 다 받지 못했다')
+                return identify(rows)
+            try:
+                items, why_empty = parse_feed_strict(
+                    bounded(lambda u=url: fetch(u, ctx), budget), hint)
+            except Exception as e:
+                notes.append(f'{hint} {url}: {_why(e)}')
+                print(f'  {hint}: 피드 실패 ({_why(e)}) {url[-40:]}', file=sys.stderr)
+                continue
+            if why_empty:
+                notes.append(f'{hint} {url}: {why_empty}')
+            elif not items:
+                notes.append(f'{hint} {url}: 항목 0건')
+            rows.extend(items)
+            print(f'  {hint}: {len(items)}건 ({_host_of(url)})')
+    return identify(rows)
+
+
+def existing_index(path):
+    """그날 파일의 {guid: (source, url)} — `reconcile()` 이 후보와 대조한다."""
+    try:
+        with open(path, encoding='utf-8') as fh:
+            items = json.load(fh).get('items') or []
+    except (OSError, ValueError):
+        return {}
+    return {it['guid']: (it.get('source'), it.get('url')) for it in items if it.get('guid')}
+
+
+def _tally(cands, log):
+    """{매체: {candidates, tried, with_body, chosen, fail: {사유: n}}}.
+
+    `fail` 의 사유는 본문 수집이 적은 값 그대로다(HTTP 403·Late·TimeoutError·추출 실패·blocked) —
+    Actions 에서 어느 매체가 왜 빠졌는지를 이 숫자로 읽는다. 그 밖에 undated·stale·same_story.
+    """
+    out = {}
+
+    def cell(source):
+        return out.setdefault(source or '', {'candidates': 0, 'tried': 0, 'with_body': 0,
+                                             'chosen': 0, 'fail': Counter()})
+    for r in cands:
+        cell(r.get('source'))['candidates'] += 1
+    for r, outcome in log:
+        c = cell(r.get('source'))
+        if outcome == 'same_story':
+            c['fail']['same_story'] += 1
+            continue
+        note = r.get('body_note')
+        if outcome == 'no_body' and note == 'blocked':
+            c['fail']['blocked'] += 1
+            continue
+        c['tried'] += 1
+        if outcome == 'no_body':
+            c['fail'][note or 'no_body'] += 1
+            continue
+        c['with_body'] += 1
+        if outcome == 'chosen':
+            c['chosen'] += 1
+        else:
+            c['fail'][outcome] += 1
+    return {s: dict(c, fail=dict(c['fail'])) for s, c in out.items()}
+
+
+def spread_stage(rows, bodydir, ctx, per_category, now, start, fetch=None, fetch_bytes=None,
+                 clock=time.monotonic, spread_seconds=SPREAD_BUDGET, stage_seconds=STAGE_BUDGET):
+    """미국 다섯 갈래를 매체 돌려 뽑기로 확정한다. (확정 행, funnel, 다음 본문 번호).
+
+    `rows` 는 dedupe 를 거친 전체 후보다. 본문은 **고르면서** 한 건씩 받는다 — 안 열린 기사는
+    자리를 차지하지 않고 같은 매체의 다음 기사, 그다음 매체로 넘어간다. 돌려 뽑기에 `spread_seconds`
+    를 다 쓰면 그 갈래의 남은 자리와 뒤 갈래는 예전 방식(기존 피드의 최신순)으로 채우고, 그것도
+    `stage_seconds` 안에서만 한다. 마감에 걸리면 덜 찬 채로 돌려준다.
+    """
+    fetch, fetch_bytes = fetch or _fast_get, fetch_bytes or _fast_bytes
+    stage = Budget(stage_seconds, clock)
+    spread = Budget(min(spread_seconds, stage_seconds), clock)
+    state = {'next': start, 'stage_cap': False}
+    fails = Counter()
+
+    def ask(row, budget):
+        n, state['next'] = state['next'], state['next'] + 1          # 시도마다 전진 — 성공·실패 불문
+        fetch_bodies([row], bodydir, ctx,
+                     fetch=lambda u, c: bounded(lambda: fetch(u, c), budget),
+                     fetch_bytes=lambda u, c: bounded(lambda: fetch_bytes(u, c), budget),
+                     start=n, hosted=True)
+        return bool(row.get('body_chars'))
+
+    def try_spread(row):
+        if spread.over():
+            raise Stop()
+        if 'body_chars' in row:                 # 이미 물었다
+            return bool(row['body_chars'])
+        source = row.get('source')
+        if fails[source] >= BLOCK_AFTER:
+            row['body_chars'], row['body_note'] = 0, 'blocked'
+            return False
+        if ask(row, spread):
+            return True
+        if row.get('body_note') != '추출 실패':    # 껍데기 한두 건으로 매체를 막지 않는다 — 요청 실패만 센다
+            fails[source] += 1
+        return False
+
+    def try_legacy(row):
+        if stage.over():
+            state['stage_cap'] = True
+            raise Stop()
+        if 'body_chars' in row:
+            return bool(row['body_chars'])
+        source = row.get('source')
+        if fails[source] >= BLOCK_AFTER:          # 옛 길도 막힌 매체에는 다시 묻지 않는다(codex 구현 검토 1회차)
+            row['body_chars'], row['body_note'] = 0, 'blocked'
+            return False
+        if ask(row, stage):
+            return True
+        if row.get('body_note') != '추출 실패':
+            fails[source] += 1
+        return False
+
+    cands = candidates(rows, now)
+    picked, cats, stopped, legacy_n = [], {}, [], 0
+    for cat in ROTATE:
+        chosen, log = [], []
+        if not stopped:
+            chosen, log, hit = confirm(cands[cat], try_spread, per_category, now)
+            # 마지막 후보의 요청이 마감에 걸리면 `confirm` 은 Stop 없이 끝난다(더 물을 후보가 없다).
+            # 그때도 시간이 다 된 것이다 — 이 갈래부터 옛 길로 간다(구현 검토 2회차).
+            if hit or spread.over():
+                stopped.append('spread_time_cap')
+        if stopped:
+            before = len(chosen)
+            chosen, more = legacy_fill([r for r in rows if r.get('category') == cat], chosen,
+                                       try_legacy, per_category)
+            log += more
+            legacy_n += len(chosen) - before
+        picked.extend(chosen)
+        cats[cat] = _tally(cands[cat], log)
+    # 옛 길의 마지막 요청 중에 단계 마감이 끝나면 `try_legacy` 가 다시 불리지 않는다 — 여기서도 본다
+    # (codex 구현 검토 4회차)
+    if state['stage_cap'] or (stopped and stage.over()):
+        stopped.append('stage_time_cap')
+    funnel = {'categories': cats, 'legacy_filled': legacy_n, 'stopped': stopped,
+              'blocked': sorted(s for s, n in fails.items() if n >= BLOCK_AFTER and s)}
+    return picked, funnel, state['next']
 
 
 def summarize_chosen(chosen, bodydir, summarize=summarize_items):
@@ -276,6 +512,12 @@ def main():
             harvested.extend(items)
             print(f'  {category}: {len(items)}건 ({url.split("/")[2]})')
 
+    # 새 매체(2026-11-12) — 시간 상한 안에서만. 막히거나 느리면 notes 에 적고 지금까지의 매체로 간다
+    clock = time.monotonic()
+    extra = harvest_extra(ctx, Budget(EXTRA_FEED_BUDGET), notes)
+    harvested.extend(extra)
+    seconds = {'extra_feeds': round(time.monotonic() - clock, 1)}
+
     now = datetime.now(timezone.utc)
     # 피드가 없는 출처(일본은행 정책 발표문·연설 목록, 2026-09-26)
     for category, rows in pages(now.year).items():
@@ -292,19 +534,39 @@ def main():
             print(f'  {category}: {len(got)}건 ({url.split("/")[2]} 목록)')
     # 국내/해외 필터(common/region_filter.py) — 경제·매크로·정치에서 Jev 가 conf≥0.9 로 해외라 한 것만 뺀다.
     # dedupe **전에**: 같은 기사의 글로벌 사본이 남는다. 그날 파일에 이미 있는 기사는 빼지 않는다
-    categorized, region = apply_region_filter(categorize(harvested), exempt=guids_in(path))
-    chosen = select(dedupe(categorized), per_category=args.per_category, now=now)
-    print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건(글로벌·칼럼은 후보)')
+    # guid 충돌(매체도 URL 도 다른데 guid 가 같은 기사)은 지역 필터·dedupe **앞에서** 걷어낸다 — 요약 이월과
+    # 면제가 guid 만 본다. 그날 파일에 이미 있는 기사가 이긴다
+    rows, collided = reconcile(categorize(harvested), existing_index(path))
+    if collided:
+        notes.append(f'guid_collision: {len(collided)}건 버림')
+    categorized, region = apply_region_filter(rows, exempt=guids_in(path))
+    deduped = dedupe(categorized)
+    chosen = select(deduped, per_category=args.per_category, now=now, defer=ROTATE)
+    print(f'수집 {len(harvested)}건 → 중복 제거·선정 {len(chosen)}건(글로벌·칼럼은 후보, 미국 다섯 갈래는 따로)')
 
     fetch_bodies(chosen, args.bodydir, ctx)
+    tried = len(chosen)
     chosen = trim(chosen, now)             # 글로벌·칼럼 확정 — 본문·날짜가 확인된 것만
+    # 미국 다섯 갈래 — 매체를 돌려 가며 본문이 열리는 것만 확정한다
+    clock = time.monotonic()
+    picked, funnel, _ = spread_stage(deduped, args.bodydir, ctx, args.per_category, now, start=tried + 1)
+    seconds['confirm'] = round(time.monotonic() - clock, 1)
+    funnel.update(seconds=seconds, guid_collisions=collided)
+    notes.extend(f'{why}: 미국 갈래를 시간 안에 다 고르지 못했다' for why in funnel['stopped'])
+    # 예전 순서를 지킨다: MLCC, 미국 다섯 갈래, 글로벌, 칼럼
+    chosen = ([it for it in chosen if it.get('category') not in TWO_PHASE] + picked
+              + [it for it in chosen if it.get('category') in TWO_PHASE])
+    for it in chosen:
+        it.pop('_extra', None)             # 수집 중에만 쓰는 표시 — 저장하지 않는다
+    mix = Counter(it.get('source') for it in picked)
+    print(f'미국 다섯 갈래 {len(picked)}건 — ' + ', '.join(f'{s} {n}' for s, n in mix.most_common()))
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     carried = carry_summaries(path, chosen)
     if carried:
         print(f'  기존 요약 {carried}건 재사용')
     payload = {'report_date': args.date, 'harvested': len(harvested),
-               'notes': notes, 'items': chosen, 'region_filter': region}
+               'notes': notes, 'items': chosen, 'region_filter': region, 'funnel': funnel}
     # 요약 **전에** 한 번 저장한다 — 요약(외부 API·인증)이 어떤 식으로 죽어도 메타데이터와
     # MLCC 행은 남아야 한다(2026-09-24 구현 검토 #2).
     save_json(path, payload)

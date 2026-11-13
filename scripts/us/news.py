@@ -57,9 +57,9 @@ FEEDS = {
         '10000116',     # Retail
     )),
     'tech': (_CNBC.format('19854910'),),                      # Technology
+    # finance.yahoo.com/news/rssindex 는 2026-10-06 부터 404 — 브라우저 지문으로도 안 열린다. 뺐다(11/12).
     'pool': (_CNBC.format('100003114'),                       # Top News
-             _CNBC.format('10000664'),                        # Finance
-             'https://finance.yahoo.com/news/rssindex'),
+             _CNBC.format('10000664')),                       # Finance
     'mlcc': tuple(_YAHOO_TICKER.format(t) for t in MLCC_TICKERS),
     # 2026-09-26 「글로벌」 — 미·한 밖의 정책·경제 뉴스. 출처 실측은 `../plan.md` 2026-09-26 표.
     # 로이터는 reuters.com 이 401(DataDome)이라 Investing.com 이 전재한 판으로 받는다.
@@ -84,6 +84,38 @@ FEEDS = {
                'https://www.ecb.europa.eu/rss/blog.html',
                'https://www.bis.org/doclist/cbspeeches.rss',
                'https://www.nli-research.co.jp/RSS.rdf?site=nli'),          # 닛세이기초연구소(Atom)
+}
+
+# ── 매체 넓히기 (2026-11-12) ──────────────────────────────────────────────
+# When changing this: read `docs/superpowers/specs/2026-11-12-us-news-source-spread.md` first —
+# 매체별 실측(무엇이 403·유료벽·껍데기인지)과 codex 설계 검토의 재현 입력이 거기 있다.
+# 사용자 「미국 뉴스가 지금 다 cnbc」 — 위 politics·economy·industry·tech·pool 이 전부 CNBC 라
+# 미국 다섯 갈래는 9/23 부터 매 판 15건 중 15건이 CNBC 였다. **`FEEDS` 에 넣지 않는다**:
+# `collect_contested.py` 가 `FEEDS` 묶음을 그대로 돌고 자기 시간 상한을 쓴다. 이 목록은
+# `fetch_news.py` 만 읽는다. 묶음 이름은 갈래가 아니라 「어떻게 걸러 받나」다.
+_PBS = 'https://www.pbs.org/newshour/feeds/rss/{}'
+_FOX = 'https://moxie.foxbusiness.com/google-publisher/{}.xml'
+_GUARDIAN = 'https://www.theguardian.com/{}/rss'
+EXTRA_FEEDS = {
+    'x_politics': (_PBS.format('politics'), _GUARDIAN.format('us-news/us-politics'),
+                   'https://feeds.nbcnews.com/nbcnews/public/politics',
+                   'https://www.cbsnews.com/latest/rss/politics',
+                   'https://abcnews.go.com/abcnews/politicsheadlines'),
+    'x_economy': (_PBS.format('economy'), _FOX.format('economy'),
+                  'https://feeds.npr.org/1017/rss.xml'),
+    # 종합 비즈니스 피드 — 생활 기사가 섞인다(팔찌 경매·전시·메디케어 가입 안내, 11/12 실측).
+    # AI·매크로 낱말에 걸리거나 제목이 `_INDUSTRY` 에 걸릴 때만 받는다.
+    'x_business': ('https://fortune.com/feed/',
+                   'https://feeds.nbcnews.com/nbcnews/public/business',
+                   'https://www.cbsnews.com/latest/rss/moneywatch',
+                   'https://abcnews.go.com/abcnews/businessheadlines',
+                   _GUARDIAN.format('us/business')),
+    # AI·매크로 낱말에 걸린 것만(`pool` 과 같다)
+    'x_pool': ('https://techcrunch.com/feed/',
+               'https://feeds.arstechnica.com/arstechnica/index',
+               'https://www.theverge.com/rss/index.xml',
+               'https://api.axios.com/feed/',
+               _FOX.format('markets')),
 }
 
 LABELS = {'politics': '정치', 'economy': '경제', 'macro': '매크로', 'industry': '산업',
@@ -119,7 +151,28 @@ _MLCC = re.compile(
     r'(?i:\b(?:Murata|MRAAY|Samsung Electro-Mechanics|Taiyo Yuden|Yageo|Walsin|Holy Stone|'
     r'Sanhuan|Fenghua|MLCCs?|multilayer ceramic|capacitors?)\b)')
 _HINT = {'politics': 'politics', 'economy': 'economy', 'industry': 'industry',
-         'tech': 'industry', 'pool': None, 'global': None, 'insight': None}
+         'tech': 'industry', 'pool': None, 'global': None, 'insight': None,
+         'x_politics': 'politics', 'x_economy': 'economy', 'x_business': None, 'x_pool': None}
+# 종합 비즈니스 피드(`x_business`)의 기사를 산업 칸에 받는 **제목** 낱말. 적게 시작한다 — 넓히면
+# 「public land sales」「wedding dress sales」가 들어온다. 놓친 기사는 CNBC 업종 피드가 메운다.
+_INDUSTRY = re.compile(
+    r'\bCEO\b|\bIPO\b|\bFDA\b|'
+    r'(?i:\b(?:earnings|revenue|profits?|layoffs?|job cuts|merger|acquisition|acquires?|buyout|'
+    r'automakers?|airlines?|retailers?|drugmakers?|chipmakers?|production|factory|factories|'
+    r'recalls?|suppliers?|bankrupt\w*|shares|'
+    r'(?:quarterly|same-store|retail|car|auto|vehicle|holiday) sales|'
+    r'sales (?:fall|fell|rise|rose|drop|jump|surge|slump|slide|grow|climb|plunge|decline)\w*)\b)')
+# 새 피드의 의견·영상·라이브·방송 회차. 본문이 기사가 아니거나, 요약하면 견해가 사실처럼 실린다.
+_SKIP_URL = re.compile(r'/(?:commentisfree|live|video|watch|opinion|columns?|podcasts?|newsletters?)/')
+_SKIP_TITLE = re.compile(r'^\s*(?:WATCH|LISTEN|LIVE|Video|Opinion)\s*:|The Guardian view|'
+                         r'^\s*\d{1,2}/\d{1,2}:\s')
+
+
+def skipped(item):
+    """새 피드 행 가운데 기사가 아닌 것. 분류보다 **먼저** 본다 — 뒤에 두면 AI·매크로 낱말이 든
+    칼럼이 그 갈래로 빠져나간다(codex 설계 검토 1회차 #10)."""
+    return bool(_SKIP_URL.search(item.get('url') or '')
+                or _SKIP_TITLE.search(item.get('title') or ''))
 
 # ── 글로벌 (2026-09-26) ──────────────────────────────────────────────────
 # When changing this: read `docs/superpowers/specs/2026-09-26-global-news-sources.md` first —
@@ -228,6 +281,8 @@ def policy_score(text):
 def classify(item):
     """출처 묶음 + 제목·요약 -> 최종 갈래. 어디에도 안 맞는 종합 피드 기사는 None."""
     hint = item.get('category')
+    if hint in EXTRA_FEEDS and skipped(item):
+        return None
     if hint == 'mlcc':          # 무관한 종목 피드 기사는 다른 갈래로도 보내지 않는다 — 대개 몇 달 전 시황이다
         return 'mlcc' if _MLCC.search(item.get('title') or '') else None
     title = item.get('title') or ''
@@ -241,13 +296,20 @@ def classify(item):
         return 'global'
     text = f"{title} {item.get('summary') or ''}"
     if region_of(item) and policy_score(text) and not _JA_ROUTINE.search(title):
-        return 'global'
+        # 새 피드 행은 글로벌 칸으로 보내지 않는다 — 글로벌·칼럼은 예전 길(`select → fetch_bodies → trim`)로
+        # 본문을 받고 그 길에는 시간 상한이 없다. 새 매체의 느린 기사면이 거기로 새면 상한을 우회한다
+        # (codex 구현 검토 3회차). **미국 갈래로도 보내지 않는다**: 이 규칙은 미국 칸에 해외 정책 기사가
+        # 들어가지 않게 하는 그물이기도 하다(지역 필터 Jev 는 30초 안에 못 물은 행을 그대로 둔다).
+        # 11/12 실수집에서 정치 칸에 「Ukraine … Putin」이 실렸다. 글로벌 칸의 출처는 `FEEDS['global']` 그대로.
+        return None if hint in EXTRA_FEEDS else 'global'
     if hint == 'global':        # 세계 피드의 판다·만찬·사건 기사는 다른 갈래로 보내지 않는다
         return None
     if _AI.search(text):
         return 'ai'
     if _MACRO.search(text):
         return 'macro'
+    if hint == 'x_business':
+        return 'industry' if _INDUSTRY.search(title) else None
     return _HINT.get(hint, hint if hint in NARROWNESS else None)
 
 
@@ -304,6 +366,17 @@ _BOILERPLATE = (
     'data is a real-time snapshot', 'sign up for free newsletters',
 )
 
+# 매체별 안내문. **`extract_body(host=…)` 로 넘긴 호출에만** 더한다 — 이 함수는 일본 뉴스·텔레그램·
+# 쟁점 수집도 쓰고, 문구가 든 문단은 통째로 빠져 길이 하한을 건드린다(codex 설계 검토 1회차 #8).
+# NPR 음성 꼭지는 본문이 메뉴 글자와 고지문 두 문단뿐인 900자 껍데기다 — 둘이 빠지면 본문 없음이 된다.
+_HOST_BOILERPLATE = {
+    'www.foxbusiness.com': ('quotes displayed in real-time', 'market data provided by factset'),
+    'www.theverge.com': ('posts from this topic will be added', 'the verge is a part of'),
+    'www.npr.org': ('npr does not offer or accept money', 'wait wait...don', 'get npr+'),
+    'www.pbs.org': ('subscribe to here’s the deal', "subscribe to here's the deal"),
+    'arstechnica.com': ('ars technica has been separating',),
+}
+
 # 산문 한 문단의 하한. 캡션·크레딧·버튼 라벨을 걸러 내는 값이다.
 MIN_PARAGRAPH = 60
 
@@ -359,6 +432,11 @@ SOURCES = {
     'www.aljazeera.com': 'Al Jazeera', 'www.bbc.com': 'BBC', 'www.bbc.co.uk': 'BBC',
     'news.yahoo.co.jp': 'Yahoo!ニュース', 'www.boj.or.jp': 'Bank of Japan',
     'www.nli-research.co.jp': 'ニッセイ基礎研究所',
+    'www.pbs.org': 'PBS NewsHour', 'www.npr.org': 'NPR', 'www.nbcnews.com': 'NBC News',
+    'www.today.com': 'NBC News', 'www.cbsnews.com': 'CBS News', 'abcnews.com': 'ABC News',
+    'abcnews.go.com': 'ABC News', 'www.foxbusiness.com': 'Fox Business', 'fortune.com': 'Fortune',
+    'techcrunch.com': 'TechCrunch', 'arstechnica.com': 'Ars Technica',
+    'www.theverge.com': 'The Verge', 'www.axios.com': 'Axios',
 }
 
 
@@ -398,8 +476,8 @@ def parse_feed(xml, category):
     return out
 
 
-def extract_body(html, max_chars=DEFAULT_MAX_BODY):
-    """기사 HTML -> 읽을 수 있는 본문.
+def extract_body(html, max_chars=DEFAULT_MAX_BODY, host=None):
+    """기사 HTML -> 읽을 수 있는 본문. `host` 를 주면 그 매체의 안내문도 거른다.
 
     `release_text.to_text` 와 달리 **`<p>` 만 본다.** 발표문은 표가 본체라 통째로
     평탄화하는 것이 맞지만, 뉴스 기사는 본문이 전부 `<p>` 에 있고 나머지는 추천 기사·
@@ -420,13 +498,14 @@ def extract_body(html, max_chars=DEFAULT_MAX_BODY):
                 html = html[:min(stops)]
             break
     stripped = _DROP.sub(' ', html)
+    boilerplate = _BOILERPLATE + _HOST_BOILERPLATE.get(host, ())
     kept = []
     for raw in _PARA.findall(stripped):
         text = _WS.sub(' ', _html.unescape(_TAG.sub('', raw))).strip()
         if len(text) < MIN_PARAGRAPH:
             continue
         low = text.lower()
-        if any(b in low for b in _BOILERPLATE):
+        if any(b in low for b in boilerplate):
             continue
         kept.append(text)
     if kept and any(e in kept[0].lower()[:200] for e in _ERROR_PAGE):
@@ -471,7 +550,15 @@ def dedupe(items):
         out = []
         if it.get('guid'):
             out.append(('guid', it.get('source'), it['guid']))
-        u = _norm_url(it.get('url'))
+        # 새 피드 행(`identify`)은 guid 가 곧 URL 이다 — 추적 파라미터를 걷어내지 않는다. 걷어내면
+        # `?ref=1`·`?ref=2` 를 다른 기사로 식별해 놓고 여기서 하나로 합친다(codex 구현 검토 1회차).
+        # 기존 피드 행의 정규화 URL 이 이 URL 과 같으면 여전히 합쳐진다(가디언이 두 묶음에 다 있다).
+        # 끝의 `/` 는 **경로일 때만** 뗀다(`…/a/` 와 `…/a` 는 같은 주소다). 쿼리가 있으면 글자 그대로 —
+        # `?ref=1` 과 `?ref=1/` 을 하나로 만들지 않는다(구현 검토 2회차).
+        if it.get('_extra'):
+            u = it['guid'] if '?' in it['guid'] else it['guid'].rstrip('/')
+        else:
+            u = _norm_url(it.get('url'))
         if u:
             out.append(('url', None, u))
         return out
@@ -483,11 +570,12 @@ def dedupe(items):
             if a != b:
                 parent[b] = a
 
-    out, seen = [], {}
+    out, seen, rows_extra = [], {}, {}
     for it, ks in zip(rows, every):
         root = find(ks[0])
         if root not in seen:
             seen[root] = dict(it)
+            rows_extra[root] = bool(it.get('_extra'))
             out.append(seen[root])
             continue
         cur = seen[root]
@@ -498,17 +586,27 @@ def dedupe(items):
         for k, val in it.items():
             if val and not cur.get(k):
                 cur[k] = val
+        # 기존 피드에도 있는 기사는 기존 피드 기사다 — 새 피드 사본과 합쳐졌다고 `_extra` 가 붙으면
+        # 시간 상한의 옛 길(`legacy_fill`)이 이 행을 못 쓴다(구현 검토 2회차). 순서와 무관하게 뗀다.
+        if not it.get('_extra') or not rows_extra[root]:
+            rows_extra[root] = False
+            cur.pop('_extra', None)
     return out
 
 
-def select(items, per_category=DEFAULT_PER_CATEGORY, now=None):
+def select(items, per_category=DEFAULT_PER_CATEGORY, now=None, defer=()):
     """갈래별 상한을 적용한다. 갈래가 얇으면 **다른 갈래에서 채우지 않는다.**
 
     상한이지 할당량이 아니다 — 쓸 만한 것이 둘뿐인 날 셋째를 고르는 것은 자리를 채우는
     것이고, 그러면 발행본이 「오늘 있었던 일 목록」으로 되돌아간다.
+
+    `defer` 갈래는 고르지 않고 뺀다 — `fetch_news` 가 미국 다섯 갈래를 `confirm()` 으로 따로
+    고른다(2026-11-12). 기본값이면 예전과 같다.
     """
     buckets = {}
     for it in items or []:
+        if it.get('category') in defer:
+            continue
         buckets.setdefault(it.get('category'), []).append(it)
     out = []
     for cat in sorted(buckets, key=lambda c: NARROWNESS.get(c, 9)):
@@ -667,6 +765,223 @@ def trim(items, now):
     for cat in TWO_PHASE:
         out.extend(_two_phase(pools[cat], FINAL[cat], now, undated_ok=False))
     return out
+
+
+# ── 미국 다섯 갈래의 매체 돌려 뽑기 (2026-11-12) ──────────────────────────
+# When changing this: read `docs/superpowers/specs/2026-11-12-us-news-source-spread.md` first.
+# 「최신 3건」은 가장 자주 올리는 매체가 갈래를 차지한다(CNBC 15/15). 매체별로 줄을 세워 한 바퀴에
+# 매체당 한 건씩, **본문이 열리는지 확인하면서** 고른다 — 새 매체가 Actions 에서 막혀 있어도
+# 그 줄만 건너뛰고 다음 매체로 간다. 네트워크는 여기 없다: 본문 확인은 `try_body` 가 한다.
+ROTATE = ('ai', 'macro', 'politics', 'industry', 'economy')      # 고르는 순서(좁은 갈래부터)
+# guid 는 자리표시 `<!--NEWS:guid|…-->` 와 `data-news="…"`·`data-summary="…"` 에 글자 그대로 실린다.
+# `|`·`>` 는 자리표시 문법을 깨고, `& < " '` 는 확장기가 `&amp;` 로 바꿔 싣는데 `summary_violations()` 는
+# 속성을 풀지 않고 수집분과 대조한다 — 정상 확장한 요약이 「원문이 아니다」로 막혔다(codex 구현 검토 1회차).
+# 그런 URL 의 기사는 받지 않는다: 발행본의 guid 가 수집분의 guid 와 글자 하나까지 같아야 한다.
+_BAD_GUID = re.compile(r'[|<>"\'&\s]')
+STORY_JACCARD = 0.12
+# `collect_contested.cluster()` 가 쓰는 불용어 + 정치 기사 어디에나 있는 이름. 뒤쪽이 없으면
+# 「Democrats push … Trump …」 두 건이 고유명사 둘을 나눠 가져 같은 이야기가 된다.
+_STORY_STOP = set(
+    'the and for with from says said after over into its are was has have will this that '
+    'not but you your how why what who new more than about amid could would may can his her '
+    'their they them our out off one two all just as at by in of on to a an is be it or up us '
+    'we he she news live update updates report reports here there when where week year today '
+    'trump democrats democrat democratic republicans republican gop'.split())
+# 제목끼리만 볼 때 이름 구실을 못 하는 대문자 낱말 — 「CEO」「China」를 나눠 가진 닛산 기사와 엔비디아 기사가
+# 같은 이야기가 됐다(11/12 표본).
+_TITLE_GENERIC = set('ceo cfo american americans america white house senate congress supreme court '
+                     'wall street federal fed'.split())
+_CAP = re.compile(r"\b[A-Z][a-zA-Z\-']{2,}\b")
+_LOWER = re.compile(r'[a-z]{4,}')
+
+
+class Stop(Exception):
+    """`try_body` 가 올린다 — 시간이 다 됐다. 그때까지 확정한 것으로 끝낸다."""
+
+
+def identify(rows):
+    """새 피드 행에 식별값을 준다 — **guid 는 피드가 준 값이 아니라 프래그먼트만 뗀 원 URL** 이다.
+
+    발행본의 `data-news`, 요약 이월(`carry_summaries`), 지역 필터 면제, 확장기, 게이트가 모두
+    guid 만으로 기사를 찾는다. 매체가 늘면 서로 다른 기사가 같은 guid 를 달 수 있고(CBS·CNBC 는
+    숫자·uuid), 그러면 한 기사의 요약이 다른 기사에 붙는다. URL 은 기사마다 다르다.
+    추적 파라미터를 걷어내는 `_norm_url` 은 쓰지 않는다 — 그건 「같은 기사인가」(dedupe)의 도구이고,
+    `?ref=1`·`?ref=2` 가 다른 기사인 매체에서는 둘을 하나로 만든다(codex 설계 검토 4회차).
+    `dedupe` 도 새 피드 행은 이 guid 로만 합친다 — 식별과 중복 판정이 같은 기준이어야 한다.
+    """
+    out = []
+    for it in rows or []:
+        url = (it.get('url') or '').split('#', 1)[0]
+        if not url or _BAD_GUID.search(url):
+            continue
+        out.append(dict(it, guid=url, _extra=True))
+    return out
+
+
+def reconcile(rows, existing):
+    """(남길 행, 버린 행). guid 가 같은데 **매체도 URL 도 다른** 기사는 하나만 남긴다.
+
+    `existing` 은 그날 파일의 `{guid: (source, url)}` 이다. 지역 필터와 dedupe **앞에서** 부른다 —
+    그날 파일에만 있는 guid 를 다른 매체의 기사가 들고 오면 그 기사가 요약과 면제를 물려받는다
+    (codex 설계 검토 3회차). 같은 매체의 같은 guid 는 URL 이 달라도 같은 기사다: CNBC 는 제목을
+    고치면 슬러그만 바꾼다. 우선순위는 그날 파일에 있는 행 > 기존 피드 행 > 먼저 온 행.
+    """
+    saved = {g: (s, _norm_url(u)) for g, (s, u) in (existing or {}).items()}
+    groups, kept, dropped = {}, [], []
+    for r in rows or []:
+        groups.setdefault(r.get('guid'), []).append(r)
+
+    def same_article(a_source, a_url, b_source, b_url):
+        return a_source == b_source or a_url == b_url
+
+    for guid, group in groups.items():
+        if guid is None:
+            kept.extend(group)
+            continue
+        if guid in saved:
+            owner = saved[guid]
+        else:
+            first = min(group, key=lambda r: bool(r.get('_extra')))      # 기존 피드 행이 먼저
+            owner = (first.get('source'), _norm_url(first.get('url')))
+        for r in group:
+            if same_article(r.get('source'), _norm_url(r.get('url')), *owner):
+                kept.append(r)
+            else:
+                dropped.append({'guid': guid, 'source': r.get('source'), 'url': r.get('url'),
+                                'title': r.get('title')})
+    order = {id(r): i for i, r in enumerate(rows or [])}
+    kept.sort(key=lambda r: order[id(r)])
+    return kept, dropped
+
+
+def _story_toks(row):
+    text = f"{row.get('title') or ''} {(row.get('summary') or '')[:200]}"
+    caps = {w.lower() for w in _CAP.findall(text)} - _STORY_STOP
+    words = set(_LOWER.findall(text.lower())) - _STORY_STOP
+    return caps, words
+
+
+def _title_names(row):
+    title = (row.get('title') or '').replace('’', "'")
+    return ({w.lower().removesuffix("'s") for w in _CAP.findall(title)}
+            - _STORY_STOP - _TITLE_GENERIC)
+
+
+def same_story(a, b):
+    """두 행이 같은 큰 이야기인가 — 매체가 달라도 한 갈래에 한 번만 싣는다.
+
+    「같다」는 사건이 아니라 **큰 이야기**다: 하루에 기사가 수십 건 나오는 이야기(11/12 의 엔비디아
+    CEO 건)는 갈래마다 한 자리만 차지한다. 세 길 가운데 하나면 같다.
+      · `same_event` — 제목 낱말 자카드 0.5. 매체가 다르면 거의 안 걸린다.
+      · 제목+요약에서 고유명사 둘 이상 공유 + 낱말 자카드 0.12 이상(`collect_contested.cluster()` 기준).
+      · **제목끼리** 고유명사 둘 이상 공유 — 「Scott Colom rejoices…」와 「Scott Colom wins Mississippi
+        Senate race」처럼 각도가 달라 낱말이 안 겹치는 쌍(11/12 실수집에서 정치 칸에 같은 선거가 두 번).
+    **완벽하지 않다** — 고정물(`tests/fixtures/same_story_pairs.json`)에서 같다고 본 쌍은 전부 맞았고
+    같은 이야기 쌍의 84% 를 잡는다. 넓은 표본에는 나라 이름 둘(Russia·Ukraine)을 나눠 가진 다른 기사가
+    묶이는 오탐이 있다 — 그 비용은 그 갈래에서 기사 한 건을 건너뛰는 것이다. 놓친 중복은 작성자가 거른다.
+    """
+    if same_event(a.get('title'), b.get('title')):
+        return True
+    if len(_title_names(a) & _title_names(b)) >= 2:
+        return True
+    ca, wa = _story_toks(a)
+    cb, wb = _story_toks(b)
+    union = wa | wb
+    return len(ca & cb) >= 2 and bool(union) and len(wa & wb) / len(union) >= STORY_JACCARD
+
+
+def candidates(items, now):
+    """{갈래: [행]} — 미국 다섯 갈래의 후보. 날짜가 있으면 창(36시간) 안이어야 하고, 없으면 통과한다
+    (기사면에서 읽은 뒤 `confirm` 이 다시 본다)."""
+    out = {cat: [] for cat in ROTATE}
+    for it in items or []:
+        if it.get('category') in out and _fresh(it, now, undated_ok=True):
+            out[it['category']].append(it)
+    return out
+
+
+def _newest_first(rows):
+    def key(r):
+        when = _when(r)
+        return (when is None, -(when.timestamp() if when else 0))
+    return sorted(rows, key=key)
+
+
+def lanes(rows):
+    """매체별 줄. 줄 안은 최신순(날짜 없는 행은 뒤), 줄 순서는 맨 앞 기사의 최신순."""
+    by = {}
+    for r in _newest_first(rows or []):
+        by.setdefault(r.get('source') or '', []).append(r)
+
+    def head(source):
+        when = _when(by[source][0])
+        return (when is None, -(when.timestamp() if when else 0), source)
+    return [by[s] for s in sorted(by, key=head)]
+
+
+def confirm(rows, try_body, cap, now):
+    """(확정 행, [(행, 결과)], 시간이 다 됐나). 한 바퀴에 한 매체는 확정 한 건을 넘지 못한다.
+
+    각 매체는 확정이 나올 때까지 자기 줄의 다음 기사로 내려간다: 이미 확정한 것과 같은 이야기면
+    본문을 묻지 않고 건너뛰고, `try_body(row)` 가 거짓이면(본문이 안 열림) 다음 기사, 기사면에서도
+    시각을 못 읽었거나 창 밖이면 다음 기사. **같은 이야기는 확정된 것에 대해서만 접는다** — 본문 전에
+    접으면 먼저 고른 쪽이 안 열릴 때 대체본이 없다. 결과는 chosen·same_story·no_body·undated·stale.
+    """
+    queue, chosen, log = lanes(rows), [], []
+    try:
+        while len(chosen) < cap and any(queue):
+            for lane in queue:
+                while lane:
+                    r = lane.pop(0)
+                    if any(same_story(r, c) for c in chosen):
+                        log.append((r, 'same_story'))
+                        continue
+                    if not try_body(r):
+                        log.append((r, 'no_body'))
+                        continue
+                    if _when(r) is None:
+                        log.append((r, 'undated'))
+                        continue
+                    if now is not None and not _fresh(r, now, undated_ok=False):
+                        log.append((r, 'stale'))
+                        continue
+                    chosen.append(r)
+                    log.append((r, 'chosen'))
+                    break
+                if len(chosen) >= cap:          # 바퀴 도중에도 멈춘다 — 매체 넷이면 넷을 고르던 자리
+                    break
+    except Stop:
+        return chosen, log, True
+    return chosen, log, False
+
+
+def legacy_fill(rows, chosen, try_body, cap):
+    """(행, [(행, 결과)]). 시간이 다 돼 못 채운 자리를 **예전 방식**으로 채운다 — 기존 피드 행의 최신순.
+
+    창을 걸지 않는다: 「지금보다 얇아지지 않는다」가 이 길의 약속이라 규칙이 예전과 같아야 한다.
+    이미 본문을 물어 실패한 행은 다시 묻지 않는다. 후보가 모자라서 빈 자리에는 쓰지 않는다 —
+    조용한 날 3건보다 적은 것은 의도다(`fetch_news` 가 시간 상한 때만 부른다).
+    """
+    out, log = list(chosen), []
+    have = {r.get('guid') for r in out}
+    pool = [r for r in rows or [] if not r.get('_extra')]
+    try:
+        for r in _newest_first(pool):
+            if len(out) >= cap:
+                break
+            if r.get('guid') in have or any(same_story(r, c) for c in out):
+                continue
+            if 'body_chars' in r and not r['body_chars']:
+                continue
+            if not try_body(r):
+                log.append((r, 'no_body'))
+                continue
+            out.append(r)
+            have.add(r.get('guid'))
+            log.append((r, 'chosen'))
+    except Stop:
+        pass
+    return out, log
 
 
 _LD_DATE = re.compile(r'"datePublished"\s*:\s*"([^"]+)"')

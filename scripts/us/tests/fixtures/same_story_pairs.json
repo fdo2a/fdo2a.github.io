@@ -1,0 +1,616 @@
+{
+ "note": "2026-11-12 실제 수집 제목·RSS 요약(200자). same = 같은 큰 이야기(사건이 아니라). 합격 기준: 정밀 >= 0.9, 재현 >= 0.5",
+ "pairs": [
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Scott Colom wins Mississippi Senate election over incumbent Republican Hyde-Smith",
+    "summary": "Scott Colom will be the first Democrat elected to the Senate from the state since 1982, and Mississippi's first Black senator since Reconstruction."
+   },
+   "b": {
+    "source": "www.pbs.org",
+    "title": "Scott Colom wins Senate election in Mississippi",
+    "summary": "Democratic nominee Scott Colom has defeated Republican Sen. Cindy Hyde-Smith in Mississippi's closely contested U.S. Senate race after a prolonged ballot counting process, giving the state its first B"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Scott Colom wins Mississippi Senate election over incumbent Republican Hyde-Smith",
+    "summary": "Scott Colom will be the first Democrat elected to the Senate from the state since 1982, and Mississippi's first Black senator since Reconstruction."
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "Democrat Scott Colom unseats Cindy Hyde-Smith in stunning Mississippi Senate win",
+    "summary": "<p>Colom takes victory by razor-thin margin in state that has not elected a Democrat to the Senate since 1982</p><p>Democrat Scott Colom defeated Cindy Hyde-Smith, the incumbent Republican senator, to"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Mississippi Senate: Scott Colom lead over Hyde-Smith pops to more than 4,400 votes",
+    "summary": "Tuesday was the deadline for provisional ballots to be resolved in Mississippi, and the deadline for the receipt of mail-in absentee ballots."
+   },
+   "b": {
+    "source": "www.pbs.org",
+    "title": "News Wrap: Democrat Scott Colom defeats Mississippi Sen. Cindy Hyde-Smith",
+    "summary": "In our news wrap Wednesday, Democrat Scott Colom has defeated incumbent Republican Sen. Cindy Hyde-Smith in Mississippi, a group that included Defense Secretary Pete Hegseth was admonished by an Army "
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "Scott Colom wins Senate election in Mississippi",
+    "summary": "Democratic nominee Scott Colom has defeated Republican Sen. Cindy Hyde-Smith in Mississippi's closely contested U.S. Senate race after a prolonged ballot counting process, giving the state its first B"
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "Democrat Scott Colom unseats Cindy Hyde-Smith in stunning Mississippi Senate win",
+    "summary": "<p>Colom takes victory by razor-thin margin in state that has not elected a Democrat to the Senate since 1982</p><p>Democrat Scott Colom defeated Cindy Hyde-Smith, the incumbent Republican senator, to"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "The Guardian",
+    "title": "Promises and pride: Scott Colom rejoices with young and old on historic night in Mississippi",
+    "summary": "<p>When he finally arrived at his victory party, Colom walked out to T.I.’s Let ‘Em Know. The audience, still galvanized even after hours of standing, roared</p><p>About a thousand people gathered on "
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "How Scott Colom won deep-red Mississippi with little help from Democrats",
+    "summary": "<p>Democrat chatted up people at hair salons, colleges and at Trump rallies to become Mississippi’s first Black senator since Reconstruction</p><p>The <a href=\"https://www.youtube.com/shorts/ozTp2-tou"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Scott Colom wins Mississippi Senate election over incumbent Republican Hyde-Smith",
+    "summary": "Scott Colom will be the first Democrat elected to the Senate from the state since 1982, and Mississippi's first Black senator since Reconstruction."
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "Promises and pride: Scott Colom rejoices with young and old on historic night in Mississippi",
+    "summary": "<p>When he finally arrived at his victory party, Colom walked out to T.I.’s Let ‘Em Know. The audience, still galvanized even after hours of standing, roared</p><p>About a thousand people gathered on "
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Hegseth impeachment effort torpedoed in House",
+    "summary": "GOP Rep. Thomas Massie, who has clashed with President Donald Trump, kicked off the Hegseth impeachment fight days after a blue wave midterm election."
+   },
+   "b": {
+    "source": "www.pbs.org",
+    "title": "House rejects Hegseth impeachment as GOP selects Jordan and Thune as leaders",
+    "summary": "Power shifts in Washington continued as new party leadership began to take shape. In the House, the GOP picked Jim Jordan to be their new leader and Senate Republicans re-elected John Thune. The House"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Hegseth impeachment effort torpedoed in House",
+    "summary": "GOP Rep. Thomas Massie, who has clashed with President Donald Trump, kicked off the Hegseth impeachment fight days after a blue wave midterm election."
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "Democrats lambast absent peers after Republicans block Hegseth impeachment attempt",
+    "summary": "<p>Eleven Democrats missed the key procedural vote on the impeachment effort, which failed by just seven votes</p><ul><li><p><a href=\"https://www.theguardian.com/us-news/live/2026/nov/11/donald-trump-"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Hegseth impeachment articles introduced by Rep. Massie",
+    "summary": "The House is likely to vote this week on articles of impeachment against Defense Secretary Pete Hegseth filed by Republican Rep. Thomas Masie."
+   },
+   "b": {
+    "source": "www.pbs.org",
+    "title": "A breakdown of the impeachment articles filed against Pete Hegseth",
+    "summary": "For a legal perspective on the effort to impeach Defense Secretary Pete Hegseth, Geoff Bennett spoke with Eugene Fidell. He's a longtime military law expert who served as a Coast Guard lawyer and late"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "Judge allows Trump defamation case against BBC to proceed but tosses 1 claim",
+    "summary": "President Donald Trump's $10 billion defamation case against the BBC remains on track, for the moment."
+   },
+   "b": {
+    "source": "www.cbsnews.com",
+    "title": "Judge denies motion to dismiss Trump's defamation case against BBC",
+    "summary": "A U.S. federal judge has denied a motion to dismiss President Trump's defamation case against the BBC, allowing the case to proceed."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "Judge allows Trump defamation case against BBC to proceed but tosses 1 claim",
+    "summary": "President Donald Trump's $10 billion defamation case against the BBC remains on track, for the moment."
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "Federal judge allows Trump’s $10bn defamation lawsuit against BBC to proceed",
+    "summary": "<p>Trump-appointed judge Jeffrey T Kuntz partially denies British broadcaster’s motion to dismiss over edit</p><p>Federal judge Jeffrey T Kuntz ruled on Tuesday that Donald Trump’s lawsuit against the"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "abcnews.com",
+    "title": "Judge allows Trump defamation case against BBC to proceed but tosses 1 claim",
+    "summary": "President Donald Trump’s $10 billion defamation case against the BBC remains on track for now"
+   },
+   "b": {
+    "source": "The Guardian",
+    "title": "Federal judge allows Trump’s $10bn defamation lawsuit against BBC to proceed",
+    "summary": "<p>Trump-appointed judge Jeffrey T Kuntz partially denies British broadcaster’s motion to dismiss over edit</p><p>Federal judge Jeffrey T Kuntz ruled on Tuesday that Donald Trump’s lawsuit against the"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.cbsnews.com",
+    "title": "White House warns of \"blatant criminality\" in Democratic probes",
+    "summary": "White House counsel Will Scharf warned that congressional subpoenas could lead to investigations from the executive branch."
+   },
+   "b": {
+    "source": "abcnews.com",
+    "title": "White House confronts Democrats over planned probes, claiming possible 'criminality'",
+    "summary": "The White House has issued a warning to Democrats over their planned probes into the Trump administration"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "White House threatens Democrats over plans to investigate Trump officials",
+    "summary": "With Democrats set to take control of Congress, the White House is threatening them over investigations into the Trump administration. The top White House lawyer warned that aggressive oversight of th"
+   },
+   "b": {
+    "source": "www.nbcnews.com",
+    "title": "White House warns congressional Democrats: Investigating us may be a crime",
+    "summary": "Rep. Robert Garcia, the incoming House Oversight Committee chair, noted that the Constitution grants Congress “latitude to conduct investigations.”"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "White House sends warning to Democrats about investigating the Trump administration",
+    "summary": "The White House has issued a warning to Democrats over their planned probes into the Trump administration, going as far as claiming that such investigations — a standard oversight function of Congress"
+   },
+   "b": {
+    "source": "abcnews.com",
+    "title": "White House confronts Democrats over planned probes, claiming possible 'criminality'",
+    "summary": "The White House has issued a warning to Democrats over their planned probes into the Trump administration"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Nvidia hires law firm Wachtell Lipton to lead Jensen Huang affair probe",
+    "summary": "On Sunday, Huang admitted to having an affair with a woman who has been connected to Chinese intelligence by reports in The New York Times and Financial Times."
+   },
+   "b": {
+    "source": "www.nbcnews.com",
+    "title": "Nvidia hires former acting U.S. attorney to probe Jensen Huang affair",
+    "summary": "Nvidia shares have tumbled by more than 10% since Monday, erasing almost $500 billion in market value."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Nvidia board meeting to decide CEO Jensen Huang’s fate stretches into evening",
+    "summary": "Nvidia's board is meeting days after CEO Jensen Huang admitted to an affair with a woman who is believed by U.S. intelligence of being a Chinese spy."
+   },
+   "b": {
+    "source": "www.axios.com",
+    "title": "\"Congress will investigate\": Nvidia CEO Jensen Huang faces probe over alleged Chinese spy ties",
+    "summary": "<p>Nvidia CEO <a href=\"https://www.axios.com/2026/10/21/nvidia-ceo-jensen-huang-europe-sovereign-ai-tour-bubble\" target=\"_blank\">Jensen Huang</a> is facing increasing congressional scrutiny after mult"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "U.S. gas prices fall below $4 for the first time since July",
+    "summary": "Americans may finally find some relief at the pump."
+   },
+   "b": {
+    "source": "www.foxbusiness.com",
+    "title": "Gas prices fall below $4 a gallon for first time since July",
+    "summary": "AAA data shows the national average gas price dropped below $4 a gallon for the first time in months as winter blend fuel and lower demand ease costs."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.foxbusiness.com",
+    "title": "Gas prices fall below $4 a gallon for first time since July",
+    "summary": "AAA data shows the national average gas price dropped below $4 a gallon for the first time in months as winter blend fuel and lower demand ease costs."
+   },
+   "b": {
+    "source": "www.npr.org",
+    "title": "Why is gasoline suddenly under $4 a gallon?",
+    "summary": "The average price of a gallon of gasoline dipped below $4 this week for the first time in months. Does that mean more relief is coming for drivers?"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Tesla to wind down Cybertruck production in Texas next year to ramp Cybercab, Musk says",
+    "summary": "The Cybertruck and its polarizing design gained a niche following, but it did not achieve mass-market sales and Tesla has issued several voluntary recalls."
+   },
+   "b": {
+    "source": "www.cbsnews.com",
+    "title": "Tesla extends Cybertruck production to clear backlog, Musk says",
+    "summary": "Tesla CEO Elon Musk originally said Tesla would wind down production​ at its Texas factory in mid-2027."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Tesla to wind down Cybertruck production in Texas next year to ramp Cybercab, Musk says",
+    "summary": "The Cybertruck and its polarizing design gained a niche following, but it did not achieve mass-market sales and Tesla has issued several voluntary recalls."
+   },
+   "b": {
+    "source": "www.foxbusiness.com",
+    "title": "Tesla to wind down Cybertruck production at Texas factory next year to make room for Cybercab",
+    "summary": "Elon Musk says Tesla will wind down Cybertruck production at Gigafactory Texas by mid-2027 to make room for increased Cybercab robotaxi output."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Meta head of infrastructure will leave and be succeeded by former AWS cloud exec",
+    "summary": "Meta's head of infrastructure and co-head of engineering Santosh Janardhan will leave in 2027, with former AWS senior vice president David Brown taking over."
+   },
+   "b": {
+    "source": "techcrunch.com",
+    "title": "Meta is losing its longtime head of infrastructure",
+    "summary": "Santosh Janardhan, who originally joined the company in 2009, will be stepping down from his role."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "4 key findings in the Jeffrey Epstein report from GOP-led House Oversight panel",
+    "summary": "Jeffrey Epstein's crimes committed after 2005 could have been prevented, barring \"repeated failures\" from law enforcement and federal prosecutors. That's one of the findings in a report published Tues"
+   },
+   "b": {
+    "source": "www.nbcnews.com",
+    "title": "House GOP report on Jeffrey Epstein rips Justice Department, urges further investigation",
+    "summary": "“Too many survivors and other witnesses informed this Committee that they were never approached or properly questioned by federal authorities,” the Republican report said."
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "Anthropic sets IPO price range of $70 to $78, looks to start trading Nov. 19, sources say",
+    "summary": "Anthropic's IPO is expected to come roughly five months after Elon Musk took SpaceX public in a record offering."
+   },
+   "b": {
+    "source": "www.nbcnews.com",
+    "title": "Anthropic eyes $1.4 trillion IPO valuation",
+    "summary": "Anthropic has begun marketing for its proposed IPO, targeting a $1.4 trillion valuation. NBC News’ Allie Canal reports on Anthropic’s approach to its stock market debut amid concerns about the stabili"
+   }
+  },
+  {
+   "same": true,
+   "a": {
+    "source": "CNBC",
+    "title": "CoreWeave soars more than 24% for best day since April 2025 after strong Q3 report",
+    "summary": "Neoclouds such as CoreWeave, Nebius and IREN have come under scrutiny this month as investors assessed the sustainability of the AI trade."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "CoreWeave beats on revenue and lifts guidance, easing AI slowdown concerns",
+    "summary": "CoreWeave's stock has been hammered heading into the neocloud's Q3 earnings report."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Scott Colom wins Mississippi Senate election over incumbent Republican Hyde-Smith",
+    "summary": "Scott Colom will be the first Democrat elected to the Senate from the state since 1982, and Mississippi's first Black senator since Reconstruction."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "Hegseth impeachment effort torpedoed in House",
+    "summary": "GOP Rep. Thomas Massie, who has clashed with President Donald Trump, kicked off the Hegseth impeachment fight days after a blue wave midterm election."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "Judge allows Trump defamation case against BBC to proceed but tosses 1 claim",
+    "summary": "President Donald Trump's $10 billion defamation case against the BBC remains on track, for the moment."
+   },
+   "b": {
+    "source": "www.cbsnews.com",
+    "title": "White House warns of \"blatant criminality\" in Democratic probes",
+    "summary": "White House counsel Will Scharf warned that congressional subpoenas could lead to investigations from the executive branch."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "www.pbs.org",
+    "title": "Biden says he wouldn't have run for a second term in 2024 if he knew he had cancer",
+    "summary": "Joe Biden says he did not know he had cancer while he was president and would not have sought a second term if he already had been diagnosed."
+   },
+   "b": {
+    "source": "www.nbcnews.com",
+    "title": "Pro-Palestinian protesters pelt Joe Biden with objects outside Irish university",
+    "summary": "Videos show protesters chanting “Blood on your hands” and pelting objects at the former president outside Trinity College Dublin."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Canada’s ambassador warns Trump tariffs are driving up costs, threatening U.S. investment",
+    "summary": "U.S.-Canada trade tensions persist as Trump's tariffs drive up costs, threaten investment and complicate negotiations between the two countries."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "White House vows to press ahead with tariffs despite midterm backlash over rising prices",
+    "summary": "Business executives warned at a Washington summit of rising costs and shifting supply chains as polls showed growing opposition to Trump's tariffs."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Consumer prices rose 0.4% in October, more than expected, complicating Fed's inflation fight",
+    "summary": "The report comes at a critical juncture for the Federal Reserve as it considers its next move regarding interest rates."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "U.S. gas prices fall below $4 for the first time since July",
+    "summary": "Americans may finally find some relief at the pump."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Tesla beats on earnings and sales even as auto revenue declines",
+    "summary": "Tesla reported better-than-expected third-quarter results."
+   },
+   "b": {
+    "source": "www.cbsnews.com",
+    "title": "Tesla extends Cybertruck production to clear backlog, Musk says",
+    "summary": "Tesla CEO Elon Musk originally said Tesla would wind down production​ at its Texas factory in mid-2027."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Meta head of infrastructure will leave and be succeeded by former AWS cloud exec",
+    "summary": "Meta's head of infrastructure and co-head of engineering Santosh Janardhan will leave in 2027, with former AWS senior vice president David Brown taking over."
+   },
+   "b": {
+    "source": "www.foxbusiness.com",
+    "title": "Meta ordered to pay $25B after jury finds it misled users on data privacy",
+    "summary": "The $25 billion penalty comes after jurors found Meta committed more than 43 million violations of New Mexico&apos;s consumer protection laws."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "techcrunch.com",
+    "title": "OpenAI’s quarterly revenue reportedly crosses $10B for the first time",
+    "summary": "Sales of $10 billion represents an almost 50% jump from revenue of $6.7 billion the company recorded in the second quarter."
+   },
+   "b": {
+    "source": "techcrunch.com",
+    "title": "OpenAI acquires Odessia, travel startup created by Sonder founder",
+    "summary": "OpenAI has not yet said what its plans are for the future of travel. But Sonder founder Francis Davidson is a well-known figure in the travel industry."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "OpenAI deepens Abu Dhabi foothold as Sam Altman inks deals spanning energy, government and investment",
+    "summary": "OpenAI signed four Abu Dhabi agreements spanning energy, government and investment as Sam Altman met the emirate’s crown prince."
+   },
+   "b": {
+    "source": "techcrunch.com",
+    "title": "OpenAI’s quarterly revenue reportedly crosses $10B for the first time",
+    "summary": "Sales of $10 billion represents an almost 50% jump from revenue of $6.7 billion the company recorded in the second quarter."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Anthropic sets IPO price range of $70 to $78, looks to start trading Nov. 19, sources say",
+    "summary": "Anthropic's IPO is expected to come roughly five months after Elon Musk took SpaceX public in a record offering."
+   },
+   "b": {
+    "source": "fortune.com",
+    "title": "A day after Anthropic’s office push, Databricks jumps in with AI agents that never sleep",
+    "summary": "The $190 billion AI startup's new tool, which operates in the background and shadows the user's daily workday, comes on the heels of Anthropic's renewed push for corporate users."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "House Oversight calls on DOJ to interview key Epstein witnesses, says govt. ‘failed’ survivors",
+    "summary": "\"The federal government has failed the survivors of Jeffrey Epstein and Ghislaine Maxwell's horrific crimes for decades,\" Rep. James Comer, R-Ky., said."
+   },
+   "b": {
+    "source": "www.nbcnews.com",
+    "title": "Pro-Palestinian protesters pelt Joe Biden with objects outside Irish university",
+    "summary": "Videos show protesters chanting “Blood on your hands” and pelting objects at the former president outside Trinity College Dublin."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "www.cbsnews.com",
+    "title": "White House warns of \"blatant criminality\" in Democratic probes",
+    "summary": "White House counsel Will Scharf warned that congressional subpoenas could lead to investigations from the executive branch."
+   },
+   "b": {
+    "source": "arstechnica.com",
+    "title": "Democrats oppose plan to stack FCC with Republicans, plan probes of Chairman Carr",
+    "summary": "Democrats accuse FCC nominee of evading questions about Carr, her current boss."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Here are five key takeaways from the Fed rate decision and Warsh news conference",
+    "summary": "Even though the interest-rate vote went as expected, there were a few surprises out of this week's Federal Open Market Committee meeting."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "Bessent says 'not necessarily' a mistake if the Fed hikes again",
+    "summary": "Treasury Secretary Scott Bessent joined CNBC for an interview on Oct. 28, 2026."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Elon Musk's Tesla and SpaceX lose over $420 billion in combined market cap after midterms",
+    "summary": "Elon Musk's Tesla and SpaceX lose $420 billion in combined market cap after midterms"
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "With earnings in rearview mirror, SpaceX-Tesla merger chatter takes center stage",
+    "summary": "A Tesla-SpaceX merger may be in the works, but the companies face a long road of negotiations and regulatory reviews."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Australia hikes rates to 18-year high to fight inflation",
+    "summary": "The Reserve Bank of Australia's decision was in line with expectations from economists polled by Reuters, and marked its fifth rate increase this year."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "Bank of England hikes interest rate for the first time since Iran war, warns inflation will near 5%",
+    "summary": "One policymaker voted to raise the bank's key interest rate to 4.25%."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "China wholesale inflation hits highest in more than four years as consumer measure slows",
+    "summary": "The PPI for October came in at 5.7%, compared to the 5.3% expected by economists polled by Reuters."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "Euro zone inflation hits 4% for first time in three years as interest rate hike looms",
+    "summary": "It was driven by energy inflation, which surged above 20% in October."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "www.cbsnews.com",
+    "title": "SNAP proposal would increase food insecurity, critics say",
+    "summary": "Anti-hunger advocates are blasting a proposed change to SNAP rules that could cut off more than 6 million people from access to federal food aid."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "Social Security could pay full benefits until 2059 if taxable payroll kept pace with GDP: AARP report",
+    "summary": "An aging work force is not the only reason Social Security's trust funds now have a looming shortfall, according to AARP Public Policy Institute research."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Feds arrest top official of healthcare company, alleging illegal drug importation",
+    "summary": "U.S. officials are accusing two top officials of a Canadian company of operating a scheme to illegally import prescription drugs, court records show."
+   },
+   "b": {
+    "source": "CNBC",
+    "title": "Fed's Goolsbee calls inflation report 'borderline disturbing' as central bank weighs more hikes",
+    "summary": "The consumer price index rose more than expected in October, raising alarm among Federal Reserve officials."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Scott Colom wins Mississippi Senate election over incumbent Republican Hyde-Smith",
+    "summary": "Scott Colom will be the first Democrat elected to the Senate from the state since 1982, and Mississippi's first Black senator since Reconstruction."
+   },
+   "b": {
+    "source": "www.pbs.org",
+    "title": "Judge allows Trump defamation case against BBC to proceed but tosses 1 claim",
+    "summary": "President Donald Trump's $10 billion defamation case against the BBC remains on track, for the moment."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "Hegseth impeachment effort torpedoed in House",
+    "summary": "GOP Rep. Thomas Massie, who has clashed with President Donald Trump, kicked off the Hegseth impeachment fight days after a blue wave midterm election."
+   },
+   "b": {
+    "source": "www.pbs.org",
+    "title": "4 key findings in the Jeffrey Epstein report from GOP-led House Oversight panel",
+    "summary": "Jeffrey Epstein's crimes committed after 2005 could have been prevented, barring \"repeated failures\" from law enforcement and federal prosecutors. That's one of the findings in a report published Tues"
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "www.nbcnews.com",
+    "title": "Anthropic eyes $1.4 trillion IPO valuation",
+    "summary": "Anthropic has begun marketing for its proposed IPO, targeting a $1.4 trillion valuation. NBC News’ Allie Canal reports on Anthropic’s approach to its stock market debut amid concerns about the stabili"
+   },
+   "b": {
+    "source": "techcrunch.com",
+    "title": "OpenAI’s quarterly revenue reportedly crosses $10B for the first time",
+    "summary": "Sales of $10 billion represents an almost 50% jump from revenue of $6.7 billion the company recorded in the second quarter."
+   }
+  },
+  {
+   "same": false,
+   "a": {
+    "source": "CNBC",
+    "title": "U.S. gas prices fall below $4 for the first time since July",
+    "summary": "Americans may finally find some relief at the pump."
+   },
+   "b": {
+    "source": "www.cbsnews.com",
+    "title": "Tesla extends Cybertruck production to clear backlog, Musk says",
+    "summary": "Tesla CEO Elon Musk originally said Tesla would wind down production​ at its Texas factory in mid-2027."
+   }
+  }
+ ]
+}
