@@ -5,9 +5,9 @@
  "report_date": "2026-11-13",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-13T12:16:09+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-13T12:32:07+00:00",
  "cutoff_at": "2026-11-13T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 469,
+  "harvest": 463,
   "candidates": 1,
   "articles": [
    6
@@ -35,28 +35,27 @@
   "runner": "local",
   "discovery": "truncated",
   "hosts": {
-   "edaily": "ok",
-   "newspim": "ok",
-   "dailian": "ok",
-   "etoday": "ok",
-   "khan": "ok",
-   "news1": "ok",
+   "joongang": "ok",
+   "sbs": "ok",
+   "kbs": "ok",
+   "yna": "ok",
+   "mk": "ok",
    "mt": "ok"
   },
   "notes": [
-   "discover:469"
+   "discover:463"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 15102,
-   "out": 4342
+   "in": 14930,
+   "out": 3824
   }
  },
  "event": {
-  "topic_ko": "젠슨 황 사임 뒤 엔비디아의 한국 GPU 공급과 협력 유지 여부",
-  "query": "GPU 젠슨 26만장",
+  "topic_ko": "트럼프의 멕시코 관세 2배 경고와 중미 이민자 행렬",
+  "query": "관세 트럼프 2배",
   "trigger": []
  },
- "content_hash": "0c5262eb75734259"
+ "content_hash": "570c98360257f00e"
 }
