@@ -138,7 +138,7 @@ def _show(d, signed=False):
     if d is None:
         return '없음'
     if isinstance(d, Decimal):
-        s = format(d, 'f')
+        s = format(d, ',f')
         return '+' + s if signed and d > 0 else s
     return str(d)
 
@@ -228,6 +228,11 @@ def _head(table, kids):
 
 def _raw_text(n):
     return re.sub(r'\s+', ' ', ''.join(n.raw)).strip()
+
+
+def _head_text(table, kids):
+    head, _ = _head(table, kids)
+    return ' | '.join(_raw_text(c) for c in _cells(head[0], kids)) if head else '없음'
 
 
 def _signature(table, kids):
@@ -654,7 +659,7 @@ def audit(html, data, date, effective=None):
                 found[home].append(t)
             else:
                 res.violations.append(f'[KR {TABLE_NAME[home]}] — 「{SECTION_OF[home]}」 섹션에 지도에 없는 표가 있다'
-                                      f'(머리 「{_raw_text(_head(t, kids)[0][0]) if _head(t, kids)[0] else "없음"}」)')
+                                      f'(머리 「{_head_text(t, kids)}」)')
         elif kind:
             res.violations.append(f'[KR {TABLE_NAME[kind]}] — 지도 표가 다른 섹션({title or "섹션 밖"})에 있다')
 
