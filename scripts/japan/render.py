@@ -139,7 +139,9 @@ def _t_next(d):
     rows = [[_e(e['date']), _e(e.get('time_jst') or '—'), _e(e['name_ko']), _e(e.get('watch') or '')]
             for e in d['next_events']]
     if not rows:
-        return '<p class="caption">앞으로 2주 안에 확인된 일본 일정이 없다.</p>'
+        # 「일정이 없다」고 단정하지 않는다 — 일정표는 원출처에서 확인한 것만 담고 결산·부처 발표는 빠질 수 있다.
+        # 본문이 13일 결산을 적은 바로 뒤에 「일정이 없다」가 붙어 앞뒤가 어긋났다(2026-11-12 발행본).
+        return '<p class="caption">확인해 둔 공표 일정표에는 앞으로 2주 안에 잡힌 일본 일정이 없다.</p>'
     return _table(['날짜', '시각(JST)', '일정', '볼 것'], rows, '일본은행 공표 일정 기준.')
 
 
