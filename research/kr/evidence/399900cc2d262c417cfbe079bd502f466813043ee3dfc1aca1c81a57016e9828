@@ -1,0 +1,271 @@
+{
+ "source": "kr/data commit 31c4de0 (collect-kr-data.yml run 43398724725) 발췌",
+ "indices": {
+  "KOSPI": {
+   "close": 5290.53,
+   "change_pct": -0.98
+  },
+  "KOSDAQ": {
+   "close": 699.66,
+   "change_pct": 0.45
+  }
+ },
+ "flows_date": {
+  "KOSPI": "2026-11-13",
+  "KOSDAQ": "2026-11-13"
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_KOSPI_1113": {
+  "date": "2026-11-13",
+  "individual": 136,
+  "foreign": -5449,
+  "institution": 4
+ },
+ "flows_KOSDAQ_1113": {
+  "date": "2026-11-13",
+  "individual": -531,
+  "foreign": -792,
+  "institution": 1263
+ },
+ "KOSPI_ohlc": {
+  "open": 5452.41,
+  "high": 5504.44,
+  "low": 5259.09,
+  "prevClose": 5342.73
+ },
+ "session": {
+  "report_date": "2026-11-13",
+  "us_prev": {
+   "as_of": "2026-11-12",
+   "rows": {
+    "S&P 500": -0.35,
+    "Nasdaq": -0.39,
+    "Dow": -0.36
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": -0.35,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.57,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": 0.53,
+    "항셍": -1.55,
+    "상해종합": -0.59,
+    "대만가권": 1.35
+   },
+   "dates": {
+    "닛케이": "2026-11-13",
+    "항셍": "2026-11-13",
+    "상해종합": "2026-11-13",
+    "대만가권": "2026-11-13"
+   },
+   "avg_pct": -0.06,
+   "relative_pp": -0.92
+  },
+  "usdkrw_intraday": {
+   "high": 1337.08,
+   "high_t": "09:00",
+   "low": 1330.08,
+   "low_t": "10:30",
+   "close": 1334.88,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "econ": {
+  "국고채 3년": {
+   "value": 3.759,
+   "date": "2026-11-13",
+   "unit": "연%",
+   "item_name": "국고채(3년)",
+   "prev": 3.729,
+   "prev_date": "2026-11-12",
+   "bp": 3.0
+  },
+  "국고채 10년": {
+   "value": 4.001,
+   "date": "2026-11-13",
+   "unit": "연%",
+   "item_name": "국고채(10년)",
+   "prev": 3.937,
+   "prev_date": "2026-11-12",
+   "bp": 6.4
+  },
+  "CD 91일": {
+   "value": 3.37,
+   "date": "2026-11-13",
+   "unit": "연%",
+   "item_name": "CD(91일)",
+   "prev": 3.37,
+   "prev_date": "2026-11-12",
+   "bp": 0.0
+  },
+  "회사채 AA- 3년": {
+   "value": 4.434,
+   "date": "2026-11-13",
+   "unit": "연%",
+   "item_name": "회사채(3년, AA-)",
+   "prev": 4.407,
+   "prev_date": "2026-11-12",
+   "bp": 2.7
+  },
+  "한국은행 기준금리": {
+   "value": 3.0,
+   "date": "2026-10",
+   "unit": "연%",
+   "item_name": "한국은행 기준금리",
+   "prev": 3.0,
+   "prev_date": "2026-09",
+   "bp": 0.0
+  }
+ },
+ "stocks": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": -3.03,
+   "close": 1216000,
+   "value": 3919705
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": -0.96,
+   "close": 206000,
+   "value": 2608742
+  },
+  {
+   "name": "삼성전기",
+   "change_pct": -3.5,
+   "close": 855000,
+   "value": 692987
+  },
+  {
+   "name": "삼성전자우",
+   "change_pct": 1.31,
+   "close": 170500,
+   "value": 588478
+  },
+  {
+   "name": "SK스퀘어",
+   "change_pct": -3.67,
+   "close": 762000,
+   "value": 488388
+  },
+  {
+   "name": "한진칼우",
+   "change_pct": -15.41,
+   "close": 112000,
+   "value": 304478
+  },
+  {
+   "name": "NAVER",
+   "change_pct": -5.12,
+   "close": 172500,
+   "value": 280119
+  },
+  {
+   "name": "삼성SDI",
+   "change_pct": 1.06,
+   "close": 478000,
+   "value": 218579
+  },
+  {
+   "name": "이수페타시스",
+   "change_pct": 5.23,
+   "close": 88500,
+   "value": 169693
+  },
+  {
+   "name": "대덕전자",
+   "change_pct": -2.25,
+   "close": 91300,
+   "value": 156115
+  },
+  {
+   "name": "한국전력",
+   "change_pct": -9.79,
+   "close": 27650,
+   "value": 139283
+  },
+  {
+   "name": "한진칼",
+   "change_pct": 0.25,
+   "close": 203500,
+   "value": 139174
+  },
+  {
+   "name": "코리아써키트",
+   "change_pct": 1.81,
+   "close": 90200,
+   "value": 123571
+  },
+  {
+   "name": "두산",
+   "change_pct": -8.55,
+   "close": 610000,
+   "value": 105653
+  },
+  {
+   "name": "KB금융",
+   "change_pct": 4.74,
+   "close": 159000,
+   "value": 102455
+  },
+  {
+   "name": "금호건설",
+   "change_pct": 29.9,
+   "close": 11210,
+   "value": 95683
+  },
+  {
+   "name": "하나금융지주",
+   "change_pct": 3.4,
+   "close": 124600,
+   "value": 81605
+  },
+  {
+   "name": "신한지주",
+   "change_pct": 5.65,
+   "close": 89800,
+   "value": 81242
+  },
+  {
+   "name": "LG에너지솔루션",
+   "change_pct": -1.52,
+   "close": 324500,
+   "value": 68577
+  },
+  {
+   "name": "효성중공업",
+   "change_pct": -1.63,
+   "close": 1807000,
+   "value": 67092
+  },
+  {
+   "name": "대한항공",
+   "change_pct": -0.32,
+   "close": 31550,
+   "value": 61730
+  },
+  {
+   "name": "LS ELECTRIC",
+   "change_pct": -0.96,
+   "close": 123300,
+   "value": 57334
+  }
+ ]
+}
