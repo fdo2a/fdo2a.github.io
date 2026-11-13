@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-12",
  "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-13T00:26:40+00:00",
- "cutoff_at": "2026-11-13T00:26:40+00:00",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-13T00:46:04+00:00",
+ "cutoff_at": "2026-11-13T00:46:04+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "2781836fbc16e995cbd1e91b5f06fa1a0620aea196704b64d97922d6e9dd61e8"
  },
  "counts": {
-  "harvest": 199,
+  "harvest": 200,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 95510,
-   "out": 23411
+   "in": 60947,
+   "out": 15018
   },
   "discovery": "ok",
   "hosts": {
@@ -43,33 +43,17 @@
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "9/9",
-   "pairs": "4/4",
+   "claims": "6/6",
+   "pairs": "3/3",
    "obs": "9/9"
   },
   "verified": {
-   "pairs": 3,
-   "claims": 6,
-   "obs": 9,
-   "strict_pairs": 2,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "memo[0]",
-    "memo[1]",
-    "structure",
-    "worry.most[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "structure:unverified",
-    "edges[0]:unverified",
-    "memo[1]:unverified",
-    "worry.most[0]:unverified"
-   ]
   }
  },
  "event": {
@@ -77,11 +61,5 @@
   "query": "nvidia huang affair",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "edges[0]:unverified",
-  "memo[1]:unverified",
-  "worry.most[0]:unverified"
- ],
- "content_hash": "0e21113052261598"
+ "content_hash": "52722189a561eb2d"
 }
