@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-13",
- "status": "error",
- "reason": "model_extract_success",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-14T08:11:12+00:00",
- "cutoff_at": "2026-11-14T08:11:12+00:00",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-14T09:32:43+00:00",
+ "cutoff_at": "2026-11-14T09:32:43+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 0,
-   "out": 0
+   "in": 51371,
+   "out": 12482
   },
   "discovery": "ok",
   "hosts": {
@@ -40,12 +40,65 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "memo[0]",
+    "memo[1]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.most[0]"
+   ],
+   "outcome": "skipped_ratio",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "edges[0]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "edges[1]:dangling",
+    "memo[0]:dangling",
+    "memo[1]:unverified",
+    "memo[1]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling"
+   ]
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 사임과 Megaspeed 칩 우회 의혹, 미 수출통제 책임 공방",
+  "query": "nvidia huang scandal",
   "trigger": []
  },
- "content_hash": "dc9421034e15450d"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "edges[0]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[1]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:unverified",
+  "memo[1]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling"
+ ],
+ "content_hash": "a7eec9fac45e6c02"
 }
