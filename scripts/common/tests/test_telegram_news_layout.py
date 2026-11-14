@@ -397,6 +397,7 @@ def test_linking_text_carries_no_number_no_name_and_no_summary(link, needle):
     '인수 조건을 둘러싼 견해가 엇갈렸다.',             # measured on the published posts: 「조건」 420 times
     '서명을 앞둔 합의를 두고 시각이 갈렸다.',
     '조명이 쏠린 종목을 두고 견해가 나뉘었다.',
+    '시장에서는 거절반응도 나타났다는 점이 바탕이었다.',   # 「절반」 inside 「거절반응」
     '견해는 한 곳으로 모였다.',                        # what linking text is for
     '시각은 두 가지로 갈렸다.',
     '설비의 수명을 둘러싼 견해도 있었다.',
