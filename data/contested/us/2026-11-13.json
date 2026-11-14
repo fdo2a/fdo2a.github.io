@@ -6,9 +6,9 @@
  "status": "error",
  "reason": "model_extract_success",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-14T07:54:12+00:00",
- "cutoff_at": "2026-11-14T07:54:12+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-14T08:11:12+00:00",
+ "cutoff_at": "2026-11-14T08:11:12+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "7e1580664ed4178fcbd66c56bf01096148be0e81148b658f14a165aa495be906"
  },
  "counts": {
-  "harvest": 192,
+  "harvest": 191,
   "candidates": 1,
   "articles": [
    6
@@ -47,5 +47,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "1b5800512dd83be0"
+ "content_hash": "dc9421034e15450d"
 }
