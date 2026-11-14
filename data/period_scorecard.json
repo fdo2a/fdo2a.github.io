@@ -1,93 +1,108 @@
 {
-  "start_date": "2026-11-02",
-  "end_date": "2026-11-06",
-  "key": "2026-W45",
+  "start_date": "2026-11-09",
+  "end_date": "2026-11-13",
+  "key": "2026-W46",
   "assets": {
     "equities": {
       "grade": 0,
-      "realized": -2.6808,
+      "realized": 2.5053,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
+          "from": "2026-11-09",
+          "to": "2026-11-13"
         }
       ]
     },
     "bonds": {
       "grade": 1,
-      "realized": 7.0,
-      "verdict": "적중",
-      "score": 1.0,
+      "realized": -29.4,
+      "verdict": "미스",
+      "score": -1.0,
       "segments": [
         {
           "grade": 1,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
+          "from": "2026-11-09",
+          "to": "2026-11-10"
+        },
+        {
+          "grade": 0,
+          "from": "2026-11-10",
+          "to": "2026-11-13"
         }
       ]
     },
     "fx": {
       "grade": -1,
-      "realized": 0.3798,
+      "realized": 1.1048,
       "verdict": "미스",
       "score": -1.0,
       "segments": [
         {
           "grade": -1,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
+          "from": "2026-11-09",
+          "to": "2026-11-10"
+        },
+        {
+          "grade": 0,
+          "from": "2026-11-10",
+          "to": "2026-11-13"
         }
       ]
     },
     "energy": {
       "grade": 0,
-      "realized": -12.1679,
+      "realized": -1.8324,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
+          "from": "2026-11-09",
+          "to": "2026-11-13"
         }
       ]
     },
     "metals": {
       "grade": 1,
-      "realized": 4.6753,
-      "verdict": "적중",
-      "score": 1.0,
-      "segments": [
-        {
-          "grade": 1,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
-        }
-      ]
-    },
-    "memory": {
-      "grade": 1,
-      "realized": -17.9096,
+      "realized": -4.7438,
       "verdict": "미스",
       "score": -1.0,
       "segments": [
         {
           "grade": 1,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
+          "from": "2026-11-09",
+          "to": "2026-11-10"
+        },
+        {
+          "grade": 0,
+          "from": "2026-11-10",
+          "to": "2026-11-13"
+        }
+      ]
+    },
+    "memory": {
+      "grade": 1,
+      "realized": 4.715,
+      "verdict": "적중",
+      "score": 1.0,
+      "segments": [
+        {
+          "grade": 1,
+          "from": "2026-11-09",
+          "to": "2026-11-13"
         }
       ]
     },
     "ai_infra": {
       "grade": 0,
-      "realized": -18.0154,
+      "realized": 7.3329,
       "verdict": "중립",
       "segments": [
         {
           "grade": 0,
-          "from": "2026-11-02",
-          "to": "2026-11-06"
+          "from": "2026-11-09",
+          "to": "2026-11-13"
         }
       ]
     }
@@ -96,33 +111,145 @@
   "neutral": 3,
   "total": 7,
   "neutral_share": 0.4286,
-  "weighted": 0.0,
+  "weighted": -0.5,
   "span": "weekly",
   "regime": {
-    "verdict": "판정불가",
-    "prints": 0,
+    "verdict": "기준 보합",
+    "partial": false,
     "regime": {
       "growth": 0,
-      "inflation": 0,
-      "since": "2026-10-14",
-      "thesis": "교착 유지(10월 14일부터 17영업일째). 11월 5일 신규 발표는 주간 실업수당 청구뿐이었다. 신규 청구 189,000건·4주 평균 194,750건은 해고가 적은 상태를 확인했지만 계절 요인의 몫이 컸고, 성장 점수 -0.017·물가 점수 0.003이 그대로 중립 범위라 implied 좌표도 교착이다. 11월 6일 10월 고용과 11월 10일 10월 CPI가 다음 점검이다."
+      "inflation": 1,
+      "since": "2026-11-10",
+      "thesis": "비용압박 유지(11월 10일부터, 3일째). 11월 12일 신규 실업수당 청구(20만 건, 4주 평균 195,250건 불변)와 10월 기존주택 판매(375만 건, 전월 397만 건)가 나와 성장 점수가 0.1에서 0.065로 조금 내려왔지만 보합 범위 안이고, 물가 점수 0.451은 그대로다. 마지막 변경 후 5영업일 잠금 중. 다음 점검은 11월 13일 PPI와 11월 17일 소매판매·산업생산이다."
     },
-    "note": "기간 중 신규 발표 없음"
+    "days_expected": 5,
+    "days_scanned": 5,
+    "missing_days": [],
+    "excluded_new": [
+      "Construction Spending MoM",
+      "Factory Orders MoM",
+      "Housing Starts",
+      "Philly Fed Manufacturing",
+      "Trade Balance"
+    ],
+    "prints": [
+      {
+        "name": "CPI MoM",
+        "label_ko": "소비자물가 전월비",
+        "axis": "Inflation",
+        "ref_period": "2026-10-01",
+        "date": "2026-11-10",
+        "trend": "재가속"
+      },
+      {
+        "name": "Core CPI MoM",
+        "label_ko": "근원 소비자물가 전월비",
+        "axis": "Inflation",
+        "ref_period": "2026-10-01",
+        "date": "2026-11-10",
+        "trend": "재가속"
+      },
+      {
+        "name": "Continuing Jobless Claims",
+        "label_ko": "계속 실업수당 청구",
+        "axis": "Labor",
+        "ref_period": "2026-10-31",
+        "date": "2026-11-12",
+        "trend": "보합"
+      },
+      {
+        "name": "Existing Home Sales",
+        "label_ko": "기존주택 판매",
+        "axis": "Activity",
+        "ref_period": "2026-10-01",
+        "date": "2026-11-12",
+        "trend": "악화"
+      },
+      {
+        "name": "Initial Claims 4-wk MA",
+        "label_ko": "신규 청구 4주 평균",
+        "axis": "Labor",
+        "ref_period": "2026-11-07",
+        "date": "2026-11-12",
+        "trend": "개선"
+      },
+      {
+        "name": "Initial Jobless Claims",
+        "label_ko": "신규 실업수당 청구",
+        "axis": "Labor",
+        "ref_period": "2026-11-07",
+        "date": "2026-11-12",
+        "trend": "개선"
+      },
+      {
+        "name": "PPI Final Demand MoM",
+        "label_ko": "생산자물가",
+        "axis": "Inflation",
+        "ref_period": "2026-10-01",
+        "date": "2026-11-13",
+        "trend": "재가속"
+      }
+    ],
+    "growth": {
+      "verdict": "기준 보합",
+      "note": "발표 직전 판단이 보합이라 맞고 틀림 대신 기울기만 잰다",
+      "total": 4,
+      "scored": 0,
+      "agree": 0,
+      "against": 0,
+      "flat": 0,
+      "neutral_book": 4,
+      "no_book": 0,
+      "no_trend": 0,
+      "ratio": null,
+      "pct": null,
+      "lean": {
+        "up": 2,
+        "down": 1,
+        "flat": 1
+      },
+      "stale": [],
+      "uncertain": []
+    },
+    "inflation": {
+      "verdict": "판정불가",
+      "note": "마지막 거래일까지 수집되지 않은 지표가 있다",
+      "total": 3,
+      "scored": 1,
+      "agree": 1,
+      "against": 0,
+      "flat": 0,
+      "neutral_book": 2,
+      "no_book": 0,
+      "no_trend": 0,
+      "ratio": null,
+      "pct": null,
+      "lean": {
+        "up": 2,
+        "down": 0,
+        "flat": 0
+      },
+      "stale": [
+        "CPI YoY",
+        "Core CPI YoY"
+      ],
+      "uncertain": []
+    }
   },
   "rollup": {
     "last_4": {
       "periods": 4,
-      "weighted": 0.0833,
+      "weighted": -0.125,
       "insufficient": false
     },
     "last_12": {
-      "periods": 9,
-      "weighted": -0.0593,
+      "periods": 10,
+      "weighted": -0.1033,
       "insufficient": true
     },
     "all": {
-      "periods": 9,
-      "weighted": -0.0593,
+      "periods": 10,
+      "weighted": -0.1033,
       "insufficient": false
     }
   },
