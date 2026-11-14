@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 1,
- "collected_at": "2026-11-14T05:05:30+00:00",
- "cutoff_at": "2026-11-14T05:05:30+00:00",
+ "collected_at": "2026-11-14T05:24:42+00:00",
+ "cutoff_at": "2026-11-14T05:24:42+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,80 +30,50 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 54258,
-   "out": 13472
+   "in": 86728,
+   "out": 18554
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "8/8",
+   "claims": "6/6",
    "pairs": "3/3",
-   "obs": "8/8"
+   "obs": "10/10"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 7,
+   "pairs": 3,
+   "claims": 6,
+   "obs": 10,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[0]",
     "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[2]",
     "structure",
-    "variables[0]",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "worry.moderate[0]"
    ],
-   "outcome": "skipped_ratio",
+   "outcome": "partial",
    "remaining": [
-    "structure:dangling",
-    "variables[0]:dangling",
-    "edges[0]:unverified",
-    "edges[0]:dangling",
-    "edges[1]:dangling",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[2]:dangling",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:unverified",
-    "worry.unlikely[0]:dangling"
+    "worry.moderate[0]:unverified"
    ]
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 사임과 메가스피드 대중 칩 우회 수출 의혹",
+  "topic_ko": "젠슨 황 사임과 메가스피드 칩 우회 수출 의혹",
   "query": "nvidia huang scandal",
   "trigger": []
  },
  "problems": [
-  "structure:dangling",
-  "variables[0]:dangling",
-  "edges[0]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[2]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:unverified",
-  "worry.unlikely[0]:dangling"
+  "worry.moderate[0]:unverified"
  ],
- "content_hash": "9545abc8110c7a66"
+ "content_hash": "1492a6fa7f87d15d"
 }
