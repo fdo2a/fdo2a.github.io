@@ -102,10 +102,11 @@ def test_brief_layout_is_unchanged_by_news_only_rules():
     (page(section().replace('</h2>', '</h2><h2>검증되지 않은 주장</h2>')), '모양'),
     (page(section(P_VIEW + '<p>표식 없는 문장이 섹션 안에 있다.</p>')), '모양'),
     (page(section(P_VIEW[3:-4])), '모양'),                                             # span without p
-    (page(section('<p>' + P_VIEW[3:-4] + P_REP[3:-4] + '</p>')), '모양'),              # two spans in one p
     (page(section(P_VIEW.replace('찾았다.', '찾았다. <a href="https://example.com">원문</a>'))), '모양'),
     (page(section(P_VIEW.replace('</span>', '<img src="x.png"></span>'))), '모양'),
-    (page(section(P_VIEW.replace('</span></p>', '</span> 덧붙인 말이다.</p>'))), '모양'),
+    (page(section(P_VIEW + '<p>' + P_REP[3:-4] + '<b>굵게</b></p>')), '모양'),            # a tag that is not a marker
+    (page(section('<p>표식보다 먼저 나오는 문단이지만 표식이 없다.</p>' + P_VIEW)), '모양'),
+    (page(section(P_VIEW.replace('<span data-tg', '<span class="x"').replace('</p>', '</p>') + P_REP)), '모양'),  # a span that is not a marker
     (page(section(P_VIEW).replace('<div class="card">', '<div class="card">머리말 한 줄')), '모양'),
     (page(section(P_VIEW).replace('<div class="card">', '<div>')), '모양'),
     (page(section('')), '모양'),                                                       # empty section
@@ -185,7 +186,7 @@ def test_the_same_item_quoted_twice_fails():
     assert any('hedgecat0301/10' in x and '두 번' in x for x in v), v
 
 
-def test_paragraph_longer_than_300_chars_fails():
+def test_marker_longer_than_300_chars_fails():
     long_summary = S_OP + ' ' + '규제가 강화되면 발사 일정과 보조금에 영향이 갈 수 있다는 시각도 함께 전해졌다. ' * 6
     d = data(**{'kwusa/3': {'summary_ko': long_summary}})
     body = '연합인포맥스를 인용해 민주당 승리로 테슬라와 스페이스X 관련 규제가 강화될 수 있다는 시각도 나왔다. ' + \
@@ -209,6 +210,338 @@ def test_overlap_floor_is_higher_than_the_brief():
     assert any('맞지 않는다' in x for x in run(page(section(weak))))
     d = data()
     assert check(page(weak), d) == []
+
+
+# ── one piece of writing, not one paragraph per item (2026-11-14) ─────────
+# 사용자 지시 「기사를 조각조각 요약한 것 밖에 안되잖아. 같은 출처를 반복해서 얘기할 필요 없고, 이 내용들이
+# 하나의 완성된 글이 되어 발행되도록」 — a paragraph may weave several items and carry linking text.
+
+S_REP2 = '로이터는 텍사스 전력망 운영사가 신규 데이터센터 접속 심사를 미루기로 했다고 보도했다.'
+S_VIEW2 = '필자는 반도체 재고 조정이 끝나 가고 업황이 바닥을 지났다고 진단했다.'
+S_OP2 = '가스터빈 수주가 40GW 로 늘어 증설이 수요를 따라가지 못한다는 시각이 제시됐다.'
+S_OP3 = '변압기 납기가 길어져 전력 설비 업체의 가격 협상력이 커졌다는 의견이 제시됐다.'
+
+SP_VIEW, SP_REP, SP_OP = P_VIEW[3:-4], P_REP[3:-4], P_OP[3:-4]
+SP_REP2_BARE = '<span data-tg="insidertracking/8">전력망 운영사도 신규 데이터센터 접속 심사를 미루기로 했다고 전했다.</span>'
+SP_REP2_BACK = '<span data-tg="insidertracking/8">같은 보도는 전력망 운영사도 신규 데이터센터 접속 심사를 미루기로 했다고 전했다.</span>'
+SP_REP2_NAMED = '<span data-tg="insidertracking/8">로이터는 전력망 운영사도 신규 데이터센터 접속 심사를 미루기로 했다고 전했다.</span>'
+SP_VIEW2_BARE = '<span data-tg="hedgecat0301/11">반도체 재고 조정이 끝나 가고 업황이 바닥을 지났다고도 진단했다.</span>'
+SP_VIEW2_BACK = '<span data-tg="hedgecat0301/11">한 연구원은 반도체 재고 조정이 끝나 가고 업황이 바닥을 지났다고도 진단했다.</span>'
+SP_OP2_BARE = '<span data-tg="d_ticker/11">가스터빈 수주가 40GW 로 늘어 증설이 수요를 따라가지 못한다는 시각도 나왔다.</span>'
+SP_OP2_SUBJ = '<span data-tg="d_ticker/11">시장에서는 가스터빈 수주가 40GW 로 늘어 증설이 수요를 따라가지 못한다는 시각도 나왔다.</span>'
+SP_OP3_BARE = '<span data-tg="d_ticker/12">변압기 납기가 길어져 전력 설비 업체의 가격 협상력이 커졌다는 의견도 있었다.</span>'
+
+
+def data2():
+    d = data()
+    d['items'] += [
+        {'id': 'insidertracking/8', 'kind': 'report', 'firm': None, 'analyst': None,
+         'source': {'name': '로이터', 'url': 'https://www.reuters.com/y', 'basis': 'link'}, 'summary_ko': S_REP2, 'news_use': True},
+        {'id': 'hedgecat0301/11', 'kind': 'view', 'firm': '키움증권', 'analyst': '한지영', 'source': None,
+         'summary_ko': S_VIEW2, 'news_use': True},
+        {'id': 'd_ticker/11', 'kind': 'opinion', 'firm': None, 'analyst': None, 'source': None,
+         'summary_ko': S_OP2, 'news_use': True},
+        {'id': 'd_ticker/12', 'kind': 'opinion', 'firm': None, 'analyst': None, 'source': None,
+         'summary_ko': S_OP3, 'news_use': True},
+    ]
+    return d
+
+
+def para(*parts):
+    return '<p>' + ' '.join(parts) + '</p>'
+
+
+def run2(*paragraphs, **kw):
+    return run(page(section(''.join(paragraphs))), data2(), **kw)
+
+
+def test_a_paragraph_can_weave_several_items_and_linking_text():
+    pairs, paras = [], []
+    v = run2(para('데이터센터 전력을 둘러싼 보도가 이어졌다.', SP_REP, SP_REP2_BACK), para(SP_VIEW, SP_VIEW2_BACK),
+             pairs=pairs, paras=paras)
+    assert v == []
+    assert [p[0] for p in pairs] == ['insidertracking/7', 'insidertracking/8', 'hedgecat0301/10', 'hedgecat0301/11']
+    assert len(paras) == 2
+    assert paras[0][0] == ('text', '데이터센터 전력을 둘러싼 보도가 이어졌다. ')          # spaces as written
+    assert [x[1] for x in paras[0] if x[0] == 'tg'] == ['insidertracking/7', 'insidertracking/8']
+    assert [x for x in paras[0] if x[0] == 'text'][1] == ('text', ' ')
+
+
+def _lacks(v, tid, name):
+    return any(tid in x and name in x for x in v)
+
+
+def test_the_speaker_is_written_in_the_marker_a_name_or_a_back_reference():
+    """Never inferred from the data alone (codex 설계 검토 2회): the reader sees 「같은 보도는」."""
+    assert run2(para(SP_REP, SP_REP2_NAMED)) == []
+    assert run2(para(SP_REP, SP_REP2_BACK)) == []
+    assert run2('<p>' + SP_REP + ' \n ' + SP_REP2_BACK + '</p>') == []
+    # the same source right before is not enough without the words
+    assert _lacks(run2(para(SP_REP, SP_REP2_BARE)), 'insidertracking/8', '로이터')
+    # another paragraph
+    assert _lacks(run2(para(SP_REP), para(SP_REP2_BACK)), 'insidertracking/8', '로이터')
+    # linking words between the two markers can change who is speaking
+    assert _lacks(run2(para(SP_REP, '반면 다른 쪽에서는', SP_REP2_BACK)), 'insidertracking/8', '로이터')
+    assert _lacks(run2('<p>' + SP_REP + ' ― ' + SP_REP2_BACK + '</p>'), 'insidertracking/8', '로이터')
+    # the marker before it is another source, or is not the one right before
+    assert _lacks(run2(para(SP_OP, SP_REP2_BACK)), 'insidertracking/8', '로이터')
+    assert _lacks(run2(para(SP_REP, SP_OP, SP_REP2_BACK)), 'insidertracking/8', '로이터')
+    # the back-reference is at the very start
+    late = SP_REP2_BACK.replace('같은 보도는 전력망 운영사도', '전력망 운영사도 같은 보도에서')
+    assert _lacks(run2(para(SP_REP, late)), 'insidertracking/8', '로이터')
+    # the word has to end: 「같은 보도자료에 따르면」 is a press release, not the outlet (설계 검토 3회 #1)
+    for start in ('같은 보도자료에 따르면', '같은 보도국은', '이 매체들은'):
+        assert _lacks(run2(para(SP_REP, SP_REP2_BACK.replace('같은 보도는', start))), 'insidertracking/8', '로이터'), start
+    for start in ('이어서 같은 보도는', '또 이 매체는', '같은 기사에 따르면', '해당 통신도'):
+        assert run2(para(SP_REP, SP_REP2_BACK.replace('같은 보도는', start))) == [], start
+    # a chain: named → back-reference → back-reference
+    d = data2()
+    d['items'].append({'id': 'insidertracking/9', 'kind': 'report', 'firm': None, 'analyst': None,
+                       'source': {'name': '로이터', 'url': None, 'basis': 'credit'}, 'news_use': True,
+                       'summary_ko': '로이터는 주 의회가 용수 사용 상한을 두는 법안을 검토한다고 보도했다.'})
+    third = '<span data-tg="insidertracking/9">이 매체는 주 의회가 용수 사용 상한을 두는 법안을 검토한다고도 보도했다.</span>'
+    assert run(page(section(para(SP_REP, SP_REP2_BACK, third))), d) == []
+    assert _lacks(run(page(section(para(SP_REP, SP_REP2_BARE, third))), d), 'insidertracking/9', '로이터')
+
+
+def test_no_back_reference_after_a_marker_that_names_another_speaker_of_the_file():
+    # 「로이터에 따르면 A다. 연합인포맥스는 B를 전했다.」「같은 보도는 C」 — whose report? (2회 #3)
+    d = data2()
+    for it in d['items']:
+        if it['id'] == 'insidertracking/7':
+            it['summary_ko'] = S_REP + ' 연합인포맥스는 이 요구가 전력주에 부담이라고 전했다.'
+    first = SP_REP.replace('요구했다.', '요구했다. 연합인포맥스는 이 요구가 전력주에 부담이라고 전했다.')
+    assert run(page(section(para(first, SP_REP2_NAMED))), d) == []
+    assert _lacks(run(page(section(para(first, SP_REP2_BACK))), d), 'insidertracking/8', '로이터')
+
+
+def test_a_view_refers_back_only_to_the_same_firm_and_analyst():
+    assert run2(para(SP_VIEW, SP_VIEW2_BACK)) == []
+    assert _lacks(run2(para(SP_VIEW, SP_VIEW2_BARE)), 'hedgecat0301/11', '한지영')
+    assert run2(para(SP_VIEW, SP_VIEW2_BACK.replace('한 연구원은', '그 연구원은'))) == []
+    assert _lacks(run2(para(SP_VIEW, SP_VIEW2_BACK.replace('한 연구원은', '한 연구원들은'))), 'hedgecat0301/11', '한지영')
+    assert _lacks(run2(para(SP_VIEW, SP_VIEW2_BACK.replace('한 연구원은', '김 연구원은'))), 'hedgecat0301/11', '한지영')
+    assert _lacks(run2(para(SP_REP, SP_VIEW2_BACK)), 'hedgecat0301/11', '한지영')
+    d = data2()
+    for it in d['items']:
+        if it['id'] == 'hedgecat0301/11':
+            it['analyst'] = '김승혁'
+    assert _lacks(run(page(section(para(SP_VIEW, SP_VIEW2_BACK))), d), 'hedgecat0301/11', '김승혁')
+    # a team view (no analyst) never lends or borrows its name
+    d = data2()
+    for it in d['items']:
+        if it['id'].startswith('hedgecat0301/'):
+            it['analyst'] = None
+    v = run(page(section(para(SP_VIEW.replace(' 한지영 연구원은', '은'), SP_VIEW2_BACK))), d)
+    assert _lacks(v, 'hedgecat0301/11', '키움증권')
+
+
+def test_an_unsourced_item_after_a_sourced_one_needs_its_own_subject():
+    # 「로이터에 따르면 A다. B라는 시각도 나왔다.」 reads as Reuters' report (codex 설계 검토 1회 #1)
+    assert _lacks(run2(para(SP_REP, SP_OP2_BARE)), 'd_ticker/11', '주어')
+    assert _lacks(run2(para(SP_VIEW, SP_OP2_BARE)), 'd_ticker/11', '주어')
+    assert _lacks(run2(para(SP_REP, '한편', SP_OP2_BARE)), 'd_ticker/11', '주어')   # linking text does not stand in for it
+    # 「시장에서」 somewhere in the sentence is not a speaker (2회 #1)
+    mid = SP_OP2_BARE.replace('가스터빈 수주가', '가스터빈 수주가 시장에서는')
+    assert _lacks(run2(para(SP_REP, mid)), 'd_ticker/11', '주어')
+    # 「시장은행은」 is a name, not the market (설계 검토 3회 #1)
+    for start in ('시장은행은', '업계지는', '시장에서의'):
+        assert _lacks(run2(para(SP_REP, SP_OP2_SUBJ.replace('시장에서는', start))), 'd_ticker/11', '주어'), start
+    for start in ('증권가에서는', '투자자들 사이에서는', '시장 일각에서는', '일각에서는', '반면 월가에서는'):
+        assert run2(para(SP_REP, SP_OP2_SUBJ.replace('시장에서는', start))) == [], start
+    assert run2(para(SP_REP, SP_OP2_SUBJ)) == []
+    assert run2(para(SP_REP, SP_OP2_SUBJ.replace('시장에서는', '한편 업계 일각에서는'))) == []
+    # first in its paragraph, or after another unsourced item: nothing to be mistaken for
+    assert run2(para(SP_REP), para(SP_OP2_BARE)) == []
+    assert run2(para(SP_REP, SP_OP2_SUBJ, SP_OP3_BARE)) == []
+    assert run2(para(SP_OP2_BARE, SP_OP3_BARE)) == []
+
+
+@pytest.mark.parametrize('link,needle', [
+    ('나스닥이 5.5% 밀린 날이었다.', '숫자'),
+    ('이날은 11월 장의 분수령이었다.', '숫자'),
+    ('로이터 보도가 논의의 출발점이었다.', '이름'),
+    ('한지영 연구원의 진단이 눈에 띄었다.', '이름'),
+    ('키움증권 쪽 견해가 먼저 나왔다.', '이름'),
+    ('연합인포맥스가 옮긴 시각도 있었다.', '이름'),
+    ('로 이터가 전한 내용이 출발점이었다.', '이름'),                # spaced out (구현 검토 1회 #2)
+    ('한 지 영 연구원의 진단이 눈에 띄었다.', '이름'),
+    ('하루에 세 차례 올랐다는 점이 화제였다.', '숫자'),             # a quantity in words (구현 검토 1회 #1)
+    ('주가가 두 배가 됐다는 점이 논의의 바탕이었다.', '숫자'),
+    ('수십억 달러가 걸린 문제라는 데 견해가 모였다.', '숫자'),
+    ('거래가 절반으로 줄었다는 점이 쟁점이었다.', '숫자'),
+    ('전력망을 둘러싼 보도가 ３건 이어졌다.', '숫자'),               # full-width digit
+    ('서너 차례 금리를 내렸다는 점이 바탕이었다.', '숫자'),         # compound numerals (구현 검토 2회 #2)
+    ('스물한 차례 상승했다는 점이 화제였다.', '숫자'),
+    ('수백 건이 쟁점이었다는 데 견해가 모였다.', '숫자'),
+    ('한두 번이 아니라는 지적이 이어졌다.', '숫자'),
+    ('수차례 이어진 논쟁이라는 점이 바탕이었다.', '숫자'),
+    ('수 주째 이어진 논쟁이라는 점이 바탕이었다.', '숫자'),
+    ('데이터센터 전력을 둘러싼 보도가 이어졌고 ' + '규제와 전력망과 용수 문제가 한꺼번에 불거졌다는 점에서 ' * 2 + '눈길을 끌었다.', '80자'),
+    ('텍사스 주지사 당선인이 데이터센터 사업 중단을 요구했다.', '겹친다'),
+    ('전력과 용수 부담이 이유다', '겹친다'),                        # not sentence-shaped, still a copied clause
+])
+def test_linking_text_carries_no_number_no_name_and_no_summary(link, needle):
+    v = run2(para(link, SP_REP, SP_REP2_BACK))
+    assert any('잇는 말' in x and needle in x for x in v), v
+
+
+@pytest.mark.parametrize('link', [
+    '다양한 종목에서 같은 흐름이 보였다.',            # 「한 종목」 inside 「다양한」
+    '이번 주 내내 이어진 논쟁이다.',
+    '한편 전력 설비를 보는 눈은 달랐다.',
+    '한 해외 매체의 보도가 논의의 출발점이었다.',     # 「한 해」 inside 「한 해외」
+    '이 원칙을 둘러싼 견해가 맞섰다.',                 # 「이 원」 inside 「이 원칙」
+    '시장의 일원으로서 논의를 이어갔다.',              # 「일원」 is not one won (구현 검토 2회 #3)
+    '두 주요 지수를 보는 눈이 달랐다.',
+    '사원 수를 둘러싼 논의는 아니었다.',
+    '수주는 엇갈렸다는 데 견해가 모였다.',             # 「수주」 is orders, not several weeks (구현 검토 3회 #2)
+    '설비의 수명을 둘러싼 견해도 있었다.',
+    '견해는 엇갈렸다.',
+    '데이터센터 전력을 둘러싼 보도가 이어졌다.',
+])
+def test_linking_text_without_a_quantity_passes(link):
+    assert run2(para(link, SP_REP, SP_REP2_BACK, SP_OP2_SUBJ, SP_OP3_BARE)) == []
+
+
+def test_a_name_inside_the_speakers_own_name_is_not_another_speaker():
+    # sources 「로이터통신」 ×2 and, elsewhere in the file, 「로이터」 (구현 검토 1회 #3)
+    d = data2()
+    for it in d['items']:
+        if it['id'] in ('insidertracking/7', 'insidertracking/8'):
+            it['source'] = dict(it['source'], name='로이터통신')
+    d['items'].append({'id': 'kwusa/4', 'kind': 'opinion', 'firm': None, 'analyst': None, 'news_use': True,
+                       'source': {'name': '로이터', 'url': None, 'basis': 'credit'}, 'summary_ko': S_OP3})
+    first = SP_REP.replace('로이터에 따르면', '로이터통신에 따르면')
+    assert run(page(section(para(first, SP_REP2_BACK))), d) == []
+    # the other way round: the marker is 「로이터」's and names 「로이터통신」 too (구현 검토 2회 #1)
+    d2 = data2()
+    d2['items'].append({'id': 'kwusa/4', 'kind': 'opinion', 'firm': None, 'analyst': None, 'news_use': True,
+                        'source': {'name': '로이터통신', 'url': None, 'basis': 'credit'}, 'summary_ko': S_OP3})
+    d2['items'][1]['summary_ko'] = S_REP + ' 로이터통신은 주 의회도 같은 요구를 했다고 전했다.'
+    both = SP_REP.replace('요구했다.', '요구했다. 로이터통신은 주 의회도 같은 요구를 했다고 전했다.')
+    assert run(page(section(para(both, SP_REP2_NAMED))), d2) == []
+    assert _lacks(run(page(section(para(both, SP_REP2_BACK))), d2), 'insidertracking/8', '로이터')
+    # spaced out in the marker before
+    spaced = SP_REP.replace('요구했다.', '요구했다. 연합 인포맥스는 이 요구가 부담이라고 전했다.')
+    d3 = data2()
+    d3['items'][1]['summary_ko'] = S_REP + ' 연합인포맥스는 이 요구가 부담이라고 전했다.'
+    assert _lacks(run(page(section(para(spaced, SP_REP2_BACK))), d3), 'insidertracking/8', '로이터')
+    # 「로이터」 really named next to it still blocks the back-reference
+    d['items'][1]['summary_ko'] = S_REP + ' 로이터 기자는 주 의회도 같은 요구를 했다고 전했다.'
+    two = first.replace('요구했다.', '요구했다. 로이터 기자는 주 의회도 같은 요구를 했다고 전했다.')
+    assert _lacks(run(page(section(para(two, SP_REP2_BACK))), d), 'insidertracking/8', '로이터통신')
+
+
+def test_a_longer_speakers_name_does_not_name_the_shorter_one():
+    # the item is 「로이터」's, the marker says 「로이터통신은」 — another outlet of the file (구현 검토 3회 #1)
+    d = data2()
+    d['items'].append({'id': 'kwusa/4', 'kind': 'opinion', 'firm': None, 'analyst': None, 'news_use': True,
+                       'source': {'name': '로이터통신', 'url': None, 'basis': 'credit'}, 'summary_ko': S_OP3})
+    wrong = SP_REP.replace('로이터에 따르면', '로이터통신에 따르면')
+    assert _lacks(run(page(section(para(wrong))), d), 'insidertracking/7', '로이터')
+    assert run(page(section(para(SP_REP))), d) == []
+    # the longer name spaced out is still the longer name (구현 검토 4회 #1)
+    for spaced in ('로이터 통신에 따르면', '로이터  통신에 따르면', '로 이터 통 신에 따르면'):
+        assert _lacks(run(page(section(para(SP_REP.replace('로이터에 따르면', spaced)))), d), 'insidertracking/7', '로이터'), spaced
+    assert not _lacks(run(page(section(para(SP_REP.replace('로이터에 따르면', '로이터 통신과 로이터에 따르면')))), d),
+                      'insidertracking/7', '출처')
+    both = SP_REP.replace('로이터에 따르면', '로이터통신과 로이터에 따르면')
+    assert not _lacks(run(page(section(para(both))), d), 'insidertracking/7', '출처')
+    # and the other way round: the item is 「로이터통신」's, the marker says only 「로이터」
+    for it in d['items']:
+        if it['id'] == 'kwusa/4':
+            it['source']['name'] = '로이터'
+        if it['id'] == 'insidertracking/7':
+            it['source'] = dict(it['source'], name='로이터통신')
+    assert _lacks(run(page(section(para(SP_REP))), d), 'insidertracking/7', '로이터통신')
+    # the brief layout names the same way
+    b = data()
+    for it in b['items']:
+        it.pop('news_use', None)
+    b['items'].append({'id': 'kwusa/4', 'kind': 'opinion', 'firm': None, 'analyst': None,
+                       'source': {'name': '로이터통신', 'url': None, 'basis': 'credit'}, 'summary_ko': S_OP3})
+    assert _lacks(check(page(para(wrong)), b), 'insidertracking/7', '로이터')
+    assert check(page(para(SP_REP)), b) == []
+    assert _lacks(check(page(para(SP_REP.replace('로이터에 따르면', '로이터 통신에 따르면'))), b), 'insidertracking/7', '로이터')
+    assert check(page(para(SP_REP.replace('로이터에 따르면', '로이터 통신과 로이터에 따르면'))), b) == []
+
+
+def test_the_same_name_spelled_with_and_without_a_space_is_one_name():
+    # 「로이터통신」 and 「로이터 통신」 both in the file must not hide each other (구현 검토 5회 #1)
+    for layout in ('news', 'brief'):
+        d = data2()
+        for it in d['items']:
+            if it['id'] in ('insidertracking/7', 'insidertracking/8'):
+                it['source'] = dict(it['source'], name='로이터통신')
+            if layout == 'brief':
+                it.pop('news_use', None)
+        d['items'].append({'id': 'kwusa/4', 'kind': 'opinion', 'firm': None, 'analyst': None,
+                           'source': {'name': '로이터 통신', 'url': None, 'basis': 'credit'}, 'summary_ko': S_OP3,
+                           **({'news_use': True} if layout == 'news' else {})})
+        first = SP_REP.replace('로이터에 따르면', '로이터통신에 따르면')
+        if layout == 'brief':
+            assert check(page(para(first)), d) == []
+        else:
+            assert run(page(section(para(first))), d) == []
+            assert run(page(section(para(first, SP_REP2_BACK))), d) == []      # nor block the back-reference
+
+
+def test_dates_are_compared_token_by_token():
+    from common.telegram_gate import dates_only_in
+    assert dates_only_in('1월에 발표했다', '11월에 발표했다') == ['1월']
+    assert dates_only_in('3일 발표했다', '11월 13일 발표했다') == ['3일']
+    assert dates_only_in('11월 13일 발표했다', '11월 13일에 발표했다') == []
+
+
+def test_character_references_are_read_the_way_they_show():
+    # `&#32;같은 보도는` starts with a space, and 32 is not a figure (구현 검토 1회 #4)
+    assert run2(para(SP_REP, SP_REP2_BACK.replace('>같은 보도는', '>&#32;같은 보도는'))) == []
+    assert run2(para(SP_REP, SP_REP2_BACK.replace('>같은 보도는', '>&nbsp;같은 보도는'))) == []
+    # the brief layout reads them the same way
+    d = data()
+    for it in d['items']:
+        it.pop('news_use', None)
+    assert check(page('<p>' + P_VIEW[3:-4].replace('급락한 배경을', '급락한&#32;배경을') + '</p>'), d) == []
+
+
+def test_short_linking_words_pass():
+    assert run2(para(SP_REP, SP_REP2_BACK), para('반면', SP_OP2_BARE, '이어', SP_OP3_BARE)) == []
+
+
+def test_linking_text_is_a_small_share_of_the_section():
+    link = '데이터센터 전력을 둘러싼 보도가 하루 내내 이어졌다는 점이 이날의 줄기였다.'
+    v = run2(para(link, SP_REP), para(link.replace('보도', '소식'), SP_REP2_NAMED))
+    assert any('잇는 말' in x and '20%' in x for x in v), v
+    assert run2(para(link, SP_REP, SP_REP2_BACK, SP_OP2_SUBJ, SP_OP3_BARE), para(SP_VIEW, SP_VIEW2_BACK)) == []
+
+
+def test_cli_prints_the_paragraphs_in_order_then_the_pairs(tmp_path):
+    html = page(section(para('데이터센터 전력을 둘러싼 보도가 이어졌다.', SP_REP, SP_REP2_BACK) + para(SP_VIEW)))
+    r = _cli(tmp_path, html, data2(), '--layout', 'news', '--news', str(tmp_path / 'news.json'))
+    assert r.returncode == 0, r.stdout + r.stderr
+    out = r.stdout
+    assert '다시 읽기 3건' in out and '문단 2개' in out
+    assert '문단 1: 데이터센터 전력을 둘러싼 보도가 이어졌다. [insidertracking/7] 로이터에 따르면' in out
+    assert out.index('문단 2: [hedgecat0301/10]') < out.index('요약: ' + S_REP)
+    assert '날짜:' not in out
+
+
+def test_cli_prints_the_spaces_as_written(tmp_path):
+    # glued markers print glued, a line break prints as one space, &amp; as & (설계 검토 3회 #2)
+    glued = '<p>전력 &amp; 용수를 둘러싼 보도다.\n   ' + SP_REP + SP_REP2_BACK + '</p>'
+    r = _cli(tmp_path, page(section(glued)), data2(), '--layout', 'news', '--news', str(tmp_path / 'news.json'))
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert '문단 1: 전력 & 용수를 둘러싼 보도다. [insidertracking/7] 로이터에 따르면' in r.stdout
+    assert '요구했다.[insidertracking/8] 같은 보도는' in r.stdout
+
+
+def test_cli_points_at_dates_the_summary_does_not_have(tmp_path):
+    # dates are masked out of the number check, so the reader is shown them (codex 설계 검토 1회 #6)
+    sp = SP_OP2_BARE.replace('가스터빈 수주가', '2028년 3분기까지 가스터빈 수주가')
+    r = _cli(tmp_path, page(section(para(sp))), data2(), '--layout', 'news', '--news', str(tmp_path / 'news.json'))
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert '날짜: 2028년, 3분기 — 요약에는 이 표기가 없다' in r.stdout
 
 
 # ── text outside the section ─────────────────────────────────────────────
@@ -280,7 +613,7 @@ def _cli(tmp_path, html, d, *extra):
 def test_cli_news_layout_prints_pairs_and_needs_the_news_path(tmp_path):
     r = _cli(tmp_path, page(section()), data(), '--layout', 'news', '--news', str(tmp_path / 'news.json'))
     assert r.returncode == 0, r.stdout + r.stderr
-    assert '다시 읽기 3건' in r.stdout and 'hedgecat0301/10' in r.stdout and S_VIEW in r.stdout
+    assert '다시 읽기 3건' in r.stdout and '문단 3개' in r.stdout and 'hedgecat0301/10' in r.stdout and S_VIEW in r.stdout
     r = _cli(tmp_path, page(section()), data(), '--layout', 'news')
     assert r.returncode == 2 and '--news' in r.stderr
     r = _cli(tmp_path, page(section()), data(), '--layout', 'news', '--news', str(tmp_path / 'missing.json'))
