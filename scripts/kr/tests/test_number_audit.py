@@ -271,22 +271,45 @@ def test_flows_label_spacing_only_is_warning(post, data):
     assert has(r, '시장=코스피', '라벨')
 
 
-@pytest.mark.parametrize('label', ['당일 잠정치 2026-11-11', '당일 잠정치(11월 11일)', '당일 잠정치 11/11'])
-def test_flows_label_wrong_date_is_violation(post, data, label):
-    """당일 라벨에 다른 날짜가 붙으면 뜻이 맞아도 막는다(codex 구현 검토 #2)."""
+@pytest.mark.parametrize('label', [
+    '당일 잠정치 2026-11-11', '당일 잠정치(11월 11일)', '당일 잠정치 11/11',          # 구현 검토 1회차 #2
+    '당일 잠정치 2026.11.11', '당일 잠정치 2025년 11월 12일', '당일 잠정치 전날',      # 2회차 #1
+    '당일 잠정치 2026-11-12', '당일 잠정', '잠정치', '당일 잠정치, 전일 확정', '당일 잠정치·전 거래일',
+    '당일 잠정치) (전 거래일', '당일\u200b잠정치', '당일 확정', '전 거래일 기준(2026-11-11)'])
+def test_flows_label_must_be_the_data_label(post, data, label):
+    """제목 괄호는 자료가 정하는 라벨 글자 그대로(공백만 무시) — 덧붙인 날짜·시점 말은 뜻을 가리지 않고 막는다."""
     r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', f'<h3>코스피 ({label})</h3>'), data)
-    assert has(r, '시장=코스피', '라벨', '날짜')
+    assert has(r, '시장=코스피', '라벨', '당일 잠정치')
 
 
-def test_flows_label_right_date_is_only_warning(post, data):
-    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', '<h3>코스피 (당일 잠정치 2026-11-12)</h3>'), data)
-    assert r.violations == [] and warned(r, '시장=코스피', '라벨')
+@pytest.mark.parametrize('label', ['전 거래일 기준(2026.11.11)', '전 거래일 기준(11월 11일)', '전 거래일 기준',
+                                   '전 거래일 기준(2025-11-11)', '전일 기준(2026-11-11)',
+                                   '전 거래일 기준(2026-11-11) 당일 잠정치'])
+def test_stale_label_must_be_the_data_label(post, data, label):
+    r = run(_stale_post(post, label), _stale(data))
+    assert has(r, '시장=코스피', '라벨') and has(r, '시장=코스닥', '라벨')
 
 
-@pytest.mark.parametrize('label', ['당일 잠정치, 전일 확정', '당일 잠정치·전 거래일'])
-def test_flows_label_mixed_meaning_is_violation(post, data, label):
-    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', f'<h3>코스피 ({label})</h3>'), data)
-    assert has(r, '시장=코스피', '라벨')
+def test_flows_label_matches_collector_wording():
+    """게이트가 기대하는 세 라벨은 수집기(`kr.flows.flows_freshness`)가 쓰는 글자와 같다."""
+    from kr.flows import flows_freshness
+    assert K._flow_label('provisional', D12) == flows_freshness(D12, D12, True)['label']
+    assert K._flow_label('confirmed', D12) == flows_freshness(D12, D12, False)['label']
+    assert K._flow_label('stale', '2026-11-11') == flows_freshness('2026-11-11', D12)['label']
+
+
+def test_data_label_disagreeing_with_flows_date_is_input_error(post, data):
+    data['kr_flows']['KOSPI']['label'] = '전 거래일 기준(2026-11-11)'
+    with pytest.raises(K.InputError):
+        run(post, data)
+
+
+def test_flows_title_markup_is_violation(post, data):
+    for h3 in ('<h3 style="opacity:0">코스피 (당일 잠정치)</h3>',
+               '<h3>코스피 (<span>당일 잠정치</span>)</h3>',
+               '<h3 hidden>코스피 (당일 잠정치)</h3><h3>코스피 (당일 잠정치)</h3>'):
+        r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', h3), data)
+        assert has(r, '[KR 수급]'), h3
 
 
 def test_confirmed_label_when_not_provisional(post, data):
@@ -330,6 +353,22 @@ def test_top_name_rank_members(post, data):
     assert has(run(sub(post, TOP3, TOP3.replace('29종 합산', '상위 3종')), data), '행=3위', '열=비고')
     r = run(sub(post, TOP1, TOP1.replace('<td>1</td>', '<td>2</td>')), data)
     assert has(r, '[KR 거래대금]', '순위')
+
+
+def test_top_duplicate_optional_column_is_violation(post, data):
+    """「비고」 열을 둘 두면 뒤 열만 대조됐다 — 앞 열의 「999종 합산」 이 통과했다(구현 검토 2회차 #3)."""
+    h = sub(post, '<th>비고</th>', '<th>비고</th><th>비고</th>')
+    h = re.sub(r'(<td>[^<]*조원</td>)(<td>[^<]*</td></tr>)', r'\1<td>999종 합산</td>\2', h)
+    r = run(h, data)
+    assert has(r, '[KR 거래대금]', '비고', '두 번')
+    h = sub(post, '<th>구분</th>', '<th>구분</th><th>구분</th>')
+    h = re.sub(r'(<td>[^<]*조원</td>)', r'<td>x</td>\1', h)
+    assert has(run(h, data), '[KR 거래대금]', '구분', '두 번')
+
+
+def test_index_duplicate_optional_column_is_violation(post, data):
+    h = sub(post, '<th>시가</th>', '<th>시가</th><th>시가</th>')
+    assert has(run(h, data), '[KR 지수]', '시가', '두 번')
 
 
 def test_top_note_text_without_digits_is_fine(post, data):
@@ -470,17 +509,48 @@ def test_hidden_digits_in_owned_cell(post, data, cell):
     assert has(r, '[KR 수급]', '행=기관', '숨')
 
 
-@pytest.mark.parametrize('cell', ['<span style="opacity:0">+416</span>', '<span style="opacity: 0.0;">+416</span>',
-                                  '<span style="font-size:0">+416</span>', '<span style="color:transparent">+416</span>'])
-def test_style_hidden_whole_value_in_owned_cell(post, data, cell):
-    """US 파서가 보이는 글로 읽는 인라인 숨김 — 값이 맞아도 막는다(codex 구현 검토 #3)."""
+@pytest.mark.parametrize('cell', [
+    '<span style="opacity:0">+416</span>', '<span style="opacity: 0.0;">+416</span>',
+    '<span style="font-size:0">+416</span>', '<span style="color:transparent">+416</span>',      # 1회차 #3
+    '<span style="opacity:0%">+416</span>', '<span style="color:rgba(0,0,0,0)">+416</span>',     # 2회차 #2
+    '<span style="background-color:transparent">+416</span>', '<span style="opacity:0;opacity:1">+416</span>',
+    '<span style="opacity:0.8">+416</span>', '<span style="">+416</span>',
+    '<font color="#fff">+416</font>', '<span title="x">+416</span>', '<bdo dir="rtl">+416</bdo>',
+    '<s>+416</s>', '<span class="up" hidden></span>+416'])
+def test_markup_outside_the_allowlist_in_mapped_table(post, data, cell):
+    """표 안에는 재 본 발행본에 있는 태그·속성만 — 인라인 스타일은 값이 무엇이든 싣지 않는다(숨김 블랙리스트 대신)."""
     r = run(sub(post, KQ_INST, KQ_INST.replace('+416', cell)), data)
-    assert has(r, '[KR 수급]', '행=기관', '숨')
+    assert has(r, '[KR 수급]', '시장=코스닥', '허용하지 않는')
 
 
-def test_opacity_nonzero_is_not_hidden(post, data):
-    r = run(sub(post, KQ_INST, KQ_INST.replace('+416', '<span style="opacity:0.8">+416</span>')), data)
-    assert r.violations == []
+@pytest.mark.parametrize('old,new', [
+    (KQ_INST, KQ_INST.replace('<tr>', '<tr style="opacity:0">')),                              # 2회차 #2 — 칸 밖 조상
+    (KQ_INST, KQ_INST.replace('<td>기관', '<td style="color:#fff">기관')),
+    ('<th>주체</th>', '<th style="font-size:0">주체</th>'),
+    ('<th>주체</th>', '<th bgcolor="#000">주체</th>')])
+def test_markup_on_rows_and_headers(post, data, old, new):
+    assert has(run(sub(post, old, new), data), '[KR 수급]', '허용하지 않는')
+
+
+def test_markup_on_ancestors_of_mapped_table(post, data):
+    m = re.search(r'<div class="tbl-scroll">(?=\s*<table>\s*<thead>\s*<tr>\s*<th>지수</th>)', post)
+    assert m
+    for wrap in ('<div class="tbl-scroll" style="opacity:0">', '<div class="tbl-scroll" hidden>',
+                 '<div class="tbl-scroll" aria-hidden="true">'):
+        h = post[:m.start()] + wrap + post[m.end():]
+        assert has(run(h, data), '[KR 지수]'), wrap
+    for wrap in ('<font color="#ffffff">', '<dialog>', '<s>'):
+        h = post[:m.start()] + wrap + m.group(0) + post[m.end():]
+        assert has(run(h, data), '[KR 지수]', '허용하지 않는'), wrap
+    h = re.sub(r'<body([^>]*)>', r'<body\1 style="color:transparent">', post, count=1)
+    assert has(run(h, data), '허용하지 않는', 'body')
+
+
+def test_allowed_markup_stays_clean(post, data):
+    h = sub(post, KQ_INST, KQ_INST.replace('+416', '<strong>+416</strong>'))
+    h = sub(h, '<div class="tbl-scroll">', '<div class="tbl-scroll" id="t1" data-x="1">')
+    r = run(h, data)
+    assert r.violations == [] and r.warnings == []
 
 
 def test_hidden_or_split_number_anywhere(post, data):

@@ -11,6 +11,8 @@ US 엔진(`us.number_audit`)의 문서 파서·섹션·토크나이저·결과 �
   - 코어 칸(지수 종가·등락률, 수급, 거래대금, 자료 있는 금리 행)은 데이터가 있는데 비우면 위반,
     선택 칸(시가·고가·저가·전일 종가)만 비우면 경고 — `kr_intraday` 가 없으면 비어야 한다.
   - 섹션별 표 개수가 정해져 있다. 표 삭제·이름 바꾼 섹션·다른 섹션으로 옮긴 표·지도 밖 표는 위반.
+  - 지도 표·수급 제목·그 조상에는 허용 목록의 태그·속성만(인라인 style 은 값과 상관없이 위반). 수급 제목 괄호는
+    자료 라벨 글자 그대로(공백만 무시).
   - 아시아 세션 유닛 관측 블록은 같은 날 자료로 `fund.gate.check` 가 위반 0 일 때만 위임으로 센다.
 
 When changing this: read `docs/superpowers/specs/2026-11-13-kr-number-audit.md` first.
@@ -162,30 +164,56 @@ class _Cell:
     col: str
 
 
-# US 파서가 숨김으로 보지 않는 인라인 스타일 — 소유 칸 안에서만 KR 이 더 본다(US 동작은 그대로, codex 구현 검토 #3).
-# CSS 클래스로 숨긴 것은 여전히 못 본다(spec 의 한계).
-_KR_HIDE_STYLE = re.compile(r'opacity\s*:\s*0*(?:\.0+)?\s*(?:;|$|!)|font-size\s*:\s*0+(?:\.0+)?(?:px|em|rem|pt|%)?\s*(?:;|$|!)'
-                            r'|color\s*:\s*transparent|clip-path\s*:\s*inset\(\s*50%|text-indent\s*:\s*-\d{3,}', re.I)
+# 표현 허용 목록 — 숨김 스타일을 하나씩 막는 대신(opacity:0% · rgba(0,0,0,0) · <tr style> 로 계속 뚫렸다, codex 구현
+# 검토 1·2회차) 지도 표와 그 조상에는 발행본에서 잰 태그·속성만 둔다. 2026-08-19~11-12 발행본 51편의 네 표·수급 제목·
+# 조상에 인라인 style 은 0건이다 — 그래서 style 은 값이 무엇이든 위반이다(「숨겼다」가 아니라 「이 표에는 싣지 않는다」).
+# CSS 클래스·<style> 규칙·표를 덮는 다른 요소는 여전히 못 본다(spec 의 한계).
+_IN_TAGS = frozenset({'thead', 'tbody', 'tr', 'th', 'td', 'span', 'b', 'strong', 'em'})
+_IN_ATTRS = frozenset({'class', 'colspan', 'rowspan'})          # colspan·rowspan 값은 _structure_ok 가 본다
+_ANC_TAGS = frozenset({'div', 'section', 'main', 'article', 'body', 'html'})
+_ANC_ATTRS = frozenset({'class', 'id', 'lang'})                  # + data-*
+_H3_ATTRS = frozenset({'class', 'id'})
 
 
-# 한 번의 audit() 동안만 쓰는 표시 — 노드가 __slots__ 라 속성을 달 수 없어 id 집합으로 둔다(audit 머리에서 새로 채운다)
-_STYLE_HIDDEN = set()
+def _markup_bad(n, tags, attrs, data_ok=False):
+    """허용 목록 밖 태그·속성 — 「<tr style>」 꼴 이름만(값·위치는 싣지 않아 줄이 안정적이다)."""
+    out = []
+    if tags is not None and n.tag not in tags:
+        out.append(f'<{n.tag}>')
+    for k in n.attrs:
+        if k not in attrs and not (data_ok and k.startswith('data-')):
+            out.append(f'<{n.tag} {k}>')
+    return out
 
 
-def _mark_style_hidden(doc):
-    """숫자를 담은 채 인라인 스타일로 안 보이게 한 요소가 있으면, 그 요소를 품은 모든 조상을 표시한다."""
-    _STYLE_HIDDEN.clear()
-    for n in doc.nodes:
-        if _KR_HIDE_STYLE.search(n.attrs.get('style', '')) and re.search(r'\d', ''.join(n.raw)):
-            a = n
-            while a is not None:
-                _STYLE_HIDDEN.add(id(a))
-                a = a.parent
+def _descendants(n, kids):
+    for c in kids.get(id(n), []):
+        yield c
+        for d in _descendants(c, kids):
+            yield d
+
+
+def _markup_ok(res, kind, root, kids, market=None):
+    """지도 표(또는 수급 제목 h3) 하나의 표현 검사. 위반을 싣되 대조는 계속한다."""
+    bad = []
+    if root.tag == 'h3':
+        bad += _markup_bad(root, None, _H3_ATTRS)
+        bad += [f'<h3> 안 <{d.tag}>' for d in _descendants(root, kids)]
+    else:
+        bad += _markup_bad(root, None, _IN_ATTRS)
+        for d in _descendants(root, kids):
+            bad += _markup_bad(d, _IN_TAGS, _IN_ATTRS)
+    for a in list(root.ancestors())[1:]:
+        bad += _markup_bad(a, _ANC_TAGS, _ANC_ATTRS, data_ok=True)
+    if bad:
+        what = '수급 제목' if root.tag == 'h3' else '표'
+        res.violations.append(
+            f'[KR {TABLE_NAME[kind]}] 시장={market or "-"} — {what}와 그것을 감싼 요소에 허용하지 않는 태그·속성이 있다'
+            f'({", ".join(sorted(set(bad)))}) — 인라인 style·표현 속성은 값과 상관없이 싣지 않는다'
+            f'(화면에 보이는 숫자와 검사가 읽는 숫자가 달라질 수 있다)')
 
 
 def _hidden_digits(td):
-    if id(td) in _STYLE_HIDDEN:
-        return True
     raw = re.sub(r'\D', '', ''.join(td.raw))
     vis = re.sub(r'\D', '', ''.join(td.text))
     return raw != vis
@@ -280,6 +308,7 @@ def _signature(table, kids):
 def _structure_ok(res, kind, table, kids, market=None):
     head, body = _head(table, kids)
     name = TABLE_NAME[kind]
+    _markup_ok(res, kind, table, kids, market)
     if len(head) != 1:
         res.violations.append(f'[KR {name}] 시장={market or "-"} — 표 머리 행이 {len(head)}개다(정확히 1개)')
         return None
@@ -342,35 +371,18 @@ def _audit_index(res, table, kids, data, owned):
             res.violations.append(f'[KR 지수] 시장=- 행={label} — 행이 없다(데이터에는 있다)')
 
 
-def _meaning(label):
-    """라벨의 시점 뜻. 뜻이 둘 이상 섞이면(「당일 잠정치, 전일 확정」) None — 정할 수 없으면 위반이다."""
-    s = re.sub(r'\s', '', label or '')
-    found = set()
-    if re.search(r'전거래일|전일|어제|직전', s):
-        found.add('stale')
-    if '잠정' in s:
-        found.add('provisional')
-    if '확정' in s:
-        found.add('confirmed')
-    return found.pop() if len(found) == 1 else None
-
-
-def _label_dates(label):
-    """라벨에 적힌 날짜(ISO·「11월 11일」·「11/11」) — 월·일만 있으면 (None, 월, 일)."""
-    s = label or ''
-    out = [tuple(int(x) for x in d.split('-')) for d in _ISO.findall(s)]
-    rest = _ISO.sub(' ', s)
-    out += [(None, int(m), int(d)) for m, d in re.findall(r'(\d{1,2})\s*월\s*(\d{1,2})\s*일', rest)]
-    out += [(None, int(m), int(d)) for m, d in re.findall(r'(?<![\d.])(\d{1,2})[/.](\d{1,2})(?![\d.])', rest)]
-    return out
-
-
-def _date_ok(found, want):
-    y, m, d = (int(x) for x in want.split('-'))
-    return all((fy is None or fy == y) and fm == m and fd == d for fy, fm, fd in found)
-
-
 _MEANING_KO = {'stale': '전 거래일 기준', 'provisional': '당일 잠정', 'confirmed': '당일 확정'}
+
+
+def _flow_label(expect, flows_date):
+    """자료가 정하는 제목 라벨 — 수집기 `kr.flows.flows_freshness` 가 쓰는 글자와 같다(시험이 강제)."""
+    if expect == 'stale':
+        return f'전 거래일 기준({flows_date})'
+    return '당일 잠정치' if expect == 'provisional' else '당일 확정'
+
+
+def _nospace(s):
+    return re.sub(r'\s+', '', s or '')
 
 
 def _flows_market(table, section, doc, tables):
@@ -408,7 +420,12 @@ def _flows_inputs(data, date):
         if len(rows) != 1:
             raise InputError(f'kr_flows.{key} 에 flows_date {fd} 행이 {len(rows)}개다(정확히 1개)')
         expect = 'stale' if fd != date else ('provisional' if prov else 'confirmed')
-        out[key] = {'date': fd, 'row': rows[0], 'expect': expect, 'label': f.get('label')}
+        label = _flow_label(expect, fd)
+        # 자료의 라벨이 있으면 같은 사실(flows_date·잠정 여부)에서 나온 글자여야 한다 — 다르면 어느 쪽이 맞는지 정할 수 없다
+        if f.get('label') is not None and _nospace(_norm(str(f['label']))) != _nospace(label):
+            raise InputError(f'kr_flows.{key}.label 「{f["label"]}」 이 flows_date {fd}·잠정 여부가 정하는 라벨 '
+                             f'「{label}」 과 다르다')
+        out[key] = {'date': fd, 'row': rows[0], 'expect': expect, 'label': label}
     return out
 
 
@@ -424,26 +441,24 @@ def _audit_flows(res, tables, section, doc, kids, flows, owned):
         if not m:
             res.violations.append(f'[KR 수급] 시장=- — 표의 시장을 정할 수 없다(제목 「{text}」)')
             continue
-        by_market.setdefault(INDEX_ROWS[m.group(1)], []).append((t, m.group(2), text))
+        by_market.setdefault(INDEX_ROWS[m.group(1)], []).append((t, m.group(2), h3))
     for key, ko in MARKET_KO.items():
         found = by_market.get(key, [])
         if len(found) != 1:
             res.violations.append(f'[KR 수급] 시장={ko} — 표가 {len(found)}개다(시장마다 정확히 1개)')
             continue
-        table, label, title = found[0]
+        table, label, h3 = found[0]
         info = flows[key]
-        got = _meaning(label)
-        if got != info['expect']:
-            res.violations.append(f'[KR 수급] 시장={ko} — 제목 라벨 「{label or ""}」 이 자료와 다르다'
-                                  f'(자료: {_MEANING_KO[info["expect"]]}, flows_date {info["date"]})')
-        else:
-            # 뜻과 상관없이 라벨에 날짜가 적혀 있으면 flows_date 와 같아야 한다(「당일 잠정치 2026-11-11」, codex 구현 검토 #2)
-            if not _date_ok(_label_dates(label), info['date']):
-                res.violations.append(f'[KR 수급] 시장={ko} — 제목 라벨 「{label}」 의 날짜가 flows_date '
-                                      f'{info["date"]} 와 다르다')
-            elif info.get('label') and label != info['label']:
-                res.warnings.append(f'경고(표): [KR 수급] 시장={ko} — 제목 라벨 「{label}」 이 자료 라벨 '
-                                    f'「{info["label"]}」 과 글자가 다르다(뜻은 같다)')
+        # 제목 괄호는 자료 라벨 글자 그대로(공백만 무시). 뜻·날짜를 풀어 읽지 않는다 — 덧붙인 날짜(「2026.11.11」)나
+        # 시점 말(「전날」)을 하나씩 막는 방식은 계속 뚫렸다(codex 구현 검토 1·2회차)
+        if _nospace(label) != _nospace(info['label']):
+            res.violations.append(f'[KR 수급] 시장={ko} — 제목 라벨 「{label or ""}」 이 자료 라벨 「{info["label"]}」 과 다르다'
+                                  f'(자료: {_MEANING_KO[info["expect"]]}, flows_date {info["date"]}) — 괄호 안은 '
+                                  f'그 글자만 쓴다')
+        elif label != info['label']:
+            res.warnings.append(f'경고(표): [KR 수급] 시장={ko} — 제목 라벨 「{label}」 이 자료 라벨 '
+                                f'「{info["label"]}」 과 띄어쓰기가 다르다')
+        _markup_ok(res, 'flows', h3, kids, ko)
         got_s = _structure_ok(res, 'flows', table, kids, ko)
         if got_s is None:
             continue
@@ -483,6 +498,12 @@ def _audit_top(res, table, kids, data, owned):
     for th in ths:
         if th not in TOP_COLS:
             res.violations.append(f'[KR 거래대금] — 알 수 없는 열 「{th}」')
+    dup = sorted({th for th in ths if ths.count(th) > 1})
+    if dup:
+        # 같은 머리가 둘이면 뒤 열만 대조된다 — 선택 열(구분·비고)도 마찬가지다(codex 구현 검토 2회차 #3)
+        for th in dup:
+            res.violations.append(f'[KR 거래대금] — 열 「{th}」 이 두 번 있다')
+        return
     for need in ('순위', '종목/ETF', '거래대금'):
         if ths.count(need) != 1:
             res.violations.append(f'[KR 거래대금] — 필수 열 「{need}」 이 정확히 하나가 아니다')
@@ -647,7 +668,6 @@ def audit(html, data, date, effective=None):
     series, _ = _econ_series(data)
 
     doc = _Stream(html)
-    _mark_style_hidden(doc)
     kids = _children(doc)
     sections = _sections(doc)
     by_title = {}
