@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-13",
  "status": "none",
- "reason": "topic_too_long",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-14T02:56:36+00:00",
- "cutoff_at": "2026-11-14T02:56:36+00:00",
+ "collected_at": "2026-11-14T04:00:46+00:00",
+ "cutoff_at": "2026-11-14T04:00:46+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "7e1580664ed4178fcbd66c56bf01096148be0e81148b658f14a165aa495be906"
  },
  "counts": {
-  "harvest": 193,
+  "harvest": 192,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 28415,
-   "out": 9998
+   "in": 49753,
+   "out": 11902
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,12 +42,55 @@
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "5/5"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 5,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "memo[0]",
+    "memo[1]",
+    "structure",
+    "variables[2]",
+    "worry.most[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:dangling",
+    "variables[2]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "memo[0]:dangling",
+    "memo[1]:unverified",
+    "worry.most[0]:dangling"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 사임과 메가스피드 대중 칩 우회 수출 의혹",
+  "query": "nvidia huang scandal",
   "trigger": []
  },
- "content_hash": "9574d079b1d6a6c7"
+ "problems": [
+  "structure:dangling",
+  "variables[2]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "memo[0]:dangling",
+  "memo[1]:unverified",
+  "worry.most[0]:dangling"
+ ],
+ "content_hash": "beb7b0edbf4b58ba"
 }
