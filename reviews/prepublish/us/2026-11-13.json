@@ -1,0 +1,22 @@
+{
+ "section": "us",
+ "date": "2026-11-13",
+ "request_id": "us-2026-11-13-2dc4b06b9de7",
+ "draft_sha": "34a96953d2a37af4f0811e5881cbc405e629abd3",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 2,
+ "style_candidates": 0,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 3,
+ "facts_rejected": 1,
+ "style_applied": 0,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-14T00:01:26Z"
+}
