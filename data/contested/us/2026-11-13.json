@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-13",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "topic_too_long",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-14T01:51:45+00:00",
- "cutoff_at": "2026-11-14T01:51:45+00:00",
+ "collected_at": "2026-11-14T02:56:36+00:00",
+ "cutoff_at": "2026-11-14T02:56:36+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 49820,
-   "out": 14047
+   "in": 28415,
+   "out": 9998
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,48 +42,12 @@
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "8/8"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 8,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "memo[0]",
-    "structure",
-    "worry.most[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:dangling",
-    "edges[0]:unverified",
-    "edges[0]:dangling",
-    "memo[0]:dangling",
-    "worry.most[0]:dangling"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 사임과 Megaspeed의 대중 칩 우회 수출 의혹",
-  "query": "nvidia huang scandal",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "edges[0]:unverified",
-  "edges[0]:dangling",
-  "memo[0]:dangling",
-  "worry.most[0]:dangling"
- ],
- "content_hash": "943b339a8d7a899d"
+ "content_hash": "9574d079b1d6a6c7"
 }
