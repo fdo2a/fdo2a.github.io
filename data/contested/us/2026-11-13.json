@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-13",
  "status": "error",
- "reason": "model_verify_success",
+ "reason": "model_extract_success",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-14T07:35:31+00:00",
- "cutoff_at": "2026-11-14T07:35:31+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-14T07:54:12+00:00",
+ "cutoff_at": "2026-11-14T07:54:12+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "7e1580664ed4178fcbd66c56bf01096148be0e81148b658f14a165aa495be906"
  },
  "counts": {
-  "harvest": 193,
+  "harvest": 192,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 28173,
-   "out": 9965
+   "in": 0,
+   "out": 0
   },
   "discovery": "ok",
   "hosts": {
@@ -40,17 +40,12 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
-  "grounded": {
-   "claims": "5/5",
-   "pairs": "2/2",
-   "obs": "10/10"
-  }
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "젠슨 황 사임 이후 메가스피드 칩 우회 수출 의혹과 미 국가안보 논란",
-  "query": "nvidia huang scandal",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "84359d458f35de6c"
+ "content_hash": "1b5800512dd83be0"
 }
