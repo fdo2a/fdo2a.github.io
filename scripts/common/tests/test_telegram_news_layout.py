@@ -364,8 +364,6 @@ def test_an_unsourced_item_after_a_sourced_one_needs_its_own_subject():
     ('한지영 연구원의 진단이 눈에 띄었다.', '이름'),
     ('키움증권 쪽 견해가 먼저 나왔다.', '이름'),
     ('연합인포맥스가 옮긴 시각도 있었다.', '이름'),
-    ('로 이터가 전한 내용이 출발점이었다.', '이름'),                # spaced out (구현 검토 1회 #2)
-    ('한 지 영 연구원의 진단이 눈에 띄었다.', '이름'),
     ('하루에 세 차례 올랐다는 점이 화제였다.', '숫자'),             # a quantity in words (구현 검토 1회 #1)
     ('주가가 두 배가 됐다는 점이 논의의 바탕이었다.', '숫자'),
     ('수십억 달러가 걸린 문제라는 데 견해가 모였다.', '숫자'),
@@ -396,12 +394,34 @@ def test_linking_text_carries_no_number_no_name_and_no_summary(link, needle):
     '두 주요 지수를 보는 눈이 달랐다.',
     '사원 수를 둘러싼 논의는 아니었다.',
     '수주는 엇갈렸다는 데 견해가 모였다.',             # 「수주」 is orders, not several weeks (구현 검토 3회 #2)
+    '인수 조건을 둘러싼 견해가 엇갈렸다.',             # measured on the published posts: 「조건」 420 times
+    '서명을 앞둔 합의를 두고 시각이 갈렸다.',
+    '조명이 쏠린 종목을 두고 견해가 나뉘었다.',
+    '견해는 한 곳으로 모였다.',                        # what linking text is for
+    '시각은 두 가지로 갈렸다.',
     '설비의 수명을 둘러싼 견해도 있었다.',
     '견해는 엇갈렸다.',
     '데이터센터 전력을 둘러싼 보도가 이어졌다.',
 ])
 def test_linking_text_without_a_quantity_passes(link):
     assert run2(para(link, SP_REP, SP_REP2_BACK, SP_OP2_SUBJ, SP_OP3_BARE)) == []
+
+
+def test_a_name_written_apart_in_linking_text_is_a_warning_for_the_reader():
+    # 「로 이터가 전했다」 may be the outlet (구현 검토 1회 #2); 「매일 경제 지표가」 next to 매일경제 in the
+    # file is plain words. Code cannot tell them apart, so it does not block — it tells the reader.
+    for link in ('로 이터가 전한 내용이 출발점이었다.', '한 지 영 연구원의 진단이 눈에 띄었다.'):
+        warns = []
+        assert run2(para(link, SP_REP, SP_REP2_BACK, SP_OP2_SUBJ, SP_OP3_BARE), warnings=warns) == [], link
+        assert any('띄어 쓴 이름' in w for w in warns), (link, warns)
+    d = data2()
+    d['items'].append({'id': 'kwusa/4', 'kind': 'opinion', 'firm': None, 'analyst': None, 'news_use': True,
+                       'source': {'name': '매일경제', 'url': None, 'basis': 'credit'}, 'summary_ko': S_OP3})
+    warns = []
+    assert run(page(section(para('매일 경제 지표가 나오는 주였다.', SP_REP, SP_REP2_BACK))), d, warnings=warns) == []
+    assert any('띄어 쓴 이름' in w and '매일경제' in w for w in warns), warns
+    warns = []
+    assert any('이름' in x for x in run(page(section(para('매일경제 보도가 출발점이었다.', SP_REP, SP_REP2_BACK))), d, warnings=warns))
 
 
 def test_a_name_inside_the_speakers_own_name_is_not_another_speaker():

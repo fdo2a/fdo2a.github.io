@@ -64,21 +64,31 @@ NEWS_LINK_MAX_CHARS = 80        # one piece of linking text — a topic sentence
 NEWS_LINK_MAX_SHARE = 0.2       # linking text is what no summary vouches for; keep it a small share
 NEWS_LINK_MIN_COMPARE = 10      # 「반면」「이어」 match any summary by two characters
 # a quantity in words is still a figure no summary vouches for: 「세 차례」「서너 차례」「스물한 번」「두 배」
-# 「수백 건」「수십억 달러」「절반」 (구현 검토 1회 #1, 2회 #2). The numeral stands at a word start and the
-# counter ends the word, so 「다양한 종목」「이번 주」「한 해외 매체」「두 주요 지수」 are not one; a Sino-Korean
-# numeral needs a magnitude (십·백·천·만·억·조), so 「일원」「사원」「이 원칙」 are not one either (2회 #3).
+# 「수백 건」「수십억 달러」「절반」 (구현 검토 1회 #1, 2회 #2). Measured on the 208 published posts
+# (2026-11-14): a one-syllable numeral glued to its counter is far more often another word —
+# 「조건」 420 times, 「서명」「조명」「천명」「서해」「이억원」(a name) — so it counts only when written
+# apart (「한 번」) or when the numeral has two syllables or more (「서너차례」「다섯개」); 「수」 joins only
+# counters it makes no word with (「수주」 is orders, 3회 #2); a Sino-Korean numeral counts only as
+# 「수십·수백·수천 …」 — the others come with a digit, which `\d` already stops (「일원」「사원」, 2회 #3).
+# 「곳」「가지」 are left out: 「견해는 한 곳으로 모였다」「두 가지로 갈렸다」 are what linking text says.
 # This is a net for the common forms, not a boundary — words can state a quantity in ways no list
 # ends (「거듭」「연거푸」). Linking text that states a fact is for the routine's reading to delete.
 _Q_END = r'(?=$|[^가-힣]|[가이은는을를도의에로와과만나씩째]|으로|까지)'
 _NATIVE = r'(?:한|두|세|네|서|너|석|넉|댓|다섯|여섯|일곱|여덟|아홉|열|스무|스물|서른|마흔|쉰|예순|일흔|여든|아흔|몇|여러|대여섯|예닐곱)+'
-_SINO = r'수?[일이삼사오육칠팔구]?[십백천만억조][일이삼사오육칠팔구십백천만억조]*'
-LINK_QUANTITY = re.compile(
-    r'(?<![가-힣])' + _NATIVE + r'\s?(?:차례|번|배|개|곳|건|명|가지|달|주|해|분기|개월|종목|거래일|년)' + _Q_END +
-    # 「수」(several) joins its counter only where the pair is not a word of its own — 「수주」(orders),
-    # 「수명」「수해」「수건」「수배」 are (구현 검토 3회 #2); with a space it is the numeral
-    r'|(?<![가-힣])수(?:\s?(?:차례|년|개월|거래일|분기)|\s(?:번|배|개|곳|건|명|가지|달|주|해|종목))' + _Q_END +
-    r'|(?<![가-힣])' + _SINO + r'\s?(?:퍼센트|프로|배|달러|원|포인트|bp|건|명|개|곳|차례|번|종목|년|개월)' + _Q_END +
+_NATIVE_Q = re.compile(r'(?<![가-힣])(' + _NATIVE + r')(\s?)(?:차례|번|배|개|건|명|달|주|해|분기|개월|종목|거래일|년)' + _Q_END)
+_OTHER_Q = re.compile(
+    r'(?<![가-힣])수(?:\s?(?:차례|년|개월|거래일|분기)|\s(?:번|배|개|곳|건|명|달|주|해|종목))' + _Q_END +
+    r'|(?<![가-힣])수[십백천만억조]+\s?(?:퍼센트|프로|배|달러|원|포인트|bp|건|명|개|곳|차례|번|종목|년|개월)' + _Q_END +
     r'|절반|갑절|반토막')
+
+
+def link_quantity(text):
+    """The first quantity written in words, or None."""
+    for m in _NATIVE_Q.finditer(text or ''):
+        if m.group(2) or len(m.group(1)) >= 2:
+            return m.group(0)
+    m = _OTHER_Q.search(text or '')
+    return m.group(0) if m else None
 _LEAD = r'^(?:(?:또한|또|이어서|이어|한편|반면|다만|여기에|이와 달리|이에 대해)[,\s]*)?'
 _END = r'(?=[\s,])'             # the word really ends here — 「같은 보도자료」「시장은행은」 are other words (설계 검토 3회 #1)
 # a back-reference to the outlet / the analyst of the marker right before (설계 검토 2회 #3)
@@ -395,7 +405,7 @@ def _news_context(paras):
     return ctx
 
 
-def _news_links(paras, items, sums):
+def _news_links(paras, items, sums, warn=None):
     """Linking text: the words in a paragraph that no marker holds, so no summary vouches for them."""
     v = []
     names = {FIRM_KIWOOM, FIRM_HANWHA}.union(*(_speakers(it) for it in items.values()))
@@ -408,13 +418,19 @@ def _news_links(paras, items, sums):
                 continue
             n_link += len(chunk)
             head = f'잇는 말 「{chunk[:30]}{"…" if len(chunk) > 30 else ""}」'
-            q = re.search(r'\d', chunk) or LINK_QUANTITY.search(chunk)
+            d = re.search(r'\d', chunk)
+            q = d.group(0) if d else link_quantity(chunk)
             if q:
-                v.append(f'{head} 에 숫자가 있다(「{q.group(0)}」) — 수치·수량·날짜는 표식 안에만 쓴다')
-            # 「로 이터가 전했다」 is still the outlet (구현 검토 1회 #2)
-            hit = sorted(_named(chunk, names))
+                v.append(f'{head} 에 숫자가 있다(「{q}」) — 수치·수량·날짜는 표식 안에만 쓴다')
+            hit = sorted(nm for nm in names if nm in chunk)
             if hit:
                 v.append(f'{head} 에 이름 「{hit[0]}」 이 있다 — 증권사·연구원·매체는 표식 안에만 쓴다')
+            else:
+                # written apart it may be the outlet (「로 이터가 전했다」, 구현 검토 1회 #2) or plain words
+                # (「매일 경제 지표가」 next to 매일경제 in the file) — code cannot tell, the reader can
+                loose = sorted(_named(chunk, names))
+                if loose and warn is not None:
+                    warn.append(f'{head} 에 띄어 쓴 이름처럼 보이는 글자가 있다(「{loose[0]}」) — 매체·증권사·연구원을 가리키면 지운다')
             if len(chunk) > NEWS_LINK_MAX_CHARS:
                 v.append(f'{head} 이 {len(chunk)}자다(최대 {NEWS_LINK_MAX_CHARS}자) — 잇는 말은 문단이 무엇에 관한 것인지만 말한다')
             if len(_squash(chunk)) >= NEWS_LINK_MIN_COMPARE:
@@ -598,7 +614,7 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
                 warn.append(f'「{nm}」 의 텔레그램 견해와 닮은 문장이 data-tg 표식 밖에 있다 — 텔레그램에서 왔으면 감싼다: 「{sent[:40]}…」')
     sums = [it['summary_ko'] for it in items.values() if it.get('summary_ko')]
     if is_news:
-        v.extend(_news_links(sec_paras, items, sums))
+        v.extend(_news_links(sec_paras, items, sums, warn))
         for sent in _news_outside(outside, news):
             best = max((coverage(sent, s) for s in sums), default=0)
             if best >= OUTSIDE_COVERAGE:
