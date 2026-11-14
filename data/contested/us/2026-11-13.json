@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-14T00:47:08+00:00",
- "cutoff_at": "2026-11-14T00:47:08+00:00",
+ "collected_at": "2026-11-14T01:51:45+00:00",
+ "cutoff_at": "2026-11-14T01:51:45+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "7e1580664ed4178fcbd66c56bf01096148be0e81148b658f14a165aa495be906"
  },
  "counts": {
-  "harvest": 195,
+  "harvest": 193,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 51472,
-   "out": 12721
+   "in": 49820,
+   "out": 14047
   },
   "discovery": "throttled",
   "hosts": {
@@ -44,13 +44,13 @@
   "gdelt": "throttled",
   "grounded": {
    "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "9/9"
+   "pairs": "3/3",
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 9,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -58,45 +58,32 @@
   "repair": {
    "paths": [
     "edges[0]",
-    "edges[2]",
     "memo[0]",
-    "memo[1]",
     "structure",
-    "worry.moderate[0]",
     "worry.most[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
-    "structure:unverified",
     "structure:dangling",
+    "edges[0]:unverified",
     "edges[0]:dangling",
-    "edges[2]:unverified",
-    "edges[2]:dangling",
     "memo[0]:dangling",
-    "memo[1]:dangling",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling"
+    "worry.most[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 사임과 Megaspeed 대중 칩 우회 수출 의혹",
+  "topic_ko": "젠슨 황 사임과 Megaspeed의 대중 칩 우회 수출 의혹",
   "query": "nvidia huang scandal",
   "trigger": []
  },
  "problems": [
-  "structure:unverified",
   "structure:dangling",
+  "edges[0]:unverified",
   "edges[0]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
   "memo[0]:dangling",
-  "memo[1]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling"
+  "worry.most[0]:dangling"
  ],
- "content_hash": "b63d7365ef9554d9"
+ "content_hash": "943b339a8d7a899d"
 }
