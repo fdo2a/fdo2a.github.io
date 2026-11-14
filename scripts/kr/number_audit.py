@@ -174,6 +174,13 @@ _IN_ATTRS = frozenset({'class', 'colspan', 'rowspan'})          # colspan·rowsp
 _ANC_TAGS = frozenset({'div', 'section', 'main', 'article', 'body', 'html'})
 _ANC_ATTRS = frozenset({'class', 'id', 'lang'})                  # + data-*
 _H3_ATTRS = frozenset({'class', 'id'})
+_INLINE = frozenset({'span', 'b', 'strong', 'em'})
+# 표 안 요소가 설 수 있는 부모 — 브라우저는 <td> 안 <td>, <tr> 밖 <td> 를 고쳐 그려서(앞 칸을 닫거나 새 행을 만든다)
+# 트리와 화면이 갈린다(codex 구현 검토 4회차). 그 밖의 자리는 위반.
+_PARENT = {'thead': frozenset({'table'}), 'tbody': frozenset({'table'}),
+           'tr': frozenset({'thead', 'tbody', 'table'}),
+           'th': frozenset({'tr'}), 'td': frozenset({'tr'})}
+_PARENT.update({t: _INLINE | {'th', 'td'} for t in _INLINE})
 
 
 class _KrStream(_Stream):
@@ -182,12 +189,36 @@ class _KrStream(_Stream):
 
     def __init__(self, html):
         self.voids = []              # (부모 노드, 태그, 속성 이름들)
+        self.early = []              # 브라우저가 파서보다 먼저 닫는 주석 꼴(「<!-->」·「--!>」·CDATA)
         super().__init__(html)
 
     def handle_starttag(self, tag, attrs):
         super().handle_starttag(tag, attrs)
         if tag in VOID:
             self.voids.append((self.stack[-1] if self.stack else None, tag, [k for k, _ in attrs]))
+
+    # 주석·선언·처리 명령 — 파서 판에 따라 끝을 브라우저와 다르게 본다(「<!--> 9 -->」 는 브라우저에서 빈 주석 + 보이는 글)
+    def _note(self, _data):
+        self.voids.append((self.stack[-1] if self.stack else None, '!주석·선언', []))
+
+    def handle_comment(self, data):
+        self._note(data)
+        if data.startswith(('>', '->')) or '--!>' in data:
+            self.early.append(data)
+        super().handle_comment(data)
+
+    def handle_decl(self, decl):
+        self._note(decl)
+        super().handle_decl(decl)
+
+    def handle_pi(self, data):
+        self._note(data)
+        super().handle_pi(data)
+
+    def unknown_decl(self, data):
+        self._note(data)
+        self.early.append(data)
+        super().unknown_decl(data)
 
 
 def _markup_bad(n, tags, attrs, data_ok=False):
@@ -220,8 +251,10 @@ def _markup_ok(res, kind, root, doc, kids, market=None):
         bad += _markup_bad(root, None, _IN_ATTRS)
         for d in _descendants(root, kids):
             bad += _markup_bad(d, _IN_TAGS, _IN_ATTRS)
+            if d.tag in _PARENT and d.parent.tag not in _PARENT[d.tag]:
+                bad.append(f'<{d.parent.tag}> 바로 아래 <{d.tag}>(자리)')
     # 단일 태그는 종류를 가리지 않고 싣지 않는다(발행본의 이 표·제목 안에 0건)
-    bad += [f'<{tag}>' for parent, tag, _ in doc.voids if parent is not None and _inside(parent, root)]
+    bad += [(f'<{tag}>' if tag[0] != '!' else '주석·선언') for parent, tag, _ in doc.voids if parent is not None and _inside(parent, root)]
     for a in list(root.ancestors())[1:]:
         bad += _markup_bad(a, _ANC_TAGS, _ANC_ATTRS, data_ok=True)
     if root.tag == 'table':
@@ -703,6 +736,14 @@ def audit(html, data, date, effective=None):
         if title:
             by_title.setdefault(title, []).append(n)
 
+    # 둘째 <body>·<html> 시작 태그의 속성은 브라우저가 첫 요소에 합친다 — 트리에서는 표의 조상이 아니어도 표에 닿는다
+    for tag in ('html', 'body'):
+        n_tag = sum(1 for n in doc.nodes if n.tag == tag)
+        if n_tag > 1:
+            res.violations.append(f'<{tag}> 시작 태그가 {n_tag}개다 — 브라우저는 뒤 태그의 속성을 첫 요소에 합친다(1개만)')
+
+    for c in doc.early:
+        res.violations.append(f'브라우저가 먼저 닫는 주석 꼴이 있다({c[:20]!r}) — 뒤 글이 화면에는 보이고 검사에는 안 보인다')
     body_at = html.find('<body')
     for s in numbers_split_by_tags(html[body_at:] if body_at >= 0 else html):
         res.violations.append(f'수치가 태그·보이지 않는 문자로 쪼개져 있다({s[:30]!r}) — 화면과 검사가 다른 숫자를 읽는다')

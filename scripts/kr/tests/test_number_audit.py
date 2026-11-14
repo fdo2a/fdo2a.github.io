@@ -589,6 +589,45 @@ def test_fullwidth_label_is_violation(post, data):
     assert has(r, '[KR 수급]')
 
 
+@pytest.mark.parametrize('old,new', [
+    ('<td class="up">+416</td>', '<td class="up"><td>+416</td></td>'),          # 브라우저는 둘째 <td> 에서 앞 칸을 닫는다
+    ('<td class="up">+416</td>', '<td class="up"><span><td>+416</td></span></td>'),
+    (KQ_INST, '<tr><td>기관</td><td class="up">+416</td><tr><td>기타</td><td>+1</td></tr></tr>'),
+    (KQ_INST, KQ_INST.replace('<td>기관</td>', '<td>기관<th>x</th></td>')),
+    (KQ_INST, KQ_INST + '<td>기관</td><td>+999</td>'),
+    (KQ_INST, KQ_INST + '<thead><tr><th>주체</th><th>순매수(억원)</th></tr></thead>'.replace('<thead>', '<tbody><thead>'))])
+def test_misnested_table_elements(post, data, old, new):
+    """표 안 요소는 정해진 부모 아래에만 — 브라우저가 구조를 고쳐 그리는 배치는 검사와 화면이 갈린다(4회차)."""
+    assert has(run(sub(post, old, new), data), '[KR 수급]', '시장=코스닥', '허용하지 않는', '자리')
+
+
+@pytest.mark.parametrize('cell', ['+416<!--> 9 -->', '+416<!-- x -->', '+416<![CDATA[ 9 ]]>', '+416<?x 9 ?>', '+416<!x 9>'])
+def test_comments_in_mapped_table(post, data, cell):
+    """주석·선언은 파서 판과 브라우저가 끝을 다르게 볼 수 있다(「<!-->」) — 표·제목 안에서는 싣지 않는다."""
+    r = run(sub(post, KQ_INST, KQ_INST.replace('+416', cell)), data)
+    assert has(r, '[KR 수급]', '시장=코스닥', '허용하지 않는', '주석')
+    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', '<h3>코스피 (당일 잠정치<!--> 전날 -->)</h3>'), data)
+    assert has(r, '[KR 수급]')
+
+
+def test_second_body_or_html_tag_is_violation(post, data):
+    """둘째 <body>·<html> 시작 태그의 속성은 브라우저가 첫 요소에 합친다 — 트리에서는 조상이 아니어도."""
+    h = sub(post, '</body>', '<body style="color:transparent"></body>')
+    assert has(run(h, data), 'body')
+    h = sub(post, '</body>', '<html style="opacity:0"></body>')
+    assert has(run(h, data), 'html')
+
+
+@pytest.mark.parametrize('junk', ['<!--> <table><tr><td>코스피</td><td>9,999.99</td></tr></table> -->',
+                                  '<!---> <p>외국인 +9,999</p> -->', '<!-- a --!> <p>+9,999</p> -->',
+                                  '<![CDATA[ a > <p>+9,999</p> ]]>'])
+def test_comment_forms_the_browser_ends_early(post, data, junk):
+    """「<!-->」·「--!>」·CDATA 는 브라우저가 먼저 닫아 뒤 글이 화면에 보인다 — 파서는 통째로 주석으로 버린다. 문서 어디서든 위반."""
+    r = run(sub(post, '<h2>수급</h2>', '<h2>수급</h2>' + junk), data)
+    assert has(r, '주석')
+    assert not has(run(sub(post, '<h2>수급</h2>', '<h2>수급</h2><!-- 보통 주석 -->'), data), '주석')
+
+
 def test_allowed_markup_stays_clean(post, data):
     h = sub(post, KQ_INST, KQ_INST.replace('+416', '<strong>+416</strong>'))
     h = sub(h, '<div class="tbl-scroll">', '<div class="tbl-scroll" id="t1" data-x="1">')
