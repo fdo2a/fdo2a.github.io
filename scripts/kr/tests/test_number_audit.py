@@ -271,6 +271,24 @@ def test_flows_label_spacing_only_is_warning(post, data):
     assert has(r, '시장=코스피', '라벨')
 
 
+@pytest.mark.parametrize('label', ['당일 잠정치 2026-11-11', '당일 잠정치(11월 11일)', '당일 잠정치 11/11'])
+def test_flows_label_wrong_date_is_violation(post, data, label):
+    """당일 라벨에 다른 날짜가 붙으면 뜻이 맞아도 막는다(codex 구현 검토 #2)."""
+    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', f'<h3>코스피 ({label})</h3>'), data)
+    assert has(r, '시장=코스피', '라벨', '날짜')
+
+
+def test_flows_label_right_date_is_only_warning(post, data):
+    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', '<h3>코스피 (당일 잠정치 2026-11-12)</h3>'), data)
+    assert r.violations == [] and warned(r, '시장=코스피', '라벨')
+
+
+@pytest.mark.parametrize('label', ['당일 잠정치, 전일 확정', '당일 잠정치·전 거래일'])
+def test_flows_label_mixed_meaning_is_violation(post, data, label):
+    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', f'<h3>코스피 ({label})</h3>'), data)
+    assert has(r, '시장=코스피', '라벨')
+
+
 def test_confirmed_label_when_not_provisional(post, data):
     data['kr_market_data']['flows_provisional']['KOSPI'] = False
     data['kr_flows']['KOSPI'].update(flows_provisional=False, label='당일 확정')
@@ -450,6 +468,19 @@ def test_wrong_copy_of_mapped_table_in_open_details(post, data):
 def test_hidden_digits_in_owned_cell(post, data, cell):
     r = run(sub(post, KQ_INST, KQ_INST.replace('+416', cell)), data)
     assert has(r, '[KR 수급]', '행=기관', '숨')
+
+
+@pytest.mark.parametrize('cell', ['<span style="opacity:0">+416</span>', '<span style="opacity: 0.0;">+416</span>',
+                                  '<span style="font-size:0">+416</span>', '<span style="color:transparent">+416</span>'])
+def test_style_hidden_whole_value_in_owned_cell(post, data, cell):
+    """US 파서가 보이는 글로 읽는 인라인 숨김 — 값이 맞아도 막는다(codex 구현 검토 #3)."""
+    r = run(sub(post, KQ_INST, KQ_INST.replace('+416', cell)), data)
+    assert has(r, '[KR 수급]', '행=기관', '숨')
+
+
+def test_opacity_nonzero_is_not_hidden(post, data):
+    r = run(sub(post, KQ_INST, KQ_INST.replace('+416', '<span style="opacity:0.8">+416</span>')), data)
+    assert r.violations == []
 
 
 def test_hidden_or_split_number_anywhere(post, data):

@@ -162,7 +162,30 @@ class _Cell:
     col: str
 
 
+# US 파서가 숨김으로 보지 않는 인라인 스타일 — 소유 칸 안에서만 KR 이 더 본다(US 동작은 그대로, codex 구현 검토 #3).
+# CSS 클래스로 숨긴 것은 여전히 못 본다(spec 의 한계).
+_KR_HIDE_STYLE = re.compile(r'opacity\s*:\s*0*(?:\.0+)?\s*(?:;|$|!)|font-size\s*:\s*0+(?:\.0+)?(?:px|em|rem|pt|%)?\s*(?:;|$|!)'
+                            r'|color\s*:\s*transparent|clip-path\s*:\s*inset\(\s*50%|text-indent\s*:\s*-\d{3,}', re.I)
+
+
+# 한 번의 audit() 동안만 쓰는 표시 — 노드가 __slots__ 라 속성을 달 수 없어 id 집합으로 둔다(audit 머리에서 새로 채운다)
+_STYLE_HIDDEN = set()
+
+
+def _mark_style_hidden(doc):
+    """숫자를 담은 채 인라인 스타일로 안 보이게 한 요소가 있으면, 그 요소를 품은 모든 조상을 표시한다."""
+    _STYLE_HIDDEN.clear()
+    for n in doc.nodes:
+        if _KR_HIDE_STYLE.search(n.attrs.get('style', '')) and re.search(r'\d', ''.join(n.raw)):
+            a = n
+            while a is not None:
+                _STYLE_HIDDEN.add(id(a))
+                a = a.parent
+
+
 def _hidden_digits(td):
+    if id(td) in _STYLE_HIDDEN:
+        return True
     raw = re.sub(r'\D', '', ''.join(td.raw))
     vis = re.sub(r'\D', '', ''.join(td.text))
     return raw != vis
@@ -320,14 +343,31 @@ def _audit_index(res, table, kids, data, owned):
 
 
 def _meaning(label):
+    """라벨의 시점 뜻. 뜻이 둘 이상 섞이면(「당일 잠정치, 전일 확정」) None — 정할 수 없으면 위반이다."""
     s = re.sub(r'\s', '', label or '')
-    if '전거래일' in s:
-        return 'stale'
+    found = set()
+    if re.search(r'전거래일|전일|어제|직전', s):
+        found.add('stale')
     if '잠정' in s:
-        return 'provisional'
+        found.add('provisional')
     if '확정' in s:
-        return 'confirmed'
-    return None
+        found.add('confirmed')
+    return found.pop() if len(found) == 1 else None
+
+
+def _label_dates(label):
+    """라벨에 적힌 날짜(ISO·「11월 11일」·「11/11」) — 월·일만 있으면 (None, 월, 일)."""
+    s = label or ''
+    out = [tuple(int(x) for x in d.split('-')) for d in _ISO.findall(s)]
+    rest = _ISO.sub(' ', s)
+    out += [(None, int(m), int(d)) for m, d in re.findall(r'(\d{1,2})\s*월\s*(\d{1,2})\s*일', rest)]
+    out += [(None, int(m), int(d)) for m, d in re.findall(r'(?<![\d.])(\d{1,2})[/.](\d{1,2})(?![\d.])', rest)]
+    return out
+
+
+def _date_ok(found, want):
+    y, m, d = (int(x) for x in want.split('-'))
+    return all((fy is None or fy == y) and fm == m and fd == d for fy, fm, fd in found)
 
 
 _MEANING_KO = {'stale': '전 거래일 기준', 'provisional': '당일 잠정', 'confirmed': '당일 확정'}
@@ -397,8 +437,8 @@ def _audit_flows(res, tables, section, doc, kids, flows, owned):
             res.violations.append(f'[KR 수급] 시장={ko} — 제목 라벨 「{label or ""}」 이 자료와 다르다'
                                   f'(자료: {_MEANING_KO[info["expect"]]}, flows_date {info["date"]})')
         else:
-            dates = _ISO.findall(label or '')
-            if info['expect'] == 'stale' and any(d != info['date'] for d in dates):
+            # 뜻과 상관없이 라벨에 날짜가 적혀 있으면 flows_date 와 같아야 한다(「당일 잠정치 2026-11-11」, codex 구현 검토 #2)
+            if not _date_ok(_label_dates(label), info['date']):
                 res.violations.append(f'[KR 수급] 시장={ko} — 제목 라벨 「{label}」 의 날짜가 flows_date '
                                       f'{info["date"]} 와 다르다')
             elif info.get('label') and label != info['label']:
@@ -607,6 +647,7 @@ def audit(html, data, date, effective=None):
     series, _ = _econ_series(data)
 
     doc = _Stream(html)
+    _mark_style_hidden(doc)
     kids = _children(doc)
     sections = _sections(doc)
     by_title = {}
