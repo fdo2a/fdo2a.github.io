@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
 from common.numbers import numbers_split_by_tags
+from fund.gate import VOID
 from us.number_audit import (InputError, Result, _WIDE, _children, _cells, _inside, _rows, _sections,
                              _Stream, _unverified, tokens)
 
@@ -175,6 +176,20 @@ _ANC_ATTRS = frozenset({'class', 'id', 'lang'})                  # + data-*
 _H3_ATTRS = frozenset({'class', 'id'})
 
 
+class _KrStream(_Stream):
+    """US 파서 + 단일 태그 기록. `fund.gate._Doc` 은 `img`·`br` 같은 단일 태그를 노드로 남기지 않아 허용 목록이
+    보지 못했다(codex 구현 검토 3회차 #1). US 동작은 그대로 — 이 하위 클래스는 KR 만 쓴다."""
+
+    def __init__(self, html):
+        self.voids = []              # (부모 노드, 태그, 속성 이름들)
+        super().__init__(html)
+
+    def handle_starttag(self, tag, attrs):
+        super().handle_starttag(tag, attrs)
+        if tag in VOID:
+            self.voids.append((self.stack[-1] if self.stack else None, tag, [k for k, _ in attrs]))
+
+
 def _markup_bad(n, tags, attrs, data_ok=False):
     """허용 목록 밖 태그·속성 — 「<tr style>」 꼴 이름만(값·위치는 싣지 않아 줄이 안정적이다)."""
     out = []
@@ -183,6 +198,8 @@ def _markup_bad(n, tags, attrs, data_ok=False):
     for k in n.attrs:
         if k not in attrs and not (data_ok and k.startswith('data-')):
             out.append(f'<{n.tag} {k}>')
+    if n.dup:
+        out.append(f'<{n.tag}> 중복 속성')       # 브라우저는 첫 값을, 파서는 마지막 값을 쓴다
     return out
 
 
@@ -193,7 +210,7 @@ def _descendants(n, kids):
             yield d
 
 
-def _markup_ok(res, kind, root, kids, market=None):
+def _markup_ok(res, kind, root, doc, kids, market=None):
     """지도 표(또는 수급 제목 h3) 하나의 표현 검사. 위반을 싣되 대조는 계속한다."""
     bad = []
     if root.tag == 'h3':
@@ -203,8 +220,19 @@ def _markup_ok(res, kind, root, kids, market=None):
         bad += _markup_bad(root, None, _IN_ATTRS)
         for d in _descendants(root, kids):
             bad += _markup_bad(d, _IN_TAGS, _IN_ATTRS)
+    # 단일 태그는 종류를 가리지 않고 싣지 않는다(발행본의 이 표·제목 안에 0건)
+    bad += [f'<{tag}>' for parent, tag, _ in doc.voids if parent is not None and _inside(parent, root)]
     for a in list(root.ancestors())[1:]:
         bad += _markup_bad(a, _ANC_TAGS, _ANC_ATTRS, data_ok=True)
+    if root.tag == 'table':
+        # 표 안인데 칸(th·td) 밖인 글 — 브라우저는 표 앞으로 꺼내 보인다
+        for item in doc.stream:
+            if item is None or not item[0].strip():
+                continue
+            stack = item[1]
+            at = next((i for i, n in enumerate(stack) if n is root), None)
+            if at is not None and not any(n.tag in ('th', 'td') for n in stack[at + 1:]):
+                bad.append('칸 밖 글')
     if bad:
         what = '수급 제목' if root.tag == 'h3' else '표'
         res.violations.append(
@@ -305,10 +333,10 @@ def _signature(table, kids):
     return None
 
 
-def _structure_ok(res, kind, table, kids, market=None):
+def _structure_ok(res, kind, table, doc, kids, market=None):
     head, body = _head(table, kids)
     name = TABLE_NAME[kind]
-    _markup_ok(res, kind, table, kids, market)
+    _markup_ok(res, kind, table, doc, kids, market)
     if len(head) != 1:
         res.violations.append(f'[KR {name}] 시장={market or "-"} — 표 머리 행이 {len(head)}개다(정확히 1개)')
         return None
@@ -321,8 +349,8 @@ def _structure_ok(res, kind, table, kids, market=None):
     return ths, body
 
 
-def _audit_index(res, table, kids, data, owned):
-    got = _structure_ok(res, 'index', table, kids)
+def _audit_index(res, table, doc, kids, data, owned):
+    got = _structure_ok(res, 'index', table, doc, kids)
     if got is None:
         return
     ths, body = got
@@ -436,7 +464,7 @@ def _audit_flows(res, tables, section, doc, kids, flows, owned):
         if h3 is None or h3 == 'ambiguous':
             res.violations.append('[KR 수급] 시장=- — 표의 시장을 정할 수 없다(같은 블록에 h3 가 정확히 하나여야 한다)')
             continue
-        text = _norm(h3.plain())
+        text = h3.plain()            # 전각 숫자·괄호를 고쳐 읽지 않는다 — 라벨은 공백만 무시한다
         m = _H3.fullmatch(text)
         if not m:
             res.violations.append(f'[KR 수급] 시장=- — 표의 시장을 정할 수 없다(제목 「{text}」)')
@@ -458,8 +486,8 @@ def _audit_flows(res, tables, section, doc, kids, flows, owned):
         elif label != info['label']:
             res.warnings.append(f'경고(표): [KR 수급] 시장={ko} — 제목 라벨 「{label}」 이 자료 라벨 '
                                 f'「{info["label"]}」 과 띄어쓰기가 다르다')
-        _markup_ok(res, 'flows', h3, kids, ko)
-        got_s = _structure_ok(res, 'flows', table, kids, ko)
+        _markup_ok(res, 'flows', h3, doc, kids, ko)
+        got_s = _structure_ok(res, 'flows', table, doc, kids, ko)
         if got_s is None:
             continue
         ths, body = got_s
@@ -489,8 +517,8 @@ def _audit_flows(res, tables, section, doc, kids, flows, owned):
                 res.violations.append(f'[KR 수급] 시장={ko} 행={who} — 행이 없다(데이터에는 있다)')
 
 
-def _audit_top(res, table, kids, data, owned):
-    got = _structure_ok(res, 'top', table, kids)
+def _audit_top(res, table, doc, kids, data, owned):
+    got = _structure_ok(res, 'top', table, doc, kids)
     if got is None:
         return
     ths, body = got
@@ -569,8 +597,8 @@ def _econ_series(data):
     return s, miss
 
 
-def _audit_rates(res, table, kids, data, owned):
-    got = _structure_ok(res, 'rates', table, kids)
+def _audit_rates(res, table, doc, kids, data, owned):
+    got = _structure_ok(res, 'rates', table, doc, kids)
     if got is None:
         return
     ths, body = got
@@ -667,7 +695,7 @@ def audit(html, data, date, effective=None):
     flows = _flows_inputs(data, date)
     series, _ = _econ_series(data)
 
-    doc = _Stream(html)
+    doc = _KrStream(html)
     kids = _children(doc)
     sections = _sections(doc)
     by_title = {}
@@ -735,7 +763,7 @@ def audit(html, data, date, effective=None):
             continue
         if want_n[kind]:
             {'index': _audit_index, 'top': _audit_top, 'rates': _audit_rates}[kind](
-                res, found[kind][0], kids, data, owned)
+                res, found[kind][0], doc, kids, data, owned)
     if 'flows' in sec_of:
         _audit_flows(res, found['flows'], sec_of['flows'], doc, kids, flows, owned)
 

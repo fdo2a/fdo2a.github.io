@@ -546,6 +546,49 @@ def test_markup_on_ancestors_of_mapped_table(post, data):
     assert has(run(h, data), '허용하지 않는', 'body')
 
 
+@pytest.mark.parametrize('cell', ['+416<img src="x" alt="999">', '+416<br>', '+416<input value="999">',
+                                  '+416<wbr>', '+416<embed src="x">'])
+def test_void_tags_in_mapped_table(post, data, cell):
+    """트리에 노드로 남지 않는 단일 태그도 허용 목록으로 본다(codex 구현 검토 3회차 #1)."""
+    r = run(sub(post, KQ_INST, KQ_INST.replace('+416', cell)), data)
+    assert has(r, '[KR 수급]', '시장=코스닥', '허용하지 않는')
+
+
+def test_void_tag_in_flows_title(post, data):
+    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', '<h3>코스피 (당일 잠정치<img src="x" alt="전날">)</h3>'), data)
+    assert has(r, '[KR 수급]', '시장=코스피', '허용하지 않는', 'img')
+
+
+@pytest.mark.parametrize('old,new', [
+    ('<td>기관</td><td class="up">+416', '<td colspan="2" colspan="1">기관</td><td class="up">+416'),
+    ('<td>기관</td><td class="up">+416', '<td rowspan="2" rowspan="1">기관</td><td class="up">+416'),
+    ('<td>기관</td><td class="up">+416', '<td>기관</td><td class="up" class="down">+416'),
+    ('<h3>코스닥 (당일 잠정치)</h3>', '<h3 class="a" class="b">코스닥 (당일 잠정치)</h3>')])
+def test_duplicate_attributes_in_mapped_table(post, data, old, new):
+    """브라우저는 첫 속성을, 파서는 마지막 속성을 쓴다 — 같은 속성이 둘이면 위반(3회차 #2)."""
+    assert has(run(sub(post, old, new), data), '[KR 수급]', '시장=코스닥', '중복')
+
+
+def test_duplicate_attribute_on_ancestor(post, data):
+    m = re.search(r'<div class="tbl-scroll">(?=\s*<table>\s*<thead>\s*<tr>\s*<th>지수</th>)', post)
+    h = post[:m.start()] + '<div class="x" class="tbl-scroll">' + post[m.end():]
+    assert has(run(h, data), '[KR 지수]', '중복')
+
+
+def test_text_outside_cells_in_mapped_table(post, data):
+    """표 안인데 칸 밖인 글은 브라우저가 표 앞으로 꺼내 보인다."""
+    r = run(sub(post, KQ_INST, KQ_INST + '기관 +999'), data)
+    assert has(r, '[KR 수급]', '시장=코스닥', '칸 밖')
+
+
+def test_fullwidth_label_is_violation(post, data):
+    """라벨은 공백만 무시한다 — 전각 숫자·괄호는 같은 글자가 아니다(3회차 #3)."""
+    r = run(_stale_post(post, '전 거래일 기준(２０２６-１１-１１)'), _stale(data))
+    assert has(r, '시장=코스피', '라벨')
+    r = run(sub(post, '<h3>코스피 (당일 잠정치)</h3>', '<h3>코스피 （당일 잠정치）</h3>'), data)
+    assert has(r, '[KR 수급]')
+
+
 def test_allowed_markup_stays_clean(post, data):
     h = sub(post, KQ_INST, KQ_INST.replace('+416', '<strong>+416</strong>'))
     h = sub(h, '<div class="tbl-scroll">', '<div class="tbl-scroll" id="t1" data-x="1">')
