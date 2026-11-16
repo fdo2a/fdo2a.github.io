@@ -1,0 +1,342 @@
+{
+ "report_date": "2026-11-16",
+ "market": "kr",
+ "collected_utc": "2026-11-16T19:00:11+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-12T22:47:30+00:00",
+  "kwusa": "2026-11-13T09:07:23+00:00",
+  "lim_econ": "2026-11-13T08:29:41+00:00",
+  "d_ticker": "2026-11-13T07:14:36+00:00",
+  "aethersemiconductor": "2026-11-13T08:41:50+00:00",
+  "FastStockNews": "2026-11-13T08:44:45+00:00",
+  "FastStockNewsUSA": "2026-11-13T09:10:03+00:00",
+  "insidertracking": "2026-11-13T09:11:44+00:00"
+ },
+ "window_note": [
+  "hedgecat0301: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "kwusa: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "lim_econ: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "d_ticker: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "aethersemiconductor: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "FastStockNews: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "FastStockNewsUSA: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "insidertracking: 직전 커서가 72시간보다 오래돼 72시간만 읽음"
+ ],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 3000,
+   "last_dt": "2026-11-15T22:46:34+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 61770,
+   "last_dt": "2026-11-16T08:43:34+00:00",
+   "read": 6
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 2135,
+   "last_dt": "2026-11-15T22:39:38+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 4174,
+   "last_dt": "2026-11-16T15:09:35+00:00",
+   "read": 24
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 26994,
+   "last_dt": "2026-11-16T14:55:06+00:00",
+   "read": 57
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 127996,
+   "last_dt": "2026-11-16T11:36:35+00:00",
+   "read": 94
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 24501,
+   "last_dt": "2026-11-16T13:34:10+00:00",
+   "read": 37
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 10,
+   "truncated": false,
+   "from_dt": "2026-11-13T19:00:11.454071+00:00",
+   "last_id": 69425,
+   "last_dt": "2026-11-16T11:59:25+00:00",
+   "read": 171
+  }
+ },
+ "items": [
+  {
+   "id": "FastStockNews/127906",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-14T04:01:50+00:00",
+   "url": "https://t.me/FastStockNews/127906",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "서울경제",
+    "url": "https://www.sedaily.com/article/20114194?ref=naver",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "스페이스X가 텍사스 스타베이스에 240억 달러 이상, 애리조나 코치스카운티에 약 500억 달러를 투입해 총 740억 달러 규모의 초대형 AI 데이터센터를 짓겠다고 밝혔다. 텍사스 부지에는 데이터센터와 함께 총 748메가와트 규모의 천연가스발전소를 세워 전력을 자체 조달할 계획이다. 애리조나에서는 물 대신 공기로 열을 식히는 건식 냉각 방식을 적용하며, 두 지역에서 건설 일자리 9500개 이상과 상시 일자리 1500개 이상이 생길 것으로 기대된다. 다만 전력과 수자원 부담, 주민 반발은 변수다. 애리조나에서는 2400명 이상이 건설 반대 청원에 서명했고, 텍사스 스타베이스시는 다음 달 9일 재산세 감면 등을 검토한다. 한편 블룸버그통신은 테슬라와의 인수합병이 이르면 다음 달 성사될 수 있다고 전했다. 양사 이사회는 특별위원회에서 합병 조건과 지배구조를 논의 중이며, 핵심 쟁점은 테슬라 주주에게 돌아갈 스페이스X 주식 규모와 테슬라 중국 사업의 분리 문제다. 두 회사 시가총액 합계는 약 3조 4700억 달러에 달한다."
+  },
+  {
+   "id": "aethersemiconductor/26943",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-14T09:40:45+00:00",
+   "url": "https://t.me/aethersemiconductor/26943",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "삼성의 미국 데이터센터 냉각 업체 모딘 인수 협상 소식과 미국 CSP 파운드리 수주 확대 보도가 함께 전해졌다. 블룸버그에 따르면 모딘의 기업가치는 보도 이전 기준 약 56억 달러이며 거래가 수주 내 성사될 수 있고, 모딘의 데이터센터 매출은 9월 분기에 전년 대비 95% 증가했다. 디지타임스는 삼성이 2분기 연속 미국 주요 클라우드 업체로부터 AI 칩 주문을 확보했고 출하가 2028년에 시작된다고 전했다. 이를 두고 삼성이 메모리를 넘어 파운드리와 열 관리로 AI 인프라 노출을 넓히고 있다는 시각과, TSMC 첨단 공정의 공급 부족이 세컨드 소스로 번지면서 TSMC 가격 결정력에 우호적이라는 의견이 제시됐다. 다만 고객들은 생산능력이 확보된다는 전제에서 여전히 TSMC를 선호한다고 봤다."
+  },
+  {
+   "id": "d_ticker/4160",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-15T07:02:31+00:00",
+   "url": "https://t.me/d_ticker/4160",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "니혼게이자이",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "일본 완구업체 타카라토미가 지난 8월 기업 간 교류를 위해 팽이 장난감 '베이블레이드' 대회를 처음 열었다는 소식이 전해졌다. 일본 각지 64개 기업의 직원들이 3인 1조로 참가해 도쿄 아키하바라에서 토너먼트를 즐기며 명함을 나누고 업무 이야기를 주고받는 자리가 됐다. 이를 두고 음주와 접대를 꺼리는 직장 문화를 겨냥한 편안한 비즈니스 네트워킹이라는 시각이 제시됐다. 연령별로는 나이가 많을수록 술자리를 덜 선호한다는 조사 결과도 함께 언급됐다. 한편 AI 사업을 하지 않는 타카라토미의 올해 주가 상승률이 최대 100%를 넘었다는 점도 소개됐다."
+  },
+  {
+   "id": "aethersemiconductor/26953",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-15T09:27:09+00:00",
+   "url": "https://t.me/aethersemiconductor/26953",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "BofA는 DRAM의 가격 상승 논리가 아직 꺾이지 않았지만 NAND 현물 시장은 이미 뚜렷하게 약해지고 있다는 시각을 내놓았다. 이에 따라 NAND가 이번 메모리 상승 사이클에서 가장 먼저 재평가가 필요한 품목이 될 것이라는 의견도 제시됐다. 두 품목의 밸류에이션 차이와 실적 탄력성은 2027년 1분기 계약가격 협상이 예정대로 진행될지에 따라 정해질 것이라는 전망이다."
+  },
+  {
+   "id": "aethersemiconductor/26954",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-15T10:35:54+00:00",
+   "url": "https://t.me/aethersemiconductor/26954",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "SK하이닉스가 HBM4 생산 설비를 추가로 들이기 위해 내년 상반기 장비 반입과 설치를 목표로 일정을 서두르고 있다는 협력사 관계자의 전언이 나왔다. 일부 장비는 1분기 납품을 요구하는 것으로 알려졌다. 추가 생산 기지로는 올해 초부터 HBM 라인을 꾸려 온 청주 P&T6가 유력하게 거론됐다. 또 다른 업계 관계자는 팹 유휴공간을 활용하면 가동 시 웨이퍼 기준 월 2만장 이상의 HBM을 더 생산할 수 있다고 봤다. 이번 증설을 AI 수요 불확실성 속에서도 수요가 견고하다는 판단에 따른 움직임으로 읽는 시각도 있다."
+  },
+  {
+   "id": "aethersemiconductor/26961",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-15T15:09:29+00:00",
+   "url": "https://t.me/aethersemiconductor/26961",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 반도체에 대한 헤지펀드 순플로우가 2주 연속 -3z를 밑돌고 6주 연속 매도가 이어졌으나, 글로벌 HF 순익스포저는 고점 대비 67% 줄어 2025년 9월 이후 최저 수준이라는 점이 제시됐다. 이를 근거로 반도체가 디리스킹을 거쳐 단기 반등 여지가 있다는 시각이 나왔다. 다만 장기 기준으로는 익스포저가 여전히 80번째 백분위수 부근이라 포지셔닝이 특별히 낮지 않고, HF 포지셔닝의 모멘텀이 상대수익률보다 약해 HF가 강세로 돌아서지 않으면 반등이 견조하지 않을 수 있다는 의견도 함께 담겼다."
+  },
+  {
+   "id": "hedgecat0301/3000",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-15T22:46:34+00:00",
+   "url": "https://t.me/hedgecat0301/3000",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "키움증권 전략 보고서는 엔비디아 실적과 앤스로픽 IPO가 AI 관련 투자심리를 가를 분기점이 될 것이라는 시각을 제시한다. 지난주 미국 증시는 다우만 오르고 나머지 지수는 하락했으며, 국내 코스피는 저가매수와 외국인 순매수 전환으로 반등했지만 연준 위원들의 매파 발언과 금리 상승이 반등의 지속성을 제약하고 있다고 전했다. 이번 주 코스피는 FOMC 의사록, 연준 인사 발언, 엔비디아 실적과 앤스로픽 IPO 결과에 따라 눈치보기 장세가 이어질 것이라는 의견이다."
+  },
+  {
+   "id": "d_ticker/4166",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T00:40:18+00:00",
+   "url": "https://t.me/d_ticker/4166",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "중국 국가시장감독관리총국이 SK하이닉스의 인텔 낸드사업부(현 솔리다임) 인수를 6가지 조건부로 승인했다는 내용이 2025년 9월 보도로 전해졌다. 조건에는 기업용 SSD의 중국 내 판매 가격을 시행일 전 24개월 평균가격 이하로 제한하는 항목, 5년 이내 기업용 SSD 생산을 지속 확대하는 항목, 모든 제품을 중국 시장에 계속 공급하는 항목, 제3 경쟁자의 시장 진입을 돕는 항목 등이 포함됐다. 발효 후 5년이 지난 2026년 12월 이후 해제를 신청할 수 있지만 총국이 승인하지 않으면 조항이 유지될 것이라는 전망이 함께 제시됐다. 이에 더해 글쓴이는 중국 당국이 효력 만료를 허용하지 않을 가능성이 커 보인다는 견해를 밝히며, 최근 낸드 스팟 가격 하락의 배경으로 중국의 이런 규제 요인을 생각해 볼 수 있다는 시각을 제시했다."
+  },
+  {
+   "id": "FastStockNews/127943",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-16T01:12:26+00:00",
+   "url": "https://t.me/FastStockNews/127943",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "뉴스핌",
+    "url": "https://www.newspim.com/news/view/20261116000368",
+    "basis": "link"
+   },
+   "article_date": "2026-11-16",
+   "summary_note": "분량 벗어남 233자"
+  },
+  {
+   "id": "d_ticker/4167",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T01:24:47+00:00",
+   "url": "https://t.me/d_ticker/4167",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "SK하이닉스가 용인 반도체 클러스터에 협력사 전용 테스트베드인 트리니티팹을 짓겠다고 발표했다. 연구개발, 시험, 양산, 판매를 지원하는 것이 목표이며, 8746억 원 규모로 2027년 5월 개관할 예정이다. 회사는 향후 5년간 소부장 기업에 1.4조 원을 지원할 계획이라고 밝혔다."
+  },
+  {
+   "id": "FastStockNews/127962",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-16T03:19:30+00:00",
+   "url": "https://t.me/FastStockNews/127962",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "한국세무사회가 수습 실무교육에서 AI 도움 없이 교육생의 역량을 평가하는 체계를 도입하겠다고 밝혔다. 이는 수사로 드러나지 않은 시험 부정 합격자까지 걸러내려는 취지라는 시각이다. 세무사회는 납세자의 권익을 책임지는 세무사로 활동할 수 없도록 하겠다는 입장을 성명으로 내놓았다."
+  },
+  {
+   "id": "FastStockNews/127982",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-16T06:14:01+00:00",
+   "url": "https://t.me/FastStockNews/127982",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "글쓴이는 글로벌 증시 하락 자체보다, 같은 악재에도 국내 시장이 남들보다 3~4배 더 빠지는 점을 문제 삼아 정부의 대응을 바로잡아 달라고 요구하고 있다. 특히 코스피가 저점을 다시 깨면 앞서 내놓은 담보비율 완화 대책이 역효과로 돌아오고, 미뤄진 물량이 손실이 커진 채 한꺼번에 쏟아질 수 있다는 시각을 제시한다. 그 위험을 키우는 원인으로는 정부가 당장 대책을 내놓을 뜻이 없다는 태도를 꼽으며, 지난 금요일까지 버티던 시장이 이 점이 확인되자 윗꼬리를 달고 외국인 매도가 커졌다고 본다. 이런 상황에서도 정부가 태평한 것은 고의가 아니라면 이해하기 어렵다는 비판적 의견이다."
+  },
+  {
+   "id": "FastStockNews/127991",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-16T07:51:28+00:00",
+   "url": "https://t.me/FastStockNews/127991",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "지슨, 카티스, DGI, 시선AI 등 AI 컨닝 방지 관련 기술을 보유한 기업들의 주가가 장중 20%를 넘게 올랐다는 소식이 전해졌다. 이는 정부가 제63회 세무사 시험에서 초소형 카메라와 생성형 AI를 활용한 부정행위가 확인되자 방지 대책 마련에 나선 데 따른 것으로 풀이된다. 특히 초소형 카메라와 무선 이어폰이 부정행위에 쓰이면서 기존 감독 방식의 실효성에 의문이 제기됐고, 감독관이 현장에 있었음에도 첨단기기 부정행위를 적발하지 못했다는 점이 지적됐다. 이에 시험장 내 무선 통신 환경을 실시간으로 감시하는 보안 시스템의 필요성이 부각되고 있다는 시각이 나온다."
+  },
+  {
+   "id": "aethersemiconductor/26980",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-16T09:33:29+00:00",
+   "url": "https://t.me/aethersemiconductor/26980",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "바이두가 3분기 실적으로 매출 308.1억 위안을 기록해 시장 예상치와 같은 수준이었다고 전해졌다. 반면 조정 주당순이익(EPS)은 6.78위안으로 예상치 6.02위안을 웃돌았으며, AI 클라우드 인프라 매출은 전년 대비 94% 늘어 직전 분기의 50% 증가율보다 크게 빨라졌다는 점이 강조됐다. 이를 근거로 AI 사업이 실적 개선을 이끌고 있다는 시각이 제시됐다."
+  },
+  {
+   "id": "d_ticker/4169",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T13:55:38+00:00",
+   "url": "https://t.me/d_ticker/4169",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": "2026-11-16",
+   "summary_ko": "고려아연이 미국 자회사 페달포인트 리사이클과 비상장 기업 솔라사이클을 합병해 합작법인 '주피터'를 세우기로 했다는 소식이다. 두 회사는 데이터센터와 에너지 인프라 장비에서 나오는 폐금속을 회수해 가공하는 리사이클링 전문 기업이며, 주피터 지분은 고려아연 70%, 솔라사이클 30%로 나뉜다. 고려아연은 주피터와 함께 2029년 가동을 목표로 한 미국 테네시주 금속 제련소의 원재료 공급망을 구축해 나간다는 구상을 밝혔다는 내용이다. 이는 회사 측의 계획으로, 사업이 이 구상대로 진행될지는 지켜볼 필요가 있다는 시각도 함께 전해진다."
+  },
+  {
+   "id": "d_ticker/4174",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T15:09:35+00:00",
+   "url": "https://t.me/d_ticker/4174",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "세미애널러시스가 기관용 리포트에서 AI 가속기 전망치를 낮췄다는 소식이 X를 통해 퍼졌다. 2026년 AI 가속기 시장 전망은 3920억 달러로 유지됐지만, 2027년은 7700억 달러에서 6270억 달러로, 2028년은 1조540억 달러에서 7580억 달러로 낮아졌다. 2028년 HBM 수요도 30% 하향 조정됐다. 이유로는 3분기 AI 프론티어 랩의 연환산매출 성장세 둔화에 따라 컴퓨팅 비용을 감당 가능한 수준으로 줄이는 흐름과, 하이퍼스케일러들의 확약 없는 AI 투자 철수, 미국 중간선거 이후 5.8GW 규모 미국 데이터센터 공급 지연이 꼽혔다는 시각이다."
+  }
+ ],
+ "stats": {
+  "items": 16,
+  "summarized": 15,
+  "summary_failed": 1,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
