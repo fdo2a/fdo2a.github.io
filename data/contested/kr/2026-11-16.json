@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-16T19:39:48+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-16T19:55:49+00:00",
  "cutoff_at": "2026-11-16T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 416,
+  "harvest": 415,
   "candidates": 1,
   "articles": [
    6
@@ -43,19 +43,19 @@
    "etnews": "ok"
   },
   "notes": [
-   "discover:416"
+   "discover:415"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 15038,
-   "out": 3945
+   "in": 15039,
+   "out": 6336
   }
  },
  "event": {
   "topic_ko": "넥스트레이드 3분기 실적 급감과 거래대금 위축",
-  "query": "3분기 영업익 전년",
+  "query": "3분기 전년 영업익",
   "trigger": []
  },
- "content_hash": "b282567bbd5498eb"
+ "content_hash": "43ebfd1d50c893b0"
 }
