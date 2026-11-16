@@ -1,16 +1,16 @@
 {
-  "as_of": "2026-11-13",
+  "as_of": "2026-11-16",
   "complete": true,
   "missing": [],
   "tickers": {
     "005930.KS": {
       "name": "삼성전자",
       "currency": "KRW",
-      "price": 206000.0,
-      "price_date": "2026-11-11",
-      "chg_20d_pct": -11.21,
-      "pct_from_52w_high": -42.12,
-      "market_cap": 1354480884908032.0,
+      "price": 196800.0,
+      "price_date": "2026-11-16",
+      "chg_20d_pct": -9.72,
+      "pct_from_52w_high": -44.71,
+      "market_cap": 1281547239948288.0,
       "eps_fy0": 47638.7,
       "eps_fy1": 77323.65,
       "eps_fy1_low": 60097.656,
@@ -19,8 +19,8 @@
       "bvps": 98030.17,
       "bvps_as_of": "2026-Q2",
       "bvps_source": "dart",
-      "pb": 2.1,
-      "pe_fy1": 2.66,
+      "pb": 2.01,
+      "pe_fy1": 2.55,
       "next_earnings_date": "2027-01-27",
       "fair_value": {
         "method": "blended",
@@ -32,10 +32,10 @@
         "band2": 276231
       },
       "position": {
-        "vs_weighted_pct": -49.3,
-        "vs_base_pct": -41.4,
-        "upside_bull_pct": 240.2,
-        "downside_bear_pct": -26.8,
+        "vs_weighted_pct": -51.6,
+        "vs_base_pct": -44.0,
+        "upside_bull_pct": 256.2,
+        "downside_bear_pct": -23.4,
         "in_band1": true,
         "in_band2": true
       }
@@ -43,36 +43,36 @@
     "000660.KS": {
       "name": "SK하이닉스",
       "currency": "KRW",
-      "price": 1277000.0,
-      "price_date": "2026-11-11",
-      "chg_20d_pct": -10.01,
-      "pct_from_52w_high": -56.24,
-      "market_cap": 884287326912512.0,
-      "eps_fy0": 360343.94,
-      "eps_fy1": 535732.6,
+      "price": 1120000.0,
+      "price_date": "2026-11-16",
+      "chg_20d_pct": -12.29,
+      "pct_from_52w_high": -61.62,
+      "market_cap": 789794086977536.0,
+      "eps_fy0": 360169.8,
+      "eps_fy1": 537910.7,
       "eps_fy1_low": 387400.8,
       "eps_fy1_high": 877791.0,
       "eps_fy1_analysts": 37.0,
       "bvps": 368991.21,
       "bvps_as_of": "2026-Q2",
       "bvps_source": "dart",
-      "pb": 3.46,
-      "pe_fy1": 2.38,
+      "pb": 3.04,
+      "pe_fy1": 2.08,
       "next_earnings_date": "2027-01-27",
       "fair_value": {
         "method": "blended",
-        "bull": 4130226,
-        "base": 1967856,
-        "bear": 770142,
-        "weighted": 2317138,
-        "band1": 1853710,
-        "band2": 1575654
+        "bull": 4139810,
+        "base": 1972561,
+        "bear": 771912,
+        "weighted": 2322573,
+        "band1": 1858058,
+        "band2": 1579350
       },
       "position": {
-        "vs_weighted_pct": -44.9,
-        "vs_base_pct": -35.1,
-        "upside_bull_pct": 223.4,
-        "downside_bear_pct": -39.7,
+        "vs_weighted_pct": -51.8,
+        "vs_base_pct": -43.2,
+        "upside_bull_pct": 269.6,
+        "downside_bear_pct": -31.1,
         "in_band1": true,
         "in_band2": true
       }
@@ -80,11 +80,11 @@
     "MU": {
       "name": "Micron",
       "currency": "USD",
-      "price": 788.2,
-      "price_date": "2026-11-12",
-      "chg_20d_pct": -15.36,
-      "pct_from_52w_high": -35.03,
-      "market_cap": 891787804672.0,
+      "price": 778.31,
+      "price_date": "2026-11-13",
+      "chg_20d_pct": -11.44,
+      "pct_from_52w_high": -35.85,
+      "market_cap": 880597991424.0,
       "eps_fy0": 176.50168,
       "eps_fy1": 207.76048,
       "eps_fy1_low": 136.0,
@@ -93,8 +93,8 @@
       "bvps": 122.35,
       "bvps_as_of": "2026-08-31",
       "bvps_source": "yfinance",
-      "pb": 6.44,
-      "pe_fy1": 3.79,
+      "pb": 6.36,
+      "pe_fy1": 3.75,
       "next_earnings_date": "2026-12-23",
       "fair_value": {
         "method": "blended",
@@ -106,12 +106,12 @@
         "band2": 788
       },
       "position": {
-        "vs_weighted_pct": -32.0,
-        "vs_base_pct": -18.9,
-        "upside_bull_pct": 166.8,
-        "downside_bear_pct": -54.2,
+        "vs_weighted_pct": -32.8,
+        "vs_base_pct": -19.9,
+        "upside_bull_pct": 170.2,
+        "downside_bear_pct": -53.6,
         "in_band1": true,
-        "in_band2": false
+        "in_band2": true
       }
     }
   }

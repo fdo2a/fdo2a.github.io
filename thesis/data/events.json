@@ -1,6 +1,14 @@
 {
-  "collected_at": "2026-11-13T02:02:40+09:00",
-  "since": "2026-11-12T01:33:57+09:00",
-  "items": [],
+  "collected_at": "2026-11-16T20:04:52+09:00",
+  "since": "2026-11-13T02:02:40+09:00",
+  "items": [
+    {
+      "ticker": "005930.KS",
+      "source": "Samsung Newsroom · Corporate",
+      "title": "Samsung’s Latest Products Recognized by Consumer Technology Association Ahead of CES 2027",
+      "url": "https://news.samsung.com/global/samsungs-latest-products-recognized-by-consumer-technology-association-ahead-of-ces-2027",
+      "published": "2026-11-15T08:00:00+00:00"
+    }
+  ],
   "missing": []
 }
