@@ -1,0 +1,28 @@
+# 2026-11-16 KR 세션 보도 발췌 (웹 검색 색인 발췌, 관측 2026-11-16T19:05Z)
+
+수치는 보도 인용이며 정본 가격은 kr/data다. 아래 종목 종가는 kr/data에 없다(kr_stock_moves 빈 배열).
+
+## 지수·수급 원인
+- 코스피 5,100.50(-3.59%), 코스닥 665.65(-4.86%); 외국인 순매도 보도치 1조3,771억(서울경제TV·이투데이 계열)~1조3,837억(한국면세뉴스)~1조6,998억(일부 매체) 엇갈림. 대만 가권 -6.03%(한국면세뉴스; 한국경제TV 11-16 "삼전닉스 개미들 애타는데" 기사도 -6.03%). 닛케이 -2.42%(한국면세뉴스 단일).
+  https://www.kdfnews.com/news/articleView.html?idxno=191002 / https://www.etoday.co.kr/news/view/2648800 / https://www.sentv.co.kr/article/view/sentv202611160186 / https://www.thereport.co.kr/news/articleView.html?idxno=93413
+- 삼성전자 196,800원(-4.47%), SK하이닉스 1,120,000원(-7.89%), 삼성전기 -8.19%, KB금융 +1.64%, 삼성생명 +0.60%, 삼성바이오로직스 +0.85%(남도일보·서울신문 마감시황). 외국인 삼성전자 6,193억·SK하이닉스 2,241억 순매도(뉴스핌·헤럴드경제).
+  https://www.namdonews.com/news/articleView.html?idxno=929383 / https://www.seoul.co.kr/news/economy/securities/2026/11/16/20261116500087 / https://www.newspim.com/news/view/20261116001280 / https://www.news1.kr/finance/general-stock/6355807
+- 원인 보도: 엔비디아 경영 공백(황 전 CEO 복귀 추진에 베선트 재무장관 외부 영입 요구·10일 내 대중 판매 의혹 답변 요구), WSJ 엔비디아 고객 금융지원 축소 전망, 미 국채금리 상승, 미 법원 D램 3사 담합 소송 기각 신청 불수용(11-14 현지, 답변서 12-07·첫 사건관리회의 2027-01-12), 앤트로픽 상장 자금 이탈 우려(한국경제TV·이데일리·뉴스1).
+  https://www.wowtv.co.kr/NewsCenter/News/Read?articleId=A202611160169 / https://www.fnnews.com/news/202611161746030442 / https://m.sedaily.com/article/20115048
+- 세미애널리시스 AI 가속기 전망 하향(2027 7,700억→6,270억달러, 2028 HBM 수요 -30%) — 텔레그램 d_ticker 11-16T15:09Z, X 경유 전언(1차 보고서 미확인).
+
+## 종목
+- 삼성SDI 462,500원(-3.24%), 장중 512,000원까지 상승 뒤 반락. 같은 날 미국 주피터파워와 ESS용 LFP 16GWh(2029~2031) 공급 계약 발표, 금액 비공개("수조원"). 하락 원인 특정 재료 없음(재경일보 마감분석, 인포스탁데일리 1116마감체크).
+  https://news.jkn.co.kr/post/1098239 / https://kr.investing.com/news/stock-market-news/article-2176965 / https://foxcg.com/samsung-sdi-jupiter-ess-16gwh
+- LG에너지솔루션 318,500원(-1.85%), 별도 공시·재료 없음(재경일보). https://news.jkn.co.kr/post/1098199
+- 은행: 코픽스 2년 8개월 만에 최고, 애프터마켓 우리 +1.54%·하나 +1.52%·KB +1.19%·신한 +1.00%(뉴스핌); 하나증권 최정욱 "글로벌 금리 급등에 방어주 매력 부각"(비즈니스포스트).
+  https://www.newspim.com/news/view/20261116001348 / https://www.businesspost.co.kr/BP?command=article_view&num=452020
+- 대한항공 +0.48%, 제주항공 +5.55%(아시아뉴스통신 단일, 교차 확인 안 됨).
+
+## 정책·일정
+- 미 상무부 BIS, 중국 등 우려국 기업의 미국산 AI칩 원격 접속에 허가 의무(11-16 현지 발표, 한국 장 마감 뒤). https://www.fnnews.com/news/202611170332514333
+- 국고채 10년 입찰: 선매출 1조1,000억 3.940%(응찰률 278.0%), 본매출 1조1,000억 3.985%(304.4%); 공정위 PD 15곳 과징금 1조6,265억~6,266억 뒤 첫 10년물(연합뉴스·이데일리, kr/data/news).
+- 신용융자 담보비율 140% 유지 의무 면제 2026-11-09~2027-01-31(금감원·금투협, 비조치의견서). https://www.fnnews.com/news/202611080900232982
+- 한은 금통위 11-26; 10-22 3.00% 동결(만장일치), 11월 25bp 인상 전망(우리금융경영연구소·하나금융연구소). https://www.fnnews.com/news/202610221909169005 / https://www.khan.co.kr/article/202610222159005
+- 엔비디아 FY27 3분기 실적 11-17 미 장 마감 뒤(11-18 KST 새벽), LSEG 매출 예상 1,092억달러·EPS 2.48달러; 앤트로픽 공모가 11-18 확정·11-19 나스닥 상장(70~78달러); FOMC 10월 의사록 11-19 04:00 KST. https://www.khan.co.kr/article/202611152035005 / https://www.newspim.com/news/view/20261116001408
+- APEC 선전 11-18~19, 미중 정상회담 19일 전후(날짜 보도 엇갈림); 미국은 반도체 수출통제를 협상 의제로 삼지 않는다는 입장. https://www.etoday.co.kr/news/view/2648254
