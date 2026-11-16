@@ -5,9 +5,9 @@
  "report_date": "2026-11-16",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-16T19:55:49+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-16T20:12:06+00:00",
  "cutoff_at": "2026-11-16T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 415,
+  "harvest": 403,
   "candidates": 1,
   "articles": [
    6
@@ -43,13 +43,13 @@
    "etnews": "ok"
   },
   "notes": [
-   "discover:415"
+   "discover:403"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 15039,
-   "out": 6336
+   "in": 37788,
+   "out": 7024
   }
  },
  "event": {
@@ -57,5 +57,5 @@
   "query": "3분기 전년 영업익",
   "trigger": []
  },
- "content_hash": "43ebfd1d50c893b0"
+ "content_hash": "c93364f67a1a3a41"
 }
