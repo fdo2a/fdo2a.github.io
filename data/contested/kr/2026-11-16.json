@@ -1,0 +1,61 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-16",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-16T19:07:53+00:00",
+ "cutoff_at": "2026-11-16T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "0f38e9439b437f0e556f38a8f16f4009cb056179",
+  "sha256": "9c300826eec0289ab878cf60c72028eaeef899a0a53d6673e20393dd62b45218",
+  "extra": {
+   "kr_econ.json": "87fd3e940944954eb6de2ebcf1b909a6ddfcb46115c85e7557bf94de8c93e3d3",
+   "kr_flows.json": "bb46151a7e3e2b01f6ec7eacf833bd89d7aad61dab53aa831d7a431aa4d05397",
+   "kr_session.json": "e69b04b428ff79131ecfbb79a64348a4bc377d9f2a3d6d04b5eaa6ced5347560"
+  }
+ },
+ "counts": {
+  "harvest": 423,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "dailian": "ok",
+   "sedaily": "ok",
+   "aju": "ok",
+   "yna": "ok",
+   "mt": "ok",
+   "etnews": "ok"
+  },
+  "notes": [
+   "discover:423"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 14992,
+   "out": 4112
+  }
+ },
+ "event": {
+  "topic_ko": "넥스트레이드 3분기 실적 급감과 거래대금 위축",
+  "query": "3분기 전년 영업익",
+  "trigger": []
+ },
+ "content_hash": "1b7131f31b6a3b36"
+}
