@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-17 07:52 KST",
+  "generated": "2026-11-17 08:05 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-16",
   "indices": {
@@ -196,11 +196,11 @@
       "prev_cut_et": "16:00"
     },
     "Gold": {
-      "last": 3854.5,
-      "chg": -27.300048828125,
-      "pct": -0.7032832316122617,
+      "last": 3854.60009765625,
+      "chg": -26.89990234375,
+      "pct": -0.6930285287582105,
       "date": "2026-11-16",
-      "prev": 3881.800048828125,
+      "prev": 3881.5,
       "prev_date": "2026-11-13",
       "basis": "close_1600_et",
       "contract": "GCZ26.CMX",
@@ -695,9 +695,9 @@
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -0.703,
+        "change": -0.693,
         "unit": "%",
-        "multiple": -0.52,
+        "multiple": -0.51,
         "band": "보통"
       },
       "10Y": {
@@ -845,7 +845,7 @@
         }
       },
       "Gold": {
-        "value": 3854.5,
+        "value": 3854.6,
         "percentile": 43.5,
         "band": "중간",
         "sessions": 504,
@@ -1134,9 +1134,9 @@
           {
             "name": "DAX",
             "ticker": "^GDAXI",
-            "close": 26598.64,
-            "pct": -0.57,
-            "date": "2026-11-16"
+            "close": 26749.95,
+            "pct": -0.08,
+            "date": "2026-11-13"
           },
           {
             "name": "FTSE100",
@@ -1148,14 +1148,14 @@
           {
             "name": "유로스톡스50",
             "ticker": "^STOXX50E",
-            "close": 6348.35,
-            "pct": -0.6,
-            "date": "2026-11-16"
+            "close": 6386.86,
+            "pct": -0.19,
+            "date": "2026-11-13"
           }
         ],
         "alignment": {
           "label": "이어감",
-          "avg_pct": -0.45,
+          "avg_pct": -0.15,
           "mixed": false
         }
       }
