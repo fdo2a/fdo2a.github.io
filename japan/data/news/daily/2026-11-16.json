@@ -1,0 +1,2294 @@
+{
+  "report_date": "2026-11-16",
+  "cut": "16:30",
+  "source": "Yahoo!ファイナンス ニュース",
+  "complete": true,
+  "notes": [],
+  "items": [
+    {
+      "guid": "6419916d2c90c826dd9d2e27ea4d1612b3ca1da9",
+      "url": "https://finance.yahoo.co.jp/news/detail/6419916d2c90c826dd9d2e27ea4d1612b3ca1da9",
+      "title": "午後3時のドルは159円半ばで上値重い、米利上げ思惑根強くユーロは安値更新",
+      "source": "ロイター",
+      "published": "2026-11-16T15:16:58+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 867,
+      "body_file": "02-macro.txt",
+      "summary_ko": "16일 오후 3시 도쿄 외환시장에서 달러·엔은 159엔 중반에서 상단이 무거운 흐름을 보였다. 미국의 금리 인상 기대로 달러 매수는 이어졌지만, 외환 개입 경계감이 있는 엔화보다 유로화에 대한 달러 매수가 더 강했다. 유로·달러는 한때 1.1011달러까지 떨어져 2025년 4월 이후 약 1년 7개월 만에 최저치를 경신했으며, 프랑스의 재정·정치 문제가 약세 배경으로 꼽혔다. 일본은행 다카다 하지메 심의위원의 도쿠시마 강연에서는 새로운 발언이 없어 엔화 매수 재료가 되지 못했고, 시장은 다음 주 다무라 나오키 심의위원의 발언에 주목했다. 내각부가 발표한 2026년 7~9월기 국내총생산(GDP) 속보치에 대한 환율 반응은 제한적이었다. 다만 궂은 날씨와 물가 상승으로 개인소비가 약해진 점이 서둘러 금리를 올릴 필요가 없다는 논거로 거론되며 통화정책에 미칠 영향이 주목된다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "7e16a9c741bbeae1fc5317096ea229d8fbd1ce6c",
+      "url": "https://finance.yahoo.co.jp/news/detail/7e16a9c741bbeae1fc5317096ea229d8fbd1ce6c",
+      "title": "実質GDP、4期ぶりマイナス＝年0．1％減、消費低迷―7～9月期",
+      "source": "時事通信",
+      "published": "2026-11-16T10:00:20+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 420,
+      "body_file": "03-macro.txt",
+      "summary_ko": "일본 내각부가 16일 발표한 2026년 7~9월기 국내총생산(GDP) 속보치에 따르면, 물가 변동을 제외한 실질 GDP는 전기 대비 0.02% 감소했다. 이 성장 속도가 1년간 이어진다고 가정한 연율 환산으로는 0.1% 감소다. 마이너스 성장은 4분기 만이다. 물가 상승과 날씨 불순으로 개인소비가 부진했고, 원유의 대체 조달이 진전되며 수입이 늘어난 점도 GDP를 끌어내렸다. GDP의 절반가량을 차지하는 개인소비는 전기 대비 0.3% 줄어 2분기 연속 감소했다. 생필품 구매를 줄이는 움직임이 나타났고, 태풍과 장마로 의류와 여행 관련 지출도 저조했다. 내년 4월 에너지 절약 기준 강화를 앞두고 늘었던 에어컨 선구매도 꺾였다. 공공투자는 1.1% 줄어 2분기 연속 감소했다. 반면 설비투자는 1.6% 늘어 3분기 만에 플러스로 돌아섰다. 서버와 반도체 제조장비 등 인공지능(AI)·디지털 관련 투자가 확대된 영향이다. 공적 재고는 앞선 분기에 석유 비축분 방출로 줄었던 데 따른 반동으로 GDP를 0.5%포인트 끌어올렸다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "abac6fdaa24aa8139d4f47a0294fc4097ee1cc69",
+      "url": "https://finance.yahoo.co.jp/news/detail/abac6fdaa24aa8139d4f47a0294fc4097ee1cc69",
+      "title": "〔東京外為〕ドル、159円後半＝米利上げ観測と介入警戒で横ばい（16日午前9時）",
+      "source": "時事通信",
+      "published": "2026-11-16T09:05:59+09:00",
+      "category": "macro",
+      "feed": "market",
+      "body_chars": 756,
+      "body_file": "05-macro.txt",
+      "summary_ko": "16일 오전 9시 도쿄 외환시장에서 달러·엔 환율은 1달러=159엔 후반대에서 횡보하고 있다. 미국의 금리 인상 관측과 일본 정부·일본은행의 외환시장 개입 경계감이 맞서면서 환율이 쉽게 움직이지 못하는 모습이다. 달러는 전주 말 대비 6전 내린 159엔 78~79전에 거래되고 있다. 13일에는 미국 소비자물가 상승률 예상치 상회와 웰러 등 연준(FRB) 고위 인사들의 금리 인상에 우호적인 발언이 겹치며 160엔 19전까지 올라 9월 2일 이후 약 2개월 반 만의 고점을 찍었다. 다만 미쓰무라 준 재무관과 가타야마 사쓰키 재무상이 엔저를 견제하는 발언을 내놓으면서 160엔대에서는 매물이 나오기 쉽다는 인식이 강하다. 전문가들은 달러 강세와 엔 약세 기조는 바뀌지 않았지만, 160~162엔대로 거래 범위를 끌어올리려면 새로운 달러 매수 재료가 필요하다고 본다. 한편 7~9월기 실질 국내총생산(GDP)은 전기 대비 0.0% 감소해 4분기 만에 마이너스를 기록했으나, 환율 반응은 제한적이었다. 유로화는 엔과 달러 모두에 대해 하락했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "3d08f22122796125e698e5ab0a63502ea68e5e27",
+      "url": "https://finance.yahoo.co.jp/news/detail/3d08f22122796125e698e5ab0a63502ea68e5e27",
+      "title": "サイバー攻撃「自律化」が脅威に＝AIエージェント悪用、防御後手",
+      "source": "時事通信",
+      "published": "2026-11-16T08:00:27+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 780,
+      "body_file": "13-industry.txt",
+      "summary_ko": "기업을 겨냥한 불법 접속이 잇따르는 가운데, 사람의 지시 없이 스스로 문제를 해결하는 AI 에이전트가 사이버 공격에 악용되면서 공격의 자율화가 위협으로 떠올랐다. 미국 보안업체 팔로알토네트웍스는 9월, 종전에 2주가량 걸리던 침입을 AI 에이전트가 10시간 미만에 수행한 사례를 공개했으며, 취약점 탐지와 인증 정보 탈취 등 50종 넘는 공격 기법이 쓰였다고 밝혔다. 미국 구글이 10월 말 낸 보고서에는 AI가 공격 프로그램을 스스로 줄여 다시 실행하거나 오류와 수정을 되풀이해 정상 작동시킨 사례도 담겼다. 방위연구소의 사사키 하야토 특임연구원은 피해 조직을 조사하고 분석하는 데 2~3일이 금방 지나지만 공격자는 수십 분에서 수 시간이면 공격을 끝내고 다음 표적으로 넘어간다며 대응과 공격의 속도가 맞지 않는다고 지적했다. 그는 민간 분석기관이 정보를 신속히 공유하고 정부가 이를 취합해 대책을 지휘하는 체제를 요구했다. 나카소네평화연구소의 오사와 준 상석연구원은 방어 쪽도 AI로 취약점을 폭넓게 찾아 고쳐야 한다고 주장했다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "c1abbd40d11c3ca72d7c33d6017657840dc9a1bf",
+      "url": "https://finance.yahoo.co.jp/news/detail/c1abbd40d11c3ca72d7c33d6017657840dc9a1bf",
+      "title": "ベルギーｉｍｅｃ、北海道大に日本初の研究開発拠点 ラピダスとも連携",
+      "source": "ロイター",
+      "published": "2026-11-16T13:04:11+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 507,
+      "body_file": "16-industry.txt",
+      "summary_ko": "벨기에 반도체 국제연구기관 아이메크(imec)의 패트릭 반데나메레 최고경영자는 16일 도쿄에서 열린 기자회견에서 일본에 처음으로 연구개발 거점을 홋카이도대학 캠퍼스 안에 설치한다고 발표했다. 이 거점은 일본 국내 포토닉스 관련 연구 프로그램을 지원한다. 아이메크는 일본 정부가 지원하는 첨단 반도체 양산 기업 라피더스와도 협력·연계하기로 했다. 향후 5년간 홋카이도 연구개발 팀을 연구자와 기술자 약 15명 규모로 늘리고 벨기에 연구팀과 긴밀히 협력할 계획이다. 반데나메레 CEO는 2나노미터(nm) 회로선폭 반도체를 내년도 하반기에 양산하는 것을 목표로 하는 라피더스에 대해 \"어려운 사업이지만 들리는 바로는 매우 긍정적인 상황\"이라고 평가했다. 그는 AI 수요가 끝을 모를 만큼 커지고 있어 더 많은 기업이 첨단 기술에 도전하는 것이 매우 중요하다며, 라피더스가 마지막 단계까지 나아가 제품화에 성공하기를 바란다고 말했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "d55e6769fe51127d09035e69c7bb53340121dcb8",
+      "url": "https://finance.yahoo.co.jp/news/detail/d55e6769fe51127d09035e69c7bb53340121dcb8",
+      "title": "焦点：三井化学に託された半導体材料再編、まず問われるＪＳＲとのシナジー",
+      "source": "ロイター",
+      "published": "2026-11-16T11:05:09+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 2274,
+      "body_file": "17-industry.txt",
+      "summary_ko": "2026년 11월 9일 열린 기자회견에서 미쓰이화학 이치무라 사토시 CEO는 JSR 인수를 종착점이 아닌 출발점으로 보고 JSR을 핵심으로 소재·장비 기업과의 연계를 넓히겠다고 밝혔다. 정부계 펀드 산업혁신투자기구(JIC)가 반도체 소재 재편의 핵심으로 삼으려 JSR을 사들였다가 시장 평가가 높아지자 매각을 택했고, 미쓰이화학이 그 구상을 사실상 넘겨받았다. 인수 규모는 1조 8400억 엔으로 크며, 미쓰이화학은 일시적인 재무지표 악화를 인정하면서도 비핵심 사업 매각으로 자금을 확보해 조기에 정상화하겠다고 했다. 연간 1000억 엔 이상의 잉여현금흐름 창출을 목표로 제시했다. 다만 반도체 소재에서는 규모가 곧바로 경쟁력이 되지 않으며, 의사결정 속도가 관건이라는 지적이 나온다. 미쓰이화학은 올해 4월 JSR 출신 인사를 ICT 솔루션 사업본부장으로 앉히는 등 통합 준비에 나섰다. 골드만삭스증권은 이번 인수가 곧바로 업계 재편을 불러오지는 않는다고 봤다. 주주인 미쓰이스미토모트러스트자산운용은 인수 가격이 높고 주식 희석과 재무 부담이 크다고 우려했다. 통합 성과가 재편의 향방을 결정하게 된다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "145400283c33725e0a5a66694e9837ca46d11084",
+      "url": "https://finance.yahoo.co.jp/news/detail/145400283c33725e0a5a66694e9837ca46d11084",
+      "title": "〔JPXエネルギー〕ドバイ原油、4日ぶり反落＝一時2100円超安（16日）",
+      "source": "時事通信",
+      "published": "2026-11-16T16:14:55+09:00",
+      "category": "market",
+      "feed": "market",
+      "body_chars": 321,
+      "body_file": "07-market.txt",
+      "summary_ko": "11월 16일 도쿄상품거래소의 두바이 원유 선물은 4영업일 만에 하락 전환했다. 중심 월물인 2027년 4월물(6번째 월물)의 정산가는 직전 주말보다 740엔 내린 8만6390엔이었고, 11월 당월물은 50엔 올랐으나 나머지 월물은 430~1130엔 내렸다. 주간에 미국·중국·러시아 3개국 정상회담 등 중요한 일정이 예정돼 관망 분위기 속에 혼조로 출발했으나, 오전에는 세계적인 원유 공급 과잉 전망으로 매도세가 우세해 27년 4월물 낙폭이 한때 2100엔을 넘었다. 오후에는 거래 중이던 뉴욕 WTI 선물이 반등하고 환율이 엔화 약세·달러 강세로 기울면서 낙폭이 줄었다. 전력, 석유제품, LNG, 오사카거래소의 CME 원유 등 지수 선물은 거래가 성립되지 않았다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "fe758fae469ffd8807b4ce547ed4d4dfa95e31da",
+      "url": "https://finance.yahoo.co.jp/news/detail/fe758fae469ffd8807b4ce547ed4d4dfa95e31da",
+      "title": "日経平均は反落、ＡＩ株が下げ主導 エヌビディア決算前に手掛けにくさ",
+      "source": "ロイター",
+      "published": "2026-11-16T16:06:16+09:00",
+      "category": "market",
+      "feed": "bus_all",
+      "body_chars": 1558,
+      "body_file": "08-market.txt",
+      "summary_ko": "지난 16일 도쿄 증시에서 닛케이평균주가는 전일 대비 2.42%(1480.33엔) 내린 5만9662.02엔에 마감하며 반락했다. 인공지능(AI)·반도체 관련주가 약세를 주도하며 지수를 끌어내렸고, 오후에는 6만 엔 선을 하회했다. 미국 반도체 대기업 엔비디아의 실적 발표(일본시간 18일 오전)를 앞두고 관망 심리가 커진 가운데 아시아 증시와 미국 주가지수 선물도 약세를 보였다. 미국의 데이터센터 규제 논의도 불확실성을 키웠다. 다만 2026년 7~9월기 국내총생산(GDP) 속보치는 실질 기준 전기 대비 0.02% 감소해 4분기 만에 마이너스 성장을 기록했지만, 시장 영향은 제한적이었다. TOPIX는 1.02% 내린 3901.37포인트로 마감했고, 도쿄증권거래소 프라임 시장 거래대금은 약 7조9303억 엔이었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "296a7559c135362f5214a024b369caa8cac7cdf4",
+      "url": "https://finance.yahoo.co.jp/news/detail/296a7559c135362f5214a024b369caa8cac7cdf4",
+      "title": "〔東京株式〕大幅反落＝半導体中心に売り（16日）☆差替",
+      "source": "時事通信",
+      "published": "2026-11-16T15:38:03+09:00",
+      "category": "market",
+      "feed": "market",
+      "body_chars": 376,
+      "body_file": "11-market.txt",
+      "summary_ko": "16일 도쿄 증시에서 닛케이평균주가는 전 영업일 대비 1480엔 33전 내린 5만9662엔 02전으로 대폭 반락했다. 도픽스(TOPIX)도 40.20포인트 내린 3901.37로 6영업일 만에 하락 전환했다. 인공지능(AI) 기업들의 설비투자가 지속될지에 대한 우려가 이어지는 가운데 반도체 관련주를 중심으로 매도가 쏟아지며 지수를 끌어내렸다. 개인소비 관련주 등 AI 산업과 거리가 있는 종목에는 매수가 들어왔지만 시장을 떠받치기에는 역부족이었다. 프라임 시장에서는 55%의 종목이 하락하고 42%가 상승했으며, 거래량은 25억 2285만 주, 거래대금은 7조 9303억 엔이었다. 33개 업종별 지수에서는 비철금속, 전기기기, 유리·토석제품, 금속제품 등이 떨어졌고 소매업, 수산·농림업 등은 올랐다. 스탠더드 시장 TOP20은 반락했고, 그로스 시장의 그로스250과 그로스Core는 이틀째 내림세를 보였다.",
+      "summary_model": "claude-haiku-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "japan",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 237,
+    "answered": 237,
+    "dropped": [
+      {
+        "guid": "06d0b049b031c4d49fd22ba6be1e214567700ace",
+        "title": "マクロスコープ：銀行株とＡＩ株が異例の連動、米選挙後に鮮明 金利が媒介か",
+        "label": "foreign",
+        "confidence": 0.97
+      },
+      {
+        "guid": "f8a65543bd0ad0af4e1cd7b0471e7f5e36dd1c6b",
+        "title": "香港不動産開発の新世界発展、32億ドルの株主割当増資計画 株価急落",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "e257c3f5fd2cc2f295bf971a68a9b9e8f9ccd5cc",
+        "title": "インテル株主が提訴、株価29％急落で情報開示遅れを主張",
+        "label": "foreign",
+        "confidence": 0.98
+      }
+    ],
+    "stopped": "complete",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "fe758fae469ffd8807b4ce547ed4d4dfa95e31da",
+        "title": "日経平均は反落、ＡＩ株が下げ主導 エヌビディア決算前に手掛けにくさ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a64eb0f91ebbbd3b59469d23c416440e70464b70",
+        "title": "出光がＫｅｅＰｅｒ技研と資本業務提携、ＶＴから全株譲り受け",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "acb06ea0c885d786f31e7cbc205b433df5b7bac5",
+        "title": "1480円安の5万9662円02銭＝16日の平均株価",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6419916d2c90c826dd9d2e27ea4d1612b3ca1da9",
+        "title": "午後3時のドルは159円半ばで上値重い、米利上げ思惑根強くユーロは安値更新",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c9e59082e8b216631f8449b5aac47a1a8411760a",
+        "title": "大成建設、米ペガサスと240億円ＶＣファンド ＡＩ新興など対象",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "06d0b049b031c4d49fd22ba6be1e214567700ace",
+        "title": "マクロスコープ：銀行株とＡＩ株が異例の連動、米選挙後に鮮明 金利が媒介か",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c1abbd40d11c3ca72d7c33d6017657840dc9a1bf",
+        "title": "ベルギーｉｍｅｃ、北海道大に日本初の研究開発拠点 ラピダスとも連携",
+        "category": "industry",
+        "label": "foreign_impact",
+        "confidence": 0.53,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1e4d53c7ad709fb676e7e9c71a6ce96047e6cd64",
+        "title": "円相場、159円72～73銭＝16日正午現在",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "236339a88910b6c603df8d2260e4e69b80b9a41b",
+        "title": "日経平均は後場に6万円下回る、ＡＩ株が下げ拡大",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "59cece58986e8c0a50ea97016d4db28cc4a4117a",
+        "title": "959円安の6万0182円50銭＝16日午前の平均株価",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f8a65543bd0ad0af4e1cd7b0471e7f5e36dd1c6b",
+        "title": "香港不動産開発の新世界発展、32億ドルの株主割当増資計画 株価急落",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "96588095737511d60013cf3c3c7cc297c14fa499",
+        "title": "市場動向に「細心の注意」と城内経財相、安定的マクロ環境を確保＝ＧＤＰで",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d55e6769fe51127d09035e69c7bb53340121dcb8",
+        "title": "焦点：三井化学に託された半導体材料再編、まず問われるＪＳＲとのシナジー",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ac079d4b7082932f632fc2c831906bfa988cab07",
+        "title": "ＳＫハイニックス、国内の半導体供給網支援へ5年で10億ドル投資",
+        "category": "industry",
+        "label": "foreign_impact",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7e16a9c741bbeae1fc5317096ea229d8fbd1ce6c",
+        "title": "実質GDP、4期ぶりマイナス＝年0．1％減、消費低迷―7～9月期",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "21bd0e93c92995914c9d9e87784f2229542d5c52",
+        "title": "実質ＧＤＰ7─9月期は4期ぶりマイナス、年率0.1％減 個人消費に弱さ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e257c3f5fd2cc2f295bf971a68a9b9e8f9ccd5cc",
+        "title": "インテル株主が提訴、株価29％急落で情報開示遅れを主張",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a82651de2866169bd75480372654258e1b25390a",
+        "title": "ニデック、半期報告書提出期限の1カ月延長を申請 訂正作業に遅れ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3d08f22122796125e698e5ab0a63502ea68e5e27",
+        "title": "サイバー攻撃「自律化」が脅威に＝AIエージェント悪用、防御後手",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e8df81b54e2597a771f2337d8859d45104510376",
+        "title": "本日の経済スケジュール ─ ★7-9月期GDPに注目",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.6,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b161a6ca9164ab4fe5cd106c51ed84676cdbac8c",
+        "title": "東京為替：ドル・円は軟調、日本株安で円買い",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "145400283c33725e0a5a66694e9837ca46d11084",
+        "title": "〔JPXエネルギー〕ドバイ原油、4日ぶり反落＝一時2100円超安（16日）",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.16,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8e1e2d799cff3506e02e73d9773a1136acd8c652",
+        "title": "〔新興株式〕グロース250は続落＝見送りムードで薄商い（16日）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f1094eacbf6b2257342411bb4d93b273a1752551",
+        "title": "日経平均は大幅反落、売り優勢で下げ幅広げる展開／相場概況",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "296a7559c135362f5214a024b369caa8cac7cdf4",
+        "title": "〔東京株式〕大幅反落＝半導体中心に売り（16日）☆差替",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "da206a0c2cf90a90d27a1e3d5a49bb91f4405dbd",
+        "title": "11月16日日本国債市場：債券先物は126円25銭で取引終了",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "914b055cf404b762d120a19e600c0df9f4b28cb0",
+        "title": "日経平均大引け：前週末比1480.33円安の59662.02円",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a40edc57fa0798dd6d3929392d496f6e6bd7cc1c",
+        "title": "東証グロース（大引け）＝値下がり優勢、アクセルＭ、ＪＤＳＣがS高",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a58020714b6796d979a45f396e52080bf710561c",
+        "title": "日経平均16日大引け＝反落、1480円安の5万9662円",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "16e9bf47ed328d1a8b04ccaaee6772e8acf2cb6e",
+        "title": "東証スタンダード（大引け）＝値下がり優勢、岐阜造園、森組がS高",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a8fd0c59757181b6ccddef8080792b25a03b85a4",
+        "title": "日経平均、1480円33銭安の5万9662円02銭で終了＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6b462c9d375fc67ea47cd05c8f05754de5feba41",
+        "title": "東京為替：ドル・円はじり安、円買い継続",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e62d39a28015a90c2dac29e3dbdafaf430d6bddc",
+        "title": "〔東京外為〕ドル、159円台半ば＝株価下げ幅拡大などで軟化（16日午後3時）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f1dd1b7040c57f03b31676e54b7cbe592e4a18f7",
+        "title": "15時の日経平均は1451円安の5万9691円、アドテストが731.38円押し下げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "59a99f234e813a89660d32d81500b6c484ac3dee",
+        "title": "日経平均、1500円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0ec8164d772f4534b7861047892c3e73ac0b7c54",
+        "title": "日経平均の下げ幅が1500円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f9f0dabbd1f381e04e0536c0d2480bdc5ba04658",
+        "title": "東京為替：ドル・円は一段安、株安・円高で",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3ea13e0f7da89344357d17acc2c1a38f1888b905",
+        "title": "日経平均の下げ幅が1400円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b293dcb273270fa721007cfdb2fc6bc4fdbf8d2b",
+        "title": "東京為替：ドル・円は安値圏、株安を嫌気",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "33978166da764ff7984618007f62cdde6820e513",
+        "title": "14時の日経平均は1232円安の5万9909円、アドテストが696.86円押し下げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ab494fcaae3efb91a94068dc628ea2f75ceee447",
+        "title": "東京為替：ドル・円は下げ渋り、ドル買い継続で",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "76e04d29287a4cdb1ad33d6accd4f82995a98567",
+        "title": "東京為替：ドル・円は反落、株安受け円買い",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f982c12e882f5a85408b99942f574b084e923fc8",
+        "title": "13時の日経平均は1097円安の6万44円、アドテストが689.31円押し下げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b5289c7685b399c6944e7abaddf18f3fef2c260c",
+        "title": "日経平均の下げ幅が1300円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8f46d34202482405ef9579e3a88b9a649382921d",
+        "title": "日経平均、1300円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9cb25cf2f273576e194e47411b62eb9d518bb50d",
+        "title": "日経平均の下げ幅が1200円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f784aa6bbf6d815b4ed5fb28e3cd70618e731616",
+        "title": "日経平均、1200円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e52d5b420cbee68bd8a8866319737c15be9c22ca",
+        "title": "後場に注目すべき3つのポイント～半導体関連株安とGDPのマイナス成長が重荷",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ffbc609a9fe4eaa48dd7a0a5dc050da621edd581",
+        "title": "日経平均が6日ぶり6万円台割れ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cd67a175deb50300783c977bc47d51f4e689b8a2",
+        "title": "日経平均の下げ幅が1100円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "60a42030d534919979f4e46c8806ba1829dd4bbf",
+        "title": "日経平均、6万円割れ＝1週間ぶり―東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "249e9fa418bccafe16bce2368579af4777e6c416",
+        "title": "日経平均、1100円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "64cb8fe981924e22bdedcaa414985e7e91ce9e46",
+        "title": "日経平均、1041円08銭安の6万0101円27銭で始まる＝東京株式後場",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "260eb98f495ff83149dfb25e68a8c57358abe2ea",
+        "title": "東京為替：ドル・円は伸び悩み、節目を意識",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "adb3716e4ba36680ba03026e300354572844ba53",
+        "title": "半導体関連株安とGDPのマイナス成長が重荷／後場の投資戦略",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ce5c57ba45c467b1bab5d1af0f0cb96a5a895a14",
+        "title": "日経平均は大幅反落、半導体関連株安とGDPのマイナス成長が重荷／ランチタイムコメント",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "81c2a2c13c00e9cf44684a6e6d52d8547e96972a",
+        "title": "11時の日経平均は1054円安の6万88円、アドテストが669.89円押し下げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "21854fce1b78583c5ae050fae0963c3f1ef27f23",
+        "title": "日経平均の下げ幅が1000円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e8920e2c81da4d646be45b8046c2a6b63d13b616",
+        "title": "日経平均、1000円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e304cc08f8a4d8c0050b6bf86ba2951a273b03d7",
+        "title": "東京為替：ドル・円は小幅安、159円70銭台で方向感乏しい",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5623aacce4544799eabf6d7747e82f68e0a37cc6",
+        "title": "日経平均の下げ幅が900円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "535ef6d858d0fc0d9dd0f430ed8b6f53f96b85c8",
+        "title": "日経平均、900円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c9c2ce830617e04abd0d6fcc894e163b9bcfb9b7",
+        "title": "日経平均の下げ幅が800円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bb08e6129c7b2cb5355999497c1a4a24da51bd22",
+        "title": "日経平均、800円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "10d31ebb50b0eb9dbcd45d5ffe55ae61bf7744cf",
+        "title": "日経平均の下げ幅が700円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "53e730a97ad269c4f713b7b79eaa6fd9dddb5883",
+        "title": "日経平均、700円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6dad72fbe3269245f466b84a48de3d2b3f7b71eb",
+        "title": "東京為替：ドル・円は持ち直し、159円80銭台を一時回復",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9eafe488f417bb26048be0ec62ce02dcdd279576",
+        "title": "10時の日経平均は321円安の6万820円、アドテストが489.75円押し下げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f3bd8a16e8eac7a0aad82863874a165fae4c836a",
+        "title": "日経平均の下げ幅が600円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "da879a4bdfd219488a0fcfe77be714c2e81b0231",
+        "title": "日経平均、600円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "84b7ced6ec7c756d9305108f3b98b4b20ed86713",
+        "title": "日経平均の下げ幅が500円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "345fb177c671cdc554dd58152e5ad53dcb7aeee9",
+        "title": "日経平均、500円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "45e64393acc6e1f3a45c03aff7bbfd730f060d09",
+        "title": "東京為替：ドル・円は伸び悩み、159円90銭手前から押し戻し",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fd3f73b7213f58129dec89bd81d793e567f0be47",
+        "title": "日経平均の下げ幅が400円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3d14ea9500eb9536ac449571109d06e516ef2648",
+        "title": "日経平均、400円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "64b3263c5d536be9fc91f69aad4d0b7380ce4b65",
+        "title": "日経平均の下げ幅が300円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "97c7715694464f858788825fdbc4d19f2eb5ebe9",
+        "title": "日経平均、300円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "75b6021fc8d9209756a06bd9a3e3a423139d7d5c",
+        "title": "日経平均が4日ぶり6万1000円台割れ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8437bfad14d8afde1a5abcfb7c52fd6f1ac884cb",
+        "title": "日経平均の下げ幅が200円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "136071eac40a1dee1848396b664622acecc1f1dc",
+        "title": "日経平均の下げ幅が100円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "abac6fdaa24aa8139d4f47a0294fc4097ee1cc69",
+        "title": "〔東京外為〕ドル、159円後半＝米利上げ観測と介入警戒で横ばい（16日午前9時）",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c0cb90151825e7ace38ca00ba04b79dc61ddfb5a",
+        "title": "東京為替：ドル・円はもみ合い、159円80銭付近",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8e55df5bfc80a2b787ad3ec7ca9296530f134402",
+        "title": "半導体やAI関連株の底堅さを見極め／オープニングコメント",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.6,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "988005c14d756ac23da993e48e91634cd5747e7f",
+        "title": "今日の為替市場ポイント：介入警戒と金利差の綱引きから神経質な値動きが続きそう",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ec300bed2af4ea0cb18d30079bde661c82a60dc9",
+        "title": "東証グロース市場250指数先物見通し：底堅い値動きか",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a53935651dae51c31dee590e86d6f9f16af38879",
+        "title": "伊藤智洋が読む「日経平均株価・短期シナリオ」 (11月16日記）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "69a63ef292be1bb1b40186acaecb311f4282a70e",
+        "title": "シカゴ日経平均先物 大取終値比 85円安 （11月13日）",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0643420b24eea8e46171083e534b6ab1c6c9c41f",
+        "title": "今日の注目スケジュール：GDP、中新築住宅価格、中小売売上高など",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.56,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7322dbc99483b559974559300553681db4b9b88a",
+        "title": "【日経平均の値位置を知る！】 上値・下値テクニカル・ポイント(16日現在)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "52d453ef1d7dce81e51bc621eaaba108f010fb39",
+        "title": "【決算速報】ＡＩＦＣＧ、上期最終が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.88,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c16d6d64b6852488775ccd45220a504528fb1e07",
+        "title": "【決算速報】ウェッジＨＤ、前期最終は赤字拡大で着地、今期業績は非開示",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "dcfd8fe9124134cdbc28276e7d41b014342faa20",
+        "title": "【決算速報】ショーケース、7-9月期(2Q)経常は黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "573505bdf7deb6a1deb91dcfd6f53257ee0ce58a",
+        "title": "オプティム---上期は42.1%増収・2ケタ営業増益、アグリテック事業が大幅増収",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fae26a635bbc69a3bc14fa47c04e1726e29b1b7c",
+        "title": "【決算速報】リニカル、7-9月期(2Q)最終は赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ab665197fd6acd31cfcd2e0c685bb846c474a9db",
+        "title": "【決算速報】ハナツアーＪ、1-9月期(3Q累計)経常が19％減益で着地・7-9月期も36％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "310596cace70ac1d6f1aaa2899286d55fe421b89",
+        "title": "【決算速報】片倉、1-9月期(3Q累計)経常は8％増益で着地、今期配当を10円増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "28f3be0a094be00746d4d4c51f3c24387b548a13",
+        "title": "【決算速報】キューブ、今期経常を一転赤字に下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a8890f2d4b64a87b6075a3894224cd06ca2dde6c",
+        "title": "【決算速報】ＮＴＬ、上期経常が黒字浮上で着地・7-9月期も黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3e0608bdb198c96589af91a098ee2b2ec482d41b",
+        "title": "【決算速報】辻本郷ＩＴＣ、今期経常は2.4倍増で2期ぶり最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4ccfd73752c1f0f12382eb02110754053483fcbd",
+        "title": "【決算速報】松屋、今期経常を19％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8e9231efd9cb260627560608efa4b2b170c17cb3",
+        "title": "【決算速報】バンクオブイ、前期経常は4％減益で着地、今期業績は非開示",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.53,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "61f96eb735c5b6af9a8b2f4b9c07679a3e98eaea",
+        "title": "【決算速報】くふうカンパ、前期営業が上振れ着地・今期は36％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9513d8b8b2dd1c136f820d82db120a191387420b",
+        "title": "【決算速報】ジャパンＲＥ、今期経常は8％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6dadd136b8351d51151da5ec6fd30b1b52a146fe",
+        "title": "【決算速報】オリバー、1-9月期(3Q累計)最終は11％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.3,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "48796d2a30e28fabd6dec7cba90c2574c5e5cb87",
+        "title": "【決算速報】電通グループ、1-9月期(3Q累計)最終が黒字浮上で着地・7-9月期は44％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2c012ae18c8834aa9cd455c13f3d4c3a1bd70a1e",
+        "title": "【決算速報】フリージア、上期経常は11％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1a6019cdd4480436bd3302e161f4f9bd58cb0579",
+        "title": "【決算速報】ＮＥＸＹＺ．、今期経常は45％増益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cf60b77071663457950ad44efc38424799ca3bfa",
+        "title": "【決算速報】技研ＨＤ、上期経常が1％増益で着地・7-9月期は31％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "35b626e132917d23bfa0ce31d906c4288d329c31",
+        "title": "【決算速報】ブランジスタ、今期経常は6％増で5期連続最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2d3494fc57cbbc79f33f65575dbb7b305505a018",
+        "title": "【決算速報】フェローテク、今期最終を4％上方修正、配当を増額修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0925ae0a37e105d09ead4b5626503996e26a3ae9",
+        "title": "【決算速報】クラウドＷ、今期営業は2.5億円の赤字～1億円の黒字へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "30e7c9d9661cb00e0fe5a3761794b3eb2dcddb8c",
+        "title": "【決算速報】ポート、上期最終が31％減益で着地・7-9月期も66％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fef369fc28ac924743b1061d3946c1f08e86047f",
+        "title": "【決算速報】動物高度医療、上期経常が21％増益で着地・7-9月期も11％増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cc1ed8ba45a91e3dea774efab04549903e7f6f5c",
+        "title": "【決算速報】アップコン、今期経常を一転10％増益に上方修正・最高益更新へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "043b64ed01ac9a2c90888de7f8ef04299a8291ec",
+        "title": "【決算速報】Ｓｃｈｏｏ、今期経常は赤字転落へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "995297b14975c65b8a237d10b7e787e5933df4d8",
+        "title": "【決算速報】エアウォータ、今期最終を50％下方修正、未定だった配当は75円実施",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e803af6f658eb4f0ad57e90968757d6ee7b88b91",
+        "title": "【決算速報】ネットプロ、上期最終は22％増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "78b865e6ec9cabc3dbb35a6d7e91b69a59db61c1",
+        "title": "【決算速報】フツパー、1-9月期(3Q累計)経常は42％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b0f142b33892d551a0aa8bff4fbf63695fdc5793",
+        "title": "【決算速報】日本ナレッジ、上期経常は黒字浮上で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f64aa79942000167a2e93d96bc7f444467fb927f",
+        "title": "【決算速報】あいＨＤ、7-9月期(1Q)経常は50％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f1faf2b6425891491196e9a18a26bc4ed99a5ceb",
+        "title": "【決算速報】ＫｅｅＰｅｒ、7-9月期(1Q)経常は36％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c84b4f1b3a92ef3b5509efd2409127eb1961dab4",
+        "title": "【決算速報】イオレ、今期経常を2.1倍上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "126de5f5e4495303befab0d2d6210b2727d18acc",
+        "title": "【決算速報】サニックスＨ、今期最終を46％下方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "934d5f0ee897742ddac2a6c6e59f637db56470d5",
+        "title": "【決算速報】カヤック、1-9月期(3Q累計)経常が18％増益で着地・7-9月期は33％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.64,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2b35299e7a2a6ca23f0041458de99bc6d0bbfba0",
+        "title": "【決算速報】ＭＳＯＬ、1-9月期(3Q累計)経常は24％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "dfc2bd43cc51595663eb2c0c8e11990e25bf9a0f",
+        "title": "【決算速報】レカム、今期最終は83％増で5期ぶり最高益、0.3円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0116208190808a062d5dba88808b3fc10d700a9f",
+        "title": "【決算速報】北浜ＣＰ、上期経常が赤字拡大で着地・7-9月期も赤字拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2b98c592f2392ff656d4e796914f44d1218b3db2",
+        "title": "【決算速報】あかつき本社、上期経常は1％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ef6ad592e9636e26bbf249858abdf3ecf2c52be8",
+        "title": "【決算速報】オロ、1-9月期(3Q累計)最終が18％増益で着地・7-9月期は7％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.34,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "047180c04ddf9fa7f1a8dd7b032320f359b788fe",
+        "title": "【決算速報】ロイヤルＨＤ、1-9月期(3Q累計)経常が2％増益で着地・7-9月期は2％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "41f42c3d6f1c866341573668e8ab629338d67787",
+        "title": "【決算速報】オープンＧ、今期最終を46％上方修正・最高益予想を上乗せ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9983dd47b67b9fb1f5ffd2f6398d99be37e58671",
+        "title": "【決算速報】サンウェルズ、上期経常が赤字縮小で着地・7-9月期も赤字縮小",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "01260223d503d4e16bc7638210e4ba4a2d3c71f2",
+        "title": "【決算速報】夢みつけ隊、上期経常が12％減益で着地・7-9月期も55％減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b518f033781e820fded6751d85f403a9c26ec095",
+        "title": "【決算速報】日精蝋、今期経常を4％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "73937a0cfc30c468e3e0dd4c4bfdd3a92067fe33",
+        "title": "筑波精工---中間期は大幅増収で黒字転換、海外半導体メーカー向けステージが牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2d97b5ca1b1dda253c00e7852e8524c8853230c8",
+        "title": "【決算速報】ＧＳＩ、上期経常は9％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "19844f2aafc31bcb32c8ab902189be091d823972",
+        "title": "ＪＲＣ レーティング：Buy 目標株価2,101円で74.2％の上値余地",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ec88eb2095bf55af1c39753aa64940946d48e4e1",
+        "title": "NSグループ---3Qは2ケタ増収増益、新規・更新保証料が伸長",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "36d004fe01fb70f7a3a24e1245ee69b9a66cab65",
+        "title": "トヨクモ---3Qは27.8%増収・43.7%営業増益、法人向けクラウドが拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "278cc58f1d9f30cf3a0fb5d1c7de9f0df930f242",
+        "title": "Ｔｒｕｅ Ｄａｔａ---上期は13.0%増収、ストック収益が堅調に推移、初のM&Aによる成長基盤拡大が進行",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "605139845ae499c7b58a8f1dc63a958617ec26f3",
+        "title": "SBSホールディングス---3Qは2ケタ増収増益、売上高・各利益が過去最高",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "53fc1a1f9e511192040348e9b3c49ac0fee1a78c",
+        "title": "キットアライブ---3Qは11.6%増収、大型プロジェクトの進捗と継続受注が寄与",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "20b26a6764cb49bcc1995fbe0aa50641d988f0c0",
+        "title": "アップルインターナショナル---3Qは大幅増収増益、マレーシア向け中古車輸出が牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bcdcd65d40cb0cdc17ed8be63252688c727bcbfd",
+        "title": "ミラティブ---3Q累計は11.9%増収、営業利益194.4%増と大幅増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "89fbf88ed3f298a9cc531f222465531d9cb7c7b2",
+        "title": "フェイスネットワーク---上期は竣工引渡しの下期集中で減収、通期増収増益計画を据え置き",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b4c3926a532ec07d4387b5b6e372cd8c1b1acf5",
+        "title": "【決算速報】片倉コープ、上期経常は50％増益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a3d5ce68f9248d339b2c6811515520b6d62a6336",
+        "title": "ニッポンインシュア---26年9月期は2ケタ増収大幅増益、期末配当を増配",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "46c0dae71de59be194c01c573e24b82bdf556939",
+        "title": "And Doホールディングス---1Qは2ケタ増収・大幅増益、不動産売買事業が牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4ca3e91e1245f3b7ae62e81ef8b0caeb12bb3c6d",
+        "title": "ユーソナー---3Qは2ケタ増収・増益、ソナーサービス等の受注が順調に推移",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "87d903add0ded5359a842b45d01f8a8613c9e80e",
+        "title": "ADワークスグループ---株主優待制度を再導入、デジタルギフトを年2回進呈",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "621a0216a1afc89dd1aecbeaaf621afda1457a48",
+        "title": "LisB---3Qは33.6%増収・76.7%営業増益、「direct」が牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1f21cb733177f94d9a42f7a07ab32e2b5966607b",
+        "title": "ピーバンドットコム---中間期は2ケタ増収増益、量産案件と部品調達が伸長",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bc4f6f113cce65474e2a457d8c4c4165248b323a",
+        "title": "ユミルリンク---3Qは2ケタ増収増益、ストック型収益が堅調に拡大",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "960c9db2646c5e5554aa19ff21a0a035adc45afb",
+        "title": "スカラ---1Qは31.9%増収・営業黒字転換、TCG事業が81.6%増収",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d87dddb1f7017e091aeccdd177b17720d66b042e",
+        "title": "Ｊトラスト---3Qは営業利益47.3%増、日本金融事業が大幅増益を牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c4aec1ec5ddc61778f02924772a5a31d6bbdd604",
+        "title": "仙波糖化工業---中間期は増収大幅増益、販売数量拡大と価格転嫁が奏功",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "78e8de40b6bb45c4b312c0e359d37a7a82d4c45d",
+        "title": "【決算速報】菊水化、上期経常は3.2倍増益で上振れ着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2d95701b75a9762406fd86a5c7a83b3ac115776c",
+        "title": "kubell---続落、26年12月期通期経常利益予想を上方修正も",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b2ec9c7abbe22578310922398511ea87c77c1854",
+        "title": "【決算速報】ＡＳＮＯＶＡ、上期経常が赤字縮小で着地・7-9月期は黒字浮上",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5237a6f245e903ed82809080ab641bc9b2c8a4fe",
+        "title": "【決算速報】ＧＥＩ、今期経常は24％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ff8d7994d74bf5566d8db0f397cdddf00e4ee952",
+        "title": "【決算速報】トスネット、今期経常は12％減益へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "83fadb68fb14baf57fef208c2512a3a8413df8ea",
+        "title": "ティアフォー---続伸、大口受注でコマツ向け自動運転システムを開発",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "24d1af67de7e880e76333e31c1516bd25c2abf09",
+        "title": "リフォームT---急騰、27年3月期通期業績予想を上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4ddc427a80496181b9e384c4d478606ad2f18615",
+        "title": "ＡＰＰＩＥＲ---大幅反発、業績上方修正で今期営業益はほぼ倍増へ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e6510634cd417bbbd47d64607cdfa6f3eafb2f8a",
+        "title": "ニトリＨＤ---大幅反発、7-9月期は増益転換で市場想定も上振れ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4d60e9084d72da277db218b409a10b38ff6adec7",
+        "title": "インバウンドテック：ウェブクルー連結で中間期は営業黒字、通期売上2.6倍・黒字転換へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b0704127abe4d93618898bf32ea97808b2811c75",
+        "title": "【決算速報】河西工、今期経常を33％上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8bb15ba17ed78e08232c8c5fb1d5b5d773e9a5d8",
+        "title": "kubell---3Q累計は16.2%増収、営業利益201.2%増と大幅増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "da8ee8b4a4835f1c07dc5f8afa466a045a55fa09",
+        "title": "キャリアリンク---上期は5割超の営業増益、地方自治体向けBPOと製造系人材の拡大が寄与",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8d41b99ba43e2b831d3b87181c2862c639f40ddf",
+        "title": "【決算速報】Ｈｉクラテス、今期経常は微増で3期連続最高益、6円増配へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5a8b717bbede1fc5587e6e67b650f6c890939bb2",
+        "title": "バルテス・ホールディングス---中間期は8.1%増収、生成AIテストツール投資が順調に進捗",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c17b37212b96936557c02fd3d8b325a94db570d3",
+        "title": "ノムラシステムコーポレーション---3Qは増収・最終31.5%増益、基幹システム刷新需要が堅調",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "de92874f63f56194138f39ddd1f28a43329421c8",
+        "title": "スペースシャワーSKIYAKIホールディングス---中間期は増収増益、ソリューションが牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0fce261e5000d3c5f1173c8a667402a368762eb8",
+        "title": "アドバンスクリエイト---26年9月期は営業赤字が大幅縮小、販管費削減が奏功",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9628b73568e5e7573dac2ec17cd6f5f9dc30efba",
+        "title": "アドバンスクリエイト---26年9月期業績は予想を下回る、保険契約承継の収益認識が後ずれ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5e1936e9d504d26da20aa3a44aee71de31aee2b3",
+        "title": "IACEトラベル---中間期は2ケタ営業増益、Smart BTMの利用企業が増加",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "61e461770e836fc06aa21aff69399d7a64d4cf4c",
+        "title": "テリロジーホールディングス---株主優待制度を導入、保有株数と期間に応じ優待ポイントを進呈",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b1fd4a36cfae5ad11346ff7b4ca980a32236d553",
+        "title": "【決算速報】グリッド、7-9月期(1Q)経常は75％減益で着地",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4e04f9dd0ed50d6f5eddb9e0637f9e4f3665ca6e",
+        "title": "シュッピン---中間期決算を発表、基幹システムの安定稼働と収益力改善を推進",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c479832912589ebe3eeb46f1c02bd7ff53ea97dc",
+        "title": "SDエンターテイメント---中間期は11.5%増収、営業損益が黒字転換",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9f1606932480bf2b44108ae37eb75c065c28e3e8",
+        "title": "MIRAINIホールディングス---通期業績予想を上方修正、期末配当は10円増配",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1acebb506d905e7de647862cad085ae347069142",
+        "title": "MIRAINIホールディングス---統合初の中間期は好発進、通期予想を上方修正し増配",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "27e721561c754c961120b03303b7455519932841",
+        "title": "クラボウ---政策保有株式の売却益計上で今期最終益予想を上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5e9e34b2de8557e7d722d699f70abf11fcde8818",
+        "title": "クラボウ---タウンズを持分法適用関連会社化、体外診断薬で資本業務提携",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b40887cd3db8165bdcd6c3e97936c87a4bd41a81",
+        "title": "クラボウ---中間期は2ケタ増収・営業5割増益、化成品事業が牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a287e2b8fa1de6bfc71bcb23c86ce3f862243819",
+        "title": "ココルポート：質の高い個別支援で成長、増配による株主還元も強化",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "366ef8fa16fe0b58c2b81f057b3f166e74e7d42e",
+        "title": "アトラグループ---通期業績予想を上方修正、営業利益は前期比2倍超の見込み",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "44d72fdaadb01099fe14522d7bf562264410696f",
+        "title": "アトラグループ---3Qは営業益2.8倍、A-COMS事業が牽引し通期予想を再上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "520326e2641c53934e2687275aba69f142e26010",
+        "title": "【決算速報】ＴＯＹＯ、今期経常を16％下方修正、配当は18円増額",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ab9909d05b91acf85fc4793144b6a768ff276e0a",
+        "title": "ラックランド---大幅続落、大幅下方修正にネガティブサプライズ",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.68,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bdcc07dbfe4e85da0b442b7f25a17c821760d951",
+        "title": "ツバキナカシマ---大幅続落、減損計上などで大幅赤字見通しに下方修正",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0c81070d01ab0b1c9fb5e3f5f4ebfeb360bef15d",
+        "title": "ナブテスコ---大幅続落、7-9月期業績は市場予想を小幅に下振れ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3b8c925dbbdf2235eaef0fbf9e871aec34e5489e",
+        "title": "Lib Work---1Qは17.7%増収で損失縮小、上期予想を上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "467b0e1595fe33a49fed0a9c9d3220900b393863",
+        "title": "Lib Work---第2四半期累計業績予想を上方修正、経常利益は前回予想の2倍に",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9028c9940473e84ad1906f60f25fd7e13cd1e281",
+        "title": "FCE---26年9月期は2ケタ増収増益、ロボパットAIが成長を牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "56a7a824f8bf8e51dffcdfed6a493947998729e0",
+        "title": "イノベーションHD---２Ｑ決算は売上高13.3％増、営業利益4.5％減の増収減益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a6c1690bb25f862bc0e5e76f17181a5b1dbe6b07",
+        "title": "ＴＨＫ---大幅続落、業績上方修正もサプライズ限定的で出尽くし感",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6927db8b20d30d170f4c88b90eda1dac6d916354",
+        "title": "ダイコク電機---中間期は減収減益も営業利益は通期計画比9割超の進捗、サービスが伸長",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8a8e84ecd21a54b8a02afa801700bbe43f3ba543",
+        "title": "ケイファーマ---3Qは研究開発を推進、通期予想を上方修正し損失縮小へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "96134c06c935ba782e4ef0b418daa307f8846159",
+        "title": "ティア---26年9月期は増収、その他事業が倍増益、今期は2ケタ増収増益を計画",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "43ed99bb43628d28467803caf8a52e21604ad1d3",
+        "title": "プリモＧＨＤ バリュエーションレポート：レーティング_Buy 目標株価8,474円で178.8％上昇余地",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3c7ca41cbcf3e50b72a52d9b7e267d6e34664ef3",
+        "title": "酒井重工業---中間期は5.0%増収、北米向けがAI関連建設投資で3割増",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c4981d15d635ec26e7656442d1aaced800c269d9",
+        "title": "コーユーレンティア---3Qは万博反動で減益、スペースデザイン事業は33.8%増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b3e441315199e565a8159b90dbf3e3a37301df64",
+        "title": "GLOE---上昇、27年6月期通期経常利益予想を約4倍に上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3ea2184e907e6e738e061a38e5b4ec24cbadd4bf",
+        "title": "シンシア---上場10周年記念株主優待を実施",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7394c153ba53b5e3b8aa6fadeb58f42ef404d57b",
+        "title": "シンシア---26年12月期業績予想を上方修正、自社ブランドのカラーレンズが伸長",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d5dae3ab4314485f1aff7fff29ab02658f158eff",
+        "title": "シンシア---3Qは5.9%増収・経常増益、カラーレンズが牽引し通期予想を上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "426f66e0b76c5649532afeafd1ffc58466d53570",
+        "title": "シンカ---3Qは24.6%増収、生成AI機能の拡充で成長投資を推進",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c4ed514f21df8392730609791ad40ad5a9efde41",
+        "title": "アクシスＣ---急騰、27年6月期第1四半期は人材紹介・スキルシェアの成長で大幅増収増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ea661abc2c071c35a2ae0258924dd532fc978063",
+        "title": "日本エマージェンシーアシスタンス---3Qは大幅増益、各段階利益の進捗率は100%超",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8832abf76681c7fd848ca1797165ae74413d7644",
+        "title": "本日注目の【株主優待】情報 (13日引け後 発表分)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4eee76eadeaec03bef034a0509d2a8438433564f",
+        "title": "本日の決算発表予定 … データセク、フェローテク、電通グループなど 51社 (11月16日)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b822108e68876dd2f4115b868ad6e6a5d65ece3",
+        "title": "外為：1ドル159円53銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8f0bb14d8db487301b47e1ba5a0730b2a9f21b1f",
+        "title": "外為：1ドル159円46銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "143acff2156bf489a22fff2cc93696581d43c1d7",
+        "title": "外為：1ドル159円60銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "43806547a4ea178915f2c0fda496f876f2d634d2",
+        "title": "外為：スイスフラン、190円15銭前後と大幅なフラン安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f3d2b007b7b9aa0bfc476135a744aacd210a68bc",
+        "title": "外為：英ポンド、210円81銭前後と大幅なポンド安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.25,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4ed58e7e7a37ee61e961d11fdfa7ebdffbc6ea3a",
+        "title": "外為：ブラジルレアル、28円18銭前後とレアル安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.5,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "92eeef73a835ac0459a8857f60dad3df56a8aff0",
+        "title": "外為：カナダドル、111円82銭前後とカナダドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.31,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1b9b252e215b134ab0059067f1c4ce712a404cc5",
+        "title": "外為：NZドル、88円14銭前後とNZドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.3,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "233528bac0bcd45bdd11d6a654718307f64e447c",
+        "title": "外為：豪ドル、108円01銭前後と大幅な豪ドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.38,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b1689ff4953ee54b5e54491a2545165bc324ad69",
+        "title": "外為：1ドル159円63銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "869989299c2d9c2b62516a0fd14e6bc2eed2f543",
+        "title": "外為：1ドル159円72銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "83f5716f3cf0744354b54f93370cf8a6bf46993f",
+        "title": "外為：1ドル159円69銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "da7e8f950f0a9d477138774ebe588c96ee2aae96",
+        "title": "外為：南アランド、9円4159銭前後とランド安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.55,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "50844c0ec33e3cc11eb847dbe5d26cf53b74a179",
+        "title": "外為：英ポンド、211円01銭前後とポンド安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.3,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "692881c74df2d0b37ca6e7eb3b2fb1aab8624eff",
+        "title": "外為：ブラジルレアル、28円15銭前後とレアル安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.35,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ea6a9a7bbfc1491c383763f82ad9fe854b2865d7",
+        "title": "外為：カナダドル、111円87銭前後とカナダドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.2,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "667a71a431e26075b8cda543af0c27932a4db706",
+        "title": "外為：スイスフラン、190円37銭前後と大幅なフラン安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.37,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f2a1231263d2a887025cc9fdd6b7c51d10a3931d",
+        "title": "外為：NZドル、88円17銭前後とNZドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.26,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "891c38bea90ee4fe701898be82f936e38602be82",
+        "title": "外為：豪ドル、108円00銭前後と大幅な豪ドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.46,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f476efcd6e28d36773afb243104e27a565333e06",
+        "title": "外為：1ドル159円77銭前後と小幅なドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a3d2c31841911575f14ca293b891cc94fe052466",
+        "title": "外為：1ドル159円78銭前後と小幅なドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b87eb89d1bf0c237dd9411828f4730e3f135497f",
+        "title": "外為：1ドル159円71銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ca64296e8498f2d80459c892ae11a3f2d9a7d852",
+        "title": "【決算速報】コンヴァノ、上期最終は2倍増益で着地、株式併合に伴い配当予想を修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c88e798ae6f19ce0c6b1545e8c21e4242aefee75",
+        "title": "【決算速報】シリウスＶ、1-9月期(3Q累計)経常は黒字浮上・通期計画を超過",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.52,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d2195c9f5ea4a78a39c3856dfa010e3c1806660e",
+        "title": "【決算速報】フロンテオ、上期経常が赤字拡大で着地・7-9月期は赤字転落",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      }
+    ],
+    "late": 0,
+    "seconds": 20.8,
+    "categories": null
+  }
+}
