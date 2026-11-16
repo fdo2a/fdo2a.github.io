@@ -1,0 +1,76 @@
+# US 2026-11-16 web research evidence (WebSearch result summaries)
+
+Collected 2026-11-16 23:05-23:25 UTC via WebSearch (result summaries only; WebFetch unavailable in this session: getaddrinfo ENOTFOUND).
+Figures below are as reported by the outlets (often intraday snapshots); canonical closing prices live in data/market_data.json.
+
+## Session drivers
+- Reuters via MarketScreener / The Standard / Devdiscourse / Virginia Business, 2026-11-16: "Wall Street ends sharply lower on AI jitters ahead of Nvidia results, Anthropic IPO". AI enthusiasm cooled after Jensen Huang's exit; a new US rule limiting China's access to top AI chips weighed; semiconductor index fell about 5% (outlets cite 4.6%-5.3%); Intel and Micron each down more than 7%; Nvidia -4.1%. December 25bp hike priced near-certain (one outlet 95.7%, another 93.7%, CME FedWatch). Nvidia reports Tuesday; Anthropic IPO later in week.
+  https://www.marketscreener.com/news/wall-street-slumps-on-ai-jitters-ahead-of-nvidia-results-anthropic-ipo-ce785edfdd8ef425
+  https://www.thestandard.com.hk/finance/article/348698/Wall-Street-ends-sharply-lower-on-AI-jitters-ahead-of-Nvidia-results-Anthropic-IPO
+  https://www.devdiscourse.com/article/international/4007783-us-stocks-wall-street-ends-sharply-lower-on-ai-jitters-ahead-of-nvidia-results-anthropic-ipo
+- AP via BNN Bloomberg 2026-11-16: "More drops for Nvidia and other AI stocks drag the US market lower, pulling the S&P 500 down 2%". Nvidia down ~4% in afternoon after -13% last week; >30% below October record.
+  https://bnnbloomberg.ca/markets/nasdaq/2026/11/16/stocks-decline-on-tech-sell-off-as-concerns-over-the-nvidia-fallout-persist
+- Motley Fool midday 2026-11-16: "Nasdaq Tumbles as Wall Street Braces for Nvidia Earnings and Bitcoin Slides".
+  https://fool.com/coverage/stock-market-today/2026/11/16/stock-market-midday-nov-16-stocks-slide-as-tech-selling-intensifies-across-the-market
+- Yahoo Finance live 2026-11-16: "Major Indexes Plunge at the Start of a Big Week for the AI Trade; Nvidia Sell-Off Intensifies Ahead of Earnings".
+  https://finance.yahoo.com/markets/stocks/articles/stock-market-today-futures-point-132129320.html
+- Benzinga 2026-11-16: "Tech Stocks Lose $960B as US Shuts China AI Chip Loophole" - 19 largest US-listed tech stocks lost about $960bn combined; Alphabet -3.8% (~$135bn) (intraday figure; tied to new license rule).
+  https://www.benzinga.com/markets/equities/26/11/63320949/tech-stocks-960-billion-china-ai-chips-remote-access-rule
+
+## BIS interim final rule (2026-11-16)
+- TechCrunch / Bloomberg / Nextgov / Yahoo / The Next Web, 2026-11-16: Commerce BIS interim final rule. Licenses needed for chip exports to data centers anywhere serving companies headquartered in China, Macau or other D:5 countries above 12 million aggregate TPP; license requirement for shipments to Indonesia, Malaysia, Singapore, Thailand, Brazil ("higher-than-normal risk of diversion"); US-headquartered companies operating in listed countries exempt; formally rescinds January 2025 AI Diffusion Rule; framed as first policy response to Megaspeed/Nvidia scandal; 60-day comment period. Outlets differ on scope wording.
+  https://techcrunch.com/2026/11/16/us-tightens-ai-chip-export-controls-to-deter-chinese-companies-from-accessing-compute-remotely/
+  https://www.bloomberg.com/news/articles/2026-11-16/us-moves-to-limit-remote-access-to-advanced-ai-chips
+  https://www.nextgov.com/artificial-intelligence/2026/11/commerce-department-moves-close-ai-chip-loophole/417255/
+  https://thenextweb.com/news/us-remote-access-ai-chips-rule-china-singapore-malaysia
+
+## Rates / Fed
+- CNBC 2026-11-16: "Treasury prices catch a small bid as stock market weakens and Warsh says AI might 'disappoint'". 10Y down >2bp to 5.131% (after Friday high 5.174%), 2Y down ~4bp to 4.834%, 30Y ~flat 5.476% (intraday snapshot). December quarter-point hike largely priced per CME FedWatch. October FOMC minutes due Wednesday.
+  https://www.cnbc.com/2026/11/16/treasury-yields-bonds-inflation.html
+- CNBC 2026-11-13 (prior session): FedWatch 100% odds of a December rise; 25bp 86%, 50bp ~14%.
+  https://www.cnbc.com/amp/2026/11/13/treasury-yields-fed-rates.html
+- FRBSF agenda: Productivity and Jobs Task Force conference 2026-11-16, Warsh opening remarks 9:00-9:15 a.m. PT (12:00-12:15 p.m. ET).
+  https://www.frbsf.org/?p=446248
+- Coverage of Warsh remarks (Yahoo Finance "Fed Is Modeling AI 'Super Intelligence' Scenarios, Including Job Losses and a Stock Market Slump"; mlq.ai; Stocktwits; SBS): three staff scenarios; no rate signal; outlets do not separate the speech's effect from the AI-stock selloff already underway.
+  https://finance.yahoo.com/economy/policy/articles/fed-modeling-ai-super-intelligence-183644026.html
+  https://mlq.ai/news/warsh-says-ai-could-lift-growth-cost-jobs-or-disappoint-and-hit-stocks-as-the-fed-studies-three-scenarios/
+
+## Memory
+- Invezz 2026-11-16 "Why Micron and Sandisk stocks are falling on Monday?"; StockStory; TipRanks; GuruFocus via TradingView: AI/Nvidia fallout and AI capex reassessment main drivers; federal judge denied Micron/Samsung/SK hynix joint motion to dismiss proposed class action over conventional DRAM supply; memory prices still rising per reports. Samsung ~-4.5%, SK hynix ~-6.7% in Seoul (outlet figures).
+  https://invezz.com/news/2026/11/16/why-micron-and-sandisk-stocks-are-falling-on-monday/
+  https://tradingview.com/news/gurufocus:f72125aae094b:0-micron-stocks-sink-nearly-7-after-judge-lets-dram-supply-lawsuit-proceed
+  https://stockstory.org/us/stocks/nasdaq/mu/news/why-up-down/micron-sk-hynix-and-sandisk-shares-plummet-what-you-need-to-know
+- 24/7 Wall St. 2026-11-16: "SanDisk Falls 7% as AI Chip Selloff Hits Memory Stocks Despite Evercore's $2,500 Target"; SanDisk 8-for-1 split days away.
+  https://247wallst.com/investing/2026/11/16/sandisk-falls-7-as-ai-chip-selloff-hits-memory-stocks-despite-evercores-2500-target-micron-and-western-digital-drop-6/
+- BigGo Finance (Bernstein note): AI hardware caught in indiscriminate selloff; Dell, SanDisk "unfairly punished"; AI servers ~11.7% of Dell operating profit FY ending January.
+  https://finance.biggo.com/news/cd05cbde-7e00-44dd-a0c1-ba65c2480338
+
+## AI infrastructure
+- Tokenpost 2026-11-16 premarket: Lumentum -5.18%, Coherent -5.11%, Marvell -4.64%, Ciena -4.11%.
+  https://www.tokenpost.com/news/investing/58167
+- TIKR (undated in summary): Coherent -9%, Lumentum -8% on Nvidia leadership turmoil; report that interim CEO Kress expected to rein in deal-making. Marvell acquiring Lumentum in ~$115bn all-stock deal.
+  https://www.tikr.com/blog/coherent-sinks-9-lumentum-down-8-as-ai-hardware-stocks-slide-on-nvidia-leadership-turmoil
+- Vertiv / GE Vernova: no 2026-11-16-specific item found.
+
+## Oil
+- MarineLink / Business Recorder / Asharq Al-Awsat / ADVFN 2026-11-16: oil fell on recovering Hormuz flows and IEA Q4 surplus outlook; tanker hit a naval mine near Hormuz (Iranian navy report). 14:10 GMT Brent ~$94.17, WTI ~$87.42.
+  https://www.marinelink.com/news/oil-prices-fall-alongside-recovering-544391
+  https://english.aawsat.com/business/5341729-oil-prices-fall-expectations-coming-supply-surplus
+
+## Upcoming catalysts
+- Nvidia FQ3 results ~16:20 ET 2026-11-17, call 17:00 ET; consensus revenue ~US$108.84bn, EPS US$2.47; guidance US$108bn +/-2% ex China DC compute; options implied ~+/-10.6% move (Pepperstone preview 2026-11-11).
+  https://pepperstone.com/en/analysis/navigating-markets/nvidia-q3-2026-earnings-preview-key-numbers-market-impact-trading-insights/
+- Anthropic IPO: pricing expected 11/18, trading 11/19 on Nasdaq "ANT", range $70-78, 825m shares (FourWeekMBA / IPOX; subject to clearance).
+  https://fourweekmba.com/ai-anthropics-ipo-day-by-day-pricing-18-nov-trading-19-nov/
+  https://www.ipox.com/ipo-calendar/anthropic
+- TechCrunch 2026-11-16: first earnings since Huang resignation; interim CEO Colette Kress; internal probe; Huang return petition, CNBC: no return talks.
+  https://techcrunch.com/2026/11/16/all-the-questions-nvidia-should-answer-on-tuesday-but-probably-wont/
+
+## Not found
+- Nvidia earnings pre-announcement / guidance change / M&A / earnings-date change between 11/10 and 11/16: none found in searches.
+- Vertiv / GE Vernova earnings, M&A or guidance changes 11/11-11/16: none found.
+- Micron / WDC / Seagate earnings, M&A or guidance changes 11/12-11/16: none found (DRAM class-action ruling is litigation, not guidance).
+- US-Iran agreement/ceasefire or Hormuz military clash announcement: none found (tanker mine incident reported by Iranian navy).
+- October retail sales consensus (due 11/17 08:30 ET): not found.
+- November Empire State survey (NY Fed, 11/16): not found in search.
+- Final FedWatch January-meeting probability for 11/16: not found.
