@@ -782,3 +782,14 @@ def test_production_config_does_not_override_effective():
     assert g['argv'] == ['scripts/check_numbers.py', '--html', '{html}', '--datadir', '{datadir}',
                          '--market', 'kr', '--date', '{date}']
     assert g['kind'] == 'numbers' and g['required'] is True and g['json'] is True
+
+
+def test_early_closed_comments_found_in_raw_html_regardless_of_parser():
+    """주석 꼴은 원문에서 찾는다 — 패치된 html.parser 는 브라우저처럼 닫아 handle_comment 에 흔적이 없다."""
+    f = K._early_closed_comments
+    assert f('<p>a</p><!-- x --!> <p>9</p> -->') == [' x --!>']
+    assert f('<!--> <p>9</p> -->') == ['<!-->']
+    assert f('<!---> <p>9</p> -->') == ['<!--->']
+    assert f('<!-- 보통 --> <p>--!></p>') == []
+    assert f('<!-- a --> <!-- b --!>') == [' b --!>']
+    assert f('<!-- 끝없는') == []

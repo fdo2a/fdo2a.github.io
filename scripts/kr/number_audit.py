@@ -183,6 +183,28 @@ _PARENT = {'thead': frozenset({'table'}), 'tbody': frozenset({'table'}),
 _PARENT.update({t: _INLINE | {'th', 'td'} for t in _INLINE})
 
 
+def _early_closed_comments(html):
+    """브라우저가 먼저 닫는 주석의 원문 목록 — 「<!-->」·「<!--->」(바로 닫힘)와 `-->` 보다 `--!>` 가 먼저 오는 주석.
+    html.parser 의 보안 패치 판(3.12.11·3.13.4~ 등)은 이 꼴을 브라우저처럼 닫아 handle_comment 에 흔적이
+    남지 않고, 옛 판은 뒤 글까지 주석으로 삼킨다. 판에 따라 결과가 갈리지 않게 원문에서 찾는다."""
+    out, i = [], 0
+    while (s := html.find('<!--', i)) >= 0:
+        body = s + 4
+        for opener in ('>', '->'):
+            if html.startswith(opener, body):
+                out.append(html[s:body + len(opener)])
+                i = body + len(opener)
+                break
+        else:
+            a, b = html.find('-->', body), html.find('--!>', body)
+            if b >= 0 and (a < 0 or b < a):
+                out.append(html[body:b + 4])
+                i = b + 4
+            else:
+                i = a + 3 if a >= 0 else len(html)
+    return out
+
+
 class _KrStream(_Stream):
     """US 파서 + 단일 태그 기록. `fund.gate._Doc` 은 `img`·`br` 같은 단일 태그를 노드로 남기지 않아 허용 목록이
     보지 못했다(codex 구현 검토 3회차 #1). US 동작은 그대로 — 이 하위 클래스는 KR 만 쓴다."""
@@ -190,6 +212,7 @@ class _KrStream(_Stream):
     def __init__(self, html):
         self.voids = []              # (부모 노드, 태그, 속성 이름들)
         self.early = []              # 브라우저가 파서보다 먼저 닫는 주석 꼴(「<!-->」·「--!>」·CDATA)
+        self.early += _early_closed_comments(html)   # 주석 꼴은 원문에서 — 파서 판에 기대지 않는다
         super().__init__(html)
 
     def handle_starttag(self, tag, attrs):
@@ -203,8 +226,6 @@ class _KrStream(_Stream):
 
     def handle_comment(self, data):
         self._note(data)
-        if data.startswith(('>', '->')) or '--!>' in data:
-            self.early.append(data)
         super().handle_comment(data)
 
     def handle_decl(self, decl):
