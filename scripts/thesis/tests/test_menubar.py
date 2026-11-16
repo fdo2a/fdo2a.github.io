@@ -19,7 +19,9 @@ spec.loader.exec_module(build)
 
 
 def labels(html):
-    return re.findall(r'<a href="[^"]*"[^>]*>([^<]+)</a>', html)
+    """섹션 링크의 글자. 언어 전환 링크(`hreflang` 을 단 「日本語」, 2026-11-14)는 섹션이 아니라 뺀다."""
+    return [text for tag, text in re.findall(r'(<a\b[^>]*>)([^<]+)</a>', html)
+            if 'href="' in tag and 'hreflang=' not in tag]
 
 
 def test_menubar_carries_every_section():

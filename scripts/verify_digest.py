@@ -171,6 +171,17 @@ def _log_trimmed(sid, lines):
         pass
 
 
+def _ja_tail(root, now):
+    """일본어판 줄(2026-11-14) — origin/main 의 `ja/config.json` 이 꺼져 있으면 없다. 꼬리 끝에 줄일 수 있는 줄로만
+    붙인다(기존 줄의 순서·꼭 싣는 줄은 그대로). 만들다 실패해도 요약은 나간다 — 이유는 이 맥의 stderr 에만."""
+    try:
+        from ja import runner as JR
+        return [D.Soft(x) for x in JR.digest_lines(root, now)]
+    except Exception as exc:  # noqa: BLE001
+        print(f'일본어판 줄을 만들지 못했다: {type(exc).__name__}: {exc}'[:300], file=sys.stderr)
+        return []
+
+
 def _text(state, now, args, notes, health_tail, v=1):
     """(제출본, 글 수). 상태를 바꾸지 않는다."""
     import review_gate as G
@@ -185,7 +196,8 @@ def _text(state, now, args, notes, health_tail, v=1):
     trimmed = []
     # 접수 결과·전송기 줄은 꼭 싣는 줄이다. 발행 알림 꼬리는 publish_tail 이 줄마다 붙인 표시를 그대로 넘긴다
     tail = [D.Must(x) for x in D.carry_lines(state, now.date(), trimmed)] \
-        + list(D.publish_tail(G.repo_root(), now, fetch=not args.no_fetch)) + [D.Must(x) for x in health_tail]
+        + list(D.publish_tail(G.repo_root(), now, fetch=not args.no_fetch)) + [D.Must(x) for x in health_tail] \
+        + _ja_tail(G.repo_root(), now)
     pending = D.compose(posts, lines, now, notes + more, tail, numbers, tracked, published, v, trimmed=trimmed)
     pending['kr_checks'] = D.surviving_kr_keys(KR_KEYS, pending['text'])     # 실린 줄만 — 빠진 줄은 다음에 다시
     _log_trimmed(pending['id'], trimmed)

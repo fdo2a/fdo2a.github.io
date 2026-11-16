@@ -34,6 +34,11 @@ _EXCLUDED_DIRS = ('data', 'scripts', 'node_modules', 'assets', '_workspace')
 # Navigation, not prose.
 _EXCLUDED_NAMES = ('index.html', '404.html')
 
+# The Japanese edition (`ja/`, 2026-11-14) mirrors Korean posts that this gate already
+# reviews, and goes through its own pre-publish review (`scripts/ja/`). Only the first path
+# element counts — `scripts/ja/…` or a deeper `…/ja/…` is not the edition.
+_EDITION_ROOTS = ('ja',)
+
 # Pages nobody types. /thesis/ is rendered every day by build_thesis_pages.py — prose out
 # of content.py, figures out of a committed watch.json — so the page changes whenever a
 # price does. Reviewing the page would put four entries in the queue every weekday and
@@ -100,7 +105,7 @@ def is_watched(path):
     parts = path.split('/')
     if parts[-1] in _EXCLUDED_NAMES:
         return False
-    if parts[0] in _RENDERED_DIRS:
+    if parts[0] in _RENDERED_DIRS or (len(parts) > 1 and parts[0] in _EDITION_ROOTS):
         return False
     return not any(part in _EXCLUDED_DIRS for part in parts[:-1])
 

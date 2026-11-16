@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="OPs7ovhz_Y0qBIfQeEKG7MAe0Ier_HBSeJhwexTvzmY" />
+<meta name="description" content="米国株式モーニングブリーフのアーカイブ — 毎朝（火〜土）、株価指数・セクター、米国債利回り曲線、為替、商品、メモリ/DRAM、AIインフラ、経済指標をアナリストの視点でまとめます。">
+<link rel="canonical" href="https://fdo2a.github.io/ja/">
+<link rel="alternate" hreflang="ko" href="https://fdo2a.github.io/">
+<link rel="alternate" hreflang="ja" href="https://fdo2a.github.io/ja/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="US Market Brief — 米国株式モーニングブリーフ">
+<meta property="og:description" content="前営業日の米国市場をアナリストの戦略視点でまとめたモーニングブリーフのアーカイブ">
+<meta property="og:url" content="https://fdo2a.github.io/ja/">
+<meta property="og:locale" content="ja_JP">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Blog","name":"US Market Brief","url":"https://fdo2a.github.io/ja/","description":"米国株式モーニングブリーフのアーカイブ","inLanguage":"ja"}
+</script>
+<title>米国株式市況・モーニングブリーフ一覧 | US Market Brief</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --toss-blue: #0064FF;
+    --blue-bg: #E8F2FF;
+    --blue-deep: #003EA8;
+    --text: #191F28;
+    --text-2: #4E5968;
+    --text-3: #5F6B7A;
+    --bg: #F2F4F6;
+    --border: #E5E8EB;
+    --border-subtle: #F2F4F6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
+  header.site { display: flex; align-items: baseline; gap: 10px; padding: 4px 2px 6px; }
+  header.site .brand { font-size: 24px; font-weight: 800; color: var(--toss-blue); letter-spacing: -0.025em; }
+  header.site .desc { font-size: 12px; color: var(--text-3); font-weight: 600; }
+  .menubar { display: flex; gap: 2px; flex-wrap: wrap; padding: 0 2px;
+             border-bottom: 1px solid var(--border); margin: 0 0 18px; }
+  .menubar a { font-size: 13px; font-weight: 700; color: var(--text-3); text-decoration: none;
+               padding: 9px 13px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+               white-space: nowrap; transition: color 100ms ease, border-color 100ms ease; }
+  .menubar a:hover { color: var(--text-2); }
+  .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
+  @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
+  
+  .subnav { display: inline-flex; gap: 2px; flex-wrap: wrap; margin: 0 0 14px; padding: 3px;
+    background: #fff; border: 1px solid var(--border); border-radius: 9999px; }
+  .subnav button { min-height: 36px; font-size: 13px; font-weight: 700; color: var(--text-3);
+    background: none; border: 0; border-radius: 9999px; padding: 0 14px; cursor: pointer; font-family: inherit;
+    transition: background-color 150ms cubic-bezier(.23,1,.32,1), color 150ms cubic-bezier(.23,1,.32,1); }
+  .subnav button:hover { color: var(--text-2); }
+  .subnav button[aria-selected="true"] { background: var(--blue-bg); color: var(--toss-blue); }
+  .subnav button:focus-visible { outline: 2px solid var(--toss-blue); outline-offset: 2px; }
+  .empty .retry { display: block; margin: 12px auto 0; min-height: 40px; padding: 0 18px; border-radius: 9999px;
+    border: 1px solid var(--border); background: #fff; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { .subnav button { transition: none; } }
+  .intro {
+    background: var(--blue-bg);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin: 14px 0 22px;
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .intro .small { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--blue-deep); }
+  h2.list-title { font-size: 15px; font-weight: 800; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+  h2.list-title::before { content: ''; width: 6px; height: 16px; border-radius: 3px; background: var(--toss-blue); }
+  .post-list { display: flex; flex-direction: column; gap: 8px; }
+  a.post {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 100ms ease, transform 100ms ease;
+  }
+  a.post:hover { border-color: var(--toss-blue); }
+  .post .date {
+    flex-shrink: 0;
+    background: var(--blue-bg); color: var(--toss-blue);
+    border-radius: 9999px;
+    font-size: 11.5px; font-weight: 800;
+    padding: 4px 12px;
+  }
+  .post .body { min-width: 0; }
+  .post .title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+  .post .headline {
+    font-size: 12px; color: var(--text-2); line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .post .arrow { margin-left: auto; color: var(--text-3); font-size: 18px; flex-shrink: 0; }
+  
+  details.month > summary {
+    list-style: none; cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 4px; border-bottom: 1px solid var(--border);
+    font-size: 14px; font-weight: 800; color: var(--text);
+  }
+  details.month > summary::-webkit-details-marker { display: none; }
+  details.month > summary::before {
+    content: '›'; display: inline-block; width: 12px; text-align: center;
+    color: var(--text-3); font-size: 18px; line-height: 1; transition: transform 120ms ease;
+  }
+  details.month[open] > summary::before { transform: rotate(90deg); color: var(--toss-blue); }
+  details.month > summary:hover { color: var(--toss-blue); }
+  details.month .m-count { font-size: 11.5px; font-weight: 700; color: var(--text-3); }
+  details.month > .post-list { padding: 10px 0 6px; }
+  .empty { text-align: center; color: var(--text-3); font-size: 13px; font-weight: 600; padding: 40px 0; }
+  footer { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.6; }
+</style>
+<!-- goatcounter --><script data-goatcounter="https://fdo2a.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style id="ja-typography">
+html[lang="ja"] body, html[lang="ja"] body * { word-break: normal; line-break: strict; }
+html[lang="ja"] body :is(p, li, h1, h2, h3, h4, summary, blockquote, .caption) { overflow-wrap: anywhere; }
+html[lang="ja"] body { font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; }
+.ja-lang-bar { max-width: 1120px; margin: 8px auto 0; padding: 0 16px; text-align: right; font-size: 13px; }
+.ja-notice { max-width: 1120px; margin: 8px auto; padding: 10px 16px; border-radius: 10px; background: #FFF8E1; color: #5D4300; font-size: 14px; }
+</style>
+<style id="ja-list">html[lang="ja"] header.site .brand { font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, sans-serif; white-space: nowrap; }</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="menubar">
+    <a href="./" aria-current="page">米国市場</a>
+    <a href="japan/">日本市場</a>
+    <a class="ja-lang" href="https://fdo2a.github.io/" hreflang="ko" lang="ko">한국어</a>
+  </nav>
+  <header class="site">
+    <span class="brand">US Market Brief</span>
+    <span class="desc">戦略モーニングブリーフ</span>
+  </header>
+  <div class="intro">
+    米国市場の営業日の翌朝（火〜土 9:00 JST）、前営業日の市場をまとめたモーニングブリーフを掲載します。日本語版は韓国語版の翻訳のため、掲載が遅れることがあります。
+    <span class="small">株価指数・セクター · 債券 · 為替 · 商品 · マクロ · 経済指標と市場予想 — ニュースとメモリ/DRAM · AIインフラ · MLCC は「ニュース・産業」タブ</span>
+  </div>
+  <nav class="subnav" role="tablist" aria-label="発行頻度">
+    <button type="button" role="tab" aria-controls="list" data-span="daily" aria-selected="true">日次</button>
+    <button type="button" role="tab" aria-controls="list" data-span="weekly" aria-selected="false">週次</button>
+    <button type="button" role="tab" aria-controls="list" data-span="news" aria-selected="false">ニュース・産業</button>
+  </nav>
+  <h2 class="list-title">レポート一覧</h2>
+  <div class="post-list" id="list" role="tabpanel" aria-label="レポート一覧">
+    <div class="empty">読み込み中…</div>
+  </div>
+  <footer>
+    データ：Yahoo Finance、FRED。ニュースのコメントは公開報道に基づき、主要な数値は発行前にクロスチェックしています。<br>
+    本資料は情報提供を目的として作成したものであり、特定銘柄の売買を推奨するものではありません。<br>
+    <a href="../about.html" style="color:#5F6B7A;">サイト紹介（韓国語）</a> · <a href="../privacy.html" style="color:#5F6B7A;">プライバシーポリシー（韓国語）</a>
+  </footer>
+</div>
+<script>
+(async () => {
+  const list = document.getElementById('list');
+  const days = ['日','月','火','水','木','金','土'];
+  const SOURCES = {
+    daily:   { file: 'posts.json',   dir: 'posts/',   empty: 'まだレポートがありません。' },
+    weekly:  { file: 'weekly.json',  dir: 'weekly/',  empty: 'まだ週次レポートがありません。' },
+    news:    { file: 'news.json',    dir: 'news/',    empty: 'まだニュース・産業ブリーフがありません。' }
+  };
+  const cache = {};
+
+  function label(span, item) {
+    if (span === 'daily' || span === 'news') {
+      const day = item.date || item.key;
+      const d = new Date(day + 'T00:00:00');
+      return `${day} (${days[d.getDay()]})`;
+    }
+    return item.label || item.key || item.date || '';
+  }
+
+  async function load(span) {
+    if (cache[span]) return cache[span];
+    const src = SOURCES[span];
+    const res = await fetch(src.file, { cache: 'no-store' });
+    if (res.status === 404) { cache[span] = []; return cache[span]; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) throw new Error('not a list');
+    cache[span] = rows;
+    return rows;
+  }
+
+  function groupKey(span, p) {
+    const k = String(p.date || p.key || '');
+    const w = k.match(/^(\d{4})-W(\d{2})$/);
+    if (w) {
+      if (p.end_date) return p.end_date.slice(0, 7);
+      const jan4 = new Date(Date.UTC(+w[1], 0, 4));
+      const fri = new Date(jan4);
+      fri.setUTCDate(jan4.getUTCDate() - (jan4.getUTCDay() + 6) % 7 + (+w[2] - 1) * 7 + 4);
+      return fri.toISOString().slice(0, 7);
+    }
+    return k.slice(0, 7);
+  }
+
+  function groupTitle(g) {
+    const [y, m] = g.split('-');
+    return m ? `${y}年${+m}月` : `${y}年`;
+  }
+
+  let generation = 0;
+  async function render(span) {
+    const mine = ++generation;
+    const src = SOURCES[span];
+    list.innerHTML = '<div class="empty">読み込み中…</div>';
+    let rows;
+    try { rows = (await load(span)).slice(); }
+    catch (e) {
+      if (mine !== generation) return;
+      list.innerHTML = '<div class="empty">一覧を読み込めませんでした。<button type="button" class="retry">再試行</button></div>';
+      list.querySelector('.retry').addEventListener('click', () => render(span));
+      return;
+    }
+    if (mine !== generation) return;
+    rows.sort((a, b) => String(b.date || b.key || '').localeCompare(String(a.date || a.key || '')));
+    if (!rows.length) { list.innerHTML = `<div class="empty">${src.empty}</div>`; return; }
+    const card = p => `<a class="post" href="${src.dir}${p.slug || p.key || p.date}.html">
+        <span class="date">${label(span, p)}</span>
+        <span class="body">
+          <div class="title">${p.title || ''}</div>
+          <div class="headline">${p.headline || ''}</div>
+        </span>
+        <span class="arrow">›</span>
+      </a>`;
+    const groups = [];
+    for (const p of rows) {
+      const g = groupKey(span, p);
+      if (!groups.length || groups[groups.length - 1].key !== g) groups.push({ key: g, items: [] });
+      groups[groups.length - 1].items.push(p);
+    }
+    list.innerHTML = groups.map((g, i) => `<details class="month"${i === 0 ? ' open' : ''}>
+        <summary><span class="m-name">${groupTitle(g.key)}</span><span class="m-count">${g.items.length}件</span></summary>
+        <div class="post-list">${g.items.map(card).join('')}</div>
+      </details>`).join('');
+  }
+
+  const buttons = [...document.querySelectorAll('.subnav button')];
+  function select(span) {
+    buttons.forEach(b => {
+      const on = b.dataset.span === span;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+    render(span);
+  }
+  function choose(btn) {
+    const span = btn.dataset.span;
+    history.replaceState(null, '', span === 'daily' ? location.pathname : '?span=' + span);
+    select(span);
+  }
+  buttons.forEach((btn, i) => {
+    btn.addEventListener('click', () => choose(btn));
+    btn.addEventListener('keydown', e => {
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      const to = step ? buttons[(i + step + buttons.length) % buttons.length]
+        : e.key === 'Home' ? buttons[0] : e.key === 'End' ? buttons[buttons.length - 1] : null;
+      if (!to) return;
+      e.preventDefault();
+      to.focus();
+      choose(to);
+    });
+  });
+
+  const asked = new URLSearchParams(location.search).get('span');
+  select(Object.prototype.hasOwnProperty.call(SOURCES, asked) ? asked : 'daily');
+})();
+</script>
+</body>
+</html>

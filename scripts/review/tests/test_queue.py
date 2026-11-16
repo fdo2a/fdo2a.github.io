@@ -326,3 +326,22 @@ def test_a_new_page_is_never_typography():
     """원장에 없는 글은 판정이 무엇이든 신규다 — refresh가 집어갈 수 없어야 한다."""
     got = classify({'reviewed': {}}, ONE, verdicts({('old', 'new'): True}))
     assert [p.reason for p in got.todo] == ['신규'] and got.typography == []
+
+
+def test_the_japanese_edition_is_not_watched():
+    """`ja/` 는 한글 글의 일본어판이다 — 자체 검토를 거치므로 한글 검토 큐에 들이지 않는다(2026-11-14).
+    첫 경로 요소가 `ja` 인 것만 빠진다."""
+    for path in ('ja/posts/2026-11-13.html', 'ja/news/2026-11-13.html', 'ja/weekly/2026-W46.html',
+                 'ja/japan/daily/2026-11-13.html', 'ja/japan/posts/2026-W45.html'):
+        assert not is_watched(path), path
+    for path in ('posts/2026-11-13.html', 'japan/daily/2026-11-13.html', 'kr/ja/2026-11-13.html',
+                 'newthing/ja/x.html', 'ja.html'):
+        assert is_watched(path), path
+
+
+def test_the_japanese_edition_stays_out_of_the_queue():
+    from review.queue import classify
+    tree = {'ja/posts/2026-11-13.html': 'j1', 'posts/2026-11-13.html': 'k1',
+            'ja/japan/daily/2026-11-13.html': 'j2'}
+    got = classify({}, tree)
+    assert [p.path for p in got.pending] == ['posts/2026-11-13.html']

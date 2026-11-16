@@ -15,6 +15,7 @@ tick 만 쓰는 임시 폴더에 origin/main 커밋을 통째로 떠 둔 사본*
   python3 scripts/runner_launch.py run --correct      # launchd ProgramArguments
   python3 scripts/runner_launch.py contested run      # 쟁점 분석 로컬 러너(2026-10-21)
   python3 scripts/runner_launch.py digest             # 매일 검증 알림(2026-11-08, 매시 — 9시 뒤 하루 한 번)
+  python3 scripts/runner_launch.py ja run             # 일본어판 러너(2026-11-14, 30분마다 — 기본 꺼짐)
 
 **stdlib 만 쓴다** — 사람 폴더의 레포 모듈을 import 하면 그 폴더의 편집 중인 파일 하나에 런처가
 경보 없이 죽는다(codex 구현 3차 #4). 경보 기록도 여기서 직접 한다.
@@ -171,7 +172,8 @@ def _git(root, *args, timeout=60):
 # 첫 인자로 고르는 진입점 — 목록 밖 이름은 받지 않는다.
 # 발행 건별 알림(`verify_publish.py`)은 여기 없다 — 2.5단계(2026-11-10)부터 GitHub Actions `publish-watch.yml` 이 돌린다.
 ENTRIES = {'contested': 'contested_local.py',
-           'digest': 'verify_digest.py'}   # 매일 검증 알림(2026-11-08)
+           'digest': 'verify_digest.py',   # 매일 검증 알림(2026-11-08)
+           'ja': 'ja_local.py'}            # 일본어판 러너(2026-11-14)
 DEFAULT_ENTRY = 'review_gate.py'
 
 

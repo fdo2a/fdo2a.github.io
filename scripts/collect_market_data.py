@@ -757,14 +757,28 @@ def collect_futures_bars():
     return out
 
 
-def render_curve(yields, path):
+# Every word drawn inside the curve chart. The Japanese edition passes its own table
+# (`scripts/ja/chart.py`); the default is the Korean chart, byte for byte.
+CURVE_LABELS_KO = {
+    'today': '오늘 ({date})',
+    'week_ago': '1주 전 ({date})',
+    'note': '* {note} 기준 (그 외 Yahoo 스팟 {date})',
+}
+CURVE_FONTS_KO = ('Noto Sans CJK KR', 'NanumGothic', 'Pretendard', 'Apple SD Gothic Neo')
+
+
+def render_curve(yields, path, labels=None, fonts=None):
     """Toss-style curve chart. Palette #0064FF/#D97706 is CVD-validated; dashes are the
-    secondary encoding — do not change colors."""
+    secondary encoding — do not change colors.
+
+    `labels` replaces the words in the chart (keys of CURVE_LABELS_KO), `fonts` the font
+    preference list; both default to the Korean chart."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib import font_manager
-    for f in ['Noto Sans CJK KR', 'NanumGothic', 'Pretendard', 'Apple SD Gothic Neo']:
+    words = CURVE_LABELS_KO if labels is None else labels
+    for f in (CURVE_FONTS_KO if fonts is None else fonts):
         if any(f.lower() in x.name.lower() for x in font_manager.fontManager.ttflist):
             plt.rcParams['font.family'] = f
             break
@@ -791,15 +805,15 @@ def render_curve(yields, path):
         d = (t - w) * 100
         ax.annotate(f"{'+' if d > 0 else ''}{d:.0f}bp", (i, min(t, w)), textcoords='offset points',
                     xytext=(0, -20), ha='center', fontsize=9, color=MUTED)
-    ax.annotate(f'오늘 ({t_date})', (3, today[3]), textcoords='offset points',
+    ax.annotate(words['today'].format(date=t_date), (3, today[3]), textcoords='offset points',
                 xytext=(14, 4), fontsize=9.5, color=INK2, fontweight='bold')
-    ax.annotate(f'1주 전 ({w_date})', (3, week_ago[3]), textcoords='offset points',
+    ax.annotate(words['week_ago'].format(date=w_date), (3, week_ago[3]), textcoords='offset points',
                 xytext=(14, -12), fontsize=9.5, color=MUTED)
     ax.set_xticks(list(x))
     ax.set_xticklabels([f'{t}*' if t in odd else t for t in labels], fontsize=11, color=INK2)
     if odd:
         note = ' · '.join(f"{t} {yields[t].get('source', '?')} {yields[t]['date']}" for t in odd)
-        ax.text(0, -0.19, f'* {note} 기준 (그 외 Yahoo 스팟 {t_date})', transform=ax.transAxes,
+        ax.text(0, -0.19, words['note'].format(note=note, date=t_date), transform=ax.transAxes,
                 fontsize=8.5, color=MUTED)
     ax.tick_params(axis='y', labelsize=9.5, colors=MUTED, length=0)
     ax.tick_params(axis='x', length=0, pad=8)

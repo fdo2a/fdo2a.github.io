@@ -237,3 +237,14 @@ def test_a_corrupt_sha_in_the_ledger_does_not_take_the_hook_down(repo):
     write(repo, 'posts/2026-08-21.html', NEW)
     out = run(repo, 'pending', '--hook')
     assert out.returncode == 0 and '확인 실패' not in out.stdout
+
+
+def test_a_japanese_edition_page_never_reaches_the_queue(repo):
+    """`ja/` 글이 추적돼 있어도 실제 열거 경로(ls-tree → classify)에서 큐에 안 잡힌다(2026-11-14)."""
+    publish(repo, 'ja/posts/2026-11-13.html', OLD, 'ja')
+    publish(repo, 'posts/2026-11-13.html', OLD, 'ko')
+    write(repo, 'ja/japan/daily/2026-11-13.html', OLD)          # 작업 폴더에만 있는 판도
+    got = json.loads(run(repo, 'pending', '--json', '--no-fetch').stdout)
+    seen = {p['path'] for key in ('pending', 'expired', 'typography', 'unavailable') for p in got[key]}
+    assert 'posts/2026-11-13.html' in seen
+    assert not any(p.startswith('ja/') for p in seen), seen

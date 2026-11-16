@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 일본어판 러너 — 예시일 뿐 설치돼 있지 않다. 켜는 순서는 scripts/ja/CLAUDE.md 「Turning it on」.
+     설치: cp 이 파일 ~/Library/LaunchAgents/com.fdo2a.ja-runner.plist && launchctl load ~/Library/LaunchAgents/com.fdo2a.ja-runner.plist -->
+<plist version="1.0">
+<dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>HOME</key>
+		<string>/Users/daeyoung</string>
+		<key>PATH</key>
+		<string>/usr/bin:/bin:/usr/sbin:/sbin</string>
+	</dict>
+	<key>ExitTimeOut</key>
+	<integer>30</integer>
+	<key>Label</key>
+	<string>com.fdo2a.ja-runner</string>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Library/Frameworks/Python.framework/Versions/3.13/bin/python3</string>
+		<string>scripts/runner_launch.py</string>
+		<string>ja</string>
+		<string>run</string>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>/Users/daeyoung/Library/Logs/fdo2a-ja-runner.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/daeyoung/Library/Logs/fdo2a-ja-runner.log</string>
+	<key>StartInterval</key>
+	<integer>1800</integer>
+	<key>WorkingDirectory</key>
+	<string>/Users/daeyoung/Desktop/AI/report/site</string>
+</dict>
+</plist>
