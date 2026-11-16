@@ -1,0 +1,98 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-16",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 0,
+ "collected_at": "2026-11-16T23:31:24+00:00",
+ "cutoff_at": "2026-11-16T23:31:24+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "021199b1e99812fef7addcd452296e3caa05601a",
+  "sha256": "fc637a45bfdf910fb405fa53375de1b20195f41d7659f65150357d748ca0a4f7"
+ },
+ "counts": {
+  "harvest": 173,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "tokens": {
+   "in": 46760,
+   "out": 14867
+  },
+  "discovery": "throttled",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "throttled",
+  "grounded": {
+   "claims": "8/8",
+   "pairs": "4/4",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 9,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "memo[0]",
+    "memo[1]",
+    "structure",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "edges[0]:dangling",
+    "memo[0]:dangling",
+    "memo[1]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
+  },
+  "attempt_refunded": "discovery_throttled"
+ },
+ "event": {
+  "topic_ko": "젠슨 황 사임 이후 엔비디아 CEO 복귀 논란과 국가안보·수출통제 쟁점",
+  "query": "nvidia huang calls",
+  "trigger": []
+ },
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "edges[0]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "ac687330d55b69e2"
+}
