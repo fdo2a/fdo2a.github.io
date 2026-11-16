@@ -1,6 +1,6 @@
 {
-  "generated": "2026-11-14 08:31 KST",
-  "report_date": "2026-11-13",
+  "generated": "2026-11-17 07:34 KST",
+  "report_date": "2026-11-16",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
@@ -627,7 +627,7 @@
         "recent_avg": 0.723
       },
       "trend_cell_ko": "재가속(뚜렷) · 3개월 평균 +0.17% → +0.72%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "PCE Price Index YoY",
@@ -854,86 +854,11 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "PPI Final Demand MoM"
-  ],
+  "new_releases": [],
   "anatomy_releases": [],
   "introduced": [],
   "introduced_since": {},
-  "headline_releases": [
-    {
-      "key": "ppi",
-      "label": "생산자물가(PPI)",
-      "tier": 2,
-      "agency": "BLS",
-      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
-      "role": "scored",
-      "primary": "PPI Final Demand MoM",
-      "max_abs_z": 1.678,
-      "indicators": [
-        {
-          "name": "PPI Final Demand MoM",
-          "axis": "Inflation",
-          "actual": 0.35,
-          "previous": 1.41,
-          "ref_period": "2026-10-01",
-          "momentum_z": 1.678,
-          "fred_id": "PPIFIS",
-          "transform": "mom_pct",
-          "units": "%"
-        }
-      ],
-      "components": [
-        {
-          "label": "식품·에너지·무역서비스 제외",
-          "fred_id": "WPSFD49116",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "무역서비스 제외",
-            "식품·에너지·무역서비스 제외",
-            "근원 생산자물가"
-          ],
-          "actual": 0.5,
-          "cite_values": [
-            0.5
-          ],
-          "cite_forms": [
-            [
-              0.5,
-              ""
-            ]
-          ],
-          "text_value": 0.5,
-          "ref_period": "2026-10-01"
-        }
-      ],
-      "anatomy": {
-        "release_date": "2026-11-13",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "식품·에너지·무역서비스 제외",
-            "fred_id": "WPSFD49116",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": 0.48609666458636624,
-            "text_ok": true,
-            "text_value": 0.5
-          }
-        ]
-      },
-      "anatomy_status": "partial",
-      "anatomy_reason": "components_short"
-    }
-  ],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-09-01",
@@ -1044,12 +969,5 @@
       2.57
     ]
   },
-  "anatomy_gaps": [
-    {
-      "key": "ppi",
-      "status": "partial",
-      "reason": "components_short",
-      "components": 1
-    }
-  ]
+  "anatomy_gaps": []
 }

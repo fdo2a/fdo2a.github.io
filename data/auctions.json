@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-11-13",
-  "generated": "2026-11-14 08:32 KST",
+  "report_date": "2026-11-16",
+  "generated": "2026-11-17 07:41 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
@@ -42,10 +42,10 @@
       "tail_status": "no_wi_source",
       "yield_ref": {
         "tenor": "30Y",
-        "level": 5.481,
-        "bp": 4.8,
-        "date": "2026-11-13",
-        "source": "Naver"
+        "level": 5.467,
+        "bp": -1.4,
+        "date": "2026-11-16",
+        "source": "Yahoo"
       }
     },
     {
@@ -82,10 +82,10 @@
       "tail_status": "no_wi_source",
       "yield_ref": {
         "tenor": "10Y",
-        "level": 5.153,
-        "bp": 5.0,
-        "date": "2026-11-13",
-        "source": "Naver"
+        "level": 5.121,
+        "bp": -3.3,
+        "date": "2026-11-16",
+        "source": "Yahoo"
       }
     },
     {

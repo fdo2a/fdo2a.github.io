@@ -1,0 +1,535 @@
+{
+ "report_date": "2026-11-16",
+ "market": "us",
+ "collected_utc": "2026-11-16T22:39:00+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-12T22:47:30+00:00",
+  "kwusa": "2026-11-13T15:08:09+00:00",
+  "lim_econ": "2026-11-13T08:29:41+00:00",
+  "d_ticker": "2026-11-13T15:14:31+00:00",
+  "aethersemiconductor": "2026-11-13T16:38:00+00:00",
+  "FastStockNews": "2026-11-13T10:25:40+00:00",
+  "FastStockNewsUSA": "2026-11-13T17:39:51+00:00",
+  "insidertracking": "2026-11-13T22:35:53+00:00"
+ },
+ "window_note": [
+  "hedgecat0301: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "kwusa: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "lim_econ: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "d_ticker: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "aethersemiconductor: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "FastStockNews: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "FastStockNewsUSA: 직전 커서가 72시간보다 오래돼 72시간만 읽음",
+  "insidertracking: 직전 커서가 72시간보다 오래돼 72시간만 읽음"
+ ],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 3000,
+   "last_dt": "2026-11-15T22:46:34+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 61771,
+   "last_dt": "2026-11-16T22:22:31+00:00",
+   "read": 7
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 2136,
+   "last_dt": "2026-11-16T22:38:07+00:00",
+   "read": 2
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 4177,
+   "last_dt": "2026-11-16T22:28:18+00:00",
+   "read": 27
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 26996,
+   "last_dt": "2026-11-16T22:31:26+00:00",
+   "read": 59
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 128000,
+   "last_dt": "2026-11-16T22:32:35+00:00",
+   "read": 96
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 24502,
+   "last_dt": "2026-11-16T22:01:44+00:00",
+   "read": 38
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 11,
+   "truncated": false,
+   "from_dt": "2026-11-13T22:39:00.548764+00:00",
+   "last_id": 69451,
+   "last_dt": "2026-11-16T22:20:42+00:00",
+   "read": 186
+  }
+ },
+ "items": [
+  {
+   "id": "d_ticker/4150",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-13T22:39:40+00:00",
+   "url": "https://t.me/d_ticker/4150",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "엔비디아 이사회가 Arm CEO 르네 하스에게 접촉했다는 내용을 파이낸셜타임스(FT)가 보도했다. 하스는 월가 애널리스트들 사이에서 후보로 거론되는 인물이며, 2006년부터 7년간 엔비디아에서 일하다 컴퓨팅 제품 사업부 부사장까지 올랐고 2013년 Arm에 합류했다. 다만 엔비디아 이사회는 CEO 선임을 위해 헤드헌팅 업체를 고르는 단계이며 아직 어떤 후보와도 공식 접촉하지 않았다고 밝혔다. 개별 후보를 두고 추측하는 것은 이르다는 입장이다."
+  },
+  {
+   "id": "aethersemiconductor/26935",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-14T01:12:12+00:00",
+   "url": "https://t.me/aethersemiconductor/26935",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "로이터는 소식통을 인용해 젠슨 황 전 엔비디아 CEO가 중국인 여성 사업가 앨리스 황과 불륜 관계였음에도 법률고문 등 경영진에게 그 관계를 사실과 다르게 설명했다고 전했다. 앨리스 황은 엔비디아 고객사 메가스피드의 전 고위 임원으로, 미국 당국이 중국 스파이 활동 가능성을 조사해 온 인물이다. 젠슨 황은 언론 문의 때마다 고객과의 통상적 관계라고 해명했다. 이 사안이 알려진 뒤 엔비디아 주가는 고점 대비 30% 넘게 떨어져 1조 8천억 달러 넘는 시가총액이 사라졌다."
+  },
+  {
+   "id": "FastStockNewsUSA/24470",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-14T04:01:50+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24470",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "서울경제",
+    "url": "https://www.sedaily.com/article/20114194?ref=naver",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "스페이스X가 텍사스 스타베이스와 애리조나 코치스카운티에 총 740억 달러 이상을 투입해 초대형 AI 데이터센터를 짓는다. 텍사스에서는 데이터센터와 함께 748㎿급 천연가스발전소를 세워 전력을 자체 조달하고, 애리조나에서는 물 대신 공기로 열을 식히는 방식을 쓸 계획이다. 회사는 두 지역에서 1만 1000개 이상의 일자리가 생길 것으로 기대한다. 다만 전력과 수자원 부담, 지역 주민 반발이 변수로 꼽힌다. 한편 블룸버그통신에 따르면 스페이스X와 테슬라의 인수합병이 이르면 다음 달 성사될 수 있으며, 양사 이사회는 테슬라 주주에게 돌아갈 스페이스X 주식 규모와 테슬라 중국 사업 분리 문제를 논의 중이다."
+  },
+  {
+   "id": "d_ticker/4154",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-14T12:19:50+00:00",
+   "url": "https://t.me/d_ticker/4154",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디인포메이션",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "AI 업계에서는 젠슨 황 CEO가 사임하면서 엔비디아에게서 신규 투자와 재정 지원을 받기 어려워질 것이라는 우려가 나온다는 전언이다. 이에 엔비디아 칩을 구매해 온 한 CSP 고객이 AMD나 구글의 칩을 쓰는 방안을 검토 중이라는 소식도 함께 전해졌다. 콜레트 크레스 임시 CEO에게는 고객들이 엔비디아 외 칩으로 분산하는 흐름을 막는 것이 과제로 꼽히는데, 그는 황보다 보수적인 접근을 택할 가능성이 있다는 시각이 제시됐다. 크레스가 오픈AI의 엔비디아 최신 칩 기반 8GW 데이터센터 구축에 엔비디아가 250B달러 규모의 신용 지원을 제공하는 것에 이의를 제기해 온 점도 이러한 전망의 근거로 언급됐다."
+  },
+  {
+   "id": "aethersemiconductor/26946",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-14T12:36:03+00:00",
+   "url": "https://t.me/aethersemiconductor/26946",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디인포메이션",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "AI 업계는 젠슨 황 엔비디아 CEO의 사임 이후 엔비디아로부터 신규 투자와 재정 지원을 받기 어려워질 수 있다고 우려하고 있으며, 한 CSP 고객은 AMD나 구글의 칩 도입을 검토 중이라는 소식이 전해졌다. 이와 관련해 콜레트 크레스 임시 CEO가 고객의 칩 다변화를 막아야 하는 과제를 안고 있으나, 그녀가 황보다 보수적인 접근을 택할 가능성이 있다는 시각이 제시됐다. 특히 크레스는 오픈AI가 엔비디아 최신 칩으로 8GW 규모 데이터센터를 짓기 위해 엔비디아의 2,500억 달러 신용 지원을 받는 방안에 이의를 제기해 온 인물로 언급됐다."
+  },
+  {
+   "id": "insidertracking/69317",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-15T02:50:35+00:00",
+   "url": "https://t.me/insidertracking/69317",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "동남아시아의 대형 데이터센터들이 미국 수출 통제의 허점을 이용해 중국 기업에 엔비디아 기반 컴퓨팅 자원을 제공했다는 내용을 월스트리트저널이 보도했다. 일부 데이터센터는 반도체 밀수를 가리는 수단으로 쓰였다는 의혹도 함께 제기됐다. 이 같은 네트워크가 중국 정부의 AI 개발을 첨단 미국산 프로세서 직접 접근이 막힌 상황에서도 이어지게 했다는 분석이 나왔다는 시각도 전해졌다."
+  },
+  {
+   "id": "d_ticker/4160",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-15T07:02:31+00:00",
+   "url": "https://t.me/d_ticker/4160",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "니혼게이자이",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "일본 완구업체 타카라토미가 지난 8월 기업 간 교류를 위해 팽이 장난감 베이블레이드 대회를 처음 열었다는 소식이 전해졌다. 일본 전역 64개 기업 직원들이 3인 1조로 참가해 도쿄 아키하바라에서 토너먼트를 즐기고 명함을 나누며 자연스럽게 소통했다고 한다. 이를 두고 술자리와 접대를 꺼리는 직장인 문화에 맞춘 편안한 비즈니스 네트워킹 방식이라는 시각이 제시됐다. 아울러 AI 사업 없이도 올해 주가가 최대 100% 이상 올랐다는 점이 주목할 만하다는 의견도 함께 담겼다."
+  },
+  {
+   "id": "aethersemiconductor/26958",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-15T11:56:23+00:00",
+   "url": "https://t.me/aethersemiconductor/26958",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜타임스",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "미국 의회가 엔비디아 창업자 젠슨 황과 중국 스파이로 의심받는 여성의 불륜 의혹이 불거진 뒤 첨단 AI 칩의 중국 유입을 막는 법안 처리에 속도를 내고 있다는 소식이다. 여야 모두 민감한 칩의 해외 판매를 제한하고 행정부가 승인한 판매를 의회가 검토해 막을 수 있게 하는 법안을 지지하고 있으며, 그중 원격접속보안법은 실물 칩 구매가 금지된 중국 기업이 클라우드로 해외 칩에 접속하는 것까지 막는 내용을 담고 있다. 이번 사안으로 법안 추진에 힘이 실렸다는 것이 전문가의 시각이며, 국방수권법 최종안에 관련 법안이 포함될 가능성이 크다는 전망도 나온다. 다만 한 상원 보좌관은 남은 일정이 빠듯해 올해 안에 처리하지 못할 수 있다고 우려했다. 한편 의원들은 상무부가 메가스피드의 거래제한 기업 목록 등재를 지연시킨 경위를 따지고 있다."
+  },
+  {
+   "id": "aethersemiconductor/26961",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-15T15:09:29+00:00",
+   "url": "https://t.me/aethersemiconductor/26961",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "반도체 섹터는 극단적 매도 이후 어느 정도 디리스킹된 모습을 보이며, 글로벌 HF 순익스포저가 연초 이후 고점 대비 67% 줄어 2025년 9월 이후 최저 수준이라는 점에서 단기 반등 가능성이 있다는 시각이다. 다만 글로벌 반도체 익스포저가 2018년 이후 데이터 대비 여전히 80번째 백분위수 부근이고, HF 포지셔닝의 6개월 z-스코어가 상대 수익률 z-스코어보다 낮아 HF가 강세로 돌아서지 않으면 반등이 견조하지 않을 수 있다는 의견도 함께 제시됐다. 포트폴리오 전반에서는 그로스 플로우와 HF 성과가 안정 조짐을 보이고 있다고 평가했다."
+  },
+  {
+   "id": "insidertracking/69371",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-15T22:13:12+00:00",
+   "url": "https://t.me/insidertracking/69371",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "서울경제",
+    "url": "https://en.sedaily.com/business/2026/11/16/samsung-foundry-to-make-starlink-satellite-chips-in-texas",
+    "basis": "link"
+   },
+   "article_date": "2026-11-16",
+   "summary_ko": "삼성전자가 미국 텍사스주 오스틴 공장을 키워 일론 머스크의 스페이스X 스타링크 위성에 들어가는 STM32V8 마이크로컨트롤러를 만들기로 했다고 알려졌다. 이 칩은 프랑스 STMicroelectronics와 함께 개발한 18나노 FD-SOI 공정으로 만들며, 2030년 가동 목표다. 삼성은 오스틴 공장 증설에 19억 달러(약 2조7000억 원)를 투자한다. 미국 상무부는 삼성의 텍사스 테일러·오스틴 공장 투자 총 370억 달러에 대해 《칩스법》에 따라 47억4500만 달러(약 6조3600억 원)의 보조금을 배정했다. 삼성은 테일러 공장을 2나노 AI 칩 생산기지로, 오스틴 공장을 항공·산업용 특수 칩 기지로 나눠 운영하는 투트랙 전략을 추진한다. 아울러 시스템LSI 사업부는 키사이트 테크놀로지스와 위성-지상 연결을 위한 5G 비지상망(NR-NTN) 모뎀 성능을 검증 중이다. 골드만삭스는 저궤도 위성 시장이 2035년까지 최대 4570억 달러로 커질 것으로 전망했다."
+  },
+  {
+   "id": "kwusa/61764",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-15T22:23:13+00:00",
+   "url": "https://t.me/kwusa/61764",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_note": "요약이 아닌 답 「죄송하지만」"
+  },
+  {
+   "id": "lim_econ/2135",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-15T22:39:38+00:00",
+   "url": "https://t.me/lim_econ/2135",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "미국 재무장관 베선트가 엔비디아의 지배구조 쇄신과 외부 CEO 영입을 요구했고, 우크라이나 전쟁 해법으로는 돈바스 양보와 나토 가입을 연계한 방안이 거론됐다는 소식이 전해졌다. 연준 위원들은 물가 억제를 위해 추가 긴축이 필요하다고 언급했으며, 골드만삭스는 S&P 500의 12개월 목표치를 8700으로 제시했다. 또 앤트로픽 IPO에서는 중국 본토와 홍콩 기관이 배제되면서 우회 참여 시도가 나온다는 내용이 담겼다. 엔비디아의 경우 황 젠슨 복귀 논의가 있다는 점에서 지배구조 불확실성이 커졌다는 시각이 제시됐고, 골드만의 증시 전망에 대해서는 기술주 밸류에이션 조정을 근거로 한 낙관론이라는 의견이 담겼다."
+  },
+  {
+   "id": "hedgecat0301/3000",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-15T22:46:34+00:00",
+   "url": "https://t.me/hedgecat0301/3000",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "키움증권 전략 보고서는 미국 증시가 PPI 하회에도 엔비디아발 AI 순환금융 우려와 반도체 차익실현으로 다우만 오르고 나머지 지수는 하락했다고 전했다. 이어 이번 주 코스피가 FOMC 의사록, 연준 인사 발언, 엔비디아 실적, 앤스로픽 IPO 등 주요 이벤트에 따라 눈치보기 장세를 이어갈 것이라는 시각을 제시했다. 특히 엔비디아 경영 불확실성과 앤스로픽 흥행 여부가 AI 투자 심리의 분기점이 될 것이라는 의견을 밝혔다."
+  },
+  {
+   "id": "kwusa/61765",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-15T23:00:52+00:00",
+   "url": "https://t.me/kwusa/61765",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_ko": "김승혁 필자는 11월 13일 종가 기준으로 S&P500이 0.40% 하락한 7,561.67, 나스닥 종합이 0.91% 내린 25,136.27로 마감했다고 전했다. 필라델피아 반도체 지수는 3.43% 급락했고, 업종별로는 반도체 및 장비(-3.41%)의 낙폭이 가장 컸다. 반면 음식료 및 담배(1.59%)와 가정용품(1.27%)은 상대적으로 강했다고 정리했다. 종목별로는 AMD(-8.75%)와 델(-7.18%)의 하락이 두드러졌으며, 팩터 가운데 모멘텀(-1.55%)과 하이베타(-1.79%)가 부진했다고 짚었다."
+  },
+  {
+   "id": "kwusa/61766",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-16T01:21:29+00:00",
+   "url": "https://t.me/kwusa/61766",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김진영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시가 전주 급락 후 기술주 중심으로 반등했다고 진단하고, 이번 주는 엔비디아 실적과 앤트로픽 상장, 미·중 정상회담, 10월 소매판매와 FOMC 의사록, 20일 옵션 만기가 겹쳐 변동성이 커질 것으로 전망했다. 특히 엔비디아는 CEO 사임 이후 가이던스와 경영 연속성이 관전 포인트이며, 금리 상승이 이어지면 성장주에 부담이 될 수 있다고 봤다. 업종별로는 에너지와 산업재, 반도체 등이 강세를 보였고, 신규 상장 ETF로는 AI 기업 신용위험을 겨냥한 상품과 미국 최초의 K-뷰티 ETF, 민간 AI 기업을 편입한 Magnificent 7 Plus ETF 등이 소개됐다."
+  },
+  {
+   "id": "FastStockNewsUSA/24493",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-16T02:05:10+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24493",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 주주와 여론 사이에서 젠슨 황 CEO의 복귀론이 커지고 있지만 분석가들의 전망은 엇갈린다는 소식이 전해졌다. 시포트 리서치의 제이 골드버그는 황 CEO가 법적 분쟁을 해결한다면 AI 업계의 영향력과 투자자 지지를 바탕으로 복귀할 수 있다는 시각을 밝혔다. 반면 요크빌 아이브스의 댄 아이브스는 복귀 가능성이 극히 낮다는 의견을 내놓았다. 그는 주주 청원과 여론 압력이 혼란을 키울 수는 있어도 임시 CEO 크레스의 과제인 회사 안정화와 신뢰 회복은 바꾸지 못하며, AI 칩 분야의 선도적 지위와 장기 수요 전망은 여전히 견고하다고 평가했다. 엔비디아는 화요일 3분기 실적을 발표할 예정이다."
+  },
+  {
+   "id": "FastStockNewsUSA/24494",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-16T02:57:46+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24494",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아가 젠슨 황 CEO 퇴임을 앞두고 AI 기업에 대한 자금 지원 방식을 재편하기 시작했다는 소식이 전해졌다. 황 CEO가 승인했던 일부 투자에 신중한 입장을 보인 것으로 알려진 새 재무 책임자가 부임하면서 스타트업들은 지원 축소를 예상하고 있다는 분석이다. 황 CEO가 엔비디아는 더 이상 '무제한 ATM'이 아니라고 밝힌 가운데, 칩을 사들여 컴퓨터를 임대하는 신흥 클라우드 업체들이 불안해하고 있는 것으로 보도됐다. 이와 관련해 UBS의 팀 아쿠리 애널리스트는 지원 중단으로 시장에서 500억 달러 이상의 자금이 사라질 수 있다는 견해를 내놨다."
+  },
+  {
+   "id": "insidertracking/69395",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-16T04:06:43+00:00",
+   "url": "https://t.me/insidertracking/69395",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "트럼프 행정부가 엔비디아를 인공지능 분야의 '국가 대표 기업(national champion)'으로 지정할 계획이라고 월스트리트저널(WSJ)이 보도했다. 다만 지정의 구체적인 방식과 시행 시점은 원문 제목만으로는 알 수 없다. 이번 소식은 정부가 특정 기업을 전략적으로 육성하려 한다는 시각으로 읽힌다는 의견이 있다."
+  },
+  {
+   "id": "kwusa/61767",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-16T04:24:50+00:00",
+   "url": "https://t.me/kwusa/61767",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "김승혁",
+   "source": null,
+   "summary_ko": "키움증권 김승혁 애널리스트는 11월 2주차 미국 증시를 금리 급등과 엔비디아 급락에도 악재가 지수 전반으로 번지지 않아 S&P500이 2.5% 올랐다고 평가했다. 특히 실질금리 부담은 중소형주와 주택 등 차입 민감 업종에 집중됐고, 코어위브의 수주와 선지급금 발표가 반도체 지수 상승을 떠받쳤다고 진단했다. 다만 AI 투자심리는 아직 신중하다고 보며, 필수소비재가 6주 연속 시장을 웃돌며 사상 최고치를 기록한 점을 짚었다. 이번 주는 엔비디아 실적과 앤트로픽 상장의 성과가 AI 하드웨어 반등 지속 여부를 가를 변수로 꼽았다. 금리 부담과 FOMC 의사록, 미중 정상회담이 지수 상단을 제한할 수 있다고 봤다."
+  },
+  {
+   "id": "kwusa/61769",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-16T08:42:08+00:00",
+   "url": "https://t.me/kwusa/61769",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "박기현",
+   "source": null,
+   "summary_ko": "필자는 네비우스의 3Q26 매출이 크게 늘었지만 일회성 Asset-light 매출을 빼면 성장 둔화가 뚜렷하다고 진단했다. 연간 매출 가이던스는 하단으로 낮아졌고 ARR 7B달러 달성 시점도 2027년 2월로 미뤄졌다. 필자는 일회성 매출을 제외하면 기존 가이던스 하단도 밑돌 수 있다고 보았으며, 영업현금흐름 적자와 운전자본 시차, 미확정 조달 계획을 주가 재평가 전 확인해야 할 과제로 꼽았다. 또한 FY27 손익분기 목표는 서버 내용연수 연장 가정이 반영된 만큼 해석에 유의가 필요하다고 짚었다."
+  },
+  {
+   "id": "kwusa/61770",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-16T08:43:34+00:00",
+   "url": "https://t.me/kwusa/61770",
+   "market_basis": "channel",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "박기현",
+   "source": null,
+   "summary_ko": "아이렌의 1Q27 매출은 2.28억 달러로 전분기 대비 66% 늘었고, 그중 AI 클라우드 매출이 88%를 차지했다고 필자는 짚었다. 다만 운영 ARR 40억 달러 목표는 MSFT 설계 변경과 장비 납기 문제로 2027년 1~2월로 밀렸다고 진단했다. 필자는 주가가 실적 직후 반등했다가 6거래일 만에 상승분을 모두 반납한 점을 들어, 시장의 관심이 실적에서 자금조달과 규제 리스크로 옮겨갔다고 본다. 밸류에이션 측면에서는 P/B 1.4배 수준의 할인이 해소되려면 납기 준수와 자금조달 실행력이 확인돼야 한다고 판단했다. MSFT 지연은 고객 요청에 따른 면책 사유이나 완전한 면책으로 단정하기 어렵다고 보며, 인도가 한 달 늦어질 때마다 FY27 매출 약 2.5억 달러가 이연될 수 있다고 경고했다."
+  },
+  {
+   "id": "FastStockNewsUSA/24498",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-16T11:31:25+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24498",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "가격 결정력이 칩 자체보다 계약 기간에 더 크게 좌우된다는 시각이 제시됐다. 5년 장기 계약은 와트당 연간 20~25달러 수준인 반면 단기 계약은 40~50달러, SPCX 신규 계약은 50달러를 넘는다는 것이다. 이를 근거로 NBIS의 2026년 기준 가격(와트당 약 12달러)이 고가 단기 계약 쪽으로 전환되면 실현 가격이 오를 여지가 있다는 의견도 나왔다. 아울러 초기 ANT 계약은 와트당 약 30달러였으나 GOOGL이 H100을 포함해 53~79달러를 지불하고 있다는 점을 들어, 계약 시점과 안정적인 공급 보장이 GPU 자체만큼 중요해지고 있다고 해석했다."
+  },
+  {
+   "id": "FastStockNewsUSA/24499",
+   "channel": "FastStockNewsUSA",
+   "group": "relay",
+   "dt_utc": "2026-11-16T11:37:26+00:00",
+   "url": "https://t.me/FastStockNewsUSA/24499",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "AI가 경제를 더 역동적으로 만들고 있으며, 일자리 창출 효과가 노동 대체 효과보다 훨씬 크다는 시각이 제시됐다. 근거로는 미국에서 AI를 계기로 스타트업 붐이 일고 있고 신규 법인 설립이 폭발적으로 늘고 있다는 점이 꼽혔다. 또한 AI 산업이 꾸준히 인력을 늘리고 있다는 점도 함께 언급됐다."
+  },
+  {
+   "id": "aethersemiconductor/26989",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-16T14:04:09+00:00",
+   "url": "https://t.me/aethersemiconductor/26989",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "OpenAI가 AI의 사고 방식을 해독하는 스타트업을 50억 달러 이상에 인수하는 방안을 검토했다는 보도가 나왔다. 원문은 디 인포메이션의 보도를 옮긴 것으로, 이번 소식은 인수가 실제로 성사됐다는 내용이 아니라 검토 단계에 머물러 있다는 점을 전한다. 해당 기사에서는 AI 내부 작동을 이해하려는 기술에 대한 관심이 인수 논의로 이어졌다는 시각이 제시됐다."
+  },
+  {
+   "id": "d_ticker/4174",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T15:09:35+00:00",
+   "url": "https://t.me/d_ticker/4174",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "세미애널러시스가 기관용 리포트에서 AI 가속기 전망을 낮췄다는 소식이 X를 통해 퍼졌다. 2026년 AI 가속기 시장 전망은 3920억 달러로 동일하게 유지됐고, 2027년은 7700억 달러에서 6270억 달러로, 2028년은 1조540억 달러에서 7580억 달러로 낮아졌다. 함께 2028년 HBM 수요도 30% 하향됐다. 이런 조정의 배경으로는 3분기 AI 프론티어 랩의 연환산매출 성장세가 둔화되면서 컴퓨팅 비용을 감당할 수 있는 수준으로 투자를 줄여야 한다는 점, 확약 없는 AI 투자에서 하이퍼스케일러들이 물러서고 있다는 점, 미국 중간선거 결과로 5.8GW 규모의 미국 데이터센터 공급이 지연된 점이 꼽혔다는 시각이다."
+  },
+  {
+   "id": "insidertracking/69437",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-16T21:26:49+00:00",
+   "url": "https://t.me/insidertracking/69437",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "타이슨 푸드의 Q4 2026 어닝콜 요약에 따르면 연간 조정 영업이익은 19억8,000만달러, 조정 EPS는 3.44달러였고 Prepared Foods와 Chicken이 실적을 떠받친 것으로 나타났다. 반면 Beef 사업은 연간 영업손실 6억5,400만달러를 기록했고 FY27 매출과 조정 영업이익도 감소할 것으로 전망됐다. 이에 따라 Beef 공급망 정상화와 구조조정 효과, Prepared Foods의 마진 확대, Chicken 수익성 방어가 향후 실적 회복의 관건이라는 시각이 제시됐다. 본장에서는 주가가 9% 상승 마감했다."
+  },
+  {
+   "id": "insidertracking/69449",
+   "channel": "insidertracking",
+   "group": "relay",
+   "dt_utc": "2026-11-16T22:02:41+00:00",
+   "url": "https://t.me/insidertracking/69449",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "시추에이셔널 어웨어니스의 3분기 포트폴리오 공개 내용을 보면, 이 펀드는 샤론AI(SHAZ)를 약 1억 4,605만 달러 추가 매수해 총 4억 4,067만 달러를 보유하며 포트폴리오 비중 82.73%를 기록했다. 반면 마이크론과 샌디스크, 블룸에너지, TSMC, 네비우스 포지션은 전량 정리됐고, 코어위브·코어사이언티픽·어플라이드디지털은 전량 매도됐다. IREN 보유량은 94.43% 축소됐으며 페르미는 약 1,125만 달러 규모로 신규 편입됐다. AI 반도체와 데이터센터 관련주를 대거 덜어낸 움직임을 두고, 특정 종목에 집중하는 방향으로 재편됐다는 시각이 나온다."
+  },
+  {
+   "id": "kwusa/61771",
+   "channel": "kwusa",
+   "group": "firm",
+   "dt_utc": "2026-11-16T22:22:31+00:00",
+   "url": "https://t.me/kwusa/61771",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_note": "요약이 아닌 답 「죄송하지만」"
+  },
+  {
+   "id": "lim_econ/2136",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-16T22:38:07+00:00",
+   "url": "https://t.me/lim_econ/2136",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "미 상무부는 제3국 데이터센터의 첨단 AI칩 구매를 허가제로 바꿔 원격접속 우회를 막기로 했다. 트럼프 대통령은 젠슨 황의 엔비디아 복귀론을 지지했고, 해맥 클리블랜드 연은 총재는 물가가 나빠지면 더 크고 빠른 추가 인상이 필요하다고 경고했다. 도이치뱅크는 아시아의 반도체 흑자가 미 증시로 흘러들지만 AI 사이클이 둔화하면 외환시장 변동성이 커질 수 있다는 시각을 내놓았고, 블랙록은 주식 비중을 1%에서 3%로 늘리며 조정을 매수 기회로 보는 판단을 제시했다."
+  }
+ ],
+ "stats": {
+  "items": 29,
+  "summarized": 27,
+  "summary_failed": 2,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
