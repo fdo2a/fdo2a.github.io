@@ -52,4 +52,6 @@ Every Tokyo trading day, `/japan/daily/<session>.html`, routine `.claude/JAPAN_D
 - BOJ API: no key, ≤10 calls per run, series codes cached 7 days (`japan/data/daily/boj_series.json`); the credit line is mandatory.
 - Review runner: `japan/daily` = (`jp`, `daily`) in `review/kinds.py` — codex drafts, manual review-gate correction (not in `DAILY`).
 
+- **Telegram notes (optional `views` section, 2026-11-15)**: `fetch_telegram_jp.py` + `common/tg_jp.py` → `japan/data/telegram/<s>.json`, one channel, window `(prev 16:30 JST, s 16:30 JST]`, no cursor, saved once. **`usable: true` is the only switch** — otherwise the file is absent for collector, `diag` and gate. `publish_japan_daily.py` pins the gated bytes to `japan/data/telegram/published/<s>.json` (exit 3 = gate failed, nothing written); a published post reads only the pin (`build_japan_daily.telegram_path`). Gate: `common/telegram_gate.py` layout `jp`. When changing this: read `docs/superpowers/specs/2026-11-15-telegram-japan-daily.md` before touching `fetch_telegram_jp.py`, `common/tg_jp.py` or the `views` code in `daily_gate.py`.
+
 When changing this: read `docs/superpowers/specs/2026-10-27-japan-daily-design.md` (§13 overrides) before touching `scripts/japan/daily_*.py`, `collect_japan_daily.py` or `publish_japan_daily.py`.

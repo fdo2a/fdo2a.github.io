@@ -47,3 +47,73 @@ def test_span_name_has_daily():
     import review_gate
     assert review_gate.SPAN_NAME['daily'] == '일간'
     assert sys.modules['review_gate']
+
+
+def test_jp_daily_telegram_pin_is_optional_evidence(monkeypatch):
+    """The pinned Telegram summaries travel with the post when the publish commit has them; a post
+    without them (no usable file that day, or before 2026-11-15) is still reviewable."""
+    import collections
+    import review_gate
+    key = '2026-10-26'
+    pin = f'japan/data/telegram/published/{key}.json'
+    assert kinds.optional_evidence('japan/daily', key) == (pin,)
+    assert pin not in kinds.evidence('japan/daily', key)
+    for section, k in (('weekly', '2026-W43'), ('kr/weekly', '2026-W43'), ('japan/posts', '2026-W43')):
+        assert kinds.optional_evidence(section, k) == ()
+    item = collections.namedtuple('Item', 'section path')('japan/daily', f'japan/daily/{key}.html')
+    monkeypatch.setattr(review_gate, 'rev_parse', lambda root, ref: 'sha')
+    assert review_gate._period_evidence('.', 'c0ffee', item) == kinds.evidence('japan/daily', key) + (pin,)
+    monkeypatch.setattr(review_gate, 'rev_parse', lambda root, ref: None if 'telegram' in ref else 'sha')
+    have = review_gate._period_evidence('.', 'c0ffee', item)
+    assert have == kinds.evidence('japan/daily', key)
+    assert [p for p in kinds.evidence('japan/daily', key) if p not in have] == []      # nothing "missing"
+
+
+def test_pin_travels_from_the_publish_commit_to_the_gate_rerun(tmp_path, capsys):
+    """End to end on a real repository: the publish commit's pin is listed as evidence, extracted
+    next to the post, and is what the re-run gate reads — never the collector's later file."""
+    import collections
+    import json
+    import subprocess
+
+    import check_japan_daily as CLI
+    import review_gate
+    from japan.tests import test_daily_views as V
+
+    S = V.S
+    root = tmp_path / 'repo'
+    files = {f'japan/daily/{S}.html': V.page(),
+             f'japan/data/daily/{S}.json': json.dumps(V.SNAP, ensure_ascii=False),
+             f'japan/data/news/daily/{S}.json': '{"items": []}',
+             f'japan/data/telegram/published/{S}.json': json.dumps(V.DATA, ensure_ascii=False),
+             f'japan/data/telegram/{S}.json': json.dumps(V.tg(V.I2), ensure_ascii=False)}    # pushed later by the collector
+    for rel, text in files.items():
+        (root / rel).parent.mkdir(parents=True, exist_ok=True)
+        (root / rel).write_text(text, encoding='utf-8')
+
+    def git(*a):
+        return subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.invalid', *a], cwd=root,
+                              check=True, capture_output=True, text=True)
+    git('init', '-q')
+    git('add', '-A')
+    git('commit', '-qm', f'Add JP daily [{S}]')
+    item = collections.namedtuple('Item', 'section path')('japan/daily', f'japan/daily/{S}.html')
+    have = review_gate._period_evidence(str(root), 'HEAD', item)
+    assert have == kinds.evidence('japan/daily', S) + kinds.optional_evidence('japan/daily', S)
+    ev = tmp_path / 'ev'
+    ev.mkdir()
+    assert review_gate.snapshot(str(root), 'HEAD', (item.path, *have), str(ev), everything=True)
+    assert not (ev / 'japan' / 'data' / 'telegram' / f'{S}.json').exists()             # the collector's file is not evidence
+    assert CLI.main(['--session', S, '--root', str(ev)]) == 0
+    assert '견해·의견 다시 읽기 3건' in capsys.readouterr().out
+
+    # a publish commit without the pin: the same post fails closed instead of passing unchecked
+    git('rm', '-q', f'japan/data/telegram/published/{S}.json')
+    git('commit', '-qm', 'no pin')
+    have = review_gate._period_evidence(str(root), 'HEAD', item)
+    assert have == kinds.evidence('japan/daily', S)
+    ev2 = tmp_path / 'ev2'
+    ev2.mkdir()
+    assert review_gate.snapshot(str(root), 'HEAD', (item.path, *have), str(ev2), everything=True)
+    assert CLI.main(['--session', S, '--root', str(ev2)]) == 1
+    assert '쓸 수 있는 텔레그램 파일이 없다' in capsys.readouterr().err

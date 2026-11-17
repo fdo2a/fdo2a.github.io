@@ -108,10 +108,15 @@ def frozen(path):
     return complete and any(it.get('summary_ko') for it in d.get('items', []))
 
 
-def read_channel(ch, cursor_id, floor_dt, fetch, sleep, max_pages=MAX_PAGES):
+def read_channel(ch, cursor_id, floor_dt, fetch, sleep, max_pages=MAX_PAGES, track_reached=False):
     """Newest -> older until the cursor (exclusive) or, without one, the time floor.
-    -> (posts newer than the cursor/floor, status dict)."""
-    got, pages, before = [], 0, None
+    -> (posts newer than the cursor/floor, status dict).
+    `track_reached` (the Japan daily collector) adds `st['reached']`: a post at or below the
+    cursor/floor was actually seen. A page cap, a failed page, a `before` link that does not move
+    and a page with no `before` link are not that — the last one is the channel's first post or a
+    link the parser no longer recognises, and the two cannot be told apart (구현 검토 1회 #3).
+    Off by default: US/KR files keep their keys."""
+    got, pages, before, seen_floor = [], 0, None, False
     st = {'status': 'ok', 'pages': 0, 'truncated': False}
     while pages < max_pages:
         if pages:
@@ -138,12 +143,17 @@ def read_channel(ch, cursor_id, floor_dt, fetch, sleep, max_pages=MAX_PAGES):
         oldest = min(p['id'] for p in posts)
         reached = (cursor_id is not None and oldest <= cursor_id + 1) or \
                   (cursor_id is None and any(datetime.fromisoformat(p['dt_utc']) < floor_dt for p in posts))
-        if reached or nxt is None or (before is not None and nxt >= before):
+        seen_floor = seen_floor or reached
+        if reached or nxt is None:
+            break
+        if before is not None and nxt >= before:
             break
         before = nxt
     else:
         st['truncated'] = True
     st['pages'] = pages
+    if track_reached:
+        st['reached'] = seen_floor and st['status'] == 'ok'
     if st['status'] == 'failed' and not got:
         return [], st
     keep = [p for p in got if (p['id'] > cursor_id if cursor_id is not None

@@ -15,6 +15,11 @@ from us.weekly_insight import _c, _e, _table
 SECTIONS = ('comment', 'today', 'equity', 'bonds', 'yen', 'macro', 'news', 'next')
 TITLES = {'comment': '전략 코멘트', 'today': '오늘의 장', 'equity': '주식', 'bonds': '채권',
           'yen': '엔화', 'macro': '매크로', 'news': '일본 경제 뉴스', 'next': '향후 확인 일정'}
+# 텔레그램 한 채널의 일본 관련 메모(2026-11-15) — 실을 것이 있는 날만, 뉴스 절 바로 뒤에 하나.
+# 모양·내용은 common/telegram_gate.py (layout 'jp') 가 본다. 제목은 그쪽 NEWS_TITLE 과 같다.
+OPTIONAL = ('views',)
+TITLES['views'] = '증권사 견해·시장 의견'
+_VIEWS_OPEN = re.compile(r'<section\b[^>]*\bdata-section="views"[^>]*>')
 PLACEHOLDERS = {'equity': ('indices', 'sectors'), 'bonds': ('jgb',), 'yen': ('fx',),
                 'macro': ('macro',), 'next': ('next',)}
 BRAND = 'Japan Market Daily'
@@ -169,6 +174,15 @@ def validate_body(body, want):
             errs.append(f'data-section="{s}" 절이 {names.count(s)}번 있다 — 한 번')
     if [n for n in names if n in SECTIONS] != list(want):
         errs.append(f'절 순서가 다르다: {" → ".join(names)} (기대 {" → ".join(want)})')
+    if names.count('views') > 1:
+        errs.append(f'data-section="views" 절이 {names.count("views")}번 있다 — 실을 메모가 있는 날만 한 번')
+    elif 'views' in names:
+        i = names.index('views')
+        if i == 0 or names[i - 1] != 'news':
+            errs.append('data-section="views"(증권사 견해·시장 의견) 절은 일본 경제 뉴스 절 바로 뒤에 둔다')
+        if not all('data-tg-section' in m.group(0) for m in _VIEWS_OPEN.finditer(body)):
+            errs.append('data-section="views" 절에 data-tg-section 표식이 없다 — '
+                        '<section class="card" data-section="views" data-tg-section>')
     inner = dict(found)
     for sec, phs in PLACEHOLDERS.items():
         for ph in phs:

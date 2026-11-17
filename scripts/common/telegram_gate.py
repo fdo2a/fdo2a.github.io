@@ -29,6 +29,20 @@ layout='news' (2026-11-12, the news posts `/news/`·`/kr/news/`) adds, on top of
 - a sentence OUTSIDE the elements that repeats any summary in the file (>= 0.7) FAILS — the news
   posts have no post-publish review. Block boundaries are kept when splitting, and only two things
   are left out: the stored news summary inside `p[data-summary]` and `section[data-contested]`.
+layout='jp' (2026-11-15, the Japan daily `/japan/daily/`) is the news layout with these differences:
+- the section is `<section data-section="views" data-tg-section>` = h2(「증권사 견해·시장 의견」) · p+,
+  each p exactly one `<span data-tg>` — one item, one paragraph, no linking text (`views_node`);
+- outside the section nothing is left out of the comparison. A sentence that repeats a Telegram
+  summary (>= 0.7) fails unless an article of **the day's news file** says it at least as closely
+  (`_jp_articles`): the prose of a Japan daily is written from that file, and a note about the
+  same release would otherwise fail the writer's own sentences (11/16 실측: 발행본 14편 중 11편). A
+  sentence closer to the note than to every article is the note's. The page's markup decides
+  none of this;
+- an opinion with no outlet reads as hearsay (`RELAY_WORDS` — a bare 「평가했다」 is a direct
+  statement); a broker name (`tg_jp.RELAY_FIRMS`) is the item's `relay_firm` or stands in its summary;
+- 엔 amounts are figures with a unit; every date in a marker is the note's own date or stands in
+  the summary, and a note dated before the session names its day.
+Design: docs/superpowers/specs/2026-11-15-telegram-japan-daily.md
 The overlap floor is not a check of meaning (the same words can say the opposite), and whether a
 sentence READS as the right speaker's is not something code can settle; the routine reads every
 paragraph in order and each marker next to its summary as its last step (`paras`, `pairs`).
@@ -41,6 +55,7 @@ from html.parser import HTMLParser
 
 from .numbers import strip_comments
 from .telegram import CHANNEL_WORDS, FIRM_HANWHA, FIRM_KIWOOM, POST_MAX_OPINIONS, POST_MAX_VIEWS
+from . import tg_jp
 from .tg_junk import refusal
 
 NOTE_RE = re.compile(r'<section\b[^>]*\bdata-editor-note\s*=\s*"[^"]*"[^>]*>.*?</section>', re.S)
@@ -112,13 +127,17 @@ NUM_RE = re.compile(r'(-?\d[\d,]*(?:\.\d+)?)\s*(' + UNITS + r')?')
 DATE_MASK = re.compile(r'\d{4}-\d{2}-\d{2}|\d{4}년|\d{1,2}월|\d{1,2}일|\d{1,2}/\d{1,2}|\d{1,2}분기|\d{1,2}시|\d{1,2}분')
 
 
-def number_units(text):
+# Japan daily only: a yen amount is a figure with a unit (「3,800엔」 is not 「3,800원」)
+JP_NUM_RE = re.compile(r'(-?\d[\d,]*(?:\.\d+)?)\s*(억\s*엔|조\s*엔|만\s*엔|엔(?!비디아|진|터|지니어|드)|' + UNITS + r')?')
+
+
+def number_units(text, num_re=NUM_RE):
     """{(value, unit)} for every figure in the text, dates and clock times masked. Unit-sensitive:
     5.5% and 5.5bp and 5.5달러 are different claims."""
     t = DATE_MASK.sub(' ', text or '')
     t = re.sub(r'(?<=[^\s(\[])-(?=\d)', ' ', t)       # hyphen joining words, not a sign
     out = set()
-    for m in NUM_RE.finditer(t):
+    for m in num_re.finditer(t):
         try:
             val = round(float(m.group(1).replace(',', '')), 4)
         except ValueError:
@@ -460,7 +479,17 @@ def _news_outside(outside, news):
         if not m:
             break
         t = t[:m.start()] + ' ' + t[_close_of(t, 'section', m.end()):]
+    return _pieces(t)
+
+
+def _pieces(t, line_breaks_end_sentences=True):
+    """Markup -> the sentences that are compared with the summaries, block boundaries kept.
+    jp passes False: a `<br>`/`<wbr>` inside running text does not end the sentence — cut there,
+    a copied sentence fell into fragments too short to compare (구현 검토 5회). US/KR keep the
+    reading their published posts were checked with."""
     t = re.sub(r'<(script|style)\b.*?</\1>', ' ', t, flags=re.S)
+    if not line_breaks_end_sentences:
+        t = re.sub(r'<w?br\b[^>]*>', ' ', t, flags=re.I)
     out = []
     for block in _BLOCK.split(t):
         text = re.sub(r'\s+', ' ', _html.unescape(TAG_RE.sub(' ', block))).strip()
@@ -472,13 +501,291 @@ def _news_outside(outside, news):
     return out
 
 
-def check(html, data, warnings=None, layout='brief', news=None, pairs=None, paras=None):
-    """layout 'brief' (default) or 'news'. `news` = the day's news file (news layout: its stored
-    summaries are left out of the outside comparison). `pairs` collects (id, marker text, summary);
-    `paras` the section's paragraphs in order, each a list of ('text', chunk) / ('tg', id, text)."""
+# ── Japan daily layout ───────────────────────────────────────────────────
+VIEWS = 'views'
+RELAY_WORDS = re.compile(r'전해졌|전해진|전해지|알려졌|알려진|라는\s?(?:의견|시각|관측|해석|전망|평가|주장|지적|우려|분석|얘기|소식)')
+JP_DATE = re.compile(r'\d{4}-\d{2}-\d{2}|\d{4}년|\d{1,2}월|\d{1,2}일|\d{1,2}/\d{1,2}|\d{1,2}분기')
+
+
+class _Offsets(HTMLParser):
+    """HTMLParser that knows where in the source the tag it is handling starts and ends."""
+
+    def __init__(self, doc):
+        super().__init__(convert_charrefs=True)
+        self.doc = doc
+        self._lines = [0] + [m.end() for m in re.finditer('\n', doc)]
+
+    def here(self):
+        line, col = self.getpos()
+        return self._lines[line - 1] + col
+
+    def after_start(self):
+        return self.here() + len(self.get_starttag_text() or '')
+
+    def after_end(self):
+        i = self.doc.find('>', self.here())
+        return len(self.doc) if i < 0 else i + 1
+
+
+class _Views(_Offsets):
+    """Every `<section data-section="views" data-tg-section>` with its source span and tokens, and
+    every marker (data-tg, data-tg-section, data-section="views") that is not one of them or
+    inside one."""
+
+    def __init__(self, doc):
+        super().__init__(doc)
+        self.stack, self.nodes, self.cur, self.depth, self.stray = [], [], None, 0, []
+
+    def _open(self, tag, attrs, void):
+        a = {k: (v or '') for k, v in attrs}
+        mark, views = 'data-tg-section' in a, a.get('data-section', '').strip() == VIEWS
+        hidden = _hidden_attrs(a) or tag in _INERT
+        if self.cur is not None:
+            self.cur['tokens'].append(('start', tag, a))
+            self.cur['hidden'] = self.cur['hidden'] or hidden
+            self.cur['nested'] = self.cur['nested'] or tag == 'section' or mark or views
+            if not void:
+                self.depth += 1
+            return
+        if tag == 'section' and mark and views and not void:
+            self.cur = {'start': self.here(), 'end': None, 'tokens': [], 'closed': False, 'nested': False,
+                        'hidden': hidden or any(h for _, h, _ in self.stack),
+                        'inside': any(sec for _, _, sec in self.stack)}
+            self.depth = 1
+            return
+        for name, on in (('data-tg', 'data-tg' in a), ('data-tg-section', mark), ('data-section="views"', views)):
+            if on:
+                self.stray.append(f'<{tag} {name}>')
+        if not void:
+            self.stack.append((tag, hidden, tag == 'section'))
+
+    def handle_starttag(self, tag, attrs):
+        self._open(tag, attrs, tag in _VOID)
+
+    def handle_startendtag(self, tag, attrs):
+        # `<div hidden/>` opens a div: HTML ignores the slash on a non-void element (구현 검토 4회)
+        self._open(tag, attrs, tag in _VOID)
+
+    def handle_endtag(self, tag):
+        if tag in _VOID:
+            return
+        if self.cur is not None:
+            self.depth -= 1
+            if self.depth == 0:
+                self.cur.update(closed=tag == 'section', end=self.after_end())
+                self.nodes.append(self.cur)
+                self.cur = None
+            else:
+                self.cur['tokens'].append(('end', tag))
+            return
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i][0] == tag:
+                del self.stack[i:]
+                break
+
+    def handle_data(self, data):
+        if self.cur is not None and data:
+            self.cur['tokens'].append(('text', re.sub(r'\s+', ' ', data)))
+
+    def close(self):
+        super().close()
+        if self.cur is not None:
+            self.cur['end'] = len(self.doc)
+            self.nodes.append(self.cur)
+            self.cur = None
+
+
+def _views_shape(tokens):
+    """(None, [(id, text)]) when the tokens are exactly h2(title) · p+ with every p holding one
+    span[data-tg] > text and nothing else; else (where it breaks, [])."""
+    i = 0
+
+    def at(kind, tag=None):
+        return i < len(tokens) and tokens[i][0] == kind and (tag is None or tokens[i][1] == tag)
+
+    def words():
+        nonlocal i
+        got = []
+        while at('text'):
+            got.append(tokens[i][1])
+            i += 1
+        return re.sub(r' +', ' ', ''.join(got))
+
+    def blank():
+        nonlocal i
+        j = i
+        if words().strip():
+            i = j
+
+    blank()
+    if not at('start', 'h2'):
+        return '제목(h2)으로 시작하지 않는다', []
+    i += 1
+    if words().strip() != NEWS_TITLE or not at('end', 'h2'):
+        return f'제목이 「{NEWS_TITLE}」 하나가 아니다', []
+    i += 1
+    blank()
+    paras = []
+    while at('start', 'p'):
+        i += 1
+        n = len(paras) + 1
+        blank()
+        if not (at('start', 'span') and 'data-tg' in tokens[i][2]):
+            return f'{n}번째 문단이 <span data-tg> 하나로 시작하지 않는다', []
+        tid = (tokens[i][2]['data-tg'] or '').strip()
+        if not tid:
+            return f'{n}번째 문단의 data-tg 에 항목 id 가 없다', []
+        i += 1
+        text = words()
+        if not text.strip() or not at('end', 'span'):
+            return f'{n}번째 문단의 표식 안이 글자만이 아니다', []
+        i += 1
+        blank()
+        if not at('end', 'p'):
+            return f'{n}번째 문단에 표식 하나 말고 다른 것이 있다', []
+        i += 1
+        paras.append((tid, text))
+        blank()
+    if not paras:
+        return '인용 문단이 하나도 없다', []
+    if i != len(tokens):
+        return f'{len(paras)}번째 문단 뒤에 문단이 아닌 것이 있다', []
+    return None, paras
+
+
+def views_node(doc):
+    """-> (node, violations). node = {'start', 'end', 'source', 'paras'} for the one valid
+    `<section data-section="views" data-tg-section>` of a Japan daily, else None. `doc` is the page
+    with comments stripped; the span is in that string. A node is returned only when nothing at all
+    is wrong with the markers on the page — the Japan daily gate exempts exactly this span."""
+    rd = _Views(doc)
+    rd.feed(doc)
+    rd.close()
+    v = []
+    if rd.stray:
+        v.append(f'「{NEWS_TITLE}」 절 밖에 표식이 있다({", ".join(rd.stray[:3])}) — data-tg·data-tg-section·'
+                 f'data-section="views" 는 그 절 하나와 그 안의 문단에만 쓴다')
+    if len(rd.nodes) > 1:
+        v.append(f'「{NEWS_TITLE}」 절이 {len(rd.nodes)}개다 — 하나만 둔다')
+    node = None
+    for s in rd.nodes:
+        if s['inside'] or s['nested']:
+            why = '다른 절 안에 있거나 안에 절·표식을 품고 있다'
+        elif not s['closed']:
+            why = '절이 닫히지 않았다'
+        elif s['hidden']:
+            why = '절이나 그 안·바깥 요소가 숨겨져 있다(hidden·display:none·details 등)'
+        else:
+            why, paras = _views_shape(s['tokens'])
+        if why:
+            v.append(f'「{NEWS_TITLE}」 절의 모양이 다르다 — <section class="card" data-section="views" data-tg-section> 안에 '
+                     f'h2 하나와 <p><span data-tg="…">문장</span></p> 문단만 둔다 ({why})')
+        else:
+            node = {'start': s['start'], 'end': s['end'], 'source': doc[s['start']:s['end']], 'paras': paras}
+    return (None, v) if v else (node, v)
+
+
+def _jp_articles(news):
+    """Japan daily: the summaries of the day's news file that may vouch for a sentence outside the
+    section — every publishable one, wherever (or whether) the page shows it.
+
+    An outside sentence that overlaps a Telegram summary is the article's, not the note's, when
+    one of these says it at least as closely. It used to matter whether the page 「carried」 the
+    article (its summary placed in the news section, or cited by a mover paragraph). That was read
+    from markup the writer controls, and each reading had a counterexample: `data-cite` on any
+    element, `<P …>`, a hidden ancestor, a hidden child, `<div hidden/>`, a `<p>` inside the `<p>`
+    (구현 검토 1회 #2, 2·3·4회). The news file is written by the collector, the writer is handed
+    all of it (mover causes already come from any item), and the comparison — closer to the note
+    than to every article fails — is what stops a copied note. So nothing here reads the page."""
+    from us.news_summary import summary_problem
+    out = []
+    for it in (news or {}).get('items') or []:
+        text = it.get('summary_ko') if isinstance(it, dict) else None
+        text = re.sub(r'\s+', ' ', text).strip() if isinstance(text, str) else ''
+        if text and summary_problem(text) is None:
+            out.append(text)
+    return out
+
+
+def _jp_note_date(it):
+    """The note's own date: the date it carries, else the JST day it was posted."""
+    if it.get('note_date'):
+        return it['note_date']
+    try:
+        from datetime import datetime
+        return datetime.fromisoformat(it['dt_utc']).astimezone(tg_jp.JST).date().isoformat()
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def _jp_dates(tid, it, text, summ, session):
+    v = []
+    nd = _jp_note_date(it)
+    own = set()
+    if nd:
+        y, m, d = (int(x) for x in nd.split('-'))
+        own = {nd, f'{y}년', f'{m}월', f'{d}일', f'{m}/{d}'}
+    norm = lambda tok: re.sub(r'(?<!\d)0+(?=\d)', '', tok) if '-' not in tok else tok     # noqa: E731
+    have = {norm(x) for x in JP_DATE.findall(summ or '')}
+    bad = [tok for tok in dict.fromkeys(JP_DATE.findall(text)) if norm(tok) not in own and norm(tok) not in have]
+    if bad:
+        v.append(f'data-tg="{tid}" — 요약에도 메모 날짜({nd or "알 수 없음"})에도 없는 날짜·기간이 있다: {", ".join(bad)}')
+    if nd and session and nd < session and not re.search(rf'(?<!\d){m}월\s?{d}일', text):
+        v.append(f'data-tg="{tid}" — {m}월 {d}일 메모다(세션 {session} 이전) — 문장에 「{m}월 {d}일」 을 밝힌다')
+    return v
+
+
+class _AttrText(HTMLParser):
+    """Every attribute value of a page except the `data-tg` ids (those name the channel by design)."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.values = []
+
+    def handle_starttag(self, tag, attrs):
+        self.values.extend(v for k, v in attrs if v and k != 'data-tg')
+
+    handle_startendtag = handle_starttag
+
+
+def word_violations(doc, jp=False):
+    """「텔레그램」·t.me·channel names anywhere in the page (`doc` = comments stripped). The raw markup
+    is searched too: any attribute quoting, any element (a, img, link, meta). jp: the words are
+    banned in the news section as well, and the message says when the hit is there; attribute
+    values count too — a `<meta name="description">` is published text (구현 검토 6회)."""
+    v = []
+    vis = _visible(doc)
+    if jp:
+        rd = _AttrText()
+        rd.feed(doc)
+        rd.close()
+        attrs = ' '.join(rd.values)
+        if BANNED.search(attrs) or any(w.lower() in attrs.lower() for w in CHANNEL_WORDS):
+            v.append('「텔레그램」·채널 이름이 태그 속성 안에 있다(meta 설명·alt·title 등) — 발행본 어디에도 쓰지 않는다')
+    in_news = ''
+    if jp:
+        m = re.search(r'<section\b[^>]*\bdata-section\s*=\s*["\']?news\b[^>]*>', doc, re.I)
+        in_news = _visible(doc[m.end():_close_of(doc, 'section', m.end())]) if m else ''
+    where = lambda hit: (' (일본 경제 뉴스 절 안 — 그 기사의 자리표시를 뺀다)' if hit else '')     # noqa: E731
+    if BANNED.search(vis) or re.search(r't\.me/|telegram\.me', doc, re.I):
+        v.append('「텔레그램」·t.me 가 발행본에 있다 — 채널 출처는 쓰지 않는다' + where(BANNED.search(in_news)))
+    for w in CHANNEL_WORDS:
+        if w.lower() in vis.lower():
+            v.append(f'채널 이름 「{w}」 이 발행본에 있다' + where(w.lower() in in_news.lower()))
+    return v
+
+
+def check(html, data, warnings=None, layout='brief', news=None, pairs=None, paras=None, session=None, views=None):
+    """layout 'brief' (default), 'news' or 'jp'. `news` = the day's news file (news/jp layout: its
+    stored summaries are left out of the outside comparison). `pairs` collects (id, marker text,
+    summary); `paras` the section's paragraphs in order, each a list of ('text', chunk) /
+    ('tg', id, text). jp: `session` = the Tokyo session, `views` receives the `views_node` (or
+    nothing when the markers on the page are not exactly one valid section)."""
     v = []
     warn = warnings if warnings is not None else []
-    is_news = layout == 'news'
+    is_jp = layout == 'jp'
+    is_news = layout in ('news', 'jp')
+    num_re = JP_NUM_RE if is_jp else NUM_RE
     max_views, max_others = (None, None) if is_news else (POST_MAX_VIEWS, POST_MAX_OPINIONS)
     seen = set()
     min_cov = NEWS_MIN_COVERAGE if is_news else MIN_COVERAGE
@@ -487,17 +794,30 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
     doc = strip_comments(html or '')
     if not is_news:
         doc = NOTE_RE.sub(' ', doc)
-    vis = _visible(doc)
-    # raw markup too: any attribute quoting, any element (a, img, link, meta)
-    if BANNED.search(vis) or re.search(r't\.me/|telegram\.me', doc, re.I):
-        v.append('「텔레그램」·t.me 가 발행본에 있다 — 채널 출처는 쓰지 않는다')
-    for w in CHANNEL_WORDS:
-        if w.lower() in vis.lower():
-            v.append(f'채널 이름 「{w}」 이 발행본에 있다')
+    v.extend(word_violations(doc, is_jp))
     els = elements(doc)
     items = {it['id']: it for it in (data or {}).get('items', [])}
     ctx, sec_paras = {}, []
-    if is_news:
+    node = None
+    if is_jp:
+        node, got = views_node(doc)
+        v.extend(got)
+        # what is checked below is what views_node read, not a second reading of the markup: the
+        # regex of elements() does not see `<span data-tg>` (no value) or an id written with
+        # character references, and a marker only one of the two sees was checked by neither
+        # (구현 검토 1회 #1)
+        seen_by_parser = [tid for tid, _ in node['paras']] if node else []
+        if [tid for tid, _, _, _ in els] != seen_by_parser and not got:
+            v.append(f'data-tg 표식을 읽는 두 방식의 결과가 다르다(절 안 {len(seen_by_parser)}개, 원문 {len(els)}개) — '
+                     f'<p><span data-tg="채널/번호">문장</span></p> 꼴로만 쓴다')
+            node = None
+        if node:
+            els = [(tid, _html.escape(text), None, None) for tid, text in node['paras']]
+        if node and views is not None:
+            views.append(node)
+        if node and paras is not None:
+            paras.extend([('tg', tid, text)] for tid, text in node['paras'])
+    elif is_news:
         got, sec_paras = _news_sections(doc)
         v.extend(got)
         ctx = _news_context(sec_paras)
@@ -508,7 +828,8 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
     if els and not data:
         return v + ['data-tg 표식이 있는데 텔레그램 파일이 없다']
     if is_news and els and not any('news_use' in it for it in items.values()):
-        return v + ['텔레그램 파일에 news_use 표시가 없다 — 뉴스 글은 scripts/tg_news.py input 이 만든 파일만 쓴다']
+        return v + ['텔레그램 파일에 news_use 표시가 없다 — ' + ('일본 일간은 scripts/fetch_telegram_jp.py 가 만든 파일만 쓴다'
+                                                      if is_jp else '뉴스 글은 scripts/tg_news.py input 이 만든 파일만 쓴다')]
     n_view = n_other = 0
     names = {FIRM_KIWOOM, FIRM_HANWHA}
     for it in items.values():
@@ -572,7 +893,11 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
                 if not REPORT_WORDS.search(text):
                     v.append(f'data-tg="{tid}" — 보도 틀(「…에 따르면」·「…라고 보도했다」)이 없다')
             else:
-                if not OPINION_WORDS.search(text):
+                if is_jp and not src:
+                    if not RELAY_WORDS.search(text):
+                        v.append(f'data-tg="{tid}" — 전해 들은 말의 틀(「…라는 분석이 전해졌다」)이 없다 — 「…로 평가했다」 처럼 '
+                                 f'직접 한 말로 쓰지 않는다')
+                elif not OPINION_WORDS.search(text):
                     v.append(f'data-tg="{tid}" — 의견 틀(「…라는 의견도 나왔다」)이 없다')
                 if src and not named:
                     v.append(f'data-tg="{tid}" — 글이 밝힌 출처 「{src}」 를 문장 안에 단다' + how.format('매체', '같은 보도는'))
@@ -583,10 +908,19 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
             if named:
                 told[tid] = who
         said[tid] = text
-        extra = number_units(text) - number_units(summ)
+        extra = number_units(text, num_re) - number_units(summ, num_re)
         if extra:
             v.append(f'data-tg="{tid}" — 요약에 없는 수치 {sorted(extra)[:5]}')
         body = text
+        if is_jp:
+            firm = it.get('relay_firm')
+            other = sorted(tg_jp.firms_in(text) - ({firm} if firm else set()) - tg_jp.firms_in(summ))
+            if other:
+                v.append(f'data-tg="{tid}" — 증권사 이름 「{other[0]}」 은 이 메모의 것이 아니다(메모의 증권사: {firm or "없음"}) — '
+                         f'이름은 그 항목의 relay_firm 이나 요약에 있는 것만 쓴다')
+            v.extend(_jp_dates(tid, it, text, summ, session))
+            if firm:
+                body = body.replace(firm, '')
         for nm in names | ({src} if src else set()):
             body = body.replace(nm, '')
         if coverage(body, summ) < min_cov:
@@ -597,8 +931,11 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
         v.append(f'의견·보도 {n_other}건 — 최대 {max_others}')
     # outside the elements
     outside = doc
-    for _, _, s, e in sorted(els, key=lambda x: -x[2]):
-        outside = outside[:s] + ' ' + outside[e:]
+    if node:                        # jp: the one valid section, whole
+        outside = doc[:node['start']] + ' ' + doc[node['end']:]
+    else:
+        for _, _, s, e in sorted(els, key=lambda x: -x[2]):
+            outside = outside[:s] + ' ' + outside[e:]
     out_vis = _visible(outside)
     # 키움증권 is also a listed stock, so a bare firm name outside is fine; an analyst name, or the
     # firm as the speaker of a view, is not
@@ -614,10 +951,20 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
                 warn.append(f'「{nm}」 의 텔레그램 견해와 닮은 문장이 data-tg 표식 밖에 있다 — 텔레그램에서 왔으면 감싼다: 「{sent[:40]}…」')
     sums = [it['summary_ko'] for it in items.values() if it.get('summary_ko')]
     if is_news:
-        v.extend(_news_links(sec_paras, items, sums, warn))
-        for sent in _news_outside(outside, news):
+        if not is_jp:
+            v.extend(_news_links(sec_paras, items, sums, warn))
+        pieces, articles = (_pieces(outside, False), _jp_articles(news)) if is_jp else (_news_outside(outside, news), [])
+        for sent in pieces:
             best = max((coverage(sent, s) for s in sums), default=0)
-            if best >= OUTSIDE_COVERAGE:
+            if best < OUTSIDE_COVERAGE:
+                continue
+            if is_jp:
+                # an article collected that day says it at least as closely: the sentence is that article's
+                if max((coverage(sent, n) for n in articles), default=0) >= best:
+                    continue
+                v.append(f'표식 밖 문장이 텔레그램 요약과 겹친다({best:.2f}) — 일본 일간에서는 「{NEWS_TITLE}」 절 밖에 텔레그램에서 '
+                         f'온 내용을 쓰지 않는다(그날 일간 뉴스 파일의 기사 내용이면 그 기사 요약에 맞게 쓴다): 「{sent[:40]}…」')
+            else:
                 v.append(f'표식 밖 문장이 텔레그램 요약과 겹친다({best:.2f}) — 뉴스 글에서는 「{NEWS_TITLE}」 섹션 밖에 '
                          f'텔레그램에서 온 내용을 쓰지 않는다: 「{sent[:40]}…」')
         return v

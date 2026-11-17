@@ -54,6 +54,16 @@ def publish_day(path):
     return None
 
 
+def optional_evidence(section, key):
+    """있으면 함께 꺼내는 근거 — 없어도 그 글은 검토 대상이다(「근거 없음」 판정은 `evidence` 만 본다).
+    일본 일간: 발행 단계가 발행 커밋에 고정한 텔레그램 요약(2026-11-15). 견해·의견 절이 없는 날이나
+    쓸 수 있는 파일이 없던 날, 이 기능 이전의 글에는 없다."""
+    market, span = PERIOD[section]
+    if market == 'jp' and span == 'daily':
+        return (f'japan/data/telegram/published/{key}.json',)
+    return ()
+
+
 def evidence(section, key):
     """발행 커밋에서 꺼낼 게이트 근거 — 경로는 레포 기준."""
     market, span = PERIOD[section]

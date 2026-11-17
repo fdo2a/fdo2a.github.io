@@ -27,6 +27,8 @@ KEY=$(bash scripts/ci/run_lock.sh key jp_daily)                 # jpd-<S>
 
 `diag` 가 절 순서(이벤트일이면 매크로가 둘째), 기준일이 다른 값(JGB 는 네이버 당일 또는 MOF 폴백 직전 세션, 콜 BOJ 최신 관측일), 뉴스 후보 수, 실패한 비-코어 원천을 알려 준다. 그대로 작성자에게 넘긴다.
 
+**견해·의견 후보(2026-11-15)** — 같은 워크플로가 수집 끝에 `japan/data/telegram/<S>.json` 을 만든다(비차단, 실패해도 일간은 그대로 간다). `diag` 의 `견해·의견 후보 N건` 줄이 **N ≥ 1 일 때만** 그 줄의 파일 경로를 작성자에게 넘긴다. `견해·의견: 없음(…)` 이거나 0건이면 넘기지 않고, 그날 글에는 그 절이 없다. 이 파일 때문에 수집을 다시 띄우지 않는다. **`diag` 뒤로는 발행 커밋을 만들 때까지 `git pull` 하지 않는다** — 게이트와 발행 단계는 `diag` 가 본 그 파일(또는 없음)을 작업 폴더에서 그대로 읽는다. 중간에 파일이 생기거나 바뀌면 작성자가 보지 못한 요약으로 글을 검사하게 된다. 설계: `docs/superpowers/specs/2026-11-15-telegram-japan-daily.md`.
+
 ## STEP 2 — 작성과 조립
 
 `japan-daily-writer` 를 **동기**로, Agent 호출에 `model: "sonnet"` 을 적어 부른다. 넘기는 것: 세션 `S`, `diag` 출력 전문, 스냅샷·뉴스 파일 경로, 직전 일간 경로(있으면). 오케스트레이터는 데이터·지시문을 다시 읽지 않는다. 작성자 마감의 점검(번역투 포함)은 작성자가 한다 — 오케스트레이터는 대신 고치지 않는다.
@@ -50,13 +52,15 @@ python3 scripts/check_readability.py --strict $(pwd)/jpd_$S.html
 python3 scripts/check_style.py $(pwd)/jpd_$S.html
 ```
 
+**「증권사 견해·시장 의견」 절은 일간을 붙잡지 않는다(2026-11-15).** 위반 문구가 `data-tg`·그 절·「텔레그램 요약과 겹친다」를 가리키면: **첫 되돌림에 한해** 그 회차의 다른 위반과 함께 작성자에게 돌려준다. 그 뒤에도 남았거나 나중 회차에 새로 나오면 작성자를 부르지 않고 `python3 scripts/tg_news.py strip --html jpd_$S.html` 로 절만 뺀 뒤 위 다섯 게이트를 처음부터 다시 돌린다(조립이 그 절 때문에 실패하면 같은 명령을 `jpd_$S.body.html` 에 쓰고 다시 조립). strip 으로 사라지지 않는 것(절 밖에 남은 `data-tg`, 작성자 산문 속 채널 이름·요약과 겹치는 문장)은 보통의 산문 위반이다 — 아래 예산으로 돌려준다. 게이트를 다 통과하면 `check_japan_daily.py` 가 찍은 「문단 / 요약」 짝을 읽는다 — 뜻이 요약과 다르거나 요약에 없는 평가·전망을 덧붙인 문단은 그 `<p>` 를 지우고(마지막 문단이면 strip) 게이트를 다시 돌린다. 문장을 고쳐 쓰지는 않는다.
+
 위반은 목록 그대로 작성자에게 돌려준다(STEP 2 의 예산 — 조립 실패와 합쳐 최대 세 번, 두 번째부터 Opus). 그래도 남으면 발행하지 않고 잠금을 풀고 위반 목록을 PushNotification 으로 보낸다. 윤문은 하지 않는다 — 게이트를 통과한 판이 최종본이다. 번역투는 작성자가 마감에서 고친다(2026-10-22) — 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py jpd_$S.html | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다(발행을 막지 않는다).
 
 ## STEP 4 — 발행
 
 1. `mkdir -p japan/daily && mv jpd_$S.html japan/daily/$S.html`
-2. `python3 scripts/publish_japan_daily.py --session $S --title "<meta.title>" --headline "<meta.summary>"` — 수집 후보를 발행 스냅샷 `japan/data/daily/<S>.json` 으로 고정하고 이력·`japan/daily.json`·sitemap 을 갱신한다. exit 2 면 이미 발행된 세션이니 커밋하지 않고 끝낸다.
-3. 커밋 직전 가드: `git fetch -q origin main` — **실패하면 커밋하지 않고 끝낸다** — 성공하면 `git cat-file -e origin/main:japan/daily/$S.html` 이 없을 때만 진행. `git add japan/daily japan/data/daily japan/data/history japan/daily.json sitemap.xml && git commit -m "Add JP daily [$S]" && git push`.
+2. `python3 scripts/publish_japan_daily.py --session $S --title "<meta.title>" --headline "<meta.summary>"` — 수집 후보를 발행 스냅샷 `japan/data/daily/<S>.json` 으로 고정하고 이력·`japan/daily.json`·sitemap 을 갱신한다. exit 2 면 이미 발행된 세션이니 커밋하지 않고 끝낸다. **exit 3** 은 견해·의견 절의 근거가 달라졌다는 뜻이다(쓸 수 있는 파일이 없어졌거나 내용이 바뀜 — 아무것도 쓰지 않았다): `python3 scripts/tg_news.py strip --html japan/daily/$S.html` → STEP 3 의 게이트를 `--html japan/daily/$S.html` 로 다시 → 이 명령을 **한 번만** 더. 또 3 이거나 strip 뒤 게이트가 통과하지 못하면 글을 `jpd_$S.html` 로 되돌리고 발행하지 않는다(잠금 해제, 출력을 PushNotification). 이 단계가 그날 쓴 요약 파일을 `japan/data/telegram/published/<S>.json` 으로 고정한다 — 쓸 수 있는 파일이 없던 날은 만들지 않는다.
+3. 커밋 직전 가드: `git fetch -q origin main` — **실패하면 커밋하지 않고 끝낸다** — 성공하면 `git cat-file -e origin/main:japan/daily/$S.html` 이 없을 때만 진행. `git add japan/daily japan/data/daily japan/data/history japan/daily.json sitemap.xml`, 이어서 **따로 한 줄** `[ -e japan/data/telegram/published/$S.json ] && git add japan/data/telegram/published/$S.json`(없는 경로를 앞 줄에 넣으면 `git add` 가 통째로 실패한다. 수집기 파일 `japan/data/telegram/$S.json` 은 올리지 않는다 — 워크플로 몫이다), 그다음 `git commit -m "Add JP daily [$S]" && git push`.
 4. push 가 거절되면 `git pull --rebase`. `japan/daily.json`·`sitemap.xml` 에서 충돌하면 **원격 판을 받고(`git checkout --ours <파일>` — rebase 중에는 `--ours` 가 upstream, `--theirs` 는 재적용 중인 로컬 커밋이다)** `python3 scripts/update_archives.py --kind jp-daily --key $S --title "<title>" --headline "<summary>"` 로 이 세션 항목만 다시 넣은 뒤 `git add` → `git rebase --continue` → 3 의 가드를 다시 하고 push. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
 5. 잠금 release, PushNotification 으로 `https://fdo2a.github.io/japan/daily/<S>.html`.
 

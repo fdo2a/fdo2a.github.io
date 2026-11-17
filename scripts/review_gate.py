@@ -1359,8 +1359,11 @@ def _period_ready(root, oid, items, errs):
 
 
 def _period_evidence(root, commit, item):
-    """발행 커밋에 있는 근거 파일만 — 없는 경로를 넘기면 git archive 가 통째로 실패한다."""
-    return tuple(p for p in kinds.evidence(item.section, kinds.key_of(item.path))
+    """발행 커밋에 있는 근거 파일만 — 없는 경로를 넘기면 git archive 가 통째로 실패한다.
+    있으면 꺼내는 근거(`kinds.optional_evidence`)도 여기서 함께 나간다 — 검토 프롬프트의 근거 목록,
+    문체 단계의 스냅샷, 게이트 재실행(`check_japan_daily.py --root`)이 같은 목록을 쓴다."""
+    key = kinds.key_of(item.path)
+    return tuple(p for p in kinds.evidence(item.section, key) + kinds.optional_evidence(item.section, key)
                  if rev_parse(root, f'{commit}:{p}'))
 
 

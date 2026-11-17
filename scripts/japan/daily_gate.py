@@ -8,12 +8,19 @@
 막는 것: complete 아님·세션/파일명 불일치·코어 값 없음, da 표식 없음, 미완 표식, 절 순서(코드가 정한
 `order()`), data-ref 불일치, 기준일이 다른 값의 날짜 누락, 「오늘 콜」·「오늘 JGB」(MOF 폴백일 때), 창작 수치, 예상·컨센서스 비교,
 주간 신호 어휘, 「지수 기여」, BOJ 크레디트 누락, 움직인 종목 문단, buy-side.
+
+「증권사 견해·시장 의견」 절(2026-11-15, 텔레그램 한 채널) — 내용은 `common.telegram_gate` (layout 'jp') 가
+그 항목의 요약과 대조한다. 여기서는 그 절이 **하나의 유효한 절**일 때에만(`views_node`, 뉴스 절 바로 뒤,
+`_SEC` 가 보는 범위와 글자 그대로 같음) 스냅샷 수치 검사·산문 검사에서 그 범위만 뺀다. 쓸 수 있는 파일이
+없는데 표식이 있으면 막는다(`tg_news.py strip` 으로 뺀다). 설계: docs/superpowers/specs/2026-11-15-telegram-japan-daily.md
 """
 import html as html_mod
 import math
 import re
 
 from common import movers as CM
+from common import telegram_gate as TG
+from common.numbers import strip_comments
 from japan import daily_render as R
 from japan.gate import _jo_eok, _text_figures
 from us.macro_gate import BANNED_LABELS
@@ -232,7 +239,33 @@ def _figures_of(fragment):
     return _text_figures(t)
 
 
-def check(html, snap, session, filename=None, news=None):
+def _views(html, tg, news, session, pairs):
+    """-> (위반, 검사에서 뺄 절의 원문 | None)."""
+    doc = strip_comments(html)
+    if tg is None:
+        # 단어 규칙은 파일이 없는 날에도 돈다 — 발행본에 「텔레그램」·채널 이름이 없다는 약속은 파일과
+        # 무관하고, US·KR 게이트도 파일 없이 같은 검사를 한다(구현 검토 1회 #6)
+        v = TG.word_violations(doc, jp=True)
+        node, got = TG.views_node(doc)
+        if node or got or TG.elements(doc) or re.search(r'\bdata-tg(?:-section)?\b', doc, re.I):
+            v.append(f'「{TG.NEWS_TITLE}」 절이나 data-tg 표식이 있는데 쓸 수 있는 텔레그램 파일이 없다 — '
+                     f'`python3 scripts/tg_news.py strip --html <파일>` 로 절을 뺀다')
+        return v, None
+    got = []
+    v = TG.check(html, tg, layout='jp', news=news, session=session, pairs=pairs, views=got)
+    if not got:
+        return v, None
+    src = got[0]['source']
+    secs = list(_SEC.finditer(html))
+    i = next((k for k, m in enumerate(secs) if m.group(1) == TG.VIEWS), None)
+    if (html.count(src) != 1 or i is None or i == 0 or secs[i].group(0) != src or secs[i - 1].group(1) != 'news'
+            or html[secs[i - 1].end():secs[i].start()].strip()):
+        return v + [f'「{TG.NEWS_TITLE}」 절이 제자리에 없다 — 일본 경제 뉴스 절 바로 뒤에, 주석 없이 한 번만 둔다'], None
+    return v, src
+
+
+def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
+    """`tg` = 쓸 수 있는(`usable`) 텔레그램 파일 내용 또는 None, `pairs` 는 (id, 문단, 요약)을 받는다."""
     v = []
     if not snap.get('complete'):
         v.append('스냅샷 complete 가 거짓이다 — 닛케이 공식 종가를 확인하지 못한 세션은 발행하지 않는다')
@@ -259,11 +292,18 @@ def check(html, snap, session, filename=None, news=None):
         if names.count(s) != 1:
             v.append(f'data-section="{s}" 절이 {names.count(s)}번 있다')
 
-    prose_secs = [(n, b) for n, b in found if n != 'news']
-    paras, movers = [], []
+    tg_v, exempt = _views(html, tg, news, session, pairs)
+    v += tg_v
+    prose_secs = [(n, b) for n, b in found if n != 'news' and not (n == TG.VIEWS and exempt)]
+    paras, movers, mover_src = [], [], []
     for _, b in prose_secs:
-        for attrs, inner in _P.findall(_TABLE.sub(' ', b)):
-            (movers if 'data-mover' in attrs else paras).append((attrs, inner))
+        for m in _P.finditer(_TABLE.sub(' ', b)):
+            attrs, inner = m.group(1), m.group(2)
+            if 'data-mover' in attrs:
+                movers.append((attrs, inner))
+                mover_src.append(m.group(0))
+            else:
+                paras.append((attrs, inner))
     head = re.search(r'<section class="card headline-card">(.*?)</section>', html, re.S)
     head_html = head.group(1) if head else ''
     for _, inner in _P.findall(head_html):
@@ -309,8 +349,14 @@ def check(html, snap, session, filename=None, news=None):
         return out
 
     # 뉴스 절과 움직인 종목 문단을 뺀 보이는 글 전부 — 머리 카드·소제목·표 포함(codex 구현 검토 #5)
-    rest = re.sub(r'<section\b[^>]*\bdata-section="news"[^>]*>.*?</section>', ' ', html, flags=re.S)
-    rest = re.sub(r'<p\b[^>]*\bdata-mover\b[^>]*>.*?</p>', ' ', rest, flags=re.S)
+    # 빼는 것은 **검사한 것만** — 견해·의견 절은 텔레그램 게이트가, 움직인 종목 문단은 아래에서 본 문단만.
+    # 그 밖의 자리에 data-mover 를 단 문단은 수치 검사를 피하는 구멍이었다(2026-11-15 설계 검토).
+    rest = html.replace(exempt, ' ', 1) if exempt else html
+    rest = re.sub(r'<section\b[^>]*\bdata-section="news"[^>]*>.*?</section>', ' ', rest, flags=re.S)
+    for src in mover_src:
+        rest = rest.replace(src, ' ', 1)
+    for inner in re.findall(r'<p\b[^>]*\bdata-mover\b[^>]*>(.*?)</p>', rest, flags=re.S):
+        v.append(f'움직인 종목 문단(data-mover)이 본문 절 밖에 있다 — 주식 절 등 산문 절 안에만 쓴다: 「{_plain(inner)[:40]}」')
     rest = re.sub(r'<(script|style|head)\b.*?</\1>', ' ', rest, flags=re.S)
     v += _invented(rest)
     # 움직인 종목 — 원인은 인용한 기사(data-cite) 요약에서만, 아니면 「확인된 재료 없음」(codex 구현 검토 #8)

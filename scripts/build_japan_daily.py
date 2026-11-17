@@ -30,6 +30,43 @@ def news_path(root, session):
     return Path(root) / 'japan' / 'data' / 'news' / 'daily' / f'{session}.json'
 
 
+def telegram_path(root, session):
+    """발행된 세션이면 발행 단계가 고정한 사본(없으면 없는 것), 아니면 수집기 파일.
+    발행 뒤에 수집기 파일이 바뀌어도 발행본의 근거는 달라지지 않는다."""
+    base = Path(root) / 'japan' / 'data' / 'telegram'
+    if (Path(root) / 'japan' / 'data' / 'daily' / f'{session}.json').exists():
+        return base / 'published' / f'{session}.json'
+    return base / f'{session}.json'
+
+
+def telegram_problem(data, session):
+    """쓸 수 없는 이유, 쓸 수 있으면 None. `usable: true` 가 유일한 스위치다."""
+    if not isinstance(data, dict) or not isinstance(data.get('items'), list):
+        return '형식이 다르다'
+    for it in data['items']:
+        if (not isinstance(it, dict) or not isinstance(it.get('id'), str) or not it['id']
+                or not isinstance(it.get('summary_ko'), (str, type(None)))):
+            return '형식이 다르다(항목이 id·요약 글자를 가진 객체가 아니다)'
+    if data.get('report_date') != session:
+        return f'report_date {data.get("report_date")} ≠ {session}'
+    if data.get('usable') is not True:
+        return 'usable 이 아니다(' + ' · '.join(data.get('unusable_why') or ['사유 미기록']) + ')'
+    return None
+
+
+def load_telegram(root, session):
+    """-> (쓸 수 있는 파일 내용 | None, 없는 것으로 본 이유 | None). 파일이 아예 없으면 (None, None)."""
+    p = telegram_path(root, session)
+    if not p.exists():
+        return None, None
+    try:
+        data = json.loads(p.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return None, f'{p} 를 읽지 못했다'
+    why = telegram_problem(data, session)
+    return (None, f'{p}: {why}') if why else (data, None)
+
+
 def _load(p):
     return json.loads(Path(p).read_text(encoding='utf-8'))
 
@@ -46,6 +83,14 @@ def cmd_diag(args):
     src = '네이버 당일' if R.jgb_source(d) == 'naver' else 'MOF 직전 세션'
     print(f'기준일 — JGB({src}) {", ".join(jgb) or "없음"} · 콜 {(d.get("call_rate") or {}).get("period")} · 엔 16:30 JST')
     print(f'뉴스 후보 {len(news.get("items") or [])}건 · 움직인 종목 묶음 {len(d["movers"]["groups"])}개')
+    tg, why = load_telegram(args.root, args.session)
+    if tg is None:
+        print(f'견해·의견: 없음({why or "파일 없음"})')
+    else:
+        n = sum(1 for it in tg['items'] if it.get('news_use') is True)
+        cut = (tg.get('stats') or {}).get('valve_dropped') or 0
+        print(f'견해·의견 후보 {n}건' + (f' — {telegram_path(args.root, args.session)}' if n else '')
+              + (f' (안전 한도로 {cut}건은 수집에서 빠졌다)' if cut else ''))
     bad = {k: v for k, v in d.get('fetch_status', {}).items() if v != 'ok'}
     for k, v in bad.items():
         print(f'  ! {k}: {v}')
