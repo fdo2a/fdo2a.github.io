@@ -20,6 +20,10 @@ changed_after_collect(`_collect_status.json` 의 해시와 다름).
   `pending`)으로 판정할 수 있는 조건은 적용일과 무관하게 지금부터 강제한다. 날짜 칸이 없는 자료(econ_indicators·intraday·
   kr_flows·kr_intraday·kr_econ·kr_top_value·kr_index_etf·kr_stance_eval·원문 txt)는 적용일 전에는 신선도를 확인할
   길이 없다 — 그 구멍을 닫는 것이 적용일이다.
+- **`EFFECTIVE` 가 None 인 동안 1a 는 완료가 아니다** — 빈 대상 목록(표시 없이 비면 「대상 없음이 확인되지 않음」 조건으로
+  남길 뿐 막지 않는다 — `unconfirmed_empty`), 날짜 칸 없는 자료의 신선도, 목록형·txt 자료의 수집 실패를 막지 못한다.
+- 적용일부터 수집 잡이 쓰는 gate 파일(produced_by collector·reference)은 `_collect_status.json` 에 항목과 sha256 이
+  있어야 한다(없으면 unstamped).
 - 판정할 수 없는 것은 정상으로 추정하지 않는다. 이 검사는 루틴이 자료·규칙을 직접 고치는 우회를 막지 않는다(권한 분리 단계).
 설계 docs/superpowers/specs/2026-11-17-input-health.md
 """
