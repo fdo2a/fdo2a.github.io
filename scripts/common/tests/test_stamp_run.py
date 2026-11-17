@@ -4,14 +4,12 @@
 `stamp_collect.py` 가 그 파일의 `collect`(ok)와 해시를 이번 실행의 장부에 다시 적었다 — 이번 수집 실패가 사라졌다.
 지금은 잡 시작의 `--begin` 이 시각을 적고, 끝의 stamp 가 그 뒤에 쓰이지 않은 파일을 `status: failed`·`run: failed`
 (옛 바이트는 `stale_copy`)로 적는다. 정당하게 다시 쓰지 않는 길(US 둘째 슬롯의 건너뜀, 동결된 텔레그램)은 단계 결과
-(`COLLECT_STEPS`)로 가른다.
+(`COLLECT_STEPS`)로 가른다. 워크플로 쪽 정적 확인은 `scripts/us/tests/test_stamp_workflow.py`(PyYAML 이 필요하다 —
+이 폴더는 PyYAML 없는 CI 잡에서도 돈다).
 """
 import datetime as dt
 import json
 import os
-
-import pytest
-import yaml
 
 import stamp_collect as S
 from common import collect_status as C
@@ -202,53 +200,6 @@ def test_sidecar_list_file_not_rewritten_is_failed_and_keeps_its_old_status(tmp_
     assert e['run'] == 'written' and e['status'] == 'ok' and e['collect_in'] == 'sidecar' and e['sha256']
 
 
-# ── 워크플로(정적 확인 — 실행해 보지 못한다) ───────────────────────────────
-
-WF = {'us': ('.github/workflows/collect-market-data.yml', 'collect', 'data'),
-      'kr': ('.github/workflows/collect-kr-data.yml', 'collect', 'kr/data')}
-
-
-def _steps(market):
-    path, job, _ = WF[market]
-    doc = yaml.safe_load(open(os.path.join(ROOT, path), encoding='utf-8'))
-    jobs = doc['jobs']
-    return jobs[job]['steps'] if job in jobs else next(
-        j['steps'] for j in jobs.values() if any('stamp_collect.py' in str(s.get('run')) for s in j['steps']))
-
-
-@pytest.mark.parametrize('market', ['us', 'kr'])
-def test_workflow_wires_begin_steps_and_stamp(market):
-    steps = _steps(market)
-    datadir = WF[market][2]
-    runs = [str(s.get('run') or '') for s in steps]
-    ids = {s['id'] for s in steps if 'id' in s}
-    assert set(S.STEP_OF[market].values()) <= ids, set(S.STEP_OF[market].values()) - ids
-    begin = next(i for i, r in enumerate(runs) if 'stamp_collect.py' in r and '--begin' in r)
-    stamp = next(i for i, r in enumerate(runs) if 'stamp_collect.py' in r and '--begin' not in r)
-    first_write = min(i for i, s in enumerate(steps) if s.get('id') in set(S.STEP_OF[market].values()))
-    assert begin < first_write < stamp
-    assert f'--datadir {datadir}' in runs[begin] and f'--datadir {datadir}' in runs[stamp]
-    assert steps[stamp]['env'][S.STEPS_ENV] == '${{ toJSON(steps) }}'
-    # 장부 갱신 실패는 조용히 넘어가지 않는다 — 자료 커밋은 그대로 하되 마지막에 실행을 실패로 끝낸다
-    assert steps[begin].get('id') == 'stamp_begin' and steps[stamp].get('id') == 'stamp'
-    last = steps[-1]
-    assert "steps.stamp.outcome == 'failure'" in last['if'] and "steps.stamp_begin.outcome == 'failure'" in last['if']
-    assert 'always()' in last['if'] and 'exit 1' in last['run'] and not last.get('continue-on-error')
-
-
-@pytest.mark.parametrize('market', ['us', 'kr'])
-def test_every_step_id_runs_the_script_that_writes_its_files(market):
-    by_id = {s['id']: str(s.get('run') or '') for s in _steps(market) if 'id' in s}
-    want = {'us': {'collect': 'collect_market_data.py', 'macro_eval': 'eval_macro_regime.py',
-                   'releases': 'fetch_releases.py --datadir data', 'fed': 'collect_fed_events.py',
-                   'calendar': 'build_calendar.py', 'auctions': 'build_auctions.py',
-                   'liquidity': 'build_liquidity.py', 'telegram': 'fetch_telegram.py'},
-            'kr': {'collect': 'collect_kr_data.py', 'telegram': 'fetch_telegram.py'}}[market]
-    for sid, script in want.items():
-        assert script in by_id[sid], (sid, by_id.get(sid))
-    assert set(want) == set(S.STEP_OF[market].values())
-
-
 def test_every_ledger_gate_file_is_run_tracked():
     """정책의 gate 자료 가운데 수집 잡이 쓰는 것(collector·reference)은 모두 이 판정의 대상이다 — 빠지면 적용일 뒤 막힌다."""
     import fnmatch
@@ -266,3 +217,20 @@ def test_every_ledger_gate_file_is_run_tracked():
                 continue
             producer = next((p for pat, p in S.REGISTRY[market].items() if p and fnmatch.fnmatchcase(rel, pat)), None)
             assert producer in S.STEP_OF[market], (market, e['path'])
+
+
+def test_frozen_file_clears_a_carried_failure_when_its_step_runs_again(tmp_path):
+    # 동결된 텔레그램 파일은 그날 다시 쓰이지 않는다 — 단계가 한 번 죽었다가 다음 실행에서 성공(동결)하면 풀려야 한다
+    us_first_run(tmp_path)
+    S.begin(str(tmp_path), now=T1)
+    skipped = {'collect': {'outcome': 'success', 'outputs': {'skipped': 'true'}}}
+    key = f'telegram/{RD}.json'
+    f = S.stamp(str(tmp_path), steps=dict(skipped, telegram={'outcome': 'failure'}))['files'][key]
+    assert f['run'] == 'failed'
+    first_response = f['response']
+    S.begin(str(tmp_path), now=T1 + dt.timedelta(minutes=30))
+    f = S.stamp(str(tmp_path), steps=dict(skipped, telegram={'outcome': 'skipped'}))['files'][key]
+    assert f['run'] == 'failed' and f['response'] == first_response          # 건너뛴 실행은 지우지 못한다, 사유는 그대로
+    S.begin(str(tmp_path), now=T1 + dt.timedelta(minutes=60))
+    f = S.stamp(str(tmp_path), steps=dict(skipped, telegram={'outcome': 'success'}))['files'][key]
+    assert f['run'] == 'kept' and f['status'] == 'ok' and f['sha256'] and 'stale_copy' not in f

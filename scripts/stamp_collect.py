@@ -162,14 +162,15 @@ def run_state(market, pat, rel, path, collected_at, run, steps):
     return 'failed', noted or f'단계 {step} 결과 {outcome or "모름"}, 파일은 다시 쓰이지 않았다'
 
 
-def _failed_entry(entry, why):
+def _failed_entry(entry, why, carried=None):
     """이번 수집 실패 — 남아 있는 옛 파일의 해시·상태는 `stale_copy` 로 따로 둔다(그 바이트가 「성공」이라 말해도
     이번 실행의 결과가 아니다). 최상위에 sha256 을 두지 않는다."""
     if entry.get('run') == 'failed' and isinstance(entry.get('stale_copy'), dict):
         return entry
     stale = {k: v for k, v in entry.items() if k not in ('present', 'run')}
+    # 물려받은 실패는 앞선 실행이 적은 사유를 그대로 둔다(다시 감싸면 실행마다 길어져 잘린다)
     return {'present': True, 'collect_in': entry.get('collect_in'), 'status': 'failed', 'run': 'failed',
-            'response': C.clean(f'이번 수집 실행에서 다시 쓰이지 않았다 — {why}'), 'stale_copy': stale}
+            'response': carried or C.clean(f'이번 수집 실행에서 다시 쓰이지 않았다 — {why}'), 'stale_copy': stale}
 
 
 def sha256(path):
@@ -240,7 +241,7 @@ def stamp(datadir, market=None, now=None, steps=None):
             pc = pc.get('collect') if isinstance(pc, dict) else None
             entry.update(_collect_fields(pc))
             entry['collect_in'] = f'producer:{producer}' if pc else 'none'
-            state, why = states.get(producer, ('untracked', None))
+            state, why, carried = states.get(producer, ('untracked', None, None))
         else:
             if rel.endswith('.json'):
                 body = _json(path)
@@ -258,12 +259,15 @@ def stamp(datadir, market=None, now=None, steps=None):
             else:
                 entry['collect_in'] = 'none'
             state, why = run_state(market, pat, rel, path, entry.get('collected_at'), run, steps)
-            if state in ('skipped', 'kept', 'unknown') and (old.get(rel) or {}).get('run') == 'failed':
-                # 앞선 실행의 실패는 이 파일이 실제로 다시 쓰일 때까지 남는다(건너뛴 실행이 지우지 않는다)
-                state, why = 'failed', (old[rel].get('response') or '앞선 실행의 수집 실패')
-            states[rel] = (state, why)
+            carried = None
+            if state in ('skipped', 'unknown') and (old.get(rel) or {}).get('run') == 'failed':
+                # 앞선 실행의 실패는 건너뛴(또는 판정할 수 없는) 실행이 지우지 못한다 — 그 단계가 다시 돌아야 풀린다.
+                # 단계가 성공하고 동결된 파일을 그대로 둔 것(kept)은 그 단계가 다시 돈 것이다 — 파일의 collect 가 다시 말한다
+                # (동결 파일은 그날 다시 쓰이지 않으므로, 여기서 실패를 물려주면 재수집으로도 풀 길이 없다).
+                state, carried = 'failed', (old[rel].get('response') or '앞선 실행의 수집 실패')
+            states[rel] = (state, why, carried)
         entry['run'] = state
-        files[rel] = _failed_entry(entry, why) if state == 'failed' else entry
+        files[rel] = _failed_entry(entry, why, carried) if state == 'failed' else entry
     checked = isinstance(run, dict) and run.get('open') is True and _parse(run.get('started_at')) is not None
     book = {'format': C.FORMAT, 'market': market, 'report_date': report_date,
             'stamped_at': C.now_iso(now),
