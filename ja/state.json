@@ -80,16 +80,16 @@
     "japan/data/news/daily/2026-11-12.json": "879da43d5bdd3a35a5c42649b9ddf8da7b58ad28",
     "japan/data/news/daily/2026-11-13.json": "b4980a1ec3912a9af019a695e6aeaeda61725a19",
     "japan/data/news/daily/2026-11-16.json": "ae8f073e188ebf4dc87bda11d4e45cf12a6f1380",
-    "link:posts/2026-11-16.html": "0",
+    "link:posts/2026-11-16.html": "1",
     "list:news.json": "b575ab1a3f728b39"
    },
    "reason": "",
    "renderer": "r2",
-   "rounds": 1,
+   "rounds": 2,
    "source_blob": "5527d8dd1dc12b5a7ec750e42ba98931d07bfdcf",
    "status": "published",
    "text_hash": "635fd19621794215",
-   "updated": "2026-11-17T11:18:19+09:00"
+   "updated": "2026-11-17T11:26:28+09:00"
   },
   "posts/2026-11-16.html": {
    "deps": {
@@ -129,13 +129,13 @@
     "japan/data/news/daily/2026-11-16.json": "ae8f073e188ebf4dc87bda11d4e45cf12a6f1380",
     "list:posts.json": "902665be9fd9f16d"
    },
-   "reason": "로그인 만료",
+   "reason": "",
    "renderer": "r2",
-   "rounds": 1,
+   "rounds": 2,
    "source_blob": "d81c252fdb84d8a7a29c90f7af9093236b722fe9",
-   "status": "pending",
+   "status": "published",
    "text_hash": "6417cf145a47d28d",
-   "updated": "2026-11-17T11:16:57+09:00"
+   "updated": "2026-11-17T11:26:28+09:00"
   }
  },
  "version": 1
