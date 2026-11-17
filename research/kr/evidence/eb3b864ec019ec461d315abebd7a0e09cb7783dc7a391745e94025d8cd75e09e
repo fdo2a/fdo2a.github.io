@@ -1,0 +1,460 @@
+{
+ "note": "kr/data commit d84feab (data: kr market data for 2026-11-17, 2026-11-17T09:14:53Z) 발췌. 수급은 Naver 투자자별 당일 잠정. 종목 종가는 kr_stock_moves.json(KRX 종가). 11-16 종목 종가는 수집 파일에 없음(빈 배열).",
+ "kr_market_data": {
+  "report_date": "2026-11-17",
+  "complete": true,
+  "missing": [
+   "flows_intraday"
+  ],
+  "indices": {
+   "KOSPI": {
+    "close": 4968.48,
+    "change_pct": -2.59
+   },
+   "KOSDAQ": {
+    "close": 650.06,
+    "change_pct": -2.34
+   }
+  },
+  "flows_date": {
+   "KOSPI": "2026-11-17",
+   "KOSDAQ": "2026-11-17"
+  },
+  "flows_provisional": {
+   "KOSPI": true,
+   "KOSDAQ": true
+  }
+ },
+ "kr_flows_latest3": {
+  "KOSPI": [
+   {
+    "date": "2026-11-17",
+    "individual": 4237,
+    "foreign": -14218,
+    "institution": 5223
+   },
+   {
+    "date": "2026-11-16",
+    "individual": 12904,
+    "foreign": -13287,
+    "institution": -4562
+   },
+   {
+    "date": "2026-11-13",
+    "individual": 145,
+    "foreign": -5419,
+    "institution": -59
+   }
+  ],
+  "KOSDAQ": [
+   {
+    "date": "2026-11-17",
+    "individual": 1107,
+    "foreign": -907,
+    "institution": -264
+   },
+   {
+    "date": "2026-11-16",
+    "individual": 3674,
+    "foreign": -2005,
+    "institution": -1535
+   },
+   {
+    "date": "2026-11-13",
+    "individual": -512,
+    "foreign": -806,
+    "institution": 1259
+   }
+  ]
+ },
+ "kr_econ": {
+  "국고채 3년": {
+   "value": 3.725,
+   "date": "2026-11-17",
+   "unit": "연%",
+   "item_name": "국고채(3년)",
+   "prev": 3.743,
+   "prev_date": "2026-11-16",
+   "bp": -1.8
+  },
+  "국고채 10년": {
+   "value": 3.966,
+   "date": "2026-11-17",
+   "unit": "연%",
+   "item_name": "국고채(10년)",
+   "prev": 3.981,
+   "prev_date": "2026-11-16",
+   "bp": -1.5
+  },
+  "CD 91일": {
+   "value": 3.38,
+   "date": "2026-11-17",
+   "unit": "연%",
+   "item_name": "CD(91일)",
+   "prev": 3.38,
+   "prev_date": "2026-11-16",
+   "bp": 0.0
+  },
+  "회사채 AA- 3년": {
+   "value": 4.402,
+   "date": "2026-11-17",
+   "unit": "연%",
+   "item_name": "회사채(3년, AA-)",
+   "prev": 4.416,
+   "prev_date": "2026-11-16",
+   "bp": -1.4
+  },
+  "한국은행 기준금리": {
+   "value": 3.0,
+   "date": "2026-10",
+   "unit": "연%",
+   "item_name": "한국은행 기준금리",
+   "prev": 3.0,
+   "prev_date": "2026-09",
+   "bp": 0.0
+  }
+ },
+ "kr_econ_expectations": {
+  "policy": {
+   "bp": 72.5,
+   "change_bp": -1.8,
+   "date": "2026-11-17"
+  },
+  "growth": {
+   "bp": 24.1,
+   "change_bp": 0.3,
+   "date": "2026-11-17"
+  },
+  "credit": {
+   "bp": 67.7,
+   "change_bp": 0.4,
+   "date": "2026-11-17"
+  }
+ },
+ "kr_session": {
+  "report_date": "2026-11-17",
+  "us_prev": {
+   "as_of": "2026-11-16",
+   "rows": {
+    "S&P 500": -1.92,
+    "Nasdaq": -2.49,
+    "Dow": -1.41
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": -0.24,
+    "bars": 13,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.06,
+    "bars": 13,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -1.34,
+    "항셍": -1.03,
+    "상해종합": -0.5,
+    "대만가권": -2.31
+   },
+   "dates": {
+    "닛케이": "2026-11-17",
+    "항셍": "2026-11-17",
+    "상해종합": "2026-11-17",
+    "대만가권": "2026-11-17"
+   },
+   "avg_pct": -1.29,
+   "relative_pp": -1.29
+  },
+  "usdkrw_intraday": {
+   "high": 1342.48,
+   "high_t": "10:00",
+   "low": 1334.3,
+   "low_t": "12:30",
+   "close": 1337.95,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "kr_movers": {
+  "report_date": "2026-11-17",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "반도체와반도체장비",
+    "direction": "down",
+    "reasons": [
+     "지수 기여 하위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "삼성전자",
+      "change_pct": -3.3,
+      "close": 190300,
+      "value": 3097843
+     },
+     {
+      "name": "SK하이닉스",
+      "change_pct": -1.96,
+      "close": 1098000,
+      "value": 4002532
+     },
+     {
+      "name": "삼성전자우",
+      "change_pct": -5.77,
+      "close": 152000,
+      "value": 812875
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "반도체와반도체장비",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위"
+    ],
+    "members": [
+     {
+      "name": "이수페타시스",
+      "change_pct": 2.82,
+      "close": 83800,
+      "value": 115884
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "제약",
+    "direction": "up",
+    "reasons": [
+     "지수 기여 상위"
+    ],
+    "members": [
+     {
+      "name": "삼성에피스홀딩스",
+      "change_pct": 1.54,
+      "close": 362000,
+      "value": 34988
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "전기장비",
+    "direction": "down",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "HD현대일렉트릭",
+      "change_pct": -5.61,
+      "close": 378500,
+      "value": 68729
+     },
+     {
+      "name": "효성중공업",
+      "change_pct": -5.57,
+      "close": 1646000,
+      "value": 62556
+     },
+     {
+      "name": "산일전기",
+      "change_pct": -8.04,
+      "close": 111000,
+      "value": 43448
+     }
+    ]
+   },
+   {
+    "id": "g5",
+    "industry": "기계",
+    "direction": "down",
+    "reasons": [
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "두산에너빌리티",
+      "change_pct": -5.12,
+      "close": 42600,
+      "value": 87364
+     }
+    ]
+   }
+  ]
+ },
+ "kr_intraday_ohlc": {
+  "KOSPI": {
+   "open": 5008.09,
+   "high": 5084.06,
+   "low": 4957.0,
+   "prevClose": 5100.5
+  },
+  "KOSDAQ": {
+   "open": 656.82,
+   "high": 665.79,
+   "low": 649.62,
+   "prevClose": 665.65
+  }
+ },
+ "kr_technical_kospi": {
+  "as_of": "2026-11-17",
+  "close": 4968.48,
+  "ma": {
+   "ma20": 5478.96,
+   "ma60": 6273.11,
+   "ma120": 6892.96
+  },
+  "ma_alignment": "역배열",
+  "disparity": {
+   "vs_ma20": -9.32,
+   "vs_ma60": -20.8,
+   "vs_ma120": -27.92
+  },
+  "bollinger": {
+   "upper": 6078.26,
+   "mid": 5478.96,
+   "lower": 4879.65,
+   "pct_b": 0.074,
+   "bandwidth": 0.2188
+  },
+  "ichimoku": {
+   "tenkan": 5248.87,
+   "kijun": 5554.87,
+   "senkou_a": 6743.6,
+   "senkou_b": 6239.7,
+   "cloud_top": 6743.6,
+   "cloud_bottom": 6239.7,
+   "price_vs_cloud": "below"
+  },
+  "chikou_above_price_26ago": false,
+  "swing": {
+   "high_20": 6100.11,
+   "low_20": 4911.28,
+   "high_60": 7171.52,
+   "low_60": 4911.28
+  }
+ },
+ "kr_stance_eval": {
+  "verdict": "무효화",
+  "prior_date": "2026-11-16",
+  "prior_exposure": "유지",
+  "prior_horizon": "다음 세션",
+  "prior_thesis": "엔비디아 실적(11월 18일 새벽)과 앤트로픽 상장(11월 19일)을 앞둔 첫 세션에서 코스피는 3.59% 내린 5,100.50에 마감했고 외국인은 1조3,287억원을 순매도했다(당일 잠정). 매도는 반도체·전자부품 대형주에 몰렸고 은행 11개 종목 가운데 10개가 올랐으며 국고채 금리는 내리고 회사채 금리차는 넓어지지 않았다. 이날 하락은 확인 일정을 앞두고 AI 하드웨어 대형주 노출을 먼저 줄인 위험 축소의 비중이 크다고 본다.",
+  "metric": "KOSPI",
+  "level": 5012.0,
+  "side": "below",
+  "observed": 4968.48,
+  "note": "KOSPI 종가 4,968.48 가 5,012.00 를 밑돌아 무효화 조건이 발동했다"
+ },
+ "kr_stock_moves_selected": [
+  {
+   "name": "SK하이닉스",
+   "change_pct": -1.96,
+   "close": 1098000,
+   "value": 4002532
+  },
+  {
+   "name": "삼성전자",
+   "change_pct": -3.3,
+   "close": 190300,
+   "value": 3097843
+  },
+  {
+   "name": "삼성전자우",
+   "change_pct": -5.77,
+   "close": 152000,
+   "value": 812875
+  },
+  {
+   "name": "삼성SDI",
+   "change_pct": -3.78,
+   "close": 445000,
+   "value": 221880
+  },
+  {
+   "name": "코리아써키트",
+   "change_pct": 1.12,
+   "close": 89900,
+   "value": 116391
+  },
+  {
+   "name": "이수페타시스",
+   "change_pct": 2.82,
+   "close": 83800,
+   "value": 115884
+  },
+  {
+   "name": "KB금융",
+   "change_pct": -2.97,
+   "close": 156800,
+   "value": 102612
+  },
+  {
+   "name": "두산에너빌리티",
+   "change_pct": -5.12,
+   "close": 42600,
+   "value": 87364
+  },
+  {
+   "name": "두산",
+   "change_pct": -6.72,
+   "close": 541000,
+   "value": 86191
+  },
+  {
+   "name": "LG에너지솔루션",
+   "change_pct": -4.08,
+   "close": 305500,
+   "value": 76072
+  },
+  {
+   "name": "대한항공",
+   "change_pct": 0.79,
+   "close": 31950,
+   "value": 73390
+  },
+  {
+   "name": "신한지주",
+   "change_pct": -3.53,
+   "close": 87500,
+   "value": 71099
+  },
+  {
+   "name": "HD현대일렉트릭",
+   "change_pct": -5.61,
+   "close": 378500,
+   "value": 68729
+  },
+  {
+   "name": "효성중공업",
+   "change_pct": -5.57,
+   "close": 1646000,
+   "value": 62556
+  },
+  {
+   "name": "산일전기",
+   "change_pct": -8.04,
+   "close": 111000,
+   "value": 43448
+  },
+  {
+   "name": "삼성에피스홀딩스",
+   "change_pct": 1.54,
+   "close": 362000,
+   "value": 34988
+  }
+ ],
+ "kr_industry_note": "kr_industry.json 전체는 정본 파일 참조"
+}
