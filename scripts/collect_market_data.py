@@ -1426,7 +1426,10 @@ def main():
         from us.movers_data import collect as collect_movers
         movers = collect_movers(report_date, _SSL)
     except Exception as e:
-        movers = {'report_date': report_date, 'groups': [], 'error': str(e)[:200]}
+        # 묶음 0개가 「움직인 종목 없음」으로 읽히면 안 된다 — error 와 collect failed 를 함께 적는다.
+        from common.movers import stamp as stamp_movers
+        movers = stamp_movers({'report_date': report_date, 'groups': [], 'error': str(e)[:200]},
+                              source='Wikipedia S&P 500 constituents + yfinance', checked=0, expected=0)
     json.dump(movers, open(os.path.join(args.outdir, 'movers.json'), 'w'),
               indent=2, ensure_ascii=False)
     print(f"movers: {len(movers.get('groups', []))} groups" + (f" ({movers['error']})" if movers.get('error') else ''))
