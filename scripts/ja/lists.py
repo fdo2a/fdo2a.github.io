@@ -1,6 +1,6 @@
 """일본어 목록 json — 한글 목록에서 일본어판이 나간 글만 남기고 제목·헤드라인·라벨을 일본어로 바꾼다.
 
-    python3 -m scripts.ja.lists          # ja/ 아래 다섯 파일을 다시 쓴다
+    python3 -m scripts.ja.lists          # ja/ 아래 세 파일을 다시 쓴다
 
 일본어 글의 이전·다음 이동과 목록 페이지(`ja/index.html`, `ja/japan/index.html`)가 이 파일을 읽는다.
 
@@ -13,8 +13,9 @@
 - 그 밖의 필드(`date`·`key`·`start_date`·`end_date`)는 그대로.
 - 결과에 한글이 한 자라도 남으면 `ValueError`.
 - 직렬화는 한글판 파일을 쓰는 코드와 같다: `json.dump(..., ensure_ascii=False, indent=2)`.
-  `posts.json`·`news.json`·`weekly.json` 은 `update_archives.py` 가 써서 끝 줄바꿈이 없고,
-  `japan/daily.json`(`publish_japan_daily._write_json`)·`japan/posts.json` 은 끝에 `\\n` 이 있다.
+  `posts.json`·`news.json` 은 `update_archives.py` 가 써서 끝 줄바꿈이 없고,
+  `japan/daily.json`(`publish_japan_daily._write_json`)은 끝에 `\\n` 이 있다.
+- 주간 목록(`weekly.json`·`japan/posts.json`)은 만들지 않는다 — 일본어판은 일간만이다(2026-11-17).
 """
 from __future__ import annotations
 
@@ -30,9 +31,7 @@ HANGUL = re.compile(r"[가-힣]")
 LISTS = (
     ("posts.json", "posts", ""),
     ("news.json", "news", ""),
-    ("weekly.json", "weekly", ""),
     ("japan/daily.json", "japan/daily", "\n"),
-    ("japan/posts.json", "japan/posts", "\n"),
 )
 TEXT_FIELDS = ("title", "headline", "label")
 LISTED = ("published", "notice")
@@ -83,7 +82,7 @@ def _read_list(path: Path):
 
 
 def build(root) -> dict:
-    """{relpath: text} — `ja/posts.json` 등 다섯 파일의 내용."""
+    """{relpath: text} — `ja/posts.json` 등 세 파일의 내용."""
     root = Path(root)
     ledger, _why = S.load_ledger(root)
     pages = ledger.get("pages") or {}
@@ -104,7 +103,7 @@ def build(root) -> dict:
 
 
 def write(root) -> list:
-    """다섯 파일을 쓰고, 바뀐 경로를 돌려준다."""
+    """세 파일을 쓰고, 바뀐 경로를 돌려준다."""
     root = Path(root)
     changed = []
     for rel, text in build(root).items():

@@ -213,16 +213,16 @@ def _tabs(page):
     return out
 
 
+# 2026-11-17: 일본어판은 일간만 — 주간 탭이 없다
 EMPTY = {
-    "ja/index.html": [("日次", ["まだレポートがありません。"]), ("週次", ["まだ週次レポートがありません。"]),
+    "ja/index.html": [("日次", ["まだレポートがありません。"]),
                       ("ニュース・産業", ["まだニュース・産業ブリーフがありません。"])],
-    "ja/japan/index.html": [("日次", ["まだ日次大引けブリーフがありません。"]), ("週次", ["まだ週次レポートがありません。"])],
+    "ja/japan/index.html": [("日次", ["まだ日次大引けブリーフがありません。"])],
 }
 
 
 # The repo's own lists stop being empty once the edition publishes — feed empty ones.
-NO_POSTS = {f"ja/{name}": [] for name in ("posts.json", "weekly.json", "news.json",
-                                          "japan/daily.json", "japan/posts.json")}
+NO_POSTS = {f"ja/{name}": [] for name in ("posts.json", "news.json", "japan/daily.json")}
 
 
 @pytest.mark.parametrize("width", [390, 1280])
@@ -233,6 +233,41 @@ def test_empty_lists_in_japanese_without_overflow(browser, rel, width):
     got = _tabs(page)
     assert [(t, e) for t, e, _ in got] == EMPTY[rel]
     assert all(sw == width for _, _, sw in got)
+    page.close()
+
+
+def test_weekly_fallback_count_is_exact_per_page():
+    # codex 2026-11-17 #4: 일본 목록의 「일간이 비면 주간」 폴백 꼴이 바뀌면 조용히 지나가지 않고 멈춘다
+    jp = src("japan/index.html")
+    old = "(await load('daily')).length ? 'daily' : 'weekly'"
+    assert jp.count(old) == 1 and src("index.html").count(old) == 0
+    with pytest.raises(SI.SiteError, match="주간 폴백 0개"):
+        SI.build_page(jp.replace(old, "(await load('daily')).length ? 'daily' : 'news'"), "japan/index.html")
+    with pytest.raises(SI.SiteError, match="주간 폴백 1개"):
+        SI.build_page(src("index.html").replace("</script>", f"\n  const first = {old};\n</script>", 1), "index.html")
+    for name, cut in (("주간 탭", 'data-span="weekly"'), ("주간 목록 원천", "weekly:")):
+        with pytest.raises(SI.SiteError, match=name):
+            SI.build_page(jp.replace(cut, cut.replace("weekly", "weeklyx"), 1), "japan/index.html")
+
+
+@pytest.mark.parametrize("rel", sorted(EMPTY))
+def test_no_weekly_tab_and_no_weekly_request(browser, rel):
+    """주간 목록을 부르지 않고, `?span=weekly` 로 와도 일간 탭이 열린다. 일본 목록은 일간이 비어도 일간에 머문다."""
+    for name in ("weekly.json", "japan/posts.json"):
+        assert not (ROOT / "ja" / name).exists()
+    asked, failed = [], []
+    page = _open(browser, rel, 1280, NO_POSTS)
+    page.on("request", lambda r: asked.append(r.url))
+    page.on("response", lambda r: failed.append(r.url) if r.status >= 400 else None)
+    page.goto(SITE + rel[:-len("index.html")] + "?span=weekly")
+    page.wait_for_timeout(400)
+    assert not page.query_selector('.subnav button[data-span="weekly"]')
+    assert page.evaluate("document.querySelector('.subnav button[data-span=\"daily\"]')"
+                         ".matches('[aria-selected=\"true\"], [aria-current=\"true\"]')")
+    assert page.evaluate("[...document.querySelectorAll('#list .empty')].map(e => e.textContent.trim())") \
+        == EMPTY[rel][0][1]
+    assert not [u for u in asked if "weekly.json" in u or u.endswith("/japan/posts.json")], asked
+    assert not failed, failed
     page.close()
 
 

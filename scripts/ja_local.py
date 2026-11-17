@@ -73,6 +73,9 @@ def cmd_build(argv) -> int:
     ap.add_argument("--no-review", action="store_true")
     ap.add_argument("--root", default=str(ROOT))
     a = ap.parse_args(argv)
+    if not runner.SCOPE.fullmatch(a.path):      # 러너와 같은 범위 — 주간·KR 은 일본어판에 없다
+        print(f"[ja] {a.path}: 일본어판 범위 밖 — {', '.join(runner.SCOPE_DIRS)} 의 날짜 글만 만든다", file=sys.stderr)
+        return 2
     root, out = Path(a.root), Path(a.out)
     side, why = state.load_sidecar(out, a.path)
     side_from = "out"

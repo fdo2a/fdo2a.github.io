@@ -38,13 +38,14 @@ JA_BASE = "https://fdo2a.github.io/ja/"
 JA_FONTS = "'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic'"
 DEFAULT_STACK = "-apple-system,BlinkMacSystemFont,sans-serif"
 
-OUT_OF_JA_DIRS = ("assets/", "kr/", "thesis/", "china/")
+# 주간(`weekly/`, `japan/posts/`)은 일본어판에 없다(2026-11-17) — 한글 글로 보낸다.
+OUT_OF_JA_DIRS = ("assets/", "kr/", "thesis/", "china/", "weekly/", "japan/posts/")
 OUT_OF_JA_FILES = ("about.html", "privacy.html")
 JA_ASSET = re.compile(r"^assets/yield_curve_[^/]*\.png$")
 URL_ATTRS = ("href", "src", "data-index", "data-news-index")
 _ABS = re.compile(r"[a-zA-Z][a-zA-Z0-9+.\-]*:|#|//|/")
-# 일본어판 범위의 글(목록 json 이 있는 다섯 갈래) — `pipeline.LIST_SOURCES` 와 같은 꼴.
-ARTICLE = re.compile(r"(?:posts|news|weekly|japan/daily|japan/posts)/[^/]+\.html")
+# 일본어판 범위의 글(목록 json 이 있는 세 갈래) — `pipeline.LIST_SOURCES` 와 같은 꼴.
+ARTICLE = re.compile(r"(?:posts|news|japan/daily)/[^/]+\.html")
 
 # script 안 한글 고정 문자열(정확히 일치하는 부분 문자열 → 일본어). 2026-11-14 실물 151편에는
 # ld+json 밖 script 에 한글이 없다(글 끝 이동 막대의 한글은 HTML 쪽이라 단위가 덮는다).

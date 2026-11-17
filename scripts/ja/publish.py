@@ -13,7 +13,7 @@
 3. 확인한 HEAD 위에 커밋 → 푸시. 거절되면 fetch 하고
    - 그 사이 일본어판 코드(`CODE_PATHS` — 일본어판이 불러 쓰는 공유 코드 포함)가 바뀌었으면 포기 — 옛 코드로 만든
      결과를 밀지 않는다.
-   - 한글 목록 다섯(`LIST_FILES`) 가운데 하나라도 바뀌었으면 포기 — 일본어 목록은 다섯 파일을 통째로 다시 만들므로,
+   - 한글 목록 셋(`LIST_FILES`) 가운데 하나라도 바뀌었으면 포기 — 일본어 목록은 세 파일을 통째로 다시 만들므로,
      이번 커밋에 들지 않은 글의 항목(삭제·제목 정정)도 낡는다. rebase 하지 않는다.
    - 이 커밋에 든 글마다 원본과 의존 파일을 origin/main 에서 다시 잰다(`expect`). 하나라도 다르면 **커밋 전체를
      포기**한다 — 그 글만 빼려면 원장·목록까지 되돌려야 해서다. 러너는 번역을 `cache_dir` 에 남겨 두므로 다음
@@ -37,7 +37,7 @@ CODE_PATHS = ("scripts/ja", "scripts/ja_local.py", "ja/config.json",
               "scripts/common/__init__.py", "scripts/common/analytics.py",
               "scripts/review/__init__.py", "scripts/review/runner.py", "scripts/review/queue.py",
               "scripts/review/kinds.py")
-LIST_FILES = ("posts.json", "news.json", "weekly.json", "japan/daily.json", "japan/posts.json")
+LIST_FILES = ("posts.json", "news.json", "japan/daily.json")
 LIST_PREFIX = "list:"
 
 

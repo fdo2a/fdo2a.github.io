@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="日本市場レポート — 東京市場の営業日夕方の大引けブリーフ（株式・JGB・円・マクロ・日本経済ニュース）と、BOJ・JGB・円・資金フローから金利正常化の持続性を点検する週次レポート。">
+<meta name="description" content="日本市場レポート — 東京市場の営業日夕方の大引けブリーフ（株式・JGB・円・マクロ・日本経済ニュース）。">
 <link rel="canonical" href="https://fdo2a.github.io/ja/japan/">
 <link rel="alternate" hreflang="ko" href="https://fdo2a.github.io/japan/">
 <link rel="alternate" hreflang="ja" href="https://fdo2a.github.io/ja/japan/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Japan Market — 日本市場 日次・週次">
-<meta property="og:description" content="東京市場の営業日夕方の日本市場大引けブリーフと、金利正常化を点検する週次レポート">
+<meta property="og:title" content="Japan Market — 日本市場 日次">
+<meta property="og:description" content="東京市場の営業日夕方の日本市場大引けブリーフ">
 <meta property="og:url" content="https://fdo2a.github.io/ja/japan/">
 <meta property="og:locale" content="ja_JP">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Blog","name":"Japan Market","url":"https://fdo2a.github.io/ja/japan/","description":"日本市場の日次大引けブリーフと週次レポート","inLanguage":"ja"}
+{"@context":"https://schema.org","@type":"Blog","name":"Japan Market","url":"https://fdo2a.github.io/ja/japan/","description":"日本市場の日次大引けブリーフ","inLanguage":"ja"}
 </script>
-<title>日本市場 — 日次マーケット・週次点検 | Japan Market</title>
+<title>日本市場 — 日次大引けブリーフ | Japan Market</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -136,16 +136,15 @@ html[lang="ja"] body { font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN',
   </nav>
   <header class="site">
     <span class="brand">Japan Market</span>
-    <span class="desc">日次・週次レポート</span>
+    <span class="desc">日次レポート</span>
   </header>
   <div class="intro">
-    東京市場の営業日の夕方にはその日の株式・JGB・円・マクロ・日本経済ニュースを大引けブリーフとして、週に一度は日本が金利正常化を続けられるかを BOJ → JGB → 円・資金フロー → 日本企業 の順に点検します。日本語版は韓国語版の翻訳のため、掲載が遅れることがあります。
-    <span class="small">日次：日経平均 225 · TOPIX-17業種 · JGB · コールレート · 円（16:30 JST）· 日本銀行の指標 · 経済ニュース  |  週次：日米金利差 · 対外債券売買 · 円の投機ポジション</span>
+    東京市場の営業日の夕方に、その日の株式・JGB・円・マクロ・日本経済ニュースを大引けブリーフとして掲載します。日本語版は韓国語版の翻訳のため、掲載が遅れることがあります。週次レポートは韓国語版のみです。
+    <span class="small">日次：日経平均 225 · TOPIX-17業種 · JGB · コールレート · 円（16:30 JST）· 日本銀行の指標 · 経済ニュース</span>
   </div>
   
   <nav class="subnav" aria-label="発行頻度">
     <button type="button" data-span="daily" aria-current="true">日次</button>
-    <button type="button" data-span="weekly" aria-current="false">週次</button>
   </nav>
   <h2 class="list-title">レポート一覧</h2>
   <div class="post-list" id="list">
@@ -164,7 +163,6 @@ html[lang="ja"] body { font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN',
   const days = ['日','月','火','水','木','金','土'];
   const SOURCES = {
     daily:   { file: 'daily.json',  dir: 'daily/',  empty: 'まだ日次大引けブリーフがありません。' },
-    weekly:  { file: 'posts.json',  dir: 'posts/',  empty: 'まだ週次レポートがありません。' }
   };
   const cache = {};
 
@@ -239,7 +237,7 @@ html[lang="ja"] body { font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN',
   });
 
   try {
-    const first = (await load('daily')).length ? 'daily' : 'weekly';
+    const first = 'daily';
     document.querySelectorAll('.subnav button')
       .forEach(b => b.setAttribute('aria-current', String(b.dataset.span === first)));
     await render(first);

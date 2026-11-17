@@ -193,6 +193,24 @@ def test_live_links_to_unpublished_articles_go_korean():
     assert rw("../news/x.html", "news/2026-11-13.html", set(), "data-index") == "../news/x.html"
 
 
+@pytest.mark.parametrize("live", [None, set(), {"weekly/2026-W46.html", "japan/posts/2026-W46.html"}])
+def test_links_to_weeklies_always_go_to_the_korean_page(live):
+    # 2026-11-17: 주간은 일본어판에 없다 — 발행 집합(live)을 주든 안 주든 한글 글로 보낸다(안 그러면 ja/weekly/ 404)
+    rw = A.rewrite_relative
+    assert rw("../weekly/2026-W46.html", "posts/2026-11-16.html", live) == "../../weekly/2026-W46.html"
+    assert rw("../weekly/2026-W46.html#x", "news/2026-11-16.html", live) == "../../weekly/2026-W46.html#x"
+    assert rw("../posts/2026-W46.html", "japan/daily/2026-11-16.html", live) == "../../../japan/posts/2026-W46.html"
+    assert rw("../../weekly/", "japan/daily/2026-11-16.html", live) == "../../../weekly/"
+    assert rw("../daily/2026-11-13.html", "japan/daily/2026-11-16.html", {"japan/daily/2026-11-13.html"}) \
+        == "../daily/2026-11-13.html"                                   # 일본 일간끼리는 그대로
+
+
+def test_weeklies_are_not_link_targets():
+    html = ('<a href="../weekly/2026-W46.html">w</a><a href="../japan/posts/2026-W46.html">jw</a>'
+            '<a href="../posts/2026-11-13.html">a</a>')
+    assert A.link_targets(html, "news/2026-11-13.html") == ["posts/2026-11-13.html"]
+
+
 def test_link_targets():
     html = ('<a href="../posts/2026-11-13.html">a</a><a href="2026-11-13.html">self</a>'
             '<a href="../posts.json">l</a><a href="../kr/posts/2026-11-13.html">kr</a>'

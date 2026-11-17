@@ -69,6 +69,17 @@ def test_exception_still_reports(tmp_path, fakes):
     assert rep["status"] == "error" and "FileNotFoundError" in rep["reason"]
 
 
+@pytest.mark.parametrize("path", ["weekly/2026-W46.html", "japan/posts/2026-W46.html", "kr/posts/2026-11-13.html"])
+def test_build_refuses_paths_outside_the_edition(tmp_path, monkeypatch, capsys, path):
+    # codex 2026-11-17 #1: 손 명령도 러너와 같은 범위 — 주간은 번역하지 않는다(모델을 부르기 전에 멈춘다)
+    def boom(*a, **k):
+        raise AssertionError("build_page 를 불렀다")
+    monkeypatch.setattr(L.pipeline, "build_page", boom)
+    out = tmp_path / "out"
+    assert L.main(["build", path, "--out", str(out), "--root", str(tmp_path)]) == 2
+    assert "범위 밖" in capsys.readouterr().err and not out.exists()
+
+
 def test_usage():
     assert L.main([]) == 2 and L.main(["nope"]) == 2
     assert set(L.COMMANDS) == {"build", "run", "status", "retry"}

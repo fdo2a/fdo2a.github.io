@@ -48,10 +48,13 @@ from . import assemble, chart, lists, news, pipeline, publish, state
 from . import translate as T
 
 KST = timezone(timedelta(hours=9))
-SCOPE = re.compile(r"(?:posts|news|weekly|japan/daily|japan/posts)/(?:\d{4}-\d{2}-\d{2}|\d{4}-W\d{2})\.html")
-SCOPE_DIRS = ("posts", "news", "weekly", "japan/daily", "japan/posts")
-# 같은 날이면 링크 대상이 먼저 — news 는 그날 posts 를, weekly 는 일간을 가리킨다
-RANK = {"posts": 0, "japan/daily": 1, "japan/posts": 2, "weekly": 3, "news": 4}
+# 일간만 — 주간(`weekly/`, `japan/posts/`)은 일본어판에 없다(2026-11-17 사용자 결정). 주간으로 가는 링크는
+# `assemble.OUT_OF_JA_DIRS` 가 한글 글로 보낸다. 범위를 바꾸면 `lists.LISTS`·`pipeline.LIST_SOURCES`·
+# `assemble.ARTICLE`·`site` 의 탭 정리를 함께 바꾼다.
+SCOPE = re.compile(r"(?:posts|news|japan/daily)/\d{4}-\d{2}-\d{2}\.html")
+SCOPE_DIRS = ("posts", "news", "japan/daily")
+# 같은 날이면 링크 대상이 먼저 — news 는 그날 posts 를 가리킨다
+RANK = {"posts": 0, "japan/daily": 1, "news": 4}
 CHART_SRC = re.compile(r"assets/yield_curve_(\d{4}-\d{2}-\d{2})\.png")
 MAIN = ("source_blob", "text_hash", "deps", "renderer")
 LIVE = ("published", "notice")
@@ -1005,7 +1008,9 @@ class _Tick:
             if a.is_file():
                 a.unlink()
         self.ledger["pages"].pop(path, None)
-        self.touched[path] = {path: ""}
+        # 기대값은 지금 사본에서 잰 원본 — 원본이 지워졌으면 "", 범위에서 빠졌을 뿐이면(주간) 그 blob.
+        # ""로 고정하면 푸시가 거절돼 다시 잴 때 남아 있는 원본과 어긋나 tick 전체를 포기한다.
+        self.touched[path] = {path: publish.current(self.clone, "HEAD", path, path)}
         if self.attempts.pop(path, None) is not None:
             self.loc.put("attempts.json", self.attempts)
         if self.tm_path(path).is_file():

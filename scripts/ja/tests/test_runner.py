@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta, timezone
 import pytest
 
 from scripts.ja import assemble as A
+from scripts.ja import publish as PB
 from scripts.ja import runner as R
 from scripts.ja.review import ReviewFailed
 from scripts.ja.tests.test_pipeline import FR, FT, HTML, NEWS, PATH, TITLE, HEAD, fake_ja, no_call
@@ -168,6 +169,26 @@ def test_start_cut_uses_week_end_for_weeklies():
     assert not R.eligible("weekly/2026-W45.html", s)
     assert not R.eligible("posts/2026-11-14.html", s) and R.eligible("posts/2026-11-15.html", s)
     assert not R.eligible("posts/2026-11-15.html", None)
+
+
+def test_weeklies_are_out_of_scope(env):
+    # 2026-11-17 사용자 결정: 일본어판은 일간만(미국 일간·뉴스, 일본 일간). start 가 그 주보다 앞서도 주간은 고르지 않는다.
+    for path in ("weekly/2026-W46.html", "japan/posts/2026-W46.html"):
+        assert not R.SCOPE.fullmatch(path)
+    for path in (POST, "news/2026-11-13.html", PATH):
+        assert R.SCOPE.fullmatch(path)
+    assert "weekly" not in R.SCOPE_DIRS and "japan/posts" not in R.SCOPE_DIRS
+    row = [{"key": "2026-W46", "title": "주간", "headline": "주간 머리"}]
+    commit(env["work"], {"weekly/2026-W46.html": HTML, "japan/posts/2026-W46.html": HTML,
+                         "weekly.json": json.dumps(row, ensure_ascii=False),
+                         "japan/posts.json": json.dumps(row, ensure_ascii=False)})
+    clone = fresh_clone(env)
+    assert set(R.scope_tree(clone)) == {PATH}
+    rep, _ = run(env, clone=clone, c=cfg(start=date(2026, 11, 1)))
+    assert set(rep.pages) == {PATH}, rep
+    assert remote_show(env, "ja/weekly/2026-W46.html") is None
+    assert remote_show(env, "ja/japan/posts/2026-W46.html") is None
+    assert remote_show(env, "ja/weekly.json") is None and remote_show(env, "ja/japan/posts.json") is None
 
 
 # ── 꺼짐·잠금 ─────────────────────────────────────────────────────────────
@@ -413,6 +434,35 @@ def test_deleted_source_removes_japanese_page(env):
     assert rep.pages == {PATH: "deleted"}
     assert remote_show(env, "ja/" + PATH) is None and remote_show(env, "ja/_tm/" + PATH + ".json") is None
     assert PATH not in remote_ledger(env) and json.loads(remote_show(env, "ja/japan/daily.json")) == []
+
+
+def test_out_of_scope_ledger_page_expects_the_source_it_still_has(env, monkeypatch):
+    # codex 2026-11-17 #2: 범위에서 빠진 글(주간)은 원본이 남아 있다 — 「원본 삭제」로 기대값을 적으면 푸시가 거절돼
+    # 다시 잴 때 어긋나 같은 tick 의 일간 변경까지 포기한다.
+    weekly = "weekly/2026-W46.html"
+    led = {"version": 1, "pages": {weekly: {"status": "published", "renderer": A.RENDERER}}}
+    commit(env["work"], {weekly: HTML, "ja/" + weekly: "<html lang=\"ja\"></html>",
+                         "ja/state.json": json.dumps(led)})
+    blob = git(env["work"], "rev-parse", f"HEAD:{weekly}")
+    seen = {}
+
+    def fake_push(clone, **k):
+        seen.update(k["expect"])
+        return "pushed"
+    monkeypatch.setattr(PB, "push", fake_push)
+    rep, clone = run(env)
+    assert rep.pages[weekly] == "deleted" and not (clone / "ja" / weekly).exists()
+    assert seen[weekly] == {weekly: blob}
+    assert PB.changed_pages(clone, "HEAD", {weekly: seen[weekly]}) == []
+
+
+def test_deleted_source_expects_no_source(env, monkeypatch):
+    run(env)
+    commit(env["work"], {"japan/daily.json": "[]"}, rm=[PATH])
+    seen = {}
+    monkeypatch.setattr(PB, "push", lambda clone, **k: seen.update(k["expect"]) or "pushed")
+    run(env, ft=no_call, fr=no_call)
+    assert seen[PATH] == {PATH: ""}
 
 
 def test_abandoned_push_is_redone_without_model(env, monkeypatch):

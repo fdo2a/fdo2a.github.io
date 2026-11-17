@@ -12,8 +12,8 @@ POSTS = [
     {"date": "2026-11-12", "title": "미국 증시 마감 시황 — 나", "headline": "헤드 나"},
     {"date": "2026-11-11", "title": "미국 증시 마감 시황 — 다", "headline": "헤드 다"},
 ]
-WEEKLY_JP = [{"key": "2026-W45", "title": "일본 시장 주간 — 라", "headline": "헤드 라",
-              "start_date": "2026-11-02", "end_date": "2026-11-06", "label": "2026년 11월 2일~6일"}]
+DAILY_JP = [{"date": "2026-11-06", "title": "일본 시장 마감 — 라", "headline": "헤드 라",
+             "session": "2026-11-06", "label": "2026년 11월 6일"}]
 
 
 def _put(root, rel, obj):
@@ -35,15 +35,15 @@ def _ledger(root, **pages):
 @pytest.fixture()
 def root(tmp_path):
     _put(tmp_path, "posts.json", POSTS)
-    _put(tmp_path, "japan/posts.json", WEEKLY_JP)
+    _put(tmp_path, "japan/daily.json", DAILY_JP)
     return tmp_path
 
 
-def test_empty_ledger_gives_five_empty_lists(root):
+def test_empty_ledger_gives_three_empty_lists(root):
+    # 2026-11-17: 주간(weekly.json·japan/posts.json)은 일본어판 목록에 없다
     out = L.build(root)
-    assert sorted(out) == ["ja/japan/daily.json", "ja/japan/posts.json", "ja/news.json",
-                           "ja/posts.json", "ja/weekly.json"]
-    assert out["ja/posts.json"] == "[]" and out["ja/japan/posts.json"] == "[]\n"
+    assert sorted(out) == ["ja/japan/daily.json", "ja/news.json", "ja/posts.json"]
+    assert out["ja/posts.json"] == "[]" and out["ja/japan/daily.json"] == "[]\n"
     assert all(json.loads(t) == [] for t in out.values())
 
 
@@ -72,15 +72,14 @@ def test_stale_or_missing_sidecar_field_drops_the_item(root):
 
 
 def test_label_is_translated_and_other_fields_kept(root):
-    _ledger(root, **{"japan/posts/2026-W45.html": "published"})
-    _side(root, "japan/posts/2026-W45.html",
-          {"title": "일본 시장 주간 — 라", "headline": "헤드 라", "label": "2026년 11월 2일~6일"},
-          {"title": "日本市場週次", "headline": "見出し", "label": "2026年11月2日〜6日"})
-    text = L.build(root)["ja/japan/posts.json"]
+    _ledger(root, **{"japan/daily/2026-11-06.html": "published"})
+    _side(root, "japan/daily/2026-11-06.html",
+          {"title": "일본 시장 마감 — 라", "headline": "헤드 라", "label": "2026년 11월 6일"},
+          {"title": "日本市場大引け", "headline": "見出し", "label": "2026年11月6日"})
+    text = L.build(root)["ja/japan/daily.json"]
     assert text.endswith("]\n")
-    assert json.loads(text) == [{"key": "2026-W45", "title": "日本市場週次", "headline": "見出し",
-                                 "start_date": "2026-11-02", "end_date": "2026-11-06",
-                                 "label": "2026年11月2日〜6日"}]
+    assert json.loads(text) == [{"date": "2026-11-06", "title": "日本市場大引け", "headline": "見出し",
+                                 "session": "2026-11-06", "label": "2026年11月6日"}]
 
 
 def test_empty_and_hangul_free_values_need_no_sidecar_entry(root):
@@ -103,7 +102,7 @@ def test_hangul_left_in_result_raises(root):
 
 
 def test_serialization_matches_the_korean_writers():
-    """한글판 다섯 파일이 `dumps(rows, tail)` 로 바이트까지 다시 써진다 — 일본어판도 같은 방식."""
+    """한글판 세 파일이 `dumps(rows, tail)` 로 바이트까지 다시 써진다 — 일본어판도 같은 방식."""
     for rel, _folder, tail in L.LISTS:
         raw = (ROOT / rel).read_text(encoding="utf-8")
         assert L.dumps(json.loads(raw), tail) == raw, rel
@@ -116,11 +115,11 @@ def test_page_of_follows_the_index_order():
 
 
 def test_repo_files_are_what_build_gives():
-    """레포에 남긴 `ja/` 목록 다섯 개가 지금 원장으로 다시 만든 것과 같다."""
+    """레포에 남긴 `ja/` 목록 세 개가 지금 원장으로 다시 만든 것과 같다."""
     for rel, text in L.build(ROOT).items():
         assert (ROOT / rel).read_text(encoding="utf-8") == text, rel
 
 
 def test_write_is_idempotent(root):
-    assert len(L.write(root)) == 5
+    assert len(L.write(root)) == 3
     assert L.write(root) == []

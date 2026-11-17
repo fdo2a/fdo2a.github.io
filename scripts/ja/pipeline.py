@@ -63,9 +63,7 @@ KO_BASE = "https://fdo2a.github.io/"
 LIST_SOURCES = (
     (re.compile(r"posts/[^/]+\.html"), "posts.json"),
     (re.compile(r"news/[^/]+\.html"), "news.json"),
-    (re.compile(r"weekly/[^/]+\.html"), "weekly.json"),
     (re.compile(r"japan/daily/[^/]+\.html"), "japan/daily.json"),
-    (re.compile(r"japan/posts/[^/]+\.html"), "japan/posts.json"),
 )
 LIST_FIELDS = ("title", "headline", "label")
 

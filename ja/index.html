@@ -144,12 +144,11 @@ html[lang="ja"] body { font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN',
     <span class="desc">戦略モーニングブリーフ</span>
   </header>
   <div class="intro">
-    米国市場の営業日の翌朝（火〜土 9:00 JST）、前営業日の市場をまとめたモーニングブリーフを掲載します。日本語版は韓国語版の翻訳のため、掲載が遅れることがあります。
+    米国市場の営業日の翌朝（火〜土 9:00 JST）、前営業日の市場をまとめたモーニングブリーフを掲載します。日本語版は韓国語版の翻訳のため、掲載が遅れることがあります。週次レポートは韓国語版のみです。
     <span class="small">株価指数・セクター · 債券 · 為替 · 商品 · マクロ · 経済指標と市場予想 — ニュースとメモリ/DRAM · AIインフラ · MLCC は「ニュース・産業」タブ</span>
   </div>
   <nav class="subnav" role="tablist" aria-label="発行頻度">
     <button type="button" role="tab" aria-controls="list" data-span="daily" aria-selected="true">日次</button>
-    <button type="button" role="tab" aria-controls="list" data-span="weekly" aria-selected="false">週次</button>
     <button type="button" role="tab" aria-controls="list" data-span="news" aria-selected="false">ニュース・産業</button>
   </nav>
   <h2 class="list-title">レポート一覧</h2>
@@ -168,7 +167,6 @@ html[lang="ja"] body { font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN',
   const days = ['日','月','火','水','木','金','土'];
   const SOURCES = {
     daily:   { file: 'posts.json',   dir: 'posts/',   empty: 'まだレポートがありません。' },
-    weekly:  { file: 'weekly.json',  dir: 'weekly/',  empty: 'まだ週次レポートがありません。' },
     news:    { file: 'news.json',    dir: 'news/',    empty: 'まだニュース・産業ブリーフがありません。' }
   };
   const cache = {};
