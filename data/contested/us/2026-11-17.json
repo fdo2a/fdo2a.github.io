@@ -1,0 +1,102 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-17",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 0,
+ "collected_at": "2026-11-17T23:13:25+00:00",
+ "cutoff_at": "2026-11-17T23:13:25+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "299cb5b1a0acc332fec2de70a8804f8c4cab4664",
+  "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
+ },
+ "counts": {
+  "harvest": 206,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "tokens": {
+   "in": 43174,
+   "out": 11591
+  },
+  "discovery": "throttled",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "throttled",
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "2/2",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "memo[0]",
+    "memo[2]",
+    "structure",
+    "variables[2]",
+    "worry.most[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:dangling",
+    "variables[2]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "edges[1]:dangling",
+    "memo[0]:unverified",
+    "memo[0]:dangling",
+    "memo[2]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling"
+   ]
+  },
+  "attempt_refunded": "discovery_throttled"
+ },
+ "event": {
+  "topic_ko": "젠슨 황 사임 이후 엔비디아 CEO 복귀 논란과 메가스피드 수출통제 의혹",
+  "query": "nvidia huang chip",
+  "trigger": []
+ },
+ "problems": [
+  "structure:dangling",
+  "variables[2]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[1]:dangling",
+  "memo[0]:unverified",
+  "memo[0]:dangling",
+  "memo[2]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling"
+ ],
+ "content_hash": "a2da31d97dc05015"
+}
