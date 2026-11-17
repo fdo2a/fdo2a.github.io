@@ -132,13 +132,13 @@
     "japan/data/news/daily/2026-11-16.json": "ae8f073e188ebf4dc87bda11d4e45cf12a6f1380",
     "list:posts.json": "902665be9fd9f16d"
    },
-   "reason": "",
+   "reason": "대기",
    "renderer": "r2",
-   "rounds": 4,
+   "rounds": 5,
    "source_blob": "d81c252fdb84d8a7a29c90f7af9093236b722fe9",
-   "status": "published",
+   "status": "notice",
    "text_hash": "6417cf145a47d28d",
-   "updated": "2026-11-17T17:04:54+09:00"
+   "updated": "2026-11-17T20:36:48+09:00"
   }
  },
  "version": 1
