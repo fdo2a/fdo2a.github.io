@@ -157,3 +157,62 @@ def test_f1_check_movers_exits_2_on_absent_or_non_list_groups(tmp_path, bad):
     put(d, 'movers.json', bad)
     assert _run('check_movers.py', tmp_path, '--datadir', str(d)).returncode == 2
 
+
+# ── F4. 옛 종목 근거 — 고유 종목·유한한 측정값만 센다 ─────────────────────────────────────────
+
+KR_MOVERS = {'path': '<datadir>/kr_movers.json', 'class': 'gate', 'name': 'KR 움직인 종목', 'date': 'report_date',
+             'target': 'groups'}
+KR_MOVES = {'path': '<datadir>/kr_stock_moves.json', 'class': 'writer', 'name': 'KR 개별주 등락', 'risk': 'x',
+            'covered_by': None}
+
+
+def kr_na():
+    return next(g for g in GATES['markets']['kr']['gates'] if g['name'] == 'check_movers')['na_when']
+
+
+def _legacy_na(tmp_path, rows, spec=None):
+    pol = policy([KR_MOVERS, KR_MOVES], market='kr')
+    put(tmp_path, 'kr_movers.json', {'report_date': D, 'groups': []})
+    put(tmp_path, 'kr_stock_moves.json', rows if isinstance(rows, str) else json.dumps(rows))
+    return I.na_when(I.assess(pol, 'kr', ctx(tmp_path)), spec or kr_na())
+
+
+def test_f4_legacy_evidence_counts_unique_measured_stocks_only(tmp_path, monkeypatch):
+    from common import movers as M
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    n = M.LEGACY_MIN_ITEMS
+    good = [{'name': f's{i}', 'change_pct': 0.1 * i, 'date': D} for i in range(n)]
+    assert _legacy_na(tmp_path, good) == (True, 'legacy')
+    # codex 재현: 그날 날짜만 든 같은 객체 n 개 — 전에는 (True, 'legacy')
+    assert _legacy_na(tmp_path, [{'date': D}] * n) == (False, None)
+    assert _legacy_na(tmp_path, [{'name': 's0', 'change_pct': 1.0, 'date': D}] * n) == (False, None)   # 같은 종목
+    assert _legacy_na(tmp_path, good[:-1] + [dict(good[0])]) == (False, None)            # 고유 종목이 하나 모자라다
+    assert _legacy_na(tmp_path, good + [dict(good[0])]) == (True, 'legacy')              # 중복은 한 번만 센다
+    for badv in (None, 'x', True, '1.0'):
+        assert _legacy_na(tmp_path, good[:-1] + [dict(good[-1], change_pct=badv)]) == (False, None), badv
+    assert _legacy_na(tmp_path, good[:-1] + [{'change_pct': 1.0, 'date': D}]) == (False, None)        # 이름 없음
+    assert _legacy_na(tmp_path, good[:-1] + [dict(good[-1], name='')]) == (False, None)
+    # NaN·무한대 — json 은 읽지만 측정값이 아니다
+    raw = json.dumps(good[:-1])[:-1] + ', {"name": "nan", "change_pct": NaN, "date": "%s"}]' % D
+    assert _legacy_na(tmp_path, raw) == (False, None)
+    raw = json.dumps(good[:-1])[:-1] + ', {"name": "inf", "change_pct": Infinity, "date": "%s"}]' % D
+    assert _legacy_na(tmp_path, raw) == (False, None)
+
+
+def test_f4_legacy_evidence_spec_must_name_the_id_and_value_fields(tmp_path, monkeypatch):
+    from common import movers as M
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    ev = kr_na()['legacy_evidence']
+    assert ev['id_field'] == 'name' and ev['value_field'] == 'change_pct'      # kr.etf_normalize.krx_changes 의 행
+    good = [{'name': f's{i}', 'change_pct': 0.1, 'date': D} for i in range(M.LEGACY_MIN_ITEMS)]
+    for drop in ('id_field', 'value_field'):
+        spec = dict(kr_na(), legacy_evidence={k: v for k, v in ev.items() if k != drop})
+        assert _legacy_na(tmp_path, good, spec) == (False, None), drop
+
+
+def test_f4_krx_changes_rows_carry_the_fields_the_policy_names():
+    from kr import etf_normalize as E
+    rows = E.krx_changes([{'name': '삼성전자', 'code': '005930', 'value': 1}],
+                         {'005930': [('2026-11-13', 100.0), (D, 101.0)]}, D)
+    ev = kr_na()['legacy_evidence']
+    assert rows and all(ev['id_field'] in r and ev['value_field'] in r for r in rows)

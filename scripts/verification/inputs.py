@@ -511,7 +511,8 @@ def na_when(health, spec):
     실제로 잰 종목이 있다, `min_coverage` 가 있으면 `checked ≥ ⌈min_coverage × expected⌉` — 수집기와 같은 기준),
     'legacy' = 적용일 전, 수집 상태 표시가 없고 옛 칸이 다 정상이며 지정 목록이 비었고 **독립 근거**
     (`legacy_evidence`)가 있는 경우: 근거 목록이 `min_items`(모집단 × MIN_COVERAGE, `common.movers.LEGACY_MIN_ITEMS`)
-    행 이상이고 **행마다 `date_field` 가 발행일**이다. 근거를 정하지 않았거나, 한 종목만 쟀거나, 날짜를 입증할 수
+    행 이상이고 **행마다 `date_field` 가 발행일**이며, `id_field`(종목)가 있고 `value_field`(등락)가 유한한
+    **고유 종목**이 `min_items` 이상이다(2회차 F4). 근거를 정하지 않았거나, 한 종목만 쟀거나, 날짜를 입증할 수
     없으면 legacy na 는 없다 — 미완료(2026-11-17, KR 11/16 은 종목을 하나도 재지 못한 날이었고, 1a 구현 검토 #1 은
     한 종목만 잰 날도 「해당 없음」이 되는 것을 찾았다). 지금 `kr_stock_moves.json` 의 행에는 날짜가 없어 KR 의
     옛 방식 na 는 나오지 않는다 — 적용일 뒤의 수집 상태(`collect`)로만 na 가 된다."""
@@ -552,7 +553,19 @@ def na_when(health, spec):
     df = ev.get('date_field')
     if not isinstance(df, str) or not all(isinstance(r, dict) and r.get(df) == health.get('date') for r in proof):
         return False, None
+    # 「쟀다」는 것도 자료가 말해야 한다 — 종목 식별자가 있고 등락 수치가 유한한 행만, 같은 종목은 한 번만 센다
+    # (1a 구현 검토 2회차 F4: 그날 날짜만 든 같은 객체 54개가 근거로 통했다). 칸 이름을 정하지 않았으면 근거가 없다.
+    idf, vf = ev.get('id_field'), ev.get('value_field')
+    if not isinstance(idf, str) or not isinstance(vf, str):
+        return False, None
+    measured = {r[idf] for r in proof if isinstance(r.get(idf), str) and r[idf].strip() and _finite(r.get(vf))}
+    if len(measured) < need:
+        return False, None
     return True, 'legacy'
+
+
+def _finite(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
 
 
 def _int(x):

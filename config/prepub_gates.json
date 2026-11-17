@@ -439,7 +439,9 @@
         "module": "common.movers",
         "attr": "LEGACY_MIN_ITEMS"
        },
-       "date_field": "date"
+       "date_field": "date",
+       "id_field": "name",
+       "value_field": "change_pct"
       }
      }
     },
