@@ -76,7 +76,8 @@ def main():
 
     # 2026-11-17: 지금 발행하는 글은 책이 없으면 부트스트랩으로 넘기지 않는다 — 자료가 없어 판단할 수 없으면 미완료.
     # --legacy-releases(지난 글을 그 커밋 자료로 재검사)만 옛 판정을 유지한다 — 그때의 자료 폴더에는 없던 파일이 있다.
-    if args.legacy_releases:
+    from verification.inputs import legacy_recheck
+    if legacy_recheck(args.legacy_releases, args.html):     # 1a 적용일 전 글에만(구현 검토 #9)
         market = market or {}
         econ = (econ_book or {}).get('indicators') if isinstance(econ_book, dict) else None
         if prev is None and ev is None:

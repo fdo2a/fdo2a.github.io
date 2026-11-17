@@ -307,3 +307,45 @@ def test_9_numbers_recheck_only_before_strict_from(tmp_path):
         r = run('check_numbers.py', tmp_path, '--datadir', str(k), '--market', 'kr', '--date', day, '--recheck',
                 name=f'{day}.html')
         assert ('kr_intraday.json' in r.stderr and r.returncode == 2) is want_missing_is_fatal, (day, r.stderr)
+
+
+def test_9_legacy_releases_does_not_relax_new_posts(tmp_path):
+    """--legacy-releases(정정기·윤문기가 check_macro·check_sources 에 늘 붙인다)도 같은 완화다 — 적용일 전 글에만."""
+    for day in ('2026-11-16', I.STRICT_FROM):
+        d = tmp_path / f'm-{day}'
+        d.mkdir()
+        (d / 'market_data.json').write_text(json.dumps({'report_date': day}))
+        for script in ('check_macro.py', 'check_sources.py'):
+            r = run(script, tmp_path, '--datadir', str(d), '--legacy-releases', name=f'{day}.html')
+            assert (r.returncode == 2) is (day >= I.STRICT_FROM), (script, day, r.returncode, r.stderr[-300:])
+
+
+def test_9_legacy_recheck_needs_a_known_date():
+    assert I.legacy_recheck(True, 'posts/2026-11-16.html') is True
+    assert I.legacy_recheck(True, f'posts/{I.STRICT_FROM}.html') is False
+    assert I.legacy_recheck(False, 'posts/2026-11-16.html') is False
+    assert I.legacy_recheck(True, 'posts/unknown.html') is False
+
+
+def test_7_list_object_with_confirmed_sidecar_does_not_raise(tmp_path):
+    e = {'path': '<datadir>/x.json', 'class': 'gate', 'name': 'x', 'require': ['events'], 'target': 'events'}
+    pol = policy([e])
+    put(tmp_path, 'x.json', [])
+    put(tmp_path, '_collect_status.json', {'files': {'x.json': dict(STAMPED, empty='confirmed_none')}})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), '<datadir>/x.json') == 'incomplete_fields'
+
+
+def test_8_real_scorecard_passes_as_reference(tmp_path, monkeypatch):
+    """레포의 실제 data/scorecard.json(수집기 산출 그대로) — 적용일 뒤 해시 항목만 있으면 정상."""
+    import shutil
+    src = os.path.join(ROOT, 'data', 'scorecard.json')
+    if not os.path.exists(src):
+        pytest.fail('data/scorecard.json 이 없다 — 실제 생산자 산출로 확인할 수 없다')
+    p = tmp_path / 'scorecard.json'
+    shutil.copyfile(src, p)
+    put(tmp_path, '_collect_status.json', {'files': {'scorecard.json': {'sha256': sha(str(p)), 'bytes': 1,
+                                                                        'collect_in': 'none'}}})
+    pol = policy([META, real_entry('us', '<datadir>/scorecard.json')])
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    f = I.assess(pol, 'us', ctx(tmp_path))['files']['<datadir>/scorecard.json']
+    assert f['state'] == 'ok', f

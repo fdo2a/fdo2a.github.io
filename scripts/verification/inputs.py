@@ -41,6 +41,13 @@ EFFECTIVE = None
 # 배포 전까지 발행된 글은 옛 규칙으로 쓰였는데 새 규칙으로 재검사된다. 사본: `review/corrector.py`·`review/style_pass.py`
 # (레포 밖 사본에서도 돈다 — 시험이 같게 묶는다).
 STRICT_FROM = '2026-11-17'
+
+
+def legacy_recheck(flag, html_path):
+    """재검사 플래그(`--recheck`·`--legacy-releases`)가 옛 판정을 줄 수 있는가 — 글 파일 이름의 날짜가 STRICT_FROM
+    전일 때만. 날짜를 모르면 옛 판정을 쓰지 않는다(1a 구현 검토 #9)."""
+    m = re.search(r'\d{4}-\d{2}-\d{2}', os.path.basename(str(html_path or '')))
+    return bool(flag and m and m.group(0) < STRICT_FROM)
 CLASSES = ('gate', 'writer', 'unused', 'discontinued')
 STATES = ('ok', 'missing', 'empty_file', 'unreadable', 'stale', 'failed', 'incomplete_fields', 'unstamped',
           'changed_after_collect')
@@ -307,7 +314,7 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
             if not isinstance(obj, list) or not obj:
                 bad('incomplete_fields', '목록이 비었다')
         elif not isinstance(obj, dict) or _empty(obj.get(k)):
-            if k == e.get('target') and confirmed and isinstance(obj.get(k), list):
+            if k == e.get('target') and confirmed and isinstance(obj, dict) and isinstance(obj.get(k), list):
                 continue       # 대상 목록이 정상 조회 뒤 0건(confirmed_none) — 빈 일정이 정상인 날(1a 구현 검토 #7)
             bad('incomplete_fields', f'필수 칸 {k} 가 비었다')
     if isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and entry['sha256'] != sha:

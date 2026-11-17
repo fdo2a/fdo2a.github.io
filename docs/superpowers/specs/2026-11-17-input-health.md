@@ -100,7 +100,7 @@ plan.md 「조사·측정」의 감사 훅 실측에 코드 읽기로 보충한 
 | 6 | 적용일 뒤 `_collect_status.json` 항목이 없어도 통과 | collector·reference gate 파일마다 항목·64자리 sha256(없으면 unstamped). `rewritten_by` 는 해시만 면제 |
 | 7 | 정상 0건 일정이 보류 | `require` 칸이 `target` 과 같고 ok·confirmed_none 이면 빈 목록 허용. 표시 없는 빈 일정은 그대로 막는다 |
 | 8 | `scorecard.json` 정책 ↔ 등록표 불일치 | `produced_by: reference`(collect 칸 없음 — 생산자 계약), 적용일부터 해시 항목만 |
-| 9 | `--recheck` 가 새 글에도, 정정기가 원본 2 를 허용 | `inputs.STRICT_FROM` 전 글에만. 새 일간 글은 0·1 밖 종료를 허용하지 않는다(정정기·윤문기) |
+| 9 | `--recheck` 가 새 글에도, 정정기가 원본 2 를 허용 | `inputs.STRICT_FROM` 전 글에만(`--recheck` 와 같은 꼴인 `check_macro`·`check_sources` 의 `--legacy-releases` 도 — `inputs.legacy_recheck`). 새 일간 글은 0·1 밖 종료를 허용하지 않는다(정정기·윤문기). 재검사하는 검사기들의 exit 2 는 모두 「미완료·못 읽음·사용법 오류」 뜻이다(코드 확인) |
 | 10 | 루틴·작성자 문서의 「없으면 섹션 생략」 | 보류 규칙과 맞춤, 「이미 신뢰 가능」 → 「자료 상태 검사를 받는 수집 자료(원천 재대조 아님)」 |
 | 11 | 2판 알림 「N/M 통과」가 na 를 통과로 안 셈 | 「필수 검사 N개 중 통과 a · 해당 없음 b」(1판 문구 그대로) |
 
