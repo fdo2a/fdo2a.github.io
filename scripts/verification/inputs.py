@@ -26,6 +26,7 @@ changed_after_collect(`_collect_status.json` 의 해시와 다름).
 import fnmatch
 import hashlib
 import json
+import math
 import os
 import re
 
@@ -402,7 +403,7 @@ def assess(pol, market, ctx):
         elif not _is_glob(e['path']) and _pat(e['path'], date) not in present \
                 and (not e.get('optional') or (e.get('required_when_enforced') and on)):
             put(_pat(e['path'], date), e, None)
-    return {'files': out, 'unclassified': unclassified, 'effective': EFFECTIVE, 'enforced': on,
+    return {'files': out, 'unclassified': unclassified, 'effective': EFFECTIVE, 'enforced': on, 'date': date,
             'discontinued': [{k: d.get(k) for k in ('path', 'name', 'reason', 'since', 'affects', 'approved_by',
                                                      'approved_at', 'missing_key')} for d in disc],
             '_objs': objs, '_present': present}
@@ -439,9 +440,13 @@ def for_gate(health, paths):
 def na_when(health, spec):
     """(참인가, 근거) — 「해당 없음」은 정상 조회로 대상이 없음을 확인한 경우만.
     근거 'collect' = 수집 상태가 ok·confirmed_none 이고(`min_checked` 가 있으면 `collect.checked` 가 그 이상 —
-    실제로 잰 종목이 있다), 'legacy' = 적용일 전, 수집 상태 표시가 없고 옛 칸이 다 정상이며 지정 목록이 비었고
-    **독립 근거**(`legacy_evidence` — 예: KR `kr_stock_moves.json` 에 잰 종목이 있다)가 있는 경우. 근거를 정하지
-    않았거나 근거가 없으면 legacy na 는 없다 — 미완료(2026-11-17, KR 11/16 은 종목을 하나도 재지 못한 날이었다)."""
+    실제로 잰 종목이 있다, `min_coverage` 가 있으면 `checked ≥ ⌈min_coverage × expected⌉` — 수집기와 같은 기준),
+    'legacy' = 적용일 전, 수집 상태 표시가 없고 옛 칸이 다 정상이며 지정 목록이 비었고 **독립 근거**
+    (`legacy_evidence`)가 있는 경우: 근거 목록이 `min_items`(모집단 × MIN_COVERAGE, `common.movers.LEGACY_MIN_ITEMS`)
+    행 이상이고 **행마다 `date_field` 가 발행일**이다. 근거를 정하지 않았거나, 한 종목만 쟀거나, 날짜를 입증할 수
+    없으면 legacy na 는 없다 — 미완료(2026-11-17, KR 11/16 은 종목을 하나도 재지 못한 날이었고, 1a 구현 검토 #1 은
+    한 종목만 잰 날도 「해당 없음」이 되는 것을 찾았다). 지금 `kr_stock_moves.json` 의 행에는 날짜가 없어 KR 의
+    옛 방식 na 는 나오지 않는다 — 적용일 뒤의 수집 상태(`collect`)로만 na 가 된다."""
     key = spec.get('file')
     f = health['files'].get(key)
     obj = health['_objs'].get(key)
@@ -456,8 +461,14 @@ def na_when(health, spec):
             return False, None
         need = spec.get('min_checked')
         got = c.get('checked')
-        if need is not None and not (isinstance(got, int) and not isinstance(got, bool) and got >= need):
+        if need is not None and not (_int(got) and got >= need):
             return False, None
+        if 'min_coverage' in spec:
+            # 수집기가 「없음 확인」을 쓰는 기준(모집단 × MIN_COVERAGE)을 같은 곳에서 읽어 한 번 더 본다
+            cov, exp = _resolve(spec['min_coverage']), c.get('expected')
+            if not isinstance(cov, (int, float)) or not (_int(exp) and exp > 0 and _int(got)) \
+                    or got < math.ceil(cov * exp):
+                return False, None
         return True, 'collect'
     if health['enforced']:
         return False, None
@@ -466,9 +477,29 @@ def na_when(health, spec):
         return False, None
     full = health.get('_present', {}).get(ev.get('file'))
     proof, err = _read_json(full) if full else (None, 'missing')
-    if err or not isinstance(proof, list) or len(proof) < int(ev.get('min_items', 1)):
+    need = _resolve(ev.get('min_items'))
+    if err or not isinstance(proof, list) or not _int(need) or len(proof) < need:
+        return False, None
+    # 그날 것임을 자료가 말해야 한다 — 날짜 칸이 없는 행(지금의 kr_stock_moves.json)으로는 입증할 수 없다
+    df = ev.get('date_field')
+    if not isinstance(df, str) or not all(isinstance(r, dict) and r.get(df) == health.get('date') for r in proof):
         return False, None
     return True, 'legacy'
+
+
+def _int(x):
+    return isinstance(x, int) and not isinstance(x, bool)
+
+
+def _resolve(v):
+    """정책의 수치 — 수 그대로이거나 `{"module", "attr"}`(수집 쪽 상수를 한 곳에서 읽는다). 못 읽으면 None."""
+    if isinstance(v, dict):
+        try:
+            import importlib
+            return getattr(importlib.import_module(v['module']), v['attr'])
+        except Exception:  # noqa: BLE001 — 못 읽은 기준으로 「해당 없음」을 주지 않는다
+            return None
+    return v
 
 
 def describe(f):

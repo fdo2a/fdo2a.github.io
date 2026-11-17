@@ -411,7 +411,10 @@ def test_confirmed_zero_movers_is_na_by_collect(days, monkeypatch, tmp_path):
             (dict(ok, checked=0), None, d, 'incomplete', None),
             (dict(ok, empty='unknown'), None, d, 'incomplete', None),
             ({k: v for k, v in ok.items() if k != 'checked'}, None, d, 'incomplete', None),
-            (None, [{'name': '삼성전자', 'change_pct': 0.5}], None, 'na', 'legacy'),
+            (dict(ok, checked=1, expected=58), None, d, 'incomplete', None),          # 한 종목만 쟀다(검토 #1)
+            (None, [{'name': '삼성전자', 'change_pct': 0.5}], None, 'incomplete', None),  # 한 종목·날짜 없음(검토 #1)
+            (None, [{'name': f's{k}', 'change_pct': 0.5} for k in range(60)], None, 'incomplete', None),
+            (None, [{'name': f's{k}', 'change_pct': 0.5, 'date': d} for k in range(60)], None, 'na', 'legacy'),
             (None, [], None, 'incomplete', None))):
         c = _fresh(base, ctx0, str(tmp_path / f'z{i}'), effective is not None)
         p = os.path.join(c['datadir'], 'kr_movers.json')

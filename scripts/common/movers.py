@@ -13,6 +13,7 @@ US `scripts/us/movers_data.py`(S&P 500 중 달러 거래대금 상위 60).
 
 Pure — 네트워크 없음.
 """
+import math
 import re
 
 THRESHOLD_PCT = 5.0
@@ -88,9 +89,22 @@ def group_movers(candidates, max_groups=MAX_GROUPS):
     return out
 
 
+# 모집단 = 거래대금 상위 이 수(KR `kr.etf_normalize.stock_moves`, US `us.movers_data.TOP_N` 이 여기서 읽는다).
+UNIVERSE_TOP_N = 60
 # 모집단 후보 중 그날 봉(전일 종가 포함)을 실제로 잰 비율이 이보다 낮으면 「다 읽었다」고 하지 않는다.
 # 정상일은 57~60/60(신규 상장·거래정지 몇 종목이 빠진다). 늦게 돈 KR 실행은 0~1/58 이었다(11/09~11/16).
 MIN_COVERAGE = 0.9
+
+
+def min_measured(expected):
+    """모집단 `expected` 종목 중 「다 읽었다」고 할 수 있는 최소 측정 수 — 수집기(`stamp`)와 발행 전 검사의
+    「해당 없음」 판정(`verification.inputs.na_when`)이 같은 값을 쓴다."""
+    return math.ceil(MIN_COVERAGE * expected)
+
+
+# 수집 상태 표시가 없는 옛 자료에서 「해당 없음」의 독립 근거로 쓸 최소 측정 수 — 옛 자료에는 모집단 수가 없어
+# 모집단 크기(UNIVERSE_TOP_N)로 잰다(2026-11-17, 1a 구현 검토 #1).
+LEGACY_MIN_ITEMS = min_measured(UNIVERSE_TOP_N)
 # 시총·업종 조회 실패가 이 비율을 넘으면 기여 상·하위나 업종 묶기를 믿을 수 없다.
 MAX_LOOKUP_FAIL = 0.1
 
@@ -113,7 +127,7 @@ def stamp(book, *, source, checked, expected, lookup_failed=(), lookup_total=0):
     if problems:
         book['collect'] = C.failed(rd, source, '; '.join(problems), checked=checked, expected=expected)
         return book
-    if checked < MIN_COVERAGE * expected:
+    if checked < min_measured(expected):
         missing.append(f'coverage:{checked}/{expected}')
     lf = list(lookup_failed)
     if lookup_total and len(lf) > MAX_LOOKUP_FAIL * lookup_total:

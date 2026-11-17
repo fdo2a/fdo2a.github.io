@@ -157,7 +157,7 @@ def test_na_when(tmp_path, monkeypatch):
              'covered_by': None}
     pol = policy([GATE_MOV, moves])
     na = {'file': '<datadir>/movers.json', 'list': 'groups', 'min_checked': 1,
-          'legacy_evidence': {'file': '<datadir>/kr_stock_moves.json', 'min_items': 1}}
+          'legacy_evidence': {'file': '<datadir>/kr_stock_moves.json', 'min_items': 1, 'date_field': 'date'}}
     ok_collect = dict(STAMPED, empty='confirmed_none', checked=60, expected=60)
     put(tmp_path, 'movers.json', {'report_date': D, 'groups': [], 'collect': ok_collect})
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na) == (True, 'collect')
@@ -171,6 +171,8 @@ def test_na_when(tmp_path, monkeypatch):
     put(tmp_path, 'kr_stock_moves.json', [])
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False          # 하나도 못 쟀다(KR 11/16)
     put(tmp_path, 'kr_stock_moves.json', [{'name': 'a', 'change_pct': 1.0}])
+    assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False          # 그날 날짜가 없다(1a 검토 #1)
+    put(tmp_path, 'kr_stock_moves.json', [{'name': 'a', 'change_pct': 1.0, 'date': D}])
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na) == (True, 'legacy')
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), {'file': na['file'], 'list': 'groups'})[0] is False
     monkeypatch.setattr(I, 'EFFECTIVE', D)

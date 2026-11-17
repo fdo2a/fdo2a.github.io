@@ -231,7 +231,11 @@
      "na_when": {
       "file": "<datadir>/movers.json",
       "list": "groups",
-      "min_checked": 1
+      "min_checked": 1,
+      "min_coverage": {
+       "module": "common.movers",
+       "attr": "MIN_COVERAGE"
+      }
      }
     },
     {
@@ -425,9 +429,17 @@
       "file": "<datadir>/kr_movers.json",
       "list": "groups",
       "min_checked": 1,
+      "min_coverage": {
+       "module": "common.movers",
+       "attr": "MIN_COVERAGE"
+      },
       "legacy_evidence": {
        "file": "<datadir>/kr_stock_moves.json",
-       "min_items": 1
+       "min_items": {
+        "module": "common.movers",
+        "attr": "LEGACY_MIN_ITEMS"
+       },
+       "date_field": "date"
       }
      }
     },

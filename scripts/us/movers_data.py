@@ -15,7 +15,7 @@ import urllib.request
 from common import movers as M
 
 WIKI = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-TOP_N = 60
+TOP_N = M.UNIVERSE_TOP_N
 
 
 def parse_constituents(html):
