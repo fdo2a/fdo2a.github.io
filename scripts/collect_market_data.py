@@ -514,7 +514,7 @@ def _econ_pair(vals, tf):
     return pairs[-1][1], pairs[-2][1]
 
 
-def collect_econ():
+def collect_econ(reasons=None):
     """FRED-sourced Actual/Previous/ref-period for the dashboard. Never fabricates —
     a series that fails to fetch is simply omitted (agent falls back to web for it).
 
@@ -524,6 +524,7 @@ def collect_econ():
     """
     out = []
     seen = {}
+    reasons = {} if reasons is None else reasons     # name -> fetch_failed | transform_error | no_value
     for axis, name, sid, tf, units, *rest in ECON:
         opts = rest[0] if rest else {}
         vals = seen.get(sid)
@@ -534,12 +535,16 @@ def collect_econ():
             seen[sid] = vals
             time.sleep(0.6)
         if not vals:
+            reasons[name] = 'fetch_failed'
             continue
         try:
             pair = _econ_pair(vals, tf)
         except Exception:
+            reasons[name] = 'transform_error'
             continue
         if pair is None:
+            # 받았지만 최신 달을 변환할 수 없다(결측 달 — 2025-10 CPI). 수집 실패가 아니다.
+            reasons[name] = 'no_value'
             continue
         actual, previous = pair
         row = {
@@ -1079,6 +1084,55 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
     return 0 if 200 <= st['code'] < 300 and elapsed <= max_time else 1
 
 
+# ── 수집 상태 칸(2026-11-17, 공통 계약 A) ──────────────────────────────────
+# 비-코어 블록의 실패 경로가 「성공」 파일로 남지 않게, 쓰는 자리에서 칸을 만든다.
+
+MARKET_SOURCE = 'yfinance + Naver 국채 + FRED'
+
+
+def market_collect(data):
+    """market_data.json — 필수 = 기존 `complete`(전 행·커브·장중 두 지수·섹터). 빠진 행은 `missing` 그대로."""
+    from common import collect_status as C
+    missing = list(data.get('missing') or [])
+    if not data.get('indices'):
+        return C.failed(data.get('report_date'), MARKET_SOURCE, '지수 행이 없다', missing=missing)
+    return C.build('ok' if data.get('complete') else 'partial', data.get('report_date'), MARKET_SOURCE,
+                   missing=missing, required_ok=bool(data.get('complete')), empty='has_data')
+
+
+def intraday_collect(intraday, report_date):
+    """intraday.json — 30분봉을 못 받은 자산이 `missing`. 그 파일에는 날짜 칸이 없어 as_of 가 유일한 기준일이다."""
+    from common import collect_status as C
+    names = [n for n, _ in INTRADAY_KEY]
+    missing = [n for n in names if not (intraday or {}).get(n)]
+    return C.by_counts(report_date, 'yfinance 30m', missing, len(names))
+
+
+def econ_collect(econ, reasons, report_date):
+    """econ_indicators.json — 받지 못했거나 변환이 터진 지표가 `missing`. 받았지만 최신 달 값이 원천에
+    없는 지표(`no_value`, 결측 달)는 수집 실패가 아니어서 `detail` 에만 적는다."""
+    from common import collect_status as C
+    missing = sorted(n for n, why in (reasons or {}).items() if why in ('fetch_failed', 'transform_error'))
+    none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value')
+    st = C.by_counts(report_date, 'FRED', missing, len(ECON),
+                     detail=('원천에 최신 값 없음: ' + ', '.join(none)) if none else None)
+    if not econ and st['status'] != 'failed':
+        st = C.failed(report_date, 'FRED', '지표 0건', missing=missing)
+    return st
+
+
+def macro_metrics_collect(mm, econ_status, report_date):
+    """macro_metrics.json — 축 점수의 재료(econ)가 일부 빠졌거나 어제 책(macro.json)이 깨졌으면 partial."""
+    from common import collect_status as C
+    missing = []
+    if econ_status.get('status') != 'ok':
+        missing.append('econ_indicators')
+    if mm.get('book_state') == 'corrupt':
+        missing.append('macro.json:corrupt')
+    return C.build('partial' if missing else 'ok', report_date, 'FRED (macro_metrics)',
+                   missing=missing, empty='has_data')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--outdir', default='data')
@@ -1195,7 +1249,9 @@ def main():
         drivers = {'rows': {}, 'decomposition': {}}
 
     print('collecting FRED economic indicators...')
-    econ, econ_series = collect_econ()
+    econ_reasons = {}
+    econ, econ_series = collect_econ(econ_reasons)
+    econ_status = econ_collect(econ, econ_reasons, report_date)
     # 「직전 대비」 칸의 정본(2026-09-23). macro_metrics.json 이 실패하거나 낡은 날에도
     # 표에 찍힌 두 수의 비교는 이 파일 하나로 끝나야 한다 — 게이트도 같은 함수로 잰다.
     from us.macro_metrics import TREND_NOTE_KO, vs_prev
@@ -1324,7 +1380,9 @@ def main():
             print(f"    해부 {rel['key']}: {rel['label']} ({rel.get('role')}) "
                   f"발표일 {anat.get('release_date')} · FRED 회차 {anat.get('round')} · "
                   f"후보 {ok}/{len(anat.get('candidates') or [])}")
-        json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
+        # 실패하면 이 블록은 파일을 쓰지 않는다 — 어제 파일의 report_date·collect.as_of 가 그대로 남아 낡음으로 걸린다.
+        json.dump({'generated': data['generated'], 'report_date': report_date, **mm,
+                   'collect': macro_metrics_collect(mm, econ_status, report_date)},
                   open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
@@ -1418,6 +1476,7 @@ def main():
           + (f" failed={','.join(ft['failed'])}" if ft['failed'] else '')
           + (f" csv_rescued={','.join(ft['csv_rescued'])}" if ft['csv_rescued'] else ''))
 
+    data['collect'] = market_collect(data)
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
 
     # 움직인 종목 — S&P 500 중 달러 거래대금 상위 60 에서 지수 기여 상·하위 2 + |등락| ≥ 5% 를
@@ -1477,7 +1536,8 @@ def main():
     except Exception as e:
         print(f'period aggregation failed: {e}', file=sys.stderr)
 
-    json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
+    json.dump({**intraday, 'collect': intraday_collect(intraday, report_date)},
+              open(os.path.join(args.outdir, 'intraday.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
     json.dump({'generated': data['generated'], 'source': 'FRED via collect_market_data.py',
                'note': 'Actual/Previous/ref_period are authoritative FRED values. '
@@ -1487,7 +1547,8 @@ def main():
                        'Confidence, NY Fed inflation exp) are web-sourced. role=anatomy rows '
                        '(Philly Fed) are dissected but never scored.',
                'trend_note_ko': TREND_NOTE_KO,
-               'indicators': econ},
+               'indicators': econ,
+               'collect': econ_status},
               open(os.path.join(args.outdir, 'econ_indicators.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
 
