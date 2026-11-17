@@ -87,3 +87,37 @@ def test_monthly_workflow_commits_its_three_files_with_retry():
         assert f'data/{f}' in run
     assert 'bash scripts/ci/push_with_retry.sh' in run
     assert 'collect_fund_factors.py --outdir data' in run
+
+
+# ── 수집 상태 찍기(2026-11-17): 모든 쓰기 뒤·커밋 앞, 커밋에 담긴다 ─────────────────────────
+
+def _steps(wf_path, job='collect'):
+    with open(wf_path, encoding='utf-8') as fh:
+        return [s.get('name') or s.get('uses') for s in yaml.safe_load(fh)['jobs'][job]['steps']], \
+            yaml.safe_load(open(wf_path, encoding='utf-8'))['jobs'][job]['steps']
+
+
+def test_us_stamp_runs_after_every_writer_and_before_both_commits():
+    names, steps = _steps(WF)
+    i = names.index('Stamp collection status')
+    for writer in ('Collect', 'Fetch primary releases', 'Sanitize primary releases', 'Evaluate macro regime',
+                   'Fetch Telegram channels', 'Fetch Fed events', 'Build the next-ten-days calendar',
+                   'Treasury coupon auction results', 'Fed H.4.1 and Treasury refunding (liquidity)',
+                   'Sanitize liquidity'):
+        assert names.index(writer) < i, writer
+    for commit in ('Commit liquidity (market data already complete)', 'Commit data'):
+        assert i < names.index(commit)
+        assert 'data/_collect_status.json' in steps[names.index(commit)]['run']
+    assert steps[i]['if'] == 'always()' and '--datadir data' in steps[i]['run']
+
+
+def test_kr_stamp_runs_right_before_the_versions_commit():
+    kr = os.path.join(os.path.dirname(WF), 'collect-kr-data.yml')
+    names, steps = _steps(kr)
+    i = names.index('Stamp collection status')
+    assert names.index('Fetch Telegram channels (non-core)') < i < names.index('Commit data')
+    assert 'versions.py commit' in steps[names.index('Commit data')]['run']
+    assert '--datadir kr/data' in steps[i]['run']
+    from kr import versions_kr
+    assert 'git add kr/data/*.json' in versions_kr.STAGE_SH          # _collect_status.json 이 커밋 O 에 든다
+    assert versions_kr.is_dateless('kr/data/_collect_status.json')  # 발행된 날 동결 대상(원격 판 유지)

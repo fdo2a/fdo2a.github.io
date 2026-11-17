@@ -95,6 +95,15 @@ jobs:
           if d['missing']:
               print('missing:', ', '.join(d['missing']))
           PY
+      - name: Stamp collection status
+        # 2026-11-17 (명세 「공통 계약 A」): 파일마다 sha256·bytes·수집 상태를 kr/data/_collect_status.json 에.
+        # 목록형(kr_top_value·kr_index_etf)의 상태는 수집기가 이미 적어 두었고 여기서 해시를 더한다.
+        # **versions.py commit 바로 앞**: 그 단계가 kr/data/*.json 으로 이 파일까지 담아 커밋 O 를 만든다.
+        # 발행된 날(enforce)은 날짜 없는 고정 경로가 원격 판으로 동결되므로 이 파일도 원격 판(그 판의 해시)이 남는다.
+        if: always()
+        continue-on-error: true
+        run: python scripts/stamp_collect.py --datadir kr/data
+
       - name: Commit data
         # 판 관리 1단계(2026-11-10): 오늘과 같은 경로로 커밋 O 를 만든 뒤 원격 최신 위에 다시 세워 push 한다.
         # 실행 원본은 versions/kr/<D>/runs/<run_id>/ 에 남는다. 모드는 레포 Variable KR_VERSIONS_MODE —

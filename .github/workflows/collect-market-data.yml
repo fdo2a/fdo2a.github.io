@@ -265,12 +265,22 @@ jobs:
         if: always()
         run: python scripts/build_liquidity.py --datadir data --sanitize
 
+      - name: Stamp collection status
+        # 2026-11-17 (명세 「공통 계약 A」): 이 잡이 쓴 파일마다 sha256·bytes·수집 상태(collect 칸)를
+        # data/_collect_status.json 에 적는다 — 발행 전 검사가 「수집 뒤 바뀜」과 「수집 실패」를 가리는 근거.
+        # **모든 쓰기가 끝난 뒤·두 커밋 단계 앞**이어야 한다(건너뛴 실행도 유동성을 다시 쓰므로 always()).
+        # 실패해도 자료 커밋은 막지 않는다 — 옛 해시가 남으면 검사가 「수집 뒤 바뀜」으로 막는다(닫히는 쪽).
+        if: always()
+        continue-on-error: true
+        run: python scripts/stamp_collect.py --datadir data
+
       - name: Commit liquidity (market data already complete)
         if: always() && steps.collect.outputs.skipped == 'true'
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add -A data/liquidity 2>/dev/null || true
+          git add data/_collect_status.json 2>/dev/null || true
           # 새 발표 원장 — 첫 슬롯에서 기록이 빠졌으면 이 실행이 채운다(record_releases.py).
           git add data/history/releases.jsonl 2>/dev/null || true
           if git diff --cached --quiet; then echo 'liquidity/ledger: nothing new'; exit 0; fi
@@ -323,6 +333,8 @@ jobs:
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
           git add data/weekly 2>/dev/null || true
+          # 수집 상태·해시(stamp_collect.py) — 같은 커밋에 들어가야 해시가 이 커밋의 바이트를 가리킨다.
+          git add data/_collect_status.json 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: market data for ${RD}"
 
