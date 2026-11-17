@@ -278,6 +278,13 @@ def build(report_date, results, announced, yields=None, generated=None):
                for e in expected if (e['cusip'], e['key']) not in got]
 
     key = lambda t: (t['years'], t['kind'])  # noqa: E731
+    from common import collect_status as C
+    # 조회가 끝까지 됐다(빈 7일 창은 위에서 실패로 올렸다). 그날 마감한 이표채 0건 = 「없음 확인」,
+    # 공고된 입찰의 결과 미게시 = 대상은 있는데 필수 값이 비었다(has_data + required_ok False).
+    collect = C.build('ok', rd.isoformat(), 'TreasuryDirect TA_WS',
+                      missing=[f"pending:{p['key']}" for p in pending],
+                      required_ok=not pending,
+                      empty='has_data' if (today or pending) else 'confirmed_none')
     return {
         'report_date': rd.isoformat(),
         'generated': generated,
@@ -291,13 +298,16 @@ def build(report_date, results, announced, yields=None, generated=None):
         'next': sorted(nxt, key=lambda t: t['date']),
         'rule': {'avg_n': AVG_N, 'min_hist': MIN_HIST, 'btc_band': BTC_BAND,
                  'dealer_band_pp': DEALER_BAND_PP},
+        'collect': collect,
     }
 
 
 def failed(report_date, error, generated=None):
+    from common import collect_status as C
     return {'report_date': str(report_date), 'generated': generated,
             'source': 'TreasuryDirect TA_WS', 'ok': False, 'error': str(error)[:300],
-            'complete': False, 'pending': [], 'today': [], 'recent': [], 'next': []}
+            'complete': False, 'pending': [], 'today': [], 'recent': [], 'next': [],
+            'collect': C.failed(str(report_date), 'TreasuryDirect TA_WS', error)}
 
 
 # --- 표시 ---------------------------------------------------------------------
