@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-16",
  "status": "none",
- "reason": "schema_invalid",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-17T02:02:36+00:00",
- "cutoff_at": "2026-11-17T02:02:36+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-17T03:08:43+00:00",
+ "cutoff_at": "2026-11-17T03:08:43+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,51 +30,65 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 88002,
-   "out": 23862
+   "in": 53969,
+   "out": 18158
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "10/10",
-   "pairs": "5/5",
-   "obs": "11/11"
+   "claims": "12/12",
+   "pairs": "6/6",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 4,
-   "claims": 8,
-   "obs": 11,
+   "pairs": 5,
+   "claims": 10,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
+    "edges[0]",
     "edges[1]",
-    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "memo[2]",
     "structure",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "worry.most[0]"
    ],
-   "outcome": "fixed",
-   "remaining": []
-  },
-  "attempt_refunded": "discovery_throttled"
+   "outcome": "skipped_ratio",
+   "remaining": [
+    "structure:unverified",
+    "edges[0]:unverified",
+    "edges[1]:unverified",
+    "memo[0]:unverified",
+    "memo[1]:unverified",
+    "memo[2]:unverified",
+    "worry.most[0]:unverified"
+   ]
+  }
  },
  "event": {
-  "topic_ko": "젠슨 황 사임 이후 엔비디아 CEO 복귀 논란과 국가안보·수출통제 쟁점",
+  "topic_ko": "젠슨 황 사임 이후 엔비디아 경영 공백과 대중국 칩 수출통제 논란",
   "query": "nvidia huang calls",
   "trigger": []
  },
  "problems": [
-  "claims"
+  "structure:unverified",
+  "edges[0]:unverified",
+  "edges[1]:unverified",
+  "memo[0]:unverified",
+  "memo[1]:unverified",
+  "memo[2]:unverified",
+  "worry.most[0]:unverified"
  ],
- "content_hash": "cf3bd6c940b70646"
+ "content_hash": "d23e239291a5bfb4"
 }
