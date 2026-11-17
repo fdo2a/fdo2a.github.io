@@ -1122,13 +1122,19 @@ def intraday_collect(intraday, report_date):
 
 
 def econ_collect(econ, reasons, report_date):
-    """econ_indicators.json — 받지 못했거나 변환이 터진 지표가 `missing`. 받았지만 최신 달 값이 원천에
-    없는 지표(`no_value`, 결측 달)는 수집 실패가 아니어서 `detail` 에만 적는다."""
+    """econ_indicators.json — 받지 못했거나 변환이 터진 지표가 `missing`.
+
+    「아직 미발표」와 「계산 재료 결측」을 가른다(1a 구현 검토 #5). 새 달이 나오기 전에는 원천의 마지막 달이 그 전
+    달이고 그 달로 행을 만든다 — 결측이 아니다. `no_value` 는 원천에 있는 최신 달을 변환할 재료(비교 달)가 원천에
+    없다는 뜻이다(예: 2025-10 CPI 미발표로 2026-10 CPI YoY 를 만들 수 없다). 축 점수에 드는 지표(scored — `role` 이
+    anatomy 가 아닌 것)의 no_value 는 `missing`(`no_value:<이름>`)·required_ok false, 해부 전용은 `detail` 에만."""
     from common import collect_status as C
+    anatomy = {e[1] for e in ECON if len(e) > 5 and (e[5] or {}).get('role') == 'anatomy'}
     missing = sorted(n for n, why in (reasons or {}).items() if why in ('fetch_failed', 'transform_error'))
-    none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value')
+    missing += sorted(f'no_value:{n}' for n, why in (reasons or {}).items() if why == 'no_value' and n not in anatomy)
+    none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value' and n in anatomy)
     st = C.by_counts(report_date, 'FRED', missing, len(ECON),
-                     detail=('원천에 최신 값 없음: ' + ', '.join(none)) if none else None)
+                     detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None)
     if not econ and st['status'] != 'failed':
         st = C.failed(report_date, 'FRED', '지표 0건', missing=missing)
     return st

@@ -39,12 +39,11 @@ def test_intraday_all_partial_none():
     assert cmd.intraday_collect({n: None for n in names}, RD)['status'] == 'failed'
 
 
-def test_econ_fetch_failure_is_missing_but_a_missing_month_is_not():
+def test_econ_fetch_failure_is_missing_and_a_scored_missing_input_too():
+    # 1a 구현 검토 #5 — 점수에 드는 지표의 계산 재료 결측(no_value)도 결측이다(test_econ_collect_required.py)
     rows = [{'name': 'x'}]
-    c = cmd.econ_collect(rows, {'CPI YoY': 'no_value', 'Core CPI YoY': 'no_value'}, RD)
-    assert c['status'] == 'ok' and c['missing'] == [] and 'CPI YoY' in c['detail']
     c = cmd.econ_collect(rows, {'JOLTS Job Openings': 'fetch_failed', 'CPI YoY': 'no_value'}, RD)
-    assert c['status'] == 'partial' and c['missing'] == ['JOLTS Job Openings']
+    assert c['status'] == 'partial' and c['missing'] == ['JOLTS Job Openings', 'no_value:CPI YoY']
     assert cmd.econ_collect([], {}, RD)['status'] == 'failed'
 
 
