@@ -1179,13 +1179,7 @@ def macro_metrics_collect(mm, econ_status, report_date):
     from common import collect_status as C
     missing, ref = [], {}
     if econ_status.get('status') != 'ok':
-        inner = [m for m in (econ_status.get('missing') or []) if isinstance(m, str)]
-        if econ_status.get('status') == 'partial' and inner:
-            missing += [f'econ:{m}' for m in inner]
-            src = econ_status.get('missing_ref') if isinstance(econ_status.get('missing_ref'), dict) else {}
-            ref = {f'econ:{m}': src[m] for m in inner if m in src}
-        else:
-            missing.append('econ_indicators')
+        missing, ref = C.carry_upstream(econ_status, 'econ', 'econ_indicators')
     if mm.get('book_state') == 'corrupt':
         missing.append('macro.json:corrupt')
     return C.build('partial' if missing else 'ok', report_date, 'FRED (macro_metrics)',

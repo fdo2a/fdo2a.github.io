@@ -212,12 +212,15 @@ def index_collect(index, metrics_state, metrics_collect=None):
         return C.failed(rd, SOURCE, f'macro_metrics.json {metrics_state} — 오늘 받을 원문 목록을 모른다')
     rows = index.get('releases') or []
     missing = [r.get('key') for r in rows if not r.get('ok')]
-    if metrics_collect and metrics_collect.get('status') != 'ok':
-        missing.append('macro_metrics')
+    # 목록을 정한 축 점수가 일부 지표 없이 나왔으면 무엇이 빠졌는지를 그대로 옮긴다(`metrics:<키>` + 식별자·기준월) —
+    # 승인된 예외가 이 파일에도 같은 지표·같은 기준월로만 걸린다. 무엇이 빠졌는지 모르면 전처럼 macro_metrics.
+    up, ref = C.carry_upstream(metrics_collect, 'metrics', 'macro_metrics')
+    missing += up
     st = 'partial' if missing else 'ok'
     if rows and not any(r.get('ok') for r in rows):
         st = 'failed'
-    return C.build(st, rd, SOURCE, missing=missing, empty='has_data' if rows else 'confirmed_none')
+    return C.build(st, rd, SOURCE, missing=missing, empty='has_data' if rows else 'confirmed_none',
+                   missing_ref=ref or None)
 
 
 def run(datadir, rid, get=http_get, today=None, fulldir=None):

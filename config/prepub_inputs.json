@@ -53,7 +53,9 @@
         "affects_checks": [
          "check_macro",
          "check_fed",
-         "check_numbers"
+         "check_numbers",
+         "check_sources",
+         "check_weight"
         ],
         "sections": [
          "매크로 진단의 물가 축(4축 스트립·축 표)",
@@ -83,7 +85,9 @@
         "affects_checks": [
          "check_macro",
          "check_fed",
-         "check_numbers"
+         "check_numbers",
+         "check_sources",
+         "check_weight"
         ],
         "sections": [
          "매크로 진단의 물가 축(4축 스트립·축 표)",
@@ -123,7 +127,73 @@
      "path": "<datadir>/macro_eval.json",
      "class": "gate",
      "name": "매크로 판정",
-     "date": "report_date"
+     "date": "report_date",
+     "accepted_missing": [
+      {
+       "id": "us-2026-10-cpi-yoy-not-published",
+       "key": "metrics:econ:no_value:CPI YoY",
+       "fred_id": "CPIAUCSL",
+       "transform": "yoy_pct",
+       "ref_period": "2026-10",
+       "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
+       "source": [
+        "https://www.bls.gov/news.release/cpi.nr0.htm",
+        "https://www.bls.gov/schedule/news_release/cpi.htm"
+       ],
+       "approved_by": "user",
+       "approved_on": "2026-11-17",
+       "expires": "2026-12-09",
+       "impact": {
+        "affects_checks": [
+         "check_macro",
+         "check_fed",
+         "check_numbers",
+         "check_sources",
+         "check_weight"
+        ],
+        "sections": [
+         "매크로 진단의 물가 축(4축 스트립·축 표)",
+         "경제 지표 표의 소비자물가 전년비·근원 소비자물가 전년비 행"
+        ],
+        "scores": [
+         "물가 축 점수(8개 중 6개로 산출)",
+         "inflation_score — 레짐 판정의 물가 다리"
+        ]
+       }
+      },
+      {
+       "id": "us-2026-10-cpi-yoy-not-published",
+       "key": "metrics:econ:no_value:Core CPI YoY",
+       "fred_id": "CPILFESL",
+       "transform": "yoy_pct",
+       "ref_period": "2026-10",
+       "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
+       "source": [
+        "https://www.bls.gov/news.release/cpi.nr0.htm",
+        "https://www.bls.gov/schedule/news_release/cpi.htm"
+       ],
+       "approved_by": "user",
+       "approved_on": "2026-11-17",
+       "expires": "2026-12-09",
+       "impact": {
+        "affects_checks": [
+         "check_macro",
+         "check_fed",
+         "check_numbers",
+         "check_sources",
+         "check_weight"
+        ],
+        "sections": [
+         "매크로 진단의 물가 축(4축 스트립·축 표)",
+         "경제 지표 표의 소비자물가 전년비·근원 소비자물가 전년비 행"
+        ],
+        "scores": [
+         "물가 축 점수(8개 중 6개로 산출)",
+         "inflation_score — 레짐 판정의 물가 다리"
+        ]
+       }
+      }
+     ]
     },
     {
      "path": "<datadir>/macro_metrics.json",
@@ -152,7 +222,9 @@
         "affects_checks": [
          "check_macro",
          "check_fed",
-         "check_numbers"
+         "check_numbers",
+         "check_sources",
+         "check_weight"
         ],
         "sections": [
          "매크로 진단의 물가 축(4축 스트립·축 표)",
@@ -182,7 +254,9 @@
         "affects_checks": [
          "check_macro",
          "check_fed",
-         "check_numbers"
+         "check_numbers",
+         "check_sources",
+         "check_weight"
         ],
         "sections": [
          "매크로 진단의 물가 축(4축 스트립·축 표)",
@@ -212,7 +286,73 @@
      "status_ok": [
       "complete"
      ],
-     "target": "releases"
+     "target": "releases",
+     "accepted_missing": [
+      {
+       "id": "us-2026-10-cpi-yoy-not-published",
+       "key": "metrics:econ:no_value:CPI YoY",
+       "fred_id": "CPIAUCSL",
+       "transform": "yoy_pct",
+       "ref_period": "2026-10",
+       "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
+       "source": [
+        "https://www.bls.gov/news.release/cpi.nr0.htm",
+        "https://www.bls.gov/schedule/news_release/cpi.htm"
+       ],
+       "approved_by": "user",
+       "approved_on": "2026-11-17",
+       "expires": "2026-12-09",
+       "impact": {
+        "affects_checks": [
+         "check_macro",
+         "check_fed",
+         "check_numbers",
+         "check_sources",
+         "check_weight"
+        ],
+        "sections": [
+         "매크로 진단의 물가 축(4축 스트립·축 표)",
+         "경제 지표 표의 소비자물가 전년비·근원 소비자물가 전년비 행"
+        ],
+        "scores": [
+         "물가 축 점수(8개 중 6개로 산출)",
+         "inflation_score — 레짐 판정의 물가 다리"
+        ]
+       }
+      },
+      {
+       "id": "us-2026-10-cpi-yoy-not-published",
+       "key": "metrics:econ:no_value:Core CPI YoY",
+       "fred_id": "CPILFESL",
+       "transform": "yoy_pct",
+       "ref_period": "2026-10",
+       "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
+       "source": [
+        "https://www.bls.gov/news.release/cpi.nr0.htm",
+        "https://www.bls.gov/schedule/news_release/cpi.htm"
+       ],
+       "approved_by": "user",
+       "approved_on": "2026-11-17",
+       "expires": "2026-12-09",
+       "impact": {
+        "affects_checks": [
+         "check_macro",
+         "check_fed",
+         "check_numbers",
+         "check_sources",
+         "check_weight"
+        ],
+        "sections": [
+         "매크로 진단의 물가 축(4축 스트립·축 표)",
+         "경제 지표 표의 소비자물가 전년비·근원 소비자물가 전년비 행"
+        ],
+        "scores": [
+         "물가 축 점수(8개 중 6개로 산출)",
+         "inflation_score — 레짐 판정의 물가 다리"
+        ]
+       }
+      }
+     ]
     },
     {
      "path": "<datadir>/fed/events.json",

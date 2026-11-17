@@ -157,8 +157,9 @@ approved_by, approved_on, expires, impact{affects_checks, sections, scores}}]`, 
 ③ 자료가 말하는 **식별자와 기준월** `collect.missing_ref[키] = {fred_id, transform, ref_period}` 이 등록과 셋 다 같다(이름만
 같거나 자료가 말하지 않으면 적용 안 됨) ④ 수집 실패(`failed`)가 아니다. 낡음·해시·표시 없음·`empty: unknown` 은 예외와
 무관하게 막는다. 원본 `collect` 는 고치지 않는다. 수집기: `collect_econ` 이 no_value 지표의 FRED id·변환·기준월을 남기고
-`econ_collect` 가 `missing_ref` 로 싣는다. `macro_metrics_collect` 는 econ 의 결측을 `econ:<키>`·같은 식별자로 그대로
-옮긴다(전에는 `econ_indicators` 하나) — 두 파일 모두 등록해야 풀린다.
+`econ_collect` 가 `missing_ref` 로 싣는다. `macro_metrics_collect`·`eval_macro_regime.eval_collect`·
+`fetch_releases.index_collect` 는 윗단의 결측을 접두어(`econ:`·`metrics:`)와 같은 식별자로 그대로 옮긴다 — 결측이 지나가는
+파일마다 등록해야 풀린다.
 
 ### F6 승인 — 2026-11-17 사용자 결정
 
@@ -172,9 +173,12 @@ All items less food and energy 의 12개월 칸은 「-」. ② BLS 일정 https
 
 **등록(정확히 하나, 시험이 고정).** id `us-2026-10-cpi-yoy-not-published` · 지표 CPI YoY(`CPIAUCSL`·`yoy_pct`)·Core CPI YoY
 (`CPILFESL`·`yoy_pct`) · 기준월 `2026-10` · 승인 user 2026-11-17 · **만료 2026-12-09**(12/10 발표 뒤 첫 글부터 예외 없음,
-자동 연장 없음, 2025-10 원자료가 복구된다고 가정하지 않는다). `econ_indicators.json` 에 `no_value:<이름>` 둘,
-`macro_metrics.json` 에 `econ:no_value:<이름>` 둘. 영향 범위: 검사 `check_macro`·`check_fed`·`check_numbers`(그 두 파일을 읽는
-검사), 섹션 매크로 진단의 물가 축·경제 지표 표의 두 행, 점수 물가 축 점수·`inflation_score`(레짐의 물가 다리).
+자동 연장 없음, 2025-10 원자료가 복구된다고 가정하지 않는다). 결측은 네 파일로 옮겨 가므로 네 곳에 같은 id 로 건다(각 두 지표, 모두 8줄):
+`econ_indicators.json` 의 `no_value:<이름>` → `macro_metrics.json` 의 `econ:no_value:<이름>` → `macro_eval.json`·
+`releases/index.json` 의 `metrics:econ:no_value:<이름>`(`common.collect_status.carry_upstream` — 윗단이 무엇이 빠졌는지
+말하면 키와 식별자·기준월을 그대로 옮기고, 말하지 않으면 뭉뚱그린 키 하나라 등록할 수 없다. 전에는 뒤의 두 파일이
+`macro_metrics:partial`·`macro_metrics` 로만 적어 예외가 닿지 않았다). 영향 범위: 검사 `check_macro`·`check_fed`·
+`check_numbers`·`check_sources`·`check_weight`(그 네 파일을 읽는 검사), 섹션 매크로 진단의 물가 축·경제 지표 표의 두 행, 점수 물가 축 점수·`inflation_score`(레짐의 물가 다리).
 
 **조건과 구현.**
 - 대상 고정 — 식별자(FRED id + 변환)와 기준월이 모두 같을 때만. 이름이 비슷한 지표(CPI MoM 등), 같은 이름의 다른 계열,

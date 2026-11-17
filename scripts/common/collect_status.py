@@ -111,6 +111,21 @@ def by_counts(as_of, source, missing, total, *, empty_when_ok='has_data', **kw):
                  empty=empty_when_ok if st == 'ok' else ('has_data' if st == 'partial' else None), **kw)
 
 
+def carry_upstream(upstream, prefix, fallback):
+    """윗단 자료의 `collect` 가 일부만(partial)일 때 그 결측을 아랫단 자료의 결측으로 옮긴다 → (missing, missing_ref).
+
+    무엇이 빠졌는지 윗단이 말하면 키마다 `<prefix>:<키>` 로, 식별자·기준월(`missing_ref`)도 같이 옮긴다 — 사람이 승인한
+    항목 단위 예외(`accepted_missing`)가 아랫단 파일에도 **같은 지표·같은 기준월**로만 걸리게. 윗단이 실패했거나 무엇이
+    빠졌는지 말하지 않으면 뭉뚱그린 `fallback` 하나(그것은 등록할 수 없다). 윗단이 ok 면 빈 목록."""
+    if not isinstance(upstream, dict) or upstream.get('status') in (None, 'ok'):
+        return [], {}
+    inner = [m for m in (upstream.get('missing') or []) if isinstance(m, str)]
+    if upstream.get('status') != 'partial' or not inner:
+        return [fallback], {}
+    src = upstream.get('missing_ref') if isinstance(upstream.get('missing_ref'), dict) else {}
+    return [f'{prefix}:{m}' for m in inner], {f'{prefix}:{m}': src[m] for m in inner if m in src}
+
+
 # ── _collect_status.json ─────────────────────────────────────────────────
 
 def status_path(datadir):

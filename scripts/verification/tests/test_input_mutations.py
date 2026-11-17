@@ -532,6 +532,19 @@ def _cpi_day(base, ctx0, dest, month='2026-10', extra=None, coverage=True):
         obj = M.with_coverage(obj, cmd.excluded_scored(reasons, refs))
     obj['collect'] = mmc
     _dump(p, obj)
+    # 결측은 두 파일 더 옮겨 간다 — 축 점수로 레짐을 판정한 책과, 축 점수가 목록을 정한 지표 원문 목록
+    import eval_macro_regime
+    import fetch_releases
+    p = os.path.join(c['datadir'], 'macro_eval.json')
+    ev = _load(p)
+    ev['collect'] = eval_macro_regime.eval_collect(d, 'fresh', obj, 'ok')
+    _dump(p, ev)
+    p = os.path.join(c['datadir'], 'releases', 'index.json')
+    idx = _load(p)
+    assert idx['releases']                                                     # 그날 받을 원문이 있었다
+    # 그날 원문은 다 받은 것으로 둔다(옛 목록에는 행마다의 수집 결과 칸이 없다) — 여기서 보는 것은 옮겨 온 결측뿐이다
+    idx['collect'] = fetch_releases.index_collect({'report_date': d, 'releases': [{'key': 'x', 'ok': True}]}, 'fresh', mmc)
+    _dump(p, idx)
     RD.restamp_hashes(c)
     return c
 
@@ -550,9 +563,10 @@ def test_approved_cpi_gap_real_policy_real_day(days, monkeypatch, tmp_path):
     # ① 자료 층: 승인된 두 지표만 빠졌다 — 막지 않고 조건으로(예외 ID·만료일이 기록에)
     assert not s['inputs']['blocking'] and not s['inputs']['unclassified'], s['inputs']
     conds = [x for x in s['conditions'] if x['kind'] == 'accepted_missing']
-    assert sorted(x['file'] for x in conds) == ['<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json']
+    assert sorted(x['file'] for x in conds) == ['<datadir>/econ_indicators.json', '<datadir>/macro_eval.json',
+                                                '<datadir>/macro_metrics.json', '<datadir>/releases/index.json']
     assert all(x['ids'] == ['us-2026-10-cpi-yoy-not-published'] and x['expires'] == '2026-12-09' for x in conds)
-    assert len(s['inputs']['accepted_missing']) == 2 and '원천 미발표' in s['inputs']['accepted_missing'][0]
+    assert len(s['inputs']['accepted_missing']) == 4 and '원천 미발표' in s['inputs']['accepted_missing'][0]
     assert _load(os.path.join(c['datadir'], 'econ_indicators.json'))['collect']['status'] == 'partial'   # 원본 그대로
     # 조건 8: 이 날은 빠진 둘이 판단을 바꿀 수 있다 — check_macro 가 보류(미완료), 발행하지 않는다
     g = _macro(res)
@@ -569,7 +583,8 @@ def test_approved_cpi_gap_real_policy_real_day(days, monkeypatch, tmp_path):
 def test_approved_cpi_gap_does_not_cover_anything_else(days, monkeypatch, tmp_path):
     base, ctx0 = days[('us', '2026-11-12')]
     monkeypatch.setattr(I, 'EFFECTIVE', ctx0['date'])
-    both = {'<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json'}
+    both = {'<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json', '<datadir>/macro_eval.json',
+            '<datadir>/releases/index.json'}
     # ② 세 번째 지표가 더 빠지면 차단
     c = _cpi_day(base, ctx0, str(tmp_path / 'third'), extra={'JOLTS Job Openings': 'fetch_failed'})
     cfg, pol = _policy(c)

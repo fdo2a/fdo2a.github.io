@@ -37,13 +37,15 @@ def eval_collect(report_date, metrics_state, metrics, macro_state):
     if macro_state == 'unreadable':
         return C.failed(report_date, src, 'macro.json 을 읽지 못했다 — 처음 여는 날과 구별할 수 없다',
                         missing=['macro.json'])
-    missing = []
+    missing, ref = [], {}
     if metrics_state != 'fresh':
         missing.append(f'macro_metrics:{metrics_state}')
-    elif (metrics.get('collect') or {}).get('status') not in (None, 'ok'):
-        missing.append('macro_metrics:partial')
+    else:
+        # 축 점수가 일부 지표 없이 나왔으면 무엇이 빠졌는지를 그대로 옮긴다(`metrics:<키>` + 식별자·기준월) — 승인된
+        # 예외가 이 파일에도 같은 지표·같은 기준월로만 걸린다. 무엇이 빠졌는지 모르면 전처럼 macro_metrics:partial.
+        missing, ref = C.carry_upstream(metrics.get('collect'), 'metrics', 'macro_metrics:partial')
     return C.build('partial' if missing else 'ok', report_date, src, missing=missing, empty='has_data',
-                   detail='bootstrap — 어제 책 없음' if macro_state == 'absent' else None)
+                   detail='bootstrap — 어제 책 없음' if macro_state == 'absent' else None, missing_ref=ref or None)
 
 
 def main():

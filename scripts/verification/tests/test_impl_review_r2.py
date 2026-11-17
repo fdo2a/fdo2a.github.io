@@ -525,16 +525,51 @@ def test_f6_macro_metrics_follows_the_same_registration(tmp_path, monkeypatch):
 
 # ── 실제 정책 파일 기준(사용자 조건 9·10) ────────────────────────────────────────────────────
 
-def _real_us(tmp_path, econ, mm, date=D):
-    """실제 정책의 두 파일 항목만 떼어 판정한다(다른 gate 자료는 이 시험의 대상이 아니다)."""
+def _chain(reasons, month=MONTH):
+    """수집기가 적는 모양 그대로, 결측이 옮겨 가는 네 파일의 collect — econ → macro_metrics → macro_eval·releases/index."""
+    sys.path.insert(0, SCRIPTS)
+    import eval_macro_regime
+    import fetch_releases
+    econ, mm = _collected(reasons, month)
+    ev = eval_macro_regime.eval_collect(D, 'fresh', {'collect': mm}, 'ok')
+    idx = fetch_releases.index_collect({'report_date': D, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh', mm)
+    return econ, mm, ev, idx
+
+
+def _real_us(tmp_path, chain, date=D):
+    """실제 정책의 네 파일 항목만 떼어 판정한다(다른 gate 자료는 이 시험의 대상이 아니다)."""
+    econ, mm, ev, idx = chain
+    paths = ('<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json', '<datadir>/macro_eval.json',
+             '<datadir>/releases/index.json')
     files, _ = I.entries(REAL, 'us')
-    two = [e for e in files if e['path'] in ('<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json')]
-    pol = policy(two)
+    pol = policy([e for e in files if e['path'] in paths])
     put(tmp_path, 'econ_indicators.json', {'indicators': [{'name': 'x'}], 'collect': dict(econ, as_of=date)})
     put(tmp_path, 'macro_metrics.json', {'report_date': date, 'indicators': [{'name': 'x'}],
                                          'collect': dict(mm, as_of=date)})
+    put(tmp_path, 'macro_eval.json', {'report_date': date, 'collect': dict(ev, as_of=date)})
+    put(tmp_path, 'releases/index.json', {'report_date': date, 'status': 'complete', 'releases': [{'key': 'cpi'}],
+                                          'collect': dict(idx, as_of=date)})
     h = I.assess(pol, 'us', ctx(tmp_path, date=date))
     return h, R.summarize([], health=h)
+
+
+def test_f6_the_gap_travels_through_four_files_with_its_identity():
+    econ, mm, ev, idx = _chain(CPI)
+    assert ev['status'] == 'partial' and ev['missing'] == [f'metrics:econ:{K1}', f'metrics:econ:{K2}']
+    assert ev['missing_ref'] == {f'metrics:econ:{K1}': ident(K1), f'metrics:econ:{K2}': ident(K2)}
+    assert idx['status'] == 'partial' and idx['missing'] == ev['missing'] and idx['missing_ref'] == ev['missing_ref']
+    # 무엇이 빠졌는지 윗단이 말하지 않으면 뭉뚱그린 키 하나 — 등록할 수 없다
+    sys.path.insert(0, SCRIPTS)
+    import eval_macro_regime
+    import fetch_releases
+    assert eval_macro_regime.eval_collect(D, 'fresh', {'collect': {'status': 'partial'}}, 'ok')['missing'] == [
+        'macro_metrics:partial']
+    assert fetch_releases.index_collect({'report_date': D, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh',
+                                        {'status': 'failed', 'missing': ['x']})['missing'] == ['macro_metrics']
+    # 원문을 못 받은 발표가 섞이면 그것은 다른 결측이다
+    idx2 = fetch_releases.index_collect({'report_date': D, 'releases': [{'key': 'cpi', 'ok': True},
+                                                                         {'key': 'ppi', 'ok': False}]}, 'fresh', mm)
+    assert idx2['missing'][0] == 'ppi' and len(idx2['missing']) == 3
 
 
 def test_f6_real_policy_has_exactly_this_one_exception():
@@ -544,11 +579,12 @@ def test_f6_real_policy_has_exactly_this_one_exception():
         for e in files:
             for a in e.get('accepted_missing') or []:
                 got[(market, e['path'], a['key'])] = a
-    assert set(got) == {('us', '<datadir>/econ_indicators.json', 'no_value:CPI YoY'),
-                        ('us', '<datadir>/econ_indicators.json', 'no_value:Core CPI YoY'),
-                        ('us', '<datadir>/macro_metrics.json', 'econ:no_value:CPI YoY'),
-                        ('us', '<datadir>/macro_metrics.json', 'econ:no_value:Core CPI YoY')}
-    assert len(got) == 4
+    names = ('CPI YoY', 'Core CPI YoY')
+    want = {('us', '<datadir>/econ_indicators.json', f'no_value:{n}') for n in names} \
+        | {('us', '<datadir>/macro_metrics.json', f'econ:no_value:{n}') for n in names} \
+        | {('us', '<datadir>/macro_eval.json', f'metrics:econ:no_value:{n}') for n in names} \
+        | {('us', '<datadir>/releases/index.json', f'metrics:econ:no_value:{n}') for n in names}
+    assert set(got) == want and len(got) == 8        # 결측이 옮겨 가는 네 파일 × 두 지표, 예외는 하나(같은 id)
     for (market, path, key), a in got.items():
         assert market == 'us' and a['id'] == EID and a['ref_period'] == '2026-10' and a['expires'] == '2026-12-09'
         assert a['approved_by'] == 'user' and a['approved_on'] == '2026-11-17' and a['transform'] == 'yoy_pct'
@@ -566,10 +602,10 @@ def test_f6_real_policy_has_exactly_this_one_exception():
 
 def test_f6_real_1_only_the_two_approved_indicators_missing_is_conditional(tmp_path, monkeypatch):
     monkeypatch.setattr(I, 'EFFECTIVE', None)
-    h, s = _real_us(tmp_path, *_collected(CPI))
+    h, s = _real_us(tmp_path, _chain(CPI))
     assert s['publish_ok'] and s['status'] == 'conditional'
     conds = [c for c in s['conditions'] if c['kind'] == 'accepted_missing']
-    assert len(conds) == 2 and all(c['ids'] == [EID] and c['expires'] == '2026-12-09' for c in conds)
+    assert len(conds) == 4 and all(c['ids'] == [EID] and c['expires'] == '2026-12-09' for c in conds)
     assert all(EID in line and '원천 미발표' in line for line in s['inputs']['accepted_missing'])
 
 
@@ -577,40 +613,40 @@ def test_f6_real_2_a_third_missing_indicator_blocks(tmp_path, monkeypatch):
     monkeypatch.setattr(I, 'EFFECTIVE', None)
     for third in ({'PCE Price Index YoY': 'no_value'}, {'JOLTS Job Openings': 'fetch_failed'},
                   {'CPI MoM': 'transform_error'}):
-        h, s = _real_us(tmp_path, *_collected(dict(CPI, **third)))
+        h, s = _real_us(tmp_path, _chain(dict(CPI, **third)))
         assert not s['publish_ok'] and s['status'] == 'incomplete', third
-        assert len(s['inputs']['blocking']) == 2 and not s['inputs']['accepted_missing']
+        assert len(s['inputs']['blocking']) == 4 and not s['inputs']['accepted_missing']
 
 
 def test_f6_real_3_same_indicators_missing_for_another_month_block(tmp_path, monkeypatch):
     monkeypatch.setattr(I, 'EFFECTIVE', None)
     for month in ('2026-11', '2026-09', '2027-10'):
-        h, s = _real_us(tmp_path, *_collected(CPI, month=month))
+        h, s = _real_us(tmp_path, _chain(CPI, month=month))
         assert not s['publish_ok'] and s['status'] == 'incomplete', month
 
 
 def test_f6_real_4_after_expiry_it_blocks_unless_the_data_is_whole(tmp_path, monkeypatch):
     monkeypatch.setattr(I, 'EFFECTIVE', None)
-    assert _real_us(tmp_path, *_collected(CPI), date='2026-12-09')[1]['publish_ok']
-    h, s = _real_us(tmp_path, *_collected(CPI), date='2026-12-10')           # 12/10 발표 뒤 첫 글 — 예외 없음
+    assert _real_us(tmp_path, _chain(CPI), date='2026-12-09')[1]['publish_ok']
+    h, s = _real_us(tmp_path, _chain(CPI), date='2026-12-10')           # 12/10 발표 뒤 첫 글 — 예외 없음
     assert not s['publish_ok'] and s['status'] == 'incomplete'
     # 2026-11 기준월이 정상 산출되면(결측 없음) 그냥 통과 — 조건도 남지 않는다
-    h, s = _real_us(tmp_path, *_collected({}), date='2026-12-10')
+    h, s = _real_us(tmp_path, _chain({}), date='2026-12-10')
     assert s['publish_ok'] and not [c for c in s['conditions'] if c['kind'] == 'accepted_missing']
 
 
 def test_f6_real_identity_mismatch_and_other_names_do_not_match(tmp_path, monkeypatch):
     monkeypatch.setattr(I, 'EFFECTIVE', None)
-    econ, mm = _collected(CPI)
     for fid in ('CPIAUCNS', 'CUSR0000SA0', ''):
-        e2 = json.loads(json.dumps(econ))
-        e2['missing_ref'][K1]['fred_id'] = fid
-        m2 = json.loads(json.dumps(mm))
-        m2['missing_ref']['econ:' + K1]['fred_id'] = fid
-        h, s = _real_us(tmp_path, e2, m2)
-        assert not s['publish_ok'], fid
+        chain = json.loads(json.dumps(_chain(CPI)))
+        for c in chain:
+            for k, r in c['missing_ref'].items():
+                if k.endswith(K1):
+                    r['fred_id'] = fid
+        h, s = _real_us(tmp_path, chain)
+        assert not s['publish_ok'] and len(s['inputs']['blocking']) == 4, fid
     # 다른 CPI 지표(전월 대비)는 이름이 비슷해도 대상이 아니다
-    h, s = _real_us(tmp_path, *_collected({'CPI MoM': 'no_value', 'Core CPI MoM': 'no_value'}))
+    h, s = _real_us(tmp_path, _chain({'CPI MoM': 'no_value', 'Core CPI MoM': 'no_value'}))
     assert not s['publish_ok']
 
 
