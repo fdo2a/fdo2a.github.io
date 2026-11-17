@@ -126,8 +126,8 @@
  ],
  "fetch": {},
  "format": "verify-publish/1",
- "last_ok": "2026-11-17T08:50:14.360237+09:00",
- "last_seen": "7cb282dc8cee1bf09810e732ddc6b79b5d0e07d7",
+ "last_ok": "2026-11-17T13:08:37.262902+09:00",
+ "last_seen": "fe39eb89417307618fed10f75cce3c236a55c278",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
@@ -191,6 +191,7 @@
   "us:2026-11-10": "ok",
   "us:2026-11-11": "ok",
   "us:2026-11-12": "ok",
-  "us:2026-11-13": "ok"
+  "us:2026-11-13": "ok",
+  "us:2026-11-16": "ok"
  }
 }
