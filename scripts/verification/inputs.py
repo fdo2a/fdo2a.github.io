@@ -24,6 +24,11 @@ changed_after_collect(`_collect_status.json` 의 해시와 다름).
   남길 뿐 막지 않는다 — `unconfirmed_empty`), 날짜 칸 없는 자료의 신선도, 목록형·txt 자료의 수집 실패를 막지 못한다.
 - 적용일부터 수집 잡이 쓰는 gate 파일(produced_by collector·reference)은 `_collect_status.json` 에 항목과 sha256 이
   있어야 한다(없으면 unstamped).
+- 대상 목록 칸이 없거나 목록이 아니면 빈 목록이 아니다 — 적용일·표시와 무관하게 incomplete_fields(2회차 F1).
+- 장부(`_collect_status.json`) 항목의 `run: failed`(이번 수집 실행이 그 파일을 다시 쓰지 못했다)는 파일 안의 「성공」보다
+  앞선다 — 적용일부터 failed, 그 전에는 조건 `recollect_failed`. 적용일부터 `run` 이 `RUN_OK` 가 아니면 unstamped(2회차 F3).
+- 정책의 `accepted_missing`(사람이 승인한 항목 단위 기한부 결측)에 **전부** 든 partial 만 조건부로 돌린다 — 수집 실패·다른
+  결측·만료·기준월 불일치는 그대로 막는다(2회차 F6, `_accepted`). 실제 정책에 등록은 없다(사용자 결정 전).
 - 판정할 수 없는 것은 정상으로 추정하지 않는다. 이 검사는 루틴이 자료·규칙을 직접 고치는 우회를 막지 않는다(권한 분리 단계).
 설계 docs/superpowers/specs/2026-11-17-input-health.md
 """
