@@ -157,7 +157,8 @@ def test_na_when(tmp_path, monkeypatch):
              'covered_by': None}
     pol = policy([GATE_MOV, moves])
     na = {'file': '<datadir>/movers.json', 'list': 'groups', 'min_checked': 1,
-          'legacy_evidence': {'file': '<datadir>/kr_stock_moves.json', 'min_items': 1, 'date_field': 'date'}}
+          'legacy_evidence': {'file': '<datadir>/kr_stock_moves.json', 'min_items': 1, 'date_field': 'date',
+                              'id_field': 'name', 'value_field': 'change_pct'}}
     ok_collect = dict(STAMPED, empty='confirmed_none', checked=60, expected=60)
     put(tmp_path, 'movers.json', {'report_date': D, 'groups': [], 'collect': ok_collect})
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na) == (True, 'collect')
