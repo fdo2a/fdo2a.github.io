@@ -94,7 +94,11 @@
      "class": "gate",
      "name": "연준 사건 책",
      "date": "report_date",
-     "target": "events"
+     "target": "events",
+     "target_where": {
+      "fresh": true
+     },
+     "why": "수집기는 fresh 사건이 없으면 confirmed_none 을 쓴다(collect_fed_events.events_collect) — 대상은 fresh 사건"
     },
     {
      "path": "<datadir>/fed/*.txt",
@@ -433,9 +437,8 @@
      "path": "<datadir>/kr_index_etf.json",
      "class": "gate",
      "name": "KR 지수 ETF",
-     "require": [
-      "<items>"
-     ]
+     "target": "<items>",
+     "why": "수집기는 빈 목록을 조회 성공 뒤 confirmed_none 으로 적는다 — 빈 목록은 그 표시가 있을 때만"
     },
     {
      "path": "<tg>",

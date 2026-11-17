@@ -63,6 +63,9 @@ def main(argv=None):
     ap.add_argument('--market', choices=('us', 'kr'), default='us')
     ap.add_argument('--date', help='KR: 글 날짜(필수)')
     ap.add_argument('--effective', help=argparse.SUPPRESS)
+    ap.add_argument('--recheck', action='store_true',
+                    help='지난 글을 그 커밋 자료로 재검사(정정기·윤문기·매일 알림) — 그때 없던 위임 자료는 2026-11-17 전처럼 '
+                         '미검증으로 센다. 발행 실행 목록은 쓰지 않는다')
     args = ap.parse_args(argv)
     if args.market == 'kr':
         return _main_kr(args)
@@ -89,6 +92,11 @@ def main(argv=None):
     for k, rel in [(k, f'{k}.json') for k in OPTIONAL] + [('liquidity', os.path.join('liquidity', 'liquidity.json'))]:
         try:
             data[k] = _read(os.path.join(args.datadir, rel))
+        except FileNotFoundError:
+            if args.recheck:
+                continue             # 지난 글 재검사: 없으면 그 위임이 성립하지 않아 미검증으로 센다(옛 판정)
+            print(f'FATAL: {os.path.basename(rel)} 이 없다', file=sys.stderr)
+            return 2
         except (OSError, ValueError) as e:
             print(f'FATAL: {os.path.basename(rel)} 을 읽지 못했다: {type(e).__name__}', file=sys.stderr)
             return 2
@@ -165,7 +173,7 @@ def _main_kr(args):
             html = fh.read()
         data = K.load_inputs(args.datadir)
         lacking = [k for k in ('kr_intraday', 'kr_econ', K.FUND) if data.get(k) is None]
-        if lacking:
+        if lacking and not args.recheck:
             # 2026-11-17: 선택 자료도 그날 수집분이 있어야 한다 — 없으면 미완료(2)
             print(f'FATAL: {", ".join(k + ".json" for k in lacking)} 이 없거나 읽히지 않는다', file=sys.stderr)
             return 2

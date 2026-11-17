@@ -318,3 +318,28 @@ def test_hash_only_status_entry_is_not_a_stamp(tmp_path):
     put(tmp_path, '_collect_status.json', {'files': {'market_data.json': {
         'sha256': H.sha256(open(p, 'rb').read()).hexdigest(), 'bytes': 1}}})
     assert st(I.assess(pol, 'us', ctx(tmp_path))) == 'unstamped'
+
+
+def test_target_where_counts_only_matching_items(tmp_path):
+    ev = dict(GATE_EV, target_where={'fresh': True})
+    pol = policy([ev])
+    rel = '<datadir>/fed/events.json'
+    stale_only = {'report_date': D, 'events': [{'key': 'old', 'fresh': False}]}
+    put(tmp_path, 'fed/events.json', dict(stale_only, collect=dict(STAMPED, empty='confirmed_none')))
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'                 # fresh 0건 = 없음 확인
+    put(tmp_path, 'fed/events.json', dict(stale_only, collect=dict(STAMPED, empty='has_data')))
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'incomplete_fields'
+    put(tmp_path, 'fed/events.json', {'report_date': D, 'events': [{'key': 'x', 'fresh': True}],
+                                      'collect': dict(STAMPED, empty='confirmed_none')})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'incomplete_fields'
+
+
+def test_list_file_target_items(tmp_path):
+    ent = {'path': '<datadir>/kr_index_etf.json', 'class': 'gate', 'name': 'ETF', 'target': '<items>'}
+    pol = policy([ent], market='kr')
+    rel = '<datadir>/kr_index_etf.json'
+    put(tmp_path, 'kr_index_etf.json', [])
+    put(tmp_path, '_collect_status.json', {'files': {'kr_index_etf.json': dict(STAMPED, empty='confirmed_none')}})
+    assert st(I.assess(pol, 'kr', ctx(tmp_path)), rel) == 'ok'
+    put(tmp_path, '_collect_status.json', {'files': {'kr_index_etf.json': dict(STAMPED, empty='has_data')}})
+    assert st(I.assess(pol, 'kr', ctx(tmp_path)), rel) == 'incomplete_fields'

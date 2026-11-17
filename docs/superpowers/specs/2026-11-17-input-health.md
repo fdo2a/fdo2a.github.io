@@ -92,6 +92,14 @@ plan.md 「조사·측정」의 감사 훅 실측에 코드 읽기로 보충한 
   `EFFECTIVE` 되돌리기). 기록의 generator 해시·레포 다이제스트가 「바뀌었다」는 것은 남기지만 막지는 않는다.
 - 적용일 전에는 날짜 칸 없는 자료의 신선도, 목록형·txt 의 수집 실패, 표시 없는 빈 대상 목록을 알 수 없다.
 - writer 분류 자료(웹 조사 노트·KR 개별주 등락·기술적 레벨·지표 원문 등)는 검사기가 대조하지 않는다 — 기록에 risk 로만.
-- 지난 글 재검사(정정기·윤문기)는 같은 검사기를 쓴다. `--legacy-releases` 가 있는 `check_macro`·`check_sources` 는
-  옛 판정을 유지하지만, 나머지는 그 커밋 자료에 없던 파일 때문에 원본부터 2 가 될 수 있다(원본과 같으면 정정기는
-  기존 실패로 허용, `NEVER_TOLERATE` 의 `check_fund`·`check_sources` 는 막는다).
+- 지난 글 재검사(정정기·윤문기·매일 알림)는 같은 검사기를 그 커밋 자료로 돌린다. 원본의 2 를 허용하지 않는
+  `check_fund`(NEVER_TOLERATE)·`check_numbers`(VIOLATION_DIFF·NO_TOLERATE_EXIT2)는 `--recheck` 로 2026-11-17 전 판정을
+  쓴다 — 실측: US 10/12·10/21(펀드 partial·unavailable)은 `check_fund` 2, 10/12·10/20·10/21·11/05(유동성 책 전)는
+  `check_numbers` 2 였고 `--recheck` 로 옛 결과(0·1)가 돌아온다. `check_macro`·`check_sources` 는 `--legacy-releases`
+  가 같은 몫(`check_macro` 는 책·econ·metrics 완화까지). 발행 실행 목록은 두 플래그를 쓰지 않는다(시험이 강제). 나머지
+  검사기는 원본도 2 면 정정기가 기존 실패로 허용한다 — 그 게이트는 그 정정을 검사하지 않는 셈이다(전의 exit 0 과 같은 공백).
+- 실행 목록 설정에 `inputs_policy` 가 없으면 자료 검사를 하지 않는다(시험용 설정 경로). 실제 설정에 있다는 것은 시험이
+  강제하지만, 권한 분리 전에는 루틴이 그 칸을 지우는 것을 막지 못한다.
+- 표시 모드의 변이 시험은 손으로 만든 표시(`realday.stamp`)로 돈다 — 실제 수집기 산출(작업 2)과의 맞물림은 병합 뒤
+  첫 수집에서 확인해야 한다(대조한 것: 수집 쪽 `collect_status.build` 의 모양, `stamp_collect.py` 의 등록표·해시 칸,
+  연준 사건의 fresh 기준, 지수 ETF 빈 목록의 confirmed_none).

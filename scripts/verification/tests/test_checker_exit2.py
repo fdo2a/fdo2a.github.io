@@ -169,3 +169,25 @@ def test_numbers_config_unreadable(monkeypatch):
     with pytest.raises(CN.ConfigMissing):
         CN._mode(None)
     assert CN._mode('block') == 'block'
+
+
+def test_recheck_keeps_the_old_rule_for_past_posts(tmp_path, d):
+    # 정정기·윤문기·매일 알림이 지난 글을 그 커밋 자료로 다시 볼 때 — 그때 없던 자료로 원본부터 2 가 되면 정정이 막힌다
+    put(d, 'fund_board.json', {'report_date': D, 'status': 'partial'})
+    assert run('check_fund.py', tmp_path, '--datadir', str(d), '--market', 'us').returncode == 2
+    put(d, 'fund_board.json', {'report_date': D, 'status': 'unavailable'})
+    assert run('check_fund.py', tmp_path, '--datadir', str(d), '--market', 'us', '--recheck').returncode == 0
+    k = tmp_path / 'kr'
+    k.mkdir()
+    put(k, 'kr_market_data.json', {'report_date': D})
+    put(k, 'kr_flows.json', {})
+    put(k, 'kr_top_value.json', [])
+    r = run('check_numbers.py', tmp_path, '--datadir', str(k), '--market', 'kr', '--date', D, '--recheck')
+    assert 'kr_intraday.json' not in r.stderr, r.stderr          # 옛 판정 — 선택 자료가 없어도 그 이유로 2 가 아니다
+
+
+def test_publish_config_never_passes_recheck():
+    cfg = json.load(open(os.path.join(os.path.dirname(SCRIPTS), 'config', 'prepub_gates.json'), encoding='utf-8'))
+    for m in cfg['markets'].values():
+        for g in m['gates']:
+            assert '--recheck' not in (g.get('argv') or []), g['name']

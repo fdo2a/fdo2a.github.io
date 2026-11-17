@@ -35,6 +35,9 @@ def main(argv=None):
     ap.add_argument('--datadir', default='data')
     ap.add_argument('--market', choices=sorted(FILES), default='us')
     ap.add_argument('--date', help='글 날짜(파일명에 없을 때)')
+    ap.add_argument('--recheck', action='store_true',
+                    help='지난 글을 그 커밋 자료로 재검사(정정기·윤문기) — 2026-11-17 전 판정(자료가 오늘 것이 아니거나 '
+                         'unavailable·partial 이면 섹션이 없어야 통과). 발행 실행 목록은 쓰지 않는다')
     ap.add_argument('--print-block', action='store_true',
                     help='그 날 자료로 다시 그린 정본 블록을 출력하고 끝낸다 — 블록 불일치는 '
                          '손으로 고치지 않고 이 출력으로 블록 전체를 바꾼다')
@@ -63,7 +66,7 @@ def main(argv=None):
         html = fh.read()
     data = _load(os.path.join(args.datadir, FILES[args.market]))
     from fund.gate import EFFECTIVE
-    if post_date >= EFFECTIVE:
+    if post_date >= EFFECTIVE and not args.recheck:
         why = (f'{FILES[args.market]} 이 없거나 읽히지 않는다' if not isinstance(data, dict) else
                f"자료 날짜 {data.get('report_date')} ≠ 글 날짜 {post_date}" if data.get('report_date') != post_date else
                f"자료 상태 {data.get('status')}" if data.get('status') != 'ok' else None)

@@ -661,7 +661,7 @@ def replay_numbers(root, path, sha, checker, commit_of=None, timeout=180):
                 fh.write(got.stdout)
         try:
             run = subprocess.run([sys.executable, checker, '--html', html, '--datadir', datadir,
-                                  '--json'], capture_output=True, text=True, cwd=work,
+                                  '--json', '--recheck'], capture_output=True, text=True, cwd=work,
                                  timeout=timeout)
             res = number_result(run.returncode, run.stdout, run.stderr, False)
         except subprocess.TimeoutExpired:

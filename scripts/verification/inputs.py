@@ -298,7 +298,11 @@ def _health(e, key, full, date, status_files, excuse, ref=None):
                 bad('incomplete_fields', '대상이 있는지 모른다(collect.empty=unknown)')
             t = e.get('target')
             if t and stamp['empty'] != 'unknown':
-                lst = d.get(t) if isinstance(obj, dict) else obj
+                lst = d.get(t) if isinstance(obj, dict) and t != '<items>' else obj
+                where = e.get('target_where')
+                if isinstance(lst, list) and isinstance(where, dict):
+                    # 「대상」이 목록의 일부일 때(예: 연준 사건 책의 fresh 사건만) — 수집기의 empty 와 같은 뜻으로 센다
+                    lst = [x for x in lst if isinstance(x, dict) and all(x.get(k) == v for k, v in where.items())]
                 if isinstance(lst, list):
                     if not lst and stamp['empty'] != 'confirmed_none':
                         bad('incomplete_fields', f'{t} 가 비었는데 「없음 확인」이 없다')

@@ -196,8 +196,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_calendar.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'us',
-             '--date', date],
-            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir],
+             '--date', date, '--recheck'],
+            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir, '--recheck'],
         ]
         market = 'us'
     else:
@@ -210,9 +210,9 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
                 '--date', date]] if _kr_brief_carries_news(date) else []),
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date],
+             '--date', date, '--recheck'],
             [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date],
+             '--date', date, '--recheck'],
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout'],
         ]
         market = 'kr'
