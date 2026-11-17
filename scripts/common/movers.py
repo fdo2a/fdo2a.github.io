@@ -88,6 +88,48 @@ def group_movers(candidates, max_groups=MAX_GROUPS):
     return out
 
 
+# 모집단 후보 중 그날 봉(전일 종가 포함)을 실제로 잰 비율이 이보다 낮으면 「다 읽었다」고 하지 않는다.
+# 정상일은 57~60/60(신규 상장·거래정지 몇 종목이 빠진다). 늦게 돈 KR 실행은 0~1/58 이었다(11/09~11/16).
+MIN_COVERAGE = 0.9
+# 시총·업종 조회 실패가 이 비율을 넘으면 기여 상·하위나 업종 묶기를 믿을 수 없다.
+MAX_LOOKUP_FAIL = 0.1
+
+
+def stamp(book, *, source, checked, expected, lookup_failed=(), lookup_total=0):
+    """`collect` 칸을 붙인다(2026-11-17, 공통 계약 A). `checked` = 그날 등락을 실제로 잰 종목 수,
+    `expected` = 모집단 후보 수. 묶음 0개를 「없음 확인」으로 적는 것은 모집단을 거의 다 쟀을 때뿐이다 —
+    후보가 비었거나(앞 단계 실패) 일부만 쟀으면 `unknown`.
+    """
+    from common import collect_status as C
+    rd = book.get('report_date')
+    if book.get('error'):
+        book['collect'] = C.failed(rd, source, book['error'], checked=checked, expected=expected)
+        return book
+    missing, problems = [], []
+    if not expected:
+        problems.append('모집단 후보 0종목 — 앞 단계(구성 종목·거래대금) 실패')
+    elif checked == 0:
+        problems.append(f'후보 {expected}종목 중 그날 봉을 잰 종목 0')
+    if problems:
+        book['collect'] = C.failed(rd, source, '; '.join(problems), checked=checked, expected=expected)
+        return book
+    if checked < MIN_COVERAGE * expected:
+        missing.append(f'coverage:{checked}/{expected}')
+    lf = list(lookup_failed)
+    if lookup_total and len(lf) > MAX_LOOKUP_FAIL * lookup_total:
+        missing.append(f'lookup:{len(lf)}/{lookup_total}')
+    groups = book.get('groups') or []
+    if missing:
+        book['collect'] = C.build('partial', rd, source, missing=missing,
+                                  empty='has_data' if groups else 'unknown',
+                                  checked=checked, expected=expected)
+    else:
+        book['collect'] = C.build('ok', rd, source, empty='has_data' if groups else 'confirmed_none',
+                                  checked=checked, expected=expected,
+                                  detail=f'lookup failed {len(lf)}' if lf else None)
+    return book
+
+
 def build(report_date, universe, rows, industries=None, threshold=THRESHOLD_PCT,
           max_groups=MAX_GROUPS):
     """산출 파일 모양. `industries` 는 {종목명: 업종} — 후보만 조회해 넘긴다."""

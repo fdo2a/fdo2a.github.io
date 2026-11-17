@@ -194,6 +194,17 @@ def _report_date(datadir, override):
     return dt.date.today()
 
 
+def calendar_collect(book):
+    """collect 칸(2026-11-17). 못 받은 재료(`missing`)와 발표 번호를 못 얻어 비운 지표(`unresolved`
+    — 「일정 없음」이 아니라 「확인 못 함」)를 둘 다 결측으로 센다. 일정이 하나도 없는 것은 재료를 다
+    받았을 때만 「없음 확인」이다."""
+    from common import collect_status as C
+    missing = list(book.get('missing') or []) + [f'unresolved:{s}' for s in book.get('unresolved') or []]
+    st = 'partial' if missing else 'ok'
+    return C.build(st, book.get('report_date'), 'FRED release calendar + Census + TreasuryDirect TA_WS + fomc_dates.json',
+                   missing=missing, empty='has_data' if book.get('events') else 'confirmed_none')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
@@ -223,6 +234,7 @@ def main():
     # 2026-11-07 전 파일의 `ambiguous`(이름이 모호해 뺀 지표)를 대신한다.
     book['unresolved'] = sorted(info['unresolved'])
     book['release_ids'] = dict(sorted(info['release_ids'].items()))
+    book['collect'] = calendar_collect(book)
     out = args.out or os.path.join(args.datadir, 'calendar.json')
     os.makedirs(os.path.dirname(out) or '.', exist_ok=True)
     with open(out, 'w', encoding='utf-8') as fh:

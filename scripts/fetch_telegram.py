@@ -306,6 +306,7 @@ def main(argv=None):
                'window_note': notes, 'channels': chans, 'items': items}
     os.makedirs(outdir, exist_ok=True)
     carry_summaries(items, {it['id']: it for it in (load(path) or {}).get('items', []) if it.get('summary_ko')})
+    payload['collect'] = telegram_collect(payload, final=False)
     _save(path, payload)                      # metadata first: a summary crash must not lose it
     from common.tg_summary import summarize   # noqa: E402
     done, failed = summarize(items, bodies)
@@ -313,10 +314,42 @@ def main(argv=None):
                         'stale_dropped': dropped,
                         'channels_failed': sorted(c for c, s in chans.items() if s['status'] == 'failed'),
                         'holes': sorted(c for c, s in chans.items() if s.get('hole'))}
+    payload['collect'] = telegram_collect(payload)
     _save(path, payload)
     print(f'{path} — 후보 {len(cands)} → {len(items)}건, 요약 {done} 실패 {failed}, '
           f'실패 채널 {payload["stats"]["channels_failed"] or "없음"}')
     return 1 if payload['stats']['channels_failed'] or (items and not done) else 0
+
+
+SOURCE = 't.me/s public channels'
+
+
+def telegram_collect(payload, final=True):
+    """collect 칸(2026-11-17). 채널을 다 끝까지 읽었을 때만 「올라온 글 없음」을 확인한 것이다.
+
+    실패·일부만 읽은 채널과 쪽수 상한에 걸려 구멍(`hole`)이 난 채널은 missing. 요약 단계 전(`final=False`)의
+    첫 저장은 failed — 요약 중에 죽으면 그 상태로 남는다. 요약 몇 건 실패는 그 글을 못 쓸 뿐이라 detail 에만,
+    글이 있는데 요약이 하나도 없으면 쓸 것이 없으므로 failed."""
+    from common import collect_status as C
+    rd = payload.get('report_date')
+    if not final:
+        return C.failed(rd, SOURCE, 'running — 요약 단계가 끝나지 않았다')
+    chans = payload.get('channels') or {}
+    missing = []
+    for ch, st in sorted(chans.items()):
+        if st.get('status') != 'ok':
+            missing.append(f"channel:{ch}:{st.get('status')}")
+        elif st.get('hole'):
+            missing.append(f'hole:{ch}')
+    stats = payload.get('stats') or {}
+    items = payload.get('items') or []
+    if not chans or all(st.get('status') == 'failed' for st in chans.values()):
+        return C.failed(rd, SOURCE, '채널을 하나도 읽지 못했다', missing=missing)
+    if items and not stats.get('summarized'):
+        return C.failed(rd, SOURCE, f'글 {len(items)}건 중 요약 0건', missing=missing + ['summary:all'])
+    detail = f"요약 실패 {stats['summary_failed']}건" if stats.get('summary_failed') else None
+    return C.build('partial' if missing else 'ok', rd, SOURCE, missing=missing,
+                   empty='has_data' if items else 'confirmed_none', detail=detail)
 
 
 def carry_summaries(items, old):

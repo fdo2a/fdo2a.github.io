@@ -87,7 +87,10 @@ def test_yesterdays_files_are_gone_even_on_a_quiet_day(tmp_path):
         {'report_date': '2026-10-28', 'releases': [{'key': 'claims', 'ok': True, 'url': 'x'}]})})
     FR.run(str(d), 'r2', get=pages({}), today=TODAY)
     assert list((d / 'releases').glob('*.txt')) == []
-    assert index(d) == {'report_date': '2026-10-29', 'run_id': 'r2', 'status': 'complete', 'releases': []}
+    got = index(d)
+    c = got.pop('collect')
+    assert got == {'report_date': '2026-10-29', 'run_id': 'r2', 'status': 'complete', 'releases': []}
+    assert c['status'] == 'ok' and c['empty'] == 'confirmed_none'
 
 
 def test_off_site_redirect_is_refused(tmp_path):
@@ -173,3 +176,56 @@ def test_sanitize_also_wipes_the_private_copies(tmp_path):
     FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
     FR.sanitize(str(d), 'other-run')
     assert not list((tmp_path / '_workspace' / 'releases').glob('*.txt'))
+
+
+# ── collect 칸(2026-11-17): 「받을 원문 없음」은 오늘 목록을 믿을 수 있을 때만 ─────────────
+
+def test_collect_all_fetched_is_has_data(tmp_path):
+    d = setup(tmp_path, [CPI])
+    FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
+    c = index(d)['collect']
+    assert c['status'] == 'ok' and c['empty'] == 'has_data' and c['as_of'] == '2026-10-29'
+
+
+def test_collect_one_failed_is_failed_or_partial(tmp_path):
+    d = setup(tmp_path, [CPI, PCE])
+    FR.run(str(d), 'r1', get=pages({CPI['url']: _fx('cpi.txt')}), today=TODAY)
+    c = index(d)['collect']
+    assert c['status'] == 'partial' and c['missing'] == ['pce'] and c['required_ok'] is False
+    d2 = setup(tmp_path / 'b', [CPI])
+    FR.run(str(d2), 'r1', get=pages({}), today=TODAY)
+    assert index(d2)['collect']['status'] == 'failed'
+
+
+def test_collect_stale_or_absent_metrics_is_failed_not_none(tmp_path):
+    d = setup(tmp_path, [])
+    (d / 'macro_metrics.json').write_text(json.dumps({'report_date': '2026-10-28', 'headline_releases': []}))
+    FR.run(str(d), 'r1', get=pages({}), today=TODAY)
+    assert index(d)['collect']['status'] == 'failed'
+    (d / 'macro_metrics.json').unlink()
+    FR.run(str(d), 'r1', get=pages({}), today=TODAY)
+    c = index(d)['collect']
+    assert c['status'] == 'failed' and c['empty'] == 'unknown'
+
+
+def test_collect_degraded_metrics_is_partial(tmp_path):
+    d = setup(tmp_path, [])
+    (d / 'macro_metrics.json').write_text(json.dumps({'report_date': '2026-10-29', 'headline_releases': [],
+                                                     'collect': {'status': 'partial'}}))
+    FR.run(str(d), 'r1', get=pages({}), today=TODAY)
+    c = index(d)['collect']
+    assert c['status'] == 'partial' and c['empty'] == 'unknown'
+
+
+def test_collect_running_and_aborted_are_failed(tmp_path):
+    d = setup(tmp_path, [CPI])
+
+    def boom(url):
+        raise RuntimeError('killed')
+    try:
+        FR.run(str(d), 'r1', get=boom, today=TODAY)
+    except RuntimeError:
+        pass
+    assert index(d)['collect']['status'] == 'failed'
+    FR.sanitize(str(d), 'r1')
+    assert index(d)['collect']['status'] == 'failed'

@@ -29,6 +29,23 @@ def load(path):
         return None
 
 
+def eval_collect(report_date, metrics_state, metrics, macro_state):
+    """collect 칸(2026-11-17). 축 점수(macro_metrics)가 없거나 낡았거나 일부만 찼으면 오늘 판정의 재료가
+    빠진 것이다(partial). 어제 책(macro.json)이 있는데 못 읽었으면 「처음 여는 날」로 읽히면 안 된다(failed)."""
+    from common import collect_status as C
+    src = 'macro_metrics.json + macro.json'
+    if macro_state == 'unreadable':
+        return C.failed(report_date, src, 'macro.json 을 읽지 못했다 — 처음 여는 날과 구별할 수 없다',
+                        missing=['macro.json'])
+    missing = []
+    if metrics_state != 'fresh':
+        missing.append(f'macro_metrics:{metrics_state}')
+    elif (metrics.get('collect') or {}).get('status') not in (None, 'ok'):
+        missing.append('macro_metrics:partial')
+    return C.build('partial' if missing else 'ok', report_date, src, missing=missing, empty='has_data',
+                   detail='bootstrap — 어제 책 없음' if macro_state == 'absent' else None)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
@@ -40,8 +57,12 @@ def main():
         sys.exit(1)
     report_date = market['report_date']
 
-    macro = load(os.path.join(args.datadir, 'macro.json'))
+    macro_path = os.path.join(args.datadir, 'macro.json')
+    macro = load(macro_path)
+    macro_state = 'ok' if macro is not None else ('unreadable' if os.path.exists(macro_path) else 'absent')
     metrics = load(os.path.join(args.datadir, 'macro_metrics.json')) or {}
+    metrics_state = 'fresh' if metrics.get('report_date') == report_date else (
+        'stale' if metrics else 'absent')
     # Scores keyed to another session would judge today's regime against yesterday's
     # economy. Drop them: with no scores nothing is implied, so the book freezes.
     got = metrics.get('report_date')
@@ -56,6 +77,7 @@ def main():
         print(f'FATAL: macro.json is invalid: {e}', file=sys.stderr)
         sys.exit(1)
 
+    ev['collect'] = eval_collect(report_date, metrics_state, metrics, macro_state)
     with open(os.path.join(args.datadir, 'macro_eval.json'), 'w', encoding='utf-8') as fh:
         json.dump(ev, fh, indent=2, ensure_ascii=False)
 
