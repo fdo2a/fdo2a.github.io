@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-16",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "topic_too_long",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-17T04:32:50+00:00",
- "cutoff_at": "2026-11-17T04:32:50+00:00",
+ "collected_at": "2026-11-17T05:38:57+00:00",
+ "cutoff_at": "2026-11-17T05:38:57+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "fc637a45bfdf910fb405fa53375de1b20195f41d7659f65150357d748ca0a4f7"
  },
  "counts": {
-  "harvest": 177,
+  "harvest": 179,
   "candidates": 1,
   "articles": [
    6
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 85540,
-   "out": 25269
+   "in": 66610,
+   "out": 19297
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,61 +42,12 @@
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "7/7",
-   "pairs": "3/3",
-   "obs": "12/12"
-  },
-  "verified": {
-   "pairs": 3,
-   "claims": 6,
-   "obs": 11,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "memo[0]",
-    "memo[1]",
-    "memo[2]",
-    "structure",
-    "variables[1]",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_ratio",
-   "remaining": [
-    "structure:dangling",
-    "variables[1]:dangling",
-    "edges[0]:dangling",
-    "memo[0]:dangling",
-    "memo[1]:dangling",
-    "memo[2]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 사임 이후 엔비디아 CEO 복귀 논란과 대중국 칩 수출통제 강화",
-  "query": "nvidia huang calls",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "variables[1]:dangling",
-  "edges[0]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "998f8dea65c6481a"
+ "content_hash": "c169fe0a5798e88e"
 }
