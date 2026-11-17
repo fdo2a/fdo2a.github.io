@@ -192,16 +192,20 @@ def calibrate_tape(ohlc):
 
     반환은 `(high, low, meta)` — meta가 None이면 초안값을 쓴 것이다.
     """
-    vals = []
+    vals, used = [], 0
     for bars in (ohlc or {}).values():
-        vals += _positions(bars)
+        got = _positions(bars)
+        used += bool(got)
+        vals += got
     if len(vals) < TAPE_MIN_SESSIONS:
         return TAPE_HIGH, TAPE_LOW, None
     vals.sort()
     hi = round(_quantile(vals, 0.75), 1)
     lo = round(_quantile(vals, 0.25), 1)
-    return hi, lo, {'sessions': len(vals), 'high': hi, 'low': lo,
-                    'source': '일간 OHLC 종가 위치의 사분위'}
+    # `sessions` 는 거래일 수가 아니다 — 지수마다의 일간 관측값을 합친 개수다(이름은 읽는 쪽 때문에 그대로 둔다).
+    # 캡션이 「N거래일」로 옮기지 않게, 실제로 관측값을 낸 지수 수와 단위를 함께 낸다.
+    return hi, lo, {'sessions': len(vals), 'indices': used, 'unit': '지수별 일간 관측값 합계',
+                    'high': hi, 'low': lo, 'source': '일간 OHLC 종가 위치의 사분위'}
 
 
 def participation(closes, dates, report_date=None):

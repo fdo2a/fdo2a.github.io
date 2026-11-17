@@ -1377,7 +1377,7 @@ def main():
         print(f"  참여도: {par['band']} ({par['gap_pp']:+.2f}%p)" if par
               else '  참여도: 판정 불가')
         cal = sess.get('tape_calibration')
-        print(f"  마감 위치 경계: {cal['high']}/{cal['low']} ({cal['sessions']}세션 실측)"
+        print(f"  마감 위치 경계: {cal['high']}/{cal['low']} (지수 {cal.get('indices', '?')}개 · 일간 관측값 {cal['sessions']}개 실측)"
               if cal else '  마감 위치 경계: 초안값 75/25 (표본 부족)')
         print(f"  출발: {sess['futures']['direction'] or '판정 불가'} / "
               f"야간 선물 {len(sess['futures']['contracts'])}종")

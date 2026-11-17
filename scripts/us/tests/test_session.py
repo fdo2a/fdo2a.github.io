@@ -245,3 +245,25 @@ def test_tape_accepts_calibrated_thresholds():
     t = session.tape({'S&P 500': {'close': 70, 'low': 0, 'high': 100}},
                      thresholds=(60, 20))
     assert t['S&P 500']['band'] == '고점권 마감'
+
+
+def test_calibrate_tape_says_how_many_indices_fed_the_sample():
+    # sessions 는 거래일 수가 아니라 지수별 일간 관측값을 합친 개수다 — 캡션이 「N거래일」로 잘못 쓰지 않게
+    # 실제로 관측값을 낸 지수 수와 단위를 함께 낸다(2026-11-17, 11/10~11/16 캡션의 「2,253거래일」).
+    bars = [{'high': 100.0, 'low': 0.0, 'close': float(i)} for i in range(100)]
+    _, _, meta = session.calibrate_tape({'^GSPC': bars, '^IXIC': bars, '^RUT': bars})
+    assert meta['sessions'] == 300 and meta['indices'] == 3
+    assert meta['unit'] == '지수별 일간 관측값 합계'
+
+
+def test_calibrate_tape_counts_only_indices_that_contributed():
+    bars = [{'high': 100.0, 'low': 0.0, 'close': float(i)} for i in range(100)]
+    flat = [{'high': 1.0, 'low': 1.0, 'close': 1.0}] * 50          # 고가=저가인 봉은 위치를 낼 수 없다
+    _, _, meta = session.calibrate_tape({'^GSPC': bars, '^IXIC': [], '^RUT': flat, '^X': None})
+    assert meta['sessions'] == 100 and meta['indices'] == 1
+
+
+def test_calibrate_tape_keeps_the_existing_keys():
+    bars = [{'high': 100.0, 'low': 0.0, 'close': float(i)} for i in range(100)]
+    hi, lo, meta = session.calibrate_tape({'^GSPC': bars})
+    assert (meta['high'], meta['low'], meta['source']) == (hi, lo, '일간 OHLC 종가 위치의 사분위')
