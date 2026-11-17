@@ -17,7 +17,7 @@ def run(tmp_path, index, *extra):
     (d / 'releases' / 'index.json').write_text(json.dumps(index))
     (d / 'fed').mkdir()
     (d / 'fed' / 'events.json').write_text(json.dumps({'report_date': '2026-11-05', 'events': []}))
-    post = tmp_path / 'p.html'
+    post = tmp_path / '2026-11-05.html'  # 날짜 있는 지난 글 — --legacy-releases 는 1a 적용일 전 글에만(구현 검토 #9)
     post.write_text(POST)
     return subprocess.run([sys.executable, SCRIPT, '--html', str(post), '--datadir', str(d), *extra],
                           capture_output=True, text=True)
@@ -46,7 +46,7 @@ def test_missing_books_are_incomplete_when_publishing(tmp_path):
         d = tmp_path / gone.split('/')[0]
         r = run(d, {'report_date': '2026-11-05', 'status': 'complete', 'releases': [ROW]})
         os.unlink(d / 'data' / gone)
-        r = subprocess.run([sys.executable, SCRIPT, '--html', str(d / 'p.html'), '--datadir', str(d / 'data')],
+        r = subprocess.run([sys.executable, SCRIPT, '--html', str(d / '2026-11-05.html'), '--datadir', str(d / 'data')],
                            capture_output=True, text=True)
         assert r.returncode == 2, gone
     r = run(tmp_path / 'stale', {'report_date': '2026-11-04', 'status': 'complete', 'releases': [ROW]})
