@@ -501,6 +501,76 @@ def test_us_auctions_ok_false_is_incomplete(days, monkeypatch, tmp_path):
     assert '국채 입찰(auctions.json) — 수집 실패' in g['reason']
 
 
+# ── 승인된 결측(accepted_missing, 1a 구현 검토 2회차 F6) — 실제 날 자료로 끝에서 끝까지 ─────────────────────
+
+CPI_KEYS = ('no_value:CPI YoY', 'no_value:Core CPI YoY')
+CPI_REF = '2026-10-01'
+
+
+def _cpi_partial_day(base, ctx0, dest):
+    """US 11/12 자료에 「CPI 전년 대비 둘을 만들 수 없다」를 수집기가 적는 모양 그대로 넣는다(표시 모드)."""
+    import sys
+    sys.path.insert(0, RD.SCRIPTS)
+    import collect_market_data as cmd
+    c = _fresh(base, ctx0, dest, True)
+    d = c['date']
+    econ = cmd.econ_collect([{'name': 'x'}], {'CPI YoY': 'no_value', 'Core CPI YoY': 'no_value'}, d,
+                            refs={'CPI YoY': CPI_REF, 'Core CPI YoY': CPI_REF})
+    mm = cmd.macro_metrics_collect({'book_state': 'ok'}, econ, d)
+    assert econ['status'] == 'partial' and mm['status'] == 'partial'
+    for name, col in (('econ_indicators.json', econ), ('macro_metrics.json', mm)):
+        p = os.path.join(c['datadir'], name)
+        obj = _load(p)
+        obj['collect'] = col
+        _dump(p, obj)
+    RD.restamp_hashes(c)
+    return c
+
+
+def _with_accepted(pol, expires, approved_on='2026-11-12'):
+    pol = copy.deepcopy(pol)
+    reg = lambda k: {'key': k, 'ref_period': CPI_REF, 'reason': 'FRED CPIAUCSL 2025-10 값이 원천에 비어 있다(시험)',
+                     'approved_by': 'user', 'approved_on': approved_on, 'expires': expires}
+    for e in pol['markets']['us']['files']:
+        if e['path'] == '<datadir>/econ_indicators.json':
+            e['accepted_missing'] = [reg(k) for k in CPI_KEYS]
+        if e['path'] == '<datadir>/macro_metrics.json':
+            e['accepted_missing'] = [reg('econ:' + k) for k in CPI_KEYS]
+    return I.validate(pol)
+
+
+def test_cpi_gap_blocks_us_with_the_real_policy_and_is_conditional_only_when_registered(days, monkeypatch, tmp_path):
+    base, ctx0 = days[('us', '2026-11-12')]
+    c = _cpi_partial_day(base, ctx0, str(tmp_path / 'cpi'))
+    monkeypatch.setattr(I, 'EFFECTIVE', c['date'])
+    cfg, pol = _policy(c)
+    # 지금 상태(등록 없음) — US 는 막힌다
+    s = R.run_gates(cfg, 'us', c, policy=pol)['summary']
+    assert not s['publish_ok'] and s['status'] == 'incomplete' and R.exit_code(s) == 2
+    assert {'<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json'} <= set(s['inputs']['blocking_files'])
+    # 사용자가 두 키를 기한부로 승인한 정책(임시) — 발행은 되지만 조건부, 승인자·만료일이 기록에 남는다
+    res = R.run_gates(cfg, 'us', c, policy=_with_accepted(pol, '2026-12-10'))
+    s = res['summary']
+    assert s['publish_ok'] and s['status'] == 'conditional' and not s['verified'], (s['blocking'], s['inputs'])
+    cond = sorted((x['file'], x['expires'], x['approved_by']) for x in s['conditions'] if x['kind'] == 'accepted_missing')
+    assert cond == [('<datadir>/econ_indicators.json', '2026-12-10', 'user'),
+                    ('<datadir>/macro_metrics.json', '2026-12-10', 'user')]
+    assert len(s['inputs']['accepted_missing']) == 2 and '만료 2026-12-10' in s['inputs']['accepted_missing'][0]
+    # 원본 표시는 그대로 partial
+    assert _load(os.path.join(c['datadir'], 'econ_indicators.json'))['collect']['status'] == 'partial'
+    # 만료(글 날짜 기준) — 다시 막힌다
+    s = R.run_gates(cfg, 'us', c, policy=_with_accepted(pol, _prev(c['date'])))['summary']
+    assert not s['publish_ok'] and s['status'] == 'incomplete'
+    # 다른 결측이 하나 섞이면 등록이 있어도 막힌다
+    p = os.path.join(c['datadir'], 'econ_indicators.json')
+    obj = _load(p)
+    obj['collect']['missing'] = list(obj['collect']['missing']) + ['JOLTS Job Openings']
+    _dump(p, obj)
+    RD.restamp_hashes(c)
+    s = R.run_gates(cfg, 'us', c, policy=_with_accepted(pol, '2026-12-10'))['summary']
+    assert not s['publish_ok'] and '<datadir>/econ_indicators.json' in s['inputs']['blocking_files']
+
+
 def _write_matrix(mode, rows):
     """보고용 — 변이 행렬 요약을 시험 임시 폴더 밖 환경 변수 경로에 남긴다(설정했을 때만)."""
     out = os.environ.get('INPUT_MUTATION_MATRIX')

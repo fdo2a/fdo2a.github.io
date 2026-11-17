@@ -73,3 +73,37 @@ def test_f5_checkers_use_the_same_rule(tmp_path):
                 assert 'legacy_recheck(' in src, name
                 assert not re.search(r"STRICT_FROM\s*=", src), name
     assert {'check_fund.py', 'check_numbers.py', 'check_macro.py', 'check_sources.py'} <= set(users)
+
+
+# ── F3·F6 — 새 조건이 알림까지 간다 ─────────────────────────────────────────
+
+from review import prepub_view as V  # noqa: E402
+from review.tests import prepub_fixture as F  # noqa: E402
+
+
+def test_recollect_failed_and_accepted_missing_reach_the_alert(tmp_path):
+    repo = F.init(tmp_path)
+    inputs = {'blocking': [], 'blocking_files': [], 'unclassified': [], 'warnings': [], 'unconfirmed_empty': [],
+              'recollect_failed': ['KR 장중 세션(kr_session.json) — 이번 수집 실패, 옛 판으로 검사함(적용일 전)'],
+              'accepted_missing': ['경제 지표(econ_indicators.json) — 승인된 결측 2건(만료 2026-12-10), 승인 user: '
+                                   'no_value:CPI YoY, no_value:Core CPI YoY']}
+    F.publish(repo, workspace=False, summ=F.summary(status='conditional', inputs=inputs, conditions=[
+        {'kind': 'recollect_failed', 'file': '<datadir>/kr_session.json'},
+        {'kind': 'accepted_missing', 'file': '<datadir>/econ_indicators.json', 'keys': ['no_value:CPI YoY'],
+         'approved_by': 'user', 'expires': '2026-12-10'}]))
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    text = V.render_publish(v, who=V.GITHUB)
+    assert ' · 재수집 실패: KR 장중 세션(kr_session.json) — 이번 수집 실패, 옛 판으로 검사함(적용일 전)' in text
+    assert ' · 승인된 결측: 경제 지표(econ_indicators.json) — 승인된 결측 2건(만료 2026-12-10), 승인 user' in text
+    digest = '\n'.join(V.digest_lines(v))
+    assert '재수집 실패 1개' in digest and '승인된 결측이 있는 자료 1개' in digest
+
+
+def test_old_records_without_the_new_keys_still_read(tmp_path):
+    repo = F.init(tmp_path)
+    inputs = {'blocking': [], 'blocking_files': [], 'unclassified': [], 'warnings': [], 'unconfirmed_empty': []}
+    F.publish(repo, workspace=False, summ=F.summary(status='verified', inputs=inputs))
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    text = V.render_publish(v, who=V.GITHUB)
+    assert '재수집 실패' not in text and '승인된 결측' not in text
+    assert v['recorded']['inputs']['recollect_failed'] == [] and v['recorded']['inputs']['accepted_missing'] == []

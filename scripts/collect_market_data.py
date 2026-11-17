@@ -514,7 +514,7 @@ def _econ_pair(vals, tf):
     return pairs[-1][1], pairs[-2][1]
 
 
-def collect_econ(reasons=None):
+def collect_econ(reasons=None, refs=None):
     """FRED-sourced Actual/Previous/ref-period for the dashboard. Never fabricates —
     a series that fails to fetch is simply omitted (agent falls back to web for it).
 
@@ -525,6 +525,7 @@ def collect_econ(reasons=None):
     out = []
     seen = {}
     reasons = {} if reasons is None else reasons     # name -> fetch_failed | transform_error | no_value
+    refs = {} if refs is None else refs              # name -> no_value 인 지표의 기준월(원천의 최신 관측월)
     for axis, name, sid, tf, units, *rest in ECON:
         opts = rest[0] if rest else {}
         vals = seen.get(sid)
@@ -545,6 +546,7 @@ def collect_econ(reasons=None):
         if pair is None:
             # 받았지만 최신 달을 변환할 수 없다(결측 달 — 2025-10 CPI). 수집 실패가 아니다.
             reasons[name] = 'no_value'
+            refs[name] = vals[-1][0]      # 어느 달을 만들지 못했는가 — 승인 예외가 기준월을 대조한다(2회차 F6)
             continue
         actual, previous = pair
         row = {
@@ -1121,7 +1123,7 @@ def intraday_collect(intraday, report_date):
     return C.by_counts(report_date, 'yfinance 30m', missing, len(names))
 
 
-def econ_collect(econ, reasons, report_date):
+def econ_collect(econ, reasons, report_date, refs=None):
     """econ_indicators.json — 받지 못했거나 변환이 터진 지표가 `missing`.
 
     「아직 미발표」와 「계산 재료 결측」을 가른다(1a 구현 검토 #5). 새 달이 나오기 전에는 원천의 마지막 달이 그 전
@@ -1133,8 +1135,13 @@ def econ_collect(econ, reasons, report_date):
     missing = sorted(n for n, why in (reasons or {}).items() if why in ('fetch_failed', 'transform_error'))
     missing += sorted(f'no_value:{n}' for n, why in (reasons or {}).items() if why == 'no_value' and n not in anatomy)
     none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value' and n in anatomy)
+    # 결측 키 → 그 지표의 기준월(`missing_ref`) — 항목 단위 승인 예외(`config/prepub_inputs.json` 의 accepted_missing)는
+    # 이 값이 등록의 ref_period 와 같을 때만 적용된다. 기준월을 모르는 키는 싣지 않는다(예외가 적용되지 않는다).
+    ref = {f'no_value:{n}': str(v) for n, v in sorted((refs or {}).items())
+           if v and f'no_value:{n}' in missing}
     st = C.by_counts(report_date, 'FRED', missing, len(ECON),
-                     detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None)
+                     detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None,
+                     missing_ref=ref or None)
     if not econ and st['status'] != 'failed':
         st = C.failed(report_date, 'FRED', '지표 0건', missing=missing)
     return st
@@ -1150,15 +1157,25 @@ def _note_run_failure(outdir, rel, error):
 
 
 def macro_metrics_collect(mm, econ_status, report_date):
-    """macro_metrics.json — 축 점수의 재료(econ)가 일부 빠졌거나 어제 책(macro.json)이 깨졌으면 partial."""
+    """macro_metrics.json — 축 점수의 재료(econ)가 일부 빠졌거나 어제 책(macro.json)이 깨졌으면 partial.
+
+    econ 이 일부만 받았으면(partial) 그 결측 키를 `econ:<키>` 로 그대로 싣고 기준월(`missing_ref`)도 옮긴다 — 승인
+    예외가 이 파일에도 **같은 키·기준월**로 걸리게(1a 구현 검토 2회차 F6). 무엇이 빠졌는지 모르면(실패·목록 없음)
+    전처럼 `econ_indicators` 하나 — 그것은 등록할 수 없다."""
     from common import collect_status as C
-    missing = []
+    missing, ref = [], {}
     if econ_status.get('status') != 'ok':
-        missing.append('econ_indicators')
+        inner = [m for m in (econ_status.get('missing') or []) if isinstance(m, str)]
+        if econ_status.get('status') == 'partial' and inner:
+            missing += [f'econ:{m}' for m in inner]
+            src = econ_status.get('missing_ref') if isinstance(econ_status.get('missing_ref'), dict) else {}
+            ref = {f'econ:{m}': src[m] for m in inner if m in src}
+        else:
+            missing.append('econ_indicators')
     if mm.get('book_state') == 'corrupt':
         missing.append('macro.json:corrupt')
     return C.build('partial' if missing else 'ok', report_date, 'FRED (macro_metrics)',
-                   missing=missing, empty='has_data')
+                   missing=missing, empty='has_data', missing_ref=ref or None)
 
 
 def main():
@@ -1277,9 +1294,9 @@ def main():
         drivers = {'rows': {}, 'decomposition': {}}
 
     print('collecting FRED economic indicators...')
-    econ_reasons = {}
-    econ, econ_series = collect_econ(econ_reasons)
-    econ_status = econ_collect(econ, econ_reasons, report_date)
+    econ_reasons, econ_refs = {}, {}
+    econ, econ_series = collect_econ(econ_reasons, econ_refs)
+    econ_status = econ_collect(econ, econ_reasons, report_date, econ_refs)
     # 「직전 대비」 칸의 정본(2026-09-23). macro_metrics.json 이 실패하거나 낡은 날에도
     # 표에 찍힌 두 수의 비교는 이 파일 하나로 끝나야 한다 — 게이트도 같은 함수로 잰다.
     from us.macro_metrics import TREND_NOTE_KO, vs_prev

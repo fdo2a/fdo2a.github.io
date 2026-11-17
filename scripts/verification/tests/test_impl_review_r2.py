@@ -335,3 +335,161 @@ def test_f3_end_to_end_stamper_to_gate(tmp_path, monkeypatch):
     SC.stamp(str(tmp_path), market='kr', steps=steps)
     assert not I.blocking(I.assess(pol, 'kr', ctx(tmp_path)))['any']
 
+
+# ── F6. 항목 단위 기한부 승인 예외(accepted_missing) — 기구만, 실제 정책에는 등록하지 않는다 ─────────────
+
+ECON = {'path': '<datadir>/econ_indicators.json', 'class': 'gate', 'name': '경제 지표', 'require': ['indicators']}
+MM = {'path': '<datadir>/macro_metrics.json', 'class': 'gate', 'name': '매크로 지표', 'date': 'report_date',
+      'require': ['indicators']}
+K1, K2, REF = 'no_value:CPI YoY', 'no_value:Core CPI YoY', '2026-10-01'
+
+
+def acc(key, expires='2026-12-10', ref=REF, **kw):
+    d = {'key': key, 'ref_period': ref, 'reason': 'FRED CPIAUCSL 2025-10 값이 원천에 비어 있다',
+         'approved_by': 'user', 'approved_on': '2026-11-10', 'expires': expires}
+    d.update(kw)
+    return d
+
+
+def partial(missing, refs=None, **kw):
+    c = dict(STAMPED, status='partial', required_ok=False, missing=list(missing),
+             missing_ref=refs if refs is not None else {m: REF for m in missing})
+    c.update(kw)
+    return c
+
+
+def _econ(tmp_path, collect, accepted, date=D):
+    pol = policy([dict(ECON, accepted_missing=accepted)])
+    put(tmp_path, 'econ_indicators.json', {'indicators': [{'name': 'x'}], 'collect': dict(collect, as_of=date)})
+    h = I.assess(pol, 'us', ctx(tmp_path, date=date))
+    return h, h['files']['<datadir>/econ_indicators.json']
+
+
+def test_f6_registered_keys_make_the_file_conditional_not_ok(tmp_path, monkeypatch):
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    _, f = _econ(tmp_path, partial([K1, K2]), [])
+    assert f['state'] == 'failed' and f['blocking']                          # 등록이 없으면 막힌다(지금 상태)
+    h, f = _econ(tmp_path, partial([K1, K2]), [acc(K1), acc(K2)])
+    assert f['state'] == 'ok' and not f['blocking']
+    assert [a['key'] for a in f['accepted_missing']] == [K1, K2]
+    assert f['accepted_missing'][0]['approved_by'] == 'user' and f['accepted_missing'][0]['expires'] == '2026-12-10'
+    s = R.summarize([], health=h)
+    assert s['publish_ok'] and s['status'] == 'conditional' and not s['verified']
+    cond = [c for c in s['conditions'] if c['kind'] == 'accepted_missing']
+    assert cond == [{'kind': 'accepted_missing', 'file': '<datadir>/econ_indicators.json', 'keys': [K1, K2],
+                     'approved_by': 'user', 'expires': '2026-12-10'}]
+    assert s['inputs']['accepted_missing'] == [I.describe_accepted(f)]
+    assert '승인된 결측 2건(만료 2026-12-10)' in s['inputs']['accepted_missing'][0]
+
+
+def test_f6_any_other_miss_or_failure_or_wrong_period_still_blocks(tmp_path, monkeypatch):
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    both = [acc(K1), acc(K2)]
+    cases = {
+        '다른 결측이 섞였다': partial([K1, K2, 'JOLTS Job Openings'], refs={K1: REF, K2: REF}),
+        '등록 안 된 no_value': partial([K1, 'no_value:PCE Price Index YoY']),
+        '수집 실패': partial([K1, K2], status='failed', empty='unknown'),
+        '다른 기준월': partial([K1, K2], refs={K1: '2026-11-01', K2: '2026-11-01'}),
+        '한 키만 기준월이 다르다': partial([K1, K2], refs={K1: REF, K2: '2026-11-01'}),
+        '자료가 기준월을 말하지 않는다': partial([K1, K2], refs={}),
+        'missing_ref 칸이 없다': {k: v for k, v in partial([K1, K2]).items() if k != 'missing_ref'},
+        '대상을 모른다': partial([K1, K2], empty='unknown'),
+    }
+    for name, c in cases.items():
+        _, f = _econ(tmp_path, c, both)
+        assert f['blocking'] and 'accepted_missing' not in f, name
+    _, f = _econ(tmp_path, partial([K1, K2]), [acc(K1)])                      # 한 키만 등록
+    assert f['blocking']
+    # 낡은 자료(as_of ≠ 발행일)는 예외와 무관하게 막힌다
+    pol = policy([dict(ECON, accepted_missing=both)])
+    put(tmp_path, 'econ_indicators.json', {'indicators': [{'name': 'x'}],
+                                           'collect': dict(partial([K1, K2]), as_of='2026-11-13')})
+    f = I.assess(pol, 'us', ctx(tmp_path))['files']['<datadir>/econ_indicators.json']
+    assert f['state'] == 'stale' and f['blocking']
+
+
+def test_f6_expiry_is_judged_by_the_post_date_and_blocks_again_after(tmp_path, monkeypatch):
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    both = [acc(K1, expires='2026-12-10'), acc(K2, expires='2026-12-10')]
+    assert not _econ(tmp_path, partial([K1, K2]), both, date='2026-12-10')[1]['blocking']      # 만료일 당일까지
+    assert _econ(tmp_path, partial([K1, K2]), both, date='2026-12-11')[1]['blocking']          # 다음 날부터 다시 막힌다
+    mixed = [acc(K1, expires='2026-12-10'), acc(K2, expires='2026-11-20')]
+    assert _econ(tmp_path, partial([K1, K2]), mixed, date='2026-11-21')[1]['blocking']
+    # 승인일 전 글에는 적용하지 않는다
+    assert _econ(tmp_path, partial([K1, K2]), both, date='2026-11-09')[1]['blocking']
+    assert not _econ(tmp_path, partial([K1, K2]), both, date='2026-11-10')[1]['blocking']
+
+
+def test_f6_original_collect_is_not_rewritten(tmp_path, monkeypatch):
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    before = partial([K1, K2])
+    h, f = _econ(tmp_path, before, [acc(K1), acc(K2)])
+    on_disk = json.load(open(os.path.join(str(tmp_path), 'econ_indicators.json'), encoding='utf-8'))['collect']
+    assert on_disk['status'] == 'partial' and on_disk['required_ok'] is False and on_disk['missing'] == [K1, K2]
+    assert h['_objs']['<datadir>/econ_indicators.json']['collect']['status'] == 'partial'
+
+
+@pytest.mark.parametrize('bad', [
+    acc(K1, approved_by='routine'), acc(K1, approved_by=None), {k: v for k, v in acc(K1).items() if k != 'expires'},
+    acc(K1, expires='soon'), acc(K1, expires='2026-13-40'), acc(K1, ref=None), acc(K1, reason=''), acc('', ),
+    acc(K1, approved_on='어제'), 'no_value:CPI YoY', {k: v for k, v in acc(K1).items() if k != 'approved_by'}])
+def test_f6_config_errors(bad):
+    with pytest.raises(I.PolicyError):
+        policy([dict(ECON, accepted_missing=[bad])])
+
+
+def test_f6_only_gate_files_and_only_a_list():
+    with pytest.raises(I.PolicyError):
+        policy([dict(ECON, accepted_missing=acc(K1))])
+    w = {'path': '<datadir>/x.md', 'class': 'writer', 'name': 'x', 'risk': 'r', 'covered_by': None,
+         'accepted_missing': [acc(K1)]}
+    with pytest.raises(I.PolicyError):
+        policy([w])
+
+
+def test_f6_macro_metrics_follows_the_same_registration(tmp_path, monkeypatch):
+    """macro_metrics 는 econ_indicators 의 결측을 `econ:<키>` 로 다시 싣는다 — 같은 키·기준월로 등록해야 풀린다."""
+    sys.path.insert(0, SCRIPTS)
+    import collect_market_data as cmd
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    econ = cmd.econ_collect([{'name': 'x'}], {'CPI YoY': 'no_value', 'Core CPI YoY': 'no_value'}, D,
+                            refs={'CPI YoY': REF, 'Core CPI YoY': REF})
+    assert econ['status'] == 'partial' and econ['missing'] == [K1, K2] and econ['missing_ref'] == {K1: REF, K2: REF}
+    mm = cmd.macro_metrics_collect({'book_state': 'ok'}, econ, D)
+    assert mm['status'] == 'partial' and mm['missing'] == [f'econ:{K1}', f'econ:{K2}']
+    assert mm['missing_ref'] == {f'econ:{K1}': REF, f'econ:{K2}': REF}
+    pol = policy([dict(ECON, accepted_missing=[acc(K1), acc(K2)]),
+                  dict(MM, accepted_missing=[acc(f'econ:{K1}'), acc(f'econ:{K2}')])])
+    put(tmp_path, 'econ_indicators.json', {'indicators': [{'name': 'x'}], 'collect': econ})
+    put(tmp_path, 'macro_metrics.json', {'report_date': D, 'indicators': [{'name': 'x'}], 'collect': mm})
+    h = I.assess(pol, 'us', ctx(tmp_path))
+    assert not I.blocking(h)['any']
+    assert sorted(c['file'] for c in R.summarize([], health=h)['conditions'] if c['kind'] == 'accepted_missing') == [
+        '<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json']
+    # econ 쪽에 다른 결측이 섞이면 macro_metrics 도 풀리지 않는다
+    econ2 = cmd.econ_collect([{'name': 'x'}], {'CPI YoY': 'no_value', 'Core CPI YoY': 'no_value',
+                                               'JOLTS Job Openings': 'fetch_failed'}, D,
+                             refs={'CPI YoY': REF, 'Core CPI YoY': REF})
+    mm2 = cmd.macro_metrics_collect({'book_state': 'ok'}, econ2, D)
+    put(tmp_path, 'econ_indicators.json', {'indicators': [{'name': 'x'}], 'collect': econ2})
+    put(tmp_path, 'macro_metrics.json', {'report_date': D, 'indicators': [{'name': 'x'}], 'collect': mm2})
+    assert sorted(I.blocking(I.assess(pol, 'us', ctx(tmp_path)))['files']) == [
+        '<datadir>/econ_indicators.json', '<datadir>/macro_metrics.json']
+    # 어제 책이 깨진 것(macro.json:corrupt)은 등록과 무관하게 막는다
+    mm3 = cmd.macro_metrics_collect({'book_state': 'corrupt'}, econ, D)
+    put(tmp_path, 'econ_indicators.json', {'indicators': [{'name': 'x'}], 'collect': econ})
+    put(tmp_path, 'macro_metrics.json', {'report_date': D, 'indicators': [{'name': 'x'}], 'collect': mm3})
+    assert I.blocking(I.assess(pol, 'us', ctx(tmp_path)))['files'] == ['<datadir>/macro_metrics.json']
+    # econ 이 통째로 실패하면 키 없이 `econ_indicators` 하나 — 등록할 수 없다
+    mm4 = cmd.macro_metrics_collect({'book_state': 'ok'}, {'status': 'failed', 'missing': []}, D)
+    assert mm4['missing'] == ['econ_indicators']
+
+
+def test_f6_real_policy_registers_nothing():
+    """사용자 답 전 — 실제 정책에는 승인 예외가 없다(기구만 있다)."""
+    for market in REAL['markets']:
+        files, _ = I.entries(REAL, market)
+        assert not [e['path'] for e in files if e.get('accepted_missing')], market
+    raw = open(os.path.join(ROOT, 'config', 'prepub_inputs.json'), encoding='utf-8').read()
+    assert 'accepted_missing' not in raw
+    assert I.EFFECTIVE is None

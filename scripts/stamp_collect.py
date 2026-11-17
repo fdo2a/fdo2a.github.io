@@ -41,7 +41,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import collect_status as C  # noqa: E402
 
 COLLECT_KEYS = ('status', 'as_of', 'collected_at', 'source', 'response', 'required_ok', 'missing', 'empty',
-                'checked', 'expected', 'detail')
+                'checked', 'expected', 'detail', 'missing_ref')
 
 # 이 잡이 쓰는 파일. {D} = 그날 report_date. 값 = 비 JSON 파일의 생산자(JSON) — None 이면 JSON 자체.
 REGISTRY = {

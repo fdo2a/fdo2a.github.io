@@ -163,11 +163,12 @@ def _inputs_view(inp):
     """2판 기록의 자료 상태 — 「무엇이·왜」 문장(기록이 정책 이름 + 상태 한국어로 만든 것)과 분류 안 된 파일."""
     if not isinstance(inp, dict):
         return {'blocking': [], 'unclassified': [], 'warnings': 0, 'unconfirmed_empty': [], 'recollect_failed': [],
-                'readable': inp is None}
+                'accepted_missing': [], 'readable': inp is None}
     lst = lambda k: [x for x in inp.get(k) or [] if isinstance(x, str)] if isinstance(inp.get(k), list) else []
     return {'blocking': lst('blocking'), 'unclassified': lst('unclassified'),
             'warnings': len(lst('warnings')), 'unconfirmed_empty': lst('unconfirmed_empty'),
-            'recollect_failed': lst('recollect_failed'), 'readable': True}
+            'recollect_failed': lst('recollect_failed'), 'accepted_missing': lst('accepted_missing'),
+            'readable': True}
 
 
 def _as_str(x):
@@ -487,6 +488,11 @@ def recorded_lines(v):
             out.append(f' · 재수집 실패: {_cut(x, 120)}')
         if len(inp.get('recollect_failed', [])) > GATE_LINES:
             out.append(f' · 재수집 실패: 외 {len(inp["recollect_failed"]) - GATE_LINES}개')
+        # 사람이 승인한 기한부 결측 — 「승인된 결측 N건(만료 D)」(2회차 F6)
+        for x in inp.get('accepted_missing', [])[:GATE_LINES]:
+            out.append(f' · 승인된 결측: {_cut(x, 160)}')
+        if len(inp.get('accepted_missing', [])) > GATE_LINES:
+            out.append(f' · 승인된 결측: 외 {len(inp["accepted_missing"]) - GATE_LINES}개')
     stuck_label = '미완료' if rec.get('v2') else '판정 불가'
     for key, label in (('blocking', '막은 것'), ('indeterminate', stuck_label), ('na', '해당 없음'),
                        ('not_run', '실행 안 함'),
@@ -647,6 +653,8 @@ def digest_lines(v, who=MAC):
             bits.append(f'대상 없음 미확인 {len(inp["unconfirmed_empty"])}개')
         if inp.get('recollect_failed'):
             bits.append(f'재수집 실패 {len(inp["recollect_failed"])}개')
+        if inp.get('accepted_missing'):
+            bits.append(f'승인된 결측이 있는 자료 {len(inp["accepted_missing"])}개')
         u = unverified_numbers(v)
         if rec.get('numbers') and v.get('market') == 'kr':
             bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤

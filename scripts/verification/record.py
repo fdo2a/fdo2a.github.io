@@ -504,7 +504,8 @@ def summarize(results, health=None, integrity=None):
                   'unclassified': b['unclassified'], 'warnings': [health['files'][k]['file']
                                                                   for k in I.warnings(health)],
                   'unconfirmed_empty': [I.describe_empty(health['files'][k]) for k in I.unconfirmed_empty(health)],
-                  'recollect_failed': [I.describe_recollect(health['files'][k]) for k in I.recollect_failed(health)]}
+                  'recollect_failed': [I.describe_recollect(health['files'][k]) for k in I.recollect_failed(health)],
+                  'accepted_missing': [I.describe_accepted(health['files'][k]) for k in I.accepted_missing(health)]}
         for k in I.warnings(health):
             conditions.append({'kind': 'unstamped', 'file': health['files'][k]['file']})
         for k in I.unconfirmed_empty(health):
@@ -513,6 +514,13 @@ def summarize(results, health=None, integrity=None):
         for k in I.recollect_failed(health):
             # 적용일 전 — 이번 수집은 이 파일을 못 썼고 같은 날 옛 판으로 검사했다. 숨기지 않는다(2회차 F3)
             conditions.append({'kind': 'recollect_failed', 'file': health['files'][k]['file']})
+        for k in I.accepted_missing(health):
+            # 사람이 승인한 기한부 결측 — 발행은 하되 검증됨이 아니다. 승인자·만료일을 기록에 남긴다(2회차 F6)
+            am = health['files'][k]['accepted_missing']
+            conditions.append({'kind': 'accepted_missing', 'file': health['files'][k]['file'],
+                               'keys': [a['key'] for a in am],
+                               'approved_by': ', '.join(sorted({str(a['approved_by']) for a in am})),
+                               'expires': min(a['expires'] for a in am)})
     blocking = failed + incomplete
     if inputs and (inputs['blocking'] or inputs['unclassified']):
         blocking.append('inputs')

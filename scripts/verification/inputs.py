@@ -123,6 +123,7 @@ def validate(pol):
                 raise PolicyError(f'{market} {e["path"]} writer 분류에 risk·covered_by 가 없다')
             if e.get('produced_by', 'collector') not in PRODUCERS:
                 raise PolicyError(f'{market} {e["path"]} produced_by 가 다르다')
+            _validate_accepted(market, e)
             w = e.get('when')
             if w is not None and (not isinstance(w, dict) or e.get('else_class') not in ('writer', 'unused')
                                   or not all(isinstance(w.get(k), str) for k in ('file', 'each', 'any_ok', 'template'))):
@@ -139,6 +140,62 @@ def validate(pol):
             if not isinstance(d.get('affects'), dict):
                 raise PolicyError(f'{market} {d.get("path")} 수집 중단 등록에 영향(affects)이 없다')
     return pol
+
+
+ACCEPTED_KEYS = ('key', 'ref_period', 'reason', 'approved_by', 'approved_on', 'expires')
+
+
+def _iso_date(v):
+    try:
+        import datetime
+        return isinstance(v, str) and datetime.date.fromisoformat(v).isoformat() == v
+    except ValueError:
+        return False
+
+
+def _validate_accepted(market, e):
+    """`accepted_missing` — 항목 단위 기한부 승인 예외(1a 구현 검토 2회차 F6). 사람이 승인한 것만(`approved_by: "user"`,
+    수집 중단과 같은 규칙 — 권한 분리 전에는 루틴이 이 파일을 고칠 수 있다는 잔여 위험도 같다), 만료일 필수."""
+    am = e.get('accepted_missing')
+    if am is None:
+        return
+    if e.get('class') != 'gate' or not isinstance(am, list):
+        raise PolicyError(f'{market} {e.get("path")} accepted_missing 은 gate 자료의 목록이어야 한다')
+    for a in am:
+        if not isinstance(a, dict):
+            raise PolicyError(f'{market} {e["path"]} 승인된 결측 항목의 형식이 다르다')
+        if a.get('approved_by') != 'user':
+            raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 approved_by: "user" 가 없다')
+        for k in ('key', 'ref_period', 'reason'):
+            if not isinstance(a.get(k), str) or not a[k]:
+                raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 {k} 가 없다')
+        for k in ('approved_on', 'expires'):
+            if not _iso_date(a.get(k)):
+                raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록의 {k} 가 날짜(YYYY-MM-DD)가 아니다')
+
+
+def _accepted(e, stamp, date, excuse):
+    """이 파일의 수집 결측이 **전부** 등록된 승인 예외인가 → 등록 목록, 아니면 None.
+
+    풀어 주는 것은 「일부만 받았다」에서 나온 세 사유뿐이다(collect.status=partial, required_ok false, missing).
+    수집 실패(failed)·다른 결측이 하나라도 섞임·만료(발행일 > expires)·승인일 전 글·자료가 말하는 기준월
+    (`collect.missing_ref[키]`)이 등록의 `ref_period` 와 다름(자료가 기준월을 말하지 않는 것 포함)은 그대로 막는다.
+    만료는 벽시계가 아니라 **글 날짜**로 본다 — 옛 기록을 다시 검증해도 판정이 뒤집히지 않는다."""
+    regs = e.get('accepted_missing')
+    if not regs or not isinstance(date, str) or stamp.get('status') != 'partial':
+        return None
+    miss = [m for m in stamp['missing'] if m not in excuse]
+    refs = stamp.get('missing_ref') if isinstance(stamp.get('missing_ref'), dict) else {}
+    live = {a['key']: a for a in regs if a['approved_on'] <= date <= a['expires']}
+    if not miss:
+        return None                       # 무엇이 빠졌는지 모르는 partial 은 풀 수 없다
+    out = []
+    for m in miss:
+        a = live.get(m) if isinstance(m, str) else None
+        if a is None or refs.get(m) != a['ref_period']:
+            return None
+        out.append({k: a.get(k) for k in ACCEPTED_KEYS})
+    return out
 
 
 def load(path):
@@ -369,6 +426,7 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
             pass
         else:
             bad('changed_after_collect', '수집 상태 파일의 해시와 다르다')
+    accepted = None
     recollect = None
     if run_failed:
         old = entry.get('stale_copy') if isinstance(entry.get('stale_copy'), dict) else {}
@@ -392,12 +450,14 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
         if not _stamp_ok_shape(stamp):
             bad('incomplete_fields', '수집 상태 칸(collect) 형식이 다르다')
         else:
-            if stamp['status'] != 'ok':
+            # 사람이 승인한 기한부 결측(2회차 F6) — 원본 collect 는 고치지 않고 판정에서만 조건으로 돌린다
+            accepted = _accepted(e, stamp, date, excuse)
+            if stamp['status'] != 'ok' and not accepted:
                 bad('failed', f'collect.status={stamp["status"]}')
             if stamp['as_of'] != date:
                 bad('stale', f'collect.as_of={stamp["as_of"]} ≠ 발행일 {date}')
             as_of = stamp['as_of'] if as_of is None else as_of
-            if not stamp['required_ok'] or [m for m in stamp['missing'] if m not in excuse]:
+            if (not stamp['required_ok'] or [m for m in stamp['missing'] if m not in excuse]) and not accepted:
                 bad('incomplete_fields', '수집기가 필수 항목을 다 채우지 못했다고 적었다')
             if stamp['empty'] == 'unknown':
                 bad('incomplete_fields', '대상이 있는지 모른다(collect.empty=unknown)')
@@ -414,7 +474,7 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
     # 「표시 없는 빈 배열」만 조건으로 남는다 — 칸의 부재·잘못된 형식은 위에서 막았다
     unconfirmed = bool(stamp is None and produced == 'collector' and e.get('target')
                        and _target_list(e, obj) == [])
-    extra = {'recollect_failed': recollect}
+    extra = {'recollect_failed': recollect, 'accepted_missing': accepted if not reasons else None}
     if not reasons:
         return 'ok', [], sha, as_of, obj, stamp, unconfirmed, extra
     states = {s for s, _ in reasons}
@@ -457,6 +517,8 @@ def assess(pol, market, ctx):
                            stamped=stamp is not None, unconfirmed_empty=unconfirmed)
                 if extra.get('recollect_failed'):
                     rec['recollect_failed'] = extra['recollect_failed'][:300]
+                if extra.get('accepted_missing'):
+                    rec['accepted_missing'] = extra['accepted_missing']
                 rec['blocking'] = state != 'ok' and not (state == 'unstamped' and not on)
                 objs[key] = obj
             if e.get('optional'):
@@ -541,6 +603,21 @@ def recollect_failed(health):
 def describe_recollect(f):
     rel = str(f.get('file') or '').split('>/', 1)[-1]
     return f'{f.get("name")}({rel}) — 이번 수집 실패, 옛 판으로 검사함(적용일 전)'
+
+
+def accepted_missing(health):
+    """사람이 승인한 기한부 결측으로 조건부가 된 gate 자료(2회차 F6) — 막지 않지만 검증됨이 아니다."""
+    return sorted(k for k, f in health['files'].items()
+                  if f['class'] == 'gate' and f.get('accepted_missing') and not f['blocking'])
+
+
+def describe_accepted(f):
+    rel = str(f.get('file') or '').split('>/', 1)[-1]
+    am = f.get('accepted_missing') or []
+    exp = min((a.get('expires') or '' for a in am), default='')
+    by = ', '.join(sorted({str(a.get('approved_by')) for a in am}))
+    return (f'{f.get("name")}({rel}) — 승인된 결측 {len(am)}건(만료 {exp}), 승인 {by}: '
+            + ', '.join(str(a.get('key')) for a in am))
 
 
 def describe_empty(f):
