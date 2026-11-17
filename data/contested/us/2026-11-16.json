@@ -5,10 +5,10 @@
  "report_date": "2026-11-16",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-17T09:09:26+00:00",
- "cutoff_at": "2026-11-17T09:09:26+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-17T09:27:57+00:00",
+ "cutoff_at": "2026-11-17T09:27:57+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -30,8 +30,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 30568,
-   "out": 9044
+   "in": 30903,
+   "out": 9066
   },
   "discovery": "ok",
   "hosts": {
@@ -42,7 +42,7 @@
   "notes": [],
   "gdelt": "ok",
   "grounded": {
-   "claims": "3/3",
+   "claims": "4/4",
    "pairs": "1/1",
    "obs": "8/8"
   },
@@ -57,8 +57,8 @@
  },
  "event": {
   "topic_ko": "호르무즈 해협 공격 속 걸프 원유 수송 유지 여부",
-  "query": "hormuz middle",
+  "query": "hormuz iran",
   "trigger": []
  },
- "content_hash": "f8f8d03e63c7e239"
+ "content_hash": "8ece5f67a4baec07"
 }
