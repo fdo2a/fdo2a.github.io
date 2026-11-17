@@ -3061,31 +3061,9 @@
       ]
     },
     "posts/2026-08-31.html": {
-      "sha": "7ecdb1dea6814f0e42c098572c83dc45f76e2f06",
-      "at": "2026-09-06T17:47:53+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "20d21fd48ba474d901f2ba58dd0e547686eb9971",
-          "at": "2026-09-13T01:23:56+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "cb004bebb631c2d5197f4561a8d50c5916cd229f",
-          "at": "2026-09-25T17:36:06+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "8d05d6e4f832516e51b01e00a28b2b23cb8ab811",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "f66a32c5a7f67ccec85247d83ca99ed258ad19d4",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "3a59cd98c1f97150db8b9ef9cff2b44854ac2ac1",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-01.html": {
       "sha": "589f80384935a9a2871bba66fe50da4ece9ec108",
@@ -3132,31 +3110,9 @@
       ]
     },
     "posts/2026-09-03.html": {
-      "sha": "8dc7901434e07318226cc71b8bc1d5f4db83d077",
-      "at": "2026-09-06T14:52:28+09:00",
-      "findings": 5,
-      "accepted": [
-        {
-          "sha": "31089f2447237a13a5afd62f9dfd01c5eb366678",
-          "at": "2026-09-13T01:23:56+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "c04bded687831b29e0dd3525ce89a2df2c10cc6e",
-          "at": "2026-09-25T17:36:06+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "d0f851f4d2c1e60685a840a2cf10e2e8db891712",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "fe1ff161fa20e5a46eace9328ff327231d287c0c",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "2ba4001122d4474df3c1ed79ebd55235eaeba310",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-04.html": {
       "sha": "daf65520ce5a57c58be81aad00f3a7e73f06734e",
@@ -3416,668 +3372,199 @@
       ]
     },
     "posts/2026-09-23.html": {
-      "sha": "cdcb6c783179f8641c9ae548f2300de03455fbe3",
-      "at": "2026-09-26T04:18:32+09:00",
-      "findings": 0,
-      "baseline": true,
-      "accepted": [
-        {
-          "sha": "7f57b08c63408ee64740237167d985f07885c595",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "46c3d3f288c14fc6117e95f2588cc441d05cfb59",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-24.html": {
-      "sha": "59df12a4dd5e5741377e901cd588a6663b77b00d",
-      "at": "2026-09-26T04:18:32+09:00",
-      "findings": 0,
-      "baseline": true,
-      "accepted": [
-        {
-          "sha": "aed221f24cd31949f0a3864e79ff316c1bde8846",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "a1fa9309899c11baea808ec1072a39abb56f2e2a",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "bbd25c0e4e342c80622be5cedccafa733f3b3bae",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-25.html": {
-      "sha": "d55ca58bbe6ae4cf2ec983804f7784632dfcb0a3",
-      "at": "2026-10-17T12:28:28+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "e650095bf907a537176430499e50fbe915133501",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "1befd879743c6d52b2643b01068ec3ea14763527",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "b8a2c619c3edd4a99984f3fa0e77764cda977b6a",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-28.html": {
-      "sha": "0accfe1bfa4cd184d5c6ff0bdbeb097478780205",
-      "at": "2026-10-02T11:44:43+07:00",
-      "findings": 0,
-      "accepted": [
-        {
-          "sha": "4e20d9022e51cdcacb3891cf4bfb56877a0828b5",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "9ee85a671ce2a10a12bf7787573aab15516c65da",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "b0f14905ad3abdd8ce37da90d197264311bf02ce",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-29.html": {
-      "sha": "dc58124b1409398ef666d49397b2ea2659b0be64",
-      "at": "2026-10-02T11:44:43+07:00",
-      "findings": 5,
-      "accepted": [
-        {
-          "sha": "ea7b48e2aa69d7388ce42a7ee66d53bc3e865aea",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "70216c442986cca484ce82d36cd02497dc4d14b7",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "67dadcc5899c0c1ae53aff38662f3629155dcb7a",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-09-30.html": {
-      "sha": "cea6904a75a7c76c5765b5f69aee6a246e6223d8",
-      "at": "2026-10-17T12:09:13+09:00",
-      "findings": 0,
-      "accepted": [
-        {
-          "sha": "102bc25f0c31bcd83b537194fab544f79f146a25",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "da4862629e726b5df5d81075b5deb92753bc777f",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "a6c17eea399733145eac911339f9422b61d27625",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-10-01.html": {
-      "sha": "bd8a4053718ff440a40380350abe283fdf3e378f",
-      "at": "2026-10-17T12:28:27+09:00",
-      "findings": 1,
-      "accepted": [
-        {
-          "sha": "77503dbcae22882474706d77741bfd9de4f35c73",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "5816dbdcab904619560a5fcef888d140bd9e4d1b",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "ee210b2a663637a1df5cac02962d785b0e71d841",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-10-02.html": {
-      "sha": "54a4aae45f09bea4f73910f376170d048b316d2e",
-      "at": "2026-10-17T12:09:13+09:00",
-      "findings": 0,
-      "accepted": [
-        {
-          "sha": "ea12a58412b83cbf8113d70b0c0e172ce866f404",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "47823099bfb01c44cc62eec86ab605f3f0e335f8",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "301599d33b8ba6e0e8bcfa2d4bf7e92df9bf0809",
+      "at": "2026-11-17T23:00:44+09:00",
+      "findings": 1
     },
     "posts/2026-10-05.html": {
-      "sha": "96f2ab9da790a21ff94e361754c51ecb83c9f828",
-      "at": "2026-10-06T11:24:53+09:00",
-      "findings": 1,
-      "accepted": [
-        {
-          "sha": "01f915fb8f828630b97f9780a2b220407413b8ee",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "dfc2b1e8300ce2e1eda6ab2afd11346bb77c0d83",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "b9b6c12c71e4d9402de2bd6a241e860a7042d61a",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-06.html": {
-      "sha": "bce9d8ec4965ed84ec7f46a1a43ed3f525092eae",
-      "at": "2026-10-07T13:11:32+09:00",
-      "findings": 0,
-      "accepted": [
-        {
-          "sha": "f06cfe97c6b738d91c6d157a852bf214698e1c34",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "e1a7d0482649a09a325e21d1921dfddd466f85e1",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "a5d8e206fd2f4692a96f7582cf3e5aa867330ed2",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-07.html": {
-      "sha": "4fbf6c25fff03cf3c3de38f8ef619b6458ffcac5",
-      "at": "2026-10-08T10:13:07+09:00",
-      "findings": 9,
-      "accepted": [
-        {
-          "sha": "9f2394e4f9aba920ed116c242d754901fbf7c069",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "fbfb775323dca970f5db1dddb24dc546c7c6c11a",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "5e5fd515ffd75138264468c73bd286756f47ef84",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "84a5c1b2306907ad5a73575a6933ab25f908edf5",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-08.html": {
-      "sha": "320732607883ceaa6ff7007ffb9ac8d2b580d646",
-      "at": "2026-10-09T10:08:22+09:00",
-      "findings": 9,
-      "accepted": [
-        {
-          "sha": "e001ca8c045c7982905e7e2fad5fa11ab4c70096",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "d5872928b20cb36f74d08b3125fee2206ddc6286",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "01698ccf5c526cb012a86f47cf80b8560f2a44b9",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "ab9efc95809469059dad929ab26ddc10fa096199",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-09.html": {
-      "sha": "69936dd990363bb86d0d376dbd212ece67acc194",
-      "at": "2026-10-10T13:09:50+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "e8a174ca37a56c17c91dec88c8ae74a7e80f11d9",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "d8495bb444fc639465d02e1759898bbf2e17ed7a",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "05935a6f42802bf76e36722ebadcd54b5faa6ec9",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "858d05b2efb98b23a8de088596f55ddb17252f91",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-12.html": {
-      "sha": "eae5c687a6a79d5062dac1a6ad2945db64aedeb9",
-      "at": "2026-10-14T19:04:45+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "e55d9dcb8b29a5911f75e524bdb375ec16a06a32",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "39253a6f73461cdf575d76396f97c4ee4fae617e",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "976aa3f30e9b86988377e600d2d6348978909dd8",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "b9503f7e49d3edfbb7237c8f35097951c2bd7daa",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-13.html": {
-      "sha": "5d16e5b49f04683c950bfcd9d03f7f93faf95f5e",
-      "at": "2026-10-14T19:04:45+09:00",
-      "findings": 11,
-      "accepted": [
-        {
-          "sha": "49794d8b2a7f4b2fd9dd0644b10b78f6c9f03087",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "d7a7d54f26a13158e8d0b98ebf5411bb41ba7fd3",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "bd79373a028572f58ae63f6b4ce452850b5e157a",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "7131558a2086f050645de59700f5dde2052c2416",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-14.html": {
-      "sha": "47bb449d22a474f1fdff6e14f754fe3fd8a7cfdb",
-      "at": "2026-10-15T10:06:28+09:00",
-      "findings": 5,
-      "accepted": [
-        {
-          "sha": "7c09da14a87905b8c60ac203230d50dbe54b504a",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "a28972eab02696a2174304b0236a152da76adbd4",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "d32f0f71665d7a5306397aba0daa20849e424acf",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "b393627b1f5b0da7a8cdfcef6824006525246d8e",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-15.html": {
-      "sha": "e86f57c5d5c105c194b25e139a8bf1422d32e3c3",
-      "at": "2026-10-17T12:14:16+09:00",
-      "findings": 1,
-      "accepted": [
-        {
-          "sha": "7ac7a986f5079c67e94ece78c604c8965cd8e9ec",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "33f149d2cf8d2945e55170ad359436531318f17a",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "466e6427eb572a4bb37646405eb89ba9642aa6d9",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "b06954dcb6e50944f0a8b0024fb74e1b1155717a",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-16.html": {
-      "sha": "0de5e55c52ef96f2b894b9fa794e1b8c2decfbb2",
-      "at": "2026-10-17T12:07:38+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "1c8840b8c4dc0f570694a6488231a0e90225701d",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "10da66c927ce0bae5184ff4b0e74b2da337eaed1",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "225bf7b06cae06c220d1f5b40a063d08688ace86",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "12a577bfca64a5ab5f5222c9f5df9bc55dc43601",
+      "at": "2026-11-17T23:00:45+09:00",
+      "findings": 1
     },
     "posts/2026-10-19.html": {
-      "sha": "d8195b36c48427bacde60b72952a43a26bdfef4e",
-      "at": "2026-10-20T09:09:31+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "c3dd1a288179087cf6c47d99b3bf4836b6163aa0",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "ac209ef0fe7a8ecb28d413b154b699157b531868",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "6fbdf63be72354af3327f37647edd8d053755b0f",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "afec5dc08cd4fb7c7c52b0e26f3ed49575ba530f",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-20.html": {
-      "sha": "3404920f6ea3167b6459a87d04c2f875ea97ccfb",
-      "at": "2026-10-21T08:09:33+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "6ac4f36303bcb0d11b8bc88092f6df3a7ab7ea4a",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "c3693ef4b481c95b6140ebb98aac02ef393fb948",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "09aa312a41bed0972b0f7e13cce0fdbaddb13e89",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "73599e9b0f1da547a3efb78d253ba78d6872f82c",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-21.html": {
-      "sha": "977a5afb7c5a9f7a9c47002c33577d5a78896e36",
-      "at": "2026-10-22T09:09:28+09:00",
-      "findings": 6,
-      "accepted": [
-        {
-          "sha": "49e8cc7fbe78a3ccb37ebe947d805c6cacca249d",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "1d2668746b06a257df23fae82f55318870112ac6",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        }
-      ]
+      "sha": "6d9fcd945a6f8aea09bf89e96655460cd0a3140c",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-22.html": {
-      "sha": "ee02ad1c740682e05bfb6b9962fb98dc5915a77a",
-      "at": "2026-10-23T08:09:28+09:00",
-      "findings": 5,
-      "accepted": [
-        {
-          "sha": "d84b6d1655c39e248e990f12a7c27ebd324ba0fd",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "f76e763ddc47fec124821b4dd1b04126316cdfc8",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "0460885c1ef603136d62410ad82c3d6af333d28d",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "278d51db3759b1f8a1838169d677679bba6840a4",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-23.html": {
-      "sha": "0c7a2db2e01a7ddbfb53e32a430f628c123226a9",
-      "at": "2026-10-24T08:13:18+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "648571482cc5b441cfe71bfb1d982b46cff59121",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "16d62da33a13e1537cd2f8e934f76749b0ad65c6",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "a359cff8ab460e5ec37e900e0a584b3d10c81174",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "21664dc5a15a130ca6ba51d58459da485f9a2863",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-26.html": {
-      "sha": "3fc611f4ad40993ebafe5437ddb887d4000c064f",
-      "at": "2026-10-27T15:02:57+09:00",
-      "findings": 1,
-      "accepted": [
-        {
-          "sha": "53700f2f59f55bdee2a11f09883bf09b58fc1c52",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "8847862990e73a9ef590978218b0982bee88d936",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "cda9dfadacf45c26538d218e8b152ad77f7a7643",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "97553983ef54ffcc92b4e2aa4e4e66651113314f",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-27.html": {
-      "sha": "739823fb9dab191234f2755cd99109a7ba8c0ba5",
-      "at": "2026-10-28T09:01:57+09:00",
-      "findings": 0,
-      "accepted": [
-        {
-          "sha": "c4f1f7fbda642f47a2d59158f2a6d4f23b56c5e4",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "881290b2dd89f766dc513a8b58f264d67719a6e0",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "72b19eb8084d9d18dcb066a3df09d06684343bda",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "f0455d9f796f502934f28a1a0871bfce1a37dc3b",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-28.html": {
-      "sha": "d41e0e1bbdfb9470bb5cd4ea61bf15ba622423d0",
-      "at": "2026-10-29T08:04:21+09:00",
-      "findings": 3,
-      "accepted": [
-        {
-          "sha": "6f07c6f000191c7a1127a390e17e59abee617a3e",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "f0da23bc7548387aa3703e3db62e0e29bfe677f7",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "70931edade80e41657d7ae840ff2791b0899e637",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "13d5df44d2f4e20b59f43832515bb7f29ebd16a6",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-29.html": {
-      "sha": "defefc65f019374cc76feb1234f664b672915bce",
-      "at": "2026-10-30T08:03:56+09:00",
-      "findings": 4,
-      "accepted": [
-        {
-          "sha": "044e505f408a47e66c3aa1aca3396d90b289d817",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "69c2f00e9df6b93d4522f205f3a8d7381efa4956",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "c107985d029f341e6b621e88aee47a300b260fd3",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "5490546c8e66f19817271f7fb311982506da72c6",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-10-30.html": {
-      "sha": "69ff2cc92633a1ab53e5d5eeffc1218bc8eeab01",
-      "at": "2026-10-31T20:51:31+09:00",
-      "findings": 4,
-      "accepted": [
-        {
-          "sha": "90b1a5a00d4c208a628de79c2bfdb29175ee0769",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "05a8cb346b6e6c7d07b43111d3241cb3618216d3",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "968a29fb1583a0aec6ac225f07c54a92737a476c",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "26a3bdcfc686199e47230185725f98ec41ebd2a5",
+      "at": "2026-11-17T23:00:46+09:00",
+      "findings": 1
     },
     "posts/2026-11-02.html": {
-      "sha": "23f4ac237ca699e87925f7ac3c39e72bd10a3943",
-      "at": "2026-11-03T10:05:36+09:00",
-      "findings": 1,
-      "accepted": [
-        {
-          "sha": "829adf69a86dd45a0c16fcc73ca838400390afe2",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "73d423c92217ee7e7f72da8f85062d7695750995",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "e46a17dd0bb1454de82810a93cd225966824950b",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "e9e21b550a19c214af917570d7d33171d7a87803",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-03.html": {
-      "sha": "7d3d596b1de5b18d329848c2aff6bc6247358cd2",
-      "at": "2026-11-04T09:04:20+09:00",
-      "findings": 0,
-      "accepted": [
-        {
-          "sha": "db5c4328ed7b7903d87723db6554cc220b213532",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "f351238f9d5c96db2c5b03f0bbad6ca265a27802",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "e0c3247ea9e90763f4e0a4dacc3339ac9b809389",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "b0b0de0f0f5c6bc18650dbb2c22f11faec651161",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-04.html": {
-      "sha": "4ec74b9aa55fba8aadec2ebcff1af775c7f3b4ec",
-      "at": "2026-11-05T09:14:09+09:00",
-      "findings": 1,
-      "accepted": [
-        {
-          "sha": "69afb6b24a21aa870b8edd2957e9b5dbc918b966",
-          "at": "2026-11-05T18:15:55+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "0a1ab78cd758a3e6bcd160fab77de4a852c6a16e",
-          "at": "2026-11-06T01:52:38+09:00",
-          "reason": "typography"
-        },
-        {
-          "sha": "3819b4491b976c797600bc8cc9a4c68d4b3b2746",
-          "at": "2026-11-06T02:11:14+09:00",
-          "reason": "fund-board-relayout"
-        }
-      ]
+      "sha": "8431b2f2e5eb273a9f3e01a18465b98970628bbb",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-05.html": {
-      "sha": "f81f69ac0cb759fec13d4a4ad9ffdf7084b1d98d",
-      "at": "2026-11-06T19:08:50+09:00",
-      "findings": 0
+      "sha": "105c6fc793947b7bf48d046f9a90b751f0f9cc3b",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-06.html": {
-      "sha": "ae072abe432ff9b9344e21a66e50ad2606b77b5d",
-      "at": "2026-11-07T12:43:51+09:00",
+      "sha": "9138b2d1a7aa8328ba090a34dc1d39d21dba7357",
+      "at": "2026-11-17T23:00:47+09:00",
       "findings": 1
     },
     "posts/2026-11-09.html": {
-      "sha": "448e8b2a8057a360a6174f1142d25cbcbc3c079f",
-      "at": "2026-11-10T15:10:12+09:00",
-      "findings": 0
+      "sha": "6338fe4849ebb2e4591c1abddfd4515845741620",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-10.html": {
-      "sha": "70dafba76fe265e74aa698c168f0d8a3a34f274f",
-      "at": "2026-11-11T10:05:01+09:00",
-      "findings": 5
+      "sha": "3240fc31408bf8c0bb775cfe7929e44cb879bba3",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-11.html": {
-      "sha": "8ed5c0038bbd370797d60a9e2622ee452176d014",
-      "at": "2026-11-12T10:02:57+09:00",
-      "findings": 0
+      "sha": "9db9a7cf6c4a905868dac3a9b3d24425169302e7",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-12.html": {
-      "sha": "10e7f2011cf7dd6bffbc33ac1827ded6e2ffa97f",
-      "at": "2026-11-13T09:04:31+09:00",
-      "findings": 2
+      "sha": "1f0eba39e10e832245d420ea6306a2ce9ed802ed",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-13.html": {
-      "sha": "3a12e0d4913be14664b6fd5df542e01c209d70a6",
-      "at": "2026-11-14T10:04:31+09:00",
-      "findings": 0
+      "sha": "b899b1a2a0a46d63e9b8906f5062ba6de993e8dc",
+      "at": "2026-11-17T23:00:47+09:00",
+      "findings": 1
     },
     "posts/2026-11-16.html": {
-      "sha": "0eb61caa84fd56452fcb99db99edc37eb5b69e28",
-      "at": "2026-11-17T20:27:38+09:00",
-      "findings": 2
+      "sha": "5547b8d9e34855bdf28c9758be9693f700b1b537",
+      "at": "2026-11-17T23:00:48+09:00",
+      "findings": 1
     },
     "privacy.html": {
       "sha": "2aa8d1ac997b2bc21cf86ed8283ddd2c6d6fb41c",
