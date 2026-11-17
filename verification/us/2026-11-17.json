@@ -1,0 +1,820 @@
+{
+ "code": {
+  "dirty": false,
+  "dirty_sha256": null,
+  "head": "e3a459c86da1ad91c9a79e01fc4958bbc8f6a86b",
+  "python": "3.11.18"
+ },
+ "created_at": {
+  "kst": "2026-11-18T08:36:20+09:00",
+  "utc": "2026-11-17T23:36:20+00:00"
+ },
+ "date": "2026-11-17",
+ "disabled": [
+  {
+   "name": "check_news",
+   "since": "2026-09-26",
+   "why": "뉴스·산업 브리프(STEP 3.5) 전용 — 시황 브리프 목록 밖"
+  }
+ ],
+ "format": "prepub-record/1",
+ "gates": [
+  {
+   "argv": [],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "unconfirmed",
+   "note": null,
+   "output_sha256": null,
+   "reason": "",
+   "required": true,
+   "script_sha256": null,
+   "seconds": 0.0,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_macro.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "매크로 게이트 통과"
+   ],
+   "kind": "structure",
+   "name": "check_macro",
+   "note": null,
+   "output_sha256": "15214a1d6318c231d1e97c464567b99243c3a2f3332146edbe7a799c8b4559a4",
+   "reason": "",
+   "required": true,
+   "script_sha256": "f340bd3b33d5364595f694a7e60f92e68ad0022edcc1dc628ae82408d2fa221f",
+   "seconds": 0.08,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_price_context.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "price context gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_price_context",
+   "note": null,
+   "output_sha256": "cb8b7a0160393d199c3606d566d83d8f024384d9c02a4a573f87ea6a4ff2287c",
+   "reason": "",
+   "required": true,
+   "script_sha256": "6022ad5fe7792c75642d5bb785e17909403867da630e1ccfe24e4ec284f6034f",
+   "seconds": 0.05,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_sector_perf.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "sector performance gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_sector_perf",
+   "note": null,
+   "output_sha256": "86aac4e52c882362fd94b7961c6a2606040ba89905a156cd50c498593ea0804a",
+   "reason": "",
+   "required": true,
+   "script_sha256": "5fd4c795c06c95ba208c4dbb69ec3e14bb6e3a0be896069b7cebbe40bf6ece9b",
+   "seconds": 0.04,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_session.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "us"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "session gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_session",
+   "note": null,
+   "output_sha256": "b48111753af34051b1878f227f883fe95706998e0b3dadd74250368fddf2aa45",
+   "reason": "",
+   "required": true,
+   "script_sha256": "5f1750f7a8d1a38512f41110cf065ff12160e0bf0ac16149c823ab31cb76a2e8",
+   "seconds": 0.05,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_fed.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "연준 이벤트 없음 — 섹션 없이 발행 (OK)"
+   ],
+   "kind": "structure",
+   "name": "check_fed",
+   "note": null,
+   "output_sha256": "effb405f89659c4367f21926b56382f9767563f373f94334d43773ce13d219f7",
+   "reason": "",
+   "required": true,
+   "script_sha256": "52c4985b90c9bab55f4fe8df85e968c1c94c4765de39a658c14e14622dffd5bd",
+   "seconds": 0.05,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_auction.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "check_auction",
+   "note": null,
+   "output_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "reason": "",
+   "required": true,
+   "script_sha256": "a7c9b8acc09e61f3fd7a4b6ecf2e7c012142517a01517cf0882525c0d34443f2",
+   "seconds": 0.07,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_liquidity.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--repo",
+    "{repo}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "liquidity gate: OK"
+   ],
+   "kind": "structure",
+   "name": "check_liquidity",
+   "note": null,
+   "output_sha256": "90db4a299dd8c368cd0f938f3bad4bf04e9e8b07928af59a758afd50da1e4a86",
+   "reason": "",
+   "required": true,
+   "script_sha256": "a98a6f7f299b709852e42604219fc159fc0ed224868e39d90976cdd84e90c66c",
+   "seconds": 0.12,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_calendar.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "calendar gate: OK"
+   ],
+   "kind": "structure",
+   "name": "check_calendar",
+   "note": null,
+   "output_sha256": "00a24c417bcb6d3d5065048448d5002f9b198df55489d5205c02dd8cd2bd0480",
+   "reason": "",
+   "required": true,
+   "script_sha256": "a1a8d9d08604397965428b9a67a7ace4e555516455c80eb84c19b7d346fb863c",
+   "seconds": 0.04,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_sources.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:18+09:00",
+   "exit": 0,
+   "items": [
+    "source gate: OK"
+   ],
+   "kind": "structure",
+   "name": "check_sources",
+   "note": null,
+   "output_sha256": "b090ac5d7b16265b85b9d2e7df7cb987f5947b9906e2829a7e7551708c3521fa",
+   "reason": "",
+   "required": true,
+   "script_sha256": "5f161a8507173fb7f1b39f45ba1fb47bcacfc3522ac6447da3c9c68a984f5a9f",
+   "seconds": 0.05,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_telegram.py",
+    "--html",
+    "{html}",
+    "--tg",
+    "{tg}",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-18T08:36:19+09:00",
+   "exit": 0,
+   "items": [
+    "텔레그램 인용 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_telegram",
+   "note": null,
+   "output_sha256": "b773eeadf4f60f07cb0987c38ca9a1b8f7042668bb10f4859844bc7b8b052eed",
+   "reason": "",
+   "required": true,
+   "script_sha256": "85170d659f4a4a93a38d8b1192bb7ffb2d7fdbf5ff3b0106295c90e237da9547",
+   "seconds": 1.15,
+   "started": "2026-11-18T08:36:18+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_weight.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "us"
+   ],
+   "ended": "2026-11-18T08:36:19+09:00",
+   "exit": 0,
+   "items": [
+    "분량: 본문 11111자 · 뉴스 요약 0자 · 전체 11111자 (공백 제외)",
+    "경고: 서술형 본문이 11111자다(평상시 4,000~5,000자) — 큰 사건이 있는 날이 아니면 반복 해석·장중 시각·변화 없는 판단부터 덜어낸다. 중요한 분석은 지우지 않는다",
+    "경고: 시황군 3951자 < 판단군 5694자 — 중요한 분석이 몰린 날이 아니면 주요 자산의 움직임·큰 변동의 원인·자산 간 연결이 빠졌는지 점검한다(비율을 맞추려고 시황을 덧붙이지 않는다)",
+    "OK — 무게중심 게이트 통과 (발표일)"
+   ],
+   "kind": "structure",
+   "name": "check_weight",
+   "note": null,
+   "output_sha256": "164a13ef3fae1f80b79f5558a3f59d4091648f6c710e53746f788731b6afbf68",
+   "reason": "",
+   "required": true,
+   "script_sha256": "b8cbaad2816efb897d327c756caa33d34511e2d0cbaa64bf8b65fffd67263b75",
+   "seconds": 0.08,
+   "started": "2026-11-18T08:36:19+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 2
+  },
+  {
+   "argv": [
+    "scripts/check_movers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:19+09:00",
+   "exit": 0,
+   "items": [
+    "움직인 종목 이상 없음 — <html>"
+   ],
+   "kind": "numbers",
+   "name": "check_movers",
+   "note": null,
+   "output_sha256": "1c354846acd928935b45519f6ec3a8381902f059957192f323e03075cf81c991",
+   "reason": "",
+   "required": true,
+   "script_sha256": "e99503591fb2c4f74ab37d0889d5b1c6bbcb25fdea72900b75de8795e70d1612",
+   "seconds": 0.03,
+   "started": "2026-11-18T08:36:19+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_fund.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "us"
+   ],
+   "ended": "2026-11-18T08:36:20+09:00",
+   "exit": 0,
+   "items": [
+    "펀드 섹션 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_fund",
+   "note": null,
+   "output_sha256": "c56f366fb435563834955370d3f5e7b6a5e2797cb4c105d63843cb2357141458",
+   "reason": "",
+   "required": true,
+   "script_sha256": "aeed2493c3394d3cb59b7662d032e7854bbada5b97f627e8b43f61d94001f7dc",
+   "seconds": 0.07,
+   "started": "2026-11-18T08:36:19+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_numbers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-18T08:36:20+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "numbers",
+   "name": "check_numbers",
+   "note": null,
+   "numbers": {
+    "delegated": 420,
+    "excluded": 34,
+    "prose_judged": 28,
+    "table_cells": 69,
+    "tokens_seen": 800,
+    "unverified": 249,
+    "unverified_by": {
+     "매크로 표(예상치·표식 없는 행)": 1,
+     "보도·인용 문장": 1,
+     "사전 밖 자산": 18,
+     "시점·구간 단서": 23,
+     "연구 원장": 45,
+     "자산 없음": 127,
+     "자산 후보 둘 이상": 4,
+     "자산과 수치 사이가 멀다": 4,
+     "지표 해부": 26
+    }
+   },
+   "output_sha256": "b5310195ee45db31bd2c1fc02e3627b21fd22fa5017b99dc4767acbd50f8d1d2",
+   "reason": "",
+   "required": true,
+   "script_sha256": "22453afc6d570a0dd2ed15b9d116b583d246c0a5db727d25ba17a62c629ef1e3",
+   "seconds": 0.27,
+   "started": "2026-11-18T08:36:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_research.py",
+    "check",
+    "--span",
+    "daily",
+    "--html",
+    "{html}",
+    "--root",
+    "research/us",
+    "--market",
+    "us",
+    "--date",
+    "{date}",
+    "--cycle",
+    "{cycle}"
+   ],
+   "ended": "2026-11-18T08:36:20+09:00",
+   "exit": 0,
+   "items": [
+    "RESEARCH_OK"
+   ],
+   "kind": "structure",
+   "name": "check_research",
+   "note": null,
+   "output_sha256": "b07ae556f94f4f1cfa887f6909d5974d37234606485396e81f20c0f23646bbde",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d54dcf4ef6d44931fe5fc7bb03f625616884aa4bda1f649ed69f9fcfe7c96afd",
+   "seconds": 0.11,
+   "started": "2026-11-18T08:36:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_style.py",
+    "{html}"
+   ],
+   "ended": "2026-11-18T08:36:20+09:00",
+   "exit": 0,
+   "items": [
+    "경고 1건(발행은 막지 않는다) — <html>",
+    "· 문장 안에 매체 출처가 있다 — 「CNBC」 — 다시 읽어 보고, 자연스러우면 그대로 둔다"
+   ],
+   "kind": "format",
+   "name": "check_style",
+   "note": null,
+   "output_sha256": "348f50cd0d7efae65049f15c1fede5c8818db8e6ee92358ec1c6541cec415fdf",
+   "reason": "",
+   "required": true,
+   "script_sha256": "4ffd7ef01b1b78a44d60afab21a10479758e3b54404214f30baf75077484a4a9",
+   "seconds": 0.07,
+   "started": "2026-11-18T08:36:20+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 1
+  },
+  {
+   "argv": [
+    "scripts/check_readability.py",
+    "--strict",
+    "--no-inline-images",
+    "{html}"
+   ],
+   "ended": "2026-11-18T08:36:20+09:00",
+   "exit": 0,
+   "items": [
+    "== <html>",
+    "문장 232 · 중앙 56자 · P90 99자 · 120자 초과 6문장 · 수치 중앙 1개/P90 4개 · 문단 P90 348자",
+    "note 수치 10개 문장 (6개 넘음 — 읽기 어려우면 표로) · 추정 기여도로 기술 -0.31%p, 금융 -0.20%p, 커뮤니케이션서비스 -0.18%p, 헬스케어 -0.13%p, 경기소비재 -0.12%p, 유틸리티 -0.06…",
+    "note 수치 8개 문장 (6개 넘음 — 읽기 어려우면 표로) · 2년물은 2.1bp 내린 4.806%, 5년물은 2.0bp 내린 4.915%, 10년물은 1.2bp 내린 5.109%, 30년물은 0.8bp 내린 5.460%로 …",
+    "note 수치 8개 문장 (6개 넘음 — 읽기 어려우면 표로) · WTI는 0.20% 오른 85.70달러, 브렌트는 0.53% 오른 92.84달러로 끝났고, 천연가스는 1.85% 오른 3.191달러, 금은 0.11% 내린 3,8…",
+    "note 수치 8개 문장 (6개 넘음 — 읽기 어려우면 표로) · 11월 10일 종가 대비 버티브 -1.982%, GE 버노바 -2.149%로 단순평균 -2.066%이고, S&P 500 -2.399%를 빼면 +0.333%p로 판…",
+    "note 산문 과잉 정밀 1,334.73원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,334.73 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 2,701.87 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 24,328.38 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 3,850.20 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 50,759.42 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 7,340.53 — 호가가 아니면 반올림을 생각해 본다",
+    "info 126자 문장 · 이 판단은 11월 17일 종가 대비 11월 24일 종가에서 엔비디아 누적 등락률이 S&P 500 누적 등락률보다 6.21%p 이상 높으면 뒷받침되고, 6.21%p…",
+    "info 143자 문장 · 밤사이 S&P 선물(ES)은 전날 20:30(ET) 고점 7,457에서 04:00(ET) 저점 7,395까지 0.83% 범위에서 움직였고, 나스닥 선물(NQ)은 …",
+    "info 165자 문장 · 추정 기여도로 기술 -0.31%p, 금융 -0.20%p, 커뮤니케이션서비스 -0.18%p, 헬스케어 -0.13%p, 경기소비재 -0.12%p, 유틸리티 -0.06…",
+    "info 139자 문장 · 지난 20거래일 동안 AI 인프라 관련주는 시장 움직임을 감안하고도 12.79% 뒤처졌는데, 성장−가치·대형−소형·반도체 세 축으로 나누면 반도체 축의 몫이 -1…",
+    "info 124자 문장 · 11월 10일 종가 대비 버티브 -1.982%, GE 버노바 -2.149%로 단순평균 -2.066%이고, S&P 500 -2.399%를 빼면 +0.333%p로 판…",
+    "info 길이 표시 6건 중 5건만 출력 — 막지 않는다",
+    "기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.",
+    "수치: 숫자 토큰(%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, 「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.",
+    "note(문체 참고): 문장당 수치 6개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·천 단위+소수, 헤드라인 80자 초과·수치 4개 초과.",
+    "note 는 발행을 막지 않는다(--strict 도 세지 않는다) — 다시 읽어 보고, 자연스러우면 그대로 둔다.",
+    "FAIL 은 조판이 깨지는 구조 문제뿐이다: 섹션 경계를 넘는 div, 인라인 이미지(--no-inline-images), 조판 미적용."
+   ],
+   "kind": "structure",
+   "name": "check_readability",
+   "note": null,
+   "output_sha256": "4326f0468ac9b3d4e81a875408520777da5cb514a4169346f4297de8d21dfc1b",
+   "reason": "",
+   "required": true,
+   "script_sha256": "3f22b4ab8f65c4ff7cea28b1e73696a556c8d11afc9462d427f502881e35c165",
+   "seconds": 0.07,
+   "started": "2026-11-18T08:36:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/apply_colors.py",
+    "--check",
+    "{html}"
+   ],
+   "ended": "2026-11-18T08:36:20+09:00",
+   "exit": 0,
+   "items": [
+    "미적용 0편 · 이미 적용 1편 · 대상 1편"
+   ],
+   "kind": "format",
+   "name": "apply_colors_check",
+   "note": null,
+   "output_sha256": "f84dea3d0adf0019cdd91f716917514cf7075304d7fe3295e89d326e65b0d3d1",
+   "reason": "",
+   "required": false,
+   "script_sha256": "f30eb5298059531af009a4a544920907a8065305be01ddba7812b3b601f38e67",
+   "seconds": 0.05,
+   "started": "2026-11-18T08:36:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  }
+ ],
+ "generator": {
+  "prepub_gates.json": "69edd128aa45f3ff562b1d80107a7cd76bbcc04c0bfbafe15c0c793aa11bcd40",
+  "record.py": "ccd59345a9a3371d0048eafa5ecd8d20f0d195ec9063bfd7da417e6a0c4c0dcb",
+  "run_gates.py": "7d5ccf05d63243fc52a49e2aa370acf387a4b512062cf3b760a49862ac88952c"
+ },
+ "inputs": {
+  "capped": false,
+  "count": 40,
+  "files": [
+   {
+    "path": "<datadir>/auctions.json",
+    "ref": "repo:data/auctions.json",
+    "sha256": "38bebd2bf4cc508739a7de2fa7be8c631e83542171122f34c7b0d678dffe7d18"
+   },
+   {
+    "path": "<datadir>/calendar.json",
+    "ref": "repo:data/calendar.json",
+    "sha256": "452a0e2b26d91d07a10a71973408e721968e0c535c05b2ad50025a09b699d3c2"
+   },
+   {
+    "path": "<datadir>/econ_indicators.json",
+    "ref": "repo:data/econ_indicators.json",
+    "sha256": "5c00996634e287623dda789d0d7a919adfd0c1efbbe68737c63e21c124e4a8aa"
+   },
+   {
+    "path": "<datadir>/fund_board.html",
+    "ref": "repo:data/fund_board.html",
+    "sha256": "29365cfaf05700fc2c54df9bd06a8239449a05ad475d63e05750e3dc2dccb719"
+   },
+   {
+    "path": "<datadir>/fund_board.json",
+    "ref": "repo:data/fund_board.json",
+    "sha256": "92a6d106e62968040697843e80f0377827717363b8dcdca0fbeee8b15f26db88"
+   },
+   {
+    "path": "<datadir>/gates.txt",
+    "ref": "workspace-only",
+    "sha256": "92afb9db4759102c80b9b8a4551f7aedc994a7f1d53cd0436148e65b702ae09a"
+   },
+   {
+    "path": "<datadir>/gates2.txt",
+    "ref": "workspace-only",
+    "sha256": "64f8bc8545ec6c46b0c1a887217ebd5d20dfc87b22ce1263043f0c09b139466b"
+   },
+   {
+    "path": "<datadir>/intraday.json",
+    "ref": "repo:data/intraday.json",
+    "sha256": "567cdaa45bc37d0f874fd028b2b8e5af1e65a5e3af7a819a6e7522b7b745a8b2"
+   },
+   {
+    "path": "<datadir>/macro.json",
+    "ref": "git:3e92b845d0ce278ec4f0f361d0379f1c2ceff308:data/macro.json",
+    "sha256": "fdcec62d1892a03aad85d2f97f504d2309f686fb90871b9d10339f8e3aa99cd5"
+   },
+   {
+    "path": "<datadir>/macro_eval.json",
+    "ref": "repo:data/macro_eval.json",
+    "sha256": "1f31f0ac79292fdc32f5b325c3f8ad434a61f82057ce2b1dd2c68c5bdf40032a"
+   },
+   {
+    "path": "<datadir>/macro_metrics.json",
+    "ref": "repo:data/macro_metrics.json",
+    "sha256": "ae9e37f70df886520c624cd5fae0fa8b8abea79e14ca61ce1371c15134ca2e84"
+   },
+   {
+    "path": "<datadir>/macro_next.json",
+    "ref": "repo:data/macro.json",
+    "sha256": "4f5b5a7c94dad68c0164e68cfeec9635a751d41fda09007703ba750f3273fdb1"
+   },
+   {
+    "path": "<datadir>/market_data.json",
+    "ref": "repo:data/market_data.json",
+    "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-17.body.html",
+    "ref": "workspace-only",
+    "sha256": "b830dce97a19951184944c348c8585b0606a45680fe01dc08a52214a51620527"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-17.html",
+    "ref": "workspace-only",
+    "sha256": "a561c101e6e32f172176f2ca4a247d3f408fa76c9713fdd0ea63d1f77b8f9324"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-17.meta.json",
+    "ref": "workspace-only",
+    "sha256": "4d27880950aa4e6dadcf35f50da5c1608acf5463ef5cb94b84ba75ec8bb86f71"
+   },
+   {
+    "path": "<datadir>/movers.json",
+    "ref": "repo:data/movers.json",
+    "sha256": "70398230311f3cd868d030a31a51283e27189dc6c63aaf6135d32f160f3b6289"
+   },
+   {
+    "path": "<datadir>/research_notes.md",
+    "ref": "workspace-only",
+    "sha256": "3799c882fc25f9938fad7ef8b3e133c3786a64729afb97910cf125d119df79aa"
+   },
+   {
+    "path": "<datadir>/sector_performance.html",
+    "ref": "repo:data/sector_performance.html",
+    "sha256": "665a59f7aa8bb783b79d057515c0562c49f46e38e0ed492eeb133f56b44bf435"
+   },
+   {
+    "path": "<datadir>/telegram.json",
+    "ref": "repo:data/telegram/2026-11-17.json",
+    "sha256": "50fb5a281e3a6d7a835925a19b37526448cfa2647afa63963115ec925b05a86c"
+   },
+   {
+    "path": "<datadir>/yield_curve.png",
+    "ref": "repo:data/yield_curve.png",
+    "sha256": "b31cd5743f858d3b3441c8745271cbf7755b2f3adf7f44668ae89785fbe6b542"
+   },
+   {
+    "path": "<datadir>/fed/chair-speech-20261116.txt",
+    "ref": "repo:data/fed/chair-speech-20261116.txt",
+    "sha256": "7aee9676b2a3404dc1ff44a075dfc7635ffb7a5cb025bc3135561f9233060300"
+   },
+   {
+    "path": "<datadir>/fed/events.json",
+    "ref": "repo:data/fed/events.json",
+    "sha256": "30b41a7a87adbb0c7949c8ef645f25ea9e8d55f19b73c26b246fa45d02ef8045"
+   },
+   {
+    "path": "<datadir>/fed/fomc-minutes-20261007.txt",
+    "ref": "repo:data/fed/fomc-minutes-20261007.txt",
+    "sha256": "21b33f7348abbb4fd60d957210117d63e95d98e794661d499755d4d321811a01"
+   },
+   {
+    "path": "<datadir>/fed/fomc-projections-20260916.txt",
+    "ref": "repo:data/fed/fomc-projections-20260916.txt",
+    "sha256": "49ce913fe9d12178a38a93c724009e20d4e959320ffe6c0bd7c8d40f921cb02d"
+   },
+   {
+    "path": "<datadir>/fed/fomc-statement-20260916.txt",
+    "ref": "repo:data/fed/fomc-statement-20260916.txt",
+    "sha256": "407288109f9ca0f6358730a94e7f0258e16559d53fe6f28d7501c72c7c3b3be4"
+   },
+   {
+    "path": "<datadir>/fed/fomc-statement-20261028.txt",
+    "ref": "repo:data/fed/fomc-statement-20261028.txt",
+    "sha256": "6450a2171d74f47ac85da4f6825d8e8ad71468d109d817e1b425d405d180c72a"
+   },
+   {
+    "path": "<datadir>/fed/jackson-hole-20260828.txt",
+    "ref": "repo:data/fed/jackson-hole-20260828.txt",
+    "sha256": "a0ff7e424cd11b039af1c4304eb77b1c7ce7189147c3e9298af9af59f94a5b9f"
+   },
+   {
+    "path": "<datadir>/fed/seen.json",
+    "ref": "repo:data/fed/seen.json",
+    "sha256": "64078f8ea2ab0f39c287d588aa449ebb00c4f81c2b8305686b4af0c72256dd76"
+   },
+   {
+    "path": "<datadir>/fed/statements.json",
+    "ref": "repo:data/fed/statements.json",
+    "sha256": "5f197370a4076584818157a68e17a0991a4dd8924c1bd06ccfbeed4aaa33f502"
+   },
+   {
+    "path": "<datadir>/liquidity/liquidity.json",
+    "ref": "repo:data/liquidity/liquidity.json",
+    "sha256": "97576f110c25423ea97d1613ae63da8415dd09d3a26dfee4aa1bcd346236632f"
+   },
+   {
+    "path": "<datadir>/liquidity/state.json",
+    "ref": "repo:data/liquidity/state.json",
+    "sha256": "ed9582880fa105e110c98619e5d841d8bc99587a5a6f15d912db78f313e36fa8"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_borrowing.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_borrowing.txt",
+    "sha256": "6e68303d9a23af00f69514852a38445d9bb3493e17a28347fbd4c7e00d46cc80"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_refunding.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_refunding.txt",
+    "sha256": "f553e5b9c3875ed9ba1f8030745c20cb1ea7738048093cc47d0cd7f7d38895a8"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_tbac.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_tbac.txt",
+    "sha256": "81b285c9d68d029aaaf8bd2dc5d6ce8f663f0d47e1cf533707cc1648302b3b2f"
+   },
+   {
+    "path": "<datadir>/news/2026-11-17.json",
+    "ref": "repo:data/news/2026-11-17.json",
+    "sha256": "53a4c64fdf2f2df0372a085bcc5354c1289725e56c638e00ec94a99f55105130"
+   },
+   {
+    "path": "<datadir>/releases/index.json",
+    "ref": "repo:data/releases/index.json",
+    "sha256": "5825755aed76d935e2c204962137a92ae44f6ad3ec6b82ec2e46df68c6a945f6"
+   },
+   {
+    "path": "<datadir>/releases/industrial-production.txt",
+    "ref": "repo:data/releases/industrial-production.txt",
+    "sha256": "61ebb7751e4644cbf9a0a744f3c4155dee19208fac7329b7b988af31d1d67eee"
+   },
+   {
+    "path": "<datadir>/releases/retail-sales.txt",
+    "ref": "repo:data/releases/retail-sales.txt",
+    "sha256": "82629dfd2a4d4819a848e114ebe23f02697b6d31016ead913f13a0fc0b1d8ada"
+   },
+   {
+    "path": "<tg>/telegram.json",
+    "ref": "repo:data/telegram/2026-11-17.json",
+    "sha256": "50fb5a281e3a6d7a835925a19b37526448cfa2647afa63963115ec925b05a86c"
+   }
+  ],
+  "incomplete": false,
+  "unreadable": 0
+ },
+ "manual": "수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다",
+ "market": "us",
+ "post": {
+  "blob": "b450161e2ffcb38b9c85f310adb739afca8d391a",
+  "path": "posts/2026-11-17.html",
+  "sha256": "a561c101e6e32f172176f2ca4a247d3f408fa76c9713fdd0ea63d1f77b8f9324"
+ },
+ "preservation": {
+  "note": "같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로>, 로컬 origin/main 추적 이력의 앞 커밋에 있으면 git:<커밋>:<경로> 로 참조한다(복원 가능성 — 그 파일을 원본으로 썼다는 증거는 아니다). workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다",
+  "workspace_only": 6,
+  "workspace_only_files": [
+   "<datadir>/gates.txt",
+   "<datadir>/gates2.txt",
+   "<datadir>/morning_brief_2026-11-17.body.html",
+   "<datadir>/morning_brief_2026-11-17.html",
+   "<datadir>/morning_brief_2026-11-17.meta.json",
+   "<datadir>/research_notes.md"
+  ]
+ },
+ "repo_inputs": {
+  "digest": "9504ad82221d008e3ce6a463774a7bdf8efc7e90b8ec5a83eb2abd42a8ac0f9b",
+  "files": 926,
+  "paths": [
+   "scripts",
+   "config",
+   "research/us",
+   "posts"
+  ]
+ },
+ "summary": {
+  "blocking": [],
+  "integrity": [],
+  "not_run": [],
+  "note_format": [],
+  "note_numbers": [],
+  "publish_ok": true,
+  "status": "pass_with_warnings",
+  "verified": true,
+  "warned": [
+   "check_weight",
+   "check_style"
+  ]
+ }
+}

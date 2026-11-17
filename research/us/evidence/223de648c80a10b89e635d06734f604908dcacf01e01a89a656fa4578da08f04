@@ -1,0 +1,84 @@
+# US 2026-11-17 web research evidence (WebSearch result summaries)
+Collected 2026-11-17 22:55-23:15 UTC via WebSearch (result summaries only; WebFetch not used). Summaries below paraphrase the search-tool synopsis of the cited pages; URLs as returned.
+
+## Session close and drivers
+- Reuters (via MarketScreener / The Standard / Virginia Business): Dow -848.75 (-1.64%) to 50,759.42; S&P 500 -76.06 (-1.03%) to 7,340.53; Nasdaq -181.37 (-0.74%). S&P 500 and Nasdaq fourth straight loss. Software names fell (Salesforce, Workday, Intuit, Adobe). Intel dropped after Nvidia cut its stake by 25%. Anthropic expected to set final IPO price Wednesday (11/18), Nasdaq debut 11/19. Worries over data-center opposition and hyperscaler payback.
+  https://www.marketscreener.com/news/wall-street-ends-lower-ahead-of-nvidia-results-focus-turns-to-anthropic-debut-ce785edcdc81fe2d
+  https://www.thestandard.com.hk/finance/article/348819/Wall-Street-ends-lower-ahead-of-Nvidia-earnings-Anthropic-debut
+  https://virginiabusiness.com/wall-street-falls-nvidia-earnings-anthropic-ipo/
+- Yahoo Finance live: "Dow sinks 850 points, S&P 500 and Nasdaq drop with focus on Nvidia earnings"; retail sales 0.2% in line; ex autos & gas 0.6% vs 0.4% forecast; software weighed on Dow; Salesforce and UnitedHealth among Dow decliners.
+  https://finance.yahoo.com/markets/live/stock-market-today-tuesday-november-17-dow-sp-500-nasdaq-nvidia-earnings-retail-sales-143848454.html
+- Kiplinger: "Dow Dives 848 Points as NSA Outage Wrecks Tech". CNN reported NSA classified internal network down (six people familiar), no evidence of cyberattack; NSA: "experienced temporary degradation during scheduled routine maintenance". Context of tech glitches (FAA grounding last Friday, bank service outages Monday). Salesforce worst Dow stock -9.5%, biggest one-day drop since 2024-05-30. Dow fell more than 1,000 points at session low.
+  https://www.kiplinger.com/investing/stocks/dow-dives-848-points-as-nsa-outage-wrecks-tech-stock-market-today
+- FXStreet / TMGM: "Dow Jones Industrial Average slides on NSA outage, then Nvidia beats"; Dow session low ~1,000-1,011 points down near 50,600; low came after NSA statement (timing per FXStreet, not verified against canonical bars).
+  https://www.fxstreet.com/news/dow-jones-industrial-average-slides-on-nsa-outage-then-nvidia-beats-202611172133
+- Briefs: Dow ~50,645 (-1.9%) around 3:04 p.m. ET. https://www.briefs.co/news/stocks-slide-as-chip-names-stumble-and-nsa-network-hiccup-ra/
+- TipRanks: earlier intraday note Dow -1.2%. https://www.tipranks.com/news/stocks-fall-as-nsa-outage-and-nvidia-earnings-add-to-investor-jitters
+- Seoul Economic Daily: https://en.sedaily.com/world/2026/11/18/us-stocks-extend-slide-as-classified-network-outage-hits-dow
+
+## Software
+- Seeking Alpha / Benzinga / Proactive / CNBC movers: Salesforce ~-9.4% (S&P 500 worst), ServiceNow ~-6.5%, Workday ~-5%, Intuit, HubSpot lower; Microsoft ~-3% (CNBC live); iShares software ETF >-3%. Explanations: AI agents shrinking paid seats; portfolio adjustment ahead of Anthropic IPO.
+  https://seekingalpha.com/news/4673872-salesforce-leads-enterprise-software-stocks-lower-ahead-of-anthropics-ipo
+  https://www.benzinga.com/markets/equities/26/11/63359152/stock-market-today-salesforce-software-selloff-anthropic-ipo-nvidia-november-17
+  https://cnbc.com/2026/11/17/stocks-moving-the-most-today-live-updates.html
+  https://www.proactiveinvestors.com/companies/news/1101949/salesforce-leads-wall-street-software-sell-off-as-investors-brace-for-anthropic-ipo-1101949.html
+- 24/7 Wall St.: ServiceNow lost about $59B in value in 14 trading days since its report (slower contract growth forecast).
+  https://247wallst.com/investing/2026/11/17/servicenow-has-lost-about-59-billion-in-value-in-14-trading-days-since-a-report-where-revenue-beat/
+
+## UnitedHealth
+- GuruFocus: CMS proposed wider Medicare Advantage audits (RADV codified without FFS adjuster, extrapolation from payment year 2018; ~$9B/yr recovery estimate); UNH -4.62% at 9:50 ET. Sen. Warren called for breaking up healthcare conglomerates (UNH, CVS, Cigna). Humana, CVS also lower.
+  https://www.gurufocus.com/news/9205488/unitedhealth-stocks-fall-462-as-cms-proposes-wider-medicare-advantage-audits
+  https://www.gurufocus.com/news/9205170/unitedhealth-unh-shares-dip-premarket-amid-new-federal-healthcare-fraud-regulations
+  https://news.jkn.co.kr/editions/english/post/1103124
+  https://247wallst.com/investing/etf/2026/11/17/your-safe-health-care-etf-just-got-hit-by-unitedhealth-again/
+
+## Nvidia results (after close 11/17)
+- NVIDIA press release (GlobeNewswire 2026-11-17): Q3 FY2027 revenue $115.8B (+103% y/y), Data Center $107.6B (+110%); Q4 outlook $130.0B +/-3% (includes extra week), assumes no China data center compute revenue. Interim CEO Colette Kress.
+  https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-third-quarter-fiscal-2027
+  https://www.globenewswire.com/news-release/2026/11/17/3405200/0/en/nvidia-announces-financial-results-for-third-quarter-fiscal-2027.html
+  https://www.stocktitan.net/news/NVDA/nvidia-announces-financial-results-for-third-quarter-fiscal-fpx9dw5egxqa.html
+- Futu: new $150B buyback announced. https://news.futunn.com/en/post/1004785440/nvidia-reported-q3-fy2027-revenue-of-115-8-billion-and
+- BigGo: buyback capacity lifted to $227B (figure differs from Futu; unresolved). https://finance.biggo.com/news/99c52df5-57c4-40d6-927d-32bd8ddfcaca
+- Search synopsis (Yahoo / TradingKey): EPS $2.68 vs $2.47 est; revenue vs ~$108.85B est (providers vary $108.7-109.3B); Q4 guide vs ~$125.3B est; GM guide 71-72% vs 74.9% latest quarter (pre-report ~74% expectation per one source; Kress flagged 71-72% bottom on August call as memory prices climb). After hours: +4.57% to $162.56 in one report; as much as +4%, narrowing to ~+3% in another.
+  https://www.tradingkey.com/analysis/stocks/us-stocks/262309793-nvidia-earnings-report-q3-rubin-ramp-data-center-growth-revenue-guidance-gross-margin-tradingkey
+  https://finance.yahoo.com/markets/stocks/articles/street-wants-130-billion-revenue-202501925.html  (pre-event: "Street wants $130B in guidance"; options price nearly 7% move)
+  https://www.tradingkey.com/analysis/stocks/us-stocks/262309391-nvidia-nvda-stock-earnings-q3-blackwell-ceo-transition-price-outlook-tradingkey (pre-event: options imply 8.5% swing)
+  https://finance.yahoo.com/markets/stocks/articles/nvidia-earnings-wolfe-research-says-172000551.html (pre-event Wolfe: stock already prices in guidance cut)
+- CBS News (news file): Huang statement "would be honored" to return; board chair Harvey Jones later said no intention to rehire.
+
+## Rates / Fed
+- CNBC 2026-11-17 Treasury: yields moderate after retail sales; 10Y ~5.129% (+~1bp) later in session, 2Y ~4.825%; bull-steepening flight-to-quality, brief lift after retail sales (per search synopsis).
+  https://www.cnbc.com/2026/11/17/treasury-yields-bonds-inflation.html
+- Newsquawk US Market Wrap: STIR pricing Dec 26.0bp, March 61.3bp (cumulative).
+  https://www.newsquawk.com/headlines/us-market-wrap-equity-weakness-continues-as-nvda-earnings-await
+- CNBC gold 2026-11-17: FedWatch 95.5% 25bp hike December, 4.5% 50bp.
+  https://cnbc.com/2026/11/17/gold-hovers-near-over-one-year-low-as-firm-dollar-fed-hike-bets-weigh.html
+- TechFlow/Jin10 11/17: Dec 25bp 95.7%; by Jan 2027 cumulative +25bp 27.6%, +50bp 69.4%, +75bp 3.1%.  https://www.techflowpost.com/en-US/newsletter/145029
+- FXStreet gold 11/17: 96% December; ~70% another move in January. https://fxstreet.com/analysis/gold-today-96-odds-of-a-december-hike-keep-sellers-targeting-3-820-202611171317
+- CNBC 2026-11-17 13:40 UTC (news file): Musalem says up to four more hikes may be needed before spring 2027; real policy rate to 2-2.5%, ~1pp below; Dec/Jan/Mar/Apr meetings. Pomegra: 100-150bp framing. https://pomegra.io/news/musalem-urges-fed-rate-hikes-sooner-as-yields-climb
+- CBS (news file): Gov. Cook rebuffs White House hearing.
+
+## Retail sales / IP reaction
+- ING THINK 2026-11-17: control group +0.6% m/m vs 0.3% expected; September revised to 0.5%; real sales declined given higher prices.  (news file item)
+- Reuters synopsis: headline 0.2% matched expectations; ex autos & gasoline 0.6% vs 0.4% forecast.
+- PBS (news file): autos -1.6%, gas stations +1.5%; ex gas 0.1%; Navy Federal's Heather Long: spending pulled back after inflation.
+- Industrial production consensus: financecalendar.com says no major polling consensus published. https://www.financecalendar.com/event/us-industrial-production-october-2026/
+
+## Memory
+- 24/7 Wall St. 11/17: SanDisk and Micron fall ~4% as GF Securities cuts NAND price forecast, warns of 2027 glut; GF still favours Micron/SK hynix for DRAM/HBM.
+  https://247wallst.com/investing/2026/11/17/sandisk-and-micron-fall-4-as-gf-securities-cuts-nand-price-forecast-and-warns-of-a-glut-sk-hynix-dips/
+- FX Leaders 11/17: Micron tests support below $700. https://www.fxleaders.com/news/2026/11/17/micron-stock-tests-support-below-700-as-big-tech-attack-weighs-on-chip-companies/
+- BigGo: BofA estimates NAND spot down ~20% over past month; Samsung -4.47%, SK hynix -7.89% "on the 16th"; 512Gb NAND wafer spot $14.3 (-12% w/w). Date ambiguous vs canonical 11/17 KRX closes (Samsung -3.30%, SK hynix -1.96%).
+  https://finance.biggo.com/news/0865c6d4-9c16-4d62-8a8b-ec76e4b5ab6a
+- Kioxia guidance miss (11/2) context: https://finance.biggo.com/news/18648875-0637-4122-a621-f5e58c200db5 ; Goldman maintains Buy Samsung/SK hynix (tight NAND through 2027).
+- TechCrunch (news file) 11/17: Anthropic post-IPO cap table: Amazon ~14.7% (up to ~23.8% if all notes converted), Google ~13.7%; AMD, Broadcom, Google, Micron among IPO private-placement participants (per summary).
+
+## AI infra
+- Yahoo Finance / Invezz 11/17: Coherent, Lumentum rise on Reuters report US advancing restrictions on Chinese data-center equipment; gains faded intraday.
+  https://finance.yahoo.com/technology/articles/coherent-lumentum-shares-rise-us-133958005.html
+  https://invezz.com/news/2026/11/17/coherent-lumentum-stocks-gain-on-tuesday-heres-why/
+- 24/7 Wall St. 11/17: Marvell rises 3% after Monday's 7% drop; Lumentum deal dilution question.
+  https://247wallst.com/investing/2026/11/17/marvell-rises-3-after-mondays-7-drop-is-the-lumentum-deal-still-worth-the-dilution-risk/
+- Marvell-Lumentum all-stock deal announced 2026-11-02 (4.5 MRVL per LITE, EV ~$115B, close 1H 2028). https://www.sec.gov/Archives/edgar/data/0001633978/000119312526442760/d163169d425.htm
+- Background on FCC/administration ban on Chinese optical transceivers (Reuters Aug 2026): https://www.streetinsider.com/Reuters/Exclusive-Trump+administration+drafting+ban+on+Chinese+data+center+devices%2C+sources+say/26860820.html
+- GE Vernova, Vertiv, Broadcom, Alphabet, Financials sector: no dated 11/17 cause found in searches.
