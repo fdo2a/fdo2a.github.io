@@ -193,7 +193,8 @@ def session_collect(report_date, ctx, holidays):
     선물·환율·해외 지수가 모두 지난 날 것이어도 성공이었다).
 
     * 선물 ES·NQ, 원달러: 그날 한국 정규장 창(`kr_hours_window`·`usdkrw_window`, KST 로 자른다)이 None 이면 결측 —
-      지난 날 봉뿐이면 창이 비어 None 이 된다.
+      지난 날 봉뿐이면 창이 비어 None 이 된다. 창이 있어도 마지막 봉이 `kr.session.WINDOW_END` 에 못 미치면
+      `incomplete_window:<이름>`(2회차 F2), 마지막 봉 시각을 못 읽으면 `incomplete_window:<이름>:unknown`.
     * 전일 미국장(`us_prev.as_of`): 기대 날짜 = 미국 휴장 달력(`data/market_holidays.json` 의 us)으로 센 report_date
       직전 미국 거래일. 다르면 결측. 달력이 그날을 덮지 않거나 못 읽으면 판정할 수 없어 결측(성공으로 두지 않는다).
     * 아시아 지수: 일본(닛케이)은 달력(jp)이 있어 기대 날짜와 대조한다. 달력이 없는 항셍·상해·대만은 한 곳이 지난
@@ -208,6 +209,23 @@ def session_collect(report_date, ctx, holidays):
     missing += [f"futures:{lab}" for lab, _ in kr_session.FUTURES if not fut.get(lab)]
     if not ctx.get("usdkrw_intraday"):
         missing.append("usdkrw")
+    # 창이 있어도 장 끝까지 왔는지 따로 본다(2회차 F2 — 전에는 09:00·09:30 봉 둘이면 성공이었다). 선물·환율 각각.
+    cut = []
+    for lab, win in [(lab, fut.get(lab)) for lab, _ in kr_session.FUTURES] + [("usdkrw", ctx.get("usdkrw_intraday"))]:
+        if not win:
+            continue
+        done, why = kr_session.window_complete(win)
+        if done is None:
+            missing.append(f"incomplete_window:{lab}:unknown")
+            cut.append(f"{lab} {why}")
+        elif not done:
+            missing.append(f"incomplete_window:{lab}")
+            cut.append(f"{lab} {why}")
+    if cut:
+        notes_window = ("장중 창 미완결(기준: 정규장 15:30 KST 에서 30분봉 하나 여유, 조기 마감·개장 지연 달력 없음 — "
+                        "다른 마감 시각을 추정하지 않는다): " + ", ".join(cut))
+    else:
+        notes_window = None
     us = ctx.get("us_prev")
     want_us, why_us = kr_session.expected_session(report_date, (holidays or {}).get("us"), before=True)
     if not us:
@@ -236,8 +254,9 @@ def session_collect(report_date, ctx, holidays):
     if holidays is None:
         missing.append("calendar:market_holidays.json")
     total = len(kr_session.FUTURES) + len(kr_session.PEERS) + 2
-    return C.by_counts(report_date, "yfinance + data/market_data.json", missing, total,
-                       detail=("기준일이 다른 아시아 지수(휴장일 수 있다): " + ", ".join(notes)) if notes else None)
+    detail = "; ".join(x for x in (
+        notes_window, ("기준일이 다른 아시아 지수(휴장일 수 있다): " + ", ".join(notes)) if notes else None) if x)
+    return C.by_counts(report_date, "yfinance + data/market_data.json", missing, total, detail=detail or None)
 
 
 def _holidays():

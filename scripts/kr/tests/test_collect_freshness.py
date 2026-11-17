@@ -62,9 +62,9 @@ def ctx(us_as_of=PREV, fut=True, fx=True, peer_dates=None):
     peer_dates = peer_dates or {n: D for n, _ in S.PEERS}
     return {"report_date": D,
             "us_prev": {"as_of": us_as_of, "rows": {"S&P 500": 0.1}} if us_as_of else None,
-            "us_futures_during_kr": {lab: ({"pct": 0.1} if fut else None) for lab, _ in S.FUTURES},
+            "us_futures_during_kr": {lab: ({"pct": 0.1, "last_t": "15:30"} if fut else None) for lab, _ in S.FUTURES},
             "asia_peers": {"rows": {n: 0.1 for n in peer_dates}, "dates": peer_dates},
-            "usdkrw_intraday": {"close": 1400.0} if fx else None}
+            "usdkrw_intraday": {"close": 1400.0, "last_t": "15:30"} if fx else None}
 
 
 def test_session_ok_only_when_every_window_is_that_day():

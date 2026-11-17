@@ -16,6 +16,12 @@ FUTURES = (('ES', 'ES=F'), ('NQ', 'NQ=F'))
 CALENDAR_PEERS = ('닛케이',)
 KR_OPEN, KR_CLOSE = (9, 0), (15, 30)
 KST = _dt.timezone(_dt.timedelta(hours=9))
+# 장중 창(선물·원달러)의 마지막 봉이 이 시각(KST) 이후여야 「그날 장 끝까지 본 창」이다(2026-11-17, 1a 구현 검토 2회차 F2).
+# 정규장 마감 15:30 에서 30분봉 하나의 여유. 실측: origin/main 의 kr_session.json 92판(발행일 54일)에서 선물 창이 있는
+# 91판·환율 92판의 마지막 봉이 전부 15:30. **조기 마감·개장 지연 달력은 없다**(`data/market_holidays.json` 은 휴장일만) —
+# 그래서 다른 마감 시각을 추정하지 않는다. 선물·환율은 KRX 가 일찍 닫아도 15:30 KST 까지 거래되므로 이 기준이 정상일을
+# 막지 않지만, 창 자체(09:00~15:30)가 그날 KRX 장 시간과 다른 날(수능일 10:00~16:30)은 여전히 구분하지 못한다.
+WINDOW_END = (15, 0)
 
 
 def _finite(x):
@@ -104,6 +110,20 @@ def kr_hours_window(bars, report_date):
     return {'pct': round((last / first - 1) * 100, 2), 'bars': len(picked),
             'first_t': picked[0][0].strftime('%H:%M'),
             'last_t': picked[-1][0].strftime('%H:%M')}
+
+
+def window_complete(win):
+    """(완결인가 | None, 사유). 창의 마지막 봉(`last_t`, HH:MM KST)이 `WINDOW_END` 이후면 완결. 마지막 봉 시각을 읽지
+    못하면 None — 판정할 수 없다(완결로 추정하지 않는다)."""
+    t = (win or {}).get('last_t')
+    try:
+        hh, mm = str(t).split(':')
+        last = (int(hh), int(mm))
+    except (ValueError, AttributeError):
+        return None, 'last_t 를 읽지 못했다'
+    if last >= WINDOW_END:
+        return True, None
+    return False, f'마지막 봉 {t} < {WINDOW_END[0]:02d}:{WINDOW_END[1]:02d}'
 
 
 def usdkrw_window(bars, report_date):
