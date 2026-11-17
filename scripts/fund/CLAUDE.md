@@ -24,6 +24,7 @@ The US and KR dailies are reference material for the PM of a tactical global-equ
 ## Invariants
 
 - **JSON always, HTML only when renderable** (`publish.write`); an unavailable day deletes yesterday's HTML. Section owed iff `status` ∈ {ok, partial} and `report_date` == post date; otherwise it must be absent.
+- **`collect`** (collector status record, 2026-11-17) is added to both JSONs by `publish.write` and is **excluded from `core.digest`**, so the block and committed posts do not change with it.
 - **The block is byte-compared with a fresh render.** Nothing downstream may rewrite it: `colorize` skips the two section titles, `prose_swap` skips the blocks, block lines are `<div>` not `<p>` (readability counts `<p>` as prose).
 - **FF3 trial never touches the board**: `fund_board.json`/`.html` stay byte-identical (`tests/test_pipeline.py` freezes 11/03·11/04); `core.SCHEMA_VERSION`, `render.py`, `gate.py` change only in the merge step.
 - **No `macro_eval` on the board** — it is written after collection, so it would be yesterday's call.

@@ -74,8 +74,16 @@ def run_into(tmp, closes, dates, **kw):
 
 
 def files(d):
-    return {n: (d / n).read_bytes() for n in ('fund_board.json', 'fund_board.html')
-            if (d / n).exists()}
+    """Board files; the JSON's `collect.collected_at` (wall clock, 2026-11-17) is blanked so two runs
+    of the same inputs compare equal byte for byte otherwise."""
+    out = {n: (d / n).read_bytes() for n in ('fund_board.json', 'fund_board.html')
+           if (d / n).exists()}
+    if 'fund_board.json' in out:
+        j = json.loads(out['fund_board.json'])
+        if isinstance(j.get('collect'), dict):
+            j['collect']['collected_at'] = None
+        out['fund_board.json'] = json.dumps(j, ensure_ascii=False, indent=2, allow_nan=False).encode()
+    return out
 
 
 def inline_reference(outdir, closes, dates, market, fred, report_date, generated_at, holidays):
@@ -152,3 +160,36 @@ def test_bad_factor_only_history_keeps_board_bytes(tmp_path):
     assert files(a) == files(b)
     board = json.loads(files(b)['fund_board.json'])
     assert not any('VTI' in m for m in board['missing'])
+
+
+# --- collect 칸(2026-11-17): 덧붙여도 블록·digest·바이트 비교가 그대로 -------------------------
+
+def test_written_board_carries_collect_and_still_renders_to_the_same_block(tmp_path):
+    closes, dates = hist(BASE)
+    run_into(tmp_path, closes, dates)
+    board = json.loads((tmp_path / 'fund_board.json').read_text(encoding='utf-8'))
+    c = board['collect']
+    assert c['status'] == 'ok' and c['as_of'] == board['report_date'] and c['empty'] == 'has_data'
+    # check_fund 는 JSON 으로 블록을 다시 그려 바이트로 비교한다 — collect 가 있어도 같은 바이트.
+    assert render.board_html(board) == (tmp_path / 'fund_board.html').read_text(encoding='utf-8')
+
+
+def test_digest_ignores_collect_only():
+    with open(os.path.join(FIX, 'fund_board_2026-11-03.json'), encoding='utf-8') as fh:
+        board = json.load(fh)
+    assert core.digest(dict(board, collect={'status': 'ok'})) == FROZEN['2026-11-03']
+    assert core.digest(dict(board, other=1)) != FROZEN['2026-11-03']
+
+
+@pytest.mark.parametrize('status,want', [('ok', 'ok'), ('partial', 'partial'), ('unavailable', 'failed')])
+def test_collect_maps_board_status(status, want):
+    c = publish.collect_of({'report_date': '2026-11-16', 'status': status, 'missing': ['x']}, 's')
+    assert c['status'] == want
+    assert c['empty'] == ('unknown' if want == 'failed' else 'has_data')
+
+
+def test_failed_board_json_says_failed(tmp_path):
+    publish.write(str(tmp_path), 'fund_board.json', 'fund_board.html',
+                  publish.failed('2026-11-16', 't', RuntimeError('boom'), universe=True), None)
+    c = json.loads((tmp_path / 'fund_board.json').read_text())['collect']
+    assert c['status'] == 'failed' and c['required_ok'] is False and 'boom' in c['response']
