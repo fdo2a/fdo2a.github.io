@@ -308,3 +308,13 @@ def test_date_ref_ties_a_book_to_another_file(tmp_path):
     assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'                       # 수집 표시 불필요(ledger)
     put(tmp_path, 'macro.json', {'report_date': '2026-11-12'})
     assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'stale'
+
+
+def test_hash_only_status_entry_is_not_a_stamp(tmp_path):
+    # stamp_collect.py 는 collect 칸이 파일 안에 있는 자료에도 해시만 적는다 — 그것을 수집 표시로 읽지 않는다
+    pol = policy([GATE_MD])
+    p = put(tmp_path, 'market_data.json', md())
+    import hashlib as H
+    put(tmp_path, '_collect_status.json', {'files': {'market_data.json': {
+        'sha256': H.sha256(open(p, 'rb').read()).hexdigest(), 'bytes': 1}}})
+    assert st(I.assess(pol, 'us', ctx(tmp_path))) == 'unstamped'

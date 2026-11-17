@@ -273,7 +273,9 @@ def _health(e, key, full, date, status_files, excuse, ref=None):
     # 수집 상태 표시
     skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
     entry = status_files.get(skey) if isinstance(status_files, dict) else None
-    stamp = d.get('collect') if isinstance(obj, dict) and 'collect' in d else entry
+    # 수집 상태 파일의 항목은 해시만 담기도 한다(collect 칸이 파일 안에 있는 자료) — 상태 칸이 있어야 표시로 본다
+    side = entry if isinstance(entry, dict) and 'status' in entry else None
+    stamp = d.get('collect') if isinstance(obj, dict) and 'collect' in d else side
     if isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and entry['sha256'] != sha:
         if e.get('rewritten_by'):
             # 수집 뒤 루틴이 정해진 명령으로 다시 쓰는 파일(예: build_liquidity --recompute) — 해시는 다를 수 있다.
