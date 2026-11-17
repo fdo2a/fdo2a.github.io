@@ -2,40 +2,40 @@
   "source": "ECOS (한국은행 경제통계시스템)",
   "series": {
     "국고채 3년": {
-      "value": 3.743,
-      "date": "2026-11-16",
+      "value": 3.725,
+      "date": "2026-11-17",
       "unit": "연%",
       "item_name": "국고채(3년)",
-      "prev": 3.759,
-      "prev_date": "2026-11-13",
-      "bp": -1.6
+      "prev": 3.743,
+      "prev_date": "2026-11-16",
+      "bp": -1.8
     },
     "국고채 10년": {
-      "value": 3.981,
-      "date": "2026-11-16",
+      "value": 3.966,
+      "date": "2026-11-17",
       "unit": "연%",
       "item_name": "국고채(10년)",
-      "prev": 4.001,
-      "prev_date": "2026-11-13",
-      "bp": -2.0
+      "prev": 3.981,
+      "prev_date": "2026-11-16",
+      "bp": -1.5
     },
     "CD 91일": {
       "value": 3.38,
-      "date": "2026-11-16",
+      "date": "2026-11-17",
       "unit": "연%",
       "item_name": "CD(91일)",
-      "prev": 3.37,
-      "prev_date": "2026-11-13",
-      "bp": 1.0
+      "prev": 3.38,
+      "prev_date": "2026-11-16",
+      "bp": 0.0
     },
     "회사채 AA- 3년": {
-      "value": 4.416,
-      "date": "2026-11-16",
+      "value": 4.402,
+      "date": "2026-11-17",
       "unit": "연%",
       "item_name": "회사채(3년, AA-)",
-      "prev": 4.434,
-      "prev_date": "2026-11-13",
-      "bp": -1.8
+      "prev": 4.416,
+      "prev_date": "2026-11-16",
+      "bp": -1.4
     },
     "한국은행 기준금리": {
       "value": 3.0,
@@ -54,20 +54,20 @@
       "numerator": "국고채 3년",
       "denominator": "한국은행 기준금리",
       "note": "3년물이 기준금리보다 얼마나 위인가 — 정책 경로와 기간프리미엄이 섞여 있다",
-      "bp": 74.3,
-      "date": "2026-11-16",
-      "sessions": 531,
-      "change_bp": -1.6,
-      "prev_date": "2026-11-13",
+      "bp": 72.5,
+      "date": "2026-11-17",
+      "sessions": 532,
+      "change_bp": -1.8,
+      "prev_date": "2026-11-16",
       "standing": {
-        "percentile": 70.2,
-        "sessions": 531,
+        "percentile": 68.4,
+        "sessions": 532,
         "window": "2년",
         "days": null,
         "share_pct": null,
         "side": "mid",
         "short": "한가운데쯤",
-        "text": "최근 2년(531거래일)의 한가운데쯤"
+        "text": "최근 2년(532거래일)의 한가운데쯤"
       }
     },
     "growth": {
@@ -75,20 +75,20 @@
       "numerator": "국고채 10년",
       "denominator": "국고채 3년",
       "note": "커브 기울기 — 장기 성장·물가 기대가 단기 정책 기대를 얼마나 웃도나",
-      "bp": 23.8,
-      "date": "2026-11-16",
-      "sessions": 531,
-      "change_bp": -0.4,
-      "prev_date": "2026-11-13",
+      "bp": 24.1,
+      "date": "2026-11-17",
+      "sessions": 532,
+      "change_bp": 0.3,
+      "prev_date": "2026-11-16",
       "standing": {
-        "percentile": 21.7,
-        "sessions": 531,
+        "percentile": 22.6,
+        "sessions": 532,
         "window": "2년",
         "days": null,
-        "share_pct": 22,
+        "share_pct": 23,
         "side": "low",
-        "short": "좁은 쪽 22% 안",
-        "text": "최근 2년(531거래일) 가운데 좁은 쪽 22% 안"
+        "short": "좁은 쪽 23% 안",
+        "text": "최근 2년(532거래일) 가운데 좁은 쪽 23% 안"
       }
     },
     "credit": {
@@ -96,20 +96,20 @@
       "numerator": "회사채 AA- 3년",
       "denominator": "국고채 3년",
       "note": "같은 만기에서 신용 위험에 매겨진 값",
-      "bp": 67.3,
-      "date": "2026-11-16",
-      "sessions": 531,
-      "change_bp": -0.2,
-      "prev_date": "2026-11-13",
+      "bp": 67.7,
+      "date": "2026-11-17",
+      "sessions": 532,
+      "change_bp": 0.4,
+      "prev_date": "2026-11-16",
       "standing": {
-        "percentile": 82.5,
-        "sessions": 531,
+        "percentile": 84.0,
+        "sessions": 532,
         "window": "2년",
         "days": null,
-        "share_pct": 18,
+        "share_pct": 16,
         "side": "high",
-        "short": "넓은 쪽 18% 안",
-        "text": "최근 2년(531거래일) 가운데 넓은 쪽 18% 안"
+        "short": "넓은 쪽 16% 안",
+        "text": "최근 2년(532거래일) 가운데 넓은 쪽 16% 안"
       }
     }
   }
