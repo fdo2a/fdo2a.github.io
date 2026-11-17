@@ -1,11 +1,11 @@
 {
-  "report_date": "2026-11-16",
+  "report_date": "2026-11-17",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
+      "industry": "Systems Software",
       "direction": "down",
       "reasons": [
         "지수 기여 하위",
@@ -13,34 +13,16 @@
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -4.12,
-          "close": 156.14,
-          "value": 51519851770.77
+          "name": "Microsoft (MSFT)",
+          "change_pct": -2.27,
+          "close": 506.24,
+          "value": 13795060489.73
         },
         {
-          "name": "Micron Technology (MU)",
-          "change_pct": -7.62,
-          "close": 719.02,
-          "value": 19122267674.49
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": -5.58,
-          "close": 504.28,
-          "value": 18045930554.68
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": -7.02,
-          "close": 55.47,
-          "value": 5591547414.41
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": -7.27,
-          "close": 145.36,
-          "value": 3093299624.11
+          "name": "ServiceNow (NOW)",
+          "change_pct": -6.51,
+          "close": 92.9,
+          "value": 2207370273.96
         }
       ]
     },
@@ -53,70 +35,58 @@
       ],
       "members": [
         {
-          "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": -4.07,
-          "close": 283.72,
-          "value": 9668554876.2
+          "name": "Alphabet Inc. (Class C) (GOOG)",
+          "change_pct": -1.3,
+          "close": 277.6,
+          "value": 5406201267.66
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Personal Care Products",
+      "industry": "Semiconductors",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Procter & Gamble (PG)",
-          "change_pct": 1.9,
-          "close": 173.02,
-          "value": 2265857345.49
+          "name": "Broadcom (AVGO)",
+          "change_pct": 2.46,
+          "close": 341.6,
+          "value": 8790141881.06
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Managed Health Care",
+      "industry": "Heavy Electrical Equipment",
       "direction": "up",
       "reasons": [
         "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "UnitedHealth Group (UNH)",
-          "change_pct": 1.12,
-          "close": 412.02,
-          "value": 1813190786.35
+          "name": "GE Vernova (GEV)",
+          "change_pct": 2.14,
+          "close": 779.91,
+          "value": 3876566698.72
         }
       ]
     },
     {
       "id": "g5",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Managed Health Care",
       "direction": "down",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Sandisk (SNDK)",
-          "change_pct": -8.58,
-          "close": 809.11,
-          "value": 9891870410.0
-        },
-        {
-          "name": "Dell Technologies (DELL)",
-          "change_pct": -6.96,
-          "close": 320.55,
-          "value": 2676468665.78
-        },
-        {
-          "name": "Seagate Technology (STX)",
-          "change_pct": -5.54,
-          "close": 499.0,
-          "value": 2230435190.0
+          "name": "UnitedHealth Group (UNH)",
+          "change_pct": -5.42,
+          "close": 389.68,
+          "value": 3092757220.99
         }
       ]
     }

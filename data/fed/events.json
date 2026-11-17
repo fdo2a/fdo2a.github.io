@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-11-16",
+  "report_date": "2026-11-17",
   "events": [
     {
       "key": "chair-speech-20261116",
@@ -12,7 +12,7 @@
       "speaker": "Kevin Warsh",
       "role": "Chairman",
       "first_seen": "2026-11-16",
-      "fresh": true,
+      "fresh": false,
       "sources": [
         {
           "role": "primary",
