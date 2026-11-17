@@ -58,6 +58,7 @@
     "data/news/2026-11-12.json": "085e7ee67f941475116542cbd112515a50e0231d",
     "data/news/2026-11-13.json": "967cef76d1ae90a3017191d87c2b7f4ddc335985",
     "data/news/2026-11-16.json": "935dba73e99c6bdb330e5f849d5d3f043cfc3548",
+    "data/news/2026-11-17.json": "8d2b8833d104f6db1d779a02c161051e5596719e",
     "japan/data/2026-W45.news.json": "1ec8c0711f5e818d01b4cc13bd1f9b46429567c1",
     "japan/data/2026-W46.news.json": "34fd1ddc6ac7016326a49576374bc52fd548807f",
     "japan/data/news/2026-11-03.json": "3351d3f34da7fd8449f9012031b7c7ea6a2919dc",
@@ -84,11 +85,11 @@
    },
    "reason": "",
    "renderer": "r2",
-   "rounds": 2,
+   "rounds": 3,
    "source_blob": "c14fcfd2a8e7c55b26cdd36bc8bbfbb2d9365aa2",
    "status": "published",
    "text_hash": "c78d0aee9ac08bf0",
-   "updated": "2026-11-18T01:09:52+09:00"
+   "updated": "2026-11-18T07:47:19+09:00"
   },
   "news/2026-11-16.html": {
    "deps": {
