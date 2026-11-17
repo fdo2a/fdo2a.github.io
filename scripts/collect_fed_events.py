@@ -87,19 +87,40 @@ def body(resp, url):
     return fe.flatten(resp.text)
 
 
-def feed_items(name):
+FEED_NAMES = ('press_monetary', 'speeches', 'testimony')
+
+
+def new_log():
+    """이 실행이 실제로 읽은 것 — collect 칸의 근거. 피드를 다 읽었을 때만 「이벤트 없음」을 확인한 것이다."""
+    return {'feeds_ok': [], 'failed': []}
+
+
+def feed_items(name, log=None):
+    log = new_log() if log is None else log
     resp, note = fetch(fe.FEEDS[name])
     if resp is None:
         print(f'  피드 {name}: 실패 ({note})', file=sys.stderr)
+        log['failed'].append(f'feed:{name}')
         return []
-    return fe.parse_feed(resp.text)
+    try:
+        items = fe.parse_feed(resp.text)
+    except Exception as e:  # noqa: BLE001
+        items, note = [], type(e).__name__
+    if not items:
+        # 연준 RSS 는 늘 지난 항목을 담는다 — 0건은 「오늘 없음」이 아니라 읽기 실패다.
+        print(f'  피드 {name}: 항목 0건 ({note})', file=sys.stderr)
+        log['failed'].append(f'feed:{name}')
+        return []
+    log['feeds_ok'].append(name)
+    return items
 
 
-def discover(report_date):
-    """오늘 다룰 후보 이벤트. 원문은 아직 안 받는다."""
+def discover(report_date, log=None):
+    """오늘 다룰 후보 이벤트. 원문은 아직 안 받는다. `log` 에 읽은 피드·실패를 적는다."""
+    log = new_log() if log is None else log
     out = []
 
-    for it in fe.in_window(feed_items('press_monetary'), report_date):
+    for it in fe.in_window(feed_items('press_monetary', log), report_date):
         kind = fe.press_kind(it['title'])
         if not kind:
             continue
@@ -107,11 +128,12 @@ def discover(report_date):
         out.append({'kind': kind, 'date8': date8, 'item': it, 'speaker': None, 'role': None})
 
     for feed in ('speeches', 'testimony'):
-        for it in fe.in_window(feed_items(feed), report_date):
+        for it in fe.in_window(feed_items(feed, log), report_date):
             resp, note = fetch(it['link'])
             if resp is None:
                 print(f'  연설 {it["title"][:40]}: 페이지 실패 ({note}) — 직함 확인 불가',
                       file=sys.stderr)
+                log['failed'].append(f'page:{fe.slug_name(it["link"]) or "?"}{fe.slug_date(it["link"]) or ""}')
                 continue
             page = fe.flatten(resp.text)
             hit = fe.speech_kind(it, page, feed=feed)
@@ -135,6 +157,22 @@ def presconf_candidates(statements, seen):
             if fe.event_key('presconf', d) not in seen]
 
 
+def events_collect(report_date, events, log):
+    """collect 칸(2026-11-17). 피드 셋을 다 읽고 연설 페이지·기자회견 전문 조회가 다 끝났을 때만
+    「오늘 이벤트 없음」을 확인한 것이다. 하나라도 못 읽었으면 partial·unknown(이벤트가 있으면 has_data)."""
+    from common import collect_status as C
+    missing = list(log.get('failed') or [])
+    missing += [f'feed:{n}' for n in FEED_NAMES
+                if n not in log.get('feeds_ok', []) and f'feed:{n}' not in missing]
+    missing += [f"event:{e['key']}" for e in events if e.get('first_seen') is None]
+    fresh = any(e.get('fresh') for e in events)
+    if len([n for n in FEED_NAMES if n in log.get('feeds_ok', [])]) == 0:
+        return C.failed(report_date, 'federalreserve.gov RSS', '연준 피드를 하나도 읽지 못했다',
+                        missing=missing)
+    return C.build('partial' if missing else 'ok', report_date, 'federalreserve.gov RSS',
+                   missing=missing, empty='has_data' if fresh else 'confirmed_none')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', default='data')
@@ -152,7 +190,8 @@ def main():
     seen = load(os.path.join(outdir, 'seen.json'), {}) or {}
     statements = load(os.path.join(outdir, 'statements.json'), []) or []
 
-    candidates = discover(report_date)
+    log = new_log()
+    candidates = discover(report_date, log)
     for date8 in presconf_candidates(statements, seen):
         candidates.append({'kind': 'presconf', 'date8': date8,
                            'item': {'title': f'FOMC 기자회견 전문 ({date8})',
@@ -178,7 +217,11 @@ def main():
                                 chars=len(text or ''), text=text))
         got = [s for s in sources if s['ok']]
         if not got and first_seen is None and kind == 'presconf':
-            continue            # 아직 안 올라온 전문은 이벤트가 아니다
+            # 아직 안 올라온 전문은 이벤트가 아니다 — 단 404 가 아닌 실패(차단·시간 초과)는 「아직 없음」을
+            # 확인한 것이 아니다.
+            if any(not s['ok'] and 'HTTP 404' not in (s.get('note') or '') for s in sources):
+                log['failed'].append(f'presconf:{date8}')
+            continue
 
         # **원문을 하나도 못 받았으면 「봤다」고 기록하지 않는다.** 예전에는 즉시
         # 기록했고, 그래서 수집이 실패한 첫날 이벤트가 소진돼 **정작 원문을 확보한
@@ -241,7 +284,8 @@ def main():
         with open(os.path.join(outdir, f'{key}.txt'), 'w', encoding='utf-8') as fh:
             fh.write(text)
 
-    book = {'report_date': report_date, 'events': events, 'diff': diff}
+    book = {'report_date': report_date, 'events': events, 'diff': diff,
+            'collect': events_collect(report_date, events, log)}
     with open(os.path.join(outdir, 'events.json'), 'w', encoding='utf-8') as fh:
         json.dump(book, fh, indent=2, ensure_ascii=False)
     with open(os.path.join(outdir, 'seen.json'), 'w', encoding='utf-8') as fh:
