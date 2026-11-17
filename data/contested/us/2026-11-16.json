@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-16",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "model_extract_success",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-17T06:44:17+00:00",
- "cutoff_at": "2026-11-17T06:44:17+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-17T07:50:27+00:00",
+ "cutoff_at": "2026-11-17T07:50:27+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,62 +22,31 @@
  },
  "counts": {
   "harvest": 179,
-  "candidates": 2,
+  "candidates": 1,
   "articles": [
-   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 80837,
-   "out": 21449
+   "in": 0,
+   "out": 0
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
    "theguardian.com": "ok",
+   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "8/8",
-   "pairs": "4/4",
-   "obs": "10/10"
-  },
-  "verified": {
-   "pairs": 4,
-   "claims": 8,
-   "obs": 10,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[2]",
-    "structure",
-    "worry.moderate[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[1]:unverified",
-    "edges[2]:unverified"
-   ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "젠슨 황 복귀 논란과 칩 수출통제 강화",
-  "query": "nvidia huang calls",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "edges[1]:unverified",
-  "edges[2]:unverified"
- ],
- "content_hash": "4976cc62e842f2ca"
+ "content_hash": "81e95d450233efde"
 }
