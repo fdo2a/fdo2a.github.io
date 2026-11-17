@@ -123,21 +123,34 @@ def market_collect(market):
 
 
 def flows_collect(report_date, flow_checks, flows_out):
-    """kr_flows.json — 시장별 수급 상태. 전 거래일 기준(stale)은 수집 실패가 아니어서 detail 에만."""
+    """kr_flows.json — 시장별 수급 상태. `as_of` 는 **원천이 말한 거래일** — 두 시장 최신 행 가운데 이른 날
+    (1a 구현 검토 #3: 전에는 최신 행이 지난 날이어도 발행일). 전 거래일 기준은 수집 실패가 아니어서 status 는 그대로,
+    검사 쪽이 `as_of ≠ 발행일` 로 본다(정상적으로 전 거래일인 날을 허용할지는 사용자 결정 — 지금은 허용하지 않는다)."""
     from common import collect_status as C
     missing = [f"flows:{m}:{(flow_checks.get(m) or {}).get('state', 'absent')}" for m in ("KOSPI", "KOSDAQ")
                if (flow_checks.get(m) or {}).get("state") != "ok"]
     stale = [m for m in ("KOSPI", "KOSDAQ") if (flows_out.get(m) or {}).get("stale")]
-    return C.by_counts(report_date, "Naver 투자자별 매매동향", missing, 2,
+    latest = [d for d in ((flows_out.get(m) or {}).get("latest_date") for m in ("KOSPI", "KOSDAQ")) if d]
+    return C.by_counts(min(latest) if latest else report_date, "Naver 투자자별 매매동향", missing, 2,
                        detail=("전 거래일 기준: " + ", ".join(stale)) if stale else None)
 
 
-def intraday_collect(report_date, intraday):
-    """kr_intraday.json — 지수 분봉. OHLC 는 선택 칸(없으면 비운다)이라 detail 에만."""
+def intraday_collect(report_date, intraday, dates=None):
+    """kr_intraday.json — 지수 분봉. `dates` = 시장별 원천 봉의 거래일(`sources.fetch_intraday_dated`). 그날 봉이
+    아니거나 날짜를 모르면 그 시장은 결측(`stale:<시장>:<날짜>`), `as_of` 는 원천 날짜 가운데 이른 날
+    (1a 구현 검토 #3). OHLC 는 선택 칸(없으면 비운다)이라 detail 에만."""
     from common import collect_status as C
-    missing = [c for c in ("KOSPI", "KOSDAQ") if not intraday.get(c)]
+    dates = dates or {}
+    missing = []
+    for c in ("KOSPI", "KOSDAQ"):
+        if not intraday.get(c):
+            missing.append(c)
+        elif dates.get(c) != report_date:
+            missing.append(f"stale:{c}:{dates.get(c) or 'unknown'}")
     no_ohlc = [c for c in ("KOSPI", "KOSDAQ") if intraday.get(c) and f"{c}_ohlc" not in intraday]
-    return C.by_counts(report_date, "Naver 분봉", missing, 2,
+    seen = [d for d in (dates.get(c) for c in ("KOSPI", "KOSDAQ")) if d]
+    as_of = min(seen) if seen and min(seen) < report_date else report_date
+    return C.by_counts(as_of, "Naver 분봉", missing, 2,
                        detail=("OHLC 없음: " + ", ".join(no_ohlc)) if no_ohlc else None)
 
 
@@ -175,18 +188,68 @@ def stance_collect(report_date, ev, prior_state):
     return C.build("partial", report_date, src, missing=[miss], empty="has_data")
 
 
-def session_collect(report_date, md, fut, peers, fx_bars):
-    """kr_session.json — 못 받은 선물·아시아 지수·원달러 30분봉·미국 시장 자료가 missing."""
+def session_collect(report_date, ctx, holidays):
+    """kr_session.json — **계산된 결과**가 그날 것인지로 판정한다(1a 구현 검토 #4: 전에는 원자료가 비지만 않으면
+    선물·환율·해외 지수가 모두 지난 날 것이어도 성공이었다).
+
+    * 선물 ES·NQ, 원달러: 그날 한국 정규장 창(`kr_hours_window`·`usdkrw_window`, KST 로 자른다)이 None 이면 결측 —
+      지난 날 봉뿐이면 창이 비어 None 이 된다.
+    * 전일 미국장(`us_prev.as_of`): 기대 날짜 = 미국 휴장 달력(`data/market_holidays.json` 의 us)으로 센 report_date
+      직전 미국 거래일. 다르면 결측. 달력이 그날을 덮지 않거나 못 읽으면 판정할 수 없어 결측(성공으로 두지 않는다).
+    * 아시아 지수: 일본(닛케이)은 달력(jp)이 있어 기대 날짜와 대조한다. 달력이 없는 항셍·상해·대만은 한 곳이 지난
+      날이면 휴장과 가를 수 없어 detail 에만 남기고(10/01~11/16 발행 30일 중 9일이 휴장으로 그랬다), **넷 다 그날
+      값이 없으면** 결측(11/16 실측 — 넷 모두 11/13).
+    """
     from common import collect_status as C
     from kr import session as kr_session
-    missing = [f"futures:{lab}" for lab, t in kr_session.FUTURES if not fut.get(t)]
-    missing += [f"peer:{name}" for name, _ in kr_session.PEERS if name not in peers]
-    if not fx_bars:
+    ctx = ctx or {}
+    missing, notes = [], []
+    fut = ctx.get("us_futures_during_kr") or {}
+    missing += [f"futures:{lab}" for lab, _ in kr_session.FUTURES if not fut.get(lab)]
+    if not ctx.get("usdkrw_intraday"):
         missing.append("usdkrw")
-    if not md:
+    us = ctx.get("us_prev")
+    want_us, why_us = kr_session.expected_session(report_date, (holidays or {}).get("us"), before=True)
+    if not us:
         missing.append("us_market_data")
+    elif want_us is None:
+        missing.append(f"us_prev:{why_us}")
+    elif us.get("as_of") != want_us:
+        missing.append(f"us_prev:{us.get('as_of')}≠{want_us}")
+    peers = ctx.get("asia_peers") or {}
+    dates = peers.get("dates") or {}
+    rows = peers.get("rows") or {}
+    missing += [f"peer:{name}" for name, _ in kr_session.PEERS if name not in rows]
+    if rows and not any(dates.get(n) == report_date for n in rows):
+        missing.append(f"peers:none_on_{report_date}")
+    want_jp, why_jp = kr_session.expected_session(report_date, (holidays or {}).get("jp"), before=False)
+    for name in kr_session.CALENDAR_PEERS:
+        if name not in rows:
+            continue
+        if want_jp is None:
+            missing.append(f"peer:{name}:{why_jp}")
+        elif dates.get(name) != want_jp:
+            missing.append(f"peer:{name}:{dates.get(name)}")
+    for name in rows:
+        if name not in kr_session.CALENDAR_PEERS and dates.get(name) != report_date:
+            notes.append(f"{name} {dates.get(name)}")
+    if holidays is None:
+        missing.append("calendar:market_holidays.json")
     total = len(kr_session.FUTURES) + len(kr_session.PEERS) + 2
-    return C.by_counts(report_date, "yfinance + data/market_data.json", missing, total)
+    return C.by_counts(report_date, "yfinance + data/market_data.json", missing, total,
+                       detail=("기준일이 다른 아시아 지수(휴장일 수 있다): " + ", ".join(notes)) if notes else None)
+
+
+def _holidays():
+    """거래소 휴장 달력 — 세션 자료의 기대 날짜를 정한다. 못 읽으면 None(세션 자료가 partial 이 된다)."""
+    for cand in ("data/market_holidays.json", "../data/market_holidays.json"):
+        if os.path.exists(cand):
+            try:
+                with open(cand, encoding="utf-8") as f:
+                    return json.load(f)
+            except (OSError, ValueError):
+                return None
+    return None
 
 
 def top_value_collect(report_date, top_value, error):
@@ -415,9 +478,10 @@ def main(outdir: str, assetdir: str = "kr/assets"):
 
     # 장중 30분봉 (Naver 분봉 다운샘플) + 당일 OHLC — 코스닥은 수급 차트 우축에도 쓴다
     intraday = {}
+    intraday_dates = {}
     for code in ("KOSPI", "KOSDAQ"):
         try:
-            intraday[code] = sources.fetch_intraday(code)
+            intraday_dates[code], intraday[code] = sources.fetch_intraday_dated(code)
             # 위 등락률 검증에서 받은 integration 을 다시 쓴다. flow_bizdate 는 싣지 않는다(기존 계약)
             if ohlc.get(code) is not None:
                 intraday[f"{code}_ohlc"] = {k: v for k, v in ohlc[code].items() if k != "flow_bizdate"}
@@ -481,7 +545,8 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     _write(outdir, "kr_movers.json", kr_movers)
     _write(outdir, "kr_industry.json", industry)
     _write(outdir, "kr_theme.json", theme_rows)
-    _write(outdir, "kr_intraday.json", {**intraday, "collect": intraday_collect(report_date, intraday)})
+    _write(outdir, "kr_intraday.json", {**intraday,
+                                        "collect": intraday_collect(report_date, intraday, intraday_dates)})
     _write(outdir, "kr_econ.json", {**econ, "collect": econ_collect(report_date, econ)})
 
     # 판단 원장 판정 — 어제 적어 둔 무효화 레벨을 오늘 종가로 검산한다. 비-코어.
@@ -600,8 +665,8 @@ def main(outdir: str, assetdir: str = "kr/assets"):
                 for lab, t in kr_session.FUTURES},
             "asia_peers": kr_session.asia_peers(peers, kospi_pct),
             "usdkrw_intraday": kr_session.usdkrw_window(fx_bars, report_date),
-            "collect": session_collect(report_date, md, fut, peers, fx_bars),
         }
+        session_ctx["collect"] = session_collect(report_date, session_ctx, _holidays())
         _write(outdir, "kr_session.json", session_ctx)
         print(f"session: 아시아 {len(peers)}종 / 미국 선물 {len(fut)}종")
     except Exception as e:

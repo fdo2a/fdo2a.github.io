@@ -52,28 +52,47 @@ def fetch_index(code: str) -> dict:
             "trade_date": trade_date, "prev_diff": num_or_none(j.get("compareToPreviousClosePrice"))}
 
 
-def downsample_30min(bars: list) -> list:
-    """분봉 리스트를 30분 앵커(:00/:30)로 다운샘플. 마지막 봉(종가) 보장.
-    bars: [{"localDateTime":"YYYYMMDDHHMMSS","currentPrice":float}, ...]"""
+def dated_30min(bars: list):
+    """분봉 리스트 → (원천 거래일 YYYY-MM-DD | None, 30분 앵커 목록). 마지막 봉(종가) 보장.
+    bars: [{"localDateTime":"YYYYMMDDHHMMSS","currentPrice":float}, ...]
+
+    거래일은 **마지막 봉의 날짜**다. `count=400` 은 한 세션(390분)보다 길어 정상 응답에도 앞 세션 꼬리가 섞이므로
+    마지막 봉과 날짜가 같은 봉만 쓴다 — 전에는 날짜를 버려 앞 세션의 15:00·15:30 이 오늘 궤적에 섞일 수 있었고,
+    API 가 지난 거래일 봉만 돌려줘도 수집기가 그날 것으로 적었다(2026-11-17, 1a 구현 검토 #3)."""
+    rows = [b for b in bars or [] if len(str(b.get("localDateTime", ""))) >= 12]
+    if not rows:
+        return None, []
+    last = str(rows[-1]["localDateTime"])
+    day = last[:8]
+    rows = [b for b in rows if str(b["localDateTime"])[:8] == day]
     out = {}
-    for b in bars:
-        t = str(b.get("localDateTime", ""))
-        if len(t) < 12:
-            continue
+    for b in rows:
+        t = str(b["localDateTime"])
         if t[10:12] in ("00", "30"):
             out[f"{t[8:10]}:{t[10:12]}"] = round(float(b["currentPrice"]), 2)
-    if bars:
-        last = bars[-1]
-        t = str(last["localDateTime"])
-        out[f"{t[8:10]}:{t[10:12]}"] = round(float(last["currentPrice"]), 2)
-    return [{"t": k, "close": v} for k, v in out.items()]
+    out[f"{last[8:10]}:{last[10:12]}"] = round(float(rows[-1]["currentPrice"]), 2)
+    try:
+        iso = date(int(day[:4]), int(day[4:6]), int(day[6:8])).isoformat()
+    except ValueError:
+        iso = None
+    return iso, [{"t": k, "close": v} for k, v in out.items()]
+
+
+def downsample_30min(bars: list) -> list:
+    """분봉 리스트를 30분 앵커(:00/:30)로 다운샘플 — 마지막 봉과 같은 날의 봉만(`dated_30min`)."""
+    return dated_30min(bars)[1]
+
+
+def fetch_intraday_dated(code: str):
+    """KR 지수 30분봉 장중 궤적 → (원천 거래일, 점들). 수집기는 거래일을 report_date 와 대조한다."""
+    return dated_30min(
+        fetch_json(f"https://api.stock.naver.com/chart/domestic/index/{code}/minute?count=400",
+                   timeout=15))
 
 
 def fetch_intraday(code: str) -> list:
-    """KR 지수 30분봉 장중 궤적 — Naver 분봉을 30분 앵커로 다운샘플."""
-    return downsample_30min(
-        fetch_json(f"https://api.stock.naver.com/chart/domestic/index/{code}/minute?count=400",
-                   timeout=15))
+    """KR 지수 30분봉 장중 궤적 — Naver 분봉을 30분 앵커로 다운샘플(날짜는 `fetch_intraday_dated`)."""
+    return fetch_intraday_dated(code)[1]
 
 
 def fetch_index_ohlc(code: str) -> dict:

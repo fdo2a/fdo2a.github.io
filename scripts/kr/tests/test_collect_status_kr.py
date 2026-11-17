@@ -131,9 +131,12 @@ def test_stance_collect_partial_when_close_missing():
 
 
 def test_session_collect_counts_what_failed():
+    # 계산된 창으로 판정한다(1a 구현 검토 #4) — 자세한 경우는 test_collect_freshness.py
     from kr import session as S
-    fut = {t: [1] for _, t in S.FUTURES}
-    peers = {n: (1.0, D) for n, _ in S.PEERS}
-    assert collect_kr_data.session_collect(D, {"x": 1}, fut, peers, [1])["status"] == "ok"
-    c = collect_kr_data.session_collect(D, None, fut, {}, [])
+    hol = {"us": {"dates": [], "valid_through": "2027-12-31"}, "jp": {"dates": [], "valid_through": "2027-12-31"}}
+    ctx = {"us_prev": {"as_of": "2026-11-11"}, "us_futures_during_kr": {lab: {"pct": 0.1} for lab, _ in S.FUTURES},
+           "asia_peers": {"rows": {n: 0.1 for n, _ in S.PEERS}, "dates": {n: D for n, _ in S.PEERS}},
+           "usdkrw_intraday": {"close": 1.0}}
+    assert collect_kr_data.session_collect(D, ctx, hol)["status"] == "ok"
+    c = collect_kr_data.session_collect(D, dict(ctx, us_prev=None, usdkrw_intraday=None), hol)
     assert c["status"] == "partial" and "usdkrw" in c["missing"] and "us_market_data" in c["missing"]

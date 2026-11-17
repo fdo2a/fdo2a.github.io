@@ -12,6 +12,8 @@ import datetime as _dt
 PEERS = (('닛케이', '^N225'), ('항셍', '^HSI'),
          ('상해종합', '000001.SS'), ('대만가권', '^TWII'))
 FUTURES = (('ES', 'ES=F'), ('NQ', 'NQ=F'))
+# 휴장 달력(`data/market_holidays.json`)이 있는 아시아 지수 — 기대 날짜와 대조한다(jp 달력). 나머지는 달력이 없다.
+CALENDAR_PEERS = ('닛케이',)
 KR_OPEN, KR_CLOSE = (9, 0), (15, 30)
 KST = _dt.timezone(_dt.timedelta(hours=9))
 
@@ -33,6 +35,26 @@ def _sessions_between(a, b):
         if cur.weekday() < 5:
             n += 1
     return n
+
+
+def expected_session(report_date, calendar, before):
+    """(기대 거래일 | None, 이유). before=True 면 report_date **직전** 거래일(전일 미국장), False 면 report_date 이거나
+    휴장이면 그 직전 거래일(같은 날 아시아 장). calendar = 휴장 달력 한 시장분 `{dates, valid_through}` —
+    없거나 그날을 덮지 않으면 None(판정할 수 없다 — 성공으로 추정하지 않는다)."""
+    try:
+        day = _dt.date.fromisoformat(str(report_date))
+    except ValueError:
+        return None, 'report_date'
+    if not isinstance(calendar, dict) or not isinstance(calendar.get('dates'), list):
+        return None, 'calendar_missing'
+    through = calendar.get('valid_through')
+    if not isinstance(through, str) or through < day.isoformat():
+        return None, 'calendar_out_of_range'
+    hol = set(calendar['dates'])
+    d = day - _dt.timedelta(days=1) if before else day
+    while d.weekday() >= 5 or d.isoformat() in hol:
+        d -= _dt.timedelta(days=1)
+    return d.isoformat(), 'ok'
 
 
 def us_prev(market_data, report_date):
