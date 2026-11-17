@@ -196,6 +196,30 @@ def _write_index(outdir, index):
     os.replace(tmp, os.path.join(outdir, 'index.json'))
 
 
+SOURCE = 'agency press releases (BLS·BEA·Census·DOL …)'
+
+
+def index_collect(index, metrics_state, metrics_collect=None):
+    """collect 칸(2026-11-17). `metrics_state` = fresh | stale | absent.
+
+    오늘 받을 원문의 목록은 macro_metrics.json 이 정한다 — 그 파일이 없거나 이 세션 것이 아니면 「받을 것
+    없음」을 확인한 것이 아니다(failed). 목록이 일부만 믿을 만하면(macro_metrics 의 collect 가 ok 가 아님)
+    partial. 원문을 못 받은 지표가 missing.
+    """
+    from common import collect_status as C
+    rd = index.get('report_date')
+    if metrics_state != 'fresh':
+        return C.failed(rd, SOURCE, f'macro_metrics.json {metrics_state} — 오늘 받을 원문 목록을 모른다')
+    rows = index.get('releases') or []
+    missing = [r.get('key') for r in rows if not r.get('ok')]
+    if metrics_collect and metrics_collect.get('status') != 'ok':
+        missing.append('macro_metrics')
+    st = 'partial' if missing else 'ok'
+    if rows and not any(r.get('ok') for r in rows):
+        st = 'failed'
+    return C.build(st, rd, SOURCE, missing=missing, empty='has_data' if rows else 'confirmed_none')
+
+
 def run(datadir, rid, get=http_get, today=None, fulldir=None):
     fulldir = fulldir or fulldir_for(datadir)
     outdir = os.path.join(datadir, 'releases')
@@ -203,13 +227,18 @@ def run(datadir, rid, get=http_get, today=None, fulldir=None):
     os.makedirs(fulldir, exist_ok=True)
     _wipe(fulldir)
     market = load(os.path.join(datadir, 'market_data.json')) or {}
+    from common import collect_status as C
     index = {'report_date': market.get('report_date'), 'run_id': rid,
-             'status': 'running', 'releases': []}
+             'status': 'running', 'releases': [],
+             'collect': C.failed(market.get('report_date'), SOURCE, 'running — 실행이 끝나지 않았다')}
     _wipe(outdir)
     _write_index(outdir, index)
 
-    metrics = load(os.path.join(datadir, 'macro_metrics.json')) or {}
+    raw = load(os.path.join(datadir, 'macro_metrics.json'))
+    metrics = raw or {}
     releases = metrics.get('headline_releases') or []
+    metrics_state = 'absent' if not raw else (
+        'fresh' if metrics.get('report_date') == index['report_date'] else 'stale')
     if releases and metrics.get('report_date') != index['report_date']:
         # Yesterday's metrics left behind by a failed step would name yesterday's
         # releases under today's date (codex 구현 검토 2026-11-06 #1).
@@ -241,6 +270,7 @@ def run(datadir, rid, get=http_get, today=None, fulldir=None):
         index['releases'].append(row)
         _write_index(outdir, index)
     index['status'] = 'complete'
+    index['collect'] = index_collect(index, metrics_state, metrics.get('collect'))
     _write_index(outdir, index)
     got = sum(1 for r in index['releases'] if r['ok'])
     print(f'원문 {got}/{len(index["releases"])}건 확보' if releases else '오늘 해부할 신규 발표 없음')
@@ -258,8 +288,11 @@ def sanitize(datadir, rid):
     _wipe(outdir)
     if os.path.isdir(fulldir_for(datadir)):
         _wipe(fulldir_for(datadir))
+    from common import collect_status as C
     _write_index(outdir, {'report_date': market.get('report_date'), 'run_id': rid,
-                          'status': 'aborted', 'releases': []})
+                          'status': 'aborted', 'releases': [],
+                          'collect': C.failed(market.get('report_date'), SOURCE,
+                                              'aborted — 이 실행의 완료된 index 가 아니다')})
     print('원문 디렉터리를 비웠다 — 이 실행의 완료된 index 가 아니다', file=sys.stderr)
     return False
 
