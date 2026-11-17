@@ -270,6 +270,17 @@ def run_gates(cwd, cmds, timeout):
     return out
 
 
+# 1a 적용일 — `verification.inputs.STRICT_FROM`·`corrector.STRICT_FROM` 과 같다(시험). 이 날짜부터의 일간 글은 0·1 밖의
+# 종료(미완료 2·시간 초과)를 원본과 같아도 허용하지 않는다(1a 구현 검토 #9).
+STRICT_FROM = '2026-11-17'
+_DAILY = re.compile(r'^(?:kr/)?posts/(\d{4}-\d{2}-\d{2})\.html$')
+
+
+def strict_for(path):
+    m = _DAILY.match(path or '')
+    return bool(m and m.group(1) >= STRICT_FROM)
+
+
 # 원본도 실패했다는 이유로 넘기지 않는 게이트 — corrector.NEVER_TOLERATE 와 같은 뜻.
 NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py',
                             'check_sources.py'])
@@ -287,14 +298,14 @@ def _violations(text):
     return '\n'.join(l for l in (text or '').splitlines() if not _INFO_LINE.match(l))
 
 
-def judge(baseline, after):
-    """거부 이유 목록 — 비면 통과."""
+def judge(baseline, after, strict=False):
+    """거부 이유 목록 — 비면 통과. strict(1a 적용일 뒤 글)면 0·1 밖의 종료는 원본과 같아도 거부한다."""
     bad = []
     for name, (code, text) in after.items():
         if code == 0:
             continue
         was = baseline.get(name)
-        if name in NO_TOLERATE_EXIT2 and code not in (0, 1):
+        if (strict or name in NO_TOLERATE_EXIT2) and code not in (0, 1):
             bad.append(f'{name} 판정 불가 (종료 {code}): {text[-300:]}')   # 2·시간 초과(124) 모두
             continue
         if was and was[0] != 0 and was[0] == code and _violations(was[1]) == _violations(text) \
@@ -382,7 +393,7 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
                                  cycle.group(1) if cycle else None, research_root)
             baseline = run_gates(clone, cmds, timeout)
             Path(post).write_text(new, encoding='utf-8')
-            bad = judge(baseline, run_gates(clone, cmds, timeout))
+            bad = judge(baseline, run_gates(clone, cmds, timeout), strict=strict_for(item.path))
             if not APPLY:
                 verdict = ('거부 — ' + ' / '.join(bad)) if bad else '통과'
                 path, changed = _record(root, item, html, new, skipped, verdict)
@@ -416,7 +427,7 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
                 Path(post).write_text(html, encoding='utf-8')
                 base = run_gates(clone, cmds, timeout)
                 Path(post).write_text(new, encoding='utf-8')
-                bad = judge(base, run_gates(clone, cmds, timeout))
+                bad = judge(base, run_gates(clone, cmds, timeout), strict=strict_for(item.path))
                 if _git(clone, 'status', '--porcelain', '--untracked-files=no').stdout.strip():
                     return '게이트 재실행이 작업 폴더를 바꿨다 — 푸시하지 않는다'
                 return ('rebase 뒤 게이트 거부 — ' + ' / '.join(bad)) if bad else None

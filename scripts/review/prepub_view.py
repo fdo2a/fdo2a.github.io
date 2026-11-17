@@ -151,6 +151,8 @@ def recorded(rec, allowed=None):
         'allowed': allowed,
         'required': sum(1 for g in by if g.get('required', True)),
         'required_pass': sum(1 for g in by if g.get('required', True) and g.get('status') in ('pass', 'warn')),
+        # 2판: 정상 「해당 없음」은 통과도 실패도 아니다 — 따로 센다(1a 구현 검토 #11)
+        'required_na': sum(1 for g in by if g.get('required', True) and g.get('status') == 'na') if v2 else 0,
         'numbers': numbers, 'numbers_gate': None if ngate is None else ngate.get('status'), 'python': _str(_dict(rec.get('code')).get('python')),
         'created': _str(_dict(rec.get('created_at')).get('kst')),
         'reasons': {g['name']: gate_reasons(g) for g in by if g.get('status') not in ('pass',)},
@@ -160,10 +162,10 @@ def recorded(rec, allowed=None):
 def _inputs_view(inp):
     """2판 기록의 자료 상태 — 「무엇이·왜」 문장(기록이 정책 이름 + 상태 한국어로 만든 것)과 분류 안 된 파일."""
     if not isinstance(inp, dict):
-        return {'blocking': [], 'unclassified': [], 'warnings': 0, 'readable': inp is None}
+        return {'blocking': [], 'unclassified': [], 'warnings': 0, 'unconfirmed_empty': [], 'readable': inp is None}
     lst = lambda k: [x for x in inp.get(k) or [] if isinstance(x, str)] if isinstance(inp.get(k), list) else []
     return {'blocking': lst('blocking'), 'unclassified': lst('unclassified'),
-            'warnings': len(lst('warnings')), 'readable': True}
+            'warnings': len(lst('warnings')), 'unconfirmed_empty': lst('unconfirmed_empty'), 'readable': True}
 
 
 def _as_str(x):
@@ -458,7 +460,9 @@ def recorded_lines(v):
     st = STATUS.get(rec['status'], '모르는 판정')
     out = ['[루틴이 남긴 검사 결과]',
            f' · 판정 {st} · 발행 {"가능" if rec["publish_ok"] else "불가"} · '
-           f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"} · 필수 검사 {rec["required_pass"]}/{rec["required"]} 통과']
+           f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"} · ' + (
+               f'필수 검사 {rec["required"]}개 중 통과 {rec["required_pass"]} · 해당 없음 {rec["required_na"]}'
+               if rec.get('v2') else f'필수 검사 {rec["required_pass"]}/{rec["required"]} 통과')]
     budget = [REASON_BUDGET]                 # 갈래 전체가 나눠 쓰는 이유 예산(codex 구현 검토 #1)
     inp = rec.get('inputs')
     if inp:
@@ -471,6 +475,11 @@ def recorded_lines(v):
             out.append(f' · 자료 미완료: 분류되지 않은 파일 {_cut(_input_name(x), 80)}')
         if inp['warnings']:
             out.append(f' · 수집 상태 표시 없는 자료 {inp["warnings"]}개(적용일 전이라 막지 않았어요)')
+        # 빈 대상 목록이 정상 0건인지 수집 실패인지 모른다 — 적용일 전이라 막지 않았다(1a 구현 검토 #2)
+        for x in inp['unconfirmed_empty'][:GATE_LINES]:
+            out.append(f' · 대상 없음 미확인: {_cut(x, 120)}')
+        if len(inp['unconfirmed_empty']) > GATE_LINES:
+            out.append(f' · 대상 없음 미확인: 외 {len(inp["unconfirmed_empty"]) - GATE_LINES}개')
     stuck_label = '미완료' if rec.get('v2') else '판정 불가'
     for key, label in (('blocking', '막은 것'), ('indeterminate', stuck_label), ('na', '해당 없음'),
                        ('not_run', '실행 안 함'),
@@ -627,6 +636,8 @@ def digest_lines(v, who=MAC):
         inp = rec.get('inputs') or {}
         if inp.get('blocking') or inp.get('unclassified'):
             bits.append(f'자료 미완료 {len(inp["blocking"]) + len(inp["unclassified"])}개')
+        if inp.get('unconfirmed_empty'):
+            bits.append(f'대상 없음 미확인 {len(inp["unconfirmed_empty"])}개')
         u = unverified_numbers(v)
         if rec.get('numbers') and v.get('market') == 'kr':
             bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤

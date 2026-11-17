@@ -32,6 +32,11 @@ import re
 
 FORMAT = 'prepub-inputs/1'
 EFFECTIVE = None
+# 1a 의 「자료 없음 = 미완료(2)」가 적용되는 첫 글 날짜. 발행 뒤 재검사(정정기·윤문기·매일 알림)의 `--recheck`(옛 판정)과
+# 「원본도 2 면 기존 실패로 허용」은 이 날짜 **전** 글에만 쓴다(1a 구현 검토 #9). **배포일과 같아야 한다** — 이 날짜부터
+# 배포 전까지 발행된 글은 옛 규칙으로 쓰였는데 새 규칙으로 재검사된다. 사본: `review/corrector.py`·`review/style_pass.py`
+# (레포 밖 사본에서도 돈다 — 시험이 같게 묶는다).
+STRICT_FROM = '2026-11-17'
 CLASSES = ('gate', 'writer', 'unused', 'discontinued')
 STATES = ('ok', 'missing', 'empty_file', 'unreadable', 'stale', 'failed', 'incomplete_fields', 'unstamped',
           'changed_after_collect')

@@ -54,6 +54,13 @@ def _mode(arg):
     return mode
 
 
+def _legacy(args, post_date):
+    """--recheck(옛 판정)은 1a 적용일(`verification.inputs.STRICT_FROM`) 전 글에만 — 새 글에는 붙여도 효과가 없다
+    (1a 구현 검토 #9). 글 날짜를 모르면 옛 판정을 쓰지 않는다."""
+    from verification.inputs import STRICT_FROM
+    return bool(args.recheck and post_date and post_date < STRICT_FROM)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
@@ -93,7 +100,7 @@ def main(argv=None):
         try:
             data[k] = _read(os.path.join(args.datadir, rel))
         except FileNotFoundError:
-            if args.recheck:
+            if _legacy(args, m.group(0) if m else None):
                 continue             # 지난 글 재검사: 없으면 그 위임이 성립하지 않아 미검증으로 센다(옛 판정)
             print(f'FATAL: {os.path.basename(rel)} 이 없다', file=sys.stderr)
             return 2
@@ -173,7 +180,7 @@ def _main_kr(args):
             html = fh.read()
         data = K.load_inputs(args.datadir)
         lacking = [k for k in ('kr_intraday', 'kr_econ', K.FUND) if data.get(k) is None]
-        if lacking and not args.recheck:
+        if lacking and not _legacy(args, args.date):
             # 2026-11-17: 선택 자료도 그날 수집분이 있어야 한다 — 없으면 미완료(2)
             print(f'FATAL: {", ".join(k + ".json" for k in lacking)} 이 없거나 읽히지 않는다', file=sys.stderr)
             return 2

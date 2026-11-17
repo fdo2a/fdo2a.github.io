@@ -57,6 +57,9 @@ KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund', 'numbers')   # number
 # 지난 글을 그 커밋 자료로 재검사한다 — 2026-11-17 「자료 누락 = 미완료(2)」 전의 판정(그때 없던 위임 자료·옛 펀드 상태).
 # 이 둘은 원본의 2 를 허용하지 않는 게이트라(NEVER_TOLERATE·VIOLATION_DIFF) 없으면 옛 글이 정정되지 않는다.
 RECHECK = {'fund': ['--recheck'], 'numbers': ['--recheck']}
+# 1a 적용일 — `verification.inputs.STRICT_FROM` 과 같다(시험). 이 날짜부터의 글은 --recheck 가 옛 판정을 주지 않고
+# (검사기가 날짜를 본다), 정정 재검사의 exit 2(미완료)를 「원본도 그랬다」로 허용하지 않는다(1a 구현 검토 #9).
+STRICT_FROM = '2026-11-17'
 KR_NEWS_FROM = '2026-11-06'   # `kr.news.SPLIT_FROM` 과 같다(테스트) — 이 모듈은 레포 밖 사본에서도 돈다
 # KR 판단 게이트는 `--market` 이 없고 `--next` 로 그날 낸 원장을 받는다 — 발행 커밋의 kr_stance.json 이
 # 그것이다(STEP 2.9 가 같은 커밋에 승계한다). 2026-10-20 배치(review 가 복기 첫 문단, 확인 일정 표)는
@@ -135,6 +138,8 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
     """
     post = str(clone / item.path)
     data = evidence / ('kr/data' if item.section == 'kr' else 'data')
+    m = re.search(r'(\d{4}-\d{2}-\d{2})\.html$', item.path)
+    strict = bool(m and m.group(1) >= STRICT_FROM)
     gates = []
     if item.section == 'us':
         gates.append(('check_macro.py', ['--html', post, '--datadir', str(data),
@@ -173,6 +178,10 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
         if name == 'verify_post.py' and 'Playwright가 없어' in result:
             raise RuntimeError('required Playwright layout verification unavailable')
         if code:
+            if strict and code not in (0, 1):
+                # 새 글의 미완료(2)·도구 오류는 정정본도 원본도 검사하지 못한 것이다 — 통과로 두지 않는다
+                raise RuntimeError(f'{name} exited {code} (incomplete — not tolerated for posts from '
+                                   f'{STRICT_FROM}): {result[-4000:]}')
             if name in VIOLATION_DIFF:
                 if code != 1:
                     raise RuntimeError(f'{name} exited {code} (cannot judge): {result[-4000:]}')
