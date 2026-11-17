@@ -453,6 +453,45 @@ def _check_axis_strip(section, v):
                  '문단 앞에 <span data-axis="AXIS">방향</span> 배지를 둘 것')
 
 
+_COVERAGE = re.compile(r'<([a-z][a-z0-9]*)\b([^>]*?)\bdata-axis-coverage\s*=\s*"([A-Za-z]+)"([^>]*)>(.*?)</\1>',
+                       re.S | re.I)
+_COVERAGE_HIDDEN = re.compile(r'\bhidden\b|display\s*:\s*none|visibility\s*:\s*hidden|aria-hidden\s*=\s*"true"',
+                              re.I)
+
+
+def _check_coverage(section, metrics, v):
+    """원천 미발표로 빠진 지표가 있는 축은, 그 축 점수가 몇 개 중 몇 개로 나왔고 무엇이 왜 빠졌는지가 독자에게 보여야
+    한다(2026-11-17 사용자 승인 조건 7) — 온전한 점수와 같게 싣지 않는다. 자료는 `macro_metrics.json` 의 `coverage`.
+
+    표식: 4축 스트립 가까이 `<span data-axis-coverage="Inflation">8개 중 6개로 산출, … 원천 미발표로 제외</span>`."""
+    cov = (metrics or {}).get('coverage') if isinstance(metrics, dict) else None
+    cov = cov if isinstance(cov, dict) else {}
+    found = {}
+    for _tag, pre, axis, post, inner in _COVERAGE.findall(section or ''):
+        if _COVERAGE_HIDDEN.search(pre + post):
+            v.append(f'§8 {axis} 축의 산출 범위 표시가 숨겨져 있다 — 독자에게 보여야 한다')
+            continue
+        found[axis] = ' '.join(strip_tags(inner).split())
+    for axis, c in cov.items():
+        ko = AXIS_KO_COVERAGE.get(axis, axis)
+        want = f"{c.get('total')}개 중 {c.get('used')}개"
+        labels = [e.get('label_ko') for e in c.get('excluded') or []]
+        text = found.get(axis)
+        if text is None:
+            v.append(f'§8 {ko} 축 점수는 {want}로 산출됐다({"·".join(str(x) for x in labels)} — 원천 미발표). '
+                     f'<span data-axis-coverage="{axis}">{c.get("phrase_ko")}</span> 를 그 축 배지 옆에 싣는다')
+            continue
+        lacking = [w for w in [want, '원천 미발표', '제외'] + labels if w and w not in text]
+        if lacking:
+            v.append(f'§8 {ko} 축의 산출 범위 표시에 빠진 말: {", ".join(lacking)} — 「{c.get("phrase_ko")}」 그대로 싣는다')
+    for axis in found:
+        if axis not in cov:
+            v.append(f'§8 {axis} 축에는 빠진 지표가 없는데 산출 범위 표시(data-axis-coverage)가 있다')
+
+
+AXIS_KO_COVERAGE = {'Labor': '고용', 'Activity': '생산·활동', 'Consumption': '소비', 'Inflation': '물가'}
+
+
 def _check_hygiene(html, v):
     """Nothing that only exists inside the pipeline may appear on the published page."""
     text = strip_tags(html)
@@ -650,6 +689,7 @@ def check(html, prev_macro, macro_eval, next_macro, *, econ=None, metrics=None,
     _check_hygiene(html, v)
     regime_cell = _check_regime(section, text, macro_eval, v)
     _check_axis_strip(section, v)
+    _check_coverage(section, metrics, v)
     _check_quiet_day(section, macro_eval, v)
     _check_releases(html, macro_eval, v, releases)
     trans_cells = _check_transmission(section, macro_eval, v)

@@ -488,11 +488,12 @@ def recorded_lines(v):
             out.append(f' · 재수집 실패: {_cut(x, 120)}')
         if len(inp.get('recollect_failed', [])) > GATE_LINES:
             out.append(f' · 재수집 실패: 외 {len(inp["recollect_failed"]) - GATE_LINES}개')
-        # 사람이 승인한 기한부 결측 — 「승인된 결측 N건(만료 D)」(2회차 F6)
+        # 사람이 승인한 기한부 결측 — 공식 기관이 발표하지 않은 지표를 검증 대상에서 조건부로 뺐다(수집 실패 허용이 아니다).
+        # 예외 ID·제외 지표·승인일·만료일·영향 범위가 한 줄에 다 들어가야 한다(2026-11-17 사용자 조건 5)
         for x in inp.get('accepted_missing', [])[:GATE_LINES]:
-            out.append(f' · 승인된 결측: {_cut(x, 160)}')
+            out.append(f' · 승인된 결측(원천 미발표): {_cut(x, 600)}')
         if len(inp.get('accepted_missing', [])) > GATE_LINES:
-            out.append(f' · 승인된 결측: 외 {len(inp["accepted_missing"]) - GATE_LINES}개')
+            out.append(f' · 승인된 결측(원천 미발표): 외 {len(inp["accepted_missing"]) - GATE_LINES}개')
     stuck_label = '미완료' if rec.get('v2') else '판정 불가'
     for key, label in (('blocking', '막은 것'), ('indeterminate', stuck_label), ('na', '해당 없음'),
                        ('not_run', '실행 안 함'),
@@ -654,7 +655,7 @@ def digest_lines(v, who=MAC):
         if inp.get('recollect_failed'):
             bits.append(f'재수집 실패 {len(inp["recollect_failed"])}개')
         if inp.get('accepted_missing'):
-            bits.append(f'승인된 결측이 있는 자료 {len(inp["accepted_missing"])}개')
+            bits.append(f'승인된 결측(원천 미발표)이 있는 자료 {len(inp["accepted_missing"])}개')
         u = unverified_numbers(v)
         if rec.get('numbers') and v.get('market') == 'kr':
             bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤

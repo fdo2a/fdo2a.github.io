@@ -42,6 +42,44 @@ def incomplete(why):
     sys.exit(2)
 
 
+HOLD_SENSITIVE = '승인된 결측이 판단을 바꿀 수 있음 — 사람 승인 필요'
+
+
+def coverage_hold(metrics):
+    """원천 미발표로 점수에서 빠진 지표가 있는 날 — 그 지표가 있었다면 축 판단이 달라질 수 있으면 자동 발행하지 않는다
+    (2026-11-17 사용자 승인 조건 8). -> 보류 사유 | None. 판정은 결정적이다: 자료의 점수로 다시 계산한다
+    (`us.macro_metrics.sensitivity` — 빠진 지표가 모두 점수 범위의 아래 끝·위 끝일 때 방향·강도·레짐 다리가 지금과 같은가).
+    자료가 서로 맞지 않아 판정할 수 없으면 그것도 보류다. 사람 승인 절차는 아직 없다 — 보류로 끝난다."""
+    from us import macro_metrics as M
+    col = metrics.get('collect') if isinstance(metrics.get('collect'), dict) else {}
+    named = sorted(str(m)[len('econ:no_value:'):] for m in col.get('missing') or []
+                   if str(m).startswith('econ:no_value:'))
+    cov = metrics.get('coverage')
+    if not named and not cov:
+        return None
+    if not isinstance(cov, dict) or not cov:
+        return (f'점수에서 빠진 지표({", ".join(named)})가 있는데 macro_metrics.json 에 산출 범위(coverage)가 없다 '
+                '— 그 축 점수가 몇 개 중 몇 개로 나왔는지 알 수 없다')
+    listed = sorted(e.get('name') for c in cov.values() if isinstance(c, dict) for e in c.get('excluded') or []
+                    if isinstance(e, dict))
+    if col and listed != named:
+        return f'수집 상태가 말하는 빠진 지표({named})와 산출 범위의 제외 지표({listed})가 다르다'
+    for axis, c in sorted(cov.items()):
+        ex = c.get('excluded') if isinstance(c, dict) else None
+        if not isinstance(ex, list) or not ex:
+            return f'{axis} 축의 산출 범위 형식이 다르다'
+        used = sum(1 for r in M.scored_rows(metrics.get('indicators')) if r.get('axis') == axis
+                   and r.get('signed_z') is not None)
+        if c.get('used') != used or c.get('total') != used + len(ex):
+            return f'{axis} 축의 산출 범위({c.get("used")}/{c.get("total")})가 지표 행({used}개)과 맞지 않는다'
+        s = M.sensitivity(metrics.get('indicators'), axis, len(ex))
+        if not s['stable']:
+            ko = M.AXIS_LABELS_KO.get(axis, axis)
+            return (f'{HOLD_SENSITIVE}({ko} 축 {c.get("total")}개 중 {used}개로 산출: 지금 {s["now"]}, 빠진 {len(ex)}개가 '
+                    f'점수 범위 아래 끝(-{s["bound"]})이면 {s["low"]}, 위 끝(+{s["bound"]})이면 {s["high"]})')
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
@@ -105,6 +143,10 @@ def main():
         incomplete(f"releases/index.json 이 {releases.get('report_date')} 것이다")
     if releases.get('status') != 'complete':
         incomplete(f"releases/index.json status={releases.get('status')!r} — 원문 수집이 끝나지 않았다")
+    hold = coverage_hold(metrics)
+    if hold:
+        print(f'FATAL: {hold} — 미완료, 보류한다(글을 고쳐서 풀리지 않는다)', file=sys.stderr)
+        sys.exit(2)
     return _finish(html, prev, ev, nxt, econ, metrics, market, releases)
 
 

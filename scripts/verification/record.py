@@ -518,8 +518,17 @@ def summarize(results, health=None, integrity=None):
             # 사람이 승인한 기한부 결측 — 발행은 하되 검증됨이 아니다. 승인자·만료일을 기록에 남긴다(2회차 F6)
             am = health['files'][k]['accepted_missing']
             conditions.append({'kind': 'accepted_missing', 'file': health['files'][k]['file'],
+                               'ids': sorted({a['id'] for a in am}),
                                'keys': [a['key'] for a in am],
+                               'indicators': [{x: a[x] for x in ('key', 'fred_id', 'transform', 'ref_period')}
+                                              for a in am],
+                               'reason': '; '.join(sorted({a['reason'] for a in am})),
+                               'source': sorted({u for a in am for u in a['source']}),
+                               'impact': [a['impact'] for a in am][0] if len({json.dumps(a['impact'], sort_keys=True)
+                                                                              for a in am}) == 1
+                               else [a['impact'] for a in am],
                                'approved_by': ', '.join(sorted({str(a['approved_by']) for a in am})),
+                               'approved_on': ', '.join(sorted({a['approved_on'] for a in am})),
                                'expires': min(a['expires'] for a in am)})
     blocking = failed + incomplete
     if inputs and (inputs['blocking'] or inputs['unclassified']):

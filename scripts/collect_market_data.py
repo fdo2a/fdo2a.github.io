@@ -525,7 +525,7 @@ def collect_econ(reasons=None, refs=None):
     out = []
     seen = {}
     reasons = {} if reasons is None else reasons     # name -> fetch_failed | transform_error | no_value
-    refs = {} if refs is None else refs              # name -> no_value 인 지표의 기준월(원천의 최신 관측월)
+    refs = {} if refs is None else refs              # name -> no_value 인 지표의 식별자·기준월(아래)
     for axis, name, sid, tf, units, *rest in ECON:
         opts = rest[0] if rest else {}
         vals = seen.get(sid)
@@ -546,7 +546,8 @@ def collect_econ(reasons=None, refs=None):
         if pair is None:
             # 받았지만 최신 달을 변환할 수 없다(결측 달 — 2025-10 CPI). 수집 실패가 아니다.
             reasons[name] = 'no_value'
-            refs[name] = vals[-1][0]      # 어느 달을 만들지 못했는가 — 승인 예외가 기준월을 대조한다(2회차 F6)
+            # 어느 지표의 어느 달을 만들지 못했는가 — 승인 예외는 식별자(FRED id·변환)와 기준월이 모두 같을 때만 걸린다
+            refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7]}
             continue
         actual, previous = pair
         row = {
@@ -1135,16 +1136,29 @@ def econ_collect(econ, reasons, report_date, refs=None):
     missing = sorted(n for n, why in (reasons or {}).items() if why in ('fetch_failed', 'transform_error'))
     missing += sorted(f'no_value:{n}' for n, why in (reasons or {}).items() if why == 'no_value' and n not in anatomy)
     none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value' and n in anatomy)
-    # 결측 키 → 그 지표의 기준월(`missing_ref`) — 항목 단위 승인 예외(`config/prepub_inputs.json` 의 accepted_missing)는
-    # 이 값이 등록의 ref_period 와 같을 때만 적용된다. 기준월을 모르는 키는 싣지 않는다(예외가 적용되지 않는다).
-    ref = {f'no_value:{n}': str(v) for n, v in sorted((refs or {}).items())
-           if v and f'no_value:{n}' in missing}
+    # 결측 키 → 그 지표의 식별자·기준월(`missing_ref[키] = {fred_id, transform, ref_period(YYYY-MM)}`) — 항목 단위 승인
+    # 예외(`config/prepub_inputs.json` 의 accepted_missing)는 셋이 모두 등록과 같을 때만 적용된다. 모르는 키는 싣지 않는다.
+    ref = {f'no_value:{n}': {k: v[k] for k in ('fred_id', 'transform', 'ref_period')}
+           for n, v in sorted((refs or {}).items())
+           if isinstance(v, dict) and all(v.get(k) for k in ('fred_id', 'transform', 'ref_period'))
+           and f'no_value:{n}' in missing}
     st = C.by_counts(report_date, 'FRED', missing, len(ECON),
                      detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None,
                      missing_ref=ref or None)
     if not econ and st['status'] != 'failed':
         st = C.failed(report_date, 'FRED', '지표 0건', missing=missing)
     return st
+
+
+def excluded_scored(reasons, refs):
+    """no_value 인 점수 대상 지표 → `[{name, axis, fred_id, transform, ref_period}]`(해부 전용은 뺀다)."""
+    anatomy = {e[1] for e in ECON if len(e) > 5 and (e[5] or {}).get('role') == 'anatomy'}
+    out = []
+    for n, why in sorted((reasons or {}).items()):
+        r = (refs or {}).get(n)
+        if why == 'no_value' and n not in anatomy and isinstance(r, dict):
+            out.append({'name': n, **{k: r.get(k) for k in ('axis', 'fred_id', 'transform', 'ref_period')}})
+    return out
 
 
 def _note_run_failure(outdir, rel, error):
@@ -1419,6 +1433,10 @@ def main():
         # left out and the anatomy falls back to the text or the headline.
         mm = _anatomy_round(mm, econ, econ_series, last_seen, book_state, book_date,
                             report_date, compute_macro_metrics)
+        # 원천에 재료가 없어 행을 만들지 못한 점수 대상 지표 — 축 점수가 몇 개 중 몇 개로 나왔는지와, 그 지표가 있었다면
+        # 판단이 달라질 수 있는지를 함께 싣는다(추정치로 채우지 않는다). 2026-11-17 사용자 승인 조건 7·8.
+        from us.macro_metrics import with_coverage
+        mm = with_coverage(mm, excluded_scored(econ_reasons, econ_refs))
         for rel in mm['headline_releases']:
             anat = rel.get('anatomy') or {}
             ok = sum(1 for c in anat.get('candidates') or [] if c.get('round_ok'))

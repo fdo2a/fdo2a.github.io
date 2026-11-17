@@ -517,6 +517,81 @@ def _axis_summary(rows):
     return out
 
 
+# ── 원천 미발표로 빠진 지표(2026-11-17 사용자 승인 조건 7·8) ─────────────────────────────
+# 축 점수는 「있는 행」의 평균이다 — 빠진 지표가 있는 축을 온전한 점수와 같게 보이면 안 된다(coverage), 그리고 그 지표가
+# 있었다면 판단이 달라질 수 있는 날은 자동으로 발행하지 않는다(sensitivity). 추정치·전월값으로 채우지 않는다.
+#
+# 점수(자기 모멘텀의 표준편차 단위)에는 코드상 위·아래 한계가 없다 — 그래서 「양 끝」을 ±SENSITIVITY_Z 로 둔다.
+# 2026-10-15~11-16 발행 자료의 모든 지표에서 |점수| 최대는 2.54 였다.
+SENSITIVITY_Z = 3.0
+EXCLUDED_WHY_KO = '원천 미발표'
+
+
+def scored_rows(indicators):
+    """축 점수에 드는 행 — `compute` 가 점수에 쓰는 것과 같은 기준(scored·도입일 아님)."""
+    return [r for r in indicators or [] if isinstance(r, dict)
+            and (r.get('role') or 'scored') == 'scored' and not r.get('introduced')]
+
+
+def axis_verdict(mean, axis):
+    """축 평균 → 판단 (방향, 강도, 레짐 다리 -1/0/+1). 레짐 다리는 `us.macro.classify` 와 같은 문턱."""
+    from .macro import classify
+    direction, strength = describe(mean, axis)
+    return [direction, strength, classify(mean)]
+
+
+def sensitivity(indicators, axis, n_excluded, bound=SENSITIVITY_Z):
+    """빠진 지표 n개가 모두 점수 범위의 아래 끝(-bound)·위 끝(+bound)이었다면 이 축의 판단이 지금과 같은가.
+
+    평균은 빠진 값에 대해 단조라 두 경우면 충분하다. 결정적이다 — 자료의 점수와 상수만 쓴다.
+    -> {'now', 'low', 'high', 'bound', 'stable'}; 축에 점수가 하나도 없으면 stable 은 False(판단할 수 없다)."""
+    zs = [r['signed_z'] for r in scored_rows(indicators)
+          if r.get('axis') == axis and isinstance(r.get('signed_z'), (int, float))]
+    if not zs or n_excluded <= 0:
+        return {'now': None, 'low': None, 'high': None, 'bound': bound, 'stable': bool(zs) and n_excluded <= 0}
+    total = len(zs) + n_excluded
+    now = axis_verdict(sum(zs) / len(zs), axis)
+    low = axis_verdict((sum(zs) - n_excluded * bound) / total, axis)
+    high = axis_verdict((sum(zs) + n_excluded * bound) / total, axis)
+    return {'now': now, 'low': low, 'high': high, 'bound': bound, 'stable': now == low == high}
+
+
+def coverage_phrase(total, used, labels):
+    """글에 싣는 문장 — 「8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로 제외」."""
+    last = (labels[-1] or ' ')[-1]
+    josa = '은' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 else '는'
+    return f"{total}개 중 {used}개로 산출, {'·'.join(labels)}{josa} {EXCLUDED_WHY_KO}로 제외"
+
+
+def with_coverage(mm, excluded):
+    """`compute` 결과에 축별 산출 범위를 싣는다. `excluded` = 원천에 최신 달을 만들 재료가 없어 행을 만들지 못한
+    점수 대상 지표 `[{name, axis, fred_id, transform, ref_period}]`(수집기의 no_value). 빠진 지표가 없으면 그대로.
+
+    `coverage[축] = {total, used, excluded: [...], phrase_ko, sensitivity}`, `axis_summary[축].coverage_ko` = 같은 문장."""
+    excluded = [e for e in excluded or [] if isinstance(e, dict) and e.get('axis') in AXIS_LABELS_KO]
+    if not excluded:
+        return mm
+    out = dict(mm)
+    cov = {}
+    summary = {k: dict(v) for k, v in (mm.get('axis_summary') or {}).items()}
+    for axis in AXIS_LABELS_KO:
+        ex = [e for e in excluded if e['axis'] == axis]
+        if not ex:
+            continue
+        used = sum(1 for r in scored_rows(mm.get('indicators')) if r.get('axis') == axis
+                   and r.get('signed_z') is not None)
+        items = [{'name': e['name'], 'label_ko': LABELS_KO.get(e['name'], e['name']), 'fred_id': e.get('fred_id'),
+                  'transform': e.get('transform'), 'ref_period': e.get('ref_period')} for e in ex]
+        phrase = coverage_phrase(used + len(ex), used, [i['label_ko'] for i in items])
+        cov[axis] = {'total': used + len(ex), 'used': used, 'excluded': items, 'why_ko': EXCLUDED_WHY_KO,
+                     'phrase_ko': phrase, 'sensitivity': sensitivity(mm.get('indicators'), axis, len(ex))}
+        if axis in summary:
+            summary[axis]['coverage_ko'] = phrase
+    out['coverage'] = cov
+    out['axis_summary'] = summary
+    return out
+
+
 def _axis_mean(rows, axis):
     zs = [r['signed_z'] for r in rows if r['axis'] == axis and r['signed_z'] is not None]
     return sum(zs) / len(zs) if zs else None

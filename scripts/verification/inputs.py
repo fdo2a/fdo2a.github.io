@@ -28,7 +28,9 @@ changed_after_collect(`_collect_status.json` 의 해시와 다름).
 - 장부(`_collect_status.json`) 항목의 `run: failed`(이번 수집 실행이 그 파일을 다시 쓰지 못했다)는 파일 안의 「성공」보다
   앞선다 — 적용일부터 failed, 그 전에는 조건 `recollect_failed`. 적용일부터 `run` 이 `RUN_OK` 가 아니면 unstamped(2회차 F3).
 - 정책의 `accepted_missing`(사람이 승인한 항목 단위 기한부 결측)에 **전부** 든 partial 만 조건부로 돌린다 — 수집 실패·다른
-  결측·만료·기준월 불일치는 그대로 막는다(2회차 F6, `_accepted`). 실제 정책에 등록은 없다(사용자 결정 전).
+  결측·만료·식별자(FRED id·변환)나 기준월 불일치는 그대로 막는다(2회차 F6, `_accepted`). 뜻은 「수집 실패 허용」이 아니라
+  「공식 기관이 발표하지 않은 지표를 검증 대상에서 조건부로 뺀다」. 실제 정책의 등록은 사용자가 승인한 하나뿐이다
+  (US 2026-10 CPI 전년 대비 둘, 만료 2026-12-09 — 시험이 고정). 등록 목록은 권한 분리 대상이다(지금은 루틴이 고칠 수 있다).
 - 판정할 수 없는 것은 정상으로 추정하지 않는다. 이 검사는 루틴이 자료·규칙을 직접 고치는 우회를 막지 않는다(권한 분리 단계).
 설계 docs/superpowers/specs/2026-11-17-input-health.md
 """
@@ -147,7 +149,9 @@ def validate(pol):
     return pol
 
 
-ACCEPTED_KEYS = ('key', 'ref_period', 'reason', 'approved_by', 'approved_on', 'expires')
+ACCEPTED_KEYS = ('id', 'key', 'fred_id', 'transform', 'ref_period', 'reason', 'source', 'approved_by', 'approved_on',
+                 'expires', 'impact')
+ACCEPTED_IDENTITY = ('fred_id', 'transform', 'ref_period')     # 자료의 `collect.missing_ref[키]` 와 셋 다 같아야 한다
 
 
 def _iso_date(v):
@@ -171,9 +175,18 @@ def _validate_accepted(market, e):
             raise PolicyError(f'{market} {e["path"]} 승인된 결측 항목의 형식이 다르다')
         if a.get('approved_by') != 'user':
             raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 approved_by: "user" 가 없다')
-        for k in ('key', 'ref_period', 'reason'):
+        for k in ('id', 'key', 'fred_id', 'transform', 'ref_period', 'reason'):
             if not isinstance(a.get(k), str) or not a[k]:
                 raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 {k} 가 없다')
+        if not re.fullmatch(r'\d{4}-\d{2}', a['ref_period']):
+            raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록의 ref_period 가 기준월(YYYY-MM)이 아니다')
+        src, imp = a.get('source'), a.get('impact')
+        if not isinstance(src, list) or not src or not all(isinstance(x, str) and x for x in src):
+            raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 출처(source)가 없다')
+        if not isinstance(imp, dict) or not all(
+                isinstance(imp.get(k), list) and imp[k] and all(isinstance(x, str) and x for x in imp[k])
+                for k in ('affects_checks', 'sections', 'scores')):
+            raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 영향 범위(impact: affects_checks·sections·scores)가 없다')
         for k in ('approved_on', 'expires'):
             if not _iso_date(a.get(k)):
                 raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록의 {k} 가 날짜(YYYY-MM-DD)가 아니다')
@@ -183,8 +196,9 @@ def _accepted(e, stamp, date, excuse):
     """이 파일의 수집 결측이 **전부** 등록된 승인 예외인가 → 등록 목록, 아니면 None.
 
     풀어 주는 것은 「일부만 받았다」에서 나온 세 사유뿐이다(collect.status=partial, required_ok false, missing).
-    수집 실패(failed)·다른 결측이 하나라도 섞임·만료(발행일 > expires)·자료가 말하는 기준월
-    (`collect.missing_ref[키]`)이 등록의 `ref_period` 와 다름(자료가 기준월을 말하지 않는 것 포함)은 그대로 막는다.
+    수집 실패(failed)·다른 결측이 하나라도 섞임·만료(발행일 > expires)·자료가 말하는 식별자와 기준월
+    (`collect.missing_ref[키] = {fred_id, transform, ref_period}`)이 등록과 하나라도 다름(자료가 말하지 않는 것 포함)은
+    그대로 막는다. 뜻은 「수집 실패 허용」이 아니라 「공식 기관이 발표하지 않은 지표를 검증 대상에서 조건부로 뺀다」다.
     만료는 벽시계가 아니라 **글 날짜**로 본다 — 옛 기록을 다시 검증해도 판정이 뒤집히지 않는다. `approved_on` 은 기록용이다
     (글 날짜와 대조하지 않는다 — 보류된 글을 다음 날 승인해도 그 글이 풀려야 한다. 범위는 기준월과 만료일이 정한다)."""
     regs = e.get('accepted_missing')
@@ -198,7 +212,9 @@ def _accepted(e, stamp, date, excuse):
     out = []
     for m in miss:
         a = live.get(m) if isinstance(m, str) else None
-        if a is None or refs.get(m) != a['ref_period']:
+        r = refs.get(m) if isinstance(m, str) else None
+        # 이름(키)만 같아서는 안 된다 — 자료가 말하는 식별자(FRED id·변환)와 기준월이 등록과 모두 같아야 한다
+        if a is None or not isinstance(r, dict) or any(r.get(k) != a[k] for k in ACCEPTED_IDENTITY):
             return None
         out.append({k: a.get(k) for k in ACCEPTED_KEYS})
     return out
@@ -618,12 +634,25 @@ def accepted_missing(health):
 
 
 def describe_accepted(f):
+    """「승인된 결측 — 원천 미발표」 한 줄: 예외 ID, 제외 지표, 승인일, 만료일, 영향 범위(검사·섹션·점수), 원인."""
     rel = str(f.get('file') or '').split('>/', 1)[-1]
     am = f.get('accepted_missing') or []
+    ids = ', '.join(sorted({str(a.get('id')) for a in am}))
     exp = min((a.get('expires') or '' for a in am), default='')
+    on = ', '.join(sorted({str(a.get('approved_on')) for a in am}))
     by = ', '.join(sorted({str(a.get('approved_by')) for a in am}))
-    return (f'{f.get("name")}({rel}) — 승인된 결측 {len(am)}건(만료 {exp}), 승인 {by}: '
-            + ', '.join(str(a.get('key')) for a in am))
+
+    def uniq(k):
+        out = []
+        for a in am:
+            for x in (a.get('impact') or {}).get(k) or []:
+                if x not in out:
+                    out.append(x)
+        return ', '.join(out)
+    why = '; '.join(sorted({str(a.get('reason')) for a in am}))
+    return (f'{f.get("name")}({rel}) — 승인된 결측 — 원천 미발표 {len(am)}건(예외 {ids}, 승인 {by} {on}, 만료 {exp}): '
+            + ', '.join(f'{a.get("key")}[{a.get("fred_id")}·{a.get("transform")}·{a.get("ref_period")}]' for a in am)
+            + f' · 영향: 검사 {uniq("affects_checks")} / 섹션 {uniq("sections")} / 점수 {uniq("scores")} · 원인: {why}')
 
 
 def describe_empty(f):

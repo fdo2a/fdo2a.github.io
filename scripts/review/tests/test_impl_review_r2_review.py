@@ -85,18 +85,25 @@ def test_recollect_failed_and_accepted_missing_reach_the_alert(tmp_path):
     repo = F.init(tmp_path)
     inputs = {'blocking': [], 'blocking_files': [], 'unclassified': [], 'warnings': [], 'unconfirmed_empty': [],
               'recollect_failed': ['KR 장중 세션(kr_session.json) — 이번 수집 실패, 옛 판으로 검사함(적용일 전)'],
-              'accepted_missing': ['경제 지표(econ_indicators.json) — 승인된 결측 2건(만료 2026-12-10), 승인 user: '
-                                   'no_value:CPI YoY, no_value:Core CPI YoY']}
+              'accepted_missing': ['경제 지표(econ_indicators.json) — 승인된 결측 — 원천 미발표 2건(예외 '
+                                   'us-2026-10-cpi-yoy-not-published, 승인 user 2026-11-17, 만료 2026-12-09): '
+                                   'no_value:CPI YoY[CPIAUCSL·yoy_pct·2026-10], no_value:Core CPI YoY[CPILFESL·yoy_pct·'
+                                   '2026-10] · 영향: 검사 check_macro / 섹션 물가 축 / 점수 물가 축 점수 · 원인: BLS 미발표']}
     F.publish(repo, workspace=False, summ=F.summary(status='conditional', inputs=inputs, conditions=[
         {'kind': 'recollect_failed', 'file': '<datadir>/kr_session.json'},
         {'kind': 'accepted_missing', 'file': '<datadir>/econ_indicators.json', 'keys': ['no_value:CPI YoY'],
-         'approved_by': 'user', 'expires': '2026-12-10'}]))
+         'ids': ['us-2026-10-cpi-yoy-not-published'], 'approved_by': 'user', 'expires': '2026-12-09'}]))
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     text = V.render_publish(v, who=V.GITHUB)
     assert ' · 재수집 실패: KR 장중 세션(kr_session.json) — 이번 수집 실패, 옛 판으로 검사함(적용일 전)' in text
-    assert ' · 승인된 결측: 경제 지표(econ_indicators.json) — 승인된 결측 2건(만료 2026-12-10), 승인 user' in text
+    line = next(x for x in text.split('\n') if x.startswith(' · 승인된 결측(원천 미발표): '))
+    # 예외 ID·제외 지표·승인일·만료일·영향 범위·원인이 잘리지 않고 다 보인다(사용자 조건 5)
+    for want in ('예외 us-2026-10-cpi-yoy-not-published', '승인 user 2026-11-17', '만료 2026-12-09',
+                 'no_value:Core CPI YoY[CPILFESL·yoy_pct·2026-10]', '검사 check_macro', '섹션 물가 축', '점수 물가 축 점수',
+                 '원인: BLS 미발표'):
+        assert want in line, want
     digest = '\n'.join(V.digest_lines(v))
-    assert '재수집 실패 1개' in digest and '승인된 결측이 있는 자료 1개' in digest
+    assert '재수집 실패 1개' in digest and '승인된 결측(원천 미발표)이 있는 자료 1개' in digest
 
 
 def test_old_records_without_the_new_keys_still_read(tmp_path):
