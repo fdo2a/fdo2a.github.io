@@ -275,7 +275,12 @@ def _health(e, key, full, date, status_files, excuse, ref=None):
     entry = status_files.get(skey) if isinstance(status_files, dict) else None
     stamp = d.get('collect') if isinstance(obj, dict) and 'collect' in d else entry
     if isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and entry['sha256'] != sha:
-        bad('changed_after_collect', '수집 상태 파일의 해시와 다르다')
+        if e.get('rewritten_by'):
+            # 수집 뒤 루틴이 정해진 명령으로 다시 쓰는 파일(예: build_liquidity --recompute) — 해시는 다를 수 있다.
+            # 수집 상태 칸의 건강 조건은 그대로 본다.
+            pass
+        else:
+            bad('changed_after_collect', '수집 상태 파일의 해시와 다르다')
     if stamp is not None and produced == 'collector':
         if not _stamp_ok_shape(stamp):
             bad('incomplete_fields', '수집 상태 칸(collect) 형식이 다르다')
@@ -334,7 +339,8 @@ def assess(pol, market, ctx):
             if full is None:
                 rec['state'] = 'missing'
                 rec['reason'] = '파일이 없다'
-                rec['blocking'] = not e.get('optional')
+                # 적용일부터 필수가 되는 파일(수집 상태 기록 — 없으면 해시 대조가 조용히 꺼진다)
+                rec['blocking'] = not e.get('optional') or bool(e.get('required_when_enforced') and on)
             else:
                 state, why, sha, as_of, obj, stamp = _health(e, key, full, date, status_files, excuse,
                                                              _ref(e, present))
@@ -387,12 +393,13 @@ def assess(pol, market, ctx):
         if e.get('when'):
             for key in sorted(cond[i] - set(present)):
                 put(key, e, None)
-        elif not _is_glob(e['path']) and _pat(e['path'], date) not in present:
+        elif not _is_glob(e['path']) and _pat(e['path'], date) not in present \
+                and (not e.get('optional') or (e.get('required_when_enforced') and on)):
             put(_pat(e['path'], date), e, None)
     return {'files': out, 'unclassified': unclassified, 'effective': EFFECTIVE, 'enforced': on,
             'discontinued': [{k: d.get(k) for k in ('path', 'name', 'reason', 'since', 'affects', 'approved_by',
                                                      'approved_at', 'missing_key')} for d in disc],
-            '_objs': objs}
+            '_objs': objs, '_present': present}
 
 
 def blocks(f):
@@ -425,8 +432,10 @@ def for_gate(health, paths):
 
 def na_when(health, spec):
     """(참인가, 근거) — 「해당 없음」은 정상 조회로 대상이 없음을 확인한 경우만.
-    근거 'collect' = 수집 상태가 ok·confirmed_none. 'legacy' = 적용일 전, 수집 상태 표시가 없고 옛 칸이 다 정상이며
-    지정 목록이 빈 경우(파일 있음·날짜 일치·error 없음은 상태 검사가 이미 확인했다)."""
+    근거 'collect' = 수집 상태가 ok·confirmed_none 이고(`min_checked` 가 있으면 `collect.checked` 가 그 이상 —
+    실제로 잰 종목이 있다), 'legacy' = 적용일 전, 수집 상태 표시가 없고 옛 칸이 다 정상이며 지정 목록이 비었고
+    **독립 근거**(`legacy_evidence` — 예: KR `kr_stock_moves.json` 에 잰 종목이 있다)가 있는 경우. 근거를 정하지
+    않았거나 근거가 없으면 legacy na 는 없다 — 미완료(2026-11-17, KR 11/16 은 종목을 하나도 재지 못한 날이었다)."""
     key = spec.get('file')
     f = health['files'].get(key)
     obj = health['_objs'].get(key)
@@ -437,10 +446,21 @@ def na_when(health, spec):
         return False, None
     c = obj.get('collect')
     if f['stamped']:
-        if isinstance(c, dict) and c.get('status') == 'ok' and c.get('empty') == 'confirmed_none':
-            return True, 'collect'
-        return False, None
+        if not (isinstance(c, dict) and c.get('status') == 'ok' and c.get('empty') == 'confirmed_none'):
+            return False, None
+        need = spec.get('min_checked')
+        got = c.get('checked')
+        if need is not None and not (isinstance(got, int) and not isinstance(got, bool) and got >= need):
+            return False, None
+        return True, 'collect'
     if health['enforced']:
+        return False, None
+    ev = spec.get('legacy_evidence')
+    if not isinstance(ev, dict):
+        return False, None
+    full = health.get('_present', {}).get(ev.get('file'))
+    proof, err = _read_json(full) if full else (None, 'missing')
+    if err or not isinstance(proof, list) or len(proof) < int(ev.get('min_items', 1)):
         return False, None
     return True, 'legacy'
 

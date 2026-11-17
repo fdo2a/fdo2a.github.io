@@ -124,6 +124,9 @@ def load_policy(cfg, config_path):
             na = spec.get('na_when')
             if na and na['file'] not in (spec.get('inputs') or []):
                 raise ConfigError(f'{market} {spec["name"]} na_when 의 자료가 입력 목록에 없다')
+            ev = (na or {}).get('legacy_evidence')
+            if ev is not None and (not isinstance(ev, dict) or ev.get('file') not in known):
+                raise ConfigError(f'{market} {spec["name"]} na_when.legacy_evidence 가 분류 정책에 없다')
     return pol
 
 

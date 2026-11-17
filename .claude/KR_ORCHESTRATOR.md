@@ -8,7 +8,7 @@
 
 ## STEP 0 — 커밋된 KR 데이터 확인 (먼저)
 
-`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr/assets/kr_flows_intraday_[DATE].png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr/assets/kr_charts_[DATE].png`(있는 것은 `kr/data/kr_charts_manifest.json` 이 정본) — 전부 비-코어(없어도 발행 게이트 통과, 해당 블록만 생략). **2026-09-17 네이버 SPA 개편으로 장중 수급·프로그램 매매는 소스가 폐지됐다 — 상시 결측이니 §5·§6 의 해당 서브블록을 빼고 쓰고, 수집을 다시 돌려도 안 돌아온다.**
+`.github/workflows/collect-kr-data.yml`가 마감 후 Naver+yfinance로 `kr/data/*`를 커밋한다(수급·**장중 수급 궤적**·**프로그램 매매**·거래대금·업종·테마·섹터·지수·장중·**기술적 지표**). **루틴 환경은 금융 호스트가 막힐 수 있으니 직접 fetch 금지 — 커밋된 파일을 읽는다.** 장중 수급은 `kr_flows_intraday.json`(누적 순매수 30분 앵커·극값·방향 전환, 억원)·차트 `kr/assets/kr_flows_intraday_[DATE].png`, 프로그램 매매는 `kr_program.json`(차익·비차익·전체 순매수, 억원), 기술적 지표는 `kr_technical.json`(4종 이평·볼린저·일목)·오버레이 `kr/assets/kr_charts_[DATE].png`(있는 것은 `kr/data/kr_charts_manifest.json` 이 정본) — 전부 작성자만 쓰는 자료(writer 분류, `config/prepub_inputs.json` — 없으면 해당 블록만 생략). **2026-09-17 네이버 SPA 개편으로 장중 수급·프로그램 매매는 소스가 폐지됐다 — 상시 결측이니 §5·§6 의 해당 서브블록을 빼고 쓰고, 수집을 다시 돌려도 안 돌아온다.**
 
 0. **선점 잠금과 멱등 가드 — 다른 파일을 읽기 전에**(2026-09-27, 한도 뒤 재시도 루틴이 생기면서 같은 날 여러 번 뜬다):
 
@@ -22,7 +22,7 @@
    아래 1·2 로 `report_date` 가 예상 세션과 맞고 `kr/posts/<report_date>.html` 이 이미 커밋돼 있으면 **「already published」만 보고하고 끝낸다**(잠금을 풀고, 알림 없이). **단 2026-11-06 부터는 뉴스 글도 본다** — 브리프가 있고 `kr/news/<report_date>.html` 이 origin 에 없으면 `python3 scripts/ci/routine_due.py kr-news-input <report_date> <워크스페이스 루트>/kr_news_data` 를 돌린다. `expected` 면(브리프 발행 뒤 한도로 죽은 런) STEP 1~3 을 건너뛰고 **STEP 3.5 만** 한다. `none` 이면 「already published」다. `error …` 면 판정할 수 없으니 쓰지 않고 잠금을 풀고 그 줄을 붙여 PushNotification 으로 보고한다(재시도 루틴이 다음 회차에 다시 본다). 이 명령은 잠금을 보지 않으므로 잠금을 쥔 채 돌려도 된다(`routine_due.py kr` 은 자기 잠금에 BUSY 를 낸다 — 이 판단에 쓰지 않는다). 잠금은 잡은 그대로다. 데이터가 예상 세션보다 이르면 이 가드로 멈추지 말고 3번 재수집으로 내려간다 — 어제 글이 있는 건 당연하다.
 
 1. `git -C <repo> pull` 후 `kr/data/kr_market_data.json` Read.
-2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices = 코스피·코스닥 두 지수 모두 종가·검증된 등락률, flows = 코스피·코스닥 두 시장 모두, top_value·sectors. 2026-11-12 부터 못 읽은 값은 0 이 아니라 결측이라 등락률을 못 읽거나 검증하지 못한 날은 `indices` 결측이다 — 계산값으로 채워 발행하지 않는다)면 그대로 사용. `missing`에 `econ`·`themes`·`flows_intraday`만 있으면 발행 가능(전부 비-코어 — `flows_intraday` 결측 시 §6 장중 수급 서브블록만 생략). `econ`은 ECOS 금리 일부/전량 결측 — writer가 결측 행을 빼고 §9를 재구성한다(2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
+2. `report_date`가 예상 세션과 맞고 `"complete": true`(코어 4종: indices = 코스피·코스닥 두 지수 모두 종가·검증된 등락률, flows = 코스피·코스닥 두 시장 모두, top_value·sectors. 2026-11-12 부터 못 읽은 값은 0 이 아니라 결측이라 등락률을 못 읽거나 검증하지 못한 날은 `indices` 결측이다 — 계산값으로 채워 발행하지 않는다)면 그대로 사용. `missing` 이 비거나 `flows_intraday` 하나뿐이면 발행 가능(`flows_intraday` 는 사용자가 승인한 수집 중단 — `config/prepub_inputs.json` 의 `discontinued`, §6 장중 수급 서브블록 생략). **2026-11-17 부터 `econ`·`themes` 등 다른 결측은 미완료(exit 2)** — 아래 발행 게이트의 exit 2 규칙. `econ`은 ECOS 금리 일부/전량 결측이다 — 재수집 뒤에도 남으면 보류한다(결측 행을 빼고 발행하지 않는다, 2026-07-29 ECOS 연동, 인증키는 레포 시크릿 `ECOS_API_KEY`). `themes`는 2026-07-29 테마 섹션 폐지로 강등.
 3. 없거나 stale/`complete:false`면 **수집 워크플로를 직접 돌린다**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려(cron 08:00·08:30 UTC 가 실제로는 12:40·12:57 UTC) **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**. 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
@@ -67,7 +67,7 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
 
-**텔레그램(2026-11-06)** — 작성자를 부르기 직전에 한 번, 어느 경로로 왔든 같은 방법으로: `W=<워크스페이스 루트>; rm -f $W/kr_telegram.json; C=$(git -C <repo> rev-parse --verify HEAD) && [ -n "$C" ] && git -C <repo> show "$C:kr/data/kr_market_data.json" | cmp -s - <repo>/kr/data/kr_market_data.json && { git -C <repo> show "$C:kr/data/telegram/<DATE>.json" > $W/kr_telegram.json 2>/dev/null || rm -f $W/kr_telegram.json; }`. 작성자가 읽는 `kr/data/kr_market_data.json` 이 그 커밋의 것과 **바이트까지 같을 때만** 쓴다(로컬 `collect_kr_data.py` 폴백이면 텔레그램 없음). `report_date` 가 `<DATE>` 가 아니면 지운다(다른 날짜로 대체 금지). 이 스냅샷 경로를 작성자 프롬프트에 **명시**하고 게이트도 같은 파일을 쓴다. `stats` 한 줄을 최종 보고에 옮긴다. 규칙: `.claude/agents/kr-report-writer.md` 「텔레그램 견해·의견」.
+**텔레그램(2026-11-06)** — 작성자를 부르기 직전에 한 번, 어느 경로로 왔든 같은 방법으로: `W=<워크스페이스 루트>; rm -f $W/kr_telegram.json; C=$(git -C <repo> rev-parse --verify HEAD) && [ -n "$C" ] && git -C <repo> show "$C:kr/data/kr_market_data.json" | cmp -s - <repo>/kr/data/kr_market_data.json && { git -C <repo> show "$C:kr/data/telegram/<DATE>.json" > $W/kr_telegram.json 2>/dev/null || rm -f $W/kr_telegram.json; }`. 작성자가 읽는 `kr/data/kr_market_data.json` 이 그 커밋의 것과 **바이트까지 같을 때만** 쓴다(로컬 `collect_kr_data.py` 폴백이면 텔레그램 없음). `report_date` 가 `<DATE>` 가 아니면 지운다(다른 날짜로 대체 금지). 그날 텔레그램은 필수 입력이라(2026-11-17) 없으면 게이트가 exit 2(미완료)다. 이 스냅샷 경로를 작성자 프롬프트에 **명시**하고 게이트도 같은 파일을 쓴다. `stats` 한 줄을 최종 보고에 옮긴다. 규칙: `.claude/agents/kr-report-writer.md` 「텔레그램 견해·의견」.
 
 Agent 도구로 `kr-report-writer` 동기 실행. 프롬프트: report_date, kr/data 입력 목록(**kr_flows_intraday.json/.png·kr_program.json·kr_technical.json 포함**), research_notes.md, 산출 파일명 `kr_brief_[YYYY-MM-DD].html`(작성자는 `.body.html`·`.meta.json` 만 쓰고 `scripts/render_post.py --market kr` 로 합친다 — head·CSS·상단 바·nav 는 셸이 만든다), 그리고 **writer 스펙의 섹션 순서를 그대로 따르라**는 지시(전략 코멘트는 헤드라인 바로 다음, 테마 섹션 없음, 장중 수급·프로그램 매매는 수급 서브블록, 기술적 분석은 일봉 차트 바로 아래). Agent 미지원 시 general-purpose 에이전트에게 `.claude/agents/kr-report-writer.md` 를 먼저 Read 하라고 경로를 주어 위임하거나 직접 수행(폴백).
 
@@ -88,10 +88,10 @@ python3 scripts/run_gates.py check --market kr --date <DATE> --html <kr_brief �
         --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json --cycle <CYCLE_ID>
 ```
 
-**실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사가 실패했거나 **판정 불가**(통과가 아니다). `check_news`·`check_contested` 는 2026-11-06 부터 목록의 `disabled` 에 있다 — 따로 돌리지 않는다. 표 숫자는 `check_numbers` 결과로 기록되고, 문장 수치 수기 대조((c))는 자동 기록 대상이 아니다.
+**실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사 위반 → writer(위반과 미완료가 함께면 1). **exit 2 = 미완료**(입력 자료가 없거나 비었거나 낡았거나 수집 실패·분류 안 된 파일·검사기가 돌지 못함 — `자료 미완료:` 줄이 무엇이·왜) → **글을 고치지 말고** STEP 0 의 수집 재실행(`gh workflow run collect-kr-data.yml -f force=true`, run ID·`--exit-status`) 1회 → 게이트 다시. **그래도 2 면 커밋·푸시하지 않고** 잠금을 풀고 PushNotification(무엇이·왜)으로 보류. 섹션을 빼고 발행하지 않는다. `check_news`·`check_contested` 는 2026-11-06 부터 목록의 `disabled` 에 있다 — 따로 돌리지 않는다. 표 숫자는 `check_numbers` 결과로 기록되고, 문장 수치 수기 대조((c))는 자동 기록 대상이 아니다.
 
 - `check_weight.py` 의 KR 계약: 필수 섹션 비어 있음 금지, §2 문단 순서(2026-10-20 부터 다섯 — 어제 판단의 판정은 「시장 판단과 복기」 첫 문단, 배치는 `check_kr_stance.py` 가 발행일로 고른다), 가격 섹션의 스탠스 등급 어휘 금지. **절대 글자 수 하한은 2026-10-13 폐지** — 「경고:」 줄(서술형 본문 5,000자 초과, 시황군 < 판단군)은 발행을 막지 않으며, 그것을 맞추려고 초안을 늘리거나 줄이지 않는다(`STYLE_EXEMPLARS.md` §11).
-- `check_fund.py` — `kr/data/kr_fund_view.json` 의 `status` 가 `ok`·`partial` 이고 날짜가 오늘이면 「아시아 세션 유닛 관측」 섹션이 있어야 하고, 그 밖에는 없어야 한다. 블록(`kr_fund_view.html`)은 그대로 넣는다.
+- `check_fund.py` — `kr/data/kr_fund_view.json` 의 `status` 가 `ok` 이고 날짜가 오늘이면 「아시아 세션 유닛 관측」 섹션이 있어야 한다. 그 밖(`partial`·`unavailable`·다른 날)은 미완료(exit 2). 블록(`kr_fund_view.html`)은 그대로 넣는다.
 - `check_kr_stance.py` 는 비-코어가 아니다 — 원장이 틀어지면 다음 회차의 복기가 통째로 거짓이 된다.
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
@@ -132,7 +132,8 @@ cp <워크스페이스 루트>/kr_stance_next.json <repo>/kr/data/kr_stance.json
 5. **최종 검증 기록 (2026-11-08)** — 4 의 가드를 통과한 뒤, 커밋 전에 **실제로 올릴 파일**로:
    `python3 scripts/run_gates.py record --market kr --date [YYYY-MM-DD] --html kr/posts/[YYYY-MM-DD].html --datadir kr/data --repo . --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json --cycle <CYCLE_ID> --out verification/kr/[YYYY-MM-DD].json`
    - exit 0 → 6. **기록한 뒤에는 글을 고치지 않는다** — 고쳤으면 record 를 다시 돈다.
-   - exit 1(필수 검사 실패·판정 불가) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-3 → record, 최대 2회. 그래도 1이면 **커밋하지 않고** 잠금 해제, 알림에 막은 검사기를 적고 중단. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 다시 하고 record — 그 판도 1이면 중단.
+   - exit 2(미완료 — 입력 자료) → 글을 고치지 않는다. 위 발행 게이트의 exit 2 규칙(수집 재실행 1회 → 그래도 2 면 커밋·푸시 없이 잠금 해제·PushNotification 보류).
+   - exit 1(필수 검사 위반) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-3 → record, 최대 2회. 그래도 1이면 **커밋하지 않고** 잠금 해제, 알림에 막은 검사기를 적고 중단. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 다시 하고 record — 그 판도 1이면 중단.
    - exit 4(검사는 다 돌았고 발행 가능, **레포 안 기록 저장만** 실패) → 찍힌 `fallback_record=<경로>`(레포 밖 같은 기록)를 적어 두고 발행한다. 아래 verify 에 `--record-file <그 경로>` 를 붙인다 — 기록이 레포에 없어도 글·검사 코드·원장·입력이 바뀌면 막는다. 알림에 「검증 기록 없음 — 저장 실패」(2026-11-22 까지 시험 운영).
    - exit 5(기록 도구 자체 오류, 또는 대체 기록도 못 남김) → 최종 판이 검사됐다는 근거가 없다. **커밋하지 않고** 잠금 해제, 알림에 「검증 도구 오류 — 발행 보류」와 오류 줄을 적고 중단(필수 검사를 못 돌린 것과 같다).
 6. **커밋·푸시** — 명령을 `&&` 로 잇지 말고 한 줄씩 돌려 종료 코드를 본다: `git add -A` → `python3 scripts/run_gates.py verify --market kr --date [YYYY-MM-DD] --repo . --index --datadir kr/data --tg <워크스페이스 루트>/kr_telegram.json --stance-next <워크스페이스 루트>/kr_stance_next.json` — exit 0 이면 `git commit -m "Add KR brief [YYYY-MM-DD]"`. exit 1 이면 5 의 record → `git add -A` → verify 다시. **exit 4(기록 없음)는 5 의 record 가 4 였을 때만** 넘어간다 — 그때는 `--record-file <fallback_record 경로>` 를 붙여 0 이어야 commit. **exit 2(git 을 읽지 못함)는 커밋하지 않고 중단**.

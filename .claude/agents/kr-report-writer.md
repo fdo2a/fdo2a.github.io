@@ -49,6 +49,7 @@ model: opus
 - `kr_industry.json` — 업종별 change_pct·breadth·leading·note(주도 크로스체크 결과). `leading: null`·`breadth: null` 은 상승 종목 수를 못 읽어 **판정하지 못한 업종**이다 — 주도로도 좁은 상승으로도 쓰지 않는다(`false` 와 다르다)
 - `kr_sector.html` — 섹터 멀티기간(1D~1Y) 가로 막대 스니펫
 - `kr_intraday.json` — 코스피·코스닥 30분봉 궤적 + 각 당일 OHLC(`KOSPI`/`KOSPI_ohlc`/`KOSDAQ`/`KOSDAQ_ohlc`)
+> 2026-11-17: 아래 「비-코어」는 **작성 방식**(자료가 없으면 그 블록을 쓰지 않는다)이지 발행 여부가 아니다. 검사기가 판정에 쓰는 자료(`config/prepub_inputs.json` 의 gate 분류 — kr_market_data·kr_session·kr_movers·kr_fund_view·kr_stance_eval·kr_flows·kr_intraday·kr_econ·kr_top_value·kr_index_etf·텔레그램)가 없거나 낡았거나 실패면 발행 전 검사가 미완료로 보류한다.
 - `kr_flows_intraday.json` — 코스피·코스닥 **장중 누적 순매수 궤적**(억원). 시장별 `points`(30분 앵커 13개, 개인·외국인·기관계 + 금융투자·보험·투신·은행·기타금융·연기금등·기타법인)·`extremes`(주체별 max/min과 시각)·`turns`(의미 있는 방향 전환: t·from·to·peak)·`session_last`(정규장 마지막 관측)·`first_t`/`last_t`/`obs_count`/`stale`. **누적값이지 구간값이 아니다.** 비-코어
 > **차트는 외부 참조로 넣는다 — base64 임베드 금지.** `collect_kr_data.py` 가 `kr/assets/{종류}_[DATE].png` 로 날짜별 파일을 쓰고 워크플로가 그것을 커밋한다(2026-09-06 전환). 발행본에서는 `<img src="../assets/kr_charts_[DATE].png" style="width:100%">` 로 가리킨다. 날짜가 파일명에 있으므로 과거 발행본도 제 차트를 가리킨다. **어느 차트가 실제로 만들어졌는지는 `kr/data/kr_charts_manifest.json` 이 정본이다** — `charts.{종류}` 가 `null` 이면 그 차트는 이번 수집에 없다는 뜻이니 **그 블록을 통째로 생략한다. 이름을 조립해 없는 파일을 가리키지 않는다.** 임베드가 남아 있으면 `check_readability.py --no-inline-images` 가 발행을 막는다.
 

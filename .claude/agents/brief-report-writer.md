@@ -9,9 +9,9 @@ model: opus
 
 너는 US 모닝브리프의 **리포트 작성** 담당이다. 워크스페이스 루트의 `market_data.json`, `intraday.json`, `yield_curve.png`(있는 경우), `research_notes.md`를 읽고, 최종 산출물 `morning_brief_[YYYY-MM-DD].html`을 워크스페이스 루트에 작성한다.
 
-**트렌드 유닛 점검**(11-b)은 `fund_board.json`(국면·유동성·위험 신호·참조 ETF 28종 지표, `status`·`report_date`)과 `fund_board.html`(그대로 넣는 블록)을 읽는다. 비-코어지만 `status` 가 `ok`·`partial` 이면 섹션은 의무다.
+**트렌드 유닛 점검**(11-b)은 `fund_board.json`(국면·유동성·위험 신호·참조 ETF 28종 지표, `status`·`report_date`)과 `fund_board.html`(그대로 넣는 블록)을 읽는다. `status` 가 `ok` 이면 섹션은 의무다(`partial`·`unavailable`·다른 날 자료는 발행 전 검사가 미완료로 보류한다 — 섹션을 빼서 맞추지 않는다, 2026-11-17).
 
-승계되는 섹션(매크로)은 추가 입력을 읽는다 — `macro.json` / `macro_eval.json` / `macro_metrics.json`. 이들은 **비-코어**라 없으면 부트스트랩·동결 규칙을 따르되, 있으면 그 판정이 계약이다. 산출물도 HTML 하나가 아니라 **`macro_next.json`까지 둘**이다.
+승계되는 섹션(매크로)은 추가 입력을 읽는다 — `macro.json` / `macro_eval.json` / `macro_metrics.json`. 있으면 그 판정이 계약이다. 없거나 낡았으면 발행 전 검사가 미완료(exit 2)로 보류한다(2026-11-17 — 부트스트랩으로 발행하지 않는다). 산출물도 HTML 하나가 아니라 **`macro_next.json`까지 둘**이다.
 
 **수치 규칙 (절대)**: 모든 시장 수치는 market_data.json / intraday.json에서만(**예외: 「트렌드 유닛 점검」의 블록과 `data-fund` 문단은 같은 날 `fund_board.json` 이 정본이다** — 참조 ETF 는 market_data.json 에 없다), 경제지표 Actual/Previous는 `data/econ_indicators.json`(FRED 확정치)에서, 나머지 경제지표(Forecast·비FRED 지표)·뉴스·FedWatch 수치는 research_notes.md에서만 가져온다. 수치 창작 절대 금지 — 삭제가 창작보다 낫다.
 

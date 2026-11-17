@@ -153,12 +153,26 @@ def test_target_list_needs_confirmed_none(tmp_path):
 
 
 def test_na_when(tmp_path, monkeypatch):
-    pol = policy([GATE_MOV])
-    na = {'file': '<datadir>/movers.json', 'list': 'groups'}
-    put(tmp_path, 'movers.json', {'report_date': D, 'groups': [], 'collect': dict(STAMPED, empty='confirmed_none')})
+    moves = {'path': '<datadir>/kr_stock_moves.json', 'class': 'writer', 'name': '개별주 등락', 'risk': 'x',
+             'covered_by': None}
+    pol = policy([GATE_MOV, moves])
+    na = {'file': '<datadir>/movers.json', 'list': 'groups', 'min_checked': 1,
+          'legacy_evidence': {'file': '<datadir>/kr_stock_moves.json', 'min_items': 1}}
+    ok_collect = dict(STAMPED, empty='confirmed_none', checked=60, expected=60)
+    put(tmp_path, 'movers.json', {'report_date': D, 'groups': [], 'collect': ok_collect})
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na) == (True, 'collect')
+    for bad in (dict(ok_collect, checked=0), {k: v for k, v in ok_collect.items() if k != 'checked'},
+                dict(ok_collect, empty='unknown'), dict(ok_collect, status='partial')):
+        put(tmp_path, 'movers.json', {'report_date': D, 'groups': [], 'collect': bad})
+        assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False, bad
+    # 옛 방식 — 독립 근거(잰 종목)가 있어야만
     put(tmp_path, 'movers.json', {'report_date': D, 'groups': []})
+    assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False          # 근거 파일 없음
+    put(tmp_path, 'kr_stock_moves.json', [])
+    assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False          # 하나도 못 쟀다(KR 11/16)
+    put(tmp_path, 'kr_stock_moves.json', [{'name': 'a', 'change_pct': 1.0}])
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na) == (True, 'legacy')
+    assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), {'file': na['file'], 'list': 'groups'})[0] is False
     monkeypatch.setattr(I, 'EFFECTIVE', D)
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False      # 적용일부터 옛 방식은 안 된다
     monkeypatch.setattr(I, 'EFFECTIVE', None)
@@ -168,6 +182,32 @@ def test_na_when(tmp_path, monkeypatch):
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False
     os.unlink(os.path.join(str(tmp_path), 'movers.json'))
     assert I.na_when(I.assess(pol, 'us', ctx(tmp_path)), na)[0] is False
+
+
+def test_rewritten_by_skips_only_the_hash(tmp_path):
+    liq = {'path': '<datadir>/liquidity/liquidity.json', 'class': 'gate', 'name': '유동성 책', 'date': 'report_date',
+           'status_ok': ['complete'], 'rewritten_by': 'build_liquidity --recompute'}
+    pol = policy([liq])
+    rel = '<datadir>/liquidity/liquidity.json'
+    put(tmp_path, '_collect_status.json', {'files': {'liquidity/liquidity.json': {'sha256': '0' * 64}}})
+    put(tmp_path, 'liquidity/liquidity.json', {'report_date': D, 'status': 'complete', 'collect': STAMPED})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'
+    put(tmp_path, 'liquidity/liquidity.json', {'report_date': D, 'status': 'complete',
+                                               'collect': dict(STAMPED, status='failed')})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'failed'
+    pol2 = policy([{k: v for k, v in liq.items() if k != 'rewritten_by'}])
+    put(tmp_path, 'liquidity/liquidity.json', {'report_date': D, 'status': 'complete', 'collect': STAMPED})
+    assert st(I.assess(pol2, 'us', ctx(tmp_path)), rel) == 'changed_after_collect'
+
+
+def test_status_file_is_required_from_effective(tmp_path, monkeypatch):
+    meta = {'path': '<datadir>/_collect_status.json', 'class': 'gate', 'name': '수집 상태 기록', 'optional': True,
+            'required_when_enforced': True, 'produced_by': 'meta'}
+    pol = policy([meta])
+    assert not I.blocking(I.assess(pol, 'us', ctx(tmp_path)))['any']
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    r = I.assess(pol, 'us', ctx(tmp_path))
+    assert r['files']['<datadir>/_collect_status.json']['state'] == 'missing' and I.blocking(r)['any']
 
 
 def test_conditional_text_follows_events(tmp_path):

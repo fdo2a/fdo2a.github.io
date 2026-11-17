@@ -230,7 +230,8 @@
      ],
      "na_when": {
       "file": "<datadir>/movers.json",
-      "list": "groups"
+      "list": "groups",
+      "min_checked": 1
      }
     },
     {
@@ -422,7 +423,12 @@
      ],
      "na_when": {
       "file": "<datadir>/kr_movers.json",
-      "list": "groups"
+      "list": "groups",
+      "min_checked": 1,
+      "legacy_evidence": {
+       "file": "<datadir>/kr_stock_moves.json",
+       "min_items": 1
+      }
      }
     },
     {

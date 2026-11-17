@@ -9,8 +9,9 @@
      "class": "gate",
      "name": "수집 상태 기록",
      "optional": true,
+     "required_when_enforced": true,
      "produced_by": "meta",
-     "why": "수집기(stamp_collect.py)가 쓰는 목록형·JSON 아닌 파일의 수집 상태와 모든 등록 파일의 해시. 없으면 그 파일들이 unstamped"
+     "why": "수집기(stamp_collect.py)가 쓰는 목록형·JSON 아닌 파일의 수집 상태와 모든 등록 파일의 해시(키는 자료 폴더 기준 — 작업 공간 telegram.json 은 telegram/<D>.json). 적용일 전에는 없어도 되고, 적용일부터 필수(없으면 해시 대조가 꺼진다)"
     },
     {
      "path": "<datadir>/market_data.json",
@@ -122,7 +123,9 @@
      "date": "report_date",
      "status_ok": [
       "complete"
-     ]
+     ],
+     "rewritten_by": "build_liquidity --recompute",
+     "why": "수집 뒤 루틴이 ledger_changed 때 다시 쓴다 — 해시 불일치는 정상 경로, collect 칸의 건강 조건은 그대로"
     },
     {
      "path": "<datadir>/calendar.json",
@@ -210,7 +213,8 @@
      "class": "writer",
      "name": "유동성 표",
      "risk": "작성자가 그대로 넣는 생성 표",
-     "covered_by": "check_liquidity(liquidity.json·발행본 원장과 대조)"
+     "covered_by": "check_liquidity(liquidity.json·발행본 원장과 대조)",
+     "rewritten_by": "build_liquidity --recompute"
     },
     {
      "path": "<datadir>/liquidity/qra/*.txt",
@@ -345,8 +349,9 @@
      "class": "gate",
      "name": "수집 상태 기록",
      "optional": true,
+     "required_when_enforced": true,
      "produced_by": "meta",
-     "why": "수집기(stamp_collect.py)가 쓰는 목록형·JSON 아닌 파일의 수집 상태와 모든 등록 파일의 해시. 없으면 그 파일들이 unstamped"
+     "why": "수집기(stamp_collect.py)가 쓰는 목록형·JSON 아닌 파일의 수집 상태와 모든 등록 파일의 해시(키는 자료 폴더 기준 — 작업 공간 telegram.json 은 telegram/<D>.json). 적용일 전에는 없어도 되고, 적용일부터 필수(없으면 해시 대조가 꺼진다)"
     },
     {
      "path": "<datadir>/kr_market_data.json",
@@ -474,7 +479,8 @@
      "class": "writer",
      "name": "KR 개별주 등락",
      "risk": "묶음 밖 종목 등락률의 출처 — 문장 숫자는 대조되지 않는다",
-     "covered_by": null
+     "covered_by": null,
+     "note": "적용일 전 check_movers 의 「해당 없음」 독립 근거(잰 종목이 1개 이상) — 없거나 비면 na 대신 미완료"
     },
     {
      "path": "<datadir>/kr_technical.json",
