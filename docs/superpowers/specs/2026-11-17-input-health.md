@@ -132,7 +132,7 @@ codex 가 1회차 11건 중 7건 닫힘·4건 일부로 보고, 새 구멍 다�
 | F3 높음 | 그날 정상 `kr_session.json` 이 있을 때 둘째 실행의 세션 수집이 예외로 죽으면 stamper 가 옛 파일의 성공·해시를 다시 적는다 | `stamp_collect.py --begin`(잡 시작) + 끝의 stamp 가 파일마다 `run`. 단계는 돌았는데 `collect.collected_at`(칸 없는 참고 파일은 mtime)이 시작 전이면 `status: failed`·`run: failed`·`stale_copy`. 단계 결과는 `COLLECT_STEPS`(`toJSON(steps)`). 적용일부터 막고(`failed`), 그 전에는 조건 `recollect_failed`. 장부를 못 쓰면 실행을 실패로 끝낸다 |
 | F4 중간 | 그날 날짜만 든 같은 객체 54개가 옛 종목 근거로 통한다 | `legacy_evidence.id_field`·`value_field`(KR: `name`·`change_pct`) — 식별자가 있고 등락이 유한한 **고유 종목**이 `min_items` 이상일 때만 |
 | F5 중간 | `2026-11-16-2026-11-17.html` — `legacy_recheck` 는 첫 날짜, 정정기는 끝 날짜, 윤문기는 정규 경로만 | `inputs.post_date`(basename 전체가 `YYYY-MM-DD.html` 이고 실제 날짜)·`legacy_post` 한 곳. 검사기 넷(`check_fund`·`check_numbers`·`check_macro`·`check_sources`)과 정정기·윤문기가 그것을 부른다. 두 모듈의 사본은 가져오기가 안 될 때만 쓰이고 일치 시험으로 묶었다 |
-| F6 (D) | CPI 결측 — 기한부 예외의 **기구** | `accepted_missing`(아래). **실제 정책에는 등록하지 않았다** |
+| F6 (D) | CPI 결측 — 기한부 예외 | `accepted_missing`(아래). 2026-11-17 사용자 승인으로 **예외 하나**를 등록했다(「F6 승인」 절) |
 | B-6 | 적용 전에는 날짜 없는 낡은 자료가 조건부 발행 가능 | 그대로다 — `EFFECTIVE` 가 None 인 동안의 한계(잔여 위험) |
 
 **F3 의 판정 규칙.** `run` = `written`(이번 실행이 썼다) / `skipped`(그 단계가 건너뛰었다 — US 둘째 슬롯은 `collect` 의
@@ -149,22 +149,69 @@ JSON 의 상태를 따른다.
 sanitize 단계가 「끝나지 않은 실행」을 다시 적는다. KR enforce 모드의 동결은 stamp **뒤**에 임시 worktree 에서 일어나고
 날짜 없는 최상위 경로(`_collect_status.json` 포함)를 원격 판으로 둔다 — 장부와 파일이 같은 판에 머문다.
 
-**F6 의 판정 규칙.** 파일 항목의 `accepted_missing: [{key, ref_period, reason, approved_by, approved_on, expires}]`,
-`approved_by` 는 `"user"` 만(수집 중단과 같은 규칙·같은 잔여 위험). 풀어 주는 것은 「일부만 받았다」에서 나온 세 사유
-(`collect.status=partial`·`required_ok` false·`missing`)뿐이고, 조건은 넷 모두다: ① `collect.missing` 의 **모든** 키가 등록돼
-있다 ② 글 날짜가 `expires` 이하다(벽시계가 아니라 글 날짜 — 옛 기록을 다시 검증해도 뒤집히지 않는다. `approved_on` 은
-기록용이고 대조하지 않는다 — 보류된 글을 다음 날 승인해도 그 글이 풀려야 한다)
-③ 자료가 말하는 기준월 `collect.missing_ref[키]` 가 등록의 `ref_period` 와 같다(자료가 기준월을 말하지 않으면 적용 안 됨)
-④ 수집 실패(`failed`)가 아니다. 낡음·해시·표시 없음·`empty: unknown` 은 예외와 무관하게 막는다. 원본 `collect` 는 고치지
-않는다. 수집기: `econ_collect` 가 no_value 지표의 기준월(원천의 최신 관측월, 예 `2026-10-01`)을 `missing_ref` 로 싣고,
-`macro_metrics_collect` 는 econ 의 결측을 `econ:<키>`·기준월로 그대로 옮긴다(전에는 `econ_indicators` 하나) — 두 파일 모두
-같은 키·기준월로 등록해야 풀린다. 등록할 때 쓸 키: `econ_indicators.json` 에 `no_value:CPI YoY`·`no_value:Core CPI YoY`,
-`macro_metrics.json` 에 `econ:no_value:CPI YoY`·`econ:no_value:Core CPI YoY`, `ref_period` `2026-10-01`. 기록 조건
-`accepted_missing`(승인자·만료일), 알림 「승인된 결측 N건(만료 D)」. **등록은 사용자 결정이다** — 시험이 실제 정책의 등록 0건과,
-그 상태에서 CPI 전년 대비 둘이 빠진 US 가 막힌다는 것을 고정한다(`test_cpi_gap_blocks_us_with_the_real_policy_…`).
-축 점수(확인만, 고치지 않았다): `us/macro_metrics.compute` 는 `econ_indicators` 의 행만 돈다 — no_value 지표는 행 자체가 없어
-`_axis_mean`·`breadth_counts` 가 남은 행으로 평균·개수를 낸다(합성 자료로 돌려 확인: 인플레이션 5행 → 3행, 「빠졌다」는 표시 없음).
-예외를 등록하면 그 축이 CPI 전년 대비 없이 계산된다는 것을 글에 드러낼지는 사용자 결정으로 남긴다.
+**F6 의 판정 규칙.** 파일 항목의 `accepted_missing: [{id, key, fred_id, transform, ref_period(YYYY-MM), reason, source,
+approved_by, approved_on, expires, impact{affects_checks, sections, scores}}]`, `approved_by` 는 `"user"` 만. 풀어 주는 것은
+「일부만 받았다」에서 나온 세 사유(`collect.status=partial`·`required_ok` false·`missing`)뿐이고, 조건은 넷 모두다:
+① `collect.missing` 의 **모든** 키가 등록돼 있다 ② 글 날짜가 `expires` 이하다(벽시계가 아니라 글 날짜 — 옛 기록을 다시
+검증해도 뒤집히지 않는다. `approved_on` 은 기록용이고 대조하지 않는다 — 보류된 글을 다음 날 승인해도 그 글이 풀려야 한다)
+③ 자료가 말하는 **식별자와 기준월** `collect.missing_ref[키] = {fred_id, transform, ref_period}` 이 등록과 셋 다 같다(이름만
+같거나 자료가 말하지 않으면 적용 안 됨) ④ 수집 실패(`failed`)가 아니다. 낡음·해시·표시 없음·`empty: unknown` 은 예외와
+무관하게 막는다. 원본 `collect` 는 고치지 않는다. 수집기: `collect_econ` 이 no_value 지표의 FRED id·변환·기준월을 남기고
+`econ_collect` 가 `missing_ref` 로 싣는다. `macro_metrics_collect` 는 econ 의 결측을 `econ:<키>`·같은 식별자로 그대로
+옮긴다(전에는 `econ_indicators` 하나) — 두 파일 모두 등록해야 풀린다.
+
+### F6 승인 — 2026-11-17 사용자 결정
+
+**성격.** 「수집 실패 허용」이 아니라 **「공식 기관이 발표하지 않은 지표를 검증 대상에서 조건부로 뺀다」**. 기록·알림 문구도
+「승인된 결측 — 원천 미발표」.
+
+**원출처(본체가 확인).** ① BLS 2026-10 CPI 발표문 https://www.bls.gov/news.release/cpi.nr0.htm (USDL-26-1685) — 예산 공백으로
+2025-10 조사 자료를 수집하지 못했고, 2025-10 지수가 없는 계열은 2026-10 의 12개월 변화율을 발표하지 못한다. All items·
+All items less food and energy 의 12개월 칸은 「-」. ② BLS 일정 https://www.bls.gov/schedule/news_release/cpi.htm — 2026-11
+기준월 CPI 는 2026-12-10 08:30 ET. FRED CPIAUCSL 의 2025-10 은 빈칸, 2025-11 은 325.063.
+
+**등록(정확히 하나, 시험이 고정).** id `us-2026-10-cpi-yoy-not-published` · 지표 CPI YoY(`CPIAUCSL`·`yoy_pct`)·Core CPI YoY
+(`CPILFESL`·`yoy_pct`) · 기준월 `2026-10` · 승인 user 2026-11-17 · **만료 2026-12-09**(12/10 발표 뒤 첫 글부터 예외 없음,
+자동 연장 없음, 2025-10 원자료가 복구된다고 가정하지 않는다). `econ_indicators.json` 에 `no_value:<이름>` 둘,
+`macro_metrics.json` 에 `econ:no_value:<이름>` 둘. 영향 범위: 검사 `check_macro`·`check_fed`·`check_numbers`(그 두 파일을 읽는
+검사), 섹션 매크로 진단의 물가 축·경제 지표 표의 두 행, 점수 물가 축 점수·`inflation_score`(레짐의 물가 다리).
+
+**조건과 구현.**
+- 대상 고정 — 식별자(FRED id + 변환)와 기준월이 모두 같을 때만. 이름이 비슷한 지표(CPI MoM 등), 같은 이름의 다른 계열,
+  다른 기준월은 불일치다. 나머지 지표는 기존 기준 그대로이고 다른 결측이 하나라도 섞이면 예외 없이 보류.
+- 대체값 금지 — `_econ_pair` 는 비교 달이 없으면 None 을 돌려 행 자체를 만들지 않는다(추정치·전월값·13개월 변화로 채우지
+  않는다). 시험으로 고정했다.
+- 공개 기록 — 검증 기록의 조건 `accepted_missing` 에 `ids`·`indicators`(키·FRED id·변환·기준월)·`reason`·`source`·`impact`·
+  `approved_on`·`expires`, 알림 한 줄에 예외 ID·제외 지표·승인일·만료일·영향 범위·원인.
+- **점수 표시(조건 7).** `us.macro_metrics.with_coverage` 가 `macro_metrics.json` 에 `coverage[축] = {total, used, excluded,
+  phrase_ko, sensitivity}` 와 `axis_summary[축].coverage_ko` 를 싣는다(물가 축: 8개 중 6개). 글은 그 축 배지 옆에
+  `<span data-axis-coverage="Inflation">8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로
+  제외</span>` 를 싣고(작성자 지시 `.claude/agents/brief-report-writer.md` §8 (a)), `us/macro_gate._check_coverage` 가 표식·
+  개수·지표 이름·「원천 미발표」·숨김 여부를 대조한다(없으면 위반 exit 1, 빠진 지표가 없는 날의 표식도 위반).
+- **판단 민감도(조건 8).** `check_macro.coverage_hold` — 빠진 지표가 모두 점수 범위의 아래 끝·위 끝일 때로 그 축 평균을
+  다시 내어(`us.macro_metrics.sensitivity`) 방향·강도·레짐 다리(`us.macro.classify`)가 지금과 같은지 본다. 다르면 exit 2,
+  사유 「승인된 결측이 판단을 바꿀 수 있음 — 사람 승인 필요」. 자료의 `sensitivity` 칸을 믿지 않고 행으로 다시 계산한다.
+  수집 상태가 말하는 빠진 지표와 `coverage` 가 어긋나거나 `coverage` 가 없으면 그것도 보류. **점수에는 코드상 한계가 없다**
+  (자기 모멘텀의 표준편차 단위) — 그래서 「양 끝」을 `SENSITIVITY_Z = 3.0` 으로 두었다(2026-10-15~11-16 발행 자료 22일의 모든
+  지표에서 |점수| 최대 2.54). **사람 승인 절차는 아직 없다 — 보류로 끝난다.**
+
+**민감도 실측(origin/main 의 발행 자료, 2026-10-15~11-16 22일).** CPI 전년 대비 두 행이 없는 날은 5일(11/10·11·12·13·16)이고
+**5일 모두 보류**다. 11/10~12: 지금 재가속(레짐 다리 +1), 아래 끝이면 둔화(−1), 위 끝이면 재가속 뚜렷. 11/13·16: 지금
+재가속, 아래 끝이면 둔화·다리 0. 폭을 ±2·±1·±0.5 로 좁혀도 5일 모두 판단이 달라진다(강도까지 볼 때). 강도를 빼고 방향·레짐
+다리만 보면 ±0.5 에서만 11/13·16 이 유지된다(2/5). 다른 기준 후보 — 「마지막으로 발표된 그 지표의 점수(2026-09: −0.428·
+−0.451)에서 관측된 최대 월간 변화폭(1.064·0.532)만큼」 — 으로도 5일 모두 달라진다(아래쪽에서 교착·다리 0). 두 지표가
+들어 있던 11/09 의 물가 축은 교착(0.003)이었고 빠진 11/10 부터 재가속(0.451)이다. **즉 지금 기준으로는 예외를 등록해도
+US 는 매일 보류된다** — 자료 층의 보류(등록 전)가 판단 층의 보류로 바뀔 뿐이다. 어느 기준을 쓸지, 사람 승인 절차를 둘지는
+사용자 결정이다.
+
+**12/10 뒤(확인한 사실).** `_econ_pair` 는 「직전」도 바로 앞 달이어야 행을 만든다 — 2026-11 CPI 전년 대비는 2025-11 이 있어
+계산되지만 **직전(2026-10 전년 대비)이 없어 행이 만들어지지 않는다**(시험 `test_f6_no_substitute_value_is_ever_made` 가 그
+동작을 고정). 그러면 12/10 부터 두 지표는 기준월 2026-11 의 no_value 로 남고, 예외는 기준월도 만료일도 맞지 않아 US 가
+막힌다(2026-12 기준월이 나오는 2027-01 까지). 고치지 않았다 — 「직전 없이 행을 만들지」는 표에 실리는 값의 계약이라 사용자
+결정이다.
+
+**권한.** 승인된 예외 목록(`accepted_missing`)은 권한 분리(②) 대상이다 — **지금은 작성 루틴이 이 파일을 고쳐 예외를 더하거나
+만료일을 늘릴 수 있다(미해결 위험)**. `approved_by: "user"` 는 문자열일 뿐 사람의 승인을 증명하지 못한다.
 
 **실측**(origin/main `6b0f62e4` 까지의 이력).
 - F1: 대상 목록 칸이 없거나 목록이 아닌 판 0 — auctions 30판·fed/events 53·releases/index 61·calendar 140·movers 46·
