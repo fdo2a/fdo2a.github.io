@@ -142,7 +142,7 @@ def test_main_same_session_rerun_is_identical(tmp_path, monkeypatch):
     repo, data = setup_dirs(tmp_path)
     a = run(monkeypatch, repo, data, '--date', '2026-11-05')
     b = run(monkeypatch, repo, data, '--date', '2026-11-05')
-    strip = lambda x: {k: v for k, v in x.items() if k not in ('run_id', 'generated', 'checked')}  # noqa: E731
+    strip = lambda x: {k: v for k, v in x.items() if k not in ('run_id', 'generated', 'checked', 'collect')}  # noqa: E731
     assert strip(a) == strip(b)                    # 같은 세션 재수집이 발표를 지우지 않는다(1차 #1)
 
 
@@ -352,3 +352,69 @@ def test_impl_sched2_release_dates_unreadable_falls_back_to_window():
 def test_impl_sched2_partial_qra_schedule_checks():
     rounds = {'2026Q4': {'times': {}, 'docs': {}}}
     assert B.qra_due(rounds, {'qra_next': {'borrowing': None, 'refunding': '2027-02-03'}}, et(2026, 12, 1)) is True
+
+
+# ── collect 칸(2026-11-17) ───────────────────────────────────────────────
+
+def test_collect_release_day_is_has_data(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path)
+    c = run(monkeypatch, repo, data, '--date', '2026-11-05')['collect']
+    assert c['status'] == 'ok' and c['empty'] == 'has_data' and c['as_of'] == '2026-11-05'
+
+
+def test_collect_quiet_day_by_schedule_is_confirmed_none(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path, posts={'2026-11-06.html': '<table data-h41-release="2026-11-05"></table>'
+                                             '<p data-qra-doc="2026Q4:borrowing"></p>'
+                                             '<p data-qra-doc="2026Q4:refunding"></p>'})
+    run(monkeypatch, repo, data, '--date', '2026-11-05')
+    (data / 'market_data.json').write_text(json.dumps({'report_date': '2026-11-09'}))
+    book = run(monkeypatch, repo, data, '--date', '2026-11-09')
+    assert book['today'] is False
+    c = book['collect']
+    assert c['status'] == 'ok' and c['empty'] == 'confirmed_none' and c['missing'] == []
+
+
+def test_collect_pending_h41_is_partial_has_data(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path)
+    run(monkeypatch, repo, data, '--date', '2026-11-05')
+    (data / 'market_data.json').write_text(json.dumps({'report_date': '2026-11-12'}))
+    c = run(monkeypatch, repo, data, '--date', '2026-11-12')['collect']
+    assert c['status'] == 'partial' and c['required_ok'] is False
+    assert c['missing'] == ['h41:2026-11-12'] and c['empty'] == 'has_data'
+
+
+def test_collect_landing_failure_is_missing(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path)
+    run(monkeypatch, repo, data, '--date', '2026-11-05')
+    st_path = data / 'liquidity' / 'state.json'
+    st = json.loads(st_path.read_text())
+    st['schedule']['qra_next'] = {'borrowing': '2026-11-02', 'refunding': '2026-11-04'}
+    st_path.write_text(json.dumps(st))
+    c = run(monkeypatch, repo, data, '--date', '2026-11-05', get=fake_get(missing={L.QRA_LANDING}))['collect']
+    assert c['status'] == 'partial' and 'qra:landing' in c['missing']
+
+
+def test_collect_running_and_aborted_are_failed(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path)
+    monkeypatch.setattr(B, 'fetch_h41', lambda *a, **k: (_ for _ in ()).throw(RuntimeError('crash')))
+    with pytest.raises(RuntimeError):
+        run(monkeypatch, repo, data, '--date', '2026-11-05')
+    p = data / 'liquidity' / 'liquidity.json'
+    assert json.loads(p.read_text())['collect']['status'] == 'failed'
+    monkeypatch.setenv('LIQ_RUN_ID', 'other')
+    run(monkeypatch, repo, data, '--sanitize')
+    b = json.loads(p.read_text())
+    assert b['status'] == 'aborted' and b['collect']['status'] == 'failed'
+
+
+def test_collect_disabled_is_not_confirmed_none(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path, effective=None)
+    c = run(monkeypatch, repo, data, '--date', '2026-11-05')['collect']
+    assert c['empty'] == 'unknown' and c['required_ok'] is False
+
+
+def test_collect_survives_recompute(tmp_path, monkeypatch):
+    repo, data = setup_dirs(tmp_path)
+    a = run(monkeypatch, repo, data, '--date', '2026-11-05')['collect']
+    b = run(monkeypatch, repo, data, '--date', '2026-11-05', '--recompute', get=fake_get(missing=set(PAGES)))['collect']
+    assert b['status'] == a['status'] and b['collected_at'] == a['collected_at']
