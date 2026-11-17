@@ -10,14 +10,17 @@ import collect_market_data as cmd  # noqa: E402
 RD = '2026-11-16'
 
 
+FULL = {'report_date': RD, 'complete': True, 'missing': [], 'indices': {'S&P 500': {}},
+        'yield_drivers': {'rows': {'real_10y': {}}, 'decomposition': {}}, 'price_context': {}, 'session': {}}
+
+
 def test_market_complete_is_ok():
-    c = cmd.market_collect({'report_date': RD, 'complete': True, 'missing': [], 'indices': {'S&P 500': {}}})
+    c = cmd.market_collect(FULL)
     assert c['status'] == 'ok' and c['required_ok'] and c['as_of'] == RD and c['empty'] == 'has_data'
 
 
 def test_market_incomplete_is_partial_with_the_missing_rows():
-    c = cmd.market_collect({'report_date': RD, 'complete': False, 'missing': ['yields/2Y'],
-                            'indices': {'S&P 500': {}}})
+    c = cmd.market_collect(dict(FULL, complete=False, missing=['yields/2Y']))
     assert c['status'] == 'partial' and c['required_ok'] is False and c['missing'] == ['yields/2Y']
 
 
@@ -71,3 +74,22 @@ def test_every_us_collector_file_is_stamped_in_main():
                    "'collect': econ_status", "'collect': macro_metrics_collect("):
         assert marker in src
     assert src.index("data['collect'] = market_collect(data)") < src.index('json.dump(data, open(md_path')
+
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize('broken,token', [
+    ({'yield_drivers': {'rows': {}, 'decomposition': {}}}, 'block:yield_drivers'),   # 금리 동인 블록 실패의 기본값
+    ({'price_context': None}, 'block:price_context'),                               # 가격 맥락 블록 실패 = 키 없음
+    ({'session': None}, 'block:session'),
+])
+def test_failed_derived_block_is_partial_even_when_complete(broken, token):
+    data = dict(FULL)
+    for k, v in broken.items():
+        if v is None:
+            data.pop(k)
+        else:
+            data[k] = v
+    c = cmd.market_collect(data)
+    assert c['status'] == 'partial' and c['required_ok'] is False and token in c['missing']

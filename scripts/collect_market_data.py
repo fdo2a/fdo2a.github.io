@@ -1090,14 +1090,27 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
 MARKET_SOURCE = 'yfinance + Naver 국채 + FRED'
 
 
+# 같은 파일에 실리는 파생 블록. 셋 다 예외를 삼키고 기본값·빈 키로 넘어가므로 `complete` 에 잡히지 않는다
+# (2026-09-22 사고 — 배선이 끊겨 price_context·session 이 빠진 날도 complete 였다). 검사기가 읽는 키다.
+DERIVED_BLOCKS = ('yield_drivers', 'price_context', 'session')
+
+
 def market_collect(data):
-    """market_data.json — 필수 = 기존 `complete`(전 행·커브·장중 두 지수·섹터). 빠진 행은 `missing` 그대로."""
+    """market_data.json — 필수 = 기존 `complete`(전 행·커브·장중 두 지수·섹터) **와** 파생 블록 셋.
+    빠진 행은 `missing` 그대로, 실패한 파생 블록은 `block:<이름>`."""
     from common import collect_status as C
     missing = list(data.get('missing') or [])
     if not data.get('indices'):
         return C.failed(data.get('report_date'), MARKET_SOURCE, '지수 행이 없다', missing=missing)
-    return C.build('ok' if data.get('complete') else 'partial', data.get('report_date'), MARKET_SOURCE,
-                   missing=missing, required_ok=bool(data.get('complete')), empty='has_data')
+    blocks = []
+    if not ((data.get('yield_drivers') or {}).get('rows')):
+        blocks.append('block:yield_drivers')
+    for key in ('price_context', 'session'):
+        if not isinstance(data.get(key), dict):
+            blocks.append(f'block:{key}')
+    ok = bool(data.get('complete')) and not blocks
+    return C.build('ok' if ok else 'partial', data.get('report_date'), MARKET_SOURCE,
+                   missing=missing + blocks, required_ok=ok, empty='has_data')
 
 
 def intraday_collect(intraday, report_date):
