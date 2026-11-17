@@ -217,3 +217,38 @@ def test_who_changes_wording_only(tmp_path):
     assert 'who' not in inspect.signature(V.fingerprint).parameters   # 같은 사건인지는 주체와 무관
     with pytest.raises(KeyError):
         V.render_publish(v, who='cloud')
+
+
+def test_v2_record_shows_incomplete_inputs_with_what_and_why(tmp_path):
+    # 2판(2026-11-17): 미완료 사유는 「무엇이·왜」 — 파일의 사람이 읽는 이름 + state 의 한국어
+    repo = F.init(tmp_path)
+    inputs = {'blocking': ['국채 입찰(auctions.json) — 수집 실패'], 'blocking_files': ['<datadir>/auctions.json'],
+              'unclassified': ['<datadir>/surprise.json'], 'warnings': ['<datadir>/market_data.json']}
+    F.publish(repo, workspace=False,
+              summ=F.summary(status='incomplete', publish_ok=False, verified=False, blocking=['g1', 'inputs'],
+                             inputs=inputs, na=['check_numbers'], incomplete=['g1']),
+              gate_status={'g1': 'incomplete', 'check_numbers': 'na'})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    text = V.render_publish(v, who=V.GITHUB)
+    assert '판정 미완료' in text and '발행 불가' in text
+    assert ' · 자료 미완료: 국채 입찰(auctions.json) — 수집 실패' in text
+    assert '분류되지 않은 파일 surprise.json' in text and '수집 상태 표시 없는 자료 1개' in text
+    assert ' · 미완료: g1' in text and ' · 해당 없음: check_numbers' in text and '판정 불가' not in text
+    labels = V.anomaly_labels(v)
+    assert '필수 검사 미완료(g1)' in labels and '자료 미완료(1개 · 분류 안 된 파일 1개)' in labels
+    digest = '\n'.join(V.digest_lines(v))
+    assert '판정 미완료' in digest and '자료 미완료 2개' in digest and '해당 없음 check_numbers' in digest
+
+
+def test_v2_verdict_labels_and_fully_verified(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False, summ=F.summary(status='verified'),
+              numbers={'table_cells': 4, 'prose_judged': 1, 'unverified': 0})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert '판정 검증됨' in V.render_publish(v) and V.fully_verified(v)
+    (tmp_path / 'b').mkdir()
+    repo2 = F.init(tmp_path / 'b')
+    F.publish(repo2, workspace=False, summ=F.summary(status='conditional', verified=False, warned=['g1']),
+              gate_status={'g1': 'warn'})
+    v = V.view(str(repo2), 'HEAD', 'us', '2026-11-09')
+    assert '판정 조건부' in V.render_publish(v) and not V.fully_verified(v)

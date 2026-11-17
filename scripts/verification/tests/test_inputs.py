@@ -254,3 +254,17 @@ def test_state_ko_covers_every_state():
     assert set(I.STATE_KO) == set(I.STATES)
     assert I.describe({'name': '시장 데이터', 'file': '<datadir>/market_data.json', 'state': 'stale'}) \
         == '시장 데이터(market_data.json) — 날짜가 발행일과 다름'
+
+
+def test_date_ref_ties_a_book_to_another_file(tmp_path):
+    book = {'path': '<datadir>/macro.json', 'class': 'gate', 'name': '매크로 책', 'date': 'report_date',
+            'date_rule': 'ref', 'date_ref': {'file': '<datadir>/macro_eval.json', 'field': 'macro_date'},
+            'produced_by': 'ledger'}
+    pol = policy([book])
+    rel = '<datadir>/macro.json'
+    put(tmp_path, 'macro.json', {'report_date': '2026-11-13'})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'incomplete_fields'      # 기준 파일이 없다
+    put(tmp_path, 'macro_eval.json', {'macro_date': '2026-11-13'})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'                       # 수집 표시 불필요(ledger)
+    put(tmp_path, 'macro.json', {'report_date': '2026-11-12'})
+    assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'stale'

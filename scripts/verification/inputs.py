@@ -180,6 +180,14 @@ def _conditional(e, present):
     return out
 
 
+def _ref(e, present):
+    r = e.get('date_ref')
+    if not isinstance(r, dict) or not present.get(r.get('file')):
+        return None
+    obj, err = _read_json(present[r['file']])
+    return obj.get(r.get('field')) if not err and isinstance(obj, dict) else None
+
+
 def _empty(v):
     return v is None or v == '' or v == [] or v == {}
 
@@ -190,7 +198,7 @@ def _stamp_ok_shape(c):
             and c.get('empty') in EMPTY)
 
 
-def _health(e, key, full, date, status_files, excuse):
+def _health(e, key, full, date, status_files, excuse, ref=None):
     """gate 파일 하나 → (state, reasons, sha, as_of, obj, stamp)."""
     reasons = []
     try:
@@ -248,9 +256,12 @@ def _health(e, key, full, date, status_files, excuse):
             bad('incomplete_fields', f'날짜 칸 {e["date"]} 이 없다')
         else:
             as_of = v
-            if e.get('date_rule') == 'before':
-                if not v < date:
-                    bad('stale', f'{e["date"]}={v} — 발행일 {date} 보다 앞선 책이어야 한다')
+            if e.get('date_rule') == 'ref':
+                # 다른 gate 자료가 말하는 날짜와 같아야 한다(예: 직전 매크로 책 = macro_eval.macro_date)
+                if not isinstance(ref, str):
+                    bad('incomplete_fields', f'기준 날짜({e["date_ref"]["field"]})를 읽지 못해 날짜를 확인할 수 없다')
+                elif v != ref:
+                    bad('stale', f'{e["date"]}={v} ≠ {e["date_ref"]["field"]}={ref}')
             elif v != date:
                 bad('stale', f'{e["date"]}={v} ≠ 발행일 {date}')
     for k in e.get('require') or []:
@@ -325,7 +336,8 @@ def assess(pol, market, ctx):
                 rec['reason'] = '파일이 없다'
                 rec['blocking'] = not e.get('optional')
             else:
-                state, why, sha, as_of, obj, stamp = _health(e, key, full, date, status_files, excuse)
+                state, why, sha, as_of, obj, stamp = _health(e, key, full, date, status_files, excuse,
+                                                             _ref(e, present))
                 rec.update(state=state, reason='; '.join(why)[:300], sha256=sha, as_of=as_of,
                            stamped=stamp is not None)
                 rec['blocking'] = state != 'ok' and not (state == 'unstamped' and not on)

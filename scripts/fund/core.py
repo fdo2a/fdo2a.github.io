@@ -31,7 +31,13 @@ def _finite(obj):
 
 
 def digest(data):
-    """sha256[:12] of the canonical JSON — the board block carries it."""
+    """sha256[:12] of the canonical JSON — the board block carries it.
+
+    The top-level `collect` object (collection status, 2026-11-17 input-health contract) is left
+    out: it describes the run, not the board, and stamping it after rendering must not make
+    check_fund's byte comparison fail. Data without `collect` hashes exactly as before."""
+    if isinstance(data, dict) and 'collect' in data:
+        data = {k: v for k, v in data.items() if k != 'collect'}
     raw = json.dumps(data, sort_keys=True, ensure_ascii=False, allow_nan=False,
                      separators=(',', ':'))
     return hashlib.sha256(raw.encode('utf-8')).hexdigest()[:12]

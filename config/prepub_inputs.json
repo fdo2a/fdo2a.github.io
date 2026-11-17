@@ -47,9 +47,13 @@
      "class": "gate",
      "name": "매크로 책(직전 회차)",
      "date": "report_date",
-     "date_rule": "before",
+     "date_rule": "ref",
+     "date_ref": {
+      "file": "<datadir>/macro_eval.json",
+      "field": "macro_date"
+     },
      "produced_by": "ledger",
-     "why": "직전 발행 커밋이 macro_next.json 을 승격한 책 — 수집기 산출물이 아니어서 수집 상태 표시를 요구하지 않는다. 날짜는 발행일보다 앞서야 한다"
+     "why": "직전 발행 커밋이 macro_next.json 을 승격한 책 — 수집기 산출물이 아니어서 수집 상태 표시를 요구하지 않는다. 날짜는 macro_eval.json 의 macro_date(판정이 쓴 책의 날짜)와 같아야 한다"
     },
     {
      "path": "<datadir>/macro_eval.json",
