@@ -206,4 +206,6 @@ def test_kr_view_block_is_unchanged_by_collect(tmp_path):
     publish.write(str(tmp_path), 'kr_fund_view.json', 'kr_fund_view.html', view, html)
     written = json.loads((tmp_path / 'kr_fund_view.json').read_text(encoding='utf-8'))
     assert written['collect']['as_of'] == view['report_date']
-    assert kr_view.html(written) == html == (tmp_path / 'kr_fund_view.html').read_text(encoding='utf-8')
+    assert kr_view.html(written) == html
+    if html:                                    # 그릴 수 없는 날(unavailable)은 HTML 이 없다
+        assert (tmp_path / 'kr_fund_view.html').read_text(encoding='utf-8') == html
