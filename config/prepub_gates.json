@@ -1,6 +1,6 @@
 {
  "format": "prepub-gates/1",
- "_doc": "발행 게이트의 현재 실행 목록 — 루틴의 반복 고리(run_gates.py check)와 최종 기록(run_gates.py record)이 이 목록만 돌린다. required=false 는 참고(발행을 막지 않음). effective = 검사기의 적용일 — 그 전 글은 not_run. kind: format 표현·형식 / numbers 수치 대조 / structure 구조·필수 표식(편집자 노트 때문인 실패의 처리가 갈린다). 설계 docs/superpowers/specs/2026-11-08-prepub-record.md",
+ "_doc": "발행 게이트의 현재 실행 목록 — 루틴의 반복 고리(run_gates.py check)와 최종 기록(run_gates.py record)이 이 목록만 돌린다. required=false 는 참고(발행을 막지 않음). effective = 검사기의 적용일 — 그 전 글은 na(해당 없음). kind: format 표현·형식 / numbers 수치 대조 / structure 구조·필수 표식(편집자 노트 때문인 실패의 처리가 갈린다). inputs = 그 검사기가 판정에 쓰는 자료(config/prepub_inputs.json 의 경로) — 하나라도 정상이 아니면 검사기를 돌리지 않고 미완료(2026-11-17). na_when = 실행기가 직접 확인하는 「대상 없음」 조건. 설계 docs/superpowers/specs/2026-11-08-prepub-record.md · 2026-11-17-input-health.md",
  "markets": {
   "us": {
    "post": "posts/{date}.html",
@@ -9,7 +9,8 @@
      "name": "unconfirmed",
      "builtin": "unconfirmed",
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_macro",
@@ -22,9 +23,14 @@
      ],
      "kind": "structure",
      "required": true,
-     "partial_patterns": [
-      "econ_indicators\\.json 이 없거나 읽을 수 없다",
-      "둘 다 없다 — 부트스트랩"
+     "inputs": [
+      "<datadir>/macro.json",
+      "<datadir>/macro_eval.json",
+      "<datadir>/macro_next.json",
+      "<datadir>/market_data.json",
+      "<datadir>/econ_indicators.json",
+      "<datadir>/macro_metrics.json",
+      "<datadir>/releases/index.json"
      ]
     },
     {
@@ -41,6 +47,10 @@
      "indeterminate_patterns": [
       "^no .+\\.json — nothing to check",
       "^WARN: could not read"
+     ],
+     "inputs": [
+      "<datadir>/market_data.json",
+      "<datadir>/scorecard.json"
      ]
     },
     {
@@ -53,7 +63,10 @@
       "{datadir}"
      ],
      "kind": "numbers",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/market_data.json"
+     ]
     },
     {
      "name": "check_session",
@@ -70,6 +83,9 @@
      "required": true,
      "indeterminate_patterns": [
       "^no .+\\.json — nothing to check"
+     ],
+     "inputs": [
+      "<datadir>/market_data.json"
      ]
     },
     {
@@ -82,7 +98,14 @@
       "{datadir}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/fed/events.json",
+      "<datadir>/fed/*.txt",
+      "<datadir>/market_data.json",
+      "<datadir>/intraday.json",
+      "<datadir>/econ_indicators.json"
+     ]
     },
     {
      "name": "check_auction",
@@ -94,7 +117,11 @@
       "{datadir}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/auctions.json",
+      "<datadir>/market_data.json"
+     ]
     },
     {
      "name": "check_liquidity",
@@ -108,7 +135,11 @@
       "{repo}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/liquidity/liquidity.json",
+      "<datadir>/market_data.json"
+     ]
     },
     {
      "name": "check_calendar",
@@ -120,7 +151,11 @@
       "{datadir}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/market_data.json",
+      "<datadir>/calendar.json"
+     ]
     },
     {
      "name": "check_sources",
@@ -132,7 +167,12 @@
       "{datadir}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/market_data.json",
+      "<datadir>/releases/index.json",
+      "<datadir>/fed/events.json"
+     ]
     },
     {
      "name": "check_telegram",
@@ -146,7 +186,11 @@
       "{date}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<tg>",
+      "<datadir>/telegram.json"
+     ]
     },
     {
      "name": "check_weight",
@@ -160,7 +204,11 @@
       "us"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/market_data.json",
+      "<datadir>/macro_eval.json"
+     ]
     },
     {
      "name": "check_movers",
@@ -175,7 +223,15 @@
      "required": true,
      "indeterminate_patterns": [
       "^FATAL: 움직인 종목 문단이 있는데"
-     ]
+     ],
+     "inputs": [
+      "<datadir>/movers.json",
+      "<datadir>/market_data.json"
+     ],
+     "na_when": {
+      "file": "<datadir>/movers.json",
+      "list": "groups"
+     }
     },
     {
      "name": "check_fund",
@@ -193,7 +249,10 @@
      "effective": {
       "module": "fund.gate",
       "attr": "EFFECTIVE"
-     }
+     },
+     "inputs": [
+      "<datadir>/fund_board.json"
+     ]
     },
     {
      "name": "check_numbers",
@@ -206,7 +265,14 @@
      ],
      "kind": "numbers",
      "required": true,
-     "json": true
+     "json": true,
+     "inputs": [
+      "<datadir>/market_data.json",
+      "<datadir>/econ_indicators.json",
+      "<datadir>/macro_metrics.json",
+      "<datadir>/fund_board.json",
+      "<datadir>/liquidity/liquidity.json"
+     ]
     },
     {
      "name": "check_research",
@@ -227,7 +293,8 @@
       "{cycle}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_style",
@@ -236,7 +303,8 @@
       "{html}"
      ],
      "kind": "format",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_readability",
@@ -248,7 +316,8 @@
      ],
      "kind": "structure",
      "required": true,
-     "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)"
+     "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)",
+     "inputs": []
     },
     {
      "name": "apply_colors_check",
@@ -258,7 +327,8 @@
       "{html}"
      ],
      "kind": "format",
-     "required": false
+     "required": false,
+     "inputs": []
     }
    ]
   },
@@ -269,7 +339,8 @@
      "name": "unconfirmed",
      "builtin": "unconfirmed",
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_session",
@@ -286,6 +357,9 @@
      "required": true,
      "indeterminate_patterns": [
       "^no .+\\.json — nothing to check"
+     ],
+     "inputs": [
+      "<datadir>/kr_session.json"
      ]
     },
     {
@@ -300,7 +374,10 @@
       "kr"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/kr_market_data.json"
+     ]
     },
     {
      "name": "check_kr_stance",
@@ -314,7 +391,14 @@
       "{stance_next}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<stance_next>",
+      "<datadir>/kr_stance_eval.json",
+      "<datadir>/kr_top_value.json",
+      "<datadir>/kr_index_etf.json",
+      "<datadir>/kr_market_data.json"
+     ]
     },
     {
      "name": "check_movers",
@@ -331,7 +415,15 @@
      "required": true,
      "indeterminate_patterns": [
       "^FATAL: 움직인 종목 문단이 있는데"
-     ]
+     ],
+     "inputs": [
+      "<datadir>/kr_movers.json",
+      "<datadir>/kr_market_data.json"
+     ],
+     "na_when": {
+      "file": "<datadir>/kr_movers.json",
+      "list": "groups"
+     }
     },
     {
      "name": "check_telegram",
@@ -345,7 +437,10 @@
       "{date}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<tg>"
+     ]
     },
     {
      "name": "check_fund",
@@ -363,7 +458,10 @@
      "effective": {
       "module": "fund.gate",
       "attr": "EFFECTIVE"
-     }
+     },
+     "inputs": [
+      "<datadir>/kr_fund_view.json"
+     ]
     },
     {
      "name": "check_numbers",
@@ -380,7 +478,15 @@
      ],
      "kind": "numbers",
      "required": true,
-     "json": true
+     "json": true,
+     "inputs": [
+      "<datadir>/kr_market_data.json",
+      "<datadir>/kr_flows.json",
+      "<datadir>/kr_top_value.json",
+      "<datadir>/kr_intraday.json",
+      "<datadir>/kr_econ.json",
+      "<datadir>/kr_fund_view.json"
+     ]
     },
     {
      "name": "check_research",
@@ -401,7 +507,8 @@
       "{cycle}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_style",
@@ -410,7 +517,8 @@
       "{html}"
      ],
      "kind": "format",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_readability",
@@ -422,7 +530,8 @@
      ],
      "kind": "structure",
      "required": true,
-     "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)"
+     "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)",
+     "inputs": []
     }
    ]
   }
@@ -447,5 +556,6 @@
     "why": "뉴스·산업 브리프(STEP 3.5) 전용 — 시황 브리프 목록 밖"
    }
   ]
- }
+ },
+ "inputs_policy": "config/prepub_inputs.json"
 }

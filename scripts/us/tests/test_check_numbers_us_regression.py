@@ -18,6 +18,14 @@ SCRIPTS = os.path.dirname(os.path.dirname(HERE))
 KEYS = ('market_data', 'econ_indicators', 'macro_metrics', 'fund_board')
 
 
+def _liquidity_stub(ws):
+    """2026-11-17 부터 유동성 책도 필수 입력이다(없으면 2). 11/05 고정 자료에는 없던 책 — 위임이 서지 않는 상태
+    (`status` 가 complete 아님)로 두어 출력은 바뀌기 전과 같다."""
+    os.makedirs(os.path.join(ws, 'liquidity'), exist_ok=True)
+    with open(os.path.join(ws, 'liquidity', 'liquidity.json'), 'w', encoding='utf-8') as fh:
+        json.dump({'report_date': '2026-11-05', 'status': 'fixture_absent'}, fh)
+
+
 def _post():
     with open(os.path.join(FIX, 'post.html'), encoding='utf-8') as fh:
         return fh.read()
@@ -51,6 +59,7 @@ def _run(tmp, name, date, html, drop, extra, market_flag):
             with open(os.path.join(FIX, f'{k}.json'), encoding='utf-8') as src, \
                     open(os.path.join(d, 'ws', f'{k}.json'), 'w', encoding='utf-8') as dst:
                 dst.write(src.read())
+    _liquidity_stub(os.path.join(d, 'ws'))
     args = [sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html', p,
             '--datadir', os.path.join(d, 'ws'), *extra, *market_flag]
     r = subprocess.run(args, capture_output=True, text=True)

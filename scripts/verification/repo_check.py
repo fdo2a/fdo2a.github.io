@@ -94,7 +94,7 @@ def check(repo, market, date, rev):
         res = _result({'record': UNKNOWN}, ['기록을 읽지 못했다'], None)
         res['overall'] = UNKNOWN          # 기록 자체를 못 읽었다 — 「일부 확인」이 아니다
         return res
-    if rec.get('format') != R.FORMAT or rec.get('market') != market or rec.get('date') != date:
+    if rec.get('format') not in R.FORMATS or rec.get('market') != market or rec.get('date') != date:
         return _result({'record': MISMATCH}, ['다른 형식이거나 다른 글의 기록이다'], rec)
 
     cats, cw = {}, {}

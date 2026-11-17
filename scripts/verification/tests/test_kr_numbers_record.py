@@ -77,7 +77,7 @@ def test_body_table_error_blocks(tmp_path, post):
     assert any('시장=코스닥 행=기관' in x for x in r['gates'][0]['items'])
 
 
-def test_before_effective_is_not_run(tmp_path, post):
+def test_before_effective_is_na(tmp_path, post):
     r = _run(tmp_path, post, effective=False)
-    assert r['gates'][0]['status'] == 'not_run'
-    assert r['summary']['publish_ok'] and r['summary']['not_run'] == ['check_numbers']
+    assert r['gates'][0]['status'] == 'na'
+    assert r['summary']['publish_ok'] and r['summary']['na'] == ['check_numbers']

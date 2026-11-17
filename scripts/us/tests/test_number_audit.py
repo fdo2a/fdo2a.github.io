@@ -402,6 +402,8 @@ def cli(tmp_path, html, prose=None, drop=()):
     for k in ('market_data', 'econ_indicators', 'macro_metrics', 'fund_board'):
         if k not in drop:
             (d / f'{k}.json').write_text(json.dumps(load(f'{k}.json')), encoding='utf-8')
+    (d / 'liquidity').mkdir(exist_ok=True)
+    (d / 'liquidity' / 'liquidity.json').write_text('{"report_date": "2026-11-05", "status": "fixture_absent"}')
     args = [sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html', str(p),
             '--datadir', str(d)]
     if prose:
@@ -441,10 +443,29 @@ def test_cli_date_mismatch_is_2(tmp_path, post):
     p.write_text(post, encoding='utf-8')
     d = tmp_path / 'ws'
     d.mkdir()
-    (d / 'market_data.json').write_text(json.dumps(load('market_data.json')), encoding='utf-8')
+    for k in ('market_data', 'econ_indicators', 'macro_metrics', 'fund_board'):
+        (d / f'{k}.json').write_text(json.dumps(load(f'{k}.json')), encoding='utf-8')
+    (d / 'liquidity').mkdir(exist_ok=True)
+    (d / 'liquidity' / 'liquidity.json').write_text('{"report_date": "2026-11-05", "status": "fixture_absent"}')
     r = subprocess.run([sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html', str(p),
                         '--datadir', str(d)], capture_output=True, text=True)
     assert r.returncode == 2 and '다르다' in r.stderr
+
+
+def test_cli_missing_delegated_input_is_2(tmp_path, post):
+    # 2026-11-17: 위임 자료가 없으면 「미검증으로 센다」가 아니라 미완료
+    for k in ('econ_indicators', 'macro_metrics', 'fund_board'):
+        (tmp_path / k).mkdir()
+        r = cli(tmp_path / k, post, drop=(k,))
+        assert r.returncode == 2 and f'{k}.json' in r.stderr
+    d = tmp_path / 'liq'
+    d.mkdir()
+    r = cli(d, post)
+    os.unlink(d / 'ws' / 'liquidity' / 'liquidity.json')
+    r = subprocess.run([sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html',
+                        str(d / 'morning_brief_2026-11-05.html'), '--datadir', str(d / 'ws')],
+                       capture_output=True, text=True)
+    assert r.returncode == 2 and 'liquidity.json' in r.stderr
 
 
 def test_cli_json_separates_warnings_and_violations(tmp_path, post):
@@ -456,6 +477,8 @@ def test_cli_json_separates_warnings_and_violations(tmp_path, post):
     d.mkdir()
     for k in ('market_data', 'econ_indicators', 'macro_metrics', 'fund_board'):
         (d / f'{k}.json').write_text(json.dumps(load(f'{k}.json')), encoding='utf-8')
+    (d / 'liquidity').mkdir(exist_ok=True)
+    (d / 'liquidity' / 'liquidity.json').write_text('{"report_date": "2026-11-05", "status": "fixture_absent"}')
     r = subprocess.run([sys.executable, os.path.join(SCRIPTS, 'check_numbers.py'), '--html', str(p),
                         '--datadir', str(d), '--prose', 'warn', '--json'], capture_output=True, text=True)
     out = json.loads(r.stdout)

@@ -1,5 +1,6 @@
-"""check_macro.py: a missing releases index means "no release text" now, the old
-strict reading only when re-checking a past post (--legacy-releases)."""
+"""check_macro.py: when publishing now a missing / old-schema releases index (or any missing book)
+is incomplete (exit 2, 2026-11-17); the old strict reading only when re-checking a past post
+(--legacy-releases)."""
 import json
 import os
 import subprocess
@@ -27,9 +28,9 @@ def run(tmp_path, *extra):
                           capture_output=True, text=True, cwd=os.path.join(os.path.dirname(__file__), '..', '..'))
 
 
-def test_missing_index_now_means_no_release_text(tmp_path):
+def test_missing_index_now_is_incomplete(tmp_path):
     r = run(tmp_path)
-    assert '구성 항목' not in r.stdout, r.stdout
+    assert r.returncode == 2 and '구성 항목' not in r.stdout, r.stdout
 
 
 def test_missing_index_in_legacy_mode_keeps_the_strict_rule(tmp_path):
@@ -37,7 +38,7 @@ def test_missing_index_in_legacy_mode_keeps_the_strict_rule(tmp_path):
     assert r.returncode == 1 and '구성 항목' in r.stdout
 
 
-def test_an_old_schema_index_now_means_no_release_text(tmp_path):
+def test_an_old_schema_index_now_is_incomplete(tmp_path):
     d = tmp_path / 'x'
     d.mkdir()
     r0 = run(d)          # builds data/ under d
@@ -46,7 +47,7 @@ def test_an_old_schema_index_now_means_no_release_text(tmp_path):
     post = d / 'p.html'
     r = subprocess.run([sys.executable, SCRIPT, '--html', str(post), '--datadir', str(d / 'data')],
                        capture_output=True, text=True, cwd=os.path.join(os.path.dirname(__file__), '..', '..'))
-    assert '구성 항목' not in r.stdout, r.stdout
+    assert r.returncode == 2 and '구성 항목' not in r.stdout, r.stdout
     r = subprocess.run([sys.executable, SCRIPT, '--html', str(post), '--datadir', str(d / 'data'), '--legacy-releases'],
                        capture_output=True, text=True, cwd=os.path.join(os.path.dirname(__file__), '..', '..'))
     assert '구성 항목' in r.stdout

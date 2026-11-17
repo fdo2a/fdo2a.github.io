@@ -6,7 +6,10 @@ Run from the repo clone, against the writer's output in the routine workspace:
   python scripts/check_macro.py --html morning_brief_2026-08-19.html --datadir .
 
 Exit 0 = publishable. Exit 1 = violations printed, one per line; hand them back to
-the writer subagent verbatim and re-run.
+the writer subagent verbatim and re-run. Exit 2 = incomplete input (2026-11-17): a book,
+market_data, econ_indicators, macro_metrics or (when publishing now) the releases index is
+missing, unreadable or from another session — re-collect, do not rewrite the post. The old
+"bootstrap" pass with both books absent and the skipped axis-table check are gone.
 """
 
 import argparse
@@ -19,15 +22,24 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from us.macro_gate import check  # noqa: E402
 
 
+class Corrupt(Exception):
+    pass
+
+
 def load(path):
+    """Absent -> None. Unreadable -> Corrupt (a broken file is not an absent one)."""
     try:
         with open(path, encoding='utf-8') as fh:
             return json.load(fh)
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
-        return None
+        raise Corrupt(f'could not read {path}: {e}')
+
+
+def incomplete(why):
+    print(f'FATAL: {why} — 미완료, 수집을 다시 돌린다(글을 고쳐서 풀리지 않는다)', file=sys.stderr)
+    sys.exit(2)
 
 
 def main():
@@ -51,36 +63,51 @@ def main():
         sys.exit(2)
 
     d = args.datadir
-    prev = load(os.path.join(d, 'macro.json'))
-    ev = load(os.path.join(d, 'macro_eval.json'))
-    nxt = load(args.next_path or os.path.join(d, 'macro_next.json'))
+    try:
+        prev = load(os.path.join(d, 'macro.json'))
+        ev = load(os.path.join(d, 'macro_eval.json'))
+        nxt = load(args.next_path or os.path.join(d, 'macro_next.json'))
+        market = load(os.path.join(d, 'market_data.json'))
+        econ_book = load(os.path.join(d, 'econ_indicators.json'))
+        metrics = load(os.path.join(d, 'macro_metrics.json'))
+        releases = load(os.path.join(d, 'releases', 'index.json'))
+    except Corrupt as e:
+        incomplete(str(e))
 
-    if prev is None and ev is None:
-        print('macro.json / macro_eval.json 둘 다 없다 — 부트스트랩 실행으로 간주하고 '
-              '§8 어휘·표 완성도만 검사한다', file=sys.stderr)
+    # 2026-11-17: 지금 발행하는 글은 책이 없으면 부트스트랩으로 넘기지 않는다 — 자료가 없어 판단할 수 없으면 미완료.
+    # --legacy-releases(지난 글을 그 커밋 자료로 재검사)만 옛 판정을 유지한다 — 그때의 자료 폴더에는 없던 파일이 있다.
+    if args.legacy_releases:
+        market = market or {}
+        econ = (econ_book or {}).get('indicators') if isinstance(econ_book, dict) else None
+        if prev is None and ev is None:
+            print('macro.json / macro_eval.json 둘 다 없다 — 부트스트랩 실행으로 간주하고 '
+                  '§8 어휘·표 완성도만 검사한다', file=sys.stderr)
+        if releases and releases.get('status') is not None \
+                and releases.get('report_date') != market.get('report_date'):
+            releases = {'status': 'stale', 'releases': []}
+        return _finish(html, prev, ev, nxt, econ, metrics, market, releases)
+    if prev is None or ev is None:
+        incomplete('macro.json / macro_eval.json 이 없다')
+    if not isinstance(market, dict) or not market.get('report_date'):
+        incomplete('market_data.json 이 없거나 report_date 가 없다')
+    # 축 표 게이트의 기준일은 세션(market_data)이다.
+    econ = (econ_book or {}).get('indicators') if isinstance(econ_book, dict) else None
+    if not econ:
+        incomplete('econ_indicators.json 이 없거나 indicators 가 비었다 — §9 축 표를 대조할 정본이 없다')
+    if not isinstance(metrics, dict) or metrics.get('report_date') != market.get('report_date'):
+        incomplete(f"macro_metrics.json report_date={(metrics or {}).get('report_date')} ≠ 세션 "
+                   f"{market.get('report_date')}")
+    # 원문 index (2026-11-06 계약). 지금 발행하는 글은 오늘 세션의 완료된 index 가 있어야 한다.
+    if releases is None or releases.get('status') is None:
+        incomplete('releases/index.json 이 없거나 2026-11-06 전 형식이다')
+    if releases.get('report_date') != market.get('report_date'):
+        incomplete(f"releases/index.json 이 {releases.get('report_date')} 것이다")
+    if releases.get('status') != 'complete':
+        incomplete(f"releases/index.json status={releases.get('status')!r} — 원문 수집이 끝나지 않았다")
+    return _finish(html, prev, ev, nxt, econ, metrics, market, releases)
 
-    market = load(os.path.join(d, 'market_data.json')) or {}
 
-    # 축 표 게이트의 기준일은 세션(market_data)이다. metrics 가 그 날짜·현행 스키마가
-    # 아니면 추세 칸은 「—」만 허용된다 — 어제 추세가 오늘 숫자 옆에 나가지 않게.
-    econ = (load(os.path.join(d, 'econ_indicators.json')) or {}).get('indicators')
-    if not econ and market.get('report_date'):
-        print('WARN: econ_indicators.json 이 없거나 읽을 수 없다 — §9 축 표(직전 대비·추세) '
-              '검사를 건너뛴다. 표의 Actual/Previous 를 대조할 정본이 없다', file=sys.stderr)
-    metrics = load(os.path.join(d, 'macro_metrics.json'))
-    if econ and metrics and metrics.get('report_date') != market.get('report_date'):
-        print(f"WARN: macro_metrics.json report_date={metrics.get('report_date')}, "
-              f"세션 {market.get('report_date')} — 추세 칸은 「—」만 허용", file=sys.stderr)
-    # 원문 index (2026-11-06 계약): 오늘 세션 것이 아니면 「원문 없음」으로 — 낡은 원문을
-    # 근거로 해부 블록을 요구하지 않는다. status 없는 옛 index 는 그대로 넘겨 옛 판정을 유지.
-    releases = load(os.path.join(d, 'releases', 'index.json'))
-    if not args.legacy_releases and (releases is None or releases.get('status') is None):
-        # Publishing now: no readable index — or one from before the 2026-11-06 contract,
-        # which check_sources and the writer also treat as empty — means no release text.
-        releases = {'status': 'missing' if releases is None else 'legacy', 'releases': []}
-    elif releases and releases.get('status') is not None \
-            and releases.get('report_date') != market.get('report_date'):
-        releases = {'status': 'stale', 'releases': []}
+def _finish(html, prev, ev, nxt, econ, metrics, market, releases):
     violations = check(html, prev, ev, nxt, econ=econ, metrics=metrics,
                        report_date=market.get('report_date'), releases=releases)
     if not violations:

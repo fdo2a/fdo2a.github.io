@@ -6,6 +6,7 @@
 
 Exit 0 = 발행 가능. Exit 1 = 위반이 한 줄씩 찍힌다 — 그대로 writer에게 돌려주고 다시 돌린다.
 「경고:」 줄은 분량·균형 경고로 종료 코드에 영향이 없다(2026-10-13).
+Exit 2 = 미완료(2026-11-17): 시장 데이터(또는 US macro_eval.json)가 없거나 읽히지 않는다 — 재수집.
 """
 import argparse
 import json
@@ -49,10 +50,13 @@ def main():
     # macro_eval이 없으면 축약일인지 알 수 없고, 모르는 채 평시 문턱(4,600/0.75)을
     # 적용하면 축약일이 느슨하게 통과한다. 모르면 막는다(2026-08-30 codex 검토).
     if args.market == 'us' and macro_eval is None and not args.allow_missing_eval:
-        print(f'macro_eval.json을 {args.datadir}에서 읽지 못했다 — 축약일 여부를 모르는 채 '
-              '문턱을 고를 수 없다. scripts/eval_macro_regime.py를 먼저 돌릴 것 '
-              '(옛 발행본을 검사할 때만 --allow-missing-eval)')
-        sys.exit(1)
+        print(f'FATAL: macro_eval.json을 읽지 못했다 — 축약일 여부를 모르는 채 '
+              '문턱을 고를 수 없다. 미완료 — 수집을 다시 돌린다 '
+              '(옛 발행본을 검사할 때만 --allow-missing-eval)', file=sys.stderr)
+        sys.exit(2)
+    if market_data is None:
+        print(f'FATAL: {MARKET_FILE[args.market]}을 읽지 못했다 — 미완료, 수집을 다시 돌린다', file=sys.stderr)
+        sys.exit(2)
 
     violations = check(doc, market=args.market, market_data=market_data,
                        macro_eval=macro_eval)

@@ -1,0 +1,561 @@
+{
+ "format": "prepub-inputs/1",
+ "_doc": "발행 전 자료 분류 — US·KR 일간의 자료 폴더(--datadir·--tg·--stance-next)에 있을 수 있는 모든 파일. gate=검사기가 판정에 쓴다(누락·실패면 그 검사 미완료=보류) / writer=작성자만 쓴다(risk·covered_by 기록) / unused=작성·검사 모두 안 쓴다 / discontinued=사람이 승인한 수집 중단. 분류되지 않은 파일이 있으면 미완료. 위에서부터 첫 일치. {date}=발행일. 로직 scripts/verification/inputs.py, 설계 docs/superpowers/specs/2026-11-17-input-health.md. 잔여 위험: 권한 분리 전에는 루틴이 이 파일을 고칠 수 있다.",
+ "markets": {
+  "us": {
+   "files": [
+    {
+     "path": "<datadir>/_collect_status.json",
+     "class": "gate",
+     "name": "수집 상태 기록",
+     "optional": true,
+     "produced_by": "meta",
+     "why": "수집기(stamp_collect.py)가 쓰는 목록형·JSON 아닌 파일의 수집 상태와 모든 등록 파일의 해시. 없으면 그 파일들이 unstamped"
+    },
+    {
+     "path": "<datadir>/market_data.json",
+     "class": "gate",
+     "name": "시장 데이터",
+     "date": "report_date",
+     "require": [
+      "indices",
+      "sectors",
+      "yields",
+      "fx",
+      "commodities"
+     ]
+    },
+    {
+     "path": "<datadir>/econ_indicators.json",
+     "class": "gate",
+     "name": "경제지표(FRED)",
+     "require": [
+      "indicators"
+     ]
+    },
+    {
+     "path": "<datadir>/intraday.json",
+     "class": "gate",
+     "name": "장중 흐름",
+     "require": [
+      "S&P 500",
+      "Nasdaq"
+     ]
+    },
+    {
+     "path": "<datadir>/macro.json",
+     "class": "gate",
+     "name": "매크로 책(직전 회차)",
+     "date": "report_date",
+     "date_rule": "before",
+     "produced_by": "ledger",
+     "why": "직전 발행 커밋이 macro_next.json 을 승격한 책 — 수집기 산출물이 아니어서 수집 상태 표시를 요구하지 않는다. 날짜는 발행일보다 앞서야 한다"
+    },
+    {
+     "path": "<datadir>/macro_eval.json",
+     "class": "gate",
+     "name": "매크로 판정",
+     "date": "report_date"
+    },
+    {
+     "path": "<datadir>/macro_metrics.json",
+     "class": "gate",
+     "name": "매크로 지표 점수",
+     "date": "report_date",
+     "require": [
+      "indicators"
+     ]
+    },
+    {
+     "path": "<datadir>/macro_next.json",
+     "class": "gate",
+     "name": "매크로 책(작성자 산출)",
+     "date": "report_date",
+     "produced_by": "writer",
+     "why": "작성자가 쓰는 다음 회차 책 — check_macro 가 대조한다"
+    },
+    {
+     "path": "<datadir>/releases/index.json",
+     "class": "gate",
+     "name": "지표 원문 목록",
+     "date": "report_date",
+     "status_ok": [
+      "complete"
+     ],
+     "target": "releases"
+    },
+    {
+     "path": "<datadir>/fed/events.json",
+     "class": "gate",
+     "name": "연준 사건 책",
+     "date": "report_date",
+     "target": "events"
+    },
+    {
+     "path": "<datadir>/fed/*.txt",
+     "class": "gate",
+     "name": "연준 원문",
+     "when": {
+      "file": "<datadir>/fed/events.json",
+      "each": "events",
+      "any_ok": "sources",
+      "template": "<datadir>/fed/{key}.txt"
+     },
+     "else_class": "unused",
+     "else_note": "오늘 사건 책에 없는 사건의 원문 — 검사기·작성자가 쓰지 않는다"
+    },
+    {
+     "path": "<datadir>/auctions.json",
+     "class": "gate",
+     "name": "국채 입찰",
+     "date": "report_date",
+     "target": "today"
+    },
+    {
+     "path": "<datadir>/liquidity/liquidity.json",
+     "class": "gate",
+     "name": "유동성 책",
+     "date": "report_date",
+     "status_ok": [
+      "complete"
+     ]
+    },
+    {
+     "path": "<datadir>/calendar.json",
+     "class": "gate",
+     "name": "발표 일정",
+     "date": "report_date",
+     "require": [
+      "events"
+     ]
+    },
+    {
+     "path": "<datadir>/movers.json",
+     "class": "gate",
+     "name": "움직인 종목",
+     "date": "report_date",
+     "target": "groups"
+    },
+    {
+     "path": "<datadir>/fund_board.json",
+     "class": "gate",
+     "name": "트렌드 유닛 점검",
+     "date": "report_date",
+     "status_ok": [
+      "ok"
+     ],
+     "require": [
+      "units"
+     ]
+    },
+    {
+     "path": "<datadir>/telegram.json",
+     "class": "gate",
+     "name": "텔레그램 견해(작업 공간 사본)",
+     "date": "report_date",
+     "target": "items",
+     "optional": true,
+     "stamp_key": "telegram/{date}.json",
+     "why": "--tg 와 같은 파일 — 판정은 <tg> 항목이 한다. 없을 때는 <tg> 쪽이 막는다"
+    },
+    {
+     "path": "<tg>",
+     "class": "gate",
+     "name": "텔레그램 견해",
+     "date": "report_date",
+     "target": "items",
+     "stamp_key": "telegram/{date}.json"
+    },
+    {
+     "path": "<datadir>/scorecard.json",
+     "class": "gate",
+     "name": "가격 맥락 성적표",
+     "optional": true,
+     "why": "작업 공간에 복사하지 않는 파일 — 없으면 check_price_context 가 주장을 막는 쪽으로 판정한다. 있으면 읽혀야 한다(날짜는 검사기가 직접 버린다)"
+    },
+    {
+     "path": "<datadir>/sector_performance.html",
+     "class": "writer",
+     "name": "섹터 기간 수익률 표",
+     "risk": "작성자가 그대로 끼워 넣는 생성 표 — 다른 날 회차가 섞일 수 있다",
+     "covered_by": "check_sector_perf(글의 표를 market_data.json 의 같은 회차와 대조)"
+    },
+    {
+     "path": "<datadir>/yield_curve.png",
+     "class": "writer",
+     "name": "수익률 곡선 그림",
+     "risk": "그림 속 값은 어느 검사기도 읽지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/fund_board.html",
+     "class": "writer",
+     "name": "트렌드 유닛 점검 블록",
+     "risk": "작성자가 그대로 넣는 생성 블록",
+     "covered_by": "check_fund(fund_board.json 으로 다시 그려 바이트 비교)"
+    },
+    {
+     "path": "<datadir>/auction_table.html",
+     "class": "writer",
+     "name": "국채 입찰 표",
+     "risk": "작성자가 그대로 넣는 생성 표",
+     "covered_by": "check_auction(auctions.json 과 대조)"
+    },
+    {
+     "path": "<datadir>/liquidity/table.html",
+     "class": "writer",
+     "name": "유동성 표",
+     "risk": "작성자가 그대로 넣는 생성 표",
+     "covered_by": "check_liquidity(liquidity.json·발행본 원장과 대조)"
+    },
+    {
+     "path": "<datadir>/liquidity/qra/*.txt",
+     "class": "writer",
+     "name": "분기 조달계획 원문",
+     "risk": "작성자가 지침 문장을 읽는 원문 — 문장 내용은 대조되지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/releases/*.txt",
+     "class": "writer",
+     "name": "지표 원문",
+     "risk": "해부 블록의 원문 — 문장·숫자 내용은 원문과 대조되지 않는다(check_macro 는 블록 존재만)",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/research_notes.md",
+     "class": "writer",
+     "name": "작성자 웹 조사 노트",
+     "risk": "웹 조사로 들어온 원인·해석·인용 — 원자료가 없다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/fed/seen.json",
+     "class": "unused",
+     "name": "연준 수집기 내부 상태",
+     "note": "수집기가 다음 수집에 쓰는 기록"
+    },
+    {
+     "path": "<datadir>/fed/statements.json",
+     "class": "unused",
+     "name": "연준 성명 목록",
+     "note": "수집기 내부 목록 — 검사기는 events.json 만 본다"
+    },
+    {
+     "path": "<datadir>/liquidity/state.json",
+     "class": "unused",
+     "name": "유동성 수집기 내부 상태",
+     "note": "수집기가 다음 수집에 쓰는 기록"
+    },
+    {
+     "path": "<datadir>/news/*.json",
+     "class": "unused",
+     "name": "뉴스 수집분",
+     "note": "뉴스·산업 브리프(STEP 3.5) 입력 — 시황 브리프 작성자에게 넘기지 않는다"
+    },
+    {
+     "path": "<datadir>/morning_brief_*",
+     "class": "unused",
+     "name": "시황 브리프 초안",
+     "note": "작성자 산출물(검사 대상 글) — 입력이 아니다"
+    },
+    {
+     "path": "<datadir>/news_industry_*",
+     "class": "unused",
+     "name": "뉴스·산업 브리프 초안",
+     "note": "둘째 글의 산출물 — 이 글의 입력이 아니다"
+    },
+    {
+     "path": "<datadir>/contested.json",
+     "class": "unused",
+     "name": "쟁점 분석",
+     "note": "뉴스·산업 브리프 입력"
+    },
+    {
+     "path": "<datadir>/telegram_news.json",
+     "class": "unused",
+     "name": "뉴스 글용 텔레그램",
+     "note": "뉴스·산업 브리프 입력"
+    },
+    {
+     "path": "<datadir>/telegram/*.json",
+     "class": "unused",
+     "name": "텔레그램 수집분(날짜별)",
+     "note": "검사기·작성자는 --tg 사본을 쓴다"
+    },
+    {
+     "path": "<datadir>/contested/*/*.json",
+     "class": "unused",
+     "name": "쟁점 분석 이력",
+     "note": "뉴스 글 몫"
+    },
+    {
+     "path": "<datadir>/history/*.jsonl",
+     "class": "unused",
+     "name": "이력 원장",
+     "note": "주간·채점 파이프라인 몫"
+    },
+    {
+     "path": "<datadir>/weekly/*.json",
+     "class": "unused",
+     "name": "주간 스냅샷",
+     "note": "주간 파이프라인 몫"
+    },
+    {
+     "path": "<datadir>/weekly_ext/*.json",
+     "class": "unused",
+     "name": "주간 확장 자료",
+     "note": "주간 파이프라인 몫"
+    },
+    {
+     "path": "<datadir>/fund_factors*",
+     "class": "unused",
+     "name": "팩터 수집분",
+     "note": "펀드 보드 생성기 입력 — 작성자는 fund_board.json·html 만 읽는다"
+    },
+    {
+     "path": "<datadir>/fomc_dates.json",
+     "class": "unused",
+     "name": "FOMC 일정",
+     "note": "수집기(일정표) 입력"
+    },
+    {
+     "path": "<datadir>/market_holidays.json",
+     "class": "unused",
+     "name": "휴장일",
+     "note": "수집기·감시 입력"
+    },
+    {
+     "path": "<datadir>/period_scorecard.json",
+     "class": "unused",
+     "name": "주간 성적표",
+     "note": "주간 파이프라인 몫"
+    }
+   ],
+   "discontinued": []
+  },
+  "kr": {
+   "files": [
+    {
+     "path": "<datadir>/_collect_status.json",
+     "class": "gate",
+     "name": "수집 상태 기록",
+     "optional": true,
+     "produced_by": "meta",
+     "why": "수집기(stamp_collect.py)가 쓰는 목록형·JSON 아닌 파일의 수집 상태와 모든 등록 파일의 해시. 없으면 그 파일들이 unstamped"
+    },
+    {
+     "path": "<datadir>/kr_market_data.json",
+     "class": "gate",
+     "name": "KR 시장 데이터",
+     "date": "report_date",
+     "require": [
+      "indices"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_session.json",
+     "class": "gate",
+     "name": "KR 세션(해외·환율)",
+     "date": "report_date"
+    },
+    {
+     "path": "<datadir>/kr_movers.json",
+     "class": "gate",
+     "name": "KR 움직인 종목",
+     "date": "report_date",
+     "target": "groups"
+    },
+    {
+     "path": "<datadir>/kr_fund_view.json",
+     "class": "gate",
+     "name": "아시아 세션 유닛 관측",
+     "date": "report_date",
+     "status_ok": [
+      "ok"
+     ],
+     "require": [
+      "observations"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_stance_eval.json",
+     "class": "gate",
+     "name": "직전 판단 채점",
+     "require": [
+      "verdict"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_flows.json",
+     "class": "gate",
+     "name": "KR 수급",
+     "require": [
+      "KOSPI",
+      "KOSDAQ"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_intraday.json",
+     "class": "gate",
+     "name": "KR 장중",
+     "require": [
+      "KOSPI",
+      "KOSDAQ"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_econ.json",
+     "class": "gate",
+     "name": "KR 금리(ECOS)",
+     "require": [
+      "series"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_top_value.json",
+     "class": "gate",
+     "name": "KR 거래대금 상위",
+     "require": [
+      "<items>"
+     ]
+    },
+    {
+     "path": "<datadir>/kr_index_etf.json",
+     "class": "gate",
+     "name": "KR 지수 ETF",
+     "require": [
+      "<items>"
+     ]
+    },
+    {
+     "path": "<tg>",
+     "class": "gate",
+     "name": "텔레그램 견해",
+     "date": "report_date",
+     "target": "items",
+     "stamp_key": "telegram/{date}.json"
+    },
+    {
+     "path": "<stance_next>",
+     "class": "gate",
+     "name": "판단 원장(작성자 산출)",
+     "date": "date",
+     "produced_by": "writer",
+     "why": "작성자가 쓰는 오늘 판단 — check_kr_stance 가 대조한다"
+    },
+    {
+     "path": "<datadir>/kr_sector.html",
+     "class": "writer",
+     "name": "업종 멀티기간 막대",
+     "risk": "작성자가 그대로 넣는 생성 스니펫 — 1W~1Y 기간 수익률은 대조되지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_fund_view.html",
+     "class": "writer",
+     "name": "아시아 세션 유닛 블록",
+     "risk": "작성자가 그대로 넣는 생성 블록",
+     "covered_by": "check_fund(kr_fund_view.json 으로 다시 그려 바이트 비교)"
+    },
+    {
+     "path": "<datadir>/kr_industry.json",
+     "class": "writer",
+     "name": "KR 업종 등락·폭",
+     "risk": "업종 주도·폭 서술의 근거 — 문장 숫자는 대조되지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_stock_moves.json",
+     "class": "writer",
+     "name": "KR 개별주 등락",
+     "risk": "묶음 밖 종목 등락률의 출처 — 문장 숫자는 대조되지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_technical.json",
+     "class": "writer",
+     "name": "KR 기술적 레벨",
+     "risk": "기술적 분석 표·문장의 레벨 — 대조되지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_charts_manifest.json",
+     "class": "writer",
+     "name": "KR 차트 목록",
+     "risk": "어느 차트를 실을지 — 없는 차트를 가리킬 수 있다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_program.json",
+     "class": "writer",
+     "name": "KR 프로그램 매매",
+     "risk": "원천 폐지(2026-09-17) 뒤 매일 error — 작성자가 블록을 빼야 한다. 수집 중단 등록 후보(사용자 승인 필요)",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_stance.json",
+     "class": "writer",
+     "name": "직전 회차 판단 원장",
+     "risk": "복기 문단의 근거 — 채점은 kr_stance_eval.json 이 한다",
+     "covered_by": "check_kr_stance(복기 판정을 kr_stance_eval.json 과 대조)"
+    },
+    {
+     "path": "<datadir>/news/{date}.json",
+     "class": "writer",
+     "name": "KR 뉴스 수집분(오늘)",
+     "risk": "§11 촉매 리서치의 출발점 — 요약 문장은 대조되지 않는다",
+     "covered_by": null
+    },
+    {
+     "path": "<datadir>/kr_theme.json",
+     "class": "unused",
+     "name": "KR 테마",
+     "note": "2026-07-29 테마 섹션 폐지 — 작성자가 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/news/*.json",
+     "class": "unused",
+     "name": "KR 뉴스 수집분(지난 날)",
+     "note": "지난 날 수집분"
+    },
+    {
+     "path": "<datadir>/telegram/*.json",
+     "class": "unused",
+     "name": "텔레그램 수집분(날짜별)",
+     "note": "검사기·작성자는 --tg 사본을 쓴다"
+    },
+    {
+     "path": "<datadir>/weekly/*.json",
+     "class": "unused",
+     "name": "KR 주간 스냅샷",
+     "note": "주간 파이프라인 몫"
+    },
+    {
+     "path": "<datadir>/history/*.jsonl",
+     "class": "unused",
+     "name": "KR 이력 원장",
+     "note": "수집 판 관리(versions_kr) 몫"
+    }
+   ],
+   "discontinued": [
+    {
+     "path": "<datadir>/kr_flows_intraday.json",
+     "name": "KR 장중 수급 궤적",
+     "missing_key": "flows_intraday",
+     "reason": "Naver 레거시 페이지 폐지(2026-09-17 SPA 개편), 대체 원천 없음",
+     "since": "2026-09-17",
+     "affects": {
+      "gates": [],
+      "sections": [
+       "§6 장중 수급 서브블록"
+      ]
+     },
+     "approved_by": "user",
+     "approved_at": "2026-11-17",
+     "residual_risk": "권한 분리 전에는 루틴이 이 파일을 고쳐 수집 실패를 수집 중단으로 바꿀 수 있다"
+    }
+   ]
+  }
+ }
+}

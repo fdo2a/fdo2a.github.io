@@ -5,8 +5,9 @@
   python3 scripts/check_fund.py --html kr_brief_2026-10-07.html --datadir kr/data --market kr
 
 글 날짜는 파일명의 YYYY-MM-DD 다(없으면 --date). 적용일(fund.gate.EFFECTIVE) 이전 글은
-검사하지 않는다. 자료가 오늘 것이 아니거나 unavailable 이면 섹션이 **없어야** 통과한다.
-Exit 0 = 발행 가능, 1 = 위반. Logic: scripts/fund/gate.py.
+검사하지 않는다. Exit 0 = 발행 가능, 1 = 위반, 2 = 미완료(2026-11-17): 적용일 이후 글인데 자료가 없거나 읽히지
+않거나 오늘 것이 아니거나 `status` 가 ok 가 아니다(partial·unavailable) — 섹션을 빼고 발행하지 않는다, 재수집.
+Logic: scripts/fund/gate.py.
 """
 import argparse
 import json
@@ -61,6 +62,15 @@ def main(argv=None):
     with open(args.html, encoding='utf-8') as fh:
         html = fh.read()
     data = _load(os.path.join(args.datadir, FILES[args.market]))
+    from fund.gate import EFFECTIVE
+    if post_date >= EFFECTIVE:
+        why = (f'{FILES[args.market]} 이 없거나 읽히지 않는다' if not isinstance(data, dict) else
+               f"자료 날짜 {data.get('report_date')} ≠ 글 날짜 {post_date}" if data.get('report_date') != post_date else
+               f"자료 상태 {data.get('status')}" if data.get('status') != 'ok' else None)
+        if why:
+            # 섹션을 빼고 발행하지 않는다 — 재수집 뒤에도 그러면 보류(2026-11-17)
+            print(f'FATAL: {why} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
+            return 2
     violations = check(html, data, args.market, post_date)
     if not violations:
         print(f'펀드 섹션 이상 없음 — {args.html}')

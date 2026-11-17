@@ -10,12 +10,15 @@
   # 커밋 직전(index) / push 직전(HEAD) — 기록과 그 판의 글·검사 코드·입력이 짝인지
   python3 scripts/run_gates.py verify --market us --date D --repo . (--index | --rev HEAD) [--datadir <W>]
 
-종료 코드
-  check : 0 발행 가능 / 1 필수 검사 실패·판정 불가 → 위반을 작성자에게 넘겨 다시
-  record: 0 기록됨·발행 가능 / 1 발행 불가(필수 검사 실패·판정 불가, 노트가 구조를 망가뜨림, 검사 중 글·입력 변경)
+종료 코드(2026-11-17 1a — 2판 기록)
+  check : 0 발행 가능 / 1 필수 검사 위반 → 위반을 작성자에게 넘겨 다시 /
+          2 미완료(입력 자료가 없거나 비었거나 낡았거나 수집 실패, 분류 안 된 파일, 검사기가 돌지 못함, 설정·도구 오류)
+            → 글을 고쳐서 풀리는 문제가 아니다 — 글을 고치지 말고 수집을 다시 돌린다
+  record: 0 기록됨·발행 가능 / 1 위반(노트가 구조를 망가뜨림 포함) / 2 미완료(검사 중 글·입력 변경 포함)
           4 레포 안 기록 저장 실패 — 검사는 다 돌았고 발행 가능이었다. 같은 기록을 레포 밖에 남기고
             `fallback_record=<경로>` 를 찍는다. 처음 2주는 경고하고 발행하되 verify 에 `--record-file <경로>`
-          5 기록 도구 자체 오류, 또는 대체 기록도 못 남김 — 최종 판이 검사됐다는 근거가 없다 → **발행 보류**
+          5 기록 도구 자체 오류(설정을 못 읽음 포함), 또는 대체 기록도 못 남김 — 최종 판이 검사됐다는 근거가 없다 → **발행 보류**
+  위반과 미완료가 함께면 1(우선순위 실패 > 미완료) — 미완료 목록도 함께 찍는다.
   verify: 0 짝 맞음 / 1 어긋남(다시 record → add → commit --amend) / 2 git 을 읽지 못함(보류) / 4 기록 없음
 로직 `scripts/verification/record.py`. 설계 `docs/superpowers/specs/2026-11-08-prepub-record.md`.
 """
@@ -29,8 +32,7 @@ sys.path.insert(0, HERE)
 from verification import record as R  # noqa: E402
 
 DEFAULT_CONFIG = os.path.join(os.path.dirname(HERE), 'config', 'prepub_gates.json')
-LABEL = {'pass': '통과', 'warn': '경고', 'fail': '실패', 'indeterminate': '판정 불가', 'not_run': '실행 안 함',
-         'partial': '일부만 검사'}
+LABEL = dict(R.STATUS_KO, indeterminate='판정 불가', not_run='실행 안 함', partial='일부만 검사')
 
 
 def _ctx(a):
@@ -52,11 +54,24 @@ def _print(res, show_output):
             print(f'   노트를 뺀 사본: {LABEL.get(n["stripped_status"], n["stripped_status"])}'
                   f' · 노트 구간 {len(n["note_items"])} · 본문 {len(n["body_items"])}')
     s = res['summary']
-    print(f'판정: {s["status"]} · 발행 {"가능" if s["publish_ok"] else "불가"}'
+    print(f'판정: {R.VERDICT_KO.get(s["status"], s["status"])}({s["status"]}) · 발행 {"가능" if s["publish_ok"] else "불가"}'
           + (f' · 막은 것 {", ".join(s["blocking"])}' if s['blocking'] else '')
-          + (f' · 실행 안 함 {", ".join(s["not_run"])}' if s['not_run'] else '')
+          + (f' · 미완료 {", ".join(s["incomplete"])}' if s.get('incomplete') else '')
+          + (f' · 해당 없음 {", ".join(s["na"])}' if s.get('na') else '')
           + (f' · 노트 수치 불일치 {", ".join(s["note_numbers"])}' if s['note_numbers'] else '')
           + (f' · 노트 형식 {", ".join(s["note_format"])}' if s['note_format'] else ''))
+    inp = s.get('inputs')
+    if inp is None:
+        print('자료 상태: 분류 정책 없이 돌았다(시험용 설정) — 자료 누락을 검사하지 않았다')
+    else:
+        for x in inp['blocking']:
+            print(f'자료 미완료: {x}')
+        for x in inp['unclassified']:
+            print(f'자료 미완료: 분류되지 않은 파일 {x} — config/prepub_inputs.json 에 분류를 넣어야 한다')
+        if inp['warnings']:
+            print(f'자료 경고: 수집 상태 표시 없음 {len(inp["warnings"])}개(적용일 전이라 막지 않는다)')
+    if not s['publish_ok'] and s['status'] != 'failed':
+        print('미완료 — 글을 고치지 말고 수집을 다시 돌린다(재수집 1회 뒤에도 2 면 보류)')
 
 
 def main(argv=None):
@@ -91,9 +106,10 @@ def main(argv=None):
 
     try:
         cfg = R.load_config(a.config)
+        policy = R.load_policy(cfg, a.config)
     except R.ConfigError as exc:
         print(f'기록 도구 오류: {exc}', file=sys.stderr)
-        return 5 if a.cmd == 'record' else 1
+        return 5 if a.cmd == 'record' else (2 if a.cmd == 'check' else 1)
 
     if a.cmd == 'verify':
         extra = {k: os.path.abspath(x) for k, x in (('tg', a.tg), ('stance_next', a.stance_next)) if x}
@@ -107,26 +123,27 @@ def main(argv=None):
 
     ctx = _ctx(a)
     try:
-        res = R.run_gates(cfg, a.market, ctx)
+        res = R.run_gates(cfg, a.market, ctx, policy=policy)
     except Exception as exc:  # noqa: BLE001 — 기록 도구의 실패는 검사 실패와 다르다
         print(f'기록 도구 오류: {type(exc).__name__}: {exc}', file=sys.stderr)
-        return 5 if a.cmd == 'record' else 1
+        return 5 if a.cmd == 'record' else 2
     _print(res, show_output=(a.cmd == 'check' or not res['summary']['publish_ok']))
     for w in res['summary'].get('integrity') or []:
         print(f'무결성: {w}')
     print(f'report_sha256={res["post_sha256"]}')
+    code = R.exit_code(res['summary'])
     if a.cmd == 'check':
-        return 0 if res['summary']['publish_ok'] else 1
+        return code
 
     try:
         rec = R.build_record(cfg, a.config, a.market, ctx, res)
     except Exception as exc:  # noqa: BLE001
         print(f'기록 도구 오류: {type(exc).__name__}: {exc}', file=sys.stderr)
-        return 1 if not res['summary']['publish_ok'] else 5
+        return code if code else 5
     fb = R.fallback_path(a.market, a.date)
     saved = R.save_record(rec, os.path.abspath(a.out), fallback=fb)
-    if not res['summary']['publish_ok']:
-        return 1
+    if code:
+        return code
     if saved == 4:
         print('레포 안 기록 저장 실패 — 그 날짜 기록은 지웠다(경고). 대체 기록으로 verify 한다', file=sys.stderr)
         print(f'fallback_record={fb}')

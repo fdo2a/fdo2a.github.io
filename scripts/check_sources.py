@@ -8,8 +8,11 @@ Run from the repo clone, against the writer's output in the routine workspace:
 Exit 0 = publishable. Exit 1 = violations printed, one per line; hand them back to
 the writer subagent verbatim and re-run.
 
-An absent, unreadable or stale index authorises nothing — it never switches the
-gate off. The page is not *required* to link; a link it does print must point at a
+Exit 2 = incomplete (2026-11-17) when publishing now: market_data.json without a
+report_date, an unreadable book, or a releases index / Fed book that is absent, stale or
+not complete — re-collect. With --legacy-releases (re-checking a past post against its own
+commit's data) an absent, stale or pre-contract book still reads as empty, as before:
+it authorises nothing and never switches the gate off. The page is not *required* to link; a link it does print must point at a
 document collected today, for the block it sits in. Yesterday's URL cannot
 authorise today's citation, and a day when collection failed is the day an invented
 link is most likely.
@@ -33,9 +36,8 @@ def _load(path):
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f'WARN: could not read {path}: {e} — treating it as empty',
-              file=sys.stderr)
-        return None
+        print(f'FATAL: could not read {path}: {e} — 미완료', file=sys.stderr)
+        sys.exit(2)
 
 
 def _fresh(book, report_date, path):
@@ -98,6 +100,18 @@ def main():
 
     rel_path = os.path.join(args.datadir, 'releases', 'index.json')
     fed_path = os.path.join(args.datadir, 'fed', 'events.json')
+    if not args.legacy_releases:
+        rel, fed_book = _load(rel_path), _load(fed_path)
+        why = ('market_data.json 기준일이 없다' if not report_date else
+               'releases/index.json 이 없다' if rel is None else
+               'fed/events.json 이 없다' if fed_book is None else
+               f"releases/index.json 이 {rel.get('report_date')} 것이다" if rel.get('report_date') != report_date else
+               f"fed/events.json 이 {fed_book.get('report_date')} 것이다"
+               if fed_book.get('report_date') != report_date else
+               f"releases/index.json status={rel.get('status')!r}" if rel.get('status') != 'complete' else None)
+        if why:
+            print(f'FATAL: {why} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
+            sys.exit(2)
     # Nothing readable and current -> the empty book, which authorises nothing.
     releases = _releases_contract(_fresh(_load(rel_path), report_date, rel_path),
                                   args.legacy_releases, rel_path) or {'releases': []}

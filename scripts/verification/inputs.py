@@ -142,6 +142,11 @@ def _display(key, full):
     return key
 
 
+def _pat(p, date):
+    """정책 경로의 `{date}` 를 발행일로 — 그날 파일만 다른 분류를 받는다(예: KR `news/{date}.json` 만 작성자 입력)."""
+    return p.replace('{date}', date or '')
+
+
 def _is_glob(p):
     return any(c in p for c in '*?[')
 
@@ -348,11 +353,11 @@ def assess(pol, market, ctx):
     for key in sorted(present):
         hit = None
         for i, e in enumerate(files):
-            if fnmatch.fnmatchcase(key, e['path']):
+            if fnmatch.fnmatchcase(key, _pat(e['path'], date)):
                 hit = (i, e)
                 break
         if hit is None:
-            d = next((x for x in disc if fnmatch.fnmatchcase(key, x['path'])), None)
+            d = next((x for x in disc if fnmatch.fnmatchcase(key, _pat(x['path'], date))), None)
             if d is not None:
                 put(key, dict(d, **{'class': 'discontinued'}), present[key])
             else:
@@ -370,8 +375,8 @@ def assess(pol, market, ctx):
         if e.get('when'):
             for key in sorted(cond[i] - set(present)):
                 put(key, e, None)
-        elif not _is_glob(e['path']) and e['path'] not in present:
-            put(e['path'], e, None)
+        elif not _is_glob(e['path']) and _pat(e['path'], date) not in present:
+            put(_pat(e['path'], date), e, None)
     return {'files': out, 'unclassified': unclassified, 'effective': EFFECTIVE, 'enforced': on,
             'discontinued': [{k: d.get(k) for k in ('path', 'name', 'reason', 'since', 'affects', 'approved_by',
                                                      'approved_at', 'missing_key')} for d in disc],

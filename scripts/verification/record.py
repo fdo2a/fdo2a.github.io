@@ -19,6 +19,18 @@
 - 기록 기능 자체의 실패(저장 실패·기록 도구 오류)와 검사 실패를 가른다. 앞의 것은 처음 2주 동안 경고, 뒤의 것은
   기존 차단 규칙 그대로.
 - 검사기 목록은 `config/prepub_gates.json` 하나 — 루틴의 반복 고리(`check`)와 기록(`record`)이 같은 목록을 쓴다.
+
+2판(`prepub-record/2`, 2026-11-17 1a 「자료 누락 차단」):
+- 검사 상태는 다섯 — pass·warn·fail·na(해당 없음)·incomplete(미완료). 옛 판정 불가·일부만 검사·확인 안 된 실행 안 함은
+  전부 incomplete. **na 는 실행기가 직접 확인한 경우만** — 설정의 `na_when`(수집 상태 ok·confirmed_none, 적용일 전에는
+  옛 방식을 허용하되 `na_basis: "legacy"`)이 참이거나 검사기의 적용일 전 글. 필수 검사의 incomplete 는 발행을 막는다.
+- 검사기마다 `inputs`(정책 파일 `config/prepub_inputs.json` 의 경로). 실행기가 먼저 `verification.inputs.assess` 로 자료
+  상태를 보고 하나라도 정상이 아니면 그 검사기를 돌리지 않고 incomplete(사유에 파일과 상태). 분류되지 않은 파일·입력
+  스냅샷의 한도 초과·읽기 실패도 incomplete.
+- 글 판정은 넷 — verified(필수 전부 pass·na, 조건 없음) / conditional(경고·노트 조건·옛 방식 na·수집 상태 표시 없음) /
+  incomplete / failed. 우선순위 failed > incomplete > conditional > verified.
+- **한계(다음 작업)**: conditional 의 자동 발행 허용 목록(auto_ok)·경고 코드 구조화·사람 승인 명령은 없다. 경고는
+  지금처럼 발행을 막지 않고 조건으로만 남는다 — conditional 은 「검증됨」이 아니다. 재시도 상한·record 4 보류도 그대로다.
 """
 import hashlib
 import json
@@ -31,7 +43,8 @@ import tempfile
 import time
 from datetime import datetime, timedelta, timezone
 
-FORMAT = 'prepub-record/1'
+FORMAT = 'prepub-record/2'
+FORMATS = ('prepub-record/1', FORMAT)          # 읽는 쪽(알림·감시)이 받는 판
 CONFIG_FORMAT = 'prepub-gates/1'
 KST = timezone(timedelta(hours=9))
 GATE_TIMEOUT = 300
@@ -54,6 +67,10 @@ class ConfigError(Exception):
     pass
 
 
+VERDICT_KO = {'verified': '검증됨', 'conditional': '조건부', 'incomplete': '미완료', 'failed': '실패'}
+STATUS_KO = {'pass': '통과', 'warn': '경고', 'fail': '실패', 'na': '해당 없음', 'incomplete': '미완료'}
+
+
 def load_config(path):
     try:
         with open(path, encoding='utf-8') as fh:
@@ -62,7 +79,52 @@ def load_config(path):
         raise ConfigError(f'검사기 목록을 읽지 못했다: {exc}') from exc
     if not isinstance(cfg, dict) or cfg.get('format') != CONFIG_FORMAT or not isinstance(cfg.get('markets'), dict):
         raise ConfigError('검사기 목록 형식이 다르다')
+    for market, m in cfg['markets'].items():
+        for spec in (m.get('gates') if isinstance(m, dict) else None) or []:
+            if 'inputs' in spec and (not isinstance(spec['inputs'], list)
+                                     or not all(isinstance(x, str) for x in spec['inputs'])):
+                raise ConfigError(f'{market} {spec.get("name")} 입력 목록(inputs) 형식이 다르다')
+            na = spec.get('na_when')
+            if na is not None and (not isinstance(na, dict) or not isinstance(na.get('file'), str)
+                                   or not isinstance(na.get('list'), str)):
+                raise ConfigError(f'{market} {spec.get("name")} na_when 형식이 다르다')
     return cfg
+
+
+def policy_path(cfg, config_path):
+    """설정이 가리키는 자료 분류 정책의 절대 경로(설정 파일의 부모의 부모 = 레포 기준). 없으면 None."""
+    rel = cfg.get('inputs_policy')
+    if rel is None:
+        return None
+    if not isinstance(rel, str) or not rel:
+        raise ConfigError('inputs_policy 형식이 다르다')
+    return rel if os.path.isabs(rel) else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(config_path))), rel)
+
+
+def load_policy(cfg, config_path):
+    """자료 분류 정책 — 설정에 `inputs_policy` 가 있으면 반드시 읽혀야 하고 검사기의 `inputs` 가 정책 경로여야 한다.
+    읽지 못하면 ConfigError(실행기는 미완료로 끝낸다 — 정책 없이 검사를 돌리지 않는다)."""
+    from verification import inputs as I
+    p = policy_path(cfg, config_path)
+    if p is None:
+        return None
+    try:
+        pol = I.load(p)
+    except I.PolicyError as exc:
+        raise ConfigError(str(exc)) from exc
+    for market, m in cfg['markets'].items():
+        try:
+            known = set(I.paths_of(pol, market))
+        except I.PolicyError as exc:
+            raise ConfigError(str(exc)) from exc
+        for spec in m.get('gates') or []:
+            unknown = [x for x in spec.get('inputs') or [] if x not in known]
+            if unknown:
+                raise ConfigError(f'{market} {spec["name"]} 입력이 분류 정책에 없다: {", ".join(unknown)}')
+            na = spec.get('na_when')
+            if na and na['file'] not in (spec.get('inputs') or []):
+                raise ConfigError(f'{market} {spec["name"]} na_when 의 자료가 입력 목록에 없다')
+    return pol
 
 
 def gates_of(cfg, market):
@@ -134,14 +196,15 @@ def _argv(spec, ctx):
 def _base(spec):
     return {'name': spec['name'], 'required': bool(spec.get('required', True)),
             'kind': spec.get('kind') if spec.get('kind') in KINDS else 'structure',
-            'argv': list(spec.get('argv') or []), 'status': 'indeterminate', 'exit': None,
+            'argv': list(spec.get('argv') or []), 'status': 'incomplete', 'exit': None,
             'script_sha256': None,
             'timed_out': False, 'reason': '', 'warn_count': 0, 'items': [], 'output_sha256': None,
             'note': None}
 
 
 def _classify(spec, code, out, err, ctx, res):
-    """종료 코드와 출력 → 상태. 모르는 것은 판정 불가."""
+    """종료 코드와 출력 → 상태. 모르는 것은 미완료. `not_run`(검사기가 볼 것이 없다고 했다)은 실행기가
+    `na_when` 으로 대상 없음을 확인해야 na 가 된다 — 그 전에는 중간값이다."""
     lines = (out or '') + '\n' + (err or '')
     res['output_sha256'] = sha256_bytes(lines.encode('utf-8', 'replace'))
     items = items_of(lines, ctx)
@@ -152,15 +215,16 @@ def _classify(spec, code, out, err, ctx, res):
             obj = None
         if code == 2 or obj is None or not isinstance(obj, dict):
             res['reason'] = (items[-1] if items else '결과를 읽지 못했다') if code == 2 else '결과를 읽지 못했다'
-            return 'indeterminate'
+            return 'incomplete'
         if obj.get('skipped') is True:
             res['reason'] = '적용일 전 글이라 검사하지 않았다'
-            return 'not_run' if code == 0 else 'indeterminate'
+            res['na_basis'] = 'effective'
+            return 'na' if code == 0 else 'incomplete'
         warns, viols = obj.get('warnings'), obj.get('violations')
         counts = obj.get('counts')
         if not isinstance(warns, list) or not isinstance(viols, list) or not isinstance(counts, dict):
             res['reason'] = '결과 형식이 약속과 다르다'
-            return 'indeterminate'
+            return 'incomplete'
         res['numbers'] = {k: counts.get(k) for k in ('tokens_seen', 'table_cells', 'prose_judged',
                                                       'unverified', 'delegated', 'excluded')}
         by = obj.get('unverified_by')
@@ -173,39 +237,41 @@ def _classify(spec, code, out, err, ctx, res):
         res['warn_count'] = len(warns)
         if (code == 1) != bool(viols) or code not in (0, 1):
             res['reason'] = '종료 코드와 결과가 어긋난다'
-            return 'indeterminate'
+            return 'incomplete'
         return 'fail' if viols else ('warn' if warns else 'pass')
     res['items'] = items[:MAX_ITEMS]
     res['warn_count'] = sum(1 for x in lines.splitlines() if _WARN.match(x))
     if code == 0:
         # exit 0 이어도 검사하지 않은 경우가 있다 — 검사기별 출력 계약(codex 재검토 #8). 필수 입력이 없어
-        # 못 본 것은 판정 불가, 적용 대상이 아니라 건너뛴 것은 실행 안 함.
+        # 못 본 것은 미완료, 볼 것이 없다고 한 것은 not_run(실행기가 na_when 으로 확인해야 na).
         for pat in spec.get('partial_patterns') or []:
             hit = next((x for x in lines.splitlines() if re.search(pat, x)), None)
             if hit:
-                # 일부만 검사했다 — 발행은 막지 않되(기존 규칙) 검증 완료로 세지 않는다
+                # 일부만 검사했다 — 2판부터 미완료(입력이 빠져 검사를 건너뛴 것은 통과가 아니다)
                 res['reason'] = '일부 검사를 건너뛰었다 — ' + _mask(hit.strip(), ctx)[:MAX_ITEM_LEN]
-                res['partial'] = True
+                return 'incomplete'
         for pat in spec.get('indeterminate_patterns') or []:
             hit = next((x for x in lines.splitlines() if re.search(pat, x)), None)
             if hit:
                 res['reason'] = '필수 입력이 없어 검사하지 못했다 — ' + _mask(hit.strip(), ctx)[:MAX_ITEM_LEN]
-                return 'indeterminate'
+                return 'incomplete'
         for pat in list(spec.get('not_run_patterns') or []) + [r'nothing to check', r'검사하지 않는다']:
             hit = next((x for x in lines.splitlines() if re.search(pat, x)), None)
             if hit:
                 res['reason'] = '검사기가 검사하지 않았다 — ' + _mask(hit.strip(), ctx)[:MAX_ITEM_LEN]
                 return 'not_run'
-        if res.get('partial'):
-            return 'partial'
         return 'warn' if res['warn_count'] else 'pass'
     if code == 1:
         if 'Traceback (most recent call last)' in (err or '') or any(_FATAL.match(x) for x in lines.splitlines()):
             res['reason'] = '검사기가 위반이 아니라 실행 오류로 끝났다'
-            return 'indeterminate'
+            return 'incomplete'
         return 'fail'
-    res['reason'] = '입력을 읽지 못했다' if code == 2 else f'알 수 없는 종료 코드 {code}'
-    return 'indeterminate'
+    if code == 2:
+        # 검사기가 입력을 못 읽었다(미완료) — 무엇이 왜인지는 검사기의 마지막 줄이 말한다
+        res['reason'] = '검사기가 입력을 읽지 못했다' + (f' — {items[-1]}' if items else '')
+    else:
+        res['reason'] = f'알 수 없는 종료 코드 {code}'
+    return 'incomplete'
 
 
 def _effective(spec):
@@ -240,7 +306,8 @@ def _exec(spec, ctx, html, timeout):
             res['reason'] = '적용일을 읽지 못했다'
             return res
         if eff and ctx.get('date') and ctx['date'] < eff:
-            res['status'] = 'not_run'
+            res['status'] = 'na'
+            res['na_basis'] = 'effective'
             res['reason'] = f'적용일({eff}) 전 글이라 검사기가 검사하지 않는다'
             return res
         c = dict(ctx, html=html)
@@ -293,13 +360,18 @@ def _note_split(spec, ctx, html, res, timeout):
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def run_gates(cfg, market, ctx, timeout=GATE_TIMEOUT, total=TOTAL_TIMEOUT):
-    """실행 목록을 돌린다 → {'gates', 'summary', 'post_sha256', 'post_bytes'}. 글은 고치지 않는다.
+def run_gates(cfg, market, ctx, timeout=GATE_TIMEOUT, total=TOTAL_TIMEOUT, policy=None):
+    """실행 목록을 돌린다 → {'gates', 'summary', 'post_sha256', 'post_bytes', 'inputs', 'health'}. 글은 고치지 않는다.
 
     글 바이트를 **한 번** 읽어 불변 사본(같은 파일 이름)에 두고 그 사본만 검사한다 — 마지막 확인과 기록 사이에
     원본이 바뀌어도 기록의 해시는 검사한 바이트의 것이다(codex 구현 검토 #2). 원본이 검사 중에 바뀌었거나
     입력 파일이 검사 전후로 다르면 결과를 쓰지 않는다(#1·#7) — 발행 차단.
+
+    policy(자료 분류 정책)가 있으면 검사기를 돌리기 전에 자료 상태를 본다 — 검사기의 `inputs` 가운데 하나라도
+    정상이 아니면 그 검사기는 돌리지 않고 incomplete. policy=None 은 정책이 없는 설정(시험용)뿐이다 — 실제 설정은
+    `inputs_policy` 를 반드시 갖는다(test_config 가 강제).
     """
+    from verification import inputs as I
     orig = ctx['html']
     with open(orig, 'rb') as fh:
         raw = fh.read()
@@ -309,6 +381,7 @@ def run_gates(cfg, market, ctx, timeout=GATE_TIMEOUT, total=TOTAL_TIMEOUT):
         m = re.search(r'data-research-cycle="([^"]+)"', raw.decode('utf-8', 'replace'))
         ctx = dict(ctx, cycle=m.group(1) if m else None)
     inputs_before = _inputs(ctx)
+    health = I.assess(policy, market, ctx) if policy is not None else None
     post_rel = _rel_post(orig, ctx['repo'])
     repo_before = repo_digest(ctx['repo'], market, post_rel, 'worktree')
     work = tempfile.mkdtemp(prefix='prepub-run-')
@@ -327,9 +400,29 @@ def run_gates(cfg, market, ctx, timeout=GATE_TIMEOUT, total=TOTAL_TIMEOUT):
                 r['timed_out'] = True
                 results.append(r)
                 continue
+            bad = I.for_gate(health, spec.get('inputs')) if health is not None else []
+            if bad:
+                # 입력이 정상이 아니면 검사기를 돌리지 않는다 — 글을 고쳐서 풀리는 문제가 아니다(재수집)
+                r = _base(spec)
+                r['inputs_bad'] = [{'path': health['files'][k]['file'], 'state': health['files'][k]['state']}
+                                   for k in bad]
+                r['reason'] = '입력 미완료 — ' + '; '.join(I.describe(health['files'][k]) for k in bad)
+                results.append(r)
+                continue
             r = _exec(spec, c, html, min(timeout, max(1, int(left))))
             if r['status'] == 'fail':
                 _note_split(spec, c, html, r, min(timeout, max(1, int(left))))
+            if r['status'] == 'not_run':
+                ok, basis = (I.na_when(health, spec['na_when']) if health is not None and spec.get('na_when')
+                             else (False, None))
+                if ok:
+                    r['status'], r['na_basis'] = 'na', basis
+                    r['reason'] = ('대상 없음 확인(' + ('수집 상태 ok·confirmed_none' if basis == 'collect'
+                                                    else '적용일 전 옛 방식 — 파일·날짜·error 없음·빈 목록') + ') — '
+                                   + r['reason'])
+                else:
+                    r['status'] = 'incomplete'
+                    r['reason'] = '검사기가 검사하지 않았는데 「대상 없음」이 확인되지 않았다 — ' + r['reason']
             results.append(r)
         integrity = []
         with open(html, 'rb') as fh:
@@ -344,6 +437,10 @@ def run_gates(cfg, market, ctx, timeout=GATE_TIMEOUT, total=TOTAL_TIMEOUT):
         inputs_after = _inputs(ctx)
         if _digest_files(inputs_before) != _digest_files(inputs_after):
             integrity.append('검사 중에 입력 파일이 바뀌었다 — 다시 기록해야 한다')
+        for snap in (inputs_before, inputs_after):
+            if snap['capped'] or snap['unreadable']:
+                integrity.append(f'입력 스냅샷이 불완전하다 — 한도 초과 {snap["capped"]}, 읽기 실패 {snap["unreadable"]}개')
+                break
         repo_after = repo_digest(ctx['repo'], market, post_rel, 'worktree')
         if repo_before[0] is None or repo_after[0] is None:
             integrity.append('레포 안 코드·원장의 다이제스트를 읽지 못했다')
@@ -351,59 +448,85 @@ def run_gates(cfg, market, ctx, timeout=GATE_TIMEOUT, total=TOTAL_TIMEOUT):
             integrity.append('검사 중에 레포 안 코드·설정·원장이 바뀌었다 — 다시 기록해야 한다')
     finally:
         shutil.rmtree(work, ignore_errors=True)
-    summary = summarize(results)
-    if integrity:
-        summary['integrity'] = integrity
-        summary['publish_ok'] = False
-        summary['verified'] = False
-        summary['blocking'] = summary['blocking'] + ['integrity']
+    summary = summarize(results, health=health, integrity=integrity)
     return {'gates': results, 'summary': summary, 'post_sha256': post_sha, 'post_bytes': raw,
-            'inputs': inputs_after, 'repo_digest': repo_after}
+            'inputs': inputs_after, 'repo_digest': repo_after, 'health': health}
 
 
 def _digest_files(inp):
     return sha256_bytes(json.dumps([(f['path'], f['sha256']) for f in inp['files']]).encode())
 
 
-def summarize(results):
-    """기록 상태와 발행 여부를 따로 낸다. 필수 검사의 실패·판정 불가는 막고, 참고 검사는 상태에만."""
-    blocking, not_run, note_format, note_numbers, warned = [], [], [], [], []
+def summarize(results, health=None, integrity=None):
+    """글 판정과 발행 여부. 필수 검사의 실패·미완료는 막고, 참고 검사는 상태에만.
+
+    판정 우선순위 failed > incomplete > conditional > verified. 노트만의 실패(`note_format`·`note_numbers`)는 지금처럼
+    발행을 막지 않되 조건으로 남긴다. 자료 상태(분류 안 된 파일·정상이 아닌 gate 자료)와 무결성 경보는 incomplete.
+    한계: 경고는 막지 않는다(자동 허용 목록·사람 승인은 다음 작업) — conditional 은 자동 발행이지만 검증됨이 아니다."""
+    from verification import inputs as I
+    integrity = list(integrity or [])
+    failed, incomplete, note_format, note_numbers, warned, na, conditions = [], [], [], [], [], [], []
     for r in results:
         st = r['status']
-        if st in ('not_run', 'partial'):
-            not_run.append(r['name'])
         if st == 'warn':
             warned.append(r['name'])
+        if st == 'na':
+            na.append(r['name'])
         if not r['required']:
             continue
-        if st == 'indeterminate':
-            blocking.append(r['name'])                 # 실행하지 못한 필수 검사는 통과가 아니다
+        if st == 'incomplete':
+            incomplete.append(r['name'])               # 돌지 못한·입력이 빠진 필수 검사는 통과가 아니다
         elif st == 'fail':
             n = r.get('note')
             note_only = bool(n) and n.get('stripped_status') in ('pass', 'warn')
             if not note_only:
-                blocking.append(r['name'])             # 노트를 빼도 남는 실패 = 본문 오류
+                failed.append(r['name'])               # 노트를 빼도 남는 실패 = 본문 오류
             elif r['kind'] == 'format':
                 note_format.append(r['name'])          # 노트의 표현·형식 — 기록하고 허용
+                conditions.append({'kind': 'note_format', 'gate': r['name']})
             elif r['kind'] == 'numbers':
                 note_numbers.append(r['name'])         # 노트의 수치가 원자료와 다름 — 검증 완료 아님
+                conditions.append({'kind': 'note_numbers', 'gate': r['name']})
             else:
-                blocking.append(r['name'])             # 노트가 구조·필수 표식을 망가뜨림 — 보류
-    statuses = {r['status'] for r in results}
-    if 'fail' in statuses:
-        status = 'fail'
-    elif 'indeterminate' in statuses:
-        status = 'indeterminate'
-    elif not_run:
-        status = 'pass_with_gaps'
-    elif warned:
-        status = 'pass_with_warnings'
+                failed.append(r['name'])               # 노트가 구조·필수 표식을 망가뜨림 — 보류
+        elif st == 'warn':
+            conditions.append({'kind': 'warn', 'gate': r['name']})
+        elif st == 'na' and r.get('na_basis') == 'legacy':
+            conditions.append({'kind': 'na_legacy', 'gate': r['name']})
+    inputs = None
+    if health is not None:
+        b = I.blocking(health)
+        inputs = {'blocking': [I.describe(health['files'][k]) for k in b['files']],
+                  'blocking_files': [health['files'][k]['file'] for k in b['files']],
+                  'unclassified': b['unclassified'], 'warnings': [health['files'][k]['file']
+                                                                  for k in I.warnings(health)]}
+        for k in I.warnings(health):
+            conditions.append({'kind': 'unstamped', 'file': health['files'][k]['file']})
+    blocking = failed + incomplete
+    if inputs and (inputs['blocking'] or inputs['unclassified']):
+        blocking.append('inputs')
+    if integrity:
+        blocking.append('integrity')
+    if failed:
+        status = 'failed'
+    elif blocking:
+        status = 'incomplete'
+    elif conditions:
+        status = 'conditional'
     else:
-        status = 'pass'
-    return {'status': status, 'publish_ok': not blocking,
-            'verified': status in ('pass', 'pass_with_warnings') and not note_numbers,
-            'blocking': blocking, 'not_run': not_run, 'note_format': note_format,
-            'note_numbers': note_numbers, 'warned': warned, 'integrity': []}
+        status = 'verified'
+    return {'status': status, 'publish_ok': not blocking, 'verified': status == 'verified',
+            'blocking': blocking, 'failed': failed, 'incomplete': incomplete, 'na': na,
+            'not_run': [], 'note_format': note_format, 'note_numbers': note_numbers, 'warned': warned,
+            'conditions': conditions, 'inputs': inputs, 'integrity': integrity}
+
+
+def exit_code(summary):
+    """check·record 공통 — 0 발행 가능 / 1 위반(재작성) / 2 미완료(재수집 — 글을 고쳐서 풀리지 않는다).
+    위반과 미완료가 함께면 1(우선순위 failed > incomplete) — 미완료 목록은 출력에 함께 찍힌다."""
+    if summary['publish_ok']:
+        return 0
+    return 1 if summary['status'] == 'failed' else 2
 
 
 # ── 기록 ─────────────────────────────────────────────────────────────────
@@ -516,9 +639,11 @@ def _inputs(ctx):
             'incomplete': capped or unreadable > 0, 'files': files}
 
 
-def _generator(config_path):
+def _generator(config_path, policy=None):
     out = {}
-    for p in (os.path.join(HERE, 'record.py'), os.path.join(os.path.dirname(HERE), 'run_gates.py'), config_path):
+    paths = [os.path.join(HERE, 'record.py'), os.path.join(HERE, 'inputs.py'),
+             os.path.join(os.path.dirname(HERE), 'run_gates.py'), config_path] + ([policy] if policy else [])
+    for p in paths:
         try:
             out[os.path.basename(p)] = sha256_file(p)
         except OSError:
@@ -635,13 +760,22 @@ def build_record(cfg, config_path, market, ctx, res):
         'post': {'path': rel, 'sha256': res['post_sha256'],
                  'blob': blob.stdout.decode().strip() if blob.returncode == 0 else None},
         'created_at': {'utc': t.isoformat(timespec='seconds'), 'kst': _iso(t)},
-        'generator': _generator(config_path), 'code': _code(repo),
+        'generator': _generator(config_path, policy_path(cfg, config_path)), 'code': _code(repo),
         'repo_inputs': {'paths': repo_paths(market), 'digest': digest, 'files': nfiles},
         'inputs': inputs, 'preservation': preservation,
         'gates': gates, 'disabled': (cfg.get('disabled') or {}).get(market, []),
         'manual': '수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다',
         'summary': res['summary'],
+        'inputs_health': _health_public(res.get('health')),
     }
+
+
+def _health_public(health):
+    """자료 상태 — 파일별 state·분류, writer 의 risk·covered_by, 수집 중단 목록. 정책 없이 돌았으면 None."""
+    if health is None:
+        return None
+    from verification import inputs as I
+    return I.public(health)
 
 
 def _atomic_write(path, data):
@@ -758,7 +892,7 @@ def verify(cfg, market, date, repo, rev=None, datadir=None, extra=None, record_f
         return 1, ['기록을 읽지 못했다']
     why = []
     if not isinstance(rec, dict) or rec.get('format') != FORMAT:
-        return 1, ['기록 형식이 다르다']
+        return 1, ['기록 형식이 다르다 — 지금 판(' + FORMAT + ')으로 다시 record 한다']
     if rec.get('market') != market or rec.get('date') != date:
         why.append(f'다른 글의 기록이다 — {rec.get("market")}/{rec.get("date")}')
     post = rec.get('post') or {}

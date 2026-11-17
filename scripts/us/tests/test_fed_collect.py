@@ -115,24 +115,25 @@ def _run(tmp_path, html, monkeypatch):
 
 
 def test_unknown_report_date_blocks_a_published_section(tmp_path, monkeypatch):
-    """오늘이 언제인지 모르면 책이 오늘 것인지도 모른다 — 통과시키지 않는다."""
+    """오늘이 언제인지 모르면 책이 오늘 것인지도 모른다 — 통과시키지 않는다(2026-11-17 부터 미완료 2)."""
     (tmp_path / 'fed').mkdir()
     (tmp_path / 'fed' / 'events.json').write_text(
         json.dumps({'report_date': '2026-01-01', 'events': [], 'diff': None}),
         encoding='utf-8')
-    assert _run(tmp_path, SECTION_PAGE, monkeypatch) == 1
+    assert _run(tmp_path, SECTION_PAGE, monkeypatch) == 2
 
 
-def test_unknown_report_date_without_a_section_passes(tmp_path, monkeypatch):
+def test_unknown_report_date_without_a_section_is_incomplete(tmp_path, monkeypatch):
+    # 2026-11-17: 섹션이 없어도 통과가 아니다 — 기준일을 모르면 「사건 없음」도 확인할 수 없다
     (tmp_path / 'fed').mkdir()
     (tmp_path / 'fed' / 'events.json').write_text(
         json.dumps({'report_date': '2026-01-01', 'events': [], 'diff': None}),
         encoding='utf-8')
     assert _run(tmp_path, '<html><body><main><h2>주식</h2></main></body></html>',
-                monkeypatch) == 0
+                monkeypatch) == 2
 
 
 def test_corrupt_events_json_fails_rather_than_being_excused(tmp_path, monkeypatch):
     (tmp_path / 'fed').mkdir()
     (tmp_path / 'fed' / 'events.json').write_text('{ not json', encoding='utf-8')
-    assert _run(tmp_path, SECTION_PAGE, monkeypatch) == 1
+    assert _run(tmp_path, SECTION_PAGE, monkeypatch) == 2

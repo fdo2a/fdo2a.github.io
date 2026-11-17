@@ -426,6 +426,7 @@ def test_check_weight_cli_warnings_alone_exit_zero(tmp_path):
     root = Path(__file__).resolve().parents[3]
     f = tmp_path / 'kr.html'
     f.write_text(_kr_cli_doc(6000), encoding='utf-8')
+    (tmp_path / 'kr_market_data.json').write_text('{}')      # 2026-11-17: 시장 데이터가 없으면 미완료(2)
     r = subprocess.run([sys.executable, str(root / 'scripts' / 'check_weight.py'), '--html', str(f),
                         '--datadir', str(tmp_path), '--market', 'kr'],
                        capture_output=True, text=True, cwd=root)

@@ -114,5 +114,5 @@ def test_cli_reads_the_market_files(tmp_path):
     post.write_text(page('<p data-mover="g1">삼성전자 +3.25%</p>'
                          '<p data-mover="g2">현대건설 -7.77%</p>'), encoding='utf-8')
     assert C.main(['--html', str(post), '--datadir', str(tmp_path), '--market', 'kr']) == 0
-    # US 폴더에는 KR 파일이 없다 — 강제하지 않는다
-    assert C.main(['--html', str(post), '--datadir', str(tmp_path)]) == 0
+    # US 자료(movers.json)가 없으면 미완료(2026-11-17 — 전에는 강제하지 않고 통과)
+    assert C.main(['--html', str(post), '--datadir', str(tmp_path)]) == 2

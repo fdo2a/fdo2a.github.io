@@ -8,8 +8,8 @@ Run from the repo clone, against the writer's output in the routine workspace:
 Exit 0 = publishable. Exit 1 = violations printed, one per line; hand them back to
 the writer subagent verbatim and re-run.
 
-Non-core: if market_data.json carries no price_context block (an older dataset, or a
-collector run where that step failed) there is nothing to enforce and the gate passes.
+Exit 2 = incomplete (2026-11-17): market_data.json missing or unreadable, no
+price_context block (the collector step failed), or an unreadable scorecard.json — re-collect.
 """
 
 import argparse
@@ -41,16 +41,13 @@ def main():
             market = json.load(fh)
         price_context = market.get('price_context')
         report_date = market.get('report_date')
-    except FileNotFoundError:
-        print(f'no {md_path} — nothing to check')
-        return
     except Exception as e:
-        print(f'WARN: could not read {md_path}: {e}', file=sys.stderr)
-        return
+        print(f'FATAL: could not read {md_path}: {e} — 미완료', file=sys.stderr)
+        sys.exit(2)
 
     if not price_context:
-        print('no price_context block in market_data.json — nothing to check')
-        return
+        print('FATAL: no price_context block in market_data.json — 미완료(수집 단계 실패)', file=sys.stderr)
+        sys.exit(2)
 
     scorecard = None
     sc_path = os.path.join(args.datadir, 'scorecard.json')
@@ -59,7 +56,8 @@ def main():
             with open(sc_path, encoding='utf-8') as fh:
                 scorecard = json.load(fh)
         except Exception as e:
-            print(f'WARN: could not read {sc_path}: {e}', file=sys.stderr)
+            print(f'FATAL: could not read {sc_path}: {e} — 미완료', file=sys.stderr)
+            sys.exit(2)
     # A scorecard left over from another session would let a stale `sufficient: true`
     # authorise today's claim. Treat it as absent, which the gate fails closed on.
     if scorecard is not None and scorecard.get('report_date') != report_date:

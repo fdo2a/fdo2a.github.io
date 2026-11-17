@@ -6,6 +6,8 @@ python3 scripts/check_kr_stance.py --html kr_brief_2026-09-22.html --datadir kr/
 
 Exit 0 = 발행 가능. Exit 1 = 위반이 한 줄씩 찍힌다 — 그대로 writer 에게 돌려주고
 다시 돌린다. 비-코어가 아니다: 원장이 틀어지면 다음 회차의 복기가 통째로 거짓이 된다.
+Exit 2 = 미완료(2026-11-17): 수집 자료(kr_stance_eval·kr_top_value·kr_index_etf·kr_market_data)가 없거나
+읽히지 않는다 — 재수집. 작성자가 낸 원장(--next)이 없거나 틀린 것은 위반(1)이다.
 """
 import argparse
 import json
@@ -24,6 +26,20 @@ def _load(path):
         return json.load(f)
 
 
+def _need(path):
+    """수집 자료 — 없거나 깨졌으면 미완료(2)."""
+    try:
+        v = _load(path)
+    except (OSError, ValueError) as e:
+        v, why = None, type(e).__name__
+    else:
+        why = "없다"
+    if v is None:
+        print(f"FATAL: {os.path.basename(path)} 이 {why} — 미완료, 수집을 다시 돌린다", file=sys.stderr)
+        sys.exit(2)
+    return v
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--html", required=True)
@@ -34,19 +50,23 @@ def main():
 
     with open(args.html, encoding="utf-8") as f:
         html_doc = f.read()
-    nxt = _load(args.next_path)
-    ev = _load(os.path.join(args.datadir, "kr_stance_eval.json"))
+    try:
+        nxt = _load(args.next_path)
+    except (OSError, ValueError) as e:
+        print(f"고칠 것 1건 — {args.html}\n- {args.next_path} 를 읽지 못했다({type(e).__name__})")
+        return 1
+    ev = _need(os.path.join(args.datadir, "kr_stance_eval.json"))
 
     violations = []
     if nxt is None:
         violations.append(f"{args.next_path} 가 없다 — 오늘 판단을 원장에 남겨야 내일이 복기한다")
     else:
         violations += [f"원장: {x}" for x in kr_stance.validate(nxt)]
-    liquidity = liquidity_index(_load(os.path.join(args.datadir, "kr_top_value.json")),
-                                _load(os.path.join(args.datadir, "kr_index_etf.json")))
+    liquidity = liquidity_index(_need(os.path.join(args.datadir, "kr_top_value.json")),
+                                _need(os.path.join(args.datadir, "kr_index_etf.json")))
     # 배치 계약(stance_gate.LAYOUT_V2_FROM)은 발행일로 고른다 — 수집 파일의 report_date 가 정본,
     # 없으면 작성자가 낸 원장의 date.
-    md = _load(os.path.join(args.datadir, "kr_market_data.json")) or {}
+    md = _need(os.path.join(args.datadir, "kr_market_data.json"))
     report_date = md.get("report_date") or (nxt or {}).get("date")
     if not report_date:
         violations.append("report_date 를 알 수 없다(kr_market_data.json·원장 date 둘 다 없다) — "

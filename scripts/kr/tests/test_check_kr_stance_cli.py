@@ -18,6 +18,8 @@ def _run(tmp_path, html, report_date, ledger_date=None):
     d = tmp_path / "data"
     d.mkdir(exist_ok=True)
     (d / "kr_stance_eval.json").write_text(json.dumps(EVAL, ensure_ascii=False))
+    for name in ("kr_top_value.json", "kr_index_etf.json"):      # 2026-11-17: 없으면 미완료(2)
+        (d / name).write_text("[]")
     if report_date is not None:
         (d / "kr_market_data.json").write_text(json.dumps({"report_date": report_date}))
     nxt = {**STANCE, "date": ledger_date if ledger_date is not None else report_date,
@@ -50,8 +52,14 @@ def test_new_layout_passes_on_10_20(tmp_path):
 
 
 def test_missing_report_date_fails(tmp_path):
+    # 2026-11-17: kr_market_data.json 자체가 없으면 미완료(2) — 수집 자료다
     code, out = _run(tmp_path, _doc(), None, ledger_date="")
-    assert code == 1 and "report_date" in out
+    assert code == 2
+    d = tmp_path / "data"
+    (d / "kr_market_data.json").write_text("{}")             # 파일은 있는데 날짜가 없다 — 위반(1)
+    r = subprocess.run([sys.executable, str(SCRIPT), "--html", str(tmp_path / "post.html"),
+                        "--datadir", str(d), "--next", str(tmp_path / "next.json")], capture_output=True, text=True)
+    assert r.returncode == 1 and "report_date" in r.stdout
 
 
 def test_ledger_date_must_match_report_date(tmp_path):
