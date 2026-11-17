@@ -139,6 +139,22 @@ def write_status(datadir, book):
     os.replace(tmp, path)
 
 
+def note_run_failure(datadir, rel, error):
+    """수집기가 예외를 삼키고 넘어가는 자리에서 「이번 실행은 이 파일을 쓰지 못했다」를 남긴다(2026-11-17, 1a 구현 검토
+    2회차 F3). 실행 시작 기록(`stamp_collect.py --begin`)이 열려 있을 때만 적는다 — 없으면 아무것도 하지 않는다.
+    판정은 `stamp_collect.py` 가 한다(이 기록이 없어도 「이번 실행에서 다시 쓰이지 않은 파일」은 잡힌다 — 이것은 사유)."""
+    try:
+        book = load_status(datadir)
+        run = book.get('run')
+        if not (isinstance(run, dict) and run.get('open') is True):
+            return False
+        run.setdefault('failures', {})[rel] = clean(error)
+        write_status(datadir, book)
+        return True
+    except OSError:
+        return False
+
+
 def record_sidecar(datadir, rel, collect):
     """칸을 넣을 수 없는 파일(목록형·비 JSON)의 상태를 `_collect_status.json` 에. 해시는 stamp 가 더한다."""
     book = load_status(datadir)

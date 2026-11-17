@@ -162,10 +162,12 @@ def recorded(rec, allowed=None):
 def _inputs_view(inp):
     """2판 기록의 자료 상태 — 「무엇이·왜」 문장(기록이 정책 이름 + 상태 한국어로 만든 것)과 분류 안 된 파일."""
     if not isinstance(inp, dict):
-        return {'blocking': [], 'unclassified': [], 'warnings': 0, 'unconfirmed_empty': [], 'readable': inp is None}
+        return {'blocking': [], 'unclassified': [], 'warnings': 0, 'unconfirmed_empty': [], 'recollect_failed': [],
+                'readable': inp is None}
     lst = lambda k: [x for x in inp.get(k) or [] if isinstance(x, str)] if isinstance(inp.get(k), list) else []
     return {'blocking': lst('blocking'), 'unclassified': lst('unclassified'),
-            'warnings': len(lst('warnings')), 'unconfirmed_empty': lst('unconfirmed_empty'), 'readable': True}
+            'warnings': len(lst('warnings')), 'unconfirmed_empty': lst('unconfirmed_empty'),
+            'recollect_failed': lst('recollect_failed'), 'readable': True}
 
 
 def _as_str(x):
@@ -480,6 +482,11 @@ def recorded_lines(v):
             out.append(f' · 대상 없음 미확인: {_cut(x, 120)}')
         if len(inp['unconfirmed_empty']) > GATE_LINES:
             out.append(f' · 대상 없음 미확인: 외 {len(inp["unconfirmed_empty"]) - GATE_LINES}개')
+        # 이번 수집은 그 파일을 못 썼고 같은 날 옛 판으로 검사했다 — 적용일 전이라 막지 않았다(1a 구현 검토 2회차 F3)
+        for x in inp.get('recollect_failed', [])[:GATE_LINES]:
+            out.append(f' · 재수집 실패: {_cut(x, 120)}')
+        if len(inp.get('recollect_failed', [])) > GATE_LINES:
+            out.append(f' · 재수집 실패: 외 {len(inp["recollect_failed"]) - GATE_LINES}개')
     stuck_label = '미완료' if rec.get('v2') else '판정 불가'
     for key, label in (('blocking', '막은 것'), ('indeterminate', stuck_label), ('na', '해당 없음'),
                        ('not_run', '실행 안 함'),
@@ -638,6 +645,8 @@ def digest_lines(v, who=MAC):
             bits.append(f'자료 미완료 {len(inp["blocking"]) + len(inp["unclassified"])}개')
         if inp.get('unconfirmed_empty'):
             bits.append(f'대상 없음 미확인 {len(inp["unconfirmed_empty"])}개')
+        if inp.get('recollect_failed'):
+            bits.append(f'재수집 실패 {len(inp["recollect_failed"])}개')
         u = unverified_numbers(v)
         if rec.get('numbers') and v.get('market') == 'kr':
             bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤

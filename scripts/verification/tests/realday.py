@@ -153,7 +153,8 @@ def stamp(ctx, market, pol):
             skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
             with open(full, 'rb') as fh:
                 raw = fh.read()
-            status[skey] = {'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'collect_in': 'none'}
+            status[skey] = {'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'collect_in': 'none',
+                            'run': 'written'}
             continue
         c = dict(STAMP, as_of=date)
         obj = None
@@ -172,7 +173,7 @@ def stamp(ctx, market, pol):
         skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
         with open(full, 'rb') as fh:
             raw = fh.read()
-        ent = {'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw)}
+        ent = {'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'run': 'written'}
         if not isinstance(obj, dict):
             ent.update(c)
         status[skey] = ent

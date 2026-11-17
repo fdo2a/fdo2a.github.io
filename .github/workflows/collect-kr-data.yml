@@ -46,7 +46,15 @@ jobs:
         run: pip install --quiet yfinance pandas requests beautifulsoup4 lxml matplotlib pytest
       - name: Run unit tests
         run: python -m pytest scripts/kr/tests -q
+      - name: Mark collection start
+        # 2026-11-17 (1a 구현 검토 2회차 F3): 이번 실행의 시작 시각을 kr/data/_collect_status.json 에 적는다. 끝의
+        # 「Stamp collection status」가 이 시각 뒤에 다시 쓰이지 않은 파일을 「이번 수집 실패」로 적는다(같은 날 17:00 판이
+        # 정상이어도 17:30 실행의 세션 수집 실패를 성공으로 다시 찍지 않는다). 실패해도 수집은 한다.
+        id: stamp_begin
+        continue-on-error: true
+        run: python scripts/stamp_collect.py --datadir kr/data --begin
       - name: Collect
+        id: collect
         # ECOS 인증키는 URL 경로에 들어가므로 로그 유출에 주의 — kr/econ.py가 scrub()로 마스킹한다.
         env:
           ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
@@ -71,6 +79,7 @@ jobs:
           RD=$(python -c "import json;print(json.load(open('kr/data/kr_market_data.json'))['report_date'])")
           python scripts/fetch_kr_news.py --datadir kr/data --bodydir _workspace/kr_news --date "$RD"
       - name: Fetch Telegram channels (non-core)
+        id: telegram
         # 텔레그램 공개 채널 8개 → kr/data/telegram/<date>.json (2026-11-06 사용자 지시 — 증권사 글은 그 증권사
         # 견해로, 나머지는 「이런 의견도 있었다」·원문 출처로 인용). 원문은 _workspace/ 에만, 요약만 커밋한다.
         # 요약이 있는 날 파일은 동결된다(17:30 재수집이 17:00 판을 바꾸지 않는다). 실패해도 브리프는 그대로.
@@ -96,12 +105,15 @@ jobs:
               print('missing:', ', '.join(d['missing']))
           PY
       - name: Stamp collection status
+        id: stamp
         # 2026-11-17 (명세 「공통 계약 A」): 파일마다 sha256·bytes·수집 상태를 kr/data/_collect_status.json 에.
         # 목록형(kr_top_value·kr_index_etf)의 상태는 수집기가 이미 적어 두었고 여기서 해시를 더한다.
         # **versions.py commit 바로 앞**: 그 단계가 kr/data/*.json 으로 이 파일까지 담아 커밋 O 를 만든다.
         # 발행된 날(enforce)은 날짜 없는 고정 경로가 원격 판으로 동결되므로 이 파일도 원격 판(그 판의 해시)이 남는다.
         if: always()
         continue-on-error: true
+        env:
+          COLLECT_STEPS: ${{ toJSON(steps) }}
         run: python scripts/stamp_collect.py --datadir kr/data
 
       - name: Commit data
@@ -129,3 +141,10 @@ jobs:
           path: ${{ runner.temp }}/versions
           if-no-files-found: ignore
           retention-days: 90
+      - name: Fail the run when the collection ledger was not written
+        # 장부(시작 기록·끝 기록)를 못 썼으면 자료 커밋은 그대로 두되 실행을 실패로 끝낸다 — 조용히 넘어가지 않는다.
+        # 2026-11-17 1a 구현 검토 2회차 F3.
+        if: always() && (steps.stamp.outcome == 'failure' || steps.stamp_begin.outcome == 'failure')
+        run: |
+          echo "::error::수집 상태 장부(kr/data/_collect_status.json)를 쓰지 못했다 — begin=${{ steps.stamp_begin.outcome }} stamp=${{ steps.stamp.outcome }}"
+          exit 1

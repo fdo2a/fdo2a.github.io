@@ -216,3 +216,122 @@ def test_f4_krx_changes_rows_carry_the_fields_the_policy_names():
                          {'005930': [('2026-11-13', 100.0), (D, 101.0)]}, D)
     ev = kr_na()['legacy_evidence']
     assert rows and all(ev['id_field'] in r and ev['value_field'] in r for r in rows)
+
+
+# ── F3. 같은 날 재수집 실패 — 장부의 run: failed 는 파일 안의 「성공」보다 앞선다 ─────────────────────
+
+KR_SESSION = {'path': '<datadir>/kr_session.json', 'class': 'gate', 'name': 'KR 장중 세션', 'date': 'report_date'}
+META = {'path': '<datadir>/_collect_status.json', 'class': 'gate', 'name': '수집 상태 기록', 'optional': True,
+        'required_when_enforced': True, 'produced_by': 'meta'}
+
+
+def _sha(p):
+    import hashlib
+    return hashlib.sha256(open(p, 'rb').read()).hexdigest()
+
+
+def _session_day(tmp_path, entry):
+    pol = policy([META, KR_SESSION], market='kr')
+    p = put(tmp_path, 'kr_session.json', {'report_date': D, 'collect': STAMPED})
+    put(tmp_path, '_collect_status.json', {'files': {'kr_session.json': entry(p)}})
+    return I.assess(pol, 'kr', ctx(tmp_path))
+
+
+def _failed(p):
+    return {'present': True, 'collect_in': 'file', 'status': 'failed', 'run': 'failed',
+            'response': '이번 수집 실행에서 다시 쓰이지 않았다 — RuntimeError: yfinance timeout',
+            'stale_copy': dict(STAMPED, sha256=_sha(p), bytes=1, collect_in='file')}
+
+
+def test_f3_rerun_failure_blocks_from_effective_even_if_the_old_copy_says_ok(tmp_path, monkeypatch):
+    rel = '<datadir>/kr_session.json'
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    f = _session_day(tmp_path, _failed)['files'][rel]
+    assert f['state'] == 'failed' and f['blocking']                         # 재현: 전에는 장부를 보지 않고 ok
+    assert '옛 판 있음' in f['reason'] and 'yfinance timeout' in f['reason']
+    # 정상 재실행 — 새 해시·run written
+    f = _session_day(tmp_path, lambda p: {'sha256': _sha(p), 'bytes': 1, 'run': 'written'})['files'][rel]
+    assert f['state'] == 'ok' and not f['blocking']
+    for ok in I.RUN_OK:
+        assert _session_day(tmp_path, lambda p: {'sha256': _sha(p), 'run': ok})['files'][rel]['state'] == 'ok'
+
+
+def test_f3_before_effective_it_is_a_visible_condition_not_hidden(tmp_path, monkeypatch):
+    rel = '<datadir>/kr_session.json'
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    h = _session_day(tmp_path, _failed)
+    f = h['files'][rel]
+    assert f['state'] == 'ok' and not f['blocking'] and '옛 판 있음' in f['recollect_failed']
+    assert I.recollect_failed(h) == [rel]
+    s = R.summarize([], health=h)
+    assert s['publish_ok'] and s['status'] == 'conditional'
+    assert {'kind': 'recollect_failed', 'file': rel} in s['conditions']
+    assert s['inputs']['recollect_failed'] == [I.describe_recollect(f)]
+
+
+def test_f3_ledger_must_say_how_the_file_got_there_from_effective(tmp_path, monkeypatch):
+    rel = '<datadir>/kr_session.json'
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    for run in (None, 'unknown', 'untracked', 'nonsense'):
+        e = {'sha256': None, 'bytes': 1}
+        f = _session_day(tmp_path, lambda p: dict(e, sha256=_sha(p), **({'run': run} if run else {})))['files'][rel]
+        assert f['state'] == 'unstamped' and f['blocking'] and 'run=' in f['reason'], run
+
+
+def test_f3_run_ok_states_match_the_stamper():
+    sys.path.insert(0, SCRIPTS)
+    import stamp_collect as SC
+    assert I.RUN_OK == SC.RUN_OK
+
+
+def test_f3_failed_sidecar_list_file(tmp_path, monkeypatch):
+    # 목록형 파일(표시가 장부에 있다) — 옛 판의 표시는 stale_copy 에서 읽고, 적용일부터는 막는다
+    e = next(x for m, x in target_entries() if x['path'] == '<datadir>/kr_index_etf.json')
+    pol = policy([META, e], market='kr')
+    p = put(tmp_path, 'kr_index_etf.json', [{'name': 'KODEX 200'}])
+    put(tmp_path, '_collect_status.json', {'files': {'kr_index_etf.json': {
+        'present': True, 'collect_in': 'sidecar', 'status': 'failed', 'run': 'failed', 'response': 'x',
+        'stale_copy': dict(STAMPED, sha256=_sha(p), collect_in='sidecar')}}})
+    rel = '<datadir>/kr_index_etf.json'
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    h = I.assess(pol, 'kr', ctx(tmp_path))
+    assert not h['files'][rel]['blocking'] and I.recollect_failed(h) == [rel]
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    f = I.assess(pol, 'kr', ctx(tmp_path))['files'][rel]
+    assert f['state'] == 'failed' and f['blocking']
+
+
+def test_f3_end_to_end_stamper_to_gate(tmp_path, monkeypatch):
+    """수집기 → stamp → 검사: 둘째 실행의 세션 실패가 적용일부터 발행을 막고, 정상 재실행은 통과한다."""
+    import datetime as dt
+    sys.path.insert(0, SCRIPTS)
+    import stamp_collect as SC
+    from common import collect_status as C
+    kst = dt.timezone(dt.timedelta(hours=9))
+    t0, t1 = dt.datetime(2026, 11, 16, 17, 0, tzinfo=kst), dt.datetime(2026, 11, 16, 17, 30, tzinfo=kst)
+    pol = policy([META, KR_SESSION, {'path': '<datadir>/kr_market_data.json', 'class': 'gate', 'name': 'KR 시장',
+                                     'date': 'report_date'}], market='kr')
+
+    def write(name, at):
+        put(tmp_path, name, {'report_date': D, 'collect': C.build('ok', D, 'x', empty='has_data',
+                                                                 collected_at=C.now_iso(at))})
+    steps = {'collect': {'outcome': 'success'}}
+    SC.begin(str(tmp_path), now=t0)
+    write('kr_market_data.json', t0)
+    write('kr_session.json', t0)
+    SC.stamp(str(tmp_path), market='kr', steps=steps)
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    assert not I.blocking(I.assess(pol, 'kr', ctx(tmp_path)))['any']
+    SC.begin(str(tmp_path), now=t1)                                        # 둘째 실행 — 세션만 실패
+    write('kr_market_data.json', t1)
+    C.note_run_failure(str(tmp_path), 'kr_session.json', 'RuntimeError: boom')
+    SC.stamp(str(tmp_path), market='kr', steps=steps)
+    b = I.blocking(I.assess(pol, 'kr', ctx(tmp_path)))
+    assert b['files'] == ['<datadir>/kr_session.json']
+    t2 = t1 + dt.timedelta(minutes=30)
+    SC.begin(str(tmp_path), now=t2)                                        # 셋째 실행 — 둘 다 성공
+    write('kr_market_data.json', t2)
+    write('kr_session.json', t2)
+    SC.stamp(str(tmp_path), market='kr', steps=steps)
+    assert not I.blocking(I.assess(pol, 'kr', ctx(tmp_path)))['any']
+

@@ -21,9 +21,15 @@
 * `producer:<rel>` — 비 JSON 산출물(표 HTML·차트·원문 txt)은 그것을 만든 JSON 의 칸을 옮긴다.
 * `none` — 칸이 없다(옛 형식이거나 수집기가 칸을 쓰기 전에 죽었다). 검사 쪽이 「상태 없음」으로 본다.
 
+`--begin`(잡 시작, 수집 앞)이 이번 실행의 시작 시각을 적는다. 끝의 stamp 는 파일마다 `run` 을 적는다 — written(이번
+실행이 썼다) / skipped(단계가 건너뛰었다) / kept(동결) / failed(단계는 돌았는데 파일이 다시 쓰이지 않았다 — 같은 날 앞선
+실행의 정상 파일이 남아 있어도 `status: failed`, 그 바이트의 해시·상태는 `stale_copy` 로) / unknown / untracked.
+단계 결과는 환경 변수 `COLLECT_STEPS`(`${{ toJSON(steps) }}`)로 받는다(1a 구현 검토 2회차 F3).
+
 판정하지 않는다 — 기록만 한다. exit 0(쓰기 실패만 1).
 """
 import argparse
+import datetime as _dt
 import glob
 import hashlib
 import json
@@ -69,6 +75,102 @@ REGISTRY = {
 }
 MARKET_FILE = {'us': 'market_data.json', 'kr': 'kr_market_data.json'}
 
+# ── 이번 실행이 그 파일을 실제로 다시 썼는가(2026-11-17, 1a 구현 검토 2회차 F3) ──────────────────────────
+# 같은 날 앞선 실행의 정상 파일이 남아 있으면, 이번 실행이 그 파일을 쓰지 못해도(예외를 삼켰거나 단계가 죽었거나)
+# 옛 파일의 `collect` 가 「성공」이라 장부에 성공으로 다시 찍혔다. 그래서 잡 시작에 `--begin` 이 시각을 적고,
+# 여기서 파일의 `collect.collected_at`(칸이 없는 참고 파일은 mtime)이 그 뒤인지 본다.
+# 등록표 패턴 → 그 파일을 쓰는 워크플로 단계 id(`steps.<id>` — 워크플로의 id 와 같아야 한다, 시험이 묶는다).
+STEP_OF = {
+    'us': {'market_data.json': 'collect', 'econ_indicators.json': 'collect', 'intraday.json': 'collect',
+           'movers.json': 'collect', 'fund_board.json': 'collect', 'macro_metrics.json': 'collect',
+           'scorecard.json': 'collect', 'macro_eval.json': 'macro_eval', 'releases/index.json': 'releases',
+           'fed/events.json': 'fed', 'calendar.json': 'calendar', 'auctions.json': 'auctions',
+           'liquidity/liquidity.json': 'liquidity', 'telegram/{D}.json': 'telegram'},
+    'kr': {'kr_market_data.json': 'collect', 'kr_session.json': 'collect', 'kr_movers.json': 'collect',
+           'kr_fund_view.json': 'collect', 'kr_stance_eval.json': 'collect', 'kr_flows.json': 'collect',
+           'kr_intraday.json': 'collect', 'kr_econ.json': 'collect', 'kr_top_value.json': 'collect',
+           'kr_index_etf.json': 'collect', 'telegram/{D}.json': 'telegram'},
+}
+# 단계가 성공하고도 일부러 다시 쓰지 않는 파일 — 요약이 있는 날의 텔레그램 파일은 동결된다(fetch_telegram.frozen).
+MAY_KEEP = ('telegram/{D}.json',)
+# `collect` 칸이 없는 참고 파일 — 파일 수정 시각으로 본다(Actions 의 checkout 은 잡 시작 전이다).
+MTIME_ONLY = ('scorecard.json',)
+RUN_OK = ('written', 'skipped', 'kept')
+RUN_STATES = RUN_OK + ('failed', 'unknown', 'untracked')
+STEPS_ENV = 'COLLECT_STEPS'           # 워크플로가 `${{ toJSON(steps) }}` 를 넣는다
+
+
+def _parse(ts):
+    try:
+        t = _dt.datetime.fromisoformat(str(ts))
+    except (TypeError, ValueError):
+        return None
+    return t if t.tzinfo else None
+
+
+def _steps():
+    """워크플로 단계 결과 `{id: {outcome, outputs}}` — 없거나 못 읽으면 None(모른다)."""
+    raw = os.environ.get(STEPS_ENV)
+    if not raw:
+        return None
+    try:
+        d = json.loads(raw)
+    except ValueError:
+        return None
+    return d if isinstance(d, dict) else None
+
+
+def begin(datadir, now=None):
+    """잡 시작(checkout 뒤·수집 앞) — 이번 실행의 시작 시각을 장부에 적는다. 파일 항목은 건드리지 않는다."""
+    book = C.load_status(datadir)
+    book['run'] = {'started_at': C.now_iso(now), 'open': True, 'failures': {},
+                   'run_id': (f"{os.environ['GITHUB_RUN_ID']}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
+                              if os.environ.get('GITHUB_RUN_ID') else None)}
+    C.write_status(datadir, book)
+    return book['run']
+
+
+def run_state(market, pat, rel, path, collected_at, run, steps):
+    """-> (상태, 사유). written 이번 실행이 썼다 / skipped 단계가 건너뛰었다(옛 판이 그대로 유효 — US 둘째 슬롯) /
+    kept 일부러 다시 쓰지 않았다(동결) / failed 단계는 돌았는데 파일이 다시 쓰이지 않았다 / unknown 판정할 수 없다
+    (시작 기록·단계 결과가 없다 — 성공으로 추정하지 않는다) / untracked 이 판정의 대상이 아니다."""
+    step = STEP_OF[market].get(pat)
+    if step is None:
+        return 'untracked', None
+    started = _parse(run.get('started_at')) if isinstance(run, dict) and run.get('open') is True else None
+    if started is None:
+        return 'unknown', '수집 실행 시작 기록(--begin)이 없다'
+    if pat in MTIME_ONLY:
+        written = int(os.path.getmtime(path)) >= int(started.timestamp())
+    else:
+        t = _parse(collected_at)
+        written = t is not None and t >= started
+    if written:
+        return 'written', None
+    info = steps.get(step) if isinstance(steps, dict) else None
+    info = info if isinstance(info, dict) else {}
+    outcome = info.get('outcome')
+    outputs = info.get('outputs') if isinstance(info.get('outputs'), dict) else {}
+    if outcome == 'skipped' or outputs.get('skipped') == 'true':
+        return 'skipped', None
+    if pat in MAY_KEEP:
+        if outcome == 'success':
+            return 'kept', None
+        if outcome is None:
+            return 'unknown', f'단계 {step} 의 결과를 모른다'
+    noted = (run.get('failures') or {}).get(rel) if isinstance(run.get('failures'), dict) else None
+    return 'failed', noted or f'단계 {step} 결과 {outcome or "모름"}, 파일은 다시 쓰이지 않았다'
+
+
+def _failed_entry(entry, why):
+    """이번 수집 실패 — 남아 있는 옛 파일의 해시·상태는 `stale_copy` 로 따로 둔다(그 바이트가 「성공」이라 말해도
+    이번 실행의 결과가 아니다). 최상위에 sha256 을 두지 않는다."""
+    if entry.get('run') == 'failed' and isinstance(entry.get('stale_copy'), dict):
+        return entry
+    stale = {k: v for k, v in entry.items() if k not in ('present', 'run')}
+    return {'present': True, 'collect_in': entry.get('collect_in'), 'status': 'failed', 'run': 'failed',
+            'response': C.clean(f'이번 수집 실행에서 다시 쓰이지 않았다 — {why}'), 'stale_copy': stale}
+
 
 def sha256(path):
     h = hashlib.sha256()
@@ -92,17 +194,23 @@ def infer_market(datadir):
 
 def expand(datadir, market, report_date):
     """등록표 → [(상대경로, 생산자)]. glob 은 지금 있는 파일로 펼친다(없으면 아무것도 안 남긴다)."""
+    return [(rel, producer) for rel, producer, _pat in _expand(datadir, market, report_date)]
+
+
+def _expand(datadir, market, report_date):
+    """[(상대경로, 생산자, 등록표 패턴)]."""
     out = []
-    for pat, producer in REGISTRY[market].items():
+    for key, producer in REGISTRY[market].items():
+        pat = key
         if '{D}' in pat:
             if not report_date:
                 continue
             pat = pat.replace('{D}', report_date)
         if '*' in pat:
             for p in sorted(glob.glob(os.path.join(datadir, pat))):
-                out.append((os.path.relpath(p, datadir).replace(os.sep, '/'), producer))
+                out.append((os.path.relpath(p, datadir).replace(os.sep, '/'), producer, key))
         else:
-            out.append((pat, producer))
+            out.append((pat, producer, key))
     return out
 
 
@@ -110,14 +218,18 @@ def _collect_fields(c):
     return {k: c[k] for k in COLLECT_KEYS if isinstance(c, dict) and k in c}
 
 
-def stamp(datadir, market=None, now=None):
+def stamp(datadir, market=None, now=None, steps=None):
     market = market or infer_market(datadir)
     md = _json(os.path.join(datadir, MARKET_FILE[market])) or {}
     report_date = md.get('report_date')
-    old = C.load_status(datadir).get('files') or {}
-    files = {}
-    rows = expand(datadir, market, report_date)
-    for rel, producer in rows:
+    prior = C.load_status(datadir)
+    old = prior.get('files') or {}
+    run = prior.get('run') if isinstance(prior.get('run'), dict) else {}
+    steps = _steps() if steps is None else steps
+    files, states = {}, {}
+    rows = _expand(datadir, market, report_date)
+    # 생산자(JSON)부터 — 비 JSON 산출물은 생산자의 실행 상태를 따른다
+    for rel, producer, pat in sorted(rows, key=lambda r: r[1] is not None):
         path = os.path.join(datadir, rel)
         if not os.path.isfile(path):
             files[rel] = {'present': False}
@@ -128,23 +240,38 @@ def stamp(datadir, market=None, now=None):
             pc = pc.get('collect') if isinstance(pc, dict) else None
             entry.update(_collect_fields(pc))
             entry['collect_in'] = f'producer:{producer}' if pc else 'none'
-        elif rel.endswith('.json'):
-            body = _json(path)
-            if isinstance(body, dict) and isinstance(body.get('collect'), dict):
-                entry.update(_collect_fields(body['collect']))
-                entry['collect_in'] = 'file'
-            elif (old.get(rel) or {}).get('collect_in') == 'sidecar':
-                entry.update(_collect_fields(old[rel]))
-                entry['collect_in'] = 'sidecar'
+            state, why = states.get(producer, ('untracked', None))
+        else:
+            if rel.endswith('.json'):
+                body = _json(path)
+                prev = old.get(rel) or {}
+                prev = prev.get('stale_copy') if prev.get('run') == 'failed' and isinstance(
+                    prev.get('stale_copy'), dict) else prev
+                if isinstance(body, dict) and isinstance(body.get('collect'), dict):
+                    entry.update(_collect_fields(body['collect']))
+                    entry['collect_in'] = 'file'
+                elif prev.get('collect_in') == 'sidecar':
+                    entry.update(_collect_fields(prev))
+                    entry['collect_in'] = 'sidecar'
+                else:
+                    entry['collect_in'] = 'none'
             else:
                 entry['collect_in'] = 'none'
-        else:
-            entry['collect_in'] = 'none'
-        files[rel] = entry
+            state, why = run_state(market, pat, rel, path, entry.get('collected_at'), run, steps)
+            if state in ('skipped', 'kept', 'unknown') and (old.get(rel) or {}).get('run') == 'failed':
+                # 앞선 실행의 실패는 이 파일이 실제로 다시 쓰일 때까지 남는다(건너뛴 실행이 지우지 않는다)
+                state, why = 'failed', (old[rel].get('response') or '앞선 실행의 수집 실패')
+            states[rel] = (state, why)
+        entry['run'] = state
+        files[rel] = _failed_entry(entry, why) if state == 'failed' else entry
+    checked = isinstance(run, dict) and run.get('open') is True and _parse(run.get('started_at')) is not None
     book = {'format': C.FORMAT, 'market': market, 'report_date': report_date,
             'stamped_at': C.now_iso(now),
             'run_id': (f"{os.environ['GITHUB_RUN_ID']}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
                        if os.environ.get('GITHUB_RUN_ID') else None),
+            # 닫는다 — 다음 실행이 `--begin` 없이 이 기록을 자기 것으로 읽지 못하게
+            'run': {'started_at': run.get('started_at') if checked else None, 'open': False, 'checked': checked,
+                    'steps_known': isinstance(steps, dict)},
             'files': files}
     C.write_status(datadir, book)
     return book
@@ -154,7 +281,18 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--datadir', required=True)
     ap.add_argument('--market', choices=('us', 'kr'))
+    ap.add_argument('--begin', action='store_true',
+                    help='잡 시작(수집 앞)에 한 번 — 이번 실행의 시작 시각을 적는다. 끝의 stamp 가 그 뒤에 쓰인 파일만 '
+                         '「이번 실행이 썼다」로 본다')
     a = ap.parse_args(argv)
+    if a.begin:
+        try:
+            run = begin(a.datadir)
+        except OSError as e:
+            print(f'stamp_collect --begin: 쓰기 실패 — {e}', file=sys.stderr)
+            return 1
+        print(f"{C.status_path(a.datadir)} — 실행 시작 {run['started_at']}")
+        return 0
     try:
         book = stamp(a.datadir, a.market)
     except OSError as e:
@@ -170,6 +308,9 @@ def main(argv=None):
           + (f" · 수집 실패·일부 {bad}" if bad else ''))
     for r in bad:
         print(f"::warning::수집 상태 {files[r]['status']}: {r} — {files[r].get('response')}")
+    unknown = sorted(r for r, e in files.items() if e.get('run') == 'unknown')
+    if unknown:
+        print(f"::warning::이번 실행이 다시 썼는지 판정할 수 없는 파일 {len(unknown)}개 — {unknown[:6]}")
     return 0
 
 

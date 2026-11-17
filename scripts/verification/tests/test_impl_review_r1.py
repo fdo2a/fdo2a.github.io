@@ -165,7 +165,8 @@ def test_6_ledger_entry_and_hash_required_from_effective(tmp_path, monkeypatch):
     put(tmp_path, '_collect_status.json', {'files': {'market_data.json': {'sha256': 'abc', 'bytes': 1}}})
     f = I.assess(pol, 'us', ctx(tmp_path))['files'][rel]
     assert f['blocking'] and '해시' in f['reason']
-    put(tmp_path, '_collect_status.json', {'files': {'market_data.json': {'sha256': sha(p), 'bytes': 1}}})
+    put(tmp_path, '_collect_status.json', {'files': {'market_data.json': {'sha256': sha(p), 'bytes': 1,
+                                                                          'run': 'written'}}})
     assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'
 
 
@@ -190,7 +191,8 @@ def test_6_rewritten_file_needs_the_entry_but_not_the_hash(tmp_path, monkeypatch
     monkeypatch.setattr(I, 'EFFECTIVE', D)
     put(tmp_path, '_collect_status.json', {'files': {}})
     assert I.assess(pol, 'us', ctx(tmp_path))['files'][rel]['blocking']
-    put(tmp_path, '_collect_status.json', {'files': {'liquidity/liquidity.json': {'sha256': '0' * 64}}})
+    put(tmp_path, '_collect_status.json', {'files': {'liquidity/liquidity.json': {'sha256': '0' * 64,
+                                                                                  'run': 'written'}}})
     assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'
 
 
@@ -262,7 +264,7 @@ def test_8_scorecard_is_a_reference_file(tmp_path, monkeypatch):
     rel = '<datadir>/scorecard.json'
     p = put(tmp_path, 'scorecard.json', {'report_date': '2026-11-13', 'sufficient': True})   # 검사기가 날짜를 직접 본다
     put(tmp_path, '_collect_status.json', {'files': {'scorecard.json': {'sha256': sha(p), 'bytes': 1,
-                                                                        'collect_in': 'none'}}})
+                                                                        'collect_in': 'none', 'run': 'written'}}})
     monkeypatch.setattr(I, 'EFFECTIVE', D)
     assert st(I.assess(pol, 'us', ctx(tmp_path)), rel) == 'ok'                       # 재현: 전에는 unstamped
     put(tmp_path, '_collect_status.json', {'files': {}})
@@ -344,7 +346,7 @@ def test_8_real_scorecard_passes_as_reference(tmp_path, monkeypatch):
     p = tmp_path / 'scorecard.json'
     shutil.copyfile(src, p)
     put(tmp_path, '_collect_status.json', {'files': {'scorecard.json': {'sha256': sha(str(p)), 'bytes': 1,
-                                                                        'collect_in': 'none'}}})
+                                                                        'collect_in': 'none', 'run': 'written'}}})
     pol = policy([META, real_entry('us', '<datadir>/scorecard.json')])
     monkeypatch.setattr(I, 'EFFECTIVE', D)
     f = I.assess(pol, 'us', ctx(tmp_path))['files']['<datadir>/scorecard.json']

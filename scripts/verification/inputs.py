@@ -89,6 +89,8 @@ PRODUCERS = ('collector', 'reference', 'writer', 'ledger', 'meta')
 # 적용일부터 `_collect_status.json` 에 항목·해시가 있어야 하는 생산자 — 수집 잡이 쓰는 파일(stamp_collect 등록표).
 # reference = 수집기가 쓰지만 수집 상태 칸을 쓰지 않는 참고 파일(검사기가 날짜를 직접 본다 — scorecard.json).
 LEDGER_PRODUCERS = ('collector', 'reference')
+# 장부 항목의 `run`(stamp_collect.RUN_OK 와 같다 — 시험이 묶는다): 이번 실행이 썼다 / 단계가 건너뛰었다 / 동결
+RUN_OK = ('written', 'skipped', 'kept')
 _SHA = re.compile(r'^[0-9a-f]{64}$')
 _KEY = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.-]*$')
 
@@ -275,27 +277,27 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
         with open(full, 'rb') as fh:
             raw = fh.read()
     except OSError as exc:
-        return 'unreadable', [f'읽지 못했다({type(exc).__name__})'], None, None, None, None, False
+        return 'unreadable', [f'읽지 못했다({type(exc).__name__})'], None, None, None, None, False, {}
     sha = hashlib.sha256(raw).hexdigest()
     if size == 0 or not raw:
-        return 'empty_file', ['0바이트'], sha, None, None, None, False
+        return 'empty_file', ['0바이트'], sha, None, None, None, False, {}
     produced = e.get('produced_by', 'collector')
     obj = None
     if key.endswith('.json') or full.endswith('.json'):
         try:
             obj = json.loads(raw.decode('utf-8'))
         except (ValueError, UnicodeDecodeError) as exc:
-            return 'unreadable', [f'JSON 이 깨졌다({type(exc).__name__})'], sha, None, None, None, False
+            return 'unreadable', [f'JSON 이 깨졌다({type(exc).__name__})'], sha, None, None, None, False, {}
     else:
         try:
             if not raw.decode('utf-8').strip():
-                return 'empty_file', ['내용이 비었다'], sha, None, None, None, False
+                return 'empty_file', ['내용이 비었다'], sha, None, None, None, False, {}
         except UnicodeDecodeError:
-            return 'unreadable', ['UTF-8 로 읽지 못했다'], sha, None, None, None, False
+            return 'unreadable', ['UTF-8 로 읽지 못했다'], sha, None, None, None, False, {}
     if produced == 'meta':
         if not isinstance(obj, dict) or not isinstance(obj.get('files'), dict):
-            return 'unreadable', ['수집 상태 파일 형식이 다르다'], sha, None, obj, None, False
-        return 'ok', [], sha, None, obj, None, False
+            return 'unreadable', ['수집 상태 파일 형식이 다르다'], sha, None, obj, None, False, {}
+        return 'ok', [], sha, None, obj, None, False, {}
 
     def bad(state, why):
         reasons.append((state, why))
@@ -336,8 +338,15 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
     # 수집 상태 표시
     skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
     entry = status_files.get(skey) if isinstance(status_files, dict) else None
+    # 이번 수집 실행이 이 파일을 다시 쓰지 못했다(`stamp_collect.py` 의 run: failed) — 남아 있는 옛 파일이 「성공」이라
+    # 말해도 이번 실행의 결과가 아니다(1a 구현 검토 2회차 F3). 옛 판의 표시는 `stale_copy` 에 있다.
+    run_failed = isinstance(entry, dict) and entry.get('run') == 'failed'
+    if run_failed:
+        entry_stamp = entry.get('stale_copy') if isinstance(entry.get('stale_copy'), dict) else {}
+    else:
+        entry_stamp = entry
     # 수집 상태 파일의 항목은 해시만 담기도 한다(collect 칸이 파일 안에 있는 자료) — 상태 칸이 있어야 표시로 본다
-    side = entry if isinstance(entry, dict) and 'status' in entry else None
+    side = entry_stamp if isinstance(entry_stamp, dict) and 'status' in entry_stamp else None
     stamp = d.get('collect') if isinstance(obj, dict) and 'collect' in d else side
     confirmed = (produced == 'collector' and _stamp_ok_shape(stamp) and stamp['status'] == 'ok'
                  and stamp['empty'] == 'confirmed_none')
@@ -360,13 +369,25 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
             pass
         else:
             bad('changed_after_collect', '수집 상태 파일의 해시와 다르다')
-    if on and produced in LEDGER_PRODUCERS:
+    recollect = None
+    if run_failed:
+        old = entry.get('stale_copy') if isinstance(entry.get('stale_copy'), dict) else {}
+        recollect = ('이번 수집에서 이 파일을 다시 쓰지 못했다 — 옛 판 있음'
+                     + (f'({old["collected_at"]} 수집)' if isinstance(old.get('collected_at'), str) else '')
+                     + (f': {str(entry.get("response"))[:120]}' if entry.get('response') else ''))
+        if on:
+            bad('failed', recollect)          # 적용일부터 막는다(재수집 1회 뒤 보류와 같은 길). 그 전에는 조건으로 남긴다
+            recollect = None
+    elif on and produced in LEDGER_PRODUCERS:
         # 적용일부터 수집 잡이 쓰는 파일마다 장부 항목·유효한 해시가 있어야 한다 — 없으면 해시 대조가 조용히 꺼진다
         # (1a 구현 검토 #6: `{"files": {}}` 로 모든 대조가 빠졌다)
         if not isinstance(status_files, dict):
             bad('unstamped', '수집 상태 기록(_collect_status.json)을 읽지 못해 해시를 대조할 수 없다')
         elif not (isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and _SHA.match(entry['sha256'])):
             bad('unstamped', f'수집 상태 기록에 이 파일({skey})의 항목·해시가 없다')
+        elif entry.get('run') not in RUN_OK:
+            # 이번 실행이 이 파일을 다시 썼는지(또는 정당하게 건너뛰었는지) 장부가 말하지 못한다 — 성공으로 추정하지 않는다
+            bad('unstamped', f'수집 상태 기록이 이 파일을 이번 실행이 썼는지 말하지 못한다(run={entry.get("run")!r})')
     if stamp is not None and produced == 'collector':
         if not _stamp_ok_shape(stamp):
             bad('incomplete_fields', '수집 상태 칸(collect) 형식이 다르다')
@@ -393,11 +414,12 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
     # 「표시 없는 빈 배열」만 조건으로 남는다 — 칸의 부재·잘못된 형식은 위에서 막았다
     unconfirmed = bool(stamp is None and produced == 'collector' and e.get('target')
                        and _target_list(e, obj) == [])
+    extra = {'recollect_failed': recollect}
     if not reasons:
-        return 'ok', [], sha, as_of, obj, stamp, unconfirmed
+        return 'ok', [], sha, as_of, obj, stamp, unconfirmed, extra
     states = {s for s, _ in reasons}
     state = next(s for s in _ORDER if s in states)
-    return state, [w for _, w in reasons], sha, as_of, obj, stamp, unconfirmed
+    return state, [w for _, w in reasons], sha, as_of, obj, stamp, unconfirmed, extra
 
 
 def assess(pol, market, ctx):
@@ -429,10 +451,12 @@ def assess(pol, market, ctx):
                 # 적용일부터 필수가 되는 파일(수집 상태 기록 — 없으면 해시 대조가 조용히 꺼진다)
                 rec['blocking'] = not e.get('optional') or bool(e.get('required_when_enforced') and on)
             else:
-                state, why, sha, as_of, obj, stamp, unconfirmed = _health(e, key, full, date, status_files, excuse,
-                                                                          _ref(e, present), on)
+                state, why, sha, as_of, obj, stamp, unconfirmed, extra = _health(
+                    e, key, full, date, status_files, excuse, _ref(e, present), on)
                 rec.update(state=state, reason='; '.join(why)[:300], sha256=sha, as_of=as_of,
                            stamped=stamp is not None, unconfirmed_empty=unconfirmed)
+                if extra.get('recollect_failed'):
+                    rec['recollect_failed'] = extra['recollect_failed'][:300]
                 rec['blocking'] = state != 'ok' and not (state == 'unstamped' and not on)
                 objs[key] = obj
             if e.get('optional'):
@@ -505,6 +529,18 @@ def unconfirmed_empty(health):
     0건인지 수집 실패인지 가를 수 없다(1a 구현 검토 #2)."""
     return sorted(k for k, f in health['files'].items()
                   if f['class'] == 'gate' and f.get('unconfirmed_empty') and not f['blocking'])
+
+
+def recollect_failed(health):
+    """적용일 전, 이번 수집 실행이 다시 쓰지 못해 같은 날 옛 판이 남은 gate 자료 — 막지 않지만 조건으로 남긴다
+    (적용일부터는 failed 로 막는다, 1a 구현 검토 2회차 F3)."""
+    return sorted(k for k, f in health['files'].items()
+                  if f['class'] == 'gate' and f.get('recollect_failed') and not f['blocking'])
+
+
+def describe_recollect(f):
+    rel = str(f.get('file') or '').split('>/', 1)[-1]
+    return f'{f.get("name")}({rel}) — 이번 수집 실패, 옛 판으로 검사함(적용일 전)'
 
 
 def describe_empty(f):

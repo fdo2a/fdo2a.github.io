@@ -1140,6 +1140,15 @@ def econ_collect(econ, reasons, report_date):
     return st
 
 
+def _note_run_failure(outdir, rel, error):
+    """예외를 삼키고 넘어가는 블록이 파일을 못 썼을 때 — 사유를 수집 상태 장부의 실행 기록에(`stamp_collect.py` 가 읽는다)."""
+    try:
+        from common import collect_status as C
+        C.note_run_failure(outdir, rel, f'{type(error).__name__}: {error}')
+    except Exception:  # noqa: BLE001 — 기록 실패가 수집을 막지 않는다(판정은 stamp 가 시각으로 한다)
+        pass
+
+
 def macro_metrics_collect(mm, econ_status, report_date):
     """macro_metrics.json — 축 점수의 재료(econ)가 일부 빠졌거나 어제 책(macro.json)이 깨졌으면 partial."""
     from common import collect_status as C
@@ -1406,6 +1415,8 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'macro metrics failed: {e}', file=sys.stderr)
+        # 같은 날 앞선 실행의 파일이 남으면 날짜로는 안 걸린다 — 이번 실행의 실패를 장부에 남긴다(1a 구현 검토 2회차 F3)
+        _note_run_failure(args.outdir, 'macro_metrics.json', e)
 
     # Non-core, same contract as the blocks above: the statistical context for the
     # price side — is today's move large for this asset, where does the level sit in
@@ -1484,6 +1495,7 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'scorecard failed: {e}', file=sys.stderr)
+        _note_run_failure(args.outdir, 'scorecard.json', e)
 
     # FRED 텔레메트리는 **마지막 FRED 호출 뒤**에 굳힌다 — 구성항목 수집이 위에서
     # 끝나므로 여기 값이 그 실행의 전부다. 죽은 키로 몇 주가 조용히 지나는 것을

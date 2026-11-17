@@ -38,7 +38,9 @@ EXPECT = {'delete': 'missing', 'zero': 'empty_file', 'broken': 'unreadable', 'da
           'target_unknown': 'incomplete_fields', 'target_emptied': 'incomplete_fields', 'unstamp': 'unstamped',
           # 대상 목록 칸의 부재·잘못된 형식은 빈 배열이 아니다 — 두 방식 모두 막혀야 한다(1a 구현 검토 2회차 F1,
           # LEGACY_UNDETECTABLE 에 넣지 않는다)
-          'drop_target_field': 'incomplete_fields', 'target_not_list': 'incomplete_fields'}
+          'drop_target_field': 'incomplete_fields', 'target_not_list': 'incomplete_fields',
+          # 같은 날 재수집 실패 — 장부가 run: failed 라 적었다(옛 판의 바이트·표시는 그대로 정상). 표시 모드만(2회차 F3)
+          'rerun_failed': 'failed'}
 
 # 지금 배포 상태(수집 상태 표시 없음)에서 옛 칸으로 알아낼 수 없는 변이 — 작업 2 배포 뒤 적용일을 넣으면 닫힌다.
 # (파일 종류, 변이) → 이유. 파일 종류는 정책 경로. 발행은 막지 않지만 글 판정은 조건부(conditional)이고 조건에
@@ -128,7 +130,7 @@ def _mutations(entry, full, stamped):
             # 표시 모드에서도 빈 대상 목록을 넣는다 — 표시는 has_data 그대로(confirmed_none 없이 비우면 미완료)
             out += ['target_unknown', 'target_emptied', 'drop_target_field', 'target_not_list']
         if stamped:
-            out += ['unstamp']
+            out += ['unstamp', 'rerun_failed']
     for k in entry.get('require') or []:
         out.append('require_emptied')
         break
@@ -257,6 +259,16 @@ def apply(ctx, key, entry, full, kind, stamped):
         else:
             obj[t] = {'0': obj.get(t)}
         _dump(full, obj)
+        return True
+    if kind == 'rerun_failed':
+        # stamp_collect 가 「이번 실행은 이 파일을 다시 쓰지 못했다」고 적은 모양 — 파일 자체는 건드리지 않는다
+        p, st, ent, skey = _status_entry(ctx, key, entry)
+        if ent is None:
+            return False
+        st['files'][skey] = {'present': True, 'collect_in': ent.get('collect_in'), 'status': 'failed',
+                             'run': 'failed', 'response': '이번 수집 실행에서 다시 쓰이지 않았다 — injected',
+                             'stale_copy': {k: v for k, v in ent.items() if k != 'run'}}
+        _dump(p, st)
         return True
     if kind == 'unstamp':
         if has_collect:

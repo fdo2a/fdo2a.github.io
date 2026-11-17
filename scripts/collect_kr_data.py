@@ -690,6 +690,13 @@ def main(outdir: str, assetdir: str = "kr/assets"):
         print(f"session: 아시아 {len(peers)}종 / 미국 선물 {len(fut)}종")
     except Exception as e:
         print(f"kr session failed: {e}")
+        # 같은 날 앞선 실행의 kr_session.json 이 남으면 그 파일은 「성공」이라 말한다 — 이번 실행의 실패를 장부에
+        # 남긴다(1a 구현 검토 2회차 F3, `stamp_collect.py` 가 status failed·stale_copy 로 적는다)
+        try:
+            from common import collect_status as C
+            C.note_run_failure(outdir, "kr_session.json", f"{type(e).__name__}: {e}")
+        except Exception:  # noqa: BLE001 — 기록 실패가 수집을 막지 않는다
+            pass
 
     # 펀드 참고 블록 — 같은 실행의 메모리 객체로만 조립한다(새 요청 없음). 비-코어:
     # JSON 은 늘 쓰고, 그릴 수 없는 날은 HTML 을 지운다.
