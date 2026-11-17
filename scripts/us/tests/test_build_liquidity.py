@@ -418,3 +418,27 @@ def test_collect_survives_recompute(tmp_path, monkeypatch):
     a = run(monkeypatch, repo, data, '--date', '2026-11-05')['collect']
     b = run(monkeypatch, repo, data, '--date', '2026-11-05', '--recompute', get=fake_get(missing=set(PAGES)))['collect']
     assert b['status'] == a['status'] and b['collected_at'] == a['collected_at']
+
+
+def test_recompute_keeps_collect_and_the_gate_still_enforces_it(tmp_path, monkeypatch):
+    """1a 구현 검토 1회차 「추가」 — rewritten_by 는 해시 불일치만 면제한다. 재계산 산출물의 collect 가 보존되고,
+    그 collect 의 건강 조건은 실제 정책 항목으로 그대로 강제된다."""
+    import hashlib
+    from verification import inputs as I
+    repo, data = setup_dirs(tmp_path)
+    run(monkeypatch, repo, data, '--date', '2026-11-05')
+    p = data / 'liquidity' / 'liquidity.json'
+    first = hashlib.sha256(p.read_bytes()).hexdigest()
+    (data / '_collect_status.json').write_text(json.dumps({'files': {'liquidity/liquidity.json': {'sha256': first}}}))
+    book = run(monkeypatch, repo, data, '--date', '2026-11-05', '--recompute', get=fake_get(missing=set(PAGES)))
+    assert hashlib.sha256(p.read_bytes()).hexdigest() != first and book['collect']['status'] == 'ok'
+    pol = I.load(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'config', 'prepub_inputs.json'))
+    files, _ = I.entries(pol, 'us')
+    entry = next(e for e in files if e['path'] == '<datadir>/liquidity/liquidity.json')
+    one = I.validate({'format': I.FORMAT, 'markets': {'us': {'files': [entry]}}})
+    ctx = {'datadir': str(data), 'date': '2026-11-05'}
+    rel = '<datadir>/liquidity/liquidity.json'
+    assert I.assess(one, 'us', ctx)['files'][rel]['state'] == 'ok'          # 해시는 다르지만 정해진 재계산
+    book['collect']['status'] = 'failed'
+    p.write_text(json.dumps(book))
+    assert I.assess(one, 'us', ctx)['files'][rel]['state'] == 'failed'      # collect 조건은 그대로

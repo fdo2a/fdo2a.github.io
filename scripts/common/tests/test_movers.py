@@ -116,3 +116,16 @@ def test_cli_reads_the_market_files(tmp_path):
     assert C.main(['--html', str(post), '--datadir', str(tmp_path), '--market', 'kr']) == 0
     # US 자료(movers.json)가 없으면 미완료(2026-11-17 — 전에는 강제하지 않고 통과)
     assert C.main(['--html', str(post), '--datadir', str(tmp_path)]) == 2
+
+
+def test_stamp_partial_coverage_is_never_confirmed_none():
+    """1a 구현 검토 1회차 「추가」 — 일부만 잰 날(1행)은 묶음 0개여도 「없음 확인」이 아니다. 경계는 검사 쪽
+    `na_when` 과 같은 `min_measured`(⌈MIN_COVERAGE × expected⌉)."""
+    from common import movers as M
+    need = M.min_measured(58)
+    for checked, status, empty in ((1, 'partial', 'unknown'), (need - 1, 'partial', 'unknown'),
+                                   (need, 'ok', 'confirmed_none'), (0, 'failed', 'unknown')):
+        book = M.stamp({'report_date': '2026-11-16', 'groups': []}, source='t', checked=checked, expected=58)
+        c = book['collect']
+        assert (c['status'], c['empty']) == (status, empty), checked
+    assert M.min_measured(60) == M.LEGACY_MIN_ITEMS == 54
