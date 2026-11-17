@@ -220,10 +220,15 @@ EMPTY = {
 }
 
 
+# The repo's own lists stop being empty once the edition publishes — feed empty ones.
+NO_POSTS = {f"ja/{name}": [] for name in ("posts.json", "weekly.json", "news.json",
+                                          "japan/daily.json", "japan/posts.json")}
+
+
 @pytest.mark.parametrize("width", [390, 1280])
 @pytest.mark.parametrize("rel", sorted(EMPTY))
 def test_empty_lists_in_japanese_without_overflow(browser, rel, width):
-    page = _open(browser, rel, width, {})
+    page = _open(browser, rel, width, NO_POSTS)
     assert page.evaluate("document.documentElement.scrollWidth") == width
     got = _tabs(page)
     assert [(t, e) for t, e, _ in got] == EMPTY[rel]

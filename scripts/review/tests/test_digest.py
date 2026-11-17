@@ -1061,6 +1061,8 @@ def cli_env(tmp_path, monkeypatch):
     monkeypatch.setattr(D, 'now_kst', lambda: clock['now'])
     monkeypatch.setattr(V, 'build', lambda state, now, args, notes: ([post()], {}, {'posts/2026-11-06.html': 's1'}))
     monkeypatch.setattr(D, 'publish_tail', lambda root, now, fetch=True: [])
+    # 일본어판 꼬리는 이 맥의 실제 설정·기록을 읽는다 — 켜진 뒤로는 줄이 붙는다. 전용 시험: test_digest_ja.py
+    monkeypatch.setattr(V, '_ja_tail', lambda root, now: [])
     real_post, real_status = D.post_digest, D.fetch_status
     monkeypatch.setattr(D, 'post_digest', lambda body, sid: real_post(body, sid, run=w))
     monkeypatch.setattr(D, 'fetch_status', lambda sid=None: real_status(sid, run=w))
