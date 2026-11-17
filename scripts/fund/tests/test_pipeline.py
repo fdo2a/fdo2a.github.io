@@ -193,3 +193,17 @@ def test_failed_board_json_says_failed(tmp_path):
                   publish.failed('2026-11-16', 't', RuntimeError('boom'), universe=True), None)
     c = json.loads((tmp_path / 'fund_board.json').read_text())['collect']
     assert c['status'] == 'failed' and c['required_ok'] is False and 'boom' in c['response']
+
+
+def test_kr_view_block_is_unchanged_by_collect(tmp_path):
+    """check_fund --market kr 도 JSON 으로 블록을 다시 그린다 — 커밋된 11/16 KR 판으로 확인."""
+    from fund import kr_view
+    path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'kr', 'data', 'kr_fund_view.json')
+    with open(path, encoding='utf-8') as fh:
+        view = json.load(fh)
+    view.pop('collect', None)
+    html = kr_view.html(view)
+    publish.write(str(tmp_path), 'kr_fund_view.json', 'kr_fund_view.html', view, html)
+    written = json.loads((tmp_path / 'kr_fund_view.json').read_text(encoding='utf-8'))
+    assert written['collect']['as_of'] == view['report_date']
+    assert kr_view.html(written) == html == (tmp_path / 'kr_fund_view.html').read_text(encoding='utf-8')
