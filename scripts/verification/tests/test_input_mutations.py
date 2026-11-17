@@ -35,7 +35,10 @@ from verification.tests import realday as RD
 EXPECT = {'delete': 'missing', 'zero': 'empty_file', 'broken': 'unreadable', 'date_back': 'stale',
           'fail_ok': 'failed', 'fail_status': 'failed', 'fail_error': 'failed', 'fail_collect': 'failed',
           'missing_filled': 'incomplete_fields', 'require_emptied': 'incomplete_fields',
-          'target_unknown': 'incomplete_fields', 'target_emptied': 'incomplete_fields', 'unstamp': 'unstamped'}
+          'target_unknown': 'incomplete_fields', 'target_emptied': 'incomplete_fields', 'unstamp': 'unstamped',
+          # 대상 목록 칸의 부재·잘못된 형식은 빈 배열이 아니다 — 두 방식 모두 막혀야 한다(1a 구현 검토 2회차 F1,
+          # LEGACY_UNDETECTABLE 에 넣지 않는다)
+          'drop_target_field': 'incomplete_fields', 'target_not_list': 'incomplete_fields'}
 
 # 지금 배포 상태(수집 상태 표시 없음)에서 옛 칸으로 알아낼 수 없는 변이 — 작업 2 배포 뒤 적용일을 넣으면 닫힌다.
 # (파일 종류, 변이) → 이유. 파일 종류는 정책 경로. 발행은 막지 않지만 글 판정은 조건부(conditional)이고 조건에
@@ -123,7 +126,7 @@ def _mutations(entry, full, stamped):
         out += ['fail_collect']
         if entry.get('target'):
             # 표시 모드에서도 빈 대상 목록을 넣는다 — 표시는 has_data 그대로(confirmed_none 없이 비우면 미완료)
-            out += ['target_unknown', 'target_emptied']
+            out += ['target_unknown', 'target_emptied', 'drop_target_field', 'target_not_list']
         if stamped:
             out += ['unstamp']
     for k in entry.get('require') or []:
@@ -235,6 +238,24 @@ def apply(ctx, key, entry, full, kind, stamped):
         if kind == 'target_unknown':
             # 대상 목록을 비우고 「모름」 — 수집기가 조기 반환·예외 경로에서 쓰는 모양
             obj['collect'] = dict(obj.get('collect') or dict(RD.STAMP, as_of=d), empty='unknown')
+        _dump(full, obj)
+        return True
+    if kind in ('drop_target_field', 'target_not_list'):
+        # 수집 상태 표시는 그대로 둔다 — 칸만 빠지거나 목록이 아닌 손상
+        t = entry['target']
+        if t == '<items>':
+            if kind == 'drop_target_field':
+                return False                              # 최상위가 목록인 파일에는 뺄 칸이 없다
+            _dump(full, {'items': obj})
+            return True
+        if not isinstance(obj, dict):
+            return False
+        if kind == 'drop_target_field':
+            if t not in obj:
+                return False
+            del obj[t]
+        else:
+            obj[t] = {'0': obj.get(t)}
         _dump(full, obj)
         return True
     if kind == 'unstamp':

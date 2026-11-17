@@ -213,12 +213,19 @@ def _empty(v):
     return v is None or v == '' or v == [] or v == {}
 
 
-def _target_list(e, obj):
-    """정책의 대상 목록(`target`, `target_where` 로 거른 것) — 없거나 목록이 아니면 None."""
+def _raw_target(e, obj):
+    """정책의 대상 목록 칸 그대로(거르기 전) — `<items>` 는 파일 최상위. 칸이 없으면 None."""
     t = e.get('target')
     if not t:
         return None
-    lst = obj.get(t) if isinstance(obj, dict) and t != '<items>' else (obj if t == '<items>' else None)
+    return obj if t == '<items>' else (obj.get(t) if isinstance(obj, dict) else None)
+
+
+def _target_list(e, obj):
+    """정책의 대상 목록(`target`, `target_where` 로 거른 것) — 없거나 목록이 아니면 None."""
+    if not e.get('target'):
+        return None
+    lst = _raw_target(e, obj)
     where = e.get('target_where')
     if isinstance(lst, list) and isinstance(where, dict):
         # 「대상」이 목록의 일부일 때(예: 연준 사건 책의 fresh 사건만) — 수집기의 empty 와 같은 뜻으로 센다
@@ -317,6 +324,10 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
             if k == e.get('target') and confirmed and isinstance(obj, dict) and isinstance(obj.get(k), list):
                 continue       # 대상 목록이 정상 조회 뒤 0건(confirmed_none) — 빈 일정이 정상인 날(1a 구현 검토 #7)
             bad('incomplete_fields', f'필수 칸 {k} 가 비었다')
+    if e.get('target') and not isinstance(_raw_target(e, obj), list):
+        # 칸이 없거나 목록이 아니면 「빈 목록」이 아니다 — 깨진 자료다. 적용일·수집 상태 표시와 무관하게 막는다
+        # (1a 구현 검토 2회차 F1: `{"report_date": D, "ok": true}` 인 입찰 책이 「대상 없음 미확인」 조건으로 발행 가능했다)
+        bad('incomplete_fields', f'대상 목록 {e["target"]} 칸이 없거나 목록이 아니다')
     if isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and entry['sha256'] != sha:
         if e.get('rewritten_by'):
             # 수집 뒤 루틴이 정해진 명령으로 다시 쓰는 파일(예: build_liquidity --recompute) — 해시는 다를 수 있다.
@@ -352,11 +363,11 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
                         bad('incomplete_fields', f'{t} 가 비었는데 「없음 확인」이 없다')
                     if lst and stamp['empty'] == 'confirmed_none':
                         bad('incomplete_fields', f'{t} 가 있는데 「없음 확인」이라고 적었다')
-                else:
-                    bad('incomplete_fields', f'대상 목록 {t} 가 없다')
     elif stamp is None and produced == 'collector':
         bad('unstamped', '수집 상태 표시(collect·_collect_status)가 없다')
-    unconfirmed = bool(stamp is None and produced == 'collector' and e.get('target') and not _target_list(e, obj))
+    # 「표시 없는 빈 배열」만 조건으로 남는다 — 칸의 부재·잘못된 형식은 위에서 막았다
+    unconfirmed = bool(stamp is None and produced == 'collector' and e.get('target')
+                       and _target_list(e, obj) == [])
     if not reasons:
         return 'ok', [], sha, as_of, obj, stamp, unconfirmed
     states = {s for s, _ in reasons}

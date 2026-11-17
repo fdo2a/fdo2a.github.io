@@ -216,6 +216,10 @@ def _hidden_ancestor(doc, at):
     return None
 
 
+class BadBook(ValueError):
+    """입찰 책의 모양이 깨졌다 — 검사기는 미완료(exit 2)로 끝낸다."""
+
+
 def check(doc, book, report_date):
     """-> [위반]. `book` 은 auctions.json(없으면 None), `report_date` 는 market_data 의 것."""
     doc = strip_comments(doc or '')
@@ -231,7 +235,10 @@ def check(doc, book, report_date):
             v.append(f'{why} — 「국채 입찰」 섹션·표식을 실은 채로는 발행할 수 없다')
         return v
 
-    today = book.get('today') or []
+    today = book.get('today')
+    if not isinstance(today, list):
+        # 칸이 없거나 목록이 아니면 「입찰 없는 날」이 아니다 — 깨진 책이다(1a 구현 검토 2회차 F1)
+        raise BadBook('auctions.json 의 today 칸이 없거나 목록이 아니다')
     if not today:
         if present(doc):
             v.append(f'{report_date} 에는 결과가 나온 이표채 입찰이 없다 — 「국채 입찰」 섹션을 빼라')

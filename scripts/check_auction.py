@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from us.auction_gate import check  # noqa: E402
+from us.auction_gate import BadBook, check  # noqa: E402
 
 
 def load(path):
@@ -47,6 +47,9 @@ def main():
         sys.exit(2)
     today = market.get('report_date') if isinstance(market, dict) else None
     why = ('auctions.json 없음' if book is None else
+           'auctions.json 이 객체가 아니다' if not isinstance(book, dict) else
+           # 칸이 없거나 목록이 아니면 「입찰 없는 날」이 아니다(1a 구현 검토 2회차 F1)
+           'auctions.json 의 today 칸이 없거나 목록이 아니다' if not isinstance(book.get('today'), list) else
            '기준일(market_data.json report_date) 없음' if not today else
            f'입찰 결과 수집 실패({str(book.get("error"))[:120]})' if not book.get('ok') or book.get('error') else
            f'auctions.json 이 {book.get("report_date")} 에서 멈춰 있다(오늘 {today})'
@@ -58,7 +61,11 @@ def main():
         print(f'FATAL: {why} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
         sys.exit(2)
 
-    errs = check(html, book, today)
+    try:
+        errs = check(html, book, today)
+    except BadBook as e:
+        print(f'FATAL: {e} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
+        sys.exit(2)
     if errs:
         for e in errs:
             print(e)

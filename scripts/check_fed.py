@@ -87,6 +87,9 @@ def main():
         incomplete(str(e))
     if book is None:
         incomplete('fed/events.json 이 없다')
+    if not isinstance(book, dict) or not isinstance(book.get('events'), list):
+        # 칸이 없거나 목록이 아니면 「연준 이벤트 없는 날」이 아니다(1a 구현 검토 2회차 F1)
+        incomplete('fed/events.json 의 events 칸이 없거나 목록이 아니다')
     today = (market or {}).get('report_date')
     if not today:
         incomplete('market_data.json 에서 기준일을 읽을 수 없어 연준 책이 오늘 것인지 확인할 수 없다')
