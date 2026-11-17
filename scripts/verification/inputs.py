@@ -43,11 +43,36 @@ EFFECTIVE = None
 STRICT_FROM = '2026-11-17'
 
 
-def legacy_recheck(flag, html_path):
-    """재검사 플래그(`--recheck`·`--legacy-releases`)가 옛 판정을 줄 수 있는가 — 글 파일 이름의 날짜가 STRICT_FROM
-    전일 때만. 날짜를 모르면 옛 판정을 쓰지 않는다(1a 구현 검토 #9)."""
-    m = re.search(r'\d{4}-\d{2}-\d{2}', os.path.basename(str(html_path or '')))
-    return bool(flag and m and m.group(0) < STRICT_FROM)
+_POST_NAME = re.compile(r'(\d{4}-\d{2}-\d{2})\.html')
+
+
+def post_date(html_path):
+    """글 파일 이름이 **정확히 `YYYY-MM-DD.html`** 일 때만 그 날짜, 아니면 None(1a 구현 검토 2회차 F5 — 전에는 이름의
+    첫 날짜를 읽어 `2026-11-16-2026-11-17.html` 이 11/16 글로 통했고, 정정기는 끝 날짜, 윤문기는 정규 경로만 봤다)."""
+    m = _POST_NAME.fullmatch(os.path.basename(str(html_path or '')))
+    if not m:
+        return None
+    try:
+        import datetime
+        datetime.date.fromisoformat(m.group(1))
+    except ValueError:
+        return None
+    return m.group(1)
+
+
+def legacy_post(html_path):
+    """이 글이 옛 판정(1a 적용 전)을 받을 수 있는가 — 정규 이름의 날짜가 STRICT_FROM 전일 때만. 날짜를 모르면 아니다.
+    **재검사 날짜 판정은 이 함수 하나다** — 검사기(`legacy_recheck`)·정정기·윤문기가 모두 부른다."""
+    d = post_date(html_path)
+    return bool(d and d < STRICT_FROM)
+
+
+def legacy_recheck(flag, html_path, date=None):
+    """재검사 플래그(`--recheck`·`--legacy-releases`)가 옛 판정을 줄 수 있는가 — `legacy_post` 가 참일 때만.
+    `--date` 를 함께 받은 검사기는 그 날짜가 파일 이름의 날짜와 같아야 한다(다르면 옛 판정 없음)."""
+    if not flag or not legacy_post(html_path):
+        return False
+    return date is None or date == post_date(html_path)
 CLASSES = ('gate', 'writer', 'unused', 'discontinued')
 STATES = ('ok', 'missing', 'empty_file', 'unreadable', 'stale', 'failed', 'incomplete_fields', 'unstamped',
           'changed_after_collect')

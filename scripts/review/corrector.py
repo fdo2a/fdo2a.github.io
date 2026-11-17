@@ -60,6 +60,36 @@ RECHECK = {'fund': ['--recheck'], 'numbers': ['--recheck']}
 # 1a 적용일 — `verification.inputs.STRICT_FROM` 과 같다(시험). 이 날짜부터의 글은 --recheck 가 옛 판정을 주지 않고
 # (검사기가 날짜를 본다), 정정 재검사의 exit 2(미완료)를 「원본도 그랬다」로 허용하지 않는다(1a 구현 검토 #9).
 STRICT_FROM = '2026-11-17'
+
+
+def _legacy_post_copy(path):
+    """`verification.inputs.legacy_post` 의 사본 — 그 패키지를 가져올 수 없는 격리 사본에서만 쓴다(시험이 같게 묶는다)."""
+    import datetime
+    m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', os.path.basename(str(path or '')))
+    if not m:
+        return False
+    try:
+        datetime.date.fromisoformat(m.group(1))
+    except ValueError:
+        return False
+    return m.group(1) < STRICT_FROM
+
+
+def legacy_post(path):
+    """이 글이 옛 판정을 받을 수 있는가 — 판정은 `verification.inputs.legacy_post` 한 곳(1a 구현 검토 2회차 F5)."""
+    try:
+        from verification.inputs import legacy_post as rule
+    except ImportError:
+        rule = _legacy_post_copy
+    return rule(path)
+
+
+def strict_for(path):
+    """정정 재검사의 exit 2(미완료)를 「원본도 그랬다」로 허용하지 않는 글 — 옛 판정을 받지 못하는 글 전부
+    (정규 이름이 아니어서 날짜를 모르는 글 포함)."""
+    return not legacy_post(path)
+
+
 KR_NEWS_FROM = '2026-11-06'   # `kr.news.SPLIT_FROM` 과 같다(테스트) — 이 모듈은 레포 밖 사본에서도 돈다
 # KR 판단 게이트는 `--market` 이 없고 `--next` 로 그날 낸 원장을 받는다 — 발행 커밋의 kr_stance.json 이
 # 그것이다(STEP 2.9 가 같은 커밋에 승계한다). 2026-10-20 배치(review 가 복기 첫 문단, 확인 일정 표)는
@@ -138,8 +168,7 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
     """
     post = str(clone / item.path)
     data = evidence / ('kr/data' if item.section == 'kr' else 'data')
-    m = re.search(r'(\d{4}-\d{2}-\d{2})\.html$', item.path)
-    strict = bool(m and m.group(1) >= STRICT_FROM)
+    strict = strict_for(item.path)
     gates = []
     if item.section == 'us':
         gates.append(('check_macro.py', ['--html', post, '--datadir', str(data),

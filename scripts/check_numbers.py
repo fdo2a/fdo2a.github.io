@@ -56,9 +56,10 @@ def _mode(arg):
 
 def _legacy(args, post_date):
     """--recheck(옛 판정)은 1a 적용일(`verification.inputs.STRICT_FROM`) 전 글에만 — 새 글에는 붙여도 효과가 없다
-    (1a 구현 검토 #9). 글 날짜를 모르면 옛 판정을 쓰지 않는다."""
-    from verification.inputs import STRICT_FROM
-    return bool(args.recheck and post_date and post_date < STRICT_FROM)
+    (1a 구현 검토 #9). 글 날짜는 정규 파일 이름(YYYY-MM-DD.html)으로만 정하고, `post_date`(--date 나 이름에서 읽은 것)가
+    그것과 다르거나 이름이 정규가 아니면 옛 판정을 쓰지 않는다(2회차 F5)."""
+    from verification.inputs import legacy_recheck
+    return bool(post_date) and legacy_recheck(args.recheck, args.html, post_date)
 
 
 def main(argv=None):

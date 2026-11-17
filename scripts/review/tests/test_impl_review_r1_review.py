@@ -25,7 +25,9 @@ def test_corrector_does_not_tolerate_exit2_on_new_posts(setup, monkeypatch):
     gate(root, 'scripts/check_weight.py', "import sys\nprint('FATAL: 입력 없음', file=sys.stderr)\nraise SystemExit(2)\n")
     _counting(exe)
     base = git(root, 'rev-parse', 'HEAD')
+    from verification import inputs as I
     monkeypatch.setattr(corrector, 'STRICT_FROM', '2026-09-01')               # 이 글을 「새 글」로
+    monkeypatch.setattr(I, 'STRICT_FROM', '2026-09-01')                       # 판정은 inputs 한 곳(2회차 F5)
     _, error = correct_one(root, item, 'wrong value', base, 10)
     assert error and 'check_weight.py' in error and 'incomplete' in error     # 재현: 전에는 기존 실패로 허용
     assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'

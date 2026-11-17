@@ -273,12 +273,34 @@ def run_gates(cwd, cmds, timeout):
 # 1a 적용일 — `verification.inputs.STRICT_FROM`·`corrector.STRICT_FROM` 과 같다(시험). 이 날짜부터의 일간 글은 0·1 밖의
 # 종료(미완료 2·시간 초과)를 원본과 같아도 허용하지 않는다(1a 구현 검토 #9).
 STRICT_FROM = '2026-11-17'
-_DAILY = re.compile(r'^(?:kr/)?posts/(\d{4}-\d{2}-\d{2})\.html$')
+_DAILY_DIR = re.compile(r'^(?:kr/)?posts/[^/]+$')      # 1a 가 걸리는 일간 글(US·KR 브리프)의 자리
+
+
+def _legacy_post_copy(path):
+    """`verification.inputs.legacy_post` 의 사본 — 그 패키지를 가져올 수 없는 격리 사본에서만 쓴다(시험이 같게 묶는다)."""
+    import datetime
+    m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', os.path.basename(str(path or '')))
+    if not m:
+        return False
+    try:
+        datetime.date.fromisoformat(m.group(1))
+    except ValueError:
+        return False
+    return m.group(1) < STRICT_FROM
+
+
+def legacy_post(path):
+    """이 글이 옛 판정을 받을 수 있는가 — 판정은 `verification.inputs.legacy_post` 한 곳(1a 구현 검토 2회차 F5)."""
+    try:
+        from verification.inputs import legacy_post as rule
+    except ImportError:
+        rule = _legacy_post_copy
+    return rule(path)
 
 
 def strict_for(path):
-    m = _DAILY.match(path or '')
-    return bool(m and m.group(1) >= STRICT_FROM)
+    """일간 글 자리(posts/·kr/posts/)의 글 가운데 옛 판정을 받지 못하는 것 — 이름이 정규가 아니어도 엄격하다."""
+    return bool(_DAILY_DIR.match(path or '')) and not legacy_post(path)
 
 
 # 원본도 실패했다는 이유로 넘기지 않는 게이트 — corrector.NEVER_TOLERATE 와 같은 뜻.
