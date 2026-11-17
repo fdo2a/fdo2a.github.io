@@ -44,7 +44,11 @@ EMPTY = ('has_data', 'confirmed_none', 'unknown')
 STATUS_FILE = '_collect_status.json'
 ROOTS = ('datadir', 'tg', 'stance_next')
 FILE_ROOTS = ('tg', 'stance_next')
-PRODUCERS = ('collector', 'writer', 'ledger', 'meta')
+PRODUCERS = ('collector', 'reference', 'writer', 'ledger', 'meta')
+# 적용일부터 `_collect_status.json` 에 항목·해시가 있어야 하는 생산자 — 수집 잡이 쓰는 파일(stamp_collect 등록표).
+# reference = 수집기가 쓰지만 수집 상태 칸을 쓰지 않는 참고 파일(검사기가 날짜를 직접 본다 — scorecard.json).
+LEDGER_PRODUCERS = ('collector', 'reference')
+_SHA = re.compile(r'^[0-9a-f]{64}$')
 _KEY = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.-]*$')
 
 
@@ -193,41 +197,57 @@ def _empty(v):
     return v is None or v == '' or v == [] or v == {}
 
 
+def _target_list(e, obj):
+    """정책의 대상 목록(`target`, `target_where` 로 거른 것) — 없거나 목록이 아니면 None."""
+    t = e.get('target')
+    if not t:
+        return None
+    lst = obj.get(t) if isinstance(obj, dict) and t != '<items>' else (obj if t == '<items>' else None)
+    where = e.get('target_where')
+    if isinstance(lst, list) and isinstance(where, dict):
+        # 「대상」이 목록의 일부일 때(예: 연준 사건 책의 fresh 사건만) — 수집기의 empty 와 같은 뜻으로 센다
+        lst = [x for x in lst if isinstance(x, dict) and all(x.get(k) == v for k, v in where.items())]
+    return lst if isinstance(lst, list) else None
+
+
 def _stamp_ok_shape(c):
     return (isinstance(c, dict) and c.get('status') in COLLECT_STATUS and isinstance(c.get('as_of'), str)
             and isinstance(c.get('required_ok'), bool) and isinstance(c.get('missing'), list)
             and c.get('empty') in EMPTY)
 
 
-def _health(e, key, full, date, status_files, excuse, ref=None):
-    """gate 파일 하나 → (state, reasons, sha, as_of, obj, stamp)."""
+def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
+    """gate 파일 하나 → (state, reasons, sha, as_of, obj, stamp, unconfirmed_empty).
+
+    unconfirmed_empty = 수집 상태 표시가 없는데 대상 목록이 비었다(적용일 전) — 「대상 0건」과 「수집 실패로 빈 목록」을
+    가를 수 없다. 막지 않되 기록·알림에 조건으로 남긴다(1a 구현 검토 #2)."""
     reasons = []
     try:
         size = os.path.getsize(full)
         with open(full, 'rb') as fh:
             raw = fh.read()
     except OSError as exc:
-        return 'unreadable', [f'읽지 못했다({type(exc).__name__})'], None, None, None, None
+        return 'unreadable', [f'읽지 못했다({type(exc).__name__})'], None, None, None, None, False
     sha = hashlib.sha256(raw).hexdigest()
     if size == 0 or not raw:
-        return 'empty_file', ['0바이트'], sha, None, None, None
+        return 'empty_file', ['0바이트'], sha, None, None, None, False
     produced = e.get('produced_by', 'collector')
     obj = None
     if key.endswith('.json') or full.endswith('.json'):
         try:
             obj = json.loads(raw.decode('utf-8'))
         except (ValueError, UnicodeDecodeError) as exc:
-            return 'unreadable', [f'JSON 이 깨졌다({type(exc).__name__})'], sha, None, None, None
+            return 'unreadable', [f'JSON 이 깨졌다({type(exc).__name__})'], sha, None, None, None, False
     else:
         try:
             if not raw.decode('utf-8').strip():
-                return 'empty_file', ['내용이 비었다'], sha, None, None, None
+                return 'empty_file', ['내용이 비었다'], sha, None, None, None, False
         except UnicodeDecodeError:
-            return 'unreadable', ['UTF-8 로 읽지 못했다'], sha, None, None, None
+            return 'unreadable', ['UTF-8 로 읽지 못했다'], sha, None, None, None, False
     if produced == 'meta':
         if not isinstance(obj, dict) or not isinstance(obj.get('files'), dict):
-            return 'unreadable', ['수집 상태 파일 형식이 다르다'], sha, None, obj, None
-        return 'ok', [], sha, None, obj, None
+            return 'unreadable', ['수집 상태 파일 형식이 다르다'], sha, None, obj, None, False
+        return 'ok', [], sha, None, obj, None, False
 
     def bad(state, why):
         reasons.append((state, why))
@@ -265,25 +285,36 @@ def _health(e, key, full, date, status_files, excuse, ref=None):
                     bad('stale', f'{e["date"]}={v} ≠ {e["date_ref"]["field"]}={ref}')
             elif v != date:
                 bad('stale', f'{e["date"]}={v} ≠ 발행일 {date}')
-    for k in e.get('require') or []:
-        if k == '<items>':
-            if not isinstance(obj, list) or not obj:
-                bad('incomplete_fields', '목록이 비었다')
-        elif not isinstance(obj, dict) or _empty(obj.get(k)):
-            bad('incomplete_fields', f'필수 칸 {k} 가 비었다')
     # 수집 상태 표시
     skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
     entry = status_files.get(skey) if isinstance(status_files, dict) else None
     # 수집 상태 파일의 항목은 해시만 담기도 한다(collect 칸이 파일 안에 있는 자료) — 상태 칸이 있어야 표시로 본다
     side = entry if isinstance(entry, dict) and 'status' in entry else None
     stamp = d.get('collect') if isinstance(obj, dict) and 'collect' in d else side
+    confirmed = (produced == 'collector' and _stamp_ok_shape(stamp) and stamp['status'] == 'ok'
+                 and stamp['empty'] == 'confirmed_none')
+    for k in e.get('require') or []:
+        if k == '<items>':
+            if not isinstance(obj, list) or not obj:
+                bad('incomplete_fields', '목록이 비었다')
+        elif not isinstance(obj, dict) or _empty(obj.get(k)):
+            if k == e.get('target') and confirmed and isinstance(obj.get(k), list):
+                continue       # 대상 목록이 정상 조회 뒤 0건(confirmed_none) — 빈 일정이 정상인 날(1a 구현 검토 #7)
+            bad('incomplete_fields', f'필수 칸 {k} 가 비었다')
     if isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and entry['sha256'] != sha:
         if e.get('rewritten_by'):
             # 수집 뒤 루틴이 정해진 명령으로 다시 쓰는 파일(예: build_liquidity --recompute) — 해시는 다를 수 있다.
-            # 수집 상태 칸의 건강 조건은 그대로 본다.
+            # 수집 상태 칸의 건강 조건과 아래 항목 요구는 그대로 본다.
             pass
         else:
             bad('changed_after_collect', '수집 상태 파일의 해시와 다르다')
+    if on and produced in LEDGER_PRODUCERS:
+        # 적용일부터 수집 잡이 쓰는 파일마다 장부 항목·유효한 해시가 있어야 한다 — 없으면 해시 대조가 조용히 꺼진다
+        # (1a 구현 검토 #6: `{"files": {}}` 로 모든 대조가 빠졌다)
+        if not isinstance(status_files, dict):
+            bad('unstamped', '수집 상태 기록(_collect_status.json)을 읽지 못해 해시를 대조할 수 없다')
+        elif not (isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and _SHA.match(entry['sha256'])):
+            bad('unstamped', f'수집 상태 기록에 이 파일({skey})의 항목·해시가 없다')
     if stamp is not None and produced == 'collector':
         if not _stamp_ok_shape(stamp):
             bad('incomplete_fields', '수집 상태 칸(collect) 형식이 다르다')
@@ -299,11 +330,7 @@ def _health(e, key, full, date, status_files, excuse, ref=None):
                 bad('incomplete_fields', '대상이 있는지 모른다(collect.empty=unknown)')
             t = e.get('target')
             if t and stamp['empty'] != 'unknown':
-                lst = d.get(t) if isinstance(obj, dict) and t != '<items>' else obj
-                where = e.get('target_where')
-                if isinstance(lst, list) and isinstance(where, dict):
-                    # 「대상」이 목록의 일부일 때(예: 연준 사건 책의 fresh 사건만) — 수집기의 empty 와 같은 뜻으로 센다
-                    lst = [x for x in lst if isinstance(x, dict) and all(x.get(k) == v for k, v in where.items())]
+                lst = _target_list(e, obj)
                 if isinstance(lst, list):
                     if not lst and stamp['empty'] != 'confirmed_none':
                         bad('incomplete_fields', f'{t} 가 비었는데 「없음 확인」이 없다')
@@ -313,11 +340,12 @@ def _health(e, key, full, date, status_files, excuse, ref=None):
                     bad('incomplete_fields', f'대상 목록 {t} 가 없다')
     elif stamp is None and produced == 'collector':
         bad('unstamped', '수집 상태 표시(collect·_collect_status)가 없다')
+    unconfirmed = bool(stamp is None and produced == 'collector' and e.get('target') and not _target_list(e, obj))
     if not reasons:
-        return 'ok', [], sha, as_of, obj, stamp
+        return 'ok', [], sha, as_of, obj, stamp, unconfirmed
     states = {s for s, _ in reasons}
     state = next(s for s in _ORDER if s in states)
-    return state, [w for _, w in reasons], sha, as_of, obj, stamp
+    return state, [w for _, w in reasons], sha, as_of, obj, stamp, unconfirmed
 
 
 def assess(pol, market, ctx):
@@ -349,10 +377,10 @@ def assess(pol, market, ctx):
                 # 적용일부터 필수가 되는 파일(수집 상태 기록 — 없으면 해시 대조가 조용히 꺼진다)
                 rec['blocking'] = not e.get('optional') or bool(e.get('required_when_enforced') and on)
             else:
-                state, why, sha, as_of, obj, stamp = _health(e, key, full, date, status_files, excuse,
-                                                             _ref(e, present))
+                state, why, sha, as_of, obj, stamp, unconfirmed = _health(e, key, full, date, status_files, excuse,
+                                                                          _ref(e, present), on)
                 rec.update(state=state, reason='; '.join(why)[:300], sha256=sha, as_of=as_of,
-                           stamped=stamp is not None)
+                           stamped=stamp is not None, unconfirmed_empty=unconfirmed)
                 rec['blocking'] = state != 'ok' and not (state == 'unstamped' and not on)
                 objs[key] = obj
             if e.get('optional'):
@@ -417,6 +445,19 @@ def blocking(health):
     bad = sorted(k for k, f in health['files'].items() if blocks(f))
     return {'files': bad, 'unclassified': list(health['unclassified']),
             'any': bool(bad or health['unclassified'])}
+
+
+def unconfirmed_empty(health):
+    """적용일 전, 수집 상태 표시 없이 대상 목록이 빈 gate 자료 — 막지 않지만 「대상 없음이 확인되지 않음」 조건.
+    **`EFFECTIVE` 가 None 인 동안 1a 는 완료가 아니다**: 이 빈 목록(연준 사건·입찰·원문 목록·움직인 종목 등)이 정상
+    0건인지 수집 실패인지 가를 수 없다(1a 구현 검토 #2)."""
+    return sorted(k for k, f in health['files'].items()
+                  if f['class'] == 'gate' and f.get('unconfirmed_empty') and not f['blocking'])
+
+
+def describe_empty(f):
+    rel = str(f.get('file') or '').split('>/', 1)[-1]
+    return f'{f.get("name")}({rel}) — 대상 없음이 확인되지 않음(적용일 전)'
 
 
 def warnings(health):

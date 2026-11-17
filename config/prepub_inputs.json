@@ -32,7 +32,8 @@
      "name": "경제지표(FRED)",
      "require": [
       "indicators"
-     ]
+     ],
+     "why": "목록이 비지 않았는지만 여기서 본다 — 축 점수에 드는 지표(scored, role 이 anatomy 가 아닌 것)를 계산할 재료가 원천에 없으면 수집기가 collect.missing(no_value:<이름>)·required_ok false 로 적고 그것이 막는다(collect_market_data.econ_collect, 1a 구현 검토 #5). 적용일 전(표시 없음)에는 막지 못한다"
     },
     {
      "path": "<datadir>/intraday.json",
@@ -138,7 +139,9 @@
      "date": "report_date",
      "require": [
       "events"
-     ]
+     ],
+     "target": "events",
+     "why": "일정이 정상적으로 0건인 날이 있다 — 빈 events 는 수집기가 재료를 다 받고 confirmed_none 을 적었을 때만(build_calendar.calendar_collect). 표시 없는 빈 일정은 막는다"
     },
     {
      "path": "<datadir>/movers.json",
@@ -182,7 +185,8 @@
      "class": "gate",
      "name": "가격 맥락 성적표",
      "optional": true,
-     "why": "작업 공간에 복사하지 않는 파일 — 없으면 check_price_context 가 주장을 막는 쪽으로 판정한다. 있으면 읽혀야 한다(날짜는 검사기가 직접 버린다)"
+     "produced_by": "reference",
+     "why": "작업 공간에 복사하지 않는 파일 — 없으면 check_price_context 가 주장을 막는 쪽으로 판정한다. 있으면 읽혀야 한다(날짜는 검사기가 직접 버린다). 생산자 계약: collect_market_data.py 가 비-코어로 쓰고 collect 칸을 쓰지 않는다 — stamp_collect 등록표도 해시만 남기는 참고 자료로 둔다(collect_in none). 그래서 수집 상태 칸을 요구하지 않고(reference), 적용일부터 장부 항목·해시만 요구한다(1a 구현 검토 #8)"
     },
     {
      "path": "<datadir>/sector_performance.html",

@@ -502,9 +502,13 @@ def summarize(results, health=None, integrity=None):
         inputs = {'blocking': [I.describe(health['files'][k]) for k in b['files']],
                   'blocking_files': [health['files'][k]['file'] for k in b['files']],
                   'unclassified': b['unclassified'], 'warnings': [health['files'][k]['file']
-                                                                  for k in I.warnings(health)]}
+                                                                  for k in I.warnings(health)],
+                  'unconfirmed_empty': [I.describe_empty(health['files'][k]) for k in I.unconfirmed_empty(health)]}
         for k in I.warnings(health):
             conditions.append({'kind': 'unstamped', 'file': health['files'][k]['file']})
+        for k in I.unconfirmed_empty(health):
+            # 적용일 전 — 빈 대상 목록이 정상 0건인지 수집 실패인지 모른다. 막지 않되 숨기지 않는다(1a 구현 검토 #2)
+            conditions.append({'kind': 'unconfirmed_empty', 'file': health['files'][k]['file']})
     blocking = failed + incomplete
     if inputs and (inputs['blocking'] or inputs['unclassified']):
         blocking.append('inputs')

@@ -253,8 +253,6 @@ def test_7_sweep_confirmed_none_emitters_have_a_target():
     for (m, p), t in emitters.items():
         e = real_entry(m, p)
         assert e.get('target') == t, (m, p)
-        assert all(k == t for k in e.get('require') or [] if k == t) and t not in [
-            k for k in e.get('require') or [] if k != e.get('target')], (m, p)
 
 
 def test_8_scorecard_is_a_reference_file(tmp_path, monkeypatch):
