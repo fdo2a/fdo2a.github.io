@@ -202,6 +202,37 @@ Not taken: making `common.movers.check` (shared with US/KR, unchanged here) refu
 by an ancestor, and the same `<x hidden/>` reading in the US/KR news layout — existing behaviour of code this
 feature does not change.
 
+## First real run (2026-11-17)
+
+Collection: 48 posts read down to the floor, `usable: true`, 0 candidates (34 in the window: 7 remarks,
+27 not about Japan — re-read by hand, one mentions Kioxia once at character 831, outside the 160-char head).
+The daily was published without the section and the daily word rule did not block it. The path with a real
+summary, a section and a pin holding items has still not run.
+Found: the routine committed the pin in a commit of its own 9 seconds after the post. Why is a guess — the old
+STEP 4.3 had the pin on a second `git add` line inside a long paragraph, guarded by `[ -e …/$S.json ]`: either
+the line was skipped or it ran with `$S` unset in that shell and skipped silently. The post-publish review
+extracts evidence from the commit that introduced the post (`review_gate.publish_commit`), so a pin committed
+later is absent for it. For this run that costs nothing (no section, a pin with zero items). In general a
+review without the pin still runs the word rules but cannot compare body sentences with the summaries, and a
+page with the section fails for missing evidence (`check_japan_daily.py`, `daily_gate._views`; read from the
+code, not from a run). Fix: STEP 4.3 is now one `git add` command whose
+`$(ls -d japan/data/telegram/published 2>/dev/null)` stages the pin directory (no dependence on `$S`), then the
+commit, then one check before every push: `git status --porcelain` of that directory plus the Telegram paths
+of `HEAD` (`git show --name-only`: the commit's changed paths, not its tree) must print nothing — no usable
+file that day — or exactly the session's pin, which is a new file whenever 4.2 wrote it — a `??` line means the pin was left out (amend,
+only while `HEAD` is the unpushed post commit; never a second commit), anything else stops the run. A failed
+line stops the sequence. Run in a scratch repository: no pin, pin, pin left out of the add, pin with `$S`
+empty, a stray file of another day in the directory. codex review of this change (3 rounds, round 3 IMPL OK — it accepted the 「not taken」 below): round 1 —
+directory-wide add can carry unrelated files (taken as the check above, the add stays `$S`-independent), a
+failed commit followed by the amend (taken), 「harmless」 overstated (taken), the 4.4 wording (taken). Round 2 —
+the check after a rebase without conflicts (taken: 4.4 repeats guard and check after any rebase), the note
+not saying the check reads changed paths (taken). Not taken: 「a pin for S already on origin/main makes the
+check stop a correct post, or lets a stale pin through」 — only `publish_japan_daily.py` writes that path, it
+refuses a published session, and under 4.3 the pin leaves the clone only inside the commit that adds the post,
+so origin/main cannot hold a pin for a session whose post it lacks (the `cat-file` guard stops the run when it
+has the post). Not done:
+a mechanical check in code — the routine can still skip a line it is told to run.
+
 ## Not doing
 
 Weekly; notes as the cause of a move; other channels; raw text in the repo; a per-day minimum; the stale-date
