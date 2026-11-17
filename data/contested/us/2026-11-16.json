@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-16",
- "status": "error",
- "reason": "model_extract_success",
+ "status": "none",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-17T08:06:32+00:00",
- "cutoff_at": "2026-11-17T08:06:32+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-17T09:09:26+00:00",
+ "cutoff_at": "2026-11-17T09:09:26+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,33 +21,44 @@
   "sha256": "fc637a45bfdf910fb405fa53375de1b20195f41d7659f65150357d748ca0a4f7"
  },
  "counts": {
-  "harvest": 179,
+  "harvest": 182,
   "candidates": 1,
   "articles": [
-   6
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 0,
-   "out": 0
+   "in": 30568,
+   "out": 9044
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
    "aljazeera.com": "ok",
-   "bbc.co.uk": "ok"
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "호르무즈 해협 공격 속 걸프 원유 수송 유지 여부",
+  "query": "hormuz middle",
   "trigger": []
  },
- "content_hash": "077439d3f4ff7ee7"
+ "content_hash": "f8f8d03e63c7e239"
 }
