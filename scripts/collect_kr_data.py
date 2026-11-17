@@ -221,11 +221,10 @@ def session_collect(report_date, ctx, holidays):
         elif not done:
             missing.append(f"incomplete_window:{lab}")
             cut.append(f"{lab} {why}")
-    if cut:
-        notes_window = ("장중 창 미완결(기준: 정규장 15:30 KST 에서 30분봉 하나 여유, 조기 마감·개장 지연 달력 없음 — "
-                        "다른 마감 시각을 추정하지 않는다): " + ", ".join(cut))
-    else:
-        notes_window = None
+    # 어떤 기준으로 봤는지는 늘 적는다 — 조기 마감을 말해 줄 달력이 없어 정규장 마감 하나로 본다
+    end = "%02d:%02d" % kr_session.WINDOW_END
+    notes_window = (f"장중 창 완결 기준: 마지막 봉 {end} KST 이후(정규장 15:30, 조기 마감·개장 지연 달력 없음 — "
+                    "다른 마감 시각을 추정하지 않는다)" + ((" — 미완결: " + ", ".join(cut)) if cut else ""))
     us = ctx.get("us_prev")
     want_us, why_us = kr_session.expected_session(report_date, (holidays or {}).get("us"), before=True)
     if not us:

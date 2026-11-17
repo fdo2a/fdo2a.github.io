@@ -39,6 +39,7 @@ def ctx(fut_times=FULL, fx_times=FULL):
 def test_full_window_is_ok():
     c = collect_kr_data.session_collect(D, ctx(), HOL)
     assert c["status"] == "ok" and c["missing"] == [] and c["required_ok"] is True
+    assert "15:00" in c["detail"] and "달력 없음" in c["detail"] and "미완결" not in c["detail"]   # 기준은 늘 적는다
 
 
 def test_early_bars_only_is_partial_not_ok():
