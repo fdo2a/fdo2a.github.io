@@ -4,8 +4,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 4002532,
-    "volume": 3594697,
+    "value": 4066361,
+    "volume": 3652852,
     "members": [
       "SK하이닉스"
     ]
@@ -15,8 +15,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 3097843,
-    "volume": 16134588,
+    "value": 3167226,
+    "volume": 16500049,
     "members": [
       "삼성전자"
     ]
@@ -63,8 +63,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 812875,
-    "volume": 5270839,
+    "value": 834034,
+    "volume": 5410619,
     "members": [
       "삼성전자우"
     ]
@@ -74,8 +74,8 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 522006,
-    "volume": 682514,
+    "value": 541319,
+    "volume": 708435,
     "members": [
       "삼성전기"
     ]
@@ -96,10 +96,21 @@
     "kind": "stock",
     "direction": null,
     "theme": null,
-    "value": 363483,
-    "volume": 530281,
+    "value": 368743,
+    "volume": 538097,
     "members": [
       "SK스퀘어"
+    ]
+  },
+  {
+    "label": "삼성SDI",
+    "kind": "stock",
+    "direction": null,
+    "theme": null,
+    "value": 229213,
+    "volume": 501910,
+    "members": [
+      "삼성SDI"
     ]
   },
   {
@@ -135,17 +146,6 @@
     "volume": 19889359,
     "members": [
       "SOL SK하이닉스선물단일종목인버스2X"
-    ]
-  },
-  {
-    "label": "삼성SDI",
-    "kind": "stock",
-    "direction": null,
-    "theme": null,
-    "value": 221880,
-    "volume": 485273,
-    "members": [
-      "삼성SDI"
     ]
   }
 ]
