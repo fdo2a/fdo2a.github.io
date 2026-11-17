@@ -1,0 +1,97 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-17",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-17T11:18:27+00:00",
+ "cutoff_at": "2026-11-17T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "d84feab06a717443403d020e9f78583f3074f33f",
+  "sha256": "0e1c8c188c81f175a4f0407d8c6cb31ed6caf8d12a6dcd0fc3817143a30054c6",
+  "extra": {
+   "kr_econ.json": "9e3b32b6fc55bbaa7652271ddb08250da0b9feda7ed7a0b53a7c05b57f0e7bb1",
+   "kr_flows.json": "798671f30702a34a8a478054d7fc47fdc8a9cf8797b0b1804d06afa683d4cf73",
+   "kr_session.json": "b0ca7a3dfdbfc01617922fbadceaba7cb287712fb4f136d956073b20b922c261"
+  }
+ },
+ "counts": {
+  "harvest": 560,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "khan": "ok",
+   "sedaily": "ok",
+   "newspim": "ok",
+   "herald": "ok",
+   "mt": "ok",
+   "edaily": "ok"
+  },
+  "notes": [
+   "discover:560"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 54053,
+   "out": 17177
+  },
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "5/5"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 5,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[2]",
+    "structure",
+    "worry.most[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "variables[0]:unverified",
+    "edges[2]:unverified",
+    "memo[0]:unverified",
+    "memo[2]:unverified"
+   ]
+  }
+ },
+ "event": {
+  "topic_ko": "2027년 세계경제 전망과 주요국 장기금리 방향",
+  "query": "내년 KIEP 성장",
+  "trigger": []
+ },
+ "problems": [
+  "variables[0]:unverified",
+  "edges[2]:unverified",
+  "memo[0]:unverified",
+  "memo[2]:unverified"
+ ],
+ "content_hash": "7d95ca5fd9ee26a0"
+}
