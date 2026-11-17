@@ -183,15 +183,16 @@ def _accepted(e, stamp, date, excuse):
     """이 파일의 수집 결측이 **전부** 등록된 승인 예외인가 → 등록 목록, 아니면 None.
 
     풀어 주는 것은 「일부만 받았다」에서 나온 세 사유뿐이다(collect.status=partial, required_ok false, missing).
-    수집 실패(failed)·다른 결측이 하나라도 섞임·만료(발행일 > expires)·승인일 전 글·자료가 말하는 기준월
+    수집 실패(failed)·다른 결측이 하나라도 섞임·만료(발행일 > expires)·자료가 말하는 기준월
     (`collect.missing_ref[키]`)이 등록의 `ref_period` 와 다름(자료가 기준월을 말하지 않는 것 포함)은 그대로 막는다.
-    만료는 벽시계가 아니라 **글 날짜**로 본다 — 옛 기록을 다시 검증해도 판정이 뒤집히지 않는다."""
+    만료는 벽시계가 아니라 **글 날짜**로 본다 — 옛 기록을 다시 검증해도 판정이 뒤집히지 않는다. `approved_on` 은 기록용이다
+    (글 날짜와 대조하지 않는다 — 보류된 글을 다음 날 승인해도 그 글이 풀려야 한다. 범위는 기준월과 만료일이 정한다)."""
     regs = e.get('accepted_missing')
     if not regs or not isinstance(date, str) or stamp.get('status') != 'partial':
         return None
     miss = [m for m in stamp['missing'] if m not in excuse]
     refs = stamp.get('missing_ref') if isinstance(stamp.get('missing_ref'), dict) else {}
-    live = {a['key']: a for a in regs if a['approved_on'] <= date <= a['expires']}
+    live = {a['key']: a for a in regs if date <= a['expires']}
     if not miss:
         return None                       # 무엇이 빠졌는지 모르는 partial 은 풀 수 없다
     out = []

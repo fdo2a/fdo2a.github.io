@@ -139,7 +139,9 @@ codex 가 1회차 11건 중 7건 닫힘·4건 일부로 보고, 새 구멍 다�
 `outputs.skipped == 'true'`, 나머지 단계는 `outcome: skipped`) / `kept`(단계가 성공하고 일부러 다시 쓰지 않았다 — 요약이
 있는 날의 텔레그램 파일 동결, `MAY_KEEP`) / `failed`(단계가 성공·실패로 **돌았는데** 파일이 다시 쓰이지 않았다) / `unknown`
 (`--begin` 기록이 없거나 동결 여부를 가를 단계 결과가 없다) / `untracked`(판정 대상이 아닌 작성 재료). 앞선 실행의 `failed` 는
-건너뛴·동결·모름 실행이 지우지 못하고, 파일이 실제로 다시 쓰여야 풀린다. 비 JSON 산출물은 생산자 JSON 의 상태를 따른다.
+건너뛴·모름 실행이 지우지 못한다 — 그 단계가 다시 돌아 파일을 쓰거나(`written`), 성공하고 동결 파일을 그대로 두어야(`kept`)
+풀린다(동결 파일은 그날 다시 쓰이지 않으므로 `kept` 에 실패를 물려주면 재수집으로 풀 길이 없다). 비 JSON 산출물은 생산자
+JSON 의 상태를 따른다.
 전수로 찾은 「조용히 옛 판이 남는 자리」(읽기 전용 조사): 수집기 안에서 삼키는 예외 셋(`collect_kr_data.py` 세션,
 `collect_market_data.py` macro_metrics·scorecard — 사유를 `note_run_failure` 로 남긴다), 쓰지 않고 exit 0
 (`collect_fed_events.py` report_date 없음), `continue-on-error` 단계가 쓰기 전에 죽는 경우(`build_calendar`·`build_auctions`·
@@ -150,7 +152,8 @@ sanitize 단계가 「끝나지 않은 실행」을 다시 적는다. KR enforce
 **F6 의 판정 규칙.** 파일 항목의 `accepted_missing: [{key, ref_period, reason, approved_by, approved_on, expires}]`,
 `approved_by` 는 `"user"` 만(수집 중단과 같은 규칙·같은 잔여 위험). 풀어 주는 것은 「일부만 받았다」에서 나온 세 사유
 (`collect.status=partial`·`required_ok` false·`missing`)뿐이고, 조건은 넷 모두다: ① `collect.missing` 의 **모든** 키가 등록돼
-있다 ② 글 날짜가 `approved_on ≤ 날짜 ≤ expires`(벽시계가 아니라 글 날짜 — 옛 기록을 다시 검증해도 뒤집히지 않는다)
+있다 ② 글 날짜가 `expires` 이하다(벽시계가 아니라 글 날짜 — 옛 기록을 다시 검증해도 뒤집히지 않는다. `approved_on` 은
+기록용이고 대조하지 않는다 — 보류된 글을 다음 날 승인해도 그 글이 풀려야 한다)
 ③ 자료가 말하는 기준월 `collect.missing_ref[키]` 가 등록의 `ref_period` 와 같다(자료가 기준월을 말하지 않으면 적용 안 됨)
 ④ 수집 실패(`failed`)가 아니다. 낡음·해시·표시 없음·`empty: unknown` 은 예외와 무관하게 막는다. 원본 `collect` 는 고치지
 않는다. 수집기: `econ_collect` 가 no_value 지표의 기준월(원천의 최신 관측월, 예 `2026-10-01`)을 `missing_ref` 로 싣고,
@@ -168,7 +171,8 @@ sanitize 단계가 「끝나지 않은 실행」을 다시 적는다. KR enforce
   kr_movers 74·kr_index_etf 37·telegram 15(US 7·KR 8). 정상일 오차단 0/456판.
 - F2: `kr_session.json` 92판(발행일 54일). 선물 창의 마지막 봉 15:30 이 91판(나머지 1판은 창 자체가 None — 2026-09-07,
   미국 노동절. 이것은 1회차 #4 의 `futures:<이름>` 결측이고 이번 기준과 무관), 환율 92판 전부 15:30. `WINDOW_END` 15:00 으로
-  새로 막히는 판 0/92(발행일 0/54). 참고: 창의 **첫** 봉이 09:00 이 아닌 판이 1(2026-09-08, 13:00 시작·봉 6개) — 시작 쪽
+  새로 막히는 판 0/92(발행일 0/54). 이 54일에는 KRX 조기 마감·개장 지연일이 없다 — 그런 날 선물·환율 봉이 15:30 KST 까지
+  이어져 막히지 않으리라는 것은 **추정**이다(선물·환율은 KRX 와 무관하게 거래된다는 데서 나온 것, 실측 아님). 참고: 창의 **첫** 봉이 09:00 이 아닌 판이 1(2026-09-08, 13:00 시작·봉 6개) — 시작 쪽
   완결성은 이번에 보지 않았다(계획 밖, 잔여 위험).
 - F3: 과거 자료로 오차단 비율을 잴 수 없다 — `collect.collected_at` 이 아직 배포되지 않았다. 「수집 커밋에서 그 파일이 바뀌지
   않은 횟수」(KR 42커밋 중 kr_session 6, US 105커밋 중 macro_metrics 2 등)는 같은 내용으로 다시 쓴 것과 못 쓴 것을 가르지

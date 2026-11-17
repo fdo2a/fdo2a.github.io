@@ -415,9 +415,8 @@ def test_f6_expiry_is_judged_by_the_post_date_and_blocks_again_after(tmp_path, m
     assert _econ(tmp_path, partial([K1, K2]), both, date='2026-12-11')[1]['blocking']          # 다음 날부터 다시 막힌다
     mixed = [acc(K1, expires='2026-12-10'), acc(K2, expires='2026-11-20')]
     assert _econ(tmp_path, partial([K1, K2]), mixed, date='2026-11-21')[1]['blocking']
-    # 승인일 전 글에는 적용하지 않는다
-    assert _econ(tmp_path, partial([K1, K2]), both, date='2026-11-09')[1]['blocking']
-    assert not _econ(tmp_path, partial([K1, K2]), both, date='2026-11-10')[1]['blocking']
+    # 승인일은 기록용 — 보류된 글을 다음 날 승인해도(글 날짜 < 승인일) 그 글이 풀린다. 범위는 기준월·만료일이 정한다
+    assert not _econ(tmp_path, partial([K1, K2]), both, date='2026-11-09')[1]['blocking']
 
 
 def test_f6_original_collect_is_not_rewritten(tmp_path, monkeypatch):
