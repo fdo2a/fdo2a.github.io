@@ -49,6 +49,7 @@
   .menubar a:hover { color: var(--text-2); }
   .menubar a[aria-current="page"] { color: var(--toss-blue); border-bottom-color: var(--toss-blue); }
   @media (max-width: 420px) { .menubar a { padding: 9px 9px; font-size: 12.5px; } }
+  .menubar a.lang { margin-left: auto; font-weight: 600; }
   /* 일간·주간 — 메뉴바(밑줄 탭)보다 한 단계 아래라는 것이 보이게 알약형 세그먼트로 (2026-10-21) */
   .subnav { display: inline-flex; gap: 2px; flex-wrap: wrap; margin: 0 0 14px; padding: 3px;
     background: #fff; border: 1px solid var(--border); border-radius: 9999px; }
@@ -128,6 +129,7 @@
     <a href="kr/">한국 시장</a>
     <a href="thesis/">메모리 thesis</a>
     <a href="japan/">일본 시장</a>
+    <a class="lang" href="ja/" hreflang="ja" lang="ja">日本語</a>
   </nav>
   <header class="site">
     <span class="brand">US Market Brief</span>
