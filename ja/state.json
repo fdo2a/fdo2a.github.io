@@ -21,11 +21,11 @@
     "japan/data/news/2026-11-05.json": "8a12ae60f3b796059a8498ab0fd5d0de2509091d",
     "japan/data/news/2026-11-06.json": "46535cf8a63c7a0489ac3080325c4e4993daf35e",
     "japan/data/news/2026-11-09.json": "91343e57709f4dd76b638755671ad10e8faa324f",
-    "japan/data/news/2026-11-10.json": "8cf0d04eed771d8cb8702ec30770afb339e293cb",
+    "japan/data/news/2026-11-10.json": "50bb96a59e6869fcb8b359c10adbe12a4fa9b082",
     "japan/data/news/2026-11-11.json": "8fdd79a99a6ff2522ada4d19a5db91608abfb5a9",
-    "japan/data/news/2026-11-12.json": "49210bc3b02ee29cb0e58644b3cfa19a0c16e2d2",
-    "japan/data/news/2026-11-13.json": "f45b8b61331684d3bb492e5956c8a26c4065cb2f",
-    "japan/data/news/2026-11-16.json": "e9f2cd1266245de513ff0f6ecfa90d43ffbee7d4",
+    "japan/data/news/2026-11-12.json": "1459a5636aef23ad09901dca1a9b91a9c98297bc",
+    "japan/data/news/2026-11-13.json": "35198640559caf8159eb4a1cc9ef69f5b4f104ee",
+    "japan/data/news/2026-11-16.json": "07394ce0196fb8ad24ce2c306f9ef8ac7aec08ee",
     "japan/data/news/daily/2026-11-02.json": "4a376c5926ab251b18790ae67e696cac1aa079b4",
     "japan/data/news/daily/2026-11-04.json": "04ba3feca7a2625149a63c804aebf6d8cf67cd18",
     "japan/data/news/daily/2026-11-05.json": "c305b642a8d157724ac4776db738a34de31048e6",
@@ -38,13 +38,13 @@
     "japan/data/news/daily/2026-11-16.json": "ae8f073e188ebf4dc87bda11d4e45cf12a6f1380",
     "list:japan/daily.json": "36f59dfc8e370b85"
    },
-   "reason": "확인 안 된 인명: 다카다, 다무라",
+   "reason": "",
    "renderer": "r2",
-   "rounds": 2,
+   "rounds": 3,
    "source_blob": "10c8cf3d61a572fe99ed84b171476db99dbc7343",
-   "status": "held",
+   "status": "published",
    "text_hash": "d8bdbf27d261e0b0",
-   "updated": "2026-11-17T13:32:55+09:00"
+   "updated": "2026-11-18T01:42:39+09:00"
   },
   "japan/daily/2026-11-17.html": {
    "deps": {
