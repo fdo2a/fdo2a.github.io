@@ -1,0 +1,441 @@
+"""발행 전 자료 상태 검사 — 검사기가 판정에 쓰는 자료가 있고, 읽히고, 오늘 것이고, 수집에 성공했는가 (2026-11-17).
+
+1a 「자료 누락 차단」. 정책 파일 `config/prepub_inputs.json`(`prepub-inputs/1`)이 자료 폴더의 모든 파일을 넷으로 나눈다.
+- `gate`: 검사기가 판정에 쓴다 — 없거나 비었거나 깨졌거나 낡았거나 수집 실패면 그 검사는 「미완료」(발행 보류).
+- `writer`: 작성자만 쓴다 — 차단하지 않고 `risk`(어떤 미검증 정보가 들어올 수 있나)·`covered_by`(글에 실린 뒤 어느 검사기가
+  다른 자료와 대조하나, 없으면 null)를 기록에 싣는다.
+- `unused`: 작성·검사 모두 안 쓴다. 없어도 막지 않는다.
+- `discontinued`: 의도적으로 수집을 멈춘 자료 — 사유·중단일·영향·승인 주체(`approved_by: "user"` 만)를 적는다.
+  등록된 `missing_key` 는 시장 데이터의 `missing` 에서 결측으로 세지 않는다.
+  **잔여 위험: 권한 분리 전에는 루틴이 이 정책 파일을 고쳐 수집 실패를 수집 중단으로 바꿀 수 있다.**
+분류되지 않은 파일이 자료 폴더에 있으면 미완료다(새 파일은 반드시 분류된다).
+
+판정(`state`): ok / missing / empty_file / unreadable / stale(자료 기준일 ≠ 발행일) / failed(수집 실패 표시) /
+incomplete_fields(필수 항목·날짜 칸 빠짐, 대상 목록이 비었는데 없음 확인이 없음) / unstamped(수집 상태 표시 없음) /
+changed_after_collect(`_collect_status.json` 의 해시와 다름).
+- 수집 상태 표시 = 파일 최상위 `collect` 객체, 또는 `<datadir>/_collect_status.json` 의 `files[<상대경로>]`(목록형·JSON 이
+  아닌 파일). 수집기(작업 2)가 쓴다. `empty: "confirmed_none"` 만 「조회가 끝까지 성공했고 대상이 0건」이다.
+- `unstamped` 는 **적용일(`EFFECTIVE`) 전에는 경고, 적용일부터 미완료**. 초기값 None = 아직 강제하지 않는다 — 작업 2 가
+  배포되고 첫 수집을 확인한 뒤 사람이 날짜를 넣는다. 옛 칸(`report_date`·`ok`·`error`·`status`·`complete`·`missing`·
+  `pending`)으로 판정할 수 있는 조건은 적용일과 무관하게 지금부터 강제한다. 날짜 칸이 없는 자료(econ_indicators·intraday·
+  kr_flows·kr_intraday·kr_econ·kr_top_value·kr_index_etf·kr_stance_eval·원문 txt)는 적용일 전에는 신선도를 확인할
+  길이 없다 — 그 구멍을 닫는 것이 적용일이다.
+- 판정할 수 없는 것은 정상으로 추정하지 않는다. 이 검사는 루틴이 자료·규칙을 직접 고치는 우회를 막지 않는다(권한 분리 단계).
+설계 docs/superpowers/specs/2026-11-17-input-health.md
+"""
+import fnmatch
+import hashlib
+import json
+import os
+import re
+
+FORMAT = 'prepub-inputs/1'
+EFFECTIVE = None
+CLASSES = ('gate', 'writer', 'unused', 'discontinued')
+STATES = ('ok', 'missing', 'empty_file', 'unreadable', 'stale', 'failed', 'incomplete_fields', 'unstamped',
+          'changed_after_collect')
+STATE_KO = {'ok': '정상', 'missing': '파일 없음', 'empty_file': '빈 파일', 'unreadable': '읽지 못함',
+            'stale': '날짜가 발행일과 다름', 'failed': '수집 실패', 'incomplete_fields': '필수 항목 빠짐',
+            'unstamped': '수집 상태 표시 없음', 'changed_after_collect': '수집 뒤 바뀜'}
+_ORDER = ('failed', 'stale', 'incomplete_fields', 'changed_after_collect', 'unstamped')
+COLLECT_STATUS = ('ok', 'failed', 'partial')
+EMPTY = ('has_data', 'confirmed_none', 'unknown')
+STATUS_FILE = '_collect_status.json'
+ROOTS = ('datadir', 'tg', 'stance_next')
+FILE_ROOTS = ('tg', 'stance_next')
+PRODUCERS = ('collector', 'writer', 'ledger', 'meta')
+_KEY = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.-]*$')
+
+
+class PolicyError(Exception):
+    pass
+
+
+def _root_of(path):
+    m = re.match(r'^<([a-z_]+)>(/.*)?$', path or '')
+    return m.group(1) if m and m.group(1) in ROOTS else None
+
+
+def validate(pol):
+    """형식이 다르면 PolicyError — 정책을 못 읽은 채 검사를 돌리지 않는다(실행기는 미완료 exit 2)."""
+    if not isinstance(pol, dict) or pol.get('format') != FORMAT or not isinstance(pol.get('markets'), dict):
+        raise PolicyError('자료 분류 정책 형식이 다르다')
+    for market, m in pol['markets'].items():
+        if not isinstance(m, dict) or not isinstance(m.get('files'), list) \
+                or not isinstance(m.get('discontinued', []), list):
+            raise PolicyError(f'{market} 분류 목록이 없다')
+        for e in m['files']:
+            if not isinstance(e, dict) or not isinstance(e.get('name'), str) or not e['name']:
+                raise PolicyError(f'{market} 분류 항목에 이름이 없다: {e!r}'[:200])
+            if e.get('class') not in ('gate', 'writer', 'unused'):
+                raise PolicyError(f'{market} {e.get("path")} 분류가 gate·writer·unused 가 아니다')
+            if _root_of(e.get('path')) is None:
+                raise PolicyError(f'{market} {e.get("path")} 경로가 <datadir>/·<tg>·<stance_next> 로 시작하지 않는다')
+            if e['class'] == 'writer' and ('risk' not in e or 'covered_by' not in e):
+                raise PolicyError(f'{market} {e["path"]} writer 분류에 risk·covered_by 가 없다')
+            if e.get('produced_by', 'collector') not in PRODUCERS:
+                raise PolicyError(f'{market} {e["path"]} produced_by 가 다르다')
+            w = e.get('when')
+            if w is not None and (not isinstance(w, dict) or e.get('else_class') not in ('writer', 'unused')
+                                  or not all(isinstance(w.get(k), str) for k in ('file', 'each', 'any_ok', 'template'))):
+                raise PolicyError(f'{market} {e["path"]} 조건부 입력(when)의 형식이 다르다')
+        for d in m.get('discontinued', []):
+            if not isinstance(d, dict) or _root_of(d.get('path')) is None:
+                raise PolicyError(f'{market} 수집 중단 항목의 경로가 없다')
+            if d.get('approved_by') != 'user':
+                # 수집 중단은 사람이 승인한 것만 — 루틴이 실패를 중단으로 바꾸지 못하게(권한 분리 전에는 파일 수정으로 가능)
+                raise PolicyError(f'{market} {d.get("path")} 수집 중단 등록에 approved_by: "user" 가 없다')
+            for k in ('name', 'reason', 'since', 'approved_at'):
+                if not isinstance(d.get(k), str) or not d[k]:
+                    raise PolicyError(f'{market} {d.get("path")} 수집 중단 등록에 {k} 가 없다')
+            if not isinstance(d.get('affects'), dict):
+                raise PolicyError(f'{market} {d.get("path")} 수집 중단 등록에 영향(affects)이 없다')
+    return pol
+
+
+def load(path):
+    try:
+        with open(path, encoding='utf-8') as fh:
+            pol = json.load(fh)
+    except (OSError, ValueError) as exc:
+        raise PolicyError(f'자료 분류 정책을 읽지 못했다: {exc}') from exc
+    return validate(pol)
+
+
+def entries(pol, market):
+    m = (pol.get('markets') or {}).get(market)
+    if not isinstance(m, dict):
+        raise PolicyError(f'{market} 자료 분류가 없다')
+    return m['files'], m.get('discontinued', [])
+
+
+def paths_of(pol, market):
+    files, disc = entries(pol, market)
+    return [e['path'] for e in files] + [d['path'] for d in disc]
+
+
+def enforced(date):
+    return bool(EFFECTIVE) and bool(date) and date >= EFFECTIVE
+
+
+def _present(ctx):
+    """{정책 경로: 실제 파일} — 정책 경로는 `<datadir>/상대경로`, 파일 뿌리는 `<tg>`·`<stance_next>` 그대로."""
+    out = {}
+    root = ctx.get('datadir')
+    if root and os.path.isdir(root):
+        for d, dirs, names in os.walk(root):
+            dirs[:] = sorted(x for x in dirs if not x.startswith('.'))
+            for n in sorted(names):
+                if not n.startswith('.'):
+                    full = os.path.join(d, n)
+                    out['<datadir>/' + os.path.relpath(full, root).replace(os.sep, '/')] = full
+    for k in FILE_ROOTS:
+        p = ctx.get(k)
+        if p and os.path.isfile(p):
+            out[f'<{k}>'] = p
+    return out
+
+
+def _display(key, full):
+    if key in ('<tg>', '<stance_next>'):
+        return f'{key}/{os.path.basename(full)}' if full else key
+    return key
+
+
+def _is_glob(p):
+    return any(c in p for c in '*?[')
+
+
+def _read_json(full):
+    try:
+        with open(full, encoding='utf-8') as fh:
+            return json.load(fh), None
+    except (OSError, ValueError, UnicodeDecodeError) as exc:
+        return None, type(exc).__name__
+
+
+def _conditional(e, present):
+    """조건부 입력이 오늘 필수인 경로들 — 다른 gate 자료의 값에 묶는다(예: 연준 사건 책이 원문을 받았다고 한 사건)."""
+    w = e['when']
+    full = present.get(w['file'])
+    if not full:
+        return set()                      # 묶인 자료가 없으면 그 자료가 이미 미완료다 — 여기서 추정하지 않는다
+    obj, err = _read_json(full)
+    if err or not isinstance(obj, dict) or not isinstance(obj.get(w['each']), list):
+        return set()
+    out = set()
+    for ev in obj[w['each']]:
+        if not isinstance(ev, dict):
+            continue
+        srcs = ev.get(w['any_ok'])
+        if isinstance(srcs, list) and any(isinstance(s, dict) and s.get('ok') for s in srcs):
+            key = ev.get('key')
+            # 이상한 키(경로 문자)는 그대로 「없는 파일」로 남긴다 — 고치지 않는다
+            out.add(w['template'].format(key=key if isinstance(key, str) and _KEY.match(key) else '<잘못된 키>'))
+    return out
+
+
+def _empty(v):
+    return v is None or v == '' or v == [] or v == {}
+
+
+def _stamp_ok_shape(c):
+    return (isinstance(c, dict) and c.get('status') in COLLECT_STATUS and isinstance(c.get('as_of'), str)
+            and isinstance(c.get('required_ok'), bool) and isinstance(c.get('missing'), list)
+            and c.get('empty') in EMPTY)
+
+
+def _health(e, key, full, date, status_files, excuse):
+    """gate 파일 하나 → (state, reasons, sha, as_of, obj, stamp)."""
+    reasons = []
+    try:
+        size = os.path.getsize(full)
+        with open(full, 'rb') as fh:
+            raw = fh.read()
+    except OSError as exc:
+        return 'unreadable', [f'읽지 못했다({type(exc).__name__})'], None, None, None, None
+    sha = hashlib.sha256(raw).hexdigest()
+    if size == 0 or not raw:
+        return 'empty_file', ['0바이트'], sha, None, None, None
+    produced = e.get('produced_by', 'collector')
+    obj = None
+    if key.endswith('.json') or full.endswith('.json'):
+        try:
+            obj = json.loads(raw.decode('utf-8'))
+        except (ValueError, UnicodeDecodeError) as exc:
+            return 'unreadable', [f'JSON 이 깨졌다({type(exc).__name__})'], sha, None, None, None
+    else:
+        try:
+            if not raw.decode('utf-8').strip():
+                return 'empty_file', ['내용이 비었다'], sha, None, None, None
+        except UnicodeDecodeError:
+            return 'unreadable', ['UTF-8 로 읽지 못했다'], sha, None, None, None
+    if produced == 'meta':
+        if not isinstance(obj, dict) or not isinstance(obj.get('files'), dict):
+            return 'unreadable', ['수집 상태 파일 형식이 다르다'], sha, None, obj, None
+        return 'ok', [], sha, None, obj, None
+
+    def bad(state, why):
+        reasons.append((state, why))
+
+    d = obj if isinstance(obj, dict) else {}
+    as_of = None
+    # 옛 칸 — 적용일과 무관하게 지금부터
+    if isinstance(obj, dict):
+        if 'ok' in d and d['ok'] is not True:
+            bad('failed', f'ok={d["ok"]!r}')
+        if d.get('error'):
+            bad('failed', 'error 가 있다')
+        if 'status' in d and d['status'] not in (e.get('status_ok') or ('ok', 'complete')):
+            bad('failed', f'status={str(d["status"])[:40]}')
+        if 'complete' in d and d['complete'] is not True:
+            bad('incomplete_fields', 'complete 가 참이 아니다')
+        if 'missing' in d:
+            miss = d['missing'] if isinstance(d['missing'], list) else ['<형식이 다르다>']
+            left = [m for m in miss if m not in excuse]
+            if left:
+                bad('incomplete_fields', 'missing: ' + ', '.join(str(x) for x in left[:5]))
+        if d.get('pending'):
+            bad('incomplete_fields', '결과 미확정(pending)이 있다')
+    if e.get('date'):
+        v = d.get(e['date'])
+        if not isinstance(v, str):
+            bad('incomplete_fields', f'날짜 칸 {e["date"]} 이 없다')
+        else:
+            as_of = v
+            if e.get('date_rule') == 'before':
+                if not v < date:
+                    bad('stale', f'{e["date"]}={v} — 발행일 {date} 보다 앞선 책이어야 한다')
+            elif v != date:
+                bad('stale', f'{e["date"]}={v} ≠ 발행일 {date}')
+    for k in e.get('require') or []:
+        if k == '<items>':
+            if not isinstance(obj, list) or not obj:
+                bad('incomplete_fields', '목록이 비었다')
+        elif not isinstance(obj, dict) or _empty(obj.get(k)):
+            bad('incomplete_fields', f'필수 칸 {k} 가 비었다')
+    # 수집 상태 표시
+    skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
+    entry = status_files.get(skey) if isinstance(status_files, dict) else None
+    stamp = d.get('collect') if isinstance(obj, dict) and 'collect' in d else entry
+    if isinstance(entry, dict) and isinstance(entry.get('sha256'), str) and entry['sha256'] != sha:
+        bad('changed_after_collect', '수집 상태 파일의 해시와 다르다')
+    if stamp is not None and produced == 'collector':
+        if not _stamp_ok_shape(stamp):
+            bad('incomplete_fields', '수집 상태 칸(collect) 형식이 다르다')
+        else:
+            if stamp['status'] != 'ok':
+                bad('failed', f'collect.status={stamp["status"]}')
+            if stamp['as_of'] != date:
+                bad('stale', f'collect.as_of={stamp["as_of"]} ≠ 발행일 {date}')
+            as_of = stamp['as_of'] if as_of is None else as_of
+            if not stamp['required_ok'] or [m for m in stamp['missing'] if m not in excuse]:
+                bad('incomplete_fields', '수집기가 필수 항목을 다 채우지 못했다고 적었다')
+            if stamp['empty'] == 'unknown':
+                bad('incomplete_fields', '대상이 있는지 모른다(collect.empty=unknown)')
+            t = e.get('target')
+            if t and stamp['empty'] != 'unknown':
+                lst = d.get(t) if isinstance(obj, dict) else obj
+                if isinstance(lst, list):
+                    if not lst and stamp['empty'] != 'confirmed_none':
+                        bad('incomplete_fields', f'{t} 가 비었는데 「없음 확인」이 없다')
+                    if lst and stamp['empty'] == 'confirmed_none':
+                        bad('incomplete_fields', f'{t} 가 있는데 「없음 확인」이라고 적었다')
+                else:
+                    bad('incomplete_fields', f'대상 목록 {t} 가 없다')
+    elif stamp is None and produced == 'collector':
+        bad('unstamped', '수집 상태 표시(collect·_collect_status)가 없다')
+    if not reasons:
+        return 'ok', [], sha, as_of, obj, stamp
+    states = {s for s, _ in reasons}
+    state = next(s for s in _ORDER if s in states)
+    return state, [w for _, w in reasons], sha, as_of, obj, stamp
+
+
+def assess(pol, market, ctx):
+    """→ {files: {정책 경로: {...}}, unclassified: [...], discontinued: [...], enforced, effective, _objs}.
+
+    정책 경로 = `<datadir>/상대경로` 또는 파일 뿌리 `<tg>`·`<stance_next>`(실제 파일 이름은 `file`)."""
+    files, disc = entries(pol, market)
+    date = ctx.get('date')
+    present = _present(ctx)
+    excuse = {d['missing_key'] for d in disc if isinstance(d.get('missing_key'), str)}
+    status_files = None
+    sf = present.get('<datadir>/' + STATUS_FILE)
+    if sf:
+        obj, err = _read_json(sf)
+        status_files = obj.get('files') if not err and isinstance(obj, dict) and isinstance(obj.get('files'), dict) \
+            else None
+    cond = {i: _conditional(e, present) for i, e in enumerate(files) if e.get('when')}
+    out, objs, unclassified = {}, {}, []
+    on = enforced(date)
+
+    def put(key, e, full, cls=None):
+        cls = cls or e['class']
+        rec = {'class': cls, 'name': e['name'], 'file': _display(key, full), 'state': 'ok', 'reason': '',
+               'sha256': None, 'as_of': None, 'blocking': False, 'stamped': False}
+        if cls == 'gate':
+            if full is None:
+                rec['state'] = 'missing'
+                rec['reason'] = '파일이 없다'
+                rec['blocking'] = not e.get('optional')
+            else:
+                state, why, sha, as_of, obj, stamp = _health(e, key, full, date, status_files, excuse)
+                rec.update(state=state, reason='; '.join(why)[:300], sha256=sha, as_of=as_of,
+                           stamped=stamp is not None)
+                rec['blocking'] = state != 'ok' and not (state == 'unstamped' and not on)
+                objs[key] = obj
+            if e.get('optional'):
+                rec['optional'] = True
+        else:
+            if full is not None:
+                try:
+                    with open(full, 'rb') as fh:
+                        rec['sha256'] = hashlib.sha256(fh.read()).hexdigest()
+                except OSError:
+                    rec['state'] = 'unreadable'
+            else:
+                rec['state'] = 'missing'
+            if cls == 'writer':
+                rec['risk'], rec['covered_by'] = e.get('risk'), e.get('covered_by')
+            elif cls == 'discontinued':
+                for k in ('reason', 'since', 'affects', 'approved_by', 'approved_at'):
+                    rec[k] = e.get(k)
+            if e.get('note') or e.get('else_note'):
+                rec['note'] = e.get('note') if cls == e.get('class') else e.get('else_note')
+        out[key] = rec
+
+    for key in sorted(present):
+        hit = None
+        for i, e in enumerate(files):
+            if fnmatch.fnmatchcase(key, e['path']):
+                hit = (i, e)
+                break
+        if hit is None:
+            d = next((x for x in disc if fnmatch.fnmatchcase(key, x['path'])), None)
+            if d is not None:
+                put(key, dict(d, **{'class': 'discontinued'}), present[key])
+            else:
+                unclassified.append(_display(key, present[key]))
+            continue
+        i, e = hit
+        if e.get('when'):
+            put(key, e, present[key], 'gate' if key in cond[i] else e['else_class'])
+        else:
+            put(key, e, present[key])
+    # 있어야 하는데 없는 gate 자료
+    for i, e in enumerate(files):
+        if e['class'] != 'gate':
+            continue
+        if e.get('when'):
+            for key in sorted(cond[i] - set(present)):
+                put(key, e, None)
+        elif not _is_glob(e['path']) and e['path'] not in present:
+            put(e['path'], e, None)
+    return {'files': out, 'unclassified': unclassified, 'effective': EFFECTIVE, 'enforced': on,
+            'discontinued': [{k: d.get(k) for k in ('path', 'name', 'reason', 'since', 'affects', 'approved_by',
+                                                     'approved_at', 'missing_key')} for d in disc],
+            '_objs': objs}
+
+
+def blocks(f):
+    return bool(f.get('blocking'))
+
+
+def blocking(health):
+    bad = sorted(k for k, f in health['files'].items() if blocks(f))
+    return {'files': bad, 'unclassified': list(health['unclassified']),
+            'any': bool(bad or health['unclassified'])}
+
+
+def warnings(health):
+    """막지 않지만 조건으로 남길 것 — 적용일 전의 unstamped."""
+    return sorted(k for k, f in health['files'].items()
+                  if f['class'] == 'gate' and f['state'] == 'unstamped' and not f['blocking'])
+
+
+def for_gate(health, paths):
+    """검사기의 입력 가운데 막는 것 → [정책 경로]. 조건부 패턴(`*`)은 오늘 필수인 것 전부."""
+    out = []
+    for p in paths or []:
+        keys = [k for k in health['files'] if fnmatch.fnmatchcase(k, p)] if _is_glob(p) else [p]
+        for k in keys:
+            f = health['files'].get(k)
+            if f is not None and blocks(f):
+                out.append(k)
+    return out
+
+
+def na_when(health, spec):
+    """(참인가, 근거) — 「해당 없음」은 정상 조회로 대상이 없음을 확인한 경우만.
+    근거 'collect' = 수집 상태가 ok·confirmed_none. 'legacy' = 적용일 전, 수집 상태 표시가 없고 옛 칸이 다 정상이며
+    지정 목록이 빈 경우(파일 있음·날짜 일치·error 없음은 상태 검사가 이미 확인했다)."""
+    key = spec.get('file')
+    f = health['files'].get(key)
+    obj = health['_objs'].get(key)
+    if not f or f['blocking'] or f['state'] not in ('ok', 'unstamped') or not isinstance(obj, dict):
+        return False, None
+    lst = obj.get(spec.get('list'))
+    if not isinstance(lst, list) or lst:
+        return False, None
+    c = obj.get('collect')
+    if f['stamped']:
+        if isinstance(c, dict) and c.get('status') == 'ok' and c.get('empty') == 'confirmed_none':
+            return True, 'collect'
+        return False, None
+    if health['enforced']:
+        return False, None
+    return True, 'legacy'
+
+
+def describe(f):
+    """「무엇이·왜」 — `시장 데이터(market_data.json) — 수집 실패`."""
+    rel = str(f.get('file') or '').split('>/', 1)[-1]
+    return f'{f.get("name")}({rel}) — {STATE_KO.get(f.get("state"), "판정 불가")}'
+
+
+def public(health):
+    """기록에 싣는 모양 — 원시 객체는 뺀다."""
+    return {'files': {k: dict(v) for k, v in sorted(health['files'].items())},
+            'unclassified': list(health['unclassified']), 'discontinued': list(health['discontinued']),
+            'effective': health['effective'], 'enforced': health['enforced']}
