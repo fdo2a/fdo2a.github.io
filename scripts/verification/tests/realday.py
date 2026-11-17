@@ -145,9 +145,16 @@ def stamp(ctx, market, pol):
         if f['class'] != 'gate' or f['state'] == 'missing':
             continue
         e = _entry(files, key, date)
-        if e.get('produced_by', 'collector') != 'collector':
+        produced = e.get('produced_by', 'collector')
+        if produced not in I.LEDGER_PRODUCERS:
             continue
         full = path_of(ctx, key)
+        if produced == 'reference':         # 수집 상태 칸 없이 해시만(stamp_collect 의 collect_in none)
+            skey = (e.get('stamp_key') or key.split('>/', 1)[-1]).format(date=date)
+            with open(full, 'rb') as fh:
+                raw = fh.read()
+            status[skey] = {'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw), 'collect_in': 'none'}
+            continue
         c = dict(STAMP, as_of=date)
         obj = None
         if full.endswith('.json'):

@@ -9,7 +9,15 @@ KR 11/16 은 원본이 아니라 사고 회귀다 — 그날 종목을 하나도
 - `legacy`: 지금 실제로 배포되는 상태(표시 없음, 적용일 None). 옛 칸으로 알아낼 수 없는 변이는 `LEGACY_UNDETECTABLE`
   에 이유와 함께 적는다 — 몰래 빼지 않는다. 목록 밖의 변이가 발행 가능하면 구멍이다(시험을 약하게 고치지 않는다).
 변이마다 「발행 불가」만 보지 않고 그 파일의 판정(state)까지 맞춘다 — 해시 불일치가 다른 변이를 가리지 않게 표시
-모드에서는 변이 뒤 해시를 다시 적는다.
+모드에서는 변이 뒤 해시를 다시 적는다. **자료 바이트를 하나도 바꾸지 못한 변이는 세지 않는다**(날짜 칸이 없는 옛
+자료의 「날짜 하루 전」, 칸이 없는 목록형·txt 의 「수집 실패 표시」 — 1a 구현 검토 1회차, 행렬 수치가 부풀지 않게).
+
+**이 시험이 증명하지 못하는 것**(1a 구현 검토 1회차 「시험과 호환성」): 표시 모드의 `collect` 는 손으로 붙인 것
+(`realday.stamp`)이다 — 실제 수집기를 돌리지 않는다. 그래서 **수집기가 틀린 성공 표시를 쓰는 오류, 틀린
+`confirmed_none`, 오래된 원천을 오늘 날짜로 찍는 오류는 이 시험이 증명하지 못한다.** 그 몫은 수집 쪽 단위 시험이다
+(`scripts/kr/tests/test_collect_freshness.py` — 지난 날 분봉·수급·세션, `scripts/common/tests/test_movers.py` — 일부만
+잰 움직인 종목, `scripts/us/tests/test_econ_collect_required.py` — 계산 재료 결측). 정의된 변이에서 부적절한 발행
+허용이 0건이라는 것뿐이고, 발행이 안전하다는 증명이 아니다.
 """
 import copy
 import fnmatch
@@ -30,17 +38,12 @@ EXPECT = {'delete': 'missing', 'zero': 'empty_file', 'broken': 'unreadable', 'da
           'target_unknown': 'incomplete_fields', 'target_emptied': 'incomplete_fields', 'unstamp': 'unstamped'}
 
 # 지금 배포 상태(수집 상태 표시 없음)에서 옛 칸으로 알아낼 수 없는 변이 — 작업 2 배포 뒤 적용일을 넣으면 닫힌다.
-# (파일 종류, 변이) → 이유. 파일 종류는 정책 경로.
-_NO_DATE = '날짜 칸이 없는 자료 — 적용일 전에는 신선도를 확인할 길이 없다(collect.as_of 로 닫힌다)'
-_NO_FLAG = '목록형·txt 자료 — 실패 표시를 담을 칸이 없다(_collect_status.json 으로 닫힌다)'
+# (파일 종류, 변이) → 이유. 파일 종류는 정책 경로. 발행은 막지 않지만 글 판정은 조건부(conditional)이고 조건에
+# unconfirmed_empty 가 있어야 한다 — 숨기지 않는다(1a 구현 검토 #2).
+# 적용일 전에 바이트를 바꿀 칸이 없는 변이(날짜 칸 없는 자료의 날짜, 목록형·txt 의 실패 표시)는 아예 변이로 세지
+# 않는다 — 그 자료들의 신선도·실패는 적용일 전에는 알 수 없다(잔여 위험, 명세 「잔여 위험」).
 _TARGET = '수집 성공 표시가 없어 「대상 0건」과 「수집 실패로 빈 목록」을 가를 수 없다(collect.empty 로 닫힌다)'
 LEGACY_UNDETECTABLE = {
-    **{(p, 'date_back'): _NO_DATE for p in (
-        '<datadir>/econ_indicators.json', '<datadir>/intraday.json', '<datadir>/kr_flows.json',
-        '<datadir>/kr_intraday.json', '<datadir>/kr_econ.json', '<datadir>/kr_top_value.json',
-        '<datadir>/kr_index_etf.json', '<datadir>/kr_stance_eval.json', '<datadir>/fed/*.txt')},
-    **{(p, 'fail_collect'): _NO_FLAG for p in ('<datadir>/kr_top_value.json', '<datadir>/kr_index_etf.json',
-                                               '<datadir>/fed/*.txt')},
     **{(p, 'target_emptied'): _TARGET for p in (
         '<datadir>/fed/events.json', '<datadir>/auctions.json', '<datadir>/releases/index.json',
         '<datadir>/kr_movers.json', '<datadir>/movers.json', '<tg>', '<datadir>/telegram.json')},
@@ -119,7 +122,8 @@ def _mutations(entry, full, stamped):
     if produced == 'collector':
         out += ['fail_collect']
         if entry.get('target'):
-            out += ['target_unknown'] + ([] if stamped else ['target_emptied'])
+            # 표시 모드에서도 빈 대상 목록을 넣는다 — 표시는 has_data 그대로(confirmed_none 없이 비우면 미완료)
+            out += ['target_unknown', 'target_emptied']
         if stamped:
             out += ['unstamp']
     for k in entry.get('require') or []:
@@ -248,6 +252,18 @@ def apply(ctx, key, entry, full, kind, stamped):
     raise AssertionError(kind)
 
 
+def _snapshot(dest):
+    """작업 공간(ws·side)의 모든 파일 바이트 해시 — 변이가 실제로 무엇을 바꿨는지."""
+    import hashlib
+    out = {}
+    for d, _dirs, names in os.walk(dest):
+        for n in names:
+            p = os.path.join(d, n)
+            with open(p, 'rb') as fh:
+                out[os.path.relpath(p, dest)] = hashlib.sha256(fh.read()).hexdigest()
+    return out
+
+
 def _keys_for(ctx, full):
     """같은 실제 파일을 가리키는 정책 키들(US 작업 공간 telegram.json = --tg)."""
     out = []
@@ -273,8 +289,10 @@ def _matrix(days, stamped, monkeypatch, tmp_path):
         m, d, base, ctx0, key, entry, kind, dest = t
         c = _fresh(base, ctx0, dest, stamped)
         full = RD.path_of(c, key)
-        if not apply(c, key, entry, full, kind, stamped):
-            return None
+        before = _snapshot(dest)
+        if not apply(c, key, entry, full, kind, stamped) or _snapshot(dest) == before:
+            shutil.rmtree(dest, ignore_errors=True)
+            return None                           # 적용할 칸이 없어 바이트가 그대로 — 변이로 세지 않는다
         if stamped and entry.get('produced_by') != 'meta':
             RD.restamp_hashes(c)
         cfg, pol = _policy(c)
@@ -283,7 +301,8 @@ def _matrix(days, stamped, monkeypatch, tmp_path):
         shutil.rmtree(dest, ignore_errors=True)
         return {'market': m, 'date': d, 'key': key, 'policy': entry['path'], 'kind': kind,
                 'publish_ok': res['summary']['publish_ok'], 'states': states, 'status': res['summary']['status'],
-                'incomplete_gates': res['summary']['incomplete'], 'blocking': res['summary']['blocking']}
+                'incomplete_gates': res['summary']['incomplete'], 'blocking': res['summary']['blocking'],
+                'conditions': [x.get('kind') for x in res['summary']['conditions']]}
 
     # 적용일은 모듈 상수 — 방식마다 한 번 정하고(표시 모드 = 가장 이른 날, 모든 날에 강제) 병렬로 돌린다
     # (검사기는 하위 프로세스라 스레드로 충분하다)
@@ -326,6 +345,8 @@ def test_legacy_mutations_block_except_the_listed(days, monkeypatch, tmp_path):
     for r in rows:
         if not r['publish_ok'] or (r['policy'], r['kind']) not in LEGACY_UNDETECTABLE:
             continue
+        # 막지 못한 것은 숨기지 않는다 — 조건부 판정·「대상 없음 미확인」 조건(1a 구현 검토 #2)
+        assert r['status'] == 'conditional' and 'unconfirmed_empty' in r['conditions'], r
     # 막힌 변이는 그 파일의 판정이 맞아야 한다(검사기가 우연히 막은 것과 가른다 — 둘 다 기록한다)
     by_state = [(r['market'], r['date'], r['key'], r['kind'], r['states']) for r in rows
                 if not r['publish_ok'] and (r['policy'], r['kind']) not in LEGACY_UNDETECTABLE

@@ -81,9 +81,9 @@ plan.md 「조사·측정」의 감사 훅 실측에 코드 읽기로 보충한 
 - **오류 주입 영구 시험** `test_input_mutations.py`: US 11/12(입찰·유동성 발표·지표 원문)·US 11/16(연준 의장 연설)·
   KR 11/12·11/13 을 발행 커밋과 기록의 입력 참조로 바이트 그대로 복원(해시 대조, 커밋을 못 찾으면 실패)해 gate 파일마다
   삭제·0바이트·깨진 JSON·날짜 하루 전·실패 표시(ok·status·error·collect)·필수 칸 비우기·대상 목록 비우기(empty
-  unknown)·수집 표시 제거를 넣는다. 표시 모드(손으로 붙인 `collect`, 적용일 = 발행일)는 발행 가능 0건, 옛 모드는
-  옛 칸으로 알 수 없는 변이만 이유와 함께 목록(`LEGACY_UNDETECTABLE` — 날짜 칸 없는 자료의 날짜, 목록형·txt 의 실패 표시,
-  표시 없는 빈 대상 목록)에 둔다. writer·unused·discontinued 파일 삭제는 발행 가능(오차단 0), 분류 안 된 파일은 미완료.
+  unknown, 그리고 표시 그대로)·수집 표시 제거를 넣는다. 표시 모드(손으로 붙인 `collect`·해시 장부, 적용일 = 발행일)는
+  발행 가능 0건, 옛 모드는 옛 칸으로 알 수 없는 변이만 이유와 함께 목록(`LEGACY_UNDETECTABLE` — 표시 없는 빈 대상
+  목록, 조건부 판정이어야 한다)에 둔다. writer·unused·discontinued 파일 삭제는 발행 가능(오차단 0), 분류 안 된 파일은 미완료.
 - 사고 회귀: KR 11/16(실제로는 종목을 하나도 재지 못한 날 — `kr_stock_moves.json` 0행) → 미완료(전에는 not_run 으로
   발행). 손으로 만든 정상 0건(collect ok·confirmed_none·checked) → na. US `auctions.json` `ok:false` → 미완료(전에는
   경고 뒤 발행).
@@ -114,7 +114,10 @@ plan.md 「조사·측정」의 감사 훅 실측에 코드 읽기로 보충한 
 
 시험의 한계: 오류 주입 시험(`test_input_mutations.py`)은 손으로 붙인 표시로 돈다 — 수집기의 틀린 성공 표시·틀린
 `confirmed_none`·오래된 원천을 오늘로 찍는 오류는 증명하지 못한다(수집 쪽 단위 시험 `kr/tests/test_collect_freshness.py`·
-`common/tests/test_movers.py`·`us/tests/test_econ_collect_required.py` 가 그 몫). 바이트를 바꾸지 못한 변이는 세지 않는다.
+`common/tests/test_movers.py`·`us/tests/test_econ_collect_required.py` 가 그 몫). 바이트를 바꾸지 못한 변이는 세지 않는다
+(날짜 칸 없는 옛 자료의 날짜 하루 전, 칸 없는 목록형·txt 의 실패 표시). 표시 모드에 빈 대상 목록(표시는 has_data)을 넣었다.
+행렬(US 11/12·11/16, KR 11/12·11/13): 표시 모드 막힘 592/592 → 609/609, 옛 모드 519/545(발행 가능 26) → 523/527(발행
+가능 4 — 전부 표시 없는 빈 대상 목록: 입찰 1·연준 사건 1·지표 원문 목록 2, 모두 조건부 판정·`unconfirmed_empty` 조건).
 
 ## 잔여 위험
 
