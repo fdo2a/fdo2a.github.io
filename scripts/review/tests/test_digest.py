@@ -8,7 +8,7 @@ import os
 import re
 import subprocess
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import pytest
 
@@ -992,17 +992,25 @@ def test_needs_replay():
     assert not D.needs_replay('news/2026-11-06.html')
 
 
-def test_cli_dry_run_smoke(tmp_path):
-    # 실제 레포를 읽는다 — 전송·알림 기록 없음. 단 만료 판정이 reviews/seen.json(미추적)을 갱신한다:
-    # 세션 시작 훅(`pending --hook`)과 같은 부수 효과라 받아들인다.
+def test_cli_dry_run_smoke(repo, tmp_path):
+    # CLI 를 끝까지 돌린다 — 작은 레포에서. 실제 레포를 읽으면 30초가 넘고 만료 판정이 그 레포의
+    # reviews/seen.json(미추적)을 고쳐 썼다(2026-11-19). 레포는 작업 폴더(cwd)의 git 최상위다.
     scripts = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    day = (D.now_kst().date() - timedelta(days=1)).isoformat()
+    write_commit(repo, {f'posts/{day}.html': '<p>1</p>', f'kr/posts/{day}.html': '<p>1</p>'}, 'p')
+    origin = str(tmp_path / 'origin.git')
+    subprocess.run(['git', 'clone', '-q', '--bare', repo, origin], check=True)
+    git(repo, 'remote', 'add', 'origin', origin)
+    git(repo, 'fetch', '-q', 'origin')
     env = dict(os.environ, VERIFY_DIGEST_STATE=str(tmp_path / 'st.json'))
     r = subprocess.run([sys.executable, os.path.join(scripts, 'verify_digest.py'), '--dry-run',
                         '--no-fetch', '--no-replay'], capture_output=True, text=True, env=env,
-                       cwd=os.path.dirname(scripts), timeout=300)
+                       cwd=repo, timeout=300)
     assert r.returncode == 0, r.stderr[-2000:]
     assert r.stdout.startswith('[검증 알림]')
+    assert 'US 일간' in r.stdout and 'KR 일간' in r.stdout
     assert not os.path.exists(tmp_path / 'st.json')
+    assert os.path.exists(os.path.join(repo, 'reviews', 'seen.json'))     # 만료 판정이 쓴 자리 = 작은 레포
 
 
 def test_replay_falls_back_to_that_days_data(repo, tmp_path):

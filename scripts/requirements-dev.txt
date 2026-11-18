@@ -1,0 +1,9 @@
+# 로컬 시험용 — `python3 -m pip install -r scripts/requirements-dev.txt` (site/ 에서).
+# CI 는 워크플로마다 필요한 것만 직접 깐다(여기를 읽지 않는다).
+#
+# 전체 시험(site/ 에서):  python3 -m pytest scripts
+# 병렬(코어 수만큼):      python3 -m pytest scripts -n auto
+# 시험은 서로 다른 임시 폴더만 쓰고 이 맥의 ~/Library·레포 상태를 건드리지 않아 병렬로 돌려도 된다.
+# 다른 무거운 작업과 겹칠 때는 -n 4 처럼 줄인다(시간 제한이 있는 시험이 CPU 경합에 흔들릴 수 있다).
+pytest>=8
+pytest-xdist>=3.6
