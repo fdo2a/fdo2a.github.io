@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-17",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T02:01:56+00:00",
- "cutoff_at": "2026-11-18T02:01:56+00:00",
+ "collected_at": "2026-11-18T03:06:35+00:00",
+ "cutoff_at": "2026-11-18T03:06:35+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,80 +21,47 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 212,
-  "candidates": 1,
+  "harvest": 215,
+  "candidates": 2,
   "articles": [
+   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 45339,
-   "out": 12842
+   "in": 47256,
+   "out": 14200
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "8/8"
+   "claims": "8/8",
+   "pairs": "2/2",
+   "obs": "11/11"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 8,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 11,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "memo[0]",
-    "memo[2]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:dangling",
-    "edges[0]:dangling",
-    "edges[1]:dangling",
-    "memo[0]:dangling",
-    "memo[2]:dangling",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 이후 엔비디아의 CEO 향방과 AI 수요 판단",
-  "query": "nvidia huang chip",
+  "topic_ko": "젠슨 황 퇴진 이후 엔비디아 CEO 향방과 AI 수요 판단",
+  "query": "nvidia huang scandal",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "edges[0]:dangling",
-  "edges[1]:dangling",
-  "memo[0]:dangling",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "9bde115f7777cd96"
+ "content_hash": "be86b5a7f5ca808a"
 }
