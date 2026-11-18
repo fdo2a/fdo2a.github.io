@@ -566,10 +566,10 @@ def _check_coverage(section, metrics, v, html=None):
                 v.append(f'§8 {ko} 축의 산출 범위 표시가 독자에게 보이는 자리에 없다'
                          f'({(hidden.get(axis) or ["요소 밖(주석·스크립트)"])[0]}) — 숨기지 않고 그 축 배지 옆에 싣는다')
             else:
-                v.append(f'§8 {ko} 축 점수는 {want}로 산출됐다({"·".join(str(x) for x in labels)} — 원천 미발표). '
+                v.append(f'§8 {ko} 축 점수는 {want}로 산출됐다({"·".join(str(x) for x in labels)} 제외). '
                          f'<span data-axis-coverage="{axis}">{c.get("phrase_ko")}</span> 를 그 축 배지 옆에 싣는다')
             continue
-        need = [want, '원천 미발표', '제외'] + labels
+        need = [want, '제외'] + labels + sorted({e.get('why_ko') or '원천 미발표' for e in c.get('excluded') or []})
         if not any(all(w in t for w in need if w) for t in texts):
             lacking = [w for w in need if w and w not in texts[0]]
             v.append(f'§8 {ko} 축의 산출 범위 표시에 빠진 말: {", ".join(lacking)} — 「{c.get("phrase_ko")}」 그대로 싣는다')

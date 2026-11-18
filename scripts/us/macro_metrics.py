@@ -556,37 +556,89 @@ def sensitivity(indicators, axis, n_excluded, bound=SENSITIVITY_Z):
     return {'now': now, 'low': low, 'high': high, 'bound': bound, 'stable': now == low == high}
 
 
-def coverage_phrase(total, used, labels):
-    """글에 싣는 문장 — 「8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로 제외」."""
-    last = (labels[-1] or ' ')[-1]
-    josa = '은' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 else '는'
-    return f"{total}개 중 {used}개로 산출, {'·'.join(labels)}{josa} {EXCLUDED_WHY_KO}로 제외"
+# 축 점수에 쓰이지 않은 까닭 — 수집 상태의 키 접두어와 같은 말(`no_value` 는 econ 쪽 키 `econ:no_value:<이름>`).
+WHY_KO = {'no_value': EXCLUDED_WHY_KO,        # 원천에 그 달을 만들 재료가 없다
+          'no_score': '이력 부족',             # 행은 있는데 점수를 낼 이력이 모자란다(signed_z 없음)
+          'introduced': '새로 들인 지표',       # 들인 날은 점수에서 뺀다(구성 변경이 혼자 축을 움직이지 못하게)
+          'no_row': '수집 실패'}               # 행 자체가 없다(받지 못했거나 변환이 터졌다)
+WHY_ORDER = ('no_value', 'no_score', 'introduced', 'no_row')
 
 
-def with_coverage(mm, excluded):
-    """`compute` 결과에 축별 산출 범위를 싣는다. `excluded` = 원천에 최신 달을 만들 재료가 없어 행을 만들지 못한
-    점수 대상 지표 `[{name, axis, fred_id, transform, ref_period}]`(수집기의 no_value). 빠진 지표가 없으면 그대로.
+def _josa(word):
+    last = (word or ' ')[-1]
+    return '은' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 else '는'
 
-    `coverage[축] = {total, used, excluded: [...], phrase_ko, sensitivity}`, `axis_summary[축].coverage_ko` = 같은 문장."""
+
+def coverage_phrase(total, used, excluded):
+    """글에 싣는 문장 — 「8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로 제외」.
+    `excluded` = `[{label_ko, why}]`(또는 이름 목록 — 그러면 모두 원천 미발표). 까닭이 여럿이면 까닭마다 한 구절."""
+    items = [e if isinstance(e, dict) else {'label_ko': e, 'why': 'no_value'} for e in excluded]
+    parts = []
+    for why in WHY_ORDER:
+        labels = [e['label_ko'] for e in items if e.get('why') == why]
+        if labels:
+            parts.append(f"{'·'.join(labels)}{_josa(labels[-1])} {WHY_KO[why]}로 제외")
+    return f"{total}개 중 {used}개로 산출, " + ', '.join(parts)
+
+
+def unused_scored(indicators):
+    """행은 있는데 축 점수에 쓰이지 않은 점수 대상 → `[(이름, 축, 까닭)]` — 점수가 없거나(no_score) 들인 날(introduced)."""
+    out = []
+    for r in indicators or []:
+        if not isinstance(r, dict) or (r.get('role') or 'scored') != 'scored':
+            continue
+        if r.get('introduced'):
+            out.append((r.get('name'), r.get('axis'), 'introduced'))
+        elif r.get('signed_z') is None:
+            out.append((r.get('name'), r.get('axis'), 'no_score'))
+    return out
+
+
+def with_coverage(mm, excluded, expected=None):
+    """`compute` 결과에 축별 산출 범위를 싣는다 — **그 축에 정의된 점수 대상 가운데 실제로 점수에 쓰인 것**이 몇인가.
+
+    `expected` = 정의된 점수 대상 `[(축, 이름)]`(수집기의 ECON 표, 해부 전용 제외). `excluded` = 원천에 최신 달을 만들
+    재료가 없어 행을 만들지 못한 지표 `[{name, axis, fred_id, transform, ref_period, lacking}]`(수집기의 no_value).
+    쓰이지 않은 것은 **전부** 싣는다(3회차 G2 — 전에는 no_value 만 세어, 행은 있는데 점수가 없는 지표가 가려졌고
+    전체 수도 「쓴 수 + 2」였다): no_value / no_score / introduced / no_row. 쓰이지 않은 것이 없는 축은 싣지 않는다.
+
+    `coverage[축] = {total, used, excluded: [{name, label_ko, why, why_ko, …}], phrase_ko, sensitivity}`,
+    `axis_summary[축].coverage_ko` = 같은 문장. `expected` 를 모르면(옛 호출) 정의된 수는 「행 + excluded」로 센다."""
     excluded = [e for e in excluded or [] if isinstance(e, dict) and e.get('axis') in AXIS_LABELS_KO]
-    if not excluded:
-        return mm
+    rows = [r for r in mm.get('indicators') or [] if isinstance(r, dict) and (r.get('role') or 'scored') == 'scored']
+    used_names = {r.get('name') for r in scored_rows(rows) if r.get('signed_z') is not None}
+    row_why = {n: why for n, _a, why in unused_scored(rows)}
+    by_ex = {e['name']: e for e in excluded}
+    if expected is None:
+        expected = [(r.get('axis'), r.get('name')) for r in rows] + [(e['axis'], e['name']) for e in excluded]
     out = dict(mm)
     cov = {}
     summary = {k: dict(v) for k, v in (mm.get('axis_summary') or {}).items()}
     for axis in AXIS_LABELS_KO:
-        ex = [e for e in excluded if e['axis'] == axis]
-        if not ex:
+        names = []
+        for a, n in expected:
+            if a == axis and n not in names:
+                names.append(n)
+        used = [n for n in names if n in used_names]
+        items = []
+        for n in names:
+            if n in used_names:
+                continue
+            why = 'no_value' if n in by_ex else row_why.get(n, 'no_row')
+            item = {'name': n, 'label_ko': LABELS_KO.get(n, n), 'why': why, 'why_ko': WHY_KO[why]}
+            if n in by_ex:
+                item.update({k: by_ex[n].get(k) for k in ('fred_id', 'transform', 'ref_period', 'lacking')})
+            items.append(item)
+        if not items:
             continue
-        used = sum(1 for r in scored_rows(mm.get('indicators')) if r.get('axis') == axis
-                   and r.get('signed_z') is not None)
-        items = [{'name': e['name'], 'label_ko': LABELS_KO.get(e['name'], e['name']), 'fred_id': e.get('fred_id'),
-                  'transform': e.get('transform'), 'ref_period': e.get('ref_period')} for e in ex]
-        phrase = coverage_phrase(used + len(ex), used, [i['label_ko'] for i in items])
-        cov[axis] = {'total': used + len(ex), 'used': used, 'excluded': items, 'why_ko': EXCLUDED_WHY_KO,
-                     'phrase_ko': phrase, 'sensitivity': sensitivity(mm.get('indicators'), axis, len(ex))}
+        items.sort(key=lambda e: WHY_ORDER.index(e['why']))
+        phrase = coverage_phrase(len(names), len(used), items)
+        cov[axis] = {'total': len(names), 'used': len(used), 'excluded': items, 'phrase_ko': phrase,
+                     'sensitivity': sensitivity(mm.get('indicators'), axis, len(items))}
         if axis in summary:
             summary[axis]['coverage_ko'] = phrase
+    if not cov:
+        return mm
     out['coverage'] = cov
     out['axis_summary'] = summary
     return out

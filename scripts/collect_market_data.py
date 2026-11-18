@@ -1172,6 +1172,11 @@ def econ_collect(econ, reasons, report_date, refs=None):
     return st
 
 
+def expected_scored():
+    """축 점수에 드는 것으로 **정의된** 지표 `[(축, 이름)]` — ECON 표에서 해부 전용을 뺀 것(산출 범위의 전체 수)."""
+    return [(e[0], e[1]) for e in ECON if not (len(e) > 5 and (e[5] or {}).get('role') == 'anatomy')]
+
+
 def excluded_scored(reasons, refs):
     """no_value 인 점수 대상 지표 → `[{name, axis, fred_id, transform, ref_period}]`(해부 전용은 뺀다)."""
     anatomy = {e[1] for e in ECON if len(e) > 5 and (e[5] or {}).get('role') == 'anatomy'}
@@ -1202,6 +1207,10 @@ def macro_metrics_collect(mm, econ_status, report_date):
     missing, ref = [], {}
     if econ_status.get('status') != 'ok':
         missing, ref = C.carry_upstream(econ_status, 'econ', 'econ_indicators')
+    # 행은 있는데 축 점수에 쓰이지 않은 지표(점수를 낼 이력이 모자라거나 들인 날) — econ 쪽 결측에는 없으므로 여기서
+    # 까닭을 가른 키로 적는다(3회차 G2). 이 키들은 승인 예외에 등록되지 않으니, 섞인 날은 예외가 걸리지 않는다.
+    from us.macro_metrics import unused_scored
+    missing += [f'{why}:{name}' for name, _axis, why in unused_scored(mm.get('indicators'))]
     if mm.get('book_state') == 'corrupt':
         missing.append('macro.json:corrupt')
     return C.build('partial' if missing else 'ok', report_date, 'FRED (macro_metrics)',
@@ -1452,7 +1461,7 @@ def main():
         # 원천에 재료가 없어 행을 만들지 못한 점수 대상 지표 — 축 점수가 몇 개 중 몇 개로 나왔는지와, 그 지표가 있었다면
         # 판단이 달라질 수 있는지를 함께 싣는다(추정치로 채우지 않는다). 2026-11-17 사용자 승인 조건 7·8.
         from us.macro_metrics import with_coverage
-        mm = with_coverage(mm, excluded_scored(econ_reasons, econ_refs))
+        mm = with_coverage(mm, excluded_scored(econ_reasons, econ_refs), expected_scored())
         for rel in mm['headline_releases']:
             anat = rel.get('anatomy') or {}
             ok = sum(1 for c in anat.get('candidates') or [] if c.get('round_ok'))

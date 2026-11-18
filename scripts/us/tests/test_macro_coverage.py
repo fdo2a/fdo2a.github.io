@@ -38,8 +38,9 @@ def test_coverage_says_how_many_of_how_many_and_what_is_left_out():
     out = M.with_coverage(mm([0.5] * 6), EXCL)
     c = out['coverage']['Inflation']
     assert (c['total'], c['used']) == (8, 6) and [e['name'] for e in c['excluded']] == ['CPI YoY', 'Core CPI YoY']
-    assert c['excluded'][0] == {'name': 'CPI YoY', 'label_ko': '소비자물가 전년비', 'fred_id': 'CPIAUCSL',
-                                'transform': 'yoy_pct', 'ref_period': '2026-10'}
+    assert c['excluded'][0] == {'name': 'CPI YoY', 'label_ko': '소비자물가 전년비', 'why': 'no_value',
+                                'why_ko': '원천 미발표', 'fred_id': 'CPIAUCSL', 'transform': 'yoy_pct',
+                                'ref_period': '2026-10', 'lacking': None}
     assert c['phrase_ko'] == '8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로 제외'
     assert out['axis_summary']['Inflation']['coverage_ko'] == c['phrase_ko']
     assert 'Labor' not in out['coverage'] and 'coverage_ko' not in out['axis_summary']['Labor']

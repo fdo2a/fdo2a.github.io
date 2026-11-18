@@ -52,18 +52,28 @@ def coverage_hold(metrics):
     자료가 서로 맞지 않아 판정할 수 없으면 그것도 보류다. 사람 승인 절차는 아직 없다 — 보류로 끝난다."""
     from us import macro_metrics as M
     col = metrics.get('collect') if isinstance(metrics.get('collect'), dict) else {}
-    named = sorted(str(m)[len('econ:no_value:'):] for m in col.get('missing') or []
-                   if str(m).startswith('econ:no_value:'))
     cov = metrics.get('coverage')
-    if not named and not cov:
+    # 축 점수에 쓰이지 않은 지표 — 세 곳이 같은 것을 말해야 한다: 지표 행(여기서 직접 본다), 수집 상태, 산출 범위.
+    # 행에서 직접 보는 것은 수집 상태와 산출 범위가 함께 빠뜨린 점수 결측을 잡으려는 것이다(3회차 G2).
+    in_rows = sorted((why, name) for name, _axis, why in M.unused_scored(metrics.get('indicators')))
+    named = sorted(tuple(str(m)[len('econ:'):].split(':', 1)) if str(m).startswith('econ:no_value:')
+                   else tuple(str(m).split(':', 1))
+                   for m in col.get('missing') or []
+                   if str(m).startswith(('econ:no_value:', 'no_score:', 'introduced:')))
+    if not named and not cov and not in_rows:
         return None
     if not isinstance(cov, dict) or not cov:
-        return (f'점수에서 빠진 지표({", ".join(named)})가 있는데 macro_metrics.json 에 산출 범위(coverage)가 없다 '
-                '— 그 축 점수가 몇 개 중 몇 개로 나왔는지 알 수 없다')
-    listed = sorted(e.get('name') for c in cov.values() if isinstance(c, dict) for e in c.get('excluded') or []
-                    if isinstance(e, dict))
-    if col and listed != named:
-        return f'수집 상태가 말하는 빠진 지표({named})와 산출 범위의 제외 지표({listed})가 다르다'
+        return (f'축 점수에 쓰이지 않은 지표({", ".join(n for _w, n in sorted(set(named) | set(in_rows)))})가 있는데 '
+                'macro_metrics.json 에 산출 범위(coverage)가 없다 — 그 축 점수가 몇 개 중 몇 개로 나왔는지 알 수 없다')
+    listed = sorted((e.get('why'), e.get('name')) for c in cov.values() if isinstance(c, dict)
+                    for e in c.get('excluded') or [] if isinstance(e, dict))
+    rows_listed = [x for x in listed if x[0] in ('no_score', 'introduced')]
+    if rows_listed != in_rows:
+        return (f'지표 행에서 본 점수 결측({[n for _w, n in in_rows]})과 산출 범위의 제외 지표'
+                f'({[n for _w, n in rows_listed]})가 다르다')
+    if col and [x for x in listed if x[0] != 'no_row'] != named:
+        return (f'수집 상태가 말하는 빠진 지표({[n for _w, n in named]})와 산출 범위의 제외 지표'
+                f'({[n for _w, n in listed]})가 다르다')
     for axis, c in sorted(cov.items()):
         ex = c.get('excluded') if isinstance(c, dict) else None
         if not isinstance(ex, list) or not ex:

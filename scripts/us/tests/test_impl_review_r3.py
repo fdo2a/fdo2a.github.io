@@ -139,3 +139,83 @@ def test_g1_lacking_travels_with_the_key_through_the_chain(monkeypatch):
     assert ev['missing_ref']['metrics:econ:no_value:CPI YoY']['lacking'] == ['2025-10']
     assert idx['missing_ref'] == ev['missing_ref']
 
+
+# ── G2. 축 점수에 쓰이지 않은 지표는 전부 결측·산출 범위에 든다 ──────────────────────────────
+
+NAMES = ('CPI MoM', 'Core CPI MoM', 'PPI Final Demand MoM', 'PCE Price Index YoY', 'Core PCE YoY',
+         'Michigan 1-Yr Inflation Exp')
+EXPECTED = [('Inflation', n) for n in ('CPI YoY', 'Core CPI YoY') + NAMES] + [('Labor', 'Nonfarm Payrolls (chg)')]
+EXCL = [{'name': 'CPI YoY', 'axis': 'Inflation', 'fred_id': 'CPIAUCSL', 'transform': 'yoy_pct', 'ref_period': '2026-10',
+         'lacking': ['2025-10']},
+        {'name': 'Core CPI YoY', 'axis': 'Inflation', 'fred_id': 'CPILFESL', 'transform': 'yoy_pct',
+         'ref_period': '2026-10', 'lacking': ['2025-10']}]
+
+
+def metrics(zs, **over):
+    ind = [dict({'name': n, 'label_ko': M.LABELS_KO.get(n, n), 'axis': 'Inflation', 'role': 'scored',
+                 'introduced': False, 'signed_z': z}, **over.get(n, {})) for n, z in zip(NAMES, zs)]
+    ind.append({'name': 'Nonfarm Payrolls (chg)', 'axis': 'Labor', 'role': 'scored', 'introduced': False, 'signed_z': 0.4})
+    return {'indicators': ind, 'book_state': 'ok',
+            'axis_summary': {'Inflation': {'label_ko': '물가'}, 'Labor': {'label_ko': '고용'}}}
+
+
+def test_g2_a_row_without_a_score_is_excluded_and_counted():
+    # codex 재현: 승인된 두 행 말고 다른 물가 지표가 행은 있는데 점수가 없다 — 전에는 total 7(=5+2), excluded 2
+    mm = M.with_coverage(metrics([0.5, 0.5, None, 0.5, 0.5, 0.5]), EXCL, EXPECTED)
+    c = mm['coverage']['Inflation']
+    assert (c['total'], c['used']) == (8, 5)                   # 전체 = 그 축에 정의된 점수 대상 수
+    assert [(e['name'], e['why']) for e in c['excluded']] == [('CPI YoY', 'no_value'), ('Core CPI YoY', 'no_value'),
+                                                              ('PPI Final Demand MoM', 'no_score')]
+    assert '8개 중 5개' in c['phrase_ko'] and '원천 미발표' in c['phrase_ko'] and '이력 부족' in c['phrase_ko']
+    # 수집 상태에도 사유를 가른 키로 — 다른 결측이 섞인 날은 승인 예외가 걸리지 않는다
+    econ = {'status': 'partial', 'missing': ['no_value:CPI YoY', 'no_value:Core CPI YoY'],
+            'missing_ref': {'no_value:CPI YoY': {'x': 1}, 'no_value:Core CPI YoY': {'x': 2}}}
+    col = cmd.macro_metrics_collect(mm, econ, D)
+    assert col['missing'] == ['econ:no_value:CPI YoY', 'econ:no_value:Core CPI YoY', 'no_score:PPI Final Demand MoM']
+    assert col['status'] == 'partial' and 'no_score:PPI Final Demand MoM' not in col['missing_ref']
+
+
+def test_g2_unused_rows_alone_also_make_the_file_partial():
+    mm = M.with_coverage(metrics([0.5, None, 0.5, 0.5, 0.5, 0.5]), [], EXPECTED + [('Inflation', 'x')][:0])
+    c = mm['coverage']['Inflation']
+    assert (c['total'], c['used']) == (8, 5) and {e['why'] for e in c['excluded']} == {'no_row', 'no_score'}
+    col = cmd.macro_metrics_collect(mm, {'status': 'ok', 'missing': []}, D)
+    assert col['status'] == 'partial' and 'no_score:Core CPI MoM' in col['missing']
+
+
+def test_g2_introduced_row_is_out_of_the_score_and_said_so():
+    mm = M.with_coverage(metrics([0.5] * 6, **{'CPI MoM': {'introduced': True}}),
+                         [], [e for e in EXPECTED if e[1] not in ('CPI YoY', 'Core CPI YoY')])
+    c = mm['coverage']['Inflation']
+    assert (c['total'], c['used']) == (6, 5) and [(e['name'], e['why']) for e in c['excluded']] == [('CPI MoM', 'introduced')]
+    assert cmd.macro_metrics_collect(mm, {'status': 'ok', 'missing': []}, D)['missing'] == ['introduced:CPI MoM']
+
+
+def test_g2_whole_axis_scored_means_no_coverage_block():
+    full = [e for e in EXPECTED if e[1] not in ('CPI YoY', 'Core CPI YoY')]
+    mm = M.with_coverage(metrics([0.5] * 6), [], full)
+    assert 'coverage' not in mm
+    assert cmd.macro_metrics_collect(mm, {'status': 'ok', 'missing': []}, D)['status'] == 'ok'
+
+
+def test_g2_expected_comes_from_the_econ_table():
+    exp = cmd.expected_scored()
+    assert len(exp) == sum(1 for e in cmd.ECON if not (len(e) > 5 and (e[5] or {}).get('role') == 'anatomy'))
+    assert sum(1 for a, _ in exp if a == 'Inflation') == 8 and ('Inflation', 'CPI YoY') in exp
+
+
+def _hold(m):
+    sys.path.insert(0, SCRIPTS)
+    import check_macro
+    return check_macro.coverage_hold(m)
+
+
+def test_g2_gate_finds_unused_rows_even_when_both_records_omit_them():
+    # 수집 상태도 산출 범위도 말하지 않은 점수 결측 — 게이트가 행에서 직접 본다
+    m = dict(metrics([5.0, 5.0, None, 5.0, 5.0, 5.0]), collect={'status': 'ok', 'missing': []})
+    assert 'PPI Final Demand MoM' in _hold(m)                  # 재현: 전에는 None(결측이 없다고 봤다)
+    m = M.with_coverage(metrics([5.0] * 6), EXCL, EXPECTED)
+    m['collect'] = {'status': 'partial', 'missing': ['econ:no_value:CPI YoY', 'econ:no_value:Core CPI YoY']}
+    assert _hold(m) is None                                    # 승인된 둘뿐이고 판단이 안 바뀌는 날
+    m['indicators'][2]['signed_z'] = None                      # 산출 범위가 말하지 않은 세 번째
+    assert _hold(m) is not None
