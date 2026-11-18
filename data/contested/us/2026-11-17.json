@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-17",
- "status": "error",
- "reason": "model_extract_success",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T18:18:57+00:00",
- "cutoff_at": "2026-11-18T18:18:57+00:00",
+ "collected_at": "2026-11-18T19:21:50+00:00",
+ "cutoff_at": "2026-11-18T19:21:50+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,31 +22,79 @@
  },
  "counts": {
   "harvest": 217,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
+   2,
+   2,
    5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 0,
-   "out": 0
+   "in": 44637,
+   "out": 13859
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
+   "aljazeera.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "7/7",
+   "pairs": "3/3",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 3,
+   "claims": 6,
+   "obs": 8,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "memo[0]",
+    "structure",
+    "variables[1]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_ratio",
+   "remaining": [
+    "structure:dangling",
+    "variables[1]:unverified",
+    "edges[0]:unverified",
+    "edges[1]:dangling",
+    "memo[0]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 퇴진 뒤 엔비디아의 전략·수요 전망과 AI 투자 흐름",
+  "query": "huang nvidia scandal",
   "trigger": []
  },
- "content_hash": "1606d7d9f99e921d"
+ "problems": [
+  "structure:dangling",
+  "variables[1]:unverified",
+  "edges[0]:unverified",
+  "edges[1]:dangling",
+  "memo[0]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "8ddc4d54caf8c292"
 }
