@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-18T12:05:43+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-18T12:22:40+00:00",
  "cutoff_at": "2026-11-18T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 515,
+  "harvest": 501,
   "candidates": 1,
   "articles": [
    6
@@ -35,29 +35,26 @@
   "runner": "local",
   "discovery": "truncated",
   "hosts": {
-   "ytn": "short",
-   "fnnews": "ok",
-   "hankook": "ok",
-   "bpost": "short",
-   "kbs": "ok",
-   "bizwatch": "ok",
+   "sedaily": "ok",
    "herald": "ok",
-   "sbs": "ok"
+   "sbs": "ok",
+   "mk": "ok",
+   "yna": "ok"
   },
   "notes": [
-   "discover:515"
+   "discover:501"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 16141,
-   "out": 10746
+   "in": 19031,
+   "out": 4751
   }
  },
  "event": {
-  "topic_ko": "엔비디아 호실적 뒤 코스피 5000선 회복과 반등 지속성",
-  "query": "코스피 회복 엔비디아",
+  "topic_ko": "시진핑 APEC CEO 서밋 연설과 미중 정상회담 전 통상 갈등",
+  "query": "시진핑 낙후 폐쇄는",
   "trigger": []
  },
- "content_hash": "1084a06e6fd03e1d"
+ "content_hash": "5ca1f97ed07efd18"
 }
