@@ -1,0 +1,63 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-18",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-18T11:13:23+00:00",
+ "cutoff_at": "2026-11-18T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "79e40670b54f75885c3791a8fc720ee52afcd334",
+  "sha256": "ba975740e625870a24e07e6fc969b5c5789c6d1ff40280a72d199231d9b00ba7",
+  "extra": {
+   "kr_econ.json": "5df1bbfffd72758a3a2b6d12594ec46f19dfc98fdd370aefa24d606240c81fbf",
+   "kr_flows.json": "f4b845eb0de1b7723d39ab285f496ecc226bbf824dd08f89d1e55597db07f2e6",
+   "kr_session.json": "0bbfcdafde0c2e658fd8a5cf8a233d5d7d65161e134a0654a31135f46fad9125"
+  }
+ },
+ "counts": {
+  "harvest": 578,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "ytn": "short",
+   "fnnews": "ok",
+   "hankook": "ok",
+   "bpost": "short",
+   "kbs": "ok",
+   "bizwatch": "ok",
+   "herald": "ok",
+   "sbs": "ok"
+  },
+  "notes": [
+   "discover:578"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 16053,
+   "out": 8505
+  }
+ },
+ "event": {
+  "topic_ko": "엔비디아 호실적 뒤 코스피 5000선 회복과 반등 지속성",
+  "query": "코스피 회복 엔비디아",
+  "trigger": []
+ },
+ "content_hash": "9280c4b474aa69cc"
+}
