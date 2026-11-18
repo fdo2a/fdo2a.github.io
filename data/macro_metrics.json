@@ -1,10 +1,10 @@
 {
-  "generated": "2026-11-18 08:08 KST",
-  "report_date": "2026-11-17",
+  "generated": "2026-11-19 07:34 KST",
+  "report_date": "2026-11-18",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
-  "growth_score": 0.233,
+  "growth_score": 0.225,
   "inflation_score": 0.647,
   "growth_diffusion": 0.556,
   "inflation_diffusion": 0.5,
@@ -47,7 +47,7 @@
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.628,
+      "score": -0.652,
       "direction": "악화",
       "strength": "완만",
       "breadth_ko": "아홉 중 여섯이 악화, 하나는 보합, 둘은 반대",
@@ -76,8 +76,8 @@
           "name": "Housing Starts",
           "direction": "악화",
           "strength": "완만",
-          "actual": 1221.0,
-          "previous": 1288.0
+          "actual": 1309.0,
+          "previous": 1191.0
         }
       ]
     },
@@ -148,7 +148,7 @@
   },
   "axis_scores": {
     "Labor": 0.564,
-    "Activity": -0.628,
+    "Activity": -0.652,
     "Consumption": 0.764,
     "Inflation": 0.647
   },
@@ -375,7 +375,7 @@
         "recent_avg": 0.075
       },
       "trend_cell_ko": "악화(미미) · 3개월 평균 +0.19% → +0.07%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Durable Goods Orders MoM",
@@ -515,7 +515,7 @@
         "recent_avg": 0.83
       },
       "trend_cell_ko": "개선(완만) · 3개월 평균 +0.28% → +0.83%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Michigan Consumer Sentiment",
@@ -726,20 +726,20 @@
       "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.643,
-      "signed_z": -0.643,
-      "actual": 1221.0,
-      "previous": 1288.0,
-      "ref_period": "2026-09-01",
-      "vs_prev": "악화",
+      "momentum_z": -0.856,
+      "signed_z": -0.856,
+      "actual": 1309.0,
+      "previous": 1191.0,
+      "ref_period": "2026-10-01",
+      "vs_prev": "개선",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 1345.0,
-        "recent_avg": 1292.667
+        "prior_avg": 1330.0,
+        "recent_avg": 1260.0
       },
-      "trend_cell_ko": "악화(완만) · 3개월 평균 1,345K → 1,293K",
-      "is_new": false
+      "trend_cell_ko": "악화(완만) · 3개월 평균 1,330K → 1,260K",
+      "is_new": true
     },
     {
       "name": "Trade Balance",
@@ -855,174 +855,136 @@
     }
   ],
   "new_releases": [
-    "Industrial Production MoM",
-    "Retail Sales MoM"
+    "Housing Starts"
   ],
   "anatomy_releases": [],
   "introduced": [],
   "introduced_since": {},
   "headline_releases": [
     {
-      "key": "retail-sales",
-      "label": "소매판매",
-      "tier": 1,
-      "agency": "Census",
-      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
-      "role": "scored",
-      "primary": "Retail Sales MoM",
-      "max_abs_z": 0.935,
-      "indicators": [
-        {
-          "name": "Retail Sales MoM",
-          "axis": "Consumption",
-          "actual": 0.21,
-          "previous": 0.83,
-          "ref_period": "2026-10-01",
-          "momentum_z": 0.935,
-          "fred_id": "RSAFS",
-          "transform": "mom_pct",
-          "units": "%"
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-11-17",
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "text",
-      "anatomy_reason": "no_registry"
-    },
-    {
-      "key": "industrial-production",
-      "label": "산업생산(G.17)",
+      "key": "housing-starts",
+      "label": "주택착공",
       "tier": 2,
-      "agency": "Federal Reserve",
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "agency": "Census",
+      "url": "https://www.census.gov/construction/nrc/pdf/newresconst.pdf",
       "role": "scored",
-      "primary": "Industrial Production MoM",
-      "max_abs_z": 0.3,
+      "primary": "Housing Starts",
+      "max_abs_z": 0.856,
       "indicators": [
         {
-          "name": "Industrial Production MoM",
+          "name": "Housing Starts",
           "axis": "Activity",
-          "actual": -0.43,
-          "previous": 0.73,
+          "actual": 1309.0,
+          "previous": 1191.0,
           "ref_period": "2026-10-01",
-          "momentum_z": -0.3,
-          "fred_id": "INDPRO",
-          "transform": "mom_pct",
-          "units": "%"
+          "momentum_z": -0.856,
+          "fred_id": "HOUST",
+          "transform": "level",
+          "units": "K"
         }
       ],
       "components": [
         {
-          "label": "제조업 생산",
-          "fred_id": "IPMAN",
-          "transform": "mom_pct",
-          "unit": "%",
+          "label": "단독주택 착공",
+          "fred_id": "HOUST1F",
+          "transform": "level",
+          "unit": "채",
           "aliases": [
-            "제조업"
+            "단독주택"
           ],
-          "actual": 0.3,
+          "actual": 864000,
           "cite_values": [
-            0.3
+            864000,
+            864,
+            86.4
           ],
           "cite_forms": [
             [
-              0.3,
+              864000,
               ""
+            ],
+            [
+              864,
+              "천"
+            ],
+            [
+              86.4,
+              "만"
             ]
           ],
-          "text_value": 0.3,
+          "text_value": 864000.0,
           "ref_period": "2026-10-01"
         },
         {
-          "label": "광업",
-          "fred_id": "IPMINE",
-          "transform": "mom_pct",
-          "unit": "%",
+          "label": "완공",
+          "fred_id": "COMPUTSA",
+          "transform": "level",
+          "unit": "채",
           "aliases": [
-            "광업"
+            "완공"
           ],
-          "actual": -0.8,
+          "actual": 1272000,
           "cite_values": [
-            -0.8
+            1272000,
+            1272,
+            127.2,
+            1.272
           ],
           "cite_forms": [
             [
-              -0.8,
+              1272000,
               ""
+            ],
+            [
+              1272,
+              "천"
+            ],
+            [
+              127.2,
+              "만"
+            ],
+            [
+              1.272,
+              "백만"
             ]
           ],
-          "text_value": -0.8,
+          "text_value": 1272000.0,
           "ref_period": "2026-10-01"
         }
       ],
       "anatomy": {
-        "release_date": "2026-11-17",
+        "release_date": "2026-11-18",
         "round": "ok",
         "candidates": [
           {
-            "label": "제조업 생산",
-            "fred_id": "IPMAN",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": 0.27329547282730626,
-            "text_ok": true,
-            "text_value": 0.3
-          },
-          {
-            "label": "광업",
-            "fred_id": "IPMINE",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": -0.8479750246869644,
-            "text_ok": true,
-            "text_value": -0.8
-          },
-          {
-            "label": "유틸리티",
-            "fred_id": "IPUTIL",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "not_in_text",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": -4.251734925491801,
-            "text_ok": false
-          },
-          {
-            "label": "설비가동률",
-            "fred_id": "TCU",
+            "label": "단독주택 착공",
+            "fred_id": "HOUST1F",
             "transform": "level",
-            "unit": "%",
+            "unit": "채",
             "round_ok": true,
-            "reason": "not_in_text",
+            "reason": "ok",
             "observation": "2026-10-01",
             "changed": [
               "current"
             ],
-            "fred_value": 76.3633,
-            "text_ok": false
+            "fred_value": 864.0,
+            "text_ok": true,
+            "text_value": 864000.0
+          },
+          {
+            "label": "완공",
+            "fred_id": "COMPUTSA",
+            "transform": "level",
+            "unit": "채",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 1272.0,
+            "text_ok": true,
+            "text_value": 1272000.0
           }
         ]
       },
@@ -1112,8 +1074,8 @@
       4.6
     ],
     "Housing Starts": [
-      "2026-09-01",
-      1221.0
+      "2026-10-01",
+      1309.0
     ],
     "Trade Balance": [
       "2026-09-01",

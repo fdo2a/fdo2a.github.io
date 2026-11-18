@@ -1,37 +1,16 @@
 {
-  "report_date": "2026-11-17",
-  "run_id": "44196304027-1",
+  "report_date": "2026-11-18",
+  "run_id": "44412507835-1",
   "status": "complete",
   "releases": [
     {
-      "key": "retail-sales",
-      "landing_url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
+      "key": "housing-starts",
+      "landing_url": "https://www.census.gov/construction/nrc/pdf/newresconst.pdf",
       "ok": true,
-      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
+      "url": "https://www.census.gov/construction/nrc/pdf/newresconst.pdf",
       "resolver": "fixed",
       "verified": true,
       "doc_kind": "pdf",
-      "checks": {
-        "ok": true,
-        "identity": true,
-        "period": true,
-        "value": null,
-        "primary_checked": true,
-        "note": "verified"
-      },
-      "note": "impersonate=safari",
-      "published": true,
-      "chars": 19380,
-      "path": "releases/retail-sales.txt"
-    },
-    {
-      "key": "industrial-production",
-      "landing_url": "https://www.federalreserve.gov/releases/g17/current/",
-      "ok": true,
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
-      "resolver": "fixed",
-      "verified": true,
-      "doc_kind": "html",
       "checks": {
         "ok": true,
         "identity": true,
@@ -42,8 +21,8 @@
       },
       "note": "impersonate=safari",
       "published": true,
-      "chars": 5542,
-      "path": "releases/industrial-production.txt"
+      "chars": 31686,
+      "path": "releases/housing-starts.txt"
     }
   ]
 }

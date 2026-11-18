@@ -1,9 +1,9 @@
 {
-  "report_date": "2026-11-17",
-  "macro_date": "2026-11-16",
+  "report_date": "2026-11-18",
+  "macro_date": "2026-11-17",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": 0.233,
+    "growth_score": 0.225,
     "inflation_score": 0.647,
     "growth_diffusion": 0.556,
     "inflation_diffusion": 0.5
@@ -14,171 +14,133 @@
     "name": "비용압박"
   },
   "new_releases": [
-    "Industrial Production MoM",
-    "Retail Sales MoM"
+    "Housing Starts"
   ],
   "headline_releases": [
     {
-      "key": "retail-sales",
-      "label": "소매판매",
-      "tier": 1,
-      "agency": "Census",
-      "url": "https://www.census.gov/retail/marts/www/marts_current.pdf",
-      "role": "scored",
-      "primary": "Retail Sales MoM",
-      "max_abs_z": 0.935,
-      "indicators": [
-        {
-          "name": "Retail Sales MoM",
-          "axis": "Consumption",
-          "actual": 0.21,
-          "previous": 0.83,
-          "ref_period": "2026-10-01",
-          "momentum_z": 0.935,
-          "fred_id": "RSAFS",
-          "transform": "mom_pct",
-          "units": "%"
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-11-17",
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "text",
-      "anatomy_reason": "no_registry"
-    },
-    {
-      "key": "industrial-production",
-      "label": "산업생산(G.17)",
+      "key": "housing-starts",
+      "label": "주택착공",
       "tier": 2,
-      "agency": "Federal Reserve",
-      "url": "https://www.federalreserve.gov/releases/g17/current/",
+      "agency": "Census",
+      "url": "https://www.census.gov/construction/nrc/pdf/newresconst.pdf",
       "role": "scored",
-      "primary": "Industrial Production MoM",
-      "max_abs_z": 0.3,
+      "primary": "Housing Starts",
+      "max_abs_z": 0.856,
       "indicators": [
         {
-          "name": "Industrial Production MoM",
+          "name": "Housing Starts",
           "axis": "Activity",
-          "actual": -0.43,
-          "previous": 0.73,
+          "actual": 1309.0,
+          "previous": 1191.0,
           "ref_period": "2026-10-01",
-          "momentum_z": -0.3,
-          "fred_id": "INDPRO",
-          "transform": "mom_pct",
-          "units": "%"
+          "momentum_z": -0.856,
+          "fred_id": "HOUST",
+          "transform": "level",
+          "units": "K"
         }
       ],
       "components": [
         {
-          "label": "제조업 생산",
-          "fred_id": "IPMAN",
-          "transform": "mom_pct",
-          "unit": "%",
+          "label": "단독주택 착공",
+          "fred_id": "HOUST1F",
+          "transform": "level",
+          "unit": "채",
           "aliases": [
-            "제조업"
+            "단독주택"
           ],
-          "actual": 0.3,
+          "actual": 864000,
           "cite_values": [
-            0.3
+            864000,
+            864,
+            86.4
           ],
           "cite_forms": [
             [
-              0.3,
+              864000,
               ""
+            ],
+            [
+              864,
+              "천"
+            ],
+            [
+              86.4,
+              "만"
             ]
           ],
-          "text_value": 0.3,
+          "text_value": 864000.0,
           "ref_period": "2026-10-01"
         },
         {
-          "label": "광업",
-          "fred_id": "IPMINE",
-          "transform": "mom_pct",
-          "unit": "%",
+          "label": "완공",
+          "fred_id": "COMPUTSA",
+          "transform": "level",
+          "unit": "채",
           "aliases": [
-            "광업"
+            "완공"
           ],
-          "actual": -0.8,
+          "actual": 1272000,
           "cite_values": [
-            -0.8
+            1272000,
+            1272,
+            127.2,
+            1.272
           ],
           "cite_forms": [
             [
-              -0.8,
+              1272000,
               ""
+            ],
+            [
+              1272,
+              "천"
+            ],
+            [
+              127.2,
+              "만"
+            ],
+            [
+              1.272,
+              "백만"
             ]
           ],
-          "text_value": -0.8,
+          "text_value": 1272000.0,
           "ref_period": "2026-10-01"
         }
       ],
       "anatomy": {
-        "release_date": "2026-11-17",
+        "release_date": "2026-11-18",
         "round": "ok",
         "candidates": [
           {
-            "label": "제조업 생산",
-            "fred_id": "IPMAN",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": 0.27329547282730626,
-            "text_ok": true,
-            "text_value": 0.3
-          },
-          {
-            "label": "광업",
-            "fred_id": "IPMINE",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": -0.8479750246869644,
-            "text_ok": true,
-            "text_value": -0.8
-          },
-          {
-            "label": "유틸리티",
-            "fred_id": "IPUTIL",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "not_in_text",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": -4.251734925491801,
-            "text_ok": false
-          },
-          {
-            "label": "설비가동률",
-            "fred_id": "TCU",
+            "label": "단독주택 착공",
+            "fred_id": "HOUST1F",
             "transform": "level",
-            "unit": "%",
+            "unit": "채",
             "round_ok": true,
-            "reason": "not_in_text",
+            "reason": "ok",
             "observation": "2026-10-01",
             "changed": [
               "current"
             ],
-            "fred_value": 76.3633,
-            "text_ok": false
+            "fred_value": 864.0,
+            "text_ok": true,
+            "text_value": 864000.0
+          },
+          {
+            "label": "완공",
+            "fred_id": "COMPUTSA",
+            "transform": "level",
+            "unit": "채",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 1272.0,
+            "text_ok": true,
+            "text_value": 1272000.0
           }
         ]
       },
@@ -188,8 +150,8 @@
   ],
   "anatomy_gaps": [],
   "stale": false,
-  "abbreviated": false,
-  "abbreviated_reason": "tier 1 발표가 있는 날",
+  "abbreviated": true,
+  "abbreviated_reason": null,
   "axis_directions": {
     "Labor": "개선",
     "Activity": "악화",
@@ -204,8 +166,8 @@
     "inflation_label": "재가속",
     "name": "비용압박",
     "since": "2026-11-10",
-    "days_held": 6,
-    "thesis": "비용압박 유지(11월 10일부터, 5일째). 11월 16일은 새 경제지표 발표가 없어 성장 점수 0.065(보합 범위)와 물가 점수 0.647(재가속)이 11월 13일 생산자물가 뒤 그대로다. 점수가 현재 국면을 가리킨다. 다음 점검은 11월 17일 소매판매·산업생산이다."
+    "days_held": 7,
+    "thesis": "비용압박 유지(11월 10일부터, 6일째). 11월 17일 10월 소매판매(0.21%, 예상 0.2% 부합)와 산업생산(-0.43%, 유틸리티 되돌림 주도) 신규 발표로 소비축이 보합에서 개선으로 올라 성장 점수가 0.065에서 0.233으로 높아졌지만 보합 범위 안이고, 물가 점수 0.647(재가속)은 그대로다. 점수가 현재 국면을 가리킨다. 다음 점검은 11월 25일 PCE 물가·GDP다."
   },
   "regime_change_allowed": false,
   "regime_block": "scores_agree",
@@ -220,9 +182,9 @@
     "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 10일 10월 CPI 뒤 CME FedWatch 기준 25bp 인상 89%·50bp 인상 11%로 보도됐다(IBTimes). 발표 전 12월 인상 확률은 11월 9일 84%(Reuters via Yahoo)로 보도됐으나 같은 상품·같은 시각의 쌍은 아니다.",
     "prob_pct": null,
     "prob_status": "unverified",
-    "prob_note": "11월 16일 마감 기사(Reuters 계열) 기준 CME FedWatch 12월 25bp 인상 확률 93.7%와 95.7%가 매체별로 보도됐고 관측 시각은 확인되지 않았다. 11월 13일 PPI 뒤 보도치는 89~90%(FXEmpire 89.7%, Al Jazeera 89.4%, CNBC 89%)로 같은 기준의 비교가 아니다. 1월 회의 확률은 확인하지 못했다.",
-    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 16일 새 발표는 없었고, 워시 의장 연설(생산성·일자리 태스크포스 개회사)은 금리나 단기 정책 전망을 다루지 않고 AI 시나리오(직원의 예시적 시나리오, 전망 아님)만 소개했다. 12월 인상 확률은 93.7~95.7%로 보도돼 거의 반영된 상태다. 반대 근거는 베선트 재무장관의 인상 반대 발언과 고용의 질이다.",
-    "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 10월 생산자물가가 예상을 밑돈 데 이어 11월 17일 10월 소매판매도 예상을 밑돌고, CME FedWatch 12월 인상 확률이 소비자물가 발표 전 보도치(84%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
+    "prob_note": "11월 17일 CME FedWatch 12월 25bp 인상 확률은 95.5%(CNBC)와 95.7%(TechFlow/Jin10)로 보도됐고 관측 시각은 확인되지 않았다. 1월 회의까지 누적 50bp 인상 확률 69.4%(Jin10). 11월 16일 보도치 93.7~95.7%와 같은 기준의 비교가 아니다.",
+    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 17일 10월 소매판매가 예상(0.2%)에 부합하고 통제그룹은 0.6%로 예상 0.3%를 넘어(ING) 수요 둔화로 인상을 늦출 근거가 나오지 않았다. 무살렘 세인트루이스 연은 총재(올해 비투표)는 2027년 봄 전까지 최대 4차례 추가 인상이 필요할 수 있다고 말했다. 12월 인상 확률은 95.5~95.7%로 보도돼 거의 반영된 상태다. 반대 근거는 베선트 재무장관의 인상 반대 발언과 고용의 질이다.",
+    "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 11월 25일 10월 PCE 물가가 예상을 밑돌고 CME FedWatch 12월 인상 확률이 소비자물가 발표 전 보도치(84%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
     "change_allowed": true,
     "change_block": null
   },
@@ -233,7 +195,7 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 67,
+      "days_held": 68,
       "allowed_directions": [
         -1,
         0,
@@ -246,7 +208,7 @@
       "channel": "물가 재가속이 생산자물가로 굳고 12월 인상 뒤 1·3월 추가 인상까지 거론되면서 실질금리 정점 통과와 완화 재개 기대가 더 뒤로 밀렸다. 30년물이 5.4% 위에서 이틀 연속 마감했고 10년·30년물 입찰 응찰이 평균보다 얇아 장기물 공급 부담이 더해졌다.",
       "confirm": "30Y가 5.4% 아래로 내려와 5거래일 머물거나 근원 CPI 전월비가 0.2% 이하로 내려오면 중립 복귀, 30Y가 5.05% 하회하면 우호",
       "since": "2026-11-13",
-      "days_held": 3,
+      "days_held": 4,
       "allowed_directions": [
         -1,
         0
@@ -258,7 +220,7 @@
       "channel": "물가 둔화가 실질금리 차를 좁혀 달러를 약하게 한다는 경로가 물가 재가속과 12월 인상 경로로 막혔다. 미국 정책금리 경로가 위로 옮겨 가 달러 강세 쪽을 받치지만, 금리차 자체와 다른 중앙은행 경로는 재지 않았고 달러 레벨도 이미 높아 우호까지는 올리지 않는다.",
       "confirm": "DXY 20일 -3% 이상 하락 또는 FedWatch 인하 확률 재등장 시 비우호, 12월 50bp 인상 확률 50% 상회 시 우호",
       "since": "2026-11-10",
-      "days_held": 6,
+      "days_held": 7,
       "allowed_directions": [
         -1,
         0,
@@ -271,7 +233,7 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 67,
+      "days_held": 68,
       "allowed_directions": [
         -1,
         0,
@@ -284,7 +246,7 @@
       "channel": "물가 재가속과 인상 경로가 실질금리 하락 기대를 늦춰 금 보유비용 하락 경로가 약해졌다. 지정학·재정 헤지 수요가 남아 비우호까지는 내리지 않는다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-11-10",
-      "days_held": 6,
+      "days_held": 7,
       "allowed_directions": [
         -1,
         0,
@@ -297,7 +259,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 67,
+      "days_held": 68,
       "allowed_directions": [
         0,
         1
@@ -309,7 +271,7 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화에 이어 11월 10일 소프트뱅크의 발전설비 선급금 손상(37억 달러)과 조달 재검토가 고객 쪽 부담을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 67,
+      "days_held": 68,
       "allowed_directions": [
         -1,
         0,
