@@ -103,7 +103,7 @@ def test_gate_requires_the_visible_coverage_marker():
     for hidden in ('hidden', 'style="display:none"', 'style="visibility: hidden"', 'aria-hidden="true"'):
         v = []
         G._check_coverage(section(f'<span {hidden} data-axis-coverage="Inflation">{phrase}</span>'), m, v)
-        assert any('숨겨져' in x for x in v) and any('data-axis-coverage' in x for x in v), hidden
+        assert len(v) == 1 and '보이는 자리에 없다' in v[0], hidden
 
 
 def test_gate_rejects_the_marker_on_a_day_without_exclusions():
@@ -189,3 +189,51 @@ def test_check_macro_exits_2_on_a_sensitive_day(tmp_path):
     assert r.returncode == 2 and '승인된 결측이 판단을 바꿀 수 있음 — 사람 승인 필요' in r.stderr and '보류' in r.stderr
     r = run(dict(cov_metrics((5.0,) * 6), collect=collect()))
     assert r.returncode != 2 and '승인된 결측이 판단을 바꿀 수 있음' not in r.stderr   # 보류가 아니다 — 글 검사로 넘어간다
+
+
+# ── 3회차 G3 — 표시가 독자에게 실제로 보이는 자리인가(상위 요소까지) ─────────────────────────
+
+def _cov_violations(html_fragment, doc=None):
+    m = cov_metrics()
+    v = []
+    G._check_coverage(html_fragment, m, v, html=doc)
+    return v
+
+
+def _marker():
+    return f'<span class="sub" data-axis-coverage="Inflation">{cov_metrics()["coverage"]["Inflation"]["phrase_ko"]}</span>'
+
+
+@pytest.mark.parametrize('wrap', [
+    '<div hidden>{}</div>',                                   # codex 재현 — 전에는 위반 []
+    '<div style="display:none"><p>{}</p></div>',
+    '<div style="visibility:hidden">{}</div>',
+    '<div aria-hidden="true"><span>{}</span></div>',
+    '<details><summary>자세히</summary>{}</details>',           # 접힌 details
+    '<template>{}</template>',
+    '<script type="text/plain">{}</script>',
+    '<!-- {} -->',
+    '<div HIDDEN="">{}</div>',
+    "<div style='DISPLAY : NONE'>{}</div>",
+])
+def test_g3_marker_inside_a_hidden_ancestor_is_a_violation(wrap):
+    v = _cov_violations(section(' ' + wrap.format(_marker())))
+    assert len(v) == 1 and ('보이는 자리' in v[0] or '숨겨' in v[0]), (wrap, v)
+
+
+def test_g3_hidden_ancestor_above_the_section_counts_too():
+    sec = section(' ' + _marker())
+    assert _cov_violations(sec, doc=f'<html><body><main>{sec}</main></body></html>') == []
+    v = _cov_violations(sec, doc=f'<html><body><main hidden>{sec}</main></body></html>')
+    assert len(v) == 1 and '보이는 자리' in v[0]
+    v = _cov_violations(sec, doc=f'<html><body><details><summary>x</summary><main>{sec}</main></details></body></html>')
+    assert len(v) == 1
+
+
+def test_g3_visible_places_pass():
+    for wrap in ('{}', '<details open><summary>자세히</summary>{}</details>', '<div class="note"><p>{}</p></div>',
+                 '<details><summary>물가 {}</summary>본문</details>',            # summary 는 접혀 있어도 보인다
+                 '<br><img src="x.png" alt="">{}', '<div style="display:block">{}</div>'):
+        assert _cov_violations(section(' ' + wrap.format(_marker()))) == [], wrap
+    # 숨긴 사본이 하나 더 있어도, 보이는 표시가 있으면 독자는 본다
+    assert _cov_violations(section(f' {_marker()} <div hidden>{_marker()}</div>')) == []

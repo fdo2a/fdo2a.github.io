@@ -14,6 +14,9 @@ Pure — `check()` takes strings and dicts and returns a list of violation messa
 """
 
 import re
+from html.parser import HTMLParser
+
+from common.numbers import strip_comments
 
 from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
                     TRANSMISSION_LABELS, conflicts, regime_name)
@@ -453,38 +456,124 @@ def _check_axis_strip(section, v):
                  '문단 앞에 <span data-axis="AXIS">방향</span> 배지를 둘 것')
 
 
-_COVERAGE = re.compile(r'<([a-z][a-z0-9]*)\b([^>]*?)\bdata-axis-coverage\s*=\s*"([A-Za-z]+)"([^>]*)>(.*?)</\1>',
-                       re.S | re.I)
-_COVERAGE_HIDDEN = re.compile(r'\bhidden\b|display\s*:\s*none|visibility\s*:\s*hidden|aria-hidden\s*=\s*"true"',
-                              re.I)
+_COVERAGE_RAW = re.compile(r'\bdata-axis-coverage\s*=\s*["\']?([A-Za-z]+)', re.I)
+_HIDING_STYLE = re.compile(r'display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse)', re.I)
+_VOID = frozenset(('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
+                   'track', 'wbr'))
+_NEVER_SHOWN = frozenset(('script', 'style', 'template', 'noscript', 'head', 'title'))
 
 
-def _check_coverage(section, metrics, v):
+class _CoverageMarkers(HTMLParser):
+    """`data-axis-coverage` 표식과 그것이 **독자에게 보이는 자리**인지 — 자신과 모든 상위 요소를 본다(3회차 G3:
+    전에는 표식 자신의 속성만 봐서 `<div hidden>` 안의 표식이 통과했다).
+
+    숨김 = `hidden` 속성·`aria-hidden="true"`·`display:none`·`visibility:hidden`(인라인 style), 접힌 `<details>`
+    (`open` 없음 — `<summary>` 안은 보인다), `script`·`style`·`template`·`noscript`·`head` 안. 주석 안의 표식은 요소가
+    아니라 아예 잡히지 않는다(= 표식 없음). 스타일시트의 클래스로 숨긴 것은 여기서 알 수 없다.
+    -> `self.markers = [(axis, 보이는 글자, 숨긴 이유 | None)]`."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack = []          # (tag, 숨긴 이유 | None, details 인가)
+        self.open = []           # 열려 있는 표식 [axis, [글자], 숨긴 이유, 깊이]
+        self.markers = []
+
+    def _why(self, tag, attrs):
+        a = {k.lower(): (v or '') for k, v in attrs}
+        if tag in _NEVER_SHOWN:
+            return f'<{tag}> 안'
+        if 'hidden' in a:
+            return f'<{tag} hidden>'
+        if a.get('aria-hidden', '').strip().lower() == 'true':
+            return f'<{tag} aria-hidden>'
+        if _HIDING_STYLE.search(a.get('style', '')):
+            return f'<{tag} style="{a["style"][:30]}">'
+        return None
+
+    def _inherited(self):
+        """상위 요소에서 내려오는 숨김 — 접힌 details 는 summary 밖의 자식만 숨긴다."""
+        for i, (tag, why, _d) in enumerate(self.stack):
+            if why:
+                return why
+            if tag == 'details-closed' and not any(t == 'summary' for t, _w, _x in self.stack[i + 1:]):
+                return '접힌 <details>'
+        return None
+
+    def handle_starttag(self, tag, attrs):
+        why = self._why(tag, attrs)
+        name = tag
+        if tag == 'details' and 'open' not in {k.lower() for k, _ in attrs}:
+            name = 'details-closed'
+        if tag not in _VOID:
+            self.stack.append((name, why, tag))
+        a = {k.lower(): (v or '') for k, v in attrs}
+        if 'data-axis-coverage' in a and tag not in _VOID:
+            self.open.append([a['data-axis-coverage'], [], self._inherited(), len(self.stack)])
+
+    def handle_startendtag(self, tag, attrs):
+        pass                     # 스스로 닫는 요소는 글자를 담지 않는다
+
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i][2] == tag:
+                for m in [m for m in self.open if m[3] > i]:
+                    self.open.remove(m)
+                    self.markers.append((m[0], ' '.join(''.join(m[1]).split()), m[2]))
+                del self.stack[i:]
+                return
+
+    def handle_data(self, data):
+        hidden = self._inherited()
+        for m in self.open:
+            if not hidden or hidden == m[2]:     # 표식 안에서 다시 숨긴 글자는 독자가 못 본다
+                m[1].append(data)
+
+    def close(self):
+        super().close()
+        for m in self.open:
+            self.markers.append((m[0], ' '.join(''.join(m[1]).split()), m[2]))
+        self.open = []
+
+
+def coverage_markers(html):
+    p = _CoverageMarkers()
+    p.feed(html or '')
+    p.close()
+    return p.markers
+
+
+def _check_coverage(section, metrics, v, html=None):
     """원천 미발표로 빠진 지표가 있는 축은, 그 축 점수가 몇 개 중 몇 개로 나왔고 무엇이 왜 빠졌는지가 독자에게 보여야
     한다(2026-11-17 사용자 승인 조건 7) — 온전한 점수와 같게 싣지 않는다. 자료는 `macro_metrics.json` 의 `coverage`.
 
-    표식: 4축 스트립 가까이 `<span data-axis-coverage="Inflation">8개 중 6개로 산출, … 원천 미발표로 제외</span>`."""
+    표식: 4축 스트립 가까이 `<span data-axis-coverage="Inflation">8개 중 6개로 산출, … 원천 미발표로 제외</span>`.
+    `html` = 글 전체(섹션 밖 상위 요소의 숨김을 보려고) — 없으면 섹션만 본다."""
     cov = (metrics or {}).get('coverage') if isinstance(metrics, dict) else None
     cov = cov if isinstance(cov, dict) else {}
-    found = {}
-    for _tag, pre, axis, post, inner in _COVERAGE.findall(section or ''):
-        if _COVERAGE_HIDDEN.search(pre + post):
-            v.append(f'§8 {axis} 축의 산출 범위 표시가 숨겨져 있다 — 독자에게 보여야 한다')
-            continue
-        found[axis] = ' '.join(strip_tags(inner).split())
+    section = section or ''
+    in_section = {a for a in _COVERAGE_RAW.findall(strip_comments(section))}
+    marks = coverage_markers(html if html and section in html else section)
+    shown, hidden = {}, {}
+    for axis, text, why in marks:
+        (hidden if why else shown).setdefault(axis, []).append(why or text)
     for axis, c in cov.items():
         ko = AXIS_KO_COVERAGE.get(axis, axis)
         want = f"{c.get('total')}개 중 {c.get('used')}개"
         labels = [e.get('label_ko') for e in c.get('excluded') or []]
-        text = found.get(axis)
-        if text is None:
-            v.append(f'§8 {ko} 축 점수는 {want}로 산출됐다({"·".join(str(x) for x in labels)} — 원천 미발표). '
-                     f'<span data-axis-coverage="{axis}">{c.get("phrase_ko")}</span> 를 그 축 배지 옆에 싣는다')
+        texts = shown.get(axis) if axis in in_section else None
+        if not texts:
+            if hidden.get(axis) or axis in _COVERAGE_RAW.findall(section):
+                v.append(f'§8 {ko} 축의 산출 범위 표시가 독자에게 보이는 자리에 없다'
+                         f'({(hidden.get(axis) or ["요소 밖(주석·스크립트)"])[0]}) — 숨기지 않고 그 축 배지 옆에 싣는다')
+            else:
+                v.append(f'§8 {ko} 축 점수는 {want}로 산출됐다({"·".join(str(x) for x in labels)} — 원천 미발표). '
+                         f'<span data-axis-coverage="{axis}">{c.get("phrase_ko")}</span> 를 그 축 배지 옆에 싣는다')
             continue
-        lacking = [w for w in [want, '원천 미발표', '제외'] + labels if w and w not in text]
-        if lacking:
+        need = [want, '원천 미발표', '제외'] + labels
+        if not any(all(w in t for w in need if w) for t in texts):
+            lacking = [w for w in need if w and w not in texts[0]]
             v.append(f'§8 {ko} 축의 산출 범위 표시에 빠진 말: {", ".join(lacking)} — 「{c.get("phrase_ko")}」 그대로 싣는다')
-    for axis in found:
+    for axis in sorted(set(shown) | set(hidden)):
         if axis not in cov:
             v.append(f'§8 {axis} 축에는 빠진 지표가 없는데 산출 범위 표시(data-axis-coverage)가 있다')
 
@@ -689,7 +778,7 @@ def check(html, prev_macro, macro_eval, next_macro, *, econ=None, metrics=None,
     _check_hygiene(html, v)
     regime_cell = _check_regime(section, text, macro_eval, v)
     _check_axis_strip(section, v)
-    _check_coverage(section, metrics, v)
+    _check_coverage(section, metrics, v, html=html)
     _check_quiet_day(section, macro_eval, v)
     _check_releases(html, macro_eval, v, releases)
     trans_cells = _check_transmission(section, macro_eval, v)
