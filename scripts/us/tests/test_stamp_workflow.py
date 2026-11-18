@@ -35,6 +35,9 @@ def test_workflow_wires_begin_steps_and_stamp(market):
     assert begin < first_write < stamp
     assert f'--datadir {datadir}' in runs[begin] and f'--datadir {datadir}' in runs[stamp]
     assert steps[stamp]['env'][S.STEPS_ENV] == '${{ toJSON(steps) }}'
+    # 두 단계가 같은 실행 ID 를 받는다(3회차 G4) — 시작 기록은 그것을 연 실행의 stamp 만 쓴다
+    rid = '${{ github.run_id }}-${{ github.run_attempt }}'
+    assert steps[begin]['env'][S.RUN_ID_ENV] == rid and steps[stamp]['env'][S.RUN_ID_ENV] == rid
     # 장부 갱신 실패는 조용히 넘어가지 않는다 — 자료 커밋은 그대로 하되 마지막에 실행을 실패로 끝낸다
     assert steps[begin].get('id') == 'stamp_begin' and steps[stamp].get('id') == 'stamp'
     last = steps[-1]

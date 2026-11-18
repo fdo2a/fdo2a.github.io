@@ -104,6 +104,8 @@ jobs:
         # 앞선 실행의 정상 파일이 남아 있어도 성공으로 다시 찍지 않는다. 실패해도 수집은 한다(끝에서 실행을 실패로 끝낸다).
         id: stamp_begin
         continue-on-error: true
+        env:
+          COLLECT_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         run: python scripts/stamp_collect.py --datadir data --begin
 
       - name: Collect
@@ -290,6 +292,8 @@ jobs:
         continue-on-error: true
         env:
           COLLECT_STEPS: ${{ toJSON(steps) }}
+          # 시작 기록을 연 실행과 같은 ID — 다르면 그 기록을 쓰지 않는다(3회차 G4)
+          COLLECT_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         run: python scripts/stamp_collect.py --datadir data
 
       - name: Commit liquidity (market data already complete)

@@ -52,6 +52,8 @@ jobs:
         # 정상이어도 17:30 실행의 세션 수집 실패를 성공으로 다시 찍지 않는다). 실패해도 수집은 한다.
         id: stamp_begin
         continue-on-error: true
+        env:
+          COLLECT_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         run: python scripts/stamp_collect.py --datadir kr/data --begin
       - name: Collect
         id: collect
@@ -114,6 +116,8 @@ jobs:
         continue-on-error: true
         env:
           COLLECT_STEPS: ${{ toJSON(steps) }}
+          # 시작 기록을 연 실행과 같은 ID — 다르면 그 기록을 쓰지 않는다(3회차 G4)
+          COLLECT_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         run: python scripts/stamp_collect.py --datadir kr/data
 
       - name: Commit data

@@ -316,6 +316,7 @@ def test_f3_end_to_end_stamper_to_gate(tmp_path, monkeypatch):
         put(tmp_path, name, {'report_date': D, 'collect': C.build('ok', D, 'x', empty='has_data',
                                                                  collected_at=C.now_iso(at))})
     steps = {'collect': {'outcome': 'success'}}
+    monkeypatch.setenv(SC.RUN_ID_ENV, 'test-run')              # --begin 과 stamp 는 같은 실행 ID(3회차 G4)
     SC.begin(str(tmp_path), now=t0)
     write('kr_market_data.json', t0)
     write('kr_session.json', t0)

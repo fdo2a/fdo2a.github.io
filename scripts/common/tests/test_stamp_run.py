@@ -21,6 +21,16 @@ T1 = dt.datetime(2026, 11, 16, 17, 30, 0, tzinfo=KST)      # 둘째 실행 시�
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def _run_id(monkeypatch):
+    # 시작 기록은 같은 실행 ID 의 stamp 만 쓴다(3회차 G4) — 시험의 --begin·stamp 는 한 실행으로 둔다
+    monkeypatch.setenv(S.RUN_ID_ENV, 'test-run')
+    monkeypatch.delenv('GITHUB_RUN_ID', raising=False)
+
+
 def w(p, obj):
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(obj if isinstance(obj, str) else json.dumps(obj), encoding='utf-8')
@@ -42,7 +52,7 @@ def test_first_run_is_written(tmp_path):
     e = book['files']['kr_session.json']
     assert e['run'] == 'written' and e['status'] == 'ok' and e['sha256']
     assert book['run'] == {'started_at': C.now_iso(T0 - dt.timedelta(minutes=1)), 'open': False, 'checked': True,
-                           'steps_known': True}
+                           'run_id': 'test-run', 'steps_known': True}
 
 
 def test_same_day_rerun_failure_is_stamped_failed_not_ok(tmp_path):
@@ -234,3 +244,51 @@ def test_frozen_file_clears_a_carried_failure_when_its_step_runs_again(tmp_path)
     S.begin(str(tmp_path), now=T1 + dt.timedelta(minutes=60))
     f = S.stamp(str(tmp_path), steps=dict(skipped, telegram={'outcome': 'success'}))['files'][key]
     assert f['run'] == 'kept' and f['status'] == 'ok' and f['sha256'] and 'stale_copy' not in f
+
+
+# ── 3회차 G4 — 시작 기록은 그것을 연 실행의 것일 때만 쓴다 ──────────────────────────────────
+
+def test_g4_open_begin_record_of_another_run_is_not_reused(tmp_path, monkeypatch):
+    # codex 재현: 첫 실행이 --begin 뒤 파일을 쓰고 최종 stamp 전에 죽었다. 다음 실행이 --begin 없이 stamp 하면
+    # 앞 실행의 open: true·시작 시각으로 그 파일을 written 이라 했다.
+    monkeypatch.setenv(S.RUN_ID_ENV, 'run-1')
+    S.begin(str(tmp_path), now=T0 - dt.timedelta(minutes=1))
+    w(tmp_path / 'kr_market_data.json', {'report_date': RD, 'collect': col(T0)})
+    w(tmp_path / 'kr_session.json', {'report_date': RD, 'collect': col(T0)})
+    monkeypatch.setenv(S.RUN_ID_ENV, 'run-2')                                  # 다음 실행 — --begin 을 건너뛰었다
+    book = S.stamp(str(tmp_path), steps={'collect': {'outcome': 'success'}})
+    assert book['files']['kr_session.json']['run'] == 'unknown'                # 재현: 전에는 written
+    assert book['run']['checked'] is False
+
+
+def test_g4_same_run_id_is_checked_and_missing_id_is_unknown(tmp_path, monkeypatch):
+    monkeypatch.setenv(S.RUN_ID_ENV, 'run-7')
+    run = S.begin(str(tmp_path), now=T0 - dt.timedelta(minutes=1))
+    assert run['run_id'] == 'run-7' and run['open'] is True
+    w(tmp_path / 'kr_market_data.json', {'report_date': RD, 'collect': col(T0)})
+    w(tmp_path / 'kr_session.json', {'report_date': RD, 'collect': col(T0)})
+    book = S.stamp(str(tmp_path), steps={'collect': {'outcome': 'success'}})
+    assert book['files']['kr_session.json']['run'] == 'written' and book['run']['checked'] is True
+    assert book['run']['run_id'] == 'run-7'
+    # 실행 ID 를 모르는 stamp 는 어느 시작 기록도 자기 것이라 할 수 없다
+    S.begin(str(tmp_path), now=T1)
+    monkeypatch.delenv(S.RUN_ID_ENV)
+    monkeypatch.delenv('GITHUB_RUN_ID', raising=False)
+    assert S.stamp(str(tmp_path), steps={'collect': {'outcome': 'success'}})['files']['kr_session.json']['run'] == 'unknown'
+
+
+def test_g4_run_id_sources(tmp_path, monkeypatch):
+    monkeypatch.delenv(S.RUN_ID_ENV, raising=False)
+    monkeypatch.setenv('GITHUB_RUN_ID', '123')
+    monkeypatch.setenv('GITHUB_RUN_ATTEMPT', '2')
+    assert S.current_run_id() == '123-2'
+    monkeypatch.setenv(S.RUN_ID_ENV, 'explicit')
+    assert S.current_run_id() == 'explicit'
+    monkeypatch.delenv(S.RUN_ID_ENV)
+    monkeypatch.delenv('GITHUB_RUN_ID')
+    assert S.current_run_id() is None
+    # 로컬: --begin 이 ID 를 만들어 적는다 — 끝의 stamp 에 그 값을 넘겨야 같은 실행이다
+    run = S.begin(str(tmp_path), now=T0)
+    assert run['run_id'] and run['generated'] is True
+    w(tmp_path / 'kr_market_data.json', {'report_date': RD, 'collect': col(T0 + dt.timedelta(minutes=1))})
+    assert S.stamp(str(tmp_path), run_id=run['run_id'])['run']['checked'] is True

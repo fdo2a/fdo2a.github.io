@@ -98,6 +98,20 @@ MTIME_ONLY = ('scorecard.json',)
 RUN_OK = ('written', 'skipped', 'kept')
 RUN_STATES = RUN_OK + ('failed', 'unknown', 'untracked')
 STEPS_ENV = 'COLLECT_STEPS'           # 워크플로가 `${{ toJSON(steps) }}` 를 넣는다
+# 이번 실행의 ID — 워크플로가 `${{ github.run_id }}-${{ github.run_attempt }}` 를 두 단계(--begin·stamp)에 같이 넣는다.
+# 시작 기록은 **그것을 연 실행**의 stamp 만 쓴다(3회차 G4: 앞 실행이 열어 두고 죽은 기록을 다음 실행이 제 것으로 읽었다).
+RUN_ID_ENV = 'COLLECT_RUN_ID'
+
+
+def current_run_id(explicit=None):
+    """이번 실행의 ID — 인자 > `COLLECT_RUN_ID` > `GITHUB_RUN_ID-GITHUB_RUN_ATTEMPT`. 모르면 None(추정하지 않는다)."""
+    if explicit:
+        return str(explicit)
+    if os.environ.get(RUN_ID_ENV):
+        return os.environ[RUN_ID_ENV]
+    if os.environ.get('GITHUB_RUN_ID'):
+        return f"{os.environ['GITHUB_RUN_ID']}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
+    return None
 
 
 def _parse(ts):
@@ -120,26 +134,36 @@ def _steps():
     return d if isinstance(d, dict) else None
 
 
-def begin(datadir, now=None):
-    """잡 시작(checkout 뒤·수집 앞) — 이번 실행의 시작 시각을 장부에 적는다. 파일 항목은 건드리지 않는다."""
+def begin(datadir, now=None, run_id=None):
+    """잡 시작(checkout 뒤·수집 앞) — 이번 실행의 시작 시각과 실행 ID 를 장부에 적는다. 파일 항목은 건드리지 않는다.
+    실행 ID 를 모르면(로컬) 하나 만들어 적는다 — 끝의 stamp 에 `--run-id`(또는 `COLLECT_RUN_ID`)로 넘겨야 같은 실행이다."""
+    rid = current_run_id(run_id)
+    generated = rid is None
+    if generated:
+        import uuid
+        rid = 'local-' + uuid.uuid4().hex[:12]
     book = C.load_status(datadir)
-    book['run'] = {'started_at': C.now_iso(now), 'open': True, 'failures': {},
-                   'run_id': (f"{os.environ['GITHUB_RUN_ID']}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
-                              if os.environ.get('GITHUB_RUN_ID') else None)}
+    book['run'] = {'started_at': C.now_iso(now), 'open': True, 'failures': {}, 'run_id': rid, 'generated': generated}
     C.write_status(datadir, book)
     return book['run']
 
 
-def run_state(market, pat, rel, path, collected_at, run, steps):
+def _own_run(run, run_id):
+    """장부의 시작 기록이 **이번 실행**의 것인가 — 열려 있고, 시각을 읽을 수 있고, 실행 ID 가 같다."""
+    return (isinstance(run, dict) and run.get('open') is True and _parse(run.get('started_at')) is not None
+            and bool(run_id) and run.get('run_id') == run_id)
+
+
+def run_state(market, pat, rel, path, collected_at, run, steps, run_id=None):
     """-> (상태, 사유). written 이번 실행이 썼다 / skipped 단계가 건너뛰었다(옛 판이 그대로 유효 — US 둘째 슬롯) /
     kept 일부러 다시 쓰지 않았다(동결) / failed 단계는 돌았는데 파일이 다시 쓰이지 않았다 / unknown 판정할 수 없다
     (시작 기록·단계 결과가 없다 — 성공으로 추정하지 않는다) / untracked 이 판정의 대상이 아니다."""
     step = STEP_OF[market].get(pat)
     if step is None:
         return 'untracked', None
-    started = _parse(run.get('started_at')) if isinstance(run, dict) and run.get('open') is True else None
-    if started is None:
-        return 'unknown', '수집 실행 시작 기록(--begin)이 없다'
+    if not _own_run(run, run_id):
+        return 'unknown', '이번 실행의 시작 기록(--begin, 같은 실행 ID)이 없다'
+    started = _parse(run.get('started_at'))
     if pat in MTIME_ONLY:
         written = int(os.path.getmtime(path)) >= int(started.timestamp())
     else:
@@ -219,7 +243,7 @@ def _collect_fields(c):
     return {k: c[k] for k in COLLECT_KEYS if isinstance(c, dict) and k in c}
 
 
-def stamp(datadir, market=None, now=None, steps=None):
+def stamp(datadir, market=None, now=None, steps=None, run_id=None):
     market = market or infer_market(datadir)
     md = _json(os.path.join(datadir, MARKET_FILE[market])) or {}
     report_date = md.get('report_date')
@@ -227,6 +251,7 @@ def stamp(datadir, market=None, now=None, steps=None):
     old = prior.get('files') or {}
     run = prior.get('run') if isinstance(prior.get('run'), dict) else {}
     steps = _steps() if steps is None else steps
+    run_id = current_run_id(run_id)
     files, states = {}, {}
     rows = _expand(datadir, market, report_date)
     # 생산자(JSON)부터 — 비 JSON 산출물은 생산자의 실행 상태를 따른다
@@ -258,7 +283,7 @@ def stamp(datadir, market=None, now=None, steps=None):
                     entry['collect_in'] = 'none'
             else:
                 entry['collect_in'] = 'none'
-            state, why = run_state(market, pat, rel, path, entry.get('collected_at'), run, steps)
+            state, why = run_state(market, pat, rel, path, entry.get('collected_at'), run, steps, run_id)
             carried = None
             if state in ('skipped', 'unknown') and (old.get(rel) or {}).get('run') == 'failed':
                 # 앞선 실행의 실패는 건너뛴(또는 판정할 수 없는) 실행이 지우지 못한다 — 그 단계가 다시 돌아야 풀린다.
@@ -268,14 +293,13 @@ def stamp(datadir, market=None, now=None, steps=None):
             states[rel] = (state, why, carried)
         entry['run'] = state
         files[rel] = _failed_entry(entry, why, carried) if state == 'failed' else entry
-    checked = isinstance(run, dict) and run.get('open') is True and _parse(run.get('started_at')) is not None
+    checked = _own_run(run, run_id)
     book = {'format': C.FORMAT, 'market': market, 'report_date': report_date,
             'stamped_at': C.now_iso(now),
-            'run_id': (f"{os.environ['GITHUB_RUN_ID']}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
-                       if os.environ.get('GITHUB_RUN_ID') else None),
-            # 닫는다 — 다음 실행이 `--begin` 없이 이 기록을 자기 것으로 읽지 못하게
+            'run_id': run_id,
+            # 닫는다 — 다음 실행이 `--begin` 없이 이 기록을 자기 것으로 읽지 못하게(닫지 못하고 죽어도 실행 ID 가 다르다)
             'run': {'started_at': run.get('started_at') if checked else None, 'open': False, 'checked': checked,
-                    'steps_known': isinstance(steps, dict)},
+                    'run_id': run_id, 'steps_known': isinstance(steps, dict)},
             'files': files}
     C.write_status(datadir, book)
     return book
@@ -288,17 +312,20 @@ def main(argv=None):
     ap.add_argument('--begin', action='store_true',
                     help='잡 시작(수집 앞)에 한 번 — 이번 실행의 시작 시각을 적는다. 끝의 stamp 가 그 뒤에 쓰인 파일만 '
                          '「이번 실행이 썼다」로 본다')
+    ap.add_argument('--run-id', help='이번 실행의 ID(없으면 COLLECT_RUN_ID, 그다음 GITHUB_RUN_ID-ATTEMPT). --begin 과 '
+                                     '끝의 stamp 가 같은 값을 받아야 한다')
     a = ap.parse_args(argv)
     if a.begin:
         try:
-            run = begin(a.datadir)
+            run = begin(a.datadir, run_id=a.run_id)
         except OSError as e:
             print(f'stamp_collect --begin: 쓰기 실패 — {e}', file=sys.stderr)
             return 1
-        print(f"{C.status_path(a.datadir)} — 실행 시작 {run['started_at']}")
+        print(f"{C.status_path(a.datadir)} — 실행 시작 {run['started_at']} · 실행 ID {run['run_id']}"
+              + (' (만든 값 — 끝의 stamp 에 --run-id 로 넘긴다)' if run.get('generated') else ''))
         return 0
     try:
-        book = stamp(a.datadir, a.market)
+        book = stamp(a.datadir, a.market, run_id=a.run_id)
     except OSError as e:
         print(f'stamp_collect: 쓰기 실패 — {e}', file=sys.stderr)
         return 1
