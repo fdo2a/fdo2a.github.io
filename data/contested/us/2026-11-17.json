@@ -3,113 +3,47 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-17",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T16:09:43+00:00",
- "cutoff_at": "2026-11-18T16:09:43+00:00",
+ "collected_at": "2026-11-18T17:16:05+00:00",
+ "cutoff_at": "2026-11-18T17:16:05+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "299cb5b1a0acc332fec2de70a8804f8c4cab4664",
-  "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
- },
+ "market_snapshot": null,
  "counts": {
   "harvest": 218,
-  "candidates": 2,
+  "candidates": 3,
   "articles": [
    2,
-   5
+   2,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 43802,
-   "out": 11032
+   "in": 5265,
+   "out": 76
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "aljazeera.com": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 6,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[1]",
-    "memo[2]",
-    "structure",
-    "variables[1]",
-    "variables[2]",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:dangling",
-    "variables[1]:unverified",
-    "variables[2]:dangling",
-    "edges[0]:dangling",
-    "edges[1]:dangling",
-    "edges[2]:unverified",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[1]:dangling",
-    "memo[2]:unverified",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 이후 엔비디아 사업 운영·전략의 지속성",
-  "query": "huang nvidia scandal",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "variables[1]:unverified",
-  "variables[2]:dangling",
-  "edges[0]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "9543cdcb30da8394"
+ "content_hash": "1090ac13667e716e"
 }
