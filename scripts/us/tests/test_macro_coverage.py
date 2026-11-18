@@ -238,3 +238,19 @@ def test_g3_visible_places_pass():
         assert _cov_violations(section(' ' + wrap.format(_marker()))) == [], wrap
     # 숨긴 사본이 하나 더 있어도, 보이는 표시가 있으면 독자는 본다
     assert _cov_violations(section(f' {_marker()} <div hidden>{_marker()}</div>')) == []
+
+
+def test_g3_self_closing_hidden_wrapper_and_markers_outside_the_section():
+    sec = section(' ' + _marker())
+    # 브라우저는 <div hidden/> 를 여는 태그로 읽는다 — 그 뒤의 표식은 숨겨진다
+    v = _cov_violations(section(' <div hidden/>' + _marker() + '</div>'))
+    assert len(v) == 1 and '보이는 자리' in v[0]
+    # 섹션 안의 표식이 숨겨져 있으면, 섹션 밖 다른 곳에 보이는 사본이 있어도 통과하지 않는다
+    hidden_sec = section(' <div hidden>' + _marker() + '</div>')
+    doc = f'<html><body><main>{hidden_sec}<section><h2>주식</h2><p>{_marker()}</p></section></main></body></html>'
+    v = _cov_violations(hidden_sec, doc=doc)
+    assert any('보이는 자리' in x for x in v), v
+    # 글 전체가 주어지면 늘 글 전체로 본다 — 주석이 섞여 있어도 상위 요소의 숨김을 놓치지 않는다
+    doc = f'<html><body><!-- c --><main hidden><!-- x -->{sec}</main></body></html>'
+    v = _cov_violations(G.section_macro(doc), doc=doc)
+    assert len(v) == 1 and '보이는 자리' in v[0]

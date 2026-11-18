@@ -470,13 +470,23 @@ class _CoverageMarkers(HTMLParser):
     숨김 = `hidden` 속성·`aria-hidden="true"`·`display:none`·`visibility:hidden`(인라인 style), 접힌 `<details>`
     (`open` 없음 — `<summary>` 안은 보인다), `script`·`style`·`template`·`noscript`·`head` 안. 주석 안의 표식은 요소가
     아니라 아예 잡히지 않는다(= 표식 없음). 스타일시트의 클래스로 숨긴 것은 여기서 알 수 없다.
-    -> `self.markers = [(axis, 보이는 글자, 숨긴 이유 | None)]`."""
+    -> `self.markers = [(axis, 보이는 글자, 숨긴 이유 | None, 글에서의 위치)]`."""
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.stack = []          # (tag, 숨긴 이유 | None, details 인가)
         self.open = []           # 열려 있는 표식 [axis, [글자], 숨긴 이유, 깊이]
         self.markers = []
+
+    def feed(self, data):
+        self._lines = [0]
+        for line in data.splitlines(keepends=True):
+            self._lines.append(self._lines[-1] + len(line))
+        super().feed(data)
+
+    def _offset(self):
+        line, col = self.getpos()
+        return self._lines[line - 1] + col
 
     def _why(self, tag, attrs):
         a = {k.lower(): (v or '') for k, v in attrs}
@@ -508,17 +518,19 @@ class _CoverageMarkers(HTMLParser):
             self.stack.append((name, why, tag))
         a = {k.lower(): (v or '') for k, v in attrs}
         if 'data-axis-coverage' in a and tag not in _VOID:
-            self.open.append([a['data-axis-coverage'], [], self._inherited(), len(self.stack)])
+            self.open.append([a['data-axis-coverage'], [], self._inherited(), len(self.stack), self._offset()])
 
     def handle_startendtag(self, tag, attrs):
-        pass                     # 스스로 닫는 요소는 글자를 담지 않는다
+        # HTML 에서 `<div hidden/>` 의 `/` 는 무시된다 — 브라우저는 여는 태그로 읽는다(빈 요소만 스스로 닫힌다)
+        if tag not in _VOID:
+            self.handle_starttag(tag, attrs)
 
     def handle_endtag(self, tag):
         for i in range(len(self.stack) - 1, -1, -1):
             if self.stack[i][2] == tag:
                 for m in [m for m in self.open if m[3] > i]:
                     self.open.remove(m)
-                    self.markers.append((m[0], ' '.join(''.join(m[1]).split()), m[2]))
+                    self.markers.append((m[0], ' '.join(''.join(m[1]).split()), m[2], m[4]))
                 del self.stack[i:]
                 return
 
@@ -531,7 +543,7 @@ class _CoverageMarkers(HTMLParser):
     def close(self):
         super().close()
         for m in self.open:
-            self.markers.append((m[0], ' '.join(''.join(m[1]).split()), m[2]))
+            self.markers.append((m[0], ' '.join(''.join(m[1]).split()), m[2], m[4]))
         self.open = []
 
 
@@ -552,10 +564,14 @@ def _check_coverage(section, metrics, v, html=None):
     cov = cov if isinstance(cov, dict) else {}
     section = section or ''
     in_section = {a for a in _COVERAGE_RAW.findall(strip_comments(section))}
-    marks = coverage_markers(html if html and section in html else section)
+    # 글 전체가 주어지면 늘 글 전체로 본다(섹션 밖 상위 요소의 숨김) — 표식은 이 섹션 안에 있는 것만 센다
+    doc = html if html else section
+    at = doc.find(section) if html else 0
+    lo, hi = (at, at + len(section)) if at >= 0 else (0, len(doc))
     shown, hidden = {}, {}
-    for axis, text, why in marks:
-        (hidden if why else shown).setdefault(axis, []).append(why or text)
+    for axis, text, why, pos in coverage_markers(doc):
+        if lo <= pos < hi:
+            (hidden if why else shown).setdefault(axis, []).append(why or text)
     for axis, c in cov.items():
         ko = AXIS_KO_COVERAGE.get(axis, axis)
         want = f"{c.get('total')}개 중 {c.get('used')}개"

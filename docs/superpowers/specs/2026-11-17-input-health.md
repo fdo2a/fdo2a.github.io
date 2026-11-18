@@ -154,8 +154,9 @@ approved_by, approved_on, expires, impact{affects_checks, sections, scores}}]`, 
 「일부만 받았다」에서 나온 세 사유(`collect.status=partial`·`required_ok` false·`missing`)뿐이고, 조건은 넷 모두다:
 ① `collect.missing` 의 **모든** 키가 등록돼 있다 ② 글 날짜가 `expires` 이하다(벽시계가 아니라 글 날짜 — 옛 기록을 다시
 검증해도 뒤집히지 않는다. `approved_on` 은 기록용이고 대조하지 않는다 — 보류된 글을 다음 날 승인해도 그 글이 풀려야 한다)
-③ 자료가 말하는 **식별자와 기준월** `collect.missing_ref[키] = {fred_id, transform, ref_period}` 이 등록과 셋 다 같다(이름만
-같거나 자료가 말하지 않으면 적용 안 됨) ④ 수집 실패(`failed`)가 아니다. 낡음·해시·표시 없음·`empty: unknown` 은 예외와
+③ 자료가 말하는 **식별자·기준월·원인** `collect.missing_ref[키] = {fred_id, transform, ref_period, lacking}` 이 등록과 같다 —
+앞의 셋은 값이 같고, `lacking`(원천에 없는 비교 달)은 정확히 등록된 그 달 하나(3회차 G1). 이름만 같거나 자료가 말하지 않으면
+적용 안 됨 ④ 수집 실패(`failed`)가 아니다. 낡음·해시·표시 없음·`empty: unknown` 은 예외와
 무관하게 막는다. 원본 `collect` 는 고치지 않는다. 수집기: `collect_econ` 이 no_value 지표의 FRED id·변환·기준월을 남기고
 `econ_collect` 가 `missing_ref` 로 싣는다. `macro_metrics_collect`·`eval_macro_regime.eval_collect`·
 `fetch_releases.index_collect` 는 윗단의 결측을 접두어(`econ:`·`metrics:`)와 같은 식별자로 그대로 옮긴다 — 결측이 지나가는
@@ -242,9 +243,11 @@ US 는 매일 보류된다** — 자료 층의 보류(등록 전)가 판단 층�
 하지 않은 것: 사람 승인 절차(E)는 사용자 답 대기 — 민감도 보류는 여전히 보류로 끝난다.
 
 **G2 실측**(origin/main 의 `data/macro_metrics.json`, 발행일 64일 2026-08-17~11-17): 점수 대상 행에 점수가 없던(signed_z None) 날
-**0일**, 지표를 들인 날 **1일**(2026-11-09 — Housing Starts·Trade Balance·Construction Spending MoM·Factory Orders MoM 넷).
-G2 로 새로 partial(보류)이 되는 날은 **1/64** — 그 들인 날이다. 이력 부족은 평소에 흔하지 않았다(0/64). 들인 날을 보류로 둘지는
-정할 일이다(지표를 더하는 배포 날 US 가 하루 멈춘다 — 지금은 계획대로 「쓰이지 않은 것은 전부」로 구현).
+**0일**(0/64 — 이력 부족은 평소에 흔하지 않았다). 지표를 들인 날은 **1일**(2026-11-09 — Housing Starts·Trade Balance·
+Construction Spending MoM·Factory Orders MoM 넷)인데, `introduced` 칸은 2026-11-08 변경부터 있어 그 칸이 있는 자료는 7일
+(11/09~11/17)뿐이다 — 분모는 **1/7**(전체로는 1/64). G2 로 새로 partial(보류)이 되는 날은 그 하루다. 들인 지표의 발표 시점을
+알 수 없으면(`pending` — 키 없음·조회 실패) 다음 날에도 들인 상태로 남으므로, FRED 키가 죽은 기간에는 하루를 넘겨 보류될 수
+있다(이력에서 `pending` 은 0일). 들인 날을 보류로 둘지는 정할 일이다 — 지금은 계획대로 「쓰이지 않은 것은 전부」로 구현했다.
 
 **G5 확인.** 직전 칸을 읽는 곳: `macro_metrics.vs_prev`(None → None), `macro_table_gate`(정본이 None 이면 칸이 「—」여야 하고
 직전 대비도 「—」), `anatomy_gate.headline_terms`·`macro_gate.structured_figures`(None 은 건너뛴다), `number_audit`(축 표는
@@ -286,8 +289,12 @@ G2 로 새로 partial(보류)이 되는 날은 **1/64** — 그 들인 날이다
   동결)인 날은 그 단계가 삼킨 실패를 가르지 못한다. ⑤ `accepted_missing` 의 `approved_by: "user"` 는 문자열일 뿐이다 —
   권한 분리 전에는 루틴이 등록을 더할 수 있다(수집 중단과 같은 위험). ⑥ 격리 사본에서 `verification` 패키지를 가져올 수
   있는지는 확인하지 못했다(같은 `scripts/` 트리에 있어 될 것으로 보이지만 추정) — 그래서 사본을 남겼다.
+- **지금 등록된 예외는 어떤 결과도 바꾸지 않는다.** 12/09 까지는 실측한 날이 모두 민감도 보류(5/5)이고, 12/10 부터는 G5 로
+  행이 만들어져 예외 없이 통과한다. 열려 있는 결정은 사람 승인 절차(E)다.
 - **3회차 뒤에 남은 것.** ① KR 장중 창 — 조기 마감일·수능일(10:00~16:30)·개장 지연일에 선물·환율 30분봉이 어느 시각까지
   제공되는지 **확인하지 못했다**. 15:00 전에 정상적으로 끝나는 자료라면 오차단이고, 16:30 까지 이어지는 날은 15:30 에서 자른
   창을 완결로 본다. ② 사람 승인 절차가 없다 — 민감도 보류는 풀 길이 없다. ③ `missing_ref`(식별자·기준월·`lacking`)는 수집기가
   적는 자료다 — 원천을 독립적으로 증명하지 않는다. ④ 산출 범위 표시를 스타일시트의 클래스로 숨긴 것은 게이트가 모른다.
-  ⑤ 지표를 들인 날은 그 지표가 점수에서 빠져 US 가 보류된다(1/64, 2026-11-09).
+  ⑤ 지표를 들인 날은 그 지표가 점수에서 빠져 US 가 보류된다(2026-11-09, `introduced` 칸이 있는 7일 중 1일).
+  ⑥ 행 자체가 없는 지표는 수집기의 `coverage`·`collect` 가 말해 줘야 게이트가 안다(게이트는 ECON 표를 읽지 않는다).
+  ⑦ 12/10 뒤 통과 확인은 합성 자료·함수 수준이다 — 실제 글을 `run_gates` 로 돌린 것이 아니다.
