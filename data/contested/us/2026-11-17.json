@@ -7,8 +7,8 @@
  "reason": "verify_rejected",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T13:59:32+00:00",
- "cutoff_at": "2026-11-18T13:59:32+00:00",
+ "collected_at": "2026-11-18T15:04:12+00:00",
+ "cutoff_at": "2026-11-18T15:04:12+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 214,
+  "harvest": 216,
   "candidates": 2,
   "articles": [
    3,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44512,
-   "out": 10725
+   "in": 45361,
+   "out": 12008
   },
   "discovery": "throttled",
   "hosts": {
@@ -44,14 +44,14 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "3/3",
+   "claims": "5/5",
    "pairs": "1/1",
-   "obs": "7/7"
+   "obs": "9/9"
   },
   "verified": {
    "pairs": 0,
    "claims": 0,
-   "obs": 7,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -59,9 +59,9 @@
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 이후 엔비디아 운영·전략의 지속성",
+  "topic_ko": "젠슨 황 퇴진 이후 엔비디아 사업 운영·전략의 지속성",
   "query": "huang nvidia scandal",
   "trigger": []
  },
- "content_hash": "eef2457e4bc17693"
+ "content_hash": "e12ee9acb7bf1e1e"
 }
