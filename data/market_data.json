@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-19 07:34 KST",
+  "generated": "2026-11-19 07:52 KST",
   "source": "github-actions/collect_market_data.py",
   "report_date": "2026-11-18",
   "indices": {
@@ -160,9 +160,9 @@
   },
   "commodities": {
     "WTI": {
-      "last": 81.87999725341797,
-      "chg": -2.5100021362304688,
-      "pct": -2.9742886057401163,
+      "last": 81.86000061035156,
+      "chg": -2.529998779296875,
+      "pct": -2.99798411849167,
       "date": "2026-11-18",
       "prev": 84.38999938964844,
       "prev_date": "2026-11-17",
@@ -688,9 +688,9 @@
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": -2.974,
+        "change": -2.998,
         "unit": "%",
-        "multiple": -1.03,
+        "multiple": -1.04,
         "band": "보통"
       },
       "Gold": {
@@ -829,7 +829,7 @@
         }
       },
       "WTI": {
-        "value": 81.88,
+        "value": 81.86,
         "percentile": 70.4,
         "band": "중간",
         "sessions": 504,
@@ -1171,11 +1171,11 @@
           "bars": 33
         },
         "NQ": {
-          "high": 27609.75,
+          "high": 27605.25,
           "high_t": "18:00",
           "low": 27045.0,
           "low_t": "16:00",
-          "range_pct": 2.09,
+          "range_pct": 2.07,
           "bars": 33
         }
       },
