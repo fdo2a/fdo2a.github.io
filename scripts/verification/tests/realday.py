@@ -178,7 +178,10 @@ def stamp(ctx, market, pol):
             ent.update(c)
         status[skey] = ent
     with open(os.path.join(ctx['datadir'], I.STATUS_FILE), 'w', encoding='utf-8') as fh:
-        json.dump({'format': 'collect-status/1', 'files': status}, fh, ensure_ascii=False)
+        # stamp_collect 가 쓰는 장부의 머리 — 세션(report_date)과 실행 ID(적용일부터 필수, 2026-11-18)
+        json.dump({'format': 'collect-status/1', 'market': market, 'report_date': date, 'run_id': 'fixture-run',
+                   'run': {'run_id': 'fixture-run', 'open': False, 'checked': True}, 'files': status},
+                  fh, ensure_ascii=False)
 
 
 def restamp_hashes(ctx):

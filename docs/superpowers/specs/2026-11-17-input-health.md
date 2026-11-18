@@ -257,6 +257,57 @@ Construction Spending MoM·Factory Orders MoM 넷)인데, `introduced` 칸은 20
 2026-12-10 뒤 상황은 합성 자료로 수집 → 점수 → 수집 상태 넷 → 실제 정책의 자료 판정 → 보류 판정 → 축 표 게이트까지 돌려
 예외 없이 통과함을 확인했다(`test_g5_after_december_cpi_us_passes_without_the_exception`). 실제 FRED 응답·실제 글은 아니다.
 
+### 사용자 추가 지시 — 2026-11-18 (3회차에 더함)
+
+**1. 같은 실행인가(G4 강화).** 입력 자료·검사 결과·발행 대상이 한 실행에 속한다는 것을 세 고리로 본다.
+
+| 고리 | 이미 있던 것 | 비어 있어 메운 것 |
+|---|---|---|
+| 수집 장부 | 파일마다 sha256·`run`, 장부의 `run_id`(G4) | 적용일부터 장부의 `report_date` 가 글 날짜와 같고 `run_id` 가 있어야 한다(아니면 `stale`·`incomplete_fields` — `inputs._health` 의 meta) |
+| 검증 기록 | 글 해시 `post.sha256`, 입력 파일마다의 해시 `inputs.files`(장부도 자료 폴더의 파일이라 들어 있다), 검사 코드·레포 원장 해시 | `collect_run` — 이 검사가 읽은 장부의 실행 ID·세션·해시·`checked`(장부가 없으면 `{present: false}`) |
+| verify | 글 해시·입력 해시·검사 코드·레포 원장 대조, 입력 뿌리 누락 | 기록의 `collect_run` 과 지금 디스크 장부의 대조 — 다르면 「수집 실행이 다르다」(exit 1, 다시 기록) |
+
+재현 시험(`scripts/verification/tests/test_run_binding.py`): 장부만 새것·입력은 옛것(`changed_after_collect`, 적용일 무관 — 전부터
+막혔다), 기록은 옛것·장부는 새 실행, 기록은 옛것·입력은 새것(전부터 막혔다), 기록은 옛것·글은 새것(전부터 막혔다), 장부가
+지워지거나 깨짐, 장부 없이 기록한 뒤 장부가 생김, 다른 세션의 장부·실행 ID 없는 장부(적용일부터). verify 의 어긋남은 exit 1
+(다시 record — 지금 파일로 검사를 다시 돌린다)이고 미완료(2)가 아니다: 기존 계약을 그대로 두었다. `collect_run` 칸이 없는 옛
+기록은 입력 해시 대조만 받는다.
+
+**2. 없는 값의 상태.** 「미발표」로 뭉뚱그리지 않는다 — `us.macro_metrics.MISSING_STATES`.
+
+| 상태 | 뜻 | 판별 |
+|---|---|---|
+| `not_published` | 원천 기관이 그 값을 내지 않았다 | 원천 응답에 그 달 행이 있고 값이 빈칸(`us.fred.FredClient.blank_dates` — API 의 `.`, CSV 의 빈칸) |
+| `not_collected` | 원천에 그 달 자체가 아직 없거나 우리가 그 범위를 받지 않았다 | 응답에 그 달 행이 없다 |
+| `collect_failed` | 받으려다 실패했다 | 수집기의 `fetch_failed`(행도 no_value 도 아니다 — 다른 결측 키) |
+| `unknown` | 가를 근거가 없다 | 빈칸 정보를 얻지 못했다 — 추정하지 않고 보류 쪽 |
+
+쓰이는 곳: ① no_value 지표의 `missing_ref[키].lacking_why = {달: 상태}` — **승인 예외는 그 달이 `not_published` 일 때만**
+(`_accepted`). ② 직전 칸이 null 인 행의 `previous_why` — 표의 Previous 칸은 「— (미발표|미수집|수집 실패|확인 불가)」, 축 표
+게이트가 사유를 대조한다(사유 없는 「—」·다른 사유·채운 값은 위반, 사유 칸이 없는 옛 자료의 행은 「—」만). `unknown` 이면
+`previous_unknown:<이름>` 이 `collect.missing` 에 들어가 보류. ③ 산출 범위 문장(원천 미발표 / 원천에 비교 달 없음).
+한계: 판별은 FRED 응답의 모양에 기댄다 — 「행이 있고 값이 빈칸」을 「기관이 내지 않았다」로 읽는 것은 FRED 의 관례이고,
+BLS 발표문을 직접 읽어 확인하는 것이 아니다(2026-10 CPI 는 본체가 발표문으로 따로 확인했다).
+
+**3. 「N개 중 M개」와 실제 계산.** `check_macro.coverage_hold` 가 M(`coverage.used`)을 지표 행에서 다시 세어 대조하고(다르면
+보류), N 이 M + 제외 목록 수와 같은지 본다. 글의 표식은 `_check_coverage` 가 `N개 중 M개`·제외 지표 이름·까닭을 대조한다
+(`test_hold_when_the_data_cannot_be_judged`, `test_gate_requires_the_visible_coverage_marker`,
+`test_g2_gate_finds_unused_rows_even_when_both_records_omit_them`). **N 을 ECON 표의 정의와 대조하는 것은 수집 쪽뿐이다**
+(`test_g2_expected_comes_from_the_econ_table`) — 게이트는 ECON 표를 읽지 않는다(수집기 모듈을 게이트 환경에서 가져오지 않는다).
+
+**4. 물가 지표 누락 영향 — 발행일별**(origin/main 의 `data/macro_metrics.json`, 발행일 64일 2026-08-17~11-17, G2 가 새로 보류하는 날).
+
+| 날짜 | G2 로 새로 보류되는 사유 | 판정 |
+|---|---|---|
+| 2026-08-17 ~ 11-06 (57일) | 없음 | — |
+| 2026-11-09 | `introduced` ×4 — Housing Starts·Trade Balance·Construction Spending MoM·Factory Orders MoM 을 들인 날(점수에서 하루 뺀다) | **오차단 쪽** — 네 지표의 자료는 다 받았고 값도 있다. 구성 변경이 혼자 축을 움직이지 못하게 하루 빼는 설계다. 다만 그날 축 점수가 정의된 지표 전부로 나온 것은 아니라는 점에서는 표시 대상이다 |
+| 2026-11-10 ~ 11-17 (6일) | 없음(G2 로 새로 생기는 사유는 없다) | 이 6일은 CPI 전년 대비 둘의 no_value 로 이미 보류 대상이다(1회차 #5·민감도) — 실제 결측(BLS 미발표), 정당 |
+
+분모: 새로 보류 1/64(오차단 쪽 1, 정당 0). **판정 불가**: `introduced` 칸은 2026-11-08 변경부터 자료에 있어 그 전 57일은 「들인
+날이었는가」를 자료로 가를 수 없다(칸이 있는 7일 중 1일). 「행 자체가 없는 지표(no_row)」는 그날의 ECON 표 구성을 자료가 말해
+주지 않아 57일 모두 판정 불가다(지금 ECON 으로 세면 11/09 전의 모든 날에 그날 아직 없던 네 지표가 「없음」으로 나온다 — 실제
+결측이 아니다). 점수 없는 행(no_score)은 64일 모두 판정 가능하고 0일이다.
+
 ## 잔여 위험
 
 - 권한 분리 전에는 루틴이 정책 파일·자료·검사기·이 문서를 고칠 수 있다(분류를 writer 로 바꾸기, 수집 중단 등록 추가,

@@ -386,6 +386,14 @@ def _health(e, key, full, date, status_files, excuse, ref=None, on=False):
     if produced == 'meta':
         if not isinstance(obj, dict) or not isinstance(obj.get('files'), dict):
             return 'unreadable', ['수집 상태 파일 형식이 다르다'], sha, None, obj, None, False, {}
+        if on:
+            # 적용일부터 장부는 **이 글의 세션**을 수집한 실행의 것이어야 한다 — 다른 날의 장부나 어느 실행의 것인지
+            # 모르는 장부로 오늘 입력을 판정하지 않는다(2026-11-18, 실행 결속)
+            if obj.get('report_date') != date:
+                return ('stale', [f'수집 상태 기록의 세션 {obj.get("report_date")} ≠ 발행일 {date}'], sha,
+                        obj.get('report_date') if isinstance(obj.get('report_date'), str) else None, obj, None, False, {})
+            if not isinstance(obj.get('run_id'), str) or not obj['run_id']:
+                return 'incomplete_fields', ['수집 상태 기록에 실행 ID 가 없다'], sha, None, obj, None, False, {}
         return 'ok', [], sha, None, obj, None, False, {}
 
     def bad(state, why):

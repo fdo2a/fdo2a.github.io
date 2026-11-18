@@ -667,6 +667,32 @@ def _inputs(ctx):
             'incomplete': capped or unreadable > 0, 'files': files}
 
 
+COLLECT_LEDGER = '_collect_status.json'
+
+
+def collect_run(datadir):
+    """이 검사가 읽은 **수집 실행** — 자료 폴더의 장부(`_collect_status.json`)가 말하는 실행 ID·세션·해시(2026-11-18).
+    기록에 실어 두고 verify 가 지금 디스크의 장부와 대조한다: 입력 자료·검사 결과·발행 대상이 같은 실행에 속하는가.
+    장부가 없으면 `{'present': False}`(적용일 전에는 없을 수 있다), 못 읽으면 readable False."""
+    path = os.path.join(datadir or '', COLLECT_LEDGER)
+    if not datadir or not os.path.isfile(path):
+        return {'present': False}
+    out = {'present': True, 'readable': False}
+    try:
+        with open(path, 'rb') as fh:
+            raw = fh.read()
+        out['sha256'] = sha256_bytes(raw)
+        book = json.loads(raw.decode('utf-8'))
+    except (OSError, ValueError, UnicodeDecodeError):
+        return out
+    if not isinstance(book, dict):
+        return out
+    run = book.get('run') if isinstance(book.get('run'), dict) else {}
+    out.update(readable=True, run_id=book.get('run_id'), report_date=book.get('report_date'),
+               stamped_at=book.get('stamped_at'), checked=run.get('checked'))
+    return out
+
+
 def _generator(config_path, policy=None):
     out = {}
     paths = [os.path.join(HERE, 'record.py'), os.path.join(HERE, 'inputs.py'),
@@ -791,6 +817,8 @@ def build_record(cfg, config_path, market, ctx, res):
         'generator': _generator(config_path, policy_path(cfg, config_path)), 'code': _code(repo),
         'repo_inputs': {'paths': repo_paths(market), 'digest': digest, 'files': nfiles},
         'inputs': inputs, 'preservation': preservation,
+        # 이 검사가 읽은 수집 실행 — 글 해시(`post`)·입력 해시(`inputs.files`)와 함께 「같은 실행」의 세 고리
+        'collect_run': collect_run(ctx.get('datadir')),
         'gates': gates, 'disabled': (cfg.get('disabled') or {}).get(market, []),
         'manual': '수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다',
         'summary': res['summary'],
@@ -951,6 +979,16 @@ def verify(cfg, market, date, repo, rev=None, datadir=None, extra=None, record_f
     missing = sorted(r for r in roots if not given.get(r))
     if missing:
         why.append('입력 인자 누락 — 기록에 있는 입력을 대조하려면 ' + ', '.join('--' + m.replace('_', '-') for m in missing))
+    if datadir and 'collect_run' in rec:
+        # 기록이 읽은 수집 실행과 지금 디스크의 장부가 같은 실행인가(옛 기록에는 이 칸이 없다 — 입력 해시 대조가 그 몫)
+        was, cur = rec.get('collect_run') or {}, collect_run(datadir)
+        key = lambda c: (c.get('present'), c.get('readable'), c.get('run_id'), c.get('report_date'), c.get('sha256'))
+        if key(was) != key(cur):
+            name = lambda c: ('장부 없음' if not c.get('present') else '읽지 못함' if not c.get('readable')
+                              else f'{c.get("run_id")}({c.get("report_date")})')
+            why.append(f'수집 실행이 다르다 — 기록이 읽은 장부 {name(was)} / 지금 장부 {name(cur)}'
+                       + ('' if was.get('run_id') != cur.get('run_id') else ' (같은 실행 ID, 장부 바이트가 다르다)')
+                       + ' — 다시 기록해야 한다')
     if datadir:
         now_in = _inputs(dict(datadir=datadir, **(extra or {})))
         old = {f['path']: f['sha256'] for f in (rec.get('inputs') or {}).get('files') or []}
