@@ -207,7 +207,7 @@ model: opus
 **축 지표 표** — 4축(Labor / Activity & Production / Consumption / Inflation) 각각 하나, 컬럼 `지표 | Actual | Forecast | Previous | 발표일 | 컨센 대비 | 직전 대비 | 추세`.
 - **Actual/Previous/기준월은 `data/econ_indicators.json`(FRED 확정치)**, Forecast·발표일·비FRED 지표(ISM·S&P Global PMI·ADP·CB Confidence·Philly Fed·NY Fed 기대인플레)는 `research_notes.md` 에서.
 - Forecast 가 있으면 「컨센 대비」에 상회▲/하회▼/부합= + 행 `class="hl"`. 없으면 칸을 비운다. research_notes 에 '미확정'인 연구 자료 행은 **추가 리서치 없이** 뺀다(정본 행은 빼지 않는다). **[확인필요] 금지.**
-- `econ_indicators.json` 의 지표는 **한 행씩 빠짐없이** `<tr data-indicator="영문 name">` 으로. Actual/Previous 는 그 파일 값(게이트가 대조). **`previous` 가 `null` 인 행**(바로 앞 달 값이 원천에 없어 만들 수 없는 경우 — 예: 2026-10 전년 대비가 발표되지 않은 뒤의 2026-11 전년 대비)은 Previous 칸과 「직전 대비」 칸을 둘 다 「—」로 둔다. 더 오래된 달의 값이나 추정치로 채우지 않고, 산문에서도 그 지표의 「전월 대비 변화」를 말하지 않는다.
+- `econ_indicators.json` 의 지표는 **한 행씩 빠짐없이** `<tr data-indicator="영문 name">` 으로. Actual/Previous 는 그 파일 값(게이트가 대조). **`previous` 가 `null` 인 행**(바로 앞 달 값이 원천에 없어 만들 수 없는 경우 — 예: 2026-10 전년 대비가 발표되지 않은 뒤의 2026-11 전년 대비)은 Previous 칸에 「—」와 **왜 없는지**를 함께 적고(`previous_why` 그대로: `not_published` → 「— (미발표)」, `not_collected` → 「— (미수집)」, `collect_failed` → 「— (수집 실패)」, `unknown` → 「— (확인 불가)」 — 게이트가 사유를 대조한다, 뭉뚱그려 「미발표」로 쓰지 않는다), 「직전 대비」 칸은 「—」로 둔다. 더 오래된 달의 값이나 추정치로 채우지 않고, 산문에서도 그 지표의 「전월 대비 변화」를 말하지 않는다.
 - 「직전 대비」 `<td data-label="직전 대비" data-vs-prev>` = `indicators[].vs_prev`(개선/악화/보합, 물가축은 상승/하락/보합), 없으면 「—」. `macro_metrics.json` 이 낡은 날에도 채운다.
 - 「추세」 `<td data-label="추세" data-trend>` = `indicators[].trend_cell_ko` **그대로**, `null` 이면 「—」. **`macro_metrics.json` 의 `report_date` 가 오늘 세션이 아니면 모든 추세 칸은 「—」.**
 - 연구 자료 행(ISM·PMI·ADP)은 `data-indicator` 없이, 두 칸은 「—」.

@@ -118,6 +118,10 @@ class FredClient:
         if transport is None and not self.key:
             self.transport = 'csv'
         self._cache = {}
+        # 원천 응답에 **행은 있는데 값이 빈** 날짜들(시리즈별) — 「기관이 그 값을 내지 않았다」와 「원천에 그 달이 아직
+        # 없다」를 가르는 근거다(2026-11-18). `series()` 의 계약(결측 제거·전체 이력)은 그대로다.
+        self.blank_dates = {}
+        self._blanks = None
         self.requests = 0
         self.series_ok = 0
         self.failed = []
@@ -213,15 +217,18 @@ class FredClient:
         count = payload.get('count')
         if isinstance(count, int) and count > LIMIT:
             raise FredError(f'{sid}: truncated response ({count} > limit {LIMIT})')
-        rows = _pairs((o.get('date'), o.get('value')) for o in obs)
+        raw = [(o.get('date'), o.get('value')) for o in obs]
+        rows = _pairs(raw)
         _assert_ascending(sid, rows)
+        self._blanks = _blank_dates(raw)
         return rows
 
     def _csv(self, sid):
         body = self._get(f'{CSV}?id={sid}').decode('utf-8')
-        rows = _pairs(tuple(line.split(',')[:2])
-                      for line in body.splitlines()[1:] if ',' in line)
+        raw = [tuple(line.split(',')[:2]) for line in body.splitlines()[1:] if ',' in line]
+        rows = _pairs(raw)
         _assert_ascending(sid, rows)
+        self._blanks = _blank_dates(raw)
         return rows
 
     # ------------------------------------------------------------ 공개 API
@@ -272,6 +279,8 @@ class FredClient:
                 self.failed.append(sid)
             raise
         self._cache[sid] = rows
+        self.blank_dates[sid] = self._blanks if isinstance(self._blanks, list) else None
+        self._blanks = None
         self.series_ok += 1
         return rows
 
@@ -449,6 +458,11 @@ def key_health(telemetry, key_set):
                          f'data was collected from the unofficial graph CSV')
     return 'warning', (f'FRED API unavailable, key not verified ({cause}) — '
                        f'data was collected from the unofficial graph CSV')
+
+
+def _blank_dates(rows):
+    """행은 있는데 값이 빈(`.`·빈칸) 날짜들 — `_pairs` 가 버리는 바로 그 행."""
+    return [d.strip() for d, v in rows if d and (v is None or str(v).strip() in ('.', ''))]
 
 
 def _pairs(rows):

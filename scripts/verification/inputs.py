@@ -222,6 +222,10 @@ def _accepted(e, stamp, date, excuse):
             return None
         if r.get('lacking') != [a['lacking']]:
             return None                   # 원인이 다르다 — 승인된 「그 달 미발표」가 아닌 다른 이력 결측
+        if r.get('lacking_why') != {a['lacking']: 'not_published'}:
+            # 그 달이 「원천 기관이 내지 않은 값」(원천 응답에 행이 있고 값이 빈칸)일 때만 — 원천에 아직 없거나(not_collected)
+            # 받다가 실패했거나(collect_failed) 가를 근거가 없으면(unknown) 승인된 미발표가 아니다(2026-11-18)
+            return None
         out.append({k: a.get(k) for k in ACCEPTED_KEYS})
     return out
 
@@ -658,7 +662,7 @@ def describe_accepted(f):
     why = '; '.join(sorted({str(a.get('reason')) for a in am}))
     return (f'{f.get("name")}({rel}) — 승인된 결측 — 원천 미발표 {len(am)}건(예외 {ids}, 승인 {by} {on}, 만료 {exp}): '
             + ', '.join(f'{a.get("key")}[{a.get("fred_id")}·{a.get("transform")}·{a.get("ref_period")}'
-                        f'·{a.get("lacking")} 없음]' for a in am)
+                        f'·{a.get("lacking")} 미발표]' for a in am)
             + f' · 영향: 검사 {uniq("affects_checks")} / 섹션 {uniq("sections")} / 점수 {uniq("scores")} · 원인: {why}')
 
 

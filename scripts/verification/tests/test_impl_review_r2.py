@@ -352,7 +352,8 @@ IMPACT = {'affects_checks': ['check_macro'], 'sections': ['물가 축'], 'scores
 
 
 def ident(key, month=MONTH, **kw):
-    d = {'fred_id': FRED.get(key, 'XXX'), 'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10']}
+    d = {'fred_id': FRED.get(key, 'XXX'), 'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10'],
+         'lacking_why': {'2025-10': 'not_published'}}
     d.update(kw)
     return d
 
@@ -392,13 +393,14 @@ def test_f6_registered_keys_make_the_file_conditional_not_ok(tmp_path, monkeypat
     (cond,) = [c for c in s['conditions'] if c['kind'] == 'accepted_missing']
     # 공개 기록(조건 5): 예외 ID, 원인, 제외 지표, 승인일, 영향 범위
     assert cond['ids'] == [EID] and cond['file'] == '<datadir>/econ_indicators.json' and cond['keys'] == [K1, K2]
-    assert cond['indicators'] == [dict(key=K1, **ident(K1, lacking='2025-10')), dict(key=K2, **ident(K2, lacking='2025-10'))]
+    want = lambda k: {'key': k, 'fred_id': FRED[k], 'transform': 'yoy_pct', 'ref_period': MONTH, 'lacking': '2025-10'}
+    assert cond['indicators'] == [want(K1), want(K2)]
     assert cond['approved_by'] == 'user' and cond['approved_on'] == '2026-11-17' and cond['expires'] == '2026-12-09'
     assert cond['impact'] == IMPACT and 'BLS' in cond['reason'] and cond['source'] == ['https://www.bls.gov/x']
     line = s['inputs']['accepted_missing'][0]
     assert line == I.describe_accepted(f)
     for want in ('승인된 결측 — 원천 미발표 2건', f'예외 {EID}', '승인 user 2026-11-17', '만료 2026-12-09',
-                 'no_value:CPI YoY[CPIAUCSL·yoy_pct·2026-10·2025-10 없음]', '검사 check_macro', '섹션 물가 축', '점수 물가 축 점수',
+                 'no_value:CPI YoY[CPIAUCSL·yoy_pct·2026-10·2025-10 미발표]', '검사 check_macro', '섹션 물가 축', '점수 물가 축 점수',
                  '원인: BLS'):
         assert want in line, want
 
@@ -486,7 +488,8 @@ def _collected(reasons, month=MONTH):
     sys.path.insert(0, SCRIPTS)
     import collect_market_data as cmd
     refs = {n: {'axis': 'Inflation', 'fred_id': {'CPI YoY': 'CPIAUCSL', 'Core CPI YoY': 'CPILFESL'}.get(n, 'X'),
-                'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10']}
+                'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10'],
+                'lacking_why': {'2025-10': 'not_published'}}
             for n, why in reasons.items() if why == 'no_value'}
     econ = cmd.econ_collect([{'name': 'x'}], reasons, D, refs=refs)
     return econ, cmd.macro_metrics_collect({'book_state': 'ok'}, econ, D)

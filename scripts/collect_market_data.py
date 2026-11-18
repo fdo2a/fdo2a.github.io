@@ -531,6 +531,50 @@ def _lacking(vals, tf):
     return [f'{m // 12:04d}-{m % 12 + 1:02d}' for m in need if m not in have]
 
 
+def fred_blanks(sid):
+    """원천 응답에 행은 있는데 값이 빈 날짜들 | None(모른다) — `us.fred.FredClient.blank_dates`."""
+    try:
+        got = fred_client().blank_dates.get(sid)
+    except Exception:  # noqa: BLE001 — 모르면 모른다(추정하지 않는다)
+        return None
+    return list(got) if isinstance(got, list) else None
+
+
+def _month_state(vals, blanks, m):
+    """원천에 값이 없는 달 `m`(연·월 일련번호)의 상태 — 행이 있고 값이 빈칸이면 not_published, 행 자체가 없으면
+    not_collected, 빈칸 정보가 없으면 unknown(`us.macro_metrics.MISSING_STATES`)."""
+    from us.macro_metrics import _month
+    if blanks is None:
+        return 'unknown'
+    return 'not_published' if any(_month(d) == m for d in blanks) else 'not_collected'
+
+
+def _ym(m):
+    return f'{m // 12:04d}-{m % 12 + 1:02d}'
+
+
+def _lacking_why(vals, tf, blanks):
+    """`_lacking` 의 달마다 상태 → `{'YYYY-MM': 상태}`."""
+    from us.macro_metrics import _month
+    by = {_ym(_month(f'{k}-01')): _month(f'{k}-01') for k in _lacking(vals, tf)}
+    return {k: _month_state(vals, blanks, m) for k, m in by.items()}
+
+
+def _previous_why(vals, tf, blanks):
+    """직전 변환값을 만들지 못한 까닭 — 그것을 만드는 데 필요한 달 가운데 원천에 없는 것들의 상태(여럿이면 보수적으로).
+    필요한 달이 다 있는데도 못 만들었으면(값 0 등) unknown."""
+    from us.macro_metrics import _month, worst_state
+    if tf == 'level' or not vals:
+        return 'not_collected' if blanks is not None else 'unknown'      # 직전 관측 자체가 원천에 없다
+    have = {_month(d) for d, _ in vals}
+    last = _month(vals[-1][0])
+    need = {'yoy_pct': [last - 1, last - 13], 'mom_pct': [last - 1, last - 2], 'mom_diff': [last - 1, last - 2]}[tf]
+    absent = [m for m in need if m not in have]
+    if not absent:
+        return 'unknown'
+    return worst_state({_month_state(vals, blanks, m) for m in absent})
+
+
 def collect_econ(reasons=None, refs=None):
     """FRED-sourced Actual/Previous/ref-period for the dashboard. Never fabricates —
     a series that fails to fetch is simply omitted (agent falls back to web for it).
@@ -566,8 +610,10 @@ def collect_econ(reasons=None, refs=None):
             # 어느 지표의 어느 달을 만들지 못했는가 — 승인 예외는 식별자(FRED id·변환)와 기준월이 모두 같을 때만 걸린다
             # `lacking` = 그 달을 변환하는 데 필요한 비교 달 가운데 원천에 없는 것(3회차 G1 — 식별자·기준월이 같아도
             # 「2025-10 미발표」가 아닌 다른 원인이면 승인된 미발표가 아니다)
+            # `lacking_why` = 그 달이 왜 없나(미발표·미수집·모름) — 승인 예외는 미발표일 때만(2026-11-18)
+            blanks = fred_blanks(sid)
             refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7],
-                          'lacking': _lacking(vals, tf)}
+                          'lacking': _lacking(vals, tf), 'lacking_why': _lacking_why(vals, tf, blanks)}
             continue
         actual, previous = pair
         row = {
@@ -575,6 +621,9 @@ def collect_econ(reasons=None, refs=None):
             'actual': round(actual, 2), 'previous': None if previous is None else round(previous, 2),
             'ref_period': vals[-1][0],  # observation month (reference period), not release date
         }
+        if previous is None:
+            # 직전 칸이 왜 비었나 — 「미발표」로 뭉뚱그리지 않는다(2026-11-18). 표의 「—」 옆에 이 사유가 실린다
+            row['previous_why'] = _previous_why(vals, tf, fred_blanks(sid))
         if opts.get('role'):
             row['role'] = opts['role']
         out.append(row)
@@ -1160,10 +1209,14 @@ def econ_collect(econ, reasons, report_date, refs=None):
     # 항목 단위 승인 예외(`config/prepub_inputs.json` 의 accepted_missing)는 넷이 모두 등록과 같을 때만 적용된다
     # (`lacking` 은 정확히 등록된 그 달 하나). 모르는 키는 싣지 않는다.
     ref = {f'no_value:{n}': dict({k: v[k] for k in ('fred_id', 'transform', 'ref_period')},
-                                 lacking=[str(x) for x in v['lacking']])
+                                 lacking=[str(x) for x in v['lacking']],
+                                 lacking_why=dict(v.get('lacking_why') or {}))
            for n, v in sorted((refs or {}).items())
            if isinstance(v, dict) and all(v.get(k) for k in ('fred_id', 'transform', 'ref_period'))
            and isinstance(v.get('lacking'), list) and f'no_value:{n}' in missing}
+    # 직전 칸이 비었는데 왜 비었는지 가를 근거가 없는 행 — 추정하지 않고 결측으로(보류 쪽)
+    missing += sorted(f'previous_unknown:{r.get("name")}' for r in econ or []
+                      if isinstance(r, dict) and r.get('previous') is None and r.get('previous_why') == 'unknown')
     st = C.by_counts(report_date, 'FRED', missing, len(ECON),
                      detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None,
                      missing_ref=ref or None)
@@ -1184,7 +1237,8 @@ def excluded_scored(reasons, refs):
     for n, why in sorted((reasons or {}).items()):
         r = (refs or {}).get(n)
         if why == 'no_value' and n not in anatomy and isinstance(r, dict):
-            out.append({'name': n, **{k: r.get(k) for k in ('axis', 'fred_id', 'transform', 'ref_period', 'lacking')}})
+            out.append({'name': n, **{k: r.get(k) for k in ('axis', 'fred_id', 'transform', 'ref_period', 'lacking',
+                                                            'lacking_why')}})
     return out
 
 

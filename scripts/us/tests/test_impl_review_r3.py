@@ -114,7 +114,8 @@ def test_g1_collector_states_which_comparison_month_is_absent(monkeypatch):
     rows, reasons, refs, col = _run_econ(monkeypatch, monthly('2019-01', '2026-10', skip=('2025-10',)))
     assert reasons == {'CPI YoY': 'no_value'}
     assert col['missing_ref']['no_value:CPI YoY'] == {'fred_id': 'CPIAUCSL', 'transform': 'yoy_pct',
-                                                     'ref_period': '2026-10', 'lacking': ['2025-10']}
+                                                     'ref_period': '2026-10', 'lacking': ['2025-10'],
+                                                     'lacking_why': {'2025-10': 'unknown'}}   # 빈칸 정보를 주지 않았다
 
 
 def test_g1_another_cause_is_not_recorded_as_the_approved_one(monkeypatch):
@@ -219,3 +220,98 @@ def test_g2_gate_finds_unused_rows_even_when_both_records_omit_them():
     assert _hold(m) is None                                    # 승인된 둘뿐이고 판단이 안 바뀌는 날
     m['indicators'][2]['signed_z'] = None                      # 산출 범위가 말하지 않은 세 번째
     assert _hold(m) is not None
+
+
+# ── 추가 지시(2026-11-18) — 없는 값의 상태를 가른다: 미발표 / 미수집 / 수집 실패 / 모름 ─────────────────────
+
+def test_h2_fred_client_remembers_rows_whose_value_is_blank():
+    from us import fred as F
+    c = F.FredClient(key=None)
+    c.transport = 'csv'
+    c._get = lambda url: b'observation_date,CPIAUCSL\n2025-09-01,324.3\n2025-10-01,\n2025-11-01,325.063\n2025-12-01,.\n'
+    assert c.series('CPIAUCSL') == [('2025-09-01', 324.3), ('2025-11-01', 325.063)]       # 계약은 그대로(결측 제거)
+    assert c.blank_dates['CPIAUCSL'] == ['2025-10-01', '2025-12-01']                      # 행은 있는데 값이 빈 달
+    c2 = F.FredClient(key='k' * 32)
+    c2.transport = 'api'
+    c2._json = lambda url: {'count': 3, 'observations': [{'date': '2025-09-01', 'value': '324.3'},
+                                                         {'date': '2025-10-01', 'value': '.'},
+                                                         {'date': '2025-11-01', 'value': '325.063'}]}
+    assert c2.series('CPIAUCSL') == [('2025-09-01', 324.3), ('2025-11-01', 325.063)]
+    assert c2.blank_dates['CPIAUCSL'] == ['2025-10-01']
+
+
+def _econ_with(monkeypatch, vals, blanks, table=None):
+    monkeypatch.setattr(cmd, 'ECON', table or [('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%')])
+    monkeypatch.setattr(cmd, 'fred_series', lambda sid: vals)
+    monkeypatch.setattr(cmd, 'fred_blanks', lambda sid: blanks)
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    reasons, refs = {}, {}
+    rows, _ = cmd.collect_econ(reasons, refs)
+    return rows, reasons, refs, cmd.econ_collect(rows, reasons, D, refs)
+
+
+def test_h2_lacking_month_is_classified_not_lumped(monkeypatch):
+    oct_gap = monthly('2019-01', '2026-10', skip=('2025-10',))
+    # 원천 응답에 그 달 행이 있고 값이 빈칸 — 기관이 내지 않았다
+    _, _, _, col = _econ_with(monkeypatch, oct_gap, ['2025-10-01'])
+    ref = col['missing_ref']['no_value:CPI YoY']
+    assert ref['lacking'] == ['2025-10'] and ref['lacking_why'] == {'2025-10': 'not_published'}
+    # 원천에 그 달 행 자체가 없다(또는 우리가 그 범위를 받지 않았다)
+    _, _, _, col = _econ_with(monkeypatch, oct_gap, [])
+    assert col['missing_ref']['no_value:CPI YoY']['lacking_why'] == {'2025-10': 'not_collected'}
+    # 가를 근거가 없다 — 추정하지 않는다
+    _, _, _, col = _econ_with(monkeypatch, oct_gap, None)
+    assert col['missing_ref']['no_value:CPI YoY']['lacking_why'] == {'2025-10': 'unknown'}
+    # 받으려다 실패한 것은 다른 키다(no_value 가 아니다)
+    monkeypatch.setattr(cmd, 'retry', lambda fn, **kw: None)
+    rows, reasons, refs, col = _econ_with(monkeypatch, None, None)
+    assert reasons == {'CPI YoY': 'fetch_failed'} and col['missing'] == ['CPI YoY']
+
+
+def test_h2_row_with_null_previous_says_why(monkeypatch):
+    nov = monthly('2019-01', '2026-11', skip=('2025-10',))
+    rows, reasons, _, col = _econ_with(monkeypatch, nov, ['2025-10-01'])
+    assert reasons == {} and rows[0]['previous'] is None and rows[0]['previous_why'] == 'not_published'
+    assert col['status'] == 'ok'
+    rows, _, _, col = _econ_with(monkeypatch, nov, [])
+    assert rows[0]['previous_why'] == 'not_collected' and col['status'] == 'ok'
+    # 모르면 모른다고 적고 보류 쪽 — 수집 상태에 결측으로
+    rows, _, _, col = _econ_with(monkeypatch, nov, None)
+    assert rows[0]['previous_why'] == 'unknown'
+    assert col['status'] != 'ok' and col['missing'] == ['previous_unknown:CPI YoY'] and col['required_ok'] is False
+    # 직전이 있는 행에는 칸이 없다
+    rows, _, _, _ = _econ_with(monkeypatch, monthly('2019-01', '2026-11'), [])
+    assert rows[0]['previous'] is not None and 'previous_why' not in rows[0]
+    # 이력이 한 점뿐인 수준 지표 — 직전 관측이 원천에 없다
+    rows, _, _, _ = _econ_with(monkeypatch, [('2026-11-01', 3.1)], [],
+                               table=[('Inflation', 'Michigan 1-Yr Inflation Exp', 'MICH', 'level', '%')])
+    assert rows[0]['previous'] is None and rows[0]['previous_why'] == 'not_collected'
+
+
+@pytest.mark.parametrize('why,label', [('not_published', '미발표'), ('not_collected', '미수집'),
+                                       ('collect_failed', '수집 실패'), ('unknown', '확인 불가')])
+def test_h2_table_gate_reads_the_reason_next_to_the_dash(why, label):
+    vals = monthly('2019-01', '2026-11', skip=('2025-10',), step=1.3)
+    item = {'axis': 'Inflation', 'name': 'CPI YoY', 'fred_id': 'CPIAUCSL', 'transform': 'yoy_pct', 'units': '%',
+            'actual': 4.2, 'previous': None, 'previous_why': why, 'ref_period': '2026-11-01', 'vs_prev': None}
+    mm = dict(M.compute({'CPIAUCSL': vals}, [item]), report_date='2026-12-10')
+    trend = mm['indicators'][0]['trend_cell_ko']
+    assert M.PREVIOUS_WHY_KO[why] == label
+    for cell in (f'— ({label})', f'—({label})', f'— {label}'):
+        assert T.check_tables(TABLE.format(actual='4.2%', prev=cell, vs='—', trend=trend), [item], mm, '2026-12-10') == [], cell
+    others = [x for x in M.PREVIOUS_WHY_KO.values() if x != label]
+    for cell in ['—', '', f'— ({others[0]})', '4.0%', f'4.0% ({label})', '— (전월 4.0%)']:
+        v = T.check_tables(TABLE.format(actual='4.2%', prev=cell, vs='—', trend=trend), [item], mm, '2026-12-10')
+        assert v and label in ' '.join(v), cell                     # 사유 없는 「—」·다른 사유·채운 값은 위반
+    # 사유 칸이 없는 옛 자료의 행은 「—」만(전과 같다)
+    old = {k: v for k, v in item.items() if k != 'previous_why'}
+    assert T.check_tables(TABLE.format(actual='4.2%', prev='—', vs='—', trend=trend), [old], mm, '2026-12-10') == []
+    assert T.check_tables(TABLE.format(actual='4.2%', prev=f'— ({label})', vs='—', trend=trend), [old], mm, '2026-12-10')
+
+
+def test_h2_coverage_words_follow_the_state():
+    ex = [dict(EXCL[0], lacking_why={'2025-10': 'not_published'}), dict(EXCL[1], lacking_why={'2025-10': 'not_collected'})]
+    c = M.with_coverage(metrics([0.5] * 6), ex, EXPECTED)['coverage']['Inflation']
+    assert [(e['name'], e['why_ko']) for e in c['excluded']] == [('CPI YoY', '원천 미발표'), ('Core CPI YoY', '원천에 비교 달 없음')]
+    assert '소비자물가 전년비는 원천 미발표로 제외' in c['phrase_ko']
+    assert '근원 소비자물가 전년비는 원천에 비교 달 없음으로 제외' in c['phrase_ko']

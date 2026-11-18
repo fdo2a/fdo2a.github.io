@@ -556,6 +556,26 @@ def sensitivity(indicators, axis, n_excluded, bound=SENSITIVITY_Z):
     return {'now': now, 'low': low, 'high': high, 'bound': bound, 'stable': now == low == high}
 
 
+# 없는 값의 상태(2026-11-18 사용자 지시 — 「미발표」로 뭉뚱그리지 않는다):
+#   not_published  원천 기관이 그 값을 내지 않았다(원천 응답에 그 달 행이 있고 값이 빈칸)
+#   not_collected  원천에 그 달 자체가 아직 없거나 우리가 그 범위를 받지 않았다
+#   collect_failed 받으려다 실패했다
+#   unknown        가를 근거가 없다 — 추정하지 않는다(보류 쪽)
+MISSING_STATES = ('not_published', 'not_collected', 'collect_failed', 'unknown')
+PREVIOUS_WHY_KO = {'not_published': '미발표', 'not_collected': '미수집', 'collect_failed': '수집 실패',
+                   'unknown': '확인 불가'}          # 축 표의 Previous 칸 「—」 옆에 싣는 말
+NO_VALUE_WHY_KO = {'not_published': EXCLUDED_WHY_KO, 'not_collected': '원천에 비교 달 없음',
+                   'collect_failed': '수집 실패', 'unknown': '비교 달 상태 확인 불가'}
+
+
+def worst_state(states):
+    """여러 달의 상태 → 하나(보수적으로): unknown > collect_failed > not_collected > not_published. 없으면 unknown."""
+    for s in ('unknown', 'collect_failed', 'not_collected', 'not_published'):
+        if s in states:
+            return s
+    return 'unknown'
+
+
 # 축 점수에 쓰이지 않은 까닭 — 수집 상태의 키 접두어와 같은 말(`no_value` 는 econ 쪽 키 `econ:no_value:<이름>`).
 WHY_KO = {'no_value': EXCLUDED_WHY_KO,        # 원천에 그 달을 만들 재료가 없다
           'no_score': '이력 부족',             # 행은 있는데 점수를 낼 이력이 모자란다(signed_z 없음)
@@ -574,10 +594,16 @@ def coverage_phrase(total, used, excluded):
     `excluded` = `[{label_ko, why}]`(또는 이름 목록 — 그러면 모두 원천 미발표). 까닭이 여럿이면 까닭마다 한 구절."""
     items = [e if isinstance(e, dict) else {'label_ko': e, 'why': 'no_value'} for e in excluded]
     parts = []
-    for why in WHY_ORDER:
-        labels = [e['label_ko'] for e in items if e.get('why') == why]
-        if labels:
-            parts.append(f"{'·'.join(labels)}{_josa(labels[-1])} {WHY_KO[why]}로 제외")
+    seen = []
+    for e in items:                       # 까닭(독자에게 보이는 말)마다 한 구절, 나온 순서대로
+        w = e.get('why_ko') or WHY_KO.get(e.get('why'), EXCLUDED_WHY_KO)
+        if w not in seen:
+            seen.append(w)
+    for w in seen:
+        labels = [e['label_ko'] for e in items if (e.get('why_ko') or WHY_KO.get(e.get('why'), EXCLUDED_WHY_KO)) == w]
+        last = w[-1]
+        ro = '으로' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 not in (0, 8) else '로'
+        parts.append(f"{'·'.join(labels)}{_josa(labels[-1])} {w}{ro} 제외")
     return f"{total}개 중 {used}개로 산출, " + ', '.join(parts)
 
 
@@ -628,6 +654,11 @@ def with_coverage(mm, excluded, expected=None):
             item = {'name': n, 'label_ko': LABELS_KO.get(n, n), 'why': why, 'why_ko': WHY_KO[why]}
             if n in by_ex:
                 item.update({k: by_ex[n].get(k) for k in ('fred_id', 'transform', 'ref_period', 'lacking')})
+                lw = by_ex[n].get('lacking_why')
+                if isinstance(lw, dict):
+                    # 왜 그 달을 만들 수 없나 — 미발표와 미수집을 가른다. 상태를 모르는 옛 호출은 전과 같은 말
+                    item['lacking_why'] = lw
+                    item['why_ko'] = NO_VALUE_WHY_KO[worst_state(set(lw.values()))]
             items.append(item)
         if not items:
             continue
