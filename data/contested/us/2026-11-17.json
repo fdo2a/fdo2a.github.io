@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-17",
- "status": "none",
- "reason": "verify_rejected",
+ "status": "error",
+ "reason": "model_extract_success",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T07:26:50+00:00",
- "cutoff_at": "2026-11-18T07:26:50+00:00",
+ "collected_at": "2026-11-18T08:31:40+00:00",
+ "cutoff_at": "2026-11-18T08:31:40+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,47 +21,33 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 214,
-  "candidates": 2,
+  "harvest": 209,
+  "candidates": 1,
   "articles": [
-   3,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 50545,
-   "out": 11193
+   "in": 0,
+   "out": 0
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
    "theguardian.com": "short",
+   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "1/1",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 이후 엔비디아의 사업 지속성과 리더십 공백의 영향",
-  "query": "nvidia huang earnings",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "a8ccc0fd0ef99c95"
+ "content_hash": "ec244916edb25e7d"
 }
