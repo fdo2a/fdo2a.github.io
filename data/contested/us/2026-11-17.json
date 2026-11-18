@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-17",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 0,
- "collected_at": "2026-11-17T23:13:25+00:00",
- "cutoff_at": "2026-11-17T23:13:25+00:00",
+ "collected_at": "2026-11-18T00:17:53+00:00",
+ "cutoff_at": "2026-11-18T00:17:53+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 206,
+  "harvest": 210,
   "candidates": 1,
   "articles": [
    6
@@ -30,73 +30,36 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 43174,
-   "out": 11591
+   "in": 46836,
+   "out": 11942
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
+   "claims": "4/4",
    "pairs": "2/2",
-   "obs": "6/6"
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 6,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "memo[0]",
-    "memo[2]",
-    "structure",
-    "variables[2]",
-    "worry.most[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:dangling",
-    "variables[2]:unverified",
-    "edges[0]:dangling",
-    "edges[1]:unverified",
-    "edges[1]:dangling",
-    "memo[0]:unverified",
-    "memo[0]:dangling",
-    "memo[2]:dangling",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 사임 이후 엔비디아 CEO 복귀 논란과 메가스피드 수출통제 의혹",
+  "topic_ko": "젠슨 황의 엔비디아 CEO 복귀 논란과 메가스피드 칩 우회 의혹",
   "query": "nvidia huang chip",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "variables[2]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
-  "edges[1]:dangling",
-  "memo[0]:unverified",
-  "memo[0]:dangling",
-  "memo[2]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling"
- ],
- "content_hash": "a2da31d97dc05015"
+ "content_hash": "22eff08017ee1bbf"
 }
