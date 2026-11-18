@@ -5,9 +5,9 @@
  "report_date": "2026-11-18",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-18T12:22:40+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-18T12:38:48+00:00",
  "cutoff_at": "2026-11-18T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 501,
+  "harvest": 488,
   "candidates": 1,
   "articles": [
    6
@@ -42,19 +42,19 @@
    "yna": "ok"
   },
   "notes": [
-   "discover:501"
+   "discover:488"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 19031,
-   "out": 4751
+   "in": 19077,
+   "out": 3591
   }
  },
  "event": {
   "topic_ko": "시진핑 APEC CEO 서밋 연설과 미중 정상회담 전 통상 갈등",
-  "query": "시진핑 낙후 폐쇄는",
+  "query": "시진핑 폐쇄는 낙후",
   "trigger": []
  },
- "content_hash": "5ca1f97ed07efd18"
+ "content_hash": "f35d34ee3bda13ea"
 }
