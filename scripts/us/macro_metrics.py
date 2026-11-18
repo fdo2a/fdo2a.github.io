@@ -589,6 +589,22 @@ def _josa(word):
     return '은' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 else '는'
 
 
+def introduced_effect(indicators, axis):
+    """들인 날이라 점수에서 뺀 지표는 값과 점수를 안다 — **실제 점수를 넣어 다시 낸 축 판정**과 지금 판정을 견준다
+    (모르는 값에 쓰는 양 끝 `sensitivity` 와 다르다). -> {'now', 'with', 'direction_same', 'leg_same', 'strength_same'}
+    또는 None(지금 점수가 없거나 들인 지표의 점수를 읽지 못한다 — 판정할 수 없다)."""
+    rows = [r for r in indicators or [] if isinstance(r, dict) and (r.get('role') or 'scored') == 'scored'
+            and r.get('axis') == axis]
+    used = [r['signed_z'] for r in rows if not r.get('introduced') and _has_value(r.get('signed_z'))]
+    new = [r for r in rows if r.get('introduced') is True]
+    if not used or not new or not all(_has_value(r.get('signed_z')) for r in new):
+        return None
+    both = used + [r['signed_z'] for r in new]
+    now, incl = axis_verdict(sum(used) / len(used), axis), axis_verdict(sum(both) / len(both), axis)
+    return {'now': now, 'with': incl, 'direction_same': now[0] == incl[0], 'leg_same': now[2] == incl[2],
+            'strength_same': now[1] == incl[1]}
+
+
 def coverage_phrase(total, used, excluded):
     """글에 싣는 문장 — 「8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로 제외」.
     `excluded` = `[{label_ko, why}]`(또는 이름 목록 — 그러면 모두 원천 미발표). 까닭이 여럿이면 까닭마다 한 구절."""

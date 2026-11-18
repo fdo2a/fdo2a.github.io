@@ -611,6 +611,68 @@ def test_approved_cpi_gap_does_not_cover_anything_else(days, monkeypatch, tmp_pa
     assert not s['publish_ok'] and both <= set(s['inputs']['blocking_files'])
 
 
+def test_introduction_day_warning_makes_the_post_conditional_through_run_gates(days, monkeypatch, tmp_path):
+    """4회차 H3 — 들인 날의 제외는 막지 않고 조건으로: check_macro 의 경고 줄이 실행기에서 warn → 글 판정 conditional 로
+    기록되는가. 실제 날(US 11/12) 자료의 고용 지표 하나를 「오늘 들인 지표」로 표시하고 글에 산출 범위 표식을 넣는다."""
+    import re
+    import sys
+    sys.path.insert(0, RD.SCRIPTS)
+    from us import macro_metrics as M
+    base, ctx0 = days[('us', '2026-11-12')]
+    c = _fresh(base, ctx0, str(tmp_path / 'intro'), False)
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    cfg, pol = _policy(c)
+    spec = next(g for g in cfg['markets']['us']['gates'] if g['name'] == 'check_macro')
+    only = {'format': R.CONFIG_FORMAT, 'markets': {'us': {'post': cfg['markets']['us']['post'], 'gates': [spec]}}}
+    base_res = R.run_gates(only, 'us', c, policy=pol)
+    assert base_res['gates'][0]['status'] == 'pass', base_res['gates'][0]          # 손대기 전에는 통과
+    mp = os.path.join(c['datadir'], 'macro_metrics.json')
+    mm = _load(mp)
+    book = _load(os.path.join(c['datadir'], 'macro.json'))['report_date']
+    labor = [r for r in M.scored_rows(mm['indicators']) if r['axis'] == 'Labor' and r['signed_z'] is not None]
+    # 넣어도 축 방향·레짐 다리가 달라지지 않는 지표를 고른다(그날 자료에서)
+    pick = None
+    for r in labor:
+        r['introduced'] = True
+        eff = M.introduced_effect(mm['indicators'], 'Labor')
+        r['introduced'] = False
+        if eff and eff['direction_same'] and eff['leg_same']:
+            pick = r
+            break
+    assert pick is not None
+    pick['introduced'] = True
+    mm['introduced'] = [pick['name']]
+    mm['introduced_since'] = {pick['name']: book}
+    mm = M.with_coverage(mm, [])
+    cov = mm['coverage']['Labor']
+    _dump(mp, mm)
+    html = open(c['html'], encoding='utf-8').read()
+    marked, n = re.subn(r'(<span data-axis="Labor">[^<]*</span>)',
+                        r'\1 <span class="sub" data-axis-coverage="Labor">' + cov['phrase_ko'] + '</span>', html, count=1)
+    assert n == 1
+    post = tmp_path / f"{c['date']}.html"
+    c['html'] = str(post)
+    # 표식 없이 — 위반(글을 고쳐야 한다)
+    post.write_text(html, encoding='utf-8')
+    g = R.run_gates(only, 'us', c, policy=pol)['gates'][0]
+    assert g['status'] == 'fail' and any('data-axis-coverage' in x for x in g.get('items') or [g.get('reason', '')])
+    # 표식을 싣고 — 통과가 아니라 경고, 글 판정은 조건부
+    post.write_text(marked, encoding='utf-8')
+    res = R.run_gates(only, 'us', c, policy=pol)
+    g, s = res['gates'][0], res['summary']
+    assert g['status'] == 'warn' and g['exit'] == 0, g
+    assert s['publish_ok'] and s['status'] == 'conditional' and not s['verified']
+    assert {'kind': 'warn', 'gate': 'check_macro'} in s['conditions'] and s['warned'] == ['check_macro']
+    # 들인 지표의 실제 점수를 넣으면 방향이 뒤집히는 날 — 보류(미완료)
+    for r in mm['indicators']:
+        if r['name'] == pick['name']:
+            r['signed_z'] = -60.0 if (M.introduced_effect(mm['indicators'], 'Labor')['now'][2] >= 0) else 60.0
+    _dump(mp, mm)
+    res = R.run_gates(only, 'us', c, policy=pol)
+    assert res['gates'][0]['status'] == 'incomplete' and not res['summary']['publish_ok']
+    assert '새로 들인 지표의 제외가 판단을 바꿀 수 있음' in res['gates'][0]['reason']
+
+
 def _write_matrix(mode, rows):
     """보고용 — 변이 행렬 요약을 시험 임시 폴더 밖 환경 변수 경로에 남긴다(설정했을 때만)."""
     out = os.environ.get('INPUT_MUTATION_MATRIX')

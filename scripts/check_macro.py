@@ -55,8 +55,13 @@ def coverage_notes(metrics):
     for axis, c in sorted(cov.items()):
         new = [e.get('label_ko') or e.get('name') for e in (c.get('excluded') or []) if e.get('why') == 'introduced']
         if new:
-            out.append(f'경고: {M.AXIS_LABELS_KO.get(axis, axis)} 축 점수는 {c.get("total")}개 중 {c.get("used")}개로 산출 — '
-                       f'새로 들인 지표 {len(new)}개({", ".join(str(x) for x in new)})는 들인 날이라 점수에서 뺐다')
+            line = (f'경고: {M.AXIS_LABELS_KO.get(axis, axis)} 축 점수는 {c.get("total")}개 중 {c.get("used")}개로 산출 — '
+                    f'새로 들인 지표 {len(new)}개({", ".join(str(x) for x in new)})는 들인 날이라 점수에서 뺐다')
+            eff = M.introduced_effect(metrics.get('indicators'), axis)
+            if eff and not eff['strength_same']:
+                # 방향·레짐 다리는 같고 강도만 다르다 — 막지 않되 적는다
+                line += f' · 들인 지표 포함 시 강도 {eff["now"][1]}→{eff["with"][1]}'
+            out.append(line)
     return out
 
 
@@ -104,6 +109,17 @@ def coverage_hold(metrics, prev_date=None):
                    and r.get('signed_z') is not None)
         if c.get('used') != used or c.get('total') != used + len(ex):
             return f'{axis} 축의 산출 범위({c.get("used")}/{c.get("total")})가 지표 행({used}개)과 맞지 않는다'
+        if all(e.get('why') == 'introduced' for e in ex):
+            # 들인 지표는 값과 점수를 안다 — 모르는 값의 양 끝이 아니라 실제 점수를 넣어 다시 낸 축 판정과 견준다.
+            # 방향이나 레짐 다리가 다르면 보류, 강도만 다르면 조건(`coverage_notes`). 점수를 못 읽으면 판정할 수 없다.
+            eff = M.introduced_effect(metrics.get('indicators'), axis)
+            ko = M.AXIS_LABELS_KO.get(axis, axis)
+            if eff is None:
+                return f'{ko} 축: 들인 지표의 실제 점수를 읽지 못해 판단에 미치는 영향을 볼 수 없다'
+            if not (eff['direction_same'] and eff['leg_same']):
+                return (f'{HOLD_SENSITIVE_NEW}({ko} 축 {c.get("total")}개 중 {used}개로 산출: 지금 {eff["now"]}, '
+                        f'들인 {len(ex)}개를 실제 점수로 넣으면 {eff["with"]})')
+            continue
         s = M.sensitivity(metrics.get('indicators'), axis, len(ex))
         if not s['stable']:
             ko = M.AXIS_LABELS_KO.get(axis, axis)

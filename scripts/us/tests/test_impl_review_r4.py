@@ -178,8 +178,8 @@ def test_h3_no_score_or_missing_value_cannot_hide_behind_introduced():
 
 
 def test_h3_sensitivity_applies_the_same_way():
-    # (c) 들인 지표를 뺀 것이 축 판단을 바꿀 수 있으면 보류
-    hold, _ = _gate(day(zs=(0.3,) * 5))
+    # (c) 들인 지표를 뺀 것이 축 판단을 바꿀 수 있으면 보류 — 실제 점수를 넣어 방향이 달라지는 날(아래 h3c)
+    hold, _ = _gate(day(zs=(0.3,) * 5, new={'signed_z': -9.0}))
     assert hold and hold.startswith('승인된 결측이 판단을 바꿀 수 있음') is False and '판단을 바꿀 수 있음' in hold
     assert '사람 승인 필요' in hold
 
@@ -214,7 +214,58 @@ def test_h3_check_macro_prints_a_warning_line_instead_of_holding(tmp_path):
                                '--datadir', str(d)], capture_output=True, text=True, cwd=os.path.dirname(SCRIPTS))
     r = run(day())
     assert r.returncode != 2 and '경고: 생산·활동 축 점수는 6개 중 5개로 산출' in r.stdout
-    r = run(day(zs=(0.3,) * 5))                                                  # 판단이 바뀔 수 있는 날 — 보류
+    r = run(day(zs=(0.3,) * 5, new={'signed_z': -9.0}))                          # 판단이 바뀔 수 있는 날 — 보류
     assert r.returncode == 2 and '새로 들인 지표의 제외가 판단을 바꿀 수 있음 — 사람 승인 필요' in r.stderr
     r = run(day(since='2026-11-05'))                                             # 하루를 넘겼다 — 보류
     assert r.returncode == 2 and '하루를 넘겨' in r.stderr
+
+
+# ── H3 (c) 고침 — 들인 지표는 점수를 안다: 양 끝이 아니라 실제 점수를 넣은 축 판정과 견준다 ─────────────────
+
+def test_h3c_real_2026_11_09_is_conditional_not_held():
+    """2026-11-09 실제 자료(발행 커밋의 macro_metrics.json, 그 직전 커밋의 macro.json = 어제 책)."""
+    root = os.path.dirname(SCRIPTS)
+
+    def show(ref):
+        out = subprocess.run(['git', '-C', root, 'show', ref], capture_output=True)
+        assert out.returncode == 0, f'git show {ref} 실패 — 전체 이력이 필요하다'
+        return json.loads(out.stdout)
+    commit = '8bc6e2543befd876881f2294e00abd58ee89c82d'
+    mm = M.with_coverage(show(f'{commit}:data/macro_metrics.json'), [], cmd.expected_scored())
+    prev = show(f'{commit}~1:data/macro.json')
+    mm['collect'] = cmd.macro_metrics_collect(mm, {'status': 'ok', 'missing': []}, '2026-11-09')
+    c = mm['coverage']['Activity']
+    assert (c['total'], c['used']) == (9, 5) and {e['why'] for e in c['excluded']} == {'introduced'}
+    hold, notes = _gate(mm, prev=prev['report_date'])
+    assert hold is None                                        # 재현: 양 끝(±3.0)으로는 보류였다
+    assert len(notes) == 1 and '9개 중 5개' in notes[0]
+    assert '강도 미미→완만' in notes[0]                         # 넷을 실제 점수로 넣으면 방향·레짐 다리는 같고 강도만 달라진다
+
+
+def test_h3c_actual_scores_flipping_the_direction_or_leg_hold():
+    # 지금 개선(+)인데 들인 지표의 실제 점수가 크게 음수라 넣으면 악화 — 보류
+    hold, _ = _gate(day(zs=(0.6,) * 5, new={'signed_z': -9.0}))
+    assert hold and hold.startswith('새로 들인 지표의 제외가 판단을 바꿀 수 있음 — 사람 승인 필요')
+    assert '실제 점수' in hold
+    # 방향·레짐 다리가 같으면 강도가 달라도 막지 않는다 — 조건으로
+    hold, notes = _gate(day(zs=(0.6,) * 5, new={'signed_z': 4.0}))
+    assert hold is None and any('강도' in n for n in notes)
+    # 아무것도 달라지지 않으면 강도 구절이 없다
+    hold, notes = _gate(day(zs=(4.0,) * 5, new={'signed_z': 4.0}))
+    assert hold is None and len(notes) == 1 and '강도' not in notes[0]
+    # 양 끝으로는 뒤집히지만 실제 점수로는 그대로인 날 — 이제 보류하지 않는다
+    assert _gate(day(zs=(0.3,) * 5, new={'signed_z': 0.3}))[0] is None
+
+
+def test_h3c_unknown_values_keep_the_both_ends_rule():
+    # 모르는 값(CPI 같은 no_value)은 그대로 양 끝·방향·강도·레짐 다리 전부
+    from us.tests.test_macro_coverage import collect, cov_metrics
+    sys.path.insert(0, SCRIPTS)
+    import check_macro
+    m = dict(cov_metrics((0.451,) * 6), collect=collect())
+    assert check_macro.coverage_hold(m).startswith('승인된 결측이 판단을 바꿀 수 있음 — 사람 승인 필요')
+    # 들인 지표와 모르는 값이 한 축에 섞이면 모르는 값의 규칙으로(양 끝)
+    mm = day(zs=(0.3,) * 5, new={'signed_z': 0.3})
+    mm['coverage']['Activity']['excluded'].append({'name': 'X', 'label_ko': 'X', 'why': 'no_row', 'why_ko': '수집 실패'})
+    mm['coverage']['Activity']['total'] += 1
+    assert check_macro.coverage_hold(mm, prev_date=PREV)
