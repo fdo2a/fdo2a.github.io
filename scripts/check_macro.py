@@ -109,23 +109,28 @@ def coverage_hold(metrics, prev_date=None):
                    and r.get('signed_z') is not None)
         if c.get('used') != used or c.get('total') != used + len(ex):
             return f'{axis} 축의 산출 범위({c.get("used")}/{c.get("total")})가 지표 행({used}개)과 맞지 않는다'
-        if all(e.get('why') == 'introduced' for e in ex):
+        ko = M.AXIS_LABELS_KO.get(axis, axis)
+        intro = [e for e in ex if e.get('why') == 'introduced']
+        unknown = [e for e in ex if e.get('why') != 'introduced']
+        # 한 축에 까닭이 섞여도 **둘 다** 본다 — 어느 하나라도 걸리면 보류(5회차 I1: 섞인 축에서 실제 점수 비교를 건너뛰었다)
+        if intro:
             # 들인 지표는 값과 점수를 안다 — 모르는 값의 양 끝이 아니라 실제 점수를 넣어 다시 낸 축 판정과 견준다.
             # 방향이나 레짐 다리가 다르면 보류, 강도만 다르면 조건(`coverage_notes`). 점수를 못 읽으면 판정할 수 없다.
             eff = M.introduced_effect(metrics.get('indicators'), axis)
-            ko = M.AXIS_LABELS_KO.get(axis, axis)
             if eff is None:
                 return f'{ko} 축: 들인 지표의 실제 점수를 읽지 못해 판단에 미치는 영향을 볼 수 없다'
             if not (eff['direction_same'] and eff['leg_same']):
                 return (f'{HOLD_SENSITIVE_NEW}({ko} 축 {c.get("total")}개 중 {used}개로 산출: 지금 {eff["now"]}, '
-                        f'들인 {len(ex)}개를 실제 점수로 넣으면 {eff["with"]})')
-            continue
-        s = M.sensitivity(metrics.get('indicators'), axis, len(ex))
-        if not s['stable']:
-            ko = M.AXIS_LABELS_KO.get(axis, axis)
-            head = HOLD_SENSITIVE_NEW if all(e.get('why') == 'introduced' for e in ex) else HOLD_SENSITIVE
-            return (f'{head}({ko} 축 {c.get("total")}개 중 {used}개로 산출: 지금 {s["now"]}, 빠진 {len(ex)}개가 '
-                    f'점수 범위 아래 끝(-{s["bound"]})이면 {s["low"]}, 위 끝(+{s["bound"]})이면 {s["high"]})')
+                        f'들인 {len(intro)}개를 실제 점수로 넣으면 {eff["with"]})')
+        if unknown:
+            # 모르는 값(미발표·점수 없음·행 없음)은 점수 범위의 양 끝으로 — 들인 지표를 넣지 않은 상태와 넣은 상태 양쪽에서
+            for with_intro in ([False, True] if intro else [False]):
+                s = M.sensitivity(metrics.get('indicators'), axis, len(unknown), include_introduced=with_intro)
+                if not s['stable']:
+                    state = '(들인 지표를 실제 점수로 넣은 상태에서) ' if with_intro else ''
+                    return (f'{HOLD_SENSITIVE}({ko} 축 {c.get("total")}개 중 {used}개로 산출: {state}지금 {s["now"]}, '
+                            f'빠진 {len(unknown)}개가 점수 범위 아래 끝(-{s["bound"]})이면 {s["low"]}, '
+                            f'위 끝(+{s["bound"]})이면 {s["high"]})')
     return None
 
 

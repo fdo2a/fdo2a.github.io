@@ -540,13 +540,18 @@ def axis_verdict(mean, axis):
     return [direction, strength, classify(mean)]
 
 
-def sensitivity(indicators, axis, n_excluded, bound=SENSITIVITY_Z):
+def sensitivity(indicators, axis, n_excluded, bound=SENSITIVITY_Z, include_introduced=False):
     """빠진 지표 n개가 모두 점수 범위의 아래 끝(-bound)·위 끝(+bound)이었다면 이 축의 판단이 지금과 같은가.
 
     평균은 빠진 값에 대해 단조라 두 경우면 충분하다. 결정적이다 — 자료의 점수와 상수만 쓴다.
     -> {'now', 'low', 'high', 'bound', 'stable'}; 축에 점수가 하나도 없으면 stable 은 False(판단할 수 없다)."""
-    zs = [r['signed_z'] for r in scored_rows(indicators)
-          if r.get('axis') == axis and isinstance(r.get('signed_z'), (int, float))]
+    # `include_introduced`: 들인 날이라 점수에서 뺀 지표의 실제 점수를 넣은 상태에서 본다(5회차 I1 — 한 축에 들인 지표와
+    # 모르는 값이 섞이면 넣은 상태·넣지 않은 상태 양쪽에서 양 끝을 본다)
+    pool = scored_rows(indicators)
+    if include_introduced:
+        pool = [r for r in indicators or [] if isinstance(r, dict) and (r.get('role') or 'scored') == 'scored']
+    zs = [r['signed_z'] for r in pool
+          if r.get('axis') == axis and isinstance(r.get('signed_z'), (int, float)) and not isinstance(r['signed_z'], bool)]
     if not zs or n_excluded <= 0:
         return {'now': None, 'low': None, 'high': None, 'bound': bound, 'stable': bool(zs) and n_excluded <= 0}
     total = len(zs) + n_excluded
