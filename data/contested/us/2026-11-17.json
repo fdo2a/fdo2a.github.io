@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T05:16:17+00:00",
- "cutoff_at": "2026-11-18T05:16:17+00:00",
+ "collected_at": "2026-11-18T06:20:52+00:00",
+ "cutoff_at": "2026-11-18T06:20:52+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,37 +21,39 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 219,
-  "candidates": 1,
+  "harvest": 213,
+  "candidates": 3,
   "articles": [
+   2,
+   3,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46591,
-   "out": 11881
+   "in": 76036,
+   "out": 16900
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
    "aljazeera.com": "ok",
+   "theguardian.com": "short",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "7/7",
+   "claims": "4/4",
    "pairs": "2/2",
-   "obs": "7/7"
+   "obs": "6/6"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7,
-   "strict_pairs": 1,
+   "pairs": 2,
+   "claims": 4,
+   "obs": 6,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
@@ -59,48 +61,29 @@
    "paths": [
     "edges[0]",
     "edges[1]",
-    "memo[0]",
-    "memo[1]",
-    "memo[2]",
     "structure",
-    "worry.moderate[0]",
+    "variables[1]",
     "worry.most[0]",
     "worry.unlikely[0]"
    ],
-   "outcome": "skipped_threshold",
+   "outcome": "partial",
    "remaining": [
-    "structure:dangling",
-    "edges[0]:dangling",
-    "edges[1]:dangling",
     "memo[0]:unverified",
-    "memo[0]:dangling",
-    "memo[1]:dangling",
-    "memo[2]:dangling",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
+    "memo[1]:unverified",
+    "worry.moderate[0]:unverified"
    ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 이후 엔비디아 CEO 복귀 가능성과 리더십 공백의 영향",
+  "topic_ko": "젠슨 황 퇴진 이후 엔비디아의 사업 지속성과 리더십 공백의 영향",
   "query": "nvidia huang earnings",
   "trigger": []
  },
  "problems": [
-  "structure:dangling",
-  "edges[0]:dangling",
-  "edges[1]:dangling",
   "memo[0]:unverified",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
+  "memo[1]:unverified",
+  "worry.moderate[0]:unverified"
  ],
- "content_hash": "7cb6ead3af7c2c40"
+ "content_hash": "c629c72c72c8211d"
 }
