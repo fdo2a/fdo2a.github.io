@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-17",
- "status": "error",
- "reason": "model_extract_success",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T08:31:40+00:00",
- "cutoff_at": "2026-11-18T08:31:40+00:00",
+ "collected_at": "2026-11-18T09:34:39+00:00",
+ "cutoff_at": "2026-11-18T09:34:39+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,17 +21,18 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 209,
-  "candidates": 1,
+  "harvest": 214,
+  "candidates": 2,
   "articles": [
+   2,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 0,
-   "out": 0
+   "in": 47176,
+   "out": 10950
   },
   "discovery": "throttled",
   "hosts": {
@@ -42,12 +43,70 @@
   },
   "notes": [],
   "gdelt": "throttled",
+  "grounded": {
+   "claims": "5/5",
+   "pairs": "1/1",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 5,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "memo[2]",
+    "structure",
+    "variables[2]",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "variables[2]:dangling",
+    "edges[1]:dangling",
+    "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "memo[1]:dangling",
+    "memo[2]:unverified",
+    "memo[2]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
+  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 퇴진 이후 엔비디아 사업 경쟁력의 지속성",
+  "query": "huang nvidia earnings",
   "trigger": []
  },
- "content_hash": "ec244916edb25e7d"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "variables[2]:dangling",
+  "edges[1]:dangling",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:dangling",
+  "memo[2]:unverified",
+  "memo[2]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "d3c1ff2256af61d2"
 }
