@@ -501,17 +501,34 @@ ECON = [
 
 
 def _econ_pair(vals, tf):
-    """(Actual, Previous) — 최신 관측월의 변환값과 그 직전 변환값. 날짜로 맞춘
+    """(Actual, Previous | None) — 최신 관측월의 변환값과 그 직전 변환값. 날짜로 맞춘
     `transform_pairs` 를 쓴다(2025-10 CPI 결측 탓에 행 위치 계산이 13개월 YoY 를 냈다).
-    최신 관측월을 변환할 수 없으면 None — 지어내지 않고 행을 뺀다."""
+
+    * 최신 관측월을 변환할 수 없으면 None — 지어내지 않고 행을 뺀다(수집 상태에 no_value).
+    * 최신값은 계산되는데 **바로 앞 달**의 변환값이 없으면 (Actual, None) — 행은 만들고 직전 칸은 비운다. 더 오래된 달을
+      「직전」으로 찍지 않고, 추정치로 채우지도 않는다(2026-11-18, 1a 구현 검토 3회차 G5: 2026-11 CPI 전년 대비는 2025-11 이
+      있어 계산되지만 2026-10 전년 대비가 없어 행이 통째로 빠졌다). 표의 Previous·직전 대비는 「—」, 축 점수는 이 칸이
+      아니라 변환된 이력(`macro_metrics.transform_series`)으로 낸다."""
     from us.macro_metrics import _month, transform_pairs
     pairs = transform_pairs(vals, tf)
-    if len(pairs) < 2 or pairs[-1][0] != vals[-1][0]:
+    if not pairs or pairs[-1][0] != vals[-1][0]:
         return None
-    # Previous 도 바로 앞 달이어야 한다 — 그 달을 못 만들면 더 오래된 달을 「직전」으로 찍지 않는다.
-    if tf != 'level' and _month(pairs[-1][0]) - _month(pairs[-2][0]) != 1:
-        return None
+    if len(pairs) < 2 or (tf != 'level' and _month(pairs[-1][0]) - _month(pairs[-2][0]) != 1):
+        return pairs[-1][1], None
     return pairs[-1][1], pairs[-2][1]
+
+
+def _lacking(vals, tf):
+    """최신 관측월을 변환하는 데 필요한 **비교 관측 달** 가운데 원천에 없는 것 → `['YYYY-MM', …]`(3회차 G1).
+    전년 대비는 12개월 전, 전월 대비·차분은 한 달 전. 그 달이 원천에 있는데도 변환이 안 됐으면(값 0 등) 빈 목록 —
+    「그 달이 발표되지 않았다」와 다른 원인이다."""
+    from us.macro_metrics import _month
+    have = {_month(d) for d, _ in vals or []}
+    if not have:
+        return []
+    last = _month(vals[-1][0])
+    need = {'yoy_pct': [last - 12], 'mom_pct': [last - 1], 'mom_diff': [last - 1]}.get(tf, [])
+    return [f'{m // 12:04d}-{m % 12 + 1:02d}' for m in need if m not in have]
 
 
 def collect_econ(reasons=None, refs=None):
@@ -552,7 +569,7 @@ def collect_econ(reasons=None, refs=None):
         actual, previous = pair
         row = {
             'axis': axis, 'name': name, 'fred_id': sid, 'transform': tf, 'units': units,
-            'actual': round(actual, 2), 'previous': round(previous, 2),
+            'actual': round(actual, 2), 'previous': None if previous is None else round(previous, 2),
             'ref_period': vals[-1][0],  # observation month (reference period), not release date
         }
         if opts.get('role'):

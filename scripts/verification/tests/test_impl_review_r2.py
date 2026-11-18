@@ -663,5 +663,7 @@ def test_f6_no_substitute_value_is_ever_made():
     assert [d for d, _ in M.transform_pairs(vals, 'yoy_pct')][-1] == '2026-09-01'
     assert cmd._econ_pair(vals, 'mom_pct') is not None                           # 전월 대비는 정상
     vals11 = vals + [('2026-11-01', 400.0)]                                       # 2025-11 은 있다 → 2026-11 은 산출
-    assert cmd._econ_pair(vals11, 'yoy_pct') is None                             # 직전(2026-10)이 없어 「직전 대비」를 못 만든다
+    actual, previous = cmd._econ_pair(vals11, 'yoy_pct')                         # 행은 만든다(3회차 G5)
+    assert actual == pytest.approx((400.0 / dict(vals)['2025-11-01'] - 1) * 100)
+    assert previous is None                                                      # 직전(2026-10)은 비운다 — 2026-09 로 채우지 않는다
     assert [d for d, _ in M.transform_pairs(vals11, 'yoy_pct')][-1] == '2026-11-01'
