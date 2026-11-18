@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-17",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T15:04:12+00:00",
- "cutoff_at": "2026-11-18T15:04:12+00:00",
+ "collected_at": "2026-11-18T16:09:43+00:00",
+ "cutoff_at": "2026-11-18T16:09:43+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,40 +21,72 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 216,
+  "harvest": 218,
   "candidates": 2,
   "articles": [
-   3,
+   2,
    5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 45361,
-   "out": 12008
+   "in": 43802,
+   "out": 11032
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
-   "pairs": "1/1",
-   "obs": "9/9"
+   "claims": "6/6",
+   "pairs": "2/2",
+   "obs": "7/7"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 9,
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "memo[2]",
+    "structure",
+    "variables[1]",
+    "variables[2]",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:dangling",
+    "variables[1]:unverified",
+    "variables[2]:dangling",
+    "edges[0]:dangling",
+    "edges[1]:dangling",
+    "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "memo[1]:dangling",
+    "memo[2]:unverified",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
@@ -63,5 +95,21 @@
   "query": "huang nvidia scandal",
   "trigger": []
  },
- "content_hash": "e12ee9acb7bf1e1e"
+ "problems": [
+  "structure:dangling",
+  "variables[1]:unverified",
+  "variables[2]:dangling",
+  "edges[0]:dangling",
+  "edges[1]:dangling",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:dangling",
+  "memo[2]:unverified",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "9543cdcb30da8394"
 }
