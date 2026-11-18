@@ -244,6 +244,7 @@ def _econ_with(monkeypatch, vals, blanks, table=None):
     monkeypatch.setattr(cmd, 'ECON', table or [('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%')])
     monkeypatch.setattr(cmd, 'fred_series', lambda sid: vals)
     monkeypatch.setattr(cmd, 'fred_blanks', lambda sid: blanks)
+    monkeypatch.setattr(cmd, 'fred_unclear', lambda sid: None if blanks is None else [])
     monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
     reasons, refs = {}, {}
     rows, _ = cmd.collect_econ(reasons, refs)

@@ -121,7 +121,10 @@ class FredClient:
         # 원천 응답에 **행은 있는데 값이 빈** 날짜들(시리즈별) — 「기관이 그 값을 내지 않았다」와 「원천에 그 달이 아직
         # 없다」를 가르는 근거다(2026-11-18). `series()` 의 계약(결측 제거·전체 이력)은 그대로다.
         self.blank_dates = {}
+        # 값 필드가 없거나 null 이거나 알 수 없는 형식인 행의 날짜 — 「빈칸」의 근거가 못 된다(모름, 4회차 H1)
+        self.unclear_dates = {}
         self._blanks = None
+        self._unclear = None
         self.requests = 0
         self.series_ok = 0
         self.failed = []
@@ -220,15 +223,19 @@ class FredClient:
         raw = [(o.get('date'), o.get('value')) for o in obs]
         rows = _pairs(raw)
         _assert_ascending(sid, rows)
-        self._blanks = _blank_dates(raw)
+        # 공식 API 가 「값 없음」을 적는 표기는 문자열 "." 하나다 — 필드 부재·null·빈 문자열·그 밖의 글자는 모른다
+        self._blanks, self._unclear = _classify_blanks(raw, API_BLANKS)
         return rows
 
     def _csv(self, sid):
         body = self._get(f'{CSV}?id={sid}').decode('utf-8')
-        raw = [tuple(line.split(',')[:2]) for line in body.splitlines()[1:] if ',' in line]
+        lines = [line for line in body.splitlines()[1:] if line.strip()]
+        raw = [tuple(line.split(',')[:2]) for line in lines if ',' in line]
         rows = _pairs(raw)
         _assert_ascending(sid, rows)
-        self._blanks = _blank_dates(raw)
+        # fredgraph.csv 는 값 칸을 비우거나(지금) "." 로(옛 표기) 적는다. 값 칸 자체가 없는 줄(쉼표 없음)은 모른다
+        self._blanks, self._unclear = _classify_blanks(
+            raw + [(line, _NO_FIELD) for line in lines if ',' not in line], CSV_BLANKS)
         return rows
 
     # ------------------------------------------------------------ 공개 API
@@ -280,7 +287,8 @@ class FredClient:
             raise
         self._cache[sid] = rows
         self.blank_dates[sid] = self._blanks if isinstance(self._blanks, list) else None
-        self._blanks = None
+        self.unclear_dates[sid] = self._unclear if isinstance(self._unclear, list) else None
+        self._blanks = self._unclear = None
         self.series_ok += 1
         return rows
 
@@ -460,9 +468,31 @@ def key_health(telemetry, key_set):
                        f'data was collected from the unofficial graph CSV')
 
 
-def _blank_dates(rows):
-    """행은 있는데 값이 빈(`.`·빈칸) 날짜들 — `_pairs` 가 버리는 바로 그 행."""
-    return [d.strip() for d, v in rows if d and (v is None or str(v).strip() in ('.', ''))]
+API_BLANKS = ('.',)            # 공식 API: 값이 없는 관측은 `"value": "."`
+CSV_BLANKS = ('', '.')         # fredgraph.csv: 값 칸이 비어 있다(지금) 또는 `.`(옛 표기)
+_NO_FIELD = object()
+
+
+def _classify_blanks(rows, explicit):
+    """-> (명시적으로 빈 날짜들, 모르는 날짜들). **명시적 빈 표기**(`explicit` 의 문자열 그대로)만 「원천이 그 달 행을 주고
+    값을 비웠다」의 근거다. 값 필드가 없거나 null·문자열이 아니거나 수로도 빈 표기로도 읽히지 않으면 모른다 — 「미발표」로
+    읽지 않는다(4회차 H1: `{"date": "2025-10-01"}` 처럼 value 가 없는 행이 미발표로 분류돼 승인 예외를 통과했다)."""
+    blank, unclear = [], []
+    for d, v in rows:
+        if not isinstance(d, str) or not d.strip():
+            continue
+        d = d.strip()
+        if isinstance(v, str) and v in explicit:
+            blank.append(d)
+            continue
+        if isinstance(v, (str, int, float)) and not isinstance(v, bool):
+            try:
+                float(v)
+                continue                 # 값이 있는 행(`_pairs` 가 받는 것과 같다)
+            except ValueError:
+                pass
+        unclear.append(d)
+    return blank, unclear
 
 
 def _pairs(rows):

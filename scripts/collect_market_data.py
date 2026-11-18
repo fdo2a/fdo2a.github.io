@@ -540,12 +540,24 @@ def fred_blanks(sid):
     return list(got) if isinstance(got, list) else None
 
 
-def _month_state(vals, blanks, m):
+def fred_unclear(sid):
+    """원천 응답에서 값 필드가 없거나 형식을 모르는 행의 날짜들 | None(모른다) — `FredClient.unclear_dates`.
+    이런 달은 「미발표」의 근거가 없다(4회차 H1)."""
+    try:
+        got = fred_client().unclear_dates.get(sid)
+    except Exception:  # noqa: BLE001
+        return None
+    return list(got) if isinstance(got, list) else None
+
+
+def _month_state(vals, blanks, m, unclear=()):
     """원천에 값이 없는 달 `m`(연·월 일련번호)의 상태 — 행이 있고 값이 빈칸이면 not_published, 행 자체가 없으면
     not_collected, 빈칸 정보가 없으면 unknown(`us.macro_metrics.MISSING_STATES`)."""
     from us.macro_metrics import _month
-    if blanks is None:
+    if blanks is None or unclear is None:
         return 'unknown'
+    if any(_month(d) == m for d in unclear):
+        return 'unknown'                  # 그 달 행의 값 칸이 없거나 형식을 모른다 — 빈칸이라는 근거가 없다
     return 'not_published' if any(_month(d) == m for d in blanks) else 'not_collected'
 
 
@@ -553,26 +565,26 @@ def _ym(m):
     return f'{m // 12:04d}-{m % 12 + 1:02d}'
 
 
-def _lacking_why(vals, tf, blanks):
+def _lacking_why(vals, tf, blanks, unclear=()):
     """`_lacking` 의 달마다 상태 → `{'YYYY-MM': 상태}`."""
     from us.macro_metrics import _month
     by = {_ym(_month(f'{k}-01')): _month(f'{k}-01') for k in _lacking(vals, tf)}
-    return {k: _month_state(vals, blanks, m) for k, m in by.items()}
+    return {k: _month_state(vals, blanks, m, unclear) for k, m in by.items()}
 
 
-def _previous_why(vals, tf, blanks):
+def _previous_why(vals, tf, blanks, unclear=()):
     """직전 변환값을 만들지 못한 까닭 — 그것을 만드는 데 필요한 달 가운데 원천에 없는 것들의 상태(여럿이면 보수적으로).
     필요한 달이 다 있는데도 못 만들었으면(값 0 등) unknown."""
     from us.macro_metrics import _month, worst_state
     if tf == 'level' or not vals:
-        return 'not_collected' if blanks is not None else 'unknown'      # 직전 관측 자체가 원천에 없다
+        return 'not_collected' if blanks is not None and unclear is not None else 'unknown'   # 직전 관측이 원천에 없다
     have = {_month(d) for d, _ in vals}
     last = _month(vals[-1][0])
     need = {'yoy_pct': [last - 1, last - 13], 'mom_pct': [last - 1, last - 2], 'mom_diff': [last - 1, last - 2]}[tf]
     absent = [m for m in need if m not in have]
     if not absent:
         return 'unknown'
-    return worst_state({_month_state(vals, blanks, m) for m in absent})
+    return worst_state({_month_state(vals, blanks, m, unclear) for m in absent})
 
 
 def collect_econ(reasons=None, refs=None):
@@ -613,7 +625,8 @@ def collect_econ(reasons=None, refs=None):
             # `lacking_why` = 그 달이 왜 없나(미발표·미수집·모름) — 승인 예외는 미발표일 때만(2026-11-18)
             blanks = fred_blanks(sid)
             refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7],
-                          'lacking': _lacking(vals, tf), 'lacking_why': _lacking_why(vals, tf, blanks)}
+                          'lacking': _lacking(vals, tf),
+                          'lacking_why': _lacking_why(vals, tf, blanks, fred_unclear(sid))}
             continue
         actual, previous = pair
         row = {
@@ -623,7 +636,7 @@ def collect_econ(reasons=None, refs=None):
         }
         if previous is None:
             # 직전 칸이 왜 비었나 — 「미발표」로 뭉뚱그리지 않는다(2026-11-18). 표의 「—」 옆에 이 사유가 실린다
-            row['previous_why'] = _previous_why(vals, tf, fred_blanks(sid))
+            row['previous_why'] = _previous_why(vals, tf, fred_blanks(sid), fred_unclear(sid))
         if opts.get('role'):
             row['role'] = opts['role']
         out.append(row)

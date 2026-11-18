@@ -110,6 +110,7 @@ def test_g5_after_december_cpi_us_passes_without_the_exception(tmp_path, monkeyp
     monkeypatch.setattr(cmd, 'ECON', table)
     monkeypatch.setattr(cmd, 'fred_series', lambda sid: series[sid])
     monkeypatch.setattr(cmd, 'fred_blanks', lambda sid: ['2025-10-01'])          # 원천 응답: 그 달 행은 있고 값이 빈칸
+    monkeypatch.setattr(cmd, 'fred_unclear', lambda sid: [])
     monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
     reasons, refs = {}, {}
     rows, by_id = cmd.collect_econ(reasons, refs)
@@ -153,3 +154,75 @@ def test_g5_after_december_cpi_us_passes_without_the_exception(tmp_path, monkeyp
     idx2 = fetch_releases.index_collect({'report_date': day, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh', mmc2)
     assert not _real_us(tmp_path, (econ2, mmc2, ev2, idx2), date=day)[1]['publish_ok']
     assert _real_us(tmp_path, (econ2, mmc2, ev2, idx2), date='2026-12-09')[1]['publish_ok']   # 만료 전날까지는 예외
+
+
+# ── 4회차 H1 — 값 필드가 없는 행은 「미발표」의 근거가 아니다: 실제 정책으로 끝까지 ───────────────────────
+
+def _collect_with_client(monkeypatch, client, day):
+    """수집 함수들에 원천 응답(합성)을 그대로 흘려 네 파일의 collect 를 만든다."""
+    sys.path.insert(0, SCRIPTS)
+    import collect_market_data as cmd
+    import eval_macro_regime
+    import fetch_releases
+    monkeypatch.setattr(cmd, 'ECON', [('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%'),
+                                      ('Inflation', 'Core CPI YoY', 'CPILFESL', 'yoy_pct', '%'),
+                                      ('Inflation', 'CPI MoM', 'CPIAUCSL', 'mom_pct', '%')])
+    monkeypatch.setattr(cmd, 'fred_client', lambda: client)
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    reasons, refs = {}, {}
+    rows, _ = cmd.collect_econ(reasons, refs)
+    econ = cmd.econ_collect(rows, reasons, day, refs)
+    mmc = cmd.macro_metrics_collect({'indicators': [], 'book_state': 'ok'}, econ, day)
+    ev = eval_macro_regime.eval_collect(day, 'fresh', {'collect': mmc}, 'ok')
+    idx = fetch_releases.index_collect({'report_date': day, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh', mmc)
+    return reasons, (econ, mmc, ev, idx)
+
+
+def _api(oct_row):
+    from us import fred as F
+    from us.tests.test_impl_review_r3 import monthly
+    obs = [{'date': d, 'value': str(v)} for d, v in monthly('2019-01', '2026-10', skip=('2025-10',))]
+    if oct_row is not None:
+        obs.append(oct_row)
+    obs.sort(key=lambda o: o['date'])
+    c = F.FredClient(key='k' * 32)
+    c.transport = 'api'
+    c._json = lambda url: {'count': len(obs), 'observations': obs}
+    return c
+
+
+@pytest.mark.parametrize('oct_row,passes', [
+    ({'date': '2025-10-01', 'value': '.'}, True),            # 원천이 그 달 행을 주고 값을 명시적으로 비웠다
+    ({'date': '2025-10-01'}, False),                         # codex 재현 — value 필드가 없다(전에는 예외 통과)
+    ({'date': '2025-10-01', 'value': None}, False),
+    ({'date': '2025-10-01', 'value': 'N/A'}, False),
+    (None, False),                                           # 그 달 행 자체가 없다(not_collected)
+])
+def test_h1_exception_end_to_end_with_the_real_policy(tmp_path, monkeypatch, oct_row, passes):
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    reasons, chain = _collect_with_client(monkeypatch, _api(oct_row), D)
+    assert reasons == {'CPI YoY': 'no_value', 'Core CPI YoY': 'no_value'}
+    h, s = _real_us(tmp_path, chain)
+    assert s['publish_ok'] is passes, (oct_row, chain[0]['missing_ref'])
+    if passes:
+        assert s['status'] == 'conditional' and len(s['inputs']['accepted_missing']) == 4
+    else:
+        assert s['status'] == 'incomplete' and len(s['inputs']['blocking']) == 4 and not s['inputs']['accepted_missing']
+
+
+def test_h1_csv_transport_end_to_end(tmp_path, monkeypatch):
+    from us import fred as F
+    from us.tests.test_impl_review_r3 import monthly
+
+    def client(line):
+        rows = [f'{d},{v}' for d, v in monthly('2019-01', '2026-10', skip=('2025-10',))] + ([line] if line else [])
+        body = 'observation_date,X\n' + '\n'.join(sorted(rows)) + '\n'
+        c = F.FredClient(key=None)
+        c.transport = 'csv'
+        c._get = lambda url: body.encode()
+        return c
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    for line, passes in (('2025-10-01,', True), ('2025-10-01,.', True), ('2025-10-01', False), ('2025-10-01,N/A', False),
+                         (None, False)):
+        _, chain = _collect_with_client(monkeypatch, client(line), D)
+        assert _real_us(tmp_path, chain)[1]['publish_ok'] is passes, line
