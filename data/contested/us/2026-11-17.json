@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-17",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "topic_too_long",
  "retryable": true,
- "attempts": 0,
- "collected_at": "2026-11-18T00:17:53+00:00",
- "cutoff_at": "2026-11-18T00:17:53+00:00",
+ "attempts": 1,
+ "collected_at": "2026-11-18T01:22:29+00:00",
+ "cutoff_at": "2026-11-18T01:22:29+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 210,
+  "harvest": 211,
   "candidates": 1,
   "articles": [
    6
@@ -30,36 +30,22 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 46836,
-   "out": 11942
+   "in": 27326,
+   "out": 11286
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "9/9"
-  },
-  "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 9,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "젠슨 황의 엔비디아 CEO 복귀 논란과 메가스피드 칩 우회 의혹",
-  "query": "nvidia huang chip",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "content_hash": "22eff08017ee1bbf"
+ "content_hash": "00f5ec0917062340"
 }
