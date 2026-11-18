@@ -577,6 +577,14 @@ def _check_coverage(section, metrics, v, html=None):
         want = f"{c.get('total')}개 중 {c.get('used')}개"
         labels = [e.get('label_ko') for e in c.get('excluded') or []]
         texts = shown.get(axis) if axis in in_section else None
+        # 축마다 표식은 정확히 하나, 그 하나가 보여야 한다(4회차 H2) — 보이는 것 옆에 숨긴 사본을 두거나 둘을 실으면
+        # 어느 것이 그 축의 표시인지 흐려진다
+        if texts and hidden.get(axis):
+            v.append(f'§8 {ko} 축의 산출 범위 표시에 숨겨진 사본이 있다({hidden[axis][0]}) — 표식은 축마다 하나만, 보이게')
+            continue
+        if texts and len(texts) > 1:
+            v.append(f'§8 {ko} 축의 산출 범위 표시가 {len(texts)}개다 — 축마다 하나만 싣는다')
+            continue
         if not texts:
             if hidden.get(axis) or axis in _COVERAGE_RAW.findall(section):
                 v.append(f'§8 {ko} 축의 산출 범위 표시가 독자에게 보이는 자리에 없다'

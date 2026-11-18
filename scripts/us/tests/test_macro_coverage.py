@@ -236,8 +236,8 @@ def test_g3_visible_places_pass():
                  '<details><summary>물가 {}</summary>본문</details>',            # summary 는 접혀 있어도 보인다
                  '<br><img src="x.png" alt="">{}', '<div style="display:block">{}</div>'):
         assert _cov_violations(section(' ' + wrap.format(_marker()))) == [], wrap
-    # 숨긴 사본이 하나 더 있어도, 보이는 표시가 있으면 독자는 본다
-    assert _cov_violations(section(f' {_marker()} <div hidden>{_marker()}</div>')) == []
+    # 보이는 표시 옆의 숨긴 사본은 위반이다(4회차 H2 — 표식은 축마다 하나, 보이게) — test_impl_review_r4.py
+    assert _cov_violations(section(f' {_marker()} <div hidden>{_marker()}</div>'))
 
 
 def test_g3_self_closing_hidden_wrapper_and_markers_outside_the_section():

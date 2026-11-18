@@ -91,3 +91,28 @@ def test_h1_wrapper_reads_the_client(monkeypatch):
     monkeypatch.setattr(cmd, 'fred_client', lambda: c)
     assert cmd.fred_blanks('CPIAUCSL') == [] and cmd.fred_unclear('CPIAUCSL') == ['2025-10-01']
     assert cmd.fred_blanks('NOPE') is None and cmd.fred_unclear('NOPE') is None
+
+
+# ── H2. 표식은 축마다 정확히 하나, 그리고 그 하나가 보여야 한다 ──────────────────────────────
+
+from us.tests.test_macro_coverage import _cov_violations, _marker, section  # noqa: E402
+
+
+def test_h2_visible_and_hidden_copies_together_are_a_violation():
+    # codex 재현: 보이는 표식 + 숨겨진 표식 — 전에는 위반 []
+    v = _cov_violations(section(f' {_marker()} <div hidden>{_marker()}</div>'))
+    assert len(v) == 1 and '숨겨진' in v[0]
+    v = _cov_violations(section(f' <details><summary>x</summary>{_marker()}</details> {_marker()}'))
+    assert len(v) == 1 and '숨겨진' in v[0]
+
+
+def test_h2_two_visible_markers_are_a_violation():
+    v = _cov_violations(section(f' {_marker()} {_marker()}'))
+    assert len(v) == 1 and '하나만' in v[0]
+    # 서로 다른 말을 하는 두 표식도 — 어느 것이 맞는지 독자가 알 수 없다
+    other = _marker().replace('8개 중 6개', '8개 중 8개')
+    assert _cov_violations(section(f' {_marker()} {other}'))
+
+
+def test_h2_exactly_one_visible_marker_passes():
+    assert _cov_violations(section(' ' + _marker())) == []
