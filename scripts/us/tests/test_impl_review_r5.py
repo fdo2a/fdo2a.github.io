@@ -113,3 +113,36 @@ def test_i2_value_rows_with_extra_fields_keep_the_old_parse():
     assert c.series('X') == [('2025-09-01', 324.3), ('2025-10-01', 325.0)]
     assert c.blank_dates['X'] == [] and c.unclear_dates['X'] == []
 
+
+# ── I3. 표식은 문서 전체에서 축마다 정확히 하나, 보이는 글자가 있어야 한다 ───────────────────────
+
+def test_i3_hidden_copy_outside_the_macro_section_is_a_violation():
+    sec = section(' ' + _marker())
+    doc = f'<html><body><main>{sec}<section><h2>주식</h2><div hidden>{_marker()}</div></section></main></body></html>'
+    v = _cov_violations(sec, doc=doc)
+    assert len(v) == 1 and '숨겨진' in v[0]                                       # 재현: 전에는 []
+    doc = f'<html><body><main>{sec}<section><h2>주식</h2><p>{_marker()}</p></section></main></body></html>'
+    v = _cov_violations(sec, doc=doc)
+    assert len(v) == 1 and '2개' in v[0]                                          # 보이는 사본이 §8 밖에 하나 더
+    # §8 밖에만 있으면 §8 에는 없는 것이다
+    doc = f'<html><body><main>{section()}<section><h2>주식</h2><p>{_marker()}</p></section></main></body></html>'
+    assert _cov_violations(section(), doc=doc)
+
+
+def test_i3_empty_marker_and_opacity_zero():
+    empty = '<span data-axis-coverage="Inflation"></span>'
+    v = _cov_violations(section(f' {_marker()} {empty}'))
+    assert len(v) == 1 and ('2개' in v[0] or '빈' in v[0])                        # 재현: 빈 요소가 개수에서 빠졌다
+    v = _cov_violations(section(f' {empty}'))
+    assert len(v) == 1 and '빈' in v[0]
+    v = _cov_violations(section(' ' + _marker().replace('<span ', '<span style="opacity:0" ')))
+    assert len(v) == 1 and '보이는 자리' in v[0]                                   # 재현: 전에는 통과
+    v = _cov_violations(section(f' <div style="opacity: 0;">{_marker()}</div>'))
+    assert len(v) == 1 and '보이는 자리' in v[0]
+    for ok in ('opacity:0.6', 'opacity: 1', 'opacity:.5'):
+        assert _cov_violations(section(' ' + _marker().replace('<span ', f'<span style="{ok}" '))) == [], ok
+
+
+def test_i3_exactly_one_visible_marker_in_the_whole_document_passes():
+    sec = section(' ' + _marker())
+    assert _cov_violations(sec, doc=f'<html><body><main>{sec}<section><h2>주식</h2><p>본문</p></section></main></body></html>') == []

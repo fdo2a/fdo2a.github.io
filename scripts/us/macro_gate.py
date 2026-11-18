@@ -457,7 +457,10 @@ def _check_axis_strip(section, v):
 
 
 _COVERAGE_RAW = re.compile(r'\bdata-axis-coverage\s*=\s*["\']?([A-Za-z]+)', re.I)
-_HIDING_STYLE = re.compile(r'display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse)', re.I)
+# 인라인 style 로 숨기는 것 가운데 보는 것은 셋뿐이다 — display:none, visibility:hidden, opacity:0(5회차 I3).
+# 그 밖(글자 크기 0, 화면 밖 위치, 같은 색, 스타일시트의 클래스)은 정적 검사로 끝낼 수 없다 — 실사이트 감시 단계의 몫.
+_HIDING_STYLE = re.compile(r'display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse)'
+                           r'|opacity\s*:\s*(?:0+(?:\.0+)?|\.0+)\s*(?:;|!|$)', re.I)
 _VOID = frozenset(('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
                    'track', 'wbr'))
 _NEVER_SHOWN = frozenset(('script', 'style', 'template', 'noscript', 'head', 'title'))
@@ -568,10 +571,16 @@ def _check_coverage(section, metrics, v, html=None):
     doc = html if html else section
     at = doc.find(section) if html else 0
     lo, hi = (at, at + len(section)) if at >= 0 else (0, len(doc))
-    shown, hidden = {}, {}
+    # 표식은 **문서 전체**에서 축마다 정확히 하나다(5회차 I3 — §8 밖의 숨긴 사본·빈 요소가 개수에서 빠졌다).
+    # shown = §8 안의 보이는 표식, elsewhere = §8 밖의 보이는 표식, hidden = 어디든 숨겨진 표식
+    shown, elsewhere, hidden = {}, {}, {}
     for axis, text, why, pos in coverage_markers(doc):
-        if lo <= pos < hi:
-            (hidden if why else shown).setdefault(axis, []).append(why or text)
+        if why:
+            hidden.setdefault(axis, []).append(why)
+        elif lo <= pos < hi:
+            shown.setdefault(axis, []).append(text)
+        else:
+            elsewhere.setdefault(axis, []).append(text)
     for axis, c in cov.items():
         ko = AXIS_KO_COVERAGE.get(axis, axis)
         want = f"{c.get('total')}개 중 {c.get('used')}개"
@@ -582,8 +591,12 @@ def _check_coverage(section, metrics, v, html=None):
         if texts and hidden.get(axis):
             v.append(f'§8 {ko} 축의 산출 범위 표시에 숨겨진 사본이 있다({hidden[axis][0]}) — 표식은 축마다 하나만, 보이게')
             continue
-        if texts and len(texts) > 1:
-            v.append(f'§8 {ko} 축의 산출 범위 표시가 {len(texts)}개다 — 축마다 하나만 싣는다')
+        total = len(texts or []) + len(elsewhere.get(axis) or [])
+        if texts and total > 1:
+            v.append(f'§8 {ko} 축의 산출 범위 표시가 글 전체에 {total}개다 — 축마다 하나만 싣는다')
+            continue
+        if texts and not texts[0].strip():
+            v.append(f'§8 {ko} 축의 산출 범위 표식이 빈 요소다 — 「{c.get("phrase_ko")}」 를 보이는 글자로 싣는다')
             continue
         if not texts:
             if hidden.get(axis) or axis in _COVERAGE_RAW.findall(section):
@@ -597,7 +610,7 @@ def _check_coverage(section, metrics, v, html=None):
         if not any(all(w in t for w in need if w) for t in texts):
             lacking = [w for w in need if w and w not in texts[0]]
             v.append(f'§8 {ko} 축의 산출 범위 표시에 빠진 말: {", ".join(lacking)} — 「{c.get("phrase_ko")}」 그대로 싣는다')
-    for axis in sorted(set(shown) | set(hidden)):
+    for axis in sorted(set(shown) | set(hidden) | set(elsewhere)):
         if axis not in cov:
             v.append(f'§8 {axis} 축에는 빠진 지표가 없는데 산출 범위 표시(data-axis-coverage)가 있다')
 
