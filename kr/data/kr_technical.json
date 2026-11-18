@@ -1,24 +1,24 @@
 {
   "코스피": {
     "as_of": "2026-11-18",
-    "close": 5067.44,
+    "close": null,
     "ma": {
-      "ma20": 5445.54,
-      "ma60": 6243.36,
-      "ma120": 6869.79
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
-    "ma_alignment": "역배열",
+    "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -6.94,
-      "vs_ma60": -18.83,
-      "vs_ma120": -26.24
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 6058.24,
-      "mid": 5445.54,
-      "lower": 4832.85,
-      "pct_b": 0.191,
-      "bandwidth": 0.225
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 5207.86,
@@ -27,7 +27,7 @@
       "senkou_b": 6239.7,
       "cloud_top": 6509.6,
       "cloud_bottom": 6239.7,
-      "price_vs_cloud": "below"
+      "price_vs_cloud": "inside"
     },
     "chikou_above_price_26ago": false,
     "swing": {
@@ -39,24 +39,24 @@
   },
   "코스닥": {
     "as_of": "2026-11-18",
-    "close": 662.81,
+    "close": null,
     "ma": {
-      "ma20": 704.92,
-      "ma60": 788.81,
-      "ma120": 834.71
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
-    "ma_alignment": "역배열",
+    "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -5.97,
-      "vs_ma60": -15.97,
-      "vs_ma120": -20.59
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 785.34,
-      "mid": 704.92,
-      "lower": 624.51,
-      "pct_b": 0.238,
-      "bandwidth": 0.2281
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 677.49,
@@ -65,7 +65,7 @@
       "senkou_b": 776.36,
       "cloud_top": 857.31,
       "cloud_bottom": 776.36,
-      "price_vs_cloud": "below"
+      "price_vs_cloud": "inside"
     },
     "chikou_above_price_26ago": false,
     "swing": {
@@ -77,24 +77,24 @@
   },
   "SK하이닉스": {
     "as_of": "2026-11-18",
-    "close": 1144000.0,
+    "close": null,
     "ma": {
-      "ma20": 1283300.0,
-      "ma60": 1540150.0,
-      "ma120": 1794741.67
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
-    "ma_alignment": "역배열",
+    "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -10.85,
-      "vs_ma60": -25.72,
-      "vs_ma120": -36.26
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 1537449.64,
-      "mid": 1283300.0,
-      "lower": 1029150.36,
-      "pct_b": 0.226,
-      "bandwidth": 0.3961
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 1203000.0,
@@ -103,7 +103,7 @@
       "senkou_b": 1590500.0,
       "cloud_top": 1660000.0,
       "cloud_bottom": 1590500.0,
-      "price_vs_cloud": "below"
+      "price_vs_cloud": "inside"
     },
     "chikou_above_price_26ago": false,
     "swing": {
@@ -115,24 +115,24 @@
   },
   "삼성전자": {
     "as_of": "2026-11-18",
-    "close": 194700.0,
+    "close": null,
     "ma": {
-      "ma20": 210565.0,
-      "ma60": 241080.0,
-      "ma120": 265115.0
+      "ma20": null,
+      "ma60": null,
+      "ma120": null
     },
-    "ma_alignment": "역배열",
+    "ma_alignment": "혼조",
     "disparity": {
-      "vs_ma20": -7.53,
-      "vs_ma60": -19.24,
-      "vs_ma120": -26.56
+      "vs_ma20": null,
+      "vs_ma60": null,
+      "vs_ma120": null
     },
     "bollinger": {
-      "upper": 239996.09,
-      "mid": 210565.0,
-      "lower": 181133.91,
-      "pct_b": 0.23,
-      "bandwidth": 0.2795
+      "upper": null,
+      "mid": null,
+      "lower": null,
+      "pct_b": null,
+      "bandwidth": null
     },
     "ichimoku": {
       "tenkan": 197600.0,
@@ -141,7 +141,7 @@
       "senkou_b": 238600.0,
       "cloud_top": 255250.0,
       "cloud_bottom": 238600.0,
-      "price_vs_cloud": "below"
+      "price_vs_cloud": "inside"
     },
     "chikou_above_price_26ago": false,
     "swing": {
