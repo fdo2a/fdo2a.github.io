@@ -591,6 +591,79 @@ def _corr_band(v):
     return f'{lead}({"강하게" if a >= 0.6 else "느슨하게"})'
 
 
+YIELD_MOVE_TICKERS = (('10Y', '^TNX'), ('30Y', '^TYX'))
+
+
+def _last_bar_is_today(closes, dates, ticker, rd):
+    """야후 이력의 마지막 봉이 보고일 것인가. 날짜를 모르면 그렇다고 본다(`move_multiple` 의 가정)."""
+    ds = (dates or {}).get(ticker)
+    seq = (closes or {}).get(ticker)
+    if not ds or not rd or not seq or len(ds) != len(seq):
+        return True
+    return ds[-1] == rd
+
+
+def align_yield_moves(moves, closes, market_data, w=MOVE_WINDOW, dates=None):
+    """국채 당일 변화를 **발행 표의 16:00 ET 컷**으로 바꾼다(2026-11-07).
+
+    야후 금리 지수는 15:00 ET 에 끝나 그 일봉 변화는 표의 bp 와 방향·크기가 다를 수 있다. 크기 판정의
+    잣대(평소 하루)는 그대로 야후 일봉 이력이다 — 긴 이력은 옛 계열이라는 원자재와 같은 한계.
+    표 행이 16:00 컷이 아니거나 전일比가 없으면 손대지 않는다.
+    """
+    ylds = (market_data or {}).get('yields') or {}
+    rd = (market_data or {}).get('report_date')
+    for name, ticker in YIELD_MOVE_TICKERS:
+        row = ylds.get(name) or {}
+        if row.get('basis') != 'cut_1600_et' or row.get('bp') is None:
+            continue
+        if rd and row.get('date') != rd:
+            # 채권 휴장일 — 실린 커브는 직전 국채 세션 것이고 bp 도 그 세션의 변화다. 오늘 움직임이 아니다.
+            moves[name] = None
+            continue
+        today = row['bp'] / 100.0
+        ch = changes(closes, ticker)
+        # 잣대는 오늘을 뺀 지난 w 일 — 야후 마지막 봉이 오늘 것일 때만 그 봉을 뺀다(codex 구현 검토 9회 #3)
+        hist = (ch[:-1] if _last_bar_is_today(closes, dates, ticker, rd) else ch) if ch else []
+        typical = _stdev(hist[-w:]) if len(hist) >= w else None
+        mult = round(today / typical, 2) if typical else None
+        moves[name] = {'ticker': ticker, 'change': round(today, 3), 'unit': 'pp',
+                       'multiple': mult, 'band': move_band(mult), 'basis': 'cut_1600_et'}
+
+
+def align_yield_levels(levels, closes, market_data, w=PCTL_WINDOW, dates=None):
+    """국채 「지금 위치」(백분위·말)도 **표의 16:00 컷 값**을 지난 이력 위에 놓아 잰다(codex 구현 검토 8회 #2).
+
+    야후 금리 지수는 15:00 ET 에 끝나 그 마지막 값이 표와 다르다. 비교 이력은 야후 일봉에서 오늘 봉을 뺀 것
+    (`move_multiple` 과 같은 가정 — 마지막 봉이 오늘) 그대로다. 채권 휴장일·컷이 아닌 행은 위치를 비운다/그대로 둔다.
+    """
+    ylds = (market_data or {}).get('yields') or {}
+    rd = (market_data or {}).get('report_date')
+    for name, ticker in YIELD_MOVE_TICKERS:
+        row = ylds.get(name) or {}
+        if row.get('basis') != 'cut_1600_et' or row.get('level') is None:
+            continue
+        if rd and row.get('date') != rd:
+            # 휴장일 — 표는 직전 세션의 16:00 컷인데 야후 마지막 값은 15:00 이다. 위치를 비운다(9회 #2).
+            levels[name] = None
+            continue
+        s = _series(closes, ticker)
+        if s is None or len(s) < 30:
+            continue
+        hist = s[:-1] if _last_bar_is_today(closes, dates, ticker, rd) else s
+        prior = hist[-w:]
+        if not prior:
+            continue
+        cur = float(row['level'])
+        below = sum(1 for v in prior if v < cur)
+        above = sum(1 for v in prior if v > cur)
+        ties = len(prior) - below - above
+        pct = round((below + 0.5 * ties) / len(prior) * 100, 1)
+        n = len(prior)
+        levels[name] = {'value': round(cur, 3), 'percentile': pct, 'band': percentile_band(pct),
+                        'sessions': n, 'plain': standing_mod.plain(pct, n, above=above, below=below),
+                        'basis': 'cut_1600_et'}
+
+
 def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
     """Assemble every reading into the block the writer and gate read.
 
@@ -679,6 +752,8 @@ def compute(closes, market_data, sectors, dates=None, index_ticker='^GSPC'):
         got = factor_decomposition(closes, dates, basket)
         if got:
             factors[key] = dict(got, label_ko=label)
+    align_yield_moves(moves, closes, market_data, dates=dates)
+    align_yield_levels(levels, closes, market_data, dates=dates)
     rows = ((market_data or {}).get('yield_drivers') or {}).get('rows')
     return {
         'windows': {'move': MOVE_WINDOW, 'percentile': PCTL_WINDOW,

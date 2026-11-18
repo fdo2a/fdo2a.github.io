@@ -996,13 +996,9 @@ def _us_listed(ticker):
     return '.' not in ticker and '=' not in ticker
 
 
-def completeness(data, intraday, naver_stale=False, report_date=None):
+def completeness(data, intraday, report_date=None):
     missing = []
     report_date = report_date or data.get('report_date')
-    if naver_stale:
-        # 국채 현물 마감 전에 뜬 회차. 이 판을 complete 로 커밋하면 마감 뒤 회차가
-        # 멱등 가드에 막혀 그날 커브가 영영 전일치로 남는다.
-        missing.append('yields/naver_close_not_posted')
     for group, pairs in GROUPS:
         for name, ticker in pairs:
             row = data[group].get(name)
@@ -1019,7 +1015,13 @@ def completeness(data, intraday, naver_stale=False, report_date=None):
         y = data['yields'].get(t)
         if y is None or y.get('level') is None:
             missing.append(f'yields/{t}')
-        elif y.get('week_ago') is None:
+            continue
+        # 16:00 ET 컷 행만 발행한다 — 기준이 다른 값(종가·야후·FRED)이 섞이면 막는다.
+        if y.get('basis') != 'cut_1600_et':
+            missing.append(f'yields/{t}/basis')
+        if y.get('bp') is None:
+            missing.append(f'yields/{t}/prev')
+        if y.get('week_ago') is None:
             missing.append(f'yields/{t}/week_ago')
     for n in ('Nasdaq', 'S&P 500'):
         if intraday.get(n) is None:
@@ -1421,264 +1423,37 @@ def weekly_aggregate(market_rows, report_date):
     return k, period_build('weekly', k, dated, yh, daily_headlines(repo_root))
 
 
-# ── 수익률만 고치는 재실행 (2026-11-19) ─────────────────────────────────────
-# 루틴은 `missing` 이 `yields/naver_close_not_posted` 하나뿐인 동안 9분마다 수집을 다시 건다.
-# 그 재실행이 전부 다시 모으면 러너 3-4분·커밋 하나가 매번 든다(하루 중앙 3회). 그 당일 판이
-# 「네이버만 빠짐」이면 네이버만 한 번 보고: 종가가 왔으면 수익률과 거기서 나오는 것만 고치고,
-# 아직 전 거래일이면 아무것도 쓰지 않고 끝낸다. 그 밖의 모든 경우는 None — 전체 수집 그대로다.
-NAVER_ONLY_MISSING = ['yields/naver_close_not_posted']
-PATCH_PROBE_TIMEOUT_S = 10
-PATCH_PROBE_BUDGET_S = 80        # 요청 사이·조각 사이에서 보는 시한(정상적인 느린 응답은 여기서 끝난다)
-PATCH_PROBE_WALL_S = 90          # 벽시계 상한 — 무슨 일이 있어도 탐침은 90초에 끊긴다(루틴은 540초 기다린다)
-_NY = 'America/New_York'
+def load_ledger_or_exit(path):
+    """국채 16:00 원장. 깨졌으면 **수집을 시작하기 전에**(산출물을 쓰기 전, 건너뛰기 판단 전) 실패로 끝낸다(exit 3).
 
-
-def _load_json(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except (OSError, ValueError):
-        return None
-
-
-def _emit(*lines):
-    out = os.environ.get('GITHUB_OUTPUT')
-    if out:
-        with open(out, 'a') as fh:
-            for line in lines:
-                fh.write(line + '\n')
-
-
-def patch_base(outdir, now, no_patch=False):
-    """고칠 수 있는 판이면 (prev, intraday, bond_date), 아니면 (None, 이유).
-
-    조건은 전부 「첫 수집이 그날 마감 뒤에 한 실행으로 끝냈고, 고치기가 다시 돌리지 않는 사슬
-    (원문·요소 대조·레짐 평가·새 발표 원장)이 그 실행의 것으로 온전하다」를 확인한다. 하나라도
-    아니면 전체 수집이 그것을 다시 만든다.
+    깨진 원장을 빈 것으로 보고 이어 가면 지난 세션이 지워지거나, 국채가 빈 판이 완성본 market_data·차트·
+    이력·주간 집계를 덮는다(codex 구현 검토 3-5회). 실패한 잡은 알림으로 드러나고 파일은 사람이 고친다.
     """
-    import zoneinfo
-    from us.history import read_jsonl
-    from us.naver_yields import bond_session, load_bond_closed
-    from fund.calendar import load as load_holidays
-    if no_patch:
-        return None, '--no-patch'
-    prev = _load_json(os.path.join(outdir, 'market_data.json'))
-    if not isinstance(prev, dict):
-        return None, 'market_data.json 없음·읽기 실패'
-    rd, run, gen = prev.get('report_date'), prev.get('collection_run'), prev.get('generated')
-    if prev.get('source') != SOURCE or prev.get('complete') is not False \
-            or prev.get('missing') != NAVER_ONLY_MISSING:
-        return None, '「네이버 종가만 빠진」 판이 아니다'
-    if not (rd and run and gen and prev.get('collection_started')):
-        return None, '수집 시작·실행 표시가 없는 판'
+    from us import yield_cut
     try:
-        ny = zoneinfo.ZoneInfo(_NY)
-        started = datetime.datetime.fromisoformat(prev['collection_started']).astimezone(ny)
-        now_ny = now.astimezone(ny)
-        day = datetime.date.fromisoformat(rd)
-    except (TypeError, ValueError):
-        return None, '수집 시작 시각을 읽지 못했다'
-    close = datetime.datetime.combine(day, datetime.time(16, 30), tzinfo=ny)
-    if started.date() != day or started < close:
-        return None, f'첫 수집이 {rd} 16:30 ET 뒤가 아니다({started.isoformat()})'
-    if now_ny.date() != day or now_ny < started:
-        return None, f'지금 뉴욕 날짜가 {rd} 가 아니거나 첫 수집보다 이르다'
-    intraday = _load_json(os.path.join(outdir, 'intraday.json'))
-    if not isinstance(intraday, dict):
-        return None, 'intraday.json 없음'
-    econ = _load_json(os.path.join(outdir, 'econ_indicators.json')) or {}
-    mm = _load_json(os.path.join(outdir, 'macro_metrics.json')) or {}
-    if econ.get('generated') != gen or mm.get('generated') != gen or mm.get('report_date') != rd:
-        return None, 'econ·macro_metrics 가 같은 실행의 것이 아니다'
-    index = _load_json(os.path.join(outdir, 'releases', 'index.json')) or {}
-    rows = index.get('releases')
-    if (index.get('status') != 'complete' or index.get('report_date') != rd
-            or index.get('run_id') != run or not isinstance(rows, list)
-            or not all(isinstance(r, dict) and r.get('ok') is True for r in rows)):
-        return None, '원문 index 가 그 실행의 온전한 것이 아니다(실패한 원문 포함)'
-    ev = _load_json(os.path.join(outdir, 'macro_eval.json')) or {}
-    if ev.get('report_date') != rd or ev.get('collection_run') != run:
-        return None, 'macro_eval 이 그 실행의 것이 아니다'
-    scan = f'scan|{rd}|{run}'
-    if not any(r.get('id') == scan for r in read_jsonl(os.path.join(outdir, 'history', 'releases.jsonl'))):
-        return None, '새 발표 원장에 그 실행의 기록이 없다'
-    cal = os.path.join(outdir, 'market_holidays.json')
-    bond_date = bond_session(rd, load_bond_closed(cal), (load_holidays(cal) or {}).get('dates') or ())
-    holiday = prev.get('yields_bond_holiday')
-    if bond_date != rd:
-        if not (isinstance(holiday, dict) and holiday.get('curve_date') == bond_date):
-            return None, '채권 휴장 기준이 그 판과 다르다'
-    elif holiday is not None:
-        return None, '채권 휴장 기준이 그 판과 다르다'
-    return (prev, intraday, bond_date), None
-
-
-def _restore_file(path, data):
-    """바꿔치기 전 상태로 — `data` 가 None 이면 원래 없던 파일이다."""
-    if data is None:
-        if os.path.exists(path):
-            os.remove(path)
-        return
-    with open(path, 'wb') as fh:
-        fh.write(data)
-
-
-def _install_patch(staged):
-    """[(임시 파일, 목적지)] 를 순서대로 바꿔치기한다. market_data.json 이 맨 끝이어야 한다.
-
-    중간에 실패하면 이미 바꾼 파일을 되돌리고(market_data.json 은 맨 끝이라 아직 옛 판이다)
-    **exit 1** 로 실행을 실패시킨다 — 아무것도 커밋되지 않고 다음 재실행이 원격의 옛 판에서 다시
-    시작한다. 같은 프로세스에서 전체 수집으로 넘어가지 않는다: 방금 쓰기가 실패한 디스크에서 전체
-    수집의 이력·주간 쓰기는 실패해도 삼켜지므로(비-코어 try/except) 새 수익률과 옛 이력이 섞여
-    커밋될 수 있다(codex 구현 검토 1회 I3).
-    """
-    backups = []
-    for _, target in staged:
-        try:
-            with open(target, 'rb') as fh:
-                backups.append(fh.read())
-        except FileNotFoundError:
-            backups.append(None)
-    done = 0
-    try:
-        for tmp, target in staged:
-            os.replace(tmp, target)
-            done += 1
-        return True
-    except Exception as e:
-        print(f'yields patch: install failed at {staged[done][1]} ({e}) — restoring', file=sys.stderr)
-        try:
-            for (_, target), data in list(zip(staged, backups))[:done]:
-                _restore_file(target, data)
-        except Exception as e2:
-            print(f'yields patch: could not restore the files it replaced ({e2})', file=sys.stderr)
-        print('FATAL: yields patch install failed — failing the run so nothing is committed',
+        return yield_cut.load(path, strict=True)
+    except yield_cut.LedgerCorrupt as e:
+        print(f'FATAL: yields_1600 ledger is corrupt — fix it by hand before collecting: {e}',
               file=sys.stderr)
-        sys.exit(1)
+        sys.exit(3)
 
 
-def _within(seconds, fn):
-    """`fn()` 의 결과를, 벽시계로 `seconds` 초 안에 끝났을 때만 돌려준다. 넘기면 TimeoutError.
+def market_history(hdir, data, ledger, ledger_ok, bond_closed=(), equity_closed=()):
+    """시세 이력(`history/market.jsonl`) 한 행 + 국채 16:00 컷 소급.
 
-    소켓 timeout 은 바이트가 올 때마다 새로 시작하고 버퍼 읽기는 요청한 양이 찰 때까지 돌아오지
-    않으므로, 읽기 안쪽에서 시한을 보는 것으로는 조금씩 흘려 보내는 응답을 못 끊는다(codex 구현
-    검토 1·2회 I6). 그래서 일을 데몬 스레드에 맡기고 기다리는 쪽에서 끊는다 — 남은 스레드는
-    프로세스가 끝날 때 함께 사라지고, 그 결과는 버린다.
+    국채 원장이 깨진 회차(`ledger_ok` 거짓)는 이력을 건드리지 않는다 — 국채가 빈 행으로 이미 있는 그날 행을
+    덮거나(--force 재수집), 임시로 다시 채운 CNBC 값으로 옛 행을 소급하면 주간 집계가 바뀐다(codex 구현 검토 4회).
     """
-    import threading
-    box = {}
-
-    def run():
-        try:
-            box['value'] = fn()
-        except BaseException as e:          # 스레드 안의 실패를 부른 쪽으로 옮긴다
-            box['error'] = e
-    t = threading.Thread(target=run, daemon=True)
-    t.start()
-    t.join(seconds)
-    if t.is_alive():
-        raise TimeoutError(f'not finished within {seconds}s')
-    if 'error' in box:
-        raise box['error']
-    return box['value']
-
-
-def yields_patch_step(args, now=None):
-    """-> 'patched' | 'waiting' | None(전체 수집으로 간다)."""
-    import copy
-    from us.history import market_record, read_jsonl
-    outdir = args.outdir
-    now = now or datetime.datetime.now(datetime.timezone.utc)
-    base, why = patch_base(outdir, now, getattr(args, 'no_patch', False))
-    if base is None:
-        print(f'yields patch: not eligible ({why}) — full collection')
-        return None
-    prev, intraday, bond_date = base
-    rd = prev['report_date']
-    print(f'yields patch: {rd} lacks only the Naver close — probing Naver for {bond_date}')
-    try:
-        # 한 쪽(60거래일)만 받는다 — 커브에 필요한 것은 기준일·전일·5거래일 전뿐이다. 쪽이 하나라
-        # 「앞쪽만 받고 뒤쪽은 실패한」 반쪽 응답이 생길 수 없다: 만기 하나라도 실패하면 커브가 없다.
-        curve, latest = _within(PATCH_PROBE_WALL_S, lambda: naver_spot_yields(
-            pages=1, expected_date=bond_date, timeout=PATCH_PROBE_TIMEOUT_S, attempts=1,
-            budget_s=PATCH_PROBE_BUDGET_S))
-    except Exception as e:
-        print(f'yields patch: Naver probe failed ({e})', file=sys.stderr)
-        curve, latest = None, None
-    usable = bool(curve) and all((curve.get(t) or {}).get(f) is not None
-                                 for t in ('2Y', '5Y', '10Y', '30Y') for f in ('level', 'bp'))
-    if not usable:
-        # 전체 수집의 naver_stale 과 같은 식 — 「아직 안 나왔다」일 때만 기다린다.
-        if bool(latest) and curve is None and latest < bond_date:
-            print(f'yields patch: Naver is still {latest} (< {bond_date}) — waiting, nothing written')
-            _emit('skipped=true', 'waiting=true')
-            return 'waiting'
-        print('yields patch: no usable Naver curve — full collection', file=sys.stderr)
-        return None
-
-    new = copy.deepcopy(prev)
-    new['yields'] = merge_yields(prev.get('yields_fred'), prev.get('yields'), curve)
-    apply_spreads(new, prev.get('yields_fred'))
-    missing = completeness(new, intraday, naver_stale=False, report_date=rd)
-    if missing:
-        print(f'yields patch: still incomplete after the patch ({", ".join(missing)}) — '
-              'full collection', file=sys.stderr)
-        return None
-    new['complete'], new['missing'] = True, []
-    # 수집 상태 칸도 고친 판으로 다시 만든다 — 첫 실행의 partial(네이버 종가 없음)을 물려받으면 1a 장부가 막는다.
-    new['collect'] = market_collect(new)
-    new['yields_patched'] = {
-        'at': now.astimezone(datetime.timezone.utc).isoformat(timespec='seconds'),
-        'run': run_id(), 'source': 'Naver', 'date': bond_date}
-
-    hist = os.path.join(outdir, 'history', 'market.jsonl')
-    md_path = os.path.join(outdir, 'market_data.json')
-    png = os.path.join(outdir, 'yield_curve.png')
-    staged = []
-    try:
-        record = market_record(new)
-        rows = [r for r in read_jsonl(hist) if r.get('report_date') != rd] + [record]
-        rows.sort(key=lambda r: r.get('report_date') or '')
-        k, agg = weekly_aggregate(rows, rd)
-        weekly = os.path.join(outdir, 'weekly', f'{k}.json')
-        os.makedirs(os.path.dirname(weekly), exist_ok=True)
-        os.makedirs(os.path.dirname(hist), exist_ok=True)
-
-        def stage(target, write):
-            tmp = os.path.join(os.path.dirname(target), '.patch-' + os.path.basename(target))
-            staged.append((tmp, target))
-            write(tmp)
-
-        stage(png, lambda tmp: render_curve(new['yields'], tmp))
-
-        def write_hist(tmp):
-            with open(tmp, 'w', encoding='utf-8') as fh:
-                for r in rows:
-                    fh.write(json.dumps(r, ensure_ascii=False, default=str) + '\n')
-        stage(hist, write_hist)
-
-        def dump(obj):
-            def write(tmp):
-                with open(tmp, 'w') as fh:
-                    json.dump(obj, fh, indent=2, default=str, ensure_ascii=False)
-            return write
-        stage(weekly, dump(agg))
-        stage(md_path, dump(new))            # 맨 끝 — 이것이 바뀌어야 판이 complete 가 된다
-        _install_patch(staged)               # 실패하면 되돌리고 exit 1 — 여기로 돌아오지 않는다
-    except Exception as e:
-        print(f'yields patch: could not prepare the outputs ({e}) — full collection', file=sys.stderr)
-        return None
-    finally:
-        for tmp, _ in staged:
-            try:
-                os.remove(tmp)
-            except OSError:
-                pass
-    for t, row in new['yields'].items():
-        print(f"  {t}: {row['level']}% ({row.get('source')} {row['date']})")
-    print(f'yields patch: {rd} is now COMPLETE (curve {bond_date}, weekly {k})')
-    _emit('patched=true')
-    return 'patched'
+    from us.history import append_jsonl, backfill_yield_cut, market_record
+    path = os.path.join(hdir, 'market.jsonl')
+    if not ledger_ok:
+        print('history: market.jsonl untouched (yields ledger corrupt)', file=sys.stderr)
+        return
+    if append_jsonl(path, market_record(data), upsert=True):
+        print(f"history: appended {data.get('report_date')} to market.jsonl")
+    nb = backfill_yield_cut(path, ledger, bond_closed=bond_closed, equity_closed=equity_closed)
+    if nb:
+        print(f"history: 16:00 ET yields cut back-filled on {nb} older rows")
 
 
 def main():
@@ -1686,8 +1461,6 @@ def main():
     ap.add_argument('--outdir', default='data')
     ap.add_argument('--force', action='store_true',
                     help='regenerate even if a complete dataset for the same report date exists')
-    ap.add_argument('--no-patch', action='store_true',
-                    help='네이버 종가만 빠진 당일 판도 수익률만 고치지 않고 전부 다시 모은다')
     ap.add_argument('--fred-check', action='store_true',
                     help='공식 API 와 graph CSV 를 전 생산 시리즈에 대해 대조하고 끝낸다 '
                          '(아무 파일도 쓰지 않는다)')
@@ -1703,10 +1476,11 @@ def main():
     if args.ff_probe:
         sys.exit(ff_probe(args.ff_probe_url, args.max_time))
 
-    # 네이버 종가만 기다리는 재실행은 여기서 끝난다(고쳤거나, 아직이라 아무것도 안 썼거나).
-    if yields_patch_step(args) is not None:
-        return
-    # 이 판이 언제·어느 실행에서 모이기 시작했나 — 고치기 경로가 「마감 뒤 한 실행의 판」인지 본다.
+    # 국채 16:00 원장 검사는 **네트워크·수집·건너뛰기 판단보다 먼저** — 완성본이 있는 날의 재실행도 깨진
+    # 원장을 실패로 드러내고, 외부에 닿기 전에 끝난다(codex 구현 검토 6회 #1·7회 #1).
+    ledger_path = os.path.join(args.outdir, 'yields_1600.json')
+    ledger = load_ledger_or_exit(ledger_path)
+    # 이 판이 언제·어느 실행에서 모이기 시작했나(기록용).
     collection_started = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
 
     set_fred_client(None)          # 재진입 실행이 지난 열화 상태를 물려받지 않게
@@ -1760,29 +1534,42 @@ def main():
         except Exception:
             pass
 
-    print('collecting Naver same-date curve (primary: 2Y/5Y/10Y/30Y)...')
-    # 채권시장만 쉬는 날(콜럼버스 데이·재향군인의 날)은 그날 국채 종가가 영영 없다 —
-    # 직전 국채 마감일 커브를 그 날짜 그대로 싣는다(2026-10-12 글이 이것 때문에 빠졌다).
+    print('collecting Treasury 16:00 ET cut (Naver intraday; CNBC only for gaps)...')
+    # 2026-11-07 부터 발행 커브는 16:00 ET 에 가장 가까운 스냅숏(15:45-16:15) — 주식·원자재·환율과
+    # 같은 시각. 네이버 「종가」는 18시 넘어 모여 발행을 08시 대로 밀었다. 전일·1주 전은 같은 규칙으로
+    # 고른 원장 값이다(`us/yield_cut.py`). 종가·야후(15:00 ET)·FRED(T-1)로 채우지 않는다.
+    # 채권시장만 쉬는 날은 직전 국채 세션 커브를 그 날짜로 싣는다(2026-10-12 규칙 그대로).
     from us.naver_yields import bond_session, load_bond_closed
+    from us import yield_cut
     from fund.calendar import load as load_holidays
     cal_path = os.path.join(args.outdir, 'market_holidays.json')
-    bond_date = bond_session(report_date, load_bond_closed(cal_path),
-                             (load_holidays(cal_path) or {}).get('dates') or ())
+    bond_closed = load_bond_closed(cal_path)
+    equity_closed = set((load_holidays(cal_path) or {}).get('dates') or ())
+    bond_date = bond_session(report_date, bond_closed, equity_closed)
     if bond_date != report_date:
         print(f'  {report_date} is a US bond-market holiday — curve as of {bond_date}')
-    yields_naver, naver_latest = naver_spot_yields(expected_date=bond_date)
-    # 「아직 안 나왔다」와 「못 받았다」는 다르게 다뤄야 한다. 전자는 다음 회차가 메울
-    # 수 있으므로 incomplete 로 남겨 멱등 가드가 재시도를 막지 않게 하고, 후자는
-    # 야후·FRED 폴백으로 발행한다 — 네이버 장애로 발행이 멈추면 안 된다.
-    naver_stale = bool(naver_latest) and yields_naver is None and naver_latest < bond_date
-    if naver_stale:
-        print(f'  Naver curve is still {naver_latest} (< {bond_date}) — 국채 마감 전 회차로 본다',
-              file=sys.stderr)
-    print('collecting Yahoo spot yields (fallback: 5Y/10Y/30Y)...')
-    yields_yahoo = yahoo_spot_yields()
-    print('collecting FRED yields (fallback + cross-check)...')
+    closed = set(bond_closed) | equity_closed
+    ledger_ok = True  # 깨진 원장은 main() 첫머리에서 이미 exit 3
+    _cnbc = {}
+
+    def cnbc_once():
+        if 'v' not in _cnbc:
+            _cnbc['v'] = yield_cut.fetch_cnbc(_SSL)
+        return _cnbc['v']
+    from zoneinfo import ZoneInfo
+    now_et = datetime.datetime.now(ZoneInfo('America/New_York')).replace(tzinfo=None)
+    changed = yield_cut.update(ledger, bond_date, closed, yield_cut.fetch_naver(_SSL), cnbc_once,
+                               now_et=now_et)
+    if len(ledger) <= yield_cut.WEEK_BACK:
+        # 전환 첫날: CNBC 5D 의 지난 세션을 모두 적어 1주 전 비교와 이력 소급을 연다.
+        changed += yield_cut.bootstrap(ledger, cnbc_once(), closed, bond_date)
+    if changed and ledger_ok:
+        yield_cut.save(ledger_path, ledger)
+        print(f'  yields_1600 ledger: wrote {", ".join(sorted(changed))}')
+    cut_rows = yield_cut.rows(bond_date, ledger, closed) if ledger_ok else None
+    print('collecting FRED yields (cross-check only)...')
     yields_fred = fred_yields()
-    yields = merge_yields(yields_fred, yields_yahoo, yields_naver)
+    yields = cut_rows or {t: None for t in ('2Y', '5Y', '10Y', '30Y')}
     for t, row in yields.items():
         print(f'  {t}: ' + (f"{row['level']}% ({row.get('source')} {row['date']})" if row else 'MISSING'))
     print('collecting yield drivers (real / breakeven / spreads)...')
@@ -1845,11 +1632,11 @@ def main():
         'mlcc': daily['mlcc'],
         'yields': yields,
         'yields_fred': yields_fred,
-        'yields_note': 'yields = 발행용 기준값. 1순위는 네이버 국채 종가(SIFMA 국채 현물 '
-                       '마감 17:05 ET)로 **전 만기가 동일 기준일**이다. 네이버가 비면 '
-                       'Yahoo 스팟(^FVX/^TNX/^TYX) -> FRED 순으로 메우는데, 그때는 만기별 '
-                       'date가 갈릴 수 있으므로 각 행의 source/date를 표·차트·캡션에 표기할 것. '
-                       'yields_fred는 전 만기 FRED 동일자 대조용.',
+        'yields_note': 'yields = 발행용 기준값. 16:00 ET 에 가장 가까운 장중 스냅숏(15:45-16:15, '
+                       'stamp_et), 전 만기 한 원천(source: naver=레피니티브, cnbc=트레이드웹)·한 날짜. '
+                       '전일(bp)·1주 전(week_ago)도 같은 규칙으로 고른 값이다(prev_source·'
+                       'week_ago_source). 국채 현물 마감(17:05 ET) 종가가 아니다 — 표 캡션에 기준을 밝힌다. '
+                       'yields_fred는 전 만기 FRED(T-1) 대조용.',
         'yield_drivers': drivers,
         # 채권 휴장일에만 붙는다. 작성자는 커브를 「채권시장 휴장 — <curve_date> 종가」로 쓰고
         # 행의 bp 를 그날의 움직임으로 읽지 않는다(bp 는 curve_date 의 전일比다).
@@ -1861,7 +1648,7 @@ def main():
     y = data['yields']
     apply_spreads(data, yields_fred)
 
-    missing = completeness(data, intraday, naver_stale=naver_stale, report_date=report_date)
+    missing = completeness(data, intraday, report_date=report_date)
     data['complete'] = not missing
     data['missing'] = missing
 
@@ -2054,12 +1841,10 @@ def main():
     # 승계 책 이력 — 오늘 커밋돼 있는 macro 를 로그에 밀어 넣는다.
     # 어제까지의 판단이 대상이다 (오늘 것은 아직 writer 가 만들지 않았다).
     try:
-        from us.history import append_jsonl, macro_record, market_record
+        from us.history import append_jsonl, macro_record
         hdir = os.path.join(args.outdir, 'history')
         # 시세 원장이 먼저다 — 기간 집계가 이 행을 읽는다.
-        if append_jsonl(os.path.join(hdir, 'market.jsonl'), market_record(data),
-                        upsert=True):
-            print(f"history: appended {report_date} to market.jsonl")
+        market_history(hdir, data, ledger, ledger_ok, bond_closed, equity_closed)
         for name, fn, out in (('macro.json', macro_record, 'macro.jsonl'),):
             src = os.path.join(args.outdir, name)
             if not os.path.exists(src):
@@ -2076,6 +1861,10 @@ def main():
         # 시세를 다시 받지 않는다 — 발행본이 인쇄한 스냅샷 원장만 굴린다.
         k, agg = weekly_aggregate(read_jsonl(os.path.join(args.outdir, 'history', 'market.jsonl')),
                                   report_date)
+        # 일본 주간이 이 값을 FRED 종가 계열 뒤에 붙일지 가른다(기준이 다르면 붙이지 않는다).
+        from us.period import yields_basis
+        agg['yields_basis'] = yields_basis(read_jsonl(os.path.join(args.outdir, 'history',
+                                                                   'market.jsonl')), report_date)
         d = os.path.join(args.outdir, 'weekly')
         os.makedirs(d, exist_ok=True)
         json.dump(agg, open(os.path.join(d, f'{k}.json'), 'w'),

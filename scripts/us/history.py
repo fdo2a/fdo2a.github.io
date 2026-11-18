@@ -55,12 +55,50 @@ def market_record(data):
         kinds = {r.get('basis') for r in rows}
         if rows and len(kinds) == 1 and None not in kinds:
             basis[group] = kinds.pop()
+    # 국채도 2026-11-07 부터 16:00 ET 컷(`us/yield_cut.py`). 네 만기가 모두 그 기준일 때만 표시한다.
+    yrows = [r for r in ((data or {}).get('yields') or {}).values() if isinstance(r, dict)]
+    ykinds = {r.get('basis') for r in yrows}
+    if yrows and len(ykinds) == 1 and None not in ykinds:
+        basis['yields'] = ykinds.pop()
     if basis:
         row['basis'] = basis
     row['yields'] = {tenor: float(r['level'])
                      for tenor, r in ((data or {}).get('yields') or {}).items()
                      if isinstance(r, dict) and r.get('level') is not None}
     return row
+
+
+def backfill_yield_cut(path, ledger, basis='cut_1600_et', bond_closed=(), equity_closed=()):
+    """16:00 ET 컷 원장에 있는 날의 옛 행(국채 기준 표시 없음)에 `cut_1600.yields` 를 붙인다.
+
+    기간 집계(`period.series_from`)는 최신 행의 기준으로 계열을 통일하고, 옛 행은 같은 기준으로 다시 잰
+    값이 있을 때만 쓴다 — 전환 주에 종가와 16:00 값을 빼지 않게(codex 설계 검토 2회 #5a). 환율·원자재
+    전환(2026-10-14) 때 손으로 한 일을 자동으로 한다. 인쇄값(`yields`)은 건드리지 않는다. → 고친 행 수.
+
+    채권시장만 쉬는 날의 행은 발행 때처럼 **직전 국채 세션**의 컷을 붙인다(`naver_yields.bond_session`) —
+    그 행이 비면 다음 주간이 직전 세션 기준값 없음으로 막힌다(codex 구현 검토 2회 #1).
+    """
+    from us.naver_yields import bond_session
+    rows = read_jsonl(path)
+    n = 0
+    for row in rows:
+        d = row.get('report_date')
+        if not d or (row.get('basis') or {}).get('yields') == basis:
+            continue
+        got = (ledger or {}).get(bond_session(d, set(bond_closed), set(equity_closed)))
+        tenors = (got or {}).get('tenors') or {}
+        vals = {t: float(v['value']) for t, v in tenors.items() if isinstance(v, dict) and v.get('value') is not None}
+        if len(vals) < 4 or ((row.get('cut_1600') or {}).get('yields')) == vals:
+            continue
+        row.setdefault('cut_1600', {})['yields'] = vals
+        n += 1
+    if n:
+        tmp = path + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as fh:
+            for row in rows:
+                fh.write(json.dumps(row, ensure_ascii=False) + '\n')
+        os.replace(tmp, path)
+    return n
 
 
 def read_jsonl(path):

@@ -100,7 +100,13 @@ def series_from(rows, as_of=None):
                 if v is None:
                     continue
                 closes[g].setdefault(name, []).append((d, float(v)))
-        for tenor, v in (row.get('yields') or {}).items():
+        # 국채(2026-11-07 16:00 ET 컷)도 같은 규칙. 단 옛 행에 다시 잰 값이 없으면 **그 날을 비운다** —
+        # 종가와 16:00 값을 이으면 브렌트와 같은 모순이 된다(인쇄값으로 채우는 그룹과 다르다).
+        yvals = dict(row.get('yields') or {})
+        ywant = latest_basis.get('yields')
+        if ywant and (row.get('basis') or {}).get('yields') != ywant:
+            yvals = dict(((row.get('cut_1600') or {}).get('yields')) or {})
+        for tenor, v in yvals.items():
             if v is None:
                 continue
             yields_hist.setdefault(tenor, []).append((d, float(v)))
@@ -121,6 +127,13 @@ def _bounds(closes, key, span):
         return None, None, 0
     dates = sorted({d for d, _ in series if keyer(d) == key})
     return (dates[0], dates[-1], len(dates)) if dates else (None, None, 0)
+
+
+def yields_basis(rows, as_of=None):
+    """`as_of` 까지의 최신 행의 국채 기준(`basis.yields`) — 없으면 None(옛 종가 계열)."""
+    dated = sorted((r for r in (rows or []) if r.get('report_date')
+                    and (as_of is None or r['report_date'] <= as_of)), key=lambda r: r['report_date'])
+    return ((dated[-1].get('basis') or {}).get('yields')) if dated else None
 
 
 def build(span, key, closes, yields_hist, daily_headlines):
@@ -186,6 +199,14 @@ def build(span, key, closes, yields_hist, daily_headlines):
         if chg is None:
             out['complete'] = False
             out['missing'].append(f'yields.{tenor}')
+            continue
+        # 기준값은 **기간 직전의 정확한 세션**이어야 한다. 그날 국채 값이 비었는데(전환 주에 소급이 없는 날)
+        # 더 앞의 값으로 재면 주간 변화가 여러 주치가 된다(codex 구현 검토 1회 #2).
+        bench = [d for d, _ in ((closes.get('indices') or {}).get(BENCHMARK) or []) if d < start]
+        base_d = [d for d, _ in series if d < start]
+        if bench and base_d and base_d[-1] != bench[-1]:
+            out['complete'] = False
+            out['missing'].append(f'yields.{tenor}: {bench[-1]} 기준값 없음 (직전 {base_d[-1]})')
             continue
         last = slice_series(series, start, end)[-1][0]
         if last != end:

@@ -217,13 +217,15 @@ YIELD_TENOR = {('nominal', 2): '2Y', ('nominal', 5): '5Y', ('nominal', 10): '10Y
 
 
 def yield_ref(item, yields, report_date):
-    """그 만기의 그날 종가 행. 날짜가 report_date 가 아니면 붙이지 않는다."""
+    """그 만기의 그날 발행 커브 행(2026-11-07 부터 16:00 ET 컷 — `basis`·`stamp_et` 를 함께 넘긴다).
+    날짜가 report_date 가 아니면 붙이지 않는다."""
     tenor = YIELD_TENOR.get((item['kind'], item['years']))
     row = (yields or {}).get(tenor) if tenor else None
     if not row or row.get('date') != report_date or row.get('level') is None:
         return None
     return {'tenor': tenor, 'level': row.get('level'), 'bp': _r(row.get('bp'), 1),
-            'date': row.get('date'), 'source': row.get('source')}
+            'date': row.get('date'), 'source': row.get('source'),
+            'basis': row.get('basis'), 'stamp_et': row.get('stamp_et')}
 
 
 # --- 책 만들기 -----------------------------------------------------------------

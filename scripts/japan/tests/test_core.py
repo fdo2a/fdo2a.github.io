@@ -101,3 +101,10 @@ def test_us_legs_take_the_published_close_when_fred_lags():
     agg = {'end_date': '2026-09-25', 'yields': {'10Y': {'end': 5.12}}}
     assert C.with_published_close(rows, agg, '10Y')[-1] == ('2026-09-25', 5.12)
     assert C.with_published_close(rows, None, '10Y') == rows
+
+
+def test_published_cut_is_not_spliced_onto_fred_closes():
+    # 2026-11-07: US 발행본 국채가 16:00 ET 컷이면 FRED 종가 계열에 붙이지 않는다 — 한 계열 한 기준
+    rows = [('2026-11-05', 4.80)]
+    agg = {'end_date': '2026-11-06', 'yields': {'10Y': {'end': 4.86}}, 'yields_basis': 'cut_1600_et'}
+    assert C.with_published_close(rows, agg, '10Y') == rows

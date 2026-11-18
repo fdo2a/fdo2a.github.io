@@ -54,7 +54,8 @@ def _trading_back(d, holidays=()):
 
 
 def us_session(now, holidays=()):
-    return _trading_back((now.astimezone(NY) - timedelta(hours=17)).date(), holidays).isoformat()
+    """US 기대 세션 — 뉴욕 16:45 전이면 직전 거래일. 본 런(16:50 ET, 2026-11-23)보다 먼저 넘어가야 본 런이 오늘 세션을 본다."""
+    return _trading_back((now.astimezone(NY) - timedelta(hours=16, minutes=45)).date(), holidays).isoformat()
 
 
 def kr_session(now, holidays=()):

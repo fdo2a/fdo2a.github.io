@@ -7,12 +7,15 @@ name: Collect market data
 
 on:
   schedule:
-    # 발행용 커브를 네이버 국채 «종가»로 바꾸면서(2026-09-04) 수집이 국채 현물
-    # 마감(17:05 ET) 뒤로 와야 한다. 예전 두 번째 슬롯 15:22 UTC 는 겨울에 17:15 EST
-    # 로 마감 10분 뒤라 마진이 없었다. 이제 두 슬롯 모두 **17:30 ET** 다 —
-    # 여름(EDT) 06:30 KST · 겨울(EST) 07:30 KST(다음 날 아침, 화~토). KST 는 서머타임이
-    # 없으므로 두 벌을 띄우고, 같은 report_date 가 이미 완전하면 두 번째가 무동작으로 끝난다.
-    - cron: '30 6 * * 2-6'
+    # 2026-11-07: 발행 커브가 국채 16:00 ET 컷(`us/yield_cut.py`)이 되어 국채 종가(18시 넘어 모임)를
+    # 기다리지 않는다. 슬롯은 16:50 ET(2026-11-23) — 미국 종가와 아시아 상장 종목 일봉이 16:35-16:50 ET 에
+    # 자리 잡는다(11/19·11/20 실측, 16:20 은 아시아 10종 날짜가 틀렸다). 여름(EDT) 05:50 KST ·
+    # 겨울(EST) 06:50 KST. KST 는 서머타임이 없어 두 벌을 띄운다(겨울의 05:50 은 장중이라 미완성으로
+    # 끝나고, 여름의 06:50 은 이미 완전하면 무동작). 예약 실행은 몇 시간씩 늦게 뜨므로(AGENTS 규칙 10)
+    # 실제 시각은 US 루틴이 STEP 0 에서 workflow_dispatch 로 맞춘다. 07:30 슬롯은 안전망.
+    - cron: '50 5 * * 2-6'
+      timezone: 'Asia/Seoul'
+    - cron: '50 6 * * 2-6'
       timezone: 'Asia/Seoul'
     - cron: '30 7 * * 2-6'
       timezone: 'Asia/Seoul'
@@ -23,7 +26,7 @@ on:
         type: boolean
         default: false
       full:
-        description: '네이버 국채 종가만 빠진 당일 판도 수익률만 고치지 않고 전부 다시 모은다 (force 포함)'
+        description: 'force 와 같다 (2026-11-23 수익률만 고치는 재실행을 없앤 뒤 남겨 둔 입력)'
         type: boolean
         default: false
       fred_check:
@@ -121,11 +124,9 @@ jobs:
         # 수집기가 예전 graph CSV 로 내려가 그대로 발행한다 — 데이터는 절대 안 멈춘다.
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        # 재실행(루틴이 force=true 로 건다)이 「네이버 국채 종가만 빠진」 당일 판을 만나면 수익률만 고치거나
-        # (patched=true), 네이버가 아직 전 거래일이면 아무것도 쓰지 않고 끝낸다(skipped=true·waiting=true).
-        # force 는 이것을 막지 않는다 — 전부 다시 모으려면 full=true.
+        # 국채는 16:00 ET 컷이라 네이버 종가를 기다리는 재실행이 없다(2026-11-23). full 은 force 와 같다.
         run: |
-          python scripts/collect_market_data.py --outdir data ${{ (github.event_name == 'workflow_dispatch' && (inputs.force || inputs.full)) && '--force' || '' }} ${{ (github.event_name == 'workflow_dispatch' && inputs.full) && '--no-patch' || '' }}
+          python scripts/collect_market_data.py --outdir data ${{ (github.event_name == 'workflow_dispatch' && (inputs.force || inputs.full)) && '--force' || '' }}
 
       - name: Record new releases (weekly regime ledger)
         # Non-core (2026-11-08, docs/superpowers/specs/2026-11-08-weekly-regime-ledger.md). Appends
@@ -134,9 +135,7 @@ jobs:
         # the calendar.json the previous run wrote (its window starts at report_date+1, so it holds
         # today's events). Runs on skipped collections too — it is idempotent, and if the first
         # slot died here the second slot fills the day from the committed files.
-        # Not on a yields patch (the base run recorded this macro snapshot — eligibility checks its
-        # scan row) and not on a waiting run (it must leave no trace).
-        if: always() && steps.collect.outputs.patched != 'true' && steps.collect.outputs.waiting != 'true'
+        if: always()
         continue-on-error: true
         run: python scripts/record_releases.py --datadir data
 
@@ -144,7 +143,7 @@ jobs:
         id: releases
         # A yields patch keeps the base run's releases, cross-check and evaluation (all bound to
         # that run's id) — these four steps would wipe or rebuild them under a new id.
-        if: steps.collect.outputs.skipped != 'true' && steps.collect.outputs.patched != 'true'
+        if: steps.collect.outputs.skipped != 'true'
         # Non-core: pulls the actual press release behind each promoted indicator so the
         # routine reads the document rather than paraphrasing a dashboard row. The
         # agencies 403 ordinary clients, hence the TLS impersonation in the script.
@@ -157,7 +156,7 @@ jobs:
         # when the fetch above failed or crashed half-way — a
         # stale release left behind would be read as today's (the run id ties the index
         # to this run, so a same-day forced re-collection does not inherit the last one).
-        if: always() && steps.collect.outputs.skipped != 'true' && steps.collect.outputs.patched != 'true'
+        if: always() && steps.collect.outputs.skipped != 'true'
         run: python scripts/fetch_releases.py --datadir data --sanitize
 
       - name: Cross-check release components
@@ -166,7 +165,7 @@ jobs:
         # and before the macro evaluation, which copies the result into macro_eval.json.
         # It resets every release first, so a failure here leaves no components, never
         # yesterday's. Never fail the collection job on it.
-        if: ${{ !cancelled() && steps.collect.outcome == 'success' && steps.collect.outputs.skipped != 'true' && steps.collect.outputs.patched != 'true' }}
+        if: ${{ !cancelled() && steps.collect.outcome == 'success' && steps.collect.outputs.skipped != 'true' }}
         continue-on-error: true
         run: python scripts/xcheck_components.py --datadir data
 
@@ -175,7 +174,7 @@ jobs:
         # After the release texts and the component cross-check (2026-11-08): the
         # evaluation copies headline_releases — with their usable components — into
         # macro_eval.json for the writer and the gate.
-        if: ${{ !cancelled() && steps.collect.outcome == 'success' && steps.collect.outputs.skipped != 'true' && steps.collect.outputs.patched != 'true' }}
+        if: ${{ !cancelled() && steps.collect.outcome == 'success' && steps.collect.outputs.skipped != 'true' }}
         # Non-core: judges yesterday's macro book
         # against today's axis scores so §8 inherits a regime instead of re-reading the
         # cycle every morning. Never fail the collection job on it.
@@ -285,15 +284,13 @@ jobs:
         # keeps checking until that round is found. Runs even when the market collection was skipped, and
         # the published posts decide what is still unprinted. Pending releases are warnings (exit 0).
         id: liquidity
-        # A waiting run (Naver close not posted yet) writes and commits nothing — not even this.
-        if: steps.collect.outputs.waiting != 'true'
         continue-on-error: true
         run: python scripts/build_liquidity.py --datadir data --repo .
 
       - name: Sanitize liquidity
         # data/liquidity/{table.html,qra/*.txt} must be this run's and complete, or empty (same contract
         # as data/releases). state.json is kept — it holds only verified rounds.
-        if: always() && steps.collect.outputs.waiting != 'true'
+        if: always()
         run: python scripts/build_liquidity.py --datadir data --sanitize
 
       - name: Stamp collection status
@@ -312,7 +309,7 @@ jobs:
         run: python scripts/stamp_collect.py --datadir data
 
       - name: Commit liquidity (market data already complete)
-        if: always() && steps.collect.outputs.skipped == 'true' && steps.collect.outputs.waiting != 'true'
+        if: always() && steps.collect.outputs.skipped == 'true'
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
@@ -346,16 +343,9 @@ jobs:
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          if [ "${{ steps.collect.outputs.patched }}" = "true" ]; then
-            # 수익률만 고친 실행: 네 산출물은 한 묶음이다. 하나라도 스테이징이 안 되면 여기서 실패해
-            # 아무것도 커밋하지 않는다(새 수익률 + 옛 차트가 나가지 않게) — `|| true` 를 붙이지 않는다.
-            git add data/market_data.json data/yield_curve.png data/history/market.jsonl data/weekly
-            SUFFIX=' (yields patch)'
-          else
-            git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
-            git add data/yield_curve.png 2>/dev/null || true
-            SUFFIX=''
-          fi
+          git add data/market_data.json data/intraday.json data/econ_indicators.json data/sector_performance.html
+          git add data/yield_curve.png 2>/dev/null || true
+          git add data/yields_1600.json 2>/dev/null || true
           git add data/movers.json 2>/dev/null || true
           git add data/macro_metrics.json data/macro_eval.json 2>/dev/null || true
           git add data/scorecard.json 2>/dev/null || true
@@ -381,14 +371,14 @@ jobs:
           # 수집 상태·해시(stamp_collect.py) — 같은 커밋에 들어가야 해시가 이 커밋의 바이트를 가리킨다.
           git add data/_collect_status.json 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
-          bash scripts/ci/push_with_retry.sh "data: market data for ${RD}${SUFFIX}"
+          bash scripts/ci/push_with_retry.sh "data: market data for ${RD}"
 
       # 키가 **거부**됐을 때만 빨간 실행으로 남긴다(2026-10-22 사용자 지시). FRED 점검·장애로
       # API 가 안 되면 키를 확인할 수 없을 뿐이라 경고다. **커밋 뒤**인 이유는 폴백 데이터가
       # 이미 레포에 들어가 있어야 하기 때문이다 — 죽은 키가 몇 주 동안 조용히 지나가는 것만 막으면 된다.
       - name: FRED key health
         # 수집을 건너뛴 실행은 커밋된 어제 파일을 다시 읽어 같은 경보를 또 울린다 — 건너뛴다.
-        if: steps.collect.outputs.skipped != 'true' && steps.collect.outputs.patched != 'true'
+        if: steps.collect.outputs.skipped != 'true'
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
@@ -410,3 +400,10 @@ jobs:
           # 실행을 실패로 끝내는 것은 1a 를 켠 뒤다(2026-11-20) — 그 전에는 경고만 남긴다. 루틴이 수집 실행의 성공 여부를
           # 본다(gh run watch --exit-status): 장부만 못 쓴 실행이 빨갛게 끝나면 발행 흐름이 1a 전과 달라진다.
           PYTHONPATH=scripts python -c "import sys; from verification.inputs import enforcing; sys.exit(1 if enforcing() else 0)"
+
+      - name: Preserve yields 16:00 ledger (any step failed)
+        # 국채 16:00 ET 원장은 다음 날의 전일比·1주 전 정본이다 — 수집 뒤 어느 단계가 실패해도(일반 커밋의
+        # push 실패 포함) 그날 값을 남긴다. 이 잡의 작업 트리가 아니라 origin/main 의 깨끗한 worktree 에서
+        # 원장 하나만 합쳐 push 한다(codex 설계 검토 2회 #2·구현 검토 1회 #4·2회 #2-#4).
+        if: failure()
+        run: bash scripts/ci/preserve_yields_ledger.sh data/yields_1600.json

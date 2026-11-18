@@ -116,8 +116,13 @@ def leg_spread(us, jp, start, end, label):
 
 
 def with_published_close(rows, us_agg, tenor):
-    """FRED 는 하루 이틀 늦다. US 주간 집계에 그 주 발행본 종가가 있으면 최신점으로 붙인다."""
-    if not us_agg:
+    """FRED 는 하루 이틀 늦다. US 주간 집계에 그 주 발행본 종가가 있으면 최신점으로 붙인다.
+
+    2026-11-07 부터 US 발행본 국채는 16:00 ET 컷이다(`yields_basis`). 그 값은 FRED 종가 계열에 붙이지
+    않는다 — 한 계열에 두 기준이 섞이면 주간·4주 변화와 미·일 금리차가 실행 시점에 따라 달라진다
+    (codex 구현 검토 1회 #3). 그때는 FRED 만 쓰고 늦은 만큼은 `asof` 가 드러낸다.
+    """
+    if not us_agg or us_agg.get('yields_basis'):
         return rows
     y = (us_agg.get('yields') or {}).get(tenor) or {}
     end = us_agg.get('end_date')

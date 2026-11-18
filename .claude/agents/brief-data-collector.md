@@ -59,13 +59,10 @@ CMDTY = [('WTI','CL=F'),('Brent','BZ=F'),('Natural Gas','NG=F'),('Gold','GC=F')]
 MEMORY = [('Micron','MU'),('Western Digital','WDC'),('Seagate','STX'),('Nvidia','NVDA'),('Samsung Elec','005930.KS'),('SK hynix','000660.KS')]
 AI_INFRA = [('Marvell','MRVL'),('Coherent','COHR'),('Lumentum','LITE'),('GE Vernova','GEV'),('Vertiv','VRT')]
 
-# ⚠ 이건 **강등 폴백**이다 (2026-09-04). 정상 경로의 발행용 커브는 Actions 가 만드는
-# 네이버 국채 종가(전 만기 동일 기준일, 17:05 ET)이고, 여기 코드는 그 파일이 아예
-# 없을 때만 돈다. 그래서 아래는 기준일이 갈린 커브를 만들며, spread_2s10s_aligned 를
-# 세우지 않는다 — writer 는 그 필드가 없으면 예전 규율(별표 + 동일자 FRED 병기)로
-# 떨어진다. 그게 이 경로에서는 맞는 동작이다.
-# 금리: 5Y/10Y/30Y는 야후 스팟이 기준(주식 종가와 동일자), 2Y만 FRED (2026-07-28 사용자 지시).
-# 야후에 2년 스팟 지수는 없다 — ^UST2Y 부재, 2YY=F는 선물이라 하루 더 늦고 DGS2와 20bp 이상 벌어짐.
+# ⚠ 국채는 이 경로에서 만들지 않는다 (2026-11-07). 발행 커브는 Actions 가 만드는 16:00 ET 컷
+# (`scripts/us/yield_cut.py`, 전일·1주 전도 같은 규칙의 원장 값)뿐이다. 야후 금리 지수는 15:00 ET 에
+# 끝나고 FRED 는 T-1 이라 기준이 다르다 — 섞으면 브렌트와 같은 모순이 된다. 그래서 아래 yields 는
+# 비워 두고 completeness 게이트가 막게 한다. yahoo_yields·fred_yields 는 대조용으로만 남긴다.
 def yahoo_yields():
     out = {}
     for name, t in [('5Y','^FVX'),('10Y','^TNX'),('30Y','^TYX')]:
@@ -98,8 +95,8 @@ def fred_yields():
     return out
 
 yf_y, fr_y = yahoo_yields(), fred_yields()
-# 야후가 우선, 비면 FRED로 메움 (2Y는 야후에 없으므로 항상 FRED로 떨어진다)
-merged = {t: dict(yf_y.get(t) or fr_y.get(t) or {}) or None for t in ('2Y','5Y','10Y','30Y')}
+# 발행 커브는 만들지 않는다 — 16:00 ET 컷이 아닌 값은 completeness 가 막는다(2026-11-07)
+merged = {t: None for t in ('2Y','5Y','10Y','30Y')}
 
 data = {
     'generated': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
@@ -123,7 +120,7 @@ if y.get('5Y') and y.get('30Y'):
 print(json.dumps(data, indent=2, default=str))
 ```
 
-FRED 요청이 SSL 오류로 실패하면 certifi의 ssl context로 재시도한다. **금리 기준일이 만기별로 다른 것은 정상이다** — 5Y/10Y/30Y(야후 스팟)는 주식 종가와 같은 날, 2Y(FRED DGS2)는 1영업일 이상 뒤진다. 각 만기의 date·source를 research_notes.md에 그대로 적고, 날짜를 억지로 맞추거나 값을 보정하지 않는다.
+FRED 요청이 SSL 오류로 실패하면 certifi의 ssl context로 재시도한다. **이 경로로는 국채 커브가 생기지 않는다** — `yields` 가 비면 발행하지 않고 completeness 규칙대로 알린다(야후·FRED 값으로 채우지 않는다).
 
 ## STEP 1b — 수익률 커브 차트
 

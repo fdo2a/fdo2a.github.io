@@ -10,7 +10,7 @@
 잘못 쏜 발화는 8초짜리 no-op 이다. 이중 발화는 `run_lock.sh` 가 가른다.
 
 **창**: 예약은 2-5시간 늦게 온다(AGENTS 규칙 10). 늦은 틱이 다음 세션의 「본 런 전」 구간에 떨어지면 `routine_due`
-는 DUE 를 낸다 — 세션은 본 런보다 먼저 넘어간다(US 17:00 NY vs 본 런 17:30, KR 16:00 KST vs 18:00). 그 세션의
+는 DUE 를 낸다 — 세션은 본 런보다 먼저 넘어간다(US 16:45 NY vs 본 런 16:50 — 2026-11-23, KR 16:00 KST vs 18:00). 그 세션의
 본 런 시작 + 여유 전에는 쏘지 않는다.
 
 **묶인 주간**: 주간 판정이 본 런 창(토 15:00 KST + 여유) 뒤에도 `WAIT` 면 쏘지 않고 **실행을 빨갛게 끝낸다**
@@ -67,7 +67,7 @@ SLOTS = {
 # 루틴 쪽에 남기는 안전망 cron(claude.ai 스케줄러 — 제시각에 뜬다). 레포가 루틴을 바꾸지는 않는다 — 본 세션이 이 값으로
 # RemoteTrigger 를 고친다. 세션 경계 직전의 마지막 기회 자리다(codex 구현 2회차 #4). 시험이 게이트 슬롯과 합쳐 옛 시각을 덮는지 본다.
 BACKSTOPS = {
-    'us': '30 20 * * 2-6',                       # 15:30 EST · 16:30 EDT — 경계 17:00 ET 전
+    'us': '30 20 * * 2-6',                       # 15:30 EST · 16:30 EDT — 경계 16:45 ET 전
     'kr': '30 6 * * 1-6',                        # 15:30 KST — 경계 16:00 KST 전
     'jp_daily': '30 20 * * 1-5',                 # 05:30 KST — 보충 창 06:00 JST 전
     'japan': 'CRON_TZ=Asia/Seoul 30 23 * * 1-5',  # 23:30 KST — 21시 이후 STALE 알림 규칙이 산다
@@ -97,7 +97,7 @@ def _at(day, hh, mm, tz):
 def not_before(kind, now, holidays):
     """그 시각 기대 세션의 본 런 시작 + 여유(UTC). 이보다 이르면 쏘지 않는다. holidays = {'us','kr','jp': (...)}."""
     if kind == 'us':
-        return _at(rd.us_session(now, holidays['us']), 17, 30, rd.NY) + GRACE
+        return _at(rd.us_session(now, holidays['us']), 16, 50, rd.NY) + GRACE
     if kind == 'kr':
         return _at(rd.kr_session(now, holidays['kr']), 18, 0, rd.SEOUL) + GRACE
     if kind == 'jp_daily':

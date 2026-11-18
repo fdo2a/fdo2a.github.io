@@ -18,7 +18,8 @@ def _full_data(day='2026-09-25'):
     cut = dict(_CUT, date=day, prev_date='2026-09-01')
     data = {g: {n: ({**cut} if g in close_cut.CUT_GROUPS else {'last': 1.0}) for n, _ in pairs}
             for g, pairs in cmd.GROUPS}
-    data['yields'] = {t: {'level': 4.0, 'week_ago': 4.0} for t in ('2Y', '5Y', '10Y', '30Y')}
+    data['yields'] = {t: {'level': 4.0, 'week_ago': 4.0, 'bp': 1.0, 'basis': 'cut_1600_et'}
+                      for t in ('2Y', '5Y', '10Y', '30Y')}
     data['sector_performance'] = {n: {'1D': 0.1, '1W': 0.1, '1M': 0.1} for n, _ in cmd.SECTORS}
     return data
 
@@ -31,9 +32,18 @@ def test_otherwise_complete_dataset_reports_nothing_missing():
     assert cmd.completeness(_full_data(), _INTRADAY, report_date='2026-09-25') == []
 
 
-def test_a_pre_close_run_is_marked_incomplete():
-    missing = cmd.completeness(_full_data(), _INTRADAY, naver_stale=True)
-    assert 'yields/naver_close_not_posted' in missing
+def test_yield_rows_must_be_the_1600_cut_with_both_comparisons():
+    # 2026-11-07: 발행 커브는 16:00 ET 컷만. 종가·야후·FRED 행(basis 없음)이 들어오면 막는다.
+    data = _full_data()
+    data['yields']['2Y'] = {'level': 4.0, 'week_ago': 4.0, 'bp': 1.0, 'source': 'Naver'}
+    data['yields']['5Y'] = dict(data['yields']['5Y'], bp=None)
+    data['yields']['10Y'] = dict(data['yields']['10Y'], week_ago=None)
+    data['yields']['30Y'] = None
+    missing = cmd.completeness(data, _INTRADAY)
+    assert 'yields/2Y/basis' in missing
+    assert 'yields/5Y/prev' in missing
+    assert 'yields/10Y/week_ago' in missing
+    assert 'yields/30Y' in missing
 
 
 def test_us_listed_rows_dated_before_the_session_are_incomplete():

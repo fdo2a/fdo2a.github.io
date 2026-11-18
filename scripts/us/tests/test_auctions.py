@@ -125,7 +125,8 @@ def test_today_and_next():
                                                     'source': 'Naver'}})
     assert book['complete'] and [t['key'] for t in book['today']] == ['nominal-5y']
     assert book['today'][0]['yield_ref'] == {'tenor': '5Y', 'level': 4.80, 'bp': -2.0,
-                                             'date': RD, 'source': 'Naver'}
+                                             'date': RD, 'source': 'Naver',
+                                             'basis': None, 'stamp_et': None}
     assert book['next'][0]['label_ko'] == '10년물'
 
 
