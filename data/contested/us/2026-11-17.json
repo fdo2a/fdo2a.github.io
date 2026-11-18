@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-17",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T09:34:39+00:00",
- "cutoff_at": "2026-11-18T09:34:39+00:00",
+ "collected_at": "2026-11-18T10:39:14+00:00",
+ "cutoff_at": "2026-11-18T10:39:14+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,92 +21,46 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 214,
+  "harvest": 211,
   "candidates": 2,
   "articles": [
    2,
-   6
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 47176,
-   "out": 10950
+   "in": 46706,
+   "out": 11272
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "short",
-   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
+   "claims": "3/3",
    "pairs": "1/1",
-   "obs": "6/6"
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 5,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[1]",
-    "memo[2]",
-    "structure",
-    "variables[2]",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:unverified",
-    "structure:dangling",
-    "variables[2]:dangling",
-    "edges[1]:dangling",
-    "edges[2]:unverified",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[1]:dangling",
-    "memo[2]:unverified",
-    "memo[2]:dangling",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
-   ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "젠슨 황 퇴진 이후 엔비디아 사업 경쟁력의 지속성",
-  "query": "huang nvidia earnings",
+  "query": "huang nvidia chip",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "variables[2]:dangling",
-  "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "d3c1ff2256af61d2"
+ "content_hash": "fab167c807cc87ca"
 }
