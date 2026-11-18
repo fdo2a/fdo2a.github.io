@@ -185,11 +185,13 @@ def test_g2_unused_rows_alone_also_make_the_file_partial():
 
 
 def test_g2_introduced_row_is_out_of_the_score_and_said_so():
-    mm = M.with_coverage(metrics([0.5] * 6, **{'CPI MoM': {'introduced': True}}),
+    mm = M.with_coverage(metrics([0.5] * 6, **{'CPI MoM': {'introduced': True, 'actual': 0.3}}),
                          [], [e for e in EXPECTED if e[1] not in ('CPI YoY', 'Core CPI YoY')])
     c = mm['coverage']['Inflation']
     assert (c['total'], c['used']) == (6, 5) and [(e['name'], e['why']) for e in c['excluded']] == [('CPI MoM', 'introduced')]
-    assert cmd.macro_metrics_collect(mm, {'status': 'ok', 'missing': []}, D)['missing'] == ['introduced:CPI MoM']
+    # 4회차 H3: 들인 날의 제외는 산출 규칙이다 — 결측에 넣지 않고 적어만 둔다(전에는 introduced:<이름> 으로 막았다)
+    col = cmd.macro_metrics_collect(mm, {'status': 'ok', 'missing': []}, D)
+    assert col['missing'] == [] and col['status'] == 'ok' and 'CPI MoM' in col['detail']
 
 
 def test_g2_whole_axis_scored_means_no_coverage_block():

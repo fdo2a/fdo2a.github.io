@@ -607,15 +607,23 @@ def coverage_phrase(total, used, excluded):
     return f"{total}개 중 {used}개로 산출, " + ', '.join(parts)
 
 
+def _has_value(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and x == x and abs(x) != float('inf')
+
+
 def unused_scored(indicators):
-    """행은 있는데 축 점수에 쓰이지 않은 점수 대상 → `[(이름, 축, 까닭)]` — 점수가 없거나(no_score) 들인 날(introduced)."""
+    """행은 있는데 축 점수에 쓰이지 않은 점수 대상 → `[(이름, 축, 까닭)]`.
+
+    `introduced` = 들인 날이라 규칙대로 하루 뺀 것 — **자료의 그 칸(`introduced`)이 참이고, 최신값이 실제로 있고, 점수도
+    계산된** 행만(4회차 H3). 값이 없거나 점수가 없는 행은 들인 날이어도 `no_score` 다 — 결측이 「들인 날」로 덮이지 않는다."""
     out = []
     for r in indicators or []:
         if not isinstance(r, dict) or (r.get('role') or 'scored') != 'scored':
             continue
-        if r.get('introduced'):
+        scored = _has_value(r.get('signed_z'))
+        if r.get('introduced') is True and scored and _has_value(r.get('actual')):
             out.append((r.get('name'), r.get('axis'), 'introduced'))
-        elif r.get('signed_z') is None:
+        elif r.get('introduced') or not scored:
             out.append((r.get('name'), r.get('axis'), 'no_score'))
     return out
 

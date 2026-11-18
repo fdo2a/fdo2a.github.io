@@ -1276,12 +1276,17 @@ def macro_metrics_collect(mm, econ_status, report_date):
         missing, ref = C.carry_upstream(econ_status, 'econ', 'econ_indicators')
     # 행은 있는데 축 점수에 쓰이지 않은 지표(점수를 낼 이력이 모자라거나 들인 날) — econ 쪽 결측에는 없으므로 여기서
     # 까닭을 가른 키로 적는다(3회차 G2). 이 키들은 승인 예외에 등록되지 않으니, 섞인 날은 예외가 걸리지 않는다.
+    # 들인 날의 제외(introduced)는 자료 결측이 아니라 산출 규칙이다 — 결측에 넣지 않고 적어만 둔다(4회차 H3). 값이 있고
+    # 점수가 계산된 행만 그렇게 분류된다(`unused_scored`); 판단을 바꿀 수 있는지·하루를 넘겼는지는 check_macro 가 본다.
     from us.macro_metrics import unused_scored
-    missing += [f'{why}:{name}' for name, _axis, why in unused_scored(mm.get('indicators'))]
+    unused = unused_scored(mm.get('indicators'))
+    missing += [f'{why}:{name}' for name, _axis, why in unused if why != 'introduced']
+    rule = [name for name, _axis, why in unused if why == 'introduced']
     if mm.get('book_state') == 'corrupt':
         missing.append('macro.json:corrupt')
     return C.build('partial' if missing else 'ok', report_date, 'FRED (macro_metrics)',
-                   missing=missing, empty='has_data', missing_ref=ref or None)
+                   missing=missing, empty='has_data', missing_ref=ref or None,
+                   detail=('들인 날이라 점수에서 뺀 지표(산출 규칙): ' + ', '.join(rule)) if rule else None)
 
 
 def main():
