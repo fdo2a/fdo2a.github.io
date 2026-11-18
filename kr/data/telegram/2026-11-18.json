@@ -1,0 +1,278 @@
+{
+ "report_date": "2026-11-18",
+ "market": "kr",
+ "collected_utc": "2026-11-18T09:13:10+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-16T22:41:45+00:00",
+  "kwusa": "2026-11-17T00:54:00+00:00",
+  "lim_econ": "2026-11-16T22:38:07+00:00",
+  "d_ticker": "2026-11-17T06:42:14+00:00",
+  "aethersemiconductor": "2026-11-17T09:12:19+00:00",
+  "FastStockNews": "2026-11-17T08:55:20+00:00",
+  "FastStockNewsUSA": "2026-11-17T03:46:41+00:00",
+  "insidertracking": "2026-11-17T09:01:00+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-16T22:41:45+00:00",
+   "last_id": 3002,
+   "last_dt": "2026-11-17T22:49:51+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-17T00:54:00+00:00",
+   "last_id": 61779,
+   "last_dt": "2026-11-17T22:57:32+00:00",
+   "read": 4
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-16T22:38:07+00:00",
+   "last_id": 2137,
+   "last_dt": "2026-11-17T22:39:07+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-17T06:42:14+00:00",
+   "last_id": 4189,
+   "last_dt": "2026-11-18T02:59:58+00:00",
+   "read": 9
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-17T09:12:19+00:00",
+   "last_id": 27039,
+   "last_dt": "2026-11-18T05:39:04+00:00",
+   "read": 22
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-17T08:55:20+00:00",
+   "last_id": 128146,
+   "last_dt": "2026-11-18T09:12:21+00:00",
+   "read": 66
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-17T03:46:41+00:00",
+   "last_id": 24544,
+   "last_dt": "2026-11-18T07:11:16+00:00",
+   "read": 36
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 7,
+   "truncated": false,
+   "from_dt": "2026-11-17T09:01:00+00:00",
+   "last_id": 69632,
+   "last_dt": "2026-11-18T09:04:24+00:00",
+   "read": 123
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/27022",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T11:59:40+00:00",
+   "url": "https://t.me/aethersemiconductor/27022",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "호르무즈 해협에서 기뢰에 부딪힌 선박 두 척이 대규모 화재에 휩싸였다는 소식이 전해졌다. 이란 혁명수비대는 두 선박이 미국 전투기의 지원을 받고 있었다고 주장했으며, 한 척은 원유 200만 배럴 이상을 실은 초대형 유조선, 다른 한 척은 LNG 운반선으로 소개됐다. 혁명수비대는 두 선박이 경고를 무시하고 통항이 금지된 남쪽 항로에 들어섰다고 덧붙이며, 미국의 말을 믿은 탓이라는 시각을 내비쳤다. 다만 이 내용은 혁명수비대의 주장으로, 사고 경위와 미국 관여 여부는 원문만으로는 확인되지 않는다."
+  },
+  {
+   "id": "aethersemiconductor/27024",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T12:26:34+00:00",
+   "url": "https://t.me/aethersemiconductor/27024",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "BofA의 11월 펀드매니저 설문에서 응답자의 52%가 향후 6개월 안에 주요 AI 하이퍼스케일러 중 한 곳이 자본적지출을 줄이겠다고 발표할 것으로 내다봤다. 10월 30%에서 크게 늘어난 수치다. 반면 40%는 감축이 없을 것으로 예상했다. 이런 변화는 투자자들이 AI 인프라 투자의 지속 가능성과 그에 따른 기술주 압박을 점점 더 우려하고 있음을 보여준다는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNews/128083",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-17T22:38:05+00:00",
+   "url": "https://t.me/FastStockNews/128083",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "뉴욕 증시 마감 소식에서 다우지수는 1.64% 하락했다. 하락의 배경으로는 엔비디아 실적을 앞둔 경계감과 잇따른 전산 장애가 함께 꼽혔다. 본문을 확인하지 못해 장애의 규모나 실적 기대치 같은 세부 내용은 알 수 없으며, 두 요인이 투자심리를 위축시켰다는 시각으로 읽힌다."
+  },
+  {
+   "id": "FastStockNews/128084",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-17T22:38:17+00:00",
+   "url": "https://t.me/FastStockNews/128084",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "뉴욕 증시가 엔비디아 실적을 앞둔 경계감과 잇따른 전산 장애 소식에 하락 마감했다는 속보다. 다우지수가 1.64% 내렸다는 내용이 전해졌다. 다만 원문은 제목 수준의 정보만 담고 있어, 하락의 구체적 배경이나 이후 전망에 대해서는 별도의 해석이 드러나 있지 않다."
+  },
+  {
+   "id": "hedgecat0301/3002",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-17T22:49:51+00:00",
+   "url": "https://t.me/hedgecat0301/3002",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시가 3거래일 연속 약세를 보였지만 엔비디아의 호실적과 양호한 컨퍼런스콜이 AI주 불안을 일부 덜어줬다고 평가했다. 특히 4분기 매출 가이던스와 2028회계연도 매출 전망치 상향, 선택적 지원 지속 방침을 근거로 엔비디아발 리스크가 완화됐다고 봤다. 국내 증시는 코스피가 5,000pt 아래에서 마감하며 매수 주체가 사라지고 이익 신뢰도가 흔들리는 국면이라고 진단했다. 그럼에도 필자는 이런 국면에서 비중을 더 줄이는 전략의 실효성이 낮다고 보고, 최악의 시나리오를 주가에 반영하기보다 상황 반전 가능성에 무게를 두는 편이 낫다고 주장했다."
+  },
+  {
+   "id": "d_ticker/4185",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-17T22:50:52+00:00",
+   "url": "https://t.me/d_ticker/4185",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "삼성전기가 엔비디아향 패키지기판 생산능력을 높이기 위해 기존 공급계약을 개정했다고 발표했으며, 세종과 부산 생산시설의 캐파를 늘릴 계획이라는 소식이 전해졌다. 다만 생산능력이 얼마나 늘어나는지와 투자액이 어떻게 달라지는지는 밝히지 않았다. 이와 관련해 삼성전기가 지난 10월 GTC 베를린에서 2028년 엔비디아에 배정할 패키지기판 물량이 회사 전체 캐파의 상당 부분을 차지할 것이라고 언급했다는 점이 함께 거론되며, 엔비디아 수요가 향후 삼성전기의 생산 구조에 큰 비중을 차지할 것이라는 시각이 제시됐다."
+  },
+  {
+   "id": "d_ticker/4186",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-17T23:14:17+00:00",
+   "url": "https://t.me/d_ticker/4186",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 어닝콜 요약에 따르면 베라루빈은 양산 첫 분기에 200억 달러 매출을 냈고 3분기 데이터센터 매출의 약 19%를 차지해 직전 제시 비중인 20%에 근접했다. 공급망 약정은 한 분기 만에 40% 늘었으며, 이 시각은 가격 상승과 임대료 강세가 수요를 떠받친다고 보는 쪽이다. 다만 4분기 매출총이익률은 원가 상승을 기존 계약가에 전가하지 못해 74.9%에서 72.0%로 둔화될 것이라는 의견이 제시됐고, FY28에는 새 판매가에 원가 상승분을 반영해 72~73%로 회복된다는 전망이 덧붙었다."
+  },
+  {
+   "id": "aethersemiconductor/27033",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-18T00:07:29+00:00",
+   "url": "https://t.me/aethersemiconductor/27033",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 어닝콜 정리 원문은 베라루빈이 양산 첫 분기에 200억 달러 매출을 올렸고 하이퍼스케일러들이 약 1개월 만에 실가동에 들어갔다고 전한다. 토큰 가격 하락에도 사용량이 늘어 호퍼 임대료는 재계약 시 최대 2배, 블랙웰 B300은 60% 이상 올랐다는 설명이다. 공급망 약정은 한 분기 만에 40% 늘어난 것으로 나타났고, 이를 두고 엔비디아가 생산능력 확보에 적극적이라는 시각이 제시됐다. 4분기 GPM은 원가 상승과 기존 가격 합의 탓에 72.0%로 둔화될 전망이나, 2028회계연도에는 72~73%로 회복되고 새 판매가격에 원가 상승분이 반영될 것이라는 의견도 덧붙었다."
+  },
+  {
+   "id": "aethersemiconductor/27036",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-18T00:12:11+00:00",
+   "url": "https://t.me/aethersemiconductor/27036",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-18",
+   "summary_ko": "양사가 군공항 부지 약 250만평을 나눠 쓰기로 합의했으며, SK는 북측 약 100만평, 삼성은 남측 약 120만평을 배정받아 각각 팹 2기씩을 짓는다는 소식이다. 협의가 길어진 이유는 KTX 광주송정역과 도심·간선도로 접근성이 좋고 지반도 안정돼 공사 여건이 나은 북측을 양사가 모두 원했기 때문이라는 시각이다. 여기에 부지를 동서로 나누면 사업장이 좁고 길어져 배치가 어렵다는 현실적 문제와 북측 선점을 둘러싼 자존심 대립도 영향을 줬다는 의견이 함께 제시됐다."
+  },
+  {
+   "id": "FastStockNews/128108",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-18T02:34:54+00:00",
+   "url": "https://t.me/FastStockNews/128108",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디일렉",
+    "url": "https://www.thelec.kr/news/articleView.html?idxno=65592",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "지슨은 18일 기존 전파탐지장비에 적용하는 인공지능(AI) 부정행위 탐지 소프트웨어를 다음 달 출시한다고 밝혔다. 적용 장비는 평균 45평 공간의 블루투스, 와이파이, 이동통신 전파를 감지해 감독관이 이동하며 의심 전파를 추적하게 한다. 신규 이동형 탐지기에는 기본 탑재하고 기존 장비에는 유상 업그레이드로 제공한다. 휴대전화를 수거해도 초소형 카메라로 문제를 찍어 답을 받는 과정에서 생기는 통신 신호를 포착하는 것이 핵심이다. 전파 위치는 증강현실 화면에 색상으로 표시되며, 알림은 진동으로 전달되고 감지 기록은 자동 저장된다. 내년 상반기에는 시험실마다 설치할 수 있도록 가격을 낮춘 전용 기기를 출시하고 수출도 추진한다."
+  },
+  {
+   "id": "d_ticker/4189",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-18T02:59:58+00:00",
+   "url": "https://t.me/d_ticker/4189",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "데이터센터 전력기기 시장에서는 맞춤 설계 대신 대량 생산을 위한 표준화가 자리 잡고 있으며, 이 방식이 납기 준수에는 유리하지만 프로젝트 중간의 설계 변경과 물량 변동으로 주문 취소가 생길 수 있다는 시각이 제기됐다. 맞춤형 배전기기 기업 파웰 인더스트리 경영진은 데이터센터향 주문 취소가 실제로 있었다고 밝히면서도, 그 원인을 고객 요구에 따른 설계와 물량 변동으로 설명했다. 다만 자금조달 문제는 없었고, 취소 건 대부분은 고객과 협의해 생산 물량을 다시 배정해 수주잔고 이탈은 없다는 입장이다."
+  },
+  {
+   "id": "FastStockNews/128129",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-18T05:51:47+00:00",
+   "url": "https://t.me/FastStockNews/128129",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-18",
+   "summary_ko": "지슨이 AI 기반 시험 부정행위 감시장비를 연내 출시할 계획이라는 소식이 전해졌다. 교육청과 조달청으로부터 구매 문의가 들어왔다는 점이 함께 알려졌다. 이를 두고 공공 시험 현장의 수요가 실제 사업 성과로 이어질 수 있다는 시각이 제시된 것으로 보인다. 다만 원문이 제목과 링크뿐이어서 세부 사양과 도입 규모는 확인되지 않는다."
+  },
+  {
+   "id": "FastStockNews/128132",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-18T06:21:09+00:00",
+   "url": "https://t.me/FastStockNews/128132",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "삼성전자와 SK하이닉스 투자자들 사이에서 외국인 이탈과 주가 하락에 대한 불만이 커지고, 막대한 이익을 주주환원으로 연결해야 한다는 요구가 높아지고 있다는 소식이다. 한 SK하이닉스 투자자는 HBM으로 역대급 실적을 거둔 것은 인정하지만 그 성과가 주가로 이어지는지는 별개의 문제라고 지적했다. 이 투자자는 정부가 코스피 5000 목표보다 외국인 자금이 한국 증시를 떠나는 이유부터 살펴야 하고, 회사도 성과급 경쟁보다 주주환원과 주가 관리에 책임을 져야 한다는 의견을 내놓았다."
+  }
+ ],
+ "stats": {
+  "items": 13,
+  "summarized": 13,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
