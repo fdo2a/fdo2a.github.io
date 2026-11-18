@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T01:41:17+00:00",
- "cutoff_at": "2026-11-18T01:41:17+00:00",
+ "collected_at": "2026-11-18T02:01:56+00:00",
+ "cutoff_at": "2026-11-18T02:01:56+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,38 +21,36 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 213,
-  "candidates": 2,
+  "harvest": 212,
+  "candidates": 1,
   "articles": [
-   1,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44445,
-   "out": 11103
+   "in": 45339,
+   "out": 12842
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "short",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
    "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "7/7"
+   "pairs": "3/3",
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 6,
-   "strict_pairs": 1,
+   "obs": 8,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
@@ -60,12 +58,9 @@
    "paths": [
     "edges[0]",
     "edges[1]",
-    "edges[2]",
     "memo[0]",
-    "memo[1]",
     "memo[2]",
     "structure",
-    "variables[1]",
     "worry.moderate[0]",
     "worry.most[0]",
     "worry.unlikely[0]"
@@ -73,42 +68,33 @@
    "outcome": "skipped_threshold",
    "remaining": [
     "structure:dangling",
-    "variables[1]:dangling",
     "edges[0]:dangling",
-    "edges[1]:unverified",
     "edges[1]:dangling",
-    "edges[2]:unverified",
-    "edges[2]:dangling",
     "memo[0]:dangling",
-    "memo[1]:dangling",
-    "memo[2]:unverified",
-    "worry.most[0]:unverified",
+    "memo[2]:dangling",
     "worry.most[0]:dangling",
+    "worry.moderate[0]:unverified",
     "worry.moderate[0]:dangling",
     "worry.unlikely[0]:dangling"
    ]
-  }
+  },
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "젠슨 황 퇴진 이후 엔비디아의 CEO 향방과 AI 수요 판단",
-  "query": "nvidia huang scandal",
+  "query": "nvidia huang chip",
   "trigger": []
  },
  "problems": [
   "structure:dangling",
-  "variables[1]:dangling",
   "edges[0]:dangling",
-  "edges[1]:unverified",
   "edges[1]:dangling",
-  "edges[2]:unverified",
-  "edges[2]:dangling",
   "memo[0]:dangling",
-  "memo[1]:dangling",
-  "memo[2]:unverified",
-  "worry.most[0]:unverified",
+  "memo[2]:dangling",
   "worry.most[0]:dangling",
+  "worry.moderate[0]:unverified",
   "worry.moderate[0]:dangling",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "c5df13f7ec03c1d9"
+ "content_hash": "9bde115f7777cd96"
 }
