@@ -208,6 +208,19 @@ def calibrate_tape(ohlc):
                     'high': hi, 'low': lo, 'source': '일간 OHLC 종가 위치의 사분위'}
 
 
+def band_of(gap_pp, cap_pct):
+    """참여도 판정 이름 — 내부 값이다. 글은 이 이름이 아니라 그 뜻을 쓴다.
+
+    `gap_pp` 는 동일가중에서 시총가중을 뺀 수익률 차이, `cap_pct` 는 시총가중 등락이다.
+    발행 검사(`session_gate`)가 저장된 판정값을 같은 규칙으로 다시 내 대조한다.
+    """
+    if abs(gap_pp) < PARTICIPATION_MIN_PP:
+        return '중립'
+    if cap_pct > 0:
+        return '고르게 오름' if gap_pp > 0 else '소수가 끌어올림'
+    return '소수가 끌어내림' if gap_pp > 0 else '고르게 내림'
+
+
 def participation(closes, dates, report_date=None):
     """동일가중이 시총가중을 따라갔나 — 「평균적인 종목이 지수를 따라갔나」.
 
@@ -241,13 +254,8 @@ def participation(closes, dates, report_date=None):
     if cap is None or eq is None:
         return None
     g = round(eq - cap, 2)
-    if abs(g) < PARTICIPATION_MIN_PP:
-        band = '중립'
-    elif cap > 0:
-        band = '고르게 오름' if g > 0 else '소수가 끌어올림'
-    else:
-        band = '소수가 끌어내림' if g > 0 else '고르게 내림'
-    return {'gap_pp': g, 'spy_pct': round(cap, 2), 'date': b, 'band': band}
+    # 판정은 반올림한 차이와 **반올림 전** 시총가중 등락의 부호로 한다. 저장하는 spy_pct 는 반올림값이다.
+    return {'gap_pp': g, 'spy_pct': round(cap, 2), 'date': b, 'band': band_of(g, cap)}
 
 
 def tape(intraday, thresholds=None):

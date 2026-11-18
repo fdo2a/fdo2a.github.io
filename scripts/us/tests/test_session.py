@@ -267,3 +267,14 @@ def test_calibrate_tape_keeps_the_existing_keys():
     bars = [{'high': 100.0, 'low': 0.0, 'close': float(i)} for i in range(100)]
     hi, lo, meta = session.calibrate_tape({'^GSPC': bars})
     assert (meta['high'], meta['low'], meta['source']) == (hi, lo, '일간 OHLC 종가 위치의 사분위')
+
+
+def test_band_of_is_the_rule_participation_uses():
+    from scripts.us.session import band_of
+    assert band_of(0.39, 1.0) == '중립'
+    assert band_of(-0.39, -1.0) == '중립'
+    assert band_of(0.4, 1.0) == '고르게 오름'
+    assert band_of(-0.4, 1.0) == '소수가 끌어올림'
+    assert band_of(0.4, -1.0) == '소수가 끌어내림'
+    assert band_of(-0.4, -1.0) == '고르게 내림'
+    assert band_of(0.4, 0.0) == '소수가 끌어내림'      # 오르지 않은 날은 내린 날 쪽 — 기존 규칙 그대로
