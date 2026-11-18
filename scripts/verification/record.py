@@ -520,7 +520,7 @@ def summarize(results, health=None, integrity=None):
             conditions.append({'kind': 'accepted_missing', 'file': health['files'][k]['file'],
                                'ids': sorted({a['id'] for a in am}),
                                'keys': [a['key'] for a in am],
-                               'indicators': [{x: a[x] for x in ('key', 'fred_id', 'transform', 'ref_period')}
+                               'indicators': [{x: a[x] for x in ('key', 'fred_id', 'transform', 'ref_period', 'lacking')}
                                               for a in am],
                                'reason': '; '.join(sorted({a['reason'] for a in am})),
                                'source': sorted({u for a in am for u in a['source']}),

@@ -41,6 +41,7 @@
        "fred_id": "CPIAUCSL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -73,6 +74,7 @@
        "fred_id": "CPILFESL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -135,6 +137,7 @@
        "fred_id": "CPIAUCSL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -167,6 +170,7 @@
        "fred_id": "CPILFESL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -210,6 +214,7 @@
        "fred_id": "CPIAUCSL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -242,6 +247,7 @@
        "fred_id": "CPILFESL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -294,6 +300,7 @@
        "fred_id": "CPIAUCSL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",
@@ -326,6 +333,7 @@
        "fred_id": "CPILFESL",
        "transform": "yoy_pct",
        "ref_period": "2026-10",
+       "lacking": "2025-10",
        "reason": "BLS 가 예산 공백으로 2025-10 조사 자료를 수집하지 못해 2025-10 지수가 없고, 그래서 2026-10 의 12개월 변화율을 발표하지 못했다(2026-10 CPI 발표문 USDL-26-1685, 12개월 칸 「-」)",
        "source": [
         "https://www.bls.gov/news.release/cpi.nr0.htm",

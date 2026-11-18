@@ -564,7 +564,10 @@ def collect_econ(reasons=None, refs=None):
             # 받았지만 최신 달을 변환할 수 없다(결측 달 — 2025-10 CPI). 수집 실패가 아니다.
             reasons[name] = 'no_value'
             # 어느 지표의 어느 달을 만들지 못했는가 — 승인 예외는 식별자(FRED id·변환)와 기준월이 모두 같을 때만 걸린다
-            refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7]}
+            # `lacking` = 그 달을 변환하는 데 필요한 비교 달 가운데 원천에 없는 것(3회차 G1 — 식별자·기준월이 같아도
+            # 「2025-10 미발표」가 아닌 다른 원인이면 승인된 미발표가 아니다)
+            refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7],
+                          'lacking': _lacking(vals, tf)}
             continue
         actual, previous = pair
         row = {
@@ -1153,12 +1156,14 @@ def econ_collect(econ, reasons, report_date, refs=None):
     missing = sorted(n for n, why in (reasons or {}).items() if why in ('fetch_failed', 'transform_error'))
     missing += sorted(f'no_value:{n}' for n, why in (reasons or {}).items() if why == 'no_value' and n not in anatomy)
     none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value' and n in anatomy)
-    # 결측 키 → 그 지표의 식별자·기준월(`missing_ref[키] = {fred_id, transform, ref_period(YYYY-MM)}`) — 항목 단위 승인
-    # 예외(`config/prepub_inputs.json` 의 accepted_missing)는 셋이 모두 등록과 같을 때만 적용된다. 모르는 키는 싣지 않는다.
-    ref = {f'no_value:{n}': {k: v[k] for k in ('fred_id', 'transform', 'ref_period')}
+    # 결측 키 → 그 지표의 식별자·기준월·원인(`missing_ref[키] = {fred_id, transform, ref_period(YYYY-MM), lacking}`) —
+    # 항목 단위 승인 예외(`config/prepub_inputs.json` 의 accepted_missing)는 넷이 모두 등록과 같을 때만 적용된다
+    # (`lacking` 은 정확히 등록된 그 달 하나). 모르는 키는 싣지 않는다.
+    ref = {f'no_value:{n}': dict({k: v[k] for k in ('fred_id', 'transform', 'ref_period')},
+                                 lacking=[str(x) for x in v['lacking']])
            for n, v in sorted((refs or {}).items())
            if isinstance(v, dict) and all(v.get(k) for k in ('fred_id', 'transform', 'ref_period'))
-           and f'no_value:{n}' in missing}
+           and isinstance(v.get('lacking'), list) and f'no_value:{n}' in missing}
     st = C.by_counts(report_date, 'FRED', missing, len(ECON),
                      detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None,
                      missing_ref=ref or None)
@@ -1174,7 +1179,7 @@ def excluded_scored(reasons, refs):
     for n, why in sorted((reasons or {}).items()):
         r = (refs or {}).get(n)
         if why == 'no_value' and n not in anatomy and isinstance(r, dict):
-            out.append({'name': n, **{k: r.get(k) for k in ('axis', 'fred_id', 'transform', 'ref_period')}})
+            out.append({'name': n, **{k: r.get(k) for k in ('axis', 'fred_id', 'transform', 'ref_period', 'lacking')}})
     return out
 
 

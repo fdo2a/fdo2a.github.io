@@ -518,7 +518,8 @@ def _cpi_day(base, ctx0, dest, month='2026-10', extra=None, coverage=True):
     c = _fresh(base, ctx0, dest, True)
     d = c['date']
     reasons = dict({n: 'no_value' for n in CPI}, **(extra or {}))
-    refs = {n: {'axis': 'Inflation', 'fred_id': f, 'transform': 'yoy_pct', 'ref_period': month} for n, f in CPI.items()}
+    refs = {n: {'axis': 'Inflation', 'fred_id': f, 'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10']}
+            for n, f in CPI.items()}
     econ = cmd.econ_collect([{'name': 'x'}], reasons, d, refs=refs)
     mmc = cmd.macro_metrics_collect({'book_state': 'ok'}, econ, d)
     p = os.path.join(c['datadir'], 'econ_indicators.json')

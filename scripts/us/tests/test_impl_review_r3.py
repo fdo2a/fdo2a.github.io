@@ -97,3 +97,45 @@ def test_g5_table_gate_accepts_dashes_for_the_missing_previous_and_rejects_a_fil
                 TABLE.format(actual='4.0%', prev='—', vs='—', trend=trend)):         # 최신값이 다르다
         assert T.check_tables(bad, [item], mm, '2026-12-10'), bad
 
+
+# ── G1. 어느 비교 달이 원천에 없는가 ─────────────────────────────────────────────────────────
+
+def _run_econ(monkeypatch, vals):
+    monkeypatch.setattr(cmd, 'ECON', [('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%'),
+                                      ('Inflation', 'CPI MoM', 'CPIAUCSL', 'mom_pct', '%')])
+    monkeypatch.setattr(cmd, 'fred_series', lambda sid: vals)
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    reasons, refs = {}, {}
+    rows, _ = cmd.collect_econ(reasons, refs)
+    return rows, reasons, refs, cmd.econ_collect(rows, reasons, D, refs)
+
+
+def test_g1_collector_states_which_comparison_month_is_absent(monkeypatch):
+    rows, reasons, refs, col = _run_econ(monkeypatch, monthly('2019-01', '2026-10', skip=('2025-10',)))
+    assert reasons == {'CPI YoY': 'no_value'}
+    assert col['missing_ref']['no_value:CPI YoY'] == {'fred_id': 'CPIAUCSL', 'transform': 'yoy_pct',
+                                                     'ref_period': '2026-10', 'lacking': ['2025-10']}
+
+
+def test_g1_another_cause_is_not_recorded_as_the_approved_one(monkeypatch):
+    # 비교 달(2025-10)은 있는데 값이 0 이라 변환이 안 된다 — 「그 달이 원천에 없다」가 아니다
+    vals = [(d, 0.0 if d == '2025-10-01' else v) for d, v in monthly('2019-01', '2026-10')]
+    rows, reasons, refs, col = _run_econ(monkeypatch, vals)
+    assert reasons.get('CPI YoY') == 'no_value' and col['missing_ref']['no_value:CPI YoY']['lacking'] == []
+    # 전월 대비가 못 만들어진 것은 다른 달(2026-09)이 없는 것이다
+    rows, reasons, refs, col = _run_econ(monkeypatch, monthly('2019-01', '2026-10', skip=('2026-09',)))
+    assert reasons == {'CPI MoM': 'no_value'}
+    assert col['missing_ref']['no_value:CPI MoM']['lacking'] == ['2026-09']
+
+
+def test_g1_lacking_travels_with_the_key_through_the_chain(monkeypatch):
+    import eval_macro_regime
+    import fetch_releases
+    rows, reasons, refs, econ = _run_econ(monkeypatch, monthly('2019-01', '2026-10', skip=('2025-10',)))
+    mm = cmd.macro_metrics_collect({'book_state': 'ok'}, econ, D)
+    ev = eval_macro_regime.eval_collect(D, 'fresh', {'collect': mm}, 'ok')
+    idx = fetch_releases.index_collect({'report_date': D, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh', mm)
+    assert mm['missing_ref']['econ:no_value:CPI YoY']['lacking'] == ['2025-10']
+    assert ev['missing_ref']['metrics:econ:no_value:CPI YoY']['lacking'] == ['2025-10']
+    assert idx['missing_ref'] == ev['missing_ref']
+

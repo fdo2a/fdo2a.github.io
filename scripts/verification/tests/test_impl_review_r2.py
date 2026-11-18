@@ -352,13 +352,14 @@ IMPACT = {'affects_checks': ['check_macro'], 'sections': ['물가 축'], 'scores
 
 
 def ident(key, month=MONTH, **kw):
-    d = {'fred_id': FRED.get(key, 'XXX'), 'transform': 'yoy_pct', 'ref_period': month}
+    d = {'fred_id': FRED.get(key, 'XXX'), 'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10']}
     d.update(kw)
     return d
 
 
 def acc(key, expires='2026-12-09', month=MONTH, **kw):
     d = {'id': EID, 'key': key, 'fred_id': FRED.get(key, 'XXX'), 'transform': 'yoy_pct', 'ref_period': month,
+         'lacking': '2025-10',
          'reason': 'BLS 가 2026-10 의 12개월 변화율을 발표하지 못했다', 'source': ['https://www.bls.gov/x'],
          'approved_by': 'user', 'approved_on': '2026-11-17', 'expires': expires, 'impact': IMPACT}
     d.update(kw)
@@ -391,13 +392,13 @@ def test_f6_registered_keys_make_the_file_conditional_not_ok(tmp_path, monkeypat
     (cond,) = [c for c in s['conditions'] if c['kind'] == 'accepted_missing']
     # 공개 기록(조건 5): 예외 ID, 원인, 제외 지표, 승인일, 영향 범위
     assert cond['ids'] == [EID] and cond['file'] == '<datadir>/econ_indicators.json' and cond['keys'] == [K1, K2]
-    assert cond['indicators'] == [dict(key=K1, **ident(K1)), dict(key=K2, **ident(K2))]
+    assert cond['indicators'] == [dict(key=K1, **ident(K1, lacking='2025-10')), dict(key=K2, **ident(K2, lacking='2025-10'))]
     assert cond['approved_by'] == 'user' and cond['approved_on'] == '2026-11-17' and cond['expires'] == '2026-12-09'
     assert cond['impact'] == IMPACT and 'BLS' in cond['reason'] and cond['source'] == ['https://www.bls.gov/x']
     line = s['inputs']['accepted_missing'][0]
     assert line == I.describe_accepted(f)
     for want in ('승인된 결측 — 원천 미발표 2건', f'예외 {EID}', '승인 user 2026-11-17', '만료 2026-12-09',
-                 'no_value:CPI YoY[CPIAUCSL·yoy_pct·2026-10]', '검사 check_macro', '섹션 물가 축', '점수 물가 축 점수',
+                 'no_value:CPI YoY[CPIAUCSL·yoy_pct·2026-10·2025-10 없음]', '검사 check_macro', '섹션 물가 축', '점수 물가 축 점수',
                  '원인: BLS'):
         assert want in line, want
 
@@ -485,7 +486,8 @@ def _collected(reasons, month=MONTH):
     sys.path.insert(0, SCRIPTS)
     import collect_market_data as cmd
     refs = {n: {'axis': 'Inflation', 'fred_id': {'CPI YoY': 'CPIAUCSL', 'Core CPI YoY': 'CPILFESL'}.get(n, 'X'),
-                'transform': 'yoy_pct', 'ref_period': month} for n, why in reasons.items() if why == 'no_value'}
+                'transform': 'yoy_pct', 'ref_period': month, 'lacking': ['2025-10']}
+            for n, why in reasons.items() if why == 'no_value'}
     econ = cmd.econ_collect([{'name': 'x'}], reasons, D, refs=refs)
     return econ, cmd.macro_metrics_collect({'book_state': 'ok'}, econ, D)
 
@@ -589,7 +591,7 @@ def test_f6_real_policy_has_exactly_this_one_exception():
     for (market, path, key), a in got.items():
         assert market == 'us' and a['id'] == EID and a['ref_period'] == '2026-10' and a['expires'] == '2026-12-09'
         assert a['approved_by'] == 'user' and a['approved_on'] == '2026-11-17' and a['transform'] == 'yoy_pct'
-        assert a['fred_id'] == ('CPILFESL' if 'Core' in key else 'CPIAUCSL')
+        assert a['fred_id'] == ('CPILFESL' if 'Core' in key else 'CPIAUCSL') and a['lacking'] == '2025-10'
         assert a['source'] == ['https://www.bls.gov/news.release/cpi.nr0.htm',
                                'https://www.bls.gov/schedule/news_release/cpi.htm']
         assert set(a['impact']) == {'affects_checks', 'sections', 'scores'} and 'check_macro' in a['impact']['affects_checks']

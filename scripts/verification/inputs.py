@@ -149,9 +149,11 @@ def validate(pol):
     return pol
 
 
-ACCEPTED_KEYS = ('id', 'key', 'fred_id', 'transform', 'ref_period', 'reason', 'source', 'approved_by', 'approved_on',
-                 'expires', 'impact')
+ACCEPTED_KEYS = ('id', 'key', 'fred_id', 'transform', 'ref_period', 'lacking', 'reason', 'source', 'approved_by',
+                 'approved_on', 'expires', 'impact')
 ACCEPTED_IDENTITY = ('fred_id', 'transform', 'ref_period')     # 자료의 `collect.missing_ref[키]` 와 셋 다 같아야 한다
+# 원인도 같아야 한다(3회차 G1): 자료의 `missing_ref[키].lacking`(그 달을 만드는 데 필요한 비교 달 가운데 원천에 없는 것)이
+# **정확히 등록의 `lacking` 그 달 하나**. 다른 달이 없거나, 여러 달이 없거나, 자료가 말하지 않으면 불일치.
 
 
 def _iso_date(v):
@@ -180,6 +182,8 @@ def _validate_accepted(market, e):
                 raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 {k} 가 없다')
         if not re.fullmatch(r'\d{4}-\d{2}', a['ref_period']):
             raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록의 ref_period 가 기준월(YYYY-MM)이 아니다')
+        if not isinstance(a.get('lacking'), str) or not re.fullmatch(r'\d{4}-\d{2}', a['lacking']):
+            raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 원인(lacking: 원천에 없는 비교 달 YYYY-MM)이 없다')
         src, imp = a.get('source'), a.get('impact')
         if not isinstance(src, list) or not src or not all(isinstance(x, str) and x for x in src):
             raise PolicyError(f'{market} {e["path"]} 승인된 결측 등록에 출처(source)가 없다')
@@ -216,6 +220,8 @@ def _accepted(e, stamp, date, excuse):
         # 이름(키)만 같아서는 안 된다 — 자료가 말하는 식별자(FRED id·변환)와 기준월이 등록과 모두 같아야 한다
         if a is None or not isinstance(r, dict) or any(r.get(k) != a[k] for k in ACCEPTED_IDENTITY):
             return None
+        if r.get('lacking') != [a['lacking']]:
+            return None                   # 원인이 다르다 — 승인된 「그 달 미발표」가 아닌 다른 이력 결측
         out.append({k: a.get(k) for k in ACCEPTED_KEYS})
     return out
 
@@ -651,7 +657,8 @@ def describe_accepted(f):
         return ', '.join(out)
     why = '; '.join(sorted({str(a.get('reason')) for a in am}))
     return (f'{f.get("name")}({rel}) — 승인된 결측 — 원천 미발표 {len(am)}건(예외 {ids}, 승인 {by} {on}, 만료 {exp}): '
-            + ', '.join(f'{a.get("key")}[{a.get("fred_id")}·{a.get("transform")}·{a.get("ref_period")}]' for a in am)
+            + ', '.join(f'{a.get("key")}[{a.get("fred_id")}·{a.get("transform")}·{a.get("ref_period")}'
+                        f'·{a.get("lacking")} 없음]' for a in am)
             + f' · 영향: 검사 {uniq("affects_checks")} / 섹션 {uniq("sections")} / 점수 {uniq("scores")} · 원인: {why}')
 
 
