@@ -137,10 +137,14 @@ def cmd_split(a):
     summary = {k: got[k] for k in ('accuracy', 'unplaced', 'excluded', 'dropped')}
     summary['candidates'] = len(got['candidates']['items'])
     summary['style_findings'] = got['style']
+    # 명료성 분류(2026-11-18) — split 시점에 정해지는 값만. 고쳐졌는지는 여기서 적지 않는다(발행 뒤 발행본과 견준다)
+    summary['clarity'] = got['clarity']
+    summary['clarity_meta'] = got['meta']
     _write(os.path.join(a.out, 'split.json'), summary)
+    recorded = sum(1 for f in got['clarity'] if f['route'] == 'record_only')
     print(f"prepub: accuracy {len(got['accuracy'])} · style candidates {summary['candidates']} · "
           f"excluded {len(got['excluded'])} · unplaced {len(got['unplaced'])} · "
-          f"dropped {len(got['dropped'])} (번역투만 고친다)")
+          f"dropped {len(got['dropped'])} · recorded {recorded} (번역투·용어만 고친다 — 기록만 하는 지적은 발행을 막지 않는다)")
     return 0
 
 
@@ -205,6 +209,52 @@ def _public_findings(findings, post_text=''):
     return out
 
 
+_PLACED = frozenset({'candidate', 'not_located', 'protected'})
+
+
+def _public_clarity(findings, draft_html=''):
+    """공개 기록에 남길 명료성 지적 — **닫힌 값과, 제출한 글에 실제로 있는 인용만.**
+
+    검토자가 쓴 글(이유·고칠 방향)은 싣지 않는다 — 비공개 결과에만 있다. 분류는 네 이름, 알 수 없는 것은 가·나·다,
+    길은 분류로 정해진 값(파일에 적힌 값을 믿지 않는다), 자리 결과는 세 값뿐이다. 그 밖의 글자는 빈 값이 된다.
+    인용은 독자가 보는 글자(`prepub.public.visible`)로 대조한다 — 주간 묶음이 발행본과 견줄 때도 같은 읽기다.
+    이 기록은 발행 직전 유출 검사의 대상이라, 칸 이름에 그 검사의 고정 문자열을 쓰지 않는다(`close/leak.py`).
+    """
+    from prepub import split as split_mod      # 길은 그 표 하나에서만 정한다
+    from prepub.public import norm, visible
+    route = {k: split_mod.ROUTES[k] for k in split_mod.CLARITY_KINDS}
+    text = visible(draft_html)
+    out = []
+    for f in findings or ():
+        if not isinstance(f, dict) or f.get('kind') not in route:
+            continue
+        quote = norm(str(f.get('quote') or ''))[:40]
+        tell, where = f.get('cannot_tell'), f.get('placed')
+        out.append({'kind': f['kind'], 'quote': quote if quote and quote in text else '',
+                    'cannot_tell': tell if tell in ('가', '나', '다') else '',
+                    'route': route[f['kind']],
+                    'placed': where if where in _PLACED else ''})
+    return out
+
+
+def _public_meta(meta):
+    meta = meta if isinstance(meta, dict) else {}
+
+    def count(key):
+        v = meta.get(key)
+        return v if isinstance(v, int) and not isinstance(v, bool) and 0 <= v < 10000 else 0
+    return {'marker': meta.get('marker') is True, 'lines_skipped': count('lines_skipped'),
+            'over_cap': count('over_cap')}
+
+
+def _draft_html(folder):
+    try:
+        with open(os.path.join(folder, 'original.html'), encoding='utf-8') as fh:
+            return fh.read()
+    except OSError:
+        return ''
+
+
 def _post_text(folder):
     """제출한 판의 본문 글자(태그 뺌) — 인용이 글에 있는지 대조한다."""
     import re
@@ -243,6 +293,15 @@ def cmd_record(a):
            'style_findings': _public_findings(split.get('style_findings', []), _post_text(a.dir)),
            'recorded_at': __import__('datetime').datetime.now(
                __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+    if isinstance(split, dict) and 'clarity' in split:
+        # 덧붙이는 칸이다 — 만들다 무슨 일이 나도 지금 형식의 기록으로 내린다. 발행을 막거나 되돌리는 값이 아니다.
+        try:
+            extra = {'clarity': _public_clarity(split.get('clarity'), _draft_html(a.dir)),
+                     'clarity_meta': _public_meta(split.get('clarity_meta'))}
+            json.dumps(extra)
+        except Exception:
+            extra = {}
+        rec.update(extra)
     folder = os.path.join(ROOT, 'reviews', 'prepublish', a.section)
     os.makedirs(folder, exist_ok=True)
     path = os.path.join(folder, f'{a.date}.json')
