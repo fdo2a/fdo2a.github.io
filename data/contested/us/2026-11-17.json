@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T19:21:50+00:00",
- "cutoff_at": "2026-11-18T19:21:50+00:00",
+ "collected_at": "2026-11-18T20:28:24+00:00",
+ "cutoff_at": "2026-11-18T20:28:24+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 217,
+  "harvest": 216,
   "candidates": 3,
   "articles": [
    2,
@@ -32,8 +32,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44637,
-   "out": 13859
+   "in": 45200,
+   "out": 13734
   },
   "discovery": "throttled",
   "hosts": {
@@ -47,35 +47,36 @@
   "grounded": {
    "claims": "7/7",
    "pairs": "3/3",
-   "obs": "8/8"
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 3,
-   "claims": 6,
-   "obs": 8,
+   "pairs": 2,
+   "claims": 4,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[0]",
     "edges[1]",
     "memo[0]",
     "structure",
     "variables[1]",
+    "variables[2]",
+    "worry.moderate[0]",
     "worry.most[0]",
     "worry.unlikely[0]"
    ],
    "outcome": "skipped_ratio",
    "remaining": [
-    "structure:dangling",
+    "structure:unverified",
     "variables[1]:unverified",
-    "edges[0]:unverified",
-    "edges[1]:dangling",
+    "variables[2]:unverified",
+    "edges[1]:unverified",
     "memo[0]:dangling",
     "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
+    "worry.moderate[0]:unverified",
     "worry.unlikely[0]:dangling"
    ]
   },
@@ -87,14 +88,14 @@
   "trigger": []
  },
  "problems": [
-  "structure:dangling",
+  "structure:unverified",
   "variables[1]:unverified",
-  "edges[0]:unverified",
-  "edges[1]:dangling",
+  "variables[2]:unverified",
+  "edges[1]:unverified",
   "memo[0]:dangling",
   "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
+  "worry.moderate[0]:unverified",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "8ddc4d54caf8c292"
+ "content_hash": "00c471f0119ec521"
 }
