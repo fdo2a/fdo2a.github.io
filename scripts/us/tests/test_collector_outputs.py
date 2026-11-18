@@ -64,4 +64,7 @@ def test_econ_pair_refuses_when_the_latest_month_cannot_be_transformed():
 
 def test_econ_pair_refuses_a_previous_that_is_not_the_month_before():
     vals = [('2026-06-01', 100.0), ('2026-07-01', 101.0), ('2026-09-01', 102.0), ('2026-10-01', 103.0)]
-    assert cmd._econ_pair(vals, 'mom_pct') is None        # 09 MoM 없음 -> 10 의 직전이 07 이 된다
+    # 09 MoM 이 없다 — 07 을 10 의 「직전」으로 찍지 않는다. 최신값(10)은 계산되므로 행은 만들고 직전은 비운다
+    # (2026-11-18 3회차 G5: 전에는 행을 통째로 버렸다)
+    actual, previous = cmd._econ_pair(vals, 'mom_pct')
+    assert previous is None and round(actual, 4) == round((103.0 / 102.0 - 1) * 100, 4)

@@ -68,3 +68,68 @@ def test_g1_the_cause_is_in_the_record_and_alert(tmp_path, monkeypatch):
     cond = next(c for c in s['conditions'] if c['kind'] == 'accepted_missing')
     assert all(i['lacking'] == '2025-10' for i in cond['indicators'])
     assert '2025-10 없음' in s['inputs']['accepted_missing'][0]
+
+
+# ── G5. 2026-12-10 뒤 — 2026-11 전년 대비는 있고 2026-10 전년 대비는 없다: 예외 없이 통과해야 한다 ───────────
+
+def test_g5_after_december_cpi_us_passes_without_the_exception(tmp_path, monkeypatch):
+    """합성 원자료(2025-10 만 원천에 없다, 최신 달 2026-11)를 수집 함수들에 그대로 흘린다 — 수집 → 점수 → 수집 상태 넷 →
+    실제 정책의 자료 판정(글 날짜 2026-12-10, 예외 만료 뒤) → check_macro 의 보류 판정 → 축 표 게이트.
+    한계: 실제 FRED 응답·실제 발행 글이 아니다(그날이 오지 않았다)."""
+    sys.path.insert(0, SCRIPTS)
+    import check_macro
+    import collect_market_data as cmd
+    import eval_macro_regime
+    import fetch_releases
+    from us import macro_metrics as M
+    from us import macro_table_gate as T
+    from us.tests.test_impl_review_r3 import TABLE, monthly
+    day = '2026-12-10'
+    monkeypatch.setattr(I, 'EFFECTIVE', None)
+    table = [('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%'), ('Inflation', 'CPI MoM', 'CPIAUCSL', 'mom_pct', '%'),
+             ('Inflation', 'Core CPI YoY', 'CPILFESL', 'yoy_pct', '%')]
+    series = {'CPIAUCSL': monthly('2018-01', '2026-11', skip=('2025-10',), step=1.3),
+              'CPILFESL': monthly('2018-01', '2026-11', skip=('2025-10',), step=0.9)}
+    monkeypatch.setattr(cmd, 'ECON', table)
+    monkeypatch.setattr(cmd, 'fred_series', lambda sid: series[sid])
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    reasons, refs = {}, {}
+    rows, by_id = cmd.collect_econ(reasons, refs)
+    assert reasons == {} and [r['name'] for r in rows] == ['CPI YoY', 'CPI MoM', 'Core CPI YoY']
+    yoy = rows[0]
+    assert yoy['ref_period'] == '2026-11-01' and yoy['previous'] is None       # 직전(2026-10 전년 대비)은 비운다
+    assert rows[1]['previous'] is not None                                     # 전월 대비는 평소대로
+    econ = cmd.econ_collect(rows, reasons, day, refs)
+    assert econ['status'] == 'ok' and econ['missing'] == []
+    for r in rows:
+        r['vs_prev'] = M.vs_prev(r['name'], r['axis'], r['actual'], r['previous'])
+    seen = {r['name']: [r['ref_period'], r['actual']] for r in rows}            # 어제 책이 이미 아는 지표(들인 날이 아니다)
+    mm = M.compute(by_id, rows, seen, book_state='ok')
+    mm = M.with_coverage(mm, cmd.excluded_scored(reasons, refs), cmd.expected_scored())
+    assert 'coverage' not in mm                                                # 축 점수에 셋 다 쓰였다
+    assert all(r['signed_z'] is not None for r in mm['indicators'])            # 점수는 이력으로 — 직전 칸과 무관
+    mmc = cmd.macro_metrics_collect(mm, econ, day)
+    ev = eval_macro_regime.eval_collect(day, 'fresh', {'collect': mmc}, 'ok')
+    idx = fetch_releases.index_collect({'report_date': day, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh', mmc)
+    assert [c['status'] for c in (mmc, ev, idx)] == ['ok', 'ok', 'ok']
+    # 자료 판정 — 실제 정책, 예외는 만료됐고(2026-12-09) 걸릴 결측도 없다
+    h, s = _real_us(tmp_path, (econ, mmc, ev, idx), date=day)
+    assert s['publish_ok'] and not s['inputs']['blocking'] and not s['inputs']['accepted_missing']
+    assert not [c for c in s['conditions'] if c['kind'] == 'accepted_missing']
+    # 판단 민감도 보류 — 빠진 지표가 없으니 걸리지 않는다
+    assert check_macro.coverage_hold(dict(mm, report_date=day, collect=mmc)) is None
+    # 축 표 — Previous·직전 대비 「—」가 통과한다
+    trend = next(r for r in mm['indicators'] if r['name'] == 'CPI YoY')['trend_cell_ko']
+    page = TABLE.format(actual=f"{yoy['actual']}%", prev='—', vs='—', trend=trend)
+    assert T.check_tables(page, [yoy], dict(mm, report_date=day), day) == []
+    # 같은 날 최신 달(2026-11)을 못 받았으면(원천이 2026-10 에서 멈춤) 예외도 만료라 막힌다
+    series2 = {k: [x for x in v if x[0] <= '2026-10-01'] for k, v in series.items()}
+    monkeypatch.setattr(cmd, 'fred_series', lambda sid: series2[sid])
+    reasons, refs = {}, {}
+    rows2, _ = cmd.collect_econ(reasons, refs)
+    econ2 = cmd.econ_collect(rows2, reasons, day, refs)
+    mmc2 = cmd.macro_metrics_collect({'indicators': [], 'book_state': 'ok'}, econ2, day)
+    ev2 = eval_macro_regime.eval_collect(day, 'fresh', {'collect': mmc2}, 'ok')
+    idx2 = fetch_releases.index_collect({'report_date': day, 'releases': [{'key': 'cpi', 'ok': True}]}, 'fresh', mmc2)
+    assert not _real_us(tmp_path, (econ2, mmc2, ev2, idx2), date=day)[1]['publish_ok']
+    assert _real_us(tmp_path, (econ2, mmc2, ev2, idx2), date='2026-12-09')[1]['publish_ok']   # 만료 전날까지는 예외
