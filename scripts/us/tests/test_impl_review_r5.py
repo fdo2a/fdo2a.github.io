@@ -82,3 +82,34 @@ def test_i1_sensitivity_can_include_the_introduced_scores():
     assert M.sensitivity(rows, AX, 1)['stable'] is True                           # 들인 지표를 넣지 않은 상태
     assert M.sensitivity(rows, AX, 1, include_introduced=True)['stable'] is False  # 넣은 상태(평균 0.27)
 
+
+# ── I2. CSV 행의 필드 수가 정확히 둘이 아니면 모른다 ────────────────────────────────────────
+
+def csv_client(body):
+    c = F.FredClient(key=None)
+    c.transport = 'csv'
+    c._get = lambda url: body.encode()
+    return c
+
+
+@pytest.mark.parametrize('line,blank,unclear', [
+    ('2025-10-01,', True, False),
+    ('2025-10-01,.', True, False),
+    ('2025-10-01,.,unexpected', False, True),          # codex 재현 — 여분 필드(전에는 미발표)
+    ('2025-10-01,,', False, True),
+    ('2025-10-01,,x', False, True),
+    ('2025-10-01', False, True),                       # 필드 부족
+])
+def test_i2_csv_row_must_have_exactly_two_fields(line, blank, unclear):
+    c = csv_client(f'observation_date,CPIAUCSL\n2025-09-01,324.3\n{line}\n2025-11-01,325.063\n')
+    assert c.series('CPIAUCSL') == [('2025-09-01', 324.3), ('2025-11-01', 325.063)]
+    assert (c.blank_dates['CPIAUCSL'] == ['2025-10-01']) is blank
+    assert (c.unclear_dates['CPIAUCSL'] == ['2025-10-01']) is unclear
+
+
+def test_i2_value_rows_with_extra_fields_keep_the_old_parse():
+    # 값이 있는 행의 파싱 계약(앞의 두 칸)은 그대로다 — 여기서 바꾸는 것은 「빈칸」의 근거뿐
+    c = csv_client('observation_date,X\n2025-09-01,324.3,extra\n2025-10-01,325.0\n')
+    assert c.series('X') == [('2025-09-01', 324.3), ('2025-10-01', 325.0)]
+    assert c.blank_dates['X'] == [] and c.unclear_dates['X'] == []
+

@@ -233,9 +233,15 @@ class FredClient:
         raw = [tuple(line.split(',')[:2]) for line in lines if ',' in line]
         rows = _pairs(raw)
         _assert_ascending(sid, rows)
-        # fredgraph.csv 는 값 칸을 비우거나(지금) "." 로(옛 표기) 적는다. 값 칸 자체가 없는 줄(쉼표 없음)은 모른다
-        self._blanks, self._unclear = _classify_blanks(
-            raw + [(line, _NO_FIELD) for line in lines if ',' not in line], CSV_BLANKS)
+        # fredgraph.csv 는 값 칸을 비우거나(지금) "." 로(옛 표기) 적는다. 「빈칸」의 근거는 **칸이 정확히 둘인 줄**뿐이다 —
+        # 값 칸이 없는 줄(쉼표 없음)도, 여분 칸이 있는 줄(`2025-10-01,.,x`)도 형식을 모른다(5회차 I2). 값이 있는 줄의
+        # 파싱(앞의 두 칸)은 그대로다.
+        shaped = []
+        for line in lines:
+            parts = line.split(',')
+            shaped.append((parts[0], parts[1]) if len(parts) == 2 else
+                          (parts[0], parts[1]) if len(parts) > 2 and _is_number(parts[1]) else (parts[0], _NO_FIELD))
+        self._blanks, self._unclear = _classify_blanks(shaped, CSV_BLANKS)
         return rows
 
     # ------------------------------------------------------------ 공개 API
@@ -471,6 +477,14 @@ def key_health(telemetry, key_set):
 API_BLANKS = ('.',)            # 공식 API: 값이 없는 관측은 `"value": "."`
 CSV_BLANKS = ('', '.')         # fredgraph.csv: 값 칸이 비어 있다(지금) 또는 `.`(옛 표기)
 _NO_FIELD = object()
+
+
+def _is_number(v):
+    try:
+        float(v)
+        return True
+    except (TypeError, ValueError):
+        return False
 
 
 def _classify_blanks(rows, explicit):
