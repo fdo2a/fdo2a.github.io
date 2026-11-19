@@ -3,49 +3,82 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-18",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-19T11:45:04+00:00",
- "cutoff_at": "2026-11-19T11:45:04+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-19T12:54:11+00:00",
+ "cutoff_at": "2026-11-19T12:54:11+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "cb6d927e3b63185b66018dfa7b894f13c766acd9",
+  "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
+ },
  "counts": {
   "harvest": 224,
   "candidates": 3,
   "articles": [
    4,
    2,
-   4
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 1,
+  "runs": 2,
   "tokens": {
-   "in": 5262,
-   "out": 73
+   "in": 77564,
+   "out": 23804
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "bbc.co.uk": "ok"
+   "bbc.co.uk": "ok",
+   "theguardian.com": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 9,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[0]",
+    "structure",
+    "worry.most[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "edges[2]:unverified"
+   ]
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "Anthropic 사상 최대 IPO의 수요 성격과 상장 시점 해석",
+  "query": "anthropic ipo record",
   "trigger": []
  },
- "content_hash": "b04831c6f8ace9f1"
+ "problems": [
+  "edges[2]:unverified"
+ ],
+ "content_hash": "48aa955546279f0a"
 }
