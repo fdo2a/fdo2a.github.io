@@ -52,9 +52,9 @@ MAX_EVENTS, MAX_TEXT, MAX_KEY, MAX_BYTES = 500, 3900, 200, 256 * 1024
 OVERFLOW_KEY = 'sys:overflow'
 # 계약 §1 의 kind 목록에 overflow 를 넣었다(2026-11-10) — Worker 검증 목록과 같이 바꾼다.
 OVERFLOW_KIND = 'overflow'
-OVERFLOW_TEXT = ('[발행 알림] 알림 일부를 아직 내보내지 못했어요 — 한 번에 실을 수 있는 양(500건·256KB)을 넘었거나 '
-                 '한 건이 3,900자를 넘어요. 자르지 않고 남겨 뒀어요. 양이 넘은 알림은 앞의 것이 전송되면 이어서 나가고, '
-                 '너무 긴 알림은 나가지 않아요 — 상태 브랜치의 계산 상태에서 직접 확인해야 해요.')
+OVERFLOW_TEXT = ('[발행 알림] 알림 일부 대기 중 · 확인 필요\n한 번에 실을 수 있는 양(500건·256KB)을 넘었거나 '
+                 '한 건이 3,900자를 넘어요. 자르지 않고 남겨 뒀어요\n양이 넘은 알림은 앞의 것이 전송되면 이어서 나가고, '
+                 '너무 긴 알림은 나가지 않아요 — 상태 브랜치의 계산 상태에서 직접 확인')
 _ID = re.compile(r'^[0-9a-f]{32}$')
 _HASH = re.compile(r'^[0-9a-f]{64}$')
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -191,12 +191,31 @@ def text_hash(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
+# 본문이 id 에 들어간다 — 같은 id 에 다른 본문이 가면 Worker 가 그 사건을 거부한다(core.js mismatch).
+# ① 문구를 바꾼 뒤 상태를 잃고 다시 계산해도 옛 id·새 본문이 되지 않고(codex 구현 검토 d1 #3),
+# ② 같은 사건을 다른 경로로 다시 계산해 본문이 달라져도(기준선으로 잡아 둔 세션의 「늦은 발행」 ↔ 커밋 시각으로 본
+#    「늦은 발행」, 「사라짐」 두 문장 — d2 #1) 다른 id 가 된다. 다른 id 는 한 번 더 갈 수 있다 — 계약은 「중복 전송 허용」.
+# publish·changed 는 호출부가 본문 해시를 extra 에 이미 넣는다(맥·GitHub 가 같은 id 를 쓰도록 GitHub 문장 기준).
+BODY_IN_EXTRA = ('publish', 'changed')
+
+
+def _base_id(kind, key, extra=''):
+    """상태 안에서 「같은 사건」을 가리는 값 — 종전의 id 그대로다. 본문을 넣기 전에 쌓인 사건은 id 가 곧 이 값이다."""
+    return event_id(kind, key, extra)
+
+
+def _body_id(kind, key, extra, text):
+    return event_id(kind, key, extra if kind in BODY_IN_EXTRA else f'{extra}|{text_hash(text)}')
+
+
 def add_event(st, kind, key, text, now, extra=''):
-    """key 는 순서 단위(계약 §1): 글 경로 / `us:2026-11-10` / `sys:<kind>`. 같은 key 안에서 달라야 할 것은 extra 로."""
-    eid = event_id(kind, key, extra)
-    if any(e.get('id') == eid for e in st['events']):
+    """key 는 순서 단위(계약 §1): 글 경로 / `us:2026-11-10` / `sys:<kind>`. 같은 key 안에서 달라야 할 것은 extra 로.
+    한 번만 쌓는 단위는 종전대로 (kind, key, extra) 다 — id 에 본문이 들어가도 같은 사건이 두 번 쌓이지 않는다."""
+    base = _base_id(kind, key, extra)
+    if any(e.get('base', e.get('id')) == base for e in st['events']):
         return None
-    st['events'].append({'id': eid, 'kind': kind, 'key': key, 'text': text, 'hash': text_hash(text),
+    eid = _body_id(kind, key, extra, text)
+    st['events'].append({'id': eid, 'base': base, 'kind': kind, 'key': key, 'text': text, 'hash': text_hash(text),
                          'created': now.isoformat(), 'status': 'pending', 'tries': 0})
     return eid
 
@@ -353,8 +372,8 @@ def _fetch_failed(st, now, why):
     base = datetime.fromisoformat(st.get('last_ok') or f['since'])
     if now - base >= FETCH_STALE and not f.get('alerted'):
         hours = int((now - base).total_seconds() // 3600)
-        add_event(st, 'fetch', 'sys:fetch', f'[발행 알림] GitHub 조회가 {hours}시간 넘게 실패하고 있어요 — 미발행 여부를 '
-                                            f'몰라요(그동안 미발행 판정을 멈춰요). 사유: {f["why"]}', now,
+        add_event(st, 'fetch', 'sys:fetch', f'[발행 알림] GitHub 조회 실패 · 확인 필요\n{hours}시간 넘게 실패하고 있어요 — '
+                                            f'미발행 여부를 몰라서 그동안 미발행 판정을 멈춰요\n사유: {f["why"]}', now,
                   extra=f['since'])
         f['alerted'] = True
 
@@ -445,9 +464,9 @@ def _late_or_ok(st, root, tip, market, s, path, dl, now, emit=None):
     if ct <= dl:
         return 'ok'
     ct = ct.astimezone(KST)
-    emit(st, 'late', f'{market}:{s}', f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각({_when(dl)}) 뒤에 '
+    emit(st, 'late', f'{market}:{s}', f'[늦은 발행] {_label(market, s)} · 확인만\n기준 시각({_when(dl)}) 뒤에 '
                                            f'올라온 것으로 보여요(커밋 시각 {ct.month}/{ct.day:02d} {ct:%H:%M} 기준 — 실제 '
-                                           '공개 시각과 다를 수 있어요). 미발행 경고는 보내지 않았어요.', now)
+                                           '공개 시각과 다를 수 있어요)\n미발행 경고는 보내지 않았어요', now)
     return 'late'
 
 
@@ -468,8 +487,9 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
         anc, anc_why = _ancestry(root, last, tip) if last else (True, None)
         if not anc:
             add_event(st, 'gap', 'sys:gap',
-                      f'[발행 알림] 지난 확인 기준점({last[:7]})을 지금 이력에서 못 찾았어요 — {anc_why}. 그 사이 사건을 다 봤다고 '
-                      f'할 수 없어요. {V.EFFECTIVE} 이후 글을 전부 다시 계산해요.', now, extra=f'{last}->{tip}')
+                      f'[발행 알림] 확인 기준점을 잃음 · 확인 필요\n지난 확인 기준점({last[:7]})을 지금 이력에서 못 찾았어요 '
+                      f'— {anc_why}\n그 사이 사건을 다 봤다고 할 수 없어요. {V.EFFECTIVE} 이후 글을 전부 다시 계산해요', now,
+                      extra=f'{last}->{tip}')
             full = True
         paths = tree if full else _changed(root, last, tip)
         targets = {t for t in map(_target_of_any, paths) if t}
@@ -494,7 +514,8 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
     reset = st.get('reset')
     if reset:
         st['reset'] = None
-        rid = add_event(st, 'reset', 'sys:reset', '', now, extra=f'{reset}|{now.date().isoformat()}')
+        rextra = f'{reset}|{now.date().isoformat()}'
+        rid = add_event(st, 'reset', 'sys:reset', '', now, extra=rextra)      # 본문은 아래에서 채운다 — id 도 그때 다시
     st['baseline'] = False
 
     # 미발행·해소 먼저 — 「해소」가 그 글의 발행 알림보다 앞에 오게
@@ -514,25 +535,25 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
                     st['sessions'][key] = 'ok'                     # 다시 올라왔다 — 글 쪽 알림이 따로 간다
                 elif seen == 'missing_quiet':
                     # 기준선(첫 실행)에서 경고 없이 잡아 둔 세션 — 경고를 보낸 적이 없으니 「해소」가 아니다
-                    emit(st, 'late', key, f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각({_when(dl)}) 뒤에 '
-                                          '올라왔어요 — 이 세션의 미발행 경고는 보낸 적이 없어요(처음 실행 때 기준선).', now)
+                    emit(st, 'late', key, f'[늦은 발행] {_label(market, s)} · 확인만\n기준 시각({_when(dl)}) 뒤에 '
+                                          '올라왔어요\n이 세션의 미발행 경고는 보낸 적이 없어요(처음 실행 때 기준선)', now)
                     st['sessions'][key] = 'resolved'
                 elif seen == 'missing':
                     warn = next((e for e in st['events'] if e.get('kind') == 'missing' and e.get('key') == key), None)
                     # 한 번이라도 보내려 했으면 텔레그램이 받았을 수 있다 — 「안 보냈다」고 하지 않는다(codex 구현 검토 #3)
                     if github:
                         # outbox 에 실린 경고는 Worker 가 이미 보냈을 수 있다 — 취소하지 않고, 받았다고도 하지 않는다
-                        emit(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} 세션 보고서가 올라왔어요 '
-                                                  f'— 앞서 생성된 미발행 경고(기준 {_when(dl)})가 풀렸어요.', now)
+                        emit(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} · 해결\n글이 올라왔어요 '
+                                                  f'— 앞서 생성된 미발행 경고(기준 {_when(dl)})가 풀렸어요', now)
                     elif warn is not None and warn.get('status') == 'pending' and not warn.get('attempted'):
                         # 경고를 아직 못 보냈다 — 보내지 않고 「늦은 발행」 하나로 바꾼다(받은 적 없는 경고의 해소를 보내지 않는다)
                         warn['status'] = 'cancelled'
-                        emit(st, 'late', key, f'[늦은 발행] {_label(market, s)} 세션 보고서가 기준 시각'
-                                                   f'({_when(dl)}) 뒤에 올라왔어요 — 미발행 경고는 보내기 전에 해소돼 '
-                                                   '보내지 않았어요.', now)
+                        emit(st, 'late', key, f'[늦은 발행] {_label(market, s)} · 확인만\n기준 시각'
+                                                   f'({_when(dl)}) 뒤에 올라왔어요\n미발행 경고는 보내기 전에 해소돼 '
+                                                   '보내지 않았어요', now)
                     else:
-                        emit(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} 세션 보고서가 올라왔어요 '
-                                                       f'— 앞서 보낸 미발행 경고(기준 {_when(dl)})가 풀렸어요.', now)
+                        emit(st, 'resolved', key, f'[미발행 해소] {_label(market, s)} · 해결\n글이 올라왔어요 '
+                                                       f'— 앞서 보낸 미발행 경고(기준 {_when(dl)})가 풀렸어요', now)
                     st['sessions'][key] = 'resolved'
                 elif seen is None and now >= dl:
                     # 기준 시각을 넘겨 처음 봤다 — 그때 맥이 못 봤을 수 있다. 커밋 시각으로 늦었는지만 추정한다
@@ -543,9 +564,11 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
                 st['sessions'][key] = 'missing_quiet' if quiet else 'missing'
                 note = _collection_note(root, tip, market, s)
                 # 원인 줄은 그 시각 수집 판에 따라 바뀐다 — id 에 넣어 같은 id·다른 본문이 되지 않게(Fable #4)
+                # 첫 줄 = 대상·상태(미리보기는 첫 줄만), 원인은 단정하지 않는다(11/19 알림 틀)
                 emit(st, 'missing', key,
-                          f'[미발행] {_label(market, s)} 세션 보고서 미발행 확인\n'
-                          f'기준 시각: {_when(dl)}\n' + note, now, extra=text_hash(note))
+                          f'[미발행] {_label(market, s)} · 확인 필요\n'
+                          f'기준 시각 {_when(dl)} 이 지났는데 이번에 확인한 공개 판에 글이 없어요\n'
+                          + note.replace('원인: 확정하지 못했어요 — ', '원인(확정 아님): ', 1), now, extra=text_hash(note))
 
     flagged, unverified = 0, []
     for path, v in views.items():
@@ -566,7 +589,8 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
         else:
             if prev.get('gone'):
                 prev['gone'] = False
-                emit(st, 'back', path, f'[다시 올라옴] {path} 가 다시 공개 판에 있어요.', now, extra=tip)
+                emit(st, 'back', path, f'[다시 올라옴] {_short(path)} · 확인만\n사라졌던 글이 다시 공개 판에 있어요', now,
+                     extra=tip)
             if prev.get('fp') != fp:
                 text = V.render_publish(v, head='[상태 바뀜]', who=who)
                 canon = text if who == V.GITHUB else V.render_publish(v, head='[상태 바뀜]', who=V.GITHUB)
@@ -581,28 +605,30 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
         if prev is not None and not prev.get('gone'):
             prev['gone'] = True
             _mark_gone(st, f'{market}:{d}')
-            emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 지금 공개 판에 없어요 '
-                                  f'— 발행됐던 글이에요. {_deleted_by(root, tip, path)} 루틴·정정 이력 확인 필요.', now,
-                 extra=tip)
+            emit(st, 'gone', path, f'[사라짐] {_label(market, d)} · 확인 필요\n발행됐던 글이 지금 공개 판에 없어요\n'
+                                  f'{_deleted_by(root, tip, path)} 루틴·정정 이력 확인', now, extra=tip)
         elif prev is None and path in paths:
             st['posts'][path] = {'fp': None, 'first_seen': None, 'gone': True}
             _mark_gone(st, f'{market}:{d}')
-            emit(st, 'gone', path, f'[사라짐] {V.LABEL[market]} {int(d[5:7])}/{d[8:]} 보고서가 {V.subject(who)} 확인하기 전에 '
-                                  f'올라왔다가 지금은 없어요 — {_deleted_by(root, tip, path)} 루틴·정정 이력 확인 필요.', now,
+            emit(st, 'gone', path, f'[사라짐] {_label(market, d)} · 확인 필요\n{V.subject(who)} 확인하기 전에 '
+                                  f'올라왔다가 지금은 없어요\n{_deleted_by(root, tip, path)} 루틴·정정 이력 확인', now,
                  extra=tip)
 
     if reset and rid:
         ev = next(e for e in st['events'] if e['id'] == rid)
-        _set_text(ev, f'[발행 알림] {reset} — 이미 올라온 글·세션은 기준선으로만 잡았어요. 즉시 확인이 필요한 이상이 있는 '
-                      f'글 {flagged}편만 따로 알려요. 이상은 아니지만 설정된 검사 완료가 아닌 글(경고·미실행·자동 대조하지 못한 수치·숫자 대조 없음) '
+        # 아침 요약은 11/19 부터 발행 전 기록 내역을 싣지 않는다 — 그 줄을 가리키지 않는다
+        _set_text(ev, f'[발행 알림] {reset} · 기준선만 잡음\n이미 올라온 글·세션은 알림 없이 기준선으로 잡았어요. '
+                      f'즉시 확인이 필요한 이상이 있는 글 {flagged}편만 따로 알려요\n'
+                      f'이상은 아니지만 설정된 검사가 다 끝나지 않은 글(경고·미실행·범위 밖 숫자·숫자 대조 없음) '
                       f'{len(unverified)}편' + (': ' + ', '.join(_short(p) for p in unverified[:10])
                                                  + (f' 외 {len(unverified) - 10}편' if len(unverified) > 10 else '')
                                                  if unverified else '')
-                      + ' — 최근 7일 안 글은 아침 요약의 [발행 전 기록] 줄에도 보여요. 아직 안 올라온 세션은 아침 요약에 있어요.'
+                      + '\n아직 안 올라온 세션은 아침 요약에 있어요'
                       if quiet else
-                      f'[발행 알림] {reset} — {V.EFFECTIVE} 이후 글을 전부 다시 계산해요(이미 받은 알림이 다시 올 수 있어요).')
+                      f'[발행 알림] {reset} · 전부 다시 계산\n{V.EFFECTIVE} 이후 글을 전부 다시 계산해요(이미 받은 알림이 다시 올 수 있어요)')
+        ev['id'] = _body_id('reset', 'sys:reset', rextra, ev['text'])       # 글 수·이름이 본문에 있다 — 본문이 다르면 다른 id
     if st['fetch'].get('alerted'):
-        add_event(st, 'fetch_ok', 'sys:fetch_ok', '[발행 알림] GitHub 조회가 다시 돼요 — 밀린 판정을 이어서 해요.', now,
+        add_event(st, 'fetch_ok', 'sys:fetch_ok', '[발행 알림] GitHub 조회 복구 · 해결\n밀린 판정을 이어서 해요', now,
                   extra=st['fetch'].get('since', ''))
     st['fetch'] = {}
     st['last_seen'], st['last_ok'] = tip, now.isoformat()

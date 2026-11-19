@@ -173,7 +173,7 @@ def test_event_count_cap_holds_back_newest_and_adds_one_overflow():
     kept = [e['key'] for e in doc['events'] if e['key'] != W.OVERFLOW_KEY]
     assert kept == [f'posts/2027-01-{i:04d}.html' for i in range(499)]   # 오래된 쪽을 싣고 새 사건을 멈춘다
     assert len(W.pending(st)) == 621                                     # 남긴 것은 상태에 그대로 — 버리지 않는다
-    assert over[0]['id'] == W.event_id(W.OVERFLOW_KIND, W.OVERFLOW_KEY, st['events'][499]['id'])   # 처음 남겨진 사건 기준
+    assert over[0]['id'] == W.event_id(W.OVERFLOW_KIND, W.OVERFLOW_KEY, f"{st['events'][499]['id']}|{W.text_hash(W.OVERFLOW_TEXT)}")   # 처음 남겨진 사건 기준
     again = W.build_outbox(st, at(11, 10, 14))
     assert [e['id'] for e in again['events']] == [e['id'] for e in doc['events']]     # 넘침 알림은 하나만
     W.apply_acks(st, {(e['id'], e['hash']) for e in doc['events']}, set(), at(11, 10, 15))
@@ -265,7 +265,7 @@ def test_first_run_without_branch_is_baseline(world):
     world.sync()
     assert CLI.main(['--github']) == 0
     st, out = world.state(), world.outbox()
-    assert [e['kind'] for e in st['events']] == ['reset'] and '기준선으로만' in st['events'][0]['text']
+    assert [e['kind'] for e in st['events']] == ['reset'] and '기준선만 잡음' in st['events'][0]['text']
     assert st['sessions']['kr:2026-11-09'] == 'missing_quiet'
     assert out['format'] == 'alerts-outbox/1' and [e['id'] for e in out['events']] == [st['events'][0]['id']]
     assert out['last_ok'] == at(11, 10, 13).isoformat() and out['last_seen'] == F.git(world.src, 'rev-parse', 'HEAD')
