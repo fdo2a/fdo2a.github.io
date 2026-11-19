@@ -134,6 +134,21 @@ def _global_rows(market):
     return out
 
 
+def _global_missing(market):
+    """수집기가 「없음」으로 선언한 세계 지수 {이름: 선언된 날짜|None}. rows 에 있는 이름은 넣지 않는다.
+
+    두 원천으로 확인하지 못한 지수다(`us/global_close.py`). 그 행은 숫자 없이 비워 둘 수 있다.
+    """
+    gc = ((market.get('session') or {}).get('global_close') or {})
+    have = set(_global_rows(market))
+    out = {}
+    for region in ('asia', 'europe'):
+        for m in (gc.get(region) or {}).get('missing') or []:
+            if isinstance(m, dict) and m.get('name') and m['name'] not in have:
+                out[m['name']] = m.get('date')
+    return out
+
+
 def _vix(market):
     pc = market.get('price_context') or {}
     lv = ((pc.get('levels') or {}).get('VIX') or {})
@@ -500,6 +515,7 @@ def _audit_table(spec, table, kids, market, res, owned):
         elif par != 'bp':
             v.append(f'[{spec.section}] 열 머리 「{th}」 의 괄호는 단위(bp)나 날짜(「11월 5일」)만 쓴다')
     seen = {}
+    declared_missing = _global_missing(market) if spec.group == 'global' else {}
     for tr in body:
         cells = _cells(tr, kids)
         if not cells:
@@ -526,6 +542,14 @@ def _audit_table(spec, table, kids, market, res, owned):
             if col is None:
                 continue          # 소유하지 않는다 — 그 칸 수치는 문장 층에서 미검증으로 센다(codex #9)
             owned.add(id(cell))
+            if a is None and spec.group == 'global' and akey in declared_missing:
+                # 「없음」으로 선언된 지수의 행: 숫자가 없으면(「—」) 틀린 숫자가 아니다. 기준일 칸은
+                # 선언된 날짜까지 받는다. 그 밖의 숫자는 아래에서 「데이터에 이 행이 없다」로 걸린다.
+                text = cell.plain()
+                if not re.search(r'\d', text):
+                    continue
+                if col == 'date' and text == _md(declared_missing[akey]):
+                    continue
             _audit_cell(spec, label, col, cell, a, head_dates, res)
     for label, key in spec.rows.items():
         a = _asset(market, spec.group, _GLOBAL_NAME.get(key, key)) or {}

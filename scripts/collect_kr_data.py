@@ -455,15 +455,10 @@ def main(outdir: str, assetdir: str = "kr/assets"):
             except Exception:
                 pass
 
-        peers = {}
-        for name, t in kr_session.PEERS:
-            try:
-                c = yf.Ticker(t).history(period="10d")["Close"].dropna()
-                if len(c) >= 2:
-                    peers[name] = (float(c.iloc[-1] / c.iloc[-2] - 1) * 100,
-                                   str(c.index[-1].date()))
-            except Exception:
-                pass
+        # 아시아 이웃 지수는 미국 수집기와 같은 판정을 쓴다(`us/global_close.py`). 예전에는 야후 일봉의
+        # 마지막 두 행을 그대로 썼는데, 현지 자정 뒤 재수집에서는 야후가 그날 일봉을 비워 마지막 행이
+        # 전 세션이 됐다(11/18 닛케이 +0.28% → 02:04 KST 재수집 -1.34%). 확인 못 한 지수는 싣지 않는다.
+        peers, peers_missing = kr_session.settle_peers(report_date)
 
         fx_bars = []
         try:
@@ -483,6 +478,8 @@ def main(outdir: str, assetdir: str = "kr/assets"):
                 lab: kr_session.kr_hours_window(fut.get(t), report_date)
                 for lab, t in kr_session.FUTURES},
             "asia_peers": kr_session.asia_peers(peers, kospi_pct),
+            # 확인하지 못해 뺀 이웃 지수와 그 이유 — 전 세션 값으로 대신하지 않는다.
+            "asia_peers_missing": peers_missing,
             "usdkrw_intraday": kr_session.usdkrw_window(fx_bars, report_date),
         }
         _write(outdir, "kr_session.json", session_ctx)

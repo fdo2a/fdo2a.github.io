@@ -65,3 +65,17 @@ def test_econ_pair_refuses_when_the_latest_month_cannot_be_transformed():
 def test_econ_pair_refuses_a_previous_that_is_not_the_month_before():
     vals = [('2026-06-01', 100.0), ('2026-07-01', 101.0), ('2026-09-01', 102.0), ('2026-10-01', 103.0)]
     assert cmd._econ_pair(vals, 'mom_pct') is None        # 09 MoM 없음 -> 10 의 직전이 07 이 된다
+
+
+def test_session_block_gets_the_settled_global_closes():
+    """세계 지수 행은 이력의 마지막 행이 아니라 두 원천으로 확인한 판정에서 나온다(2026-11-19)."""
+    assert 'settle=global_close_settle(report_date)' in SRC
+    src = inspect.getsource(cmd.global_close_settle)
+    assert 'global_close.collect(' in src and 'except Exception' in src
+
+
+def test_global_close_settle_never_raises(monkeypatch):
+    from us import global_close
+    monkeypatch.setattr(global_close, 'collect',
+                        lambda *a, **k: (_ for _ in ()).throw(RuntimeError('down')))
+    assert cmd.global_close_settle('2026-11-18') == {}

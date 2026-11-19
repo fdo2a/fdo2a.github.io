@@ -1115,6 +1115,28 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
 SOURCE = 'github-actions/collect_market_data.py'
 
 
+def global_close_settle(report_date):
+    """세계 지수 6종의 그 세션 확정 종가 판정 — {티커: 판정}. 절대 예외를 내지 않는다.
+
+    야후 이력의 마지막 행을 쓰지 않는다: 현지 자정 뒤에는 그 행이 전 세션이다. 네이버의 날짜 붙은
+    종가를 야후와 맞춰 본 것만 싣고, 못 맞춘 지수는 이유가 붙은 「없음」이다(`us/global_close.py`).
+    비-코어 — 여기서 무엇이 실패해도 그 지수 행이 빠질 뿐 수집·완결 판정은 그대로다.
+    """
+    try:
+        from us import global_close
+        from us.session import ASIA, EUROPE
+        pairs = ASIA + EUROPE
+        print('settling global closes (Naver dated close x Yahoo)...')
+        out = global_close.collect([t for _, t in pairs], report_date, context=_SSL)
+        for name, t in pairs:
+            print(global_close.describe(name, out.get(t) or {}), file=sys.stderr
+                  if (out.get(t) or {}).get('status') != 'ok' else sys.stdout)
+        return out
+    except Exception as e:
+        print(f'global close settle failed: {e}', file=sys.stderr)
+        return {}
+
+
 def run_id():
     """이 실행의 표시 — 원문 index(`fetch_releases`)·새 발표 원장(`record_releases`)과 같은 꼴."""
     rid = os.environ.get('GITHUB_RUN_ID')
@@ -1698,7 +1720,8 @@ def main():
     try:
         from us.session import compute as compute_session
         sess = compute_session(closes, hist_dates, data, intraday,
-                               collect_futures_bars(), report_date, ohlc=hist_ohlc)
+                               collect_futures_bars(), report_date, ohlc=hist_ohlc,
+                               settle=global_close_settle(report_date))
         data['session'] = sess
         for key, ko in (('asia', '아시아'), ('europe', '유럽')):
             al = sess['global_close'][key]['alignment']

@@ -692,3 +692,71 @@ def test_c12_fullwidth_table_cell_same_value_passes(post, data):
 def test_c12_period_then_digit_is_not_a_decimal():
     assert [(t.raw, t.value) for t in N.tokens('상승했다.5% 올랐다. 4.5% 와 .5%')] == \
         [('5%', 5.0), ('4.5%', 4.5), ('.5%', 0.5)]
+
+
+# ── 「없음」으로 선언된 세계 지수 (2026-11-19) ───────────────────────────────
+# 수집기가 두 원천으로 확인하지 못한 지수는 rows 에서 빠지고 missing 에 이유와 함께 남는다.
+# 작성 지시문은 「글로벌 6종」 표를 말하므로, 그 지수의 행을 빼도, 숫자 없이 비워 둬도 통과해야 한다.
+# 숫자를 쓰면 여전히 위반이다.
+
+NIKKEI_ROW = ('<tr><td data-label="지수">닛케이225</td><td data-label="종가">62,188.63</td>'
+              '<td data-label="등락" class="sc-dn">-1.42%</td><td data-label="기준일">11월 4일</td></tr>')
+
+
+def _declare_missing(data, name='닛케이', date='2026-11-05'):
+    asia = data['market_data']['session']['global_close']['asia']
+    row = next(r for r in asia['rows'] if r['name'] == name)
+    asia['rows'] = [r for r in asia['rows'] if r['name'] != name]
+    asia['missing'] = [{'name': name, 'ticker': row['ticker'], 'date': date,
+                        'reason': 'value_disagree', 'note_ko': '두 원천의 종가가 다르다'}]
+    return data
+
+
+def _table_violations(res):
+    return [v for v in res.violations if '오늘의 장' in v and '닛케이' in v]
+
+
+def _blank(close='—', chg='—', date='—'):
+    return ('<tr><td data-label="지수">닛케이225</td>'
+            f'<td data-label="종가">{close}</td><td data-label="등락">{chg}</td>'
+            f'<td data-label="기준일">{date}</td></tr>')
+
+
+def test_declared_missing_index_row_omitted_passes(post, data):
+    assert NIKKEI_ROW in post
+    res = run(sub(post, NIKKEI_ROW, ''), _declare_missing(data), prose='warn')
+    assert not _table_violations(res)
+
+
+def test_declared_missing_index_row_left_blank_passes(post, data):
+    res = run(sub(post, NIKKEI_ROW, _blank()), _declare_missing(data), prose='warn')
+    assert not _table_violations(res)
+
+
+def test_declared_missing_index_blank_row_may_carry_the_declared_date(post, data):
+    data = _declare_missing(data)
+    res = run(sub(post, NIKKEI_ROW, _blank(date='11월 5일')), data, prose='warn')
+    assert not _table_violations(res)
+    res = run(sub(post, NIKKEI_ROW, _blank(date='11월 4일')), data, prose='warn')
+    assert _table_violations(res)                       # 선언된 날짜가 아닌 날짜는 숫자다
+
+
+@pytest.mark.parametrize('cells', [{'close': '62,188.63'}, {'chg': '-1.42%'},
+                                   {'close': '62,188.63', 'chg': '-1.42%', 'date': '11월 5일'}])
+def test_declared_missing_index_with_a_number_still_fails(post, data, cells):
+    res = run(sub(post, NIKKEI_ROW, _blank(**cells)), _declare_missing(data), prose='warn')
+    assert _table_violations(res)
+
+
+def test_index_absent_without_a_declaration_behaves_as_before(post, data):
+    asia = data['market_data']['session']['global_close']['asia']
+    asia['rows'] = [r for r in asia['rows'] if r['name'] != '닛케이']
+    assert _table_violations(run(sub(post, NIKKEI_ROW, _blank()), data, prose='warn'))   # 빈 행도 위반
+    assert not _table_violations(run(sub(post, NIKKEI_ROW, ''), data, prose='warn'))     # 행을 빼면 통과
+
+
+def test_index_present_in_rows_is_not_excused_by_a_stray_missing_entry(post, data):
+    asia = data['market_data']['session']['global_close']['asia']
+    asia['missing'] = [{'name': '닛케이', 'ticker': '^N225', 'date': '2026-11-05', 'reason': 'x'}]
+    res = run(sub(post, '62,188.63', '62,188.64'), data, prose='warn')
+    assert _table_violations(res)                       # rows 에 있으면 값 대조가 그대로 돈다

@@ -321,3 +321,33 @@ def test_a_number_split_by_a_comment_is_refused():
     from us import session_gate as G
     from common.numbers import numbers_split_by_tags
     assert numbers_split_by_tags('<p>2.<!-- > -->20% 올랐다</p>')
+
+
+# ── 「없음」으로 선언된 세계 지수 (2026-11-19, us/global_close.py) ─────────────
+
+def _missing(name):
+    return {'name': name, 'ticker': 'x', 'date': '2026-08-27', 'reason': 'value_disagree',
+            'note_ko': '두 원천의 종가가 다르다'}
+
+
+def test_missing_indices_are_not_demanded_and_a_one_row_region_has_no_verdict():
+    s = dict(SESSION, global_close={
+        'asia': {'rows': [SESSION['global_close']['asia']['rows'][0]], 'alignment': None,
+                 'missing': [_missing('항셍'), _missing('상해종합')]},
+        'europe': {'rows': [], 'alignment': None,
+                   'missing': [_missing('DAX'), _missing('FTSE100'), _missing('유로스톡스50')]}})
+    html = FULL.replace('유럽은 미국과 엇갈렸습니다. DAX 0.31%, FTSE100 -0.79%. '
+                        '아시아도 닛케이 -0.20%, 항셍 -0.34%로 함께 밀렸습니다.',
+                        '닛케이는 -0.20%로 마쳤습니다.')
+    assert check(html, s) == []
+    # 남은 한 행의 수치는 여전히 본문·표에 있어야 한다.
+    assert any('닛케이' in v for v in check(html.replace('-0.20%', '-0.30%'), s))
+
+
+def test_with_every_index_missing_the_global_paragraph_is_optional():
+    s = dict(SESSION, global_close={
+        'asia': {'rows': [], 'alignment': None, 'missing': [_missing('닛케이')]},
+        'europe': {'rows': [], 'alignment': None, 'missing': [_missing('DAX')]}})
+    html = FULL.replace('<p data-session="global">유럽은 미국과 엇갈렸습니다. DAX 0.31%, FTSE100 -0.79%. '
+                        '아시아도 닛케이 -0.20%, 항셍 -0.34%로 함께 밀렸습니다.</p>', '')
+    assert check(html, s) == []

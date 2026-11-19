@@ -285,13 +285,24 @@ def tape(intraday, thresholds=None):
 
 
 def compute(closes, dates, market_data, intraday, futures_bars, report_date,
-            ohlc=None):
-    """「오늘의 장」 블록. 어느 조각이 없어도 나머지는 나온다."""
+            ohlc=None, settle=None):
+    """「오늘의 장」 블록. 어느 조각이 없어도 나머지는 나온다.
+
+    `settle` 은 `us.global_close.collect` 의 결과({티커: 판정})다. 주면 세계 지수 행은 **거기서만**
+    나온다 — 이력(`closes`)의 마지막 행을 쓰지 않는다. 야후가 마지막 일봉을 비운 시각에 이력의
+    마지막 행은 전 세션이라, 그 값이 그날 마감처럼 실렸다(2026-10-26~11-17 발행본 전부). 판정을 못
+    받은 지수는 `missing` 에 이유와 함께 남고 행은 없다. 수집기는 늘 `settle` 을 준다.
+    """
     us_pct = (((market_data or {}).get('indices') or {}).get('S&P 500') or {}).get('pct')
     g = {}
     for key, pairs in (('asia', ASIA), ('europe', EUROPE)):
-        rows = region_rows(closes, dates, pairs, report_date)
-        g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct)}
+        if settle is None:
+            rows = region_rows(closes, dates, pairs, report_date)
+            g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct)}
+            continue
+        from .global_close import rows_and_missing
+        rows, missing = rows_and_missing(settle, pairs)
+        g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct), 'missing': missing}
 
     contracts = {}
     for label, ticker in FUTURES:
