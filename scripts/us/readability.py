@@ -188,6 +188,7 @@ def _blank_inert(html: str) -> str:
 # 태그 토큰화는 게이트가 쓰는 것과 같은 것을 쓴다 — 속성값 안의 `>` 에서 끊기면
 # 정상 발행본이 「div 가 열린 채」로 걸린다(2026-09-04 codex 검토가 실제로 뚫었다).
 from common.numbers import TAG_RE  # noqa: E402
+from .style import drop_generated, generated_elements  # noqa: E402  일본 일간 v2 생성 문장(style.py 가 정본)
 
 # `<script>`·주석은 `_blank_inert` 가 가리고, 여기서는 본문 안에 함께 실려 오는
 # `<style>`(§4 섹터 표)과 `<textarea>` 를 더 가린다. 안의 태그 모양 텍스트는
@@ -897,8 +898,14 @@ def split_title_sentences(html: str) -> str:
 
 
 def enhance_html(html: str) -> str:
-    """조판·문단·빠른 이동을 한 번에 적용한다. 보이는 숫자는 반드시 불변이다."""
+    """조판·문단·빠른 이동을 한 번에 적용한다. 보이는 숫자는 반드시 불변이다.
+
+    일본 일간 v2 의 코드 생성 문장(`<p data-gen>`)은 조판이 건드리지 않는다 — 변환 앞에 자리표로 바꿨다가
+    뒤에 그대로 되돌린다. 게이트가 조판 뒤의 글에서 그 바이트를 코드 출력과 대조한다. 없는 문서는 그대로다."""
     before = visible_numeric_tokens(html)
+    kept = generated_elements(html)
+    for i, el in enumerate(kept):
+        html = html.replace(el, f'<!--gen-keep-{i}-->', 1)
     out = inject_css(html)
     out = demote_card_p_font(out)
     out = block_labels(out)
@@ -907,14 +914,16 @@ def enhance_html(html: str) -> str:
     out = split_dense_paragraphs(out)
     out = inject_reading_map(out)
     out = move_strategy_first(out)
+    for i, el in enumerate(kept):
+        out = out.replace(f'<!--gen-keep-{i}-->', el, 1)
     if Counter(visible_numeric_tokens(out)) != Counter(before):
         raise ValueError("가독성 보정 중 보이는 숫자가 바뀌었다")
     return out
 
 
 def paragraphs(html: str) -> list:
-    """본문 `<p>`의 순수 텍스트. 표·차트·스타일은 제외."""
-    body = _STRIP.sub("", html)
+    """본문 `<p>`의 순수 텍스트. 표·차트·스타일은 제외. 일본 일간 v2 의 코드 생성 문장도 뺀다(style.drop_generated)."""
+    body = _STRIP.sub("", drop_generated(html))
     out = []
     for attrs, raw in _P.findall(body):
         if _EXCLUDED_P_CLASS.search(attrs):

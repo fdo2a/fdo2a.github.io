@@ -135,9 +135,20 @@ def _root(tmp_path, snap=SNAP):
 def test_build_diag_prints_order(tmp_path, capsys):
     import build_japan_daily as B
     root = _root(tmp_path)
-    assert B.main(['diag', '--session', S, '--root', str(root)]) == 0
+    # v2 전환(2026-11-19): 2판이 아닌 미발행 후보는 다시 수집한다
+    assert B.main(['diag', '--session', S, '--root', str(root)]) == 1
     out = capsys.readouterr().out
-    assert 'comment → today → equity' in out and 'complete=True' in out
+    assert 'comment → today → equity' in out and 'complete=True' in out and '2판 스냅샷이 아니다' in out
+
+
+def test_build_diag_v2_candidate_ok(tmp_path, capsys):
+    import build_japan_daily as B
+    snap = dict(copy.deepcopy(SNAP), schema=2,
+                facts={'items': [], 'blocks': {'topix': 'current', 'sectors': 'invalid', 'curve': {}}})
+    snap['calendar']['coverage'] = {'today_missing': ['무역통계'], 'upcoming_missing': []}
+    assert B.main(['diag', '--session', S, '--root', str(_root(tmp_path, snap))]) == 0
+    out = capsys.readouterr().out
+    assert 'TOPIX current · 업종 invalid' in out and '<!--G:topix-->' in out and '미확인 계열: 무역통계' in out
 
 
 def test_build_diag_refuses_incomplete(tmp_path, capsys):

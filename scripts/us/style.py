@@ -197,8 +197,29 @@ _PROVENANCE = re.compile(
     r'<details\b[^>]*\bdata-provenance\b[^>]*>(.*?)</details\s*>', re.S | re.I)
 
 
+# 일본 일간 v2(2026-11-19)의 코드 생성 문장 `<p data-gen="topix|sectors|curve">`. 작성자 글이 아니라 코드 출력이라
+# 문체·읽기 쉬움 검사에서 뺀다. **일본 일간 문서에서만**(canonical 이 /japan/daily/) — 그리고 그 문서는
+# `japan/daily_gate.verify_generated` 가 이 요소들이 `render(facts)` 와 바이트로 같은지 따로 확인해야 발행된다
+# (발행 래퍼가 다섯 게이트를 전부 요구한다). 같은 문장을 작성자가 산문에 쓰면 그대로 검사받는다.
+# US·KR 문서에는 이 요소도 그 canonical 도 없다 — 동작이 같다(시험으로 고정).
+GENERATED_P = re.compile(r'<p data-gen="(?:topix|sectors|curve)">[^<]*</p>')
+_JP_DAILY_CANONICAL = re.compile(r'<link rel="canonical" href="https://fdo2a\.github\.io/japan/daily/')
+
+
+def generated_elements(html):
+    """일본 일간 문서의 코드 생성 문장 원소들(그 밖의 문서는 [] — 입력을 그대로 둔다)."""
+    return GENERATED_P.findall(html or '') if _JP_DAILY_CANONICAL.search(html or '') else []
+
+
+def drop_generated(html):
+    for el in generated_elements(html):
+        html = html.replace(el, ' ', 1)
+    return html
+
+
 def _body(html):
     """`<body>` 안에서 스크립트·스타일·불변 생성 구간·근거 블록을 뺀 것."""
+    html = drop_generated(html)
     m = re.search(r'<body\b', html, re.I)
     body = html[m.start():] if m else html
     body = _SCRIPT.sub(' ', body)

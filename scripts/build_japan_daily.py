@@ -8,6 +8,8 @@
 
 스냅샷은 발행 전이면 `japan/data/daily/candidate/<s>.json`, 발행 뒤면 `japan/data/daily/<s>.json`.
 `complete` 가 거짓이거나 `jgb_recollect` 가 false 가 아니면(이른 후보·옛 형식) 진단이 1 로 끝난다 — 오케스트레이터는 발행하지 않는다.
+미발행 후보가 2판(`schema: 2`)이 아니어도 1 이다(v2 전환 — 다시 수집). 2판은 본문에 `<!--G:…-->` 자리가 필수이고
+조립이 구조(자리표시자는 절의 바로 아래 자식, 숨김·style 금지)를 본다 — `japan/daily_render.validate_v2`.
 """
 import argparse
 import json
@@ -99,17 +101,42 @@ def cmd_diag(args):
     # 이른(16:30 예약) 후보나 필드가 없는 옛 형식 후보는 네이버 당일 JGB 를 놓쳤을 수 있다 — 다시 수집할 때까지
     # 발행하지 않는다(codex 구현 검토 #2·#3). 재수집도 실패하면 재시도 회차가 이어받는다.
     published = (Path(args.root) / 'japan' / 'data' / 'daily' / f'{args.session}.json').exists()
+    if d.get('schema') == 2:
+        b = (d.get('facts') or {}).get('blocks') or {}
+        curve = b.get('curve') or {}
+        print(f'생성 문장 — TOPIX {b.get("topix")} · 업종 {b.get("sectors")} · '
+              f'스프레드 2~10년 {curve.get("s2s10")} / 10~30년 {curve.get("s10s30")} '
+              '(본문에는 <!--G:topix-->·<!--G:sectors-->·<!--G:curve--> 자리만 둔다)')
+        miss = ((d.get('calendar') or {}).get('coverage') or {}).get('today_missing') or []
+        if miss:
+            print(f'일정표 미확인 계열: {"·".join(miss)} — 「오늘 발표가 없다」를 쓰지 않는다(캡션이 말한다)')
+    # 2판이 아닌 미발행 후보는 v2 조립·게이트에 맞지 않는다 — 다시 수집한다(설계 §6 전환)
+    if not published and d.get('schema') != 2:
+        print('  ! schema: 2판 스냅샷이 아니다 — 다시 수집해야 한다')
+        return 1
     if not published and d.get('jgb_recollect', True) is not False:
         print('  ! jgb_recollect: 네이버 JGB 마감 확정 전 후보 — 다시 수집해야 한다')
         return 1
     return 0 if d['complete'] else 1
 
 
+def _run_dir_of(out):
+    """조립본이 일본 일간 실행 폴더(입력 고정 기록이 있는 곳) 안이면 그 폴더."""
+    d = Path(out).resolve().parent
+    return d if (d / 'inputs.json').exists() else None
+
+
 def cmd_assemble(args):
+    # 새 판을 조립하는 순간 앞 판의 통과 기록과 조립본은 이 실행의 발행 자격을 잃는다(codex 구현 1회차 #1)
+    run_dir = _run_dir_of(args.out)
+    if run_dir is not None:
+        from jp_daily_gates import invalidate
+        invalidate(str(run_dir), '새 판 조립 시작')
+        Path(args.out).unlink(missing_ok=True)
     body = Path(args.body).read_text(encoding='utf-8')
     meta = _load(args.meta)
     d = _load(snapshot_path(args.root, args.session))
-    errs = R.validate_body(body, R.order(d['calendar'].get('event_day')))
+    errs = R.validate_body(body, R.order(d['calendar'].get('event_day')), schema=d.get('schema'))
     for k in ('title', 'summary'):
         if not str(meta.get(k, '')).strip():
             errs.append(f'meta.json 에 {k} 가 없다')
@@ -119,6 +146,8 @@ def cmd_assemble(args):
     if errs:
         for e in errs:
             print(f'  - {e}')
+        if run_dir is not None:
+            invalidate(str(run_dir), '조립 실패', errs)
         return 1
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(R.assemble(body, meta, d), encoding='utf-8')

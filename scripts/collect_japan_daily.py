@@ -30,6 +30,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from common import weekly_sources as WS  # noqa: E402
 from japan import daily_calendar as CAL  # noqa: E402
+from japan import daily_facts as JF  # noqa: E402
+from japan import daily_index as IX  # noqa: E402
 from japan import daily_macro as MAC  # noqa: E402
 from japan import daily_movers as MOV  # noqa: E402
 from japan import daily_prices as PR  # noqa: E402
@@ -44,8 +46,10 @@ JST = timezone(timedelta(hours=9))
 BOJ_SERIES_CACHE = os.path.join(DAILY_DIR, 'boj_series.json')
 FX = (('usdjpy', 'JPY=X', 'USD/JPY'), ('eurjpy', 'EURJPY=X', 'EUR/JPY'),
       ('krw_per_100jpy', 'JPYKRW=X', '100엔당 원'))
-TOPIX_ETF = ('1306', 'TOPIX ETF(1306)')
 CUT = '16:30'
+NAVER_TOPIX = 'https://api.stock.naver.com'
+INDEX_REQUEST_SEC = 10     # JPX·네이버 요청당
+INDEX_TOTAL_SEC = 60       # JPX·네이버 전체 — 넘으면 TOPIX·업종 invalid, 나머지 수집은 그대로
 MISMATCH_PCT = 0.05
 
 
@@ -173,7 +177,8 @@ def _jgb_status(jgb):
     return 'ok' if not gaps else f'결측 {",".join(gaps)}'
 
 
-def _rates(fetch, session, prev, status, holidays=(), now=None):
+def _rates(fetch, session, prev, status, holidays=(), now=None, raw=None):
+    """`raw` 에 dict 를 주면 실린 블록의 만기별 원시 호가 글자를 채운다(스프레드 — facts 로만 간다)."""
     mof = None
     try:
         # 이력 + 이번 달 — 월초에도 직전 채권 영업일 행이 있다(codex 구현 검토 #12)
@@ -184,14 +189,20 @@ def _rates(fetch, session, prev, status, holidays=(), now=None):
     fetched = (jst.date().isoformat(), jst.strftime('%H:%M'))
     try:
         # 네이버 당일 1순위, MOF 는 대조 겸 폴백 — 출처를 섞지 않는다
-        jgb, why, check = RT.jgb_naver(fetch.naver_bonds(), session, prev, fetched, mof)
+        got_raw = {}
+        jgb, why, check = RT.jgb_naver(fetch.naver_bonds(), session, prev, fetched, mof, raw=got_raw)
     except Exception as e:
         jgb, why, check = None, _why(e), None
     status['jgb_naver'] = 'ok' if jgb else why
     if check:
         status['jgb_mof_check'] = check
+    if jgb and raw is not None:
+        raw.update(got_raw)
     if not jgb:
-        jgb = RT.jgb_block(mof, prev, holidays=holidays) if mof is not None else {}
+        got_raw = {}
+        jgb = RT.jgb_block(mof, prev, holidays=holidays, raw=got_raw) if mof is not None else {}
+        if raw is not None:
+            raw.update(got_raw)
     status['jgb'] = _jgb_status(jgb) if jgb else status.get('jgb_mof', 'JGB 없음')
     try:
         call = RT.call_rate(fetch.boj('FM01', 'STRDCLUCON'), session, holidays=holidays)
@@ -234,11 +245,52 @@ def _macro(fetch, events_today, prev_snap, status):
     return items, periods
 
 
-def _breadth(sectors):
-    """업종 몇 개가 올랐나 — 본문이 셀 수 있게 코드가 센다(작성자가 세면 창작 수치가 된다)."""
-    chg = [s['chg_pct'] for s in sectors if s.get('ok') and s.get('chg_pct') is not None]
-    return {'total': len(sectors), 'counted': len(chg), 'up': sum(1 for c in chg if c > 0),
-            'down': sum(1 for c in chg if c < 0), 'flat': sum(1 for c in chg if c == 0)}
+class _Budget:
+    """JPX·네이버 호출의 전체 시간 상한. 요청마다 남은 시간을 요청 제한으로 주고(최대 10초), 응답을 받은 **뒤에도**
+    기한을 다시 본다 — 마지막 호출이 상한을 넘겨 돌아오면 그 응답을 채택하지 않는다(codex 구현 1회 #8)."""
+
+    def __init__(self, clock, limit=INDEX_TOTAL_SEC):
+        self.clock, self.limit, self.start = clock, limit, clock()
+
+    def remaining(self):
+        return self.limit - (self.clock() - self.start)
+
+    def check(self):
+        if self.remaining() <= 0:
+            raise TimeoutError('JPX·네이버 전체 시간 상한 초과')
+
+    def timeout(self):
+        left = self.remaining()
+        if left <= 0:
+            raise TimeoutError('JPX·네이버 전체 시간 상한 초과')
+        return min(INDEX_REQUEST_SEC, left)
+
+
+def _index(fetch, session, prev, status):
+    """TOPIX·업종(JPX + 네이버 대조). 예외·시간 초과는 두 블록 invalid 로만 끝난다 — 닛케이·엔·JGB·뉴스와
+    `complete` 에 영향을 주지 않는다(§8)."""
+    import time
+    clock = getattr(fetch, 'clock', time.monotonic)
+    sleep = getattr(fetch, 'sleep', time.sleep)
+    budget = _Budget(clock)
+
+    def timed(fn):
+        def call(*a):
+            out = fn(*a, timeout=budget.timeout())
+            budget.check()                  # 응답이 기한을 넘겨 돌아왔으면 버린다
+            return out
+        return call
+    try:
+        get, day = timed(fetch.jpx), timed(fetch.naver_topix_day)
+        out = IX.collect(get, session, prev, sleep, naver_basic=timed(fetch.naver_topix_basic),
+                         naver_day=lambda: day(session, prev))
+        budget.check()                      # 채택 직전에 한 번 더
+    except Exception as e:  # noqa: BLE001 — 지수 수집 실패는 그 두 블록만
+        why = f'지수 수집 실패({type(e).__name__})'
+        out = {'topix': {'status': 'invalid', 'why': why}, 'sectors': {'status': 'invalid', 'why': why}}
+    for name in ('topix', 'sectors'):
+        status[name] = 'ok' if out[name]['status'] == 'current' else out[name]['why']
+    return out
 
 
 def _jp_holidays(root):
@@ -259,12 +311,7 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
     prev_snap = _prev_snapshot(root, prev)
 
     nikkei = _nikkei(fetch, session, prev, status)
-    topix = _instrument(fetch, f'{TOPIX_ETF[0]}.T', session, prev, hist_prices.get(TOPIX_ETF[0]),
-                        status, 'topix_etf')
-    sectors = []
-    for code, name in MOV.SECTOR17.items():
-        row = _instrument(fetch, f'{code}.T', session, prev, hist_prices.get(code), status, f'sector_{code}')
-        sectors.append(dict(row, code=code, name_ko=name))
+    index = _index(fetch, session, prev, status)
     rows, stocks = [], []
     for code, name, sector in MOV.UNIVERSE:
         r = _instrument(fetch, f'{code}.T', session, prev, hist_prices.get(code), status, f'stock_{code}')
@@ -273,20 +320,27 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
         if r['ok'] and r['chg_pct'] is not None:
             rows.append({'code': code, 'name': name, 'change_pct': r['chg_pct'], 'close': r['value']})
     hol = _jp_holidays(root) if holidays is None else holidays
-    jgb, call, recollect = _rates(fetch, session, prev, status, hol, now)
+    raw = {}
+    jgb, call, recollect = _rates(fetch, session, prev, status, hol, now, raw=raw)
+    curve = RT.spreads(jgb, raw, session)
+    for seg, c in curve.items():
+        status[f'curve_{seg}'] = 'ok' if c['status'] != 'invalid' else c['why']
     today = CAL.today_events(cal, session)
     macro, periods = _macro(fetch, today, prev_snap, status)
     snap = {
+        'schema': JF.SCHEMA,
         'session': session, 'prev_session': prev, 'cut': CUT,
         'scheduled_at': scheduled_at, 'ran_at': now.astimezone(timezone.utc).isoformat(),
         'complete': bool(nikkei['ok']), 'fetch_status': status,
-        'indices': {'nikkei': nikkei, 'topix_etf': dict(topix, label=TOPIX_ETF[1])},
-        'sectors': sectors, 'sector_breadth': _breadth(sectors), 'stocks': stocks, 'movers': MOV.build(session, rows),
+        # TOPIX·업종·스프레드는 facts 에만 — ETF(1306·1617~1633) 수집은 없앴다(v2)
+        'indices': {'nikkei': nikkei}, 'stocks': stocks, 'movers': MOV.build(session, rows),
         'jgb': jgb, 'jgb_recollect': recollect, 'call_rate': call, 'fx': _fx(fetch, session, prev, status),
         'macro': macro, 'macro_periods': periods,
         'calendar': {'version': CAL.version(cal), 'today': today,
-                     'event_day': CAL.event_day(cal, session), 'upcoming': CAL.upcoming(cal, session)},
+                     'event_day': CAL.event_day(cal, session), 'upcoming': CAL.upcoming(cal, session),
+                     'coverage': CAL.coverage(cal, session)},
         'news_file': f'japan/data/news/daily/{session}.json',
+        'facts': JF.build(session, prev, index, jgb, raw, curve),
     }
     path = os.path.join(root, DAILY_DIR, 'candidate', f'{session}.json')
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -349,6 +403,26 @@ class Live:
 
     def jgb_rows(self):
         return WS.fetch_jgb(self.ctx, keep=40)
+
+    def jpx(self, url, timeout=INDEX_REQUEST_SEC):
+        """(status, headers, bytes) — 404 도 예외가 아니라 응답으로 돌려준다(슬롯 표가 뺀다)."""
+        import urllib.error
+        import urllib.request
+        req = urllib.request.Request(url, headers={'User-Agent': WS.UA})
+        try:
+            with urllib.request.urlopen(req, context=self.ctx, timeout=timeout) as r:
+                return r.status, dict(r.headers.items()), r.read()
+        except urllib.error.HTTPError as e:
+            return e.code, dict(e.headers.items()) if e.headers else {}, b''
+
+    def naver_topix_basic(self, timeout=INDEX_REQUEST_SEC):
+        return WS.http_get(f'{NAVER_TOPIX}/index/.TOPX/basic', self.ctx, timeout=timeout)
+
+    def naver_topix_day(self, session, prev, timeout=INDEX_REQUEST_SEC):
+        start = (datetime.fromisoformat(prev) - timedelta(days=10)).strftime('%Y%m%d0000')
+        end = (datetime.fromisoformat(session) + timedelta(days=1)).strftime('%Y%m%d0000')
+        return WS.http_get(f'{NAVER_TOPIX}/chart/foreign/index/.TOPX/day?startDateTime={start}&endDateTime={end}',
+                           self.ctx, timeout=timeout)
 
     def naver_bonds(self):
         """만기별 `marketIndex/prices` 응답. `pageSize` 는 10 미만을 거부한다(`too_small`)."""
