@@ -17,6 +17,8 @@ model: opus
 
 **수치 규칙 (절대)**: 모든 시장 수치는 market_data.json / intraday.json에서만(**예외: 「트렌드 유닛 점검」의 블록과 `data-fund` 문단은 같은 날 `fund_board.json` 이 정본이다** — 참조 ETF 는 market_data.json 에 없다), 경제지표 Actual/Previous는 `data/econ_indicators.json`(FRED 확정치)에서, 나머지 경제지표(Forecast·비FRED 지표)·뉴스·FedWatch 수치는 research_notes.md에서만 가져온다. 수치 창작 절대 금지 — 삭제가 창작보다 낫다.
 
+**숫자 출처 표식 (2026-11-20 — 2주 참고 검사, 발행을 막지 않는다)**: 표 밖 문장의 자료 숫자는 `<span data-ref="별칭:경로">-0.23%</span>` 로 감싼다. 별칭 `md` market_data · `mm` macro_metrics · `fb` fund_board · `au` auctions · `cal` calendar · `lq` liquidity · `rl` 연구 원장(`rl:<기록 id>.<경로>`) · `dv` 계산값. 경로는 읽은 그대로(`md:indices.SP500.pct` — 키의 공백·& 는 빼도 된다, 목록은 `[id·key·name]`, 지표 실제값은 `mm:indicators[Initial Jobless Claims].actual`). `id`·`ei`·`mv` 는 상태 칸이 없어 달아도 확인 불가로 센다. 계산값: `dv:diff|sum|ratio|pctchg(칸,칸)`(같은 묶음 두 자산의 같은 필드, 또는 한 자산의 last↔prev·level↔week_ago), `dv:rank(md:sectors,pct,Energy)`, `dv:gap(값칸,rl:문턱칸)`. 음수 칸을 부호 없이(「0.23% 내렸다」) 쓰면 `|abs`, 어림선(「7,300선」)은 `|lvl`. **한 표식 = 수량 하나**, 부호·배율·단위까지 안에(`<span …>-0.23</span>%` 는 오류). 기사·검색 숫자는 `data-src="news:<guid 전체>"`·`data-src="web:<source_id>"`(이번 cycle 기록의 출처 id), 나열을 센 수(「지수 6종」)만 `<span data-nx="enum">6종</span>`. 날짜·만기·지수 이름은 달지 않는다. 표식 없는 숫자는 「확인 불가」로 집계될 뿐이다 — 그것을 줄이려고 숫자를 지우거나 칸을 바꿔 달지 않는다(첫 판 대비 이력이 기록된다).
+
 ## 보고서 구조 (한국어, 순서 고정)
 
 1. **헤드라인 한 줄 요약** — H1 80자·수치 넷 안팎이 기준이다(참고 — 발행을 막지 않는다). `시장 방향 + 가장 중요한 촉매 + 투자판단에 미치는 영향` 만 — 지수 네 종 등락률을 제목에 복사하지 않는다. 헤드라인 카드 본문은 두 문단·문단당 두 문장 이내.

@@ -106,7 +106,9 @@ def test_optional_argv_dropped_when_missing():
 
 
 def test_us_news_repo_paths():
-    assert R.repo_paths('us-news') == ['scripts', 'config', 'research/us', 'posts', 'news']
+    assert R.repo_paths('us-news') == ['scripts', 'config', 'research/us', 'posts']
+    digest, n = R.repo_digest(ROOT, 'us-news', f'news/{D}.html', 'worktree')
+    assert digest is not None and n > 0                # /news/ 가 gitignore 라 넣으면 다이제스트가 통째로 실패했다
     assert R.repo_paths('us') == ['scripts', 'config', 'research/us', 'posts']
     assert R.record_path('us-news', D) == f'verification/us-news/{D}.json'
 

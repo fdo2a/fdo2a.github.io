@@ -378,8 +378,12 @@ def _fetch_failed(st, now, why):
         f['alerted'] = True
 
 
+# 기록·건별 알림이 보는 경로 — US 뉴스·산업 글(news/)은 2026-11-20 부터(그 전 글은 V.start_of 가 거른다)
+WATCH_PATHS = ('posts', 'kr/posts', 'news', 'verification')
+
+
 def _tree(root, rev):
-    raw = V._git(root, 'ls-tree', '-r', '--name-only', '-z', rev, '--', 'posts', 'kr/posts', 'verification')
+    raw = V._git(root, 'ls-tree', '-r', '--name-only', '-z', rev, '--', *WATCH_PATHS)
     return {p for p in raw.decode('utf-8', 'replace').split('\0') if p}
 
 
@@ -420,7 +424,7 @@ def _changed(root, old, new):
     """두 시점의 트리 비교가 아니라 사이 커밋마다의 변경 — 그 사이에 올라왔다 사라진 글도 잡는다(codex 구현 검토 #2)."""
     # -m: merge 커밋의 변경도 부모마다, --no-renames: 옮긴 글의 옛 경로를 삭제로 남긴다(codex 재검토 #2).
     raw = V._git(root, 'log', '-m', '--no-renames', '--format=', '--name-only', '-z', f'{old}..{new}', '--',
-                 'posts', 'kr/posts', 'verification')
+                 *WATCH_PATHS)
     return {p.strip('\n') for p in raw.decode('utf-8', 'replace').split('\0') if p.strip('\n')}
 
 
@@ -429,9 +433,9 @@ def _target_of_any(path):
     if t:
         return t
     parts = path.split('/')
-    if len(parts) == 3 and parts[0] == 'verification' and parts[1] in V.TARGETS and parts[2].endswith('.json'):
+    if len(parts) == 3 and parts[0] == 'verification' and parts[1] in V.RECORD_TARGETS and parts[2].endswith('.json'):
         d = parts[2][:-5]
-        if d >= V.EFFECTIVE:
+        if d >= V.start_of(parts[1]):
             return parts[1], d
     return None
 

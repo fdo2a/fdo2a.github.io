@@ -500,9 +500,11 @@ REPO_PATHS = ('scripts', 'config')
 
 def repo_paths(market):
     """판정에 쓰이는 레포 안 코드·원장. US 는 유동성 원장이 이전 글을 읽어 `posts/` 도.
-    US 뉴스·산업 글(us-news)은 US 원장(research/us)과 같은 날 일간(posts/ — 숫자 출처 검사가 cycle 을 읽는다)·news/ 를 본다."""
+    US 뉴스·산업 글(us-news)은 US 원장(research/us)과 같은 날 일간(posts/ — 숫자 출처 검사가 cycle 을 읽는다)을 본다.
+    `news/` 는 넣지 않는다 — .gitignore 의 `/news/`(작업 공간 폴더) 때문에 임시 index 의 `add -A` 가 통째로 실패하고,
+    그 글 말고 다른 뉴스 글을 읽는 검사도 없다(2026-11-20 구현 중 발견, 설계 §8.4 와 다름)."""
     if market == 'us-news':
-        return list(REPO_PATHS) + ['research/us', 'posts', 'news']
+        return list(REPO_PATHS) + ['research/us', 'posts']
     return list(REPO_PATHS) + [f'research/{market}'] + (['posts'] if market == 'us' else [])
 
 

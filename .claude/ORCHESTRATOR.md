@@ -35,6 +35,9 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    git show "$C:data/market_data.json" > "$WS/market_data.json"
    mkdir -p "$WS/news"
    git show "$C:data/news/$D.json" > "$WS/news/$D.json" 2>/dev/null || rm -f "$WS/news/$D.json"
+   mkdir -p "$WS/news/numbers" "$WS/telegram/numbers"
+   git show "$C:data/news/numbers/$D.json" > "$WS/news/numbers/$D.json" 2>/dev/null || rm -f "$WS/news/numbers/$D.json"
+   git show "$C:data/telegram/numbers/$D.json" > "$WS/telegram/numbers/$D.json" 2>/dev/null || rm -f "$WS/telegram/numbers/$D.json"
    ```
 
    마지막 줄의 `|| rm -f` 는 지우지 않는다 — 리다이렉션이 실패해도 빈 파일이 먼저 생기고, 작성자는 그것을 JSON 으로 읽다 죽는다. 뉴스 파일이 없으면 작성자에게 없다고 넘긴다. `research_notes.md` 는 없다(죽은 런의 워크스페이스와 함께 사라졌다) — ③·④ 업계 뉴스 층을 비우라고 넘긴다. 잠금은 위에서 잡은 그대로다.
@@ -54,7 +57,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    - 유동성·수급: **`data/liquidity/` 디렉터리 전체**를 `<workspace>/liquidity/` 로 복사한다(`liquidity.json`·`table.html`(있을 때)·`state.json`·`qra/*.txt`). `status: complete`·`report_date` 오늘·`today: true` 일 때만 writer 가 「유동성·수급」 섹션을 쓴다. 실을 회차는 책이 아니라 발행본 원장(`posts/*.html` 의 `data-h41-release`·`data-qra-doc`)이 정한다 — 늦게 확인된 회차도 다음 글이 싣는다.
    - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok`·`partial` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다). HTML 은 그대로 넣는 생성 블록이다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
-   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
+   - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. **같은 커밋의 숫자 목록**(`data/news/numbers/[DATE].json` → `<workspace>/news/numbers/[DATE].json`, `data/telegram/numbers/[DATE].json` → `<workspace>/telegram/numbers/[DATE].json`)도 있으면 함께 복사한다 — 숫자 출처 검사가 기사·텔레그램 숫자를 이 목록과 대조한다(없으면 그 숫자는 「확인 불가」로 셀 뿐 막지 않는다). DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
@@ -117,9 +120,13 @@ Launch the Agent tool with subagent_type "brief-report-writer", run synchronousl
 (a) `grep -c '확인필요' <html>` = 0. (b) **수치 대조는 `check_numbers.py` 가 한다**(2026-11-07) — 시장 표 6종의 칸은 전수로 막고, 문장 수치는 자산·단위로 정해지는 것만 대조한다. 문장 층이 경고(`경고(문장)`)인 동안(`config/number_audit.json`, 2026-11-21 재측정까지)은 **문장 수치 5개 이상**을 `grep -o '4\.62' <html>` 식으로 원본과 계속 대조한다 — HTML 전체(~34K 토큰)를 읽지 않는다. 수치 창작 금지, 미확인은 삭제·재구성.
 
 ```bash
+# 처음 돌리기 전에 한 번만: cp <workspace>/morning_brief_[DATE].html <workspace>/numsrc_first.html  (다시 덮지 않는다)
 python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/morning_brief_[DATE].html \
-        --datadir <workspace> --repo <repo> --tg <workspace>/telegram.json --cycle <CYCLE_ID>
+        --datadir <workspace> --repo <repo> --tg <workspace>/telegram.json --cycle <CYCLE_ID> \
+        --first-html <workspace>/numsrc_first.html
 ```
+
+**숫자 출처 검사(`check_number_sources`, 2026-11-20 — 참고, 2주 동안 막지 않는다)**: 글의 모든 숫자를 「자료로 확인 · 기사와 일치 · 텔레그램 글과 일치 · 검색 발췌와 일치 · 세지 않은 숫자 · 확인 불가」 중 하나로 센다. 첫 판(`numsrc_first.html`)은 **게이트를 처음 돌리기 전 초안을 한 번 복사한 것**이다 — 최종 기록이 첫 판에서 확인 불가였던 숫자가 고쳐졌는지·문장째 사라졌는지를 적는다. 확인 불가를 줄이는 수정은 셋뿐이다: ① 맞는 표식을 단다(`brief-report-writer.md` 「숫자 출처 표식」) ② 값을 칸 값으로 고친다 ③ 출처에 정말 없으면 숫자를 빼고 최종 보고에 적는다. 작성자에게 최대 2회 넘기고, 그 뒤 남은 확인 불가는 기록에 실린 채 발행한다. 아래 「중복 수치 삭제」는 이 검사의 확인 불가에 쓰지 않는다.
 
 **실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사가 실패했거나 **판정 불가**(검사기가 돌지 못함 — 통과가 아니다). 검사기를 따로 하나씩 돌려 목록을 대신하지 않는다. 아래 설명은 검사기별 계약이다.
 
@@ -135,7 +142,7 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
 
 1. `python3 scripts/apply_readability.py <html>` → `python3 scripts/apply_colors.py <html>`(방향색; `--check` 는 미적용이면 exit 1) → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 항상 돈다.
 2. 실패하면 writer 를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 돌리고, 데이터 정본·표를 재대조한 뒤 apply → check 를 반복한다.
-3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고친다(긴 문장 분리 → 중복 수치 삭제 → 산문 반올림). **통과할 때까지 계속한다.**
+3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고친다(긴 문장 분리 → 중복 수치 삭제 → 산문 반올림 — 숫자 출처 검사의 확인 불가는 이 대상이 아니다). **통과할 때까지 계속한다.**
 
 가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다 — 중단 알림을 보내지 않는다. 중단은 데이터 정본이 끝내 완성되지 않을 때(completeness gate)뿐이다.
 
@@ -170,7 +177,7 @@ Site base URL: https://fdo2a.github.io/
    `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
    **STEP 2.6 이 돌았으면**(`close: on`) 아래 커밋 명령을 한 줄로 돌리지 말고 `.claude/STYLE_CLOSE.md` B 의 순서(add → verify → staged-scan → commit → push 전 verify → push → push 뒤 verify)로 나눠 돈다 — 검사가 exit 0 이 아니면 커밋·push 하지 않는다.
 5. **최종 검증 기록 (2026-11-08)** — STEP 0 의 커밋 직전 가드(pull·중복 확인·유동성 재검사)를 먼저 하고, **실제로 올릴 파일**(노트까지 붙은 `posts/[DATE].html`)로:
-   `python3 scripts/run_gates.py record --market us --date [DATE] --html posts/[DATE].html --datadir <workspace> --repo . --tg <workspace>/telegram.json --cycle <CYCLE_ID> --out verification/us/[DATE].json`
+   `python3 scripts/run_gates.py record --market us --date [DATE] --html posts/[DATE].html --datadir <workspace> --repo . --tg <workspace>/telegram.json --cycle <CYCLE_ID> --first-html <workspace>/numsrc_first.html --out verification/us/[DATE].json`
    - exit 0 → 6. **기록한 뒤에는 글을 고치지 않는다** — 고쳤으면 record 를 다시 돈다.
    - exit 1(필수 검사 실패·판정 불가) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-4 → record. 최대 2회, 그래도 1이면 **커밋하지 않고** `run_lock.sh release`, PushNotification 으로 막은 검사기와 함께 중단. **편집자 노트는 고치지 않는다** — 노트 때문에 막혔으면(출력의 「노트를 뺀 사본」 줄) 고치지 말고 중단·보고. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 STEP 3 1-4 를 다시 하고 record — 그 판도 1이면 중단.
    - exit 4(검사는 다 돌았고 발행 가능, **레포 안 기록 저장만** 실패) → 찍힌 `fallback_record=<경로>`(레포 밖 같은 기록)를 적어 두고 발행한다. 아래 verify 에 `--record-file <그 경로>` 를 붙인다 — 기록이 레포에 없어도 글·검사 코드·원장·입력이 바뀌면 막는다. 알림에 「검증 기록 없음 — 저장 실패」(2026-11-22 까지 시험 운영).
@@ -190,7 +197,7 @@ Site base URL: https://fdo2a.github.io/
 0-1. **쟁점 분석 결과 가져오기**(2026-10-21) — `python3 scripts/contested_ready.py --market us --date [DATE] --out <workspace>/contested.json`. 결과는 Mac 의 로컬 러너가 만들어 푸시한다 — **루틴은 기다리지도 수집하지도 않는다.** 마지막 줄 `contested: …` 를 최종 보고에 옮긴다.
 0-2. **텔레그램 입력**(2026-11-12) — `python3 scripts/tg_news.py input --market us --date [DATE] --repo . --news <workspace>/news/[DATE].json --out <workspace>/telegram_news.json`. 브리프 **발행 커밋**의 텔레그램 파일에 뉴스 글용 표시(`news_use`)를 달아 꺼낸다 — 같은 런이든 재개든 이 명령 하나다(워크스페이스의 `telegram.json` 을 넘기지 않는다). `--news` 는 **이 단계의 작성자와 `check_news.py` 가 쓰는 바로 그 파일**이다. 마지막 줄 `tg-news: …` 를 최종 보고에 옮긴다. **그 줄이 `tg-news: 쓸 수 있는 …` 일 때만** `<workspace>/telegram_news.json` 경로를 작성자 프롬프트에 적는다. `none`·`error` 면 「텔레그램 없음」이라고 적는다 — 이 글을 막지 않는다. 종료 코드 1(옛 출력 파일을 못 지움)이면 그 파일이 남아 있다: 「텔레그램 없음」으로 하고, 아래 `check_telegram.py` 의 `--tg` 에는 그 파일 대신 없는 경로(`<workspace>/telegram_news.json.none`)를 준다.
 1. Agent 도구로 subagent_type `news-industry-writer` 를 동기 실행한다(없으면 `.claude/agents/news-industry-writer.md` 를 읽고 직접). 프롬프트: 기준일, 워크스페이스 경로, 입력 — `market_data.json`(`memory`·`ai_infra`·`mlcc`·`price_context`), `news/[DATE].json`(없으면 없다고), `research_notes.md` ③·④ 절, `telegram_news.json`(0-2 에서 생겼으면 경로, 아니면 「텔레그램 없음」). 산출물: `news_industry_[DATE].html`(`.body.html`+`.meta.json` 을 `render_post.py --market news` 로 합친 것). **쟁점 분석은 작성자가 쓰지 않는다** — 작성자는 표식 한 줄만 두고, 다음 명령이 그 자리를 채운다: `python3 scripts/render_contested.py --html news_industry_[DATE].html --json <workspace>/contested.json --market us --date [DATE]`. 결과가 `ok` 면 섹션, 확정된 none 이면 지우고, 아직 없거나 재시도 중이면 자리표시(`<!--contested-pending-->`)를 남긴다 — 로컬 러너가 발행 뒤에 채운다.
-2. **게이트** — 작성자가 돌린 것을 레포 클론에서 다시 돌린다. 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 오케스트레이터가 직접). **쟁점 분석 섹션은 고치지 않는다** — 그 섹션 때문에 게이트(`check_style`·`check_readability` 포함)가 막히면 `render_contested.py … --omit gate_failed` 로 섹션을 빼고 게이트를 다시 돌린 뒤 최종 보고에 적는다.
+2. **게이트** — 처음 돌리기 전에 한 번 `cp news_industry_[DATE].html <workspace>/numsrc_first_news.html`(숫자 출처 검사의 첫 판, 다시 덮지 않는다). 작성자가 돌린 것을 레포 클론에서 다시 돌린다. 실패하면 출력을 그대로 넘겨 위반 문단만 고치게 한다(두 번 연속 같은 위반이면 오케스트레이터가 직접). **쟁점 분석 섹션은 고치지 않는다** — 그 섹션 때문에 게이트(`check_style`·`check_readability` 포함)가 막히면 `render_contested.py … --omit gate_failed` 로 섹션을 빼고 게이트를 다시 돌린 뒤 최종 보고에 적는다.
    ```bash
    python3 scripts/apply_readability.py news_industry_[DATE].html
    python3 scripts/apply_colors.py news_industry_[DATE].html
@@ -205,7 +212,9 @@ Site base URL: https://fdo2a.github.io/
 2-1. **텔레그램 섹션 — 실패 처리와 다시 읽기**(2026-11-12) — `check_telegram.py … --layout news` 가 실패하면 출력을 작성자에게 넘겨 지목된 표식·잇는 말만 고치게 한다(최대 2회 — 메시지가 고치는 법을 말한다). 그래도 실패하면 `python3 scripts/tg_news.py strip --html news_industry_[DATE].html` 로 「증권사 견해·시장 의견」 섹션만 빼고 **같은 `<workspace>/telegram_news.json` 로 위 게이트를 전부 다시** 돌린다. 섹션을 빼고도 「표식 밖 문장이 텔레그램 요약과 겹친다」가 남으면 그 문장을 작성자가 지운다 — 그래도 안 되면 이 글은 내지 않는다. 섹션을 뺐으면 최종 보고에 적는다.
    **다시 읽기는 발행 직전 마지막 일이다.** 게이트를 전부 통과한 최종판에서 `check_telegram.py` 가 찍은 것을 오케스트레이터가 직접 읽는다(작성자에게 맡기지 않는다). **① 문단**(글 순서 그대로 — `[id]` 뒤가 그 항목의 문장, 나머지가 잇는 말): 문장마다 누구의 말로 읽히는지(이름·「같은 보도는」·「시장에서는」이 어디까지 가리키는지, 앞 문장 안에 다른 화자가 나올 때), 「반면」 같은 관계어가 맞는지, 잇는 말이 요약에 없는 사실·평가·전망을 말하지 않는지. 「경고: … 띄어 쓴 이름처럼 보이는 글자」 줄이 있으면 그 잇는 말이 매체·증권사·연구원을 가리키는지 보고, 가리키면 지운다. **② 항목별 `문장 / 요약` 쌍**: 뜻이 같은지, 요약에 없는 평가·날짜·기간을 덧붙이지 않았는지(`날짜:` 줄이 찍힌 항목은 표기만 바꾼 것인지 본다). 틀린 것은 고쳐 쓰지 않고 지운다 — 틀린 항목은 그 `<span data-tg>` 와 앞뒤에 붙은 잇는 말을 같이, 틀린 잇는 말은 그것만. 지운 자리 뒤의 표식이 「같은 보도는」「한 연구원은」으로 시작하고 있었으면 게이트가 이름 누락으로 잡는다 — 그 표식에 이름을 직접 단다(이것만은 고쳐 쓴다). 그렇게 해도 문단이 말이 안 되면(관계어만 남는다, 여는 말이 가리킬 것이 없다) 그 `<p>` 를 통째로 지운다. 표식이 하나도 안 남으면 `strip`. 지운 뒤 게이트 전부 → 다시 읽기. 읽은 뒤에는 파일을 건드리지 않고 발행한다. 이 글은 발행 뒤 자동 검토 대상이 아니라 이 읽기가 유일한 뜻 확인이다.
 3. **윤문은 이 글에 하지 않는다** — 뉴스 블록은 `summary_ko` 에 묶여 있어(유사도 게이트) 윤문이 걸리고, 산업 세 섹션은 짧다. 발행 뒤 codex 문체 수정도 `posts/` 일간만 본다. 문체 검사(`check_style`)는 위에서 돈다. **번역투는 작성자가 마감에서 고친다**(2026-10-22, 기사 요약·제목은 대상 밖) — 게이트를 다 통과한 판으로 `python3 scripts/scan_translationese.py news_industry_[DATE].html | tail -1` 을 돌려 남은 개수를 최종 보고에 옮긴다.
-4. **발행 (이 글만의 커밋)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 STEP 3-1 과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`. 그리고 `git add news/ news.json sitemap.xml && git commit -m "Add [YYYY-MM-DD] news-industry brief" && git push` — 거절되면 `git pull --rebase` 후 다시 push 한다.
+4. **발행 (이 글만의 커밋)** — `news_industry_[DATE].html` 을 `news/[YYYY-MM-DD].html` 로 복사하고(주입 없음, `post-shell-v1` 확인은 STEP 3-1 과 같다) `python3 scripts/update_archives.py --root . --kind news --key [YYYY-MM-DD] --title "[meta.json 의 title 에서 「 | DATE」 를 뗀 것]" --headline "[그 글의 h1]"`.
+   **발행 전 기록(2026-11-20)** — 실제로 올릴 `news/[DATE].html` 로 `python3 scripts/run_gates.py record --market us-news --date [DATE] --html news/[DATE].html --datadir <workspace> --repo . --tg <workspace>/telegram_news.json --contested <workspace>/contested.json --first-html <workspace>/numsrc_first_news.html --out verification/us-news/[DATE].json`(텔레그램이 없는 날 `--tg` 는 위 2 의 없는 경로). 목록은 위 2 의 검사기와 숫자 출처 검사(참고)다. exit 0 → 다음. exit 1 → 위 2 의 고리로 돌아가고, 끝내 1 이면 이 글을 내지 않는다(이 글만 빼고 보고). exit 4 → `fallback_record` 를 적고 아래 verify 에 `--record-file`. exit 5 → 이 글을 내지 않는다.
+   그리고 `git add news/ news.json sitemap.xml verification/us-news/` → `python3 scripts/run_gates.py verify --market us-news --date [DATE] --repo . --index --datadir <workspace> --tg <workspace>/telegram_news.json --contested <workspace>/contested.json` 이 exit 0 일 때만 `git commit -m "Add [YYYY-MM-DD] news-industry brief"`. push 직전마다(거절 뒤 `git pull --rebase` 포함) 같은 verify 를 `--rev HEAD` 로 — exit 0 이면 `git push`, 1 이면 record → add → `git commit --amend --no-edit` → 다시 verify, 2 면 push 하지 않고 보고.
 
 ## STEP 4 — Notify
 

@@ -70,16 +70,24 @@ def _nov18(repo, numbers=NUMBERS, weight=WEIGHT_ITEMS, style=STYLE_ITEMS):
     return V.view(str(repo), 'HEAD', 'kr', KR_DATE)
 
 
+def _hint(v, name):
+    """분량·문체 경고의 독자용 문장 — 건별 알림에서는 빠졌지만(2026-11-20 사용자) 다듬는 함수는 남아 있다."""
+    return V._gate_text(name, None, V._names(v['recorded'])[1])
+
+
 def test_nov18_kr_matches_the_agreed_layout(kr_repo):
-    text = V.render_publish(_nov18(kr_repo), who=V.GITHUB)
+    v = _nov18(kr_repo)
+    text = V.render_publish(v, who=V.GITHUB)
     lines = text.split('\n')
-    assert lines[0] == '[발행] KR 일간 11/18 · 발행 통과 · 검토 1건 · 참고 1건'      # 미리보기는 첫 줄만 보인다
-    assert '■ 발행 상태' in lines and '■ 볼 것' in lines and '■ 검증 범위' in lines
-    assert lines.index('■ 발행 상태') < lines.index('■ 볼 것') < lines.index('■ 검증 범위')
+    # 11/20 사용자 「글자 수 같은건 안알려줘도 돼」 — 분량·문체 경고는 건별 알림에 싣지 않는다
+    assert lines[0] == '[발행] KR 일간 11/18 · 발행 통과'      # 미리보기는 첫 줄만 보인다
+    assert '■ 발행 상태' in lines and '■ 볼 것' not in lines and '■ 검증 범위' in lines
+    assert lines.index('■ 발행 상태') < lines.index('■ 검증 범위')
     assert '필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)' in text
-    assert ('1. [검토 권고] 본문 7,101자(평소 4,000~5,000자), 시황 1,619자 < 판단 1,878자. '
-            '반복된 해석부터 덜고, 주요 시장 움직임·원인 설명이 빠졌는지 확인') in text
-    assert '2. [참고] 「이틀」 3회. 자연스러우면 수정 불필요' in text
+    assert '7,101자' not in text and '이틀' not in text
+    assert _hint(v, 'check_weight') == ('본문 7,101자(평소 4,000~5,000자), 시황 1,619자 < 판단 1,878자. '
+                                        '반복된 해석부터 덜고, 주요 시장 움직임·원인 설명이 빠졌는지 확인')
+    assert _hint(v, 'check_style') == '「이틀」 3회. 자연스러우면 수정 불필요'
     assert ('표 55칸 자동 대조 · 숫자 250개 범위 밖(문장 159 · 업종 기간별 78 · 기타 표 13). '
             '오류 250건이라는 뜻은 아님') in text
     assert text.endswith('※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님')
@@ -97,7 +105,7 @@ def test_numbers_come_from_the_record_not_fixed_text(kr_repo):
     text = V.render_publish(_nov18(kr_repo, numbers=nums, style=None))
     assert '표 31칸 자동 대조 · 숫자 7개 범위 밖(문장 7). 오류 7건이라는 뜻은 아님' in text
     assert '55' not in text and '250' not in text
-    assert text.split('\n')[0].endswith('· 발행 통과 · 검토 1건')                       # 없는 갈래는 세지 않는다
+    assert text.split('\n')[0].endswith('· 발행 통과')                       # 없는 갈래는 세지 않는다
 
 
 def test_no_warnings_folds_the_look_block(kr_repo):
@@ -118,33 +126,35 @@ def test_no_warnings_folds_the_look_block(kr_repo):
      '매크로 2,600자(평소 상한 2,000자). 발표가 몰린 날이 아니면 반복 해석부터 덜기'),
 ])
 def test_weight_variants_keep_numbers_and_direction(kr_repo, items, want):
-    text = V.render_publish(_nov18(kr_repo, weight=items, style=None))
-    assert want in text
+    v = _nov18(kr_repo, weight=items, style=None)
+    assert want in _hint(v, 'check_weight') and want not in V.render_publish(v)
 
 
 def test_unknown_weight_sentence_falls_back_whole(kr_repo):
     odd = '경고: 처음 보는 분량 경고다. 둘째 문장이 있다'
-    text = V.render_publish(_nov18(kr_repo, weight=[odd], style=None))
-    assert '[검토 권고] 분량: 처음 보는 분량 경고다. 둘째 문장이 있다' in text
+    v = _nov18(kr_repo, weight=[odd], style=None)
+    assert _hint(v, 'check_weight') == '분량: 처음 보는 분량 경고다. 둘째 문장이 있다'
+    assert '처음 보는' not in V.render_publish(v)
 
 
 def test_style_day_word_count_and_cap(kr_repo):
     four = ['· 날수를 고유어로 썼다 — 「이틀」, 「사흘」, 「이틀」, 「나흘」 — 다시 읽어 보고, 자연스러우면 그대로 둔다']
-    text = V.render_publish(_nov18(kr_repo, weight=None, style=four))
+    v = _nov18(kr_repo, weight=None, style=four)
     # 검사기는 앞 4개까지만 적는다 — 넷이 찍혔으면 그 이상일 수 있다
-    assert '[참고] 「이틀」 2회 · 「사흘」 1회 · 「나흘」 1회(4회 이상일 수 있음). 자연스러우면 수정 불필요' in text
+    assert _hint(v, 'check_style') == '「이틀」 2회 · 「사흘」 1회 · 「나흘」 1회(4회 이상일 수 있음). 자연스러우면 수정 불필요'
 
 
 def test_other_style_hint_is_note_not_review(kr_repo):
-    text = V.render_publish(_nov18(kr_repo, weight=None, style=['경고 1건 — <html>', '· 문단이 길다 — 다시 읽어 본다']))
-    assert '1. [참고] 문체: 문단이 길다 — 다시 읽어 본다' in text and '검토 1건' not in text
+    v = _nov18(kr_repo, weight=None, style=['경고 1건 — <html>', '· 문단이 길다 — 다시 읽어 본다'])
+    assert _hint(v, 'check_style') == '문체: 문단이 길다 — 다시 읽어 본다'
+    text = V.render_publish(v)
+    assert '[참고]' not in text and '검토 1건' not in text
 
 
 def test_long_fallback_reason_is_cut_at_a_sentence(kr_repo):
     long = '경고: ' + '첫 문장이다. ' + '가' * 300
-    text = V.render_publish(_nov18(kr_repo, weight=[long], style=None))
-    line = next(x for x in text.split('\n') if '[검토 권고]' in x)
-    assert line.endswith('첫 문장이다. (이하 기록 파일)')
+    v = _nov18(kr_repo, weight=[long], style=None)
+    assert _hint(v, 'check_weight').endswith('첫 문장이다. (이하 기록 파일)')
 
 
 def test_required_failure_is_check_needed(kr_repo):
@@ -336,8 +346,8 @@ def test_real_overflow_drops_gap_reasons_then_note_items(kr_repo, monkeypatch):
         _gate(rec, 'check_movers', reason='나 ' * 70)
         _gate(rec, 'check_fund', status='fail', items=['위반: 펀드 표가 없다'])
         rec['summary'].update(blocking=['check_fund'], publish_ok=False, status='fail', verified=False)
-        _warn(rec, 'check_style', STYLE_ITEMS)
-        _warn(rec, 'check_weight', WEIGHT_ITEMS)
+        _warn(rec, 'check_telegram', ['경고: 텔레그램 인용 하나를 다시 본다 — ' + '같은 보도를 한 번 더 확인한다 ' * 5])
+        # 분량·문체 경고는 알림에 없다(11/20) — 줄일 검토 항목은 다른 검사기의 경고로
     _rewrite(kr_repo, fn)
     v = V.view(str(kr_repo), 'HEAD', 'kr', KR_DATE)
     full = V.render_publish(v)
@@ -633,8 +643,8 @@ def test_suffixed_name_is_one_item_with_the_label(kr_repo):
     _rewrite(kr_repo, fn)
     text = V.render_publish(V.view(str(kr_repo), 'HEAD', 'kr', KR_DATE))
     assert text.count('분량 실패 — 섹션 「매크로」를 찾지 못했다') == 1 and 'check_weight' not in text
-    assert text.split('\n')[0] == '[발행] KR 일간 11/18 · 확인 필요 · 확인 1건 · 참고 1건 · 검사 빈칸 1건'
-    assert text.count('「이틀」 3회') == 1 and 'check_style' not in text
+    assert text.split('\n')[0] == '[발행] KR 일간 11/18 · 확인 필요 · 확인 1건 · 검사 빈칸 1건'
+    assert text.count('「이틀」 3회') == 0 and 'check_style' not in text      # 문체 경고는 알림에 없다(11/20)
 
 
 def test_correction_line_does_not_claim_publish_time_or_commit_order(kr_repo):
@@ -653,15 +663,16 @@ def test_correction_line_does_not_claim_publish_time_or_commit_order(kr_repo):
 def test_gap_names_outlive_review_and_note_items_but_not_check_items(kr_repo, monkeypatch):
     # 남기는 우선순위: 확인 필요 항목과 이유 > 빈칸 이름 > 검토·참고 항목
     v = _many_gaps(kr_repo, 6, width=10)
-    v['recorded']['warned'] = ['check_weight', 'check_style']
-    v['recorded']['reasons'].update(check_weight=[x[4:] for x in WEIGHT_ITEMS[1:3]], check_style=[STYLE_ITEMS[1][2:]])
+    v['recorded']['warned'] = ['check_telegram', 'check_movers']
+    v['recorded']['reasons'].update(check_telegram=['텔레그램 인용 하나를 다시 본다 — ' + '같은 보도를 한 번 더 확인한다 ' * 3],
+                                    check_movers=['묶음 하나를 다시 본다 — ' + '원인 기사 하나가 그날 것인지 다시 본다 ' * 3])
     full = V.render_publish(v)
-    assert '[검토 권고]' in full and '[참고]' in full
+    assert '[검토 권고]' in full
     brief = '\n'.join(V.scope_lines(v, V.BRIEF))
     monkeypatch.setattr(V, 'TEXT_LIMIT', V._size(full) - (V._size('\n'.join(V.scope_lines(v))) - V._size(brief)) - 40)
     text = V.render_publish(v)
     assert '[확인 필요] 펀드 실패 — 위반: 펀드 블록 표가 없다' in text and ' · 일부만 검사: check_xxxxxxxxxx_5' in text
-    assert '[참고]' not in text and '외 ' in text
+    assert '[검토 권고]' not in text and '외 ' in text
 
 
 # ── codex 구현 검토 3회 지적의 재현 ─────────────────────────────────────────

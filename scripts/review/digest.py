@@ -851,7 +851,14 @@ def _show_prepub(p):
                                                               if gaps else ''))
         # 기록에 숫자 대조 결과가 없다 — KR 의 검사 도입 전 기록은 「완료」라 위 줄이 없고, 기준선으로 넘어간 글은
         # 발행 알림도 없었다(codex d2 #2). 위 줄과 겹쳐도 늘 쓴다 — 이름이 가려지면 겹침 판단이 틀려 줄이 사라졌다(codex d3).
-        if rec.get('readable') and not rec.get('numbers'):
+        src = rec.get('sources') if isinstance(rec.get('sources'), dict) else None
+        if rec.get('readable') and src:
+            # 숫자 출처 검사가 돈 기록(2026-11-20) — 확인 불가 수만 짧게. 「검증 완료」라고 쓰지 않는다
+            c = src.get('counts') or {}
+            out.append(f' · [발행 전 기록] 숫자 {c.get("total")}개 중 확인 불가 {c.get("unknown")}개(숫자 출처 검사)')
+        elif rec.get('readable') and rec.get('sources_bad'):
+            out.append(' · [발행 전 기록] 숫자 집계가 맞지 않아요(숫자 출처 검사)')
+        if rec.get('readable') and not rec.get('numbers') and not src:
             out.append(f' · [발행 전 기록] 표 숫자 대조 없음({V.KR_NO_NUMBERS[V._kr_no_numbers(rec)][1]})'
                        if pv.get('market') == 'kr' else ' · [발행 전 기록] 숫자 자동 대조 없음')
         # 요약에는 수정 줄만 온다 — 「위 검사」가 가리킬 줄이 없으니 대상을 직접 적는다(codex d2 #4)

@@ -276,8 +276,8 @@ def dry_run(root, fetched):
 
 def preview(root, market, date, fetched):
     """상태를 읽지도 쓰지도 않는다. 확인 주체는 맥(이 명령을 돌린 자리) — GitHub 알림 문장은 --dry-run 으로 본다."""
-    if market not in V.TARGETS:
-        print(f'시장은 {", ".join(V.TARGETS)} 중 하나', file=sys.stderr)
+    if market not in V.RECORD_TARGETS:
+        print(f'시장은 {", ".join(V.RECORD_TARGETS)} 중 하나', file=sys.stderr)
         return 2
     if not fetched:
         print('⚠ fetch 실패 — 마지막으로 받아 둔 origin/main 기준', file=sys.stderr)

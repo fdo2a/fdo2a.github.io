@@ -17,10 +17,24 @@ from verification import record as R
 from verification import repo_check as C
 
 EFFECTIVE = '2026-11-09'                      # 발행 전 기록이 루틴에 들어간 첫 발행일
+# 세션 감시(미발행·달력)는 이 둘만 — publish_watch 가 V.TARGETS 를 돈다
 TARGETS = {'us': 'posts/{date}.html', 'kr': 'kr/posts/{date}.html'}
-LABEL = {'us': 'US 일간', 'kr': 'KR 일간'}
+# 기록·건별 알림 대상 = 세션 감시 + US 뉴스·산업 글(2026-11-20). 뉴스 글은 미발행 감시가 없다(게이트를 못 넘으면
+# 빼고 가는 글 — ORCHESTRATOR STEP 3.5). 기록이 루틴에 들어간 날부터만 본다 — 그 전 뉴스 글은 「기록 없음」 경보가 아니다.
+RECORD_TARGETS = dict(TARGETS, **{'us-news': 'news/{date}.html'})
+LABEL = {'us': 'US 일간', 'kr': 'KR 일간', 'us-news': 'US 뉴스·산업'}
 _PATH = {'us': re.compile(r'^posts/(\d{4}-\d{2}-\d{2})\.html$'),
-         'kr': re.compile(r'^kr/posts/(\d{4}-\d{2}-\d{2})\.html$')}
+         'kr': re.compile(r'^kr/posts/(\d{4}-\d{2}-\d{2})\.html$'),
+         'us-news': re.compile(r'^news/(\d{4}-\d{2}-\d{2})\.html$')}
+
+
+def _news_start():
+    from common import numsrc
+    return numsrc.EFFECTIVE                   # 자리표시 상수 — 병합 뒤 첫 발행일(뉴스 글 기록·숫자 출처 검사가 같이 시작)
+
+
+def start_of(market):
+    return _news_start() if market == 'us-news' else EFFECTIVE
 STATUS = {'pass': '통과', 'warn': '경고', 'fail': '실패', 'indeterminate': '판정 불가',
           'not_run': '실행 안 함', 'partial': '일부만 검사',
           'pass_with_warnings': '통과(경고 있음)', 'pass_with_gaps': '통과(검증 빈칸 있음)'}
@@ -56,13 +70,13 @@ def target_of(path):
     """(market, date) — 발행 전 기록 대상(US·KR 일간, 적용일 이후)일 때만."""
     for market, rx in _PATH.items():
         m = rx.match(path)
-        if m and m.group(1) >= EFFECTIVE:
+        if m and m.group(1) >= start_of(market):
             return market, m.group(1)
     return None
 
 
 def post_path(market, date):
-    return TARGETS[market].format(date=date)
+    return RECORD_TARGETS[market].format(date=date)
 
 
 def _adding(root, ref, path):
@@ -131,6 +145,11 @@ def recorded(rec, allowed=None):
                     and isinstance(g.get('numbers'), dict)), None)
     # 숫자 결과가 없을 때 왜 없는지 — 검사기 항목이 없다(도입 전) / 실행 안 함 / 판정 불가 / 돌았는데 결과가 빠졌다(손상)
     ngate = next((g for g in by if g.get('name') == 'check_numbers'), None)
+    sgate = next((g for g in by if g.get('name') == 'check_number_sources'), None)
+    sources, sources_bad = None, False
+    if sgate is not None and sgate.get('status') in ('pass', 'warn'):
+        sources = valid_sources(sgate.get('sources'))
+        sources_bad = sources is None
     return {
         'readable': True, 'status': s['status'], 'publish_ok': s['publish_ok'],   # status 는 원래 값 — 지문이 쓴다(표시는 STATUS 밖이면 「모르는 판정」, 재검토 10회)
         'verified': s['verified'], 'blocking': [_as_str(x) for x in s.get('blocking') or []],
@@ -147,10 +166,33 @@ def recorded(rec, allowed=None):
         'allowed': allowed,
         'required': sum(1 for g in by if g.get('required', True)),
         'required_pass': sum(1 for g in by if g.get('required', True) and g.get('status') in ('pass', 'warn')),
+        'sources': sources, 'sources_bad': sources_bad,
+        'sources_gate': None if sgate is None else sgate.get('status'),
         'numbers': numbers, 'numbers_gate': None if ngate is None else ngate.get('status'), 'python': _str(_dict(rec.get('code')).get('python')),
         'created': _str(_dict(rec.get('created_at')).get('kst')),
         'reasons': {g['name']: gate_reasons(g) for g in by if g.get('status') not in ('pass',)},
     }
+
+
+SOURCE_CLASSES = ('table', 'data', 'article', 'telegram', 'web', 'excluded', 'unknown')
+_HISTORY_KEYS = ('first_unknown', 'fixed', 'gone', 'still', 'ambiguous')
+
+
+def valid_sources(src):
+    """기록의 숫자 출처 결과를 꺼낼 때 검증한다(설계 §8.4) — 사전인가, 칸과 total 이 0 이상 정수인가, 합이 total 과
+    같은가(수량·숫자열 둘 다), history 가 약속한 꼴인가. 어기면 None(표시는 「숫자 집계가 맞지 않아요」)."""
+    if not isinstance(src, dict):
+        return None
+    for part in ('counts', 'runs'):
+        c = src.get(part)
+        if not isinstance(c, dict) or any(_count(c.get(k)) is None for k in SOURCE_CLASSES + ('total',)) \
+                or sum(c[k] for k in SOURCE_CLASSES) != c['total']:
+            return None
+    h = src.get('history')
+    if h != 'unverifiable' and not (isinstance(h, dict) and all(_count(h.get(k)) is not None for k in _HISTORY_KEYS)
+                                    and sum(h[k] for k in _HISTORY_KEYS[1:]) == h['first_unknown']):
+        return None
+    return src
 
 
 def _as_str(x):
@@ -474,11 +516,13 @@ GATE_LABEL = {
     'check_liquidity': '유동성', 'check_calendar': '일정', 'check_sources': '출처', 'check_telegram': '텔레그램 인용',
     'check_weight': '분량', 'check_movers': '움직인 종목', 'check_fund': '펀드', 'check_numbers': '숫자 대조',
     'check_research': '리서치', 'check_style': '문체', 'check_readability': '가독성', 'apply_colors_check': '등락 색',
-    'check_kr_stance': 'KR 판단',
+    'check_kr_stance': 'KR 판단', 'check_number_sources': '숫자 출처', 'check_news': '뉴스 블록',
+    'check_contested': '쟁점 분석',
 }
 # 다시 읽어 보라는 힌트만 내는 검사기(AGENTS.md 규칙 5 — 막지 않는다) → 「참고」
 _GATE_SLOT = re.compile(r'^((?:(?! — ).)* — )(' + '|'.join(sorted(GATE_LABEL, key=len, reverse=True)) + r')(?=\(|$)')
 HINT_GATES = frozenset({'check_style', 'check_readability'})
+QUIET_WARN = frozenset({'check_weight', 'check_style', 'check_readability'})     # 건별 알림에서 경고를 뺀다(11/20)
 CHECK, REVIEW, NOTE = '확인 필요', '검토 권고', '참고'
 _TAGS = ((CHECK, '확인'), (REVIEW, '검토'), (NOTE, '참고'))
 _NORMAL = frozenset({'pass', 'pass_with_warnings', 'pass_with_gaps'})
@@ -657,8 +701,9 @@ def look_items(v):
     add(NOTE, rec['note_format'], '실패(노트로 형식 실패 허용)')
     add(CHECK, rec['blocking'] + rec['required_failed'], '실패')
     add(REVIEW, rec['ref_failed'], '실패(참고 검사)')
-    add(REVIEW, [x for x in rec['warned'] if key(x) not in HINT_GATES], None)
-    add(NOTE, [x for x in rec['warned'] if key(x) in HINT_GATES], None)
+    # 분량·문체 경고는 건별 알림에 싣지 않는다(2026-11-20 사용자 「글자 수 같은건 안알려줘도 돼 — 이 검사기의 핵심은
+    # 수치를 신뢰할 수 있는지」). 판정·기록은 그대로 — 실패(막힘)는 위 갈래에서 그대로 보인다
+    add(REVIEW, [x for x in rec['warned'] if key(x) not in HINT_GATES and key(x) not in QUIET_WARN], None)
     order = {t: i for i, (t, _) in enumerate(_TAGS)}
     return sorted(out, key=lambda x: order[x[0]])
 
@@ -781,6 +826,72 @@ def _count(x):
     return x if isinstance(x, int) and not isinstance(x, bool) and x >= 0 else None
 
 
+# ── 숫자 출처(2026-11-20) ───────────────────────────────────────────────────
+SOURCE_SHOWN = (('자료로 확인', ('table', 'data')), ('기사와 일치', ('article',)), ('텔레그램 글과 일치', ('telegram',)),
+                ('검색 발췌와 일치', ('web',)), ('세지 않은 숫자', ('excluded',)), ('확인 불가', ('unknown',)))
+SOURCE_LIMITS = '프로그램이 보지 못하는 것: 숫자의 주어·방향, 기사 자체의 오류'
+SOURCE_UNKNOWN_SHOWN = 8
+SOURCE_BAD = '숫자: 숫자 집계가 맞지 않아요 — 기록 파일을 확인해요(칸 합이 숫자 수와 달라 칸별 수를 싣지 않았어요)'
+SOURCE_NOT_RUN = '숫자: 숫자 출처 검사 못 함'
+# U 이유(common/numsrc.U_REASONS)만 싣는다 — 기록이 바뀌어 다른 낱말이 와도 맥 요약·알림에 자유 문장이 새지 않게
+SOURCE_REASONS = frozenset({'표식 없음', '표식 오류', '자료와 다름', '칸 없음', '칸 무효', '기사 목록에 없음', '목록 없음',
+                            '발췌에 없음', '코드 블록(표식 없음)', '선언 무효'})
+
+
+def sources_lines(s):
+    """검증 범위의 숫자 줄 — 배타 칸을 0 이어도 전부, 합을 확인한다. 「검증 완료」라고 쓰지 않는다(확인 불가 0 ≠ 오류 0)."""
+    c = s['counts']
+    n = c['total']
+    parts = [(label, sum(c[k] for k in keys)) for label, keys in SOURCE_SHOWN]
+    if sum(v for _, v in parts) != n:
+        return [SOURCE_BAD]
+    out = [f'숫자 {n}개 = ' + ' · '.join(f'{label} {v}' for label, v in parts)]
+    d = s.get('detail') if isinstance(s.get('detail'), dict) else {}
+    bits = [(lab, _count(d.get(k)) or 0) for lab, k in (
+        ('흔한 수', 'article_common'), ('계산값', 'dv'), ('어림선', 'lvl'), ('부호 뺀 칸', 'abs_refs'),
+        ('지난 관측일 칸', 'stale_refs'), ('무효 칸', 'invalid_refs'), ('작성자가 뺀 숫자', 'excluded_enum'))]
+    zone = (_count(d.get('zone_contested')) or 0) + (_count(d.get('zone_note')) or 0)
+    bits.append(('쟁점 분석·편집자 노트 구역', zone))
+    h = s.get('history')
+    if isinstance(h, dict):
+        bits += [('고쳐서 확인', h['fixed']), ('문장째 사라짐', h['gone']), ('그대로 확인 불가', h['still']),
+                 ('이력 확인 불가', h['ambiguous'])]
+    line = ' · '.join(f'{lab} {v}' for lab, v in bits if v)
+    if isinstance(h, dict):
+        line = (line + ' · ' if line else '') + f'첫 판 확인 불가 {h["first_unknown"]}개 기준'
+    else:
+        line = (line + ' · ' if line else '') + '수정 이력 확인 불가'
+    out.append(' · ' + line)
+    by = s.get('unknown_by') if isinstance(s.get('unknown_by'), dict) else {}
+    why = [f'{k} {v}' for k, v in by.items() if k in SOURCE_REASONS and _count(v)]
+    if why:
+        out.append(' · 확인 불가 이유: ' + ' · '.join(why[:5]))
+    lst = [u for u in s.get('unknown') or [] if isinstance(u, dict)]
+    total = _count(s.get('unknown_total'))
+    total = c['unknown'] if total is None else total
+    if lst:
+        shown = [_show(str(u.get('text', '')), 60) for u in lst[:SOURCE_UNKNOWN_SHOWN]]
+        more = total - len(shown)
+        out.append(' · 확인 불가: ' + '; '.join(shown) + (f' (외 {more}개)' if more > 0 else ''))
+    out.append(' · ' + SOURCE_LIMITS)
+    return out
+
+
+def _number_scope(v, rec):
+    """숫자 줄 — 숫자 출처 결과가 있으면 그것(새 기록), 게이트가 있는데 못 돌았거나 합이 틀리면 그렇다고,
+    게이트 항목이 없는 옛 기록은 지금의 숫자 대조 줄 그대로."""
+    if rec.get('sources'):
+        return ['숫자: ' + x if i == 0 else x for i, x in enumerate(sources_lines(rec['sources']))]
+    if rec.get('sources_bad'):
+        return [SOURCE_BAD]
+    st = rec.get('sources_gate')
+    if st is not None:
+        why = {'not_run': '적용일 전 글이라 실행 안 함', 'indeterminate': '판정 불가로 끝남'}.get(st, f'상태 {STATUS.get(st, "모름")}')
+        old = [_numbers_line(v, rec)] if rec.get('numbers') else []
+        return old + [f'{SOURCE_NOT_RUN}({why})']
+    return [_numbers_line(v, rec)]
+
+
 def _gaps(rec):
     """검사 빈칸 — 돌지 않았거나 일부만 본 검사기. [(갈래, 이름)]. 판정과 무관한 표시용 묶음."""
     if not rec.get('readable'):
@@ -819,7 +930,7 @@ def scope_lines(v, brief=FULL):
     rec, chk = v.get('recorded') or {}, v.get('check') or {}
     out = []
     if rec.get('readable'):
-        out.append(_numbers_line(v, rec))
+        out += _number_scope(v, rec)
         reasons = _names(rec)[1]
         gaps = _gaps(rec)
         if gaps and brief >= NAMES:
