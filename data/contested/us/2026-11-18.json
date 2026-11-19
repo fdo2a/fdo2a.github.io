@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-18",
- "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-19T12:54:11+00:00",
- "cutoff_at": "2026-11-19T12:54:11+00:00",
+ "status": "error",
+ "reason": "model_extract_is_error_429",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-19T15:18:01+00:00",
+ "cutoff_at": "2026-11-19T15:18:01+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,64 +21,36 @@
   "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
  },
  "counts": {
-  "harvest": 224,
-  "candidates": 3,
+  "harvest": 220,
+  "candidates": 2,
   "articles": [
-   4,
-   2,
-   6
+   3,
+   5
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 2,
+  "runs": 3,
   "tokens": {
-   "in": 77564,
-   "out": 23804
+   "in": 0,
+   "out": 0
   },
+  "notes": [
+   "model_error: You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from=cc_cli_limit_message · your 5-hour limit resets 1:40am (Asia/Seoul)"
+  ],
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
-   "bbc.co.uk": "ok",
-   "theguardian.com": "ok"
+   "aljazeera.com": "short",
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok"
   },
-  "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "9/9"
-  },
-  "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 9,
-   "strict_pairs": 1,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[2]",
-    "memo[0]",
-    "structure",
-    "worry.most[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[2]:unverified"
-   ]
-  }
+  "gdelt": "throttled"
  },
  "event": {
-  "topic_ko": "Anthropic 사상 최대 IPO의 수요 성격과 상장 시점 해석",
-  "query": "anthropic ipo record",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "edges[2]:unverified"
- ],
- "content_hash": "48aa955546279f0a"
+ "content_hash": "63dab137fc0acb67"
 }
