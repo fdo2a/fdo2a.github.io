@@ -226,9 +226,10 @@ def main(argv=None, env=None, run_due=run_due, opener=None, now=None,
             say(f'::error::retry-gate {kind}: 판정 실패 — {e}')
             failed = True
             continue
-        after = clock()
         # 휴장 달력은 자식이 fetch 한 뒤의 판으로 읽는다 — 앞서 읽은 판과 자식의 판이 다르면 세션이 갈린다(codex 구현 2회차 #1).
         holidays = fixed_holidays if fixed_holidays is not None else load_holidays()
+        # 시각은 휴장 조회 뒤, 발화 직전에 읽는다 — 조회가 늦으면 앞서 읽은 시각으로는 경계 여유를 잘못 잰다(3회차).
+        after = clock()
         # 자식의 판정 시각은 before 와 after 사이다. 그 사이 세션이 넘어갔으면 판정이 어느 세션 것인지 모른다 —
         # 쏘지 않고 다음 틱에 맡긴다. 창은 after(발화 직전) 시각으로 본다.
         if mode != 'force' and session_key(kind, before, holidays) != session_key(kind, after, holidays):

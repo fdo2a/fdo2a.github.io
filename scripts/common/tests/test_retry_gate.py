@@ -529,3 +529,27 @@ def test_spec_lists_the_backstop_crons_from_code():
         assert f'`{cron}`' in spec, (kind, cron)
     for old in ('45 3 * * 2-6', '40 16 * * 1-5', '30 14 * * 1-5', '40 16 * * 6'):
         assert old not in spec, old
+
+
+# ── codex 구현 검토 3회차 지적 ────────────────────────────────────────────────
+
+def test_boundary_guard_uses_the_clock_after_holiday_lookup(monkeypatch):
+    # KR 판정이 15:29:59 KST 에 끝났다(경계 30분 밖). 휴장 조회가 늦어 발화가 15:31 이 되면 경계 30분 안이다 —
+    # 발화 직전 시각으로 봐야 한다.
+    t = {'now': utc(2026, 11, 19, 6, 29, 0)}
+
+    def due(kind):
+        t['now'] = utc(2026, 11, 19, 6, 29, 59)
+        return 'DUE 2026-11-18 미발행: kr/news/2026-11-18.html'
+
+    def hol():
+        t['now'] = utc(2026, 11, 19, 6, 31, 0)
+        return NO_HOL
+
+    monkeypatch.setattr(rg, 'load_holidays', hol)
+    calls = []
+    out = io.StringIO()
+    code = rg.main(['--kinds', 'kr', '--mode', 'gate'], env={'ROUTINE_FIRE_TOKEN_KR': 't'}, run_due=due,
+                   opener=lambda r, timeout=None: calls.append(r) or FakeResp(OK_BODY),
+                   out=out, clock=lambda: t['now'])
+    assert code == 0 and calls == [] and 'boundary' in out.getvalue()
