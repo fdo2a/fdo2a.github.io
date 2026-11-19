@@ -3,106 +3,27 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-17",
- "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
+ "status": "error",
+ "reason": "stale",
+ "retryable": false,
  "attempts": 2,
- "collected_at": "2026-11-19T02:04:05+00:00",
- "cutoff_at": "2026-11-19T02:04:05+00:00",
+ "collected_at": "2026-11-19T03:12:56+00:00",
+ "cutoff_at": "2026-11-19T03:12:56+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "34cabfc653ed4cc7bbe585eb721e1acab64d2f3b",
-  "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
- },
- "counts": {
-  "harvest": 222,
-  "candidates": 2,
-  "articles": [
-   2,
-   5
-  ]
- },
+ "market_snapshot": null,
+ "counts": {},
  "diagnostics": {
-  "runner": "local",
-  "tokens": {
-   "in": 43705,
-   "out": 11600
-  },
-  "discovery": "throttled",
-  "hosts": {
-   "cnbc.com": "ok",
-   "aljazeera.com": "short",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
-  },
-  "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 7,
-   "strict_pairs": 1,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[1]",
-    "structure",
-    "variables[1]",
-    "worry.moderate[0]",
-    "worry.most[0]"
-   ],
-   "outcome": "skipped_ratio",
-   "remaining": [
-    "structure:unverified",
-    "structure:dangling",
-    "variables[1]:unverified",
-    "edges[1]:unverified",
-    "edges[1]:dangling",
-    "edges[2]:unverified",
-    "memo[0]:dangling",
-    "memo[1]:unverified",
-    "memo[1]:dangling",
-    "worry.most[0]:unverified",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified"
-   ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  "runner": "local"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 이후 엔비디아의 사업·전략 영향",
-  "query": "huang nvidia scandal",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "variables[1]:unverified",
-  "edges[1]:unverified",
-  "edges[1]:dangling",
-  "edges[2]:unverified",
-  "memo[0]:dangling",
-  "memo[1]:unverified",
-  "memo[1]:dangling",
-  "worry.most[0]:unverified",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified"
- ],
- "content_hash": "836cd2bce5b868da"
+ "content_hash": "a8b768073efd0af7"
 }
