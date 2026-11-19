@@ -1,0 +1,103 @@
+{
+  "report_date": "2026-11-18",
+  "generated": "2026-11-19 08:48 KST",
+  "source": "TreasuryDirect TA_WS",
+  "ok": true,
+  "error": null,
+  "complete": true,
+  "pending": [],
+  "today": [
+    {
+      "date": "2026-11-18",
+      "key": "nominal-20y",
+      "kind": "nominal",
+      "years": 20,
+      "reopening": false,
+      "label_ko": "20년물",
+      "term": "20-Year",
+      "cusip": "912810UZ9",
+      "offering_amt": 16000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.63,
+      "indirect_pct": 60.2,
+      "direct_pct": 26.7,
+      "dealer_pct": 13.1,
+      "high_yield": 5.459,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.63,
+        "indirect_pct": 63.7,
+        "direct_pct": 24.3,
+        "dealer_pct": 12.0
+      },
+      "prev_offering_amt": 13000000000.0,
+      "prev_date": "2026-10-21",
+      "btc_vs_avg": 0.0,
+      "dealer_vs_avg_pp": 1.1,
+      "indirect_vs_avg_pp": -3.5,
+      "insufficient": false,
+      "demand_ko": "수요 약함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": null
+    }
+  ],
+  "recent": [
+    {
+      "date": "2026-11-12",
+      "key": "nominal-30y",
+      "kind": "nominal",
+      "years": 30,
+      "reopening": false,
+      "label_ko": "30년물",
+      "term": "30-Year",
+      "cusip": "912810UY2",
+      "offering_amt": 25000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.36,
+      "indirect_pct": 68.1,
+      "direct_pct": 20.5,
+      "dealer_pct": 11.4,
+      "high_yield": 5.441,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.44,
+        "indirect_pct": 70.5,
+        "direct_pct": 20.0,
+        "dealer_pct": 9.5
+      },
+      "prev_offering_amt": 22000000000.0,
+      "prev_date": "2026-10-08",
+      "btc_vs_avg": -0.08,
+      "dealer_vs_avg_pp": 1.9,
+      "indirect_vs_avg_pp": -2.4,
+      "insufficient": false,
+      "demand_ko": "수요 약함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": {
+        "tenor": "30Y",
+        "level": 5.412,
+        "bp": -4.8,
+        "date": "2026-11-18",
+        "source": "Naver"
+      }
+    }
+  ],
+  "next": [
+    {
+      "date": "2026-11-19",
+      "key": "tips-10y",
+      "label_ko": "10년 TIPS 재발행",
+      "offering_amt": 19000000000.0,
+      "close_time_et": "01:00 PM",
+      "reopening": true
+    }
+  ],
+  "rule": {
+    "avg_n": 6,
+    "min_hist": 3,
+    "btc_band": 0.05,
+    "dealer_band_pp": 1.0
+  }
+}
