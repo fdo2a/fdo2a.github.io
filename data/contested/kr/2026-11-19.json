@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "model_extract_success",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-19T11:14:03+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-19T11:29:35+00:00",
  "cutoff_at": "2026-11-19T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 550,
+  "harvest": 537,
   "candidates": 1,
   "articles": [
    5
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 1,
+  "runs": 2,
   "discovery": "truncated",
   "hosts": {
    "aju": "ok",
@@ -46,7 +46,7 @@
    "chosun": "ok"
   },
   "notes": [
-   "discover:550"
+   "discover:537"
   ],
   "source": "naver",
   "source_switch": "",
@@ -60,5 +60,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "b26bd00fddf477a7"
+ "content_hash": "97d3187aa9e629f8"
 }
