@@ -645,7 +645,8 @@ NAVER_PRICES = 'https://m.stock.naver.com/front-api/marketIndex/prices'
 NAVER_TENORS = {'2Y': 'US2YT=RR', '5Y': 'US5YT=RR', '10Y': 'US10YT=RR', '30Y': 'US30YT=RR'}
 
 
-def naver_spot_yields(pages=2, page_size=60, expected_date=None):
+def naver_spot_yields(pages=2, page_size=60, expected_date=None, timeout=25, attempts=3,
+                      budget_s=None):
     """전 만기 **동일자** 종가 커브 — 발행용 1순위 (2026-09-04).
 
     야후에 2년 스팟 지수가 없어서 2Y 만 FRED DGS2(T-1) 를 쓰던 우회를 걷어낸다.
@@ -656,27 +657,59 @@ def naver_spot_yields(pages=2, page_size=60, expected_date=None):
     120/120 영업일 전 만기 정렬·결측 0, FRED CMT 대비 중앙 0.1~0.4bp.
 
     `pageSize` 는 10 미만을 거부한다(`too_small`).
+
+    `timeout`·`attempts`·`budget_s` 는 수익률만 고치는 재실행의 탐침용이다 — 요청당 시간과 재시도를
+    줄이고, 전체가 `budget_s` 초를 넘기면 그 자리에서 (None, None) 으로 끝낸다(루틴이 실행 하나를
+    540초만 기다린다). 시한은 요청 사이와 응답을 읽는 조각 사이에서 보므로 탐침은 늦어도
+    `budget_s + timeout` 초에 끝난다(정상적인 응답일 때 — 벽시계 상한은 부르는 쪽 `_within` 이
+    따로 건다). 기본값은 전체 수집이 쓰던 그대로다.
     """
     from us.naver_yields import parse_prices, build_curve
+    deadline = None if budget_s is None else time.monotonic() + budget_s
     series = {}
     for tenor, code in NAVER_TENORS.items():
         rows = []
         for page in range(1, pages + 1):
+            if deadline is not None and time.monotonic() >= deadline:
+                print(f'  Naver probe over its {budget_s}s budget — giving up', file=sys.stderr)
+                return None, None
             url = (f'{NAVER_PRICES}?category=bond'
                    f'&reutersCode={urllib.parse.quote(code, safe="")}'
                    f'&page={page}&pageSize={page_size}')
 
             def one(u=url):
-                raw = urllib.request.urlopen(u, timeout=25, context=_SSL).read()
+                resp = urllib.request.urlopen(u, timeout=timeout, context=_SSL)
+                if deadline is None:
+                    raw = resp.read()
+                else:
+                    # 조금씩 흘려 보내는 응답이 소켓 timeout 을 계속 갱신하며 예산을 넘기지 못하게
+                    # 조각마다 시한을 본다 — 탐침 전체는 budget_s + timeout 초 안에 끝난다.
+                    parts = []
+                    while True:
+                        if time.monotonic() >= deadline:
+                            raise TimeoutError(f'over the {budget_s}s budget while reading')
+                        chunk = resp.read1(65536) if hasattr(resp, 'read1') else resp.read(65536)
+                        if not chunk:
+                            break
+                        parts.append(chunk)
+                    raw = b''.join(parts)
                 return json.loads(raw.decode('utf-8', 'replace'))
 
-            payload = retry(one, attempts=3, base_sleep=2)
+            if attempts <= 1:
+                try:                       # 재시도도 그 사이 잠도 없다 — 탐침은 한 번만 본다
+                    payload = one()
+                except Exception as e:
+                    print(f'  Naver {tenor} p{page}: {e}', file=sys.stderr)
+                    payload = None
+            else:
+                payload = retry(one, attempts=attempts, base_sleep=2)
             got = parse_prices(payload) if payload else []
             if not got:
                 break
             rows += got
         series[tenor] = rows
-        time.sleep(0.5)
+        if deadline is None:
+            time.sleep(0.5)
     if any(not rows for rows in series.values()):
         return None, None
     from us.naver_yields import common_date
@@ -1079,11 +1112,317 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
     return 0 if 200 <= st['code'] < 300 and elapsed <= max_time else 1
 
 
+SOURCE = 'github-actions/collect_market_data.py'
+
+
+def run_id():
+    """이 실행의 표시 — 원문 index(`fetch_releases`)·새 발표 원장(`record_releases`)과 같은 꼴."""
+    rid = os.environ.get('GITHUB_RUN_ID')
+    if rid:
+        return f"{rid}-{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
+    return f'local-{os.getpid()}-{int(time.time())}'
+
+
+def apply_spreads(data, yields_fred):
+    """커브에서 나오는 스프레드 칸. 전체 수집과 수익률만 고치는 재실행이 같은 식을 쓴다."""
+    y = data['yields']
+    for k in ('spread_2s10s_bp', 'spread_2s10s_aligned', 'spread_2s10s_basis',
+              'spread_2s10s_fred_bp', 'spread_5s30s_bp'):
+        data.pop(k, None)
+    # 발행값. 네이버로 채워진 날은 두 다리가 같은 날짜라 basis 가 「동일 기준일」로 나온다.
+    if y.get('2Y') and y.get('10Y'):
+        data['spread_2s10s_bp'] = (y['10Y']['level'] - y['2Y']['level']) * 100
+        same = y['2Y']['date'] == y['10Y']['date']
+        data['spread_2s10s_aligned'] = same
+        data['spread_2s10s_basis'] = (
+            f"2Y·10Y 모두 {y['10Y'].get('source')} {y['10Y']['date']} 동일 기준일" if same
+            else f"2Y {y['2Y'].get('source')} {y['2Y']['date']} vs "
+                 f"10Y {y['10Y'].get('source')} {y['10Y']['date']}")
+    # Single-date cross-checks: both legs FRED (T-1), and both legs Yahoo same-day.
+    yields_fred = yields_fred or {}
+    if yields_fred.get('2Y') and yields_fred.get('10Y'):
+        data['spread_2s10s_fred_bp'] = (yields_fred['10Y']['level'] - yields_fred['2Y']['level']) * 100
+    if y.get('5Y') and y.get('30Y'):
+        data['spread_5s30s_bp'] = (y['30Y']['level'] - y['5Y']['level']) * 100
+
+
+def weekly_aggregate(market_rows, report_date):
+    """시세 원장 행 → (주 키, 그 주 집계). 전체 수집과 수익률만 고치는 재실행이 함께 쓴다."""
+    from us.period import build as period_build, series_from, week_key
+    dated, yh = series_from(market_rows, as_of=report_date)
+    # posts.json 은 레포 루트에 있다 — outdir 는 'data' 하위 상대/절대/중첩 어느 값도
+    # 될 수 있으므로 outdir 기준 역산 대신 이 스크립트 파일 위치(scripts/ 의 부모)로
+    # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    k = week_key(report_date)
+    return k, period_build('weekly', k, dated, yh, daily_headlines(repo_root))
+
+
+# ── 수익률만 고치는 재실행 (2026-11-19) ─────────────────────────────────────
+# 루틴은 `missing` 이 `yields/naver_close_not_posted` 하나뿐인 동안 9분마다 수집을 다시 건다.
+# 그 재실행이 전부 다시 모으면 러너 3-4분·커밋 하나가 매번 든다(하루 중앙 3회). 그 당일 판이
+# 「네이버만 빠짐」이면 네이버만 한 번 보고: 종가가 왔으면 수익률과 거기서 나오는 것만 고치고,
+# 아직 전 거래일이면 아무것도 쓰지 않고 끝낸다. 그 밖의 모든 경우는 None — 전체 수집 그대로다.
+NAVER_ONLY_MISSING = ['yields/naver_close_not_posted']
+PATCH_PROBE_TIMEOUT_S = 10
+PATCH_PROBE_BUDGET_S = 80        # 요청 사이·조각 사이에서 보는 시한(정상적인 느린 응답은 여기서 끝난다)
+PATCH_PROBE_WALL_S = 90          # 벽시계 상한 — 무슨 일이 있어도 탐침은 90초에 끊긴다(루틴은 540초 기다린다)
+_NY = 'America/New_York'
+
+
+def _load_json(path):
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return None
+
+
+def _emit(*lines):
+    out = os.environ.get('GITHUB_OUTPUT')
+    if out:
+        with open(out, 'a') as fh:
+            for line in lines:
+                fh.write(line + '\n')
+
+
+def patch_base(outdir, now, no_patch=False):
+    """고칠 수 있는 판이면 (prev, intraday, bond_date), 아니면 (None, 이유).
+
+    조건은 전부 「첫 수집이 그날 마감 뒤에 한 실행으로 끝냈고, 고치기가 다시 돌리지 않는 사슬
+    (원문·요소 대조·레짐 평가·새 발표 원장)이 그 실행의 것으로 온전하다」를 확인한다. 하나라도
+    아니면 전체 수집이 그것을 다시 만든다.
+    """
+    import zoneinfo
+    from us.history import read_jsonl
+    from us.naver_yields import bond_session, load_bond_closed
+    from fund.calendar import load as load_holidays
+    if no_patch:
+        return None, '--no-patch'
+    prev = _load_json(os.path.join(outdir, 'market_data.json'))
+    if not isinstance(prev, dict):
+        return None, 'market_data.json 없음·읽기 실패'
+    rd, run, gen = prev.get('report_date'), prev.get('collection_run'), prev.get('generated')
+    if prev.get('source') != SOURCE or prev.get('complete') is not False \
+            or prev.get('missing') != NAVER_ONLY_MISSING:
+        return None, '「네이버 종가만 빠진」 판이 아니다'
+    if not (rd and run and gen and prev.get('collection_started')):
+        return None, '수집 시작·실행 표시가 없는 판'
+    try:
+        ny = zoneinfo.ZoneInfo(_NY)
+        started = datetime.datetime.fromisoformat(prev['collection_started']).astimezone(ny)
+        now_ny = now.astimezone(ny)
+        day = datetime.date.fromisoformat(rd)
+    except (TypeError, ValueError):
+        return None, '수집 시작 시각을 읽지 못했다'
+    close = datetime.datetime.combine(day, datetime.time(16, 30), tzinfo=ny)
+    if started.date() != day or started < close:
+        return None, f'첫 수집이 {rd} 16:30 ET 뒤가 아니다({started.isoformat()})'
+    if now_ny.date() != day or now_ny < started:
+        return None, f'지금 뉴욕 날짜가 {rd} 가 아니거나 첫 수집보다 이르다'
+    intraday = _load_json(os.path.join(outdir, 'intraday.json'))
+    if not isinstance(intraday, dict):
+        return None, 'intraday.json 없음'
+    econ = _load_json(os.path.join(outdir, 'econ_indicators.json')) or {}
+    mm = _load_json(os.path.join(outdir, 'macro_metrics.json')) or {}
+    if econ.get('generated') != gen or mm.get('generated') != gen or mm.get('report_date') != rd:
+        return None, 'econ·macro_metrics 가 같은 실행의 것이 아니다'
+    index = _load_json(os.path.join(outdir, 'releases', 'index.json')) or {}
+    rows = index.get('releases')
+    if (index.get('status') != 'complete' or index.get('report_date') != rd
+            or index.get('run_id') != run or not isinstance(rows, list)
+            or not all(isinstance(r, dict) and r.get('ok') is True for r in rows)):
+        return None, '원문 index 가 그 실행의 온전한 것이 아니다(실패한 원문 포함)'
+    ev = _load_json(os.path.join(outdir, 'macro_eval.json')) or {}
+    if ev.get('report_date') != rd or ev.get('collection_run') != run:
+        return None, 'macro_eval 이 그 실행의 것이 아니다'
+    scan = f'scan|{rd}|{run}'
+    if not any(r.get('id') == scan for r in read_jsonl(os.path.join(outdir, 'history', 'releases.jsonl'))):
+        return None, '새 발표 원장에 그 실행의 기록이 없다'
+    cal = os.path.join(outdir, 'market_holidays.json')
+    bond_date = bond_session(rd, load_bond_closed(cal), (load_holidays(cal) or {}).get('dates') or ())
+    holiday = prev.get('yields_bond_holiday')
+    if bond_date != rd:
+        if not (isinstance(holiday, dict) and holiday.get('curve_date') == bond_date):
+            return None, '채권 휴장 기준이 그 판과 다르다'
+    elif holiday is not None:
+        return None, '채권 휴장 기준이 그 판과 다르다'
+    return (prev, intraday, bond_date), None
+
+
+def _restore_file(path, data):
+    """바꿔치기 전 상태로 — `data` 가 None 이면 원래 없던 파일이다."""
+    if data is None:
+        if os.path.exists(path):
+            os.remove(path)
+        return
+    with open(path, 'wb') as fh:
+        fh.write(data)
+
+
+def _install_patch(staged):
+    """[(임시 파일, 목적지)] 를 순서대로 바꿔치기한다. market_data.json 이 맨 끝이어야 한다.
+
+    중간에 실패하면 이미 바꾼 파일을 되돌리고(market_data.json 은 맨 끝이라 아직 옛 판이다)
+    **exit 1** 로 실행을 실패시킨다 — 아무것도 커밋되지 않고 다음 재실행이 원격의 옛 판에서 다시
+    시작한다. 같은 프로세스에서 전체 수집으로 넘어가지 않는다: 방금 쓰기가 실패한 디스크에서 전체
+    수집의 이력·주간 쓰기는 실패해도 삼켜지므로(비-코어 try/except) 새 수익률과 옛 이력이 섞여
+    커밋될 수 있다(codex 구현 검토 1회 I3).
+    """
+    backups = []
+    for _, target in staged:
+        try:
+            with open(target, 'rb') as fh:
+                backups.append(fh.read())
+        except FileNotFoundError:
+            backups.append(None)
+    done = 0
+    try:
+        for tmp, target in staged:
+            os.replace(tmp, target)
+            done += 1
+        return True
+    except Exception as e:
+        print(f'yields patch: install failed at {staged[done][1]} ({e}) — restoring', file=sys.stderr)
+        try:
+            for (_, target), data in list(zip(staged, backups))[:done]:
+                _restore_file(target, data)
+        except Exception as e2:
+            print(f'yields patch: could not restore the files it replaced ({e2})', file=sys.stderr)
+        print('FATAL: yields patch install failed — failing the run so nothing is committed',
+              file=sys.stderr)
+        sys.exit(1)
+
+
+def _within(seconds, fn):
+    """`fn()` 의 결과를, 벽시계로 `seconds` 초 안에 끝났을 때만 돌려준다. 넘기면 TimeoutError.
+
+    소켓 timeout 은 바이트가 올 때마다 새로 시작하고 버퍼 읽기는 요청한 양이 찰 때까지 돌아오지
+    않으므로, 읽기 안쪽에서 시한을 보는 것으로는 조금씩 흘려 보내는 응답을 못 끊는다(codex 구현
+    검토 1·2회 I6). 그래서 일을 데몬 스레드에 맡기고 기다리는 쪽에서 끊는다 — 남은 스레드는
+    프로세스가 끝날 때 함께 사라지고, 그 결과는 버린다.
+    """
+    import threading
+    box = {}
+
+    def run():
+        try:
+            box['value'] = fn()
+        except BaseException as e:          # 스레드 안의 실패를 부른 쪽으로 옮긴다
+            box['error'] = e
+    t = threading.Thread(target=run, daemon=True)
+    t.start()
+    t.join(seconds)
+    if t.is_alive():
+        raise TimeoutError(f'not finished within {seconds}s')
+    if 'error' in box:
+        raise box['error']
+    return box['value']
+
+
+def yields_patch_step(args, now=None):
+    """-> 'patched' | 'waiting' | None(전체 수집으로 간다)."""
+    import copy
+    from us.history import market_record, read_jsonl
+    outdir = args.outdir
+    now = now or datetime.datetime.now(datetime.timezone.utc)
+    base, why = patch_base(outdir, now, getattr(args, 'no_patch', False))
+    if base is None:
+        print(f'yields patch: not eligible ({why}) — full collection')
+        return None
+    prev, intraday, bond_date = base
+    rd = prev['report_date']
+    print(f'yields patch: {rd} lacks only the Naver close — probing Naver for {bond_date}')
+    try:
+        # 한 쪽(60거래일)만 받는다 — 커브에 필요한 것은 기준일·전일·5거래일 전뿐이다. 쪽이 하나라
+        # 「앞쪽만 받고 뒤쪽은 실패한」 반쪽 응답이 생길 수 없다: 만기 하나라도 실패하면 커브가 없다.
+        curve, latest = _within(PATCH_PROBE_WALL_S, lambda: naver_spot_yields(
+            pages=1, expected_date=bond_date, timeout=PATCH_PROBE_TIMEOUT_S, attempts=1,
+            budget_s=PATCH_PROBE_BUDGET_S))
+    except Exception as e:
+        print(f'yields patch: Naver probe failed ({e})', file=sys.stderr)
+        curve, latest = None, None
+    usable = bool(curve) and all((curve.get(t) or {}).get(f) is not None
+                                 for t in ('2Y', '5Y', '10Y', '30Y') for f in ('level', 'bp'))
+    if not usable:
+        # 전체 수집의 naver_stale 과 같은 식 — 「아직 안 나왔다」일 때만 기다린다.
+        if bool(latest) and curve is None and latest < bond_date:
+            print(f'yields patch: Naver is still {latest} (< {bond_date}) — waiting, nothing written')
+            _emit('skipped=true', 'waiting=true')
+            return 'waiting'
+        print('yields patch: no usable Naver curve — full collection', file=sys.stderr)
+        return None
+
+    new = copy.deepcopy(prev)
+    new['yields'] = merge_yields(prev.get('yields_fred'), prev.get('yields'), curve)
+    apply_spreads(new, prev.get('yields_fred'))
+    missing = completeness(new, intraday, naver_stale=False, report_date=rd)
+    if missing:
+        print(f'yields patch: still incomplete after the patch ({", ".join(missing)}) — '
+              'full collection', file=sys.stderr)
+        return None
+    new['complete'], new['missing'] = True, []
+    new['yields_patched'] = {
+        'at': now.astimezone(datetime.timezone.utc).isoformat(timespec='seconds'),
+        'run': run_id(), 'source': 'Naver', 'date': bond_date}
+
+    hist = os.path.join(outdir, 'history', 'market.jsonl')
+    md_path = os.path.join(outdir, 'market_data.json')
+    png = os.path.join(outdir, 'yield_curve.png')
+    staged = []
+    try:
+        record = market_record(new)
+        rows = [r for r in read_jsonl(hist) if r.get('report_date') != rd] + [record]
+        rows.sort(key=lambda r: r.get('report_date') or '')
+        k, agg = weekly_aggregate(rows, rd)
+        weekly = os.path.join(outdir, 'weekly', f'{k}.json')
+        os.makedirs(os.path.dirname(weekly), exist_ok=True)
+        os.makedirs(os.path.dirname(hist), exist_ok=True)
+
+        def stage(target, write):
+            tmp = os.path.join(os.path.dirname(target), '.patch-' + os.path.basename(target))
+            staged.append((tmp, target))
+            write(tmp)
+
+        stage(png, lambda tmp: render_curve(new['yields'], tmp))
+
+        def write_hist(tmp):
+            with open(tmp, 'w', encoding='utf-8') as fh:
+                for r in rows:
+                    fh.write(json.dumps(r, ensure_ascii=False, default=str) + '\n')
+        stage(hist, write_hist)
+
+        def dump(obj):
+            def write(tmp):
+                with open(tmp, 'w') as fh:
+                    json.dump(obj, fh, indent=2, default=str, ensure_ascii=False)
+            return write
+        stage(weekly, dump(agg))
+        stage(md_path, dump(new))            # 맨 끝 — 이것이 바뀌어야 판이 complete 가 된다
+        _install_patch(staged)               # 실패하면 되돌리고 exit 1 — 여기로 돌아오지 않는다
+    except Exception as e:
+        print(f'yields patch: could not prepare the outputs ({e}) — full collection', file=sys.stderr)
+        return None
+    finally:
+        for tmp, _ in staged:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+    for t, row in new['yields'].items():
+        print(f"  {t}: {row['level']}% ({row.get('source')} {row['date']})")
+    print(f'yields patch: {rd} is now COMPLETE (curve {bond_date}, weekly {k})')
+    _emit('patched=true')
+    return 'patched'
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--outdir', default='data')
     ap.add_argument('--force', action='store_true',
                     help='regenerate even if a complete dataset for the same report date exists')
+    ap.add_argument('--no-patch', action='store_true',
+                    help='네이버 종가만 빠진 당일 판도 수익률만 고치지 않고 전부 다시 모은다')
     ap.add_argument('--fred-check', action='store_true',
                     help='공식 API 와 graph CSV 를 전 생산 시리즈에 대해 대조하고 끝낸다 '
                          '(아무 파일도 쓰지 않는다)')
@@ -1098,6 +1437,12 @@ def main():
         sys.exit(fred_check())
     if args.ff_probe:
         sys.exit(ff_probe(args.ff_probe_url, args.max_time))
+
+    # 네이버 종가만 기다리는 재실행은 여기서 끝난다(고쳤거나, 아직이라 아무것도 안 썼거나).
+    if yields_patch_step(args) is not None:
+        return
+    # 이 판이 언제·어느 실행에서 모이기 시작했나 — 고치기 경로가 「마감 뒤 한 실행의 판」인지 본다.
+    collection_started = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
 
     set_fred_client(None)          # 재진입 실행이 지난 열화 상태를 물려받지 않게
     fredc = fred_client()
@@ -1220,7 +1565,9 @@ def main():
 
     data = {
         'generated': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M KST'),
-        'source': 'github-actions/collect_market_data.py',
+        'source': SOURCE,
+        'collection_started': collection_started,
+        'collection_run': run_id(),
         'report_date': report_date,
         'indices': daily['indices'],
         'sectors': daily['sectors'],
@@ -1245,20 +1592,7 @@ def main():
         'sector_performance_as_of': perf_as_of,
     }
     y = data['yields']
-    # 발행값. 네이버로 채워진 날은 두 다리가 같은 날짜라 basis 가 「동일 기준일」로 나온다.
-    if y.get('2Y') and y.get('10Y'):
-        data['spread_2s10s_bp'] = (y['10Y']['level'] - y['2Y']['level']) * 100
-        same = y['2Y']['date'] == y['10Y']['date']
-        data['spread_2s10s_aligned'] = same
-        data['spread_2s10s_basis'] = (
-            f"2Y·10Y 모두 {y['10Y'].get('source')} {y['10Y']['date']} 동일 기준일" if same
-            else f"2Y {y['2Y'].get('source')} {y['2Y']['date']} vs "
-                 f"10Y {y['10Y'].get('source')} {y['10Y']['date']}")
-    # Single-date cross-checks: both legs FRED (T-1), and both legs Yahoo same-day.
-    if yields_fred.get('2Y') and yields_fred.get('10Y'):
-        data['spread_2s10s_fred_bp'] = (yields_fred['10Y']['level'] - yields_fred['2Y']['level']) * 100
-    if y.get('5Y') and y.get('30Y'):
-        data['spread_5s30s_bp'] = (y['30Y']['level'] - y['5Y']['level']) * 100
+    apply_spreads(data, yields_fred)
 
     missing = completeness(data, intraday, naver_stale=naver_stale, report_date=report_date)
     data['complete'] = not missing
@@ -1453,24 +1787,14 @@ def main():
     # 기간 집계 — 기간 키로 나눠 쓰므로 주/달이 넘어가면 지난 파일이 곧 확정본이다.
     try:
         from us.history import read_jsonl
-        from us.period import build as period_build, series_from, week_key
         # 시세를 다시 받지 않는다 — 발행본이 인쇄한 스냅샷 원장만 굴린다.
-        dated, yh = series_from(read_jsonl(os.path.join(args.outdir, 'history',
-                                                        'market.jsonl')), as_of=report_date)
-        # posts.json 은 레포 루트에 있다 — outdir 는 'data' 하위 상대/절대/중첩 어느 값도
-        # 될 수 있으므로 outdir 기준 역산 대신 이 스크립트 파일 위치(scripts/ 의 부모)로
-        # 레포 루트를 고정한다. Actions 는 항상 레포 루트에서 이 스크립트를 실행한다.
-        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        heads = daily_headlines(repo_root)
-        for span, keyer, sub in (('weekly', week_key, 'weekly'),):
-            k = keyer(report_date)
-            agg = period_build(span, k, dated, yh, heads)
-            d = os.path.join(args.outdir, sub)
-            os.makedirs(d, exist_ok=True)
-            json.dump(agg, open(os.path.join(d, f'{k}.json'), 'w'),
-                      indent=2, default=str, ensure_ascii=False)
-            print(f"{span} {k}: {agg['sessions']} sessions, "
-                  f"complete={agg['complete']}")
+        k, agg = weekly_aggregate(read_jsonl(os.path.join(args.outdir, 'history', 'market.jsonl')),
+                                  report_date)
+        d = os.path.join(args.outdir, 'weekly')
+        os.makedirs(d, exist_ok=True)
+        json.dump(agg, open(os.path.join(d, f'{k}.json'), 'w'),
+                  indent=2, default=str, ensure_ascii=False)
+        print(f"weekly {k}: {agg['sessions']} sessions, complete={agg['complete']}")
     except Exception as e:
         print(f'period aggregation failed: {e}', file=sys.stderr)
 
