@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-19T00:56:08+00:00",
- "cutoff_at": "2026-11-19T00:56:08+00:00",
+ "collected_at": "2026-11-19T02:04:05+00:00",
+ "cutoff_at": "2026-11-19T02:04:05+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -17,11 +17,11 @@
  "prompt_version": "2026-11-04.1",
  "market_snapshot": {
   "path": "data/market_data.json",
-  "commit": "299cb5b1a0acc332fec2de70a8804f8c4cab4664",
+  "commit": "34cabfc653ed4cc7bbe585eb721e1acab64d2f3b",
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 218,
+  "harvest": 222,
   "candidates": 2,
   "articles": [
    2,
@@ -31,8 +31,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 43174,
-   "out": 10833
+   "in": 43705,
+   "out": 11600
   },
   "discovery": "throttled",
   "hosts": {
@@ -44,15 +44,15 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "5/5",
-   "pairs": "2/2",
+   "claims": "6/6",
+   "pairs": "3/3",
    "obs": "7/7"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 2,
+   "claims": 4,
    "obs": 7,
-   "strict_pairs": 0,
+   "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
   },
@@ -60,45 +60,49 @@
    "paths": [
     "edges[1]",
     "edges[2]",
+    "memo[0]",
     "memo[1]",
-    "memo[2]",
     "structure",
+    "variables[1]",
     "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "worry.most[0]"
    ],
-   "outcome": "skipped_threshold",
+   "outcome": "skipped_ratio",
    "remaining": [
     "structure:unverified",
     "structure:dangling",
+    "variables[1]:unverified",
+    "edges[1]:unverified",
     "edges[1]:dangling",
     "edges[2]:unverified",
+    "memo[0]:dangling",
+    "memo[1]:unverified",
     "memo[1]:dangling",
-    "memo[2]:dangling",
     "worry.most[0]:unverified",
     "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.unlikely[0]:dangling"
+    "worry.moderate[0]:unverified"
    ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 뒤 엔비디아의 전략 지속성과 사업 영향",
+  "topic_ko": "젠슨 황 퇴진 이후 엔비디아의 사업·전략 영향",
   "query": "huang nvidia scandal",
   "trigger": []
  },
  "problems": [
   "structure:unverified",
   "structure:dangling",
+  "variables[1]:unverified",
+  "edges[1]:unverified",
   "edges[1]:dangling",
   "edges[2]:unverified",
+  "memo[0]:dangling",
+  "memo[1]:unverified",
   "memo[1]:dangling",
-  "memo[2]:dangling",
   "worry.most[0]:unverified",
   "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.unlikely[0]:dangling"
+  "worry.moderate[0]:unverified"
  ],
- "content_hash": "d396d82cc6e53e33"
+ "content_hash": "836cd2bce5b868da"
 }
