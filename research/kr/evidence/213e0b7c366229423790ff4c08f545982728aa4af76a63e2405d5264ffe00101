@@ -1,0 +1,272 @@
+{
+ "commit": "fedd080",
+ "indices": {
+  "KOSPI": {
+   "close": 5137.89,
+   "change_pct": 1.39
+  },
+  "KOSDAQ": {
+   "close": 684.81,
+   "change_pct": 3.32
+  }
+ },
+ "flows_date": {
+  "KOSPI": "2026-11-19",
+  "KOSDAQ": "2026-11-19"
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_kospi_1119": {
+  "date": "2026-11-19",
+  "individual": -693,
+  "foreign": -4026,
+  "institution": 197
+ },
+ "flows_kosdaq_1119": {
+  "date": "2026-11-19",
+  "individual": -32,
+  "foreign": -2143,
+  "institution": 2200
+ },
+ "KOSPI_ohlc": {
+  "open": 5090.04,
+  "high": 5137.89,
+  "low": 4963.61,
+  "prevClose": 5067.44
+ },
+ "KOSDAQ_ohlc": {
+  "open": 668.31,
+  "high": 684.81,
+  "low": 650.39,
+  "prevClose": 662.81
+ },
+ "stocks": {
+  "SK하이닉스": {
+   "name": "SK하이닉스",
+   "change_pct": 3.41,
+   "close": 1183000,
+   "value": 2969237
+  },
+  "삼성전자": {
+   "name": "삼성전자",
+   "change_pct": 1.13,
+   "close": 196900,
+   "value": 2406462
+  },
+  "KB금융": {
+   "name": "KB금융",
+   "change_pct": -2.24,
+   "close": 152900,
+   "value": 76808
+  },
+  "HD현대일렉트릭": {
+   "name": "HD현대일렉트릭",
+   "change_pct": 8.63,
+   "close": 415500,
+   "value": 50022
+  },
+  "삼성전기": {
+   "name": "삼성전기",
+   "change_pct": 9.26,
+   "close": 885000,
+   "value": 789402
+  },
+  "하이브": {
+   "name": "하이브",
+   "change_pct": 13.69,
+   "close": 189400,
+   "value": 219971
+  },
+  "신세계": {
+   "name": "신세계",
+   "change_pct": 10.47,
+   "close": 295500,
+   "value": 41250
+  },
+  "아모레퍼시픽": {
+   "name": "아모레퍼시픽",
+   "change_pct": 9.03,
+   "close": 142500,
+   "value": 64888
+  },
+  "파라다이스": {
+   "name": "파라다이스",
+   "change_pct": 10.51,
+   "close": 11570,
+   "value": 38054
+  },
+  "하나투어": {
+   "name": "하나투어",
+   "change_pct": 16.75,
+   "close": 35900,
+   "value": 37749
+  },
+  "삼성에스디에스": {
+   "name": "삼성에스디에스",
+   "change_pct": -7.14,
+   "close": 214500,
+   "value": 111548
+  },
+  "현대모비스": {
+   "name": "현대모비스",
+   "change_pct": -4.07,
+   "close": 341500,
+   "value": 80420
+  },
+  "효성중공업": {
+   "name": "효성중공업",
+   "change_pct": 6.9,
+   "close": 1796000,
+   "value": 60700
+  },
+  "이수페타시스": {
+   "name": "이수페타시스",
+   "change_pct": 3.88,
+   "close": 83000,
+   "value": 69226
+  }
+ },
+ "session": {
+  "report_date": "2026-11-19",
+  "us_prev": {
+   "as_of": "2026-11-18",
+   "rows": {
+    "S&P 500": -0.23,
+    "Nasdaq": 0.42,
+    "Dow": -1.11
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": 0.51,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": 0.84,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": 0.71,
+    "항셍": -1.95,
+    "상해종합": -0.28,
+    "대만가권": -4.4
+   },
+   "dates": {
+    "닛케이": "2026-11-19",
+    "항셍": "2026-11-19",
+    "상해종합": "2026-11-19",
+    "대만가권": "2026-11-19"
+   },
+   "avg_pct": -1.48,
+   "relative_pp": 2.87
+  },
+  "usdkrw_intraday": {
+   "high": 1332.85,
+   "high_t": "09:00",
+   "low": 1326.78,
+   "low_t": "09:00",
+   "close": 1329.48,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "industry_top": [
+  {
+   "name": "방송과엔터테인먼트",
+   "change_pct": 10.47,
+   "total": 58,
+   "rise": 42,
+   "breadth": 0.724,
+   "no": 285,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "전자장비와기기",
+   "change_pct": 6.9,
+   "total": 105,
+   "rise": 72,
+   "breadth": 0.686,
+   "no": 282,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": "좁은 상승·개별종목"
+  },
+  {
+   "name": "호텔,레스토랑,레저",
+   "change_pct": 6.01,
+   "total": 20,
+   "rise": 17,
+   "breadth": 0.85,
+   "no": 317,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "건강관리기술",
+   "change_pct": 5.63,
+   "total": 13,
+   "rise": 10,
+   "breadth": 0.769,
+   "no": 288,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "전기장비",
+   "change_pct": 4.74,
+   "total": 35,
+   "rise": 28,
+   "breadth": 0.8,
+   "no": 306,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "화장품",
+   "change_pct": 4.45,
+   "total": 64,
+   "rise": 53,
+   "breadth": 0.828,
+   "no": 266,
+   "liquidity_backed": true,
+   "leading": true,
+   "note": "폭넓은 상승 주도"
+  },
+  {
+   "name": "소프트웨어",
+   "change_pct": 4.31,
+   "total": 76,
+   "rise": 50,
+   "breadth": 0.658,
+   "no": 287,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": "좁은 상승·개별종목"
+  },
+  {
+   "name": "기타금융",
+   "change_pct": 4.0,
+   "total": 6,
+   "rise": 3,
+   "breadth": 0.5,
+   "no": 319,
+   "liquidity_backed": false,
+   "leading": false,
+   "note": "좁은 상승·개별종목"
+  }
+ ]
+}
