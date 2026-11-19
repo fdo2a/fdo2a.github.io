@@ -3,49 +3,48 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-18",
- "status": "none",
- "reason": "topic_too_long",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-11-19T07:07:33+00:00",
- "cutoff_at": "2026-11-19T07:07:33+00:00",
+ "collected_at": "2026-11-19T07:24:42+00:00",
+ "cutoff_at": "2026-11-19T07:24:42+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "cb6d927e3b63185b66018dfa7b894f13c766acd9",
-  "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 225,
-  "candidates": 1,
+  "harvest": 222,
+  "candidates": 3,
   "articles": [
-   5
+   4,
+   2,
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 25500,
-   "out": 8466
+   "in": 5019,
+   "out": 70
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
-   "aljazeera.com": "ok"
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok"
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
   "topic_ko": "",
   "query": "",
   "trigger": []
  },
- "content_hash": "a34afe499ad4fc72"
+ "content_hash": "9edda9a6cd9da2dc"
 }
