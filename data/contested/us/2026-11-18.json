@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-18",
- "status": "error",
- "reason": "model_extract_success",
+ "status": "none",
+ "reason": "topic_too_long",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-19T06:04:43+00:00",
- "cutoff_at": "2026-11-19T06:04:43+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-19T07:07:33+00:00",
+ "cutoff_at": "2026-11-19T07:07:33+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
  },
  "counts": {
-  "harvest": 224,
+  "harvest": 225,
   "candidates": 1,
   "articles": [
    5
@@ -30,23 +30,22 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 0,
-   "out": 0
+   "in": 25500,
+   "out": 8466
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "aljazeera.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
   "topic_ko": "",
   "query": "",
   "trigger": []
  },
- "content_hash": "ade20a71d0ec302f"
+ "content_hash": "a34afe499ad4fc72"
 }
