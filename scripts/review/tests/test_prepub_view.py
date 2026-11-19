@@ -27,10 +27,10 @@ def test_normal_publish_separates_pair_and_recorded(tmp_path):
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     assert v['kind'] == V.OK and v['same_commit']
     text = V.render_publish(v)
-    assert '[맥이 직접 확인]' in text and '[루틴이 남긴 검사 결과]' in text
-    assert '작업 공간 전용 입력: 대조 불가 1개' in text
-    assert '확인 완료' not in text and '발행본과 검사 기록 일치' not in text      # 대조 불가가 있으면
-    assert '자동 대조하지 못한 수치 30개' in text and '루틴 파이썬 3.11.9' in text
+    assert '■ 발행 상태' in text and '■ 검증 범위' in text
+    assert '작업 공간 전용 입력 1개는 원본을 보관하지 않아 대조 못 함' in text
+    assert '일치(맥 대조, 작업 공간 입력 제외)' in text and '일치(맥 대조)' not in text   # 대조 불가가 있으면
+    assert '숫자 30개 범위 밖' in text and '루틴 파이썬' not in text              # 버전은 기록에만(11/19)
 
 
 def test_not_run_and_partial_are_not_verified(tmp_path):
@@ -40,7 +40,8 @@ def test_not_run_and_partial_are_not_verified(tmp_path):
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     assert V.headline(v) == '발행본과 검사 기록 일치'                    # 짝은 맞다
     text = V.render_publish(v)
-    assert '설정된 검사 완료 아님' in text and '실행 안 함: g1' in text and '일부만 검사: check_numbers' in text
+    assert '실행 안 함: g1' in text and '일부만 검사: 숫자 대조' in text and '■ 볼 것' not in text
+    assert text.split('\n')[0].endswith('· 발행 통과 · 검사 빈칸 2건')            # 첫 줄에서 숨기지 않는다
 
 
 def _fake_typography(monkeypatch):
@@ -67,7 +68,7 @@ def test_correction_does_not_raise_false_mismatch(tmp_path, monkeypatch):
     assert v1['check']['overall'] == C.MATCH                       # 기록 커밋 기준이라 불일치가 아니다
     assert V.fingerprint(v0) == V.fingerprint(v1)                   # 정정은 발행 건별 알림을 만들지 않는다
     assert v1['corrections'] == {'typeset': 0, 'other': 1, 'unknown': 0}
-    assert '조판 외 변경 1회' in V.render_publish(v1)
+    assert '조판 외 1회' in V.render_publish(v1)
 
 
 def test_correction_counts_each_version(tmp_path, monkeypatch):
@@ -120,7 +121,7 @@ def test_record_in_later_commit_is_noted(tmp_path):
     F.publish(repo, body=HTML, workspace=False)                     # 기록은 다음 커밋에
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     assert v['kind'] == V.OK and v['same_commit'] is False
-    assert '뒤 커밋에 들어 있어요' in V.render_publish(v)
+    assert '글을 추가한 커밋과 기록을 담은 커밋이 달라요(다른 커밋' in V.render_publish(v)
 
 
 def test_unreadable_summary_is_not_pass(tmp_path):
@@ -206,12 +207,11 @@ def test_who_changes_wording_only(tmp_path):
     F.publish(repo)
     v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
     mac, gh = V.render_publish(v), V.render_publish(v, who=V.GITHUB)
-    assert '[맥이 직접 확인]' in mac and '맥이 확인한 범위는 일치' in mac and mac.endswith(V.FOOTER)
-    assert '맥이 증명하지는 못해요' in V.FOOTER and 'GitHub' not in mac
-    assert '[GitHub이 직접 대조]' in gh and 'GitHub 이 확인한 범위는 일치' in gh and '맥' not in gh
-    assert gh.endswith(V.footer(V.GITHUB)) and 'GitHub 이 짝만 다시 확인했어요' in V.footer(V.GITHUB)
-    assert '증명하지는 못해요' in V.footer(V.GITHUB)                  # 검사가 실제로 돌았다고 하지 않는다
-    assert mac.replace('맥이', 'X').count('\n') == gh.count('\n')      # 줄 구성은 같다
+    assert '(맥 대조, 작업 공간 입력 제외)' in mac and mac.endswith(V.FOOTER) and 'GitHub' not in mac
+    assert '(GitHub 대조, 작업 공간 입력 제외)' in gh and gh.endswith(V.footer(V.GITHUB)) and '맥' not in gh
+    for foot in (V.FOOTER, V.footer(V.GITHUB)):                   # 검사가 실제로 돌았다고·내용이 맞다고 하지 않는다
+        assert '기록 일치만 확인' in foot and '검사 재실행이나 전체 내용의 사실 검증은 아님' in foot
+    assert mac.count('\n') == gh.count('\n')                         # 줄 구성은 같다
     assert 'GitHub 이 확인한 범위' in V.digest_lines(v, who=V.GITHUB)[0] and '맥이 확인한 범위' in V.digest_lines(v)[0]
     import inspect
     assert 'who' not in inspect.signature(V.fingerprint).parameters   # 같은 사건인지는 주체와 무관

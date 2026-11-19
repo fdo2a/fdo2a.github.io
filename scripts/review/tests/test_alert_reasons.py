@@ -38,8 +38,8 @@ def test_workspace_inputs_are_named_with_the_reason(tmp_path):
         rec['inputs']['files'].append({'path': '<tg>/telegram.json', 'sha256': 'x', 'ref': 'workspace-only'})
     rewrite(repo, add)
     text = V.render_publish(view(repo), who=V.GITHUB)
-    assert '대조 불가 1칸(작업 공간 전용 입력)' in text
-    assert '작업 공간 전용 입력: 대조 불가 2개 — 루틴 작업 공간에만 있던 파일이라 원본을 보관하지 않았어요' in text
+    assert '발행본과 검사 기록 일치(GitHub 대조, 작업 공간 입력 제외)' in text
+    assert '작업 공간 전용 입력 2개는 원본을 보관하지 않아 대조 못 함(지문만 남음)' in text
     assert 'macro_next.json, 텔레그램 입력 telegram.json' in text
 
 
@@ -61,7 +61,7 @@ def test_unknown_category_carries_its_reason(tmp_path):
     F.git(repo, 'rm', '-q', 'scripts/g2.py')
     F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
     text = V.render_publish(view(repo))
-    assert '검사 코드: 대조 불가 — 그 커밋에 검사 코드 파일이 없다 — check_numbers(scripts/g2.py)' in text
+    assert '검사 코드: 대조 불가 — 그 커밋에 검사 코드 파일이 없다 — 숫자 대조(scripts/g2.py)' in text   # 내부 이름 대신 표시 이름(11/19)
 
 
 def test_every_unknown_or_mismatch_line_has_a_reason(tmp_path):
@@ -94,7 +94,7 @@ def test_warning_shows_the_checkers_own_reason(tmp_path):
     rewrite(repo, lambda r: gate_warn(r, status='warn', items=['분량: 본문 10117자', '경고: 서술형 본문이 10117자다',
                                                                '경고: 시황군 3698자 < 판단군 4999자', '경고: 셋째']))
     text = V.render_publish(view(repo))
-    assert ' · 경고: g1 — 서술형 본문이 10117자다; 시황군 3698자 < 판단군 4999자 (외 1건)' in text
+    assert '1. [검토 권고] g1: 서술형 본문이 10117자다; 시황군 3698자 < 판단군 4999자 (외 1건)' in text
     assert '분량:' not in text                          # 경고 줄이 있으면 정보 줄은 이유로 쓰지 않는다
 
 
@@ -110,7 +110,7 @@ def test_reason_field_wins_and_missing_reason_is_said(tmp_path):
     rewrite(repo, two)
     text = V.render_publish(view(repo))
     assert ' · 실행 안 함: g1 — 적용일 전 글이라 검사하지 않았다' in text
-    assert ' · 경고: check_numbers — 이유가 기록에 없어요' in text
+    assert '[검토 권고] 숫자 대조: 이유가 기록에 없어요' in text
 
 
 def test_long_reasons_stay_inside_one_event(tmp_path):
@@ -120,14 +120,15 @@ def test_long_reasons_stay_inside_one_event(tmp_path):
     def many(rec):
         rec['gates'] = [{'name': f'g{i}', 'argv': ['scripts/g1.py'], 'status': 'warn', 'required': True,
                          'script_sha256': rec['gates'][0]['script_sha256'],
-                         'items': ['경고: ' + '가' * 300] * 5} for i in range(40)]
+                         'items': ['경고: ' + '가나다 ' * 75] * 5} for i in range(40)]      # 낱말이 있는 긴 문장
         rec['summary']['warned'] = [g['name'] for g in rec['gates']]
         rec['inputs']['files'] += [{'path': f'<datadir>/{"n" * 70}{i}', 'sha256': 'x', 'ref': 'workspace-only'}
                                    for i in range(30)]
     rewrite(repo, many)
     text = V.render_publish(view(repo))
     assert len(text) <= W.MAX_TEXT
-    assert '외 34개' in text                               # 검사기 이름도 잘리면 남은 수를 적는다
+    assert '외 32건' in text and '외 23개' in text          # 검사기·입력 파일이 잘리면 남은 수를 적는다
+    assert '■ 검증 범위' in text                           # 넘쳐도 범위 덩어리는 남긴다
 
 
 def test_unverified_numbers_show_reasons_and_old_records_say_so(tmp_path):
@@ -136,12 +137,12 @@ def test_unverified_numbers_show_reasons_and_old_records_say_so(tmp_path):
                                                'unverified_by': {'자산 없음': 5, '시점·구간 단서': 2, '어림수': 1,
                                                                  '연구 원장': 1, '지표 해부': 0}})
     text = V.render_publish(view(repo))
-    assert '자동 대조하지 못한 수치 9개 — 자산 없음 5 · 시점·구간 단서 2 · 어림수 1 · 연구 원장 1' in text
+    assert '숫자 9개 범위 밖(자산 없음 5 · 시점·구간 단서 2 · 어림수 1 · 리서치 기록 1)' in text
     assert '지표 해부' not in text
     (tmp_path / 'b').mkdir()
     repo2 = F.init(tmp_path / 'b')
     F.publish(repo2, workspace=False, numbers={'table_cells': 5, 'prose_judged': 2, 'unverified': 9})
-    assert '9개 — 이 기록에는 이유별 내역이 없어요' in V.render_publish(view(repo2))
+    assert '숫자 9개 범위 밖(이유별 내역 없는 기록)' in V.render_publish(view(repo2))
 
 
 def test_unreadable_summary_says_what_is_missing(tmp_path):
@@ -265,14 +266,20 @@ def test_budget_is_shared_across_all_categories(tmp_path):
     def many(rec):
         sha_ = rec['gates'][0]['script_sha256']
         rec['gates'] = [{'name': f'g{i}', 'argv': ['scripts/g1.py'], 'status': st, 'required': True,
-                         'script_sha256': sha_, 'reason': '이' * 200}
+                         'script_sha256': sha_, 'reason': '이유다 ' * 50}
                         for i, st in enumerate(['fail'] * 12 + ['indeterminate'] * 6 + ['not_run'] * 6 + ['partial'] * 6)]
         names = [g['name'] for g in rec['gates']]
         rec['summary'].update(blocking=names[:12], not_run=names[18:24])
     rewrite(repo, many)
     text = V.render_publish(view(repo))
     assert len(text) <= V.TEXT_LIMIT <= W.MAX_TEXT
-    assert '이유 일부는 길이 제한으로 줄였어요' in text
+    # 넘치면 빈칸부터 줄인다(이유 → 이름 → 건수만) — 확인 필요 항목과 그 이유가 먼저다(codex 구현 1회 #2·#5, 2회 #3).
+    # 확인 필요만으로도 넘치는 날이라 빈칸은 건수로 남는다: 미리 자르는 고정 상한은 없고, 건수는 전부 센다
+    assert '■ 검증 범위' in text and ' · 검사 빈칸 12건(실행 안 함 6건 · 일부만 검사 6건)' in text
+    assert '검사 빈칸의 이름·이유는 길이 제한으로 줄였어요' in text and text.split('\n')[0].endswith('검사 빈칸 12건')
+    shown = text.count('[확인 필요]')
+    assert shown >= 8 and (shown == 18 or f'외 {18 - shown}건' in text)
+    assert text.endswith(V.FOOTER)
 
 
 def test_fit_drops_tail_lines_and_says_how_many():
@@ -418,7 +425,7 @@ def test_identifier_shaped_name_outside_config_is_hidden(tmp_path):
     rewrite(repo, bad)
     v = view(repo)
     assert 'secret_token' not in '\n'.join(V.digest_lines(v))
-    assert '경고: g1' in V.render_publish(v)
+    assert '[검토 권고] g1' in V.render_publish(v)
 
 
 def test_calendar_unknown_market_code_never_printed():
@@ -452,7 +459,7 @@ def test_non_list_items_do_not_crash(tmp_path):
         rec['gates'][0].update(status='warn', items=42)
         rec['summary']['warned'] = ['g1']
     rewrite(repo, bad)
-    assert '경고: g1 — 이유가 기록에 없어요' in V.render_publish(view(repo))
+    assert '[검토 권고] g1: 이유가 기록에 없어요' in V.render_publish(view(repo))
 
 
 def test_bad_report_date_is_not_echoed(tmp_path):

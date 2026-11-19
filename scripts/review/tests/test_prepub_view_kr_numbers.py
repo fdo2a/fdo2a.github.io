@@ -27,16 +27,15 @@ def kr_numbers_repo(tmp_path, monkeypatch):
 
 
 def _text(v):
-    return '\n'.join(V.recorded_lines(v)), '\n'.join(V.digest_lines(v))
+    return V.render_publish(v), '\n'.join(V.digest_lines(v))
 
 
 def test_kr_record_with_numbers(kr_numbers_repo):
     F.publish(kr_numbers_repo, 'kr', '2026-11-16', numbers=NUMBERS)
     v = V.view(str(kr_numbers_repo), 'HEAD', 'kr', '2026-11-16')
     full, digest = _text(v)
-    assert '표 칸 54 대조' in full                                      # US 와 같은 줄
-    assert '표 54칸 대조, 미검증 225개' in full and '숫자 검증 완료가 아니에요' in full
-    assert 'KR 문장 143' in full
+    assert '표 54칸 자동 대조 · 숫자 225개 범위 밖(문장 143 · 업종 기간별 71 · 기타 표 11)' in full
+    assert '오류 225건이라는 뜻은 아님' in full and 'KR 문장' not in full
     assert '표 54칸 대조' in digest and '자동 대조하지 못한 수치 225개' in digest
     assert not V.fully_verified(v)
 

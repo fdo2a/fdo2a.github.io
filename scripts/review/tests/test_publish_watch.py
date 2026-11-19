@@ -374,7 +374,7 @@ def test_transient_read_error_does_not_freeze_unknown(tmp_path, monkeypatch):
     monkeypatch.setattr(C, '_show', real)
     run(st, repo, at(11, 9, 8, 10))
     pub = next(e for e in st['events'] if e['kind'] == 'publish')
-    assert '검사 코드: 일치' in pub['text'] and '발행본과 검사 기록 일치' in pub['text']
+    assert '검사 코드' not in pub['text'] and '발행본과 검사 기록 일치' in pub['text']   # 일시 오류가 대조 불가로 굳지 않았다
 
 
 def test_published_then_deleted_is_gone_and_back(tmp_path):
@@ -558,8 +558,8 @@ def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):
     assert CLI.main(['--no-fetch', '--preview', 'kr', '2026-11-09']) == 0
     assert not state.parent.exists()                                 # 만들지도 않는다
     out = capsys.readouterr().out
-    assert '[맥이 직접 확인]' in out and '표 숫자 검사가 없어요(검사 도입 전 기록)' in out
-    assert '작업 공간 전용 입력: 대조 불가' in out and '조용히 기준선으로 잡는다' in out
+    assert '맥 대조' in out and '표 숫자 검사가 없어요(검사 도입 전 기록)' in out
+    assert '작업 공간 전용 입력 1개는 원본을 보관하지 않아 대조 못 함' in out and '조용히 기준선으로 잡는다' in out
     state.parent.mkdir()
     st = W.new_state('x')
     st['last_seen'] = 'abc'

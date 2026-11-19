@@ -88,8 +88,8 @@ def test_github_run_names_github_not_mac_and_same_ids(tmp_path):
     mac = run(W.new_state('x'), repo, at(11, 10, 13), who=V.MAC)
     g = next(e for e in gh['events'] if e['kind'] == 'publish')
     m = next(e for e in mac['events'] if e['kind'] == 'publish')
-    assert '[GitHub이 직접 대조]' in g['text'] and 'GitHub 이 짝만 다시 확인했어요' in g['text'] and '맥' not in g['text']
-    assert '[맥이 직접 확인]' in m['text'] and 'GitHub' not in m['text']
+    assert 'GitHub 대조' in g['text'] and 'GitHub은 기록 일치만 확인' in g['text'] and '맥' not in g['text']
+    assert '맥 대조' in m['text'] and 'GitHub' not in m['text']
     assert g['id'] == m['id']                                             # 같은 사건 — 주체는 지문에 안 든다
     assert len(g['text']) < W.MAX_TEXT // 2                               # 지금 문장은 상한에 한참 못 미친다
 
@@ -286,7 +286,7 @@ def test_second_run_appends_events_on_top(world):
     assert [e['kind'] for e in world.state()['events']] == ['reset', 'late', 'publish']
     out = world.outbox()
     assert [e['kind'] for e in out['events']] == ['reset', 'late', 'publish']       # 전송 확인을 못 읽었다 → 하나도 안 뺀다
-    assert '[GitHub이 직접 대조]' in out['events'][-1]['text']
+    assert 'GitHub 대조' in out['events'][-1]['text']
     assert len(world.commits()) == 2 and world.pokes == [1, 2]
 
 
@@ -486,7 +486,7 @@ def test_dry_run_and_bare_call_write_nothing(world, capsys):
     world.sync()
     assert CLI.main(['--dry-run']) == 0
     out = capsys.readouterr().out
-    assert '[GitHub이 직접 대조]' in out and 'outbox 2건' in out
+    assert 'GitHub 대조' in out and 'outbox 2건' in out
     assert CLI.main([]) == 2
     assert F.git(world.origin, 'branch', '--list', CLI.STATE_BRANCH) == '' and world.pokes == []
 

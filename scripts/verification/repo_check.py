@@ -97,12 +97,15 @@ def check(repo, market, date, rev):
     if rec.get('format') != R.FORMAT or rec.get('market') != market or rec.get('date') != date:
         return _result({'record': MISMATCH}, ['다른 형식이거나 다른 글의 기록이다'], rec)
 
-    cats, cw = {}, {}
+    cats, cw, cd = {}, {}, {}
 
-    def note(cat, msg):
-        """칸마다 이유 — 알림이 「대조 불가」만 말하지 않게(사용자 11/11). 기존 why 에도 같은 문장."""
+    def note(cat, msg, state=UNKNOWN, gate=None):
+        """칸마다 이유 — 알림이 「대조 불가」만 말하지 않게(사용자 11/11). 기존 why 에도 같은 문장.
+        `cd` 는 표시 전용 짝(이유별 상태·검사기 이름) — 알림이 불일치 이유를 먼저 보이고 검사기 이름 자리에만
+        표시명을 쓰게 한다. 판정(cats·overall·why·cat_why)은 그대로다(2026-11-19)."""
         why.append(msg)
         cw.setdefault(cat, []).append(msg)
+        cd.setdefault(cat, []).append({'state': state, 'text': msg, 'gate': gate})
 
     cfg = _config_at(repo, rev, market)
     if cfg is None:
@@ -123,7 +126,7 @@ def check(repo, market, date, rev):
         note('post', '기록에 글 해시가 없다')
     elif post.get('path') != pp or post['sha256'] != R.sha256_bytes(body):
         cats['post'] = MISMATCH
-        note('post', '기록의 글 해시가 그 커밋의 글과 다르다')
+        note('post', '기록의 글 해시가 그 커밋의 글과 다르다', MISMATCH)
     else:
         cats['post'] = MATCH
 
@@ -138,7 +141,7 @@ def check(repo, market, date, rev):
     elif [g.get('name') if isinstance(g.get('name'), str) else None for g in gates if isinstance(g, dict)] \
             != [g['name'] for g in R.gates_of(cfg, market)]:
         cats['gates'] = MISMATCH
-        note('gates', '기록의 검사기 목록이 그 커밋의 설정과 다르다')
+        note('gates', '기록의 검사기 목록이 그 커밋의 설정과 다르다', MISMATCH)
     else:
         cats['gates'] = MATCH
 
@@ -154,25 +157,25 @@ def check(repo, market, date, rev):
         argv = g.get('argv') or []
         if not isinstance(argv, list):            # 손상된 기록 — 예외 없이 대조 불가로(codex 재검토 8회 #2)
             states.append(UNKNOWN)
-            note('scripts', f'기록의 실행 정보 형식이 다르다 — {name}')
+            note('scripts', f'기록의 실행 정보 형식이 다르다 — {name}', gate=name)
             continue
         if name in builtin and not argv:
             continue                      # 설정이 내장 검사라고 한 것(`unconfirmed`)만 — 대조할 파일이 없다
         if not argv or not isinstance(argv[0], str):
             states.append(UNKNOWN)        # 파일 검사인데 실행 정보가 없다(codex 재검토 #7)
-            note('scripts', f'기록에 실행 정보가 없다 — {name}')
+            note('scripts', f'기록에 실행 정보가 없다 — {name}', gate=name)
             continue
         if not isinstance(g.get('script_sha256'), str) or not g['script_sha256']:
             states.append(UNKNOWN)        # 파일 검사인데 해시가 없다 — 건너뛰면 「일치」로 보인다(#7)
-            note('scripts', f'기록에 검사 코드 해시가 없다 — {name}')
+            note('scripts', f'기록에 검사 코드 해시가 없다 — {name}', gate=name)
             continue
         cur = _show(repo, rev, argv[0])
         if cur is None:
             states.append(UNKNOWN)
-            note('scripts', f'그 커밋에 검사 코드 파일이 없다 — {name}({argv[0]})')
+            note('scripts', f'그 커밋에 검사 코드 파일이 없다 — {name}({argv[0]})', gate=name)
         elif R.sha256_bytes(cur) != g['script_sha256']:
             states.append(MISMATCH)
-            note('scripts', f'검사 코드가 기록과 다르다 — {name}')
+            note('scripts', f'검사 코드가 기록과 다르다 — {name}', MISMATCH, gate=name)
         else:
             states.append(MATCH)
     cats['scripts'] = UNKNOWN if gates is None else _combine(states)
@@ -192,7 +195,7 @@ def check(repo, market, date, rev):
         note('repo_digest', '기록에 레포 다이제스트가 없다')
     elif digest != ri['digest']:
         cats['repo_digest'] = MISMATCH
-        note('repo_digest', '레포 안 코드·설정·원장이 기록과 다르다')
+        note('repo_digest', '레포 안 코드·설정·원장이 기록과 다르다', MISMATCH)
     else:
         cats['repo_digest'] = MATCH
 
@@ -204,6 +207,7 @@ def check(repo, market, date, rev):
         cats['workspace_inputs'] = UNKNOWN
         note('repo_inputs', '기록에 입력 목록이 없다')
         cw['workspace_inputs'] = ['기록에 입력 목록이 없다']
+        cd['workspace_inputs'] = [{'state': UNKNOWN, 'text': '기록에 입력 목록이 없다', 'gate': None}]
     else:
         for f in files:
             ref = f.get('ref') if isinstance(f, dict) else None
@@ -214,14 +218,15 @@ def check(repo, market, date, rev):
                     note('repo_inputs', f'그 커밋에 보존 입력 파일이 없다 — {ref}')
                 elif R.sha256_bytes(blob) != f.get('sha256'):
                     repo_states.append(MISMATCH)
-                    note('repo_inputs', f'보존 입력이 기록과 다르다 — {ref}')
+                    note('repo_inputs', f'보존 입력이 기록과 다르다 — {ref}', MISMATCH)
                 else:
                     repo_states.append(MATCH)
             elif isinstance(ref, str) and ref.startswith('git:'):
                 sub = []
-                repo_states.append(_history_state(repo, rev, ref, f.get('sha256'), sub))
+                hs = _history_state(repo, rev, ref, f.get('sha256'), sub)
+                repo_states.append(hs)
                 for m in sub:
-                    note('repo_inputs', m)
+                    note('repo_inputs', m, hs)
             elif ref == 'workspace-only':
                 workspace += 1
                 if isinstance(f.get('path'), str):
@@ -233,6 +238,7 @@ def check(repo, market, date, rev):
         cats['workspace_inputs'] = UNKNOWN if workspace else NONE
     res = _result(cats, why, rec)
     res['cat_why'] = cw
+    res['cat_detail'] = cd
     res['workspace_only'] = workspace
     res['workspace_files'] = ws_files
     res['repo_input_count'] = len(repo_states)
@@ -281,4 +287,6 @@ def _result(cats, why, rec):
     unknown = [k for k, v in cats.items() if v == UNKNOWN]
     return {'cats': cats, 'overall': overall(cats), 'why': why, 'unknown': unknown, 'rec': rec,
             'cat_why': {k: list(why) for k in cats if cats[k] in (UNKNOWN, MISMATCH)},
+            'cat_detail': {k: [{'state': cats[k], 'text': m, 'gate': None} for m in why]
+                           for k in cats if cats[k] in (UNKNOWN, MISMATCH)},
             'workspace_only': 0, 'workspace_files': [], 'repo_input_count': 0}
