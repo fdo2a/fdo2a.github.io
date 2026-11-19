@@ -314,9 +314,22 @@ def main(argv=None):
                         'channels_failed': sorted(c for c, s in chans.items() if s['status'] == 'failed'),
                         'holes': sorted(c for c, s in chans.items() if s.get('hole'))}
     _save(path, payload)
+    write_numbers(a.datadir, a.date, items, bodies)
     print(f'{path} — 후보 {len(cands)} → {len(items)}건, 요약 {done} 실패 {failed}, '
           f'실패 채널 {payload["stats"]["channels_failed"] or "없음"}')
     return 1 if payload['stats']['channels_failed'] or (items and not done) else 0
+
+
+def write_numbers(datadir, date, items, bodies):
+    """원글 숫자 목록 → `data/telegram/numbers/<date>.json`(키 = 항목 id 전체). 원글은 커밋하지 않는다(2026-11-20, 섀도)."""
+    try:
+        from common import article_numbers as AN
+        out = AN.numbers_path(datadir, 'telegram', date)
+        rows = [(it['id'], it.get('summary_ko'), '', bodies.get(it['id']) or None) for it in items]
+        n, off = AN.write_day(out, date, rows, AN.load_prev(out))
+        print(f'  숫자 목록 {n}건 — 요약 숫자가 원글에 없는 글 {len(off)}건')
+    except Exception as e:             # noqa: BLE001
+        print(f'  숫자 목록 실패 ({type(e).__name__})', file=sys.stderr)
 
 
 def carry_summaries(items, old):

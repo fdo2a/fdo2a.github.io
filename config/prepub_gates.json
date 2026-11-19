@@ -209,6 +209,45 @@
      "json": true
     },
     {
+     "name": "check_number_sources",
+     "argv": [
+      "scripts/check_number_sources.py",
+      "--market",
+      "us",
+      "--date",
+      "{date}",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--repo",
+      "{repo}"
+     ],
+     "optional_argv": [
+      [
+       "--tg",
+       "{tg}"
+      ],
+      [
+       "--cycle",
+       "{cycle}"
+      ],
+      [
+       "--first",
+       "{first_html}"
+      ]
+     ],
+     "kind": "numbers",
+     "required": false,
+     "json": true,
+     "result": "sources",
+     "effective": {
+      "module": "common.numsrc",
+      "attr": "EFFECTIVE"
+     },
+     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md"
+    },
+    {
      "name": "check_research",
      "argv": [
       "scripts/check_research.py",
@@ -423,6 +462,121 @@
      "kind": "structure",
      "required": true,
      "_why": "fails 는 섹션 경계를 넘는 div·조판 미적용 같은 구조 오류다(경고는 원래대로 막지 않는다)"
+    }
+   ]
+  },
+  "us-news": {
+   "post": "news/{date}.html",
+   "gates": [
+    {
+     "name": "unconfirmed",
+     "builtin": "unconfirmed",
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_news",
+     "argv": [
+      "scripts/check_news.py",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--date",
+      "{date}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_telegram",
+     "argv": [
+      "scripts/check_telegram.py",
+      "--html",
+      "{html}",
+      "--tg",
+      "{tg}",
+      "--news",
+      "{datadir}/news/{date}.json",
+      "--date",
+      "{date}",
+      "--layout",
+      "news"
+     ],
+     "kind": "structure",
+     "required": true,
+     "_why": "텔레그램이 없는 날은 --tg 에 없는 경로(<workspace>/telegram_news.json.none)를 준다(ORCHESTRATOR STEP 3.5 0-2)"
+    },
+    {
+     "name": "check_contested",
+     "argv": [
+      "scripts/check_contested.py",
+      "--html",
+      "{html}",
+      "--json",
+      "{contested}",
+      "--market",
+      "us",
+      "--date",
+      "{date}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_readability",
+     "argv": [
+      "scripts/check_readability.py",
+      "--strict",
+      "--no-inline-images",
+      "{html}"
+     ],
+     "kind": "structure",
+     "required": true
+    },
+    {
+     "name": "check_style",
+     "argv": [
+      "scripts/check_style.py",
+      "{html}"
+     ],
+     "kind": "format",
+     "required": true
+    },
+    {
+     "name": "check_number_sources",
+     "argv": [
+      "scripts/check_number_sources.py",
+      "--market",
+      "us-news",
+      "--date",
+      "{date}",
+      "--html",
+      "{html}",
+      "--datadir",
+      "{datadir}",
+      "--repo",
+      "{repo}"
+     ],
+     "optional_argv": [
+      [
+       "--tg",
+       "{tg}"
+      ],
+      [
+       "--first",
+       "{first_html}"
+      ]
+     ],
+     "kind": "numbers",
+     "required": false,
+     "json": true,
+     "result": "sources",
+     "effective": {
+      "module": "common.numsrc",
+      "attr": "EFFECTIVE"
+     },
+     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md"
     }
    ]
   }

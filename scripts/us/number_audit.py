@@ -337,6 +337,9 @@ class Result:
     unverified_by: dict = field(default_factory=dict)
     skipped: bool = False
     independent: int = 0
+    # 값을 맞춰 본 뒤 위반이 없었던 표 칸(id) — 판정에 쓰지 않는다. 숫자 출처 검사(common/numsrc)가 「표 대조」 칸을
+    # 실제로 맞은 칸에만 주려고 읽는다(owned 는 틀린 칸도 담는다). 2026-11-20
+    cells_ok: set = field(default_factory=set, repr=False, compare=False)
 
     def summary(self):
         why = ', '.join(f'{k} {v}' for k, v in sorted(self.unverified_by.items(),
@@ -535,6 +538,7 @@ def _audit_table(spec, table, kids, market, res, owned):
         if len(cells) - 1 != len(keys):
             v.append(f'[{spec.section}] 「{label}」 행의 칸 수({len(cells) - 1})가 열 수({len(keys)})와 다르다')
         for col, cell in zip(keys, cells[1:]):
+            before = len(v)
             dl = cell.attrs.get('data-label')
             if dl is not None and COLUMNS.get(_norm_label(dl)) != col:
                 v.append(f'[{spec.section}] 「{label}」 행의 칸 data-label 「{dl}」 이 열 '
@@ -551,6 +555,8 @@ def _audit_table(spec, table, kids, market, res, owned):
                 if col == 'date' and text == _md(declared_missing[akey]):
                     continue
             _audit_cell(spec, label, col, cell, a, head_dates, res)
+            if len(v) == before:
+                res.cells_ok.add(id(cell))
     for label, key in spec.rows.items():
         a = _asset(market, spec.group, _GLOBAL_NAME.get(key, key)) or {}
         if key not in seen and any(_num(a.get(c)) is not None for c in spec.cols):
@@ -872,7 +878,9 @@ def _unverified(res, why, n=1):
 
 # ── 본체 ─────────────────────────────────────────────────────────────────
 
-def audit(html, data, prose='warn', tables=True):
+def audit(html, data, prose='warn', tables=True, trace=None):
+    """`trace`(사전)를 주면 판정과 무관한 부산물을 채운다 — 숫자 출처 검사가 같은 파서·같은 노드로 「표 대조」 칸을
+    정하려고 쓴다: `doc`(_Stream), `kinds`(흐름 항목 번호 → 'T' = 맞춰 본 표 칸·위임 노드 / 그 밖 갈래). 판정·종료 코드 불변."""
     market = data.get('market_data')
     if not isinstance(market, dict):
         raise InputError('market_data.json 이 없거나 객체가 아니다')
@@ -981,7 +989,9 @@ def audit(html, data, prose='warn', tables=True):
                 _audit_sentence(s, market, res, w, prose)
         block, ctx = [], None
 
-    for item in doc.stream:
+    if trace is not None:
+        trace['doc'], trace['kinds'] = doc, {}
+    for idx, item in enumerate(doc.stream):
         if item is None:
             flush()
             continue
@@ -1009,6 +1019,12 @@ def audit(html, data, prose='warn', tables=True):
                     kind = 'unv:연구 원장'
                 if kind is None and any('data-release' in n.attrs for n in stack):
                     kind = 'unv:지표 해부'
+        if trace is not None:
+            if kind == 'owned':
+                cell = next((n for n in stack if id(n) in owned), None)
+                trace['kinds'][idx] = 'T' if cell is not None and id(cell) in res.cells_ok else 'owned_bad'
+            else:
+                trace['kinds'][idx] = 'T' if kind and kind.startswith('deleg:') else kind
         if ctx is not None and (ctx[1] != kind):
             flush()
         if ctx is None:

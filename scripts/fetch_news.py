@@ -466,6 +466,30 @@ def apply_region_filter(rows, exempt=(), post=None):
     return rows, meta
 
 
+def write_numbers(datadir, date, chosen, bodydir):
+    """기사별 숫자 목록(본문·제목) → `data/news/numbers/<date>.json` — 본문은 커밋하지 않고 숫자만(2026-11-20, 섀도).
+    요약 숫자가 본문에 없으면 로그에만 남긴다 — 기사·요약을 버리지 않는다. 어떤 실패도 수집을 멈추지 않는다."""
+    try:
+        from common import article_numbers as AN
+        out = AN.numbers_path(datadir, 'news', date)
+        rows = []
+        for it in chosen:
+            body = None
+            if it.get('body_file'):
+                try:
+                    with open(os.path.join(bodydir, it['body_file']), encoding='utf-8') as fh:
+                        body = fh.read()
+                except OSError:
+                    body = None
+            rows.append((str(it.get('guid')), it.get('summary_ko'), it.get('title') or '', body))
+        n, off = AN.write_day(out, date, rows, AN.load_prev(out))
+        print(f'  숫자 목록 {n}건 — 요약 숫자가 본문에 없는 기사 {len(off)}건')
+        for guid, miss in off[:10]:
+            print(f'    요약⊂본문 어긋남 {guid[-40:]}: {", ".join(miss)}')
+    except Exception as e:             # noqa: BLE001 — 비-코어(섀도)
+        print(f'  숫자 목록 실패 ({type(e).__name__})', file=sys.stderr)
+
+
 def guids_in(path):
     try:
         from common.region_filter import guids_in as _g
@@ -577,6 +601,7 @@ def main():
         notes.append(f'요약 단계 실패: {type(e).__name__}')
         print(f'  요약 단계 실패 ({type(e).__name__})', file=sys.stderr)
     save_json(path, payload)
+    write_numbers(args.datadir, args.date, chosen, args.bodydir)
     got = sum(1 for it in chosen if it.get('body_chars'))
     print(f'{path} — 본문 {got}/{len(chosen)}건 · 요약 {summarized}건')
 

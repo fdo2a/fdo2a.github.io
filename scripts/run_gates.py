@@ -6,7 +6,8 @@
           [--tg <W>/telegram.json] [--stance-next <W>/kr_stance_next.json] [--cycle <CYCLE_ID>]
   # 최종(실제로 올릴 파일, 노트 붙인 뒤) — 같은 목록을 돌리고 결과를 기록한다
   python3 scripts/run_gates.py record --market us --date D --html posts/D.html --datadir <W> --repo . \\
-          [같은 선택 인자] --out verification/us/D.json
+          [같은 선택 인자] [--first-html <W>/numsrc_first.html] --out verification/us/D.json
+  # US 뉴스·산업 글(2026-11-20): --market us-news --html news/D.html --tg <W>/telegram_news.json --contested <W>/contested.json
   # 커밋 직전(index) / push 직전(HEAD) — 기록과 그 판의 글·검사 코드·입력이 짝인지
   python3 scripts/run_gates.py verify --market us --date D --repo . (--index | --rev HEAD) [--datadir <W>]
 
@@ -37,7 +38,9 @@ def _ctx(a):
     repo = os.path.abspath(a.repo)
     return {'html': os.path.abspath(a.html), 'datadir': os.path.abspath(a.datadir) if a.datadir else None,
             'repo': repo, 'date': a.date, 'tg': os.path.abspath(a.tg) if a.tg else None,
-            'stance_next': os.path.abspath(a.stance_next) if a.stance_next else None, 'cycle': a.cycle}
+            'stance_next': os.path.abspath(a.stance_next) if a.stance_next else None, 'cycle': a.cycle,
+            'first_html': os.path.abspath(a.first_html) if a.first_html else None,
+            'contested': os.path.abspath(a.contested) if a.contested else None}
 
 
 def _print(res, show_output):
@@ -72,6 +75,9 @@ def main(argv=None):
         p.add_argument('--tg')
         p.add_argument('--stance-next')
         p.add_argument('--cycle')
+        # 숫자 출처 검사의 첫 판(2026-11-20) — 게이트를 처음 돌리기 전 초안 사본. 없으면 수정 이력이 「확인 불가」로 기록된다
+        p.add_argument('--first-html')
+        p.add_argument('--contested', help='us-news: 쟁점 분석 결과(<workspace>/contested.json)')
         p.add_argument('--config', default=DEFAULT_CONFIG)
         if name == 'record':
             p.add_argument('--out', required=True)
@@ -85,6 +91,7 @@ def main(argv=None):
     v.add_argument('--datadir')
     v.add_argument('--tg')
     v.add_argument('--stance-next')
+    v.add_argument('--contested')
     v.add_argument('--record-file', help='record 가 4 였을 때만 — 레포 밖 대체 기록으로 대조')
     v.add_argument('--config', default=DEFAULT_CONFIG)
     a = ap.parse_args(argv)
@@ -96,7 +103,8 @@ def main(argv=None):
         return 5 if a.cmd == 'record' else 1
 
     if a.cmd == 'verify':
-        extra = {k: os.path.abspath(x) for k, x in (('tg', a.tg), ('stance_next', a.stance_next)) if x}
+        extra = {k: os.path.abspath(x) for k, x in (('tg', a.tg), ('stance_next', a.stance_next),
+                                                     ('contested', a.contested)) if x}
         code, why = R.verify(cfg, a.market, a.date, os.path.abspath(a.repo),
                              rev=None if a.index else a.rev,
                              datadir=os.path.abspath(a.datadir) if a.datadir else None, extra=extra,
