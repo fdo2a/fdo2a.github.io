@@ -13,6 +13,9 @@
 는 DUE 를 낸다 — 세션은 본 런보다 먼저 넘어간다(US 17:00 NY vs 본 런 17:30, KR 16:00 KST vs 18:00). 그 세션의
 본 런 시작 + 여유 전에는 쏘지 않는다.
 
+**묶인 주간**: 주간 판정이 본 런 창(토 15:00 KST + 여유) 뒤에도 `WAIT` 면 쏘지 않고 **실행을 빨갛게 끝낸다**
+(`held`) — 집계가 주 끝까지 못 왔거나 휴장 달력이 끝난 것이라 재시도로 풀리지 않는다. Actions 실패 메일이 알림이다.
+
 토큰: 레포 비밀값 `ROUTINE_FIRE_TOKEN_<KIND>`(루틴마다 하나, 웹 화면에서만 만든다). 없으면 `RETRY_GATE_LIVE=true`
 전에는 경고, 뒤에는 실패. 토큰은 출력하지 않는다.
 
@@ -124,10 +127,16 @@ def session_key(kind, now, holidays):
 
 
 def action(kind, line, now, holidays, mode):
-    """(행동, 이유). 행동: fire · would-fire · early · boundary · noop."""
-    due = line.split(' ', 1)[0] == 'DUE'
+    """(행동, 이유). 행동: fire · would-fire · early · boundary · noop · held."""
+    word = line.split(' ', 1)[0]
+    due = word == 'DUE'
     if mode == 'force':
         return 'fire', 'force'
+    # 주간이 본 런 창 뒤에도 WAIT 면 그 주는 묶였다(집계가 주 끝까지 못 옴·달력 끝). 재시도로는 풀리지 않고,
+    # noop 으로 넘기면 주 키가 넘어갈 때까지 아무도 모른다 — 빨갛게 끝내 Actions 실패 메일로 알린다
+    # (2026-11-19 사용자 결정). 주 중간·본 런 전의 WAIT 는 정상이라 조용히 둔다.
+    if kind == 'weekly' and word == 'WAIT' and now >= not_before(kind, now, holidays):
+        return 'held', '본 런 창이 지났는데 WAIT — 이번 주 주간이 묶였다'
     if not due:
         return 'noop', 'DUE 아님'
     # 경계 직전에 쏘면 루틴이 뜨는 사이 세션이 넘어가 루틴 Step 1 이 다음 세션 DUE 를 보고 본 런 전에 돈다(codex 구현 2회차 #3).
@@ -237,6 +246,10 @@ def main(argv=None, env=None, run_due=run_due, opener=None, now=None,
             say(f'retry-gate {kind}: {line} → noop (판정 중 세션이 넘어감 — 다음 틱이 다시 본다)')
             continue
         act, why = action(kind, line, after, holidays, mode)
+        if act == 'held':
+            say(f'::error::retry-gate {kind}: {line} → held ({why})')
+            failed = True
+            continue
         say(f'retry-gate {kind}: {line} → {act} ({why})')
         if act != 'fire':
             continue

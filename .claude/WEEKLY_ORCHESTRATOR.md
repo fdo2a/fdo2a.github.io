@@ -27,11 +27,17 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 - STEP 6 커밋 직전에는 작업 중인 변경이 있으니 `pull` 하지 않고 `git fetch -q origin main` 을 먼저 하고 — **실패하면 확인할 수 없으니 커밋하지 않고 끝낸다** — 성공했을 때만 `git cat-file -e origin/main:<그 글 경로>` 로 확인한다. 그 사이 생긴 쪽은 커밋에서 뺀다. push 가 거절되면 `git pull --rebase` 하고, `weekly.json`·`kr/weekly.json`·`sitemap.xml` 충돌은 원격 판을 받은 뒤 STEP 6 의 `update_archives.py` 를 이 키로 다시 돌려 `git rebase --continue` 한다. 글 파일 자체가 충돌하면 다른 런이 발행한 것이니 `git rebase --abort` 하고 끝낸다.
 
 
+**수동 복구 — 키를 손으로 준다(로컬 수동 실행 전용, 루틴은 쓰지 않는다).** 주 키가 넘어간 뒤(월 17:00 NY) 지난 주를 내야 할 때다 — 재시도 게이트가 `held` 로 빨갛게 끝났거나 STEP 1 이 WAIT 를 알린 주. `<KEY>` 를 그 주로 직접 정하고 위의 `report_date` 한 줄과 `week-key` 대조 **둘만** 건너뛴다. 잠금부터 나머지는 그대로이고 STEP 1 의 `weekly-ready <KEY>` 가 관문이다(뒤 단계는 모두 키·집계를 인자로 받는다). `WAIT` 가 「달력이 … 에서 끝난다」면 `data/market_holidays.json` 을 거래소 공지로 채워 **main 에 올린 뒤** 다시 한다(판정은 원격 판 달력을 먼저 읽는다). 「집계 끝 ≠ 마지막 거래일」이면 수집이 빠진 것이라 원장·집계를 먼저 고쳐야 한다 — 이 절차의 범위 밖이다.
+
 ## STEP 1 — 집계 파일 확인
 
-`data/weekly/<KEY>.json`과 `kr/data/weekly/<KEY>.json`이 있고 `complete: true`인지 본다(STEP 0 에서 한 시장이 이미 발행됐으면 남은 시장의 집계만).
+```bash
+python3 scripts/ci/routine_due.py weekly-ready <KEY>     # DONE <KEY> | READY <KEY> <남은 시장> | WAIT … | ERROR …
+```
 
-없거나 `complete: false`면 **PushNotification으로 알리고 중단한다.** 완성본만 발행한다 — 반쪽 집계로 낸 총정리는 나중에 정정할 방법이 없다.
+**첫 낱말이 `READY` 일 때만 진행한다.** 남은 시장마다 그 주 마지막 거래일(금요일에서 휴장 달력을 거슬러 올라간 날)의 세션이 닫혔고, 작업 트리의 집계(`data/weekly/<KEY>.json`·`kr/data/weekly/<KEY>.json`)가 `complete: true` 이며 `end_date` 가 바로 그 날인지 본다 — `complete` 만으로는 주 중간 집계도 통과한다(2026-11-19). 이후 단계의 「남은 시장」은 `READY` 가 적은 목록이다(STEP 0 에서 본 것과 다르면 이쪽을 따른다). `DONE` 이면 「already published」로 끝낸다.
+
+`WAIT`·`ERROR` 면 그 줄을 **PushNotification으로 알리고 잠금을 풀고 중단한다.** 완성본만 발행한다 — 반쪽 집계로 낸 총정리는 나중에 정정할 방법이 없다. 집계를 손으로 고치거나 판정을 건너뛰지 않는다.
 
 이 집계는 시세를 다시 받지 않는다. 일별 스냅샷 원장(`data/history/market.jsonl`·`kr/data/history/kr_market.jsonl`)을 굴린 것이라 **끝값이 그 기간 마지막 발행본의 종가와 같아야 한다.** 다르면 원장이 어긋난 것이니 발행하지 말고 알린다 — 2026-08-30에 시세를 다시 받던 집계가 10년물·금·원달러를 발행본과 다르게 실어 주간본을 회수했다.
 
@@ -43,7 +49,7 @@ python3 -c "import sys,json;sys.path.insert(0,'scripts');from us.period import w
 
 1. `python3 scripts/ci/snapshot_ready.py us --key <KEY> --end <END>` — `READY` 면 2·3 을 건너뛴다.
 2. `STALE` 이면 워크플로를 띄운다: `N=wk-$(date +%s)-$RANDOM` → `gh workflow run collect-weekly-data.yml -f key=<KEY> -f end=<END> -f nonce=$N` → `/bin/sleep 15` → `RUN=$(gh run list --workflow=collect-weekly-data.yml --limit 20 --json databaseId,displayTitle --jq "[.[] | select(.displayTitle | endswith(\" $N\"))][0].databaseId")` — **nonce 로 집는다**(맨 `--limit 1` 은 다른 실행을 집을 수 있다). 비어 있으면 15초 뒤 한 번 더 찾는다. `gh` 가 없으면 KR_ORCHESTRATOR STEP 0 처럼 `mcp__github__actions_run_trigger`(같은 입력과 nonce)·`actions_list` 로 같은 일을 한다. 기다림은 `bash scripts/ci/wait_run.sh "$RUN"` 한 번(Bash 도구 timeout 600000) — exit 2(아직 도는 중)면 같은 명령을 한 번 더, 0·1·3 이면 그대로 3 으로 간다.
-3. `git pull` 하고 1 을 다시 한다. 여전히 `STALE` 이면 발행하지 않고 그 이유(판정 출력)를 PushNotification 으로 알린 뒤 잠금을 풀고 끝낸다. `<END>` 는 집계의 `end_date` 다.
+3. `git pull` 하고 1 을 다시 한다. **pull 이 집계를 바꿨을 수 있으니 STEP 1 을 통째로 다시 한다** — `weekly-ready <KEY>`(남은 시장은 이 출력에서 다시 정한다)와 끝값 대조 둘 다. 여전히 `STALE` 이면 발행하지 않고 그 이유(판정 출력)를 PushNotification 으로 알린 뒤 잠금을 풀고 끝낸다. `<END>` 는 집계의 `end_date` 다.
 
 이 단계를 STEP 2·3 **앞에** 두는 이유: STEP 3 이 이력·스코어카드를 고친 뒤에는 `git pull` 이 작업 중 변경과 부딪친다.
 

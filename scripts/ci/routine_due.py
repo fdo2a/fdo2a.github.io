@@ -7,6 +7,7 @@
     python3 scripts/ci/routine_due.py japan-key        # 일본 주간 키·그 주 금요일·MOF 게시일 (STEP 0)
     python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
     python3 scripts/ci/routine_due.py week-end         # 달력상 그 주 마지막 US 거래일 (주간 스냅샷 기본 종료일)
+    python3 scripts/ci/routine_due.py weekly-ready KEY # 주간 STEP 1 — DONE|READY <남은 시장>|WAIT|ERROR (잠금을 보지 않는다)
 
 본 루틴이 5시간 한도로 죽으면 다시 띄울 장치가 없었다(9/25 US 뉴스·산업 브리프). 재시도
 루틴이 3시간마다 뜨고, 이 스크립트가 `DUE` 일 때만 오케스트레이터를 읽는다. 나머지는 곧바로
@@ -14,13 +15,18 @@
 
 판정 순서는 루틴과 같다: **기대 세션을 먼저 정하고**(데이터에 적힌 날짜가 아니다 — 수집이
 밀린 날 어제 글이 있다고 끝내면 오늘 글이 영영 안 나온다), 그 세션의 글이 다 있으면 DONE,
-그 세션의 잠금이 살아 있으면 BUSY, 아니면 DUE. 주간은 남은 시장의 집계가 불완전하면 WAIT —
-주간 루틴은 집계를 다시 만들지 않으므로 돌려도 같은 자리에서 멈춘다.
+그 세션의 잠금이 살아 있으면 BUSY, 아니면 DUE. 주간은 남은 시장마다 **그 주가 끝났고 집계가 그 마지막
+거래일까지 왔을 때만** DUE 다(`weekly_holds`) — 아니면 WAIT. 집계의 `complete` 는 「받은 날짜 안에 빠진
+계열이 없다」는 뜻일 뿐이라 주 중간 집계도 참이다(2026-11-19 목요일에 DUE 가 났다). 주간 루틴은 집계를
+다시 만들지 않으므로 돌려도 같은 자리에서 멈춘다.
 
 **휴장은 달력(`data/market_holidays.json`)으로만 판정한다.** 「마감 뒤 수집했는데 날짜가
 이전」은 휴장과 시세 지연을 가르지 못해, 지연된 거래일을 휴장으로 보고 글을 조용히 건너뛴다
-(codex 구현 검토 #2). 달력에 없는 휴장일은 DUE 로 떨어져 재시도가 헛돌 뿐이다 — 틀리는 방향을
-토큰 쪽으로 둔다.
+(codex 구현 검토 #2). 일간은 달력에 없는 휴장일이 DUE 로 떨어져 재시도가 헛돌 뿐이다 — 틀리는 방향을
+토큰 쪽으로 둔다. **주간은 반대다**: 그 주 마지막 날의 휴장이 달력에 없으면 집계가 「하루 모자란」 것으로
+보여 WAIT 로 묶인다(이유에 기대한 날과 실제 끝 날을 적는다). 달력이 그 주 금요일을 덮지 못하면
+(`valid_through`) 추측하지 않고 WAIT 「달력이 … 에서 끝난다」. 묶인 주는 retry_gate 가 빨갛게 알린다.
+거래일을 휴장으로 잘못 넣으면 하루 일찍 통과한다 — 달력으로는 알 수 없다.
 
 잠금의 최종 판정은 `run_lock.sh acquire` 다. 여기서 BUSY 는 그 날짜 키의 잠금이 stale
 기준보다 젊을 때뿐이다.
@@ -181,18 +187,70 @@ def decide_kr(now, files, lock_age, holidays=(), news_expected=lambda d: False):
     return _daily(kr_session(now, holidays), files, lock_age, STALE_MIN['kr'], want)
 
 
-def decide_weekly(key, aggs, files, lock_age):
-    want = {'us': f'weekly/{key}.html', 'kr': f'kr/weekly/{key}.html'}
-    missing = {m: p for m, p in want.items() if p not in files}
+WEEKLY = {'us': ('weekly/{}.html', 'data/weekly/{}.json', us_session),
+          'kr': ('kr/weekly/{}.html', 'kr/data/weekly/{}.json', kr_session)}
+
+
+def weekly_missing(key, files):
+    """아직 원격에 없는 주간 글 — {시장: 경로}."""
+    return {m: post.format(key) for m, (post, _, _) in WEEKLY.items() if post.format(key) not in files}
+
+
+def _day(text):
+    """날짜로 읽히는 문자열이면 date, 아니면 None. 비교는 글자가 아니라 이 값으로 한다 —
+    `2027-W01-1` 도 날짜로 읽히지만 글자로는 11월보다 뒤다(codex 설계 4회차)."""
+    try:
+        return date.fromisoformat(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def weekly_holds(key, markets, now, cal, aggs=None):
+    """그 주 주간을 아직 낼 수 없는 이유들(없으면 낼 수 있다). cal = {시장: (휴장일, valid_through)}.
+
+    시장마다 그 주 금요일에서 휴장을 거슬러 올라간 날이 「마지막 거래일」이다. 그 세션이 닫혔고, 집계가
+    complete 이며, 집계의 end_date 가 바로 그 날이어야 한다. `aggs` 가 None 이면(fetch 실패) 시계만 본다.
+    """
+    friday = japan_friday(key)
+    why = []
+    for m in markets:
+        dates, through = cal.get(m) or ((), None)
+        end = _day(through)
+        if end is None or friday > end:
+            why.append(f'{m} 달력이 {end.isoformat() if end else "읽지 못함"} 에서 끝난다 — data/market_holidays.json 을 채운다')
+            continue                              # 마지막 거래일을 모른다 — 아래는 추측이 된다
+        last = _trading_back(friday, dates).isoformat()
+        if WEEKLY[m][2](now, dates) < last:
+            why.append(f'{m} 마지막 거래일 {last} 마감 전')
+        if aggs is None:
+            continue
+        agg = aggs.get(m)
+        if not isinstance(agg, dict) or agg.get('complete') is not True:
+            why.append(f'{m} 집계 불완전')
+        elif agg.get('end_date') != last:
+            why.append(f'{m} 집계 끝 {agg.get("end_date")} ≠ 마지막 거래일 {last}')
+    return why
+
+
+def decide_weekly(key, aggs, files, lock_age, now, cal):
+    missing = weekly_missing(key, files)
     if not missing:
         return 'DONE', f'{key} 발행 완료'
-    # 남은 시장의 집계만 본다 — 이미 나간 쪽 집계가 사라졌다고 남은 글을 막지 않는다(codex #6).
-    bad = [m for m in missing if not (aggs.get(m) or {}).get('complete')]
-    if bad:
-        return 'WAIT', f'{key} 집계 불완전: {", ".join(bad)} — 주간 루틴이 고칠 수 없다'
+    # 남은 시장만 본다 — 이미 나간 쪽 집계가 사라졌다고 남은 글을 막지 않는다(codex #6).
+    why = weekly_holds(key, missing, now, cal, aggs)
+    if why:
+        return 'WAIT', f'{key} {"; ".join(why)}'
     if lock_age is not None and lock_age < STALE_MIN['weekly']:
         return 'BUSY', f'{key} 작성 중 (잠금 {lock_age}분 전)'
     return 'DUE', f'{key} 미발행: {", ".join(missing.values())}'
+
+
+def valid_key(key):
+    try:
+        y, w = key.split('-W')
+        return len(y) == 4 and len(w) == 2 and y.isdigit() and w.isdigit() and bool(japan_friday(key))
+    except ValueError:
+        return False
 
 
 # ── git 에서 사실을 모은다 ──────────────────────────────────────────────────────
@@ -209,20 +267,35 @@ def _show_json(path, ref='origin/main'):
         return None
 
 
-def _holidays(market, ref='origin/main'):
-    """달력의 그 시장 휴장일. 원격 판 → 작업 폴더 판 순. 못 읽으면 빈 목록 — 판정이 DUE 쪽으로 기운다."""
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+
+
+def _tree_json(path):
+    """작업 트리의 JSON — 없거나 깨졌으면 None."""
+    try:
+        with open(os.path.join(ROOT, path), encoding='utf-8') as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return None
+
+
+def _calendar(market, ref='origin/main'):
+    """(그 시장 휴장일, valid_through). 원격 판 → 작업 폴더 판 순. 못 읽으면 ((), None).
+    valid_through 는 날짜로 읽히는 문자열일 때만(YYYY-MM-DD 로 고쳐 돌려준다) — 아니면 None(주간 판정이 「달력 끝」으로 멈춘다)."""
     cal = _show_json('data/market_holidays.json', ref)
     if cal is None:
-        try:
-            here = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..',
-                                'data', 'market_holidays.json')
-            with open(here, encoding='utf-8') as fh:
-                cal = json.load(fh)
-        except (OSError, ValueError):
-            cal = {}
-    got = (cal or {}).get(market) or {}
-    days = got.get('dates')
-    return tuple(days) if isinstance(days, list) else ()
+        cal = _tree_json('data/market_holidays.json')
+    got = cal.get(market) if isinstance(cal, dict) else None
+    days = got.get('dates') if isinstance(got, dict) else None
+    if not isinstance(days, list):
+        return (), None
+    end = _day(got.get('valid_through'))
+    return tuple(days), end.isoformat() if end else None
+
+
+def _holidays(market, ref='origin/main'):
+    """달력의 그 시장 휴장일. 못 읽으면 빈 목록 — 일간 판정이 DUE 쪽으로 기운다."""
+    return _calendar(market, ref)[0]
 
 
 class GitLookupError(RuntimeError):
@@ -346,15 +419,48 @@ def main(argv=None):
         # 주간 오케스트레이터가 데이터로 정한 키와 맞대 본다 — 다르면 데이터가 밀린 것이다.
         print(week_of(datetime.now(timezone.utc), _holidays('us')))
         return 0
+    if args[0] == 'weekly-ready':
+        # 주간 STEP 1 — 잠금을 쥔 런이 부른다(`weekly` 는 자기 잠금에 BUSY 를 낸다). 키는 받은 그대로 쓴다:
+        # 루틴은 STEP 0 에서 정한 키를, 주 키가 넘어간 뒤의 수동 복구는 손으로 고른 키를 준다.
+        # 집계는 작성자가 읽는 작업 트리에서, 발행 여부는 방금 fetch 한 원격에서 본다. READY 만 진행이다.
+        if len(args) != 2 or not valid_key(args[1]):
+            print('usage: routine_due.py weekly-ready YYYY-Www', file=sys.stderr)
+            return 2
+        key = args[1]
+        if _git('fetch', '-q', 'origin', 'main').returncode:
+            print('ERROR fetch 실패 — 발행 여부를 확인할 수 없다')
+            return 1
+        listed = _git('ls-tree', '-r', '--name-only', 'origin/main', '--', 'weekly', 'kr/weekly')
+        if listed.returncode:
+            print('ERROR origin/main 목록을 읽지 못했다')
+            return 1
+        missing = weekly_missing(key, set(listed.stdout.split()))
+        if not missing:
+            print(f'DONE {key}')
+            return 0
+        why = weekly_holds(key, missing, datetime.now(timezone.utc),
+                           {m: _calendar(m) for m in missing},
+                           {m: _tree_json(WEEKLY[m][1].format(key)) for m in missing})
+        if why:
+            print(f'WAIT {key} {"; ".join(why)}')
+            return 1
+        print(f'READY {key} {",".join(missing)}')
+        return 0
     kind = args[0]
     if kind not in ('us', 'kr', 'weekly', 'japan', 'jp_daily'):
         print('usage: routine_due.py us|kr|weekly|japan|jp_daily', file=sys.stderr)
         return 2
+    stale = ''
     if _git('fetch', '-q', 'origin', 'main').returncode:
         # 판정 불가는 DUE 로 보낸다 — 틀려도 오케스트레이터의 가드가 막는다. 반대로
         # DONE 으로 보내면 글이 조용히 빠진다.
-        print('DUE fetch 실패 — 오케스트레이터가 판정한다')
-        return 0
+        if kind != 'weekly':
+            print('DUE fetch 실패 — 오케스트레이터가 판정한다')
+            return 0
+        # 주간만 예외: 무조건 DUE 면 주 중간에도 세션이 뜬다. 가진 origin/main 으로 같은 규칙을 그대로 적용한다.
+        # 옛 판은 발행·집계를 적게 볼 뿐이라 틀려도 WAIT·DUE 쪽이고(발행된 글은 지워지지 않는다), DUE 가 나가도
+        # STEP 1 의 weekly-ready 가 fetch 를 다시 해 닫는다.
+        stale = ' (fetch 실패 — 가진 origin/main 기준)'
     now = datetime.now(timezone.utc)
     if kind == 'us':
         hol = _holidays('us')
@@ -379,8 +485,9 @@ def main(argv=None):
         aggs = {'us': _show_json(f'data/weekly/{key}.json'),
                 'kr': _show_json(f'kr/data/weekly/{key}.json')}
         verdict = decide_weekly(key, aggs, _files('weekly', 'kr/weekly'),
-                                _lock_age(lock_name('weekly', now, key), now))
-    print(' '.join(verdict))
+                                _lock_age(lock_name('weekly', now, key), now), now,
+                                {m: _calendar(m) for m in WEEKLY})
+    print(' '.join(verdict) + stale)
     return 0
 
 

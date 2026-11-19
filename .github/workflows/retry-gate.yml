@@ -2,6 +2,7 @@ name: Retry gate (routine fire on DUE)
 
 # 재시도 루틴의 판정(routine_due.py)을 여기서 돌리고, DUE 이고 그 세션 본 런 뒤일 때만 그 루틴의 API 트리거를 친다.
 # 판정이 DONE·BUSY·WAIT·SKIP 이면 클라우드 세션이 뜨지 않는다. 루틴 프롬프트의 Step 1 재판정은 그대로다.
+# 예외 하나: 주간이 본 런 창 뒤에도 WAIT 면 이 실행이 실패로 끝난다(held) — 그 주 주간이 묶였다는 알림이다.
 # 예약 문자열은 scripts/ci/retry_gate.py 의 SLOTS 와 글자까지 같아야 한다(시험). UTC — KST = UTC+9.
 # 두 줄이 같은 분에 맞지 않게 분을 달리 둔다(시험) — 실행은 github.event.schedule 한 줄만 본다.
 # 예약은 2~5시간 늦게 올 수 있다 — 늦은 틱이 본 런 전에 떨어지면 스크립트의 창이 막는다.
