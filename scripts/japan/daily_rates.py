@@ -17,6 +17,7 @@ Pure — 네트워크 없음.
 import math
 import re
 from datetime import date, datetime, timedelta, timezone
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 from us import naver_yields as NY
 
@@ -41,9 +42,12 @@ def prev_business(day, holidays=()):
     return d.isoformat()
 
 
-def jgb_block(rows, prev_session, tenors=TENORS, holidays=None):
+def jgb_block(rows, prev_session, tenors=TENORS, holidays=None, raw=None):
     """MOF 폴백. `holidays` 를 주면 비교 행이 정확히 그 앞 영업일일 때만 bp 를 낸다 —
-    CSV 에 한 날이 빠지면 2세션 변화가 「전일」로 찍힌다(codex 설계 검토 #4)."""
+    CSV 에 한 날이 빠지면 2세션 변화가 「전일」로 찍힌다(codex 설계 검토 #4).
+
+    `raw` 에 dict 를 주면 만기별 (당일, 비교일) 원시 값 글자를 채운다(스프레드용, v2). MOF 행은 이미 float 라
+    `repr` 로 되살린다 — 15자리 이하 십진 글자는 float 와 1:1 이라 원문과 같은 값이다(MOF CSV 는 3자리)."""
     usable = [r for r in rows or [] if r.get('date', '') <= prev_session]
     if not usable or usable[-1]['date'] != prev_session:
         latest = usable[-1]['date'] if usable else None
@@ -60,6 +64,8 @@ def jgb_block(rows, prev_session, tenors=TENORS, holidays=None):
         p = before.get(t) if before else None
         out[t] = {'value': v, 'period': last['date'], 'prev_period': before['date'] if before else None,
                   'chg_bp': round((v - p) * 100, 1) if _finite(p) else None, 'unit': '%', 'source': 'mof'}
+        if raw is not None:
+            raw[t] = (repr(float(v)), repr(float(p)) if _finite(p) else None)
     return out
 
 
@@ -124,7 +130,20 @@ def mof_check(series, mof_rows, prev_session, tenors=TENORS):
     return f'skip: MOF {prev_session} {",".join(missing)} 결측' if missing else 'ok'
 
 
-def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenors=TENORS):
+def _raw_on(payload, day):
+    """그 JST 날짜 행의 종가 **원문 글자**(쉼표 제거). 스프레드는 이 글자를 Decimal 로 읽는다 — float 를 거치지 않는다."""
+    out = []
+    for r in (payload or {}).get('result') or []:
+        try:
+            t = datetime.fromisoformat(str(r.get('localTradedAt') or ''))
+        except ValueError:
+            continue
+        if t.tzinfo is not None and t.astimezone(_JST).date().isoformat() == day:
+            out.append(str(r.get('closePrice')).replace(',', '').strip())
+    return out
+
+
+def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenors=TENORS, raw=None):
     """네이버 `marketIndex/prices` 응답(만기별) -> (블록, 사유, MOF 대조).
 
     전부-아니면-전무다. 블록이 None 이면 사유가 있고 호출부가 MOF 로 내려간다:
@@ -168,7 +187,67 @@ def jgb_naver(payloads, session, prev_session, fetched_jst, mof_rows=None, tenor
         v, p = dict(series[t])[session], dict(series[t])[prev_session]
         out[t] = {'value': round(v, 3), 'period': session, 'prev_period': prev_session,
                   'chg_bp': round((v - p) * 100, 1), 'unit': '%', 'source': 'naver'}
+        if raw is not None:
+            raw[t] = (_raw_on(payloads[t], session)[0], _raw_on(payloads[t], prev_session)[0])
     return out, None, check
+
+
+# ── 금리 스프레드 (v2, 2026-11-19) ──────────────────────────────────────
+# 같은 블록의 두 다리로만: s2s10 = 10Y − 2Y, s10s30 = 30Y − 10Y. 원시 호가 글자를 Decimal 로 읽어 양일 스프레드를
+# 각각 구해 뺀 뒤 **마지막에 한 번만** 소수 첫째로 ROUND_HALF_UP(절댓값 기준). 만기별 chg_bp(이미 반올림)의 차로
+# 구하지 않는다 — 2Y 1.8800→1.8804·10Y 2.7880→2.7876 이면 다리별 0.0·−0.0 이지만 실제는 −0.1bp(8회차 #2),
+# 10Y 2.7000→2.7035 는 정확히 +0.35bp → +0.4bp 인데 float 로는 +0.3bp(12회차 (b)2).
+SEGMENTS = (('s2s10', '2Y', '10Y'), ('s10s30', '10Y', '30Y'))
+SEGMENT_KO = {'s2s10': '2~10년', 's10s30': '10~30년'}
+_BP = Decimal('0.1')
+
+
+def raw_dec(text):
+    if text is None or isinstance(text, (bool, float)):
+        return None
+    try:
+        d = Decimal(str(text).replace(',', '').strip())
+    except InvalidOperation:
+        return None
+    return d if d.is_finite() else None
+
+
+def round_bp(d):
+    """%p 차 Decimal → bp 소수 첫째(ROUND_HALF_UP, 절댓값 기준)."""
+    return (d * 100).quantize(_BP, rounding=ROUND_HALF_UP)
+
+
+def spreads(jgb, raw, session):
+    """-> {구간: {status, spread, chg(반올림 전 %p, Decimal|None), period, prev_period, source, why}}.
+
+    status: 두 다리가 네이버 당일이면 current, MOF 폴백(관측일 < 세션)이면 stale, 다리·원시 값이 없거나 두 다리의
+    기준일·출처가 다르면 그 구간만 invalid. 변화는 두 다리의 비교일 값이 다 있을 때만."""
+    out = {}
+    for name, short, long_ in SEGMENTS:
+        a, b = (jgb or {}).get(short), (jgb or {}).get(long_)
+        ra, rb = (raw or {}).get(short), (raw or {}).get(long_)
+        bad = {'status': 'invalid', 'why': f'{SEGMENT_KO[name]} 다리가 없다'}
+        if not isinstance(a, dict) or not isinstance(b, dict) or not ra or not rb:
+            out[name] = bad
+            continue
+        if (a.get('period'), a.get('prev_period'), a.get('source')) != (b.get('period'), b.get('prev_period'),
+                                                                       b.get('source')):
+            out[name] = dict(bad, why=f'{SEGMENT_KO[name]} 두 다리의 기준일·출처가 다르다')
+            continue
+        now_a, now_b = raw_dec(ra[0]), raw_dec(rb[0])
+        if now_a is None or now_b is None:
+            out[name] = dict(bad, why=f'{SEGMENT_KO[name]} 원시 값이 수가 아니다')
+            continue
+        spread = now_b - now_a
+        prev_a, prev_b = raw_dec(ra[1]), raw_dec(rb[1])
+        chg = (spread - (prev_b - prev_a)) if (prev_a is not None and prev_b is not None and a.get('prev_period')) else None
+        if chg is None:
+            out[name] = dict(bad, why=f'{SEGMENT_KO[name]} 비교일 값이 없다')
+            continue
+        current = a.get('source') == 'naver' and a.get('period') == session
+        out[name] = {'status': 'current' if current else 'stale', 'why': None, 'spread': spread, 'chg': chg,
+                     'period': a.get('period'), 'prev_period': a.get('prev_period'), 'source': a.get('source')}
+    return out
 
 
 def period(freq, raw):

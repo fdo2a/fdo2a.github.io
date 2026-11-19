@@ -358,11 +358,29 @@ def jp_calendar_notes(cals, today, runway=JP_CAL_RUNWAY):
                 except ValueError:
                     continue
         last = max(days) if days else None
+        if name == '일간':
+            notes.extend(jp_coverage_notes(cal, today))
         if last is not None and last > limit:
             continue
         where = f'마지막 일정이 {_md(last.isoformat())}예요' if last else '일정이 하나도 없어요'
         notes.append(f'일본 {name} 일정표 {where} — 원출처에서 확인한 일정을 더하지 않으면 {effect}')
     return list(dict.fromkeys(notes))
+
+
+# 일본 일간 v2(2026-11-19): 필수 계열마다 확인 창이 [오늘, 오늘+21일] 을 덮는지 — 수집기와 **같은 판정 함수**
+# (`japan.daily_calendar.alert_missing`, R14)라 창의 기간뿐 아니라 cov·checked_at·창 밖 행·monthly 의 발표 행
+# 검증에 실패한 계열도 이름이 나온다. 이름은 고정 목록(REQUIRED)에서만 나와 줄 길이에 상한이 있다.
+JP_COV_PREFIX = '일본 일간 일정표 확인 창이 3주를 덮지 못하는 계열: '
+JP_COV_SUFFIX = ' — 원출처에서 일정을 확인해 창을 넓히지 않으면 「오늘 잡힌 지표가 없다」 캡션이 찍히지 않아요'
+
+
+def jp_coverage_notes(cal, today):
+    from japan import daily_calendar as JCAL
+    try:
+        names = JCAL.alert_missing(cal, today)
+    except (TypeError, ValueError, AttributeError):
+        return [JP_CAL_UNREAD]
+    return [JP_COV_PREFIX + '·'.join(names) + JP_COV_SUFFIX] if names else []
 
 
 def jp_calendars(root, rev='origin/main'):
@@ -999,7 +1017,13 @@ _KR_NOTE = re.compile(
 _JP_CAL_NOTE = re.compile(
     rf'일본 (?:일간|주간) 일정표 (?:마지막 일정이 {_MD}예요|일정이 하나도 없어요) — 원출처에서 확인한 일정을 더하지 않으면 '
     r'(?:지표 표·결정일 표시·다음 일정 표가 멈춰요|다음 일정 표가 비어요)')
-_MUST_NOTES = _MUST_NOTES + (_JP_CAL_NOTE,)      # 짧은 고정 문구 둘뿐 — 줄이지 않는다
+def _jp_cov_pattern():
+    from japan import daily_calendar as JCAL
+    names = '|'.join(re.escape(n) for n in list(JCAL.REQUIRED_NAMES.values()) + [JCAL.UNLINKED])
+    return re.compile(re.escape(JP_COV_PREFIX) + rf'(?:{names})(?:·(?:{names}))*' + re.escape(JP_COV_SUFFIX))
+
+
+_MUST_NOTES = _MUST_NOTES + (_JP_CAL_NOTE, _jp_cov_pattern())      # 고정 문구 — 이름도 고정 목록 16개뿐
 NOTE_PATTERNS = _MUST_NOTES + _NAME_NOTES + (_KR_NOTE, _KR_CHECK_NOTE)
 
 

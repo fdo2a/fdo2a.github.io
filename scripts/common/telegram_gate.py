@@ -777,8 +777,11 @@ def word_violations(doc, jp=False):
     return v
 
 
-def check(html, data, warnings=None, layout='brief', news=None, pairs=None, paras=None, session=None, views=None):
-    """layout 'brief' (default), 'news' or 'jp'. `news` = the day's news file (news/jp layout: its
+def check(html, data, warnings=None, layout='brief', news=None, pairs=None, paras=None, session=None, views=None,
+          skip=()):
+    """layout 'brief' (default), 'news' or 'jp'. `skip` = exact fragments the caller has already verified as
+    code output (jp v2: generated sentences and code tables byte-equal to `render(facts)`) — they are left out
+    of the outside-the-markers comparison only; nothing else changes, and an empty `skip` is the old behaviour. `news` = the day's news file (news/jp layout: its
     stored summaries are left out of the outside comparison). `pairs` collects (id, marker text,
     summary); `paras` the section's paragraphs in order, each a list of ('text', chunk) /
     ('tg', id, text). jp: `session` = the Tokyo session, `views` receives the `views_node` (or
@@ -944,6 +947,8 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
     else:
         for _, _, s, e in sorted(els, key=lambda x: -x[2]):
             outside = outside[:s] + ' ' + outside[e:]
+    for frag in skip or ():
+        outside = outside.replace(frag, ' ')
     out_vis = _visible(outside)
     # 키움증권 is also a listed stock, so a bare firm name outside is fine; an analyst name, or the
     # firm as the speaker of a view, is not

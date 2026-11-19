@@ -9,8 +9,15 @@ from datetime import date
 from review import digest as D
 
 
+def _cov():
+    from japan import daily_calendar as C
+    return [{'id': cid, 'name_ko': n, 'cadence': 'irregular', 'source': 'https://x', 'from': '2026-01-01',
+             'through': '2027-12-31', 'checked_at': '2026-11-13'} for cid, n in C.REQUIRED]
+
+
 def _cal(*days):
-    return {'events': [{'date': d} for d in days]}
+    # 일간 일정표의 확인 창(v2)은 전부 덮인 것으로 둔다 — 이 파일의 앞쪽 시험은 「마지막 일정」 알림만 본다
+    return {'events': [{'date': d} for d in days], 'coverage': _cov()}
 
 
 def test_runs_out_within_two_weeks_both_calendars():
@@ -34,9 +41,12 @@ def test_empty_and_unreadable():
 
 
 def test_bad_dates_are_skipped_not_fatal():
-    notes = D.jp_calendar_notes({'일간': {'events': [{'date': None}, {'date': '2027-01-29'}, {}]}},
+    notes = D.jp_calendar_notes({'일간': {'events': [{'date': None}, {'date': '2027-01-29'}, {}], 'coverage': _cov()}},
                                 date(2026, 11, 13))
-    assert notes == []
+    # 바닥 알림은 없다(죽지도 않는다). 날짜를 못 읽는 행은 v2 확인 창 판정에서 「계열을 확인할 수 없는 일정 행」이다
+    # (codex 구현 1회 #6 — 그런 행이 있는 날은 부재 캡션을 찍지 않는다)
+    from japan import daily_calendar as C
+    assert notes == [D.JP_COV_PREFIX + C.UNLINKED + D.JP_COV_SUFFIX] and D.safe_notes(notes) == notes
 
 
 def test_notes_pass_the_whitelist_as_must_lines():
@@ -52,3 +62,38 @@ def test_non_iso_dates_do_not_extend_the_runway():
     notes = D.jp_calendar_notes({'주간': {'events': [{'date': '2026-11-20'}, {'date': '20270129'}, 'x']}},
                                 date(2026, 11, 13))
     assert notes and '11/20' in notes[0]
+
+
+# ── 일본 일간 v2: 계열별 확인 창(2026-11-19, R14) ─────────────────────────────
+
+def test_coverage_gap_names_series_and_passes_whitelist():
+    from japan import daily_calendar as C
+    cov = [c for c in _cov() if c['id'] not in ('trade', 'gdp')]
+    cov.append(dict(_cov()[0], id='gdp', through='2026-11-20'))          # 3주를 못 덮는다
+    notes = D.jp_calendar_notes({'일간': {'events': [{'date': '2027-01-29', 'cov': 'boj_policy'}], 'coverage': cov}},
+                                date(2026, 11, 13))
+    assert notes == [D.JP_COV_PREFIX + 'GDP·무역통계' + D.JP_COV_SUFFIX]
+    assert D.safe_notes(notes) == notes and [c for _n, c in D._classified_notes(notes)] == ['must']
+    assert C.REQUIRED_NAMES['trade'] == '무역통계'
+
+
+def test_monthly_meeting_rows_only_named_in_alert():
+    cov = _cov()
+    for c in cov:
+        if c['id'] == 'boj_policy':
+            c.update(cadence='monthly', **{'from': '2026-12-01', 'through': '2026-12-31'})
+    cal = {'events': [{'date': '2026-12-17', 'kind': 'meeting', 'cov': 'boj_policy'}, {'date': '2027-01-29'}],
+           'coverage': cov}
+    notes = D.jp_calendar_notes({'일간': cal}, date(2026, 12, 1))
+    assert notes and 'BOJ 금융정책' in notes[0]
+
+
+def test_repo_daily_calendar_covers_every_required_series():
+    """2026-11-19 원출처로 6개 계열 창을 채웠다 — 오늘 기준 미확인 계열이 없어야 한다."""
+    import json
+    import os
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..')
+    with open(os.path.join(root, 'japan', 'data', 'calendar_daily.json'), encoding='utf-8') as fh:
+        cal = json.load(fh)
+    notes = D.jp_calendar_notes({'일간': cal}, date(2026, 11, 19))
+    assert not any(n.startswith(D.JP_COV_PREFIX) for n in notes), notes

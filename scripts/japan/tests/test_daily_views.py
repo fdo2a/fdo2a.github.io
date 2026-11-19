@@ -6,7 +6,6 @@ import json
 import pytest
 
 import build_japan_daily as B
-import publish_japan_daily as PUB
 import tg_news
 from common import telegram_gate as TG
 from common import tg_jp
@@ -482,49 +481,5 @@ def test_cli_prints_pairs_and_ignores_a_non_usable_file(tmp_path, capsys):
     assert '없는 것으로 본다' in cap.out and '쓸 수 있는 텔레그램 파일이 없다' in cap.err
 
 
-def _pin(root):
-    p = root / 'japan' / 'data' / 'telegram' / 'published' / f'{S}.json'
-    return p.read_bytes() if p.exists() else None
-
-
-def test_publish_pins_the_file_the_gate_saw(tmp_path):
-    root = _root(tmp_path, html=page())
-    src = (root / 'japan' / 'data' / 'telegram' / f'{S}.json').read_bytes()
-    PUB.publish(str(root), S, 't', 'h')
-    assert _pin(root) == src
-    # whatever the collector pushes afterwards, the published post is checked against the pin
-    (root / 'japan' / 'data' / 'telegram' / f'{S}.json').write_text(json.dumps(tg(I2)), encoding='utf-8')
-    import check_japan_daily as CLI
-    assert CLI.main(['--session', S, '--root', str(root)]) == 0
-
-
-def test_publish_pins_a_usable_file_even_without_a_section(tmp_path):
-    root = _root(tmp_path, html=page(views=None))
-    PUB.publish(str(root), S, 't', 'h')
-    assert _pin(root) == (root / 'japan' / 'data' / 'telegram' / f'{S}.json').read_bytes()
-
-
-def test_publish_pins_nothing_without_a_usable_file(tmp_path):
-    root = _root(tmp_path, data=dict(DATA, usable=False), html=page(views=None))
-    PUB.publish(str(root), S, 't', 'h')
-    assert _pin(root) is None and (root / 'japan' / 'data' / 'daily' / f'{S}.json').exists()
-    root2 = _root(tmp_path / 'b', data=None, html=page(views=None))
-    PUB.publish(str(root2), S, 't', 'h')
-    assert _pin(root2) is None
-
-
-@pytest.mark.parametrize('data', [None, dict(DATA, usable=False), tg(I2)])
-def test_a_section_the_file_does_not_back_is_exit_3_and_writes_nothing(tmp_path, data, capsys):
-    root = _root(tmp_path, data=data, html=page())
-    assert PUB.main(['--root', str(root), '--session', S, '--title', 't']) == 3
-    assert _pin(root) is None and not (root / 'japan' / 'data' / 'daily' / f'{S}.json').exists()
-    assert not (root / 'japan' / 'daily.json').exists() and not (root / 'sitemap.xml').exists()
-    # the routine strips the section and publishes again
-    p = root / 'japan' / 'daily' / f'{S}.html'
-    p.write_text(tg_news.strip_section(p.read_text(encoding='utf-8'))[0], encoding='utf-8')
-    assert PUB.main(['--root', str(root), '--session', S, '--title', 't']) == 0
-
-
-def test_already_published_is_still_exit_2(tmp_path):
-    root = _root(tmp_path, html=page(), published=True)
-    assert PUB.main(['--root', str(root), '--session', S, '--title', 't']) == 2
+# 발행 고정(견해 파일을 글과 함께 고정)은 실행 격리 뒤 검증 기록으로 정한다 —
+# scripts/japan/tests/test_jpd_publish_run.py·test_publish_daily.py (2026-11-19).

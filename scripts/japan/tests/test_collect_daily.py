@@ -109,9 +109,9 @@ def test_noncore_failure_drops_block_only(tmp_path):
 
 
 def test_stale_quote_excluded(tmp_path):
-    snap = _run(tmp_path, Fake(quote={'1617.T': {'last': 50000.0, 'bar_date': P}}))
-    row = next(s for s in snap['sectors'] if s['code'] == '1617')
-    assert row['value'] is None and not row['ok']
+    # v2: 업종 ETF 수집은 없앴다 — 같은 규칙(세션 봉 없음 → 값 없음)을 개별주로 본다
+    snap = _run(tmp_path, Fake(quote={'7203.T': {'last': 50000.0, 'bar_date': P}}))
+    assert '7203' not in {r['code'] for r in snap['stocks']}
 
 
 def test_snapshot_records_basis_and_times(tmp_path):
@@ -149,9 +149,9 @@ def test_reconcile_never_touches_published(tmp_path):
 
 def test_split_not_reapplied_to_adjusted_daily_bars(tmp_path):
     # codex 구현 검토 #10 — yfinance 일봉 분모는 이미 분할조정이다
-    fake = Fake(quote={'1617.T': {'last': 82.0, 'bar_date': S}}, closes={'1617.T': [[P, 100.0]]},
-                splits={'1617.T': [[S, 2.0]]})
-    row = next(r for r in _run(tmp_path, fake)['sectors'] if r['code'] == '1617')
+    fake = Fake(quote={'7203.T': {'last': 82.0, 'bar_date': S}}, closes={'7203.T': [[P, 100.0]]},
+                splits={'7203.T': [[S, 2.0]]})
+    row = next(r for r in _run(tmp_path, fake)['stocks'] if r['code'] == '7203')
     assert row['chg_pct'] == -18.0
 
 
@@ -174,10 +174,13 @@ def test_stocks_recorded_for_history(tmp_path):
     assert '7203' in codes and all(r['value'] == 100.0 for r in snap['stocks'])
 
 
-def test_sector_breadth_recorded(tmp_path):
-    snap = _run(tmp_path, Fake(quote={'1617.T': {'last': 50000.0, 'bar_date': P}}))
-    b = snap['sector_breadth']
-    assert b == {'total': 17, 'counted': 16, 'up': 16, 'down': 0, 'flat': 0}
+def test_v2_snapshot_has_no_etf_fields(tmp_path):
+    fake = Fake()
+    snap = _run(tmp_path, fake)
+    assert snap['schema'] == 2 and set(snap['indices']) == {'nikkei'}
+    assert 'sectors' not in snap and 'sector_breadth' not in snap and 'topix_etf' not in json.dumps(snap)
+    # JPX 를 주입하지 않은 Fake — 지수 수집 실패는 TOPIX·업종 invalid 로만 끝난다
+    assert snap['facts']['blocks']['topix'] == 'invalid' and snap['complete']
 
 
 # --- 네이버 당일 JGB (2026-10-29) ---------------------------------------------------------
