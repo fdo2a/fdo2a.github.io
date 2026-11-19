@@ -14,6 +14,14 @@ from review.tests.test_run_cli import (POST, drafts, fake_codex, git, repo,  # n
                                        run, state_of, write)
 
 
+def _signal_self(sig):
+    """이 스레드에 신호를 보낸다. `os.kill(getpid())` 는 프로세스 전체로 가서, 스레드가 여럿인 xdist 작업자에서는
+    신호를 막지 않은 다른 스레드가 받는다 — 막아 둔 채 대기시키는 시험이 작업자를 죽였다(2026-11-19)."""
+    import signal
+    import threading
+    signal.pthread_kill(threading.get_ident(), sig)
+
+
 def push_from_elsewhere(repo, tmp_path, files, msg):
     other = str(tmp_path / 'other')
     if not os.path.isdir(other):
@@ -511,7 +519,7 @@ def test_a_signal_while_copying_removes_the_copy(repo, tmp_path, monkeypatch):
 
     def fetch_then_signal(root, *args, **kw):
         if args[:1] == ('fetch',):
-            os.kill(os.getpid(), signal.SIGTERM)
+            _signal_self(signal.SIGTERM)
         return real(root, *args, **kw)
     monkeypatch.setattr(runner_launch, '_git', fetch_then_signal)
     assert runner_launch.main(['run']) == 128 + signal.SIGTERM
@@ -536,7 +544,7 @@ def test_a_signal_right_after_the_temp_folder_is_made_still_removes_it(repo, tmp
 
     def made_then_signal(*a, **k):
         path = real(*a, **k)
-        os.kill(os.getpid(), signal.SIGTERM)
+        _signal_self(signal.SIGTERM)
         return path
     monkeypatch.setattr(rl.tempfile, 'mkdtemp', made_then_signal)
     assert rl.main(['run']) == 128 + signal.SIGTERM
@@ -551,7 +559,7 @@ def test_a_signal_during_cleanup_is_reported_and_does_not_skip_it(repo, tmp_path
     real = rl.shutil.rmtree
 
     def signal_then_remove(path, **k):
-        os.kill(os.getpid(), signal.SIGTERM)
+        _signal_self(signal.SIGTERM)
         return real(path, **k)
     monkeypatch.setattr(rl.shutil, 'rmtree', signal_then_remove)
     assert rl.main(['run']) == 128 + signal.SIGTERM
@@ -571,7 +579,7 @@ def test_a_signal_while_writing_the_alarm_keeps_the_alarm_and_the_code(repo, tmp
     real = rl.os.replace
 
     def signal_then_replace(src, dst):
-        os.kill(os.getpid(), signal.SIGTERM)
+        _signal_self(signal.SIGTERM)
         return real(src, dst)
     monkeypatch.setattr(rl.os, 'replace', signal_then_replace)
     assert rl.main(['run']) == 128 + signal.SIGTERM
@@ -611,7 +619,7 @@ def test_a_signal_pending_at_the_final_decision_is_reported():
     with runner_launch._Signals() as sigs:
         old = signal.pthread_sigmask(signal.SIG_BLOCK, [signal.SIGTERM])
         try:
-            os.kill(os.getpid(), signal.SIGTERM)   # 막힌 채 대기 중
+            _signal_self(signal.SIGTERM)   # 막힌 채 대기 중
             assert sigs.final() == signal.SIGTERM
         finally:
             signal.pthread_sigmask(signal.SIG_SETMASK, old)
@@ -674,7 +682,7 @@ def test_a_real_child_start_failure_and_a_signal_keep_both(repo, tmp_path, monke
 
     def failing_child(args, *a, **k):
         if any(str(x).endswith('review_gate.py') for x in args):
-            os.kill(os.getpid(), signal.SIGTERM)
+            _signal_self(signal.SIGTERM)
             raise OSError(35, 'Resource temporarily unavailable')
         return real(args, *a, **k)
     monkeypatch.setattr(rl.subprocess, 'Popen', failing_child)
@@ -716,8 +724,8 @@ def test_two_signals_pending_at_the_final_decision_prefer_sigterm():
     with runner_launch._Signals() as sigs:
         old = signal.pthread_sigmask(signal.SIG_BLOCK, [signal.SIGTERM, signal.SIGINT])
         try:
-            os.kill(os.getpid(), signal.SIGINT)
-            os.kill(os.getpid(), signal.SIGTERM)
+            _signal_self(signal.SIGINT)
+            _signal_self(signal.SIGTERM)
             assert sigs.final() == signal.SIGTERM
         finally:
             signal.pthread_sigmask(signal.SIG_SETMASK, old)

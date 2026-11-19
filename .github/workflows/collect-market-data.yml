@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - run: pip install --quiet certifi
       - name: Compare official API against the graph CSV
         env:
@@ -72,7 +72,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - run: pip install --quiet certifi
       - name: Fetch the French factor file once and discard it
         run: python scripts/collect_market_data.py --ff-probe
@@ -90,10 +90,11 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Install CJK font (for chart labels)
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+        # apt 미러 이름 풀이가 끊겨 여기서 수집이 죽었다(2026-11-11 KR 두 실행) — 3번까지 다시 해 본다
+        run: bash scripts/ci/install_cjk_font.sh
 
       - name: Install Python deps
         run: pip install --quiet yfinance pandas lxml matplotlib certifi 'curl_cffi>=0.15.0' pypdf
