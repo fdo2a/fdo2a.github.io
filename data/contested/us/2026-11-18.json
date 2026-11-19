@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-11-19T08:27:37+00:00",
- "cutoff_at": "2026-11-19T08:27:37+00:00",
+ "collected_at": "2026-11-19T09:32:22+00:00",
+ "cutoff_at": "2026-11-19T09:32:22+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
  },
  "counts": {
-  "harvest": 226,
+  "harvest": 227,
   "candidates": 3,
   "articles": [
    4,
@@ -32,8 +32,8 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 49607,
-   "out": 12613
+   "in": 53801,
+   "out": 13732
   },
   "discovery": "throttled",
   "hosts": {
@@ -45,42 +45,47 @@
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "2/2",
+   "claims": "3/3",
    "pairs": "1/1",
-   "obs": "11/11"
+   "obs": "12/12"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 11,
+   "obs": 12,
    "strict_pairs": 1,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[1]",
     "memo[0]",
-    "structure"
+    "structure",
+    "worry.moderate[0]",
+    "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
     "structure:unverified",
-    "edges[1]:unverified",
-    "memo[0]:unverified"
+    "structure:dangling",
+    "memo[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "Anthropic 나스닥 IPO 공모가 확정과 청약 수요",
-  "query": "anthropic ipo record",
+  "topic_ko": "앤트로픽 IPO 공모 수요 강도와 상장 초기 반응",
+  "query": "anthropic spacex record",
   "trigger": []
  },
  "problems": [
   "structure:unverified",
-  "edges[1]:unverified",
-  "memo[0]:unverified"
+  "structure:dangling",
+  "memo[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "af343d70b9b525b0"
+ "content_hash": "a93e14130350d0de"
 }
