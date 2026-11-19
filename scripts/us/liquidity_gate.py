@@ -17,6 +17,7 @@
 import html as _html
 import re
 
+from common.hidden import encloses, hidden_ancestor, hidden_tags
 from common.numbers import TAG_RE, strip_comments
 
 from . import liquidity as L
@@ -311,23 +312,9 @@ def _check_qra_paragraph(where, raw, kind, doc):
 
 
 def _hidden_ancestor(doc, at):
-    for m in _HIDDEN.finditer(doc, 0, at):
-        name = re.match(r'<\s*([a-zA-Z][\w-]*)', m.group(0))
-        if not name:
-            continue
-        depth, tag = 0, name.group(1).lower()
-        for t in TAG_RE.finditer(doc, m.start()):
-            nm = re.match(r'<\s*(/?)\s*([a-zA-Z][\w-]*)', t.group(0))
-            if not nm or nm.group(2).lower() != tag or t.group(0).endswith('/>'):
-                continue
-            depth += -1 if nm.group(1) else 1
-            if depth == 0:
-                if t.start() > at:
-                    return m.group(0)[:60]
-                break
-        else:
-            return m.group(0)[:60]
-    return None
+    """`at` 위치를 감싸는 숨긴 요소가 있는가(섹션 통째로 숨기기, 재검토 #2). 옛 원문 정규식(`_HIDDEN` —
+    script 문자열 안 태그까지 본다) OR 공용 판정(common.hidden) — 걷는 방식은 둘 다 `encloses` 하나다."""
+    return encloses(doc, at, _HIDDEN.finditer(doc, 0, at)) or hidden_ancestor(doc, at)
 
 
 def _table_rows(body):
@@ -398,7 +385,7 @@ def check(doc, book, report_date, ledger):
     anc = _hidden_ancestor(doc, doc.find(sec))
     if anc:
         v.append(f'「유동성·수급」 섹션을 숨긴 요소가 감싸고 있다 — {anc}')
-    hid = _HIDDEN.search(sec)
+    hid = _HIDDEN.search(sec) or next(iter(hidden_tags(sec)), None)   # 옛 원문 정규식 OR 공용 판정
     if hid:
         v.append(f'「유동성·수급」 섹션 안에 숨긴 요소가 있다 — {hid.group(0)[:60]}')
     days = _ATTR('data-liquidity-day').findall(sec)

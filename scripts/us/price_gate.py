@@ -17,6 +17,8 @@ them, so they are enforced here rather than asked for in the prompt:
 import re
 from html.parser import HTMLParser
 
+from common.hidden import is_hidden, unsure_note
+
 # Machinery the reader has no use for. The 08-17 brief printed "signed-z 0.895" and a
 # filename; the same failure mode applies to anything named here.
 INTERNAL_JARGON = ('주성분', '고유값', 'NNLS', 'nnls', 'lstsq', '최소자승',
@@ -83,11 +85,18 @@ class _Reader(HTMLParser):
         self.text = []
         self._open = []     # [(tag, hides, [chunk lists this element feeds])]
         self._hidden = 0
+        # 위 읽기는 옛 판정식(_hides) 그대로 — 여기서는 위반만 더한다. 표식 요소 자신·그 조상·그 안이
+        # 공용 판정(common.hidden)으로 숨었거나 닫힌 <details> 에 접혀 있으면(summary 밖) 그 표식을 적는다.
+        self.unseen = []    # [표식 이름]
+        self._view = []     # _open 과 나란히: (공용 숨김 상속, 접힘 상속, 닫힌 details 인가, 표식 요소인가)
+        self._in_marker = 0
 
     def handle_starttag(self, tag, attrs):
         if tag in _VOID_TAGS:
+            self._watch(tag, attrs, push=False)
             return
         hiding = _hides(tag, attrs)
+        self._watch(tag, attrs)
         feeds = []
         if not hiding and not self._hidden:
             got = dict(attrs)
@@ -106,8 +115,25 @@ class _Reader(HTMLParser):
         for i in range(len(self._open) - 1, -1, -1):
             if self._open[i][0] == tag:
                 self._hidden -= sum(1 for _, h, _f in self._open[i:] if h)
+                self._in_marker -= sum(1 for *_x, m in self._view[i:] if m)
                 del self._open[i:]
+                del self._view[i:]
                 return
+
+    def _watch(self, tag, attrs, push=True):
+        core_up, folded_up, closed_details, _m = self._view[-1] if self._view else (False, False, False, False)
+        folded = folded_up or (closed_details and tag != 'summary')
+        own = is_hidden(attrs)
+        got = dict(attrs)
+        names = [a for a in self._wanted if got.get(a)]
+        if names and (core_up or own or folded):
+            self.unseen += names
+        elif self._in_marker and (own or (tag == 'details' and 'open' not in got)):
+            self.unseen.append(f'{tag} 안')
+        if push:
+            self._view.append((core_up or own, folded, tag == 'details' and 'open' not in got, bool(names)))
+            if names:
+                self._in_marker += 1
 
     def handle_data(self, data):
         if self._hidden:
@@ -119,13 +145,13 @@ class _Reader(HTMLParser):
 
 
 def _read(html):
-    """(visible text, {attr: {value: [text per element]}})."""
+    """(visible text, {attr: {value: [text per element]}}, [markers hidden or folded — common.hidden])."""
     r = _Reader()
     r.feed(html or '')
     r.close()
     blocks = {a: {v: [''.join(c) for c in lists] for v, lists in got.items()}
               for a, got in r.blocks.items()}
-    return ''.join(r.text), blocks
+    return ''.join(r.text), blocks, r.unseen
 
 
 def _told(blocks, attr):
@@ -186,7 +212,10 @@ def _dates(text, iso):
 def check(html, price_context, scorecard=None):
     """Return a list of violations, one string each. Empty list = publishable."""
     v = []
-    seen, blocks = _read(html)
+    seen, blocks, unseen = _read(html)
+    if unseen:
+        v.append(f'표식 블록({", ".join(dict.fromkeys(unseen))})이나 그 안·바깥 요소가 숨겨지거나 접혀 있다'
+                 f' — 독자가 보지 못하는 서술은 싣지 않는다(펼친 본문에 쓴다).{unsure_note(html)}')
     if blocks['data-scorecard']:
         # 파일을 못 읽었다는 것은 「표본이 충분하다」는 뜻이 아니다. 모르면 막는다.
         if not (scorecard or {}).get('sufficient'):

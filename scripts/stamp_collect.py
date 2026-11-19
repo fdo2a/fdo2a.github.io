@@ -177,6 +177,10 @@ def run_state(market, pat, rel, path, collected_at, run, steps, run_id=None):
     outputs = info.get('outputs') if isinstance(info.get('outputs'), dict) else {}
     if outcome == 'skipped' or outputs.get('skipped') == 'true':
         return 'skipped', None
+    # 수익률만 고치는 재실행(us-collect-wait, 2026-11-19): collect 단계는 market_data.json 만 다시 쓴다 — 나머지는
+    # 첫 실행의 판이 그대로 유효하다(고치기 자격이 그 판들이 같은 실행의 것임을 확인한다). market_data.json 자체는 예외가 아니다.
+    if step == 'collect' and outputs.get('patched') == 'true' and pat != 'market_data.json':
+        return 'skipped', None
     if pat in MAY_KEEP:
         if outcome == 'success':
             return 'kept', None

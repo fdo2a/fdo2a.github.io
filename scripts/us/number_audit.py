@@ -134,6 +134,21 @@ def _global_rows(market):
     return out
 
 
+def _global_missing(market):
+    """수집기가 「없음」으로 선언한 세계 지수 {이름: 선언된 날짜|None}. rows 에 있는 이름은 넣지 않는다.
+
+    두 원천으로 확인하지 못한 지수다(`us/global_close.py`). 그 행은 숫자 없이 비워 둘 수 있다.
+    """
+    gc = ((market.get('session') or {}).get('global_close') or {})
+    have = set(_global_rows(market))
+    out = {}
+    for region in ('asia', 'europe'):
+        for m in (gc.get(region) or {}).get('missing') or []:
+            if isinstance(m, dict) and m.get('name') and m['name'] not in have:
+                out[m['name']] = m.get('date')
+    return out
+
+
 def _vix(market):
     pc = market.get('price_context') or {}
     lv = ((pc.get('levels') or {}).get('VIX') or {})
@@ -348,6 +363,10 @@ class _Stream(_Doc):
     def __init__(self, html):
         self.stream = []
         self.hidden_text = []
+        # 공용 판정(common.hidden)으로만 숨긴 요소 안 글 — 흐름(stream)과 hidden_text 는 옛 판정식 그대로 두고
+        # (넓히면 숨긴 자산명·표 머리가 흐름에서 빠져 분류 검사가 통과한다, codex 설계 검토 2026-11-19 #5),
+        # 그 안 수치만 따로 위반으로 센다. 대조 집계에는 넣지 않는다 — 흐름에 이미 있으니 두 번 센다.
+        self.core_hidden_text = []
         self.svg_text = []
         self.raw_tokens = 0      # 분류와 무관하게 본문의 모든 글 조각에서 센 수치(script·style 만 뺀다)
         self.extra = []          # (출처, 글) — 제목·meta 설명·대체 문구. 속성 순서와 무관하게 파서로 읽는다
@@ -393,6 +412,8 @@ class _Stream(_Doc):
             if in_body:
                 self.hidden_text.append(data)
             return
+        if in_body and any(n.core_hidden for n in stack):
+            self.core_hidden_text.append(data)
         # 접힌 details 는 모든 접힌 조상에 대해 그 직속 <summary> 안일 때만 보인다(중첩 포함)
         for i, n in enumerate(stack):
             if n.tag == 'details' and 'open' not in n.attrs and not (
@@ -404,6 +425,11 @@ class _Stream(_Doc):
 
 _NONDISPLAY_BODY = {'textarea', 'xmp', 'select', 'option', 'optgroup', 'datalist', 'noscript', 'iframe',
                     'noembed', 'noframes', 'plaintext', 'object', 'template'}
+
+
+def core_hidden_tokens(doc):
+    """공용 판정으로만 숨긴 요소 안 수치(위반 전용 — `hidden` 집계와 따로)."""
+    return [t for d in doc.core_hidden_text for t in tokens(d)]
 
 
 def _hidden_attr(n):
@@ -489,6 +515,7 @@ def _audit_table(spec, table, kids, market, res, owned):
         elif par != 'bp':
             v.append(f'[{spec.section}] 열 머리 「{th}」 의 괄호는 단위(bp)나 날짜(「11월 5일」)만 쓴다')
     seen = {}
+    declared_missing = _global_missing(market) if spec.group == 'global' else {}
     for tr in body:
         cells = _cells(tr, kids)
         if not cells:
@@ -515,6 +542,14 @@ def _audit_table(spec, table, kids, market, res, owned):
             if col is None:
                 continue          # 소유하지 않는다 — 그 칸 수치는 문장 층에서 미검증으로 센다(codex #9)
             owned.add(id(cell))
+            if a is None and spec.group == 'global' and akey in declared_missing:
+                # 「없음」으로 선언된 지수의 행: 숫자가 없으면(「—」) 틀린 숫자가 아니다. 기준일 칸은
+                # 선언된 날짜까지 받는다. 그 밖의 숫자는 아래에서 「데이터에 이 행이 없다」로 걸린다.
+                text = cell.plain()
+                if not re.search(r'\d', text):
+                    continue
+                if col == 'date' and text == _md(declared_missing[akey]):
+                    continue
             _audit_cell(spec, label, col, cell, a, head_dates, res)
     for label, key in spec.rows.items():
         a = _asset(market, spec.group, _GLOBAL_NAME.get(key, key)) or {}
@@ -862,7 +897,7 @@ def audit(html, data, prose='warn', tables=True):
         res.violations.append(f'수치가 태그·보이지 않는 문자로 쪼개져 있다({s[:30]!r}) — 화면과 검사가 '
                               f'다른 숫자를 읽는다')
     hidden = [t for d in doc.hidden_text for t in tokens(d)]
-    for t in hidden:
+    for t in hidden + core_hidden_tokens(doc):
         res.violations.append(f'숨긴 요소 안에 수치 「{t.raw}」 — 독자에게 안 보이는 수치는 싣지 않는다')
     svg = [t for d in doc.svg_text for t in tokens(d)]
     for t in svg:

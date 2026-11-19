@@ -1,0 +1,105 @@
+{
+  "report_date": "2026-11-18",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": 4.19,
+          "close": 1144000,
+          "value": 3971674
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": 2.31,
+          "close": 194700,
+          "value": 3378742
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "제약",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "삼성바이오로직스",
+          "change_pct": -3.39,
+          "close": 1366000,
+          "value": 48177
+        },
+        {
+          "name": "셀트리온",
+          "change_pct": -2.58,
+          "close": 207500,
+          "value": 90107
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "전자장비와기기",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성전기",
+          "change_pct": 7.43,
+          "close": 810000,
+          "value": 817923
+        },
+        {
+          "name": "LG이노텍",
+          "change_pct": 5.6,
+          "close": 283000,
+          "value": 39169
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "건설",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성E&A",
+          "change_pct": -5.6,
+          "close": 64100,
+          "value": 280415
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "복합기업",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "두산",
+          "change_pct": 8.69,
+          "close": 588000,
+          "value": 126717
+        }
+      ]
+    }
+  ]
+}

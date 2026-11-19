@@ -40,7 +40,7 @@ jobs:
           ref: main
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - name: Install deps
         # curl_cffi = 접근 거절 때 브라우저 TLS 지문으로 한 번 더, pypdf = 일본은행 정책 발표문(PDF)
         run: pip install --quiet certifi curl_cffi pypdf pytest 'anthropic>=1.8,<2'

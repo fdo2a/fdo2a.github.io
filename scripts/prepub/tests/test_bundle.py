@@ -61,17 +61,35 @@ def test_request_ids_have_the_shape_the_private_runner_accepts():
     assert re.fullmatch(r'(us|kr|jp)-\d{4}-\d{2}-\d{2}-[0-9a-f]{12}', bundle.request_id('kr', '2026-11-07'))
 
 
-def test_the_prepublish_prompt_asks_only_for_translationese_and_confidence(repo, tmp_path):
+def test_the_prepublish_prompt_asks_for_the_fix_kinds_and_the_clarity_kinds(repo, tmp_path):
+    """2026-11-07 「번역투만」에서 2026-11-18 사용자 결정으로 넓혔다 — 번역투·확신도 두 분류는 그대로, 명료성 넷을 더한다.
+    반복·끊긴 흐름·기타는 여전히 묻지 않는다."""
     bundle.build(str(repo), 'us', '2026-11-07', draft(tmp_path), tmp_path / 'b')
     text = (tmp_path / 'b/prompt.txt').read_text(encoding='utf-8')
     tail = text[text.index('문체 지적(') :]
-    for kind in ('「번역투」', '「판단 세기 흐림」', '「원문에 없는 관계」'):
+    for kind in ('「번역투」', '「판단 세기 흐림」', '「원문에 없는 관계」',
+                 '「용어」', '「문장 구조」', '「지시 대상 불명확」', '「논리·사실관계 의심」'):
         assert kind in tail
     for kind in ('「반복」', '「끊긴 흐름」', '「기타」'):
         assert kind not in tail
     assert gate.STYLE_FINDINGS_HEAD in tail
+    # 사용자가 정한 기준 문장과, 검토자가 지키는 두 가지
+    assert '무엇이 발생했으며 작성자가 어떤 판단을 내렸는지' in tail
+    assert '짐작' in tail and '고친 문장' in tail
+    for mark in ('(가)', '(나)', '(다)'):
+        assert mark in tail
+
+
+def test_every_kind_the_prompt_asks_for_has_a_route():
+    from prepub import split
+    assert set(bundle.PREPUB_KINDS) == set(split.ROUTES)
+    assert bundle.RECORD_ONLY_MAX == split.RECORD_MAX
 
 
 def test_the_post_publish_prompt_is_unchanged():
-    assert '「반복」' in gate.STYLE_FINDINGS_PROMPT.format(
+    text = gate.STYLE_FINDINGS_PROMPT.format(
         n=8, kinds='·'.join(f'「{k}」' for k in gate.STYLE_KINDS), head=gate.STYLE_FINDINGS_HEAD)
+    assert '「반복」' in text
+    # 발행 뒤 검토(맥 러너)는 명료성 분류를 묻지도 읽지도 않는다
+    assert '용어' not in gate.STYLE_KINDS and '「지시 대상 불명확」' not in text
+    assert gate.STYLE_FINDINGS_MAX == 8

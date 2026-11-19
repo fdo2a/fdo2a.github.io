@@ -121,3 +121,106 @@ def test_kr_stamp_runs_right_before_the_versions_commit():
     from kr import versions_kr
     assert 'git add kr/data/*.json' in versions_kr.STAGE_SH          # _collect_status.json 이 커밋 O 에 든다
     assert versions_kr.is_dateless('kr/data/_collect_status.json')  # 발행된 날 동결 대상(원격 판 유지)
+
+
+# ── 수익률만 고치는 재실행(2026-11-19) ───────────────────────────────────────
+
+def _step(name):
+    return next(s for s in load()['jobs']['collect']['steps'] if s.get('name') == name)
+
+
+def test_full_input_forces_a_rebuild_and_force_alone_keeps_the_patch():
+    wf = load()
+    on = wf.get('on', wf.get(True))
+    assert on['workflow_dispatch']['inputs']['full']['default'] is False
+    run = _step('Collect')['run']
+    assert "inputs.full) && '--no-patch'" in run
+    assert "(inputs.force || inputs.full)) && '--force'" in run
+
+
+def step_runs(step, outputs, collect_ok=True):
+    """이 스텝이 도는가 — 스텝의 `if` 를 GitHub 규칙대로 평가한다.
+
+    상태 함수(always·!cancelled)가 없으면 앞 스텝이 실패했을 때 돌지 않는다. 없는 출력은 ''.
+    지원하는 문법 밖이면 추측하지 않고 실패한다.
+    """
+    expr = str(step.get('if', '')).strip()
+    if expr.startswith('${{'):
+        expr = expr[3:-2].strip()
+    has_status = 'always()' in expr or '!cancelled()' in expr
+    if not expr:
+        return collect_ok
+
+    def out(m):
+        return repr(outputs.get(m.group(1), ''))
+    py = re.sub(r'steps\.collect\.outputs\.([a-z_]+)', out, expr)
+    py = py.replace("steps.collect.outcome", repr('success' if collect_ok else 'failure'))
+    # 1a 수집 장부 단계(2026-11-17) — 정상 실행에서는 성공한다(실패 경로는 test_stamp_workflow.py 가 본다)
+    py = re.sub(r'steps\.stamp(?:_begin)?\.outcome', repr('success'), py)
+    py = py.replace('!cancelled()', 'True').replace('always()', 'True')
+    py = py.replace('&&', ' and ').replace('||', ' or ')
+    assert re.fullmatch(r"[\w\s'=!()]*", py), f'unsupported step if: {expr}'
+    ok = bool(eval(py, {'__builtins__': {}}, {'True': True}))
+    return ok and (has_status or collect_ok)
+
+
+def ran(outputs, collect_ok=True):
+    return [s['name'] for s in load()['jobs']['collect']['steps']
+            if s.get('name') and s.get('id') not in ('collect', 'stamp_begin') and step_runs(s, outputs, collect_ok)]
+
+
+SETUP = ['Install CJK font (for chart labels)', 'Install Python deps']
+LEDGER = 'Record new releases (weekly regime ledger)'
+RELEASE_CHAIN = ['Fetch primary releases', 'Sanitize primary releases',
+                 'Cross-check release components', 'Evaluate macro regime']
+NON_CORE = ['Fetch market news', 'Fetch Telegram channels', 'Fetch Fed events',
+            'Refresh FOMC schedule', 'Build the next-ten-days calendar',
+            'Treasury coupon auction results']
+LIQ = ['Fed H.4.1 and Treasury refunding (liquidity)', 'Sanitize liquidity']
+COMMIT_LIQ = 'Commit liquidity (market data already complete)'
+# 1a: 모든 쓰기 뒤·커밋 앞, 늘 돈다(기다림 실행에서도 — 장부만 쓰고 커밋은 하지 않는다). 시작 기록(stamp_begin)은 Collect 앞.
+STAMP = 'Stamp collection status'
+
+
+def test_step_matrix_full_collection_is_unchanged():
+    assert ran({}) == SETUP + [LEDGER] + RELEASE_CHAIN + NON_CORE + LIQ + [STAMP,
+        'Report status', 'Commit data', 'FRED key health']
+
+
+def test_step_matrix_skipped_run_is_unchanged():
+    # 이미 완전한 판: 원장·유동성만 돌고 유동성 커밋으로 끝난다(오늘과 같다).
+    assert ran({'skipped': 'true'}) == SETUP + [LEDGER] + LIQ + [STAMP, COMMIT_LIQ, 'Report status']
+
+
+def test_step_matrix_patch_run_commits_and_leaves_the_frozen_chain_alone():
+    assert ran({'patched': 'true'}) == SETUP + NON_CORE + LIQ + [STAMP, 'Report status', 'Commit data']
+
+
+def test_step_matrix_waiting_run_touches_and_commits_nothing():
+    assert ran({'skipped': 'true', 'waiting': 'true'}) == SETUP + [STAMP, 'Report status']
+    report = _step('Report status')['run']
+    assert 'git ' not in report and "open('data/market_data.json')" in report   # 읽기만 한다
+
+
+def test_step_matrix_failed_collect_commits_nothing():
+    # 되돌리기·설치 실패로 수집기가 exit 1 — 커밋 스텝은 하나도 돌지 않는다.
+    names = ran({}, collect_ok=False)
+    assert 'Commit data' not in names and COMMIT_LIQ not in names
+    assert not [n for n in names if 'Commit' in n]
+
+
+def test_always_steps_keep_always():
+    for name in ('Record new releases (weekly regime ledger)', 'Sanitize primary releases',
+                 'Sanitize liquidity', 'Commit liquidity (market data already complete)'):
+        assert 'always()' in _step(name)['if']
+
+
+def test_patch_commit_stages_its_four_outputs_strictly():
+    run = _step('Commit data')['run']
+    strict = next(line.strip() for line in run.splitlines()
+                  if 'data/yield_curve.png' in line and 'data/history/market.jsonl' in line)
+    assert strict == ('git add data/market_data.json data/yield_curve.png '
+                      'data/history/market.jsonl data/weekly')
+    assert '|| true' not in strict
+    assert "steps.collect.outputs.patched }}\" = \"true\"" in run
+    assert '(yields patch)' in run

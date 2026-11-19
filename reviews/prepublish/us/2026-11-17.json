@@ -1,0 +1,31 @@
+{
+ "section": "us",
+ "date": "2026-11-17",
+ "request_id": "us-2026-11-17-194aa3531256",
+ "draft_sha": "6208f2c89f0ff79fcccd03ae7c905951a7e4af98",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": true,
+ "accuracy_findings": 2,
+ "style_candidates": 2,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 3,
+ "facts_rejected": 4,
+ "style_applied": 0,
+ "style_rejected": 1,
+ "skeleton_rejected": 1,
+ "checker_rejected": 0,
+ "style_findings": [
+  {
+   "kind": "번역투",
+   "quote": "국채는 매파적 연준 발언에도 2년물 중심으로 사들여졌다."
+  },
+  {
+   "kind": "번역투",
+   "quote": "점수가 현재 국면을 가리키므로 국면이 옮겨 갈 곳이 없다."
+  }
+ ],
+ "recorded_at": "2026-11-17T23:35:44Z"
+}

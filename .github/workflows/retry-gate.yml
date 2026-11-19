@@ -1,0 +1,65 @@
+name: Retry gate (routine fire on DUE)
+
+# 재시도 루틴의 판정(routine_due.py)을 여기서 돌리고, DUE 이고 그 세션 본 런 뒤일 때만 그 루틴의 API 트리거를 친다.
+# 판정이 DONE·BUSY·WAIT·SKIP 이면 클라우드 세션이 뜨지 않는다. 루틴 프롬프트의 Step 1 재판정은 그대로다.
+# 예약 문자열은 scripts/ci/retry_gate.py 의 SLOTS 와 글자까지 같아야 한다(시험). UTC — KST = UTC+9.
+# 두 줄이 같은 분에 맞지 않게 분을 달리 둔다(시험) — 실행은 github.event.schedule 한 줄만 본다.
+# 예약은 2~5시간 늦게 올 수 있다 — 늦은 틱이 본 런 전에 떨어지면 스크립트의 창이 막는다.
+# 설계: docs/superpowers/specs/2026-11-19-retry-gate.md
+on:
+  schedule:
+    # US 20:30·KR 06:xx 는 루틴의 안전망 cron 이 제시각에 맡는다(세션 경계 직전의 마지막 기회).
+    - cron: '30 0,2,5,8,11,14,17 * * 2-6'      # US 재시도 (화-토)
+    - cron: '7 0,3,12,15,18,21 * * 1-6'        # KR 재시도 (월-토)
+    - cron: '17 12 * * 1-5'                    # 일본 일간 재시도 21:17 KST
+    - cron: '7 4,7,10,13 * * 1-5'              # 일본 주간 13·16·19·22 KST (13시 = MOF 게시일 본 런)
+    - cron: '22 9,12,15,18,21 * * 6'           # 주간 재시도 (토 18시 - 일 06시 KST)
+  workflow_dispatch:
+    inputs:
+      kinds:
+        description: 'us,kr,jp_daily,japan,weekly 중 쉼표로'
+        required: true
+        default: 'us,kr,jp_daily,japan,weekly'
+      mode:
+        description: 'check = 판정만, gate = DUE 면 발화, force = 판정과 무관하게 발화(토큰 시험)'
+        type: choice
+        options: [check, gate, force]
+        default: check
+
+# 읽기만 — 판정은 origin/main 과 잠금 ref 를 읽는다. 쓰는 것은 없다.
+permissions:
+  contents: read
+
+# 예약 문자열마다 따로 — 같은 시각의 다른 슬롯 실행이 대기 중인 실행을 밀어내 취소하지 않게.
+concurrency:
+  group: retry-gate-${{ github.event.schedule || 'manual' }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          # KR 뉴스 글 판정이 브리프를 처음 넣은 커밋을 이력에서 찾는다 — 얕은 clone 에서는 틀린 커밋을 집는다.
+          fetch-depth: 0
+      - name: Judge and fire
+        # 표준 라이브러리만(pip 없음). 토큰은 루틴마다 하나 — 웹 화면에서 만든 값을 레포 비밀값에 넣는다.
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+          KINDS: ${{ github.event.inputs.kinds }}
+          MODE: ${{ github.event.inputs.mode }}
+          RETRY_GATE_LIVE: ${{ vars.RETRY_GATE_LIVE }}
+          ROUTINE_FIRE_TOKEN_US: ${{ secrets.ROUTINE_FIRE_TOKEN_US }}
+          ROUTINE_FIRE_TOKEN_KR: ${{ secrets.ROUTINE_FIRE_TOKEN_KR }}
+          ROUTINE_FIRE_TOKEN_JP_DAILY: ${{ secrets.ROUTINE_FIRE_TOKEN_JP_DAILY }}
+          ROUTINE_FIRE_TOKEN_JAPAN: ${{ secrets.ROUTINE_FIRE_TOKEN_JAPAN }}
+          ROUTINE_FIRE_TOKEN_WEEKLY: ${{ secrets.ROUTINE_FIRE_TOKEN_WEEKLY }}
+        run: |
+          if [ -n "$SCHEDULE" ]; then
+            python3 scripts/ci/retry_gate.py --schedule "$SCHEDULE"
+          else
+            python3 scripts/ci/retry_gate.py --kinds "$KINDS" --mode "${MODE:-check}"
+          fi

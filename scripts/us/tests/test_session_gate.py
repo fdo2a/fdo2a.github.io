@@ -51,9 +51,142 @@ def test_mentioning_participation_when_neutral_fails():
     assert any('중립' in v for v in check(FULL, s))
 
 
-def test_omitting_participation_when_it_fired_fails():
-    html = FULL.replace('소수가 끌어올림이었고 ', '')
-    assert any('소수가 끌어올림' in v for v in check(html, SESSION))
+def test_the_participation_label_is_not_required_in_prose():
+    """판정 이름은 내부 값이다 — 글은 그 뜻을 독자의 말로 쓴다(2026-11-17 사용자 결정)."""
+    html = FULL.replace('소수가 끌어올림이었고 ',
+                        '동일가중 지수의 수익률이 시가총액가중 지수보다 0.95%p 낮았고 ')
+    assert check(html, SESSION) == []
+
+
+def _tape(text):
+    return FULL.replace('소수가 끌어올림이었고 나스닥은 고점권 마감입니다.', text)
+
+
+def test_a_fired_participation_day_must_carry_the_gap_figure():
+    """판정이 켜진 날 참여도를 통째로 빼먹지 못하게 — 이름 대신 차이 수치가 있는지 본다
+    (2026-11-18 사용자 결정). 수치가 있다는 것까지만 본다. 풀이가 맞는지는 보지 않는다."""
+    v = check(_tape('나스닥은 고점권 마감입니다.'), SESSION)
+    assert len(v) == 1 and '0.95%p' in v[0] and '수익률 차이' in v[0]
+    # 풀어 쓴 문장만 있고 수치가 없어도 빠진 것으로 본다
+    assert check(_tape('몇몇 대형주가 지수를 끌어올렸고 나스닥은 고점권 마감입니다.'), SESSION)
+
+
+def test_the_gap_figure_is_read_tolerantly():
+    for text in ('차이는 0.95%p였다.', '차이는 -0.95%p였다.', '차이는 −0.95 %p였다.',
+                 '차이는 +0.95%포인트였다.', '차이는 0.95퍼센트포인트였다.',
+                 '차이는 0.95% 포인트였다.', '차이는 0.95%P였다.'):
+        assert check(_tape(text), SESSION) == [], text
+    half = dict(SESSION, participation={'gap_pp': 0.5, 'spy_pct': 0.3, 'band': '고르게 오름'})
+    for text in ('0.50%p 높았다.', '0.5%p 높았다.'):
+        assert check(_tape(text), half) == [], text
+    one = dict(SESSION, participation={'gap_pp': -1.0, 'spy_pct': 0.3, 'band': '소수가 끌어올림'})
+    for text in ('1.00%p 낮았다.', '1.0%p 낮았다.', '1%p 낮았다.'):
+        assert check(_tape(text), one) == [], text
+
+
+def test_the_gap_figure_must_be_that_number_in_percentage_points():
+    for text in ('차이는 0.95%였다.', '차이는 10.95%p였다.', '차이는 0.955%p였다.',
+                 '차이는 0.59%p였다.', '차이는 0.9%p였다.', '0.95 높았다. 금리는 3%p 올랐다.'):
+        assert any('수익률 차이' in v for v in check(_tape(text), SESSION)), text
+
+
+def test_the_gap_figure_is_read_as_the_reader_sees_it():
+    """문자 참조로 적은 숫자·기호도 화면에는 같은 수치다(2026-11-18 codex 구현 검토)."""
+    for text in ('차이는 &#48;.95%p였다.', '차이는 0.95&#37;p였다.', '차이는 0.95&nbsp;%p였다.',
+                 '차이는 &minus;0.95%p였다.'):
+        assert check(_tape(text), SESSION) == [], text
+
+
+def test_the_gap_figure_is_not_read_out_of_scientific_notation():
+    one = dict(SESSION, participation={'gap_pp': -1.0, 'spy_pct': 0.3, 'band': '소수가 끌어올림'})
+    for text in ('차이는 2e-1%p였다.', '차이는 2E+1%p였다.', '차이는 2e1%p였다.'):
+        assert any('수익률 차이' in v for v in check(_tape(text), one)), text
+
+
+def test_the_gap_figure_must_sit_in_the_tape_paragraph():
+    html = _tape('나스닥은 고점권 마감입니다.').replace(
+        '엔비디아 실적이 하루를 만들었습니다.',
+        '엔비디아 실적이 하루를 만들었습니다. 두 지수의 차이는 0.95%p였다.')
+    assert any('수익률 차이' in v for v in check(html, SESSION))
+
+
+def test_an_old_post_that_named_the_band_still_passes():
+    """2026-11-18 이전 글은 판정 이름으로 이 요구를 채웠다 — 다시 검사해도 떨어지지 않는다."""
+    assert check(FULL, SESSION) == []
+    other = _tape('고르게 내림이었고 나스닥은 고점권 마감입니다.')    # 그날 판정이 아닌 이름
+    assert any('수익률 차이' in v for v in check(other, SESSION))
+
+
+def test_no_gap_figure_is_asked_on_a_neutral_day_or_when_the_block_is_broken():
+    neutral = dict(SESSION, participation={'gap_pp': 0.1, 'band': '중립'})
+    assert check(_tape('나스닥은 고점권 마감입니다.'), neutral) == []
+    broken = dict(SESSION, participation={'gap_pp': 'x', 'band': '소수가 끌어올림'})
+    v = check(_tape('나스닥은 고점권 마감입니다.'), broken)
+    assert len(v) == 1 and '수가 아니다' in v[0]
+
+
+def _par(**kw):
+    return {**SESSION, 'participation': kw}
+
+
+def _par_violations(session, html=None):
+    return [v for v in check(html or FULL, session) if '참여도 판정값' in v]
+
+
+def test_participation_band_must_match_its_own_figures():
+    # gap 이 음수인데 gap 양수 쪽 이름
+    assert _par_violations(_par(gap_pp=-0.95, band='소수가 끌어내림'))
+    # SPY 가 올랐는데 내린 날의 이름
+    assert _par_violations(_par(gap_pp=-0.95, spy_pct=0.5, band='고르게 내림'))
+    assert not _par_violations(_par(gap_pp=-0.95, spy_pct=0.5, band='소수가 끌어올림'))
+    assert not _par_violations(_par(gap_pp=-0.95, spy_pct=-0.5, band='고르게 내림'))
+    assert not _par_violations(_par(gap_pp=0.9, spy_pct=-1.91, band='소수가 끌어내림'))
+    assert not _par_violations(_par(gap_pp=0.9, spy_pct=1.91, band='고르게 오름'))
+    assert _par_violations(_par(gap_pp=0.9, spy_pct=1.91, band='소수가 끌어내림'))
+
+
+def test_participation_neutral_threshold_is_checked_both_ways():
+    neutral_page = FULL.replace('소수가 끌어올림이었고 ', '')
+    for gap in (0.39, -0.39, 0.0):
+        assert not _par_violations(_par(gap_pp=gap, spy_pct=1.0, band='중립'), neutral_page)
+        assert _par_violations(_par(gap_pp=gap, spy_pct=1.0, band='고르게 오름'), neutral_page)
+    for gap, band in ((0.4, '고르게 오름'), (-0.4, '소수가 끌어올림')):
+        assert not _par_violations(_par(gap_pp=gap, spy_pct=1.0, band=band))
+        assert _par_violations(_par(gap_pp=gap, spy_pct=1.0, band='중립'), neutral_page)
+
+
+def test_participation_direction_is_loose_only_when_spy_cannot_decide():
+    """spy_pct 는 반올림값이라 0.00 이면 방향을 다시 낼 수 없다. 없을 때도 같다."""
+    for extra in ({}, {'spy_pct': None}, {'spy_pct': 0.0}, {'spy_pct': -0.0}, {'spy_pct': 0}):
+        assert not _par_violations(_par(gap_pp=0.9, band='소수가 끌어내림', **extra))
+        assert not _par_violations(_par(gap_pp=0.9, band='고르게 오름', **extra))
+        assert _par_violations(_par(gap_pp=0.9, band='고르게 내림', **extra))
+        assert _par_violations(_par(gap_pp=0.9, band='소수가 끌어올림', **extra))
+
+
+def test_participation_rejects_values_that_are_not_numbers():
+    nan, inf = float('nan'), float('inf')
+    for bad in (nan, inf, -inf, '0.9', True, None, 10 ** 400):
+        assert _par_violations(_par(gap_pp=bad, spy_pct=-1.0, band='소수가 끌어내림'))
+    assert _par_violations({**SESSION, 'participation': {'band': '소수가 끌어내림'}})
+    for bad in (nan, inf, -inf, '-1.0', True, 10 ** 400):
+        assert _par_violations(_par(gap_pp=0.9, spy_pct=bad, band='소수가 끌어내림'))
+
+
+def test_participation_rejects_an_unknown_band():
+    for bad in ('소수가 끌어내림 ', '약세', None, ''):
+        assert _par_violations(_par(gap_pp=0.9, spy_pct=-1.0, band=bad))
+
+
+def test_absent_participation_block_is_still_not_checked():
+    s = {**SESSION, 'participation': None}
+    assert not _par_violations(s)
+    assert not [v for v in check(FULL.replace('소수가 끌어올림이었고 ', ''), s) if '참여도' in v]
+
+
+def test_a_band_mismatch_message_points_at_the_data_not_the_prose():
+    msg = _par_violations(_par(gap_pp=-0.95, band='소수가 끌어내림'))[0]
+    assert '수집 자료' in msg
 
 
 def test_calling_it_breadth_fails():
@@ -188,3 +321,33 @@ def test_a_number_split_by_a_comment_is_refused():
     from us import session_gate as G
     from common.numbers import numbers_split_by_tags
     assert numbers_split_by_tags('<p>2.<!-- > -->20% 올랐다</p>')
+
+
+# ── 「없음」으로 선언된 세계 지수 (2026-11-19, us/global_close.py) ─────────────
+
+def _missing(name):
+    return {'name': name, 'ticker': 'x', 'date': '2026-08-27', 'reason': 'value_disagree',
+            'note_ko': '두 원천의 종가가 다르다'}
+
+
+def test_missing_indices_are_not_demanded_and_a_one_row_region_has_no_verdict():
+    s = dict(SESSION, global_close={
+        'asia': {'rows': [SESSION['global_close']['asia']['rows'][0]], 'alignment': None,
+                 'missing': [_missing('항셍'), _missing('상해종합')]},
+        'europe': {'rows': [], 'alignment': None,
+                   'missing': [_missing('DAX'), _missing('FTSE100'), _missing('유로스톡스50')]}})
+    html = FULL.replace('유럽은 미국과 엇갈렸습니다. DAX 0.31%, FTSE100 -0.79%. '
+                        '아시아도 닛케이 -0.20%, 항셍 -0.34%로 함께 밀렸습니다.',
+                        '닛케이는 -0.20%로 마쳤습니다.')
+    assert check(html, s) == []
+    # 남은 한 행의 수치는 여전히 본문·표에 있어야 한다.
+    assert any('닛케이' in v for v in check(html.replace('-0.20%', '-0.30%'), s))
+
+
+def test_with_every_index_missing_the_global_paragraph_is_optional():
+    s = dict(SESSION, global_close={
+        'asia': {'rows': [], 'alignment': None, 'missing': [_missing('닛케이')]},
+        'europe': {'rows': [], 'alignment': None, 'missing': [_missing('DAX')]}})
+    html = FULL.replace('<p data-session="global">유럽은 미국과 엇갈렸습니다. DAX 0.31%, FTSE100 -0.79%. '
+                        '아시아도 닛케이 -0.20%, 항셍 -0.34%로 함께 밀렸습니다.</p>', '')
+    assert check(html, s) == []

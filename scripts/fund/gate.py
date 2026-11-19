@@ -21,6 +21,7 @@ The hash on the block is an integrity tag, not a fact check.
 import re
 from html.parser import HTMLParser
 
+from common.hidden import is_hidden, unsure_note
 from fund import kr_view, render
 from fund.universe import UNITS
 
@@ -81,15 +82,16 @@ def _self_hidden(tag, attrs):
 
 class _Node:
     __slots__ = ('tag', 'attrs', 'parent', 'start', 'end', 'text', 'prose', 'raw', 'self_hidden',
-                 'dup')
+                 'dup', 'core_hidden')
 
     def __init__(self, tag, attrs, parent, start):
         self.tag, self.attrs, self.parent, self.start = tag, attrs, parent, start
         self.end = None
         self.text, self.prose = [], []          # visible text only
         self.raw = []                           # all text, to find headings even when hidden
-        self.self_hidden = _self_hidden(tag, attrs)
+        self.self_hidden = _self_hidden(tag, attrs)     # 읽기(보이는 text)는 이 옛 판정식 그대로
         self.dup = False
+        self.core_hidden = False                        # 공용 판정(common.hidden) — 위반에만 쓴다
 
     def ancestors(self):
         n = self
@@ -140,6 +142,7 @@ class _Doc(HTMLParser):
         node = _Node(tag, {k: (v or '') for k, v in attrs},
                      self.stack[-1] if self.stack else None, self._pos())
         node.dup = dup
+        node.core_hidden = is_hidden(attrs)
         self.stack.append(node)
         self.nodes.append(node)
 
@@ -319,6 +322,10 @@ def check(html, data, market, post_date, effective=EFFECTIVE):
         v.append('섹션 안 빈 요소(img 등)에 같은 속성이 두 번 있다')
     if _hidden(section):
         v.append(f'「{title}」 섹션이 보이지 않는다(숨겨진 조상 요소)')
+    core = [n.tag for n in doc.nodes if n.core_hidden and (inside(n) or any(a is n for a in section.ancestors()))]
+    if core:
+        v.append(f'「{title}」 섹션이나 그 안·바깥 요소가 숨겨져 있다(<{core[0]}> 등 {len(core)}곳) — '
+                 f'독자가 보지 못하는 서술은 싣지 않는다{unsure_note(html)}')
 
     # the generated block — counted in the raw source too, so a commented copy is caught
     raw_blocks = html.count(f'{attr}=')

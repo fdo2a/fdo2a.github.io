@@ -10,9 +10,12 @@
 """
 
 import datetime as dt
+import math
 import re
+from html import unescape as _unescape   # 이 파일의 함수들은 `html` 을 인자 이름으로 쓴다
 
 from .section import locate_section
+from .session import band_of
 from common.numbers import TAG_RE, numbers_split_by_tags
 
 SECTION_TITLE = '오늘의 장'
@@ -49,6 +52,72 @@ def _sessions_between(a, b):
 
 def _finite(x):
     return isinstance(x, (int, float)) and x == x
+
+
+def _number(x):
+    """유한한 수만. `_finite` 는 무한대와 bool 을 통과시킨다."""
+    if not isinstance(x, (int, float)) or isinstance(x, bool):
+        return False
+    try:
+        return math.isfinite(x)
+    except OverflowError:       # float 로 못 옮기는 큰 정수 — 등락률일 수 없다
+        return False
+
+
+def _participation_consistency(par):
+    """저장된 참여도 판정값이 함께 저장된 수치와 맞는가.
+
+    수집 블록의 자기 일관성만 본다 — RSP·SPY 원천이 맞는지는 아니다. `spy_pct` 는
+    반올림값이라 0.00 이거나 없으면 방향을 다시 낼 수 없다. 그때는 차이의 부호와 맞는
+    두 이름 가운데 하나인지만 본다.
+    """
+    where = '참여도 판정값(수집 자료 market_data.json 의 session — 글을 고쳐 맞출 일이 아니다)'
+    band, gap, cap = par.get('band'), par.get('gap_pp'), par.get('spy_pct')
+    if band not in PARTICIPATION_LABELS + ('중립',):
+        return [f'{where}이 정해진 다섯 값이 아니다: {band!r}']
+    if not _number(gap):
+        return [f'{where}의 차이 수치가 수가 아니다: {gap!r}']
+    if cap is not None and not _number(cap):
+        return [f'{where}의 시총가중 등락이 수가 아니다: {cap!r}']
+    if cap:
+        allowed = {band_of(gap, cap)}
+    else:
+        allowed = {band_of(gap, 1), band_of(gap, -1)}
+    if band not in allowed:
+        return [f'{where}이 수치와 맞지 않는다: {band} / 차이 {gap:+.2f}%p'
+                + ('' if cap is None else f' · 시총가중 {cap:+.2f}%')]
+    return []
+
+
+_PP_UNIT = re.compile(r'\s*(?:[%％]\s*[pP]|[%％]\s*포인트|퍼센트\s*포인트)')
+
+
+def _has_gap_figure(text, gap):
+    """참여도 차이의 **크기**가 %p 단위로 적혔나.
+
+    참여도를 통째로 빼먹은 글을 잡는 자리다 — 옛 검사가 판정 이름으로 보던 것을 수치로
+    본다. 부호는 보지 않는다(「0.99%p 높았다」와 「-0.43%p」 둘 다 맞는 문장이다). 수치가
+    있다는 것까지만 보고, 그 수치를 푼 말이 맞는지는 보지 않는다.
+    """
+    text = _unescape(text)              # 「&#48;.95%p」도 화면에는 0.95%p 다
+    full = f'{abs(gap):.2f}'
+    forms, s = {full}, full
+    while s.endswith('0'):              # 0.50 → 0.5, 1.00 → 1.0 → 1
+        s = s[:-1]
+        forms.add(s.rstrip('.'))
+    for form in forms:
+        for m in re.finditer(re.escape(form), text):
+            i, j = m.start(), m.end()
+            if i and (text[i - 1].isdigit() or text[i - 1] == '.'):
+                continue                # 더 긴 수의 일부(10.95 안의 0.95)
+            if re.search(r'\d[eE][-+−]?$', text[:i]):
+                continue                # 지수 표기의 지수 자리(2e-1 의 1)
+            if j < len(text) and (text[j].isdigit()
+                                  or (text[j] == '.' and text[j + 1:j + 2].isdigit())):
+                continue
+            if _PP_UNIT.match(text, j):
+                return True
+    return False
 
 
 def _particle(word, with_final, without_final):
@@ -183,10 +252,22 @@ def check(html, session, market='us', price_context=None):
         par = session.get('participation')
         if par:
             said = [lab for lab in PARTICIPATION_LABELS if lab in page]
-            if par['band'] == '중립' and said:
+            if par.get('band') == '중립' and said:
                 v.append(f'참여도가 중립인데 「{said[0]}」이라 썼다 — 채우기 금지')
-            if par['band'] != '중립' and par['band'] not in blocks.get('tape', ''):
-                v.append(f'참여도 {par["band"]}({par["gap_pp"]:+.2f}%p)을 서술하지 않았다')
+            # 판정 이름을 본문에 요구하지 않는다(2026-11-17) — 이름은 내부 값이고 글은 그 뜻을
+            # 독자의 말로 쓴다. 기계가 보는 것은 판정값이 제 수치와 맞는지뿐이다. 본문이 판정과
+            # 같은 뜻인지는 여기서 보증하지 않는다.
+            v += _participation_consistency(par)
+            # 판정이 켜진 날 참여도를 통째로 빼먹지 못하게 — 이름 대신 차이 수치가 tape 문단에
+            # 있는지 본다(2026-11-18). 옛 글은 그날의 판정 이름으로 이 자리를 채웠으므로 이름도
+            # 받는다(다시 검사해도 떨어지지 않게). 있는지만 본다 — 풀이가 맞는지는 아니다.
+            band, gap = par.get('band'), par.get('gap_pp')
+            if band in PARTICIPATION_LABELS and _number(gap):
+                tape = blocks.get('tape', '')
+                if not (_has_gap_figure(tape, gap) or band in tape):
+                    v.append('참여도 판정이 켜진 날인데 tape 문단에 두 지수의 수익률 차이'
+                             f'({abs(gap):.2f}%p)가 없다 — 동일가중과 시총가중 지수의 '
+                             '수익률 차이를 %p 로 적는다')
 
     # 표에 실린 값이 원본과 어긋나면 막는다. 손으로 옮겨 적은 수치는 흔들린다.
     for row in rows:

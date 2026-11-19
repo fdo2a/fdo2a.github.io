@@ -1266,7 +1266,8 @@ def summary(ledger, now, last=None, attempts=None) -> list:
     if len(rows) > 5:
         out.append(f"일본어판 보류·갱신 대기 외 {len(rows) - 5}편 — ja_local.py status 로 확인")
     if any(human(p) for _l, p, _e in rows):
-        out.append("일본어판 보류 풀기: 인명은 glossary.NAMES 에, 고정 번역 지적은 용어집에 고치면 다음 tick 이 다시 하고, "
+        out.append("일본어판 보류 풀기: 인명은 근거(일본어 원제·일본은행 공식 명단)를 확인한 것만 glossary 에 더하고"
+                   "(같은 성의 다른 사람이면 더하지 않는다. 일본은행 사람이 맞는데 멈췄으면 글을 읽고 ROSTER_CHECKED 에), 고정 번역 지적은 용어집에 고치면 다음 tick 이 다시 하고, "
                    "나머지는 원인을 본 뒤 `ja_local.py retry <path>`")
     if isinstance(last, dict):
         at = _parse_ts(last.get("at"))

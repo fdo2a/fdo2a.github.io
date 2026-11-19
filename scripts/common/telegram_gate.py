@@ -53,6 +53,7 @@ import re
 from difflib import SequenceMatcher
 from html.parser import HTMLParser
 
+from .hidden import VOID, fragment_hidden, is_hidden
 from .numbers import strip_comments
 from .telegram import CHANNEL_WORDS, FIRM_HANWHA, FIRM_KIWOOM, POST_MAX_OPINIONS, POST_MAX_VIEWS
 from . import tg_jp
@@ -234,22 +235,23 @@ class _Sections(HTMLParser):
         self.stack, self.sections, self.cur, self.depth, self.outside = [], [], None, 0, 0
 
     def _open(self, tag, attrs, void):
-        _is_hidden = _hidden_attrs
         a = {k: (v or '') for k, v in attrs}
+        hid = _hidden_attrs(a) or is_hidden(attrs)    # 옛 판정식 + 공용 판정(common.hidden) — 여기서 숨김은 위반뿐
+        wraps = _hidden_attrs(a) or (hid and tag not in VOID)     # 빈 요소(param 포함)는 공용 판정으로는 아무것도 안 감싼다
         if self.cur is not None:
             self.cur['tokens'].append(('start', tag, a))
-            self.cur['hidden'] = self.cur['hidden'] or _is_hidden(a) or tag in _INERT
+            self.cur['hidden'] = self.cur['hidden'] or hid or tag in _INERT
             if not void:
                 self.depth += 1
             return
         if tag == 'section' and 'data-tg-section' in a:
-            self.cur = {'tokens': [], 'hidden': _is_hidden(a) or any(h for _, h in self.stack), 'closed': False}
+            self.cur = {'tokens': [], 'hidden': hid or any(h for _, h in self.stack), 'closed': False}
             self.depth = 1
             return
         if 'data-tg' in a:
             self.outside += 1
         if not void:
-            self.stack.append((tag, _is_hidden(a) or tag in _INERT))
+            self.stack.append((tag, wraps or tag in _INERT))
 
     def handle_starttag(self, tag, attrs):
         self._open(tag, attrs, tag in _VOID)
@@ -539,7 +541,7 @@ class _Views(_Offsets):
     def _open(self, tag, attrs, void):
         a = {k: (v or '') for k, v in attrs}
         mark, views = 'data-tg-section' in a, a.get('data-section', '').strip() == VIEWS
-        hidden = _hidden_attrs(a) or tag in _INERT
+        hidden = _hidden_attrs(a) or is_hidden(attrs) or tag in _INERT
         if self.cur is not None:
             self.cur['tokens'].append(('start', tag, a))
             self.cur['hidden'] = self.cur['hidden'] or hidden
@@ -557,7 +559,7 @@ class _Views(_Offsets):
             if on:
                 self.stray.append(f'<{tag} {name}>')
         if not void:
-            self.stack.append((tag, hidden, tag == 'section'))
+            self.stack.append((tag, (_hidden_attrs(a) or tag in _INERT) if tag in VOID else hidden, tag == 'section'))
 
     def handle_starttag(self, tag, attrs):
         self._open(tag, attrs, tag in _VOID)
@@ -796,6 +798,12 @@ def check(html, data, warnings=None, layout='brief', news=None, pairs=None, para
         doc = NOTE_RE.sub(' ', doc)
     v.extend(word_violations(doc, is_jp))
     els = elements(doc)
+    if not is_news:
+        # 브리프의 data-tg 는 절 없이 본문에 선다 — 표식 자신·그 안·그 조상에 숨긴 요소가 있으면 막는다(common.hidden)
+        for tid, _inner, start, end in els:
+            hid = fragment_hidden(doc, start, end)
+            if hid:
+                v.append(f'data-tg="{tid}" 인용이나 그 안·바깥 요소가 숨겨져 있다({hid}) — 숨긴 인용은 싣지 않는다')
     items = {it['id']: it for it in (data or {}).get('items', [])}
     ctx, sec_paras = {}, []
     node = None

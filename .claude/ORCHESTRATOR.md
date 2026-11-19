@@ -80,7 +80,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
 **운용자 대상 시황·리서치:** STEP 1 시작 전에 `.claude/DESK_REPORT.md`를 읽고 그 문서의 Handoff를 수행한다. 기존 시황·수급·뉴스 자료를 유지하면서 `research_notes.md`에 `운용 판단 브리핑`을 추가한다. 작성자에게 이 절과 해당 문서 경로를 반드시 넘긴다. STEP 2 초안 뒤에 그 문서의 Editorial acceptance를 수행한다. 실제 보유·운용제약이 주어지지 않았으면 자산별 조건부 판단으로 쓰며, 새 거래 아이디어가 없는 날도 정상 발행한다.
 
-**리서치 인계:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 경로(없으면 bootstrap), `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안 뒤에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다.
+**리서치 인계:** `.claude/TRADER_LEARNING.md`를 반드시 읽고 Research handoff를 수행한다. 수집·작성 담당에게 해당 문서 경로, 직전 발행본 요약 파일 경로, `research_notes.md`의 `학습·복기` 절을 전달한다. STEP 2 초안 뒤에 그 문서의 Editorial check를 수행하고, 위반 문단을 수정한 뒤 기존 발행 게이트를 통과시킨다. 요약 파일은 STEP 1 전에 레포 클론 루트에서 `python3 scripts/prev_post_digest.py --market us --date [DATE] --repo . --out <workspace>/prev_post.html` 로 만든다 — 커밋된 직전 글에서 코드가 제목·전략 코멘트·복기 절(KR 은 향후 확인 일정까지)만 글자 그대로 잘라 낸 것이라 글 전체(60-110 KB)를 읽히지 않는다. 마지막 줄이 `prev_post: bootstrap` 이면 bootstrap 이다. **exit 0 이 아니면(`prev_post: error`) 요약 파일 대신 지금까지처럼 직전 발행본 경로(없으면 bootstrap)를 전달하고** 그 줄을 최종 보고에 옮긴다.
 
 **앞으로 작성하는 보고서:** `.claude/RESEARCH_WORKFLOW.md`를 읽고 증거 → 가설·복기 기록 → 당일 cycle 순서로 진행한다. 원장은 `research/us`, 원장·증거 파일을 새 발행본과 함께 커밋한다. 기존 발행본은 이 변경의 대상이 아니다. 작성자에게 cycle ID와 모든 미해결 가설을 전달하고, 초안이 아래 검사를 통과해야 한다. 새 자료가 추가되면 cycle도 다시 기록한다.
 
@@ -155,7 +155,7 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
 
 ## STEP 2.6 — 문체 마감 (꺼져 있으면 건너뛴다, 2026-11-06)
 
-`python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 작성자 재호출(edits JSON) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
+`python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 좁은 편집자 `narrow-editor` 호출(edits JSON — 그 타입이 없으면 작성자 재호출) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
 
 **STEP 2.6 이 돌았으면** 마감한 판으로 `check_telegram.py` 를 한 번 더 돌린다 — 흐름 편집이 표식 밖으로 문장을 옮길 수 있다.
 

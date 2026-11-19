@@ -2,6 +2,24 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-11-19",
+        "individual": -693,
+        "foreign": -4026,
+        "institution": 197
+      },
+      {
+        "date": "2026-11-18",
+        "individual": -6169,
+        "foreign": -3405,
+        "institution": 4926
+      },
+      {
+        "date": "2026-11-17",
+        "individual": 4310,
+        "foreign": -14190,
+        "institution": 5134
+      },
+      {
         "date": "2026-11-16",
         "individual": 12904,
         "foreign": -13287,
@@ -42,28 +60,10 @@
         "individual": 5207,
         "foreign": -26892,
         "institution": 17092
-      },
-      {
-        "date": "2026-11-05",
-        "individual": 22087,
-        "foreign": -33733,
-        "institution": 8819
-      },
-      {
-        "date": "2026-11-04",
-        "individual": 9629,
-        "foreign": -24528,
-        "institution": 11334
-      },
-      {
-        "date": "2026-11-03",
-        "individual": 16388,
-        "foreign": -15086,
-        "institution": -4941
       }
     ],
-    "latest_date": "2026-11-16",
-    "flows_date": "2026-11-16",
+    "latest_date": "2026-11-19",
+    "flows_date": "2026-11-19",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false,
@@ -71,6 +71,24 @@
   },
   "KOSDAQ": {
     "rows": [
+      {
+        "date": "2026-11-19",
+        "individual": -32,
+        "foreign": -2143,
+        "institution": 2200
+      },
+      {
+        "date": "2026-11-18",
+        "individual": -1215,
+        "foreign": -497,
+        "institution": 1794
+      },
+      {
+        "date": "2026-11-17",
+        "individual": 1081,
+        "foreign": -882,
+        "institution": -265
+      },
       {
         "date": "2026-11-16",
         "individual": 3674,
@@ -112,28 +130,10 @@
         "individual": -1222,
         "foreign": -896,
         "institution": 2069
-      },
-      {
-        "date": "2026-11-05",
-        "individual": 1568,
-        "foreign": -585,
-        "institution": -1024
-      },
-      {
-        "date": "2026-11-04",
-        "individual": -706,
-        "foreign": 114,
-        "institution": 704
-      },
-      {
-        "date": "2026-11-03",
-        "individual": 3180,
-        "foreign": -713,
-        "institution": -2359
       }
     ],
-    "latest_date": "2026-11-16",
-    "flows_date": "2026-11-16",
+    "latest_date": "2026-11-19",
+    "flows_date": "2026-11-19",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false,

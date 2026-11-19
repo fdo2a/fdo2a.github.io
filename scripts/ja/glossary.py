@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 import sys
+from collections import namedtuple
 
 VERSION = "g1"
 
@@ -429,17 +430,20 @@ LATIN_MAP = {
     "FX": ("為替",),
 }
 
-# ── 인명·기관명(번역 지시의 참고 자료) — 레포의 일본어 원제로 확인한 표기만 ──────────
-# 근거: `japan/data/news/**` 의 `title`(NFKC) 에 값 문자열이 그대로 있는 것만 둔다(2026-11-14,
-# 원제 398건). 시험 `test_names_are_confirmed_in_repo_titles` 가 매번 다시 확인한다.
-# - **성과 이름이 함께 확인된 사람은 0명**이다. 그래서 사람은 「성 + 직함」 꼴(원제의 `=片山財務相`)만
-#   두고, 이름(下の名前) 한자는 두지 않는다 — 본문에 이름까지 나오면 번역기가 unverified_names 로
-#   올리고 그 글은 보류된다(사람이 원출처로 확인해 여기에 더하면 풀린다).
-# - 같은 한글 성이 다른 사람인 경우가 있다: 「기우치 미노루 경제재정상」(城内)과 「기우치 다카히데」
-#   (노무라 이코노미스트, 木内) — 성만으로는 키를 만들지 않는다.
-# - 1차에 있던 이름 한자(植田和男·氷見野良三·内田眞一 …)와 확인되지 않은 기관(日本銀行·金融庁·
-#   厚生労働省·経済産業省·日本取引所グループ·東京証券取引所)은 뺐다. 원제의 약칭(日銀·経産省·東証)은 확인됐다.
-NAMES = {
+# ── 인명·기관명(번역 지시의 참고 자료) — 근거가 있는 표기만 ─────────────────────────
+# 근거는 둘뿐이다. `name_evidence` 가 판정하고 시험 `test_names_have_evidence` 가 매번 다시 확인한다.
+# ① 원제: `japan/data/news/**` 의 `title`(NFKC) 에 값 문자열이 그대로 있다 → `NAMES_TITLES`(손 목록).
+#    사람은 「성 + 직함」 꼴(원제의 `=片山財務相`)만 둔다 — 원제에서 성과 이름이 함께 확인된 사람은 0명이다.
+# ② 일본은행 공식 명단: `BOJ_BOARD`(정책위원 9명) → `roster_terms()` 가 풀네임과 「성 + 직함」을 만든다
+#    (2026-11-17 사용자 결정. **일본은행 명단까지다** — 다른 기관 명단은 사용자 결정 없이는 근거가 아니다).
+# - 맨 성만으로는 키를 만들지 않는다. 같은 한글 성의 다른 사람이 실제로 나온다: 「기우치 미노루 경제재정상」
+#   (城内)과 「기우치 다카히데」(노무라 이코노미스트, 木内), 「상선미쓰이 다무라 조타로 사장」, 「우치다 가즈히토
+#   이사장」, 「사토 모토히로 교수」. 그래서 명단 한자는 일본은행 사람으로 가리킨 자리에만 쓰게 하고(`NAMES_NOTE`),
+#   `roster_misuse` 가 번역 결과를 다시 본다.
+# - 그 밖의 사람은 번역기가 unverified_names 로 올리고 그 글은 보류된다(사람이 근거를 확인해 더하면 풀린다).
+# - 확인되지 않은 기관 정식명(日本銀行·金融庁·厚生労働省·経済産業省·日本取引所グループ·東京証券取引所)은 두지 않는다.
+#   원제의 약칭(日銀·経産省·東証)은 확인됐다.
+NAMES_TITLES = {
     # 사람: 성 + 직함
     "우에다 일본은행 총재": "植田日銀総裁",
     "히미노 일본은행 부총재": "氷見野日銀副総裁",
@@ -458,8 +462,183 @@ NAMES = {
     "도쿄증권거래소": "東証",
 }
 
-NAMES_NOTE = ("人名は姓と肩書だけが確認済み(下の名前の漢字は未確認)。"
-              "参考資料にない名(下の名前)や人物が本文にあれば unverified_names に入れる。")
+BojMember = namedtuple("BojMember", "role family given romaji ko_family ko_given ko_alias")
+
+# 일본은행 정책위원회 명단 — `source` 를 `as_of` 에 직접 읽은 그대로(로마자는 영문판 같은 경로).
+# - 한글 표기(ko_family·ko_given)는 로마자를 외래어 표기법대로 옮긴 것 하나뿐이다.
+# - `ko_alias` 는 표준 표기가 아닌 한글 성이다. **같은 사람임을 따로 확인한 것만** 두고 근거를 `BOJ_ALIAS_EVIDENCE`
+#   에 적는다. 별칭은 그 문단이 일본은행을 함께 말할 때만 통한다(`roster_misuse`).
+# - 구성이 바뀌면(일본은행 「審議委員の発令について」「総裁・副総裁の発令について」) 다시 읽어 고친다. 새 위원의
+#   이름은 여기 없으니 그 글이 names 로 보류된다 — 그 보류가 다시 읽으라는 신호다. 물러난 사람이 남아 있어도
+#   한자는 그 사람 것이다.
+BOJ_BOARD = {
+    "source": "https://www.boj.or.jp/about/organization/policyboard/index.htm",
+    "as_of": "2026-11-17",
+    "members": (
+        BojMember("総裁", "植田", "和男", "UEDA Kazuo", "우에다", "가즈오", ()),
+        BojMember("副総裁", "内田", "眞一", "UCHIDA Shinichi", "우치다", "신이치", ()),
+        BojMember("副総裁", "氷見野", "良三", "HIMINO Ryozo", "히미노", "료조", ()),
+        BojMember("審議委員", "高田", "創", "TAKATA Hajime", "다카타", "하지메", ("다카다",)),
+        BojMember("審議委員", "田村", "直樹", "TAMURA Naoki", "다무라", "나오키", ()),
+        BojMember("審議委員", "小枝", "淳子", "KOEDA Junko", "고에다", "준코", ()),
+        BojMember("審議委員", "増", "一行", "MASU Kazuyuki", "마스", "가즈유키", ()),
+        BojMember("審議委員", "浅田", "統一郎", "ASADA Toichiro", "아사다", "도이치로", ()),
+        BojMember("審議委員", "佐藤", "綾野", "SATO Ayano", "사토", "아야노", ()),
+    ),
+}
+# 별칭의 근거 — (한글 별칭, 한자 성): 같은 사람이라고 본 까닭. 시험이 별칭마다 이 줄이 있는지 본다.
+BOJ_ALIAS_EVIDENCE = {
+    ("다카다", "高田"): "た 를 「다」로 적은 한글 표기(표준은 다카타). 2026-11-16 한글 일간·수집 요약의 「일본은행 다카다 "
+                       "하지메 심의위원의 도쿠시마 강연」과 같은 날 원제 「…＝高田日銀委員」이 같은 강연이고, 이름 하지메와 "
+                       "직함이 명단과 같다. 명단에 Takata·Takada 로 읽힐 성은 高田 하나다.",
+}
+ROLE_SUFFIX = {"総裁": "日銀総裁", "副総裁": "日銀副総裁", "審議委員": "日銀委員"}   # 원제가 쓰는 꼴
+ROLE_KO = {"総裁": "총재", "副総裁": "부총재", "審議委員": "심의위원"}
+_ROLE_WORDS = {"総裁": "총재", "副総裁": "부총재", "審議委員": "(?:심의위원|정책위원|위원)"}   # 한글 글이 쓰는 꼴
+# 일본어에서 명단 한자가 놓일 수 있는 꼴은 닫혀 있다: 풀네임(+직함·氏), 성+그 사람의 직함, 성+氏. 그 밖의 자리에 놓인
+# 성 한자(「佐藤社長」「田村を」「高田工業」)는 전부 「맨 성」이다. 「委員長」「委員会」「総裁選」은 그 직함이 아니다.
+_ROLE_JA = {"総裁": r"(?:日銀)?総裁(?!選)", "副総裁": r"(?:日銀)?副総裁",
+            "審議委員": r"(?:日銀)?(?:審議委員|政策委員|委員)(?![長会])"}
+
+
+def _ja_forms(m, ja: str):
+    """일본어에서 그 성 한자가 (닫힌 꼴로 놓인 수, 맨 성으로 놓인 수)."""
+    f, g, role = re.escape(m.family), re.escape(m.given), _ROLE_JA[m.role]
+    closed = {x.start() for x in re.finditer(rf"{f}(?:{g}(?:{role}|氏)?|{role}|氏)", ja)}
+    total = [x.start() for x in re.finditer(f, ja)]
+    return len(closed), sum(1 for i in total if i not in closed)
+
+
+def roster_terms() -> dict:
+    """명단에서 만든 참고 표기 — 풀네임과 「성 + 직함」. 맨 성은 만들지 않는다."""
+    out = {}
+    for m in BOJ_BOARD["members"]:
+        for kf in (m.ko_family,) + tuple(m.ko_alias):
+            out[f"{kf} {m.ko_given}"] = m.family + m.given
+            out[f"{kf} 일본은행 {ROLE_KO[m.role]}"] = m.family + ROLE_SUFFIX[m.role]
+    return out
+
+
+NAMES = {**roster_terms(), **NAMES_TITLES}
+
+
+def roster_evidence(ja: str, titles_blob: str) -> bool:
+    """명단에서 만든 값의 근거: 명단의 풀네임이거나, 명단의 성 + **그 사람의** 직함(그 직함 꼴이 원제에서
+    쓰인 적이 있을 때만). 원제에 우연히 든 문자열은 여기서 근거가 아니다."""
+    for m in BOJ_BOARD["members"]:
+        if ja == m.family + m.given:
+            return True
+        suf = ROLE_SUFFIX[m.role]
+        if ja == m.family + suf and re.search(r"[\u4e00-\u9fff]" + re.escape(suf), titles_blob):
+            return True
+    return False
+
+
+# ── 명단 한자를 명단 밖 사람에게 붙였는가 — 결정적 검사 ─────────────────────────────
+# 명단 한자는 한글 문단이 그 사람을 **직함과 붙여** 가리킬 때만 통한다(「다무라 심의위원」「우에다 가즈오 일본은행 총재」).
+# 직함은 그 사람 것이어야 한다(우에다 → 총재). 맨 「위원」「총재」가 문단 어딘가에 있는 것으로는 안 된다.
+_PH = re.compile(r"⟦/?[a-z]+/?⟧")          # extract.PH_RE 와 같은 꼴(자체 닫힘 ⟦a/⟧ 포함)
+_ORG_KO = r"(?:일본은행|일은|BOJ)"
+_UNIT_ORG = re.compile(r"일본은행|BOJ")
+# 직함 바로 뒤가 낱말의 끝인가 — 한글이 아니거나, 조사로 이어진다. 목록에 없는 한글이 이어지면 그 직함이 아니다
+# (「위원장」「위원회」「총재직」). 목록이 빠뜨린 조사는 **보류 쪽**으로만 틀린다(통하는 자리로 안 쳐 줄 뿐이다).
+# 성 쪽에는 이런 목록을 쓰지 않는다 — 조사를 하나 빠뜨리면 다른 사람이 통과하기 때문이다(`_surname`).
+_END = (r"(?:(?![가-힣])|(?=에게서|으로부터|로부터|이라고|에게|한테|께서|처럼|까지|부터|조차|마저|보다|이랑|하고|이며|이다|였다"
+        r"|라고|으로|은|는|이|가|을|를|의|도|와|과|에|로|만|께|랑|며|씨|측|나))")
+
+
+# 사람이 그 글을 읽고 「이 글의 이 한자는 명단의 그 사람이 맞다」(또는 명단과 무관한 낱말이다)고 확인한 것 —
+# 경로 → 한자 성들. 이름 검사가 틀리게 멈춘 글을 푸는 길은 이것뿐이다(검사는 걸리는 쪽으로 넓게 짰다).
+# 줄마다 무엇을 보고 확인했는지 주석으로 남긴다. 이 파일을 고치면 그 글이 다시 돈다.
+ROSTER_CHECKED = {}
+
+# 문장 머리에 놓인 직함 붙은 성 — 앞에 소속을 달 자리가 없다. 「이날 히미노 부총재는」처럼 이끄는 말 하나까지.
+_LEAD = r"(?:^|[.!?。」”\n]\s*)(?:(?:이날|한편|또|또한|다만|앞서|이어|전날|반면|특히|그러나|같은 날)\s)?$"
+
+
+def _surname(kf: str) -> str:
+    """그 성이 낱말 머리에 선 자리 — 뒤에 무엇이 붙든 사람으로 본다(조사 목록도 제외 낱말도 두지 않는다)."""
+    return rf"(?<![가-힣]){re.escape(kf)}"
+
+
+def _roster_unit(m, ko: str):
+    """한 문단에서 그 사람 성이 놓인 자리 → (직함과 붙은 표준 표기 수, 그 가운데 문장 머리에 놓인 수, 직함과 붙은
+    별칭 수, 직함과 안 붙은 수, 그 문단이 일본은행을 말하나)."""
+    std = opening = alias = loose = 0
+    org = bool(_UNIT_ORG.search(ko))
+    for i, kf in enumerate((m.ko_family,) + tuple(m.ko_alias)):
+        k = re.escape(kf)
+        anchored = re.compile(rf"(?:{_ORG_KO}\s?)?(?<![가-힣]){k}(?:\s{re.escape(m.ko_given)})?\s?(?:({_ORG_KO})\s?)?"
+                              rf"{_ROLE_WORDS[m.role]}{_END}")
+        spans = []
+        for a in anchored.finditer(ko):
+            spans.append(a.span())
+            org = org or a.group(0).startswith(("일본은행", "일은", "BOJ")) or bool(a.group(1))
+            if i == 0:
+                std += 1
+                opening += bool(re.search(_LEAD, ko[:a.start()]))
+            else:
+                alias += 1
+        for p in re.finditer(_surname(kf), ko):
+            if not any(s <= p.start() < e for s, e in spans):
+                loose += 1
+    return std, opening, alias, loose, org
+
+
+def roster_strong(kos) -> frozenset:
+    """그 글에서 **일본은행을 함께 말한 문단** 안에 직함과 붙어 나온 구성원(한자 성+이름)."""
+    out = set()
+    for ko in kos:
+        ko = _PH.sub("", str(ko or ""))
+        for m in BOJ_BOARD["members"]:
+            std, _opening, alias, _loose, org = _roster_unit(m, ko)
+            if org and (std or alias):
+                out.add(m.family + m.given)
+    return frozenset(out)
+
+
+def roster_misuse(ko: str, ja, strong=frozenset(), checked=()) -> list:
+    """명단 한자를 명단 밖 사람에게 붙인 것으로 보이는 한글 성들 — 그 글은 names 로 보류된다. `strong` 은
+    `roster_strong(그 글의 모든 문단)`, `checked` 는 `ROSTER_CHECKED[그 글]`(사람이 확인한 한자 성).
+    통하는 자리 = 성(+이름)에 그 사람의 직함이 붙었고,
+      · 그 문단이 일본은행을 말한다(별칭은 이 경우만), 또는
+      · 그 자리가 문장 머리이고(앞에 소속을 달 자리가 없다) 그 글의 다른 문단이 같은 사람을 위처럼 가리켰다.
+    세 가지를 센다 — 한글 문단의 통하는 자리 수 A, 일본어의 닫힌 꼴 수 C(`_ja_forms`: 풀네임, 성+그 사람의 직함,
+    성+氏), 일본어의 맨 성 수 B. 일본어에 그 성 한자가 하나라도 있으면 아래가 **전부** 참이어야 통과한다.
+      · B = 0 — 명단 한자는 닫힌 꼴로만 놓인다(「佐藤社長」「田村を」「高田工業」는 걸린다).
+      · 한글 문단에 직함과 붙지 않은 그 성이 낱말 머리에 하나도 없다(뒤에 무엇이 붙든 사람으로 본다).
+      · C ≤ A — 한글이 그 사람을 가리킨 횟수보다 일본어가 더 많이 쓰지 않는다(한 문단의 두 번째 사람에게 붙인 것).
+    문장 꼴이나 낱말 목록으로 가르지 않는다. 틀리면 보류 쪽이다(사람이 `ROSTER_CHECKED` 로 푼다).
+    한 글자 성 増 은 일본어 어디에나 나오는 글자라, 맨 増 은 한글 문단에 직함 없는 낱말 머리 「마스」가 있을 때만
+    센다(그 문단의 増 은 전부 — 「마스터카드」+「増益」도 걸린다. 한글 48,775 문단 가운데 그런 문단은 1개였다)."""
+    import unicodedata
+    ko = _PH.sub("", str(ko or ""))
+    ja = unicodedata.normalize("NFKC", _PH.sub("", str(ja or "")))
+    out = []
+    for m in BOJ_BOARD["members"]:
+        if m.family in checked:
+            continue
+        std, opening, alias, loose, org = _roster_unit(m, ko)
+        closed, bare = _ja_forms(m, ja)
+        if len(m.family) < 2 and not loose:
+            bare = 0
+        if not closed and not bare:
+            continue
+        if org:
+            accepted = std + alias
+        else:
+            accepted = std if (std == opening and not alias and m.family + m.given in strong) else 0
+        if not bare and not loose and closed <= accepted:
+            continue
+        seen = [kf for kf in (m.ko_family,) + tuple(m.ko_alias) if kf in ko]
+        out.append(seen[0] if seen else m.ko_family)
+    return out
+
+
+NAMES_NOTE = ("確認済みの表記は二種類だけ: ①「姓+肩書」(日本語見出しで確認)、②日銀政策委員会の9名のフルネーム"
+              "(日銀公式サイトで確認)。②の漢字は、本文がその人物を日銀の総裁・副総裁・審議委員として示している"
+              "場合にだけ使う。同じ姓でも別人(企業の社長、大学教授、証券会社のストラテジストなど)には使わず、"
+              "unverified_names に入れる。参考資料にない名(下の名前)や人物が本文にあれば unverified_names に入れる。")
 
 
 # ── 화면에 안 보이는 기계 표식 속성의 값 — 속성별 닫힌 어휘 ─────────────────────

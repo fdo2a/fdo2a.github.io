@@ -81,6 +81,7 @@ def test_a_quote_inside_a_judgment_zone_stays_excluded():
 
 
 # 2026-11-07 사용자 결정 「번역투 고치는것만 검토하는걸로 하자」 — 반복·끊긴 흐름·기타는 발행 전에 고치지 않는다
+# (2026-11-18 사용자 결정으로 `용어` 가 같은 길을 탄다 — `test_clarity.py`. 반복·끊긴 흐름·기타는 여전히 고치지 않는다.)
 def test_only_translationese_becomes_a_style_candidate():
     got = split.split(REVIEW, HTML)
     assert {it['hint'].split(':')[0] for it in got['candidates']['items']} == {'번역투'}

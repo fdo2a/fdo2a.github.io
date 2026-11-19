@@ -1,0 +1,260 @@
+{
+ "report_date": "2026-11-17",
+ "market": "kr",
+ "collected_utc": "2026-11-17T09:13:04+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-15T22:46:34+00:00",
+  "kwusa": "2026-11-16T08:43:34+00:00",
+  "lim_econ": "2026-11-15T22:39:38+00:00",
+  "d_ticker": "2026-11-16T15:09:35+00:00",
+  "aethersemiconductor": "2026-11-16T14:55:06+00:00",
+  "FastStockNews": "2026-11-16T11:36:35+00:00",
+  "FastStockNewsUSA": "2026-11-16T13:34:10+00:00",
+  "insidertracking": "2026-11-16T11:59:25+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-15T22:46:34+00:00",
+   "last_id": 3001,
+   "last_dt": "2026-11-16T22:41:45+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-16T08:43:34+00:00",
+   "last_id": 61775,
+   "last_dt": "2026-11-17T00:54:00+00:00",
+   "read": 4
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-15T22:39:38+00:00",
+   "last_id": 2136,
+   "last_dt": "2026-11-16T22:38:07+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-16T15:09:35+00:00",
+   "last_id": 4180,
+   "last_dt": "2026-11-17T06:42:14+00:00",
+   "read": 6
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-16T14:55:06+00:00",
+   "last_id": 27017,
+   "last_dt": "2026-11-17T09:12:19+00:00",
+   "read": 22
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-16T11:36:35+00:00",
+   "last_id": 128080,
+   "last_dt": "2026-11-17T08:55:20+00:00",
+   "read": 82
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-16T13:34:10+00:00",
+   "last_id": 24507,
+   "last_dt": "2026-11-17T03:46:41+00:00",
+   "read": 6
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-16T11:59:25+00:00",
+   "last_id": 69499,
+   "last_dt": "2026-11-17T09:01:00+00:00",
+   "read": 66
+  }
+ },
+ "items": [
+  {
+   "id": "d_ticker/4177",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T22:28:18+00:00",
+   "url": "https://t.me/d_ticker/4177",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "드러켄밀러 펀드가 3분기 13F 공시에서 새로 매수한 종목으로 시게이트와 웨스턴디지털 등 하드디스크 기업, 뉴몬트·배릭 마이닝·애그니코 이글 마인스 등 금광 기업, 솜니그룹, 앱러빈, 스페이스X, TTM 테크놀로지스, 휴매나가 확인됐다. 금액은 시게이트 9000만 달러가 가장 크고 휴매나가 2500만 달러로 가장 작다. 공시에 드러난 매수 목록만으로는 펀드가 특정 업종에 베팅했다는 시각을 단정하기 어렵다는 의견도 가능하다."
+  },
+  {
+   "id": "hedgecat0301/3001",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-16T22:41:45+00:00",
+   "url": "https://t.me/hedgecat0301/3001",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 엔비디아 CEO 젠슨황의 거취 불확실성과 세미애널리시스의 AI 가속기 수요 하향 전망이 AI주 약세를 키웠다고 진단했다. 다만 중장기 AI 수요 감소를 확정적으로 단정하기보다는 다음 분기 실적 시즌의 투자·수요 전망 변화를 확인하며 대응할 필요가 있다고 봤다. 당장은 2일 뒤 예정된 엔비디아 실적과 앤스로픽 IPO 흥행이 분위기 전환의 계기가 될 수 있다고 보았다. 국내 증시는 전일 AI 악재를 선반영한 측면이 있고 코스피200 동일가중지수의 방어력이 두드러져 장중 낙폭을 되돌릴 것으로 전망했다. 코스피 선행 PBR 0.96배 수준을 근거로 지수 급락 여지는 제한적이라며 낙폭과대 주도주 분할 매수와 운송·은행·통신 업종 편입을 대안으로 제시했다."
+  },
+  {
+   "id": "d_ticker/4178",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-16T22:45:34+00:00",
+   "url": "https://t.me/d_ticker/4178",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 상무부 산업안보국이 발표한 '첨단 칩 원격 접근 대응 규정' 관보는 미국 내 파운드리와 후공정 패키징(OSAT) 업체가 첨단 노드 로직 칩을 수출할 경우 이를 데이터센터용 고성능 칩으로 간주하고, 중국 등 수출통제 대상국이 수입하려면 규제 대상 첨단 칩이 아님을 입증해야 한다고 명시했다. 규제 대상인 첨단 칩의 기준으로는 HBM 탑재와 무관하게 최종 패키징 기준 트랜지스터 수 300억 개 미만이라는 조건과, HBM을 탑재하지 않은 상태에서 트랜지스터 총합이 2027년 350억 개, 2029년 이후 400억 개 미만이어야 한다는 조건이 제시됐다. 이를 두고 HBM 탑재 여부를 면밀히 들여다보겠다는 시각이 나온다."
+  },
+  {
+   "id": "aethersemiconductor/27002",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T01:59:37+00:00",
+   "url": "https://t.me/aethersemiconductor/27002",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_note": "합쇼체·해요체 「습니다.」"
+  },
+  {
+   "id": "aethersemiconductor/27004",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T02:00:14+00:00",
+   "url": "https://t.me/aethersemiconductor/27004",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "씨티 아시아 트레이딩 전략팀의 모하메드 아파바이는 창신메모리(CXMT)가 2026년 7월 27일 상하이 과창판에 상장한 사실을 전하며, 이 종목을 세계에서 가장 깔끔하면서도 기술적으로는 가장 취약한 포지션으로 볼 수 있는지 묻는 시각을 제시했다. 중국 역사상 최대인 85억 달러 규모의 A주 반도체 공모는 개인 212배, 기관 최대 570배의 청약 경쟁률을 기록해 공모 규모가 98억 달러로 늘어났다. 한편 커뮤니티 글쓴이는 CXMT가 코스피와 92%의 상관관계를 보인다고 주장했다."
+  },
+  {
+   "id": "FastStockNews/128046",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-17T03:23:33+00:00",
+   "url": "https://t.me/FastStockNews/128046",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "헤럴드경제",
+    "url": "https://biz.heraldcorp.com/article/10939552?ref=naver",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "한국전기안전공사 재직자로 밝힌 한 직원이 지난 16일 익명 커뮤니티 블라인드에 수능 시험 AI 부정행위를 자신들이 잡아내겠다는 글을 올려 화제가 되고 있다. 이 직원은 전국 사업소 직원 3000명이 개인당 열화상 카메라와 검전기를 1대씩 갖고 있다고 밝혔다. 공사는 지난해에도 전국 1282개 시험장의 전기설비를 점검하는 등 매년 수능을 앞두고 시험장 안전점검을 해오고 있다. 열화상 카메라는 작동 중인 기기에서 나는 열을 포착해 신체나 의복에 숨긴 기기를 찾아낼 가능성이 거론된다. 다만 초소형 이어폰처럼 발열이 적거나 옷에 가려진 기기는 감지가 어렵다는 지적이 나온다. 검전기는 전압 유무를 확인하는 장비로 무선 신호는 탐지하지 못해, 블루투스나 와이파이 감지에는 별도의 전파탐지기가 필요하다. 누리꾼들은 호응하고 있지만 장비별 한계가 뚜렷하다는 점은 남는다."
+  },
+  {
+   "id": "aethersemiconductor/27011",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T03:52:18+00:00",
+   "url": "https://t.me/aethersemiconductor/27011",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-17",
+   "summary_ko": "수능 대책이 나왔다는 소식과 함께, 시험 도중 재난문자를 한 번 보내 휴대전화를 들고 있는 학생을 가려내는 방법도 있다는 글이 올라왔다. 글에는 마련된 대책의 구체적인 내용이 나와 있지 않으며, 글쓴이는 이를 부정행위를 적발하는 한 가지 수단으로 언급하고 있을 뿐이다. 이 방식이 실제로 시행되는지, 효과가 어떨지는 확인되지 않은 상태다."
+  },
+  {
+   "id": "FastStockNews/128054",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-17T04:44:30+00:00",
+   "url": "https://t.me/FastStockNews/128054",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "디일렉",
+    "url": "https://www.thelec.kr/news/articleView.html?idxno=65525",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "비엠티가 미국 스웨즈락, 일본 후지킨 등 소수 업체만 확보한 글로벌 장비사 공급 자격을 얻었다. 3~4년간의 평가를 거쳐 지난 9월 A사의 승인 공급사 명단에 올랐으며, A사의 모든 장비와 프로젝트에 제품을 공급할 수 있게 됐다. 공급 제품은 반도체 증착·식각 장비 배관에 쓰이는 UHP 피팅과 밸브다. 올해 하반기 일부 물량을 공급했고 내년부터 품목을 늘려 A사에서만 연간 수백억원의 추가 매출을 기대한다. 램리서치, 도쿄일렉트론, ASML, KLA와도 정식 부품 승인을 논의 중이다. 부산 2공장은 9월 일부 가동을 시작했으며, 내년 6월 설비 확충을 마치면 생산능력이 2500억원에서 3500억원으로 40% 늘어난다. 올해 3분기 매출은 502억원, 영업이익은 89억원으로 분기 매출 500억원을 처음 넘겼고, 수주잔고는 약 1300억원이다. 회사는 2030년 매출 5000억원 달성을 목표로 제시했다."
+  },
+  {
+   "id": "FastStockNews/128061",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-17T05:40:40+00:00",
+   "url": "https://t.me/FastStockNews/128061",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "조선비즈",
+    "url": "https://biz.chosun.com/it-science/ict/2026/11/17/4MWPKOEPTNG5NKCR7PKZLJ4D5Q/",
+    "basis": "link"
+   },
+   "article_date": "2026-11-17",
+   "summary_ko": "예스티가 삼성전자의 차세대 1d D램 공정에 쓰일 고압수소어닐링(HPA) 장비 공급사로 선정된 것으로 확인됐다. 예스티는 지난 6월 삼성전자 장비선정위원회를 통과했으며, 웨이퍼 열처리로 결함을 줄이는 이 장비의 검증용 설비를 11월 말에서 12월 사이 납품할 계획이다. 납품 장비는 한 번에 웨이퍼 125매를 처리하는 제품이다. 다만 이번 반입은 공정 적합성을 평가하기 위한 검증용이어서 양산용 구매발주서(PO)는 아직 발행되지 않았다. 후속 평가 결과에 따라 정식 발주와 공급 규모가 정해질 전망이다. 삼성전자가 기존 공급사 HPSP 외에 예스티 장비를 도입하는 것은 공급망을 다변화하려는 목적으로 풀이된다. 예스티는 올해 파운드리와 낸드플래시용 HPA 공급을 시작했으며, 3분기 매출은 438억원, 영업이익은 110억원으로 각각 전년 동기 대비 약 134%, 900% 증가했다."
+  },
+  {
+   "id": "aethersemiconductor/27012",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T05:54:50+00:00",
+   "url": "https://t.me/aethersemiconductor/27012",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "미국 상무부가 11월 16일 발표한 잠정 최종 규칙으로 중국 본사 기업이 역외 데이터센터에서 연산 자원을 쓰려면 라이선스가 필요해졌고, 이 규정이 학습뿐 아니라 해외에서 제공되는 추론까지 옭죌 것이라는 시각이 제시됐다. 이에 따라 비용 부담은 중국 내 클라우드보다 해외 추론 서비스 쪽에 더 무겁게 돌아갈 것으로 보고 있다. 해외 수요가 중국 클라우드 업체로 돌아오면서 가동률과 가격이 오를 수 있으나, 알리클라우드의 성장 동력은 이제 고객 수요보다 칩 공급에 달려 있다는 의견도 나왔다. 기업별 노출도는 역외 컴퓨팅 의존도에 따라 갈린다는 판단이며, Z.AI는 영향이 거의 없고 텐센트는 상대적으로 유리하며 미니맥스는 직접적인 타격을 받을 것이라는 견해다. 알리바바·Z.AI·텐센트에는 비중확대, 미니맥스에는 중립 의견이 유지됐다."
+  },
+  {
+   "id": "aethersemiconductor/27016",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-17T08:56:33+00:00",
+   "url": "https://t.me/aethersemiconductor/27016",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "메모리 3사인 삼성전자, SK하이닉스, 마이크론이 주요 고객사와 잇달아 장기공급계약(LTA)을 맺은 것이 애플의 협상 입지를 약화시켰다는 시각이다. 애플도 최근 SK하이닉스와 메모리 공급사에 유리한 조건으로 LTA를 체결한 것으로 알려졌다는 소식이다. 다만 기사 제목에 나온 삼성 D램 장기계약의 구체적 조건이나 규모는 이 글만으로는 확인되지 않는다."
+  }
+ ],
+ "stats": {
+  "items": 11,
+  "summarized": 10,
+  "summary_failed": 1,
+  "stale_dropped": 2,
+  "channels_failed": [],
+  "holes": []
+ }
+}

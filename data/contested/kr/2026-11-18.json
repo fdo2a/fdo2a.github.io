@@ -1,0 +1,60 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-18",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-18T12:38:48+00:00",
+ "cutoff_at": "2026-11-18T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "79e40670b54f75885c3791a8fc720ee52afcd334",
+  "sha256": "ba975740e625870a24e07e6fc969b5c5789c6d1ff40280a72d199231d9b00ba7",
+  "extra": {
+   "kr_econ.json": "5df1bbfffd72758a3a2b6d12594ec46f19dfc98fdd370aefa24d606240c81fbf",
+   "kr_flows.json": "f4b845eb0de1b7723d39ab285f496ecc226bbf824dd08f89d1e55597db07f2e6",
+   "kr_session.json": "0bbfcdafde0c2e658fd8a5cf8a233d5d7d65161e134a0654a31135f46fad9125"
+  }
+ },
+ "counts": {
+  "harvest": 488,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "discovery": "truncated",
+  "hosts": {
+   "sedaily": "ok",
+   "herald": "ok",
+   "sbs": "ok",
+   "mk": "ok",
+   "yna": "ok"
+  },
+  "notes": [
+   "discover:488"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 19077,
+   "out": 3591
+  }
+ },
+ "event": {
+  "topic_ko": "시진핑 APEC CEO 서밋 연설과 미중 정상회담 전 통상 갈등",
+  "query": "시진핑 폐쇄는 낙후",
+  "trigger": []
+ },
+ "content_hash": "f35d34ee3bda13ea"
+}

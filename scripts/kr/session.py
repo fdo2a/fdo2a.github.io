@@ -159,6 +159,31 @@ def usdkrw_window(bars, report_date):
             'last_t': picked[-1][0].strftime('%H:%M'), 'bars': len(picked)}
 
 
+def settle_peers(report_date, collect=None):
+    """아시아 이웃 지수의 그 세션 등락. -> ({이름: (등락, 기준일)}, {이름: {'reason', 'note_ko', 'date'}}).
+
+    네이버의 날짜 붙은 종가를 야후와 맞춰 본 것만 싣는다 — 미국 수집기와 같은 함수다. 무엇이
+    실패해도 예외를 내지 않고, 그 지수는 이유와 함께 빠진다.
+    """
+    peers, missing = {}, {}
+    try:
+        from us import global_close
+        settle = (collect or global_close.collect)([t for _, t in PEERS], report_date)
+        for name, ticker in PEERS:
+            r = (settle or {}).get(ticker) or {}
+            if r.get('status') == 'ok':
+                peers[name] = ((r['close'] / r['prev_close'] - 1) * 100, r['date'])
+            else:
+                reason = r.get('reason') or 'naver_fetch_failed'
+                missing[name] = {'reason': reason, 'date': r.get('date'),
+                                 'note_ko': global_close.NOTE_KO.get(reason, reason)}
+    except Exception as e:
+        peers = {}
+        missing = {name: {'reason': 'settle_failed', 'date': None, 'note_ko': str(e)[:120]}
+                   for name, _ in PEERS}
+    return peers, missing
+
+
 def asia_peers(pcts, kospi_pct):
     """아시아 이웃 시장과 코스피의 상대 강약.
 

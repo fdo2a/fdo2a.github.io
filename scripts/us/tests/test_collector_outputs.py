@@ -68,3 +68,17 @@ def test_econ_pair_refuses_a_previous_that_is_not_the_month_before():
     # (2026-11-18 3회차 G5: 전에는 행을 통째로 버렸다)
     actual, previous = cmd._econ_pair(vals, 'mom_pct')
     assert previous is None and round(actual, 4) == round((103.0 / 102.0 - 1) * 100, 4)
+
+
+def test_session_block_gets_the_settled_global_closes():
+    """세계 지수 행은 이력의 마지막 행이 아니라 두 원천으로 확인한 판정에서 나온다(2026-11-19)."""
+    assert 'settle=global_close_settle(report_date)' in SRC
+    src = inspect.getsource(cmd.global_close_settle)
+    assert 'global_close.collect(' in src and 'except Exception' in src
+
+
+def test_global_close_settle_never_raises(monkeypatch):
+    from us import global_close
+    monkeypatch.setattr(global_close, 'collect',
+                        lambda *a, **k: (_ for _ in ()).throw(RuntimeError('down')))
+    assert cmd.global_close_settle('2026-11-18') == {}

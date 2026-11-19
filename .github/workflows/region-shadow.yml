@@ -40,7 +40,7 @@ jobs:
           ref: main
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - name: Install deps
         run: pip install --quiet certifi pytest 'anthropic>=1.8,<2'
       - name: Run unit tests

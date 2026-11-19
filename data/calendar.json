@@ -1,78 +1,8 @@
 {
-  "report_date": "2026-11-16",
-  "generated": "2026-11-17 08:19 KST",
+  "report_date": "2026-11-18",
+  "generated": "2026-11-19 08:48 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-retail-sales-20261117",
-      "kind": "release",
-      "name_ko": "소매판매",
-      "date": "2026-11-17",
-      "time_et": "08:30",
-      "time_kst": "2026-11-17 22:30",
-      "status": "confirmed",
-      "source": "Census 공표 일정(Census·FRED 대조)",
-      "assets": [
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
-    },
-    {
-      "key": "release-industrial-production-20261117",
-      "kind": "release",
-      "name_ko": "산업생산(G.17)",
-      "date": "2026-11-17",
-      "time_et": "09:15",
-      "time_kst": "2026-11-17 23:15",
-      "status": "confirmed",
-      "source": "Federal Reserve 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "auction-20261117-6-Week",
-      "kind": "auction",
-      "name_ko": "6-Week 국채 입찰 1,000억 달러",
-      "date": "2026-11-17",
-      "time_et": "11:30",
-      "time_kst": "2026-11-18 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "release-housing-starts-20261118",
-      "kind": "release",
-      "name_ko": "주택착공",
-      "date": "2026-11-18",
-      "time_et": "08:30",
-      "time_kst": "2026-11-18 22:30",
-      "status": "confirmed",
-      "source": "Census 공표 일정(Census·FRED 대조)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "auction-20261118-20-Year",
-      "kind": "auction",
-      "name_ko": "20-Year 국채 입찰 160억 달러",
-      "date": "2026-11-18",
-      "time_et": "13:00",
-      "time_kst": "2026-11-19 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "release-claims-20261119",
       "kind": "release",
@@ -88,9 +18,51 @@
       "watch": "추세 확인"
     },
     {
+      "key": "auction-20261119-4-Week",
+      "kind": "auction",
+      "name_ko": "4-Week 국채 입찰 1,150억 달러",
+      "date": "2026-11-19",
+      "time_et": "11:30",
+      "time_kst": "2026-11-20 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261119-8-Week",
+      "kind": "auction",
+      "name_ko": "8-Week 국채 입찰 1,100억 달러",
+      "date": "2026-11-19",
+      "time_et": "11:30",
+      "time_kst": "2026-11-20 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
       "key": "auction-20261119-10-Year",
       "kind": "auction",
       "name_ko": "10-Year 국채 입찰 190억 달러",
+      "date": "2026-11-19",
+      "time_et": "13:00",
+      "time_kst": "2026-11-20 03:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261119-9-Day",
+      "kind": "auction",
+      "name_ko": "9-Day 국채 입찰 150억 달러",
       "date": "2026-11-19",
       "time_et": "13:00",
       "time_kst": "2026-11-20 03:00",
@@ -124,6 +96,20 @@
       "time_kst": "2026-11-21 00:00",
       "status": "confirmed",
       "source": "U. Michigan 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-industrial-production-20261124",
+      "kind": "release",
+      "name_ko": "산업생산(G.17)",
+      "date": "2026-11-24",
+      "time_et": "09:15",
+      "time_kst": "2026-11-24 23:15",
+      "status": "confirmed",
+      "source": "Federal Reserve 공표 일정(FRED)",
       "assets": [
         "금리"
       ],
@@ -204,6 +190,36 @@
   ],
   "recent_auctions": [
     {
+      "date": "2026-11-18",
+      "term": "20-Year",
+      "type": "Bond",
+      "offering_amt": 16000000000.0,
+      "high_yield": 5.459,
+      "bid_to_cover": 2.63,
+      "indirect_pct": 60.2,
+      "dealer_pct": 13.1
+    },
+    {
+      "date": "2026-11-18",
+      "term": "17-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": 4.35,
+      "bid_to_cover": 3.05,
+      "indirect_pct": 56.8,
+      "dealer_pct": 37.5
+    },
+    {
+      "date": "2026-11-17",
+      "term": "6-Week",
+      "type": "Bill",
+      "offering_amt": 100000000000.0,
+      "high_yield": 4.131,
+      "bid_to_cover": 2.82,
+      "indirect_pct": 65.7,
+      "dealer_pct": 29.7
+    },
+    {
       "date": "2026-11-16",
       "term": "13-Week",
       "type": "Bill",
@@ -262,56 +278,6 @@
       "bid_to_cover": 2.36,
       "indirect_pct": 68.1,
       "dealer_pct": 11.4
-    },
-    {
-      "date": "2026-11-10",
-      "term": "10-Year",
-      "type": "Note",
-      "offering_amt": 42000000000.0,
-      "high_yield": 5.02,
-      "bid_to_cover": 2.46,
-      "indirect_pct": 61.2,
-      "dealer_pct": 9.8
-    },
-    {
-      "date": "2026-11-09",
-      "term": "3-Year",
-      "type": "Note",
-      "offering_amt": 58000000000.0,
-      "high_yield": 4.627,
-      "bid_to_cover": 2.53,
-      "indirect_pct": 55.5,
-      "dealer_pct": 9.5
-    },
-    {
-      "date": "2026-11-09",
-      "term": "6-Week",
-      "type": "Bill",
-      "offering_amt": 100000000000.0,
-      "high_yield": 4.064,
-      "bid_to_cover": 2.59,
-      "indirect_pct": 67.1,
-      "dealer_pct": 30.2
-    },
-    {
-      "date": "2026-11-09",
-      "term": "13-Week",
-      "type": "Bill",
-      "offering_amt": 95000000000.0,
-      "high_yield": 4.159,
-      "bid_to_cover": 2.67,
-      "indirect_pct": 55.9,
-      "dealer_pct": 35.4
-    },
-    {
-      "date": "2026-11-09",
-      "term": "26-Week",
-      "type": "Bill",
-      "offering_amt": 82000000000.0,
-      "high_yield": 4.293,
-      "bid_to_cover": 2.92,
-      "indirect_pct": 56.7,
-      "dealer_pct": 34.0
     }
   ],
   "blackout": {

@@ -1,0 +1,76 @@
+# US 2026-11-18 web research evidence (WebSearch result summaries)
+Collected 2026-11-18 23:15-23:54 UTC via WebSearch (result summaries only; WebFetch not reachable in this session — host resolution blocked). Summaries below paraphrase the search-tool synopsis of the cited pages; URLs as returned. Where sources disagree the disagreement is recorded.
+
+## Session close and drivers
+- Investing.com / StockTitan / BigGo / Asia Business Daily: Dow -561.25 (-1.11%) to 50,198.17; S&P 500 -16.90 (-0.23%) to 7,323.63; S&P 500 fifth straight decline; Nasdaq edged higher. UnitedHealth -10.21% to 349.91; Humana -12.98% to 385.78 tied to a new CMS rule; Amazon +3.82% to 267.74. Nvidia closed 2.9% lower after early gains despite the earnings beat. "Dollar hits 19-month high" (Benzinga headline). IBTimes headline: "Dow Drops 561 Points. Nvidia Reverses Rally As Fed Signals More Rate Hikes."
+  https://investing.com/news/stock-market-news/us-stocks-mixed-at-close-of-trade-dow-jones-industrial-average-down-111-5037118
+  https://www.stocktitan.net/articles/stock-market-today-live-november-18-2026
+  https://finance.biggo.com/news/37d72474-5ba3-4a14-9ad8-3b098eef6641
+  https://benzinga.com/markets/equities/26/11/63404681/stock-market-today-dow-jones-nvidia-earnings-dollar-19-month-high-november-18
+  https://www.ibtimes.com/us-stocks-dow-falls-nvidia-earnings-fed-rate-hikes-3809938
+  https://www.asiae.co.kr/en/article/2026111905110040800
+  https://news.futunn.com/en/post/1004948510/us-stock-market-close-nvidia-falls-another-3-to-hit
+
+## Nvidia
+- CNBC "Nvidia sinks after earnings, dragging down neoclouds CoreWeave, Iren": shares -2.89% Wednesday, down more than 13% over the past week; board chair Harvey Jones said on the earnings call Huang would not return as CEO; interim CEO Colette Kress said Nvidia would closely review which firms it supports in the investment program Huang led. Analysts cited doubts about management, AI-spending durability and China stance.
+  https://www.cnbc.com/2026/11/18/nvidia-stock-earnings.html
+- Seoul Economic Daily: "Nvidia Falls After Earnings Beat as AI Financing Pledges Wobble"; "Nvidia Falls 2.9% Despite Strong Earnings as AMD Jumps 5.3%". Revenue $115.8B; EPS reported as $2.70 (one source) vs $2.68 adjusted (another) vs $2.47 est.
+  https://en.sedaily.com/world/2026/11/19/nvidia-falls-after-earnings-beat-as-ai-financing-pledges
+  https://en.sedaily.com/world/2026/11/19/nvidia-falls-29-percent-despite-strong-earnings-as-amd
+- TechCrunch (2026-11-18): Nvidia did not file its 10-Q the same day as results; company said delay related to whether it must disclose additional information about its ongoing internal investigation into Huang; WSJ reports the SEC is examining whether Nvidia's public disclosures misled investors (neither commented).
+  https://techcrunch.com/2026/11/18/nvidia-created-a-weird-bit-of-intrigue-by-not-filing-a-routine-sec-report/
+- Techi: Nvidia has closed below its open after 9 of its last 10 reports.
+  https://www.techi.com/nvidia-stock-falls-day-after-earnings-ten-report-record/
+
+## AMD / Broadcom (movers g3)
+- Seoul Economic Daily / Benzinga-type coverage: AMD closed 530.14 (+5.3%), Broadcom 354.05 (+3.6%); analysts describe rotation into rival chipmakers amid Nvidia leadership uncertainty; "investors treating Nvidia's problems as Nvidia's own." AMD ($2.5B) and Broadcom ($1B) are buyers in the Anthropic concurrent private placement (TradingKey/Traders Union summary).
+  https://en.sedaily.com/world/2026/11/19/nvidia-falls-29-percent-despite-strong-earnings-as-amd
+  https://www.tradingkey.com/analysis/stocks/us-stocks/262310789-anthropic-ipo-set-nov-19-what-investors-know-ahead-nasdaq-debut-tradingkey
+
+## Amazon (movers g1)
+- Traders Union: Amazon $267.69 +3.8% as investors eye its 14.7% stake in Anthropic after the IPO; Investing.com morning +2.5%; TechCrunch 11/17: Amazon and Google together ~30% of Anthropic after IPO (Class N non-voting).
+  https://tradersunion.com/news/stocks/show/4308578-amazon-rises-3-8percent-as-anthropic/
+  https://uk.investing.com/news/stock-market-news/why-is-amazon-stock-climbing-today-93CH-4991155
+  https://techcrunch.com/2026/11/17/amazon-and-google-will-together-own-nearly-30-of-anthropic-after-its-ipo/
+- TechCrunch (news file): Anthropic priced IPO at $83 vs 70-78 range; ~$1.5T fully diluted; lists Thursday on Nasdaq as ANT.
+
+## Managed care (movers g4)
+- Yahoo Finance: "UnitedHealth and other insurance stocks drag down the Dow after CMS proposes new anti-fraud rule." FX Leaders: "$9 billion industry clawback risk under new CMS rules, sending UNH stock to $350." Quantisnow/Quiver: proposed Medicare Advantage risk-adjustment (RADV) audit crackdown that would restart audits and apply findings to past years back to payment year 2018; CMS estimates ~$9B collections per payment year; proposed rule (could change in final). Oppenheimer expects legal challenges like 2025, when a federal court struck down a prior framework. Intraday snapshots: UNH -9.0~-9.9%, HUM -10.6~-11.3%, Elevance -6.5~-6.9% (1:40 pm ET snapshot). One source says the proposal was released Monday (11/16) — date not reconciled; Newsy Today calls it the "CRUSH" rule.
+  https://finance.yahoo.com/healthcare/article/unitedhealth-and-other-insurance-stocks-drag-down-the-dow-after-cms-proposes-new-anti-fraud-rule-173851810.html
+  https://www.fxleaders.com/news/2026/11/18/unitedhealth-faces-9-billion-industry-clawback-risk-under-new-cms-rules-sending-unh-stock-to-350/
+  https://www.quantisnow.com/articles/cms-audit-proposal-drives-humana-unitedhealth-and-elevance-lower-as-s-p-500-edges-up
+  https://quiverquant.com/news/Humana+slides+as+proposed+Medicare+Advantage+audit+crackdown+pressures+insurers
+  https://www.newsy-today.com/cms-proposes-crush-rule-to-curb-fraud-unitedhealth-humana-shares-drop/
+  https://mlq.ai/news/unitedhealth-and-humana-fall-after-cms-proposes-a-90-billion-anti-fraud-rule/
+
+## Cybersecurity (movers g5)
+- Quantisnow: Palo Alto closed $339.68 (+9.87%) on Wednesday before its after-close results; cyber peers rallied hours before the report ("the report was not the cause"); Fortinet +5.86%, Cloudflare +5.74%; linked to Homeland Security Secretary Markwayne Mullin describing a rise in AI-powered cyberattacks and a CISA warning about a Java flaw. Seeking Alpha: "CrowdStrike advances 7% amid cybersecurity rally"; no CrowdStrike-specific announcement identified. CNBC (news file, 22:25 UTC): Palo Alto beat, raised FY2027 guidance, $4.5B Applied Compute deal, shares +7% after hours.
+  https://www.quantisnow.com/articles/palo-alto-and-cyber-peers-rallied-hours-before-earnings-so-the-report-was-not-the-cause
+  https://seekingalpha.com/news/4674326-crowdstrike-advances-7-amid-cybersecurity-rally
+
+## Fed / rates
+- CNBC (news file, 15:13 UTC): Waller said a 0.5pp hike at the Dec 8-9 FOMC is probably needed and the Fed may need to "shock people"; futures fully price 25bp. Seoul Economic Daily / mlq.ai: Waller offered a fallback of 25bp plus a clear signal of another January move.
+  https://en.sedaily.com/world/2026/11/19/feds-waller-again-floats-half-point-hike-says-shock-may-be
+  https://mlq.ai/news/feds-waller-says-the-fed-may-need-to-shock-people-with-a-half-point-rate-hike-in-december/
+- CNBC "Fed officials expect more rate hikes, worry about AI impact on inflation, minutes show" (2 pm ET): "almost all participants" judged further increases likely appropriate; a couple noted >25bp could warrant consideration at the next meeting if inflation data unfavorable; Cook and Hammack dissented for a 25bp hike (10-2 vote). Minutes predate the October CPI.
+  https://www.cnbc.com/2026/11/18/fed-minutes-october-2026.html
+  https://investinglive.com/central-banks/fomc-minutes-a-couple-of-participants-noted-a-hike-of-more-than-25-bps-could-warrant-consideration-in-december/
+- investingLive Americas wrap (mirror): "Waller/Fed minutes put a bigger December hike in play"; one account says 2Y erased a 2.5bp drop and rose as much as 2.8bp to 4.83%; another that oil selloff pulled longer yields lower and Waller limited the Treasury rally. Pricing cited: ~27bp for December, ~62bp across next three meetings; 50bp ~5-10%.
+  https://www.louisvelazquez.com/investinglive-americas-fx-news-wrap-18-nov-waller-fed-minutes-put-a-bigger-december-hike-in-play/
+  http://www.zerohedge.com/markets/nvda-fades-gains-anthropic-ipo-awaits-newsquawk-us-market-wrap
+- FedWatch: Seoul Economic Daily (dated 11/19): December 25bp 92.7% (from 96.9% a day earlier), 50bp 7.3% (from 3.1%) after Waller. 24/7 Wall St (11/18): "Traders now see a 95% chance the Fed hikes in December." Snapshot times differ.
+  https://247wallst.com/investing/2026/11/18/traders-now-see-a-95-chance-the-fed-hikes-rates-in-december/
+
+## Energy / commodities
+- HDFC Sky (Asian hours 11/18): Brent -0.5% to 92.6, WTI -1.15% as US stockpiles rose; Hormuz risks limited losses. GuruFocus: oil decline amid supply concerns. Gulf News: oil slips in Asia.
+  https://hdfcsky.com/news/brent-crude-oil-price-today-november-18-2026-brent-falls-0-5percent-to-92-6-wti-drops-1-15percent-as-us-stockpiles-rise-middle-east-risks-limit-losses
+  https://www.gurufocus.com/news/9207158/oil-prices-decline-amid-supply-concerns-and-middle-east-tensions
+- CNBC (news file): IEA's Birol (Economist op-ed) sees "no credible pathway" back to pre-war normal in Hormuz; summary mentions renewed US-Iran strikes this week — NOT independently confirmed by search (only an older syndicated "US resumes strikes" story, apparently Aug/Sep 2026).
+- ING FX Daily (news file): strong US data and above-target inflation keep Fed hike expectations alive; dollar broadly strong; industrial metals and energy lower.
+- Gold -3%: no same-day source found for the cause.
+
+## Housing starts (Census, 08:30 ET)
+- GV Wire/Reuters, CNBC, TheStreet: starts +9.9% to 1.309M vs 1.250M estimate (previous 1.221M, revised 1.191M); permits -7.4% to 1.295M, lowest since May 2020 per one source / "over 3-1/2 years" per Reuters; single-family permits -8.7% to 772K, a larger fall than analysts expected; NAHB cites labor shortages from immigration crackdown; CNBC: "two new housing reports point to bleak winter ahead, with record low sales."
+  https://gvwire.com/2026/11/18/us-single-family-housing-starts-rebound-in-october-building-permits-plunge/
+  https://cnbc.com/2026/11/18/two-new-housing-reports-point-to-bleak-winter-ahead.html
+  https://pro.thestreet.com/market-commentary/what-to-watch-as-housing-starts-jump-but-total-permits-sink

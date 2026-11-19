@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-16",
  "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-17T06:44:17+00:00",
- "cutoff_at": "2026-11-17T06:44:17+00:00",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-17T09:27:57+00:00",
+ "cutoff_at": "2026-11-17T09:27:57+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,63 +21,44 @@
   "sha256": "fc637a45bfdf910fb405fa53375de1b20195f41d7659f65150357d748ca0a4f7"
  },
  "counts": {
-  "harvest": 179,
-  "candidates": 2,
+  "harvest": 182,
+  "candidates": 1,
   "articles": [
-   2,
-   6
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 80837,
-   "out": 21449
+   "in": 30903,
+   "out": 9066
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "economictimes.indiatimes.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "8/8",
-   "pairs": "4/4",
-   "obs": "10/10"
+   "claims": "4/4",
+   "pairs": "1/1",
+   "obs": "8/8"
   },
   "verified": {
-   "pairs": 4,
-   "claims": 8,
-   "obs": 10,
+   "pairs": 0,
+   "claims": 0,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[2]",
-    "structure",
-    "worry.moderate[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[1]:unverified",
-    "edges[2]:unverified"
-   ]
-  },
-  "attempt_refunded": "discovery_throttled"
+  }
  },
  "event": {
-  "topic_ko": "젠슨 황 복귀 논란과 칩 수출통제 강화",
-  "query": "nvidia huang calls",
+  "topic_ko": "호르무즈 해협 공격 속 걸프 원유 수송 유지 여부",
+  "query": "hormuz iran",
   "trigger": []
  },
- "problems": [
-  "edges[1]:unverified",
-  "edges[2]:unverified"
- ],
- "content_hash": "4976cc62e842f2ca"
+ "content_hash": "8ece5f67a4baec07"
 }

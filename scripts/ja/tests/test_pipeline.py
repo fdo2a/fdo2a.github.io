@@ -717,3 +717,111 @@ def test_limit_reason_keeps_reset_time_for_the_runner(tmp_path):
         raise LimitReached(msg)
     r = build(root, ft=ft, fr=no_call)
     assert r.detail["stop"] == "limit" and "resets Nov 21 at 9am" in r.reason
+
+
+# ── 일본은행 명단 한자를 다른 사람에게 붙였는가 ──────────────────────────────────
+
+STRANGER = "상선미쓰이의 다무라 사장은 말했다."
+BOJ = "일본은행 다무라 심의위원은 반대했다."
+HTML_R = HTML.replace("<p>가타야마 사쓰키 재무상이 견제했다.</p>", f"<p>{STRANGER}</p>\n<p>{BOJ}</p>")
+BOJ_JA = "日銀の田村審議委員は反対した。"
+
+
+def _roster_ft(stranger_ja):
+    return FT(bad=lambda ko, n: {STRANGER: stranger_ja, BOJ: BOJ_JA}.get(ko))
+
+
+def test_roster_kanji_for_the_boj_member_is_ready(tmp_path):
+    root = make_root(tmp_path, html=HTML_R)
+    r = build(root, ft=_roster_ft("商船三井のタムラ社長は述べた。"))
+    assert r.status == "ready", (r.reason, r.detail)
+    assert BOJ_JA in r.html_ja
+
+
+def test_roster_kanji_on_a_stranger_is_held_and_not_saved(tmp_path):
+    root = make_root(tmp_path, html=HTML_R)
+    fr = FR()
+    r = build(root, ft=_roster_ft("商船三井の田村社長は述べた。"), fr=fr)
+    assert r.status == "held" and r.detail["stop"] == "names" and "다무라" in r.reason
+    assert r.detail["unverified_names"] == ["다무라"]
+    kos = {v["ko"] for v in r.sidecar["units"].values()}
+    assert STRANGER not in kos and TITLE in kos and BOJ in kos
+    # 사람이 근거를 확인해 풀면(가짜 번역기가 가나로 적는다) 그 단위만 다시 번역한다
+    ft2 = _roster_ft("商船三井のタムラ社長は述べた。")
+    r2 = build(root, side=r.sidecar, ft=ft2, fr=FR())
+    assert r2.status == "ready" and [c["kos"] for c in ft2.calls] == [[STRANGER]]   # 같은 성의 정상 문단은 그대로
+
+
+def test_roster_kanji_already_in_the_sidecar_is_not_reused(tmp_path):
+    """사이드카에 이미 든 번역이 이름 검사에 걸리면 다시 쓰지 않는다 — 한도로 일찍 끝나도 그 번역은 살아나지 않는다."""
+    root = make_root(tmp_path, html=HTML_R)
+    r = build(root, ft=_roster_ft("商船三井のタムラ社長は述べた。"))
+    assert r.status == "ready"
+    side = json.loads(json.dumps(r.sidecar))
+    row = next(v for v in side["units"].values() if v["ko"] == STRANGER)
+    row["ja"] = "商船三井の田村直樹社長は述べた。"
+    r1 = build(root, side=json.loads(json.dumps(side)), ft=FT(limit_at=0), fr=no_call)   # 번역기가 한도에 걸린다
+    assert r1.status == "pending" and r1.html_ja is None
+    assert STRANGER not in {v["ko"] for v in r1.sidecar["units"].values()}      # 저장되는 사이드카에서도 빠진다
+    assert r1.detail["roster_dropped"] == 1
+    ft2, fr2 = _roster_ft("商船三井のタムラ社長は述べた。"), FR()
+    r2 = build(root, side=side, ft=ft2, fr=fr2)
+    assert r2.status == "ready" and [c["kos"] for c in ft2.calls] == [[STRANGER]]
+    ko_of = {x["id"]: x["ko"] for x in fr2.calls[0]["rows"]}
+    assert {ko_of[i] for i in fr2.calls[0]["scope"]} >= {STRANGER, TARGET, BOJ}   # 앞뒤 문단도 다시 검토받는다
+    assert "田村直樹社長" not in r2.html_ja
+    assert {v["ko"]: v["ja"] for v in r2.sidecar["units"].values()}[STRANGER] == "商船三井のタムラ社長は述べた。"
+
+
+def test_roster_hold_does_not_drag_the_boj_paragraph_and_clears_when_fixed(tmp_path):
+    root = make_root(tmp_path, html=HTML_R)
+    r = build(root, ft=_roster_ft("商船三井の田村社長は述べた。"))
+    assert r.status == "held" and r.detail["stop"] == "names"
+    kos = {v["ko"] for v in r.sidecar["units"].values()}
+    assert BOJ in kos and STRANGER not in kos            # 같은 성이 든 정상 문단은 저장된다
+    # 검토자가 그 문단을 지적해 고침 번역이 깨끗해지면 보류가 풀린다
+    seen = []
+
+    def find(rows, scope, n):
+        uid = next((x["id"] for x in rows if x["ko"] == STRANGER and x["id"] in scope), None)
+        return [Finding(uid, "誤訳", "인명 한자", "商船三井のタムラ社長は述べた。")] if uid is not None and n == 0 else []
+
+    def tr(ko, n):
+        seen.append(n)
+        if ko == BOJ:
+            return BOJ_JA
+        if ko == STRANGER:
+            return "商船三井の田村社長は述べた。" if n == 0 else "商船三井のタムラ社長は述べた。"
+        return None
+    r2 = build(root, ft=FT(bad=tr), fr=FR(find=find), cfg=NAMES_OK)
+    assert r2.status == "ready", (r2.reason, r2.detail)
+    assert "unverified_names" not in r2.detail
+
+
+def test_adjudicated_B_with_roster_kanji_on_a_stranger_is_rejected(tmp_path):
+    root = make_root(tmp_path, html=HTML_R)
+    sug = ["ドル円は159.81円で、田村直樹氏も述べた。"] * 3
+    fr = FRA(find=_flip(sug), choose=lambda items: {it["id"]: ("B", "B") for it in items})
+    r = build(root, ft=_roster_ft("商船三井のタムラ社長は述べた。"), fr=fr)
+    assert r.status == "held" and r.detail["stop"] == "blocking"
+    rec = r.detail["adjudication"][0]
+    assert rec["result"] == "held" and rec["gate"].startswith("names: 다무라")
+    assert TARGET not in {v["ko"] for v in r.sidecar["units"].values()}
+
+
+def test_roster_checked_page_is_not_held(tmp_path, monkeypatch):
+    from scripts.ja import glossary as G
+    root = make_root(tmp_path, html=HTML_R)
+    assert build(root, ft=_roster_ft("商船三井の田村社長は述べた。")).status == "held"
+    monkeypatch.setattr(G, "ROSTER_CHECKED", {PATH: ("田村",)})       # 사람이 그 글을 읽고 확인했다
+    assert build(root, ft=_roster_ft("商船三井の田村社長は述べた。")).status == "ready"
+
+
+def test_stale_list_translation_that_trips_is_dropped(tmp_path):
+    root = make_root(tmp_path, html=HTML_R)
+    r = build(root, ft=_roster_ft("商船三井のタムラ社長は述べた。"))
+    side = json.loads(json.dumps(r.sidecar))
+    side["list"]["title"] = "田村直樹社長の発言"
+    pg = P._Page(root, PATH, side, no_call, no_call, P.Config())
+    pg.load()
+    assert "list" not in pg.side_in and "list_src" not in pg.side_in and pg.detail["roster_dropped"] == 1

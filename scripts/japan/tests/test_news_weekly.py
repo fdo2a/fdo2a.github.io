@@ -400,3 +400,357 @@ def test_numbers_of_unusable_summaries_are_not_number_sources():
     texts = G.number_sources([good, bad, evidence])
     assert SUMMARY in texts and not any('98765' in t or '54321' in t for t in texts)
     assert G.title_source(good['title']) in texts
+
+
+# ── 재수집은 합친다·정해진 날은 다시 넘기지 않는다(2026-11-19) ─────────────────
+ID4, ID5 = 'd' * 40, 'e' * 40
+SUM = '일본은행 총재가 금리 인상을 이어 가겠다고 밝혔다. ' * 4
+
+
+def _day_rows(*arts):
+    return [dict(r, created='10/16') for r in F.N.parse_list(_list_page(list(arts)), 'bus_all')]
+
+
+def _summ(items, bodydir, system=None):
+    n = 0
+    for it in items:
+        if it.get('body_file') and not it.get('summary_ko'):
+            it['summary_ko'] = SUM
+            n += 1
+    return n
+
+
+def _detail_url(i):
+    return f'https://finance.yahoo.co.jp/news/detail/{i}'
+
+
+def _first(tmp_path, arts, details):
+    return F.collect_day('2026-10-16', _day_rows(*arts), [], '2026-10-17', str(tmp_path / 'b'), None, True, [],
+                         fetch=_fake_fetch({}, details), summarize=_summ, datadir=str(tmp_path))
+
+
+def test_a_rerun_with_a_shrunk_list_keeps_what_was_summarised(tmp_path):
+    p1 = _first(tmp_path, [_art(ID1, '日銀の植田総裁、利上げ継続を表明'), _art(ID2, '長期金利が上昇、国債売り')],
+                {_detail_url(ID1): _detail(), _detail_url(ID2): _detail()})
+    assert {it['guid'] for it in p1['items']} == {ID1, ID2}
+    before = json.loads((tmp_path / 'news' / '2026-10-16.json').read_text())
+    # 다음 실행: ID1 은 50쪽 밖으로 밀려 목록에 없고 새 기사 ID3 이 보인다
+    p2 = F.collect_day('2026-10-16', _day_rows(_art(ID2, '長期金利が上昇、国債売り'), _art(ID3, '円相場が下落、円安進む')),
+                       [], '2026-10-17', str(tmp_path / 'b2'), None, False, [],
+                       fetch=_fake_fetch({}, {_detail_url(ID3): _detail()}), summarize=_summ, datadir=str(tmp_path))
+    assert {it['guid'] for it in p2['items']} == {ID1, ID2, ID3}
+    old = {it['guid']: it for it in before['items']}
+    new = {it['guid']: it for it in p2['items']}
+    assert new[ID1] == old[ID1] and new[ID2] == old[ID2]          # 보관분은 글자 하나 안 바뀐다
+    assert p2['harvested'] == p1['harvested'] == 2 and p2['complete']   # 다 읽었던 날은 그대로 완주
+
+
+def test_kept_items_hold_their_slots(tmp_path):
+    arts = [_art(ID1, '日銀、利上げ継続'), _art(ID2, '長期金利が上昇'), _art(ID3, '円相場が下落')]
+    _first(tmp_path, arts, {_detail_url(i): _detail() for i in (ID1, ID2, ID3)})
+    fetch = _fake_fetch({}, {_detail_url(ID4): _detail()})
+    p = F.collect_day('2026-10-16', _day_rows(_art(ID4, '物価見通しを上方修正')), [], '2026-10-17',
+                      str(tmp_path / 'b2'), None, False, [], fetch=fetch, summarize=_summ, datadir=str(tmp_path))
+    assert [it['guid'] for it in p['items']] == [ID1, ID2, ID3]   # 매크로 세 자리가 찼다
+    assert _detail_url(ID4) not in fetch.calls                    # 찬 갈래는 본문도 받지 않는다
+
+
+def test_an_outage_rerun_leaves_the_day_alone(tmp_path):
+    p1 = _first(tmp_path, [_art(ID1, '日銀の植田総裁、利上げ継続を表明')], {_detail_url(ID1): _detail()})
+
+    def down(u, ctx):
+        raise OSError('down')
+    p2 = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b2'), None, False, ['목록 실패'],
+                       fetch=down, summarize=_summ, datadir=str(tmp_path))
+    assert p2['items'] == p1['items'] and p2['harvested'] == p1['harvested'] and p2['dropped'] == p1['dropped']
+    assert p2['complete']
+
+
+def test_an_unsummarised_kept_item_is_refetched_under_a_fresh_name(tmp_path):
+    path = tmp_path / 'news' / '2026-10-16.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({'report_date': '2026-10-16', 'complete': False, 'items': [
+        {'guid': ID1, 'url': _detail_url(ID1), 'title': '日銀の植田総裁、利上げ継続を表明', 'source': 'ロイター',
+         'published': '2026-10-16T18:42:12+09:00', 'category': 'macro', 'feed': 'bus_all',
+         'body_chars': 500, 'body_file': '07-macro.txt', 'summary_ko': '日銀の総裁は述べた。' * 20}]},
+        ensure_ascii=False))
+    seen = []
+
+    def summ(items, bodydir, system=None):
+        for it in items:
+            if it.get('body_file') and not it.get('summary_ko'):
+                seen.append(it['body_file'])
+                it['summary_ko'] = SUM
+        return len(seen)
+    p = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b'), None, False, [],
+                      fetch=_fake_fetch({}, {_detail_url(ID1): _detail()}), summarize=summ,
+                      datadir=str(tmp_path), lists_read=False)
+    assert seen == ['01-macro.txt'] and p['items'][0]['summary_ko'] == SUM   # 일본어 요약을 지우고 다시
+
+
+def test_a_failed_refetch_keeps_the_item_and_keeps_the_day_open(tmp_path):
+    path = tmp_path / 'news' / '2026-10-16.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({'report_date': '2026-10-16', 'complete': True, 'lists_settled': True,
+                                'official_ok': True, 'attempts': 1, 'items': [
+        {'guid': ID1, 'url': _detail_url(ID1), 'title': '日銀の植田総裁、利上げ継続を表明', 'source': 'ロイター',
+         'published': '2026-10-16T18:42:12+09:00', 'category': 'macro', 'feed': 'bus_all',
+         'body_chars': 500, 'body_file': '07-macro.txt'}]}, ensure_ascii=False))
+
+    def down(u, ctx):
+        raise OSError('503')
+    p = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b'), None, False, [],
+                      fetch=down, summarize=_summ, datadir=str(tmp_path), lists_read=False)
+    it = p['items'][0]
+    assert it['guid'] == ID1 and it['body_chars'] > 0 and 'body_file' not in it
+    assert not F.done(str(path))
+
+
+def test_a_stored_item_is_dropped_only_by_current_rules(tmp_path):
+    path = tmp_path / 'news' / '2026-10-16.json'
+    path.parent.mkdir(parents=True)
+    row = {'url': _detail_url(ID1), 'title': '日銀の植田総裁、利上げ継続を表明', 'source': 'ロイター',
+           'published': '2026-10-16T18:42:12+09:00', 'category': 'macro', 'feed': 'bus_all', 'body_chars': 500,
+           'summary_ko': SUM}
+    path.write_text(json.dumps({'report_date': '2026-10-16', 'complete': True, 'items': [
+        dict(row, guid=ID1), dict(row, guid=ID2, source='LIMO'),
+        dict(row, guid=ID3, published='2026-10-15T09:00:00+09:00')]}, ensure_ascii=False))
+    p = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b'), None, False, [],
+                      fetch=_fake_fetch({}), summarize=_summ, datadir=str(tmp_path), lists_read=False)
+    assert [it['guid'] for it in p['items']] == [ID1]
+    assert any('매체' in n for n in p['notes']) and any('날짜' in n for n in p['notes'])
+
+
+def test_a_refetched_item_whose_page_moved_to_another_day_is_dropped(tmp_path):
+    path = tmp_path / 'news' / '2026-10-17.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({'report_date': '2026-10-17', 'complete': True, 'items': [
+        {'guid': ID1, 'url': _detail_url(ID1), 'title': '日銀の植田総裁、利上げ継続を表明', 'source': 'ロイター',
+         'published': '2026-10-17T08:00:00+09:00', 'category': 'macro', 'feed': 'bus_all', 'body_chars': 500}]},
+        ensure_ascii=False))
+    p = F.collect_day('2026-10-17', [], [], '2026-10-18', str(tmp_path / 'b'), None, False, [],
+                      fetch=_fake_fetch({}, {_detail_url(ID1): _detail()}),   # 기사면은 10/16
+                      summarize=_summ, datadir=str(tmp_path), lists_read=False)
+    assert p['items'] == [] and any('기사면 날짜' in n for n in p['notes'])
+
+
+def test_a_first_run_body_outage_is_retried_not_frozen_empty(tmp_path):
+    def down(u, ctx):
+        raise OSError('503')
+    p = F.collect_day('2026-10-16', _day_rows(_art(ID1, '日銀、利上げ継続')), [], '2026-10-17',
+                      str(tmp_path / 'b'), None, True, [], fetch=down, summarize=_summ, datadir=str(tmp_path))
+    path = str(tmp_path / 'news' / '2026-10-16.json')
+    assert p['items'] == [] and [r['guid'] for r in p['retry']] == [ID1] and not F.done(path)
+    # 다음 실행은 목록 없이 retry 만 다시 받아 채운다
+    p2 = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b2'), None, False, [],
+                       fetch=_fake_fetch({}, {_detail_url(ID1): _detail()}), summarize=_summ,
+                       datadir=str(tmp_path), lists_read=False)
+    assert [it['guid'] for it in p2['items']] == [ID1] and p2['retry'] == [] and F.done(path)
+
+
+def _pages_capped(day_created='10/16'):
+    url = lambda feed, p: F.N.LIST_URL.format(feed=feed, page=p)  # noqa: E731
+    pages = {url(f, 1): _list_page([_art(ID1, '日銀、利上げ継続', created='10/15')]) for f in F.N.FEEDS}
+    # stocks 는 1쪽 상한 안에 10/16 뒤 기사만 — 그날 앞에 못 닿는다
+    pages[url('stocks', 1)] = _list_page([_art(ID2, '日経平均が続落', created='10/17')])
+    return pages
+
+
+def test_a_capped_list_settles_the_day_but_complete_stays_false(tmp_path):
+    rows, notes, reach = F.harvest('2026-10-16', '2026-10-18', None, fetch=_fake_fetch(_pages_capped()),
+                                   gap=0, max_pages=1)
+    assert reach['stocks']['capped'] and F.settled_for('2026-10-16', reach)
+    assert not F.complete_for('2026-10-16', reach)
+    p = F.collect_day('2026-10-16', rows, [], '2026-10-18', str(tmp_path / 'b'), None, False, notes,
+                      fetch=_fake_fetch({}), summarize=_summ, datadir=str(tmp_path), reach=reach, off_ok=True)
+    assert not p['complete'] and p['lists_settled'] and 'stocks' in p['settled_why']
+    assert F.done(str(tmp_path / 'news' / '2026-10-16.json'))      # 빈 날이라도 정해졌으면 끝
+
+
+def test_a_transient_list_failure_is_retried_up_to_the_attempt_limit(tmp_path):
+    def broken(u, ctx):
+        raise OSError('down')
+    path = str(tmp_path / 'news' / '2026-10-16.json')
+    for n in range(1, F.MAX_ATTEMPTS + 1):
+        rows, notes, reach = F.harvest('2026-10-16', '2026-10-18', None, fetch=broken, gap=0)
+        assert not F.settled_for('2026-10-16', reach)
+        p = F.collect_day('2026-10-16', rows, [], '2026-10-18', str(tmp_path / 'b'), None, False, notes,
+                          fetch=broken, summarize=_summ, datadir=str(tmp_path), reach=reach, off_ok=True)
+        assert p['attempts'] == n and F.done(path) == (n == F.MAX_ATTEMPTS)
+    assert '4회' in p['settled_why']
+
+
+def test_an_official_outage_does_not_freeze_until_the_limit(tmp_path):
+    rows, notes, reach = F.harvest('2026-10-16', '2026-10-18', None, fetch=_fake_fetch(_pages_capped()),
+                                   gap=0, max_pages=1)
+    F.collect_day('2026-10-16', rows, [], '2026-10-18', str(tmp_path / 'b'), None, False, notes,
+                  fetch=_fake_fetch({}), summarize=_summ, datadir=str(tmp_path), reach=reach, off_ok=False)
+    path = str(tmp_path / 'news' / '2026-10-16.json')
+    d = json.loads(Path(path).read_text())
+    assert F.lists_ready(d) and not F.done(path)          # 목록은 정해졌다 — 다음 실행은 공식 출처만
+
+
+def test_main_pages_lists_only_for_unsettled_days(tmp_path, monkeypatch):
+    news = tmp_path / 'news'
+    news.mkdir()
+    settled = {'complete': False, 'lists_settled': True, 'official_ok': True, 'attempts': 1, 'retry': [],
+               'items': [{'guid': ID1, 'url': _detail_url(ID1), 'title': '日銀の植田総裁、利上げ継続を表明',
+                          'source': 'ロイター', 'published': '2026-10-16T18:42:12+09:00', 'category': 'macro',
+                          'feed': 'bus_all', 'body_chars': 500}]}       # 요약만 빠졌다
+    (news / '2026-10-16.json').write_text(json.dumps(dict(settled, report_date='2026-10-16'), ensure_ascii=False))
+    for day in ('2026-10-12', '2026-10-13', '2026-10-14', '2026-10-15'):
+        (news / f'{day}.json').write_text(json.dumps({'report_date': day, 'complete': True, 'lists_settled': True,
+                                                      'official_ok': True, 'attempts': 1, 'items': []}))
+    calls = []
+    monkeypatch.setattr(F, 'harvest', lambda *a, **k: calls.append(a) or ([], [], {}))
+    monkeypatch.setattr(F, 'harvest_official', lambda *a, **k: ([], [], True))
+    monkeypatch.setattr(F, '_context', lambda: None)
+    monkeypatch.setattr(F, 'get', _fake_fetch({}, {_detail_url(ID1): _detail()}))
+    monkeypatch.setattr(F, 'summarize_chosen', lambda chosen, sub, summarize=None: _summ(chosen, sub))
+    assert F.main(['--datadir', str(tmp_path), '--bodydir', str(tmp_path / 'b'), '--today', '2026-10-17']) == 0
+    assert calls == []                                    # 목록은 한 쪽도 넘기지 않았다
+    assert F.done(str(news / '2026-10-16.json'))
+    assert F.main(['--datadir', str(tmp_path), '--bodydir', str(tmp_path / 'b'), '--today', '2026-10-17',
+                   '--date', '2026-10-16', '--refresh']) == 1 and calls   # refresh 는 목록을 넘긴다(여기선 0행)
+
+
+def test_finalize_with_kept_rows_fills_only_free_slots():
+    keep = [{'guid': 'k1', 'category': 'macro', 'title': '日銀総裁、物価に言及', 'body_chars': 1,
+             'published': '2026-10-16T10:00:00+09:00'}]
+    rows = [{'guid': g, 'category': 'macro', 'title': t, 'body_chars': 500, 'published': '2026-10-16T10:00:00+09:00'}
+            for g, t in (('n1', '日銀総裁、物価に言及す'), ('n2', '長期金利が上昇'), ('n3', '国債入札が不調'),
+                         ('n4', '財務相、為替介入に言及'))]
+    got = [r['guid'] for r in F.N.finalize(rows, '2026-10-16', keep=keep)]
+    assert got == ['k1', 'n2', 'n3']                      # n1 은 보관분의 재탕, 자리는 셋
+
+
+def _pending_store(tmp_path, day='2026-10-16', extra=()):
+    path = tmp_path / 'news' / f'{day}.json'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    row = {'source': 'ロイター', 'published': f'{day}T18:42:12+09:00', 'category': 'macro', 'feed': 'bus_all'}
+    items = [dict(row, guid=ID1, url=_detail_url(ID1), title='日銀の植田総裁、利上げ継続を表明',
+                  body_chars=500, body_file='01-macro.txt')] + list(extra)
+    path.write_text(json.dumps({'report_date': day, 'complete': True, 'lists_settled': True, 'official_ok': True,
+                                'attempts': 1, 'items': items}, ensure_ascii=False))
+    return str(path), row
+
+
+def test_a_blank_refetch_page_does_not_drop_a_stored_item(tmp_path):
+    path, _ = _pending_store(tmp_path)
+    p = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b'), None, False, [],
+                      fetch=_fake_fetch({}, {_detail_url(ID1): '<html></html>'}), summarize=_summ,
+                      datadir=str(tmp_path), lists_read=False)
+    assert [it['guid'] for it in p['items']] == [ID1] and p['items'][0]['body_chars'] > 0
+    assert 'body_file' not in p['items'][0] and not F.done(path)
+
+
+def test_a_dropped_stored_item_frees_its_slot_for_a_fresh_candidate(tmp_path):
+    sticky = [{'guid': g, 'url': _detail_url(g), 'title': t, 'source': 'ロイター', 'category': 'macro',
+               'feed': 'bus_all', 'published': '2026-10-17T09:00:00+09:00', 'body_chars': 500,
+               'body_file': f'0{n}-macro.txt', 'summary_ko': SUM}
+              for n, g, t in ((2, ID2, '長期金利が上昇、国債売り'), (3, ID3, '円相場が下落、円安進む'))]
+    path, _ = _pending_store(tmp_path, '2026-10-17', sticky)
+    raw = json.loads(Path(path).read_text())
+    raw['items'][0]['published'] = '2026-10-17T08:00:00+09:00'
+    Path(path).write_text(json.dumps(raw, ensure_ascii=False))
+    rows = [dict(r, created='10/17') for r in F.N.parse_list(_list_page([_art(ID4, '物価見通しを上方修正')]), 'bus_all')]
+    detail4 = _detail().replace('2026-10-16T18:42:12', '2026-10-17T11:00:00')
+    p = F.collect_day('2026-10-17', rows, [], '2026-10-18', str(tmp_path / 'b'), None, True, [],
+                      fetch=_fake_fetch({}, {_detail_url(ID1): _detail(),          # 기사면은 10/16 으로 옮겨 갔다
+                                             _detail_url(ID4): detail4}),
+                      summarize=_summ, datadir=str(tmp_path))
+    assert [it['guid'] for it in p['items']] == [ID2, ID3, ID4]
+    names = [it.get('body_file') for it in p['items']]
+    assert len(set(names)) == 3                              # 보관분 이름과 겹치지 않는다
+
+
+def test_healthy_empty_lists_settle_the_day(tmp_path):
+    rows, notes, reach = F.harvest('2026-10-16', '2026-10-18', None, fetch=_fake_fetch({}), gap=0)
+    assert rows == [] and F.complete_for('2026-10-16', reach)
+    p = F.collect_day('2026-10-16', rows, [], '2026-10-18', str(tmp_path / 'b'), None, True, notes,
+                      fetch=_fake_fetch({}), summarize=_summ, datadir=str(tmp_path), reach=reach, off_ok=True)
+    assert p['complete'] and p['lists_settled'] and p['attempts'] == 1
+    assert F.done(str(tmp_path / 'news' / '2026-10-16.json'))
+
+
+# ── codex 구현 2회차 지적(2026-11-19) ────────────────────────────────────────
+def test_a_first_run_body_save_failure_is_retried_not_frozen(tmp_path):
+    sub = tmp_path / 'b' / '2026-10-16'
+    (sub / '01-macro.txt').mkdir(parents=True)             # 그 이름이 디렉터리 — 쓰기가 OSError 로 죽는다
+    p = _first(tmp_path, [_art(ID1, '日銀の植田総裁、利上げ継続を表明')], {_detail_url(ID1): _detail()})
+    path = str(tmp_path / 'news' / '2026-10-16.json')
+    assert p['items'] == [] and [r['guid'] for r in p['retry']] == [ID1]
+    assert not F.done(path)                                # 기사를 못 실은 채 굳지 않는다
+    p2 = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b2'), None, False, [],
+                       fetch=_fake_fetch({}, {_detail_url(ID1): _detail()}), summarize=_summ,
+                       datadir=str(tmp_path), lists_read=False)
+    assert [it['guid'] for it in p2['items']] == [ID1] and p2['retry'] == [] and F.done(path)
+
+
+def _queued(tmp_path):
+    """첫 실행에서 본문이 503 — ID1 이 `retry` 에 든다."""
+    def down(u, ctx):
+        raise OSError('503')
+    p = F.collect_day('2026-10-16', _day_rows(_art(ID1, '日銀の植田総裁、利上げ継続を表明')), [], '2026-10-17',
+                      str(tmp_path / 'b'), None, True, [], fetch=down, summarize=_summ, datadir=str(tmp_path))
+    assert [(r['guid'], r['category']) for r in p['retry']] == [(ID1, 'macro')]
+
+
+def _rerun_queued(tmp_path):
+    fetch = _fake_fetch({}, {_detail_url(ID1): _detail()})
+    p = F.collect_day('2026-10-16', [], [], '2026-10-17', str(tmp_path / 'b2'), None, False, [],
+                      fetch=fetch, summarize=_summ, datadir=str(tmp_path), lists_read=False)
+    return p, fetch
+
+
+def test_a_queued_retry_is_screened_by_the_current_media_rule(tmp_path, monkeypatch):
+    _queued(tmp_path)
+    monkeypatch.setattr(F.N, 'MEDIA_RANK', {k: v for k, v in F.N.MEDIA_RANK.items() if k != 'ロイター'})
+    p, fetch = _rerun_queued(tmp_path)
+    assert p['items'] == [] and p['retry'] == [] and fetch.calls == []     # 본문도 받지 않는다
+    assert any('다시 받을 후보 뺌' in n and '매체' in n for n in p['notes'])
+    assert F.done(str(tmp_path / 'news' / '2026-10-16.json'))
+
+
+def test_a_queued_retry_is_screened_by_the_current_category_rule(tmp_path, monkeypatch):
+    _queued(tmp_path)
+    monkeypatch.setattr(F.N, 'classify', lambda title, feed=None: None)
+    p, fetch = _rerun_queued(tmp_path)
+    assert p['items'] == [] and p['retry'] == [] and fetch.calls == []
+    assert any('다시 받을 후보 뺌' in n and '갈래' in n for n in p['notes'])
+
+
+def test_a_queued_retry_takes_its_current_category(tmp_path, monkeypatch):
+    _queued(tmp_path)
+    monkeypatch.setattr(F.N, 'classify', lambda title, feed=None: 'policy')
+    p, _ = _rerun_queued(tmp_path)
+    assert [(it['guid'], it['category']) for it in p['items']] == [(ID1, 'policy')]
+    assert p['items'][0]['body_file'].endswith('-policy.txt')
+
+
+def test_a_refetched_stored_item_and_a_fresh_one_do_not_share_a_body_file(tmp_path):
+    path, _ = _pending_store(tmp_path)                      # ID1: 본문은 받았고 요약이 없다(옛 이름 01-macro.txt)
+    seen = {}
+
+    def summ(items, bodydir, system=None):
+        for it in items:
+            if it.get('body_file') and not it.get('summary_ko'):
+                seen[it['guid']] = Path(bodydir, it['body_file']).read_text(encoding='utf-8').splitlines()[0]
+                it['summary_ko'] = SUM
+        return len(seen)
+    p = F.collect_day('2026-10-16', _day_rows(_art(ID4, '物価見通しを上方修正')), [], '2026-10-17',
+                      str(tmp_path / 'b'), None, True, [],
+                      fetch=_fake_fetch({}, {_detail_url(ID1): _detail(), _detail_url(ID4): _detail()}),
+                      summarize=summ, datadir=str(tmp_path))
+    assert [it['guid'] for it in p['items']] == [ID1, ID4]
+    names = [it['body_file'] for it in p['items']]
+    assert len(set(names)) == 2                             # 1단계(보관)와 2단계(새 기사)가 같은 번호·갈래다
+    assert seen == {ID1: '# 日銀の植田総裁、利上げ継続を表明', ID4: '# 物価見通しを上方修正'}   # 요약기는 제 본문을 읽는다
+
+
+def test_a_queued_official_row_is_checked_by_date_only():
+    off = {'guid': 'o1', 'title': '研究員の眼', 'source': 'ニッセイ基礎研究所', 'category': 'insight', 'official': True,
+           'published': '2026-10-16T09:00:00+09:00'}
+    rows, notes = F._requeue([off, dict(off, guid='o2', published='2026-10-15T09:00:00+09:00')], '2026-10-16')
+    assert [r['guid'] for r in rows] == ['o1'] and rows[0]['category'] == 'insight'   # 허용 목록·제목 분류 밖
+    assert len(notes) == 1 and '날짜' in notes[0]

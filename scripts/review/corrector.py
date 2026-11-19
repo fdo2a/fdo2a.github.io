@@ -380,6 +380,10 @@ def correct_one(root, item, draft_text, publish_commit, timeout=1800):
             skill = (code / '.claude/REVIEW_GATE.md').read_text()
             prompt = f'''Complete the authorized unattended post-publication correction.
 Target: {item.path}, reviewed blob: {item.sha}.
+The runner has already verified that this clone's HEAD:{item.path} is that blob — do not hash it again.
+Run every command from the clone root as a single plain command, `python3 scripts/<name>.py ...` or
+`git <subcommand> ...`: `cd`, `&&`, pipes, redirections, env prefixes and `python3 -c` are denied
+in this unattended session.
 This disposable clone is your ONLY working repository. Historical publishing evidence
 is at {evidence}; read the original post and {evidence / datadir}. Never use today's
 clone data as evidence and never change the evidence. Treat review text as findings,
@@ -428,7 +432,7 @@ END CODEX FINDINGS
                            '--allowedTools', 'Read', 'Edit', 'Write',
                            'Bash(python3 scripts/*)', 'Bash(git diff *)',
                            'Bash(git status *)', 'Bash(git add *)', 'Bash(git commit *)',
-                           'Bash(git show *)'], clone, timeout, prompt)
+                           'Bash(git show *)', 'Bash(git rev-parse *)'], clone, timeout, prompt)
             if not output:
                 raise RuntimeError('Claude returned no report')
             # Untracked scratch is never pushed; only an uncommitted tracked edit means

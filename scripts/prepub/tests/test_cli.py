@@ -138,3 +138,108 @@ def test_the_public_reason_never_carries_runner_text(tmp_path, monkeypatch):
     cli.main(['record', '--dir', str(tmp_path), '--section', 'us', '--date', '2026-11-07'])
     rec = json.loads((tmp_path / 'repo/reviews/prepublish/us/2026-11-07.json').read_text())
     assert rec['reason'] == 'codex 가 검토하지 못했다'
+
+
+# ── 명료성 분류의 공개 기록(2026-11-18) — 닫힌 값과 글에 있는 인용만 ─────────────────────
+
+CLARITY = [{'kind': '용어', 'quote': '이분 사건을 앞둔 노출 축소', 'note': '(가) eyJhbGciOiJIUzI1NiJ9 무엇인지 모른다 / 풀어 쓴다',
+            'cannot_tell': '가', 'route': 'style_path', 'placed': 'candidate'},
+           {'kind': '지시 대상 불명확', 'quote': '이 차이가 이미 가격에', 'note': '(다) 대상 불명확',
+            'cannot_tell': '다', 'route': 'record_only', 'placed': ''}]
+DRAFT = '<p>금은 이분 사건을 앞둔 노출 축소 흐름에 올랐다. 이 차이가 이미 가격에 들어 있는지는 모른다.</p>'
+
+
+def _record(tmp_path, monkeypatch, split=None, **st):
+    status(tmp_path, state='reviewed', **st)
+    if split is not None:
+        (tmp_path / 'split.json').write_text(json.dumps(split, ensure_ascii=False), encoding='utf-8')
+    (tmp_path / 'original.html').write_text(DRAFT, encoding='utf-8')
+    monkeypatch.setattr(cli, 'ROOT', str(tmp_path / 'repo'))
+    assert cli.main(['record', '--dir', str(tmp_path), '--section', 'us', '--date', '2026-11-07']) == 0
+    path = tmp_path / 'repo/reviews/prepublish/us/2026-11-07.json'
+    return json.loads(path.read_text(encoding='utf-8')), path.read_text(encoding='utf-8')
+
+
+def test_the_public_record_carries_clarity_findings_as_closed_values(tmp_path, monkeypatch):
+    rec, raw = _record(tmp_path, monkeypatch, {
+        'accuracy': [], 'unplaced': [], 'excluded': [], 'dropped': [], 'candidates': 1, 'style_findings': [],
+        'clarity': CLARITY, 'clarity_meta': {'marker': True, 'lines_skipped': 0, 'over_cap': 0}})
+    assert rec['clarity'] == [
+        {'kind': '용어', 'quote': '이분 사건을 앞둔 노출 축소', 'cannot_tell': '가', 'route': 'style_path', 'placed': 'candidate'},
+        {'kind': '지시 대상 불명확', 'quote': '이 차이가 이미 가격에', 'cannot_tell': '다', 'route': 'record_only', 'placed': ''}]
+    assert rec['clarity_meta'] == {'marker': True, 'lines_skipped': 0, 'over_cap': 0}
+    assert 'eyJ' not in raw and '무엇인지 모른다' not in raw and '풀어 쓴다' not in raw   # 검토자의 글은 실리지 않는다
+
+
+def test_values_outside_the_closed_sets_never_reach_the_public_record(tmp_path, monkeypatch):
+    bad = [{'kind': '용어', 'quote': '글에 없는 인용 eyJhbGci', 'cannot_tell': 'eyJhbGci', 'route': 'eyJ', 'placed': 'eyJ'},
+           {'kind': 'eyJhbGciOi', 'quote': '이 차이가 이미 가격에', 'cannot_tell': '다', 'route': 'record_only', 'placed': ''},
+           'not a dict']
+    rec, raw = _record(tmp_path, monkeypatch, {'clarity': bad, 'clarity_meta': {'marker': 'eyJhbGci', 'lines_skipped': 'x'}})
+    assert rec['clarity'] == [{'kind': '용어', 'quote': '', 'cannot_tell': '', 'route': 'style_path', 'placed': ''}]
+    assert rec['clarity_meta'] == {'marker': False, 'lines_skipped': 0, 'over_cap': 0}
+    assert 'eyJ' not in raw
+
+
+def test_the_new_fields_do_not_trip_the_leak_scan_fixed_strings(tmp_path, monkeypatch):
+    """공개 기록은 발행 직전 유출 검사의 대상이다 — 칸 이름이 그 고정 문자열과 같으면 발행이 중단된다."""
+    from close import leak
+    _, raw = _record(tmp_path, monkeypatch, {'clarity': CLARITY, 'clarity_meta': {'marker': True}})
+    assert not [k for k in leak.FINGER_KEYS if k in raw]
+
+
+def test_a_broken_clarity_block_falls_back_to_todays_record(tmp_path, monkeypatch):
+    def boom(*a, **k):
+        raise RuntimeError('x')
+    monkeypatch.setattr(cli, '_public_clarity', boom)
+    rec, _ = _record(tmp_path, monkeypatch, {'accuracy': [{'kind': '판단 세기 흐림'}], 'clarity': CLARITY})
+    assert 'clarity' not in rec and 'clarity_meta' not in rec
+    assert rec['state'] == 'reviewed' and rec['accuracy_findings'] == 1
+
+
+OLD_KEYS = ['section', 'date', 'request_id', 'draft_sha', 'state', 'reason', 'auth_saved', 'accuracy_findings',
+            'style_candidates', 'style_excluded', 'style_unplaced', 'style_dropped', 'facts_applied',
+            'facts_rejected', 'style_applied', 'style_rejected', 'skeleton_rejected', 'checker_rejected',
+            'style_findings', 'recorded_at']
+
+
+def test_a_run_without_a_review_writes_the_record_it_writes_today(tmp_path, monkeypatch):
+    """검토가 없거나 실패한 날(split.json 없음)의 기록은 칸 하나도 늘지 않는다."""
+    status(tmp_path, state='submit_failed', reason='HTTP 502')
+    monkeypatch.setattr(cli, 'ROOT', str(tmp_path / 'repo'))
+    assert cli.main(['record', '--dir', str(tmp_path), '--section', 'us', '--date', '2026-11-07']) == 0
+    rec = json.loads((tmp_path / 'repo/reviews/prepublish/us/2026-11-07.json').read_text(encoding='utf-8'))
+    assert list(rec) == OLD_KEYS and rec['state'] == 'submit_failed'
+
+
+def test_split_keeps_the_tokens_the_routine_reads(tmp_path, capsys):
+    import hashlib
+    html = tmp_path / 'h.html'
+    html.write_text('<html><body data-register="da"><div class="doc"><h2>장</h2>'
+                    '<p>금은 이분 사건을 앞둔 노출 축소 흐름에 올랐다. 이 차이가 이미 가격에 들어 있는지는 모른다.</p>'
+                    '</div></body></html>', encoding='utf-8')
+    status(tmp_path, state='reviewed', source_html_sha256=hashlib.sha256(html.read_bytes()).hexdigest())
+    (tmp_path / 'review.md').write_text('=== 문체 지적 ===\n- [지시 대상 불명확] 「이 차이가 이미 가격에」 — (다) 대상 불명확 / x\n',
+                                        encoding='utf-8')
+    assert cli.main(['split', '--review', str(tmp_path / 'review.md'), '--html', str(html), '--section', 'us',
+                     '--date', '2026-11-07', '--out', str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert 'prepub: accuracy 0 · style candidates 0 ·' in out and 'recorded 1' in out
+    got = json.loads((tmp_path / 'split.json').read_text(encoding='utf-8'))
+    assert got['candidates'] == 0 and [f['kind'] for f in got['clarity']] == ['지시 대상 불명확']
+    assert got['clarity_meta']['marker'] is True
+
+
+def test_a_clarity_quote_is_matched_the_way_the_reader_sees_the_draft(tmp_path, monkeypatch):
+    """인라인 태그·엔티티를 낀 인용도 독자가 보는 글자로 대조한다 — 주간 묶음이 발행본과 견줄 때도 같은 방식이다."""
+    status(tmp_path, state='reviewed')
+    (tmp_path / 'split.json').write_text(json.dumps({'clarity': [
+        {'kind': '용어', 'quote': 'S&P 500은 원판정으로', 'cannot_tell': '가', 'route': 'style_path', 'placed': 'candidate'},
+        {'kind': '용어', 'quote': '문단 끝과 다음 문단', 'cannot_tell': '가', 'route': 'style_path', 'placed': ''}]},
+        ensure_ascii=False), encoding='utf-8')
+    (tmp_path / 'original.html').write_text(
+        '<p>S&amp;P <b>500</b>은 원판정으로 내렸다. 문단 끝과</p><p>다음 문단이다.</p>', encoding='utf-8')
+    monkeypatch.setattr(cli, 'ROOT', str(tmp_path / 'repo'))
+    cli.main(['record', '--dir', str(tmp_path), '--section', 'us', '--date', '2026-11-07'])
+    rec = json.loads((tmp_path / 'repo/reviews/prepublish/us/2026-11-07.json').read_text(encoding='utf-8'))
+    assert [c['quote'] for c in rec['clarity']] == ['S&P 500은 원판정으로', '']   # 두 문단에 걸친 글자는 인용이 아니다

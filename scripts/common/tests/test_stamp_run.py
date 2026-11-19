@@ -292,3 +292,32 @@ def test_g4_run_id_sources(tmp_path, monkeypatch):
     assert run['run_id'] and run['generated'] is True
     w(tmp_path / 'kr_market_data.json', {'report_date': RD, 'collect': col(T0 + dt.timedelta(minutes=1))})
     assert S.stamp(str(tmp_path), run_id=run['run_id'])['run']['checked'] is True
+
+
+def test_us_yields_patch_run_keeps_the_base_files_and_stamps_only_what_it_rewrote(tmp_path):
+    """수익률만 고치는 재실행(2026-11-19, main 의 us-collect-wait)과 1a 를 합친 자리 — 병합 때 찾은 틈.
+
+    고치기 실행은 `collect` 단계가 성공하고 `patched=true` 를 내지만 market_data.json 외의 파일은 다시 쓰지 않는다.
+    전에는 그 파일들이 「단계는 돌았는데 다시 쓰이지 않음」 = failed 로 찍혀, 1a 를 켜면 네이버 종가를 기다린 날마다
+    멀쩡한 판이 막혔다. 그 파일들은 첫 실행의 판이 그대로 유효하다 — 건너뜀과 같다."""
+    us_first_run(tmp_path)
+    S.begin(str(tmp_path), now=T1)
+    w(tmp_path / 'market_data.json', {'report_date': RD, 'collect': col(T1 + dt.timedelta(minutes=2))})
+    w(tmp_path / 'liquidity' / 'liquidity.json', {'report_date': RD, 'collect': col(T1 + dt.timedelta(minutes=1))})
+    steps = {'collect': {'outcome': 'success', 'outputs': {'patched': 'true'}},
+             'auctions': {'outcome': 'success', 'outputs': {}}, 'telegram': {'outcome': 'success', 'outputs': {}},
+             'liquidity': {'outcome': 'success', 'outputs': {}}}
+    f = S.stamp(str(tmp_path), steps=steps)['files']
+    assert f['market_data.json']['run'] == 'written'
+    assert f['macro_metrics.json']['run'] == 'skipped' and f['macro_metrics.json']['status'] == 'ok'
+    assert not [k for k, e in f.items() if e.get('run') == 'failed' and k != 'auctions.json'
+                and not k.startswith('telegram/') and k != 'auction_table.html']
+
+
+def test_us_yields_patch_does_not_excuse_market_data_itself(tmp_path):
+    """고치기 실행이 market_data.json 을 다시 쓰지 못했으면(고친 판이 없다) 그것은 실패다 — 건너뜀으로 덮지 않는다."""
+    us_first_run(tmp_path)
+    S.begin(str(tmp_path), now=T1)
+    steps = {'collect': {'outcome': 'success', 'outputs': {'patched': 'true'}}}
+    f = S.stamp(str(tmp_path), steps=steps)['files']
+    assert f['market_data.json']['run'] == 'failed'

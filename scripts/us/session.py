@@ -192,16 +192,33 @@ def calibrate_tape(ohlc):
 
     반환은 `(high, low, meta)` — meta가 None이면 초안값을 쓴 것이다.
     """
-    vals = []
+    vals, used = [], 0
     for bars in (ohlc or {}).values():
-        vals += _positions(bars)
+        got = _positions(bars)
+        used += bool(got)
+        vals += got
     if len(vals) < TAPE_MIN_SESSIONS:
         return TAPE_HIGH, TAPE_LOW, None
     vals.sort()
     hi = round(_quantile(vals, 0.75), 1)
     lo = round(_quantile(vals, 0.25), 1)
-    return hi, lo, {'sessions': len(vals), 'high': hi, 'low': lo,
-                    'source': '일간 OHLC 종가 위치의 사분위'}
+    # `sessions` 는 거래일 수가 아니다 — 지수마다의 일간 관측값을 합친 개수다(이름은 읽는 쪽 때문에 그대로 둔다).
+    # 캡션이 「N거래일」로 옮기지 않게, 실제로 관측값을 낸 지수 수와 단위를 함께 낸다.
+    return hi, lo, {'sessions': len(vals), 'indices': used, 'unit': '지수별 일간 관측값 합계',
+                    'high': hi, 'low': lo, 'source': '일간 OHLC 종가 위치의 사분위'}
+
+
+def band_of(gap_pp, cap_pct):
+    """참여도 판정 이름 — 내부 값이다. 글은 이 이름이 아니라 그 뜻을 쓴다.
+
+    `gap_pp` 는 동일가중에서 시총가중을 뺀 수익률 차이, `cap_pct` 는 시총가중 등락이다.
+    발행 검사(`session_gate`)가 저장된 판정값을 같은 규칙으로 다시 내 대조한다.
+    """
+    if abs(gap_pp) < PARTICIPATION_MIN_PP:
+        return '중립'
+    if cap_pct > 0:
+        return '고르게 오름' if gap_pp > 0 else '소수가 끌어올림'
+    return '소수가 끌어내림' if gap_pp > 0 else '고르게 내림'
 
 
 def participation(closes, dates, report_date=None):
@@ -237,13 +254,8 @@ def participation(closes, dates, report_date=None):
     if cap is None or eq is None:
         return None
     g = round(eq - cap, 2)
-    if abs(g) < PARTICIPATION_MIN_PP:
-        band = '중립'
-    elif cap > 0:
-        band = '고르게 오름' if g > 0 else '소수가 끌어올림'
-    else:
-        band = '소수가 끌어내림' if g > 0 else '고르게 내림'
-    return {'gap_pp': g, 'spy_pct': round(cap, 2), 'date': b, 'band': band}
+    # 판정은 반올림한 차이와 **반올림 전** 시총가중 등락의 부호로 한다. 저장하는 spy_pct 는 반올림값이다.
+    return {'gap_pp': g, 'spy_pct': round(cap, 2), 'date': b, 'band': band_of(g, cap)}
 
 
 def tape(intraday, thresholds=None):
@@ -273,13 +285,24 @@ def tape(intraday, thresholds=None):
 
 
 def compute(closes, dates, market_data, intraday, futures_bars, report_date,
-            ohlc=None):
-    """「오늘의 장」 블록. 어느 조각이 없어도 나머지는 나온다."""
+            ohlc=None, settle=None):
+    """「오늘의 장」 블록. 어느 조각이 없어도 나머지는 나온다.
+
+    `settle` 은 `us.global_close.collect` 의 결과({티커: 판정})다. 주면 세계 지수 행은 **거기서만**
+    나온다 — 이력(`closes`)의 마지막 행을 쓰지 않는다. 야후가 마지막 일봉을 비운 시각에 이력의
+    마지막 행은 전 세션이라, 그 값이 그날 마감처럼 실렸다(2026-10-26~11-17 발행본 전부). 판정을 못
+    받은 지수는 `missing` 에 이유와 함께 남고 행은 없다. 수집기는 늘 `settle` 을 준다.
+    """
     us_pct = (((market_data or {}).get('indices') or {}).get('S&P 500') or {}).get('pct')
     g = {}
     for key, pairs in (('asia', ASIA), ('europe', EUROPE)):
-        rows = region_rows(closes, dates, pairs, report_date)
-        g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct)}
+        if settle is None:
+            rows = region_rows(closes, dates, pairs, report_date)
+            g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct)}
+            continue
+        from .global_close import rows_and_missing
+        rows, missing = rows_and_missing(settle, pairs)
+        g[key] = {'rows': rows, 'alignment': alignment(rows, us_pct), 'missing': missing}
 
     contracts = {}
     for label, ticker in FUTURES:

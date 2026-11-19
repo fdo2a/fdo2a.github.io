@@ -64,3 +64,63 @@ def test_asia_peers_keep_their_session_dates():
     peers = ks.asia_peers({'닛케이': (-0.2, '2026-08-27')}, kospi_pct=0.9)
     assert peers['dates']['닛케이'] == '2026-08-27'
     assert peers['rows']['닛케이'] == -0.2
+
+
+# ── 아시아 이웃 지수: 미국 수집기와 같은 판정 (2026-11-19) ────────────────────
+
+def test_settle_peers_uses_the_shared_settle_and_never_a_prior_session():
+    """자정 뒤 재수집에서 야후가 그날 일봉을 비워도 전 세션으로 돌아가지 않는다.
+
+    11/18 실측: 첫 수집 닛케이 +0.28%(11-18) → 02:04 KST 재수집이 -1.34%(11-17)를 실었다.
+    """
+    from us import global_close as gc
+
+    def nv(t, ctx):
+        rows = {'^N225': [('2026-11-18T15:45:03+09:00', '59,024.28'), ('2026-11-17T15:45:03+09:00', '58,860.43')],
+                '^HSI': [('2026-11-18T16:08:28+08:00', '23,294.75'), ('2026-11-17T16:08:36+08:00', '23,508.17')]}.get(t)
+        if not rows:
+            return None, None
+        return (gc.parse_naver_rows([{'localTradedAt': s, 'closePrice': c} for s, c in rows]),
+                gc.parse_naver_live({'marketStatus': 'CLOSE', 'localTradedAt': rows[0][0]}))
+
+    def yh(t):
+        if t == '^N225':      # 02:04 KST: 11-18 일봉이 비었고 시세가 그날 종가다
+            return [('2026-11-17', 58860.43), ('2026-11-18', None)], {'price': 59024.28, 'date': '2026-11-18'}
+        if t == '^HSI':       # 야후 값이 네이버와 다르다 → 싣지 않는다
+            return [('2026-11-17', 23508.17), ('2026-11-18', 23000.0)], None
+        return None, None
+
+    import datetime as dt
+    now = dt.datetime(2026, 11, 19, 2, 4, tzinfo=ks.KST).timestamp()
+    peers, missing = ks.settle_peers(
+        '2026-11-18', collect=lambda ts, rd: gc.collect(ts, rd, now=now, naver=nv, yahoo=yh))
+    assert set(peers) == {'닛케이'}
+    pct, date = peers['닛케이']
+    assert (round(pct, 2), date) == (0.28, '2026-11-18')
+    assert missing['항셍']['reason'] == 'value_disagree' and missing['항셍']['date'] == '2026-11-18'
+    assert missing['상해종합']['reason'] == 'naver_fetch_failed'
+    assert missing['대만가권']['reason'] == 'naver_fetch_failed'
+    assert all(m['note_ko'] for m in missing.values())
+    block = ks.asia_peers(peers, kospi_pct=1.0)
+    assert block['rows'] == {'닛케이': 0.28} and block['dates'] == {'닛케이': '2026-11-18'}
+
+
+def test_settle_peers_survives_a_collector_that_raises():
+    def boom(ts, rd):
+        raise RuntimeError('network down')
+    peers, missing = ks.settle_peers('2026-11-18', collect=boom)
+    assert peers == {} and set(missing) == {n for n, _ in ks.PEERS}
+
+
+def test_every_peer_has_a_naver_code_and_a_close_time():
+    from us import global_close as gc
+    for _, t in ks.PEERS:
+        assert t in gc.NAVER_CODES and t in gc.CLOSE_PRINT_LOCAL
+
+
+def test_kr_collector_no_longer_takes_the_last_two_yahoo_rows():
+    import os
+    src = open(os.path.join(os.path.dirname(__file__), '..', '..', 'collect_kr_data.py'), encoding='utf-8').read()
+    assert 'kr_session.settle_peers(report_date)' in src
+    assert 'history(period="10d")["Close"].dropna()' not in src
+    assert '"asia_peers_missing": peers_missing' in src

@@ -1,0 +1,22 @@
+{
+ "section": "us",
+ "date": "2026-11-18",
+ "request_id": "us-2026-11-18-9c9c1ce16914",
+ "draft_sha": "9f2c777ef512d88121ba3b82686327db2be3d5ba",
+ "state": "limit",
+ "reason": "codex 사용 한도",
+ "auth_saved": null,
+ "accuracy_findings": 0,
+ "style_candidates": 0,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 0,
+ "facts_rejected": 0,
+ "style_applied": 0,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-19T00:08:48Z"
+}

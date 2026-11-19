@@ -1,0 +1,1352 @@
+{
+  "report_date": "2026-11-18",
+  "cut": "16:30",
+  "source": "Yahoo!ファイナンス ニュース",
+  "complete": true,
+  "notes": [],
+  "items": [
+    {
+      "guid": "fb9e1d7a410e7d2f08c1107cdcbe9f7c12764b4d",
+      "url": "https://finance.yahoo.co.jp/news/detail/fb9e1d7a410e7d2f08c1107cdcbe9f7c12764b4d",
+      "title": "経済・物価・金融情勢に応じ政策金利上げ、緩和度合い調整が適切＝日銀総裁",
+      "source": "ロイター",
+      "published": "2026-11-18T11:00:47+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 1032,
+      "body_file": "01-macro.txt",
+      "summary_ko": "일본은행의 우에다 가즈오 총재는 18일 참의원 특별위원회에서 현재 금융 환경이 완화적이라는 점을 들어, 앞으로 경제·물가·금융 상황에 따라 정책금리를 계속 올리며 완화 정도를 조절하는 것이 적절하다는 뜻을 밝혔다. 10월 29~30일 금융정책결정회의에서 기조적 물가 상승률이 2% 물가안정목표와 대체로 맞는 수준이라고 판단했지만, 이 수준이 2% 안팎에서 자리 잡는지 확인하는 일이 중요하다고 짚었다. 음식료품 소비세율 인하의 직접 영향은 일시적이며 물가 기조는 과거 증세 때처럼 이를 제외하고 판단하겠다고 했다. 감세가 성장률과 기조 물가를 얼마나 끌어올릴지는 불확실성이 높다고 했다. 장기금리는 시장에서 정해지는 것이 기본이라며, 일본은행의 국채 매입 확대가 재정 조달 지원으로 받아들여지면 오히려 금리가 불안해질 수 있다고 경계했다. 보유 상장지수펀드(ETF) 매각 방침 재검토에는 시장 영향을 고려해 착실히 매각한다는 관점에서 스스로 결정했다고 답했다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "cec482c71ff305ec095d78e6cf32f6cc01934928",
+      "url": "https://finance.yahoo.co.jp/news/detail/cec482c71ff305ec095d78e6cf32f6cc01934928",
+      "title": "米消費者、インフレ圧力下でも底堅い 信用なお健全＝Ｗファーゴ",
+      "source": "ロイター",
+      "published": "2026-11-18T09:43:01+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 591,
+      "body_file": "02-macro.txt",
+      "summary_ko": "웰스파고는 17일 공개한 노트에서 휘발유 가격 상승과 인플레이션이 미국 소비자 가계 일부를 압박하고 있지만, 소비자 전반은 견조하고 신용의 질도 대체로 건전하다고 진단했다. 애널리스트들은 소비자금융사, 핀테크 기업, 은행에서 새롭게 경계할 징후 9가지가 나타났다고 짚었다. 이 징후는 저소득층과 자동차 대출에 몰려 있으며 부유층 가계는 계속 탄탄하다고 했다. 임금 상승률이 더는 물가상승률을 웃돌지 못하고, 휘발유 가격과 금리 상승이 소비자에게 부담이라는 점도 지적했다. 그럼에도 카드 발행사는 대형과 중소형을 가리지 않고 연체가 계속 줄고 있으며, 서브프라임 대출업체에서도 초기 단계 연체율과 카드 사용액 증가율이 비교적 안정적이라고 밝혔다. 판세를 바꿀 변수로는 휘발유 가격의 큰 폭 하락을 꼽았고, 이것이 소비자금융주에 우호적인 환경을 만들 수 있다고 봤다. 아울러 아메리칸 익스프레스에 대해서는 부유층 고객 기반과 낮은 규제 리스크를 이유로 긍정적 시각을 유지했다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "45efb12368b3f7719b85460be98182be8e3e21d9",
+      "url": "https://finance.yahoo.co.jp/news/detail/45efb12368b3f7719b85460be98182be8e3e21d9",
+      "title": "午後3時のドルは159円前半で方向性出ず、実需は円安圧力残るとの見方",
+      "source": "ロイター",
+      "published": "2026-11-18T15:38:01+09:00",
+      "category": "macro",
+      "feed": "bus_all",
+      "body_chars": 960,
+      "body_file": "04-macro.txt",
+      "summary_ko": "18일 도쿄 외환시장에서 오후 3시 달러·엔 환율은 159엔대 초반으로 전날 뉴욕 종가와 비슷한 수준에서 방향성 없이 움직였다. 오전에는 엔비디아 실적 발표 뒤 오른 미국 주가선물을 따라 한때 159.65엔까지 올랐지만, 선물이 약해지자 오후 들어 159.15엔까지 밀렸다. 재무성이 발표한 10월 무역수지는 4765억 엔 적자로 6개월 연속 적자였으며, 유가 상승과 우회 수송에 따른 비용 증가로 원유 수입단가가 올라 수입액이 늘었다. 다이와증권의 미나미 겐토 선임 이코노미스트는 인공지능 관련 수요가 수출과 수입을 함께 늘려 무역수지를 개선하기 어렵다며, 당분간 실수요 차원의 엔화 매도 압력이 이어지기 쉽다고 말했다. 우에다 일본은행 총재는 국회에서 정책금리를 계속 올리겠다는 기조를 밝혔다.",
+      "summary_model": "claude-sonnet-5-5"
+    },
+    {
+      "guid": "1f2e130665589886cf69348889fae0c56b2a0ba7",
+      "url": "https://finance.yahoo.co.jp/news/detail/1f2e130665589886cf69348889fae0c56b2a0ba7",
+      "title": "10月貿易赤字、4765億円＝輸出入額が過去最大―財務省",
+      "source": "時事通信",
+      "published": "2026-11-18T09:00:31+09:00",
+      "category": "policy",
+      "feed": "bus_all",
+      "body_chars": 300,
+      "body_file": "07-policy.txt",
+      "summary_ko": "일본 재무성이 18일 발표한 10월 무역통계 속보(통관 기준)에 따르면 무역수지는 4765억 엔 적자였다. 적자는 6개월 연속이다. 중동 정세 긴장으로 미국산 원유 조달이 늘고 반도체 수요가 커지면서 수입이 수출 증가폭을 웃돌았다. 엔화 약세도 금액을 끌어올려 수출입 금액은 모두 비교 가능한 1979년 이후 최대치를 기록했다. 수출액은 전년 같은 달보다 20.5% 늘어난 11조 7688억 엔이었다. 미국향 자동차와 싱가포르향 집적회로(IC) 등 반도체 관련 전자부품이 증가를 이끌었다. 수입액은 21.6% 증가한 12조 2453억 엔이며, 그중 원유는 가격 급등에 힘입어 60.5% 늘었다. 다만 중동산 수입량은 16.5% 줄었다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "88da3de6b31251b887034254392261d92b068c2b",
+      "url": "https://finance.yahoo.co.jp/news/detail/88da3de6b31251b887034254392261d92b068c2b",
+      "title": "独、買収ルール厳格化へ 安値での提案抑制し株主保護強化",
+      "source": "ロイター",
+      "published": "2026-11-18T15:14:04+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 520,
+      "body_file": "15-industry.txt",
+      "summary_ko": "독일 정부가 헐값 인수 제안을 억제하고 주주 보호를 강화하기 위해 기업 인수 규칙을 엄격히 바꿀 방침이다. 로이터가 17일 확인한 법안 초안에 따르면, 재무부가 마련한 개정안은 인수자의 지분율이 단계별 기준에 도달할 때마다 나머지 주주에게 새 매수 제안을 하도록 의무화한다. 현행법은 의결권의 30%를 확보하면 매수 제안을 하도록 하는 기준 하나만 두고 있다. 초안은 35%, 40%, 45%, 50% 기준을 추가했다. 법정 최저 가격으로 일부 주식을 확보한 뒤 주주에게 다시 제안하지 않고 지분을 단계적으로 늘리는 행위를 막으려는 취지다. 정부 관계자는 새 규칙으로 인수자가 처음부터 공정하고 충분히 높은 가격을 제시하게 될 것이라고 설명했다. 이탈리아 은행 유니크레디트의 독일 코메르츠은행 인수 움직임이 개정 계기 중 하나가 됐으나, 이번 개정안은 이 인수에는 영향을 주지 않는다고 정부 관계자는 전했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "9b24517a760bbc87181259c9968ae28c9ede823b",
+      "url": "https://finance.yahoo.co.jp/news/detail/9b24517a760bbc87181259c9968ae28c9ede823b",
+      "title": "アリス氏、日本にも関連会社＝東京法人介しAI事業―中国メディア",
+      "source": "時事通信",
+      "published": "2026-11-18T08:00:26+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 300,
+      "body_file": "17-industry.txt",
+      "summary_ko": "중국 경제매체 재신은 18일 엔비디아의 황 전 최고경영자(CEO)의 불륜 상대로 알려진 중국인 사업가 앨리스 황(황러)이 일본에도 관련 회사를 세웠다고 보도했다. 재신에 따르면 황러는 일본 법인을 통해 여러 회사를 보유하며 중국 내 데이터센터 관련 기업을 간접적으로 지배해 온 것으로 전해졌다. 문제의 일본 법인은 2025년 3월 도쿄 고지마치에 설립된 'NeXPower Japan'이다. 황러는 같은 해 6월 이 법인을 통해 1000만 위안(약 2억 4000만 엔)을 출자해 상하이에 회사를 설립했다. 이 회사는 다른 중국 기업을 거쳐 데이터센터용 장비를 공급하는 상하이 회사를 산하에 두게 됐다고 한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "b66d2171db2d33a86a542dd6fc7d6607b95fc7e1",
+      "url": "https://finance.yahoo.co.jp/news/detail/b66d2171db2d33a86a542dd6fc7d6607b95fc7e1",
+      "title": "ソニー、プレステ訴訟に勝利＝英裁判所、損害賠償請求棄却",
+      "source": "時事通信",
+      "published": "2026-11-18T06:00:19+09:00",
+      "category": "industry",
+      "feed": "bus_all",
+      "body_chars": 327,
+      "body_file": "18-industry.txt",
+      "summary_ko": "2026년 11월 17일 런던 법원은 영국 이용자들이 소니그룹의 가정용 게임기 플레이스테이션에서 과도한 요금을 물렸다며 약 20억 파운드(약 4200억 엔)의 손해배상을 요구한 집단소송의 원고 측 청구를 기각했다. 소비자 문제 활동가들이 2022년 제기한 이 소송은 올해 3월 심리가 시작됐으며, 원고들은 소니가 지배적 지위를 남용해 자사 온라인 스토어에서만 살 수 있는 플레이스테이션용 게임과 콘텐츠에 부당하게 높은 가격을 매겼다고 주장했다. 이에 대해 소니는 게임과 콘텐츠 판매의 이익률이 지나치게 높지 않으며 정당한 방식의 경쟁이었다고 반박했다. 법원은 판결에서 원고단이 소니의 법 위반을 입증하지 못했다고 결론지어 소니가 전면 승소했다. 이번 판결로 대규모 배상 부담을 피하게 된 소니는 해당 사안에서 법적 위험을 해소했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "87d5770d26bfc6f09ade6b134784ddfdad449900",
+      "url": "https://finance.yahoo.co.jp/news/detail/87d5770d26bfc6f09ade6b134784ddfdad449900",
+      "title": "日経平均は3日ぶり小反発、エヌビディア決算後の上昇は短時間 イベントが続き模様眺めも",
+      "source": "ロイター",
+      "published": "2026-11-18T16:08:34+09:00",
+      "category": "market",
+      "feed": "bus_all",
+      "body_chars": 1454,
+      "body_file": "09-market.txt",
+      "summary_ko": "닛케이평균은 18일 전일 대비 0.28%(163엔85전) 오른 5만9024엔28전에 마감하며 3거래일 만에 소폭 반등했다. 엔비디아가 4분기 매출 전망을 시장 예상보다 높게 내놓자 장 초반 매수가 몰려 한때 1.31% 오른 5만9630엔95전까지 올랐지만, 상승은 길게 이어지지 못하고 일시 마이너스로 전환했다. 젠슨 황 최고경영자 후임을 둘러싼 불확실성이 투자심리를 누른 데다, 인공지능 개발사 앤트로픽의 신규 상장과 미국·중국·러시아 정상회담을 앞두고 지정학 리스크가 상단을 막았다. 토픽스는 0.42% 내린 3824포인트, 프라임 시장 지수는 0.41% 내린 1971.10포인트에 마쳤다. 프라임 시장 거래대금은 8조0502억엔이었다. 증권 전문가는 이번 반등이 단순한 기술적 반등에 그친다고 보고, 미국 중간선거에서 민주당이 승리한 뒤 데이터센터 규제 방향이 1월 의회 개회 전까지 불투명해 움직임이 제한될 것이라고 평가했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "7a168be04c10e57c21d37c8f50033f44c809f0ca",
+      "url": "https://finance.yahoo.co.jp/news/detail/7a168be04c10e57c21d37c8f50033f44c809f0ca",
+      "title": "〔東京株式〕3日ぶり反発＝半導体株に買い（18日）☆差替",
+      "source": "時事通信",
+      "published": "2026-11-18T15:42:43+09:00",
+      "category": "market",
+      "feed": "market",
+      "body_chars": 317,
+      "body_file": "11-market.txt",
+      "summary_ko": "니케이평균주가는 전날보다 163엔 85전 오른 5만 9024엔 28전에 마감해 3영업일 만에 반등했다. 미국 엔비디아의 호실적 발표를 계기로 반도체 관련주에 매수세가 몰렸다. 반면 반도체 관련주를 제외한 대부분의 종목은 약세를 보였고, 니케이평균은 한때 마이너스권으로 밀려나기도 했다. 도쿄증권거래소 주가지수(TOPIX)는 16.02포인트 내린 3824.00으로 마감했다. 프라임 시장에서는 26%의 종목이 오르고 72%가 내렸으며, 거래량은 24억 5217만 주, 거래대금은 8조 502억 엔이었다. 업종별로는 석유·석탄제품과 전기기기 등이 올랐고, 서비스업과 항공운송업 등은 하락했다. 스탠더드 시장의 TOP20 지수는 반등했고, 그로스 시장의 250종목 지수와 그로스 코어 지수는 이틀째 하락세를 이어갔다.",
+      "summary_model": "claude-haiku-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "japan",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 129,
+    "answered": 129,
+    "dropped": [
+      {
+        "guid": "f1ed0315271c328d165200de614740ea51b35f3d",
+        "title": "米ウェイモ、高速道のロボタクシー運行停止 加州規制受け",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "0bbf5b7b76f03c2f179e8ee81281583a67e090e8",
+        "title": "米エヌビディア、供給元と連携して生産能力拡大 ＡＩ需要に対応",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "f366c0941c11dae85bbd5b7c1ad48fe4be9f9b34",
+        "title": "ＵＢＳが国際事業抑制の新資本規制受け入れへ、緩和働きかけ実らず＝関係者",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "50e1882ecfd2db558cc6c8fcdae633d0c9de3d90",
+        "title": "アングル：エヌビディア、株主訴訟に備えた保険未加入 賠償は手元資金で",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "ecb7e55c45399288c37984cc925f1fe890ab70b0",
+        "title": "売上高と純利益、過去最高＝米エヌビディア、8～10月期決算―「フアン氏復帰ない」",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "50e897e50f96f2ec35d4c1e11a6307a40210ee3c",
+        "title": "ＮＹ市場サマリー（17日）株続落、ドル軟調 利回り低下",
+        "label": "foreign",
+        "confidence": 0.97
+      },
+      {
+        "guid": "c082817e5e0508d0b1c859ea3715b0b0dbfafbaa",
+        "title": "米エヌビディア第4四半期売上高見通しが予想超え、クラウド受注残2.5兆ドル フアン氏後任「速やかに」",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "65e6b4286ae5fdc6afe2d1a9c3175049a4d167e6",
+        "title": "11月17日のNY為替概況",
+        "label": "foreign",
+        "confidence": 0.98
+      }
+    ],
+    "stopped": "complete",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "87d5770d26bfc6f09ade6b134784ddfdad449900",
+        "title": "日経平均は3日ぶり小反発、エヌビディア決算後の上昇は短時間 イベントが続き模様眺めも",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "10ad3455e83d05c603a7f3475e2de5c624f0cb2a",
+        "title": "163円高の5万9024円28銭＝18日の平均株価",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "45efb12368b3f7719b85460be98182be8e3e21d9",
+        "title": "午後3時のドルは159円前半で方向性出ず、実需は円安圧力残るとの見方",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "88da3de6b31251b887034254392261d92b068c2b",
+        "title": "独、買収ルール厳格化へ 安値での提案抑制し株主保護強化",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2f311d325ea8f4f1ddf3bec48a849828e285fda2",
+        "title": "Ｊフロント、３Ｄインベストメントが筆頭株主に 議決権割合16.49％",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f1ed0315271c328d165200de614740ea51b35f3d",
+        "title": "米ウェイモ、高速道のロボタクシー運行停止 加州規制受け",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fe8f59e09525bc1313e7762634c971074e74f099",
+        "title": "円相場、159円38～38銭＝18日正午現在",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0bbf5b7b76f03c2f179e8ee81281583a67e090e8",
+        "title": "米エヌビディア、供給元と連携して生産能力拡大 ＡＩ需要に対応",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cd249370875ffbac9fd6634dae672c5ab68c195b",
+        "title": "163円安の5万8696円54銭＝18日午前の平均株価",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fb9e1d7a410e7d2f08c1107cdcbe9f7c12764b4d",
+        "title": "経済・物価・金融情勢に応じ政策金利上げ、緩和度合い調整が適切＝日銀総裁",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f366c0941c11dae85bbd5b7c1ad48fe4be9f9b34",
+        "title": "ＵＢＳが国際事業抑制の新資本規制受け入れへ、緩和働きかけ実らず＝関係者",
+        "category": "policy",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "58bc962806be221b2819bee62c1d9631b9a7a1ef",
+        "title": "植田日銀総裁、10時から参院特別委に出席＝関係筋",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cec482c71ff305ec095d78e6cf32f6cc01934928",
+        "title": "米消費者、インフレ圧力下でも底堅い 信用なお健全＝Ｗファーゴ",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.66,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "50e1882ecfd2db558cc6c8fcdae633d0c9de3d90",
+        "title": "アングル：エヌビディア、株主訴訟に備えた保険未加入 賠償は手元資金で",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1f2e130665589886cf69348889fae0c56b2a0ba7",
+        "title": "10月貿易赤字、4765億円＝輸出入額が過去最大―財務省",
+        "category": "policy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "bce70a665771f50437cb9a6c9cc83d43eb506e48",
+        "title": "貿易収支、10月は4765億円の赤字 市場予想下回る赤字幅",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6e52e4617d46060c6a8183110a93309861dafd61",
+        "title": "ホンダ、米アラバマ工場に735億円投資 ＨＶ新型エンジンなど増産",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9b24517a760bbc87181259c9968ae28c9ede823b",
+        "title": "アリス氏、日本にも関連会社＝東京法人介しAI事業―中国メディア",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.4,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ecb7e55c45399288c37984cc925f1fe890ab70b0",
+        "title": "売上高と純利益、過去最高＝米エヌビディア、8～10月期決算―「フアン氏復帰ない」",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "50e897e50f96f2ec35d4c1e11a6307a40210ee3c",
+        "title": "ＮＹ市場サマリー（17日）株続落、ドル軟調 利回り低下",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c082817e5e0508d0b1c859ea3715b0b0dbfafbaa",
+        "title": "米エヌビディア第4四半期売上高見通しが予想超え、クラウド受注残2.5兆ドル フアン氏後任「速やかに」",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "645a4d624f0c69aa1b264a026037c7d727d63332",
+        "title": "本日の経済スケジュール ─ ★10月貿易収支など",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.8,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b66d2171db2d33a86a542dd6fc7d6607b95fc7e1",
+        "title": "ソニー、プレステ訴訟に勝利＝英裁判所、損害賠償請求棄却",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f22de1e4e963e8afe3703025638995f2ed6902d8",
+        "title": "東証グロース市場250指数先物概況：エヌビディア決算好感も朝高後売られ3日続落",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "05843e9e2f1767c9a22d8075f59def001d618748",
+        "title": "東京為替：ドル・円は反落、米金利・原油にらみ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "f7d2f7db4e606770fa0ac7364fd36c3ed97bc2a0",
+        "title": "〔新興株式〕グロース250、5日続落＝手じまい売りに押される（18日）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6c61d9d07454399bd9792ea6cb77214edb1d94d2",
+        "title": "日経平均は反発、エヌビディア好決算で半導体株に買い戻し／相場概況",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7a168be04c10e57c21d37c8f50033f44c809f0ca",
+        "title": "〔東京株式〕3日ぶり反発＝半導体株に買い（18日）☆差替",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9d52fc4d7003d0f84ecaaf58c176dbf802139552",
+        "title": "明日の決算発表予定 東京海上、ＭＳ＆ＡＤなど5社 (11月18日)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7f78eed853bc65016ff33313eed375f7247de07a",
+        "title": "11月18日日本国債市場：債券先物は126円24銭で取引終了",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e6d65d7e8dce57c35bb6c799291d1bec09b1fd2f",
+        "title": "東証グロース（大引け）＝値下がり優勢、ＶＮＸ、リベースがS高",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "58912a503db1ebbe76b7bacf5ea82e603d1c3173",
+        "title": "日経平均18日大引け＝3日ぶり反発、163円高の5万9024円",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e96940fe324a6f0d38ae4b7e2f5723ea510d9d27",
+        "title": "東証スタンダード（大引け）＝値下がり優勢、セキュアヴェ、ショーケースがS高",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "40d912f3eebf241877820375b3d74d0669ca4b0c",
+        "title": "日経平均、163円85銭高の5万9024円28銭で終了＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "aae97e69af9653f1762b87a76a5a667cfa00ac81",
+        "title": "日経平均大引け：前日比163.85円高の59024.28円",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5c01e530935b75e262f06413b39b45cd841a355e",
+        "title": "東京為替：ドル・円は戻りが鈍い、ドル買い抑制",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4b3e5b398b796823ac809d29f2657ee178346779",
+        "title": "15時の日経平均は209円高の5万9069円、アドテストが234.09円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "30cbd94fc29a32b217934dc3d3785439cb05df58",
+        "title": "日経平均は236円高、訪日外国人客数などに関心",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5dc350313edecd8a8ddc2eeb0bb81ca88e5a1fc5",
+        "title": "東京為替：ドル・円は下げ一服、米金利にらみ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6178d51c85fdd5ecefeeec73f8129db439b9b2a3",
+        "title": "日経平均VIは低下、株価底堅いがイベント控え警戒感も継続",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "22cbbbb8ee849899f6772751804d0d8fdb065ab8",
+        "title": "14時の日経平均は119円高の5万8979円、アドテストが177.99円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "575b8d807a7c8430451982f942f8353cb25e67a6",
+        "title": "東京為替：ドル・円はじり安、ポンドは底堅い",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a0a7db51242e353e73744a025298941d336dbc37",
+        "title": "東京為替：ドル・円は続落、クロス円も軟調",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "90decaa3d84206c2661df9383be08deec328ae5d",
+        "title": "日経平均は184円高、やや押し目買い優勢",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6c65e47780b0c5cd756ea8ffa576367679550008",
+        "title": "東京為替：ドル・円は底堅い、安値圏でもみ合い",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "81d2ab83e86b0f848045eb48c5715c2fe3144066",
+        "title": "13時の日経平均は72円高の5万8933円、アドテストが167.20円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "561c4d3134f151d1c2f77b3c2f1cff5af8cd17cf",
+        "title": "後場に注目すべき3つのポイント～エヌビディア好決算も買い一巡後に失速",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.24,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "54df8bea3a4f3d9aa3e82f684bc5f7812a1c1a83",
+        "title": "日経平均、201円84銭安の5万8658円59銭で始まる＝東京株式後場",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "357b310f064ac4df3582d30f9c9c394eee583e1c",
+        "title": "東京為替：ドル・円は反落、上昇分を削る",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3da69727cec0169c583321b9a65a9531f9328448",
+        "title": "エヌビディア好決算も買い一巡後に失速／後場の投資戦略",
+        "category": "industry",
+        "label": "foreign",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "edb631570112074f5690a920386ad2a5ab5c4bcf",
+        "title": "〔東京外為〕ドル、159円台前半＝株価軟化や米金利低下で値を消す（18日正午）",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7127d75c235b96e262c0d6a12427214f7139dbf2",
+        "title": "日経平均は続落、エヌビディア好決算も買い一巡後に失速／ランチタイムコメント",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "71195ac8c876a0a6f6ff1d661815d4cfeb7c45d5",
+        "title": "日経平均の下げ幅が500円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6669dc9726d78e03a51c5a8c456ee1f5a8a6968e",
+        "title": "日経平均、500円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "86f85356416ce777aee6b0f8a82b2c7eac8517b5",
+        "title": "日経平均の下げ幅が400円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "95a489f27254723d00ff15a2d86720d1e0d2848f",
+        "title": "11時の日経平均は433円安の5万8426円、東エレクが120.85円押し下げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b1b5d716f715f36cb364b47babe311841929c611",
+        "title": "日経平均、400円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "062e5a27c0aeea8054556a26b0f4361e89d769f4",
+        "title": "日経平均の下げ幅が300円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8c2a1f94f150ff09a795f18cd4c6d41a78f62489",
+        "title": "日経平均、300円超安＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c9edeed1f3e282ab36eab8c10462b7365f6ce7c6",
+        "title": "日経平均の下げ幅が200円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c0a2f134baa44542b0f94349e8e94acaa8e29016",
+        "title": "日経平均の下げ幅が100円を超える",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ec5f615a6c0d058e24631a1f2d98da808b6c584c",
+        "title": "東京為替：ドル・円は159円65銭まで上昇、買い優勢の展開",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5e1c0a9f6553c1742e73e604e5cdd88ed25d6b0a",
+        "title": "日経平均がマイナス転換",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7a32965c20904b3cafd78bab997152e5808137d9",
+        "title": "東京為替：ドル・円は159円60銭まで上昇、ユーロ・ドルは続落",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "fa6faff060c83eee4e9a06d169ab5cc17442e1e9",
+        "title": "10時の日経平均は563円高の5万9423円、アドテストが278.31円押し上げ",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "76dc7a3fc70e7aa2e3063bd00ee731df3851fd18",
+        "title": "東京為替：ドル・円は159円50銭付近でもみ合い、上値追いは限定的",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "1354f9dc1431bf2e0311c5e407009e74a5b86151",
+        "title": "〔東京外為〕ドル、159円台半ば＝エヌビディア好決算受け上昇（18日午前9時）",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6e6f163f350b11a03b2bd79588621d8f95b91144",
+        "title": "日経平均の上げ幅が700円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2c334b7f6c1de6804cc38665c819176b351c63c5",
+        "title": "日経平均、700円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "233437f1fc0978f7e05200fbac1c05d4ec12410f",
+        "title": "日経平均の上げ幅が600円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3006ee333f4affaeafbe3e8eca3e93a904c44886",
+        "title": "日経平均、600円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2556e3f5f13f35fb29d2ac7990b964399d8720da",
+        "title": "日経平均の上げ幅が500円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4194a50807a8afc21d37ea1b11cf1711a166902f",
+        "title": "日経平均は480円高、寄り後は上げ幅拡大",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "9df4905a02db3878c513f69d8b458833e1f2a5b7",
+        "title": "日経平均、500円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "67f2031c3facddb917622a707080406738b41d41",
+        "title": "東京為替：ドル・円は159円50銭台に上昇、米利上げ観測を意識",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e8c461d80c45a944835eab14f3f2dfefbd3a1c99",
+        "title": "日経平均の上げ幅が400円突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "62c85cd136ada9f05da77b82b49612eda986169a",
+        "title": "日経平均、400円超高＝東京株式",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "32d3db7522955ffc0f81bcbfe80793fecf3d86c4",
+        "title": "〔JPXエネルギー〕ドバイ原油、反発＝供給混乱懸念で（18日朝）",
+        "category": "market",
+        "label": "foreign",
+        "confidence": 0.11,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "06ce39c97d11b646eb3c92ec3967e8c5ad216d68",
+        "title": "エヌビディア決算を受けた半導体やAI関連株の自律反発狙い／オープニングコメント",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.24,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8edc681ec1399af2e4cbd606af9cb44a5137f1eb",
+        "title": "今日の為替市場ポイント：米国のインフレ圧力が意識され、ドル高円安の流れは継続する可能性",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.25,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "ebf7c04bac83a8fa2a3f27c7e2736bf3ce5f4224",
+        "title": "伊藤智洋が読む「日経平均株価・短期シナリオ」 (11月18日記）",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "478a341435e091bf271cf52bd9f9f85e28ad55c7",
+        "title": "東証グロース市場250指数先物見通し：続落か",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "6262f6ebd49a7853ca92aea4baa362256e17d83f",
+        "title": "シカゴ日経平均先物 大取終値比 10円安 （11月17日）",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "65e6b4286ae5fdc6afe2d1a9c3175049a4d167e6",
+        "title": "11月17日のNY為替概況",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "79f8c3456222ed73af35d163c081d31340e0be65",
+        "title": "【相場の体温計】 東証プライム・騰落レシオ推移(25日平均)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a638cf244e8a263f8f9658f202324fd9f9fce9ec",
+        "title": "【日経平均の値位置を知る！】 上値・下値テクニカル・ポイント(18日現在)",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3c9cb968b7d8a5850b79d864cb55d5b02f728f9e",
+        "title": "ネクストジェン：株価は新中計で1300円→3600～5000円、優待+配当利回り4%",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5c0cc1f83058c9f0ceeff573e620c33992a75f3b",
+        "title": "プラチナは軟調、米利上げ見通しや株安で ＜コモディティ特集＞",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "61a710d5b7e26712da69454fa6e81cb856ce6607",
+        "title": "ツクルバ---上場来安値、27年7月期の営業損益予想を下方修正、中古マンション市場で購買力低下",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "656fa1a1a10d23f8e6b4148211b2adcc36ae5bc4",
+        "title": "TDSE---大幅に3日ぶり反発、送電線と識別する深度アルゴリズムを東電HDと共同で特許出願",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "609a9dbcb795de0c61004417e07c35d902022e64",
+        "title": "関電工---大幅反発、受注好調や工事採算改善を踏まえて国内証券が目標株価上げ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "56bbe15562fd59a510047ab7ae142fa269f54fe4",
+        "title": "明治ＨＤ---続伸、ワクチン開発の米パイオ企業に出資",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "a66d11f684622d09c51d76a0e85b38b54bdd3381",
+        "title": "日機装---大幅続落、インダストリアル事業伸び悩みで国内証券が格下げ",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b3c64a83c7ffac839d4023a2f5c4b815da9b5a8d",
+        "title": "INEST---中間期は大幅増益で黒字転換、ストック収益の積み上げと構造改革が奏功",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3f265db8664e9b443b4583d5a19faf42481294da",
+        "title": "冨士ダイス---中間期は34.6%増収で大幅増益、価格転嫁が進み通期予想を上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3f05f5ec13bdd09a12bba22741df8487d7d7ba24",
+        "title": "TDSE---東電HDと深度アルゴリズムを共同で特許出願、架空送電線AI診断を高度化",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "59f444a720dfb1e7b05e846655f57516262fee8a",
+        "title": "セカンドサイトアナリティカ：金融で磨いたAI技術でAX推進、SBI証券・ジェイリースの業務改革を支援",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4b78e652a1ba6c900017f694c1275ffe377e233a",
+        "title": "クラシコム：「北欧、暮らしの道具店」で20期連続増収増益、還元を自社株買いへ切り替え株主価値向上へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8653f9730ec56b8119c78da80c44de051cce5c19",
+        "title": "日本電子材料---反発、エフィッシモの保有比率上昇が続く",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "b9e408f5395315d15f023411c064f230cee3728b",
+        "title": "壱番屋---大幅反落、ハウス食品がKKRに売却優先交渉権と伝わる",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "20670ba7dc6e35582c1f2ccf758095a4067aa673",
+        "title": "ＨＥＮＮＧＥ---大幅反発、情報漏洩対策など再評価局面として国内証券が買い推奨",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.53,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "4974e7934c2b5bc8b9f3da36c7274333d4756eb4",
+        "title": "アトラグループ---REMED JAPANと資本業務提携、持分法適用関連会社化へ",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "23d8acb8af9e45d4d71579a20e6f2863199293ee",
+        "title": "楽天銀行---大幅続落、楽天証券に不正アクセスで顧客情報漏洩",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "93341199458a0a7934bd284c91f52494ed096935",
+        "title": "キオクシア---大幅反発、エヌビディア決算受けAI・半導体関連には買い安心感",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e41736917a800dbdf383c3a438afea8a7ab5d570",
+        "title": "テックファム---大幅に続伸、株主優待制度を導入、デジタルギフトを年8000円分贈呈",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "97009154c09fb1fbe634347fcb0b519a99055b00",
+        "title": "エムアップホールディングス---中間期は25.9%増収・19.1%営業増益",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "75669a5ee28fad599c5dc89a90eae0d645c1431a",
+        "title": "セキュア---大幅に4日ぶり反発、顔認証関連ソリューションの累計導入件数が1万4000件突破",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "cd0bd9a31a0ebf8c72f5bff741428380c93fbc06",
+        "title": "フェローテック---保有株式の売却で特別利益発生見込み、通期最終利益予想を上方修正",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5654c8a0634e97ea114ea0a1fc9822d4004658ed",
+        "title": "リベラウェア---大幅に5日ぶり反発、国産無人機向け高性能バッテリー事業へ参入",
+        "category": "market",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3e7a506581dc3ede19426ead393b9f1f89b05a88",
+        "title": "フェローテック---業績上振れ見込みで期末配当予想を倍増、通期300円に",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "105ce48951356621618c8a471b4cfe8d78adf13a",
+        "title": "フェローテック---中間期は営業利益500億円、AI関連需要で半導体等装置関連事業が牽引",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "7114da8504c50200a0fb08be97663fd806d67a29",
+        "title": "本日注目の【株主優待】情報 (17日引け後 発表分)",
+        "category": "industry",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2162d68fe8cdc7dba376b9f38aea40330babdf3f",
+        "title": "外為：1ドル159円24銭前後と小幅なドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "e475fb2893d55b0cd4ef53c6103765b16362e774",
+        "title": "外為：1ドル159円27銭前後と小幅なドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "536964010f3cd3a8def7a9fc0dc3f4d4a5bdc563",
+        "title": "外為：1ドル159円16銭前後とドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "0ff6abdf1d557a9dea57f7034fe52b986274e6d3",
+        "title": "外為：豪ドル、107円17銭前後と小幅な豪ドル安・円高で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.49,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8fa0edf26d12e35923ece6c99cb0c5ca9636a4a1",
+        "title": "外為：スイスフラン、189円50銭前後とフラン安・円高で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.4,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "133c0171986f815862dd48ef5c1c9fa7374d4aab",
+        "title": "外為：英ポンド、210円28銭前後とポンド高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.43,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "3d8feecff20e670bfdaa5321cd460b4c3f1b8bcb",
+        "title": "外為：1ドル159円38銭前後と小幅なドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "12346db5660ad28a8c76e1f7e8bf66f554bc2ad6",
+        "title": "外為：1ドル159円43銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "117b06d20bb998d849a73ef113b623a8a5fc2638",
+        "title": "外為：英ポンド、210円71銭前後と大幅なポンド高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.33,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "8146d93c6b284351c1295b8d32491e9b1f841f09",
+        "title": "外為：ブラジルレアル、27円62銭前後と小幅なレアル高・円安で推移",
+        "category": "macro",
+        "label": "foreign_impact",
+        "confidence": 0.3,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "c4be510c1a0fdebad8f0b3072b999d9441af272a",
+        "title": "外為：スイスフラン、189円74銭前後と小幅なフラン高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5b4ce6a432c80928cd7a5e833633d3da495d3186",
+        "title": "外為：NZドル、87円77銭前後とNZドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.31,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "2c8004d5d66d6bac60fd38fea39e5c503ce346a8",
+        "title": "外為：カナダドル、111円53銭前後とカナダドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.28,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "d05490b92f68f5d5c2616ce3cbad107a4d2d0bca",
+        "title": "外為：豪ドル、107円44銭前後と豪ドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.56,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "61af8684a41000f106e18486b3d44e85fd643d32",
+        "title": "外為：1ドル159円54銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "31dccca6f65a4da4035e3d3a744adb0b72c1da35",
+        "title": "外為：1ドル159円51銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "5969fa94c7d2e4bda70f701dd3f0e95aa277feb2",
+        "title": "外為：1ドル159円48銭前後とドル高・円安で推移",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      }
+    ],
+    "late": 0,
+    "seconds": 11.4,
+    "categories": null
+  }
+}

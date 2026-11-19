@@ -1,6 +1,99 @@
 {
-  "report_date": "2026-11-16",
+  "report_date": "2026-11-19",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
-  "groups": []
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "반도체와반도체장비",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "SK하이닉스",
+          "change_pct": 3.41,
+          "close": 1183000,
+          "value": 2969237
+        },
+        {
+          "name": "삼성전자",
+          "change_pct": 1.13,
+          "close": 196900,
+          "value": 2406462
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "자동차부품",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "현대모비스",
+          "change_pct": -4.07,
+          "close": 341500,
+          "value": 80420
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "은행",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "KB금융",
+          "change_pct": -2.24,
+          "close": 152900,
+          "value": 76808
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "전자장비와기기",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "삼성전기",
+          "change_pct": 9.26,
+          "close": 885000,
+          "value": 789402
+        },
+        {
+          "name": "코리아써키트",
+          "change_pct": 7.01,
+          "close": 99200,
+          "value": 94142
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "방송과엔터테인먼트",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "하이브",
+          "change_pct": 13.69,
+          "close": 189400,
+          "value": 219971
+        }
+      ]
+    }
+  ]
 }

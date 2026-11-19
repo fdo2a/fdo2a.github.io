@@ -73,7 +73,7 @@ Rationale and history live in the documents each rule points to. Only the rule i
 
 1. **Design** — write the spec. **Keep it in context; do not save it.**
 2. **Design review** — hand it to codex (`/codex:rescue`) before implementing. **Read-only.**
-3. **Update `plan.md`** — at the project root (`../plan.md`; keeping it in `site/` mixes it into publish commits). Record each point of feedback as **accepted / rejected / partially accepted in a table** — rejected ones with the reason.
+3. **Update the task's file in `../plans/`** (one per task, index `../plan.md`; outside `site/` to stay out of publish commits). Record each point of feedback as **accepted / rejected / partially accepted in a table** — rejected ones with the reason.
 4. **Implement** — TDD is the default here.
 5. **Implementation review** — back to codex. This doubles as the pre-commit/pre-publish review.
 6. **Narrow fix** — within two or three files, pass the codex output through as-is and name only the items to fix.

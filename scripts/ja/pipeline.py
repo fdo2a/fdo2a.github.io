@@ -150,6 +150,7 @@ class _Page:
         self.detail = {}
         self.rounds = 0
         self.unverified = []
+        self.roster_bad = {}          # 키 → 명단 한자를 다른 사람에게 붙인 것으로 보이는 한글 성들(지금 번역 기준)
         self.bad = set()             # 남기면 안 되는 키
         self.changed = set()         # 이번에 번역한 키
         self.reviewed_ja = {}        # 키 → 검토를 통과한 그 번역
@@ -189,6 +190,9 @@ class _Page:
         self.list_uid = {u.attr: u.uid for u in lunits}
         self.doc = doc
         self.units = doc.units + lunits
+        self.roster_strong = glossary.roster_strong(u.ko for u in self.units)
+        self.roster_checked = tuple(glossary.ROSTER_CHECKED.get(self.path) or ())
+        self.side_in = self._drop_roster(self.side_in)     # plan 보다 먼저 — 이웃 재검토·todo 가 여기서 정해진다
         self.plan = state.plan(X.Doc(self.html2, self.units), self.side_in)
         self.key = self.plan.keys
         self.fixed = dict(self.plan.fixed)
@@ -337,7 +341,53 @@ class _Page:
                 self.cur[k] = ja
                 self.changed.add(k)
                 self.reviewed_ja.pop(k, None)
+                self._roster_check(k, ja)
         return failed
+
+    # ── 명단 한자(일본은행)를 다른 사람에게 붙였는가 — 번역문이 채택되는 자리마다 본다 ──────
+    def _drop_roster(self, side):
+        """사이드카에서 이름 검사에 걸리는 번역을 뺀다 — 없던 것처럼 다시 번역되고, 저장되는 사이드카에도 남지 않는다."""
+        trips = lambda ko, ja: bool(glossary.roster_misuse(ko or "", ja, self.roster_strong, self.roster_checked))
+        units = (side or {}).get("units") or {}
+        drop = [k for k, rec in units.items() if isinstance(rec, dict) and rec.get("ja") is not None
+                and trips(rec.get("ko"), rec["ja"])]
+        src, lst = [(side or {}).get(f) if isinstance((side or {}).get(f), dict) else {} for f in ("list_src", "list")]
+        stale_list = any(trips(src.get(f), ja) for f, ja in lst.items() if isinstance(ja, str))
+        if not drop and not stale_list:
+            return side
+        side = json.loads(json.dumps(side))
+        for k in drop:
+            side["units"].pop(k)
+        if stale_list:                       # 목록 번역은 ready 때만 다시 적힌다 — 걸리는 옛 것을 남기지 않는다
+            side.pop("list", None)
+            side.pop("list_src", None)
+        self.detail["roster_dropped"] = len(drop) + int(stale_list)
+        return side
+
+    def _roster_hits(self, k, ja):
+        return glossary.roster_misuse(self.rep[k].ko, ja, self.roster_strong, self.roster_checked)
+
+    def _roster_check(self, k, ja):
+        """그 키의 지금 번역으로 다시 판정한다 — 고쳐졌으면 풀린다. 걸린 키는 사이드카에 남기지 않는다."""
+        hits = self._roster_hits(k, ja)
+        if hits:
+            self.roster_bad[k] = hits
+        else:
+            self.roster_bad.pop(k, None)
+        return hits
+
+    def scan_roster(self):
+        """채택된 번역 전부를 마지막에 한 번 더 본다(채택 자리를 놓쳐도 여기서 막힌다)."""
+        for k, ja in list(self.cur.items()):
+            if k in self.rep:
+                self._roster_check(k, ja)
+
+    def names_held(self):
+        """보류 사유에 적을 이름들 — 번역기가 올린 것 + 이름 검사에 걸린 것."""
+        out = list(self.unverified)
+        for hits in self.roster_bad.values():
+            out += [nm for nm in hits if nm not in out]
+        return out
 
     def _mark_names(self):
         names = [_compact(n) for n in self.unverified if _compact(n)]
@@ -499,10 +549,11 @@ class _Page:
             if v.choice in ("A", "both"):
                 good.append(it["a"])
             if v.choice in ("B", "both") and it["b"]:
-                hard = [p for p in gate.check_unit(self.rep[k].ko, it["b"]) if not p.soft]
+                hard = [f"{p.code}: {p.detail}" for p in gate.check_unit(self.rep[k].ko, it["b"]) if not p.soft]
+                hard += [f"names: {nm}" for nm in self._roster_hits(k, it["b"])]   # 수정안도 같은 이름 검사
                 if hard:
                     if v.choice == "B":
-                        row["gate"] = "; ".join(f"{p.code}: {p.detail}" for p in hard)
+                        row["gate"] = "; ".join(hard)
                 else:
                     good.append(it["b"])
             ok.setdefault(k, []).append(good)
@@ -520,6 +571,7 @@ class _Page:
             if pick != self.cur.get(k):
                 self.cur[k] = pick
                 self.changed.add(k)
+                self._roster_check(k, pick)
             self.reviewed_ja[k] = pick
             self.open.discard(k)
         self.detail["adjudication"] = log
@@ -529,7 +581,7 @@ class _Page:
     def sidecar(self, final=False):
         keep = {}
         for k in set(self.changed) | set(self.unreviewed):
-            if k in self.bad or k in self.open or k not in self.cur:
+            if k in self.bad or k in self.roster_bad or k in self.open or k not in self.cur:
                 continue
             keep[k] = self.cur[k]
         rev = {k: ja for k, ja in keep.items() if self.reviewed_ja.get(k) == ja}
@@ -578,8 +630,8 @@ def build_page(root, path, *, sidecar, translate, review, cfg=None, live=None) -
         if pg.gate_failed or getattr(pg, "fixed_failed", None):
             pg.detail["gate_failed"] = {**{str(pg.rep[k].uid): v for k, v in pg.gate_failed.items()},
                                         **{str(i): v for i, v in pg.fixed_failed.items()}}
-        if pg.unverified:
-            pg.detail["unverified_names"] = list(pg.unverified)
+        if pg.names_held():
+            pg.detail["unverified_names"] = pg.names_held()
         if hasattr(pg, "plan"):
             t = pg.texts()
             soft = [{"id": u.uid, "flags": _flags(u.ko, t[u.uid])} for u in pg.units
@@ -596,9 +648,9 @@ def build_page(root, path, *, sidecar, translate, review, cfg=None, live=None) -
             pg.translate_keys(pg.todo)
         if pg.gate_failed:
             raise _Stop("held", "기계 검사가 남았다: " + _gate_reason(pg), "gate")
-        names_hold = bool(pg.unverified)
+        names_hold = bool(pg.names_held())
         if names_hold and not cfg.review_on_names_hold:
-            raise _Stop("held", "확인 안 된 인명: " + ", ".join(pg.unverified), "names")
+            raise _Stop("held", "확인 안 된 인명: " + ", ".join(pg.names_held()), "names")
         if cfg.review:
             scope = pg.uids_of(pg.changed) | set(pg.recheck) | pg.uids_of(k for k in pg.unreviewed if k in pg.rep)
             scope |= pg.fixed_firsts()        # 고정 번역도 그 글의 문맥에서 검토받는다(새 쌍만, 첫 출현 하나)
@@ -623,8 +675,9 @@ def build_page(root, path, *, sidecar, translate, review, cfg=None, live=None) -
                 raise _Stop("held", "검토 지적이 남았다: " + why + (f" — 판정 {verd}" if verd else ""), "blocking")
         else:
             pg.detail["review_skipped"] = True
-        if pg.unverified:
-            raise _Stop("held", "확인 안 된 인명: " + ", ".join(pg.unverified), "names")
+        pg.scan_roster()
+        if pg.names_held():
+            raise _Stop("held", "확인 안 된 인명: " + ", ".join(pg.names_held()), "names")
         texts = pg.texts(only_doc=True)
         lack = [u.uid for u in pg.doc.units if u.uid not in texts]
         if lack:

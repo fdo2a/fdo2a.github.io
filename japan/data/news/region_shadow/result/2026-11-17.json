@@ -1,0 +1,6279 @@
+{
+  "session": "2026-11-17",
+  "market": "japan",
+  "results": {
+    "haiku": {
+      "b86b635bc03c": {
+        "595f99e38986514f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "3072e1a30513a1b0": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "a5fe8728e9c0f1f4": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "d9c1c0dc3a9600fe": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "dce82cdcdb8a9907": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "b427dd4f92b661c1": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "8de161119bc62579": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "35a7e1ca356cc9bb": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "57bc78e7dc4c5224": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "3264889915cbb1f3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "51bd0e97f4236be8": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "a0493b9ba4bf7e14": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "c41030408b6f26ef": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "5ab0908e7e5c006d": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "e863862007b92bd2": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "e7f7f3c722df1c2a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "c13bcee547a10d3a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "69c3117fb5b8417e": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "e0becb0fd5d2d26c": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "50eccc5801000869": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "34464b0f0b5964ba": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "1b23a573f1234007": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "7c7c87daf648b7cc": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "6ccbfb4ac0be6a46": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "c2290e1ace92ada0": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:14+09:00"
+        },
+        "09879d8a91588c7d": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "dff1286a06c9bf8e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "8174afa12adafaae": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "a2a2e379aa6961c4": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "2de1afe850156ebe": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "8363365b23d54e7c": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "bafb55f641a401b6": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "f2326325d004a4b9": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "232752d7806e0a7a": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "e9d4d6994d8cbce0": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "126d0d62f59c0460": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "44754a5ed22917d3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "cf1ee5b633313018": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "0e3aad94603ceabe": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "085be14055cec3fd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "e6323e20f53d1305": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "03a8e53e78a784b0": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "5a80504efa3551a2": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "d144bf375ce392c7": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "3c40ab3d0c678705": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "46d2934db1fa1d8f": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "56a7f9902c3c0bcd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "83a98919ba6bae86": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "8ca4f4df6f9f64a1": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "d5763b39b111b3d5": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:16+09:00"
+        },
+        "1953d7d776749f32": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "a17d8c73c33e4531": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "bb237f33e1120fb3": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "df0ff5e598a0677c": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "28225ea75c18f786": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "58f14f0cb93f23fd": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "79d4af588f23c25f": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "77c56645aa0b2403": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "c8702c1e10a12624": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "f0775e1c5e32fdf3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "ea2abaa1f17eb82c": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "2c6bee9473907489": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "e54b766cfa57cc30": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "21e2e4a7740e946d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "69ba9a06cc5204e5": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "fd3b06af06fe3f65": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "e0c9d8f3fc159211": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "67d888262771a87b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "c576f987e9b8a61c": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "70e72a9cbbe8c9b1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "5280e9628a4fe660": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "d7fce4a017a5f098": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "6ca5c731b2d0ccb2": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "b1c181938ac41ff6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "15d994389de69734": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:18+09:00"
+        },
+        "c6d8d38b2530077f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "46c8b6b38e965a3a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "cbebfea932d478ec": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "6d84e69a8d8d2b34": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "6aab065a0ce5e8c5": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "11f752f1d8d32f04": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "9bb39993337a00ba": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "0bfbccd3d506e078": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "8ddafda0796ee55e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "28563862d4ed8641": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "9461cd0516d902b1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "c19069a904188114": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "e3601e032be0faa3": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "7369c2fa3c971efd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "91d37e23dd7157be": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "aad31a9c78f76788": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "74718f3399b0a8f7": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "c23de5dd58d5a592": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "77e4adeb1eb51b4a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "d529249291db4043": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "ebfe77cbf6253b37": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "1c2ba8cc1a371101": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "0e2f26718361f400": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "8a5ad30769190341": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "8ccde4a054e8f9ec": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:20+09:00"
+        },
+        "b1ece84599de0a08": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "21f9936f85a50ce4": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "e6ce77c8a302fa01": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "4018803fa3840006": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "0f388d36022f64df": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "ce2ea9967a20c5fd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "2e269e4d97c9381d": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "267f04f23907994f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "7b38efa2748d75fa": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "8cfc9d42a732b578": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "c373a3e348e31d62": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "72ee93ede3fc8d6b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "53a59f4e86124214": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "07196e0629585de1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "e8a7466422d34c38": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "9fb84e64a606569b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "f1fc01c1aa90425b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "7e8ebecded6c6b6e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "d897041ea8fe5dac": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "e064c5193c9ca2e1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "694487b858dfc03b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "839809597f1434b6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "771a726801674f04": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "bcbc4200b9fa6e3a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "16b852d1231fe30f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:22+09:00"
+        },
+        "014748d0c3bc825a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "4ac6002d186c1b42": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "8779d9af79fe9d34": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "38a5bfbe792c429b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "0070a3e0f613a5b6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "a43df00b5d3d345c": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "11a9bd1fd1935012": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "bf7153e8b3f07ee9": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "b8e8a32d9722b819": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "1f12e2576cf53440": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "20c788d235c71518": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "2c8847bd1f4cbc35": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "531a52ac82a66b00": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "2be316f5eabd3035": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "b8d225e9fbef9fd9": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "5733bc9b390240f5": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "bc90202717dafb16": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "f3257a11380ef87e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "b3cfd578fc7d26d3": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "2a32d389b60ac65e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "ddd01081f570d486": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "4f08dd6741e1d993": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "1cb8fe96172cef45": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "d70cbf2bdad22303": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "6d6f1865060313c0": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:24+09:00"
+        },
+        "f69500f87240744d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "f1d44bd6615be4a3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "408a4ad324fdd27b": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "1b8043b665b4102e": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "d27b7854cf3cef84": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "339a35d0af54b4bd": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "938692cd8708c55d": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "aed1d19586bb93ad": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "2f2be56454c91b47": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "7df6768c8b0c2dbd": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "ec286dc2516c1fc3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "292b01385a8e3852": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "d0db6abae2c8f067": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "39e0437044b37e5e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "e4708a154c1e72cb": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "4c950cea053d7600": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "d81ee32468049151": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "c7df6b070eb31231": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "de811c72033cd059": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "780026acd699a30e": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "93a6dc7eb9966bf6": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "55dd23f5aed8464d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "caceb79ced9767c0": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "103f9c4e31d6bcb9": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "73922c3e80268a26": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:26+09:00"
+        },
+        "a02d874c926202e9": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "8ec633d58544307b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "09bd7663b1072664": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "3feec7fe38f6829a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "7ffd435053d7cb49": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "c1082f70e715c323": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "e1e3584fe2de08d1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "2158ef9c587800bd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "641385d51f2d6bf6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "3dd7c4fc747d9b21": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "ed001648fec52eea": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "0ea34ffe539188e6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "0091eb66add35940": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "64a18d71b7a3c614": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "2a4b5a43a0b5d717": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "7cd20eef7277804e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "6dfd747055c35549": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "52579d0ebb4adda0": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "1fca53081eeec025": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "531ae4c68043caf5": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "0eacdb7a7474a6ba": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "a41888397637dacf": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "b15771de1e047e48": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "1ca1bdc1efe8b0da": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "bdbeb5646a40d231": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:28+09:00"
+        },
+        "de673c08096e9207": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "4db88edda481f444": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "8995a8b0046db40d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "c1371d2f68e74d09": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "a84e1f8c77a99050": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "ca9308e90cf11680": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "b9772b54febc8c89": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "993eda04f7412b3e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "3d0ac49ff2b9fd80": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "a486c9b0da4c471e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "f7596228140b604d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "6209630c7d1c75e8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "381905ef5beff733": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "98a732d44f8c3b77": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "5abea3c35af405ac": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "c1e72ba40610f0f0": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "a5078022b45577a9": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "798a67aa47727aa6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "335cb1b085c2bda8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "d201b96211710214": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "909810001b60e378": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "68bb8f2b493719fe": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "bb92d74e8d7f8075": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "6c2edd3e514db033": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "cfd838e1f8f11bb1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:30+09:00"
+        },
+        "a41277b508127b9a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "7b13a6b7c18fb8bc": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "a6ec857add0a5038": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "9a54bcf314c3f8ea": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "898a68c4b4efa05e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "aae2422892effa96": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "cc7344530735c1a5": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "a0b9e78e295b4ef8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "f86745b9952c134f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "bac70b219c42daf8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "3b20e165c7bd5dfd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "ca9dbd7639721f92": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "55f12ab1202f62ea": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "85754884560b003d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "1f397130338abc63": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "dfa3908bd3c7cde4": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "2e5120c2c9db8ada": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "9e99cbf785a0e53a": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "18ddb7fd27653866": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "5f4c44179f8a8224": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "c110ed91cabe6149": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "44a2d772b2ad1026": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "071b95d5687c872e": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "0131839ac7169ca3": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "c2a44be050c59c13": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:32+09:00"
+        },
+        "7629661affd7112d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "56f9867150a7fda8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "025bc41ba4182de4": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "99fc4026e156a099": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "b3c83535363f557d": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "073f1a23715b2c9f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "c4d91cefc0aa1b8f": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "bbc08052a9df1a45": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "cb92ae5366ada025": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "b3afe2b820461245": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "84f89b0a12b42448": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "a6ab92b988cf56e0": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "4ad153bd38285e54": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "3e5a64d951b32574": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "d6246c3cb6898473": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "1eb727b1aa2d9bb8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "c5e0344f07a76c76": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "e7903356c18f7898": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "c26b306d0aaa6ee2": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "0873d3cdbcea57e3": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "ad3bab02c83147d3": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "642e6abe51a0e3e2": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "d0ada4a633d8a0cd": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "88964a35ec2797c1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "68506442b4717898": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:34+09:00"
+        },
+        "9d5d781e34dc1b23": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "d27cf10a879de894": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "a6c1cdfbb7e66439": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "edea4ecb018ab222": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "a1d4fd24058a9283": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "d8e0fef8cd018441": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "8125ee79700d85e8": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "220d0949340a4027": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "a5a2b93449c78cc6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "1f0bc0e9377f4abe": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "b66856175ce370db": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "bee5b505ad37f2ae": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "f8064064658b3c55": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "f6f68f673157aae3": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "277772d9a6d90d46": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "9ac93b7b3c8e5b2b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "dcac10a05b350da1": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "5f4844c97fd852ff": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "14640a95037caa37": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "a8b6927fdf9b0dd4": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "c890dcde51ef15b6": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "91b4b94a9f6ecfab": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "a64e9c2636377c6f": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "8073be64357160bb": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "28b93cf3574c5120": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:36+09:00"
+        },
+        "119902c58b280447": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "4eae2abde0935eda": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "be39106c953b6f55": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "ac487fadfbf21192": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "c6754d1fec0859e0": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "249ea061ec4b2adf": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "e897601c3c115bcf": {
+          "label": "foreign_impact",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "e86b23e687553531": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "22f5dc156e0c6079": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "f8bef63e9974569e": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "9d3979d880990e82": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "d8f4b397b5dad899": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "ea7811b60ed35f0a": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "4325acfcc2473ccc": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "e6b30cf54e951486": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "b66c4e727b25090f": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "bc350146a0ade71c": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "adbaeb6eb78674f1": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "8f814c82854eaf39": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "3943fdf47c7801cf": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "7d321099e63819f7": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "8973f16cbc2e85ee": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "fb11692375f622bb": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "6e044ab5289d22d3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "e7e20be7187bbd88": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:38+09:00"
+        },
+        "f380e4d596fe3326": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "4775d20a4e008d6b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "406159e10b343362": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "8ca5e70fe9fe8746": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "126064bc1201c87b": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "e382b6b3b6f6e917": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "7ef34b3e4e7f67ea": {
+          "label": "domestic",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "ce8db7e3c8b4880b": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "cf83046e6c64f074": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "47245110f189192a": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "392926b3335be2eb": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "e8d4f33cc5296d86": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "029a6e3882155c34": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "a87002dba6c8964b": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "5f8869ed6303ccb3": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "cb352ded65090b8c": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "15a2c22e2250664b": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "1c0df3f52de188e4": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "38ac0de4856c926c": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "dbfd09b9aaff6d72": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "ab402ee69550891d": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "9254d83ea0287660": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        },
+        "340ba4702c9b9b89": {
+          "label": "foreign",
+          "model": "claude-haiku-5-5",
+          "requested": "claude-haiku-5-5",
+          "at": "2026-11-17T18:42:40+09:00"
+        }
+      }
+    },
+    "jev": {
+      "35e3b33ec7a6": {
+        "595f99e38986514f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:41+09:00"
+        },
+        "3072e1a30513a1b0": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.05,
+            "foreign_impact": 0.0,
+            "foreign": 0.95
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:41+09:00"
+        },
+        "a5fe8728e9c0f1f4": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "d9c1c0dc3a9600fe": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.02,
+            "foreign": 0.0
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "dce82cdcdb8a9907": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.01,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "b427dd4f92b661c1": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.0,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "8de161119bc62579": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "35a7e1ca356cc9bb": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.36,
+            "foreign_impact": 0.23,
+            "foreign": 0.41
+          },
+          "confidence": 0.11,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "57bc78e7dc4c5224": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "3264889915cbb1f3": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "51bd0e97f4236be8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.52,
+            "foreign_impact": 0.39,
+            "foreign": 0.09
+          },
+          "confidence": 0.28,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "a0493b9ba4bf7e14": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "c41030408b6f26ef": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:42+09:00"
+        },
+        "5ab0908e7e5c006d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.7,
+            "foreign_impact": 0.03,
+            "foreign": 0.27
+          },
+          "confidence": 0.55,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "e863862007b92bd2": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "e7f7f3c722df1c2a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.02,
+            "foreign": 0.01
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "c13bcee547a10d3a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "69c3117fb5b8417e": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.43,
+            "foreign_impact": 0.08,
+            "foreign": 0.49
+          },
+          "confidence": 0.24,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "e0becb0fd5d2d26c": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.04,
+            "foreign": 0.0
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "50eccc5801000869": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "34464b0f0b5964ba": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "1b23a573f1234007": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "7c7c87daf648b7cc": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.21,
+            "foreign_impact": 0.02,
+            "foreign": 0.77
+          },
+          "confidence": 0.66,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "6ccbfb4ac0be6a46": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:43+09:00"
+        },
+        "c2290e1ace92ada0": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.0,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "09879d8a91588c7d": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "dff1286a06c9bf8e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "8174afa12adafaae": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "a2a2e379aa6961c4": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.0,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "2de1afe850156ebe": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "8363365b23d54e7c": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.38,
+            "foreign_impact": 0.02,
+            "foreign": 0.6
+          },
+          "confidence": 0.4,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "bafb55f641a401b6": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "f2326325d004a4b9": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.04,
+            "foreign": 0.0
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "232752d7806e0a7a": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.0,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "e9d4d6994d8cbce0": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.63,
+            "foreign_impact": 0.31,
+            "foreign": 0.06
+          },
+          "confidence": 0.44,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:44+09:00"
+        },
+        "126d0d62f59c0460": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "44754a5ed22917d3": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "cf1ee5b633313018": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.48,
+            "foreign_impact": 0.17,
+            "foreign": 0.35
+          },
+          "confidence": 0.22,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "0e3aad94603ceabe": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "085be14055cec3fd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.88,
+            "foreign_impact": 0.01,
+            "foreign": 0.11
+          },
+          "confidence": 0.82,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "e6323e20f53d1305": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.96,
+            "foreign": 0.02
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "03a8e53e78a784b0": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "5a80504efa3551a2": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.01,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "d144bf375ce392c7": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "3c40ab3d0c678705": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:45+09:00"
+        },
+        "46d2934db1fa1d8f": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "56a7f9902c3c0bcd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.94,
+            "foreign_impact": 0.0,
+            "foreign": 0.06
+          },
+          "confidence": 0.91,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "83a98919ba6bae86": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.48,
+            "foreign_impact": 0.5,
+            "foreign": 0.02
+          },
+          "confidence": 0.25,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "8ca4f4df6f9f64a1": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "d5763b39b111b3d5": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.04,
+            "foreign_impact": 0.01,
+            "foreign": 0.95
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "1953d7d776749f32": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.26,
+            "foreign_impact": 0.59,
+            "foreign": 0.15
+          },
+          "confidence": 0.38,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "a17d8c73c33e4531": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "bb237f33e1120fb3": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.12,
+            "foreign": 0.86
+          },
+          "confidence": 0.79,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "df0ff5e598a0677c": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.06,
+            "foreign_impact": 0.21,
+            "foreign": 0.73
+          },
+          "confidence": 0.6,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "28225ea75c18f786": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "58f14f0cb93f23fd": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:46+09:00"
+        },
+        "79d4af588f23c25f": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "77c56645aa0b2403": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.01,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "c8702c1e10a12624": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "f0775e1c5e32fdf3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.94,
+            "foreign_impact": 0.06,
+            "foreign": 0.0
+          },
+          "confidence": 0.91,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "ea2abaa1f17eb82c": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "2c6bee9473907489": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.2,
+            "foreign_impact": 0.08,
+            "foreign": 0.72
+          },
+          "confidence": 0.58,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "e54b766cfa57cc30": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.05,
+            "foreign": 0.0
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "21e2e4a7740e946d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "69ba9a06cc5204e5": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "fd3b06af06fe3f65": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "e0c9d8f3fc159211": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.01,
+            "foreign": 0.02
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:47+09:00"
+        },
+        "67d888262771a87b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "c576f987e9b8a61c": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "70e72a9cbbe8c9b1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "5280e9628a4fe660": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "d7fce4a017a5f098": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "6ca5c731b2d0ccb2": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "b1c181938ac41ff6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "15d994389de69734": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "c6d8d38b2530077f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "46c8b6b38e965a3a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:48+09:00"
+        },
+        "cbebfea932d478ec": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "6d84e69a8d8d2b34": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.85,
+            "foreign_impact": 0.12,
+            "foreign": 0.03
+          },
+          "confidence": 0.77,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "6aab065a0ce5e8c5": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "11f752f1d8d32f04": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.02,
+            "foreign": 0.0
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "9bb39993337a00ba": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "0bfbccd3d506e078": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.02,
+            "foreign": 0.0
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "8ddafda0796ee55e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.02,
+            "foreign": 0.03
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "28563862d4ed8641": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "9461cd0516d902b1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:49+09:00"
+        },
+        "c19069a904188114": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "e3601e032be0faa3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "7369c2fa3c971efd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "91d37e23dd7157be": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "aad31a9c78f76788": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "74718f3399b0a8f7": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "c23de5dd58d5a592": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.4,
+            "foreign_impact": 0.35,
+            "foreign": 0.25
+          },
+          "confidence": 0.1,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "77e4adeb1eb51b4a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "d529249291db4043": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.04,
+            "foreign": 0.0
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "ebfe77cbf6253b37": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.91,
+            "foreign_impact": 0.08,
+            "foreign": 0.01
+          },
+          "confidence": 0.86,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:50+09:00"
+        },
+        "1c2ba8cc1a371101": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.02,
+            "foreign": 0.02
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "0e2f26718361f400": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "8a5ad30769190341": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "8ccde4a054e8f9ec": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "b1ece84599de0a08": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "21f9936f85a50ce4": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "e6ce77c8a302fa01": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "4018803fa3840006": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "0f388d36022f64df": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "ce2ea9967a20c5fd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "2e269e4d97c9381d": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.26,
+            "foreign_impact": 0.15,
+            "foreign": 0.59
+          },
+          "confidence": 0.38,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:51+09:00"
+        },
+        "267f04f23907994f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "7b38efa2748d75fa": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "8cfc9d42a732b578": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.88,
+            "foreign_impact": 0.12,
+            "foreign": 0.0
+          },
+          "confidence": 0.82,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "c373a3e348e31d62": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "72ee93ede3fc8d6b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "53a59f4e86124214": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.15,
+            "foreign_impact": 0.23,
+            "foreign": 0.62
+          },
+          "confidence": 0.43,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "07196e0629585de1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "e8a7466422d34c38": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "9fb84e64a606569b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "f1fc01c1aa90425b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "7e8ebecded6c6b6e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:52+09:00"
+        },
+        "d897041ea8fe5dac": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "e064c5193c9ca2e1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "694487b858dfc03b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "839809597f1434b6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.02,
+            "foreign": 0.01
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "771a726801674f04": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "bcbc4200b9fa6e3a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.05,
+            "foreign": 0.0
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "16b852d1231fe30f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "014748d0c3bc825a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "4ac6002d186c1b42": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "8779d9af79fe9d34": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:53+09:00"
+        },
+        "38a5bfbe792c429b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "0070a3e0f613a5b6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "a43df00b5d3d345c": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "11a9bd1fd1935012": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "bf7153e8b3f07ee9": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "b8e8a32d9722b819": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.26,
+            "foreign_impact": 0.11,
+            "foreign": 0.63
+          },
+          "confidence": 0.44,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "1f12e2576cf53440": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "20c788d235c71518": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "2c8847bd1f4cbc35": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "531a52ac82a66b00": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "2be316f5eabd3035": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.09,
+            "foreign_impact": 0.11,
+            "foreign": 0.8
+          },
+          "confidence": 0.7,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:54+09:00"
+        },
+        "b8d225e9fbef9fd9": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.4,
+            "foreign_impact": 0.01,
+            "foreign": 0.59
+          },
+          "confidence": 0.38,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "5733bc9b390240f5": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.58,
+            "foreign_impact": 0.07,
+            "foreign": 0.35
+          },
+          "confidence": 0.37,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "bc90202717dafb16": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.68,
+            "foreign_impact": 0.02,
+            "foreign": 0.3
+          },
+          "confidence": 0.52,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "f3257a11380ef87e": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.45,
+            "foreign_impact": 0.49,
+            "foreign": 0.06
+          },
+          "confidence": 0.24,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "b3cfd578fc7d26d3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "2a32d389b60ac65e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.75,
+            "foreign_impact": 0.01,
+            "foreign": 0.24
+          },
+          "confidence": 0.62,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "ddd01081f570d486": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.84,
+            "foreign_impact": 0.16,
+            "foreign": 0.0
+          },
+          "confidence": 0.76,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "4f08dd6741e1d993": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.02,
+            "foreign": 0.97
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "1cb8fe96172cef45": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "d70cbf2bdad22303": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "6d6f1865060313c0": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:55+09:00"
+        },
+        "f69500f87240744d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.89,
+            "foreign_impact": 0.1,
+            "foreign": 0.01
+          },
+          "confidence": 0.83,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "f1d44bd6615be4a3": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "408a4ad324fdd27b": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "1b8043b665b4102e": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.03,
+            "foreign_impact": 0.01,
+            "foreign": 0.96
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "d27b7854cf3cef84": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "339a35d0af54b4bd": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.02,
+            "foreign": 0.97
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "938692cd8708c55d": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.05,
+            "foreign": 0.93
+          },
+          "confidence": 0.89,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "aed1d19586bb93ad": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.11,
+            "foreign_impact": 0.12,
+            "foreign": 0.77
+          },
+          "confidence": 0.66,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "2f2be56454c91b47": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.56,
+            "foreign_impact": 0.14,
+            "foreign": 0.3
+          },
+          "confidence": 0.34,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "7df6768c8b0c2dbd": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.15,
+            "foreign_impact": 0.12,
+            "foreign": 0.73
+          },
+          "confidence": 0.6,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "ec286dc2516c1fc3": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:56+09:00"
+        },
+        "292b01385a8e3852": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.02,
+            "foreign": 0.96
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "d0db6abae2c8f067": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.0,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "39e0437044b37e5e": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.37,
+            "foreign_impact": 0.0,
+            "foreign": 0.63
+          },
+          "confidence": 0.44,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "e4708a154c1e72cb": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.02,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "4c950cea053d7600": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.07,
+            "foreign_impact": 0.05,
+            "foreign": 0.88
+          },
+          "confidence": 0.82,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "d81ee32468049151": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "c7df6b070eb31231": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.04,
+            "foreign": 0.96
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "de811c72033cd059": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "780026acd699a30e": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.02,
+            "foreign": 0.96
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "93a6dc7eb9966bf6": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.03,
+            "foreign_impact": 0.03,
+            "foreign": 0.94
+          },
+          "confidence": 0.91,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "55dd23f5aed8464d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:57+09:00"
+        },
+        "caceb79ced9767c0": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "103f9c4e31d6bcb9": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "73922c3e80268a26": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.02,
+            "foreign": 0.03
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "a02d874c926202e9": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "8ec633d58544307b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "09bd7663b1072664": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "3feec7fe38f6829a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "7ffd435053d7cb49": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "c1082f70e715c323": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "e1e3584fe2de08d1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "2158ef9c587800bd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:58+09:00"
+        },
+        "641385d51f2d6bf6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.89,
+            "foreign_impact": 0.0,
+            "foreign": 0.11
+          },
+          "confidence": 0.83,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "3dd7c4fc747d9b21": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.84,
+            "foreign_impact": 0.0,
+            "foreign": 0.16
+          },
+          "confidence": 0.76,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "ed001648fec52eea": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.9,
+            "foreign_impact": 0.0,
+            "foreign": 0.1
+          },
+          "confidence": 0.85,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "0ea34ffe539188e6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.0,
+            "foreign": 0.05
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "0091eb66add35940": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "64a18d71b7a3c614": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "2a4b5a43a0b5d717": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.92,
+            "foreign_impact": 0.01,
+            "foreign": 0.07
+          },
+          "confidence": 0.88,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "7cd20eef7277804e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.92,
+            "foreign_impact": 0.0,
+            "foreign": 0.08
+          },
+          "confidence": 0.88,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "6dfd747055c35549": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "52579d0ebb4adda0": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.0,
+            "foreign": 0.04
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "1fca53081eeec025": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.88,
+            "foreign_impact": 0.01,
+            "foreign": 0.11
+          },
+          "confidence": 0.82,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:42:59+09:00"
+        },
+        "531ae4c68043caf5": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "0eacdb7a7474a6ba": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "a41888397637dacf": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.69,
+            "foreign_impact": 0.05,
+            "foreign": 0.26
+          },
+          "confidence": 0.53,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "b15771de1e047e48": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "1ca1bdc1efe8b0da": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "bdbeb5646a40d231": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "de673c08096e9207": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "4db88edda481f444": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "8995a8b0046db40d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "c1371d2f68e74d09": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "a84e1f8c77a99050": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:00+09:00"
+        },
+        "ca9308e90cf11680": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "b9772b54febc8c89": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "993eda04f7412b3e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "3d0ac49ff2b9fd80": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "a486c9b0da4c471e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "f7596228140b604d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "6209630c7d1c75e8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "381905ef5beff733": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "98a732d44f8c3b77": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "5abea3c35af405ac": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "c1e72ba40610f0f0": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:01+09:00"
+        },
+        "a5078022b45577a9": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.87,
+            "foreign_impact": 0.0,
+            "foreign": 0.13
+          },
+          "confidence": 0.8,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "798a67aa47727aa6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "335cb1b085c2bda8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "d201b96211710214": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "909810001b60e378": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "68bb8f2b493719fe": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "bb92d74e8d7f8075": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "6c2edd3e514db033": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.02,
+            "foreign": 0.0
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "cfd838e1f8f11bb1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "a41277b508127b9a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "7b13a6b7c18fb8bc": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.73,
+            "foreign_impact": 0.09,
+            "foreign": 0.18
+          },
+          "confidence": 0.6,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:02+09:00"
+        },
+        "a6ec857add0a5038": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.0,
+            "foreign": 0.04
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "9a54bcf314c3f8ea": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.94,
+            "foreign_impact": 0.0,
+            "foreign": 0.06
+          },
+          "confidence": 0.91,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "898a68c4b4efa05e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "aae2422892effa96": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "cc7344530735c1a5": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "a0b9e78e295b4ef8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.0,
+            "foreign": 0.04
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "f86745b9952c134f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.84,
+            "foreign_impact": 0.02,
+            "foreign": 0.14
+          },
+          "confidence": 0.76,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "bac70b219c42daf8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "3b20e165c7bd5dfd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "ca9dbd7639721f92": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "55f12ab1202f62ea": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.95,
+            "foreign_impact": 0.0,
+            "foreign": 0.05
+          },
+          "confidence": 0.92,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:03+09:00"
+        },
+        "85754884560b003d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "1f397130338abc63": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "dfa3908bd3c7cde4": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "2e5120c2c9db8ada": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "9e99cbf785a0e53a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.0,
+            "foreign": 0.03
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "18ddb7fd27653866": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.67,
+            "foreign_impact": 0.01,
+            "foreign": 0.32
+          },
+          "confidence": 0.5,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "5f4c44179f8a8224": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "c110ed91cabe6149": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "44a2d772b2ad1026": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.82,
+            "foreign_impact": 0.01,
+            "foreign": 0.17
+          },
+          "confidence": 0.73,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "071b95d5687c872e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "0131839ac7169ca3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:04+09:00"
+        },
+        "c2a44be050c59c13": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.6,
+            "foreign_impact": 0.01,
+            "foreign": 0.39
+          },
+          "confidence": 0.4,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "7629661affd7112d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "56f9867150a7fda8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "025bc41ba4182de4": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.9,
+            "foreign_impact": 0.01,
+            "foreign": 0.09
+          },
+          "confidence": 0.85,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "99fc4026e156a099": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.01,
+            "foreign": 0.03
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "b3c83535363f557d": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "073f1a23715b2c9f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "c4d91cefc0aa1b8f": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.11,
+            "foreign_impact": 0.05,
+            "foreign": 0.84
+          },
+          "confidence": 0.76,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "bbc08052a9df1a45": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.97,
+            "foreign_impact": 0.02,
+            "foreign": 0.01
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "cb92ae5366ada025": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.67,
+            "foreign_impact": 0.01,
+            "foreign": 0.32
+          },
+          "confidence": 0.5,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "b3afe2b820461245": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:05+09:00"
+        },
+        "84f89b0a12b42448": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.9,
+            "foreign_impact": 0.01,
+            "foreign": 0.09
+          },
+          "confidence": 0.85,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "a6ab92b988cf56e0": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "4ad153bd38285e54": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "3e5a64d951b32574": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.93,
+            "foreign_impact": 0.01,
+            "foreign": 0.06
+          },
+          "confidence": 0.89,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "d6246c3cb6898473": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.57,
+            "foreign_impact": 0.14,
+            "foreign": 0.29
+          },
+          "confidence": 0.35,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "1eb727b1aa2d9bb8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.96,
+            "foreign_impact": 0.0,
+            "foreign": 0.04
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "c5e0344f07a76c76": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.92,
+            "foreign_impact": 0.07,
+            "foreign": 0.01
+          },
+          "confidence": 0.88,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "e7903356c18f7898": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "c26b306d0aaa6ee2": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "0873d3cdbcea57e3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:06+09:00"
+        },
+        "ad3bab02c83147d3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "642e6abe51a0e3e2": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.94,
+            "foreign_impact": 0.01,
+            "foreign": 0.05
+          },
+          "confidence": 0.91,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "d0ada4a633d8a0cd": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "88964a35ec2797c1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "68506442b4717898": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "9d5d781e34dc1b23": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.01,
+            "foreign": 0.01
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "d27cf10a879de894": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "a6c1cdfbb7e66439": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.77,
+            "foreign_impact": 0.02,
+            "foreign": 0.21
+          },
+          "confidence": 0.66,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "edea4ecb018ab222": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:07+09:00"
+        },
+        "a1d4fd24058a9283": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "d8e0fef8cd018441": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "8125ee79700d85e8": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "220d0949340a4027": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.01,
+            "foreign": 0.01
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "a5a2b93449c78cc6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "1f0bc0e9377f4abe": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "b66856175ce370db": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.94,
+            "foreign_impact": 0.01,
+            "foreign": 0.05
+          },
+          "confidence": 0.91,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "bee5b505ad37f2ae": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "f8064064658b3c55": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:08+09:00"
+        },
+        "f6f68f673157aae3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.91,
+            "foreign_impact": 0.01,
+            "foreign": 0.08
+          },
+          "confidence": 0.86,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "277772d9a6d90d46": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "9ac93b7b3c8e5b2b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "dcac10a05b350da1": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "5f4844c97fd852ff": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.88,
+            "foreign_impact": 0.01,
+            "foreign": 0.11
+          },
+          "confidence": 0.82,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "14640a95037caa37": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.07,
+            "foreign_impact": 0.01,
+            "foreign": 0.92
+          },
+          "confidence": 0.88,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "a8b6927fdf9b0dd4": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.01,
+            "foreign": 0.01
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "c890dcde51ef15b6": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "91b4b94a9f6ecfab": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "a64e9c2636377c6f": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.98,
+            "foreign_impact": 0.0,
+            "foreign": 0.02
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "8073be64357160bb": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:09+09:00"
+        },
+        "28b93cf3574c5120": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "119902c58b280447": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "4eae2abde0935eda": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.41,
+            "foreign_impact": 0.02,
+            "foreign": 0.57
+          },
+          "confidence": 0.35,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "be39106c953b6f55": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "ac487fadfbf21192": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "c6754d1fec0859e0": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "249ea061ec4b2adf": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "e897601c3c115bcf": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.03,
+            "foreign_impact": 0.01,
+            "foreign": 0.96
+          },
+          "confidence": 0.94,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "e86b23e687553531": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.92,
+            "foreign_impact": 0.01,
+            "foreign": 0.07
+          },
+          "confidence": 0.88,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:10+09:00"
+        },
+        "22f5dc156e0c6079": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.93,
+            "foreign_impact": 0.01,
+            "foreign": 0.06
+          },
+          "confidence": 0.89,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "f8bef63e9974569e": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "9d3979d880990e82": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "d8f4b397b5dad899": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "ea7811b60ed35f0a": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.69,
+            "foreign_impact": 0.09,
+            "foreign": 0.22
+          },
+          "confidence": 0.53,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "4325acfcc2473ccc": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.13,
+            "foreign_impact": 0.77,
+            "foreign": 0.1
+          },
+          "confidence": 0.66,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "e6b30cf54e951486": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.48,
+            "foreign_impact": 0.49,
+            "foreign": 0.03
+          },
+          "confidence": 0.24,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "b66c4e727b25090f": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.43,
+            "foreign_impact": 0.53,
+            "foreign": 0.04
+          },
+          "confidence": 0.3,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "bc350146a0ade71c": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.47,
+            "foreign_impact": 0.46,
+            "foreign": 0.07
+          },
+          "confidence": 0.2,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "adbaeb6eb78674f1": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.4,
+            "foreign_impact": 0.5,
+            "foreign": 0.1
+          },
+          "confidence": 0.25,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "8f814c82854eaf39": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.73,
+            "foreign_impact": 0.24,
+            "foreign": 0.03
+          },
+          "confidence": 0.6,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "3943fdf47c7801cf": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:11+09:00"
+        },
+        "7d321099e63819f7": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "8973f16cbc2e85ee": {
+          "label": "domestic",
+          "p": {
+            "domestic": 1.0,
+            "foreign_impact": 0.0,
+            "foreign": 0.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "fb11692375f622bb": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.1,
+            "foreign_impact": 0.78,
+            "foreign": 0.12
+          },
+          "confidence": 0.67,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "6e044ab5289d22d3": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.64,
+            "foreign_impact": 0.09,
+            "foreign": 0.27
+          },
+          "confidence": 0.46,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "e7e20be7187bbd88": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.71,
+            "foreign_impact": 0.26,
+            "foreign": 0.03
+          },
+          "confidence": 0.56,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "f380e4d596fe3326": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.49,
+            "foreign_impact": 0.41,
+            "foreign": 0.1
+          },
+          "confidence": 0.24,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "4775d20a4e008d6b": {
+          "label": "foreign_impact",
+          "p": {
+            "domestic": 0.42,
+            "foreign_impact": 0.54,
+            "foreign": 0.04
+          },
+          "confidence": 0.31,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "406159e10b343362": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.48,
+            "foreign_impact": 0.45,
+            "foreign": 0.07
+          },
+          "confidence": 0.22,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "8ca5e70fe9fe8746": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.54,
+            "foreign_impact": 0.42,
+            "foreign": 0.04
+          },
+          "confidence": 0.31,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:12+09:00"
+        },
+        "126064bc1201c87b": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "e382b6b3b6f6e917": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.0,
+            "foreign": 0.01
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "7ef34b3e4e7f67ea": {
+          "label": "domestic",
+          "p": {
+            "domestic": 0.99,
+            "foreign_impact": 0.01,
+            "foreign": 0.0
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "ce8db7e3c8b4880b": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "cf83046e6c64f074": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.02,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "47245110f189192a": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.01,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "392926b3335be2eb": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.01,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "e8d4f33cc5296d86": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.01,
+            "foreign": 0.98
+          },
+          "confidence": 0.97,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "029a6e3882155c34": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.02,
+            "foreign_impact": 0.14,
+            "foreign": 0.84
+          },
+          "confidence": 0.76,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "a87002dba6c8964b": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.01,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "5f8869ed6303ccb3": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.01,
+            "foreign": 0.99
+          },
+          "confidence": 0.98,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "cb352ded65090b8c": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:13+09:00"
+        },
+        "15a2c22e2250664b": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        },
+        "1c0df3f52de188e4": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.12,
+            "foreign": 0.87
+          },
+          "confidence": 0.8,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        },
+        "38ac0de4856c926c": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.16,
+            "foreign_impact": 0.04,
+            "foreign": 0.8
+          },
+          "confidence": 0.7,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        },
+        "dbfd09b9aaff6d72": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.02,
+            "foreign": 0.97
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        },
+        "ab402ee69550891d": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.01,
+            "foreign_impact": 0.02,
+            "foreign": 0.97
+          },
+          "confidence": 0.96,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        },
+        "9254d83ea0287660": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.11,
+            "foreign_impact": 0.02,
+            "foreign": 0.87
+          },
+          "confidence": 0.8,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        },
+        "340ba4702c9b9b89": {
+          "label": "foreign",
+          "p": {
+            "domestic": 0.0,
+            "foreign_impact": 0.0,
+            "foreign": 1.0
+          },
+          "confidence": 1.0,
+          "model": "jev-1.14.0",
+          "requested": "jev-1.14.0",
+          "at": "2026-11-17T18:43:14+09:00"
+        }
+      }
+    }
+  },
+  "runs": []
+}
