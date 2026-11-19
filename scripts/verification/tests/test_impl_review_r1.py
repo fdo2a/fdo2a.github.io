@@ -16,7 +16,7 @@ import sys
 import pytest
 
 from verification import inputs as I
-from verification import record as R
+from verification import record2 as R
 from verification.tests.test_inputs import STAMPED, ctx, put, st, policy, D
 
 SCRIPTS = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -286,7 +286,7 @@ def run(script, tmp_path, *args, name):
 
 
 def test_9_recheck_does_not_relax_new_posts(tmp_path):
-    new = I.STRICT_FROM
+    new = '2026-11-17'
     old = '2026-11-16'
     assert old < new
     for day in (old, new):
@@ -300,7 +300,7 @@ def test_9_recheck_does_not_relax_new_posts(tmp_path):
 
 
 def test_9_numbers_recheck_only_before_strict_from(tmp_path):
-    for day, want_missing_is_fatal in (('2026-11-16', False), (I.STRICT_FROM, True)):
+    for day, want_missing_is_fatal in (('2026-11-16', False), ('2026-11-17', True)):
         k = tmp_path / f'kr-{day}'
         k.mkdir()
         (k / 'kr_market_data.json').write_text(json.dumps({'report_date': day}))
@@ -313,18 +313,18 @@ def test_9_numbers_recheck_only_before_strict_from(tmp_path):
 
 def test_9_legacy_releases_does_not_relax_new_posts(tmp_path):
     """--legacy-releases(정정기·윤문기가 check_macro·check_sources 에 늘 붙인다)도 같은 완화다 — 적용일 전 글에만."""
-    for day in ('2026-11-16', I.STRICT_FROM):
+    for day in ('2026-11-16', '2026-11-17'):
         d = tmp_path / f'm-{day}'
         d.mkdir()
         (d / 'market_data.json').write_text(json.dumps({'report_date': day}))
         for script in ('check_macro.py', 'check_sources.py'):
             r = run(script, tmp_path, '--datadir', str(d), '--legacy-releases', name=f'{day}.html')
-            assert (r.returncode == 2) is (day >= I.STRICT_FROM), (script, day, r.returncode, r.stderr[-300:])
+            assert (r.returncode == 2) is (day >= '2026-11-17'), (script, day, r.returncode, r.stderr[-300:])
 
 
 def test_9_legacy_recheck_needs_a_known_date():
     assert I.legacy_recheck(True, 'posts/2026-11-16.html') is True
-    assert I.legacy_recheck(True, f'posts/{I.STRICT_FROM}.html') is False
+    assert I.legacy_recheck(True, f'posts/{'2026-11-17'}.html') is False
     assert I.legacy_recheck(False, 'posts/2026-11-16.html') is False
     assert I.legacy_recheck(True, 'posts/unknown.html') is False
 

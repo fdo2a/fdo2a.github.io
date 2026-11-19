@@ -13,7 +13,7 @@ import os
 import pytest
 
 from verification import inputs as I
-from verification import record as R
+from verification import record2 as R
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 CFG = os.path.join(ROOT, 'config', 'prepub_gates.json')

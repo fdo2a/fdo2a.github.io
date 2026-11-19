@@ -626,6 +626,15 @@ def _data_commit(root, commit, path):
     return None, f'그 날({want}) 판 데이터를 못 찾았어요 — 발행 커밋 데이터는 {have}'
 
 
+def _recheck():
+    """지난 글 재검사 플래그 — 1a 를 켠 뒤에만 붙인다(꺼져 있으면 검사기 인자가 1a 전과 같다)."""
+    try:
+        from verification.inputs import enforcing
+    except ImportError:
+        return []
+    return ['--recheck'] if enforcing() else []
+
+
 def replay_numbers(root, path, sha, checker, commit_of=None, timeout=180):
     """발행 커밋의 글(이 blob)과 그 커밋의 데이터로 숫자 검사를 다시 돌린다."""
     if commit_of is None:
@@ -662,7 +671,7 @@ def replay_numbers(root, path, sha, checker, commit_of=None, timeout=180):
                 fh.write(got.stdout)
         try:
             run = subprocess.run([sys.executable, checker, '--html', html, '--datadir', datadir,
-                                  '--json', '--recheck'], capture_output=True, text=True, cwd=work,
+                                  '--json'] + _recheck(), capture_output=True, text=True, cwd=work,
                                  timeout=timeout)
             res = number_result(run.returncode, run.stdout, run.stderr, False)
         except subprocess.TimeoutExpired:

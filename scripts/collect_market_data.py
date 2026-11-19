@@ -514,7 +514,11 @@ def _econ_pair(vals, tf):
     if not pairs or pairs[-1][0] != vals[-1][0]:
         return None
     if len(pairs) < 2 or (tf != 'level' and _month(pairs[-1][0]) - _month(pairs[-2][0]) != 1):
-        return pairs[-1][1], None
+        # 직전 칸이 빈 행을 새로 만드는 것은 1a 를 켠 뒤다(2026-11-20) — 그 전에는 1a 전처럼 행을 뺀다: 지표 목록에 행이
+        # 늘면 표·작성 입력이 달라지고, 그 행의 「— (사유)」 표기를 검사하는 규칙도 켠 뒤에만 돈다. 수집 상태에는
+        # 꺼져 있어도 no_value 로 남는다.
+        from verification.inputs import enforcing
+        return (pairs[-1][1], None) if enforcing() else None
     return pairs[-1][1], pairs[-2][1]
 
 

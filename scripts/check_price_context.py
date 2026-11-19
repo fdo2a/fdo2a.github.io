@@ -19,6 +19,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us.price_gate import check  # noqa: E402
 
 
@@ -41,13 +42,25 @@ def main():
             market = json.load(fh)
         price_context = market.get('price_context')
         report_date = market.get('report_date')
+    except FileNotFoundError as e:
+        if enforcing():
+            print(f'FATAL: could not read {md_path}: {e} — 미완료', file=sys.stderr)
+            sys.exit(2)
+        print(f'no {md_path} — nothing to check')
+        return
     except Exception as e:
-        print(f'FATAL: could not read {md_path}: {e} — 미완료', file=sys.stderr)
-        sys.exit(2)
+        if enforcing():
+            print(f'FATAL: could not read {md_path}: {e} — 미완료', file=sys.stderr)
+            sys.exit(2)
+        print(f'WARN: could not read {md_path}: {e}', file=sys.stderr)
+        return
 
     if not price_context:
-        print('FATAL: no price_context block in market_data.json — 미완료(수집 단계 실패)', file=sys.stderr)
-        sys.exit(2)
+        if enforcing():
+            print('FATAL: no price_context block in market_data.json — 미완료(수집 단계 실패)', file=sys.stderr)
+            sys.exit(2)
+        print('no price_context block in market_data.json — nothing to check')
+        return
 
     scorecard = None
     sc_path = os.path.join(args.datadir, 'scorecard.json')
@@ -56,8 +69,10 @@ def main():
             with open(sc_path, encoding='utf-8') as fh:
                 scorecard = json.load(fh)
         except Exception as e:
-            print(f'FATAL: could not read {sc_path}: {e} — 미완료', file=sys.stderr)
-            sys.exit(2)
+            if enforcing():
+                print(f'FATAL: could not read {sc_path}: {e} — 미완료', file=sys.stderr)
+                sys.exit(2)
+            print(f'WARN: could not read {sc_path}: {e}', file=sys.stderr)
     # A scorecard left over from another session would let a stale `sufficient: true`
     # authorise today's claim. Treat it as absent, which the gate fails closed on.
     if scorecard is not None and scorecard.get('report_date') != report_date:

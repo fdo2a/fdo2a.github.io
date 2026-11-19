@@ -16,7 +16,8 @@ def test_strict_from_copies_are_equal():
     from scripts.review import corrector
     from review import style_pass
     from verification import inputs as I
-    assert corrector.STRICT_FROM == style_pass.STRICT_FROM == I.STRICT_FROM
+    # 사본은 켜는 날과 같다(이 모듈은 conftest 가 켠 상태 — 꺼진 상태의 묶음은 test_switch_off.py)
+    assert corrector.STRICT_FROM == style_pass.STRICT_FROM == I.strict_from()
 
 
 def test_corrector_does_not_tolerate_exit2_on_new_posts(setup, monkeypatch):
@@ -27,7 +28,7 @@ def test_corrector_does_not_tolerate_exit2_on_new_posts(setup, monkeypatch):
     base = git(root, 'rev-parse', 'HEAD')
     from verification import inputs as I
     monkeypatch.setattr(corrector, 'STRICT_FROM', '2026-09-01')               # 이 글을 「새 글」로
-    monkeypatch.setattr(I, 'STRICT_FROM', '2026-09-01')                       # 판정은 inputs 한 곳(2회차 F5)
+    monkeypatch.setenv(I.TEST_ENV, '2026-09-01')                              # 판정은 inputs 한 곳(2회차 F5)
     _, error = correct_one(root, item, 'wrong value', base, 10)
     assert error and 'check_weight.py' in error and 'incomplete' in error     # 재현: 전에는 기존 실패로 허용
     assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
@@ -50,7 +51,7 @@ def test_style_pass_judge_strict_for_new_posts():
     assert sp.judge({'check_weight.py': same}, {'check_weight.py': same}, strict=True)    # 새 글 — 거부
     one = (1, '위반')
     assert sp.judge({'check_weight.py': one}, {'check_weight.py': one}, strict=True) == []
-    assert sp.strict_for('posts/2026-11-17.html') is (sp.STRICT_FROM <= '2026-11-17')
+    assert sp.strict_for('posts/2026-11-17.html') is True
     assert sp.strict_for('posts/2026-09-21.html') is False
     assert sp.strict_for('weekly/2026-W46.html') is False
 

@@ -1,0 +1,255 @@
+"""발행 전 기록 읽기(`review.prepub_view`) — 2단계(2026-11-08).
+
+막는 거짓말: 정정된 글에 거짓 불일치, 짝이 맞으니 「검증 완료」, 미실행·일부 검사 숨기기, 조회 실패를 「기록 없음」으로.
+"""
+import json
+
+import pytest
+
+from review import prepub_view as V
+from review.tests import prepub_fixture as F
+from verification import repo_check as C
+
+HTML = '<html><head><style>p{color:red}</style></head><body><p>미 10년물 4.20%</p></body></html>'
+
+
+def test_target_of_only_daily_after_effective():
+    assert V.target_of('posts/2026-11-09.html') == ('us', '2026-11-09')
+    assert V.target_of('kr/posts/2026-11-10.html') == ('kr', '2026-11-10')
+    assert V.target_of('posts/2026-11-06.html') is None          # 기록 도입 전
+    assert V.target_of('news/2026-11-09.html') is None
+    assert V.target_of('weekly/2026-W46.html') is None
+
+
+def test_normal_publish_separates_pair_and_recorded(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, body=HTML, numbers={'table_cells': 40, 'prose_judged': 12, 'unverified': 30})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['kind'] == V.OK and v['same_commit']
+    text = V.render_publish(v)
+    assert '■ 발행 상태' in text and '■ 검증 범위' in text
+    assert '작업 공간 전용 입력 1개는 원본을 보관하지 않아 대조 못 함' in text
+    assert '일치(맥 대조, 작업 공간 입력 제외)' in text and '일치(맥 대조)' not in text   # 대조 불가가 있으면
+    assert '숫자 30개 범위 밖' in text and '루틴 파이썬' not in text              # 버전은 기록에만(11/19)
+
+
+def test_not_run_and_partial_are_not_verified(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False, summ=F.summary(verified=False, not_run=['g1']),
+              gate_status={'g1': 'not_run', 'check_numbers': 'partial'})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert V.headline(v) == '발행본과 검사 기록 일치'                    # 짝은 맞다
+    text = V.render_publish(v)
+    assert '실행 안 함: g1' in text and '일부만 검사: 숫자 대조' in text and '■ 볼 것' not in text
+    assert text.split('\n')[0].endswith('· 발행 통과 · 검사 빈칸 2건')            # 첫 줄에서 숨기지 않는다
+
+
+def _fake_typography(monkeypatch):
+    # 조판 판정 자체는 review.prose 의 시험 몫 — 여기서는 판정 결과를 세는 쪽만 본다
+    from review import prose
+
+    def fake(path, old, new, root=None):
+        if 'TYPESET' in new and old.replace('TYPESET', '') == new.replace('TYPESET', ''):
+            return True
+        if 'UNKNOWN' in new:
+            return None
+        return False
+    monkeypatch.setattr(prose, 'typography', fake)
+
+
+def test_correction_does_not_raise_false_mismatch(tmp_path, monkeypatch):
+    _fake_typography(monkeypatch)
+    repo = F.init(tmp_path)
+    F.publish(repo, body=HTML, workspace=False)
+    v0 = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    F.write(repo, 'posts/2026-11-09.html', HTML.replace('4.20%', '4.30%'))     # 발행 뒤 사실 정정
+    F.commit(repo, 'fix')
+    v1 = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v1['check']['overall'] == C.MATCH                       # 기록 커밋 기준이라 불일치가 아니다
+    assert V.fingerprint(v0) == V.fingerprint(v1)                   # 정정은 발행 건별 알림을 만들지 않는다
+    assert v1['corrections'] == {'typeset': 0, 'other': 1, 'unknown': 0}
+    assert '조판 외 1회' in V.render_publish(v1)
+
+
+def test_correction_counts_each_version(tmp_path, monkeypatch):
+    _fake_typography(monkeypatch)
+    repo = F.init(tmp_path)
+    F.publish(repo, body=HTML, workspace=False)
+    F.write(repo, 'posts/2026-11-09.html', HTML + 'TYPESET')
+    F.commit(repo, 'typeset')
+    F.write(repo, 'posts/2026-11-09.html', HTML + 'TYPESET UNKNOWN')
+    F.commit(repo, 'odd')
+    F.write(repo, 'data/market_data.json', '{"a": 3}')               # 글을 안 건드린 커밋은 세지 않는다
+    F.commit(repo, 'data')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['corrections'] == {'typeset': 1, 'other': 0, 'unknown': 1}
+    assert v['check']['overall'] == C.MATCH
+
+
+def test_real_typography_on_hand_css_is_not_typeset(tmp_path):
+    # 실제 판정: 등록된 조판 블록 교체가 아닌 손 CSS 변경은 조판으로 받지 않는다(세면 「조판 외」나 「판정 불가」)
+    repo = F.init(tmp_path)
+    F.publish(repo, body=HTML, workspace=False)
+    F.write(repo, 'posts/2026-11-09.html', HTML.replace('color:red', 'color:blue'))
+    F.commit(repo, 'css')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['corrections']['typeset'] == 0 and v['corrections']['other'] + v['corrections']['unknown'] == 1
+
+
+def test_no_record(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, record=False)
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['kind'] == V.NO_RECORD and '발행 전 기록 없음' in V.render_publish(v)
+
+
+def test_readded_post_is_ambiguous(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False)
+    F.git(repo, 'rm', '-q', 'posts/2026-11-09.html')
+    F.commit(repo, 'rm')
+    F.write(repo, 'posts/2026-11-09.html', '<p>다시</p>')
+    F.commit(repo, 're-add')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['kind'] == V.AMBIGUOUS and '판정 불가' in V.headline(v)
+
+
+def test_record_in_later_commit_is_noted(tmp_path):
+    repo = F.init(tmp_path)
+    F.write(repo, 'posts/2026-11-09.html', HTML)
+    F.commit(repo, 'post only')
+    F.publish(repo, body=HTML, workspace=False)                     # 기록은 다음 커밋에
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['kind'] == V.OK and v['same_commit'] is False
+    assert '글을 추가한 커밋과 기록을 담은 커밋이 달라요(다른 커밋' in V.render_publish(v)
+
+
+def test_unreadable_summary_is_not_pass(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False)
+    rec = json.load(open(repo / 'verification/us/2026-11-09.json'))
+    del rec['summary']['verified']
+    F.git(repo, 'rm', '-q', '--cached', 'verification/us/2026-11-09.json')
+    # 같은 커밋 안에서 고쳐 쓴 기록을 흉내 — amend
+    F.write(repo, 'verification/us/2026-11-09.json', json.dumps(rec))
+    F.git(repo, 'add', '-A')
+    F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    text = V.render_publish(v)
+    assert '요약을 읽지 못했어요' in text and '판정 통과' not in text
+
+
+def test_git_failure_is_raised_not_no_record(tmp_path):
+    repo = F.init(tmp_path)
+    with pytest.raises(V.GitError):
+        V.view(str(repo), 'no-such-ref', 'us', '2026-11-09')
+
+
+def test_digest_lines_short(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False, summ=F.summary(verified=False), gate_status={'g1': 'not_run'})
+    lines = V.digest_lines(V.view(str(repo), 'HEAD', 'us', '2026-11-09'))
+    assert lines[0].startswith(' · [발행 전 기록]') and '완료 아님' in lines[1] and 'g1' in lines[1]
+
+
+def test_every_summary_status_has_a_label():
+    # 기록이 내는 판정 이름이 모두 번역된다 — 새 이름이 생기면 여기서 걸린다
+    import inspect
+    import re
+    from verification import record2 as R
+    src = inspect.getsource(R.summarize)
+    names = set(re.findall(r"status = '([a-z_]+)'", src))
+    assert names and names <= set(V.STATUS), names - set(V.STATUS)
+
+
+def test_gate_without_script_hash_is_unknown(tmp_path):
+    # codex 구현 검토 #7 — 해시가 빠진 파일 검사를 건너뛰면 「일치」로 보인다
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False)
+    rec = json.load(open(repo / 'verification/us/2026-11-09.json'))
+    rec['gates'][0]['script_sha256'] = None
+    F.write(repo, 'verification/us/2026-11-09.json', json.dumps(rec))
+    F.git(repo, 'add', '-A')
+    F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['check']['cats']['scripts'] == C.UNKNOWN and V.headline(v) != '발행본과 검사 기록 일치'
+
+
+def test_string_false_is_not_verified(tmp_path):
+    rec = {'summary': F.summary(verified='false', publish_ok='true'), 'gates': [{'name': 'g1', 'status': 'pass'}]}
+    r = V.recorded(rec)
+    assert r['readable'] is False and 'publish_ok' in r['unreadable_why'] and 'verified' in r['unreadable_why']
+
+
+def test_file_gate_without_argv_is_unknown(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False)
+    rec = json.load(open(repo / 'verification/us/2026-11-09.json'))
+    rec['gates'][0]['argv'] = []
+    F.write(repo, 'verification/us/2026-11-09.json', json.dumps(rec))
+    F.git(repo, 'add', '-A')
+    F.git(repo, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--amend', '--no-edit')
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['check']['cats']['scripts'] == C.UNKNOWN
+
+
+def test_missing_summary_lists_are_unreadable():
+    s = F.summary()
+    del s['blocking']
+    r = V.recorded({'summary': s, 'gates': [{'name': 'g1', 'status': 'pass'}]})
+    assert r['readable'] is False and 'blocking' in r['unreadable_why']
+
+
+# ── 2.5단계: 확인 주체(who) ────────────────────────────────────────────────
+
+def test_who_changes_wording_only(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo)
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    mac, gh = V.render_publish(v), V.render_publish(v, who=V.GITHUB)
+    assert '(맥 대조, 작업 공간 입력 제외)' in mac and mac.endswith(V.FOOTER) and 'GitHub' not in mac
+    assert '(GitHub 대조, 작업 공간 입력 제외)' in gh and gh.endswith(V.footer(V.GITHUB)) and '맥' not in gh
+    for foot in (V.FOOTER, V.footer(V.GITHUB)):                   # 검사가 실제로 돌았다고·내용이 맞다고 하지 않는다
+        assert '기록 일치만 확인' in foot and '검사 재실행이나 전체 내용의 사실 검증은 아님' in foot
+    assert mac.count('\n') == gh.count('\n')                         # 줄 구성은 같다
+    assert 'GitHub 이 확인한 범위' in V.digest_lines(v, who=V.GITHUB)[0] and '맥이 확인한 범위' in V.digest_lines(v)[0]
+    import inspect
+    assert 'who' not in inspect.signature(V.fingerprint).parameters   # 같은 사건인지는 주체와 무관
+    with pytest.raises(KeyError):
+        V.render_publish(v, who='cloud')
+
+
+def test_v2_record_shows_incomplete_inputs_with_what_and_why(tmp_path):
+    # 2판(2026-11-17): 미완료 사유는 「무엇이·왜」 — 파일의 사람이 읽는 이름 + state 의 한국어
+    repo = F.init(tmp_path)
+    inputs = {'blocking': ['국채 입찰(auctions.json) — 수집 실패'], 'blocking_files': ['<datadir>/auctions.json'],
+              'unclassified': ['<datadir>/surprise.json'], 'warnings': ['<datadir>/market_data.json']}
+    F.publish(repo, workspace=False,
+              summ=F.summary(status='incomplete', publish_ok=False, verified=False, blocking=['g1', 'inputs'],
+                             inputs=inputs, na=['check_numbers'], incomplete=['g1']),
+              gate_status={'g1': 'incomplete', 'check_numbers': 'na'})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    text = V.render_publish(v, who=V.GITHUB)
+    assert '판정 미완료' in text and '발행 불가' in text
+    assert ' · 자료 미완료: 국채 입찰(auctions.json) — 수집 실패' in text
+    assert '분류되지 않은 파일 surprise.json' in text and '수집 상태 표시 없는 자료 1개' in text
+    # 새 알림 틀(2026-11-19 main): 검사기는 「볼 것」에 한 줄씩, 자료 상태 표식(inputs)은 위의 자료 미완료 줄이 대표한다
+    assert '[확인 필요] g1 미완료' in text and '판정 불가' not in text and 'inputs 실패' not in text
+    labels = V.anomaly_labels(v)
+    assert '필수 검사 미완료(g1)' in labels and '자료 미완료(1개 · 분류 안 된 파일 1개)' in labels
+    digest = '\n'.join(V.digest_lines(v))
+    assert '판정 미완료' in digest and '자료 미완료 2개' in digest and '해당 없음 check_numbers' in digest
+
+
+def test_v2_verdict_labels_and_fully_verified(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False, summ=F.summary(status='verified'),
+              numbers={'table_cells': 4, 'prose_judged': 1, 'unverified': 0})
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert '판정 검증됨' in V.render_publish(v) and V.fully_verified(v)
+    (tmp_path / 'b').mkdir()
+    repo2 = F.init(tmp_path / 'b')
+    F.publish(repo2, workspace=False, summ=F.summary(status='conditional', verified=False, warned=['g1']),
+              gate_status={'g1': 'warn'})
+    v = V.view(str(repo2), 'HEAD', 'us', '2026-11-09')
+    assert '판정 조건부' in V.render_publish(v) and not V.fully_verified(v)

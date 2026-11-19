@@ -25,6 +25,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us.source_gate import check  # noqa: E402
 
 
@@ -36,8 +37,12 @@ def _load(path):
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f'FATAL: could not read {path}: {e} — 미완료', file=sys.stderr)
-        sys.exit(2)
+        if enforcing():
+            print(f'FATAL: could not read {path}: {e} — 미완료', file=sys.stderr)
+            sys.exit(2)
+        print(f'WARN: could not read {path}: {e} — treating it as empty',
+              file=sys.stderr)
+        return None
 
 
 def _fresh(book, report_date, path):
@@ -102,8 +107,10 @@ def main():
     fed_path = os.path.join(args.datadir, 'fed', 'events.json')
     from verification.inputs import legacy_recheck
     # --legacy-releases 의 옛 판정은 1a 적용일 전 글에만 — 새 글의 미완료를 재검사에서 통과로 두지 않는다(구현 검토 #9)
-    args.legacy_releases = legacy_recheck(args.legacy_releases, args.html)
-    if not args.legacy_releases:
+    # 1a 를 켜기 전에는 --legacy-releases 를 받은 그대로 쓴다(1a 전과 같다)
+    if enforcing():
+        args.legacy_releases = legacy_recheck(args.legacy_releases, args.html)
+    if enforcing() and not args.legacy_releases:
         rel, fed_book = _load(rel_path), _load(fed_path)
         why = ('market_data.json 기준일이 없다' if not report_date else
                'releases/index.json 이 없다' if rel is None else

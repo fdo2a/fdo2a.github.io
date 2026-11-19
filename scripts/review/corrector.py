@@ -57,14 +57,17 @@ KR_DATADIR_GATES = ('session', 'weight', 'movers', 'fund', 'numbers')   # number
 # 지난 글을 그 커밋 자료로 재검사한다 — 2026-11-17 「자료 누락 = 미완료(2)」 전의 판정(그때 없던 위임 자료·옛 펀드 상태).
 # 이 둘은 원본의 2 를 허용하지 않는 게이트라(NEVER_TOLERATE·VIOLATION_DIFF) 없으면 옛 글이 정정되지 않는다.
 RECHECK = {'fund': ['--recheck'], 'numbers': ['--recheck']}
-# 1a 적용일 — `verification.inputs.STRICT_FROM` 과 같다(시험). 이 날짜부터의 글은 --recheck 가 옛 판정을 주지 않고
-# (검사기가 날짜를 본다), 정정 재검사의 exit 2(미완료)를 「원본도 그랬다」로 허용하지 않는다(1a 구현 검토 #9).
-STRICT_FROM = '2026-11-17'
+# 1a 를 켜는 날 — `verification.inputs.EFFECTIVE` 와 같다(시험이 묶는다). None = 아직 켜지 않았다: 모든 글이 옛 판정
+# (1a 전과 같다). 날짜를 넣으면 그날부터의 글은 --recheck 가 옛 판정을 주지 않고(검사기가 날짜를 본다), 재검사의
+# 0·1 밖 종료(미완료 2·시간 초과)를 「원본도 그랬다」로 허용하지 않는다(1a 구현 검토 #9).
+STRICT_FROM = None
 
 
 def _legacy_post_copy(path):
     """`verification.inputs.legacy_post` 의 사본 — 그 패키지를 가져올 수 없는 격리 사본에서만 쓴다(시험이 같게 묶는다)."""
     import datetime
+    if STRICT_FROM is None:
+        return True                    # 켜지 않았다 — 모든 글이 옛 판정
     m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', os.path.basename(str(path or '')))
     if not m:
         return False
@@ -73,6 +76,20 @@ def _legacy_post_copy(path):
     except ValueError:
         return False
     return m.group(1) < STRICT_FROM
+
+
+def _enforcing():
+    """1a 를 켰는가 — 판정은 `verification.inputs.enforcing` 한 곳, 그 패키지를 가져올 수 없는 격리 사본에서만 사본 날짜."""
+    try:
+        from verification.inputs import enforcing
+    except ImportError:
+        return STRICT_FROM is not None
+    return enforcing()
+
+
+def _recheck(name):
+    """재검사 플래그 — 켠 뒤에만 붙인다(꺼져 있으면 검사기 인자가 1a 전과 같다)."""
+    return RECHECK.get(name, []) if _enforcing() else []
 
 
 def legacy_post(path):
@@ -143,7 +160,7 @@ def _contested_gate(clone, item, post):
 def _kr_datadir_args(name, post, data, path):
     """KR 근거 폴더 게이트의 인자. 표 숫자 대조는 글 날짜를 `--date` 로 받는다 — 없으면 판정 불가(2)라
     정정이 늘 막힌다. 날짜는 글 경로(kr/posts/<D>.html)에서. 적용일 전 글은 게이트가 skipped(0)로 끝낸다."""
-    args = ['--html', post, '--datadir', str(data), '--market', 'kr'] + RECHECK.get(name, [])
+    args = ['--html', post, '--datadir', str(data), '--market', 'kr'] + _recheck(name)
     m = re.search(r'(\d{4}-\d{2}-\d{2})\.html$', path)
     if name == 'numbers' and m:
         args += ['--date', m.group(1)]
@@ -175,7 +192,7 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
                                          '--next', str(data / 'macro.json'), '--legacy-releases']))
         for name in US_DATADIR_GATES:
             gates.append((f'check_{name}.py', ['--html', post, '--datadir', str(data)]
-                          + RECHECK.get(name, [])))
+                          + _recheck(name)))
         # 2026-11-06 (codex 구현 검토 #6): a correction must not add a link the post's own
         # commit never fetched. The evidence snapshot is that commit's data, hence legacy.
         gates.append(('check_sources.py', ['--html', post, '--datadir', str(data),

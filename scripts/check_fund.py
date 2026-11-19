@@ -70,7 +70,8 @@ def main(argv=None):
     # --recheck(옛 판정)은 1a 적용일 전 글에만 — 새 글의 미완료를 재검사에서 통과로 두지 않는다(1a 구현 검토 #9).
     # 날짜는 정규 파일 이름(YYYY-MM-DD.html)으로만 정한다(2회차 F5)
     legacy = legacy_recheck(args.recheck, args.html, args.date)
-    if post_date >= EFFECTIVE and not legacy:
+    from verification.inputs import enforcing
+    if enforcing() and post_date >= EFFECTIVE and not legacy:
         why = (f'{FILES[args.market]} 이 없거나 읽히지 않는다' if not isinstance(data, dict) else
                f"자료 날짜 {data.get('report_date')} ≠ 글 날짜 {post_date}" if data.get('report_date') != post_date else
                f"자료 상태 {data.get('status')}" if data.get('status') != 'ok' else None)

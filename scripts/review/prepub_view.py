@@ -397,7 +397,7 @@ def fully_verified(v):
     문장 숫자는 대조하지 않으므로 완료가 아니다(2026-11-13 — 미검증 0 이 찍혀도)."""
     rec = v.get('recorded') or {}
     return bool(v.get('market') != 'kr' and rec.get('readable') and rec.get('verified')
-                and rec.get('status') in ('pass', 'verified')
+                and rec.get('status') == ('verified' if rec.get('v2') else 'pass')
                 and rec.get('numbers') and unverified_numbers(v) == 0)
 
 
@@ -469,7 +469,8 @@ def _kr_no_numbers(rec):
     st = rec.get('numbers_gate')
     if st is None:
         return 'before'
-    return st if st in ('not_run', 'indeterminate', 'na', 'incomplete') else 'corrupt'
+    # 「해당 없음」·「미완료」는 2판의 상태다 — 1판 기록에 그 값이 있으면 전처럼 기록 손상으로 읽는다
+    return st if st in ('not_run', 'indeterminate') + (('na', 'incomplete') if rec.get('v2') else ()) else 'corrupt'
 
 
 def _kr_scope(n):
@@ -686,7 +687,9 @@ def look_items(v):
     seen.add('integrity')                     # 기록이 blocking 에 넣는 무결성 표식 — 위 경보가 대표한다(#2)
     if 'integrity' in rec['blocking'] and not rec['integrity']:
         out.append((CHECK, '무결성 경보: 이유가 기록에 없어요'))
-    add(CHECK, rec['required_indeterminate'], '판정 불가')
+    if rec.get('inputs'):
+        seen.add('inputs')                    # 2판 기록의 자료 상태 표식 — 발행 상태의 「자료 미완료」 줄이 대표한다
+    add(CHECK, rec['required_indeterminate'], '미완료' if rec.get('v2') else '판정 불가')
     add(REVIEW, rec['note_numbers'], '실패(노트로 숫자 실패 허용)')
     add(NOTE, rec['note_format'], '실패(노트로 형식 실패 허용)')
     add(CHECK, rec['blocking'] + rec['required_failed'], '실패')
@@ -717,6 +720,43 @@ def _pair_phrase(chk, who):
     return f'발행본과 검사 기록 일부 대조 불가({w} 대조)'
 
 
+GATE_LINES = 6            # 자료 상태 한 갈래에 적는 줄 수
+
+
+def _inputs_lines(rec):
+    """2판 기록(1a 를 켠 뒤)의 자료 상태 — 「무엇이·왜」(사용자 11/11). 1판 기록에는 이 칸이 없어 줄도 없다."""
+    inp = rec.get('inputs') if rec.get('readable') else None
+    if not inp:
+        return []
+    out = []
+    # 자료가 없거나 비었거나 낡았거나 수집 실패
+    for x in inp['blocking'][:GATE_LINES]:
+        out.append(f' · 자료 미완료: {_cut(x, 120)}')
+    if len(inp['blocking']) > GATE_LINES:
+        out.append(f' · 자료 미완료: 외 {len(inp["blocking"]) - GATE_LINES}개')
+    for x in inp['unclassified'][:GATE_LINES]:
+        out.append(f' · 자료 미완료: 분류되지 않은 파일 {_cut(_input_name(x), 80)}')
+    if inp['warnings']:
+        out.append(f' · 수집 상태 표시 없는 자료 {inp["warnings"]}개(적용일 전이라 막지 않았어요)')
+    # 빈 대상 목록이 정상 0건인지 수집 실패인지 모른다 — 적용일 전이라 막지 않았다(1a 구현 검토 #2)
+    for x in inp['unconfirmed_empty'][:GATE_LINES]:
+        out.append(f' · 대상 없음 미확인: {_cut(x, 120)}')
+    if len(inp['unconfirmed_empty']) > GATE_LINES:
+        out.append(f' · 대상 없음 미확인: 외 {len(inp["unconfirmed_empty"]) - GATE_LINES}개')
+    # 이번 수집은 그 파일을 못 썼고 같은 날 옛 판으로 검사했다 — 적용일 전이라 막지 않았다(1a 구현 검토 2회차 F3)
+    for x in inp.get('recollect_failed', [])[:GATE_LINES]:
+        out.append(f' · 재수집 실패: {_cut(x, 120)}')
+    if len(inp.get('recollect_failed', [])) > GATE_LINES:
+        out.append(f' · 재수집 실패: 외 {len(inp["recollect_failed"]) - GATE_LINES}개')
+    # 사람이 승인한 기한부 결측 — 공식 기관이 발표하지 않은 지표를 검증 대상에서 조건부로 뺐다(수집 실패 허용이 아니다).
+    # 예외 ID·제외 지표·승인일·만료일·영향 범위가 한 줄에 다 들어가야 한다(2026-11-17 사용자 조건 5)
+    for x in inp.get('accepted_missing', [])[:GATE_LINES]:
+        out.append(f' · 승인된 결측(원천 미발표): {_cut(x, 600)}')
+    if len(inp.get('accepted_missing', [])) > GATE_LINES:
+        out.append(f' · 승인된 결측(원천 미발표): 외 {len(inp["accepted_missing"]) - GATE_LINES}개')
+    return out
+
+
 def status_lines(v, who=MAC):
     out = ['■ 발행 상태']
     if v['kind'] == AMBIGUOUS:
@@ -726,7 +766,8 @@ def status_lines(v, who=MAC):
     rec, chk = v.get('recorded') or {}, v.get('check') or {}
     bits = []
     if rec.get('readable'):
-        bits.append(f'필수 검사 {rec["required_pass"]}/{rec["required"]} 기록상 통과')
+        bits.append(f'필수 검사 {rec["required"]}개 중 통과 {rec["required_pass"]} · 해당 없음 {rec["required_na"]}'
+                    if rec.get('v2') else f'필수 검사 {rec["required_pass"]}/{rec["required"]} 기록상 통과')
         if not rec['publish_ok']:
             bits.append('기록상 발행 불가')
         if rec['status'] not in _NORMAL and not _ref_only(rec):
@@ -741,6 +782,7 @@ def status_lines(v, who=MAC):
         bits.append(f'발행본과 검사 기록을 대조하지 못했어요({_WHO[who]["name"]} 대조 결과 없음)')
     if bits:
         out.append(' · '.join(bits))
+    out += _inputs_lines(rec)
     cw = chk.get('cat_why') or {}
     for k, label in C.CATEGORY_LABEL.items():
         st = (chk.get('cats') or {}).get(k)

@@ -43,11 +43,28 @@ import re
 
 FORMAT = 'prepub-inputs/1'
 EFFECTIVE = None
-# 1a 의 「자료 없음 = 미완료(2)」가 적용되는 첫 글 날짜. 발행 뒤 재검사(정정기·윤문기·매일 알림)의 `--recheck`(옛 판정)과
-# 「원본도 2 면 기존 실패로 허용」은 이 날짜 **전** 글에만 쓴다(1a 구현 검토 #9). **배포일과 같아야 한다** — 이 날짜부터
-# 배포 전까지 발행된 글은 옛 규칙으로 쓰였는데 새 규칙으로 재검사된다. 사본: `review/corrector.py`·`review/style_pass.py`
-# (레포 밖 사본에서도 돈다 — 시험이 같게 묶는다).
-STRICT_FROM = '2026-11-17'
+# ── 켜는 스위치(2026-11-20, 1a 를 두 번에 나눠 올린다) ──────────────────────────────────────────────
+# `EFFECTIVE` 가 None 인 동안 1a 의 **막는 판정은 하나도 켜지지 않는다** — 검사기·실행기·기록·정정 재검사가 전부
+# 1a 전(main)과 같은 판정을 낸다. 먼저 올라가는 것은 수집기 쪽(파일의 `collect` 칸·장부 `_collect_status.json`)뿐이다.
+# 첫 수집을 확인한 뒤 사람이 `EFFECTIVE` 에 날짜를 넣으면 그날 한꺼번에 켜진다: 자료 없음 = 미완료(2), 2판 기록,
+# 산출 범위 규칙, 수집 상태 표시 없음 = 미완료, 그리고 그 날짜 **전** 글의 재검사만 옛 판정(`legacy_post`).
+# 판정 함수는 `enforcing()` 하나다 — 다른 곳에서 `EFFECTIVE` 를 직접 보지 않는다.
+# 사본: `review/corrector.py`·`review/style_pass.py` 의 `STRICT_FROM`(레포 밖 사본에서도 돈다 — 시험이 같게 묶는다).
+#
+# 시험 전용 환경 변수 `PREPUB_INPUTS_TEST_STRICT_FROM=<YYYY-MM-DD>`: 스위치를 **켜는 쪽으로만** 흉내 낸다(검사기가
+# 하위 프로세스로 돌아 monkeypatch 가 닿지 않는다). 켜진 판정 + 그 날짜를 재검사 경계로 쓴다. 끄는 방법은 없다.
+TEST_ENV = 'PREPUB_INPUTS_TEST_STRICT_FROM'
+
+
+def strict_from():
+    """1a 의 막는 판정이 적용되는 첫 글 날짜 — 꺼져 있으면 None. 이 날짜 **전** 글의 재검사(`--recheck`·
+    `--legacy-releases`, 정정기·윤문기의 「원본도 2 면 기존 실패로 허용」)만 옛 판정을 받는다(1a 구현 검토 #9)."""
+    return EFFECTIVE or os.environ.get(TEST_ENV) or None
+
+
+def enforcing():
+    """1a 의 막는 판정을 켰는가 — **스위치 판정은 이 함수 하나다.** 꺼져 있으면 모든 검사가 1a 전과 같다."""
+    return strict_from() is not None
 
 
 _POST_NAME = re.compile(r'(\d{4}-\d{2}-\d{2})\.html')
@@ -70,8 +87,10 @@ def post_date(html_path):
 def legacy_post(html_path):
     """이 글이 옛 판정(1a 적용 전)을 받을 수 있는가 — 정규 이름의 날짜가 STRICT_FROM 전일 때만. 날짜를 모르면 아니다.
     **재검사 날짜 판정은 이 함수 하나다** — 검사기(`legacy_recheck`)·정정기·윤문기가 모두 부른다."""
+    if not enforcing():
+        return True                    # 꺼져 있으면 모든 글이 옛 판정이다
     d = post_date(html_path)
-    return bool(d and d < STRICT_FROM)
+    return bool(d and d < strict_from())
 
 
 def legacy_recheck(flag, html_path, date=None):
@@ -252,6 +271,9 @@ def paths_of(pol, market):
 
 
 def enforced(date):
+    """수집 상태 표시가 없으면(`unstamped`) 미완료로 치는 글인가 — 켠 날(`EFFECTIVE`)부터의 글. 켜고 끄는 판정이 아니라
+    켠 뒤의 날짜 경계다(이 함수는 `enforcing()` 이 참인 2판 실행기에서만 불린다). 시험 전용 환경 변수는 이 경계를 켜지
+    않는다 — 표시 없는 자료를 경고로 두는 상태(적용일 전)의 시험이 그대로 돌게."""
     return bool(EFFECTIVE) and bool(date) and date >= EFFECTIVE
 
 

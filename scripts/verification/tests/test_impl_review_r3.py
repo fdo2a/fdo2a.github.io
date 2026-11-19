@@ -10,7 +10,7 @@ import sys
 import pytest
 
 from verification import inputs as I
-from verification import record as R
+from verification import record2 as R
 from verification.tests.test_impl_review_r2 import (CPI, D, K1, K2, REAL, SCRIPTS, _chain, _econ, _real_us, acc,
                                                     ident, partial)
 

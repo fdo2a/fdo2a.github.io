@@ -29,7 +29,7 @@ from datetime import date as _date, timedelta
 import pytest
 
 from verification import inputs as I
-from verification import record as R
+from verification import record2 as R
 from verification.tests import realday as RD
 
 EXPECT = {'delete': 'missing', 'zero': 'empty_file', 'broken': 'unreadable', 'date_back': 'stale',

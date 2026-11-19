@@ -39,6 +39,8 @@ def commit(repo, msg, when=None):
     return git(repo, 'rev-parse', 'HEAD')
 
 
+FORMAT = R.FORMAT            # 1a 를 켠 뒤의 시험은 conftest 가 2판(`prepub-record/2`)으로 바꾼다
+
 CONFIG = {'format': R.CONFIG_FORMAT, 'markets': {
     'us': {'post': 'posts/{date}.html', 'gates': [{'name': 'g1', 'script': 'scripts/g1.py'},
                                                   {'name': 'check_numbers', 'script': 'scripts/g2.py'}]},
@@ -87,7 +89,7 @@ def publish(repo, market='us', date='2026-11-09', body='<p>글</p>', workspace=T
             if g['name'] == 'check_numbers' and numbers is not None:
                 ent['numbers'] = numbers
             gates.append(ent)
-        rec = {'format': R.FORMAT, 'market': market, 'date': date,
+        rec = {'format': FORMAT, 'market': market, 'date': date,
                'post': {'path': pp, 'sha256': sha(body)},
                'created_at': {'kst': f'{date}T07:00:00+09:00'},
                'repo_inputs': {'paths': R.repo_paths(market), 'digest': digest, 'files': n},

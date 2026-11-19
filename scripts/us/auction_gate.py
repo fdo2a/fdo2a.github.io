@@ -221,8 +221,9 @@ def check(doc, book, report_date):
             v.append(f'{why} — 「국채 입찰」 섹션·표식을 실은 채로는 발행할 수 없다')
         return v
 
-    today = book.get('today')
-    if not isinstance(today, list):
+    from verification.inputs import enforcing
+    today = book.get('today') or []
+    if enforcing() and not isinstance(book.get('today'), list):
         # 칸이 없거나 목록이 아니면 「입찰 없는 날」이 아니다 — 깨진 책이다(1a 구현 검토 2회차 F1)
         raise BadBook('auctions.json 의 today 칸이 없거나 목록이 아니다')
     if not today:

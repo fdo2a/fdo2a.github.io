@@ -12,7 +12,7 @@ import sys
 import pytest
 
 from verification import inputs as I
-from verification import record as R
+from verification import record2 as R
 from verification.tests.test_inputs import STAMPED, ctx, put, policy, D
 
 SCRIPTS = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -13,6 +13,9 @@ import re
 
 from verification import record as R
 
+# 받는 기록 판 — 1판(`record.py`)과 2판(`record2.py`, 1a 를 켠 뒤). 이 모듈이 쓰는 것은 두 판에 공통인 칸뿐이다
+FORMATS = (R.FORMAT, 'prepub-record/2')
+
 MATCH, MISMATCH, UNKNOWN, NONE = '일치', '불일치', '대조 불가', '없음'
 PARTIAL = '일부 확인'
 CATEGORY_LABEL = {
@@ -94,7 +97,7 @@ def check(repo, market, date, rev):
         res = _result({'record': UNKNOWN}, ['기록을 읽지 못했다'], None)
         res['overall'] = UNKNOWN          # 기록 자체를 못 읽었다 — 「일부 확인」이 아니다
         return res
-    if rec.get('format') not in R.FORMATS or rec.get('market') != market or rec.get('date') != date:
+    if rec.get('format') not in FORMATS or rec.get('market') != market or rec.get('date') != date:
         return _result({'record': MISMATCH}, ['다른 형식이거나 다른 글의 기록이다'], rec)
 
     cats, cw, cd = {}, {}, {}

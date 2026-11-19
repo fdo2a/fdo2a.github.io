@@ -47,13 +47,13 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
 1. `git -C <repo> pull` (or re-clone) to get the latest committed data, then Read `data/market_data.json`.
 2. If it exists, `report_date` matches today's expected US session (most recent US weekday; if it looks stale by >1 trading day, note it), and `"complete": true` — **copy the five data files to the workspace root** (`market_data.json`, `intraday.json`, `econ_indicators.json`, `sector_performance.html`, `yield_curve.png`) and skip STEP 1's market-data collection entirely. Proceed to STEP 1 for research_notes.md only (the web-research half).
-   Also copy the files below, and **always `data/_collect_status.json` → `<workspace>/_collect_status.json`** (collection status and hashes, when present). Since 2026-11-17 every file a gate reads is required (`config/prepub_inputs.json`): one that is missing, empty, stale or marked failed makes `run_gates.py` exit 2 (incomplete) — see the exit-2 rule under 발행 게이트. No section is dropped to publish around it.
-   - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → incomplete (exit 2), not bootstrap mode.
-   - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다**(사건이 없는 것이지 자료가 없는 것이 아니다). 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다. `events.json` 이 없거나 낡았으면, 원문을 받았다는 사건의 txt 가 없으면 미완료(exit 2)다 — 섹션을 빼고 발행하지 않는다.
-   - 국채 입찰: `data/auctions.json` 은 **늘** `<workspace>/auctions.json` 으로, `data/auction_table.html` 은 있을 때만 복사한다. `today` 가 비지 않을 때만 writer 가 「국채 입찰」 섹션을 쓴다(비면 섹션이 없어야 통과). `ok` 가 참이 아니거나 `report_date` 가 오늘이 아니거나 `pending` 이 남으면 미완료(exit 2)다.
-   - 유동성·수급: **`data/liquidity/` 디렉터리 전체**를 `<workspace>/liquidity/` 로 복사한다(`liquidity.json`·`table.html`(있을 때)·`state.json`·`qra/*.txt`). `today: true` 일 때만 writer 가 「유동성·수급」 섹션을 쓴다. `status` 가 complete 가 아니거나 `report_date` 가 오늘이 아니면 미완료(exit 2)다. 실을 회차는 책이 아니라 발행본 원장(`posts/*.html` 의 `data-h41-release`·`data-qra-doc`)이 정한다 — 늦게 확인된 회차도 다음 글이 싣는다.
-   - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다. 그 밖(`partial`·`unavailable`·다른 날)은 미완료(exit 2)다. HTML 은 그대로 넣는 생성 블록이다.
-   - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없거나 날짜가 다르면 미완료(exit 2). 묶음이 빈 날은 「해당 없음」이다.
+   Also copy the two inherited books if present — they are **non-core**: their absence never blocks publication, and never fails the completeness gate.
+   - §9 매크로: `data/macro.json` (yesterday's regime / policy path / transmission), `data/macro_eval.json` (today's verdict — what may move), `data/macro_metrics.json` (axis scores and the new-release list), and **`data/releases/`** — the primary press releases behind today's promoted indicators, already fetched and committed (`index.json` says which succeeded). Copy the whole `releases/` directory. Missing → the writer opens the book in bootstrap mode.
+   - 연준 이벤트: **`data/fed/`** 디렉터리 전체 — `events.json`(오늘 다룰 이벤트와 각 원문의 수집 결과)과 `<key>.txt`(성명·기자회견 전문·연설 원문). **대부분의 날에는 `fresh` 이벤트가 없고, 그런 날은 이 섹션을 아예 열지 않는다.** Missing → the writer omits the section entirely. 원문 텍스트 파일이 인용 대조의 정본이므로 디렉터리째 복사한다.
+   - 국채 입찰: `data/auctions.json` 은 **늘** `<workspace>/auctions.json` 으로, `data/auction_table.html` 은 있을 때만 복사한다. `ok: true`·`report_date` 오늘·`today` 비지 않음일 때만 writer 가 「국채 입찰」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다).
+   - 유동성·수급: **`data/liquidity/` 디렉터리 전체**를 `<workspace>/liquidity/` 로 복사한다(`liquidity.json`·`table.html`(있을 때)·`state.json`·`qra/*.txt`). `status: complete`·`report_date` 오늘·`today: true` 일 때만 writer 가 「유동성·수급」 섹션을 쓴다. 실을 회차는 책이 아니라 발행본 원장(`posts/*.html` 의 `data-h41-release`·`data-qra-doc`)이 정한다 — 늦게 확인된 회차도 다음 글이 싣는다.
+   - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok`·`partial` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다). HTML 은 그대로 넣는 생성 블록이다.
+   - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
    - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
@@ -108,7 +108,7 @@ Gate before proceeding: market_data.json parses as JSON with non-null indices/se
 
 **시황 브리프에는 오늘의 뉴스·메모리/DRAM·AI 인프라·MLCC 가 없다**(2026-09-26 사용자 지시) — 네 섹션은 STEP 3.5 의 둘째 글 「뉴스·산업 브리프」로 옮겨 갔다. 작성자에게 그 섹션을 쓰라고 하지 않는다.
 
-**텔레그램 스냅샷(2026-11-06) — 작성자를 부르기 직전에 한 번, 어느 경로로 왔든 같은 방법으로:** `D=<report_date>; rm -f <workspace>/telegram.json; C=$(git -C <repo> rev-parse --verify HEAD) && [ -n "$C" ] && git -C <repo> show "$C:data/market_data.json" | cmp -s - <workspace>/market_data.json && { git -C <repo> show "$C:data/telegram/$D.json" > <workspace>/telegram.json 2>/dev/null || rm -f <workspace>/telegram.json; }`. 워크스페이스의 시장 데이터가 그 커밋의 것과 **바이트까지 같을 때만** 그 커밋의 텔레그램을 쓴다 — 로컬 수집 폴백, 복사 뒤 재수집처럼 판이 어긋나면 텔레그램 없음 — 게이트가 미완료(exit 2)로 막는다. 파일의 `report_date` 가 `$D` 가 아니면 지운다(다른 날짜로 대체하지 않는다). 이 한 판을 작성자와 `check_telegram.py` 가 같이 쓴다 — 그날 텔레그램 수집 파일은 필수 입력이라(2026-11-17) 없으면 게이트가 exit 2 다. 경로를 입력 목록에 넣는다. `stats`(항목·요약·실패 채널) 한 줄을 최종 보고에 옮긴다. 규칙: `.claude/agents/brief-report-writer.md` 「텔레그램 견해·의견」, 설계 `docs/superpowers/specs/2026-11-06-telegram-source.md`.
+**텔레그램 스냅샷(2026-11-06) — 작성자를 부르기 직전에 한 번, 어느 경로로 왔든 같은 방법으로:** `D=<report_date>; rm -f <workspace>/telegram.json; C=$(git -C <repo> rev-parse --verify HEAD) && [ -n "$C" ] && git -C <repo> show "$C:data/market_data.json" | cmp -s - <workspace>/market_data.json && { git -C <repo> show "$C:data/telegram/$D.json" > <workspace>/telegram.json 2>/dev/null || rm -f <workspace>/telegram.json; }`. 워크스페이스의 시장 데이터가 그 커밋의 것과 **바이트까지 같을 때만** 그 커밋의 텔레그램을 쓴다 — 로컬 수집 폴백, 복사 뒤 재수집처럼 판이 어긋나면 텔레그램 없음이다. 파일의 `report_date` 가 `$D` 가 아니면 지운다(다른 날짜로 대체하지 않는다). 이 한 판을 작성자와 `check_telegram.py` 가 같이 쓴다. 없으면 작성자 프롬프트에 「텔레그램 없음」이라고 적고, 있으면 경로를 입력 목록에 넣는다. `stats`(항목·요약·실패 채널) 한 줄을 최종 보고에 옮긴다. 규칙: `.claude/agents/brief-report-writer.md` 「텔레그램 견해·의견」, 설계 `docs/superpowers/specs/2026-11-06-telegram-source.md`.
 
 Launch the Agent tool with subagent_type "brief-report-writer", run synchronously. Prompt: the report trading date, the list of input files from STEP 1 (**including macro.json / macro_eval.json / macro_metrics.json if present**), and the required outputs in the workspace root — morning_brief_[YYYY-MM-DD].html (the writer authors only `.body.html` + `.meta.json` and assembles them with `scripts/render_post.py`; head, CSS, top bar and nav come from the shell) **plus macro_next.json** (the updated macro book; the input macro.json must be left untouched). Same fallbacks as STEP 1 (agent file: .claude/agents/brief-report-writer.md).
 
@@ -121,9 +121,7 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
         --datadir <workspace> --repo <repo> --tg <workspace>/telegram.json --cycle <CYCLE_ID>
 ```
 
-**실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. 검사기를 따로 하나씩 돌려 목록을 대신하지 않는다. 아래 설명은 검사기별 계약이다.
-- exit 1 = 필수 검사 위반 → 찍힌 위반을 writer 에게 넘긴다(위반과 미완료가 함께면 1).
-- **exit 2 = 미완료**(입력 자료가 없거나 비었거나 낡았거나 수집 실패·분류 안 된 파일·검사기가 돌지 못함, `자료 미완료:` 줄이 무엇이·왜를 말한다) → **글을 고치지 말고** STEP 0 3 의 수집 재실행(`gh workflow run collect-market-data.yml -f force=true`, run ID·`--exit-status`, 작업 공간 다시 복사) 1회 → 게이트 다시. **그래도 2 면 커밋·푸시하지 않고** `run_lock.sh release`, PushNotification(무엇이·왜)으로 보류. 섹션을 빼고 발행하지 않는다.
+**실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사가 실패했거나 **판정 불가**(검사기가 돌지 못함 — 통과가 아니다). 검사기를 따로 하나씩 돌려 목록을 대신하지 않는다. 아래 설명은 검사기별 계약이다.
 
 - `check_fund.py` — 생성 블록은 다시 그린 것과 바이트가 같아야 한다. 블록 안을 고치지 말고, 해석 문단(`data-fund`)만 고친다. 「편입·비중 확대·매수하」 같은 권고 어휘가 섹션에 있으면 막힌다.
 - `check_sector_perf.py` — 섹터 기간 수익률 표가 그날 섹터 등락률과 같은 회차여야 한다. 낡은 행을 손으로 채울 때 `sectors` 만 고치지 말고 **같은 회차의 `sector_performance` 행 전체와 `data/sector_performance.html`** 을 함께 옮긴다(2026-10-12 한 글에서 커뮤니케이션서비스가 +0.97%·-1.51% 로 갈렸다). 표 안 숫자를 손으로 고치지 않는다.
@@ -131,7 +129,7 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
 - `check_numbers.py` — 표 칸 하나하나가 행·열이 가리키는 데이터 값을 인쇄 자릿수로 반올림한 것이어야 한다. 표의 행 이름·열 이름을 바꾸거나 행·열을 더하면 막힌다(지도에 없는 표). 위반 줄이 가리킨 칸만 데이터 값으로 고친다. `경고(문장)` 줄은 막지 않지만 그 문장을 원본과 다시 본다. 집계 줄의 「미검증」은 프로그램이 대조하지 못한 수치 수다. exit 2 는 통과가 아니다(데이터 날짜가 글 날짜와 다르면 2).
 - `check_auction.py` — 「국채 입찰」도 침묵이 기본값이다. 그날 이표채 결과가 없거나 `auctions.json` 이 낡았으면 섹션을 열면 막히고, 결과가 있는데 섹션이 없어도 막힌다. 표는 `auction_table.html` 그대로.
 - `check_liquidity.py` — 「유동성·수급」도 침묵이 기본값이다. 실을 H.4.1 회차·분기조달계획 문서가 없으면 섹션을 열면 막히고, 있으면 없어도 막힌다. 표는 `liquidity/table.html` 그대로, 해석은 표식 문단으로만. **첫 위반 줄이 `ledger_changed:` 면** 수집 뒤 다른 글이 같은 회차를 실은 것이다 — `python3 scripts/build_liquidity.py --datadir <workspace> --repo <repo> --recompute` 를 돌리고 writer 에게 **「유동성·수급」 섹션만** 새 `liquidity/table.html` 로 다시 쓰게 한 뒤 게이트를 전부 다시 돈다. 이 고리는 최대 2회, 그래도 `ledger_changed` 면 중단·보고(회차는 원장에 없는 채로 남아 다음 글이 싣는다).
-- `price_context`·`session`·`calendar.json` 이 없거나 낡은 날은 미완료(exit 2)다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
+- 비-코어 입력(`price_context`·`session`·`calendar.json`·뉴스 수집분)이 없는 날도 표식 대조는 그대로 돈다 — 수집이 실패한 날이 창작이 실릴 확률이 가장 높다.
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
 
@@ -139,7 +137,7 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
 2. 실패하면 writer 를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 돌리고, 데이터 정본·표를 재대조한 뒤 apply → check 를 반복한다.
 3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고친다(긴 문장 분리 → 중복 수치 삭제 → 산문 반올림). **통과할 때까지 계속한다.**
 
-가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다 — 중단 알림을 보내지 않는다. 중단은 데이터 정본이 끝내 완성되지 않을 때(completeness gate·게이트 exit 2 보류)뿐이다.
+가독성 실패는 초안 반려일 뿐 미발행 사유가 아니다 — 중단 알림을 보내지 않는다. 중단은 데이터 정본이 끝내 완성되지 않을 때(completeness gate)뿐이다.
 
 각 게이트가 막는 조건의 상세와 이력: `docs/superpowers/specs/2026-09-24-instruction-history-archive.md` 「STEP 2」.
 
@@ -174,8 +172,7 @@ Site base URL: https://fdo2a.github.io/
 5. **최종 검증 기록 (2026-11-08)** — STEP 0 의 커밋 직전 가드(pull·중복 확인·유동성 재검사)를 먼저 하고, **실제로 올릴 파일**(노트까지 붙은 `posts/[DATE].html`)로:
    `python3 scripts/run_gates.py record --market us --date [DATE] --html posts/[DATE].html --datadir <workspace> --repo . --tg <workspace>/telegram.json --cycle <CYCLE_ID> --out verification/us/[DATE].json`
    - exit 0 → 6. **기록한 뒤에는 글을 고치지 않는다** — 고쳤으면 record 를 다시 돈다.
-   - exit 2(미완료 — 입력 자료) → 글을 고치지 않는다. 위 발행 게이트의 exit 2 규칙(수집 재실행 1회 → 그래도 2 면 커밋·푸시 없이 잠금 해제·PushNotification 보류).
-   - exit 1(필수 검사 위반) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-4 → record. 최대 2회, 그래도 1이면 **커밋하지 않고** `run_lock.sh release`, PushNotification 으로 막은 검사기와 함께 중단. **편집자 노트는 고치지 않는다** — 노트 때문에 막혔으면(출력의 「노트를 뺀 사본」 줄) 고치지 말고 중단·보고. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 STEP 3 1-4 를 다시 하고 record — 그 판도 1이면 중단.
+   - exit 1(필수 검사 실패·판정 불가) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-4 → record. 최대 2회, 그래도 1이면 **커밋하지 않고** `run_lock.sh release`, PushNotification 으로 막은 검사기와 함께 중단. **편집자 노트는 고치지 않는다** — 노트 때문에 막혔으면(출력의 「노트를 뺀 사본」 줄) 고치지 말고 중단·보고. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 STEP 3 1-4 를 다시 하고 record — 그 판도 1이면 중단.
    - exit 4(검사는 다 돌았고 발행 가능, **레포 안 기록 저장만** 실패) → 찍힌 `fallback_record=<경로>`(레포 밖 같은 기록)를 적어 두고 발행한다. 아래 verify 에 `--record-file <그 경로>` 를 붙인다 — 기록이 레포에 없어도 글·검사 코드·원장·입력이 바뀌면 막는다. 알림에 「검증 기록 없음 — 저장 실패」(2026-11-22 까지 시험 운영).
    - exit 5(기록 도구 자체 오류, 또는 대체 기록도 못 남김) → 최종 판이 검사됐다는 근거가 없다. **커밋하지 않고** 잠금 해제, 알림에 「검증 도구 오류 — 발행 보류」와 오류 줄을 적고 중단(필수 검사를 못 돌린 것과 같다).
 6. Commit and push to main — **뉴스·산업 브리프를 쓰기 전에** 이 커밋부터 올린다. 글과 기록이 **같은 커밋**에 든다. 명령을 `&&` 로 잇지 말고 한 줄씩 돌려 종료 코드를 본다:

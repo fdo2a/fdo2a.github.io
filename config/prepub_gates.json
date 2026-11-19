@@ -31,6 +31,10 @@
       "<datadir>/econ_indicators.json",
       "<datadir>/macro_metrics.json",
       "<datadir>/releases/index.json"
+     ],
+     "partial_patterns": [
+      "econ_indicators\\.json 이 없거나 읽을 수 없다",
+      "둘 다 없다 — 부트스트랩"
      ]
     },
     {

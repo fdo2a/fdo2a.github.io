@@ -451,7 +451,7 @@ def test_kr_numbers_gate_gets_the_post_date():
     from scripts.review import corrector
     assert 'numbers' in corrector.KR_DATADIR_GATES and 'check_numbers.py' in corrector.VIOLATION_DIFF
     args = corrector._kr_datadir_args('numbers', '/c/kr/posts/2026-11-16.html', '/e/kr/data', 'kr/posts/2026-11-16.html')
-    assert args == ['--html', '/c/kr/posts/2026-11-16.html', '--datadir', '/e/kr/data', '--market', 'kr', '--recheck',
+    assert args == ['--html', '/c/kr/posts/2026-11-16.html', '--datadir', '/e/kr/data', '--market', 'kr',
                     '--date', '2026-11-16']
     assert '--date' not in corrector._kr_datadir_args('fund', 'p', 'd', 'kr/posts/2026-11-16.html')
 

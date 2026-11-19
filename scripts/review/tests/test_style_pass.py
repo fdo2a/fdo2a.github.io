@@ -514,6 +514,6 @@ def test_kr_numbers_gate_runs_with_date_and_exit2_is_never_tolerated():
     from review import style_pass as sp
     cmds = sp.gate_commands('kr', 'p.html', 'd', 'o.html', '2026-11-16', None)
     num = [c for c in cmds if c[1].endswith('check_numbers.py')]
-    assert len(num) == 1 and num[0][-5:] == ['--market', 'kr', '--date', '2026-11-16', '--recheck']
+    assert len(num) == 1 and num[0][-4:] == ['--market', 'kr', '--date', '2026-11-16']
     same = (2, 'FATAL: x')
     assert sp.judge({'check_numbers.py': same}, {'check_numbers.py': same})

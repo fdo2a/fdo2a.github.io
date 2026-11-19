@@ -46,21 +46,33 @@ def main(argv=None):
     movers_name, market_name = FILES[args.market]
     movers = _load(os.path.join(args.datadir, movers_name))
     market = _load(os.path.join(args.datadir, market_name)) or {}
-    # 자료가 없거나 읽히지 않거나 다른 날 것이면 미완료(2) — 「볼 것 없음」으로 통과시키면 수집 실패가 「움직인
-    # 종목 0건」으로 발행된다(2026-11-17, 11/16 KR 의 not_run 이 자료 없음과 같은 문구였다).
-    if not isinstance(movers, dict) or not isinstance(movers.get('groups'), list):
-        print(f'FATAL: {movers_name} 이 없거나 읽히지 않는다 — 수집을 다시 돌린다', file=sys.stderr)
-        return 2
-    if not market.get('report_date') or movers.get('report_date') != market.get('report_date'):
-        print(f"FATAL: {movers_name} 날짜 {movers.get('report_date')} ≠ {market_name} 날짜 "
-              f"{market.get('report_date')} — 수집을 다시 돌린다", file=sys.stderr)
-        return 2
-    if not movers['groups']:
-        if _has_mover_paragraph(html):
-            print(f'FAIL 움직인 종목 묶음이 없는 날인데 움직인 종목 문단이 있다({movers_name}) — 문단을 뺀다')
-            return 1
-        print(f'movers: 묶음 없음({movers_name}) — nothing to check')
-        return 0
+    from verification.inputs import enforcing
+    if not enforcing():
+        # 1a 를 켜기 전 — 1a 전 판정 그대로(자료가 쓸 수 없으면 강제하지 않는다, 종료 0)
+        why = ('자료 없음·읽기 실패' if not movers else '묶음 없음' if not movers.get('groups')
+               else '다른 날 자료' if movers.get('report_date') != market.get('report_date') else None)
+        if why:
+            if _has_mover_paragraph(html):
+                print(f'FATAL: 움직인 종목 문단이 있는데 대조할 자료가 없다 — {why}({movers_name})')
+            else:
+                print(f'movers: {why}({movers_name}) — nothing to check')
+            return 0
+    else:
+        # 자료가 없거나 읽히지 않거나 다른 날 것이면 미완료(2) — 「볼 것 없음」으로 통과시키면 수집 실패가 「움직인
+        # 종목 0건」으로 발행된다(2026-11-17, 11/16 KR 의 not_run 이 자료 없음과 같은 문구였다).
+        if not isinstance(movers, dict) or not isinstance(movers.get('groups'), list):
+            print(f'FATAL: {movers_name} 이 없거나 읽히지 않는다 — 수집을 다시 돌린다', file=sys.stderr)
+            return 2
+        if not market.get('report_date') or movers.get('report_date') != market.get('report_date'):
+            print(f"FATAL: {movers_name} 날짜 {movers.get('report_date')} ≠ {market_name} 날짜 "
+                  f"{market.get('report_date')} — 수집을 다시 돌린다", file=sys.stderr)
+            return 2
+        if not movers['groups']:
+            if _has_mover_paragraph(html):
+                print(f'FAIL 움직인 종목 묶음이 없는 날인데 움직인 종목 문단이 있다({movers_name}) — 문단을 뺀다')
+                return 1
+            print(f'movers: 묶음 없음({movers_name}) — nothing to check')
+            return 0
     violations = check(html, movers, market.get('report_date'))
     if not violations:
         print(f'움직인 종목 이상 없음 — {args.html}')

@@ -27,6 +27,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from us import number_audit as N  # noqa: E402
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 
 CONFIG = os.path.join(os.path.dirname(HERE), 'config', 'number_audit.json')
 OPTIONAL = ('econ_indicators', 'macro_metrics', 'fund_board')
@@ -44,6 +45,11 @@ class ConfigMissing(Exception):
 def _mode(arg):
     if arg:
         return arg
+    if not enforcing():
+        try:
+            return _read(CONFIG).get('prose', 'warn')
+        except (OSError, ValueError, AttributeError):
+            return 'warn'       # 설정이 없으면 막지 않는 쪽 — 표 층은 늘 막는다(1a 를 켜기 전)
     try:
         mode = _read(CONFIG).get('prose', 'warn')
     except (OSError, ValueError, AttributeError) as e:
@@ -96,8 +102,27 @@ def main(argv=None):
     except (OSError, ValueError) as e:
         print(f'FATAL: 입력을 읽지 못했다: {e}', file=sys.stderr)
         return 2
-    # 2026-11-17: 위임 자료도 필수 — 없으면 「미검증으로 센다」가 아니라 미완료(2)
-    for k, rel in [(k, f'{k}.json') for k in OPTIONAL] + [('liquidity', os.path.join('liquidity', 'liquidity.json'))]:
+    if not enforcing():
+        # 1a 를 켜기 전 — 위임 자료가 없으면 그 위임이 성립하지 않아 해당 수치는 미검증으로 센다
+        for k in OPTIONAL:
+            p = os.path.join(args.datadir, f'{k}.json')
+            try:
+                data[k] = _read(p)
+            except OSError:
+                pass
+            except ValueError as e:
+                print(f'FATAL: {k}.json 을 읽지 못했다: {e}', file=sys.stderr)
+                return 2
+        try:
+            data['liquidity'] = _read(os.path.join(args.datadir, 'liquidity', 'liquidity.json'))
+        except OSError:
+            pass
+        except ValueError as e:
+            print(f'FATAL: liquidity.json 을 읽지 못했다: {e}', file=sys.stderr)
+            return 2
+    # 2026-11-17(1a 를 켠 뒤): 위임 자료도 필수 — 없으면 「미검증으로 센다」가 아니라 미완료(2)
+    for k, rel in ([(k, f'{k}.json') for k in OPTIONAL] + [('liquidity', os.path.join('liquidity', 'liquidity.json'))]
+                   if enforcing() else []):
         try:
             data[k] = _read(os.path.join(args.datadir, rel))
         except FileNotFoundError:
@@ -181,7 +206,7 @@ def _main_kr(args):
             html = fh.read()
         data = K.load_inputs(args.datadir)
         lacking = [k for k in ('kr_intraday', 'kr_econ', K.FUND) if data.get(k) is None]
-        if lacking and not _legacy(args, args.date):
+        if lacking and enforcing() and not _legacy(args, args.date):
             # 2026-11-17: 선택 자료도 그날 수집분이 있어야 한다 — 없으면 미완료(2)
             print(f'FATAL: {", ".join(k + ".json" for k in lacking)} 이 없거나 읽히지 않는다', file=sys.stderr)
             return 2

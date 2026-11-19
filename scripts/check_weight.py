@@ -15,6 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us.weight import check, narrative, warnings  # noqa: E402
 
 MARKET_FILE = {'us': 'market_data.json', 'kr': 'kr_market_data.json'}
@@ -49,12 +50,17 @@ def main():
 
     # macro_eval이 없으면 축약일인지 알 수 없고, 모르는 채 평시 문턱(4,600/0.75)을
     # 적용하면 축약일이 느슨하게 통과한다. 모르면 막는다(2026-08-30 codex 검토).
+    if args.market == 'us' and macro_eval is None and not args.allow_missing_eval and not enforcing():
+        print(f'macro_eval.json을 {args.datadir}에서 읽지 못했다 — 축약일 여부를 모르는 채 '
+              '문턱을 고를 수 없다. scripts/eval_macro_regime.py를 먼저 돌릴 것 '
+              '(옛 발행본을 검사할 때만 --allow-missing-eval)')
+        sys.exit(1)
     if args.market == 'us' and macro_eval is None and not args.allow_missing_eval:
         print(f'FATAL: macro_eval.json을 읽지 못했다 — 축약일 여부를 모르는 채 '
               '문턱을 고를 수 없다. 미완료 — 수집을 다시 돌린다 '
               '(옛 발행본을 검사할 때만 --allow-missing-eval)', file=sys.stderr)
         sys.exit(2)
-    if market_data is None:
+    if market_data is None and enforcing():
         print(f'FATAL: {MARKET_FILE[args.market]}을 읽지 못했다 — 미완료, 수집을 다시 돌린다', file=sys.stderr)
         sys.exit(2)
 

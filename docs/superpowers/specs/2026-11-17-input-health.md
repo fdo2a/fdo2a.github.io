@@ -383,3 +383,34 @@ codex 는 G2·G4 를 닫힘으로, G1·G3 을 일부로 봤다. 좁은 수정 �
   ⑤ 지표를 들인 날은 결측이 아니라 조건이다(4회차 H3) — 2026-11-09 는 조건부로 나온다(위 실측).
   ⑥ 행 자체가 없는 지표는 수집기의 `coverage`·`collect` 가 말해 줘야 게이트가 안다(게이트는 ECON 표를 읽지 않는다).
   ⑦ 12/10 뒤 통과 확인은 합성 자료·함수 수준이다 — 실제 글을 `run_gates` 로 돌린 것이 아니다.
+
+## 두 번에 나눠 올린다 — 수집기 먼저, 막는 판정은 켜는 날 한꺼번에 (2026-11-20 사용자 결정)
+
+**왜.** 1a 를 한 번에 올리면 다음 US 발행이 막힌다. 11/18 US 글(발행 커밋 4952eace)을 그 커밋의 자료로 다시 검사하면
+main 의 `check_macro` 는 통과, 1a 의 `check_macro` 는 「Inflation 축에는 빠진 지표가 없는데 산출 범위 표시가 있다」로
+실패했다 — 수집기는 아직 제외 지표 칸(`coverage`)을 쓰지 않는데 작성자는 임시 고지(a2d45e48)로 표식을 이미 쓴다. 위
+「적용」 절의 배포 순서(수집기 먼저 → 첫 수집 확인 → 적용일)를 지키려면 검사 쪽 변경 전체가 스위치 뒤에 있어야 한다.
+
+**스위치는 하나.** `verification.inputs.enforcing()`(= `EFFECTIVE` 가 날짜). 전에 따로 있던 `STRICT_FROM`(2026-11-17
+고정)은 없앴다 — `strict_from()` 이 `EFFECTIVE` 를 돌려준다(꺼져 있으면 모든 글이 옛 판정). 위 절들의 `STRICT_FROM` 은
+`strict_from()` 으로 읽는다. 「옛 칸으로 판정할 수 있는 조건은 적용일과 무관하게 지금부터 강제한다」도 켠 뒤의 일이다.
+
+**꺼진 동안 1a 전과 같은 것**(실제 글 5편과 입력 변이 3,952회로 main 판과 종료 코드·출력을 견줬다 — 계획 파일의 표):
+- 검사기 14개(`check_macro`·`price_context`·`session`·`fed`·`auction`·`liquidity`·`calendar`·`sources`·`telegram`·
+  `weight`·`movers`·`fund`·`numbers`·`kr_stance`). 고친 양이 큰 여섯은 1a 전 `main()` 을 `_main_pre1a` 로 그대로 둔다.
+- 실행기·기록: `run_gates._main1` + `record.py`(1a 전 파일과 바이트가 같다, 1판). 2판은 `_main2` + `record2.py`.
+  실행 목록 설정은 하나다 — 1판은 `inputs`·`na_when`·`inputs_policy` 칸을 읽지 않는다.
+- 게이트 모듈: 산출 범위 표식(`macro_gate._check_coverage`), 직전 칸 사유(`macro_table_gate`), 입찰 책 모양(`BadBook`).
+- 재검사: 정정기·윤문기·매일 알림이 `--recheck` 를 붙이지 않고, 0·1 밖 종료를 전처럼 다룬다.
+- 수집기 가운데 **이미 있는 값이 달라지는 둘**: 직전 변환값이 없는 지표 행을 새로 만드는 것(`_econ_pair` — 지표 목록에
+  행이 는다), KR 지수 분봉에서 앞 세션 꼬리를 빼는 것(`dated_30min` — 실리는 점이 달라진다).
+
+**꺼져 있어도 도는 것(먼저 올라가는 것).** 파일의 `collect` 칸, 장부 `_collect_status.json`, 워크플로의 시작 기록·끝 기록
+단계, `macro_metrics.json` 의 `coverage`·`axis_summary[축].coverage_ko`(새 칸), 연준 수집기의 피드 실패 기록, FRED 빈칸
+분류, `fund.core.digest` 가 `collect` 를 빼는 것(없으면 `collect` 가 붙은 책으로 펀드 블록 대조가 깨진다 — 변이로 확인).
+
+**켜는 날 함께 해야 하는 것.** ① `EFFECTIVE` 와 사본 둘(`corrector`·`style_pass` 의 `STRICT_FROM`) ② 오케스트레이터·
+작성 지시문의 종료 코드 2·산출 범위 표식 문구(1a f8e442d3 등 — 지금은 main 문구) ③ 루틴이 작업 공간에 남기는 임시
+파일: 11/17 기록의 `gates.txt`·`gates2.txt`, 11/18 기록의 `body_src.html` 은 분류에 넣었지만 **이름이 날마다 달라질 수
+있다 — 분류되지 않은 파일은 미완료이므로, 켜기 전에 임시 파일을 자료 폴더 밖에 두게 하거나 규칙을 정해야 한다** ④ 새
+알림 틀(main f1ee315d)에 2판의 자료 상태 줄은 실었다(`prepub_view._inputs_lines`) — 「해당 없음」 검사기 줄은 요약에만 있다.

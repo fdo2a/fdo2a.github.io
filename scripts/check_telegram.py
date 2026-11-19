@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from common.telegram_gate import check, dates_only_in  # noqa: E402
 
 
@@ -43,11 +44,11 @@ def main(argv=None):
             data = json.load(f)
     except (OSError, ValueError) as e:
         data = None
-        if a.layout == 'brief':
+        if a.layout == 'brief' and enforcing():
             print(f'FATAL: 텔레그램 입력 {os.path.basename(a.tg)} 이 없거나 읽히지 않는다({type(e).__name__}) — '
                   '미완료, 수집을 다시 돌린다', file=sys.stderr)
             return 2
-    if a.layout == 'brief' and (not isinstance(data, dict) or data.get('report_date') != a.date):
+    if a.layout == 'brief' and enforcing() and (not isinstance(data, dict) or data.get('report_date') != a.date):
         print(f'FATAL: 텔레그램 입력의 report_date {(data or {}).get("report_date") if isinstance(data, dict) else None}'
               f' ≠ {a.date} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
         return 2

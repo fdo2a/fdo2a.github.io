@@ -91,26 +91,26 @@ def test_status_mapping(repo):
     cfg = config(repo, [g(n) for n in 'abcdefh'] + [g('missing_script')])
     res = run(repo, cfg, write_post(repo))
     st = {x['name']: x['status'] for x in res['gates']}
-    assert st == {'a': 'pass', 'b': 'warn', 'c': 'warn', 'd': 'fail', 'e': 'incomplete',
-                  'f': 'incomplete', 'h': 'incomplete', 'missing_script': 'incomplete'}
+    assert st == {'a': 'pass', 'b': 'warn', 'c': 'warn', 'd': 'fail', 'e': 'indeterminate',
+                  'f': 'indeterminate', 'h': 'indeterminate', 'missing_script': 'indeterminate'}
     by = {x['name']: x for x in res['gates']}
     assert by['b']['warn_count'] == 1 and by['d']['exit'] == 1 and by['d']['items']
     assert all('started' in x and 'ended' in x for x in res['gates'])
 
 
-def test_timeout_is_incomplete(repo):
+def test_timeout_is_indeterminate(repo):
     gate(repo, 'slow', SLOW)
     res = R.run_gates(R.load_config(config(repo, [g('slow')])), 'us',
                       dict(html=write_post(repo), datadir=str(repo / 'ws'), repo=str(repo), date='2026-11-06'),
                       timeout=1)
-    assert res['gates'][0]['status'] == 'incomplete' and res['gates'][0]['timed_out']
+    assert res['gates'][0]['status'] == 'indeterminate' and res['gates'][0]['timed_out']
 
 
-def test_missing_required_input_is_incomplete(repo):
+def test_missing_required_input_is_indeterminate(repo):
     gate(repo, 'tg', PASS)
     cfg = config(repo, [g('tg', extra=('--tg', '{tg}'))])
     res = run(repo, cfg, write_post(repo))
-    assert res['gates'][0]['status'] == 'incomplete' and 'tg' in res['gates'][0]['reason']
+    assert res['gates'][0]['status'] == 'indeterminate' and 'tg' in res['gates'][0]['reason']
 
 
 def test_builtin_unconfirmed(repo):
@@ -119,11 +119,11 @@ def test_builtin_unconfirmed(repo):
     assert run(repo, cfg, write_post(repo, POST.replace('본문', '본문 [확인필요]')))['gates'][0]['status'] == 'fail'
 
 
-def test_numbers_json_skip_is_na_and_counts_kept(repo):
+def test_numbers_json_skip_is_not_run_and_counts_kept(repo):
     gate(repo, 'nums', NUMBERS_SKIP)
     cfg = config(repo, [g('nums', json=True)])
     r = run(repo, cfg, write_post(repo))['gates'][0]
-    assert r['status'] == 'na' and r['na_basis'] == 'effective' and '적용일' in r['reason']
+    assert r['status'] == 'not_run' and '적용일' in r['reason']
     gate(repo, 'nums', NUMBERS_OK)
     r = run(repo, cfg, write_post(repo))['gates'][0]
     assert r['status'] == 'warn' and r['numbers']['unverified'] == 2 and r['numbers']['table_cells'] == 5
@@ -131,38 +131,22 @@ def test_numbers_json_skip_is_na_and_counts_kept(repo):
 
 # ── 발행 여부는 기록 상태와 따로 ──────────────────────────────────────────────
 
-def test_required_incomplete_blocks_reference_does_not(repo):
+def test_required_indeterminate_blocks_reference_does_not(repo):
     gate(repo, 'ok', PASS)
     gate(repo, 'broken', CRASH)
     gate(repo, 'ref', FAIL)
     res = run(repo, config(repo, [g('ok'), g('ref', required=False)]), write_post(repo))
-    assert res['summary']['publish_ok'] and res['summary']['status'] == 'verified'   # 참고 검사 실패는 판정 밖
-    assert res['gates'][1]['status'] == 'fail'
+    assert res['summary']['publish_ok'] and res['summary']['status'] == 'fail'   # 참고 검사 실패는 상태만
     res = run(repo, config(repo, [g('ok'), g('broken')]), write_post(repo))
-    assert not res['summary']['publish_ok'] and res['summary']['status'] == 'incomplete'
-    assert res['summary']['blocking'] == ['broken'] and res['summary']['incomplete'] == ['broken']
-    assert R.exit_code(res['summary']) == 2
+    assert not res['summary']['publish_ok'] and res['summary']['status'] == 'indeterminate'
+    assert res['summary']['blocking'] == ['broken']
 
 
-def test_effective_skip_is_na(repo):
-    # 적용일 전 글의 건너뜀은 해당 없음(사유: 적용일 전) — 확인된 na 라 조건이 아니다
+def test_not_run_is_not_verified(repo):
     gate(repo, 'nums', NUMBERS_SKIP)
     res = run(repo, config(repo, [g('nums', json=True)]), write_post(repo))
-    assert res['summary']['publish_ok'] and res['summary']['na'] == ['nums']
-    assert res['summary']['status'] == 'verified' and res['summary']['not_run'] == []
-
-
-def test_verdict_priority(repo):
-    # failed > incomplete > conditional > verified
-    for n, b in (('ok', PASS), ('w', WARN), ('bad', FAIL), ('broken', CRASH)):
-        gate(repo, n, b)
-    for names, want, code in ((['ok'], 'verified', 0), (['ok', 'w'], 'conditional', 0),
-                              (['w', 'broken'], 'incomplete', 2), (['broken', 'bad', 'w'], 'failed', 1)):
-        res = run(repo, config(repo, [g(n) for n in names]), write_post(repo))
-        assert res['summary']['status'] == want, names
-        assert R.exit_code(res['summary']) == code
-    res = run(repo, config(repo, [g('ok'), g('w')]), write_post(repo))
-    assert res['summary']['conditions'] == [{'kind': 'warn', 'gate': 'w'}] and not res['summary']['verified']
+    assert res['summary']['publish_ok'] and res['summary']['not_run'] == ['nums']
+    assert res['summary']['status'] == 'pass_with_gaps'
 
 
 # ── 편집자 노트 ───────────────────────────────────────────────────────────
@@ -220,7 +204,7 @@ def test_record_writes_hashes_and_evidence(repo):
     assert p.returncode == 0, p.stderr
     rec = json.load(open(repo / 'verification' / 'us' / '2026-11-06.json', encoding='utf-8'))
     import hashlib
-    assert rec['format'] == 'prepub-record/2' and rec['post']['path'] == 'posts/2026-11-06.html'
+    assert rec['format'] == 'prepub-record/1' and rec['post']['path'] == 'posts/2026-11-06.html'
     assert rec['post']['sha256'] == hashlib.sha256(open(html, 'rb').read()).hexdigest()
     assert rec['inputs']['files'][0]['path'] == 'ws/market_data.json' or rec['inputs']['files']
     assert rec['summary']['publish_ok'] is True and rec['code']['python']
@@ -228,20 +212,10 @@ def test_record_writes_hashes_and_evidence(repo):
     assert str(repo) not in json.dumps(rec, ensure_ascii=False)  # 절대 경로가 공개 기록에 없다
 
 
-def test_record_exit_codes_split_violation_and_incomplete(repo):
+def test_record_blocking_exit_1(repo):
     gate(repo, 'broken', CRASH)
     p = cli(repo, *record_args(repo, write_post(repo)), cfg=config(repo, [g('broken')]))
-    assert p.returncode == 2 and 'broken' in p.stdout and '글을 고치지 말고' in p.stdout
-    gate(repo, 'bad', FAIL)
-    p = cli(repo, *record_args(repo, write_post(repo)), cfg=config(repo, [g('bad')]))
-    assert p.returncode == 1
-    p = cli(repo, 'check', *record_args(repo, write_post(repo))[1:-2], cfg=config(repo, [g('broken')]))
-    assert p.returncode == 2
-
-
-def test_check_config_error_is_2(repo):
-    p = cli(repo, 'check', *record_args(repo, write_post(repo))[1:-2], cfg=str(repo / 'nope.json'))
-    assert p.returncode == 2
+    assert p.returncode == 1 and 'broken' in p.stdout
 
 
 def test_record_write_failure_exit_4_and_stale_removed(repo, monkeypatch, tmp_path):
@@ -437,24 +411,24 @@ def test_record_tool_error_blocks_now(repo, monkeypatch):
     assert p.returncode == 5
 
 
-def test_research_error_is_incomplete(repo):
+def test_research_error_is_indeterminate(repo):
     # #8 — 입력 오류(RESEARCH_ERROR, exit 1)는 위반이 아니라 판정 불가 → 필수면 보류
     gate(repo, 'rs', 'import sys\nprint("RESEARCH_ERROR: ledger broken", file=sys.stderr)\nsys.exit(1)\n')
     r = run(repo, config(repo, [g('rs')]), write_post(repo))
-    assert r['gates'][0]['status'] == 'incomplete' and not r['summary']['publish_ok']
+    assert r['gates'][0]['status'] == 'indeterminate' and not r['summary']['publish_ok']
 
 
-def test_effective_date_makes_na(repo):
+def test_effective_date_makes_not_run(repo):
     # #8 — 적용일 전 글은 exit 0 이어도 검사되지 않았다
     gate(repo, 'f', PASS)
     spec = g('f', effective={'module': 'fund.gate', 'attr': 'EFFECTIVE'})
     r = R.run_gates(R.load_config(config(repo, [spec])), 'us',
                     dict(html=write_post(repo, date='2026-09-01'), datadir=str(repo / 'ws'), repo=str(repo),
                          date='2026-09-01'))
-    assert r['gates'][0]['status'] == 'na' and r['summary']['na'] == ['f']
+    assert r['gates'][0]['status'] == 'not_run' and r['summary']['not_run'] == ['f']
     bad = g('f', effective={'module': 'no.such', 'attr': 'X'})
     r = run(repo, config(repo, [bad]), write_post(repo))
-    assert r['gates'][0]['status'] == 'incomplete'
+    assert r['gates'][0]['status'] == 'indeterminate'
 
 
 def test_verify_requires_same_input_roots(repo):
@@ -531,15 +505,14 @@ def test_record_blob_unreadable_is_2_not_missing(repo, monkeypatch):
 
 
 def test_exit0_contracts(repo):
-    # #8 — exit 0 이어도 필수 입력이 없어 못 봤으면 미완료. 「볼 것 없음」도 실행기가 na_when 으로 확인하지
-    # 못하면 미완료(2판)
+    # #8 — exit 0 이어도 필수 입력이 없어 못 봤으면 판정 불가, 대상이 아니면 실행 안 함
     gate(repo, 'miss', 'print("no data/market_data.json — nothing to check")\n')
     gate(repo, 'skip', 'print("no price_context block in market_data.json — nothing to check")\n')
     cfg = config(repo, [g('miss', indeterminate_patterns=[r'^no \S+\.json — nothing to check']),
                         g('skip', indeterminate_patterns=[r'^no \S+\.json — nothing to check'])])
     r = run(repo, cfg, write_post(repo))
     st = {x['name']: x['status'] for x in r['gates']}
-    assert st == {'miss': 'incomplete', 'skip': 'incomplete'} and r['summary']['blocking'] == ['miss', 'skip']
+    assert st == {'miss': 'indeterminate', 'skip': 'not_run'} and r['summary']['blocking'] == ['miss']
 
 
 def test_repo_changed_during_check_blocks(repo):
@@ -610,11 +583,10 @@ def test_exit0_contracts_with_real_patterns(repo):
     gate(repo, 'c', 'print("session block absent in market_data.json — nothing to check")\n')
     cfg = config(repo, [g(n, indeterminate_patterns=pats) for n in 'abc'])
     st = {x['name']: x['status'] for x in run(repo, cfg, write_post(repo))['gates']}
-    assert st == {'a': 'incomplete', 'b': 'incomplete', 'c': 'incomplete'}
+    assert st == {'a': 'indeterminate', 'b': 'indeterminate', 'c': 'not_run'}
 
 
-def test_check_session_without_a_session_block_is_incomplete(tmp_path):
-    # 2026-11-17: 블록이 없으면 수집 단계 실패 — 「볼 것 없음」으로 통과시키지 않는다
+def test_check_session_says_when_there_is_nothing_to_check(tmp_path):
     d = tmp_path / 'd'
     d.mkdir()
     (d / 'market_data.json').write_text(json.dumps({'report_date': '2026-11-06'}))
@@ -622,19 +594,19 @@ def test_check_session_without_a_session_block_is_incomplete(tmp_path):
     h.write_text('<p>x</p>')
     p = subprocess.run([sys.executable, os.path.join(SCRIPTS, 'check_session.py'), '--html', str(h), '--datadir',
                         str(d), '--market', 'us'], capture_output=True, text=True)
-    assert p.returncode == 2 and '미완료' in p.stderr
+    assert p.returncode == 0 and 'nothing to check' in p.stdout
 
 
 def test_movers_without_data(tmp_path):
-    # 4회차 — 자료가 없으면 문단이 있든 없든 미완료(2026-11-17 — 전에는 문단이 없으면 「실행 안 함」으로 통과)
+    # 4회차 — 자료 없이 문단이 있으면 판정 불가(필수라 보류), 문단도 없으면 실행 안 함
     cfg_real = R.load_config(os.path.join(SCRIPTS, '..', 'config', 'prepub_gates.json'))
     spec = next(g for g in cfg_real['markets']['us']['gates'] if g['name'] == 'check_movers')
     d = tmp_path / 'd'
     d.mkdir()
     repo = os.path.dirname(SCRIPTS)
-    for body, want in (('<p data-mover="g1">현대건설 -7.77%</p>', 'incomplete'),
-                       ("<p class='x' data-mover = 'g1'>현대건설 -7.77%</p>", 'incomplete'),   # 5회차
-                       ('<p hidden data-mover="g1">x</p>', 'incomplete'), ('<p>x</p>', 'incomplete')):
+    for body, want in (('<p data-mover="g1">현대건설 -7.77%</p>', 'indeterminate'),
+                       ("<p class='x' data-mover = 'g1'>현대건설 -7.77%</p>", 'indeterminate'),   # 5회차
+                       ('<p hidden data-mover="g1">x</p>', 'not_run'), ('<p>x</p>', 'not_run')):
         h = tmp_path / '2026-11-06.html'
         h.write_text(body)
         r = R._exec(spec, dict(repo=repo, datadir=str(d), date='2026-11-06'), str(h), 60)
@@ -646,4 +618,4 @@ def test_partial_check_is_not_verified(repo):
                     'print("매크로 게이트 통과")\n')
     r = run(repo, config(repo, [g('m', partial_patterns=[r'econ_indicators\.json 이 없거나 읽을 수 없다'])]),
             write_post(repo))
-    assert r['gates'][0]['status'] == 'incomplete' and not r['summary']['publish_ok']
+    assert r['gates'][0]['status'] == 'partial' and r['summary']['publish_ok'] and not r['summary']['verified']

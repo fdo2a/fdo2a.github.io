@@ -17,6 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us.calendar_gate import check  # noqa: E402
 
 
@@ -27,11 +28,14 @@ def _load(path):
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f'FATAL: could not read {path}: {e} — 미완료', file=sys.stderr)
-        sys.exit(2)
+        if enforcing():
+            print(f'FATAL: could not read {path}: {e} — 미완료', file=sys.stderr)
+            sys.exit(2)
+        print(f'WARN: could not read {path}: {e} — treating it as empty', file=sys.stderr)
+        return None
 
 
-def main():
+def _main_1a():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='data')
@@ -69,6 +73,46 @@ def main():
             print(x)
         sys.exit(1)
     print('calendar gate: OK')
+
+def _main_pre1a():
+    """1a 를 켜기 전의 판정 — 1a 전 `main()` 그대로."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--html', required=True)
+    ap.add_argument('--datadir', default='data')
+    args = ap.parse_args()
+
+    try:
+        with open(args.html, encoding='utf-8') as fh:
+            html = fh.read()
+    except OSError as e:
+        print(f'FATAL: cannot read {args.html}: {e}', file=sys.stderr)
+        sys.exit(2)
+
+    market = _load(os.path.join(args.datadir, 'market_data.json')) or {}
+    path = os.path.join(args.datadir, 'calendar.json')
+    book, why = _load(path), None
+    if book is None:
+        why = f'{path} 을 읽지 못했다'
+    elif market.get('report_date') and book.get('report_date') != market['report_date']:
+        why = (f"{path} 은 {book.get('report_date')} 것이고 오늘은 "
+               f"{market['report_date']} 다 — 낡은 장부는 쓰지 않는다")
+        book = None
+
+    violations = check(html, book or {})
+    if violations:
+        # 왜 인가하는 일정이 하나도 없는지 말해 주지 않으면, 되돌려받은 작성자는
+        # 표식을 고치려 든다 — 고칠 것은 수집이다.
+        if why:
+            print(f'수집한 일정이 없다: {why}')
+        for x in violations:
+            print(x)
+        sys.exit(1)
+    print('calendar gate: OK')
+
+
+
+def main():
+    return _main_1a() if enforcing() else _main_pre1a()
 
 
 if __name__ == '__main__':

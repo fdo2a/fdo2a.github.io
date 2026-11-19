@@ -59,11 +59,20 @@ def dated_30min(bars: list):
     거래일은 **마지막 봉의 날짜**다. `count=400` 은 한 세션(390분)보다 길어 정상 응답에도 앞 세션 꼬리가 섞이므로
     마지막 봉과 날짜가 같은 봉만 쓴다 — 전에는 날짜를 버려 앞 세션의 15:00·15:30 이 오늘 궤적에 섞일 수 있었고,
     API 가 지난 거래일 봉만 돌려줘도 수집기가 그날 것으로 적었다(2026-11-17, 1a 구현 검토 #3)."""
+    from verification.inputs import enforcing
     rows = [b for b in bars or [] if len(str(b.get("localDateTime", ""))) >= 12]
+    day = str(rows[-1]["localDateTime"])[:8] if rows else None
+    try:
+        iso = date(int(day[:4]), int(day[4:6]), int(day[6:8])).isoformat() if day else None
+    except ValueError:
+        iso = None
+    if not enforcing():
+        # 1a 를 켜기 전(2026-11-20): 실리는 점은 1a 전 `downsample_30min` 그대로다 — 앞 세션 꼬리도, 모양이 깨진 봉의
+        # 처리도 바꾸지 않는다. 원천 거래일(`iso`)만 더 돌려준다(수집 상태가 쓴다).
+        return iso, _downsample_pre1a(bars or [])
     if not rows:
         return None, []
     last = str(rows[-1]["localDateTime"])
-    day = last[:8]
     rows = [b for b in rows if str(b["localDateTime"])[:8] == day]
     out = {}
     for b in rows:
@@ -71,11 +80,23 @@ def dated_30min(bars: list):
         if t[10:12] in ("00", "30"):
             out[f"{t[8:10]}:{t[10:12]}"] = round(float(b["currentPrice"]), 2)
     out[f"{last[8:10]}:{last[10:12]}"] = round(float(rows[-1]["currentPrice"]), 2)
-    try:
-        iso = date(int(day[:4]), int(day[4:6]), int(day[6:8])).isoformat()
-    except ValueError:
-        iso = None
     return iso, [{"t": k, "close": v} for k, v in out.items()]
+
+
+def _downsample_pre1a(bars: list) -> list:
+    """1a 전의 `downsample_30min` 그대로 — 분봉 리스트를 30분 앵커(:00/:30)로 다운샘플. 마지막 봉(종가) 보장."""
+    out = {}
+    for b in bars:
+        t = str(b.get("localDateTime", ""))
+        if len(t) < 12:
+            continue
+        if t[10:12] in ("00", "30"):
+            out[f"{t[8:10]}:{t[10:12]}"] = round(float(b["currentPrice"]), 2)
+    if bars:
+        last = bars[-1]
+        t = str(last["localDateTime"])
+        out[f"{t[8:10]}:{t[10:12]}"] = round(float(last["currentPrice"]), 2)
+    return [{"t": k, "close": v} for k, v in out.items()]
 
 
 def downsample_30min(bars: list) -> list:

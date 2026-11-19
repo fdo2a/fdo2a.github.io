@@ -16,6 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us import liquidity as L  # noqa: E402
 from us.liquidity_gate import check  # noqa: E402
 
@@ -28,7 +29,7 @@ def load(path):
         return None
 
 
-def main():
+def _main_1a():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='.')
@@ -63,6 +64,45 @@ def main():
     for w in ((book or {}).get('h41') or {}).get('pending') or []:
         print(f'경고: H.4.1 {w} 주 회차 미확인 — 다음 글이 싣는다', file=sys.stderr)
     print('liquidity gate: OK')
+
+def _main_pre1a():
+    """1a 를 켜기 전의 판정 — 1a 전 `main()` 그대로."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--html', required=True)
+    ap.add_argument('--datadir', default='.')
+    ap.add_argument('--repo', default='.')
+    args = ap.parse_args()
+    try:
+        with open(args.html, encoding='utf-8') as fh:
+            html = fh.read()
+    except OSError as e:
+        print(f'FATAL: cannot read {args.html}: {e}', file=sys.stderr)
+        sys.exit(2)
+    try:
+        book = load(os.path.join(args.datadir, 'liquidity', 'liquidity.json'))
+    except Exception as e:
+        print(f'liquidity.json 을 읽을 수 없다: {e}')
+        sys.exit(1)
+    market = load(os.path.join(args.datadir, 'market_data.json')) or {}
+    today = market.get('report_date')
+    ledger = L.ledger_from_posts(args.repo, today)
+    errs = check(html, book, today, ledger)
+    if errs:
+        for e in errs:
+            print(e)
+        sys.exit(1)
+    if book is None:
+        print('경고: liquidity.json 없음 — 「유동성·수급」 섹션 없이 발행한다 (비-코어)', file=sys.stderr)
+    elif book.get('status') != 'complete':
+        print(f'경고: 유동성 책 상태 {book.get("status")} — 섹션 없이 발행한다', file=sys.stderr)
+    for w in ((book or {}).get('h41') or {}).get('pending') or []:
+        print(f'경고: H.4.1 {w} 주 회차 미확인 — 다음 글이 싣는다', file=sys.stderr)
+    print('liquidity gate: OK')
+
+
+
+def main():
+    return _main_1a() if enforcing() else _main_pre1a()
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us.auction_gate import BadBook, check  # noqa: E402
 
 
@@ -28,7 +29,7 @@ def load(path):
         return None
 
 
-def main():
+def _main_1a():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='.')
@@ -70,6 +71,48 @@ def main():
         for e in errs:
             print(e)
         sys.exit(1)
+
+def _main_pre1a():
+    """1a 를 켜기 전의 판정 — 1a 전 `main()` 그대로(비-코어: 책이 없거나 실패했거나 다른 날 것이면 섹션 없이 통과)."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--html', required=True)
+    ap.add_argument('--datadir', default='.')
+    args = ap.parse_args()
+    try:
+        with open(args.html, encoding='utf-8') as fh:
+            html = fh.read()
+    except OSError as e:
+        print(f'FATAL: cannot read {args.html}: {e}', file=sys.stderr)
+        sys.exit(2)
+    try:
+        book = load(os.path.join(args.datadir, 'auctions.json'))
+    except Exception as e:
+        # 깨진 파일을 «없음»으로 돌리면 비-코어 면제가 사고를 덮는다.
+        print(f'auctions.json 을 읽을 수 없다: {e}')
+        sys.exit(1)
+    market = load(os.path.join(args.datadir, 'market_data.json')) or {}
+    today = market.get('report_date')
+
+    errs = check(html, book, today)
+    if errs:
+        for e in errs:
+            print(e)
+        sys.exit(1)
+    if book is None:
+        print('경고: auctions.json 없음 — 「국채 입찰」 섹션 없이 발행한다 (비-코어)', file=sys.stderr)
+    elif not book.get('ok'):
+        print(f'경고: 입찰 결과 수집 실패({book.get("error")}) — 섹션 없이 발행한다', file=sys.stderr)
+    elif book.get('report_date') != today:
+        print(f'경고: auctions.json 이 {book.get("report_date")} 에서 멈춰 있다 — 섹션 없이 발행한다',
+              file=sys.stderr)
+    elif book.get('pending'):
+        print('경고: 결과가 아직 없는 입찰 — ' + ', '.join(p['label_ko'] for p in book['pending']),
+              file=sys.stderr)
+
+
+
+def main():
+    return _main_1a() if enforcing() else _main_pre1a()
 
 
 if __name__ == '__main__':

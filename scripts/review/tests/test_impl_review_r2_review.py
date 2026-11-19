@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from review import corrector, style_pass  # noqa: E402
 from verification import inputs as I  # noqa: E402
 
-OLD, NEW = '2026-11-16', I.STRICT_FROM
+OLD, NEW = '2026-11-16', '2026-11-17'
 # (경로, 옛 판정을 받는가)
 TABLE = [
     (f'posts/{OLD}.html', True), (f'kr/posts/{OLD}.html', True), (f'/abs/clone/posts/{OLD}.html', True),

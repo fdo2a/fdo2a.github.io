@@ -19,8 +19,19 @@ def bar(day, hhmm, price):
 
 # ── #3 분봉 ──────────────────────────────────────────────────────────────
 
-def test_intraday_keeps_the_source_date_and_drops_the_prior_session_tail():
+def test_intraday_points_are_unchanged_until_the_switch_is_on():
+    # 1a 를 켜기 전: 원천 거래일은 돌려주되(수집 상태가 쓴다) 실리는 점은 1a 전과 같다 — 앞 세션 꼬리도 그대로
+    bars = [bar(PREV, "1500", 1.0), bar(PREV, "1530", 2.0), bar(D, "0900", 10.0), bar(D, "0930", 11.0)]
+    day, pts = sources.dated_30min(bars)
+    assert day == D
+    assert pts == [{"t": "15:00", "close": 1.0}, {"t": "15:30", "close": 2.0},
+                   {"t": "09:00", "close": 10.0}, {"t": "09:30", "close": 11.0}]
+
+
+def test_intraday_keeps_the_source_date_and_drops_the_prior_session_tail(monkeypatch):
     # count=400 은 한 세션(390분)보다 길다 — 정상 응답에도 앞 세션 꼬리가 섞인다. 날짜는 마지막 봉의 것.
+    from verification import inputs as I
+    monkeypatch.setenv(I.TEST_ENV, "2026-11-17")                    # 켠 뒤의 동작
     bars = [bar(PREV, "1500", 1.0), bar(PREV, "1530", 2.0), bar(D, "0900", 10.0), bar(D, "0930", 11.0)]
     day, pts = sources.dated_30min(bars)
     assert day == D

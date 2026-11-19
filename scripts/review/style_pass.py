@@ -196,8 +196,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_calendar.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'us',
-             '--date', date, '--recheck'],
-            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir, '--recheck'],
+             '--date', date] + _recheck(),
+            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir] + _recheck(),
         ]
         market = 'us'
     else:
@@ -210,9 +210,9 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
                 '--date', date]] if _kr_brief_carries_news(date) else []),
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date, '--recheck'],
+             '--date', date] + _recheck(),
             [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date, '--recheck'],
+             '--date', date] + _recheck(),
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout'],
         ]
         market = 'kr'
@@ -270,15 +270,18 @@ def run_gates(cwd, cmds, timeout):
     return out
 
 
-# 1a 적용일 — `verification.inputs.STRICT_FROM`·`corrector.STRICT_FROM` 과 같다(시험). 이 날짜부터의 일간 글은 0·1 밖의
-# 종료(미완료 2·시간 초과)를 원본과 같아도 허용하지 않는다(1a 구현 검토 #9).
-STRICT_FROM = '2026-11-17'
+# 1a 를 켜는 날 — `verification.inputs.EFFECTIVE` 와 같다(시험이 묶는다). None = 아직 켜지 않았다: 모든 글이 옛 판정
+# (1a 전과 같다). 날짜를 넣으면 그날부터의 글은 --recheck 가 옛 판정을 주지 않고(검사기가 날짜를 본다), 재검사의
+# 0·1 밖 종료(미완료 2·시간 초과)를 「원본도 그랬다」로 허용하지 않는다(1a 구현 검토 #9).
+STRICT_FROM = None
 _DAILY_DIR = re.compile(r'^(?:kr/)?posts/[^/]+$')      # 1a 가 걸리는 일간 글(US·KR 브리프)의 자리
 
 
 def _legacy_post_copy(path):
     """`verification.inputs.legacy_post` 의 사본 — 그 패키지를 가져올 수 없는 격리 사본에서만 쓴다(시험이 같게 묶는다)."""
     import datetime
+    if STRICT_FROM is None:
+        return True                    # 켜지 않았다 — 모든 글이 옛 판정
     m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', os.path.basename(str(path or '')))
     if not m:
         return False
@@ -287,6 +290,20 @@ def _legacy_post_copy(path):
     except ValueError:
         return False
     return m.group(1) < STRICT_FROM
+
+
+def _enforcing():
+    """1a 를 켰는가 — 판정은 `verification.inputs.enforcing` 한 곳, 그 패키지를 가져올 수 없는 격리 사본에서만 사본 날짜."""
+    try:
+        from verification.inputs import enforcing
+    except ImportError:
+        return STRICT_FROM is not None
+    return enforcing()
+
+
+def _recheck():
+    """재검사 플래그 — 켠 뒤에만 붙인다(꺼져 있으면 검사기 인자가 1a 전과 같다)."""
+    return ['--recheck'] if _enforcing() else []
 
 
 def legacy_post(path):

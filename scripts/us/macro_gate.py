@@ -16,6 +16,8 @@ Pure — `check()` takes strings and dicts and returns a list of violation messa
 import re
 from html.parser import HTMLParser
 
+from common.hidden import is_hidden, style_hides
+from verification.inputs import enforcing
 from common.numbers import strip_comments
 
 from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
@@ -457,10 +459,9 @@ def _check_axis_strip(section, v):
 
 
 _COVERAGE_RAW = re.compile(r'\bdata-axis-coverage\s*=\s*["\']?([A-Za-z]+)', re.I)
-# 인라인 style 로 숨기는 것 가운데 보는 것은 셋뿐이다 — display:none, visibility:hidden, opacity:0(5회차 I3).
-# 그 밖(글자 크기 0, 화면 밖 위치, 같은 색, 스타일시트의 클래스)은 정적 검사로 끝낼 수 없다 — 실사이트 감시 단계의 몫.
-_HIDING_STYLE = re.compile(r'display\s*:\s*none|visibility\s*:\s*(?:hidden|collapse)'
-                           r'|opacity\s*:\s*(?:0+(?:\.0+)?|\.0+)\s*(?:;|!|$)', re.I)
+# 속성·클래스·인라인 style 의 숨김 판정은 공용 `common.hidden.is_hidden` 하나다(2026-11-20 — 자기 목록을 두지 않는다,
+# `common/tests/test_hidden.py`). 태그 수준 규칙(script·template·접힌 details)만 여기 둔다. 스타일시트의 클래스로 숨긴
+# 것은 정적 검사로 끝낼 수 없다 — 실사이트 감시 단계의 몫.
 _VOID = frozenset(('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
                    'track', 'wbr'))
 _NEVER_SHOWN = frozenset(('script', 'style', 'template', 'noscript', 'head', 'title'))
@@ -499,8 +500,9 @@ class _CoverageMarkers(HTMLParser):
             return f'<{tag} hidden>'
         if a.get('aria-hidden', '').strip().lower() == 'true':
             return f'<{tag} aria-hidden>'
-        if _HIDING_STYLE.search(a.get('style', '')):
-            return f'<{tag} style="{a["style"][:30]}">'
+        if is_hidden(attrs):
+            return (f'<{tag} style="{a["style"][:30]}">' if style_hides(a.get('style', ''))
+                    else f'<{tag}> 의 숨김 속성·클래스')
         return None
 
     def _inherited(self):
@@ -815,7 +817,10 @@ def check(html, prev_macro, macro_eval, next_macro, *, econ=None, metrics=None,
     _check_hygiene(html, v)
     regime_cell = _check_regime(section, text, macro_eval, v)
     _check_axis_strip(section, v)
-    _check_coverage(section, metrics, v, html=html)
+    if enforcing():
+        # 산출 범위 표식 규칙은 1a 를 켠 뒤에만 — 그 전에는 수집기가 제외 지표 칸을 쓰지 않던 때의 글·임시 고지
+        # (a2d45e48)의 표식을 「빠진 지표가 없는데 표식이 있다」로 막지 않는다(2026-11-20, 11/18 글 재현)
+        _check_coverage(section, metrics, v, html=html)
     _check_quiet_day(section, macro_eval, v)
     _check_releases(html, macro_eval, v, releases)
     trans_cells = _check_transmission(section, macro_eval, v)
