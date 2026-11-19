@@ -88,8 +88,8 @@ def test_github_run_names_github_not_mac_and_same_ids(tmp_path):
     mac = run(W.new_state('x'), repo, at(11, 10, 13), who=V.MAC)
     g = next(e for e in gh['events'] if e['kind'] == 'publish')
     m = next(e for e in mac['events'] if e['kind'] == 'publish')
-    assert '[GitHub이 직접 대조]' in g['text'] and 'GitHub 이 짝만 다시 확인했어요' in g['text'] and '맥' not in g['text']
-    assert '[맥이 직접 확인]' in m['text'] and 'GitHub' not in m['text']
+    assert 'GitHub 대조' in g['text'] and 'GitHub은 기록 일치만 확인' in g['text'] and '맥' not in g['text']
+    assert '맥 대조' in m['text'] and 'GitHub' not in m['text']
     assert g['id'] == m['id']                                             # 같은 사건 — 주체는 지문에 안 든다
     assert len(g['text']) < W.MAX_TEXT // 2                               # 지금 문장은 상한에 한참 못 미친다
 
@@ -173,7 +173,7 @@ def test_event_count_cap_holds_back_newest_and_adds_one_overflow():
     kept = [e['key'] for e in doc['events'] if e['key'] != W.OVERFLOW_KEY]
     assert kept == [f'posts/2027-01-{i:04d}.html' for i in range(499)]   # 오래된 쪽을 싣고 새 사건을 멈춘다
     assert len(W.pending(st)) == 621                                     # 남긴 것은 상태에 그대로 — 버리지 않는다
-    assert over[0]['id'] == W.event_id(W.OVERFLOW_KIND, W.OVERFLOW_KEY, st['events'][499]['id'])   # 처음 남겨진 사건 기준
+    assert over[0]['id'] == W.event_id(W.OVERFLOW_KIND, W.OVERFLOW_KEY, f"{st['events'][499]['id']}|{W.text_hash(W.OVERFLOW_TEXT)}")   # 처음 남겨진 사건 기준
     again = W.build_outbox(st, at(11, 10, 14))
     assert [e['id'] for e in again['events']] == [e['id'] for e in doc['events']]     # 넘침 알림은 하나만
     W.apply_acks(st, {(e['id'], e['hash']) for e in doc['events']}, set(), at(11, 10, 15))
@@ -265,7 +265,7 @@ def test_first_run_without_branch_is_baseline(world):
     world.sync()
     assert CLI.main(['--github']) == 0
     st, out = world.state(), world.outbox()
-    assert [e['kind'] for e in st['events']] == ['reset'] and '기준선으로만' in st['events'][0]['text']
+    assert [e['kind'] for e in st['events']] == ['reset'] and '기준선만 잡음' in st['events'][0]['text']
     assert st['sessions']['kr:2026-11-09'] == 'missing_quiet'
     assert out['format'] == 'alerts-outbox/1' and [e['id'] for e in out['events']] == [st['events'][0]['id']]
     assert out['last_ok'] == at(11, 10, 13).isoformat() and out['last_seen'] == F.git(world.src, 'rev-parse', 'HEAD')
@@ -286,7 +286,7 @@ def test_second_run_appends_events_on_top(world):
     assert [e['kind'] for e in world.state()['events']] == ['reset', 'late', 'publish']
     out = world.outbox()
     assert [e['kind'] for e in out['events']] == ['reset', 'late', 'publish']       # 전송 확인을 못 읽었다 → 하나도 안 뺀다
-    assert '[GitHub이 직접 대조]' in out['events'][-1]['text']
+    assert 'GitHub 대조' in out['events'][-1]['text']
     assert len(world.commits()) == 2 and world.pokes == [1, 2]
 
 
@@ -486,7 +486,7 @@ def test_dry_run_and_bare_call_write_nothing(world, capsys):
     world.sync()
     assert CLI.main(['--dry-run']) == 0
     out = capsys.readouterr().out
-    assert '[GitHub이 직접 대조]' in out and 'outbox 2건' in out
+    assert 'GitHub 대조' in out and 'outbox 2건' in out
     assert CLI.main([]) == 2
     assert F.git(world.origin, 'branch', '--list', CLI.STATE_BRANCH) == '' and world.pokes == []
 

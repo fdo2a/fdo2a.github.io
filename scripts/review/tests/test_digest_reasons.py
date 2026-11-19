@@ -68,7 +68,7 @@ def _render_old(posts, prev_lines, now, notes=(), extra_tail=(), limit=D.LIMIT):
         old = old if isinstance(old, dict) else {}
         body = bool(old) and old.get('sha') != p.get('sha')
         if body or old.get('text') != D.block(p):
-            changed.append((p, D.block(p, changed_body=body)))
+            changed.append((p, D.show(p, changed_body=body)))   # 보내는 덩어리(11/19) — 기억은 block
     today = now.date()
     changed.sort(key=lambda x: (not D.in_window(x[0]['path'], today),
                                 -(D.post_day(x[0]['path']) or date.min).toordinal(), x[0]['path']))
@@ -101,8 +101,9 @@ def _render_old(posts, prev_lines, now, notes=(), extra_tail=(), limit=D.LIMIT):
 @pytest.fixture
 def blk(monkeypatch):
     """글 블록 길이를 마음대로 — post 에 `blk` 를 넣으면 그 글자가 블록이다."""
-    real = D.block
+    real, real_show = D.block, D.show
     monkeypatch.setattr(D, 'block', lambda p, changed_body=False: p['blk'] if 'blk' in p else real(p, changed_body))
+    monkeypatch.setattr(D, 'show', lambda p, changed_body=False: p['blk'] if 'blk' in p else real_show(p, changed_body))
 
     def make(n, path='posts/2026-11-06.html'):
         return dict(post(path), blk='■' + '가' * (n - 1))
@@ -140,10 +141,10 @@ def test_name_notes_shrink_at_name_boundaries_and_must_lines_stay(n):
         assert trimmed == [gone_note(n)]                        # 줄이기 전 전체 문장
     else:
         assert note[0] == gone_note(n) and trimmed == []
-    if a['path'] in lines:                                      # ④ lines 불변식
-        assert D.block(a) in text
+    if a['path'] in lines:                                      # ④ lines 불변식 — 기억했으면 보낸 것이다
+        assert D.show(a) in text
     else:
-        assert D.block(a) not in text
+        assert D.show(a) not in text
 
 
 def test_counted_lengths_equal_assembled_lengths():
@@ -325,7 +326,7 @@ def test_round13_short_soft_tail_is_never_traded_for_the_block(blk):
 def test_boundary_soft_tail_goes_only_when_the_block_then_fits(blk):
     must = [D.Must('꼭' * 150)]
     soft = ['가' * 200, '나' * 200]
-    got = _scan(blk, soft, 3000, 3700, must)
+    got = _scan(blk, soft, 2900, 3700, must)      # 11/19 맺음말이 길어져 시작점을 당겼다
     kinds = [(g[0], tuple(g[1])) for _, g in sorted(got.items())]
     order = [k for i, k in enumerate(kinds) if i == 0 or kinds[i - 1] != k]
     # 다 실림 → 뒤 하나만 뺌(필요 이상 빼지 않는다) → 둘 다 뺌 → 블록을 미루고 안내는 그대로

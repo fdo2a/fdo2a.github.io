@@ -54,8 +54,9 @@ LABEL = {'us': 'US 일간', 'kr': 'KR 일간', 'weekly': 'US 주간', 'kr/weekly
 DATA_FILES = ('data/market_data.json', 'data/econ_indicators.json', 'data/macro_metrics.json',
               'data/fund_board.json', 'data/liquidity/liquidity.json')
 REQUIRED_DATA = 'data/market_data.json'
-CAVEAT = ('※ 숫자 재검사는 US 일간만 해요. 문장 속 숫자 상당수는 미검증이고, '
-          '뜻·해석이 맞는지는 기계 검사 밖이에요.')
+# 발행 뒤 재검사만 말한다 — 발행 전 검사는 글마다 다르다(KR 일간 표 대조는 도입 전 글에 없고, 일본 주간은 발행 게이트가 본다)
+CAVEAT = ('※ 발행 뒤 숫자 재검사는 US 일간만 해요(그 밖의 글은 발행 뒤에 숫자를 다시 대조하지 않아요). '
+          '문장 속 숫자 상당수는 미검증이고, 뜻·해석이 맞는지는 기계 검사 밖이에요.')
 WEEKDAY = '월화수목금토일'
 _DAY = re.compile(r'(\d{4}-\d{2}-\d{2})\.html$')
 
@@ -786,6 +787,75 @@ def block(p, changed_body=False):
     return '\n'.join([head, _number_line(p.get('number')), _review_line(p)])
 
 
+# ── 보내는 덩어리(2026-11-19 사용자 「겹치는 것만 빼자」) ─────────────────────
+# block() 은 바뀜 판정·기억용 문장이라 그대로 둔다 — 그 문장을 바꾸면 90일치 글이 「바뀐 상태」로 다시 온다.
+# 보낼 때만 show() 를 쓴다: 발행 건별 알림에 이미 실린 발행 전 기록 내역, 글 머리를 되풀이하는 검토 줄,
+# 맺음말(CAVEAT)과 같은 「자동 숫자 검사 없음」 줄을 뺀다. 발행 뒤에 생긴 정보와 이상은 남긴다.
+
+def _show_review(p):
+    """검토 줄 — 머리(verdict)가 같은 상태를 **실제로** 말할 때만 뺀다. 숫자 경고로 머리가 「확인 필요」면
+    검토 상태는 이 줄에만 있다(codex d1 #2)."""
+    state, head = p['state'], verdict(p)
+    if not p['auto'] and state != '완료' and head == '사람이 읽어야 함':
+        return None
+    if state == '대기' and not p.get('draft') and head == '검토 대기':
+        return None
+    if state == '읽지 않음' and head == '검토 안 함(범위 편입)':
+        return None
+    return _review_line(p)
+
+
+_ABOVE = ('위 검사는 기록을 처음 담은 판 기준', '발행 전 검사 기록은 처음 기록을 담은 판 기준')
+
+
+def _show_prepub(p):
+    """발행 전 기록 가운데 발행 건별 알림에 없는 것만 — 즉시 확인 이상, 발행 뒤 수정, 기록을 못 읽음."""
+    pv = p.get('prepub')
+    if isinstance(pv, dict) and pv.get('error'):
+        return [_prepub_unread(pv['error'])]
+    try:
+        from review import prepub_view as V
+    except Exception:  # noqa: BLE001
+        return [_prepub_unread('module')]
+    try:
+        out = []
+        bad = V.anomaly_labels(pv) if isinstance(pv, dict) and pv.get('kind') else []
+        if bad:
+            out.append(' · [발행 전 기록] 즉시 확인: ' + ', '.join(bad))
+        # 검사가 다 끝나지 않은 칸 — 발행 알림이 기준선(첫 실행)으로 조용히 넘어갔거나 전송에 실패했으면 여기서만 보인다.
+        # 짧은 고정 문구라 남긴다(codex d1 #1 부분 채택 — 나머지 내역은 기록 파일·발행 알림 몫).
+        rec = (pv.get('recorded') or {}) if isinstance(pv, dict) else {}
+        if rec.get('readable') and not rec.get('verified'):
+            raw = (rec.get('not_run') or []) + (rec.get('partial') or [])
+            gaps = [V._disp(x, rec) for x in raw]
+            out.append(' · [발행 전 기록] 설정된 검사 완료 아님' + (f' — 실행 안 함·일부만 {", ".join(gaps[:4])}'
+                                                              + (f' 외 {len(gaps) - 4}개' if len(gaps) > 4 else '')
+                                                              if gaps else ''))
+        # 기록에 숫자 대조 결과가 없다 — KR 의 검사 도입 전 기록은 「완료」라 위 줄이 없고, 기준선으로 넘어간 글은
+        # 발행 알림도 없었다(codex d2 #2). 위 줄과 겹쳐도 늘 쓴다 — 이름이 가려지면 겹침 판단이 틀려 줄이 사라졌다(codex d3).
+        if rec.get('readable') and not rec.get('numbers'):
+            out.append(f' · [발행 전 기록] 표 숫자 대조 없음({V.KR_NO_NUMBERS[V._kr_no_numbers(rec)][1]})'
+                       if pv.get('market') == 'kr' else ' · [발행 전 기록] 숫자 자동 대조 없음')
+        # 요약에는 수정 줄만 온다 — 「위 검사」가 가리킬 줄이 없으니 대상을 직접 적는다(codex d2 #4)
+        fix = [x.replace(_ABOVE[0], _ABOVE[1], 1) for x in (V.correction_line(pv) if isinstance(pv, dict) else [])]
+        return out + fix
+    except Exception:  # noqa: BLE001
+        return [_prepub_unread('render')]
+
+
+def show(p, changed_body=False):
+    mark = ' (글 내용이 바뀜)' if changed_body else ''
+    out = [f'■ {_day_label(p["path"])} — {verdict(p)}{mark}']
+    if 'prepub' in p:
+        out += _show_prepub(p)
+    if p.get('number'):                             # 실제 재검사 결과만 — 「자동 검사 없음」은 맺음말이 말한다
+        out.append(_number_line(p['number']))
+    r = _show_review(p)
+    if r:
+        out.append(r)
+    return '\n'.join(out)
+
+
 def _totals(posts):
     nums = [p.get('number') or {} for p in posts]
     v = sum(n.get('violations', 0) for n in nums)
@@ -1133,7 +1203,7 @@ def render(posts, prev_lines, now, notes=(), extra_tail=(), limit=LIMIT, trimmed
         old = old if isinstance(old, dict) else {}
         body = bool(old) and old.get('sha') != p.get('sha')
         if body or old.get('text') != block(p):
-            changed.append((p, block(p, changed_body=body)))
+            changed.append((p, show(p, changed_body=body)))
     # 잘릴 때 최근 글이 먼저 살아남게 — 창 안 최신 → 창 밖 최신 순(밀린 것은 다음 알림에)
     today = now.date()
     changed.sort(key=lambda x: (not in_window(x[0]['path'], today),

@@ -157,7 +157,15 @@ def claude(prompt, payload, schema, model, run=subprocess.run, diag=None):
             'input_tokens', 'cache_read_input_tokens', 'cache_creation_input_tokens'))
         diag['tokens']['out'] += int(u.get('output_tokens') or 0)
     if out.get('is_error') or out.get('subtype') != 'success':
-        raise ModelError(str(out.get('subtype') or 'error')[:30])
+        # is_error 인 채 subtype 이 success 면 이유가 「success」로만 남아 원인을 못 봤다(2026-11-19) —
+        # 이유는 짧게(is_error_<HTTP 상태>), CLI 가 낸 문장은 진단에 남긴다.
+        if out.get('is_error'):
+            why = f"is_error_{out.get('api_error_status') or 'x'}"
+            if diag is not None:
+                diag.setdefault('notes', []).append(f"model_error: {str(out.get('result') or '')[:200]}")
+        else:
+            why = str(out.get('subtype') or 'error')
+        raise ModelError(why[:30])
     so = out.get('structured_output')
     if not isinstance(so, dict):
         raise ModelError('no_structured_output')

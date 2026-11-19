@@ -553,3 +553,52 @@ def test_boundary_guard_uses_the_clock_after_holiday_lookup(monkeypatch):
                    opener=lambda r, timeout=None: calls.append(r) or FakeResp(OK_BODY),
                    out=out, clock=lambda: t['now'])
     assert code == 0 and calls == [] and 'boundary' in out.getvalue()
+
+
+# ── 묶인 주간은 빨갛게 끝낸다 (2026-11-19 사용자 결정) ─────────────────────────
+
+WEEKLY_SLOT = ['--schedule', '22 9,12,15,18,21 * * 6']
+HELD = 'WAIT 2026-W47 us 집계 끝 2026-11-19 ≠ 마지막 거래일 2026-11-20'
+
+
+def test_weekly_wait_after_the_main_run_window_is_held():
+    """본 런(토 15:00 KST) + 여유가 지났는데 WAIT 면 그 주는 묶인 것이다 — noop 으로 넘기면 아무도 모른다."""
+    assert rg.action('weekly', HELD, utc(2026, 11, 21, 9, 22), NO_HOL, 'gate')[0] == 'held'
+    assert rg.action('weekly', HELD, utc(2026, 11, 21, 21, 22), NO_HOL, 'check')[0] == 'held'
+    assert rg.action('weekly', HELD, utc(2026, 11, 23, 3, 0), NO_HOL, 'check')[0] == 'held'   # 월 — 키가 넘어가기 전
+
+
+def test_weekly_wait_is_quiet_midweek_and_before_the_main_run():
+    for now in (utc(2026, 11, 19, 10, 44),        # 목 — 11/19 강제 발화 시각
+                utc(2026, 11, 20, 22, 30),        # 금 마감 직후
+                utc(2026, 11, 21, 7, 59),         # 토 16:59 KST — 창 1분 전
+                utc(2026, 11, 24, 23, 0)):        # 다음 주 화 — 키가 넘어갔다
+        assert rg.action('weekly', HELD, now, NO_HOL, 'gate') == ('noop', 'DUE 아님'), now
+    # 성금요일 주(2026-04-03 휴장)도 토요일 창은 같다
+    hol = dict(NO_HOL, us=('2026-04-03',))
+    assert rg.action('weekly', HELD, utc(2026, 4, 4, 7, 59), hol, 'gate')[0] == 'noop'
+    assert rg.action('weekly', HELD, utc(2026, 4, 4, 8, 0), hol, 'gate')[0] == 'held'
+
+
+def test_held_is_weekly_wait_only():
+    sat = utc(2026, 11, 21, 12, 22)
+    for line in ('DONE 2026-W47 발행 완료', 'BUSY 2026-W47 작성 중 (잠금 5분 전)'):
+        assert rg.action('weekly', line, sat, NO_HOL, 'gate')[0] == 'noop'
+    assert rg.action('weekly', 'DUE 2026-W47 미발행', sat, NO_HOL, 'gate')[0] == 'fire'
+    assert rg.action('weekly', HELD, sat, NO_HOL, 'force')[0] == 'fire'
+    for kind in ('us', 'kr', 'jp_daily', 'japan'):
+        assert rg.action(kind, 'WAIT x', utc(2026, 11, 24, 14, 0), NO_HOL, 'gate')[0] == 'noop'
+
+
+def test_main_ends_red_on_a_held_week_and_fires_nothing(monkeypatch):
+    env = {'ROUTINE_FIRE_TOKEN_WEEKLY': 'sk-ant-oat01-SECRET', 'RETRY_GATE_LIVE': 'true'}
+    code, calls, out = _run(monkeypatch, {'weekly': HELD}, env=env, now=utc(2026, 11, 21, 9, 22), argv=WEEKLY_SLOT)
+    assert code == 1 and not calls
+    assert '::error::retry-gate weekly: ' + HELD in out and '묶였다' in out
+    code, calls, out = _run(monkeypatch, {'weekly': HELD}, env=env, now=utc(2026, 11, 21, 9, 22),
+                            argv=['--kinds', 'weekly', '--mode', 'check'])
+    assert code == 1 and not calls
+    # 주 중간 수동 점검은 초록이다
+    code, calls, out = _run(monkeypatch, {'weekly': HELD}, env=env, now=utc(2026, 11, 19, 10, 44),
+                            argv=['--kinds', 'weekly', '--mode', 'check'])
+    assert code == 0 and not calls and '::error::' not in out

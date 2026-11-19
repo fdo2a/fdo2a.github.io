@@ -34,8 +34,8 @@ def test_first_run_reports_publish_and_missing(tmp_path):
     st = run(W.new_state('처음 실행했어요'), repo, at(11, 10, 13))
     assert kinds(st) == ['reset', 'missing', 'publish']             # KR 11/09 은 23:00 기준을 넘겼다
     miss = next(e for e in st['events'] if e['kind'] == 'missing')
-    assert 'KR 일간 11/09 세션 보고서 미발행 확인' in miss['text'] and '11/09 23:00 KST' in miss['text']
-    assert '원인: 확정하지 못했어요' in miss['text'] and '읽지 못했어요' in miss['text'] and '보류' not in miss['text']
+    assert miss['text'].startswith('[미발행] KR 일간 11/09 · 확인 필요') and '11/09 23:00 KST' in miss['text']
+    assert '원인(확정 아님)' in miss['text'] and '읽지 못했어요' in miss['text'] and '보류' not in miss['text']
 
 
 def test_no_change_no_new_event(tmp_path):
@@ -99,7 +99,7 @@ def test_fetch_failure_is_not_missing_and_keeps_baseline(tmp_path):
     run(st, repo, at(11, 10, 10), fetched=False)
     assert kinds(st) == before and st['last_seen'] == base           # 1시간 — 아직 알리지 않는다
     run(st, repo, at(11, 10, 11, 1), fetched=False)
-    assert kinds(st)[-1] == 'fetch' and '미발행 여부를 몰라요' in st['events'][-1]['text']
+    assert kinds(st)[-1] == 'fetch' and '미발행 여부를 몰라서' in st['events'][-1]['text']
     run(st, repo, at(11, 10, 11, 30), fetched=False)
     assert kinds(st).count('fetch') == 1                             # 한 번만
     run(st, repo, at(11, 10, 12))
@@ -374,7 +374,7 @@ def test_transient_read_error_does_not_freeze_unknown(tmp_path, monkeypatch):
     monkeypatch.setattr(C, '_show', real)
     run(st, repo, at(11, 9, 8, 10))
     pub = next(e for e in st['events'] if e['kind'] == 'publish')
-    assert '검사 코드: 일치' in pub['text'] and '발행본과 검사 기록 일치' in pub['text']
+    assert '검사 코드' not in pub['text'] and '발행본과 검사 기록 일치' in pub['text']   # 일시 오류가 대조 불가로 굳지 않았다
 
 
 def test_published_then_deleted_is_gone_and_back(tmp_path):
@@ -415,7 +415,7 @@ def test_first_run_is_baseline_only(tmp_path):
     repo = F.init(tmp_path)
     F.publish(repo, 'us', '2026-11-09')
     st = run(W.new_state('처음 실행했어요', baseline=True), repo, at(11, 12, 13))
-    assert kinds(st) == ['reset'] and '기준선으로만' in st['events'][0]['text']
+    assert kinds(st) == ['reset'] and '기준선만 잡음' in st['events'][0]['text']
     assert st['sessions']['kr:2026-11-09'] == 'missing_quiet'       # 경고 없이 — 아침 요약에 보인다
     assert any('아직 안 올라온 세션: KR 일간 11/09' in x for x in W.summary_lines_from(st, at(11, 12, 13)))
     F.publish(repo, 'kr', '2026-11-09')
@@ -558,8 +558,8 @@ def test_preview_never_touches_state(tmp_path, monkeypatch, capsys):
     assert CLI.main(['--no-fetch', '--preview', 'kr', '2026-11-09']) == 0
     assert not state.parent.exists()                                 # 만들지도 않는다
     out = capsys.readouterr().out
-    assert '[맥이 직접 확인]' in out and '표 숫자 검사가 없어요(검사 도입 전 기록)' in out
-    assert '작업 공간 전용 입력: 대조 불가' in out and '조용히 기준선으로 잡는다' in out
+    assert '맥 대조' in out and '표 숫자 검사가 없어요(검사 도입 전 기록)' in out
+    assert '작업 공간 전용 입력 1개는 원본을 보관하지 않아 대조 못 함' in out and '조용히 기준선으로 잡는다' in out
     state.parent.mkdir()
     st = W.new_state('x')
     st['last_seen'] = 'abc'
