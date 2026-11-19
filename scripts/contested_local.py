@@ -212,7 +212,12 @@ class Interrupted(BaseException):
 
 STATE = os.path.expanduser('~/Library/Caches/fdo2a-contested-state.json')
 ANALYZE_MAX_HOURS = 36        # 기준일 발행 뒤 이만큼 지나면 분석하지 않고 자리표시를 지운다
-THROTTLE_COOLDOWN_MIN = 60    # 검색(GDELT·네이버)이 막혀 돌려준 시도 뒤에는 이만큼 쉰다
+THROTTLE_COOLDOWN_MIN = 60    # 검색(GDELT·네이버)이 막힌 시도(세든 안 세든) 뒤에는 이만큼 쉰다
+# 돌려주는 사유 — 검색이 막혀 후보가 모자라 **추출·검증 모델을 부르기 전에** 끝난 시도뿐(2026-11-19).
+# 추출이 한 번이라도 돈 시도는 센다: us 11-17 은 막힌 검색 아래에서 추출·검증을 끝까지 돌고도(약 44k 토큰)
+# 돌려받아 22번 돌았다. US 고르기(sonnet, 제목만)는 수집의 일부로 본다 — 그 횟수는 MAX_RUNS 가 묶는다.
+REFUND_REASONS = ('gdelt_throttled', 'search_throttled')
+MAX_RUNS = 8                  # 날짜·시장당 `analyze_date` 호출 상한 — 돌려준 시도까지 센다(시험 운행 제외)
 
 
 def _state_load():
@@ -257,11 +262,46 @@ def _attempts_local(date, bump=False, at_least=0, market='us', refund_to=None):
     return st[key]
 
 
+def _runs_local(date, bump=False, at_least=0, market='us'):
+    """날짜별 `analyze_date` 호출 횟수(돌려준 시도 포함) — 열쇠 `runs:시장:날짜`. 결과의 `diagnostics.runs` 에도
+    실어 캐시를 잃어도 상한이 걸린다. `at_least` 는 원격 값 — 그보다 작아지지 않는다."""
+    st = _state_load()
+    key = f'runs:{market}:{date}'
+    n = max(st.get(key) if isinstance(st.get(key), int) else 0, at_least)
+    if not bump:
+        return n
+    if os.environ.get('CONTESTED_DRY'):
+        return n + 1                                # 시험 운행은 적지 않는다
+    st[key] = n + 1
+    _state_save(st)
+    return st[key]
+
+
+def _remote_runs(prev):
+    n = ((prev or {}).get('diagnostics') or {}).get('runs')
+    return n if isinstance(n, int) and not isinstance(n, bool) and n >= 0 else 0
+
+
+def _cool_mark(date, market='us'):
+    """막힌 검색 아래의 시도 — 센 시도도 쉰다(돌려준 시도는 `refund_to` 가 적는다)."""
+    if os.environ.get('CONTESTED_DRY'):
+        return
+    st = _state_load()
+    st[f'cool:{market}:{date}'] = int(datetime.now(timezone.utc).timestamp())
+    _state_save(st)
+
+
+def _throttled(p):
+    """검색이 막힌 채 끝난 결과인가 — 원격 결과로 쉼을 복원할 때 쓴다."""
+    d = (p or {}).get('diagnostics') or {}
+    return (p or {}).get('status') != 'ok' and (d.get('discovery') == 'throttled' or bool(d.get('attempt_refunded')))
+
+
 def _cooling(date, prev, market='us'):
-    """검색이 막혀 시도를 돌려준 뒤 THROTTLE_COOLDOWN_MIN 이 안 지났는가 — 로컬 기록과 원격 결과 중 늦은 쪽."""
+    """검색이 막힌 시도 뒤 THROTTLE_COOLDOWN_MIN 이 안 지났는가 — 로컬 기록과 원격 결과 중 늦은 쪽."""
     at = _state_load().get(f'cool:{market}:{date}')
     since = ((datetime.now(timezone.utc).timestamp() - at) / 60) if isinstance(at, int) else float('inf')
-    if ((prev or {}).get('diagnostics') or {}).get('attempt_refunded'):
+    if _throttled(prev):
         since = min(since, _minutes_since(prev))
     return since < THROTTLE_COOLDOWN_MIN
 
@@ -394,6 +434,8 @@ def handle(clone, temp, date, md_current, notes, market='us'):
     if todo == 'analyze':
         age_h = (datetime.now(KST) - datetime.fromisoformat(date).replace(tzinfo=KST)).total_seconds() / 3600
         attempts = max((prev or {}).get('attempts', 0), _attempts_local(date, market=market))
+        if _runs_local(date, at_least=_remote_runs(prev), market=market) >= MAX_RUNS:
+            attempts = max(attempts, C.MAX_ATTEMPTS)    # 돌려준 시도까지 상한에 닿았다 — 아래에서 마감
         stale = age_h > ANALYZE_MAX_HOURS + 24
         if market == 'kr' and not stale:
             from collect_contested_kr import cutoff_of
@@ -418,8 +460,9 @@ def handle(clone, temp, date, md_current, notes, market='us'):
             result = analyze_date(clone, temp, date, md_current, prev, market)
         _save(jpath, result)
         files.append(rel_json)
-        with open(os.path.expanduser(f'~/Library/Caches/fdo2a-contested-last-{market}.json'), 'w') as fh:
-            json.dump(result, fh, ensure_ascii=False, indent=1)
+        if not os.environ.get('CONTESTED_DRY'):     # 시험 운행은 마지막 결과 기록을 덮지 않는다
+            with open(os.path.expanduser(f'~/Library/Caches/fdo2a-contested-last-{market}.json'), 'w') as fh:
+                json.dump(result, fh, ensure_ascii=False, indent=1)
         note = f'{result["status"]}({result.get("reason") or "-"})'
         if html is not None and page_state(html) == 'pending' and C.settled(result, market, date):
             f, n = fill(clone, date, result, market, temp)
@@ -463,11 +506,23 @@ def _final_error(date, prev, reason, market='us'):
 
 
 def analyze_date(clone, temp, date, md_current, prev, market='us'):
+    """수집·분석 한 번 → 결과 dict. 상한에 닿은 실패는 어느 길로 끝났든 마감한다 — 일찍 돌아온 길
+    (`market_data_not_found`)도 빠지지 않게(codex 구현 1회차 #1)."""
+    result = _analyze_once(clone, temp, date, md_current, prev, market)
+    if result.get('status') != 'ok' and (result.get('attempts', 0) >= C.MAX_ATTEMPTS
+                                         or _remote_runs(result) >= MAX_RUNS):
+        result['retryable'] = False                # 시도를 다 썼다 — 자리표시를 지운다
+    return result
+
+
+def _analyze_once(clone, temp, date, md_current, prev, market='us'):
     """수집·분석 한 번 → 결과 dict. 어떤 실패도 결과로 남긴다(3차 P2)."""
     import contested_build as Bld
     attempts = _attempts_local(date, bump=True, at_least=(prev or {}).get('attempts', 0),
                                market=market)                                  # 수집 전에 적는다
+    runs = _runs_local(date, bump=True, at_least=_remote_runs(prev), market=market)
     base = _base(date, attempts, market)
+    base['diagnostics']['runs'] = runs
     try:
         if market == 'us' and md_current.get('report_date') == date and md_current.get('complete'):
             datadir, oid = 'data', None
@@ -502,13 +557,14 @@ def analyze_date(clone, temp, date, md_current, prev, market='us'):
     except Exception as e:
         result = dict(base, status='error', reason=f'analyze_{type(e).__name__}'[:40], retryable=True)
     diag = result.get('diagnostics') or {}
-    if result.get('status') != 'ok' and result.get('retryable') and diag.get('discovery') == 'throttled':
-        # 검색(GDELT 429·네이버 한도)이 막힌 시도는 횟수에서 돌려준다(사용자 2026-10-21) — 기사 부족은 그날
-        # 사건 탓이 아니라 막힌 탓이다. 마감은 stale(기준일 + 60시간)이 맡는다
+    throttled = result.get('status') != 'ok' and result.get('retryable') and diag.get('discovery') == 'throttled'
+    if throttled and result.get('reason') in REFUND_REASONS:
+        # 검색(GDELT 429·네이버 한도)이 막혀 모델 전에 끝난 시도는 횟수에서 돌려준다(사용자 2026-10-21) — 기사
+        # 부족은 그날 사건 탓이 아니라 막힌 탓이다. 상한은 MAX_RUNS, 마감은 stale(기준일 + 60시간)이 맡는다
         attempts = _attempts_local(date, market=market, refund_to=attempts - 1)
         result = dict(result, attempts=attempts, diagnostics=dict(diag, attempt_refunded='discovery_throttled'))
-    if result.get('status') != 'ok' and attempts >= C.MAX_ATTEMPTS:
-        result['retryable'] = False                # 시도를 다 썼다 — 자리표시를 지운다
+    elif throttled:
+        _cool_mark(date, market)                   # 센 시도도 쉰다 — 막힌 동안 같은 분석을 15분마다 되풀이하지 않게
     return result
 
 

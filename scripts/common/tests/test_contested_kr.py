@@ -623,7 +623,7 @@ def test_throttled_discovery_refunds_the_attempt_and_cools_down(tmp_path, monkey
     monkeypatch.setitem(sys.modules, 'collect_contested', fake)
     monkeypatch.setattr(Bld, 'ranker', lambda diag=None: None)
     monkeypatch.setattr(Bld, 'analyze', lambda bundle, base: dict(
-        base, status='error', reason='fetch_incomplete', retryable=True))
+        base, status='error', reason='gdelt_throttled', retryable=True))   # 추출 모델 전에 끝났다
     L._attempts_local('2026-10-20', bump=True, market='us')            # 앞선 시도 1회
     notes = []
     files, _ = L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us')
@@ -642,8 +642,8 @@ def test_throttled_discovery_refunds_the_attempt_and_cools_down(tmp_path, monkey
     assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us') is not None
 
 
-def test_throttled_but_last_attempt_still_refunds(tmp_path, monkeypatch):
-    """상한 직전 시도도 돌려준다 — 막힌 검색 탓에 그날을 최종 오류로 굳히지 않는다."""
+def test_throttled_last_attempt_still_refunds_before_the_model(tmp_path, monkeypatch):
+    """상한 직전 시도도 모델 전에 막혔으면 돌려준다 — 막힌 검색 탓에 그날을 최종 오류로 굳히지 않는다."""
     import sys
     import types
     import contested_build as Bld
@@ -664,7 +664,7 @@ def test_throttled_but_last_attempt_still_refunds(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, 'collect_contested', fake)
     monkeypatch.setattr(Bld, 'ranker', lambda diag=None: None)
     monkeypatch.setattr(Bld, 'analyze', lambda bundle, base: dict(
-        base, status='none', reason='analysis_unverified', retryable=True))
+        base, status='error', reason='gdelt_throttled', retryable=True))
     for _ in range(C.MAX_ATTEMPTS - 1):
         L._attempts_local('2026-10-20', bump=True, market='us')
     L.handle(str(clone), str(tmp_path), '2026-10-20', md, [], 'us')
@@ -725,3 +725,124 @@ def test_push_adds_tracked_pages_under_ignored_dirs(tmp_path, monkeypatch):
     out = subprocess.run(['git', '--git-dir', str(remote), 'show', 'main:news/2026-10-20.html'],
                          capture_output=True, text=True, check=True).stdout
     assert out == '<p>b</p>'
+
+
+def _runner_env(tmp_path, monkeypatch, analyze, t=datetime(2026, 10, 21, 7, 39, tzinfo=KST)):
+    """`handle` 한 번을 가짜 수집·분석으로 — (clone, md, clock)."""
+    import sys
+    import types
+    import contested_build as Bld
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    monkeypatch.setenv('HOME', str(tmp_path))
+    (tmp_path / 'Library' / 'Caches').mkdir(parents=True, exist_ok=True)
+    clone, md = _throttled_clone(tmp_path)
+    clock = {'t': t}
+
+    class Now(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return clock['t'] if tz is None else clock['t'].astimezone(tz)
+    monkeypatch.setattr(L, 'datetime', Now)
+    fake = types.ModuleType('collect_contested')
+    fake.collect = lambda *a, **k: {'status': 'ok', 'gdelt': 'throttled', 'discovery': 'throttled'}
+    monkeypatch.setitem(sys.modules, 'collect_contested', fake)
+    monkeypatch.setattr(Bld, 'ranker', lambda diag=None: None)
+    monkeypatch.setattr(Bld, 'analyze', analyze)
+    return clone, md, clock
+
+
+def _result(clone, d='2026-10-20'):
+    return json.loads((clone / 'data' / 'contested' / 'us' / f'{d}.json').read_text())
+
+
+def test_throttled_discovery_counts_the_attempt_once_the_model_ran(tmp_path, monkeypatch):
+    """11/19 감사: us 11-17 이 추출·검증을 끝까지 돌고도(약 44k 토큰) 돌려받아 22번 돌았다. 모델이 돈 시도는 센다."""
+    def analyze(bundle, base):
+        base['diagnostics']['tokens'] = {'in': 44000, 'out': 12000}
+        return dict(base, status='none', reason='analysis_unverified', retryable=True)
+    clone, md, clock = _runner_env(tmp_path, monkeypatch, analyze)
+    L.handle(str(clone), str(tmp_path), '2026-10-20', md, [], 'us')
+    res = _result(clone)
+    assert res['attempts'] == 1 and 'attempt_refunded' not in res['diagnostics']
+    assert L._attempts_local('2026-10-20', market='us') == 1
+    assert C.validate(res, 'us', '2026-10-20') == []
+    # 막힌 검색 아래의 시도는 세더라도 60분 쉰다 — 같은 부분 기사로 15분마다 전체 분석을 다시 하지 않게
+    clock['t'] = datetime(2026, 10, 21, 8, 20, tzinfo=KST)
+    notes = []
+    assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, notes, 'us') is None
+    assert notes == ['us 2026-10-20 검색 제한 대기']
+
+
+def test_remote_throttled_result_cools_even_without_local_state(tmp_path, monkeypatch):
+    """로컬 상태를 잃어도 원격 결과(막힌 검색·ok 아님)의 수집 시각으로 쉰다."""
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    t = {'now': datetime(2026, 10, 21, 8, 0, tzinfo=KST)}
+
+    class Now(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return t['now'] if tz is None else t['now'].astimezone(tz)
+    monkeypatch.setattr(L, 'datetime', Now)
+    prev = {'status': 'none', 'diagnostics': {'discovery': 'throttled'},
+            'collected_at': '2026-10-20T22:30:00+00:00'}                     # 07:30 KST
+    assert L._cooling('2026-10-20', prev, 'us')
+    assert not L._cooling('2026-10-20', dict(prev, status='ok'), 'us')
+    assert not L._cooling('2026-10-20', dict(prev, diagnostics={'discovery': 'ok'}), 'us')
+    t['now'] = datetime(2026, 10, 21, 8, 31, tzinfo=KST)
+    assert not L._cooling('2026-10-20', prev, 'us')
+
+
+def test_runs_cap_counts_refunded_attempts_and_lives_in_the_result(tmp_path, monkeypatch):
+    """돌려받은 시도도 날짜당 MAX_RUNS 번까지 — 횟수는 결과에도 실려 캐시를 잃어도 상한이 걸린다."""
+    def analyze(bundle, base):
+        return dict(base, status='error', reason='gdelt_throttled', retryable=True)
+    clone, md, clock = _runner_env(tmp_path, monkeypatch, analyze)
+    for i in range(L.MAX_RUNS):
+        clock['t'] = datetime(2026, 10, 20, 9, 0, tzinfo=KST) + timedelta(minutes=61 * i)   # 쉼(60분) 뒤마다
+        assert L.handle(str(clone), str(tmp_path), '2026-10-20', md, [], 'us') is not None
+        res = _result(clone)
+        assert res['attempts'] == 0 and res['diagnostics']['runs'] == i + 1
+    assert res['retryable'] is False and C.settled(res, 'us', '2026-10-20')    # 마지막 회에 마감
+    # 캐시를 잃어도 원격 결과의 runs 로 상한을 안다
+    (tmp_path / 'state.json').unlink()
+    prev = dict(res, retryable=True, content_hash='')
+    prev['content_hash'] = C.content_hash(prev)
+    (clone / 'data' / 'contested' / 'us' / '2026-10-20.json').write_text(json.dumps(prev))
+    clock['t'] += timedelta(hours=2)
+    L.handle(str(clone), str(tmp_path), '2026-10-20', md, [], 'us')
+    res = _result(clone)
+    assert res['reason'] == 'attempts_exhausted' and res['retryable'] is False
+
+
+def test_runs_count_never_drops_below_the_remote_value(tmp_path, monkeypatch):
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    assert L._runs_local('2026-10-20', bump=True, at_least=5, market='us') == 6
+    assert L._runs_local('2026-10-20', market='us') == 6
+    assert L._runs_local('2026-10-20', market='kr') == 0
+    monkeypatch.setenv('CONTESTED_DRY', '1')
+    assert L._runs_local('2026-10-20', bump=True, market='us') == 7
+    assert L._runs_local('2026-10-20', market='us') == 6                 # 시험 운행은 적지 않는다
+
+
+def test_runs_cap_finalizes_even_on_the_early_market_data_return(tmp_path, monkeypatch):
+    """codex 구현 1회차 #1: 여덟 번째 호출이 `market_data_not_found` 로 일찍 돌아와도 마감한다."""
+    monkeypatch.setattr(L, 'STATE', str(tmp_path / 'state.json'))
+    monkeypatch.delenv('CONTESTED_DRY', raising=False)
+    clone, _md = _throttled_clone(tmp_path)
+    prev = {'attempts': 0, 'diagnostics': {'runs': L.MAX_RUNS - 1}}
+    res = L.analyze_date(str(clone), str(tmp_path), '2026-10-19', {}, prev, 'us')
+    assert res['reason'] == 'market_data_not_found' and res['diagnostics']['runs'] == L.MAX_RUNS
+    assert res['retryable'] is False
+    res = L.analyze_date(str(clone), str(tmp_path), '2026-10-18', {}, {'attempts': 0}, 'us')
+    assert res['retryable'] is True                                   # 상한 밖이면 그대로 재시도
+
+
+def test_dry_run_leaves_the_last_result_file_alone(tmp_path, monkeypatch):
+    def analyze(bundle, base):
+        return dict(base, status='error', reason='gdelt_throttled', retryable=True)
+    clone, md, _clock = _runner_env(tmp_path, monkeypatch, analyze)
+    monkeypatch.setenv('CONTESTED_DRY', '1')
+    L.handle(str(clone), str(tmp_path), '2026-10-20', md, [], 'us')
+    assert not (tmp_path / 'Library' / 'Caches' / 'fdo2a-contested-last-us.json').exists()
