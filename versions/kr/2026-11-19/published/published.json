@@ -1,0 +1,44 @@
+{
+  "market": "kr",
+  "date": "2026-11-19",
+  "publish_commit": "e60b0fe2cb6c6d48df426ed0fe3baaade837dd73",
+  "source": "publish_commit_tree",
+  "post": {
+    "path": "kr/posts/2026-11-19.html",
+    "sha256": "9b4b601c58c6a72c8d34b5f8399bb0234da3e7f5daaf6923f35469defa91f2a3"
+  },
+  "record": {
+    "path": "verification/kr/2026-11-19.json",
+    "sha256": "460eae2752986cb59fd94b9cd5f4fef9e55e9881ce2cf5500f72a8058a8e905a"
+  },
+  "files": {
+    "kr/assets/kr_charts_2026-11-19.png": "fd516f569a08b17223e49fdb3ceb3be5e2bb38f1dfaad52b1c73874bf4a7d554",
+    "kr/data/history/kr_market.jsonl": "fdb4caab63363cae28af700e82183078588479cbf9ea471197b99a0348cc8174",
+    "kr/data/kr_charts_manifest.json": "a84d39913ec11eb0ec6795559f202e1126354e45ab0fbd5712dd6ce6cd9bab7e",
+    "kr/data/kr_econ.json": "cb54ca86f23c5486250e6cb384c80e59f122b16a9c809e263668747cd31562cc",
+    "kr/data/kr_flows.json": "a4e48abbd7c1f6679a31918bf048b9939a4217a45c54f432353de5ad103e1e25",
+    "kr/data/kr_flows_intraday.json": "31173077b6f6a7de415bcbbd0cf4182322370a94df84dc45cae9dadec4fa7064",
+    "kr/data/kr_fund_view.html": "42a9de6a295cbf1e7a35f4fb0622802674fb3c878479ee84c942044b47748a08",
+    "kr/data/kr_fund_view.json": "17be6ca87ff51fa4bb063b0c7e5ad8cc6b354f061c1447f23d32509ad1b7efac",
+    "kr/data/kr_index_etf.json": "7213dc721e3eae33cc0b61b9405b7728de51e84155b775fe881a7c19cfc3e2ca",
+    "kr/data/kr_industry.json": "a1c1526da18027de3fb3e3f08c598dc268e87c16525e2830c1801c04f7ac00fd",
+    "kr/data/kr_intraday.json": "deaf42fdb8cf9df2e8b45b91966248816c809e7012594c5a9e5f91e6eb0402ec",
+    "kr/data/kr_market_data.json": "e6c9edd431bd95db267ad31585806ad5923dcd783b48ba3991211dfb36950dfe",
+    "kr/data/kr_movers.json": "65061ad4c8c050084bff55e519f43eb9a7795e984becbd7e81418bb25dc2d32b",
+    "kr/data/kr_program.json": "f4e9ba2fe1eacef0815dd13217fc82f6f03f965f6cc7e8d468032230b3617b40",
+    "kr/data/kr_sector.html": "f27637ceaec39c66d2174192862beb45ca3d42154ad672e30cbbcf631600cda3",
+    "kr/data/kr_session.json": "25fae9b03555a56e7760d0776b0d7fb08bd3a496e41e753fe0d157435c020e62",
+    "kr/data/kr_stance.json": "f915ca1c3ce56f0b473a404e6ba2ff51085f2df85f8d94ad08b90f7169484d7c",
+    "kr/data/kr_stance_eval.json": "6ea093324761ff48eb674b156e305889da55a61defb7ab2766101be3eac06219",
+    "kr/data/kr_stock_moves.json": "8daebe9f72fa65e07caef47c48ab1fe56e340fbb17a7fe5823c486cb3d7bd841",
+    "kr/data/kr_technical.json": "8cde3a9f31e725bc9790fe5ebd5da313656caf78868ea6bc90982bc55c8ac397",
+    "kr/data/kr_theme.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "kr/data/kr_top_value.json": "68ab2cba713ee88c6ccd893624cd99e178c7d31ae82575e75f41d38f2a9ec82c",
+    "kr/data/news/2026-11-19.json": "eb01d8303559fa841585fef91e83d14f98cc75f7edc3bf5fa2614a1bac58f536",
+    "kr/data/telegram/2026-11-19.json": "3f1c111a2d4c495992d6635901dc361599c5cb48db428dfa5ed91ad435aebba3",
+    "kr/data/weekly/2026-W47.json": "d727c3bbf9c75e2c9a005b1f0562e5db3e68437e7682136e0c3658a3c025140d"
+  },
+  "stance_next_sha256": "f915ca1c3ce56f0b473a404e6ba2ff51085f2df85f8d94ad08b90f7169484d7c",
+  "stance_prev_sha256_estimated": "8e4e367b649734e46cf2980c6e5219dffad2dbfe8a87115b44b7043de95f0607",
+  "pinned_at": "2026-11-20T02:14:23+09:00"
+}

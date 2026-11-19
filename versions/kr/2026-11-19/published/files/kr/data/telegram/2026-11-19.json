@@ -1,0 +1,263 @@
+{
+ "report_date": "2026-11-19",
+ "market": "kr",
+ "collected_utc": "2026-11-19T09:17:46+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-17T22:49:51+00:00",
+  "kwusa": "2026-11-17T22:57:32+00:00",
+  "lim_econ": "2026-11-17T22:39:07+00:00",
+  "d_ticker": "2026-11-18T02:59:58+00:00",
+  "aethersemiconductor": "2026-11-18T05:39:04+00:00",
+  "FastStockNews": "2026-11-18T09:12:21+00:00",
+  "FastStockNewsUSA": "2026-11-18T07:11:16+00:00",
+  "insidertracking": "2026-11-18T09:04:24+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-17T22:49:51+00:00",
+   "last_id": 3003,
+   "last_dt": "2026-11-18T22:49:26+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-17T22:57:32+00:00",
+   "last_id": 61785,
+   "last_dt": "2026-11-19T08:50:04+00:00",
+   "read": 6
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-17T22:39:07+00:00",
+   "last_id": 2138,
+   "last_dt": "2026-11-18T22:39:51+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-18T02:59:58+00:00",
+   "last_id": 4196,
+   "last_dt": "2026-11-18T22:24:18+00:00",
+   "read": 7
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-18T05:39:04+00:00",
+   "last_id": 27079,
+   "last_dt": "2026-11-19T07:01:58+00:00",
+   "read": 40
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-18T09:12:21+00:00",
+   "last_id": 128194,
+   "last_dt": "2026-11-19T08:12:33+00:00",
+   "read": 48
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-18T07:11:16+00:00",
+   "last_id": 24569,
+   "last_dt": "2026-11-19T08:21:40+00:00",
+   "read": 24
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 6,
+   "truncated": false,
+   "from_dt": "2026-11-18T09:04:24+00:00",
+   "last_id": 69746,
+   "last_dt": "2026-11-19T09:07:07+00:00",
+   "read": 107
+  }
+ },
+ "items": [
+  {
+   "id": "FastStockNews/128147",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-18T10:45:36+00:00",
+   "url": "https://t.me/FastStockNews/128147",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "김과장 네프콘이라는 채널의 글은 AI 확산으로 기업이 지켜야 할 정보와 보안의 중요성이 커지고 있으며, AI·클라우드·사이버보안을 두루 갖춘 한 기업이 AI 시대에 더 주목받아야 한다는 시각을 제시한다. 이 기업은 한 번에 여러 서비스를 판매하는 사업 구조를 갖추고 있고, 600개 이상의 고객사에 대한 보안 수행 경험과 100개국 이상을 아우르는 24시간 보안관제 체계, 오픈AI·구글·앤트로픽 등과의 사이버보안 협력을 강점으로 꼽는다. 또한 ERP와 데이터 관리, 클라우드, 보안 시스템이 업무 전반에 연결돼 다른 업체로 전환하기 어렵다는 점을 들어, 전통 IT서비스 기업에서 AI·보안 기업으로 재평가될 가능성이 있다는 의견을 내놓는다."
+  },
+  {
+   "id": "aethersemiconductor/27043",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-18T11:42:50+00:00",
+   "url": "https://t.me/aethersemiconductor/27043",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "모건스탠리는 미 상무부가 중국 AI 기업의 해외 첨단 GPU 원격 접근을 제한하는 규정을 마무리 중이라는 보도를 바탕으로, 알리바바에 대한 영향을 점검했다. 이 규제는 GPU 조달 감소로 단기 현금흐름에는 약간 도움이 되지만 클라우드 성장에는 크게 부정적이라는 시각이다. 다만 티헤드 칩 물량 확대와 가이던스 대비 낮은 매출 추정치가 이를 일부 흡수할 수 있다고 봤다. 목표주가 180달러와 비중확대 의견은 유지됐다."
+  },
+  {
+   "id": "aethersemiconductor/27047",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-18T12:10:31+00:00",
+   "url": "https://t.me/aethersemiconductor/27047",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "모건스탠리는 클라우드 반도체와 구형 메모리 종목의 투자의견을 낮춘 데 이어, 투자자 반발에 답하는 리포트에서 수요는 여전히 강하지만 클라우드 설비투자 둔화가 드러나기 전에 비중을 줄여야 한다는 시각을 밝혔다. 2027년 RCD 출하 가정이 지나치게 보수적일 수 있다고 인정하면서도, 이익이 늘어나도 밸류에이션은 조정될 수 있다는 견해를 유지했다. 미국 데이터센터 증설의 일부가 2029년으로 밀린 점도 실행 불확실성을 키운다고 봤다. 반면 CXMT와 난야는 제품 믹스와 기술 전환 측면에서 차별점이 있다는 이유로 비중확대를 유지했다."
+  },
+  {
+   "id": "aethersemiconductor/27056",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-18T15:17:31+00:00",
+   "url": "https://t.me/aethersemiconductor/27056",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-18",
+   "summary_ko": "현대차그룹의 휴머노이드 로봇 아틀라스가 반도체 공장에 처음 투입된다는 소식이다. 보스턴다이내믹스는 17일(현지시간) 글로벌파운드리스와 함께 내년 초 아틀라스를 현장에 투입하기 위한 테스트를 시작하겠다고 밝혔으며, 글로벌파운드리스의 주요 사업장에 아틀라스를 배치해 반도체 생산에 필요한 특정 동작을 익히게 할 계획이다. 두 회사는 이 과정에서 아틀라스가 맡을 수 있는 작업을 찾아보기로 했다. 이는 로봇의 현장 활용 가능성을 넓히려는 시도로 읽힌다는 시각이 나온다."
+  },
+  {
+   "id": "d_ticker/4194",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-18T15:29:47+00:00",
+   "url": "https://t.me/d_ticker/4194",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "월스트리트저널",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "미사일과 로켓의 초고온 내열재인 레이카브는 레이온을 화학 가공해 만든 특수 탄소 섬유로, 2760℃의 노즐 열을 견디게 해 주는 필수 소재로 꼽힌다. 그런데 이를 공급할 수 있는 업체가 프랑스 아리안그룹과 독일 엔카 등 소수에 그친다. 특히 아리안그룹이 패트리어트 요격미사일용 레이카브 공급망을 사실상 독점하고 있어, 미국 방산 소재 업체 파크 에어로스페이스는 이곳에서 전량을 수입해 코팅 처리 후 L3해리스 등에 납품하고, 최종적으로 록히드마틴이 미사일을 조립하는 구조라는 점이 생산 병목으로 작용하고 있다는 시각이다."
+  },
+  {
+   "id": "hedgecat0301/3003",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-18T22:49:26+00:00",
+   "url": "https://t.me/hedgecat0301/3003",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시가 장전 선물 대비 차갑게 움직여 혼조로 마감한 배경으로, 엔비디아의 호실적에도 젠슨황 경영 공백 우려와 AI 투자수익성 부담이 남아 있었고, 월러 연준 이사의 12월 50bp 인상 주장과 매파적 FOMC 의사록이 겹친 점을 꼽았다. 금리 하락에도 안전자산 선호와 경기 둔화 우려가 반영된 것으로 해석했다. 다만 50bp 인상은 연준 내 소수의견이고, 최근 WTI 하락이 인플레이션 하방 압력이 될 수 있다고 봤다. 필자는 높은 밸류에이션으로 공모된 앤스로픽 IPO가 냉각된 AI주 투자심리를 회복시킬 가능성에 주목했다. 국내 증시는 엔비디아 상승분 반납과 매파 발언 부담으로 하락 출발한 뒤 업종 차별화 장세를 보일 것으로 전망했다. 외국인 순매도 강도가 약화되는 점과 코스피가 악재를 상당 부분 반영했다는 점을 근거로, 앤스로픽 IPO 이후 외국인 자금 확보 부담이 완화되며 매도 압력이 줄어들 가능성을 대응 전략에 반영할 만하다고 제시했다."
+  },
+  {
+   "id": "aethersemiconductor/27062",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-18T22:51:58+00:00",
+   "url": "https://t.me/aethersemiconductor/27062",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "참가자들은 물가가 여전히 높다는 데 공감했다. 관세 효과는 줄어드는 듯하다는 견해도 있었으나, 다수는 에너지 가격과 AI 관련 수요가 물가 압력을 계속 키운다고 봤다. 고용에서는 노동시장이 안정적이고 최대고용에 가깝다는 평가가 주를 이뤘지만, 역동성이 이례적으로 낮다는 지적도 나왔다. 성장은 가계지출과 설비투자에 힘입어 강하다는 시각이 많았고, 금리 민감 부문은 약하다는 의견도 제시됐다."
+  },
+  {
+   "id": "FastStockNews/128163",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T03:01:04+00:00",
+   "url": "https://t.me/FastStockNews/128163",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "SK하이닉스가 충북 청주 사업장에 차세대 HBM 제조 장비인 하이브리드 본더 2대를 들여와 공정 테스트와 성능 검증을 진행 중이라는 업계 소식이 전해졌다. 장비는 국내 한화세미텍과 네덜란드 베시, 미국 어플라이드머티리얼즈 제품을 함께 들여온 것으로 파악됐다. 이를 두고 특정 업체에 기대지 않고 두 곳 장비를 동시에 가동해 수율과 신뢰성을 조기에 확보하려는 투트랙 전략이라는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNews/128177",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T04:35:33+00:00",
+   "url": "https://t.me/FastStockNews/128177",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "하루 공매도 거래대금이 1조2448억원이고 그중 외국인 비중이 약 80%라는 수치가 제시됐다. 글쓴이는 이 상황이 시장 불신을 키우고 있어 금융당국이 이에 답해야 한다는 시각을 보인다. 아울러 대만이 공매도 주문 한도를 줄이고 안정기금의 개입을 승인한 사례를 들어, 한국도 대응 기준을 분명히 밝혀야 한다는 의견을 낸다. 제도의 효용을 설명하는 데 그치지 말고 종목별 쏠림, 불법거래, 이해상충 문제까지 점검해야 한다는 주장도 담겼다."
+  },
+  {
+   "id": "aethersemiconductor/27075",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-19T04:58:13+00:00",
+   "url": "https://t.me/aethersemiconductor/27075",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "JP모건의 아시아태평양 테크 리서치는 엔비디아 기판 공급 확대와 메모리 업종 내 차별화를 짚었다. 킨서스의 추가 편입이 신규 발표로 보이며, 2027년 하반기부터 엔비디아 전용 생산능력을 3.5배 늘린다는 점이 언급됐다. 메모리는 키옥시아와 같은 소비자 비중이 큰 기업의 가격 정체와 중국 업체 경쟁 위험이 부각된 반면, 난야테크와 윈본드는 eSSD 공급 계약 의존도 때문에 CXMT와의 경쟁에 더 취약하다는 시각이 제시됐다. 투자자들은 첨단 로직·패키징과 ASIC 관련주를 선호하는 가운데, MATCH 법안이 중국 노출도가 높은 장비주에 줄 영향을 계산하고 있다는 의견도 전해졌다."
+  },
+  {
+   "id": "FastStockNews/128191",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T06:59:10+00:00",
+   "url": "https://t.me/FastStockNews/128191",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "에이직랜드가 2026년 11월 19일 공시를 통해 국내를 공급지역으로 하는 주문형 반도체 양산 공급 계약을 체결했다고 밝혔다. 계약금액은 139억 원이며 계약기간은 2026년 11월 19일부터 2027년 4월 30일까지 5개월이고, 매출 대비 비율은 19.1%로 적혀 있다. 계약상대는 공시에 기재되지 않았다. 이번 계약이 회사 실적에 의미 있는 기여를 할 것이라는 시각이 있을 수 있으나, 원문에는 이에 대한 별도 전망은 제시되지 않았다."
+  },
+  {
+   "id": "FastStockNews/128192",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T07:17:48+00:00",
+   "url": "https://t.me/FastStockNews/128192",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "래리 핑크 블랙록 CEO는 AI 투자에 필요한 자본이 여전히 부족하다는 시각을 밝혔다. 그는 미국이 필요한 수준의 AI 투자를 하려면 7조~9조 달러가 필요하다고 추산했고, 해법으로 AI 칩을 자동차 대출이나 MBS처럼 묶는 증권화를 제시했다. 규제 측면에서는 민주당의 중간선거 압승으로 데이터센터 건설 제한 등 규제가 강화될 수 있다는 평가와 함께, 데이터센터 모라토리엄이 도입되면 경기 침체 위험이 있다는 우려를 전했다는 의견이다. 아울러 젠슨 황의 퇴진이 AI 붐을 흔들지는 않을 것이라는 견해도 덧붙였다."
+  }
+ ],
+ "stats": {
+  "items": 12,
+  "summarized": 12,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
