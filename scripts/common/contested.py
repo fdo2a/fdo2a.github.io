@@ -25,6 +25,8 @@ import re
 from html.parser import HTMLParser
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
+from .hidden import is_hidden, unsure_note
+
 SCHEMA_VERSION = 1
 PROMPT_VERSION = '2026-11-04.1'
 MARKER = '<!--CONTESTED-->'
@@ -818,8 +820,8 @@ def check(html, payload, market, date, transforms=(), trusted_styles=None):
             return errs
         sec = secs[0]
         for tag, attrs in sec['ancestors']:
-            if tag in _INERT or _hidden(attrs):
-                errs.append(f'섹션이 보이지 않는 조상 <{tag}> 안에 있다')
+            if tag in _INERT or _hidden(attrs) or is_hidden(attrs):   # 옛 판정식 + 공용 판정(common.hidden)
+                errs.append(f'섹션이 보이지 않는 조상 <{tag}> 안에 있다{unsure_note(html)}')
         anc = sec['ancestors']
         if not anc or anc[-1][0] != 'div' or 'doc' not in (anc[-1][1].get('class') or '').split():
             errs.append('섹션이 본문 컨테이너(div.doc) 바로 아래에 있지 않다')

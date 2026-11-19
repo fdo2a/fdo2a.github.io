@@ -25,9 +25,10 @@ from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
 from common.numbers import numbers_split_by_tags
+from common.hidden import unsure_note
 from fund.gate import VOID
 from us.number_audit import (InputError, Result, _WIDE, _children, _cells, _inside, _rows, _sections,
-                             _Stream, _unverified, tokens)
+                             _Stream, _unverified, core_hidden_tokens, tokens)
 
 EFFECTIVE = '2026-11-16'          # 첫 차단 발행일(다음 거래일). 그 전 글은 입력을 읽기 전에 건너뛴다
 
@@ -769,7 +770,7 @@ def audit(html, data, date, effective=None):
     for s in numbers_split_by_tags(html[body_at:] if body_at >= 0 else html):
         res.violations.append(f'수치가 태그·보이지 않는 문자로 쪼개져 있다({s[:30]!r}) — 화면과 검사가 다른 숫자를 읽는다')
     hidden = [t for d in doc.hidden_text for t in tokens(d)]
-    for t in hidden:
+    for t in hidden + core_hidden_tokens(doc):
         res.violations.append(f'숨긴 요소 안에 수치 「{t.raw}」 — 독자에게 안 보이는 수치는 싣지 않는다')
     svg = [t for d in doc.svg_text for t in tokens(d)]
     for t in svg:
@@ -801,6 +802,12 @@ def audit(html, data, date, effective=None):
         sec, title = top_section(t)
         hid = any(a.self_hidden for a in t.ancestors())
         home = next((k for k, s in sec_of.items() if s is sec), None)
+        if kind and not hid:
+            # 공용 판정(common.hidden) — 지도 표·그 조상·그 안. 위 hid(옛 판정식)는 읽기용이라 그대로 둔다
+            core = [n.tag for n in doc.nodes if n.core_hidden and (_inside(n, t) or any(a is n for a in t.ancestors()))]
+            if core:
+                res.violations.append(f'[KR {TABLE_NAME[kind]}] — 지도 표나 그 안·바깥 요소가 숨겨져 있다'
+                                      f'(<{core[0]}> 등 {len(core)}곳){unsure_note(html)}')
         if hid:
             if kind:
                 res.violations.append(f'[KR {TABLE_NAME[kind]}] — 지도 표가 숨긴·접힌 곳에 있다({title or "섹션 밖"})')

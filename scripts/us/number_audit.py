@@ -348,6 +348,10 @@ class _Stream(_Doc):
     def __init__(self, html):
         self.stream = []
         self.hidden_text = []
+        # 공용 판정(common.hidden)으로만 숨긴 요소 안 글 — 흐름(stream)과 hidden_text 는 옛 판정식 그대로 두고
+        # (넓히면 숨긴 자산명·표 머리가 흐름에서 빠져 분류 검사가 통과한다, codex 설계 검토 2026-11-19 #5),
+        # 그 안 수치만 따로 위반으로 센다. 대조 집계에는 넣지 않는다 — 흐름에 이미 있으니 두 번 센다.
+        self.core_hidden_text = []
         self.svg_text = []
         self.raw_tokens = 0      # 분류와 무관하게 본문의 모든 글 조각에서 센 수치(script·style 만 뺀다)
         self.extra = []          # (출처, 글) — 제목·meta 설명·대체 문구. 속성 순서와 무관하게 파서로 읽는다
@@ -393,6 +397,8 @@ class _Stream(_Doc):
             if in_body:
                 self.hidden_text.append(data)
             return
+        if in_body and any(n.core_hidden for n in stack):
+            self.core_hidden_text.append(data)
         # 접힌 details 는 모든 접힌 조상에 대해 그 직속 <summary> 안일 때만 보인다(중첩 포함)
         for i, n in enumerate(stack):
             if n.tag == 'details' and 'open' not in n.attrs and not (
@@ -404,6 +410,11 @@ class _Stream(_Doc):
 
 _NONDISPLAY_BODY = {'textarea', 'xmp', 'select', 'option', 'optgroup', 'datalist', 'noscript', 'iframe',
                     'noembed', 'noframes', 'plaintext', 'object', 'template'}
+
+
+def core_hidden_tokens(doc):
+    """공용 판정으로만 숨긴 요소 안 수치(위반 전용 — `hidden` 집계와 따로)."""
+    return [t for d in doc.core_hidden_text for t in tokens(d)]
 
 
 def _hidden_attr(n):
@@ -862,7 +873,7 @@ def audit(html, data, prose='warn', tables=True):
         res.violations.append(f'수치가 태그·보이지 않는 문자로 쪼개져 있다({s[:30]!r}) — 화면과 검사가 '
                               f'다른 숫자를 읽는다')
     hidden = [t for d in doc.hidden_text for t in tokens(d)]
-    for t in hidden:
+    for t in hidden + core_hidden_tokens(doc):
         res.violations.append(f'숨긴 요소 안에 수치 「{t.raw}」 — 독자에게 안 보이는 수치는 싣지 않는다')
     svg = [t for d in doc.svg_text for t in tokens(d)]
     for t in svg:

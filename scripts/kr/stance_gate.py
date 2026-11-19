@@ -21,6 +21,7 @@ import datetime
 import re
 
 from fund.gate import _Doc, _hidden   # 숨김·주석·엔티티를 브라우저처럼 — 펀드 게이트와 같은 규칙
+from common.hidden import fragment_hidden, unsure_note
 from kr import grade_talk
 
 ORDER = ("event", "gap", "meaning", "action", "invalidation", "review")   # 옛 배치(v1)
@@ -222,6 +223,15 @@ def check_layout_v2(html_doc: str) -> tuple:
             if not cells[0] or not _WHEN.search(cells[0]):
                 v.append(f"「{SCHEDULE}」: 첫 칸 「{cells[0]}」이 시점이 아니다 — 날짜·「이달 말」·"
                          "「일정 미확정」처럼 쓴다")
+    # 공용 판정(common.hidden) — 두 섹션·그 조상·그 안. 위 읽기(_hidden·plain)는 옛 판정식 그대로 둔다
+    # (넓히면 숨긴 앞 문단이 빠져 뒤 문단이 첫 문단으로 올라선다, codex 설계 검토 2026-11-19 #3)
+    for title, sec in ((LEARNING, learn), (SCHEDULE, sched)):
+        if sec is None:
+            continue
+        core = [n.tag for n in doc.nodes if n.core_hidden and (any(a is sec for a in n.ancestors()) or any(a is n for a in sec.ancestors()))]
+        if core:
+            v.append(f"「{title}」: 섹션이나 그 안·바깥 요소가 숨겨져 있다(<{core[0]}> 등 {len(core)}곳) — "
+                     f"독자가 보지 못하는 판단은 싣지 않는다{unsure_note(html_doc)}")
     news = _headed(doc, NEWS)
     news_sec = news[0][1] if news and news[0][1] is not None else None
     if news_sec is not None:
@@ -235,6 +245,18 @@ def check_layout_v2(html_doc: str) -> tuple:
         if sched.start < learn.end or between:
             v.append(f"「{SCHEDULE}」은 「{LEARNING}」 바로 뒤에 둔다")
     return v, review
+
+
+def hidden_ledes(html_doc: str, title: str = SECTION) -> list:
+    """§2 의 data-lede 문단마다 — 그 문단 자신·그 안·그 조상이 공용 판정(common.hidden)으로 숨었으면 표식 이름."""
+    m = re.search(r"<h2[^>]*>\s*%s\s*</h2>" % re.escape(title), html_doc)
+    if not m:
+        return []
+    nxt = re.search(r"<h2[\s>]", html_doc[m.end():])
+    end = m.end() + nxt.start() if nxt else len(html_doc)
+    rx = re.compile(r'<p[^>]*data-lede="([a-z]+)"[^>]*>(.*?)</p>', re.S)
+    return [p.group(1) for p in rx.finditer(html_doc, m.end(), end)
+            if fragment_hidden(html_doc, p.start(), p.end())]
 
 
 def marked(seg: str) -> list:
@@ -404,6 +426,8 @@ def check(html_doc: str, stance: dict, stance_eval: dict, liquidity=None,
     if ordered != list(order):
         v.append(f"§2: 문단 순서가 {'→'.join(order)} 가 아니다 — {'→'.join(ordered)}")
 
+    for k in hidden_ledes(html_doc):
+        v.append(f"§2: data-lede=\"{k}\" 문단이나 그 안·바깥 요소가 숨겨져 있다 — 펼친 본문 문단으로 쓴다{unsure_note(html_doc)}")
     body = dict(got)
     if v2:
         lv, body["review"] = check_layout_v2(html_doc)
