@@ -6,9 +6,9 @@
  "status": "error",
  "reason": "model_extract_success",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-19T01:31:29+00:00",
- "cutoff_at": "2026-11-19T01:31:29+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-19T02:38:16+00:00",
+ "cutoff_at": "2026-11-19T02:38:16+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
  },
  "counts": {
-  "harvest": 220,
+  "harvest": 222,
   "candidates": 1,
   "articles": [
    5
@@ -33,20 +33,19 @@
    "in": 0,
    "out": 0
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok"
  },
  "event": {
   "topic_ko": "",
   "query": "",
   "trigger": []
  },
- "content_hash": "da1e852115dc8f27"
+ "content_hash": "5f8bacdefc497a4b"
 }
