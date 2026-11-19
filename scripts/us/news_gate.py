@@ -42,6 +42,7 @@ import re
 from difflib import SequenceMatcher
 from html.parser import HTMLParser
 
+from common.hidden import VOID, is_hidden, unsure_note
 from .news import DIGEST_CATEGORIES
 from .news_summary import cjk_runs, self_correction, summary_problem
 
@@ -116,6 +117,11 @@ class _Reader(HTMLParser):
         self.section_items = []
         self.section_stray = 0
         self.section_stray_text = ''
+        # 공용 판정(common.hidden)으로 숨긴 요소 — 절 안·뉴스 블록 안. 위의 글자 모으기는 옛 판정식 그대로
+        # 두고(넓히면 숨긴 글자가 분량·링크 검사의 입력에서 빠져 그 검사가 통과한다), 이것만 위반을 더한다.
+        self.core_hidden = []
+        self._core = []          # 열린 요소마다 「여기부터 공용 판정으로 숨김」
+        self._title_core = []
 
     # ── 구조 ──────────────────────────────────────────────────────────
     def handle_starttag(self, tag, attrs):
@@ -126,6 +132,8 @@ class _Reader(HTMLParser):
         skip = (parent[2] if parent else False) or tag in _SKIP_TAGS or any(
             c in (a.get('class') or '').split() for c in _SKIP_CLASSES)
         item = parent[3] if parent else None
+        core_up = self._core[-1] if self._core else False
+        core = core_up or is_hidden(attrs)
         if _is_item(a) and item is None:
             item = {'guid': a.get('data-news'), 'chars': 0, 'text': '', 'links': [],
                     'hidden': hidden, 'in_section': self.section_depth is not None}
@@ -135,10 +143,17 @@ class _Reader(HTMLParser):
         if tag in ('h2', 'h3') and self.section_depth is None:
             self._in_title, self._title = True, ''
             self._title_depth = len(self.stack)
+            self._title_core = []
+        elif self._in_title and core:
+            self._title_core.append(tag)        # 제목 안 숨긴 요소 — 제목이 맞으면 닫힐 때 적는다
         if tag == 'a' and item is not None and not hidden:
             item['links'].append(a.get('href') or '')
+        if core and (item is not None or self.section_depth is not None):
+            self.core_hidden.append(tag)
         if tag not in ('br', 'img', 'hr', 'meta', 'link', 'input'):
             self.stack.append((tag, hidden, skip, item))
+            # 위 목록(옛 읽기용)에 없는 빈 요소(wbr·source 등, common.hidden.VOID)는 아무것도 감싸지 않는다
+            self._core.append(core_up if tag in VOID else core)
 
     def handle_endtag(self, tag):
         idx = None
@@ -152,16 +167,22 @@ class _Reader(HTMLParser):
                 # 구간은 **제목을 담은 요소**부터 그 요소가 닫힐 때까지다.
                 # 제목 자신의 깊이를 잡으면 바로 다음 줄에서 지워진다.
                 self.section_depth = max(self._title_depth - 1, 0)
+                if idx is not None and self._core[idx]:
+                    self.core_hidden.append(tag)
+                self.core_hidden += self._title_core
             self._title = ''
         if idx is None:
             return
         if self.section_depth is not None and idx <= self.section_depth:
             self.section_depth = None
         del self.stack[idx:]
+        del self._core[idx:]
 
     def handle_data(self, data):
         if self._in_title:
             self._title += data
+            if data.strip() and self._core and self._core[-1]:
+                self._title_core.append('#text')
         text = re.sub(r'\s+', '', data)
         if not text:
             return
@@ -169,6 +190,8 @@ class _Reader(HTMLParser):
         if top is None:
             return
         _, hidden, skip, item = top
+        if self._core[-1] and (item is not None or self.section_depth is not None):
+            self.core_hidden.append('#text')
         if hidden or skip:
             return
         if item is not None:
@@ -223,6 +246,10 @@ def check(html, collected, report_date=None, categories=DIGEST_CATEGORIES, title
     if hidden:
         v.append(f'숨겨진 뉴스 블록 {len(hidden)}개 — 독자가 보지 못하는 항목은 '
                  f'실은 것으로 치지 않는다')
+
+    if doc.core_hidden:
+        v.append(f'「{title}」 절이나 뉴스 블록 안에 숨긴 요소가 있다(<{doc.core_hidden[0]}> 등 '
+                 f'{len(doc.core_hidden)}곳) — 독자가 보지 못하는 글·링크는 싣지 않는다{unsure_note(html)}')
 
     visible = [it for it in doc.items if not it['hidden']]
     unmarked = sum(1 for it in visible if not it['guid'])

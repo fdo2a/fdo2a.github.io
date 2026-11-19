@@ -16,6 +16,7 @@ from html.parser import HTMLParser
 from japan.news import DIGEST_CATEGORIES, LABELS, PER_CATEGORY, same_event
 from japan.render import NEWS_TITLE, ORDER, SECTIONS
 from us import news_gate
+from common.hidden import VOID, is_hidden, unsure_note
 from us.news_summary import summary_problem
 from scripts.common import commentary
 
@@ -105,6 +106,10 @@ class _NewsNodes(HTMLParser):
         self.sections = []        # <section data-section> 의 이름, 문서 순서
         self.titles = []          # news 절 h2 의 **보이는** 글자
         self._h2 = None
+        # news 절 전체(제목·그 앞 요소·조상 포함)에서 공용 판정(common.hidden)으로 숨긴 요소. 위 숨김·제목은
+        # 옛 판정식 그대로 — 넓히면 숨긴 제목이 빠져 둘째 h2 가 제목이 된다(codex 설계 검토 2026-11-19 #6)
+        self.core_hidden = []
+        self._core = []
 
     def handle_starttag(self, tag, attrs):
         a = {k.lower(): (v or '') for k, v in attrs}
@@ -115,14 +120,19 @@ class _NewsNodes(HTMLParser):
             section = a['data-section']
             self.sections.append(section)
         hidden = top[2] or news_gate._is_hidden(a)
+        core_up = self._core[-1] if self._core else False
+        core = core_up or is_hidden(attrs)
         item = top[3]
         if item is None and news_gate._is_item(a):
             item = {'guid': a.get('data-news') or None, 'section': section, 'hidden': hidden}
             self.items.append(item)
         if tag == 'h2' and section == 'news':
             self._h2 = []
+        if core and (section == 'news' or item is not None):
+            self.core_hidden.append(tag)
         if tag not in ('br', 'img', 'hr', 'meta', 'link', 'input', 'wbr', 'source'):
             self.stack.append((tag, section, hidden, item))
+            self._core.append(core_up if tag in VOID else core)   # 빈 요소는 아무것도 감싸지 않는다
 
     def handle_endtag(self, tag):
         if tag == 'h2' and self._h2 is not None:
@@ -131,6 +141,7 @@ class _NewsNodes(HTMLParser):
         for i in range(len(self.stack) - 1, -1, -1):
             if self.stack[i][0] == tag:
                 del self.stack[i:]
+                del self._core[i:]
                 break
 
     def handle_data(self, data):
@@ -147,6 +158,13 @@ def _news_nodes(html):
     except Exception:
         pass
     return r
+
+
+def hidden_news_violation(nodes, html=''):
+    if not nodes.core_hidden:
+        return []
+    return [f'news 절 안(제목·조상 포함)에 숨긴 요소가 있다(<{nodes.core_hidden[0]}> 등 {len(nodes.core_hidden)}곳) '
+            f'— 독자가 보지 못하는 제목·기사는 싣지 않는다{unsure_note(html)}']
 
 
 def check_news(html, secs, names, digest):
@@ -169,6 +187,7 @@ def check_news(html, secs, names, digest):
         if usable:
             v.append(f'data-section="news" 절이 없다 — 이번 주 뉴스 후보 {len(usable)}건')
         return v
+    v += hidden_news_violation(nodes, html)
     visible = [t for t in nodes.titles if t]
     if not visible or visible[0] != NEWS_TITLE:
         v.append(f'news 절의 제목은 보이는 <h2>「{NEWS_TITLE}」 이다')

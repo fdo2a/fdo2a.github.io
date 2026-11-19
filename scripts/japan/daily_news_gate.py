@@ -22,6 +22,7 @@ def check(html, collected, session):
     if nodes.sections.count('news') > 1:
         v.append('news 절이 둘 이상이다')
     if 'news' in nodes.sections:
+        v += JG.hidden_news_violation(nodes, html)
         titles = [t for t in nodes.titles if t]
         if not titles or titles[0] != TITLE:
             v.append(f'news 절의 제목은 보이는 <h2>「{TITLE}」 이다')

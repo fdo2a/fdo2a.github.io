@@ -15,6 +15,8 @@ Pure — 네트워크 없음.
 """
 import re
 
+from .hidden import fragment_hidden
+
 THRESHOLD_PCT = 5.0
 TOP_CONTRIB = 2
 MAX_GROUPS = 5
@@ -125,11 +127,17 @@ def check(html, movers, report_date):
     if not movers or not movers.get("groups") or movers.get("report_date") != report_date:
         return []
     visible = {}
-    for attrs, gid, inner in _MARKED.findall(_COMMENT.sub(' ', html or '')):
+    doc = _COMMENT.sub(' ', html or '')
+    v = []
+    for m in _MARKED.finditer(doc):
+        attrs, gid, inner = m.groups()
+        # 공용 판정(common.hidden) — 표식 문단 자신·그 안·그 조상. 아래 「보이는 문단」 고르기는 옛 판정식 그대로
+        hid = fragment_hidden(doc, m.start(), m.end())
+        if hid:
+            v.append(f'움직인 종목 {gid} 문단이나 그 안·바깥 요소가 숨겨져 있다({hid}) — 펼친 본문 문단으로 쓴다')
         if _HIDDEN.search(attrs):
             continue
         visible.setdefault(gid, []).append(_TAG.sub(' ', inner))
-    v = []
     for g in movers["groups"]:
         lead = g["members"][0]
         where = f'{g["id"]}({g.get("industry") or lead["name"]}, 대표 {lead["name"]})'

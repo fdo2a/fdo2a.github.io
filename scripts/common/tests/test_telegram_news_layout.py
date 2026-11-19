@@ -73,8 +73,15 @@ def test_post_without_the_section_passes_with_or_without_a_file():
 
 
 def test_visible_opacity_values_are_not_hidden():
-    for val in ('1', '.5', '0.01', '100%'):
+    for val in ('1', '.5', '0.1', '100%'):
         assert run(page(section(P_VIEW.replace('<p>', f'<p style="opacity:{val}">')))) == [], val
+
+
+def test_near_zero_opacity_is_hidden():
+    # 2026-11-19 공용 판정(common.hidden): 0.1 미만은 읽을 수 없다 — price_gate 가 이미 0.05 를 숨김으로 봤다.
+    # 예전 이 테스트는 0.01 을 「보인다」로 두었다.
+    for val in ('0.01', '0.09', '5%'):
+        assert run(page(section(P_VIEW.replace('<p>', f'<p style="opacity:{val}">')))), val
 
 
 def test_attributes_added_by_the_typesetter_are_fine():
