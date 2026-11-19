@@ -1,6 +1,6 @@
 {
   "report_date": "2026-11-19",
-  "generated": "2026-11-20 07:41 KST",
+  "generated": "2026-11-20 08:17 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
@@ -114,7 +114,7 @@
         "level": 5.401,
         "bp": -1.1,
         "date": "2026-11-19",
-        "source": "Yahoo"
+        "source": "Naver"
       }
     }
   ],
