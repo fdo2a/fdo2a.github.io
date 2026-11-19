@@ -195,13 +195,13 @@ def quantities(text, terms=()):
         quantum = 10 ** -_decimals(num) * scale_last
         # 부호 — 바로 앞 글자, 그 앞이 숫자·글자가 아닐 때만(「3-6개월」은 범위)
         st, sign = a, ''
-        if a > 0 and t[a - 1] in _SIGN and (a < 2 or not (t[a - 2].isalnum())):
+        if a > 0 and t[a - 1] in _SIGN and _sign_ok(t, a - 1):
             sign = '+' if t[a - 1] == '+' else '-'
             st = a - 1
         dollar = False
         if st > 0 and t[st - 1] == '$':
             dollar, st = True, st - 1
-            if st > 0 and t[st - 1] in _SIGN and (st < 2 or not t[st - 2].isalnum()) and not sign:
+            if st > 0 and t[st - 1] in _SIGN and _sign_ok(t, st - 1) and not sign:
                 sign = '+' if t[st - 1] == '+' else '-'
                 st -= 1
         unit = ''
@@ -226,6 +226,17 @@ def quantities(text, terms=()):
         if _RANGE.fullmatch(t[p.end:n.start] or 'x'):
             p.unit, p.unit_inherited = n.unit, True
     return out
+
+
+def _sign_ok(t, i):
+    """t[i] 의 부호 글자가 부호인가 — `us/number_audit._TOK` 와 같은 경계: 앞이 ASCII 글자·숫자·밑줄이거나 「숫자.」「숫자,」
+    이면 부호가 아니다(「3-6개월」은 범위). **한글 뒤는 부호다**(「나스닥-0.42%」 — 화면은 음수다)."""
+    if i == 0:
+        return True
+    p = t[i - 1]
+    if p.isascii() and (p.isalnum() or p == '_'):
+        return False
+    return not (p in '.,' and i >= 2 and t[i - 2].isdigit())
 
 
 def _ko_scale(word):
@@ -409,9 +420,12 @@ def sentences(text):
 
 
 def mask_sentence(text, a, b, qs):
-    """문장 글에서 수량 자리를 #로 — 값만 고친 문장을 같은 문장으로 알아본다."""
+    """문장 글에서 **값 수량** 자리를 #로 — 값만 고친 문장을 같은 문장으로 알아본다. 날짜·이름 같은 X-코드 글자는
+    그대로 둔다 — 가리면 「S&P 500은 5%」와 「러셀 2000은 5%」가 같은 문장이 된다(codex 리뷰 전 자체 점검)."""
     parts, pos = [], a
     for q in qs:
+        if q.code:
+            continue
         parts.append(text[pos:q.start])
         parts.append('#')
         pos = q.end

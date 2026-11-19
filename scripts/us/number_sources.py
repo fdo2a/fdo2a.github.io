@@ -177,8 +177,11 @@ class Classifier:
         for it in items:
             if it.cls not in ('unknown', 'excluded') and not it.q.code:
                 shown.setdefault(it.q.raw.strip(), it.cls)
+        # 독립 재집계(설계 §2.1 불변식) — 수량 문법과 따로, 보이는 글의 숫자열을 다시 센다. 어긋나면 검사기 결함(exit 2)
+        self.run_count = sum(len(S.runs(b.text)) for b, _ in per_block)
         for where, text in doc.extra:
             text = S.norm(text)
+            self.run_count += len(S.runs(text))
             qs = S.quantities(text, self.inp.terms)
             sents = S.sentences(text)
             for q in qs:
@@ -230,6 +233,13 @@ class Classifier:
             self.detail['excluded_code'] += 1
             return 'excluded', 'code'
         st = stacks[0] if stacks else []
+        # 상속 자리(텔레그램·요약 문단·블록 제목)는 수량의 글자 전부가 같은 조상 안일 때만 — 「…5</span>%」처럼 경계에
+        # 걸치면 표식 오류다(표식 경계 규칙과 같은 갈래)
+        for pred in (lambda n: 'data-tg' in n.attrs, lambda n: 'data-news' in n.attrs,
+                     lambda n: n.tag == 'p' and 'data-summary' in n.attrs,
+                     lambda n: n.tag == 'p' and 'news-head' in n.attrs.get('class', '').split()):
+            if len({id(_anc(x, pred)) for x in stacks}) > 1:
+                return 'unknown', '표식 오류'
         tg = _anc(st, lambda n: 'data-tg' in n.attrs)
         if tg is not None:
             return self._match_list(self.inp.telegram.get(_attr(tg, 'data-tg')), q, 'telegram')
@@ -393,6 +403,8 @@ def result(inp, html, first_html=None):
     """게이트 결과(사전) — `sources` 칸. InvariantError·InputError 는 그대로 올린다."""
     c, items = classify(inp, html)
     q, r = S.tally(items)
+    if r['total'] != c.run_count:
+        raise S.InvariantError(f'숫자열 {c.run_count}개 중 {r["total"]}개만 수량에 들었다')
     unknown = [it for it in items if it.cls == 'unknown']
     by = {}
     for it in unknown:

@@ -173,10 +173,10 @@ def test_news_post_before_start_is_not_a_target(tmp_path, monkeypatch):
     assert V.target_of('news/2026-11-09.html') is None and V.target_of('news/2026-11-10.html') == ('us-news', '2026-11-10')
 
 
-def test_placeholder_effective_keeps_old_news_quiet():
-    # 자리표시 상수가 그대로면 어떤 뉴스 글도 대상이 아니다(병합 뒤 첫 발행일로 바꾼다)
-    assert numsrc.EFFECTIVE == '2099-12-31'
-    assert V.target_of('news/2026-11-18.html') is None
+def test_news_targets_start_at_numsrc_effective(monkeypatch):
+    # 뉴스 글 기록·알림은 숫자 출처 검사 적용일(자리표시 상수 — 병합 뒤 첫 발행일로 바꾼다)부터
+    monkeypatch.setattr(numsrc, 'EFFECTIVE', '2026-11-19')
+    assert V.target_of('news/2026-11-18.html') is None and V.target_of('news/2026-11-19.html') == ('us-news', '2026-11-19')
     assert V.target_of('posts/2026-11-18.html') == ('us', '2026-11-18')
 
 

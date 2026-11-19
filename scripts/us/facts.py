@@ -373,9 +373,9 @@ def _mm(keys, parents, data):
 def _fb(keys, parents, data):
     k = tuple(keys)
     rd = data.get('report_date')
-    if len(k) == 2 and k[0] == 'units':
+    if len(k) == 3 and k[0] == 'units' and k[1] == '[]':
         u = parents[1] if len(parents) > 1 else {}
-        f = k[1]
+        f = k[2]
         if f in ('ret_1m', 'ret_3m', 'ret_6m', 'ret_12m', 'rel_3m', 'mom_12_1', 'drawdown_52w', 'rel_3m_5d'):
             return PCT, True, ('fb', 'units', f), u.get('id', ''), f, 1.0, {}, u.get('as_of') or rd
         if f in ('vol_60', 'var_1d_90', 'var_1d_95'):

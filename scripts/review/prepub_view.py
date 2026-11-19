@@ -1060,7 +1060,10 @@ def digest_lines(v, who=MAC):
         u = unverified_numbers(v)
         if rec.get('numbers') and v.get('market') == 'kr':
             bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤
-        if not rec.get('numbers'):
+        if rec.get('sources'):
+            c = rec['sources']['counts']
+            bits.append(f'숫자 {c["total"]}개 중 확인 불가 {c["unknown"]}개(숫자 출처 검사)')
+        elif not rec.get('numbers'):
             bits.append(f'표 숫자 대조 없음({KR_NO_NUMBERS[_kr_no_numbers(rec)][1]})' if v.get('market') == 'kr'
                         else '숫자 자동 대조 없음(기록에 숫자 대조 결과가 없어요)')
         elif u is None:

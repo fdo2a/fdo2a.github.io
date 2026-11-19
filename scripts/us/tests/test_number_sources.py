@@ -394,3 +394,116 @@ def test_cli_json_and_exit_codes(wd, tmp_path):
     p = _cli('--market', 'us', '--date', D, '--html', str(h), '--datadir', str(wd), '--repo', REPO, '--json',
              '--effective', '2026-01-01')
     assert p.returncode == 2
+
+
+# ── 자체 점검(구현 뒤) ──
+
+def test_sign_after_hangul_is_a_sign_like_old_tokenizer(wd):
+    q = [x for x in S.quantities('나스닥-0.42%') if not x.code][0]
+    assert q.sign == '-' and q.value == pytest.approx(-0.42)
+    # +0.42 칸에 화면상 음수를 달면 자료와 다름
+    assert one(wd, '<p>나스닥<span data-ref="md:indices.Nasdaq.pct">-0.42%</span></p>') == ('unknown', '자료와 다름')
+    assert one(wd, '<p>나스닥<span data-ref="md:indices.Nasdaq.pct">+0.42%</span></p>')[0] == 'data'
+    # 음수 칸에 화면상 양수 + |abs 는 부호가 인쇄됐으므로 다름
+    assert one(wd, '<p>지수<span data-ref="md:indices.SP500.pct|abs">+0.23%</span></p>') == ('unknown', '자료와 다름')
+    assert [x.sign for x in S.quantities('3-6개월')] == ['', '']
+    assert [x.sign for x in S.quantities('A-1')] == ['']
+
+
+def test_run_recount_catches_a_dropped_run(wd, monkeypatch):
+    real = S.quantities
+
+    def drop(text, terms=()):
+        qs = real(text, terms)
+        return qs[1:] if len(qs) > 1 else qs
+    monkeypatch.setattr(S, 'quantities', drop)
+    with pytest.raises(S.InvariantError):
+        run(wd, '<p>0.3% 올랐고 0.4% 내렸다.</p>')
+
+
+def test_history_keeps_names_literal(wd):
+    h = hist(wd, '<p>S&amp;P 500은 5% 내렸다.</p>', '<p>러셀 2000은 <span data-ref="md:indices.SP500.pct|abs">5%</span> 내렸다.</p>')
+    assert h['gone'] == 1 and h['fixed'] == 0
+
+
+def test_inheritance_boundary_is_marker_error(wd):
+    (wd / 'telegram.json').write_text(json.dumps({'items': [{'id': 'ch/1', 'summary_ko': '5%에 이른다.'}]}), encoding='utf-8')
+    AN.write_day(AN.numbers_path(str(wd), 'telegram', D), D, [('ch/1', '5%에 이른다.', '', '5% 전망')])
+    assert one(wd, '<p><span data-tg="ch/1">금리는 5</span>%에 이른다.</p>') == ('unknown', '표식 오류')
+
+
+def _fixture_wd(tmp_path):
+    import shutil
+    d = tmp_path / 'fx'
+    d.mkdir()
+    for n in os.listdir(FIX):
+        if n.endswith('.json'):
+            shutil.copy(os.path.join(FIX, n), d / n)
+    return d
+
+
+@pytest.mark.parametrize('ref', [
+    'fb:units[semis].ret_3m', 'fb:risk.vix.level', 'fb:liquidity.net.level_bn',
+    'md:indices.SP500.pct', 'md:yields.10Y.level', 'md:sectors.Energy.pct', 'md:spread_2s10s_bp',
+])
+def test_each_schema_branch_resolves_real_files(tmp_path, ref):
+    from us import facts as FA
+    d = _fixture_wd(tmp_path)
+    md = json.load(open(d / 'market_data.json'))
+    b = FA.Book(str(d), md['report_date'], [])
+    f = b.resolve(ref)
+    assert f.status in ('current', 'stale') and f.units, (ref, f)
+
+
+def test_macro_metrics_branch(wd):
+    # 11/05 고정 자료는 book_state·units 이전 꼴이라 무효·칸 없음이 맞다 — 지금 꼴(MM)로 본다
+    assert one(wd, '<p>청구는 <span data-ref="mm:indicators[Initial Jobless Claims].actual">20만 건</span>이다.</p>')[0] == 'data'
+    assert one(wd, '<p>점수 <span data-ref="mm:growth_score">0.225</span></p>')[0] == 'data'
+
+
+def test_old_macro_metrics_shape_is_not_a_cell(tmp_path):
+    from us import facts as FA
+    d = _fixture_wd(tmp_path)
+    b = FA.Book(str(d), '2026-11-05', [])
+    assert b.resolve('mm:growth_score').status == 'invalid'          # book_state 가 없다
+    with pytest.raises(FA.Miss):
+        b.resolve('mm:indicators[Initial Jobless Claims].actual')     # units 가 없다
+
+
+def test_auction_branch(tmp_path):
+    from us import facts as FA
+    au = {'ok': True, 'complete': True, 'report_date': D,
+          'today': [{'date': D, 'key': 'nominal-20y', 'bid_to_cover': 2.63, 'indirect_pct': 60.2, 'offering_amt': 1.6e10,
+                     'avg6': {'bid_to_cover': 2.63}}]}
+    (tmp_path / 'auctions.json').write_text(json.dumps(au), encoding='utf-8')
+    b = FA.Book(str(tmp_path), D, [])
+    assert b.resolve('au:today[nominal-20y].bid_to_cover').status == 'current'
+    assert b.resolve('au:today[nominal-20y].avg6.bid_to_cover').units == FA.RATIO
+    f = b.resolve('au:today[nominal-20y].offering_amt')
+    q = [x for x in S.quantities('160억 달러') if not x.code][0]
+    assert U._shown_ok(q, f, set())
+    (tmp_path / 'auctions.json').write_text(json.dumps(dict(au, complete=False)), encoding='utf-8')
+    assert FA.Book(str(tmp_path), D, []).resolve('au:today[nominal-20y].bid_to_cover').status == 'invalid'
+
+
+def test_markers_survive_publish_transforms(tmp_path):
+    """발행 경로(apply_readability → apply_colors)를 지나도 표식이 남고 같은 칸으로 분류된다(설계 §8.5)."""
+    html, _ = _fix()
+    d = _fixture_wd(tmp_path)
+    md = json.load(open(d / 'market_data.json'))
+    rd = md['report_date']
+    want = md['indices']['S&P 500']['pct']
+    shown = f'{want:+.2f}%'
+    p = tmp_path / f'{rd}.html'
+    body = f'<p>지수는 <span data-ref="md:indices.SP500.pct">{shown}</span> 움직였다.</p>'
+    p.write_text(html.replace('</main>', body + '</main>', 1) if '</main>' in html else html.replace('</body>', body + '</body>'),
+                 encoding='utf-8')
+    for tool in ('apply_readability.py', 'apply_colors.py'):
+        r = subprocess.run([sys.executable, os.path.join(SCRIPTS, tool), str(p)], capture_output=True, text=True)
+        assert r.returncode in (0, 1), r.stderr
+    out = p.read_text(encoding='utf-8')
+    assert f'data-ref="md:indices.SP500.pct">{shown}</span>' in out
+    inp = U.Inputs('us', rd, str(d), REPO, ledger=[])
+    items_ = U.classify(inp, out)[1]
+    got = [i for i in items_ if i.why == 'md:indices.SP500.pct']
+    assert len(got) == 1 and got[0].cls == 'data'

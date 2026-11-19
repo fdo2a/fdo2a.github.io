@@ -314,7 +314,8 @@ def main(argv=None):
                         'channels_failed': sorted(c for c, s in chans.items() if s['status'] == 'failed'),
                         'holes': sorted(c for c, s in chans.items() if s.get('hole'))}
     _save(path, payload)
-    write_numbers(a.datadir, a.date, items, bodies)
+    if a.market == 'us':                      # 숫자 출처 검사는 US 루틴 1차(2026-11-20) — KR 은 2차에서
+        write_numbers(a.datadir, a.date, items, bodies)
     print(f'{path} — 후보 {len(cands)} → {len(items)}건, 요약 {done} 실패 {failed}, '
           f'실패 채널 {payload["stats"]["channels_failed"] or "없음"}')
     return 1 if payload['stats']['channels_failed'] or (items and not done) else 0
