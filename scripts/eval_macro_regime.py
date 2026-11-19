@@ -56,6 +56,8 @@ def main():
         print(f'FATAL: macro.json is invalid: {e}', file=sys.stderr)
         sys.exit(1)
 
+    # 이 평가가 어느 수집 실행의 것인가 — 수익률만 고치는 재실행이 다른 실행의 평가를 얼리지 않게.
+    ev['collection_run'] = market.get('collection_run')
     with open(os.path.join(args.datadir, 'macro_eval.json'), 'w', encoding='utf-8') as fh:
         json.dump(ev, fh, indent=2, ensure_ascii=False)
 
