@@ -517,6 +517,16 @@ HINT_GATES = frozenset({'check_style', 'check_readability'})
 CHECK, REVIEW, NOTE = '확인 필요', '검토 권고', '참고'
 _TAGS = ((CHECK, '확인'), (REVIEW, '검토'), (NOTE, '참고'))
 _NORMAL = frozenset({'pass', 'pass_with_warnings', 'pass_with_gaps'})
+_V2_VERDICTS = frozenset({'verified', 'conditional', 'incomplete', 'failed', 'na'})
+
+
+def _verdict_ko(rec):
+    """기록 판정의 한국어 — 2판의 판정 이름은 2판 기록에서만 읽는다. 1판 기록에 그 값이 있으면 1a 전처럼 「모르는 판정」
+    (codex 구현 검토 2회차 C4 — 공용 표에 2판 값이 들어와 손상된 1판 기록이 「검증됨」으로 보였다)."""
+    st = rec.get('status')
+    if st in _V2_VERDICTS and not rec.get('v2'):
+        return '모르는 판정'
+    return STATUS.get(st, '모르는 판정')
 SHOW_LEN = 160            # 알림 한 이유의 상한 — 넘으면 문장 끝에서 끊는다(중간 자르기 없음)
 LOOK_ITEMS = 8
 
@@ -771,7 +781,7 @@ def status_lines(v, who=MAC):
         if not rec['publish_ok']:
             bits.append('기록상 발행 불가')
         if rec['status'] not in _NORMAL and not _ref_only(rec):
-            bits.append(f'기록 판정 {STATUS.get(rec["status"], "모르는 판정")}')
+            bits.append(f'기록 판정 {_verdict_ko(rec)}')
     elif v.get('recorded') is not None:
         out.append(f'기록의 요약을 읽지 못했어요 — {rec.get("unreadable_why") or "이유를 몰라요"}. 「통과」로 보지 않아요')
     if v.get('recorded') is None:
@@ -1019,7 +1029,7 @@ def digest_lines(v, who=MAC):
     if bad:
         out.append('   - 즉시 확인: ' + ', '.join(bad))
     if rec.get('readable'):
-        bits = [f'판정 {STATUS.get(rec["status"], "모르는 판정")}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
+        bits = [f'판정 {_verdict_ko(rec)}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
             bits.append('실행 안 함·일부만 ' + ', '.join(_disp(x, rec) for x in (rec['not_run'] + rec['partial'])[:4]))
         if rec.get('na'):

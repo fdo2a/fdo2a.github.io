@@ -576,6 +576,21 @@ def _lacking_why(vals, tf, blanks, unclear=()):
     return {k: _month_state(vals, blanks, m, unclear) for k, m in by.items()}
 
 
+def _previous_lacking(vals, tf, blanks, unclear=()):
+    """직전 변환값을 만드는 데 필요한 달 가운데 원천에 없는 것 → `{'YYYY-MM': 상태}`. 최신 달이 변환되지 않는 경우나
+    level 은 빈 사전(이 함수의 몫이 아니다)."""
+    from us.macro_metrics import _month, transform_pairs
+    if tf == 'level' or not vals:
+        return {}
+    pairs = transform_pairs(vals, tf)
+    if not pairs or pairs[-1][0] != vals[-1][0]:
+        return {}
+    have = {_month(d) for d, _ in vals}
+    last = _month(vals[-1][0])
+    need = {'yoy_pct': [last - 1, last - 13], 'mom_pct': [last - 1, last - 2], 'mom_diff': [last - 1, last - 2]}[tf]
+    return {_ym(m): _month_state(vals, blanks, m, unclear) for m in need if m not in have}
+
+
 def _previous_why(vals, tf, blanks, unclear=()):
     """직전 변환값을 만들지 못한 까닭 — 그것을 만드는 데 필요한 달 가운데 원천에 없는 것들의 상태(여럿이면 보수적으로).
     필요한 달이 다 있는데도 못 만들었으면(값 0 등) unknown."""
@@ -631,6 +646,14 @@ def collect_econ(reasons=None, refs=None):
             refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7],
                           'lacking': _lacking(vals, tf),
                           'lacking_why': _lacking_why(vals, tf, blanks, fred_unclear(sid))}
+            if not refs[name]['lacking']:
+                # 1a 를 켜기 전에만 생기는 경우(2026-11-20): 최신 달은 변환되는데 **직전 변환값**을 만들 달이 없어 1a 전처럼
+                # 행을 뺐다. 그 까닭을 「최신 달의 비교 달」로 찾으면 비어 「상태 확인 불가」로 읽힌다 — 직전 값을 만드는
+                # 데 없는 달과 그 상태를 적는다(산출 범위 문장 `coverage_ko` 가 이 값으로 쓰인다).
+                prev_lack = _previous_lacking(vals, tf, blanks, fred_unclear(sid))
+                if prev_lack:
+                    refs[name]['lacking'] = sorted(prev_lack)
+                    refs[name]['lacking_why'] = prev_lack
             continue
         actual, previous = pair
         row = {

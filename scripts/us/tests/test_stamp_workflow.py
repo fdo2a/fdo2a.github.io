@@ -42,7 +42,9 @@ def test_workflow_wires_begin_steps_and_stamp(market):
     assert steps[begin].get('id') == 'stamp_begin' and steps[stamp].get('id') == 'stamp'
     last = steps[-1]
     assert "steps.stamp.outcome == 'failure'" in last['if'] and "steps.stamp_begin.outcome == 'failure'" in last['if']
-    assert 'always()' in last['if'] and 'exit 1' in last['run'] and not last.get('continue-on-error')
+    # 실패로 끝내는 것은 1a 를 켠 뒤다 — 그 전에는 경고만(루틴이 수집 실행의 성공 여부를 본다, 2026-11-20)
+    assert 'always()' in last['if'] and 'sys.exit(1 if enforcing() else 0)' in last['run'] \
+        and not last.get('continue-on-error')
 
 
 @pytest.mark.parametrize('market', ['us', 'kr'])

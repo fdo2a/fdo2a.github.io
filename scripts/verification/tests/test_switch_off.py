@@ -175,3 +175,36 @@ def test_a_v1_record_is_not_read_with_v2_meanings():
     assert V._kr_no_numbers({'numbers_gate': 'na', 'v2': False}) == 'corrupt'
     assert V._kr_no_numbers({'numbers_gate': 'na', 'v2': True}) == 'na'
     assert V._kr_no_numbers({'numbers_gate': 'not_run'}) == 'not_run'
+
+
+def test_a_v1_record_with_a_v2_verdict_name_shows_as_unknown(tmp_path):
+    """codex 2회차 C4 — 1판 기록의 `summary.status` 가 2판 이름이면 1a 전처럼 「모르는 판정」으로 보인다."""
+    from review import prepub_view as V
+    from review.tests import prepub_fixture as F
+    repo = F.init(tmp_path)
+    F.publish(repo, workspace=False, summ=F.summary(status='verified'))
+    v = V.view(str(repo), 'HEAD', 'us', '2026-11-09')
+    assert v['recorded']['v2'] is False
+    text = V.render_publish(v, who=V.GITHUB)
+    assert '기록 판정 모르는 판정' in text and '검증됨' not in text
+    assert '판정 모르는 판정' in '\n'.join(V.digest_lines(v))
+
+
+def test_a_dropped_row_says_which_month_is_missing_while_off(monkeypatch):
+    """꺼진 동안 직전 값이 없어 뺀 지표 — 산출 범위 문장이 「상태 확인 불가」가 아니라 없는 달과 그 상태를 말한다
+    (12/10 무렵 11월 CPI 가 나오면 생긴다: 2026-11 전년 대비는 되는데 2026-10 전년 대비를 만들 2025-10 이 미발표)."""
+    import collect_market_data as cmd
+    vals = [(f'{y}-{m:02d}-01', 100.0 + i) for i, (y, m) in enumerate(
+        [(2025, m) for m in range(8, 13) if m != 10] + [(2026, m) for m in range(1, 12)])]
+    assert cmd._econ_pair(vals, 'yoy_pct') is None                      # 1a 전처럼 행을 뺀다
+    got = cmd._previous_lacking(vals, 'yoy_pct', ['2025-10-01'])
+    assert got == {'2025-10': 'not_published'}
+    monkeypatch.setattr(cmd, 'ECON', [('Inflation', 'CPI YoY', 'CPIAUCSL', 'yoy_pct', '%')])
+    monkeypatch.setattr(cmd, 'fred_series', lambda *a, **k: vals, raising=False)
+    monkeypatch.setattr(cmd, 'fred_blanks', lambda sid: ['2025-10-01'])
+    monkeypatch.setattr(cmd, 'fred_unclear', lambda sid: [])
+    monkeypatch.setattr(cmd.time, 'sleep', lambda s: None)
+    reasons, refs = {}, {}
+    cmd.collect_econ(reasons, refs)
+    assert reasons == {'CPI YoY': 'no_value'}
+    assert refs['CPI YoY']['lacking'] == ['2025-10'] and refs['CPI YoY']['lacking_why'] == {'2025-10': 'not_published'}

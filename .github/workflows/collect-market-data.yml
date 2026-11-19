@@ -406,4 +406,6 @@ jobs:
         if: always() && (steps.stamp.outcome == 'failure' || steps.stamp_begin.outcome == 'failure')
         run: |
           echo "::error::수집 상태 장부(data/_collect_status.json)를 쓰지 못했다 — begin=${{ steps.stamp_begin.outcome }} stamp=${{ steps.stamp.outcome }}"
-          exit 1
+          # 실행을 실패로 끝내는 것은 1a 를 켠 뒤다(2026-11-20) — 그 전에는 경고만 남긴다. 루틴이 수집 실행의 성공 여부를
+          # 본다(gh run watch --exit-status): 장부만 못 쓴 실행이 빨갛게 끝나면 발행 흐름이 1a 전과 달라진다.
+          PYTHONPATH=scripts python -c "import sys; from verification.inputs import enforcing; sys.exit(1 if enforcing() else 0)"
