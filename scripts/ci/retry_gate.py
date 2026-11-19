@@ -38,13 +38,14 @@ FIRE_HEADERS = {
     'Content-Type': 'application/json',
 }
 
-# 종류 → (쏠 루틴, 토큰 비밀값 이름). 일본 주간은 재시도 루틴 하나로 모은다 — MOF 본 루틴과 모델·도구·소스·Step 1·3 이
-# 글자까지 같고(11/19 list 대조), 알림 규칙은 시각(서울 21시)으로 정한다. 본 루틴은 끈다.
+# 종류 → (쏠 루틴, 토큰 비밀값 이름). 일본 주간은 재시도 루틴 하나로 모은다 — 옛 일요일 재시도(trig_01QoHr…)에 평일 재시도의
+# 지시문을 옮겨 쓴다. 평일 재시도(trig_019f…)·MOF 본 루틴(trig_01Vo5…)은 대화에서 만든 루틴이라 웹 화면에 없어 토큰을
+# 만들 수 없었다(11/19). 둘은 끈다. 알림 규칙은 시각(서울 21시)으로 정한다.
 ROUTINES = {
     'us': ('trig_01HteZubmVtg18xyKfKU5gGV', 'ROUTINE_FIRE_TOKEN_US'),
     'kr': ('trig_01NtKZrNrQj1veWCbuQhL4Eh', 'ROUTINE_FIRE_TOKEN_KR'),
     'jp_daily': ('trig_016v1gDVjFtuYP7KnTfXxudt', 'ROUTINE_FIRE_TOKEN_JP_DAILY'),
-    'japan': ('trig_019fRwbnTTb9a6pWg9DKUkxU', 'ROUTINE_FIRE_TOKEN_JAPAN'),
+    'japan': ('trig_01QoHrHqXPEy2m3eKdrsjpo2', 'ROUTINE_FIRE_TOKEN_JAPAN'),
     'weekly': ('trig_01KoxpP7cSdkWXyh36YzGYpe', 'ROUTINE_FIRE_TOKEN_WEEKLY'),
 }
 

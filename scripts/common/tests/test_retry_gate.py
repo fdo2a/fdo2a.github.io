@@ -95,7 +95,7 @@ def test_late_japan_tick_after_midnight_on_post_day_waits_for_main_slot():
 
 
 def test_sunday_japan_is_never_due():
-    """일요일 일본 재시도(trig_01QoHr…)를 끄는 근거 — 2026-2027 모든 일요일, 시각 4개, 달력 휴장 포함."""
+    """일요일에는 일본 주간 슬롯을 두지 않는 근거 — 2026-2027 모든 일요일, 시각 4개, 달력 휴장 포함."""
     import json as _json
     with open(os.path.join(ROOT, 'data', 'market_holidays.json'), encoding='utf-8') as fh:
         jp = tuple(_json.load(fh)['jp']['dates'])
