@@ -1,0 +1,33 @@
+{
+ "report_date": "2026-11-19",
+ "market": "jp",
+ "collected_utc": "2026-11-19T09:40:18+00:00",
+ "window": {
+  "floor": "2026-11-18T16:30:00+09:00",
+  "ceiling": "2026-11-19T16:30:00+09:00"
+ },
+ "channels": {
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "reached": true
+  }
+ },
+ "items": [],
+ "stats": {
+  "read": 49,
+  "outside": 9,
+  "chatter": 8,
+  "stale": 0,
+  "burst": 0,
+  "not_japan": 32,
+  "dup": 0,
+  "valve_dropped": 0,
+  "stale_dropped": 0,
+  "items": 0,
+  "summarized": 0,
+  "news_use": 0
+ },
+ "usable": true
+}
