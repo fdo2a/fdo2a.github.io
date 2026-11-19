@@ -92,15 +92,9 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Cache CJK font package
-        # apt 미러 이름 풀이가 끊겨 글꼴 설치에서 수집이 죽는다(2026-11-11 KR 두 실행) — 받은 .deb 를 보존한다
-        uses: actions/cache@v4
-        with:
-          path: ~/cjk-font-debs
-          key: cjk-font-${{ runner.os }}-v1
-
       - name: Install CJK font (for chart labels)
-        run: bash scripts/ci/install_cjk_font.sh ~/cjk-font-debs
+        # apt 미러 이름 풀이가 끊겨 여기서 수집이 죽었다(2026-11-11 KR 두 실행) — 3번까지 다시 해 본다
+        run: bash scripts/ci/install_cjk_font.sh
 
       - name: Install Python deps
         run: pip install --quiet yfinance pandas lxml matplotlib certifi 'curl_cffi>=0.15.0' pypdf

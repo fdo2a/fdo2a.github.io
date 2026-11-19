@@ -1008,7 +1008,8 @@ def test_cli_dry_run_smoke(repo, tmp_path):
                        cwd=repo, timeout=300)
     assert r.returncode == 0, r.stderr[-2000:]
     assert r.stdout.startswith('[검증 알림]')
-    assert 'US 일간' in r.stdout and 'KR 일간' in r.stdout
+    d = date.fromisoformat(day)
+    assert f'■ US 일간 {d.month}/{d.day:02d}' in r.stdout and f'■ KR 일간 {d.month}/{d.day:02d}' in r.stdout   # 두 글의 머리
     assert not os.path.exists(tmp_path / 'st.json')
     assert os.path.exists(os.path.join(repo, 'reviews', 'seen.json'))     # 만료 판정이 쓴 자리 = 작은 레포
 

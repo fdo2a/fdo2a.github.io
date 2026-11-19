@@ -1,5 +1,7 @@
 # 로컬 시험용 — `python3 -m pip install -r scripts/requirements-dev.txt` (site/ 에서).
 # CI 는 워크플로마다 필요한 것만 직접 깐다(여기를 읽지 않는다).
+# 시험 도구만 적는다 — 수집 코드가 쓰는 패키지(pandas·numpy·PyYAML 등)는 이미 깔려 있다고 본다.
+# 빈 가상 환경이라면 워크플로의 `pip install` 줄에 있는 것부터 깐다.
 #
 # 전체 시험(site/ 에서):  python3 -m pytest scripts
 # 병렬(코어 수만큼):      python3 -m pytest scripts -n auto
