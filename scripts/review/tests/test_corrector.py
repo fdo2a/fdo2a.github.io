@@ -454,3 +454,28 @@ def test_kr_numbers_gate_gets_the_post_date():
     assert args == ['--html', '/c/kr/posts/2026-11-16.html', '--datadir', '/e/kr/data', '--market', 'kr',
                     '--date', '2026-11-16']
     assert '--date' not in corrector._kr_datadir_args('fund', 'p', 'd', 'kr/posts/2026-11-16.html')
+
+
+def test_prompt_says_blob_is_verified_and_names_the_allowed_command_form(setup):
+    """10-23·10-29 KR: Claude 가 blob 을 다시 해시하려다(`git hash-object`·`python3 -c`) 거부당하고 커밋 없이 멈췄다.
+    러너가 이미 확인한 사실과 허용되는 명령 꼴을 알려 준다. 쓰기가 되는 `git hash-object` 는 열지 않는다."""
+    root, remote, item, exe = setup
+    _counting(exe, "assert 'already verified' in prompt and 'python3 -c' in prompt\n"
+                   "i = sys.argv.index('--allowedTools')\n"
+                   "assert 'Bash(git rev-parse *)' in sys.argv[i:]\n"
+                   "assert not any('hash-object' in a for a in sys.argv)\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+
+
+def test_no_commit_is_still_an_error(setup):
+    """명령이 거부돼 커밋 없이 끝나도 오류로 남는다 — 정정 완화가 실패를 숨기지 않는다."""
+    root, remote, item, exe = setup
+    exe.write_text("#!/usr/bin/env python3\nimport sys\nsys.stdin.read()\n"
+                   "print('I stopped: every git and python3 command was denied. None is a factual error.')\n")
+    exe.chmod(0o755)
+    base = git(root, 'rev-parse', 'HEAD')
+    out, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error == 'expected exactly one correction commit'
+    assert 'denied' in out
