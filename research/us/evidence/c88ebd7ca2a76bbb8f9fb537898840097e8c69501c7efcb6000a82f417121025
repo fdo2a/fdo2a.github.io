@@ -1,0 +1,85 @@
+{
+  "report_date": "2026-11-19",
+  "universe": "S&P 500 중 달러 거래대금 상위 60",
+  "threshold_pct": 5.0,
+  "groups": [
+    {
+      "id": "g1",
+      "industry": "Semiconductors",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Nvidia (NVDA)",
+          "change_pct": -3.3,
+          "close": 145.98,
+          "value": 46109911060.74
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -7.72,
+          "close": 489.19,
+          "value": 34653636169.28
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Interactive Media & Services",
+      "direction": "down",
+      "reasons": [
+        "지수 기여 하위"
+      ],
+      "members": [
+        {
+          "name": "Alphabet Inc. (Class A) (GOOGL)",
+          "change_pct": -3.46,
+          "close": 272.66,
+          "value": 13238853788.21
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Systems Software",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위",
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Palo Alto Networks (PANW)",
+          "change_pct": 6.42,
+          "close": 361.73,
+          "value": 6912475304.18
+        },
+        {
+          "name": "CrowdStrike (CRWD)",
+          "change_pct": 2.71,
+          "close": 243.46,
+          "value": 2813156761.96
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "industry": "Managed Health Care",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "UnitedHealth Group (UNH)",
+          "change_pct": -5.55,
+          "close": 330.48,
+          "value": 6547132227.09
+        }
+      ]
+    }
+  ]
+}
