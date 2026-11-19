@@ -1080,3 +1080,17 @@ def test_verifier_callback_cannot_edit_published_text():
     assert p['status'] == 'ok', p.get('reason')
     assert p['issues'][0]['issue_ko'] == '시위 규모' and p['pairs'][0]['why_ko'] != '바꿨다'
     assert seq.payloads[3][1]['result']['topic_ko'] == '프랑스 시위'      # 재검증에도 같은 제목
+
+
+def test_claude_error_keeps_the_cli_message():
+    """is_error 인데 subtype 이 success 면 이유가 「success」 한 낱말로만 남았다(2026-11-19 실측) — 이유와 진단에 무엇이 났는지 남긴다."""
+    class P:
+        def __init__(self, out, rc=0):
+            self.stdout, self.returncode = out, rc
+    out = json.dumps({'is_error': True, 'subtype': 'success', 'api_error_status': 429,
+                      'result': 'Claude AI usage limit reached|1763560800'})
+    diag = {}
+    with pytest.raises(Bld.ModelError) as e:
+        Bld.claude('p', {}, {}, 'opus', run=lambda *a, **k: P(out), diag=diag)
+    assert str(e.value) == 'is_error_429'
+    assert any('usage limit reached' in n for n in diag['notes'])
