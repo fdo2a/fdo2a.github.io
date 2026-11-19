@@ -6,11 +6,13 @@
   offline_trial.py sheets --out DIR [--artificial A.json]   사람 판정지 judge.html + key.json(눈가림)
   offline_trial.py score  --out DIR --answers answers.json  사람 판정 → 의미·가독성 숫자
 
-`run` 은 STEP 2.6 과 같은 순서를 글마다 돈다: 후보 → 작성자(`claude -p --model opus`, 시스템
-프롬프트 = 작성자 정의 파일, 도구 = 정의 머리말 그대로) → guard check(쓰기 단계 포함) → 검사자(정의
+`run` 은 STEP 2.6 과 같은 순서를 글마다 돈다: 후보 → 편집자(`claude -p --model opus`, 시스템
+프롬프트 = 운영과 같은 `narrow-editor.md`, 도구 = 정의 머리말 그대로. `--full-writer` 는 2026-11-19 전의
+작성자 정의 파일 — 비교 기준선, `--lean` 은 역할 한 줄) → guard check(쓰기 단계 포함) → 검사자(정의
 파일, 도구 없음) → apply → 필요하면 재검사 1회. 호출마다 `usage`(입력·캐시 생성·캐시 읽기·출력)와
 `total_cost_usd` 를 calls.jsonl 에 남긴다. 게이트 재실행·누출 검사·감사 업로드는 돌리지 않는다(토큰을
-쓰지 않는 결정적 단계).
+쓰지 않는 결정적 단계). 출력 폴더 하나는 편집자 하나(`mode.json`)에 묶인다 — 다른 편집자의 결과를 이어 쓰거나 한
+집계에 섞지 않는다.
 """
 
 import argparse
@@ -31,6 +33,9 @@ from close import flow, guard, locks, paths  # noqa: E402
 REPO = paths.REPO
 AGENTS = os.path.join(REPO, '.claude', 'agents')
 WRITER = {'us': 'brief-report-writer.md', 'kr': 'kr-report-writer.md'}
+EDITOR = 'narrow-editor.md'      # STYLE_CLOSE A 5 가 운영에서 부르는 정의(2026-11-19)
+MODES = ('narrow-editor', 'full-writer', 'lean')
+LEGACY_MODE = 'unknown (pre-mode.json)'
 CHECKER = 'close-meaning-checker.md'
 MODEL = os.environ.get('TRIAL_MODEL', 'opus')
 MIN_REAL = 40   # 실제 작성자 표본 반영 편집 최소(v4.2 F')
@@ -100,7 +105,38 @@ def _guard(*args):
     return lines[-1] if lines else 'close: error (exit %d)' % r.returncode
 
 
-def run_post(path, out, sandbox, lean=False):
+def editor_file(mode, market):
+    """편집자 호출의 시스템 프롬프트가 될 정의 파일 이름. lean 은 정의 파일을 쓰지 않는다(None)."""
+    return {'narrow-editor': EDITOR, 'full-writer': WRITER[market], 'lean': None}[mode]
+
+
+def recorded_mode(out):
+    """이 출력 폴더가 묶인 편집자. 폴더가 비었으면 None, 결과는 있는데 기록이 없으면 LEGACY_MODE."""
+    path = os.path.join(out, 'mode.json')
+    if os.path.exists(path):
+        try:
+            mode = json.load(open(path, encoding='utf-8')).get('mode')
+        except (OSError, ValueError, AttributeError):
+            mode = None
+        return mode if mode in MODES else LEGACY_MODE
+    if any(os.path.exists(os.path.join(out, n)) for n in ('posts.jsonl', 'calls.jsonl')):
+        return LEGACY_MODE
+    return None
+
+
+def bind_mode(out, mode):
+    """폴더를 편집자 하나에 묶는다 → 묶였으면 '', 못 묶으면 이유."""
+    have = recorded_mode(out)
+    if have is None:
+        with open(os.path.join(out, 'mode.json'), 'w', encoding='utf-8') as fh:
+            json.dump({'mode': mode}, fh)
+        return ''
+    if have != mode:
+        return '이 폴더의 결과는 편집자 %s 로 만든 것이다(요청 %s) — 새 폴더를 쓴다' % (have, mode)
+    return ''
+
+
+def run_post(path, out, sandbox, mode='narrow-editor'):
     market, date = market_of(path), date_of(path)
     key = '%s_%s' % (market, date)
     d = os.path.join(out, 'runs', key)
@@ -115,10 +151,11 @@ def run_post(path, out, sandbox, lean=False):
     if not cand['items']:
         rec['outcome'] = 'no_candidates'
         return rec
-    wsys, whead = _sysfile(out, WRITER[market])
-    if lean:            # 비교 변형 — 작성자 정의 대신 짧은 역할 한 줄(규칙은 프롬프트의 §13 그대로)
+    if mode == 'lean':  # 비교 변형 — 정의 파일 대신 짧은 역할 한 줄(규칙은 프롬프트의 §13 그대로)
         wsys, whead = os.path.join(out, 'sys_lean.md'), {'tools': ''}
         open(wsys, 'w', encoding='utf-8').write(LEAN_SYS)
+    else:
+        wsys, whead = _sysfile(out, editor_file(mode, market))
     csys, _ = _sysfile(out, CHECKER)
     rules = guard.closing_rules(os.path.join(AGENTS, guard.EXEMPLARS))
     wprompt = guard.writer_input(cand, rules)
@@ -183,6 +220,11 @@ def cmd_run(args):
     out = os.path.abspath(args.out)
     paths.check_out(out, close_dir=None)
     os.makedirs(out, exist_ok=True)
+    mode = 'lean' if args.lean else 'full-writer' if args.full_writer else 'narrow-editor'
+    why = bind_mode(out, mode)
+    if why:
+        print('trial: %s' % why, file=sys.stderr)
+        return 2
     sandbox = os.path.join(out, 'sandbox')
     os.makedirs(sandbox, exist_ok=True)
     done = os.path.join(out, 'posts.jsonl')
@@ -193,7 +235,7 @@ def cmd_run(args):
         if p in have:
             continue
         print('[trial] %s' % p, flush=True)
-        rec = run_post(p, out, sandbox, lean=args.lean)
+        rec = run_post(p, out, sandbox, mode)
         rec['at'] = datetime.datetime.now().isoformat(timespec='seconds')
         with open(done, 'a', encoding='utf-8') as fh:
             fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
@@ -254,9 +296,9 @@ def cmd_report(args):
     daily = {m: {'tokens': avg(v, 'tokens'), 'cost': avg(v, 'cost'), 'posts': len(v)} for m, v in mk.items()}
     daily['us+kr'] = {'tokens': daily['us']['tokens'] + daily['kr']['tokens'],
                       'cost': daily['us']['cost'] + daily['kr']['cost']}
-    rep = {'stats': stats, 'daily': daily, 'rows': rows}
+    rep = {'mode': recorded_mode(out), 'stats': stats, 'daily': daily, 'rows': rows}
     json.dump(rep, open(os.path.join(out, 'report.json'), 'w'), ensure_ascii=False, indent=1)
-    lines = ['# 오프라인 시험 집계', '', '| 글 | 결과 | 후보 | 작성자 편집 | 반영 | 호출 | 토큰 | USD |', '|---|---|---|---|---|---|---|---|']
+    lines = ['# 오프라인 시험 집계', '', '편집자: %s' % rep['mode'], '', '| 글 | 결과 | 후보 | 작성자 편집 | 반영 | 호출 | 토큰 | USD |', '|---|---|---|---|---|---|---|---|']
     for r in rows:
         lines.append('| %s | %s | %d | %d | %d | %d | %d | %.3f |' % (
             r['post'], r['outcome'], r['candidates'], r['writer_edits'], r['applied'], r['calls'], r['tokens'],
@@ -265,6 +307,7 @@ def cmd_report(args):
         daily['us']['tokens'], daily['us']['cost'], daily['kr']['tokens'], daily['kr']['cost'],
         daily['us+kr']['tokens'], daily['us+kr']['cost']), '', json.dumps(stats, ensure_ascii=False)]
     open(os.path.join(out, 'report.md'), 'w').write('\n'.join(lines) + '\n')
+    print('편집자: %s' % rep['mode'])
     print('\n'.join(lines[-3:]))
     return 0
 
@@ -420,7 +463,10 @@ def main(argv=None):
     p = sub.add_parser('run')
     p.add_argument('--out', required=True)
     p.add_argument('--posts', nargs='+', required=True)
-    p.add_argument('--lean', action='store_true', help='작성자 정의 대신 짧은 역할 프롬프트(비용 비교용)')
+    which = p.add_mutually_exclusive_group()
+    which.add_argument('--lean', action='store_true', help='정의 파일 대신 짧은 역할 프롬프트(비용 비교용)')
+    which.add_argument('--full-writer', action='store_true',
+                       help='운영의 narrow-editor 대신 작성자 정의 파일(2026-11-19 전 기준선)')
     p.set_defaults(fn=cmd_run)
     p = sub.add_parser('report')
     p.add_argument('--out', required=True)

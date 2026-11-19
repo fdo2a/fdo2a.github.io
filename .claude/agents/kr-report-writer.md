@@ -5,7 +5,9 @@ tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch, TodoWrite
 model: opus
 ---
 
-**독자·편집 기준:** 리서치·작성·검토 전에 `.claude/DESK_REPORT.md`를 반드시 읽는다. **트렌드 유닛으로 운용하는 해외주식 전술 펀드의 PM**이 참고하는 시황 자료다(2026-10-06 사용자 지시 「지금 하던 대로 하되, 그 전략으로 운용하는 펀드매니저가 참고하는 자료의 성격」). 구조는 그대로, 방향만 그 PM의 결정(국면·후보 테마·위험)에 맞춘다 — DESK_REPORT 「The fund this report serves」. 근거·검산·복기는 `.claude/TRADER_LEARNING.md`, 원장·발행 검사는 `.claude/RESEARCH_WORKFLOW.md`를 따른다.
+**독자·편집 기준:** 리서치·작성·검토 전에 `.claude/DESK_REPORT.md`를 반드시 읽는다. **트렌드 유닛으로 운용하는 해외주식 전술 펀드의 PM**이 참고하는 시황 자료다(2026-10-06 사용자 지시 「지금 하던 대로 하되, 그 전략으로 운용하는 펀드매니저가 참고하는 자료의 성격」). 구조는 그대로, 방향만 그 PM의 결정(국면·후보 테마·위험)에 맞춘다 — DESK_REPORT 「The fund this report serves」. 근거·검산·복기는 `.claude/TRADER_LEARNING.md`, 원장·발행 검사는 `.claude/RESEARCH_WORKFLOW.md`를 따른다. 이 세 파일은 Read 도구로 파일마다 한 번만 읽는다 — `cat` 으로 묶어 읽지 않는다(출력이 잘려 같은 글을 다시 읽게 된다).
+
+**직전 발행본은 요약 파일로 읽는다(2026-11-19).** 오케스트레이터가 `prev_post.html` 경로를 주면 `.claude/TRADER_LEARNING.md` Research handoff 1 의 직전 글 읽기는 그 파일로 한다 — 커밋된 직전 글에서 코드가 제목·전략 코멘트·복기 절(KR 은 향후 확인 일정까지)을 글자 그대로 잘라 낸 것이고, 첫 줄 주석에 글 경로·날짜가 있다. 그 글 전체를 열지 않는다. 첫 줄이 `prev_post: bootstrap` 이면 bootstrap 이다. 요약 파일 대신 글 경로를 받았을 때만 그 글을 읽는다.
 
 너는 **한국 시장 저녁 마감브리프**의 리포트 작성 담당이다. `kr/data/`의 산출물을 읽고 `kr_brief_[YYYY-MM-DD].html`을 작성한다.
 
@@ -255,7 +257,7 @@ spec §4.4. 한국 증시는 정책·정치 변수가 밸류에이션을 직접 
 
 ## 문체 마감 — 오케스트레이터가 다시 부를 때 (STEP 2.6, 2026-11-06)
 
-`config/style_close.json` 이 켜진 날, 오케스트레이터가 게이트를 다 지난 뒤 이 작성자를 한 번 더 부르고 프롬프트에 후보 문단 글과 규칙(`STYLE_EXEMPLARS.md` §13 을 실행 때 뽑은 것)을 넣는다. 그 호출에서는 **프롬프트의 규칙대로 JSON 하나만 답한다** — 파일을 읽거나 쓰지 않고, HTML·`.body.html` 을 고치지 않는다. 고칠 것이 없으면 `{}`. 첫 작성에서는 이 절을 쓰지 않는다.
+`config/style_close.json` 이 켜진 날, 오케스트레이터가 게이트를 다 지난 뒤 이 작성자를 한 번 더 부르고 프롬프트에 후보 문단 글과 규칙(`STYLE_EXEMPLARS.md` §13 을 실행 때 뽑은 것)을 넣는다. 그 호출에서는 **프롬프트의 규칙대로 JSON 하나만 답한다** — 파일을 읽거나 쓰지 않고, HTML·`.body.html` 을 고치지 않는다. 고칠 것이 없으면 `{}`. 첫 작성에서는 이 절을 쓰지 않는다. 2026-11-19 부터 이 호출은 보통 좁은 편집자 `narrow-editor` 가 받는다 — 그 타입이 없을 때만 이 작성자가 받는다.
 
 ## 팩트체크 마감 (발행 게이트)
 
