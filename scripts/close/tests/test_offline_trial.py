@@ -85,3 +85,45 @@ def test_run_uses_the_real_guard_cli(tmp_path, monkeypatch):
     assert '올랐고' in approved
     calls = [json.loads(l) for l in open(out / 'calls.jsonl')]
     assert [c['role'] for c in calls] == ['writer', 'checker']
+
+
+def _args(tmp_path, *extra):
+    out = tmp_path / 'trial'
+    out.mkdir(exist_ok=True)
+    return out, ['run', '--out', str(out), '--posts', 'posts/x.html', *extra]
+
+
+def test_default_mode_mirrors_production_editor(tmp_path, monkeypatch):
+    """운영은 A5 를 narrow-editor 로 부른다 — 시험이 옛 작성자를 재면 다른 프롬프트를 잰다."""
+    seen = []
+    monkeypatch.setattr(ot, 'run_post', lambda p, out, sb, mode: seen.append(mode) or
+                        {'post': p, 'outcome': 'no_candidates', 'candidates': 0})
+    out, argv = _args(tmp_path)
+    assert ot.main(argv) == 0
+    assert seen == ['narrow-editor']
+    assert json.loads((out / 'mode.json').read_text())['mode'] == 'narrow-editor'
+    assert ot.editor_file('narrow-editor', 'us') == 'narrow-editor.md'
+    assert ot.editor_file('full-writer', 'kr') == 'kr-report-writer.md'
+
+
+def test_one_directory_one_mode(tmp_path, monkeypatch):
+    monkeypatch.setattr(ot, 'run_post', lambda p, out, sb, mode: {'post': p, 'outcome': 'x', 'candidates': 0})
+    out, argv = _args(tmp_path)
+    assert ot.main(argv) == 0
+    assert ot.main(argv + ['--full-writer']) == 2          # 같은 폴더에 다른 편집자 결과를 섞지 않는다
+    assert ot.main(argv + ['--lean']) == 2
+    assert ot.main(argv) == 0
+
+
+def test_legacy_directory_without_mode_is_not_resumed(tmp_path, monkeypatch):
+    monkeypatch.setattr(ot, 'run_post', lambda p, out, sb, mode: {'post': p, 'outcome': 'x', 'candidates': 0})
+    out, argv = _args(tmp_path)
+    (out / 'calls.jsonl').write_text('{}\n')
+    assert ot.main(argv) == 2 and not (out / 'mode.json').exists()
+    assert ot.recorded_mode(str(out)) == 'unknown (pre-mode.json)'
+
+
+def test_lean_and_full_writer_are_exclusive(tmp_path):
+    out, argv = _args(tmp_path)
+    with pytest.raises(SystemExit):
+        ot.main(argv + ['--lean', '--full-writer'])
