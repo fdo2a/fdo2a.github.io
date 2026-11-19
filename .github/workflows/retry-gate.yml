@@ -3,6 +3,7 @@ name: Retry gate (routine fire on DUE)
 # 재시도 루틴의 판정(routine_due.py)을 여기서 돌리고, DUE 이고 그 세션 본 런 뒤일 때만 그 루틴의 API 트리거를 친다.
 # 판정이 DONE·BUSY·WAIT·SKIP 이면 클라우드 세션이 뜨지 않는다. 루틴 프롬프트의 Step 1 재판정은 그대로다.
 # 예약 문자열은 scripts/ci/retry_gate.py 의 SLOTS 와 글자까지 같아야 한다(시험). UTC — KST = UTC+9.
+# 두 줄이 같은 분에 맞지 않게 분을 달리 둔다(시험) — 실행은 github.event.schedule 한 줄만 본다.
 # 예약은 2~5시간 늦게 올 수 있다 — 늦은 틱이 본 런 전에 떨어지면 스크립트의 창이 막는다.
 # 설계: docs/superpowers/specs/2026-11-19-retry-gate.md
 on:
@@ -10,9 +11,9 @@ on:
     # US 20:30·KR 06:xx 는 루틴의 안전망 cron 이 제시각에 맡는다(세션 경계 직전의 마지막 기회).
     - cron: '30 0,2,5,8,11,14,17 * * 2-6'      # US 재시도 (화-토)
     - cron: '7 0,3,12,15,18,21 * * 1-6'        # KR 재시도 (월-토)
-    - cron: '7 12 * * 1-5'                     # 일본 일간 재시도 21:07 KST
+    - cron: '17 12 * * 1-5'                    # 일본 일간 재시도 21:17 KST
     - cron: '7 4,7,10,13 * * 1-5'              # 일본 주간 13·16·19·22 KST (13시 = MOF 게시일 본 런)
-    - cron: '7 9,12,15,18,21 * * 6'            # 주간 재시도 (토 18시 - 일 06시 KST)
+    - cron: '22 9,12,15,18,21 * * 6'           # 주간 재시도 (토 18시 - 일 06시 KST)
   workflow_dispatch:
     inputs:
       kinds:

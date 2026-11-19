@@ -477,3 +477,55 @@ def test_holidays_are_read_after_the_judge_fetched(monkeypatch):
     rg.main(['--kinds', 'us', '--mode', 'check'], env={},
             run_due=lambda k: order.append('due') or 'DONE x', now=LATE, out=io.StringIO())
     assert order == ['due', 'hol']
+
+
+# ── 3회차 전 자체 점검(Fable) ────────────────────────────────────────────────
+
+def test_no_two_slots_share_a_minute():
+    """예약 줄 둘이 같은 분에 맞으면 GitHub 가 실행을 줄마다 따로 내는지 문서로 확인되지 않는다 — 한 번만 뜨면
+    `github.event.schedule` 은 한 줄뿐이라 다른 종류(일본 일간의 하나뿐인 슬롯)가 판정되지 않는다. 겹치지 않게 둔다."""
+    seen = {}
+    for cron in rg.SLOTS:
+        minute, hours, _, _, dows = cron.split()
+        for wd in rg.expand(dows):
+            for h in rg.expand(hours):
+                key = (wd, h, int(minute))
+                assert key not in seen, (cron, seen[key])
+                seen[key] = cron
+
+
+def test_stale_holiday_calendar_does_not_fire_before_the_main_run(monkeypatch):
+    # codex 구현 2회차 #1 의 시나리오 그대로: 부모가 처음 본 달력은 오늘(11/19)을 KR 휴장으로 잘못 적었고, 자식의 fetch 가
+    # 그 줄을 지운 판을 가져왔다. 17:00 KST — 자식은 오늘 세션 DUE, 옛 달력으로는 어제 세션(창이 이미 열림)이다.
+    fetched = []
+    stale, fresh = dict(NO_HOL, kr=('2026-11-19',)), NO_HOL
+    monkeypatch.setattr(rg, 'load_holidays', lambda: fresh if fetched else stale)
+    now = utc(2026, 11, 19, 8, 0)
+    assert rg.action('kr', 'DUE x', now, stale, 'gate')[0] == 'fire'      # 옛 달력으로 보면 쏜다 — 막아야 할 경로
+    calls = []
+    out = io.StringIO()
+    code = rg.main(['--kinds', 'kr', '--mode', 'gate'], env={'ROUTINE_FIRE_TOKEN_KR': 't'},
+                   run_due=lambda k: fetched.append(k) or 'DUE 2026-11-19 미발행: kr/posts/2026-11-19.html',
+                   opener=lambda r, timeout=None: calls.append(r) or FakeResp(OK_BODY), now=now, out=out)
+    assert code == 0 and calls == [] and 'early' in out.getvalue()
+
+
+def test_session_id_only_needs_to_be_a_non_empty_string(monkeypatch):
+    # 문서의 예시는 `session_…` 이지만 접두사는 계약이 아니다 — 접두사가 바뀌면 떴는데 빨갛게 읽는다.
+    for body, want in ((b'{"type":"routine_fire","claude_code_session_id":"cse_01abc"}', 0),
+                       (b'{"type":"routine_fire","claude_code_session_id":""}', 1)):
+        out = io.StringIO()
+        code = rg.main(['--kinds', 'us', '--mode', 'force'], env={'ROUTINE_FIRE_TOKEN_US': 'a'},
+                       run_due=lambda k: 'DONE x', opener=lambda r, timeout=None, b=body: FakeResp(b),
+                       now=LATE, holidays=NO_HOL, out=out)
+        assert code == want, body
+
+
+def test_spec_lists_the_backstop_crons_from_code():
+    """루틴 안전망 시각의 정본은 BACKSTOPS 다 — 본 세션이 이 표로 루틴을 고친다. 설계 문서가 옛 시각을 적고 있으면 안 된다."""
+    with open(os.path.join(ROOT, 'docs', 'superpowers', 'specs', '2026-11-19-retry-gate.md'), encoding='utf-8') as fh:
+        spec = fh.read()
+    for kind, cron in rg.BACKSTOPS.items():
+        assert f'`{cron}`' in spec, (kind, cron)
+    for old in ('45 3 * * 2-6', '40 16 * * 1-5', '30 14 * * 1-5', '40 16 * * 6'):
+        assert old not in spec, old

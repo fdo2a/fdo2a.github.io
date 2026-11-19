@@ -48,15 +48,16 @@ ROUTINES = {
     'weekly': ('trig_01KoxpP7cSdkWXyh36YzGYpe', 'ROUTINE_FIRE_TOKEN_WEEKLY'),
 }
 
-# 예약 문자열(UTC) → 판정할 종류. 지금 재시도 슬롯과 같은 시(정각은 7분 밀었다). 일요일 일본 재시도는 뺐다 —
+# 예약 문자열(UTC) → 판정할 종류. 지금 재시도 슬롯과 같은 시(정각은 7분 밀었다 — KR 과 같은 분에 걸리는 일본 일간·주간은
+# 17·22분: 두 줄이 같은 분에 맞을 때 실행이 줄마다 따로 뜨는지 확인되지 않는다, 시험 test_no_two_slots_share_a_minute). 일요일 일본 재시도는 뺐다 —
 # 일요일에는 언제나 WAIT(시험 test_sunday_japan_is_never_due). 워크플로의 cron 과 글자까지 같아야 한다(시험).
 # US 20:30·KR 06:xx 는 아래 안전망 cron 이 제시각에 맡는다 — 세션 경계 직전의 마지막 기회라 예약 지연을 태우지 않는다.
 SLOTS = {
     '30 0,2,5,8,11,14,17 * * 2-6': ('us',),
     '7 0,3,12,15,18,21 * * 1-6': ('kr',),
-    '7 12 * * 1-5': ('jp_daily',),
+    '17 12 * * 1-5': ('jp_daily',),
     '7 4,7,10,13 * * 1-5': ('japan',),          # 13·16·19·22 KST — 13시는 MOF 게시일 본 런 자리
-    '7 9,12,15,18,21 * * 6': ('weekly',),
+    '22 9,12,15,18,21 * * 6': ('weekly',),
 }
 
 # 루틴 쪽에 남기는 안전망 cron(claude.ai 스케줄러 — 제시각에 뜬다). 레포가 루틴을 바꾸지는 않는다 — 본 세션이 이 값으로
@@ -122,7 +123,7 @@ def session_key(kind, now, holidays):
 
 
 def action(kind, line, now, holidays, mode):
-    """(행동, 이유). 행동: fire · would-fire · early · noop."""
+    """(행동, 이유). 행동: fire · would-fire · early · boundary · noop."""
     due = line.split(' ', 1)[0] == 'DUE'
     if mode == 'force':
         return 'fire', 'force'
@@ -171,7 +172,7 @@ def fire(trig, token, text, opener):
                 raise ValueError('응답이 JSON 객체가 아니다')
             # 성공 = 문서의 응답 모양(type routine_fire + 새 세션 id). 아니면 2xx 라도 실패로 돌린다(codex 구현 2회차 #5).
             sid = body.get('claude_code_session_id')
-            if body.get('type') != 'routine_fire' or not (isinstance(sid, str) and sid.startswith('session_')):
+            if body.get('type') != 'routine_fire' or not (isinstance(sid, str) and sid.strip()):
                 return 0, f'응답 모양이 다르다(type={str(body.get("type"))[:30]})'
             return resp.status, 'routine_fire'
     except urllib.error.HTTPError as e:
