@@ -264,14 +264,20 @@ def preselect(rows, cap=PRESELECT):
     return out
 
 
-def finalize(rows, report_date, per_category=PER_CATEGORY):
+def finalize(rows, report_date, per_category=PER_CATEGORY, keep=()):
     """본문을 받은 뒤 확정 — 본문이 있고 기사면 날짜가 발행일이며 이미 고른 기사와 같은 사건이 아닌 것.
 
     얇은 갈래를 다른 갈래로 채우지 않는다(US·KR `select` 와 같다).
+    `keep` = 그날 파일에 이미 있는 기사(재수집, 2026-11-19). 걸러지지 않고 자기 갈래의 자리를 먼저 차지하며
+    같은 사건 비교에 든다 — 새 후보는 빈 자리만 채운다. 결과는 갈래 순서, 갈래 안에서는 `keep` 이 앞이다.
     """
-    taken = []
+    keep = list(keep or [])
+    taken = list(keep)
+    out = []
     for cat in DIGEST_CATEGORIES:
-        n = 0
+        held = [r for r in keep if r.get('category') == cat]
+        out.extend(held)
+        n = len(held)
         for r in rows or []:
             if r.get('category') != cat or n >= per_category:
                 continue
@@ -280,8 +286,10 @@ def finalize(rows, report_date, per_category=PER_CATEGORY):
             if any(same_event(r.get('title'), t.get('title')) for t in taken):
                 continue
             taken.append(r)
+            out.append(r)
             n += 1
-    return taken
+    out.extend(r for r in keep if r.get('category') not in DIGEST_CATEGORIES)   # 보관분은 어떤 경우에도 빠지지 않는다
+    return out
 
 
 # ── 기사면 ───────────────────────────────────────────────────────────────
