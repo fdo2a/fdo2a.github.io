@@ -7,8 +7,8 @@
  "reason": "analysis_unverified",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-18T23:43:34+00:00",
- "cutoff_at": "2026-11-18T23:43:34+00:00",
+ "collected_at": "2026-11-19T00:56:08+00:00",
+ "cutoff_at": "2026-11-19T00:56:08+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,10 +21,9 @@
   "sha256": "6f7b0aa4fe0dc17c60c417011834f5166afdb9b9833b679d11b7a9558a289f2e"
  },
  "counts": {
-  "harvest": 213,
-  "candidates": 3,
+  "harvest": 218,
+  "candidates": 2,
   "articles": [
-   2,
    2,
    5
   ]
@@ -32,74 +31,74 @@
  "diagnostics": {
   "runner": "local",
   "tokens": {
-   "in": 44542,
-   "out": 12466
+   "in": 43174,
+   "out": 10833
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
-   "obs": "9/9"
+   "claims": "5/5",
+   "pairs": "2/2",
+   "obs": "7/7"
   },
   "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 8,
+   "pairs": 1,
+   "claims": 2,
+   "obs": 7,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[0]",
+    "edges[1]",
     "edges[2]",
-    "memo[0]",
     "memo[1]",
+    "memo[2]",
     "structure",
-    "variables[1]",
     "worry.moderate[0]",
+    "worry.most[0]",
     "worry.unlikely[0]"
    ],
-   "outcome": "skipped_ratio",
+   "outcome": "skipped_threshold",
    "remaining": [
     "structure:unverified",
-    "variables[1]:dangling",
-    "edges[0]:dangling",
+    "structure:dangling",
+    "edges[1]:dangling",
     "edges[2]:unverified",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[1]:unverified",
+    "memo[1]:dangling",
+    "memo[2]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
     "worry.moderate[0]:unverified",
-    "worry.unlikely[0]:unverified",
     "worry.unlikely[0]:dangling"
    ]
   },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "젠슨 황 퇴진 뒤 엔비디아의 전략·수요 전망과 AI 투자 흐름",
+  "topic_ko": "젠슨 황 퇴진 뒤 엔비디아의 전략 지속성과 사업 영향",
   "query": "huang nvidia scandal",
   "trigger": []
  },
  "problems": [
   "structure:unverified",
-  "variables[1]:dangling",
-  "edges[0]:dangling",
+  "structure:dangling",
+  "edges[1]:dangling",
   "edges[2]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:unverified",
+  "memo[1]:dangling",
+  "memo[2]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
   "worry.moderate[0]:unverified",
-  "worry.unlikely[0]:unverified",
   "worry.unlikely[0]:dangling"
  ],
- "content_hash": "0148e87b6a78c94e"
+ "content_hash": "d396d82cc6e53e33"
 }
