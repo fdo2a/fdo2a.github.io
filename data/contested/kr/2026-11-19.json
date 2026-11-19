@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-19",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "topic_too_long",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-19T12:02:51+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-19T12:20:25+00:00",
  "cutoff_at": "2026-11-19T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 460,
+  "harvest": 502,
   "candidates": 1,
   "articles": [
    5
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 3,
+  "runs": 4,
   "discovery": "truncated",
   "hosts": {
    "aju": "ok",
@@ -46,51 +46,19 @@
    "chosun": "ok"
   },
   "notes": [
-   "discover:460"
+   "discover:502"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 52356,
-   "out": 14860
-  },
-  "grounded": {
-   "claims": "2/2",
-   "pairs": "1/1",
-   "obs": "9/9"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 9,
-   "strict_pairs": 1,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[2]",
-    "memo[2]",
-    "structure",
-    "worry.moderate[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[0]:unverified",
-    "edges[2]:unverified",
-    "memo[2]:unverified"
-   ]
+   "in": 15073,
+   "out": 7260
   }
  },
  "event": {
-  "topic_ko": "11월 19일 코스피 반등의 동력과 수출 1조 달러 달성",
-  "query": "수출 1조 달러",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "edges[0]:unverified",
-  "edges[2]:unverified",
-  "memo[2]:unverified"
- ],
- "content_hash": "b12ff499d5af6044"
+ "content_hash": "15592ebdca14cab0"
 }
