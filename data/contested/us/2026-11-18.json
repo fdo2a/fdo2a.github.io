@@ -3,89 +3,49 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-18",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 3,
- "collected_at": "2026-11-19T09:32:22+00:00",
- "cutoff_at": "2026-11-19T09:32:22+00:00",
+ "collected_at": "2026-11-19T11:45:04+00:00",
+ "cutoff_at": "2026-11-19T11:45:04+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "cb6d927e3b63185b66018dfa7b894f13c766acd9",
-  "sha256": "d8fea3cfa99265c75ed6d274e9c0fbea03d345ec0107c9ecaa7f420bb6cd9edd"
- },
+ "market_snapshot": null,
  "counts": {
-  "harvest": 227,
+  "harvest": 224,
   "candidates": 3,
   "articles": [
    4,
    2,
-   6
+   4
   ]
  },
  "diagnostics": {
   "runner": "local",
+  "runs": 1,
   "tokens": {
-   "in": 53801,
-   "out": 13732
+   "in": 5262,
+   "out": 73
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "bbc.co.uk": "ok",
-   "theguardian.com": "ok"
+   "bbc.co.uk": "ok"
   },
   "notes": [],
   "gdelt": "throttled",
-  "grounded": {
-   "claims": "3/3",
-   "pairs": "1/1",
-   "obs": "12/12"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 12,
-   "strict_pairs": 1,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "memo[0]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "structure:unverified",
-    "structure:dangling",
-    "memo[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.unlikely[0]:dangling"
-   ]
-  },
   "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "앤트로픽 IPO 공모 수요 강도와 상장 초기 반응",
-  "query": "anthropic spacex record",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "structure:dangling",
-  "memo[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "a93e14130350d0de"
+ "content_hash": "b04831c6f8ace9f1"
 }
