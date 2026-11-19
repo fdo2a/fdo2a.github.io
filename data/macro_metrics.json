@@ -1,21 +1,21 @@
 {
-  "generated": "2026-11-19 08:47 KST",
-  "report_date": "2026-11-18",
+  "generated": "2026-11-20 07:34 KST",
+  "report_date": "2026-11-19",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
-  "growth_score": 0.225,
+  "growth_score": 0.188,
   "inflation_score": 0.647,
   "growth_diffusion": 0.556,
   "inflation_diffusion": 0.5,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.564,
+      "score": 0.451,
       "direction": "개선",
-      "strength": "완만",
-      "breadth_ko": "일곱 중 다섯이 개선, 둘은 보합",
-      "support": 5,
+      "strength": "미미",
+      "breadth_ko": "일곱 중 넷이 개선, 둘은 보합, 하나는 반대",
+      "support": 4,
       "improving": 5,
       "total": 7,
       "leaders": [
@@ -40,8 +40,8 @@
           "name": "Initial Claims 4-wk MA",
           "direction": "개선",
           "strength": "미미",
-          "actual": 195250.0,
-          "previous": 195250.0
+          "actual": 197750.0,
+          "previous": 195750.0
         }
       ]
     },
@@ -147,7 +147,7 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.564,
+    "Labor": 0.451,
     "Activity": -0.652,
     "Consumption": 0.764,
     "Inflation": 0.647
@@ -190,24 +190,24 @@
       "fred_id": "ICSA",
       "transform": "level",
       "units": "",
-      "direction": "개선",
+      "direction": "보합",
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.386,
-      "signed_z": 0.386,
-      "actual": 200000.0,
-      "previous": 191000.0,
-      "ref_period": "2026-11-07",
+      "momentum_z": -0.028,
+      "signed_z": 0.028,
+      "actual": 203000.0,
+      "previous": 202000.0,
+      "ref_period": "2026-11-14",
       "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 198750.0,
-        "recent_avg": 195250.0
+        "prior_avg": 198000.0,
+        "recent_avg": 197750.0
       },
-      "trend_cell_ko": "개선(미미) · 4주 평균 199K → 195K",
-      "is_new": false
+      "trend_cell_ko": "보합 · 4주 평균 198K → 198K",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -222,20 +222,20 @@
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.48,
-      "signed_z": 0.48,
-      "actual": 195250.0,
-      "previous": 195250.0,
-      "ref_period": "2026-11-07",
-      "vs_prev": "보합",
+      "momentum_z": -0.333,
+      "signed_z": 0.333,
+      "actual": 197750.0,
+      "previous": 195750.0,
+      "ref_period": "2026-11-14",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 200000.0,
-        "recent_avg": 196375.0
+        "prior_avg": 198875.0,
+        "recent_avg": 196437.5
       },
-      "trend_cell_ko": "개선(미미) · 4주 평균 200K → 196K",
-      "is_new": false
+      "trend_cell_ko": "개선(미미) · 4주 평균 199K → 196K",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -246,24 +246,24 @@
       "fred_id": "CCSA",
       "transform": "level",
       "units": "",
-      "direction": "보합",
+      "direction": "악화",
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": 0.032,
-      "signed_z": -0.032,
-      "actual": 1697000.0,
-      "previous": 1717000.0,
-      "ref_period": "2026-10-31",
-      "vs_prev": "개선",
+      "momentum_z": 0.317,
+      "signed_z": -0.317,
+      "actual": 1763000.0,
+      "previous": 1693000.0,
+      "ref_period": "2026-11-07",
+      "vs_prev": "악화",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 1707000.0,
-        "recent_avg": 1707750.0
+        "prior_avg": 1709500.0,
+        "recent_avg": 1717000.0
       },
-      "trend_cell_ko": "보합 · 4주 평균 1,707K → 1,708K",
-      "is_new": false
+      "trend_cell_ko": "악화(미미) · 4주 평균 1,710K → 1,717K",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -739,7 +739,7 @@
         "recent_avg": 1260.0
       },
       "trend_cell_ko": "악화(완만) · 3개월 평균 1,330K → 1,260K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Trade Balance",
@@ -834,157 +834,398 @@
       "fred_id": "GACDFSA066MSFRBPHI",
       "transform": "level",
       "units": "",
-      "direction": "개선",
+      "direction": "악화",
       "strength": "뚜렷",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 1.635,
-      "signed_z": 1.635,
-      "actual": 20.9,
-      "previous": 37.8,
-      "ref_period": "2026-10-01",
+      "momentum_z": -1.011,
+      "signed_z": -1.011,
+      "actual": 6.3,
+      "previous": 20.9,
+      "ref_period": "2026-11-01",
       "vs_prev": "악화",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 17.1,
-        "recent_avg": 35.367
+        "prior_avg": 33.033,
+        "recent_avg": 21.667
       },
-      "trend_cell_ko": "개선(뚜렷) · 3개월 평균 17.1 → 35.4",
-      "is_new": false
+      "trend_cell_ko": "악화(뚜렷) · 3개월 평균 33.0 → 21.7",
+      "is_new": true
     }
   ],
   "new_releases": [
-    "Housing Starts"
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
   ],
-  "anatomy_releases": [],
+  "anatomy_releases": [
+    "Philly Fed Manufacturing"
+  ],
   "introduced": [],
   "introduced_since": {},
   "headline_releases": [
     {
-      "key": "housing-starts",
-      "label": "주택착공",
+      "key": "philly-fed",
+      "label": "필라델피아 연은 제조업 경기",
       "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/construction/nrc/pdf/newresconst.pdf",
-      "role": "scored",
-      "primary": "Housing Starts",
-      "max_abs_z": 0.856,
+      "agency": "Philadelphia Fed",
+      "url": "https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/manufacturing-business-outlook-survey",
+      "role": "anatomy",
+      "primary": "Philly Fed Manufacturing",
+      "max_abs_z": 1.011,
       "indicators": [
         {
-          "name": "Housing Starts",
+          "name": "Philly Fed Manufacturing",
           "axis": "Activity",
-          "actual": 1309.0,
-          "previous": 1191.0,
-          "ref_period": "2026-10-01",
-          "momentum_z": -0.856,
-          "fred_id": "HOUST",
+          "actual": 6.3,
+          "previous": 20.9,
+          "ref_period": "2026-11-01",
+          "momentum_z": -1.011,
+          "fred_id": "GACDFSA066MSFRBPHI",
           "transform": "level",
-          "units": "K"
+          "units": ""
         }
       ],
       "components": [
         {
-          "label": "단독주택 착공",
-          "fred_id": "HOUST1F",
+          "label": "신규주문",
+          "fred_id": "NOCDFSA066MSFRBPHI",
           "transform": "level",
-          "unit": "채",
+          "unit": "",
           "aliases": [
-            "단독주택"
+            "신규주문",
+            "신규 주문"
           ],
-          "actual": 864000,
+          "actual": -0.4,
           "cite_values": [
-            864000,
-            864,
-            86.4
+            -0.4
           ],
           "cite_forms": [
             [
-              864000,
+              -0.4,
               ""
-            ],
-            [
-              864,
-              "천"
-            ],
-            [
-              86.4,
-              "만"
             ]
           ],
-          "text_value": 864000.0,
-          "ref_period": "2026-10-01"
+          "text_value": -0.4,
+          "ref_period": "2026-11-01"
         },
         {
-          "label": "완공",
-          "fred_id": "COMPUTSA",
+          "label": "출하",
+          "fred_id": "SHCDFSA066MSFRBPHI",
           "transform": "level",
-          "unit": "채",
+          "unit": "",
           "aliases": [
-            "완공"
+            "출하"
           ],
-          "actual": 1272000,
+          "actual": 25.7,
           "cite_values": [
-            1272000,
-            1272,
-            127.2,
-            1.272
+            25.7
           ],
           "cite_forms": [
             [
-              1272000,
+              25.7,
               ""
-            ],
-            [
-              1272,
-              "천"
-            ],
-            [
-              127.2,
-              "만"
-            ],
-            [
-              1.272,
-              "백만"
             ]
           ],
-          "text_value": 1272000.0,
-          "ref_period": "2026-10-01"
+          "text_value": 25.7,
+          "ref_period": "2026-11-01"
+        },
+        {
+          "label": "고용",
+          "fred_id": "NECDFSA066MSFRBPHI",
+          "transform": "level",
+          "unit": "",
+          "aliases": [
+            "고용"
+          ],
+          "actual": 11.6,
+          "cite_values": [
+            11.6
+          ],
+          "cite_forms": [
+            [
+              11.6,
+              ""
+            ]
+          ],
+          "text_value": 11.6,
+          "ref_period": "2026-11-01"
+        },
+        {
+          "label": "지불가격",
+          "fred_id": "PPCDFSA066MSFRBPHI",
+          "transform": "level",
+          "unit": "",
+          "aliases": [
+            "지불가격",
+            "지불 가격",
+            "투입가격",
+            "투입 가격"
+          ],
+          "actual": 58.2,
+          "cite_values": [
+            58.2
+          ],
+          "cite_forms": [
+            [
+              58.2,
+              ""
+            ]
+          ],
+          "text_value": 58.2,
+          "ref_period": "2026-11-01"
+        },
+        {
+          "label": "수취가격",
+          "fred_id": "PRCDFSA066MSFRBPHI",
+          "transform": "level",
+          "unit": "",
+          "aliases": [
+            "수취가격",
+            "수취 가격",
+            "판매가격"
+          ],
+          "actual": 47,
+          "cite_values": [
+            47
+          ],
+          "cite_forms": [
+            [
+              47,
+              ""
+            ]
+          ],
+          "text_value": 47.0,
+          "ref_period": "2026-11-01"
         }
       ],
       "anatomy": {
-        "release_date": "2026-11-18",
+        "release_date": "2026-11-19",
         "round": "ok",
         "candidates": [
           {
-            "label": "단독주택 착공",
-            "fred_id": "HOUST1F",
+            "label": "신규주문",
+            "fred_id": "NOCDFSA066MSFRBPHI",
             "transform": "level",
-            "unit": "채",
+            "unit": "",
             "round_ok": true,
             "reason": "ok",
-            "observation": "2026-10-01",
+            "observation": "2026-11-01",
             "changed": [
               "current"
             ],
-            "fred_value": 864.0,
+            "fred_value": -0.4,
             "text_ok": true,
-            "text_value": 864000.0
+            "text_value": -0.4
           },
           {
-            "label": "완공",
-            "fred_id": "COMPUTSA",
+            "label": "출하",
+            "fred_id": "SHCDFSA066MSFRBPHI",
             "transform": "level",
-            "unit": "채",
+            "unit": "",
             "round_ok": true,
             "reason": "ok",
-            "observation": "2026-10-01",
+            "observation": "2026-11-01",
             "changed": [
               "current"
             ],
-            "fred_value": 1272.0,
+            "fred_value": 25.7,
             "text_ok": true,
-            "text_value": 1272000.0
+            "text_value": 25.7
+          },
+          {
+            "label": "고용",
+            "fred_id": "NECDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 11.6,
+            "text_ok": true,
+            "text_value": 11.6
+          },
+          {
+            "label": "지불가격",
+            "fred_id": "PPCDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 58.2,
+            "text_ok": true,
+            "text_value": 58.2
+          },
+          {
+            "label": "수취가격",
+            "fred_id": "PRCDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 47.0,
+            "text_ok": true,
+            "text_value": 47.0
+          },
+          {
+            "label": "6개월 뒤 전망",
+            "fred_id": "GAFDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "not_in_text",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 33.6,
+            "text_ok": false
+          }
+        ]
+      },
+      "anatomy_status": "complete",
+      "anatomy_reason": null
+    },
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "role": "scored",
+      "primary": "Initial Claims 4-wk MA",
+      "max_abs_z": 0.333,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 203000.0,
+          "previous": 202000.0,
+          "ref_period": "2026-11-14",
+          "momentum_z": -0.028,
+          "fred_id": "ICSA",
+          "transform": "level",
+          "units": ""
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 197750.0,
+          "previous": 195750.0,
+          "ref_period": "2026-11-14",
+          "momentum_z": -0.333,
+          "fred_id": "IC4WSA",
+          "transform": "level",
+          "units": ""
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1763000.0,
+          "previous": 1693000.0,
+          "ref_period": "2026-11-07",
+          "momentum_z": 0.317,
+          "fred_id": "CCSA",
+          "transform": "level",
+          "units": ""
+        }
+      ],
+      "components": [
+        {
+          "label": "계절조정 전 청구",
+          "fred_id": "ICNSA",
+          "transform": "level",
+          "unit": "건",
+          "aliases": [
+            "계절조정 전",
+            "원계열"
+          ],
+          "actual": 197492,
+          "cite_values": [
+            197492,
+            197.492
+          ],
+          "cite_forms": [
+            [
+              197492,
+              ""
+            ],
+            [
+              197.492,
+              "천"
+            ]
+          ],
+          "text_value": 197492.0,
+          "ref_period": "2026-11-14"
+        },
+        {
+          "label": "보험 실업률",
+          "fred_id": "IURSA",
+          "transform": "level",
+          "unit": "%",
+          "aliases": [
+            "보험 실업률",
+            "피보험 실업률"
+          ],
+          "actual": 1.1,
+          "cite_values": [
+            1.1
+          ],
+          "cite_forms": [
+            [
+              1.1,
+              ""
+            ]
+          ],
+          "text_value": 1.1,
+          "ref_period": "2026-11-07"
+        }
+      ],
+      "anatomy": {
+        "release_date": "2026-11-19",
+        "round": "ok",
+        "candidates": [
+          {
+            "label": "계절조정 전 청구",
+            "fred_id": "ICNSA",
+            "transform": "level",
+            "unit": "건",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-14",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 197492.0,
+            "text_ok": true,
+            "text_value": 197492.0
+          },
+          {
+            "label": "보험 실업률",
+            "fred_id": "IURSA",
+            "transform": "level",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-07",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 1.1,
+            "text_ok": true,
+            "text_value": 1.1
           }
         ]
       },
@@ -998,16 +1239,16 @@
       7523.0
     ],
     "Initial Jobless Claims": [
-      "2026-11-07",
-      200000.0
+      "2026-11-14",
+      203000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-11-07",
-      195250.0
+      "2026-11-14",
+      197750.0
     ],
     "Continuing Jobless Claims": [
-      "2026-10-31",
-      1697000.0
+      "2026-11-07",
+      1763000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-10-01",
@@ -1090,8 +1331,8 @@
       1.84
     ],
     "Philly Fed Manufacturing": [
-      "2026-10-01",
-      20.9
+      "2026-11-01",
+      6.3
     ],
     "CPI YoY": [
       "2026-09-01",
