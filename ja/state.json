@@ -23,9 +23,9 @@
     "japan/data/news/2026-11-09.json": "91343e57709f4dd76b638755671ad10e8faa324f",
     "japan/data/news/2026-11-10.json": "50bb96a59e6869fcb8b359c10adbe12a4fa9b082",
     "japan/data/news/2026-11-11.json": "2521d373df7cd2cfd460708ddefd36618230a2cc",
-    "japan/data/news/2026-11-12.json": "f4fbb80fc3eee8208d21d6abe28367efc80375b3",
-    "japan/data/news/2026-11-13.json": "ecf3dea2d2602f1cfcfe16f54cd08fd67b088d8b",
-    "japan/data/news/2026-11-16.json": "1e8a6c982e005d6cb468a1f3c62d7b67dbe2f728",
+    "japan/data/news/2026-11-12.json": "9b9b704dafa1de152b2d666969f4587557d60701",
+    "japan/data/news/2026-11-13.json": "df113615b42cdbd0baf77f40a6cb91fa501561f2",
+    "japan/data/news/2026-11-16.json": "2b4b02c42c659af5c505b41d419d69d4def966e5",
     "japan/data/news/daily/2026-11-02.json": "4a376c5926ab251b18790ae67e696cac1aa079b4",
     "japan/data/news/daily/2026-11-04.json": "04ba3feca7a2625149a63c804aebf6d8cf67cd18",
     "japan/data/news/daily/2026-11-05.json": "c305b642a8d157724ac4776db738a34de31048e6",
@@ -40,11 +40,11 @@
    },
    "reason": "",
    "renderer": "r2",
-   "rounds": 5,
+   "rounds": 6,
    "source_blob": "10c8cf3d61a572fe99ed84b171476db99dbc7343",
    "status": "published",
    "text_hash": "d8bdbf27d261e0b0",
-   "updated": "2026-11-18T16:04:44+09:00"
+   "updated": "2026-11-19T12:24:55+09:00"
   },
   "japan/daily/2026-11-17.html": {
    "deps": {
@@ -161,9 +161,9 @@
     "japan/data/news/2026-11-09.json": "91343e57709f4dd76b638755671ad10e8faa324f",
     "japan/data/news/2026-11-10.json": "50bb96a59e6869fcb8b359c10adbe12a4fa9b082",
     "japan/data/news/2026-11-11.json": "2521d373df7cd2cfd460708ddefd36618230a2cc",
-    "japan/data/news/2026-11-12.json": "f4fbb80fc3eee8208d21d6abe28367efc80375b3",
-    "japan/data/news/2026-11-13.json": "ecf3dea2d2602f1cfcfe16f54cd08fd67b088d8b",
-    "japan/data/news/2026-11-16.json": "1e8a6c982e005d6cb468a1f3c62d7b67dbe2f728",
+    "japan/data/news/2026-11-12.json": "9b9b704dafa1de152b2d666969f4587557d60701",
+    "japan/data/news/2026-11-13.json": "df113615b42cdbd0baf77f40a6cb91fa501561f2",
+    "japan/data/news/2026-11-16.json": "2b4b02c42c659af5c505b41d419d69d4def966e5",
     "japan/data/news/daily/2026-11-02.json": "4a376c5926ab251b18790ae67e696cac1aa079b4",
     "japan/data/news/daily/2026-11-04.json": "04ba3feca7a2625149a63c804aebf6d8cf67cd18",
     "japan/data/news/daily/2026-11-05.json": "c305b642a8d157724ac4776db738a34de31048e6",
@@ -179,11 +179,11 @@
    },
    "reason": "",
    "renderer": "r2",
-   "rounds": 7,
+   "rounds": 8,
    "source_blob": "cc7d63dfea074f008e5fee87895c16cc9ae8b3b4",
    "status": "published",
    "text_hash": "635fd19621794215",
-   "updated": "2026-11-18T16:04:44+09:00"
+   "updated": "2026-11-19T12:24:55+09:00"
   },
   "news/2026-11-17.html": {
    "deps": {
@@ -365,13 +365,13 @@
     "japan/data/news/daily/2026-11-17.json": "435e14c97bb3650937ea1c677966fe698501041b",
     "list:posts.json": "b46fcd20564f47f4"
    },
-   "reason": "한도",
+   "reason": "대기",
    "renderer": "r2",
-   "rounds": 4,
+   "rounds": 5,
    "source_blob": "48a6ca0f7af794072377eb5fb8f166fc6417fa6f",
    "status": "notice",
    "text_hash": "277936799360844d",
-   "updated": "2026-11-19T04:46:05+09:00"
+   "updated": "2026-11-19T12:24:55+09:00"
   },
   "posts/2026-11-18.html": {
    "deps": {
