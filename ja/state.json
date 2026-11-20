@@ -24,8 +24,8 @@
     "japan/data/news/2026-11-10.json": "50bb96a59e6869fcb8b359c10adbe12a4fa9b082",
     "japan/data/news/2026-11-11.json": "2521d373df7cd2cfd460708ddefd36618230a2cc",
     "japan/data/news/2026-11-12.json": "7fb16e18a7dc16da0ee379e5c6ff7e0509c8b17e",
-    "japan/data/news/2026-11-13.json": "32677a03e6fca5d12c16758a36ff226ba39ade98",
-    "japan/data/news/2026-11-16.json": "134ebf5dfba29e72e596eefc6ac03bf179fee44d",
+    "japan/data/news/2026-11-13.json": "7a3677c9afccaacae0ede92a50bf82636ffda12a",
+    "japan/data/news/2026-11-16.json": "c897af0d3f835dbfcdf1332fae4416fca2d866a6",
     "japan/data/news/daily/2026-11-02.json": "4a376c5926ab251b18790ae67e696cac1aa079b4",
     "japan/data/news/daily/2026-11-04.json": "04ba3feca7a2625149a63c804aebf6d8cf67cd18",
     "japan/data/news/daily/2026-11-05.json": "c305b642a8d157724ac4776db738a34de31048e6",
@@ -40,11 +40,11 @@
    },
    "reason": "",
    "renderer": "r2",
-   "rounds": 7,
+   "rounds": 8,
    "source_blob": "10c8cf3d61a572fe99ed84b171476db99dbc7343",
    "status": "published",
    "text_hash": "d8bdbf27d261e0b0",
-   "updated": "2026-11-19T16:27:13+09:00"
+   "updated": "2026-11-20T12:14:19+09:00"
   },
   "japan/daily/2026-11-17.html": {
    "deps": {
@@ -162,8 +162,8 @@
     "japan/data/news/2026-11-10.json": "50bb96a59e6869fcb8b359c10adbe12a4fa9b082",
     "japan/data/news/2026-11-11.json": "2521d373df7cd2cfd460708ddefd36618230a2cc",
     "japan/data/news/2026-11-12.json": "7fb16e18a7dc16da0ee379e5c6ff7e0509c8b17e",
-    "japan/data/news/2026-11-13.json": "32677a03e6fca5d12c16758a36ff226ba39ade98",
-    "japan/data/news/2026-11-16.json": "134ebf5dfba29e72e596eefc6ac03bf179fee44d",
+    "japan/data/news/2026-11-13.json": "7a3677c9afccaacae0ede92a50bf82636ffda12a",
+    "japan/data/news/2026-11-16.json": "c897af0d3f835dbfcdf1332fae4416fca2d866a6",
     "japan/data/news/daily/2026-11-02.json": "4a376c5926ab251b18790ae67e696cac1aa079b4",
     "japan/data/news/daily/2026-11-04.json": "04ba3feca7a2625149a63c804aebf6d8cf67cd18",
     "japan/data/news/daily/2026-11-05.json": "c305b642a8d157724ac4776db738a34de31048e6",
@@ -179,11 +179,11 @@
    },
    "reason": "",
    "renderer": "r2",
-   "rounds": 9,
+   "rounds": 10,
    "source_blob": "cc7d63dfea074f008e5fee87895c16cc9ae8b3b4",
    "status": "published",
    "text_hash": "635fd19621794215",
-   "updated": "2026-11-19T16:27:13+09:00"
+   "updated": "2026-11-20T12:14:19+09:00"
   },
   "news/2026-11-17.html": {
    "deps": {
