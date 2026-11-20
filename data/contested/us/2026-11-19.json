@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-19",
  "status": "none",
- "reason": "verify_rejected",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-20T00:32:47+00:00",
- "cutoff_at": "2026-11-20T00:32:47+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-20T01:37:14+00:00",
+ "cutoff_at": "2026-11-20T01:37:14+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,46 +22,70 @@
  },
  "counts": {
   "harvest": 213,
-  "candidates": 2,
+  "candidates": 1,
   "articles": [
-   3,
    6
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 2,
+  "runs": 3,
   "tokens": {
-   "in": 42079,
-   "out": 10260
+   "in": 39827,
+   "out": 9492
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
    "theguardian.com": "ok",
+   "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "3/3",
+   "claims": "4/4",
    "pairs": "1/1",
-   "obs": "7/7"
+   "obs": "9/9"
   },
   "verified": {
-   "pairs": 0,
-   "claims": 0,
-   "obs": 7,
+   "pairs": 1,
+   "claims": 2,
+   "obs": 9,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "structure",
+    "worry.most[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "edges[0]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "worry.most[0]:dangling"
+   ]
   }
  },
  "event": {
-  "topic_ko": "엔비디아 황 퇴진 파장과 상무부의 대중 AI 칩 수출 허가 심사 논란",
-  "query": "nvidia huang sales",
+  "topic_ko": "미 상무부의 대중 AI 칩 수출 허가 심사가 엄격했는지를 둘러싼 논란",
+  "query": "china nvidia chip",
   "trigger": []
  },
- "content_hash": "e938d4cc36f1d891"
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "edges[0]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "worry.most[0]:dangling"
+ ],
+ "content_hash": "67c1384cc1566638"
 }
