@@ -524,6 +524,24 @@
      "note": "오케스트레이터가 검사 실행 결과를 받아 적은 임시 파일(2026-11-17 기록의 gates.txt·gates2.txt, workspace-only) — 작성자·검사기가 읽지 않는다. 다른 이름의 임시 파일은 분류되지 않은 파일로 걸린다"
     },
     {
+     "path": "<datadir>/readability.txt",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 조판 검사 출력",
+     "note": "오케스트레이터가 검사 실행 결과를 받아 적은 임시 파일(2026-11-19 기록, workspace-only) — 검사기는 이 파일을 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/style.txt",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 문체 검사 출력",
+     "note": "오케스트레이터가 검사 실행 결과를 받아 적은 임시 파일(2026-11-19 기록, workspace-only) — 검사기는 이 파일을 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/prev_post.html",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 앞 글 사본",
+     "note": "오케스트레이터가 작업 중에 남긴 임시 파일(2026-11-19 기록, workspace-only) — 검사기는 이 파일을 읽지 않는다"
+    },
+    {
      "path": "<datadir>/body_src.html",
      "class": "unused",
      "name": "루틴이 작업 공간에 남긴 본문 사본",
