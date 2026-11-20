@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-20T01:37:14+00:00",
- "cutoff_at": "2026-11-20T01:37:14+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-20T01:54:38+00:00",
+ "cutoff_at": "2026-11-20T01:54:38+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -29,10 +29,10 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 3,
+  "runs": 4,
   "tokens": {
-   "in": 39827,
-   "out": 9492
+   "in": 40365,
+   "out": 9292
   },
   "discovery": "ok",
   "hosts": {
@@ -46,12 +46,12 @@
   "grounded": {
    "claims": "4/4",
    "pairs": "1/1",
-   "obs": "9/9"
+   "obs": "8/8"
   },
   "verified": {
    "pairs": 1,
    "claims": 2,
-   "obs": 9,
+   "obs": 8,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
@@ -60,17 +60,20 @@
    "paths": [
     "edges[0]",
     "edges[1]",
+    "memo[1]",
     "structure",
-    "worry.most[0]"
+    "worry.most[0]",
+    "worry.unlikely[0]"
    ],
    "outcome": "skipped_threshold",
    "remaining": [
     "structure:unverified",
-    "structure:dangling",
-    "edges[0]:unverified",
     "edges[0]:dangling",
     "edges[1]:unverified",
-    "worry.most[0]:dangling"
+    "memo[1]:unverified",
+    "worry.most[0]:dangling",
+    "worry.unlikely[0]:unverified",
+    "worry.unlikely[0]:dangling"
    ]
   }
  },
@@ -81,11 +84,12 @@
  },
  "problems": [
   "structure:unverified",
-  "structure:dangling",
-  "edges[0]:unverified",
   "edges[0]:dangling",
   "edges[1]:unverified",
-  "worry.most[0]:dangling"
+  "memo[1]:unverified",
+  "worry.most[0]:dangling",
+  "worry.unlikely[0]:unverified",
+  "worry.unlikely[0]:dangling"
  ],
- "content_hash": "67c1384cc1566638"
+ "content_hash": "bfb31a37f151043a"
 }
