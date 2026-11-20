@@ -1,78 +1,8 @@
 {
-  "report_date": "2026-11-18",
-  "generated": "2026-11-19 08:48 KST",
+  "report_date": "2026-11-19",
+  "generated": "2026-11-20 08:17 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "release-claims-20261119",
-      "kind": "release",
-      "name_ko": "신규 실업수당 청구",
-      "date": "2026-11-19",
-      "time_et": "08:30",
-      "time_kst": "2026-11-19 22:30",
-      "status": "confirmed",
-      "source": "DOL 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "auction-20261119-4-Week",
-      "kind": "auction",
-      "name_ko": "4-Week 국채 입찰 1,150억 달러",
-      "date": "2026-11-19",
-      "time_et": "11:30",
-      "time_kst": "2026-11-20 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261119-8-Week",
-      "kind": "auction",
-      "name_ko": "8-Week 국채 입찰 1,100억 달러",
-      "date": "2026-11-19",
-      "time_et": "11:30",
-      "time_kst": "2026-11-20 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261119-10-Year",
-      "kind": "auction",
-      "name_ko": "10-Year 국채 입찰 190억 달러",
-      "date": "2026-11-19",
-      "time_et": "13:00",
-      "time_kst": "2026-11-20 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261119-9-Day",
-      "kind": "auction",
-      "name_ko": "9-Day 국채 입찰 150억 달러",
-      "date": "2026-11-19",
-      "time_et": "13:00",
-      "time_kst": "2026-11-20 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "expiry-202611",
       "kind": "expiry",
@@ -102,6 +32,48 @@
       "watch": "추세 확인"
     },
     {
+      "key": "auction-20261123-13-Week",
+      "kind": "auction",
+      "name_ko": "13-Week 국채 입찰 950억 달러",
+      "date": "2026-11-23",
+      "time_et": "11:30",
+      "time_kst": "2026-11-24 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261123-26-Week",
+      "kind": "auction",
+      "name_ko": "26-Week 국채 입찰 820억 달러",
+      "date": "2026-11-23",
+      "time_et": "11:30",
+      "time_kst": "2026-11-24 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261123-2-Year",
+      "kind": "auction",
+      "name_ko": "2-Year 국채 입찰 690억 달러",
+      "date": "2026-11-23",
+      "time_et": "13:00",
+      "time_kst": "2026-11-24 03:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
       "key": "release-industrial-production-20261124",
       "kind": "release",
       "name_ko": "산업생산(G.17)",
@@ -114,6 +86,62 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "auction-20261124-52-Week",
+      "kind": "auction",
+      "name_ko": "52-Week 국채 입찰 540억 달러",
+      "date": "2026-11-24",
+      "time_et": "11:30",
+      "time_kst": "2026-11-25 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261124-6-Week",
+      "kind": "auction",
+      "name_ko": "6-Week 국채 입찰 900억 달러",
+      "date": "2026-11-24",
+      "time_et": "11:30",
+      "time_kst": "2026-11-25 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261124-2-Year",
+      "kind": "auction",
+      "name_ko": "2-Year 국채 입찰 280억 달러",
+      "date": "2026-11-24",
+      "time_et": "13:00",
+      "time_kst": "2026-11-25 03:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "auction-20261124-5-Year",
+      "kind": "auction",
+      "name_ko": "5-Year 국채 입찰 700억 달러",
+      "date": "2026-11-24",
+      "time_et": "13:00",
+      "time_kst": "2026-11-25 03:00",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
       "key": "release-claims-20261125",
@@ -186,9 +214,63 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "auction-20261125-7-Year",
+      "kind": "auction",
+      "name_ko": "7-Year 국채 입찰 440억 달러",
+      "date": "2026-11-25",
+      "time_et": "11:30",
+      "time_kst": "2026-11-26 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-11-19",
+      "term": "10-Year",
+      "type": "Note",
+      "offering_amt": 19000000000.0,
+      "high_yield": 2.903,
+      "bid_to_cover": 2.43,
+      "indirect_pct": 68.6,
+      "dealer_pct": 6.0
+    },
+    {
+      "date": "2026-11-19",
+      "term": "9-Day",
+      "type": "Bill",
+      "offering_amt": 15000000000.0,
+      "high_yield": 3.968,
+      "bid_to_cover": 3.97,
+      "indirect_pct": 45.9,
+      "dealer_pct": 52.1
+    },
+    {
+      "date": "2026-11-19",
+      "term": "4-Week",
+      "type": "Bill",
+      "offering_amt": 115000000000.0,
+      "high_yield": 4.119,
+      "bid_to_cover": 2.55,
+      "indirect_pct": 59.3,
+      "dealer_pct": 36.4
+    },
+    {
+      "date": "2026-11-19",
+      "term": "8-Week",
+      "type": "Bill",
+      "offering_amt": 110000000000.0,
+      "high_yield": 4.194,
+      "bid_to_cover": 2.72,
+      "indirect_pct": 67.8,
+      "dealer_pct": 27.9
+    },
     {
       "date": "2026-11-18",
       "term": "20-Year",

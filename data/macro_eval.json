@@ -1,9 +1,9 @@
 {
-  "report_date": "2026-11-18",
-  "macro_date": "2026-11-17",
+  "report_date": "2026-11-19",
+  "macro_date": "2026-11-18",
   "horizon": "3-6개월",
   "scores": {
-    "growth_score": 0.225,
+    "growth_score": 0.188,
     "inflation_score": 0.647,
     "growth_diffusion": 0.556,
     "inflation_diffusion": 0.5
@@ -14,133 +14,372 @@
     "name": "비용압박"
   },
   "new_releases": [
-    "Housing Starts"
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims"
   ],
   "headline_releases": [
     {
-      "key": "housing-starts",
-      "label": "주택착공",
+      "key": "philly-fed",
+      "label": "필라델피아 연은 제조업 경기",
       "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/construction/nrc/pdf/newresconst.pdf",
-      "role": "scored",
-      "primary": "Housing Starts",
-      "max_abs_z": 0.856,
+      "agency": "Philadelphia Fed",
+      "url": "https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/manufacturing-business-outlook-survey",
+      "role": "anatomy",
+      "primary": "Philly Fed Manufacturing",
+      "max_abs_z": 1.011,
       "indicators": [
         {
-          "name": "Housing Starts",
+          "name": "Philly Fed Manufacturing",
           "axis": "Activity",
-          "actual": 1309.0,
-          "previous": 1191.0,
-          "ref_period": "2026-10-01",
-          "momentum_z": -0.856,
-          "fred_id": "HOUST",
+          "actual": 6.3,
+          "previous": 20.9,
+          "ref_period": "2026-11-01",
+          "momentum_z": -1.011,
+          "fred_id": "GACDFSA066MSFRBPHI",
           "transform": "level",
-          "units": "K"
+          "units": ""
         }
       ],
       "components": [
         {
-          "label": "단독주택 착공",
-          "fred_id": "HOUST1F",
+          "label": "신규주문",
+          "fred_id": "NOCDFSA066MSFRBPHI",
           "transform": "level",
-          "unit": "채",
+          "unit": "",
           "aliases": [
-            "단독주택"
+            "신규주문",
+            "신규 주문"
           ],
-          "actual": 864000,
+          "actual": -0.4,
           "cite_values": [
-            864000,
-            864,
-            86.4
+            -0.4
           ],
           "cite_forms": [
             [
-              864000,
+              -0.4,
               ""
-            ],
-            [
-              864,
-              "천"
-            ],
-            [
-              86.4,
-              "만"
             ]
           ],
-          "text_value": 864000.0,
-          "ref_period": "2026-10-01"
+          "text_value": -0.4,
+          "ref_period": "2026-11-01"
         },
         {
-          "label": "완공",
-          "fred_id": "COMPUTSA",
+          "label": "출하",
+          "fred_id": "SHCDFSA066MSFRBPHI",
           "transform": "level",
-          "unit": "채",
+          "unit": "",
           "aliases": [
-            "완공"
+            "출하"
           ],
-          "actual": 1272000,
+          "actual": 25.7,
           "cite_values": [
-            1272000,
-            1272,
-            127.2,
-            1.272
+            25.7
           ],
           "cite_forms": [
             [
-              1272000,
+              25.7,
               ""
-            ],
-            [
-              1272,
-              "천"
-            ],
-            [
-              127.2,
-              "만"
-            ],
-            [
-              1.272,
-              "백만"
             ]
           ],
-          "text_value": 1272000.0,
-          "ref_period": "2026-10-01"
+          "text_value": 25.7,
+          "ref_period": "2026-11-01"
+        },
+        {
+          "label": "고용",
+          "fred_id": "NECDFSA066MSFRBPHI",
+          "transform": "level",
+          "unit": "",
+          "aliases": [
+            "고용"
+          ],
+          "actual": 11.6,
+          "cite_values": [
+            11.6
+          ],
+          "cite_forms": [
+            [
+              11.6,
+              ""
+            ]
+          ],
+          "text_value": 11.6,
+          "ref_period": "2026-11-01"
+        },
+        {
+          "label": "지불가격",
+          "fred_id": "PPCDFSA066MSFRBPHI",
+          "transform": "level",
+          "unit": "",
+          "aliases": [
+            "지불가격",
+            "지불 가격",
+            "투입가격",
+            "투입 가격"
+          ],
+          "actual": 58.2,
+          "cite_values": [
+            58.2
+          ],
+          "cite_forms": [
+            [
+              58.2,
+              ""
+            ]
+          ],
+          "text_value": 58.2,
+          "ref_period": "2026-11-01"
+        },
+        {
+          "label": "수취가격",
+          "fred_id": "PRCDFSA066MSFRBPHI",
+          "transform": "level",
+          "unit": "",
+          "aliases": [
+            "수취가격",
+            "수취 가격",
+            "판매가격"
+          ],
+          "actual": 47,
+          "cite_values": [
+            47
+          ],
+          "cite_forms": [
+            [
+              47,
+              ""
+            ]
+          ],
+          "text_value": 47.0,
+          "ref_period": "2026-11-01"
         }
       ],
       "anatomy": {
-        "release_date": "2026-11-18",
+        "release_date": "2026-11-19",
         "round": "ok",
         "candidates": [
           {
-            "label": "단독주택 착공",
-            "fred_id": "HOUST1F",
+            "label": "신규주문",
+            "fred_id": "NOCDFSA066MSFRBPHI",
             "transform": "level",
-            "unit": "채",
+            "unit": "",
             "round_ok": true,
             "reason": "ok",
-            "observation": "2026-10-01",
+            "observation": "2026-11-01",
             "changed": [
               "current"
             ],
-            "fred_value": 864.0,
+            "fred_value": -0.4,
             "text_ok": true,
-            "text_value": 864000.0
+            "text_value": -0.4
           },
           {
-            "label": "완공",
-            "fred_id": "COMPUTSA",
+            "label": "출하",
+            "fred_id": "SHCDFSA066MSFRBPHI",
             "transform": "level",
-            "unit": "채",
+            "unit": "",
             "round_ok": true,
             "reason": "ok",
-            "observation": "2026-10-01",
+            "observation": "2026-11-01",
             "changed": [
               "current"
             ],
-            "fred_value": 1272.0,
+            "fred_value": 25.7,
             "text_ok": true,
-            "text_value": 1272000.0
+            "text_value": 25.7
+          },
+          {
+            "label": "고용",
+            "fred_id": "NECDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 11.6,
+            "text_ok": true,
+            "text_value": 11.6
+          },
+          {
+            "label": "지불가격",
+            "fred_id": "PPCDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 58.2,
+            "text_ok": true,
+            "text_value": 58.2
+          },
+          {
+            "label": "수취가격",
+            "fred_id": "PRCDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 47.0,
+            "text_ok": true,
+            "text_value": 47.0
+          },
+          {
+            "label": "6개월 뒤 전망",
+            "fred_id": "GAFDFSA066MSFRBPHI",
+            "transform": "level",
+            "unit": "",
+            "round_ok": true,
+            "reason": "not_in_text",
+            "observation": "2026-11-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 33.6,
+            "text_ok": false
+          }
+        ]
+      },
+      "anatomy_status": "complete",
+      "anatomy_reason": null
+    },
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "role": "scored",
+      "primary": "Initial Claims 4-wk MA",
+      "max_abs_z": 0.333,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 203000.0,
+          "previous": 202000.0,
+          "ref_period": "2026-11-14",
+          "momentum_z": -0.028,
+          "fred_id": "ICSA",
+          "transform": "level",
+          "units": ""
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 197750.0,
+          "previous": 195750.0,
+          "ref_period": "2026-11-14",
+          "momentum_z": -0.333,
+          "fred_id": "IC4WSA",
+          "transform": "level",
+          "units": ""
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1763000.0,
+          "previous": 1693000.0,
+          "ref_period": "2026-11-07",
+          "momentum_z": 0.317,
+          "fred_id": "CCSA",
+          "transform": "level",
+          "units": ""
+        }
+      ],
+      "components": [
+        {
+          "label": "계절조정 전 청구",
+          "fred_id": "ICNSA",
+          "transform": "level",
+          "unit": "건",
+          "aliases": [
+            "계절조정 전",
+            "원계열"
+          ],
+          "actual": 197492,
+          "cite_values": [
+            197492,
+            197.492
+          ],
+          "cite_forms": [
+            [
+              197492,
+              ""
+            ],
+            [
+              197.492,
+              "천"
+            ]
+          ],
+          "text_value": 197492.0,
+          "ref_period": "2026-11-14"
+        },
+        {
+          "label": "보험 실업률",
+          "fred_id": "IURSA",
+          "transform": "level",
+          "unit": "%",
+          "aliases": [
+            "보험 실업률",
+            "피보험 실업률"
+          ],
+          "actual": 1.1,
+          "cite_values": [
+            1.1
+          ],
+          "cite_forms": [
+            [
+              1.1,
+              ""
+            ]
+          ],
+          "text_value": 1.1,
+          "ref_period": "2026-11-07"
+        }
+      ],
+      "anatomy": {
+        "release_date": "2026-11-19",
+        "round": "ok",
+        "candidates": [
+          {
+            "label": "계절조정 전 청구",
+            "fred_id": "ICNSA",
+            "transform": "level",
+            "unit": "건",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-14",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 197492.0,
+            "text_ok": true,
+            "text_value": 197492.0
+          },
+          {
+            "label": "보험 실업률",
+            "fred_id": "IURSA",
+            "transform": "level",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-11-07",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 1.1,
+            "text_ok": true,
+            "text_value": 1.1
           }
         ]
       },
@@ -166,8 +405,8 @@
     "inflation_label": "재가속",
     "name": "비용압박",
     "since": "2026-11-10",
-    "days_held": 7,
-    "thesis": "비용압박 유지(11월 10일부터, 6일째). 11월 17일 10월 소매판매(0.21%, 예상 0.2% 부합)와 산업생산(-0.43%, 유틸리티 되돌림 주도) 신규 발표로 소비축이 보합에서 개선으로 올라 성장 점수가 0.065에서 0.233으로 높아졌지만 보합 범위 안이고, 물가 점수 0.647(재가속)은 그대로다. 점수가 현재 국면을 가리킨다. 다음 점검은 11월 25일 PCE 물가·GDP다."
+    "days_held": 8,
+    "thesis": "비용압박 유지(11월 10일부터, 7일째). 11월 18일 10월 주택착공(1,309K, 예상 1,250K 상회, 다세대 주도·통계적으로 유의하지 않은 증가, 허가 -7.4%) 신규 발표에도 주택착공 추세는 악화(완만)로 생산·활동축 악화가 유지되고, 성장 점수 0.225(보합)·물가 점수 0.647(재가속, 물가 축은 8개 중 6개 가용 지표 기준)은 그대로다. 점수가 현재 국면을 가리킨다. 다음 점검은 11월 25일 PCE 물가·GDP다."
   },
   "regime_change_allowed": false,
   "regime_block": "scores_agree",
@@ -182,8 +421,8 @@
     "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 10일 10월 CPI 뒤 CME FedWatch 기준 25bp 인상 89%·50bp 인상 11%로 보도됐다(IBTimes). 발표 전 12월 인상 확률은 11월 9일 84%(Reuters via Yahoo)로 보도됐으나 같은 상품·같은 시각의 쌍은 아니다.",
     "prob_pct": null,
     "prob_status": "unverified",
-    "prob_note": "11월 17일 CME FedWatch 12월 25bp 인상 확률은 95.5%(CNBC)와 95.7%(TechFlow/Jin10)로 보도됐고 관측 시각은 확인되지 않았다. 1월 회의까지 누적 50bp 인상 확률 69.4%(Jin10). 11월 16일 보도치 93.7~95.7%와 같은 기준의 비교가 아니다.",
-    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 17일 10월 소매판매가 예상(0.2%)에 부합하고 통제그룹은 0.6%로 예상 0.3%를 넘어(ING) 수요 둔화로 인상을 늦출 근거가 나오지 않았다. 무살렘 세인트루이스 연은 총재(올해 비투표)는 2027년 봄 전까지 최대 4차례 추가 인상이 필요할 수 있다고 말했다. 12월 인상 확률은 95.5~95.7%로 보도돼 거의 반영된 상태다. 반대 근거는 베선트 재무장관의 인상 반대 발언과 고용의 질이다.",
+    "prob_note": "11월 18일 월러 이사 발언 뒤 CME FedWatch 12월 25bp 인상 92.7%·50bp 7.3%(전일 96.9%·3.1%, Seoul Economic Daily 보도)로 보도됐고 스냅샷 시각은 확인되지 않았다. 같은 날 '인상 확률 95%'(24/7 Wall St.) 보도도 있다. 11월 17일 보도치 95.5%(CNBC)와 같은 기준의 비교가 아니다.",
+    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 18일 월러 이사는 12월 0.5%p 인상이 아마 필요하다며 대안으로 25bp와 1월 추가 인상의 명확한 신호를 제시했고, 10월 FOMC 의사록은 거의 모든 참석자가 추가 인상을 적절하다고 봤으며 몇몇은 25bp 초과를 거론했다. FedWatch 12월 50bp 확률은 7.3%로 올랐지만 25bp가 중심이고, 윌리엄스 총재는 극적 조치가 필요 없다고 했다. 2년물은 -0.6bp로 12월 25bp가 이미 반영됐음을 보여 준다. 물가 판단은 가용 지표(8개 중 6개) 기준이다.",
     "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 11월 25일 10월 PCE 물가가 예상을 밑돌고 CME FedWatch 12월 인상 확률이 소비자물가 발표 전 보도치(84%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
     "change_allowed": true,
     "change_block": null
@@ -195,7 +434,7 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 68,
+      "days_held": 69,
       "allowed_directions": [
         -1,
         0,
@@ -208,7 +447,7 @@
       "channel": "물가 재가속이 생산자물가로 굳고 12월 인상 뒤 1·3월 추가 인상까지 거론되면서 실질금리 정점 통과와 완화 재개 기대가 더 뒤로 밀렸다. 30년물이 5.4% 위에서 이틀 연속 마감했고 10년·30년물 입찰 응찰이 평균보다 얇아 장기물 공급 부담이 더해졌다.",
       "confirm": "30Y가 5.4% 아래로 내려와 5거래일 머물거나 근원 CPI 전월비가 0.2% 이하로 내려오면 중립 복귀, 30Y가 5.05% 하회하면 우호",
       "since": "2026-11-13",
-      "days_held": 4,
+      "days_held": 5,
       "allowed_directions": [
         -1,
         0
@@ -220,7 +459,7 @@
       "channel": "물가 둔화가 실질금리 차를 좁혀 달러를 약하게 한다는 경로가 물가 재가속과 12월 인상 경로로 막혔다. 미국 정책금리 경로가 위로 옮겨 가 달러 강세 쪽을 받치지만, 금리차 자체와 다른 중앙은행 경로는 재지 않았고 달러 레벨도 이미 높아 우호까지는 올리지 않는다.",
       "confirm": "DXY 20일 -3% 이상 하락 또는 FedWatch 인하 확률 재등장 시 비우호, 12월 50bp 인상 확률 50% 상회 시 우호",
       "since": "2026-11-10",
-      "days_held": 7,
+      "days_held": 8,
       "allowed_directions": [
         -1,
         0,
@@ -233,7 +472,7 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 68,
+      "days_held": 69,
       "allowed_directions": [
         -1,
         0,
@@ -246,7 +485,7 @@
       "channel": "물가 재가속과 인상 경로가 실질금리 하락 기대를 늦춰 금 보유비용 하락 경로가 약해졌다. 지정학·재정 헤지 수요가 남아 비우호까지는 내리지 않는다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-11-10",
-      "days_held": 7,
+      "days_held": 8,
       "allowed_directions": [
         -1,
         0,
@@ -259,7 +498,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 68,
+      "days_held": 69,
       "allowed_directions": [
         0,
         1
@@ -271,12 +510,13 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화에 이어 11월 10일 소프트뱅크의 발전설비 선급금 손상(37억 달러)과 조달 재검토가 고객 쪽 부담을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 68,
+      "days_held": 69,
       "allowed_directions": [
         -1,
         0,
         1
       ]
     }
-  }
+  },
+  "collection_run": "44629510105-1"
 }

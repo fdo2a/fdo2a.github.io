@@ -1,43 +1,50 @@
 {
-  "report_date": "2026-11-18",
+  "report_date": "2026-11-19",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Broadline Retail",
-      "direction": "up",
+      "industry": "Semiconductors",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Amazon (AMZN)",
-          "change_pct": 3.82,
-          "close": 267.74,
-          "value": 10935994119.36
+          "name": "Nvidia (NVDA)",
+          "change_pct": -3.3,
+          "close": 145.98,
+          "value": 46109911060.74
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -7.72,
+          "close": 489.19,
+          "value": 34653636169.28
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Semiconductors",
+      "industry": "Interactive Media & Services",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -2.89,
-          "close": 150.96,
-          "value": 51780347476.66
+          "name": "Alphabet Inc. (Class A) (GOOGL)",
+          "change_pct": -3.46,
+          "close": 272.66,
+          "value": 13238853788.21
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Semiconductors",
+      "industry": "Systems Software",
       "direction": "up",
       "reasons": [
         "지수 기여 상위",
@@ -45,16 +52,16 @@
       ],
       "members": [
         {
-          "name": "Broadcom (AVGO)",
-          "change_pct": 3.64,
-          "close": 354.05,
-          "value": 9172188219.66
+          "name": "Palo Alto Networks (PANW)",
+          "change_pct": 6.42,
+          "close": 361.73,
+          "value": 6912475304.18
         },
         {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": 5.31,
-          "close": 530.14,
-          "value": 17734113885.72
+          "name": "CrowdStrike (CRWD)",
+          "change_pct": 2.71,
+          "close": 243.46,
+          "value": 2813156761.96
         }
       ]
     },
@@ -63,43 +70,14 @@
       "industry": "Managed Health Care",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위",
         "이상 등락"
       ],
       "members": [
         {
           "name": "UnitedHealth Group (UNH)",
-          "change_pct": -10.21,
-          "close": 349.91,
-          "value": 6068208915.6
-        },
-        {
-          "name": "Humana (HUM)",
-          "change_pct": -12.98,
-          "close": 385.78,
-          "value": 1602352270.35
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Systems Software",
-      "direction": "up",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Palo Alto Networks (PANW)",
-          "change_pct": 9.9,
-          "close": 339.92,
-          "value": 5597651856.64
-        },
-        {
-          "name": "CrowdStrike (CRWD)",
-          "change_pct": 7.95,
-          "close": 237.03,
-          "value": 2783831530.8
+          "change_pct": -5.55,
+          "close": 330.48,
+          "value": 6547132227.09
         }
       ]
     }

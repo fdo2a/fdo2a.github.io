@@ -1,0 +1,50 @@
+{
+ "section": "us",
+ "date": "2026-11-19",
+ "request_id": "us-2026-11-19-6771b46b1f80",
+ "draft_sha": "1cdc2e2abd7829e262a5d48292f4e93dc7567b23",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 3,
+ "style_candidates": 1,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 5,
+ "facts_rejected": 3,
+ "style_applied": 1,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-19T23:43:39Z",
+ "clarity": [
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "이날 나온 실업수당 청구는 그 판정을 거들지 않았다",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "용어",
+   "quote": "표현 수단의 비용은 따지지 못한다",
+   "cannot_tell": "다",
+   "route": "style_path",
+   "placed": "candidate"
+  },
+  {
+   "kind": "문장 구조",
+   "quote": "점수가 현재 국면을 가리켜 국면이 옮겨 갈 곳이 없고",
+   "cannot_tell": "나",
+   "route": "record_only",
+   "placed": ""
+  }
+ ],
+ "clarity_meta": {
+  "marker": true,
+  "lines_skipped": 0,
+  "over_cap": 0
+ }
+}

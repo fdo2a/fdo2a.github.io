@@ -242,6 +242,18 @@ def yahoo_frame_to_bars(index_dates, closes):
             for d, c in zip(index_dates, closes)]
 
 
+def quote_local_time(raw, tz):
+    """regularMarketTime → 거래소 현지 시각. yfinance 판에 따라 epoch 수·문자열·pandas Timestamp·datetime 으로
+    온다 — Actions 는 판을 고정하지 않아 2026-11-20 에 Timestamp 가 와 float() 가 터졌다(아시아 세 지수 빠짐)."""
+    if hasattr(raw, 'to_pydatetime'):
+        raw = raw.to_pydatetime()
+    if isinstance(raw, _dt.datetime):
+        if raw.tzinfo is None:
+            raw = raw.replace(tzinfo=_dt.timezone.utc)
+        return raw.astimezone(tz)
+    return _dt.datetime.fromtimestamp(float(raw), tz)
+
+
 def fetch_yahoo(ticker):
     """-> (bars, quote|None). 빈 종가 행을 버리지 않고(keepna) 그대로 받는다."""
     import zoneinfo
@@ -256,7 +268,7 @@ def fetch_yahoo(ticker):
     try:
         meta = tk.history_metadata or {}
         tz = zoneinfo.ZoneInfo(meta['exchangeTimezoneName'])
-        when = _dt.datetime.fromtimestamp(float(meta['regularMarketTime']), tz)
+        when = quote_local_time(meta['regularMarketTime'], tz)
         quote = {'price': meta.get('regularMarketPrice'), 'date': when.date().isoformat()}
     except Exception as e:
         print(f'  yahoo quote {ticker}: {e}', file=sys.stderr)

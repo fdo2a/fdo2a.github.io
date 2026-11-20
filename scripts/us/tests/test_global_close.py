@@ -289,3 +289,15 @@ def test_naver_live_parser():
     assert gc.parse_naver_live({'marketStatus': 'CLOSE', 'localTradedAt': 'x'}) is None
     assert gc.parse_naver_live({'localTradedAt': '2026-11-18T17:35:00+01:00'}) is None
     assert gc.parse_naver_live(None) is None
+
+
+@pytest.mark.parametrize('raw', [
+    1795070703,                                          # 예전 yfinance: epoch 정수
+    '1795070703',
+    __import__('pandas').Timestamp(1795070703, unit='s', tz='UTC'),   # Actions 의 최신 yfinance(2026-11-20 실측)
+    dt.datetime.fromtimestamp(1795070703, dt.timezone.utc),
+])
+def test_quote_time_accepts_epoch_and_timestamp(raw):
+    """2026-11-20 아침 수집에서 regularMarketTime 이 Timestamp 로 와 float() 가 터져 아시아 세 지수가 빠졌다."""
+    tz = zoneinfo.ZoneInfo('Asia/Tokyo')
+    assert gc.quote_local_time(raw, tz).isoformat() == '2026-11-19T15:45:03+09:00'

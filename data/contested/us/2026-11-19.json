@@ -1,0 +1,116 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-19",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-20T02:12:14+00:00",
+ "cutoff_at": "2026-11-20T02:12:14+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "844718f3b66eb7c8f732b5b2ff8c761fb4e7a6d9",
+  "sha256": "fe60f508d7d8e61d18ecd3dfbf92fbd20dfc984aa983b350717be079aec5dc85"
+ },
+ "counts": {
+  "harvest": 213,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 5,
+  "tokens": {
+   "in": 76019,
+   "out": 18111
+  },
+  "discovery": "ok",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "aljazeera.com": "ok",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "8/8",
+   "pairs": "1/1",
+   "obs": "9/9"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 9,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "memo[2]",
+    "structure",
+    "variables[0]",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_threshold",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "variables[0]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:unverified",
+    "edges[1]:dangling",
+    "edges[2]:dangling",
+    "memo[0]:dangling",
+    "memo[1]:unverified",
+    "memo[1]:dangling",
+    "memo[2]:dangling",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:unverified",
+    "worry.unlikely[0]:dangling"
+   ]
+  }
+ },
+ "event": {
+  "topic_ko": "미 상무부의 대중 AI 칩 수출 허가 심사가 엄격했는지를 둘러싼 논란",
+  "query": "china nvidia chip",
+  "trigger": []
+ },
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "variables[0]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:unverified",
+  "edges[1]:dangling",
+  "edges[2]:dangling",
+  "memo[0]:dangling",
+  "memo[1]:unverified",
+  "memo[1]:dangling",
+  "memo[2]:dangling",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:unverified",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "07b67331348cab86"
+}
