@@ -5,9 +5,9 @@
  "report_date": "2026-11-20",
  "status": "error",
  "reason": "model_extract_is_error_429",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-20T17:47:14+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-20T18:02:39+00:00",
  "cutoff_at": "2026-11-20T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "discovery": "truncated",
   "hosts": {
    "newsis": "ok",
@@ -60,5 +60,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "ec1625bf53213f27"
+ "content_hash": "03d4360555bccded"
 }
