@@ -30,9 +30,9 @@ if __name__ == '__main__' and not getattr(sys.flags, 'safe_path', False) and sys
     sys.path.pop(0)
 
 import fcntl  # noqa: E402
-import io  # noqa: E402
 import json  # noqa: E402
 import os  # noqa: E402
+import selectors  # noqa: E402
 import shutil  # noqa: E402
 import signal  # noqa: E402
 import subprocess  # noqa: E402
@@ -177,13 +177,90 @@ ENTRIES = {'contested': 'contested_local.py',
 DEFAULT_ENTRY = 'review_gate.py'
 
 
+ARCHIVE_TIMEOUT = 300   # git archive 와 그 출력을 푸는 일 전체의 제한(초)
+
+
+class _ArchiveStream:
+    """git archive 의 stdout 을 tarfile 에 그대로 흘려 주는 읽기 객체(2026-11-20).
+
+    예전에는 출력(약 84MB)을 임시 파일에 받았다가 메모리로 읽어 풀었다 — tick 마다 디스크 쓰기가
+    한 번 더였다. 읽을 때마다 POLL 안쪽으로 끊어 기다리며 `_wait` 와 같은 순서로 확인한다: 신호면
+    `_Cancelled`, 마감을 넘기면 `TimeoutExpired`. tarfile 은 이 둘을 그대로 올린다(정리는 `_archive`).
+    select() 가 아니라 selectors(macOS 는 kqueue)다 — select() 는 1024 이상 번호의 fd 를 못 본다
+    (codex 구현 1차).
+    """
+
+    def __init__(self, proc, deadline, timeout):
+        self.proc, self.deadline, self.timeout = proc, deadline, timeout
+        self.fd = proc.stdout.fileno()
+        self.sel = selectors.DefaultSelector()
+        try:
+            self.sel.register(self.fd, selectors.EVENT_READ)
+        except BaseException:
+            self.sel.close()
+            raise
+
+    def read(self, n=-1):
+        while True:
+            if SIGNALS is not None and SIGNALS.got is not None:
+                raise _Cancelled()
+            left = min(POLL, self.deadline - time.monotonic())
+            if left <= 0:
+                raise subprocess.TimeoutExpired(self.proc.args, self.timeout)
+            if self.sel.select(left):
+                return os.read(self.fd, n if n and n > 0 else 1 << 16)
+
+
+def _archive(root, oid, dest, timeout):
+    """`git archive oid` 를 파이프로 받아 dest 에 바로 푼다 — 임시 파일을 거치지 않는다.
+
+    우선순위: 취소(`_Cancelled`) > 제한 시간(`TimeoutExpired`) > git 실패(예전과 같은 RuntimeError,
+    푸는 중 오류는 `__cause__`) > git 성공인데 푸는 중 오류(그 오류 그대로 — 잘린 출력·경로 탈출).
+    tarfile 은 멤버 경계에서 끊긴 흐름을 깔끔한 끝으로 보므로 잘림은 git 종료 코드가 막는다.
+    실패하면 dest 는 반쯤 찬 채로 남고, 지우는 것은 예전처럼 호출자(main 의 rmtree)다.
+    """
+    deadline = time.monotonic() + timeout
+    with tempfile.TemporaryFile() as err:
+        proc = subprocess.Popen(['git', '-C', root, 'archive', oid],
+                                stdout=subprocess.PIPE, stderr=err)
+        stream = None
+        try:
+            stream = _ArchiveStream(proc, deadline, timeout)
+            failure = None
+            try:
+                with tarfile.open(fileobj=stream, mode='r|') as tar:
+                    tar.extractall(dest, filter='data')
+            except (_Cancelled, subprocess.TimeoutExpired):
+                raise
+            except Exception as exc:        # git 종료 코드를 본 뒤에 판정한다
+                failure = exc
+            # tarfile 은 끝 표시에서 멈춘다 — 나머지(채움·거부 뒤 출력)를 받아 내야 git 이 스스로
+            # 끝나고, 그 종료 코드가 진짜다.
+            while stream.read(1 << 16):
+                pass
+            code = proc.poll()
+            if code is None:
+                code = _wait(proc, deadline - time.monotonic())
+            if SIGNALS is not None and SIGNALS.got is not None:
+                raise _Cancelled()
+        finally:
+            if stream is not None:
+                stream.sel.close()
+            if proc.poll() is None:
+                proc.kill()
+            proc.wait()
+            proc.stdout.close()
+        if code:
+            err.seek(0)
+            why = err.read().decode('utf-8', 'replace').strip()
+            raise RuntimeError(f'git archive {oid[:7]} 실패 — {why[-200:]}') from failure
+        if failure is not None:
+            raise failure
+
+
 def snapshot(root, oid, dest, name=DEFAULT_ENTRY):
     """`oid` 의 트리 전체를 dest 에 푼다. dest 는 이 tick 만 쓰는 빈 폴더다."""
-    code, tree, err = _git(root, 'archive', oid, timeout=300)
-    if code:
-        raise RuntimeError(f'git archive {oid[:7]} 실패 — {err[-200:]}')
-    with tarfile.open(fileobj=io.BytesIO(tree)) as tar:
-        tar.extractall(dest, filter='data')
+    _archive(root, oid, dest, ARCHIVE_TIMEOUT)
     entry = os.path.join(dest, 'scripts', name)
     if not os.path.isfile(entry):
         raise RuntimeError(f'{oid[:7]} 사본에 scripts/{name} 가 없다')
