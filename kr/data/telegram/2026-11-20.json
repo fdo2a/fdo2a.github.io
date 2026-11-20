@@ -1,0 +1,357 @@
+{
+ "report_date": "2026-11-20",
+ "market": "kr",
+ "collected_utc": "2026-11-20T16:53:59+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-18T22:49:26+00:00",
+  "kwusa": "2026-11-19T08:50:04+00:00",
+  "lim_econ": "2026-11-18T22:39:51+00:00",
+  "d_ticker": "2026-11-18T22:24:18+00:00",
+  "aethersemiconductor": "2026-11-19T07:01:58+00:00",
+  "FastStockNews": "2026-11-19T08:12:33+00:00",
+  "FastStockNewsUSA": "2026-11-19T08:21:40+00:00",
+  "insidertracking": "2026-11-19T09:07:07+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-18T22:49:26+00:00",
+   "last_id": 3005,
+   "last_dt": "2026-11-20T05:39:20+00:00",
+   "read": 2
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-19T08:50:04+00:00",
+   "last_id": 61792,
+   "last_dt": "2026-11-20T09:12:31+00:00",
+   "read": 7
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-18T22:39:51+00:00",
+   "last_id": 2139,
+   "last_dt": "2026-11-19T22:39:59+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-18T22:24:18+00:00",
+   "last_id": 4213,
+   "last_dt": "2026-11-20T09:17:19+00:00",
+   "read": 17
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-19T07:01:58+00:00",
+   "last_id": 27126,
+   "last_dt": "2026-11-20T15:53:15+00:00",
+   "read": 46
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-19T08:12:33+00:00",
+   "last_id": 128260,
+   "last_dt": "2026-11-20T08:15:14+00:00",
+   "read": 64
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-19T08:21:40+00:00",
+   "last_id": 24618,
+   "last_dt": "2026-11-20T16:45:29+00:00",
+   "read": 46
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-19T09:07:07+00:00",
+   "last_id": 69849,
+   "last_dt": "2026-11-20T13:51:28+00:00",
+   "read": 94
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/27080",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-19T10:42:52+00:00",
+   "url": "https://t.me/aethersemiconductor/27080",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜타임스",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "TSMC와 삼성전자가 미국 상무부의 새 수출 통제에 따라 일부 중국 고객사에 대한 칩 출하를 중단했고, 라이선스 신청이 진행되는 동안 특정 프로세서 공급도 멈추겠다고 통보한 것으로 전해졌다. 미 산업안보국은 미국 기술로 첨단 칩을 만드는 업체가 최종적으로 중국 고객에게 가는 제품을 팔려면 라이선스가 필요하다고 밝혔다. 이에 따라 중국 설계업체가 독립 패키징·테스트 업체를 거쳐 AI 데이터센터용 칩을 주문하던 우회 경로가 막혔고, 소비자용 칩에 적용되던 면제도 사라졌다는 분석이다. 업계에서는 스마트폰 칩이 결국 라이선스를 받을 가능성이 높지만, 발급이 늦어지는 것만으로도 생산 차질이 클 것이며 메모리 가격 급등과 SMIC의 생산능력 제약을 겪는 중국 기술 기업에 또 다른 타격이 될 것이라는 시각이 나온다."
+  },
+  {
+   "id": "d_ticker/4198",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-19T11:35:01+00:00",
+   "url": "https://t.me/d_ticker/4198",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "낸드 계약가격의 하락 시점이 한 분기 앞당겨질 것이라는 시각이다. 중국 클라우드 서비스 업체들이 내년 기업용 SSD 주문을 크게 줄이면서, 북미 업체들의 주문 증가분을 전부 상쇄하고 2026년 4분기부터 공급과잉이 시작된다는 것이다. 이에 따라 2027년 1분기 낸드 계약가격이 전분기 대비 하락으로 돌아서고, 기존 예상보다 빠른 2분기부터 하락세가 본격화되며 하반기에는 그 속도가 더 빨라질 것이라는 의견이다."
+  },
+  {
+   "id": "d_ticker/4201",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-19T12:52:58+00:00",
+   "url": "https://t.me/d_ticker/4201",
+   "market_basis": "default",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "CNBC",
+    "url": "https://www.cnbc.com/2026/11/18/intel-first-18a-foundry-customer.html",
+    "basis": "link"
+   },
+   "article_date": "2026-11-18",
+   "summary_ko": "인텔의 립부 탄 최고경영자는 수요일 텍사스주 오스틴에서 열린 행사에서 18A 공정 칩의 첫 외부 고객과 계약을 체결했다고 밝혔다. 고객사 이름은 공개하지 않았다. 18A는 인텔이 대만 TSMC를 따라잡기 위해 추진해 온 핵심 공정으로, 인텔이 비인텔 제품을 생산하는 경쟁력 있는 파운드리 기업으로 전환하는 전환점으로 꼽힌다. 인텔 기술 총괄 푸쉬카르 라나데는 해당 고객이 6월 위험 생산에 들어간 18A-P 공정 노드에 서명했다고 설명했다. 앞서 5월에는 애플이 일부 칩 생산을 인텔 파운드리에 맡기는 계약을 임박했다는 보도가 나왔다. 분석가들은 엔비디아, 애플, 자체 프로세서를 만드는 대형 클라우드 기업을 유력 후보로 꼽았다. 한편 인텔 주가는 지난 9월 말 이후 절반 이상 떨어졌으며, 이번 분기 매출이 애널리스트 추정치보다 최소 10억 달러 적을 것이라는 발표 이후 급락했다. 인텔은 이날 마이크로소프트가 가장 진보된 패키징 기술인 EMIB의 첫 공개 고객이라고도 밝혔다."
+  },
+  {
+   "id": "d_ticker/4204",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-19T14:41:07+00:00",
+   "url": "https://t.me/d_ticker/4204",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "팔로알토 네트웍스가 3분기 기존 보안 사업 매출이 전년 대비 20% 늘었고, 최근 인수한 업체들의 실적을 더하면 성장률이 39%로 뛴다고 밝혔다는 소식이다. 2025년 7월 인수한 신원보안 업체 사이버아크는 23%, 여러 기업을 합쳐 만든 보안운영 사업부는 40% 성장했다. 이어 오픈웨이트 AI 모델 개발사 Applied Compute를 45억 달러에 인수해 엔터프라이즈 AI 시장에 진출하는 것을 두고, 고객이 AI 이상 징후를 감지하는 감독형 모델을 함께 쓸 수 있어 긍정적이라는 시각이 제시됐다. 다만 자체 학습 인프라가 필요해 CAPEX가 늘어날 것이라는 의견도 함께 전해졌다."
+  },
+  {
+   "id": "FastStockNews/128196",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T22:32:05+00:00",
+   "url": "https://t.me/FastStockNews/128196",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "뉴욕증시가 하락 마감했다는 소식이다. 다우지수는 5만 선 아래로 밀려 붕괴했고, 나스닥은 2.25% 급락했다. 다만 제목만으로는 하락의 원인이나 향후 흐름에 대한 설명을 확인할 수 없어, 세부 배경은 본문을 통해 확인해야 할 것으로 보인다."
+  },
+  {
+   "id": "FastStockNews/128197",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T22:32:18+00:00",
+   "url": "https://t.me/FastStockNews/128197",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "뉴욕증시가 하락 마감하면서 다우지수가 5만 선 아래로 밀려났고 나스닥은 2.25% 급락했다는 소식이다. 원문은 이 흐름을 전하는 제목만 제시하고 있어, 하락의 배경이나 향후 증시 전망에 대한 별도의 분석은 담겨 있지 않다. 다만 제목은 지수 하락이 뚜렷했다는 점을 강조하는 것으로 읽힌다."
+  },
+  {
+   "id": "lim_econ/2139",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-19T22:39:59+00:00",
+   "url": "https://t.me/lim_econ/2139",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "블룸버그는 앤트로픽이 상장 첫날 약 17% 오른 97달러 부근에서 마감하며 IPO 813억달러로 역대 최대 규모를 기록했다고 전했다. 루크 랭고는 이런 초대형 거래 하나를 위험 해소의 신호로 오해하지 말라는 견해를 내놨다. AMD는 헌터브룩의 숏 포지션 공개와 중국 리스크 지적에 장중 최대 11% 급락했으나 회사 측은 이를 왜곡이라고 반박했다. 미국의 대이란 공습 가능성과 미중러 정상회담의 제한적 실행 방안도 주요 쟁점으로 꼽혔다. 캐피탈이코노믹스는 원화가 저평가돼 있다는 근거로 2027년 말 달러-원 환율이 1250원까지 내려갈 것이라는 시각을 제시했다."
+  },
+  {
+   "id": "FastStockNews/128199",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-19T22:41:35+00:00",
+   "url": "https://t.me/FastStockNews/128199",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "앤트로픽이 공모가 83달러보다 34.3% 높은 111.50달러로 거래를 시작해 시가총액이 약 2조 달러까지 불어났지만, 차익실현 매물에 주가가 100달러 아래로 밀리며 97.17달러에 마감했다. 이 같은 상장 후 수급 부담이 AI 반도체, 메모리, 장비, 대형 기술주, 중국 ADR, 테마주 전반에 확산해 대부분 종목이 장 초반 강세를 반납하고 하락 전환했다는 시각이다. 특히 헌터브룩의 AMD 공매도 보고서가 중국 수출 규제 우회 의혹을 제기하면서 반도체 지수가 하락 전환한 것이 충격으로 작용했다는 의견이다. 반면 스토리지 기업과 인텔처럼 개별 재료가 있던 종목은 상승폭을 줄이면서도 강세를 일부 유지했다는 평가다."
+  },
+  {
+   "id": "hedgecat0301/3004",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-19T22:44:37+00:00",
+   "url": "https://t.me/hedgecat0301/3004",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시 급락의 원인을 앤스로픽 IPO 흥행에 따른 AI주 자금 이탈과 AMD발 중국 기술수출 논란 및 순환금융 우려에서 찾았다. 다만 앤스로픽 상장이 AI 투자심리를 회복시키는 모멘텀이 될 수 있고, 헌터브룩의 AMD 리스크 확산 가능성은 낮게 봐야 한다고 진단했다. 코스피는 PBR 0.95배 내외이고 10월 이후 약 26% 급락한 5,000pt가 역대급 과매도 구간이라는 근거에서, 5,000pt 이하 추가 매도의 실익이 크지 않다고 판단했다. 따라서 5,000pt 공방은 저가 매수세가 바닥을 다지는 과정으로 보는 것이 적절하다고 결론지었다."
+  },
+  {
+   "id": "d_ticker/4208",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-19T23:00:48+00:00",
+   "url": "https://t.me/d_ticker/4208",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "SK하이닉스가 2018년 설립한 특수목적회사(SPC)를 통해 보유한 키옥시아 전환사채(CB)를 지분 14.53%로 전환하는 방안을 검토하고 있다는 소식이다. 이 전환이 이뤄지면 지분율 기준으로 SK하이닉스가 키옥시아의 최대 주주가 된다는 점이 함께 전해졌다."
+  },
+  {
+   "id": "aethersemiconductor/27100",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-19T23:52:34+00:00",
+   "url": "https://t.me/aethersemiconductor/27100",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "JP모건은 알리바바에 대해 비중확대(Overweight) 의견을 유지하며, 미국의 반도체 규제가 실적에 주는 타격을 클라우드 마진 개선이 상쇄할 수 있다는 시각을 밝혔다. 회사는 자체 칩으로 차세대 모델 학습이 이미 진행 중이라는 경영진 발언과 9월 분기 클라우드 마진 상승(6월 분기 11.6%에서 14.5%)을 근거로 꼽았다. 다만 클라우드 매출 성장 둔화가 이어지고 AI 랩 손실이 클라우드 이익을 웃돈다면 그룹 이익 전망에 하방 위험이 있다는 견해도 함께 제시했다. 2027년 1분기 예정인 전우 V900의 상업 출시가 국산 칩 공급 상황을 가늠할 시험대가 될 것이라는 의견이다."
+  },
+  {
+   "id": "FastStockNews/128219",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-20T00:47:13+00:00",
+   "url": "https://t.me/FastStockNews/128219",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "프로텍이 삼성전자와 반도체 제조장비 공급계약을 체결했다는 공시 내용이다. 계약금액은 234억 원이며, 2026년 11월 19일부터 2027년 9월 30일까지 10개월간 진행되고, 회사 매출 대비 비중은 10.2%다. 이번 계약이 회사 실적에 의미 있는 기여를 한다는 시각이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/27105",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-20T04:48:15+00:00",
+   "url": "https://t.me/aethersemiconductor/27105",
+   "market_basis": "keyword",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "CNBC",
+    "url": "https://www.cnbc.com/2026/11/17/congress-ai-china-jensen-huang-chips.html",
+    "basis": "link"
+   },
+   "article_date": "2026-11-17",
+   "summary_ko": "엔비디아 전 최고경영자 젠슨 황과 중국 간첩 혐의를 받는 여성의 관계가 드러나면서, 의회에서 중국의 첨단 AI 기술 접근을 막으려는 움직임이 다시 힘을 얻고 있다. 의원들은 칩 수출 통제를 강화하는 AI 오버워치법, 매치법, 칩 보안법 등을 12월 심의될 국방수권법 최종안에 넣으려 하고 있다. 이 법안들은 적대국에 대한 칩 판매를 의회가 검토하고, 상무부가 첨단 AI 칩을 추적하며, 중국 연계 기업에 핵심 반도체 장비 판매를 막는 내용을 담는다. 척 슈머 상원 원내대표는 행정부가 수출 통제 집행에 관심이 없다며 통과를 촉구했다. 한편 2027 회계연도 국방예산안은 1조1천억 달러 이상으로 전년보다 크게 늘었고, 일부 민주당 의원은 이란 전쟁 중 이를 우려하고 있다. 트럼프 행정부는 2025년 12월 엔비디아 H200의 중국 판매를 허용했으며, 최근 중국 기업이 제3국 데이터센터의 컴퓨팅 자원을 임대하는 허점을 막는 규칙을 발표했다."
+  },
+  {
+   "id": "hedgecat0301/3005",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-20T05:39:20+00:00",
+   "url": "https://t.me/hedgecat0301/3005",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "키움증권 한지영 애널리스트는 하루 종일 이어진 연속 폭락의 원인으로 다섯 가지를 꼽았다. 앤스로픽 IPO 이후 해당 종목으로 자금이 쏠리며 여타 AI·반도체주에서 자금이 빠져나갔고, 엔비디아 관련 스캔들과 AMD의 중국 서버업체 기술 제공 의혹이 대중 반도체 규제 우려를 키웠다고 봤다. 여기에 AI 투자 사이클 둔화, FCF 악화, 데이터센터 규제 등 기존 불확실성이 해소되지 않은 점, 계단식 급락으로 저점이 연이어 낮아지며 추세 훼손 우려가 번진 점, 외국인 매도를 받아낼 매수 주체가 사라진 수급 약화도 요인으로 짚었다. 그는 엔비디아 어닝 서프라이즈나 앤스로픽 IPO 흥행 같은 호재가 나왔음에도 매수 의지가 꺾인 것이 가장 큰 원인이라고 진단했다. 밸류에이션과 실적이 먹히지 않는 장세이나 기술적으로는 버티는 것이 현실적 대안이라고 보며, 남은 장에서 분위기가 회복되기를 기대했다."
+  },
+  {
+   "id": "FastStockNews/128250",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-20T06:26:48+00:00",
+   "url": "https://t.me/FastStockNews/128250",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "코스피가 고점 대비 48% 하락해 2000년 이후 주요 조정장 가운데 3위 낙폭에 이르렀다는 소식이다. 1위는 닷컴 버블 때의 56%, 2위는 2008년 금융위기 때의 55%다. 글쓴이는 2003년 카드 사태와 2020년 코로나 때의 낙폭은 이미 넘어섰다고 짚었다. 또 큰 낙폭 뒤에는 지수가 빠르게 회복되는 경향이 있고, 6개월 뒤 수익률도 2022년 긴축장을 제외하면 대체로 하락률보다 컸다는 점을 들었다. 다만 지수가 50% 떨어진 뒤 50% 오르면 고점의 75% 수준만 회복되는 셈이라, 하락률 회복이 곧 원금 회복은 아니라는 시각을 함께 제시했다. 종목별로는 이보다 더 오른 경우도 있다고 덧붙였다. 글쓴이는 지금이 실제 저점인지 알 수 없어 투자자들이 선뜻 매수에 나서기 어려운 상황이라는 의견을 내놓았다."
+  },
+  {
+   "id": "d_ticker/4210",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-20T07:10:52+00:00",
+   "url": "https://t.me/d_ticker/4210",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "SK하이닉스가 2018년 투자목적법인 SPC2를 통해 취득한 1290억 엔 규모의 키옥시아 전환사채(CB)를 보통주 12만 900주로 전환하기로 결정했다고 공시했다. 아울러 SPC1이 보유한 SPC2 지분 1001주를 1억 엔에 매입하는 거래도 함께 진행된다. 이번 결정으로 키옥시아에 대한 간접 지분율이 14.1%에 이르러 최대주주 자격을 얻게 된다는 것이 공시의 내용이다. 이는 지분 확대를 통해 키옥시아 경영에 대한 영향력이 커졌다고 보는 시각으로 해석할 수 있다."
+  },
+  {
+   "id": "aethersemiconductor/27116",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-20T11:39:38+00:00",
+   "url": "https://t.me/aethersemiconductor/27116",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "모건스탠리는 히타치가 11월 17일 열린 R&D 이노베이션 데이 2026에서 피지컬 AI 기반 기술인 IWIM과 양자컴퓨터 사업 방향을 제시한 점을 긍정적으로 평가했다. 투자의견은 Equal-weight, 목표주가는 5,700엔으로, 11월 17일 종가 4,811엔 대비 18%의 상승 여력이 있다고 봤다. 목표주가는 FY27 예상 EPS에 22배를 곱해 산출했으며, 상방 리스크로는 피지컬 AI(HMAX) 성과와 GlobalLogic 전망 개선을, 하방 리스크로는 파워그리드 공급 제약과 대형 적자 프로젝트 발생 가능성을 들었다는 시각이다."
+  },
+  {
+   "id": "aethersemiconductor/27117",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-20T11:42:02+00:00",
+   "url": "https://t.me/aethersemiconductor/27117",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "JP모건은 다음 주 한국은행 금융통화위원회에서 금리가 추가로 인상되고 이후에도 점진적 긴축이 이어질 것이라는 기본 시나리오를 제시했다. 주식시장 변동성과 AI 투자 및 반도체 사이클에 대한 의문이 있지만, 성장과 대외 펀더멘털은 아직 정점이 아니라는 시각이다. 유가 하락과 원화 강세는 시차를 두고 헤드라인 물가를 낮출 수 있어 긴축 근거를 일부 상쇄한다는 의견도 함께 담겼다. 금리 결정은 단기 시장 변동보다 성장과 물가 지표에 따라 좌우될 것으로 보는 견해다."
+  }
+ ],
+ "stats": {
+  "items": 18,
+  "summarized": 18,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

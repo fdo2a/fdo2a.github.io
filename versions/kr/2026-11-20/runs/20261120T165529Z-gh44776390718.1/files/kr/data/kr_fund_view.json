@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "calculation_version": "2026-10-06",
+  "report_date": "2026-11-20",
+  "generated_at": "2026-11-21 01:50 KST",
+  "status": "ok",
+  "missing": [],
+  "source_dates": {
+    "session": "2026-11-20",
+    "CD 91일": "2026-11-20",
+    "국고채 3년": "2026-11-20",
+    "한국은행 기준금리": "2026-10"
+  },
+  "fx": {
+    "last": 1336.07,
+    "last_t": "15:30",
+    "high": 1340.12,
+    "high_t": "12:00",
+    "low": 1334.05,
+    "low_t": "09:00",
+    "bars": 14,
+    "source": "야후 30분봉, 한국장 시간대 마지막 관측(서울 외환시장 공식 종가 아님)"
+  },
+  "cash_rates": [
+    {
+      "name": "CD 91일",
+      "value": 3.39,
+      "date": "2026-11-20",
+      "bp": 1.0
+    },
+    {
+      "name": "국고채 3년",
+      "value": 3.642,
+      "date": "2026-11-20",
+      "bp": -7.4
+    },
+    {
+      "name": "한국은행 기준금리",
+      "value": 3.0,
+      "date": "2026-10",
+      "bp": 0.0
+    }
+  ],
+  "us_futures": {
+    "ES": {
+      "pct": -0.36,
+      "first_t": "09:00",
+      "last_t": "15:30"
+    },
+    "NQ": {
+      "pct": -0.61,
+      "first_t": "09:00",
+      "last_t": "15:30"
+    }
+  },
+  "observations": [
+    {
+      "unit_id": "semis",
+      "unit_name": "반도체·AI 하드웨어",
+      "kind": "index",
+      "name": "대만가권",
+      "change_pct": -6.23,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "grid",
+      "unit_name": "전력망",
+      "kind": "industry",
+      "name": "전기제품",
+      "change_pct": -3.98,
+      "breadth": 0.044,
+      "leading": false,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "metals",
+      "unit_name": "금속·광업",
+      "kind": "industry",
+      "name": "철강",
+      "change_pct": -3.18,
+      "breadth": 0.127,
+      "leading": false,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "financials",
+      "unit_name": "금융",
+      "kind": "industry",
+      "name": "은행",
+      "change_pct": 0.19,
+      "breadth": 0.545,
+      "leading": true,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "financials",
+      "unit_name": "금융",
+      "kind": "industry",
+      "name": "증권",
+      "change_pct": -2.77,
+      "breadth": 0.026,
+      "leading": false,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "software",
+      "unit_name": "소프트웨어",
+      "kind": "industry",
+      "name": "IT서비스",
+      "change_pct": -4.55,
+      "breadth": 0.176,
+      "leading": false,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "japan",
+      "unit_name": "일본",
+      "kind": "index",
+      "name": "닛케이",
+      "change_pct": -5.06,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "china",
+      "unit_name": "중국",
+      "kind": "index",
+      "name": "항셍",
+      "change_pct": -1.89,
+      "date": "2026-11-20"
+    },
+    {
+      "unit_id": "china",
+      "unit_name": "중국",
+      "kind": "index",
+      "name": "상해종합",
+      "change_pct": -1.23,
+      "date": "2026-11-20"
+    }
+  ]
+}
