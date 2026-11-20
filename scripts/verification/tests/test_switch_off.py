@@ -208,3 +208,20 @@ def test_a_dropped_row_says_which_month_is_missing_while_off(monkeypatch):
     cmd.collect_econ(reasons, refs)
     assert reasons == {'CPI YoY': 'no_value'}
     assert refs['CPI YoY']['lacking'] == ['2025-10'] and refs['CPI YoY']['lacking_why'] == {'2025-10': 'not_published'}
+
+
+def test_coverage_fields_are_written_only_once_on():
+    """`macro_metrics.json` 의 `coverage`·`coverage_ko` 는 작성자가 읽는 파일에 새로 나타나는 칸이다 — 꺼진 동안은 싣지 않는다
+    (2026-11-20 사용자 결정: 꺼진 동안 작성 입력은 1a 전과 같다). 수집기 본체는 네트워크 없이 돌릴 수 없어 호출 자리를 본다."""
+    src = open(os.path.join(SCRIPTS, 'collect_market_data.py'), encoding='utf-8').read()
+    calls = [m.start() for m in re.finditer(r'\bwith_coverage\(', src)]
+    assert len(calls) == 1
+    before = src[:calls[0]].splitlines()[-2]                 # 호출 줄(`mm = with_coverage(`)의 바로 윗줄
+    assert before.strip() == 'if enforcing():'
+    # 작성 지시문·오케스트레이터는 수집 상태 칸을 읽으라고 하지 않는다 — 그 칸은 꺼진 동안에도 실린다
+    docs = os.path.join(ROOT, '.claude')
+    for dp, _dn, fs in os.walk(docs):
+        for f in fs:
+            if f.endswith('.md'):
+                text = open(os.path.join(dp, f), encoding='utf-8').read()
+                assert '_collect_status' not in text and 'collected_at' not in text and '`collect`' not in text, f

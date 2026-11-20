@@ -247,11 +247,96 @@ def _collect_fields(c):
     return {k: c[k] for k in COLLECT_KEYS if isinstance(c, dict) and k in c}
 
 
+# ── 같은 값의 재수집은 바이트를 바꾸지 않는다(2026-11-20) ─────────────────────────────────────────
+# `collect.collected_at` 과 장부의 실행 ID·시각은 실행마다 다르다. 그대로 두면 값이 같은 재수집도 모든 자료 파일을 바꾼다 —
+# US 의 건너뛴 실행이 매번 커밋하고, KR 판 관리가 실행마다 사본을 쌓고, KR 발행 기록 뒤의 재수집이 verify 를 깨뜨린다
+# (1a 전에는 값이 같으면 바이트도 같았다). 그래서 끝 기록이 ① 앞 판(git HEAD)과 **수집 시각만** 다른 파일을 앞 판
+# 바이트로 되돌리고 ② 그 결과 장부에 실질적으로 달라진 것이 없으면 장부도 앞 판 그대로 둔다.
+# 「이번 실행이 썼는가」(`run_state`)는 되돌리기 **전**의 수집 시각으로 판정한다 — 되돌려도 실패는 가려지지 않는다.
+# 장부가 그대로면 실행 ID·시각은 그 자료를 마지막으로 바꾼 실행의 것이다(자료가 그 실행의 것과 바이트까지 같다).
+# git 밖이거나 앞 판에 없는 파일은 건드리지 않는다.
+
+def _head_bytes(datadir, rel):
+    """git HEAD 에 있는 그 파일의 바이트 | None(git 밖·HEAD 에 없음·git 실패)."""
+    import subprocess
+    try:
+        top = subprocess.run(['git', '-C', datadir, 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
+        if top.returncode != 0:
+            return None
+        path = os.path.relpath(os.path.realpath(os.path.join(datadir, rel)),
+                               os.path.realpath(top.stdout.strip())).replace(os.sep, '/')
+        if path.startswith('..'):
+            return None
+        got = subprocess.run(['git', '-C', datadir, 'show', f'HEAD:{path}'], capture_output=True)
+    except OSError:
+        return None
+    return got.stdout if got.returncode == 0 else None
+
+
+def _sans_time(obj):
+    """수집 시각을 뺀 본문 — `collect` 의 나머지 칸(상태·결측·기준일…)은 내용이다."""
+    c = obj.get('collect')
+    return dict(obj, collect={k: v for k, v in c.items() if k != 'collected_at'}) if isinstance(c, dict) else obj
+
+
+def restore_unchanged(datadir, rel):
+    """앞 판(HEAD)과 `collect.collected_at` 만 다른 JSON 객체 파일을 앞 판 바이트로 되돌린다.
+    -> 되돌리기 전(이번 실행이 쓴) 수집 시각 | None(`collect` 칸이 없는 파일)."""
+    path = os.path.join(datadir, rel)
+    body = _json(path)
+    if not (isinstance(body, dict) and isinstance(body.get('collect'), dict)):
+        return None
+    fresh = body['collect'].get('collected_at')
+    raw = _head_bytes(datadir, rel)
+    if raw is None:
+        return fresh
+    try:
+        head = json.loads(raw.decode('utf-8'))
+    except (ValueError, UnicodeDecodeError):
+        return fresh
+    if isinstance(head, dict) and isinstance(head.get('collect'), dict) and head != body \
+            and _sans_time(head) == _sans_time(body):
+        tmp = path + '.tmp'
+        with open(tmp, 'wb') as fh:
+            fh.write(raw)
+        os.replace(tmp, path)
+    return fresh
+
+
+def _material(entry):
+    """장부 항목에서 실행마다 달라지는 것(수집 시각, 정상 상태들 사이의 차이)을 뺀 것."""
+    if not isinstance(entry, dict):
+        return entry
+    out = {k: v for k, v in entry.items() if k != 'collected_at'}
+    if out.get('run') in RUN_OK:
+        out['run'] = 'ok'
+    return out
+
+
+def _same_ledger(head, book):
+    """앞 판 장부와 실질적으로 같은가 — 시장·세션·파일별 해시·상태가 같고, 앞 판이 제대로 닫힌 장부일 때만."""
+    if not (isinstance(head, dict) and isinstance(head.get('files'), dict)):
+        return False
+    hr = head.get('run') if isinstance(head.get('run'), dict) else {}
+    if hr.get('open') is not False or not hr.get('checked') or not head.get('run_id'):
+        return False
+    if not book['run'].get('checked'):
+        return False                      # 이번 실행을 확인하지 못했다 — 그 사실을 장부에 남긴다
+    if any(head.get(k) != book.get(k) for k in ('format', 'market', 'report_date')):
+        return False
+    hf, bf = head['files'], book['files']
+    return set(hf) == set(bf) and all(_material(hf[k]) == _material(bf[k]) for k in bf)
+
+
 def stamp(datadir, market=None, now=None, steps=None, run_id=None):
     market = market or infer_market(datadir)
     md = _json(os.path.join(datadir, MARKET_FILE[market])) or {}
     report_date = md.get('report_date')
     prior = C.load_status(datadir)
+    # 이번 실행이 쓴 수집 시각을 먼저 읽고(실행 상태 판정용), 수집 시각만 다른 파일을 앞 판 바이트로 되돌린다
+    fresh = {rel: restore_unchanged(datadir, rel)
+             for rel, producer, _pat in _expand(datadir, market, report_date) if producer is None
+             and rel.endswith('.json') and os.path.isfile(os.path.join(datadir, rel))}
     old = prior.get('files') or {}
     run = prior.get('run') if isinstance(prior.get('run'), dict) else {}
     steps = _steps() if steps is None else steps
@@ -287,7 +372,8 @@ def stamp(datadir, market=None, now=None, steps=None, run_id=None):
                     entry['collect_in'] = 'none'
             else:
                 entry['collect_in'] = 'none'
-            state, why = run_state(market, pat, rel, path, entry.get('collected_at'), run, steps, run_id)
+            state, why = run_state(market, pat, rel, path, fresh.get(rel) or entry.get('collected_at'),
+                                   run, steps, run_id)
             carried = None
             if state in ('skipped', 'unknown') and (old.get(rel) or {}).get('run') == 'failed':
                 # 앞선 실행의 실패는 건너뛴(또는 판정할 수 없는) 실행이 지우지 못한다 — 그 단계가 다시 돌아야 풀린다.
@@ -306,6 +392,19 @@ def stamp(datadir, market=None, now=None, steps=None, run_id=None):
                     'run_id': run_id, 'steps_known': isinstance(steps, dict)},
             'files': files}
     C.write_status(datadir, book)
+    raw = _head_bytes(datadir, C.STATUS_FILE if hasattr(C, 'STATUS_FILE') else os.path.basename(C.status_path(datadir)))
+    if raw is not None:
+        try:
+            head = json.loads(raw.decode('utf-8'))
+        except (ValueError, UnicodeDecodeError):
+            head = None
+        if _same_ledger(head, book):
+            # 달라진 것이 없다 — 장부도 앞 판 그대로(실행 ID·시각은 이 자료를 마지막으로 바꾼 실행의 것)
+            path = C.status_path(datadir)
+            with open(path + '.tmp', 'wb') as fh:
+                fh.write(raw)
+            os.replace(path + '.tmp', path)
+            return head
     return book
 
 

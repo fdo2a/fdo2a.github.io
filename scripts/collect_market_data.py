@@ -1917,8 +1917,13 @@ def main():
                             report_date, compute_macro_metrics)
         # 원천에 재료가 없어 행을 만들지 못한 점수 대상 지표 — 축 점수가 몇 개 중 몇 개로 나왔는지와, 그 지표가 있었다면
         # 판단이 달라질 수 있는지를 함께 싣는다(추정치로 채우지 않는다). 2026-11-17 사용자 승인 조건 7·8.
+        # **1a 를 켠 뒤에만 싣는다**(2026-11-20 사용자 결정): `coverage`·`axis_summary[축].coverage_ko` 는 작성자가 읽는
+        # 파일에 새로 나타나는 칸이다 — 꺼진 동안 작성 입력은 1a 전과 같아야 한다(작성 지시문은 이 칸을 모른다).
+        # 무엇이 빠졌는지는 꺼져 있어도 `collect.missing`·`missing_ref` 에 남는다.
         from us.macro_metrics import with_coverage
-        mm = with_coverage(mm, excluded_scored(econ_reasons, econ_refs), expected_scored())
+        from verification.inputs import enforcing
+        if enforcing():
+            mm = with_coverage(mm, excluded_scored(econ_reasons, econ_refs), expected_scored())
         for rel in mm['headline_releases']:
             anat = rel.get('anatomy') or {}
             ok = sum(1 for c in anat.get('candidates') or [] if c.get('round_ok'))
