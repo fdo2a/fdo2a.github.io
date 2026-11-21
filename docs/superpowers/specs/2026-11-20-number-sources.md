@@ -87,7 +87,7 @@ X-코드(§2.1) + 작성자 선언 `data-nx="enum"` 하나뿐 — 99 이하 정�
 ## 8. 기록 · 알림
 - 게이트 `--json`: `{skipped, warnings:[], violations:[], sources:{counts, runs, detail, unknown_by, web_by, unknown(60·80자), unknown_total, declared, dv_list, history, history_why, first_sha256, cycle}}`.
 - `record.py`: 설정의 `result: "sources"` 갈래가 `sources` 로 옮긴다(`numbers` 와 섞지 않는다). **합을 다시 센다** — 배타 칸 합 == total(두 층), history 꼴; 어긋나면 판정 불가. `optional_argv` = 값이 있을 때만 붙는 인자(`--tg`·`--cycle`·`--first`). `repo_paths('us-news') = scripts·config·research/us·posts` — 설계의 `news` 는 뺐다(`.gitignore` 의 `/news/` 때문에 임시 index `add -A` 가 통째로 실패한다, 구현 중 발견).
-- `prepub_view.recorded()`: `sources`(검증한 사본)·`sources_bad`·`sources_gate`. 표시: sources 있음 → 「숫자 N개 = 자료로 확인 a · 기사와 일치 b · 텔레그램 글과 일치 g · 검색 발췌와 일치 c · 세지 않은 숫자 x · 확인 불가 d」(0 이어도 전부, 합 확인) + 내역 줄 + 이유 + 확인 불가 앞 8개 + 「프로그램이 보지 못하는 것: 숫자의 주어·방향, 기사 자체의 오류」 / `sources_bad` → 「숫자 집계가 맞지 않아요」 / 게이트가 not_run·indeterminate → 「숫자 출처 검사 못 함」 / 게이트 항목 없음(옛 기록) → 옛 숫자 줄 그대로. 「검증 완료」를 U=0 에 묶지 않는다(`fully_verified`·`fingerprint`·`anomalies`·`clean` 은 그대로). **건별 알림에서 분량·문체 경고 줄을 뺐다**(11/20 사용자) — 판정·기록·실패 표시는 그대로.
+- `prepub_view.recorded()`: `sources`(검증한 사본)·`sources_bad`·`sources_gate`. 표시: sources 있음 → 「숫자 N개 = 자료로 확인 a · 어림선 l · 기사와 일치 b · 텔레그램 글과 일치 g · 검색 발췌와 일치 c · 세지 않은 숫자 x · 확인 불가 d」(0 이어도 전부, 합 확인) + 내역 줄 + 이유 + 확인 불가 앞 8개 + 「프로그램이 보지 못하는 것: 숫자의 주어·방향, 기사 자체의 오류」 / `sources_bad` → 「숫자 집계가 맞지 않아요」 / 게이트가 not_run·indeterminate → 「숫자 출처 검사 못 함」 / 게이트 항목 없음(옛 기록) → 옛 숫자 줄 그대로. 「검증 완료」를 U=0 에 묶지 않는다(`fully_verified`·`fingerprint`·`anomalies`·`clean` 은 그대로). **건별 알림에서 분량·문체 경고 줄을 뺐다**(11/20 사용자) — 판정·기록·실패 표시는 그대로.
 - us-news: `config/prepub_gates.json` `markets["us-news"]`(STEP 3.5 의 손 게이트 + 새 게이트), `prepub_view.RECORD_TARGETS`(세션 감시 `TARGETS` 는 us·kr 그대로 — 뉴스 글은 미발행 감시 없음), `publish_watch.WATCH_PATHS` 에 `news`, `_target_of_any`·`verify_publish` 는 `RECORD_TARGETS`. 뉴스 글은 `numsrc.EFFECTIVE` 이후만 대상(그 전 글이 전체 재계산에서 「기록 없음」 경보가 되지 않게). `digest.py` 는 sources 가 있으면 「숫자 N개 중 확인 불가 d개」.
 
 ## 9. 사각지대(남은 것)
@@ -95,3 +95,8 @@ X-코드(§2.1) + 작성자 선언 `data-nx="enum"` 하나뿐 — 99 이하 정�
 
 ## 10. 확인 못 함
 매체 약관 · `web_session` 스냅샷이 원 바이트인지 · `check_auction` 이 span 든 칸을 읽는지(입찰 표 렌더러 표식은 이번에 넣지 않았다 — 표가 U 「코드 블록」) · 영→한 대조의 실제 오탐률(Actions 첫 수집 뒤) · 수집 숫자 목록은 US 만 쓴다(`fetch_telegram.py --market kr` 은 쓰지 않는다 — 2차).
+
+
+## 2026-11-21 — 어림선은 따로 센다
+
+사용자: 「7,000선」 같은 어림선은 필요한 표현이다(좁히지 않는다). 그래서 `|lvl` 대조 규칙은 그대로 두고, 맞으면 `data` 가 아니라 배타 칸 `level`(알림 「어림선」)로 센다 — 그 확인은 자릿수 범위(7,000선 ⇐ 7,000~7,999)뿐이라 「자료로 확인」에 섞으면 신뢰를 부풀린다.

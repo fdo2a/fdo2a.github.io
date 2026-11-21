@@ -57,7 +57,7 @@ def _view(rec, market='us'):
             'recorded': V.recorded(rec, [g['name'] for g in rec['gates']])}
 
 
-SIX = '숫자: 숫자 2개 = 자료로 확인 1 · 기사와 일치 0 · 텔레그램 글과 일치 0 · 검색 발췌와 일치 0 · 세지 않은 숫자 0 · 확인 불가 1'
+SIX = '숫자: 숫자 2개 = 자료로 확인 1 · 어림선 0 · 기사와 일치 0 · 텔레그램 글과 일치 0 · 검색 발췌와 일치 0 · 세지 않은 숫자 0 · 확인 불가 1'
 
 
 def test_record_json_to_publish_alert(tmp_path):
@@ -148,7 +148,7 @@ def _news_publish(repo, date, rec_sources):
 
 
 def _sources():
-    c = {'table': 0, 'data': 1, 'article': 2, 'telegram': 0, 'web': 0, 'excluded': 0, 'unknown': 1, 'total': 4}
+    c = {'table': 0, 'data': 1, 'level': 0, 'article': 2, 'telegram': 0, 'web': 0, 'excluded': 0, 'unknown': 1, 'total': 4}
     return {'counts': c, 'runs': dict(c), 'history': 'unverifiable', 'detail': {}, 'unknown': [], 'unknown_total': 1}
 
 
@@ -159,7 +159,7 @@ def test_us_news_publish_event_through_step(tmp_path, monkeypatch):
     st = W.step(W.new_state('처음'), str(repo), datetime(2026, 11, 9, 20, 0, tzinfo=W.KST), True, ref='HEAD')
     ev = [e for e in st['events'] if e['kind'] == 'publish' and e['key'] == 'news/2026-11-09.html']
     assert len(ev) == 1
-    assert ev[0]['text'].startswith('[발행] US 뉴스·산업 11/09') and '숫자 4개 = 자료로 확인 1 · 기사와 일치 2' in ev[0]['text']
+    assert ev[0]['text'].startswith('[발행] US 뉴스·산업 11/09') and '숫자 4개 = 자료로 확인 1 · 어림선 0 · 기사와 일치 2' in ev[0]['text']
     # 세션 감시(미발행)는 us·kr 만 — us-news 세션 열쇠가 없다
     assert not any(k.startswith('us-news:') for k in st['sessions'])
 

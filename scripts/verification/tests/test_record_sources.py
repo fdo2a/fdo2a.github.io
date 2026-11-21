@@ -68,7 +68,7 @@ def test_us_news_market_runs(tmp_path):
 
 
 def _obj(**kw):
-    c = {'table': 0, 'data': 1, 'article': 0, 'telegram': 0, 'web': 0, 'excluded': 0, 'unknown': 1, 'total': 2}
+    c = {'table': 0, 'data': 1, 'level': 0, 'article': 0, 'telegram': 0, 'web': 0, 'excluded': 0, 'unknown': 1, 'total': 2}
     src = {'counts': dict(c), 'runs': dict(c), 'history': 'unverifiable', 'unknown': [{'text': '0.5% — x', 'why': '표식 없음'}]}
     src.update(kw)
     return {'skipped': False, 'warnings': [], 'violations': [], 'sources': src}
@@ -81,7 +81,7 @@ def _classify(obj, code=0):
 
 
 def test_recount_bad_sum_is_indeterminate():
-    c = {'table': 0, 'data': 1, 'article': 0, 'telegram': 0, 'web': 0, 'excluded': 0, 'unknown': 1, 'total': 3}
+    c = {'table': 0, 'data': 1, 'level': 0, 'article': 0, 'telegram': 0, 'web': 0, 'excluded': 0, 'unknown': 1, 'total': 3}
     st, res = _classify(_obj(counts=c))
     assert st == 'indeterminate' and 'sources' not in res
     st, _ = _classify(_obj(runs=dict(c, total=2, unknown='1')))

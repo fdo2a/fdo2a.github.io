@@ -174,7 +174,7 @@ def recorded(rec, allowed=None):
     }
 
 
-SOURCE_CLASSES = ('table', 'data', 'article', 'telegram', 'web', 'excluded', 'unknown')
+SOURCE_CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
 _HISTORY_KEYS = ('first_unknown', 'fixed', 'gone', 'still', 'ambiguous')
 
 
@@ -827,7 +827,7 @@ def _count(x):
 
 
 # ── 숫자 출처(2026-11-20) ───────────────────────────────────────────────────
-SOURCE_SHOWN = (('자료로 확인', ('table', 'data')), ('기사와 일치', ('article',)), ('텔레그램 글과 일치', ('telegram',)),
+SOURCE_SHOWN = (('자료로 확인', ('table', 'data')), ('어림선', ('level',)), ('기사와 일치', ('article',)), ('텔레그램 글과 일치', ('telegram',)),
                 ('검색 발췌와 일치', ('web',)), ('세지 않은 숫자', ('excluded',)), ('확인 불가', ('unknown',)))
 SOURCE_LIMITS = '프로그램이 보지 못하는 것: 숫자의 주어·방향, 기사 자체의 오류'
 SOURCE_UNKNOWN_SHOWN = 8
@@ -848,7 +848,7 @@ def sources_lines(s):
     out = [f'숫자 {n}개 = ' + ' · '.join(f'{label} {v}' for label, v in parts)]
     d = s.get('detail') if isinstance(s.get('detail'), dict) else {}
     bits = [(lab, _count(d.get(k)) or 0) for lab, k in (
-        ('흔한 수', 'article_common'), ('계산값', 'dv'), ('어림선', 'lvl'), ('부호 뺀 칸', 'abs_refs'),
+        ('흔한 수', 'article_common'), ('계산값', 'dv'), ('부호 뺀 칸', 'abs_refs'),
         ('지난 관측일 칸', 'stale_refs'), ('무효 칸', 'invalid_refs'), ('작성자가 뺀 숫자', 'excluded_enum'))]
     zone = (_count(d.get('zone_contested')) or 0) + (_count(d.get('zone_note')) or 0)
     bits.append(('쟁점 분석·편집자 노트 구역', zone))

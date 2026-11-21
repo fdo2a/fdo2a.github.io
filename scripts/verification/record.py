@@ -219,7 +219,7 @@ def _classify(spec, code, out, err, ctx, res):
     return 'indeterminate'
 
 
-SOURCE_CLASSES = ('table', 'data', 'article', 'telegram', 'web', 'excluded', 'unknown')
+SOURCE_CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
 SOURCE_DETAIL = ('dv', 'lvl', 'abs_refs', 'stale_refs', 'invalid_refs', 'article_common', 'excluded_code', 'excluded_enum',
                  'zone_contested', 'zone_note', 'marker_empty')
 SOURCE_HISTORY = ('first_unknown', 'fixed', 'gone', 'still', 'ambiguous')

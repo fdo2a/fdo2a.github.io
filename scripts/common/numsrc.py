@@ -20,8 +20,8 @@ from dataclasses import dataclass, field
 EFFECTIVE = '2099-12-31'          # 자리표시 — 병합 뒤 첫 발행일로 바꾼다(설계 §7.1, 그 전 글은 not_run)
 FORMAT = 'numsrc/1'
 
-CLASSES = ('table', 'data', 'article', 'telegram', 'web', 'excluded', 'unknown')
-CLASS_KO = {'table': '자료로 확인', 'data': '자료로 확인', 'article': '기사와 일치', 'telegram': '텔레그램 글과 일치',
+CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
+CLASS_KO = {'table': '자료로 확인', 'data': '자료로 확인', 'level': '어림선', 'article': '기사와 일치', 'telegram': '텔레그램 글과 일치',
             'web': '검색 발췌와 일치', 'excluded': '세지 않은 숫자', 'unknown': '확인 불가'}
 # U 의 이유(닫힌 분류 — 설계 §7.1). 기록·알림은 이 이름만 싣는다
 U_REASONS = ('표식 없음', '표식 오류', '자료와 다름', '칸 없음', '칸 무효', '기사 목록에 없음', '목록 없음', '발췌에 없음',

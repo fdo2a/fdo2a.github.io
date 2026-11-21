@@ -128,7 +128,7 @@ def test_data_ref_match_and_mismatch(wd):
 
 
 def test_level_and_unknown_cell(wd):
-    assert one(wd, '<p>지수는 <span data-ref="md:indices.SP500.last|lvl">7,300선</span>에 있다.</p>')[0] == 'data'
+    assert one(wd, '<p>지수는 <span data-ref="md:indices.SP500.last|lvl">7,300선</span>에 있다.</p>')[0] == 'level'   # 어림선은 따로 센다(11/21)
     assert one(wd, '<p>지수는 <span data-ref="md:indices.SP500.last|lvl">7,500선</span>에 있다.</p>') == ('unknown', '자료와 다름')
     assert one(wd, '<p>지수는 <span data-ref="md:indices.SP500.foo">7,300</span>이다.</p>') == ('unknown', '칸 없음')
     assert one(wd, '<p>지수는 <span data-ref="zz:indices.SP500.last">7,323.63</span>이다.</p>') == ('unknown', '칸 없음')

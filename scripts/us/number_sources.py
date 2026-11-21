@@ -357,7 +357,8 @@ class Classifier:
             self.detail['abs_refs'] += 1
         if f.status == 'stale':
             self.detail['stale_refs'] += 1
-        return 'data', name
+        # 어림선(「7,000선」)은 쓰게 두되 「자료로 확인」에 섞지 않는다 — 그 확인은 자릿수 범위뿐이다(11/21 사용자)
+        return ('level' if 'lvl' in flags else 'data'), name
 
 
 def _shown_ok(q, f, flags):
