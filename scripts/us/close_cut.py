@@ -71,21 +71,39 @@ EARLY_CLOSE_MINUTES = 13 * 60
 CLOSE_TOLERANCE_PCT = 0.1     # 30분봉 마지막 종가 vs 일봉 종가, 60일 실측 최대 0.058%(2026-10-14)
 
 
+def _close_in_last_bar(ref, high, low, tol_pct):
+    """공식 종가가 마지막 봉의 고저 범위(± tol_pct) 안인가. 고저가를 못 읽으면 False."""
+    high, low = _finite(high), _finite(low)
+    if high is None or low is None or low > high:
+        return False
+    return low * (1 - tol_pct / 100) <= ref <= high * (1 + tol_pct / 100)
+
+
 def session_ends(equity_bars, equity_daily, bar_minutes=BAR_MINUTES,
                  tol_pct=CLOSE_TOLERANCE_PCT):
     """믿을 수 있는 주식 세션 → {날짜: 마감 끝 분}. 세 조건을 모두 볼 때만 세션이다.
 
     1. 그날 S&P 500 **일봉**이 있다 — 세션 달력은 일봉이 정한다(30분봉과 따로 받은 근거).
     2. 30분봉이 16:00 이나 표준 단축장 13:00 에 끝난다.
-    3. 그 마지막 30분봉 종가가 일봉 종가와 `tol_pct` 안이다.
+    3. 일봉 종가가 마지막 30분봉과 맞는다 — 그 봉 종가와 `tol_pct` 안이다. 16:00 마감이면
+       봉이 (시각, 종가, 고가, 저가) 일 때 **일봉 종가가 그 봉의 고저 범위 ± `tol_pct` 안**이어도
+       된다. 13:00 마감은 종가 비교만 한다.
 
     내려받은 30분봉의 마지막 봉을 그대로 마감으로 믿으면, 10:00 에서 끊긴 다운로드가 「10:00
     마감 세션」으로 통과해 자기 가정을 자기가 검증한다(codex 재검토 P1). 16:00 에 붙는
     길이 0 짜리 봉은 16:00 으로 본다.
+
+    고저 범위는 2026-11-20 사고에서 들였다. S&P 가 -3.7% 빠진 날 마지막 봉 종가(6918.45)와
+    공식 종가(6910.39)가 마감 동시호가만큼 0.117% 벌어져 그날이 세션에서 빠졌고, 환율·원자재
+    8행이 전부 비어 발행이 멈췄다. 이 차이는 그날 등락폭이 아니라 마지막 30분의 흔들림을
+    따라간다. 16:00 경로는 봉이 16:00 에 끝난다는 것으로 이미 끊긴 다운로드를 막으니, 남은
+    일은 일봉이 같은 세션의 것인지 보는 것이다. 13:00 경로는 종가 비교가 「13:00 에서 끊긴
+    평일 다운로드」와 단축장을 가르는 유일한 장치라 넓히지 않는다.
     """
     daily = equity_daily or {}
     last = {}
-    for ts, close in equity_bars or []:
+    for bar in equity_bars or []:
+        ts, close, *hl = bar
         v = _finite(close)
         key = _bar_end(ts, bar_minutes)
         if v is None or key is None:
@@ -93,13 +111,15 @@ def session_ends(equity_bars, equity_daily, bar_minutes=BAR_MINUTES,
         day, m = key
         m = min(m, CUT_MINUTES)
         if day not in last or m >= last[day][0]:
-            last[day] = (m, v)
+            last[day] = (m, v, tuple(hl[:2]) if len(hl) >= 2 else None)
     out = {}
-    for day, (m, v) in last.items():
+    for day, (m, v, hl) in last.items():
         ref = _finite(daily.get(day))
         if not ref or m not in (CUT_MINUTES, EARLY_CLOSE_MINUTES):
             continue
         if abs(v / ref - 1) * 100 <= tol_pct:
+            out[day] = m
+        elif m == CUT_MINUTES and hl and _close_in_last_bar(ref, *hl, tol_pct):
             out[day] = m
     return out
 

@@ -143,11 +143,14 @@ def fill_daily_gaps(daily, anchor=None):
     return daily
 
 
-def _bars30(sym, period='10d'):
+def _bars30(sym, period='10d', hl=False):
+    """30분봉 → [(시작 ISO, 종가)]. `hl` 이면 [(시작 ISO, 종가, 고가, 저가)] — S&P 세션 검증용."""
     import yfinance as yf
     h = yf.Ticker(sym).history(period=period, interval='30m')
     if h is None or not len(h):
         return None
+    if hl:
+        return [(i.isoformat(), r['Close'], r.get('High'), r.get('Low')) for i, r in h.iterrows()]
     return [(i.isoformat(), r['Close']) for i, r in h.iterrows()]
 
 
@@ -184,8 +187,9 @@ def collect_cut_rows(anchor, contracts=None):
 
     # 세션 달력 = S&P 500 일봉(30분봉과 따로 받은 근거). 30분봉은 그 세션이 마감까지 다 있는지만
     # 검증한다 — 잘리거나 빠진 날은 세션에서 빠지고 그 날을 쓰는 행은 None 이 된다.
+    # 고저가는 급변한 마감(2026-11-20)에서 공식 종가가 마지막 봉 범위 안인지 보는 데 쓴다.
     daily = retry(spx_daily, attempts=3) or {}
-    spx = retry(lambda: _bars30(ANCHOR_TICKER), attempts=3)
+    spx = retry(lambda: _bars30(ANCHOR_TICKER, hl=True), attempts=3)
     sessions = session_ends(spx or [], daily)
     calendar = sorted(daily)
     out = {}
