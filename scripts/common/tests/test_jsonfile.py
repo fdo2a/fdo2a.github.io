@@ -41,3 +41,28 @@ def test_or_none_lets_a_bad_path_type_raise():
     with pytest.raises(TypeError):
         J.load_json_or_none(None)
 
+
+def test_warn_missing_is_silent(tmp_path, capsys):
+    assert J.load_json_warn(str(tmp_path / 'nope.json')) is None
+    assert J.load_json_warn(str(tmp_path / 'nodir' / 'x.json')) is None
+    assert capsys.readouterr().err == ''
+
+
+@pytest.mark.parametrize('case', ['directory', 'empty', 'bad_json', 'not_utf8', 'bom'])
+def test_warn_other_failures_print_one_line(tmp_path, capsys, case):
+    path = CASES_NONE[case](tmp_path)
+    assert J.load_json_warn(path) is None
+    err = capsys.readouterr().err
+    assert err.startswith(f'WARN: could not read {path}: ') and err.count('\n') == 1
+
+
+def test_warn_catches_a_bad_path_type_too(capsys):
+    assert J.load_json_warn(None) is None
+    assert capsys.readouterr().err.startswith('WARN: could not read None: ')
+
+
+def test_warn_reads_values(tmp_path, capsys):
+    assert J.load_json_warn(_w(tmp_path, 'd.json', b'{"a": 1}')) == {'a': 1}
+    assert J.load_json_warn(_w(tmp_path, 'l.json', b'[1, 2]')) == [1, 2]
+    assert J.load_json_warn(pathlib.Path(_w(tmp_path, 'p.json', b'{}'))) == {}
+    assert capsys.readouterr().err == ''

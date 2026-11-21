@@ -219,15 +219,7 @@ def _finish(html, prev, ev, nxt, econ, metrics, market, releases):
     sys.exit(1)
 
 
-def _load_pre1a(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        return None
-    except Exception as e:
-        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
-        return None
+from common.jsonfile import load_json_warn as _load_pre1a  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _main_pre1a():

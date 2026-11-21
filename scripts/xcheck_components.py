@@ -24,15 +24,7 @@ from fetch_releases import fulldir_for, run_id  # noqa: E402
 from us import anatomy  # noqa: E402
 
 
-def load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        return None
-    except Exception as e:
-        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
-        return None
+from common.jsonfile import load_json_warn as load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _read(path):
