@@ -201,12 +201,34 @@
    "status": "sent",
    "text": "[미발행] KR 일간 11/20 · 확인 필요\n기준 시각 11/20 23:00 KST 이 지났는데 이번에 확인한 공개 판에 글이 없어요\n원인(확정 아님): 이 세션의 완전한 수집 데이터는 레포에 있어요(report_date 2026-11-20). 데이터는 있으니 작성 루틴이 돌지 않았거나 도중에 멈췄을 수 있어요",
    "tries": 0
+  },
+  {
+   "base": "28968c50b8fc3756183f422746fa10d2",
+   "created": "2026-11-21T11:27:20.758945+09:00",
+   "hash": "fb12f6068a5720e0ff6ab8f97e83dc19555a005203fecba84acab90dc95e5cb3",
+   "id": "b17f85f16ec6f86f50e5db3c2f3ff56e",
+   "key": "kr:2026-11-20",
+   "kind": "resolved",
+   "status": "pending",
+   "text": "[미발행 해소] KR 일간 11/20 · 해결\n글이 올라왔어요 — 앞서 생성된 미발행 경고(기준 11/20 23:00 KST)가 풀렸어요",
+   "tries": 0
+  },
+  {
+   "base": "8d93a5cec58861377ea216f9980084d3",
+   "created": "2026-11-21T11:27:20.758945+09:00",
+   "hash": "fb5c88c31318e4c92d5b19d69089a53ee565fcb2741d2b8a3bc885a8bfbf99bd",
+   "id": "8d93a5cec58861377ea216f9980084d3",
+   "key": "kr/posts/2026-11-20.html",
+   "kind": "publish",
+   "status": "pending",
+   "text": "[발행] KR 일간 11/20 · 발행 통과 · 검토 1건 · 참고 1건\n\n■ 발행 상태\n필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)\n\n■ 볼 것\n1. [검토 권고] 본문 6,493자(평소 4,000~5,000자), 시황 1,458자 < 판단 1,908자. 반복된 해석부터 덜고, 주요 시장 움직임·원인 설명이 빠졌는지 확인\n2. [참고] 문체: 문장 안에 매체 출처가 있다 — 「CNBC」 — 다시 읽어 보고, 자연스러우면 그대로 둔다\n\n■ 검증 범위\n표 55칸 자동 대조 · 숫자 251개 범위 밖(문장 166 · 업종 기간별 76 · 기타 표 9). 오류 251건이라는 뜻은 아님\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
+   "tries": 0
   }
  ],
  "fetch": {},
  "format": "verify-publish/1",
- "last_ok": "2026-11-21T07:20:54.833703+09:00",
- "last_seen": "ade84ad8bc874a61e3a1f65e5172df425596e5b7",
+ "last_ok": "2026-11-21T11:27:20.758945+09:00",
+ "last_seen": "1e4f818e11471f422ab4ef5bff48ed1d19373ff1",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
@@ -243,6 +265,10 @@
   "kr/posts/2026-11-19.html": {
    "first_seen": "e60b0fe2cb6c6d48df426ed0fe3baaade837dd73",
    "fp": "[\"ok\", \"e60b0fe2cb6c6d48df426ed0fe3baaade837dd73\", \"일치\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"없음\"]], \"pass_with_warnings\", true, true, true]"
+  },
+  "kr/posts/2026-11-20.html": {
+   "first_seen": "1e4f818e11471f422ab4ef5bff48ed1d19373ff1",
+   "fp": "[\"ok\", \"1e4f818e11471f422ab4ef5bff48ed1d19373ff1\", \"일치\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"없음\"]], \"pass_with_warnings\", true, true, true]"
   },
   "posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
@@ -293,7 +319,7 @@
   "kr:2026-11-17": "ok",
   "kr:2026-11-18": "ok",
   "kr:2026-11-19": "ok",
-  "kr:2026-11-20": "missing",
+  "kr:2026-11-20": "resolved",
   "us:2026-11-09": "ok",
   "us:2026-11-10": "ok",
   "us:2026-11-11": "ok",
