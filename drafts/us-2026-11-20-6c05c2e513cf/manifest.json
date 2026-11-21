@@ -1,0 +1,14 @@
+{
+ "request_id": "us-2026-11-20-6c05c2e513cf",
+ "section": "us",
+ "date": "2026-11-20",
+ "post_path": "posts/2026-11-20.html",
+ "data_commit": "e90d8082ceae4a95e541ba45639d70f36928d5d7",
+ "files": {
+  "post.html": "f527c9e645e479591a311f536dad7ece3ca042f8aeb3159aed59f1adc3cc303d",
+  "prompt.txt": "eba3fbf8c981abfc8ce564865335439c7e09832a884b319b96a103a39da3578f",
+  "research_notes.md": "edf4caedc3a95e46aa46293612e0a35d73717ab2a5999dba93d715cab98ebdd2"
+ },
+ "source_html_sha256": "f527c9e645e479591a311f536dad7ece3ca042f8aeb3159aed59f1adc3cc303d",
+ "created_at": "2026-11-21T16:41:37Z"
+}
