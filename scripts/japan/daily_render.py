@@ -414,7 +414,61 @@ def validate_body(body, want, schema=None):
                 errs.append(f'{tag} 가 {sec} 절 밖에 있다')
     if schema == FX.SCHEMA:
         errs += [e for e in validate_v2(body) if e not in errs]
+        errs += [e for e in _v2_section_opens(body) if e not in errs]
     return errs
+
+
+# 2판의 절 여는 태그는 이름 하나만 작성자 몫이다 — 번호(id)는 조립이 매기고, 다른 속성(따옴표 속 `>` 포함)은
+# 받지 않는다(2026-11-21 시험 운행: 직전 발행본을 본뜬 id 가 조립의 id 와 겹쳐 생성 요소 부모 검사가 실패했다).
+# 검사(`validate_body`)와 조립(`assemble`)이 같은 두 정규식을 쓴다 — 조립은 `_SEC` 으로 태그 끝을 따로 찾지 않는다.
+_ANY_SEC_OPEN = re.compile(r'<section\b(?:"[^"]*"|\'[^\']*\'|[^>"\'])*>', re.I)
+_PLAIN_OPEN = re.compile(r'<section(?: id="read-\d+")? class="card" data-section="([a-z]+)"'
+                         r'( data-tg-section)?(?: id="read-\d+")?>')
+_DS_WORD = re.compile(r'data-section', re.I)
+
+
+def _plain_open(tag):
+    """정해진 꼴이면 절 이름, 아니면 None."""
+    p = _PLAIN_OPEN.fullmatch(tag)
+    return p.group(1) if p and bool(p.group(2)) == (p.group(1) == 'views') else None
+
+
+def _v2_section_opens(body):
+    errs, ok = [], 0
+    for m in _ANY_SEC_OPEN.finditer(body):
+        tag = m.group(0)
+        if not _DS_WORD.search(tag):
+            continue
+        if _plain_open(tag) is None:
+            errs.append(f'절 여는 태그는 <section class="card" data-section="이름"> 꼴만 쓴다'
+                        f'(견해 절만 data-tg-section 을 붙인다): {tag[:80]}')
+        else:
+            ok += 1
+    # 따옴표가 안 닫혀 위 훑기에 안 잡힌 태그·다른 요소에 붙인 data-section 까지 — 이 글자는 절 여는 태그에만 온다.
+    stray = len(_DS_WORD.findall(body)) - ok - len(errs)
+    if stray > 0:
+        errs.append(f'data-section 글자가 절 여는 태그 밖에 {stray}번 있다 — 절 여는 태그에만 쓴다')
+    return errs
+
+
+def _v2_number_sections(body):
+    """2판 조립: 절 여는 태그를 정해진 꼴로 다시 쓰며 번호를 매긴다. 꼴이 다르면 조립하지 않는다 —
+    `validate_body` 를 거치지 않은 호출에서도 태그 꼬리가 본문 글자로 남지 않는다(codex 수정 검토 2회 #5)."""
+    errs = _v2_section_opens(body)
+    if errs:
+        raise ValueError('; '.join(errs))
+    n = 0
+
+    def _open(m):
+        nonlocal n
+        name = _plain_open(m.group(0)) if _DS_WORD.search(m.group(0)) else None
+        if name is None:
+            return m.group(0)
+        n += 1
+        tg = ' data-tg-section' if name == 'views' else ''
+        return f'<section id="read-{n}" class="card" data-section="{name}"{tg}>'
+
+    return _ANY_SEC_OPEN.sub(_open, body)
 
 
 def _credits(d):
@@ -426,9 +480,12 @@ def _credits(d):
 
 
 def assemble(body, meta, d):
+    v2 = FX.is_v2(d)
+    if v2:
+        body = _v2_number_sections(body)   # 생성 조각을 끼우기 전 — 다시 쓰는 것은 작성자 본문의 태그뿐이다
     for name, frag in render_tables(d).items():
         body = body.replace(f'<!--T:{name}-->', frag)
-    if FX.is_v2(d):
+    if v2:
         for name, frag in FX.generated(d).items():
             body = body.replace(f'<!--G:{name}-->', frag)
     n = 0
@@ -438,7 +495,8 @@ def assemble(body, meta, d):
         n += 1
         return m.group(0).replace('<section', f'<section id="read-{n}"', 1)
 
-    body = _SEC.sub(_id, body)
+    if not v2:
+        body = _SEC.sub(_id, body)
     s = d['session']
     url = f'https://fdo2a.github.io/japan/daily/{s}.html'
     title, summary = S.escape(meta['title'].strip()), S.escape(meta['summary'].strip())
