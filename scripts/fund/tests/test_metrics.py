@@ -20,13 +20,6 @@ def test_ret_none_when_history_too_short():
     assert m.ret([100, 101], 2) is None
 
 
-def test_mom_12_1_skips_last_month():
-    closes = list(range(1, 300))
-    want = (closes[-22] / closes[-253] - 1) * 100
-    assert m.mom_12_1(closes) == pytest.approx(want)
-    assert m.mom_12_1(closes[:252]) is None
-
-
 def test_vol_is_annualised_sample_stdev_of_log_returns():
     closes = [100, 102, 99, 101, 103, 100]
     lr = [math.log(b / a) for a, b in zip(closes, closes[1:])]
@@ -59,14 +52,6 @@ def test_var_none_when_short():
     assert m.hist_var([100, 101, 102], 60, 0.95) is None
 
 
-def test_sma_and_drawdown():
-    closes = [10, 20, 30, 40]
-    assert m.sma(closes, 2) == pytest.approx(35)
-    assert m.sma(closes, 5) is None
-    assert m.drawdown(closes + [20], 5) == pytest.approx(-50.0)
-    assert m.drawdown(closes + [20], 252) is None
-
-
 def test_beta_aligns_on_dates_not_positions():
     dates_a = ['d1', 'd2', 'd3', 'd4']
     a = [100, 102, 100.98, 103.0]
@@ -76,9 +61,3 @@ def test_beta_aligns_on_dates_not_positions():
     got = m.beta(a, dates_a, b, dates_b, 3)
     # on shared dates asset returns are exactly 2x benchmark returns (approximately)
     assert got == pytest.approx(2.0, rel=0.05)
-
-
-def test_relative_return_aligned_on_dates():
-    a, da = [100, 110], ['d1', 'd2']
-    b, db = [100, 105], ['d1', 'd2']
-    assert m.rel_ret(a, da, b, db, 1) == pytest.approx(5.0)

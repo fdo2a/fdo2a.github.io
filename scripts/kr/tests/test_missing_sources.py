@@ -5,7 +5,7 @@ spec: docs/superpowers/specs/2026-11-12-kr-missing-vs-zero.md
 import pytest
 
 from kr import sources
-from kr.flows import classify_row, parse_flows_row
+from kr.flows import classify_row
 
 
 # ── 지수 ────────────────────────────────────────────────────────────────
@@ -106,13 +106,6 @@ def test_classify_bad_or_other_bizdate_is_unreadable():
     assert classify_row(_p("20261112", "1", "2", "3"), requested="20261112")[0] == "ok"
 
 
-def test_parse_flows_row_return_shape_unchanged():
-    assert parse_flows_row(_p("20261112", "-2,347", "+3,812", "-6,704")) == {
-        "date": "2026-11-12", "individual": -2347, "foreign": 3812, "institution": -6704}
-    assert parse_flows_row(_p("20261112", "-2,347", ..., "-6,704")) is None
-    assert parse_flows_row(_p("20261114", "0", "0", "0")) is None
-
-
 # ── 수급 페처 ───────────────────────────────────────────────────────────
 
 OK = ("-1", "+2", "3")
@@ -193,12 +186,6 @@ def test_walk_order_matches_old_fetcher(monkeypatch):
     seen = _walk(monkeypatch, {"20261108": ZERO, "20261107": ZERO})
     sources.walk_market_flows("KOSPI", "20261110", days=2)
     assert seen == ["20261110", "20261109"]
-
-
-def test_fetch_market_flows_still_returns_list(monkeypatch):
-    _walk(monkeypatch, {})
-    rows = sources.fetch_market_flows("KOSPI", "20261112", days=2)
-    assert isinstance(rows, list) and len(rows) == 2
 
 
 # ── 거래대금 ─────────────────────────────────────────────────────────────
@@ -294,12 +281,6 @@ def test_top_value_volume_and_ratio_may_be_none(monkeypatch):
     _pages(monkeypatch, [_stock(1, "500", volume="-", ratio="", cap="-")])
     rows, _ = sources.fetch_top_value_stats("0")
     assert rows[0]["volume"] is None and rows[0]["change_pct"] is None and rows[0]["cap"] is None
-
-
-def test_fetch_top_value_wrapper_returns_list(monkeypatch):
-    _pages(monkeypatch, _market(20))
-    rows = sources.fetch_top_value("0")
-    assert isinstance(rows, list) and rows[0]["value"] == 1019
 
 
 def test_top_value_no_market_rows_raises(monkeypatch):

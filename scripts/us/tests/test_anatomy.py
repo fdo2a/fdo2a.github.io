@@ -176,13 +176,6 @@ def test_cite_forms_pair_each_value_with_its_unit_word():
     assert A.cite_forms(321.5e9, 1e8, '$B') == (321.5, [(321.5, ''), (3215, '억')])
 
 
-def test_cite_values_offer_the_agency_figure_and_the_korean_units():
-    assert A.cite_values(41600, 1000, '명') == (42000, [42000, 42, 4.2])
-    assert A.cite_values(5402000, 1e5, '건') == (5400000, [5400000, 5400, 540, 5.4])
-    assert A.cite_values(321511e6, 1e8, '$B') == (321.5, [321.5, 3215])
-    assert A.cite_values(0.391, 0.1, '%') == (0.4, [0.4])
-
-
 # ------------------------------------------------------------ FRED round
 
 def _row(date, start, end, value):

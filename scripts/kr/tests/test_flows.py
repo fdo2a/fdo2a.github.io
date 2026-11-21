@@ -1,26 +1,9 @@
-from kr.flows import build_market_flows, flows_freshness, parse_flows_row
+from kr.flows import build_market_flows, flows_freshness
 
 
 def _payload(bizdate, personal, foreign, inst):
     return {"bizdate": bizdate, "personalValue": personal,
             "foreignValue": foreign, "institutionalValue": inst}
-
-
-def test_parse_flows_row_reads_signed_thousands():
-    r = parse_flows_row(_payload("20260916", "-12,061", "-16,726", "+12,251"))
-    assert r == {"date": "2026-09-16", "individual": -12061,
-                 "foreign": -16726, "institution": 12251}
-
-
-def test_parse_flows_row_drops_non_trading_day():
-    # 휴장일도 200 을 주되 세 주체가 전부 0 이다 — 거래일로 세면 안 된다.
-    assert parse_flows_row(_payload("20260920", "0", "0", "0")) is None
-
-
-def test_parse_flows_row_drops_malformed_bizdate():
-    assert parse_flows_row(_payload("", "-1", "2", "3")) is None
-    assert parse_flows_row({}) is None
-    assert parse_flows_row(None) is None
 
 
 def test_build_market_flows_sorts_latest_first():

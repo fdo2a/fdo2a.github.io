@@ -170,19 +170,6 @@ def walk_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 2
     return {"rows": rows, "diagnostics": diags, "blocked": None}
 
 
-def fetch_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 25) -> list:
-    """시장 수급 최근 N거래일 — m.stock JSON. code: KOSPI|KOSDAQ. 반환형(list)은 그대로다.
-
-    이 API 는 한 번에 하루치만 준다. 레거시 표가 주던 10거래일을 맞추려고 bizdate 를
-    하루씩 거슬러 호출한다(`walk_market_flows`). 과거 일자를 받을 수 있어야 `period.py` 의
-    extra_flows 자가치유가 산다. 막히거나 비면 예외 — 빈 결과를 성공으로 취급하지 않는다.
-    """
-    w = walk_market_flows(code, bizdate, days=days, max_back=max_back)
-    if not w["rows"]:
-        raise FlowsFetchError(f"수급 최신 행을 못 읽었다 — {code} {bizdate} ({w['blocked']})", w["diagnostics"])
-    return w["rows"]
-
-
 TOP_BAD_MIN = 5            # 형식 오류 허용: max(5, 시장 행의 1%)
 TOP_BAD_SHARE = 0.01
 TOP_DASH_SHARE = 0.30      # `-` 가 시장 행의 30% 초과면 전체 장애로 본다(11/11 실측 약 7%) — 근사치
@@ -243,11 +230,6 @@ def fetch_top_value_stats(sosok: str = "0", pages: int = 60):
         raise RuntimeError(f"거래대금 목록이 비었다 — marketValue 응답 확인 필요(sosok={sosok})")
     rows.sort(key=lambda r: r["value"], reverse=True)
     return rows, stats
-
-
-def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
-    """거래대금 상위 목록(list) — `fetch_top_value_stats` 의 래퍼(통계는 버린다)."""
-    return fetch_top_value_stats(sosok, pages)[0]
 
 
 def fetch_industry_names() -> dict:
