@@ -245,7 +245,8 @@
    "id": "8af4d087b87937dc390b6938f8cd1b3e",
    "key": "us:2026-11-20",
    "kind": "resolved",
-   "status": "pending",
+   "sent": "2026-11-22T04:42:42.261359+09:00",
+   "status": "sent",
    "text": "[미발행 해소] US 일간 11/20 · 해결\n글이 올라왔어요 — 앞서 생성된 미발행 경고(기준 11/21 12:00 KST)가 풀렸어요",
    "tries": 0
   },
@@ -256,15 +257,16 @@
    "id": "4f2d7a0a95fc2b82d0a578c07a31bbb4",
    "key": "posts/2026-11-20.html",
    "kind": "publish",
-   "status": "pending",
+   "sent": "2026-11-22T04:42:42.261359+09:00",
+   "status": "sent",
    "text": "[발행] US 일간 11/20 · 발행 통과 · 참고 1건\n\n■ 발행 상태\n필수 검사 18/18 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조, 작업 공간 입력 제외)\n\n■ 볼 것\n1. [참고] 문체: 문장 안에 매체 출처가 있다 — 「CNBC」 — 다시 읽어 보고, 자연스러우면 그대로 둔다\n\n■ 검증 범위\n표 69칸·문장 20개 자동 대조 · 숫자 192개 범위 밖(자산 없음 94 · 리서치 기록 40 · 시점·구간 단서 22 · 사전 밖 자산 14 (외 5종)). 오류 192건이라는 뜻은 아님\n · 작업 공간 전용 입력 5개는 원본을 보관하지 않아 대조 못 함(지문만 남음): morning_brief_2026-11-20.body.html, morning_brief_2026-11-20.html, morning_brief_2026-11-20.meta.json, prev_post.html, research_notes.md\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
    "tries": 0
   }
  ],
  "fetch": {},
  "format": "verify-publish/1",
- "last_ok": "2026-11-22T01:46:37.809486+09:00",
- "last_seen": "7d65b84c80edfb0bf80d8e42344a32eb6411a2c2",
+ "last_ok": "2026-11-22T04:42:42.261359+09:00",
+ "last_seen": "254186e782956e270b772f5d648dc3a81628ef0d",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
