@@ -1,12 +1,13 @@
 {
-  "report_date": "2026-11-19",
-  "generated": "2026-11-20 08:17 KST",
+  "report_date": "2026-11-20",
+  "generated": "2026-11-21 11:50 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
   "complete": true,
   "pending": [],
-  "today": [
+  "today": [],
+  "recent": [
     {
       "date": "2026-11-19",
       "key": "tips-10y",
@@ -40,9 +41,7 @@
       "tail_bp": null,
       "tail_status": "no_wi_source",
       "yield_ref": null
-    }
-  ],
-  "recent": [
+    },
     {
       "date": "2026-11-18",
       "key": "nominal-20y",
@@ -76,46 +75,6 @@
       "tail_bp": null,
       "tail_status": "no_wi_source",
       "yield_ref": null
-    },
-    {
-      "date": "2026-11-12",
-      "key": "nominal-30y",
-      "kind": "nominal",
-      "years": 30,
-      "reopening": false,
-      "label_ko": "30년물",
-      "term": "30-Year",
-      "cusip": "912810UY2",
-      "offering_amt": 25000000000.0,
-      "close_time_et": "01:00 PM",
-      "bid_to_cover": 2.36,
-      "indirect_pct": 68.1,
-      "direct_pct": 20.5,
-      "dealer_pct": 11.4,
-      "high_yield": 5.441,
-      "n_hist": 6,
-      "avg6": {
-        "bid_to_cover": 2.44,
-        "indirect_pct": 70.5,
-        "direct_pct": 20.0,
-        "dealer_pct": 9.5
-      },
-      "prev_offering_amt": 22000000000.0,
-      "prev_date": "2026-10-08",
-      "btc_vs_avg": -0.08,
-      "dealer_vs_avg_pp": 1.9,
-      "indirect_vs_avg_pp": -2.4,
-      "insufficient": false,
-      "demand_ko": "수요 약함",
-      "tail_bp": null,
-      "tail_status": "no_wi_source",
-      "yield_ref": {
-        "tenor": "30Y",
-        "level": 5.401,
-        "bp": -1.1,
-        "date": "2026-11-19",
-        "source": "Naver"
-      }
     }
   ],
   "next": [

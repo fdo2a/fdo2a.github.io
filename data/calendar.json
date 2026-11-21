@@ -1,36 +1,8 @@
 {
-  "report_date": "2026-11-19",
-  "generated": "2026-11-20 08:17 KST",
+  "report_date": "2026-11-20",
+  "generated": "2026-11-21 11:50 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "expiry-202611",
-      "kind": "expiry",
-      "name_ko": "지수 옵션 만기",
-      "date": "2026-11-20",
-      "time_et": null,
-      "time_kst": null,
-      "status": "confirmed",
-      "source": "셋째 금요일 규칙",
-      "assets": [
-        "주식"
-      ],
-      "watch": "만기 당일 수급"
-    },
-    {
-      "key": "release-michigan-20261120",
-      "kind": "release",
-      "name_ko": "미시간대 소비자심리",
-      "date": "2026-11-20",
-      "time_et": "10:00",
-      "time_kst": "2026-11-21 00:00",
-      "status": "confirmed",
-      "source": "U. Michigan 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
     {
       "key": "auction-20261123-13-Week",
       "kind": "auction",
@@ -320,46 +292,6 @@
       "bid_to_cover": 2.83,
       "indirect_pct": 58.1,
       "dealer_pct": 30.6
-    },
-    {
-      "date": "2026-11-12",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 115000000000.0,
-      "high_yield": 4.022,
-      "bid_to_cover": 2.94,
-      "indirect_pct": 67.1,
-      "dealer_pct": 25.2
-    },
-    {
-      "date": "2026-11-12",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 110000000000.0,
-      "high_yield": 4.163,
-      "bid_to_cover": 2.5,
-      "indirect_pct": 53.0,
-      "dealer_pct": 39.2
-    },
-    {
-      "date": "2026-11-12",
-      "term": "17-Week",
-      "type": "Bill",
-      "offering_amt": 75000000000.0,
-      "high_yield": 4.344,
-      "bid_to_cover": 2.78,
-      "indirect_pct": 52.9,
-      "dealer_pct": 42.3
-    },
-    {
-      "date": "2026-11-12",
-      "term": "30-Year",
-      "type": "Bond",
-      "offering_amt": 25000000000.0,
-      "high_yield": 5.441,
-      "bid_to_cover": 2.36,
-      "indirect_pct": 68.1,
-      "dealer_pct": 11.4
     }
   ],
   "blackout": {
