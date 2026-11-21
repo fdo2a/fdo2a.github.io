@@ -58,13 +58,16 @@ def _is_local_host(host):
         return True
     if isinstance(host, (bytes, bytearray)):
         host = host.decode("ascii", "replace")
-    h = str(host).strip().lower()
+    h = str(host).strip().lower().rstrip(".")
     if h in _LOCAL_NAMES or h.endswith(".localhost"):
         return True
     try:
-        return ipaddress.ip_address(h.strip("[]").split("%", 1)[0]).is_loopback
+        ip = ipaddress.ip_address(h.strip("[]").split("%", 1)[0])
     except ValueError:
         return False
+    if getattr(ip, "ipv4_mapped", None) is not None:      # ::ffff:127.0.0.1
+        ip = ip.ipv4_mapped
+    return ip.is_loopback
 
 
 def _is_local_addr(sock, addr):
@@ -78,9 +81,13 @@ def _is_local_addr(sock, addr):
     return False
 
 
-def _block(what):
+def _record(what):
     test = os.environ.get("PYTEST_CURRENT_TEST", "(수집 중)").split(" (")[0]
     _violations.append((test, what))
+
+
+def _block(what):
+    _record(what)
     raise NetworkBlocked(
         f"시험이 바깥 네트워크에 나가려 했다: {what} — 그 호출을 monkeypatch 로 바꿔 끼우거나, "
         f"정말 필요하면 @pytest.mark.network 를 단다(기본 건너뜀).")
@@ -111,26 +118,67 @@ def _wrap_resolver(name):
     return orig, guarded
 
 
+_DEAD_PROXY = b"http://127.0.0.1:9"     # 아무도 듣지 않는 로컬 포트
+_NO_PROXY = b"localhost,.localhost,127.0.0.0/8,::1"
+
+
+def _url_host(value):
+    """libcurl 이 받을 주소의 호스트 — 스킴이 없으면 libcurl 처럼 http:// 로 읽는다. 못 읽으면 ''."""
+    from urllib.parse import urlsplit
+    url = value.decode("utf-8", "replace") if isinstance(value, (bytes, bytearray)) else str(value or "")
+    if "://" not in url:
+        url = "http://" + url
+    try:
+        return urlsplit(url).hostname or ""
+    except ValueError:
+        return ""
+
+
 def _wrap_curl_cffi():
-    """yfinance 는 curl_cffi(libcurl)로 나간다 — 파이썬 socket 을 거치지 않아 주소 지정에서 막는다."""
+    """yfinance 는 curl_cffi(libcurl)로 나간다 — 파이썬 socket 을 거치지 않는다.
+
+    주소 지정(URL)에서 막고, 로컬 주소라도 libcurl 이 혼자 따라가는 리디렉트가 바깥으로 못 나가게
+    로컬 아닌 호스트는 죽은 로컬 프록시로 보낸다(NOPROXY = 로컬). 끝난 뒤 실제 주소가 바깥이면 기록한다.
+    """
     try:
         from curl_cffi.curl import Curl
-        from curl_cffi.const import CurlOpt
+        from curl_cffi.const import CurlInfo, CurlOpt
     except Exception:
         return
-    from urllib.parse import urlsplit
-    orig = Curl.setopt
+    orig, orig_perform = Curl.setopt, Curl.perform
 
     def guarded(self, option, value):
-        if option == CurlOpt.URL and not _allow[0]:
-            url = value.decode("utf-8", "replace") if isinstance(value, (bytes, bytearray)) else str(value)
-            if not _is_local_host(urlsplit(url).hostname):
-                _block(f"curl_cffi {url[:120]}")
+        if not _allow[0]:
+            if option == CurlOpt.URL:
+                if not _is_local_host(_url_host(value)):
+                    _block(f"curl_cffi {str(value)[:120]}")
+                r = orig(self, option, value)
+                orig(self, CurlOpt.PROXY, _DEAD_PROXY)
+                orig(self, CurlOpt.NOPROXY, _NO_PROXY)
+                return r
+            if option in (CurlOpt.PROXY, CurlOpt.NOPROXY, CurlOpt.CONNECT_TO, CurlOpt.RESOLVE) and value:
+                if option != CurlOpt.PROXY or not _is_local_host(_url_host(value)):
+                    _block(f"curl_cffi setopt {option.name}={str(value)[:80]}")
         return orig(self, option, value)
 
+    def perform(self, *args, **kwargs):
+        try:
+            return orig_perform(self, *args, **kwargs)
+        finally:
+            if not _allow[0]:
+                try:
+                    eff = self.getinfo(CurlInfo.EFFECTIVE_URL)
+                except Exception:
+                    eff = b""
+                if eff and not _is_local_host(_url_host(eff)):
+                    _record(f"curl_cffi 리디렉트 {str(eff)[:120]}")
+
     guarded.__wrapped__ = orig
+    perform.__wrapped__ = orig_perform
     _orig[("curl", "setopt")] = orig
+    _orig[("curl", "perform")] = orig_perform
     Curl.setopt = guarded
+    Curl.perform = perform
 
 
 def _install():

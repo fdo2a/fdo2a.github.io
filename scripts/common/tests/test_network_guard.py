@@ -58,6 +58,69 @@ def test_curl_cffi_external_url_is_blocked(netguard):
     assert len(netguard.consume()) == 1
 
 
+def test_curl_cffi_schemeless_url_is_blocked(netguard):
+    curl = pytest.importorskip("curl_cffi.curl")
+    from curl_cffi.const import CurlOpt
+    c = curl.Curl()
+    try:
+        with pytest.raises(netguard.Blocked):
+            c.setopt(CurlOpt.URL, b"example.com/x")
+        with pytest.raises(netguard.Blocked):
+            c.setopt(CurlOpt.PROXY, b"http://proxy.example.com:8080")
+    finally:
+        c.close()
+    assert len(netguard.consume()) == 2
+
+
+def _local_http(handler_body):
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    class H(BaseHTTPRequestHandler):
+        def do_GET(self):
+            handler_body(self)
+
+        def log_message(self, *a):
+            pass
+    srv = HTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    return srv
+
+
+def test_curl_cffi_local_get_passes():
+    creq = pytest.importorskip("curl_cffi.requests")
+
+    def ok(h):
+        h.send_response(200)
+        h.send_header("Content-Length", "2")
+        h.end_headers()
+        h.wfile.write(b"ok")
+    srv = _local_http(ok)
+    try:
+        r = creq.get(f"http://127.0.0.1:{srv.server_port}/", timeout=10)
+        assert r.status_code == 200 and r.content == b"ok"
+    finally:
+        srv.shutdown()
+
+
+def test_curl_cffi_redirect_from_localhost_to_outside_does_not_leave(netguard):
+    """libcurl 이 혼자 따라가는 리디렉트 — 파이썬 setopt 를 다시 부르지 않는다(codex 구현 검토 1회)."""
+    creq = pytest.importorskip("curl_cffi.requests")
+
+    def redirect(h):
+        h.send_response(302)
+        h.send_header("Location", "http://example.com/leak")
+        h.send_header("Content-Length", "0")
+        h.end_headers()
+    srv = _local_http(redirect)
+    try:
+        with pytest.raises(Exception):
+            creq.get(f"http://127.0.0.1:{srv.server_port}/", timeout=10, allow_redirects=True)
+    finally:
+        srv.shutdown()
+    got = netguard.consume()
+    assert any("example.com" in w for w in got), got
+
+
 def test_localhost_tcp_passes():
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.bind(("127.0.0.1", 0))
@@ -94,7 +157,8 @@ def test_unix_socket_passes():
 @pytest.mark.parametrize("host,local", [
     ("localhost", True), ("127.0.0.1", True), ("::1", True), ("127.5.5.5", True),
     ("[::1]", True), (None, True), ("api.stock.naver.com", False), ("10.0.0.1", False),
-    ("0.0.0.0", False), ("localhost.evil.com", False),
+    ("0.0.0.0", False), ("localhost.evil.com", False), ("::ffff:127.0.0.1", True),
+    ("::ffff:8.8.8.8", False), ("localhost.", True),
 ])
 def test_local_host_classification(netguard, host, local):
     assert netguard.is_local_host(host) is local
