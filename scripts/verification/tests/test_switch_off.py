@@ -149,6 +149,42 @@ def test_v1_record_gives_the_pre_1a_result_for_every_existing_gate(tmp_path):
     assert new._mask(f'{d}/x {tg} /abs/p', ctx) == old._mask(f'{d}/x {tg} /abs/p', ctx)
 
 
+def test_v1_record_with_the_new_arguments_differs_only_where_stated(tmp_path):
+    """새 인자가 있을 때 기존 검사의 1판 기록이 달라지는 자리를 못 박는다(2026-11-22 codex 구현 4회차 지적).
+    `--first-html`(US 일간 루틴이 넘긴다): 기존 검사의 argv·판정·입력 목록은 1a 전과 같고, 그 경로 글자의 가림만
+    `<html>` 로 바뀐다. `--contested`(us-news 만 넘긴다): 입력 목록에 `<contested>` 한 줄이 더해질 뿐이다."""
+    from verification import record as new
+    old = _pre_1a_record(tmp_path)
+    cfg = json.load(open(os.path.join(ROOT, 'config', 'prepub_gates.json'), encoding='utf-8'))
+    d = tmp_path / 'w'
+    d.mkdir()
+    (d / 'market_data.json').write_text('{}', encoding='utf-8')
+    first = d / 'numsrc_first.html'
+    first.write_text('<p>x</p>', encoding='utf-8')
+    con = tmp_path / 'contested.json'
+    con.write_text('{}', encoding='utf-8')
+    base = {'html': str(tmp_path / 'p.html'), 'datadir': str(d), 'repo': ROOT, 'date': '2026-11-23', 'tg': None,
+            'stance_next': None, 'cycle': 'c1', 'tmp': str(tmp_path)}
+    ctx = dict(base, first_html=str(first))
+    for market in ('us', 'kr'):
+        for spec in cfg['markets'][market]['gates']:
+            if spec.get('result') == 'sources' or spec.get('optional_argv'):
+                continue
+            assert new._argv(spec, ctx) == old._argv(spec, ctx), spec['name']
+            for code, out, err in _OUTS:
+                a, b = {}, {}
+                assert new._classify(spec, code, out, err, ctx, a) == old._classify(spec, code, out, err, ctx, b), spec['name']
+                assert a == b, spec['name']
+    assert new._inputs(ctx) == old._inputs(ctx)
+    assert new._mask(f'{d}/market_data.json bad', ctx) == old._mask(f'{d}/market_data.json bad', ctx)
+    assert (old._mask(f'{first} bad', ctx), new._mask(f'{first} bad', ctx)) == ('<datadir>/numsrc_first.html bad', '<html> bad')
+    ctx = dict(base, contested=str(con))
+    was, now = old._inputs(ctx), new._inputs(ctx)
+    extra = [f for f in now['files'] if f not in was['files']]
+    assert [f['path'].split('/')[0] for f in extra] == ['<contested>'] and now['count'] == was['count'] + 1
+    assert [f for f in now['files'] if f not in extra] == was['files']
+
+
 # ── 검사기: 켜면 미완료(2)인 자리가 꺼진 채로는 1a 전 판정 ─────────────────────────────
 
 def test_missing_inputs_do_not_exit_2_while_off(tmp_path):

@@ -590,6 +590,12 @@
      "note": "뉴스·산업 브리프 입력"
     },
     {
+     "path": "<datadir>/numsrc_first*.html",
+     "class": "unused",
+     "name": "숫자 출처 검사의 첫 판 사본",
+     "note": "게이트를 처음 돌리기 전 초안 사본(numsrc_first.html·numsrc_first_news.html, 2026-11-20). 참고 검사 check_number_sources 만 읽고 발행을 막지 않는다 — 필수 검사의 입력이 아니다"
+    },
+    {
      "path": "<datadir>/telegram_news.json",
      "class": "unused",
      "name": "뉴스 글용 텔레그램",

@@ -56,6 +56,23 @@ def test_every_gate_file_is_read_by_a_required_gate(both):
                 assert e['path'] in used, (market, e['path'])
 
 
+def test_number_source_workspace_files_do_not_block_the_us_daily(both, tmp_path, monkeypatch):
+    """숫자 출처 검사가 작업 공간에 남기는 파일(첫 판 사본·숫자 목록)은 US 일간에서 분류돼 있다 — 분류가 없으면
+    1a 를 켠 날부터 2판이 「미분류 입력」으로 글을 미완료로 막는다(2026-11-22 codex 구현 4회차 지적)."""
+    _, pol = both
+    for rel in ('numsrc_first.html', 'numsrc_first_news.html', 'news/numbers/2026-11-23.json',
+                'telegram/numbers/2026-11-23.json'):
+        f = tmp_path / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text('{}', encoding='utf-8')
+    monkeypatch.setattr(I, 'EFFECTIVE', '2026-11-01')
+    res = I.assess(pol, 'us', {'date': '2026-11-23', 'datadir': str(tmp_path)})
+    assert res['unclassified'] == []
+    for rel in ('numsrc_first.html', 'numsrc_first_news.html'):
+        rec = res['files']['<datadir>/' + rel]
+        assert rec['class'] == 'unused' and not rec['blocking']
+
+
 def test_writer_entries_say_risk_and_coverage(both):
     _, pol = both
     for market in ('us', 'kr'):
