@@ -1,8 +1,8 @@
 {
-  "generated": "2026-11-21 11:43 KST",
+  "generated": "2026-11-21 12:24 KST",
   "source": "github-actions/collect_market_data.py",
-  "collection_started": "2026-11-21T02:40:30+00:00",
-  "collection_run": "44857108315-1",
+  "collection_started": "2026-11-21T03:21:37+00:00",
+  "collection_run": "44860667047-1",
   "report_date": "2026-11-20",
   "indices": {
     "Nasdaq": {
@@ -580,7 +580,7 @@
         "ticker": "^VIX",
         "change": 7.45,
         "unit": "pt",
-        "multiple": 2.16,
+        "multiple": 2.15,
         "band": "큼"
       },
       "DXY": {
