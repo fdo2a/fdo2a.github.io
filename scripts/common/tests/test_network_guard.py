@@ -98,3 +98,26 @@ def test_unix_socket_passes():
 ])
 def test_local_host_classification(netguard, host, local):
     assert netguard.is_local_host(host) is local
+
+
+def test_swallowed_block_in_a_module_fixture_fails_the_next_test(tmp_path):
+    """모듈 fixture 에서 막혀 삼켜진 호출 — 시험 함수 밖이라도 다음 시험이 실패한다(xdist 일꾼에서도)."""
+    import subprocess
+    import sys
+    guard = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "conftest.py")
+    (tmp_path / "conftest.py").write_text(f"exec(open({guard!r}, encoding='utf-8').read())\n")
+    (tmp_path / "test_inner.py").write_text(
+        "import socket\nimport pytest\n\n"
+        "@pytest.fixture(scope='module')\n"
+        "def leaky():\n"
+        "    try:\n"
+        "        socket.getaddrinfo('example.com', 443)\n"
+        "    except Exception:\n"
+        "        pass\n\n"
+        "def test_a(leaky):\n    pass\n\n"
+        "def test_b():\n    pass\n")
+    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-p", "no:xdist",
+                        str(tmp_path)], cwd=tmp_path, capture_output=True, text=True, timeout=120)
+    assert r.returncode != 0, r.stdout
+    assert "1 passed, 1 error" in r.stdout, r.stdout
+    assert "example.com" in r.stdout

@@ -166,8 +166,18 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip)
 
 
+_reported = [0]   # 시험 밖 기록 가운데 이미 알린 개수
+
+
 @pytest.fixture(autouse=True)
 def _network_guard(request):
+    # 앞 시험 사이(모듈·세션 fixture·수집)에서 막혀 삼켜진 호출 — xdist 일꾼의 종료 상태는 전달되지
+    # 않으므로 다음 시험을 실패시켜 알린다.
+    if len(_violations) > _reported[0]:
+        stray = _violations[_reported[0]:]
+        _reported[0] = len(_violations)
+        pytest.fail("시험 함수 밖(fixture·수집)에서 바깥 네트워크 호출이 막혔다:\n  "
+                    + "\n  ".join(f"{t}: {w}" for t, w in stray[:10]), pytrace=False)
     allow = "network" in request.node.keywords and request.config.getoption("--run-network")
     _allow[0] = bool(allow)
     start = len(_violations)
@@ -184,9 +194,9 @@ def _network_guard(request):
 
 
 def pytest_sessionfinish(session, exitstatus):
-    """시험 함수 밖(수집·모듈/세션 fixture)에서 막혀 삼켜진 호출도 놓치지 않는다."""
-    if _violations:
-        lines = "\n  ".join(f"{t}: {w}" for t, w in _violations[:20])
+    """마지막 시험 뒤(세션 fixture 정리 등)에 막혀 삼켜진 호출도 놓치지 않는다."""
+    if len(_violations) > _reported[0]:
+        lines = "\n  ".join(f"{t}: {w}" for t, w in _violations[_reported[0]:][:20])
         sys.stderr.write(f"\n[network guard] 시험 함수 밖에서 바깥 네트워크 호출이 막혔다:\n  {lines}\n")
         session.exitstatus = pytest.ExitCode.TESTS_FAILED
 
