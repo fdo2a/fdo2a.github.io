@@ -276,3 +276,87 @@ def test_inconsistent_facts_do_not_crash():
     d['facts']['items'] = [i for i in d['facts']['items'] if not i['field_id'].startswith(('sector.', 'curve.'))]
     assert FX.gen_sectors(d) == '업종별 지수를 확인하지 못해 싣지 않는다.' and R.render_tables(d)['sectors'] == ''
     assert '확인하지 못했다' in FX.gen_curve(d)
+
+
+def test_writer_section_ids_do_not_double_and_page_passes():
+    """2026-11-21 시험 운행: 작성자가 직전 발행본을 본떠 절에 id="read-N" 을 달면 조립이 id 를 하나 더
+    붙였고, 부모 검사가 생성 요소를 놓쳐 생성 문장·코드 표를 작성자 글로 보고 63건을 막았다."""
+    d = v2()
+    b = body(order=R.order((d.get('calendar') or {}).get('event_day')))
+    n = 0
+
+    def _writer_id(m):
+        nonlocal n
+        n += 1
+        return f'<section id="read-{n + 5}" class="card" data-section="'
+    import re
+    b = re.sub(r'<section class="card" data-section="', _writer_id, b)
+    assert R.validate_body(b, R.order((d.get('calendar') or {}).get('event_day')), schema=2) == []
+    b, errs = expand(b, NEWS)
+    assert errs == []
+    h = RD.enhance_html(R.assemble(b, {'title': '엔저 속 대형주만 올랐다', 'summary': '넓은 시장은 약했다.'}, d))
+    opens = [m.group(0) for m in re.finditer(r'<section\b(?:"[^"]*"|\'[^\']*\'|[^>"\'])*>', h)
+             if 'data-section=' in m.group(0)]
+    assert len(opens) == len(R.order((d.get('calendar') or {}).get('event_day')))
+    for i, tag in enumerate(opens, 1):
+        assert re.findall(r'\sid\s*=', tag) == [' id='], tag
+        assert f'id="read-{i}"' in tag, tag
+    assert gate(h, d) == []
+
+
+@pytest.mark.parametrize('tag', [
+    '<section class="card" data-section="news" title=">" id="read-99">',
+    '<section class="card" data-section="news" title=\'info id="read-99" end\'>',
+    '<section class="card" data-section="news" id="x">',
+    '<section data-section="news" class="card">',
+])
+def test_v2_section_open_tag_must_be_the_plain_form(tag):
+    """절 여는 태그는 이름 하나만 작성자 몫이다 — 다른 속성·따옴표 속 > 는 조립 전에 막는다(codex 수정 검토 1회)."""
+    d = v2()
+    want = R.order((d.get('calendar') or {}).get('event_day'))
+    b = body(order=want).replace('<section class="card" data-section="news">', tag, 1)
+    assert any('여는 태그' in e for e in R.validate_body(b, want, schema=2))
+
+
+BAD_OPENS = [
+    '<section class="card" data-section="news" title=">" id="read-99">',          # 따옴표 속 > 가 이름 뒤
+    '<section title=">" class="card" data-section="news">',                       # 따옴표 속 > 가 이름 앞
+    '<section class="card" data-section="news" title=\'data-section="equity"\'>',  # 값 안의 가짜 이름
+    '<section class="card" data-section="news" title="x>',                        # 안 닫힌 따옴표
+    '<SECTION class="card" DATA-SECTION="news">',
+    '<section class="card" data-section=\'news\'>',
+    '<section class="card"\ndata-section="news">',
+]
+
+
+@pytest.mark.parametrize('tag', BAD_OPENS)
+def test_v2_assemble_refuses_non_plain_open_tag_without_validation(tag):
+    """검사를 거치지 않고 조립을 직접 불러도 여는 태그의 꼬리가 본문 글자로 남지 않는다 — 조립하지 않는다
+    (codex 수정 검토 2회 #5: `title=">" id="read-99"` 의 뒷부분이 `<h2>` 앞 텍스트로 남았다)."""
+    d = v2()
+    want = R.order((d.get('calendar') or {}).get('event_day'))
+    b = body(order=want).replace('<section class="card" data-section="news">', tag, 1)
+    assert R.validate_body(b, want, schema=2) != []
+    with pytest.raises(ValueError):
+        R.assemble(b, {'title': '제목', 'summary': '요약'}, d)
+
+
+def test_v2_data_section_word_only_on_section_open_tags():
+    d = v2()
+    want = R.order((d.get('calendar') or {}).get('event_day'))
+    b = body({'today': '<div data-section="today2"><p>오후 들어 대형 수출주에만 매수가 몰렸다.</p></div>'}, want)
+    assert any('data-section 글자' in e for e in R.validate_body(b, want, schema=2))
+    with pytest.raises(ValueError):
+        R.assemble(b, {'title': '제목', 'summary': '요약'}, d)
+
+
+def test_writer_instruction_section_examples_pass_the_open_tag_check():
+    """작성자 지시문의 절 여는 태그 예시는 전부 검사가 받는 꼴이다(codex 수정 검토 2회 #4: 뉴스 절 예시에
+    class="card" 가 빠져 있어 그대로 쓰면 막혔다)."""
+    import re
+    from pathlib import Path
+    md = (Path(__file__).resolve().parents[3] / '.claude/agents/japan-daily-writer.md').read_text(encoding='utf-8')
+    tags = [t for t in re.findall(r'<section\b[^>`]*>', md) if 'data-section' in t]
+    assert len(tags) >= 4 and len(tags) == len(re.findall(r'data-section=', md))
+    for t in tags:
+        assert R._plain_open(t.replace('"이름"', '"equity"')) is not None, t
