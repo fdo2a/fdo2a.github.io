@@ -101,7 +101,9 @@ def _once_git_runs(pid_file, action, delay=0.3, limit=20):
     가짜 git 이 뜨기 전에 취소해 pid 파일이 아예 안 생겼다(2026-11-21 -n auto 실측)."""
     def run():
         end = time.monotonic() + limit
-        while not pid_file.exists() and time.monotonic() < end:
+        while not pid_file.exists():
+            if time.monotonic() >= end:
+                return      # 가짜 git 이 끝내 안 떴다 — 지나간 시험 뒤에 SIGTERM 을 쏘지 않는다
             time.sleep(0.02)
         time.sleep(delay)
         action()
