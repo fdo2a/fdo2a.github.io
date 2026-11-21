@@ -355,7 +355,15 @@ def test_unmutated_real_days_are_publishable(days, monkeypatch, tmp_path):
             # 기록 때 상태와 같다(이름이 바뀐 상태만 옮긴다 — 옛 not_run = 지금 na)
             old = {g['name']: {'not_run': 'na'}.get(g['status'], g['status']) for g in ctx0['record']['gates']}
             new = {g['name']: g['status'] for g in res['gates']}
+            # 기록 뒤 main 이 검사기 규칙을 바꾼 자리 — 1a 와 무관한 변화만, 커밋과 함께 이름으로 둔다
+            for gate, (was, now) in MAIN_RULE_CHANGES.items():
+                if old.get(gate) == was and new.get(gate) == now:
+                    old[gate] = now
             assert {k: v for k, v in new.items() if k in old} == old, (m, d)
+
+
+# 3042d189(main, 11/21): check_weight 의 분량 경고(본문 5,000자·매크로 4,600자)를 뺐다 — 옛 기록의 warn 이 지금은 pass
+MAIN_RULE_CHANGES = {'check_weight': ('warn', 'pass')}
 
 
 def test_stamped_mutations_all_block(days, monkeypatch, tmp_path):
