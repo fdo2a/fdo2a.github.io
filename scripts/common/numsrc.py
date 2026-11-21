@@ -17,7 +17,7 @@ import os
 import re
 from dataclasses import dataclass, field
 
-EFFECTIVE = '2099-12-31'          # 자리표시 — 병합 뒤 첫 발행일로 바꾼다(설계 §7.1, 그 전 글은 not_run)
+EFFECTIVE = '2026-11-23'          # 첫 검사 발행일(US 11/23 거래일 글). 그 전 글은 not_run(설계 §7.1)
 FORMAT = 'numsrc/1'
 
 CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
