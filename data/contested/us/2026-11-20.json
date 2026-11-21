@@ -3,49 +3,65 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-20",
- "status": "error",
- "reason": "gdelt_throttled",
- "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-21T19:21:38+00:00",
- "cutoff_at": "2026-11-21T19:21:38+00:00",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 3,
+ "collected_at": "2026-11-21T20:24:32+00:00",
+ "cutoff_at": "2026-11-21T20:24:32+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "338718ac1a9a3c13505b660f42cf4de37b458d5a",
+  "sha256": "98546da0a3da07d1a4cec0fe185f0084ac617e362e7d3ad91ecd360835b69801"
+ },
  "counts": {
-  "harvest": 192,
-  "candidates": 3,
+  "harvest": 188,
+  "candidates": 1,
   "articles": [
-   3,
-   3,
-   2
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 7,
+  "runs": 8,
   "tokens": {
-   "in": 4655,
-   "out": 67
+   "in": 42068,
+   "out": 11488
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "bbc.co.uk": "ok",
-   "theguardian.com": "ok"
+   "channelnewsasia.com": "ok",
+   "aljazeera.com": "ok",
+   "independent.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 6,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "황 전 CEO 스캔들 이후 미국의 대중 AI 칩 수출 정책 방향",
+  "query": "nvidia jensen chip",
   "trigger": []
  },
- "content_hash": "93093de43837c780"
+ "content_hash": "014df53c50edd4f3"
 }
