@@ -1,14 +1,14 @@
 {
-  "generated": "2026-11-21 12:24 KST",
+  "generated": "2026-11-21 16:36 KST",
   "source": "github-actions/collect_market_data.py",
-  "collection_started": "2026-11-21T03:21:37+00:00",
-  "collection_run": "44860667047-1",
+  "collection_started": "2026-11-21T07:33:00+00:00",
+  "collection_run": "44880705810-1",
   "report_date": "2026-11-20",
   "indices": {
     "Nasdaq": {
-      "last": 22617.732421875,
-      "chg": -1261.466796875,
-      "pct": -5.282701422770042,
+      "last": 22617.73046875,
+      "chg": -1261.46875,
+      "pct": -5.282709601959734,
       "date": "2026-11-20"
     },
     "S&P 500": {
@@ -24,9 +24,9 @@
       "date": "2026-11-20"
     },
     "Russell 2000": {
-      "last": 2581.78955078125,
-      "chg": -73.320556640625,
-      "pct": -2.7614883629748843,
+      "last": 2581.7900390625,
+      "chg": -73.320068359375,
+      "pct": -2.761469972730024,
       "date": "2026-11-20"
     },
     "S&P 500 Growth": {
@@ -580,14 +580,14 @@
         "ticker": "^VIX",
         "change": 7.45,
         "unit": "pt",
-        "multiple": 2.15,
+        "multiple": 2.16,
         "band": "큼"
       },
       "DXY": {
         "ticker": "DX-Y.NYB",
-        "change": -0.058,
+        "change": -0.087,
         "unit": "%",
-        "multiple": -0.18,
+        "multiple": -0.28,
         "band": "미미"
       },
       "USD/JPY": {
@@ -606,16 +606,16 @@
       },
       "WTI": {
         "ticker": "CL=F",
-        "change": 0.493,
+        "change": 0.925,
         "unit": "%",
-        "multiple": 0.17,
+        "multiple": 0.32,
         "band": "미미"
       },
       "Gold": {
         "ticker": "GC=F",
-        "change": -3.975,
+        "change": -4.615,
         "unit": "%",
-        "multiple": -2.9,
+        "multiple": -3.37,
         "band": "매우 큼"
       },
       "10Y": {
@@ -651,7 +651,7 @@
         }
       },
       "Nasdaq": {
-        "value": 22617.732,
+        "value": 22617.73,
         "percentile": 48.6,
         "band": "중간",
         "sessions": 504,
@@ -699,19 +699,19 @@
         }
       },
       "DXY": {
-        "value": 103.84,
-        "percentile": 83.0,
+        "value": 103.81,
+        "percentile": 82.6,
         "band": "높음",
         "sessions": 504,
         "plain": {
-          "percentile": 83.0,
+          "percentile": 82.6,
           "sessions": 504,
           "window": "2년",
           "days": null,
-          "share_pct": 17,
+          "share_pct": 18,
           "side": "high",
-          "short": "높은 쪽 17% 안",
-          "text": "최근 2년(504거래일) 가운데 높은 쪽 17% 안"
+          "short": "높은 쪽 18% 안",
+          "text": "최근 2년(504거래일) 가운데 높은 쪽 18% 안"
         }
       },
       "USD/JPY": {
@@ -747,12 +747,12 @@
         }
       },
       "WTI": {
-        "value": 83.62,
-        "percentile": 73.0,
+        "value": 83.98,
+        "percentile": 73.2,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 73.0,
+          "percentile": 73.2,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -763,12 +763,12 @@
         }
       },
       "Gold": {
-        "value": 3539.0,
-        "percentile": 38.9,
+        "value": 3515.4,
+        "percentile": 38.7,
         "band": "중간",
         "sessions": 504,
         "plain": {
-          "percentile": 38.9,
+          "percentile": 38.7,
           "sessions": 504,
           "window": "2년",
           "days": null,
@@ -823,7 +823,7 @@
       {
         "key": "equity_dollar",
         "label_ko": "주식과 달러",
-        "value": -0.119,
+        "value": -0.114,
         "prior": -0.352,
         "flipped": false,
         "band": "거의 무관"
@@ -831,7 +831,7 @@
       {
         "key": "gold_rates",
         "label_ko": "금과 금리",
-        "value": -0.119,
+        "value": -0.098,
         "prior": -0.043,
         "flipped": false,
         "band": "거의 무관"
@@ -847,26 +847,26 @@
     ],
     "cohesion": {
       "n_assets": 10,
-      "top1_pct": 41.2,
+      "top1_pct": 41.4,
       "top3_pct": 75.1,
-      "percentile": 38.9,
+      "percentile": 39.7,
       "band": "중간",
       "history_windows": 252
     },
     "drivers": {
       "first": {
         "group_ko": "주식",
-        "share_pct": 41.2
+        "share_pct": 41.4
       },
       "second": {
         "group_ko": "금리",
-        "share_pct": 23.7
+        "share_pct": 23.5
       },
       "companion": {
         "group_ko": "원자재",
-        "loading": 0.244,
-        "gap_pct": 56.9,
-        "ratio_pct": 53.0
+        "loading": 0.248,
+        "gap_pct": 58.7,
+        "ratio_pct": 54.0
       },
       "prior": {
         "first": "주식",
