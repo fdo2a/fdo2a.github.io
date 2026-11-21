@@ -3,49 +3,82 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-20",
- "status": "error",
- "reason": "gdelt_throttled",
+ "status": "none",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 0,
- "collected_at": "2026-11-21T15:17:35+00:00",
- "cutoff_at": "2026-11-21T15:17:35+00:00",
+ "attempts": 1,
+ "collected_at": "2026-11-21T16:20:32+00:00",
+ "cutoff_at": "2026-11-21T16:20:32+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": null,
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "338718ac1a9a3c13505b660f42cf4de37b458d5a",
+  "sha256": "98546da0a3da07d1a4cec0fe185f0084ac617e362e7d3ad91ecd360835b69801"
+ },
  "counts": {
   "harvest": 194,
-  "candidates": 3,
+  "candidates": 1,
   "articles": [
-   2,
-   2,
-   3
+   6
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 2,
+  "runs": 3,
   "tokens": {
-   "in": 4799,
-   "out": 67
+   "in": 63883,
+   "out": 14688
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "japantoday.com": "short",
+   "independent.co.uk": "ok",
+   "straitstimes.com": "ok",
+   "dw.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "attempt_refunded": "discovery_throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "5/5",
+   "pairs": "2/2",
+   "obs": "6/6"
+  },
+  "verified": {
+   "pairs": 1,
+   "claims": 2,
+   "obs": 6,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[2]",
+    "memo[1]",
+    "structure",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "worry.moderate[0]:unverified"
+   ]
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "미·중·러 선전 3자 정상회담의 성과와 우크라이나 평화 전망",
+  "query": "putin trump trilateral",
   "trigger": []
  },
- "content_hash": "530c6d3c1ecc7c83"
+ "problems": [
+  "worry.moderate[0]:unverified"
+ ],
+ "content_hash": "d2539dcee88734a7"
 }
