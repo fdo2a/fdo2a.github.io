@@ -137,6 +137,48 @@ def test_equity_close_must_match_the_daily_bar():
     assert cc.session_ends(spx, {}) == {}
 
 
+# 2026-11-20 실측(S&P -3.7%): 15:30-16:00 봉 H 6955.41 · L 6882.66 · C 6918.45, 공식 종가 6910.39.
+# 종가 차 0.117% 가 0.1% 를 넘어 그날이 세션에서 빠졌고, 환율·원자재 8행이 전부 None 이 됐다.
+NOV20 = ('2026-11-20T15:30:00-05:00', 6918.45, 6955.41, 6882.66)
+
+
+def test_volatile_full_session_counts_when_the_close_is_inside_the_last_bar():
+    assert cc.session_ends([NOV20], {'2026-11-20': 6910.39}) == {'2026-11-20': 960}
+
+
+def test_volatile_close_without_high_low_stays_strict():
+    # 고저가 없는 (시각, 종가) 봉은 지금과 똑같이 판정한다.
+    assert cc.session_ends([NOV20[:2]], {'2026-11-20': 6910.39}) == {}
+
+
+@pytest.mark.parametrize('hl', [(None, None), (math.nan, 6882.66), (6955.41, 'x')])
+def test_unusable_high_low_falls_back_to_the_close_comparison(hl):
+    bar = NOV20[:2] + hl
+    assert cc.session_ends([bar], {'2026-11-20': 6910.39}) == {}
+    assert cc.session_ends([bar], {'2026-11-20': 6918.0}) == {'2026-11-20': 960}
+
+
+def test_official_close_far_outside_the_last_bar_is_rejected():
+    # 범위 밖 + 0.1% 여유 밖이면 다른 세션의 일봉으로 본다.
+    assert cc.session_ends([NOV20], {'2026-11-20': 6882.66 * 0.998}) == {}
+    assert cc.session_ends([NOV20], {'2026-11-20': 6955.41 * 1.002}) == {}
+    # 9/30 실측처럼 저가를 0.018% 밑돈 종가는 여유 안이다.
+    assert cc.session_ends([NOV20], {'2026-11-20': 6882.66 * (1 - 0.00018)}) == {'2026-11-20': 960}
+
+
+def test_early_close_path_ignores_the_range():
+    # 13:00 마감은 「13:00 에서 끊긴 다운로드」와 가르는 유일한 장치가 종가 비교라 넓히지 않는다.
+    bar = ('2026-11-27T12:30:00-05:00', 100.0, 101.0, 99.0)
+    assert cc.session_ends([bar], {'2026-11-27': 100.5}) == {}
+    assert cc.session_ends([bar], {'2026-11-27': 100.05}) == {'2026-11-27': 780}
+
+
+def test_range_comes_from_the_bar_that_sets_the_close():
+    # 16:00 에 붙는 길이 0 봉이 마지막이면 그 봉의 고저를 쓴다 — 앞 봉의 넓은 범위를 빌리지 않는다.
+    zero = ('2026-11-20T16:00:00-05:00', 6918.45, 6918.45, 6918.45)
+    assert cc.session_ends([NOV20, zero], {'2026-11-20': 6910.39}) == {}
+
+
 def test_missing_equity_session_in_the_intraday_download_fails_closed():
     # codex 재검토 P1: 30분봉에서 10/12 가 빠져도 일봉 달력에는 있으니 10/09 와 비교하지 않는다.
     e = ends(('2026-10-09', 960, 100.0), ('2026-10-12', 960, 90.0), ('2026-10-13', 960, 105.0))
