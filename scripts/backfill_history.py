@@ -16,6 +16,7 @@ upsert), KR 지수는 커밋 순서대로 `merge_index_record` 로 접은 값, �
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -25,6 +26,7 @@ from kr.history import index_record, merge_index_record  # noqa: E402
 from us.history import append_jsonl, macro_record, market_record  # noqa: E402
 
 
+_DATE = re.compile(r'\d{4}-\d{2}-\d{2}')
 FIRST = 'first'
 LAST = 'last'
 
@@ -44,7 +46,8 @@ def _records(blobs, record_fn):
             rec = record_fn(obj)
         except Exception:
             continue
-        if isinstance(rec, dict) and rec.get('report_date') is not None:
+        date = rec.get('report_date') if isinstance(rec, dict) else None
+        if isinstance(date, str) and _DATE.fullmatch(date):
             yield rec
 
 

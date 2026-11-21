@@ -106,3 +106,13 @@ def test_kr_backfill_folds_same_day_commits_like_the_daily_merge(tmp_path):
     # 매일 경로: merge_index_record(앞 행, 새 행) — 새 값이 이기고, 새 행에 없는 지수는 앞 값을 지킨다
     expect = merge_index_record(index_record(json.loads(blobs[0])), index_record(json.loads(blobs[1])))
     assert row == expect
+
+
+def test_blobs_without_a_real_date_are_skipped_not_fatal(tmp_path):
+    # codex 구현 1회차: 목록 날짜는 TypeError 로 실행을 죽였고, 빈 문자열 날짜는 행으로 쓰였다
+    out = os.path.join(tmp_path, "market.jsonl")
+    bad = [json.dumps({"report_date": [], "indices": {}}), json.dumps({"report_date": ""}),
+           json.dumps({"report_date": "20260820"}), json.dumps({"indices": {}})]
+    n = backfill([_mkt("2026-08-20", 6000.0)] + bad, market_record, out, pick=LAST)
+    assert n == 1
+    assert [r["report_date"] for r in read_jsonl(out)] == ["2026-08-20"]
