@@ -276,3 +276,42 @@ def test_restore_still_reverts_a_file_that_differs_only_in_collection_time(tmp_p
     (d / 'x.json').write_text(json.dumps({'v': 1, 'collect': {'status': 'ok', 'collected_at': 'T2'}}), encoding='utf-8')
     assert S.restore_unchanged(str(d), 'x.json') == 'T2'
     assert (d / 'x.json').read_text(encoding='utf-8') == old
+
+
+# ── codex 4회차 E1: 바이트로 비교한다 — 같은 값의 다른 표기·공백도 새 바이트로 남는다 ─────────────────────────────
+
+@pytest.mark.parametrize('before,after', [
+    ('{"v": 1.0, "collect": {"status": "ok", "collected_at": "T1"}}', '{"v": 1e0, "collect": {"status": "ok", "collected_at": "T2"}}'),
+    ('{"v": 0, "collect": {"status": "ok", "collected_at": "T1"}}', '{"v": -0, "collect": {"status": "ok", "collected_at": "T2"}}'),
+    ('{"v": "a", "collect": {"status": "ok", "collected_at": "T1"}}', '{"v":  "a", "collect": {"status": "ok", "collected_at": "T2"}}'),
+    ('{"v": "\\u00e9", "collect": {"status": "ok", "collected_at": "T1"}}', '{"v": "\u00e9", "collect": {"status": "ok", "collected_at": "T2"}}'),
+])
+def test_restore_compares_bytes_not_parsed_values(tmp_path, before, after):
+    repo = init(tmp_path)
+    d = repo / 'data'
+    d.mkdir()
+    (d / 'x.json').write_text(before, encoding='utf-8')
+    commit(repo)
+    (d / 'x.json').write_text(after, encoding='utf-8')
+    assert S.restore_unchanged(str(d), 'x.json') == 'T2'
+    assert (d / 'x.json').read_text(encoding='utf-8') == after
+
+
+def test_restore_skips_when_the_time_string_appears_twice(tmp_path):
+    """다른 칸이 같은 시각 문자열을 담으면 어느 쪽이 수집 시각인지 바이트로 가를 수 없다 — 되돌리지 않는다."""
+    repo = init(tmp_path)
+    d = repo / 'data'
+    d.mkdir()
+    (d / 'x.json').write_text('{"g": "T1", "collect": {"collected_at": "T1"}}', encoding='utf-8')
+    commit(repo)
+    after = '{"g": "T2", "collect": {"collected_at": "T2"}}'
+    (d / 'x.json').write_text(after, encoding='utf-8')
+    S.restore_unchanged(str(d), 'x.json')
+    assert (d / 'x.json').read_text(encoding='utf-8') == after
+
+
+def test_ledger_missing_key_is_not_the_same_as_null():
+    head = {'format': 'x', 'market': 'us', 'run_id': 'r', 'run': {'open': False, 'checked': True}, 'files': {}}
+    book = dict(head, report_date=None, run={'checked': True})
+    assert not S._same_ledger(head, book)
+    assert S._same_ledger(dict(head, report_date=None), book)

@@ -287,21 +287,32 @@ def _strict(obj):
 
 def restore_unchanged(datadir, rel):
     """앞 판(HEAD)과 `collect.collected_at` 만 다른 JSON 객체 파일을 앞 판 바이트로 되돌린다.
-    -> 되돌리기 전(이번 실행이 쓴) 수집 시각 | None(`collect` 칸이 없는 파일)."""
+    -> 되돌리기 전(이번 실행이 쓴) 수집 시각 | None(`collect` 칸이 없는 파일).
+
+    **바이트로 비교한다**(2026-11-21, codex 구현 3·4회차 D4·E1): 파싱한 값끼리 비교하면 `1`↔`true`·`1e0`↔`1.0`·
+    `-0`↔`0`·공백·이스케이프 차이가 합쳐져 새 바이트를 지울 수 있다. 새 바이트에서 이번 수집 시각 문자열(정확히 한 번)을
+    앞 판의 수집 시각 문자열로 바꾼 것이 앞 판 바이트와 한 글자도 다르지 않을 때만 되돌린다. 시각 문자열이 한 번이 아니면
+    (다른 칸이 같은 시각을 담는 등) 되돌리지 않는다 — 1a 전처럼 바뀐 파일로 남는 쪽이다."""
     path = os.path.join(datadir, rel)
     body = _json(path)
     if not (isinstance(body, dict) and isinstance(body.get('collect'), dict)):
         return None
     fresh = body['collect'].get('collected_at')
     raw = _head_bytes(datadir, rel)
-    if raw is None:
+    if raw is None or not isinstance(fresh, str):
         return fresh
     try:
         head = json.loads(raw.decode('utf-8'))
     except (ValueError, UnicodeDecodeError):
         return fresh
-    if isinstance(head, dict) and isinstance(head.get('collect'), dict) and _strict(head) != _strict(body) \
-            and _strict(_sans_time(head)) == _strict(_sans_time(body)):
+    old_at = head.get('collect', {}).get('collected_at') if isinstance(head, dict) \
+        and isinstance(head.get('collect'), dict) else None
+    if not isinstance(old_at, str) or old_at == fresh:
+        return fresh
+    with open(path, 'rb') as fh:
+        mine = fh.read()
+    f_tok, o_tok = json.dumps(fresh).encode('utf-8'), json.dumps(old_at).encode('utf-8')
+    if mine.count(f_tok) == 1 and raw.count(o_tok) == 1 and mine.replace(f_tok, o_tok) == raw:
         tmp = path + '.tmp'
         with open(tmp, 'wb') as fh:
             fh.write(raw)
@@ -328,7 +339,8 @@ def _same_ledger(head, book):
         return False
     if not book['run'].get('checked'):
         return False                      # 이번 실행을 확인하지 못했다 — 그 사실을 장부에 남긴다
-    if any(_strict(head.get(k)) != _strict(book.get(k)) for k in ('format', 'market', 'report_date')):
+    # 칸이 없는 것과 null 은 다르다(codex 4회차 E2)
+    if any((k in head, _strict(head.get(k))) != (k in book, _strict(book.get(k))) for k in ('format', 'market', 'report_date')):
         return False
     hf, bf = head['files'], book['files']
     return set(hf) == set(bf) and all(_strict(_material(hf[k])) == _strict(_material(bf[k])) for k in bf)
