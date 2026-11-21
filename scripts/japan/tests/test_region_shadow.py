@@ -146,6 +146,7 @@ def _collect(tmp_path, monkeypatch, capture):
     monkeypatch.setattr(F, 'fetch_bodies', bodies)
     monkeypatch.setattr(F, 'summarize_chosen', lambda *a, **k: None)
     monkeypatch.setattr(F, 'capture_shadow', capture)
+    monkeypatch.setattr(F, 'REGION_SHADOW_CAPTURE', True)
     return F.collect_daily(S, S, str(tmp_path / 'b'), None, datadir=str(tmp_path))
 
 
@@ -482,6 +483,19 @@ SUM_KO = ('일본은행은 이날 단기 정책금리를 동결했다. 우에다
           '말했다. 시장은 12월 회의에서 인상 가능성을 놓고 엇갈린 반응을 보였다. 엔화는 회견 뒤 소폭 약세를 보였다. '
           '채권시장에서는 2년물 금리가 하락했다. 은행주는 정책 기대 후퇴로 약세를 보였다. 총재는 하반기 임금 협상 '
           '결과와 서비스 물가의 지속성을 판단 근거로 들었다. 일부 위원은 엔화 약세가 수입 물가를 다시 밀어 올릴 위험을 지적했다.')
+
+
+def test_capture_is_off_by_default_since_the_shadow_stopped(tmp_path, monkeypatch):
+    """2026-11-22 — 섀도를 멈춘 뒤로 일간 수집은 섀도 입력을 쓰지 않는다."""
+    import fetch_japan_news as F
+    assert F.REGION_SHADOW_CAPTURE is False
+    called = []
+    _collect(tmp_path, monkeypatch, lambda *a, **k: called.append(1))
+    monkeypatch.setattr(F, 'REGION_SHADOW_CAPTURE', False)
+    called.clear()
+    F.collect_daily(S, S, str(tmp_path / 'b2'), None, datadir=str(tmp_path / 'd2'))
+    assert called == []
+    assert not (tmp_path / 'd2' / 'news' / 'region_shadow').exists()
 
 
 def test_capture_runs_after_daily_save(tmp_path, monkeypatch):
