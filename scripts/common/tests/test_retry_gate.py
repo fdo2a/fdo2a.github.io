@@ -602,3 +602,9 @@ def test_main_ends_red_on_a_held_week_and_fires_nothing(monkeypatch):
     code, calls, out = _run(monkeypatch, {'weekly': HELD}, env=env, now=utc(2026, 11, 19, 10, 44),
                             argv=['--kinds', 'weekly', '--mode', 'check'])
     assert code == 0 and not calls and '::error::' not in out
+
+
+def test_a_held_session_is_never_fired():
+    """발행 전 검사가 세운 세션(HOLD)은 쏘지 않는다 — 처음부터 다시 쓰면 받아들인 수정이 사라진다(2026-11-22)."""
+    now = utc(2026, 11, 24, 5, 30)
+    assert rg.action('us', 'HOLD 2026-11-23 발행 전 검사로 세움', now, NO_HOL, 'gate')[0] == 'noop'

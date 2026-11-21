@@ -19,7 +19,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    bash scripts/ci/run_lock.sh acquire "$(cat /tmp/us-lock-key)" 120
    ```
 
-   키는 뉴욕 기준 세션 날짜라 KST 자정을 넘겨도 같은 세션은 같은 이름이다. **이후 모든 잠금 명령은 `/tmp/us-lock-key` 의 이름을 쓴다** — 다시 계산하지 않는다. **exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고, PushNotification 도 보내지 말고 「locked by another run」만 보고하고 끝낸다.** exit 4(원격 확인 실패)도 진행하지 않고 그 사실을 보고한다. exit 0 이면 아래로 진행한다.
+   키는 뉴욕 기준 세션 날짜라 KST 자정을 넘겨도 같은 세션은 같은 이름이다. **이후 모든 잠금 명령은 `/tmp/us-lock-key` 의 이름을 쓴다** — 다시 계산하지 않는다. **exit 3 이면 다른 런이 작성 중이다 — 아무것도 읽거나 쓰지 말고, PushNotification 도 보내지 말고 「locked by another run」만 보고하고 끝낸다.** exit 4(원격 확인 실패)도 진행하지 않고 그 사실을 보고한다. **exit 6 이면 발행 전 검사가 이 세션을 세워 두었다**(PREPUB_REVIEW §5 — 받아들인 수정을 고치다 멈췄다). 단 출력이 `died while judging or fixing` 이고 `git fetch -q origin main && git cat-file -e "origin/main:posts/$(cut -d- -f2- /tmp/us-lock-key).html"` 가 성공하면(브리프는 이미 나갔다 — 표시를 떼기 전에 죽은 흔적) `bash scripts/ci/run_lock.sh acquire "$(cat /tmp/us-lock-key)" 120 brief-out` 로 넘겨받아 아래로 진행한다(뉴스 이어 쓰기). 그 밖의 exit 6 은 아무것도 읽거나 쓰지 말고 출력 줄을 PushNotification 으로 보내고 끝낸다(사람이 `unhold` 한다). exit 0 이면 아래로 진행한다.
 
    **살아 있다는 표시**: STEP 2 작성 시작 전과 STEP 3 발행 커밋 직전에 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"` 를 한다. **renew 가 exit 3 이면 잠금을 잃은 것이다 — 다른 런이 넘겨받았으니 커밋·푸시하지 말고 끝낸다.** 갱신 없이 120분이 지나면 다음 런이 넘겨받는다(한도로 죽은 런의 잠금).
 
@@ -72,7 +72,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
 
    **폴백이 끝나면 `report_date`와 `complete`를 다시 본다** — 날짜가 여전히 기대 세션보다 이르면 발행하지 않고 중단한다. 뒤의 completeness 게이트는 필드 존재만 보고 날짜는 보지 않으므로, 여기서 막지 않으면 전 세션 자료가 오늘 날짜로 나간다.
 
-   **`missing` 이 `yields/naver_close_not_posted` 하나뿐이면 중단하지 말고 기다린다** — 뉴욕 시각 19:30 ET 까지. 국채 마감이 아직 안 올라온 것뿐이고 나머지는 다 됐다. 2026-10-19 세션은 17:37·17:45 ET 두 번 재수집하고 13분 만에 접었는데, 18:50 ET 에는 네이버에 4만기 모두 10/19 종가가 있었다. 다음 재시도 슬롯이 09:30 KST 라 글이 3시간 늦게 나갔다. 순서: `bash scripts/ci/run_lock.sh renew "$KEY"` → Bash 한 번에 `sleep 540`(timeout 600000) → 위 방식으로 수집 재실행·대기 → `git pull` 후 다시 본다. 19:30 ET 가 지나도 그대로면 그때 completeness 게이트 규칙대로 알림을 보내고 중단한다. 다른 항목이 함께 빠졌으면 기다리지 않는다.
+   **`missing` 이 `yields/naver_close_not_posted` 하나뿐이면 중단하지 말고 기다린다** — 뉴욕 시각 19:30 ET 까지. 국채 마감이 아직 안 올라온 것뿐이고 나머지는 다 됐다. 2026-10-19 세션은 17:37·17:45 ET 두 번 재수집하고 13분 만에 접었는데, 18:50 ET 에는 네이버에 4만기 모두 10/19 종가가 있었다. 다음 재시도 슬롯이 09:30 KST 라 글이 3시간 늦게 나갔다. 순서: `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"` → Bash 한 번에 `sleep 540`(timeout 600000) → 위 방식으로 수집 재실행·대기 → `git pull` 후 다시 본다. 19:30 ET 가 지나도 그대로면 그때 completeness 게이트 규칙대로 알림을 보내고 중단한다. 다른 항목이 함께 빠졌으면 기다리지 않는다.
 
 **토큰 규율**: 이 데이터 파일들이 있으면 그 안의 수치를 웹서치로 재확인하지 않는다. 웹 리서치(STEP 1의 리서치 절반)는 뉴스·해석·컨센서스처럼 파일에 없는 것에만 쓴다. 경제지표 Actual/Previous는 econ_indicators.json이 이미 확정했다.
 
@@ -149,11 +149,11 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
 
 ## STEP 2.7 — 발행 전 codex 검토 (STEP 2.6 보다 먼저, 2026-11-07 시범)
 
-`.claude/PREPUB_REVIEW.md` 를 따른다 — 초안을 비공개 레포 `fdo2a/review-runner` 의 codex 검토에 보내고(REST 로 띄운다), 받은 지적을 근거와 대조해 고친 뒤 발행한다. **실패·한도·25분 마감은 발행을 막지 않는다**(`fallback` → 기록만 하고 다음 단계). 기다리는 동안 9분마다 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"`. STEP 2.7 에서 STYLE_CLOSE 를 탔으면 STEP 2.6 은 건너뛴다.
+`.claude/PREPUB_REVIEW.md` 를 따른다 — 초안을 비공개 레포 `fdo2a/review-runner` 의 codex 검토에 보내고(REST 로 띄운다), 받은 지적을 근거와 대조해 고친 뒤 발행한다. **검토를 끝내지 못하면(실패·한도·25분 마감·고치다 막힘) 발행하지 않는다** — PREPUB_REVIEW §5 로 글을 세우고 끝낸다(STEP 2.6·3·3.5·4 없음, 뉴스·산업 브리프도 내지 않는다, 2026-11-22). 기다리는 동안 9분마다 `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"`. STEP 2.7 에서 STYLE_CLOSE 를 탔으면 STEP 2.6 은 건너뛴다.
 
 ## STEP 2.6 — 문체 마감 (꺼져 있으면 건너뛴다, 2026-11-06)
 
-`python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. 마감은 좁은 편집자 `narrow-editor` 호출(edits JSON — 그 타입이 없으면 작성자 재호출) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
+`python3 scripts/close_guard.py enabled` 가 `close: off` 면 아무것도 읽지 않고 STEP 3 로 간다(기본값 — `config/style_close.json`). `close: on` 이면 `.claude/STYLE_CLOSE.md` 의 A 를 `H=morning_brief_[DATE].html`·`M=us` 로 따르고, STEP 3 에서 같은 파일의 B 를 함께 한다. **STEP 2.7 이 돌았으면** A 가 끝나 `$H` 가 정해진 직후(approved 든 pre 판이든) `python3 scripts/prepub_review.py seal --dir "$PREPUB_DIR" --html "$H" --why style` 를 한다 — 발행 전 검토의 문체 후보가 0 이라 그쪽에서 봉인하지 않은 날, 이 봉인이 없으면 STEP 3 의 `record` 가 「판정을 마친 판과 다르다」(exit 10)로 멀쩡한 글을 세운다. exit 10 이면 PREPUB_REVIEW §5. 마감은 좁은 편집자 `narrow-editor` 호출(edits JSON — 그 타입이 없으면 작성자 재호출) → guard → 검사자 `close-meaning-checker` → 게이트 전체 재실행 순이고, 무엇이 실패해도 게이트를 이미 지난 판(pre)으로 발행한다.
 
 **STEP 2.6 이 돌았으면** 마감한 판으로 `check_telegram.py` 를 한 번 더 돌린다 — 흐름 편집이 표식 밖으로 문장을 옮길 수 있다.
 
@@ -165,11 +165,12 @@ Site base URL: https://fdo2a.github.io/
 2. Copy yield_curve.png into the repo as assets/yield_curve_[YYYY-MM-DD].png (**the post references this file** via `../assets/yield_curve_[DATE].png` — it is not embedded, so this copy is required for the chart to render), then promote the writer's macro book:
    - `macro_next.json` → `data/macro.json`
    Tomorrow's Actions run judges today's regime and triggers against this file. Publishing without promoting it leaves the macro book frozen — and because macro.json also carries `last_seen`, a missed promotion makes every indicator read as newly released tomorrow, which would hand the writer a free regime change.
-3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
+3. **에디터 노트 (있는 날만)** — if `notes/[YYYY-MM-DD].md` exists in the repo clone, run `python3 scripts/apply_note.py posts/[YYYY-MM-DD].html` from the repo root. That file is the publisher's own view, written by hand before the run; the script drops it in verbatim after §2 전략 코멘트. If it exits 0 (the note was applied) and STEP 2.7 ran, run `python3 scripts/prepub_review.py seal --dir "$PREPUB_DIR" --html posts/[YYYY-MM-DD].html --why note`. **Never write, edit, polish, or fact-check that text, and never author the section yourself** — a note the publisher did not write is worse than no note. The script is a no-op (exit 1, page untouched) when the file is missing, empty, or still the unedited template, so it is safe to run unconditionally. Most days there is no note and no section.
 4. Update posts.json and merge sitemap.xml in one command — **merge, never regenerate** (regenerating from posts.json wiped the weekly·KR·thesis·news URLs every morning):
    `python3 scripts/update_archives.py --root . --kind daily --key [YYYY-MM-DD] --title "[TITLE]" --headline "[HEADLINE]"` — same-date entry is replaced, never duplicated.
    **STEP 2.6 이 돌았으면**(`close: on`) 아래 커밋 명령을 한 줄로 돌리지 말고 `.claude/STYLE_CLOSE.md` B 의 순서(add → verify → staged-scan → commit → push 전 verify → push → push 뒤 verify)로 나눠 돈다 — 검사가 exit 0 이 아니면 커밋·push 하지 않는다.
 5. **최종 검증 기록 (2026-11-08)** — STEP 0 의 커밋 직전 가드(pull·중복 확인·유동성 재검사)를 먼저 하고, **실제로 올릴 파일**(노트까지 붙은 `posts/[DATE].html`)로:
+   **먼저 발행 전 검사 기록**: `python3 scripts/prepub_review.py record --dir "$PREPUB_DIR" --html posts/[DATE].html --section us --date [DATE]`(PREPUB_REVIEW §1-4) — exit 10 이면 PREPUB_REVIEW §5 로 세우고 끝낸다. 아래 exit 1 의 수리처럼 작성자가 글을 다시 고쳤으면 PREPUB_REVIEW §2 대로 받아들인 지적을 그 판에서 다시 대조해 `facts-done` 을 다시 찍은 뒤 이 기록부터 다시 한다.
    `python3 scripts/run_gates.py record --market us --date [DATE] --html posts/[DATE].html --datadir <workspace> --repo . --tg <workspace>/telegram.json --cycle <CYCLE_ID> --out verification/us/[DATE].json`
    - exit 0 → 6. **기록한 뒤에는 글을 고치지 않는다** — 고쳤으면 record 를 다시 돈다.
    - exit 1(필수 검사 실패·판정 불가) → 찍힌 위반을 writer 에게 넘겨 고치고 STEP 2 게이트 → STEP 3 1-4 → record. 최대 2회, 그래도 1이면 **커밋하지 않고** `run_lock.sh release`, PushNotification 으로 막은 검사기와 함께 중단. **편집자 노트는 고치지 않는다** — 노트 때문에 막혔으면(출력의 「노트를 뺀 사본」 줄) 고치지 말고 중단·보고. `close: on` 이면 고쳐 쓰지 않고 STYLE_CLOSE 의 pre 판(이 발행 건에서 게이트를 지난 판)으로 STEP 3 1-4 를 다시 하고 record — 그 판도 1이면 중단.
@@ -179,6 +180,7 @@ Site base URL: https://fdo2a.github.io/
    `git add -A` → `python3 scripts/run_gates.py verify --market us --date [DATE] --repo . --index --datadir <workspace> --tg <workspace>/telegram.json` — exit 0 이면 `git commit -m "Add [YYYY-MM-DD] brief"`. exit 1 이면 5 의 record → `git add -A` → verify 다시. **exit 4(기록 없음)는 5 의 record 가 4 였을 때만** 넘어간다 — 그때는 `--record-file <fallback_record 경로>` 를 붙여 0 이어야 commit. 그 밖의 4 는 record 부터 다시. **exit 2(git 을 읽지 못함)는 커밋하지 않고 중단**.
    **모든 `git push` 직전**(pull --rebase 뒤 포함) `python3 scripts/run_gates.py verify --market us --date [DATE] --repo . --rev HEAD --datadir <workspace> --tg <workspace>/telegram.json` — 밀어 올릴 커밋 안의 글·검사 코드와 지금 입력이 기록과 짝인지 본다. exit 0 → push. exit 1 → record → `git add -A` → `git commit --amend --no-edit` → 다시 verify. exit 4 → record 가 4 였을 때만, `--record-file <fallback_record 경로>` 를 붙여 0 이면 push. exit 2 → push 하지 않고 중단.
    If the push fails, continue with remaining steps and report the failure clearly in your final message and PushNotification.
+   **브리프 push 가 성공하면 바로** `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)" clear` — STEP 2.7 의 판정 표시를 뗀다(브리프가 나간 뒤에 세션이 죽어도 뉴스 이어 쓰기가 막히지 않게). exit 3 이면 STEP 3.5 를 하지 않는다.
 
 ## STEP 3.5 — 뉴스·산업 브리프 (subagent: news-industry-writer) — 브리프를 발행한 **뒤에**
 

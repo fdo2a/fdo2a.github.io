@@ -7,7 +7,13 @@
 #     exit 4  원격 확인 실패·push 거부 → 진행 안 함
 #   bash scripts/ci/run_lock.sh renew "$KEY"          # 살아 있다는 표시(오래 걸리는 단계 앞에서)
 #     exit 0  갱신   exit 3  더는 우리 잠금이 아니거나 갱신이 거부·실패했다 → 쓰지 말고 끝낸다
-#   bash scripts/ci/run_lock.sh release "$KEY"        # 자기가 잡은 잠금만 푼다
+#   bash scripts/ci/run_lock.sh renew "$KEY" judging|fixing   # 판정·수정 단계에 들어섰다(뒤의 renew 도 이 표시를 이어 단다)
+#   bash scripts/ci/run_lock.sh renew "$KEY" clear    # 표시를 뗀다 — 브리프 발행 push 가 끝난 직후(뉴스 이어 쓰기가 막히지 않게)
+#   bash scripts/ci/run_lock.sh hold "$KEY" <사유 부호>  # 세운다 — 사람이 unhold 하기 전에는 어떤 런도 잡지 못한다
+#     exit 0·4·5 는 release 와 같다
+#   bash scripts/ci/run_lock.sh unhold "$KEY"         # 사람만 — 세움·죽은 판정 표시를 released 로. 살아 있는 맨 잠금이면 exit 3
+#   bash scripts/ci/run_lock.sh release "$KEY"        # 자기가 잡은 잠금만 푼다 — 판정 표시가 달린 클론이면 풀지 않고 세운다
+#   bash scripts/ci/run_lock.sh acquire "$KEY" 120 brief-out   # 브리프가 원격 main 에 있을 때만 — 죽은 판정 표시를 넘겨받는다(세움은 아니다)
 #     exit 0  풀었다·이미 남의 것·이미 없다   exit 4  확인 실패(원격·로컬)   exit 5  push 거부 — 잠금이 남았다
 #     (4·5 는 재시도 루틴을 stale 까지 막는다 — 조용히 끝내지 말고 보고한다)
 #
@@ -21,13 +27,19 @@
 # 갱신 push 는 통과시킨다. acquire 와 routine_due.py 는 released 표시를 「잠금 없음」으로 본다.
 # 설계: docs/superpowers/specs/2026-10-20-run-lock-release-marker.md
 #
+# **판정 중 표시와 세움(2026-11-22).** 발행 전 검사에서 받아들인 정확성 수정이 생길 수 있는 단계(판정·수정)에
+# 들어서면 잠금 제목 끝에 ` state=judging|fixing` 을 단다. 그 표시가 남은 잠금은 stale 이어도 넘겨받지 않는다
+# (exit 6) — 세션이 고치다 죽었으니 처음부터 다시 쓰면 그 수정이 사라진다. `hold` 는 제목 `held <name> … reason=<부호>`
+# 로 바꾸고 그 뒤 acquire 는 언제나 exit 6. 둘 다 `unhold`(사람)로만 풀린다. routine_due.py 는 둘을 HOLD 로 읽는다.
+# 설계: ../plans/attachments/2026-11-17-prepub-all/us_interim_hold_design_v1.md §10.2 (로컬)
+#
 # 키(codex #3): 뉴욕 시각에서 17시간을 뺀 날짜 = 그 시각까지 끝났을 수 있는 가장 최근 세션.
 # KST 자정을 넘겨도 같은 세션은 같은 이름이다.
 #
 # 왜: 2026-09-26 US 루틴이 푸시 웹훅으로 새벽에 10번 떴고 넷이 동시에 작성하다 5시간 한도를
 # 함께 태웠다. 설계: docs/superpowers/specs/2026-09-26-routine-lock-and-news-freeze.md
 set -u
-cmd=${1:?key|acquire|renew|release}
+cmd=${1:?key|acquire|renew|hold|unhold|release}
 remote=${RUN_LOCK_REMOTE:-origin}
 
 if [ "$cmd" = key ]; then
@@ -39,6 +51,7 @@ fi
 
 name=${2:?lock name}
 stale=${3:-180}
+after_brief=${4:-}               # acquire 의 넷째 인자 `brief-out` = 부른 쪽이 원격 main 에 브리프가 있음을 확인했다
 ref="refs/heads/locks/${name}"
 gitdir=$(git rev-parse --git-dir) || exit 4
 own="${gitdir}/run_lock_${name}"
@@ -48,12 +61,13 @@ push_err= read_err=              # set -u: 실패 경로가 읽기 전에 늘 �
 new_commit() {
   # $1 = lock | released. nonce: 서로 다른 컨테이너가 같은 초·같은 pid 로 같은 SHA 를 만들면
   # 둘 다 push 에 성공한 것으로 보인다(codex 설계 검토 #4).
+  # $2 = 제목 꼬리(선택): ` state=judging` · ` reason=recovery_needed`
   local tree nonce
   tree=$(git mktree </dev/null) || return 1
   nonce=$(od -An -N8 -tx1 /dev/urandom 2>/dev/null | tr -d ' \n')
   [ -n "$nonce" ] || nonce="${RANDOM}${RANDOM}${RANDOM}"
   git -c user.name=routine-lock -c user.email=routine-lock@users.noreply.github.com \
-    commit-tree "$tree" -m "$1 ${name} $(date -u +%FT%TZ) pid $$ ${nonce}"
+    commit-tree "$tree" -m "$1 ${name} $(date -u +%FT%TZ) pid $$ ${nonce}${2:-}"
 }
 
 read_tip() {
@@ -81,6 +95,21 @@ read_own() {
   [ ${#mine} -eq 40 ] || [ ${#mine} -eq 64 ]
 }
 
+own_state() {
+  # 우리가 쥔 잠금 커밋($mine)의 제목에 달린 판정 표시 → own_mark(없으면 빈 값). 못 읽으면 1.
+  # **표시는 따로 적어 두지 않고 lease 를 거는 바로 그 커밋에서 읽는다**(codex 구현 2·3회차 #1). 표시를 로컬
+  # 파일에 따로 두면 같은 클론의 두 renew 가 겹칠 때 파일과 원격이 어긋나는 순서가 생긴다. push 는 원격 끝이
+  # $mine 일 때만 통과하므로, 통과한 새 커밋의 표시는 언제나 그 직전 원격 커밋의 표시에서 나온 것이다.
+  local subj
+  subj=$(git log -1 --format=%s "$mine" 2>/dev/null) || return 1
+  case "$subj" in
+  lock\ *\ state=judging) own_mark=judging ;;
+  lock\ *\ state=fixing) own_mark=fixing ;;
+  lock\ *) own_mark= ;;
+  *) return 1 ;;
+  esac
+}
+
 say_err() { [ -n "${1:-}" ] && printf '%s\n' "$1" | sed 's/^/  git: /' >&2; return 0; }
 
 case "$cmd" in
@@ -105,7 +134,24 @@ acquire)
       exit 4
     fi
     case "$tip_subject" in
+    held\ *)
+      echo "run_lock: ${name} is held (prepub hold) — a person must unhold it; not proceeding"
+      exit 6
+      ;;
     released\ *) why="previous run released it" ;;
+    *\ state=judging | *\ state=fixing)
+      age=$(( ($(date +%s) - tip_time) / 60 ))
+      if [ "$age" -lt "$stale" ]; then
+        echo "run_lock: ${name} held by another run (last sign of life ${age} min ago) — stop"
+        exit 3
+      fi
+      if [ "$after_brief" != brief-out ]; then
+        echo "run_lock: ${name} died while judging or fixing review findings (${age} min silent) — a person must unhold it; not proceeding"
+        exit 6
+      fi
+      # 브리프는 이미 나갔다 — 표시는 브리프 push 와 clear 사이에 죽은 흔적이다. 뉴스 이어 쓰기는 넘겨받는다.
+      why="holder silent for ${age} min after the brief was published"
+      ;;
     *)
       age=$(( ($(date +%s) - tip_time) / 60 ))
       if [ "$age" -lt "$stale" ]; then
@@ -140,12 +186,19 @@ acquire)
   exit 3
   ;;
 renew)
+  case "${3:-}" in
+  '' | judging | fixing | clear) ;;
+  *) echo "usage: run_lock.sh renew <name> [judging|fixing|clear]" >&2; exit 2 ;;
+  esac
   [ -f "$own" ] || { echo "run_lock: this clone does not hold ${name}" >&2; exit 3; }
   read_own || { echo "run_lock: cannot read ${own} — stop writing" >&2; exit 3; }
-  sha=$(new_commit lock) || { echo "run_lock: cannot build a renew commit for ${name} — stop writing" >&2; exit 3; }
+  own_state || { echo "run_lock: cannot read our lock commit for ${name} — stop writing" >&2; exit 3; }
+  mark=${3:-$own_mark}
+  case "$mark" in judging | fixing) tail=" state=${mark}" ;; *) tail= ;; esac   # clear = 표시를 뗀다
+  sha=$(new_commit lock "$tail") || { echo "run_lock: cannot build a renew commit for ${name} — stop writing" >&2; exit 3; }
   if push_err=$(git push -q --force-with-lease="${ref}:${mine}" "$remote" "${sha}:${ref}" 2>&1); then
     echo "$sha" >"$own"
-    echo "run_lock: renewed ${name}"
+    echo "run_lock: renewed ${name}${tail}"
     exit 0
   fi
   # 어느 쪽이든 쓰지 않는다(exit 3). 메시지만 갈라 둔다.
@@ -157,13 +210,33 @@ renew)
   fi
   exit 3
   ;;
-release)
-  [ -f "$own" ] || { echo "run_lock: this clone does not hold ${name} — nothing released"; exit 0; }
-  read_own || { echo "run_lock: cannot read ${own} — NOT released" >&2; exit 4; }
-  sha=$(new_commit released) || { echo "run_lock: cannot build a release commit for ${name} — NOT released" >&2; exit 4; }
+hold | release)
+  if [ "$cmd" = hold ]; then
+    # 사유는 우리가 정한 부호만 — 공개 ref 제목에 자유 글을 싣지 않는다
+    case "${3:-}" in
+    recovery_needed | style_abort | facts_unmarked) ;;
+    *) echo "usage: run_lock.sh hold <name> recovery_needed|style_abort|facts_unmarked" >&2; exit 2 ;;
+    esac
+    word=held tail=" reason=$3" done_msg="held ${name} (${3})"
+  else
+    word=released tail= done_msg="released ${name}"
+  fi
+  [ -f "$own" ] || { echo "run_lock: this clone does not hold ${name} — nothing ${word}"; [ "$cmd" = hold ] && exit 4; exit 0; }
+  read_own || { echo "run_lock: cannot read ${own} — NOT ${word}" >&2; exit 4; }
+  if [ "$cmd" = release ]; then
+    own_state || { echo "run_lock: cannot read our lock commit for ${name} — NOT released" >&2; exit 4; }
+    case "$own_mark" in
+    judging | fixing)
+      # 판정·수정을 시작한 런이 쓰지 않고 끝난다 — 풀면 재시도가 처음부터 다시 써 받아들인 수정이 사라진다.
+      # 지시문이 release 를 부르는 자리(중단 경로)가 어디든 여기서 세움으로 바꾼다(codex 구현 1회차 #3).
+      word=held tail=" reason=recovery_needed" done_msg="held ${name} (was marked ${own_mark} — a person must unhold it)"
+      ;;
+    esac
+  fi
+  sha=$(new_commit "$word" "$tail") || { echo "run_lock: cannot build a ${word} commit for ${name} — NOT ${word}" >&2; exit 4; }
   if push_err=$(git push -q --force-with-lease="${ref}:${mine}" "$remote" "${sha}:${ref}" 2>&1); then
     rm -f "$own"
-    echo "run_lock: released ${name}"
+    echo "run_lock: ${done_msg}"
     exit 0
   fi
   if ! read_tip; then
@@ -174,22 +247,41 @@ release)
   if [ "$tip" = "$sha" ]; then
     # push 는 적용됐는데 클라이언트가 실패로 받았다.
     rm -f "$own"
-    echo "run_lock: released ${name}"
+    echo "run_lock: ${done_msg}"
   elif [ -z "$tip" ]; then
     rm -f "$own"
     echo "run_lock: ${name} is already gone — nothing to release"
+    [ "$cmd" = hold ] && exit 4
   elif [ "$tip" = "$mine" ]; then
-    echo "run_lock: release push for ${name} was refused (remote still holds our lock) — NOT released" >&2
+    echo "run_lock: ${word} push for ${name} was refused (remote still holds our lock) — NOT ${word}" >&2
     say_err "$push_err"
     exit 5
   else
     rm -f "$own"
     echo "run_lock: ${name} was taken over by another run — left it alone"
+    [ "$cmd" = hold ] && exit 4
   fi
   exit 0
   ;;
+unhold)
+  # 사람이 부른다(재료를 받아 복구했거나, 받아들인 수정을 버리기로 정했다). 세움·판정 표시만 푼다.
+  if ! read_tip; then
+    echo "run_lock: cannot read ${name} — nothing changed" >&2; say_err "$read_err"; exit 4
+  fi
+  case "$tip_subject" in
+  held\ * | *\ state=judging | *\ state=fixing) ;;
+  *) echo "run_lock: ${name} is not held or marked — left it alone"; exit 3 ;;
+  esac
+  sha=$(new_commit released " unhold") || { echo "run_lock: cannot build a release commit — nothing changed" >&2; exit 4; }
+  if push_err=$(git push -q --force-with-lease="${ref}:${tip}" "$remote" "${sha}:${ref}" 2>&1); then
+    echo "run_lock: unheld ${name}"
+    exit 0
+  fi
+  echo "run_lock: unhold push for ${name} was refused — nothing changed" >&2; say_err "$push_err"
+  exit 5
+  ;;
 *)
-  echo "usage: run_lock.sh key <prefix> | acquire|renew|release <name> [stale_minutes]" >&2
+  echo "usage: run_lock.sh key <prefix> | acquire <name> [stale_minutes] | renew <name> [judging|fixing] | hold <name> <code> | unhold|release <name>" >&2
   exit 2
   ;;
 esac

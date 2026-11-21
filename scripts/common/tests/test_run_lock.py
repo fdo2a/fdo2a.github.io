@@ -358,3 +358,251 @@ def test_a_broken_ownership_file_is_never_reported_as_taken_over(tmp_path, conte
     assert r.returncode == 4 and 'taken over' not in r.stdout and 'NOT released' in r.stderr
     assert _own(a).exists() and _remote_tip(a, 'k') == held
     assert _run(a, 'renew', 'k').returncode == 3
+
+
+# ── 판정 중 표시·세움(2026-11-22, 발행 전 검사 막기) ───────────────────────────────
+
+def test_state_mark_sticks_to_later_renews(tmp_path):
+    a, _ = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    r = _run(a, 'renew', 'k', 'judging')
+    assert r.returncode == 0 and _tip_subject(a, 'k').endswith(' state=judging')
+    # 뒤의 맨 renew 도 표시를 잃지 않는다 — 지시문의 기존 renew 자리가 그대로 돈다
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert _tip_subject(a, 'k').endswith(' state=judging')
+    assert _run(a, 'renew', 'k', 'fixing').returncode == 0
+    assert _tip_subject(a, 'k').endswith(' state=fixing')
+
+
+def test_unknown_state_is_refused_without_moving_the_lock(tmp_path):
+    a, _ = _setup(tmp_path)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    before = _tip_subject(a, 'k')
+    r = _run(a, 'renew', 'k', 'whatever')
+    assert r.returncode == 2
+    assert _tip_subject(a, 'k') == before
+
+
+def test_a_dead_run_marked_judging_is_not_taken_over(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k', 'judging').returncode == 0
+    # 판정·수정 도중 죽은 런 — stale 이어도 넘겨받아 처음부터 쓰지 않는다
+    r = _run(b, 'acquire', 'k', '0')
+    assert r.returncode == 6 and 'person' in r.stdout
+    assert _tip_subject(b, 'k').endswith(' state=judging')
+
+
+def test_hold_blocks_every_later_run(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    r = _run(a, 'hold', 'k', 'recovery_needed')
+    assert r.returncode == 0 and _tip_subject(a, 'k').startswith('held k ')
+    assert ' reason=recovery_needed' in _tip_subject(a, 'k')
+    r = _run(b, 'acquire', 'k', '0')
+    assert r.returncode == 6
+    # 맨 release 는 남의(또는 이미 놓은) 잠금을 풀지 않는다
+    assert _run(a, 'release', 'k').returncode == 0
+    assert _tip_subject(b, 'k').startswith('held k ')
+
+
+def test_hold_reason_must_be_a_closed_code(tmp_path):
+    a, _ = _setup(tmp_path)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'hold', 'k', 'free text here').returncode == 2
+    assert _tip_subject(a, 'k').startswith('lock ')
+
+
+def test_unhold_is_the_only_way_out(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'hold', 'k', 'recovery_needed').returncode == 0
+    r = _run(b, 'unhold', 'k')
+    assert r.returncode == 0 and _tip_subject(b, 'k').startswith('released ')
+    assert _run(b, 'acquire', 'k').returncode == 0
+
+
+def test_unhold_leaves_a_live_unmarked_lock_alone(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    r = _run(b, 'unhold', 'k')
+    assert r.returncode == 3
+    assert _tip_subject(b, 'k').startswith('lock ')
+
+
+def test_routine_due_reads_hold_and_dead_judging_as_hold(tmp_path, monkeypatch):
+    from datetime import datetime, timezone
+    rd = _routine_due()
+    now = datetime(2026, 11, 24, 0, 30, tzinfo=timezone.utc)
+    name = rd.lock_name('us', now)
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', name, '120').returncode == 0
+    assert _run(a, 'renew', name, 'judging').returncode == 0
+    monkeypatch.chdir(b)
+    seen = datetime.now(timezone.utc)
+    age, flag = rd._lock_state(name, seen)
+    assert flag == 'judging' and age is not None
+    assert rd.decide_us(now, set(), age, flag=flag)[0] == 'BUSY'           # 살아 있으면 BUSY
+    assert rd.decide_us(now, set(), 999, flag=flag)[0] == 'HOLD'           # 죽었으면 사람
+    assert _run(a, 'hold', name, 'recovery_needed').returncode == 0
+    age, flag = rd._lock_state(name, seen)
+    assert flag == 'held'
+    assert rd.decide_us(now, set(), age, flag=flag)[0] == 'HOLD'
+    assert rd._lock_age(name, seen) is not None                              # 옛 호출자에게는 늘 잡힌 잠금
+
+
+def test_clear_takes_the_mark_off_so_a_news_resume_can_take_over(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k', 'fixing').returncode == 0
+    assert _run(a, 'renew', 'k', 'clear').returncode == 0
+    assert _tip_subject(a, 'k').startswith('lock ') and 'state=' not in _tip_subject(a, 'k')
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert 'state=' not in _tip_subject(a, 'k')                       # 뗀 표시는 다시 붙지 않는다
+    r = _run(b, 'acquire', 'k', '0')
+    assert r.returncode == 0 and 'took over' in r.stdout
+
+
+def test_a_published_brief_is_not_held_by_a_leftover_mark():
+    from datetime import datetime, timezone
+    rd = _routine_due()
+    now = datetime(2026, 11, 24, 0, 30, tzinfo=timezone.utc)
+    d = rd.us_session(now)
+    # 브리프는 나갔고 뉴스만 없다 — 발행 전 검사는 브리프에만 있으니 남은 표시로 세우지 않는다(뉴스 이어 쓰기 길)
+    assert rd.decide_us(now, {f'posts/{d}.html'}, 999, flag='fixing')[0] == 'DUE'
+    assert rd.decide_us(now, {f'posts/{d}.html'}, 999, flag='held')[0] == 'HOLD'
+
+
+def test_release_after_judging_holds_instead(tmp_path):
+    """지시문의 어느 중단 경로가 release 를 불러도 판정을 시작한 런은 풀리지 않는다(codex 구현 1회차 #3)."""
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k', 'judging').returncode == 0
+    r = _run(a, 'release', 'k')
+    assert r.returncode == 0 and 'held k' in r.stdout
+    assert _tip_subject(a, 'k').startswith('held k ') and 'reason=recovery_needed' in _tip_subject(a, 'k')
+    assert _run(b, 'acquire', 'k', '0').returncode == 6
+
+
+def test_release_before_judging_still_releases(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert _run(a, 'release', 'k').returncode == 0
+    assert _tip_subject(a, 'k').startswith('released ')
+
+
+def test_a_news_resume_takes_over_a_dead_mark_only_after_the_brief(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k', 'fixing').returncode == 0
+    assert _run(b, 'acquire', 'k', '0').returncode == 6
+    r = _run(b, 'acquire', 'k', '0', 'brief-out')
+    assert r.returncode == 0 and 'after the brief was published' in r.stdout
+
+
+def test_brief_out_never_opens_a_hold(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'hold', 'k', 'recovery_needed').returncode == 0
+    assert _run(b, 'acquire', 'k', '0', 'brief-out').returncode == 6
+
+
+# ── 표시는 lease 를 거는 바로 그 잠금 커밋에서 읽는다(codex 구현 2·3회차 #1) ─────────────
+
+def _stale_own(a, name='k'):
+    return _own(a, name).read_text()
+
+
+def test_the_mark_is_not_kept_in_a_local_file(tmp_path):
+    """표시를 따로 적어 두는 파일이 없다 — 같은 클론의 두 renew 가 겹쳐도 파일과 원격이 어긋날 자리가 없다."""
+    a, _ = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k', 'judging').returncode == 0
+    gitdir = _own(a).parent
+    assert sorted(p.name for p in gitdir.glob('run_lock_*')) == ['run_lock_k']
+    assert 'mark_file' not in SCRIPT.read_text(encoding='utf-8')
+
+
+def test_a_renew_carries_the_mark_of_the_commit_it_leases(tmp_path):
+    """맨 renew 는 자기가 쥔 잠금 커밋의 표시를 이어 단다 — 옛 SHA 를 쥔 renew 는 lease 로 거부된다. 그래서
+    표시 없는 커밋이 표시 달린 원격 끝을 덮는 순서가 없다."""
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    before = _stale_own(a)                                   # 표시를 달기 전의 소유 SHA
+    assert _run(a, 'renew', 'k', 'judging').returncode == 0
+    marked = _stale_own(a)
+    # 겹친 맨 renew 가 옛 SHA(표시 없음)를 읽은 채 뒤늦게 push 하는 경우
+    _own(a).write_text(before)
+    r = _run(a, 'renew', 'k')
+    assert r.returncode == 3 and _tip_subject(a, 'k').endswith(' state=judging')
+    # 새 SHA 를 읽은 맨 renew 는 그 커밋의 표시를 이어 단다
+    _own(a).write_text(marked)
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert _tip_subject(a, 'k').endswith(' state=judging')
+    assert _run(b, 'acquire', 'k', '0').returncode == 6
+
+
+def test_a_refused_marking_renew_does_not_undo_a_marking_renew_that_succeeded(tmp_path):
+    """codex 구현 3회차 #1 의 순서: A 의 renew judging 이 거부되고(원격은 그대로), 그 뒤처리 전에 B 의 renew judging
+    이 성공한다. A 가 끝난 뒤에도 뒤의 맨 renew 는 표시를 이어 달고, 죽은 뒤의 acquire 는 exit 6 이다."""
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    remote = tmp_path / 'remote.git'
+    _refuse_all_pushes(remote)
+    assert _run(a, 'renew', 'k', 'judging').returncode == 3          # A: 거부, 원격 그대로
+    (remote / 'hooks' / 'pre-receive').unlink()
+    assert _run(a, 'renew', 'k', 'judging').returncode == 0          # B: 성공
+    # A 의 실패 뒤처리가 이제야 끝난다고 해도 지울 것이 없다 — 표시는 잠금 커밋에만 있다
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert _tip_subject(a, 'k').endswith(' state=judging')
+    assert _run(b, 'acquire', 'k', '0').returncode == 6
+
+
+def test_a_refused_marking_renew_leaves_no_mark_so_the_release_still_releases(tmp_path):
+    """표시 push 가 거부됐으면(원격은 그대로 우리 것) 판정을 시작하지 않은 것이다 — release 가 세움으로 바뀌지 않는다."""
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    remote = tmp_path / 'remote.git'
+    _refuse_all_pushes(remote)
+    r = _run(a, 'renew', 'k', 'judging')
+    assert r.returncode == 3 and 'still ours' in r.stderr
+    (remote / 'hooks' / 'pre-receive').unlink()
+    assert _run(a, 'release', 'k').returncode == 0
+    assert _tip_subject(a, 'k').startswith('released ')
+    assert _run(b, 'acquire', 'k', '0').returncode == 0
+
+
+def test_a_refused_renew_keeps_the_mark_that_was_already_on_the_lock(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(a, 'renew', 'k', 'judging').returncode == 0
+    remote = tmp_path / 'remote.git'
+    _refuse_all_pushes(remote)
+    assert _run(a, 'renew', 'k', 'fixing').returncode == 3
+    assert _run(a, 'renew', 'k', 'clear').returncode == 3
+    (remote / 'hooks' / 'pre-receive').unlink()
+    assert _run(a, 'renew', 'k').returncode == 0
+    assert _tip_subject(a, 'k').endswith(' state=judging')          # 원격의 표시 그대로
+    assert _run(a, 'release', 'k').returncode == 0                   # 표시가 있으니 풀지 않고 세운다
+    assert _tip_subject(a, 'k').startswith('held k ')
+    assert _run(b, 'acquire', 'k', '0').returncode == 6
+
+
+def test_a_marking_renew_that_lost_the_lock_leaves_the_new_holder_alone(tmp_path):
+    a, b = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    assert _run(b, 'acquire', 'k', '0').returncode == 0       # 넘겨받음
+    assert _run(a, 'renew', 'k', 'judging').returncode == 3
+    assert _run(a, 'release', 'k').returncode == 0            # 남의 잠금은 건드리지 않는다
+    assert _tip_subject(b, 'k').startswith('lock k ')
+
+
+def test_an_ownership_file_that_points_at_no_lock_commit_never_moves_the_lock(tmp_path):
+    a, _ = _setup(tmp_path, deny_deletes=True)
+    assert _run(a, 'acquire', 'k').returncode == 0
+    before = _tip_subject(a, 'k')
+    _own(a).write_text('0' * 40 + '\n')                        # 이 클론에 없는 커밋
+    assert _run(a, 'renew', 'k').returncode == 3
+    assert _run(a, 'release', 'k').returncode == 4
+    assert _tip_subject(a, 'k') == before
