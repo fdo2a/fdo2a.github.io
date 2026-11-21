@@ -85,11 +85,6 @@ def h41_release_at(release_date):
 
 # ── 금액 표시 — 렌더러와 게이트가 같은 함수를 쓴다 ─────────────────────────────
 
-def eok(millions):
-    """백만 달러 → 억 달러(float)."""
-    return millions / 100.0
-
-
 def fmt_usd(millions, signed=False):
     """백만 달러 → 「2조 9,628억 달러」「363억 달러」「2.3억 달러」."""
     if millions is None:

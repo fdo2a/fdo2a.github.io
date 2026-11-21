@@ -62,12 +62,6 @@ def inputs_on(pmap, cal, i):
             'drawdown': (close / max(wyr) - 1) * 100}
 
 
-def inputs_at(closes):
-    """Inputs on the last of an unbroken close list (positions = sessions)."""
-    cal = list(range(len(closes)))
-    return inputs_on(dict(zip(cal, closes)), cal, len(closes) - 1)
-
-
 def _raw(inp):
     if not inp:
         return None

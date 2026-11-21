@@ -383,10 +383,6 @@ def _tree(root, rev):
     return {p for p in raw.decode('utf-8', 'replace').split('\0') if p}
 
 
-def _is_ancestor(root, old, new):
-    return _ancestry(root, old, new)[0]
-
-
 def _ancestry(root, old, new):
     """(조상인가, 아니면 그 이유) — gap 알림에 붙는다."""
     import subprocess

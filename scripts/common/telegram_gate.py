@@ -521,9 +521,6 @@ class _Offsets(HTMLParser):
         line, col = self.getpos()
         return self._lines[line - 1] + col
 
-    def after_start(self):
-        return self.here() + len(self.get_starttag_text() or '')
-
     def after_end(self):
         i = self.doc.find('>', self.here())
         return len(self.doc) if i < 0 else i + 1

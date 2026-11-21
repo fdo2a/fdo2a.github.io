@@ -35,58 +35,6 @@ def section_slice(html_doc, title):
 
 # 병합 섹션(2026-09-12 사용자 지시 「하나로 합쳐」) 안에서 포트폴리오가 시작하는 자리.
 PORTFOLIO_SUBTITLE = '모의 포트폴리오'
-_H3 = re.compile(r'<h3\b[^>]*>(.*?)</h3>', re.S)
-
-
-_SECTION_OPEN = re.compile(r'(?i)<section\b')
-_SECTION_CLOSE = re.compile(r'(?i)</section\s*>')
-
-
-def section_scope(html_doc, title):
-    """제목이 `title`인 <h2>를 담은 **실제 `<section>` 안쪽**. 없으면 h2 구간 그대로.
-
-    `section_slice` 는 다음 h2 까지 읽으므로, 형제 `<aside>`·`<div>` 에 놓인 블록이
-    이 섹션의 자식인 것처럼 검사된다(2026-09-12 codex 구현 검토). 중첩 `<section>`
-    (섹터 막대 스니펫)이 있으므로 깊이를 세어 짝을 찾는다.
-    """
-    seg = section_slice(html_doc, title)
-    if seg is None:
-        return None
-    start = html_doc.index(seg)
-    open_at = html_doc.rfind('<section', 0, start)
-    if open_at < 0:
-        return seg
-    depth, i = 0, open_at
-    while i < len(html_doc):
-        o = _SECTION_OPEN.search(html_doc, i)
-        c = _SECTION_CLOSE.search(html_doc, i)
-        if c is None:
-            break
-        if o is not None and o.start() < c.start():
-            depth += 1
-            i = o.end()
-            continue
-        depth -= 1
-        if depth == 0:
-            end = c.start()
-            return seg[:end - start] if end > start else seg
-        i = c.end()
-    return seg
-
-
-def sub_split(section_html, title):
-    """h2 구간을 «그 제목의 <h3> 앞»과 «h3부터 구간 끝»으로 가른다.
-
-    뒤쪽의 끝을 «다음 h3»으로 잡지 않는다 — h3 를 하나 더 두면 그 뒤가 검사 밖
-    꼬리가 된다(2026-09-12 codex 설계 검토 C2-4). 끝은 부모 구간의 끝이다.
-    h3 가 없으면 (전체, None).
-    """
-    if not section_html:
-        return (section_html, None)
-    for m in _H3.finditer(section_html):
-        if _text(m.group(1)) == title:
-            return (section_html[:m.start()], section_html[m.start():])
-    return (section_html, None)
 
 
 def prose_chars(section_html):

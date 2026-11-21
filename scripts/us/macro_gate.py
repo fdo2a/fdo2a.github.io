@@ -137,10 +137,6 @@ def parse_group_blocks(section):
     return _blocks(section, 'group')
 
 
-def parse_release_blocks(section):
-    return _blocks(section, 'release')
-
-
 def _figures(text):
     """Distinct numeric tokens, with bare years dropped — a date is not a data point."""
     return {t for t in _NUM.findall(text or '') if not _YEAR.match(t)}
