@@ -32,13 +32,13 @@ def _fake_pages(monkeypatch, pages):
     monkeypatch.setattr(sources, "fetch_json", fake)
 
 
-def test_fetch_top_value_sorts_by_value_and_filters_market(monkeypatch):
+def test_top_value_stats_sorts_by_value_and_filters_market(monkeypatch):
     _fake_pages(monkeypatch, [[
         _stock("1", "삼성전자", "0", "6,043,124", "22,223,579", "5.36"),
         _stock("2", "알테오젠", "1", "9,999,999", "1", "1.0"),   # 코스닥 — 제외
         _stock("3", "LG에너지솔루션", "0", "812,876", "1,000", "-2.34"),
     ]])
-    rows = sources.fetch_top_value("0")
+    rows = sources.fetch_top_value_stats("0")[0]
     assert [r["name"] for r in rows] == ["삼성전자", "LG에너지솔루션"]
     assert rows[0]["value"] == 6043124 and rows[0]["volume"] == 22223579
     assert rows[1]["change_pct"] == -2.34
@@ -46,21 +46,21 @@ def test_fetch_top_value_sorts_by_value_and_filters_market(monkeypatch):
     assert rows[0]["code"] == "1"
 
 
-def test_fetch_top_value_pages_until_no_new_codes(monkeypatch):
+def test_top_value_stats_pages_until_no_new_codes(monkeypatch):
     page = [_stock("1", "삼성전자", "0", "100", "1", "0.1")]
     _fake_pages(monkeypatch, [page, page, page])   # 2쪽부터 새 종목 없음
-    rows = sources.fetch_top_value("0")
+    rows = sources.fetch_top_value_stats("0")[0]
     assert len(rows) == 1
 
 
-def test_fetch_top_value_raises_when_empty(monkeypatch):
+def test_top_value_stats_raises_when_empty(monkeypatch):
     """SPA 껍데기가 조용히 [] 를 내던 실패 — 이제 예외로 올린다."""
     _fake_pages(monkeypatch, [[]])
     with pytest.raises(RuntimeError, match="거래대금"):
-        sources.fetch_top_value("0")
+        sources.fetch_top_value_stats("0")[0]
 
 
-def test_fetch_market_flows_walks_back_over_holidays(monkeypatch):
+def test_walk_market_flows_walks_back_over_holidays(monkeypatch):
     seen = []
 
     def fake(url, timeout=12):
@@ -72,17 +72,9 @@ def test_fetch_market_flows_walks_back_over_holidays(monkeypatch):
         return {"bizdate": bizdate, "personalValue": "-1",
                 "foreignValue": "+2", "institutionalValue": "3"}
     monkeypatch.setattr(sources, "fetch_json", fake)
-    rows = sources.fetch_market_flows("KOSPI", "20260921", days=2)
+    rows = sources.walk_market_flows("KOSPI", "20260921", days=2)["rows"]
     assert [r["date"] for r in rows] == ["2026-09-21", "2026-09-18"]
     assert seen == ["20260921", "20260920", "20260919", "20260918"]
-
-
-def test_fetch_market_flows_raises_when_all_blank(monkeypatch):
-    monkeypatch.setattr(sources, "fetch_json", lambda url, timeout=12: {
-        "bizdate": "20260921", "personalValue": "0",
-        "foreignValue": "0", "institutionalValue": "0"})
-    with pytest.raises(RuntimeError, match="수급"):
-        sources.fetch_market_flows("KOSPI", "20260921", days=1, max_back=3)
 
 
 def test_retired_sources_raise_without_network():
@@ -118,11 +110,11 @@ def test_fetch_industry_raises_when_empty(monkeypatch):
 
 # --- 움직인 종목의 업종 (2026-09-24) ---
 
-def test_fetch_top_value_carries_market_cap(monkeypatch):
+def test_top_value_stats_carries_market_cap(monkeypatch):
     s = _stock("005930", "삼성전자", "0", "5,504,265", "1", "3.62")
     s["marketValueRaw"] = "1674958821192000"
     _fake_pages(monkeypatch, [[s]])
-    assert sources.fetch_top_value("0")[0]["cap"] == 1674958821192000
+    assert sources.fetch_top_value_stats("0")[0][0]["cap"] == 1674958821192000
 
 
 def test_fetch_industry_keeps_the_group_number(monkeypatch):

@@ -9,9 +9,9 @@ Exit 0 = 발행 가능. Exit 1 = 위반을 한 줄씩 출력 — writer 에게 �
 지어낸 발언은 그럴듯할수록 안 걸리므로, 발행본의 인용이 수집해 둔 원문에 글자 그대로
 있는지를 본다. 원문을 못 받았으면 인용을 금지한다.
 
-비-코어의 경계는 `check_news.py` 와 같다 — `data/fed/events.json` 이 아예 없으면
-섹션 없이 통과시키고, 파일이 있는데 이벤트가 있는 날 섹션이 없으면 **닫히면서
-실패한다.**
+Exit 2 = 미완료(2026-11-17): `fed/events.json` 이 없거나 읽히지 않거나 오늘 것이 아니거나,
+기준일·장중·지표 자료가 없거나, 원문을 받았다고 한 사건의 원문 파일이 없다 — 섹션을 빼고 발행하지 않는다.
+사건 책이 오늘 것이고 이벤트가 있는 날 섹션이 없으면, 없는 날 섹션이 있으면 위반(1).
 """
 
 import argparse
@@ -21,6 +21,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from us.fed_gate import check, section  # noqa: E402
 
 
@@ -60,7 +61,65 @@ def attach_texts(book, datadir):
     return book
 
 
-def main():
+def _main_1a():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--html', required=True)
+    ap.add_argument('--datadir', default='.')
+    args = ap.parse_args()
+
+    try:
+        with open(args.html, encoding='utf-8') as fh:
+            html = fh.read()
+    except OSError as e:
+        print(f'FATAL: cannot read {args.html}: {e}', file=sys.stderr)
+        sys.exit(2)
+
+    def incomplete(why):
+        # 섹션 없이 발행하지 않는다 — 수집을 다시 돌리고, 그래도 그러면 보류(2026-11-17 사용자 결정)
+        print(f'FATAL: {why} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
+        sys.exit(2)
+
+    try:
+        book = load(os.path.join(args.datadir, 'fed', 'events.json'), strict=True)
+        market = load(os.path.join(args.datadir, 'market_data.json'), strict=True)
+        intraday = load(os.path.join(args.datadir, 'intraday.json'), strict=True)
+        econ = load(os.path.join(args.datadir, 'econ_indicators.json'), strict=True)
+    except Corrupt as e:
+        incomplete(str(e))
+    if book is None:
+        incomplete('fed/events.json 이 없다')
+    if not isinstance(book, dict) or not isinstance(book.get('events'), list):
+        # 칸이 없거나 목록이 아니면 「연준 이벤트 없는 날」이 아니다(1a 구현 검토 2회차 F1)
+        incomplete('fed/events.json 의 events 칸이 없거나 목록이 아니다')
+    today = (market or {}).get('report_date')
+    if not today:
+        incomplete('market_data.json 에서 기준일을 읽을 수 없어 연준 책이 오늘 것인지 확인할 수 없다')
+    if book.get('report_date') != today:
+        incomplete(f'연준 이벤트 책이 {book.get("report_date")} 자인데 오늘은 {today} 다')
+    if intraday is None or econ is None:
+        incomplete('intraday.json 또는 econ_indicators.json 이 없다')
+    for e in book.get('events') or []:
+        if any(s.get('ok') for s in e.get('sources') or []) and \
+                not os.path.isfile(os.path.join(args.datadir, 'fed', f'{e.get("key")}.txt')):
+            incomplete(f'원문을 받았다고 한 사건 {e.get("key")} 의 원문 파일이 없다')
+
+    attach_texts(book, args.datadir)
+
+    errs = check(html, book, market, intraday, econ)
+    if errs:
+        for e in errs:
+            print(e)
+        sys.exit(1)
+
+    fresh = [e for e in book.get('events') or [] if e.get('fresh')]
+    if not fresh:
+        print('연준 이벤트 없음 — 섹션 없이 발행 (OK)')
+    else:
+        print('연준 이벤트 OK — ' + ' · '.join(
+            f'{e.get("kind_ko")}({e.get("date")})' for e in fresh))
+
+def _main_pre1a():
+    """1a 를 켜기 전의 판정 — 1a 전 `main()` 그대로."""
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='.')
@@ -125,6 +184,11 @@ def main():
     else:
         print('연준 이벤트 OK — ' + ' · '.join(
             f'{e.get("kind_ko")}({e.get("date")})' for e in fresh))
+
+
+
+def main():
+    return _main_1a() if enforcing() else _main_pre1a()
 
 
 if __name__ == '__main__':

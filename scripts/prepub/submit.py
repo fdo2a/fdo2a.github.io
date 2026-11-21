@@ -1,6 +1,8 @@
-"""묶음을 `review-drafts` 브랜치에 올리고, 비공개 검토 워크플로를 띄우고, 결과를 기다린다.
+"""묶음을 비공개 `review-runner` 의 `drafts` 가지에 올리고, 비공개 검토 워크플로를 띄우고, 결과를 기다린다.
 
-- 올리기: 임시 인덱스(GIT_INDEX_FILE)로 커밋을 지어 push — 루틴의 작업 폴더·인덱스를 건드리지 않는다.
+- 올리기(2026-11-22): **비공개 레포의 Git Data API**(`gh api`)로 blob·tree·commit 을 짓고 가지를 앞으로만 민다.
+  예전에는 공개 레포 `review-drafts` 가지에 올렸다(11/07 예외). 막기 모드에서는 세운 글(검토를 못 마친 판)이
+  공개 가지에 남는다 — 그래서 옮겼다. 루틴의 작업 폴더·인덱스·git 자격은 쓰지 않는다(띄우기와 같은 `gh`).
 - 띄우기: REST(`gh api -X POST …/dispatches`). 루틴 세션은 GraphQL 을 막아 `gh workflow run` 이 실패한다
   (2026-11-07 실측).
 - 기다리기: `results/<request_id>.json` 이 생길 때까지 REST 로 읽는다. **요청 ID·초안 커밋이 정확히 같을
@@ -12,7 +14,7 @@ import subprocess
 import tempfile
 import time
 
-BRANCH = 'review-drafts'
+BRANCH = 'drafts'
 RUNNER_REPO = 'fdo2a/review-runner'
 WORKFLOW = 'review.yml'
 
@@ -32,44 +34,69 @@ def _run(cmd, run=subprocess.run, env=None, input=None, timeout=CALL_TIMEOUT):
     return out.returncode, (out.stdout or '').strip(), (out.stderr or '').strip()
 
 
+def _api(method, path, run, body=None, timeout=CALL_TIMEOUT):
+    """→ (dict | None, 오류 글). 404 는 (None, '404')."""
+    cmd = ['gh', 'api', '-X', method, f'repos/{RUNNER_REPO}/{path}']
+    if body is not None:
+        cmd += ['--input', '-']
+    code, out, err = _run(cmd, run, input=json.dumps(body) if body is not None else None, timeout=timeout)
+    if code:
+        return None, ('404' if 'HTTP 404' in err else err[-200:] or f'exit {code}')
+    try:
+        return json.loads(out or '{}'), ''
+    except ValueError:
+        return None, 'JSON 아님'
+
+
 def push_bundle(root, bundle_dir, rid, run=subprocess.run, tries=3):
-    """→ review-drafts 에 올린 커밋 SHA."""
+    """→ 비공개 `drafts` 가지에 올린 커밋 SHA. `root` 는 옛 호출 꼴을 지키려고만 받는다(공개 레포에 쓰지 않는다)."""
+    files = {f'drafts/{rid}/{name}': os.path.join(bundle_dir, name) for name in sorted(os.listdir(bundle_dir))}
+    return upload(files, BRANCH, f'draft {rid} (unreviewed)', run, tries)
+
+
+HOLDS_BRANCH = 'holds'
+
+
+def upload(files, branch, message, run=subprocess.run, tries=3):
+    """{레포 안 경로: 로컬 파일} 을 비공개 레포의 `branch` 에 한 커밋으로 — 가지는 앞으로만 민다."""
+    import base64
+    blobs = []
+    for path, local in sorted(files.items()):
+        with open(local, 'rb') as fh:
+            data = base64.b64encode(fh.read()).decode('ascii')
+        got, err = _api('POST', 'git/blobs', run, {'content': data, 'encoding': 'base64'})
+        if not got or not got.get('sha'):
+            raise SubmitError(f'blob 실패: {err}')
+        blobs.append({'path': path, 'mode': '100644', 'type': 'blob', 'sha': got['sha']})
     for attempt in range(tries):
-        code, _, _ = _run(['git', '-C', root, 'fetch', '-q', 'origin', BRANCH], run)
-        parent = None
-        if code == 0:
-            code, parent, err = _run(['git', '-C', root, 'rev-parse', 'FETCH_HEAD'], run)
-            if code:
-                raise SubmitError(f'FETCH_HEAD: {err[-200:]}')
-        fd, index = tempfile.mkstemp(prefix='prepub-index-')
-        os.close(fd)
-        os.unlink(index)
-        env = dict(os.environ, GIT_INDEX_FILE=index)
-        try:
-            if parent:
-                _check(_run(['git', '-C', root, 'read-tree', parent], run, env), 'read-tree')
-            for name in sorted(os.listdir(bundle_dir)):
-                path = os.path.join(bundle_dir, name)
-                blob = _check(_run(['git', '-C', root, 'hash-object', '-w', path], run), 'hash-object')
-                _check(_run(['git', '-C', root, 'update-index', '--add', '--cacheinfo',
-                             f'100644,{blob},drafts/{rid}/{name}'], run, env), 'update-index')
-            tree = _check(_run(['git', '-C', root, 'write-tree'], run, env), 'write-tree')
-        finally:
-            if os.path.exists(index):
-                os.unlink(index)
-        cmd = ['git', '-C', root, 'commit-tree', tree, '-m', f'draft {rid} (unreviewed)']
+        ref, err = _api('GET', f'git/ref/heads/{branch}', run)
+        parent = (ref or {}).get('object', {}).get('sha')
+        if ref is None and err != '404':
+            raise SubmitError(f'가지 읽기 실패: {err}')
+        body = {'tree': blobs}
         if parent:
-            cmd[4:4] = ['-p', parent]
-        commit = _check(_run(cmd, run, env=dict(os.environ, GIT_AUTHOR_NAME='prepub', GIT_AUTHOR_EMAIL='prepub@users.noreply.github.com',
-                                                GIT_COMMITTER_NAME='prepub', GIT_COMMITTER_EMAIL='prepub@users.noreply.github.com')),
-                        'commit-tree')
-        code, _, err = _run(['git', '-C', root, 'push', '-q', 'origin', f'{commit}:refs/heads/{BRANCH}'], run)
-        if code == 0:
-            return commit
+            got, err = _api('GET', f'git/commits/{parent}', run)
+            if not got:
+                raise SubmitError(f'앞 커밋 읽기 실패: {err}')
+            body['base_tree'] = got['tree']['sha']
+        tree, err = _api('POST', 'git/trees', run, body)
+        if not tree or not tree.get('sha'):
+            raise SubmitError(f'tree 실패: {err}')
+        commit, err = _api('POST', 'git/commits', run, {
+            'message': message, 'tree': tree['sha'], 'parents': [parent] if parent else [],
+            'author': {'name': 'prepub', 'email': 'prepub@users.noreply.github.com'}})
+        if not commit or not commit.get('sha'):
+            raise SubmitError(f'commit 실패: {err}')
+        if parent:
+            got, err = _api('PATCH', f'git/refs/heads/{branch}', run, {'sha': commit['sha'], 'force': False})
+        else:
+            got, err = _api('POST', 'git/refs', run, {'ref': f'refs/heads/{branch}', 'sha': commit['sha']})
+        if got is not None:
+            return commit['sha']
         if attempt == tries - 1:
-            raise SubmitError(f'push 실패: {err[-200:]}')
-        time.sleep(2 * (attempt + 1))
-    raise SubmitError('push 실패')
+            raise SubmitError(f'가지 밀기 실패: {err}')
+        time.sleep(2 * (attempt + 1))      # 다른 런이 먼저 밀었다 — 새 끝 위에 다시 짓는다
+    raise SubmitError('가지 밀기 실패')
 
 
 def _check(res, what):

@@ -3,8 +3,10 @@
 
   python3 scripts/check_telegram.py --html morning_brief_2026-11-10.html --tg <workspace>/telegram.json --date 2026-11-09
 
-No file and no data-tg in the post passes. A file whose report_date is not --date counts as
-no file (a stale snapshot must not authorise anything).
+Brief layout (2026-11-17): the day's Telegram snapshot is a required input — a missing or
+unreadable file, or one whose report_date is not --date, exits 2 (incomplete: re-collect,
+do not rewrite the post). The news layout keeps the old rule: no file and no data-tg passes,
+a stale file counts as no file (KR_ORCHESTRATOR hands it a deliberately absent path).
 
 News posts (`/news/`, `/kr/news/`, 2026-11-12) add `--layout news --news <the news file the writer used>`:
   python3 scripts/check_telegram.py --html news_industry_2026-11-11.html --tg <workspace>/telegram_news.json \\
@@ -20,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 from common.telegram_gate import check, dates_only_in  # noqa: E402
 
 
@@ -39,8 +42,16 @@ def main(argv=None):
     try:
         with open(a.tg, encoding='utf-8') as f:
             data = json.load(f)
-    except (OSError, ValueError):
+    except (OSError, ValueError) as e:
         data = None
+        if a.layout == 'brief' and enforcing():
+            print(f'FATAL: 텔레그램 입력 {os.path.basename(a.tg)} 이 없거나 읽히지 않는다({type(e).__name__}) — '
+                  '미완료, 수집을 다시 돌린다', file=sys.stderr)
+            return 2
+    if a.layout == 'brief' and enforcing() and (not isinstance(data, dict) or data.get('report_date') != a.date):
+        print(f'FATAL: 텔레그램 입력의 report_date {(data or {}).get("report_date") if isinstance(data, dict) else None}'
+              f' ≠ {a.date} — 미완료, 수집을 다시 돌린다', file=sys.stderr)
+        return 2
     if data and data.get('report_date') != a.date:
         print(f'경고: {a.tg} 의 report_date {data.get("report_date")} ≠ {a.date} — 없는 것으로 본다')
         data = None

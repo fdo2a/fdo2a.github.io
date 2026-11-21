@@ -7,7 +7,7 @@ The US and KR dailies are reference material for the PM of a tactical global-equ
 | File | Does |
 |---|---|
 | `universe.py` | 28 reference ETFs: benchmark / risk_on / risk_off (「방어 스타일」) / region. A theme not listed does not show — change with a reason in the spec |
-| `metrics.py` | Returns, 12-1 momentum, vol, historical 1-day VaR (`max(0, -q)`, linear quantile), beta, SMA, drawdown. Pure |
+| `metrics.py` | Returns, vol, historical 1-day VaR (`max(0, -q)`, linear quantile), beta. Pure |
 | `board.py` | Per-ETF rows; rank on the set measurable today **and** 5 sessions ago; `rel_3m_chg_pp`; continuity rules |
 | `regime.py` | Price-only 4-state regime with 3-session hysteresis, no state file |
 | `liquidity.py` | WALCL − WDTGAL − RRPONTSYD (Wednesday), NFCI; static unit contract; 4-week change = exactly 28 days back, else none |
@@ -24,6 +24,7 @@ The US and KR dailies are reference material for the PM of a tactical global-equ
 ## Invariants
 
 - **JSON always, HTML only when renderable** (`publish.write`); an unavailable day deletes yesterday's HTML. Section owed iff `status` ∈ {ok, partial} and `report_date` == post date; otherwise it must be absent.
+- **`collect`** (collector status record, 2026-11-17) is added to both JSONs by `publish.write` and is **excluded from `core.digest`**, so the block and committed posts do not change with it.
 - **The block is byte-compared with a fresh render.** Nothing downstream may rewrite it: `colorize` skips the two section titles, `prose_swap` skips the blocks, block lines are `<div>` not `<p>` (readability counts `<p>` as prose).
 - **FF3 trial never touches the board**: `fund_board.json`/`.html` stay byte-identical (`tests/test_pipeline.py` freezes 11/03·11/04); `core.SCHEMA_VERSION`, `render.py`, `gate.py` change only in the merge step.
 - **No `macro_eval` on the board** — it is written after collection, so it would be yesterday's call.

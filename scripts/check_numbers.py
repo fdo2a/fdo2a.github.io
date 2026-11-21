@@ -6,7 +6,9 @@
 
 시장 표 칸은 행·열이 가리키는 데이터 값과, 문장 수치는 자산·단위로 정해지는 필드와 맞춘다.
 문장 층의 차단 여부는 `config/number_audit.json` 의 `prose`(warn|block), `--prose` 로 덮는다.
-Exit 0 = 발행 가능(경고는 0), 1 = 위반(한 줄에 하나), 2 = 입력을 읽지 못함(통과로 치지 않는다).
+Exit 0 = 발행 가능(경고는 0), 1 = 위반(한 줄에 하나), 2 = 입력을 읽지 못함(통과로 치지 않는다). 2026-11-17 부터
+위임 자료(econ_indicators·macro_metrics·fund_board·liquidity, KR kr_intraday·kr_econ·kr_fund_view)가 없거나
+설정(`config/number_audit.json`)을 읽지 못해도 2 — 「없으면 미검증으로 센다」를 끝냈다.
 `--json` 은 같은 판정을 stdout 한 줄 JSON 으로 낸다(종료 코드 동일) — 매일 검증 알림이 경고와
 위반을 줄 모양으로 짐작하지 않게(2026-11-08). 입력 오류(2)는 여전히 stderr 다.
 로직 `scripts/us/number_audit.py`.
@@ -25,6 +27,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from us import number_audit as N  # noqa: E402
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
 
 CONFIG = os.path.join(os.path.dirname(HERE), 'config', 'number_audit.json')
 OPTIONAL = ('econ_indicators', 'macro_metrics', 'fund_board')
@@ -35,13 +38,34 @@ def _read(path):
         return json.load(fh)
 
 
+class ConfigMissing(Exception):
+    pass
+
+
 def _mode(arg):
     if arg:
         return arg
+    if not enforcing():
+        try:
+            return _read(CONFIG).get('prose', 'warn')
+        except (OSError, ValueError, AttributeError):
+            return 'warn'       # 설정이 없으면 막지 않는 쪽 — 표 층은 늘 막는다(1a 를 켜기 전)
     try:
-        return _read(CONFIG).get('prose', 'warn')
-    except (OSError, ValueError, AttributeError):
-        return 'warn'       # 설정이 없으면 막지 않는 쪽 — 표 층은 늘 막는다
+        mode = _read(CONFIG).get('prose', 'warn')
+    except (OSError, ValueError, AttributeError) as e:
+        # 2026-11-17: 설정을 못 읽으면 문장 층을 어느 쪽으로 돌릴지 모른다 — 미완료(2), 경고로 넘기지 않는다
+        raise ConfigMissing(f'config/number_audit.json 을 읽지 못했다: {type(e).__name__}') from e
+    if mode not in ('warn', 'block'):
+        raise ConfigMissing(f'config/number_audit.json prose={mode!r}')
+    return mode
+
+
+def _legacy(args, post_date):
+    """--recheck(옛 판정)은 1a 적용일(`verification.inputs.STRICT_FROM`) 전 글에만 — 새 글에는 붙여도 효과가 없다
+    (1a 구현 검토 #9). 글 날짜는 정규 파일 이름(YYYY-MM-DD.html)으로만 정하고, `post_date`(--date 나 이름에서 읽은 것)가
+    그것과 다르거나 이름이 정규가 아니면 옛 판정을 쓰지 않는다(2회차 F5)."""
+    from verification.inputs import legacy_recheck
+    return bool(post_date) and legacy_recheck(args.recheck, args.html, post_date)
 
 
 def main(argv=None):
@@ -53,6 +77,9 @@ def main(argv=None):
     ap.add_argument('--market', choices=('us', 'kr'), default='us')
     ap.add_argument('--date', help='KR: 글 날짜(필수)')
     ap.add_argument('--effective', help=argparse.SUPPRESS)
+    ap.add_argument('--recheck', action='store_true',
+                    help='지난 글을 그 커밋 자료로 재검사(정정기·윤문기·매일 알림) — 그때 없던 위임 자료는 2026-11-17 전처럼 '
+                         '미검증으로 센다. 발행 실행 목록은 쓰지 않는다')
     args = ap.parse_args(argv)
     if args.market == 'kr':
         return _main_kr(args)
@@ -75,22 +102,37 @@ def main(argv=None):
     except (OSError, ValueError) as e:
         print(f'FATAL: 입력을 읽지 못했다: {e}', file=sys.stderr)
         return 2
-    for k in OPTIONAL:
-        p = os.path.join(args.datadir, f'{k}.json')
+    if not enforcing():
+        # 1a 를 켜기 전 — 위임 자료가 없으면 그 위임이 성립하지 않아 해당 수치는 미검증으로 센다
+        for k in OPTIONAL:
+            p = os.path.join(args.datadir, f'{k}.json')
+            try:
+                data[k] = _read(p)
+            except OSError:
+                pass
+            except ValueError as e:
+                print(f'FATAL: {k}.json 을 읽지 못했다: {e}', file=sys.stderr)
+                return 2
         try:
-            data[k] = _read(p)
+            data['liquidity'] = _read(os.path.join(args.datadir, 'liquidity', 'liquidity.json'))
         except OSError:
-            pass                     # 없으면 그 위임이 성립하지 않아 해당 수치는 미검증으로 센다
+            pass
         except ValueError as e:
-            print(f'FATAL: {k}.json 을 읽지 못했다: {e}', file=sys.stderr)
+            print(f'FATAL: liquidity.json 을 읽지 못했다: {e}', file=sys.stderr)
             return 2
-    try:
-        data['liquidity'] = _read(os.path.join(args.datadir, 'liquidity', 'liquidity.json'))
-    except OSError:
-        pass
-    except ValueError as e:
-        print(f'FATAL: liquidity.json 을 읽지 못했다: {e}', file=sys.stderr)
-        return 2
+    # 2026-11-17(1a 를 켠 뒤): 위임 자료도 필수 — 없으면 「미검증으로 센다」가 아니라 미완료(2)
+    for k, rel in ([(k, f'{k}.json') for k in OPTIONAL] + [('liquidity', os.path.join('liquidity', 'liquidity.json'))]
+                   if enforcing() else []):
+        try:
+            data[k] = _read(os.path.join(args.datadir, rel))
+        except FileNotFoundError:
+            if _legacy(args, m.group(0) if m else None):
+                continue             # 지난 글 재검사: 없으면 그 위임이 성립하지 않아 미검증으로 센다(옛 판정)
+            print(f'FATAL: {os.path.basename(rel)} 이 없다', file=sys.stderr)
+            return 2
+        except (OSError, ValueError) as e:
+            print(f'FATAL: {os.path.basename(rel)} 을 읽지 못했다: {type(e).__name__}', file=sys.stderr)
+            return 2
     # 글 날짜와 데이터 날짜가 다르면 다른 날 값으로 대조하게 된다 — 판정할 수 없다(발행 커밋의 data 가
     # 다음 세션인 경우가 있다: 10/15 글 → 10/16 data)
     rd = (data['market_data'] or {}).get('report_date') if isinstance(data['market_data'], dict) else None
@@ -100,6 +142,9 @@ def main(argv=None):
         return 2
     try:
         r = N.audit(html, data, prose=_mode(args.prose))
+    except ConfigMissing as e:
+        print(f'FATAL: {e}', file=sys.stderr)
+        return 2
     except N.InputError as e:
         print(f'FATAL: {e}', file=sys.stderr)
         return 2
@@ -160,6 +205,11 @@ def _main_kr(args):
         with open(args.html, encoding='utf-8') as fh:
             html = fh.read()
         data = K.load_inputs(args.datadir)
+        lacking = [k for k in ('kr_intraday', 'kr_econ', K.FUND) if data.get(k) is None]
+        if lacking and enforcing() and not _legacy(args, args.date):
+            # 2026-11-17: 선택 자료도 그날 수집분이 있어야 한다 — 없으면 미완료(2)
+            print(f'FATAL: {", ".join(k + ".json" for k in lacking)} 이 없거나 읽히지 않는다', file=sys.stderr)
+            return 2
         r = K.audit(html, data, args.date, effective=eff)
     except OSError as e:
         print(f'FATAL: 입력을 읽지 못했다: {e}', file=sys.stderr)

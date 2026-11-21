@@ -497,16 +497,6 @@ def cite_forms(base, precision, unit):
     return shown, out
 
 
-def cite_values(base, precision, unit):
-    """-> (shown, [values]) — the values alone (for messages and the figure counts)."""
-    shown, forms = cite_forms(base, precision, unit)
-    vals = []
-    for v, _ in forms:
-        if v not in vals:
-            vals.append(v)
-    return shown, vals
-
-
 # -------------------------------------------------------------- pipeline
 
 def produce(rel, fetch_rows, release_date, headline_rows=None):

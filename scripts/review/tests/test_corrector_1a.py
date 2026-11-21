@@ -1,0 +1,481 @@
+"""Real Git boundary checks with a fake Claude (no model/network calls)."""
+import json
+from pathlib import Path
+import subprocess
+
+import pytest
+
+from scripts.review.corrector import correct_one
+from scripts.review.queue import Pending
+
+
+def git(root, *args):
+    return subprocess.check_output(['git', *args], cwd=root, text=True).strip()
+
+
+@pytest.fixture
+def setup(tmp_path, monkeypatch):
+    remote, root = tmp_path / 'remote.git', tmp_path / 'local'
+    git(tmp_path, 'init', '--bare', str(remote))
+    git(tmp_path, 'clone', str(remote), str(root))
+    git(root, 'checkout', '-b', 'main')
+    for key, value in [('user.name', 'Test'), ('user.email', 'test@example.com')]:
+        monkeypatch.setenv('GIT_AUTHOR_' + ('NAME' if key.endswith('name') else 'EMAIL'), value)
+        monkeypatch.setenv('GIT_COMMITTER_' + ('NAME' if key.endswith('name') else 'EMAIL'), value)
+    for path, content in {'posts/2026-09-10.html': '<p>old 1</p>',
+                          'data/evidence.json': '{}',
+                          '.claude/REVIEW_GATE.md': 'Review facts.',
+                          'reviews/index.json': '{"reviewed":{}}'}.items():
+        dest = root / path
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(content)
+    git(root, 'add', '.')
+    git(root, 'commit', '-m', 'publish')
+    git(root, 'push', '-u', 'origin', 'main')
+    item = Pending('posts/2026-09-10.html', 'us', git(root, 'rev-parse', 'HEAD:posts/2026-09-10.html'), 'new')
+    # 2026-10-10: gates run from a pristine archive of the verified commit, not from the
+    # user checkout (which the runner now keeps equal to origin/main). So the gate scripts
+    # are committed and pushed; tests that change a gate go through `gate()`.
+    scripts = root / 'scripts'
+    scripts.mkdir()
+    for name in ('macro', 'sources', 'fed', 'weight', 'price_context',
+                 'session', 'movers', 'fund', 'sector_perf', 'numbers', 'kr_stance', 'readability',
+                 'style'):
+        (scripts / f'check_{name}.py').write_text('''import sys
+from pathlib import Path
+assert all('gate-evidence' in x for x in sys.argv[1:] if x.endswith('/data'))
+assert not any('repo/data' in x for x in sys.argv)
+with Path(%r).open('a') as f:
+    f.write(Path(__file__).name + '\\n')
+print('gate passed')
+''' % str(tmp_path / 'gate-calls.txt'))
+    (scripts / 'verify_post.py').write_text('''import sys
+assert sys.argv[2] == '--before' and sys.argv[1] == sys.argv[3]
+print('layout passed')
+''')
+    git(root, 'add', 'scripts')
+    git(root, 'commit', '-m', 'gates')
+    git(root, 'push', 'origin', 'main')
+    executable = tmp_path / 'claude'
+    monkeypatch.setenv('CLAUDE_BIN', str(executable))
+    return root, remote, item, executable
+
+
+def gate(root, rel, text=None):
+    """Change (or delete) a gate script the way it would reach the runner: committed and pushed."""
+    path = root / rel
+    if text is None:
+        path.unlink()
+    else:
+        path.write_text(text)
+    git(root, 'add', '-A', 'scripts')
+    git(root, 'commit', '-m', 'gate change')
+    git(root, 'push', 'origin', 'main')
+
+
+def fake(executable, extra='', mark=True):
+    executable.write_text('''#!/usr/bin/env python3
+import json, subprocess, sys
+from pathlib import Path
+prompt = sys.stdin.read()
+assert 'HISTORICAL' in prompt
+assert '--permission-mode' in sys.argv
+Path('posts/2026-09-10.html').write_text('<p>fixed 2</p>')
+''' + extra + ('''
+sha = subprocess.check_output(['git','hash-object','posts/2026-09-10.html'],text=True).strip()
+Path('reviews/index.json').write_text(json.dumps({'reviewed':{'posts/2026-09-10.html':{'sha':sha,'at':'now','findings':1}}}))
+''' if mark else '') + '''
+subprocess.run(['git','add','.'],check=True)
+subprocess.run(['git','commit','-m','verified correction'],check=True)
+print('corrected and checked')
+''')
+    executable.chmod(0o755)
+
+
+def test_success_keeps_user_checkout(setup):
+    root, remote, item, exe = setup
+    fake(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    (root / item.path).write_text('user unsaved work')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert 'corrected' in result
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+    assert (root / item.path).read_text() == 'user unsaved work'
+    assert git(root, 'rev-parse', 'HEAD') == base
+    # Nine gates on the original (baseline) and the same nine on the correction.
+    assert len((root.parent / 'gate-calls.txt').read_text().splitlines()) == 24   # 12 US gates (check_sources 2026-11-06, check_numbers 2026-11-07) x before/after
+
+
+@pytest.mark.parametrize('extra,mark,reason', [
+    ('', False, 'ledger'),
+    ("Path('unauthorized').write_text('no')\n", True, 'unauthorized'),
+])
+def test_rejects_unmarked_or_unrelated(setup, extra, mark, reason):
+    root, remote, item, exe = setup
+    fake(exe, extra, mark)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert reason in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_stale_post(setup):
+    root, remote, item, exe = setup
+    base = git(root, 'rev-parse', 'HEAD')
+    (root / item.path).write_text('new remote version')
+    git(root, 'commit', '-am', 'new publication')
+    git(root, 'push')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'changed before' in error
+
+
+def test_timeout(setup):
+    root, remote, item, exe = setup
+    fake(exe, 'import time; time.sleep(10)\n')
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 0.05)
+    assert 'timeout' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_claude_failure(setup):
+    root, remote, item, exe = setup
+    fake(exe, 'sys.exit(7)\n')
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'exited 7' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_concurrent_remote_change(setup):
+    root, remote, item, exe = setup
+    base = git(root, 'rev-parse', 'HEAD')
+    fake(exe, f'''
+subprocess.run(['git','-C',{str(root)!r},'commit','--allow-empty','-m','concurrent publication'],check=True)
+subprocess.run(['git','-C',{str(root)!r},'push'],check=True)
+''')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'remote main changed' in error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
+
+
+@pytest.mark.parametrize('failure', ['nonzero', 'missing', 'layout_unavailable'])
+def test_independent_gate_blocks_push(setup, failure):
+    root, remote, item, exe = setup
+    fake(exe)
+    if failure == 'nonzero':
+        # Passes on the original, fails only on the corrected post — a regression.
+        (root / 'scripts/check_macro.py').write_text(
+            "import sys\nfrom pathlib import Path\n"
+            "post = sys.argv[sys.argv.index('--html') + 1]\n"
+            "if 'fixed' in Path(post).read_text(): raise SystemExit('invalid HTML')\n")
+    elif failure == 'missing':
+        (root / 'scripts/check_macro.py').unlink()
+    else:
+        (root / 'scripts/verify_post.py').write_text("print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
+    git(root, 'add', '-A', 'scripts')
+    git(root, 'commit', '-m', 'gate change')
+    git(root, 'push', 'origin', 'main')
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_every_replayed_gate_exists_in_the_real_repo():
+    """픽스처는 게이트 스크립트를 가짜로 만든다 — 지워진 게이트는 여기서만 드러난다."""
+    from pathlib import Path
+    from scripts.review import corrector
+    real = Path(__file__).resolve().parents[2]
+    names = {'macro', 'sources', *corrector.US_DATADIR_GATES, *corrector.KR_DATADIR_GATES,
+             corrector.KR_STANCE_GATE}
+    missing = [n for n in names if not (real / f'check_{n}.py').is_file()]
+    assert missing == []
+
+
+def _claude_calls(tmp):
+    marker = tmp / 'claude-called'
+    return marker.read_text().count('x') if marker.exists() else 0
+
+
+def _counting(exe, extra=''):
+    """fake() plus a marker so a test can prove Claude was (not) invoked."""
+    fake(exe, f"Path({str(exe.parent / 'claude-called')!r}).open('a').write('x')\n" + extra)
+
+
+def test_gate_failing_on_original_does_not_block(setup):
+    """발행 뒤에 생긴 게이트는 원본부터 실패한다 — 정정을 버릴 이유가 아니다(2026-09-21 KR)."""
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_weight.py', "raise SystemExit('판단군이 하한에 못 미친다')")
+    _counting(exe, "assert 'check_weight.py' in prompt\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert 'pre-existing' in result
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+
+
+def test_untracked_leftovers_do_not_discard_correction(setup):
+    root, remote, item, exe = setup
+    _counting(exe, "import atexit\natexit.register(lambda: Path('scratch-notes.txt').write_text('tmp'))\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+
+
+def test_uncommitted_tracked_change_names_the_file(setup):
+    root, remote, item, exe = setup
+    fake(exe, "import atexit\natexit.register(lambda: Path('data/evidence.json').write_text('{\"x\": 1}'))\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'data/evidence.json' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+@pytest.mark.parametrize('broken', ['missing', 'layout_unavailable'])
+def test_unrunnable_gate_stops_before_claude(setup, tmp_path, broken):
+    """게이트를 못 돌리는 환경이면 결과를 어차피 버린다 — 모델을 부르기 전에 멈춘다."""
+    root, remote, item, exe = setup
+    _counting(exe)
+    if broken == 'missing':
+        gate(root, 'scripts/check_style.py')
+    else:
+        gate(root, 'scripts/verify_post.py', "print('Playwright가 없어 레이아웃 검사는 건너뛴다')")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error
+    assert _claude_calls(tmp_path) == 0
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_model_is_pinned(setup, monkeypatch):
+    root, remote, item, exe = setup
+    fake(exe, "i = sys.argv.index('--model'); assert sys.argv[i + 1] == 'test-model'\n")
+    monkeypatch.setenv('CLAUDE_CORRECTION_MODEL', 'test-model')
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error is None, error
+
+
+def _republish(root, text):
+    (root / 'posts/2026-09-10.html').write_text(text)
+    git(root, 'commit', '-am', 'republish')
+    git(root, 'push')
+    return Pending('posts/2026-09-10.html', 'us',
+                   git(root, 'rev-parse', 'HEAD:posts/2026-09-10.html'), 'new')
+
+
+DOC = '<html><head><title>t</title>\n</head><body><p>old 1</p></body></html>'
+
+
+def test_loader_backfill_keeps_the_original_evidence_commit(setup):
+    """발행 커밋은 로더 이전 판을 가리킨다(publish_commit 이 조판을 건너뛴다)."""
+    from common import analytics
+    root, remote, item, exe = setup
+    (root / item.path).write_text(DOC)
+    git(root, 'commit', '-am', 'publish doc')
+    git(root, 'push')
+    base = git(root, 'rev-parse', 'HEAD')
+    item = _republish(root, analytics.inject(DOC))
+    fake(exe)
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+
+
+def test_prose_change_since_the_evidence_commit_is_refused(setup):
+    root, remote, item, exe = setup
+    base = git(root, 'rev-parse', 'HEAD')
+    item = _republish(root, '<p>old 9</p>')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert 'publishing snapshot' in error
+
+
+def test_kr_correction_may_not_add_grade_talk():
+    # 옛 KR 글에는 노출 등급 말투가 이미 있다 — 그대로 두거나 줄이는 것은 되고, 늘리면 막는다(2026-10-04).
+    from scripts.review.corrector import _no_new_grade_talk
+    old = '<body><p>위험 노출은 다음 세션까지 축소한다.</p></body>'
+    _no_new_grade_talk(old, old)
+    _no_new_grade_talk(old, '<body><p>반도체가 쉬었다.</p></body>')
+    with pytest.raises(RuntimeError, match='exposure-grade'):
+        _no_new_grade_talk(old, old.replace('</body>', '<p>코스피 노출은 유지한다.</p></body>'))
+
+
+def test_kr_correction_may_not_hide_grade_talk_in_a_news_block():
+    # 정정 경로에는 check_news 가 없다 — 뉴스 블록이라도 면제하지 않는다.
+    from scripts.review.corrector import _no_new_grade_talk
+    old = '<body><section><h2>오늘의 뉴스</h2></section></body>'
+    new = old.replace('</section>', '<div data-news="fake"><p>위험 노출은 유지한다.</p></div></section>')
+    with pytest.raises(RuntimeError, match='exposure-grade'):
+        _no_new_grade_talk(old, new)
+
+
+def test_fund_gate_failure_is_never_tolerated_even_if_original_failed():
+    from scripts.review import corrector
+    assert 'check_fund.py' in corrector.NEVER_TOLERATE
+    assert 'fund' in corrector.US_DATADIR_GATES and 'fund' in corrector.KR_DATADIR_GATES
+
+
+_FUND_STUB = '''import sys
+html = open(sys.argv[sys.argv.index('--html') + 1]).read()
+raise SystemExit('FAIL fund block mismatch' if {bad!r} in html else 0)
+'''
+
+
+def test_fund_failure_on_original_is_handed_over_as_must_fix(setup):
+    """원본이 check_fund 에 걸려도 정정은 시작한다 — 다만 「기존 실패」가 아니라 고칠 대상이다."""
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_fund.py', _FUND_STUB.format(bad='old'))
+    _counting(exe, "assert 'MUST pass after your correction: check_fund.py' in prompt\n"
+                   "assert 'before any correction: none' in prompt\n"
+                   "assert '--print-block' in prompt and '--market us' in prompt\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert (exe.parent / 'claude-called').exists()
+    assert git(remote, 'show', 'main:' + item.path) == '<p>fixed 2</p>'
+
+
+def test_fund_failure_that_survives_correction_blocks(setup):
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_fund.py', _FUND_STUB.format(bad='<p>'))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error and 'check_fund.py' in error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
+
+
+def test_a_local_gate_edit_after_verification_does_not_change_the_replay(setup, tmp_path):
+    """게이트는 검증한 판의 사본에서 돈다 — 사람이 로컬 스크립트를 바꿔도 독립 검사는 그대로다
+    (2026-10-10 codex 구현 검토 #2)."""
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_macro.py',
+         "import sys\nfrom pathlib import Path\n"
+         "post = sys.argv[sys.argv.index('--html') + 1]\n"
+         "if 'fixed' in Path(post).read_text(): raise SystemExit('invalid HTML')\n")
+    (root / 'scripts/check_macro.py').write_text('print("ok")\n')   # 커밋 안 된 로컬 변조
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'review', base, 10)
+    assert error and 'check_macro.py' in error
+    assert git(remote, 'rev-parse', 'main') == base
+
+
+def test_a_code_change_on_origin_since_pinning_stops_before_claude(setup, tmp_path):
+    from scripts.review import corrector
+    freshness = corrector.freshness        # 정정기가 실제로 쓰는 모듈 객체
+    root, remote, item, exe = setup
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    freshness.PINNED = freshness.trees(str(root), 'HEAD')
+    try:
+        other = tmp_path / 'other'
+        git(tmp_path, 'clone', str(remote), str(other))
+        (other / 'scripts/check_style.py').write_text('print("v2")\n')
+        git(other, 'commit', '-am', 'gate v2')
+        git(other, 'push', 'origin', 'HEAD:main')
+        _, error = correct_one(root, item, 'review', base, 10)
+    finally:
+        freshness.PINNED = None
+    assert error and freshness.DRIFT in error
+    assert _claude_calls(tmp_path) == 0
+
+
+def test_sector_table_gate_runs_and_is_never_tolerated():
+    # 2026-10-12: 한 글에서 섹터 수익률이 갈렸다 — 원본도 실패했다는 이유로 넘기지 않는다.
+    from scripts.review import corrector, style_pass
+    assert 'sector_perf' in corrector.US_DATADIR_GATES
+    assert 'check_sector_perf.py' in corrector.NEVER_TOLERATE
+    assert corrector.NEVER_TOLERATE == style_pass.NEVER_TOLERATE
+
+
+def test_kr_replay_includes_stance_gate_with_published_ledger():
+    # 2026-10-20 배치의 review 문단·확인 일정 표는 check_kr_stance 만 본다 — 정정 재검사에서 빠지면
+    # 정정이 그것을 지워도 통과한다(codex 설계 검토 2026-10-19 #2).
+    from scripts.review import corrector
+    assert 'check_kr_stance.py' in corrector._ALL_GATES
+
+
+# ── check_numbers: 위반 줄 단위 비교(2026-11-07) ─────────────────────────
+
+def _numbers_stub(body):
+    return ("import sys\nfrom pathlib import Path\n"
+            "post = Path(sys.argv[sys.argv.index('--html') + 1]).read_text()\n" + body)
+
+
+def test_numbers_same_violation_on_original_and_correction_is_tolerated(setup):
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_numbers.py', _numbers_stub(
+        "print('[주식] 「같은 줄」 — 데이터 1')\nprint('number audit: x')\nraise SystemExit(1)\n"))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    result, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+    assert 'check_numbers.py: pre-existing' in result
+
+
+def test_numbers_new_violation_line_blocks(setup):
+    root, remote, item, exe = setup
+    # 원본도 실패하지만(old), 정정본은 다른 줄(fixed)로 실패한다 — 이름으로 허용하면 통과했을 자리
+    gate(root, 'scripts/check_numbers.py', _numbers_stub(
+        "w = 'old' if 'old' in post else 'fixed'\n"
+        "print(f'[주식] 「{w}」 — 데이터 1')\nraise SystemExit(1)\n"))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error and 'correction added violations' in error and 'fixed' in error
+    assert git(remote, 'show', 'main:' + item.path) == '<p>old 1</p>'
+
+
+def test_numbers_exit2_is_never_tolerated(setup):
+    root, remote, item, exe = setup
+    gate(root, 'scripts/check_numbers.py', _numbers_stub(
+        "if 'fixed' in post: raise SystemExit(2)\n"
+        "print('[주식] 「old」 — 데이터 1')\nraise SystemExit(1)\n"))
+    _counting(exe)
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error and 'cannot judge' in error
+
+
+def test_violation_lines_drop_warnings_and_summary():
+    from scripts.review import corrector
+    out = '경고(문장): x\n[채권] 2Y — 데이터 4.477\nnumber audit: 수치 3\n'
+    assert corrector._violation_lines(out) == ['[채권] 2Y — 데이터 4.477']
+
+
+def test_kr_numbers_gate_gets_the_post_date():
+    # KR 표 숫자 대조(2026-11-13)는 --date 가 없으면 판정 불가(2) — 정정기가 글 경로의 날짜를 넘긴다
+    from scripts.review import corrector
+    assert 'numbers' in corrector.KR_DATADIR_GATES and 'check_numbers.py' in corrector.VIOLATION_DIFF
+    args = corrector._kr_datadir_args('numbers', '/c/kr/posts/2026-11-16.html', '/e/kr/data', 'kr/posts/2026-11-16.html')
+    assert args == ['--html', '/c/kr/posts/2026-11-16.html', '--datadir', '/e/kr/data', '--market', 'kr', '--recheck',
+                    '--date', '2026-11-16']
+    assert '--date' not in corrector._kr_datadir_args('fund', 'p', 'd', 'kr/posts/2026-11-16.html')
+
+
+def test_prompt_says_blob_is_verified_and_names_the_allowed_command_form(setup):
+    """10-23·10-29 KR: Claude 가 blob 을 다시 해시하려다(`git hash-object`·`python3 -c`) 거부당하고 커밋 없이 멈췄다.
+    러너가 이미 확인한 사실과 허용되는 명령 꼴을 알려 준다. 쓰기가 되는 `git hash-object` 는 열지 않는다."""
+    root, remote, item, exe = setup
+    _counting(exe, "assert 'already verified' in prompt and 'python3 -c' in prompt\n"
+                   "i = sys.argv.index('--allowedTools')\n"
+                   "assert 'Bash(git rev-parse *)' in sys.argv[i:]\n"
+                   "assert not any('hash-object' in a for a in sys.argv)\n")
+    base = git(root, 'rev-parse', 'HEAD')
+    _, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error is None, error
+
+
+def test_no_commit_is_still_an_error(setup):
+    """명령이 거부돼 커밋 없이 끝나도 오류로 남는다 — 정정 완화가 실패를 숨기지 않는다."""
+    root, remote, item, exe = setup
+    exe.write_text("#!/usr/bin/env python3\nimport sys\nsys.stdin.read()\n"
+                   "print('I stopped: every git and python3 command was denied. None is a factual error.')\n")
+    exe.chmod(0o755)
+    base = git(root, 'rev-parse', 'HEAD')
+    out, error = correct_one(root, item, 'wrong value', base, 10)
+    assert error == 'expected exactly one correction commit'
+    assert 'denied' in out

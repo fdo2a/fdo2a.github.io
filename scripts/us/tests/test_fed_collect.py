@@ -46,7 +46,7 @@ def test_html_body_still_extracts():
 def workspace(tmp_path, monkeypatch):
     (tmp_path / 'market_data.json').write_text(
         json.dumps({'report_date': '2026-09-17'}), encoding='utf-8')
-    monkeypatch.setattr(collect, 'discover', lambda rd: [{
+    monkeypatch.setattr(collect, 'discover', lambda rd, log=None: [{
         'kind': 'fomc_statement', 'date8': '20260917', 'speaker': None, 'role': None,
         'item': {'title': 'Federal Reserve issues FOMC statement',
                  'link': 'https://www.federalreserve.gov/newsevents/pressreleases/'
@@ -87,11 +87,16 @@ def test_events_json_is_written_even_on_a_quiet_day(tmp_path, monkeypatch):
     """파일이 아예 없는 것과 「오늘은 이벤트가 없다」는 다르다."""
     (tmp_path / 'market_data.json').write_text(
         json.dumps({'report_date': '2026-09-17'}), encoding='utf-8')
-    monkeypatch.setattr(collect, 'discover', lambda rd: [])
+    def quiet(rd, log=None):
+        log['feeds_ok'].extend(collect.FEED_NAMES)       # 피드 셋을 다 읽었다
+        return []
+    monkeypatch.setattr(collect, 'discover', quiet)
     monkeypatch.setattr(sys, 'argv', ['x', '--datadir', str(tmp_path)])
     collect.main()
     book = json.loads((tmp_path / 'fed' / 'events.json').read_text(encoding='utf-8'))
+    c = book.pop('collect')
     assert book == {'report_date': '2026-09-17', 'events': [], 'diff': None}
+    assert c['status'] == 'ok' and c['empty'] == 'confirmed_none' and c['as_of'] == '2026-09-17'
 
 
 # ── CLI 게이트의 «닫히면서 실패하기» ─────────────────────────────────────────
@@ -136,3 +141,74 @@ def test_corrupt_events_json_fails_rather_than_being_excused(tmp_path, monkeypat
     (tmp_path / 'fed').mkdir()
     (tmp_path / 'fed' / 'events.json').write_text('{ not json', encoding='utf-8')
     assert _run(tmp_path, SECTION_PAGE, monkeypatch) == 1
+
+
+# ── collect 칸(2026-11-17): 피드를 다 읽었을 때만 「이벤트 없음」 ─────────────────────────
+
+FEED = ('<rss><channel><item><title>Old item</title><link>https://www.federalreserve.gov/x/'
+        'monetary20200101a.htm</link><pubDate>Wed, 01 Jan 2020 14:00:00 GMT</pubDate></item>'
+        '</channel></rss>')
+
+
+def _quiet_env(tmp_path, monkeypatch, fail=()):
+    (tmp_path / 'market_data.json').write_text(json.dumps({'report_date': '2026-09-17'}))
+    feeds = {v: k for k, v in collect.fe.FEEDS.items()}
+
+    def fetch(url):
+        name = feeds.get(url)
+        if name in fail:
+            return None, 'safari: HTTP 403, 120B'
+        if name:
+            return Resp(text=FEED), 'ok'
+        return None, 'safari: HTTP 404, 80000B'          # 기자회견 전문 아직 없음
+    monkeypatch.setattr(collect, 'fetch', fetch)
+    monkeypatch.setattr(sys, 'argv', ['x', '--datadir', str(tmp_path)])
+    collect.main()
+    return json.loads((tmp_path / 'fed' / 'events.json').read_text())['collect']
+
+
+def test_all_feeds_read_and_nothing_today_is_confirmed_none(tmp_path, monkeypatch):
+    c = _quiet_env(tmp_path, monkeypatch)
+    assert c['status'] == 'ok' and c['empty'] == 'confirmed_none' and c['missing'] == []
+
+
+def test_one_feed_failed_is_partial_unknown(tmp_path, monkeypatch):
+    c = _quiet_env(tmp_path, monkeypatch, fail=('speeches',))
+    assert c['status'] == 'partial' and c['empty'] == 'unknown' and c['missing'] == ['feed:speeches']
+
+
+def test_all_feeds_failed_is_failed(tmp_path, monkeypatch):
+    c = _quiet_env(tmp_path, monkeypatch, fail=tuple(collect.FEED_NAMES))
+    assert c['status'] == 'failed' and c['empty'] == 'unknown'
+
+
+def test_empty_feed_is_a_read_failure(monkeypatch):
+    monkeypatch.setattr(collect, 'fetch', lambda url: (Resp(text='<rss></rss>'), 'ok'))
+    log = collect.new_log()
+    assert collect.feed_items('speeches', log) == []
+    assert log['failed'] == ['feed:speeches'] and log['feeds_ok'] == []
+
+
+def test_unfetched_event_is_missing():
+    ev = [{'key': 'fomc-statement-20260917', 'first_seen': None, 'fresh': False}]
+    c = collect.events_collect('2026-09-17', ev, {'feeds_ok': list(collect.FEED_NAMES), 'failed': []})
+    assert c['status'] == 'partial' and c['missing'] == ['event:fomc-statement-20260917']
+
+
+def test_fresh_event_is_has_data():
+    ev = [{'key': 'k', 'first_seen': '2026-09-17', 'fresh': True}]
+    c = collect.events_collect('2026-09-17', ev, {'feeds_ok': list(collect.FEED_NAMES), 'failed': []})
+    assert c['status'] == 'ok' and c['empty'] == 'has_data'
+
+
+def test_presconf_blocked_is_not_not_yet(tmp_path, monkeypatch):
+    (tmp_path / 'fed').mkdir()
+    (tmp_path / 'fed' / 'statements.json').write_text(json.dumps(['20260917']))
+    (tmp_path / 'market_data.json').write_text(json.dumps({'report_date': '2026-09-18'}))
+    feeds = set(collect.fe.FEEDS.values())
+    monkeypatch.setattr(collect, 'fetch', lambda url: (Resp(text=FEED), 'ok') if url in feeds
+                        else (None, 'safari: ConnectTimeout'))
+    monkeypatch.setattr(sys, 'argv', ['x', '--datadir', str(tmp_path)])
+    collect.main()
+    c = json.loads((tmp_path / 'fed' / 'events.json').read_text())['collect']
+    assert c['status'] == 'partial' and c['missing'] == ['presconf:20260917']

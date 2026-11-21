@@ -8,13 +8,7 @@ import json
 import os
 import tempfile
 
-# 발동 판정에 필요한 필드만 — desc 산문은 매일 바뀌어 이력을 부풀리기만 한다
-_TRIGGER_KEYS = ('kind', 'metric', 'op', 'value', 'toward')
 _ASSET_KEYS = ('grade', 'label', 'since', 'thesis', 'tilt', 'curve')
-
-
-def _trigger(t):
-    return {k: t[k] for k in _TRIGGER_KEYS if k in t}
 
 
 # 이력에 남기는 전달경로 필드. **`channel` 은 뺀다** — 문단 하나가 자산마다, 날마다

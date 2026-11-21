@@ -96,6 +96,20 @@ def _gone(pid_file):
     return False
 
 
+def _once_git_runs(pid_file, action, delay=0.3, limit=20):
+    """가짜 git 이 pid 를 남긴 뒤(= archive 가 도는 중) action — 고정 타이머는 병렬 시험에서
+    가짜 git 이 뜨기 전에 취소해 pid 파일이 아예 안 생겼다(2026-11-21 -n auto 실측)."""
+    def run():
+        end = time.monotonic() + limit
+        while not pid_file.exists():
+            if time.monotonic() >= end:
+                return      # 가짜 git 이 끝내 안 떴다 — 지나간 시험 뒤에 SIGTERM 을 쏘지 않는다
+            time.sleep(0.02)
+        time.sleep(delay)
+        action()
+    threading.Thread(target=run, daemon=True).start()
+
+
 def _member_boundary(data, name):
     """`name` 멤버의 헤더가 시작하는 자리 — 그 앞에서 자르면 tarfile 은 깔끔한 끝으로 본다."""
     with tarfile.open(fileobj=io.BytesIO(data)) as tar:
@@ -178,8 +192,8 @@ def test_a_cancel_during_the_archive_kills_git(fake, monkeypatch, cut):
     setup(_tar(GOOD), cut=cut, sleep=60)
     sig = _Sig()
     monkeypatch.setattr(runner_launch, 'SIGNALS', sig)
-    threading.Timer(0.5, lambda: setattr(sig, 'got', 15)).start()
     start = time.monotonic()
+    _once_git_runs(pid, lambda: setattr(sig, 'got', 15))
     with pytest.raises(runner_launch._Cancelled):
         runner_launch.snapshot('/r', 'a' * 40, str(dest))
     assert time.monotonic() - start < 10
@@ -219,7 +233,7 @@ def test_a_sigterm_during_the_stream_is_a_clean_cancel_without_an_alarm(fake, tm
     setup, pid, _ = fake
     setup(_tar(GOOD), cut=1500, sleep=60)
     work, site = _in_main(tmp_path, monkeypatch)
-    threading.Timer(0.8, lambda: os.kill(os.getpid(), signal.SIGTERM)).start()
+    _once_git_runs(pid, lambda: os.kill(os.getpid(), signal.SIGTERM))
     assert runner_launch.main(['run']) == 128 + signal.SIGTERM
     assert not (site / 'reviews' / 'runner.json').exists()
     assert os.listdir(work) == []

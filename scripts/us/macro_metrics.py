@@ -517,6 +517,193 @@ def _axis_summary(rows):
     return out
 
 
+# ── 원천 미발표로 빠진 지표(2026-11-17 사용자 승인 조건 7·8) ─────────────────────────────
+# 축 점수는 「있는 행」의 평균이다 — 빠진 지표가 있는 축을 온전한 점수와 같게 보이면 안 된다(coverage), 그리고 그 지표가
+# 있었다면 판단이 달라질 수 있는 날은 자동으로 발행하지 않는다(sensitivity). 추정치·전월값으로 채우지 않는다.
+#
+# 점수(자기 모멘텀의 표준편차 단위)에는 코드상 위·아래 한계가 없다 — 그래서 「양 끝」을 ±SENSITIVITY_Z 로 둔다.
+# 2026-10-15~11-16 발행 자료의 모든 지표에서 |점수| 최대는 2.54 였다.
+SENSITIVITY_Z = 3.0
+EXCLUDED_WHY_KO = '원천 미발표'
+
+
+def scored_rows(indicators):
+    """축 점수에 드는 행 — `compute` 가 점수에 쓰는 것과 같은 기준(scored·도입일 아님)."""
+    return [r for r in indicators or [] if isinstance(r, dict)
+            and (r.get('role') or 'scored') == 'scored' and not r.get('introduced')]
+
+
+def axis_verdict(mean, axis):
+    """축 평균 → 판단 (방향, 강도, 레짐 다리 -1/0/+1). 레짐 다리는 `us.macro.classify` 와 같은 문턱."""
+    from .macro import classify
+    direction, strength = describe(mean, axis)
+    return [direction, strength, classify(mean)]
+
+
+def sensitivity(indicators, axis, n_excluded, bound=SENSITIVITY_Z, include_introduced=False):
+    """빠진 지표 n개가 모두 점수 범위의 아래 끝(-bound)·위 끝(+bound)이었다면 이 축의 판단이 지금과 같은가.
+
+    평균은 빠진 값에 대해 단조라 두 경우면 충분하다. 결정적이다 — 자료의 점수와 상수만 쓴다.
+    -> {'now', 'low', 'high', 'bound', 'stable'}; 축에 점수가 하나도 없으면 stable 은 False(판단할 수 없다)."""
+    # `include_introduced`: 들인 날이라 점수에서 뺀 지표의 실제 점수를 넣은 상태에서 본다(5회차 I1 — 한 축에 들인 지표와
+    # 모르는 값이 섞이면 넣은 상태·넣지 않은 상태 양쪽에서 양 끝을 본다)
+    pool = scored_rows(indicators)
+    if include_introduced:
+        pool = [r for r in indicators or [] if isinstance(r, dict) and (r.get('role') or 'scored') == 'scored']
+    zs = [r['signed_z'] for r in pool
+          if r.get('axis') == axis and isinstance(r.get('signed_z'), (int, float)) and not isinstance(r['signed_z'], bool)]
+    if not zs or n_excluded <= 0:
+        return {'now': None, 'low': None, 'high': None, 'bound': bound, 'stable': bool(zs) and n_excluded <= 0}
+    total = len(zs) + n_excluded
+    now = axis_verdict(sum(zs) / len(zs), axis)
+    low = axis_verdict((sum(zs) - n_excluded * bound) / total, axis)
+    high = axis_verdict((sum(zs) + n_excluded * bound) / total, axis)
+    return {'now': now, 'low': low, 'high': high, 'bound': bound, 'stable': now == low == high}
+
+
+# 없는 값의 상태(2026-11-18 사용자 지시 — 「미발표」로 뭉뚱그리지 않는다):
+#   not_published  원천 기관이 그 값을 내지 않았다(원천 응답에 그 달 행이 있고 값이 빈칸)
+#   not_collected  원천에 그 달 자체가 아직 없거나 우리가 그 범위를 받지 않았다
+#   collect_failed 받으려다 실패했다
+#   unknown        가를 근거가 없다 — 추정하지 않는다(보류 쪽)
+MISSING_STATES = ('not_published', 'not_collected', 'collect_failed', 'unknown')
+PREVIOUS_WHY_KO = {'not_published': '미발표', 'not_collected': '미수집', 'collect_failed': '수집 실패',
+                   'unknown': '확인 불가'}          # 축 표의 Previous 칸 「—」 옆에 싣는 말
+NO_VALUE_WHY_KO = {'not_published': EXCLUDED_WHY_KO, 'not_collected': '원천에 비교 달 없음',
+                   'collect_failed': '수집 실패', 'unknown': '비교 달 상태 확인 불가'}
+
+
+def worst_state(states):
+    """여러 달의 상태 → 하나(보수적으로): unknown > collect_failed > not_collected > not_published. 없으면 unknown."""
+    for s in ('unknown', 'collect_failed', 'not_collected', 'not_published'):
+        if s in states:
+            return s
+    return 'unknown'
+
+
+# 축 점수에 쓰이지 않은 까닭 — 수집 상태의 키 접두어와 같은 말(`no_value` 는 econ 쪽 키 `econ:no_value:<이름>`).
+WHY_KO = {'no_value': EXCLUDED_WHY_KO,        # 원천에 그 달을 만들 재료가 없다
+          'no_score': '이력 부족',             # 행은 있는데 점수를 낼 이력이 모자란다(signed_z 없음)
+          'introduced': '새로 들인 지표',       # 들인 날은 점수에서 뺀다(구성 변경이 혼자 축을 움직이지 못하게)
+          'no_row': '수집 실패'}               # 행 자체가 없다(받지 못했거나 변환이 터졌다)
+WHY_ORDER = ('no_value', 'no_score', 'introduced', 'no_row')
+
+
+def _josa(word):
+    last = (word or ' ')[-1]
+    return '은' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 else '는'
+
+
+def introduced_effect(indicators, axis):
+    """들인 날이라 점수에서 뺀 지표는 값과 점수를 안다 — **실제 점수를 넣어 다시 낸 축 판정**과 지금 판정을 견준다
+    (모르는 값에 쓰는 양 끝 `sensitivity` 와 다르다). -> {'now', 'with', 'direction_same', 'leg_same', 'strength_same'}
+    또는 None(지금 점수가 없거나 들인 지표의 점수를 읽지 못한다 — 판정할 수 없다)."""
+    rows = [r for r in indicators or [] if isinstance(r, dict) and (r.get('role') or 'scored') == 'scored'
+            and r.get('axis') == axis]
+    used = [r['signed_z'] for r in rows if not r.get('introduced') and _has_value(r.get('signed_z'))]
+    new = [r for r in rows if r.get('introduced') is True]
+    if not used or not new or not all(_has_value(r.get('signed_z')) for r in new):
+        return None
+    both = used + [r['signed_z'] for r in new]
+    now, incl = axis_verdict(sum(used) / len(used), axis), axis_verdict(sum(both) / len(both), axis)
+    return {'now': now, 'with': incl, 'direction_same': now[0] == incl[0], 'leg_same': now[2] == incl[2],
+            'strength_same': now[1] == incl[1]}
+
+
+def coverage_phrase(total, used, excluded):
+    """글에 싣는 문장 — 「8개 중 6개로 산출, 소비자물가 전년비·근원 소비자물가 전년비는 원천 미발표로 제외」.
+    `excluded` = `[{label_ko, why}]`(또는 이름 목록 — 그러면 모두 원천 미발표). 까닭이 여럿이면 까닭마다 한 구절."""
+    items = [e if isinstance(e, dict) else {'label_ko': e, 'why': 'no_value'} for e in excluded]
+    parts = []
+    seen = []
+    for e in items:                       # 까닭(독자에게 보이는 말)마다 한 구절, 나온 순서대로
+        w = e.get('why_ko') or WHY_KO.get(e.get('why'), EXCLUDED_WHY_KO)
+        if w not in seen:
+            seen.append(w)
+    for w in seen:
+        labels = [e['label_ko'] for e in items if (e.get('why_ko') or WHY_KO.get(e.get('why'), EXCLUDED_WHY_KO)) == w]
+        last = w[-1]
+        ro = '으로' if '가' <= last <= '힣' and (ord(last) - 0xAC00) % 28 not in (0, 8) else '로'
+        parts.append(f"{'·'.join(labels)}{_josa(labels[-1])} {w}{ro} 제외")
+    return f"{total}개 중 {used}개로 산출, " + ', '.join(parts)
+
+
+def _has_value(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and x == x and abs(x) != float('inf')
+
+
+def unused_scored(indicators):
+    """행은 있는데 축 점수에 쓰이지 않은 점수 대상 → `[(이름, 축, 까닭)]`.
+
+    `introduced` = 들인 날이라 규칙대로 하루 뺀 것 — **자료의 그 칸(`introduced`)이 참이고, 최신값이 실제로 있고, 점수도
+    계산된** 행만(4회차 H3). 값이 없거나 점수가 없는 행은 들인 날이어도 `no_score` 다 — 결측이 「들인 날」로 덮이지 않는다."""
+    out = []
+    for r in indicators or []:
+        if not isinstance(r, dict) or (r.get('role') or 'scored') != 'scored':
+            continue
+        scored = _has_value(r.get('signed_z'))
+        if r.get('introduced') is True and scored and _has_value(r.get('actual')):
+            out.append((r.get('name'), r.get('axis'), 'introduced'))
+        elif r.get('introduced') or not scored:
+            out.append((r.get('name'), r.get('axis'), 'no_score'))
+    return out
+
+
+def with_coverage(mm, excluded, expected=None):
+    """`compute` 결과에 축별 산출 범위를 싣는다 — **그 축에 정의된 점수 대상 가운데 실제로 점수에 쓰인 것**이 몇인가.
+
+    `expected` = 정의된 점수 대상 `[(축, 이름)]`(수집기의 ECON 표, 해부 전용 제외). `excluded` = 원천에 최신 달을 만들
+    재료가 없어 행을 만들지 못한 지표 `[{name, axis, fred_id, transform, ref_period, lacking}]`(수집기의 no_value).
+    쓰이지 않은 것은 **전부** 싣는다(3회차 G2 — 전에는 no_value 만 세어, 행은 있는데 점수가 없는 지표가 가려졌고
+    전체 수도 「쓴 수 + 2」였다): no_value / no_score / introduced / no_row. 쓰이지 않은 것이 없는 축은 싣지 않는다.
+
+    `coverage[축] = {total, used, excluded: [{name, label_ko, why, why_ko, …}], phrase_ko, sensitivity}`,
+    `axis_summary[축].coverage_ko` = 같은 문장. `expected` 를 모르면(옛 호출) 정의된 수는 「행 + excluded」로 센다."""
+    excluded = [e for e in excluded or [] if isinstance(e, dict) and e.get('axis') in AXIS_LABELS_KO]
+    rows = [r for r in mm.get('indicators') or [] if isinstance(r, dict) and (r.get('role') or 'scored') == 'scored']
+    used_names = {r.get('name') for r in scored_rows(rows) if r.get('signed_z') is not None}
+    row_why = {n: why for n, _a, why in unused_scored(rows)}
+    by_ex = {e['name']: e for e in excluded}
+    if expected is None:
+        expected = [(r.get('axis'), r.get('name')) for r in rows] + [(e['axis'], e['name']) for e in excluded]
+    out = dict(mm)
+    cov = {}
+    summary = {k: dict(v) for k, v in (mm.get('axis_summary') or {}).items()}
+    for axis in AXIS_LABELS_KO:
+        names = []
+        for a, n in expected:
+            if a == axis and n not in names:
+                names.append(n)
+        used = [n for n in names if n in used_names]
+        items = []
+        for n in names:
+            if n in used_names:
+                continue
+            why = 'no_value' if n in by_ex else row_why.get(n, 'no_row')
+            item = {'name': n, 'label_ko': LABELS_KO.get(n, n), 'why': why, 'why_ko': WHY_KO[why]}
+            if n in by_ex:
+                item.update({k: by_ex[n].get(k) for k in ('fred_id', 'transform', 'ref_period', 'lacking')})
+                lw = by_ex[n].get('lacking_why')
+                if isinstance(lw, dict):
+                    # 왜 그 달을 만들 수 없나 — 미발표와 미수집을 가른다. 상태를 모르는 옛 호출은 전과 같은 말
+                    item['lacking_why'] = lw
+                    item['why_ko'] = NO_VALUE_WHY_KO[worst_state(set(lw.values()))]
+            items.append(item)
+        if not items:
+            continue
+        items.sort(key=lambda e: WHY_ORDER.index(e['why']))
+        phrase = coverage_phrase(len(names), len(used), items)
+        cov[axis] = {'total': len(names), 'used': len(used), 'excluded': items, 'phrase_ko': phrase,
+                     'sensitivity': sensitivity(mm.get('indicators'), axis, len(items))}
+        if axis in summary:
+            summary[axis]['coverage_ko'] = phrase
+    if not cov:
+        return mm
+    out['coverage'] = cov
+    out['axis_summary'] = summary
+    return out
+
+
 def _axis_mean(rows, axis):
     zs = [r['signed_z'] for r in rows if r['axis'] == axis and r['signed_z'] is not None]
     return sum(zs) / len(zs) if zs else None

@@ -118,6 +118,13 @@ class FredClient:
         if transport is None and not self.key:
             self.transport = 'csv'
         self._cache = {}
+        # 원천 응답에 **행은 있는데 값이 빈** 날짜들(시리즈별) — 「기관이 그 값을 내지 않았다」와 「원천에 그 달이 아직
+        # 없다」를 가르는 근거다(2026-11-18). `series()` 의 계약(결측 제거·전체 이력)은 그대로다.
+        self.blank_dates = {}
+        # 값 필드가 없거나 null 이거나 알 수 없는 형식인 행의 날짜 — 「빈칸」의 근거가 못 된다(모름, 4회차 H1)
+        self.unclear_dates = {}
+        self._blanks = None
+        self._unclear = None
         self.requests = 0
         self.series_ok = 0
         self.failed = []
@@ -213,15 +220,28 @@ class FredClient:
         count = payload.get('count')
         if isinstance(count, int) and count > LIMIT:
             raise FredError(f'{sid}: truncated response ({count} > limit {LIMIT})')
-        rows = _pairs((o.get('date'), o.get('value')) for o in obs)
+        raw = [(o.get('date'), o.get('value')) for o in obs]
+        rows = _pairs(raw)
         _assert_ascending(sid, rows)
+        # 공식 API 가 「값 없음」을 적는 표기는 문자열 "." 하나다 — 필드 부재·null·빈 문자열·그 밖의 글자는 모른다
+        self._blanks, self._unclear = _classify_blanks(raw, API_BLANKS)
         return rows
 
     def _csv(self, sid):
         body = self._get(f'{CSV}?id={sid}').decode('utf-8')
-        rows = _pairs(tuple(line.split(',')[:2])
-                      for line in body.splitlines()[1:] if ',' in line)
+        lines = [line for line in body.splitlines()[1:] if line.strip()]
+        raw = [tuple(line.split(',')[:2]) for line in lines if ',' in line]
+        rows = _pairs(raw)
         _assert_ascending(sid, rows)
+        # fredgraph.csv 는 값 칸을 비우거나(지금) "." 로(옛 표기) 적는다. 「빈칸」의 근거는 **칸이 정확히 둘인 줄**뿐이다 —
+        # 값 칸이 없는 줄(쉼표 없음)도, 여분 칸이 있는 줄(`2025-10-01,.,x`)도 형식을 모른다(5회차 I2). 값이 있는 줄의
+        # 파싱(앞의 두 칸)은 그대로다.
+        shaped = []
+        for line in lines:
+            parts = line.split(',')
+            shaped.append((parts[0], parts[1]) if len(parts) == 2 else
+                          (parts[0], parts[1]) if len(parts) > 2 and _is_number(parts[1]) else (parts[0], _NO_FIELD))
+        self._blanks, self._unclear = _classify_blanks(shaped, CSV_BLANKS)
         return rows
 
     # ------------------------------------------------------------ 공개 API
@@ -272,6 +292,9 @@ class FredClient:
                 self.failed.append(sid)
             raise
         self._cache[sid] = rows
+        self.blank_dates[sid] = self._blanks if isinstance(self._blanks, list) else None
+        self.unclear_dates[sid] = self._unclear if isinstance(self._unclear, list) else None
+        self._blanks = self._unclear = None
         self.series_ok += 1
         return rows
 
@@ -449,6 +472,41 @@ def key_health(telemetry, key_set):
                          f'data was collected from the unofficial graph CSV')
     return 'warning', (f'FRED API unavailable, key not verified ({cause}) — '
                        f'data was collected from the unofficial graph CSV')
+
+
+API_BLANKS = ('.',)            # 공식 API: 값이 없는 관측은 `"value": "."`
+CSV_BLANKS = ('', '.')         # fredgraph.csv: 값 칸이 비어 있다(지금) 또는 `.`(옛 표기)
+_NO_FIELD = object()
+
+
+def _is_number(v):
+    try:
+        float(v)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _classify_blanks(rows, explicit):
+    """-> (명시적으로 빈 날짜들, 모르는 날짜들). **명시적 빈 표기**(`explicit` 의 문자열 그대로)만 「원천이 그 달 행을 주고
+    값을 비웠다」의 근거다. 값 필드가 없거나 null·문자열이 아니거나 수로도 빈 표기로도 읽히지 않으면 모른다 — 「미발표」로
+    읽지 않는다(4회차 H1: `{"date": "2025-10-01"}` 처럼 value 가 없는 행이 미발표로 분류돼 승인 예외를 통과했다)."""
+    blank, unclear = [], []
+    for d, v in rows:
+        if not isinstance(d, str) or not d.strip():
+            continue
+        d = d.strip()
+        if isinstance(v, str) and v in explicit:
+            blank.append(d)
+            continue
+        if isinstance(v, (str, int, float)) and not isinstance(v, bool):
+            try:
+                float(v)
+                continue                 # 값이 있는 행(`_pairs` 가 받는 것과 같다)
+            except ValueError:
+                pass
+        unclear.append(d)
+    return blank, unclear
 
 
 def _pairs(rows):

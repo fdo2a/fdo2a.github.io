@@ -6,7 +6,10 @@ Run from the repo clone, against the writer's output in the routine workspace:
   python scripts/check_macro.py --html morning_brief_2026-08-19.html --datadir .
 
 Exit 0 = publishable. Exit 1 = violations printed, one per line; hand them back to
-the writer subagent verbatim and re-run.
+the writer subagent verbatim and re-run. Exit 2 = incomplete input (2026-11-17): a book,
+market_data, econ_indicators, macro_metrics or (when publishing now) the releases index is
+missing, unreadable or from another session — re-collect, do not rewrite the post. The old
+"bootstrap" pass with both books absent and the skipped axis-table check are gone.
 """
 
 import argparse
@@ -17,20 +20,122 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from us.macro_gate import check  # noqa: E402
+from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼져 있으면 1a 전 판정 그대로)
+
+
+class Corrupt(Exception):
+    pass
 
 
 def load(path):
+    """Absent -> None. Unreadable -> Corrupt (a broken file is not an absent one)."""
     try:
         with open(path, encoding='utf-8') as fh:
             return json.load(fh)
     except FileNotFoundError:
         return None
     except Exception as e:
-        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
+        raise Corrupt(f'could not read {path}: {e}')
+
+
+def incomplete(why):
+    print(f'FATAL: {why} — 미완료, 수집을 다시 돌린다(글을 고쳐서 풀리지 않는다)', file=sys.stderr)
+    sys.exit(2)
+
+
+HOLD_SENSITIVE = '승인된 결측이 판단을 바꿀 수 있음 — 사람 승인 필요'
+HOLD_SENSITIVE_NEW = '새로 들인 지표의 제외가 판단을 바꿀 수 있음 — 사람 승인 필요'     # 결측이 아니라 산출 규칙(4회차 H3)
+
+
+def coverage_notes(metrics):
+    """보류는 아니지만 기록·알림에 조건으로 남길 것 → 경고 줄들. 지표를 들인 날의 제외는 자료 결측이 아니라 산출
+    규칙이다(4회차 H3) — 막지 않되 숨기지 않는다. 글의 산출 범위 표시는 `_check_coverage` 가 그대로 요구한다."""
+    from us import macro_metrics as M
+    cov = metrics.get('coverage') if isinstance(metrics.get('coverage'), dict) else {}
+    out = []
+    for axis, c in sorted(cov.items()):
+        new = [e.get('label_ko') or e.get('name') for e in (c.get('excluded') or []) if e.get('why') == 'introduced']
+        if new:
+            line = (f'경고: {M.AXIS_LABELS_KO.get(axis, axis)} 축 점수는 {c.get("total")}개 중 {c.get("used")}개로 산출 — '
+                    f'새로 들인 지표 {len(new)}개({", ".join(str(x) for x in new)})는 들인 날이라 점수에서 뺐다')
+            eff = M.introduced_effect(metrics.get('indicators'), axis)
+            if eff and not eff['strength_same']:
+                # 방향·레짐 다리는 같고 강도만 다르다 — 막지 않되 적는다
+                line += f' · 들인 지표 포함 시 강도 {eff["now"][1]}→{eff["with"][1]}'
+            out.append(line)
+    return out
+
+
+def coverage_hold(metrics, prev_date=None):
+    """원천 미발표로 점수에서 빠진 지표가 있는 날 — 그 지표가 있었다면 축 판단이 달라질 수 있으면 자동 발행하지 않는다
+    (2026-11-17 사용자 승인 조건 8). -> 보류 사유 | None. 판정은 결정적이다: 자료의 점수로 다시 계산한다
+    (`us.macro_metrics.sensitivity` — 빠진 지표가 모두 점수 범위의 아래 끝·위 끝일 때 방향·강도·레짐 다리가 지금과 같은가).
+    자료가 서로 맞지 않아 판정할 수 없으면 그것도 보류다. 사람 승인 절차는 아직 없다 — 보류로 끝난다."""
+    from us import macro_metrics as M
+    col = metrics.get('collect') if isinstance(metrics.get('collect'), dict) else {}
+    cov = metrics.get('coverage')
+    # 축 점수에 쓰이지 않은 지표 — 세 곳이 같은 것을 말해야 한다: 지표 행(여기서 직접 본다), 수집 상태, 산출 범위.
+    # 행에서 직접 보는 것은 수집 상태와 산출 범위가 함께 빠뜨린 점수 결측을 잡으려는 것이다(3회차 G2).
+    in_rows = sorted((why, name) for name, _axis, why in M.unused_scored(metrics.get('indicators')))
+    named = sorted(tuple(str(m)[len('econ:'):].split(':', 1)) if str(m).startswith('econ:no_value:')
+                   else tuple(str(m).split(':', 1))
+                   for m in col.get('missing') or []
+                   if str(m).startswith(('econ:no_value:', 'no_score:')))
+    if not named and not cov and not in_rows:
         return None
+    if not isinstance(cov, dict) or not cov:
+        return (f'축 점수에 쓰이지 않은 지표({", ".join(n for _w, n in sorted(set(named) | set(in_rows)))})가 있는데 '
+                'macro_metrics.json 에 산출 범위(coverage)가 없다 — 그 축 점수가 몇 개 중 몇 개로 나왔는지 알 수 없다')
+    listed = sorted((e.get('why'), e.get('name')) for c in cov.values() if isinstance(c, dict)
+                    for e in c.get('excluded') or [] if isinstance(e, dict))
+    rows_listed = [x for x in listed if x[0] in ('no_score', 'introduced')]
+    if rows_listed != in_rows:
+        return (f'지표 행에서 본 점수 결측({[n for _w, n in in_rows]})과 산출 범위의 제외 지표'
+                f'({[n for _w, n in rows_listed]})가 다르다')
+    if col and [x for x in listed if x[0] not in ('no_row', 'introduced')] != named:
+        return (f'수집 상태가 말하는 빠진 지표({[n for _w, n in named]})와 산출 범위의 제외 지표'
+                f'({[n for _w, n in listed]})가 다르다')
+    # 들인 날의 제외는 하루뿐이다(4회차 H3 (d)) — 어제 책에 견주어 들인 것이어야 한다. 그 전 책에 견준 것이면(다음
+    # 발행일에도 들인 상태) 또는 어느 책에 견준 것인지 모르면 보류
+    since = metrics.get('introduced_since') if isinstance(metrics.get('introduced_since'), dict) else {}
+    late = sorted(n for w, n in in_rows if w == 'introduced' and (not prev_date or since.get(n) != prev_date))
+    if late:
+        return (f'새로 들인 지표({", ".join(late)})가 들인 상태로 하루를 넘겨 이어진다(견준 책 '
+                f'{sorted({str(since.get(n)) for n in late})}, 어제 책 {prev_date}) — 점수에서 빠진 채 발행하지 않는다')
+    for axis, c in sorted(cov.items()):
+        ex = c.get('excluded') if isinstance(c, dict) else None
+        if not isinstance(ex, list) or not ex:
+            return f'{axis} 축의 산출 범위 형식이 다르다'
+        used = sum(1 for r in M.scored_rows(metrics.get('indicators')) if r.get('axis') == axis
+                   and r.get('signed_z') is not None)
+        if c.get('used') != used or c.get('total') != used + len(ex):
+            return f'{axis} 축의 산출 범위({c.get("used")}/{c.get("total")})가 지표 행({used}개)과 맞지 않는다'
+        ko = M.AXIS_LABELS_KO.get(axis, axis)
+        intro = [e for e in ex if e.get('why') == 'introduced']
+        unknown = [e for e in ex if e.get('why') != 'introduced']
+        # 한 축에 까닭이 섞여도 **둘 다** 본다 — 어느 하나라도 걸리면 보류(5회차 I1: 섞인 축에서 실제 점수 비교를 건너뛰었다)
+        if intro:
+            # 들인 지표는 값과 점수를 안다 — 모르는 값의 양 끝이 아니라 실제 점수를 넣어 다시 낸 축 판정과 견준다.
+            # 방향이나 레짐 다리가 다르면 보류, 강도만 다르면 조건(`coverage_notes`). 점수를 못 읽으면 판정할 수 없다.
+            eff = M.introduced_effect(metrics.get('indicators'), axis)
+            if eff is None:
+                return f'{ko} 축: 들인 지표의 실제 점수를 읽지 못해 판단에 미치는 영향을 볼 수 없다'
+            if not (eff['direction_same'] and eff['leg_same']):
+                return (f'{HOLD_SENSITIVE_NEW}({ko} 축 {c.get("total")}개 중 {used}개로 산출: 지금 {eff["now"]}, '
+                        f'들인 {len(intro)}개를 실제 점수로 넣으면 {eff["with"]})')
+        if unknown:
+            # 모르는 값(미발표·점수 없음·행 없음)은 점수 범위의 양 끝으로 — 들인 지표를 넣지 않은 상태와 넣은 상태 양쪽에서
+            for with_intro in ([False, True] if intro else [False]):
+                s = M.sensitivity(metrics.get('indicators'), axis, len(unknown), include_introduced=with_intro)
+                if not s['stable']:
+                    state = '(들인 지표를 실제 점수로 넣은 상태에서) ' if with_intro else ''
+                    return (f'{HOLD_SENSITIVE}({ko} 축 {c.get("total")}개 중 {used}개로 산출: {state}지금 {s["now"]}, '
+                            f'빠진 {len(unknown)}개가 점수 범위 아래 끝(-{s["bound"]})이면 {s["low"]}, '
+                            f'위 끝(+{s["bound"]})이면 {s["high"]})')
+    return None
 
 
-def main():
+def _main_1a():
     ap = argparse.ArgumentParser()
     ap.add_argument('--html', required=True)
     ap.add_argument('--datadir', default='.',
@@ -51,29 +156,125 @@ def main():
         sys.exit(2)
 
     d = args.datadir
-    prev = load(os.path.join(d, 'macro.json'))
-    ev = load(os.path.join(d, 'macro_eval.json'))
-    nxt = load(args.next_path or os.path.join(d, 'macro_next.json'))
+    try:
+        prev = load(os.path.join(d, 'macro.json'))
+        ev = load(os.path.join(d, 'macro_eval.json'))
+        nxt = load(args.next_path or os.path.join(d, 'macro_next.json'))
+        market = load(os.path.join(d, 'market_data.json'))
+        econ_book = load(os.path.join(d, 'econ_indicators.json'))
+        metrics = load(os.path.join(d, 'macro_metrics.json'))
+        releases = load(os.path.join(d, 'releases', 'index.json'))
+    except Corrupt as e:
+        incomplete(str(e))
+
+    # 2026-11-17: 지금 발행하는 글은 책이 없으면 부트스트랩으로 넘기지 않는다 — 자료가 없어 판단할 수 없으면 미완료.
+    # --legacy-releases(지난 글을 그 커밋 자료로 재검사)만 옛 판정을 유지한다 — 그때의 자료 폴더에는 없던 파일이 있다.
+    from verification.inputs import legacy_recheck
+    if legacy_recheck(args.legacy_releases, args.html):     # 1a 적용일 전 글에만(구현 검토 #9)
+        market = market or {}
+        econ = (econ_book or {}).get('indicators') if isinstance(econ_book, dict) else None
+        if prev is None and ev is None:
+            print('macro.json / macro_eval.json 둘 다 없다 — 부트스트랩 실행으로 간주하고 '
+                  '§8 어휘·표 완성도만 검사한다', file=sys.stderr)
+        if releases and releases.get('status') is not None \
+                and releases.get('report_date') != market.get('report_date'):
+            releases = {'status': 'stale', 'releases': []}
+        return _finish(html, prev, ev, nxt, econ, metrics, market, releases)
+    if prev is None or ev is None:
+        incomplete('macro.json / macro_eval.json 이 없다')
+    if not isinstance(market, dict) or not market.get('report_date'):
+        incomplete('market_data.json 이 없거나 report_date 가 없다')
+    # 축 표 게이트의 기준일은 세션(market_data)이다.
+    econ = (econ_book or {}).get('indicators') if isinstance(econ_book, dict) else None
+    if not econ:
+        incomplete('econ_indicators.json 이 없거나 indicators 가 비었다 — §9 축 표를 대조할 정본이 없다')
+    if not isinstance(metrics, dict) or metrics.get('report_date') != market.get('report_date'):
+        incomplete(f"macro_metrics.json report_date={(metrics or {}).get('report_date')} ≠ 세션 "
+                   f"{market.get('report_date')}")
+    # 원문 index (2026-11-06 계약). 지금 발행하는 글은 오늘 세션의 완료된 index 가 있어야 한다.
+    if releases is None or releases.get('status') is None:
+        incomplete('releases/index.json 이 없거나 2026-11-06 전 형식이다')
+    if releases.get('report_date') != market.get('report_date'):
+        incomplete(f"releases/index.json 이 {releases.get('report_date')} 것이다")
+    if releases.get('status') != 'complete':
+        incomplete(f"releases/index.json status={releases.get('status')!r} — 원문 수집이 끝나지 않았다")
+    hold = coverage_hold(metrics, prev_date=prev.get('report_date') if isinstance(prev, dict) else None)
+    if hold:
+        print(f'FATAL: {hold} — 미완료, 보류한다(글을 고쳐서 풀리지 않는다)', file=sys.stderr)
+        sys.exit(2)
+    for line in coverage_notes(metrics):
+        print(line)                       # 실행기가 경고로 읽어 글 판정을 조건부로 둔다(기록·알림에 남는다)
+    return _finish(html, prev, ev, nxt, econ, metrics, market, releases)
+
+
+def _finish(html, prev, ev, nxt, econ, metrics, market, releases):
+    violations = check(html, prev, ev, nxt, econ=econ, metrics=metrics,
+                       report_date=market.get('report_date'), releases=releases)
+    if not violations:
+        print('매크로 게이트 통과')
+        return
+    print(f'매크로 게이트 실패 — {len(violations)}건')
+    for x in violations:
+        print(f'  - {x}')
+    sys.exit(1)
+
+
+def _load_pre1a(path):
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        return None
+    except Exception as e:
+        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
+        return None
+
+
+def _main_pre1a():
+    """1a 를 켜기 전의 판정 — 1a 전 `main()` 그대로(부트스트랩 통과·축 표 검사 건너뛰기 포함)."""
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--html', required=True)
+    ap.add_argument('--datadir', default='.',
+                    help='workspace holding macro.json / macro_eval.json / '
+                         'macro_next.json')
+    ap.add_argument('--next', dest='next_path', default=None,
+                    help='override the macro_next.json path')
+    ap.add_argument('--legacy-releases', action='store_true',
+                    help="re-checking a past post against its own commit's data: a missing "
+                         'releases index keeps the pre-2026-11-06 strict reading')
+    args = ap.parse_args()
+
+    try:
+        with open(args.html, encoding='utf-8') as fh:
+            html = fh.read()
+    except OSError as e:
+        print(f'FATAL: cannot read {args.html}: {e}', file=sys.stderr)
+        sys.exit(2)
+
+    d = args.datadir
+    prev = _load_pre1a(os.path.join(d, 'macro.json'))
+    ev = _load_pre1a(os.path.join(d, 'macro_eval.json'))
+    nxt = _load_pre1a(args.next_path or os.path.join(d, 'macro_next.json'))
 
     if prev is None and ev is None:
         print('macro.json / macro_eval.json 둘 다 없다 — 부트스트랩 실행으로 간주하고 '
               '§8 어휘·표 완성도만 검사한다', file=sys.stderr)
 
-    market = load(os.path.join(d, 'market_data.json')) or {}
+    market = _load_pre1a(os.path.join(d, 'market_data.json')) or {}
 
     # 축 표 게이트의 기준일은 세션(market_data)이다. metrics 가 그 날짜·현행 스키마가
     # 아니면 추세 칸은 「—」만 허용된다 — 어제 추세가 오늘 숫자 옆에 나가지 않게.
-    econ = (load(os.path.join(d, 'econ_indicators.json')) or {}).get('indicators')
+    econ = (_load_pre1a(os.path.join(d, 'econ_indicators.json')) or {}).get('indicators')
     if not econ and market.get('report_date'):
         print('WARN: econ_indicators.json 이 없거나 읽을 수 없다 — §9 축 표(직전 대비·추세) '
               '검사를 건너뛴다. 표의 Actual/Previous 를 대조할 정본이 없다', file=sys.stderr)
-    metrics = load(os.path.join(d, 'macro_metrics.json'))
+    metrics = _load_pre1a(os.path.join(d, 'macro_metrics.json'))
     if econ and metrics and metrics.get('report_date') != market.get('report_date'):
         print(f"WARN: macro_metrics.json report_date={metrics.get('report_date')}, "
               f"세션 {market.get('report_date')} — 추세 칸은 「—」만 허용", file=sys.stderr)
     # 원문 index (2026-11-06 계약): 오늘 세션 것이 아니면 「원문 없음」으로 — 낡은 원문을
     # 근거로 해부 블록을 요구하지 않는다. status 없는 옛 index 는 그대로 넘겨 옛 판정을 유지.
-    releases = load(os.path.join(d, 'releases', 'index.json'))
+    releases = _load_pre1a(os.path.join(d, 'releases', 'index.json'))
     if not args.legacy_releases and (releases is None or releases.get('status') is None):
         # Publishing now: no readable index — or one from before the 2026-11-06 contract,
         # which check_sources and the writer also treat as empty — means no release text.
@@ -90,6 +291,11 @@ def main():
     for x in violations:
         print(f'  - {x}')
     sys.exit(1)
+
+
+
+def main():
+    return _main_1a() if enforcing() else _main_pre1a()
 
 
 if __name__ == '__main__':

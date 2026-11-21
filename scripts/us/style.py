@@ -385,25 +385,6 @@ def _da_run(texts):
     return worst
 
 
-def _same_ending_run(texts):
-    """-다 로 고정한 문서의 단조 — **같은 두 글자 종결**(했다·했다…)이 몇 개 이어졌나.
-
-    「~다 4연속 금지」를 -다 문서에 그대로 걸면 연속을 끊을 방법이 수사의문·-습니다·
-    「~죠」밖에 없다. 2026-09-23 KR 발행본의 「나머지 업종은 어땠을까?」가 그 적응이었다.
-    """
-    worst, word = 0, ''
-    for text in texts:
-        run, prev = 0, None
-        for sentence in sentences(text):
-            core = sentence.rstrip().rstrip('.!?')
-            tail = core[-2:] if len(core) >= 2 else core
-            run = run + 1 if tail == prev else 1
-            prev = tail
-            if run > worst:
-                worst, word = run, tail
-    return worst, word
-
-
 def _plain_language(texts, whole, gloss=True):
     """쉬운 말 검사 — 음차어, 첫 등장 풀이, 한 문장 안 겹침.
 

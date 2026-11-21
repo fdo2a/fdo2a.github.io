@@ -20,6 +20,7 @@ import re
 
 from . import macro_metrics as mm
 from .section import strip_tags
+from verification.inputs import enforcing
 
 VS_PREV_HEADER = '직전 대비'
 TREND_HEADER = '추세'
@@ -200,5 +201,13 @@ def _check_row(name, cells, head, i_vs, i_tr, i_act, i_prev, exp, stale, v):
                               ('Previous', i_prev, item.get('previous'))):
         if idx is None or idx >= len(cells):
             v.append(f'§9 표: {name} 행에서 「{label}」 열을 찾지 못했다')
+        elif label == 'Previous' and canon is None and item.get('previous_why') and enforcing():
+            # 직전값이 없는 행 — 「—」 옆에 왜 없는지(미발표·미수집·수집 실패·확인 불가)를 싣는다. 사유를 뭉뚱그리거나
+            # 다른 사유를 쓰거나 값을 채우면 위반(2026-11-18)
+            want = mm.PREVIOUS_WHY_KO.get(item['previous_why'], mm.PREVIOUS_WHY_KO['unknown'])
+            got = norm(cells[idx][1])
+            rest = got.lstrip('—-– ').strip().strip('()（）').strip()
+            if not got[:1] in ('—', '-', '–') or rest != want:
+                v.append(f'§9 표: {name} Previous 「{got}」 — 직전값이 없다, 「— ({want})」 로 적는다')
         elif not _matches(cells[idx][1], canon, item.get('units')):
             v.append(f'§9 표: {name} {label} 「{norm(cells[idx][1])}」 가 정본 값 {canon} 과 다르다')

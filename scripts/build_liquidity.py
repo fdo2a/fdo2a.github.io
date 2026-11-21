@@ -291,6 +291,44 @@ def assemble(state, report_date, holidays, effective, ledger, pending=(), notes=
     return book
 
 
+SOURCE = 'federalreserve.gov H.4.1 + home.treasury.gov QRA'
+
+
+def liquidity_collect(book, rounds, confirmed, now):
+    """collect 칸(2026-11-17). 이 실행이 확인할 것을 다 확인했을 때만 ok.
+
+    * H.4.1 예정 발표일이 지났는데 못 받은 주(`h41.pending`) — 대상은 있는데 값이 없다: missing·has_data.
+    * QRA 를 확인해야 하는 날 랜딩을 못 읽었다(`qra.confirmed` 없음) — 최신 회차를 모른다: missing.
+    * 확인한 최신 회차에서 발표 시각이 지났는데 검증하지 못한 문서 — missing.
+    * 발표 예정이 없어 요청을 하나도 보내지 않은 날은 일정(Fed 발표일·랜딩의 다음 발표일)으로 「없음」을 안 것이다 —
+      실을 것이 없으면 confirmed_none.
+    """
+    from common import collect_status as C
+    rd = book.get('report_date')
+    missing = [f'h41:{w}' for w in (book.get('h41') or {}).get('pending') or []]
+    checked = book.get('checked') or {}
+    if checked.get('qra') and not confirmed:
+        missing.append('qra:landing')
+    rnd = (rounds or {}).get(confirmed) if confirmed else None
+    for kind, at in sorted(((rnd or {}).get('times') or {}).items()):
+        if _dt_le(at, now) and not (((rnd.get('docs') or {}).get(kind)) or {}).get('ok'):
+            missing.append(f'qra:{confirmed}:{kind}')
+    pending = bool((book.get('h41') or {}).get('pending'))
+    if book.get('today') or pending:
+        empty = 'has_data'
+    else:
+        empty = 'confirmed_none'
+    return C.build('partial' if missing else 'ok', rd, SOURCE, missing=missing, empty=empty,
+                   detail=('notes: ' + ', '.join(book.get('notes') or [])) if book.get('notes') else None)
+
+
+def _dt_le(iso, now):
+    try:
+        return dt.datetime.fromisoformat(iso) <= now
+    except (TypeError, ValueError):
+        return False
+
+
 def write_outputs(p, book):
     if book['today']:
         with open(p['table'], 'w', encoding='utf-8') as fh:
@@ -316,7 +354,10 @@ def main():
         rid = os.environ.get('LIQ_RUN_ID') or (run_id() if os.environ.get('GITHUB_RUN_ID') else None)
         if not book or book.get('status') != 'complete' or (rid and book.get('run_id') != rid):
             wipe_outputs(p)
-            _write_atomic(p['book'], dict(book or {}, status='aborted'))
+            from common import collect_status as C
+            _write_atomic(p['book'], dict(book or {}, status='aborted',
+                                          collect=C.failed((book or {}).get('report_date'), SOURCE,
+                                                           'aborted — 이 실행의 완료 책이 아니다')))
             print('liquidity: sanitize — 이 실행의 완료 책이 아니다, 산출물을 비웠다')
         return
 
@@ -357,6 +398,9 @@ def main():
                        qra_confirmed=(book.get('qra') or {}).get('confirmed'))
         new.update({'status': 'complete', 'run_id': book.get('run_id'), 'generated': book.get('generated'),
                     'recomputed': True})
+        if book.get('collect'):            # 수집 결과는 그대로 — 원장(발행본)만 다시 읽었다
+            new['collect'] = dict(book['collect'], empty=('has_data' if new['today'] or new['h41'].get('pending')
+                                                          else book['collect'].get('empty')))
         write_outputs(p, new)
         _write_atomic(p['book'], new)
         print(f'liquidity: recompute — H.4.1 {[c["release_date"] for c in new["h41"]["candidates"]]}, '
@@ -366,10 +410,16 @@ def main():
     rid = os.environ.get('LIQ_RUN_ID') or run_id()
     stamp = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M KST')
     wipe_outputs(p)
-    _write_atomic(p['book'], {'report_date': report_date.isoformat(), 'run_id': rid, 'status': 'running'})
+    from common import collect_status as C
+    # 끝나기 전에 죽으면 이 칸이 남는다 — `running` 책이 성공으로 읽히지 않게.
+    _write_atomic(p['book'], {'report_date': report_date.isoformat(), 'run_id': rid, 'status': 'running',
+                              'collect': C.failed(report_date.isoformat(), SOURCE, 'running — 실행이 끝나지 않았다')})
     if effective is None:
+        # 꺼진 기능은 조회하지 않았으므로 「없음 확인」이 아니다.
         _write_atomic(p['book'], {'report_date': report_date.isoformat(), 'run_id': rid, 'status': 'complete',
-                                  'generated': stamp, 'today': False, 'disabled': True})
+                                  'generated': stamp, 'today': False, 'disabled': True,
+                                  'collect': C.build('ok', report_date.isoformat(), SOURCE, required_ok=False,
+                                                     missing=['config:effective_session'])})
         print('liquidity: config/liquidity.json 의 effective_session 이 없다 — 꺼짐')
         return
 
@@ -403,6 +453,7 @@ def main():
     write_outputs(p, book)
     _write_atomic(p['state'], state, compact=True)
     book['status'] = 'complete'
+    book['collect'] = liquidity_collect(book, rounds, confirmed, now)
     _write_atomic(p['book'], book)
     for w in pending:
         print(f'::warning::H.4.1 {w} 주 회차를 아직 못 받았다 — 다음 실행이 다시 찾는다')

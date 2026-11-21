@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """재시도 루틴의 첫 단계 — 모델 없이 「지금 돌 일이 있는가」를 판정한다 (2026-09-27).
 
-    python3 scripts/ci/routine_due.py us|kr|weekly|japan|jp_daily  # 한 줄: DONE|BUSY|WAIT|DUE <이유>
+    python3 scripts/ci/routine_due.py us|kr|weekly|japan|jp_daily  # 한 줄: DONE|BUSY|WAIT|DUE|HOLD <이유> (HOLD = us 만, 2026-11-22)
     python3 scripts/ci/routine_due.py lock-name us|kr|jp_daily  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
     python3 scripts/ci/routine_due.py jp-session       # 일본 일간 세션·직전 세션 (잠금 전에 고정)
     python3 scripts/ci/routine_due.py japan-key        # 일본 주간 키·그 주 금요일·MOF 게시일 (STEP 0)
@@ -135,18 +135,26 @@ def lock_name(kind, now, key=None, holidays=()):
     return f'weekly-{key}'
 
 
-def _daily(session, files, lock_age, stale, want):
+def _daily(session, files, lock_age, stale, want, flag=None):
     missing = [p for p in want(session) if p not in files]
     if not missing:
         return 'DONE', f'{session} 발행 완료'
+    # 발행 전 검사가 세웠거나(held), 받아들인 수정을 고치다 죽었다(판정·수정 표시 + stale) — 사람을 기다린다.
+    # 재시도가 처음부터 다시 쓰면 그 수정이 사라진다(2026-11-22). 루틴의 acquire 도 같은 표시에 exit 6 이다.
+    if flag == 'held':
+        return 'HOLD', f'{session} 발행 전 검사로 세움 — 사람이 unhold 해야 다시 쓴다'
+    # 판정·수정 표시는 첫 글(브리프 — 발행 전 검사가 붙은 글)이 없을 때만 본다. 브리프가 나간 뒤 남은 표시는
+    # 뉴스 이어 쓰기를 막지 않는다(루틴은 브리프 push 직후 표시를 뗀다 — run_lock.sh renew … clear).
+    if flag in ('judging', 'fixing') and missing[0] == want(session)[0] and (lock_age is None or lock_age >= stale):
+        return 'HOLD', f'{session} 검토 지적을 {"판정" if flag == "judging" else "수정"}하다 멈춤 ({lock_age}분 무응답) — 사람 확인'
     if lock_age is not None and lock_age < stale:
         return 'BUSY', f'{session} 작성 중 (잠금 {lock_age}분 전)'
     return 'DUE', f'{session} 미발행: {", ".join(missing)}'
 
 
-def decide_us(now, files, lock_age, holidays=()):
+def decide_us(now, files, lock_age, holidays=(), flag=None):
     return _daily(us_session(now, holidays), files, lock_age, STALE_MIN['us'],
-                  lambda d: (f'posts/{d}.html', f'news/{d}.html'))
+                  lambda d: (f'posts/{d}.html', f'news/{d}.html'), flag)
 
 
 JP_LATE_HOURS = 6     # 자정을 넘긴 재시도가 어제 세션을 이어받는 창(JST)
@@ -344,24 +352,38 @@ def _files(*dirs, ref='origin/main'):
     return set(out.stdout.split())
 
 
-def _lock_age(name, now):
-    """잠금의 마지막 갱신 이후 분. 잠금이 없거나 `released` 표시면 None — run_lock.sh 와 같은 규칙.
+def _lock_state(name, now):
+    """(마지막 갱신 이후 분 | None, 표시 | None). 표시: `held`(세움) · `judging`·`fixing`(판정·수정 중 — 2026-11-22).
 
-    클라우드에서 ref 삭제가 거부돼 release 는 ref 를 지우지 않고 표시 커밋으로 바꾼다
-    (2026-10-20). 표시를 살아 있는 잠금으로 읽으면 쓰지 않고 끝난 런이 120분 동안 BUSY 를 만든다.
+    잠금이 없거나 `released` 표시면 (None, None) — run_lock.sh 와 같은 규칙. 클라우드에서 ref 삭제가 거부돼
+    release 는 ref 를 지우지 않고 표시 커밋으로 바꾼다(2026-10-20). 표시를 살아 있는 잠금으로 읽으면 쓰지 않고
+    끝난 런이 120분 동안 BUSY 를 만든다. `held` 의 나이는 의미가 없지만 None 으로 두면 옛 호출자가 「잠금 없음」
+    으로 읽는다 — 그래서 나이를 그대로 준다.
     """
     ref = f'refs/heads/locks/{name}'
     seen = f'refs/run_lock/{name}'
     if not _git('ls-remote', 'origin', ref).stdout.strip():
-        return None
+        return None, None
     if _git('fetch', '-q', 'origin', f'+{ref}:{seen}').returncode:
-        return None
+        return None, None
     out = _git('log', '-1', '--format=%ct%n%s', seen).stdout.split('\n')
     if len(out) < 2 or not out[0].strip().isdigit():
-        return None
-    if out[1].startswith('released '):
-        return None
-    return max(0, int((now.timestamp() - int(out[0])) // 60))
+        return None, None
+    subject = out[1]
+    if subject.startswith('released '):
+        return None, None
+    age = max(0, int((now.timestamp() - int(out[0])) // 60))
+    if subject.startswith('held '):
+        return age, 'held'
+    for mark in ('judging', 'fixing'):
+        if subject.endswith(f' state={mark}'):
+            return age, mark
+    return age, None
+
+
+def _lock_age(name, now):
+    """잠금의 마지막 갱신 이후 분. 잠금이 없거나 `released` 표시면 None."""
+    return _lock_state(name, now)[0]
 
 
 def main(argv=None):
@@ -464,8 +486,8 @@ def main(argv=None):
     now = datetime.now(timezone.utc)
     if kind == 'us':
         hol = _holidays('us')
-        verdict = decide_us(now, _files('posts', 'news'),
-                            _lock_age(lock_name('us', now, holidays=hol), now), hol)
+        age, flag = _lock_state(lock_name('us', now, holidays=hol), now)
+        verdict = decide_us(now, _files('posts', 'news'), age, hol, flag)
     elif kind == 'kr':
         hol = _holidays('kr')
         verdict = decide_kr(now, _files('kr/posts', 'kr/news'),

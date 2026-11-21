@@ -196,8 +196,8 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
             [py, s + 'check_calendar.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'us',
-             '--date', date],
-            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir],
+             '--date', date] + _recheck(),
+            [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir] + _recheck(),
         ]
         market = 'us'
     else:
@@ -210,9 +210,9 @@ def gate_commands(section, post, datadir, original, date, cycle, research_root=N
                 '--date', date]] if _kr_brief_carries_news(date) else []),
             [py, s + 'check_movers.py', '--html', post, '--datadir', datadir, '--market', 'kr'],
             [py, s + 'check_fund.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date],
+             '--date', date] + _recheck(),
             [py, s + 'check_numbers.py', '--html', post, '--datadir', datadir, '--market', 'kr',
-             '--date', date],
+             '--date', date] + _recheck(),
             [py, s + 'verify_post.py', post, '--before', original, '--skip-layout'],
         ]
         market = 'kr'
@@ -270,6 +270,56 @@ def run_gates(cwd, cmds, timeout):
     return out
 
 
+# 1a 를 켜는 날 — `verification.inputs.EFFECTIVE` 와 같다(시험이 묶는다). None = 아직 켜지 않았다: 모든 글이 옛 판정
+# (1a 전과 같다). 날짜를 넣으면 그날부터의 글은 --recheck 가 옛 판정을 주지 않고(검사기가 날짜를 본다), 재검사의
+# 0·1 밖 종료(미완료 2·시간 초과)를 「원본도 그랬다」로 허용하지 않는다(1a 구현 검토 #9).
+STRICT_FROM = None
+_DAILY_DIR = re.compile(r'^(?:kr/)?posts/[^/]+$')      # 1a 가 걸리는 일간 글(US·KR 브리프)의 자리
+
+
+def _legacy_post_copy(path):
+    """`verification.inputs.legacy_post` 의 사본 — 그 패키지를 가져올 수 없는 격리 사본에서만 쓴다(시험이 같게 묶는다)."""
+    import datetime
+    if STRICT_FROM is None:
+        return True                    # 켜지 않았다 — 모든 글이 옛 판정
+    m = re.fullmatch(r'(\d{4}-\d{2}-\d{2})\.html', os.path.basename(str(path or '')))
+    if not m:
+        return False
+    try:
+        datetime.date.fromisoformat(m.group(1))
+    except ValueError:
+        return False
+    return m.group(1) < STRICT_FROM
+
+
+def _enforcing():
+    """1a 를 켰는가 — 판정은 `verification.inputs.enforcing` 한 곳, 그 패키지를 가져올 수 없는 격리 사본에서만 사본 날짜."""
+    try:
+        from verification.inputs import enforcing
+    except ImportError:
+        return STRICT_FROM is not None
+    return enforcing()
+
+
+def _recheck():
+    """재검사 플래그 — 켠 뒤에만 붙인다(꺼져 있으면 검사기 인자가 1a 전과 같다)."""
+    return ['--recheck'] if _enforcing() else []
+
+
+def legacy_post(path):
+    """이 글이 옛 판정을 받을 수 있는가 — 판정은 `verification.inputs.legacy_post` 한 곳(1a 구현 검토 2회차 F5)."""
+    try:
+        from verification.inputs import legacy_post as rule
+    except ImportError:
+        rule = _legacy_post_copy
+    return rule(path)
+
+
+def strict_for(path):
+    """일간 글 자리(posts/·kr/posts/)의 글 가운데 옛 판정을 받지 못하는 것 — 이름이 정규가 아니어도 엄격하다."""
+    return bool(_DAILY_DIR.match(path or '')) and not legacy_post(path)
+
+
 # 원본도 실패했다는 이유로 넘기지 않는 게이트 — corrector.NEVER_TOLERATE 와 같은 뜻.
 NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_contested.py',
                             'check_sources.py'])
@@ -287,14 +337,14 @@ def _violations(text):
     return '\n'.join(l for l in (text or '').splitlines() if not _INFO_LINE.match(l))
 
 
-def judge(baseline, after):
-    """거부 이유 목록 — 비면 통과."""
+def judge(baseline, after, strict=False):
+    """거부 이유 목록 — 비면 통과. strict(1a 적용일 뒤 글)면 0·1 밖의 종료는 원본과 같아도 거부한다."""
     bad = []
     for name, (code, text) in after.items():
         if code == 0:
             continue
         was = baseline.get(name)
-        if name in NO_TOLERATE_EXIT2 and code not in (0, 1):
+        if (strict or name in NO_TOLERATE_EXIT2) and code not in (0, 1):
             bad.append(f'{name} 판정 불가 (종료 {code}): {text[-300:]}')   # 2·시간 초과(124) 모두
             continue
         if was and was[0] != 0 and was[0] == code and _violations(was[1]) == _violations(text) \
@@ -382,7 +432,7 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
                                  cycle.group(1) if cycle else None, research_root)
             baseline = run_gates(clone, cmds, timeout)
             Path(post).write_text(new, encoding='utf-8')
-            bad = judge(baseline, run_gates(clone, cmds, timeout))
+            bad = judge(baseline, run_gates(clone, cmds, timeout), strict=strict_for(item.path))
             if not APPLY:
                 verdict = ('거부 — ' + ' / '.join(bad)) if bad else '통과'
                 path, changed = _record(root, item, html, new, skipped, verdict)
@@ -416,7 +466,7 @@ def apply(root, item, payload, workdir, evidence_datadir, research_root=None, ti
                 Path(post).write_text(html, encoding='utf-8')
                 base = run_gates(clone, cmds, timeout)
                 Path(post).write_text(new, encoding='utf-8')
-                bad = judge(base, run_gates(clone, cmds, timeout))
+                bad = judge(base, run_gates(clone, cmds, timeout), strict=strict_for(item.path))
                 if _git(clone, 'status', '--porcelain', '--untracked-files=no').stdout.strip():
                     return '게이트 재실행이 작업 폴더를 바꿨다 — 푸시하지 않는다'
                 return ('rebase 뒤 게이트 거부 — ' + ' / '.join(bad)) if bad else None

@@ -13,11 +13,20 @@
   prepub_review.py merge-verdicts --pairs pairs.json --first v1.json --second v2.json --out verdicts.json
       판단 문장 낱말까지 바뀐 묶음(`judgment: true`)은 두 번의 의미 검사가 **둘 다 same** 일 때만 same.
       나머지 묶음은 첫 검사를 따른다. 두 답의 proposed_sha256 이 pairs 와 다르면 exit 2.
-  prepub_review.py record --dir DIR --section us|kr --date D [--facts-applied N] [--facts-rejected N]
-                          [--style-applied N] [--style-rejected N]
-      → reviews/prepublish/<section>/<date>.json (발행 커밋에 함께 넣는다)
+  prepub_review.py facts-done --dir DIR --html H [--applied N] [--rejected N]
+      정확성 지적을 전부 판정했고, 받아들인 수정을 반영해 게이트를 다시 통과했다는 표시(검토가 온 판에만).
+  prepub_review.py seal --dir DIR --html H --why style|note
+      판정을 마친 판에 guard 를 지난 문체 편집·에디터 노트만 더했다는 표시.
+  prepub_review.py record --dir DIR --html posts/D.html --section us|kr --date D [--style-applied N] …
+      → reviews/prepublish/<section>/<date>.json (발행 커밋에 함께 넣는다). **facts-done 이 없거나 올릴 파일이 판정을 마친
+      판(또는 봉인한 판)과 다르면 exit 10** — 쓰지 않는다.
+  prepub_review.py hold --dir DIR --section us|kr --date D [--state …] [--html H] [--push]
+      글을 세운다 — 닫힌 칸만 든 보류 기록을 쓰고, 잠금을 어떻게 놓을지 마지막 줄로 알린다:
+      `lock=release`(검토가 아예 돌지 않았다 — 재시도가 처음부터 다시 써도 잃는 것이 없다) ·
+      `lock=hold:<부호>`(판정을 시작했다 — 사람이 `run_lock.sh unhold` 하기 전에는 다시 쓰지 않는다).
 
-fallback 은 실패가 아니다 — 그날 글은 지금처럼 발행되고 맥 러너가 발행 뒤에 본다.
+**막기(2026-11-22 사용자 「발행 전에 제대로 검사하고 다 끝난 다음에 올려야지」)**: exit 10(fallback)은 이제 「발행하지
+않는다」다. 그날 글은 세우고, 원래 판으로 되돌려 발행하지 않는다. 절차: `.claude/PREPUB_REVIEW.md` §5.
 """
 import argparse
 import json
@@ -49,7 +58,7 @@ def cmd_submit(a):
     status = {'section': a.section, 'date': a.date, 'state': 'fallback'}
     import shutil
     try:
-        # 무엇보다 먼저 — 검토가 실패하거나 고치다 막히면 이 판으로 되돌린다(codex 구현 #7, 재검토 #7)
+        # 무엇보다 먼저 — 제출한 판. 사람의 복구(세울 때 비공개 재료)가 이 판을 읽는다. 공개 기록의 인용은 올릴 판과 대조한다
         shutil.copyfile(a.html, os.path.join(a.out, 'original.html'))
         notes = a.notes if a.notes and os.path.isfile(a.notes) else None
         status['notes'] = bool(notes)
@@ -191,7 +200,9 @@ PUBLIC_REASON = {
     'stale_html': '기다리는 사이 초안이 바뀌었다', 'not_reviewed': 'codex 가 검토하지 못했다',
     'suspicious_output': '검토 답을 버렸다(인코딩 덩어리)', 'sandbox_failed': '검토 샌드박스 실패',
     'manifest_mismatch': '묶음 해시 불일치', 'auth_missing': '로그인 비밀값 없음', 'bad_input': '입력 형식 오류',
-    'fix_failed': '고치다 막혀 원래 판으로 발행',
+    'recovery_needed': '받아들인 수정을 반영하지 못해 세움', 'style_abort': '문체 마감이 중단을 요구해 세움',
+    'facts_unmarked': '정확성 판정 완료 표시가 없어 세움', 'mark_failed': '판정 중 표시를 달지 못해 판정하지 않음',
+    'no_status': '검토 상태 파일 없음', 'fallback': '검토 상태를 알 수 없음',
 }
 
 
@@ -212,8 +223,10 @@ def _public_findings(findings, post_text=''):
 _PLACED = frozenset({'candidate', 'not_located', 'protected'})
 
 
-def _public_clarity(findings, draft_html=''):
-    """공개 기록에 남길 명료성 지적 — **닫힌 값과, 제출한 글에 실제로 있는 인용만.**
+def _public_clarity(findings, final_html=''):
+    """공개 기록에 남길 명료성 지적 — **닫힌 값과, 올릴 판(발행본)에 실제로 있는 인용만.**
+
+    제출한 초안이 아니라 올릴 판과 대조한다 — 고치면서 지운 글자(중간판)가 공개 기록에 남지 않게(codex 구현 2회차 #2).
 
     검토자가 쓴 글(이유·고칠 방향)은 싣지 않는다 — 비공개 결과에만 있다. 분류는 네 이름, 알 수 없는 것은 가·나·다,
     길은 분류로 정해진 값(파일에 적힌 값을 믿지 않는다), 자리 결과는 세 값뿐이다. 그 밖의 글자는 빈 값이 된다.
@@ -223,7 +236,7 @@ def _public_clarity(findings, draft_html=''):
     from prepub import split as split_mod      # 길은 그 표 하나에서만 정한다
     from prepub.public import norm, visible
     route = {k: split_mod.ROUTES[k] for k in split_mod.CLARITY_KINDS}
-    text = visible(draft_html)
+    text = visible(final_html)
     out = []
     for f in findings or ():
         if not isinstance(f, dict) or f.get('kind') not in route:
@@ -247,36 +260,192 @@ def _public_meta(meta):
             'over_cap': count('over_cap')}
 
 
-def _draft_html(folder):
-    try:
-        with open(os.path.join(folder, 'original.html'), encoding='utf-8') as fh:
-            return fh.read()
-    except OSError:
-        return ''
-
-
-def _post_text(folder):
-    """제출한 판의 본문 글자(태그 뺌) — 인용이 글에 있는지 대조한다."""
+def _tag_stripped(html):
+    """올릴 판의 본문 글자(태그 뺌) — 문체 지적의 인용이 그 글에 있는지 대조한다."""
     import re
+    return re.sub(r'<[^>]+>', ' ', html or '')
+
+
+def _status(folder):
     try:
-        with open(os.path.join(folder, 'original.html'), encoding='utf-8') as fh:
-            return re.sub(r'<[^>]+>', ' ', fh.read())
-    except OSError:
-        return ''
+        with open(os.path.join(folder, 'status.json'), encoding='utf-8') as fh:
+            got = json.load(fh)
+        return got if isinstance(got, dict) else None
+    except (OSError, ValueError):
+        return None
+
+
+def cmd_facts_done(a):
+    import hashlib
+    status = _status(a.dir)
+    # 다시 찍기(facts_done → facts_done)는 판정 뒤 작성자가 글을 다시 고친 경우다 — 루틴이 받아들인 지적을 그 판에서
+    # 다시 대조한 뒤에만 부른다. 앞서 봉인한 판(문체·노트)은 모두 무효가 된다(codex 구현 1회차 #2).
+    if not status or status.get('state') not in ('reviewed', 'facts_done'):
+        print(f"prepub: fallback facts_unmarked — 검토가 온 판이 아니다({(status or {}).get('state')})")
+        return FALLBACK
+    with open(a.html, 'rb') as fh:
+        sha = hashlib.sha256(fh.read()).hexdigest()
+    status.update(state='facts_done', facts_sha256=sha, facts_applied=a.applied, facts_rejected=a.rejected,
+                  sealed=[])
+    _write(os.path.join(a.dir, 'status.json'), status)
+    print(f'prepub: facts_done applied={a.applied} rejected={a.rejected}')
+    return 0
+
+
+def cmd_seal(a):
+    """판정을 마친 판에 **기계적·guard 를 지난 변경**만 덧붙였다는 표시 — 문체 마감(STYLE_CLOSE guard·의미 검사)과
+    에디터 노트(apply_note). 작성자가 다시 쓴 판은 여기가 아니라 facts-done 을 다시 찍는다."""
+    import hashlib
+    status = _status(a.dir)
+    if not status or status.get('state') != 'facts_done':
+        print(f"prepub: fallback facts_unmarked — 봉인할 판정 완료 판이 없다({(status or {}).get('state')})")
+        return FALLBACK
+    with open(a.html, 'rb') as fh:
+        sha = hashlib.sha256(fh.read()).hexdigest()
+    sealed = [x for x in status.get('sealed') or [] if isinstance(x, dict)]
+    sealed.append({'sha256': sha, 'why': a.why})
+    status['sealed'] = sealed
+    _write(os.path.join(a.dir, 'status.json'), status)
+    print(f'prepub: sealed {a.why} {sha[:12]}')
+    return 0
+
+
+def _allowed(status):
+    shas = {status.get('facts_sha256')}
+    shas |= {x.get('sha256') for x in status.get('sealed') or [] if isinstance(x, dict)}
+    return {x for x in shas if isinstance(x, str) and len(x) == 64}
+
+
+# 검토가 아예 돌지 않았다 — 받아들인 것이 없으니 재시도가 처음부터 다시 써도 잃는 것이 없다(잠금을 푼다).
+# `stale_html` 은 판정 전에 나고, `mark_failed` 는 판정 중 표시를 못 달아 판정하지 않은 경우다(설계 §10.2).
+NOT_RUN = frozenset({'submit_failed', 'timeout', 'limit', 'failed', 'mismatch', 'not_reviewed', 'suspicious_output',
+                     'sandbox_failed', 'manifest_mismatch', 'auth_missing', 'bad_input', 'no_status', 'fallback',
+                     'stale_html', 'mark_failed'})
+# 판정을 시작했다 — 사람만 푼다(run_lock.sh hold 의 부호와 같은 목록)
+HOLD_CODES = ('recovery_needed', 'style_abort', 'facts_unmarked')
+
+
+def cmd_hold(a):
+    status = _status(a.dir) or {'state': 'no_status'}
+    state = a.state or str(status.get('state'))
+    if state not in NOT_RUN and state not in HOLD_CODES:
+        state = 'recovery_needed'          # 모르는 값·검토가 온 뒤의 실패는 막는 쪽
+    rid = status.get('request_id')
+    rec = {'section': a.section, 'date': a.date,
+           'request_id': rid if isinstance(rid, str) and __import__('re').fullmatch(r'[a-z]{2}-[0-9-]{10}-[0-9a-f]{12}', rid) else None,
+           'state': state, 'reason': PUBLIC_REASON.get(state, ''), 'hold': True,
+           'recorded_at': __import__('datetime').datetime.now(
+               __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+    folder = os.path.join(ROOT, 'reviews', 'prepublish', a.section)
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, f'{a.date}.json')
+    _write(path, rec)
+    lock = 'release' if state in NOT_RUN else f'hold:{state}'
+    saved = 'none'
+    if lock != 'release':
+        # 판정을 시작한 글 — 사람이 이어 고칠 재료를 비공개 레포에만 둔다(세션이 끝나면 임시 폴더는 사라진다).
+        # 검토 답(codex 문장)과 고치던 판이 들어 있다 — 공개 레포에는 개수와 부호뿐이다. 실패해도 세우는 것은 그대로.
+        files = {}
+        for name in ('status.json', 'original.html', 'review.md', 'facts.md', 'split.json', 'candidates.json',
+                     'verdicts.md'):
+            if os.path.isfile(os.path.join(a.dir, name)):
+                files[name] = os.path.join(a.dir, name)
+        if a.html and os.path.isfile(a.html):
+            files['current.html'] = a.html
+        rid_dir = rec['request_id'] or 'no-request'
+        try:
+            submit_mod.upload({f'holds/{a.section}/{a.date}/{rid_dir}/{k}': v for k, v in files.items()},
+                              submit_mod.HOLDS_BRANCH, f'hold {a.section} {a.date} {state}')
+            saved = 'private'
+        except (submit_mod.SubmitError, OSError):
+            saved = 'failed'
+    pushed = 'skipped'
+    if a.push:
+        try:
+            push_record(ROOT, os.path.relpath(path, ROOT), f'Hold {a.date} brief (prepub {state})')
+            pushed = 'ok'
+        except RecordPushError as exc:
+            pushed = 'failed'
+            print(f'prepub: hold record push failed — {str(exc)[:160]}')
+    print(f"prepub: held {os.path.relpath(path, ROOT)} state={state} materials={saved} pushed={pushed} lock={lock}")
+    return 0
+
+
+class RecordPushError(Exception):
+    pass
+
+
+def push_record(root, rel, message, tries=3, run=None):
+    """보류 기록 **한 파일만** 바뀐 커밋을 origin/main 위에 지어 main 에 민다(codex 구현 1회차 #1).
+
+    루틴의 인덱스·로컬 커밋은 쓰지 않는다 — 문체 마감 B 가 `git add -A` 한 뒤이거나 STEP 3 의 발행 커밋을 이미 만든 뒤에
+    세워도, 올라가는 것은 origin/main 의 나무 + 이 파일뿐이다. 거절되면 다시 받아 그 위에 다시 짓는다.
+    """
+    import subprocess
+    import tempfile
+    import time
+    run = run or subprocess.run
+
+    def git(*args, env=None):
+        out = run(['git', '-C', root, *args], capture_output=True, text=True, env=env, timeout=60)
+        if out.returncode:
+            raise RecordPushError(f"git {args[0]}: {(out.stderr or '').strip()[-200:]}")
+        return (out.stdout or '').strip()
+    for attempt in range(tries):
+        git('fetch', '-q', 'origin', 'main')
+        base = git('rev-parse', 'FETCH_HEAD')
+        blob = git('hash-object', '-w', os.path.join(root, rel))
+        fd, index = tempfile.mkstemp(prefix='prepub-hold-index-')
+        os.close(fd)
+        os.unlink(index)
+        env = dict(os.environ, GIT_INDEX_FILE=index)
+        try:
+            git('read-tree', base, env=env)
+            git('update-index', '--add', '--cacheinfo', f'100644,{blob},{rel}', env=env)
+            tree = git('write-tree', env=env)
+        finally:
+            if os.path.exists(index):
+                os.unlink(index)
+        changed = git('diff-tree', '--no-commit-id', '--name-only', '-r', base, tree).split()
+        if changed not in ([rel], []):
+            raise RecordPushError(f'기록 밖 파일이 섞였다: {changed[:5]}')
+        commit = git('commit-tree', tree, '-p', base, '-m', message)
+        out = run(['git', '-C', root, 'push', '-q', 'origin', f'{commit}:refs/heads/main'],
+                  capture_output=True, text=True, timeout=60)
+        if out.returncode == 0:
+            return commit
+        if attempt == tries - 1:
+            raise RecordPushError(f"push: {(out.stderr or '').strip()[-200:]}")
+        time.sleep(2 * (attempt + 1))
+    raise RecordPushError('push')
 
 
 def cmd_record(a):
+    import hashlib
+    status = _status(a.dir)
+    if not status or status.get('state') != 'facts_done':
+        # 막기 — 정확성 판정을 끝냈다는 표시가 없는 판은 발행 기록을 만들지 않는다. 루틴은 §5 로 세운다.
+        print(f"prepub: fallback facts_unmarked — facts-done 표시 없음({(status or {}).get('state')})")
+        return FALLBACK
+    # 올릴 파일이 판정을 마친 판(또는 그 판에 봉인한 변경)과 바이트까지 같아야 한다 — 판정 뒤에 다시 쓴 판이
+    # 옛 표시로 나가지 않게(codex 구현 1회차 #2)
     try:
-        with open(os.path.join(a.dir, 'status.json'), encoding='utf-8') as fh:
-            status = json.load(fh)
-    except (OSError, ValueError):
-        status = {'state': 'fallback', 'reason': 'status.json 없음'}
+        with open(a.html, 'rb') as fh:
+            final_bytes = fh.read()
+        final = hashlib.sha256(final_bytes).hexdigest()
+    except OSError:
+        final_bytes, final = b'', None
+    if final not in _allowed(status):
+        print('prepub: fallback facts_unmarked — 올릴 판이 판정을 마친 판과 다르다(다시 쓴 판은 facts-done 을 다시 찍는다)')
+        return FALLBACK
     try:
         with open(os.path.join(a.dir, 'split.json'), encoding='utf-8') as fh:
             split = json.load(fh)
     except (OSError, ValueError):
         split = {}
-    state = a.state or status.get('state')
+    # 공개 기록의 인용은 **해시를 잰 바로 그 바이트**(올릴 판)에 남아 있는 것만 — 제출 초안에만 있던 글자는 빈 값이 된다
+    final_html = final_bytes.decode('utf-8', errors='replace')
+    state = 'reviewed'
     # 공개 기록의 이유는 우리가 만든 상태 이름뿐이다 — codex·러너 출력은 옮기지 않는다(codex 구현 재검토 #1)
     rec = {'section': a.section, 'date': a.date, 'request_id': status.get('request_id'),
            'draft_sha': status.get('draft_sha'), 'state': state,
@@ -286,17 +455,18 @@ def cmd_record(a):
            'style_excluded': len(split.get('excluded', [])),
            'style_unplaced': len(split.get('unplaced', [])),
            'style_dropped': len(split.get('dropped', [])),
-           'facts_applied': a.facts_applied, 'facts_rejected': a.facts_rejected,
+           'facts_applied': int(status.get('facts_applied') or 0), 'facts_rejected': int(status.get('facts_rejected') or 0),
            'style_applied': a.style_applied, 'style_rejected': a.style_rejected,
            'skeleton_rejected': a.skeleton_rejected, 'checker_rejected': a.checker_rejected,
            # 주간 묶음(`scripts/review/style_digest.py`)이 읽는다 — 반복되는 꼴을 예문으로 되먹인다
-           'style_findings': _public_findings(split.get('style_findings', []), _post_text(a.dir)),
+           'style_findings': _public_findings(split.get('style_findings', []), _tag_stripped(final_html)),
            'recorded_at': __import__('datetime').datetime.now(
-               __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+               __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+           'facts_done': True, 'final_sha256': final}
     if isinstance(split, dict) and 'clarity' in split:
         # 덧붙이는 칸이다 — 만들다 무슨 일이 나도 지금 형식의 기록으로 내린다. 발행을 막거나 되돌리는 값이 아니다.
         try:
-            extra = {'clarity': _public_clarity(split.get('clarity'), _draft_html(a.dir)),
+            extra = {'clarity': _public_clarity(split.get('clarity'), final_html),
                      'clarity_meta': _public_meta(split.get('clarity_meta'))}
             json.dumps(extra)
         except Exception:
@@ -338,16 +508,31 @@ def main(argv=None):
     p.add_argument('--out', required=True)
     p = sub.add_parser('record')
     p.add_argument('--dir', required=True)
+    p.add_argument('--html', required=True, help='실제로 올릴 파일(posts/[DATE].html) — 판정을 마친 판과 같아야 한다')
     p.add_argument('--section', required=True, choices=('us', 'kr'))
     p.add_argument('--date', required=True)
-    p.add_argument('--state', default=None, choices=('fix_failed',),
-                   help='검토는 왔지만 고치다 막혀 원래 판으로 발행할 때')
-    for k in ('facts-applied', 'facts-rejected', 'style-applied', 'style-rejected',
-              'skeleton-rejected', 'checker-rejected'):
+    for k in ('style-applied', 'style-rejected', 'skeleton-rejected', 'checker-rejected'):
         p.add_argument(f'--{k}', type=int, default=0)
+    p = sub.add_parser('facts-done')
+    p.add_argument('--dir', required=True)
+    p.add_argument('--html', required=True)
+    p.add_argument('--applied', type=int, default=0)
+    p.add_argument('--rejected', type=int, default=0)
+    p = sub.add_parser('hold')
+    p.add_argument('--dir', required=True)
+    p.add_argument('--section', required=True, choices=('us', 'kr'))
+    p.add_argument('--date', required=True)
+    p.add_argument('--state', default=None, choices=('recovery_needed', 'style_abort', 'stale_html', 'mark_failed'))
+    p.add_argument('--html', default=None, help='지금 고치던 판 — 판정을 시작한 글이면 비공개 레포에 함께 둔다')
+    p.add_argument('--push', action='store_true', help='보류 기록 한 파일만 든 커밋을 origin/main 위에 지어 민다')
+    p = sub.add_parser('seal')
+    p.add_argument('--dir', required=True)
+    p.add_argument('--html', required=True)
+    p.add_argument('--why', required=True, choices=('style', 'note'))
     a = ap.parse_args(argv)
     return {'submit': cmd_submit, 'wait': cmd_wait, 'split': cmd_split,
-            'merge-verdicts': cmd_merge, 'record': cmd_record}[a.cmd](a)
+            'merge-verdicts': cmd_merge, 'record': cmd_record, 'facts-done': cmd_facts_done,
+            'hold': cmd_hold, 'seal': cmd_seal}[a.cmd](a)
 
 
 if __name__ == '__main__':

@@ -14,6 +14,8 @@
 섹터 ETF를 빼버리는 선택지도 있었지만, Naver가 업종 단위 거래대금을 안 주기 때문에
 리포트에서 업종별 **자금량**이 드러나는 곳이 여기뿐이라 유지 쪽으로 결정했다.
 """
+from common.movers import UNIVERSE_TOP_N
+
 
 ETF_BRANDS = ("KODEX", "TIGER", "SOL", "ARIRANG", "KBSTAR", "HANARO",
               "PLUS", "ACE", "KOSEF", "RISE", "TIMEFOLIO", "WOORI", "FOCUS")
@@ -158,7 +160,7 @@ def normalize_top_value(rows: list, top_n: int = 10) -> list:
     return sorted(groups.values(), key=lambda x: -x["value"])[:top_n]
 
 
-def stock_moves(rows: list, top_n: int = 60) -> list:
+def stock_moves(rows: list, top_n: int = UNIVERSE_TOP_N) -> list:
     """거래대금 상위 개별주 후보 — 특징주 문장의 가격 출처가 될 종목들.
 
     2026-09-23 KR 발행본은 삼성전자 +3.25% 같은 **가격**을 「파이낸셜뉴스는 …라고 전했다」로

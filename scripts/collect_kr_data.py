@@ -109,6 +109,184 @@ def _check_indices(indices, prev_diffs, report_date):
     return ohlc, index_checks, index_mode
 
 
+# ── 수집 상태 칸(2026-11-17, 공통 계약 A) ──────────────────────────────────
+# 쓰는 자리에서 그 파일이 무엇을 받았고 무엇을 못 받았는지 적는다. 「성공」과 「대상 없음 확인」은 따로다.
+
+def market_collect(market):
+    """kr_market_data.json — 필수 = 기존 `complete`(코어 넷). `missing` 은 비-코어까지 그대로 옮긴다."""
+    from common import collect_status as C
+    if not market.get("indices"):
+        return C.failed(market.get("report_date"), "Naver + yfinance", "지수를 하나도 읽지 못했다",
+                        missing=market.get("missing"))
+    return C.build("ok" if market.get("complete") else "partial", market.get("report_date"), "Naver + yfinance",
+                   missing=market.get("missing"), required_ok=bool(market.get("complete")), empty="has_data")
+
+
+def flows_collect(report_date, flow_checks, flows_out):
+    """kr_flows.json — 시장별 수급 상태. `as_of` 는 **원천이 말한 거래일** — 두 시장 최신 행 가운데 이른 날
+    (1a 구현 검토 #3: 전에는 최신 행이 지난 날이어도 발행일). 전 거래일 기준은 수집 실패가 아니어서 status 는 그대로,
+    검사 쪽이 `as_of ≠ 발행일` 로 본다(정상적으로 전 거래일인 날을 허용할지는 사용자 결정 — 지금은 허용하지 않는다)."""
+    from common import collect_status as C
+    missing = [f"flows:{m}:{(flow_checks.get(m) or {}).get('state', 'absent')}" for m in ("KOSPI", "KOSDAQ")
+               if (flow_checks.get(m) or {}).get("state") != "ok"]
+    stale = [m for m in ("KOSPI", "KOSDAQ") if (flows_out.get(m) or {}).get("stale")]
+    latest = [d for d in ((flows_out.get(m) or {}).get("latest_date") for m in ("KOSPI", "KOSDAQ")) if d]
+    return C.by_counts(min(latest) if latest else report_date, "Naver 투자자별 매매동향", missing, 2,
+                       detail=("전 거래일 기준: " + ", ".join(stale)) if stale else None)
+
+
+def intraday_collect(report_date, intraday, dates=None):
+    """kr_intraday.json — 지수 분봉. `dates` = 시장별 원천 봉의 거래일(`sources.fetch_intraday_dated`). 그날 봉이
+    아니거나 날짜를 모르면 그 시장은 결측(`stale:<시장>:<날짜>`), `as_of` 는 원천 날짜 가운데 이른 날
+    (1a 구현 검토 #3). OHLC 는 선택 칸(없으면 비운다)이라 detail 에만."""
+    from common import collect_status as C
+    dates = dates or {}
+    missing = []
+    for c in ("KOSPI", "KOSDAQ"):
+        if not intraday.get(c):
+            missing.append(c)
+        elif dates.get(c) != report_date:
+            missing.append(f"stale:{c}:{dates.get(c) or 'unknown'}")
+    no_ohlc = [c for c in ("KOSPI", "KOSDAQ") if intraday.get(c) and f"{c}_ohlc" not in intraday]
+    seen = [d for d in (dates.get(c) for c in ("KOSPI", "KOSDAQ")) if d]
+    as_of = min(seen) if seen and min(seen) < report_date else report_date
+    return C.by_counts(as_of, "Naver 분봉", missing, 2,
+                       detail=("OHLC 없음: " + ", ".join(no_ohlc)) if no_ohlc else None)
+
+
+def econ_collect(report_date, econ):
+    """kr_econ.json — 키가 없거나(pending) 응답이 비면 failed, 못 받은 지표·그날 날짜가 아닌 일별 금리는 missing."""
+    from common import collect_status as C
+    src = "ECOS (한국은행 경제통계시스템)"
+    if not econ or econ.get("pending") or not isinstance(econ.get("series"), dict):
+        return C.failed(report_date, src, (econ or {}).get("note") or "ECOS 응답 없음")
+    total = len(kr_econ.SPECS)
+    missing = list(econ.get("missing") or [])
+    for label, row in sorted(econ["series"].items()):
+        d = (row or {}).get("date") or ""
+        if len(d) == 10 and d != report_date:          # 일별 금리인데 그날 값이 아니다(월별 기준금리는 YYYY-MM)
+            missing.append(f"stale:{label}:{d}")
+    if not econ["series"]:
+        return C.failed(report_date, src, "지표 0건", missing=missing)
+    return C.build("partial" if missing else "ok", report_date, src, missing=missing,
+                   empty="has_data", checked=len(econ["series"]), expected=total)
+
+
+def stance_collect(report_date, ev, prior_state):
+    """kr_stance_eval.json — 어제 원장을 못 읽었으면 「첫 회차」로 읽히면 안 된다(failed). 원장이 없으면 판정할
+    대상이 없음을 확인한 것(confirmed_none). 레벨·종가가 비어 판정불가면 partial."""
+    from common import collect_status as C
+    src = "kr_stance.json + 그날 지수 종가"
+    if prior_state == "unreadable":
+        return C.failed(report_date, src, "kr_stance.json 읽기 실패 — 첫 회차와 구별할 수 없다",
+                        missing=["kr_stance.json"])
+    if prior_state == "absent":
+        return C.build("ok", report_date, src, empty="confirmed_none", detail="원장 없음 — 첫 회차")
+    if ev.get("verdict") in ("유효", "무효화"):
+        return C.build("ok", report_date, src, empty="has_data")
+    miss = "invalidation.level" if ev.get("metric") is None else f"indices.{ev.get('metric')}"
+    return C.build("partial", report_date, src, missing=[miss], empty="has_data")
+
+
+def session_collect(report_date, ctx, holidays):
+    """kr_session.json — **계산된 결과**가 그날 것인지로 판정한다(1a 구현 검토 #4: 전에는 원자료가 비지만 않으면
+    선물·환율·해외 지수가 모두 지난 날 것이어도 성공이었다).
+
+    * 선물 ES·NQ, 원달러: 그날 한국 정규장 창(`kr_hours_window`·`usdkrw_window`, KST 로 자른다)이 None 이면 결측 —
+      지난 날 봉뿐이면 창이 비어 None 이 된다. 창이 있어도 마지막 봉이 `kr.session.WINDOW_END` 에 못 미치면
+      `incomplete_window:<이름>`(2회차 F2), 마지막 봉 시각을 못 읽으면 `incomplete_window:<이름>:unknown`.
+    * 전일 미국장(`us_prev.as_of`): 기대 날짜 = 미국 휴장 달력(`data/market_holidays.json` 의 us)으로 센 report_date
+      직전 미국 거래일. 다르면 결측. 달력이 그날을 덮지 않거나 못 읽으면 판정할 수 없어 결측(성공으로 두지 않는다).
+    * 아시아 지수: 일본(닛케이)은 달력(jp)이 있어 기대 날짜와 대조한다. 달력이 없는 항셍·상해·대만은 한 곳이 지난
+      날이면 휴장과 가를 수 없어 detail 에만 남기고(10/01~11/16 발행 30일 중 9일이 휴장으로 그랬다), **넷 다 그날
+      값이 없으면** 결측(11/16 실측 — 넷 모두 11/13).
+    """
+    from common import collect_status as C
+    from kr import session as kr_session
+    ctx = ctx or {}
+    missing, notes = [], []
+    fut = ctx.get("us_futures_during_kr") or {}
+    missing += [f"futures:{lab}" for lab, _ in kr_session.FUTURES if not fut.get(lab)]
+    if not ctx.get("usdkrw_intraday"):
+        missing.append("usdkrw")
+    # 창이 있어도 장 끝까지 왔는지 따로 본다(2회차 F2 — 전에는 09:00·09:30 봉 둘이면 성공이었다). 선물·환율 각각.
+    cut = []
+    for lab, win in [(lab, fut.get(lab)) for lab, _ in kr_session.FUTURES] + [("usdkrw", ctx.get("usdkrw_intraday"))]:
+        if not win:
+            continue
+        done, why = kr_session.window_complete(win)
+        if done is None:
+            missing.append(f"incomplete_window:{lab}:unknown")
+            cut.append(f"{lab} {why}")
+        elif not done:
+            missing.append(f"incomplete_window:{lab}")
+            cut.append(f"{lab} {why}")
+    # 어떤 기준으로 봤는지는 늘 적는다 — 조기 마감을 말해 줄 달력이 없어 정규장 마감 하나로 본다
+    end = "%02d:%02d" % kr_session.WINDOW_END
+    notes_window = (f"장중 창 완결 기준: 마지막 봉 {end} KST 이후(정규장 15:30, 조기 마감·개장 지연 달력 없음 — "
+                    "다른 마감 시각을 추정하지 않는다)" + ((" — 미완결: " + ", ".join(cut)) if cut else ""))
+    us = ctx.get("us_prev")
+    want_us, why_us = kr_session.expected_session(report_date, (holidays or {}).get("us"), before=True)
+    if not us:
+        missing.append("us_market_data")
+    elif want_us is None:
+        missing.append(f"us_prev:{why_us}")
+    elif us.get("as_of") != want_us:
+        missing.append(f"us_prev:{us.get('as_of')}≠{want_us}")
+    peers = ctx.get("asia_peers") or {}
+    dates = peers.get("dates") or {}
+    rows = peers.get("rows") or {}
+    missing += [f"peer:{name}" for name, _ in kr_session.PEERS if name not in rows]
+    if rows and not any(dates.get(n) == report_date for n in rows):
+        missing.append(f"peers:none_on_{report_date}")
+    want_jp, why_jp = kr_session.expected_session(report_date, (holidays or {}).get("jp"), before=False)
+    for name in kr_session.CALENDAR_PEERS:
+        if name not in rows:
+            continue
+        if want_jp is None:
+            missing.append(f"peer:{name}:{why_jp}")
+        elif dates.get(name) != want_jp:
+            missing.append(f"peer:{name}:{dates.get(name)}")
+    for name in rows:
+        if name not in kr_session.CALENDAR_PEERS and dates.get(name) != report_date:
+            notes.append(f"{name} {dates.get(name)}")
+    if holidays is None:
+        missing.append("calendar:market_holidays.json")
+    total = len(kr_session.FUTURES) + len(kr_session.PEERS) + 2
+    detail = "; ".join(x for x in (
+        notes_window, ("기준일이 다른 아시아 지수(휴장일 수 있다): " + ", ".join(notes)) if notes else None) if x)
+    return C.by_counts(report_date, "yfinance + data/market_data.json", missing, total, detail=detail or None)
+
+
+def _holidays():
+    """거래소 휴장 달력 — 세션 자료의 기대 날짜를 정한다. 못 읽으면 None(세션 자료가 partial 이 된다)."""
+    for cand in ("data/market_holidays.json", "../data/market_holidays.json"):
+        if os.path.exists(cand):
+            try:
+                with open(cand, encoding="utf-8") as f:
+                    return json.load(f)
+            except (OSError, ValueError):
+                return None
+    return None
+
+
+def top_value_collect(report_date, top_value, error):
+    from common import collect_status as C
+    if error:
+        return C.failed(report_date, "Naver 거래대금 상위", error)
+    if not top_value:
+        return C.failed(report_date, "Naver 거래대금 상위", f"양수 행 {TOP_MIN_POSITIVE}개 미만 — 표 결측")
+    return C.build("ok", report_date, "Naver 거래대금 상위", empty="has_data", checked=len(top_value))
+
+
+def index_etf_collect(report_date, index_etf, error):
+    from common import collect_status as C
+    if error:
+        return C.failed(report_date, "Naver 거래대금 상위(지수 ETF)", error)
+    return C.build("ok", report_date, "Naver 거래대금 상위(지수 ETF)",
+                   empty="has_data" if index_etf else "confirmed_none", checked=len(index_etf))
+
+
 def main(outdir: str, assetdir: str = "kr/assets"):
     from kr.history import resolve_report_date
     os.makedirs(outdir, exist_ok=True)
@@ -218,6 +396,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     # 지수·해외 ETF 는 상위 표에서 빠지지만(2026-07-29) 실행 조건의 유동성 근거로는
     # 필요하다 — 같은 raw 에서 갈라 따로 쓴다. 비-코어.
     index_etf, candidates = [], []
+    top_error = None
     try:
         raw_top, top_stats = sources.fetch_top_value_stats("0")
         top_value = normalize_top_value(raw_top, top_n=10)
@@ -238,6 +417,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
         print(f"::warning::KR 거래대금 수집 실패 — {str(e)[:120]}")
         top_value = []
         top_check = {"error": str(e)[:200]}
+        top_error = str(e)[:200]
 
     # 개별주 등락 — KRX 종가 기준(yfinance). 네이버 등락은 넥스트레이드 통합가라 쓰지 않는다. 비-코어.
     moves = []
@@ -282,6 +462,7 @@ def main(outdir: str, assetdir: str = "kr/assets"):
     # 움직인 종목 — 지수 기여 상·하위 2 + |등락| ≥ 5% 를 업종·방향으로 묶어 최대 5묶음.
     # 리서치가 묶음마다 「왜」를 찾는다(2026-09-24). 업종은 후보만 조회한다. 비-코어.
     kr_movers = {"report_date": report_date, "groups": []}
+    lookup_failed, picked = [], set()
     try:
         caps = {r["name"]: r.get("cap") or 0 for r in raw_top} if candidates else {}
         codes = {c["name"]: c["code"] for c in candidates}
@@ -294,12 +475,18 @@ def main(outdir: str, assetdir: str = "kr/assets"):
                 no = sources.fetch_stock_industry(codes[name])
             except Exception:
                 no = None
+                lookup_failed.append(name)
             industries[name] = names.get(no) if no else None
         kr_movers = movers_mod.build(report_date, "코스피 거래대금 상위 60 개별주(KRX 종가)",
                                      rows, industries)
     except Exception as e:
         print(f"movers failed: {e}", file=sys.stderr)
         kr_movers = {"report_date": report_date, "groups": [], "error": str(e)[:200]}
+    # 묶음 0개가 「움직인 종목 없음」인 것은 후보를 거의 다 잰 날뿐이다 — 후보가 비었거나(거래대금 실패)
+    # 그날 KRX 봉을 거의 못 쟀으면(늦은 실행) failed·partial 로 적는다(2026-11-17).
+    movers_mod.stamp(kr_movers, source="Naver 거래대금 상위 + yfinance KRX 일봉",
+                     checked=len(moves), expected=len(candidates),
+                     lookup_failed=lookup_failed, lookup_total=len(picked))
 
     # 테마 랭킹
     try:
@@ -309,9 +496,10 @@ def main(outdir: str, assetdir: str = "kr/assets"):
 
     # 장중 30분봉 (Naver 분봉 다운샘플) + 당일 OHLC — 코스닥은 수급 차트 우축에도 쓴다
     intraday = {}
+    intraday_dates = {}
     for code in ("KOSPI", "KOSDAQ"):
         try:
-            intraday[code] = sources.fetch_intraday(code)
+            intraday_dates[code], intraday[code] = sources.fetch_intraday_dated(code)
             # 위 등락률 검증에서 받은 integration 을 다시 쓴다. flow_bizdate 는 싣지 않는다(기존 계약)
             if ohlc.get(code) is not None:
                 intraday[f"{code}_ohlc"] = {k: v for k, v in ohlc[code].items() if k != "flow_bizdate"}
@@ -352,37 +540,48 @@ def main(outdir: str, assetdir: str = "kr/assets"):
         missing.append("flows_intraday")
 
     market = {"report_date": report_date, "complete": ok, "missing": missing,
+              "collect": None,
               "indices": indices,
               "flows_date": {m: v.get("flows_date") for m, v in flows_out.items()},
               "flows_provisional": {m: v.get("flows_provisional") for m, v in flows_out.items()},
               # 검사 기록 — 작성자는 본문에 옮기지 않는다. 판 관리 manifest 가 이 사본을 남긴다(2026-11-12)
               "checks": {"index_pct": index_checks, "flows": flow_checks, "top_value": top_check}}
 
+    market["collect"] = market_collect(market)
     _write(outdir, "kr_market_data.json", market)
-    _write(outdir, "kr_flows.json", flows_out)
+    _write(outdir, "kr_flows.json", {**flows_out, "collect": flows_collect(report_date, flow_checks, flows_out)})
     _write(outdir, "kr_flows_intraday.json", intraday_flows)
     _write(outdir, "kr_program.json", program_out)
     _write(outdir, "kr_technical.json", technical_out)
     _write(outdir, "kr_top_value.json", top_value)
     _write(outdir, "kr_index_etf.json", index_etf)
+    # 목록형이라 칸을 넣을 수 없다 — 같은 모양을 _collect_status.json 에(해시는 stamp_collect.py 가 더한다)
+    from common import collect_status as C
+    C.record_sidecar(outdir, "kr_top_value.json", top_value_collect(report_date, top_value, top_error))
+    C.record_sidecar(outdir, "kr_index_etf.json", index_etf_collect(report_date, index_etf, top_error))
     _write(outdir, "kr_stock_moves.json", moves)
     _write(outdir, "kr_movers.json", kr_movers)
     _write(outdir, "kr_industry.json", industry)
     _write(outdir, "kr_theme.json", theme_rows)
-    _write(outdir, "kr_intraday.json", intraday)
-    _write(outdir, "kr_econ.json", econ)
+    _write(outdir, "kr_intraday.json", {**intraday,
+                                        "collect": intraday_collect(report_date, intraday, intraday_dates)})
+    _write(outdir, "kr_econ.json", {**econ, "collect": econ_collect(report_date, econ)})
 
     # 판단 원장 판정 — 어제 적어 둔 무효화 레벨을 오늘 종가로 검산한다. 비-코어.
     # 원장이 없으면 「판정불가」로 남고, 그게 첫 회차의 정상 상태다(부트스트랩).
     prior = None
+    prior_state = "absent"
     prior_path = os.path.join(outdir, "kr_stance.json")
     if os.path.exists(prior_path):
         try:
             with open(prior_path, encoding="utf-8") as fh:
                 prior = json.load(fh)
+            prior_state = "ok" if prior else "unreadable"
         except Exception as e:  # noqa: BLE001 — 깨진 원장이 수집을 막지 않는다
             print(f"kr_stance.json 읽기 실패: {e}", file=sys.stderr)
+            prior_state = "unreadable"
     stance_eval = stance.evaluate(prior, indices)
+    stance_eval["collect"] = stance_collect(report_date, stance_eval, prior_state)
     _write(outdir, "kr_stance_eval.json", stance_eval)
     print(f"stance: {stance_eval['verdict']} — {stance_eval['note']}")
 
@@ -482,10 +681,18 @@ def main(outdir: str, assetdir: str = "kr/assets"):
             "asia_peers_missing": peers_missing,
             "usdkrw_intraday": kr_session.usdkrw_window(fx_bars, report_date),
         }
+        session_ctx["collect"] = session_collect(report_date, session_ctx, _holidays())
         _write(outdir, "kr_session.json", session_ctx)
         print(f"session: 아시아 {len(peers)}종 / 미국 선물 {len(fut)}종")
     except Exception as e:
         print(f"kr session failed: {e}")
+        # 같은 날 앞선 실행의 kr_session.json 이 남으면 그 파일은 「성공」이라 말한다 — 이번 실행의 실패를 장부에
+        # 남긴다(1a 구현 검토 2회차 F3, `stamp_collect.py` 가 status failed·stale_copy 로 적는다)
+        try:
+            from common import collect_status as C
+            C.note_run_failure(outdir, "kr_session.json", f"{type(e).__name__}: {e}")
+        except Exception:  # noqa: BLE001 — 기록 실패가 수집을 막지 않는다
+            pass
 
     # 펀드 참고 블록 — 같은 실행의 메모리 객체로만 조립한다(새 요청 없음). 비-코어:
     # JSON 은 늘 쓰고, 그릴 수 없는 날은 HTML 을 지운다.

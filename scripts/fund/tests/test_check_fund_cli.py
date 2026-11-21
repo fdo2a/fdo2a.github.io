@@ -48,3 +48,11 @@ def test_print_block_unavailable_fails(tmp_path):
     p = subprocess.run([sys.executable, SCRIPT, '--html', 'x.html', '--datadir', str(tmp_path),
                         '--print-block'], capture_output=True, text=True)
     assert p.returncode == 1
+
+
+def test_collect_stamp_does_not_change_the_block_digest():
+    # 2026-11-17: 수집 상태 칸(collect)은 보드 내용이 아니다 — 붙여도 다시 그린 블록이 같아야 한다
+    from fund.core import digest
+    d = {'report_date': '2026-11-16', 'status': 'ok', 'units': [1, 2]}
+    assert digest(dict(d, collect={'status': 'ok', 'as_of': '2026-11-16'})) == digest(d)
+    assert digest(dict(d, status='partial')) != digest(d)

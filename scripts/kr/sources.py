@@ -52,9 +52,39 @@ def fetch_index(code: str) -> dict:
             "trade_date": trade_date, "prev_diff": num_or_none(j.get("compareToPreviousClosePrice"))}
 
 
-def downsample_30min(bars: list) -> list:
-    """분봉 리스트를 30분 앵커(:00/:30)로 다운샘플. 마지막 봉(종가) 보장.
-    bars: [{"localDateTime":"YYYYMMDDHHMMSS","currentPrice":float}, ...]"""
+def dated_30min(bars: list):
+    """분봉 리스트 → (원천 거래일 YYYY-MM-DD | None, 30분 앵커 목록). 마지막 봉(종가) 보장.
+    bars: [{"localDateTime":"YYYYMMDDHHMMSS","currentPrice":float}, ...]
+
+    거래일은 **마지막 봉의 날짜**다. `count=400` 은 한 세션(390분)보다 길어 정상 응답에도 앞 세션 꼬리가 섞이므로
+    마지막 봉과 날짜가 같은 봉만 쓴다 — 전에는 날짜를 버려 앞 세션의 15:00·15:30 이 오늘 궤적에 섞일 수 있었고,
+    API 가 지난 거래일 봉만 돌려줘도 수집기가 그날 것으로 적었다(2026-11-17, 1a 구현 검토 #3)."""
+    from verification.inputs import enforcing
+    rows = [b for b in bars or [] if len(str(b.get("localDateTime", ""))) >= 12]
+    day = str(rows[-1]["localDateTime"])[:8] if rows else None
+    try:
+        iso = date(int(day[:4]), int(day[4:6]), int(day[6:8])).isoformat() if day else None
+    except ValueError:
+        iso = None
+    if not enforcing():
+        # 1a 를 켜기 전(2026-11-20): 실리는 점은 1a 전 `downsample_30min` 그대로다 — 앞 세션 꼬리도, 모양이 깨진 봉의
+        # 처리도 바꾸지 않는다. 원천 거래일(`iso`)만 더 돌려준다(수집 상태가 쓴다).
+        return iso, _downsample_pre1a(bars or [])
+    if not rows:
+        return None, []
+    last = str(rows[-1]["localDateTime"])
+    rows = [b for b in rows if str(b["localDateTime"])[:8] == day]
+    out = {}
+    for b in rows:
+        t = str(b["localDateTime"])
+        if t[10:12] in ("00", "30"):
+            out[f"{t[8:10]}:{t[10:12]}"] = round(float(b["currentPrice"]), 2)
+    out[f"{last[8:10]}:{last[10:12]}"] = round(float(rows[-1]["currentPrice"]), 2)
+    return iso, [{"t": k, "close": v} for k, v in out.items()]
+
+
+def _downsample_pre1a(bars: list) -> list:
+    """1a 전의 `downsample_30min` 그대로 — 분봉 리스트를 30분 앵커(:00/:30)로 다운샘플. 마지막 봉(종가) 보장."""
     out = {}
     for b in bars:
         t = str(b.get("localDateTime", ""))
@@ -69,11 +99,21 @@ def downsample_30min(bars: list) -> list:
     return [{"t": k, "close": v} for k, v in out.items()]
 
 
-def fetch_intraday(code: str) -> list:
-    """KR 지수 30분봉 장중 궤적 — Naver 분봉을 30분 앵커로 다운샘플."""
-    return downsample_30min(
+def downsample_30min(bars: list) -> list:
+    """분봉 리스트를 30분 앵커(:00/:30)로 다운샘플 — 마지막 봉과 같은 날의 봉만(`dated_30min`)."""
+    return dated_30min(bars)[1]
+
+
+def fetch_intraday_dated(code: str):
+    """KR 지수 30분봉 장중 궤적 → (원천 거래일, 점들). 수집기는 거래일을 report_date 와 대조한다."""
+    return dated_30min(
         fetch_json(f"https://api.stock.naver.com/chart/domestic/index/{code}/minute?count=400",
                    timeout=15))
+
+
+def fetch_intraday(code: str) -> list:
+    """KR 지수 30분봉 장중 궤적 — Naver 분봉을 30분 앵커로 다운샘플(날짜는 `fetch_intraday_dated`)."""
+    return fetch_intraday_dated(code)[1]
 
 
 def fetch_index_ohlc(code: str) -> dict:
@@ -128,19 +168,6 @@ def walk_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 2
     if not rows:
         raise FlowsFetchError(f"수급 응답에 유효한 행이 없다 — {code} {bizdate} 기준 {max_back}일 소급", diags)
     return {"rows": rows, "diagnostics": diags, "blocked": None}
-
-
-def fetch_market_flows(code: str, bizdate: str, days: int = 10, max_back: int = 25) -> list:
-    """시장 수급 최근 N거래일 — m.stock JSON. code: KOSPI|KOSDAQ. 반환형(list)은 그대로다.
-
-    이 API 는 한 번에 하루치만 준다. 레거시 표가 주던 10거래일을 맞추려고 bizdate 를
-    하루씩 거슬러 호출한다(`walk_market_flows`). 과거 일자를 받을 수 있어야 `period.py` 의
-    extra_flows 자가치유가 산다. 막히거나 비면 예외 — 빈 결과를 성공으로 취급하지 않는다.
-    """
-    w = walk_market_flows(code, bizdate, days=days, max_back=max_back)
-    if not w["rows"]:
-        raise FlowsFetchError(f"수급 최신 행을 못 읽었다 — {code} {bizdate} ({w['blocked']})", w["diagnostics"])
-    return w["rows"]
 
 
 TOP_BAD_MIN = 5            # 형식 오류 허용: max(5, 시장 행의 1%)
@@ -203,11 +230,6 @@ def fetch_top_value_stats(sosok: str = "0", pages: int = 60):
         raise RuntimeError(f"거래대금 목록이 비었다 — marketValue 응답 확인 필요(sosok={sosok})")
     rows.sort(key=lambda r: r["value"], reverse=True)
     return rows, stats
-
-
-def fetch_top_value(sosok: str = "0", pages: int = 60) -> list:
-    """거래대금 상위 목록(list) — `fetch_top_value_stats` 의 래퍼(통계는 버린다)."""
-    return fetch_top_value_stats(sosok, pages)[0]
 
 
 def fetch_industry_names() -> dict:

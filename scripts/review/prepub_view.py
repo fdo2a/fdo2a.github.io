@@ -37,7 +37,11 @@ def start_of(market):
     return _news_start() if market == 'us-news' else EFFECTIVE
 STATUS = {'pass': '통과', 'warn': '경고', 'fail': '실패', 'indeterminate': '판정 불가',
           'not_run': '실행 안 함', 'partial': '일부만 검사',
-          'pass_with_warnings': '통과(경고 있음)', 'pass_with_gaps': '통과(검증 빈칸 있음)'}
+          'pass_with_warnings': '통과(경고 있음)', 'pass_with_gaps': '통과(검증 빈칸 있음)',
+          # 2판(prepub-record/2, 2026-11-17) — 검사 상태 na·incomplete, 글 판정 넷
+          'na': '해당 없음', 'incomplete': '미완료',
+          'verified': '검증됨', 'conditional': '조건부', 'failed': '실패'}
+V2 = 'prepub-record/2'
 
 OK, NO_RECORD, AMBIGUOUS = 'ok', 'no_record', 'ambiguous'
 
@@ -141,6 +145,8 @@ def recorded(rec, allowed=None):
         # 문자열 "false" 를 참으로 읽지 않는다(codex 구현 검토 #7). 무엇이 빠졌는지는 적는다(사용자 11/11)
         return {'readable': False, 'unreadable_why': _unreadable_why(s, gates, lists)}
     by = [g for g in gates if isinstance(g, dict)]
+    v2 = rec.get('format') == V2
+    stuck = ('indeterminate', 'incomplete') if v2 else ('indeterminate',)
     numbers = next((g.get('numbers') for g in by if g.get('name') == 'check_numbers'
                     and isinstance(g.get('numbers'), dict)), None)
     # 숫자 결과가 없을 때 왜 없는지 — 검사기 항목이 없다(도입 전) / 실행 안 함 / 판정 불가 / 돌았는데 결과가 빠졌다(손상)
@@ -155,8 +161,10 @@ def recorded(rec, allowed=None):
         'verified': s['verified'], 'blocking': [_as_str(x) for x in s.get('blocking') or []],
         'not_run': [g['name'] for g in by if g.get('status') == 'not_run'],
         'partial': [g['name'] for g in by if g.get('status') == 'partial'],
-        'indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate'],
-        'required_indeterminate': [g['name'] for g in by if g.get('status') == 'indeterminate' and g.get('required', True)],
+        'indeterminate': [g['name'] for g in by if g.get('status') in stuck],
+        'required_indeterminate': [g['name'] for g in by if g.get('status') in stuck and g.get('required', True)],
+        'v2': v2, 'na': [g['name'] for g in by if g.get('status') == 'na'] if v2 else [],
+        'inputs': _inputs_view(s.get('inputs')) if v2 else None,
         'required_failed': [g['name'] for g in by if g.get('status') == 'fail' and g.get('required', True)],
         'ref_failed': [g['name'] for g in by if g.get('status') == 'fail' and not g.get('required', True)],
         'note_numbers': [_as_str(x) for x in s.get('note_numbers') or []],
@@ -168,6 +176,8 @@ def recorded(rec, allowed=None):
         'required_pass': sum(1 for g in by if g.get('required', True) and g.get('status') in ('pass', 'warn')),
         'sources': sources, 'sources_bad': sources_bad,
         'sources_gate': None if sgate is None else sgate.get('status'),
+        # 2판: 정상 「해당 없음」은 통과도 실패도 아니다 — 따로 센다(1a 구현 검토 #11)
+        'required_na': sum(1 for g in by if g.get('required', True) and g.get('status') == 'na') if v2 else 0,
         'numbers': numbers, 'numbers_gate': None if ngate is None else ngate.get('status'), 'python': _str(_dict(rec.get('code')).get('python')),
         'created': _str(_dict(rec.get('created_at')).get('kst')),
         'reasons': {g['name']: gate_reasons(g) for g in by if g.get('status') not in ('pass',)},
@@ -193,6 +203,18 @@ def valid_sources(src):
                                     and sum(h[k] for k in _HISTORY_KEYS[1:]) == h['first_unknown']):
         return None
     return src
+
+
+def _inputs_view(inp):
+    """2판 기록의 자료 상태 — 「무엇이·왜」 문장(기록이 정책 이름 + 상태 한국어로 만든 것)과 분류 안 된 파일."""
+    if not isinstance(inp, dict):
+        return {'blocking': [], 'unclassified': [], 'warnings': 0, 'unconfirmed_empty': [], 'recollect_failed': [],
+                'accepted_missing': [], 'readable': inp is None}
+    lst = lambda k: [x for x in inp.get(k) or [] if isinstance(x, str)] if isinstance(inp.get(k), list) else []
+    return {'blocking': lst('blocking'), 'unclassified': lst('unclassified'),
+            'warnings': len(lst('warnings')), 'unconfirmed_empty': lst('unconfirmed_empty'),
+            'recollect_failed': lst('recollect_failed'), 'accepted_missing': lst('accepted_missing'),
+            'readable': True}
 
 
 def _as_str(x):
@@ -345,7 +367,11 @@ def anomalies(v):
             # 노트 때문에 허용된 필수 실패도 publish_ok 는 참이다 — 그래도 필수 검사가 실패한 글이다(codex 5회 #1)
             out.append('필수 검사 실패(' + ', '.join(rec['required_failed'][:4]) + ')')
         if rec.get('required_indeterminate'):
-            out.append('필수 검사 판정 불가(' + ', '.join(rec['required_indeterminate'][:4]) + ')')   # 참고 검사는 이상 아님(#2)
+            out.append(('필수 검사 미완료(' if rec.get('v2') else '필수 검사 판정 불가(')
+                       + ', '.join(rec['required_indeterminate'][:4]) + ')')   # 참고 검사는 이상 아님(#2)
+        inp = rec.get('inputs') or {}
+        if inp.get('blocking') or inp.get('unclassified'):
+            out.append('자료 미완료')
         if rec.get('integrity'):
             out.append('무결성 경보')
     return out
@@ -383,6 +409,11 @@ def anomaly_labels(v):
             a = '필수 검사 실패(' + ', '.join(_disp(x, rec) for x in rec['required_failed'][:4]) + ')'
         elif a.startswith('필수 검사 판정 불가('):
             a = '필수 검사 판정 불가(' + ', '.join(_disp(x, rec) for x in rec['required_indeterminate'][:4]) + ')'
+        elif a.startswith('필수 검사 미완료('):
+            a = '필수 검사 미완료(' + ', '.join(_disp(x, rec) for x in rec['required_indeterminate'][:4]) + ')'
+        elif a == '자료 미완료':
+            inp = rec.get('inputs') or {}
+            a += f'({len(inp.get("blocking") or [])}개 · 분류 안 된 파일 {len(inp.get("unclassified") or [])}개)'
         elif a == '기준 판을 정하지 못함' and v.get('why'):
             a += f'({v["why"][0]})'
         out.append(a)
@@ -407,7 +438,8 @@ def fully_verified(v):
     """검증 완료 — 경고·빈칸 없는 pass 이고 미검증 숫자가 0 으로 확인됐다(모르면 완료 아님). KR 은 표만 대조하고
     문장 숫자는 대조하지 않으므로 완료가 아니다(2026-11-13 — 미검증 0 이 찍혀도)."""
     rec = v.get('recorded') or {}
-    return bool(v.get('market') != 'kr' and rec.get('readable') and rec.get('verified') and rec.get('status') == 'pass'
+    return bool(v.get('market') != 'kr' and rec.get('readable') and rec.get('verified')
+                and rec.get('status') == ('verified' if rec.get('v2') else 'pass')
                 and rec.get('numbers') and unverified_numbers(v) == 0)
 
 
@@ -467,6 +499,8 @@ def _input_name(path):
 # KR 기록에 숫자 결과가 없는 이유(codex 설계 검토 #10) — (건별 알림 문장, 매일 요약 꼬리)
 KR_NO_NUMBERS = {
     'before': ('이 기록에는 표 숫자 검사가 없어요(검사 도입 전 기록)', '도입 전'),
+    'na': ('표 숫자 검사가 해당 없음(적용일 전 글)', '해당 없음'),
+    'incomplete': ('표 숫자 검사가 미완료로 끝났어요(자료 누락·실행 오류)', '미완료'),
     'not_run': ('표 숫자 검사를 실행 안 함(적용일 전 글이거나 건너뜀)', '실행 안 함'),
     'indeterminate': ('표 숫자 검사가 판정 불가로 끝났어요', '판정 불가'),
     'corrupt': ('표 숫자 검사는 돌았는데 결과가 기록에서 빠졌어요(기록 손상)', '기록 손상'),
@@ -477,7 +511,8 @@ def _kr_no_numbers(rec):
     st = rec.get('numbers_gate')
     if st is None:
         return 'before'
-    return st if st in ('not_run', 'indeterminate') else 'corrupt'
+    # 「해당 없음」·「미완료」는 2판의 상태다 — 1판 기록에 그 값이 있으면 전처럼 기록 손상으로 읽는다
+    return st if st in ('not_run', 'indeterminate') + (('na', 'incomplete') if rec.get('v2') else ()) else 'corrupt'
 
 
 def _kr_scope(n):
@@ -526,6 +561,16 @@ QUIET_WARN = frozenset({'check_weight', 'check_style', 'check_readability'})    
 CHECK, REVIEW, NOTE = '확인 필요', '검토 권고', '참고'
 _TAGS = ((CHECK, '확인'), (REVIEW, '검토'), (NOTE, '참고'))
 _NORMAL = frozenset({'pass', 'pass_with_warnings', 'pass_with_gaps'})
+_V2_VERDICTS = frozenset({'verified', 'conditional', 'incomplete', 'failed', 'na'})
+
+
+def _verdict_ko(rec):
+    """기록 판정의 한국어 — 2판의 판정 이름은 2판 기록에서만 읽는다. 1판 기록에 그 값이 있으면 1a 전처럼 「모르는 판정」
+    (codex 구현 검토 2회차 C4 — 공용 표에 2판 값이 들어와 손상된 1판 기록이 「검증됨」으로 보였다)."""
+    st = rec.get('status')
+    if st in _V2_VERDICTS and not rec.get('v2'):
+        return '모르는 판정'
+    return STATUS.get(st, '모르는 판정')
 SHOW_LEN = 160            # 알림 한 이유의 상한 — 넘으면 문장 끝에서 끊는다(중간 자르기 없음)
 LOOK_ITEMS = 8
 
@@ -696,7 +741,9 @@ def look_items(v):
     seen.add('integrity')                     # 기록이 blocking 에 넣는 무결성 표식 — 위 경보가 대표한다(#2)
     if 'integrity' in rec['blocking'] and not rec['integrity']:
         out.append((CHECK, '무결성 경보: 이유가 기록에 없어요'))
-    add(CHECK, rec['required_indeterminate'], '판정 불가')
+    if rec.get('inputs'):
+        seen.add('inputs')                    # 2판 기록의 자료 상태 표식 — 발행 상태의 「자료 미완료」 줄이 대표한다
+    add(CHECK, rec['required_indeterminate'], '미완료' if rec.get('v2') else '판정 불가')
     add(REVIEW, rec['note_numbers'], '실패(노트로 숫자 실패 허용)')
     add(NOTE, rec['note_format'], '실패(노트로 형식 실패 허용)')
     add(CHECK, rec['blocking'] + rec['required_failed'], '실패')
@@ -728,6 +775,43 @@ def _pair_phrase(chk, who):
     return f'발행본과 검사 기록 일부 대조 불가({w} 대조)'
 
 
+GATE_LINES = 6            # 자료 상태 한 갈래에 적는 줄 수
+
+
+def _inputs_lines(rec):
+    """2판 기록(1a 를 켠 뒤)의 자료 상태 — 「무엇이·왜」(사용자 11/11). 1판 기록에는 이 칸이 없어 줄도 없다."""
+    inp = rec.get('inputs') if rec.get('readable') else None
+    if not inp:
+        return []
+    out = []
+    # 자료가 없거나 비었거나 낡았거나 수집 실패
+    for x in inp['blocking'][:GATE_LINES]:
+        out.append(f' · 자료 미완료: {_cut(x, 120)}')
+    if len(inp['blocking']) > GATE_LINES:
+        out.append(f' · 자료 미완료: 외 {len(inp["blocking"]) - GATE_LINES}개')
+    for x in inp['unclassified'][:GATE_LINES]:
+        out.append(f' · 자료 미완료: 분류되지 않은 파일 {_cut(_input_name(x), 80)}')
+    if inp['warnings']:
+        out.append(f' · 수집 상태 표시 없는 자료 {inp["warnings"]}개(적용일 전이라 막지 않았어요)')
+    # 빈 대상 목록이 정상 0건인지 수집 실패인지 모른다 — 적용일 전이라 막지 않았다(1a 구현 검토 #2)
+    for x in inp['unconfirmed_empty'][:GATE_LINES]:
+        out.append(f' · 대상 없음 미확인: {_cut(x, 120)}')
+    if len(inp['unconfirmed_empty']) > GATE_LINES:
+        out.append(f' · 대상 없음 미확인: 외 {len(inp["unconfirmed_empty"]) - GATE_LINES}개')
+    # 이번 수집은 그 파일을 못 썼고 같은 날 옛 판으로 검사했다 — 적용일 전이라 막지 않았다(1a 구현 검토 2회차 F3)
+    for x in inp.get('recollect_failed', [])[:GATE_LINES]:
+        out.append(f' · 재수집 실패: {_cut(x, 120)}')
+    if len(inp.get('recollect_failed', [])) > GATE_LINES:
+        out.append(f' · 재수집 실패: 외 {len(inp["recollect_failed"]) - GATE_LINES}개')
+    # 사람이 승인한 기한부 결측 — 공식 기관이 발표하지 않은 지표를 검증 대상에서 조건부로 뺐다(수집 실패 허용이 아니다).
+    # 예외 ID·제외 지표·승인일·만료일·영향 범위가 한 줄에 다 들어가야 한다(2026-11-17 사용자 조건 5)
+    for x in inp.get('accepted_missing', [])[:GATE_LINES]:
+        out.append(f' · 승인된 결측(원천 미발표): {_cut(x, 600)}')
+    if len(inp.get('accepted_missing', [])) > GATE_LINES:
+        out.append(f' · 승인된 결측(원천 미발표): 외 {len(inp["accepted_missing"]) - GATE_LINES}개')
+    return out
+
+
 def status_lines(v, who=MAC):
     out = ['■ 발행 상태']
     if v['kind'] == AMBIGUOUS:
@@ -737,11 +821,12 @@ def status_lines(v, who=MAC):
     rec, chk = v.get('recorded') or {}, v.get('check') or {}
     bits = []
     if rec.get('readable'):
-        bits.append(f'필수 검사 {rec["required_pass"]}/{rec["required"]} 기록상 통과')
+        bits.append(f'필수 검사 {rec["required"]}개 중 통과 {rec["required_pass"]} · 해당 없음 {rec["required_na"]}'
+                    if rec.get('v2') else f'필수 검사 {rec["required_pass"]}/{rec["required"]} 기록상 통과')
         if not rec['publish_ok']:
             bits.append('기록상 발행 불가')
         if rec['status'] not in _NORMAL and not _ref_only(rec):
-            bits.append(f'기록 판정 {STATUS.get(rec["status"], "모르는 판정")}')
+            bits.append(f'기록 판정 {_verdict_ko(rec)}')
     elif v.get('recorded') is not None:
         out.append(f'기록의 요약을 읽지 못했어요 — {rec.get("unreadable_why") or "이유를 몰라요"}. 「통과」로 보지 않아요')
     if v.get('recorded') is None:
@@ -752,7 +837,7 @@ def status_lines(v, who=MAC):
         bits.append(f'발행본과 검사 기록을 대조하지 못했어요({_WHO[who]["name"]} 대조 결과 없음)')
     if bits:
         out.append(' · '.join(bits))
-    cw = chk.get('cat_why') or {}
+    out += _inputs_lines(rec)
     for k, label in C.CATEGORY_LABEL.items():
         st = (chk.get('cats') or {}).get(k)
         if st not in (C.UNKNOWN, C.MISMATCH) or (k == 'workspace_inputs' and _workspace_case(chk)):
@@ -1054,9 +1139,20 @@ def digest_lines(v, who=MAC):
     if bad:
         out.append('   - 즉시 확인: ' + ', '.join(bad))
     if rec.get('readable'):
-        bits = [f'판정 {STATUS.get(rec["status"], "모르는 판정")}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
+        bits = [f'판정 {_verdict_ko(rec)}', f'설정된 검사 {"완료" if rec["verified"] else "완료 아님"}']
         if rec.get('not_run') or rec.get('partial'):
             bits.append('실행 안 함·일부만 ' + ', '.join(_disp(x, rec) for x in (rec['not_run'] + rec['partial'])[:4]))
+        if rec.get('na'):
+            bits.append('해당 없음 ' + ', '.join(_disp(x, rec) for x in rec['na'][:4]))
+        inp = rec.get('inputs') or {}
+        if inp.get('blocking') or inp.get('unclassified'):
+            bits.append(f'자료 미완료 {len(inp["blocking"]) + len(inp["unclassified"])}개')
+        if inp.get('unconfirmed_empty'):
+            bits.append(f'대상 없음 미확인 {len(inp["unconfirmed_empty"])}개')
+        if inp.get('recollect_failed'):
+            bits.append(f'재수집 실패 {len(inp["recollect_failed"])}개')
+        if inp.get('accepted_missing'):
+            bits.append(f'승인된 결측(원천 미발표)이 있는 자료 {len(inp["accepted_missing"])}개')
         u = unverified_numbers(v)
         if rec.get('numbers') and v.get('market') == 'kr':
             bits.append(_kr_scope(rec['numbers']).split(',')[0])         # 「표 54칸 대조」 — 미검증 수는 바로 뒤

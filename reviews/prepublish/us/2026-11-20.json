@@ -1,0 +1,57 @@
+{
+ "section": "us",
+ "date": "2026-11-20",
+ "request_id": "us-2026-11-20-6c05c2e513cf",
+ "draft_sha": "b0eeb103a7db10bc7ba21623a46a48914b958837",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 3,
+ "style_candidates": 2,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 5,
+ "facts_rejected": 1,
+ "style_applied": 0,
+ "style_rejected": 2,
+ "skeleton_rejected": 1,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-21T16:45:48Z",
+ "clarity": [
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "2년물이 가장 크게 내렸다",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "용어",
+   "quote": "국면이 옮겨 갈 곳이 없다",
+   "cannot_tell": "나",
+   "route": "style_path",
+   "placed": "candidate"
+  },
+  {
+   "kind": "용어",
+   "quote": "확인하는 시계는 11월 23일과 24일 종가다",
+   "cannot_tell": "다",
+   "route": "style_path",
+   "placed": "candidate"
+  },
+  {
+   "kind": "문장 구조",
+   "quote": "방향이 맞아도 같은 기간 S&P 500",
+   "cannot_tell": "나",
+   "route": "record_only",
+   "placed": ""
+  }
+ ],
+ "clarity_meta": {
+  "marker": true,
+  "lines_skipped": 0,
+  "over_cap": 0
+ }
+}

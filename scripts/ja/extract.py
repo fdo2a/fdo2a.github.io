@@ -20,7 +20,6 @@ from __future__ import annotations
 import html as _html
 import json
 import re
-from bisect import bisect_right
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
 
@@ -376,10 +375,6 @@ def _jsonld_units(html, s, e, units, ctx, notes):
             units.append(Unit(0, "jsonld", val, s + a, s + b, section=None, block="script", path=path))
 
 
-def _is_ws(html, t):
-    return t.kind == "data" and not html[t.start:t.end].strip()
-
-
 def _flush_run(html, run, units, ctx):
     # 짝 맞추기: 같은 이름의 여는·닫는 인라인 태그를 스택으로 잇는다.
     pair = {}
@@ -481,9 +476,3 @@ def join(doc: Doc, texts=None) -> str:
         pos = u.end
     out.append(src[pos:])
     return "".join(out)
-
-
-def line_of(doc: Doc, offset: int) -> int:
-    """오프셋의 줄 번호(1부터) — 보고용."""
-    lines = [0] + [m.end() for m in re.finditer("\n", doc.source)]
-    return bisect_right(lines, offset)

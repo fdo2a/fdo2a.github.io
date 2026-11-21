@@ -570,7 +570,6 @@ def cmd_commit(a):
             if f'fetch{attempt}' in os.environ.get('VERSIONS_TEST_FAIL', '').split(','):
                 raise Fallback('시험용 fetch 실패')
             git(repo, 'fetch', '-q', REMOTE, BRANCH)
-            fetched = True
             published = exists(repo, f'{REMOTE}/{BRANCH}', post)   # fetch 가 되면 원격 최신만 본다(#16)
             if f'reconcile{attempt}' in os.environ.get('VERSIONS_TEST_FAIL', '').split(','):
                 raise Fallback('시험용 실패')

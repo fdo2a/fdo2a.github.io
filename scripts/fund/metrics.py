@@ -30,16 +30,6 @@ def ret(closes, n):
     return (b / a - 1) * 100
 
 
-def mom_12_1(closes):
-    """12-1 momentum: t-252 -> t-21, the classic skip of the reversal month."""
-    if not closes or len(closes) < YEAR + 1:
-        return None
-    a, b = closes[-1 - YEAR], closes[-1 - MONTH]
-    if not (_ok(a) and _ok(b)):
-        return None
-    return (b / a - 1) * 100
-
-
 def _returns(closes, n, log=False):
     if not closes or len(closes) < n + 1:
         return None
@@ -80,26 +70,6 @@ def hist_var(closes, n=60, conf=0.95):
     return max(0.0, -_percentile(r, 1 - conf) * 100)
 
 
-def sma(closes, n):
-    if not closes or len(closes) < n:
-        return None
-    tail = closes[-n:]
-    if not all(_ok(x) for x in tail):
-        return None
-    return sum(tail) / n
-
-
-def drawdown(closes, n=YEAR):
-    """% below the highest close of the last n sessions (0 at a high). Needs n valid
-    closes — a shorter history is not a 52-week high."""
-    if not closes or len(closes) < n:
-        return None
-    tail = closes[-n:]
-    if not all(_ok(x) for x in tail):
-        return None
-    return (closes[-1] / max(tail) - 1) * 100
-
-
 def _align(a, da, b, db):
     if not (a and da and b and db) or len(a) != len(da) or len(b) != len(db):
         return None, None
@@ -110,15 +80,6 @@ def _align(a, da, b, db):
             pa.append(x)
             pb.append(bmap[d])
     return pa, pb
-
-
-def rel_ret(a, da, b, db, n):
-    """%p excess of a over b across the last n shared sessions."""
-    pa, pb = _align(a, da, b, db)
-    ra, rb = ret(pa, n), ret(pb, n)
-    if ra is None or rb is None:
-        return None
-    return ra - rb
 
 
 def beta(a, da, b, db, n=60):

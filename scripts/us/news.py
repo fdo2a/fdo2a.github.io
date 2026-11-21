@@ -21,7 +21,6 @@
 """
 
 import html as _html
-import json
 import re
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime

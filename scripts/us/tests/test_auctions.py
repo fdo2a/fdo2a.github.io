@@ -364,3 +364,29 @@ def test_rr_market_adjective_without_auction_subject_passes():
     b = _book()
     blk = block(b).replace('5년물 금리는 2.0bp 내렸다.', '국채시장은 견조했고 5년물 금리는 2.0bp 내렸다.')
     assert G.check(post(b, blk), b, RD) == []
+
+
+# --- collect 칸(2026-11-17): 조회 성공·입찰 0건만 「없음 확인」 -----------------------------
+
+def test_collect_quiet_day_is_confirmed_none():
+    c = A.build(RD, history(6) + [bill()], [])['collect']
+    assert c['status'] == 'ok' and c['empty'] == 'confirmed_none' and c['required_ok']
+    assert c['as_of'] == RD and c['source'] == 'TreasuryDirect TA_WS'
+
+
+def test_collect_auction_day_is_has_data():
+    results = history(6) + [bill(), row(RD, cusip='TODAY')]
+    c = A.build(RD, results, [row(RD, cusip='TODAY')])['collect']
+    assert c['status'] == 'ok' and c['empty'] == 'has_data' and c['required_ok']
+
+
+def test_collect_pending_result_is_has_data_but_not_required_ok():
+    c = A.build(RD, history(6) + [bill()], [row(RD, btc=None, cusip='TODAY')])['collect']
+    assert c['empty'] == 'has_data' and c['required_ok'] is False
+    assert len(c['missing']) == 1 and c['missing'][0].startswith('pending:')
+
+
+def test_collect_failed_book_is_failed_and_scrubbed():
+    c = A.failed(RD, A.AuctionError('TA_WS auctioned?format=json&days=7: 목록이 아니다'))['collect']
+    assert c['status'] == 'failed' and c['empty'] == 'unknown' and c['required_ok'] is False
+    assert 'format=json' not in c['response']

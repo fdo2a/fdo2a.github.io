@@ -103,6 +103,16 @@ jobs:
       - name: Install Python deps
         run: pip install --quiet yfinance pandas lxml matplotlib certifi 'curl_cffi>=0.15.0' pypdf
 
+      - name: Mark collection start
+        # 2026-11-17 (1a 구현 검토 2회차 F3): 이번 실행의 시작 시각을 data/_collect_status.json 에 적는다. 끝의
+        # 「Stamp collection status」가 이 시각 뒤에 다시 쓰이지 않은 파일을 「이번 수집 실패」로 적는다 — 같은 날
+        # 앞선 실행의 정상 파일이 남아 있어도 성공으로 다시 찍지 않는다. 실패해도 수집은 한다(끝에서 실행을 실패로 끝낸다).
+        id: stamp_begin
+        continue-on-error: true
+        env:
+          COLLECT_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: python scripts/stamp_collect.py --datadir data --begin
+
       - name: Collect
         id: collect
         # 상한: 최근 실행은 1-8분. FF3 시운전이 티커 5개·FRED 1개를 더한다.
@@ -131,6 +141,7 @@ jobs:
         run: python scripts/record_releases.py --datadir data
 
       - name: Fetch primary releases
+        id: releases
         # A yields patch keeps the base run's releases, cross-check and evaluation (all bound to
         # that run's id) — these four steps would wipe or rebuild them under a new id.
         if: steps.collect.outputs.skipped != 'true' && steps.collect.outputs.patched != 'true'
@@ -160,6 +171,7 @@ jobs:
         run: python scripts/xcheck_components.py --datadir data
 
       - name: Evaluate macro regime
+        id: macro_eval
         # After the release texts and the component cross-check (2026-11-08): the
         # evaluation copies headline_releases — with their usable components — into
         # macro_eval.json for the writer and the gate.
@@ -202,6 +214,7 @@ jobs:
           python scripts/fetch_news.py --datadir data --bodydir _workspace/news --date "$RD"
 
       - name: Fetch Telegram channels
+        id: telegram
         if: steps.collect.outputs.skipped != 'true'
         # Non-core (2026-11-06 사용자 지시): 텔레그램 공개 채널 8개 → data/telegram/<date>.json. 증권사 글은 그
         # 증권사 견해로, 나머지는 「이런 의견도 있었다」·원문 출처로 인용한다. 원문은 _workspace/ 에만, 요약만
@@ -219,6 +232,7 @@ jobs:
           python scripts/fetch_telegram.py --market us --datadir data --bodydir _workspace/telegram --date "$RD"
 
       - name: Fetch Fed events
+        id: fed
         if: steps.collect.outputs.skipped != 'true'
         # Non-core: finds today's FOMC statement / chair speech / Jackson Hole remarks and
         # commits the primary documents verbatim, so the publication gate can check every
@@ -238,6 +252,7 @@ jobs:
         run: python scripts/update_fomc_dates.py --datadir data
 
       - name: Build the next-ten-days calendar
+        id: calendar
         if: steps.collect.outputs.skipped != 'true'
         # Non-core, same contract: what is coming (economic releases, Treasury auctions,
         # index expiry, the Fed blackout) plus the demand behind the auctions that just
@@ -252,6 +267,7 @@ jobs:
         run: python scripts/build_calendar.py --datadir data
 
       - name: Treasury coupon auction results
+        id: auctions
         if: steps.collect.outputs.skipped != 'true'
         # Non-core. The day's Note/Bond/TIPS/FRN results from TreasuryDirect TA_WS for the
         # report's 「국채 입찰」 section, compared with the same tenor's prior six auctions.
@@ -279,12 +295,28 @@ jobs:
         if: always() && steps.collect.outputs.waiting != 'true'
         run: python scripts/build_liquidity.py --datadir data --sanitize
 
+      - name: Stamp collection status
+        id: stamp
+        # 2026-11-17 (명세 「공통 계약 A」): 이 잡이 쓴 파일마다 sha256·bytes·수집 상태(collect 칸)를
+        # data/_collect_status.json 에 적는다 — 발행 전 검사가 「수집 뒤 바뀜」과 「수집 실패」를 가리는 근거.
+        # **모든 쓰기가 끝난 뒤·두 커밋 단계 앞**이어야 한다(건너뛴 실행도 유동성을 다시 쓰므로 always()).
+        # 실패해도 자료 커밋은 막지 않는다 — 옛 해시가 남으면 검사가 「수집 뒤 바뀜」으로 막는다(닫히는 쪽).
+        # 단계 결과(COLLECT_STEPS)로 「건너뛴 단계의 옛 파일」과 「돌았는데 못 쓴 파일」을 가른다(2회차 F3).
+        if: always()
+        continue-on-error: true
+        env:
+          COLLECT_STEPS: ${{ toJSON(steps) }}
+          # 시작 기록을 연 실행과 같은 ID — 다르면 그 기록을 쓰지 않는다(3회차 G4)
+          COLLECT_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: python scripts/stamp_collect.py --datadir data
+
       - name: Commit liquidity (market data already complete)
         if: always() && steps.collect.outputs.skipped == 'true' && steps.collect.outputs.waiting != 'true'
         run: |
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add -A data/liquidity 2>/dev/null || true
+          git add data/_collect_status.json 2>/dev/null || true
           # 새 발표 원장 — 첫 슬롯에서 기록이 빠졌으면 이 실행이 채운다(record_releases.py).
           git add data/history/releases.jsonl 2>/dev/null || true
           if git diff --cached --quiet; then echo 'liquidity/ledger: nothing new'; exit 0; fi
@@ -345,6 +377,8 @@ jobs:
           git add data/fed 2>/dev/null || true
           git add data/history 2>/dev/null || true
           git add data/weekly 2>/dev/null || true
+          # 수집 상태·해시(stamp_collect.py) — 같은 커밋에 들어가야 해시가 이 커밋의 바이트를 가리킨다.
+          git add data/_collect_status.json 2>/dev/null || true
           RD=$(python -c "import json;print(json.load(open('data/market_data.json'))['report_date'])")
           bash scripts/ci/push_with_retry.sh "data: market data for ${RD}${SUFFIX}"
 
@@ -365,3 +399,13 @@ jobs:
           print(f'::{level}::{msg}' if level != 'ok' else msg)
           sys.exit(1 if level == 'error' else 0)
           PY
+
+      - name: Fail the run when the collection ledger was not written
+        # 장부(시작 기록·끝 기록)를 못 썼으면 자료 커밋은 그대로 두되 실행을 실패로 끝낸다 — 조용히 넘어가지 않는다.
+        # 옛 장부가 남으면 발행 전 검사가 해시 불일치로 막는다(닫히는 쪽). 2026-11-17 1a 구현 검토 2회차 F3.
+        if: always() && (steps.stamp.outcome == 'failure' || steps.stamp_begin.outcome == 'failure')
+        run: |
+          echo "::error::수집 상태 장부(data/_collect_status.json)를 쓰지 못했다 — begin=${{ steps.stamp_begin.outcome }} stamp=${{ steps.stamp.outcome }}"
+          # 실행을 실패로 끝내는 것은 1a 를 켠 뒤다(2026-11-20) — 그 전에는 경고만 남긴다. 루틴이 수집 실행의 성공 여부를
+          # 본다(gh run watch --exit-status): 장부만 못 쓴 실행이 빨갛게 끝나면 발행 흐름이 1a 전과 달라진다.
+          PYTHONPATH=scripts python -c "import sys; from verification.inputs import enforcing; sys.exit(1 if enforcing() else 0)"

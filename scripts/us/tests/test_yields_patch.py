@@ -512,3 +512,18 @@ def test_macro_eval_is_stamped_with_the_collection_run(tmp_path, monkeypatch):
     ev_mod.main()
     ev = json.loads((tmp_path / 'macro_eval.json').read_text())
     assert ev['collection_run'] == RUN and ev['report_date'] == RD
+
+
+def test_patched_edition_carries_a_fresh_complete_collect_status(outdir, monkeypatch):
+    """1a 병합(2026-11-19): 고친 판의 `collect` 는 첫 실행의 partial 을 물려받으면 안 된다 — 고친 내용으로 다시 만든다.
+    물려받으면 complete=true 인 판이 장부에는 「네이버 종가 없음」 partial 로 남아 1a 가 막는다."""
+    use_naver(monkeypatch, naver_curve(), RD)
+    base = json.loads((outdir / 'market_data.json').read_text())
+    base['yield_drivers'] = {'rows': [{'tenor': '10Y'}]}          # 실제 판에는 있다 — 고치기가 건드리지 않는 파생 블록
+    base['collect'] = cmd.market_collect(base)
+    assert base['collect']['status'] == 'partial'
+    (outdir / 'market_data.json').write_text(json.dumps(base))
+    assert cmd.yields_patch_step(args(outdir), now=NOW) == 'patched'
+    md = json.loads((outdir / 'market_data.json').read_text())
+    assert md['collect']['status'] == 'ok' and md['collect']['required_ok'] is True
+    assert md['collect']['missing'] == []

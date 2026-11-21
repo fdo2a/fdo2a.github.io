@@ -40,11 +40,6 @@ SESSION_INPUTS = ('kr/data/kr_market_data.json', 'kr/data/kr_flows.json',
 PUBLISHED_PART = ('industry', 'top_value', 'leading_industries', 'leading_all', 'leading_undecided')
 
 
-def dated_paths(date):
-    """D 에 딸린 대표 날짜 파일(없어도 P 트리에서 확인한다)."""
-    return (f'kr/data/news/{date}.json', f'kr/data/telegram/{date}.json', f'kr/assets/kr_charts_{date}.png')
-
-
 def is_dated(path, date):
     """이름에 D 가 든 kr/data·kr/assets 파일 — 발행됐으면 P 트리 그대로(없으면 없음).
     kr_flows_intraday_<D>.png 처럼 목록에 없던 산출물도 잡는다(codex 구현 검토 1회 #3)."""

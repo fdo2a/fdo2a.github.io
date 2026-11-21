@@ -143,11 +143,14 @@ def fill_daily_gaps(daily, anchor=None):
     return daily
 
 
-def _bars30(sym, period='10d'):
+def _bars30(sym, period='10d', hl=False):
+    """30분봉 → [(시작 ISO, 종가)]. `hl` 이면 [(시작 ISO, 종가, 고가, 저가)] — S&P 세션 검증용."""
     import yfinance as yf
     h = yf.Ticker(sym).history(period=period, interval='30m')
     if h is None or not len(h):
         return None
+    if hl:
+        return [(i.isoformat(), r['Close'], r.get('High'), r.get('Low')) for i, r in h.iterrows()]
     return [(i.isoformat(), r['Close']) for i, r in h.iterrows()]
 
 
@@ -184,8 +187,9 @@ def collect_cut_rows(anchor, contracts=None):
 
     # 세션 달력 = S&P 500 일봉(30분봉과 따로 받은 근거). 30분봉은 그 세션이 마감까지 다 있는지만
     # 검증한다 — 잘리거나 빠진 날은 세션에서 빠지고 그 날을 쓰는 행은 None 이 된다.
+    # 고저가는 급변한 마감(2026-11-20)에서 공식 종가가 마지막 봉 범위 안인지 보는 데 쓴다.
     daily = retry(spx_daily, attempts=3) or {}
-    spx = retry(lambda: _bars30(ANCHOR_TICKER), attempts=3)
+    spx = retry(lambda: _bars30(ANCHOR_TICKER, hl=True), attempts=3)
     sessions = session_ends(spx or [], daily)
     calendar = sorted(daily)
     out = {}
@@ -501,20 +505,112 @@ ECON = [
 
 
 def _econ_pair(vals, tf):
-    """(Actual, Previous) — 최신 관측월의 변환값과 그 직전 변환값. 날짜로 맞춘
+    """(Actual, Previous | None) — 최신 관측월의 변환값과 그 직전 변환값. 날짜로 맞춘
     `transform_pairs` 를 쓴다(2025-10 CPI 결측 탓에 행 위치 계산이 13개월 YoY 를 냈다).
-    최신 관측월을 변환할 수 없으면 None — 지어내지 않고 행을 뺀다."""
+
+    * 최신 관측월을 변환할 수 없으면 None — 지어내지 않고 행을 뺀다(수집 상태에 no_value).
+    * 최신값은 계산되는데 **바로 앞 달**의 변환값이 없으면 (Actual, None) — 행은 만들고 직전 칸은 비운다. 더 오래된 달을
+      「직전」으로 찍지 않고, 추정치로 채우지도 않는다(2026-11-18, 1a 구현 검토 3회차 G5: 2026-11 CPI 전년 대비는 2025-11 이
+      있어 계산되지만 2026-10 전년 대비가 없어 행이 통째로 빠졌다). 표의 Previous·직전 대비는 「—」, 축 점수는 이 칸이
+      아니라 변환된 이력(`macro_metrics.transform_series`)으로 낸다."""
     from us.macro_metrics import _month, transform_pairs
     pairs = transform_pairs(vals, tf)
-    if len(pairs) < 2 or pairs[-1][0] != vals[-1][0]:
+    if not pairs or pairs[-1][0] != vals[-1][0]:
         return None
-    # Previous 도 바로 앞 달이어야 한다 — 그 달을 못 만들면 더 오래된 달을 「직전」으로 찍지 않는다.
-    if tf != 'level' and _month(pairs[-1][0]) - _month(pairs[-2][0]) != 1:
-        return None
+    if len(pairs) < 2 or (tf != 'level' and _month(pairs[-1][0]) - _month(pairs[-2][0]) != 1):
+        # 직전 칸이 빈 행을 새로 만드는 것은 1a 를 켠 뒤다(2026-11-20) — 그 전에는 1a 전처럼 행을 뺀다: 지표 목록에 행이
+        # 늘면 표·작성 입력이 달라지고, 그 행의 「— (사유)」 표기를 검사하는 규칙도 켠 뒤에만 돈다. 수집 상태에는
+        # 꺼져 있어도 no_value 로 남는다.
+        from verification.inputs import enforcing
+        return (pairs[-1][1], None) if enforcing() else None
     return pairs[-1][1], pairs[-2][1]
 
 
-def collect_econ():
+def _lacking(vals, tf):
+    """최신 관측월을 변환하는 데 필요한 **비교 관측 달** 가운데 원천에 없는 것 → `['YYYY-MM', …]`(3회차 G1).
+    전년 대비는 12개월 전, 전월 대비·차분은 한 달 전. 그 달이 원천에 있는데도 변환이 안 됐으면(값 0 등) 빈 목록 —
+    「그 달이 발표되지 않았다」와 다른 원인이다."""
+    from us.macro_metrics import _month
+    have = {_month(d) for d, _ in vals or []}
+    if not have:
+        return []
+    last = _month(vals[-1][0])
+    need = {'yoy_pct': [last - 12], 'mom_pct': [last - 1], 'mom_diff': [last - 1]}.get(tf, [])
+    return [f'{m // 12:04d}-{m % 12 + 1:02d}' for m in need if m not in have]
+
+
+def fred_blanks(sid):
+    """원천 응답에 행은 있는데 값이 빈 날짜들 | None(모른다) — `us.fred.FredClient.blank_dates`."""
+    try:
+        got = fred_client().blank_dates.get(sid)
+    except Exception:  # noqa: BLE001 — 모르면 모른다(추정하지 않는다)
+        return None
+    return list(got) if isinstance(got, list) else None
+
+
+def fred_unclear(sid):
+    """원천 응답에서 값 필드가 없거나 형식을 모르는 행의 날짜들 | None(모른다) — `FredClient.unclear_dates`.
+    이런 달은 「미발표」의 근거가 없다(4회차 H1)."""
+    try:
+        got = fred_client().unclear_dates.get(sid)
+    except Exception:  # noqa: BLE001
+        return None
+    return list(got) if isinstance(got, list) else None
+
+
+def _month_state(vals, blanks, m, unclear=()):
+    """원천에 값이 없는 달 `m`(연·월 일련번호)의 상태 — 행이 있고 값이 빈칸이면 not_published, 행 자체가 없으면
+    not_collected, 빈칸 정보가 없으면 unknown(`us.macro_metrics.MISSING_STATES`)."""
+    from us.macro_metrics import _month
+    if blanks is None or unclear is None:
+        return 'unknown'
+    if any(_month(d) == m for d in unclear):
+        return 'unknown'                  # 그 달 행의 값 칸이 없거나 형식을 모른다 — 빈칸이라는 근거가 없다
+    return 'not_published' if any(_month(d) == m for d in blanks) else 'not_collected'
+
+
+def _ym(m):
+    return f'{m // 12:04d}-{m % 12 + 1:02d}'
+
+
+def _lacking_why(vals, tf, blanks, unclear=()):
+    """`_lacking` 의 달마다 상태 → `{'YYYY-MM': 상태}`."""
+    from us.macro_metrics import _month
+    by = {_ym(_month(f'{k}-01')): _month(f'{k}-01') for k in _lacking(vals, tf)}
+    return {k: _month_state(vals, blanks, m, unclear) for k, m in by.items()}
+
+
+def _previous_lacking(vals, tf, blanks, unclear=()):
+    """직전 변환값을 만드는 데 필요한 달 가운데 원천에 없는 것 → `{'YYYY-MM': 상태}`. 최신 달이 변환되지 않는 경우나
+    level 은 빈 사전(이 함수의 몫이 아니다)."""
+    from us.macro_metrics import _month, transform_pairs
+    if tf == 'level' or not vals:
+        return {}
+    pairs = transform_pairs(vals, tf)
+    if not pairs or pairs[-1][0] != vals[-1][0]:
+        return {}
+    have = {_month(d) for d, _ in vals}
+    last = _month(vals[-1][0])
+    need = {'yoy_pct': [last - 1, last - 13], 'mom_pct': [last - 1, last - 2], 'mom_diff': [last - 1, last - 2]}[tf]
+    return {_ym(m): _month_state(vals, blanks, m, unclear) for m in need if m not in have}
+
+
+def _previous_why(vals, tf, blanks, unclear=()):
+    """직전 변환값을 만들지 못한 까닭 — 그것을 만드는 데 필요한 달 가운데 원천에 없는 것들의 상태(여럿이면 보수적으로).
+    필요한 달이 다 있는데도 못 만들었으면(값 0 등) unknown."""
+    from us.macro_metrics import _month, worst_state
+    if tf == 'level' or not vals:
+        return 'not_collected' if blanks is not None and unclear is not None else 'unknown'   # 직전 관측이 원천에 없다
+    have = {_month(d) for d, _ in vals}
+    last = _month(vals[-1][0])
+    need = {'yoy_pct': [last - 1, last - 13], 'mom_pct': [last - 1, last - 2], 'mom_diff': [last - 1, last - 2]}[tf]
+    absent = [m for m in need if m not in have]
+    if not absent:
+        return 'unknown'
+    return worst_state({_month_state(vals, blanks, m, unclear) for m in absent})
+
+
+def collect_econ(reasons=None, refs=None):
     """FRED-sourced Actual/Previous/ref-period for the dashboard. Never fabricates —
     a series that fails to fetch is simply omitted (agent falls back to web for it).
 
@@ -524,6 +620,8 @@ def collect_econ():
     """
     out = []
     seen = {}
+    reasons = {} if reasons is None else reasons     # name -> fetch_failed | transform_error | no_value
+    refs = {} if refs is None else refs              # name -> no_value 인 지표의 식별자·기준월(아래)
     for axis, name, sid, tf, units, *rest in ECON:
         opts = rest[0] if rest else {}
         vals = seen.get(sid)
@@ -534,19 +632,42 @@ def collect_econ():
             seen[sid] = vals
             time.sleep(0.6)
         if not vals:
+            reasons[name] = 'fetch_failed'
             continue
         try:
             pair = _econ_pair(vals, tf)
         except Exception:
+            reasons[name] = 'transform_error'
             continue
         if pair is None:
+            # 받았지만 최신 달을 변환할 수 없다(결측 달 — 2025-10 CPI). 수집 실패가 아니다.
+            reasons[name] = 'no_value'
+            # 어느 지표의 어느 달을 만들지 못했는가 — 승인 예외는 식별자(FRED id·변환)와 기준월이 모두 같을 때만 걸린다
+            # `lacking` = 그 달을 변환하는 데 필요한 비교 달 가운데 원천에 없는 것(3회차 G1 — 식별자·기준월이 같아도
+            # 「2025-10 미발표」가 아닌 다른 원인이면 승인된 미발표가 아니다)
+            # `lacking_why` = 그 달이 왜 없나(미발표·미수집·모름) — 승인 예외는 미발표일 때만(2026-11-18)
+            blanks = fred_blanks(sid)
+            refs[name] = {'axis': axis, 'fred_id': sid, 'transform': tf, 'ref_period': str(vals[-1][0])[:7],
+                          'lacking': _lacking(vals, tf),
+                          'lacking_why': _lacking_why(vals, tf, blanks, fred_unclear(sid))}
+            if not refs[name]['lacking']:
+                # 1a 를 켜기 전에만 생기는 경우(2026-11-20): 최신 달은 변환되는데 **직전 변환값**을 만들 달이 없어 1a 전처럼
+                # 행을 뺐다. 그 까닭을 「최신 달의 비교 달」로 찾으면 비어 「상태 확인 불가」로 읽힌다 — 직전 값을 만드는
+                # 데 없는 달과 그 상태를 적는다(산출 범위 문장 `coverage_ko` 가 이 값으로 쓰인다).
+                prev_lack = _previous_lacking(vals, tf, blanks, fred_unclear(sid))
+                if prev_lack:
+                    refs[name]['lacking'] = sorted(prev_lack)
+                    refs[name]['lacking_why'] = prev_lack
             continue
         actual, previous = pair
         row = {
             'axis': axis, 'name': name, 'fred_id': sid, 'transform': tf, 'units': units,
-            'actual': round(actual, 2), 'previous': round(previous, 2),
+            'actual': round(actual, 2), 'previous': None if previous is None else round(previous, 2),
             'ref_period': vals[-1][0],  # observation month (reference period), not release date
         }
+        if previous is None:
+            # 직전 칸이 왜 비었나 — 「미발표」로 뭉뚱그리지 않는다(2026-11-18). 표의 「—」 옆에 이 사유가 실린다
+            row['previous_why'] = _previous_why(vals, tf, fred_blanks(sid), fred_unclear(sid))
         if opts.get('role'):
             row['role'] = opts['role']
         out.append(row)
@@ -1112,6 +1233,126 @@ def ff_probe(url=None, max_time=60.0, connect_timeout=10.0):
     return 0 if 200 <= st['code'] < 300 and elapsed <= max_time else 1
 
 
+# ── 수집 상태 칸(2026-11-17, 공통 계약 A) ──────────────────────────────────
+# 비-코어 블록의 실패 경로가 「성공」 파일로 남지 않게, 쓰는 자리에서 칸을 만든다.
+
+MARKET_SOURCE = 'yfinance + Naver 국채 + FRED'
+
+
+# 같은 파일에 실리는 파생 블록. 셋 다 예외를 삼키고 기본값·빈 키로 넘어가므로 `complete` 에 잡히지 않는다
+# (2026-09-22 사고 — 배선이 끊겨 price_context·session 이 빠진 날도 complete 였다). 검사기가 읽는 키다.
+DERIVED_BLOCKS = ('yield_drivers', 'price_context', 'session')
+
+
+def market_collect(data):
+    """market_data.json — 필수 = 기존 `complete`(전 행·커브·장중 두 지수·섹터) **와** 파생 블록 셋.
+    빠진 행은 `missing` 그대로, 실패한 파생 블록은 `block:<이름>`."""
+    from common import collect_status as C
+    missing = list(data.get('missing') or [])
+    if not data.get('indices'):
+        return C.failed(data.get('report_date'), MARKET_SOURCE, '지수 행이 없다', missing=missing)
+    blocks = []
+    if not ((data.get('yield_drivers') or {}).get('rows')):
+        blocks.append('block:yield_drivers')
+    for key in ('price_context', 'session'):
+        if not isinstance(data.get(key), dict):
+            blocks.append(f'block:{key}')
+    ok = bool(data.get('complete')) and not blocks
+    return C.build('ok' if ok else 'partial', data.get('report_date'), MARKET_SOURCE,
+                   missing=missing + blocks, required_ok=ok, empty='has_data')
+
+
+def intraday_collect(intraday, report_date):
+    """intraday.json — 30분봉을 못 받은 자산이 `missing`. 그 파일에는 날짜 칸이 없어 as_of 가 유일한 기준일이다."""
+    from common import collect_status as C
+    names = [n for n, _ in INTRADAY_KEY]
+    missing = [n for n in names if not (intraday or {}).get(n)]
+    return C.by_counts(report_date, 'yfinance 30m', missing, len(names))
+
+
+def econ_collect(econ, reasons, report_date, refs=None):
+    """econ_indicators.json — 받지 못했거나 변환이 터진 지표가 `missing`.
+
+    「아직 미발표」와 「계산 재료 결측」을 가른다(1a 구현 검토 #5). 새 달이 나오기 전에는 원천의 마지막 달이 그 전
+    달이고 그 달로 행을 만든다 — 결측이 아니다. `no_value` 는 원천에 있는 최신 달을 변환할 재료(비교 달)가 원천에
+    없다는 뜻이다(예: 2025-10 CPI 미발표로 2026-10 CPI YoY 를 만들 수 없다). 축 점수에 드는 지표(scored — `role` 이
+    anatomy 가 아닌 것)의 no_value 는 `missing`(`no_value:<이름>`)·required_ok false, 해부 전용은 `detail` 에만."""
+    from common import collect_status as C
+    anatomy = {e[1] for e in ECON if len(e) > 5 and (e[5] or {}).get('role') == 'anatomy'}
+    missing = sorted(n for n, why in (reasons or {}).items() if why in ('fetch_failed', 'transform_error'))
+    missing += sorted(f'no_value:{n}' for n, why in (reasons or {}).items() if why == 'no_value' and n not in anatomy)
+    none = sorted(n for n, why in (reasons or {}).items() if why == 'no_value' and n in anatomy)
+    # 결측 키 → 그 지표의 식별자·기준월·원인(`missing_ref[키] = {fred_id, transform, ref_period(YYYY-MM), lacking}`) —
+    # 항목 단위 승인 예외(`config/prepub_inputs.json` 의 accepted_missing)는 넷이 모두 등록과 같을 때만 적용된다
+    # (`lacking` 은 정확히 등록된 그 달 하나). 모르는 키는 싣지 않는다.
+    ref = {f'no_value:{n}': dict({k: v[k] for k in ('fred_id', 'transform', 'ref_period')},
+                                 lacking=[str(x) for x in v['lacking']],
+                                 lacking_why=dict(v.get('lacking_why') or {}))
+           for n, v in sorted((refs or {}).items())
+           if isinstance(v, dict) and all(v.get(k) for k in ('fred_id', 'transform', 'ref_period'))
+           and isinstance(v.get('lacking'), list) and f'no_value:{n}' in missing}
+    # 직전 칸이 비었는데 왜 비었는지 가를 근거가 없는 행 — 추정하지 않고 결측으로(보류 쪽)
+    missing += sorted(f'previous_unknown:{r.get("name")}' for r in econ or []
+                      if isinstance(r, dict) and r.get('previous') is None and r.get('previous_why') == 'unknown')
+    st = C.by_counts(report_date, 'FRED', missing, len(ECON),
+                     detail=('원천에 최신 값 없음(해부 전용): ' + ', '.join(none)) if none else None,
+                     missing_ref=ref or None)
+    if not econ and st['status'] != 'failed':
+        st = C.failed(report_date, 'FRED', '지표 0건', missing=missing)
+    return st
+
+
+def expected_scored():
+    """축 점수에 드는 것으로 **정의된** 지표 `[(축, 이름)]` — ECON 표에서 해부 전용을 뺀 것(산출 범위의 전체 수)."""
+    return [(e[0], e[1]) for e in ECON if not (len(e) > 5 and (e[5] or {}).get('role') == 'anatomy')]
+
+
+def excluded_scored(reasons, refs):
+    """no_value 인 점수 대상 지표 → `[{name, axis, fred_id, transform, ref_period}]`(해부 전용은 뺀다)."""
+    anatomy = {e[1] for e in ECON if len(e) > 5 and (e[5] or {}).get('role') == 'anatomy'}
+    out = []
+    for n, why in sorted((reasons or {}).items()):
+        r = (refs or {}).get(n)
+        if why == 'no_value' and n not in anatomy and isinstance(r, dict):
+            out.append({'name': n, **{k: r.get(k) for k in ('axis', 'fred_id', 'transform', 'ref_period', 'lacking',
+                                                            'lacking_why')}})
+    return out
+
+
+def _note_run_failure(outdir, rel, error):
+    """예외를 삼키고 넘어가는 블록이 파일을 못 썼을 때 — 사유를 수집 상태 장부의 실행 기록에(`stamp_collect.py` 가 읽는다)."""
+    try:
+        from common import collect_status as C
+        C.note_run_failure(outdir, rel, f'{type(error).__name__}: {error}')
+    except Exception:  # noqa: BLE001 — 기록 실패가 수집을 막지 않는다(판정은 stamp 가 시각으로 한다)
+        pass
+
+
+def macro_metrics_collect(mm, econ_status, report_date):
+    """macro_metrics.json — 축 점수의 재료(econ)가 일부 빠졌거나 어제 책(macro.json)이 깨졌으면 partial.
+
+    econ 이 일부만 받았으면(partial) 그 결측 키를 `econ:<키>` 로 그대로 싣고 기준월(`missing_ref`)도 옮긴다 — 승인
+    예외가 이 파일에도 **같은 키·기준월**로 걸리게(1a 구현 검토 2회차 F6). 무엇이 빠졌는지 모르면(실패·목록 없음)
+    전처럼 `econ_indicators` 하나 — 그것은 등록할 수 없다."""
+    from common import collect_status as C
+    missing, ref = [], {}
+    if econ_status.get('status') != 'ok':
+        missing, ref = C.carry_upstream(econ_status, 'econ', 'econ_indicators')
+    # 행은 있는데 축 점수에 쓰이지 않은 지표(점수를 낼 이력이 모자라거나 들인 날) — econ 쪽 결측에는 없으므로 여기서
+    # 까닭을 가른 키로 적는다(3회차 G2). 이 키들은 승인 예외에 등록되지 않으니, 섞인 날은 예외가 걸리지 않는다.
+    # 들인 날의 제외(introduced)는 자료 결측이 아니라 산출 규칙이다 — 결측에 넣지 않고 적어만 둔다(4회차 H3). 값이 있고
+    # 점수가 계산된 행만 그렇게 분류된다(`unused_scored`); 판단을 바꿀 수 있는지·하루를 넘겼는지는 check_macro 가 본다.
+    from us.macro_metrics import unused_scored
+    unused = unused_scored(mm.get('indicators'))
+    missing += [f'{why}:{name}' for name, _axis, why in unused if why != 'introduced']
+    rule = [name for name, _axis, why in unused if why == 'introduced']
+    if mm.get('book_state') == 'corrupt':
+        missing.append('macro.json:corrupt')
+    return C.build('partial' if missing else 'ok', report_date, 'FRED (macro_metrics)',
+                   missing=missing, empty='has_data', missing_ref=ref or None,
+                   detail=('들인 날이라 점수에서 뺀 지표(산출 규칙): ' + ', '.join(rule)) if rule else None)
+
+
 SOURCE = 'github-actions/collect_market_data.py'
 
 
@@ -1384,6 +1625,8 @@ def yields_patch_step(args, now=None):
               'full collection', file=sys.stderr)
         return None
     new['complete'], new['missing'] = True, []
+    # 수집 상태 칸도 고친 판으로 다시 만든다 — 첫 실행의 partial(네이버 종가 없음)을 물려받으면 1a 장부가 막는다.
+    new['collect'] = market_collect(new)
     new['yields_patched'] = {
         'at': now.astimezone(datetime.timezone.utc).isoformat(timespec='seconds'),
         'run': run_id(), 'source': 'Naver', 'date': bond_date}
@@ -1562,7 +1805,9 @@ def main():
         drivers = {'rows': {}, 'decomposition': {}}
 
     print('collecting FRED economic indicators...')
-    econ, econ_series = collect_econ()
+    econ_reasons, econ_refs = {}, {}
+    econ, econ_series = collect_econ(econ_reasons, econ_refs)
+    econ_status = econ_collect(econ, econ_reasons, report_date, econ_refs)
     # 「직전 대비」 칸의 정본(2026-09-23). macro_metrics.json 이 실패하거나 낡은 날에도
     # 표에 찍힌 두 수의 비교는 이 파일 하나로 끝나야 한다 — 게이트도 같은 함수로 잰다.
     from us.macro_metrics import TREND_NOTE_KO, vs_prev
@@ -1674,17 +1919,30 @@ def main():
         # left out and the anatomy falls back to the text or the headline.
         mm = _anatomy_round(mm, econ, econ_series, last_seen, book_state, book_date,
                             report_date, compute_macro_metrics)
+        # 원천에 재료가 없어 행을 만들지 못한 점수 대상 지표 — 축 점수가 몇 개 중 몇 개로 나왔는지와, 그 지표가 있었다면
+        # 판단이 달라질 수 있는지를 함께 싣는다(추정치로 채우지 않는다). 2026-11-17 사용자 승인 조건 7·8.
+        # **1a 를 켠 뒤에만 싣는다**(2026-11-20 사용자 결정): `coverage`·`axis_summary[축].coverage_ko` 는 작성자가 읽는
+        # 파일에 새로 나타나는 칸이다 — 꺼진 동안 작성 입력은 1a 전과 같아야 한다(작성 지시문은 이 칸을 모른다).
+        # 무엇이 빠졌는지는 꺼져 있어도 `collect.missing`·`missing_ref` 에 남는다.
+        from us.macro_metrics import with_coverage
+        from verification.inputs import enforcing
+        if enforcing():
+            mm = with_coverage(mm, excluded_scored(econ_reasons, econ_refs), expected_scored())
         for rel in mm['headline_releases']:
             anat = rel.get('anatomy') or {}
             ok = sum(1 for c in anat.get('candidates') or [] if c.get('round_ok'))
             print(f"    해부 {rel['key']}: {rel['label']} ({rel.get('role')}) "
                   f"발표일 {anat.get('release_date')} · FRED 회차 {anat.get('round')} · "
                   f"후보 {ok}/{len(anat.get('candidates') or [])}")
-        json.dump({'generated': data['generated'], 'report_date': report_date, **mm},
+        # 실패하면 이 블록은 파일을 쓰지 않는다 — 어제 파일의 report_date·collect.as_of 가 그대로 남아 낡음으로 걸린다.
+        json.dump({'generated': data['generated'], 'report_date': report_date, **mm,
+                   'collect': macro_metrics_collect(mm, econ_status, report_date)},
                   open(os.path.join(args.outdir, 'macro_metrics.json'), 'w'),
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'macro metrics failed: {e}', file=sys.stderr)
+        # 같은 날 앞선 실행의 파일이 남으면 날짜로는 안 걸린다 — 이번 실행의 실패를 장부에 남긴다(1a 구현 검토 2회차 F3)
+        _note_run_failure(args.outdir, 'macro_metrics.json', e)
 
     # Non-core, same contract as the blocks above: the statistical context for the
     # price side — is today's move large for this asset, where does the level sit in
@@ -1764,6 +2022,7 @@ def main():
                   indent=2, default=str, ensure_ascii=False)
     except Exception as e:
         print(f'scorecard failed: {e}', file=sys.stderr)
+        _note_run_failure(args.outdir, 'scorecard.json', e)
 
     # FRED 텔레메트리는 **마지막 FRED 호출 뒤**에 굳힌다 — 구성항목 수집이 위에서
     # 끝나므로 여기 값이 그 실행의 전부다. 죽은 키로 몇 주가 조용히 지나는 것을
@@ -1775,6 +2034,7 @@ def main():
           + (f" failed={','.join(ft['failed'])}" if ft['failed'] else '')
           + (f" csv_rescued={','.join(ft['csv_rescued'])}" if ft['csv_rescued'] else ''))
 
+    data['collect'] = market_collect(data)
     json.dump(data, open(md_path, 'w'), indent=2, default=str, ensure_ascii=False)
 
     # 움직인 종목 — S&P 500 중 달러 거래대금 상위 60 에서 지수 기여 상·하위 2 + |등락| ≥ 5% 를
@@ -1783,7 +2043,10 @@ def main():
         from us.movers_data import collect as collect_movers
         movers = collect_movers(report_date, _SSL)
     except Exception as e:
-        movers = {'report_date': report_date, 'groups': [], 'error': str(e)[:200]}
+        # 묶음 0개가 「움직인 종목 없음」으로 읽히면 안 된다 — error 와 collect failed 를 함께 적는다.
+        from common.movers import stamp as stamp_movers
+        movers = stamp_movers({'report_date': report_date, 'groups': [], 'error': str(e)[:200]},
+                              source='Wikipedia S&P 500 constituents + yfinance', checked=0, expected=0)
     json.dump(movers, open(os.path.join(args.outdir, 'movers.json'), 'w'),
               indent=2, ensure_ascii=False)
     print(f"movers: {len(movers.get('groups', []))} groups" + (f" ({movers['error']})" if movers.get('error') else ''))
@@ -1821,7 +2084,8 @@ def main():
     except Exception as e:
         print(f'period aggregation failed: {e}', file=sys.stderr)
 
-    json.dump(intraday, open(os.path.join(args.outdir, 'intraday.json'), 'w'),
+    json.dump({**intraday, 'collect': intraday_collect(intraday, report_date)},
+              open(os.path.join(args.outdir, 'intraday.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
     json.dump({'generated': data['generated'], 'source': 'FRED via collect_market_data.py',
                'note': 'Actual/Previous/ref_period are authoritative FRED values. '
@@ -1831,7 +2095,8 @@ def main():
                        'Confidence, NY Fed inflation exp) are web-sourced. role=anatomy rows '
                        '(Philly Fed) are dissected but never scored.',
                'trend_note_ko': TREND_NOTE_KO,
-               'indicators': econ},
+               'indicators': econ,
+               'collect': econ_status},
               open(os.path.join(args.outdir, 'econ_indicators.json'), 'w'),
               indent=2, default=str, ensure_ascii=False)
 

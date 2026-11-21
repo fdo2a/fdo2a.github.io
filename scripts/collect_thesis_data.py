@@ -19,7 +19,6 @@ Design: docs/superpowers/specs/2026-08-24-thesis-watch-design.md
 import argparse
 import datetime
 import json
-import os
 import ssl
 import sys
 import time

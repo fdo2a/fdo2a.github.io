@@ -89,6 +89,40 @@ def test_monthly_workflow_commits_its_three_files_with_retry():
     assert 'collect_fund_factors.py --outdir data' in run
 
 
+# ── 수집 상태 찍기(2026-11-17): 모든 쓰기 뒤·커밋 앞, 커밋에 담긴다 ─────────────────────────
+
+def _steps(wf_path, job='collect'):
+    with open(wf_path, encoding='utf-8') as fh:
+        return [s.get('name') or s.get('uses') for s in yaml.safe_load(fh)['jobs'][job]['steps']], \
+            yaml.safe_load(open(wf_path, encoding='utf-8'))['jobs'][job]['steps']
+
+
+def test_us_stamp_runs_after_every_writer_and_before_both_commits():
+    names, steps = _steps(WF)
+    i = names.index('Stamp collection status')
+    for writer in ('Collect', 'Fetch primary releases', 'Sanitize primary releases', 'Evaluate macro regime',
+                   'Fetch Telegram channels', 'Fetch Fed events', 'Build the next-ten-days calendar',
+                   'Treasury coupon auction results', 'Fed H.4.1 and Treasury refunding (liquidity)',
+                   'Sanitize liquidity'):
+        assert names.index(writer) < i, writer
+    for commit in ('Commit liquidity (market data already complete)', 'Commit data'):
+        assert i < names.index(commit)
+        assert 'data/_collect_status.json' in steps[names.index(commit)]['run']
+    assert steps[i]['if'] == 'always()' and '--datadir data' in steps[i]['run']
+
+
+def test_kr_stamp_runs_right_before_the_versions_commit():
+    kr = os.path.join(os.path.dirname(WF), 'collect-kr-data.yml')
+    names, steps = _steps(kr)
+    i = names.index('Stamp collection status')
+    assert names.index('Fetch Telegram channels (non-core)') < i < names.index('Commit data')
+    assert 'versions.py commit' in steps[names.index('Commit data')]['run']
+    assert '--datadir kr/data' in steps[i]['run']
+    from kr import versions_kr
+    assert 'git add kr/data/*.json' in versions_kr.STAGE_SH          # _collect_status.json 이 커밋 O 에 든다
+    assert versions_kr.is_dateless('kr/data/_collect_status.json')  # 발행된 날 동결 대상(원격 판 유지)
+
+
 # ── 수익률만 고치는 재실행(2026-11-19) ───────────────────────────────────────
 
 def _step(name):
@@ -121,6 +155,8 @@ def step_runs(step, outputs, collect_ok=True):
         return repr(outputs.get(m.group(1), ''))
     py = re.sub(r'steps\.collect\.outputs\.([a-z_]+)', out, expr)
     py = py.replace("steps.collect.outcome", repr('success' if collect_ok else 'failure'))
+    # 1a 수집 장부 단계(2026-11-17) — 정상 실행에서는 성공한다(실패 경로는 test_stamp_workflow.py 가 본다)
+    py = re.sub(r'steps\.stamp(?:_begin)?\.outcome', repr('success'), py)
     py = py.replace('!cancelled()', 'True').replace('always()', 'True')
     py = py.replace('&&', ' and ').replace('||', ' or ')
     assert re.fullmatch(r"[\w\s'=!()]*", py), f'unsupported step if: {expr}'
@@ -130,7 +166,7 @@ def step_runs(step, outputs, collect_ok=True):
 
 def ran(outputs, collect_ok=True):
     return [s['name'] for s in load()['jobs']['collect']['steps']
-            if s.get('name') and s.get('id') != 'collect' and step_runs(s, outputs, collect_ok)]
+            if s.get('name') and s.get('id') not in ('collect', 'stamp_begin') and step_runs(s, outputs, collect_ok)]
 
 
 SETUP = ['Install CJK font (for chart labels)', 'Install Python deps']
@@ -142,24 +178,26 @@ NON_CORE = ['Fetch market news', 'Fetch Telegram channels', 'Fetch Fed events',
             'Treasury coupon auction results']
 LIQ = ['Fed H.4.1 and Treasury refunding (liquidity)', 'Sanitize liquidity']
 COMMIT_LIQ = 'Commit liquidity (market data already complete)'
+# 1a: 모든 쓰기 뒤·커밋 앞, 늘 돈다(기다림 실행에서도 — 장부만 쓰고 커밋은 하지 않는다). 시작 기록(stamp_begin)은 Collect 앞.
+STAMP = 'Stamp collection status'
 
 
 def test_step_matrix_full_collection_is_unchanged():
-    assert ran({}) == SETUP + [LEDGER] + RELEASE_CHAIN + NON_CORE + LIQ + [
+    assert ran({}) == SETUP + [LEDGER] + RELEASE_CHAIN + NON_CORE + LIQ + [STAMP,
         'Report status', 'Commit data', 'FRED key health']
 
 
 def test_step_matrix_skipped_run_is_unchanged():
     # 이미 완전한 판: 원장·유동성만 돌고 유동성 커밋으로 끝난다(오늘과 같다).
-    assert ran({'skipped': 'true'}) == SETUP + [LEDGER] + LIQ + [COMMIT_LIQ, 'Report status']
+    assert ran({'skipped': 'true'}) == SETUP + [LEDGER] + LIQ + [STAMP, COMMIT_LIQ, 'Report status']
 
 
 def test_step_matrix_patch_run_commits_and_leaves_the_frozen_chain_alone():
-    assert ran({'patched': 'true'}) == SETUP + NON_CORE + LIQ + ['Report status', 'Commit data']
+    assert ran({'patched': 'true'}) == SETUP + NON_CORE + LIQ + [STAMP, 'Report status', 'Commit data']
 
 
 def test_step_matrix_waiting_run_touches_and_commits_nothing():
-    assert ran({'skipped': 'true', 'waiting': 'true'}) == SETUP + ['Report status']
+    assert ran({'skipped': 'true', 'waiting': 'true'}) == SETUP + [STAMP, 'Report status']
     report = _step('Report status')['run']
     assert 'git ' not in report and "open('data/market_data.json')" in report   # 읽기만 한다
 

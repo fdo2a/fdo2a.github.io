@@ -100,12 +100,16 @@ def install(monkeypatch, tmp_path, world_ref, leaks):
     monkeypatch.setattr(sources, "fetch_industry", lambda: [dict(r) for r in world_ref[0].industry])
     monkeypatch.setattr(sources, "fetch_industry_names", lambda: {})
     monkeypatch.setattr(sources, "fetch_stock_industry", lambda code: None)
-    monkeypatch.setattr(sources, "fetch_intraday", lambda code: [{"t": "15:30", "close": 1.0}])
+    monkeypatch.setattr(sources, "fetch_intraday_dated",
+                        lambda code: (world_ref[0].date, [{"t": "15:30", "close": 1.0}]))
     monkeypatch.setattr(collect_kr_data, "_yf_last_date", lambda: None)
     # 커밋된 설정 값과 무관하게 — 사람이 block 으로 바꾼 날에도 수집 전 시험이 빨개지지 않게(고정은 test_index_check 하나)
     from kr import index_check
     monkeypatch.setattr(index_check, "load_mode", lambda path=None: ("warn", "ok"))
     monkeypatch.setattr(kr_econ, "collect", lambda: {})
+    # 아시아 이웃 지수(kr/session.settle_peers)는 us.global_close 로 네이버·야후에 나간다 — 시험에서는 전부 결측
+    from us import global_close
+    monkeypatch.setattr(global_close, "collect", lambda tickers, report_date, *a, **k: {})
 
     def no_chart(*a, **k):
         raise RuntimeError("시험에서는 그리지 않는다")
