@@ -1,57 +1,51 @@
 {
-  "report_date": "2026-11-19",
+  "report_date": "2026-11-20",
   "us_prev": {
-    "as_of": "2026-11-18",
+    "as_of": "2026-11-19",
     "rows": {
-      "S&P 500": -0.23,
-      "Nasdaq": 0.42,
-      "Dow": -1.11
+      "S&P 500": -2.02,
+      "Nasdaq": -2.25,
+      "Dow": -2.19
     },
     "lag_sessions": 1
   },
   "us_futures_during_kr": {
     "ES": {
-      "pct": 0.51,
+      "pct": -0.36,
       "bars": 14,
       "first_t": "09:00",
       "last_t": "15:30"
     },
     "NQ": {
-      "pct": 0.84,
+      "pct": -0.61,
       "bars": 14,
       "first_t": "09:00",
       "last_t": "15:30"
     }
   },
-  "asia_peers": null,
-  "asia_peers_missing": {
-    "닛케이": {
-      "reason": "yahoo_no_value",
-      "date": "2026-11-19",
-      "note_ko": "야후에 그 세션의 값이 없어 대조하지 못했다"
+  "asia_peers": {
+    "rows": {
+      "닛케이": -5.06,
+      "항셍": -1.89,
+      "상해종합": -1.23,
+      "대만가권": -6.23
     },
-    "항셍": {
-      "reason": "yahoo_no_value",
-      "date": "2026-11-19",
-      "note_ko": "야후에 그 세션의 값이 없어 대조하지 못했다"
+    "dates": {
+      "닛케이": "2026-11-20",
+      "항셍": "2026-11-20",
+      "상해종합": "2026-11-20",
+      "대만가권": "2026-11-20"
     },
-    "상해종합": {
-      "reason": "yahoo_no_value",
-      "date": "2026-11-19",
-      "note_ko": "야후에 그 세션의 값이 없어 대조하지 못했다"
-    },
-    "대만가권": {
-      "reason": "yahoo_no_value",
-      "date": "2026-11-19",
-      "note_ko": "야후에 그 세션의 값이 없어 대조하지 못했다"
-    }
+    "avg_pct": -3.6,
+    "relative_pp": -1.61
   },
+  "asia_peers_missing": {},
   "usdkrw_intraday": {
-    "high": 1332.85,
-    "high_t": "09:00",
-    "low": 1326.78,
+    "high": 1340.12,
+    "high_t": "12:00",
+    "low": 1334.05,
     "low_t": "09:00",
-    "close": 1329.48,
+    "close": 1336.07,
     "last_t": "15:30",
     "bars": 14
   }

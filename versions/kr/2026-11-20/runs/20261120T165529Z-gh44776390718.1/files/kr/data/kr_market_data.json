@@ -1,0 +1,68 @@
+{
+  "report_date": "2026-11-20",
+  "complete": true,
+  "missing": [
+    "flows_intraday"
+  ],
+  "indices": {
+    "KOSPI": {
+      "close": 4869.96,
+      "change_pct": -5.21
+    },
+    "KOSDAQ": {
+      "close": 645.68,
+      "change_pct": -5.71
+    }
+  },
+  "flows_date": {
+    "KOSPI": "2026-11-20",
+    "KOSDAQ": "2026-11-20"
+  },
+  "flows_provisional": {
+    "KOSPI": true,
+    "KOSDAQ": true
+  },
+  "checks": {
+    "index_pct": {
+      "mode": "warn",
+      "config_status": "ok",
+      "KOSPI": {
+        "status": "ok",
+        "naver_pct": -5.21,
+        "derived_pct": -5.2148,
+        "prev_close": 5137.89,
+        "prev_source": "basic",
+        "integ_prev": 5137.89,
+        "matched": true,
+        "cross_note": false
+      },
+      "KOSDAQ": {
+        "status": "ok",
+        "naver_pct": -5.71,
+        "derived_pct": -5.714,
+        "prev_close": 684.81,
+        "prev_source": "basic",
+        "integ_prev": 684.81,
+        "matched": true,
+        "cross_note": false
+      }
+    },
+    "flows": {
+      "KOSPI": {
+        "state": "ok",
+        "faults": []
+      },
+      "KOSDAQ": {
+        "state": "ok",
+        "faults": []
+      }
+    },
+    "top_value": {
+      "rows": 2496,
+      "dash": 233,
+      "bad": 0,
+      "dash_top100": 0,
+      "positive_rows": 10
+    }
+  }
+}

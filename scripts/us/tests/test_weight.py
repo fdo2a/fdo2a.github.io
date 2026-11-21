@@ -63,7 +63,8 @@ def test_measured_2026_08_27_shape_is_only_a_warning_now():
              '전략 코멘트': 392, '매크로': 4788}
     v = check_volume(measure(_doc(sizes), 'us'), False, 'us')
     assert not any('매크로' in x for x in v)
-    assert any('매크로' in x and '4,600' in x for x in warnings(_doc(sizes), 'us'))
+    # 2026-11-21 사용자: 분량 경고도 뺐다 — 매크로 길이는 경고로도 남지 않는다
+    assert not any('매크로' in x for x in warnings(_doc(sizes), 'us'))
 
 
 def test_abbreviated_cap_does_not_count_the_anatomy_blocks():
@@ -115,13 +116,12 @@ def _narrative_doc(chars, news=0):
     return '<html><body data-register="da">' + body + '</body></html>'
 
 
-def test_narrative_over_5000_is_warned_and_under_is_not():
+def test_narrative_length_is_never_warned():
+    # 2026-11-21 사용자 「문장 길이는 사실 필요 없어」 — 본문 분량 경고를 뺐다(분량은 계속 센다)
     from us.weight import narrative, warnings
     assert narrative(_narrative_doc(5000))['body'] == 5000
-    assert not any('서술형 본문' in x for x in warnings(_narrative_doc(5000), 'us'))
-    assert any('서술형 본문' in x and '5001' in x for x in warnings(_narrative_doc(5001), 'us'))
-    # 하한 경고는 없다 — 정보가 적은 날은 짧아도 된다.
-    assert not any('서술형 본문' in x for x in warnings(_narrative_doc(800), 'us'))
+    for n in (800, 5000, 5001, 12000):
+        assert not any('서술형 본문' in x for x in warnings(_narrative_doc(n), 'us'))
 
 
 def test_kr_news_is_reported_separately_not_counted_in_the_body():
@@ -431,7 +431,7 @@ def test_check_weight_cli_warnings_alone_exit_zero(tmp_path):
                         '--datadir', str(tmp_path), '--market', 'kr'],
                        capture_output=True, text=True, cwd=root)
     assert r.returncode == 0, r.stdout + r.stderr
-    assert '경고: 서술형 본문' in r.stdout and '경고: 시황군' in r.stdout
+    assert '경고: 서술형 본문' not in r.stdout and '경고: 시황군' in r.stdout   # 분량 경고는 뺐다(11/21)
     bad = tmp_path / 'bad.html'
     bad.write_text(_kr_cli_doc(6000).replace('data-lede="review"', 'data-lede="x"'), encoding='utf-8')
     r = subprocess.run([sys.executable, str(root / 'scripts' / 'check_weight.py'), '--html', str(bad),

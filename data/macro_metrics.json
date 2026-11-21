@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-20 07:34 KST",
-  "report_date": "2026-11-19",
+  "generated": "2026-11-21 16:36 KST",
+  "report_date": "2026-11-20",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
-  "growth_score": 0.188,
-  "inflation_score": 0.647,
-  "growth_diffusion": 0.556,
+  "growth_score": 0.073,
+  "inflation_score": 0.722,
+  "growth_diffusion": 0.5,
   "inflation_diffusion": 0.5,
   "axis_summary": {
     "Labor": {
@@ -83,12 +83,12 @@
     },
     "Consumption": {
       "label_ko": "소비",
-      "score": 0.764,
+      "score": 0.42,
       "direction": "개선",
-      "strength": "완만",
-      "breadth_ko": "둘 중 둘이 개선",
-      "support": 2,
-      "improving": 2,
+      "strength": "미미",
+      "breadth_ko": "둘 중 하나가 개선, 하나는 보합",
+      "support": 1,
+      "improving": 1,
       "total": 2,
       "leaders": [
         {
@@ -102,19 +102,19 @@
         {
           "label_ko": "미시간대 소비자심리",
           "name": "Michigan Consumer Sentiment",
-          "direction": "개선",
-          "strength": "완만",
-          "actual": 48.1,
-          "previous": 51.7
+          "direction": "보합",
+          "strength": "미미",
+          "actual": 48.0,
+          "previous": 48.1
         }
       ]
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": 0.647,
+      "score": 0.722,
       "direction": "재가속",
       "strength": "완만",
-      "breadth_ko": "여섯 중 셋이 재가속, 둘은 교착, 하나는 반대",
+      "breadth_ko": "여섯 중 셋이 재가속, 셋은 교착",
       "support": 3,
       "improving": 3,
       "total": 6,
@@ -149,8 +149,8 @@
   "axis_scores": {
     "Labor": 0.451,
     "Activity": -0.652,
-    "Consumption": 0.764,
-    "Inflation": 0.647
+    "Consumption": 0.42,
+    "Inflation": 0.722
   },
   "indicators": [
     {
@@ -207,7 +207,7 @@
         "recent_avg": 197750.0
       },
       "trend_cell_ko": "보합 · 4주 평균 198K → 198K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -235,7 +235,7 @@
         "recent_avg": 196437.5
       },
       "trend_cell_ko": "개선(미미) · 4주 평균 199K → 196K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Continuing Jobless Claims",
@@ -263,7 +263,7 @@
         "recent_avg": 1717000.0
       },
       "trend_cell_ko": "악화(미미) · 4주 평균 1,710K → 1,717K",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -526,24 +526,24 @@
       "fred_id": "UMCSENT",
       "transform": "level",
       "units": "",
-      "direction": "개선",
-      "strength": "완만",
+      "direction": "보합",
+      "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.592,
-      "signed_z": 0.592,
-      "actual": 48.1,
-      "previous": 51.7,
-      "ref_period": "2026-09-01",
+      "momentum_z": -0.095,
+      "signed_z": -0.095,
+      "actual": 48.0,
+      "previous": 48.1,
+      "ref_period": "2026-10-01",
       "vs_prev": "악화",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 48.033,
-        "recent_avg": 51.667
+        "prior_avg": 49.833,
+        "recent_avg": 49.267
       },
-      "trend_cell_ko": "개선(완만) · 3개월 평균 48.0 → 51.7",
-      "is_new": false
+      "trend_cell_ko": "보합 · 3개월 평균 49.8 → 49.3",
+      "is_new": true
     },
     {
       "name": "CPI MoM",
@@ -694,24 +694,24 @@
       "fred_id": "MICH",
       "transform": "level",
       "units": "%",
-      "direction": "둔화",
-      "strength": "완만",
+      "direction": "교착",
+      "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.584,
-      "signed_z": -0.584,
-      "actual": 4.6,
-      "previous": 4.0,
-      "ref_period": "2026-09-01",
+      "momentum_z": -0.135,
+      "signed_z": -0.135,
+      "actual": 4.7,
+      "previous": 4.6,
+      "ref_period": "2026-10-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 4.7,
-        "recent_avg": 4.267
+        "prior_avg": 4.533,
+        "recent_avg": 4.433
       },
-      "trend_cell_ko": "둔화(완만) · 3개월 평균 4.70% → 4.27%",
-      "is_new": false
+      "trend_cell_ko": "교착 · 3개월 평균 4.53% → 4.43%",
+      "is_new": true
     },
     {
       "name": "Housing Starts",
@@ -851,386 +851,58 @@
         "recent_avg": 21.667
       },
       "trend_cell_ko": "악화(뚜렷) · 3개월 평균 33.0 → 21.7",
-      "is_new": true
+      "is_new": false
     }
   ],
   "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims"
+    "Michigan Consumer Sentiment",
+    "Michigan 1-Yr Inflation Exp"
   ],
-  "anatomy_releases": [
-    "Philly Fed Manufacturing"
-  ],
+  "anatomy_releases": [],
   "introduced": [],
   "introduced_since": {},
   "headline_releases": [
     {
-      "key": "philly-fed",
-      "label": "필라델피아 연은 제조업 경기",
+      "key": "michigan",
+      "label": "미시간대 소비자심리",
       "tier": 2,
-      "agency": "Philadelphia Fed",
-      "url": "https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/manufacturing-business-outlook-survey",
-      "role": "anatomy",
-      "primary": "Philly Fed Manufacturing",
-      "max_abs_z": 1.011,
-      "indicators": [
-        {
-          "name": "Philly Fed Manufacturing",
-          "axis": "Activity",
-          "actual": 6.3,
-          "previous": 20.9,
-          "ref_period": "2026-11-01",
-          "momentum_z": -1.011,
-          "fred_id": "GACDFSA066MSFRBPHI",
-          "transform": "level",
-          "units": ""
-        }
-      ],
-      "components": [
-        {
-          "label": "신규주문",
-          "fred_id": "NOCDFSA066MSFRBPHI",
-          "transform": "level",
-          "unit": "",
-          "aliases": [
-            "신규주문",
-            "신규 주문"
-          ],
-          "actual": -0.4,
-          "cite_values": [
-            -0.4
-          ],
-          "cite_forms": [
-            [
-              -0.4,
-              ""
-            ]
-          ],
-          "text_value": -0.4,
-          "ref_period": "2026-11-01"
-        },
-        {
-          "label": "출하",
-          "fred_id": "SHCDFSA066MSFRBPHI",
-          "transform": "level",
-          "unit": "",
-          "aliases": [
-            "출하"
-          ],
-          "actual": 25.7,
-          "cite_values": [
-            25.7
-          ],
-          "cite_forms": [
-            [
-              25.7,
-              ""
-            ]
-          ],
-          "text_value": 25.7,
-          "ref_period": "2026-11-01"
-        },
-        {
-          "label": "고용",
-          "fred_id": "NECDFSA066MSFRBPHI",
-          "transform": "level",
-          "unit": "",
-          "aliases": [
-            "고용"
-          ],
-          "actual": 11.6,
-          "cite_values": [
-            11.6
-          ],
-          "cite_forms": [
-            [
-              11.6,
-              ""
-            ]
-          ],
-          "text_value": 11.6,
-          "ref_period": "2026-11-01"
-        },
-        {
-          "label": "지불가격",
-          "fred_id": "PPCDFSA066MSFRBPHI",
-          "transform": "level",
-          "unit": "",
-          "aliases": [
-            "지불가격",
-            "지불 가격",
-            "투입가격",
-            "투입 가격"
-          ],
-          "actual": 58.2,
-          "cite_values": [
-            58.2
-          ],
-          "cite_forms": [
-            [
-              58.2,
-              ""
-            ]
-          ],
-          "text_value": 58.2,
-          "ref_period": "2026-11-01"
-        },
-        {
-          "label": "수취가격",
-          "fred_id": "PRCDFSA066MSFRBPHI",
-          "transform": "level",
-          "unit": "",
-          "aliases": [
-            "수취가격",
-            "수취 가격",
-            "판매가격"
-          ],
-          "actual": 47,
-          "cite_values": [
-            47
-          ],
-          "cite_forms": [
-            [
-              47,
-              ""
-            ]
-          ],
-          "text_value": 47.0,
-          "ref_period": "2026-11-01"
-        }
-      ],
-      "anatomy": {
-        "release_date": "2026-11-19",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "신규주문",
-            "fred_id": "NOCDFSA066MSFRBPHI",
-            "transform": "level",
-            "unit": "",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": -0.4,
-            "text_ok": true,
-            "text_value": -0.4
-          },
-          {
-            "label": "출하",
-            "fred_id": "SHCDFSA066MSFRBPHI",
-            "transform": "level",
-            "unit": "",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 25.7,
-            "text_ok": true,
-            "text_value": 25.7
-          },
-          {
-            "label": "고용",
-            "fred_id": "NECDFSA066MSFRBPHI",
-            "transform": "level",
-            "unit": "",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 11.6,
-            "text_ok": true,
-            "text_value": 11.6
-          },
-          {
-            "label": "지불가격",
-            "fred_id": "PPCDFSA066MSFRBPHI",
-            "transform": "level",
-            "unit": "",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 58.2,
-            "text_ok": true,
-            "text_value": 58.2
-          },
-          {
-            "label": "수취가격",
-            "fred_id": "PRCDFSA066MSFRBPHI",
-            "transform": "level",
-            "unit": "",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 47.0,
-            "text_ok": true,
-            "text_value": 47.0
-          },
-          {
-            "label": "6개월 뒤 전망",
-            "fred_id": "GAFDFSA066MSFRBPHI",
-            "transform": "level",
-            "unit": "",
-            "round_ok": true,
-            "reason": "not_in_text",
-            "observation": "2026-11-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 33.6,
-            "text_ok": false
-          }
-        ]
-      },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
-    },
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
+      "agency": "U. Michigan",
+      "url": "https://www.sca.isr.umich.edu/",
       "role": "scored",
-      "primary": "Initial Claims 4-wk MA",
-      "max_abs_z": 0.333,
+      "primary": "Michigan 1-Yr Inflation Exp",
+      "max_abs_z": 0.135,
       "indicators": [
         {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 203000.0,
-          "previous": 202000.0,
-          "ref_period": "2026-11-14",
-          "momentum_z": -0.028,
-          "fred_id": "ICSA",
+          "name": "Michigan Consumer Sentiment",
+          "axis": "Consumption",
+          "actual": 48.0,
+          "previous": 48.1,
+          "ref_period": "2026-10-01",
+          "momentum_z": -0.095,
+          "fred_id": "UMCSENT",
           "transform": "level",
           "units": ""
         },
         {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 197750.0,
-          "previous": 195750.0,
-          "ref_period": "2026-11-14",
-          "momentum_z": -0.333,
-          "fred_id": "IC4WSA",
+          "name": "Michigan 1-Yr Inflation Exp",
+          "axis": "Inflation",
+          "actual": 4.7,
+          "previous": 4.6,
+          "ref_period": "2026-10-01",
+          "momentum_z": -0.135,
+          "fred_id": "MICH",
           "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1763000.0,
-          "previous": 1693000.0,
-          "ref_period": "2026-11-07",
-          "momentum_z": 0.317,
-          "fred_id": "CCSA",
-          "transform": "level",
-          "units": ""
+          "units": "%"
         }
       ],
-      "components": [
-        {
-          "label": "계절조정 전 청구",
-          "fred_id": "ICNSA",
-          "transform": "level",
-          "unit": "건",
-          "aliases": [
-            "계절조정 전",
-            "원계열"
-          ],
-          "actual": 197492,
-          "cite_values": [
-            197492,
-            197.492
-          ],
-          "cite_forms": [
-            [
-              197492,
-              ""
-            ],
-            [
-              197.492,
-              "천"
-            ]
-          ],
-          "text_value": 197492.0,
-          "ref_period": "2026-11-14"
-        },
-        {
-          "label": "보험 실업률",
-          "fred_id": "IURSA",
-          "transform": "level",
-          "unit": "%",
-          "aliases": [
-            "보험 실업률",
-            "피보험 실업률"
-          ],
-          "actual": 1.1,
-          "cite_values": [
-            1.1
-          ],
-          "cite_forms": [
-            [
-              1.1,
-              ""
-            ]
-          ],
-          "text_value": 1.1,
-          "ref_period": "2026-11-07"
-        }
-      ],
+      "components": [],
       "anatomy": {
-        "release_date": "2026-11-19",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "계절조정 전 청구",
-            "fred_id": "ICNSA",
-            "transform": "level",
-            "unit": "건",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-14",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 197492.0,
-            "text_ok": true,
-            "text_value": 197492.0
-          },
-          {
-            "label": "보험 실업률",
-            "fred_id": "IURSA",
-            "transform": "level",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-11-07",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 1.1,
-            "text_ok": true,
-            "text_value": 1.1
-          }
-        ]
+        "release_date": "2026-10-23",
+        "round": "no_registry",
+        "candidates": []
       },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
+      "anatomy_status": "none",
+      "anatomy_reason": "no_verified_text"
     }
   ],
   "last_seen": {
@@ -1287,8 +959,8 @@
       0.21
     ],
     "Michigan Consumer Sentiment": [
-      "2026-09-01",
-      48.1
+      "2026-10-01",
+      48.0
     ],
     "CPI MoM": [
       "2026-10-01",
@@ -1311,8 +983,8 @@
       3.12
     ],
     "Michigan 1-Yr Inflation Exp": [
-      "2026-09-01",
-      4.6
+      "2026-10-01",
+      4.7
     ],
     "Housing Starts": [
       "2026-10-01",
@@ -1343,5 +1015,12 @@
       2.57
     ]
   },
-  "anatomy_gaps": []
+  "anatomy_gaps": [
+    {
+      "key": "michigan",
+      "status": "none",
+      "reason": "no_verified_text",
+      "components": 0
+    }
+  ]
 }

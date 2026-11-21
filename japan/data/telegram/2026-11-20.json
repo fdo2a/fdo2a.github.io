@@ -1,0 +1,72 @@
+{
+ "report_date": "2026-11-20",
+ "market": "jp",
+ "collected_utc": "2026-11-20T16:19:54+00:00",
+ "window": {
+  "floor": "2026-11-19T16:30:00+09:00",
+  "ceiling": "2026-11-20T16:30:00+09:00"
+ },
+ "channels": {
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "reached": true
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/27098",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-19T23:44:05+00:00",
+   "url": "https://t.me/aethersemiconductor/27098",
+   "market_basis": "keyword",
+   "firm": null,
+   "analyst": null,
+   "relay_firm": null,
+   "note_date": null,
+   "kind": "opinion",
+   "article_date": null,
+   "source": null,
+   "summary_ko": "SK하이닉스가 2018년 특수목적회사(SPC)를 통해 보유한 키옥시아 전환사채(CB)를 지분 14.53%로 바꾸는 방안을 검토 중이라는 소식이 전해졌다. 이렇게 전환하면 지분율 기준으로 SK하이닉스가 키옥시아의 최대 주주가 된다는 점도 함께 알려졌다.",
+   "news_use": true
+  },
+  {
+   "id": "aethersemiconductor/27105",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-20T04:48:15+00:00",
+   "url": "https://t.me/aethersemiconductor/27105",
+   "market_basis": "keyword",
+   "firm": null,
+   "analyst": null,
+   "relay_firm": null,
+   "note_date": null,
+   "kind": "report",
+   "article_date": "2026-11-17",
+   "source": {
+    "name": "CNBC",
+    "url": "https://www.cnbc.com/2026/11/17/congress-ai-china-jensen-huang-chips.html",
+    "basis": "link"
+   },
+   "summary_ko": "젠슨 황 전 엔비디아 CEO의 중국 간첩 의혹 관계가 불거지면서, 의회가 중국의 첨단 AI 기술 접근을 막으려는 움직임에 힘이 실리고 있다. 의원들은 12월 심의될 국방수권법(NDAA) 최종안에 첨단 칩 수출통제 강화 조항을 넣으려 하고 있다. 핵심 법안은 적대국 칩 판매에 대한 의회 검토, 상무부의 AI 칩 위치 추적, 중국 관련 기업에 대한 반도체 장비 판매 차단을 담는다. 슈머 상원 원내대표는 트럼프 행정부가 수출통제 집행에 소극적이라고 비판했다. 황 전 CEO는 여러 혼외 관계가 보도된 뒤 사임했으며, 그중 한 명은 미국 정보당국이 간첩일 수 있다고 본 중국 기업인이다. 한편 트럼프 행정부는 12월 중국에 엔비디아 H200 칩 판매를 허용하는 등 입장이 일관되지 않았으며, 상무부는 중국 기업의 제3국 데이터센터 컴퓨팅 임차 허점을 막는 규정을 발표했다.",
+   "news_use": true
+  }
+ ],
+ "stats": {
+  "read": 69,
+  "outside": 39,
+  "chatter": 11,
+  "stale": 0,
+  "burst": 0,
+  "not_japan": 17,
+  "dup": 0,
+  "valve_dropped": 0,
+  "stale_dropped": 0,
+  "items": 2,
+  "summarized": 2,
+  "news_use": 2
+ },
+ "usable": true
+}

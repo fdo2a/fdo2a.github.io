@@ -1,0 +1,2088 @@
+{
+  "report_date": "2026-11-20",
+  "harvested": 1339,
+  "notes": [],
+  "items": [
+    {
+      "guid": "2ad5cd22-590a-3307-93fd-41d44554b9fc",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/samsung-electro-mechanics-shares-jump-065747188.html?.tsrc=rss",
+      "title": "Samsung Electro-Mechanics shares jump on expanded Nvidia supply deal",
+      "summary": "Investing.com-- Samsung Electro-Mechanics (KS:009150) shares surged on Wednesday after the company announced an expanded partnership with Nvidia (NASDAQ:NVDA) to supply advanced semiconductor package substrates and multilayer ceramic capacitors (MLCCs).",
+      "published": "2026-11-18T06:57:47+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 1775,
+      "body_file": "01-mlcc.txt",
+      "summary_ko": "삼성전기 주가는 11월 18일 장 초반 6.5% 오른 80만3000원까지 올랐다. 삼성전기가 엔비디아와 고성능 반도체 패키지 기판과 적층세라믹커패시터(MLCC) 공급을 확대하는 파트너십을 발표한 데 따른 것이다. 회사는 세종과 부산 공장의 생산 능력을 강화해 엔비디아의 차세대 그래픽처리장치(GPU)와 고성능 컴퓨팅·네트워킹 제품에 들어가는 첨단 기판을 공급하겠다고 밝혔다. 엔비디아는 두 공장의 생산 인프라 확충을 위한 추가 자금 지원을 검토 중이며, 이는 앞서 전용 생산시설에 대규모 자금을 지원하기로 한 합의를 바탕으로 한 것이다. 삼성전기는 2029년부터 본격적인 양산 체계를 갖출 계획이다. MLCC는 고성능 컴퓨팅 시스템에서 안정적인 전력 공급을 돕는 부품으로, 이번 협력에 함께 포함됐다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "30c38de3-9211-384f-951f-cc3287551a35",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/murata-manufacturing-tse-6981-stock-052231037.html?.tsrc=rss",
+      "title": "Murata Manufacturing (TSE:6981) Stock Looks Hard To Call As Guidance Was Raised",
+      "summary": "Murata Manufacturing has had a strong multi year share price run, yet a steep pullback in recent weeks now puts the focus squarely on whether that earlier optimism still lines up with what the business earns. With the stock resetting at ¥4,933 at the last close, the question is how much of its earnings story is already embedded in that price. Over 5 years the share price has gained 87.2%, which ma",
+      "published": "2026-11-10T05:22:31+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 4046,
+      "body_file": "02-mlcc.txt",
+      "summary_ko": "무라타제작소의 주가는 5년 동안 87.2% 올랐고, 회사는 데이터센터 수요와 제품 믹스 개선을 근거로 중장기 매출과 이익 전망을 상향했다. 현재 주가수익비율(PER)은 31.0배로, 전자업종 평균 13.5배를 크게 웃돈다. 동종 경쟁사 평균인 32.6배보다는 약간 낮은 수준이다. 이 기사는 다년간의 주가 상승과 최근의 급락을 함께 고려할 때 현재 밸류에이션이 이익 체력으로 정당화되는지를 따져볼 필요가 있다고 짚는다. 다만 시장 가치 평가는 전문가마다 다르며, 기사는 특정 매수·매도 권고를 하지 않는다고 밝히고 있다. 기사에는 목표주가나 구체적인 실적 수치가 제시되지 않아, 상향 폭과 향후 실적 흐름은 원문만으로는 확인하기 어렵다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "4961bdb8-35e8-326f-a815-9d2fd523a6d6",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/taiyo-yuden-tse-6976-stock-081333430.html?.tsrc=rss",
+      "title": "Taiyo Yuden (TSE:6976) Stock Still Looks Below Fair Value On Cash Flow",
+      "summary": "Taiyo Yuden has delivered an 89.7% gain over the past three years, yet recent sharp swings leave a fresh question on the table for investors who care about what the business can earn in cash. With the stock now reacting to every piece of semiconductor news, the key issue is how much of that price currently rests on the cash flows the company can realistically generate. The share price is up 89.7% ",
+      "published": "2026-11-08T08:13:33+00:00",
+      "category": "mlcc",
+      "source": "Yahoo Finance",
+      "body_chars": 3885,
+      "body_file": "03-mlcc.txt",
+      "summary_ko": "Taiyo Yuden(TSE:6976) 주가는 3년간 89.7% 올랐다. Simply Wall St는 AI 관련 칩 수요 강세와 SK하이닉스의 실적 급등이 주가를 단기적으로 끌어올렸다고 짚었다. 최근 12개월 잉여현금흐름은 약 98억 엔이고, 애널리스트 전망으로는 2031년까지 잉여현금흐름이 늘었다가 이후 완만해지는 흐름이다. 현금흐름할인(DCF) 모델이 산출한 내재가치는 현재 주가 6,674엔보다 크게 높게 나왔다. 다만 주가수익비율(P/E)은 51.1배에 달한다. 기사는 이 괴리가 AI 테마만으로는 메워지지 않는다고 보았다. 기사는 투자 권유가 아니며, 회사 측 경고 신호가 2건(이 가운데 중대한 것 1건) 있다고 덧붙였다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.foxbusiness.com/markets/wall-street-suffers-historic-losses-dow-sp-500-plunge-correction-territory",
+      "url": "https://www.foxbusiness.com/markets/wall-street-suffers-historic-losses-dow-sp-500-plunge-correction-territory",
+      "title": "Wall Street suffers historic losses as Dow, S&P 500 plunge into correction territory",
+      "summary": "Nvidia shares tumbled about 14%, and newly public Anthropic fell 9% as AI fears fueled a brutal sell-off that erased the Nasdaq&apos;s gains for the year.",
+      "published": "2026-11-20T20:28:26-05:00",
+      "category": "ai",
+      "source": "Fox Business",
+      "body_chars": 5990,
+      "body_file": "18-ai.txt",
+      "summary_ko": "미국 증시가 20일(금) 인공지능(AI) 관련주 급락에 크게 밀려 다우와 S&P 500이 조정 국면에 진입했다. 다우는 약 950포인트 떨어졌고, S&P 500은 3.7%, 기술주 중심의 나스닥 종합지수는 5.28% 하락했다. 다우와 S&P 500은 최근 사상 최고치보다 10% 이상 떨어져 조정 국면에 들어섰다. 나스닥은 올해 상승분을 모두 반납했고, 하루 포인트 하락폭으로는 역대 두 번째로 컸다. 엔비디아는 약 14%, 신규 상장한 앤트로픽은 약 9% 급락했다. 엔비디아가 실적 호조를 보였고 앤트로픽이 주식시장에 데뷔했음에도 AI 기업 밸류에이션과 투자 규모에 대한 우려가 가라앉지 않았다. 이번 주 S&P 500 주간 하락률은 2025년 4월 이후 최대였고, 나스닥은 2020년 3월 이후 최대 주간 손실을 기록했다. S&P 500은 7거래일 연속 하락해 2020년 2월 이후 최장 연속 하락을 기록했다. 변동성 지수(VIX)는 2025년 4월 이후 최고 종가를 나타냈으며, 투자자들이 안전자산을 찾으면서 금값은 올랐다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://abcnews.com/Business/wireStory/asia-shares-drop-ai-worries-echoing-wall-streets-138309523",
+      "url": "https://abcnews.com/Business/wireStory/asia-shares-drop-ai-worries-echoing-wall-streets-138309523",
+      "title": "S&P 500 sinks 3.7% and the Nasdaq composite goes negative for the year",
+      "summary": "A bruising sell-off in artificial intelligence stocks on Friday pulled the S&P 500 down 3.7%, dragging the index to its worst weekly loss in more than 18 months, and knocking the Nasdaq composite into the red for the year",
+      "published": "2026-11-20T19:34:14-05:00",
+      "category": "ai",
+      "source": "ABC News",
+      "body_chars": 5830,
+      "body_file": "19-ai.txt",
+      "summary_ko": "20일 뉴욕증시에서 인공지능(AI) 관련주가 급락하며 S&P 500 지수가 3.7% 내린 6,910.39로 마감했다. 주간 낙폭은 18개월여 만에 최대다. 지수는 10월 6일 사상 최고치보다 10% 넘게 떨어져 조정국면에 들어섰고, 7거래일 연속 하락은 2020년 코로나19 이후 가장 긴 연속 하락이다. 나스닥 종합지수는 5.3% 급락해 연초 이후 마이너스로 돌아섰다. 엔비디아는 14% 떨어졌고 마이크론과 AMD, 브로드컴도 12~14%씩 밀렸다. 일본과 한국의 주가지수도 하루 새 5% 넘게 하락했다. AI 기업의 막대한 가치와 투자가 정당화되기 어렵다는 우려에, 이번 중간선거에서 데이터센터 건설 둔화를 내건 후보들이 당선된 점이 거품 우려를 키웠다. 전날 상장한 앤트로픽은 8.5% 떨어졌으나 공모가 83달러는 웃돌았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.pbs.org/newshour/show/mounting-tech-disruptions-raise-concerns-about-u-s-cybersecurity",
+      "url": "https://www.pbs.org/newshour/show/mounting-tech-disruptions-raise-concerns-about-u-s-cybersecurity",
+      "title": "Mounting tech disruptions raise concerns about U.S. cybersecurity",
+      "summary": "President Trump has replaced the nation's top cybersecurity official following a string of seemingly unrelated technology outages over the last couple of weeks. Officials have repeatedly stressed that these outages were not the result of intentional attacks, but given the growth of AI, there's growing concern that attacks are on the horizon. William Brangham discussed more with Chris Krebs.",
+      "published": "2026-11-20T18:45:36-05:00",
+      "category": "ai",
+      "source": "PBS NewsHour",
+      "body_chars": 7291,
+      "body_file": "20-ai.txt",
+      "summary_ko": "트럼프 대통령이 최근 2주 사이 마이크로소프트, 연방항공청, JP모건 체이스, 미국 국가안보국 등에서 잇따른 기술 장애를 계기로 국가 사이버보안 최고 책임자를 교체했다. 당국은 이번 장애가 고의적 공격이 아니라 소프트웨어 결함을 고치는 패치 과정에서 생긴 것이라고 거듭 밝혔다. 전 사이버보안청장 크레브스도 이 해석이 타당하다고 보면서, 앤트로픽이 2026년 4월 공개한 사이버보안 연구용 AI 모델 미토스 프리뷰 이후 기업들이 취약점 패치를 서두르며 시스템이 불안정해졌다고 분석했다. 다만 최근 여러 기관이 아텍스라는 AI 기반 공격 틀의 표적이 됐다며 공격 위협이 커지고 있다고 경고했다. 취약점을 모두 제거하는 데는 1년 이상 걸릴 수 있다고 내다봤다. 백악관 국가사이버국장 숀 케언크로스는 해임됐고 후임에는 커스틴 데이비스가 임명됐다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108555723",
+      "url": "https://www.cnbc.com/2026/11/20/warsh-fed-forward-guidance-rate-hikes.html",
+      "title": "Warsh wants Fed officials to talk less. Instead, they’re talking more",
+      "summary": "Fed officials have been rushing to the microphones lately while the Fed chairman stays on the sidelines.",
+      "published": "2026-11-20T21:10:48+00:00",
+      "category": "macro",
+      "source": "CNBC",
+      "body_chars": 6543,
+      "body_file": "21-macro.txt",
+      "summary_ko": "워시 연준 의장은 취임 후 6개월 동안 금리 방향에 대한 신호를 드러내지 않았지만, 동료 위원들은 공개 발언을 크게 늘렸다. 뱅크오브아메리카는 최근 2주간 연준 위원 발언이 2025년 이후 유사한 어느 시기보다 많았다고 분석했다. 대부분 위원은 금리 인상이 필요하다고 보지만 속도에는 의견이 갈리며, 월러 이사는 12월 회의에서 0.5%포인트 인상 가능성을 제기했다. 10월 의사록은 일부 위원이 추가 긴축을 명확히 예고했다면 동결에 동의할 수 있었다고 밝혀, 선제 안내의 필요성을 드러냈다. 시장은 12월 0.25%포인트 인상을 사실상 확정적으로 보고 있다. 뱅크오브아메리카의 베이브 이코노미스트는 이런 엇갈린 발언이 금리 변동성을 과도하게 키울 수 있다고 경고했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://fortune.com/2026/11/20/fed-rate-hikes-higher-inflation-expectations-unanchored-chris-waller/",
+      "url": "https://fortune.com/2026/11/20/fed-rate-hikes-higher-inflation-expectations-unanchored-chris-waller/",
+      "title": "Fed governor admits people now think higher inflation is the new normal: ‘That’s the kind of psychology we need to start breaking’",
+      "summary": "“So you might need to, like, shock people to say, ‘Wait a minute, 3% is not the number you should be thinking about going forward.’”",
+      "published": "2026-11-20T21:08:49+00:00",
+      "category": "macro",
+      "source": "Fortune",
+      "body_chars": 4963,
+      "body_file": "22-macro.txt",
+      "summary_ko": "연준의 크리스 월러 이사는 미국인들이 3% 물가 상승률을 정상으로 받아들이기 시작했다며, 이런 심리를 깨려면 충격을 줄 필요가 있다고 말했다. 소비자물가지수가 예상보다 크게 올라 물가 상승률은 5년 넘게 목표인 2%를 웃돌고 있다. 월러는 씨엔비씨 인터뷰에서 물가 압력이 핵심 서비스로 번지고 있으며, 가계와 기업이 연 3% 상승을 예상하면 임금과 가격이 그에 맞춰 올라 악순환이 생긴다고 경고했다. 그는 12월 8~9일 회의에서 0.5%포인트 인상을 포함해 더 공격적으로 금리를 올려야 하며, 2025년의 3차례 인하를 되돌리고 그 이상도 필요할 수 있다고 주장했다. 현재 기준금리는 3.75~4%다. 반면 시장은 12월 0.25%포인트 인상을 주로 반영하고 있고, 케빈 워시 의장은 사전 지침에 반대해 왔다. 존 윌리엄스 뉴욕연준 총재는 급격한 조치는 필요 없다며 신중론을 폈다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.nbcnews.com/business/consumer/walmart-holiday-shopping-sales-outlook-rcna610193",
+      "url": "https://www.nbcnews.com/business/consumer/walmart-holiday-shopping-sales-outlook-rcna610193",
+      "title": "Walmart stocks up on inflation-weary shoppers ahead of the holidays",
+      "summary": "Walmart raised its sales outlook and reported gaining market share as it lures more affluent shoppers who are hunting for deals amid high inflation.",
+      "published": "2026-11-20T00:31:36+00:00",
+      "category": "macro",
+      "source": "NBC News",
+      "body_chars": 5892,
+      "body_file": "23-macro.txt",
+      "summary_ko": "월마트가 물가 상승에 지친 소비자들의 할인점 방문 증가에 힘입어 연말 특수를 앞두고 실적과 매출 전망을 함께 끌어올렸다. 11월 19일 발표에서 월마트는 시장점유율을 높이고 올해 세 번째로 매출 전망을 올렸으며, 고소득층 고객이 늘었다고 밝혔다. 경쟁사 타깃과 코스트코도 매출이 늘었다. 전미소매협회는 11월과 12월 미국 소매 매출이 처음으로 1조 달러를 넘을 것으로 내다봤지만, 구매량 증가보다 가격 상승에 따른 지출 확대로 해석된다. 월마트는 3분기까지 7,700개 품목 가격을 낮췄고 회원비 수입은 분기 기준 17% 급증했다. 그러나 주가는 시장 전반의 매도세 속에 약 1% 하락한 주당 126달러에 머물렀다. 골드만삭스는 목표가 132달러의 매수 의견을 유지했으나 경기 둔화와 경쟁 심화를 위험 요인으로 꼽았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.theguardian.com/us-news/2026/nov/20/trump-republican-succession-battle-vance-rubio",
+      "url": "https://www.theguardian.com/us-news/2026/nov/20/trump-republican-succession-battle-vance-rubio",
+      "title": "Trump turns White House press conference into a 2028 succession audition",
+      "summary": "<p>The president appeared to put Vance and Rubio through their paces as potential successors, though Stephen Miller unexpectedly stole the spotlight</p><p>“Which of you shall we say doth love us most?”</p><p>The ageing <a href=\"https://www.folger.edu/explore/shakespeares-works/king-lear/read/\">King Lear’s</a> question to his daughters, expecting them to compete for his favour and carve up his king",
+      "published": "2026-11-21T00:16:26+00:00",
+      "category": "politics",
+      "source": "The Guardian",
+      "body_chars": 8091,
+      "body_file": "24-politics.txt",
+      "summary_ko": "트럼프 미국 대통령이 아시아 순방 후 20일(현지시간) 백악관 기자회견에서 JD 밴스 부통령과 마코 루비오 국무장관을 사실상 2028년 대선 후계 경쟁자로 세워 놓고 평가하는 듯한 모습을 보였다. 기자회견의 명목은 아시아 순방 성과 홍보였지만, 두 사람은 같은 정장과 붉은 넥타이를 맞춰 입고 90분 가까이 대통령 곁에 서 있었다. 최근 에머슨 칼리지 전국 여론조사에서는 밴스보다 루비오가 앞섰다. 트럼프는 중국·러시아 정상과의 3자 회담을 얄타 회담에 비유한 언론을 흡족해하며 세 나라가 전 세계 핵무기 대부분을 보유한다고 강조했다. 밴스는 순방에 동행하지 않은 것을 두고 자신을 홀로 남겨진 아이에 빗대며 충성을 드러냈고, 루비오는 핵보유국 정상들이 정기적으로 대화해야 한다고 주장했다. 기자가 누가 더 나은 후임자가 될지 묻자 트럼프는 답을 피했다. 밴스는 중간선거 이후 이란 전쟁이 상원을 잃을 만큼 가치가 있었는지를 묻는 질문에 대통령의 결정을 지지한다고 답해 말을 아꼈다. 이어 스티븐 밀러 백악관 정책 보좌관이 자신을 과도하게 치켜세우며 두 사람의 주목을 빼앗았고, 트럼프는 밀러에게 대선에 출마할 생각이 있냐고 농담을 던졌다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.pbs.org/newshour/show/josh-shapiro-on-foreign-policy-democratic-wins-and-his-2028-ambitions",
+      "url": "https://www.pbs.org/newshour/show/josh-shapiro-on-foreign-policy-democratic-wins-and-his-2028-ambitions",
+      "title": "Josh Shapiro on foreign policy, Democratic wins and his 2028 ambitions",
+      "summary": "Pennsylvania Gov. Josh Shapiro is fresh off a reelection campaign that gave him another four years in office and Democrats majorities in the state House. Now Shapiro is turning his attention to foreign policy, laying out his prescriptions to solve pressing global crises. Amna Nawaz sat down with the governor to discuss his vision for how the United States should engage on the world stage.",
+      "published": "2026-11-20T18:40:50-05:00",
+      "category": "politics",
+      "source": "PBS NewsHour",
+      "body_chars": 11006,
+      "body_file": "25-politics.txt",
+      "summary_ko": "Pennsylvania 주지사 조시 샤피로는 재선으로 4년 임기를 더 얻고 주 하원 다수당 지위를 지킨 뒤, 대외정책 구상을 밝히고 있다. PBS 뉴스아워의 아엠나 나와즈 기자와 나눈 인터뷰에서 그는 도널드 트럼프 행정부가 미국을 국내외에서 덜 안전하게 만들었다고 비판했다. 샤피로는 트럼프 대통령이 미국·중국·러시아 정상이 함께한 회담에서 우크라이나 전쟁이나 인공지능, 중국의 경제 잠식 문제를 제기하지 못했고, 시진핑이 장면을 주도했다고 평가했다. 이란 전쟁에 대해서는 민주당이 전쟁권한결의안과 예산 통제권을 활용해 종전과 호르무즈 해협 재개방을 이끌어야 한다고 말했다. 이스라엘 지원과 관련해서는 미국이 수십 년간 제공해 온 군사원조를 끝내는 데 찬성한다면서도, 이스라엘의 자위 무기 확보는 필요하다고 덧붙였다. 2028년 대선 출마 여부에 대해서는 명확한 답을 피했다. 한편 홍역 사태와 관련해 펜실베이니아는 올해 1,529건의 환자가 보고돼 다른 주보다 두 배 넘게 많고 사망자도 8명 나왔다. 샤피로는 이를 백신 불신 확산과 연결했다. (약 390자)",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.cbsnews.com/news/marine-corps-hero-brad-kasal-federal-investigation/",
+      "url": "https://www.cbsnews.com/news/marine-corps-hero-brad-kasal-federal-investigation/",
+      "title": "Marine Corps hero under federal investigation",
+      "summary": "Retired Sgt. Maj. Bradley Kasal, whose bloodied visage was depicted in an iconic Iraq War photo, is under investigation stemming from his tenure as a high school JROTC instructor.",
+      "published": "2026-11-20T18:00:50-05:00",
+      "category": "politics",
+      "source": "CBS News",
+      "body_chars": 12000,
+      "body_file": "26-politics.txt",
+      "summary_ko": "해병대 퇴역 준위 브래드 카설(Bradley Kasal)이 네바다주 헨더슨의 고등학교 학생군사훈련단(JROTC) 강사 재직 중 벌어진 혐의로 연방 수사를 받고 있다고 CBS 뉴스가 11월 20일 보도했다. 해병대 34년 복무 뒤 2018년 8월 해당 학교에 채용된 그는 2025년 8월 사임했다. 수사는 해병대·해군 관련 중대 범죄를 맡는 해군범죄수사국(NCIS)이 맡았으며, 캘리포니아주 캠프 펜들턴 현장사무소가 담당한다. 해병대는 퇴역 준위의 민간인 강사 시절 혐의를 인지하고 있다고 밝혔다. 카설은 2004년 제2차 팔루자 전투에서 부상당한 채 무기를 쥐고 있던 모습이 사진으로 남아 해군십자훈장을 받은 영웅이다. 그러나 CBS가 약 40명을 취재한 결과, 일부 여학생을 따로 차량으로 데려다주거나 단둘이 만나는 일이 잦았고, 한 여학생은 14세 때 알게 된 그가 입양을 제안했다는 주장을 제기했다. 학교 측도 그에게 사적 접촉의 위험을 경고한 적이 있다고 전해졌다. 카설은 CBS의 연락에 응하지 않았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108555249",
+      "url": "https://www.cnbc.com/2026/11/19/gap-gap-q3-2026-earnings.html",
+      "title": "Gap names new Athleta CEO, says Old Navy turnaround is seeing signs of progress",
+      "summary": "Gap on Thursday announced Ashley Kechter as the new CEO of Athleta. The retailer also reported mixed fiscal third-quarter earnings.",
+      "published": "2026-11-20T21:04:48+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 4701,
+      "body_file": "27-industry.txt",
+      "summary_ko": "갭은 애슐리 케히터를 애슬레타 신임 사장 겸 최고경영자로 선임했으며 취임은 12월 14일부터다. 케히터는 바오리와 팹레틱스에서 브랜드 책임을 맡았던 인물이다. 갭은 올드네이비 턴어라운드에 개선 조짐이 보인다고 밝혔고, 이 발표로 금요일 주가는 11% 넘게 올랐다. 애슬레타는 3분기 순매출이 전년 대비 14% 줄고 동일매장 매출은 15% 감소했다. 디크슨 최고경영자는 실행이 기대에 못 미쳤다고 인정하며 포괄적 재검토를 예고했다. 갭 전체 3분기 동일매장 매출은 보합으로 월가 예상치 1.3% 증가에 못 미쳤다. 연간 순매출 전망은 보합 수준으로 낮아졌다. 반면 주력 갭 브랜드는 동일매장 매출이 9% 늘어 12분기 연속 증가했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://abcnews.com/Business/wireStory/suspects-charged-brazen-train-heist-ring-netted-22-138300957",
+      "url": "https://abcnews.com/Business/wireStory/suspects-charged-brazen-train-heist-ring-netted-22-138300957",
+      "title": "Suspects charged in brazen train heist ring that netted $22 million in cargo from major retailers",
+      "summary": "Authorities have charged more than a dozen people for allegedly orchestrating a massive train heist operation",
+      "published": "2026-11-19T16:03:43-05:00",
+      "category": "industry",
+      "source": "ABC News",
+      "body_chars": 2083,
+      "body_file": "28-industry.txt",
+      "summary_ko": "미국 로스앤젤레스 연방 검찰이 열차를 노린 대규모 강도 조직의 조직원 13명을 기소했다. 기소장에 따르면 이들은 로스앤젤레스와 롱비치 항구로 들어온 상품을 실은 열차 36대 이상을 노려 2,200만 달러가 넘는 화물을 빼앗았다. 나이키 운동화, 크록스 신발, 전동 공구 등 소비재가 주요 표적이었다. 범인들은 계획한 장소에서 열차 브레이크를 파손해 열차를 멈춰 세운 뒤 화물을 트럭에 옮겨 실었고, 물건은 신원이 밝혀지지 않은 업체에 넘겨져 재판매된 것으로 알려졌다. 이들은 범행 사진과 영상을 단체 대화방에 공유하며 과시했다. 13명은 공모 및 철도 화물 절도 혐의로 기소됐고, 이 중 2명은 철도 운송업체에 대한 폭력 혐의도 받는다. 유죄가 인정되면 연방 교도소에서 5년에서 20년형을 받을 수 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108554418",
+      "url": "https://www.cnbc.com/2026/11/20/bitcoin-price-catalysts-tokenization-regulation.html",
+      "title": "Bitcoin's regulation bull case is played out. What could drive crypto gains moving forward",
+      "summary": "Crypto investors are looking beyond Congress for the next catalyst after the Senate failed to advance the Clarity Act in September.",
+      "published": "2026-11-20T18:07:18+00:00",
+      "category": "industry",
+      "source": "CNBC",
+      "body_chars": 4508,
+      "body_file": "30-industry.txt",
+      "summary_ko": "비트코인은 2026년 11월 20일 기준 6만 1,500달러 안팎에서 거래되며, 2025년 10월 기록한 사상 최고치 12만 6,000달러 이상에서 50% 넘게 떨어졌다. 미국 규제 호재가 약해진 가운데 투자자들은 월가의 블록체인 도입, 특히 토큰화를 다음 상승 동력으로 보고 있다. 블랙록 등 전통 금융사가 디지털 자산에 적극 나서고 있으며, 이ote로 이토로 CEO 요니 아시아는 주식과 채권이 블록체인 위에서 24시간 거래되는 방향으로 자본시장이 바뀌고 있다고 말했다. 그는 SpaceX 기업공개 때 이토로가 파생상품을 거래하고 상장 첫날 고객에게 배분한 사례를 들었다. 미국 상품선물거래위원회가 이달 초 개별 주식에 연동된 암호화폐식 무기한 선물의 규제 거래소 거래를 처음 허용한 점도 거론됐다. 다만 인플레이션 둔화와 지정학적 긴장 완화 여부는 여전히 변수다. 아크인베스트의 캐서린 우드는 2030년 목표가 150만 달러를 유지하고 2027년 안에 신고가를 다시 쓸 수 있다고 전망했다. 한편 클래리티법은 9월 상원 문턱을 넘지 못했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.foxbusiness.com/economy/holiday-airfares-hit-highest-levels-decade-jet-fuel-prices-surge",
+      "url": "https://www.foxbusiness.com/economy/holiday-airfares-hit-highest-levels-decade-jet-fuel-prices-surge",
+      "title": "Holiday airfares hit highest levels in a decade as jet fuel prices surge",
+      "summary": "Holiday airfares hit a decade high as jet fuel prices, double last year&apos;s levels amid the Iran war, squeeze Thanksgiving and Christmas travel budgets.",
+      "published": "2026-11-20T14:34:53-05:00",
+      "category": "economy",
+      "source": "Fox Business",
+      "body_chars": 6630,
+      "body_file": "31-economy.txt",
+      "summary_ko": "미국 연휴 항공권 가격이 10년 만의 최고 수준으로 뛰었다고 폭스비즈니스가 2026년 11월 20일 보도했다. 제트연료 가격이 이란 전쟁의 여파로 올봄 급등한 것이 원인이다. 아르구스 미국 제트연료 지수에 따르면 제트연료는 4월 갤런당 4.88달러로 정점을 찍은 뒤 여름에 3달러 아래로 내려갔다가 10월 말 4.90달러로 다시 올랐다. 호퍼의 헤일리 베리 수석 이코노미스트는 이번 연휴 시즌 항공권이 최소 10년 사이 가장 비싸며, 제트연료 가격이 작년 같은 시기보다 두 배 높다고 말했다. 소비자들은 가격이 낮을 때 일찍 예매하는 방식으로 대응하고 있다. 베리는 항공사 운항비에서 제트연료가 보통 15~30%를 차지한다고 설명했다. 그는 연료 가격이 크게 떨어져야 항공권도 내릴 것이며, 빠르면 2027년 초에 완화될 수 있다고 덧붙였다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.pbs.org/newshour/economy/americans-will-pay-more-for-thanksgiving-dinners-this-year-says-farm-bureau-survey",
+      "url": "https://www.pbs.org/newshour/economy/americans-will-pay-more-for-thanksgiving-dinners-this-year-says-farm-bureau-survey",
+      "title": "Americans will pay more for Thanksgiving dinners this year, says Farm Bureau survey",
+      "summary": "High diesel prices have made it more expensive for farmers to process and transport Thanksgiving staples like milk, dinner rolls, potatoes and cranberries, the Farm Bureau said.",
+      "published": "2026-11-19T18:30:20-05:00",
+      "category": "economy",
+      "source": "PBS NewsHour",
+      "body_chars": 3837,
+      "body_file": "32-economy.txt",
+      "summary_ko": "미국농업자문단체(AFBF)가 10명분 추수감사절 식사 비용이 작년보다 6% 오른 58.63달러가 될 것이라고 발표했다. 이는 2022년 이후 처음 오른 것이며, 2022년 기록한 최고치 64.05달러에는 못 미친다. 디젤 가격이 이란 전쟁 이후 치솟아 우유, 롤빵, 감자, 크랜베리의 가공과 운송 비용이 늘었다. 디젤 평균 가격은 9월 기록적인 갤런당 6.53달러였고, 현재는 5.96달러로 1년 전보다 58% 높다. 칠면조 가격도 16파운드짜리 기준 21.50달러에서 23.68달러로 올랐다. 조류독감으로 공급이 줄었으나 생산이 늘었고, 건강식 단백질 수요와 수출 증가로 재고가 제한되면서 가격이 올랐다. 미국농무부는 칠면조 도매가격이 파운드당 1.76달러로 사상 최고를 기록하고 작년보다 29% 오를 것으로 예상했다. 반면 당근·셀러리 채소 트레이 등 일부 품목은 소폭 내렸다. 식료품 가격은 2021년 10월 이후 2026년 10월까지 22% 올랐으며, 이는 평소 식품 물가 상승 속도의 거의 두 배에 달한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://news.yahoo.co.jp/articles/6f32d84f8b785d8fc1cde4300dbe8f3ddba68fd0?source=rss",
+      "url": "https://news.yahoo.co.jp/articles/6f32d84f8b785d8fc1cde4300dbe8f3ddba68fd0?source=rss",
+      "title": "年収が高い会社員ほど活用したいiDeCo…2026年12月から掛金上限6万2,000円に引き上げ、節税効果は年間約14万円アップ(THE GOLD ONLINE（ゴールドオンライン）)",
+      "summary": "2026年12月から、個人型確定拠出年金（iDeCo）の掛金上限が大幅に引き上げられる。特に企業年金に加入していない会社員は、これまで月額2万3,000円だった掛金の上限が月額6万2,000円に拡大す",
+      "published": "2026-11-21T01:00:38+00:00",
+      "category": "global",
+      "source": "Yahoo!ニュース",
+      "region": "japan",
+      "body_chars": 1113,
+      "body_file": "04-global.txt",
+      "summary_ko": "2026년 12월부터 개인형 확정기여연금(iDeCo)의 납입금 상한이 크게 오른다. 기업연금에 가입하지 않은 회사원은 월 2만3,000엔이던 상한이 월 6만2,000엔으로 늘어난다. 자영업자 등 국민연금 제1호 가입자는 국민연금기금 등과 함께 쓰는 한도가 월 6만8,000엔에서 7만5,000엔으로 오른다. 실제 적용은 2026년 12월분, 즉 2027년 1월 계좌 인출분부터다. iDeCo는 납입액 전액이 소득공제되고 운용수익에도 세금이 붙지 않아 상한이 오르면 절세 효과도 커진다. 기사는 이번 개정으로 연간 절세 효과가 약 14만 엔 늘어난다고 소개했다. 사회보험노무사 아베 가오리는 60세 이상 70세 미만으로 일정 요건을 갖춘 사람은 70세까지 납입할 수 있게 된 점도 짚었다. 다만 기사는 가입 전 유의점의 구체적 내용은 본문에서 다루지 않았다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.theguardian.com/business/2026/nov/20/what-impact-brexit-uk-eu-economies",
+      "url": "https://www.theguardian.com/business/2026/nov/20/what-impact-brexit-uk-eu-economies",
+      "title": "What impact has Brexit had on the UK and EU economies?",
+      "summary": "<p>As talks are held in Brussels over closer relations, we examine the economic context and the challenges ahead</p><p>The UK and EU will hold the second summit since Brexit on Friday against a volatile economic backdrop.</p><p>Taking place in Brussels as the war in the Middle East hits the global economy, the prime minister, Andy Burnham, will meet the head of the European Commission, <a href=\"ht",
+      "published": "2026-11-20T07:00:26+00:00",
+      "category": "global",
+      "source": "The Guardian",
+      "region": "europe",
+      "body_chars": 5763,
+      "body_file": "05-global.txt",
+      "summary_ko": "앤디 버넘 영국 총리가 브뤼셀에서 우르술라 폰 데어 라이언 EU 집행위원장, 안토니우 코스타 유럽이사회 의장과 만나 브렉시트 이후 두 번째 정상회담을 연다. 버넘 총리는 브렉시트가 \"효과가 없었다\"고 주장했다. 경제학자 닉 블룸은 브렉시트로 영국의 1인당 GDP가 6~8% 낮아졌다고 분석했고, 예산책임처는 15년에 걸쳐 4%의 타격을 추정했다. 영국은 2025년 대EU 상품 수출이 2019년보다 실질 기준 14% 적었지만 서비스 수출은 28% 늘었다. AI 도입 순위는 세계 3위로 EU 주요국보다 앞선다. EU도 무역장벽으로 영국 시장 접근이 어려워지고 이민이 줄어드는 영향을 받았다. 독일은 에너지 비용 급등과 중국의 추격으로, 프랑스는 정치 불확실성으로 어려움을 겪고 있다. 골드만삭스는 단일시장에 재가입하면 영국 경제가 2~5% 성장할 수 있다고 추정했다. 이번 회담은 청년 이동 제도와 식품 무역 협정에 초점을 맞춘다. 내년에는 ECB 총재 교체도 예정돼 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "108555967",
+      "url": "https://www.cnbc.com/2026/11/20/treasury-secretary-scott-bessent.html",
+      "title": "Trump says he discussed Jensen Huang with Xi; Bessent tells CNBC Nvidia chip export policy is unchanged",
+      "summary": "Trump said he discussed Jensen Huang with China's Xi. Bessent said the ousted Nvidia CEO didn't come up in talks he had while in China.",
+      "published": "2026-11-20T22:08:41+00:00",
+      "category": "global",
+      "source": "CNBC",
+      "region": "china",
+      "body_chars": 5254,
+      "body_file": "06-global.txt",
+      "summary_ko": "트럼프 대통령은 20일(현지시간) 백악관 기자회견에서 이번 주 중국 방문 중 시진핑 주석과 젠슨 황 전 엔비디아 CEO를 두고 이야기했다고 밝히며, 시 주석이 그를 훌륭한 사람이라고 평가했다고 말했다. 트럼프는 황 전 CEO에게 두 번째 기회를 줘 엔비디아 CEO로 복귀시키고 싶다는 뜻도 재확인했다. 반면 스콧 베선트 재무장관은 같은 날 CNBC에서 중국 측과의 회담에서 황 전 CEO가 언급되지 않았다고 말했다. 이후 정부 고위 관계자는 두 발언이 각자의 대화를 가리킨 것으로 모두 맞다고 설명했다. 엔비디아 이사회는 황 전 CEO 복귀를 검토하지 않고 있다. 베선트 장관은 엔비디아의 H200 AI 칩 중국 판매 정책이 변함없이 유지된다고 밝혔으며, 엔비디아가 중국 판매를 중단했다는 보도에도 정책 변경은 예상하지 않는다고 말했다. 다만 이런 발언은 중국의 첨단 반도체 확보 노력을 적극적으로 단속하려는 의지가 약할 수 있다는 해석을 낳고 있다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.bbc.co.uk/news/articles/cm1wr029evnqo#0",
+      "url": "https://www.bbc.co.uk/news/articles/cm1wr029evnqo?at_medium=RSS&at_campaign=rss",
+      "title": "Faisal Islam: This cost-cutting UK-EU deal doesn't mean lower prices will follow",
+      "summary": "The trade deal is unlikely lower food prices for shoppers, but should boost the economy more than other post-Brexit agreements.",
+      "published": "2026-11-20T16:41:52+00:00",
+      "category": "global",
+      "source": "BBC",
+      "region": "europe",
+      "body_chars": 8766,
+      "body_file": "09-global.txt",
+      "summary_ko": "영국 총리가 이번 영국·EU 식품 협정으로 기업과 소비자의 비용이 줄어든다고 강조했지만, 대형 유통업체들은 이 협정을 근거로 가격을 내리겠다고 약속하지 않았다. 마크스앤드스펜서(M&S)는 이를 \"중요한 진전\"이라고 평가했고, 테스코는 영국 농가와 생산자에게 \"좋은 소식\"이라고 밝혔다. 협정은 식품 수출 때 필요한 서류, 검사, 행정 절차를 줄여 소형 수출업체도 EU 시장에 다시 들어갈 수 있게 한다. 다만 업계 내부에서는 에너지 가격 충격 등 변수가 많아 가격 인하는 희망 사항에 가깝다고 보고 있다. 정부 평가로는 이 협정의 경제 효과는 2040년까지 50억 파운드, 0.14%다. 비판론자들은 이 수치에 EU 법규를 따라야 하는 대가가 빠져 있다고 지적한다. 식품, 배출, 청년 교류 협정을 모두 합치면 경제는 연 170억 파운드, 0.5%의 성장 효과가 예상된다. 기사는 이번 식품 협정이 자동차·화학 등 다른 분야로 확대될지가 핵심 쟁점이라고 전하며, 이는 경제적 이익과 함께 헌법적 논쟁을 동시에 부를 수 있다고 덧붙인다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "http://www.nli-research.co.jp/report/detail/id=87384?site=nli",
+      "url": "http://www.nli-research.co.jp/report/detail/id=87384?site=nli",
+      "title": "消費者物価（全国26年10月）－コアCPI上昇率は12月に3％台へ",
+      "summary": "■要旨 26年10月の消費者物価指数（生鮮食品を除く総合＝コアCPI）は前年比2.2％（9月：同2.1％）となり、上昇率は前月から0.1ポイント拡大した。 米類の下落幅拡大を主因として食料（生鮮食品を除く）の上昇率は鈍化したが、電気・ガス代の補助金縮小や燃料費単価の上昇によりエネルギー価格が上昇に転じたことがコアCPIを押し上げた。 先行きは、原油価格高騰の影響が燃料費調整単価に遅れて反映されることや、ガソリン補助金の段階的な縮小により、エネルギー価格の上昇ペースが加速する見込みである。また、原油高に伴う石油化学製品や包装資材などのコスト上昇が販売価格に転嫁され、日用品の物価上昇率が急速に高まっている。世界的なAI関連需要の拡大を背景とした半導体・メモリ価格の上昇などから、耐久消費財の上昇率も高まっている。 エネルギー価格の上昇に加え、輸入物価上昇の影響が食料や日用品などに波及することから",
+      "published": "2026-11-20T10:31:40+09:00",
+      "category": "insight",
+      "source": "ニッセイ基礎研究所",
+      "region": "japan",
+      "body_chars": 638,
+      "body_file": "12-insight.txt",
+      "summary_ko": "생명보험 계열 연구소인 닛세이기초연구소는 2026년 10월 전국 소비자물가에서 생선식품을 제외한 근원 소비자물가(코어 CPI) 상승률이 전년 대비 2.2%로 전월의 2.1%보다 0.1%포인트 올랐다고 밝혔다. 쌀 가격 하락폭이 커져 식료품(신선식품 제외) 상승률은 둔화됐지만, 전기·가스 요금 보조금 축소와 연료비 단가 상승으로 에너지 가격이 오름세로 돌아선 것이 코어 CPI를 끌어올렸다는 분석이다. 연구소는 원유 가격 급등이 연료비 조정단가에 시차를 두고 반영되고 휘발유 보조금이 단계적으로 줄어들어 에너지 가격 상승세가 빨라질 것으로 내다봤다. 아울러 원유 상승에 따른 석유화학제품과 포장재 비용이 판매가격에 전가되며 일용품 물가 상승률이 빠르게 높아지고 있고, 인공지능 관련 수요 확대로 반도체·메모리 가격이 오르면서 내구재 상승률도 높아지고 있다고 짚었다. 이에 따라 연구소는 에너지 가격 상승과 수입물가 상승이 식료품과 일용품으로 번지면서 코어 CPI 상승률이 12월에 3%대에 진입하고 2026년도 말까지 더 높아질 것으로 예상했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://think.ing.com/articles/think-ahead-201126/#When:10:58:00Z",
+      "url": "https://think.ing.com/articles/think-ahead-201126/",
+      "title": "THINK Ahead: Your questions, answered",
+      "summary": "Our Q&A explores where ING’s Global Outlook differs from market expectations, from the path for interest rates and inflation to US debt, European fiscal risks, wages and gold",
+      "published": "2026-11-20T10:58:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 5998,
+      "body_file": "13-insight.txt",
+      "summary_ko": "ING는 자사 글로벌 전망이 시장 가격보다 온건하고 우호적이라고 본다. 유가 하락으로 물가 압력이 줄어 주요 중앙은행이 12월 마지막 인상 후 금리 인상을 멈추고, 2027년 말에는 인하를 검토할 수 있다는 것이다. 가계 재무가 취약해 에너지 가격 상승의 근원물가 전이는 제한적이며, 기업이 이익률을 낮춰 비용을 흡수할 것으로 봤다. 금리 곡선은 2007년 인상기와 닮았고, 성장 둔화나 물가 위험 완화가 확인되면 중기 금리가 하락할 것으로 예상했다. 미국은 이자 지출이 GDP의 4%이고 1차 적자가 2.5%여서, 명목 성장률이 5% 안팎에 머물면 부채비율이 오를 것으로 전망했다. 다만 AI로 생산성이 크게 오르면 계산이 달라질 수 있다고 덧붙였다. 유럽에서는 프랑스 재정위기가 확산될 경우 유럽중앙은행이 전이보호장치를 가동할 가능성이 크다고 봤다. 임금은 이직률이 2%로 떨어지며 상승률이 3%로 둔화해, 이직률이 뚜렷이 오르기 전까지 온건할 것으로 본다. 금은 2027년 초 연준의 신중한 기조로 약세 요인이 있으나, 금리 하락과 달러 약세, 중앙은행 매입에 힘입어 지지될 것으로 전망했다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://www.investing.com/analysis/usdjpy-retreats-from-160-as-boj-rate-hike-bets-strengthen-the-yen-200692009",
+      "url": "https://www.investing.com/analysis/usdjpy-retreats-from-160-as-boj-rate-hike-bets-strengthen-the-yen-200692009",
+      "title": "USD/JPY Retreats From 160 as BoJ Rate Hike Bets Strengthen the Yen",
+      "summary": null,
+      "published": "2026-11-20T17:02:00+00:00",
+      "category": "insight",
+      "source": "Investing.com",
+      "body_chars": 3628,
+      "body_file": "14-insight.txt",
+      "summary_ko": "FxPro 애널리스트 팀은 달러가 일시적 안전자산 역할을 하며 대부분 통화에 강세지만 엔화에는 밀리고 있어, 달러-엔이 160엔에서 158.8엔까지 내려왔다고 본다. 근거로 미 재무부 추정에서 올해 1~9월 비거주자의 미국 자산 순유입이 6700억 달러로 전년 같은 기간보다 43% 많았다는 점을 든다. 나스닥100이 조정받으면 해외 자금 이탈과 자산효과 둔화로 달러가 여러 경로에서 압박받을 수 있다고 분석한다. 엔화는 미일 국채 금리차 축소와 포지션 청산에 힘입어 24시간 동안 0.75% 올라 주요 G10 통화 가운데 상승폭이 가장 컸다. 일본의 10월 소비자물가가 전년 대비 2.3% 올라 2025년 11월 이후 최고치를 기록하면서 금리 인상 명분도 커졌다는 평가다. 선물시장은 12월 일본은행의 긴축 확률을 85%로 반영하고 있으며, 시장은 2027년 말까지 일본 금리 인상폭을 78bp로 보고 있다. 연준 12월 인상 기본 시나리오는 유지되지만, 미국 긴축 기대가 되살아나면 달러-엔이 160엔 위로 다시 올라설 수 있다고 경계한다.",
+      "summary_model": "claude-haiku-5-5"
+    },
+    {
+      "guid": "https://think.ing.com/articles/asia-week-ahead-bok-rate-decision/#When:04:37:00Z",
+      "url": "https://think.ing.com/articles/asia-week-ahead-bok-rate-decision/",
+      "title": "Asia week ahead: BoK rate decision, data from China, Taiwan, Japan",
+      "summary": "ASIA/PACIFIC: The Bank of Korea is expected to hike rates by 25bp to 3.25%. Markets will also closely watch key regional data releases, including China’s industrial profits, Taiwan’s industrial production, and Tokyo inflation",
+      "published": "2026-11-20T04:37:00+00:00",
+      "category": "insight",
+      "source": "ING THINK",
+      "body_chars": 2094,
+      "body_file": "15-insight.txt",
+      "summary_ko": "ING은 한국은행이 수요일 기준금리를 25bp 올려 3.25%로 인상할 것으로 내다봤다. 이번 인상은 현 긴축 사이클에서 세 번째 인상이 된다. 근거로는 10월 소비자물가 상승률(헤드라인·근원 모두 전년 대비 2.8%)이 목표를 웃도는 점, 반도체 수출이 성장을 떠받치고 있는 점을 들었다. 다만 가계대출 증가세가 둔화하고 있어 앞선 금리 인상이 금융여건을 죄기 시작했다고 해석했다. 중국에 대해서는 10월 산업이익이 전반적으로 회복됐지만 AI·전자 관련 업종과 상류 원자재 생산자에 편중돼 있고, 자동차·건설 연관 업종과 소비재 제조업체는 여전히 압박을 받고 있다고 짚었다. 대만 10월 산업생산은 전년 대비 22.0% 증가로 가속할 것으로 예상했으며, 기술 부문 강세가 주도할 것이라고 봤다. 일본은 11월 도쿄 소비자물가가 전년 대비 3.1%로 올라 10월 2.8%에서 가속하고, 근원물가는 2.6%에서 2.9%로 오를 것이라는 컨센서스를 제시했다. ING는 이 수치가 대체로 부합하면 근원 물가 압력이 견고하다는 뜻이고, 12월 일본은행 금리 인상 전망을 뒷받침한다고 밝혔다.",
+      "summary_model": "claude-haiku-5-5"
+    }
+  ],
+  "region_filter": {
+    "mode": "jev",
+    "market": "us",
+    "model": "jev-1.14.0",
+    "threshold": 0.9,
+    "asked": 163,
+    "answered": 163,
+    "dropped": [
+      {
+        "guid": "108553678",
+        "title": "One of the world's most contested seas is proving too much for Asia's leaders to resolve",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "108517094",
+        "title": "Euro zone inflation hits 4% for first time in three years as interest rate hike looms",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "108506848",
+        "title": "Australia hikes rates to 18-year high to fight inflation",
+        "label": "foreign",
+        "confidence": 1.0
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/quiet-reformer-takes-infantino-tashima-stays-fifa-race-138310247",
+        "title": "A quiet reformer takes on Infantino: Tashima stays in the FIFA race",
+        "label": "foreign",
+        "confidence": 0.98
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/world/high-airfares-may-become-new-norm-as-jet-fuel-costs-soar-says-asia-pacific-airline-industry-chief",
+        "title": "High airfares may become new norm as jet fuel costs soar, says Asia-Pacific airline industry chief",
+        "label": "foreign",
+        "confidence": 1.0
+      }
+    ],
+    "stopped": "complete",
+    "errors": {},
+    "candidates": [
+      {
+        "guid": "108556723",
+        "title": "Trump says he still has confidence in Lutnick",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108556306",
+        "title": "White House replaces cyber director Sean Cairncross amid widespread tech outages",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108556300",
+        "title": "Kushner says Russia 'comfortable' with idea of NATO-like security guarantees for Ukraine",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 0.26,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108554962",
+        "title": "Denmark ratifies Trump security deal over Greenland after months of diplomatic tensions",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.66,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108553678",
+        "title": "One of the world's most contested seas is proving too much for Asia's leaders to resolve",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108554553",
+        "title": "Kash Patel skips House hearing after Mar-a-Lago gala with $50,000 access",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108554277",
+        "title": "Jeffries wins Democratic House speaker race, on track to make history in January",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108554125",
+        "title": "Vance scraps schedule to address tech outages as Trump admin insists incidents aren't linked",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108554094",
+        "title": "Jensen Huang has agreed to appear before Senate banking committee, Chairman Scott says",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108553911",
+        "title": "U.S. soldier taken into military custody over suspected spying for Russia",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108553884",
+        "title": "Ukraine allies reject U.S. criticism of deep strikes inside Russia ahead of Trump-Putin-Xi summit",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.7,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108553818",
+        "title": "Iran says army targets U.S. drone and missile sites in Kuwait as Gulf attacks mount",
+        "category": "politics",
+        "label": "foreign_impact",
+        "confidence": 0.31,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108553770",
+        "title": "Democrat Mary Peltola wins Alaska Senate election",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108552992",
+        "title": "St. Louis Fed's Musalem says four more rate hikes may be needed in coming months",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108550971",
+        "title": "Wholesale prices rose 0.3% in October, putting annual rate at 6.5%, the highest in nearly four years",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108548222",
+        "title": "Consumers are showing signs of strain even as they keep spending, CNBC/NRF Retail Monitor shows",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108547426",
+        "title": "Consumer prices rose 0.4% in October, more than expected, complicating Fed's inflation fight",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108546444",
+        "title": "3 unexpected reasons the October jobs report was so strong",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108546693",
+        "title": "A key report for where inflation stood in October comes out Tuesday. Here's what to expect",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108532857",
+        "title": "A disturbing employment trend is hiding beneath the latest strong job numbers",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108532135",
+        "title": "U.S. economy added 165,000 jobs in October, way more than expected; unemployment rate slips to 4.1%",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108527004",
+        "title": "The October jobs report is out Friday. Here's everything to expect",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108519116",
+        "title": "Here's what the Democratic election rout could mean for the U.S. economy",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108515233",
+        "title": "Voters say the economy drove them to the polls — and blame Trump for their troubles",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108518491",
+        "title": "Analysis: The Democrats have one chance to extract concessions from Trump. Markets will hate it",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108517847",
+        "title": "Private companies added 86,000 jobs in October, slightly higher than expected, ADP says",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108517094",
+        "title": "Euro zone inflation hits 4% for first time in three years as interest rate hike looms",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108511422",
+        "title": "Job openings posted big September gain in positive sign for labor market ahead of payrolls report",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108506848",
+        "title": "Australia hikes rates to 18-year high to fight inflation",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108550096",
+        "title": "Eric Trump-backed robot soldier startup can't pay staff after founder borrowed $4.6 million from company to buy home",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108546838",
+        "title": "Heating oil prices are up 59% from last winter. The spike is 'crushing folks,' Maine nonprofit says",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108505940",
+        "title": "Jim Cramer says lower oil prices are giving stocks a boost. Can it last?",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108487479",
+        "title": "Cramer’s week ahead: Expect more volatility as tech earnings, midterms loom",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108550816",
+        "title": "‘We will sue them’: Canada threatens Stellantis as Trump trade war reshapes Jeep production plans",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108469244",
+        "title": "Honda warns 50% Canada auto tariffs would be catastrophic for industry",
+        "category": "macro",
+        "label": "foreign",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108459703",
+        "title": "Audi defends plans for a $4 billion Georgia plant amid VW restructuring, tariffs",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.24,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108555723",
+        "title": "Warsh wants Fed officials to talk less. Instead, they’re talking more",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108555723",
+        "title": "Warsh wants Fed officials to talk less. Instead, they’re talking more",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108553526",
+        "title": "Fed’s Waller says central bank may need to ‘shock people’ with half-point rate hike",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108550096",
+        "title": "Eric Trump-backed robot soldier startup can't pay staff after founder borrowed $4.6 million from company to buy home",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108551023",
+        "title": "Chicago Fed's Goolsbee says central bank 'has definitely got work to do' on inflation",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108550312",
+        "title": "In a policy switch, the Fed says its October 2027 meeting will not see a vote on interest rates",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "108548896",
+        "title": "Fed's Goolsbee calls inflation report 'borderline disturbing' as central bank weighs more hikes",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/show/what-trump-addressed-during-his-lengthy-white-house-news-conference",
+        "title": "What Trump addressed during his lengthy White House news conference",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/show/josh-shapiro-on-foreign-policy-democratic-wins-and-his-2028-ambitions",
+        "title": "Josh Shapiro on foreign policy, Democratic wins and his 2028 ambitions",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/second-federal-judge-blocks-construction-of-trumps-memorial-arch",
+        "title": "Second federal judge blocks construction of Trump's memorial arch",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/trump-administration-moves-to-have-lawsuit-dismissed-in-challenge-to-alaskas-u-s-senate-race",
+        "title": "Trump administration moves to have lawsuit dismissed in challenge to Alaska's U.S. Senate race",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/white-house-taps-kirsten-davies-as-cyber-chief-after-outages-rattle-americans",
+        "title": "White House taps Kirsten Davies as cyber chief after outages rattle Americans",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/show/tennessee-democrat-describes-how-she-won-a-trump-district-with-almost-no-ad-money",
+        "title": "Tennessee Democrat describes how she won a Trump district with almost no ad money",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/world/3-takeaways-from-trump-xi-and-putins-historic-summit",
+        "title": "3 takeaways from Trump, Xi and Putin's historic summit",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.74,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/judge-issues-14-day-extension-of-order-blocking-trumps-triumphal-arch-construction",
+        "title": "Judge issues 14-day extension of order blocking Trump's triumphal arch construction",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.89,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/fact-checking-mullins-house-hearing-on-faa-ground-stop-outages-and-dirty-bombs",
+        "title": "Fact-checking Mullin's House hearing on FAA ground stop, outages and dirty bombs",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/mississippi-saw-a-spike-in-inactive-voters-for-the-midterms-democratic-lawmakers-want-answers",
+        "title": "Mississippi saw a spike in 'inactive' voters for the midterms. Democratic lawmakers want answers",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/im-not-maga-elon-musk-says-after-republicans-midterm-thrashing",
+        "title": "'I'm not MAGA,' Elon Musk says after Republicans' midterm thrashing",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/republican-rep-nick-begich-wins-reelection-for-alaska-house-seat",
+        "title": "Republican Rep. Nick Begich wins reelection for Alaska House seat",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/20/trump-republican-succession-battle-vance-rubio",
+        "title": "Trump turns White House press conference into a 2028 succession audition",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/20/tillis-republican-senator-trump-cyber-nominee",
+        "title": "Republican senator blocks Trump cyber nominee over January 6 denial",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/20/trump-datacenters-white-house",
+        "title": "Trump threatens ‘tremendous penalties’ for US tech firms that build datacenters abroad",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/20/senators-consumer-financial-protection-bureau",
+        "title": "‘Worth fighting for’: senators vow to restore financial watchdog agency after Guardian investigation",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/environment/2026/nov/20/offshore-wind-farms-trump-fishers",
+        "title": "These US fishers see offshore wind as a ‘godsend’. Trump wants to shut it down",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/20/how-democrats-flip-texas",
+        "title": "From Beto to ‘Blexas’: how Democrats flipped Texas during the midterm elections",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/19/louisiana-senate-seat-democrats-jamie-davis",
+        "title": "‘It stings to come close’: Louisiana Democrat’s narrow failure to make it 57 Senate seats",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.theguardian.com/us-news/2026/nov/19/big-bend-texas-trump",
+        "title": "The ‘blue wave’ could foil the Trump administration’s Big Bend wall plans",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/politics-news/gops-2028-hopefuls-navigate-partys-midterm-wipeout-politics-desk-rcna610480",
+        "title": "The GOP’s 2028 hopefuls navigate their party’s midterm wipeout: From the Politics Desk",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/news/us-news/zohran-mamdani-tears-achilles-playing-soccer-nyc-press-corps-rcna610443",
+        "title": "Zohran Mamdani tears Achilles while playing soccer against NYC press corps",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/congress/senate-passes-sweeping-bill-simplifying-permitting-rules-build-america-rcna610196",
+        "title": "Senate passes bill simplifying permitting rules to build in America, sending it to House",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/2026-election/doj-seeks-dismissal-lawsuit-alaska-senate-dan-sullivan-mary-peltola-rcna610343",
+        "title": "Justice Department seeks dismissal of its lawsuit in Alaska Senate race",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/trump-administration/trumps-pick-agency-providing-election-security-says-jan-6-was-not-atta-rcna610298",
+        "title": "Trump’s pick for agency providing election security says Jan. 6 was not an attack",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/politics-news/trumps-symbolic-summit-politics-desk-rcna610313",
+        "title": "Trump’s symbolic summit: From the Politics Desk",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/donald-trump/posthumously-pardons-pete-rose-mlb-hit-leader-betting-baseball-rcna610308",
+        "title": "Trump gives posthumous pardon to baseball’s Pete Rose, who pleaded guilty to tax evasion",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/national-security/classified-nsa-network-still-leaving-staff-working-home-rcna610261",
+        "title": "Classified NSA network is still down, leaving some staff working from home",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/2026-election/elon-musk-says-not-maga-spending-millions-trump-allies-rcna610129",
+        "title": "Elon Musk says he is ‘not MAGA’ after spending millions on Trump and his allies",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/congress/elissa-slotkin-fires-back-aaron-reitz-investigation-political-speech-rcna610133",
+        "title": "Sen. Elissa Slotkin fires back at DOJ official’s ‘sham’ investigation",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/2026-election/high-school-valedictorians-get-nike-shoes-request-mississippis-incomin-rcna610116",
+        "title": "High school valedictorians to get Nike shoes after request from Sen.-elect Scott Colom",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/justice-department/russian-national-igor-diu-targeted-palantir-workers-sources-say-rcna610112",
+        "title": "Russian man accused of spying targeted Palantir workers, sources say",
+        "category": "politics",
+        "label": "foreign_impact",
+        "confidence": 0.55,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/politics-news/hakeem-jeffries-defectors-reveal-limits-power-politics-desk-rcna610100",
+        "title": "Hakeem Jeffries’ progressive defectors reveal the limits of their power: From the Politics Desk",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/congress/democrats-formally-nominate-rep-hakeem-jeffries-paving-way-first-black-rcna609619",
+        "title": "House Democrats select Jeffries as leader, setting him up as the first Black speaker",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/trump-administration/trump-putin-bilateral-meeting-asia-summit-ukraine-rcna609997",
+        "title": "Trump to hold one-on-one with Putin on the sidelines of Asia summit",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/politics/congress/democrat-investigations-warn-trump-allies-vance-donald-jr-eric-rcna609904",
+        "title": "House Democrat warns a dozen Trump allies to save their records, calling it ‘just the beginning’",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/marine-corps-hero-brad-kasal-federal-investigation/",
+        "title": "Marine Corps hero under federal investigation",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/house-ethics-committee-sexual-misconduct-investigations-changes/",
+        "title": "House Ethics aims to speed up sexual misconduct investigations",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/elon-musk-corporate-disclosure-lawsuit/",
+        "title": "Musk said he'd \"look into\" this disclosure law. Now it heads to court.",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/johnson-house-republican-absences/",
+        "title": "Too many House Republicans are missing work, Mike Johnson says",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/live-updates/trump-press-conference-live-stream-2026-11-20/",
+        "title": "Trump touts Asia trip, meeting with Putin and Xi at news conference",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/white-house-national-cyber-director-sean-cairncross-leaving/",
+        "title": "White House national cyber director leaving his post",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/plot-assassinate-sikh-dissident-nyc-prison-sentence/",
+        "title": "Man who plotted to kill Sikh dissident in NYC is sentenced",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/ufo-files-pentagon-contractor/",
+        "title": "New UFO files show contractor planned vault for \"exotic material\"",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.68,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/senate-bipartisan-permitting-reform-bill-energy-baaja-trump/",
+        "title": "Senate passes bipartisan permitting bill designed to boost energy projects",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/army-lead-azide-detonation-iowa-toxic-dust-plume/",
+        "title": "Army delays detonation in Iowa that could send toxic dust into Illinois",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/trump-administration-dismiss-alaska-senate-lawsuit/",
+        "title": "DOJ moves to dismiss lawsuit over Alaska Senate race",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/elon-musk-not-maga-midterm-spending-trump/",
+        "title": "Musk says he's \"not MAGA,\" feels \"foolish\" about midterm spending",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/pete-rose-pardoned-by-trump/",
+        "title": "Trump pardons deceased MLB slugger Pete Rose",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/kennedy-center-honors-cbs-2026/",
+        "title": "CBS to air Kennedy Center Honors in December",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/kirkland-ellis-law-firm-trump-deal-12-million-free-legal-work/",
+        "title": "Law firm that cut deal with Trump has done $11.8M in pro bono work",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/meet-the-new-senators-120th-congress/",
+        "title": "Meet the 19 new senators set to be sworn in to Congress",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/bill-essayli-justice-department-mar-a-lago-trump-documents-case/",
+        "title": "DOJ taps prosecutor for probes into Mar-a-Lago raid, docs case",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/obama-pep-talk-freshman-house-democrats/",
+        "title": "Obama gives pep talk to freshman House Democrats in surprise visit",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.cbsnews.com/news/greenland-security-deal-us-denmark-danish-lawmakers/",
+        "title": "Danish lawmakers OK Greenland security deal with U.S.",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.26,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/stacey-abrams-plans-refocus-fair-fight-voting-rights-138316451",
+        "title": "Stacey Abrams plans to refocus her Fair Fight voting rights group on threats to democracy",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/quiet-reformer-takes-infantino-tashima-stays-fifa-race-138310247",
+        "title": "A quiet reformer takes on Infantino: Tashima stays in the FIFA race",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/maga-stardom-haul-lauren-boebert-considers-gops-losses-138305606",
+        "title": "From MAGA stardom to a U-Haul: Lauren Boebert considers her own and GOP's losses",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/judge-agriculture-secretarys-religious-emails-unconstitutional-138305215",
+        "title": "Judge says agriculture secretary's religious emails were unconstitutional",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/trumps-cisa-pick-michael-losapio-rejects-jan-6-138299268",
+        "title": "Trump’s CISA pick rejects Jan. 6 as an 'attack,' won't name 2020 election winner",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/appeals-court-grants-trump-request-halt-order-restoring-138291347",
+        "title": "Appeals court grants Trump request to halt order restoring Venezuelan TPS",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/college-football-picks-nebraska-gets-shot-end-decade-138257755",
+        "title": "College football picks: Nebraska gets shot to end decade-long skid against Top 25 teams vs. Buckeyes",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.83,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/democrat-hakeem-jeffries-faces-test-becoming-house-speaker-138238553",
+        "title": "Hakeem Jeffries faces test to becoming House speaker during leadership elections",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/house-democrats-prepare-elect-leaders-new-congress-party-138228920",
+        "title": "House Democrats prepare to elect leaders for the new Congress as party pushes for change",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/chargers-show-progress-offense-finally-end-11-game-138227718",
+        "title": "Chargers show enough progress on offense to finally end 11-game losing streak",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.68,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/liv-players-offered-european-tour-lifeline-left-off-138226299",
+        "title": "LIV players offered a European tour lifeline. Those left off the list are just as notable",
+        "category": "politics",
+        "label": "foreign",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/1-8-titans-team-leans-cam-wards-audition-138188128",
+        "title": "A 1-8 Titans team leans into Cam Ward’s audition as the offense shows signs of life",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.44,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/dolphins-backup-kyle-mccord-shows-promise-nfl-start-138187792",
+        "title": "Dolphins backup Kyle McCord shows promise in first NFL start in place of the injured Malik Willis",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.76,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/jaguars-verge-longest-30-point-scoring-streak-franchise-138186296",
+        "title": "Jaguars are on the verge of the longest 30-point scoring streak in franchise history",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.62,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/dak-prescotts-touchdown-tosses-offset-porous-cowboys-defense-138186025",
+        "title": "Dak Prescott's touchdown tosses aren't enough to offset another porous Cowboys defense",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/supreme-court-declines-hear-challenge-maryland-sensitive-places-138182785",
+        "title": "Supreme Court declines to hear challenge to Maryland 'sensitive places' gun law",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/california-donates-1300-hospital-beds-medical-supplies-ukraine-138180267",
+        "title": "California donates 1,300 hospital beds and medical supplies to Ukraine",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/trumps-handpicked-party-chair-faces-rebellion-midterm-losses-138155824",
+        "title": "Trump's handpicked party chair faces a rebellion as midterm losses challenge president's grip on GOP",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/commanders-hope-win-giants-turning-point-playoff-hopes-138120292",
+        "title": "Commanders hope win over Giants is a turning point as playoff hopes stay alive",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/republicans-dazed-midterm-election-defeats-grapple-wrong-138104752",
+        "title": "Republicans dazed by midterm election defeats grapple with what went wrong",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/trumps-justice-department-faces-new-era-scrutiny-democratic-138101529",
+        "title": "Trump's Justice Department faces a new era of scrutiny under a Democratic-led Congress",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/texas-attorney-general-ken-paxton-finalized-divorce-lawyer-138095312",
+        "title": "Texas Attorney General Ken Paxton has finalized his divorce",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/ice-reports-record-high-immigration-arrests-deportations-trumps-138083036",
+        "title": "ICE reports record immigration arrests, deportations since Trump White House return",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Politics/wireStory/democrats-flock-denver-post-midterms-introspection-turned-celebration-138069382",
+        "title": "Democrats flock to Denver for a post-midterms introspection-turned-celebration",
+        "category": "politics",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/economy/americans-will-pay-more-for-thanksgiving-dinners-this-year-says-farm-bureau-survey",
+        "title": "Americans will pay more for Thanksgiving dinners this year, says Farm Bureau survey",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/nation/will-people-skip-work-and-hurt-the-u-s-economy-to-play-grand-theft-auto-6",
+        "title": "Will people skip work and hurt the U.S. economy to play Grand Theft Auto 6?",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.56,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/economy/retail-spending-slowed-in-october-as-high-prices-gave-shoppers-pause",
+        "title": "Retail spending slowed in October as high prices gave shoppers pause",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/nation/customers-at-major-banks-are-experiencing-issues-accessing-their-accounts",
+        "title": "Technical issue at JPMorgan Chase triggers online delays for major U.S. banks",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/show/increasing-cost-of-housing-squeezes-americans-out-of-market",
+        "title": "Increasing cost of housing squeezes Americans out of market",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/world/high-airfares-may-become-new-norm-as-jet-fuel-costs-soar-says-asia-pacific-airline-industry-chief",
+        "title": "High airfares may become new norm as jet fuel costs soar, says Asia-Pacific airline industry chief",
+        "category": "economy",
+        "label": "foreign",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/politics/trump-administration-plans-to-make-it-harder-to-get-grocery-assistance",
+        "title": "Trump administration plans to make it harder to get grocery assistance",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/show/u-s-inflation-report-highlights-strain-of-rising-food-energy-and-housing-costs",
+        "title": "U.S. inflation report highlights strain of rising food, energy and housing costs",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.pbs.org/newshour/economy/inflation-runs-hotter-than-expected-as-higher-prices-extend-beyond-the-gas-station",
+        "title": "Inflation runs hotter than expected as higher prices extend beyond the gas station",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/holiday-airfares-hit-highest-levels-decade-jet-fuel-prices-surge",
+        "title": "Holiday airfares hit highest levels in a decade as jet fuel prices surge",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.72,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/major-kfc-franchisee-files-bankruptcy-84-restaurants-sale",
+        "title": "Major KFC franchisee files for bankruptcy, puts 84 restaurants up for sale",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.96,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/new-vehicle-affordability-squeezed-record-prices-high-interest-rates-hit-buyers",
+        "title": "New vehicle affordability squeezed as record prices and high interest rates hit buyers",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/ford-recalls-60000-transit-vans-over-software-glitch-shuts-off-lights",
+        "title": "Ford recalls 60,000 Transit vans over software glitch that shuts off lights",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/legal-battle-play-out-after-incident-new-orleans-port-left-cruise-ship-capsized",
+        "title": "Costly legal battle to play out after incident in New Orleans port left cruise ship capsized",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/blood-pressure-drug-recalled-nationwide-over-possible-metal-contamination",
+        "title": "Blood pressure drug recalled nationwide over possible metal contamination",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.77,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/more-than-720k-bmw-vehicles-recalled-over-fire-threat-regulators-say",
+        "title": "More than 720K BMW vehicles recalled over fire threat, regulators say",
+        "category": "economy",
+        "label": "foreign",
+        "confidence": 0.6,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/new-orleans-port-seeks-tanker-seizure-cruise-ship-crash-sparks-lawsuit",
+        "title": "New Orleans port seeks tanker seizure after cruise ship crash sparks $1M lawsuit",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/why-social-securitys-annual-cola-matters-more-retirees-get-older",
+        "title": "Why Social Security’s annual COLA matters more as retirees get older",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/estate-planning-step-many-families-overlook-why-matters",
+        "title": "The estate planning step many families overlook – and why it matters",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.86,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/polymarket-confirms-layoffs-prediction-market-giant-undergoes-major-restructuring",
+        "title": "Polymarket confirms layoffs as prediction market giant undergoes major restructuring",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.92,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/gas-prices-estimate-rises-2027-though-consumers-could-still-see-relief-from-pain-pump-eia",
+        "title": "Gas prices estimate rises for 2027, though consumers could still see relief from pain at the pump: EIA",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/gas-prices-fall-below-4-gallon-first-time-since-july",
+        "title": "Gas prices fall below $4 a gallon for first time since July",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/cpi-inflation-october-2026",
+        "title": "Consumer inflation rises faster than expected in October, CPI report shows",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/irs-announces-2027-tax-changes-what-taxpayers-need-know",
+        "title": "IRS announces 2027 tax changes: What taxpayers need to know",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/companies-urged-adapt-restaurant-franchisee-files-bankruptcy-businesses-want-make-excuses",
+        "title": "Companies urged to adapt as restaurant franchisee files for bankruptcy: 'Businesses want to make excuses'",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.91,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/us-jobs-report-october-2026",
+        "title": "US economy adds 165,000 jobs in October, blowing past expectations",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/wall-street-stocks-tech-sell-off-november-5-2026",
+        "title": "What Wall Street's tech stock sell-off means for your 401(k)",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/treasury-irs-opportunity-zones-investment-tax-incentives",
+        "title": "Trump admin names new economic Opportunity Zones to spur private investment in struggling communities",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/canva-restructuring-affect-22-workforce-growth-slows",
+        "title": "Canva to restructure operations, affecting 22% of workforce as growth slows",
+        "category": "economy",
+        "label": "foreign",
+        "confidence": 0.82,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.foxbusiness.com/economy/private-sector-added-86000-jobs-october-above-expectations-adp-says",
+        "title": "Private sector added 86,000 jobs in October, above expectations, ADP says",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/sections/planet-money/2026/11/13/nx-s1-6039196/does-europe-regret-its-bet-on-u-s-defense",
+        "title": "Does Europe regret its bet on U.S. defense?",
+        "category": "economy",
+        "label": "foreign",
+        "confidence": 0.67,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/2026/11/12/nx-s1-6038940/punch-in-the-gut-homes-sales-fall-to-their-lowest-in-16-years",
+        "title": "'Punch in the gut': Homes sales fall to their lowest in 16 years",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.94,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/2026/11/11/nx-s1-6037588/gasoline-price-below-4-dollars-gallon",
+        "title": "Why is gasoline suddenly under $4 a gallon?",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.97,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/2026/11/10/nx-s1-6034518/inflation-consumer-prices-economy-gas-prices",
+        "title": "Gas prices dip below $4 but inflation remains stubbornly high",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.98,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/sections/planet-money/2026/11/10/g-s1-152755/why-did-californias-billionaire-tax-fail-to-surf-the-blue-wave",
+        "title": "Why did California's billionaire tax fail to surf the blue wave?",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/2026/11/10/nx-s1-6034517/inflation-report",
+        "title": "INFLATION REPORT",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.73,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.npr.org/2026/11/09/nx-s1-6032701/economist-discusses-taxing-the-ultra-wealthy-and-their-impact-on-the-economy",
+        "title": "Economist discusses taxing the ultra wealthy and their impact on the economy",
+        "category": "economy",
+        "label": "domestic",
+        "confidence": 0.85,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://fortune.com/2026/11/20/fed-rate-hikes-higher-inflation-expectations-unanchored-chris-waller/",
+        "title": "Fed governor admits people now think higher inflation is the new normal: ‘That’s the kind of psychology we need to start breaking’",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/business/consumer/walmart-holiday-shopping-sales-outlook-rcna610193",
+        "title": "Walmart stocks up on inflation-weary shoppers ahead of the holidays",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.nbcnews.com/data-graphics/grocery-price-tracker-inflation-trends-eggs-bread-trump-administration-rcna257424",
+        "title": "How grocery prices have changed since Trump took office",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Business/wireStory/average-us-30-year-mortgage-rate-rises-728-138293216",
+        "title": "Average US 30-year mortgage rate rises to 7.28% this week, ending a four-week slide",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://abcnews.com/Business/wireStory/target-momentum-strong-quarter-holiday-shopping-season-138243258",
+        "title": "Target will take momentum from strong third quarter into the holiday shopping season",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 1.0,
+        "exempt": false,
+        "status": "judged"
+      },
+      {
+        "guid": "https://www.axios.com/2026/11/14/grocery-wholesale-inflation-vegetables",
+        "title": "Wholesale food prices are on the rise",
+        "category": "macro",
+        "label": "domestic",
+        "confidence": 0.6,
+        "exempt": false,
+        "status": "judged"
+      }
+    ],
+    "late": 0,
+    "seconds": 10.4,
+    "categories": [
+      "economy",
+      "macro",
+      "politics"
+    ]
+  },
+  "funnel": {
+    "categories": {
+      "ai": {
+        "CNBC": {
+          "candidates": 34,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "PBS NewsHour": {
+          "candidates": 3,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "NBC News": {
+          "candidates": 3,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "Fox Business": {
+          "candidates": 5,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "NPR": {
+          "candidates": 1,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "Fortune": {
+          "candidates": 3,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "CBS News": {
+          "candidates": 6,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "ABC News": {
+          "candidates": 4,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "The Guardian": {
+          "candidates": 2,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "TechCrunch": {
+          "candidates": 15,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "Ars Technica": {
+          "candidates": 5,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "The Verge": {
+          "candidates": 2,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "Axios": {
+          "candidates": 5,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        }
+      },
+      "macro": {
+        "CNBC": {
+          "candidates": 1,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "Fortune": {
+          "candidates": 1,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "NBC News": {
+          "candidates": 1,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "ABC News": {
+          "candidates": 1,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        }
+      },
+      "politics": {
+        "CNBC": {
+          "candidates": 3,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "PBS NewsHour": {
+          "candidates": 12,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {
+            "same_story": 1
+          }
+        },
+        "The Guardian": {
+          "candidates": 8,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "NBC News": {
+          "candidates": 8,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        },
+        "CBS News": {
+          "candidates": 18,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "ABC News": {
+          "candidates": 5,
+          "tried": 0,
+          "with_body": 0,
+          "chosen": 0,
+          "fail": {}
+        }
+      },
+      "industry": {
+        "CNBC": {
+          "candidates": 14,
+          "tried": 3,
+          "with_body": 2,
+          "chosen": 2,
+          "fail": {
+            "추출 실패": 1
+          }
+        },
+        "ABC News": {
+          "candidates": 1,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        }
+      },
+      "economy": {
+        "PBS NewsHour": {
+          "candidates": 1,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        },
+        "Fox Business": {
+          "candidates": 1,
+          "tried": 1,
+          "with_body": 1,
+          "chosen": 1,
+          "fail": {}
+        }
+      }
+    },
+    "legacy_filled": 0,
+    "stopped": [],
+    "blocked": [],
+    "seconds": {
+      "extra_feeds": 2.0,
+      "confirm": 8.0
+    },
+    "guid_collisions": []
+  }
+}

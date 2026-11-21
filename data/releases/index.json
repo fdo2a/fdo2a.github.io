@@ -1,47 +1,13 @@
 {
-  "report_date": "2026-11-19",
-  "run_id": "44629510105-1",
+  "report_date": "2026-11-20",
+  "run_id": "44880705810-1",
   "status": "complete",
   "releases": [
     {
-      "key": "philly-fed",
-      "landing_url": "https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/manufacturing-business-outlook-survey",
-      "ok": true,
-      "url": "https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/mbos-2026-11",
-      "resolver": "philly_month",
-      "verified": true,
-      "doc_kind": "html",
-      "checks": {
-        "ok": true,
-        "identity": true,
-        "period": true,
-        "value": true,
-        "primary_checked": true,
-        "note": "verified"
-      },
-      "note": "impersonate=safari",
-      "published": false
-    },
-    {
-      "key": "claims",
-      "landing_url": "https://www.dol.gov/ui/data.pdf",
-      "ok": true,
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "resolver": "fixed",
-      "verified": true,
-      "doc_kind": "pdf",
-      "checks": {
-        "ok": true,
-        "identity": true,
-        "period": true,
-        "value": true,
-        "primary_checked": false,
-        "note": "verified"
-      },
-      "note": "impersonate=safari",
-      "published": true,
-      "chars": 20785,
-      "path": "releases/claims.txt"
+      "key": "michigan",
+      "landing_url": "https://www.sca.isr.umich.edu/",
+      "ok": false,
+      "note": "https://www.sca.isr.umich.edu/: period_mismatch"
     }
   ]
 }

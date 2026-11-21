@@ -1,16 +1,16 @@
 {
-  "updated": "2026-11-06",
+  "updated": "2026-11-21",
   "tickers": {
     "005930.KS": {
       "grade": "홀딩 강화",
       "grade_since": "2026-08-24",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 75993.89,
-        "eps_fy1_low": 48732.0,
-        "eps_fy1_high": 94075.0,
-        "price": 188700.0,
-        "pb": 1.92
+        "eps_fy1": 77774.664,
+        "eps_fy1_low": 60097.656,
+        "eps_fy1_high": 102815.0,
+        "price": 194700.0,
+        "pb": 1.99
       },
       "open_questions": [
         "분기 실적에서 HBM4 매출 가이던스(3배·비중 60%) 달성 여부",
@@ -28,6 +28,26 @@
         "패키징 연구거점이 구체적인 공정·소재 검증과 고객 평가·제품 적용으로 이어지는가"
       ],
       "changelog": [
+        {
+          "date": "2026-11-21",
+          "signal": "홀딩 강화",
+          "stance": "Neutral",
+          "title": "CXL 캐시 오프로딩 추론 환경 검증",
+          "fact": "SK하이닉스는 11월 20일 발표에서 SK텔레콤과 CXL 기반 KV 캐시 오프로딩을 실제 LLM 추론 환경에서 검증했다고 밝혔다. 검증 시점과 상용 주문·매출은 공개하지 않았다. <cite><a href=\"https://news.skhynix.com/en/sc26-ai-hpc-exhibition/\">SK하이닉스 SC26 발표, 2026-11-20</a></cite>",
+          "inference": "추론: 경쟁사의 실제 추론 환경 검증은 캐시 재사용과 메모리 공유의 실현 가능성을 보여준다. 효율 향상이 순증 수요를 줄일 가능성과 서비스 확대로 수요를 늘릴 가능성은 구분되지 않는다.",
+          "delta": "기존 고객 플랫폼 수요 논거에 경쟁사의 메모리 효율화 검증을 교차 반영한다. 이 회사의 인증·주문이나 수익성 변화는 확인되지 않아 등급과 확신도를 유지한다.",
+          "next": "후속 공식 발표에서 상용 도입·주문·매출과 메모리 사용량 변화를 확인한다. 일정은 미정이다. 효율 개선만으로 수요가 충족되면 순증 수요 해석이 약해지고, 실제 주문과 매출이 확인되면 관련 공급사의 논거를 재평가한다."
+        },
+        {
+          "date": "2026-11-20",
+          "signal": "홀딩 강화",
+          "stance": "Neutral",
+          "title": "고객 플랫폼 출하·가동과 메모리사업 책임자 변경",
+          "fact": "NVIDIA는 11월 17일 실적 발표에서 Vera Rubin NVL72 생산을 늘려 출하를 시작했으며 CoreWeave·Google Cloud·Microsoft Azure·Oracle Cloud Infrastructure·Nebius에서 랙이 가동 중이라고 밝혔다. Google Cloud A5X의 정식 제공도 확인했다. 메모리 공급사별 인증·주문·배분과 수익 효과는 공개하지 않았다. <cite><a href=\"https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2027/default.aspx\">NVIDIA FY27 3분기 실적 발표, 2026-11-17</a></cite> 삼성전자는 11월 20일 기존 메모리 개발 책임자 황상준을 사장으로 승진시켜 메모리사업부장에 선임했다. 전영현 부회장은 DS부문장과 공동 대표를 유지한다. <cite><a href=\"https://news.samsung.com/global/samsung-electronics-announces-new-leadership-5\">삼성전자 공식 발표, 2026-11-20</a></cite> AMD는 11월 12일 Helios용 HBM4 탑재 MI450X를 새 선택지로 소개했다. 메모리 공급사별 인증·주문·매출은 밝히지 않았다. <cite><a href=\"https://newsroom.amd.com/news/amd-advances-instinct-mi400-series-ai-scientific-computing/\">AMD 공식 발표, 2026-11-12</a></cite>",
+          "inference": "추론: 고객 플랫폼이 제공 계획에서 출하와 일부 고객 가동으로 진전됐다. 기존 설비 대체나 효율 개선만으로도 가동이 가능해 메모리 순증 수요와 각사의 수익으로 단정할 수 없다. 메모리 개발 책임자가 사업을 맡게 됐지만 이번 인사만으로 고객 인증·계약이나 수율 개선을 확인할 수는 없다. AMD의 새 구성은 고객의 메모리 용량 선택지를 넓히지만 발표 자체는 공급사의 인증 완료나 매출을 뜻하지 않는다.",
+          "delta": "기존 고객 플랫폼 도입 논거에 실제 출하와 고객 가동을 추가한다. 공급사별 메모리 계약·배분과 마진은 여전히 미확인이므로 기존 등급과 확신도를 유지한다. 메모리사업의 책임자 변경을 반영하되 HBM 인증·수익성에 대한 판단은 유지한다. Helios의 새로운 HBM4 제품 구성도 반영하되 출하와 공급사별 수익 효과는 미확인으로 둔다.",
+          "next": "후속 고객 발표와 각사 실적에서 가동 확대, 메모리 공급사별 인증·주문·배분과 마진을 확인한다. 공급사 확인 일정은 미정이다. 배치가 기존 설비 대체나 효율 개선에 그치면 순증 수요 해석이 약해진다. 신임 책임자의 HBM 고객 인증과 생산·수율 진척은 후속 공식 발표에서 확인한다. AMD 제품의 실제 출하와 메모리 공급사 인증·배분도 확인한다. 일정은 미정이다."
+        },
         {
           "date": "2026-11-06",
           "signal": "홀딩 강화",
@@ -180,11 +200,11 @@
       "grade_since": "2026-08-28",
       "conviction": "base",
       "last_seen": {
-        "eps_fy1": 529348.1,
-        "eps_fy1_low": 325173.0,
+        "eps_fy1": 537910.7,
+        "eps_fy1_low": 387400.8,
         "eps_fy1_high": 877791.0,
-        "price": 1132000.0,
-        "pb": 3.07
+        "price": 1144000.0,
+        "pb": 2.64
       },
       "open_questions": [
         "HBM4E 고객 퀄 통과 여부",
@@ -201,6 +221,26 @@
         "솔리다임의 후속 공시에서 신규 생산시설 검토가 투자 결정과 구체적인 조달 구조로 진전되는가"
       ],
       "changelog": [
+        {
+          "date": "2026-11-21",
+          "signal": "주의",
+          "stance": "Neutral",
+          "title": "CXL 캐시 오프로딩 추론 환경 검증",
+          "fact": "SK하이닉스는 11월 20일 발표에서 SK텔레콤과 CXL 기반 KV 캐시 오프로딩을 실제 LLM 추론 환경에서 검증했다고 밝혔다. 검증 시점과 상용 주문·매출은 공개하지 않았다. <cite><a href=\"https://news.skhynix.com/en/sc26-ai-hpc-exhibition/\">SK하이닉스 SC26 발표, 2026-11-20</a></cite>",
+          "inference": "추론: 실제 추론 환경 검증은 공유 메모리 활용의 기술적 진전이다. 다만 계열사와의 검증이 상용 채택이나 추가 매출을 뜻하지 않으며 기존 자원의 효율만 높일 가능성도 있다.",
+          "delta": "기존 NAVER Cloud 검증에 SK텔레콤과의 별도 추론 환경 검증을 더한다. 주문과 수익성은 미확인으로 두고 등급과 확신도를 유지한다.",
+          "next": "후속 공식 발표에서 상용 도입·주문·매출과 메모리 사용량 변화를 확인한다. 일정은 미정이다. 효율 개선만으로 수요가 충족되면 순증 수요 해석이 약해지고, 실제 주문과 매출이 확인되면 관련 공급사의 논거를 재평가한다."
+        },
+        {
+          "date": "2026-11-20",
+          "signal": "주의",
+          "stance": "Neutral",
+          "title": "고객 플랫폼 출하와 가동 확인",
+          "fact": "NVIDIA는 11월 17일 실적 발표에서 Vera Rubin NVL72 생산을 늘려 출하를 시작했으며 CoreWeave·Google Cloud·Microsoft Azure·Oracle Cloud Infrastructure·Nebius에서 랙이 가동 중이라고 밝혔다. Google Cloud A5X의 정식 제공도 확인했다. 메모리 공급사별 인증·주문·배분과 수익 효과는 공개하지 않았다. <cite><a href=\"https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2027/default.aspx\">NVIDIA FY27 3분기 실적 발표, 2026-11-17</a></cite> AMD는 11월 12일 Helios용 HBM4 탑재 MI450X를 새 선택지로 소개했다. 메모리 공급사별 인증·주문·매출은 밝히지 않았다. <cite><a href=\"https://newsroom.amd.com/news/amd-advances-instinct-mi400-series-ai-scientific-computing/\">AMD 공식 발표, 2026-11-12</a></cite>",
+          "inference": "추론: 고객 플랫폼이 제공 계획에서 출하와 일부 고객 가동으로 진전됐다. 기존 설비 대체나 효율 개선만으로도 가동이 가능해 메모리 순증 수요와 각사의 수익으로 단정할 수 없다. AMD의 새 구성은 고객의 메모리 용량 선택지를 넓히지만 발표 자체는 공급사의 인증 완료나 매출을 뜻하지 않는다.",
+          "delta": "기존 고객 플랫폼 도입 논거에 실제 출하와 고객 가동을 추가한다. 공급사별 메모리 계약·배분과 마진은 여전히 미확인이므로 기존 등급과 확신도를 유지한다. Helios의 새로운 HBM4 제품 구성도 반영하되 출하와 공급사별 수익 효과는 미확인으로 둔다.",
+          "next": "후속 고객 발표와 각사 실적에서 가동 확대, 메모리 공급사별 인증·주문·배분과 마진을 확인한다. 공급사 확인 일정은 미정이다. 배치가 기존 설비 대체나 효율 개선에 그치면 순증 수요 해석이 약해진다. AMD 제품의 실제 출하와 메모리 공급사 인증·배분도 확인한다. 일정은 미정이다."
+        },
         {
           "date": "2026-11-06",
           "signal": "주의",
@@ -316,8 +356,8 @@
         "eps_fy1": 207.76048,
         "eps_fy1_low": 136.0,
         "eps_fy1_high": 335.5,
-        "price": 656.39,
-        "pb": 5.36
+        "price": 707.29,
+        "pb": 5.78
       },
       "open_questions": [
         "RPO 확대가 다음 분기에도 이어지고 매출로 전환되는가",
@@ -332,6 +372,26 @@
         "정기 주주총회에서 예정된 이사 퇴임과 감사·보상위원회 감독 책임 배분이 어떻게 이행되는가"
       ],
       "changelog": [
+        {
+          "date": "2026-11-21",
+          "signal": "홀딩 강화",
+          "stance": "Neutral",
+          "title": "CXL 캐시 오프로딩 추론 환경 검증",
+          "fact": "SK하이닉스는 11월 20일 발표에서 SK텔레콤과 CXL 기반 KV 캐시 오프로딩을 실제 LLM 추론 환경에서 검증했다고 밝혔다. 검증 시점과 상용 주문·매출은 공개하지 않았다. <cite><a href=\"https://news.skhynix.com/en/sc26-ai-hpc-exhibition/\">SK하이닉스 SC26 발표, 2026-11-20</a></cite>",
+          "inference": "추론: 경쟁사의 실제 추론 환경 검증은 캐시 재사용과 메모리 공유의 실현 가능성을 보여준다. 효율 향상이 순증 수요를 줄일 가능성과 서비스 확대로 수요를 늘릴 가능성은 구분되지 않는다.",
+          "delta": "기존 고객 플랫폼 수요 논거에 경쟁사의 메모리 효율화 검증을 교차 반영한다. 이 회사의 인증·주문이나 수익성 변화는 확인되지 않아 등급과 확신도를 유지한다.",
+          "next": "후속 공식 발표에서 상용 도입·주문·매출과 메모리 사용량 변화를 확인한다. 일정은 미정이다. 효율 개선만으로 수요가 충족되면 순증 수요 해석이 약해지고, 실제 주문과 매출이 확인되면 관련 공급사의 논거를 재평가한다."
+        },
+        {
+          "date": "2026-11-20",
+          "signal": "홀딩 강화",
+          "stance": "Neutral",
+          "title": "고객 플랫폼 출하와 가동 확인",
+          "fact": "NVIDIA는 11월 17일 실적 발표에서 Vera Rubin NVL72 생산을 늘려 출하를 시작했으며 CoreWeave·Google Cloud·Microsoft Azure·Oracle Cloud Infrastructure·Nebius에서 랙이 가동 중이라고 밝혔다. Google Cloud A5X의 정식 제공도 확인했다. 메모리 공급사별 인증·주문·배분과 수익 효과는 공개하지 않았다. <cite><a href=\"https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2027/default.aspx\">NVIDIA FY27 3분기 실적 발표, 2026-11-17</a></cite> AMD는 11월 12일 Helios용 HBM4 탑재 MI450X를 새 선택지로 소개했다. 메모리 공급사별 인증·주문·매출은 밝히지 않았다. <cite><a href=\"https://newsroom.amd.com/news/amd-advances-instinct-mi400-series-ai-scientific-computing/\">AMD 공식 발표, 2026-11-12</a></cite>",
+          "inference": "추론: 고객 플랫폼이 제공 계획에서 출하와 일부 고객 가동으로 진전됐다. 기존 설비 대체나 효율 개선만으로도 가동이 가능해 메모리 순증 수요와 각사의 수익으로 단정할 수 없다. AMD의 새 구성은 고객의 메모리 용량 선택지를 넓히지만 발표 자체는 공급사의 인증 완료나 매출을 뜻하지 않는다.",
+          "delta": "기존 고객 플랫폼 도입 논거에 실제 출하와 고객 가동을 추가한다. 공급사별 메모리 계약·배분과 마진은 여전히 미확인이므로 기존 등급과 확신도를 유지한다. Helios의 새로운 HBM4 제품 구성도 반영하되 출하와 공급사별 수익 효과는 미확인으로 둔다.",
+          "next": "후속 고객 발표와 각사 실적에서 가동 확대, 메모리 공급사별 인증·주문·배분과 마진을 확인한다. 공급사 확인 일정은 미정이다. 배치가 기존 설비 대체나 효율 개선에 그치면 순증 수요 해석이 약해진다. AMD 제품의 실제 출하와 메모리 공급사 인증·배분도 확인한다. 일정은 미정이다."
+        },
         {
           "date": "2026-11-06",
           "signal": "홀딩 강화",

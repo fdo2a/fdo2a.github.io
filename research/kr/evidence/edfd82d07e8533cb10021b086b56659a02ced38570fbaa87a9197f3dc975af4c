@@ -1,0 +1,248 @@
+{
+ "commit": "c7f40fc",
+ "indices": {
+  "KOSPI": {
+   "close": 4869.96,
+   "change_pct": -5.21
+  },
+  "KOSDAQ": {
+   "close": 645.68,
+   "change_pct": -5.71
+  }
+ },
+ "flows_date": {
+  "KOSPI": "2026-11-20",
+  "KOSDAQ": "2026-11-20"
+ },
+ "flows_provisional": {
+  "KOSPI": true,
+  "KOSDAQ": true
+ },
+ "flows_kospi_1120": {
+  "date": "2026-11-20",
+  "individual": 15381,
+  "foreign": -10956,
+  "institution": -9330
+ },
+ "flows_kosdaq_1120": {
+  "date": "2026-11-20",
+  "individual": 2803,
+  "foreign": -1615,
+  "institution": -1065
+ },
+ "KOSPI_ohlc": {
+  "open": 4928.51,
+  "high": 4971.31,
+  "low": 4831.69,
+  "prevClose": 5137.89
+ },
+ "KOSDAQ_ohlc": {
+  "open": 660.98,
+  "high": 665.15,
+  "low": 642.13,
+  "prevClose": 684.81
+ },
+ "stocks": {
+  "삼성전자": {
+   "name": "삼성전자",
+   "change_pct": -7.01,
+   "close": 183100,
+   "value": 3267336
+  },
+  "SK하이닉스": {
+   "name": "SK하이닉스",
+   "change_pct": -5.92,
+   "close": 1113000,
+   "value": 3618595
+  },
+  "삼성전자우": {
+   "name": "삼성전자우",
+   "change_pct": -8.38,
+   "close": 144300,
+   "value": 671294
+  },
+  "SK스퀘어": {
+   "name": "SK스퀘어",
+   "change_pct": -8.39,
+   "close": 677000,
+   "value": 288809
+  },
+  "KB금융": {
+   "name": "KB금융",
+   "change_pct": -0.33,
+   "close": 152400,
+   "value": 127583
+  },
+  "신한지주": {
+   "name": "신한지주",
+   "change_pct": 0.7,
+   "close": 86200,
+   "value": 75796
+  },
+  "하나금융지주": {
+   "name": "하나금융지주",
+   "change_pct": 0.0,
+   "close": 123900,
+   "value": 74121
+  },
+  "HD현대일렉트릭": {
+   "name": "HD현대일렉트릭",
+   "change_pct": -6.98,
+   "close": 386500,
+   "value": 60592
+  },
+  "삼성전기": {
+   "name": "삼성전기",
+   "change_pct": -12.54,
+   "close": 774000,
+   "value": 822968
+  },
+  "하이브": {
+   "name": "하이브",
+   "change_pct": -3.06,
+   "close": 183600,
+   "value": 95127
+  },
+  "SK텔레콤": {
+   "name": "SK텔레콤",
+   "change_pct": -13.09,
+   "close": 69700,
+   "value": 155665
+  },
+  "한진칼": {
+   "name": "한진칼",
+   "change_pct": 9.26,
+   "close": 236000,
+   "value": 134719
+  },
+  "한진칼우": {
+   "name": "한진칼우",
+   "change_pct": 29.99,
+   "close": 99700,
+   "value": 43491
+  },
+  "한미약품": {
+   "name": "한미약품",
+   "change_pct": 6.52,
+   "close": 449500,
+   "value": 94796
+  },
+  "이수페타시스": {
+   "name": "이수페타시스",
+   "change_pct": -16.14,
+   "close": 69600,
+   "value": 133490
+  },
+  "한미반도체": {
+   "name": "한미반도체",
+   "change_pct": -10.79,
+   "close": 153800,
+   "value": 111848
+  },
+  "두산": {
+   "name": "두산",
+   "change_pct": -13.89,
+   "close": 527000,
+   "value": 73763
+  }
+ },
+ "session": {
+  "report_date": "2026-11-20",
+  "us_prev": {
+   "as_of": "2026-11-19",
+   "rows": {
+    "S&P 500": -2.02,
+    "Nasdaq": -2.25,
+    "Dow": -2.19
+   },
+   "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+   "ES": {
+    "pct": -0.36,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   },
+   "NQ": {
+    "pct": -0.61,
+    "bars": 14,
+    "first_t": "09:00",
+    "last_t": "15:30"
+   }
+  },
+  "asia_peers": {
+   "rows": {
+    "닛케이": -5.06,
+    "항셍": -1.89,
+    "상해종합": -1.23,
+    "대만가권": -6.23
+   },
+   "dates": {
+    "닛케이": "2026-11-20",
+    "항셍": "2026-11-20",
+    "상해종합": "2026-11-20",
+    "대만가권": "2026-11-20"
+   },
+   "avg_pct": -3.6,
+   "relative_pp": -1.61
+  },
+  "asia_peers_missing": {},
+  "usdkrw_intraday": {
+   "high": 1340.12,
+   "high_t": "12:00",
+   "low": 1334.05,
+   "low_t": "09:00",
+   "close": 1336.07,
+   "last_t": "15:30",
+   "bars": 14
+  }
+ },
+ "econ": {
+  "국고채 3년": {
+   "value": 3.642,
+   "date": "2026-11-20",
+   "unit": "연%",
+   "item_name": "국고채(3년)",
+   "prev": 3.716,
+   "prev_date": "2026-11-19",
+   "bp": -7.4
+  },
+  "국고채 10년": {
+   "value": 3.857,
+   "date": "2026-11-20",
+   "unit": "연%",
+   "item_name": "국고채(10년)",
+   "prev": 3.942,
+   "prev_date": "2026-11-19",
+   "bp": -8.5
+  },
+  "CD 91일": {
+   "value": 3.39,
+   "date": "2026-11-20",
+   "unit": "연%",
+   "item_name": "CD(91일)",
+   "prev": 3.38,
+   "prev_date": "2026-11-19",
+   "bp": 1.0
+  },
+  "회사채 AA- 3년": {
+   "value": 4.329,
+   "date": "2026-11-20",
+   "unit": "연%",
+   "item_name": "회사채(3년, AA-)",
+   "prev": 4.39,
+   "prev_date": "2026-11-19",
+   "bp": -6.1
+  },
+  "한국은행 기준금리": {
+   "value": 3.0,
+   "date": "2026-10",
+   "unit": "연%",
+   "item_name": "한국은행 기준금리",
+   "prev": 3.0,
+   "prev_date": "2026-09",
+   "bp": 0.0
+  }
+ }
+}
