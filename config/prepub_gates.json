@@ -320,7 +320,8 @@
       "module": "common.numsrc",
       "attr": "EFFECTIVE"
      },
-     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md"
+     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md",
+     "inputs": []
     },
     {
      "name": "check_research",
@@ -605,7 +606,8 @@
      "name": "unconfirmed",
      "builtin": "unconfirmed",
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_news",
@@ -619,7 +621,10 @@
       "{date}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<datadir>/news/{date}.json"
+     ]
     },
     {
      "name": "check_telegram",
@@ -638,7 +643,11 @@
      ],
      "kind": "structure",
      "required": true,
-     "_why": "텔레그램이 없는 날은 --tg 에 없는 경로(<workspace>/telegram_news.json.none)를 준다(ORCHESTRATOR STEP 3.5 0-2)"
+     "_why": "텔레그램이 없는 날은 --tg 에 없는 경로(<workspace>/telegram_news.json.none)를 준다(ORCHESTRATOR STEP 3.5 0-2)",
+     "inputs": [
+      "<tg>",
+      "<datadir>/news/{date}.json"
+     ]
     },
     {
      "name": "check_contested",
@@ -654,7 +663,10 @@
       "{date}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": [
+      "<contested>"
+     ]
     },
     {
      "name": "check_readability",
@@ -665,7 +677,8 @@
       "{html}"
      ],
      "kind": "structure",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_style",
@@ -674,7 +687,8 @@
       "{html}"
      ],
      "kind": "format",
-     "required": true
+     "required": true,
+     "inputs": []
     },
     {
      "name": "check_number_sources",
@@ -709,7 +723,8 @@
       "module": "common.numsrc",
       "attr": "EFFECTIVE"
      },
-     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md"
+     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md",
+     "inputs": []
     }
    ]
   }

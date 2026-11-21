@@ -110,3 +110,13 @@ X-코드(§2.1) + 작성자 선언 `data-nx="enum"` 하나뿐 — 99 이하 정�
 
 ## 12. codex 구현 검토 2회 반영(2026-11-21)
 - **어림선은 표 칸에서도 `level`**: 표 대조가 맞은 칸이라도 맞는 `|lvl` 표식이 있으면 `table` 이 아니라 배타 칸 `level` 로 센다(§11 첫 항목의 예외 — `|lvl` 없는 맞는 표식은 그대로 T). 내역(`lvl`·`stale_refs` 등)도 표식 쪽 것을 그대로 센다.
+
+## 13. main 의 1a(자료 누락 차단) 위에 붙이기(2026-11-22)
+
+병합하려니 main 이 1a 1단계를 받아 `verification/record.py` 를 1a 전 blob(65c9890c)으로 **고정**해 두었다 — 스위치(`inputs.EFFECTIVE`)가 꺼진 동안 판정이 1a 전과 같다는 근거였다. 숫자 출처의 기록 몫이 바로 그 파일에 있어서, 사용자가 셋 중 「고정 풀고 붙여」를 골랐다(나머지: 바깥 단계로 빼기 · 1a 를 켤 때 같이).
+
+- **1판 `record.py`**: 숫자 출처 몫(`result: sources`·`optional_argv`·ctx `first_html`·`contested`·us-news 경로)만 더한 판(blob 9b6e6aaa). 바이트 고정 시험은 **같은 결과 시험**으로 바꿨다 — 1a 전 blob 을 git 에서 꺼내 불러, 실제 설정의 us·kr 검사기 전부(숫자 출처 제외) × 출력 일곱 꼴에서 `_argv`·`_classify`·기록 칸·`_inputs`·`_mask`·`repo_paths` 가 같다(`test_switch_off.py`).
+- **2판 `record2.py`·`_main2`**: 같은 몫을 옮겼다. 다른 점 하나 — 집계가 어긋나면 1판은 판정 불가, 2판은 미완료. 둘 다 `required: false` 라 글 판정에 들지 않는다.
+- **자료 분류표**: `us-news` 갈래를 새로 넣었다. 필수 검사가 읽는 셋(`news/{date}.json` gate · `<tg>` gate optional writer-산출 · `<contested>` gate writer-산출)과 나머지 작업 공간 `unused` 한 줄. `contested` 를 파일 뿌리(`inputs.ROOTS`·`FILE_ROOTS`)에 더했다. 숫자 출처 검사는 두 갈래 모두 `inputs: []`(참고 검사 — 없는 자료는 숫자를 「확인 불가」로 센다). US 쪽의 새 파일 `news/numbers/*`·`telegram/numbers/*` 는 기존 `news/*.json`·`telegram/*.json` unused 줄에 든다.
+- **1a 를 켜기 전 할 일**: `news/{date}.json` 은 수집 도장이 없다(`stamp_collect.STEP_OF` 에 없음). 켠 날부터 US 뉴스 글이 `unstamped` 로 미완료가 되지 않게, 켜기 전에 도장을 붙이거나 생산자를 다시 정한다.
+- **알림 정답표 12건**(`prepub_v1_golden.json`)을 다시 만들었다 — 바뀐 줄은 분량·문체 힌트(「볼 것」의 [검토 권고]·[참고])와 머리의 「검토 N건·참고 N건」뿐임을 줄 단위로 대조했다.

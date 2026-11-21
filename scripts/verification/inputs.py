@@ -109,8 +109,8 @@ _ORDER = ('failed', 'stale', 'incomplete_fields', 'changed_after_collect', 'unst
 COLLECT_STATUS = ('ok', 'failed', 'partial')
 EMPTY = ('has_data', 'confirmed_none', 'unknown')
 STATUS_FILE = '_collect_status.json'
-ROOTS = ('datadir', 'tg', 'stance_next')
-FILE_ROOTS = ('tg', 'stance_next')
+ROOTS = ('datadir', 'tg', 'stance_next', 'contested')
+FILE_ROOTS = ('tg', 'stance_next', 'contested')      # contested = us-news 의 쟁점 분석(2026-11-22)
 PRODUCERS = ('collector', 'reference', 'writer', 'ledger', 'meta')
 # 적용일부터 `_collect_status.json` 에 항목·해시가 있어야 하는 생산자 — 수집 잡이 쓰는 파일(stamp_collect 등록표).
 # reference = 수집기가 쓰지만 수집 상태 칸을 쓰지 않는 참고 파일(검사기가 날짜를 직접 본다 — scorecard.json).
@@ -296,7 +296,7 @@ def _present(ctx):
 
 
 def _display(key, full):
-    if key in ('<tg>', '<stance_next>'):
+    if key in tuple(f'<{k}>' for k in FILE_ROOTS):
         return f'{key}/{os.path.basename(full)}' if full else key
     return key
 

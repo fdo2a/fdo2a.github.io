@@ -875,6 +875,40 @@
      "residual_risk": "권한 분리 전에는 루틴이 이 파일을 고쳐 수집 실패를 수집 중단으로 바꿀 수 있다"
     }
    ]
+  },
+  "us-news": {
+   "_why": "US 뉴스·산업 글(2026-11-20 숫자 출처 검사와 함께 기록 대상). 작업 공간은 US 일간과 같다. 이 글의 필수 검사가 읽는 자료는 아래 셋뿐이고, 나머지 작업 공간 파일은 일간 몫이라 마지막 줄에서 unused 로 묶는다. 1a 를 켜기 전 할 일: news/{date}.json 은 수집 도장(_collect_status.json)이 없다 — 켠 날부터 이 글이 미완료로 막히지 않게 stamp_collect.STEP_OF 에 넣거나 produced_by 를 다시 정한다(설계 docs/superpowers/specs/2026-11-20-number-sources.md §13).",
+   "files": [
+    {
+     "path": "<datadir>/news/{date}.json",
+     "class": "gate",
+     "name": "뉴스 수집분(그날)",
+     "date": "report_date",
+     "why": "check_news·check_telegram 이 대조하는 그날 기사 목록"
+    },
+    {
+     "path": "<tg>",
+     "class": "gate",
+     "name": "뉴스 글용 텔레그램",
+     "optional": true,
+     "produced_by": "writer",
+     "why": "루틴(STEP 3.5)이 텔레그램 수집분에서 골라 만든 사본이라 수집 장부의 해시와 다르다. 텔레그램이 없는 날은 없는 경로를 준다 — check_telegram 이 그날을 따로 판정한다"
+    },
+    {
+     "path": "<contested>",
+     "class": "gate",
+     "name": "쟁점 분석",
+     "produced_by": "writer",
+     "why": "루틴(맥 러너 claude -p)이 만드는 결과 — 수집 잡의 산출이 아니다. check_contested 가 글과 대조한다"
+    },
+    {
+     "path": "<datadir>/*",
+     "class": "unused",
+     "name": "그 밖의 작업 공간 파일(일간 몫)",
+     "note": "이 글의 필수 검사는 위 셋만 읽는다. 참고 검사 check_number_sources 는 일간 자료를 읽지만 발행을 막지 않고, 없는 자료는 숫자를 「확인 불가」로 센다"
+    }
+   ],
+   "discontinued": []
   }
  }
 }

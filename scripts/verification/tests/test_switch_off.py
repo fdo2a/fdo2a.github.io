@@ -88,12 +88,65 @@ def test_run_gates_uses_the_v1_record_while_off(monkeypatch):
     assert called == ['v1', 'v2']
 
 
-def test_v1_record_module_is_byte_identical_to_the_pre_1a_one():
-    """`record.py` 는 1a 전 파일 그대로다(2판은 `record2.py`) — 꺼진 동안의 기록·verify 가 1a 전과 같다는 근거.
-    기준은 1a 를 병합하기 전 main 의 blob 해시(c9af9a0b)."""
+PRE_1A_BLOB = '65c9890c'        # 1a 를 병합하기 전 main 의 record.py(c9af9a0b)
+V1_BLOB = '9b6e6aaa'            # = 위 + 숫자 출처 검사(2026-11-22 사용자 승인 「고정 풀고 붙여」)
+
+
+def test_v1_record_module_is_the_pre_1a_one_plus_number_sources():
+    """`record.py` 는 1a 전 파일에 숫자 출처 검사(`result: sources`·`optional_argv`·ctx `first_html`·`contested`·
+    us-news 경로)만 더한 판이다(2판은 `record2.py`). 바이트 동일 대신 아래 시험이 「기존 검사의 결과는 1a 전과 같다」를
+    1a 전 blob 을 직접 불러 대조한다."""
     blob = subprocess.run(['git', 'hash-object', os.path.join(SCRIPTS, 'verification', 'record.py')],
                           capture_output=True, text=True, cwd=ROOT).stdout.strip()
-    assert blob == '65c9890c' or blob.startswith('65c9890c'), blob
+    assert blob.startswith(V1_BLOB), blob
+
+
+def _pre_1a_record(tmp_path):
+    import importlib.util
+    src = subprocess.run(['git', 'cat-file', 'blob', PRE_1A_BLOB], capture_output=True, cwd=ROOT)
+    if src.returncode:
+        pytest.skip('1a 전 blob 을 읽지 못했다(얕은 clone)')
+    f = tmp_path / 'record_pre1a.py'
+    f.write_bytes(src.stdout)
+    spec = importlib.util.spec_from_file_location('record_pre1a', f)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_OUTS = [(0, '{"warnings": [], "violations": [], "counts": {"tokens_seen": 3}}', ''),
+         (1, '{"warnings": ["w"], "violations": ["v /tmp/x"], "counts": {}}', ''),
+         (0, '{"skipped": true}', ''), (0, 'ok\n', ''), (1, 'bad 2Y 4.478%\n', 'err'), (2, '', 'boom'), (0, '', '')]
+
+
+def test_v1_record_gives_the_pre_1a_result_for_every_existing_gate(tmp_path):
+    """실제 설정의 us·kr 검사기 전부(숫자 출처 검사 제외) × 출력 몇 꼴 — argv·상태·기록 칸이 1a 전 모듈과 같다."""
+    from verification import record as new
+    old = _pre_1a_record(tmp_path)
+    cfg = json.load(open(os.path.join(ROOT, 'config', 'prepub_gates.json'), encoding='utf-8'))
+    d = tmp_path / 'w'
+    (d / 'sub').mkdir(parents=True)
+    (d / 'market_data.json').write_text('{}', encoding='utf-8')
+    (d / 'sub' / 'a.txt').write_text('x', encoding='utf-8')
+    tg = tmp_path / 'tg.json'
+    tg.write_text('{}', encoding='utf-8')
+    ctx = {'html': str(tmp_path / 'p.html'), 'datadir': str(d), 'repo': ROOT, 'date': '2026-11-23', 'tg': str(tg),
+           'stance_next': None, 'cycle': 'c1', 'tmp': str(tmp_path)}
+    n = 0
+    for market in ('us', 'kr'):
+        assert new.repo_paths(market) == old.repo_paths(market)
+        for spec in cfg['markets'][market]['gates']:
+            if spec.get('result') == 'sources' or spec.get('optional_argv'):
+                continue
+            assert new._argv(spec, ctx) == old._argv(spec, ctx), spec['name']
+            for code, out, err in _OUTS:
+                a, b = {}, {}
+                assert new._classify(spec, code, out, err, ctx, a) == old._classify(spec, code, out, err, ctx, b), spec['name']
+                assert a == b, spec['name']
+                n += 1
+    assert n > 100
+    assert new._inputs(ctx) == old._inputs(ctx)
+    assert new._mask(f'{d}/x {tg} /abs/p', ctx) == old._mask(f'{d}/x {tg} /abs/p', ctx)
 
 
 # ── 검사기: 켜면 미완료(2)인 자리가 꺼진 채로는 1a 전 판정 ─────────────────────────────

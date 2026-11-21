@@ -161,10 +161,10 @@ def sha256_file(path):
 # ── 출력 정리 ─────────────────────────────────────────────────────────────
 
 def _mask(line, ctx):
-    for k in ('html', 'work_html', 'orig_html'):
+    for k in ('html', 'work_html', 'orig_html', 'first_html'):
         if ctx.get(k):
             line = line.replace(ctx[k], '<html>')
-    for k in ('datadir', 'repo', 'tg', 'stance_next', 'tmp'):
+    for k in ('datadir', 'repo', 'tg', 'stance_next', 'contested', 'tmp'):
         if ctx.get(k):
             line = line.replace(ctx[k], f'<{k}>')
     return _ABS.sub('<path>', line)
@@ -182,7 +182,8 @@ def items_of(text, ctx):
 # ── 검사기 하나 ───────────────────────────────────────────────────────────
 
 def _argv(spec, ctx):
-    """(argv, 빠진 자리표시자). 자리표시자는 ctx 에서 채운다."""
+    """(argv, 빠진 자리표시자). 자리표시자는 ctx 에서 채운다.
+    `optional_argv` = [[플래그, 자리표시자], …] — 값이 있을 때만 붙인다(1판 record.py 와 같은 규칙, 숫자 출처 검사 2026-11-20)."""
     missing, out = [], []
     for a in spec.get('argv') or []:
         def sub(m):
@@ -192,6 +193,13 @@ def _argv(spec, ctx):
                 return m.group(0)
             return str(v)
         out.append(_PLACE.sub(sub, a))
+    for pair in spec.get('optional_argv') or []:
+        if not (isinstance(pair, list) and len(pair) == 2):
+            continue
+        flag, val = pair
+        lack = [m.group(1) for m in _PLACE.finditer(val) if ctx.get(m.group(1)) in (None, '')]
+        if not lack:
+            out += [flag, _PLACE.sub(lambda m: str(ctx.get(m.group(1))), val)]
     if spec.get('json'):
         out.append('--json')
     return out, missing
@@ -225,6 +233,8 @@ def _classify(spec, code, out, err, ctx, res):
             res['na_basis'] = 'effective'
             return 'na' if code == 0 else 'incomplete'
         warns, viols = obj.get('warnings'), obj.get('violations')
+        if spec.get('result') == 'sources':
+            return _classify_sources(code, obj, warns, viols, ctx, res)
         counts = obj.get('counts')
         if not isinstance(warns, list) or not isinstance(viols, list) or not isinstance(counts, dict):
             res['reason'] = '결과 형식이 약속과 다르다'
@@ -276,6 +286,65 @@ def _classify(spec, code, out, err, ctx, res):
     else:
         res['reason'] = f'알 수 없는 종료 코드 {code}'
     return 'incomplete'
+
+
+SOURCE_CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
+SOURCE_DETAIL = ('dv', 'lvl', 'abs_refs', 'stale_refs', 'invalid_refs', 'article_common', 'excluded_code', 'excluded_enum',
+                 'zone_contested', 'zone_note', 'marker_empty')
+SOURCE_HISTORY = ('first_unknown', 'fixed', 'gone', 'still', 'ambiguous')
+SOURCE_UNKNOWN = 60
+
+
+def _int(x):
+    return isinstance(x, int) and not isinstance(x, bool) and x >= 0
+
+
+def _sums_ok(c):
+    return isinstance(c, dict) and all(_int(c.get(k)) for k in SOURCE_CLASSES + ('total',)) and \
+        sum(c[k] for k in SOURCE_CLASSES) == c['total']
+
+
+def _classify_sources(code, obj, warns, viols, ctx, res):
+    """숫자 출처 검사(check_number_sources) — 결과를 `sources` 로 옮긴다. 기록기가 **합을 다시 센다**: 배타 칸의 합 ==
+    total(수량·숫자열 둘 다), 수정 이력이 약속한 꼴. 어긋나면 미완료(2판 — 1판의 판정 불가, 설계 §8.2). 확인 불가 숫자는 위반이 아니다 —
+    상태는 pass(참고 검사라 발행을 막지 않고, `numbers`·`verified` 에 손대지 않는다). 글자가 드는 칸은 줄여 가린다."""
+    src = obj.get('sources')
+    if not isinstance(warns, list) or not isinstance(viols, list) or not isinstance(src, dict):
+        res['reason'] = '결과 형식이 약속과 다르다'
+        return 'incomplete'
+    if code != 0 or viols:
+        res['reason'] = '종료 코드와 결과가 어긋난다'
+        return 'incomplete'
+    hist = src.get('history')
+    hist_ok = hist == 'unverifiable' or (isinstance(hist, dict) and all(_int(hist.get(k)) for k in SOURCE_HISTORY)
+                                         and sum(hist[k] for k in SOURCE_HISTORY[1:]) == hist['first_unknown'])
+    if not _sums_ok(src.get('counts')) or not _sums_ok(src.get('runs')) or not hist_ok:
+        res['reason'] = '숫자 집계가 맞지 않는다 — 칸 합이 총수와 다르거나 수정 이력 꼴이 다르다'
+        return 'incomplete'
+    det = src.get('detail') if isinstance(src.get('detail'), dict) else {}
+    out = {'counts': {k: src['counts'][k] for k in SOURCE_CLASSES + ('total',)},
+           'runs': {k: src['runs'][k] for k in SOURCE_CLASSES + ('total',)},
+           'detail': {k: det[k] for k in SOURCE_DETAIL if _int(det.get(k))},
+           'unknown_by': {str(k)[:40]: v for k, v in (src.get('unknown_by') or {}).items() if _int(v)}
+           if isinstance(src.get('unknown_by'), dict) else {},
+           'web_by': {_mask(str(k), ctx)[:60]: v for k, v in (src.get('web_by') or {}).items() if _int(v)}
+           if isinstance(src.get('web_by'), dict) else {},
+           'unknown': [{'text': _mask(str(u.get('text', '')), ctx)[:80], 'why': str(u.get('why', ''))[:40]}
+                       for u in (src.get('unknown') or []) if isinstance(u, dict)][:SOURCE_UNKNOWN],
+           'unknown_total': src.get('unknown_total') if _int(src.get('unknown_total')) else None,
+           'declared': [str(x)[:20] for x in (src.get('declared') or []) if isinstance(x, str)][:40],
+           'dv_list': [str(x)[:80] for x in (src.get('dv_list') or []) if isinstance(x, str)][:40],
+           'history': hist if hist == 'unverifiable' else
+           dict({k: hist[k] for k in SOURCE_HISTORY},
+                gone_printed=[str(x)[:20] for x in hist.get('gone_printed') or [] if isinstance(x, str)][:12]),
+           'history_why': str(src.get('history_why') or '')[:80],
+           'first_sha256': src.get('first_sha256') if isinstance(src.get('first_sha256'), str) else None}
+    res['sources'] = out
+    res['warn_count'] = len(warns)
+    res['items'] = [_mask(str(x), ctx)[:MAX_ITEM_LEN] for x in warns][:MAX_ITEMS]
+    return 'warn' if warns else 'pass'
+
+
 
 
 def _effective(spec):
@@ -583,7 +652,10 @@ REPO_PATHS = ('scripts', 'config')
 
 
 def repo_paths(market):
-    """판정에 쓰이는 레포 안 코드·원장. US 는 유동성 원장이 이전 글을 읽어 `posts/` 도."""
+    """판정에 쓰이는 레포 안 코드·원장. US 는 유동성 원장이 이전 글을 읽어 `posts/` 도.
+    us-news 는 1판 record.repo_paths 와 같다(US 원장 + 같은 날 일간 — 숫자 출처 검사가 cycle 을 읽는다)."""
+    if market == 'us-news':
+        return list(REPO_PATHS) + ['research/us', 'posts']
     return list(REPO_PATHS) + [f'research/{market}'] + (['posts'] if market == 'us' else [])
 
 
@@ -642,7 +714,7 @@ def repo_digest(repo, market, post_rel, source):
 def _inputs(ctx):
     files, capped, unreadable = [], False, 0
     roots = [('datadir', ctx.get('datadir'))]
-    for key in ('tg', 'stance_next'):
+    for key in ('tg', 'stance_next', 'contested'):
         if ctx.get(key):
             roots.append((key, ctx[key]))
     for key, root in roots:

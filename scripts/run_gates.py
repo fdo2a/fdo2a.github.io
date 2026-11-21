@@ -209,6 +209,8 @@ def _main2(argv=None):
         p.add_argument('--tg')
         p.add_argument('--stance-next')
         p.add_argument('--cycle')
+        p.add_argument('--first-html')          # 숫자 출처 검사의 첫 판(1판과 같다)
+        p.add_argument('--contested', help='us-news: 쟁점 분석 결과(<workspace>/contested.json)')
         p.add_argument('--config', default=DEFAULT_CONFIG)
         if name == 'record':
             p.add_argument('--out', required=True)
@@ -222,6 +224,7 @@ def _main2(argv=None):
     v.add_argument('--datadir')
     v.add_argument('--tg')
     v.add_argument('--stance-next')
+    v.add_argument('--contested')
     v.add_argument('--record-file', help='record 가 4 였을 때만 — 레포 밖 대체 기록으로 대조')
     v.add_argument('--config', default=DEFAULT_CONFIG)
     a = ap.parse_args(argv)
@@ -234,7 +237,8 @@ def _main2(argv=None):
         return 5 if a.cmd == 'record' else (2 if a.cmd == 'check' else 1)
 
     if a.cmd == 'verify':
-        extra = {k: os.path.abspath(x) for k, x in (('tg', a.tg), ('stance_next', a.stance_next)) if x}
+        extra = {k: os.path.abspath(x) for k, x in (('tg', a.tg), ('stance_next', a.stance_next),
+                                                     ('contested', a.contested)) if x}
         code, why = R2.verify(cfg, a.market, a.date, os.path.abspath(a.repo),
                              rev=None if a.index else a.rev,
                              datadir=os.path.abspath(a.datadir) if a.datadir else None, extra=extra,
