@@ -103,8 +103,7 @@ python3 scripts/check_research.py check --span daily --html <draft-after.html> -
    paragraph adds information, the central question is answered, and causal links
    are supported. The metrics are advisory; they cannot judge semantic repetition
    or guarantee good prose. Preserve numbers/qualifiers through existing source
-   checks. Run the research check again on the final humanized HTML; include that
-   exact command as a `humanize_prose.py finalize --gate` entry.
+   checks. Run the research check again on the final HTML.
 6. Publish only after the existing gates and research check pass. Commit the ledger
    and `evidence/` for that market alongside the new post. Do not commit `.lock` or
    scratch files. A research-data error requires correction; lack of an investment

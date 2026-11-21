@@ -15,7 +15,7 @@ STEP 2.5(AI 티 제거)에서 쓴다. `humanize-korean` 스킬은 텍스트를 �
   거부한다. 순서는 검사할 필요조차 없다 — 이름이 자리를 정하므로.
 - 거부는 예외로 나가고, 호출자는 아무것도 쓰지 않는다.
 
-Pure — 문자열을 받아 문자열을 돌려준다. 파일은 CLI(`scripts/humanize_prose.py`)가 만진다.
+Pure — 문자열을 받아 문자열을 돌려준다. 파일은 부르는 쪽이 만진다(옛 CLI ~~`scripts/humanize_prose.py`~~ 는 2026-11-22 에 지웠다).
 """
 
 import difflib
