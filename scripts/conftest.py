@@ -39,9 +39,15 @@ def _input_health_switch(request, monkeypatch):
 
 # ── 시험은 바깥 네트워크에 나가지 않는다 ──────────────────────────────────────
 # 이 프로세스 안의 소켓 연결·이름 풀이를 막는다. 로컬(localhost·127.0.0.1·::1)과 유닉스 소켓만 통과.
-# 막힌 호출은 NetworkBlocked 를 내고, 코드가 그 예외를 삼켜도 시험 끝에 그 시험을 실패로 만든다.
+# curl_cffi(libcurl)는 주소를 가리지 않고 전송 자체를 전부 거절한다 — 로컬 주소도 안 된다.
+# 막힌 호출은 NetworkBlocked 를 내고, 코드가 그 예외를 삼켜도 그 시험을 실패로 만든다
+# (시험 함수 밖 — 모듈·세션 fixture 정리 — 에서 삼켜진 것은 그 정리를 일으킨 시험의 teardown 오류).
 # 정말 바깥이 필요한 시험은 @pytest.mark.network 를 달고, 기본으로는 건너뛴다(--run-network 로만 돈다).
-# 자식 프로세스(subprocess 로 띄운 python)는 이 가드 밖이다.
+# 알려진 한계(가드 밖):
+#   - 자식 프로세스(subprocess 로 띄운 python 등).
+#   - curl_cffi 의 cffi 바인딩(`curl_cffi._wrapper.lib`)을 직접 부르는 코드 — 이 저장소에는 없다.
+#   - 모든 시험의 teardown 이 끝난 뒤(pytest_sessionfinish·atexit·플러그인 정리)에 삼켜진 호출:
+#     한 프로세스 실행은 종료 상태로 실패하지만, xdist 일꾼의 종료 상태는 전달되지 않는다.
 
 class NetworkBlocked(RuntimeError):
     """시험 중 바깥 네트워크 호출 — 원인 함수를 시험에서 바꿔 끼운다(monkeypatch)."""
@@ -118,67 +124,43 @@ def _wrap_resolver(name):
     return orig, guarded
 
 
-_DEAD_PROXY = b"http://127.0.0.1:9"     # 아무도 듣지 않는 로컬 포트
-_NO_PROXY = b"localhost,.localhost,127.0.0.0/8,::1"
-
-
-def _url_host(value):
-    """libcurl 이 받을 주소의 호스트 — 스킴이 없으면 libcurl 처럼 http:// 로 읽는다. 못 읽으면 ''."""
-    from urllib.parse import urlsplit
-    url = value.decode("utf-8", "replace") if isinstance(value, (bytes, bytearray)) else str(value or "")
-    if "://" not in url:
-        url = "http://" + url
-    try:
-        return urlsplit(url).hostname or ""
-    except ValueError:
-        return ""
-
-
 def _wrap_curl_cffi():
     """yfinance 는 curl_cffi(libcurl)로 나간다 — 파이썬 socket 을 거치지 않는다.
 
-    주소 지정(URL)에서 막고, 로컬 주소라도 libcurl 이 혼자 따라가는 리디렉트가 바깥으로 못 나가게
-    로컬 아닌 호스트는 죽은 로컬 프록시로 보낸다(NOPROXY = 로컬). 끝난 뒤 실제 주소가 바깥이면 기록한다.
+    libcurl 안에서 일어나는 일(리디렉트·프록시·이름 풀이)은 파이썬에서 볼 수 없으므로 주소를 가려
+    통과시키지 않는다. 전송이 시작되는 두 자리 — 동기 `Curl.perform`(curl_easy_perform), 비동기
+    `AsyncCurl.add_handle`(curl_multi_add_handle) — 에서 **로컬 주소를 포함해 전부** 거절한다.
+    Session·AsyncSession·`curl_cffi.requests.get` 류·WebSocket 연결은 모두 이 둘 중 하나를 거친다
+    (curl_cffi 0.16 확인). --run-network 로 도는 network 표시 시험에서만 통과한다.
     """
     try:
+        from curl_cffi.aio import AsyncCurl
         from curl_cffi.curl import Curl
-        from curl_cffi.const import CurlInfo, CurlOpt
     except Exception:
         return
-    orig, orig_perform = Curl.setopt, Curl.perform
 
-    def guarded(self, option, value):
-        if not _allow[0]:
-            if option == CurlOpt.URL:
-                if not _is_local_host(_url_host(value)):
-                    _block(f"curl_cffi {str(value)[:120]}")
-                r = orig(self, option, value)
-                orig(self, CurlOpt.PROXY, _DEAD_PROXY)
-                orig(self, CurlOpt.NOPROXY, _NO_PROXY)
-                return r
-            if option in (CurlOpt.PROXY, CurlOpt.NOPROXY, CurlOpt.CONNECT_TO, CurlOpt.RESOLVE) and value:
-                if option != CurlOpt.PROXY or not _is_local_host(_url_host(value)):
-                    _block(f"curl_cffi setopt {option.name}={str(value)[:80]}")
-        return orig(self, option, value)
-
-    def perform(self, *args, **kwargs):
+    def _url(handle):      # 알림에 붙일 주소 — 판정에는 쓰지 않는다
         try:
-            return orig_perform(self, *args, **kwargs)
-        finally:
-            if not _allow[0]:
-                try:
-                    eff = self.getinfo(CurlInfo.EFFECTIVE_URL)
-                except Exception:
-                    eff = b""
-                if eff and not _is_local_host(_url_host(eff)):
-                    _record(f"curl_cffi 리디렉트 {str(eff)[:120]}")
+            from curl_cffi.const import CurlInfo
+            return handle.getinfo(CurlInfo.EFFECTIVE_URL).decode("utf-8", "replace")[:120]
+        except Exception:
+            return "?"
 
-    guarded.__wrapped__ = orig
-    perform.__wrapped__ = orig_perform
-    _orig[("curl", "setopt")] = orig
-    _orig[("curl", "perform")] = orig_perform
-    Curl.setopt = guarded
-    Curl.perform = perform
+    def _guard(cls, name, label, handle_of):
+        orig = getattr(cls, name)
+
+        def guarded(self, *args, **kwargs):
+            if not _allow[0]:
+                _block(f"curl_cffi {label} {_url(handle_of(self, args, kwargs))}")
+            return orig(self, *args, **kwargs)
+
+        guarded.__wrapped__ = orig
+        _orig[("curl", name)] = orig
+        setattr(cls, name, guarded)
+
+    _guard(Curl, "perform", "전송(Curl.perform)", lambda self, a, k: self)
+    _guard(AsyncCurl, "add_handle", "비동기 전송(AsyncCurl.add_handle)",
+           lambda self, a, k: a[0] if a else k.get("curl"))
 
 
 def _install():
@@ -219,11 +201,9 @@ _reported = [0]   # 시험 밖 기록 가운데 이미 알린 개수
 
 @pytest.fixture(autouse=True)
 def _network_guard(request):
-    # 앞 시험 사이(모듈·세션 fixture·수집)에서 막혀 삼켜진 호출 — xdist 일꾼의 종료 상태는 전달되지
-    # 않으므로 다음 시험을 실패시켜 알린다.
-    if len(_violations) > _reported[0]:
-        stray = _violations[_reported[0]:]
-        _reported[0] = len(_violations)
+    # 수집 중이거나 앞 시험의 teardown 뒤에 막혀 삼켜진 호출 — 이 시험의 setup 을 실패시켜 알린다.
+    stray = _take_stray()
+    if stray:
         pytest.fail("시험 함수 밖(fixture·수집)에서 바깥 네트워크 호출이 막혔다:\n  "
                     + "\n  ".join(f"{t}: {w}" for t, w in stray[:10]), pytrace=False)
     allow = "network" in request.node.keywords and request.config.getoption("--run-network")
@@ -241,8 +221,37 @@ def _network_guard(request):
                     + "\n  ".join(caught[:10]), pytrace=False)
 
 
+def _take_stray():
+    stray = _violations[_reported[0]:]
+    _reported[0] = len(_violations)
+    return stray
+
+
+@pytest.hookimpl(wrapper=True)
+def pytest_runtest_teardown(item, nextitem):
+    """모듈·세션 fixture 정리에서 삼켜진 호출 — 그 정리를 일으킨 시험의 teardown 을 실패시킨다.
+
+    마지막 시험(nextitem 없음)의 teardown 에서 세션 fixture 까지 다 정리되므로, xdist 일꾼에서도
+    보통의 시험 오류로 전달된다(일꾼의 종료 상태에 기대지 않는다).
+    """
+    exc = None
+    try:
+        res = yield
+    except BaseException as e:      # 앞선 teardown 오류는 아래에서 그대로 다시 낸다
+        exc = e
+        res = None
+    stray = _take_stray()
+    if stray:
+        pytest.fail("시험 함수 밖(fixture 정리)에서 바깥 네트워크 호출이 막혔다:\n  "
+                    + "\n  ".join(f"{t}: {w}" for t, w in stray[:10])
+                    + (f"\n(같은 teardown 의 다른 오류: {exc!r})" if exc is not None else ""), pytrace=False)
+    if exc is not None:
+        raise exc
+    return res
+
+
 def pytest_sessionfinish(session, exitstatus):
-    """마지막 시험 뒤(세션 fixture 정리 등)에 막혀 삼켜진 호출도 놓치지 않는다."""
+    """모든 teardown 뒤에 막혀 삼켜진 호출 — 종료 상태로만 알릴 수 있다(xdist 일꾼에서는 전달 안 됨)."""
     if len(_violations) > _reported[0]:
         lines = "\n  ".join(f"{t}: {w}" for t, w in _violations[_reported[0]:][:20])
         sys.stderr.write(f"\n[network guard] 시험 함수 밖에서 바깥 네트워크 호출이 막혔다:\n  {lines}\n")

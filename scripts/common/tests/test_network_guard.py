@@ -45,80 +45,112 @@ def test_udp_sendto_external_is_blocked(netguard):
     assert netguard.consume()
 
 
-def test_curl_cffi_external_url_is_blocked(netguard):
-    curl = pytest.importorskip("curl_cffi.curl")
-    from curl_cffi.const import CurlOpt
-    c = curl.Curl()
-    try:
-        with pytest.raises(netguard.Blocked):
-            c.setopt(CurlOpt.URL, b"https://query2.finance.yahoo.com/v8/finance/chart/%5EN225")
-        c.setopt(CurlOpt.URL, b"http://127.0.0.1:9/")   # 로컬은 통과
-    finally:
-        c.close()
-    assert len(netguard.consume()) == 1
+# ── curl_cffi: 주소를 가리지 않고 전송 자체를 거절한다(로컬 포함) ──────────────────
+# libcurl 안의 리디렉트·프록시·이름 풀이는 파이썬에서 볼 수 없다(codex 구현 검토 1·2회) — 그래서
+# 전송이 시작되는 두 자리(Curl.perform, AsyncCurl.add_handle)에서 전부 막는다.
+
+class _Counting:
+    """요청 수를 세는 로컬 서버 — 막힌 전송은 여기까지 오지 못해야 한다."""
+
+    def __enter__(self):
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+        self.hits = hits = []
+
+        class H(BaseHTTPRequestHandler):
+            def do_GET(self):
+                hits.append(self.path)
+                self.send_response(302)      # 통과됐다면 바깥으로 리디렉트했을 서버
+                self.send_header("Location", "http://example.com/leak")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
+            def log_message(self, *a):
+                pass
+        self.srv = HTTPServer(("127.0.0.1", 0), H)
+        threading.Thread(target=self.srv.serve_forever, daemon=True).start()
+        self.url = f"http://127.0.0.1:{self.srv.server_port}/"
+        return self
+
+    def __exit__(self, *exc):
+        self.srv.shutdown()
+        self.srv.server_close()
 
 
-def test_curl_cffi_schemeless_url_is_blocked(netguard):
-    curl = pytest.importorskip("curl_cffi.curl")
-    from curl_cffi.const import CurlOpt
-    c = curl.Curl()
-    try:
-        with pytest.raises(netguard.Blocked):
-            c.setopt(CurlOpt.URL, b"example.com/x")
-        with pytest.raises(netguard.Blocked):
-            c.setopt(CurlOpt.PROXY, b"http://proxy.example.com:8080")
-    finally:
-        c.close()
-    assert len(netguard.consume()) == 2
-
-
-def _local_http(handler_body):
-    from http.server import BaseHTTPRequestHandler, HTTPServer
-
-    class H(BaseHTTPRequestHandler):
-        def do_GET(self):
-            handler_body(self)
-
-        def log_message(self, *a):
-            pass
-    srv = HTTPServer(("127.0.0.1", 0), H)
-    threading.Thread(target=srv.serve_forever, daemon=True).start()
-    return srv
-
-
-def test_curl_cffi_local_get_passes():
-    creq = pytest.importorskip("curl_cffi.requests")
-
-    def ok(h):
-        h.send_response(200)
-        h.send_header("Content-Length", "2")
-        h.end_headers()
-        h.wfile.write(b"ok")
-    srv = _local_http(ok)
-    try:
-        r = creq.get(f"http://127.0.0.1:{srv.server_port}/", timeout=10)
-        assert r.status_code == 200 and r.content == b"ok"
-    finally:
-        srv.shutdown()
-
-
-def test_curl_cffi_redirect_from_localhost_to_outside_does_not_leave(netguard):
-    """libcurl 이 혼자 따라가는 리디렉트 — 파이썬 setopt 를 다시 부르지 않는다(codex 구현 검토 1회)."""
-    creq = pytest.importorskip("curl_cffi.requests")
-
-    def redirect(h):
-        h.send_response(302)
-        h.send_header("Location", "http://example.com/leak")
-        h.send_header("Content-Length", "0")
-        h.end_headers()
-    srv = _local_http(redirect)
-    try:
-        with pytest.raises(Exception):
-            creq.get(f"http://127.0.0.1:{srv.server_port}/", timeout=10, allow_redirects=True)
-    finally:
-        srv.shutdown()
+def _refused(netguard, srv, call):
+    with pytest.raises(netguard.Blocked):
+        call()
     got = netguard.consume()
-    assert any("example.com" in w for w in got), got
+    assert len(got) == 1 and "curl_cffi" in got[0], got
+    assert srv.hits == [], "막힌 전송이 서버에 닿았다"
+
+
+def test_curl_cffi_module_helper_is_refused_even_for_localhost(netguard):
+    creq = pytest.importorskip("curl_cffi.requests")
+    with _Counting() as srv:
+        _refused(netguard, srv, lambda: creq.get(srv.url, timeout=10, allow_redirects=True))
+
+
+def test_curl_cffi_session_is_refused(netguard):
+    creq = pytest.importorskip("curl_cffi.requests")
+    with _Counting() as srv, creq.Session() as s:
+        _refused(netguard, srv, lambda: s.get(srv.url, timeout=10))
+        _refused(netguard, srv, lambda: s.post(srv.url, data=b"x", timeout=10))
+
+
+def test_curl_cffi_stream_is_refused(netguard):
+    """stream=True 는 perform 을 다른 스레드에서 부르고 그 예외를 curl_cffi 가 삼킨다 — 예외가
+    호출자에게 오지 않아도 기록은 남고(그래서 시험은 실패하고), 멈추지 않으며, 서버에 닿지 않는다."""
+    creq = pytest.importorskip("curl_cffi.requests")
+    with _Counting() as srv, creq.Session() as s:
+        try:
+            s.get(srv.url, timeout=10, stream=True)
+        except Exception:
+            pass
+        got = netguard.consume()
+        assert len(got) == 1 and "curl_cffi" in got[0], got
+        assert srv.hits == []
+
+
+def test_curl_cffi_async_session_is_refused(netguard):
+    """비동기 전송은 Curl.perform 을 거치지 않는다(codex 구현 검토 2회) — add_handle 에서 막는다."""
+    creq = pytest.importorskip("curl_cffi.requests")
+    import asyncio
+
+    async def go(url, **kw):
+        async with creq.AsyncSession() as s:
+            return await asyncio.wait_for(s.get(url, timeout=10, **kw), 20)
+
+    with _Counting() as srv:
+        _refused(netguard, srv, lambda: asyncio.run(go(srv.url)))
+        _refused(netguard, srv, lambda: asyncio.run(go(srv.url, stream=True)))
+
+
+def test_curl_cffi_raw_perform_is_refused_whatever_the_options(netguard):
+    """프록시·NOPROXY 를 어떻게 두든(빈 값 포함) 전송이 시작되지 않는다."""
+    curl = pytest.importorskip("curl_cffi.curl")
+    from curl_cffi.const import CurlOpt
+    with _Counting() as srv:
+        for url in (srv.url.encode(), b"http://[::ffff:127.0.0.1]:%d/" % srv.srv.server_port,
+                    b"https://query2.finance.yahoo.com/v8/finance/chart/%5EN225"):
+            c = curl.Curl()
+            try:
+                c.setopt(CurlOpt.URL, url)
+                c.setopt(CurlOpt.PROXY, b"")
+                c.setopt(CurlOpt.NOPROXY, b"*")
+                c.setopt(CurlOpt.FOLLOWLOCATION, 1)
+                _refused(netguard, srv, c.perform)
+            finally:
+                c.close()
+
+
+def test_curl_cffi_swallowed_refusal_is_still_recorded(netguard):
+    creq = pytest.importorskip("curl_cffi.requests")
+    with _Counting() as srv:
+        try:
+            creq.get(srv.url, timeout=10)
+        except Exception:
+            pass
+        assert len(netguard.consume()) == 1 and srv.hits == []
 
 
 def test_localhost_tcp_passes():
@@ -184,4 +216,35 @@ def test_swallowed_block_in_a_module_fixture_fails_the_next_test(tmp_path):
                         str(tmp_path)], cwd=tmp_path, capture_output=True, text=True, timeout=120)
     assert r.returncode != 0, r.stdout
     assert "1 passed, 1 error" in r.stdout, r.stdout
+    assert "example.com" in r.stdout
+
+
+_LEAKY_SESSION = (
+    "import socket\nimport pytest\n\n"
+    "@pytest.fixture(scope='session')\n"
+    "def leaky():\n"
+    "    yield\n"
+    "    try:\n"
+    "        socket.getaddrinfo('example.com', 443)\n"
+    "    except Exception:\n"
+    "        pass\n\n"
+    "def test_a(leaky):\n    pass\n\n"
+    "def test_b(leaky):\n    pass\n")
+
+
+@pytest.mark.parametrize("extra", [["-p", "no:xdist"], ["-n", "2"]], ids=["serial", "xdist"])
+def test_swallowed_block_in_session_fixture_cleanup_fails_the_last_test(tmp_path, extra):
+    """세션 fixture 정리(마지막 시험 뒤)에서 삼켜진 호출 — 일꾼의 종료 상태가 아니라 마지막 시험의
+    teardown 오류로 드러나야 xdist 에서도 전체 실행이 실패한다(codex 구현 검토 2회)."""
+    import subprocess
+    import sys
+    if extra[0] == "-n":
+        pytest.importorskip("xdist")
+    guard = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "conftest.py")
+    (tmp_path / "conftest.py").write_text(f"exec(open({guard!r}, encoding='utf-8').read())\n")
+    (tmp_path / "test_inner.py").write_text(_LEAKY_SESSION)
+    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *extra, str(tmp_path)],
+                       cwd=tmp_path, capture_output=True, text=True, timeout=180)
+    assert r.returncode != 0, r.stdout
+    assert "2 passed" in r.stdout and "error" in r.stdout, r.stdout
     assert "example.com" in r.stdout
