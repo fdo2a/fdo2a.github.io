@@ -221,7 +221,8 @@ class Classifier:
         in_table = bool(segs) and all(kinds.get(s.kind[0]) == 'T' for s in segs)
         # 표식이 있으면 표 대조(T)보다 **먼저** 표식을 본다(codex 구현 1회 #2·#3·#6) — 표 칸이 맞았다고 깨진 표식
         # (개수·겹침·경계)이나 없는 칸을 가리키는 표식이 「표 대조」로 묻히지 않게. 맞는 표식이 표 칸에 있으면 T 다
-        # (표 칸 대조가 더 강한 확인 — 표식 쪽 내역은 세지 않는다)
+        # (표 칸 대조가 더 강한 확인 — 표식 쪽 내역은 세지 않는다). 단 어림선(`|lvl`)은 표 칸에서도 배타 칸 level 로
+        # 남긴다(codex 구현 2회 #16) — 작성자가 어림이라고 표시한 숫자를 「자료로 확인」에 섞지 않는다
         msets = [tuple(n for n in st if S.is_marker(n)) for st in stacks]
         union = {id(n): n for ms in msets for n in ms}
         if union:
@@ -232,7 +233,7 @@ class Classifier:
                 return 'unknown', '표식 오류'
             saved = (dict(self.detail), dict(self.web_by), list(self.declared), list(self.book.dv_used))
             got = self._marked(m, q, stacks[0])
-            if got[0] == 'unknown' or not in_table:
+            if got[0] in ('unknown', 'level') or not in_table:
                 return got
             self.detail, self.web_by, self.declared, self.book.dv_used = (
                 saved[0], saved[1], saved[2], saved[3])

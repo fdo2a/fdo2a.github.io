@@ -511,17 +511,20 @@ def test_markers_survive_publish_transforms(tmp_path):
 
 # ── codex 구현 검토 1회 ──
 
-def _t_cell_items(html_sub):
+def _t_cell_items(html_sub, level=None, raw='4.477'):
     html, data = _fix()
     bad = html.replace('>4.477%<', html_sub, 1)
     assert bad != html
     d = {k: v for k, v in data.items()}
+    if level is not None:
+        d['market_data']['yields']['2Y']['level'] = level
     inp = U.Inputs.__new__(U.Inputs)
     inp.market, inp.date, inp.datadir, inp.repo = 'us', data['market_data']['report_date'], FIX, REPO
     inp.terms, inp.news, inp.news_summary, inp.article, inp.telegram = U.fixed_terms(), None, {}, {}, {}
     inp.ledger, inp.cycle_arg, inp.data = [], None, d
     items_ = U.classify(inp, bad)[1]
-    return [i for i in items_ if '4.477' in i.q.raw and i.sentence == '#']     # 표 칸(문장 속 같은 값은 뺀다)
+    return [i for i in items_ if (raw in i.q.raw if raw == '4.477' else i.q.raw.strip() == raw)
+            and i.sentence == '#']     # 표 칸(문장 속 같은 값은 뺀다)
 
 
 def test_bad_marker_on_table_cell_is_not_table():
@@ -538,6 +541,18 @@ def test_bad_marker_on_table_cell_is_not_table():
 
 def test_valid_marker_on_table_cell_stays_table():
     got = _t_cell_items('><span data-ref="md:yields.2Y.level">4.477%</span><')
+    assert [i.cls for i in got] == ['table']
+
+
+def test_level_marker_on_table_cell_stays_level():
+    # codex 구현 2회 #16 — 표 대조가 맞은 칸이라도 `|lvl` 표식이 맞으면 배타 칸 level 이다(「자료로 확인」에 섞지 않는다)
+    sub = '><span data-ref="md:yields.2Y.level|lvl">4.5%</span><'
+    got = _t_cell_items(sub, level=4.5, raw='4.5%')
+    assert [(i.cls, i.why) for i in got] == [('level', 'md:yields.2Y.level')]
+    # 표식이 틀리면 여전히 U, |lvl 없는 맞는 표식은 여전히 table
+    got = _t_cell_items('><span data-ref="md:indices.SP500.last|lvl">4.5%</span><', level=4.5, raw='4.5%')
+    assert [i.cls for i in got] == ['unknown']
+    got = _t_cell_items('><span data-ref="md:yields.2Y.level">4.5%</span><', level=4.5, raw='4.5%')
     assert [i.cls for i in got] == ['table']
 
 
