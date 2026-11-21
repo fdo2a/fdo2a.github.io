@@ -7,7 +7,7 @@ The US and KR dailies are reference material for the PM of a tactical global-equ
 | File | Does |
 |---|---|
 | `universe.py` | 28 reference ETFs: benchmark / risk_on / risk_off (「방어 스타일」) / region. A theme not listed does not show — change with a reason in the spec |
-| `metrics.py` | Returns, 12-1 momentum, vol, historical 1-day VaR (`max(0, -q)`, linear quantile), beta, SMA, drawdown. Pure |
+| `metrics.py` | Returns, vol, historical 1-day VaR (`max(0, -q)`, linear quantile), beta. Pure |
 | `board.py` | Per-ETF rows; rank on the set measurable today **and** 5 sessions ago; `rel_3m_chg_pp`; continuity rules |
 | `regime.py` | Price-only 4-state regime with 3-session hysteresis, no state file |
 | `liquidity.py` | WALCL − WDTGAL − RRPONTSYD (Wednesday), NFCI; static unit contract; 4-week change = exactly 28 days back, else none |
