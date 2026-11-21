@@ -54,7 +54,8 @@ def _sans_collect(raw):
         return raw
     if isinstance(obj, dict):
         obj.pop('collect', None)
-    return json.dumps(obj, sort_keys=True, ensure_ascii=False)
+    # 정렬·정규화하지 않는다 — 키 순서·숫자 표기·타입이 다르면 바뀐 파일이다(codex 3회차 D8)
+    return json.dumps(obj, ensure_ascii=False)
 
 
 def pre_1a_changed(repo, datadir, written):
@@ -230,11 +231,13 @@ def test_kr_recollection_with_the_same_values_changes_only_what_pre_1a_changed(t
         S.begin(str(outdir), now=when, run_id=rid)
         clock[0] = when + dt.timedelta(minutes=1)
         collect_kr_data.main(str(outdir), str(repo / 'kr' / 'assets'))
+        # 기대값은 stamp **전**에 읽는다 — stamp 뒤에 읽으면 되돌리기가 지운 변경을 기대값으로 삼는다(codex 3회차 D8)
+        out = {os.path.relpath(os.path.join(dp, f), outdir): open(os.path.join(dp, f), encoding='utf-8').read()
+               for dp, _dn, fs in os.walk(outdir) for f in fs if f.endswith('.json') and f != '_collect_status.json'}
         steps = {'collect': {'outcome': 'success', 'outputs': {}}, 'telegram': {'outcome': 'skipped', 'outputs': {}}}
         clock[0] = when + dt.timedelta(minutes=5)
         S.stamp(str(outdir), market='kr', steps=steps, run_id=rid)
-        return {os.path.relpath(os.path.join(dp, f), outdir): open(os.path.join(dp, f), encoding='utf-8').read()
-                for dp, _dn, fs in os.walk(outdir) for f in fs if f.endswith('.json') and f != '_collect_status.json'}
+        return out
 
     run(T1, 'run-1')
     commit(repo, 'first collection')
@@ -246,3 +249,30 @@ def test_kr_recollection_with_the_same_values_changes_only_what_pre_1a_changed(t
     # 1a 전에 바뀌던 파일만 바뀐다. 그런 파일이 하나라도 있으면 장부가 그 해시를 따라가고, 없으면 장부도 그대로다
     assert got == sorted(want + (['kr/data/_collect_status.json'] if want else []))
     assert not leaks
+
+
+# ── codex 3회차 D4: 파이썬 == 가 같다고 보는 다른 JSON 값은 되돌리지 않는다 ────────────────────────────────
+
+@pytest.mark.parametrize('before,after', [(1, True), (0, False), (1, 1.0), (0.0, -0.0), ({'a': 1, 'b': 2}, {'b': 2, 'a': 1})])
+def test_restore_keeps_a_new_value_that_python_calls_equal(tmp_path, before, after):
+    repo = init(tmp_path)
+    d = repo / 'data'
+    d.mkdir()
+    (d / 'x.json').write_text(json.dumps({'v': before, 'collect': {'status': 'ok', 'collected_at': 'T1'}}), encoding='utf-8')
+    commit(repo)
+    new = json.dumps({'v': after, 'collect': {'status': 'ok', 'collected_at': 'T2'}})
+    (d / 'x.json').write_text(new, encoding='utf-8')
+    assert S.restore_unchanged(str(d), 'x.json') == 'T2'
+    assert (d / 'x.json').read_text(encoding='utf-8') == new          # 새 값이 남는다
+
+
+def test_restore_still_reverts_a_file_that_differs_only_in_collection_time(tmp_path):
+    repo = init(tmp_path)
+    d = repo / 'data'
+    d.mkdir()
+    old = json.dumps({'v': 1, 'collect': {'status': 'ok', 'collected_at': 'T1'}})
+    (d / 'x.json').write_text(old, encoding='utf-8')
+    commit(repo)
+    (d / 'x.json').write_text(json.dumps({'v': 1, 'collect': {'status': 'ok', 'collected_at': 'T2'}}), encoding='utf-8')
+    assert S.restore_unchanged(str(d), 'x.json') == 'T2'
+    assert (d / 'x.json').read_text(encoding='utf-8') == old

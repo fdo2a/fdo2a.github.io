@@ -279,6 +279,12 @@ def _sans_time(obj):
     return dict(obj, collect={k: v for k, v in c.items() if k != 'collected_at'}) if isinstance(c, dict) else obj
 
 
+def _strict(obj):
+    """JSON 값의 엄격한 비교용 표현 — 파이썬 `==` 는 `1 == True == 1.0`, `0.0 == -0.0` 이라 다른 자료를 같다고 본다
+    (1a 1단계 codex 3회차 D4). 다시 직렬화하면 타입·숫자 표기·키 순서가 갈린다(키 순서도 바이트 차이다)."""
+    return json.dumps(obj, ensure_ascii=False, allow_nan=True)
+
+
 def restore_unchanged(datadir, rel):
     """앞 판(HEAD)과 `collect.collected_at` 만 다른 JSON 객체 파일을 앞 판 바이트로 되돌린다.
     -> 되돌리기 전(이번 실행이 쓴) 수집 시각 | None(`collect` 칸이 없는 파일)."""
@@ -294,8 +300,8 @@ def restore_unchanged(datadir, rel):
         head = json.loads(raw.decode('utf-8'))
     except (ValueError, UnicodeDecodeError):
         return fresh
-    if isinstance(head, dict) and isinstance(head.get('collect'), dict) and head != body \
-            and _sans_time(head) == _sans_time(body):
+    if isinstance(head, dict) and isinstance(head.get('collect'), dict) and _strict(head) != _strict(body) \
+            and _strict(_sans_time(head)) == _strict(_sans_time(body)):
         tmp = path + '.tmp'
         with open(tmp, 'wb') as fh:
             fh.write(raw)
@@ -322,10 +328,10 @@ def _same_ledger(head, book):
         return False
     if not book['run'].get('checked'):
         return False                      # 이번 실행을 확인하지 못했다 — 그 사실을 장부에 남긴다
-    if any(head.get(k) != book.get(k) for k in ('format', 'market', 'report_date')):
+    if any(_strict(head.get(k)) != _strict(book.get(k)) for k in ('format', 'market', 'report_date')):
         return False
     hf, bf = head['files'], book['files']
-    return set(hf) == set(bf) and all(_material(hf[k]) == _material(bf[k]) for k in bf)
+    return set(hf) == set(bf) and all(_strict(_material(hf[k])) == _strict(_material(bf[k])) for k in bf)
 
 
 def stamp(datadir, market=None, now=None, steps=None, run_id=None):
