@@ -3,103 +3,49 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-20",
- "status": "none",
- "reason": "analysis_unverified",
+ "status": "error",
+ "reason": "gdelt_throttled",
  "retryable": true,
  "attempts": 2,
- "collected_at": "2026-11-21T16:38:57+00:00",
- "cutoff_at": "2026-11-21T16:38:57+00:00",
+ "collected_at": "2026-11-21T16:58:00+00:00",
+ "cutoff_at": "2026-11-21T16:58:00+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
   "verify": "opus"
  },
  "prompt_version": "2026-11-04.1",
- "market_snapshot": {
-  "path": "data/market_data.json",
-  "commit": "338718ac1a9a3c13505b660f42cf4de37b458d5a",
-  "sha256": "98546da0a3da07d1a4cec0fe185f0084ac617e362e7d3ad91ecd360835b69801"
- },
+ "market_snapshot": null,
  "counts": {
   "harvest": 194,
-  "candidates": 1,
+  "candidates": 3,
   "articles": [
-   6
+   2,
+   3,
+   2
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "tokens": {
-   "in": 41782,
-   "out": 12046
+   "in": 4632,
+   "out": 64
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "japantoday.com": "short",
-   "independent.co.uk": "ok",
-   "straitstimes.com": "ok",
-   "dw.com": "ok"
+   "bbc.co.uk": "ok",
+   "theguardian.com": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
-  "grounded": {
-   "claims": "4/4",
-   "pairs": "2/2",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[1]",
-    "memo[2]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_ratio",
-   "remaining": [
-    "structure:dangling",
-    "edges[0]:dangling",
-    "edges[1]:unverified",
-    "edges[2]:unverified",
-    "memo[1]:unverified",
-    "memo[2]:dangling",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:unverified",
-    "worry.unlikely[0]:unverified",
-    "worry.unlikely[0]:dangling"
-   ]
-  }
+  "gdelt": "throttled",
+  "attempt_refunded": "discovery_throttled"
  },
  "event": {
-  "topic_ko": "미·중·러 선전 3자 정상회담의 성과와 우크라이나 평화 전망",
-  "query": "putin trump trilateral",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
-  "edges[2]:unverified",
-  "memo[1]:unverified",
-  "memo[2]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:unverified",
-  "worry.unlikely[0]:unverified",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "6f7001b02d118064"
+ "content_hash": "8fbbcb5a772ca573"
 }
