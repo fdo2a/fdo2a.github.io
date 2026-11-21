@@ -218,8 +218,10 @@ class Classifier:
         if any('data-editor-note' in n.attrs for n in allnodes):
             self.detail['zone_note'] += 1
             return 'excluded', 'zone_note'
-        if segs and all(kinds.get(s.kind[0]) == 'T' for s in segs):
-            return 'table', ''
+        in_table = bool(segs) and all(kinds.get(s.kind[0]) == 'T' for s in segs)
+        # 표식이 있으면 표 대조(T)보다 **먼저** 표식을 본다(codex 구현 1회 #2·#3·#6) — 표 칸이 맞았다고 깨진 표식
+        # (개수·겹침·경계)이나 없는 칸을 가리키는 표식이 「표 대조」로 묻히지 않게. 맞는 표식이 표 칸에 있으면 T 다
+        # (표 칸 대조가 더 강한 확인 — 표식 쪽 내역은 세지 않는다)
         msets = [tuple(n for n in st if S.is_marker(n)) for st in stacks]
         union = {id(n): n for ms in msets for n in ms}
         if union:
@@ -228,7 +230,15 @@ class Classifier:
             m = next(iter(union.values()))
             if len(marker_q.get(id(m), ())) != 1:
                 return 'unknown', '표식 오류'
-            return self._marked(m, q, stacks[0])
+            saved = (dict(self.detail), dict(self.web_by), list(self.declared), list(self.book.dv_used))
+            got = self._marked(m, q, stacks[0])
+            if got[0] == 'unknown' or not in_table:
+                return got
+            self.detail, self.web_by, self.declared, self.book.dv_used = (
+                saved[0], saved[1], saved[2], saved[3])
+            return 'table', ''
+        if in_table:
+            return 'table', ''
         if q.code:
             self.detail['excluded_code'] += 1
             return 'excluded', 'code'
@@ -324,9 +334,10 @@ class Classifier:
         return 'unknown', '표식 오류'
 
     def _enum(self, kind, q):
+        # 배율(천·만·억·조, K·M·B)이 붙은 값은 나열 수가 아니다(codex 구현 1회 #7 — 「0천개」)
         ok = (kind == 'enum' and q.value is not None and not q.code and q.unit in S.COUNT_WORDS
-              and float(q.value).is_integer() and 0 <= q.value <= 99 and not q.sign
-              and not any(c in q.raw for c in ',.%'))
+              and float(q.value).is_integer() and 0 <= q.value <= 99 and not q.sign and q.scale == 1.0
+              and len(q.runs) == 1 and not re.search(r'[,.%천만억조KMB]', q.raw))
         if not ok:
             return 'unknown', '선언 무효'
         self.detail['excluded_enum'] += 1
@@ -383,7 +394,8 @@ def _shown_ok(q, f, flags):
         if mag == 0:
             return False
         step = 10 ** (math.floor(math.log10(mag)) - q.sig + 1)
-        return abs(abs(got) - abs(exp)) <= step + 1e-9
+        # 부호까지 본다(codex 구현 1회 범위 밖 제안) — 「-7,000선」이 양수 칸에 맞지 않게. 부호 없는 인쇄는 양수로 읽는다
+        return abs(got - exp) <= step + 1e-9
     tol = 0.5 * q.quantum + 1e-9 * max(1.0, abs(exp))
     if q.sign:
         return abs(got - exp) <= tol

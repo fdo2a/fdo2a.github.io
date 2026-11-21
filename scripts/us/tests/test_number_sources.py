@@ -444,7 +444,7 @@ def _fixture_wd(tmp_path):
 
 @pytest.mark.parametrize('ref', [
     'fb:units[semis].ret_3m', 'fb:risk.vix.level', 'fb:liquidity.net.level_bn',
-    'md:indices.SP500.pct', 'md:yields.10Y.level', 'md:sectors.Energy.pct', 'md:spread_2s10s_bp',
+    'md:indices.SP500.pct', 'md:yields.2Y.level', 'md:sectors.Energy.pct', 'md:spread_2s10s_bp',
 ])
 def test_each_schema_branch_resolves_real_files(tmp_path, ref):
     from us import facts as FA
@@ -507,3 +507,95 @@ def test_markers_survive_publish_transforms(tmp_path):
     items_ = U.classify(inp, out)[1]
     got = [i for i in items_ if i.why == 'md:indices.SP500.pct']
     assert len(got) == 1 and got[0].cls == 'data'
+
+
+# ── codex 구현 검토 1회 ──
+
+def _t_cell_items(html_sub):
+    html, data = _fix()
+    bad = html.replace('>4.477%<', html_sub, 1)
+    assert bad != html
+    d = {k: v for k, v in data.items()}
+    inp = U.Inputs.__new__(U.Inputs)
+    inp.market, inp.date, inp.datadir, inp.repo = 'us', data['market_data']['report_date'], FIX, REPO
+    inp.terms, inp.news, inp.news_summary, inp.article, inp.telegram = U.fixed_terms(), None, {}, {}, {}
+    inp.ledger, inp.cycle_arg, inp.data = [], None, d
+    items_ = U.classify(inp, bad)[1]
+    return [i for i in items_ if '4.477' in i.q.raw and i.sentence == '#']     # 표 칸(문장 속 같은 값은 뺀다)
+
+
+def test_bad_marker_on_table_cell_is_not_table():
+    # 표 대조가 맞은 칸이라도 없는 칸을 가리키는 표식은 U(#2·#3)
+    got = _t_cell_items('><span data-ref="bad">4.477%</span><')
+    assert [(i.cls, i.why) for i in got] == [('unknown', '칸 없음')]
+    # 경계를 쪼갠 표식(#6)
+    got = _t_cell_items('><span data-ref="md:yields.2Y.level">4.477</span>%<')
+    assert [(i.cls, i.why) for i in got] == [('unknown', '표식 오류')]
+    # 겹친 표식(#6)
+    got = _t_cell_items('><span data-ref="md:yields.2Y.level"><span data-ref="md:yields.2Y.level">4.477%</span></span><')
+    assert [(i.cls, i.why) for i in got] == [('unknown', '표식 오류')]
+
+
+def test_valid_marker_on_table_cell_stays_table():
+    got = _t_cell_items('><span data-ref="md:yields.2Y.level">4.477%</span><')
+    assert [i.cls for i in got] == ['table']
+
+
+def test_rl_fields_are_schema_checked():
+    from us import facts as FA
+    ledger = [{'id': 'cycle', 'market': 'us', 'report_date': D, 'candidate_ids': ['r'], 'reviewed_ids': []},
+              {'id': 'r', 'arbitrary': 5, 'event': {
+                  'actual': {'value': 0.3, 'unit': '%', 'observed_at': f'{D}T13:30:00+00:00'},
+                  'expectations': [{'value': 0.2, 'unit': 'furlongs', 'observed_at': f'{D}T10:00:00+00:00'},
+                                   {'value': 0.25, 'unit': '%'}]}}]
+    b = FA.Book('/none', D, ledger, 'cycle')
+    with pytest.raises(FA.Miss) as e:
+        b.resolve('rl:r.arbitrary')
+    assert e.value.kind == '칸 없음'
+    f = b.resolve('rl:r.event.actual.value')
+    assert f.status == 'current' and f.units == frozenset({'%'})
+    with pytest.raises(FA.Miss) as e:
+        b.resolve('rl:r.event.expectations[0].value')              # 단위가 닫힌 표 밖
+    assert e.value.kind == '칸 무효'
+    with pytest.raises(FA.Miss) as e:
+        b.resolve('rl:r.event.expectations[1].value')              # 관측 시각 없음
+    assert e.value.kind == '칸 무효'
+
+
+def test_gap_needs_an_explicit_threshold_field(wd):
+    from us import facts as FA
+    ledger = [{'id': 'cycle', 'market': 'us', 'report_date': D, 'candidate_ids': ['r'], 'reviewed_ids': []},
+              {'id': 'r', 'event': {'actual': {'value': 0.1, 'unit': '%', 'observed_at': f'{D}T13:30:00+00:00'}}}]
+    b = FA.Book(str(wd), D, ledger, 'cycle')
+    with pytest.raises(FA.Miss) as e:
+        b.resolve('dv:gap(md:indices.SP500.pct,rl:r.event.actual.value)')
+    assert e.value.kind == '칸 없음'
+
+
+def test_enum_rejects_scale_words(wd):
+    for text in ('0천개', '3만개', '2K개'):
+        q = [x for x in S.quantities(text) if not x.code][0]
+        c = U.Classifier.__new__(U.Classifier)
+        c.detail, c.declared = {'excluded_enum': 0}, []
+        assert c._enum('enum', q) == ('unknown', '선언 무효'), text
+
+
+def test_level_compares_sign(wd):
+    assert one(wd, '<p>지수는 <span data-ref="md:indices.SP500.last|lvl">-7,300선</span>이다.</p>') == ('unknown', '자료와 다름')
+    assert one(wd, '<p>지수는 <span data-ref="md:indices.SP500.last|lvl">7,300선</span>이다.</p>')[0] == 'level'
+    # 음수 칸: 부호까지 같아야 한다
+    assert one(wd, '<p>낙폭 <span data-ref="md:indices.SP500.chg|lvl">-17포인트</span></p>')[0] == 'level'
+    assert one(wd, '<p>낙폭 <span data-ref="md:indices.SP500.chg|lvl">17포인트</span></p>') == ('unknown', '자료와 다름')
+
+
+def test_cli_text_output_sums_with_level(wd, tmp_path):
+    h = tmp_path / 'p.html'
+    h.write_text(page('<p>지수는 <span data-ref="md:indices.SP500.last|lvl">7,300선</span>이고 0.3% 올랐다.</p>'),
+                 encoding='utf-8')
+    p = _cli('--market', 'us', '--date', D, '--html', str(h), '--datadir', str(wd), '--repo', REPO, '--effective', '2026-01-01')
+    head = p.stdout.splitlines()[0]
+    import re as _re
+    total = int(_re.search(r'숫자 (\d+)개', head).group(1))
+    parts = head.split('= ', 1)[1]
+    parts = _re.sub(r'\(표 \d+·칸 \d+\)', '', parts)
+    assert sum(int(x) for x in _re.findall(r' (\d+)(?= ·|$)', ' ' + parts)) == total and '어림선 1' in head

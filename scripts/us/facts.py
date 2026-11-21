@@ -22,6 +22,11 @@ NO_STATUS = frozenset({'id', 'ei', 'mv'})       # 상태 칸이 없는 파일 �
 OPS2 = ('diff', 'sum', 'ratio', 'pctchg')
 OPS_HIST = ('ret', 'chgbp', 'streak')
 DATE_PAIRS = {frozenset({'last', 'prev'}), frozenset({'level', 'week_ago'})}
+# 연구 원장 값의 단위(research_ledger 기록의 `unit` 글자) → 인쇄 단위. 표 밖 단위는 칸 무효
+RL_UNITS = {'%': frozenset({'%'}), 'pct': frozenset({'%'}), 'percent': frozenset({'%'}), 'bp': frozenset({'bp'}),
+            '%p': frozenset({'%p'}), 'pp': frozenset({'%p'}), 'USD': frozenset({'', '달러'}), '$': frozenset({'', '달러'})}
+# gap 의 둘째 칸이 될 수 있는 원장 경로(묶음 이름) — 지금 원장 꼴에는 숫자 문턱 칸이 없다(비어 있음 = gap 은 늘 U)
+RL_THRESHOLDS = frozenset()
 
 # 인쇄 단위 집합
 PCT, PP, BP = frozenset({'%'}), frozenset({'%p'}), frozenset({'bp'})
@@ -91,6 +96,8 @@ def _walk(obj, path):
             hit = [it for it in cur if isinstance(it, dict) and any(
                 _key(it.get(f)) == _key(sel) for f in ('id', 'key', 'name', 'label_ko', 'fred_id', 'term')
                 if isinstance(it.get(f), str))]
+            if not hit and sel.isdigit() and int(sel) < len(cur) and isinstance(cur[int(sel)], dict):
+                hit = [cur[int(sel)]]           # 이름 없는 목록 항목(원장 expectations·reactions)은 자리 번호로
             if len(hit) != 1:
                 raise Miss('칸 없음', f'목록 항목 [{sel}] 이 {len(hit)}개 맞는다')
             parents.append(hit[0])
@@ -164,10 +171,25 @@ class Book:
         keys, leaf, parents = _walk(rec, rest)
         if not _num(leaf):
             raise Miss('칸 없음', '값이 숫자가 아니다')
-        unit = parents[-1].get('unit') if parents and isinstance(parents[-1], dict) else None
-        units = {'%': PCT, 'pct': PCT, 'bp': BP, '%p': PP, 'pp': PP, 'USD': USD, '$': USD}.get(unit, NUM)
-        return Fact(float(leaf), units, True, rec.get('report_date'), 'current', '', 'rl', ('rl', rid, keys[-1]),
-                    rid, keys[-1])
+        # 원장도 스키마 표로만 칸이 된다(codex 구현 1회 #3·#12) — research_ledger.validate 가 값·단위·관측 시각을 함께
+        # 검증하는 자리만: event.expectations[].value · event.actual.value · event.reactions[].before|after.
+        # 그 밖의 숫자 잎(임의 필드)은 칸 없음. 단위가 닫힌 표 밖이거나 관측 시각을 못 읽으면 칸 무효
+        shape = tuple(keys)
+        row = parents[-1] if parents and isinstance(parents[-1], dict) else {}
+        if shape in (('event', 'expectations', '[]', 'value'), ('event', 'actual', 'value')):
+            when = row.get('observed_at')
+        elif shape[:3] == ('event', 'reactions', '[]') and len(shape) == 4 and shape[3] in ('before', 'after'):
+            when = row.get('end_at') if shape[3] == 'after' else row.get('start_at')
+        else:
+            raise Miss('칸 없음', '원장 스키마 표에 없는 경로')
+        units = RL_UNITS.get(row.get('unit'))
+        if units is None:
+            raise Miss('칸 무효', '원장 값의 단위가 닫힌 표 밖이다')
+        d = when[:10] if isinstance(when, str) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', when[:10]) else None
+        if d is None:
+            raise Miss('칸 무효', '원장 값의 관측 시각을 읽지 못했다')
+        return Fact(float(leaf), units, True, d, 'current' if d == self.date else 'stale', '', 'rl',
+                    ('rl', '.'.join(k for k in shape if k != '[]')), rid, shape[-1])
 
     # ── 계산값 ──
     def _dv(self, expr):
@@ -186,8 +208,10 @@ class Book:
             a, b = self.resolve(args[0]), self.resolve(args[1])
             st = _worse(a, b)
             if op == 'gap':
-                if b.alias != 'rl':
-                    raise Miss('칸 없음', 'gap 의 문턱은 rl: 칸이어야 한다')
+                if b.alias != 'rl' or b.group[1] not in RL_THRESHOLDS:
+                    # 문턱은 원장의 「문턱」 칸만(codex 구현 1회 #12). 지금 원장 꼴에는 숫자 문턱 칸이 없다 — 문턱은
+                    # 무효화 조건 글(invalidation)에 있다 — 그래서 gap 은 늘 칸 없음(U)이다(fail closed)
+                    raise Miss('칸 없음', 'gap 의 둘째 칸은 원장의 문턱 칸이어야 한다(원장에 숫자 문턱 칸이 없다)')
                 v, units, signed = a.value - b.value, (PP if a.units == PCT else a.units), True
             else:
                 same_field = a.group == b.group and a.asset != b.asset

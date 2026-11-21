@@ -75,6 +75,7 @@ def main(argv=None):
         return 0
     c = res['counts']
     print(f"number sources: 숫자 {c['total']}개 = 자료로 확인 {c['table'] + c['data']}(표 {c['table']}·칸 {c['data']}) · "
+          f"어림선 {c['level']} · "
           f"기사와 일치 {c['article']} · 텔레그램 글과 일치 {c['telegram']} · 검색 발췌와 일치 {c['web']} · "
           f"세지 않은 숫자 {c['excluded']} · 확인 불가 {c['unknown']}")
     if res['unknown_by']:
