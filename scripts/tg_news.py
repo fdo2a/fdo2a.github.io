@@ -38,7 +38,7 @@ from ci import routine_due as rd  # noqa: E402
 from common.numbers import strip_comments  # noqa: E402
 from common.telegram_gate import NEWS_TITLE, _close_of, elements  # noqa: E402
 from common.tg_links import pool_key  # noqa: E402
-from common.tg_use import ALLEGATION, REASONS, skip_reason  # noqa: E402,F401 — re-exported
+from common.tg_use import REASONS, skip_reason  # noqa: E402
 
 PATHS = {'us': ('posts/{d}.html', 'data/telegram/{d}.json'),
          'kr': ('kr/posts/{d}.html', 'kr/data/telegram/{d}.json')}

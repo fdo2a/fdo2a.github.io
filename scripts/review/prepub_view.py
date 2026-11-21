@@ -793,7 +793,6 @@ def status_lines(v, who=MAC):
     if bits:
         out.append(' · '.join(bits))
     out += _inputs_lines(rec)
-    cw = chk.get('cat_why') or {}
     for k, label in C.CATEGORY_LABEL.items():
         st = (chk.get('cats') or {}).get(k)
         if st not in (C.UNKNOWN, C.MISMATCH) or (k == 'workspace_inputs' and _workspace_case(chk)):

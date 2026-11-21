@@ -667,7 +667,7 @@ def note_seen(root, queue, published, today, tz):
 def _split_expired(root, queue, published):
     """(지금 볼 것, 만료). 무엇이든 실패하면 만료 없이 원래 큐 — 숨기는 쪽으로 틀리지 않는다."""
     try:
-        from datetime import date, datetime
+        from datetime import date
         from review import expiry
         from review.runner import KST, draft_name
         try:

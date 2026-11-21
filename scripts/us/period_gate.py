@@ -11,7 +11,7 @@ import re
 from common.numbers import numbers_split_by_tags
 
 from us.macro_gate import BANNED_LABELS
-from us.post_check import banned_markers, body_text, data_tokens, mask_dates
+from us.post_check import banned_markers, body_text, mask_dates
 from us.readability import PROSE_MARKER, has_prose_layout
 from us.style import is_desk_register
 

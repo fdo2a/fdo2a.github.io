@@ -14,7 +14,6 @@ exit 0 = 통과 · 1 = 위반
 import argparse
 import json
 import os
-import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

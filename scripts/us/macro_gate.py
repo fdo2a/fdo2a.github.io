@@ -21,7 +21,7 @@ from verification.inputs import enforcing
 from common.numbers import strip_comments
 
 from .macro import (REGIME_NAMES, TRANSMISSION_ASSETS, TRANSMISSION_GROUPS,
-                    TRANSMISSION_LABELS, conflicts, regime_name)
+                    TRANSMISSION_LABELS, regime_name)
 from .section import locate_section, number_forms, strip_tags
 from .macro_table_gate import check_tables
 from . import anatomy_gate, release_blocks

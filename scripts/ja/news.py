@@ -148,12 +148,11 @@ _ANY_OPEN = re.compile(r"<[a-zA-Z][^>]*\sdata-news\s*=\s*(\"[^\"]*\"|'[^']*'|[^\
 
 
 def _item_end(html, start):
-    depth, pos = 0, start
+    depth = 0
     for m in _DIV.finditer(html, start):
         depth += 1 if m.group(0).lower().startswith("<div") else -1
         if depth == 0:
             return m.start(), m.end()
-        pos = m.end()
     return None
 
 

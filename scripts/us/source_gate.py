@@ -52,7 +52,6 @@ counting `<main>`: a self-closing `<main/>` is one tag to a counter and nothing 
 a browser, and that alone excluded every body link from checking.
 """
 
-import re
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
 

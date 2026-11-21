@@ -31,8 +31,8 @@
 import re
 
 from .macro_metrics import DIRECTION_WORDS, VS_PREV_WORDS, _POLARITY
-from .readability import (_MASKED_ELEMENT, _V5_MARKER_RE, _blank_inert,
-                          _find_in_head_css, _head_style_spans)
+from .readability import (_MASKED_ELEMENT, _blank_inert, _find_in_head_css,
+                          _head_style_spans)
 
 MARKER = "/* signcolor-v1 */"
 CSS = ("\n%s\n"

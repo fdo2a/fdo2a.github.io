@@ -22,7 +22,7 @@ _SIGNED = re.compile(r'(?<![\w.\d/])([+\-−])(\d[\d,]*(?:\.\d+)?)(%p|%|bp|계�
 
 def _paint_text(text):
     def repl(m):
-        sign, num, unit = m.group(1), m.group(2), m.group(3) or ''
+        sign, num = m.group(1), m.group(2)
         if float(num.replace(',', '')) == 0:
             return m.group(0)
         cls = 'pos' if sign == '+' else 'neg'

@@ -108,13 +108,6 @@ def prose_chars(section_html):
     return n
 
 
-# 「멀티에셋 전략·포트폴리오」는 2026-09-19 사용자 지시로 없어졌다. 옛 발행본에는 그
-# 섹션이 남아 있지만 새 글은 갖지 않는다 — 분량 계약에서 뺀다.
-# Compatibility exports for historical portfolio/stance review modules.
-STANCE_TITLE = '멀티에셋 전략·포트폴리오'
-LEGACY_TITLES = {STANCE_TITLE: '멀티에셋 매니저 전략'}
-RETIRED_TITLES = ('멀티에셋 전략·포트폴리오', '멀티에셋 매니저 전략', '모의 포트폴리오')
-
 SECTION_GROUPS = {
     'us': {
         'recap': ('오늘의 장', '주식', '채권', 'FX', '원자재'),
