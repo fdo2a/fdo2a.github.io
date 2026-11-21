@@ -107,6 +107,9 @@ def install(monkeypatch, tmp_path, world_ref, leaks):
     from kr import index_check
     monkeypatch.setattr(index_check, "load_mode", lambda path=None: ("warn", "ok"))
     monkeypatch.setattr(kr_econ, "collect", lambda: {})
+    # 아시아 이웃 지수(kr/session.settle_peers)는 us.global_close 로 네이버·야후에 나간다 — 시험에서는 전부 결측
+    from us import global_close
+    monkeypatch.setattr(global_close, "collect", lambda tickers, report_date, *a, **k: {})
 
     def no_chart(*a, **k):
         raise RuntimeError("시험에서는 그리지 않는다")

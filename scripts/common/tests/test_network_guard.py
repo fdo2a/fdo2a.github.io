@@ -1,0 +1,100 @@
+"""scripts/conftest.py 의 네트워크 가드 — 바깥은 막고 로컬은 통과시키는지."""
+import os
+import socket
+import tempfile
+import threading
+
+import pytest
+
+
+def test_external_connect_is_blocked(netguard):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        with pytest.raises(netguard.Blocked):
+            s.connect(("93.184.216.34", 80))
+        with pytest.raises(netguard.Blocked):
+            s.connect_ex(("93.184.216.34", 443))
+    finally:
+        s.close()
+    assert len(netguard.consume()) == 2
+
+
+def test_external_dns_is_blocked(netguard):
+    with pytest.raises(netguard.Blocked):
+        socket.getaddrinfo("example.com", 443)
+    with pytest.raises(netguard.Blocked):
+        socket.gethostbyname("example.com")
+    assert len(netguard.consume()) == 2
+
+
+def test_swallowed_block_is_still_recorded(netguard):
+    try:
+        socket.create_connection(("example.com", 80), timeout=1)
+    except Exception:
+        pass   # 수집 코드가 흔히 하는 것처럼 삼켜도
+    assert netguard.consume(), "삼킨 호출도 기록돼야 시험 끝에 실패로 칠 수 있다"
+
+
+def test_udp_sendto_external_is_blocked(netguard):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        with pytest.raises(netguard.Blocked):
+            s.sendto(b"x", ("8.8.8.8", 53))
+    finally:
+        s.close()
+    assert netguard.consume()
+
+
+def test_curl_cffi_external_url_is_blocked(netguard):
+    curl = pytest.importorskip("curl_cffi.curl")
+    from curl_cffi.const import CurlOpt
+    c = curl.Curl()
+    try:
+        with pytest.raises(netguard.Blocked):
+            c.setopt(CurlOpt.URL, b"https://query2.finance.yahoo.com/v8/finance/chart/%5EN225")
+        c.setopt(CurlOpt.URL, b"http://127.0.0.1:9/")   # 로컬은 통과
+    finally:
+        c.close()
+    assert len(netguard.consume()) == 1
+
+
+def test_localhost_tcp_passes():
+    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    srv.bind(("127.0.0.1", 0))
+    srv.listen(1)
+    port = srv.getsockname()[1]
+    t = threading.Thread(target=lambda: srv.accept()[0].close())
+    t.start()
+    try:
+        with socket.create_connection(("localhost", port), timeout=5):
+            pass
+    finally:
+        t.join(5)
+        srv.close()
+
+
+def test_unix_socket_passes():
+    if not hasattr(socket, "AF_UNIX"):
+        pytest.skip("유닉스 소켓 없음")
+    d = tempfile.mkdtemp(dir="/tmp")
+    path = os.path.join(d, "s")
+    srv = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    srv.bind(path)
+    srv.listen(1)
+    try:
+        c = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        c.connect(path)
+        c.close()
+    finally:
+        srv.close()
+        os.unlink(path)
+        os.rmdir(d)
+
+
+@pytest.mark.parametrize("host,local", [
+    ("localhost", True), ("127.0.0.1", True), ("::1", True), ("127.5.5.5", True),
+    ("[::1]", True), (None, True), ("api.stock.naver.com", False), ("10.0.0.1", False),
+    ("0.0.0.0", False), ("localhost.evil.com", False),
+])
+def test_local_host_classification(netguard, host, local):
+    assert netguard.is_local_host(host) is local
