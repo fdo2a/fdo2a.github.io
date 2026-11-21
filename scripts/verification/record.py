@@ -613,6 +613,12 @@ def _preservation(inputs, ctx):
                     'workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다'}
 
 
+def _rel_post(html, repo):
+    rel = os.path.relpath(html, repo)
+    # 레포 밖 파일(초안)이면 경로를 남기지 않는다 — 공개 기록에 작업 공간 경로가 새지 않게. verify 는 실패한다.
+    return '<레포 밖>/' + os.path.basename(html) if rel.startswith('..') else rel
+
+
 def build_record(cfg, config_path, market, ctx, res):
     """기록 — 글 해시는 검사한 바이트(res['post_bytes'])의 것이다. 원본을 다시 읽지 않는다."""
     html, repo = ctx['html'], ctx['repo']
