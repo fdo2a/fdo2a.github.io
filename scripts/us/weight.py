@@ -166,20 +166,11 @@ def narrative(html_doc, market='us'):
 
 
 def warnings(html_doc, market='us'):
-    """발행을 막지 않는 분량·균형 경고(2026-10-13)."""
+    """발행을 막지 않는 균형 경고(2026-10-13). 분량(본문 5,000자·매크로 4,600자) 경고는
+    2026-11-21 사용자 지시(「문장 길이는 사실 필요 없어」·「시황 < 판단은 안 끄는 선에서」)로 뺐다 —
+    글 길이는 작성자 재량, 시황이 판단보다 짧은지만 본다. 축약일 매크로 상한(check)은 접기 계약이라 그대로."""
     out = []
-    n = narrative(html_doc, market)
-    lo, hi = NARRATIVE_TARGET
-    if n['body'] > hi:
-        news = f', 뉴스 요약 {n["news"]}자 별도' if n['news'] else ''
-        out.append(f'서술형 본문이 {n["body"]}자다(평상시 {lo:,}~{hi:,}자{news}) — 큰 사건이 있는 날이 '
-                   '아니면 반복 해석·장중 시각·변화 없는 판단부터 덜어낸다. 중요한 분석은 지우지 않는다')
     m = measure(html_doc, market)
-    macro = m['sections'].get('매크로', 0)
-    hi = THRESHOLDS[market].get('macro_max')
-    if hi and macro > hi:
-        out.append(f'매크로가 {macro}자로 평소 상한 {hi:,}자를 넘는다 — 발표가 몰린 날이면 괜찮다. '
-                   '해부가 아닌 반복 해석부터 덜어낸다(2026-11-08 사용자 지시로 차단 → 경고)')
     if m['judgment'] and m['recap'] < m['judgment']:
         out.append(f'시황군 {m["recap"]}자 < 판단군 {m["judgment"]}자 — 중요한 분석이 몰린 날이 아니면 '
                    '주요 자산의 움직임·큰 변동의 원인·자산 간 연결이 빠졌는지 점검한다(비율을 맞추려고 '
