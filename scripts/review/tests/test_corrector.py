@@ -134,7 +134,8 @@ def test_timeout(setup):
     root, remote, item, exe = setup
     fake(exe, 'import time; time.sleep(10)\n')
     base = git(root, 'rev-parse', 'HEAD')
-    _, error = correct_one(root, item, 'review', base, 0.05)
+    # 0.05 s 는 가짜 claude 가 아직 exec 중일 때 끊어 macOS killpg 가 EPERM 을 냈다(-n auto 실측) — 자는 중에 끊는다
+    _, error = correct_one(root, item, 'review', base, 1.5)
     assert 'timeout' in error
     assert git(remote, 'rev-parse', 'main') == base
 
