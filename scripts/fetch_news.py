@@ -477,13 +477,19 @@ def news_collect(payload, final=True, feeds_read=None):
                    detail=' · '.join(parts) or None)
 
 
+# 이 수집기가 쓰지 않는 맨 위 칸 — 게이트(`inputs._health` 의 옛 칸 판정)는 이 칸들로도 막는다. 하나라도 있으면
+# 이 수집기가 쓴 꼴이 아니니 동결하지 않고 다시 받는다(구현 검토 4회차 #4)
+FOREIGN_KEYS = ('ok', 'error', 'status', 'complete', 'missing', 'pending')
+
+
 def stamp_unfinished(path, date=None):
     """그날 파일에 collect 칸이 **있는데** 끝난 수집의 도장이 아니면 참 — 동결하지 않고 다시 받는다.
 
     끝난 수집의 도장 = 게이트(`verification.inputs._health`)가 통과시키는 꼴 그대로: 형식이 맞고 status ok,
     as_of 와 report_date 가 받으려는 날(`date` — 게이트가 견주는 발행일, 파일 이름의 날)과 같음, required_ok, missing 없음, empty 가 items 와 맞음. 요약 단계에서 죽은 판(첫 저장의
     failed)도, 칸이 null·글자·빈 객체·반쪽 도장인 판도 여기 든다(설계 검토 1회차 #4, 구현 검토 2회차 #4 — 동결된
-    파일은 게이트도 통과해야 한다). collect 칸이 아예 없는 옛 파일(도입 전)은 거짓 — 지금처럼 동결한다."""
+    파일은 게이트도 통과해야 한다). 맨 위에 이 수집기가 쓰지 않는 칸(`FOREIGN_KEYS`)이 있는 판도 다시 받는다. collect 칸이
+    아예 없는 옛 파일(도입 전)은 거짓 — 지금처럼 동결한다."""
     try:
         with open(path, encoding='utf-8') as fh:
             doc = json.load(fh)
@@ -491,6 +497,8 @@ def stamp_unfinished(path, date=None):
         return False
     if not isinstance(doc, dict) or 'collect' not in doc:
         return False
+    if any(k in doc for k in FOREIGN_KEYS):
+        return True
     from verification import inputs as I
     c = doc['collect']
     items = doc.get('items') or []

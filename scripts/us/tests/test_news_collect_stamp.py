@@ -224,6 +224,68 @@ class _Stop(Exception):
     pass
 
 
+class _Kill(BaseException):
+    """요약 단계에서 프로세스가 죽은 것 — main 의 `except Exception` 이 삼키지 못한다."""
+
+
+@pytest.mark.parametrize('extra', [{'ok': False}, {'error': '503'}, {'status': 'bad'}, {'complete': False},
+                                   {'missing': ['x']}, {'pending': ['x']}, {'ok': True}])
+def test_a_file_with_top_level_keys_this_collector_never_writes_is_not_frozen(tmp_path, monkeypatch, extra):
+    """도장은 멀쩡한데 맨 위에 ok=false·error 같은 칸이 있으면 게이트(옛 칸 판정)는 막는다 — 동결하지 않고 다시 받는다
+    (구현 검토 4회차 #4). main() 으로 본다."""
+    (tmp_path / 'news').mkdir()
+    p = tmp_path / 'news' / f'{D}.json'
+    _write_day(p, 'good')
+    p.write_text(json.dumps(dict(json.loads(p.read_text(encoding='utf-8')), **extra), ensure_ascii=False), encoding='utf-8')
+    assert F.frozen(str(p)) and F.stamp_unfinished(str(p), D)
+    monkeypatch.setattr(F, '_context', lambda: (_ for _ in ()).throw(_Stop()))
+    monkeypatch.setattr(sys, 'argv', ['fetch_news.py', '--datadir', str(tmp_path), '--date', D,
+                                      '--bodydir', str(tmp_path / 'b')])
+    with pytest.raises(_Stop):
+        F.main()
+
+
+def test_main_first_save_is_failed_and_a_run_killed_in_summaries_is_recollected(tmp_path, monkeypatch):
+    """main() 의 **첫 저장**이 failed(running) 도장을 싣는다 — 이월된 요약이 있는 채로 요약 단계에서 죽어도 다음 실행이
+    동결하지 않는다(구현 검토 4회차 #9: 도장 함수만 부르는 시험은 main 의 첫 저장 한 줄을 지키지 못한다)."""
+    (tmp_path / 'news').mkdir()
+    p = tmp_path / 'news' / f'{D}.json'
+    _write_day(p, 'absent')                                   # 도입 전 파일 — 요약된 기사 a
+    row = {'guid': 'a', 'url': 'https://x.test/a', 'title': 't', 'category': 'economy', 'source': 'x'}
+    seen = {}
+
+    def die(chosen, bodydir):
+        seen['first'] = json.loads(p.read_text(encoding='utf-8'))
+        raise _Kill()
+
+    monkeypatch.setattr(F, 'FEEDS', {'economy': ['https://f.test/rss']})
+    monkeypatch.setattr(F, 'EXTRA_FEEDS', {})
+    monkeypatch.setattr(F, 'GAP', 0)
+    monkeypatch.setattr(F, '_context', lambda: None)
+    monkeypatch.setattr(F, 'get', lambda url, ctx, **kw: RSS_ITEM)
+    monkeypatch.setattr(F, 'pages', lambda year: {})
+    monkeypatch.setattr(F, 'apply_region_filter', lambda rows, exempt=None: (rows, {}))
+    monkeypatch.setattr(F, 'select', lambda rows, **kw: [])
+    monkeypatch.setattr(F, 'fetch_bodies', lambda *a, **kw: None)
+    monkeypatch.setattr(F, 'spread_stage', lambda *a, **kw: ([dict(row)], {'stopped': []}, None))
+    monkeypatch.setattr(F, 'summarize_chosen', die)
+    monkeypatch.setattr(F, 'write_numbers', lambda *a, **kw: None)
+    monkeypatch.setattr(sys, 'argv', ['fetch_news.py', '--datadir', str(tmp_path), '--date', D, '--refresh',
+                                      '--bodydir', str(tmp_path / 'b')])
+    with pytest.raises(_Kill):
+        F.main()
+    first = seen['first']
+    assert first['items'][0]['summary_ko'] == '요약'                      # 요약이 이월된 채로
+    assert first['collect']['status'] == 'failed' and 'running' in first['collect']['response']
+    assert json.loads(p.read_text(encoding='utf-8')) == first             # 죽은 뒤 남은 판이 그 첫 저장
+    assert F.frozen(str(p)) and F.stamp_unfinished(str(p), D)
+    monkeypatch.setattr(F, '_context', lambda: (_ for _ in ()).throw(_Stop()))
+    monkeypatch.setattr(sys, 'argv', ['fetch_news.py', '--datadir', str(tmp_path), '--date', D,
+                                      '--bodydir', str(tmp_path / 'b')])
+    with pytest.raises(_Stop):                                            # 다음 실행은 동결하지 않고 받으러 간다
+        F.main()
+
+
 @pytest.mark.parametrize('name,frozen_out', [('good', True), ('absent', True)] + [(b, False) for b in BAD_STAMPS])
 def test_main_freezes_only_a_finished_file(tmp_path, monkeypatch, name, frozen_out):
     """main() 의 동결 분기 — collect 칸이 있는데 끝난 도장이 아닌 판(failed·null·글자·반쪽)은 다시 받는다
