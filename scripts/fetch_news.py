@@ -273,19 +273,22 @@ def feed_root(raw):
     return seen[0].rsplit(':', 1)[-1]
 
 
-def rss_read(raw, items, why_empty):
-    """피드로 읽혔는가 — 응답의 **루트 요소**가 rss·feed(Atom)·RDF 이고, 항목이 있거나 `parse_feed_strict` 가 형식
-    경고를 내지 않았다(진짜 빈 피드). 루트가 피드가 아니면(점검 페이지의 html, XML 이 아닌 응답, 빈 응답) 그 안에
-    `<channel>`·`<item>` 글자가 있어도, 항목이 뽑혔어도 읽은 것이 아니다(collect 판정 — codex 구현 검토 1회차 #1·#3,
-    2회차 #3: 글자 찾기를 구조 판정으로 바꿨다)."""
-    return feed_root(raw) in FEED_ROOTS and (bool(items) or not why_empty)
+def rss_read(raw, items, why_empty=None):
+    """피드로 읽혔는가 — 응답의 **루트 요소**가 rss·feed(Atom)·RDF 이고 **기사가 한 건 이상 뽑혔다**.
+
+    2026-11-22 사용자 결정(codex 구현 검토 3회차 뒤): 「이 응답이 진짜 피드인가」를 더 캐묻지 않고 「기사를 받았는가」로
+    묻는다. 그래서 형식이 멀쩡한 빈 피드도 세지 않는다 — 51개 피드가 모두 정말로 비어 있는 날은 failed 로 찍힌다(받아들인
+    대가). 루트가 rss 인 오류 문서·기사 없이 잘린 응답은 기사가 없으니 세지 않고, 잘렸어도 기사가 뽑힌 응답은 센다
+    (기사를 실제로 받았다). 루트가 피드가 아니면(html 점검 페이지, XML 이 아닌 응답, 빈 응답) 그 안에서 `<item>` 이
+    뽑혔어도 세지 않는다. `why_empty` 는 쓰지 않는다(부르는 쪽 모양만 유지)."""
+    return bool(items) and feed_root(raw) in FEED_ROOTS
 
 
 def harvest_extra(ctx, budget, notes, fetch=None, feeds=None, counter=None):
     """새 매체 피드(`EXTRA_FEEDS`)를 받는다. 실패·시간 초과는 `notes` 에 적고 넘어간다.
 
     돌려주는 행은 `identify()` 를 거쳤다 — guid 가 URL 이다. `counter` 가 주어지면 RSS 로 읽힌 피드 수를
-    `counter['read']` 에 더한다(`rss_read` — 루트 요소가 피드면 항목 0건이어도 읽은 것, html 루트·빈 응답은 아니다 — collect 판정, 2026-11-22).
+    `counter['read']` 에 더한다(`rss_read` — 루트 요소가 피드이고 기사가 한 건 이상 뽑힌 것만. 빈 피드·html 루트·빈 응답은 아니다 — collect 판정, 2026-11-22).
     """
     fetch = fetch or _fast_get
     rows = []
@@ -454,8 +457,8 @@ def news_collect(payload, final=True, feeds_read=None):
     """collect 칸(2026-11-22, 1a — US 뉴스 글의 gate 자료). 텔레그램(`fetch_telegram.telegram_collect`)과 같은 꼴.
 
     요약 단계 전(`final=False`)의 첫 저장은 failed — 요약 중에 죽으면 그 상태로 남고, 다음 실행은 동결하지 않는다
-    (`stamp_unfinished`). 끝난 저장: RSS 피드(기본·새 매체)를 하나도 읽지 못했으면 failed — 피드 없는 기관 목록만
-    읽은 날은 수집이 된 것이 아니다(설계 검토 1회차 #3). 기사가 있는데 요약이 하나도 없으면 쓸 것이 없으니 failed.
+    (`stamp_unfinished`). 끝난 저장: 기사가 뽑힌 RSS 피드(기본·새 매체, `rss_read`)가 하나도 없으면 failed — 피드 없는
+    기관 목록만 읽은 날, 모든 피드가 비었거나 오류 문서인 날은 수집이 된 것이 아니다(설계 검토 1회차 #3, 11/22 사용자 결정). 기사가 있는데 요약이 하나도 없으면 쓸 것이 없으니 failed.
     피드 몇 곳 실패·요약 일부 실패는 그 기사를 못 쓸 뿐이라 detail 에만 적는다(partial 로 두지 않는다 — 글의 게이트는
     실린 기사가 이 파일에 있는지만 본다)."""
     from common import collect_status as C
@@ -464,7 +467,7 @@ def news_collect(payload, final=True, feeds_read=None):
         return C.failed(rd, SOURCE, 'running — 요약 단계가 끝나지 않았다')
     items = payload.get('items') or []
     if feeds_read is not None and feeds_read == 0:
-        return C.failed(rd, SOURCE, 'RSS 피드를 하나도 읽지 못했다')
+        return C.failed(rd, SOURCE, '기사가 뽑힌 RSS 피드가 하나도 없다')
     done = sum(1 for it in items if it.get('summary_ko'))
     if items and not done:
         return C.failed(rd, SOURCE, f'기사 {len(items)}건 중 요약 0건', missing=['summary:all'])
@@ -613,7 +616,7 @@ def main():
 
     ctx = _context()
     harvested, notes = [], []
-    feeds_read = 0                  # RSS 피드를 읽어 낸 수(예외 없이 해석) — 0 이면 collect failed
+    feeds_read = 0                  # 기사가 한 건 이상 뽑힌 RSS 피드 수(`rss_read`) — 0 이면 collect failed
     for category, urls in FEEDS.items():
         for i, url in enumerate(urls):
             if i:
@@ -630,7 +633,7 @@ def main():
                 notes.append(f'{category} {url}: {why}')
                 print(f'  {category}: 피드 실패 ({why}) {url[-40:]}', file=sys.stderr)
                 continue
-            feeds_read += rss_read(raw, items, why_empty)     # 0건이어도 RSS 면 읽은 것, 점검 페이지·빈 응답은 아니다
+            feeds_read += rss_read(raw, items, why_empty)     # 루트가 피드이고 기사가 1건 이상일 때만 — 빈 피드·점검 페이지는 아니다
             if not items:
                 notes.append(f'{category} {url}: 항목 0건')
             harvested.extend(items)

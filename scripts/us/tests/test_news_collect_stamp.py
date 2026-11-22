@@ -177,15 +177,21 @@ ATOM_ENTRY = ('<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>1</id><title
 ATOM_EMPTY = '<feed xmlns="http://www.w3.org/2005/Atom"><title>x</title></feed>'       # 형식 경고 — 읽은 것이 아니다
 NS_ITEM = '<rss><channel><x:item><link>https://x.test/a</link></x:item></channel></rss>'   # 형식 경고
 TEXT_RSS = '503 Service Unavailable <rss><channel></channel></rss>'
+RSS_COMMENT_503 = '<rss><!-- <channel> --><error>503 maintenance</error></rss>'          # 3회차 반례 — 채널 없는 오류 문서
+RSS_CUT_NO_ITEM = '<rss><channel><title>provider'                                         # 3회차 반례 — 기사 전에 잘린 응답
+# 알려진 한계(11/22): 「읽음」= 루트 + 파서(정규식)가 기사를 1건 이상 냄. 주석 속 <item> 도 파서는 기사로 낸다 — 검사를 더하지 않는다
+RSS_COMMENT_ITEM = f'<rss><!-- {ITEM} --><error>503</error></rss>'
+RSS_CUT_AFTER_ITEM = f'<rss><channel><title>provider</title>{ITEM}<item><title>cu'        # 잘렸지만 기사 한 건은 받았다
 
 
 @pytest.mark.parametrize('raw,read', [
-    (EMPTY_RSS, True), (RSS_ITEM, True), (RSS_BROKEN_BODY, True), (RDF_ITEM, True), (ATOM_ENTRY, True),
-    (HTML_503, False), (HTML_WITH_CHANNEL, False), (HTML_WITH_ITEM, False), (ATOM_EMPTY, False), (NS_ITEM, False),
+    (RSS_ITEM, True), (RSS_BROKEN_BODY, True), (RDF_ITEM, True), (ATOM_ENTRY, True), (RSS_CUT_AFTER_ITEM, True), (RSS_COMMENT_ITEM, True),
+    (EMPTY_RSS, False), (RSS_COMMENT_503, False), (RSS_CUT_NO_ITEM, False), (HTML_503, False), (HTML_WITH_CHANNEL, False), (HTML_WITH_ITEM, False), (ATOM_EMPTY, False), (NS_ITEM, False),
     (TEXT_RSS, False), ('', False), ('   ', False), (None, False)])
 def test_rss_read_counts_a_real_feed_only(raw, read):
-    """루트 요소가 피드(rss·feed·RDF)일 때만 읽은 것 — 빈 RSS 는 읽음, html 루트는 안에 <channel>·<item> 이 있어도
-    아니다(codex 구현 검토 1회차 #1·#3, 2회차 #3)."""
+    """루트 요소가 피드(rss·feed·RDF)이고 기사가 한 건 이상 뽑힌 것만 읽은 것(2026-11-22 사용자 결정) — 빈 RSS,
+    rss 루트의 오류 문서, 기사 전에 잘린 응답은 아니다. 잘렸어도 기사가 뽑혔으면 읽은 것. html 루트는 안에
+    <channel>·<item> 이 있어도 아니다(codex 구현 검토 1회차 #1·#3, 2회차 #3, 3회차 #3)."""
     from us import news as N
     items, why = N.parse_feed_strict(raw, 'economy') if raw is not None else ([], None)
     assert F.rss_read(raw, items, why) is read
@@ -201,11 +207,17 @@ def test_html_with_items_is_harvested_but_not_counted_as_a_feed():
 
 
 def test_harvest_extra_counts_feeds_through_the_counter():
-    pages = {'u1': EMPTY_RSS, 'u2': HTML_503, 'u3': '', 'u4': HTML_WITH_CHANNEL}
+    pages = {'u1': EMPTY_RSS, 'u2': HTML_503, 'u3': '', 'u4': HTML_WITH_CHANNEL, 'u5': RSS_COMMENT_503,
+             'u6': RSS_CUT_NO_ITEM}
     counter, notes = {}, []
-    rows = F.harvest_extra(None, F.Budget(60), notes, fetch=lambda u, ctx: pages[u], feeds={'economy': ['u1', 'u2', 'u3', 'u4']},
+    rows = F.harvest_extra(None, F.Budget(60), notes, fetch=lambda u, ctx: pages[u], feeds={'economy': list(pages)},
                            counter=counter)
-    assert rows == [] and counter == {'read': 1}
+    assert rows == [] and counter == {}                 # 기사가 뽑힌 피드가 없다
+    pages.update(u7=RSS_ITEM, u8=HTML_WITH_ITEM)
+    counter = {}
+    rows = F.harvest_extra(None, F.Budget(60), notes, fetch=lambda u, ctx: pages[u], feeds={'economy': list(pages)},
+                           counter=counter)
+    assert rows and counter == {'read': 1}              # html 안의 <item> 은 행으로는 들어와도 세지 않는다
 
 
 class _Stop(Exception):
@@ -228,14 +240,19 @@ def test_main_freezes_only_a_finished_file(tmp_path, monkeypatch, name, frozen_o
             F.main()
 
 
+@pytest.mark.parametrize('where', ['base', 'extra'])
 @pytest.mark.parametrize('raw,status,empty', [
     (HTML_WITH_ITEM, 'failed', None), (HTML_WITH_CHANNEL, 'failed', None), ('', 'failed', None),
-    (EMPTY_RSS, 'ok', 'confirmed_none')])
-def test_main_final_stamp_follows_the_feeds_actually_read(tmp_path, monkeypatch, raw, status, empty):
-    """main() 을 끝까지 돌려 **저장된** 도장을 본다 — html 만 받은 날은 failed, 빈 RSS 를 읽은 날은 ok·없음 확인
-    (구현 검토 3회차 #9: feeds_read 를 손으로 넣는 시험은 main 의 셈을 지키지 못한다)."""
-    monkeypatch.setattr(F, 'FEEDS', {'economy': ['https://f.test/rss']})
-    monkeypatch.setattr(F, 'EXTRA_FEEDS', {})
+    (EMPTY_RSS, 'failed', None), (RSS_COMMENT_503, 'failed', None), (RSS_CUT_NO_ITEM, 'failed', None),
+    (RSS_ITEM, 'ok', 'confirmed_none'), (RSS_CUT_AFTER_ITEM, 'ok', 'confirmed_none')])
+def test_main_final_stamp_follows_the_feeds_actually_read(tmp_path, monkeypatch, raw, status, empty, where):
+    """main() 을 끝까지 돌려 **저장된** 도장을 본다 — html·빈 RSS·rss 루트의 오류 문서·기사 전에 잘린 응답만 받은
+    날은 failed, 기사가 뽑힌 피드를 읽은 날은 ok(고른 기사가 없으니 없음 확인). 구현 검토 3회차 #9: feeds_read 를
+    손으로 넣는 시험은 main 의 셈을 지키지 못한다. 빈 RSS 는 11/22 사용자 결정으로 ok → failed.
+    `where`: 그 응답이 기본 피드로만 / 새 매체 피드로만 온 날 — 두 셈이 모두 main 의 도장에 닿는지 본다."""
+    monkeypatch.setattr(F, 'FEEDS', {'economy': ['https://f.test/rss']} if where == 'base' else {})
+    monkeypatch.setattr(F, 'EXTRA_FEEDS', {'economy': ['https://f.test/rss']} if where == 'extra' else {})
+    monkeypatch.setattr(F, '_fast_get', lambda url, ctx, **kw: raw)
     monkeypatch.setattr(F, 'GAP', 0)
     monkeypatch.setattr(F, '_context', lambda: None)
     monkeypatch.setattr(F, 'get', lambda url, ctx, **kw: raw)
