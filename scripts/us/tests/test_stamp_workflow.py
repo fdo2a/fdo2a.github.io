@@ -53,7 +53,8 @@ def test_every_step_id_runs_the_script_that_writes_its_files(market):
     want = {'us': {'collect': 'collect_market_data.py', 'macro_eval': 'eval_macro_regime.py',
                    'releases': 'fetch_releases.py --datadir data', 'fed': 'collect_fed_events.py',
                    'calendar': 'build_calendar.py', 'auctions': 'build_auctions.py',
-                   'liquidity': 'build_liquidity.py', 'telegram': 'fetch_telegram.py'},
+                   'liquidity': 'build_liquidity.py', 'telegram': 'fetch_telegram.py',
+                   'news': 'fetch_news.py'},
             'kr': {'collect': 'collect_kr_data.py', 'telegram': 'fetch_telegram.py'}}[market]
     for sid, script in want.items():
         assert script in by_id[sid], (sid, by_id.get(sid))

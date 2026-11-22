@@ -85,14 +85,16 @@ STEP_OF = {
            'movers.json': 'collect', 'fund_board.json': 'collect', 'macro_metrics.json': 'collect',
            'scorecard.json': 'collect', 'macro_eval.json': 'macro_eval', 'releases/index.json': 'releases',
            'fed/events.json': 'fed', 'calendar.json': 'calendar', 'auctions.json': 'auctions',
-           'liquidity/liquidity.json': 'liquidity', 'telegram/{D}.json': 'telegram'},
+           'liquidity/liquidity.json': 'liquidity', 'telegram/{D}.json': 'telegram',
+           'news/{D}.json': 'news'},       # US 뉴스 글의 gate 자료(2026-11-22) — fetch_news.py 가 collect 칸을 쓴다
     'kr': {'kr_market_data.json': 'collect', 'kr_session.json': 'collect', 'kr_movers.json': 'collect',
            'kr_fund_view.json': 'collect', 'kr_stance_eval.json': 'collect', 'kr_flows.json': 'collect',
            'kr_intraday.json': 'collect', 'kr_econ.json': 'collect', 'kr_top_value.json': 'collect',
            'kr_index_etf.json': 'collect', 'telegram/{D}.json': 'telegram'},
 }
 # 단계가 성공하고도 일부러 다시 쓰지 않는 파일 — 요약이 있는 날의 텔레그램 파일은 동결된다(fetch_telegram.frozen).
-MAY_KEEP = ('telegram/{D}.json',)
+# 뉴스도 요약이 끝난 날은 동결된다(fetch_news.frozen — 단 collect 가 ok 가 아닌 판은 동결하지 않는다).
+MAY_KEEP = ('telegram/{D}.json', 'news/{D}.json')
 # `collect` 칸이 없는 참고 파일 — 파일 수정 시각으로 본다(Actions 의 checkout 은 잡 시작 전이다).
 MTIME_ONLY = ('scorecard.json',)
 RUN_OK = ('written', 'skipped', 'kept')

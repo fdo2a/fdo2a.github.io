@@ -401,6 +401,44 @@ def summarize_chosen(chosen, bodydir, summarize=summarize_items):
     return done
 
 
+SOURCE = 'news feeds (fetch_news.py)'
+
+
+def news_collect(payload, final=True, feeds_read=None):
+    """collect 칸(2026-11-22, 1a — US 뉴스 글의 gate 자료). 텔레그램(`fetch_telegram.telegram_collect`)과 같은 꼴.
+
+    요약 단계 전(`final=False`)의 첫 저장은 failed — 요약 중에 죽으면 그 상태로 남고, 다음 실행은 동결하지 않는다
+    (`stamp_unfinished`). 끝난 저장: RSS 피드(기본·새 매체)를 하나도 읽지 못했으면 failed — 피드 없는 기관 목록만
+    읽은 날은 수집이 된 것이 아니다(설계 검토 1회차 #3). 기사가 있는데 요약이 하나도 없으면 쓸 것이 없으니 failed.
+    피드 몇 곳 실패·요약 일부 실패는 그 기사를 못 쓸 뿐이라 detail 에만 적는다(partial 로 두지 않는다 — 글의 게이트는
+    실린 기사가 이 파일에 있는지만 본다)."""
+    from common import collect_status as C
+    rd = payload.get('report_date')
+    if not final:
+        return C.failed(rd, SOURCE, 'running — 요약 단계가 끝나지 않았다')
+    items = payload.get('items') or []
+    if feeds_read is not None and feeds_read == 0:
+        return C.failed(rd, SOURCE, 'RSS 피드를 하나도 읽지 못했다')
+    done = sum(1 for it in items if it.get('summary_ko'))
+    if items and not done:
+        return C.failed(rd, SOURCE, f'기사 {len(items)}건 중 요약 0건', missing=['summary:all'])
+    notes = [n for n in payload.get('notes') or [] if isinstance(n, str)]
+    parts = ([f'메모 {len(notes)}건'] if notes else []) + ([f'요약 {done}/{len(items)}건'] if done < len(items) else [])
+    return C.build('ok', rd, SOURCE, empty='has_data' if items else 'confirmed_none',
+                   detail=' · '.join(parts) or None)
+
+
+def stamp_unfinished(path):
+    """그날 파일의 collect 가 ok 가 아니면 참 — 요약 단계에서 죽은 판(첫 저장의 failed)을 동결하지 않는다
+    (설계 검토 1회차 #4: 이월된 요약 때문에 동결되면 failed 가 영영 남는다). collect 칸이 없는 옛 파일은 거짓."""
+    try:
+        with open(path, encoding='utf-8') as fh:
+            c = json.load(fh).get('collect')
+    except (OSError, ValueError, AttributeError):
+        return False
+    return isinstance(c, dict) and c.get('status') != 'ok'
+
+
 def frozen(path):
     """그날 파일에 요약된 기사가 하나라도 있으면 동결한다 — 다시 긁지 않는다.
 
@@ -510,12 +548,13 @@ def main():
     args = ap.parse_args()
 
     path = os.path.join(args.datadir, 'news', f'{args.date}.json')
-    if frozen(path) and not args.refresh:
+    if frozen(path) and not args.refresh and not stamp_unfinished(path):
         print(f'{path} — 이미 요약된 날이라 동결한다(다시 받으려면 --refresh)')
         return 0
 
     ctx = _context()
     harvested, notes = [], []
+    feeds_read = 0                  # RSS 피드를 읽어 낸 수(예외 없이 해석) — 0 이면 collect failed
     for category, urls in FEEDS.items():
         for i, url in enumerate(urls):
             if i:
@@ -531,6 +570,7 @@ def main():
                 notes.append(f'{category} {url}: {why}')
                 print(f'  {category}: 피드 실패 ({why}) {url[-40:]}', file=sys.stderr)
                 continue
+            feeds_read += 1
             if not items:
                 notes.append(f'{category} {url}: 항목 0건')
             harvested.extend(items)
@@ -540,6 +580,7 @@ def main():
     clock = time.monotonic()
     extra = harvest_extra(ctx, Budget(EXTRA_FEED_BUDGET), notes)
     harvested.extend(extra)
+    feeds_read += 1 if extra else 0
     seconds = {'extra_feeds': round(time.monotonic() - clock, 1)}
 
     now = datetime.now(timezone.utc)
@@ -593,6 +634,7 @@ def main():
                'notes': notes, 'items': chosen, 'region_filter': region, 'funnel': funnel}
     # 요약 **전에** 한 번 저장한다 — 요약(외부 API·인증)이 어떤 식으로 죽어도 메타데이터와
     # MLCC 행은 남아야 한다(2026-09-24 구현 검토 #2).
+    payload['collect'] = news_collect(payload, final=False)
     save_json(path, payload)
     try:
         summarized = summarize_chosen(chosen, args.bodydir)
@@ -600,6 +642,7 @@ def main():
         summarized = 0
         notes.append(f'요약 단계 실패: {type(e).__name__}')
         print(f'  요약 단계 실패 ({type(e).__name__})', file=sys.stderr)
+    payload['collect'] = news_collect(payload, final=True, feeds_read=feeds_read)
     save_json(path, payload)
     write_numbers(args.datadir, args.date, chosen, args.bodydir)
     got = sum(1 for it in chosen if it.get('body_chars'))

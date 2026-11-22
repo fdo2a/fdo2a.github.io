@@ -44,6 +44,13 @@ LABEL = {'pass': '통과', 'warn': '경고', 'fail': '실패', 'indeterminate': 
          'partial': '일부만 검사'}
 
 
+def _only_news_contested(ap, a):
+    """`--contested`(쟁점 분석 결과)는 US 뉴스 글(us-news)의 입력이다 — 다른 갈래의 자료 분류표에는 그 뿌리가 없어
+    넘기면 「분류 안 된 파일」로 막힌다. 잘못 넘긴 인자로 조용히 막히지 않게 여기서 거절한다(exit 2, 2026-11-22)."""
+    if getattr(a, 'contested', None) and a.market != 'us-news':
+        ap.error(f'--contested 는 --market us-news 에만 준다(받은 시장: {a.market})')
+
+
 def _ctx(a):
     repo = os.path.abspath(a.repo)
     return {'html': os.path.abspath(a.html), 'datadir': os.path.abspath(a.datadir) if a.datadir else None,
@@ -105,6 +112,7 @@ def _main1(argv=None):
     v.add_argument('--record-file', help='record 가 4 였을 때만 — 레포 밖 대체 기록으로 대조')
     v.add_argument('--config', default=DEFAULT_CONFIG)
     a = ap.parse_args(argv)
+    _only_news_contested(ap, a)
 
     try:
         cfg = R.load_config(a.config)
@@ -228,6 +236,7 @@ def _main2(argv=None):
     v.add_argument('--record-file', help='record 가 4 였을 때만 — 레포 밖 대체 기록으로 대조')
     v.add_argument('--config', default=DEFAULT_CONFIG)
     a = ap.parse_args(argv)
+    _only_news_contested(ap, a)
 
     try:
         cfg = R2.load_config(a.config)

@@ -883,14 +883,14 @@
    ]
   },
   "us-news": {
-   "_why": "US 뉴스·산업 글(2026-11-20 숫자 출처 검사와 함께 기록 대상). 작업 공간은 US 일간과 같다. 이 글의 필수 검사가 읽는 자료는 아래 셋뿐이고, 나머지 작업 공간 파일은 일간 몫이라 마지막 줄에서 unused 로 묶는다. 1a 를 켜기 전 할 일: news/{date}.json 은 수집 도장(_collect_status.json)이 없다 — 켠 날부터 이 글이 미완료로 막히지 않게 stamp_collect.STEP_OF 에 넣거나 produced_by 를 다시 정한다(설계 docs/superpowers/specs/2026-11-20-number-sources.md §13).",
+   "_why": "US 뉴스·산업 글(2026-11-20 숫자 출처 검사와 함께 기록 대상). 작업 공간은 US 일간과 같다. 이 글의 필수 검사가 읽는 자료는 아래 셋뿐이고, 나머지 작업 공간 파일은 일간 몫이라 마지막 줄에서 unused 로 묶는다. news/{date}.json 은 fetch_news.py 가 collect 칸을 쓰고 워크플로 단계 news 가 장부의 run 을 정한다(2026-11-22).",
    "files": [
     {
      "path": "<datadir>/news/{date}.json",
      "class": "gate",
      "name": "뉴스 수집분(그날)",
      "date": "report_date",
-     "why": "check_news·check_telegram 이 대조하는 그날 기사 목록"
+     "why": "check_news·check_telegram 이 대조하는 그날 기사 목록. 수집 상태: fetch_news.news_collect(RSS 피드 0건·요약 0건이면 failed), 장부 단계 news(동결된 날은 kept)"
     },
     {
      "path": "<tg>",
