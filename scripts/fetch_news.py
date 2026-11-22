@@ -474,11 +474,11 @@ def news_collect(payload, final=True, feeds_read=None):
                    detail=' · '.join(parts) or None)
 
 
-def stamp_unfinished(path):
+def stamp_unfinished(path, date=None):
     """그날 파일에 collect 칸이 **있는데** 끝난 수집의 도장이 아니면 참 — 동결하지 않고 다시 받는다.
 
     끝난 수집의 도장 = 게이트(`verification.inputs._health`)가 통과시키는 꼴 그대로: 형식이 맞고 status ok,
-    as_of 가 그 파일의 report_date, required_ok, missing 없음, empty 가 items 와 맞음. 요약 단계에서 죽은 판(첫 저장의
+    as_of 와 report_date 가 받으려는 날(`date` — 게이트가 견주는 발행일, 파일 이름의 날)과 같음, required_ok, missing 없음, empty 가 items 와 맞음. 요약 단계에서 죽은 판(첫 저장의
     failed)도, 칸이 null·글자·빈 객체·반쪽 도장인 판도 여기 든다(설계 검토 1회차 #4, 구현 검토 2회차 #4 — 동결된
     파일은 게이트도 통과해야 한다). collect 칸이 아예 없는 옛 파일(도입 전)은 거짓 — 지금처럼 동결한다."""
     try:
@@ -491,7 +491,8 @@ def stamp_unfinished(path):
     from verification import inputs as I
     c = doc['collect']
     items = doc.get('items') or []
-    done = (I._stamp_ok_shape(c) and c['status'] == 'ok' and c['as_of'] == doc.get('report_date')
+    day = doc.get('report_date') if date is None else date
+    done = (I._stamp_ok_shape(c) and c['status'] == 'ok' and c['as_of'] == day and doc.get('report_date') == day
             and c['required_ok'] is True and not c['missing']
             and c['empty'] == ('has_data' if items else 'confirmed_none'))
     return not done
@@ -606,7 +607,7 @@ def main():
     args = ap.parse_args()
 
     path = os.path.join(args.datadir, 'news', f'{args.date}.json')
-    if frozen(path) and not args.refresh and not stamp_unfinished(path):
+    if frozen(path) and not args.refresh and not stamp_unfinished(path, args.date):
         print(f'{path} — 이미 요약된 날이라 동결한다(다시 받으려면 --refresh)')
         return 0
 

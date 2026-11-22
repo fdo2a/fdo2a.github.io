@@ -59,7 +59,7 @@ def _ok_stamp(items=({'guid': 'a', 'summary_ko': '요약', 'body_chars': 100},))
 
 
 BAD_STAMPS = [{'status': 'failed'}, {'status': 'partial'}, 'null', 'ok', [], {}, {'status': 'ok'},
-              'stale', 'required_false', 'missing', 'empty_mismatch', 'running']
+              'stale', 'both_stale', 'required_false', 'missing', 'empty_mismatch', 'running']
 
 
 def _stamp_case(name):
@@ -75,7 +75,10 @@ def _stamp_case(name):
 
 def _write_day(p, name):
     body = _payload([{'guid': 'a', 'summary_ko': '요약', 'body_chars': 100}])
-    if name != 'absent':
+    if name == 'both_stale':        # 파일 안의 두 날짜가 함께 옛 날 — 게이트는 발행일과 견준다(구현 검토 3회차 #4)
+        body['report_date'] = '2026-11-20'
+        body['collect'] = dict(_ok_stamp(), as_of='2026-11-20')
+    elif name != 'absent':
         body['collect'] = _stamp_case(name)
     p.write_text(json.dumps(body, ensure_ascii=False), encoding='utf-8')
 
@@ -86,7 +89,7 @@ def test_a_file_whose_stamp_is_not_ok_is_not_frozen(tmp_path, name, unfinished):
     null·글자·빈 객체·status 만 있는 반쪽·as_of 어긋남(구현 검토 2회차 #4). 칸이 없는 옛 파일만 그대로 동결."""
     p = tmp_path / 'n.json'
     _write_day(p, name)
-    assert F.stamp_unfinished(str(p)) is unfinished
+    assert F.stamp_unfinished(str(p), D) is unfinished
 
 
 def test_a_frozen_stamp_is_one_the_gate_passes(tmp_path, monkeypatch):
@@ -95,7 +98,7 @@ def test_a_frozen_stamp_is_one_the_gate_passes(tmp_path, monkeypatch):
     pol = I.load(os.path.join(ROOT, 'config', 'prepub_inputs.json'))
     ctx = _news_day(tmp_path, _ok_stamp(), 'kept')
     f = os.path.join(ctx['datadir'], 'news', f'{D}.json')
-    assert F.frozen(f) and not F.stamp_unfinished(f)
+    assert F.frozen(f) and not F.stamp_unfinished(f, D)
     assert I.assess(pol, 'us-news', ctx)['files'][f'<datadir>/news/{D}.json']['state'] == 'ok'
 
 
@@ -223,3 +226,30 @@ def test_main_freezes_only_a_finished_file(tmp_path, monkeypatch, name, frozen_o
     else:
         with pytest.raises(_Stop):
             F.main()
+
+
+@pytest.mark.parametrize('raw,status,empty', [
+    (HTML_WITH_ITEM, 'failed', None), (HTML_WITH_CHANNEL, 'failed', None), ('', 'failed', None),
+    (EMPTY_RSS, 'ok', 'confirmed_none')])
+def test_main_final_stamp_follows_the_feeds_actually_read(tmp_path, monkeypatch, raw, status, empty):
+    """main() 을 끝까지 돌려 **저장된** 도장을 본다 — html 만 받은 날은 failed, 빈 RSS 를 읽은 날은 ok·없음 확인
+    (구현 검토 3회차 #9: feeds_read 를 손으로 넣는 시험은 main 의 셈을 지키지 못한다)."""
+    monkeypatch.setattr(F, 'FEEDS', {'economy': ['https://f.test/rss']})
+    monkeypatch.setattr(F, 'EXTRA_FEEDS', {})
+    monkeypatch.setattr(F, 'GAP', 0)
+    monkeypatch.setattr(F, '_context', lambda: None)
+    monkeypatch.setattr(F, 'get', lambda url, ctx, **kw: raw)
+    monkeypatch.setattr(F, 'pages', lambda year: {})
+    monkeypatch.setattr(F, 'apply_region_filter', lambda rows, exempt=None: (rows, {}))
+    monkeypatch.setattr(F, 'select', lambda rows, **kw: [])
+    monkeypatch.setattr(F, 'fetch_bodies', lambda *a, **kw: None)
+    monkeypatch.setattr(F, 'spread_stage', lambda *a, **kw: ([], {'stopped': []}, None))
+    monkeypatch.setattr(F, 'summarize_chosen', lambda chosen, bodydir: 0)
+    monkeypatch.setattr(F, 'write_numbers', lambda *a, **kw: None)
+    monkeypatch.setattr(sys, 'argv', ['fetch_news.py', '--datadir', str(tmp_path), '--date', D,
+                                      '--bodydir', str(tmp_path / 'b')])
+    F.main()
+    c = json.loads((tmp_path / 'news' / f'{D}.json').read_text(encoding='utf-8'))['collect']
+    assert c['status'] == status
+    if empty:
+        assert c['empty'] == empty and I._stamp_ok_shape(c)
