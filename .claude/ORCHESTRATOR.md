@@ -35,12 +35,13 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    git show "$C:data/market_data.json" > "$WS/market_data.json"
    mkdir -p "$WS/news"
    git show "$C:data/news/$D.json" > "$WS/news/$D.json" 2>/dev/null || rm -f "$WS/news/$D.json"
+   git show "$C:data/_collect_status.json" > "$WS/_collect_status.json" 2>/dev/null || rm -f "$WS/_collect_status.json"
    mkdir -p "$WS/news/numbers" "$WS/telegram/numbers"
    git show "$C:data/news/numbers/$D.json" > "$WS/news/numbers/$D.json" 2>/dev/null || rm -f "$WS/news/numbers/$D.json"
    git show "$C:data/telegram/numbers/$D.json" > "$WS/telegram/numbers/$D.json" 2>/dev/null || rm -f "$WS/telegram/numbers/$D.json"
    ```
 
-   마지막 줄의 `|| rm -f` 는 지우지 않는다 — 리다이렉션이 실패해도 빈 파일이 먼저 생기고, 작성자는 그것을 JSON 으로 읽다 죽는다. 뉴스 파일이 없으면 작성자에게 없다고 넘긴다. `research_notes.md` 는 없다(죽은 런의 워크스페이스와 함께 사라졌다) — ③·④ 업계 뉴스 층을 비우라고 넘긴다. 잠금은 위에서 잡은 그대로다.
+   수집 장부(`_collect_status.json`)도 같은 커밋에서 꺼낸다 — 뉴스 글 기록(us-news)이 `news/$D.json` 의 해시를 이 장부와 대조한다. 마지막 줄의 `|| rm -f` 는 지우지 않는다 — 리다이렉션이 실패해도 빈 파일이 먼저 생기고, 작성자는 그것을 JSON 으로 읽다 죽는다. 뉴스 파일이 없으면 작성자에게 없다고 넘긴다. `research_notes.md` 는 없다(죽은 런의 워크스페이스와 함께 사라졌다) — ③·④ 업계 뉴스 층을 비우라고 넘긴다. 잠금은 위에서 잡은 그대로다.
 
    **「기대 세션과 같고」가 조건의 핵심이다.** 커밋된 데이터가 아직 어제 것이면(수집이 밀린 날 — 2026-08-27 이래 정상이다) 그 어제 글이 있는 건 당연하므로, 여기서 멈추면 오늘 글이 영영 안 나온다. 데이터가 낡았으면 가드를 통과시켜 아래 3번의 워크플로 재실행으로 내려보내고, **새 데이터를 받은 뒤 이 검사를 다시 한다**.
 
@@ -58,6 +59,7 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    - 트렌드 유닛 점검: `data/fund_board.json` 은 **늘** `<workspace>/fund_board.json` 으로 복사하고, `data/fund_board.html` 은 있을 때만 복사한다. JSON 의 `status` 가 `ok`·`partial` 이고 `report_date` 가 오늘이면 writer 가 「트렌드 유닛 점검」 섹션을 쓴다(그 밖에는 섹션이 없어야 게이트가 통과한다). HTML 은 그대로 넣는 생성 블록이다.
    - 움직인 종목: `data/movers.json` 이 있으면 `<workspace>/movers.json` 으로 복사한다(S&P 500 달러 거래대금 상위 60 에서 고른 최대 5묶음 — collector 가 묶음마다 원인을 찾고 writer 가 §12 에 쓴다). 없으면 게이트가 강제하지 않는다.
    - 뉴스: `data/news/[DATE].json`이 있으면 `<workspace>/news/[DATE].json`으로 복사한다. **같은 커밋의 숫자 목록**(`data/news/numbers/[DATE].json` → `<workspace>/news/numbers/[DATE].json`, `data/telegram/numbers/[DATE].json` → `<workspace>/telegram/numbers/[DATE].json`)도 있으면 함께 복사한다 — 숫자 출처 검사가 기사·텔레그램 숫자를 이 목록과 대조한다(없으면 그 숫자는 「확인 불가」로 셀 뿐 막지 않는다). DATE는 `report_date`다. **뉴스·산업 브리프(STEP 3.5)의 입력이다** — 시황 브리프 작성자에게는 넘기지 않는다. 기사마다 `summary_ko`(수집 잡이 만든 한국어 요약)가 들어 있다. 없으면 다른 날짜 파일로 대체하지 않는다.
+   - 수집 장부: `data/_collect_status.json` 이 있으면 **늘** `<workspace>/_collect_status.json` 으로 복사하고, 없으면 `rm -f <workspace>/_collect_status.json` 한다. 위 파일들과 **같은 pull 판에서, 같은 때** 복사한다 — 장부는 수집 잡이 그 커밋의 파일마다 적은 해시·실행 ID·세션이라 다른 판과 섞이면 「수집 뒤 바뀜」·「다른 실행」이 된다. 장부만 따로 다시 받거나 고치지 않는다(STEP 1 에서 수집 담당이 돌아온 뒤 같은 판에서 다시 복사하는 것만 예외). **record 부터 마지막 verify 까지 장부를 넣거나 빼거나 바꾸지 않는다** — 꺼진 지금도 장부는 기록의 입력 목록에 실려, 그 사이 바뀌면 verify 가 「입력 데이터가 바뀌었다」로 다시 record 를 요구한다. 1a(`verification.inputs.EFFECTIVE`)를 켜면 검사는 작업 공간의 장부로 수집 자료를 확인한다 — 장부가 없으면 일간·뉴스 글의 수집 자료가 전부 「수집 상태 표시 없음」이 되어 보류된다. 루틴이 직접 수집해 채운 파일(아래 폴백)은 장부와 맞지 않아 그날은 보류된다 — 장부를 고쳐 맞추지 않는다.
 3. If `data/market_data.json` is missing, stale, or `"complete": false`, **first re-run the collection workflow**. 이게 1순위다: 2026-08-27 이래 GitHub 예약 실행이 2~5시간씩 밀려 **수집이 이 루틴보다 늦게 도착하는 날이 정상이 됐다**(실측: 예약분이 4~5시간 밀린 날이 여러 번). 수동 dispatch 는 밀리지 않고 즉시 뜬다.
 
    ```
@@ -76,6 +78,8 @@ A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects c
    **폴백이 끝나면 `report_date`와 `complete`를 다시 본다** — 날짜가 여전히 기대 세션보다 이르면 발행하지 않고 중단한다. 뒤의 completeness 게이트는 필드 존재만 보고 날짜는 보지 않으므로, 여기서 막지 않으면 전 세션 자료가 오늘 날짜로 나간다.
 
    **`missing` 이 `yields/naver_close_not_posted` 하나뿐이면 중단하지 말고 기다린다** — 뉴욕 시각 19:30 ET 까지. 국채 마감이 아직 안 올라온 것뿐이고 나머지는 다 됐다. 2026-10-19 세션은 17:37·17:45 ET 두 번 재수집하고 13분 만에 접었는데, 18:50 ET 에는 네이버에 4만기 모두 10/19 종가가 있었다. 다음 재시도 슬롯이 09:30 KST 라 글이 3시간 늦게 나갔다. 순서: `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"` → Bash 한 번에 `sleep 540`(timeout 600000) → 위 방식으로 수집 재실행·대기 → `git pull` 후 다시 본다. 19:30 ET 가 지나도 그대로면 그때 completeness 게이트 규칙대로 알림을 보내고 중단한다. 다른 항목이 함께 빠졌으면 기다리지 않는다.
+
+   **재수집으로 새 판을 받았으면 2번의 복사를 처음부터 다시 한다** — 수집 장부(`_collect_status.json`)까지. 일부 파일만 새 판으로 덮으면 장부의 해시와 어긋난다.
 
 **토큰 규율**: 이 데이터 파일들이 있으면 그 안의 수치를 웹서치로 재확인하지 않는다. 웹 리서치(STEP 1의 리서치 절반)는 뉴스·해석·컨센서스처럼 파일에 없는 것에만 쓴다. 경제지표 Actual/Previous는 econ_indicators.json이 이미 확정했다.
 
@@ -102,6 +106,8 @@ Launch the Agent tool with subagent_type "brief-data-collector", run synchronous
 **위임한 것은 다시 읽지 않는다.** 서브에이전트는 **동기**(`run_in_background: false`)로 부르고, 기다리는 동안 아무것도 열지 않는다. 에이전트 정의 파일(`.claude/agents/*.md`), 그 에이전트가 읽을 데이터 파일, 직전 발행본은 오케스트레이터가 읽지 않는다 — **경로만 넘기고**, 돌아온 산출물과 게이트 출력만 본다. 폴백으로 general-purpose 에이전트를 쓸 때도 정의 파일 본문을 붙여 넣지 말고 「이 파일을 먼저 Read 하라」고 경로를 준다. (2026-09-22 KR 실행이 에이전트를 백그라운드로 띄워 두고 지시문 35 KB·데이터 12개·직전 발행본을 다시 읽다가 5시간 한도로 죽었다.)
 
 Fallbacks: if the subagent type is not available, launch a general-purpose agent whose prompt tells it to Read .claude/agents/brief-data-collector.md first and follow it (do not paste the file body), plus the report date. If the Agent tool itself is unavailable, execute that file's instructions yourself, in full, before continuing.
+
+**수집 담당이 돌아온 뒤 — 수집 장부를 다시 맞춘다(2026-11-22).** 수집 담당은 커밋된 완성본을 찾으면 자료 파일을 스스로 작업 공간에 복사하지만 장부는 다루지 않는다(그 지시문에는 장부가 없다 — 넣지 않는다). 그래서 돌아오면 **레포 클론을 pull 하지 않은 그대로**, 작업 트리가 아니라 **커밋 판**과 견준다: `C=$(git -C <repo> rev-parse --verify HEAD) && git -C <repo> show "$C:data/market_data.json" | cmp -s - <workspace>/market_data.json`. 작업 트리의 `data/` 는 수집 담당이 레포 안에서 수집기를 돌리면 새 자료로 덮여 옛 장부와 「같다」고 나오므로 쓰지 않는다. 같으면(커밋된 판을 복사한 것) 그 같은 커밋에서 **장부만** 다시 꺼낸다 — `git -C <repo> show "$C:data/_collect_status.json" > <workspace>/_collect_status.json 2>/dev/null || rm -f <workspace>/_collect_status.json`(커밋에 없으면 `<workspace>/_collect_status.json` 을 지운다). 자료 파일은 다시 복사하지 않는다(수집 담당이 스스로 만든 파일을 레포 판으로 덮지 않는다). 다르면(수집 담당이 스스로 수집해 채웠다) 장부를 복사하지도 고치지도 않는다 — STEP 0 의 로컬 폴백과 같이 1a 를 켠 뒤에는 그날 보류된다. 수집 담당을 다시 돌렸으면 이 확인도 다시 한다. 이 뒤로는 STEP 0 의 규칙 그대로다: record 부터 마지막 verify 까지 장부를 넣거나 빼거나 바꾸지 않는다.
 
 Gate before proceeding: market_data.json parses as JSON with non-null indices/sectors/yields; intraday.json parses; research_notes.md exists and contains the 4-axis macro indicator table. If `data/macro_metrics.json` lists `headline_releases`, research_notes.md must also carry section ⑧ (신규 발표 해부) with an entry per release — or an explicit note that the primary release could not be reached. If the gate fails, relaunch the subagent once with the specific error details; if it fails again, fix the gaps yourself using the agent file's instructions.
 

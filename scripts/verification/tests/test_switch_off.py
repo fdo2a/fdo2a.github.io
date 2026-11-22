@@ -299,6 +299,49 @@ def test_a_dropped_row_says_which_month_is_missing_while_off(monkeypatch):
     assert refs['CPI YoY']['lacking'] == ['2025-10'] and refs['CPI YoY']['lacking_why'] == {'2025-10': 'not_published'}
 
 
+LEDGER_COPY_LINES = {       # 오케스트레이터에서 장부 이름이 나와도 되는 줄(구역, 줄 머리) — 전부 「복사한다」는 지시다
+    'STEP 0': ('   git show "$C:data/_collect_status.json" > "$WS/_collect_status.json" 2>/dev/null || rm -f',
+               '   수집 장부(`_collect_status.json`)도 같은 커밋에서 꺼낸다',
+               '   - 수집 장부: ',
+               '   **재수집으로 새 판을 받았으면 2번의 복사를 처음부터 다시 한다**'),
+    'STEP 1': ('**수집 담당이 돌아온 뒤 — 수집 장부를 다시 맞춘다',),
+}
+
+
+def _ledger_lines_outside_copy_zones(text):
+    """장부 이름이 나오는 줄 가운데 복사 구역 밖의 것. 구역은 `## STEP N` 머리로 가른다."""
+    step, bad, used = None, [], set()
+    for ln in text.split('\n'):
+        m = re.match(r'## (STEP [0-9.]+) ', ln)
+        if m:
+            step = m.group(1)
+        if '_collect_status' not in ln:
+            continue
+        head = [h for h in LEDGER_COPY_LINES.get(step, ()) if ln.startswith(h)]
+        if not head or head[0] in used:                      # 같은 머리의 줄이 둘이면 둘째는 밖이다
+            bad.append((step, ln[:80]))
+        else:
+            used.add(head[0])
+    return bad
+
+
+def test_ledger_name_is_confined_to_the_copy_lines():
+    orch = open(os.path.join(ROOT, '.claude', 'ORCHESTRATOR.md'), encoding='utf-8').read()
+    assert _ledger_lines_outside_copy_zones(orch) == []
+    assert orch.count('_collect_status') >= 5               # 예외가 실제로 쓰이고 있다
+    # 작성자 프롬프트(STEP 2)·게이트·발행 절에 장부를 읽으라는 말이 들어오면 잡는다
+    for step in ('## STEP 2 — ', '## STEP 3 — ', '## STEP 3.5 — '):
+        assert orch.count('\n' + step) == 1, step
+        head, _, tail = orch.partition('\n' + step)
+        line_end = tail.index('\n')
+        mutated = head + '\n' + step + tail[:line_end] + '\n\n작성자에게 `<workspace>/_collect_status.json` 을 읽고 인용하게 한다.' + tail[line_end:]
+        assert _ledger_lines_outside_copy_zones(mutated), step
+    # 복사 구역 안이라도 허용된 머리가 아닌 새 줄, 허용된 머리를 흉내 낸 둘째 줄은 밖이다
+    step1 = orch.index('\n## STEP 1 — ')
+    assert _ledger_lines_outside_copy_zones(orch[:step1] + '\n작성자는 `_collect_status.json` 을 읽는다.' + orch[step1:])
+    assert _ledger_lines_outside_copy_zones(orch[:step1] + '\n   - 수집 장부: 작성자는 `_collect_status.json` 을 읽는다.' + orch[step1:])
+
+
 def test_coverage_fields_are_written_only_once_on():
     """`macro_metrics.json` 의 `coverage`·`coverage_ko` 는 작성자가 읽는 파일에 새로 나타나는 칸이다 — 꺼진 동안은 싣지 않는다
     (2026-11-20 사용자 결정: 꺼진 동안 작성 입력은 1a 전과 같다). 수집기 본체는 네트워크 없이 돌릴 수 없어 호출 자리를 본다."""
@@ -307,10 +350,25 @@ def test_coverage_fields_are_written_only_once_on():
     assert len(calls) == 1
     before = src[:calls[0]].splitlines()[-2]                 # 호출 줄(`mm = with_coverage(`)의 바로 윗줄
     assert before.strip() == 'if enforcing():'
-    # 작성 지시문·오케스트레이터는 수집 상태 칸을 읽으라고 하지 않는다 — 그 칸은 꺼진 동안에도 실린다
+    # 작성 지시문·오케스트레이터는 수집 상태 칸을 읽으라고 하지 않는다 — 그 칸은 꺼진 동안에도 실린다.
+    # 예외 하나(2026-11-22): US 오케스트레이터는 수집 장부 **파일을 작업 공간에 복사**한다(검사가 `--datadir` 에서 읽는다,
+    # `test_ledger_copy`). 파일 이름은 그 문서의 **복사하는 줄**에만 나온다 — STEP 0 의 이어 쓰기 블록·2번·3번과 STEP 1 의
+    # 수집 담당 복귀 뒤. STEP 2 부터(작성자 프롬프트·게이트·발행)와 작성자 지시문(agents/)·다른 문서에는 없어야 한다.
     docs = os.path.join(ROOT, '.claude')
-    for dp, _dn, fs in os.walk(docs):
+    seen = 0
+    for dp, dn, fs in os.walk(docs):
+        if dp == docs:
+            dn[:] = [d for d in dn if d != 'worktrees']      # 다른 작업의 checkout(gitignore) — 이 레포의 지시문이 아니다
         for f in fs:
             if f.endswith('.md'):
-                text = open(os.path.join(dp, f), encoding='utf-8').read()
-                assert '_collect_status' not in text and 'collected_at' not in text and '`collect`' not in text, f
+                path = os.path.join(dp, f)
+                text = open(path, encoding='utf-8').read()
+                seen += 1
+                assert 'collected_at' not in text and '`collect`' not in text, f
+                if path == os.path.join(docs, 'ORCHESTRATOR.md'):
+                    assert _ledger_lines_outside_copy_zones(text) == [], f
+                else:
+                    assert '_collect_status' not in text, f
+    assert seen > 5
+    agents = os.path.join(docs, 'agents')
+    assert os.path.isdir(agents) and any(f.endswith('.md') for f in os.listdir(agents))
