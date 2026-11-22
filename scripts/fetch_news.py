@@ -238,17 +238,54 @@ def _fast_bytes(url, ctx):
     return get_bytes(url, ctx, timeout=EXTRA_TIMEOUT)
 
 
+FEED_ROOTS = ('rss', 'feed', 'RDF')          # RSS 2.0 · Atom · RSS 1.0(rdf:RDF)
+
+
+class _RootSeen(Exception):
+    pass
+
+
+def feed_root(raw):
+    """문서의 첫 시작 태그(루트 요소)의 이름 — 접두사·네임스페이스를 뗀 것. XML 로 열리지 않으면 None.
+
+    XML 파서(expat)가 첫 요소를 만나면 멈춘다 — 뒤쪽 본문이 깨져 있어도(이스케이프 안 된 &, 정의 안 된 &nbsp;)
+    루트는 정해지고, 엔티티 전개까지 가지 않는다. 글자 찾기가 아니다: `<html>…<channel>…` 의 루트는 html 이다."""
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    from xml.parsers import expat
+    seen = []
+
+    def start(name, attrs):
+        seen.append(name)
+        raise _RootSeen()
+
+    # str 을 UTF-8 바이트로 넘긴다 — 선언의 encoding="ISO-8859-1" 은 이미 풀린 글자와 맞지 않으므로 UTF-8 로 못 박는다
+    parser = expat.ParserCreate('utf-8')
+    parser.StartElementHandler = start
+    try:
+        parser.Parse(raw.lstrip('\ufeff \t\r\n').encode('utf-8', 'replace'), True)
+    except _RootSeen:
+        pass
+    except expat.ExpatError:
+        return None
+    if not seen:
+        return None
+    return seen[0].rsplit(':', 1)[-1]
+
+
 def rss_read(raw, items, why_empty):
-    """RSS 로 읽혔는가 — 항목이 있거나, 빈 응답이 아니고 `parse_feed_strict` 가 형식 경고를 내지 않았다(진짜 빈 피드).
-    빈 응답·RSS 가 아닌 응답(점검 페이지)·형식이 바뀐 피드는 읽은 것이 아니다(collect 판정, codex 구현 검토 1회차 #1·#3)."""
-    return bool(items) or (bool(raw) and not why_empty)
+    """피드로 읽혔는가 — 응답의 **루트 요소**가 rss·feed(Atom)·RDF 이고, 항목이 있거나 `parse_feed_strict` 가 형식
+    경고를 내지 않았다(진짜 빈 피드). 루트가 피드가 아니면(점검 페이지의 html, XML 이 아닌 응답, 빈 응답) 그 안에
+    `<channel>`·`<item>` 글자가 있어도, 항목이 뽑혔어도 읽은 것이 아니다(collect 판정 — codex 구현 검토 1회차 #1·#3,
+    2회차 #3: 글자 찾기를 구조 판정으로 바꿨다)."""
+    return feed_root(raw) in FEED_ROOTS and (bool(items) or not why_empty)
 
 
 def harvest_extra(ctx, budget, notes, fetch=None, feeds=None, counter=None):
     """새 매체 피드(`EXTRA_FEEDS`)를 받는다. 실패·시간 초과는 `notes` 에 적고 넘어간다.
 
     돌려주는 행은 `identify()` 를 거쳤다 — guid 가 URL 이다. `counter` 가 주어지면 RSS 로 읽힌 피드 수를
-    `counter['read']` 에 더한다(항목 0건이어도 RSS 면 읽은 것, RSS 가 아닌 응답은 아니다 — collect 판정, 2026-11-22).
+    `counter['read']` 에 더한다(`rss_read` — 루트 요소가 피드면 항목 0건이어도 읽은 것, html 루트·빈 응답은 아니다 — collect 판정, 2026-11-22).
     """
     fetch = fetch or _fast_get
     rows = []
@@ -438,14 +475,26 @@ def news_collect(payload, final=True, feeds_read=None):
 
 
 def stamp_unfinished(path):
-    """그날 파일의 collect 가 ok 가 아니면 참 — 요약 단계에서 죽은 판(첫 저장의 failed)을 동결하지 않는다
-    (설계 검토 1회차 #4: 이월된 요약 때문에 동결되면 failed 가 영영 남는다). collect 칸이 없는 옛 파일은 거짓."""
+    """그날 파일에 collect 칸이 **있는데** 끝난 수집의 도장이 아니면 참 — 동결하지 않고 다시 받는다.
+
+    끝난 수집의 도장 = 게이트(`verification.inputs._health`)가 통과시키는 꼴 그대로: 형식이 맞고 status ok,
+    as_of 가 그 파일의 report_date, required_ok, missing 없음, empty 가 items 와 맞음. 요약 단계에서 죽은 판(첫 저장의
+    failed)도, 칸이 null·글자·빈 객체·반쪽 도장인 판도 여기 든다(설계 검토 1회차 #4, 구현 검토 2회차 #4 — 동결된
+    파일은 게이트도 통과해야 한다). collect 칸이 아예 없는 옛 파일(도입 전)은 거짓 — 지금처럼 동결한다."""
     try:
         with open(path, encoding='utf-8') as fh:
-            c = json.load(fh).get('collect')
-    except (OSError, ValueError, AttributeError):
+            doc = json.load(fh)
+    except (OSError, ValueError):
         return False
-    return isinstance(c, dict) and c.get('status') != 'ok'
+    if not isinstance(doc, dict) or 'collect' not in doc:
+        return False
+    from verification import inputs as I
+    c = doc['collect']
+    items = doc.get('items') or []
+    done = (I._stamp_ok_shape(c) and c['status'] == 'ok' and c['as_of'] == doc.get('report_date')
+            and c['required_ok'] is True and not c['missing']
+            and c['empty'] == ('has_data' if items else 'confirmed_none'))
+    return not done
 
 
 def frozen(path):

@@ -54,16 +54,49 @@ def test_no_items_after_reading_feeds_is_confirmed_none():
     assert c['status'] == 'ok' and c['empty'] == 'confirmed_none'
 
 
-@pytest.mark.parametrize('collect,unfinished', [(None, False), ({'status': 'ok'}, False),
-                                                ({'status': 'failed'}, True), ({'status': 'partial'}, True)])
-def test_a_file_whose_stamp_is_not_ok_is_not_frozen(tmp_path, collect, unfinished):
-    """요약 단계에서 죽은 판(첫 저장의 failed)에 이월 요약이 있어도 다음 실행이 동결하지 않는다(검토 1회차 #4)."""
-    p = tmp_path / 'n.json'
+def _ok_stamp(items=({'guid': 'a', 'summary_ko': '요약', 'body_chars': 100},)):
+    return F.news_collect(_payload(list(items)), final=True, feeds_read=3)
+
+
+BAD_STAMPS = [{'status': 'failed'}, {'status': 'partial'}, 'null', 'ok', [], {}, {'status': 'ok'},
+              'stale', 'required_false', 'missing', 'empty_mismatch', 'running']
+
+
+def _stamp_case(name):
+    """이름 → collect 값. 'absent' 는 칸이 없는 옛 파일."""
+    if not isinstance(name, str):
+        return name
+    ok = _ok_stamp()
+    return {'null': None, 'ok': 'ok', 'good': ok,
+            'stale': dict(ok, as_of='2026-11-20'), 'required_false': dict(ok, required_ok=False),
+            'missing': dict(ok, missing=['x']), 'empty_mismatch': dict(ok, empty='confirmed_none'),
+            'running': F.news_collect(_payload([]), final=False)}[name]
+
+
+def _write_day(p, name):
     body = _payload([{'guid': 'a', 'summary_ko': '요약', 'body_chars': 100}])
-    if collect is not None:
-        body['collect'] = collect
+    if name != 'absent':
+        body['collect'] = _stamp_case(name)
     p.write_text(json.dumps(body, ensure_ascii=False), encoding='utf-8')
+
+
+@pytest.mark.parametrize('name,unfinished', [('absent', False), ('good', False)] + [(b, True) for b in BAD_STAMPS])
+def test_a_file_whose_stamp_is_not_ok_is_not_frozen(tmp_path, name, unfinished):
+    """collect 칸이 있는데 게이트가 통과시킬 끝난 도장이 아니면 동결하지 않는다 — 요약 단계에서 죽은 판(검토 1회차 #4),
+    null·글자·빈 객체·status 만 있는 반쪽·as_of 어긋남(구현 검토 2회차 #4). 칸이 없는 옛 파일만 그대로 동결."""
+    p = tmp_path / 'n.json'
+    _write_day(p, name)
     assert F.stamp_unfinished(str(p)) is unfinished
+
+
+def test_a_frozen_stamp_is_one_the_gate_passes(tmp_path, monkeypatch):
+    """동결되는 도장(끝난 것)은 1a 를 켠 게이트에서도 ok 다 — 「동결됐는데 게이트는 막는」 길이 없다."""
+    monkeypatch.setattr(I, 'EFFECTIVE', D)
+    pol = I.load(os.path.join(ROOT, 'config', 'prepub_inputs.json'))
+    ctx = _news_day(tmp_path, _ok_stamp(), 'kept')
+    f = os.path.join(ctx['datadir'], 'news', f'{D}.json')
+    assert F.frozen(f) and not F.stamp_unfinished(f)
+    assert I.assess(pol, 'us-news', ctx)['files'][f'<datadir>/news/{D}.json']['state'] == 'ok'
 
 
 def test_the_news_file_is_tracked_by_the_news_step_and_may_be_kept():
@@ -130,20 +163,44 @@ def test_us_news_input_with_1a_on(tmp_path, monkeypatch, collect, run, state):
 
 EMPTY_RSS = '<?xml version="1.0"?><rss><channel><title>x</title></channel></rss>'
 HTML_503 = '<html><body>503 Service Unavailable</body></html>'
+HTML_WITH_CHANNEL = '<html><body>503 Service Unavailable <channel>maintenance</channel></body></html>'   # 2회차 반례
+HTML_WITH_ITEM = '<!DOCTYPE html><html><body><item><title>t</title><link>https://x.test/a</link></item></body></html>'
+ITEM = '<item><title>t</title><link>https://x.test/a</link></item>'
+RSS_ITEM = f'<?xml version="1.0" encoding="ISO-8859-1"?>\n<rss version="2.0"><channel>{ITEM}</channel></rss>'
+RSS_BROKEN_BODY = f'\ufeff\n<rss><channel>{ITEM}<item><title>a & b &nbsp;</title></channel>'        # 본문이 깨진 진짜 피드
+RDF_ITEM = f'<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><channel/>{ITEM}</rdf:RDF>'
+ATOM_ENTRY = ('<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>1</id><title>t</title>'
+              '<link href="https://x.test/a"/></entry></feed>')
+ATOM_EMPTY = '<feed xmlns="http://www.w3.org/2005/Atom"><title>x</title></feed>'       # 형식 경고 — 읽은 것이 아니다
+NS_ITEM = '<rss><channel><x:item><link>https://x.test/a</link></x:item></channel></rss>'   # 형식 경고
+TEXT_RSS = '503 Service Unavailable <rss><channel></channel></rss>'
 
 
-@pytest.mark.parametrize('raw,read', [(EMPTY_RSS, True), (HTML_503, False), ('', False), (None, False)])
+@pytest.mark.parametrize('raw,read', [
+    (EMPTY_RSS, True), (RSS_ITEM, True), (RSS_BROKEN_BODY, True), (RDF_ITEM, True), (ATOM_ENTRY, True),
+    (HTML_503, False), (HTML_WITH_CHANNEL, False), (HTML_WITH_ITEM, False), (ATOM_EMPTY, False), (NS_ITEM, False),
+    (TEXT_RSS, False), ('', False), ('   ', False), (None, False)])
 def test_rss_read_counts_a_real_feed_only(raw, read):
-    """빈 RSS 는 읽은 것, 점검 페이지·빈 응답은 아니다(codex 구현 검토 1회차 #1·#3)."""
+    """루트 요소가 피드(rss·feed·RDF)일 때만 읽은 것 — 빈 RSS 는 읽음, html 루트는 안에 <channel>·<item> 이 있어도
+    아니다(codex 구현 검토 1회차 #1·#3, 2회차 #3)."""
     from us import news as N
     items, why = N.parse_feed_strict(raw, 'economy') if raw is not None else ([], None)
     assert F.rss_read(raw, items, why) is read
 
 
+def test_html_with_items_is_harvested_but_not_counted_as_a_feed():
+    """항목이 뽑혔어도(html 안의 <item>) 피드 수에는 들지 않는다 — 그런 응답만 온 날은 failed."""
+    from us import news as N
+    items, why = N.parse_feed_strict(HTML_WITH_ITEM, 'economy')
+    assert items and not F.rss_read(HTML_WITH_ITEM, items, why)
+    c = F.news_collect(_payload([{'guid': 'a', 'summary_ko': '요약'}]), final=True, feeds_read=0)
+    assert c['status'] == 'failed'
+
+
 def test_harvest_extra_counts_feeds_through_the_counter():
-    pages = {'u1': EMPTY_RSS, 'u2': HTML_503, 'u3': ''}
+    pages = {'u1': EMPTY_RSS, 'u2': HTML_503, 'u3': '', 'u4': HTML_WITH_CHANNEL}
     counter, notes = {}, []
-    rows = F.harvest_extra(None, F.Budget(60), notes, fetch=lambda u, ctx: pages[u], feeds={'economy': ['u1', 'u2', 'u3']},
+    rows = F.harvest_extra(None, F.Budget(60), notes, fetch=lambda u, ctx: pages[u], feeds={'economy': ['u1', 'u2', 'u3', 'u4']},
                            counter=counter)
     assert rows == [] and counter == {'read': 1}
 
@@ -152,14 +209,12 @@ class _Stop(Exception):
     pass
 
 
-@pytest.mark.parametrize('collect,frozen_out', [({'status': 'ok'}, True), ({'status': 'failed'}, False), (None, True)])
-def test_main_freezes_only_a_finished_file(tmp_path, monkeypatch, collect, frozen_out):
-    """main() 의 동결 분기 — collect 가 ok 가 아닌 판은 다시 받는다(받으러 가면 _context 가 불린다)."""
+@pytest.mark.parametrize('name,frozen_out', [('good', True), ('absent', True)] + [(b, False) for b in BAD_STAMPS])
+def test_main_freezes_only_a_finished_file(tmp_path, monkeypatch, name, frozen_out):
+    """main() 의 동결 분기 — collect 칸이 있는데 끝난 도장이 아닌 판(failed·null·글자·반쪽)은 다시 받는다
+    (받으러 가면 _context 가 불린다)."""
     (tmp_path / 'news').mkdir()
-    body = _payload([{'guid': 'a', 'summary_ko': '요약', 'body_chars': 100}])
-    if collect is not None:
-        body['collect'] = collect
-    (tmp_path / 'news' / f'{D}.json').write_text(json.dumps(body, ensure_ascii=False), encoding='utf-8')
+    _write_day(tmp_path / 'news' / f'{D}.json', name)
     monkeypatch.setattr(F, '_context', lambda: (_ for _ in ()).throw(_Stop()))
     monkeypatch.setattr(sys, 'argv', ['fetch_news.py', '--datadir', str(tmp_path), '--date', D,
                                       '--bodydir', str(tmp_path / 'b')])
