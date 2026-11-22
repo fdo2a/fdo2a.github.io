@@ -10,7 +10,6 @@ writer subagent verbatim and re-run.
 """
 
 import argparse
-import json
 import os
 import sys
 
@@ -20,11 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from us.period_gate import check  # noqa: E402
 
 
-def load(path):
-    if not path or not os.path.exists(path):
-        return None
-    with open(path, encoding='utf-8') as fh:
-        return json.load(fh)
+from common.jsonfile import load_json_if_exists as load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def main():

@@ -66,3 +66,63 @@ def test_warn_reads_values(tmp_path, capsys):
     assert J.load_json_warn(_w(tmp_path, 'l.json', b'[1, 2]')) == [1, 2]
     assert J.load_json_warn(pathlib.Path(_w(tmp_path, 'p.json', b'{}'))) == {}
     assert capsys.readouterr().err == ''
+
+
+# ── 2026-11-22 둘째 묶음: 짧은 사본 9개를 모은 네 읽기 ─────────────────────────────
+
+load_json_if_exists, load_json_missing_none = J.load_json_if_exists, J.load_json_missing_none
+load_json_path, load_json_strict = J.load_json_path, J.load_json_strict
+
+
+def _files(tmp_path):
+    good = tmp_path / 'good.json'
+    good.write_text('{"a": 1}', encoding='utf-8')
+    bad = tmp_path / 'bad.json'
+    bad.write_text('{oops', encoding='utf-8')
+    nonutf = tmp_path / 'nonutf.json'
+    nonutf.write_bytes(b'\xff\xfe{}')
+    return good, bad, nonutf, tmp_path / 'missing.json'
+
+
+def test_missing_none_only_forgives_a_missing_file(tmp_path):
+    good, bad, nonutf, missing = _files(tmp_path)
+    assert load_json_missing_none(str(good)) == {'a': 1}
+    assert load_json_missing_none(str(missing)) is None
+    with pytest.raises(ValueError):
+        load_json_missing_none(str(bad))
+    with pytest.raises(UnicodeDecodeError):
+        load_json_missing_none(str(nonutf))
+    with pytest.raises(IsADirectoryError):
+        load_json_missing_none(str(tmp_path))
+
+
+def test_strict_raises_on_every_failure(tmp_path):
+    good, bad, _, missing = _files(tmp_path)
+    assert load_json_strict(str(good)) == {'a': 1}
+    with pytest.raises(FileNotFoundError):
+        load_json_strict(str(missing))
+    with pytest.raises(ValueError):
+        load_json_strict(str(bad))
+
+
+def test_if_exists_skips_falsy_and_absent_paths_only(tmp_path):
+    good, bad, _, missing = _files(tmp_path)
+    assert load_json_if_exists(None) is None and load_json_if_exists('') is None
+    assert load_json_if_exists(str(missing)) is None
+    dangling = tmp_path / 'dangling.json'
+    dangling.symlink_to(tmp_path / 'nope')
+    assert load_json_if_exists(str(dangling)) is None      # os.path.exists follows the link
+    assert load_json_if_exists(str(good)) == {'a': 1}
+    with pytest.raises(ValueError):
+        load_json_if_exists(str(bad))
+
+
+def test_path_reader_needs_a_path_and_raises(tmp_path):
+    good, bad, _, missing = _files(tmp_path)
+    assert load_json_path(good) == {'a': 1} and load_json_path(str(good)) == {'a': 1}
+    with pytest.raises(FileNotFoundError):
+        load_json_path(missing)
+    with pytest.raises(ValueError):
+        load_json_path(bad)
+    with pytest.raises(TypeError):
+        load_json_path(None)

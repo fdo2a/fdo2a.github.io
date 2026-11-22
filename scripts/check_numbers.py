@@ -33,9 +33,7 @@ CONFIG = os.path.join(os.path.dirname(HERE), 'config', 'number_audit.json')
 OPTIONAL = ('econ_indicators', 'macro_metrics', 'fund_board')
 
 
-def _read(path):
-    with open(path, encoding='utf-8') as fh:
-        return json.load(fh)
+from common.jsonfile import load_json_strict as _read  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 class ConfigMissing(Exception):

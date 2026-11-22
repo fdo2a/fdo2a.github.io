@@ -22,8 +22,7 @@ from us import fomc_official as F  # noqa: E402
 from us import weekly_insight as I  # noqa: E402
 
 
-def _load(path):
-    return json.loads(Path(path).read_text(encoding='utf-8'))
+from common.jsonfile import load_json_path as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def cmd_diag(args):

@@ -51,9 +51,7 @@ def _now_iso():
     return datetime.now(N.JST).isoformat(timespec='seconds')
 
 
-def _load(path):
-    with open(path, encoding='utf-8') as fh:
-        return json.load(fh)
+from common.jsonfile import load_json_strict as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _in_range(s, since, until):

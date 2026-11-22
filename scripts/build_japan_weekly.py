@@ -29,8 +29,7 @@ NEWS_DIRS = ('data/news', 'kr/data/news')
 JAPAN_NEWS_DIR = 'japan/data/news'
 
 
-def _load(path):
-    return json.loads(Path(path).read_text(encoding='utf-8'))
+from common.jsonfile import load_json_path as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def digest_rows(key, base=JAPAN_NEWS_DIR):

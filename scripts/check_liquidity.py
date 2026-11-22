@@ -10,7 +10,6 @@ Exit 0 = 발행 가능. Exit 1 = 위반을 한 줄씩. 첫 줄이 `ledger_change
 """
 
 import argparse
-import json
 import os
 import sys
 
@@ -21,12 +20,7 @@ from us import liquidity as L  # noqa: E402
 from us.liquidity_gate import check  # noqa: E402
 
 
-def load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        return None
+from common.jsonfile import load_json_missing_none as load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _main_1a():
