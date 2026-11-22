@@ -21,12 +21,7 @@ FILES = {'us': ('movers.json', 'market_data.json'),
          'kr': ('kr_movers.json', 'kr_market_data.json')}
 
 
-def _load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except (OSError, ValueError):
-        return None
+from scripts.common.jsonfile import load_json_or_none as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _has_mover_paragraph(html):

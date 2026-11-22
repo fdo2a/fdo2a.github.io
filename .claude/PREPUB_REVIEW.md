@@ -118,9 +118,13 @@ STYLE_CLOSE A 가 끝나 `$H` 가 정해지면(approved 든 Z 든) `python3 scri
    `pushed=failed` 여도 아래로 간다(알림에 적는다).
 3. 잠금: `lock=release` → `bash scripts/ci/run_lock.sh release "$(cat /tmp/us-lock-key)"`(검토가 돌지 않았다 — 재시도가
    처음부터 다시 써도 잃는 것이 없다). `lock=hold:<부호>` → `bash scripts/ci/run_lock.sh hold "$(cat /tmp/us-lock-key)" <부호>`
-   (사람이 `unhold` 하기 전에는 어떤 런도 이 세션을 다시 쓰지 않는다). exit 0 이 아니면 그 출력을 알림에 붙인다.
-4. PushNotification: `[US 글 막힘] [DATE] · <기록의 reason> · 다음: <재시도 루틴이 처음부터 다시 쓴다 | 사람 확인 필요>`
+   (사람이 `unhold` 하기 전에는 어떤 런도 이 세션을 다시 쓰지 않는다). `hold` 가 exit 5(잠금 push 거부)면 한 번 더 부른다.
+   그래도 exit 0 이 아니면 그 출력을 알림에 붙인다(세움이 서지 않았다 — 120분 뒤 재시도가 다시 쓸 수 있다).
+   `lock=` 은 `hold` 가 정한다 — 검토가 돌지 않은 실패도 로그인 없음(`auth_missing`)이면 첫 번째에, 그 밖의 부호는 같은 날짜에
+   같은 부호가 연달아 2번이거나 3번째면(`attempt=`) `hold:recovery_needed` 다. 한도(`limit`)는 세지 않고 늘 `release`.
+4. PushNotification: `[US 글 막힘] [DATE] · <기록의 reason> · 다음: <lock=release 면 「재시도 루틴이 처음부터 다시 쓴다」 | lock=hold 면 「사람 확인 필요」>`
    (`materials=` 값도). 그리고 **끝낸다** — STEP 2.6·3·3.5·4 를 하지 않는다.
 
 사람이 푸는 법(로컬): 비공개 `holds` 가지의 재료로 받아들인 수정을 살려 손으로 마무리하거나, 버리기로 정하면
-`bash scripts/ci/run_lock.sh unhold <키>` — 그 뒤 재시도가 처음부터 쓴다.
+`bash scripts/ci/run_lock.sh unhold <키>` — 그 뒤 재시도가 처음부터 쓴다. 검토가 돌지 않아 세운 것(`attempt=`)을 풀 때는
+원인을 고친 뒤 main 의 `reviews/prepublish/us/<D>.json` 도 지운다 — 남겨 두면 다음 실패가 곧바로 다시 세움이 된다.

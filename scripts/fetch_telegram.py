@@ -90,12 +90,7 @@ def with_run_cursors(prev, datadir, market):
     return out
 
 
-def load(path):
-    try:
-        with open(path, encoding='utf-8') as f:
-            return json.load(f)
-    except (OSError, ValueError):
-        return None
+from common.jsonfile import load_json_or_none as load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def frozen(path):

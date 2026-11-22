@@ -69,8 +69,7 @@ def load_telegram(root, session):
     return (None, f'{p}: {why}') if why else (data, None)
 
 
-def _load(p):
-    return json.loads(Path(p).read_text(encoding='utf-8'))
+from common.jsonfile import load_json_path as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def cmd_diag(args):

@@ -67,15 +67,7 @@ def fulldir_for(datadir):
 MIN_BYTES = 1000      # an empty shell; real decisions are release_verify's
 
 
-def load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        return None
-    except Exception as e:
-        print(f'WARN: could not read {path}: {e}', file=sys.stderr)
-        return None
+from common.jsonfile import load_json_warn as load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def run_id():

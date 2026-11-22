@@ -43,9 +43,13 @@ FALLBACK = 10
 WAITING = 11
 
 
+def _dumps(obj):
+    return json.dumps(obj, ensure_ascii=False, indent=1)
+
+
 def _write(path, obj):
     with open(path, 'w', encoding='utf-8') as fh:
-        json.dump(obj, fh, ensure_ascii=False, indent=1)
+        fh.write(_dumps(obj))
 
 
 def _now():
@@ -323,6 +327,108 @@ NOT_RUN = frozenset({'submit_failed', 'timeout', 'limit', 'failed', 'mismatch', 
                      'stale_html', 'mark_failed'})
 # 판정을 시작했다 — 사람만 푼다(run_lock.sh hold 의 부호와 같은 목록)
 HOLD_CODES = ('recovery_needed', 'style_abort', 'facts_unmarked')
+# 「검토 미실행」의 세 갈래(설계 auto_resume v1.5 §6.1). 다시 해도 똑같이 실패하는 부호가 슬롯마다 처음부터
+# 다시 쓰기(수집·Opus 작성·제출)를 태우지 않게, 같은 날짜 기록에서 센다.
+HUMAN_CODES = frozenset({'auth_missing'})          # 사람 손 — 첫 번째에 바로 세운다
+WAIT_CODES = frozenset({'limit'})                  # 기다림 — 세지 않고, 세우지 않는다(풀리면 바로 다시)
+COUNTED_CODES = NOT_RUN - HUMAN_CODES - WAIT_CODES
+SAME_TWICE, MAX_COUNTED = 2, 3                     # 같은 부호 연달아 2번 / 세는 실패 3번이면 세운다
+
+
+# 세움 기록의 칸 — 쓰는 쪽(_hold_rec)과 읽는 쪽(_carried)이 같은 상수를 본다.
+HOLD_ORDER_M = ('section', 'date', 'request_id', 'state', 'reason', 'hold', 'recorded_at')   # 11/22 M 의 세움 기록
+HOLD_ORDER = HOLD_ORDER_M + ('attempt', 'last_counted')            # _hold_rec 가 쓰는 순서
+HOLD_KEYS_M, HOLD_KEYS = frozenset(HOLD_ORDER_M), frozenset(HOLD_ORDER)
+RID_RE = __import__('re').compile(r'[a-z]{2}-[0-9-]{10}-[0-9a-f]{12}')
+STAMP_RE = __import__('re').compile(r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z')
+
+
+def _carried(raw, section, date):
+    """앞 기록(origin/main 의 같은 파일 **바이트**, 없으면 None) → (attempt, last_counted). 셀 수 없으면 None.
+
+    **cmd_hold 가 쓰는 세움 기록의 꼴 그대로만** 받는다(codex 구현 2회차 — 칸을 하나씩 검사하다 두 번 뚫렸다). 그 밖의 모든 것,
+    해석 중의 어떤 예외든 「셀 수 없다」다 — cmd_hold 가 늘 `lock=` 줄까지 가게 여기서 삼킨다.
+    """
+    if raw is None:
+        return 0, None                               # 파일 없음 — 그날 첫 실패
+    def pairs(items):                                # 같은 칸이 두 번 나오는 글자는 이 코드가 쓰지 않는다
+        out = dict(items)
+        if len(out) != len(items):
+            raise ValueError('duplicate key')
+        return out
+    try:
+        text = raw.decode('utf-8')                   # 바이트 그대로 — 다듬거나(.strip) 바꿔 읽지 않는다
+        rec = json.loads(text, object_pairs_hook=pairs)
+        if text != _dumps(rec):                      # _write 가 쓰는 글자와 한 바이트도 다르지 않아야 한다
+            return None
+        if tuple(rec) not in (HOLD_ORDER_M, HOLD_ORDER):     # 다시 직렬화는 읽은 순서를 따른다 — 순서는 따로 본다(5회차 ⑤)
+            return None
+        return _carried_exact(rec, section, date)
+    except Exception:
+        return None
+
+
+def _carried_exact(rec, section, date):
+    if type(rec) is not dict or rec.get('section') != section or rec.get('date') != date:
+        return None
+    keys, state = frozenset(rec), rec.get('state')
+    if not isinstance(state, str):
+        return None
+    # 발행 기록(`hold` 칸 없음)은 받지 않는다 — 이미 발행한 날짜에 또 세우는 일은 정상 흐름에 없고, 그 꼴(칸 20여 개의
+    # 값)을 하나씩 따지는 검사는 회차마다 뚫렸다(codex 구현 3회차 ⑤). 셀 수 없음 = 세는 실패는 사람 손.
+    if keys not in (HOLD_KEYS_M, HOLD_KEYS):
+        return None
+    if rec['hold'] is not True or (state not in NOT_RUN and state not in HOLD_CODES) \
+            or rec.get('reason') != PUBLIC_REASON.get(state, ''):
+        return None
+    rid, at = rec.get('request_id'), rec.get('recorded_at')
+    if not (rid is None or isinstance(rid, str) and RID_RE.fullmatch(rid)) \
+            or not (isinstance(at, str) and STAMP_RE.fullmatch(at)):
+        return None
+    __import__('datetime').datetime.strptime(at, '%Y-%m-%dT%H:%M:%SZ')     # 실제 날짜·시각이 아니면 ValueError → 셀 수 없다
+    if keys == HOLD_KEYS_M:                          # M 의 세움 기록(횟수 칸 없음) — 세는 부호였으면 1번
+        return (1, state) if state in COUNTED_CODES else (0, None)
+    n, last = rec['attempt'], rec['last_counted']
+    if type(n) is not int or not 0 <= n <= 99:       # null = 앞 런이 셀 수 없었다 — 이어서도 셀 수 없다
+        return None
+    if n == 0:                                       # 센 것이 없으면 마지막 부호도 없고, 세는 부호의 기록일 수 없다
+        return (0, None) if last is None and state not in COUNTED_CODES else None
+    if not isinstance(last, str) or last not in COUNTED_CODES:
+        return None
+    if state in COUNTED_CODES and last != state:     # 세는 부호의 기록은 자기 부호가 마지막이다
+        return None
+    return n, last
+
+
+def _hold_rec(section, date, rid, state, carried):
+    """세움 기록과 「세는 규칙으로 세울까」 — carried 는 _carried 의 값(None = 셀 수 없다). 사람 손 부호는 cmd_hold 가 본다."""
+    counted = state in COUNTED_CODES
+    if carried is None:
+        attempt, last, stop = None, None, counted    # 모르면 0 으로 적지 않는다. 세는 실패는 막는 쪽
+    elif counted:
+        attempt, last = carried[0] + 1, state
+        stop = state == carried[1] or attempt >= MAX_COUNTED
+    else:
+        (attempt, last), stop = carried, False       # 한도·사람 손·판정 뒤 부호는 횟수를 그대로 옮긴다
+    rec = {'section': section, 'date': date,
+           'request_id': rid if isinstance(rid, str) and RID_RE.fullmatch(rid) else None,
+           'state': state, 'reason': PUBLIC_REASON.get(state, ''), 'hold': True,
+           'recorded_at': __import__('datetime').datetime.now(
+               __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+           'attempt': attempt, 'last_counted': last}
+    return rec, stop
+
+
+def _iso_date(text):
+    import datetime
+    import re
+    if not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', text):      # fullmatch — 줄바꿈이 붙은 값도 거른다
+        raise argparse.ArgumentTypeError('YYYY-MM-DD')
+    try:
+        datetime.date.fromisoformat(text)
+    except ValueError:
+        raise argparse.ArgumentTypeError('YYYY-MM-DD')
+    return text
 
 
 def cmd_hold(a):
@@ -330,19 +436,22 @@ def cmd_hold(a):
     state = a.state or str(status.get('state'))
     if state not in NOT_RUN and state not in HOLD_CODES:
         state = 'recovery_needed'          # 모르는 값·검토가 온 뒤의 실패는 막는 쪽
-    rid = status.get('request_id')
-    rec = {'section': a.section, 'date': a.date,
-           'request_id': rid if isinstance(rid, str) and __import__('re').fullmatch(r'[a-z]{2}-[0-9-]{10}-[0-9a-f]{12}', rid) else None,
-           'state': state, 'reason': PUBLIC_REASON.get(state, ''), 'hold': True,
-           'recorded_at': __import__('datetime').datetime.now(
-               __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')}
+    # 센다 — --push 로 부를 때만(그래야 다음 런이 이 횟수를 본다). push 없이는 M 의 동작 그대로(원격을 읽지 않는다).
+    # 앞 기록은 **기록을 올리는 바로 그 받기**에서 읽는다(push_record 가 받을 때마다 build 를 부른다) — 따로 받으면
+    # 「읽기만 실패하고 올리기는 성공」해 실제 횟수를 덮는 틈이 생긴다(codex 구현 2회차 ④).
     folder = os.path.join(ROOT, 'reviews', 'prepublish', a.section)
     os.makedirs(folder, exist_ok=True)
     path = os.path.join(folder, f'{a.date}.json')
-    _write(path, rec)
-    lock = 'release' if state in NOT_RUN else f'hold:{state}'
-    saved = 'none'
-    if lock != 'release':
+    made = {}
+
+    def build(raw, readable=True):
+        carried = _carried(raw, a.section, a.date) if readable else None
+        made['rec'], made['stop'] = _hold_rec(a.section, a.date, status.get('request_id'), state, carried)
+        _write(path, made['rec'])
+        # 한도(limit)는 읽지 못한 기록을 덮어쓰지 않는다 — 횟수를 지우지 않게. 올리지 않고 release 한다.
+        return not (carried is None and state in WAIT_CODES)
+
+    def keep_materials():
         # 판정을 시작한 글 — 사람이 이어 고칠 재료를 비공개 레포에만 둔다(세션이 끝나면 임시 폴더는 사라진다).
         # 검토 답(codex 문장)과 고치던 판이 들어 있다 — 공개 레포에는 개수와 부호뿐이다. 실패해도 세우는 것은 그대로.
         files = {}
@@ -352,22 +461,49 @@ def cmd_hold(a):
                 files[name] = os.path.join(a.dir, name)
         if a.html and os.path.isfile(a.html):
             files['current.html'] = a.html
-        rid_dir = rec['request_id'] or 'no-request'
+        rid = status.get('request_id')
+        rid_dir = rid if isinstance(rid, str) and RID_RE.fullmatch(rid) else 'no-request'
         try:
             submit_mod.upload({f'holds/{a.section}/{a.date}/{rid_dir}/{k}': v for k, v in files.items()},
                               submit_mod.HOLDS_BRANCH, f'hold {a.section} {a.date} {state}')
-            saved = 'private'
-        except (submit_mod.SubmitError, OSError):
-            saved = 'failed'
+            return 'private'
+        except Exception:                            # 응답 꼴 오류 등 무엇이든 — lock= 줄에 닿아야 세움이 선다
+            return 'failed'
+    saved = 'none'
+    if not a.push:
+        build(None)
+    elif state not in NOT_RUN:                       # 로컬 기록 → 재료 → 공개 기록(M 의 순서). 횟수는 받은 뒤 다시 쓴다
+        _write(path, _hold_rec(a.section, a.date, status.get('request_id'), state, None)[0])
+    if state not in NOT_RUN:
+        saved = keep_materials()                     # 판정 뒤 부호는 세움이 이미 정해졌다 — M 의 순서(재료 먼저) 그대로
     pushed = 'skipped'
     if a.push:
         try:
-            push_record(ROOT, os.path.relpath(path, ROOT), f'Hold {a.date} brief (prepub {state})')
-            pushed = 'ok'
-        except RecordPushError as exc:
+            if push_record(ROOT, os.path.relpath(path, ROOT), f'Hold {a.date} brief (prepub {state})', build=build):
+                pushed = 'ok'
+        except Exception as exc:
+            # 받기·올리기의 어떤 실패든(git 시간 초과·실행 실패 포함) 여기서 멈추면 재료 저장과 lock= 줄에 닿지 못한다
             pushed = 'failed'
             print(f'prepub: hold record push failed — {str(exc)[:160]}')
-    print(f"prepub: held {os.path.relpath(path, ROOT)} state={state} materials={saved} pushed={pushed} lock={lock}")
+            if 'rec' not in made:                    # 받지도 못했다 — 로컬 기록은 「모름」
+                made['rec'], made['stop'] = _hold_rec(a.section, a.date, status.get('request_id'), state, None)
+                try:
+                    _write(path, made['rec'])
+                except OSError:
+                    pass
+            if state in COUNTED_CODES:
+                made['stop'] = True                  # 다음 런이 이 횟수를 못 본다 — 셀 수 없으면 막는 쪽
+    attempt = made['rec']['attempt']
+    if state in NOT_RUN:
+        # 세움은 --push 로 부를 때만 — push 없이 부른 hold 는 M 그대로 release 다(세지 못하니 세울 근거도 없다)
+        stop = a.push and (made['stop'] or state in HUMAN_CODES)
+        lock = 'hold:recovery_needed' if stop else 'release'
+        if stop:
+            saved = keep_materials()
+    else:
+        lock = f'hold:{state}'
+    print(f"prepub: held {os.path.relpath(path, ROOT)} state={state} attempt={attempt} "
+          f"materials={saved} pushed={pushed} lock={lock}")
     return 0
 
 
@@ -375,11 +511,14 @@ class RecordPushError(Exception):
     pass
 
 
-def push_record(root, rel, message, tries=3, run=None):
+def push_record(root, rel, message, tries=3, run=None, build=None):
     """보류 기록 **한 파일만** 바뀐 커밋을 origin/main 위에 지어 main 에 민다(codex 구현 1회차 #1).
 
     루틴의 인덱스·로컬 커밋은 쓰지 않는다 — 문체 마감 B 가 `git add -A` 한 뒤이거나 STEP 3 의 발행 커밋을 이미 만든 뒤에
     세워도, 올라가는 것은 origin/main 의 나무 + 이 파일뿐이다. 거절되면 다시 받아 그 위에 다시 짓는다.
+
+    build 를 주면 받을 때마다 `build(그 받기의 같은 파일 글자 또는 None)` 을 불러 파일을 다시 쓰게 한다 — 읽은 판과
+    올리는 바탕이 늘 같은 커밋이다. build 가 거짓을 돌려주면 올리지 않고 None 을 돌려준다.
     """
     import subprocess
     import tempfile
@@ -387,13 +526,31 @@ def push_record(root, rel, message, tries=3, run=None):
     run = run or subprocess.run
 
     def git(*args, env=None):
-        out = run(['git', '-C', root, *args], capture_output=True, text=True, env=env, timeout=60)
+        out = run(['git', '-C', root, *args], capture_output=True, encoding='utf-8', errors='replace', env=env,
+                  timeout=60)
         if out.returncode:
             raise RecordPushError(f"git {args[0]}: {(out.stderr or '').strip()[-200:]}")
         return (out.stdout or '').strip()
+    sent = None
     for attempt in range(tries):
         git('fetch', '-q', 'origin', 'main')
         base = git('rev-parse', 'FETCH_HEAD')
+        if sent and base == sent:
+            return sent                              # 앞 push 가 반영됐는데 실패로 돌아왔다 — 다시 세지 않는다
+        if build is not None:
+            entry = git('ls-tree', base, '--', rel).split()      # '<mode> <type> <sha> <path>' 또는 빈 줄
+            if not entry:
+                go = build(None)
+            elif entry[1] != 'blob':
+                go = build(None, readable=False)
+            else:
+                # 바이트 그대로 읽는다 — git() 처럼 다듬으면(.strip) 앞뒤에 붙은 글자가 사라져 모르는 기록이 읽힌다
+                got = run(['git', '-C', root, 'cat-file', 'blob', entry[2]], capture_output=True, timeout=60)
+                # 읽기만 실패하면 「셀 수 없음」으로 짓는다 — 판정 뒤 부호의 공개 기록은 M 처럼 그대로 올라간다(5회차 ⑥).
+                # 세는 실패는 셀 수 없으니 세움, 한도는 build 가 올리지 않는다.
+                go = build(got.stdout) if got.returncode == 0 else build(None, readable=False)
+            if not go:
+                return None
         blob = git('hash-object', '-w', os.path.join(root, rel))
         fd, index = tempfile.mkstemp(prefix='prepub-hold-index-')
         os.close(fd)
@@ -411,9 +568,10 @@ def push_record(root, rel, message, tries=3, run=None):
             raise RecordPushError(f'기록 밖 파일이 섞였다: {changed[:5]}')
         commit = git('commit-tree', tree, '-p', base, '-m', message)
         out = run(['git', '-C', root, 'push', '-q', 'origin', f'{commit}:refs/heads/main'],
-                  capture_output=True, text=True, timeout=60)
+                  capture_output=True, encoding='utf-8', errors='replace', timeout=60)
         if out.returncode == 0:
             return commit
+        sent = commit
         if attempt == tries - 1:
             raise RecordPushError(f"push: {(out.stderr or '').strip()[-200:]}")
         time.sleep(2 * (attempt + 1))
@@ -521,7 +679,7 @@ def main(argv=None):
     p = sub.add_parser('hold')
     p.add_argument('--dir', required=True)
     p.add_argument('--section', required=True, choices=('us', 'kr'))
-    p.add_argument('--date', required=True)
+    p.add_argument('--date', required=True, type=_iso_date)   # 공개 기록의 경로·칸·커밋 제목에 실린다
     p.add_argument('--state', default=None, choices=('recovery_needed', 'style_abort', 'stale_html', 'mark_failed'))
     p.add_argument('--html', default=None, help='지금 고치던 판 — 판정을 시작한 글이면 비공개 레포에 함께 둔다')
     p.add_argument('--push', action='store_true', help='보류 기록 한 파일만 든 커밋을 origin/main 위에 지어 민다')

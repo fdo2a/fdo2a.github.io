@@ -10,7 +10,6 @@ Exit 2 = 미완료(2026-11-17): 수집 자료(kr_stance_eval·kr_top_value·kr_i
 읽히지 않는다 — 재수집. 작성자가 낸 원장(--next)이 없거나 틀린 것은 위반(1)이다.
 """
 import argparse
-import json
 import os
 import sys
 
@@ -20,11 +19,7 @@ from kr import stance as kr_stance          # noqa: E402
 from kr.stance_gate import check, liquidity_index, parse_day   # noqa: E402
 
 
-def _load(path):
-    if not path or not os.path.exists(path):
-        return None
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
+from common.jsonfile import load_json_if_exists as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _need(path):

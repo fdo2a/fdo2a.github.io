@@ -21,12 +21,7 @@ from fund.gate import check  # noqa: E402
 FILES = {'us': 'fund_board.json', 'kr': 'kr_fund_view.json'}
 
 
-def _load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except (OSError, ValueError):
-        return None
+from common.jsonfile import load_json_or_none as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def main(argv=None):

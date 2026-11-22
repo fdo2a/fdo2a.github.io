@@ -1,19 +1,18 @@
-"""발행본의 산문만 꺼내 주고, 윤문된 것을 제자리에 돌려놓는다.
+"""발행본의 산문만 꺼내 주고, 고친 것을 제자리에 돌려놓는다.
 
-STEP 2.5(AI 티 제거)에서 쓴다. `humanize-korean` 스킬은 텍스트를 받아 마크다운을
-내놓지 HTML을 고쳐 주지 않는다. 그 사이를 사람이 손으로 메우면 — 문단을 세어 가며
-되꽂으면 — 조용히 틀어진다. 문단 **수**가 같아도 두 문단이 자리를 바꾸면 수치 멀티셋은
-그대로라 verify_post를 통과한다. 그래서 셈이 아니라 **이름**으로 맞춘다.
+처음엔 STEP 2.5(AI 티 제거, 2026-10-01 루틴에서 뺌)를 위해 만들었다. 지금은 발행 뒤 codex 문체 수정
+(`review/style_pass`, 반영은 꺼져 있다)·문체 마감(`close/guard`)·발행 전 검토 분류(`prepub/split`)·번역투 점검이
+여기 부품을 쓴다. 문단 **수**가 같아도 두 문단이 자리를 바꾸면 수치 멀티셋은 그대로라 verify_post 를 통과한다.
+그래서 셈이 아니라 **이름**으로 맞춘다.
 
 계약:
 
 - `extract()`가 손댈 수 있는 `<p>`에만 `P001` 같은 이름을 붙여 텍스트로 뽑고, 원문과
   인라인 태그를 사이드카에 적어 둔다. 표 안의 문단, 캡션, 에디터 노트는 애초에 뽑지
   않는다 — 넘기지 않은 것은 훼손될 수 없다.
-- `reinsert()`는 이름으로 되꽂는다. 이름이 빠졌거나·겹치거나·모르는 이름이 왔거나,
-  인라인 태그가 하나라도 사라졌거나, **그 문단의 숫자가 하나라도 달라졌으면** 통째로
-  거부한다. 순서는 검사할 필요조차 없다 — 이름이 자리를 정하므로.
-- 거부는 예외로 나가고, 호출자는 아무것도 쓰지 않는다.
+- `reinsert_partial()`은 이름으로 되꽂는다. 문단마다 `_check_one`(이름·인라인 태그·숫자)과
+  `_check_strict`(수치 순서·방향·부정어·고유명)를 보고, **걸린 문단만 원문으로 둔 채** 나머지를 싣는다.
+  하나라도 어긋나면 통째로 거부하던 옛 `reinsert()` 는 시험 도우미로 옮겼다(2026-11-22).
 
 Pure — 문자열을 받아 문자열을 돌려준다. 파일은 부르는 쪽이 만진다(옛 CLI ~~`scripts/humanize_prose.py`~~ 는 2026-11-22 에 지웠다).
 """
@@ -376,41 +375,6 @@ def extract(html):
     return '\n\n'.join(items) + '\n', {'fingerprint': fingerprint(html), 'items': sidecar}
 
 
-def parse_payload(text):
-    """윤문된 텍스트를 이름 → 문단으로. 마크다운이 섞여 오면 거부한다."""
-    out, pid, buf = {}, None, []
-
-    def flush():
-        if pid is None:
-            return
-        body = ' '.join(' '.join(buf).split())
-        if not body:
-            raise ProseSwapError('%s 문단이 비어서 돌아왔다' % pid)
-        if pid in out:
-            raise ProseSwapError('%s 이름이 두 번 나왔다' % pid)
-        out[pid] = body
-
-    for line in text.splitlines():
-        m = _ID_RE.match(line.strip())
-        if m:
-            flush()
-            pid, buf = m.group(1), []
-            continue
-        if pid is None:
-            if line.strip() and not line.strip().startswith('<!--'):
-                raise ProseSwapError('이름 없는 텍스트가 앞에 붙어 있다: %r' % line.strip()[:40])
-            continue
-        if line.strip().startswith('<!-- HUMANIZE-SUMMARY'):
-            break
-        if _MD_LINE_RE.match(line) or _MD_INLINE_RE.search(line):
-            raise ProseSwapError('%s 에 마크다운 문법이 섞였다: %r' % (pid, line.strip()[:40]))
-        if '<' in line or '>' in line:
-            raise ProseSwapError('%s 에 HTML이 섞였다: %r' % (pid, line.strip()[:40]))
-        buf.append(line)
-    flush()
-    if not out:
-        raise ProseSwapError('되꽂을 문단이 하나도 없다')
-    return out
 
 
 def _check_one(pid, body, known):
@@ -435,22 +399,6 @@ def _check_one(pid, body, known):
     return _unmask(body, rec['tags'])
 
 
-def reinsert(html, payload_text, sidecar):
-    """이름으로 되꽂는다. 하나라도 어긋나면 아무것도 쓰지 않고 예외."""
-    if sidecar.get('fingerprint') != fingerprint(html):
-        raise ProseSwapError('사이드카가 이 HTML에서 뽑힌 것이 아니다')
-    rewritten = parse_payload(payload_text)
-    known = sidecar['items']
-    unknown = sorted(set(rewritten) - set(known))
-    if unknown:
-        raise ProseSwapError('모르는 이름이 왔다: %s' % ', '.join(unknown))
-    missing = sorted(set(known) - set(rewritten))
-    if missing:
-        raise ProseSwapError('돌아오지 않은 문단이 있다: %s' % ', '.join(missing))
-
-    new_inner = {pid: _check_one(pid, body, known) for pid, body in rewritten.items()}
-
-    return _splice(html, new_inner)
 
 
 def _splice(html, new_inner):

@@ -11,7 +11,6 @@ Exit 2 = 미완료: `auctions.json` 이 없거나 읽히지 않거나 수집 실
 """
 
 import argparse
-import json
 import os
 import sys
 
@@ -21,12 +20,7 @@ from verification.inputs import enforcing  # noqa: E402 — 1a 를 켰는가(꺼
 from us.auction_gate import BadBook, check  # noqa: E402
 
 
-def load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        return None
+from common.jsonfile import load_json_missing_none as load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _main_1a():

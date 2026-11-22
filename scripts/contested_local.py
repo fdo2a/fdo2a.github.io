@@ -49,12 +49,7 @@ def _git(cwd, *args, check=True, timeout=120):
     return p.stdout.strip()
 
 
-def _load(path):
-    try:
-        with open(path, encoding='utf-8') as fh:
-            return json.load(fh)
-    except (OSError, ValueError):
-        return None
+from common.jsonfile import load_json_or_none as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
 
 def _save(path, payload):
