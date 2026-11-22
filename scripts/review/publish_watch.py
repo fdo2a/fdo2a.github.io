@@ -29,6 +29,8 @@ import hashlib
 import importlib.util
 import json
 import os
+import secrets
+import sys
 import tempfile
 import re
 from datetime import date, datetime, timedelta, timezone
@@ -58,6 +60,43 @@ OVERFLOW_TEXT = ('[발행 알림] 알림 일부 대기 중 · 확인 필요\n한
 _ID = re.compile(r'^[0-9a-f]{32}$')
 _HASH = re.compile(r'^[0-9a-f]{64}$')
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+# ── 글 막힘(즉시 알림, 2026-11-22 — 설계 instant_telegram v1.4, spec 2026-11-22-prepub-hold.md 「글 막힘 알림」) ──
+# 대상 섹션. 발행 전 검토가 붙는 섹션이 생기면 여기에 한 줄을 더한다 — key·이름표·글 경로는 섹션 공통이다.
+HOLD_SECTIONS = ('us',)
+HOLD_DIR = 'reviews/prepublish/{section}'
+HOLD_WINDOW = timedelta(days=7)               # 파일 이름의 날짜가 오늘(KST)에서 7일 안인 것만 본다
+HOLD_SHIP = '_hold_ship'                      # 이번 실행이 살아 있다고 확인한 막힘 사건 id — 상태 파일에 저장하지 않는다
+# 부호 → 이유(닫힌 표). 기록의 `reason` 글자는 옮기지 않는다. 집합은 prepub_review 의 NOT_RUN ∪ HOLD_CODES 와 같다(시험).
+HOLD_REASON = {
+    'submit_failed': '초안을 올리거나 검토를 띄우지 못했어요', 'timeout': '마감까지 검토가 오지 않았어요',
+    'limit': 'codex 사용 한도', 'failed': '검토 실행이 실패했어요', 'mismatch': '다른 초안의 검토 결과가 왔어요',
+    'not_reviewed': 'codex 가 검토하지 못했어요', 'suspicious_output': '검토 답이 이상해 버렸어요(인코딩 덩어리)',
+    'sandbox_failed': '검토 샌드박스가 실패했어요', 'manifest_mismatch': '검토 묶음의 해시가 맞지 않아요',
+    'auth_missing': '검토 로그인 비밀값이 없어요', 'bad_input': '검토 입력 형식이 틀렸어요',
+    'no_status': '검토 상태 파일이 없어요', 'fallback': '검토 상태를 알 수 없어요',
+    'stale_html': '기다리는 사이 초안이 바뀌었어요', 'mark_failed': '판정 중 표시를 달지 못해 판정하지 않았어요',
+    'recovery_needed': '받아들인 수정을 반영하지 못했어요', 'style_abort': '문체 마감이 중단을 요구했어요',
+    'facts_unmarked': '정확성 판정 완료 표시가 없어요',
+}
+HOLD_NEXT_HEAD = {'retry': '자동 재시도 예정', 'person': '사람 확인 필요'}
+HOLD_NEXT_TEXT = {'retry': '재시도 루틴이 다음 차례에 처음부터 다시 써요(언제인지는 기록에 없어요)',
+                  'person': '자동으로 다시 쓰지 않아요 — 원인을 고친 뒤 잠금을 풀어야 해요(unhold)'}
+HOLD_UNKNOWN = '?'
+# 서명 = 「state|next」 — 검증한 부호와 고정 표시(?)만으로 짓는다(상태 가지는 공개다 — 기록의 글자를 남기지 않는다)
+_HOLD_SIGS = frozenset(f'{a}|{b}' for a in (*HOLD_REASON, HOLD_UNKNOWN) for b in (*HOLD_NEXT_TEXT, HOLD_UNKNOWN))
+_HOLD_BLIND = re.compile(r'\?\|\?\|[0-9a-f]{16}')   # 못 읽은 기록의 서명 — 뒤는 git blob id 앞 16자(바이트가 바뀌면 바뀐다)
+# JSON 토큰 하나(앞 공백 포함): 문자열 / 숫자 / true·false·null / 구두점. 문법은 RFC 8259 그대로 — NaN·Infinity 는 받지 않는다.
+_HOLD_TOKEN = re.compile(
+    r'[ \t\n\r]*(?:(?P<s>"[^"\\\x00-\x1f]*(?:\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4})[^"\\\x00-\x1f]*)*")'
+    r'|(?P<n>-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)|(?P<l>true|false|null)|(?P<p>[\[\]{},:]))')
+_HOLD_LITERAL = {'true': True, 'false': False, 'null': None}
+_HOLD_NUM = type('_Num', (), {'__repr__': lambda self: '<숫자>'})()   # 변환하지 않은 숫자 — 어떤 값과도 같지 않다
+_HOLD_KEY = re.compile(r'hold:(' + '|'.join(map(re.escape, HOLD_SECTIONS)) + r'):(\d{4}-\d{2}-\d{2})')
+_HOLD_FILE = re.compile(r'(\d{4}-\d{2}-\d{2})\.json')
+_BLOB = re.compile(r'[0-9a-f]{40,64}')
+_HOLD_STAMP = re.compile(r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z')
+_BORN = re.compile(r'[0-9a-f]{32}')
 
 
 class StateError(Exception):
@@ -96,12 +135,94 @@ def load_state(path):
     return loads_state(raw)
 
 
-def loads_state(raw):
-    """바이트·문자열에서 — `git show origin/alerts-state:verify_publish.json` 의 출력을 그대로 받는다."""
+_LOOSE = re.compile(rb'"[^"\\]*(?:\\.[^"\\]*)*"|[\[\]{},:]', re.S)   # 문자열 하나 또는 구두점 — 문법은 따지지 않는다
+
+
+def _split_hold_fields(raw):
+    """상태 바이트 → (막힘 칸 값 자리를 null 로 바꾼 바이트, 검증을 지난 {holds, born} 또는 None). 가를 수 없으면 None.
+
+    막힘 칸(`holds`·`born`)은 공용 해석 **전에** 떼어 따로 읽는다. 여기서는 맨 위 층 객체에서 두 칸 값의 **바깥 경계만**
+    찾는다(문자열과 괄호 깊이만 센다 — 문법·UTF-8 은 보지 않는다). 그래서 그 칸 안이 어떻게 틀렸든(남는 쉼표·NaN·긴 숫자·
+    깊은 중첩·같은 칸 두 번·깨진 바이트) 나머지 상태의 해석·검증·저장에 닿지 않는다(codex 구현 3-5회차 #9, 설계 §14-1).
+    나머지 바이트는 종전 그대로 공용 해석기가 읽는다 — 막힘 칸 밖의 손상은 종전대로 상태 전체 손상이다.
+    떼어 낸 두 칸은 둘 다 한 번씩 있고 `_hold_ok` 를 지날 때만 돌려준다 — 아니면 둘 다 버린다(`_hold_state` 가 새로 만든다)."""
+    depth, want, key, start, spans = 0, 'open', None, None, []
+    for m in _LOOSE.finditer(raw):
+        c = m.group()
+        if depth == 0:
+            if c != b'{' or want != 'open' or raw[:m.start()].strip(b' \t\n\r'):
+                return None                             # 맨 위 층이 객체 하나가 아니다
+            depth, want = 1, 'key'
+        elif depth == 1 and want == 'key':
+            if c == b'}':
+                depth, want = 0, 'closed'
+            elif c[:1] == b'"':
+                key, want = c, 'colon'
+            else:
+                return None
+        elif depth == 1 and want == 'colon':
+            if c != b':':
+                return None
+            start, want = m.end(), 'value'
+        elif c in (b'{', b'['):
+            depth += 1
+        elif c in (b'}', b']', b',') and depth == 1:    # 맨 위 층의 값 하나가 여기서 끝났다
+            if key in (b'"holds"', b'"born"'):
+                spans.append((key, start, m.start()))
+            depth, want = (1, 'key') if c == b',' else (0, 'closed')
+            if c == b']':
+                return None
+        elif c in (b'}', b']'):
+            depth -= 1
+    if want != 'closed' or depth:
+        return None
+    rest, got = raw, {}
+    for _, i, j in reversed(spans):
+        rest = rest[:i] + b' null ' + rest[j:]
+
+    def pairs_once(items):
+        d = dict(items)
+        if len(d) != len(items):
+            raise ValueError('duplicate key')
+        return d
     try:
-        obj = json.loads(raw.decode('utf-8') if isinstance(raw, bytes) else raw)
+        for key, i, j in spans:
+            name = key[1:-1].decode('ascii')
+            if name in got:
+                raise ValueError('duplicate key')
+            got[name] = json.loads(raw[i:j].decode('utf-8'), object_pairs_hook=pairs_once)
+        if not _hold_ok(got.get('holds'), got.get('born')):
+            got = None
+    except Exception:  # noqa: BLE001 — 막힘 칸만 못 읽었다
+        got = None
+    return rest, got
+
+
+def loads_state(raw):
+    """바이트·문자열에서 — `git show origin/alerts-state:verify_publish.json` 의 출력을 그대로 받는다.
+    돌려주는 상태에는 막힘 칸이 **검증을 지난 채로 둘 다 있거나 둘 다 없다**."""
+    try:
+        try:
+            split = _split_hold_fields(raw if isinstance(raw, bytes) else raw.encode('utf-8'))
+        except Exception:  # noqa: BLE001 — 가르지 못하면 종전 길(공용 해석)로
+            split = None
+        if split is None:
+            obj = json.loads(raw.decode('utf-8') if isinstance(raw, bytes) else raw)
+        else:
+            obj = json.loads(split[0].decode('utf-8'))
     except (ValueError, UnicodeDecodeError) as exc:
         raise StateError(f'{type(exc).__name__}: {exc}') from exc
+    if isinstance(obj, dict):
+        held = split[1] if split is not None else {k: obj[k] for k in ('holds', 'born') if k in obj}
+        if split is None:
+            try:
+                held = held if _hold_ok(held.get('holds'), held.get('born')) else None
+            except Exception:  # noqa: BLE001
+                held = None
+        obj.pop('holds', None)
+        obj.pop('born', None)
+        if held:
+            obj.update(held)
     try:
         _validate(obj)
     except (TypeError, ValueError) as exc:
@@ -109,8 +230,13 @@ def loads_state(raw):
     return obj
 
 
+def _saved(st):
+    """저장하는 상태 — 이번 실행만의 값(HOLD_SHIP)은 빼고. 다음 실행이 지난 실행의 「살아 있음」을 물려받지 않게."""
+    return {k: v for k, v in st.items() if k != HOLD_SHIP}
+
+
 def dumps_state(st):
-    return json.dumps(st, ensure_ascii=False, indent=1, sort_keys=True)
+    return json.dumps(_saved(st), ensure_ascii=False, indent=1, sort_keys=True)
 
 
 def _validate(obj):
@@ -168,7 +294,7 @@ def save_state(path, st):
     fd, tmp = tempfile.mkstemp(dir=d, prefix='.publish-')
     try:
         with os.fdopen(fd, 'w', encoding='utf-8') as fh:
-            json.dump(st, fh, ensure_ascii=False, indent=1, sort_keys=True)
+            json.dump(_saved(st), fh, ensure_ascii=False, indent=1, sort_keys=True)
             fh.flush()
             os.fsync(fh.fileno())
         os.replace(tmp, path)
@@ -476,6 +602,7 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
     who=V.GITHUB(2.5단계): 문장의 확인 주체가 GitHub 이고, pending 은 「outbox 에 실려 전송됐을 수 있음」이다 —
     대기 중 미발행 경고를 취소하지 않는다(설계 v3 #1)."""
     github = who == V.GITHUB
+    st.pop(HOLD_SHIP, None)                          # 막힘 사건은 이번 훑기가 확인한 것만 싣는다 — 일찍 돌아가는 갈래 포함
     if not fetched:
         _fetch_failed(st, now, 'git fetch 실패')
         return st
@@ -614,6 +741,12 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
                                   f'올라왔다가 지금은 없어요\n{_deleted_by(root, tip, path)} 루틴·정정 이력 확인', now,
                  extra=tip)
 
+    try:
+        _hold_scan(st, root, tip, tree, now, quiet)
+    except Exception as exc:  # noqa: BLE001 — 훑지 못한 실행: 막힘을 닫지도 싣지도 않는다. 기존 판정은 그대로 간다
+        st.pop(HOLD_SHIP, None)
+        print(f'보류 기록을 훑지 못했다 — {type(exc).__name__}', file=sys.stderr)
+
     if reset and rid:
         ev = next(e for e in st['events'] if e['id'] == rid)
         # 아침 요약은 11/19 부터 발행 전 기록 내역을 싣지 않는다 — 그 줄을 가리키지 않는다
@@ -633,8 +766,222 @@ def step(st, root, now, fetched, ref=REF, who=V.MAC):
     st['fetch'] = {}
     st['last_seen'], st['last_ok'] = tip, now.isoformat()
     cutoff = now - KEEP_SENT
-    st['events'] = [e for e in st['events'] if e.get('status') not in ('sent', 'failed') or _closed_at(e) >= cutoff]
+    st['events'] = [e for e in st['events'] if (e.get('status') not in ('sent', 'failed') or _closed_at(e) >= cutoff)
+                    and not (_is_hold(e) and e.get('status') == 'cancelled' and _closed_at(e) < cutoff)]
     return st
+
+
+# ── 글 막힘 ───────────────────────────────────────────────────────────────
+
+def _is_hold(e):
+    """막힘 사건 — `hold:` key 와 회차 표시(`held`)가 둘 다 있을 때만. 기존 사건은 이 둘을 갖지 않는다."""
+    return str(e.get('key', '')).startswith('hold:') and type(e.get('held')) is int
+
+
+def _hold_notice(e):
+    """막힘 때문에 생긴 넘침 알림 — 다음 실행에도 기존 사건의 자리 계산에 끼지 않고, 막힘과 함께 남은 자리에만 실린다."""
+    return e.get('key') == OVERFLOW_KEY and e.get('held_overflow') is True
+
+
+def _hold_ok(holds, born):
+    """막힘 칸 둘의 닫힌 꼴 — 상태를 읽을 때(`loads_state`)와 훑을 때(`_hold_state`) 같은 검사를 쓴다."""
+    return bool(isinstance(born, str) and _BORN.fullmatch(born) is not None and isinstance(holds, dict) and all(
+        isinstance(k, str) and _HOLD_KEY.fullmatch(k) and _real_date(k.rsplit(':', 1)[1])
+        and isinstance(v, dict) and set(v) == {'n', 'sig', 'live'} and type(v['n']) is int and 0 <= v['n'] <= 10 ** 6
+        and isinstance(v['sig'], str) and (v['sig'] in _HOLD_SIGS or _HOLD_BLIND.fullmatch(v['sig']))
+        and type(v['live']) is bool
+        for k, v in holds.items()))
+
+
+def _hold_state(st):
+    """막힘 칸(`holds`·`born`)을 **따로** 검사한다 — 공용 `_validate` 에 넣으면 이 칸만 깨져도 상태 전체가 새로
+    시작한다(설계 §14-1). 깨졌으면(또는 처음이면) 둘을 함께 새로 만든다: 회차가 1 부터 다시 시작하니 `born` 도 새 값이어야
+    옛 사건과 번호가 겹치지 않는다."""
+    if not _hold_ok(st.get('holds'), st.get('born')):
+        st['holds'], st['born'] = {}, secrets.token_hex(16)     # 시각이 아니라 무작위 값 — 같은 초의 복구에서도 겹치지 않는다
+    return st['holds'], st['born']
+
+
+def _hold_when(at):
+    """검증한 `recorded_at` → 「M/DD HH:MM」(KST). 꼴·값이 틀리거나 바꾸다 넘치면 None."""
+    if not (isinstance(at, str) and _HOLD_STAMP.fullmatch(at)):
+        return None
+    try:
+        t = datetime.strptime(at, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone(KST)
+        return f'{t.month}/{t.day:02d} {t:%H:%M}'
+    except (ValueError, OverflowError):
+        return None
+
+
+def _json_top(text):
+    """JSON 글자 → 맨 위 층. 객체면 (`'{'`, [(칸, 값)…], [(값 시작, 값 끝)…]), 배열이면 (`'['`, [값…], None), 그 밖은
+    (None, 값, None). 안쪽 `{}`·`[]` 의 값은 None, 숫자는 0-99 의 정수만 값으로(나머지는 `_HOLD_NUM`). 못 읽으면 예외.
+
+    읽는 길은 하나다: 글자 전체를 **재귀 없이** 토큰 단위로 훑으며 JSON 문법을 끝까지 검사하고(괄호 짝·쉼표·콜론·문자열·숫자
+    꼴), 맨 위 층의 값만 꺼낸다. 크기·중첩 깊이·숫자 길이가 달라도 같은 길이고, 문법이 틀린 글자는 어디가 틀렸든 못 읽은
+    것이다(codex 구현 1-3회차 — 「너무 크면」「너무 깊으면」「숫자가 길면」「안쪽 괄호가 어긋나면」을 따로 다루다 뚫렸다).
+    쓰지 않는 값은 변환하지 않는다 — 긴 숫자가 읽기를 깨지 않는다."""
+    stack, pos, want = [], 0, 'value'            # want: value·first(값 또는 닫기)·key·firstkey·colon·after·end
+    kind0 = top = key = spans = None
+    while True:
+        m = _HOLD_TOKEN.match(text, pos)
+        if not m:
+            break
+        pos, kind, tok = m.end(), m.lastgroup, m.group(m.lastgroup)
+        if (kind != 'p' or tok in '{[') and want in ('value', 'first'):
+            if kind == 's':
+                val = json.loads(tok)             # 문자열 하나 — 중첩이 없다
+            elif kind == 'n':
+                val = int(tok) if len(tok) <= 2 and tok.isdigit() else _HOLD_NUM
+            elif kind == 'l':
+                val = _HOLD_LITERAL[tok]
+            else:
+                val = None
+            if not stack:
+                if kind == 'p':
+                    kind0, top, spans = tok, [], ([] if tok == '{' else None)
+                else:
+                    top = val
+            elif len(stack) == 1 and kind0 == '{':
+                top.append((key, val))
+                spans.append((m.start(kind), pos))
+            elif len(stack) == 1:
+                top.append(val)
+            if kind == 'p':
+                stack.append(tok)
+                want = 'firstkey' if tok == '{' else 'first'
+            else:
+                want = 'after' if stack else 'end'
+        elif kind == 's' and want in ('key', 'firstkey'):
+            if len(stack) == 1:
+                key = json.loads(tok)
+            want = 'colon'
+        elif tok == ':' and want == 'colon':
+            want = 'value'
+        elif tok == ',' and want == 'after':
+            want = 'key' if stack[-1] == '{' else 'value'
+        elif kind == 'p' and tok in '}]' and (want == 'after' or want == ('firstkey' if tok == '}' else 'first')) \
+                and stack and stack[-1] == ('{' if tok == '}' else '['):
+            stack.pop()
+            if len(stack) == 1 and kind0 == '{':
+                spans[-1] = (spans[-1][0], pos)   # 안쪽 값이 여기서 끝났다
+            want = 'after' if stack else 'end'
+        else:
+            raise ValueError('bad token')
+    if want != 'end' or text[pos:].strip(' \t\n\r'):
+        raise ValueError('not json')
+    return kind0, top, spans
+
+
+def _hold_top(body):
+    """기록 바이트 → 맨 위 층의 값(`_json_top`). 판정에 쓰는 칸(`hold`·`state`·`next`)이 두 번이면 어느 값이 맞는지
+    모른다 — 못 읽은 것이다. 쓰지 않는 칸이 두 번인 것은 읽기에 닿지 않는다(codex 구현 5회차 #4·#5)."""
+    kind, top, _ = _json_top(body.decode('utf-8'))
+    if kind != '{':
+        return top
+    names = [k for k, _ in top]
+    if any(names.count(k) > 1 for k in ('hold', 'state', 'next')):
+        raise ValueError('duplicate key')
+    return dict(top)
+
+
+def _hold_fields(body, blob):
+    """보류 기록 바이트 → 살아 있는 막힘이면 값(모르는 칸은 None)과 서명, 아니면 None. 결과는 셋뿐이다.
+
+    - 읽혔고 `hold` 가 true 이고 `state` 가 reviewed 가 아니다 → 살아 있다. 서명 = `state|next`(모르면 `?`).
+    - 읽혔고 그 밖이다(발행 기록·hold 아님·객체 아님) → 살아 있지 않다.
+    - **못 읽었다**(JSON·UTF-8 아님, 잘림, 같은 칸 두 번, 그 밖의 어떤 예외) → **살아 있다고 본다**, 값은 전부 모름.
+      글 없는 날짜의 보류 기록 자리에 못 읽는 파일이 있는 것부터 정상이 아니고, 잘린 세움 기록을 조용히 넘기는 쪽이
+      모름 알림 한 통보다 나쁘다. 서명에 blob id 를 붙여 **바이트가 바뀔 때만** 새 회차다(같은 바이트의 다시 push 는 아니다).
+      이 값은 상태에만 남고 알림 글에는 싣지 않는다."""
+    try:
+        rec = _hold_top(body)
+    except Exception:  # noqa: BLE001
+        return {'state': None, 'next': None, 'attempt': None, 'when': None,
+                'sig': f'{HOLD_UNKNOWN}|{HOLD_UNKNOWN}|{blob[:16]}'}
+    if not isinstance(rec, dict) or rec.get('hold') is not True or rec.get('state') == 'reviewed':
+        return None
+    state, nxt, att = rec.get('state'), rec.get('next'), rec.get('attempt')
+    state = state if isinstance(state, str) and state in HOLD_REASON else None
+    nxt = nxt if isinstance(nxt, str) and nxt in HOLD_NEXT_TEXT else None
+    return {'state': state, 'next': nxt, 'attempt': att if type(att) is int and 0 <= att <= 99 else None,
+            'when': _hold_when(rec.get('recorded_at')), 'sig': f'{state or HOLD_UNKNOWN}|{nxt or HOLD_UNKNOWN}'}
+
+
+def _hold_text(section, d, f):
+    """닫힌 표와 검증한 값만으로 짓는다 — 기록의 글자(reason·요청 id·그 밖의 칸)는 한 글자도 옮기지 않는다."""
+    return '\n'.join((
+        f'[글 막힘] {_label(section, d)} · {HOLD_NEXT_HEAD.get(f["next"], "다음 동작 모름")}',
+        '발행 전 검사를 끝내지 못해 글을 올리지 않았어요',
+        '이유: ' + (HOLD_REASON[f['state']] if f['state'] else '이유 부호를 읽지 못했어요'),
+        '다음: ' + (HOLD_NEXT_TEXT[f['next']] if f['next'] else '다음 동작은 기록에 없어요'),
+        (f'기록 {f["when"]} KST' if f['when'] else '기록 시각 모름') + ' · '
+        + (f'이 날짜의 센 실패 {f["attempt"]}번' if f['attempt'] is not None else '센 실패 수는 기록에 없어요')))
+
+
+def _hold_live(root, tip, tree, today):
+    """이번 판의 살아 있는 막힘 {key: (섹션, 날짜, 값)}. git 을 못 읽으면 GitError — 훑지 못한 실행이다."""
+    found = {}
+    for section in HOLD_SECTIONS:
+        folder = HOLD_DIR.format(section=section) + '/'
+        raw = V._git(root, 'ls-tree', '-z', tip, '--', folder)
+        for row in raw.decode('utf-8', 'replace').split('\0'):
+            meta, _, path = row.partition('\t')
+            parts = meta.split()
+            if len(parts) != 3 or parts[1] != 'blob' or not path.startswith(folder):
+                continue
+            m = _HOLD_FILE.fullmatch(path[len(folder):])       # 날짜는 파일 이름에서만
+            if not m or not _real_date(m.group(1)):
+                continue
+            d = m.group(1)
+            if not today - HOLD_WINDOW <= date.fromisoformat(d) <= today + timedelta(days=1):
+                continue
+            if V.post_path(section, d) in tree:                 # 그 날짜 글이 이 판에 있다 — 막힘이 아니다
+                continue
+            if not _BLOB.fullmatch(parts[2]):
+                raise V.GitError('ls-tree 줄을 읽지 못했다')
+            f = _hold_fields(V._git(root, 'cat-file', 'blob', parts[2]), parts[2])
+            if f is not None:
+                found[f'hold:{section}:{d}'] = (section, d, f)
+    return found
+
+
+def _hold_scan(st, root, tip, tree, now, quiet):
+    """글 막힘 사건(설계 §4.3). 회차 = 서명(state|next)이 바뀔 때만 +1, 사건 번호 = `held|<born>|<회차>`.
+    이번 훑기의 살아 있는 목록에 없는 막힘의 대기 사건은 닫고, 있는 것만 HOLD_SHIP 에 적는다(build_outbox 가 싣는다).
+    기존 사건·`sessions`·전송 확인은 읽지도 고치지도 않는다."""
+    today = now.astimezone(KST).date()
+    found = _hold_live(root, tip, tree, today)                  # 읽기 실패는 여기서 — 아래는 아무것도 바꾸지 않았다
+    holds, born = _hold_state(st)
+    cur = {}
+    for key, (section, d, f) in sorted(found.items()):
+        sig = f['sig']
+        h = holds.get(key)
+        if not (h and h['live'] and h['sig'] == sig):
+            n = (h['n'] if h else 0) + 1
+            used = {e.get('base') for e in st['events'] if e.get('key') == key}
+            while _base_id('missing', key, f'held|{born}|{n}') in used:
+                n += 1                                          # 회차 칸만 잃었을 때 — 이력에 남은 번호를 다시 쓰면 옛 전송 확인에 흡수된다
+            h = holds[key] = {'n': n, 'sig': sig, 'live': True}
+            if not quiet:                                       # 처음 실행(기준선)에는 보내지 않는다
+                extra = f'held|{born}|{h["n"]}'
+                add_event(st, 'missing', key, _hold_text(section, d, f), now, extra=extra)
+                base = _base_id('missing', key, extra)
+                for e in st['events']:
+                    if e.get('base') == base:
+                        e['held'] = h['n']
+        cur[key] = _base_id('missing', key, f'held|{born}|{h["n"]}')
+    for key, h in holds.items():
+        if key not in found:
+            h['live'] = False
+    for e in st['events']:
+        if _is_hold(e) and e.get('status') == 'pending' and cur.get(e['key']) != e.get('base'):
+            e['status'], e['closed'] = 'cancelled', now.isoformat()
+    cutoff = today - KEEP_SENT
+    for key in [k for k in holds if date.fromisoformat(k.rsplit(':', 1)[1]) < cutoff]:
+        del holds[key]
+    st[HOLD_SHIP] = [e['id'] for e in st['events']
+                     if _is_hold(e) and e.get('status') == 'pending' and cur.get(e['key']) == e.get('base')]
 
 
 def _closed_at(e):
@@ -694,19 +1041,31 @@ def dumps_outbox(doc):
 
 def build_outbox(st, now):
     """pending 사건을 계약 §1 모양으로. 상한을 넘으면 **자르지 않고 남겨 둔다**: 너무 긴 사건은 `oversize` 로 상태에만,
-    양이 넘은 사건은 pending 그대로(앞의 것이 빠지면 다음 실행에 실린다) — 그리고 `sys:overflow` 하나로 알린다."""
-    bad = None
+    양이 넘은 사건은 pending 그대로(앞의 것이 빠지면 다음 실행에 실린다) — 그리고 `sys:overflow` 하나로 알린다.
+
+    글 막힘 사건은 이번 실행이 살아 있다고 확인한 것(HOLD_SHIP)만, **기존 사건을 다 실은 뒤 남은 자리에** 싣는다 —
+    기존 사건의 계산은 막힘이 없을 때와 한 바이트도 다르지 않다. 막힘 때문에 생기는 넘침 알림도 남은 자리에 들어갈 때만
+    만든다(설계 §13-8·§14-3)."""
+    ship = set(st.get(HOLD_SHIP) or ())
+    bad = bad_hold = None
     for e in pending(st):
         if not (1 <= len(e['text']) <= MAX_TEXT and 1 <= len(e['key']) <= MAX_KEY):
             e['status'] = 'oversize'
-            bad = bad or e
+            if _is_hold(e):
+                bad_hold = bad_hold or e
+            else:
+                bad = bad or e
 
     def doc(events):
         return {'format': OUTBOX_FORMAT, 'generated_at': now.isoformat(), 'last_ok': st.get('last_ok'),
                 'last_seen': st.get('last_seen'), 'events': [_out(e) for e in events]}
 
-    over = [e for e in pending(st) if e['key'] == OVERFLOW_KEY]
-    cand = [e for e in pending(st) if e['key'] != OVERFLOW_KEY]
+    def fits(out):
+        return len(out['events']) <= MAX_EVENTS and len(dumps_outbox(out).encode('utf-8')) <= MAX_BYTES
+
+    over = [e for e in pending(st) if e['key'] == OVERFLOW_KEY and not _hold_notice(e)]
+    cand = [e for e in pending(st) if e['key'] != OVERFLOW_KEY and not _is_hold(e)]
+    hcand = [e for e in pending(st) if _is_hold(e) and e['id'] in ship]
     # 넘침 알림이 들어갈 자리를 먼저 잡고 잰다 — 그 알림의 id 는 「처음 남겨진 사건」에서 나오므로 몇 건이 실리는지 정해진 뒤에 만든다
     spare = {'id': '0' * 32, 'hash': text_hash(OVERFLOW_TEXT), 'key': OVERFLOW_KEY, 'kind': OVERFLOW_KIND,
              'text': OVERFLOW_TEXT, 'created': now.isoformat()}
@@ -715,13 +1074,41 @@ def build_outbox(st, now):
         new = (bool(bad) or n < len(cand)) and not over      # 한 번에 하나만 — 앞의 넘침 알림이 아직 안 나갔으면 더 만들지 않는다
         out = doc(over + cand[:n])
         out['events'] += [spare] if new else []
-        if (len(out['events']) <= MAX_EVENTS and len(dumps_outbox(out).encode('utf-8')) <= MAX_BYTES) or n == 0:
+        if fits(out) or n == 0:
             break
         n -= 1
     if new:
         add_event(st, OVERFLOW_KIND, OVERFLOW_KEY, OVERFLOW_TEXT, now, extra=(bad or cand[n])['id'])
     chosen = {e['id'] for e in cand[:n]}
-    return doc([e for e in st['events'] if e.get('status') == 'pending' and (e['id'] in chosen or e['key'] == OVERFLOW_KEY)])
+    hchosen = set()
+    hover = [e for e in pending(st) if _hold_notice(e)]
+    if n == len(cand) and (hcand or bad_hold or hover):      # 기존 사건이 다 실렸을 때만 — 남은 자리에
+        over = [e for e in pending(st) if e['key'] == OVERFLOW_KEY and not _hold_notice(e)]
+        head = over + cand
+        if not fits(doc(head + hover)):
+            hover = []                                       # 앞서 만든 막힘 넘침 알림도 자리가 없으면 다음에
+            hcand = []
+        m = len(hcand)
+        while True:
+            hnew = (bool(bad_hold) or m < len(hcand)) and not over and not hover
+            out = doc(head + hover + hcand[:m])
+            out['events'] += [spare] if hnew else []
+            if fits(out):
+                break
+            if m == 0:
+                hnew = False                                 # 넘침 알림 자리도 없다 — 기존 사건을 밀어내지 않는다
+                break
+            m -= 1
+        if hnew:
+            eid = add_event(st, OVERFLOW_KIND, OVERFLOW_KEY, OVERFLOW_TEXT, now, extra=(bad_hold or hcand[m])['id'])
+            for e in st['events']:
+                if eid and e['id'] == eid:
+                    e['held_overflow'] = True
+                    hover = [e]
+        hchosen = {e['id'] for e in hover + hcand[:m]}
+    first = [e for e in st['events'] if e.get('status') == 'pending' and not _is_hold(e) and not _hold_notice(e)
+             and (e['id'] in chosen or e['key'] == OVERFLOW_KEY)]
+    return doc(first + [e for e in st['events'] if e.get('status') == 'pending' and e['id'] in hchosen])
 
 
 # ── 2단계의 맥 전송(지금 진입점은 쓰지 않는다) ─────────────────────────────
@@ -783,6 +1170,9 @@ def _key_label(key):
     m = _SESSION_KEY.fullmatch(str(key))
     if m:
         return f'{_label(m.group(1), m.group(2))} 세션'
+    m = _HOLD_KEY.fullmatch(str(key))
+    if m and _real_date(m.group(2)):
+        return f'{_label(m.group(1), m.group(2))} 글 막힘'
     return '시스템 알림' if str(key).startswith('sys:') else '알 수 없는 항목'
 
 

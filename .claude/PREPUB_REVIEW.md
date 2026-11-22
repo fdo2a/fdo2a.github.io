@@ -124,6 +124,7 @@ STYLE_CLOSE A 가 끝나 `$H` 가 정해지면(approved 든 Z 든) `python3 scri
    같은 부호가 연달아 2번이거나 3번째면(`attempt=`) `hold:recovery_needed` 다. 한도(`limit`)는 세지 않고 늘 `release`.
 4. PushNotification: `[US 글 막힘] [DATE] · <기록의 reason> · 다음: <lock=release 면 「재시도 루틴이 처음부터 다시 쓴다」 | lock=hold 면 「사람 확인 필요」>`
    (`materials=` 값도). 그리고 **끝낸다** — STEP 2.6·3·3.5·4 를 하지 않는다.
+   (`pushed=ok` 면 그 기록 push 가 발행 감시를 깨워 텔레그램 「[글 막힘]」이 몇 분 안에 간다 — 다음 동작은 기록의 `next` 칸, 폰 알림은 예비로 그대로.)
 
 사람이 푸는 법(로컬): 비공개 `holds` 가지의 재료로 받아들인 수정을 살려 손으로 마무리하거나, 버리기로 정하면
 `bash scripts/ci/run_lock.sh unhold <키>` — 그 뒤 재시도가 처음부터 쓴다. 검토가 돌지 않아 세운 것(`attempt=`)을 풀 때는

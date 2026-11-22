@@ -337,8 +337,12 @@ SAME_TWICE, MAX_COUNTED = 2, 3                     # 같은 부호 연달아 2�
 
 # 세움 기록의 칸 — 쓰는 쪽(_hold_rec)과 읽는 쪽(_carried)이 같은 상수를 본다.
 HOLD_ORDER_M = ('section', 'date', 'request_id', 'state', 'reason', 'hold', 'recorded_at')   # 11/22 M 의 세움 기록
-HOLD_ORDER = HOLD_ORDER_M + ('attempt', 'last_counted')            # _hold_rec 가 쓰는 순서
-HOLD_KEYS_M, HOLD_KEYS = frozenset(HOLD_ORDER_M), frozenset(HOLD_ORDER)
+HOLD_ORDER = HOLD_ORDER_M + ('attempt', 'last_counted')            # 11/22 선행 묶음 ② 의 세움 기록
+# 11/22 즉시 알림(설계 instant_telegram v1.4 §4.2) — 닫힌 칸 `next` 하나를 더한 셋째 꼴. _hold_rec 는 이것만 쓴다.
+# 감시(publish_watch)가 이 칸만 보고 「자동 재시도」/「사람 확인」을 알린다 — 세는 규칙을 다시 계산하지 않는다.
+HOLD_ORDER_N = HOLD_ORDER + ('next',)
+HOLD_KEYS_M, HOLD_KEYS, HOLD_KEYS_N = frozenset(HOLD_ORDER_M), frozenset(HOLD_ORDER), frozenset(HOLD_ORDER_N)
+NEXT_VALUES = ('retry', 'person')                  # retry = lock=release, person = lock=hold:…
 RID_RE = __import__('re').compile(r'[a-z]{2}-[0-9-]{10}-[0-9a-f]{12}')
 STAMP_RE = __import__('re').compile(r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z')
 
@@ -361,7 +365,7 @@ def _carried(raw, section, date):
         rec = json.loads(text, object_pairs_hook=pairs)
         if text != _dumps(rec):                      # _write 가 쓰는 글자와 한 바이트도 다르지 않아야 한다
             return None
-        if tuple(rec) not in (HOLD_ORDER_M, HOLD_ORDER):     # 다시 직렬화는 읽은 순서를 따른다 — 순서는 따로 본다(5회차 ⑤)
+        if tuple(rec) not in (HOLD_ORDER_M, HOLD_ORDER, HOLD_ORDER_N):     # 다시 직렬화는 읽은 순서를 따른다 — 순서는 따로 본다(5회차 ⑤)
             return None
         return _carried_exact(rec, section, date)
     except Exception:
@@ -376,8 +380,10 @@ def _carried_exact(rec, section, date):
         return None
     # 발행 기록(`hold` 칸 없음)은 받지 않는다 — 이미 발행한 날짜에 또 세우는 일은 정상 흐름에 없고, 그 꼴(칸 20여 개의
     # 값)을 하나씩 따지는 검사는 회차마다 뚫렸다(codex 구현 3회차 ⑤). 셀 수 없음 = 세는 실패는 사람 손.
-    if keys not in (HOLD_KEYS_M, HOLD_KEYS):
+    if keys not in (HOLD_KEYS_M, HOLD_KEYS, HOLD_KEYS_N):
         return None
+    if keys == HOLD_KEYS_N and not (isinstance(rec['next'], str) and rec['next'] in NEXT_VALUES):
+        return None                                  # 셋째 꼴의 값 검사 — 횟수에는 들지 않는다
     if rec['hold'] is not True or (state not in NOT_RUN and state not in HOLD_CODES) \
             or rec.get('reason') != PUBLIC_REASON.get(state, ''):
         return None
@@ -400,8 +406,12 @@ def _carried_exact(rec, section, date):
     return n, last
 
 
-def _hold_rec(section, date, rid, state, carried):
-    """세움 기록과 「세는 규칙으로 세울까」 — carried 는 _carried 의 값(None = 셀 수 없다). 사람 손 부호는 cmd_hold 가 본다."""
+def _hold_rec(section, date, rid, state, carried, push=False):
+    """세움 기록과 「세는 규칙으로 세울까」 — carried 는 _carried 의 값(None = 셀 수 없다).
+
+    `next` 는 여기서 **한 번** 정한다(cmd_hold 의 lock= 이 이 값에서 나온다): 판정 뒤 부호 → person, 검토 미실행 부호는
+    `--push` 이고 (세는 규칙이 세움이거나 사람 손 부호)일 때만 person, 아니면 retry(`--push` 없는 hold 는 늘 retry).
+    """
     counted = state in COUNTED_CODES
     if carried is None:
         attempt, last, stop = None, None, counted    # 모르면 0 으로 적지 않는다. 세는 실패는 막는 쪽
@@ -416,6 +426,8 @@ def _hold_rec(section, date, rid, state, carried):
            'recorded_at': __import__('datetime').datetime.now(
                __import__('datetime').timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            'attempt': attempt, 'last_counted': last}
+    person = state not in NOT_RUN or bool(push and (stop or state in HUMAN_CODES))
+    rec['next'] = 'person' if person else 'retry'
     return rec, stop
 
 
@@ -446,7 +458,7 @@ def cmd_hold(a):
 
     def build(raw, readable=True):
         carried = _carried(raw, a.section, a.date) if readable else None
-        made['rec'], made['stop'] = _hold_rec(a.section, a.date, status.get('request_id'), state, carried)
+        made['rec'], made['stop'] = _hold_rec(a.section, a.date, status.get('request_id'), state, carried, a.push)
         _write(path, made['rec'])
         # 한도(limit)는 읽지 못한 기록을 덮어쓰지 않는다 — 횟수를 지우지 않게. 올리지 않고 release 한다.
         return not (carried is None and state in WAIT_CODES)
@@ -473,7 +485,7 @@ def cmd_hold(a):
     if not a.push:
         build(None)
     elif state not in NOT_RUN:                       # 로컬 기록 → 재료 → 공개 기록(M 의 순서). 횟수는 받은 뒤 다시 쓴다
-        _write(path, _hold_rec(a.section, a.date, status.get('request_id'), state, None)[0])
+        _write(path, _hold_rec(a.section, a.date, status.get('request_id'), state, None, a.push)[0])
     if state not in NOT_RUN:
         saved = keep_materials()                     # 판정 뒤 부호는 세움이 이미 정해졌다 — M 의 순서(재료 먼저) 그대로
     pushed = 'skipped'
@@ -486,7 +498,7 @@ def cmd_hold(a):
             pushed = 'failed'
             print(f'prepub: hold record push failed — {str(exc)[:160]}')
             if 'rec' not in made:                    # 받지도 못했다 — 로컬 기록은 「모름」
-                made['rec'], made['stop'] = _hold_rec(a.section, a.date, status.get('request_id'), state, None)
+                made['rec'], made['stop'] = _hold_rec(a.section, a.date, status.get('request_id'), state, None, a.push)
                 try:
                     _write(path, made['rec'])
                 except OSError:
@@ -495,8 +507,9 @@ def cmd_hold(a):
                 made['stop'] = True                  # 다음 런이 이 횟수를 못 본다 — 셀 수 없으면 막는 쪽
     attempt = made['rec']['attempt']
     if state in NOT_RUN:
-        # 세움은 --push 로 부를 때만 — push 없이 부른 hold 는 M 그대로 release 다(세지 못하니 세울 근거도 없다)
-        stop = a.push and (made['stop'] or state in HUMAN_CODES)
+        # lock= 은 기록의 next 에서 나온다(감시가 같은 값을 읽는다). 덮는 것은 하나뿐 — 기록 push 가 실패한 세는 실패는
+        # 세움이다(다음 런이 횟수를 못 본다). 그 기록은 main 에 없으니 감시가 읽을 일이 없다.
+        stop = made['rec']['next'] == 'person' or (pushed == 'failed' and state in COUNTED_CODES)
         lock = 'hold:recovery_needed' if stop else 'release'
         if stop:
             saved = keep_materials()

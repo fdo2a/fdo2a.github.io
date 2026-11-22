@@ -299,8 +299,9 @@ def test_a_crashing_record_push_still_saves_materials_and_prints_the_lock(tmp_pa
 
 def test_the_new_fields_are_closed_values(tmp_path, monkeypatch, capsys):
     _, rec = _hold(tmp_path, monkeypatch, capsys, 'timeout', prev=_prev('failed', 1, 'failed'))
-    assert set(rec) == cli.HOLD_KEYS == {'section', 'date', 'request_id', 'state', 'reason', 'hold', 'recorded_at',
-                                         'attempt', 'last_counted'}
+    # 11/22 즉시 알림 — 닫힌 칸 next 를 더한 셋째 꼴(test_hold_next.py)
+    assert set(rec) == cli.HOLD_KEYS_N == {'section', 'date', 'request_id', 'state', 'reason', 'hold', 'recorded_at',
+                                           'attempt', 'last_counted', 'next'}
     assert type(rec['attempt']) is int and rec['last_counted'] in cli.COUNTED_CODES
 
 
@@ -325,7 +326,7 @@ def test_every_sequence_of_four_codes_keeps_the_rules():
             else:
                 assert stop is False, (raw, code)       # ④ limit 은 세움이 아니다(사람 손 ①·판정 뒤 부호는 cmd_hold 가 정한다)
             assert (rec['attempt'], rec['last_counted']) == (n2, last2)    # ④ 올리지도 지우지도 않는다
-            assert set(rec) == cli.HOLD_KEYS
+            assert set(rec) == cli.HOLD_KEYS_N
             walk(json.dumps(rec, ensure_ascii=False, indent=1).encode(), n2, last2, depth + 1)
     walk(None, 0, None, 0)
     assert seen[0] == 18 ** 4

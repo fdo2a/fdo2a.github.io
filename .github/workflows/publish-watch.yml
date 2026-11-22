@@ -11,6 +11,8 @@ on:
       - 'posts/**'
       - 'kr/posts/**'
       - 'verification/**'
+      # 글 막힘 즉시 알림(2026-11-22) — 루틴 `prepub_review.py hold --push` 의 보류 기록 한 파일 커밋이 감시를 깨운다
+      - 'reviews/prepublish/**'
   schedule:
     # 세션 기준 시각 맞춤(분은 정각 회피). UTC 로 적는다 — KST = UTC+9.
     - cron: '10 3 * * *'     # 12:10 KST — US 세션 기준(12:00) 직후

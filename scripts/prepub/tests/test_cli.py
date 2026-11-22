@@ -123,7 +123,7 @@ def test_the_hold_record_carries_only_closed_fields(tmp_path, monkeypatch, capsy
     (tmp_path / 'original.html').write_text(DRAFT, encoding='utf-8')
     _, rec, raw = _hold(tmp_path, monkeypatch, capsys)
     assert set(rec) == {'section', 'date', 'request_id', 'state', 'reason', 'hold', 'recorded_at',
-                        'attempt', 'last_counted'}
+                        'attempt', 'last_counted', 'next'}
     assert rec['reason'] == 'codex 가 검토하지 못했다'
     assert 'eyJ' not in raw and '노출 축소' not in raw and '번역투' not in raw
 
