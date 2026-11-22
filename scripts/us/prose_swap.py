@@ -376,41 +376,6 @@ def extract(html):
     return '\n\n'.join(items) + '\n', {'fingerprint': fingerprint(html), 'items': sidecar}
 
 
-def parse_payload(text):
-    """윤문된 텍스트를 이름 → 문단으로. 마크다운이 섞여 오면 거부한다."""
-    out, pid, buf = {}, None, []
-
-    def flush():
-        if pid is None:
-            return
-        body = ' '.join(' '.join(buf).split())
-        if not body:
-            raise ProseSwapError('%s 문단이 비어서 돌아왔다' % pid)
-        if pid in out:
-            raise ProseSwapError('%s 이름이 두 번 나왔다' % pid)
-        out[pid] = body
-
-    for line in text.splitlines():
-        m = _ID_RE.match(line.strip())
-        if m:
-            flush()
-            pid, buf = m.group(1), []
-            continue
-        if pid is None:
-            if line.strip() and not line.strip().startswith('<!--'):
-                raise ProseSwapError('이름 없는 텍스트가 앞에 붙어 있다: %r' % line.strip()[:40])
-            continue
-        if line.strip().startswith('<!-- HUMANIZE-SUMMARY'):
-            break
-        if _MD_LINE_RE.match(line) or _MD_INLINE_RE.search(line):
-            raise ProseSwapError('%s 에 마크다운 문법이 섞였다: %r' % (pid, line.strip()[:40]))
-        if '<' in line or '>' in line:
-            raise ProseSwapError('%s 에 HTML이 섞였다: %r' % (pid, line.strip()[:40]))
-        buf.append(line)
-    flush()
-    if not out:
-        raise ProseSwapError('되꽂을 문단이 하나도 없다')
-    return out
 
 
 def _check_one(pid, body, known):
@@ -435,22 +400,6 @@ def _check_one(pid, body, known):
     return _unmask(body, rec['tags'])
 
 
-def reinsert(html, payload_text, sidecar):
-    """이름으로 되꽂는다. 하나라도 어긋나면 아무것도 쓰지 않고 예외."""
-    if sidecar.get('fingerprint') != fingerprint(html):
-        raise ProseSwapError('사이드카가 이 HTML에서 뽑힌 것이 아니다')
-    rewritten = parse_payload(payload_text)
-    known = sidecar['items']
-    unknown = sorted(set(rewritten) - set(known))
-    if unknown:
-        raise ProseSwapError('모르는 이름이 왔다: %s' % ', '.join(unknown))
-    missing = sorted(set(known) - set(rewritten))
-    if missing:
-        raise ProseSwapError('돌아오지 않은 문단이 있다: %s' % ', '.join(missing))
-
-    new_inner = {pid: _check_one(pid, body, known) for pid, body in rewritten.items()}
-
-    return _splice(html, new_inner)
 
 
 def _splice(html, new_inner):
