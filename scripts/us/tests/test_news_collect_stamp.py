@@ -126,3 +126,45 @@ def test_us_news_input_with_1a_on(tmp_path, monkeypatch, collect, run, state):
     h = I.assess(pol, 'us-news', _news_day(tmp_path, c, run))
     got = h['files'][f'<datadir>/news/{D}.json']['state']
     assert got == state, h['files'][f'<datadir>/news/{D}.json']
+
+
+EMPTY_RSS = '<?xml version="1.0"?><rss><channel><title>x</title></channel></rss>'
+HTML_503 = '<html><body>503 Service Unavailable</body></html>'
+
+
+@pytest.mark.parametrize('raw,read', [(EMPTY_RSS, True), (HTML_503, False), ('', False), (None, False)])
+def test_rss_read_counts_a_real_feed_only(raw, read):
+    """빈 RSS 는 읽은 것, 점검 페이지·빈 응답은 아니다(codex 구현 검토 1회차 #1·#3)."""
+    from us import news as N
+    items, why = N.parse_feed_strict(raw, 'economy') if raw is not None else ([], None)
+    assert F.rss_read(raw, items, why) is read
+
+
+def test_harvest_extra_counts_feeds_through_the_counter():
+    pages = {'u1': EMPTY_RSS, 'u2': HTML_503, 'u3': ''}
+    counter, notes = {}, []
+    rows = F.harvest_extra(None, F.Budget(60), notes, fetch=lambda u, ctx: pages[u], feeds={'economy': ['u1', 'u2', 'u3']},
+                           counter=counter)
+    assert rows == [] and counter == {'read': 1}
+
+
+class _Stop(Exception):
+    pass
+
+
+@pytest.mark.parametrize('collect,frozen_out', [({'status': 'ok'}, True), ({'status': 'failed'}, False), (None, True)])
+def test_main_freezes_only_a_finished_file(tmp_path, monkeypatch, collect, frozen_out):
+    """main() 의 동결 분기 — collect 가 ok 가 아닌 판은 다시 받는다(받으러 가면 _context 가 불린다)."""
+    (tmp_path / 'news').mkdir()
+    body = _payload([{'guid': 'a', 'summary_ko': '요약', 'body_chars': 100}])
+    if collect is not None:
+        body['collect'] = collect
+    (tmp_path / 'news' / f'{D}.json').write_text(json.dumps(body, ensure_ascii=False), encoding='utf-8')
+    monkeypatch.setattr(F, '_context', lambda: (_ for _ in ()).throw(_Stop()))
+    monkeypatch.setattr(sys, 'argv', ['fetch_news.py', '--datadir', str(tmp_path), '--date', D,
+                                      '--bodydir', str(tmp_path / 'b')])
+    if frozen_out:
+        assert F.main() == 0
+    else:
+        with pytest.raises(_Stop):
+            F.main()

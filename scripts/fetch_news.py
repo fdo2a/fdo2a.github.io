@@ -238,10 +238,17 @@ def _fast_bytes(url, ctx):
     return get_bytes(url, ctx, timeout=EXTRA_TIMEOUT)
 
 
-def harvest_extra(ctx, budget, notes, fetch=None, feeds=None):
+def rss_read(raw, items, why_empty):
+    """RSS 로 읽혔는가 — 항목이 있거나, 빈 응답이 아니고 `parse_feed_strict` 가 형식 경고를 내지 않았다(진짜 빈 피드).
+    빈 응답·RSS 가 아닌 응답(점검 페이지)·형식이 바뀐 피드는 읽은 것이 아니다(collect 판정, codex 구현 검토 1회차 #1·#3)."""
+    return bool(items) or (bool(raw) and not why_empty)
+
+
+def harvest_extra(ctx, budget, notes, fetch=None, feeds=None, counter=None):
     """새 매체 피드(`EXTRA_FEEDS`)를 받는다. 실패·시간 초과는 `notes` 에 적고 넘어간다.
 
-    돌려주는 행은 `identify()` 를 거쳤다 — guid 가 URL 이다.
+    돌려주는 행은 `identify()` 를 거쳤다 — guid 가 URL 이다. `counter` 가 주어지면 RSS 로 읽힌 피드 수를
+    `counter['read']` 에 더한다(항목 0건이어도 RSS 면 읽은 것, RSS 가 아닌 응답은 아니다 — collect 판정, 2026-11-22).
     """
     fetch = fetch or _fast_get
     rows = []
@@ -251,8 +258,8 @@ def harvest_extra(ctx, budget, notes, fetch=None, feeds=None):
                 notes.append('extra_time_cap: 새 매체 피드를 다 받지 못했다')
                 return identify(rows)
             try:
-                items, why_empty = parse_feed_strict(
-                    bounded(lambda u=url: fetch(u, ctx), budget), hint)
+                raw = bounded(lambda u=url: fetch(u, ctx), budget)
+                items, why_empty = parse_feed_strict(raw, hint)
             except Exception as e:
                 notes.append(f'{hint} {url}: {_why(e)}')
                 print(f'  {hint}: 피드 실패 ({_why(e)}) {url[-40:]}', file=sys.stderr)
@@ -261,6 +268,8 @@ def harvest_extra(ctx, budget, notes, fetch=None, feeds=None):
                 notes.append(f'{hint} {url}: {why_empty}')
             elif not items:
                 notes.append(f'{hint} {url}: 항목 0건')
+            if counter is not None and rss_read(raw, items, why_empty):
+                counter['read'] = counter.get('read', 0) + 1
             rows.extend(items)
             print(f'  {hint}: {len(items)}건 ({_host_of(url)})')
     return identify(rows)
@@ -560,7 +569,8 @@ def main():
             if i:
                 time.sleep(GAP)        # 같은 호스트를 붙여 때리지 않는다
             try:
-                items, why_empty = parse_feed_strict(get(url, ctx), category)
+                raw = get(url, ctx)
+                items, why_empty = parse_feed_strict(raw, category)
                 if why_empty:
                     notes.append(f'{category} {url}: {why_empty}')
                     print(f'  {category}: {why_empty}', file=sys.stderr)
@@ -570,7 +580,7 @@ def main():
                 notes.append(f'{category} {url}: {why}')
                 print(f'  {category}: 피드 실패 ({why}) {url[-40:]}', file=sys.stderr)
                 continue
-            feeds_read += 1
+            feeds_read += rss_read(raw, items, why_empty)     # 0건이어도 RSS 면 읽은 것, 점검 페이지·빈 응답은 아니다
             if not items:
                 notes.append(f'{category} {url}: 항목 0건')
             harvested.extend(items)
@@ -578,9 +588,10 @@ def main():
 
     # 새 매체(2026-11-12) — 시간 상한 안에서만. 막히거나 느리면 notes 에 적고 지금까지의 매체로 간다
     clock = time.monotonic()
-    extra = harvest_extra(ctx, Budget(EXTRA_FEED_BUDGET), notes)
+    read_extra = {}
+    extra = harvest_extra(ctx, Budget(EXTRA_FEED_BUDGET), notes, counter=read_extra)
     harvested.extend(extra)
-    feeds_read += 1 if extra else 0
+    feeds_read += read_extra.get('read', 0)
     seconds = {'extra_feeds': round(time.monotonic() - clock, 1)}
 
     now = datetime.now(timezone.utc)
