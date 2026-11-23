@@ -212,6 +212,14 @@ def collect_cut_rows(anchor, contracts=None):
     return out
 
 
+def cut_caption(cut):
+    """환율·원자재 표 캡션 — 행의 컷 시각으로 코드가 쓴다(`close_cut.caption`). 행이 없으면 None."""
+    from us.close_cut import caption
+    rows = [(n, (cut.get(g) or {}).get(n)) for g, pairs in (('commodities', CMDTY), ('fx', FX))
+            for n, _ in pairs]
+    return caption(rows) if any(r for _, r in rows) else None
+
+
 def apply_cut_to_histories(closes, dates, cut):
     """이력의 오늘·전일 값을 표 값으로(`close_cut.override_history`). 이력에 있는 티커만."""
     from us.close_cut import override_history
@@ -1641,12 +1649,8 @@ def main():
     sector_perf, perf_as_of = collect_sector_performance()
     print(f'  sector perf: {sum(1 for v in sector_perf.values() if v)}/{len(SECTORS)} (as of {perf_as_of})')
     print('collecting 30m intraday bars...')
-    # 표와 같은 월물·같은 마감 시각(단축장이면 13:00 ET)으로 자른다.
+    # 표와 같은 월물·같은 시각으로 자른다 — 16:00 ET, 그 전에 닫은 시장은 마감까지(2026-11-23).
     cut_m = 16 * 60
-    _w = (cut.get('commodities') or {}).get('WTI') or {}
-    if _w.get('cut_et'):
-        hh, mm = _w['cut_et'].split(':')
-        cut_m = int(hh) * 60 + int(mm)
     intraday = collect_intraday(datetime.date.fromisoformat(report_date),
                                 # 표 행을 실제로 만든 티커(월물 폴백 포함)를 넘긴다(codex 재검토 P2).
                                 symbols={n: ((cut.get('commodities') or {}).get(n) or {}).get('contract')
@@ -1668,6 +1672,7 @@ def main():
         'mlcc': daily['mlcc'],
         'yields': yields,
         'yields_caption': yields_caption,
+        'cut_caption': cut_caption(cut),
         'yields_fred': yields_fred,
         'yields_note': 'yields = 발행용 기준값. 16:00 ET 에 가장 가까운 장중 스냅숏(15:45-16:15, '
                        'stamp_et), 전 만기 한 원천(source: naver=레피니티브, cnbc=트레이드웹)·한 날짜. '

@@ -156,8 +156,8 @@ def cut_row(ends, sessions, anchor, calendar=None, contract=None):
     if not earlier or earlier[-1] not in sessions:
         return None
     prev_date = earlier[-1]
-    last = (ends or {}).get(anchor, {}).get(sessions[anchor])
-    prev = (ends or {}).get(prev_date, {}).get(sessions[prev_date])
+    cm, last = cut_at((ends or {}).get(anchor, {}), sessions[anchor])
+    pm, prev = cut_at((ends or {}).get(prev_date, {}), sessions[prev_date])
     if last is None or not prev:
         return None
 
@@ -166,7 +166,48 @@ def cut_row(ends, sessions, anchor, calendar=None, contract=None):
     return {'last': last, 'chg': last - prev, 'pct': (last / prev - 1) * 100,
             'date': anchor, 'prev': prev, 'prev_date': prev_date,
             'basis': BASIS, 'contract': contract,
-            'cut_et': hhmm(sessions[anchor]), 'prev_cut_et': hhmm(sessions[prev_date])}
+            'cut_et': hhmm(cm), 'prev_cut_et': hhmm(pm)}
+
+
+def cut_at(day_ends, session_end):
+    """그날 이 자산의 표 값 → (끝 분, 종가) 또는 (None, None).
+
+    16:00 ET 가 기본이다. 주식이 일찍 닫은 날(단축장, `session_end` < 16:00)에는 이 자산의
+    16:00 봉을 쓰고, 그 전에 닫은 시장이라 16:00 봉이 없으면 그날 마지막 봉(그 시장의 마감값)을
+    쓴다 — 단 주식 마감 뒤의 봉이어야 한다(2026-11-23 사용자 「16시를 디폴트로 하고 이전에
+    마감하는게 있으면 그때는 마감값으로」). 평일은 전처럼 16:00 봉이 정확히 있어야 한다.
+    """
+    day_ends = day_ends or {}
+    if session_end in day_ends and session_end >= CUT_MINUTES:
+        return session_end, day_ends[session_end]
+    if session_end >= CUT_MINUTES:
+        return None, None
+    if CUT_MINUTES in day_ends:
+        return CUT_MINUTES, day_ends[CUT_MINUTES]
+    after = [m for m in day_ends if session_end <= m < CUT_MINUTES]
+    if not after:
+        return None, None
+    m = max(after)
+    return m, day_ends[m]
+
+
+def caption(rows):
+    """표 아래 캡션 — 행마다의 `cut_et`·`prev_cut_et` 로 코드가 쓴다(2026-11-23).
+
+    rows = [(이름, 행)]. 모두 16:00 이면 평소 문장, 일찍 닫은 시장이 있으면 그 시각을 이름과 함께.
+    """
+    def off(key):
+        return [f"{n} {r[key]}" for n, r in rows if r and r.get(key) and r[key] != '16:00']
+    today, prev = off('cut_et'), off('prev_cut_et')
+    if not today and not prev:
+        return '원자재·환율은 뉴욕 16:00 ET 가격, 전 거래일 같은 시각 대비다. 결제가와 다를 수 있다.'
+    parts = []
+    if today:
+        parts.append('오늘 ' + '·'.join(today))
+    if prev:
+        parts.append('전 거래일 ' + '·'.join(prev))
+    return ('원자재·환율은 뉴욕 16:00 ET 가격이고, 그 전에 닫은 시장은 마감 가격이다('
+            + ', '.join(parts) + ' ET). 결제가와 다를 수 있다.')
 
 
 def override_history(closes, dates, row):

@@ -95,12 +95,49 @@ def test_previous_session_skips_weekends_by_the_equity_calendar():
     assert cc.cut_row(e, SESSIONS, '2026-10-12')['prev_date'] == '2026-10-09'
 
 
-def test_early_close_day_cuts_at_the_equity_close():
-    # 단축장(13:00 ET)은 그 시각 봉으로 자른다 — 주식 마감과 같은 순간.
+def test_early_close_day_still_uses_1600_when_the_market_trades_on():
+    # 2026-11-23 사용자: 16:00 이 기본 — 주식이 13:00 에 닫아도 16:00 봉이 있는 시장(환율)은 16:00.
     sessions = {'2026-11-25': 960, '2026-11-27': 780}
     e = ends(('2026-11-25', 960, 1.0), ('2026-11-27', 780, 1.1), ('2026-11-27', 960, 1.2))
     row = cc.cut_row(e, sessions, '2026-11-27')
-    assert row['last'] == 1.1 and row['cut_et'] == '13:00'
+    assert row['last'] == 1.2 and row['cut_et'] == '16:00'
+
+
+def test_early_close_day_uses_the_markets_own_close_before_1600():
+    # 16:00 전에 닫은 시장(예: 원유 13:45 무렵) — 그날 마지막 봉이 그 시장의 마감값이다.
+    sessions = {'2026-11-25': 960, '2026-11-27': 780}
+    e = ends(('2026-11-25', 960, 1.0), ('2026-11-27', 780, 1.1), ('2026-11-27', 840, 1.3))
+    row = cc.cut_row(e, sessions, '2026-11-27')
+    assert row['last'] == 1.3 and row['cut_et'] == '14:00'
+
+
+def test_early_close_day_without_bars_after_the_equity_close_uses_that_bar():
+    sessions = {'2026-11-25': 960, '2026-11-27': 780}
+    e = ends(('2026-11-25', 960, 1.0), ('2026-11-27', 750, 0.9), ('2026-11-27', 780, 1.1))
+    assert cc.cut_row(e, sessions, '2026-11-27')['cut_et'] == '13:00'
+
+
+def test_early_close_day_with_only_bars_before_the_equity_close_is_none():
+    sessions = {'2026-11-25': 960, '2026-11-27': 780}
+    e = ends(('2026-11-25', 960, 1.0), ('2026-11-27', 750, 0.9))
+    assert cc.cut_row(e, sessions, '2026-11-27') is None
+
+
+def test_normal_day_still_needs_the_exact_1600_bar():
+    e = ends(('2026-10-12', 960, 1.0), ('2026-10-13', 930, 1.1))
+    assert cc.cut_row(e, {'2026-10-12': 960, '2026-10-13': 960}, '2026-10-13') is None
+
+
+def test_caption_lists_markets_that_closed_before_1600():
+    normal = {'cut_et': '16:00', 'prev_cut_et': '16:00'}
+    assert cc.caption([('WTI', normal), ('DXY', normal)]) == (
+        '원자재·환율은 뉴욕 16:00 ET 가격, 전 거래일 같은 시각 대비다. 결제가와 다를 수 있다.')
+    rows = [('WTI', {'cut_et': '14:00', 'prev_cut_et': '16:00'}), ('DXY', {'cut_et': '13:30', 'prev_cut_et': '16:00'}),
+            ('USD/KRW', normal)]
+    assert cc.caption(rows) == ('원자재·환율은 뉴욕 16:00 ET 가격이고, 그 전에 닫은 시장은 마감 가격이다('
+                                '오늘 WTI 14:00·DXY 13:30 ET). 결제가와 다를 수 있다.')
+    # 다음 거래일(11/30) — 전 거래일 쪽에 나온다
+    assert '(전 거래일 WTI 14:00 ET)' in cc.caption([('WTI', {'cut_et': '16:00', 'prev_cut_et': '14:00'})])
 
 
 def test_row_is_none_when_the_anchor_is_not_a_session():
@@ -191,7 +228,7 @@ def test_row_states_both_cut_times():
     sessions = {'2026-11-25': 960, '2026-11-27': 780}
     e = ends(('2026-11-25', 960, 1.0), ('2026-11-27', 780, 1.1))
     row = cc.cut_row(e, sessions, '2026-11-27', calendar=['2026-11-25', '2026-11-27'])
-    assert (row['cut_et'], row['prev_cut_et']) == ('13:00', '16:00')
+    assert (row['cut_et'], row['prev_cut_et']) == ('13:00', '16:00')     # 13:00 뒤 봉이 없는 시장
 
 
 def test_bar_ends_index_bars_by_their_end_minute():
