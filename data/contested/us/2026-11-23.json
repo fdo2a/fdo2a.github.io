@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-23",
  "status": "none",
- "reason": "schema_invalid",
+ "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 1,
- "collected_at": "2026-11-23T22:03:27+00:00",
- "cutoff_at": "2026-11-23T22:03:27+00:00",
+ "attempts": 2,
+ "collected_at": "2026-11-23T22:22:31+00:00",
+ "cutoff_at": "2026-11-23T22:22:31+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "4957cb4a9137e6bd7dcfad482ddea1893ce869aaeb0b86dc4d14a5c58de19f41"
  },
  "counts": {
-  "harvest": 163,
+  "harvest": 165,
   "candidates": 1,
   "articles": [
    6
@@ -29,12 +29,12 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 1,
+  "runs": 2,
   "tokens": {
-   "in": 78599,
-   "out": 19992
+   "in": 79885,
+   "out": 19752
   },
-  "discovery": "ok",
+  "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
@@ -42,15 +42,15 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "ok",
+  "gdelt": "throttled",
   "grounded": {
-   "claims": "6/6",
-   "pairs": "3/3",
+   "claims": "8/8",
+   "pairs": "4/4",
    "obs": "10/10"
   },
   "verified": {
-   "pairs": 3,
-   "claims": 6,
+   "pairs": 4,
+   "claims": 8,
    "obs": 10,
    "strict_pairs": 1,
    "same_statistic_dropped": 0,
@@ -58,21 +58,25 @@
   },
   "repair": {
    "paths": [
-    "memo[1]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
+    "memo[0]",
+    "structure",
+    "worry.moderate[0]"
    ],
-   "outcome": "fixed",
-   "remaining": []
+   "outcome": "partial",
+   "remaining": [
+    "structure:unverified",
+    "memo[2]:unverified"
+   ]
   }
  },
  "event": {
   "topic_ko": "엔비디아 젠슨 황 CEO 복귀와 트럼프 개입 논란",
-  "query": "huang jensen returns",
+  "query": "huang jensen return",
   "trigger": []
  },
  "problems": [
-  "claims"
+  "structure:unverified",
+  "memo[2]:unverified"
  ],
- "content_hash": "b706fd1d21390ed6"
+ "content_hash": "9e102a1a33bf2288"
 }
