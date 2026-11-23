@@ -383,7 +383,6 @@
   ],
   "_sessions": {
     "2026-11-23": {
-      "flows": {},
       "industry": {
         "전자장비와기기": 1.47,
         "화장품": 0.8,
@@ -585,7 +584,15 @@
         "2026-11-19",
         "2026-11-20"
       ],
-      "flows_note": "잠정치 제외"
+      "flows_note": "잠정치 제외",
+      "flows": {}
+    }
+  },
+  "_provenance": {
+    "2026-11-23": {
+      "industry": "published",
+      "top_value": "published",
+      "flows": "published_or_remote"
     }
   }
 }

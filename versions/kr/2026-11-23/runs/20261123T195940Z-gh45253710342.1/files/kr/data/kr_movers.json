@@ -1,0 +1,18 @@
+{
+  "report_date": "2026-11-23",
+  "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
+  "threshold_pct": 5.0,
+  "groups": [],
+  "collect": {
+    "status": "failed",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-24T04:56:51+09:00",
+    "source": "Naver 거래대금 상위 + yfinance KRX 일봉",
+    "response": "후보 60종목 중 그날 봉을 잰 종목 0",
+    "required_ok": false,
+    "missing": [],
+    "empty": "unknown",
+    "checked": 0,
+    "expected": 60
+  }
+}
