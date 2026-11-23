@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-23",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "verify_rejected",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-23T11:47:39+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-23T12:05:17+00:00",
  "cutoff_at": "2026-11-23T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 539,
+  "harvest": 534,
   "candidates": 1,
   "articles": [
    6
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 3,
+  "runs": 4,
   "discovery": "truncated",
   "hosts": {
    "hankyung": "ok",
@@ -44,13 +44,13 @@
    "nocut": "ok"
   },
   "notes": [
-   "discover:539"
+   "discover:534"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 73018,
-   "out": 15212
+   "in": 48459,
+   "out": 10272
   },
   "grounded": {
    "claims": "2/2",
@@ -58,27 +58,12 @@
    "obs": "5/5"
   },
   "verified": {
-   "pairs": 1,
-   "claims": 2,
+   "pairs": 0,
+   "claims": 0,
    "obs": 5,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "memo[1]",
-    "structure",
-    "variables[0]",
-    "variables[1]",
-    "worry.most[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "edges[0]:unverified",
-    "worry.unlikely[0]:unverified"
-   ]
   }
  },
  "event": {
@@ -86,9 +71,5 @@
   "query": "수출 반도체 내년",
   "trigger": []
  },
- "problems": [
-  "edges[0]:unverified",
-  "worry.unlikely[0]:unverified"
- ],
- "content_hash": "433dae1b35e9610e"
+ "content_hash": "c73a2fc81eceb492"
 }
