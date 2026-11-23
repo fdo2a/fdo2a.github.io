@@ -1,0 +1,12 @@
+{
+ "section": "us",
+ "date": "2026-11-23",
+ "request_id": "us-2026-11-23-22287ff854bd",
+ "state": "submit_failed",
+ "reason": "초안을 올리거나 검토를 띄우지 못했다",
+ "hold": true,
+ "recorded_at": "2026-11-23T22:23:29Z",
+ "attempt": 1,
+ "last_counted": "submit_failed",
+ "next": "retry"
+}
