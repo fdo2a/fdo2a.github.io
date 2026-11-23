@@ -5,9 +5,9 @@
  "report_date": "2026-11-23",
  "status": "none",
  "reason": "verify_rejected",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-23T12:05:17+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-23T12:22:11+00:00",
  "cutoff_at": "2026-11-23T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 534,
+  "harvest": 525,
   "candidates": 1,
   "articles": [
    6
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "discovery": "truncated",
   "hosts": {
    "hankyung": "ok",
@@ -44,16 +44,16 @@
    "nocut": "ok"
   },
   "notes": [
-   "discover:534"
+   "discover:525"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 48459,
-   "out": 10272
+   "in": 46554,
+   "out": 10232
   },
   "grounded": {
-   "claims": "2/2",
+   "claims": "3/3",
    "pairs": "1/1",
    "obs": "5/5"
   },
@@ -71,5 +71,5 @@
   "query": "수출 반도체 내년",
   "trigger": []
  },
- "content_hash": "c73a2fc81eceb492"
+ "content_hash": "73a9ad205cd3471f"
 }
