@@ -262,13 +262,24 @@
    "status": "sent",
    "text": "[발행] US 일간 11/20 · 발행 통과 · 참고 1건\n\n■ 발행 상태\n필수 검사 18/18 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조, 작업 공간 입력 제외)\n\n■ 볼 것\n1. [참고] 문체: 문장 안에 매체 출처가 있다 — 「CNBC」 — 다시 읽어 보고, 자연스러우면 그대로 둔다\n\n■ 검증 범위\n표 69칸·문장 20개 자동 대조 · 숫자 192개 범위 밖(자산 없음 94 · 리서치 기록 40 · 시점·구간 단서 22 · 사전 밖 자산 14 (외 5종)). 오류 192건이라는 뜻은 아님\n · 작업 공간 전용 입력 5개는 원본을 보관하지 않아 대조 못 함(지문만 남음): morning_brief_2026-11-20.body.html, morning_brief_2026-11-20.html, morning_brief_2026-11-20.meta.json, prev_post.html, research_notes.md\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
    "tries": 0
+  },
+  {
+   "base": "16d76a0096063f33ad6f72a3c5dd7b82",
+   "created": "2026-11-23T18:29:46.348727+09:00",
+   "hash": "2f57dbd93ffb5085dcf4d428042e36d622e93c8f00d5a00f4c41f4af9ed9c487",
+   "id": "16d76a0096063f33ad6f72a3c5dd7b82",
+   "key": "kr/posts/2026-11-23.html",
+   "kind": "publish",
+   "status": "pending",
+   "text": "[발행] KR 일간 11/23 · 발행 통과\n\n■ 발행 상태\n필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)\n\n■ 검증 범위\n표 55칸 자동 대조 · 숫자 229개 범위 밖(문장 140 · 업종 기간별 80 · 기타 표 9). 오류 229건이라는 뜻은 아님\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
+   "tries": 0
   }
  ],
  "fetch": {},
  "format": "verify-publish/1",
  "holds": {},
- "last_ok": "2026-11-23T15:31:30.062475+09:00",
- "last_seen": "2de0b94a5c0e5935875e4622f6a1a59f196f01f8",
+ "last_ok": "2026-11-23T18:29:46.348727+09:00",
+ "last_seen": "10063df2968d094554a8c2e6c0a33091849ae5b8",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
@@ -309,6 +320,10 @@
   "kr/posts/2026-11-20.html": {
    "first_seen": "1e4f818e11471f422ab4ef5bff48ed1d19373ff1",
    "fp": "[\"ok\", \"1e4f818e11471f422ab4ef5bff48ed1d19373ff1\", \"일치\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"없음\"]], \"pass_with_warnings\", true, true, true]"
+  },
+  "kr/posts/2026-11-23.html": {
+   "first_seen": "10063df2968d094554a8c2e6c0a33091849ae5b8",
+   "fp": "[\"ok\", \"10063df2968d094554a8c2e6c0a33091849ae5b8\", \"일치\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"없음\"]], \"pass_with_warnings\", true, true, true]"
   },
   "posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
