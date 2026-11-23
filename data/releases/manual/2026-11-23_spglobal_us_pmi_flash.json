@@ -1,0 +1,27 @@
+{
+  "source": "S&P Global Flash US PMI news release (user-supplied PDF)",
+  "release_et": "2026-11-23 09:45",
+  "release_kst": "2026-11-23 23:45",
+  "period": "2026-11",
+  "kind": "flash",
+  "collected": "2026-11-12/2026-11-20",
+  "headline": {
+    "composite_output": {"value": 54.6, "prev": 55.9, "note": "4-month low"},
+    "services_business_activity": {"value": 54.7, "prev": 56.1, "note": "4-month low"},
+    "manufacturing_output": {"value": 53.7, "prev": 54.5, "note": "3-month low"},
+    "manufacturing_pmi": {"value": 54.5, "prev": 54.9, "note": "3-month low; 16th month above 50"}
+  },
+  "direction_only": {
+    "new_orders": "rising, slowest since July; services slowed markedly; manufacturing marginally faster",
+    "new_export_orders": "first fall in four months",
+    "employment": "rising, pace eased 2nd month; joint-3rd largest in 4+ years; manufacturing 2nd-strongest since July 2021",
+    "backlogs": "rising in both sectors",
+    "supplier_delivery_times": "lengthened most since August 2022",
+    "stocks_of_purchases": "first fall since February",
+    "input_prices": "cooled 2nd month, still above year-to-date average",
+    "output_prices": "cooled from October (largest since Aug 2022), slightly below YTD average",
+    "future_output": "revived from October 5-month low, below September"
+  },
+  "final_dates": {"manufacturing": "2026-12-01", "services_composite": "2026-12-03"},
+  "flash_vs_final_avg_abs_diff": {"composite": 0.4, "services": 0.4, "manufacturing_pmi": 0.3}
+}

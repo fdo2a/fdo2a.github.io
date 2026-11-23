@@ -1,0 +1,16 @@
+{
+  "source": "S&P Global US Business Outlook news release (user-supplied PDF)",
+  "release_utc": "2026-11-11 00:01",
+  "period": "2026-10 (tri-annual: Feb/Jun/Oct)",
+  "collected": "2026-10-09/2026-10-28",
+  "net_balance_pct": {
+    "business_activity": {"value": 32, "prev_jun": 37, "trend": 37, "manufacturing": 34, "manufacturing_prev": 45, "services": 32, "services_prev": 36},
+    "non_staff_costs": {"value": 33, "prev_jun": 25, "manufacturing": 45, "services": 31, "note": "highest since Oct 2022; mfg record"},
+    "staff_costs": {"value": 42, "manufacturing": 48, "services": 41},
+    "selling_prices": {"value": 42, "prev_jun": 35, "note": "highest since Jun 2022"},
+    "profits": {"value": 16, "prev_jun": 21},
+    "employment": {"value": 9, "manufacturing": 15, "services": 8, "note": "lowest since Jun 2020"},
+    "capex": {"value": 16, "note": "unchanged from June"},
+    "r_and_d": {"value": 4, "prev_jun": 2, "manufacturing": 3, "manufacturing_prev": 7, "services": 4, "services_prev": 1}
+  }
+}

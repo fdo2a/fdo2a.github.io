@@ -1,0 +1,18 @@
+{
+  "source": "S&P Global US Services PMI news release (user-supplied PDF)",
+  "release_et": "2026-11-04 09:45",
+  "period": "2026-10",
+  "kind": "final",
+  "headline": {
+    "services_business_activity": {"value": 56.1, "prev": 58.8, "note": "revised down from flash; 7th month of growth"},
+    "composite_output": {"value": 55.9, "prev": 58.4, "note": "3-month low"}
+  },
+  "direction_only": {
+    "new_export_business": "3rd month of rise, best since mid-2023",
+    "employment": "4th month of rise, lowest since July (Sep was 51-month peak)",
+    "backlogs": "steepest rise in 4.5 years, 20 months of increase",
+    "input_prices": "eased from Sep near-4-year peak, above 2026 average",
+    "output_prices": "fastest since July (services); composite charges fastest since Aug 2022",
+    "future_activity": "lowest since May"
+  }
+}
