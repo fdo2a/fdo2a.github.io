@@ -108,7 +108,8 @@ def write(repo, rel, content):
                     json.dumps(content, ensure_ascii=False), encoding='utf-8')
 
 
-def make_repo(tmp_path, monkeypatch, rows=None, disc=None, grade='홀딩 강화', bot=True):
+def make_repo(tmp_path, monkeypatch, rows=None, disc=None, grade='홀딩 강화', bot=True,
+              fresh=True):
     repo = tmp_path / 'repo'
     repo.mkdir()
     subprocess.run(['git', 'init', '-q'], cwd=repo, check=True)
@@ -125,6 +126,10 @@ def make_repo(tmp_path, monkeypatch, rows=None, disc=None, grade='홀딩 강화'
     write(repo, 'thesis/data/events.json', {'items': []})
     _commit(repo, 'thesis watch data', BOT_ENV if bot else None)
     monkeypatch.chdir(repo)
+    # The fixture watch has no sessions/observed_at; freshness has its own tests
+    # (test_fresh) and one gate test below that keeps the real check.
+    if fresh:
+        monkeypatch.setattr(EV, 'staleness', lambda today, watch: [])
     return repo
 
 
@@ -285,3 +290,11 @@ def test_unparsable_run_json_blocks(tmp_path, monkeypatch, capsys):
     (repo / 'run.json').write_text('{broken', encoding='utf-8')
     assert run_gate(monkeypatch, '--triggers', str(repo / 'run.json')) == 1
     assert 'run.json 을 읽지 못했다' in capsys.readouterr().out
+
+
+def test_a_stale_snapshot_defers_the_numbers_in_the_gate(tmp_path, monkeypatch):
+    """The real check: a watch without observed_at/collected_at (the pre-2026-11-23 shape,
+    MU intraday) cannot license an edit with a numeric trigger."""
+    make_repo(tmp_path, monkeypatch, rows=history(25, cross_on=TODAY), fresh=False)
+    mu = EV.assess_today(TODAY)['tickers']['MU']
+    assert mu['numeric'] is None

@@ -50,6 +50,20 @@ def append(path, row):
     return rows
 
 
+def record(path, row):
+    """Write `row` unless a new-shape row (one with `sessions`) already holds its date.
+
+    One row per session, written once: the row a judgement compared against must not change
+    afterwards (a late scheduled run used to rewrite it). A pre-2026-11-23 row without
+    `sessions` is replaced — its prices are the wall-clock-labelled ones. True if written.
+    """
+    for existing in load(path):
+        if existing['date'] == row['date'] and existing.get('sessions'):
+            return False
+    append(path, row)
+    return True
+
+
 def value_on(rows, target_date, ticker, key):
     """Value as of `target_date`, falling back to the nearest earlier row.
 

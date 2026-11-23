@@ -33,8 +33,14 @@ from thesis import edgar as SEC  # noqa: E402
 from thesis import newsroom as NR  # noqa: E402
 from thesis import history as H  # noqa: E402
 from thesis import valuation as V  # noqa: E402
+from thesis import fresh as F  # noqa: E402
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
+CALENDAR = Path(__file__).resolve().parent.parent / 'data' / 'market_holidays.json'
+
+
+def _now():
+    return datetime.datetime.now(KST).replace(microsecond=0)
 
 
 def _ssl_context():
@@ -70,7 +76,8 @@ SEC_CIKS = {
 
 # Fields recorded to history.jsonl. Kept deliberately small — this file is appended
 # forever, and every field here is one we actually difference over time.
-HISTORY_FIELDS = ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price', 'pb', 'price_date')
+HISTORY_FIELDS = ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price', 'pb', 'price_date',
+                  'observed_at')
 
 # The valuation lines as they stood that day, recorded alongside. They move daily with
 # estimates, so "did the price cross the line?" is unanswerable later unless we keep the
@@ -171,7 +178,10 @@ def _next_earnings(tk):
     return None
 
 
-def collect_ticker(symbol, name, currency):
+def collect_ticker(symbol, name, currency, session, now):
+    """`session` is the expected session of the ticker's market (fresh.sessions). Bars
+    dated after it are unfinished — the 01:00-04:00 KST scheduled runs read MU mid-session
+    and recorded that as the close (36 of 59 rows before 2026-11-23)."""
     import yfinance as yf
 
     tk = yf.Ticker(symbol)
@@ -180,6 +190,9 @@ def collect_ticker(symbol, name, currency):
         return None
 
     closes = hist['Close'].dropna()
+    closes = closes[F.keep_upto([d.date().isoformat() for d in closes.index], session)]
+    if closes.empty:
+        return None
     price = _num(closes.iloc[-1])
     price_date = str(closes.index[-1].date())
     high_52w = _num(closes.max())
@@ -195,6 +208,7 @@ def collect_ticker(symbol, name, currency):
         'currency': currency,
         'price': round(price, 2) if price else None,
         'price_date': price_date,
+        'observed_at': now.isoformat(),
         'chg_20d_pct': chg_20d,
         'pct_from_52w_high': round((price / high_52w - 1) * 100, 2) if high_52w else None,
         'market_cap': _num(info.get('marketCap')),
@@ -250,31 +264,48 @@ def apply_dart_book_value(tickers, today):
             row['pb'] = round(row['price'] / value, 2)
 
 
-def main():
+def _load_json(path):
+    try:
+        return json.loads(Path(path).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+
+
+def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default='thesis/data')
     ap.add_argument('--force', action='store_true',
-                    help='주말·휴장에도 수집 (기본은 평일만)')
-    args = ap.parse_args()
+                    help='남겨 둔 옛 옵션 — 이제 요일과 무관하게 수집한다')
+    ap.add_argument('--consumer', default='',
+                    help='publisher = 발행 점검이 건 수집. 뉴스룸(events.json)은 이때만 쓴다')
+    args = ap.parse_args(argv)
 
-    # KST 고정. Actions 러너는 UTC라 같은 실행이 로컬(KST)과 하루 어긋난 날짜를 기록했다.
-    # 스케줄 시각(17:40 KST)에는 두 날짜가 같지만, 수동 실행이나 스케줄 변경 때 갈라진다.
-    # 한국 시각 기준 루틴이고 페이지도 한국어이므로 KST 하나로 못 박는다.
-    today = datetime.datetime.now(KST).date()
-    if today.weekday() >= 5 and not args.force:
-        print(f'주말({today}) — 건너뜀. 강제하려면 --force')
-        return 0
+    # 한 번만 읽는다 — 세션·observed_at·collected_at 이 같은 시각이어야 한다.
+    # 이름표는 이 시각의 KST 날짜가 아니라 그 시각에 끝나 있던 세션이다(fresh.py).
+    # 예약 실행이 7.5-10시간 늦게(다음날 01-04시) 와도 제때 돈 실행과 같은 세션을 받는다.
+    now = _now()
+    try:
+        sess = F.sessions(now, F.calendar(_load_json(CALENDAR)))
+    except (F.CalendarGap, KeyError, TypeError, ValueError) as e:
+        print(f'세션을 정하지 못했다 — 아무 파일도 쓰지 않는다: {e}', file=sys.stderr)
+        return 1
+    # 공시·SEC 창은 달력 날짜 그대로다(접수는 아무 때나 온다).
+    today = now.date()
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
+    prev = (_load_json(out_dir / 'watch.json') or {}).get('tickers') or {}
 
     tickers, missing = {}, []
     for symbol, name, currency in TICKERS:
-        print(f'수집 {symbol} ({name})…')
-        row = collect_ticker(symbol, name, currency)
+        market = F.MARKET[symbol]
+        print(f'수집 {symbol} ({name}) — 세션 {sess[market]}…')
+        row = collect_ticker(symbol, name, currency, sess[market], now)
         if row is None:
             missing.append(symbol)
             continue
+        # 늦은 실행의 Yahoo 응답에 최신 봉이 빠져도 가격이 뒤로 가지 않는다(11-16 → 11-17 행).
+        row = F.merge_price(row, prev.get(symbol), market)
         gaps = [f for f in REQUIRED if row.get(f) is None]
         if gaps:
             missing.append(f'{symbol}:{",".join(gaps)}')
@@ -283,11 +314,17 @@ def main():
     # 공시 재무제표가 yfinance 보다 새 분기면 갈아끼운다. fair_value 계산 **전에** 해야
     # 자산법이 낡은 장부가로 굴러가지 않는다.
     apply_dart_book_value(tickers, today.isoformat())
+    for row in tickers.values():
+        F.derive(row)
 
+    stale = F.stale(tickers, sess)
     watch = {
-        'as_of': today.isoformat(),
-        'complete': not missing and len(tickers) == len(TICKERS),
+        'as_of': sess['kr'],
+        'collected_at': now.isoformat(),
+        'sessions': sess,
+        'complete': not missing and not stale and len(tickers) == len(TICKERS),
         'missing': missing,
+        'stale': stale,
         'tickers': tickers,
     }
 
@@ -324,31 +361,40 @@ def main():
           f'missing={disclosures.get("missing") or "없음"}'
           f'{" (DART_API_KEY 미설정)" if disclosures.get("pending") else ""}')
 
-    # 뉴스룸 — 비-코어. 창은 직전 수집 시각부터다(events.json 의 collected_at).
-    # 실패한 피드는 missing 에 남고, 그러면 그날은 「조용함을 증명할 수 없는 날」이 된다.
-    events_path = out_dir / 'events.json'
-    try:
-        prev_events = json.loads(events_path.read_text(encoding='utf-8'))
-    except (OSError, ValueError):
-        prev_events = None
-    try:
-        events = NR.collect(prev_events, datetime.datetime.now(KST).replace(microsecond=0))
-    except Exception as e:  # noqa: BLE001 — 뉴스룸 실패가 수집 전체를 죽이지 않는다
-        events = {'collected_at': datetime.datetime.now(KST).replace(microsecond=0).isoformat(),
-                  'items': [], 'missing': [f'{type(e).__name__}: {str(e)[:160]}']}
-    events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2) + '\n',
-                           encoding='utf-8')
-    print(f'뉴스룸 새 항목={len(events["items"])} missing={events["missing"] or "없음"}')
+    # 뉴스룸 — 비-코어. 창은 직전 events.json 의 collected_at 부터다. **발행 점검이 건
+    # 수집만 쓴다**: 새벽 예약분이 쓰면 오후 점검 직전의 수집이 그 창을 덮어, 예약분이 담은
+    # 항목이 읽히기 전에 사라진다(10-29·10-30 예약분 항목 1건씩이 같은 날 16시판에서 0건).
+    if args.consumer == 'publisher':
+        events_path = out_dir / 'events.json'
+        prev_events = _load_json(events_path)
+        try:
+            events = NR.collect(prev_events, now)
+        except Exception as e:  # noqa: BLE001 — 뉴스룸 실패가 수집 전체를 죽이지 않는다
+            events = {'collected_at': now.isoformat(),
+                      'items': [], 'missing': [f'{type(e).__name__}: {str(e)[:160]}']}
+        events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2) + '\n',
+                               encoding='utf-8')
+        print(f'뉴스룸 새 항목={len(events["items"])} missing={events["missing"] or "없음"}')
+    else:
+        print('뉴스룸 — 발행 점검 수집이 아니라 건드리지 않는다')
 
-    H.append(out_dir / 'history.jsonl', {
-        'date': today.isoformat(),
-        'tickers': {
-            s: {**{f: r.get(f) for f in HISTORY_FIELDS},
-                **{f: (r.get('fair_value') or {}).get(f) for f in HISTORY_FV_FIELDS}}
-            for s, r in tickers.items()},
-    })
+    # 이력은 complete 스냅샷만, 세션 하나에 한 번만 쓴다 — 그날 판정이 읽은 행이 나중에
+    # 바뀌지 않게. 옛 꼴(`sessions` 없는) 같은 키 행은 새 스냅샷으로 바꾼다.
+    if watch['complete']:
+        wrote = H.record(out_dir / 'history.jsonl', {
+            'date': sess['kr'],
+            'sessions': sess,
+            'tickers': {
+                s: {**{f: r.get(f) for f in HISTORY_FIELDS},
+                    **{f: (r.get('fair_value') or {}).get(f) for f in HISTORY_FV_FIELDS}}
+                for s, r in tickers.items()},
+        })
+        print(f'이력 {sess["kr"]} 행 {"기록" if wrote else "이미 있음 — 그대로"}')
+    else:
+        print(f'이력 — 불완전 스냅샷이라 쓰지 않는다 (stale={stale} missing={missing})')
 
-    print(f'\nwatch.json complete={watch["complete"]} missing={missing or "없음"}')
+    print(f'\nwatch.json as_of={watch["as_of"]} complete={watch["complete"]} '
+          f'missing={missing or "없음"} stale={stale or "없음"}')
     return 0
 
 

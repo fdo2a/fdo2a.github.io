@@ -113,3 +113,21 @@ def test_a_ticker_absent_from_the_last_row_falls_further_back():
     rows = [{'date': '2026-08-20', 'tickers': {'MU': {'price': 900.0}}},
             {'date': '2026-08-21', 'tickers': {'OTHER': {'price': 5.0}}}]
     assert previous(rows, '2026-08-25', 'MU') == {'price': 900.0}
+
+
+# ── record: 세션 하나에 한 번 (2026-11-23) ─────────────────────────────
+
+def test_record_writes_once_per_session(tmp_path):
+    path = tmp_path / 'h.jsonl'
+    first = {'date': '2026-11-23', 'sessions': {'kr': '2026-11-23'}, 'tickers': {'MU': {'price': 1}}}
+    later = {'date': '2026-11-23', 'sessions': {'kr': '2026-11-23'}, 'tickers': {'MU': {'price': 2}}}
+    assert H.record(path, first) is True
+    assert H.record(path, later) is False
+    assert H.load(path)[0]['tickers']['MU']['price'] == 1
+
+
+def test_record_replaces_an_old_shape_row(tmp_path):
+    path = tmp_path / 'h.jsonl'
+    H.append(path, {'date': '2026-11-20', 'tickers': {'MU': {'price': 707.29}}})
+    assert H.record(path, {'date': '2026-11-20', 'sessions': {}, 'tickers': {'MU': {'price': 594.51}}})
+    assert H.load(path)[0]['tickers']['MU']['price'] == 594.51

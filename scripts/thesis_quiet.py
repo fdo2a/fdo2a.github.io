@@ -17,6 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from thesis import evidence as E          # noqa: E402
+import thesis_evidence as TE              # noqa: E402
 from thesis import quiet as Q             # noqa: E402
 
 
@@ -42,7 +43,7 @@ def main(argv=None):
     # read) lists no numeric trigger and is never quiet: "could not judge" is not "nothing
     # fired", and THESIS_QUIET ends the run before STEP 1 would say so.
     hits, deferred = (None, f'{bad} — 수치 판정 보류') if bad else \
-        E.today_triggers(watch, rows, today.isoformat())
+        E.today_triggers(watch, rows, today.isoformat(), TE.staleness(today.isoformat(), watch))
     quiet, reasons = Q.decide(today, watch, hits or {}, _load(data / 'disclosures.json'),
                               _load(data / 'events.json'))
     if deferred:

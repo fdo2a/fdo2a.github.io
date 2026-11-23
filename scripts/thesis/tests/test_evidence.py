@@ -419,3 +419,14 @@ def test_quiet_deferred_for_an_unreadable_number_is_not_quiet(tmp_path, capsys):
     out = capsys.readouterr().out
     assert 'THESIS_CHECK' in out and '보류' in out
 
+
+
+# ── 신선도 (2026-11-23) — as_of 가 오늘이어도 낡은 스냅샷은 보류 ─────────
+
+def test_stale_snapshot_defers_even_when_as_of_is_today():
+    rows = history(25)
+    hits, reason = E.today_triggers(watch_for(rows), rows, TODAY,
+                                    stale=['MU 주가(2026-11-19)를 장 마감 전에 받았다'])
+    assert hits is None and '장 마감 전' in reason and '보류' in reason
+    hits, reason = E.today_triggers(watch_for(rows), rows, TODAY, stale=[])
+    assert reason is None

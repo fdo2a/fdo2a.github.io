@@ -139,16 +139,21 @@ def numeric_triggers(watch, rows):
     return out
 
 
-def today_triggers(watch, rows, today):
+def today_triggers(watch, rows, today, stale=None):
     """`(hits_by_ticker, None)` or `(None, reason)` — deferred is not "nothing fired".
 
     A stale watch.json (weekend, late collection) must not be read as today's numbers.
+    `stale` is `fresh.check()` for this judgement (the IO layer has the clock and the
+    calendar): an `as_of` of today is not enough — the 2026-11-20 snapshot said today
+    while holding KR closes of 11-18 and an intraday MU price.
     """
     if not isinstance(watch, dict) or not isinstance(watch.get('tickers'), dict) \
             or not watch['tickers']:
         return None, 'watch.json 이 없거나 종목이 없다 — 수치 판정 보류'
     if watch.get('as_of') != today:
         return None, f'watch.json 이 오늘 것이 아니다 ({watch.get("as_of")}) — 수치 판정 보류'
+    if stale:
+        return None, f'watch.json 이 낡았다 — {"; ".join(stale)} — 수치 판정 보류'
     bad = bad_number(watch)
     if bad:
         return None, f'watch.json 에 {bad} — 수치 판정 보류'
@@ -338,7 +343,7 @@ def check_run(run, tickers, recomputed, axes):
 
 
 def assess(today, tickers, *, watch, history_text, disclosures, snapshots,
-           history_problem=None, run=None, notes=()):
+           history_problem=None, run=None, notes=(), stale=None):
     """Everything the gate and STEP 3 need, per ticker.
 
     `watch`/`disclosures` are None and `history_problem` is set when the IO layer refused
@@ -354,7 +359,7 @@ def assess(today, tickers, *, watch, history_text, disclosures, snapshots,
         notes.append(f'{bad} — 가격 축 판정 불가, 수치 판정 보류')
         hits, deferred = None, bad
     else:
-        hits, deferred = today_triggers(watch, rows, today)
+        hits, deferred = today_triggers(watch, rows, today, stale)
         if deferred:
             notes.append(deferred)
     if isinstance(disclosures, dict):

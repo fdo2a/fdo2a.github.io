@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from thesis import evidence as E          # noqa: E402
+from thesis import fresh as F             # noqa: E402
 
 KST = timezone(timedelta(hours=9))
 TICKERS = ('005930.KS', '000660.KS', 'MU')
@@ -116,9 +117,22 @@ def load_inputs(today):
         snaps = []
     if isinstance(disclosures, dict):
         snaps.append(disclosures)
-    return {'watch': _json(watch_text), 'history_text': history_text,
+    watch = _json(watch_text)
+    return {'watch': watch, 'stale': staleness(today, watch), 'history_text': history_text,
             'history_problem': history_problem, 'disclosures': disclosures,
             'snapshots': snaps, 'notes': notes}
+
+
+def staleness(today, watch):
+    """fresh.check() at the moment this judgement is made (the clock on the day itself,
+    16:00 KST when replaying a past day). An unreadable calendar is itself stale."""
+    try:
+        cal = F.calendar(json.loads(
+            (Path(__file__).resolve().parent.parent / 'data' / 'market_holidays.json')
+            .read_text(encoding='utf-8')))
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        return [f'휴장 달력을 읽지 못했다 — {e}']
+    return F.check(F.now_for(today), watch, cal)
 
 
 def load_run(path):

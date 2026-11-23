@@ -1,7 +1,10 @@
 name: Collect thesis watch data
+# 발행 점검(로컬 codex 자동화, 매일 16:00 KST)이 scripts/thesis_refresh.py 로 이 워크플로를
+# consumer=publisher·request=<ID> 로 부르고 그 실행을 기다린다. 예약 실행은 백업이다 —
+# 2026-11 실측으로 7.5-10시간 늦게(다음날 01-04시 KST) 온다. 이름표는 시각이 아니라
+# 세션이라(scripts/thesis/fresh.py) 늦게 와도 같은 세션 행을 받고, 뉴스룸은 쓰지 않는다.
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('thesis collect {0}', inputs.request) || 'thesis collect (scheduled)' }}
 
-# 평일 17:40 KST — KR 수집(17:00·17:30) 이후, 감시 루틴(19:00 KST) 이전.
-# 이 시각이면 삼성·하이닉스의 당일 종가와 Micron의 전 거래일 종가가 모두 확정돼 있다.
 on:
   schedule:
     - cron: '40 17 * * 1-5'
@@ -9,9 +12,17 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: '주말·휴장에도 수집'
+        description: '남겨 둔 옛 입력 — 이제 요일과 무관하게 수집한다'
         type: boolean
         default: false
+      consumer:
+        description: 'publisher = 발행 점검이 건 수집(뉴스룸 events.json 은 이때만 쓴다)'
+        type: string
+        default: ''
+      request:
+        description: '발행 점검이 이 실행을 찾는 요청 ID(run-name 에 실린다)'
+        type: string
+        default: ''
 
 concurrency:
   group: thesis-data
@@ -36,7 +47,7 @@ jobs:
           python-version: '3.13'
 
       - name: Install dependencies
-        run: pip install --quiet yfinance certifi pandas pytest
+        run: pip install --quiet yfinance certifi pandas pytest pyyaml
 
       # 손편집 탐지는 **수집 전**에만 가능하다. 커밋된 페이지는 커밋된 데이터로 렌더한
       # 결과와 같아야 한다. 수집 후에 대조하면 그날의 정상적인 시세 변화까지 «다르다»로
@@ -58,7 +69,7 @@ jobs:
           SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
         run: |
           python3 scripts/collect_thesis_data.py \
-            ${{ inputs.force && '--force' || '' }} \
+            ${{ inputs.consumer == 'publisher' && '--consumer publisher' || '' }} \
             --out thesis/data
 
       # 페이지는 산문(content.py)과 오늘 수치(watch.json)로 결정론적으로 렌더된다.
@@ -73,7 +84,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add thesis/data/ thesis/*.html thesis/index.json
-          bash scripts/ci/push_with_retry.sh "thesis watch data $(TZ=Asia/Seoul date +%Y-%m-%d)"
+          bash scripts/ci/push_with_retry.sh "thesis watch data $(python3 -c "import json; print(json.load(open('thesis/data/watch.json'))['as_of'])")"
 
       # 테스트는 **커밋 뒤**에 돈다. 2026-09-01 채권 워크플로가 pytest 미설치로 죽으면서
       # 그날 모은 수집분을 통째로 버린 전례가 있다 — 검사 실패는 빨간 실행으로 남기되

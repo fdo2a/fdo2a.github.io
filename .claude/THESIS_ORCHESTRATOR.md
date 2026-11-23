@@ -1,6 +1,6 @@
 # 종목 thesis 감시 파이프라인
 
-평일 18:00 KST. 삼성전자(005930.KS) · SK하이닉스(000660.KS) · Micron(MU).
+매일 16:00 KST(로컬 codex 자동화 `~/.codex/automations/thesis`, 토·일 포함). 삼성전자(005930.KS) · SK하이닉스(000660.KS) · Micron(MU).
 
 **이 루틴의 기본 동작은 «아무것도 하지 않는 것»이다.** (수집 워크플로는 별개다 —
 그쪽은 매일 시세를 받아 페이지를 다시 렌더하고 커밋한다. 판단은 이 루틴만 바꾼다.) US·KR 브리프는 매일 발행하지만
@@ -10,11 +10,17 @@
 
 뭐라도 써야 할 것 같은 압박이 들면 그것이 바로 실패 신호다. 게이트가 막는다.
 
-## 가장 먼저 — 조용한 날 확인 (다른 파일을 읽기 전에)
+## 가장 먼저 — 새로 받기, 그다음 조용한 날 확인 (다른 파일을 읽기 전에)
 
 ```bash
-git pull && python3 scripts/thesis_quiet.py
+git pull --ff-only; python3 scripts/thesis_refresh.py; python3 scripts/thesis_quiet.py
 ```
+
+`thesis_refresh.py` 는 **매번** 수집을 직접 부르고(`consumer=publisher`) 그 실행이 끝날 때까지
+기다린 뒤 pull 한다. 예약 수집은 7.5-10시간 늦게 와서 미국 장중 값을 담는다 — 그 자료로
+판정하지 않는다. 새로 받기가 실패해도(`THESIS_REFRESH_FAILED`·`_STALE`) 멈추지 말고
+`thesis_quiet.py` 로 간다. quiet 이 파일로 신선도를 다시 보고, 낡았으면 THESIS_CHECK 에
+「수치 판정 보류」를 단다.
 
 `THESIS_QUIET` 가 나오면 **여기서 끝낸다.** 이 문서의 나머지도, `DESK_REPORT.md` 도 읽지
 않는다. 웹 검색·파일 수정·커밋·알림 없이 최종 메시지 한 줄(「변화 없음 — THESIS_QUIET」)로
@@ -42,20 +48,20 @@ Micron 의 SEC 공시는 `disclosures.json` 의 `MU` 행으로 매일 잡힌다.
 
 1. 레포를 클론하고 `git pull`.
 2. `thesis/data/watch.json` — 오늘의 결정론적 수치. **직접 시세를 fetch하지 마라.**
-   클라우드 환경은 금융 호스트가 403이고, 그래서 Actions가 17:40 KST에 미리 받아 커밋해 둔다.
+   클라우드 환경은 금융 호스트가 403이고, 그래서 Actions 가 받아 커밋한다(위 새로 받기).
+   `as_of` 는 KR 세션, MU 는 그 직전 미국 세션이다. `stale` 이 비어 있지 않으면 낡은 값이다.
 3. `thesis/data/thesis_state.json` — 어제까지의 판단. 등급·`last_seen`·`open_questions`.
 4. `thesis/data/history.jsonl` — 30일 전 값 조회용.
 5. 얕은 복제면 근거를 못 읽는다(게이트가 커밋 작성자로 수집 자료를 확인한다).
    `git rev-parse --is-shallow-repository` 가 `true` 면 `git fetch --shallow-since="45 days ago"`.
 
-평일에 수집 자료가 늦으면 루트 `AGENTS.md`의 예약 수집 지연 절차를 따라 Actions 수집을
-실행하고, 해당 실행 ID의 완료를 확인한 뒤 main을 동기화해 자료를 다시 읽는다. 주말에는
-전 거래일 자료를 오늘 자료로 바꾸기 위해 수집을 강제하지 않는다.
+수집은 맨 처음 새로 받기가 이미 했다. 다시 부르지 않는다.
 
-`watch.json`의 `as_of`가 오늘이 아니면 오늘의 수치 판정 자료가 없는 것이다. 주말에는 평일
-수집이 멈추므로 전 거래일 자료가 남는 것이 정상이다. **수치 트리거는 건너뛰고 사건 트리거만
+`watch.json`의 `as_of`가 오늘이 아니거나(주말·휴장일이면 전 거래일이 정상이다) 새로 받기
+뒤에도 낡았으면 오늘의 수치 판정 자료가 없는 것이다. **수치 트리거는 건너뛰고 사건 트리거만
 보되, 최종 보고에는 «수치 판정 보류 · 사건 변화 확인/미확인»을 적는다.** 판정하지 못한
 수치를 빈 트리거로 취급해 전체 변화 없음으로 보고하지 않는다. 낡은 수치로 판정하지 않는다.
+수치 판정을 보류한 날은 STEP 4 의 `last_seen` 을 그날 값으로 바꾸지 않는다.
 
 ## STEP 1 — 수치 트리거 (기계적)
 
