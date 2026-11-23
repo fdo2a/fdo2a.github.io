@@ -368,13 +368,13 @@
     "link:posts/2026-11-19.html": "1",
     "list:news.json": "892944859be68149"
    },
-   "reason": "",
+   "reason": "대기",
    "renderer": "r2",
-   "rounds": 2,
+   "rounds": 3,
    "source_blob": "458cd074e36f8cef645938a598062f6f54fe51b0",
-   "status": "published",
+   "status": "notice",
    "text_hash": "3fa696f4bb1523c3",
-   "updated": "2026-11-23T00:06:14+09:00"
+   "updated": "2026-11-23T16:00:05+09:00"
   },
   "news/2026-11-20.html": {
    "deps": {
@@ -654,13 +654,13 @@
     "japan/data/news/daily/2026-11-20.json": "10eec1c0fe1a83e1c2d4d34ad2849d7e10eaaebc",
     "list:posts.json": "b60dad3f6327d2fa"
    },
-   "reason": "",
+   "reason": "대기",
    "renderer": "r2",
-   "rounds": 1,
+   "rounds": 2,
    "source_blob": "3a6443be4b86ec8942a513ffa80d136b9a50489c",
-   "status": "published",
+   "status": "notice",
    "text_hash": "f35699648e349f00",
-   "updated": "2026-11-22T12:25:07+09:00"
+   "updated": "2026-11-23T16:00:05+09:00"
   }
  },
  "version": 1
