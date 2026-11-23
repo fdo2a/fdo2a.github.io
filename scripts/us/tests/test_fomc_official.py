@@ -204,3 +204,51 @@ def test_allowed_removals_are_named_dates_only():
     dropped = {'meetings': _years((2026, 8))}
     assert F.problems(dropped, previous=prev, today=TODAY,
                       allowed_removals={'2027-03-15'})
+
+
+# 2026-11-12 연준이 2027 일정을 고치며 10/26-27 을 정책 결정 없는 전략 회의로 정했다
+# (monetary20261112a). 원문은 그 표시를 날짜 칸이 아니라 같은 행의 의사록 칸에 적는다.
+STRATEGY_HTML = """
+<div class="panel-heading"><h4><a id="45694">2027 FOMC Meetings</a></h4></div>
+<div class="row fomc-meeting">
+    <div class="fomc-meeting__month col-md-2"><strong>September</strong></div>
+    <div class="fomc-meeting__date col-lg-1">14-15</div>
+    <div class="col-xs-12 col-md-4 col-lg-4 fomc-meeting__minutes">
+        <a href="/x.htm">Statement on Longer-Run Goals and Monetary Policy Strategy</a>
+    </div>
+</div>
+<div class="row fomc-meeting">
+    <div class="fomc-meeting__month col-xs-5 col-sm-3 col-md-2"><strong>October</strong></div>
+    <div class="fomc-meeting__date col-xs-4 col-sm-9 col-md-10 col-lg-2">26-27</div>
+    <div class="col-xs-12 col-md-4 col-lg-2">
+    </div>
+    <div class="col-xs-12 col-md-4 col-lg-4 fomc-meeting__minutes">
+            <p>Monetary Policy Strategy Meeting</p>
+    </div>
+</div>
+<div class="row fomc-meeting">
+    <div class="fomc-meeting__month col-md-2"><strong>November</strong></div>
+    <div class="fomc-meeting__date col-lg-1">16-17</div>
+    <div class="col-xs-12 col-md-4 col-lg-4 fomc-meeting__minutes">
+    </div>
+</div>
+"""
+
+
+def test_a_strategy_meeting_is_not_a_decision_day():
+    """일정표는 목록의 모든 날을 「FOMC 성명 14:00 ET」로 찍고 블랙아웃을 잰다.
+    성명이 없는 전략 회의를 넣으면 없는 발표를 기다리게 만든다."""
+    b = F.book(STRATEGY_HTML, verified_at='2026-11-23')
+    assert b['meetings'] == ['2027-09-15', '2027-11-17']
+    assert b['strategy_meetings'] == ['2027-10-27']
+
+
+def test_strategy_meetings_count_toward_a_complete_year():
+    """② 는 원문이 다 읽혔는지 보는 검사다. 2028 패널이 올라와 2027 이 중간 해가
+    되면, 결정 회의 7회 + 전략 회의 1회는 온전한 해다."""
+    year = [f'2027-{m:02d}-15' for m in range(1, 8)]
+    book = {'meetings': _years((2026, 8)) + year + ['2028-01-26'],
+            'strategy_meetings': ['2027-10-27']}
+    assert F.problems(book, today=TODAY) == []
+    assert any('2027' in x for x in F.problems(
+        {'meetings': book['meetings']}, today=TODAY))

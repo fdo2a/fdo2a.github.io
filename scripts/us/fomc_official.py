@@ -40,6 +40,11 @@ _YEAR_PANEL = re.compile(
 _ROW = re.compile(
     r'fomc-meeting__month[^>]*>(?:<strong>)?(.*?)(?:</strong>)?</div>\s*'
     r'<div class="fomc-meeting__date[^>]*>(.*?)</div>', re.S)
+# 정책 결정 없는 전략 회의(2027-10-26~27, 연준 2026-11-12 보도자료 monetary20261112a).
+# 원문은 날짜 칸이 아니라 **같은 행의 의사록 칸**에 문단 하나로 적는다. 문구 전체를
+# 태그 경계까지 맞춘다 — 옛 회의 행의 「Statement on Longer-Run Goals and Monetary
+# Policy Strategy」 링크가 걸리면 정례회의가 사라진다.
+_STRATEGY = re.compile(r'>\s*Monetary Policy Strategy Meeting\s*<', re.I)
 
 
 # 공식 확인의 유효기간. 갱신이 멈춰도 파일은 남으므로 **읽는 쪽**이 따진다 —
@@ -54,7 +59,7 @@ def _text(chunk):
 def parse_calendar(html):
     """연준 일정 페이지 → 회의 목록.
 
-    각 항목: `{'year', 'month', 'days', 'date', 'sep', 'notation'}`.
+    각 항목: `{'year', 'month', 'days', 'date', 'sep', 'notation', 'strategy'}`.
     `date` 는 회의 **마지막 날**(성명 발표일)이다. 날짜를 못 읽으면 그 행을
     버린다 — 반쯤 읽은 행을 남기면 없는 회의를 인쇄한다.
     """
@@ -69,9 +74,13 @@ def parse_calendar(html):
         if not year:
             continue
         segment = html[start:marks[i + 1][0]]
-        for raw_month, raw_days in _ROW.findall(segment):
-            item = _row(int(year), _text(raw_month), _text(raw_days))
+        rows = list(_ROW.finditer(segment))
+        for j, m in enumerate(rows):
+            item = _row(int(year), _text(m.group(1)), _text(m.group(2)))
             if item:
+                # 행의 나머지 칸 = 다음 행 시작(마지막 행은 패널 끝)까지.
+                tail = segment[m.end():rows[j + 1].start() if j + 1 < len(rows) else None]
+                item['strategy'] = bool(_STRATEGY.search(tail))
                 out.append(item)
     out.sort(key=lambda r: r['date'])
     return out
@@ -115,9 +124,12 @@ def book(html, *, verified_at, source=URL, keep_notation=False):
     한 필드로 뭉치면 오래된 표에 오늘 날짜만 붙는다.
 
     통지투표(notation vote)는 기본으로 뺀다. 성명·기자회견이 있는 정례 회의가
-    아니라서 블랙아웃·SEP 계산의 전제와 다르다.
+    아니라서 블랙아웃·SEP 계산의 전제와 다르다. 전략 회의도 같은 이유로 뺀다 —
+    `meetings` 는 **정책 결정 발표일**이다(`calendar.fomc_events` 가 성명 14:00 ET 로 찍는다).
     """
-    rows = [r for r in parse_calendar(html) if keep_notation or not r['notation']]
+    parsed = parse_calendar(html)
+    rows = [r for r in parsed
+            if (keep_notation or not r['notation']) and not r['strategy']]
     return {
         'source': source,
         'verified_at': verified_at,
@@ -125,7 +137,9 @@ def book(html, *, verified_at, source=URL, keep_notation=False):
         'meetings': [r['date'].isoformat() for r in rows],
         'sep_meetings': [r['date'].isoformat() for r in rows if r['sep']],
         'notation_votes': [r['date'].isoformat()
-                           for r in parse_calendar(html) if r['notation']],
+                           for r in parsed if r['notation']],
+        'strategy_meetings': [r['date'].isoformat()
+                              for r in parsed if r['strategy']],
     }
 
 
@@ -198,7 +212,8 @@ def problems(book, *, previous=None, today, require_previous=False,
     if dup:
         out.append(f'중복 날짜: {", ".join(dup)}')
     count = {}
-    for d in meetings:
+    # 전략 회의도 원문의 정례 일정 한 칸이다 — 2027 은 결정 7회 + 전략 1회.
+    for d in meetings + [str(x) for x in book.get('strategy_meetings') or []]:
         count[d[:4]] = count.get(d[:4], 0) + 1
     years = sorted(count)
     short = [y for y in years[1:-1] if count[y] < REGULAR_PER_YEAR]
