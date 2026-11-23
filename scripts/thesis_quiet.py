@@ -7,7 +7,7 @@ Prints `THESIS_QUIET` and exits 0 when every signal is empty; prints `THESIS_CHE
 with the reasons and exits 10 otherwise. Any other exit (a crash) means "not proven
 quiet" too — the routine then runs its normal research.
 
-Logic: scripts/thesis/quiet.py.
+Logic: scripts/thesis/quiet.py; numeric triggers: scripts/thesis/evidence.py.
 """
 import argparse
 import json
@@ -16,9 +16,8 @@ from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from thesis import history as H           # noqa: E402
+from thesis import evidence as E          # noqa: E402
 from thesis import quiet as Q             # noqa: E402
-from thesis import triggers as T          # noqa: E402
 
 
 def _load(path):
@@ -26,22 +25,6 @@ def _load(path):
         return json.loads(Path(path).read_text(encoding='utf-8'))
     except (OSError, ValueError):
         return None
-
-
-def numeric_triggers(watch, rows):
-    """Exactly STEP 1 of THESIS_ORCHESTRATOR.md — keep the two in step."""
-    deep = H.has_depth(rows, T.MIN_HISTORY_ROWS)
-    back = H.days_ago(watch['as_of'], T.LOOKBACK_DAYS)
-    out = {}
-    for sym, row in watch['tickers'].items():
-        past = {k: H.value_on(rows, back, sym, k)
-                for k in ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price')}
-        past = past if any(v is not None for v in past.values()) else None
-        prev = H.previous(rows, watch['as_of'], sym)
-        prior = T.prior_metrics(rows, sym, before=watch['as_of'])
-        out[sym] = T.evaluate(row, past, row.get('fair_value'), has_depth=deep,
-                              prev=prev, prior=prior)
-    return out
 
 
 def main(argv=None):
@@ -53,10 +36,19 @@ def main(argv=None):
     today = (date.fromisoformat(args.today) if args.today
              else datetime.now(Q.KST).date())
     watch = _load(data / 'watch.json')
-    triggers = (numeric_triggers(watch, H.load(data / 'history.jsonl'))
-                if isinstance(watch, dict) and watch.get('tickers') else {})
-    quiet, reasons = Q.decide(today, watch, triggers, _load(data / 'disclosures.json'),
+    path = data / 'history.jsonl'
+    rows, bad = E.parse_history(path.read_text(encoding='utf-8') if path.exists() else None)
+    # Same function as the gate and STEP 1. Deferred (stale watch, a number that cannot be
+    # read) lists no numeric trigger and is never quiet: "could not judge" is not "nothing
+    # fired", and THESIS_QUIET ends the run before STEP 1 would say so.
+    hits, deferred = (None, f'{bad} — 수치 판정 보류') if bad else \
+        E.today_triggers(watch, rows, today.isoformat())
+    quiet, reasons = Q.decide(today, watch, hits or {}, _load(data / 'disclosures.json'),
                               _load(data / 'events.json'))
+    if deferred:
+        quiet = False
+        if deferred not in reasons:
+            reasons.append(deferred)
     if quiet:
         print(f'THESIS_QUIET {today} — 수치 트리거·확정 공시·뉴스룸 신규 항목·실적 창 모두 비었다')
         return 0

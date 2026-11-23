@@ -3,15 +3,22 @@
 
   python3 scripts/check_thesis.py                      # 세 페이지 전부
   python3 scripts/check_thesis.py thesis/micron.html   # 하나만
-  python3 scripts/check_thesis.py --triggers run.json  # 침묵 검사까지
+  python3 scripts/check_thesis.py --triggers run.json  # 루틴: STEP 3 에서 쓴 리서치 사건
 
 보는 것:
-  1) 등급 통제 어휘 · state ↔ 페이지 정합 · kill 두 축
+  1) 등급 통제 어휘 · state ↔ 페이지 정합
   2) 변경 이력 항목의 7요소, 확정 사실의 출처 표기
   3) 금칙어 — [확인필요]·TODO·buy-side
   4) 수치 불변 — git HEAD 판과 대조해 손대지 않은 곳의 숫자가 움직였는지
-  5) 침묵 — 트리거도 확정 사건도 없는데 페이지가 수정됐는지 (--triggers 있을 때)
-  6) 모바일 레이아웃 390·1280px (Playwright 있을 때)
+  5) 침묵 — 근거(T)가 없는데 페이지가 수정됐는지. 언제나 돈다
+  6) 등급 규율 — HEAD 의 책에서 propose()를 다시 돌린 결과와 같은지(하루 한 단계·
+     대각선·회복 잠금·트리거·하루 한 번·kill 두 축)
+  7) 수집 자료 — 루틴이 watch·history·disclosures·events 를 고쳤는지
+  8) 모바일 레이아웃 390·1280px (Playwright 있을 때)
+
+근거(T·kill 축)는 run.json 을 믿지 않고 `thesis_evidence.assess_today()` 가 HEAD 의
+수집 자료에서 다시 계산한다. run.json 은 리서치 사건만 더할 수 있고, 수치 트리거나
+kill 축을 적었다면 재계산과 맞아야 한다(다르면 「지어낸 근거」).
 
 5)가 이 게이트의 존재 이유다. "변화 없으면 아무것도 하지 마"는 프롬프트로는 안 지켜진다.
 
@@ -31,6 +38,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from thesis import gate as G          # noqa: E402
+import thesis_evidence as EV          # noqa: E402
 from us.post_check import report      # noqa: E402
 from verify_post import git_show, layout_findings  # noqa: E402
 
@@ -77,24 +85,21 @@ def changed_vs_head(path):
     return bool(out.stdout.strip())
 
 
-def check_page(symbol, path, state, run):
+def check_page(symbol, path, state, licences):
+    """Page checks. `licences` is the ticker's recomputed T (thesis_evidence)."""
     findings = []
     book = state.get(symbol, {})
     html = Path(path).read_text(encoding='utf-8')
 
-    kill_evidence = tuple(run.get('kill_evidence', {}).get(symbol, ()))
-    for problem in G.check(html, state_grade=book.get('grade'),
-                           kill_evidence=kill_evidence):
+    for problem in G.check(html, state_grade=book.get('grade')):
         where = f' [{problem["where"]}]' if problem.get('where') else ''
         findings.append(f'{problem["check"]}{where}: {problem["message"]}')
 
-    if run:
-        silence = G.check_silence(
-            triggers=run.get('triggers', {}).get(symbol, []),
-            events=run.get('events', {}).get(symbol, []),
-            page_changed=changed_vs_head(path))
-        if silence:
-            findings.append(f'{silence["check"]}: {silence["message"]}')
+    # 언제나 돈다 — run.json 이 없으면 리서치 사건이 없는 것이지 검사를 건너뛸 이유가 아니다.
+    silence = G.check_silence(triggers=list(licences), events=[],
+                              page_changed=changed_vs_head(path))
+    if silence:
+        findings.append(f'{silence["check"]}: {silence["message"]}')
 
     before = git_show('HEAD', path)
     if before is not None:
@@ -103,16 +108,40 @@ def check_page(symbol, path, state, run):
     return findings
 
 
+def head_state(path=STATE):
+    """thesis_state.json `tickers` at HEAD, or None when it cannot be read."""
+    text = git_show('HEAD', path)
+    try:
+        return json.loads(text).get('tickers', {}) if text is not None else None
+    except (ValueError, AttributeError):
+        return None
+
+
+def common_findings(evidence, state, base, today):
+    """What does not belong to one page: run.json claims, collector files, grade discipline."""
+    findings = [f'{check} [{sym}]: {message}' for sym, check, message in evidence['problems']]
+    for path in EV.COLLECTOR:
+        if changed_vs_head(path):
+            findings.append(f'collector_data: {path} 이 HEAD 와 다르다 — 루틴은 수집 자료를 '
+                            '고치지 않는다')
+    for problem in G.check_grades(base, state, today, evidence['tickers']):
+        where = f' [{problem["where"]}]' if problem.get('where') else ''
+        findings.append(f'{problem["check"]}{where}: {problem["message"]}')
+    return findings
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('pages', nargs='*', help='검사할 페이지 (기본: 세 종목 전부)')
     ap.add_argument('--state', default=STATE)
-    ap.add_argument('--triggers', help='오늘 run의 트리거·사건 JSON — 침묵 검사에 필요')
+    ap.add_argument('--triggers', help='STEP 3 에서 쓴 run.json — 리서치 사건(제목·출처)')
+    ap.add_argument('--today', help='판정일 YYYY-MM-DD (기본: 지금의 KST 날짜)')
     ap.add_argument('--skip-layout', action='store_true')
     args = ap.parse_args()
 
+    today = args.today or EV.kst_today()
     state = load_state(args.state)
-    run = json.loads(Path(args.triggers).read_text(encoding='utf-8')) if args.triggers else {}
+    evidence = EV.assess_today(today, args.triggers)
 
     targets = ({p: s for s, p in PAGES.items() if p in args.pages}
                if args.pages else {p: s for s, p in PAGES.items()})
@@ -120,13 +149,23 @@ def main():
         print(f'알 수 없는 페이지: {args.pages}', file=sys.stderr)
         return 1
 
+    for note in evidence['notes']:
+        print(f'참고: {note}')
     total = 0
+    common = common_findings(evidence, state, head_state(args.state), today)
+    if common:
+        total += len(common)
+        print(f'\n확인할 것 {len(common)}건 — 근거·등급·수집 자료')
+        for f in common:
+            print(f'  - {f}')
+
     for path, symbol in targets.items():
         if not Path(path).exists():
             print(f'없는 파일: {path}')
             total += 1
             continue
-        findings = check_page(symbol, path, state, run)
+        licences = evidence['tickers'].get(symbol, {}).get('licences', [])
+        findings = check_page(symbol, path, state, licences)
         if not args.skip_layout:
             findings += layout_findings(path)
         if findings:

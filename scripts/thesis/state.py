@@ -26,10 +26,6 @@ RECOVERY_LOCK_BUSINESS_DAYS = 3
 # a contract loss alone might be priced in already. Both together is a thesis break.
 KILL_AXES = ('price', 'contract')
 
-# Relative change below which a number is treated as unmoved.
-MOVE_EPSILON = 0.005
-
-
 @dataclass
 class Proposal:
     grade: str
@@ -69,6 +65,14 @@ def propose(current, wanted, today, triggers, kill_evidence=()):
     if wanted == now:
         return Proposal(now, since, allowed=True, reasons=reasons)
 
+    # One move per day, across reruns too. The stored value, not the `or today` default:
+    # a book with no date has not moved today. After run 1's move is pushed, HEAD carries
+    # grade_since == today, so STEP 3 and the gate both hold a second step, a revert or a
+    # re-entry the same day.
+    if current.get('grade_since') == today:
+        reasons.append('one_move_per_day')
+        return Proposal(now, since, allowed=False, reasons=reasons)
+
     # Movement always needs a trigger. Re-reading the same facts is not a trigger.
     if not triggers:
         reasons.append('no_trigger')
@@ -97,26 +101,3 @@ def propose(current, wanted, today, triggers, kill_evidence=()):
     grade = GRADES[target]
     changed = grade != now
     return Proposal(grade, today if changed else since, allowed=changed, reasons=reasons)
-
-
-def numbers_moved(last_seen, today_values):
-    """Names of the tracked numbers that actually moved since we last looked.
-
-    If nothing moved, no numeric trigger can arithmetically fire — the gate uses this to
-    catch a routine that "found" a change in identical data.
-    """
-    moved = []
-    for key, before in sorted(last_seen.items()):
-        after = today_values.get(key)
-        if after is None or before is None:
-            continue
-        if not isinstance(before, (int, float)) or not isinstance(after, (int, float)):
-            if before != after:
-                moved.append(key)
-            continue
-        if before == 0:
-            if after != 0:
-                moved.append(key)
-        elif abs(after - before) / abs(before) > MOVE_EPSILON:
-            moved.append(key)
-    return moved

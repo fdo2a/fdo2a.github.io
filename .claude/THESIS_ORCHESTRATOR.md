@@ -45,6 +45,8 @@ Micron 의 SEC 공시는 `disclosures.json` 의 `MU` 행으로 매일 잡힌다.
    클라우드 환경은 금융 호스트가 403이고, 그래서 Actions가 17:40 KST에 미리 받아 커밋해 둔다.
 3. `thesis/data/thesis_state.json` — 어제까지의 판단. 등급·`last_seen`·`open_questions`.
 4. `thesis/data/history.jsonl` — 30일 전 값 조회용.
+5. 얕은 복제면 근거를 못 읽는다(게이트가 커밋 작성자로 수집 자료를 확인한다).
+   `git rev-parse --is-shallow-repository` 가 `true` 면 `git fetch --shallow-since="45 days ago"`.
 
 평일에 수집 자료가 늦으면 루트 `AGENTS.md`의 예약 수집 지연 절차를 따라 Actions 수집을
 실행하고, 해당 실행 ID의 완료를 확인한 뒤 main을 동기화해 자료를 다시 읽는다. 주말에는
@@ -58,25 +60,13 @@ Micron 의 SEC 공시는 `disclosures.json` 의 `MU` 행으로 매일 잡힌다.
 ## STEP 1 — 수치 트리거 (기계적)
 
 ```bash
-python3 - <<'PY'
-import json, sys; sys.path.insert(0, 'scripts')
-from thesis import triggers as T, history as H
-watch = json.load(open('thesis/data/watch.json'))
-rows = H.load('thesis/data/history.jsonl')
-deep = H.has_depth(rows, T.MIN_HISTORY_ROWS)
-back = H.days_ago(watch['as_of'], T.LOOKBACK_DAYS)
-out = {}
-for sym, row in watch['tickers'].items():
-    past = {k: H.value_on(rows, back, sym, k)
-            for k in ('eps_fy1', 'eps_fy1_low', 'eps_fy1_high', 'price')}
-    past = past if any(v is not None for v in past.values()) else None
-    prev = H.previous(rows, watch['as_of'], sym)
-    prior = T.prior_metrics(rows, sym, before=watch['as_of'])
-    out[sym] = T.evaluate(row, past, row.get('fair_value'), has_depth=deep,
-                          prev=prev, prior=prior)
-print(json.dumps(out, ensure_ascii=False, indent=2))
-PY
+python3 scripts/thesis_evidence.py
 ```
+
+종목별 `수치 트리거` 줄을 본다. **직접 계산하지 마라** — 게이트가 같은 함수로 git HEAD 의
+수집 자료에서 다시 계산하고, 다르면 막는다. `보류` 는 watch.json 이 오늘 것이 아니거나
+history.jsonl 에 깨진 줄이 있다는 뜻이다(`참고:` 줄에 이유). 보류는 「없음」이 아니다 —
+STEP 0 의 «수치 판정 보류»로 보고한다.
 
 이 결과가 «오늘 숫자가 실제로 움직였는가»의 답이다. 재해석하지 마라 — 산술이다.
 
@@ -129,25 +119,50 @@ bear 가치권 안이면 트리거는 비어 있고, 그것이 아무 일도 없
 
 ## STEP 3 — 판정
 
-STEP 1·2가 **둘 다 비었으면 → STEP 6으로 건너뛴다. 아무것도 하지 않는다.**
+먼저 STEP 2 에서 **1차 출처로 확인한** 사건을 `/tmp/run.json` 에 적고, 근거를 다시 뽑는다.
+이 실행의 사건만 적는다. 미확정 보도는 넣지 않는다(추론이다). 사건이 없으면 `{"events": {}}`.
 
-하나라도 있으면 기존 논거에 더해진 사실을 기록하고 종목별 등급을 제안한다. 등급이 그대로여도
-STEP 4로 진행한다. 등급 변경 제안은 규율에 통과시킨다:
+```bash
+cat > /tmp/run.json <<'JSON'
+{"events": {"MU": [{"title": "사건 제목", "source": "https://investors.micron.com/news/...", "confirmed": true}]}}
+JSON
+python3 scripts/thesis_evidence.py --events /tmp/run.json
+```
+
+`source` 는 실제로 열어 본 원출처의 전체 주소를 주소창에서 그대로 옮긴다 — `http(s)://` + 점이 든
+영문 호스트 이름(`www.sec.gov`, 한글 도메인은 `xn--…` 꼴) + 경로. 호스트가 없거나(`https:///…`)
+IP·대괄호·`@`·공백이 든 주소는 게이트가 `event_shape` 로 막는다.
+
+- 종목별 `T(허용 근거)` 가 **모두 비었으면 → STEP 6으로 건너뛴다. 아무것도 하지 않는다.**
+- T 가 빈 종목은 STEP 4 에서도 상태·페이지를 건드리지 않는다. 페이지가 바뀌면 게이트의 `silence` 가
+  막는다(상태 파일은 등급·`grade_since` 만 게이트가 본다 — 나머지도 규칙으로 건드리지 않는다).
+- 한 사건이 여러 종목에 걸치면(교차 반영, `content.py` 공통 문구 수정) 그 사건을 **영향받는 종목마다**
+  run.json 에 적는다. 그래야 그 종목들의 T 가 생기고, 다시 빌드한 페이지가 막히지 않는다.
+- `문제` 줄이 나오면 run.json 을 고친다. 수치 트리거 이름(`bear_proximity` 등)을 사건으로
+  적지 않는다 — 수치는 재계산한 것만 인정된다. `triggers`·`kill_evidence` 는 적지 않는다.
+
+T 가 있는 종목은 기존 논거에 더해진 사실을 기록하고 등급을 제안한다. 등급이 그대로여도
+STEP 4로 진행한다. 등급 변경 제안은 같은 근거로 규율에 통과시킨다:
 
 ```bash
 python3 - <<'PY'
 import json, sys; sys.path.insert(0, 'scripts')
 from thesis import state as S
+import thesis_evidence as EV
+ev = EV.assess_today(run_path='/tmp/run.json')
+t = ev['tickers']['MU']
 book = json.load(open('thesis/data/thesis_state.json'))['tickers']['MU']
-r = S.propose(book, '주의', today='YYYY-MM-DD',
-              triggers=['consensus_swing'], kill_evidence=('price',))
-print(r.grade, r.allowed, r.reasons)
+r = S.propose(book, '주의', today=ev['today'],
+              triggers=t['licences'], kill_evidence=t['kill_evidence'])
+print(r.grade, r.grade_since, r.allowed, r.reasons)
 PY
 ```
 
-규율 — 하루 한 단계 · 대각선 금지 · **kill은 가격 축과 계약/점유율 축이 함께 깨질 때만** ·
-악화는 즉시, 회복은 3영업일 잠금 · 트리거 없으면 이동 불가.
-`propose()`가 깎아낸 결과가 최종이다. 우회하지 마라.
+규율 — 하루 한 단계 · 대각선 금지 · **kill은 가격 축과 계약/점유율 축이 최근 30일 안에 함께 깨질 때만**
+(가격 축 = 수치 재현, 계약 축 = 확정 공시, 둘 다 코드가 센다) · 악화는 즉시, 회복은 3영업일 잠금 ·
+트리거 없으면 이동 불가 · **하루 한 번** — 오늘 이미 바뀐 종목은 다시 바꾸지 않는다(재실행이어도).
+`propose()`가 깎아낸 `grade`·`grade_since` 를 그대로 STEP 4 에 쓴다. 게이트가 HEAD 의 책에서
+같은 계산을 다시 해 다르면 막는다. 등급이 그대로인 날에는 `grade_since` 를 건드리지 않는다.
 
 **리서치 판단** — 트리거가 생긴 종목만 기존 논거를 유지·수정·폐기하는 이유를 작성한다.
 확인된 사실, 해석, 가장 설득력 있는 대안 설명, 다음 촉매와 반증 조건을 연결한다.
@@ -197,15 +212,16 @@ thesis 자체(9항목 기준표)가 바뀌어야 하는 사건이면 `scripts/th
 ## STEP 5 — 게이트와 발행
 
 ```bash
-cat > /tmp/run.json <<'JSON'
-{"triggers": {"MU": [...]}, "events": {"MU": [...]},
- "kill_evidence": {"MU": ["price", "contract"]}}
-JSON
 python3 scripts/check_thesis.py --triggers /tmp/run.json
 ```
 
-**실패하면 발행하지 않는다.** 특히 `silence` 실패는 "트리거 없이 페이지를 고쳤다"는 뜻이므로,
-고친 것을 되돌려야지 트리거를 만들어내면 안 된다.
+`/tmp/run.json` 은 STEP 3 에서 쓴 그대로다 — 다시 쓰지 않는다. 수치 트리거·kill 축은 게이트가
+HEAD 의 수집 자료에서 다시 계산한다.
+
+**실패하면 발행하지 않는다.** 특히 `silence` 실패는 "근거 없이 페이지를 고쳤다"는 뜻이므로,
+고친 것을 되돌려야지 근거를 만들어내면 안 된다. `grade_discipline` 은 propose() 결과와 다른
+등급을 썼다는 뜻이다. `collector_data` 는 수집 자료를 건드렸다는 뜻이다 — 그 파일을
+`git checkout -- thesis/data/<파일>` 로 되돌린다.
 
 통과하면:
 ```bash

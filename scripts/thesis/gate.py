@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from us.macro_gate import BANNED_LABELS          # noqa: E402  「buy-side」 금지
 from us.post_check import BANNED as BANNED_MARKERS  # noqa: E402  [확인필요]·TODO·TBD
 
-from .state import GRADES, KILL_AXES             # noqa: E402
+from .state import GRADES, propose             # noqa: E402
 
 STANCES = ('Bullish', 'Bearish', 'Neutral')
 REQUIRED_BLOCKS = ('changelog', 'thesis', 'valuation')
@@ -50,7 +50,7 @@ def _entries(html):
     return out
 
 
-def check(html, state_grade, kill_evidence=()):
+def check(html, state_grade):
     """Everything wrong with this page, as a list. Empty means publishable."""
     problems = []
 
@@ -69,13 +69,9 @@ def check(html, state_grade, kill_evidence=()):
             'state_consistency',
             f'thesis_state.json 등급({state_grade!r})과 페이지 표시({page_grade!r})가 다르다'))
 
-    # ── kill 은 두 축이 함께 깨질 때만 ──
-    if state_grade == 'kill condition':
-        missing = set(KILL_AXES) - set(kill_evidence)
-        if missing:
-            problems.append(_problem(
-                'kill_axes',
-                f'kill 등급인데 근거 축이 부족하다 — 없는 축: {", ".join(sorted(missing))}'))
+    # kill 두 축은 여기서 보지 않는다 — 진입하는 날 check_grades()가 propose()로 본다.
+    # 하루짜리 교차 근거는 30일 뒤 사라지므로, 유지 중인 kill 을 매일 다시 물으면 트리거
+    # 없이 등급을 끌어내리게 된다(propose 가 금지하는 일).
 
     # ── 필수 블록 ──
     for block in REQUIRED_BLOCKS:
@@ -138,3 +134,52 @@ def check_silence(triggers, events, page_changed):
         'silence',
         '트리거도 확정된 사건도 없는데 페이지가 수정됐다 — '
         '변화가 없는 날은 아무것도 건드리지 않는다')
+
+
+def check_grades(base, new, today, evidence):
+    """Grade discipline replayed from the book at git HEAD (2026-11-23).
+
+    `base` is thesis_state.json `tickers` at HEAD (None when unreadable), `new` the working
+    tree's, `evidence` the per-ticker result of `evidence.assess()`. Every (grade,
+    grade_since) that differs from HEAD must be exactly what `propose()` returns from
+    HEAD's book with the recomputed T and kill_evidence — two steps, diagonals, the
+    recovery lock, a move without a trigger, a second move on a day HEAD already moved,
+    and kill without both axes all surface as a mismatch.
+    """
+    if base is None:
+        return [_problem('grade_discipline',
+                         'HEAD 의 thesis_state.json 을 읽지 못했다 — 등급 규율을 검사할 수 없다')]
+    problems = []
+    for sym in sorted(set(base) | set(new)):
+        before, after = base.get(sym), new.get(sym)
+        if not isinstance(before, dict):
+            problems.append(_problem('grade_discipline',
+                                     'HEAD 에 없는 종목이다 — 종목 추가는 루틴 밖의 사람 커밋', sym))
+            continue
+        if not isinstance(after, dict):
+            problems.append(_problem('grade_discipline', '작업 트리 상태에서 종목이 사라졌다', sym))
+            continue
+        was = (before.get('grade'), before.get('grade_since'))
+        now = (after.get('grade'), after.get('grade_since'))
+        if was == now:
+            continue
+        if was[0] == now[0]:
+            problems.append(_problem(
+                'grade_since_tamper',
+                f'등급은 그대로인데 grade_since 만 바뀌었다 ({was[1]} → {now[1]})', sym))
+            continue
+        ev = evidence.get(sym) or {}
+        try:
+            r = propose(before, now[0], today, ev.get('licences') or [],
+                        ev.get('kill_evidence') or ())
+        except ValueError as e:
+            problems.append(_problem('grade_discipline', str(e), sym))
+            continue
+        if (r.grade, r.grade_since) != now:
+            problems.append(_problem(
+                'grade_discipline',
+                f'{was[0]} → {now[0]}({now[1]}) 은 규율이 허락하지 않는다 — '
+                f'propose 결과 {r.grade}({r.grade_since}), 사유 '
+                f'{", ".join(r.reasons) or "없음"}, T={ev.get("licences") or []}, '
+                f'kill_evidence={list(ev.get("kill_evidence") or ())}', sym))
+    return problems

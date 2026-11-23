@@ -84,20 +84,84 @@ def test_fact_without_source_is_flagged():
 
 # ── kill 두 축 ──
 
-def test_kill_without_two_axes_is_flagged():
+def test_held_kill_page_is_not_rechecked_per_day():
+    """Kill is judged on entry (check_grades); a held kill day needs no fresh axes."""
     html = PAGE.format(entries=ENTRY).replace('data-grade="주의"', 'data-grade="kill condition"')
-    problems = G.check(html, state_grade='kill condition', kill_evidence=('price',))
-    assert 'kill_axes' in keys(problems)
+    assert 'kill_axes' not in keys(G.check(html, state_grade='kill condition'))
 
 
-def test_kill_with_two_axes_passes():
-    html = PAGE.format(entries=ENTRY).replace('data-grade="주의"', 'data-grade="kill condition"')
-    problems = G.check(html, state_grade='kill condition',
-                       kill_evidence=('price', 'contract'))
-    assert 'kill_axes' not in keys(problems)
+# ── 등급 규율 — HEAD 의 책에서 propose() 재현 ──
+
+TODAY = '2026-11-20'
 
 
-# ── 금칙어 ──
+def bk(grade, since='2026-11-10'):
+    return {'grade': grade, 'grade_since': since}
+
+
+def ev(licences=('bear_proximity',), axes=()):
+    return {'MU': {'licences': list(licences), 'kill_evidence': tuple(axes)}}
+
+
+def grades(base, new, evidence=None):
+    return [(p['check'], p['where']) for p in
+            G.check_grades({'MU': base}, {'MU': new}, TODAY, evidence or ev())]
+
+
+def test_unchanged_grade_needs_nothing():
+    assert grades(bk('kill condition'), bk('kill condition'), ev(())) == []
+
+
+def test_one_step_with_licence_passes():
+    assert grades(bk('홀딩 강화'), bk('주의', TODAY)) == []
+
+
+def test_move_without_licence_is_blocked():
+    assert grades(bk('홀딩 강화'), bk('주의', TODAY), ev(())) == [('grade_discipline', 'MU')]
+
+
+def test_two_steps_are_blocked():
+    assert grades(bk('홀딩 강화'), bk('비중 조절 검토', TODAY)) == [('grade_discipline', 'MU')]
+
+
+def test_recovery_inside_lock_is_blocked():
+    assert grades(bk('주의', '2026-11-19'), bk('홀딩 강화', TODAY)) == [('grade_discipline', 'MU')]
+
+
+def test_kill_with_both_axes_passes():
+    assert grades(bk('비중 조절 검토'), bk('kill condition', TODAY),
+                  ev(axes=('contract', 'price'))) == []
+
+
+def test_kill_with_one_axis_is_blocked():
+    assert grades(bk('비중 조절 검토'), bk('kill condition', TODAY),
+                  ev(axes=('price',))) == [('grade_discipline', 'MU')]
+
+
+def test_second_move_on_a_day_head_already_moved_is_blocked():
+    moved = bk('비중 조절 검토', TODAY)
+    for later in (bk('kill condition', TODAY), bk('주의', TODAY), bk('주의', '2026-11-10')):
+        assert grades(moved, later, ev(axes=('contract', 'price'))) != [], later
+
+
+def test_grade_since_only_change_is_tamper():
+    assert grades(bk('주의', '2026-11-10'), bk('주의', '2026-11-01')) == [
+        ('grade_since_tamper', 'MU')]
+
+
+def test_unreadable_head_state_blocks():
+    assert [p['check'] for p in G.check_grades(None, {'MU': bk('주의')}, TODAY, {})] == [
+        'grade_discipline']
+
+
+def test_ticker_missing_from_head_blocks():
+    problems = G.check_grades({}, {'MU': bk('주의')}, TODAY, {})
+    assert [(p['check'], p['where']) for p in problems] == [('grade_discipline', 'MU')]
+
+
+def test_free_form_grade_in_state_is_blocked_not_raised():
+    assert grades(bk('주의'), bk('매도', TODAY)) == [('grade_discipline', 'MU')]
+
 
 def test_unresolved_marker_is_flagged():
     assert 'banned_markers' in keys(

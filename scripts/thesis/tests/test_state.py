@@ -70,7 +70,9 @@ def test_recovery_allowed_after_lock_expires():
 
 
 def test_worsening_is_never_locked():
-    r = S.propose(book('홀딩 강화', since='2026-08-24'), '주의',
+    # A move one business day ago — inside the recovery lock, which never binds worsening.
+    # (since == today would be the one-move-per-day rule, a different thing.)
+    r = S.propose(book('홀딩 강화', since='2026-08-21'), '주의',
                   today='2026-08-24', triggers=['x'])
     assert r.grade == '주의'
 
@@ -100,18 +102,25 @@ def test_grade_since_advances_only_on_change():
     assert same.grade_since == '2026-08-01'
 
 
-# ── last_seen 대조 ──
+# ── 하루 한 번 (재실행에 걸쳐서도) ──
 
-def test_unchanged_numbers_report_no_movement():
-    seen = {'eps_fy1': 100.0, 'price': 50}
-    assert S.numbers_moved(seen, {'eps_fy1': 100.0, 'price': 50}) == []
-
-
-def test_changed_numbers_are_named():
-    seen = {'eps_fy1': 100.0, 'price': 50}
-    moved = S.numbers_moved(seen, {'eps_fy1': 130.0, 'price': 50})
-    assert moved == ['eps_fy1']
+def test_second_move_on_the_same_day_is_held():
+    r = S.propose(book('주의', since='2026-08-24'), '비중 조절 검토',
+                  today='2026-08-24', triggers=['x'])
+    assert (r.grade, r.allowed) == ('주의', False) and 'one_move_per_day' in r.reasons
 
 
-def test_missing_today_value_is_not_a_move():
-    assert S.numbers_moved({'eps_fy1': 100.0}, {'eps_fy1': None}) == []
+def test_revert_on_the_same_day_is_held():
+    r = S.propose(book('주의', since='2026-08-24'), '홀딩 강화',
+                  today='2026-08-24', triggers=['x'])
+    assert r.grade == '주의' and 'one_move_per_day' in r.reasons
+
+
+def test_book_without_date_has_not_moved_today():
+    r = S.propose({'grade': '홀딩 강화'}, '주의', today='2026-08-24', triggers=['x'])
+    assert (r.grade, r.grade_since) == ('주의', '2026-08-24')
+
+
+def test_holding_the_grade_on_a_moved_day_is_fine():
+    r = S.propose(book('주의', since='2026-08-24'), '주의', today='2026-08-24', triggers=[])
+    assert (r.grade, r.grade_since, r.allowed) == ('주의', '2026-08-24', True)
