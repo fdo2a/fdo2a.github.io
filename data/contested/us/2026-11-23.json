@@ -1,0 +1,78 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-23",
+ "status": "none",
+ "reason": "schema_invalid",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-23T22:03:27+00:00",
+ "cutoff_at": "2026-11-23T22:03:27+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "cc2bfe4741473b250a596b308034bed85599f5e3",
+  "sha256": "4957cb4a9137e6bd7dcfad482ddea1893ce869aaeb0b86dc4d14a5c58de19f41"
+ },
+ "counts": {
+  "harvest": 163,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "tokens": {
+   "in": 78599,
+   "out": 19992
+  },
+  "discovery": "ok",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "aljazeera.com": "short",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "10/10"
+  },
+  "verified": {
+   "pairs": 3,
+   "claims": 6,
+   "obs": 10,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "memo[1]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "fixed",
+   "remaining": []
+  }
+ },
+ "event": {
+  "topic_ko": "엔비디아 젠슨 황 CEO 복귀와 트럼프 개입 논란",
+  "query": "huang jensen returns",
+  "trigger": []
+ },
+ "problems": [
+  "claims"
+ ],
+ "content_hash": "b706fd1d21390ed6"
+}
