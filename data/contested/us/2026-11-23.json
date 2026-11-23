@@ -6,9 +6,9 @@
  "status": "none",
  "reason": "analysis_unverified",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-23T22:22:31+00:00",
- "cutoff_at": "2026-11-23T22:22:31+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-23T23:28:28+00:00",
+ "cutoff_at": "2026-11-23T23:28:28+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "4957cb4a9137e6bd7dcfad482ddea1893ce869aaeb0b86dc4d14a5c58de19f41"
  },
  "counts": {
-  "harvest": 165,
+  "harvest": 166,
   "candidates": 1,
   "articles": [
    6
@@ -29,12 +29,12 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 2,
+  "runs": 3,
   "tokens": {
-   "in": 79885,
-   "out": 19752
+   "in": 80500,
+   "out": 22980
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
@@ -42,29 +42,29 @@
    "bbc.co.uk": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
+  "gdelt": "ok",
   "grounded": {
-   "claims": "8/8",
-   "pairs": "4/4",
-   "obs": "10/10"
+   "claims": "6/6",
+   "pairs": "3/3",
+   "obs": "11/11"
   },
   "verified": {
-   "pairs": 4,
-   "claims": 8,
-   "obs": 10,
-   "strict_pairs": 1,
+   "pairs": 2,
+   "claims": 4,
+   "obs": 11,
+   "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "memo[0]",
-    "structure",
+    "memo[2]",
     "worry.moderate[0]"
    ],
    "outcome": "partial",
    "remaining": [
     "structure:unverified",
+    "edges[2]:unverified",
     "memo[2]:unverified"
    ]
   }
@@ -76,7 +76,8 @@
  },
  "problems": [
   "structure:unverified",
+  "edges[2]:unverified",
   "memo[2]:unverified"
  ],
- "content_hash": "9e102a1a33bf2288"
+ "content_hash": "a562b5f12fb2d6e9"
 }
