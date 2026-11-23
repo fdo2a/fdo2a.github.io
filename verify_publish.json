@@ -270,7 +270,8 @@
    "id": "16d76a0096063f33ad6f72a3c5dd7b82",
    "key": "kr/posts/2026-11-23.html",
    "kind": "publish",
-   "status": "pending",
+   "sent": "2026-11-23T21:20:41.295573+09:00",
+   "status": "sent",
    "text": "[발행] KR 일간 11/23 · 발행 통과\n\n■ 발행 상태\n필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)\n\n■ 검증 범위\n표 55칸 자동 대조 · 숫자 229개 범위 밖(문장 140 · 업종 기간별 80 · 기타 표 9). 오류 229건이라는 뜻은 아님\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
    "tries": 0
   }
@@ -278,8 +279,8 @@
  "fetch": {},
  "format": "verify-publish/1",
  "holds": {},
- "last_ok": "2026-11-23T18:29:46.348727+09:00",
- "last_seen": "10063df2968d094554a8c2e6c0a33091849ae5b8",
+ "last_ok": "2026-11-23T21:20:41.295573+09:00",
+ "last_seen": "704a96a7d4d7ed168f417f5c5d2bfd5787af2796",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
