@@ -274,13 +274,31 @@
    "status": "sent",
    "text": "[발행] KR 일간 11/23 · 발행 통과\n\n■ 발행 상태\n필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)\n\n■ 검증 범위\n표 55칸 자동 대조 · 숫자 229개 범위 밖(문장 140 · 업종 기간별 80 · 기타 표 9). 오류 229건이라는 뜻은 아님\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
    "tries": 0
+  },
+  {
+   "base": "80cd4771ed493c922aca85e72eb7eae6",
+   "created": "2026-11-24T07:23:41.507135+09:00",
+   "hash": "5e09af6c25936a9067796adc061ee893f606a0de53f06df3868baad248c3a8e8",
+   "held": 1,
+   "id": "4888062b882f13b617ebeeaf474a60ec",
+   "key": "hold:us:2026-11-23",
+   "kind": "missing",
+   "status": "pending",
+   "text": "[글 막힘] US 일간 11/23 · 자동 재시도 예정\n발행 전 검사를 끝내지 못해 글을 올리지 않았어요\n이유: 초안을 올리거나 검토를 띄우지 못했어요\n다음: 재시도 루틴이 다음 차례에 처음부터 다시 써요(언제인지는 기록에 없어요)\n기록 11/24 07:23 KST · 이 날짜의 센 실패 1번",
+   "tries": 0
   }
  ],
  "fetch": {},
  "format": "verify-publish/1",
- "holds": {},
- "last_ok": "2026-11-24T00:16:33.561042+09:00",
- "last_seen": "226e9095018f617594f0db9aa13a55b6ec18a4de",
+ "holds": {
+  "hold:us:2026-11-23": {
+   "live": true,
+   "n": 1,
+   "sig": "submit_failed|retry"
+  }
+ },
+ "last_ok": "2026-11-24T07:23:41.507135+09:00",
+ "last_seen": "28271a6a86acd76f24d9cffba50b39ce94f0850a",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
