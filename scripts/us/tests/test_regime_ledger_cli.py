@@ -81,10 +81,8 @@ def test_the_workflow_records_after_collect_and_before_the_calendar_rewrite():
     col = next(i for i, s in enumerate(steps) if 'collect_market_data.py --outdir' in (s.get('run') or ''))
     cal = next(i for i, s in enumerate(steps) if 'build_calendar.py' in (s.get('run') or ''))
     assert col < rec < cal, names
-    # 건너뛴(skipped) 실행에서도 돈다. 수익률만 고친 실행(첫 실행이 이미 기록했다)과 네이버 종가를
-    # 기다리는 실행(아무것도 쓰지 않는다)에서만 빠진다(2026-11-19).
-    assert steps[rec].get('if') == ("always() && steps.collect.outputs.patched != 'true' "
-                                    "&& steps.collect.outputs.waiting != 'true'")
+    # 건너뛴(skipped) 실행에서도 돈다(2026-11-23 수익률만 고치는 재실행을 없앤 뒤 조건은 always() 하나).
+    assert steps[rec].get('if') == 'always()'
     commits = [s.get('run') or '' for s in steps if 'push_with_retry.sh' in (s.get('run') or '')]
     assert all('data/history' in c for c in commits), '두 커밋 경로 모두 원장을 담아야 한다'
 

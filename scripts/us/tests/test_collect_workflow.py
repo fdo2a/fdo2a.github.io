@@ -129,12 +129,13 @@ def _step(name):
     return next(s for s in load()['jobs']['collect']['steps'] if s.get('name') == name)
 
 
-def test_full_input_forces_a_rebuild_and_force_alone_keeps_the_patch():
+def test_full_input_is_force_since_the_yields_patch_is_gone():
+    # 2026-11-23: 16:00 ET 컷이라 네이버 종가를 기다리는 「수익률만 고치기」가 없다 — full 은 force 와 같다.
     wf = load()
     on = wf.get('on', wf.get(True))
     assert on['workflow_dispatch']['inputs']['full']['default'] is False
     run = _step('Collect')['run']
-    assert "inputs.full) && '--no-patch'" in run
+    assert '--no-patch' not in run
     assert "(inputs.force || inputs.full)) && '--force'" in run
 
 
@@ -147,7 +148,7 @@ def step_runs(step, outputs, collect_ok=True):
     expr = str(step.get('if', '')).strip()
     if expr.startswith('${{'):
         expr = expr[3:-2].strip()
-    has_status = 'always()' in expr or '!cancelled()' in expr
+    has_status = 'always()' in expr or '!cancelled()' in expr or 'failure()' in expr
     if not expr:
         return collect_ok
 
@@ -158,6 +159,8 @@ def step_runs(step, outputs, collect_ok=True):
     # 1a 수집 장부 단계(2026-11-17) — 정상 실행에서는 성공한다(실패 경로는 test_stamp_workflow.py 가 본다)
     py = re.sub(r'steps\.stamp(?:_begin)?\.outcome', repr('success'), py)
     py = py.replace('!cancelled()', 'True').replace('always()', 'True')
+    # 앞 스텝이 실패했나 — 이 행렬에서 실패하는 것은 수집기뿐이다(국채 16:00 원장 보존 단계, 2026-11-23)
+    py = py.replace('failure()', 'False' if collect_ok else 'True')
     py = py.replace('&&', ' and ').replace('||', ' or ')
     assert re.fullmatch(r"[\w\s'=!()]*", py), f'unsupported step if: {expr}'
     ok = bool(eval(py, {'__builtins__': {}}, {'True': True}))
@@ -192,16 +195,6 @@ def test_step_matrix_skipped_run_is_unchanged():
     assert ran({'skipped': 'true'}) == SETUP + [LEDGER] + LIQ + [STAMP, COMMIT_LIQ, 'Report status']
 
 
-def test_step_matrix_patch_run_commits_and_leaves_the_frozen_chain_alone():
-    assert ran({'patched': 'true'}) == SETUP + NON_CORE + LIQ + [STAMP, 'Report status', 'Commit data']
-
-
-def test_step_matrix_waiting_run_touches_and_commits_nothing():
-    assert ran({'skipped': 'true', 'waiting': 'true'}) == SETUP + [STAMP, 'Report status']
-    report = _step('Report status')['run']
-    assert 'git ' not in report and "open('data/market_data.json')" in report   # 읽기만 한다
-
-
 def test_step_matrix_failed_collect_commits_nothing():
     # 되돌리기·설치 실패로 수집기가 exit 1 — 커밋 스텝은 하나도 돌지 않는다.
     names = ran({}, collect_ok=False)
@@ -215,12 +208,3 @@ def test_always_steps_keep_always():
         assert 'always()' in _step(name)['if']
 
 
-def test_patch_commit_stages_its_four_outputs_strictly():
-    run = _step('Commit data')['run']
-    strict = next(line.strip() for line in run.splitlines()
-                  if 'data/yield_curve.png' in line and 'data/history/market.jsonl' in line)
-    assert strict == ('git add data/market_data.json data/yield_curve.png '
-                      'data/history/market.jsonl data/weekly')
-    assert '|| true' not in strict
-    assert "steps.collect.outputs.patched }}\" = \"true\"" in run
-    assert '(yields patch)' in run

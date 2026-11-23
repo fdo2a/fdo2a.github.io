@@ -391,6 +391,13 @@ jobs:
           sys.exit(1 if level == 'error' else 0)
           PY
 
+      - name: Preserve yields 16:00 ledger (any step failed)
+        # 국채 16:00 ET 원장은 다음 날의 전일比·1주 전 정본이다 — 수집 뒤 어느 단계가 실패해도(일반 커밋의
+        # push 실패 포함) 그날 값을 남긴다. 이 잡의 작업 트리가 아니라 origin/main 의 깨끗한 worktree 에서
+        # 원장 하나만 합쳐 push 한다(codex 설계 검토 2회 #2·구현 검토 1회 #4·2회 #2-#4).
+        if: failure()
+        run: bash scripts/ci/preserve_yields_ledger.sh data/yields_1600.json
+
       - name: Fail the run when the collection ledger was not written
         # 장부(시작 기록·끝 기록)를 못 썼으면 자료 커밋은 그대로 두되 실행을 실패로 끝낸다 — 조용히 넘어가지 않는다.
         # 옛 장부가 남으면 발행 전 검사가 해시 불일치로 막는다(닫히는 쪽). 2026-11-17 1a 구현 검토 2회차 F3.
@@ -400,10 +407,3 @@ jobs:
           # 실행을 실패로 끝내는 것은 1a 를 켠 뒤다(2026-11-20) — 그 전에는 경고만 남긴다. 루틴이 수집 실행의 성공 여부를
           # 본다(gh run watch --exit-status): 장부만 못 쓴 실행이 빨갛게 끝나면 발행 흐름이 1a 전과 달라진다.
           PYTHONPATH=scripts python -c "import sys; from verification.inputs import enforcing; sys.exit(1 if enforcing() else 0)"
-
-      - name: Preserve yields 16:00 ledger (any step failed)
-        # 국채 16:00 ET 원장은 다음 날의 전일比·1주 전 정본이다 — 수집 뒤 어느 단계가 실패해도(일반 커밋의
-        # push 실패 포함) 그날 값을 남긴다. 이 잡의 작업 트리가 아니라 origin/main 의 깨끗한 worktree 에서
-        # 원장 하나만 합쳐 push 한다(codex 설계 검토 2회 #2·구현 검토 1회 #4·2회 #2-#4).
-        if: failure()
-        run: bash scripts/ci/preserve_yields_ledger.sh data/yields_1600.json

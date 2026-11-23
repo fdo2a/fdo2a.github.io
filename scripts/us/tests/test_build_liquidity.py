@@ -209,11 +209,11 @@ def test_workflow_runs_liquidity_on_both_paths():
     wf = open(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.github', 'workflows',
                            'collect-market-data.yml'), encoding='utf-8').read()
     build = wf.split('- name: Fed H.4.1 and Treasury refunding (liquidity)')[1].split('- name:')[0]
-    # skipped 여도 돈다. 유일한 예외는 네이버 종가를 기다리는 실행(waiting) — 아무것도 쓰지 않는다(2026-11-19).
+    # skipped 여도 돈다(2026-11-23 네이버 종가를 기다리는 실행을 없앤 뒤 조건 없음).
     assert 'continue-on-error: true' in build
-    assert "\n        if: steps.collect.outputs.waiting != 'true'\n" in build and 'outputs.skipped' not in build
+    assert '\n        if:' not in build and 'outputs.skipped' not in build
     san = wf.split('- name: Sanitize liquidity')[1].split('- name:')[0]
-    assert "if: always() && steps.collect.outputs.waiting != 'true'\n" in san and '--sanitize' in san
+    assert "if: always()\n" in san and '--sanitize' in san
     alt = wf.split('- name: Commit liquidity (market data already complete)')[1].split('- name:')[0]
     assert "steps.collect.outputs.skipped == 'true'" in alt and 'git add -A data/liquidity' in alt
     main_commit = wf.split('- name: Commit data')[1].split('- name:')[0]

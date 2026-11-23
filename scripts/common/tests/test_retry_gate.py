@@ -40,18 +40,18 @@ NO_HOL = {'us': (), 'kr': (), 'jp': ()}
 # ── 창: 그 세션 본 런 시작 + 여유 전에는 쏘지 않는다 ─────────────────────────────────
 
 def test_us_window_opens_two_hours_after_main_start_est():
-    # 11/18(수) 세션 — 본 런 17:30 EST = 22:30 UTC, 창은 00:30 UTC(19:30 EST)부터
-    assert rg.not_before('us', utc(2026, 11, 19, 3, 0), NO_HOL) == utc(2026, 11, 19, 0, 30)
+    # 11/18(수) 세션 — 본 런 16:50 EST = 21:50 UTC, 창은 23:50 UTC(18:50 EST)부터 (2026-11-23 17:30 → 16:50)
+    assert rg.not_before('us', utc(2026, 11, 19, 3, 0), NO_HOL) == utc(2026, 11, 18, 23, 50)
 
 
 def test_us_window_follows_dst():
-    # 여름(EDT) 세션 — 17:30 EDT = 21:30 UTC, 창은 23:30 UTC
-    assert rg.not_before('us', utc(2026, 10, 15, 3, 0), NO_HOL) == utc(2026, 10, 14, 23, 30)
+    # 여름(EDT) 세션 — 16:50 EDT = 20:50 UTC, 창은 22:50 UTC
+    assert rg.not_before('us', utc(2026, 10, 15, 3, 0), NO_HOL) == utc(2026, 10, 14, 22, 50)
 
 
 def test_late_us_tick_inside_next_sessions_pre_main_gap_does_not_fire():
     # 20:30 UTC 슬롯이 2시간 늦게 22:20 UTC(17:20 EST)에 왔다 — us_session 은 이미 오늘이고 글이 없어 DUE 지만
-    # 본 런(17:30 EST)은 아직 시작도 안 했다.
+    # 본 런(16:50 EST)이 시작한 지 30분밖에 안 됐다.
     now = utc(2026, 11, 19, 22, 20)
     assert rd.us_session(now) == '2026-11-19'
     assert now < rg.not_before('us', now, NO_HOL)

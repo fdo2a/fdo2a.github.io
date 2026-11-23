@@ -28,6 +28,9 @@ NAVER_CHART = ('https://m.stock.naver.com/front-api/chart/pricesByPeriod?chartIn
                '&scriptChartType=day&category=bond&reutersCode={code}')
 CNBC_5D = 'https://ts-api.cnbc.com/harmony/app/charts/5D.json?symbol={sym}'
 TARGET = '16:00'
+# 채권 조기 폐장일은 그 마감 시각에 끊는다 — 16:00 에는 시세가 없다(2026-11-23).
+# 원출처 SIFMA 2026·2027 권고(sifma.org 2025-12-17 발표, 2026-11-23 확인): 2:00 p.m. ET.
+EARLY_CLOSE = {'2026-11-27': '14:00', '2026-12-24': '14:00', '2026-12-31': '14:00'}
 WINDOW_MIN = 15
 WEEK_BACK = 5
 BASIS = 'cut_1600_et'
@@ -104,6 +107,11 @@ def parse_cnbc_5d(payload):
     return sorted(set(out))
 
 
+def target_for(session):
+    """그 세션의 컷 시각 — 평소 16:00 ET, 채권 조기 폐장일은 그 마감 시각."""
+    return EARLY_CLOSE.get(session, TARGET)
+
+
 def pick(points, session, target=TARGET, window=WINDOW_MIN):
     """`session` 날짜의 포인트 가운데 `target` 에 가장 가까운 것(±window 분). 같은 거리면 이전 값.
 
@@ -125,8 +133,9 @@ def pick(points, session, target=TARGET, window=WINDOW_MIN):
     return {'value': round(best[2], 4), 'stamp': best[1]}
 
 
-def curve(session, naver, cnbc=None, target=TARGET):
+def curve(session, naver, cnbc=None, target=None):
     """네 만기를 한 원천에서. naver/cnbc = {tenor: [(date, hhmm, v)]}. → {'source', 'tenors'} 또는 None."""
+    target = target or target_for(session)
     for source, pts in (('naver', naver), ('cnbc', cnbc)):
         if not pts:
             continue
@@ -170,8 +179,8 @@ def _entry_problem(d, e):
     if not isinstance(e, dict) or e.get('source') not in ('naver', 'cnbc'):
         return 'source 없음'
     target = e.get('target', TARGET)
-    if target != TARGET:
-        return f'target 이 {TARGET} 이 아니다'   # 이 원장은 16:00 ET 컷만 담는다(10회 #1)
+    if target != target_for(d):
+        return f'target 이 {target_for(d)} 이 아니다'   # 이 원장은 16:00 ET 컷(조기 폐장일은 그 마감)만 담는다(10회 #1)
     ten = e.get('tenors')
     if not isinstance(ten, dict) or set(ten) != set(TENORS):
         return '네 만기가 아니다'
@@ -231,15 +240,16 @@ def record(ledger, session, got):
     return True
 
 
-def window_closed(session, now_et, target=TARGET, window=WINDOW_MIN):
+def window_closed(session, now_et, target=None, window=WINDOW_MIN):
     """`now_et`(뉴욕 현지 naive datetime 또는 None=닫힌 것으로 본다)가 그 세션의 창 끝(16:15)을 지났나."""
     if now_et is None:
         return True
+    target = target or target_for(session)
     end = dt.datetime.fromisoformat(session) + dt.timedelta(minutes=_minutes(target) + window)
     return now_et >= end
 
 
-def update(ledger, session, closed, naver, cnbc_fetch=None, target=TARGET, now_et=None):
+def update(ledger, session, closed, naver, cnbc_fetch=None, target=None, now_et=None):
     """오늘(네이버 → CNBC)과 원장에 빈 비교일(CNBC 만)을 채운다. `cnbc_fetch()` 는 필요할 때만 부른다.
 
     → 바뀐 날짜 목록. 전일·1주 전을 네이버로 채우지 않는 이유: 네이버 차트는 그날 하루치만 준다.
@@ -263,7 +273,7 @@ def update(ledger, session, closed, naver, cnbc_fetch=None, target=TARGET, now_e
     for d in needed(session, closed)[1:]:
         if d in ledger:
             continue
-        got = curve(d, None, cnbc(), target)
+        got = curve(d, None, cnbc())
         if record(ledger, d, got):
             changed.append(d)
     return changed

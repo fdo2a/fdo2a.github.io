@@ -996,9 +996,44 @@ def _us_listed(ticker):
     return '.' not in ticker and '=' not in ticker
 
 
-def completeness(data, intraday, report_date=None):
+# 한국·일본 상장 행의 기대 세션(2026-11-23) — 수집이 16:50 ET 로 당겨지며, 야후가 아시아 일봉을 아직 그날로
+# 넘기지 않은 채 전 세션 행을 주는 시각에 걸릴 수 있다(11/19·11/20 실측: 16:20 ET 에 10종 모두 전 세션).
+# 휴장일 파일이 있는 두 거래소만 본다 — 대만·중국은 휴장일을 몰라 평일로 맞추면 그쪽 휴일에 발행이 선다.
+ASIA_SUFFIX = {'.KS': 'kr', '.KQ': 'kr', '.T': 'jp'}
+
+
+def asia_expected(report_date, closed):
+    """미국 세션 `report_date` 마감 때 이미 끝난 그 거래소의 마지막 세션(같은 날짜 이하의 마지막 거래일)."""
+    d = datetime.date.fromisoformat(report_date)
+    while d.weekday() >= 5 or d.isoformat() in closed:
+        d -= datetime.timedelta(days=1)
+    return d.isoformat()
+
+
+def load_asia_holidays(cal_path):
+    """{'kr': [...], 'jp': [...]} — 파일을 못 읽으면 None(검사를 건너뛴다 — 휴장일을 모르고 막지 않는다)."""
+    try:
+        with open(cal_path, encoding='utf-8') as fh:
+            cal = json.load(fh)
+        return {k: list((cal.get(k) or {}).get('dates') or ()) for k in ('kr', 'jp')}
+    except (OSError, ValueError) as e:
+        print(f'asia date check skipped — holidays unreadable: {e}', file=sys.stderr)
+        return None
+
+
+def completeness(data, intraday, report_date=None, asia_holidays=None):
     missing = []
     report_date = report_date or data.get('report_date')
+    if report_date and asia_holidays is not None:
+        for group, pairs in GROUPS:
+            for name, ticker in pairs:
+                key = next((k for sfx, k in ASIA_SUFFIX.items() if ticker.endswith(sfx)), None)
+                row = (data.get(group) or {}).get(name)
+                if key is None or not row or not row.get('date'):
+                    continue
+                want = asia_expected(report_date, set(asia_holidays.get(key) or ()))
+                if row['date'] != want:
+                    missing.append(f'{group}/{name}/stale:{row["date"]}')
     for group, pairs in GROUPS:
         for name, ticker in pairs:
             row = data[group].get(name)
@@ -1648,7 +1683,8 @@ def main():
     y = data['yields']
     apply_spreads(data, yields_fred)
 
-    missing = completeness(data, intraday, report_date=report_date)
+    missing = completeness(data, intraday, report_date=report_date,
+                           asia_holidays=load_asia_holidays(cal_path))
     data['complete'] = not missing
     data['missing'] = missing
 

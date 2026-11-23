@@ -87,10 +87,6 @@ def us_files(when, steps, yields=4.10, generated=None):
         f['movers.json'] = {'report_date': D, 'groups': [], 'collect': _c(when, checked=60, expected=60)}
         f['fund_board.json'] = {'report_date': D, 'status': 'ok', 'collect': _c(when)}
         f['scorecard.json'] = {'report_date': D, 'sufficient': True}
-    if 'patch' in steps:                                   # 수익률만 고치는 재실행 — market_data.json 하나만 다시 쓴다
-        f['market_data.json'] = {'generated': generated or C.now_iso(when), 'report_date': D, 'complete': True,
-                                 'missing': [], 'indices': {'SPX': 1}, 'yields': {'10y': yields},
-                                 'yields_patched': {'at': C.now_iso(when)}, 'collect': _c(when)}
     if 'macro_eval' in steps:
         f['macro_eval.json'] = {'report_date': D, 'regime': 'x', 'collect': _c(when)}
     if 'releases' in steps:
@@ -149,21 +145,6 @@ def test_us_skipped_run_leaves_nothing_to_commit(us):
     written = us_run(us, T2, ('liquidity',), outputs={'skipped': 'true'}, rid='run-2')
     assert pre_1a_changed(us, 'data', written) == []
     assert changed(us) == []
-
-
-def test_us_waiting_run_leaves_nothing_changed(us):
-    # 네이버 종가를 기다리는 실행: 아무 단계도 쓰지 않는다(커밋 단계도 돌지 않는다) — 작업 폴더가 그대로다
-    us_run(us, T2, (), outputs={'skipped': 'true', 'waiting': 'true'}, rid='run-2')
-    assert changed(us) == []
-
-
-def test_us_patched_run_changes_market_data_and_the_ledger_only(us):
-    written = us_run(us, T2, ('patch', 'liquidity'), outputs={'patched': 'true'}, rid='run-2', yields=4.12)
-    assert pre_1a_changed(us, 'data', written) == ['data/market_data.json']
-    assert changed(us) == ['data/_collect_status.json', 'data/market_data.json']
-    book = C.load_status(str(us / 'data'))
-    assert book['run_id'] == 'run-2' and book['files']['market_data.json']['run'] == 'written'
-    assert book['files']['econ_indicators.json']['run'] == 'skipped'
 
 
 def test_a_real_change_is_kept_and_stamped_as_this_run(us):

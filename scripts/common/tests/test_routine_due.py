@@ -263,11 +263,11 @@ def test_weekly_thursday_is_not_due_with_the_real_w47_aggregates(monkeypatch, ca
 
 
 def test_weekly_waits_until_the_last_session_closes():
-    """2027-W12 — 3/26 성금요일. 마지막 거래일은 목요일이고, 그 세션은 NY 17:00(21:00 UTC)에 닫힌다."""
+    """2027-W12 — 3/26 성금요일. 마지막 거래일은 목요일이고, 그 세션은 NY 16:45(20:45 UTC)에 넘어간다(2026-11-23, 전 17:00)."""
     end = {'us': '2027-03-25', 'kr': '2027-03-26'}
     files = {'kr/weekly/2027-W12.html'}
-    assert weekly(files, now=utc(2027, 3, 25, 20, 59), key='2027-W12', end=end) == 'WAIT'
-    assert weekly(files, now=utc(2027, 3, 25, 21, 0), key='2027-W12', end=end) == 'DUE'
+    assert weekly(files, now=utc(2027, 3, 25, 20, 44), key='2027-W12', end=end) == 'WAIT'
+    assert weekly(files, now=utc(2027, 3, 25, 20, 45), key='2027-W12', end=end) == 'DUE'
 
 
 def test_weekly_end_date_must_be_the_last_trading_day():
