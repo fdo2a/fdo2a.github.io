@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-11-20",
-  "macro_date": "2026-11-19",
+  "report_date": "2026-11-23",
+  "macro_date": "2026-11-20",
   "horizon": "3-6개월",
   "scores": {
     "growth_score": 0.073,
@@ -13,62 +13,9 @@
     "inflation": 1,
     "name": "비용압박"
   },
-  "new_releases": [
-    "Michigan Consumer Sentiment",
-    "Michigan 1-Yr Inflation Exp"
-  ],
-  "headline_releases": [
-    {
-      "key": "michigan",
-      "label": "미시간대 소비자심리",
-      "tier": 2,
-      "agency": "U. Michigan",
-      "url": "https://www.sca.isr.umich.edu/",
-      "role": "scored",
-      "primary": "Michigan 1-Yr Inflation Exp",
-      "max_abs_z": 0.135,
-      "indicators": [
-        {
-          "name": "Michigan Consumer Sentiment",
-          "axis": "Consumption",
-          "actual": 48.0,
-          "previous": 48.1,
-          "ref_period": "2026-10-01",
-          "momentum_z": -0.095,
-          "fred_id": "UMCSENT",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Michigan 1-Yr Inflation Exp",
-          "axis": "Inflation",
-          "actual": 4.7,
-          "previous": 4.6,
-          "ref_period": "2026-10-01",
-          "momentum_z": -0.135,
-          "fred_id": "MICH",
-          "transform": "level",
-          "units": "%"
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-10-23",
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "none",
-      "anatomy_reason": "no_verified_text"
-    }
-  ],
-  "anatomy_gaps": [
-    {
-      "key": "michigan",
-      "status": "none",
-      "reason": "no_verified_text",
-      "components": 0
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
+  "anatomy_gaps": [],
   "stale": false,
   "abbreviated": true,
   "abbreviated_reason": null,
@@ -86,11 +33,11 @@
     "inflation_label": "재가속",
     "name": "비용압박",
     "since": "2026-11-10",
-    "days_held": 9,
-    "thesis": "비용압박 유지(11월 10일부터, 8일째). 11월 19일 신규 실업수당 청구(신규 203,000건, 4주 평균 197,750건, 계속 청구 1,763,000건으로 +70,000건이나 계절조정 전 증가분의 91.5%가 미시간 한 주)와 11월 필라델피아 연은 제조업지수(6.3, 전월 20.9, 신규주문 -0.4, 지불가격 58.2) 신규 발표에도 성장 점수 0.188(보합)·물가 점수 0.647(재가속, 물가 축은 8개 중 6개 가용 지표 기준)로 점수가 현재 국면을 가리킨다. 다음 점검은 11월 25일 PCE 물가·GDP다."
+    "days_held": 10,
+    "thesis": "비용압박 유지(11월 10일부터, 9일째). 11월 20일 미시간대 소비자조사 10월 확정치(심리 48.0, 9월 48.1; 1년 기대인플레 4.7%, 9월 4.6%)가 새로 반영됐지만 성장 점수 0.073(보합)·물가 점수 0.722(재가속, 물가 축은 8개 중 6개 가용 지표 기준)로 점수가 현재 국면을 가리킨다. 소비축은 개선을 유지했으나 심리가 보합으로 바뀌어 개선 근거는 소매판매 하나다. 다음 점검은 11월 25일 PCE 물가·GDP다."
   },
   "regime_change_allowed": false,
-  "regime_block": "scores_agree",
+  "regime_block": "no_new_release",
   "allowed_regimes": [
     [
       0,
@@ -102,11 +49,11 @@
     "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 10일 10월 CPI 뒤 CME FedWatch 기준 25bp 인상 89%·50bp 인상 11%로 보도됐다(IBTimes). 발표 전 12월 인상 확률은 11월 9일 84%(Reuters via Yahoo)로 보도됐으나 같은 상품·같은 시각의 쌍은 아니다.",
     "prob_pct": null,
     "prob_status": "unverified",
-    "prob_note": "11월 19일 FedWatch 12월 25bp/50bp 확률은 검색 요약에 92%·8%, 91%·9%, 95%가 섞여 원 출처를 특정하지 못해 미확정. 최신 확인치는 11월 18일 25bp 92.7%·50bp 7.3%(전일 96.9%·3.1%, Seoul Economic Daily 보도, 스냅샷 시각 미확인).",
-    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 19일 신규 실업수당 청구는 낮은 수준이고 계속 청구 급증은 미시간 한 주에 몰려 인상 폭을 바꿀 재료로 약하다. 확인된 최신 CME FedWatch는 11월 18일 기준 12월 25bp 92.7%·50bp 7.3%(Seoul Economic Daily 보도)이고 11월 19일 수치는 보도마다 달라 쓰지 않았다. 2년물은 11월 19일 -2.1bp(4.779%)로 장 후반 안전자산 수요로 내렸다는 보도다. 물가 판단은 가용 지표(8개 중 6개) 기준이다.",
+    "prob_note": "11월 20일 CME FedWatch 수치는 구하지 못했다. 가장 가까운 관측은 11월 19일 기준 12월 25bp 인상 약 91%·50bp 약 9%(Babypips가 CME FedWatch 인용)이고, 11월 16일 기준 25bp 95%·50bp 5%(RootData)로 출처마다 50bp 확률이 약 5~11%로 갈린다. 모두 11월 20일 급락 전 값이다.",
+    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 20일 월러 이사는 12월 0.5%p 인상과 2025년 인하분 되돌림 이상을 거론했고 윌리엄스 뉴욕 연은 총재는 급격한 조치가 필요 없다고 말해 50bp는 소수 견해다. 같은 날 AI주 급락 속에 2년물이 16.6bp 내린 4.613%로 마감했지만 11월 20일 FedWatch·OIS가 없어 12월 이후 경로 축소인지 안전자산 매수인지 구분하지 못한다. 시점 판단을 바꿀 같은 상품의 확률 변화가 확인되지 않아 시점은 그대로다. 물가 판단은 가용 지표(8개 중 6개) 기준이다.",
     "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 11월 25일 10월 PCE 물가가 예상을 밑돌고 CME FedWatch 12월 인상 확률이 소비자물가 발표 전 보도치(84%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
-    "change_allowed": true,
-    "change_block": null
+    "change_allowed": false,
+    "change_block": "no_new_release"
   },
   "transmission": {
     "equities": {
@@ -115,11 +62,9 @@
       "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 70,
+      "days_held": 71,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "bonds": {
@@ -128,7 +73,7 @@
       "channel": "물가 재가속이 생산자물가로 굳고 12월 인상 뒤 1·3월 추가 인상까지 거론되면서 실질금리 정점 통과와 완화 재개 기대가 더 뒤로 밀렸다. 30년물이 5.4% 위에서 이틀 연속 마감했고 10년·30년물 입찰 응찰이 평균보다 얇아 장기물 공급 부담이 더해졌다.",
       "confirm": "30Y가 5.4% 아래로 내려와 5거래일 머물거나 근원 CPI 전월비가 0.2% 이하로 내려오면 중립 복귀, 30Y가 5.05% 하회하면 우호",
       "since": "2026-11-13",
-      "days_held": 6,
+      "days_held": 7,
       "allowed_directions": [
         -1,
         0
@@ -140,11 +85,9 @@
       "channel": "물가 둔화가 실질금리 차를 좁혀 달러를 약하게 한다는 경로가 물가 재가속과 12월 인상 경로로 막혔다. 미국 정책금리 경로가 위로 옮겨 가 달러 강세 쪽을 받치지만, 금리차 자체와 다른 중앙은행 경로는 재지 않았고 달러 레벨도 이미 높아 우호까지는 올리지 않는다.",
       "confirm": "DXY 20일 -3% 이상 하락 또는 FedWatch 인하 확률 재등장 시 비우호, 12월 50bp 인상 확률 50% 상회 시 우호",
       "since": "2026-11-10",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "energy": {
@@ -153,11 +96,9 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 70,
+      "days_held": 71,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "metals": {
@@ -166,11 +107,9 @@
       "channel": "물가 재가속과 인상 경로가 실질금리 하락 기대를 늦춰 금 보유비용 하락 경로가 약해졌다. 지정학·재정 헤지 수요가 남아 비우호까지는 내리지 않는다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-11-10",
-      "days_held": 9,
+      "days_held": 10,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "memory": {
@@ -179,7 +118,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 70,
+      "days_held": 71,
       "allowed_directions": [
         0,
         1
@@ -191,13 +130,48 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화에 이어 11월 10일 소프트뱅크의 발전설비 선급금 손상(37억 달러)과 조달 재검토가 고객 쪽 부담을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 70,
+      "days_held": 71,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     }
   },
-  "collection_run": "44911292242-1"
+  "collect": {
+    "status": "partial",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-24T06:53:39+09:00",
+    "source": "macro_metrics.json + macro.json",
+    "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
+    "required_ok": false,
+    "missing": [
+      "metrics:econ:no_value:CPI YoY",
+      "metrics:econ:no_value:Core CPI YoY"
+    ],
+    "empty": "has_data",
+    "missing_ref": {
+      "metrics:econ:no_value:CPI YoY": {
+        "fred_id": "CPIAUCSL",
+        "transform": "yoy_pct",
+        "ref_period": "2026-10",
+        "lacking": [
+          "2025-10"
+        ],
+        "lacking_why": {
+          "2025-10": "not_published"
+        }
+      },
+      "metrics:econ:no_value:Core CPI YoY": {
+        "fred_id": "CPILFESL",
+        "transform": "yoy_pct",
+        "ref_period": "2026-10",
+        "lacking": [
+          "2025-10"
+        ],
+        "lacking_why": {
+          "2025-10": "not_published"
+        }
+      }
+    }
+  },
+  "collection_run": "45273816882-1"
 }

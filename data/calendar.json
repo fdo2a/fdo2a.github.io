@@ -1,50 +1,8 @@
 {
-  "report_date": "2026-11-20",
-  "generated": "2026-11-21 22:59 KST",
+  "report_date": "2026-11-23",
+  "generated": "2026-11-24 07:01 KST",
   "horizon_days": 10,
   "events": [
-    {
-      "key": "auction-20261123-13-Week",
-      "kind": "auction",
-      "name_ko": "13-Week 국채 입찰 950억 달러",
-      "date": "2026-11-23",
-      "time_et": "11:30",
-      "time_kst": "2026-11-24 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261123-26-Week",
-      "kind": "auction",
-      "name_ko": "26-Week 국채 입찰 820억 달러",
-      "date": "2026-11-23",
-      "time_et": "11:30",
-      "time_kst": "2026-11-24 01:30",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261123-2-Year",
-      "kind": "auction",
-      "name_ko": "2-Year 국채 입찰 690억 달러",
-      "date": "2026-11-23",
-      "time_et": "13:00",
-      "time_kst": "2026-11-24 03:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
     {
       "key": "release-industrial-production-20261124",
       "kind": "release",
@@ -200,9 +158,95 @@
         "금리"
       ],
       "watch": "응찰배율과 간접 낙찰 비중"
+    },
+    {
+      "key": "release-construction-spending-20261201",
+      "kind": "release",
+      "name_ko": "건설지출",
+      "date": "2026-12-01",
+      "time_et": "10:00",
+      "time_kst": "2026-12-02 00:00",
+      "status": "confirmed",
+      "source": "Census 공표 일정(Census·FRED 대조)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-jolts-20261201",
+      "kind": "release",
+      "name_ko": "JOLTS 구인·이직",
+      "date": "2026-12-01",
+      "time_et": "10:00",
+      "time_kst": "2026-12-02 00:00",
+      "status": "confirmed",
+      "source": "BLS 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-claims-20261203",
+      "kind": "release",
+      "name_ko": "신규 실업수당 청구",
+      "date": "2026-12-03",
+      "time_et": "08:30",
+      "time_kst": "2026-12-03 22:30",
+      "status": "confirmed",
+      "source": "DOL 공표 일정(FRED)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
+    },
+    {
+      "key": "release-factory-orders-20261203",
+      "kind": "release",
+      "name_ko": "공장주문",
+      "date": "2026-12-03",
+      "time_et": "10:00",
+      "time_kst": "2026-12-04 00:00",
+      "status": "confirmed",
+      "source": "Census 공표 일정(Census·FRED 대조)",
+      "assets": [
+        "금리"
+      ],
+      "watch": "추세 확인"
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-11-23",
+      "term": "2-Year",
+      "type": "Note",
+      "offering_amt": 69000000000.0,
+      "high_yield": 4.7,
+      "bid_to_cover": 2.65,
+      "indirect_pct": 51.5,
+      "dealer_pct": 10.4
+    },
+    {
+      "date": "2026-11-23",
+      "term": "13-Week",
+      "type": "Bill",
+      "offering_amt": 95000000000.0,
+      "high_yield": 4.283,
+      "bid_to_cover": 2.74,
+      "indirect_pct": 59.9,
+      "dealer_pct": 31.7
+    },
+    {
+      "date": "2026-11-23",
+      "term": "26-Week",
+      "type": "Bill",
+      "offering_amt": 82000000000.0,
+      "high_yield": 4.498,
+      "bid_to_cover": 2.6,
+      "indirect_pct": 50.7,
+      "dealer_pct": 39.2
+    },
     {
       "date": "2026-11-19",
       "term": "10-Year",
@@ -320,5 +364,15 @@
     "ppi": 46,
     "retail-sales": 9,
     "trade-balance": 51
+  },
+  "collect": {
+    "status": "ok",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-24T07:01:15+09:00",
+    "source": "FRED release calendar + Census + TreasuryDirect TA_WS + fomc_dates.json",
+    "response": "ok",
+    "required_ok": true,
+    "missing": [],
+    "empty": "has_data"
   }
 }

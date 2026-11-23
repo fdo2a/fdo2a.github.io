@@ -1,13 +1,43 @@
 {
-  "report_date": "2026-11-20",
-  "run_id": "44911292242-1",
+  "report_date": "2026-11-23",
+  "run_id": "45273816882-1",
   "status": "complete",
-  "releases": [
-    {
-      "key": "michigan",
-      "landing_url": "https://www.sca.isr.umich.edu/",
-      "ok": false,
-      "note": "https://www.sca.isr.umich.edu/: period_mismatch"
+  "releases": [],
+  "collect": {
+    "status": "partial",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-24T06:53:39+09:00",
+    "source": "agency press releases (BLS·BEA·Census·DOL …)",
+    "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
+    "required_ok": false,
+    "missing": [
+      "metrics:econ:no_value:CPI YoY",
+      "metrics:econ:no_value:Core CPI YoY"
+    ],
+    "empty": "unknown",
+    "missing_ref": {
+      "metrics:econ:no_value:CPI YoY": {
+        "fred_id": "CPIAUCSL",
+        "transform": "yoy_pct",
+        "ref_period": "2026-10",
+        "lacking": [
+          "2025-10"
+        ],
+        "lacking_why": {
+          "2025-10": "not_published"
+        }
+      },
+      "metrics:econ:no_value:Core CPI YoY": {
+        "fred_id": "CPILFESL",
+        "transform": "yoy_pct",
+        "ref_period": "2026-10",
+        "lacking": [
+          "2025-10"
+        ],
+        "lacking_why": {
+          "2025-10": "not_published"
+        }
+      }
     }
-  ]
+  }
 }

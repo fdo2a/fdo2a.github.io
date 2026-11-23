@@ -1,6 +1,6 @@
 {
-  "generated": "2026-11-21 22:57 KST",
-  "report_date": "2026-11-20",
+  "generated": "2026-11-24 06:52 KST",
+  "report_date": "2026-11-23",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
@@ -543,7 +543,7 @@
         "recent_avg": 49.267
       },
       "trend_cell_ko": "보합 · 3개월 평균 49.8 → 49.3",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "CPI MoM",
@@ -711,7 +711,7 @@
         "recent_avg": 4.433
       },
       "trend_cell_ko": "교착 · 3개월 평균 4.53% → 4.43%",
-      "is_new": true
+      "is_new": false
     },
     {
       "name": "Housing Starts",
@@ -854,57 +854,11 @@
       "is_new": false
     }
   ],
-  "new_releases": [
-    "Michigan Consumer Sentiment",
-    "Michigan 1-Yr Inflation Exp"
-  ],
+  "new_releases": [],
   "anatomy_releases": [],
   "introduced": [],
   "introduced_since": {},
-  "headline_releases": [
-    {
-      "key": "michigan",
-      "label": "미시간대 소비자심리",
-      "tier": 2,
-      "agency": "U. Michigan",
-      "url": "https://www.sca.isr.umich.edu/",
-      "role": "scored",
-      "primary": "Michigan 1-Yr Inflation Exp",
-      "max_abs_z": 0.135,
-      "indicators": [
-        {
-          "name": "Michigan Consumer Sentiment",
-          "axis": "Consumption",
-          "actual": 48.0,
-          "previous": 48.1,
-          "ref_period": "2026-10-01",
-          "momentum_z": -0.095,
-          "fred_id": "UMCSENT",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Michigan 1-Yr Inflation Exp",
-          "axis": "Inflation",
-          "actual": 4.7,
-          "previous": 4.6,
-          "ref_period": "2026-10-01",
-          "momentum_z": -0.135,
-          "fred_id": "MICH",
-          "transform": "level",
-          "units": "%"
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-10-23",
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "none",
-      "anatomy_reason": "no_verified_text"
-    }
-  ],
+  "headline_releases": [],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-09-01",
@@ -1015,12 +969,42 @@
       2.57
     ]
   },
-  "anatomy_gaps": [
-    {
-      "key": "michigan",
-      "status": "none",
-      "reason": "no_verified_text",
-      "components": 0
+  "collect": {
+    "status": "partial",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-24T06:52:59+09:00",
+    "source": "FRED (macro_metrics)",
+    "response": "missing: econ:no_value:CPI YoY, econ:no_value:Core CPI YoY",
+    "required_ok": false,
+    "missing": [
+      "econ:no_value:CPI YoY",
+      "econ:no_value:Core CPI YoY"
+    ],
+    "empty": "has_data",
+    "missing_ref": {
+      "econ:no_value:CPI YoY": {
+        "fred_id": "CPIAUCSL",
+        "transform": "yoy_pct",
+        "ref_period": "2026-10",
+        "lacking": [
+          "2025-10"
+        ],
+        "lacking_why": {
+          "2025-10": "not_published"
+        }
+      },
+      "econ:no_value:Core CPI YoY": {
+        "fred_id": "CPILFESL",
+        "transform": "yoy_pct",
+        "ref_period": "2026-10",
+        "lacking": [
+          "2025-10"
+        ],
+        "lacking_why": {
+          "2025-10": "not_published"
+        }
+      }
     }
-  ]
+  },
+  "anatomy_gaps": []
 }
