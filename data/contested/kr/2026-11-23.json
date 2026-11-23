@@ -1,0 +1,75 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-23",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-23T11:14:23+00:00",
+ "cutoff_at": "2026-11-23T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "5d78459a352eb3fc338159c869ecf3babab5e103",
+  "sha256": "71ae6426179e600c04725acb6eba2c5e101fc1e2a9491daf50ac8266a8e12ba4",
+  "extra": {
+   "kr_econ.json": "4cb02cffc1930f1ec9fd14dc9f8f172cc86f0d9075d883635cc6149a748e8ef7",
+   "kr_flows.json": "250d212418a56e2a02ab1516dfa8d16a1311fc21f17dc37c1ce472e06b30cde8",
+   "kr_session.json": "c9e19b83abad64d02cf5bff4b5618b1528b68a977aaf6c2eae70dc8222085d38"
+  }
+ },
+ "counts": {
+  "harvest": 563,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "discovery": "truncated",
+  "hosts": {
+   "hankyung": "ok",
+   "seoul": "ok",
+   "herald": "ok",
+   "kbs": "ok",
+   "newsis": "ok",
+   "nocut": "ok"
+  },
+  "notes": [
+   "discover:563"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 49398,
+   "out": 10186
+  },
+  "grounded": {
+   "claims": "2/2",
+   "pairs": "1/1",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
+ },
+ "event": {
+  "topic_ko": "산업연구원 2027년 수출 전망과 반도체 수출액 방향",
+  "query": "수출 반도체 내년",
+  "trigger": []
+ },
+ "content_hash": "af8a9bdfd79e3991"
+}
