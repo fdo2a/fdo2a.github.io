@@ -1,0 +1,22 @@
+{
+  "verdict": "유효",
+  "prior_date": "2026-11-20",
+  "prior_exposure": "축소",
+  "prior_horizon": "다음 세션",
+  "prior_thesis": "엔비디아 실적과 앤트로픽 상장이 AI 투자 계속 쪽으로 나온 직후 코스피는 5.21% 내린 4,869.96으로 마감했고, 외국인은 1조956억원을 순매도해(당일 잠정) 6거래일 연속 팔았다. 이 하락은 확인 일정 앞 위험 축소의 연장이 아니라, AI 투자 수익성 의문과 대중국 수출통제라는 새 재료에 대만·일본과 함께 아시아 AI 하드웨어가 반응한 재평가라고 본다.",
+  "metric": "KOSPI",
+  "level": 5168.0,
+  "side": "above",
+  "observed": 4708.54,
+  "note": "KOSPI 종가 4,708.54 로 5,168.00 를 위로 깨지 않았다",
+  "collect": {
+    "status": "ok",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-23T18:10:41+09:00",
+    "source": "kr_stance.json + 그날 지수 종가",
+    "response": "ok",
+    "required_ok": true,
+    "missing": [],
+    "empty": "has_data"
+  }
+}
