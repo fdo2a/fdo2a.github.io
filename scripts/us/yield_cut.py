@@ -292,6 +292,20 @@ def bootstrap(ledger, cnbc, closed, before):
     return out
 
 
+def caption(session, closed):
+    """표 아래 캡션 한 문장 — 세 날(당일·전 거래일·1주 전)의 컷 시각을 코드가 적는다(2026-11-23).
+
+    조기 폐장일이 셋 가운데 어디에 있든 시각이 맞게 나온다(11/30 은 전 거래일 11/27 이 14:00).
+    """
+    _, prev, week = needed(session, closed)
+    t, p, w = target_for(session), target_for(prev), target_for(week)
+    if t == p == w == TARGET:
+        return '국채 금리는 뉴욕 16:00 ET 무렵 장중 값(전 거래일·1주 전도 같은 시각)이다. 장 마감 종가와 다를 수 있다.'
+    early = '채권시장 조기 폐장일은 그 마감 시각'
+    return (f'국채 금리는 뉴욕 {t} ET 무렵 값이다(전 거래일 {p}, 1주 전 {w} ET 무렵 — {early}). '
+            '장 마감 종가와 다를 수 있다.')
+
+
 def rows(session, ledger, closed):
     """원장 → 발행 커브 {tenor: row}. 오늘이 없으면 None. 비교일이 없으면 그 칸만 None(완성 게이트가 막는다)."""
     today = ledger.get(session)

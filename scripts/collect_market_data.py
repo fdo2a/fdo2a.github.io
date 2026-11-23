@@ -1605,6 +1605,7 @@ def main():
     print('collecting FRED yields (cross-check only)...')
     yields_fred = fred_yields()
     yields = cut_rows or {t: None for t in ('2Y', '5Y', '10Y', '30Y')}
+    yields_caption = yield_cut.caption(bond_date, closed) if cut_rows else None
     for t, row in yields.items():
         print(f'  {t}: ' + (f"{row['level']}% ({row.get('source')} {row['date']})" if row else 'MISSING'))
     print('collecting yield drivers (real / breakeven / spreads)...')
@@ -1666,6 +1667,7 @@ def main():
         'ai_infra': daily['ai_infra'],
         'mlcc': daily['mlcc'],
         'yields': yields,
+        'yields_caption': yields_caption,
         'yields_fred': yields_fred,
         'yields_note': 'yields = 발행용 기준값. 16:00 ET 에 가장 가까운 장중 스냅숏(15:45-16:15, '
                        'stamp_et), 전 만기 한 원천(source: naver=레피니티브, cnbc=트레이드웹)·한 날짜. '
