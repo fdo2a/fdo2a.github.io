@@ -10,8 +10,12 @@ fresh collection of its own. `consumer=publisher` is also what lets that run wri
 newsroom file (collect_thesis_data.py).
 
 Exit 0 REFRESHED and fresh / 20 dispatch failed / 21 run not found / 22 run failed or
-cancelled / 23 pull failed / 11 still stale. `thesis_quiet.py` re-checks freshness from
-the files itself, so whatever this exits with, stale numbers cannot be judged.
+cancelled and the data is still stale / 23 pull failed / 11 still stale. A failed run still
+gets a pull: the workflow commits the data *before* its test step, and on 2026-11-23 the
+first run committed fresh data and then went red on a missing test dependency — not
+pulling left this checkout stale. The files decide, not the run's conclusion.
+`thesis_quiet.py` re-checks freshness from the files itself, so whatever this exits with,
+stale numbers cannot be judged.
 """
 import json
 import subprocess
@@ -63,10 +67,10 @@ def main():
         return 21
 
     print(f'수집 실행 {run_id} (요청 {request}) 을 기다린다…')
-    if subprocess.run(['gh', 'run', 'watch', str(run_id), '--exit-status',
-                       '--interval', '15'], stdout=subprocess.DEVNULL).returncode:
-        print(f'THESIS_REFRESH_FAILED 수집 실행 {run_id} 이 실패하거나 취소됐다')
-        return 22
+    run_failed = subprocess.run(['gh', 'run', 'watch', str(run_id), '--exit-status',
+                                 '--interval', '15'], stdout=subprocess.DEVNULL).returncode
+    if run_failed:
+        print(f'참고: 수집 실행 {run_id} 이 실패하거나 취소됐다 — 커밋된 자료가 있는지 받아서 본다')
     pulled = subprocess.run(['git', 'pull', '--ff-only', '-q'], capture_output=True, text=True)
     if pulled.returncode:
         print(f'THESIS_REFRESH_FAILED git pull 실패: {pulled.stderr.strip()[:300]}')
@@ -82,7 +86,7 @@ def main():
         print(f'THESIS_REFRESH_STALE 수집 실행 {run_id} 뒤에도 낡았다')
         for r in reasons:
             print(f'  - {r}')
-        return 11
+        return 22 if run_failed else 11
     print(f'THESIS_REFRESHED 실행 {run_id} — as_of {watch["as_of"]} sessions {watch.get("sessions")}')
     return 0
 

@@ -47,7 +47,7 @@ jobs:
           python-version: '3.13'
 
       - name: Install dependencies
-        run: pip install --quiet yfinance certifi pandas pytest pyyaml
+        run: pip install --quiet yfinance certifi pandas pytest pyyaml matplotlib
 
       # 손편집 탐지는 **수집 전**에만 가능하다. 커밋된 페이지는 커밋된 데이터로 렌더한
       # 결과와 같아야 한다. 수집 후에 대조하면 그날의 정상적인 시세 변화까지 «다르다»로

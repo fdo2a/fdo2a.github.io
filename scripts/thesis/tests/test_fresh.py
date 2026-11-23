@@ -172,3 +172,52 @@ def test_refresh_picks_the_run_carrying_its_request_id():
                {'databaseId': 3, 'displayTitle': 'thesis collect 000000000000'}]
     assert R.pick_run(listing, '4f2a9c01d3e7') == 2
     assert R.pick_run(listing, 'ffffffffffff') is None
+
+
+def _refresh(monkeypatch, tmp_path, run_rc, stale):
+    """thesis_refresh.main() with gh/git stubbed: the run's exit code and the freshness
+    verdict after the pull are the inputs."""
+    import subprocess
+    import thesis_refresh as R
+
+    class Done:
+        def __init__(self, rc=0, out=''):
+            self.returncode, self.stdout, self.stderr = rc, out, ''
+    pulls = []
+
+    def gh(*args):
+        if args[:2] == ('run', 'list'):
+            return Done(out='[{"databaseId": 7, "displayTitle": "thesis collect ' + REQ + '"}]')
+        return Done()
+
+    def run(cmd, **kw):
+        if cmd[:3] == ['gh', 'run', 'watch']:
+            return Done(run_rc)
+        if cmd[:2] == ['git', 'pull']:
+            pulls.append(cmd)
+        return Done()
+    REQ = 'abc123abc123'
+    monkeypatch.setattr(R.uuid, 'uuid4', lambda: type('U', (), {'hex': REQ + 'ffff'})())
+    monkeypatch.setattr(R, '_gh', gh)
+    monkeypatch.setattr(R.subprocess, 'run', run)
+    monkeypatch.setattr(R.time, 'sleep', lambda s: None)
+    monkeypatch.setattr(R.TE, 'staleness', lambda today, watch: stale)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / 'thesis/data').mkdir(parents=True)
+    (tmp_path / 'thesis/data/watch.json').write_text('{"as_of": "2026-11-23"}')
+    return R.main(), pulls
+
+
+def test_a_red_run_that_committed_fresh_data_still_pulls_and_passes(monkeypatch, tmp_path):
+    # 11-23 첫 실행: 수집·커밋 성공 뒤 시험 단계만 빨강 → pull 하지 않아 이 체크아웃이 낡았다
+    code, pulls = _refresh(monkeypatch, tmp_path, run_rc=1, stale=[])
+    assert code == 0 and pulls
+
+
+def test_a_red_run_without_fresh_data_is_22(monkeypatch, tmp_path):
+    code, pulls = _refresh(monkeypatch, tmp_path, run_rc=1, stale=['MU 주가가 낡았다'])
+    assert code == 22 and pulls
+
+
+def test_a_green_run_still_stale_is_11(monkeypatch, tmp_path):
+    assert _refresh(monkeypatch, tmp_path, run_rc=0, stale=['x'])[0] == 11
