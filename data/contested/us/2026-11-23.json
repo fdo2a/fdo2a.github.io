@@ -5,10 +5,10 @@
  "report_date": "2026-11-23",
  "status": "none",
  "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-23T23:47:50+00:00",
- "cutoff_at": "2026-11-23T23:47:50+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-24T00:07:42+00:00",
+ "cutoff_at": "2026-11-24T00:07:42+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "4957cb4a9137e6bd7dcfad482ddea1893ce869aaeb0b86dc4d14a5c58de19f41"
  },
  "counts": {
-  "harvest": 167,
+  "harvest": 169,
   "candidates": 1,
   "articles": [
    6
@@ -29,10 +29,10 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "tokens": {
-   "in": 89734,
-   "out": 17990
+   "in": 90444,
+   "out": 20888
   },
   "discovery": "ok",
   "hosts": {
@@ -45,23 +45,25 @@
   "gdelt": "ok",
   "grounded": {
    "claims": "7/7",
-   "pairs": "2/2",
-   "obs": "9/9"
+   "pairs": "3/3",
+   "obs": "10/10"
   },
   "verified": {
    "pairs": 2,
    "claims": 4,
-   "obs": 9,
+   "obs": 10,
    "strict_pairs": 0,
    "same_statistic_dropped": 0,
    "topic": true
   },
   "repair": {
    "paths": [
-    "edges[2]",
+    "edges[0]",
+    "edges[1]",
     "memo[0]",
+    "structure",
     "worry.moderate[0]",
-    "worry.most[0]"
+    "worry.unlikely[0]"
    ],
    "outcome": "partial",
    "remaining": [
@@ -72,12 +74,12 @@
  },
  "event": {
   "topic_ko": "엔비디아 젠슨 황 CEO 복귀와 트럼프 개입 논란",
-  "query": "huang nvidia return",
+  "query": "nvidia huang return",
   "trigger": []
  },
  "problems": [
   "edges[1]:unverified",
   "worry.unlikely[0]:unverified"
  ],
- "content_hash": "366668d399a0a3f6"
+ "content_hash": "a0c2552806404341"
 }
