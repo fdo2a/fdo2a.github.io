@@ -283,7 +283,8 @@
    "id": "4888062b882f13b617ebeeaf474a60ec",
    "key": "hold:us:2026-11-23",
    "kind": "missing",
-   "status": "pending",
+   "sent": "2026-11-24T10:37:11.106920+09:00",
+   "status": "sent",
    "text": "[글 막힘] US 일간 11/23 · 자동 재시도 예정\n발행 전 검사를 끝내지 못해 글을 올리지 않았어요\n이유: 초안을 올리거나 검토를 띄우지 못했어요\n다음: 재시도 루틴이 다음 차례에 처음부터 다시 써요(언제인지는 기록에 없어요)\n기록 11/24 07:23 KST · 이 날짜의 센 실패 1번",
    "tries": 0
   }
@@ -297,8 +298,8 @@
    "sig": "submit_failed|retry"
   }
  },
- "last_ok": "2026-11-24T07:23:41.507135+09:00",
- "last_seen": "28271a6a86acd76f24d9cffba50b39ce94f0850a",
+ "last_ok": "2026-11-24T10:37:11.106920+09:00",
+ "last_seen": "9979d2e1b61c63a23c991b7ade18013e6535dc3e",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
