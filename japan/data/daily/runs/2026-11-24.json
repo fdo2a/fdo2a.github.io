@@ -1,0 +1,36 @@
+{
+ "run_id": "jpd-2026-11-24-1795512606-14417",
+ "session": "2026-11-24",
+ "input_commit": "91842fffcb3f843df1b3b04467b3c05c91dc1cbd",
+ "html_sha256": "9412bfaeaa261224d202cc245ea8e04c5d3acec3dbf036352c260f735a84b32f",
+ "snapshot_sha256": "21653224f7271d726c75965ac79ab0d4600c0b3beed9116ad31dc8ee3f1e374e",
+ "news_sha256": "b17a312e268e040b7df005b4566cb7571184d24b66b9e24e95f68dd3c38da614",
+ "telegram_sha256": "939c645da7e398ab23751867898c9ebb8e1b06c8166ce934d093c6dacb92ad58",
+ "title": "일본 증시 마감 — 엔비디아 CEO 복귀에 닛케이 3.91% 급반등, 반도체주 매수 집중",
+ "summary": "엔비디아 CEO 복귀 뒤 반도체 대형주에 매수가 몰려 닛케이가 3.91% 급반등했고, JGB 금리는 모든 만기에서 내렸으며 달러/엔은 소폭 올랐다.",
+ "gates": [
+  {
+   "name": "apply_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_japan_daily",
+   "exit": 0
+  },
+  {
+   "name": "check_news",
+   "exit": 0
+  },
+  {
+   "name": "check_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_style",
+   "exit": 0
+  }
+ ],
+ "verdict": "pass",
+ "finished_at": "2026-11-24T09:40:34.012663+00:00",
+ "published_at": "2026-11-24T09:40:44.523309+00:00"
+}
