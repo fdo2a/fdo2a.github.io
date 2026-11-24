@@ -29,6 +29,7 @@
 ## 남는 것(이 묶음 밖)
 즉시 텔레그램(지금은 폰 알림 + 12:10 KST `missing`), 한도 풀리면 15분 안 재시작, 옛 세션 이어 내기, 독립 감시, 다른 보고서. 사람이 재료로 잇는 절차는 아직 손이다.
 - 첫 실제 실행에서 확인할 것: 루틴의 `gh api` 가 비공개 레포에 blob·ref 를 쓸 수 있는지(11/19 P 시험은 git push 로 확인), 비공개 워크플로가 새 자리에서 읽는지.
+  - **결과(2026-11-24): 못 쓴다.** US 11/23 첫 실행에서 클라우드 프록시가 `POST git/blobs` 를 「Write access to this GitHub API path is not permitted through this proxy (HTTP 403)」로 막아 글이 섰다(`submit_failed`). 올리기를 git push(루틴이 소스로 받아 둔 review-runner 사본의 원격)로 바꿨다. 띄우기(`dispatches`)·결과 읽기(`contents`)는 11/19-20 에 통했던 그대로 둔다.
 
 ## 같은 실패로 처음부터 다시 쓰기를 되풀이하지 않는다 (선행 묶음 ②, 2026-11-22 밤)
 사용자 11/22: 「다시 루프로 돌아가서 문제인걸 수정하고 최종 발행까지」 → 자동 이어 하기 설계(로컬 `plans/attachments/2026-11-17-prepub-all/auto_resume_design_v1.md`, codex 설계 5회 상한 뒤 사용자 「받아」)의 첫 조각. 본체(재료 꾸러미·`plan`·받아들임 장부)는 11/24 첫 실행으로 비공개 쓰기를 확인한 뒤.

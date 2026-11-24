@@ -11,70 +11,6 @@ def git(repo, *args):
                           text=True).stdout.strip()
 
 
-class FakeApi:
-    """비공개 review-runner 의 Git Data API 흉내 — `gh api -X M path --input -` 만 받는다."""
-
-    def __init__(self):
-        self.objs, self.refs, self.calls, self.fail_patch = {}, {}, [], 0
-        self.n = 0
-
-    @property
-    def ref(self):
-        return self.refs.get('drafts')
-
-    def _id(self, kind, body):
-        self.n += 1
-        sha = f'{self.n:040x}'
-        self.objs[sha] = (kind, body)
-        return sha
-
-    def __call__(self, cmd, input=None, **kw):
-        assert cmd[:2] == ['gh', 'api'] and 'repos/fdo2a/review-runner/' in ' '.join(cmd)
-        self.calls.append(cmd)
-        method = cmd[cmd.index('-X') + 1] if '-X' in cmd else 'GET'
-        path = [c for c in cmd if c.startswith('repos/')][0].split('repos/fdo2a/review-runner/', 1)[1]
-        body = json.loads(input) if input else None
-
-        def ok(obj):
-            return subprocess.CompletedProcess(cmd, 0, json.dumps(obj), '')
-
-        def err(code):
-            return subprocess.CompletedProcess(cmd, 1, '', f'gh: error (HTTP {code})')
-        if method == 'GET' and path.startswith('git/ref/heads/'):
-            r = self.refs.get(path.rsplit('/', 1)[1])
-            return ok({'object': {'sha': r}}) if r else err(404)
-        if method == 'GET' and path.startswith('git/commits/'):
-            kind, c = self.objs[path.rsplit('/', 1)[1]]
-            return ok({'sha': path.rsplit('/', 1)[1], 'tree': {'sha': c['tree']}})
-        if method == 'POST' and path == 'git/blobs':
-            import base64
-            return ok({'sha': self._id('blob', base64.b64decode(body['content']).decode())})
-        if method == 'POST' and path == 'git/trees':
-            files = dict(self.objs[body['base_tree']][1]) if body.get('base_tree') else {}
-            files.update({e['path']: e['sha'] for e in body['tree']})
-            return ok({'sha': self._id('tree', files)})
-        if method == 'POST' and path == 'git/commits':
-            return ok({'sha': self._id('commit', body)})
-        if method == 'PATCH' and path.startswith('git/refs/heads/'):
-            if self.fail_patch:
-                self.fail_patch -= 1
-                return err(422)
-            assert body['force'] is False
-            self.refs[path.rsplit('/', 1)[1]] = body['sha']
-            return ok({'object': {'sha': body['sha']}})
-        if method == 'POST' and path == 'git/refs':
-            name = body['ref'].rsplit('/', 1)[1]
-            if self.refs.get(name):
-                return err(422)
-            self.refs[name] = body['sha']
-            return ok({'object': {'sha': body['sha']}})
-        raise AssertionError(cmd)
-
-    def files(self, commit):
-        tree = self.objs[self.objs[commit][1]['tree']][1]
-        return {p: self.objs[sha][1] for p, sha in tree.items()}
-
-
 @pytest.fixture
 def b(tmp_path):
     d = tmp_path / 'bundle'
@@ -84,41 +20,92 @@ def b(tmp_path):
     return d
 
 
-def test_the_bundle_lands_on_the_private_drafts_branch(b, tmp_path):
-    api = FakeApi()
-    sha = submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-0123456789ab', run=api)
-    assert api.ref == sha
-    assert api.files(sha)['drafts/us-2026-11-07-0123456789ab/post.html'] == '<p>초안</p>'
-    # 공개 레포에는 아무것도 올리지 않는다 — 모든 호출이 비공개 레포 API 다(FakeApi 가 단언)
-    assert not [c for c in api.calls if c[0] == 'git']
+@pytest.fixture
+def runner(tmp_path, monkeypatch):
+    """비공개 review-runner 흉내 — 맨 레포(원격) + 루틴이 받아 둔 사본."""
+    remote = tmp_path / 'remote.git'
+    subprocess.run(['git', 'init', '-q', '--bare', str(remote)], check=True)
+    clone = tmp_path / 'review-runner'
+    subprocess.run(['git', 'clone', '-q', str(remote), str(clone)], check=True, capture_output=True)
+    monkeypatch.setenv('PREPUB_RUNNER_CLONE', str(clone))
+    return remote, clone
 
 
-def test_a_second_bundle_keeps_the_first(b, tmp_path):
-    api = FakeApi()
-    submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000001', run=api)
-    sha = submit.push_bundle(str(tmp_path), str(b), 'kr-2026-11-07-000000000002', run=api)
-    names = api.files(sha)
+def files_at(remote, commit):
+    names = git(remote, 'ls-tree', '-r', '--name-only', commit).splitlines()
+    return {n: git(remote, 'show', f'{commit}:{n}') for n in names}
+
+
+def test_the_bundle_lands_on_the_private_drafts_branch_by_git_push(b, tmp_path, runner):
+    remote, clone = runner
+    sha = submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-0123456789ab')
+    assert git(remote, 'rev-parse', 'refs/heads/drafts') == sha
+    assert files_at(remote, sha)['drafts/us-2026-11-07-0123456789ab/post.html'] == '<p>초안</p>'
+    # 사본의 작업 폴더·HEAD 는 그대로다
+    assert git(clone, 'status', '--porcelain') == ''
+
+
+def test_no_git_data_api_write_is_used(b, tmp_path, runner):
+    """2026-11-24 클라우드 프록시가 `POST git/blobs` 를 403 으로 막았다 — gh api 로 쓰지 않는다."""
+    calls = []
+
+    def spy(cmd, **kw):
+        calls.append(cmd)
+        return subprocess.run(cmd, **kw)
+    submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-0123456789ab', run=spy)
+    assert calls and all(c[0] == 'git' for c in calls)
+
+
+def test_a_second_bundle_keeps_the_first(b, tmp_path, runner):
+    remote, _ = runner
+    first = submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000001')
+    sha = submit.push_bundle(str(tmp_path), str(b), 'kr-2026-11-07-000000000002')
+    names = files_at(remote, sha)
     assert 'drafts/us-2026-11-07-000000000001/post.html' in names
     assert 'drafts/kr-2026-11-07-000000000002/post.html' in names
-    assert api.objs[sha][1]['parents']                      # 앞 커밋 위에 쌓인다(강제 아님)
+    assert git(remote, 'rev-parse', f'{sha}^') == first       # 앞 커밋 위에 쌓인다(강제 아님)
 
 
-def test_a_moved_branch_is_retried_on_top_not_forced(b, tmp_path, monkeypatch):
+def test_a_moved_branch_is_retried_on_top_not_forced(b, tmp_path, runner, monkeypatch):
     monkeypatch.setattr(submit.time, 'sleep', lambda s: None)
-    api = FakeApi()
-    submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000001', run=api)
-    api.fail_patch = 1
-    sha = submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000002', run=api)
-    assert api.ref == sha and 'drafts/us-2026-11-07-000000000001/post.html' in api.files(sha)
+    remote, _ = runner
+    submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000001')
+    pushes = []
+
+    def racing(cmd, **kw):
+        if 'push' in cmd and not pushes:          # 첫 push 직전에 다른 런이 먼저 민다
+            pushes.append(1)
+            other = tmp_path / 'other'
+            subprocess.run(['git', 'clone', '-q', '-b', 'drafts', str(remote), str(other)], check=True,
+                           capture_output=True)
+            (other / 'x.txt').write_text('x')
+            git(other, 'add', 'x.txt')
+            git(other, '-c', 'user.name=o', '-c', 'user.email=o@o', 'commit', '-qm', 'other')
+            git(other, 'push', '-q', 'origin', 'drafts')
+        return subprocess.run(cmd, **kw)
+    sha = submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000002', run=racing)
+    names = files_at(remote, sha)
+    assert git(remote, 'rev-parse', 'refs/heads/drafts') == sha
+    assert 'x.txt' in names and 'drafts/us-2026-11-07-000000000001/post.html' in names
 
 
 def test_an_unreachable_private_repo_is_a_submit_error(b, tmp_path, monkeypatch):
-    monkeypatch.setattr(submit.time, 'sleep', lambda s: None)
-
-    def down(cmd, **kw):
-        return subprocess.CompletedProcess(cmd, 1, '', 'gh: error (HTTP 502)')
+    monkeypatch.setenv('PREPUB_RUNNER_CLONE', str(tmp_path / 'nowhere'))
+    (tmp_path / 'nowhere').mkdir()
+    subprocess.run(['git', 'init', '-q', str(tmp_path / 'nowhere')], check=True)
+    git(tmp_path / 'nowhere', 'remote', 'add', 'origin', str(tmp_path / 'missing.git'))
     with pytest.raises(submit.SubmitError):
-        submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000001', run=down)
+        submit.push_bundle(str(tmp_path), str(b), 'us-2026-11-07-000000000001')
+
+
+def test_the_routine_clone_is_found_next_to_the_site_repo(tmp_path, monkeypatch):
+    monkeypatch.delenv('PREPUB_RUNNER_CLONE', raising=False)
+    site = tmp_path / 'fdo2a.github.io'
+    site.mkdir()
+    rr = tmp_path / 'review-runner'
+    subprocess.run(['git', 'init', '-q', str(rr)], check=True)
+    git(rr, 'remote', 'add', 'origin', 'http://local_proxy@127.0.0.1:1/git/fdo2a/review-runner')
+    assert submit.runner_clone(str(site)) == str(rr)
 
 
 class FakeGh:
