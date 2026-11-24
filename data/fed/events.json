@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-11-23",
+  "report_date": "2026-11-24",
   "events": [
     {
       "key": "fomc-minutes-20261118",
@@ -51,8 +51,8 @@
   "diff": null,
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-23",
-    "collected_at": "2026-11-24T06:59:58+09:00",
+    "as_of": "2026-11-24",
+    "collected_at": "2026-11-25T06:59:51+09:00",
     "source": "federalreserve.gov RSS",
     "response": "ok",
     "required_ok": true,

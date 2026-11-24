@@ -1,12 +1,12 @@
 {
-  "report_date": "2026-11-23",
-  "run_id": "45273816882-1",
+  "report_date": "2026-11-24",
+  "run_id": "45495207208-1",
   "status": "complete",
   "releases": [],
   "collect": {
     "status": "partial",
-    "as_of": "2026-11-23",
-    "collected_at": "2026-11-24T06:53:39+09:00",
+    "as_of": "2026-11-24",
+    "collected_at": "2026-11-25T06:54:31+09:00",
     "source": "agency press releases (BLS·BEA·Census·DOL …)",
     "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
     "required_ok": false,

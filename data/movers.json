@@ -1,111 +1,11 @@
 {
-  "report_date": "2026-11-23",
+  "report_date": "2026-11-24",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
       "industry": "Semiconductors",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Nvidia (NVDA)",
-          "change_pct": 31.48,
-          "close": 165.05,
-          "value": 127498695840.84
-        },
-        {
-          "name": "Micron Technology (MU)",
-          "change_pct": 19.04,
-          "close": 707.7,
-          "value": 34762386662.91
-        },
-        {
-          "name": "Advanced Micro Devices (AMD)",
-          "change_pct": 6.85,
-          "close": 453.46,
-          "value": 24054587870.92
-        },
-        {
-          "name": "Intel (INTC)",
-          "change_pct": 16.34,
-          "close": 59.66,
-          "value": 9723688237.11
-        },
-        {
-          "name": "Marvell Technology (MRVL)",
-          "change_pct": 18.37,
-          "close": 144.74,
-          "value": 5293914912.51
-        },
-        {
-          "name": "Texas Instruments (TXN)",
-          "change_pct": 10.4,
-          "close": 291.19,
-          "value": 3490387692.53
-        },
-        {
-          "name": "Analog Devices (ADI)",
-          "change_pct": 9.49,
-          "close": 378.75,
-          "value": 3368853611.25
-        },
-        {
-          "name": "Qualcomm (QCOM)",
-          "change_pct": 10.3,
-          "close": 165.38,
-          "value": 3341210772.19
-        },
-        {
-          "name": "Monolithic Power Systems (MPWR)",
-          "change_pct": 16.8,
-          "close": 1333.88,
-          "value": 1860607876.73
-        },
-        {
-          "name": "NXP Semiconductors (NXPI)",
-          "change_pct": 8.88,
-          "close": 256.03,
-          "value": 1572603588.39
-        }
-      ]
-    },
-    {
-      "id": "g2",
-      "industry": "Interactive Media & Services",
-      "direction": "up",
-      "reasons": [
-        "지수 기여 상위",
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "Alphabet Inc. (Class A) (GOOGL)",
-          "change_pct": 6.34,
-          "close": 282.1,
-          "value": 12316217143.07
-        },
-        {
-          "name": "Meta Platforms (META)",
-          "change_pct": 6.55,
-          "close": 597.6,
-          "value": 11277664711.27
-        },
-        {
-          "name": "Alphabet Inc. (Class C) (GOOG)",
-          "change_pct": 5.88,
-          "close": 279.53,
-          "value": 8716877178.9
-        }
-      ]
-    },
-    {
-      "id": "g3",
-      "industry": "Systems Software",
       "direction": "down",
       "reasons": [
         "지수 기여 하위",
@@ -113,50 +13,166 @@
       ],
       "members": [
         {
-          "name": "CrowdStrike (CRWD)",
-          "change_pct": -8.92,
-          "close": 208.97,
-          "value": 8778356016.29
+          "name": "Nvidia (NVDA)",
+          "change_pct": -5.86,
+          "close": 155.38,
+          "value": 58925865091.2
+        },
+        {
+          "name": "Micron Technology (MU)",
+          "change_pct": -11.01,
+          "close": 629.79,
+          "value": 24186143829.7
+        },
+        {
+          "name": "Advanced Micro Devices (AMD)",
+          "change_pct": -8.86,
+          "close": 413.27,
+          "value": 18901893968.97
+        },
+        {
+          "name": "Intel (INTC)",
+          "change_pct": -8.15,
+          "close": 54.8,
+          "value": 7145236325.32
+        },
+        {
+          "name": "Analog Devices (ADI)",
+          "change_pct": -17.37,
+          "close": 312.95,
+          "value": 4003757902.07
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": -9.1,
+          "close": 131.57,
+          "value": 3640498421.42
+        },
+        {
+          "name": "Texas Instruments (TXN)",
+          "change_pct": -11.25,
+          "close": 258.44,
+          "value": 3445147374.55
+        },
+        {
+          "name": "Monolithic Power Systems (MPWR)",
+          "change_pct": -10.77,
+          "close": 1190.16,
+          "value": 1566143490.58
+        },
+        {
+          "name": "NXP Semiconductors (NXPI)",
+          "change_pct": -6.5,
+          "close": 239.4,
+          "value": 1387286815.23
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "industry": "Technology Hardware, Storage & Peripherals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Apple Inc. (AAPL)",
+          "change_pct": 1.43,
+          "close": 354.07,
+          "value": 14115301093.35
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "industry": "Pharmaceuticals",
+      "direction": "up",
+      "reasons": [
+        "지수 기여 상위"
+      ],
+      "members": [
+        {
+          "name": "Lilly (Eli) (LLY)",
+          "change_pct": 3.15,
+          "close": 1407.59,
+          "value": 4154672102.5
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Integrated Oil & Gas",
+      "industry": "Technology Hardware, Storage & Peripherals",
       "direction": "down",
-      "reasons": [
-        "지수 기여 하위"
-      ],
-      "members": [
-        {
-          "name": "ExxonMobil (XOM)",
-          "change_pct": -1.93,
-          "close": 156.9,
-          "value": 2300698667.3
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "Automobile Manufacturers",
-      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Tesla, Inc. (TSLA)",
-          "change_pct": 11.46,
-          "close": 385.46,
-          "value": 17698398976.8
+          "name": "Sandisk (SNDK)",
+          "change_pct": -17.42,
+          "close": 77.95,
+          "value": 7465687928.42
+        },
+        {
+          "name": "Dell Technologies (DELL)",
+          "change_pct": -11.83,
+          "close": 295.28,
+          "value": 5089115640.64
+        },
+        {
+          "name": "Western Digital (WDC)",
+          "change_pct": -7.84,
+          "close": 273.95,
+          "value": 1933618083.76
+        },
+        {
+          "name": "Hewlett Packard Enterprise (HPE)",
+          "change_pct": -16.31,
+          "close": 40.19,
+          "value": 1862830027.88
+        },
+        {
+          "name": "Seagate Technology (STX)",
+          "change_pct": -7.23,
+          "close": 482.48,
+          "value": 1654449529.11
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "Semiconductor Materials & Equipment",
+      "direction": "down",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "Lam Research (LRCX)",
+          "change_pct": -6.48,
+          "close": 196.16,
+          "value": 2679298684.58
+        },
+        {
+          "name": "Applied Materials (AMAT)",
+          "change_pct": -6.66,
+          "close": 323.76,
+          "value": 2572213381.99
+        },
+        {
+          "name": "KLA Corporation (KLAC)",
+          "change_pct": -8.36,
+          "close": 133.65,
+          "value": 2087261405.18
         }
       ]
     }
   ],
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-23",
-    "collected_at": "2026-11-24T06:53:39+09:00",
+    "as_of": "2026-11-24",
+    "collected_at": "2026-11-25T06:54:31+09:00",
     "source": "Wikipedia S&P 500 constituents + yfinance",
     "response": "ok",
     "required_ok": true,
