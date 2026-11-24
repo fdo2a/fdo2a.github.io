@@ -1,0 +1,52 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-24",
+ "status": "none",
+ "reason": "topic_too_long",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-24T22:11:37+00:00",
+ "cutoff_at": "2026-11-24T22:11:37+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "67d749c22ddb478de91c0dd58025ad6b00ab68e9",
+  "sha256": "d2afd215196d446af358299b024c26489e7943500723b089b27cbf885d6f6753"
+ },
+ "counts": {
+  "harvest": 203,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "tokens": {
+   "in": 27870,
+   "out": 10232
+  },
+  "discovery": "ok",
+  "hosts": {
+   "cnbc.com": "ok",
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok"
+  },
+  "notes": [],
+  "gdelt": "ok"
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "d5867328fc1ee2e3"
+}
