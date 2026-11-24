@@ -1,0 +1,62 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-24",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-24T11:09:05+00:00",
+ "cutoff_at": "2026-11-24T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "e2d2c58332e2757ca1558379e84b71c33d2c2aec",
+  "sha256": "ade31be40e6df9129be6aae789c55381660f97f45611aa16ae8331c8a18fd834",
+  "extra": {
+   "kr_econ.json": "5a9538c6085d08bf90909db96b4f0c15f063afe5005ec405c029987584d68765",
+   "kr_flows.json": "a6c93bffb25e7fac4b49804fbbe4b9cbe17bd83f82adfdc3f2bb7d7e47b6af60",
+   "kr_session.json": "be214cabec65f4350c37cbc90e754bcbe87017fbb372c2a1fb0ebb9cd86874a4"
+  }
+ },
+ "counts": {
+  "harvest": 601,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "discovery": "truncated",
+  "hosts": {
+   "kbs": "ok",
+   "ytn": "short",
+   "dailian": "ok",
+   "fnnews": "ok",
+   "newsis": "ok",
+   "segye": "ok"
+  },
+  "notes": [
+   "discover:601"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 13719,
+   "out": 7157
+  }
+ },
+ "event": {
+  "topic_ko": "젠슨 황 엔비디아 복귀에 따른 코스피 급반등과 반등 지속성",
+  "query": "젠슨 코스피 복귀에",
+  "trigger": []
+ },
+ "content_hash": "94e6eb5a0e36c4e0"
+}
