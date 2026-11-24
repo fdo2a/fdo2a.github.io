@@ -1,0 +1,12 @@
+{
+ "section": "us",
+ "date": "2026-11-24",
+ "request_id": "us-2026-11-24-b0a3fb98db03",
+ "state": "style_abort",
+ "reason": "문체 마감이 중단을 요구해 세움",
+ "hold": true,
+ "recorded_at": "2026-11-24T22:25:58Z",
+ "attempt": 0,
+ "last_counted": null,
+ "next": "person"
+}
