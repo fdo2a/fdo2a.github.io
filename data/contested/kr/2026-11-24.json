@@ -6,8 +6,8 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-24T11:41:58+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-24T11:58:32+00:00",
  "cutoff_at": "2026-11-24T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 547,
+  "harvest": 569,
   "candidates": 1,
   "articles": [
    6
@@ -33,30 +33,30 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 3,
+  "runs": 4,
   "discovery": "truncated",
   "hosts": {
    "kbs": "ok",
+   "kmib": "ok",
    "ytn": "short",
    "dailian": "ok",
    "fnnews": "ok",
-   "newsis": "ok",
-   "segye": "ok"
+   "newsis": "ok"
   },
   "notes": [
-   "discover:547"
+   "discover:569"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 13796,
-   "out": 8257
+   "in": 14826,
+   "out": 4769
   }
  },
  "event": {
   "topic_ko": "젠슨 황 엔비디아 복귀에 따른 코스피 급반등과 반등 지속성",
-  "query": "젠슨 코스피 복귀에",
+  "query": "젠슨 복귀에 코스피",
   "trigger": []
  },
- "content_hash": "5eecf4ab2db711af"
+ "content_hash": "242192e5c9172d96"
 }
