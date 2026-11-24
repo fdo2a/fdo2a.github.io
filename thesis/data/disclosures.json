@@ -1,8 +1,8 @@
 {
-  "as_of": "2026-11-24",
+  "as_of": "2026-11-25",
   "window": {
-    "bgn": "20261123",
-    "end": "20261124"
+    "bgn": "20261124",
+    "end": "20261125"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
@@ -14,20 +14,7 @@
     },
     "000660.KS": {
       "corp_code": "00164779",
-      "events": [
-        {
-          "rcept_no": "20261123000192",
-          "date": "2026-11-23",
-          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
-          "corp": "SK하이닉스",
-          "filer": "윤풍영",
-          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261123000192",
-          "axis": null,
-          "kind": null,
-          "correction": false,
-          "confirmed": false
-        }
-      ],
+      "events": [],
       "axes": [],
       "confirmed_count": 0
     },
@@ -42,8 +29,8 @@
   "missing": [],
   "sec": {
     "window": {
-      "first": "2026-11-22",
-      "last": "2026-11-24"
+      "first": "2026-11-23",
+      "last": "2026-11-25"
     },
     "note": "SEC filingDate(미 동부 영업일) 기준, 직전 수집 전날부터 — DART 와 같이 하루 겹친다"
   }
