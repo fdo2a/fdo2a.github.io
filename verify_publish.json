@@ -331,7 +331,8 @@
    "id": "8c00b67e95574cdcdbe13a22a80b5cf1",
    "key": "kr/posts/2026-11-24.html",
    "kind": "publish",
-   "status": "pending",
+   "sent": "2026-11-24T19:06:09.993101+09:00",
+   "status": "sent",
    "text": "[발행] KR 일간 11/24 · 발행 통과\n\n■ 발행 상태\n필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)\n\n■ 검증 범위\n표 55칸 자동 대조 · 숫자 253개 범위 밖(문장 164 · 업종 기간별 77 · 기타 표 12). 오류 253건이라는 뜻은 아님\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
    "tries": 0
   }
@@ -345,8 +346,8 @@
    "sig": "submit_failed|retry"
   }
  },
- "last_ok": "2026-11-24T18:26:39.013083+09:00",
- "last_seen": "03bff0c7de33371a74f3b6536adf0206e7e6c621",
+ "last_ok": "2026-11-24T19:06:09.993101+09:00",
+ "last_seen": "aa7ab92dd77d4c446077bfaa783c4f15bb3c802c",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
