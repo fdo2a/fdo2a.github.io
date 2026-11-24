@@ -1,0 +1,1204 @@
+{
+ "code": {
+  "dirty": false,
+  "dirty_sha256": null,
+  "head": "11e373cd67d3631c72ef839fc458270acf90368b",
+  "python": "3.11.18"
+ },
+ "created_at": {
+  "kst": "2026-11-24T17:30:53+09:00",
+  "utc": "2026-11-24T08:30:53+00:00"
+ },
+ "date": "2026-11-23",
+ "disabled": [
+  {
+   "name": "check_news",
+   "since": "2026-09-26",
+   "why": "뉴스·산업 브리프(STEP 3.5) 전용 — 시황 브리프 목록 밖"
+  }
+ ],
+ "format": "prepub-record/1",
+ "gates": [
+  {
+   "argv": [],
+   "ended": "2026-11-24T17:30:48+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "unconfirmed",
+   "note": null,
+   "output_sha256": null,
+   "reason": "",
+   "required": true,
+   "script_sha256": null,
+   "seconds": 0.0,
+   "started": "2026-11-24T17:30:48+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_macro.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:48+09:00",
+   "exit": 0,
+   "items": [
+    "매크로 게이트 통과"
+   ],
+   "kind": "structure",
+   "name": "check_macro",
+   "note": null,
+   "output_sha256": "15214a1d6318c231d1e97c464567b99243c3a2f3332146edbe7a799c8b4559a4",
+   "reason": "",
+   "required": true,
+   "script_sha256": "2ababedde7a2d8e251b1220435130355c1fd4ef64f9643414da960a08e413ff5",
+   "seconds": 0.08,
+   "started": "2026-11-24T17:30:48+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_price_context.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:48+09:00",
+   "exit": 0,
+   "items": [
+    "price context gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_price_context",
+   "note": null,
+   "output_sha256": "cb8b7a0160393d199c3606d566d83d8f024384d9c02a4a573f87ea6a4ff2287c",
+   "reason": "",
+   "required": true,
+   "script_sha256": "29fddbcbc8b0ed8357c60b816d28bc8ea925c8bfa483c0f8c53235ff6402188d",
+   "seconds": 0.08,
+   "started": "2026-11-24T17:30:48+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_sector_perf.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:48+09:00",
+   "exit": 0,
+   "items": [
+    "sector performance gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_sector_perf",
+   "note": null,
+   "output_sha256": "86aac4e52c882362fd94b7961c6a2606040ba89905a156cd50c498593ea0804a",
+   "reason": "",
+   "required": true,
+   "script_sha256": "5fd4c795c06c95ba208c4dbb69ec3e14bb6e3a0be896069b7cebbe40bf6ece9b",
+   "seconds": 0.06,
+   "started": "2026-11-24T17:30:48+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_session.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "us"
+   ],
+   "ended": "2026-11-24T17:30:49+09:00",
+   "exit": 0,
+   "items": [
+    "session gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_session",
+   "note": null,
+   "output_sha256": "b48111753af34051b1878f227f883fe95706998e0b3dadd74250368fddf2aa45",
+   "reason": "",
+   "required": true,
+   "script_sha256": "fda357035a1ec614464521cb006200a2b229ef4798a0f1229db9ed7d71da99c6",
+   "seconds": 0.05,
+   "started": "2026-11-24T17:30:48+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_fed.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:49+09:00",
+   "exit": 0,
+   "items": [
+    "연준 이벤트 없음 — 섹션 없이 발행 (OK)"
+   ],
+   "kind": "structure",
+   "name": "check_fed",
+   "note": null,
+   "output_sha256": "effb405f89659c4367f21926b56382f9767563f373f94334d43773ce13d219f7",
+   "reason": "",
+   "required": true,
+   "script_sha256": "9fff5beb6f26f1149aa3039ab371542cc9ea7d3d95de6bdb929444bd272d12fa",
+   "seconds": 0.05,
+   "started": "2026-11-24T17:30:49+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_auction.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:49+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "check_auction",
+   "note": null,
+   "output_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "reason": "",
+   "required": true,
+   "script_sha256": "4add8a962f89402169df2b4c46b0def4427a2a91aa62c899ececb616b4691dd5",
+   "seconds": 0.08,
+   "started": "2026-11-24T17:30:49+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_liquidity.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--repo",
+    "{repo}"
+   ],
+   "ended": "2026-11-24T17:30:49+09:00",
+   "exit": 0,
+   "items": [
+    "liquidity gate: OK"
+   ],
+   "kind": "structure",
+   "name": "check_liquidity",
+   "note": null,
+   "output_sha256": "90db4a299dd8c368cd0f938f3bad4bf04e9e8b07928af59a758afd50da1e4a86",
+   "reason": "",
+   "required": true,
+   "script_sha256": "480c29e53f736304ce41226b4fe03919c1b61d484765131b084c55f74fe98344",
+   "seconds": 0.15,
+   "started": "2026-11-24T17:30:49+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_calendar.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:49+09:00",
+   "exit": 0,
+   "items": [
+    "calendar gate: OK"
+   ],
+   "kind": "structure",
+   "name": "check_calendar",
+   "note": null,
+   "output_sha256": "00a24c417bcb6d3d5065048448d5002f9b198df55489d5205c02dd8cd2bd0480",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d9a2ee6fc433f72eb9dbe70662f3a7ca34c6ee9f344b4cdfd45a0a86f5b547dc",
+   "seconds": 0.05,
+   "started": "2026-11-24T17:30:49+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_sources.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:49+09:00",
+   "exit": 0,
+   "items": [
+    "source gate: OK"
+   ],
+   "kind": "structure",
+   "name": "check_sources",
+   "note": null,
+   "output_sha256": "b090ac5d7b16265b85b9d2e7df7cb987f5947b9906e2829a7e7551708c3521fa",
+   "reason": "",
+   "required": true,
+   "script_sha256": "374170dd00bd66c5adb2cfb4fe0c6ad1d8ba200d9ec7ec5fdf86c9f493048b9b",
+   "seconds": 0.06,
+   "started": "2026-11-24T17:30:49+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_telegram.py",
+    "--html",
+    "{html}",
+    "--tg",
+    "{tg}",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-24T17:30:50+09:00",
+   "exit": 0,
+   "items": [
+    "텔레그램 인용 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_telegram",
+   "note": null,
+   "output_sha256": "5751a0e1ce902ae8365e005eeb7d83b282f26a47d0836052a1a6b0a19d2b1595",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d021abadb1a5efdd7133fad9a15568cee40be1d675d1336edbf304ca77ad5805",
+   "seconds": 1.23,
+   "started": "2026-11-24T17:30:49+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_weight.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "us"
+   ],
+   "ended": "2026-11-24T17:30:50+09:00",
+   "exit": 0,
+   "items": [
+    "분량: 본문 9324자 · 뉴스 요약 0자 · 전체 9324자 (공백 제외)",
+    "OK — 무게중심 게이트 통과 (축약일)"
+   ],
+   "kind": "structure",
+   "name": "check_weight",
+   "note": null,
+   "output_sha256": "caff6f05665f369d83fbbb0e8984657018f5002e9a8cf20634dab141770f418c",
+   "reason": "",
+   "required": true,
+   "script_sha256": "7c5c74d79a6db1e9b794874489b42f98b503c3a8152ae69be246900aa7dc07cc",
+   "seconds": 0.09,
+   "started": "2026-11-24T17:30:50+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_movers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:50+09:00",
+   "exit": 0,
+   "items": [
+    "움직인 종목 이상 없음 — <html>"
+   ],
+   "kind": "numbers",
+   "name": "check_movers",
+   "note": null,
+   "output_sha256": "5b6309338eaf9db1e798cac27b4f594c75aff5ab95a802ddf4fbd7df73420a69",
+   "reason": "",
+   "required": true,
+   "script_sha256": "3bb587c6d26bb4ecdbfb2ec7407513474d10b51d7ba13a65a6ef600f7049b522",
+   "seconds": 0.08,
+   "started": "2026-11-24T17:30:50+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_fund.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "us"
+   ],
+   "ended": "2026-11-24T17:30:50+09:00",
+   "exit": 0,
+   "items": [
+    "펀드 섹션 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_fund",
+   "note": null,
+   "output_sha256": "9f90ca0689b2cf6d1bc7b73c49af4d795f5c2bfb8b2f6134f70552570caf515d",
+   "reason": "",
+   "required": true,
+   "script_sha256": "61e0d1336497161684c1b7c81f3e81314f4e3239a51e9a8bf892eb4d2c17e4cd",
+   "seconds": 0.11,
+   "started": "2026-11-24T17:30:50+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_numbers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}"
+   ],
+   "ended": "2026-11-24T17:30:51+09:00",
+   "exit": 0,
+   "items": [
+    "경고(문장): [전략 코멘트] 「기술 업종은 1개월로 보면 아직 11.38% 내린 상태다.」 — Technology 등락 데이터 8.9726",
+    "경고(문장): [채권] 「2년물이 오르고 장기물이 내려 2s10s가 29.8bp에서 25.2b」 — spread_2s10s_bp 종가 데이터 25.2"
+   ],
+   "kind": "numbers",
+   "name": "check_numbers",
+   "note": null,
+   "numbers": {
+    "delegated": 420,
+    "excluded": 22,
+    "prose_judged": 26,
+    "table_cells": 69,
+    "tokens_seen": 747,
+    "unverified": 210,
+    "unverified_by": {
+     "매크로 표(예상치·표식 없는 행)": 6,
+     "보도·인용 문장": 1,
+     "사전 밖 자산": 16,
+     "시점·구간 단서": 27,
+     "연구 원장": 31,
+     "자산 없음": 120,
+     "자산 후보 둘 이상": 1,
+     "자산과 수치 사이가 멀다": 8
+    }
+   },
+   "output_sha256": "17e628ef170dfc0c10bd9d0a5580e4472d388f6f38bfb8cdb6b028bdfeb21c7c",
+   "reason": "",
+   "required": true,
+   "script_sha256": "b3c40a2c664d647bb1756a4b00d830f1e0f126a4b6d6c787cb46a03d00b01472",
+   "seconds": 0.37,
+   "started": "2026-11-24T17:30:50+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 2
+  },
+  {
+   "argv": [
+    "scripts/check_number_sources.py",
+    "--market",
+    "us",
+    "--date",
+    "{date}",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--repo",
+    "{repo}"
+   ],
+   "ended": "2026-11-24T17:30:53+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "numbers",
+   "name": "check_number_sources",
+   "note": null,
+   "output_sha256": "a9d73651df53d1ed748f848f7bb25630cefebe9bf3db5dc2207630da92ded622",
+   "reason": "",
+   "required": false,
+   "script_sha256": "fd23a80e5a96247d5a3d1d1df5e3399c545353ec83d84b5784e73155b7cab542",
+   "seconds": 1.8,
+   "sources": {
+    "counts": {
+     "article": 0,
+     "data": 6,
+     "excluded": 310,
+     "level": 0,
+     "table": 660,
+     "telegram": 0,
+     "total": 1347,
+     "unknown": 371,
+     "web": 0
+    },
+    "declared": [],
+    "detail": {
+     "abs_refs": 2,
+     "article_common": 0,
+     "dv": 0,
+     "excluded_code": 310,
+     "excluded_enum": 0,
+     "invalid_refs": 0,
+     "lvl": 0,
+     "marker_empty": 0,
+     "stale_refs": 0,
+     "zone_contested": 0,
+     "zone_note": 0
+    },
+    "dv_list": [],
+    "first_sha256": "dca99aaac439318755c0053e5eaeb69e0b8aa1d72629db173c5e21ab30b098b0",
+    "history": {
+     "ambiguous": 38,
+     "first_unknown": 367,
+     "fixed": 0,
+     "gone": 4,
+     "gone_printed": [
+      "3%p",
+      "4.24%p",
+      "20분",
+      "3%p"
+     ],
+     "still": 325
+    },
+    "history_why": "",
+    "runs": {
+     "article": 0,
+     "data": 6,
+     "excluded": 503,
+     "level": 0,
+     "table": 677,
+     "telegram": 0,
+     "total": 1557,
+     "unknown": 371,
+     "web": 0
+    },
+    "unknown": [
+     {
+      "text": "31% — 젠슨 황 복귀에 엔비디아 · 급등, S&P 500 · 반등…상승은 개장 갭에 몰렸다",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4.7% — 젠슨 황 복귀에 엔비디아 · 급등, S&P 500 · 반등…상승은 개장 갭에 몰렸다",
+      "why": "표식 없음"
+     },
+     {
+      "text": "12일 — 11월 23일 엔비디아 이사회가 사임 수리 · 만에 젠슨 황을 CEO로 복귀시키면서 엔비디아가 · 뛰어 20",
+      "why": "표식 없음"
+     },
+     {
+      "text": "23 — 11월 ·~24일에 금리가 오르지 않는데 XLK가 11월 20일 종가 대비 S&P 500보다 · 이상 되돌리",
+      "why": "표식 없음"
+     },
+     {
+      "text": "3%p — 11월 ·~24일에 금리가 오르지 않는데 XLK가 11월 20일 종가 대비 S&P 500보다 · 이상 되돌리",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4.24%p — 11월 ·~24일에 금리가 오르지 않는데 XLK가 11월 20일 종가 대비 S&P 500보다 · 이상 되돌리",
+      "why": "표식 없음"
+     },
+     {
+      "text": "10% — 상승은 거의 전부 개장 전 갭에서 나왔고, 동일가중 지수가 시가총액가중보다 덜 올라 참여가 좁았으며, 엔비디",
+      "why": "표식 없음"
+     },
+     {
+      "text": "1개월 — 기술 업종은 ·로 보면 아직 · 내린 상태다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "9% — 반등이 포지션 되감기라면 매도 압력이 사라진 뒤 상대 강세가 빠르게 식고, 불확실성 제거라면 하루 · 가까운",
+      "why": "표식 없음"
+     },
+     {
+      "text": "8거래일 — 판단의 시계는 12월 4일까지 ·이고, 그 사이 11월 25일 PCE 물가·GDP, 12월 3일 황 CEO의",
+      "why": "표식 없음"
+     },
+     {
+      "text": "-3.44%p — 이 값이 · 이하이면 판단을 뒷받침하고, · 이상이면 판단이 약해져 불확실성 제거에 따른 재평가를 우선 설명",
+      "why": "표식 없음"
+     },
+     {
+      "text": "+3.44%p — 이 값이 · 이하이면 판단을 뒷받침하고, · 이상이면 판단이 약해져 불확실성 제거에 따른 재평가를 우선 설명",
+      "why": "표식 없음"
+     },
+     {
+      "text": "+20bp — 방향이 판단대로 나와도 같은 기간 16:00 ET 기준 10년물 누적 변화가 · 이상이면 금리가 올라 성장주",
+      "why": "표식 없음"
+     },
+     {
+      "text": "0.12% — 항셍은 · 내리고 상해종합은 · 올랐으며, 닛케이는 11월 23일 종가가 없다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "0.15% — 항셍은 · 내리고 상해종합은 · 올랐으며, 닛케이는 11월 23일 종가가 없다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "2.23% — 유로스톡스50이 ·, DAX가 ·, FTSE100이 · 올랐고, 유럽 현물 장은 발표 뒤에도 두 시간 남짓",
+      "why": "표식 없음"
+     },
+     {
+      "text": "2.15% — 유로스톡스50이 ·, DAX가 ·, FTSE100이 · 올랐고, 유럽 현물 장은 발표 뒤에도 두 시간 남짓",
+      "why": "표식 없음"
+     },
+     {
+      "text": "1.30% — 유로스톡스50이 ·, DAX가 ·, FTSE100이 · 올랐고, 유럽 현물 장은 발표 뒤에도 두 시간 남짓",
+      "why": "표식 없음"
+     },
+     {
+      "text": "51.7 — 11월 유로존 종합 PMI는 ·로 10월과 같았다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6,992 — S&P 선물(ES)은 일요일 18:00(ET) 첫 봉이 저점(·)이었고 월요일 09:00(ET) 봉에서 고점",
+      "why": "표식 없음"
+     },
+     {
+      "text": "7,278 — S&P 선물(ES)은 일요일 18:00(ET) 첫 봉이 저점(·)이었고 월요일 09:00(ET) 봉에서 고점",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4.09% — S&P 선물(ES)은 일요일 18:00(ET) 첫 봉이 저점(·)이었고 월요일 09:00(ET) 봉에서 고점",
+      "why": "표식 없음"
+     },
+     {
+      "text": "5.56% — 나스닥 선물(NQ)은 같은 시각 사이 · 범위로 더 크게 움직였다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "30분 — · 단위 자료로는 갭 가운데 발표 전후의 몫을 나눌 수 없다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "+4.59% — 현물은 S&P 500 ·, 나스닥 ·, 러셀2000 ·로 높게 출발했고, 09:45(ET)에는 S&P Glo",
+      "why": "표식 없음"
+     },
+     {
+      "text": "+7.18% — 현물은 S&P 500 ·, 나스닥 ·, 러셀2000 ·로 높게 출발했고, 09:45(ET)에는 S&P Glo",
+      "why": "표식 없음"
+     },
+     {
+      "text": "+1.93% — 현물은 S&P 500 ·, 나스닥 ·, 러셀2000 ·로 높게 출발했고, 09:45(ET)에는 S&P Glo",
+      "why": "표식 없음"
+     },
+     {
+      "text": "2.12%p — 동일가중 지수의 수익률이 시가총액가중 지수보다 · 낮았다는 뜻이다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "3개 — 고점권·저점권은 종가가 그날 고가와 저가 사이 어디에서 끝났는지를 날마다 재어 모은 이력(지수 ·의 일별 관",
+      "why": "표식 없음"
+     },
+     {
+      "text": "2,256개 — 고점권·저점권은 종가가 그날 고가와 저가 사이 어디에서 끝났는지를 날마다 재어 모은 이력(지수 ·의 일별 관",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4분 — 관측값을 낮은 순으로 세웠을 때 위에서 ·의 · 지점 이상이면 고점권, 아래에서 ·의 · 지점 이하면 저점권",
+      "why": "표식 없음"
+     },
+     {
+      "text": "1 — 관측값을 낮은 순으로 세웠을 때 위에서 ·의 · 지점 이상이면 고점권, 아래에서 ·의 · 지점 이하면 저점권",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4분 — 관측값을 낮은 순으로 세웠을 때 위에서 ·의 · 지점 이상이면 고점권, 아래에서 ·의 · 지점 이하면 저점권",
+      "why": "표식 없음"
+     },
+     {
+      "text": "1 — 관측값을 낮은 순으로 세웠을 때 위에서 ·의 · 지점 이상이면 고점권, 아래에서 ·의 · 지점 이하면 저점권",
+      "why": "표식 없음"
+     },
+     {
+      "text": "9.27p — VIX는 · 내린 ·였지만 최근 ·(·) 가운데 이보다 높았던 날이 28일뿐인 수준에 남아 있다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "26.62 — VIX는 · 내린 ·였지만 최근 ·(·) 가운데 이보다 높았던 날이 28일뿐인 수준에 남아 있다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "2년 — VIX는 · 내린 ·였지만 최근 ·(·) 가운데 이보다 높았던 날이 28일뿐인 수준에 남아 있다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "504거래일 — VIX는 · 내린 ·였지만 최근 ·(·) 가운데 이보다 높았던 날이 28일뿐인 수준에 남아 있다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6종 — 지수 ·",
+      "why": "표식 없음"
+     },
+     {
+      "text": "11종 — 섹터 ·",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4.73% — 황 복귀 하루에 S&P 500은 · 오른 ·로 끝났고, 나스닥은 · 오른 ·으로 더 크게 올랐다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "7,237 — 황 복귀 하루에 S&P 500은 · 오른 ·로 끝났고, 나스닥은 · 오른 ·으로 더 크게 올랐다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6.51% — 황 복귀 하루에 S&P 500은 · 오른 ·로 끝났고, 나스닥은 · 오른 ·으로 더 크게 올랐다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "24,090 — 황 복귀 하루에 S&P 500은 · 오른 ·로 끝났고, 나스닥은 · 오른 ·으로 더 크게 올랐다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "4배 — 두 지수 모두 평소 하루 움직임의 ·를 넘는 상승이다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "3.01% — 다우는 ·, 러셀2000은 · 올랐고, 성장주가 · 올라 가치주(·)를 크게 앞섰다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "3.40% — 다우는 ·, 러셀2000은 · 올랐고, 성장주가 · 올라 가치주(·)를 크게 앞섰다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6.91% — 다우는 ·, 러셀2000은 · 올랐고, 성장주가 · 올라 가치주(·)를 크게 앞섰다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "+2.36% — 다우는 ·, 러셀2000은 · 올랐고, 성장주가 · 올라 가치주(·)를 크게 앞섰다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "2년 — 지수 레벨은 반등 뒤에도 최근 ·(·)의 한가운데쯤이다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "504거래일 — 지수 레벨은 반등 뒤에도 최근 ·(·)의 한가운데쯤이다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "7,227 — S&P 500은 ·에서 출발해 개장 직후 ·까지 밀렸다가 ·까지 오른 뒤 시가와 거의 같은 ·에서 마감했다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "7,153 — S&P 500은 ·에서 출발해 개장 직후 ·까지 밀렸다가 ·까지 오른 뒤 시가와 거의 같은 ·에서 마감했다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "7,296 — S&P 500은 ·에서 출발해 개장 직후 ·까지 밀렸다가 ·까지 오른 뒤 시가와 거의 같은 ·에서 마감했다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "7,237 — S&P 500은 ·에서 출발해 개장 직후 ·까지 밀렸다가 ·까지 오른 뒤 시가와 거의 같은 ·에서 마감했다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "171.50달러 — 나스닥은 시가보다 낮게 끝났고, 엔비디아도 10시 무렵 · 고점을 찍은 뒤 ·로 밀렸다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "165.05달러 — 나스닥은 시가보다 낮게 끝났고, 엔비디아도 10시 무렵 · 고점을 찍은 뒤 ·로 밀렸다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "1.5% — 반대로 러셀2000은 시가가 그날의 저점이었고 오후까지 · 남짓 더 올라 고점 부근에서 끝났다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "10시 — 나스닥은 · 고점 뒤 시가 아래로 내려와 끝났고, 러셀2000은 시가 위, · 고점 부근에서 끝났다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "14시 — 나스닥은 · 고점 뒤 시가 아래로 내려와 끝났고, 러셀2000은 시가 위, · 고점 부근에서 끝났다.",
+      "why": "표식 없음"
+     }
+    ],
+    "unknown_by": {
+     "코드 블록(표식 없음)": 113,
+     "표식 없음": 258
+    },
+    "unknown_total": 371,
+    "web_by": {}
+   },
+   "started": "2026-11-24T17:30:51+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_research.py",
+    "check",
+    "--span",
+    "daily",
+    "--html",
+    "{html}",
+    "--root",
+    "research/us",
+    "--market",
+    "us",
+    "--date",
+    "{date}",
+    "--cycle",
+    "{cycle}"
+   ],
+   "ended": "2026-11-24T17:30:53+09:00",
+   "exit": 0,
+   "items": [
+    "RESEARCH_OK"
+   ],
+   "kind": "structure",
+   "name": "check_research",
+   "note": null,
+   "output_sha256": "b07ae556f94f4f1cfa887f6909d5974d37234606485396e81f20c0f23646bbde",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d54dcf4ef6d44931fe5fc7bb03f625616884aa4bda1f649ed69f9fcfe7c96afd",
+   "seconds": 0.12,
+   "started": "2026-11-24T17:30:53+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_style.py",
+    "{html}"
+   ],
+   "ended": "2026-11-24T17:30:53+09:00",
+   "exit": 0,
+   "items": [
+    "말투 이상 없음 — <html>"
+   ],
+   "kind": "format",
+   "name": "check_style",
+   "note": null,
+   "output_sha256": "5cc96972aac2137f68aed4a53f3eb86126708ab77f594c6d9b3896161768b60d",
+   "reason": "",
+   "required": true,
+   "script_sha256": "4ffd7ef01b1b78a44d60afab21a10479758e3b54404214f30baf75077484a4a9",
+   "seconds": 0.06,
+   "started": "2026-11-24T17:30:53+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_readability.py",
+    "--strict",
+    "--no-inline-images",
+    "{html}"
+   ],
+   "ended": "2026-11-24T17:30:53+09:00",
+   "exit": 0,
+   "items": [
+    "== <html>",
+    "문장 192 · 중앙 59자 · P90 97자 · 120자 초과 9문장 · 수치 중앙 0개/P90 4개 · 문단 P90 428자",
+    "note 수치 8개 문장 (6개 넘음 — 읽기 어려우면 표로) · 경기소비재 +0.53%p, 커뮤니케이션서비스 +0.46%p, 산업재 +0.23%p, 금융 +0.21%p, 헬스케어 +0.12%p, 유틸리티 +0.05%p가 뒤따랐…",
+    "note 수치 8개 문장 (6개 넘음 — 읽기 어려우면 표로) · 2년물은 3.8bp 오른 4.672%, 5년물은 0.9bp 오른 4.737%였고, 10년물은 0.8bp 내린 4.924%, 30년물은 2.3bp 내린 5.293%…",
+    "note 수치 9개 문장 (6개 넘음 — 읽기 어려우면 표로) · 급등은 업종 전반으로 번져 마이크론(+19.04%), 마벨(+18.37%), 모놀리식파워시스템즈(+16.8%), 인텔(+16.34%)이 뛰었고, 텍사스인스트루먼트…",
+    "note 수치 9개 문장 (6개 넘음 — 읽기 어려우면 표로) · 11월 17일 종가 대비 엔비디아는 155.46달러에서 165.05달러로 6.169% 올랐고 S&P 500은 1.408% 내려, 차이는 +7.577%p로 뒷받침 …",
+    "note 산문 소수점 3,635.50 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 7,237.17 — 호가가 아니면 반올림을 생각해 본다",
+    "info 136자 문장 · 판단의 시계는 12월 4일까지 8거래일이고, 그 사이 11월 25일 PCE 물가·GDP, 12월 3일 황 CEO의 상원 은행위원회 증언, 12월 4일 엔비디아 분…",
+    "info 130자 문장 · 블룸버그를 인용해, 골드만삭스가 자체 패닉지수 급등을 근거로 향후 일주일간 시스템·모멘텀 자금의 추가 매도 압력이 클 수 있다고 경고했고 CTA의 대규모 순매도로…",
+    "info 123자 문장 · 경기소비재 +0.53%p, 커뮤니케이션서비스 +0.46%p, 산업재 +0.23%p, 금융 +0.21%p, 헬스케어 +0.12%p, 유틸리티 +0.05%p가 뒤따랐…",
+    "info 156자 문장 · 급등은 업종 전반으로 번져 마이크론(+19.04%), 마벨(+18.37%), 모놀리식파워시스템즈(+16.8%), 인텔(+16.34%)이 뛰었고, 텍사스인스트루먼트…",
+    "info 147자 문장 · 시장 일각에서는 멜리우스 리서치의 벤 라이츠 애널리스트가 황 CEO 복귀로 공급망 관계, 쿠다 생태계 지원, 인재 유지에 대한 우려가 크게 줄었다며 엔비디아 투자…",
+    "info 길이 표시 9건 중 5건만 출력 — 막지 않는다",
+    "기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.",
+    "수치: 숫자 토큰(%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, 「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.",
+    "note(문체 참고): 문장당 수치 6개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·천 단위+소수, 헤드라인 80자 초과·수치 4개 초과.",
+    "note 는 발행을 막지 않는다(--strict 도 세지 않는다) — 다시 읽어 보고, 자연스러우면 그대로 둔다.",
+    "FAIL 은 조판이 깨지는 구조 문제뿐이다: 섹션 경계를 넘는 div, 인라인 이미지(--no-inline-images), 조판 미적용."
+   ],
+   "kind": "structure",
+   "name": "check_readability",
+   "note": null,
+   "output_sha256": "20c360be4ce83ffbcdd1916c346a3de1f8b12c98a5753043681cb6f6f2e4ebe3",
+   "reason": "",
+   "required": true,
+   "script_sha256": "598b53a1ce723bbe540de1f7a343401e23f57eef23ae7dd05f91455f170a3628",
+   "seconds": 0.08,
+   "started": "2026-11-24T17:30:53+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/apply_colors.py",
+    "--check",
+    "{html}"
+   ],
+   "ended": "2026-11-24T17:30:53+09:00",
+   "exit": 0,
+   "items": [
+    "미적용 0편 · 이미 적용 1편 · 대상 1편"
+   ],
+   "kind": "format",
+   "name": "apply_colors_check",
+   "note": null,
+   "output_sha256": "f84dea3d0adf0019cdd91f716917514cf7075304d7fe3295e89d326e65b0d3d1",
+   "reason": "",
+   "required": false,
+   "script_sha256": "f30eb5298059531af009a4a544920907a8065305be01ddba7812b3b601f38e67",
+   "seconds": 0.06,
+   "started": "2026-11-24T17:30:53+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  }
+ ],
+ "generator": {
+  "prepub_gates.json": "1b5f81dad2ae70c6ff994be732562ee86f12ddac0c76926e9f9327909588267c",
+  "record.py": "f51d83bb3b03d785efb42f37c956ca89e2d5f2d9cb5f922f95a8df3c61eff6d6",
+  "run_gates.py": "8bb19b524cadaad6cf0aad78cba3050600f6cad866ea9ec468b57c550464e698"
+ },
+ "inputs": {
+  "capped": false,
+  "count": 51,
+  "files": [
+   {
+    "path": "<datadir>/_collect_status.json",
+    "ref": "repo:data/_collect_status.json",
+    "sha256": "4e2eb974ef9493aaf3b712ff79abe4db98472faefb07e9e48589d46bd0cf3e66"
+   },
+   {
+    "path": "<datadir>/auction_table.html",
+    "ref": "repo:data/auction_table.html",
+    "sha256": "0ded438145905089b287d91c3c975076812d0d94bf20da68faede605695f969b"
+   },
+   {
+    "path": "<datadir>/auctions.json",
+    "ref": "repo:data/auctions.json",
+    "sha256": "b207f28bb1107ab057602ff285a5a3464c1a5ee6a6cd54c0fc166ab473098c79"
+   },
+   {
+    "path": "<datadir>/calendar.json",
+    "ref": "repo:data/calendar.json",
+    "sha256": "bbd08454dec9e6961c8a3cc70c3ec5bb8e6024e5f15d3831b47a698379be94ce"
+   },
+   {
+    "path": "<datadir>/econ_indicators.json",
+    "ref": "repo:data/econ_indicators.json",
+    "sha256": "a5ae0a31935d5523ed162aa8c91a8418aeb8d806b41fbf3eada0de8725c4d68a"
+   },
+   {
+    "path": "<datadir>/fund_board.html",
+    "ref": "repo:data/fund_board.html",
+    "sha256": "d9d1c307f15c2b7a84dd9d564ac77d9b4c0189302bb9e5f6a9bd8ead6ad91516"
+   },
+   {
+    "path": "<datadir>/fund_board.json",
+    "ref": "repo:data/fund_board.json",
+    "sha256": "34c4ee128950b17817281a328296f46ebe351c9a6e0211f980833d18bf0b5705"
+   },
+   {
+    "path": "<datadir>/intraday.json",
+    "ref": "repo:data/intraday.json",
+    "sha256": "d7224eb3f3758cba1b5c7cb9a35f2f7bb2538b563e8a476163121dd64e5523ef"
+   },
+   {
+    "path": "<datadir>/macro.json",
+    "ref": "git:6161a3e6b77d1b250e2371f09f11bff399c9a9df:data/macro.json",
+    "sha256": "34cdd0463ece4521e7f2fc14170cf31b8c23ef5b12a7bd2b829562be3825949b"
+   },
+   {
+    "path": "<datadir>/macro_eval.json",
+    "ref": "repo:data/macro_eval.json",
+    "sha256": "4baca8ddd95a5e2be73a6b9d544d938760200cede67fb6df4bcb129c65880f98"
+   },
+   {
+    "path": "<datadir>/macro_metrics.json",
+    "ref": "repo:data/macro_metrics.json",
+    "sha256": "cc3f7e7e9728680c34314c2c95f8f2f33b0441ba59e6751e97b2beaaeb31b7a7"
+   },
+   {
+    "path": "<datadir>/macro_next.json",
+    "ref": "repo:data/macro.json",
+    "sha256": "4dfc5c5cb903b5beee5733b301c13f8a3f9b88805917be29d1d43cdb8397c2dd"
+   },
+   {
+    "path": "<datadir>/market_data.json",
+    "ref": "repo:data/market_data.json",
+    "sha256": "4957cb4a9137e6bd7dcfad482ddea1893ce869aaeb0b86dc4d14a5c58de19f41"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-23.body.html",
+    "ref": "workspace-only",
+    "sha256": "c4e32dde676ad35dd210b2645b0b8b1f48369485467a97388315cfa95160543e"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-23.html",
+    "ref": "workspace-only",
+    "sha256": "449eb24b5045796b6526f97e1693df8c87ee7b1f5459064ad4061e139bd7b090"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-23.meta.json",
+    "ref": "workspace-only",
+    "sha256": "c6272c1c87f4d51aa8f02400f3b2237fa6a33167a4334cc0552f11d6afcb2b62"
+   },
+   {
+    "path": "<datadir>/movers.json",
+    "ref": "repo:data/movers.json",
+    "sha256": "a3970a711c2a96b70001853b5dfc206e19f8ee0af7d67416610fe0db6ec10896"
+   },
+   {
+    "path": "<datadir>/numsrc_first.html",
+    "ref": "workspace-only",
+    "sha256": "dca99aaac439318755c0053e5eaeb69e0b8aa1d72629db173c5e21ab30b098b0"
+   },
+   {
+    "path": "<datadir>/prev_post.html",
+    "ref": "workspace-only",
+    "sha256": "9df4c92402ee5e5f205f89ca2516c59aec910356e32ccfbd0e7d6bf044e099fa"
+   },
+   {
+    "path": "<datadir>/research_notes.md",
+    "ref": "workspace-only",
+    "sha256": "ca3ac80935daa54598340f8a794604b3d54ae42313f02e7e5f0cbc8aaefed68b"
+   },
+   {
+    "path": "<datadir>/sector_performance.html",
+    "ref": "repo:data/sector_performance.html",
+    "sha256": "979a5a9f055c6acb57e7610240f1dc5d6bb34611eda6b70100d992805af237cf"
+   },
+   {
+    "path": "<datadir>/telegram.json",
+    "ref": "repo:data/telegram/2026-11-23.json",
+    "sha256": "a43e12a0ffcecfd4af83e3656f0fbfc1118c754e1e5a7bdd0c2c671d9111abf1"
+   },
+   {
+    "path": "<datadir>/yield_curve.png",
+    "ref": "repo:data/yield_curve.png",
+    "sha256": "c7859f464993adc4ad5ae30a36ac74d3820a85ba1d74a93a73b2f1d02966edf4"
+   },
+   {
+    "path": "<datadir>/_parts/p1.html",
+    "ref": "workspace-only",
+    "sha256": "983575e64b9718bd85a7ed61ea4ab6fb350d43a85208be5070b9235ce65df103"
+   },
+   {
+    "path": "<datadir>/_parts/p2.html",
+    "ref": "workspace-only",
+    "sha256": "9124eb8f7da9897203bf7ce2db204810aec8fc03ecb3e6421df87449ebe09030"
+   },
+   {
+    "path": "<datadir>/_parts/p3.html",
+    "ref": "workspace-only",
+    "sha256": "33f327f2e70d9981cec8d8957df44f65ccdda699e1c729ee3dbd90a63965bc4d"
+   },
+   {
+    "path": "<datadir>/_parts/p4.html",
+    "ref": "workspace-only",
+    "sha256": "e8007d5439480fa190980fcb6eb43a6e172d96ba92218c5465ecb41428d51a4b"
+   },
+   {
+    "path": "<datadir>/fed/chair-speech-20261116.txt",
+    "ref": "repo:data/fed/chair-speech-20261116.txt",
+    "sha256": "7aee9676b2a3404dc1ff44a075dfc7635ffb7a5cb025bc3135561f9233060300"
+   },
+   {
+    "path": "<datadir>/fed/events.json",
+    "ref": "repo:data/fed/events.json",
+    "sha256": "4d928cca0c67aaba7d6d5aa07a149591792342d8806c5992d7e8fc0f67149413"
+   },
+   {
+    "path": "<datadir>/fed/fomc-minutes-20261007.txt",
+    "ref": "repo:data/fed/fomc-minutes-20261007.txt",
+    "sha256": "21b33f7348abbb4fd60d957210117d63e95d98e794661d499755d4d321811a01"
+   },
+   {
+    "path": "<datadir>/fed/fomc-minutes-20261118.txt",
+    "ref": "repo:data/fed/fomc-minutes-20261118.txt",
+    "sha256": "1eaa28f4177e5971ff07fe49620ff47a32b0ac01c3d7446fe633aec0389fa374"
+   },
+   {
+    "path": "<datadir>/fed/fomc-projections-20260916.txt",
+    "ref": "repo:data/fed/fomc-projections-20260916.txt",
+    "sha256": "49ce913fe9d12178a38a93c724009e20d4e959320ffe6c0bd7c8d40f921cb02d"
+   },
+   {
+    "path": "<datadir>/fed/fomc-statement-20260916.txt",
+    "ref": "repo:data/fed/fomc-statement-20260916.txt",
+    "sha256": "407288109f9ca0f6358730a94e7f0258e16559d53fe6f28d7501c72c7c3b3be4"
+   },
+   {
+    "path": "<datadir>/fed/fomc-statement-20261028.txt",
+    "ref": "repo:data/fed/fomc-statement-20261028.txt",
+    "sha256": "6450a2171d74f47ac85da4f6825d8e8ad71468d109d817e1b425d405d180c72a"
+   },
+   {
+    "path": "<datadir>/fed/jackson-hole-20260828.txt",
+    "ref": "repo:data/fed/jackson-hole-20260828.txt",
+    "sha256": "a0ff7e424cd11b039af1c4304eb77b1c7ce7189147c3e9298af9af59f94a5b9f"
+   },
+   {
+    "path": "<datadir>/fed/seen.json",
+    "ref": "repo:data/fed/seen.json",
+    "sha256": "a5df8db18dfb04d80a8d125b41811b19ec7ee32732dc4fb0f1b00869e1b35405"
+   },
+   {
+    "path": "<datadir>/fed/statements.json",
+    "ref": "repo:data/fed/statements.json",
+    "sha256": "5f197370a4076584818157a68e17a0991a4dd8924c1bd06ccfbeed4aaa33f502"
+   },
+   {
+    "path": "<datadir>/liquidity/liquidity.json",
+    "ref": "repo:data/liquidity/liquidity.json",
+    "sha256": "a8fa6ad0ba168e716eac6e4984e6242df76a01fe9a9728fd137052c5e51c57b7"
+   },
+   {
+    "path": "<datadir>/liquidity/state.json",
+    "ref": "repo:data/liquidity/state.json",
+    "sha256": "fa2e26e328f727627bc4a625404fdb583b202f91e802fa6c568f446c16837991"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_borrowing.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_borrowing.txt",
+    "sha256": "6e68303d9a23af00f69514852a38445d9bb3493e17a28347fbd4c7e00d46cc80"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_refunding.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_refunding.txt",
+    "sha256": "f553e5b9c3875ed9ba1f8030745c20cb1ea7738048093cc47d0cd7f7d38895a8"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_tbac.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_tbac.txt",
+    "sha256": "81b285c9d68d029aaaf8bd2dc5d6ce8f663f0d47e1cf533707cc1648302b3b2f"
+   },
+   {
+    "path": "<datadir>/news/2026-11-23.json",
+    "ref": "repo:data/news/2026-11-23.json",
+    "sha256": "0afd1e6d3fd98cca4a066ebb6d5a8eb6c8ad030067483b9decabec78207748fa"
+   },
+   {
+    "path": "<datadir>/news/numbers/2026-11-23.json",
+    "ref": "repo:data/news/numbers/2026-11-23.json",
+    "sha256": "dbdd89a7eb3ea9f3d7e73af4ca63ff063e9c1914c97ce487e3640f146a979fee"
+   },
+   {
+    "path": "<datadir>/releases/index.json",
+    "ref": "repo:data/releases/index.json",
+    "sha256": "3bb373a6c3d7b28667c9066f6689a1120a072eae3ee2a204a73dca1611424454"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-04_spglobal_us_sector_pmi.json",
+    "ref": "repo:data/releases/manual/2026-11-04_spglobal_us_sector_pmi.json",
+    "sha256": "70ca1b132920c02ea24c192d413620e2c82c5ce8b5baada6935b58cb4cfd04e3"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-04_spglobal_us_services_pmi_final.json",
+    "ref": "repo:data/releases/manual/2026-11-04_spglobal_us_services_pmi_final.json",
+    "sha256": "21219bc54ed9e8bcbd1673a0088f9e294c65684e2efa055416b019d9447a8085"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-11_spglobal_us_business_outlook.json",
+    "ref": "repo:data/releases/manual/2026-11-11_spglobal_us_business_outlook.json",
+    "sha256": "0fab58d68135e0b4d67bf47a5d7991172f1c09e3f50cca483db5cf45dc2356c7"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-23_spglobal_us_pmi_flash.json",
+    "ref": "repo:data/releases/manual/2026-11-23_spglobal_us_pmi_flash.json",
+    "sha256": "903a8b3e32858748c7a690e1767ea25f87010b1ad543c9df16dea8317aa68d88"
+   },
+   {
+    "path": "<datadir>/telegram/numbers/2026-11-23.json",
+    "ref": "repo:data/telegram/numbers/2026-11-23.json",
+    "sha256": "e11887800674a45b232edf2bf16802340fb183d30c622d5d26e586368cbeadca"
+   },
+   {
+    "path": "<tg>/telegram.json",
+    "ref": "repo:data/telegram/2026-11-23.json",
+    "sha256": "a43e12a0ffcecfd4af83e3656f0fbfc1118c754e1e5a7bdd0c2c671d9111abf1"
+   }
+  ],
+  "incomplete": false,
+  "unreadable": 0
+ },
+ "manual": "수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다",
+ "market": "us",
+ "post": {
+  "blob": "463489fe48359f3f2d4fcd44a2c26ea3107b6cdb",
+  "path": "posts/2026-11-23.html",
+  "sha256": "449eb24b5045796b6526f97e1693df8c87ee7b1f5459064ad4061e139bd7b090"
+ },
+ "preservation": {
+  "note": "같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로>, 로컬 origin/main 추적 이력의 앞 커밋에 있으면 git:<커밋>:<경로> 로 참조한다(복원 가능성 — 그 파일을 원본으로 썼다는 증거는 아니다). workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다",
+  "workspace_only": 10,
+  "workspace_only_files": [
+   "<datadir>/morning_brief_2026-11-23.body.html",
+   "<datadir>/morning_brief_2026-11-23.html",
+   "<datadir>/morning_brief_2026-11-23.meta.json",
+   "<datadir>/numsrc_first.html",
+   "<datadir>/prev_post.html",
+   "<datadir>/research_notes.md",
+   "<datadir>/_parts/p1.html",
+   "<datadir>/_parts/p2.html",
+   "<datadir>/_parts/p3.html",
+   "<datadir>/_parts/p4.html"
+  ]
+ },
+ "repo_inputs": {
+  "digest": "462db8863cf13766a4a7c6e88d82429bba7f3e56af089661fd1ebcbb924fd047",
+  "files": 1074,
+  "paths": [
+   "scripts",
+   "config",
+   "research/us",
+   "posts"
+  ]
+ },
+ "summary": {
+  "blocking": [],
+  "integrity": [],
+  "not_run": [],
+  "note_format": [],
+  "note_numbers": [],
+  "publish_ok": true,
+  "status": "pass_with_warnings",
+  "verified": true,
+  "warned": [
+   "check_numbers"
+  ]
+ }
+}

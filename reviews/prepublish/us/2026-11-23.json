@@ -1,12 +1,59 @@
 {
  "section": "us",
  "date": "2026-11-23",
- "request_id": "us-2026-11-23-22287ff854bd",
- "state": "submit_failed",
- "reason": "초안을 올리거나 검토를 띄우지 못했다",
- "hold": true,
- "recorded_at": "2026-11-23T22:23:29Z",
- "attempt": 1,
- "last_counted": "submit_failed",
- "next": "retry"
+ "request_id": "us-2026-11-23-811214b7c2bd",
+ "draft_sha": "0b43ae9c2a3725cebe7cfeed3a69fbacfcf702fc",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 3,
+ "style_candidates": 0,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 4,
+ "facts_rejected": 1,
+ "style_applied": 0,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-24T08:30:30Z",
+ "facts_done": true,
+ "final_sha256": "449eb24b5045796b6526f97e1693df8c87ee7b1f5459064ad4061e139bd7b090",
+ "clarity": [
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "문장 구조",
+   "quote": "블룸버그를 인용해, 골드만삭스가",
+   "cannot_tell": "가",
+   "route": "record_only",
+   "placed": ""
+  }
+ ],
+ "clarity_meta": {
+  "marker": true,
+  "lines_skipped": 0,
+  "over_cap": 0
+ }
 }

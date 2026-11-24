@@ -1,0 +1,165 @@
+{
+  "report_date": "2026-11-23",
+  "generated": "2026-11-24 07:01 KST",
+  "source": "TreasuryDirect TA_WS",
+  "ok": true,
+  "error": null,
+  "complete": true,
+  "pending": [],
+  "today": [
+    {
+      "date": "2026-11-23",
+      "key": "nominal-2y",
+      "kind": "nominal",
+      "years": 2,
+      "reopening": false,
+      "label_ko": "2년물",
+      "term": "2-Year",
+      "cusip": "91282CRY9",
+      "offering_amt": 69000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.65,
+      "indirect_pct": 51.5,
+      "direct_pct": 38.1,
+      "dealer_pct": 10.4,
+      "high_yield": 4.7,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.63,
+        "indirect_pct": 56.5,
+        "direct_pct": 32.0,
+        "dealer_pct": 11.5
+      },
+      "prev_offering_amt": 69000000000.0,
+      "prev_date": "2026-10-26",
+      "btc_vs_avg": 0.02,
+      "dealer_vs_avg_pp": -1.1,
+      "indirect_vs_avg_pp": -5.0,
+      "insufficient": false,
+      "demand_ko": "수요 강함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": {
+        "tenor": "2Y",
+        "level": 4.672,
+        "bp": 3.8,
+        "date": "2026-11-23",
+        "source": "naver",
+        "basis": "cut_1600_et",
+        "stamp_et": "15:59"
+      }
+    }
+  ],
+  "recent": [
+    {
+      "date": "2026-11-19",
+      "key": "tips-10y",
+      "kind": "tips",
+      "years": 10,
+      "reopening": true,
+      "label_ko": "10년 TIPS 재발행",
+      "term": "9-Year 8-Month",
+      "cusip": "91282CRE3",
+      "offering_amt": 19000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.43,
+      "indirect_pct": 68.6,
+      "direct_pct": 25.4,
+      "dealer_pct": 6.0,
+      "high_yield": 2.903,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.39,
+        "indirect_pct": 63.9,
+        "direct_pct": 24.9,
+        "dealer_pct": 11.3
+      },
+      "prev_offering_amt": 19000000000.0,
+      "prev_date": "2026-09-17",
+      "btc_vs_avg": 0.04,
+      "dealer_vs_avg_pp": -5.3,
+      "indirect_vs_avg_pp": 4.7,
+      "insufficient": false,
+      "demand_ko": "수요 강함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": null
+    },
+    {
+      "date": "2026-11-18",
+      "key": "nominal-20y",
+      "kind": "nominal",
+      "years": 20,
+      "reopening": false,
+      "label_ko": "20년물",
+      "term": "20-Year",
+      "cusip": "912810UZ9",
+      "offering_amt": 16000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.63,
+      "indirect_pct": 60.2,
+      "direct_pct": 26.7,
+      "dealer_pct": 13.1,
+      "high_yield": 5.459,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.63,
+        "indirect_pct": 63.7,
+        "direct_pct": 24.3,
+        "dealer_pct": 12.0
+      },
+      "prev_offering_amt": 13000000000.0,
+      "prev_date": "2026-10-21",
+      "btc_vs_avg": 0.0,
+      "dealer_vs_avg_pp": 1.1,
+      "indirect_vs_avg_pp": -3.5,
+      "insufficient": false,
+      "demand_ko": "수요 약함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": null
+    }
+  ],
+  "next": [
+    {
+      "date": "2026-11-24",
+      "key": "nominal-5y",
+      "label_ko": "5년물",
+      "offering_amt": 70000000000.0,
+      "close_time_et": "01:00 PM",
+      "reopening": false
+    },
+    {
+      "date": "2026-11-24",
+      "key": "frn-2y",
+      "label_ko": "2년 FRN 재발행",
+      "offering_amt": 28000000000.0,
+      "close_time_et": "01:00 PM",
+      "reopening": true
+    },
+    {
+      "date": "2026-11-25",
+      "key": "nominal-7y",
+      "label_ko": "7년물",
+      "offering_amt": 44000000000.0,
+      "close_time_et": "11:30 AM",
+      "reopening": false
+    }
+  ],
+  "rule": {
+    "avg_n": 6,
+    "min_hist": 3,
+    "btc_band": 0.05,
+    "dealer_band_pp": 1.0
+  },
+  "collect": {
+    "status": "ok",
+    "as_of": "2026-11-23",
+    "collected_at": "2026-11-24T07:01:18+09:00",
+    "source": "TreasuryDirect TA_WS",
+    "response": "ok",
+    "required_ok": true,
+    "missing": [],
+    "empty": "has_data"
+  }
+}
