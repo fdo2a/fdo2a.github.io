@@ -5,9 +5,9 @@
  "report_date": "2026-11-24",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-24T11:58:32+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-24T12:14:39+00:00",
  "cutoff_at": "2026-11-24T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 569,
+  "harvest": 561,
   "candidates": 1,
   "articles": [
    6
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "discovery": "truncated",
   "hosts": {
    "kbs": "ok",
@@ -44,13 +44,13 @@
    "newsis": "ok"
   },
   "notes": [
-   "discover:569"
+   "discover:561"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 14826,
-   "out": 4769
+   "in": 14923,
+   "out": 8525
   }
  },
  "event": {
@@ -58,5 +58,5 @@
   "query": "젠슨 복귀에 코스피",
   "trigger": []
  },
- "content_hash": "242192e5c9172d96"
+ "content_hash": "a4cd1016694ac0dd"
 }
