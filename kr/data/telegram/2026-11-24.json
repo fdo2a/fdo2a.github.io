@@ -1,0 +1,293 @@
+{
+ "report_date": "2026-11-24",
+ "market": "kr",
+ "collected_utc": "2026-11-24T09:14:16+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-22T22:32:40+00:00",
+  "kwusa": "2026-11-23T06:19:58+00:00",
+  "lim_econ": "2026-11-22T22:39:17+00:00",
+  "d_ticker": "2026-11-23T01:50:12+00:00",
+  "aethersemiconductor": "2026-11-23T08:03:33+00:00",
+  "FastStockNews": "2026-11-23T08:54:50+00:00",
+  "FastStockNewsUSA": "2026-11-23T09:01:00+00:00",
+  "insidertracking": "2026-11-23T09:05:56+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-22T22:32:40+00:00",
+   "last_id": 3010,
+   "last_dt": "2026-11-23T22:40:36+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-23T06:19:58+00:00",
+   "last_id": 61806,
+   "last_dt": "2026-11-24T06:13:10+00:00",
+   "read": 6
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-22T22:39:17+00:00",
+   "last_id": 2141,
+   "last_dt": "2026-11-23T22:39:31+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-23T01:50:12+00:00",
+   "last_id": 4233,
+   "last_dt": "2026-11-24T00:21:41+00:00",
+   "read": 6
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-23T08:03:33+00:00",
+   "last_id": 27204,
+   "last_dt": "2026-11-24T09:03:54+00:00",
+   "read": 35
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-23T08:54:50+00:00",
+   "last_id": 128424,
+   "last_dt": "2026-11-24T08:10:12+00:00",
+   "read": 72
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-23T09:01:00+00:00",
+   "last_id": 24787,
+   "last_dt": "2026-11-24T09:00:18+00:00",
+   "read": 67
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 5,
+   "truncated": false,
+   "from_dt": "2026-11-23T09:05:56+00:00",
+   "last_id": 70126,
+   "last_dt": "2026-11-24T09:04:06+00:00",
+   "read": 91
+  }
+ },
+ "items": [
+  {
+   "id": "d_ticker/4228",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-23T09:39:08+00:00",
+   "url": "https://t.me/d_ticker/4228",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "삼성전자가 중국 시안 낸드 공장을 풀가동하는 가운데, 시안2공장(X2)의 현재 월 11만장 캐파 중 V9 물량은 1만장에 그친다는 점이 전해졌다. 이에 따라 X2는 유휴 클린룸에 전기도금 설비를 채워 월 13만장으로 늘리고 V9 라인을 2만장 더 늘리는 한편, 주력인 V6 라인의 20~30%를 V9으로 전환해 2~3만장을 보태는 방식으로 확장된다는 계획이다. 이 경우 V9 생산은 월 5만장 이상으로 5배 넘게 불어날 것이라는 전망이 제시됐다. 시안1공장(X1)은 이미 월 12만장으로 풀캐파 가동 중이어서, X2까지 합치면 시안에서만 월 25만장 규모가 된다는 시각이다."
+  },
+  {
+   "id": "aethersemiconductor/27177",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-23T13:10:01+00:00",
+   "url": "https://t.me/aethersemiconductor/27177",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-23",
+   "summary_ko": "오리건주와 버지니아주가 그록 AI 이미지 생성기가 딥페이크 음란물을 만들고 퍼뜨리는 것을 막지 못했다며 스페이스X를 상대로 주 법원에 소송을 냈다는 소식이다. 두 주는 안전장치 미비와 안전하다는 허위 홍보를 이유로 소비자보호법 위반을 주장했고, 13세 이상 미성년자의 이용을 허용하는 점도 문제로 지적했다. 스페이스X 측은 AI 제품에 적절한 안전장치를 갖췄다고 밝힌 바 있다. 회사는 이미 여러 소송과 각국 당국의 조사를 받고 있으며, 다른 소송에서는 통신품위법 230조에 따른 면책을 내세우거나 그록은 이용자가 통제하는 중립적 도구라고 주장해 왔다. 한편 메타가 주 정부와 약 170억 달러 지급에 합의한 사례를 들어, 이번 소송도 주 법무장관들이 기업의 제품 변경과 배상을 끌어낼 수 있는 흐름의 연장선이라는 시각이 있다."
+  },
+  {
+   "id": "aethersemiconductor/27188",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-23T15:08:57+00:00",
+   "url": "https://t.me/aethersemiconductor/27188",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "트럼프 대통령이 엔비디아 이사회 회의에 전화로 참석해 젠슨 황의 CEO 재임명을 지지했다는 내용이 Semafor 보도로 전해졌다. 백악관도 이 개입 사실을 확인했으며, 스티븐 Cheung 홍보국장은 대통령이 전적으로 관여했고 이번 결정이 훌륭하다고 밝혔다. 이에 따라 이번 사안을 엔비디아의 극적인 리더십 반전에 백악관이라는 중대한 변수가 더해진 사건으로 봐야 한다는 시각이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/27189",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-23T15:36:45+00:00",
+   "url": "https://t.me/aethersemiconductor/27189",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "트럼프 대통령이 엔비디아 이사회 회의에 전화로 참석해 젠슨 황의 CEO 재임명을 지지했다는 내용이 Semafor 보도로 전해졌다. 해당 보도는 사안에 정통한 소식통을 인용한 것이며, 백악관도 트럼프 대통령의 개입 사실을 확인했다. 백악관 스티븐 Cheung 홍보국장은 트럼프 대통령이 이 문제에 전적으로 관여했다고 밝혔다. 한편 글쓴이는 이 같은 정치권의 개입이 엔비디아 경영 문제에 어떤 의미를 가질지에 대해 별도의 의견을 덧붙였으나, 원문이 중간에 끊겨 그 구체적 내용은 확인하기 어렵다는 시각을 함께 전했다."
+  },
+  {
+   "id": "hedgecat0301/3010",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-23T22:40:36+00:00",
+   "url": "https://t.me/hedgecat0301/3010",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "젠슨황 CEO의 복귀 결정이 AI주 급반등을 이끈 단기 호재로 작용했다고 필자는 진단했다. 다만 정부 조사 등 노이즈 가능성과 AI 수익성, 데이터센터 규제, 메모리 다운사이클 우려가 남아 있어 불안이 완전히 해소되지는 않았다고 본다. 필자는 주가가 이미 극단적 악재를 선반영했다고 보고 추가 급락보다 복원력 개선에 무게를 두는 편이 낫다고 판단한다. 국내 증시는 AI 인프라주 중심의 반등이 예상되지만 변동성 확대에 대비할 필요가 있으며, 증안펀드의 발동 조건과 집행 방식, 출자 규모 확대 여부, 자사주 매입한도 완화의 실효성이 향후 회복 탄력성을 좌우할 변수라고 짚었다."
+  },
+  {
+   "id": "FastStockNews/128367",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-23T22:41:36+00:00",
+   "url": "https://t.me/FastStockNews/128367",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "윌리엄스 뉴욕 연은 총재는 미국 경제가 연율 약 2.75%로 견조하게 성장하고 노동시장도 균형 상태라고 진단하면서도, 약 3.5%인 인플레이션은 여전히 지나치게 높다는 입장을 밝혔다. 관세 효과는 대부분 소진됐지만 중동 분쟁에 따른 에너지 가격 상승과 AI 관련 재화의 수급 불균형이 물가를 밀어 올리고 있으며, 에너지와 공급망 위험이 상방으로 기울어 있어 고용보다 물가 안정의 위험이 커졌다는 시각이다. 그는 인플레이션을 2%로 되돌리는 것을 100% 필수 과제로 꼽고 추가 조치가 필요하다고 강조했으며, 내년 2%를 약간 웃도는 수준으로 둔화한 뒤 2028년 목표치에 도달할 것으로 내다봤다는 의견이다. 추가 인상 의지는 분명하지만 지난주 빅스텝 필요성이 낮다는 언급과 맥락을 같이하므로 점진적 인상을 지지하는 것으로 해석되며, 월러의 50bp 주장보다 12월 25bp 인상에 무게를 실은 발언으로 읽힌다는 평가다."
+  },
+  {
+   "id": "FastStockNews/128368",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-23T22:47:04+00:00",
+   "url": "https://t.me/FastStockNews/128368",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "한국은행의 2026년 11월 소비자동향조사에서 소비자심리지수(CCSI)는 103.1로 전월보다 2.3포인트 떨어져 7개월 만의 최저치를 기록했고, 경기 심리는 두 달 연속 악화한 것으로 나타났다. 강남권 집값 하락 등으로 주택가격 전망은 8개월 만에 가장 큰 폭으로 떨어졌다. 향후 1년 기대인플레이션율은 2.6%로 0.1%포인트 낮아져 넉 달 만에 하락 전환했는데, 한국은행 박 팀장은 국제유가 하락과 석유 최고가격제, 농축산물 수급관리 등 정부 물가 대책이 농·축·수산물과 석유류에 대한 물가 불안을 누그러뜨렸다는 시각을 내놓았다."
+  },
+  {
+   "id": "d_ticker/4233",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-24T00:21:41+00:00",
+   "url": "https://t.me/d_ticker/4233",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "데이터센터·GPU 프로젝트의 자금 조달 구조가 부채 중심에서 지분 중심으로 옮겨 갈 것이라는 시각이 제시됐다. JP모건은 2026년 총 사업비의 70~95%를 부채로 조달하던 프로젝트들의 대출 비율(LTC)이 2027년 이후 약 60%로 낮아질 것으로 전망했다. 대신 2027년 한 해에만 외부 투자자 출자와 신주 발행 등으로 5,500억 달러의 지분성 자금이 투입될 것으로 봤다. 5대 빅테크의 영업현금흐름은 2027년 2,560억 달러 늘어나지만 설비투자는 그보다 1.8배 많은 4,660억 달러에 이를 것으로 예상돼 현금흐름 압박이 커질 수 있다는 의견도 덧붙었다. 이런 조달 방식의 변화는 지분가치 희석과 주주환원 감소로 이어질 수 있다는 시각이다."
+  },
+  {
+   "id": "aethersemiconductor/27196",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-24T01:47:53+00:00",
+   "url": "https://t.me/aethersemiconductor/27196",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "AI 업계에 따르면 지난 10월 국내 베타 서비스를 시작한 AI 비서 '피클'은 전화 대행과 업무 처리 기능으로 이용자를 늘리고 있다. 그러나 이용자가 연결한 이메일과 연락처, 과거 서비스 정보를 바탕으로 가족 이름과 생일을 추론하거나, 요청이 없었는데도 식당에 전화를 걸어 곤란을 겪게 한 사례가 나왔다. 특정 기업에 취업 지원 서류를 여러 차례 보낸 일도 있었다는 점에서, AI 비서의 자율적 행동이 통제 범위를 벗어날 수 있다는 우려가 제기된다는 시각이 있다."
+  },
+  {
+   "id": "FastStockNews/128400",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-24T03:43:45+00:00",
+   "url": "https://t.me/FastStockNews/128400",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "대만 정부가 증시 안정을 위해 국가금융안정기금의 규모를 두 배로 늘리는 방안을 검토하고 있다는 소식이다. 현재 가용 자금은 정부 보유 기업 주식을 담보로 금융기관에서 빌린 2천억 대만달러와 4대 기금이 증권 투자에 쓰지 않은 3천억 대만달러로 이뤄져 있으며, 이 중 금융기관 차입금을 7천억 대만달러로 늘리는 것이 골자다. 이 기금은 2000년 3월 대만 대선을 앞두고 양안 긴장이 고조됐을 때 처음 투입됐고, 지난 9일까지 모두 10차례 증시에 개입한 것으로 전해졌다. 글쓴이는 이를 시장 안정 장치를 강화하려는 조치로 보는 시각을 드러내고 있다."
+  },
+  {
+   "id": "aethersemiconductor/27199",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-24T04:27:38+00:00",
+   "url": "https://t.me/aethersemiconductor/27199",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "파이낸셜타임스",
+    "url": null,
+    "basis": "paywalled_link"
+   },
+   "article_date": null,
+   "summary_ko": "트럼프 대통령의 엔비디아 주식 보유 규모가 공개 자료 기준으로 최대 37만 주로 추산되며, 젠슨 황 CEO 복귀 소식에 주가가 30% 넘게 오르면서 최대 1,500만 달러의 평가이익이 생겼다는 보도다. 다만 공개 자료는 매매 규모를 넓은 구간으로만 밝히고 10~11월 거래는 담지 않아 실제 이익은 최소 130만 달러에서 최대 1,500만 달러 사이일 수 있다는 점이 전제된다. 이와 함께 보도는 대통령의 포트폴리오가 S&P500을 폭넓게 담는 전략을 따르고 있어 엔비디아 주식 보유가 우연일 수 있다는 시각을 전한다. 민주당 루벤 가예고 상원의원은 발표 전 주식 거래를 조사해야 한다며 백악관을 강하게 비판했고, 백악관은 논평 요청에 응하지 않았다."
+  },
+  {
+   "id": "FastStockNews/128412",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-24T06:11:02+00:00",
+   "url": "https://t.me/FastStockNews/128412",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "HD현대(267250)의 부회장 조영철 씨가 2026년 11월 24일 기준으로 장내에서 2,460주를 매수했다는 내용의 임원·주요주주 소유상황 보고서가 전해졌다. 보고서상 지분비율은 0%에서 0.00%로 표시되어 지분 변동 폭은 사실상 미미한 것으로 기재됐다. 이번 매수로 총보유액은 2.8억 원으로 적혔으며, 이는 공시 시점 현재가 113,400원을 기준으로 한 금액이다. 회사 경영진의 자사주 매수를 두고 시장에서는 경영 자신감의 신호로 볼 수 있다는 시각도 있을 수 있으나, 보고서 자체에는 그러한 해석이 담겨 있지 않다."
+  },
+  {
+   "id": "FastStockNews/128420",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-24T07:39:01+00:00",
+   "url": "https://t.me/FastStockNews/128420",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "조선비즈",
+    "url": "https://biz.chosun.com/industry/company/2026/11/24/3266ZKZCRBH2XCCPKA34PHKX6I/",
+    "basis": "link"
+   },
+   "article_date": "2026-11-24",
+   "summary_ko": "한화에어로스페이스가 경남 창원에 국방 인공지능(AI) 데이터센터를 짓는다고 밝혔다. 1단계에 10조원을 투자해 2028년 7월 일부 시설을 가동하고, 장기적으로 180MW 규모까지 키운다는 계획이다. 이는 원자력발전소 1기 용량의 약 13%에 해당한다. 한화에어로는 24일 창원 건설 현장을 찾은 하정우 국가AI전략위원회 부위원장과 방위사업청 관계자들에게 이런 구축 계획을 설명했다. 데이터센터는 창원사업장 인근 약 1만3000평 부지에 들어서며, 군이 데이터 소유권과 통제권을 갖고 방산기업이 위탁 운영하는 방식이 검토되고 있다. 국방 AI는 군사정보를 다루는 만큼 외부망과 분리하고 높은 보안과 중단 없는 운영 체계를 갖춰야 한다는 점이 강조됐다. 한화에어로는 국방부가 독자적으로 센터를 구축하면 6~8년이 걸리지만 민간 시설을 활용하면 도입 시기를 4~5년 앞당길 수 있다고 보고 있다. 이번 투자는 김동관 수석부회장이 7월 발표한 55조원 규모 투자계획의 일부다. 한화는 그룹 발전자산과 연계해 AI 데이터센터 거점을 넓히고, 한국산 무기체계를 도입한 국가에 데이터센터를 묶어 수출하는 방안도 검토할 계획이다."
+  }
+ ],
+ "collect": {
+  "status": "ok",
+  "as_of": "2026-11-24",
+  "collected_at": "2026-11-24T18:15:32+09:00",
+  "source": "t.me/s public channels",
+  "response": "ok",
+  "required_ok": true,
+  "missing": [],
+  "empty": "has_data"
+ },
+ "stats": {
+  "items": 13,
+  "summarized": 13,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}

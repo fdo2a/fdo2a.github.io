@@ -2,10 +2,16 @@
   "KOSPI": {
     "rows": [
       {
+        "date": "2026-11-24",
+        "individual": -21070,
+        "foreign": 7903,
+        "institution": 8676
+      },
+      {
         "date": "2026-11-23",
-        "individual": -3743,
-        "foreign": -2340,
-        "institution": 1811
+        "individual": -3532,
+        "foreign": -2560,
+        "institution": 1758
       },
       {
         "date": "2026-11-20",
@@ -54,16 +60,10 @@
         "individual": -7145,
         "foreign": 6729,
         "institution": -5034
-      },
-      {
-        "date": "2026-11-10",
-        "individual": -13947,
-        "foreign": 4439,
-        "institution": 4642
       }
     ],
-    "latest_date": "2026-11-23",
-    "flows_date": "2026-11-23",
+    "latest_date": "2026-11-24",
+    "flows_date": "2026-11-24",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false,
@@ -72,10 +72,16 @@
   "KOSDAQ": {
     "rows": [
       {
+        "date": "2026-11-24",
+        "individual": -3136,
+        "foreign": 1142,
+        "institution": 2150
+      },
+      {
         "date": "2026-11-23",
-        "individual": -1730,
-        "foreign": -345,
-        "institution": 1956
+        "individual": -1694,
+        "foreign": -376,
+        "institution": 1950
       },
       {
         "date": "2026-11-20",
@@ -124,16 +130,10 @@
         "individual": -1838,
         "foreign": -1354,
         "institution": 3130
-      },
-      {
-        "date": "2026-11-10",
-        "individual": -556,
-        "foreign": -1479,
-        "institution": 2147
       }
     ],
-    "latest_date": "2026-11-23",
-    "flows_date": "2026-11-23",
+    "latest_date": "2026-11-24",
+    "flows_date": "2026-11-24",
     "flows_provisional": true,
     "label": "당일 잠정치",
     "stale": false,
@@ -141,8 +141,8 @@
   },
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-23",
-    "collected_at": "2026-11-23T18:10:41+09:00",
+    "as_of": "2026-11-24",
+    "collected_at": "2026-11-24T18:11:03+09:00",
     "source": "Naver 투자자별 매매동향",
     "response": "ok",
     "required_ok": true,

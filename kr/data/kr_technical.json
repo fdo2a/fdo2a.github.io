@@ -1,24 +1,24 @@
 {
   "코스피": {
-    "as_of": "2026-11-23",
-    "close": 4708.54,
+    "as_of": "2026-11-24",
+    "close": 5006.03,
     "ma": {
-      "ma20": 5353.69,
-      "ma60": 6149.42,
-      "ma120": 6788.58
+      "ma20": 5322.07,
+      "ma60": 6119.38,
+      "ma120": 6759.66
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": -12.05,
-      "vs_ma60": -23.43,
-      "vs_ma120": -30.64
+      "vs_ma20": -5.94,
+      "vs_ma60": -18.19,
+      "vs_ma120": -25.94
     },
     "bollinger": {
-      "upper": 6082.8,
-      "mid": 5353.69,
-      "lower": 4624.58,
-      "pct_b": 0.058,
-      "bandwidth": 0.2724
+      "upper": 6053.9,
+      "mid": 5322.07,
+      "lower": 4590.24,
+      "pct_b": 0.284,
+      "bandwidth": 0.275
     },
     "ichimoku": {
       "tenkan": 5045.62,
@@ -38,33 +38,33 @@
     }
   },
   "코스닥": {
-    "as_of": "2026-11-23",
-    "close": 635.45,
+    "as_of": "2026-11-24",
+    "close": 665.88,
     "ma": {
-      "ma20": 691.07,
-      "ma60": 780.87,
-      "ma120": 822.67
+      "ma20": 687.17,
+      "ma60": 778.18,
+      "ma120": 819.27
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": -8.05,
-      "vs_ma60": -18.62,
-      "vs_ma120": -22.76
+      "vs_ma20": -3.1,
+      "vs_ma60": -14.43,
+      "vs_ma120": -18.72
     },
     "bollinger": {
-      "upper": 769.87,
-      "mid": 691.07,
-      "lower": 612.27,
-      "pct_b": 0.147,
-      "bandwidth": 0.2281
+      "upper": 762.8,
+      "mid": 687.17,
+      "lower": 611.55,
+      "pct_b": 0.359,
+      "bandwidth": 0.2201
     },
     "ichimoku": {
       "tenkan": 672.27,
-      "kijun": 713.83,
+      "kijun": 712.98,
       "senkou_a": 833.58,
-      "senkou_b": 782.34,
+      "senkou_b": 792.49,
       "cloud_top": 833.58,
-      "cloud_bottom": 782.34,
+      "cloud_bottom": 792.49,
       "price_vs_cloud": "below"
     },
     "chikou_above_price_26ago": false,
@@ -76,33 +76,33 @@
     }
   },
   "SK하이닉스": {
-    "as_of": "2026-11-23",
-    "close": 1085000.0,
+    "as_of": "2026-11-24",
+    "close": 1158000.0,
     "ma": {
-      "ma20": 1263600.0,
-      "ma60": 1511850.0,
-      "ma120": 1768050.0
+      "ma20": 1254450.0,
+      "ma60": 1503016.67,
+      "ma120": 1758258.33
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": -14.13,
-      "vs_ma60": -28.23,
-      "vs_ma120": -38.63
+      "vs_ma20": -7.69,
+      "vs_ma60": -22.95,
+      "vs_ma120": -34.14
     },
     "bollinger": {
-      "upper": 1542827.08,
-      "mid": 1263600.0,
-      "lower": 984372.92,
-      "pct_b": 0.18,
-      "bandwidth": 0.442
+      "upper": 1534922.8,
+      "mid": 1254450.0,
+      "lower": 973977.2,
+      "pct_b": 0.328,
+      "bandwidth": 0.4472
     },
     "ichimoku": {
       "tenkan": 1180500.0,
       "kijun": 1315500.0,
-      "senkou_a": 1566500.0,
-      "senkou_b": 1586500.0,
-      "cloud_top": 1586500.0,
-      "cloud_bottom": 1566500.0,
+      "senkou_a": 1547000.0,
+      "senkou_b": 1571500.0,
+      "cloud_top": 1571500.0,
+      "cloud_bottom": 1547000.0,
       "price_vs_cloud": "below"
     },
     "chikou_above_price_26ago": false,
@@ -114,32 +114,32 @@
     }
   },
   "삼성전자": {
-    "as_of": "2026-11-23",
-    "close": 177500.0,
+    "as_of": "2026-11-24",
+    "close": 189400.0,
     "ma": {
-      "ma20": 206290.0,
-      "ma60": 237113.33,
-      "ma120": 262215.0
+      "ma20": 204660.0,
+      "ma60": 235911.67,
+      "ma120": 261151.67
     },
     "ma_alignment": "역배열",
     "disparity": {
-      "vs_ma20": -13.96,
-      "vs_ma60": -25.14,
-      "vs_ma120": -32.31
+      "vs_ma20": -7.46,
+      "vs_ma60": -19.72,
+      "vs_ma120": -27.48
     },
     "bollinger": {
-      "upper": 240798.02,
-      "mid": 206290.0,
-      "lower": 171781.98,
-      "pct_b": 0.083,
-      "bandwidth": 0.3346
+      "upper": 239125.48,
+      "mid": 204660.0,
+      "lower": 170194.52,
+      "pct_b": 0.279,
+      "bandwidth": 0.3368
     },
     "ichimoku": {
       "tenkan": 193750.0,
       "kijun": 210250.0,
       "senkou_a": 243500.0,
-      "senkou_b": 245000.0,
-      "cloud_top": 245000.0,
+      "senkou_b": 246250.0,
+      "cloud_top": 246250.0,
       "cloud_bottom": 243500.0,
       "price_vs_cloud": "below"
     },
