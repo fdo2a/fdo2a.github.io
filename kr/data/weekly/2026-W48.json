@@ -712,7 +712,6 @@
       }
     },
     "2026-11-24": {
-      "flows": {},
       "industry": {
         "전자제품": 12.39,
         "자동차": 8.26,
@@ -948,7 +947,19 @@
         "음료",
         "문구류",
         "가스유틸리티"
-      ]
+      ],
+      "flows": {}
+    }
+  },
+  "_provenance": {
+    "2026-11-24": {
+      "industry": "published",
+      "top_value": "published",
+      "flows": "published_or_remote"
+    },
+    "2026-11-23": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
     }
   }
 }
