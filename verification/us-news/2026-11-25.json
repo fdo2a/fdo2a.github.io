@@ -1,0 +1,933 @@
+{
+ "code": {
+  "dirty": false,
+  "dirty_sha256": null,
+  "head": "cb666b559c216247b72621a9f8a38527cb38e271",
+  "python": "3.11.18"
+ },
+ "created_at": {
+  "kst": "2026-11-26T07:42:22+09:00",
+  "utc": "2026-11-25T22:42:22+00:00"
+ },
+ "date": "2026-11-25",
+ "disabled": [],
+ "format": "prepub-record/1",
+ "gates": [
+  {
+   "argv": [],
+   "ended": "2026-11-26T07:42:19+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "unconfirmed",
+   "note": null,
+   "output_sha256": null,
+   "reason": "",
+   "required": true,
+   "script_sha256": null,
+   "seconds": 0.0,
+   "started": "2026-11-26T07:42:19+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_news.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-26T07:42:19+09:00",
+   "exit": 0,
+   "items": [
+    "뉴스 게이트 통과 — 수집 26건 대조 완료"
+   ],
+   "kind": "structure",
+   "name": "check_news",
+   "note": null,
+   "output_sha256": "6dbc9f954141c4a3e1573c680cb402b11f5be7b7ebeebba834cd99a5ccf62175",
+   "reason": "",
+   "required": true,
+   "script_sha256": "441700afba7ec323e798e94bfd09c840de2cfd7b605c3e593cfa2d167d347c66",
+   "seconds": 0.12,
+   "started": "2026-11-26T07:42:19+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_telegram.py",
+    "--html",
+    "{html}",
+    "--tg",
+    "{tg}",
+    "--news",
+    "{datadir}/news/{date}.json",
+    "--date",
+    "{date}",
+    "--layout",
+    "news"
+   ],
+   "ended": "2026-11-26T07:42:20+09:00",
+   "exit": 0,
+   "items": [
+    "텔레그램 인용 이상 없음 — <html>",
+    "다시 읽기 17건, 문단 7개 — 두 가지를 읽는다.",
+    "① 문단(글 순서 그대로, [id] 뒤가 그 항목의 문장, 나머지는 잇는 말): 문장마다 누구의 말로 읽히는지 — 이름·「같은 보도는」·「시장에서는」이 가리키는 범위, 앞 문장 안에 다른 화자가 있을 때 — 와 「반면」·「같은 흐름」 같은 관계어가 맞는지, 잇는 말이 요약에 없는 사실·평가·전망을 말하지 않는지.",
+    "문단 1: [insidertracking/70224] 기업 속보를 모은 한 글은 코어위브 회사채 수익률이 약 18%까지 올랐다는 점을 들어 이 회사의 자금 조달 부담이 커졌다는 시각을 제시했다. [d_ticker/4243] 가정까지 광섬유를 까는 FTTH 업계에서 사모펀드 자금으로 들어온 중소 사업자가 조달 리스크를 키우며 대형 CAPEX 집행이 늦춰지고 ",
+    "문단 2: 장 마감 뒤 나온 델 실적을 두고는 수요의 크기와 이익의 질이 함께 다뤄졌다. [kwusa/61807] 연합인포맥스발 소식으로는 델이 FY27 3분기 매출 549.4억 달러와 비GAAP EPS 9.45달러로 컨센서스를 크게 웃돌았고 시간외거래에서 주가가 2.74% 올랐으며, AI 최적화 서버 매출과 AI 서버 수주잔고가 사상 최대였다고 한다. A",
+    "문단 3: 수급과 포지션을 두고는 엇갈린 신호가 나왔다. [d_ticker/4244] JP모건 리포트는 개인투자자가 7월 이후 메모리 주식을 덜어내고 자금을 매그니피센트 7로 옮겼으며, 일평균 유입액이 3~8월 12억 달러에서 9~10월 9억 달러, 11월 5억 달러로 줄었다고 분석했다는 소식이다. [FastStockNewsUSA/24824] 기술주 투자자",
+    "문단 4: 공급망에서는 수요 전망과 병목이 함께 거론됐다. [FastStockNewsUSA/24808] 샌디스크 경영진은 최근 투자자 교류회에서 AI 데이터센터 낸드 시장이 1.2ZB 규모에 이를 것이라는 기존 전망에 하방 위험이 없다고 재확인했고, 중국 현지 공급업체들의 공급이 크게 늘어도 내수가 이를 흡수할 수 있다고 봤다는 소식이 전해졌다. [d_ti",
+    "문단 5: [aethersemiconductor/27259] 월스트리트저널발 소식으로는 미국 정보당국 관계자들이 의회 정보위원회 비공개 브리핑에서 앨리스 황이 중국 정보기관의 지시로 젠슨 황을 감시했다는 증거는 없다고 밝혔다고 한다. 중국 국가안전부가 정보 제공을 요구하고 접촉한 사실은 있으나 의미 있는 정보가 넘어갔다는 정황은 없다는 것이다.",
+    "문단 6: [insidertracking/70167] 블룸버그발 소식으로는 앤트로픽 주가가 상장 나흘째 공모가 83달러를 밑돈 81.91달러로 마감해 하루 만에 6.5% 떨어졌다고 한다. 공모 수요는 컸지만 상장 후 매수세가 제한적이라는 시각과 함께 12월 15일 내부자 주식 최대 3억 300만 주의 보호예수 해제와 주요 지수 편입 가능성이 수급 변수로 꼽",
+    "문단 7: [FastStockNewsUSA/24827] 중국 AI 기업들이 미국의 해외 데이터센터 내 첨단 GPU 원격 접근 규제와 오픈AI·앤트로픽의 모델 증류 차단으로 신규 모델 개발이 정체되거나 지연되고 있다는 보도가 나왔다. 딥시크 내부에서는 증류 경로가 완전히 막히면 미·중 최상위 모델 간 격차가 3~6개월에서 9개월로 벌어질 수 있다는 추정이 나",
+    "② 항목: 문장이 요약과 같은 뜻인지, 요약에 없는 평가·날짜·기간을 덧붙이지 않았는지.",
+    "[insidertracking/70224]",
+    "문장: 기업 속보를 모은 한 글은 코어위브 회사채 수익률이 약 18%까지 올랐다는 점을 들어 이 회사의 자금 조달 부담이 커졌다는 시각을 제시했다.",
+    "요약: 미국 기업 섹터별 속보를 모은 이 글은 앤트로픽의 IPO 보호예수 해제 물량이 2026년 12월부터 2027년 2월까지 단계적으로 풀린다는 점, 엔비디아 관련 수사 우려가 정보당국 보고와 의회 질의로 이어졌다는 점, 스페이스X가 궤도 컴퓨팅 위성 계획에 대해 FCC 승인을 받았다는 점, 쿠팡에 대해 미국 정부가 대응을 검토 중이라는 점 등을 전한다.",
+    "[d_ticker/4243]",
+    "문장: 가정까지 광섬유를 까는 FTTH 업계에서 사모펀드 자금으로 들어온 중소 사업자가 조달 리스크를 키우며 대형 CAPEX 집행이 늦춰지고 있다는 소식을 두고, 같은 논리라면 후발 네오클라우드가 높은 조달 비용 탓에 설비 투자 속도를 늦출 때 하이퍼스케일러도 CAPEX 집행을 조절할 여지가 생길지 모른다는 의견도 나왔다.",
+    "요약: 미국 이동통신망 시공업체 다이컴(DY)은 가정까지 광섬유를 까는 FTTH 사업을 하는데, 이 업계에서는 중소 사업자가 사모펀드 자금으로 진입해 조달 리스크를 키우면서 대형 CAPEX 집행이 늦춰지고 있다는 소식이 전해졌다. 글쓴이는 이 논리가 AI 산업에도 그대로 적용될 수 있다고 보고 있다. 후발주자인 네오클라우드가 높은 조달 비용 때문에 설비 투",
+    "[aethersemiconductor/27242]",
+    "문장: JP모건 일본 퀀트 전략팀은 CTA가 선진국 주식 선물 롱을 과거 10년 범위에서 백분위 52 수준까지 줄였다고 짚으며 MSCI 월드 약 4,465를 추세 전환의 핵심 기준선으로 보고, 비관론의 뿌리가 경기침체보다 신용 경색 우려일 수 있다는 시각을 내놨다는 소식이다.",
+    "요약: JP모건 일본 퀀트 전략팀은 닛케이 평균이 25일 56,500선까지 밀리는 가운데 AI 경계감과 글로벌 매크로 충격 우려가 시장을 짓누르고 있다고 봤다. 이 팀은 CTA가 선진국 주식 선물 롱을 줄여 과거 10년 범위의 52퍼센타일까지 내려왔다는 점을 짚으며, MSCI 월드 약 4,465를 추세 전환의 핵심 기준선으로 보는 한편 비관론의 뿌리가 경기",
+    "[lim_econ/2142]",
+    "문장: 블룸버그발 소식으로는 핌코가 AI 붐이 변동성을 키운다며 우량 채권 비중을 늘렸다고 하고, 엔비디아는 젠슨 황의 상원 청문회를 앞두고 규제 리스크가 커졌다는 의견이 나온다.",
+    "요약: 미국 무역대표부의 새 관세안이 이르면 24일 발표될 예정이며, 한국·중국·EU 등 10여 개 경제권에 국가별로 차등 적용될 수 있다는 시각이다. 엔비디아는 젠슨 황의 상원 청문회를 앞두고 규제 리스크가 커졌다는 의견이 나온다. 앤트로픽은 상장 일주일 만에 공모가를 밑돌며 급락했고, 조기 행사와 밸류에이션 부담이 투자심리를 압박했다는 평가다. 핌코는 ",
+    "[kwusa/61807]",
+    "문장: 연합인포맥스발 소식으로는 델이 FY27 3분기 매출 549.4억 달러와 비GAAP EPS 9.45달러로 컨센서스를 크게 웃돌았고 시간외거래에서 주가가 2.74% 올랐으며, AI 최적화 서버 매출과 AI 서버 수주잔고가 사상 최대였다고 한다. AI 서버 사업의 성장세가 당분간 이어질 것이라는 시각도 붙었다.",
+    "요약: 델 테크놀로지스가 FY27 3분기 실적에서 매출 549.4억 달러와 비GAAP EPS 9.45달러로 컨센서스를 크게 웃돌았다고 발표했다. AI 서버 수요 급증이 실적을 끌어올린 것으로 전해졌으며, 시간외거래에서 주가가 2.74% 오르는 흐름이 나타났다. 인프라 솔루션 그룹의 AI 최적화 서버 매출과 AI 서버 수주잔고가 사상 최대치를 기록했다는 점이",
+    "[kwusa/61808]",
+    "문장: 같은 보도는 델이 4분기 매출 563억 달러를 제시하고 연간 가이던스를 매출 2,020억 달러, AI 최적화 서버 매출 780억 달러로 올렸으며, 경영진이 3분기 AI 서버 신규 수주 602억 달러와 사상 최대 수주잔고 1,323억 달러를 밝히면서 수주 고객의 자금 조달 능력과 부지·전력 확보 여부를 엄격히 검증했다고 설명했다는 소식을 전했다.",
+    "요약: 델이 FY27 3분기 실적을 발표하며 4분기 가이던스와 연간 가이던스를 모두 상향했다는 소식이다. 4분기 매출은 563억 달러, 비GAAP 희석 EPS는 8.40달러로 제시됐고, 연간으로는 매출 2,020억 달러, AI 최적화 서버 매출 780억 달러, 비GAAP 희석 EPS 29.68달러가 제시되며 기존 가이던스보다 높아졌다. 경영진은 3분기 AI",
+    "[d_ticker/4238]",
+    "문장: 시장에서는 델이 투자등급 고객 대상 구매 금융계약을 3분기에 55% 늘리고 협력사의 생산 착수 직전에 신용과 부지·전력·냉각 준비 상태를 점검한다는 점을 들어, 이런 벤더 파이낸싱 확대를 AI 인프라 수요를 받치는 수단으로 보는 시각이 나왔다. 3분기 AI서버 신규수주가 전분기보다 1.1% 줄었다는 점과 메모리 공급 부족이 2027년까지 이어질 것이",
+    "요약: 델은 투자등급 고객을 대상으로 PC·서버·스토리지 구매 금융계약 규모가 3분기에 55% 늘었다고 밝혔다. 델 파이낸셜 서비스를 통해 선별적으로 단기 자금을 공급하며, 협력사의 생산 착수 직전에 신용을 재심사하고 부지·전력·냉각 준비 상태까지 점검한다고 설명했다. 이 같은 벤더 파이낸싱 확대를 두고 AI 인프라 수요를 받치는 수단으로 보는 시각이 제시",
+    "[aethersemiconductor/27254]",
+    "문장: JP모건은 델의 매출이 컨센서스와 회사 가이던스를 모두 웃돌았다고 보면서도 AI 외 ISG 마진이 과거 수준을 크게 넘어선 점이 지속 가능한 영업 레버리지인지 경기순환적 가격 효과인지 구분하기 어렵다고 짚었고, 비중확대 의견과 목표주가 515달러는 유지했다는 평가가 전해졌다.",
+    "요약: JP모건은 Dell의 2027 회계연도 3분기 실적이 매출 550억 달러로 자사 추정치와 컨센서스, 회사 가이던스를 모두 웃돌았고, AI 서버 수주잔고가 1,300억 달러를 넘는 등 인프라 수요가 연간 전망 상향을 뒷받침한다는 시각을 제시했다. 다만 AI 외 ISG 마진이 과거 수준을 크게 넘어선 점을 들어, 이것이 지속 가능한 영업 레버리지인지 경",
+    "[d_ticker/4244]",
+    "문장: JP모건 리포트는 개인투자자가 7월 이후 메모리 주식을 덜어내고 자금을 매그니피센트 7로 옮겼으며, 일평균 유입액이 3~8월 12억 달러에서 9~10월 9억 달러, 11월 5억 달러로 줄었다고 분석했다는 소식이다.",
+    "요약: 개인투자자들의 하락장 대응 방식이 2025년의 저가 매수에서 2026년에는 급락 시 매수를 줄이거나 오히려 파는 방향으로 바뀌었다는 것이 JP모건 리포트의 시각이다. 리포트는 7월 이후 주도주 급락, 아시아 시장의 레버리지 축소, AI 성장 기대 약화가 겹치면서 개인이 메모리 주식을 덜어내고 하이퍼스케일러의 2분기 실적이 좋게 나오자 자금을 매그니피",
+    "[FastStockNewsUSA/24824]",
+    "문장: 기술주 투자자금의 조달 통화를 보면 2025년 국경 간 기술주 유입 약 240억 달러 가운데 달러가 약 210억 달러였지만 2026년 11월 4일까지는 달러 조달이 약 60억 달러에 그쳐, AI 관련주 매수세가 더 이상 달러 자금에만 기대지 않는다는 의견도 있다."
+   ],
+   "kind": "structure",
+   "name": "check_telegram",
+   "note": null,
+   "output_sha256": "6e57430db544abd887ab5e82020f9c2af4c682544c8a67c2d186677300d83219",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d021abadb1a5efdd7133fad9a15568cee40be1d675d1336edbf304ca77ad5805",
+   "seconds": 0.47,
+   "started": "2026-11-26T07:42:19+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_contested.py",
+    "--html",
+    "{html}",
+    "--json",
+    "{contested}",
+    "--market",
+    "us",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-26T07:42:20+09:00",
+   "exit": 0,
+   "items": [
+    "OK 쟁점 분석 (none(analysis_unverified) → 자리표시(로컬 러너가 채운다))"
+   ],
+   "kind": "structure",
+   "name": "check_contested",
+   "note": null,
+   "output_sha256": "6b0023fd618a670fb02652ecb342906ab3cdddfb1f776adb97839425ea839534",
+   "reason": "",
+   "required": true,
+   "script_sha256": "2c0e86b4164a89f960889fe690f333371363e74dab519a1e3303d1f118ca2592",
+   "seconds": 0.21,
+   "started": "2026-11-26T07:42:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_readability.py",
+    "--strict",
+    "--no-inline-images",
+    "{html}"
+   ],
+   "ended": "2026-11-26T07:42:20+09:00",
+   "exit": 0,
+   "items": [
+    "== <html>",
+    "문장 203 · 중앙 60자 · P90 105자 · 120자 초과 16문장 · 수치 중앙 0개/P90 3개 · 문단 P90 504자",
+    "note 수치 7개 문장 (6개 넘음 — 읽기 어려우면 표로) · 서울 장에서 SK하이닉스가 11.05%, 삼성전자가 9.87% 내렸고, 미국에서는 마이크론(-4.53%)과 엔비디아(-3.91%)가 4% 안팎, 저장장치의 시게이…",
+    "note 수치 9개 문장 (6개 넘음 — 읽기 어려우면 표로) · 다이요유덴(-14.55%)·무라타(-14.20%)·삼성전기(-12.00%)가 10% 넘게 빠졌고, 대만의 월신(-9.91%)·야게오(-9.38%)·홀리스톤(-8.…",
+    "info 140자 문장 · 무라타가 11월 24일 데이터센터 매출 급증을 재료로 14.89% 오른 몫을 하루 만에 다 내준 것은 회사 재료보다 AI 부품 전반을 덜어 낸 매도에 가깝다 — …",
+    "info 123자 문장 · 브렌트유는 10월 말 고점보다 23% 내렸고, RBA 자체 전망에서 헤드라인 물가가 12월 분기에 4.5%로 정점을 찍을 것으로 예상됐던 만큼, 유가가 현 수준에…",
+    "info 177자 문장 · 가정까지 광섬유를 까는 FTTH 업계에서 사모펀드 자금으로 들어온 중소 사업자가 조달 리스크를 키우며 대형 CAPEX 집행이 늦춰지고 있다는 소식을 두고, 같은 …",
+    "info 150자 문장 · JP모건 일본 퀀트 전략팀은 CTA가 선진국 주식 선물 롱을 과거 10년 범위에서 백분위 52 수준까지 줄였다고 짚으며 MSCI 월드 약 4,465를 추세 전환의…",
+    "info 134자 문장 · 연합인포맥스발 소식으로는 델이 FY27 3분기 매출 549.4억 달러와 비GAAP EPS 9.45달러로 컨센서스를 크게 웃돌았고 시간외거래에서 주가가 2.74% …",
+    "info 길이 표시 16건 중 5건만 출력 — 막지 않는다",
+    "기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.",
+    "수치: 숫자 토큰(%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, 「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.",
+    "note(문체 참고): 문장당 수치 6개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·천 단위+소수, 헤드라인 80자 초과·수치 4개 초과.",
+    "note 는 발행을 막지 않는다(--strict 도 세지 않는다) — 다시 읽어 보고, 자연스러우면 그대로 둔다.",
+    "FAIL 은 조판이 깨지는 구조 문제뿐이다: 섹션 경계를 넘는 div, 인라인 이미지(--no-inline-images), 조판 미적용."
+   ],
+   "kind": "structure",
+   "name": "check_readability",
+   "note": null,
+   "output_sha256": "981a3c228a70493b8634dadf6bf519484985e5e157f8ef157c0142a8d6457966",
+   "reason": "",
+   "required": true,
+   "script_sha256": "598b53a1ce723bbe540de1f7a343401e23f57eef23ae7dd05f91455f170a3628",
+   "seconds": 0.11,
+   "started": "2026-11-26T07:42:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_style.py",
+    "{html}"
+   ],
+   "ended": "2026-11-26T07:42:20+09:00",
+   "exit": 0,
+   "items": [
+    "경고 2건(발행은 막지 않는다) — <html>",
+    "· 풀어 쓸 수 있는데 음차한 말이 있다 — 백분위(1회) → 「이보다 높았던 날은 며칠뿐」 — 다시 읽어 보고, 자연스러우면 그대로 둔다",
+    "· 날수를 고유어로 썼다 — 「나흘」 — 다시 읽어 보고, 자연스러우면 그대로 둔다"
+   ],
+   "kind": "format",
+   "name": "check_style",
+   "note": null,
+   "output_sha256": "9ba2dcba7ffe0d6dbbdbfd12cb909dde108c0cc9eec14b49eb963c3b4361fb54",
+   "reason": "",
+   "required": true,
+   "script_sha256": "4ffd7ef01b1b78a44d60afab21a10479758e3b54404214f30baf75077484a4a9",
+   "seconds": 0.06,
+   "started": "2026-11-26T07:42:20+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 1
+  },
+  {
+   "argv": [
+    "scripts/check_number_sources.py",
+    "--market",
+    "us-news",
+    "--date",
+    "{date}",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--repo",
+    "{repo}"
+   ],
+   "ended": "2026-11-26T07:42:22+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "numbers",
+   "name": "check_number_sources",
+   "note": null,
+   "output_sha256": "94cc85260c3f934cde7ce0b23bcaa9707dcf01db751ce01c880431871cb9a40a",
+   "reason": "",
+   "required": false,
+   "script_sha256": "fd23a80e5a96247d5a3d1d1df5e3399c545353ec83d84b5784e73155b7cab542",
+   "seconds": 1.63,
+   "sources": {
+    "counts": {
+     "article": 126,
+     "data": 24,
+     "excluded": 113,
+     "level": 0,
+     "table": 0,
+     "telegram": 39,
+     "total": 368,
+     "unknown": 66,
+     "web": 0
+    },
+    "declared": [],
+    "detail": {
+     "abs_refs": 4,
+     "article_common": 3,
+     "dv": 0,
+     "excluded_code": 113,
+     "excluded_enum": 0,
+     "invalid_refs": 0,
+     "lvl": 0,
+     "marker_empty": 0,
+     "stale_refs": 0,
+     "zone_contested": 0,
+     "zone_note": 0
+    },
+    "dv_list": [],
+    "first_sha256": "05bb5e69a523df4dd81c3da85cc4703813e3b1f154d9a05d6ad0e33124beed96",
+    "history": {
+     "ambiguous": 19,
+     "first_unknown": 66,
+     "fixed": 0,
+     "gone": 0,
+     "gone_printed": [],
+     "still": 47
+    },
+    "history_why": "",
+    "runs": {
+     "article": 131,
+     "data": 24,
+     "excluded": 170,
+     "level": 0,
+     "table": 0,
+     "telegram": 40,
+     "total": 432,
+     "unknown": 67,
+     "web": 0
+    },
+    "unknown": [
+     {
+      "text": "2% — 미국의 AI 인프라 종목은 낙폭이 · 안팎에 그쳤지만, 아시아 종가는 미국 장이 갭 하락에서 회복하기 전에",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6개월 — 밴스 부통령은 약 · 전부터 처리가 불가능하다는 것을 알았다고 했으나, 다른 관계자들은 통제 폭파가 유일한",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "15분 — 환경보호청은 폭파 · 뒤 공기 중 납이 검출되지 않았다고 밝혔다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "6일 — 10월에는 우크라이나 남부 올레시키에서 ·간 국지 휴전을 협상했는데, 2022년 2월 러시아의 전면 침공 이",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "1년 — 품목별로는 칠면조와 가금류 가격이 · 새 · 뛰어 지수 내 다른 항목 상승폭의 두 배를 넘었다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "1 — 월마트, 알디, 리들, 타깃 등 일부 매장은 ·인당 · 이하의 추수감사절 식사 할인 상품을 내놓고 있다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "9.3조 원 — 나시루딘 아 바카르 최고경영자는 ·의 가격이 할인 전 ·(약 · 규모)에 이른다고 밝혔다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "7대 — 그룹은 기존 에어버스 A350 ·를 점차 이 기종으로 바꿔 연료 효율과 좌석 공급력, 운항 유연성을 높일 계",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "60엔 — 마루가메제멘 우동 · 인하, 소비세 감세에 중소 음식점 도산 우려ダイヤモンド・オンライン · 11월 25일",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "60엔 — 마루가메제멘은 11월 25일부터 가마타마 우동 등 인기 메뉴 ·품목을 · 인하한다고 발표했다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "14개 — 미국, 중국·EU 등 · 경제권에 새 관세 발표BBC · 11월 25일",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "14개 — 미국 정부가 중국과 유럽연합(EU) 등 · 국가·지역을 대상으로 한 새 관세 부과 방침을 발표했다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "3 — 영국 중앙은행(BoE)은 식품 물가상승률이 내년 중반 ·~·까지 오를 수 있다고 밝혔다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "0.25%포인트 — 중앙은행은 이달 기준금리를 · 올려 ·로 인상했고 추가 조치가 필요할 수 있다고 시사했다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "3개월 — · 연속 ·대 상승으로 · 연율은 ·까지 올라, 12월 9일 · 인상이 사실상 확정적이라고 평가한다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "3개월 — · 연속 ·대 상승으로 · 연율은 ·까지 올라, 12월 9일 · 인상이 사실상 확정적이라고 평가한다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "0.25%포인트 — · 연속 ·대 상승으로 · 연율은 ·까지 올라, 12월 9일 · 인상이 사실상 확정적이라고 평가한다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "3년 — 미국의 ·에서 ·로 상향된 3분기 성장률, · 만의 최고치인 10월 근원 PCE ·, 12월 연준 인상 확률",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "5년 — 10월 고용은 · 줄었고 실업률은 ·로 · 만에 최고치를 기록했다.",
+      "why": "기사 목록에 없음"
+     },
+     {
+      "text": "4% — 서울 장에서 SK하이닉스가 ·, 삼성전자가 · 내렸고, 미국에서는 마이크론(·)과 엔비디아(·)가 · 안팎,",
+      "why": "표식 없음"
+     },
+     {
+      "text": "-11.05% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-9.87% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-4.53% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-3.91% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-2.10% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-0.55% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "20거래일 — 마이크론·웨스턴디지털·시게이트 세 종목을 같은 비중으로 묶으면 최근 · 동안 S&P 500보다 · 뒤처졌다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "28.57%p — 마이크론·웨스턴디지털·시게이트 세 종목을 같은 비중으로 묶으면 최근 · 동안 S&P 500보다 · 뒤처졌다.",
+      "why": "칸 없음"
+     },
+     {
+      "text": "-22.15%p — 반도체 축이 ·, 성장−가치 축이 ·를 설명하고, 성장−가치·대형−소형·반도체 세 축으로 설명되지 않는 몫은",
+      "why": "칸 없음"
+     },
+     {
+      "text": "-3.01%p — 반도체 축이 ·, 성장−가치 축이 ·를 설명하고, 성장−가치·대형−소형·반도체 세 축으로 설명되지 않는 몫은",
+      "why": "칸 없음"
+     },
+     {
+      "text": "-5.18%p — 반도체 축이 ·, 성장−가치 축이 ·를 설명하고, 성장−가치·대형−소형·반도체 세 축으로 설명되지 않는 몫은",
+      "why": "칸 없음"
+     },
+     {
+      "text": "20거래일 — 하루치 초과수익의 · 합을 · 회귀로 나눈 추정치다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "60거래일 — 하루치 초과수익의 · 합을 · 회귀로 나눈 추정치다.",
+      "why": "표식 없음"
+     },
+     {
+      "text": "3 — ·~·로 보면 이 묶음의 방향은 메모리 가격 주기보다 반도체 업종의 재평가가 어디서 멈추는지에 더 크게 걸려",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6개월 — ·~·로 보면 이 묶음의 방향은 메모리 가격 주기보다 반도체 업종의 재평가가 어디서 멈추는지에 더 크게 걸려",
+      "why": "표식 없음"
+     },
+     {
+      "text": "1% — 루멘텀이 · 내려 낙폭이 가장 컸고, GE 버노바(·)·마벨(·)·버티브(·)·코히런트(·)는 · 안쪽에서",
+      "why": "표식 없음"
+     },
+     {
+      "text": "-2.16% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-0.78% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-0.49% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-0.26% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-0.03% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "20거래일 — 다섯 종목을 같은 비중으로 묶으면 최근 · 동안 S&P 500보다 · 뒤처졌고, 반도체 축이 ·로 거의 전부",
+      "why": "표식 없음"
+     },
+     {
+      "text": "27.19%p — 다섯 종목을 같은 비중으로 묶으면 최근 · 동안 S&P 500보다 · 뒤처졌고, 반도체 축이 ·로 거의 전부",
+      "why": "칸 없음"
+     },
+     {
+      "text": "-25.19%p — 다섯 종목을 같은 비중으로 묶으면 최근 · 동안 S&P 500보다 · 뒤처졌고, 반도체 축이 ·로 거의 전부",
+      "why": "칸 없음"
+     },
+     {
+      "text": "-1.00%p — 성장−가치 축은 ·, 대형−소형 축은 ·이고, 세 축으로 설명되지 않는 몫은 ·다.",
+      "why": "칸 없음"
+     },
+     {
+      "text": "+1.03%p — 성장−가치 축은 ·, 대형−소형 축은 ·이고, 세 축으로 설명되지 않는 몫은 ·다.",
+      "why": "칸 없음"
+     },
+     {
+      "text": "-2.03%p — 성장−가치 축은 ·, 대형−소형 축은 ·이고, 세 축으로 설명되지 않는 몫은 ·다.",
+      "why": "칸 없음"
+     },
+     {
+      "text": "20거래일 — 메모리와 같은 방식의 추정치다(하루치 초과수익의 · 합, · 회귀).",
+      "why": "표식 없음"
+     },
+     {
+      "text": "60거래일 — 메모리와 같은 방식의 추정치다(하루치 초과수익의 · 합, · 회귀).",
+      "why": "표식 없음"
+     },
+     {
+      "text": "3 — AI 인프라의 ·~· 근거는 데이터센터 투자 규모인데, · 열세가 거의 다 반도체 축 몫이라 이 묶음은 아직",
+      "why": "표식 없음"
+     },
+     {
+      "text": "6개월 — AI 인프라의 ·~· 근거는 데이터센터 투자 규모인데, · 열세가 거의 다 반도체 축 몫이라 이 묶음은 아직",
+      "why": "표식 없음"
+     },
+     {
+      "text": "20거래일 — AI 인프라의 ·~· 근거는 데이터센터 투자 규모인데, · 열세가 거의 다 반도체 축 몫이라 이 묶음은 아직",
+      "why": "표식 없음"
+     },
+     {
+      "text": "10% — 다이요유덴(·)·무라타(·)·삼성전기(·)가 · 넘게 빠졌고, 대만의 월신(·)·야게오(·)·홀리스톤(·),",
+      "why": "표식 없음"
+     },
+     {
+      "text": "-14.55% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-14.20% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-12.00% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-9.91% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-9.38% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-8.82% — ·",
+      "why": "코드 블록(표식 없음)"
+     },
+     {
+      "text": "-6.16% — ·",
+      "why": "코드 블록(표식 없음)"
+     }
+    ],
+    "unknown_by": {
+     "기사 목록에 없음": 20,
+     "칸 없음": 9,
+     "코드 블록(표식 없음)": 19,
+     "표식 없음": 18
+    },
+    "unknown_total": 66,
+    "web_by": {}
+   },
+   "started": "2026-11-26T07:42:20+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  }
+ ],
+ "generator": {
+  "prepub_gates.json": "1b5f81dad2ae70c6ff994be732562ee86f12ddac0c76926e9f9327909588267c",
+  "record.py": "f51d83bb3b03d785efb42f37c956ca89e2d5f2d9cb5f922f95a8df3c61eff6d6",
+  "run_gates.py": "8bb19b524cadaad6cf0aad78cba3050600f6cad866ea9ec468b57c550464e698"
+ },
+ "inputs": {
+  "capped": false,
+  "count": 62,
+  "files": [
+   {
+    "path": "<datadir>/_collect_status.json",
+    "ref": "repo:data/_collect_status.json",
+    "sha256": "1e947ef7ca7cd8c9b6eaf12a59d7cdcc8b47939cbce1dc76eadb763e7fc756a3"
+   },
+   {
+    "path": "<datadir>/auction_table.html",
+    "ref": "repo:data/auction_table.html",
+    "sha256": "20acbc8cd13419ec4960c1bac98ee82bfbd918ff0f456ce0b569394ca66e682d"
+   },
+   {
+    "path": "<datadir>/auctions.json",
+    "ref": "repo:data/auctions.json",
+    "sha256": "862d6eee84e1561876942df8d266407b50538c2c8270e2cea1e8a2a77fb04f9f"
+   },
+   {
+    "path": "<datadir>/body_draft.html",
+    "ref": "workspace-only",
+    "sha256": "e8ff6ac9e5e44a1e9371766c9c9fe0b9ae1cd7da6653261006a2819c214cd1b6"
+   },
+   {
+    "path": "<datadir>/calendar.json",
+    "ref": "repo:data/calendar.json",
+    "sha256": "5a2a8de59562d7fcb838e30210581c4e854461f26f073ccacfd23531199397d9"
+   },
+   {
+    "path": "<datadir>/contested.json",
+    "ref": "workspace-only",
+    "sha256": "edebd6af1d8ab6f56657cf24cbc12738353b0e690a3e5cacfd8e49d88a37b76f"
+   },
+   {
+    "path": "<datadir>/econ_indicators.json",
+    "ref": "repo:data/econ_indicators.json",
+    "sha256": "15d45dc7b9bfabd33fc0526efdea54624b7d1d63f1634d4cc43a9e2a9f0aee25"
+   },
+   {
+    "path": "<datadir>/fund_board.html",
+    "ref": "repo:data/fund_board.html",
+    "sha256": "4cc392d18799720523e3547643e9f61de29d1b735139c3213fdda2a493fef960"
+   },
+   {
+    "path": "<datadir>/fund_board.json",
+    "ref": "repo:data/fund_board.json",
+    "sha256": "eb153f5de39679ff924f59bbe881d39a06b11b35fc96e1e627268b53c34cd1f8"
+   },
+   {
+    "path": "<datadir>/intraday.json",
+    "ref": "repo:data/intraday.json",
+    "sha256": "427d46e93c2aac04dd8723c2ae012de679ecab64ba1af9b5caa39b97e92ccba2"
+   },
+   {
+    "path": "<datadir>/macro.json",
+    "ref": "git:bb8dcb9cb0cf69a4ee4c5867853ea880a51287ad:data/macro.json",
+    "sha256": "4dfc5c5cb903b5beee5733b301c13f8a3f9b88805917be29d1d43cdb8397c2dd"
+   },
+   {
+    "path": "<datadir>/macro_eval.json",
+    "ref": "repo:data/macro_eval.json",
+    "sha256": "c7e8f989ff0137864c8b9f31351e8fb7e40cdd72eb1745a57a0de36b7d14584e"
+   },
+   {
+    "path": "<datadir>/macro_metrics.json",
+    "ref": "repo:data/macro_metrics.json",
+    "sha256": "9016ce379ec450347177d77f2750a7c0db468d9fe49ff4ce7e3d4192f7370a16"
+   },
+   {
+    "path": "<datadir>/macro_next.json",
+    "ref": "repo:data/macro.json",
+    "sha256": "1ece443e1bc7ef68a7aedc5fd2951c1649105a28c4589b300024e18ea9fca4cc"
+   },
+   {
+    "path": "<datadir>/market_data.json",
+    "ref": "repo:data/market_data.json",
+    "sha256": "932709a515e5371ef1cede4d1f906c931fed19d20f048ce1d311112a97e04714"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-25.body.html",
+    "ref": "workspace-only",
+    "sha256": "c0a733516990ef09b8f89ec619106e4ba4f80b9b2741ec55b20271c0cc49482d"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-25.html",
+    "ref": "workspace-only",
+    "sha256": "f36890d26a1a11219bb39557447fd6a33d39d68b276071ccef17ae1ee3d825bd"
+   },
+   {
+    "path": "<datadir>/morning_brief_2026-11-25.meta.json",
+    "ref": "workspace-only",
+    "sha256": "df9eed4839d8c41de5014030b67736e5418bc38f2ec8114db4d6f05ff56a0278"
+   },
+   {
+    "path": "<datadir>/movers.json",
+    "ref": "repo:data/movers.json",
+    "sha256": "0ee3684bce846976351eb547dd5b570474edbab14291b6b677e61f951a88182c"
+   },
+   {
+    "path": "<datadir>/news_industry_2026-11-25.body.expanded.html",
+    "ref": "workspace-only",
+    "sha256": "d3808cba1e202b2a96c4f93d0647c7a6dd2dc12b8322608292d63ba55693237e"
+   },
+   {
+    "path": "<datadir>/news_industry_2026-11-25.body.html",
+    "ref": "workspace-only",
+    "sha256": "3f26405ed8ef3f7d85273a0b152e44f515c8feeb8e6f852b7675d7fa13e50bd4"
+   },
+   {
+    "path": "<datadir>/news_industry_2026-11-25.html",
+    "ref": "workspace-only",
+    "sha256": "3bcf289d703cfcdd8d0e1b0b47091ef503ee5eb78965d613da1536de77ac925e"
+   },
+   {
+    "path": "<datadir>/news_industry_2026-11-25.meta.json",
+    "ref": "workspace-only",
+    "sha256": "fe6ac5d106baf15b12ddeb2af16ad921ef1ca892369799aef11f23bf268c100f"
+   },
+   {
+    "path": "<datadir>/numsrc_first.html",
+    "ref": "workspace-only",
+    "sha256": "3ca75c11a99d23cf511266eacba3174b8690bc5301afbbcb86c13936e3b9b09d"
+   },
+   {
+    "path": "<datadir>/numsrc_first_news.html",
+    "ref": "workspace-only",
+    "sha256": "05bb5e69a523df4dd81c3da85cc4703813e3b1f154d9a05d6ad0e33124beed96"
+   },
+   {
+    "path": "<datadir>/prepub_dir",
+    "ref": "workspace-only",
+    "sha256": "8492a5f17b1970d566334971ee117a6dff95461be3e62c9c8e23406e1677ea88"
+   },
+   {
+    "path": "<datadir>/prev_post.html",
+    "ref": "workspace-only",
+    "sha256": "69bc0f692cbe25d1e1190ebb6e78d4d876143b059524c30c0ecf5449e1734293"
+   },
+   {
+    "path": "<datadir>/research_notes.md",
+    "ref": "workspace-only",
+    "sha256": "7c5339098cb3ee26c786d0eab0c469a6204d781851db7bb628b7f12a873c2ad0"
+   },
+   {
+    "path": "<datadir>/sector_performance.html",
+    "ref": "repo:data/sector_performance.html",
+    "sha256": "d444c0c1f1ce9fae53bf8717e8fdc74323eb2524545f604391e3d398f0696900"
+   },
+   {
+    "path": "<datadir>/telegram.json",
+    "ref": "repo:data/telegram/2026-11-25.json",
+    "sha256": "140a393b021067176a4fff09d6a41c06d360a4b08819ca6d599e14e55f1b1d78"
+   },
+   {
+    "path": "<datadir>/telegram_news.json",
+    "ref": "workspace-only",
+    "sha256": "cf01b1a39d8dec345bfa325743727d2d8434b62795aed7d3d8d856b916c68de3"
+   },
+   {
+    "path": "<datadir>/yield_curve.png",
+    "ref": "repo:data/yield_curve.png",
+    "sha256": "2518cc553c99c1765e1365f4261743eeb1f9659b678b92558879f8f029c751cb"
+   },
+   {
+    "path": "<datadir>/fed/chair-speech-20261116.txt",
+    "ref": "repo:data/fed/chair-speech-20261116.txt",
+    "sha256": "7aee9676b2a3404dc1ff44a075dfc7635ffb7a5cb025bc3135561f9233060300"
+   },
+   {
+    "path": "<datadir>/fed/events.json",
+    "ref": "repo:data/fed/events.json",
+    "sha256": "30ba36c857191f15a19ebbbd29c1ad321972439166c18ae41281dd4e9a9de933"
+   },
+   {
+    "path": "<datadir>/fed/fomc-minutes-20261007.txt",
+    "ref": "repo:data/fed/fomc-minutes-20261007.txt",
+    "sha256": "21b33f7348abbb4fd60d957210117d63e95d98e794661d499755d4d321811a01"
+   },
+   {
+    "path": "<datadir>/fed/fomc-minutes-20261118.txt",
+    "ref": "repo:data/fed/fomc-minutes-20261118.txt",
+    "sha256": "1eaa28f4177e5971ff07fe49620ff47a32b0ac01c3d7446fe633aec0389fa374"
+   },
+   {
+    "path": "<datadir>/fed/fomc-projections-20260916.txt",
+    "ref": "repo:data/fed/fomc-projections-20260916.txt",
+    "sha256": "49ce913fe9d12178a38a93c724009e20d4e959320ffe6c0bd7c8d40f921cb02d"
+   },
+   {
+    "path": "<datadir>/fed/fomc-statement-20260916.txt",
+    "ref": "repo:data/fed/fomc-statement-20260916.txt",
+    "sha256": "407288109f9ca0f6358730a94e7f0258e16559d53fe6f28d7501c72c7c3b3be4"
+   },
+   {
+    "path": "<datadir>/fed/fomc-statement-20261028.txt",
+    "ref": "repo:data/fed/fomc-statement-20261028.txt",
+    "sha256": "6450a2171d74f47ac85da4f6825d8e8ad71468d109d817e1b425d405d180c72a"
+   },
+   {
+    "path": "<datadir>/fed/jackson-hole-20260828.txt",
+    "ref": "repo:data/fed/jackson-hole-20260828.txt",
+    "sha256": "a0ff7e424cd11b039af1c4304eb77b1c7ce7189147c3e9298af9af59f94a5b9f"
+   },
+   {
+    "path": "<datadir>/fed/seen.json",
+    "ref": "repo:data/fed/seen.json",
+    "sha256": "a5df8db18dfb04d80a8d125b41811b19ec7ee32732dc4fb0f1b00869e1b35405"
+   },
+   {
+    "path": "<datadir>/fed/statements.json",
+    "ref": "repo:data/fed/statements.json",
+    "sha256": "5f197370a4076584818157a68e17a0991a4dd8924c1bd06ccfbeed4aaa33f502"
+   },
+   {
+    "path": "<datadir>/liquidity/liquidity.json",
+    "ref": "repo:data/liquidity/liquidity.json",
+    "sha256": "b3a3c6f5bd4f11c5abd4ea614667cdb7dfed2e62b857df80ab7ac37995c55e6e"
+   },
+   {
+    "path": "<datadir>/liquidity/state.json",
+    "ref": "repo:data/liquidity/state.json",
+    "sha256": "b52193cd476a10c3d014092cd5c27555e2ec90068246d1bdcd9310c62cfc95fd"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_borrowing.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_borrowing.txt",
+    "sha256": "6e68303d9a23af00f69514852a38445d9bb3493e17a28347fbd4c7e00d46cc80"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_refunding.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_refunding.txt",
+    "sha256": "f553e5b9c3875ed9ba1f8030745c20cb1ea7738048093cc47d0cd7f7d38895a8"
+   },
+   {
+    "path": "<datadir>/liquidity/qra/2026Q4_tbac.txt",
+    "ref": "repo:data/liquidity/qra/2026Q4_tbac.txt",
+    "sha256": "81b285c9d68d029aaaf8bd2dc5d6ce8f663f0d47e1cf533707cc1648302b3b2f"
+   },
+   {
+    "path": "<datadir>/news/2026-11-25.json",
+    "ref": "repo:data/news/2026-11-25.json",
+    "sha256": "23255190ebd2e9515ec88a44e76a172e93b4004e1d030b69e10900fd25c7d84c"
+   },
+   {
+    "path": "<datadir>/news/numbers/2026-11-25.json",
+    "ref": "repo:data/news/numbers/2026-11-25.json",
+    "sha256": "3a612fd8d63d8f0fcd4e0164f11352cfcb96e33f26e8bcd57e6c9742967ef9d6"
+   },
+   {
+    "path": "<datadir>/releases/claims.txt",
+    "ref": "repo:data/releases/claims.txt",
+    "sha256": "22352bf2c574f31209dd44c697adf2ea141cf709c47b6421b445177e9ec920f4"
+   },
+   {
+    "path": "<datadir>/releases/durable-goods.txt",
+    "ref": "repo:data/releases/durable-goods.txt",
+    "sha256": "4946984d16928ced78a49a71e47d3b60d390e796607d186008f854ca37afe232"
+   },
+   {
+    "path": "<datadir>/releases/gdp.txt",
+    "ref": "repo:data/releases/gdp.txt",
+    "sha256": "bebf852fc02a213721468b72202c025139199ddcb8476b992d4a536356165483"
+   },
+   {
+    "path": "<datadir>/releases/index.json",
+    "ref": "repo:data/releases/index.json",
+    "sha256": "6cca0bdb08895c5a4d5928c49249b968ea021bb458efa927d15c162cc999ca32"
+   },
+   {
+    "path": "<datadir>/releases/new-home-sales.txt",
+    "ref": "repo:data/releases/new-home-sales.txt",
+    "sha256": "1c6f9ca12ddda476cc463d3debc84476fe993a60f8a965a97aef2e7dcad3d0a6"
+   },
+   {
+    "path": "<datadir>/releases/pce.txt",
+    "ref": "repo:data/releases/pce.txt",
+    "sha256": "0a7957b318b8ace79fcbd14d984a5711f34c7665a6ee45500b4c1eda906a3c98"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-04_spglobal_us_sector_pmi.json",
+    "ref": "repo:data/releases/manual/2026-11-04_spglobal_us_sector_pmi.json",
+    "sha256": "70ca1b132920c02ea24c192d413620e2c82c5ce8b5baada6935b58cb4cfd04e3"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-04_spglobal_us_services_pmi_final.json",
+    "ref": "repo:data/releases/manual/2026-11-04_spglobal_us_services_pmi_final.json",
+    "sha256": "21219bc54ed9e8bcbd1673a0088f9e294c65684e2efa055416b019d9447a8085"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-11_spglobal_us_business_outlook.json",
+    "ref": "repo:data/releases/manual/2026-11-11_spglobal_us_business_outlook.json",
+    "sha256": "0fab58d68135e0b4d67bf47a5d7991172f1c09e3f50cca483db5cf45dc2356c7"
+   },
+   {
+    "path": "<datadir>/releases/manual/2026-11-23_spglobal_us_pmi_flash.json",
+    "ref": "repo:data/releases/manual/2026-11-23_spglobal_us_pmi_flash.json",
+    "sha256": "903a8b3e32858748c7a690e1767ea25f87010b1ad543c9df16dea8317aa68d88"
+   },
+   {
+    "path": "<datadir>/telegram/numbers/2026-11-25.json",
+    "ref": "repo:data/telegram/numbers/2026-11-25.json",
+    "sha256": "17ef28e8f33b47b071782fc8af7242363043775d25c0204064c5899221eb9392"
+   },
+   {
+    "path": "<tg>/telegram_news.json",
+    "ref": "workspace-only",
+    "sha256": "cf01b1a39d8dec345bfa325743727d2d8434b62795aed7d3d8d856b916c68de3"
+   },
+   {
+    "path": "<contested>/contested.json",
+    "ref": "workspace-only",
+    "sha256": "edebd6af1d8ab6f56657cf24cbc12738353b0e690a3e5cacfd8e49d88a37b76f"
+   }
+  ],
+  "incomplete": false,
+  "unreadable": 0
+ },
+ "manual": "수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다",
+ "market": "us-news",
+ "post": {
+  "blob": "830a8273291c8ae21cd747dc524a8306b3c2be4c",
+  "path": "news/2026-11-25.html",
+  "sha256": "3bcf289d703cfcdd8d0e1b0b47091ef503ee5eb78965d613da1536de77ac925e"
+ },
+ "preservation": {
+  "note": "같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로>, 로컬 origin/main 추적 이력의 앞 커밋에 있으면 git:<커밋>:<경로> 로 참조한다(복원 가능성 — 그 파일을 원본으로 썼다는 증거는 아니다). workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다",
+  "workspace_only": 17,
+  "workspace_only_files": [
+   "<datadir>/body_draft.html",
+   "<datadir>/contested.json",
+   "<datadir>/morning_brief_2026-11-25.body.html",
+   "<datadir>/morning_brief_2026-11-25.html",
+   "<datadir>/morning_brief_2026-11-25.meta.json",
+   "<datadir>/news_industry_2026-11-25.body.expanded.html",
+   "<datadir>/news_industry_2026-11-25.body.html",
+   "<datadir>/news_industry_2026-11-25.html",
+   "<datadir>/news_industry_2026-11-25.meta.json",
+   "<datadir>/numsrc_first.html",
+   "<datadir>/numsrc_first_news.html",
+   "<datadir>/prepub_dir",
+   "<datadir>/prev_post.html",
+   "<datadir>/research_notes.md",
+   "<datadir>/telegram_news.json",
+   "<tg>/telegram_news.json",
+   "<contested>/contested.json"
+  ]
+ },
+ "repo_inputs": {
+  "digest": "9e41aadfa3d7815ef17e3693390008685390911791f5742e8385679f3dd557fb",
+  "files": 1086,
+  "paths": [
+   "scripts",
+   "config",
+   "research/us",
+   "posts"
+  ]
+ },
+ "summary": {
+  "blocking": [],
+  "integrity": [],
+  "not_run": [],
+  "note_format": [],
+  "note_numbers": [],
+  "publish_ok": true,
+  "status": "pass_with_warnings",
+  "verified": true,
+  "warned": [
+   "check_style"
+  ]
+ }
+}
