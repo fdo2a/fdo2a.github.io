@@ -1,0 +1,82 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-25",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-25T22:03:36+00:00",
+ "cutoff_at": "2026-11-25T22:03:36+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "558fb265d6a48eb1aa19356b2875956724b68828",
+  "sha256": "932709a515e5371ef1cede4d1f906c931fed19d20f048ce1d311112a97e04714"
+ },
+ "counts": {
+  "harvest": 203,
+  "candidates": 2,
+  "articles": [
+   2,
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "tokens": {
+   "in": 74448,
+   "out": 16297
+  },
+  "discovery": "throttled",
+  "hosts": {
+   "theguardian.com": "ok",
+   "bbc.co.uk": "ok",
+   "cnbc.com": "ok"
+  },
+  "notes": [],
+  "gdelt": "throttled",
+  "grounded": {
+   "claims": "4/4",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 7,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[1]",
+    "edges[2]",
+    "memo[1]"
+   ],
+   "outcome": "partial",
+   "remaining": [
+    "edges[0]:unverified",
+    "memo[1]:unverified"
+   ]
+  }
+ },
+ "event": {
+  "topic_ko": "젠슨 황 엔비디아 CEO 복귀를 둘러싼 국가안보 위험과 이사회 번복 원인",
+  "query": "huang jensen tech",
+  "trigger": []
+ },
+ "problems": [
+  "edges[0]:unverified",
+  "memo[1]:unverified"
+ ],
+ "content_hash": "c46602add2749e8d"
+}
