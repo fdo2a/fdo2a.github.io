@@ -1,0 +1,36 @@
+{
+ "run_id": "jpd-2026-11-25-1795599194-32529",
+ "session": "2026-11-25",
+ "input_commit": "74c681ddf2c3388540d3e64f3dd6f896de5b00f8",
+ "html_sha256": "5d43aa2b1b9197ea7164b8805aeb19ed91902f0ab7f18a9c08b2fc44e122fc81",
+ "snapshot_sha256": "0b7da0417721f24356a89148ac48c3cf38c13883abe36f96f106f9778721bf31",
+ "news_sha256": "6b12a2d2d614b98dab2dd5b4f4d2fa03fdee5d1e23118c5e3ad71794624eb08c",
+ "telegram_sha256": "73f5d58324b2090aab6fda2afc8299aee64070d3565c889ed0c2863d7e52eccc",
+ "title": "일본 증시 마감 — AI주 되팔려 닛케이 2.78% 급반락, 반도체 대형주 중심 매도에 넓은 시장은 버텼다",
+ "summary": "전날 급등했던 AI·반도체 대형주가 다시 팔려 닛케이가 2.78% 내렸고, JGB 금리는 30년을 빼고 내렸으며 달러/엔은 거의 움직이지 않았다.",
+ "gates": [
+  {
+   "name": "apply_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_japan_daily",
+   "exit": 0
+  },
+  {
+   "name": "check_news",
+   "exit": 0
+  },
+  {
+   "name": "check_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_style",
+   "exit": 0
+  }
+ ],
+ "verdict": "pass",
+ "finished_at": "2026-11-25T09:40:34.233705+00:00",
+ "published_at": "2026-11-25T09:40:39.104160+00:00"
+}
