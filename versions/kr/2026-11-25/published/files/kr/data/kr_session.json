@@ -1,0 +1,63 @@
+{
+  "report_date": "2026-11-25",
+  "us_prev": {
+    "as_of": "2026-11-24",
+    "rows": {
+      "S&P 500": -0.5,
+      "Nasdaq": -1.48,
+      "Dow": 0.85
+    },
+    "lag_sessions": 1
+  },
+  "us_futures_during_kr": {
+    "ES": {
+      "pct": -0.55,
+      "bars": 14,
+      "first_t": "09:00",
+      "last_t": "15:30"
+    },
+    "NQ": {
+      "pct": -1.18,
+      "bars": 14,
+      "first_t": "09:00",
+      "last_t": "15:30"
+    }
+  },
+  "asia_peers": {
+    "rows": {
+      "닛케이": -2.78,
+      "항셍": -1.14,
+      "상해종합": -2.03,
+      "대만가권": -4.8
+    },
+    "dates": {
+      "닛케이": "2026-11-25",
+      "항셍": "2026-11-25",
+      "상해종합": "2026-11-25",
+      "대만가권": "2026-11-25"
+    },
+    "avg_pct": -2.69,
+    "relative_pp": -3.47
+  },
+  "asia_peers_missing": {},
+  "usdkrw_intraday": {
+    "high": 1348.68,
+    "high_t": "09:00",
+    "low": 1341.8,
+    "low_t": "14:00",
+    "close": 1342.0,
+    "last_t": "15:30",
+    "bars": 11
+  },
+  "collect": {
+    "status": "ok",
+    "as_of": "2026-11-25",
+    "collected_at": "2026-11-25T18:11:12+09:00",
+    "source": "yfinance + data/market_data.json",
+    "response": "ok",
+    "required_ok": true,
+    "missing": [],
+    "empty": "has_data",
+    "detail": "장중 창 완결 기준: 마지막 봉 15:00 KST 이후(정규장 15:30, 조기 마감·개장 지연 달력 없음 — 다른 마감 시각을 추정하지 않는다)"
+  }
+}

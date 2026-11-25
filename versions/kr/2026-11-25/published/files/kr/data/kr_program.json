@@ -1,0 +1,12 @@
+{
+  "KOSPI": {
+    "rows": [],
+    "latest_date": null,
+    "error": "Naver 레거시 페이지 폐지(2026-09-17 SPA 개편) — 대체 소스 없음: programDealTrendDay"
+  },
+  "KOSDAQ": {
+    "rows": [],
+    "latest_date": null,
+    "error": "Naver 레거시 페이지 폐지(2026-09-17 SPA 개편) — 대체 소스 없음: programDealTrendDay"
+  }
+}

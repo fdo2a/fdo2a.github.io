@@ -1,0 +1,12 @@
+{
+  "report_date": "2026-11-25",
+  "charts": {
+    "kr_charts": {
+      "file": "kr_charts_2026-11-25.png",
+      "sha256": "bc686f7675af580c62bd13c22ef2f2759419cdbdc9d7f8fa6ac4c589a9c8dbba",
+      "bytes": 225562
+    },
+    "kr_flows_intraday": null
+  },
+  "notes": {}
+}

@@ -985,7 +985,6 @@
       }
     },
     "2026-11-25": {
-      "flows": {},
       "industry": {
         "소프트웨어": 9.36,
         "인터넷과카탈로그소매": 8.47,
@@ -1216,7 +1215,23 @@
         "음료",
         "문구류",
         "담배"
-      ]
+      ],
+      "flows": {}
+    }
+  },
+  "_provenance": {
+    "2026-11-25": {
+      "industry": "published",
+      "top_value": "published",
+      "flows": "published_or_remote"
+    },
+    "2026-11-23": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
+    },
+    "2026-11-24": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
     }
   }
 }
