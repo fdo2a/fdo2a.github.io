@@ -1,0 +1,117 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-25",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-25T11:13:07+00:00",
+ "cutoff_at": "2026-11-25T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "932dd47d05fbe8fc978fa60a381bea465c0c009b",
+  "sha256": "28c253fb74549bade006b7cf0d5bb52c04597e4b87432ec8ae0cb7aae665a4ae",
+  "extra": {
+   "kr_econ.json": "0b45352e872ddd3d2efe83d5ea995cf2d4d53711383f2922a15d26041e796b42",
+   "kr_flows.json": "217552c032960ae23ba984000c352db651e4931e046807fb4db6e2303b09a05b",
+   "kr_session.json": "c48b635a6c6f3e273058ec264d2b7011ac316f9d806c888c3a6afb73a0b64441"
+  }
+ },
+ "counts": {
+  "harvest": 556,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "discovery": "truncated",
+  "hosts": {
+   "newsis": "ok",
+   "donga": "short",
+   "fnnews": "ok",
+   "sbs": "ok",
+   "khan": "ok",
+   "herald": "ok",
+   "kbs": "ok"
+  },
+  "notes": [
+   "discover:556"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 30605,
+   "out": 10812
+  },
+  "grounded": {
+   "claims": "6/6",
+   "pairs": "2/2",
+   "obs": "7/7"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 7,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "structure",
+    "variables[2]",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_ratio",
+   "remaining": [
+    "structure:dangling",
+    "variables[2]:unverified",
+    "edges[0]:dangling",
+    "edges[1]:dangling",
+    "edges[2]:unverified",
+    "memo[0]:dangling",
+    "memo[1]:dangling",
+    "worry.most[0]:unverified",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:unverified",
+    "worry.unlikely[0]:dangling"
+   ]
+  }
+ },
+ "event": {
+  "topic_ko": "미국 301조 과잉생산 관세 발표 전망과 중국 반발, 화웨이 유죄 평결",
+  "query": "관세 과잉생산 발표",
+  "trigger": []
+ },
+ "problems": [
+  "structure:dangling",
+  "variables[2]:unverified",
+  "edges[0]:dangling",
+  "edges[1]:dangling",
+  "edges[2]:unverified",
+  "memo[0]:dangling",
+  "memo[1]:dangling",
+  "worry.most[0]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:unverified",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "d9b8fd243ffeb50b"
+}
