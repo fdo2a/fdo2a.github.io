@@ -4,10 +4,10 @@
  "span": "daily",
  "report_date": "2026-11-25",
  "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-25T12:05:04+00:00",
+ "reason": "topic_too_long",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-25T12:21:54+00:00",
  "cutoff_at": "2026-11-25T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 532,
+  "harvest": 518,
   "candidates": 1,
   "articles": [
    6
@@ -33,85 +33,31 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "discovery": "truncated",
   "hosts": {
    "newsis": "ok",
    "donga": "short",
    "fnnews": "ok",
-   "khan": "ok",
    "sbs": "ok",
+   "khan": "ok",
    "herald": "ok",
    "kbs": "ok"
   },
   "notes": [
-   "discover:532"
+   "discover:518"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 29564,
-   "out": 9343
-  },
-  "grounded": {
-   "claims": "4/4",
-   "pairs": "1/1",
-   "obs": "7/7"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7,
-   "strict_pairs": 1,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[0]",
-    "edges[1]",
-    "edges[2]",
-    "memo[0]",
-    "memo[1]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.moderate[1]",
-    "worry.most[0]",
-    "worry.unlikely[0]"
-   ],
-   "outcome": "skipped_ratio",
-   "remaining": [
-    "structure:dangling",
-    "edges[0]:unverified",
-    "edges[0]:dangling",
-    "edges[1]:unverified",
-    "edges[2]:dangling",
-    "memo[0]:dangling",
-    "memo[1]:dangling",
-    "worry.most[0]:dangling",
-    "worry.moderate[0]:dangling",
-    "worry.moderate[1]:unverified",
-    "worry.unlikely[0]:dangling"
-   ]
+   "in": 15500,
+   "out": 8701
   }
  },
  "event": {
-  "topic_ko": "미국 301조 과잉생산 관세 발표 전망과 중국의 반발, 한국 관세 상한",
-  "query": "관세 과잉생산 발표",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:dangling",
-  "edges[0]:unverified",
-  "edges[0]:dangling",
-  "edges[1]:unverified",
-  "edges[2]:dangling",
-  "memo[0]:dangling",
-  "memo[1]:dangling",
-  "worry.most[0]:dangling",
-  "worry.moderate[0]:dangling",
-  "worry.moderate[1]:unverified",
-  "worry.unlikely[0]:dangling"
- ],
- "content_hash": "c581518f04b3eb06"
+ "content_hash": "14befafb98daa8a3"
 }
