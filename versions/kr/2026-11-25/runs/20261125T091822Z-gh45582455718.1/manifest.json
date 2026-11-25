@@ -1,0 +1,224 @@
+{
+  "market": "kr",
+  "trade_date": "2026-11-25",
+  "run_id": "20261125T091822Z-gh45582455718.1",
+  "mode": "enforce",
+  "collected_at_utc": "2026-11-25T09:18:22+00:00",
+  "collected_at_kst": "2026-11-25T18:18:22+09:00",
+  "trigger": "workflow_dispatch",
+  "published_on_remote": false,
+  "publish_commit": null,
+  "frozen": false,
+  "would_freeze": false,
+  "changes": [
+    {
+      "status": "A",
+      "path": "kr/assets/kr_charts_2026-11-25.png"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/_collect_status.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/history/kr_market.jsonl"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_charts_manifest.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_econ.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_flows.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_flows_intraday.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_fund_view.html"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_fund_view.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_index_etf.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_industry.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_intraday.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_market_data.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_movers.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_sector.html"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_session.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_stance_eval.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_stock_moves.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_technical.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/kr_top_value.json"
+    },
+    {
+      "status": "A",
+      "path": "kr/data/news/2026-11-25.json"
+    },
+    {
+      "status": "A",
+      "path": "kr/data/telegram/2026-11-25.json"
+    },
+    {
+      "status": "M",
+      "path": "kr/data/weekly/2026-W48.json"
+    }
+  ],
+  "files": {
+    "kr/assets/kr_charts_2026-11-25.png": "bc686f7675af580c62bd13c22ef2f2759419cdbdc9d7f8fa6ac4c589a9c8dbba",
+    "kr/data/_collect_status.json": "e04a4a2bbc69bcb311ebd47758852e5823206583ebe06b5615f8ae8eaf19bd07",
+    "kr/data/history/kr_market.jsonl": "a6b16ec6f630b06a04cdcfb803b34b360e1fab0334d2ec4ca35160ea7979b450",
+    "kr/data/kr_charts_manifest.json": "853b06ee4ebae53556468acaefe9b46b5606bb7e30438eae5df494f9aada311e",
+    "kr/data/kr_econ.json": "0b45352e872ddd3d2efe83d5ea995cf2d4d53711383f2922a15d26041e796b42",
+    "kr/data/kr_flows.json": "217552c032960ae23ba984000c352db651e4931e046807fb4db6e2303b09a05b",
+    "kr/data/kr_flows_intraday.json": "1b5f34433384696fb99ad882176a1c6b2e131b591e7dd84e89dd9b1444b042ac",
+    "kr/data/kr_fund_view.html": "e3f15b76afc56226b6cc84199dff80e013b93bb82c2c090ac9fe6192e733b3ea",
+    "kr/data/kr_fund_view.json": "070f9821b0c2345d29768278d8cdc85e7320bca564c290813800cf358b36b2f0",
+    "kr/data/kr_index_etf.json": "6bea7c24973ac4b68d07f12942dedbb118123c8da2774d5141d28bf5b3b5d34d",
+    "kr/data/kr_industry.json": "58323e35bbb5b1487258921896f5f0d5453e749b5cbad41311e8a0b37b8fb1db",
+    "kr/data/kr_intraday.json": "83d1d711013ffa51aebdbae464e4a187ae1be6e1228684b66568f4a813e52f01",
+    "kr/data/kr_market_data.json": "28c253fb74549bade006b7cf0d5bb52c04597e4b87432ec8ae0cb7aae665a4ae",
+    "kr/data/kr_movers.json": "d2aa259c050409c921d559ea17e1774ddf0cbae6947d2cdcd4ad2b8efc898361",
+    "kr/data/kr_program.json": "f4e9ba2fe1eacef0815dd13217fc82f6f03f965f6cc7e8d468032230b3617b40",
+    "kr/data/kr_sector.html": "4da88e45cf3fb168c1a5a64fdd1fe27ea4301cc3850803e97e1136d3b2e3c71b",
+    "kr/data/kr_session.json": "c48b635a6c6f3e273058ec264d2b7011ac316f9d806c888c3a6afb73a0b64441",
+    "kr/data/kr_stance.json": "2dd58554d01a527f425f8726c3e0821ae171d67d4bcb6a5f7dfa4d8ab084f789",
+    "kr/data/kr_stance_eval.json": "c489b81d4ef709c6fe7b3645013af339509a298b23bb868a3a4dc74a803d9ea5",
+    "kr/data/kr_stock_moves.json": "bc038b894df8420b93fd18a94a8887eba1230b79118123cc8a776c7a55a7ae09",
+    "kr/data/kr_technical.json": "e22256409fe9e1464188d4fa703b95a5a13de529fb422e8a0ab5284ee5638b93",
+    "kr/data/kr_theme.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "kr/data/kr_top_value.json": "b8abed03e32c7c653c567b2eb300ef0f4397836a9119efa77130703016e1a669",
+    "kr/data/news/2026-11-25.json": "1abfb97503ca4a01fbd2f340d040a545e103b2d707a3643ba0c029b25974aa25",
+    "kr/data/telegram/2026-11-25.json": "41245230bf689c31c6b2e8a8b001f8d0b2c8961bbd6d07b9c3c0d191bb0574c2",
+    "kr/data/weekly/2026-W48.json": "1caba231ccf51e22fd259a674808ce258490ecd915444c76110c861b26ebe0af"
+  },
+  "field_status": {
+    "asia_peers.닛케이": "ok",
+    "asia_peers.항셍": "ok",
+    "asia_peers.상해종합": "ok",
+    "asia_peers.대만가권": "ok",
+    "technical.코스피": "ok",
+    "technical.코스닥": "ok",
+    "technical.SK하이닉스": "ok",
+    "technical.삼성전자": "ok",
+    "stock_moves": "n=58",
+    "index_pct.KOSPI": "ok",
+    "index_pct.KOSDAQ": "ok",
+    "index_pct.mode": "warn/ok",
+    "flows.KOSPI": "ok",
+    "flows.KOSDAQ": "ok",
+    "top_value": "rows=2497/dash=269/bad=0"
+  },
+  "diff_vs_published": null,
+  "checks": {
+    "index_pct": {
+      "mode": "warn",
+      "config_status": "ok",
+      "KOSPI": {
+        "status": "ok",
+        "naver_pct": -6.16,
+        "derived_pct": -6.163,
+        "prev_close": 5006.03,
+        "prev_source": "basic",
+        "integ_prev": 5006.03,
+        "matched": true,
+        "cross_note": false
+      },
+      "KOSDAQ": {
+        "status": "ok",
+        "naver_pct": -2.29,
+        "derived_pct": -2.2887,
+        "prev_close": 665.88,
+        "prev_source": "basic",
+        "integ_prev": 665.88,
+        "matched": true,
+        "cross_note": false
+      }
+    },
+    "flows": {
+      "KOSPI": {
+        "state": "ok",
+        "faults": []
+      },
+      "KOSDAQ": {
+        "state": "ok",
+        "faults": []
+      }
+    },
+    "top_value": {
+      "rows": 2497,
+      "dash": 269,
+      "bad": 0,
+      "dash_top100": 0,
+      "positive_rows": 10
+    }
+  },
+  "stored": {
+    "kr/data/_collect_status.json": "copied",
+    "kr/data/history/kr_market.jsonl": "copied",
+    "kr/data/kr_charts_manifest.json": "copied",
+    "kr/data/kr_econ.json": "copied",
+    "kr/data/kr_flows.json": "copied",
+    "kr/data/kr_flows_intraday.json": "copied",
+    "kr/data/kr_fund_view.html": "copied",
+    "kr/data/kr_fund_view.json": "copied",
+    "kr/data/kr_index_etf.json": "copied",
+    "kr/data/kr_industry.json": "copied",
+    "kr/data/kr_intraday.json": "copied",
+    "kr/data/kr_market_data.json": "copied",
+    "kr/data/kr_movers.json": "copied",
+    "kr/data/kr_program.json": "remote@8982180f1281bbac65685db0360ee1e694fc36fb",
+    "kr/data/kr_sector.html": "copied",
+    "kr/data/kr_session.json": "copied",
+    "kr/data/kr_stance.json": "remote@8982180f1281bbac65685db0360ee1e694fc36fb",
+    "kr/data/kr_stance_eval.json": "copied",
+    "kr/data/kr_stock_moves.json": "copied",
+    "kr/data/kr_technical.json": "copied",
+    "kr/data/kr_theme.json": "remote@8982180f1281bbac65685db0360ee1e694fc36fb",
+    "kr/data/kr_top_value.json": "copied",
+    "kr/data/news/2026-11-25.json": "copied",
+    "kr/data/telegram/2026-11-25.json": "copied",
+    "kr/data/weekly/2026-W48.json": "copied",
+    "kr/assets/kr_charts_2026-11-25.png": "copied"
+  }
+}

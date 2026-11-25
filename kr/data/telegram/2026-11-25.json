@@ -1,0 +1,309 @@
+{
+ "report_date": "2026-11-25",
+ "market": "kr",
+ "collected_utc": "2026-11-25T09:17:05+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-23T22:40:36+00:00",
+  "kwusa": "2026-11-24T06:13:10+00:00",
+  "lim_econ": "2026-11-23T22:39:31+00:00",
+  "d_ticker": "2026-11-24T00:21:41+00:00",
+  "aethersemiconductor": "2026-11-24T09:03:54+00:00",
+  "FastStockNews": "2026-11-24T08:10:12+00:00",
+  "FastStockNewsUSA": "2026-11-24T09:00:18+00:00",
+  "insidertracking": "2026-11-24T09:04:06+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-23T22:40:36+00:00",
+   "last_id": 3011,
+   "last_dt": "2026-11-24T22:34:07+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-24T06:13:10+00:00",
+   "last_id": 61811,
+   "last_dt": "2026-11-24T22:52:27+00:00",
+   "read": 5
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-23T22:39:31+00:00",
+   "last_id": 2142,
+   "last_dt": "2026-11-24T22:37:19+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-24T00:21:41+00:00",
+   "last_id": 4239,
+   "last_dt": "2026-11-25T01:13:55+00:00",
+   "read": 6
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-24T09:03:54+00:00",
+   "last_id": 27233,
+   "last_dt": "2026-11-25T08:52:35+00:00",
+   "read": 28
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-24T08:10:12+00:00",
+   "last_id": 128500,
+   "last_dt": "2026-11-25T09:15:55+00:00",
+   "read": 75
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 2,
+   "truncated": false,
+   "from_dt": "2026-11-24T09:00:18+00:00",
+   "last_id": 24815,
+   "last_dt": "2026-11-25T08:32:49+00:00",
+   "read": 25
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-24T09:04:06+00:00",
+   "last_id": 70196,
+   "last_dt": "2026-11-25T09:15:33+00:00",
+   "read": 65
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/27207",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-24T11:55:37+00:00",
+   "url": "https://t.me/aethersemiconductor/27207",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "닌텐도에 대한 JP모건의 시각은 플랫폼 전환을 이어가며 영업이익을 극대화할 수 있다는 것이다. 목표주가는 12,800엔에서 12,600엔으로 소폭 낮아졌지만 비중확대 의견은 유지됐다. 반도체 가격 상승세는 둔화되는 듯하나 확신하기는 이르다는 평가가 함께 제시됐다. 스위치 2 판매량은 FY2027부터 연간 1,700만~1,800만 대 수준에서 안정될 것이라는 전망이며, 이는 가격 인상 가능성을 반영해 기존 2,000만 대에서 낮춘 수치다. 목표주가는 FY2026 EPS에 PER 35배를 적용해 산출했으며, 이는 FY2030 EPS 기준 약 20배에 해당한다는 설명이다. 라이브러리 타이틀 수요 진작 효과는 느리고 간접적일 것이라는 견해도 덧붙었으나, 라이브러리 깊이와 디지털 사업 전환을 근거로 투자 매력은 충분하다는 결론이 내려졌다."
+  },
+  {
+   "id": "aethersemiconductor/27213",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-24T22:08:01+00:00",
+   "url": "https://t.me/aethersemiconductor/27213",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "DELL의 FY3Q27 실적은 매출 549억 달러로 전년 대비 103% 늘며 사상 최대를 기록했고, 조정 EPS는 9.45달러로 컨센서스를 웃돌았다. 4분기 가이던스는 매출 563억 달러, EPS 8.40달러로 제시됐다. 분기 말 AI 백로그는 1,323억 달러에 달했으며, 이를 바탕으로 AI 인프라 확대와 영업레버리지가 성장을 이끌고 있다는 시각이 나온다. 또한 ISG 중심으로 이익 구조가 옮겨가고 있으며, AI 서버에서 AI 팩토리 플랫폼으로 사업 영역이 넓어지고 있다는 의견도 제시됐다."
+  },
+  {
+   "id": "FastStockNews/128427",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-24T22:29:53+00:00",
+   "url": "https://t.me/FastStockNews/128427",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "이투데이",
+    "url": "https://www.etoday.co.kr/news/view/2652490",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "뉴욕증시는 24일(현지시간) 혼조세로 마감했다. 다우지수는 0.85% 오른 5만18.70에 마쳤지만 S&P500지수와 나스닥종합지수는 각각 0.50%, 1.48% 하락했다. 전날 30% 넘게 급등했던 엔비디아는 차익실현 매물에 5.86% 밀렸고, 필라델피아반도체지수는 7.88% 급락했다. 투자자들은 황 CEO의 복귀에도 AI 투자 부담과 높은 밸류에이션, 중간선거 이후 규제 가능성이 남아 있다고 보고 있다. 같은 날 상장한 AI 기업 앤스로픽은 3거래일 연속 하락하며 공모가 83달러를 밑돌았다. 한편 미국 행정부가 16개 교역 상대국을 대상으로 한 과잉생산 관세 조사 결과를 이르면 이날 저녁 발표할 것이라는 보도에 새로운 관세 부과 가능성이 부각됐다. 국제유가는 호르무즈 해협 선박 공격 여파로 2% 넘게 올랐다."
+  },
+  {
+   "id": "hedgecat0301/3011",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-24T22:34:07+00:00",
+   "url": "https://t.me/hedgecat0301/3011",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 증시가 AI주 등락에 따라 냉온탕을 오가는 가운데, 젠슨황 복귀에 따른 AI주 급등분이 HPE 실적 부진과 AI 수익성 우려 재부각으로 반납된 점을 짚었다. 앤스로픽마저 IPO 이후 조정을 겪는 상황을 보면 시장은 AI에 대한 기대보다 불안이 우위에 있다고 진단했다. 관세 리스크에 대해서는 무역법 301조 조사의 연장선이라 파급력이 제한적이며, 현재 가격 결정력은 관세보다 AI 불확실성이 쥐고 있다고 보고 AI주 움직임에 더 민감하게 대응해야 한다고 권했다. 국내 증시는 필라델피아 반도체 지수 약세 여파로 하락 출발한 뒤 과매도 부담에 따른 저가매수로 낙폭을 만회할 것으로 내다봤다. 필자는 전일 폭등을 추세 전환의 신호보다 과도했던 비관론이 후퇴하기 시작한 초기 국면으로 인식하며, 미국 10월 PCE 물가와 블랙프라이데이 소비, 다음 주 11월 수출 결과를 거치며 바닥 확인 작업을 이어가는 전략이 필요하다고 제시했다."
+  },
+  {
+   "id": "lim_econ/2142",
+   "channel": "lim_econ",
+   "group": "firm",
+   "dt_utc": "2026-11-24T22:37:19+00:00",
+   "url": "https://t.me/lim_econ/2142",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "블룸버그",
+    "url": null,
+    "basis": "credit"
+   },
+   "summary_ko": "미국이 한국·중국·EU 등 10여 개 경제권을 대상으로 한 관세 인상안을 이르면 24일 발표할 것으로 전해졌다. 국가별 차등 적용이 검토되지만 기존 협정상 전체 관세 수준은 넘지 않는 방향이라는 시각이 있고, 중국산은 예외 없이 적용될 가능성이 거론된다. 엔비디아는 다음 주 상원 청문회를 앞두고 규제 리스크가 커졌다는 우려가 나오며, 앤트로픽은 상장 직후 공모가를 밑돌아 변동성이 크다는 평가다. 핌코는 AI 붐이 충격 취약성을 키운다며 우량 채권의 매력을 강조했고, 삼성전자 외국인 배당에 따른 원화 단기 약세 압력도 거론된다."
+  },
+  {
+   "id": "d_ticker/4234",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-24T23:23:28+00:00",
+   "url": "https://t.me/d_ticker/4234",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "셈택(SMTC)은 고객의 납기 당김 요청에 따라 올해 3배 안팎, 내년에도 3~4배로 캐파를 늘리기로 했고 파운드리 제약 완화와 테스터 공급처 다변화로 납품 계획도 마련했다고 밝혔다. 다만 분기 매출 런레이트(연환산)가 $25M에 그쳐 주가가 17% 급락했다. 어플라이드옵토일렉트로닉스(AAOI)는 두 번째 하이퍼스케일러 고객과 4년 규모 800G 트랜시버 장기공급계약(LTA)을 체결했다고 발표했으나, 총액 $2.2B 가운데 내년 트랜시버 최소 구매분은 $1.5B, 이후 레이저 다이오드 구매분은 $0.7B로 짜였다. 계약에 CAPEX 지원이 빠져 있어 시장은 이를 긍정적으로 받아들이지 않았다는 시각이다."
+  },
+  {
+   "id": "aethersemiconductor/27216",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-24T23:29:35+00:00",
+   "url": "https://t.me/aethersemiconductor/27216",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "델(Dell)의 FY3Q27 실적 발표는 매출 549억 달러(전년 대비 103%↑), 비GAAP EPS 9.45달러로 외형과 이익이 크게 늘었다고 전했다. 이익의 중심이 인프라스트럭처 부문(ISG)으로 옮겨가고 있으며, AI 서버 수주잔고가 1,323억 달러에 이르러 수요가 공급을 앞서는 상황이 당분간 이어질 것이라는 시각이 제시됐다. 이와 함께 CPU 서버와 메모리·스토리지까지 AI 인프라 수요가 번지고 있어 부품 공급 확보가 향후 성장의 관건이라는 의견도 덧붙었다."
+  },
+  {
+   "id": "aethersemiconductor/27219",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-25T00:38:20+00:00",
+   "url": "https://t.me/aethersemiconductor/27219",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "BofA는 엔비디아향 HBM·eSSD 등 고사양 메모리와 MLCC·FC-BGA 같은 수동부품 수요가 여전히 강하고, 미국 하이퍼스케일러의 GPU 수요도 견조해 중국 수출통제 우려를 완화할 수 있다는 시각을 제시했다. 엔비디아 FY3Q27 실적과 1월 분기 가이던스가 이를 뒷받침한다는 견해다. 트렌드포스의 NAND ASP 하향 조정은 기존 논지와 대체로 맞아 놀랍지 않다고 평가했다. 다만 메모리 현물가는 NAND가 반등했지만 512Gb 웨이퍼 낙폭이 11월 들어 확대되고 있어, 연말 고정가 하방 가능성도 거론된다. 삼성전자 파운드리 축소 보도에 대해서는 이미 대부분 종료됐다는 입장으로 반박했다."
+  },
+  {
+   "id": "d_ticker/4238",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-25T01:12:44+00:00",
+   "url": "https://t.me/d_ticker/4238",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "델은 신용등급이 투자등급(IG)인 고객을 대상으로 PC·서버·스토리지 구매에 쓰이는 리스·할부 등 금융계약 규모가 3분기에 55% 늘었다고 밝혔다. 델 파이낸셜 서비스(DFS)를 통해 단기 자금을 선별적으로 공급하고 있으며, 협력사가 생산을 시작하기 직전 신용을 다시 심사하고 부지·전력·냉각 설비 준비 상황까지 확인하는 방식으로 운영한다는 시각이 제시됐다. 3Q26 AI서버 신규수주는 602억 달러로 전분기 대비 1.1% 줄었고, 신규 주문의 과반은 베라루빈 NVL72 랙이 차지했다. 메모리 공급 부족은 2027년까지 이어질 것이라는 의견이며, 메모리 가격 상승률은 둔화하더라도 가격 자체는 계속 오를 것으로 보는 시각이 함께 나왔다."
+  },
+  {
+   "id": "FastStockNews/128456",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-25T02:05:22+00:00",
+   "url": "https://t.me/FastStockNews/128456",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "대성하이텍이 중국 JIANGSU HANCHUANG MACHINERY와 반도체 후공정 테스트용 부품 제작 장비 공급 계약을 맺었다고 공시했다. 계약총액은 225억원이며 매출 대비 23.63%에 해당한다. 계약기간은 2026년 11월 24일부터 2028년 8월 31일까지 약 1년 10개월이다. 선급금은 CNY 9,000,000이며 2026년 11월 30일까지 지급하기로 했다. 선급금이 12월 10일까지 입금되지 않으면 회사는 계약을 해제하거나 출고 일정을 늦출 수 있는 조건이 붙어 있다. 이번 계약이 회사의 향후 실적에 긍정적이라는 시각도 함께 나온다."
+  },
+  {
+   "id": "FastStockNews/128463",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-25T03:37:14+00:00",
+   "url": "https://t.me/FastStockNews/128463",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "샌디스크 경영진은 최근 투자자 교류회에서 AI 수요에 힘입은 낸드 시장을 매우 낙관적으로 내다봤다는 내용이다. AI 데이터센터 낸드 시장이 1.2ZB 규모에 이를 것이라는 기존 전망은 하방 리스크가 없다는 입장을 다시 밝혔다. 직접 연결 스토리지, KV 캐시, 고속 데이터 레이크 세 가지 AI 스토리지 수요가 모두 견고하게 늘고 있으며 고대역폭 플래시도 추가 수요의 기회로 본다는 시각이다. 또 중국 내수 시장이 충분히 커서 현지 공급업체들의 생산이 크게 늘어나더라도 이를 소화할 수 있다는 의견을 제시했다."
+  },
+  {
+   "id": "FastStockNews/128477",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-25T05:49:50+00:00",
+   "url": "https://t.me/FastStockNews/128477",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": "2026-11-25",
+   "summary_ko": "코스피가 6% 급락한 날 정부가 증안펀드를 확대하는 방안을 추진한다는 단독 보도가 나왔다. 제목만으로는 확대 규모와 추진 시기, 급락의 배경을 알 수 없다. 다만 시장 급락에 대응해 증시 안정 수단을 키우려는 움직임으로 읽힌다는 시각이 가능하다. 본문을 확인해야 구체적인 내용을 파악할 수 있다."
+  },
+  {
+   "id": "aethersemiconductor/27225",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-25T06:01:48+00:00",
+   "url": "https://t.me/aethersemiconductor/27225",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "엔비디아 AI 제품의 신규 주문 납기가 크게 길어졌고, 이로 인해 소비자용 그래픽카드 공급이 밀리고 있다는 소식이 전해졌다. 대만 ODM 업체들에 따르면 B300과 GB300 신규 주문의 납기는 각각 26~40주, 14~26주로 늘었고, 메모리 업체들이 첨단 생산능력을 서버 DRAM에 우선 배분하면서 그래픽카드용 GDDR7 생산도 제한되고 있다. 이에 따라 차세대 RTX 60 시리즈의 출시가 늦어질 수 있다는 우려가 제기됐다. 엔비디아가 AI 제품 생산을 늘리는 가운데 소비자 시장의 공급 차질이 이어질 것이라는 시각이 담겼다."
+  },
+  {
+   "id": "FastStockNews/128495",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-25T08:44:05+00:00",
+   "url": "https://t.me/FastStockNews/128495",
+   "market_basis": "channel",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "매일경제",
+    "url": "https://www.mk.co.kr/news/article/12218470",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "코스피가 25일 전날보다 6.16% 내린 4697.51에 마감하며 4700선 아래로 밀렸다. 전날 상승분을 모두 반납했고 종가 기준 4600선 근처까지 떨어진 것은 1월 13일 이후 10개월 만이다. 반도체 대형주 매도가 집중돼 삼성전자는 9.87%, SK하이닉스는 11.05% 급락했다. 시장에서는 정부와 금융권이 증권시장안정펀드(증안펀드)를 대폭 키워 단계적으로 투입해야 한다는 목소리가 커지고 있다. 박현주 미래에셋그룹 회장은 하락장이 기업 실적보다 유동성 문제에서 비롯됐다며 증안펀드를 최소 100조원 규모로 확대하자고 제안했다. 2020년 조성돼 2022년 재약정된 증안펀드의 출자 약정액은 10조7600억원으로, 증시 규모가 커진 만큼 확대 필요성이 제기된다. 금융위원회는 산업은행 등 기존 출자사에 추가 출자 가능성을 묻는 공문을 보내 준비에 나섰다. 박 회장은 장기투자 문화를 위해 '전 국민 10억 만들기 펀드'를 조만간 출시하겠다고 밝히고, 자사주 매입 후 소각 의무의 한시적 완화도 제안했다."
+  }
+ ],
+ "collect": {
+  "status": "ok",
+  "as_of": "2026-11-25",
+  "collected_at": "2026-11-25T18:18:21+09:00",
+  "source": "t.me/s public channels",
+  "response": "ok",
+  "required_ok": true,
+  "missing": [],
+  "empty": "has_data"
+ },
+ "stats": {
+  "items": 14,
+  "summarized": 14,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
