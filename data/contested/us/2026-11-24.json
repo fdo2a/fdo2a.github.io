@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-24",
  "status": "none",
- "reason": "analysis_unverified",
+ "reason": "topic_too_long",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-24T23:34:36+00:00",
- "cutoff_at": "2026-11-24T23:34:36+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-25T00:40:20+00:00",
+ "cutoff_at": "2026-11-25T00:40:20+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d2afd215196d446af358299b024c26489e7943500723b089b27cbf885d6f6753"
  },
  "counts": {
-  "harvest": 203,
+  "harvest": 200,
   "candidates": 1,
   "articles": [
    6
@@ -29,65 +29,29 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 3,
+  "runs": 4,
   "tokens": {
-   "in": 74023,
-   "out": 18305
+   "in": 26235,
+   "out": 10560
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "theguardian.com": "ok",
    "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
-  "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "5/6",
-   "pairs": "2/3",
-   "obs": "8/8"
-  },
-  "verified": {
-   "pairs": 2,
-   "claims": 4,
-   "obs": 8,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[1]",
-    "edges[2]",
-    "memo[2]",
-    "structure",
-    "worry.moderate[0]",
-    "worry.most[0]"
-   ],
-   "outcome": "partial",
-   "remaining": [
-    "structure:unverified",
-    "edges[1]:unverified",
-    "edges[2]:unverified",
-    "memo[2]:unverified",
-    "worry.most[0]:unverified",
-    "worry.moderate[0]:unverified"
-   ]
-  }
+  "notes": [
+   "feed:politics:TimeoutError",
+   "feed:economy:TimeoutError",
+   "feed:industry:HTTPError"
+  ],
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "젠슨 황 엔비디아 CEO 복귀를 둘러싼 AI 거품 우려와 국가안보 논란",
-  "query": "nvidia huang return",
+  "topic_ko": "",
+  "query": "",
   "trigger": []
  },
- "problems": [
-  "structure:unverified",
-  "edges[1]:unverified",
-  "edges[2]:unverified",
-  "memo[2]:unverified",
-  "worry.most[0]:unverified",
-  "worry.moderate[0]:unverified"
- ],
- "content_hash": "6ed7bcfa90f946dd"
+ "content_hash": "bdebb9c9c7e0dcae"
 }
