@@ -1,8 +1,8 @@
 {
-  "as_of": "2026-11-25",
+  "as_of": "2026-11-26",
   "window": {
     "bgn": "20261124",
-    "end": "20261125"
+    "end": "20261126"
   },
   "note": "DART 는 18:00 까지 접수한다 — 17:40 수집 이후 공시는 다음 창에 잡힌다",
   "tickers": {
@@ -14,13 +14,75 @@
     },
     "000660.KS": {
       "corp_code": "00164779",
-      "events": [],
+      "events": [
+        {
+          "rcept_no": "20261125800766",
+          "date": "2026-11-25",
+          "title": "기업가치제고계획(자율공시)",
+          "corp": "SK하이닉스",
+          "filer": "SK하이닉스",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261125800766",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        }
+      ],
       "axes": [],
       "confirmed_count": 0
     },
     "MU": {
       "cik": "0000723125",
-      "events": [],
+      "events": [
+        {
+          "rcept_no": "0000723125-26-000037",
+          "date": "2026-11-24",
+          "title": "ARS",
+          "corp": "MICRON TECHNOLOGY INC",
+          "filer": null,
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000037/a202610karscopy.pdf",
+          "form": "ARS",
+          "items": [],
+          "accepted_et": "2026-11-24 11:24:29 ET",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false,
+          "notable": false
+        },
+        {
+          "rcept_no": "0000723125-26-000036",
+          "date": "2026-11-24",
+          "title": "DEFA14A",
+          "corp": "MICRON TECHNOLOGY INC",
+          "filer": null,
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000036/a2026defa14a.htm",
+          "form": "DEFA14A",
+          "items": [],
+          "accepted_et": "2026-11-24 11:23:53 ET",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false,
+          "notable": false
+        },
+        {
+          "rcept_no": "0000723125-26-000034",
+          "date": "2026-11-24",
+          "title": "DEF 14A",
+          "corp": "MICRON TECHNOLOGY INC",
+          "filer": null,
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000034/mu-20261124.htm",
+          "form": "DEF 14A",
+          "items": [],
+          "accepted_et": "2026-11-24 11:22:44 ET",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false,
+          "notable": false
+        }
+      ],
       "axes": [],
       "confirmed_count": 0,
       "notable_count": 0
@@ -30,7 +92,7 @@
   "sec": {
     "window": {
       "first": "2026-11-23",
-      "last": "2026-11-25"
+      "last": "2026-11-26"
     },
     "note": "SEC filingDate(미 동부 영업일) 기준, 직전 수집 전날부터 — DART 와 같이 하루 겹친다"
   }
