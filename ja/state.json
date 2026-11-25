@@ -215,6 +215,7 @@
     "japan/data/news/2026-11-19.json": "9fb36dd623605c672d3d805f988a5233432ad9a9",
     "japan/data/news/2026-11-20.json": "0866198119ece4062f149ed79f7473231785dbae",
     "japan/data/news/2026-11-23.json": "f4c0406abfb46be68470d8ed7f84276cc1f65656",
+    "japan/data/news/2026-11-24.json": "0df5f091948d40186ef5237c2891f06b94644cd6",
     "japan/data/news/daily/2026-11-10.json": "6345bec0e452301da03ed0d0d95b06ed22feb9ed",
     "japan/data/news/daily/2026-11-11.json": "92dc890a0ffec2edb354c22ad2a2d108df9656b6",
     "japan/data/news/daily/2026-11-12.json": "879da43d5bdd3a35a5c42649b9ddf8da7b58ad28",
@@ -229,11 +230,11 @@
    },
    "reason": "확인 안 된 인명: 이케다 다카마사",
    "renderer": "r2",
-   "rounds": 3,
+   "rounds": 4,
    "source_blob": "a05352005b0efa919a9ae2e4b3021d8b5c2a2a55",
    "status": "held",
    "text_hash": "e495e9a0662cfc22",
-   "updated": "2026-11-25T10:11:42+09:00"
+   "updated": "2026-11-25T14:14:42+09:00"
   },
   "news/2026-11-16.html": {
    "deps": {
