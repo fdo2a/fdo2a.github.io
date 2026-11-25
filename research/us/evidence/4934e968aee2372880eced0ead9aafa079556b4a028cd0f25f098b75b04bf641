@@ -1,0 +1,10 @@
+WebSearch session 2026-11-25 21:55-22:07 UTC (standard mode). Queries and outcome summaries (public search-result summaries, no page bytes):
+1. "stock market November 25 2026 Nasdaq semiconductors rebound off lows PCE" -> no coverage dated 2026-11-25 indexed; results were 2025 sessions.
+2. "Sandisk stock plunge November 25 2026 why" -> no coverage dated 2026-11-25; nearest Motley Fool 2026-11-13 (AI hardware selloff after Nvidia CEO exit), Finimize note of 8-for-1 split with split-adjusted trading from 2026-11-20.
+3. "SK hynix Samsung Electronics shares plunge November 25 2026 Kospi" -> no coverage dated 2026-11-25.
+4. "Treasury yields fall PCE inflation 3.8% GDP 4.3% December rate hike FedWatch" -> no 2026-11-25 match; Finimize undated piece on advance Q3 GDP 3.4% and ~83% December hike odds (older).
+5. "oil prices jump LNG tanker explosion Hormuz Saudi refinery attack November 25" -> no 2026-11-25 coverage found.
+6. "CME FedWatch December 9 2026 rate hike probability Warsh" -> no dated current reading; older 79%/82.5% figures with unclear dates.
+7. "Q3 2026 GDP second estimate 4.3% economists expected durable goods October 0.2% expected" -> no consensus found for GDP second estimate or October durable goods; advance Q3 3.4% vs 3.2% consensus (Bloomberg-sourced item, BEA advance 2026-10-29).
+8. Dell FY27 Q3, Anthropic below IPO, gold intraday, Amazon/Meta 2026-11-25 -> no indexed coverage dated 2026-11-25.
+Conclusion: same-day web coverage was not indexed at collection time; same-day facts rely on committed collector files (data/news/2026-11-25.json, data/telegram/2026-11-25.json).

@@ -1,0 +1,45 @@
+{
+ "section": "us",
+ "date": "2026-11-25",
+ "request_id": "us-2026-11-25-64b62bf74843",
+ "draft_sha": "6977444c29afb72edef3995c5324bcfa3bd66269",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 1,
+ "style_candidates": 0,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 4,
+ "facts_rejected": 1,
+ "style_applied": 0,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-25T22:33:33Z",
+ "facts_done": true,
+ "final_sha256": "f36890d26a1a11219bb39557447fd6a33d39d68b276071ccef17ae1ee3d825bd",
+ "clarity": [
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "문장 구조",
+   "quote": "이 그룹은 매크로 국면과 따로 움직이고",
+   "cannot_tell": "가",
+   "route": "record_only",
+   "placed": ""
+  }
+ ],
+ "clarity_meta": {
+  "marker": true,
+  "lines_skipped": 0,
+  "over_cap": 0
+ }
+}
