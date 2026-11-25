@@ -1,0 +1,346 @@
+# 신규주택 판매 · Census
+# 원문: https://www.census.gov/construction/nrs/pdf/newressales.pdf
+# 수집: 2026-11-26 06:53 KST (impersonate=safari)
+
+Sales of new single-family houses in October 2026 were at a seasonally-adjusted annual rate of 701,000, according to estimates
+released jointly today by the U.S. Census Bureau and the Department of Housing and Urban Development. This is 14.2 percent
+(±22.6 percent)* above the September 2026 rate of 614,000, and is 7.5 percent (±23.0 percent)* above the October 2025 rate
+of 652,000.
+
+For Sale Inventory and Months’ Supply
+The seasonally-adjusted estimate of new houses for sale at the end of October 2026 was 470,000. This is 1.5 percent (±1.4
+percent) below the September 2026 estimate of 477,000, and is 4.1 percent (±4.1 percent) below the October 2025 estimate of
+490,000.
+
+This represents a supply of 8.0 months at the current sales rate. The months' supply is 14.0 percent (±21.7 percent)* below the
+September 2026 estimate of 9.3 months, and is 11.1 percent (±20.6 percent)* below the October 2025 estimate of 9.0 months.
+
+Sales Price
+The median sales price of new houses sold in October 2026 was $391,300. This is 0.3 percent (±10.9 percent)* below the
+September 2026 price of $392,600, and is 3.2 percent (±9.2 percent)* below the October 2025 price of $404,200. The average
+sales price of new houses sold in October 2026 was $459,900. This is 2.2 percent (±9.3 percent)* below the September 2026
+price of $470,200, and is 12.1 percent (±8.1 percent) below the October 2025 price of $523,400.
+
+0
+200
+400
+600
+800
+1,000
+Oct-21 Oct-22 Oct-23 Oct-24 Oct-25 Oct-26
+Thousands of Units
+New Residential Sales
+(Seasonally Adjusted Annual Rate)
+Houses Sold
+Source: U.S. Census Bureau, HUD, November 25, 2026
+
+Data Inquiries Media Inquiries
+Economic Indicators Division, Residential Construction Branch Public Information Office
+301-763-5160 301-763-3030
+eid.rcb.customer.service@census.gov
+
+pio@census.gov
+
+The November report is scheduled for release on December 23, 2026. View the full schedule in the Economic
+Briefing Room: . The full text and tables for this release can be found at
+.
+
+EXPLANATORY NOTES
+These statistics are estimated from sample surveys. They are subject to sampling variability as well as nonsampling
+error including bias and variance from response, nonreporting, and undercoverage. Estimated average relative
+standard errors of the preliminary data are shown in the tables. Whenever a statement such as “2.5 percent
+(±3.2%) above” appears in the text, this indicates the range (-0.7 to +5.7 percent) in which the actual percent change
+is likely to have occurred. All ranges given for percent changes are 90-percent confidence intervals and account only
+for sampling variability. If a range does not contain zero, the change is statistically significant. If it does contain zero,
+the change is not statistically significant; that is, it is uncertain whether there was an increase or decrease. The same
+policies apply to the confidence intervals for percent changes shown in the tables. Changes in seasonally adjusted
+statistics often show irregular movement. It takes 4 months to establish a trend for new houses sold. Preliminary
+new home sales figures are subject to revision due to the survey methodology and definitions used. The survey is
+primarily based on a sample of houses selected from building permits. Since a “sale” is defined as a deposit taken or
+sales agreement signed, this can occur prior to a permit being issued. An estimate of these prior sales is included in
+the sales figure. On average, the preliminary seasonally adjusted estimate of total sales is revised about 6.7 percent.
+Changes in sales price data reflect changes in the distribution of houses by region, size, etc., as well as changes in the
+prices of houses with identical characteristics. Explanations of confidence intervals and sampling variability can be
+found on our website.
+
+The Census Bureau has reviewed SOC monthly and quarterly tables to ensure appropriate access, use, and disclosure
+avoidance protection of the confidential source data (Disclosure Review Board (DRB) approval number: CBDRB-
+FY26-0250).
+
+API
+The Census Bureau’s application programming interface lets developers create custom apps to reach new users and
+makes key demographic, socio-economic and housing statistics more accessible than ever before.
+
+FRED Mobile App
+Receive the latest updates on the nation’s key economic indicators by downloading the
+FRED App for both Apple and Android devices.
+FRED, the signature database of the Federal Reserve Bank of St. Louis, now incorporates
+the Census Bureau’s 13 economic indicators.
+
+###
+* The 90 percent confidence interval includes zero. In such cases, there is insufficient statistical evidence to conclude that the actual change is different from
+zero.
+
+New Privately-Owned Houses Sold and For Sale
+(Thousands of Units. Detail may not add to total because of rounding.)
+Table 1a - Seasonally adjusted
+United
+States
+North-
+east
+Mid-
+west South West
+United
+States
+North-
+east
+Mid-
+west South West
+2025
+October . . . . . . . . . . . . . . . . . . . . . . . . . 652 41 86 413 112 490 X X X X 9.0 X X
+November . . . . . . . . . . . . . . . . . . . . . . . . 757 55 84 460 158 486 X X X X 7.7 X X
+December . . . . . . . . . . . . . . . . . . . . . . . . 723 59 106 398 160 477 X X X X 7.9 X X
+
+2026
+January . . . . . . . . . . . . . . . . . . . . . . . . . . 576 29 75 339 133 477 X X X X 9.9 X X
+February . . . . . . . . . . . . . . . . . . . . . . . . . 630 19 82 388 141 486 X X X X 9.3 X X
+March . . . . . . . . . . . . . . . . . . . . . . . . . . . 659 29 84 408 138 479 X X X X 8.7 X X
+April . . . . . . . . . . . . . . . . . . . . . . . . . . . . 641 29 66 383 163 483 X X X X 9.0 X X
+May . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 636 29 85 390 132 487 X X X X 9.2 X X
+June . . . . . . . . . . . . . . . . . . . . . . . . . . . . 680 32 83 433 132 479 X X X X 8.5 X X
+July (r) . . . . . . . . . . . . . . . . . . . . . . . . . . . 644 40 55 417 132 482 X X X X 9.0 X X
+August (r) . . . . . . . . . . . . . . . . . . . . . . . . 680 24 96 441 119 480 X X X X 8.5 X X
+September (r) . . . . . . . . . . . . . . . . . . . . . 614 25 85 378 126 477 X X X X 9.3 X X
+October (p) . . . . . . . . . . . . . . . . . . . . . . 701 15 77 515 94 470 X X X X 8.0 X X
+. Average RSE (%) 3 . . . . . . . . . . . . . . . . . 8 31 17 11 16 3 X X X X 9 X X
+Percent Change4
+Oct. 2026 from Sep. 2026 . . . . . . . . . . . . 14.2% -40.0% -9.4% 36.2% -25.4% -1.5% X X X X -14.0% -0.3% -2.2%
+. 90 percent confidence interval 5 . . . . . . ± 22.6 ± 30.1 ± 27.9 ± 34.8 ± 35.2 ± 1.4 X X X X ± 21.7 ± 10.9 ± 9.3
+Oct. 2026 from Oct. 2025 . . . . . . . . . . . . 7.5% -63.4% -10.5% 24.7% -16.1% -4.1% X X X X -11.1% -3.2% -12.1%
+. 90 percent confidence interval 5 . . . . . . ± 23.0 ± 30.7 ± 29.8 ± 36.1 ± 30.1 ± 4.1 X X X X ± 20.6 ± 9.2 ± 8.1
+Table 1b - Not seasonally adjusted
+United
+States
+North-
+east
+Mid-
+west South West
+United
+States
+North-
+east
+Mid-
+west South West
+2024 Annual . . . . . . . . . . . . . . . . . . . . . . 686 34 80 413 158 491 28 47 300 116 X 420,300 514,500
+2025 Annual . . . . . . . . . . . . . . . . . . . . . . 678 33 82 412 150 475 30 53 290 102 X 417,400 523,800
+. RSE (%) . . . . . . . . . . . . . . . . . . . . . . . . . 3 14 12 3 7 4 12 15 5 6 X 4 3
+2025 Year to date . . . . . . . . . . . . . . . . . . 569 25 69 348 127 X X X X X X X X
+2026 Year to date . . . . . . . . . . . . . . . . . . 552 23 68 348 113 X X X X X X X X
+. RSE (%) . . . . . . . . . . . . . . . . . . . . . . . . . 3 15 10 4 8 X X X X X X X X
+Year to date percent change⁴ . . . . . . . . -3.0%-8.3%-1.8%0.1%-11.1%XXXXXX X X
+. 90 percent confidence interval 5 . . . . . .± 4.4 ± 21.1 ± 7.3 ± 4.9 ± 11.6 XXXXXX X X
+2025
+October . . . . . . . . . . . . . . . . . . . . . . . . . 48 4 6 31 8 498 33 55 303 108 10.3 404,200 523,400
+November . . . . . . . . . . . . . . . . . . . . . . . . 52 3 5 33 11 485 31 55 295 104 9.3 402,500 537,900
+December . . . . . . . . . . . . . . . . . . . . . . . . 56 4 8 32 12 475 30 53 290 102 8.5 429,100 540,300
+
+2026
+January . . . . . . . . . . . . . . . . . . . . . . . . . . 47 2 6 27 11 475 30 52 292 100 10.1 416,200 512,600
+February . . . . . . . . . . . . . . . . . . . . . . . . . 55 2 7 34 12 475 30 52 292 100 8.7 412,000 524,600
+March . . . . . . . . . . . . . . . . . . . . . . . . . . . 63 3 8 38 13 474 30 52 290 102 7.5 398,700 510,200
+April . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60 3 7 35 15 479 30 53 297 100 7.9 415,700 498,900
+May . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56 2 8 34 12 484 31 53 300 101 8.6 414,300 527,600
+June . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59 2 7 38 12 486 32 54 298 102 8.2 410,200 499,400
+July (r) . . . . . . . . . . . . . . . . . . . . . . . . . . . 53 3 5 34 11 490 32 56 300 101 9.3 397,000 529,800
+August (r) . . . . . . . . . . . . . . . . . . . . . . . . 56 2 7 37 10 484 32 57 293 102 8.6 388,900 477,000
+September (r) . . . . . . . . . . . . . . . . . . . . . 50 2 7 31 10 481 32 56 290 103 9.6 392,600 470,200
+October (p) . . . . . . . . . . . . . . . . . . . . . . 52 1 5 39 7 474 33 58 278 105 9.0 391,300 459,900
+. Average RSE (%) 3 . . . . . . . . . . . . . . . . . 8 31 17 11 16 3 11 13 4 5 9 5 5
+p Preliminary
+r Revised
+S Does not meet publication standards because tests for identifiable and stable seasonality do not meet reliability standards
+X Not applicable
+1 Seasonally-adjusted houses sold are published at annual rates
+2 Ratio of houses for sale to houses sold
+3 Average relative standard error for the latest 6-month period
+4 Computed using unrounded data
+5 See the Explanatory Notes in the accompanying text for an explantion of 90 percent confidence intervals
+Source: U.S. Census Bureau and U.S. Department of Housing and Urban Development, New Residential Sales, November 25, 2026.
+Additional information on the survey methodology may be found at .
+Period
+Period
+Sold during period1 For sale at end of period
+Months'
+supply2
+Average
+sales price
+($)
+Sold during period For sale at end of period
+Months'
+supply
+Median
+sales price
+($)
+Average
+sales price
+($)
+Median
+sales price
+($)
+Not adjusted change
+
+New Privately-Owned Houses Sold, by Sales Price
+(Thousands of Units. Detail may not add to total because of rounding.)
+Table 2a - Number of Houses1
+Under
+$300,000
+$300,000
+to $399,999
+$400,000
+to $499,999
+$500,000
+to $599,999
+$600,000
+to $799,999
+$800,000
+to $999,999
+$1,000,000
+and over
+2024 Annual . . . . . . . . . . . . . . . . . . . . . . 686 113 198 130 90 85 34 37
+2025 Annual . . . . . . . . . . . . . . . . . . . . . . 678 119 192 125 85 85 28 44
+. RSE (%) . . . . . . . . . . . . . . . . . . . . . . . . . 3 11 8 9 23 24 12 12
+2025
+October . . . . . . . . . . . . . . . . . . . . . . . . . 48 10 13 8 6 6 1 4
+November . . . . . . . . . . . . . . . . . . . . . . . . 52 11 15 9 5 7 2 4
+December . . . . . . . . . . . . . . . . . . . . . . . . 56 10 14 11 7 7 2 5
+
+2026
+January . . . . . . . . . . . . . . . . . . . . . . . . . . 47 8 13 9 5 7 2 3
+February . . . . . . . . . . . . . . . . . . . . . . . . . 55 9 16 12 6 5 3 3
+March . . . . . . . . . . . . . . . . . . . . . . . . . . . 63 12 20 11 7 7 2 4
+April . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60 9 19 13 8 6 2 3
+May . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56 10 15 12 6 6 2 4
+June . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59 12 16 12 8 6 2 4
+July (r) . . . . . . . . . . . . . . . . . . . . . . . . . . . 53 9 17 10 5 6 2 3
+August (r) . . . . . . . . . . . . . . . . . . . . . . . . 56 13 17 11 5 6 2 3
+September (r) . . . . . . . . . . . . . . . . . . . . . 50 10 16 9 6 5 2 2
+October (p) . . . . . . . . . . . . . . . . . . . . . . 52 13 14 10 6 5 2 2
+. Average RSE (%)2 . . . . . . . . . . . . . . . . . 8 19 14 16 26 27 30 28
+Table 2b - Percent Distribution
+Under
+$300,000
+$300,000
+to $399,999
+$400,000
+to $499,999
+$500,000
+to $599,999
+$600,000
+to $799,999
+$800,000
+to $999,999
+$1,000,000
+and over
+2024 Annual . . . . . . . . . . . . . . . . . . . . . . 100 16 29 19 13 12 5 5
+2025 Annual . . . . . . . . . . . . . . . . . . . . . . 100 18 28 18 12 13 4 6
+. SE (%) . . . . . . . . . . . . . . . . . . . . . . . . . . X 2 2 1 3 3 (A) 1
+2025
+October . . . . . . . . . . . . . . . . . . . . . . . . . 100 20 28 17 12 13 3 7
+November . . . . . . . . . . . . . . . . . . . . . . . . 100 21 28 16 10 13 4 8
+December . . . . . . . . . . . . . . . . . . . . . . . . 100 18 25 20 12 12 4 9
+
+2026
+January . . . . . . . . . . . . . . . . . . . . . . . . . . 100 17 28 19 11 14 4 5
+February . . . . . . . . . . . . . . . . . . . . . . . . . 100 16 29 22 11 10 5 6
+March . . . . . . . . . . . . . . . . . . . . . . . . . . . 100 19 31 18 11 11 4 6
+April . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100 15 31 21 13 10 4 6
+May . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100 19 28 21 11 11 4 7
+June . . . . . . . . . . . . . . . . . . . . . . . . . . . . 100 20 27 20 14 10 3 6
+July (r) . . . . . . . . . . . . . . . . . . . . . . . . . . . 100 18 33 19 9 12 3 6
+August (r) . . . . . . . . . . . . . . . . . . . . . . . . 100 22 29 20 9 11 3 5
+September (r) . . . . . . . . . . . . . . . . . . . . . 100 21 31 18 13 10 4 4
+October (p) . . . . . . . . . . . . . . . . . . . . . . 100 25 27 19 10 10 3 4
+. SE (%). . . . . . . . . . . . . . . . . . . . . . . . . . . X 4 4 2 3 3 1 1
+p Preliminary r Revised
+A Represents an RSE or SE that is greater or equal to 100 percent or could not be computed
+S Does not meet publication standards because tests for identifiable and stable seasonality do not meet reliability standards
+X Not applicable Z Less than 500 units or less than 0.5 percent
+1 Houses for which sales price was not reported have been distributed proportionally to those for which sales price was reporte d
+2 Average relative standard error for the latest 6-month period
+Source: U.S. Census Bureau and U.S. Department of Housing and Urban Development, New Residential Sales, November 25, 2026.
+Additional information on the survey methodology may be found at .
+Total
+Price Ranges
+Total
+Price Ranges
+Period
+Period
+
+New Houses Sold and For Sale by Stage of Construction and Median Number of Months on Sales Market
+(Thousands of Units. Detail may not add to total because of rounding.)
+Table 3a - Seasonally adjusted
+Total Not started
+Under
+construction Completed Total Not started
+Under
+construction Completed
+2025
+October . . . . . . . . . . . . . . . . . . . . . . . . . 652 60 196 396 490 105 259 126 X
+November . . . . . . . . . . . . . . . . . . . . . . . . 757 58 231 468 486 104 258 124 X
+December . . . . . . . . . . . . . . . . . . . . . . . . 723 84 234 405 477 102 248 127 X
+
+2026
+January . . . . . . . . . . . . . . . . . . . . . . . . . . 576 61 171 344 477 97 252 128 X
+February . . . . . . . . . . . . . . . . . . . . . . . . . 630 60 181 389 486 107 255 124 X
+March . . . . . . . . . . . . . . . . . . . . . . . . . . . 659 65 207 387 479 99 260 120 X
+April . . . . . . . . . . . . . . . . . . . . . . . . . . . . 641 60 218 363 483 102 262 119 X
+May . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 636 75 191 370 487 104 267 116 X
+June . . . . . . . . . . . . . . . . . . . . . . . . . . . . 680 94 197 389 479 102 264 113 X
+July (r) . . . . . . . . . . . . . . . . . . . . . . . . . . . 644 61 193 390 482 106 262 114 X
+August (r) . . . . . . . . . . . . . . . . . . . . . . . . 680 59 240 381 480 111 257 112 X
+September (r) . . . . . . . . . . . . . . . . . . . . . 614 62 181 371 477 115 251 111 X
+October (p) . . . . . . . . . . . . . . . . . . . . . . 701 86 239 376 470 113 245 112 X
+. Average RSE (%)3 . . . . . . . . . . . . . . . . . 8 10 11 9 3 6 4 6 X
+Table 3b - Not seasonally adjusted
+Total Not started
+Under
+construction Completed Total Not started
+Under
+construction Completed
+2024 Annual . . . . . . . . . . . . . . . . . . . . . . 686 95 242 350 491 94 280 118 2.6
+2025 Annual . . . . . . . . . . . . . . . . . . . . . . 678 67 215 396 475 98 244 134 2.8
+. RSE (%) . . . . . . . . . . . . . . . . . . . . . . . . . 3 14 6 5 4 9 5 7 8
+2025
+October . . . . . . . . . . . . . . . . . . . . . . . . . 48 4 14 30 498 109 261 128 2.6
+November . . . . . . . . . . . . . . . . . . . . . . . . 52 3 14 35 485 99 259 128 2.8
+December . . . . . . . . . . . . . . . . . . . . . . . . 56 6 15 35 475 98 244 134 2.8
+
+2026
+January . . . . . . . . . . . . . . . . . . . . . . . . . . 47 6 14 27 475 96 247 132 3.0
+February . . . . . . . . . . . . . . . . . . . . . . . . . 55 6 16 33 475 103 246 126 3.3
+March . . . . . . . . . . . . . . . . . . . . . . . . . . . 63 6 20 37 474 100 255 119 3.5
+April . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60 6 21 33 479 103 260 116 3.5
+May . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56 7 17 32 484 106 266 112 3.5
+June . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59 8 17 33 486 104 274 108 3.4
+July (r) . . . . . . . . . . . . . . . . . . . . . . . . . . . 53 5 17 31 490 107 271 111 3.0
+August (r) . . . . . . . . . . . . . . . . . . . . . . . . 56 4 21 31 484 109 263 111 3.0
+September (r) . . . . . . . . . . . . . . . . . . . . . 50 5 15 30 481 116 255 110 2.8
+October (p) . . . . . . . . . . . . . . . . . . . . . . 52 7 18 28 474 116 244 114 3.0
+. Average RSE (%)3 . . . . . . . . . . . . . . . . . 8 10 11 9 3 6 4 6 7
+p Preliminary
+r Revised
+S Does not meet publication standards because tests for identifiable and stable seasonality do not meet reliability standards
+X Not applicable
+1 Seasonally-adjusted houses sold are published at annual rates
+2 Median number of months for sale since completion
+3 Average relative standard error for the latest 6-month period
+Source: U.S. Census Bureau and U.S. Department of Housing and Urban Development, New Residential Sales, November 25, 2026.
+Additional information on the survey methodology may be found at .
+Period
+Sold during period For sale at end of period Median
+months for
+sale2
+Period
+Sold during period1 For sale at end of period Median
+months for
+sale2

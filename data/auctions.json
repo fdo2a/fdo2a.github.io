@@ -1,12 +1,90 @@
 {
-  "report_date": "2026-11-24",
-  "generated": "2026-11-25 07:00 KST",
+  "report_date": "2026-11-25",
+  "generated": "2026-11-26 07:01 KST",
   "source": "TreasuryDirect TA_WS",
   "ok": true,
   "error": null,
   "complete": true,
   "pending": [],
   "today": [
+    {
+      "date": "2026-11-25",
+      "key": "nominal-7y",
+      "kind": "nominal",
+      "years": 7,
+      "reopening": false,
+      "label_ko": "7년물",
+      "term": "7-Year",
+      "cusip": "91282CSA0",
+      "offering_amt": 44000000000.0,
+      "close_time_et": "11:30 AM",
+      "bid_to_cover": 2.43,
+      "indirect_pct": 58.2,
+      "direct_pct": 33.2,
+      "dealer_pct": 8.6,
+      "high_yield": 4.708,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.48,
+        "indirect_pct": 63.6,
+        "direct_pct": 24.7,
+        "dealer_pct": 11.7
+      },
+      "prev_offering_amt": 44000000000.0,
+      "prev_date": "2026-10-29",
+      "btc_vs_avg": -0.05,
+      "dealer_vs_avg_pp": -3.1,
+      "indirect_vs_avg_pp": -5.4,
+      "insufficient": false,
+      "demand_ko": "엇갈림",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": null
+    }
+  ],
+  "recent": [
+    {
+      "date": "2026-11-24",
+      "key": "nominal-5y",
+      "kind": "nominal",
+      "years": 5,
+      "reopening": false,
+      "label_ko": "5년물",
+      "term": "5-Year",
+      "cusip": "91282CRZ6",
+      "offering_amt": 70000000000.0,
+      "close_time_et": "01:00 PM",
+      "bid_to_cover": 2.37,
+      "indirect_pct": 54.3,
+      "direct_pct": 36.7,
+      "dealer_pct": 9.0,
+      "high_yield": 4.719,
+      "n_hist": 6,
+      "avg6": {
+        "bid_to_cover": 2.31,
+        "indirect_pct": 61.9,
+        "direct_pct": 25.4,
+        "dealer_pct": 12.6
+      },
+      "prev_offering_amt": 70000000000.0,
+      "prev_date": "2026-10-27",
+      "btc_vs_avg": 0.06,
+      "dealer_vs_avg_pp": -3.6,
+      "indirect_vs_avg_pp": -7.6,
+      "insufficient": false,
+      "demand_ko": "수요 강함",
+      "tail_bp": null,
+      "tail_status": "no_wi_source",
+      "yield_ref": {
+        "tenor": "5Y",
+        "level": 4.68,
+        "bp": -5.5,
+        "date": "2026-11-25",
+        "source": "naver",
+        "basis": "cut_1600_et",
+        "stamp_et": "15:59"
+      }
+    },
     {
       "date": "2026-11-24",
       "key": "frn-2y",
@@ -43,50 +121,6 @@
       "yield_ref": null
     },
     {
-      "date": "2026-11-24",
-      "key": "nominal-5y",
-      "kind": "nominal",
-      "years": 5,
-      "reopening": false,
-      "label_ko": "5년물",
-      "term": "5-Year",
-      "cusip": "91282CRZ6",
-      "offering_amt": 70000000000.0,
-      "close_time_et": "01:00 PM",
-      "bid_to_cover": 2.37,
-      "indirect_pct": 54.3,
-      "direct_pct": 36.7,
-      "dealer_pct": 9.0,
-      "high_yield": 4.719,
-      "n_hist": 6,
-      "avg6": {
-        "bid_to_cover": 2.31,
-        "indirect_pct": 61.9,
-        "direct_pct": 25.4,
-        "dealer_pct": 12.6
-      },
-      "prev_offering_amt": 70000000000.0,
-      "prev_date": "2026-10-27",
-      "btc_vs_avg": 0.06,
-      "dealer_vs_avg_pp": -3.6,
-      "indirect_vs_avg_pp": -7.6,
-      "insufficient": false,
-      "demand_ko": "수요 강함",
-      "tail_bp": null,
-      "tail_status": "no_wi_source",
-      "yield_ref": {
-        "tenor": "5Y",
-        "level": 4.735,
-        "bp": -0.2,
-        "date": "2026-11-24",
-        "source": "naver",
-        "basis": "cut_1600_et",
-        "stamp_et": "15:59"
-      }
-    }
-  ],
-  "recent": [
-    {
       "date": "2026-11-23",
       "key": "nominal-2y",
       "kind": "nominal",
@@ -120,9 +154,9 @@
       "tail_status": "no_wi_source",
       "yield_ref": {
         "tenor": "2Y",
-        "level": 4.689,
-        "bp": 1.7,
-        "date": "2026-11-24",
+        "level": 4.65,
+        "bp": -3.9,
+        "date": "2026-11-25",
         "source": "naver",
         "basis": "cut_1600_et",
         "stamp_et": "15:59"
@@ -197,16 +231,7 @@
       "yield_ref": null
     }
   ],
-  "next": [
-    {
-      "date": "2026-11-25",
-      "key": "nominal-7y",
-      "label_ko": "7년물",
-      "offering_amt": 44000000000.0,
-      "close_time_et": "11:30 AM",
-      "reopening": false
-    }
-  ],
+  "next": [],
   "rule": {
     "avg_n": 6,
     "min_hist": 3,
@@ -215,8 +240,8 @@
   },
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-24",
-    "collected_at": "2026-11-25T07:00:05+09:00",
+    "as_of": "2026-11-25",
+    "collected_at": "2026-11-26T07:01:35+09:00",
     "source": "TreasuryDirect TA_WS",
     "response": "ok",
     "required_ok": true,

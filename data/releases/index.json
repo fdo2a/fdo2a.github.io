@@ -1,12 +1,118 @@
 {
-  "report_date": "2026-11-24",
-  "run_id": "45495207208-1",
+  "report_date": "2026-11-25",
+  "run_id": "45708111588-1",
   "status": "complete",
-  "releases": [],
+  "releases": [
+    {
+      "key": "pce",
+      "landing_url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+      "ok": true,
+      "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-october-2026",
+      "resolver": "bea_rss",
+      "verified": true,
+      "doc_kind": "html",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": null,
+        "primary_checked": true,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "published": true,
+      "chars": 5263,
+      "path": "releases/pce.txt"
+    },
+    {
+      "key": "gdp",
+      "landing_url": "https://www.bea.gov/data/gdp/gross-domestic-product",
+      "ok": true,
+      "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf",
+      "resolver": "bea_rss",
+      "verified": true,
+      "doc_kind": "pdf",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": true,
+        "primary_checked": true,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "published": true,
+      "chars": 6967,
+      "path": "releases/gdp.txt"
+    },
+    {
+      "key": "durable-goods",
+      "landing_url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "ok": true,
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "resolver": "fixed",
+      "verified": true,
+      "doc_kind": "pdf",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": true,
+        "primary_checked": true,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "published": true,
+      "chars": 24883,
+      "path": "releases/durable-goods.txt"
+    },
+    {
+      "key": "claims",
+      "landing_url": "https://www.dol.gov/ui/data.pdf",
+      "ok": true,
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "resolver": "fixed",
+      "verified": true,
+      "doc_kind": "pdf",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": true,
+        "primary_checked": false,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "published": true,
+      "chars": 20430,
+      "path": "releases/claims.txt"
+    },
+    {
+      "key": "new-home-sales",
+      "landing_url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "ok": true,
+      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "resolver": "fixed",
+      "verified": true,
+      "doc_kind": "pdf",
+      "checks": {
+        "ok": true,
+        "identity": true,
+        "period": true,
+        "value": true,
+        "primary_checked": true,
+        "note": "verified"
+      },
+      "note": "impersonate=safari",
+      "published": true,
+      "chars": 17945,
+      "path": "releases/new-home-sales.txt"
+    }
+  ],
   "collect": {
     "status": "partial",
-    "as_of": "2026-11-24",
-    "collected_at": "2026-11-25T06:54:31+09:00",
+    "as_of": "2026-11-25",
+    "collected_at": "2026-11-26T06:54:25+09:00",
     "source": "agency press releases (BLS·BEA·Census·DOL …)",
     "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
     "required_ok": false,
@@ -14,7 +120,7 @@
       "metrics:econ:no_value:CPI YoY",
       "metrics:econ:no_value:Core CPI YoY"
     ],
-    "empty": "unknown",
+    "empty": "has_data",
     "missing_ref": {
       "metrics:econ:no_value:CPI YoY": {
         "fred_id": "CPIAUCSL",

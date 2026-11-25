@@ -1,115 +1,15 @@
 {
-  "report_date": "2026-11-24",
-  "generated": "2026-11-25 07:00 KST",
+  "report_date": "2026-11-25",
+  "generated": "2026-11-26 07:01 KST",
   "horizon_days": 10,
   "events": [
     {
-      "key": "release-claims-20261125",
-      "kind": "release",
-      "name_ko": "신규 실업수당 청구",
-      "date": "2026-11-25",
-      "time_et": "08:30",
-      "time_kst": "2026-11-25 22:30",
-      "status": "confirmed",
-      "source": "DOL 공표 일정(FRED)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-durable-goods-20261125",
-      "kind": "release",
-      "name_ko": "내구재 주문",
-      "date": "2026-11-25",
-      "time_et": "08:30",
-      "time_kst": "2026-11-25 22:30",
-      "status": "confirmed",
-      "source": "Census 공표 일정(Census·FRED 대조)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "release-gdp-20261125",
-      "kind": "release",
-      "name_ko": "GDP",
-      "date": "2026-11-25",
-      "time_et": "08:30",
-      "time_kst": "2026-11-25 22:30",
-      "status": "confirmed",
-      "source": "BEA 공표 일정(FRED)",
-      "assets": [
-        "금리",
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
-    },
-    {
-      "key": "release-pce-20261125",
-      "kind": "release",
-      "name_ko": "개인소비지출(PCE)",
-      "date": "2026-11-25",
-      "time_et": "08:30",
-      "time_kst": "2026-11-25 22:30",
-      "status": "confirmed",
-      "source": "BEA 공표 일정(FRED)",
-      "assets": [
-        "금리",
-        "주식"
-      ],
-      "watch": "컨센서스 대비 서프라이즈"
-    },
-    {
-      "key": "auction-20261125-4-Week",
+      "key": "auction-20261130-13-Week",
       "kind": "auction",
-      "name_ko": "4-Week 국채 입찰 1,050억 달러",
-      "date": "2026-11-25",
-      "time_et": "10:00",
-      "time_kst": "2026-11-26 00:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "auction-20261125-8-Week",
-      "kind": "auction",
-      "name_ko": "8-Week 국채 입찰 1,000억 달러",
-      "date": "2026-11-25",
-      "time_et": "10:00",
-      "time_kst": "2026-11-26 00:00",
-      "status": "confirmed",
-      "source": "재무부 입찰 공고",
-      "assets": [
-        "금리"
-      ],
-      "watch": "응찰배율과 간접 낙찰 비중"
-    },
-    {
-      "key": "release-new-home-sales-20261125",
-      "kind": "release",
-      "name_ko": "신규주택 판매",
-      "date": "2026-11-25",
-      "time_et": "10:00",
-      "time_kst": "2026-11-26 00:00",
-      "status": "confirmed",
-      "source": "Census 공표 일정(Census·FRED 대조)",
-      "assets": [
-        "금리"
-      ],
-      "watch": "추세 확인"
-    },
-    {
-      "key": "auction-20261125-17-Week",
-      "kind": "auction",
-      "name_ko": "17-Week 국채 입찰 750억 달러",
-      "date": "2026-11-25",
+      "name_ko": "13-Week 국채 입찰 950억 달러",
+      "date": "2026-11-30",
       "time_et": "11:30",
-      "time_kst": "2026-11-26 01:30",
+      "time_kst": "2026-12-01 01:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -118,12 +18,12 @@
       "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
-      "key": "auction-20261125-7-Year",
+      "key": "auction-20261130-26-Week",
       "kind": "auction",
-      "name_ko": "7-Year 국채 입찰 440억 달러",
-      "date": "2026-11-25",
+      "name_ko": "26-Week 국채 입찰 820억 달러",
+      "date": "2026-11-30",
       "time_et": "11:30",
-      "time_kst": "2026-11-26 01:30",
+      "time_kst": "2026-12-01 01:30",
       "status": "confirmed",
       "source": "재무부 입찰 공고",
       "assets": [
@@ -158,6 +58,20 @@
         "금리"
       ],
       "watch": "추세 확인"
+    },
+    {
+      "key": "auction-20261201-6-Week",
+      "kind": "auction",
+      "name_ko": "6-Week 국채 입찰 900억 달러",
+      "date": "2026-12-01",
+      "time_et": "11:30",
+      "time_kst": "2026-12-02 01:30",
+      "status": "confirmed",
+      "source": "재무부 입찰 공고",
+      "assets": [
+        "금리"
+      ],
+      "watch": "응찰배율과 간접 낙찰 비중"
     },
     {
       "key": "release-claims-20261203",
@@ -205,6 +119,46 @@
     }
   ],
   "recent_auctions": [
+    {
+      "date": "2026-11-25",
+      "term": "4-Week",
+      "type": "Bill",
+      "offering_amt": 105000000000.0,
+      "high_yield": 4.186,
+      "bid_to_cover": 2.64,
+      "indirect_pct": 67.2,
+      "dealer_pct": 27.9
+    },
+    {
+      "date": "2026-11-25",
+      "term": "8-Week",
+      "type": "Bill",
+      "offering_amt": 100000000000.0,
+      "high_yield": 4.204,
+      "bid_to_cover": 2.86,
+      "indirect_pct": 70.4,
+      "dealer_pct": 24.3
+    },
+    {
+      "date": "2026-11-25",
+      "term": "17-Week",
+      "type": "Bill",
+      "offering_amt": 75000000000.0,
+      "high_yield": 4.37,
+      "bid_to_cover": 3.01,
+      "indirect_pct": 57.2,
+      "dealer_pct": 35.9
+    },
+    {
+      "date": "2026-11-25",
+      "term": "7-Year",
+      "type": "Note",
+      "offering_amt": 44000000000.0,
+      "high_yield": 4.708,
+      "bid_to_cover": 2.43,
+      "indirect_pct": 58.2,
+      "dealer_pct": 8.6
+    },
     {
       "date": "2026-11-24",
       "term": "5-Year",
@@ -334,16 +288,6 @@
       "bid_to_cover": 3.05,
       "indirect_pct": 56.8,
       "dealer_pct": 37.5
-    },
-    {
-      "date": "2026-11-17",
-      "term": "6-Week",
-      "type": "Bill",
-      "offering_amt": 100000000000.0,
-      "high_yield": 4.131,
-      "bid_to_cover": 2.82,
-      "indirect_pct": 65.7,
-      "dealer_pct": 29.7
     }
   ],
   "blackout": {
@@ -375,8 +319,8 @@
   },
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-24",
-    "collected_at": "2026-11-25T07:00:04+09:00",
+    "as_of": "2026-11-25",
+    "collected_at": "2026-11-26T07:01:33+09:00",
     "source": "FRED release calendar + Census + TreasuryDirect TA_WS + fomc_dates.json",
     "response": "ok",
     "required_ok": true,

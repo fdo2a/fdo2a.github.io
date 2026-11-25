@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-25 06:53 KST",
-  "report_date": "2026-11-24",
+  "generated": "2026-11-26 06:53 KST",
+  "report_date": "2026-11-25",
   "schema": 2,
   "trend_note_ko": "직전 대비는 Actual을 Previous와 비교한 것이고, 추세는 최근 3개월 평균을 그 앞 3개월 평균과 비교한 것입니다(주간 실업수당 청구는 4주 평균끼리). 추세의 세기는 그 지표가 평소 움직이는 폭에 견준 크기이고, 작은 변화는 보합으로 봅니다. 분기 지표인 GDP는 두 비교가 같은 숫자를 보므로 직전 대비만 싣습니다.",
   "book_state": "ok",
-  "growth_score": 0.067,
-  "inflation_score": 0.722,
-  "growth_diffusion": 0.5,
-  "inflation_diffusion": 0.5,
+  "growth_score": 0.093,
+  "inflation_score": 0.85,
+  "growth_diffusion": 0.556,
+  "inflation_diffusion": 0.833,
   "axis_summary": {
     "Labor": {
       "label_ko": "고용",
-      "score": 0.451,
+      "score": 0.402,
       "direction": "개선",
       "strength": "미미",
       "breadth_ko": "일곱 중 넷이 개선, 둘은 보합, 하나는 반대",
@@ -36,23 +36,23 @@
           "previous": 60.0
         },
         {
-          "label_ko": "신규 청구 4주 평균",
-          "name": "Initial Claims 4-wk MA",
-          "direction": "개선",
-          "strength": "미미",
-          "actual": 197750.0,
-          "previous": 195750.0
+          "label_ko": "계속 실업수당 청구",
+          "name": "Continuing Jobless Claims",
+          "direction": "악화",
+          "strength": "완만",
+          "actual": 1697000.0,
+          "previous": 1792000.0
         }
       ]
     },
     "Activity": {
       "label_ko": "생산·활동",
-      "score": -0.671,
+      "score": -0.543,
       "direction": "악화",
       "strength": "완만",
-      "breadth_ko": "아홉 중 여섯이 악화, 하나는 보합, 둘은 반대",
-      "support": 6,
-      "improving": 3,
+      "breadth_ko": "아홉 중 다섯이 악화, 둘은 보합, 둘은 반대",
+      "support": 5,
+      "improving": 4,
       "total": 9,
       "leaders": [
         {
@@ -111,12 +111,12 @@
     },
     "Inflation": {
       "label_ko": "물가",
-      "score": 0.722,
+      "score": 0.85,
       "direction": "재가속",
       "strength": "완만",
       "breadth_ko": "여섯 중 셋이 재가속, 셋은 교착",
       "support": 3,
-      "improving": 3,
+      "improving": 5,
       "total": 6,
       "leaders": [
         {
@@ -147,10 +147,10 @@
     }
   },
   "axis_scores": {
-    "Labor": 0.451,
-    "Activity": -0.671,
+    "Labor": 0.402,
+    "Activity": -0.543,
     "Consumption": 0.42,
-    "Inflation": 0.722
+    "Inflation": 0.85
   },
   "indicators": [
     {
@@ -194,20 +194,20 @@
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.028,
-      "signed_z": 0.028,
-      "actual": 203000.0,
+      "momentum_z": -0.112,
+      "signed_z": 0.112,
+      "actual": 189000.0,
       "previous": 202000.0,
-      "ref_period": "2026-11-14",
-      "vs_prev": "악화",
+      "ref_period": "2026-11-21",
+      "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 198000.0,
-        "recent_avg": 197750.0
+        "prior_avg": 197000.0,
+        "recent_avg": 196000.0
       },
-      "trend_cell_ko": "보합 · 4주 평균 198K → 198K",
-      "is_new": false
+      "trend_cell_ko": "보합 · 4주 평균 197K → 196K",
+      "is_new": true
     },
     {
       "name": "Initial Claims 4-wk MA",
@@ -222,20 +222,20 @@
       "strength": "미미",
       "polarity": -1,
       "window": 4,
-      "momentum_z": -0.333,
-      "signed_z": 0.333,
-      "actual": 197750.0,
-      "previous": 195750.0,
-      "ref_period": "2026-11-14",
-      "vs_prev": "악화",
+      "momentum_z": -0.264,
+      "signed_z": 0.264,
+      "actual": 196000.0,
+      "previous": 197500.0,
+      "ref_period": "2026-11-21",
+      "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 198875.0,
-        "recent_avg": 196437.5
+        "prior_avg": 198000.0,
+        "recent_avg": 196125.0
       },
-      "trend_cell_ko": "개선(미미) · 4주 평균 199K → 196K",
-      "is_new": false
+      "trend_cell_ko": "개선(미미) · 4주 평균 198K → 196K",
+      "is_new": true
     },
     {
       "name": "Continuing Jobless Claims",
@@ -247,23 +247,23 @@
       "transform": "level",
       "units": "",
       "direction": "악화",
-      "strength": "미미",
+      "strength": "완만",
       "polarity": -1,
       "window": 4,
-      "momentum_z": 0.317,
-      "signed_z": -0.317,
-      "actual": 1763000.0,
-      "previous": 1693000.0,
-      "ref_period": "2026-11-07",
-      "vs_prev": "악화",
+      "momentum_z": 0.675,
+      "signed_z": -0.675,
+      "actual": 1697000.0,
+      "previous": 1792000.0,
+      "ref_period": "2026-11-14",
+      "vs_prev": "개선",
       "trend": {
         "window": 4,
         "label_ko": "4주 평균",
-        "prior_avg": 1709500.0,
-        "recent_avg": 1717000.0
+        "prior_avg": 1708500.0,
+        "recent_avg": 1724750.0
       },
-      "trend_cell_ko": "악화(미미) · 4주 평균 1,710K → 1,717K",
-      "is_new": false
+      "trend_cell_ko": "악화(완만) · 4주 평균 1,708K → 1,725K",
+      "is_new": true
     },
     {
       "name": "Nonfarm Payrolls (chg)",
@@ -386,24 +386,24 @@
       "fred_id": "DGORDER",
       "transform": "mom_pct",
       "units": "%",
-      "direction": "악화",
-      "strength": "미미",
+      "direction": "개선",
+      "strength": "완만",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.348,
-      "signed_z": -0.348,
-      "actual": 1.91,
-      "previous": 0.14,
-      "ref_period": "2026-09-01",
-      "vs_prev": "개선",
+      "momentum_z": 0.787,
+      "signed_z": 0.787,
+      "actual": 0.22,
+      "previous": 1.99,
+      "ref_period": "2026-10-01",
+      "vs_prev": "악화",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 1.696,
-        "recent_avg": 0.975
+        "prior_avg": -0.851,
+        "recent_avg": 0.786
       },
-      "trend_cell_ko": "악화(미미) · 3개월 평균 +1.70% → +0.98%",
-      "is_new": false
+      "trend_cell_ko": "개선(완만) · 3개월 평균 -0.85% → +0.79%",
+      "is_new": true
     },
     {
       "name": "New Home Sales",
@@ -414,24 +414,24 @@
       "fred_id": "HSN1F",
       "transform": "level",
       "units": "K",
-      "direction": "개선",
+      "direction": "보합",
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": 0.308,
-      "signed_z": 0.308,
-      "actual": 676.0,
-      "previous": 680.0,
-      "ref_period": "2026-09-01",
-      "vs_prev": "악화",
+      "momentum_z": 0.235,
+      "signed_z": 0.235,
+      "actual": 701.0,
+      "previous": 614.0,
+      "ref_period": "2026-10-01",
+      "vs_prev": "개선",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 652.333,
-        "recent_avg": 667.667
+        "prior_avg": 653.333,
+        "recent_avg": 665.0
       },
-      "trend_cell_ko": "개선(미미) · 3개월 평균 652K → 668K",
-      "is_new": false
+      "trend_cell_ko": "보합 · 3개월 평균 653K → 665K",
+      "is_new": true
     },
     {
       "name": "Existing Home Sales",
@@ -474,9 +474,9 @@
       "strength": "미미",
       "polarity": 1,
       "window": 1,
-      "momentum_z": 0.122,
-      "signed_z": 0.122,
-      "actual": 3.4,
+      "momentum_z": 0.214,
+      "signed_z": 0.214,
+      "actual": 4.3,
       "previous": 2.2,
       "ref_period": "2026-07-01",
       "vs_prev": "개선",
@@ -484,10 +484,10 @@
         "window": 1,
         "label_ko": "1기 평균",
         "prior_avg": 2.2,
-        "recent_avg": 3.4
+        "recent_avg": 4.3
       },
       "trend_cell_ko": null,
-      "is_new": false
+      "is_new": true
     },
     {
       "name": "Retail Sales MoM",
@@ -642,20 +642,20 @@
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.226,
-      "signed_z": -0.226,
-      "actual": 3.65,
-      "previous": 3.44,
-      "ref_period": "2026-09-01",
+      "momentum_z": 0.191,
+      "signed_z": 0.191,
+      "actual": 3.84,
+      "previous": 3.67,
+      "ref_period": "2026-10-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 3.617,
-        "recent_avg": 3.489
+        "prior_avg": 3.549,
+        "recent_avg": 3.656
       },
-      "trend_cell_ko": "교착 · 3개월 평균 3.62% → 3.49%",
-      "is_new": false
+      "trend_cell_ko": "교착 · 3개월 평균 3.55% → 3.66%",
+      "is_new": true
     },
     {
       "name": "Core PCE YoY",
@@ -670,20 +670,20 @@
       "strength": "미미",
       "polarity": 1,
       "window": 3,
-      "momentum_z": -0.123,
-      "signed_z": -0.123,
-      "actual": 3.12,
-      "previous": 3.03,
-      "ref_period": "2026-09-01",
+      "momentum_z": 0.231,
+      "signed_z": 0.231,
+      "actual": 3.26,
+      "previous": 3.14,
+      "ref_period": "2026-10-01",
       "vs_prev": "상승",
       "trend": {
         "window": 3,
         "label_ko": "3개월 평균",
-        "prior_avg": 3.096,
-        "recent_avg": 3.05
+        "prior_avg": 3.066,
+        "recent_avg": 3.15
       },
-      "trend_cell_ko": "교착 · 3개월 평균 3.10% → 3.05%",
-      "is_new": false
+      "trend_cell_ko": "교착 · 3개월 평균 3.07% → 3.15%",
+      "is_new": true
     },
     {
       "name": "Michigan 1-Yr Inflation Exp",
@@ -854,27 +854,457 @@
       "is_new": false
     }
   ],
-  "new_releases": [],
+  "new_releases": [
+    "Initial Jobless Claims",
+    "Initial Claims 4-wk MA",
+    "Continuing Jobless Claims",
+    "Durable Goods Orders MoM",
+    "New Home Sales",
+    "Real GDP Growth QoQ (ann.)",
+    "PCE Price Index YoY",
+    "Core PCE YoY"
+  ],
   "anatomy_releases": [],
   "introduced": [],
   "introduced_since": {},
-  "headline_releases": [],
+  "headline_releases": [
+    {
+      "key": "pce",
+      "label": "개인소비지출(PCE)",
+      "tier": 1,
+      "agency": "BEA",
+      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
+      "role": "scored",
+      "primary": "Core PCE YoY",
+      "max_abs_z": 0.231,
+      "indicators": [
+        {
+          "name": "PCE Price Index YoY",
+          "axis": "Inflation",
+          "actual": 3.84,
+          "previous": 3.67,
+          "ref_period": "2026-10-01",
+          "momentum_z": 0.191,
+          "fred_id": "PCEPI",
+          "transform": "yoy_pct",
+          "units": "%"
+        },
+        {
+          "name": "Core PCE YoY",
+          "axis": "Inflation",
+          "actual": 3.26,
+          "previous": 3.14,
+          "ref_period": "2026-10-01",
+          "momentum_z": 0.231,
+          "fred_id": "PCEPILFE",
+          "transform": "yoy_pct",
+          "units": "%"
+        }
+      ],
+      "components": [],
+      "anatomy": {
+        "release_date": "2026-11-25",
+        "round": "no_registry",
+        "candidates": []
+      },
+      "anatomy_status": "text",
+      "anatomy_reason": "no_registry"
+    },
+    {
+      "key": "gdp",
+      "label": "GDP",
+      "tier": 1,
+      "agency": "BEA",
+      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
+      "role": "scored",
+      "primary": "Real GDP Growth QoQ (ann.)",
+      "max_abs_z": 0.214,
+      "indicators": [
+        {
+          "name": "Real GDP Growth QoQ (ann.)",
+          "axis": "Activity",
+          "actual": 4.3,
+          "previous": 2.2,
+          "ref_period": "2026-07-01",
+          "momentum_z": 0.214,
+          "fred_id": "A191RL1Q225SBEA",
+          "transform": "level",
+          "units": "%"
+        }
+      ],
+      "components": [],
+      "anatomy": {
+        "release_date": "2026-11-25",
+        "round": "no_registry",
+        "candidates": []
+      },
+      "anatomy_status": "text",
+      "anatomy_reason": "no_registry"
+    },
+    {
+      "key": "durable-goods",
+      "label": "내구재 주문",
+      "tier": 2,
+      "agency": "Census",
+      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+      "role": "scored",
+      "primary": "Durable Goods Orders MoM",
+      "max_abs_z": 0.787,
+      "indicators": [
+        {
+          "name": "Durable Goods Orders MoM",
+          "axis": "Activity",
+          "actual": 0.22,
+          "previous": 1.99,
+          "ref_period": "2026-10-01",
+          "momentum_z": 0.787,
+          "fred_id": "DGORDER",
+          "transform": "mom_pct",
+          "units": "%"
+        }
+      ],
+      "components": [
+        {
+          "label": "운송 제외",
+          "fred_id": "ADXTNO",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "운송 제외",
+            "수송 제외",
+            "운송장비 제외"
+          ],
+          "actual": 0.5,
+          "cite_values": [
+            0.5
+          ],
+          "cite_forms": [
+            [
+              0.5,
+              ""
+            ]
+          ],
+          "text_value": 0.5,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "국방 제외",
+          "fred_id": "ADXDNO",
+          "transform": "mom_pct",
+          "unit": "%",
+          "aliases": [
+            "국방 제외",
+            "방산 제외"
+          ],
+          "actual": 0.4,
+          "cite_values": [
+            0.4
+          ],
+          "cite_forms": [
+            [
+              0.4,
+              ""
+            ]
+          ],
+          "text_value": 0.4,
+          "ref_period": "2026-10-01"
+        }
+      ],
+      "anatomy": {
+        "release_date": "2026-11-25",
+        "round": "ok",
+        "candidates": [
+          {
+            "label": "운송 제외",
+            "fred_id": "ADXTNO",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current",
+              "previous"
+            ],
+            "fred_value": 0.4853056539216638,
+            "text_ok": true,
+            "text_value": 0.5
+          },
+          {
+            "label": "국방 제외",
+            "fred_id": "ADXDNO",
+            "transform": "mom_pct",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current",
+              "previous"
+            ],
+            "fred_value": 0.42104151065343043,
+            "text_ok": true,
+            "text_value": 0.4
+          }
+        ]
+      },
+      "anatomy_status": "complete",
+      "anatomy_reason": null
+    },
+    {
+      "key": "claims",
+      "label": "신규 실업수당 청구",
+      "tier": 2,
+      "agency": "DOL",
+      "url": "https://www.dol.gov/ui/data.pdf",
+      "role": "scored",
+      "primary": "Continuing Jobless Claims",
+      "max_abs_z": 0.675,
+      "indicators": [
+        {
+          "name": "Initial Jobless Claims",
+          "axis": "Labor",
+          "actual": 189000.0,
+          "previous": 202000.0,
+          "ref_period": "2026-11-21",
+          "momentum_z": -0.112,
+          "fred_id": "ICSA",
+          "transform": "level",
+          "units": ""
+        },
+        {
+          "name": "Initial Claims 4-wk MA",
+          "axis": "Labor",
+          "actual": 196000.0,
+          "previous": 197500.0,
+          "ref_period": "2026-11-21",
+          "momentum_z": -0.264,
+          "fred_id": "IC4WSA",
+          "transform": "level",
+          "units": ""
+        },
+        {
+          "name": "Continuing Jobless Claims",
+          "axis": "Labor",
+          "actual": 1697000.0,
+          "previous": 1792000.0,
+          "ref_period": "2026-11-14",
+          "momentum_z": 0.675,
+          "fred_id": "CCSA",
+          "transform": "level",
+          "units": ""
+        }
+      ],
+      "components": [],
+      "anatomy": {
+        "release_date": "2026-11-25",
+        "round": "ok",
+        "candidates": [
+          {
+            "label": "계절조정 전 청구",
+            "fred_id": "ICNSA",
+            "transform": "level",
+            "unit": "건",
+            "round_ok": true,
+            "reason": "not_in_text",
+            "observation": "2026-11-14",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 197051.0,
+            "text_ok": false
+          },
+          {
+            "label": "보험 실업률",
+            "fred_id": "IURSA",
+            "transform": "level",
+            "unit": "%",
+            "round_ok": true,
+            "reason": "not_in_text",
+            "observation": "2026-11-07",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 1.2,
+            "text_ok": false
+          }
+        ]
+      },
+      "anatomy_status": "text",
+      "anatomy_reason": "components_short"
+    },
+    {
+      "key": "new-home-sales",
+      "label": "신규주택 판매",
+      "tier": 2,
+      "agency": "Census",
+      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
+      "role": "scored",
+      "primary": "New Home Sales",
+      "max_abs_z": 0.235,
+      "indicators": [
+        {
+          "name": "New Home Sales",
+          "axis": "Activity",
+          "actual": 701.0,
+          "previous": 614.0,
+          "ref_period": "2026-10-01",
+          "momentum_z": 0.235,
+          "fred_id": "HSN1F",
+          "transform": "level",
+          "units": "K"
+        }
+      ],
+      "components": [
+        {
+          "label": "재고 개월 수",
+          "fred_id": "MSACSR",
+          "transform": "level",
+          "unit": "개월",
+          "aliases": [
+            "개월",
+            "재고 소진"
+          ],
+          "actual": 8,
+          "cite_values": [
+            8
+          ],
+          "cite_forms": [
+            [
+              8,
+              ""
+            ]
+          ],
+          "text_value": 8.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "판매가격 중위값",
+          "fred_id": "MSPNHSUS",
+          "transform": "level",
+          "unit": "달러",
+          "aliases": [
+            "중위",
+            "중간값"
+          ],
+          "actual": 391300,
+          "cite_values": [
+            391300
+          ],
+          "cite_forms": [
+            [
+              391300,
+              ""
+            ]
+          ],
+          "text_value": 391300.0,
+          "ref_period": "2026-10-01"
+        },
+        {
+          "label": "판매 대기 재고",
+          "fred_id": "HNFSEPUSSA",
+          "transform": "level",
+          "unit": "채",
+          "aliases": [
+            "판매 대기",
+            "매물",
+            "판매용 재고"
+          ],
+          "actual": 470000,
+          "cite_values": [
+            470000,
+            470,
+            47
+          ],
+          "cite_forms": [
+            [
+              470000,
+              ""
+            ],
+            [
+              470,
+              "천"
+            ],
+            [
+              47,
+              "만"
+            ]
+          ],
+          "text_value": 470000.0,
+          "ref_period": "2026-10-01"
+        }
+      ],
+      "anatomy": {
+        "release_date": "2026-11-25",
+        "round": "ok",
+        "candidates": [
+          {
+            "label": "재고 개월 수",
+            "fred_id": "MSACSR",
+            "transform": "level",
+            "unit": "개월",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 8.0,
+            "text_ok": true,
+            "text_value": 8.0
+          },
+          {
+            "label": "판매가격 중위값",
+            "fred_id": "MSPNHSUS",
+            "transform": "level",
+            "unit": "달러",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 391300.0,
+            "text_ok": true,
+            "text_value": 391300.0
+          },
+          {
+            "label": "판매 대기 재고",
+            "fred_id": "HNFSEPUSSA",
+            "transform": "level",
+            "unit": "채",
+            "round_ok": true,
+            "reason": "ok",
+            "observation": "2026-10-01",
+            "changed": [
+              "current"
+            ],
+            "fred_value": 470.0,
+            "text_ok": true,
+            "text_value": 470000.0
+          }
+        ]
+      },
+      "anatomy_status": "complete",
+      "anatomy_reason": null
+    }
+  ],
   "last_seen": {
     "JOLTS Job Openings": [
       "2026-09-01",
       7523.0
     ],
     "Initial Jobless Claims": [
-      "2026-11-14",
-      203000.0
+      "2026-11-21",
+      189000.0
     ],
     "Initial Claims 4-wk MA": [
-      "2026-11-14",
-      197750.0
+      "2026-11-21",
+      196000.0
     ],
     "Continuing Jobless Claims": [
-      "2026-11-07",
-      1763000.0
+      "2026-11-14",
+      1697000.0
     ],
     "Nonfarm Payrolls (chg)": [
       "2026-10-01",
@@ -893,12 +1323,12 @@
       -0.43
     ],
     "Durable Goods Orders MoM": [
-      "2026-09-01",
-      1.91
+      "2026-10-01",
+      0.22
     ],
     "New Home Sales": [
-      "2026-09-01",
-      676.0
+      "2026-10-01",
+      701.0
     ],
     "Existing Home Sales": [
       "2026-10-01",
@@ -906,7 +1336,7 @@
     ],
     "Real GDP Growth QoQ (ann.)": [
       "2026-07-01",
-      3.4
+      4.3
     ],
     "Retail Sales MoM": [
       "2026-10-01",
@@ -929,12 +1359,12 @@
       0.35
     ],
     "PCE Price Index YoY": [
-      "2026-09-01",
-      3.65
+      "2026-10-01",
+      3.84
     ],
     "Core PCE YoY": [
-      "2026-09-01",
-      3.12
+      "2026-10-01",
+      3.26
     ],
     "Michigan 1-Yr Inflation Exp": [
       "2026-10-01",
@@ -971,8 +1401,8 @@
   },
   "collect": {
     "status": "partial",
-    "as_of": "2026-11-24",
-    "collected_at": "2026-11-25T06:53:45+09:00",
+    "as_of": "2026-11-25",
+    "collected_at": "2026-11-26T06:53:24+09:00",
     "source": "FRED (macro_metrics)",
     "response": "missing: econ:no_value:CPI YoY, econ:no_value:Core CPI YoY",
     "required_ok": false,
