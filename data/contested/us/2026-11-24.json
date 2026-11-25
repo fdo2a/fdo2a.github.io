@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-24",
  "status": "none",
- "reason": "topic_too_long",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-25T00:40:20+00:00",
- "cutoff_at": "2026-11-25T00:40:20+00:00",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-25T00:59:29+00:00",
+ "cutoff_at": "2026-11-25T00:59:29+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,7 +21,7 @@
   "sha256": "d2afd215196d446af358299b024c26489e7943500723b089b27cbf885d6f6753"
  },
  "counts": {
-  "harvest": 200,
+  "harvest": 207,
   "candidates": 1,
   "articles": [
    6
@@ -29,10 +29,10 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "tokens": {
-   "in": 26235,
-   "out": 10560
+   "in": 51072,
+   "out": 14226
   },
   "discovery": "ok",
   "hosts": {
@@ -41,17 +41,26 @@
    "aljazeera.com": "ok",
    "bbc.co.uk": "ok"
   },
-  "notes": [
-   "feed:politics:TimeoutError",
-   "feed:economy:TimeoutError",
-   "feed:industry:HTTPError"
-  ],
-  "gdelt": "ok"
+  "notes": [],
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "7/8",
+   "pairs": "2/3",
+   "obs": "11/11"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 11,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
  },
  "event": {
-  "topic_ko": "",
-  "query": "",
+  "topic_ko": "젠슨 황 복귀를 둘러싼 안보·AI 거품 논란",
+  "query": "nvidia huang return",
   "trigger": []
  },
- "content_hash": "bdebb9c9c7e0dcae"
+ "content_hash": "da0cab1e730317a1"
 }
