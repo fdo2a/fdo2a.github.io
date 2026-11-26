@@ -5,9 +5,9 @@
  "report_date": "2026-11-26",
  "status": "error",
  "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-26T12:01:04+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-26T12:17:25+00:00",
  "cutoff_at": "2026-11-26T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 615,
+  "harvest": 529,
   "candidates": 1,
   "articles": [
    6
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "discovery": "truncated",
   "hosts": {
    "seoul": "ok",
@@ -44,13 +44,13 @@
    "etnews": "ok"
   },
   "notes": [
-   "discover:615"
+   "discover:529"
   ],
   "source": "naver",
   "source_switch": "",
   "tokens": {
-   "in": 40666,
-   "out": 7278
+   "in": 16439,
+   "out": 4357
   }
  },
  "event": {
@@ -58,5 +58,5 @@
   "query": "자본시장 김용범 개혁기구",
   "trigger": []
  },
- "content_hash": "3cb09ff4401a0972"
+ "content_hash": "d2e7ba357ce374c8"
 }
