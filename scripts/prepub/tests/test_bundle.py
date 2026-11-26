@@ -50,6 +50,32 @@ def test_edited_evidence_is_refused(repo, tmp_path):
         bundle.build(str(repo), 'us', '2026-11-07', draft(tmp_path), tmp_path / 'b')
 
 
+def test_a_late_post_names_its_collection_commit(repo, tmp_path):
+    """늦은 글(2026-11-27) — 근거는 그날 수집 커밋 C 에서. HEAD 는 다음 날 자료다(11/24 MU 67d749c2 ↔ main)."""
+    c = git(repo, 'rev-parse', 'HEAD')
+    (repo / 'data/market_data.json').write_text('{"spx": 2}')
+    git(repo, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qam', 'next day')
+    man = bundle.build(str(repo), 'us', '2026-11-07', draft(tmp_path), tmp_path / 'b', data_commit=c[:8])
+    assert man['data_commit'] == c
+    with pytest.raises(bundle.BundleError):
+        bundle.build(str(repo), 'us', '2026-11-07', draft(tmp_path), tmp_path / 'c', data_commit='nope')
+
+
+def test_submit_passes_the_data_commit_only_when_given(monkeypatch, tmp_path):
+    import prepub_review as cli
+    seen = []
+
+    def build(*a, **k):
+        seen.append(k.get('data_commit'))
+        raise bundle.BundleError('stop here')
+    monkeypatch.setattr(bundle, 'build', build)
+    html = draft(tmp_path)
+    base = ['submit', '--section', 'us', '--date', '2026-11-07', '--html', str(html)]
+    cli.main(base + ['--out', str(tmp_path / 'o1')])
+    cli.main(base + ['--out', str(tmp_path / 'o2'), '--data-commit', 'abc123'])
+    assert seen == [None, 'abc123']
+
+
 def test_an_unknown_market_or_date_is_refused(repo, tmp_path):
     for sec, d in (('jp', '2026-11-07'), ('us', '11/07')):
         with pytest.raises(bundle.BundleError):

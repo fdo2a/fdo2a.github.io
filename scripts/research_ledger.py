@@ -7,7 +7,7 @@ import sys
 
 if __package__ in {None, ''}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts.common.research_ledger import append_record, read_records, summarize
+from scripts.common.research_ledger import append_record, late_cycle, read_records, summarize
 
 
 def template(kind, market):
@@ -31,9 +31,12 @@ def main(argv=None):
     s=commands.add_parser('summary');s.add_argument('--root',type=Path,required=True);s.add_argument('--market',choices=['us','kr'],required=True)
     for key in ['start','end','as-of']:s.add_argument('--'+key,required=True)
     s.add_argument('--out',type=Path)
+    # 늦은 글(2026-11-27, ORCHESTRATOR 「늦은 글」) — append 할 cycle 한 줄을 찍는다(원장은 건드리지 않는다)
+    l=commands.add_parser('late-cycle');l.add_argument('--root',type=Path,required=True);l.add_argument('--market',choices=['us','kr'],required=True);l.add_argument('--date',required=True);l.add_argument('--out',type=Path)
     args=parser.parse_args(argv)
     try:
         if args.command=='template':result=template(args.kind,args.market)
+        elif args.command=='late-cycle':result=late_cycle(read_records(args.root),args.market,args.date)
         elif args.command=='append':result=append_record(args.root,json.loads(args.input.read_text(encoding='utf-8')))
         elif args.command=='validate':result={'valid':True,'records':len(read_records(args.root))}
         else:result=summarize(args.root,args.market,args.start,args.end,args.as_of)

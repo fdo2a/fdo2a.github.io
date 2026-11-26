@@ -94,17 +94,23 @@ def prompt(section, post_path, notes=False):
         head=gate.STYLE_FINDINGS_HEAD)
 
 
-def build(root, section, date, html_path, out_dir, rid=None, notes_path=None):
+def build(root, section, date, html_path, out_dir, rid=None, notes_path=None, data_commit=None):
     """→ manifest dict. `out_dir` 에 manifest.json·post.html·prompt.txt(·research_notes.md)를 쓴다.
 
     `notes_path` 는 작성자가 읽은 워크스페이스의 `research_notes.md` — 검토자가 같은 근거를 보게 한다(codex 구현 #2).
+    `data_commit` 은 늦은 글만(2026-11-27) — 작업 공간을 꺼낸 그날 수집 커밋 C(`scripts/ci/late_workspace.py`). HEAD 는
+    다음 날 자료라 검토기가 맞는 숫자를 오류로 짚는다. 작업 공간이 C 의 `data/` 를 그대로 푼 것이라 HEAD 대조는 하지 않는다.
     """
     if section not in POST_PATH or not DATE.match(date or ''):
         raise BundleError(f'모르는 시장이나 날짜: {section} {date}')
     data_dir = gate.SNAPSHOT[section]
-    commit = _git(root, 'rev-parse', 'HEAD')
-    if _git(root, 'status', '--porcelain', '--', data_dir):
-        raise BundleError(f'{data_dir} 가 HEAD 와 다르다 — 근거를 커밋에서 꺼낼 수 없다')
+    if data_commit:
+        commit = _git(root, 'rev-parse', '--verify', f'{data_commit}^{{commit}}')
+        _git(root, 'cat-file', '-e', f'{commit}:{data_dir.rstrip("/")}')
+    else:
+        commit = _git(root, 'rev-parse', 'HEAD')
+        if _git(root, 'status', '--porcelain', '--', data_dir):
+            raise BundleError(f'{data_dir} 가 HEAD 와 다르다 — 근거를 커밋에서 꺼낼 수 없다')
     post_path = POST_PATH[section].format(date=date)
     with open(html_path, encoding='utf-8') as fh:
         html = fh.read()

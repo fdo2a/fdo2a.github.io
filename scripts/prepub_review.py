@@ -66,8 +66,9 @@ def cmd_submit(a):
         shutil.copyfile(a.html, os.path.join(a.out, 'original.html'))
         notes = a.notes if a.notes and os.path.isfile(a.notes) else None
         status['notes'] = bool(notes)
+        kw = {'data_commit': a.data_commit} if a.data_commit else {}
         man = bundle_mod.build(ROOT, a.section, a.date, a.html, os.path.join(a.out, 'bundle'),
-                               notes_path=notes)
+                               notes_path=notes, **kw)
         status['request_id'] = rid = man['request_id']
         status['source_html_sha256'] = man['source_html_sha256']
         status['draft_sha'] = sha = submit_mod.push_bundle(ROOT, os.path.join(a.out, 'bundle'), rid)
@@ -661,6 +662,8 @@ def main(argv=None):
     p.add_argument('--notes', default=None, help='작성자가 읽은 research_notes.md')
     p.add_argument('--out', required=True)
     p.add_argument('--deadline-min', type=int, default=25)
+    p.add_argument('--data-commit', default=None,
+                   help='늦은 글만 — 근거를 꺼낼 그날 수집 커밋(late_workspace.py 가 찍은 C). 없으면 HEAD')
     p = sub.add_parser('wait')
     p.add_argument('--dir', required=True)
     p.add_argument('--minutes', type=float, default=9)

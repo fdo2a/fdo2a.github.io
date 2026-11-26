@@ -6,7 +6,8 @@
         --body morning_brief_2026-09-24.body.html \
         --out  morning_brief_2026-09-24.html
 
-meta.json: {"title": "<SEO title>", "summary": "<1–2 sentences>"}. body: the sections
+meta.json: {"title": "<SEO title>", "summary": "<1–2 sentences>"} — a late post (ORCHESTRATOR 「늦은 글」)
+adds "late": true, "published": "<KST publish date>" and gets one 「늦게 올린 글 · …」 line on top. body: the sections
 that go inside <div class="doc">, starting with the headline card and its one <h1>.
 Exit 1 lists every contract violation; nothing is written then.
 

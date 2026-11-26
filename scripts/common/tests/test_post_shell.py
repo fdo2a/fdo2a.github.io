@@ -199,3 +199,35 @@ def test_kr_brief_footer_points_at_the_same_day_news():
     assert 'data-news-index="../news.json"' in foot and '같은 날 뉴스 →' in foot
     assert '뉴스·산업' in S.footer('us', '2026-11-05')
     assert 'data-news-index=' not in S.footer('kr-news', '2026-11-05')
+
+
+# --- 늦은 글(2026-11-27) — 지난 세션을 그날 자료로 나중에 낸 글 ------------------------------------
+_LATE = {'summary': '요약.', 'late': True, 'published': '2026-11-28'}
+
+
+@pytest.mark.parametrize('market', ['us', 'news'])
+def test_a_late_post_says_so_once_at_the_top_of_the_body(market):
+    meta = dict(_LATE, title=_META[market].format(d='2026-11-24'))
+    assert S.validate(market, '2026-11-24', meta, _BODY) == []
+    out = S.render(market, '2026-11-24', meta, _BODY)
+    doc = out.index('<div class="doc">') + len('<div class="doc">')
+    assert out[doc:].startswith(
+        '<p class="caption late-note" data-late="2026-11-28">늦게 올린 글 · 2026년 11월 28일</p>')
+    assert out.count('늦게 올린 글') == 1 and _BODY in out
+    ld = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', out, re.S).group(1))
+    assert ld['datePublished'] == ld['dateModified'] == '2026-11-28'
+
+
+def test_a_normal_post_is_byte_identical_with_or_without_late_false():
+    meta = {'title': _META['us'].format(d='2026-11-24'), 'summary': '요약.'}
+    out = S.render('us', '2026-11-24', meta, _BODY)
+    assert out == S.render('us', '2026-11-24', dict(meta, late=False), _BODY)
+    assert '늦게 올린 글' not in out and 'data-late' not in out
+
+
+@pytest.mark.parametrize('bad', [{'late': True}, {'late': True, 'published': '11/28'},
+                                 {'late': True, 'published': '2026-11-24'},
+                                 {'late': 'yes', 'published': '2026-11-28'}])
+def test_a_late_post_needs_a_later_publish_date(bad):
+    meta = dict({'title': _META['us'].format(d='2026-11-24'), 'summary': '요약.'}, **bad)
+    assert any('late' in e for e in S.validate('us', '2026-11-24', meta, _BODY))

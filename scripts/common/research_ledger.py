@@ -250,6 +250,34 @@ def append_record(root,payload,now=None):
         return record
 
 
+LATE_REASON = '늦은 글 — 판단은 이후 글이 이어 썼다'
+
+
+def late_cycle(records, market, report_date, cutoff=None):
+    """늦은 글(2026-11-27)의 cycle 한 줄 — 새 가설·복기 없이, 그날 열려 있던 가설을 전부 unresolved 로.
+
+    「그날 열려 있던」은 `validate` 의 cycle 규칙과 같다: report_date 가 그날 이하인 가설 중, report_date 가 그날
+    이하인 마지막 복기가 open 이거나 복기가 없는 것. 그날 기록이 이미 있으면(그날 글이 원장을 썼다) 늦은 cycle 이 아니다."""
+    if any(r['market'] == market and r['report_date'] == report_date for r in records):
+        raise ValueError(f'{report_date} 기록이 이미 원장에 있다 — 늦은 글 cycle 로 쓰지 않는다')
+    day = date.fromisoformat(report_date)
+    unresolved = []
+    for h in records:
+        if h['type'] != 'hypothesis' or h['market'] != market or date.fromisoformat(h['report_date']) > day:
+            continue
+        latest = next((r for r in reversed(records) if r['type'] == 'review' and r['hypothesis_id'] == h['id']
+                       and date.fromisoformat(r['report_date']) <= day), None)
+        if latest is None or latest['status'] == 'open':
+            unresolved.append({'hypothesis_id': h['id'], 'reason': LATE_REASON})
+    close = datetime.combine(day, datetime.min.time().replace(hour=16),
+                             ZoneInfo('America/New_York' if market == 'us' else 'Asia/Seoul'))
+    return dict(id=f'{market}-{report_date}-late-cycle', type='cycle', market=market, report_date=report_date,
+                data_cutoff=cutoff or close.astimezone(timezone.utc).isoformat(), sources=[],
+                central_questions=['늦은 글 — 그날 자료로 쓴 시황, 열린 가설은 그날 상태 그대로'],
+                candidate_ids=[], reviewed_ids=[], unresolved=unresolved,
+                no_candidate_reason='늦은 글은 새 가설·복기를 더하지 않는다 — 판단은 이후 글이 이어 썼다')
+
+
 def summarize(root,market,start,end,as_of):
     if market not in {'us','kr'}:raise ValueError('Invalid market')
     start_date=date.fromisoformat(start);end_date=date.fromisoformat(end);cutoff=timestamp(as_of)

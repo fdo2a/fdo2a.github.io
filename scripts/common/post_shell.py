@@ -215,6 +215,16 @@ def validate(market, date, meta, body):
                       f'({title!r})')
     if not ((meta or {}).get('summary') or '').strip():
         errors.append('meta.summary 가 비었다 — og:description·JSON-LD 설명이 된다')
+    late = (meta or {}).get('late', False)
+    if late is not False:
+        pub = (meta or {}).get('published')
+        try:
+            ok = late is True and _date.fromisoformat(pub).isoformat() == pub and pub > date
+        except (TypeError, ValueError):
+            ok = False
+        if not ok:
+            errors.append(f'meta.late 는 true 와 함께 published(올린 날짜 KST, YYYY-MM-DD, 거래일 뒤)가 있어야 한다 '
+                          f'(late={late!r}, published={pub!r})')
     low = body.lower()
     for needle, name in _FORBIDDEN:
         if needle in low:
@@ -247,6 +257,12 @@ def render(market, date, meta, body):
     title = meta['title'].strip()
     summary = meta['summary'].strip()
     published = (day + timedelta(days=cfg['published_offset'])).isoformat()
+    if meta.get('late') is True:
+        # 늦은 글(2026-11-27) — 지난 세션을 그날 자료로 나중에 냈다. 본문 맨 위 한 줄과 JSON-LD 발행일만 다르다.
+        published = meta['published']
+        pub = _date.fromisoformat(published)
+        body = (f'<p class="caption late-note" data-late="{published}">늦게 올린 글 · '
+                f'{pub.year}년 {pub.month}월 {pub.day}일</p>' + body)
     ld = {'@context': 'https://schema.org', '@type': 'NewsArticle', 'headline': og_title,
           'description': summary, 'datePublished': published, 'dateModified': published,
           'author': {'@type': 'Organization', 'name': cfg['brand'], 'url': cfg['site']},

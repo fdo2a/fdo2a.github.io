@@ -10,6 +10,8 @@ The repository fdo2a/fdo2a.github.io is cloned into your workspace as a source (
 
 ## STEP 0 — 커밋된 데이터 파일 확인 (먼저)
 
+**늦은 글(2026-11-27)**: 이 런을 띄운 재시도 루틴 Step 1 의 `routine_due.py us` 줄이 `LATE <D> …` 였으면 아래 0번부터 하지 않고 맨 끝 「늦은 글」 절로 간다 — 잠금을 잡기 전에 세션을 D 로 고정한다.
+
 A GitHub Actions workflow (.github/workflows/collect-market-data.yml) collects canonical yfinance/FRED data in a network-open runner and commits `data/market_data.json`, `data/intraday.json`, `data/econ_indicators.json`, `data/sector_performance.html`, `data/yield_curve.png` before this routine fires. **This is the primary data path** — the routine's own environment blocks finance hosts (Yahoo/FRED/exchanges all 403), so do NOT try to fetch them here.
 
 0. **선점 잠금 — 가장 먼저, 다른 파일을 읽기 전에.** 이 루틴은 푸시 웹훅과 예약 크론으로 하루에 여러 번 뜬다. 2026-09-26 에는 새벽에 10번 떴고 넷이 동시에 작성하다 5시간 한도를 함께 태워 그날 글이 나가지 못했다. 아래 가드는 중복 **발행**만 막고 병렬 **작성**은 못 막는다. 레포 클론으로 들어가자마자:
@@ -244,3 +246,27 @@ Send a PushNotification with the headline and the blog post URL, a `검증 기�
 - Web findings attributed to sources. Clear, natural report prose (근거와 판단이 분명한 자연스러운 보고서 문체).
 - **「buy-side」 금지 (2026-08-22 사용자 지시)** — 발행본 어디에도 쓰지 않는다. §2 헤더는 「전략 코멘트」, 해석 박스는 「전략 해석」. `scripts/check_macro.py` 게이트가 차단한다.
 - Final message: blog (GitHub Pages) delivery status, which subagents ran (or which fallback was used), and any failures.
+
+## 늦은 글 — 재시도 루틴의 `LATE <D>` (2026-11-27)
+
+`routine_due.py us` 는 현재 세션이 DONE·HOLD 일 때만 지난 5거래일의 빠진 세션 하나를 `LATE <D>` 로 낸다(11/24 처럼 세웠다 풀린 글). **지난 세션 D 를 그날 자료로 쓴다 — 입력은 기준 커밋 C 하나에서만.** 아래에 적은 것만 바꾸고 나머지(작성자·게이트·STEP 2.5·2.7·record·verify·잠금 갱신·커밋 직전 가드)는 위 절차 그대로, `[DATE]` = D. 설계: `../plans/attachments/2026-11-17-prepub-all/auto_resume_design_v2.md` §2.2(로컬).
+
+1. **잠금 (STEP 0 의 0 대신)** — 세션은 D 로 고정한다(다시 계산하지 않는다):
+   ```bash
+   bash scripts/ci/run_lock.sh key us --session <D> > /tmp/us-lock-key && cat /tmp/us-lock-key
+   bash scripts/ci/run_lock.sh acquire "$(cat /tmp/us-lock-key)" 120
+   ```
+   exit 처리와 그 뒤 모든 잠금 명령은 STEP 0 의 0 그대로다.
+2. **작업 공간 (STEP 0 의 0-1·1-3 대신)** — 수집·재수집·`gh workflow run` 을 하지 않는다. `git pull` 뒤 `python3 scripts/ci/late_workspace.py --date <D> --out <workspace> > /tmp/us-late-commit` — C(그 파일의 한 줄, 이후 `$(cat /tmp/us-late-commit)`)의 `data/` 전체(수집 장부 포함 — 해시가 그대로 맞는다)가 `<workspace>` 에 풀린다. exit 0 이 아니면 잠금을 풀고 출력 줄을 PushNotification 으로 보내고 끝낸다. 멱등 가드: `posts/<D>.html`·`news/<D>.html` 이 둘 다 원격에 있으면 already published(잠금을 푼다). 브리프만 있으면 STEP 3.5 만 하되 입력은 브리프 발행 커밋이 아니라 이 작업 공간이다. 데이터 신선도 판정은 `<workspace>/market_data.json` 의 `report_date == D`·`complete` 로 한다.
+3. **STEP 1** — 웹 리서치를 하지 않는다(D 뒤의 일이 섞인다). 수집 담당에게: 「늦은 글. 수집·자료 복사·WebSearch·WebFetch 금지, 레포 `data/` 는 읽지 않는다. `research_notes.md` 만 `<workspace>` 의 `news/<D>.json`·`telegram/<D>.json`·`econ_indicators.json`·`releases/`·`fed/` 로 쓰고, 웹으로만 채울 칸은 「늦은 글 — 웹 리서치 없음」으로 둔다」. 돌아오면 장부 다시 맞추기 대신 `late_workspace.py` 를 같은 인자로 한 번 더 돌려 C 판으로 덮는다(출력이 `/tmp/us-late-commit` 과 같아야 한다 — 다르면 중단). 직전 발행본 요약(`prev_post_digest.py --date <D>`)은 그대로.
+4. **연구 원장 — cycle 한 줄만** (RESEARCH_WORKFLOW 의 증거·가설·복기 기록 대신):
+   ```bash
+   python3 scripts/research_ledger.py late-cycle --root research/us --market us --date <D> --out <workspace>/late_cycle.json
+   python3 scripts/research_ledger.py append --input <workspace>/late_cycle.json --root research/us
+   ```
+   cycle ID 는 `us-<D>-late-cycle`, 그날 열려 있던 가설이 전부 unresolved 다(원장 검증이 D 기준으로 대조한다 — `check_research` 는 그대로). late-cycle 이 실패하면(그날 기록이 이미 있다) 잠금을 풀고 보고한다. 작성자에게는 cycle ID 와 unresolved 목록, `research_ledger.py summary --root research/us --market us --start <D> --end <D> --as-of "$(git log -1 --format=%cI "$(cat /tmp/us-late-commit)")"` 출력을 넘긴다 — 가설마다 새 판단 없이 짧게 이어 쓴다.
+5. **STEP 2** — 작성자 프롬프트에 「`data/…` 로 적힌 경로는 전부 `<workspace>/…` 로 읽는다. 레포의 `data/` 는 읽지 않는다. 웹 검색 하지 않는다」와 「meta.json 에 `"late": true, "published": "<오늘 KST YYYY-MM-DD>"`」를 넣는다(셸이 「늦게 올린 글」 한 줄을 단다). 텔레그램 스냅샷은 `C=$(git -C <repo> rev-parse --verify HEAD)` 대신 `C=$(cat /tmp/us-late-commit)` 로 한다(이하 같다).
+6. **STEP 2.7** — PREPUB_REVIEW 의 submit 에 `--data-commit "$(cat /tmp/us-late-commit)"` 를 붙인다(검토기가 C 에서 근거를 꺼낸다).
+7. **STEP 3** — `macro_next.json` → `data/macro.json` 승격을 하지 않는다(`macro_next.json` 은 게이트용으로만 쓴다). 커밋 전에 `git diff --cached --name-only` 가 `posts/<D>.html`·`assets/yield_curve_<D>.png`·`posts.json`·`sitemap.xml`·`verification/us/<D>.json`·`reviews/prepublish/us/<D>.json`·`research/us/ledger.jsonl` 밖을 담으면 커밋하지 말고 중단·보고한다. 목록은 `update_archives.py` 가 날짜 순으로 끼운다. 유동성 재검사는 그대로(HEAD 의 다른 날짜 글과 대조 — 이후 글이 실은 회차는 다시 싣지 않는다).
+8. **STEP 3.5** — 그대로(쟁점 분석은 main 의 `data/contested/us/<D>.json`). 작성자 meta 에 5 의 두 키. 0-2 뒤에 `P=$(git log -1 --diff-filter=A --format=%H -- "posts/<D>.html")` 로 `git rev-parse "$P:data/telegram/<D>.json"` 와 `git rev-parse "$(cat /tmp/us-late-commit):data/telegram/<D>.json"` 가 다르면(둘 다 없으면 같다) 이 글을 내지 않고 보고한다.
+9. **STEP 4** — 알림 첫 줄에 「늦은 글 <D>」.
