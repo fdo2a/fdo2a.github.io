@@ -1,0 +1,283 @@
+{
+ "format": "collect-status/1",
+ "market": "kr",
+ "report_date": "2026-11-26",
+ "stamped_at": "2026-11-27T03:39:48+09:00",
+ "run_id": "45877051656-1",
+ "run": {
+  "started_at": "2026-11-27T03:36:01+09:00",
+  "open": false,
+  "checked": true,
+  "run_id": "45877051656-1",
+  "steps_known": true
+ },
+ "files": {
+  "kr_charts_manifest.json": {
+   "present": true,
+   "sha256": "697eef25d56fa42e9a6cc59dc1ca8ce8bbb75b1fc93b5a91a42c4b3b95fa69a1",
+   "bytes": 267,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_econ.json": {
+   "present": true,
+   "sha256": "3481c81dd79f99c2d8933de55f6df43b6e07ed7c453c077d7b087ba440c7db79",
+   "bytes": 3466,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-26T18:10:59+09:00",
+   "source": "ECOS (한국은행 경제통계시스템)",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "checked": 5,
+   "expected": 5,
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_flows.json": {
+   "present": true,
+   "sha256": "995183fa7bd477dacf54d1e258838943c6d5f4a9106f880308b5eefcd4599667",
+   "bytes": 3261,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:08+09:00",
+   "source": "Naver 투자자별 매매동향",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_flows_intraday.json": {
+   "present": true,
+   "sha256": "ab2883d7072ad6862d8a4209ee1887c9d9b9c79706dc2015b6e65d8b6d7aef7b",
+   "bytes": 451,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_fund_view.html": {
+   "present": true,
+   "sha256": "8c48e1a8b676254edca50d6e2ccf24a8a30462ea302fbc99f2ff4b31e0a4694c",
+   "bytes": 3365,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:13+09:00",
+   "source": "KR collector in-memory (fund view)",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "producer:kr_fund_view.json",
+   "run": "written"
+  },
+  "kr_fund_view.json": {
+   "present": true,
+   "sha256": "b7fe1ab9281907b38f26d00e10355064ee950e591ebc0e0ef51b016729738773",
+   "bytes": 4022,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:13+09:00",
+   "source": "KR collector in-memory (fund view)",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_index_etf.json": {
+   "present": true,
+   "sha256": "3a794d6c34205a6ad6d9b59f36bedba60d8c8adab76dd9b8b051ec446f578e56",
+   "bytes": 1101,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:08+09:00",
+   "source": "Naver 거래대금 상위(지수 ETF)",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "checked": 8,
+   "collect_in": "sidecar",
+   "run": "written"
+  },
+  "kr_industry.json": {
+   "present": true,
+   "sha256": "a5835fa2d7cd1147f2861cfb09310501ed05d1c90cdba27859191890a112e273",
+   "bytes": 13332,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_intraday.json": {
+   "present": true,
+   "sha256": "001cfac462dc22201a857ee721573cbb08c65c2d4470c80ed007a6ec19754823",
+   "bytes": 2149,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-26T18:10:59+09:00",
+   "source": "Naver 분봉",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_market_data.json": {
+   "present": true,
+   "sha256": "6d89980397e95f9f1b919665922db14e1da4232719d3929ef6f5d9db53c6fe4d",
+   "bytes": 1564,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:08+09:00",
+   "source": "Naver + yfinance",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [
+    "flows_intraday"
+   ],
+   "empty": "has_data",
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_movers.json": {
+   "present": true,
+   "sha256": "47cbf35f51f809791a5a37d5449db4eca63c84af4a8da8e14f7cefa24d0fd933",
+   "bytes": 834,
+   "status": "partial",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:36:57+09:00",
+   "source": "Naver 거래대금 상위 + yfinance KRX 일봉",
+   "response": "missing: coverage:1/60",
+   "required_ok": false,
+   "missing": [
+    "coverage:1/60"
+   ],
+   "empty": "has_data",
+   "checked": 1,
+   "expected": 60,
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_program.json": {
+   "present": true,
+   "sha256": "f4e9ba2fe1eacef0815dd13217fc82f6f03f965f6cc7e8d468032230b3617b40",
+   "bytes": 355,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_sector.html": {
+   "present": true,
+   "sha256": "ee958368973232023610dca33bcce5aeabf575b31f7787823f4ff9cbf6990f05",
+   "bytes": 12554,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:08+09:00",
+   "source": "Naver + yfinance",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [
+    "flows_intraday"
+   ],
+   "empty": "has_data",
+   "collect_in": "producer:kr_market_data.json",
+   "run": "written"
+  },
+  "kr_session.json": {
+   "present": true,
+   "sha256": "3897ff4d109403ecad0e87acb0e1c658efee30f7c3f36867cc71d8a6b525e5c6",
+   "bytes": 1620,
+   "status": "partial",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-26T18:11:06+09:00",
+   "source": "yfinance + data/market_data.json",
+   "response": "missing: incomplete_window:ES, incomplete_window:NQ",
+   "required_ok": false,
+   "missing": [
+    "incomplete_window:ES",
+    "incomplete_window:NQ"
+   ],
+   "empty": "has_data",
+   "detail": "장중 창 완결 기준: 마지막 봉 15:00 KST 이후(정규장 15:30, 조기 마감·개장 지연 달력 없음 — 다른 마감 시각을 추정하지 않는다) — 미완결: ES 마지막 봉 13:30 < 15:00, NQ 마지막 봉 13:30 < 15:00",
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_stance_eval.json": {
+   "present": true,
+   "sha256": "17b219a24d720263bf0d52e9b3abb44968ec9e2e2d5164fc50b2f278af027d77",
+   "bytes": 1079,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:08+09:00",
+   "source": "kr_stance.json + 그날 지수 종가",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "file",
+   "run": "written"
+  },
+  "kr_stock_moves.json": {
+   "present": true,
+   "sha256": "33d6f1cff69c5efaf9ceeacdcfe7993cced749ffe1bbb235b53f8ccd973c43ae",
+   "bytes": 122,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_technical.json": {
+   "present": true,
+   "sha256": "e22256409fe9e1464188d4fa703b95a5a13de529fb422e8a0ab5284ee5638b93",
+   "bytes": 3312,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_theme.json": {
+   "present": true,
+   "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "bytes": 2,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "kr_top_value.json": {
+   "present": true,
+   "sha256": "9066a5be2dab424ed66046e9c5cc382144e22488f7ed3eb79a8868013f4cb23d",
+   "bytes": 3631,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-27T03:37:08+09:00",
+   "source": "Naver 거래대금 상위",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "checked": 10,
+   "collect_in": "sidecar",
+   "run": "written"
+  },
+  "news/2026-11-26.json": {
+   "present": true,
+   "sha256": "e375642d37e3c111ba95fdf692f463b95c4fea8c37e7abc62e54a697c5881207",
+   "bytes": 44021,
+   "collect_in": "none",
+   "run": "untracked"
+  },
+  "telegram/2026-11-26.json": {
+   "present": true,
+   "sha256": "6fe4c58dbcf2ffc77d9252caaf4d461f72dd614b7fec38a968a22bced6d568a9",
+   "bytes": 20789,
+   "status": "ok",
+   "as_of": "2026-11-26",
+   "collected_at": "2026-11-26T18:18:04+09:00",
+   "source": "t.me/s public channels",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "file",
+   "run": "kept"
+  }
+ }
+}
