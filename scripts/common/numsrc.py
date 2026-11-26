@@ -27,6 +27,7 @@ CLASS_KO = {'table': '자료로 확인', 'data': '자료로 확인', 'level': '�
 U_REASONS = ('표식 없음', '표식 오류', '자료와 다름', '칸 없음', '칸 무효', '기사 목록에 없음', '목록 없음', '발췌에 없음',
              '코드 블록(표식 없음)', '선언 무효')
 UNKNOWN_LIST, UNKNOWN_LEN = 60, 80
+UNKNOWN_ALL_LEN = 300                # `unknown_all` 문장 글자 상한(개수 상한은 없다 — 2026-11-27 설계 v3 §H)
 COMMON_MAX = 31                   # 단위 없는 31 이하 정수 — 「흔한 수」로 따로 센다
 
 
@@ -369,6 +370,8 @@ class Item:
     sentence: str = ''               # 이력 대조용(가린 문장) — 기록에 싣지 않는다
     sent_index: int = 0
     detail: dict = field(default_factory=dict)
+    full_sentence: str = ''          # 가리지 않은 문장 원문(공백 정리) — 기록 `unknown_all` 의 `s` 만. 이력 대조에 쓰지 않는다
+    in_code: int = 0                 # 1 = 표·코드 블록 안 숫자(`unknown_all` 의 `t`)
 
 
 def tally(items):

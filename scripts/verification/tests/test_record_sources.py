@@ -120,3 +120,50 @@ def test_real_config_has_both_markets():
     news = [g['name'] for g in R.gates_of(cfg, 'us-news')]
     assert news[-1] == 'check_number_sources' and 'check_news' in news and 'check_contested' in news
     assert R.post_path(cfg, 'us-news', D) == f'news/{D}.html'
+
+
+# ── 대조 못 한 숫자 전부(unknown_all, 2026-11-27 설계 v3 §H) — 기록은 경로만 가리고 옮긴다, 판정은 그대로 ──
+
+def test_unknown_all_recorded_with_full_sentence_verdict_unchanged(tmp_path):
+    r = _run(tmp_path)
+    g = r['gates'][0]
+    assert g['status'] == 'pass' and r['summary']['status'] == 'pass' and r['summary']['publish_ok']
+    s = g['sources']
+    assert s['unknown_all'] == [{'n': '0.5%', 's': '지수는 -0.23% 내렸고 0.5% 는 모른다.', 'why': '표식 없음',
+                                 'w': 'body', 't': 0}]
+    assert len(s['unknown_all']) == s['counts']['unknown'] == s['unknown_total']
+    assert s['unknown'] == [{'text': '0.5% — 지수는 · 내렸고 · 는 모른다.', 'why': '표식 없음'}]
+
+
+def _ua_obj(rows):
+    return _obj(unknown_all=rows)
+
+
+def test_unknown_all_missing_or_malformed_is_not_indeterminate():
+    from verification import record2 as R2
+    for mod in (R, R2):
+        for obj in (_obj(), _ua_obj('x'), _ua_obj(None)):
+            res = mod._base({'name': 'check_number_sources'})
+            st = mod._classify({'json': True, 'result': 'sources'}, 0, json.dumps(obj), '', {}, res)
+            assert st == 'pass' and 'unknown_all' not in res['sources'], mod.__name__
+        bad = [{'n': '1%', 's': 'a', 'why': 'w', 'w': 'body', 't': True}, {'n': 1, 's': 'a', 'why': 'w', 'w': 'body', 't': 0},
+               'x', {'n': '2%', 's': 'b 2%', 'why': '표식 없음', 'w': 'body', 't': 1}]
+        res = mod._base({'name': 'check_number_sources'})
+        st = mod._classify({'json': True, 'result': 'sources'}, 0, json.dumps(_ua_obj(bad)), '', {}, res)
+        assert st == 'pass' and res['sources']['unknown_all'] == [bad[-1]]
+
+
+def test_unknown_all_masks_paths_without_cap_and_both_writers_agree():
+    from verification import record2 as R2
+    long = '가' * 290 + ' 1% /Users/x/w/a.json'
+    rows = [{'n': '1%', 's': long, 'why': '표식 없음', 'w': 'body', 't': 0}] * 75
+    outs = []
+    for mod in (R, R2):
+        res = mod._base({'name': 'check_number_sources'})
+        st = mod._classify({'json': True, 'result': 'sources'}, 0, json.dumps(_ua_obj(rows)), '',
+                           {'datadir': '/Users/x/w'}, res)
+        assert st == 'pass'
+        ua = res['sources']['unknown_all']
+        assert len(ua) == 75 and ua[0]['s'] == '가' * 290 + ' 1% <datadir>/a.json'
+        outs.append(res['sources'])
+    assert outs[0] == outs[1]

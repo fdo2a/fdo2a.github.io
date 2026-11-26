@@ -614,3 +614,70 @@ def test_cli_text_output_sums_with_level(wd, tmp_path):
     parts = head.split('= ', 1)[1]
     parts = _re.sub(r'\(표 \d+·칸 \d+\)', '', parts)
     assert sum(int(x) for x in _re.findall(r' (\d+)(?= ·|$)', ' ' + parts)) == total and '어림선 1' in head
+
+
+# ── 대조 못 한 숫자 전부(unknown_all, 2026-11-27 설계 v3 §H) — 출력만, 판정·건수·기존 unknown 은 그대로 ──
+
+_UA_BODY = ('<p>그냥 0.3% 올랐고 1.5%는 모른다. 지수는 <span data-ref="md:indices.SP500.pct">-0.23%</span> 내렸고 2.5% 는 모른다.</p>'
+            '<table><tr><td>3.1%</td><td>4.2%</td></tr></table><div data-release="cpi"><p>근원 0.4% 올랐다.</p></div>')
+
+
+def test_unknown_all_every_unknown_with_full_sentence(wd):
+    inp = U.Inputs('us', D, str(wd), REPO, ledger=[])
+    r = U.result(inp, page(_UA_BODY, title='지수 9.9% 급락'), None)
+    assert r['counts']['unknown'] == r['unknown_total'] == len(r['unknown_all']) == 7
+    assert r['unknown_all'] == [
+        {'n': '0.3%', 's': '그냥 0.3% 올랐고 1.5%는 모른다.', 'why': '표식 없음', 'w': 'body', 't': 0},
+        {'n': '1.5%', 's': '그냥 0.3% 올랐고 1.5%는 모른다.', 'why': '표식 없음', 'w': 'body', 't': 0},
+        {'n': '2.5%', 's': '지수는 -0.23% 내렸고 2.5% 는 모른다.', 'why': '표식 없음', 'w': 'body', 't': 0},
+        {'n': '3.1%', 's': '3.1%', 'why': '코드 블록(표식 없음)', 'w': 'body', 't': 1},
+        {'n': '4.2%', 's': '4.2%', 'why': '코드 블록(표식 없음)', 'w': 'body', 't': 1},
+        {'n': '0.4%', 's': '근원 0.4% 올랐다.', 'why': '코드 블록(표식 없음)', 'w': 'body', 't': 1},
+        {'n': '9.9%', 's': '지수 9.9% 급락', 'why': '표식 없음', 'w': 'title', 't': 0}]
+    # 기존 칸은 이 변경 전과 같은 꼴 — 가린 조각·60개 상한(읽는 곳이 바뀌지 않는다)
+    assert r['unknown'] == [
+        {'text': '0.3% — 그냥 · 올랐고 ·는 모른다.', 'why': '표식 없음'},
+        {'text': '1.5% — 그냥 · 올랐고 ·는 모른다.', 'why': '표식 없음'},
+        {'text': '2.5% — 지수는 · 내렸고 · 는 모른다.', 'why': '표식 없음'},
+        {'text': '3.1% — ·', 'why': '코드 블록(표식 없음)'}, {'text': '4.2% — ·', 'why': '코드 블록(표식 없음)'},
+        {'text': '0.4% — 근원 · 올랐다.', 'why': '코드 블록(표식 없음)'}, {'text': '9.9%', 'why': '표식 없음'}]
+
+
+def test_unknown_all_has_no_count_cap_and_clips_only_long_sentences(wd):
+    body = ''.join(f'<p>값 {i}.5% 였다.</p>' for i in range(S.UNKNOWN_LIST + 15))
+    body += '<p>긴 문장 ' + '가' * 400 + ' 7.7% 였다.</p>'
+    r = run(wd, body)
+    ua = r['unknown_all']
+    assert len(r['unknown']) == S.UNKNOWN_LIST and len(ua) == r['counts']['unknown'] == S.UNKNOWN_LIST + 16
+    assert [u['n'] for u in ua[:3]] == ['0.5%', '1.5%', '2.5%']             # 글 순서 — 배열 자리가 순번
+    long = ua[-1]
+    assert long['n'] == '7.7%' and len(long['s']) == S.UNKNOWN_ALL_LEN and long['s'].endswith('…')
+
+
+_FIX_UNKNOWN_SHA = 'ef1de68c31500428'     # 이 변경 전(3fd9068b) 판이 11/05 고정 글에 낸 `unknown` 60개의 sha256 앞 16자
+_FIX_REST_SHA = '150cfd33fde295e3'        # 같은 판의 결과 전체(unknown_all 칸 없음)
+
+
+def test_fixture_unknown_unchanged_and_unknown_all_complete(tmp_path):
+    import hashlib
+    d = _fixture_wd(tmp_path)
+    html, _ = _fix()
+    r = U.result(U.Inputs('us', '2026-11-05', str(d), REPO, ledger=[]), html)
+    ua = r.pop('unknown_all')
+    assert hashlib.sha256(json.dumps(r['unknown'], ensure_ascii=False).encode()).hexdigest()[:16] == _FIX_UNKNOWN_SHA
+    assert hashlib.sha256(json.dumps(r, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:16] == _FIX_REST_SHA
+    assert len(ua) == r['counts']['unknown'] == r['unknown_total'] == 372
+    assert all(u['n'] in u['s'] for u in ua)                                # 숫자를 가리지 않은 문장
+    assert all((u['t'] == 1) == (u['why'] == '코드 블록(표식 없음)') for u in ua)
+    assert {u['w'] for u in ua} == {'body', 'meta', 'title'}
+
+
+def test_cli_json_carries_unknown_all_exit_unchanged(wd, tmp_path):
+    h = tmp_path / 'p.html'
+    h.write_text(page(_UA_BODY), encoding='utf-8')
+    p = _cli('--market', 'us', '--date', D, '--html', str(h), '--datadir', str(wd), '--repo', REPO, '--json',
+             '--effective', '2026-01-01')
+    assert p.returncode == 0, p.stderr
+    o = json.loads(p.stdout)
+    assert o['violations'] == [] and o['warnings'] == []
+    assert len(o['sources']['unknown_all']) == o['sources']['counts']['unknown'] == 6

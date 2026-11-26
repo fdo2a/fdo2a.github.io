@@ -235,6 +235,21 @@ def _sums_ok(c):
         sum(c[k] for k in SOURCE_CLASSES) == c['total']
 
 
+def _unknown_all(src, ctx):
+    """대조 못 한 숫자 전부(`unknown_all`, 2026-11-27 설계 v3 §H) — 경로만 가리고 그대로 옮긴다. 개수·글자 상한을 두지 않고
+    판정에 쓰지 않는다(꼴이 다른 행은 빼고, 칸이 없거나 목록이 아니면 칸째 두지 않는다 — 판정 불가로 바꾸지 않는다)."""
+    rows = src.get('unknown_all')
+    if not isinstance(rows, list):
+        return {}
+    out = []
+    for u in rows:
+        if not (isinstance(u, dict) and all(isinstance(u.get(k), str) for k in ('n', 's', 'why', 'w'))
+                and u.get('t') in (0, 1) and not isinstance(u.get('t'), bool)):
+            continue
+        out.append({'n': _mask(u['n'], ctx), 's': _mask(u['s'], ctx), 'why': u['why'], 'w': u['w'], 't': u['t']})
+    return {'unknown_all': out}
+
+
 def _classify_sources(code, obj, warns, viols, ctx, res):
     """숫자 출처 검사(check_number_sources) — 결과를 `sources` 로 옮긴다. 기록기가 **합을 다시 센다**: 배타 칸의 합 ==
     total(수량·숫자열 둘 다), 수정 이력이 약속한 꼴. 어긋나면 판정 불가(설계 §8.2). 확인 불가 숫자는 위반이 아니다 —
@@ -263,6 +278,7 @@ def _classify_sources(code, obj, warns, viols, ctx, res):
            'unknown': [{'text': _mask(str(u.get('text', '')), ctx)[:80], 'why': str(u.get('why', ''))[:40]}
                        for u in (src.get('unknown') or []) if isinstance(u, dict)][:SOURCE_UNKNOWN],
            'unknown_total': src.get('unknown_total') if _int(src.get('unknown_total')) else None,
+           **_unknown_all(src, ctx),
            'declared': [str(x)[:20] for x in (src.get('declared') or []) if isinstance(x, str)][:40],
            'dv_list': [str(x)[:80] for x in (src.get('dv_list') or []) if isinstance(x, str)][:40],
            'history': hist if hist == 'unverifiable' else

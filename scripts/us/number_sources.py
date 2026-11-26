@@ -171,7 +171,8 @@ class Classifier:
                 a, e = next(((x, y) for x, y in sents if x <= q.start < y), (0, len(b.text)))
                 in_sent = [x for x in qs if a <= x.start < e]
                 items.append(S.Item(q, cls, why, 'body', S.mask_sentence(b.text, a, e, in_sent),
-                                    next(i for i, x in enumerate(in_sent) if x is q)))
+                                    next(i for i, x in enumerate(in_sent) if x is q),
+                                    full_sentence=' '.join(b.text[a:e].split()), in_code=_in_code(b, q)))
         # 제목·메타 — 같은 인쇄 꼴의 본문 수량 칸을 물려받는다(U·X 이면 U)
         shown = {}
         for it in items:
@@ -194,7 +195,8 @@ class Classifier:
                 a, e = next(((x, y) for x, y in sents if x <= q.start < y), (0, len(text)))
                 in_sent = [x for x in qs if a <= x.start < e]
                 items.append(S.Item(q, cls, why, where, S.mask_sentence(text, a, e, in_sent),
-                                    next(i for i, x in enumerate(in_sent) if x is q)))
+                                    next(i for i, x in enumerate(in_sent) if x is q),
+                                    full_sentence=' '.join(text[a:e].split())))
         return items
 
     def _parse(self):
@@ -266,7 +268,7 @@ class Classifier:
         head = _anc(st, lambda n: n.tag == 'p' and 'news-head' in n.attrs.get('class', '').split())
         if news is not None and head is not None and not _anc(st, lambda n: 'sub' in n.attrs.get('class', '').split()):
             return self._match_list(self.inp.article.get(_attr(news, 'data-news')), q, 'article')
-        if any(n.tag == 'table' or any(a in n.attrs for a in _CODE_BLOCK_ATTRS) for n in st):
+        if _code_node(st):
             return 'unknown', '코드 블록(표식 없음)'
         return 'unknown', '표식 없음'
 
@@ -446,11 +448,29 @@ def result(inp, html, first_html=None):
         'web_by': dict(sorted(c.web_by.items())),
         'unknown': [{'text': S.clip(_context(it)), 'why': it.why} for it in unknown[:S.UNKNOWN_LIST]],
         'unknown_total': len(unknown),
+        'unknown_all': _unknown_all(unknown),
         'declared': c.declared[:40],
         'dv_list': [S.clip(x, 80) for x in c.book.dv_used[:40]],
         'history': hist, 'history_why': why_hist, 'first_sha256': first_sha,
         'cycle': c.cycle, 'cycle_why': c.cycle_why,
     }
+
+
+def _code_node(stack):
+    return any(n.tag == 'table' or any(a in n.attrs for a in _CODE_BLOCK_ATTRS) for n in stack)
+
+
+def _in_code(b, q):
+    """1 = 수량의 글자가 표·코드 블록 안(이유 「코드 블록(표식 없음)」과 같은 조상 판정 — 그 판정은 첫 글자 조각만 본다)."""
+    segs = b.segs_in(q.start, q.end)
+    return 1 if segs and _code_node(segs[0].stack) else 0
+
+
+def _unknown_all(unknown):
+    """대조 못 한 숫자 **전부**, 글 순서(본문 흐름 → 제목·메타·대체 문구) — 배열 자리가 곧 순번이다(2026-11-27 설계 v3 §H).
+    `n` 인쇄 꼴 · `s` 가리지 않은 문장(표·코드 블록이면 그 블록 글) · `why` · `w` 자리(body·title·meta·alt) · `t` 표·코드 블록."""
+    return [{'n': it.q.raw, 's': S.clip(it.full_sentence, S.UNKNOWN_ALL_LEN), 'why': it.why, 'w': it.where,
+             't': it.in_code} for it in unknown]
 
 
 def _context(it):
