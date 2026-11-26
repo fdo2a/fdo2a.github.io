@@ -1,0 +1,50 @@
+{
+ "report_date": "2026-11-26",
+ "market": "jp",
+ "collected_utc": "2026-11-26T09:38:56+00:00",
+ "window": {
+  "floor": "2026-11-25T16:30:00+09:00",
+  "ceiling": "2026-11-26T16:30:00+09:00"
+ },
+ "channels": {
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "reached": true
+  }
+ },
+ "items": [
+  {
+   "id": "aethersemiconductor/27242",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-25T12:20:36+00:00",
+   "url": "https://t.me/aethersemiconductor/27242",
+   "market_basis": "keyword",
+   "firm": null,
+   "analyst": null,
+   "relay_firm": null,
+   "note_date": null,
+   "kind": "opinion",
+   "source": null,
+   "summary_ko": "JP모건 일본 퀀트 전략팀은 닛케이 평균이 25일 56,500선까지 밀리는 가운데 AI 관련주 차익실현이 저가 매수를 압도하고 있다고 짚었다. 수급 기반 공포·탐욕 지수가 2025년 4월 관세 충격 이후 처음으로 마이너스 영역에 머무는 점을 근거로, 시장이 개별 기업보다 내년 AI 설비투자 둔화나 자금 조달 긴축 같은 매크로 충격을 대비하고 있다는 시각을 내놓았다. 이 팀은 CTA가 선진국 주식 선물 순매수를 줄여 과거 10년 범위의 52퍼센타일까지 내려왔다고 보고, MSCI 월드 지수 약 4,465를 추세 전환의 핵심 기준선으로 제시했다. 또 신용 스프레드 확대에 주목해 현재 비관론이 침체보다 신용 경색 우려에서 나왔을 수 있다는 의견을 밝혔으며, 방어주의 고평가 부담을 고려해 12월 상반기까지는 리버설을 겨냥한 거래가 유리하다는 견해를 유지했다.",
+   "news_use": true
+  }
+ ],
+ "stats": {
+  "read": 57,
+  "outside": 18,
+  "chatter": 8,
+  "stale": 1,
+  "burst": 0,
+  "not_japan": 29,
+  "dup": 0,
+  "valve_dropped": 0,
+  "stale_dropped": 0,
+  "items": 1,
+  "summarized": 1,
+  "news_use": 1
+ },
+ "usable": true
+}
