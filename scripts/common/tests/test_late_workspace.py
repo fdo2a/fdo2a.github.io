@@ -69,6 +69,16 @@ def test_cli_exports_that_commits_data_without_the_prefix(tmp_path):
     assert (out / 'telegram' / '2026-11-24.json').exists()
 
 
+def test_a_shallow_clone_stops_instead_of_saying_no_commit(tmp_path):
+    repo, *_ = _repo(tmp_path)
+    shallow = tmp_path / 'shallow'
+    subprocess.run(['git', 'clone', '-q', '--depth', '1', f'file://{repo}', str(shallow)], check=True,
+                   capture_output=True)
+    r = subprocess.run(['python3', SCRIPT, '--date', '2026-11-24', '--out', str(tmp_path / 'ws')],
+                       cwd=shallow, capture_output=True, text=True)
+    assert r.returncode == 2 and '얕은 클론' in r.stderr
+
+
 def test_cli_without_a_collection_commit_says_why(tmp_path):
     repo, *_ = _repo(tmp_path)
     r = subprocess.run(['python3', SCRIPT, '--date', '2026-11-20', '--out', str(tmp_path / 'ws')],

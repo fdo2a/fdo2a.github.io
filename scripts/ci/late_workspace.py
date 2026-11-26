@@ -31,6 +31,9 @@ def _git(*args):
 def find_commit(day, ref='HEAD', git=None):
     """D 의 마지막 수집 커밋(40자) 또는 None."""
     git = git or _git
+    # 얕은 클론이면 「수집 커밋 없음」과 「이력이 거기까지 안 닿음」을 가를 수 없다 — 추측하지 않고 멈춘다
+    if git('rev-parse', '--is-shallow-repository').stdout.strip() == 'true':
+        raise LookupFailed('얕은 클론이다 — 이력 전체가 있어야 그날 수집 커밋을 찾는다(git fetch --unshallow)')
     out = git('log', '--format=%H', ref, '--', 'data/market_data.json')
     if out.returncode:
         raise LookupFailed(out.stderr.strip()[-200:])
