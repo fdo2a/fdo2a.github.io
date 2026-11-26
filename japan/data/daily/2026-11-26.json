@@ -1,0 +1,1197 @@
+{
+ "schema": 2,
+ "session": "2026-11-26",
+ "prev_session": "2026-11-25",
+ "cut": "16:30",
+ "scheduled_at": "workflow_dispatch",
+ "ran_at": "2026-11-26T09:38:29.989624+00:00",
+ "complete": true,
+ "fetch_status": {
+  "nikkei_csv": "ok",
+  "nikkei": "ok",
+  "topix": "ok",
+  "sectors": "ok",
+  "jgb_naver": "ok",
+  "jgb_mof_check": "ok",
+  "jgb": "ok",
+  "call_rate": "ok",
+  "curve_s2s10": "ok",
+  "curve_s10s30": "ok",
+  "macro": "ok",
+  "fx": "ok"
+ },
+ "indices": {
+  "nikkei": {
+   "value": 57499.16,
+   "ok": true,
+   "why": null,
+   "denom": {
+    "date": "2026-11-25",
+    "value": 57011.62,
+    "source": "nikkei_official"
+   },
+   "chg_pct": 0.86,
+   "source": "Nikkei Inc. official close"
+  }
+ },
+ "stocks": [
+  {
+   "code": "7203",
+   "name": "도요타",
+   "value": 3377.0,
+   "chg_pct": -0.85
+  },
+  {
+   "code": "7267",
+   "name": "혼다",
+   "value": 1767.0,
+   "chg_pct": 0.2
+  },
+  {
+   "code": "6902",
+   "name": "덴소",
+   "value": 1932.0,
+   "chg_pct": -1.02
+  },
+  {
+   "code": "6758",
+   "name": "소니그룹",
+   "value": 4448.0,
+   "chg_pct": -1.44
+  },
+  {
+   "code": "6501",
+   "name": "히타치",
+   "value": 5012.0,
+   "chg_pct": 1.07
+  },
+  {
+   "code": "6861",
+   "name": "키엔스",
+   "value": 14310.0,
+   "chg_pct": -2.35
+  },
+  {
+   "code": "8035",
+   "name": "도쿄일렉트론",
+   "value": 7871.0,
+   "chg_pct": 0.59
+  },
+  {
+   "code": "6857",
+   "name": "어드밴테스트",
+   "value": 24830.0,
+   "chg_pct": 4.57
+  },
+  {
+   "code": "6981",
+   "name": "무라타제작소",
+   "value": 4823.0,
+   "chg_pct": 4.1
+  },
+  {
+   "code": "6503",
+   "name": "미쓰비시전기",
+   "value": 4457.0,
+   "chg_pct": -0.38
+  },
+  {
+   "code": "7741",
+   "name": "HOYA",
+   "value": 23445.0,
+   "chg_pct": -1.7
+  },
+  {
+   "code": "8306",
+   "name": "미쓰비시UFJ",
+   "value": 3118.0,
+   "chg_pct": -0.13
+  },
+  {
+   "code": "8316",
+   "name": "스미토모미쓰이FG",
+   "value": 2980.0,
+   "chg_pct": -0.37
+  },
+  {
+   "code": "8411",
+   "name": "미즈호FG",
+   "value": 7375.0,
+   "chg_pct": -0.67
+  },
+  {
+   "code": "8766",
+   "name": "도쿄해상",
+   "value": 591.1,
+   "chg_pct": -1.09
+  },
+  {
+   "code": "9983",
+   "name": "패스트리테일링",
+   "value": 85500.0,
+   "chg_pct": -0.78
+  },
+  {
+   "code": "9984",
+   "name": "소프트뱅크그룹",
+   "value": 2894.0,
+   "chg_pct": 7.32
+  },
+  {
+   "code": "9432",
+   "name": "NTT",
+   "value": 169.3,
+   "chg_pct": 0.77
+  },
+  {
+   "code": "9433",
+   "name": "KDDI",
+   "value": 2804.5,
+   "chg_pct": -0.44
+  },
+  {
+   "code": "9434",
+   "name": "소프트뱅크",
+   "value": 234.8,
+   "chg_pct": -1.3
+  },
+  {
+   "code": "7974",
+   "name": "닌텐도",
+   "value": 9082.0,
+   "chg_pct": 1.1
+  },
+  {
+   "code": "6098",
+   "name": "리쿠르트",
+   "value": 17245.0,
+   "chg_pct": 1.32
+  },
+  {
+   "code": "4661",
+   "name": "오리엔탈랜드",
+   "value": 3872.0,
+   "chg_pct": -2.37
+  },
+  {
+   "code": "8058",
+   "name": "미쓰비시상사",
+   "value": 5050.0,
+   "chg_pct": 0.26
+  },
+  {
+   "code": "8031",
+   "name": "미쓰이물산",
+   "value": 4595.0,
+   "chg_pct": -1.01
+  },
+  {
+   "code": "8001",
+   "name": "이토추상사",
+   "value": 2273.0,
+   "chg_pct": 0.22
+  },
+  {
+   "code": "4063",
+   "name": "신에쓰화학",
+   "value": 5516.0,
+   "chg_pct": 0.44
+  },
+  {
+   "code": "4452",
+   "name": "가오",
+   "value": 4081.0,
+   "chg_pct": -0.9
+  },
+  {
+   "code": "4568",
+   "name": "다이이치산쿄",
+   "value": 2875.0,
+   "chg_pct": -0.71
+  },
+  {
+   "code": "4502",
+   "name": "다케다약품",
+   "value": 7250.0,
+   "chg_pct": -1.56
+  },
+  {
+   "code": "4519",
+   "name": "주가이제약",
+   "value": 7381.0,
+   "chg_pct": -1.6
+  },
+  {
+   "code": "6954",
+   "name": "화낙",
+   "value": 5094.0,
+   "chg_pct": -0.31
+  },
+  {
+   "code": "6367",
+   "name": "다이킨공업",
+   "value": 23860.0,
+   "chg_pct": -2.17
+  },
+  {
+   "code": "7011",
+   "name": "미쓰비시중공업",
+   "value": 2622.0,
+   "chg_pct": -0.23
+  },
+  {
+   "code": "6146",
+   "name": "디스코",
+   "value": 42200.0,
+   "chg_pct": 3.97
+  },
+  {
+   "code": "8801",
+   "name": "미쓰이부동산",
+   "value": 1559.5,
+   "chg_pct": -1.55
+  },
+  {
+   "code": "8802",
+   "name": "미쓰비시지쇼",
+   "value": 4106.0,
+   "chg_pct": -1.06
+  },
+  {
+   "code": "5401",
+   "name": "일본제철",
+   "value": 680.0,
+   "chg_pct": -0.07
+  },
+  {
+   "code": "1605",
+   "name": "INPEX",
+   "value": 3287.0,
+   "chg_pct": 0.31
+  },
+  {
+   "code": "9020",
+   "name": "JR동일본",
+   "value": 4093.0,
+   "chg_pct": -1.47
+  },
+  {
+   "code": "9501",
+   "name": "도쿄전력",
+   "value": 422.2,
+   "chg_pct": 1.69
+  },
+  {
+   "code": "2914",
+   "name": "JT",
+   "value": 5527.0,
+   "chg_pct": -1.81
+  },
+  {
+   "code": "1925",
+   "name": "다이와하우스",
+   "value": 2338.5,
+   "chg_pct": -0.51
+  }
+ ],
+ "movers": {
+  "report_date": "2026-11-26",
+  "universe": "일본 대형주 고정 표본",
+  "threshold_pct": 5.0,
+  "groups": [
+   {
+    "id": "g1",
+    "industry": "정보통신·서비스",
+    "direction": "up",
+    "reasons": [
+     "등락 상위",
+     "이상 등락"
+    ],
+    "members": [
+     {
+      "name": "소프트뱅크그룹",
+      "change_pct": 7.32,
+      "close": 2894.0
+     }
+    ]
+   },
+   {
+    "id": "g2",
+    "industry": "전기·정밀",
+    "direction": "up",
+    "reasons": [
+     "등락 상위"
+    ],
+    "members": [
+     {
+      "name": "어드밴테스트",
+      "change_pct": 4.57,
+      "close": 24830.0
+     }
+    ]
+   },
+   {
+    "id": "g3",
+    "industry": "정보통신·서비스",
+    "direction": "down",
+    "reasons": [
+     "등락 하위"
+    ],
+    "members": [
+     {
+      "name": "오리엔탈랜드",
+      "change_pct": -2.37,
+      "close": 3872.0
+     }
+    ]
+   },
+   {
+    "id": "g4",
+    "industry": "전기·정밀",
+    "direction": "down",
+    "reasons": [
+     "등락 하위"
+    ],
+    "members": [
+     {
+      "name": "키엔스",
+      "change_pct": -2.35,
+      "close": 14310.0
+     }
+    ]
+   }
+  ]
+ },
+ "jgb": {
+  "2Y": {
+   "value": 1.745,
+   "period": "2026-11-26",
+   "prev_period": "2026-11-25",
+   "chg_bp": 1.3,
+   "unit": "%",
+   "source": "naver"
+  },
+  "5Y": {
+   "value": 2.058,
+   "period": "2026-11-26",
+   "prev_period": "2026-11-25",
+   "chg_bp": 0.5,
+   "unit": "%",
+   "source": "naver"
+  },
+  "10Y": {
+   "value": 2.638,
+   "period": "2026-11-26",
+   "prev_period": "2026-11-25",
+   "chg_bp": -1.4,
+   "unit": "%",
+   "source": "naver"
+  },
+  "30Y": {
+   "value": 3.902,
+   "period": "2026-11-26",
+   "prev_period": "2026-11-25",
+   "chg_bp": -5.4,
+   "unit": "%",
+   "source": "naver"
+  }
+ },
+ "jgb_recollect": false,
+ "call_rate": {
+  "value": 1.227,
+  "period": "2026-11-24",
+  "unit": "%",
+  "code": "STRDCLUCON"
+ },
+ "fx": {
+  "usdjpy": {
+   "value": 159.21,
+   "bar_start": "2026-11-26T16:25:00+09:00",
+   "bar_end": "2026-11-26T16:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "basis": "bar_end_1630_jst",
+   "label": "USD/JPY",
+   "multiplier": 1,
+   "prev_value": 159.115,
+   "prev_period": "2026-11-25",
+   "chg_pct": 0.06
+  },
+  "eurjpy": {
+   "value": 174.667,
+   "bar_start": "2026-11-26T16:25:00+09:00",
+   "bar_end": "2026-11-26T16:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "basis": "bar_end_1630_jst",
+   "label": "EUR/JPY",
+   "multiplier": 1,
+   "prev_value": 173.99,
+   "prev_period": "2026-11-25",
+   "chg_pct": 0.39
+  },
+  "krw_per_100jpy": {
+   "value": 841.4,
+   "bar_start": "2026-11-26T16:25:00+09:00",
+   "bar_end": "2026-11-26T16:30:00+09:00",
+   "tz": "Asia/Tokyo",
+   "basis": "bar_end_1630_jst",
+   "label": "100엔당 원",
+   "multiplier": 100,
+   "prev_value": 841.1,
+   "prev_period": "2026-11-25",
+   "chg_pct": 0.04
+  }
+ },
+ "macro": [],
+ "macro_periods": {
+  "cgpi": "2026-10",
+  "sppi": "2026-10",
+  "money_stock": "2026-10",
+  "monetary_base": "2026-10"
+ },
+ "calendar": {
+  "version": "80d26ba7386b",
+  "today": [],
+  "event_day": [],
+  "upcoming": [
+   {
+    "date": "2026-11-27",
+    "time_jst": "08:30",
+    "name_ko": "도쿄도 구부 소비자물가지수(11월 중순 속보)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.stat.go.jp/english/data/cpi/1582.html",
+    "checked_at": "2026-11-13",
+    "cov": "cpi_tokyo"
+   },
+   {
+    "date": "2026-11-27",
+    "time_jst": "08:50",
+    "name_ko": "무역통계 속보(11월 상순)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.customs.go.jp/toukei/calendar/calend.htm",
+    "checked_at": "2026-11-19",
+    "cov": "trade"
+   },
+   {
+    "date": "2026-11-30",
+    "time_jst": "08:50",
+    "name_ko": "광공업생산 속보(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.e-stat.go.jp/release-calendar/statistics/00550300",
+    "checked_at": "2026-11-19",
+    "cov": "industrial_production"
+   },
+   {
+    "date": "2026-11-30",
+    "time_jst": "08:50",
+    "name_ko": "상업동태통계 속보(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.e-stat.go.jp/release-calendar/statistics/00550030",
+    "checked_at": "2026-11-19",
+    "cov": "commercial"
+   },
+   {
+    "date": "2026-12-01",
+    "time_jst": "08:30",
+    "name_ko": "노동력조사 기본집계(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.stat.go.jp/data/roudou/pdf/kohyo26.pdf",
+    "checked_at": "2026-11-19",
+    "cov": "labour_force"
+   },
+   {
+    "date": "2026-12-02",
+    "time_jst": "08:50",
+    "name_ko": "본원통화(11월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": "monetary_base",
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-11-13",
+    "period": "2026-11",
+    "cov": "monetary_base"
+   },
+   {
+    "date": "2026-12-08",
+    "time_jst": "08:30",
+    "name_ko": "매월근로통계 속보(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.e-stat.go.jp/release-calendar",
+    "checked_at": "2026-11-13",
+    "cov": "wages"
+   },
+   {
+    "date": "2026-12-08",
+    "time_jst": "08:30",
+    "name_ko": "가계조사 가계수지편(10월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.e-stat.go.jp/release-calendar/statistics/00200561",
+    "checked_at": "2026-11-19",
+    "cov": "household"
+   },
+   {
+    "date": "2026-12-08",
+    "time_jst": "08:50",
+    "name_ko": "GDP 2차 속보(7-9월기)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.esri.cao.go.jp/jp/sna/kouhyou/kouhyou_top.html",
+    "checked_at": "2026-11-13",
+    "cov": "gdp"
+   },
+   {
+    "date": "2026-12-08",
+    "time_jst": "08:50",
+    "name_ko": "무역통계 속보(11월 상중순)",
+    "kind": "release",
+    "tier": "minor",
+    "series": null,
+    "source": "https://www.customs.go.jp/toukei/calendar/calend.htm",
+    "checked_at": "2026-11-19",
+    "cov": "trade"
+   },
+   {
+    "date": "2026-12-09",
+    "time_jst": "08:50",
+    "name_ko": "통화량 M2·M3(11월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": "money_stock",
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-11-13",
+    "period": "2026-11",
+    "cov": "money_stock"
+   },
+   {
+    "date": "2026-12-10",
+    "time_jst": "08:50",
+    "name_ko": "기업물가지수(11월)",
+    "kind": "release",
+    "tier": "minor",
+    "series": "cgpi",
+    "source": "https://www.boj.or.jp/en/about/calendar/index.htm",
+    "checked_at": "2026-11-13",
+    "period": "2026-11",
+    "cov": "cgpi"
+   }
+  ],
+  "coverage": {
+   "today_missing": [],
+   "upcoming_missing": []
+  }
+ },
+ "news_file": "japan/data/news/daily/2026-11-26.json",
+ "facts": {
+  "items": [
+   {
+    "field_id": "topix.close",
+    "observation_date": "2026-11-26",
+    "value": 3750.4,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "topix.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 0.11,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 3746.2,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17Food.close",
+    "observation_date": "2026-11-26",
+    "value": 476.02,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17Food.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -1.52,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 483.39,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17Energy.close",
+    "observation_date": "2026-11-26",
+    "value": 314.41,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17Energy.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 1.12,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 310.93,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17BuildingMaterial.close",
+    "observation_date": "2026-11-26",
+    "value": 458.15,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17BuildingMaterial.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.39,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 459.93,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17MaterialChemistry.close",
+    "observation_date": "2026-11-26",
+    "value": 385.81,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17MaterialChemistry.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 0.84,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 382.59,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17nostrum.close",
+    "observation_date": "2026-11-26",
+    "value": 355.33,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17nostrum.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -1.37,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 360.28,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17CarTransport.close",
+    "observation_date": "2026-11-26",
+    "value": 385.06,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17CarTransport.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.54,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 387.17,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17SteelNonferrous.close",
+    "observation_date": "2026-11-26",
+    "value": 457.24,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17SteelNonferrous.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 2.27,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 447.07,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17Machine.close",
+    "observation_date": "2026-11-26",
+    "value": 754.08,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17Machine.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 0.15,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 752.92,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17ElectricalPrecision.close",
+    "observation_date": "2026-11-26",
+    "value": 529.64,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17ElectricalPrecision.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 1.05,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 524.15,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17InformationService.close",
+    "observation_date": "2026-11-26",
+    "value": 481.86,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17InformationService.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": 1.0,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 477.11,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17ElectricPowerGas.close",
+    "observation_date": "2026-11-26",
+    "value": 113.82,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17ElectricPowerGas.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.52,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 114.41,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17TransportationLogistics.close",
+    "observation_date": "2026-11-26",
+    "value": 249.99,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17TransportationLogistics.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.8,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 252.0,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17TradingWholesale.close",
+    "observation_date": "2026-11-26",
+    "value": 1415.86,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17TradingWholesale.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.18,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 1418.47,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17Retail.close",
+    "observation_date": "2026-11-26",
+    "value": 445.62,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17Retail.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.85,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 449.42,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17Bank.close",
+    "observation_date": "2026-11-26",
+    "value": 416.05,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17Bank.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.35,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 417.5,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17Finance.close",
+    "observation_date": "2026-11-26",
+    "value": 426.48,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17Finance.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.73,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 429.62,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.Topix17RealEstate.close",
+    "observation_date": "2026-11-26",
+    "value": 533.41,
+    "unit": "index",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.Topix17RealEstate.chg_pct",
+    "observation_date": "2026-11-26",
+    "value": -0.94,
+    "unit": "%",
+    "source_id": "jpx:price3",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1,
+    "denom": {
+     "date": "2026-11-25",
+     "value": 538.46,
+     "source_id": "jpx:price3.1"
+    }
+   },
+   {
+    "field_id": "sector.breadth.up",
+    "observation_date": "2026-11-26",
+    "value": 6,
+    "unit": "count",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.breadth.down",
+    "observation_date": "2026-11-26",
+    "value": 11,
+    "unit": "count",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "sector.breadth.flat",
+    "observation_date": "2026-11-26",
+    "value": 0,
+    "unit": "count",
+    "source_id": "jpx:price3",
+    "status": "current"
+   },
+   {
+    "field_id": "jgb.2Y.yield",
+    "observation_date": "2026-11-26",
+    "value": 1.745,
+    "unit": "%",
+    "source_id": "naver:jgb",
+    "status": "current"
+   },
+   {
+    "field_id": "jgb.2Y.chg_bp",
+    "observation_date": "2026-11-26",
+    "value": 1.3,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1
+   },
+   {
+    "field_id": "jgb.5Y.yield",
+    "observation_date": "2026-11-26",
+    "value": 2.058,
+    "unit": "%",
+    "source_id": "naver:jgb",
+    "status": "current"
+   },
+   {
+    "field_id": "jgb.5Y.chg_bp",
+    "observation_date": "2026-11-26",
+    "value": 0.5,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": 1
+   },
+   {
+    "field_id": "jgb.10Y.yield",
+    "observation_date": "2026-11-26",
+    "value": 2.638,
+    "unit": "%",
+    "source_id": "naver:jgb",
+    "status": "current"
+   },
+   {
+    "field_id": "jgb.10Y.chg_bp",
+    "observation_date": "2026-11-26",
+    "value": -1.4,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1
+   },
+   {
+    "field_id": "jgb.30Y.yield",
+    "observation_date": "2026-11-26",
+    "value": 3.902,
+    "unit": "%",
+    "source_id": "naver:jgb",
+    "status": "current"
+   },
+   {
+    "field_id": "jgb.30Y.chg_bp",
+    "observation_date": "2026-11-26",
+    "value": -5.4,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1
+   },
+   {
+    "field_id": "curve.s2s10.spread_bp",
+    "observation_date": "2026-11-26",
+    "value": 89.3,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current"
+   },
+   {
+    "field_id": "curve.s2s10.chg_bp",
+    "observation_date": "2026-11-26",
+    "value": -2.7,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1
+   },
+   {
+    "field_id": "curve.s10s30.spread_bp",
+    "observation_date": "2026-11-26",
+    "value": 126.4,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current"
+   },
+   {
+    "field_id": "curve.s10s30.chg_bp",
+    "observation_date": "2026-11-26",
+    "value": -4.0,
+    "unit": "bp",
+    "source_id": "naver:jgb",
+    "status": "current",
+    "prev_observation_date": "2026-11-25",
+    "direction": -1
+   }
+  ],
+  "evidence": {
+   "topix": {
+    "slots": [
+     {
+      "slot": "",
+      "jpx_time": "202611261659",
+      "last_modified": "2026-11-26T07:59:30+00:00",
+      "sha256": "e48d9405285da2b7d01bd90b569d141d68e97dd8dcab7712bc38a9b265eacfb8"
+     },
+     {
+      "slot": ".1",
+      "jpx_time": "202611251659",
+      "last_modified": "2026-11-26T00:00:32+00:00",
+      "sha256": "fb81d4ef65a4b824f0bbae5c87a7a1ff5f59f460d87c17b61fcf15dfd9c4a9b7"
+     }
+    ],
+    "xcheck": {
+     "via": "naver:basic",
+     "close": 3750.4,
+     "prev_close": 3746.2,
+     "traded_at": "2026-11-26T15:30:02+09:00"
+    }
+   },
+   "sectors": {
+    "slots": [
+     {
+      "slot": "",
+      "jpx_time": "202611261659",
+      "last_modified": "2026-11-26T07:59:30+00:00",
+      "sha256": "e48d9405285da2b7d01bd90b569d141d68e97dd8dcab7712bc38a9b265eacfb8"
+     },
+     {
+      "slot": ".1",
+      "jpx_time": "202611251659",
+      "last_modified": "2026-11-26T00:00:32+00:00",
+      "sha256": "fb81d4ef65a4b824f0bbae5c87a7a1ff5f59f460d87c17b61fcf15dfd9c4a9b7"
+     }
+    ]
+   }
+  },
+  "blocks": {
+   "topix": "current",
+   "sectors": "current",
+   "curve": {
+    "s2s10": "current",
+    "s10s30": "current"
+   }
+  }
+ },
+ "published": "2026-11-26T09:48:10.480702+00:00"
+}

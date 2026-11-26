@@ -1,0 +1,36 @@
+{
+ "run_id": "jpd-2026-11-26-1795685590-15475",
+ "session": "2026-11-26",
+ "input_commit": "1b00a65380a9eb03b51dd51a90b1368a8e4ec112",
+ "html_sha256": "0011eeaa130262ddf71abdafffb2003c64391e975c3b30c48ba64d7fe3736834",
+ "snapshot_sha256": "ee778dee3d6be71767fcf841d4657e695725c92394261bdb5d4eadc67d45af12",
+ "news_sha256": "b588b3d2333c6ca19f75f60f2884856990e0adb49ad1268b310a5695bd40bb03",
+ "telegram_sha256": "a38882599ecba8a00cdda1f109260ac36b14824e1ca76311e000255a88feb5d4",
+ "title": "일본 증시 마감 — AI·반도체주 되사기에 닛케이 0.86% 반등, 넓은 시장은 거의 제자리",
+ "summary": "전날 급락한 AI·반도체 대형주에 저가 매수가 들어와 닛케이가 0.86% 올랐지만 넓은 시장은 거의 제자리였고, JGB는 2년이 소폭 오르고 30년이 크게 내려 갈렸다.",
+ "gates": [
+  {
+   "name": "apply_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_japan_daily",
+   "exit": 0
+  },
+  {
+   "name": "check_news",
+   "exit": 0
+  },
+  {
+   "name": "check_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_style",
+   "exit": 0
+  }
+ ],
+ "verdict": "pass",
+ "finished_at": "2026-11-26T09:48:05.666348+00:00",
+ "published_at": "2026-11-26T09:48:10.480702+00:00"
+}
