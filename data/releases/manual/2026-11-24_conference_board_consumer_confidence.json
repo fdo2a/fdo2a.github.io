@@ -1,0 +1,45 @@
+{
+  "source": "The Conference Board Consumer Confidence Index, topic page https://www.conference-board.org/topics/consumer-confidence/ (user-supplied link, read 2026-11-27 KST)",
+  "release_et": "2026-11-24 10:00",
+  "release_kst": "2026-11-25 00:00",
+  "period": "2026-11",
+  "kind": "preliminary",
+  "survey_window": "2026-11-01/2026-11-17",
+  "cutoff": "2026-11-17",
+  "headline": {
+    "consumer_confidence_index": {"value": 103.3, "prev": 91.9, "chg": 11.4, "base": "1985=100", "note": "prev revision not stated on page; back to January 2025 level per economist"},
+    "present_situation": {"value": 132.8, "chg": 13.7, "prev_derived": 119.1},
+    "expectations": {"value": 83.6, "chg": 9.9, "prev_derived": 73.7}
+  },
+  "derived_note": "prev_derived = value - chg; the page states only the point change, not the prior level",
+  "present": {
+    "business_good_pct": {"value": 23.3, "prev": 20.8},
+    "business_bad_pct": {"value": 16.8, "prev": 17.8},
+    "business_net_pct": {"value": 6.5, "chg_ppt": 3.5},
+    "jobs_plentiful_pct": {"value": 30.8, "prev": 26.2},
+    "jobs_hard_to_get_pct": {"value": 18.4, "prev": 21.4},
+    "labor_differential_pct": {"value": 12.4, "chg_ppt": 7.6}
+  },
+  "six_month_expectations": {
+    "business_improve_pct": {"value": 19.6, "prev": 17.5},
+    "business_worsen_pct": {"value": 17.3, "prev": 20.3},
+    "business_net_pct": {"value": 2.3, "chg_ppt": 5.1},
+    "more_jobs_pct": {"value": 18.1, "prev": 15.3},
+    "fewer_jobs_pct": {"value": 19.3, "prev": 25.7},
+    "jobs_net_pct": {"value": -1.2, "chg_ppt": 9.2},
+    "income_increase_pct": {"value": 18.4, "prev": 18.4},
+    "income_decrease_pct": {"value": 12.1, "prev": 11.4},
+    "income_net_pct": {"value": 6.3, "chg_ppt": -0.7}
+  },
+  "inflation_expectations_12m_pct": {"value": 5.7, "note": "declined for a second consecutive month; prior level not on page"},
+  "direction_only": {
+    "interest_rates_12m": "still expected higher",
+    "stock_prices_12m": "more expected increase than decrease",
+    "buying_plans": "autos and homes improved slightly (m/m and 6-month moving average); planned durable goods spending generally increased",
+    "write_ins": "slightly less negative; high prices still cited",
+    "economist": "Fergus McCormick: rise possibly reflects reduced uncertainty after the midterm elections; gains led by labor market perceptions"
+  },
+  "vacation_plans_6m_pct": {"value": 44.9, "prev": 42.7},
+  "not_on_page": ["prior-month revision", "recession-signal threshold", "stock/rate/buying-plan percentages"],
+  "next_release_et": "2026-12-22 10:00"
+}
