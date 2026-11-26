@@ -4,11 +4,11 @@
  "span": "daily",
  "report_date": "2026-11-25",
  "status": "none",
- "reason": "analysis_unverified",
- "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-25T23:09:07+00:00",
- "cutoff_at": "2026-11-25T23:09:07+00:00",
+ "reason": "no_conflict",
+ "retryable": false,
+ "attempts": 3,
+ "collected_at": "2026-11-26T00:14:19+00:00",
+ "cutoff_at": "2026-11-26T00:14:19+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -22,63 +22,31 @@
  },
  "counts": {
   "harvest": 205,
-  "candidates": 2,
+  "candidates": 1,
   "articles": [
-   2,
-   5
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 2,
+  "runs": 3,
   "tokens": {
-   "in": 73323,
-   "out": 15511
+   "in": 16797,
+   "out": 5434
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
-   "theguardian.com": "short",
+   "theguardian.com": "ok",
    "bbc.co.uk": "ok",
-   "cnbc.com": "ok"
+   "aljazeera.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled",
-  "grounded": {
-   "claims": "6/6",
-   "pairs": "2/2",
-   "obs": "8/8"
-  },
-  "verified": {
-   "pairs": 1,
-   "claims": 2,
-   "obs": 7,
-   "strict_pairs": 0,
-   "same_statistic_dropped": 0,
-   "topic": true
-  },
-  "repair": {
-   "paths": [
-    "edges[1]",
-    "variables[0]",
-    "worry.most[0]"
-   ],
-   "outcome": "skipped_threshold",
-   "remaining": [
-    "variables[0]:dangling",
-    "edges[1]:unverified",
-    "worry.most[0]:dangling"
-   ]
-  }
+  "gdelt": "ok"
  },
  "event": {
-  "topic_ko": "젠슨 황 엔비디아 CEO 복귀를 둘러싼 국가안보 위험과 이사회 번복 원인",
-  "query": "huang jensen tech",
+  "topic_ko": "트럼프 행정부의 14개국 대상 301조 신규 관세 제안과 미중 교역",
+  "query": "trump china tariffs",
   "trigger": []
  },
- "problems": [
-  "variables[0]:dangling",
-  "edges[1]:unverified",
-  "worry.most[0]:dangling"
- ],
- "content_hash": "cf87f39e32744c80"
+ "content_hash": "d01b5fae5a20222c"
 }
