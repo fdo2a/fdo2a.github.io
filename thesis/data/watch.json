@@ -1,51 +1,51 @@
 {
-  "as_of": "2026-11-25",
-  "collected_at": "2026-11-26T03:49:06+09:00",
+  "as_of": "2026-11-26",
+  "collected_at": "2026-11-27T03:37:00+09:00",
   "sessions": {
-    "kr": "2026-11-25",
-    "us": "2026-11-24"
+    "kr": "2026-11-26",
+    "us": "2026-11-25"
   },
   "complete": false,
   "missing": [],
   "stale": [
-    "005930.KS 주가가 2026-11-24 것이다 — 기대 세션 2026-11-25",
-    "000660.KS 주가가 2026-11-24 것이다 — 기대 세션 2026-11-25"
+    "005930.KS 주가가 2026-11-25 것이다 — 기대 세션 2026-11-26",
+    "000660.KS 주가가 2026-11-25 것이다 — 기대 세션 2026-11-26"
   ],
   "tickers": {
     "005930.KS": {
       "name": "삼성전자",
       "currency": "KRW",
-      "price": 189400.0,
-      "price_date": "2026-11-24",
-      "observed_at": "2026-11-26T03:49:06+09:00",
-      "chg_20d_pct": -14.68,
-      "pct_from_52w_high": -46.79,
-      "market_cap": 1111585988804608.0,
-      "eps_fy0": 47614.23,
-      "eps_fy1": 77494.25,
+      "price": 170700.0,
+      "price_date": "2026-11-25",
+      "observed_at": "2026-11-27T03:37:00+09:00",
+      "chg_20d_pct": -29.46,
+      "pct_from_52w_high": -52.04,
+      "market_cap": 1115493133975552.0,
+      "eps_fy0": 47516.574,
+      "eps_fy1": 77232.86,
       "eps_fy1_low": 59021.707,
       "eps_fy1_high": 102815.0,
-      "eps_fy1_analysts": 33.0,
+      "eps_fy1_analysts": 34.0,
       "bvps": 98030.17,
       "bvps_as_of": "2026-Q2",
       "bvps_source": "dart",
-      "pb": 1.93,
-      "pe_fy1": 2.44,
+      "pb": 1.74,
+      "pe_fy1": 2.21,
       "next_earnings_date": "2027-01-27",
       "fair_value": {
         "method": "blended",
-        "bull": 701664,
-        "base": 352092,
-        "bear": 150839,
-        "weighted": 406650,
-        "band1": 325320,
-        "band2": 276522
+        "bull": 700514,
+        "base": 351528,
+        "bear": 150610,
+        "weighted": 405994,
+        "band1": 324795,
+        "band2": 276076
       },
       "position": {
-        "vs_weighted_pct": -53.4,
-        "vs_base_pct": -46.2,
-        "upside_bull_pct": 270.5,
-        "downside_bear_pct": -20.4,
+        "vs_weighted_pct": -58.0,
+        "vs_base_pct": -51.4,
+        "upside_bull_pct": 310.4,
+        "downside_bear_pct": -11.8,
         "in_band1": true,
         "in_band2": true
       }
@@ -53,12 +53,12 @@
     "000660.KS": {
       "name": "SK하이닉스",
       "currency": "KRW",
-      "price": 1158000.0,
-      "price_date": "2026-11-24",
-      "observed_at": "2026-11-26T03:49:06+09:00",
-      "chg_20d_pct": -13.65,
-      "pct_from_52w_high": -60.32,
-      "market_cap": 726328496095232.0,
+      "price": 1030000.0,
+      "price_date": "2026-11-25",
+      "observed_at": "2026-11-27T03:37:00+09:00",
+      "chg_20d_pct": -30.73,
+      "pct_from_52w_high": -64.71,
+      "market_cap": 742547500564480.0,
       "eps_fy0": 359596.66,
       "eps_fy1": 535980.25,
       "eps_fy1_low": 387400.8,
@@ -67,8 +67,8 @@
       "bvps": 433817.66,
       "bvps_as_of": "2026-Q3",
       "bvps_source": "dart",
-      "pb": 2.67,
-      "pe_fy1": 2.16,
+      "pb": 2.37,
+      "pe_fy1": 1.92,
       "next_earnings_date": "2027-01-27",
       "fair_value": {
         "method": "blended",
@@ -80,10 +80,10 @@
         "band2": 1693201
       },
       "position": {
-        "vs_weighted_pct": -53.5,
-        "vs_base_pct": -45.1,
-        "upside_bull_pct": 283.7,
-        "downside_bear_pct": -28.4,
+        "vs_weighted_pct": -58.6,
+        "vs_base_pct": -51.2,
+        "upside_bull_pct": 331.3,
+        "downside_bear_pct": -19.5,
         "in_band1": true,
         "in_band2": true
       }
@@ -91,12 +91,12 @@
     "MU": {
       "name": "Micron",
       "currency": "USD",
-      "price": 629.79,
-      "price_date": "2026-11-24",
-      "observed_at": "2026-11-26T03:49:06+09:00",
-      "chg_20d_pct": -32.19,
-      "pct_from_52w_high": -48.09,
-      "market_cap": 666052001792.0,
+      "price": 601.25,
+      "price_date": "2026-11-25",
+      "observed_at": "2026-11-27T03:37:00+09:00",
+      "chg_20d_pct": -38.85,
+      "pct_from_52w_high": -50.44,
+      "market_cap": 682379247616.0,
       "eps_fy0": 175.08318,
       "eps_fy1": 204.98972,
       "eps_fy1_low": 128.49,
@@ -105,8 +105,8 @@
       "bvps": 122.35,
       "bvps_as_of": "2026-08-31",
       "bvps_source": "yfinance",
-      "pb": 5.15,
-      "pe_fy1": 3.07,
+      "pb": 4.91,
+      "pe_fy1": 2.93,
       "next_earnings_date": "2026-12-17",
       "fair_value": {
         "method": "blended",
@@ -118,10 +118,10 @@
         "band2": 782
       },
       "position": {
-        "vs_weighted_pct": -45.2,
-        "vs_base_pct": -34.7,
-        "upside_bull_pct": 231.5,
-        "downside_bear_pct": -43.2,
+        "vs_weighted_pct": -47.7,
+        "vs_base_pct": -37.7,
+        "upside_bull_pct": 247.3,
+        "downside_bear_pct": -40.5,
         "in_band1": true,
         "in_band2": true
       }
