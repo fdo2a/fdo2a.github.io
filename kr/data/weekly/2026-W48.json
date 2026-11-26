@@ -1243,7 +1243,6 @@
       }
     },
     "2026-11-26": {
-      "flows": {},
       "industry": {
         "창업투자": 7.33,
         "생명과학도구및서비스": 5.74,
@@ -1472,7 +1471,27 @@
         "카드",
         "운송인프라",
         "해운사"
-      ]
+      ],
+      "flows": {}
+    }
+  },
+  "_provenance": {
+    "2026-11-26": {
+      "industry": "published",
+      "top_value": "published",
+      "flows": "published_or_remote"
+    },
+    "2026-11-23": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
+    },
+    "2026-11-24": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
+    },
+    "2026-11-25": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
     }
   }
 }
