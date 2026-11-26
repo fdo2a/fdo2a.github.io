@@ -197,15 +197,55 @@ def public_post_hashes(repo, audit):
     return path, allowed
 
 
+PREPUB_PATH = 'reviews/prepublish/%s/%s.json'
+
+
+def prepub_post_hashes(repo, audit):
+    """→ (발행 전 검토 기록 경로, 지문으로 치지 않을 해시). 허용할 것이 없으면 (None, set()).
+
+    `prepub_review.py record` 가 쓰는 기록은 2026-11-23 부터 올릴 판의 해시 `final_sha256` 을 담는다. 문체 편집 0
+    인 날 그 값이 감사 기록의 `source_sha256` 과 같아 staged-scan 이 FOUND 를 냈다(2026-11-24 US, style_abort).
+
+    허용 기준은 `public_post_hashes` 와 같다: 그 시장·날짜 기록 하나, 중복 키 없는 JSON, `section`·`date` 가
+    감사 기록과 같을 것, 값은 **staged 글**(또는 노트를 걷어낸 판)의 해시, 자리는 `final_sha256` 하나뿐이고
+    원문에 한 번만 적혀 있을 것.
+    """
+    market, date = audit.get('market'), audit.get('date')
+    if not (isinstance(market, str) and isinstance(date, str) and market in POST_PATH and date):
+        return None, set()
+    path = PREPUB_PATH % (market, date)
+    raw = _staged(repo, path)
+    body = _staged(repo, POST_PATH[market] % date)
+    if raw is None or body is None:
+        return None, set()
+    try:
+        text = raw.decode('utf-8')
+        doc = json.loads(text, object_pairs_hook=_no_duplicates)
+    except (UnicodeDecodeError, ValueError):
+        return None, set()
+    if not isinstance(doc, dict) or doc.get('section') != market or doc.get('date') != date:
+        return None, set()
+    h = doc.get('final_sha256')
+    if not isinstance(h, str) or h not in _post_hashes(body):
+        return None, set()
+    doc['final_sha256'] = ''
+    if h in json.dumps(doc, ensure_ascii=False) or text.count(h) != 1:
+        return None, set()
+    return path, {h}
+
+
 def staged_hits(repo, audit):
     """staged 변경의 **더해진 줄**에 감사 지문이 있는 경로 목록."""
     finger = fingerprints(audit)
-    record, public = public_post_hashes(repo, audit)
+    allow = {}
+    for path, public in (public_post_hashes(repo, audit), prepub_post_hashes(repo, audit)):
+        if path:
+            allow[path] = public
     hits = []
     for path in _zlist(_git(repo, 'diff', '--cached', '--name-only', '-z')):
         diff = _git(repo, 'diff', '--cached', '-a', '--no-color', '--', path).decode('utf-8', 'replace')
         added = '\n'.join(l[1:] for l in diff.splitlines() if l.startswith('+') and not l.startswith('+++'))
-        marks = finger - public if path == record else finger
+        marks = finger - allow.get(path, set())
         if any(f in added for f in marks):
             hits.append(path)
     return hits
