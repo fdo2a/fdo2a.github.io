@@ -6,7 +6,8 @@
 
 재시도 루틴은 주 116회 떴고 거의 전부 `routine_due.py` → DONE 으로 8초 만에 끝났다. 그래도 매번 새 클라우드
 세션을 냈다. 여기서 같은 `routine_due.py <kind>` 를 부르고(루틴이 보는 것과 같은 한 줄), 줄이 `DUE` 로 시작하고
-그 세션 본 런 뒤일 때만 그 루틴의 API 트리거(`/fire`)를 친다. 루틴 프롬프트의 Step 1 재판정은 그대로라
+그 세션 본 런 뒤일 때만 그 루틴의 API 트리거(`/fire`)를 친다. `LATE`(US 늦은 글, 2026-11-27)는 본 런 창 없이 쏜다.
+고친 코드가 main 에 올라오면 retry-gate.yml 의 push 실행이 `--kinds us --mode gate` 로 틱 하나를 앞당긴다. 루틴 프롬프트의 Step 1 재판정은 그대로라
 잘못 쏜 발화는 8초짜리 no-op 이다. 이중 발화는 `run_lock.sh` 가 가른다.
 
 **창**: 예약은 2-5시간 늦게 온다(AGENTS 규칙 10). 늦은 틱이 다음 세션의 「본 런 전」 구간에 떨어지면 `routine_due`
@@ -129,7 +130,10 @@ def session_key(kind, now, holidays):
 def action(kind, line, now, holidays, mode):
     """(행동, 이유). 행동: fire · would-fire · early · boundary · noop · held."""
     word = line.split(' ', 1)[0]
-    due = word == 'DUE'
+    # LATE(US 늦은 글, 2026-11-27) = 현재 세션은 이미 DONE·HOLD 이고 지난 세션 하나가 빠졌다 — DUE 처럼 쏘되
+    # 본 런 창은 보지 않는다(본 런은 이미 끝났다). 경계 여유는 본다.
+    late = word == 'LATE'
+    due = word == 'DUE' or late
     if mode == 'force':
         return 'fire', 'force'
     # 주간이 본 런 창 뒤에도 WAIT 면 그 주는 묶였다(집계가 주 끝까지 못 옴·달력 끝). 재시도로는 풀리지 않고,
@@ -143,9 +147,9 @@ def action(kind, line, now, holidays, mode):
     if session_key(kind, now + BOUNDARY_MARGIN, holidays) != session_key(kind, now, holidays):
         return 'boundary', f'세션 경계 {int(BOUNDARY_MARGIN.total_seconds() // 60)}분 안 — 다음 틱·안전망이 본다'
     nb = not_before(kind, now, holidays)
-    if now < nb:
+    if now < nb and not late:
         return 'early', f'본 런 전 — {nb.isoformat()} 부터'
-    return ('would-fire' if mode == 'check' else 'fire'), 'DUE'
+    return ('would-fire' if mode == 'check' else 'fire'), word
 
 
 def run_due(kind):

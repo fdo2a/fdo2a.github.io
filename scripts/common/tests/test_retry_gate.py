@@ -138,6 +138,18 @@ def test_fetch_failure_due_still_fires():
     assert rg.action('us', 'DUE fetch 실패 — 오케스트레이터가 판정한다', LATE, NO_HOL, 'gate')[0] == 'fire'
 
 
+def test_late_fires_like_due_without_the_main_run_window():
+    """늦은 글(2026-11-27) — 현재 세션이 이미 DONE·HOLD 라 본 런 창은 상관없다. 경계 여유는 그대로 본다:
+    경계 직전에 쏘면 루틴 Step 1 이 다음 세션의 DUE 를 본다."""
+    early = utc(2026, 11, 19, 22, 20)                 # 11/19 세션 본 런 30분 뒤 — DUE 라면 early
+    line = 'LATE 2026-11-17 미발행: posts/2026-11-17.html, news/2026-11-17.html'
+    assert rg.action('us', line, early, NO_HOL, 'gate')[0] == 'fire'
+    assert rg.action('us', line, early, NO_HOL, 'check')[0] == 'would-fire'
+    edge = utc(2026, 11, 19, 21, 30)                  # 16:30 EST — 16:45 경계 30분 안
+    assert rg.action('us', line, edge, NO_HOL, 'gate')[0] == 'boundary'
+    assert rg.action('us', 'LATEX x', early, NO_HOL, 'gate')[0] == 'noop'
+
+
 def test_check_mode_never_fires_and_force_always_fires():
     assert rg.action('us', 'DUE x', LATE, NO_HOL, 'check')[0] == 'would-fire'
     assert rg.action('us', 'DONE x', LATE, NO_HOL, 'force')[0] == 'fire'
@@ -608,3 +620,18 @@ def test_a_held_session_is_never_fired():
     """발행 전 검사가 세운 세션(HOLD)은 쏘지 않는다 — 처음부터 다시 쓰면 받아들인 수정이 사라진다(2026-11-22)."""
     now = utc(2026, 11, 24, 5, 30)
     assert rg.action('us', 'HOLD 2026-11-23 발행 전 검사로 세움', now, NO_HOL, 'gate')[0] == 'noop'
+
+
+def test_a_fix_push_unholds_then_judges_us_once():
+    """고친 코드 push(2026-11-27) — resume 잡만 쓰기 권한이고 발화 토큰을 갖지 않는다. 판정 잡은 그 뒤 US 를 gate 로."""
+    text, doc, on = _wf()
+    assert on['push'] == {'branches': ['main'], 'paths': ['scripts/**', 'config/**', '.claude/**']}
+    resume, gate = doc['jobs']['resume'], doc['jobs']['gate']
+    assert resume['if'] == "github.event_name == 'push'" and resume['permissions'] == {'contents': 'write'}
+    assert 'permissions' not in gate
+    assert not any(k.startswith(rg.TOKEN_PREFIX) for st in resume['steps'] for k in (st.get('env') or {}))
+    assert 'resume_on_fix.py' in resume['steps'][-1]['run']
+    assert gate['needs'] == 'resume' and 'cancelled()' in gate['if']
+    env = gate['steps'][-1]['env']
+    assert "'us'" in env['KINDS'] and "'gate'" in env['MODE']
+    assert "github.event.schedule || 'manual'" not in text      # push 가 손 실행 줄에 끼지 않는다

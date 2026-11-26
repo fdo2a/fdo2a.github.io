@@ -110,6 +110,13 @@ def test_key_is_a_session_date():
     assert r.returncode == 0 and re.fullmatch(r'us-\d{4}-\d{2}-\d{2}\n', r.stdout)
 
 
+def test_key_takes_a_fixed_session_for_a_late_run():
+    r = subprocess.run(['bash', str(SCRIPT), 'key', 'us', '--session', '2026-11-24'], capture_output=True, text=True)
+    assert r.returncode == 0 and r.stdout == 'us-2026-11-24\n'
+    r = subprocess.run(['bash', str(SCRIPT), 'key', 'kr', '--session', '2026-11-24'], capture_output=True, text=True)
+    assert r.returncode == 2
+
+
 # ── 클라우드에서 ref 삭제가 거부될 때 (2026-10-20) ──────────────────────────────
 # 10/19 US 런은 쓰지 않고 끝나며 release 했지만 삭제 push 가 거부됐고, 「taken over」로 잘못 보고했다.
 # 잠금은 원격에 그대로 남아 재시도 루틴이 120분 동안 BUSY 로 막힐 수 있었다.

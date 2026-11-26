@@ -2,6 +2,7 @@
 # 루틴 선점 잠금 — 같은 세션의 US 루틴이 여러 개 떠도 작성은 하나만 한다.
 #
 #   KEY=$(bash scripts/ci/run_lock.sh key us)        # us-<세션 날짜>
+#   bash scripts/ci/run_lock.sh key us --session D    # us-D — 늦은 글처럼 세션을 이미 정한 런(2026-11-27)
 #   bash scripts/ci/run_lock.sh acquire "$KEY" [stale_minutes=180]
 #     exit 0  잡았다 → 진행   exit 3  다른 런이 잡고 있다 → 끝낸다
 #     exit 4  원격 확인 실패·push 거부 → 진행 안 함
@@ -11,7 +12,7 @@
 #   bash scripts/ci/run_lock.sh renew "$KEY" clear    # 표시를 뗀다 — 브리프 발행 push 가 끝난 직후(뉴스 이어 쓰기가 막히지 않게)
 #   bash scripts/ci/run_lock.sh hold "$KEY" <사유 부호>  # 세운다 — 사람이 unhold 하기 전에는 어떤 런도 잡지 못한다
 #     exit 0·4·5 는 release 와 같다
-#   bash scripts/ci/run_lock.sh unhold "$KEY"         # 사람만 — 세움·죽은 판정 표시를 released 로. 살아 있는 맨 잠금이면 exit 3
+#   bash scripts/ci/run_lock.sh unhold "$KEY"         # 사람 또는 resume-on-fix — 세움·죽은 판정 표시를 released 로. 살아 있는 맨 잠금이면 exit 3
 #   bash scripts/ci/run_lock.sh release "$KEY"        # 자기가 잡은 잠금만 푼다 — 판정 표시가 달린 클론이면 풀지 않고 세운다
 #   bash scripts/ci/run_lock.sh acquire "$KEY" 120 brief-out   # 브리프가 원격 main 에 있을 때만 — 죽은 판정 표시를 넘겨받는다(세움은 아니다)
 #     exit 0  풀었다·이미 남의 것·이미 없다   exit 4  확인 실패(원격·로컬)   exit 5  push 거부 — 잠금이 남았다
@@ -30,7 +31,8 @@
 # **판정 중 표시와 세움(2026-11-22).** 발행 전 검사에서 받아들인 정확성 수정이 생길 수 있는 단계(판정·수정)에
 # 들어서면 잠금 제목 끝에 ` state=judging|fixing` 을 단다. 그 표시가 남은 잠금은 stale 이어도 넘겨받지 않는다
 # (exit 6) — 세션이 고치다 죽었으니 처음부터 다시 쓰면 그 수정이 사라진다. `hold` 는 제목 `held <name> … reason=<부호>`
-# 로 바꾸고 그 뒤 acquire 는 언제나 exit 6. 둘 다 `unhold`(사람)로만 풀린다. routine_due.py 는 둘을 HOLD 로 읽는다.
+# 로 바꾸고 그 뒤 acquire 는 언제나 exit 6. 둘 다 `unhold`(사람, 또는 고친 코드가 main 에 올라온 뒤
+# resume-on-fix — scripts/ci/resume_on_fix.py, 세션당 3번까지)로만 풀린다. routine_due.py 는 둘을 HOLD 로 읽는다.
 # 설계: ../plans/attachments/2026-11-17-prepub-all/us_interim_hold_design_v1.md §10.2 (로컬)
 #
 # 키(codex #3): 뉴욕 시각에서 17시간을 뺀 날짜 = 그 시각까지 끝났을 수 있는 가장 최근 세션.
@@ -46,7 +48,8 @@ if [ "$cmd" = key ]; then
   # 규칙은 routine_due.py 한 곳에 있다 — 재시도 루틴이 확인하는 이름과 어긋나면 살아 있는
   # 런을 못 보고 겹쳐 뜬다. us = 뉴욕 −16h45m(2026-11-23), kr = 서울 −16h, jp_daily = 도쿄 −15h30m.
   prefix=${2:?prefix}
-  exec python3 "$(dirname "$0")/routine_due.py" lock-name "$prefix"
+  shift 2
+  exec python3 "$(dirname "$0")/routine_due.py" lock-name "$prefix" "$@"
 fi
 
 name=${2:?lock name}
@@ -264,7 +267,8 @@ hold | release)
   exit 0
   ;;
 unhold)
-  # 사람이 부른다(재료를 받아 복구했거나, 받아들인 수정을 버리기로 정했다). 세움·판정 표시만 푼다.
+  # 사람이 부른다(재료를 받아 복구했거나, 받아들인 수정을 버리기로 정했다). 또는 resume-on-fix 가 고친 코드 push 뒤에
+  # 부른다(retry-gate.yml 의 resume 잡 — 다른 자동 경로는 부르지 않는다). 세움·판정 표시만 푼다.
   if ! read_tip; then
     echo "run_lock: cannot read ${name} — nothing changed" >&2; say_err "$read_err"; exit 4
   fi

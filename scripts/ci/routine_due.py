@@ -2,7 +2,9 @@
 """재시도 루틴의 첫 단계 — 모델 없이 「지금 돌 일이 있는가」를 판정한다 (2026-09-27).
 
     python3 scripts/ci/routine_due.py us|kr|weekly|japan|jp_daily  # 한 줄: DONE|BUSY|WAIT|DUE|HOLD <이유> (HOLD = us 만, 2026-11-22)
+                                       # us 는 LATE <D> 미발행: … 도 (현재 세션이 DONE·HOLD 일 때 지난 5거래일의 빠진 글, 2026-11-27)
     python3 scripts/ci/routine_due.py lock-name us|kr|jp_daily  # 루틴 잠금 이름 (run_lock.sh key 가 부른다)
+    python3 scripts/ci/routine_due.py lock-name us --session D  # 늦은 글 — 세션을 정한 런의 잠금 이름
     python3 scripts/ci/routine_due.py jp-session       # 일본 일간 세션·직전 세션 (잠금 전에 고정)
     python3 scripts/ci/routine_due.py japan-key        # 일본 주간 키·그 주 금요일·MOF 게시일 (STEP 0)
     python3 scripts/ci/routine_due.py week-key         # 달력상 이번 주 키 (주간 STEP 0 이 맞대 본다)
@@ -119,14 +121,15 @@ def decide_japan(key, files, lock_age, today, holidays=()):
     return 'DUE', f'{key} 미발행: {path}'
 
 
-def lock_name(kind, now, key=None, holidays=()):
+def lock_name(kind, now, key=None, holidays=(), session=None):
     """루틴이 잡는 이름 그대로 — `run_lock.sh key <prefix>` 가 이 함수를 부른다.
 
     **이름은 거래 세션이다.** 달력 날짜로 지으면 추석 사흘 동안 같은 9/23 세션을 처리하는
-    런들이 서로 다른 잠금을 잡아 겹쳐 쓸 수 있다(구현 재검토 #1).
+    런들이 서로 다른 잠금을 잡아 겹쳐 쓸 수 있다(구현 재검토 #1). `session` = 늦은 글처럼 세션을 이미
+    정한 런(`run_lock.sh key us --session <D>`) — US 만.
     """
     if kind == 'us':
-        return f'us-{us_session(now, holidays)}'
+        return f'us-{session or us_session(now, holidays)}'
     if kind == 'kr':
         return f'kr-{kr_session(now, holidays)}'
     if kind == 'japan':
@@ -153,9 +156,49 @@ def _daily(session, files, lock_age, stale, want, flag=None):
     return 'DUE', f'{session} 미발행: {", ".join(missing)}'
 
 
+def us_want(d):
+    return (f'posts/{d}.html', f'news/{d}.html')
+
+
 def decide_us(now, files, lock_age, holidays=(), flag=None):
-    return _daily(us_session(now, holidays), files, lock_age, STALE_MIN['us'],
-                  lambda d: (f'posts/{d}.html', f'news/{d}.html'), flag)
+    return _daily(us_session(now, holidays), files, lock_age, STALE_MIN['us'], us_want, flag)
+
+
+LATE_SESSIONS = 5     # 늦은 글을 내는 창 — 현재 세션 앞의 거래일 수
+
+
+def us_late_sessions(now, holidays=()):
+    """현재 US 세션 **앞의** 5거래일, 오래된 것부터."""
+    d, out = date.fromisoformat(us_session(now, holidays)), []
+    while len(out) < LATE_SESSIONS:
+        d = _trading_back(d - timedelta(days=1), holidays)
+        out.append(d.isoformat())
+    return out[::-1]
+
+
+def decide_us_late(now, files, current, locks, holidays=(), collected=lambda d: True):
+    """늦은 글 (2026-11-27) — 현재 세션이 DONE·HOLD 일 때만 지난 5거래일의 빠진 세션을 본다.
+
+    지난 세션마다 `_daily` 를 그대로 돌린다: DUE → 늦은 대상, BUSY → 다른 런이 쓰는 중, HOLD·DONE → 대상 아님
+    (세움·죽은 판정 표시는 지금처럼 사람 몫). `locks` = {세션: (나이, 표시)} — 없는 세션은 잠금 없음.
+    `collected(D)` 가 거짓이면(그날 수집 커밋이 없다 — 달력에 없는 휴장일 등) 대상이 아니다.
+    늦은 글은 한 번에 하나: 대상 가운데 하나라도 BUSY 면 BUSY, 아니면 가장 오래된 대상 하나를 LATE.
+    """
+    if current[0] not in ('DONE', 'HOLD'):
+        return current
+    busy = due = None
+    for s in us_late_sessions(now, holidays):
+        age, flag = locks.get(s, (None, None))
+        word, why = _daily(s, files, age, STALE_MIN['us'], us_want, flag)
+        if word == 'BUSY' and busy is None:
+            busy = why
+        elif word == 'DUE' and due is None and collected(s):
+            due = why
+    if busy:
+        return 'BUSY', f'{busy} — 늦은 글'
+    if due:
+        return 'LATE', due
+    return current
 
 
 JP_LATE_HOURS = 6     # 자정을 넘긴 재시도가 어제 세션을 이어받는 창(JST)
@@ -382,6 +425,14 @@ def _lock_state(name, now):
     return age, None
 
 
+def _us_collected(day):
+    """그 세션의 수집 커밋이 origin/main 에 있는가 — 늦은 글의 작업 공간을 꺼낼 수 있는가(late_workspace.py).
+    git 조회 실패는 예외로 올린다 — 판정이 빨갛게 끝나고(retry_gate 의 「판정 실패」) 쏘지 않는다."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import late_workspace
+    return late_workspace.find_commit(day, 'origin/main') is not None
+
+
 def _lock_age(name, now):
     """잠금의 마지막 갱신 이후 분. 잠금이 없거나 `released` 표시면 None."""
     return _lock_state(name, now)[0]
@@ -393,6 +444,14 @@ def main(argv=None):
         if len(args) < 2 or args[1] not in ('us', 'kr', 'jp_daily'):
             print('usage: routine_due.py lock-name us|kr|jp_daily', file=sys.stderr)
             return 2
+        if len(args) > 2:
+            # 늦은 글 — 세션을 이미 정한 런(`LATE <D>`). 잠금은 그 세션 이름으로 잡는다.
+            if args[1] != 'us' or len(args) != 4 or args[2] != '--session' or not _day(args[3]) \
+                    or _day(args[3]).isoformat() != args[3]:
+                print('usage: routine_due.py lock-name us --session YYYY-MM-DD', file=sys.stderr)
+                return 2
+            print(lock_name('us', None, session=args[3]))
+            return 0
         market = 'jp' if args[1] == 'jp_daily' else args[1]
         print(lock_name(args[1], datetime.now(timezone.utc), holidays=_holidays(market)))
         return 0
@@ -488,7 +547,12 @@ def main(argv=None):
     if kind == 'us':
         hol = _holidays('us')
         age, flag = _lock_state(lock_name('us', now, holidays=hol), now)
-        verdict = decide_us(now, _files('posts', 'news'), age, hol, flag)
+        files = _files('posts', 'news')
+        verdict = decide_us(now, files, age, hol, flag)
+        if verdict[0] in ('DONE', 'HOLD'):
+            locks = {s: _lock_state(lock_name('us', now, session=s), now)
+                     for s in us_late_sessions(now, hol) if any(p not in files for p in us_want(s))}
+            verdict = decide_us_late(now, files, verdict, locks, hol, _us_collected)
     elif kind == 'kr':
         hol = _holidays('kr')
         verdict = decide_kr(now, _files('kr/posts', 'kr/news'),

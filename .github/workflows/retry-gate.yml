@@ -6,8 +6,13 @@ name: Retry gate (routine fire on DUE)
 # 예약 문자열은 scripts/ci/retry_gate.py 의 SLOTS 와 글자까지 같아야 한다(시험). UTC — KST = UTC+9.
 # 두 줄이 같은 분에 맞지 않게 분을 달리 둔다(시험) — 실행은 github.event.schedule 한 줄만 본다.
 # 예약은 2~5시간 늦게 올 수 있다 — 늦은 틱이 본 런 전에 떨어지면 스크립트의 창이 막는다.
-# 설계: docs/superpowers/specs/2026-11-19-retry-gate.md
+# 고친 코드 push(2026-11-27): main 에 scripts·config·.claude 가 바뀌면 resume 잡이 세운 US 세션을 풀고(resume_on_fix.py),
+# gate 잡이 US 판정을 한 번 돌린다 — 3시간 틱 하나를 앞당길 뿐 판정 규칙은 같다(DUE·LATE 면 쏜다).
+# 설계: docs/superpowers/specs/2026-11-19-retry-gate.md · ../plans/attachments/2026-11-17-prepub-all/auto_resume_design_v2.md (로컬)
 on:
+  push:
+    branches: [main]
+    paths: ['scripts/**', 'config/**', '.claude/**']
   schedule:
     # US 20:30·KR 06:xx 는 루틴의 안전망 cron 이 제시각에 맡는다(세션 경계 직전의 마지막 기회).
     - cron: '30 0,2,5,8,11,14,17 * * 2-6'      # US 재시도 (화-토)
@@ -27,17 +32,39 @@ on:
         options: [check, gate, force]
         default: check
 
-# 읽기만 — 판정은 origin/main 과 잠금 ref 를 읽는다. 쓰는 것은 없다.
+# 읽기만 — 판정은 origin/main 과 잠금 ref 를 읽는다. 쓰는 것은 resume 잡뿐이다(잡 단위로 쓰기 권한, 발화 토큰 없음).
 permissions:
   contents: read
 
-# 예약 문자열마다 따로 — 같은 시각의 다른 슬롯 실행이 대기 중인 실행을 밀어내 취소하지 않게.
+# 예약 문자열마다 따로 — 같은 시각의 다른 슬롯 실행이 대기 중인 실행을 밀어내 취소하지 않게. push 는 push 끼리
+# (대기 중인 push 실행은 더 새 push 실행이 대신한다 — 새 push 도 세움 뒤에 왔다).
 concurrency:
-  group: retry-gate-${{ github.event.schedule || 'manual' }}
+  group: retry-gate-${{ github.event.schedule || github.event_name }}
   cancel-in-progress: false
 
 jobs:
+  resume:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Unhold held US sessions after a fix
+        # 세운 시각 < push 시각인 held 세션만, 세션당 3번·push 하나당 1번(refs/heads/resume/us-<D>/<sha12>).
+        env:
+          SHA: ${{ github.sha }}
+          PUSHED_AT: ${{ github.event.repository.pushed_at }}
+        run: python3 scripts/ci/resume_on_fix.py --sha "$SHA" --pushed-at "$PUSHED_AT"
+
   gate:
+    # push 실행에서는 resume 뒤에 한 번(resume 이 실패해도 판정은 돈다). 예약·손 실행에서는 resume 이 건너뛰어진다.
+    needs: resume
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -50,8 +77,8 @@ jobs:
         # 표준 라이브러리만(pip 없음). 토큰은 루틴마다 하나 — 웹 화면에서 만든 값을 레포 비밀값에 넣는다.
         env:
           SCHEDULE: ${{ github.event.schedule }}
-          KINDS: ${{ github.event.inputs.kinds }}
-          MODE: ${{ github.event.inputs.mode }}
+          KINDS: ${{ github.event_name == 'push' && 'us' || github.event.inputs.kinds }}
+          MODE: ${{ github.event_name == 'push' && 'gate' || github.event.inputs.mode }}
           RETRY_GATE_LIVE: ${{ vars.RETRY_GATE_LIVE }}
           ROUTINE_FIRE_TOKEN_US: ${{ secrets.ROUTINE_FIRE_TOKEN_US }}
           ROUTINE_FIRE_TOKEN_KR: ${{ secrets.ROUTINE_FIRE_TOKEN_KR }}
