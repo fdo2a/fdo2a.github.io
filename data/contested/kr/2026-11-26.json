@@ -1,0 +1,62 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-26",
+ "status": "error",
+ "reason": "fetch_incomplete",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-26T11:12:42+00:00",
+ "cutoff_at": "2026-11-26T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "935538ef79ad816a450cdd60e908518b05f58f02",
+  "sha256": "993b7a3f0308aed51ef7e5d9eaa5346ffd8adee90f1d8481179d940bcb5af63c",
+  "extra": {
+   "kr_econ.json": "3481c81dd79f99c2d8933de55f6df43b6e07ed7c453c077d7b087ba440c7db79",
+   "kr_flows.json": "af017ecc85da5cc04bde9b98b8081673fdc69dc705f37fb76d3d8ee17f44880f",
+   "kr_session.json": "3897ff4d109403ecad0e87acb0e1c658efee30f7c3f36867cc71d8a6b525e5c6"
+  }
+ },
+ "counts": {
+  "harvest": 653,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "discovery": "truncated",
+  "hosts": {
+   "seoul": "ok",
+   "khan": "ok",
+   "hankyung": "ok",
+   "yna": "ok",
+   "joongang": "ok",
+   "etnews": "ok"
+  },
+  "notes": [
+   "discover:653"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 16249,
+   "out": 5207
+  }
+ },
+ "event": {
+  "topic_ko": "자본시장 대전환 위원회 출범과 김용범 위원장 내정",
+  "query": "자본시장 김용범 개혁기구",
+  "trigger": []
+ },
+ "content_hash": "49be5ff52b225856"
+}
