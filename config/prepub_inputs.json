@@ -524,6 +524,24 @@
      "note": "오케스트레이터가 검사 실행 결과를 받아 적은 임시 파일(2026-11-17 기록의 gates.txt·gates2.txt, workspace-only) — 작성자·검사기가 읽지 않는다. 다른 이름의 임시 파일은 분류되지 않은 파일로 걸린다"
     },
     {
+     "path": "<datadir>/_parts/*.html",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 글 조각",
+     "note": "오케스트레이터가 글을 조각으로 나눠 쓴 임시 파일(2026-11-23 기록의 p1-p4, workspace-only) — 발행본은 --html 로 받은 글이고 검사기는 이 파일을 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/body_draft.html",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 본문 초안 사본",
+     "note": "오케스트레이터가 작업 중에 남긴 임시 파일(2026-11-25 기록, workspace-only) — 발행본은 --html 로 받은 글이고 검사기는 이 파일을 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/prepub_dir",
+     "class": "unused",
+     "name": "루틴이 적어 둔 발행 전 검토 폴더 경로",
+     "note": "오케스트레이터가 STEP 2.7 의 PREPUB_DIR 을 적어 둔 임시 파일(2026-11-25 기록, workspace-only) — 검사기는 읽지 않는다"
+    },
+    {
      "path": "<datadir>/readability.txt",
      "class": "unused",
      "name": "루틴이 작업 공간에 남긴 조판 검사 출력",
@@ -564,6 +582,18 @@
      "class": "unused",
      "name": "유동성 수집기 내부 상태",
      "note": "수집기가 다음 수집에 쓰는 기록"
+    },
+    {
+     "path": "<datadir>/releases/manual/*.json",
+     "class": "unused",
+     "name": "사용자가 넘긴 지표 자료(S&P Global PMI 등)",
+     "note": "2026-11-23 손으로 저장한 원문 숫자 — 읽는 코드가 아직 없다(지표 해부 B단계 전). 읽기 시작하면 분류를 바꾼다"
+    },
+    {
+     "path": "<datadir>/yields_1600.json",
+     "class": "unused",
+     "name": "국채 16:00 ET 컷 원장",
+     "note": "수집기(yield_cut.py)가 전 거래일·1주 전 값을 고르는 기록(2026-11-23) — 그 값은 market_data.json 의 yields 로 들어가 거기서 검사된다. 검사기·작성자는 이 파일을 읽지 않는다"
     },
     {
      "path": "<datadir>/news/*.json",
