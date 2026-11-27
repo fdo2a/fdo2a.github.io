@@ -56,7 +56,7 @@ Publishes a US equity morning brief automatically every trading day.
 `style.py`'s desk checks run only on `<body data-register="da">` documents, so old posts re-checked by the corrector are not newly blocked. Excluded regions: `data-research-summary` (byte-compared generated section) and `details[data-provenance]` (2 × 600 chars, advisory). **When changing this**: read `docs/superpowers/specs/2026-09-24-desk-prose-design.md` before touching `scripts/us/style.py`.
 
 **Number audit** (every figure, by table cell or asset+field; prose warns until re-measured): read `docs/superpowers/specs/2026-11-07-number-audit.md` before touching `us/number_audit.py`.
-**Number sources** (every number → one source class; reference gate, `data-ref`/`data-src`/`data-nx` markers, first-draft history): read `docs/superpowers/specs/2026-11-20-number-sources.md` before touching `us/number_sources.py`, `us/facts.py` or `common/numsrc.py`.
+**Number sources** (every number → one source class; reference gate, `data-ref`/`data-src`/`data-nx` markers, first-draft history): read `docs/superpowers/specs/2026-11-20-number-sources.md` before touching `us/number_sources.py`, `us/fill.py`, `us/facts.py` or `common/numsrc.py`.
 **Jev region filter** (economy·macro·politics, before dedupe): read `docs/superpowers/specs/2026-10-28-jev-region-filter.md` before touching it in `fetch_news.py`.
 **Run lock, news freeze**: read `docs/superpowers/specs/2026-09-26-routine-lock-and-news-freeze.md` before touching `run_lock.sh`, `fetch_news.py` or `news_expand.py`.
 **Contested analysis**: read `docs/superpowers/specs/2026-10-21-contested-analysis-design.md` before touching `scripts/contested_local.py` or `scripts/common/contested.py`.

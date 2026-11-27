@@ -127,14 +127,22 @@ Launch the Agent tool with subagent_type "brief-report-writer", run synchronousl
 
 (a) `grep -c '확인필요' <html>` = 0. (b) **수치 대조는 `check_numbers.py` 가 한다**(2026-11-07) — 시장 표 6종의 칸은 전수로 막고, 문장 수치는 자산·단위로 정해지는 것만 대조한다. 문장 층이 경고(`경고(문장)`)인 동안(`config/number_audit.json`, 2026-11-21 재측정까지)은 **문장 수치 5개 이상**을 `grep -o '4\.62' <html>` 식으로 원본과 계속 대조한다 — HTML 전체(~34K 토큰)를 읽지 않는다. 수치 창작 금지, 미확인은 삭제·재구성.
 
+**조립 순서(2026-11-27)**: 작성(render_post) → `fill_numbers.py` → `apply_readability.py` → `apply_colors.py` → `run_gates.py check` → 위반이면 작성자 수리 → **처음부터**(수리 뒤 다시 render 했으면 fill 부터). 검사 목록에 `check_readability`·`check_style` 이 있으므로 조판을 검사 앞에 둔다.
+
 ```bash
-# 처음 돌리기 전에 한 번만: cp <workspace>/morning_brief_[DATE].html <workspace>/numsrc_first.html  (다시 덮지 않는다)
+# 처음 돌리기 전에 한 번만: cp <workspace>/morning_brief_[DATE].html <workspace>/numsrc_first.html  (다시 덮지 않는다 — 채우기 전 초안)
+python3 scripts/fill_numbers.py --market us --date [DATE] --html <workspace>/morning_brief_[DATE].html \
+        --datadir <workspace> --repo <repo> --meta <workspace>/morning_brief_[DATE].meta.json --report <workspace>/fill_report.json
+python3 scripts/apply_readability.py <workspace>/morning_brief_[DATE].html
+python3 scripts/apply_colors.py <workspace>/morning_brief_[DATE].html
 python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/morning_brief_[DATE].html \
         --datadir <workspace> --repo <repo> --tg <workspace>/telegram.json --cycle <CYCLE_ID> \
         --first-html <workspace>/numsrc_first.html
 ```
 
-**숫자 출처 검사(`check_number_sources`, 2026-11-20 — 참고, 2주 동안 막지 않는다)**: 글의 모든 숫자를 「자료로 확인 · 기사와 일치 · 텔레그램 글과 일치 · 검색 발췌와 일치 · 세지 않은 숫자 · 확인 불가」 중 하나로 센다. 첫 판(`numsrc_first.html`)은 **게이트를 처음 돌리기 전 초안을 한 번 복사한 것**이다 — 최종 기록이 첫 판에서 확인 불가였던 숫자가 고쳐졌는지·문장째 사라졌는지를 적는다. 확인 불가를 줄이는 수정은 셋뿐이다: ① 맞는 표식을 단다(`brief-report-writer.md` 「숫자 출처 표식」) ② 값을 칸 값으로 고친다 ③ 출처에 정말 없으면 숫자를 빼고 최종 보고에 적는다. 작성자에게 최대 2회 넘기고, 그 뒤 남은 확인 불가는 기록에 실린 채 발행한다. 아래 「중복 수치 삭제」는 이 검사의 확인 불가에 쓰지 않는다.
+**채우기(`fill_numbers.py`, 2026-11-27)**: `data-ref` 칸 안 숫자를 코드가 칸 값으로 다시 쓰고, 관측일이 글 날짜와 다른 칸 옆에 「(M월 D일 기준)」을 찍는다. exit 1 = 쓴 값 ≠ 칸 값·모양 규칙 위반·풀 수 없는 칸 — 찍힌 줄(칸 이름표·쓴 글자·칸 값으로 찍은 글자)을 그대로 작성자에게 넘긴다. exit 2 = 입력 오류(중단·보고). 적용일(`common.numsrc.FILL_EFFECTIVE`) 전 글은 아무것도 바꾸지 않는다.
+
+**숫자 출처 검사(`check_number_sources`, 2026-11-20 — 필수. `FILL_EFFECTIVE` 이후 글은 위반이 있으면 막는다, 2026-11-27)**: 막는 판의 위반은 칸 숫자의 자료와 다름·표식 오류·칸 무효·기준일 없음, block 구역(`config/number_fill.json` — 오늘의 장·주식·섹터 기간별 수익률·채권·FX·원자재·트렌드 유닛 점검)의 칸 없는 자료 숫자, 첫 판에서 사라졌는데 `<workspace>/removed.json` 에 적히지 않은 숫자다. 작성자 수리 2회 뒤에도 남으면 발행하지 않는다. 그 전 글은 아래처럼 참고다. 글의 모든 숫자를 「자료로 확인 · 기사와 일치 · 텔레그램 글과 일치 · 검색 발췌와 일치 · 세지 않은 숫자 · 확인 불가」 중 하나로 센다. 첫 판(`numsrc_first.html`)은 **게이트를 처음 돌리기 전 초안을 한 번 복사한 것**이다 — 최종 기록이 첫 판에서 확인 불가였던 숫자가 고쳐졌는지·문장째 사라졌는지를 적는다. 확인 불가를 줄이는 수정은 셋뿐이다: ① 맞는 표식을 단다(`brief-report-writer.md` 「숫자 출처 표식」) ② 값을 칸 값으로 고친다 ③ 출처에 정말 없으면 숫자를 빼고 최종 보고에 적는다. 작성자에게 최대 2회 넘기고, 그 뒤 남은 확인 불가는 기록에 실린 채 발행한다(막는 판에서는 block 구역의 확인 불가가 남으면 발행하지 않는다). 아래 「중복 수치 삭제」는 이 검사의 확인 불가에 쓰지 않는다.
 
 **실행 목록은 `config/prepub_gates.json` 하나다**(2026-11-08) — 위 한 줄이 목록의 검사기를 전부 돌리고 검사기마다 `== 이름 [필수|참고] 상태` 와 출력 원문을 찍는다. exit 1 = 필수 검사가 실패했거나 **판정 불가**(검사기가 돌지 못함 — 통과가 아니다). 검사기를 따로 하나씩 돌려 목록을 대신하지 않는다. 아래 설명은 검사기별 계약이다.
 
@@ -148,7 +156,7 @@ python3 scripts/run_gates.py check --market us --date [DATE] --html <workspace>/
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
 
-1. `python3 scripts/apply_readability.py <html>` → `python3 scripts/apply_colors.py <html>`(방향색; `--check` 는 미적용이면 exit 1) → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 항상 돈다.
+1. (위 조립 순서 그대로 — 수리한 초안은 fill 부터) `python3 scripts/apply_readability.py <html>` → `python3 scripts/apply_colors.py <html>`(방향색; `--check` 는 미적용이면 exit 1) → `python3 scripts/check_readability.py --strict --no-inline-images <html>` 과 `python3 scripts/check_style.py <html>` 의 전체 출력을 저장한다. 문체 검사는 항상 돈다.
 2. 실패하면 writer 를 **전체 보고서를 유지한 채 위반 문단만 수정하라**는 지시와 검사 원문으로 다시 돌리고, 데이터 정본·표를 재대조한 뒤 apply → check 를 반복한다.
 3. 같은 위반이 두 번 연속 남으면 오케스트레이터가 그 문단을 직접 고친다(긴 문장 분리 → 중복 수치 삭제 → 산문 반올림 — 숫자 출처 검사의 확인 불가는 이 대상이 아니다). **통과할 때까지 계속한다.**
 

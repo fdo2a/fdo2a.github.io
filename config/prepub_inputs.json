@@ -626,6 +626,18 @@
      "note": "게이트를 처음 돌리기 전 초안 사본(numsrc_first.html·numsrc_first_news.html, 2026-11-20). 참고 검사 check_number_sources 만 읽고 발행을 막지 않는다 — 필수 검사의 입력이 아니다"
     },
     {
+     "path": "<datadir>/fill_report.json",
+     "class": "unused",
+     "name": "채우기 보고서",
+     "note": "fill_numbers.py 가 칸마다 이름표·관측일·쓴 글자·채운 글자를 적은 작업 파일(2026-11-27) — 검사기는 읽지 않는다(검사는 글을 따로 다시 푼다)"
+    },
+    {
+     "path": "<datadir>/removed.json",
+     "class": "unused",
+     "name": "작성자가 뺀 숫자 목록",
+     "note": "작성자 수리 루프가 첫 판에서 뺀 숫자(숫자·원래 문장·이유)를 적는 파일(2026-11-27) — check_number_sources 가 첫 판과 짝지어 읽는다(없으면 빈 목록). 자료가 아니라 작성자 산출물이라 수집 상태 표시를 요구하지 않는다"
+    },
+    {
      "path": "<datadir>/telegram_news.json",
      "class": "unused",
      "name": "뉴스 글용 텔레그램",
