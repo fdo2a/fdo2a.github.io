@@ -29,6 +29,8 @@
 
 - **Table number audit (2026-11-13)**: `check_numbers.py --market kr --date D` (required in `config/prepub_gates.json`, from `kr.number_audit.EFFECTIVE` 2026-11-16) matches every cell of the four market tables (지수 & 장중, 수급 ×2, 거래대금 상위, 환율·금리) against `kr/data/*` by a per-column grammar on `Decimal` data; prose numbers are counted unverified, so a KR post is never fully verified. When changing this: read `docs/superpowers/specs/2026-11-13-kr-number-audit.md` before touching `scripts/kr/number_audit.py`.
 
+- **BOK MPB section (「한국은행 금통위」, 2026-11-27)**: `<section data-section="bok">` after 전략 코멘트, only on days `common/cb_events.due_events` says so (silence enforced). `collect_bok_events.py` (non-core step) commits source text to `kr/data/bok/<key>.txt`; `check_bok.py` (in `prepub_gates` kr) compares every `<blockquote>` with it after stripping all whitespace — no source text, no quote. Duty = text received **or** a decision day in hand-filled `kr/data/bok/schedule.json` (no quotes, no numbers then), minus keys already marked `data-cb-event` in posts committed at HEAD before D; `start` 2026-11-28 = `bok_gate.START`. Other missed scheduled docs are a digest line only. Writer gets `check_bok.py --diag`. When changing this: read `docs/superpowers/specs/2026-11-27-central-bank-events.md` before touching `kr/bok_*.py`, `check_bok.py`, `collect_bok_events.py` or `common/cb_*.py`.
+
 ## 주간 정리 — KR 몫
 
 - **성격**: 그 기간에 발행한 KR 마감브리프의 총정리. **웹 검색·시세 재수집 금지.** 서술은 `kr/posts/*.html`, 성과표는 집계 파일.

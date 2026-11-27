@@ -63,6 +63,8 @@ python3 scripts/check_research.py check --span daily --html <새 초안> --root 
 - 출처 귀속 필수. 복수 출처 교차 확인(단일 검색 수치 불신 — US 전례).
 - **오늘의 뉴스는 리서치 대상이 아니다** — 수집 잡이 만든 `kr/data/news/<DATE>.json`(네이버증권 주요뉴스·네이버 뉴스 정치·세계 섹션 + `summary_ko`)이 유일한 재료다. 그 요약은 촉매 리서치의 출발점으로 읽어도 되지만, 웹에서 찾은 기사를 뉴스 칸에 넣지 않는다(`check_news.py` 가 막는다). **2026-11-06 부터 오늘의 뉴스는 마감브리프가 아니라 뉴스 글(STEP 3.5)에 싣는다.**
 
+**한국은행 금통위 칸(2026-11-27)** — STEP 1 에서 레포 클론 루트로 `python3 scripts/check_bok.py --diag --date <DATE> --datadir kr/data --repo .` 를 돌린다. exit 2 면(일정 파일 없음·원문 파일 빠짐·발행본 장부를 못 읽음) 잠금을 풀고 그 줄을 붙여 PushNotification 으로 보고하고 끝낸다. exit 0 이면 출력 전체를 작성자 프롬프트에 그대로 넣고, 「실을 이벤트」가 있으면 `cp -R kr/data/bok <워크스페이스 루트>/bok` 로 디렉터리째 복사해 그 경로도 넘긴다(작성자는 여기서 원문을 복사한다). 「! 예정된 … 원문을 못 받았다」 줄은 최종 보고에 옮긴다(발행은 막지 않는다). 원문이 없는 결정일(「원문 없음」)의 금통위 결정 사실은 리서치에서 기사 출처를 하나 찾아 `research_notes.md` 에 적는다 — 인용·수치는 쓰지 않는다. 규칙: writer 스펙 「섹션 2-b」, 설계 `docs/superpowers/specs/2026-11-27-central-bank-events.md`.
+
 **테마 리서치는 폐지** (2026-07-29 사용자 지시로 테마 섹션 삭제). `kr_theme.json`은 리서치·작성 어디서도 쓰지 않는다.
 
 ## STEP 2 — 리포트 작성 (subagent: kr-report-writer)
@@ -93,6 +95,7 @@ python3 scripts/run_gates.py check --market kr --date <DATE> --html <kr_brief �
 - `check_weight.py` 의 KR 계약: 필수 섹션 비어 있음 금지, §2 문단 순서(2026-10-20 부터 다섯 — 어제 판단의 판정은 「시장 판단과 복기」 첫 문단, 배치는 `check_kr_stance.py` 가 발행일로 고른다), 가격 섹션의 스탠스 등급 어휘 금지. **절대 글자 수 하한은 2026-10-13 폐지** — 「경고:」 줄(시황군 < 판단군 — 분량 경고는 2026-11-21 뺐다)은 발행을 막지 않으며, 그것을 맞추려고 초안을 늘리거나 줄이지 않는다(`STYLE_EXEMPLARS.md` §11).
 - `check_fund.py` — `kr/data/kr_fund_view.json` 의 `status` 가 `ok`·`partial` 이고 날짜가 오늘이면 「아시아 세션 유닛 관측」 섹션이 있어야 하고, 그 밖에는 없어야 한다. 블록(`kr_fund_view.html`)은 그대로 넣는다.
 - `check_kr_stance.py` 는 비-코어가 아니다 — 원장이 틀어지면 다음 회차의 복기가 통째로 거짓이 된다.
+- `check_bok.py` — 「한국은행 금통위」 칸. 실을 이벤트가 없는 날 칸이 있거나, 있는 날 칸이 없으면 막는다. 인용은 `kr/data/bok/<key>.txt` 와 글자 대조(공백 무시). exit 2 는 미완료(일정 파일·원문 파일·장부) — 작성자에게 넘기지 말고 보고한다.
 
 **가독성·문체 = 초안 수리 루프 (실패로 루틴을 끝내지 않는다)**
 
