@@ -1,12 +1,52 @@
 {
  "section": "us",
  "date": "2026-11-24",
- "request_id": "us-2026-11-24-b0a3fb98db03",
- "state": "style_abort",
- "reason": "문체 마감이 중단을 요구해 세움",
- "hold": true,
- "recorded_at": "2026-11-24T22:25:58Z",
- "attempt": 0,
- "last_counted": null,
- "next": "person"
+ "request_id": "us-2026-11-24-3cd6a260a04a",
+ "draft_sha": "8f922dcbdfcd45ddca752966f1f8223b1eab843d",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": null,
+ "accuracy_findings": 3,
+ "style_candidates": 1,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 3,
+ "facts_rejected": 3,
+ "style_applied": 0,
+ "style_rejected": 1,
+ "skeleton_rejected": 0,
+ "checker_rejected": 1,
+ "style_findings": [],
+ "recorded_at": "2026-11-27T08:09:34Z",
+ "facts_done": true,
+ "final_sha256": "b9d5e0f8e45e4e4623ce581cd304e02391da636383c6b28765632e77fae8b65a",
+ "clarity": [
+  {
+   "kind": "논리·사실관계 의심",
+   "quote": "",
+   "cannot_tell": "",
+   "route": "accuracy",
+   "placed": ""
+  },
+  {
+   "kind": "용어",
+   "quote": "반도체 축의 몫이 -22.69%로",
+   "cannot_tell": "다",
+   "route": "style_path",
+   "placed": "candidate"
+  },
+  {
+   "kind": "문장 구조",
+   "quote": "시각을 제시했고, 미국이 엔비디아 스캔들의 중심인",
+   "cannot_tell": "가",
+   "route": "record_only",
+   "placed": ""
+  }
+ ],
+ "clarity_meta": {
+  "marker": true,
+  "lines_skipped": 0,
+  "over_cap": 0
+ }
 }
