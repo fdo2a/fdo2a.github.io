@@ -18,6 +18,10 @@ import re
 from dataclasses import dataclass, field
 
 EFFECTIVE = '2026-11-23'          # 첫 검사 발행일(US 11/23 거래일 글). 그 전 글은 not_run(설계 §7.1)
+# 「숫자는 코드가 채운다」 1차(2026-11-27, US 일간만)를 켜는 날 — 이날 글부터 채우기(fill_numbers)가 칸을 다시 쓰고
+# 숫자 출처 검사가 위반을 내며(막는다), 한글 개수를 수량으로 센다. 자리표시 2099-12-31 = 아직 켜지 않았다 —
+# 병합 뒤 첫 발행일로 바꾼다(EFFECTIVE 와 같은 꼴, 설계 §7.1). 그 전 글은 지금 판정 그대로(정정기 재검사 포함).
+FILL_EFFECTIVE = '2099-12-31'
 FORMAT = 'numsrc/1'
 
 CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
@@ -105,6 +109,7 @@ class Q:
     lead_dot: bool = False
     code: str = ''         # X-코드 갈래(date·time·term·id) — 비면 값 수량
     sig: int = 0           # 유효숫자 수(어림선 |lvl 판정)
+    korean: bool = False   # 한글로 쓴 개수(「여덟이」「세 업종」) — 숫자열이 없다(runs == [])
 
     def printed(self):
         return self.raw
@@ -227,6 +232,50 @@ def quantities(text, terms=()):
         if _RANGE.fullmatch(t[p.end:n.start] or 'x'):
             p.unit, p.unit_inherited = n.unit, True
     return out
+
+
+# ── 한글로 쓴 개수(2026-11-27 설계 「숫자는 코드가 채운다」 §4) ─────────────────────────────
+# 숫자열(RUN)은 바꾸지 않는다 — 이 수량은 숫자열이 없어 숫자열 칸 합·재집계 불변식에 들지 않는다.
+# 둘…아홉은 낱말만으로 수량이다: 앞이 한글이 아니고, 뒤가 끝·한글 아닌 글자·닫힌 조사·세는 말일 때(넷플릭스·둘러싼은 아님).
+# 한·두·세·네·열은 뒤에 세는 말이 올 때만(빈칸 하나 허용). 「둘째」 같은 차례는 수량이 아니다.
+KO_STANDALONE = {'둘': 2, '셋': 3, '넷': 4, '다섯': 5, '여섯': 6, '일곱': 7, '여덟': 8, '아홉': 9}
+KO_DETERMINER = {'한': 1, '두': 2, '세': 3, '네': 4, '열': 10}
+KO_COUNTERS = ('거래일', '종목', '업종', '섹터', '가지', '개', '곳', '건')
+_KO_PARTICLE = r'(?:이었다|이지만|이며|이고|이다|였다|다|에서|으로|이나|이|가|은|는|을|를|도|만|에|의|과|와|로|뿐|씩)'
+# 세는 말 뒤에는 조사가 붙을 수 있다(「세 업종이」「다섯 곳에서」) — 그 뒤가 한글이 아니어야 한다(「개월」「거래일째」는 아님)
+_KO_COUNTER_RX = r'(\s?)(' + '|'.join(KO_COUNTERS) + r')(?=' + _KO_PARTICLE + r'?(?![가-힣]))'
+_KO_WORD = re.compile(r'(?<![가-힣])(' + '|'.join(sorted(KO_STANDALONE, key=len, reverse=True)) + r'|'
+                      + '|'.join(KO_DETERMINER) + r')(?=' + _KO_COUNTER_RX + r'|' + _KO_PARTICLE + r'?(?![가-힣]))')
+_KO_COUNTER = re.compile(_KO_COUNTER_RX)
+# 칸 글자를 한글로 찍을 때(1-20): 홀로 쓰는 꼴(「여덟이」)과 세는 말 앞 꼴(「세 업종」)
+KO_PRINT_STANDALONE = ('', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉', '열', '열하나', '열둘', '열셋',
+                       '열넷', '열다섯', '열여섯', '열일곱', '열여덟', '열아홉', '스물')
+KO_PRINT_DETERMINER = ('', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열', '열한', '열두', '열세',
+                       '열네', '열다섯', '열여섯', '열일곱', '열여덟', '열아홉', '스무')
+
+
+def korean_quantities(text):
+    """보이는 글 → 한글 개수 수량 [Q](runs == []). 값 수량으로 다른 수량과 같은 다섯 갈래를 탄다."""
+    t = norm(text)
+    out = []
+    for m in _KO_WORD.finditer(t):
+        word = m.group(1)
+        mc = _KO_COUNTER.match(t, m.end())
+        if word in KO_DETERMINER and not mc:
+            continue
+        value = KO_STANDALONE.get(word) or KO_DETERMINER.get(word)
+        end, unit = m.end(), ''
+        if mc:
+            end, unit = mc.end(), mc.group(2)
+        out.append(Q(m.start(), end, [], t[m.start():end], float(value), 1.0, '', unit, korean=True, sig=1))
+    return out
+
+
+def korean_print(value, determiner):
+    """1-20 정수 → 한글 수사(세는 말 앞이면 「한·두·세」 꼴). 범위 밖이면 None."""
+    if not isinstance(value, (int, float)) or value != int(value) or not 1 <= value <= 20:
+        return None
+    return (KO_PRINT_DETERMINER if determiner else KO_PRINT_STANDALONE)[int(value)]
 
 
 def _sign_ok(t, i):

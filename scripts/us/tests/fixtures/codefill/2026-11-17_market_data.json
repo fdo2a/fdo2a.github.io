@@ -1,0 +1,70 @@
+{
+ "_source": "git show 34cabfc6:data/market_data.json (2026-11-17 발행 커밋, 4709cd46 정정 전) — session.global_close 만",
+ "report_date": "2026-11-17",
+ "complete": true,
+ "missing": [],
+ "session": {
+  "global_close": {
+   "asia": {
+    "rows": [
+     {
+      "name": "닛케이",
+      "ticker": "^N225",
+      "close": 59662.02,
+      "pct": -2.42,
+      "date": "2026-11-16"
+     },
+     {
+      "name": "항셍",
+      "ticker": "^HSI",
+      "close": 23753.84,
+      "pct": 0.49,
+      "date": "2026-11-16"
+     },
+     {
+      "name": "상해종합",
+      "ticker": "000001.SS",
+      "close": 3602.57,
+      "pct": -0.87,
+      "date": "2026-11-16"
+     }
+    ],
+    "alignment": {
+     "label": "이어감",
+     "avg_pct": -0.93,
+     "mixed": true
+    }
+   },
+   "europe": {
+    "rows": [
+     {
+      "name": "DAX",
+      "ticker": "^GDAXI",
+      "close": 26598.64,
+      "pct": -0.57,
+      "date": "2026-11-16"
+     },
+     {
+      "name": "FTSE100",
+      "ticker": "^FTSE",
+      "close": 10689.87,
+      "pct": -1.76,
+      "date": "2026-11-17"
+     },
+     {
+      "name": "유로스톡스50",
+      "ticker": "^STOXX50E",
+      "close": 6348.35,
+      "pct": -0.6,
+      "date": "2026-11-16"
+     }
+    ],
+    "alignment": {
+     "label": "이어감",
+     "avg_pct": -0.98,
+     "mixed": false
+    }
+   }
+  }
+ }
+}

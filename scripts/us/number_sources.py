@@ -53,8 +53,10 @@ def _try(path):
 class Inputs:
     """한 번 읽어 첫 판·최종본 분류가 같은 입력을 쓴다."""
 
-    def __init__(self, market, date, datadir, repo, tg=None, cycle=None, ledger=None):
+    def __init__(self, market, date, datadir, repo, tg=None, cycle=None, ledger=None, fill_effective=None):
         self.market, self.date, self.datadir, self.repo = market, date, datadir, repo
+        # 막는 판(설계 「숫자는 코드가 채운다」 1차) — US 일간·적용일 이후 글만. us-news 와 그 전 글은 지금 판정 그대로
+        self.blocking = market == 'us' and date >= (fill_effective or S.FILL_EFFECTIVE)
         self.terms = fixed_terms()
         self.news = _try(os.path.join(datadir, 'news', f'{date}.json'))
         nums = _try(AN.numbers_path(datadir, 'news', date))
@@ -156,6 +158,8 @@ class Classifier:
         per_block = []
         for b in blocks:
             qs = S.quantities(b.text, self.inp.terms)
+            if self.inp.blocking:
+                qs = sorted(qs + S.korean_quantities(b.text), key=lambda q: q.start)
             per_block.append((b, qs))
             for q in qs:
                 for st in S.markers_over(b, q):
@@ -340,7 +344,7 @@ class Classifier:
         # 배율(천·만·억·조, K·M·B)이 붙은 값은 나열 수가 아니다(codex 구현 1회 #7 — 「0천개」)
         ok = (kind == 'enum' and q.value is not None and not q.code and q.unit in S.COUNT_WORDS
               and float(q.value).is_integer() and 0 <= q.value <= 99 and not q.sign and q.scale == 1.0
-              and len(q.runs) == 1 and not re.search(r'[,.%천만억조KMB]', q.raw))
+              and (len(q.runs) == 1 or q.korean) and not re.search(r'[,.%천만억조KMB]', q.raw))
         if not ok:
             return 'unknown', '선언 무효'
         self.detail['excluded_enum'] += 1

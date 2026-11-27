@@ -35,6 +35,8 @@ USD, KRW, JPY = frozenset({'', '달러'}), frozenset({'', '원'}), frozenset({''
 NUM = frozenset({''})
 RATIO = frozenset({'', '배'})
 COUNT = frozenset({'', '건', '명', '개', '곳', '종'})
+# 센 값(dv:count)의 인쇄 단위 — 세는 말 전부(한글 개수의 세는 말 numsrc.KO_COUNTERS 포함)
+COUNT_ANY = COUNT | frozenset({'종목', '업종', '섹터', '거래일', '가지'})
 CUR = {'Micron': USD, 'Western Digital': USD, 'Seagate': USD, 'Nvidia': USD, 'Samsung Elec': KRW, 'SK hynix': KRW,
        'Samsung E-M': KRW, 'Murata': JPY, 'Taiyo Yuden': JPY, 'Yageo': NUM, 'Walsin': NUM, 'Holy Stone': NUM,
        'Sanhuan': frozenset({'', '위안'}), 'Fenghua': frozenset({'', '위안'})}
@@ -244,6 +246,8 @@ class Book:
                 return Fact(v, units, signed, a.date, st, '', 'dv', ('dv', op), '', op, a.scale if op in ('diff', 'sum') else 1.0, conv)
             self.dv_used.append(f'{op}({args[0]},{args[1]})')
             return Fact(v, units, signed, a.date, st, '', 'dv', ('dv', op), '', op, a.scale, {'bp': 100.0} if units == PP else {})
+        if op == 'count':
+            return self._count(args)
         if op == 'rank':
             if len(args) != 3:
                 raise Miss('칸 없음', 'rank 는 (묶음, 필드, 키)')
@@ -270,6 +274,44 @@ class Book:
             return Fact(float(rank), frozenset({'위'}), False, data.get('report_date'), 'current'
                         if data.get('report_date') == self.date else 'stale', '', 'dv', ('dv', 'rank'), '', 'rank')
         raise Miss('칸 없음', f'모르는 연산 「{op}」')
+
+    def _count(self, args):
+        """센 값(2026-11-27 설계 「숫자는 코드가 채운다」 §4) — `count(md:묶음)` = 묶음의 자산 수,
+        `count(md:묶음,필드,비교문턱)` = 그 필드가 조건을 지키는 자산 수(비교 > >= < <=, 반올림 전 값으로).
+        5832b595: 11/04 「11개 업종 가운데 여덟이 1% 넘게 올랐지만」 — count(md:sectors,pct,>1) = 7."""
+        if len(args) not in (1, 3):
+            raise Miss('칸 없음', 'count 는 (묶음) 또는 (묶음, 필드, 비교문턱)')
+        alias, _, g = args[0].partition(':')
+        if alias != 'md':
+            raise Miss('칸 없음', 'count 는 md 묶음만')
+        data = self.file('md')
+        rows = (data or {}).get(g)
+        if not isinstance(rows, dict) or not rows:
+            raise Miss('칸 없음', '묶음이 없다')
+        statuses = []
+        if len(args) == 1:
+            bad = STATUS['md']((g,), [data, rows], data, self.date)
+            if bad:
+                raise Miss('칸 무효', bad)
+            n = sum(1 for v in rows.values() if isinstance(v, dict))
+            statuses.append('current' if data.get('report_date') == self.date else 'stale')
+        else:
+            fld, cond = args[1], args[2]
+            m = re.fullmatch(r'(>=|<=|>|<)\s*(-?\d+(?:\.\d+)?)', cond)
+            if not m:
+                raise Miss('칸 없음', 'count 의 조건은 >·>=·<·<= 와 숫자')
+            cmp, thr = m.group(1), float(m.group(2))
+            n = 0
+            for k in rows:
+                f = self.resolve(f'md:{g}.{k}.{fld}')
+                if f.status == 'invalid':
+                    raise Miss('칸 무효', f'{k} 칸이 무효다')
+                statuses.append(f.status)
+                v = f.value
+                n += {'>': v > thr, '>=': v >= thr, '<': v < thr, '<=': v <= thr}[cmp]
+        st = 'stale' if 'stale' in statuses else 'current'
+        self.dv_used.append(f'count({",".join(args)})')
+        return Fact(float(n), COUNT_ANY, False, data.get('report_date'), st, '', 'dv', ('dv', 'count'), '', 'count')
 
 
 def _worse(a, b):
