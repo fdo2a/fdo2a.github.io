@@ -89,7 +89,7 @@ def test_run_gates_uses_the_v1_record_while_off(monkeypatch):
 
 
 PRE_1A_BLOB = '65c9890c'        # 1a 를 병합하기 전 main 의 record.py(c9af9a0b)
-V1_BLOB = '32af8562'            # = 위 + 숫자 출처 검사(2026-11-22 사용자 승인 「고정 풀고 붙여」) + unknown_all 칸(2026-11-27, 숫자 출처 갈래만)
+V1_BLOB = '4d37686c'            # = 위 + 숫자 출처 검사(2026-11-22 사용자 승인 「고정 풀고 붙여」) + unknown_all 칸(2026-11-27) + 막는 판 fail·fills(2026-11-27 숫자는 코드가 채운다, 숫자 출처 갈래만)
 
 
 def test_v1_record_module_is_the_pre_1a_one_plus_number_sources():

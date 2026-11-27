@@ -313,14 +313,14 @@
       ]
      ],
      "kind": "numbers",
-     "required": false,
+     "required": true,
      "json": true,
      "result": "sources",
      "effective": {
       "module": "common.numsrc",
       "attr": "EFFECTIVE"
      },
-     "_why": "참고 검사(2주) — 모든 숫자를 출처 칸 하나에. 확인 불가는 위반이 아니라 기록의 sources 집계다. 설계 docs/superpowers/specs/2026-11-20-number-sources.md",
+     "_why": "필수(2026-11-27 「숫자는 코드가 채운다」 1차) — 모든 숫자를 출처 칸 하나에. 적용일 common.numsrc.FILL_EFFECTIVE 이후 US 일간 글은 위반(칸을 단 숫자의 자료와 다름·표식 오류·칸 무효·기준일 없음, block 구역의 칸 없는 숫자, removed 에 없는 삭제)이면 exit 1. 그 전 글은 위반을 내지 않는다(확인 불가는 기록의 sources 집계). 설계 docs/superpowers/specs/2026-11-20-number-sources.md",
      "inputs": []
     },
     {

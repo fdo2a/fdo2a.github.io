@@ -523,6 +523,54 @@ def history(first_items, final_items):
     return out
 
 
+def fates(first_items, final_items, follow):
+    """첫 판 수량 가운데 `follow` 가 참인 것마다 최종본에서의 운명 — [(첫 판 항목, fixed|still|gone|ambiguous)].
+    `history` 와 같은 문장 단위 대응이다(확인 불가 말고 칸 숫자도 따라가려고 따로 둔다 — 2026-11-27 「숫자는 코드가
+    채운다」 §5). 칸 숫자가 최종본 같은 자리에 남으면 그 칸 판정대로 fixed(확인 아님)·still(확인 불가)."""
+    n_by = {}
+    for it in final_items:
+        n_by.setdefault((it.where, it.sentence), []).append(it)
+    f_count, n_count = _sentence_counts(first_items), _sentence_counts(final_items)
+    out = []
+    for it in first_items:
+        if not follow(it):
+            continue
+        key = (it.where, it.sentence)
+        if f_count.get(key, 0) != 1 or n_count.get(key, 0) > 1 or not it.sentence:
+            fate = 'ambiguous'
+        elif n_count.get(key, 0) == 0:
+            fate = 'gone'
+        else:
+            cand = [x for x in n_by.get(key, []) if x.sent_index == it.sent_index]
+            fate = 'ambiguous' if len(cand) != 1 else ('still' if cand[0].cls == 'unknown' else 'fixed')
+        out.append((it, fate))
+    return out
+
+
+REMOVED_REASONS = ('출처 없음', '칸 없음', '문장 고쳐 씀')
+REMOVED_KEY = 40
+
+
+def removed_key(number, sentence):
+    """`removed` 항목과 첫 판 숫자를 짝짓는 열쇠 — 숫자 글자 + 원래 문장 앞 40자(공백 정리)."""
+    return (norm(number or '').strip(), ' '.join(norm(sentence or '').split())[:REMOVED_KEY])
+
+
+def load_removed(path):
+    """작성자 수리 루프의 `removed.json` — [{number, sentence, reason}]. 없으면 []. 꼴이 다르면 InputError(멈춘다)."""
+    if not path or not os.path.isfile(path):
+        return []
+    try:
+        data = load_json(path)
+    except (OSError, ValueError) as e:
+        raise InputError(f'removed 목록을 읽지 못했다: {e}')
+    if not isinstance(data, list) or any(
+            not isinstance(x, dict) or not isinstance(x.get('number'), str) or not isinstance(x.get('sentence'), str)
+            or x.get('reason') not in REMOVED_REASONS for x in data):
+        raise InputError('removed 목록 꼴이 약속과 다르다 — [{number, sentence, reason(출처 없음·칸 없음·문장 고쳐 씀)}]')
+    return data
+
+
 def _sentence_counts(items):
     """(구역, 가린 문장) → 그 문장이 문서에 나온 횟수. 수량 묶음의 첫 수량(sent_index 0)으로 센다."""
     seen = {}

@@ -234,3 +234,134 @@ def test_fill_cli_is_off_before_the_switch(w18, tmp_path):
     on = subprocess.run(base + ['--effective', ON], capture_output=True, text=True)
     assert on.returncode == 1 and '되돌림(자료와 다름)' in on.stdout, on.stdout + on.stderr
     assert json.load(open(tmp_path / 'r.json'))['counts']['blocking'] == 1
+
+
+# ── 막는 검사 ──
+
+def check(wd, date, html, first=None, removed=(), on=True):
+    inp = U.Inputs('us', date, str(wd), REPO, ledger=[], fill_effective=ON if on else '2099-12-31')
+    return U.result(inp, html, first, list(removed))
+
+
+def kinds(res):
+    return [v.split(' [')[0] for v in res['violations']]
+
+
+def test_check_mismatch_blocks_in_any_zone(w18):
+    for title in ('매크로', '주식'):
+        res = check(w18, D18, page(section(title, f'<p>{span("md:indices.SP500.pct", "-0.24%")}</p>'), D18))
+        assert kinds(res) == ['자료와 다름'], title
+
+
+def test_check_half_digit_tolerance_is_gone_in_blocking_mode(w18):
+    html = page(section('매크로', f'<p>{span("md:indices.Nasdaq.pct", "+0.24%")}</p>'), D18)
+    assert kinds(check(w18, D18, html)) == ['자료와 다름']        # 0.245 → half-up 0.25
+    assert 'violations' not in check(w18, D18, html, on=False)    # 끈 판은 지금 판정 그대로(반 자리 허용)
+
+
+def test_check_unmarked_numbers_block_only_in_block_zone(w18):
+    body = '<p>S&amp;P 500은 0.23% 내렸다.</p>'
+    assert kinds(check(w18, D18, page(section('주식', body), D18))) == ['표식 없음']
+    assert kinds(check(w18, D18, page(section('전략 코멘트', body), D18))) == []
+    assert kinds(check(w18, D18, page(section('주식', f'<table><tr><td>{body}</td></tr></table>'), D18))) \
+        == ['코드 블록(표식 없음)']
+
+
+def test_check_positive_slot_with_abs_blocks(w18):
+    res = check(w18, D18, page(section('매크로', f'<p>{span("md:indices.Nasdaq.pct|abs", "0.25%")} 올랐다</p>'), D18))
+    assert kinds(res) == ['자료와 다름']
+
+
+def test_check_5832b595_sentence_in_block_zone(tmp_path):
+    wd, d = wd_from(tmp_path, '2026-11-04_market_data.json')
+    bare = section('주식', '<p>11개 업종 가운데 여덟이 1% 넘게 올랐지만, 에너지와 산업재는 내렸다.</p>')
+    res = check(wd, d, page(bare, d))
+    assert [v.split(' — ')[0] for v in res['violations']] == ['표식 없음 [세계 지수·업종] 11개', '표식 없음 [세계 지수·업종] 여덟',
+                                                             '표식 없음 [세계 지수·업종] 1%']
+    marked = section('주식', f'<p>{span("dv:count(md:sectors)", "11개")} 업종 가운데 '
+                           f'{span("dv:count(md:sectors,pct,>1)", "여덟")}이 <span data-nx="set">1%</span> 넘게 올랐다.</p>')
+    res = check(wd, d, page(marked, d))
+    # 문턱 선언은 조건 문단 밖이라 무효, 여덟은 7 과 다르다
+    assert sorted(v.split(' — ')[0] for v in res['violations']) == ['선언 무효 [세계 지수·업종] 1%',
+                                                                    '자료와 다름 [세계 지수·업종] 여덟']
+
+
+def test_check_set_threshold_only_in_condition_paragraph(w18):
+    html = page(section('매크로', '<p data-falsifier="1">30년물이 <span data-nx="set">5.05%</span>를 밑돌면 틀린다.</p>'), D18)
+    res = check(w18, D18, html)
+    assert res['violations'] == [] and res['declared_set'] == ['5.05%']
+
+
+def test_check_stale_ref_needs_the_code_printed_date(tmp_path):
+    wd, d = wd_from(tmp_path, '2026-11-17_market_data.json')
+    body = section('오늘의 장', f'<p>닛케이225가 {span("md:session.global_close.asia.rows[닛케이].pct|abs", "2.42%")} 내렸다.</p>')
+    html = page(body, d)
+    assert kinds(check(wd, d, html)) == ['기준일 없음']
+    filled, _ = FL.fill(html, str(wd), d, REPO, ledger=[])
+    res = check(wd, d, filled)
+    assert res['violations'] == []
+    assert res['fills'] == [{'ref': 'md:session.global_close.asia.rows[닛케이].pct|abs', 'asset': '닛케이', 'group': 'global',
+                             'field': 'pct', 'date': '2026-11-16', 'value': -2.42, 'text': '2.42%'}]
+    # 기준일 글자를 손으로 바꾸면 다시 막힌다
+    assert kinds(check(wd, d, filled.replace('(11월 16일 기준)', '(11월 17일 기준)'))) == ['기준일 없음']
+
+
+def test_check_removed_numbers_must_be_listed(w18):
+    first = page(section('주식', f'<p>나스닥은 {span("md:indices.Nasdaq.pct", "+0.25%")} 올랐다.</p>'
+                                 '<p>기술주는 2.5% 올랐다는 보도가 있었다.</p>'), D18)
+    final = page(section('주식', f'<p>나스닥은 {span("md:indices.Nasdaq.pct", "+0.25%")} 올랐다.</p>'), D18)
+    res = check(w18, D18, final, first=first)
+    assert kinds(res) == ['적지 않은 삭제'] and res['removal']['unlisted'] == ['2.5%']
+    rm = [{'number': '2.5%', 'sentence': '기술주는 2.5% 올랐다는 보도가 있었다.', 'reason': '출처 없음'}]
+    res = check(w18, D18, final, first=first, removed=rm)
+    assert res['violations'] == [] and res['removal']['matched'] == 1 and res['removal']['reasons'] == {'출처 없음': 1}
+    # 칸을 단 숫자도 따라간다 — 문장째 지우면 removed 가 있어야 한다
+    gone = page(section('주식', '<p>장은 조용했다.</p>'), D18)
+    res = check(w18, D18, gone, first=final)
+    assert kinds(res) == ['적지 않은 삭제']
+
+
+def test_check_ambiguous_sentence_needs_removed_only_when_number_is_gone(w18):
+    twice = '<p>기술주는 2.5% 올랐다.</p><p>기술주는 2.5% 올랐다.</p>'
+    first = page(section('전략 코멘트', twice), D18)
+    kept = page(section('전략 코멘트', '<p>기술주는 2.5% 올랐다.</p>'), D18)
+    assert check(w18, D18, kept, first=first)['violations'] == []
+    gone = page(section('전략 코멘트', '<p>장은 조용했다.</p>'), D18)
+    assert kinds(check(w18, D18, gone, first=first)) == ['적지 않은 삭제', '적지 않은 삭제']
+
+
+def test_check_title_refs(w18):
+    html = page(section('주식', f'<p>{span("md:indices.SP500.pct|abs", "0.23%")} 내렸다.</p>'), D18,
+                '미국 증시 마감 시황 — S&amp;P 500 0.23% 하락 | 2026-11-18')
+    filled, _ = FL.fill(html, str(w18), D18, REPO, meta={'title_refs': ['md:indices.SP500.pct|abs']}, ledger=[])
+    assert check(w18, D18, filled)['violations'] == []
+    bad = filled.replace('0.23% 하락', '0.24% 하락')
+    assert kinds(check(w18, D18, bad)) == ['자료와 다름']
+    other, _ = FL.fill(html.replace('S&amp;P 500 0.23%', '나스닥 0.25%'), str(w18), D18, REPO,
+                       meta={'title_refs': ['md:indices.Nasdaq.pct']}, ledger=[])
+    assert kinds(check(w18, D18, other)) == ['본문에 없는 이름표']
+
+
+def test_check_off_mode_is_unchanged(w18):
+    html = page(section('주식', '<p>11개 업종 가운데 여덟이 1% 넘게 올랐다.</p>'), D18)
+    res = check(w18, D18, html, on=False)
+    assert 'violations' not in res and 'fills' not in res
+    assert [u['n'] for u in res['unknown_all']] == ['11개', '1%']              # 한글 개수는 끈 판에서 세지 않는다
+
+
+def test_check_cli_exit_1_with_violations(w18, tmp_path):
+    import subprocess
+    import sys
+    h = tmp_path / 'p.html'
+    h.write_text(page(section('주식', '<p>S&amp;P 500은 0.23% 내렸다.</p>'), D18), encoding='utf-8')
+    base = [sys.executable, os.path.join(SCRIPTS, 'check_number_sources.py'), '--market', 'us', '--date', D18,
+            '--html', str(h), '--datadir', str(w18), '--repo', REPO, '--json', '--effective', ON]
+    off = subprocess.run(base, capture_output=True, text=True)
+    assert off.returncode == 0 and json.loads(off.stdout)['violations'] == []
+    on = subprocess.run(base + ['--fill-effective', ON], capture_output=True, text=True)
+    assert on.returncode == 1, on.stderr
+    out = json.loads(on.stdout)
+    assert out['violations'] and out['sources']['blocking'] is True
+    (w18 / 'removed.json').write_text('[{"number": "1"}]', encoding='utf-8')
+    bad = subprocess.run(base + ['--fill-effective', ON], capture_output=True, text=True)
+    assert bad.returncode == 2 and 'removed' in bad.stderr

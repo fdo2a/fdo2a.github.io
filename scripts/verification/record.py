@@ -258,7 +258,9 @@ def _classify_sources(code, obj, warns, viols, ctx, res):
     if not isinstance(warns, list) or not isinstance(viols, list) or not isinstance(src, dict):
         res['reason'] = '결과 형식이 약속과 다르다'
         return 'indeterminate'
-    if code != 0 or viols:
+    # 막는 판(2026-11-27 「숫자는 코드가 채운다」 1차): 위반이 있으면 exit 1 — 집계는 그대로 옮기고 실패로 둔다
+    blocking = src.get('blocking') is True
+    if code not in (0, 1) or (code == 1) != bool(viols) or (viols and not blocking):
         res['reason'] = '종료 코드와 결과가 어긋난다'
         return 'indeterminate'
     hist = src.get('history')
@@ -285,11 +287,41 @@ def _classify_sources(code, obj, warns, viols, ctx, res):
            dict({k: hist[k] for k in SOURCE_HISTORY},
                 gone_printed=[str(x)[:20] for x in hist.get('gone_printed') or [] if isinstance(x, str)][:12]),
            'history_why': str(src.get('history_why') or '')[:80],
-           'first_sha256': src.get('first_sha256') if isinstance(src.get('first_sha256'), str) else None}
+           'first_sha256': src.get('first_sha256') if isinstance(src.get('first_sha256'), str) else None,
+           **_blocking_fields(src, ctx, viols)}
     res['sources'] = out
     res['warn_count'] = len(warns)
-    res['items'] = [_mask(str(x), ctx)[:MAX_ITEM_LEN] for x in warns][:MAX_ITEMS]
-    return 'warn' if warns else 'pass'
+    res['items'] = [_mask(str(x), ctx)[:MAX_ITEM_LEN] for x in viols + warns][:MAX_ITEMS]
+    return 'fail' if viols else ('warn' if warns else 'pass')
+
+
+def _blocking_fields(src, ctx, viols):
+    """막는 판의 몫 — 채운 칸 `fills`(칸마다 이름표·자산·관측일·채운 값 — 다음 수집의 종가 비교가 그 값을 쓴 글을 찾는다),
+    지운 숫자 요약 `removal`(문장 없이 건수와 숫자 인쇄 꼴), 구역별 건수, 문턱 선언. 꼴이 다른 행은 뺀다."""
+    if src.get('blocking') is not True:
+        return {}
+    fills = []
+    for f in src.get('fills') or []:
+        if not (isinstance(f, dict) and isinstance(f.get('ref'), str) and isinstance(f.get('value'), (int, float))
+                and not isinstance(f.get('value'), bool)):
+            continue
+        d = f.get('date')
+        fills.append({'ref': _mask(f['ref'], ctx)[:200], 'asset': str(f.get('asset') or '')[:60],
+                      'group': str(f.get('group') or '')[:40], 'field': str(f.get('field') or '')[:40],
+                      'date': d if isinstance(d, str) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', d) else None,
+                      'value': f['value'], 'text': _mask(str(f.get('text') or ''), ctx)[:40]})
+    rm = src.get('removal')
+    removal = None
+    if isinstance(rm, dict):
+        removal = {k: rm[k] for k in ('followed', 'gone', 'ambiguous_absent', 'listed', 'matched') if _int(rm.get(k))}
+        removal['unlisted'] = [str(x)[:20] for x in rm.get('unlisted') or [] if isinstance(x, str)][:40]
+        removal['reasons'] = {str(k)[:20]: v for k, v in (rm.get('reasons') or {}).items() if _int(v)} \
+            if isinstance(rm.get('reasons'), dict) else {}
+    zones = {str(k)[:40]: {kk: v[kk] for kk in ('mode', 'total', 'unknown', 'data') if kk in v}
+             for k, v in (src.get('zones') or {}).items() if isinstance(v, dict)} \
+        if isinstance(src.get('zones'), dict) else {}
+    return {'blocking': True, 'violations': len(viols), 'fills': fills, 'removal': removal, 'zones': zones,
+            'declared_set': [str(x)[:20] for x in (src.get('declared_set') or []) if isinstance(x, str)][:40]}
 
 
 def _effective(spec):

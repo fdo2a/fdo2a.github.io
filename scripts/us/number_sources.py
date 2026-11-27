@@ -150,6 +150,15 @@ class Classifier:
         self.cycle, self.cycle_why = inp.cycle_of(html)
         self.book.cycle = self.cycle
         self.web = inp.web_lists(self.cycle)
+        self.blocking = getattr(inp, 'blocking', False)
+        self.declared_set = []           # data-nx="set" — 작성자가 정한 문턱(조건 문단 안), 대조하지 않고 목록만
+        self.zones = None
+        if self.blocking:
+            from us import zones as Z
+            try:
+                self.zones = Z.load()
+            except Z.ConfigError as e:
+                raise S.InputError(str(e))
 
     def run(self):
         doc, kinds = self._parse()
@@ -167,16 +176,25 @@ class Classifier:
                         marker_q.setdefault(id(m), set()).add((id(b), q.start))
         # 표식 안에 수량이 없는 것 — 수량이 아니라 따로 센다
         all_markers = {id(n) for n in doc.nodes if S.is_marker(n)}
+        self.body_refs = {n.attrs.get('data-ref', '').split('|')[0].strip() for n in doc.nodes if 'data-ref' in n.attrs}
         self.detail['marker_empty'] = len(all_markers - set(marker_q))
+        titles = {}
+        if self.blocking:
+            from us import number_audit as N
+            titles = {id(n): (t or '') for n, t, _ in N._sections(doc)}
         for b, qs in per_block:
             sents = S.sentences(b.text)
             for q in qs:
+                self._fact = None
                 cls, why = self._one(b, q, kinds, marker_q)
                 a, e = next(((x, y) for x, y in sents if x <= q.start < y), (0, len(b.text)))
                 in_sent = [x for x in qs if a <= x.start < e]
-                items.append(S.Item(q, cls, why, 'body', S.mask_sentence(b.text, a, e, in_sent),
-                                    next(i for i, x in enumerate(in_sent) if x is q),
-                                    full_sentence=' '.join(b.text[a:e].split()), in_code=_in_code(b, q)))
+                it = S.Item(q, cls, why, 'body', S.mask_sentence(b.text, a, e, in_sent),
+                            next(i for i, x in enumerate(in_sent) if x is q),
+                            full_sentence=' '.join(b.text[a:e].split()), in_code=_in_code(b, q))
+                if self.blocking:
+                    self._annotate(it, b, q, titles)
+                items.append(it)
         # 제목·메타 — 같은 인쇄 꼴의 본문 수량 칸을 물려받는다(U·X 이면 U)
         shown = {}
         for it in items:
@@ -184,13 +202,22 @@ class Classifier:
                 shown.setdefault(it.q.raw.strip(), it.cls)
         # 독립 재집계(설계 §2.1 불변식) — 수량 문법과 따로, 보이는 글의 숫자열을 다시 센다. 어긋나면 검사기 결함(exit 2)
         self.run_count = sum(len(S.runs(b.text)) for b, _ in per_block)
+        head = self._head_refs() if self.blocking else {}
         for where, text in doc.extra:
             text = S.norm(text)
             self.run_count += len(S.runs(text))
             qs = S.quantities(text, self.inp.terms)
+            refs = head.get((where, text)) if where in ('title', 'meta') else None
+            if refs is not None:
+                qs = sorted(qs + S.korean_quantities(text), key=lambda q: q.start)
+                vals = [q for q in qs if not q.code]
+                pairs = dict(zip((id(q) for q in vals), refs)) if len(vals) == len(refs) else {}
             sents = S.sentences(text)
             for q in qs:
-                if q.code:
+                self._fact = None
+                if refs is not None and not q.code:
+                    cls, why = self._head_one(q, text, pairs.get(id(q)))
+                elif q.code:
                     cls, why = 'excluded', 'code'
                     self.detail['excluded_code'] += 1
                 else:
@@ -198,10 +225,72 @@ class Classifier:
                     cls, why = (c, '본문과 같은 수량') if c else ('unknown', '표식 없음')
                 a, e = next(((x, y) for x, y in sents if x <= q.start < y), (0, len(text)))
                 in_sent = [x for x in qs if a <= x.start < e]
-                items.append(S.Item(q, cls, why, where, S.mask_sentence(text, a, e, in_sent),
-                                    next(i for i, x in enumerate(in_sent) if x is q),
-                                    full_sentence=' '.join(text[a:e].split())))
+                it = S.Item(q, cls, why, where, S.mask_sentence(text, a, e, in_sent),
+                            next(i for i, x in enumerate(in_sent) if x is q),
+                            full_sentence=' '.join(text[a:e].split()))
+                if self.blocking:
+                    it.detail.update(zone=self._head_zone(), ref=refs is not None and not q.code)
+                    self._take_fact(it)
+                    if it.detail.get('stale') and not text[q.end:].startswith(_asof_text(it.detail['stale'])):
+                        it.detail['no_asof'] = True
+                items.append(it)
         return items
+
+    # ── 막는 판(숫자는 코드가 채운다 1차) ──
+
+    def _annotate(self, it, b, q, titles):
+        segs = b.segs_in(q.start, q.end)
+        stack = segs[0].stack if segs else []
+        sec = next((n for n in stack if n.tag == 'section'), None)
+        from us import zones as Z
+        name, mode = Z.zone_of(self.zones, titles.get(id(sec), '') if sec is not None else '')
+        it.detail.update(zone=(name, mode))
+        it.detail['ref'] = any('data-ref' in n.attrs for st in S.markers_over(b, q) for n in st)
+        self._take_fact(it)
+        if it.detail.get('stale') and not any(n.tag in ('td', 'th') for n in stack):
+            # 관측일이 글 날짜와 다른 칸 — 숫자 바로 뒤에 코드가 찍은 기준일이 있어야 한다(fill_numbers)
+            nxt = b.segs_in(q.end, q.end + 1)
+            ok = bool(nxt) and any(n.attrs.get('data-asof') == it.detail['stale'] for n in nxt[0].stack) and \
+                b.text[q.end:].startswith(_asof_text(it.detail['stale']))
+            if not ok:
+                it.detail['no_asof'] = True
+
+    def _take_fact(self, it):
+        f = getattr(self, '_fact', None)
+        if f is None or it.cls not in ('data', 'level'):
+            return
+        name = self._fact_ref
+        it.detail['fill'] = {'ref': name, 'asset': f.asset, 'group': '.'.join(str(x) for x in f.group[1:2]),
+                             'field': f.fld, 'date': f.date[:10] if isinstance(f.date, str) else None,
+                             'value': f.value, 'text': it.q.raw}
+        if f.status == 'stale' and isinstance(f.date, str):
+            it.detail['stale'] = f.date[:10]
+
+    def _head_zone(self):
+        from us import zones as Z
+        return Z.zone_of(self.zones, '')
+
+    def _head_refs(self):
+        """(자리, 글) → 이름표 목록 — fill_numbers 가 `<title data-refs>`·og:description `data-refs` 에 적은 것."""
+        from us import fill as FL
+        out = {}
+        m = FL._TITLE.search(self.html)
+        if m:
+            refs = FL.head_refs(m.group('attrs'))
+            if refs is not None:
+                out[('title', S.norm(S.unescape(m.group('text'))))] = refs
+        m = FL._OGD.search(self.html)
+        if m:
+            refs = FL.head_refs(m.group('attrs'))
+            if refs is not None:
+                out[('meta', S.norm(S.unescape(m.group('text'))))] = refs
+        self.head_ref_names = [r for v in out.values() for r in v]
+        return out
+
+    def _head_one(self, q, text, ref):
+        if ref is None:
+            return 'unknown', '표식 오류'          # 숫자 수와 이름표 수가 다르다
+        return self._ref(ref, q)
 
     def _parse(self):
         from us import number_audit as N
@@ -317,6 +406,8 @@ class Classifier:
         if 'data-ref' in m.attrs:
             return self._ref(m.attrs['data-ref'], q)
         if 'data-nx' in m.attrs:
+            if self.blocking and m.attrs['data-nx'] == 'set':
+                return self._set(q, stack)
             return self._enum(m.attrs['data-nx'], q)
         src = m.attrs.get('data-src', '')
         if src == 'news' or src.startswith('news:'):
@@ -351,6 +442,16 @@ class Classifier:
         self.declared.append(S.clip(q.raw, 20))
         return 'excluded', 'enum'
 
+    def _set(self, q, stack):
+        """작성자가 정한 문턱(「30년물이 5.05%를 밑돌면」) — 조건 문단(`data-falsifier`·`data-macro-group`) 안에서만.
+        대조하지 않는다(자료 값이 아니다) — 목록을 기록에 싣는다."""
+        cond = any('data-falsifier' in n.attrs or 'data-macro-group' in n.attrs for n in stack)
+        if not cond or q.value is None or q.code:
+            return 'unknown', '선언 무효'
+        self.detail['excluded_set'] = self.detail.get('excluded_set', 0) + 1
+        self.declared_set.append(S.clip(q.raw, 20))
+        return 'excluded', 'set'
+
     def _ref(self, ref, q):
         name, *flags = ref.split('|')
         flags = set(flags)
@@ -365,8 +466,9 @@ class Classifier:
         if f.status == 'invalid':
             self.detail['invalid_refs'] += 1
             return 'unknown', '칸 무효'
-        if not _shown_ok(q, f, flags):
+        if not _shown_ok(q, f, flags) or (self.blocking and not _strict_ok(q, f, flags)):
             return 'unknown', '자료와 다름'
+        self._fact, self._fact_ref = f, ref
         if name.startswith('dv:'):
             self.detail['dv'] += 1
         if 'lvl' in flags:
@@ -419,7 +521,61 @@ def classify(inp, html):
     return c, items
 
 
-def result(inp, html, first_html=None):
+# 막는 판의 위반(설계 「숫자는 코드가 채운다」 §2) — 어느 구역이든 칸을 단 숫자가 칸과 맞지 않는 것,
+# block 구역에서는 칸 없이 쓴 자료 숫자도. 기사·텔레그램·검색 발췌 대조(목록에 없음 등)는 지금처럼 막지 않는다
+V_ANYWHERE = frozenset({'자료와 다름', '표식 오류', '칸 무효'})
+V_BLOCK = frozenset({'표식 없음', '코드 블록(표식 없음)', '칸 없음', '선언 무효'})
+
+
+def violations(items, c, f_items=None, removed=()):
+    """→ (위반 줄 목록, 지운 숫자 요약). 막는 판에서만 부른다."""
+    out = []
+
+    def line(kind, it):
+        zone = (it.detail.get('zone') or ('', ''))[0]
+        where = '' if it.where == 'body' else f'({it.where}) '
+        return f'{kind} [{zone}] {where}{it.q.raw} — {S.clip(it.full_sentence, 80)}'
+    for it in items:
+        zone, mode = it.detail.get('zone') or ('', 'warn')
+        if it.cls == 'unknown' and (it.why in V_ANYWHERE or (mode == 'block' and it.why in V_BLOCK)):
+            out.append(line(it.why, it))
+        if it.detail.get('no_asof'):
+            out.append(line('기준일 없음', it))
+    for r in getattr(c, 'head_ref_names', []):
+        if r.split('|')[0].strip() not in c.body_refs:
+            out.append(f'본문에 없는 이름표 [제목·설명] {r} — 제목·설명의 칸은 본문에도 칸으로 있어야 한다')
+    removal = None
+    if f_items is not None:
+        removal = {'followed': 0, 'gone': 0, 'ambiguous_absent': 0, 'listed': len(removed), 'matched': 0,
+                   'unlisted': [], 'reasons': {}}
+        for x in removed:
+            removal['reasons'][x['reason']] = removal['reasons'].get(x['reason'], 0) + 1
+        pool = {}
+        for x in removed:
+            k = S.removed_key(x['number'], x['sentence'])
+            pool[k] = pool.get(k, 0) + 1
+        final_raw = {it.q.raw.strip() for it in items}
+        follow = lambda it: it.cls == 'unknown' or it.detail.get('ref')     # noqa: E731
+        for it, fate in S.fates(f_items, items, follow):
+            removal['followed'] += 1
+            need = fate == 'gone' or (fate == 'ambiguous' and it.q.raw.strip() not in final_raw)
+            if not need:
+                continue
+            removal['gone' if fate == 'gone' else 'ambiguous_absent'] += 1
+            k = S.removed_key(it.q.raw, it.full_sentence)
+            if pool.get(k):
+                pool[k] -= 1
+                removal['matched'] += 1
+                continue
+            removal['unlisted'].append(S.clip(it.q.raw, 20))
+            # 첫 판 문장은 싣지 않는다(공개된 적 없는 초안 — 설계 2026-11-20 §7.3). 숫자와 구역만
+            zone = (it.detail.get('zone') or ('', ''))[0]
+            out.append(f'적지 않은 삭제 [{zone}] {it.q.raw} — 첫 판에 있던 숫자가 사라졌는데 removed 목록에 없다')
+        removal['unlisted'] = removal['unlisted'][:40]
+    return out, removal
+
+
+def result(inp, html, first_html=None, removed=()):
     """게이트 결과(사전) — `sources` 칸. InvariantError·InputError 는 그대로 올린다."""
     c, items = classify(inp, html)
     q, r = S.tally(items)
@@ -431,6 +587,7 @@ def result(inp, html, first_html=None):
         by[it.why] = by.get(it.why, 0) + 1
     hist, first_sha = 'unverifiable', None
     why_hist = ''
+    first_items = None
     if first_html is not None:
         path_kind, d = S.canonical_of(first_html)
         want = 'posts' if inp.market == 'us' else 'news'
@@ -441,11 +598,19 @@ def result(inp, html, first_html=None):
                 _, f_items = classify(inp, first_html)
                 hist = S.history(f_items, items)
                 first_sha = S.sha256_text(first_html)
+                first_items = f_items
             except (S.InputError, S.InvariantError) as e:
                 why_hist = f'첫 판을 분류하지 못했다 — {e}'
     else:
         why_hist = '첫 판이 없다'
-    return {
+    extra = {}
+    if c.blocking:
+        viols, removal = violations(items, c, first_items, removed)
+        extra = {'blocking': True, 'violations': viols, 'removal': removal,
+                 'declared_set': c.declared_set[:40],
+                 'fills': [it.detail['fill'] for it in items if it.detail.get('fill')],
+                 'zones': _zone_counts(items)}
+    return {**extra,
         'format': S.FORMAT, 'market': inp.market, 'date': inp.date,
         'counts': q, 'runs': r, 'detail': dict(c.detail),
         'unknown_by': {k: v for k, v in sorted(by.items(), key=lambda kv: -kv[1]) if k in S.U_REASONS},
@@ -458,6 +623,59 @@ def result(inp, html, first_html=None):
         'history': hist, 'history_why': why_hist, 'first_sha256': first_sha,
         'cycle': c.cycle, 'cycle_why': c.cycle_why,
     }
+
+
+def _zone_counts(items):
+    """구역마다 (모드, 숫자 수, 확인 불가 수) — 알림·시운전 보고용."""
+    out = {}
+    for it in items:
+        zone, mode = it.detail.get('zone') or ('', 'warn')
+        z = out.setdefault(zone, {'mode': mode, 'total': 0, 'unknown': 0, 'data': 0})
+        z['total'] += 1
+        z['unknown'] += it.cls == 'unknown'
+        z['data'] += it.cls in ('data', 'level')
+    return out
+
+
+def _asof_text(date):
+    return f'({int(date[5:7])}월 {int(date[8:10])}일 기준)'
+
+
+def _strict_ok(q, f, flags):
+    """막는 판의 대조 — 채우기(`us/fill.py`)와 따로 짠 같은 규칙: 칸 값을 쓴 자리로 half-up 한 번 반올림한 값이 쓴 값과
+    **같아야** 한다(반 자리 허용 없음). `|abs` 는 음수 칸에만, 0 이 아닌 값이 0 으로 찍히면 아님, 어림선은 쓴 유효 자리로 내림."""
+    from decimal import ROUND_FLOOR, ROUND_HALF_UP, Decimal
+    import math
+    unit = q.unit
+    conv = 1.0 if unit in f.units else f.conv.get(unit, 1.0)
+    exp = f.value * f.scale * conv
+    if 'abs' in flags:
+        if not exp < 0 or q.sign:
+            return False
+        exp = -exp
+    elif exp < 0 and not q.sign:
+        return False
+    if q.korean:
+        return float(q.value) == exp
+    if len(q.runs) != 1:
+        return False
+    a, b = q.runs[0]
+    run = q.raw[a - q.start:b - q.start]
+    written = Decimal(('0' + run) if run.startswith('.') else run.replace(',', ''))
+    dec = len(run.split('.')[1]) if '.' in run else 0
+    mag = Decimal(repr(abs(exp) / (q.scale or 1.0)))
+    if 'lvl' in flags:
+        if mag == 0 or not 1 <= q.sig <= 2:
+            return False
+        step = Decimal(10) ** (math.floor(math.log10(float(mag))) - q.sig + 1)
+        want = (mag / step).to_integral_value(rounding=ROUND_FLOOR) * step
+    else:
+        want = mag.quantize(Decimal(1).scaleb(-dec), rounding=ROUND_HALF_UP)
+        if want == 0 and mag != 0:
+            return False
+    if q.sign and want != 0 and (q.sign == '-') != (exp < 0):
+        return False
+    return written == want
 
 
 def _code_node(stack):
