@@ -162,8 +162,7 @@ def test_schedule_only_statement_day_forbids_quotes_and_numbers():
                for x in run(inject(html, sec.replace('동결했다고', '1.25%로 동결했다고')), sched))
 
 
-def test_assemble_adds_quote_css_only_on_boj_days():
-    assert 'cb-quote' not in R.CB_CSS or True
+def test_order_puts_boj_right_after_comment():
     assert R.order(None, boj=True)[:2] == ('comment', 'boj')
     assert R.order([{'x': 1}], boj=True)[:3] == ('comment', 'boj', 'macro')
     assert 'boj' not in R.order(None)
