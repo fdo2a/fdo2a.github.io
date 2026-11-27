@@ -1,0 +1,36 @@
+{
+ "run_id": "jpd-2026-11-27-1795771966-18865",
+ "session": "2026-11-27",
+ "input_commit": "0621840c58a51400cf0e7ccffa570595959a1c0c",
+ "html_sha256": "751e80aea76b56536c6aded13c307e0b5f3ea1a398efe142c796b41c657717bc",
+ "snapshot_sha256": "ee31dd2965d8d237cd4d470c6a2ba72e500f471145d5e79cfb586c0a697c2c10",
+ "news_sha256": "d094a8d30a63c6cce2fc4c6f0a7142f647cd6e02dbb38ac563f89ebe275292d9",
+ "telegram_sha256": "d3c7ff840de1611b6b448b20a616addbef8dbe471b6cf27e80a2ed24d26f9264",
+ "title": "일본 증시 마감 — 닛케이 2.11% 급반등, 반도체 대형주가 끌고 은행주도 올랐다",
+ "summary": "미국 휴장 속 얇은 장에서 반도체 대형주에 자금이 몰려 닛케이가 2.11% 올랐고, JGB는 2년이 오르고 30년이 내려 만기별로 갈렸다.",
+ "gates": [
+  {
+   "name": "apply_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_japan_daily",
+   "exit": 0
+  },
+  {
+   "name": "check_news",
+   "exit": 0
+  },
+  {
+   "name": "check_readability",
+   "exit": 0
+  },
+  {
+   "name": "check_style",
+   "exit": 0
+  }
+ ],
+ "verdict": "pass",
+ "finished_at": "2026-11-27T09:40:23.413527+00:00",
+ "published_at": "2026-11-27T09:40:27.694469+00:00"
+}
