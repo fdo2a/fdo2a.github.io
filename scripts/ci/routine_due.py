@@ -39,7 +39,7 @@ import json
 import os
 import subprocess
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 NY = ZoneInfo('America/New_York')
@@ -165,6 +165,9 @@ def decide_us(now, files, lock_age, holidays=(), flag=None):
 
 
 LATE_SESSIONS = 5     # 늦은 글을 내는 창 — 현재 세션 앞의 거래일 수
+# 본 런(16:50 ET) 앞 2시간에는 늦은 글을 시작하지 않는다 — 둘이 함께 돌면 연구 원장(해시 사슬)에 동시에 덧붙인다.
+# 16:45 ET 에 세션이 넘어가면 현재 세션이 DUE 라 늦은 글은 어차피 기다린다. 휴장일은 본 런이 없어 막지 않는다.
+LATE_QUIET = (time(14, 45), time(16, 45))
 
 
 def us_late_sessions(now, holidays=()):
@@ -185,6 +188,9 @@ def decide_us_late(now, files, current, locks, holidays=(), collected=lambda d: 
     늦은 글은 한 번에 하나: 대상 가운데 하나라도 BUSY 면 BUSY, 아니면 가장 오래된 대상 하나를 LATE.
     """
     if current[0] not in ('DONE', 'HOLD'):
+        return current
+    ny = now.astimezone(NY)
+    if LATE_QUIET[0] <= ny.time() < LATE_QUIET[1] and _trading_back(ny.date(), holidays) == ny.date():
         return current
     busy = due = None
     for s in us_late_sessions(now, holidays):

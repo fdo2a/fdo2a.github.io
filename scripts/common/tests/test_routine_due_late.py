@@ -116,3 +116,20 @@ def test_main_us_prints_late_when_the_current_session_is_done(monkeypatch, capsy
     assert capsys.readouterr().out.startswith('LATE 2026-11-24 미발행:')
     # 잠금은 현재 세션과, 글이 빠진 지난 세션만 본다
     assert calls == ['us-2026-11-25', 'us-2026-11-24']
+
+
+def test_no_late_run_starts_in_the_two_hours_before_the_next_main_run():
+    """새벽 안전망(20:30 UTC = 15:30 ET)이 늦은 글을 시작하면 16:50 ET 본 런과 함께 돌며 연구 원장
+    (`research/us/ledger.jsonl`, 해시 사슬)에 동시에 덧붙일 수 있다 — 14:45-16:45 ET 에는 늦은 글을 시작하지 않는다."""
+    tue = datetime(2026, 11, 24, 20, 30, tzinfo=timezone.utc)     # 15:30 ET 화요일, 현재 세션 11/23
+    files = both('2026-11-17', '2026-11-18', '2026-11-19', '2026-11-23')
+    assert rd.us_session(tue, THANKSGIVING) == '2026-11-23'
+    assert late(files, now=tue)[0] == 'DONE'
+    before = datetime(2026, 11, 24, 19, 44, tzinfo=timezone.utc)  # 14:44 ET — 아직 창 밖
+    assert late(files, now=before)[0] == 'LATE'
+
+
+def test_a_holiday_afternoon_does_not_block_late_runs():
+    """휴장일(본 런이 없는 날) 오후는 막지 않는다 — 11/26 추수감사절 15:30 ET."""
+    thu = datetime(2026, 11, 26, 20, 30, tzinfo=timezone.utc)
+    assert late(PUBLISHED, now=thu)[0] == 'LATE'
