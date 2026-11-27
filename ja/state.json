@@ -306,6 +306,7 @@
     "japan/data/news/2026-11-23.json": "f4c0406abfb46be68470d8ed7f84276cc1f65656",
     "japan/data/news/2026-11-24.json": "0df5f091948d40186ef5237c2891f06b94644cd6",
     "japan/data/news/2026-11-25.json": "055821fea03c69fb2a4dc1e633c7f2bcd326f4d4",
+    "japan/data/news/2026-11-26.json": "4f6acc9162107e9cf6b7bc4f38c968db76f74e3d",
     "japan/data/news/daily/2026-11-12.json": "879da43d5bdd3a35a5c42649b9ddf8da7b58ad28",
     "japan/data/news/daily/2026-11-13.json": "b4980a1ec3912a9af019a695e6aeaeda61725a19",
     "japan/data/news/daily/2026-11-16.json": "ae8f073e188ebf4dc87bda11d4e45cf12a6f1380",
@@ -320,11 +321,11 @@
    },
    "reason": "확인 안 된 인명: 다무라",
    "renderer": "r2",
-   "rounds": 1,
+   "rounds": 2,
    "source_blob": "3c2e0c47cb4e0d028211219bea5b77ce4c6d6a5b",
    "status": "held",
    "text_hash": "8c8bda8d1853622b",
-   "updated": "2026-11-26T23:20:19+09:00"
+   "updated": "2026-11-27T13:00:50+09:00"
   },
   "news/2026-11-16.html": {
    "deps": {
