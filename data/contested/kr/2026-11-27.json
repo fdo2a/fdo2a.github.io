@@ -5,9 +5,9 @@
  "report_date": "2026-11-27",
  "status": "error",
  "reason": "model_extract_is_error_429",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-27T11:49:12+00:00",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-27T12:04:41+00:00",
  "cutoff_at": "2026-11-27T20:00:00+09:00",
  "model": {
   "extract": "opus",
@@ -25,7 +25,7 @@
   }
  },
  "counts": {
-  "harvest": 523,
+  "harvest": 515,
   "candidates": 1,
   "articles": [
    6
@@ -33,7 +33,7 @@
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "discovery": "truncated",
   "hosts": {
    "joongang": "ok",
@@ -45,7 +45,7 @@
    "kmib": "ok"
   },
   "notes": [
-   "discover:523",
+   "discover:515",
    "model_error: You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from=cc_cli_limit_message · your weekly limit resets 9am (Asia/Seoul)"
   ],
   "source": "naver",
@@ -60,5 +60,5 @@
   "query": "",
   "trigger": []
  },
- "content_hash": "8e265f057c06b485"
+ "content_hash": "91549059f49199ba"
 }
