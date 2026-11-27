@@ -2,40 +2,40 @@
   "source": "ECOS (한국은행 경제통계시스템)",
   "series": {
     "국고채 3년": {
-      "value": 3.622,
-      "date": "2026-11-26",
+      "value": 3.685,
+      "date": "2026-11-27",
       "unit": "연%",
       "item_name": "국고채(3년)",
-      "prev": 3.583,
-      "prev_date": "2026-11-25",
-      "bp": 3.9
+      "prev": 3.622,
+      "prev_date": "2026-11-26",
+      "bp": 6.3
     },
     "국고채 10년": {
-      "value": 3.79,
-      "date": "2026-11-26",
+      "value": 3.832,
+      "date": "2026-11-27",
       "unit": "연%",
       "item_name": "국고채(10년)",
-      "prev": 3.761,
-      "prev_date": "2026-11-25",
-      "bp": 2.9
+      "prev": 3.79,
+      "prev_date": "2026-11-26",
+      "bp": 4.2
     },
     "CD 91일": {
       "value": 3.4,
-      "date": "2026-11-26",
+      "date": "2026-11-27",
       "unit": "연%",
       "item_name": "CD(91일)",
-      "prev": 3.39,
-      "prev_date": "2026-11-25",
-      "bp": 1.0
+      "prev": 3.4,
+      "prev_date": "2026-11-26",
+      "bp": 0.0
     },
     "회사채 AA- 3년": {
-      "value": 4.294,
-      "date": "2026-11-26",
+      "value": 4.34,
+      "date": "2026-11-27",
       "unit": "연%",
       "item_name": "회사채(3년, AA-)",
-      "prev": 4.266,
-      "prev_date": "2026-11-25",
-      "bp": 2.8
+      "prev": 4.294,
+      "prev_date": "2026-11-26",
+      "bp": 4.6
     },
     "한국은행 기준금리": {
       "value": 3.0,
@@ -54,20 +54,20 @@
       "numerator": "국고채 3년",
       "denominator": "한국은행 기준금리",
       "note": "3년물이 기준금리보다 얼마나 위인가 — 정책 경로와 기간프리미엄이 섞여 있다",
-      "bp": 62.2,
-      "date": "2026-11-26",
-      "sessions": 534,
-      "change_bp": 3.9,
-      "prev_date": "2026-11-25",
+      "bp": 68.5,
+      "date": "2026-11-27",
+      "sessions": 535,
+      "change_bp": 6.3,
+      "prev_date": "2026-11-26",
       "standing": {
-        "percentile": 62.4,
-        "sessions": 534,
+        "percentile": 66.2,
+        "sessions": 535,
         "window": "2년",
         "days": null,
         "share_pct": null,
         "side": "mid",
         "short": "한가운데쯤",
-        "text": "최근 2년(534거래일)의 한가운데쯤"
+        "text": "최근 2년(535거래일)의 한가운데쯤"
       }
     },
     "growth": {
@@ -75,20 +75,20 @@
       "numerator": "국고채 10년",
       "denominator": "국고채 3년",
       "note": "커브 기울기 — 장기 성장·물가 기대가 단기 정책 기대를 얼마나 웃도나",
-      "bp": 16.8,
-      "date": "2026-11-26",
-      "sessions": 534,
-      "change_bp": -1.0,
-      "prev_date": "2026-11-25",
+      "bp": 14.7,
+      "date": "2026-11-27",
+      "sessions": 535,
+      "change_bp": -2.1,
+      "prev_date": "2026-11-26",
       "standing": {
-        "percentile": 9.0,
-        "sessions": 534,
+        "percentile": 4.9,
+        "sessions": 535,
         "window": "2년",
-        "days": 48,
+        "days": 26,
         "share_pct": null,
         "side": "low",
-        "short": "이보다 좁았던 날이 48일뿐",
-        "text": "최근 2년(534거래일) 가운데 이보다 좁았던 날이 48일뿐"
+        "short": "이보다 좁았던 날이 26일뿐",
+        "text": "최근 2년(535거래일) 가운데 이보다 좁았던 날이 26일뿐"
       }
     },
     "credit": {
@@ -96,27 +96,27 @@
       "numerator": "회사채 AA- 3년",
       "denominator": "국고채 3년",
       "note": "같은 만기에서 신용 위험에 매겨진 값",
-      "bp": 67.2,
-      "date": "2026-11-26",
-      "sessions": 534,
-      "change_bp": -1.1,
-      "prev_date": "2026-11-25",
+      "bp": 65.5,
+      "date": "2026-11-27",
+      "sessions": 535,
+      "change_bp": -1.7,
+      "prev_date": "2026-11-26",
       "standing": {
-        "percentile": 80.7,
-        "sessions": 534,
+        "percentile": 74.0,
+        "sessions": 535,
         "window": "2년",
         "days": null,
-        "share_pct": 19,
-        "side": "high",
-        "short": "넓은 쪽 19% 안",
-        "text": "최근 2년(534거래일) 가운데 넓은 쪽 19% 안"
+        "share_pct": null,
+        "side": "mid",
+        "short": "한가운데쯤",
+        "text": "최근 2년(535거래일)의 한가운데쯤"
       }
     }
   },
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-26",
-    "collected_at": "2026-11-26T18:10:59+09:00",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-27T18:10:56+09:00",
     "source": "ECOS (한국은행 경제통계시스템)",
     "response": "ok",
     "required_ok": true,

@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-11-26",
+  "report_date": "2026-11-27",
   "universe": "코스피 거래대금 상위 60 개별주(KRX 종가)",
   "threshold_pct": 5.0,
   "groups": [
@@ -8,99 +8,135 @@
       "industry": "반도체와반도체장비",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "SK하이닉스",
-          "change_pct": 2.23,
-          "close": 1053000,
-          "value": 3588610
+          "name": "삼성전자",
+          "change_pct": 4.55,
+          "close": 179100,
+          "value": 2467705
         },
         {
-          "name": "삼성전자",
-          "change_pct": 0.35,
-          "close": 171300,
-          "value": 2313514
+          "name": "SK하이닉스",
+          "change_pct": 5.41,
+          "close": 1110000,
+          "value": 3201474
+        },
+        {
+          "name": "삼성전자우",
+          "change_pct": 5.84,
+          "close": 145000,
+          "value": 466295
+        },
+        {
+          "name": "SK스퀘어",
+          "change_pct": 5.37,
+          "close": 687000,
+          "value": 271831
+        },
+        {
+          "name": "한미반도체",
+          "change_pct": 9.14,
+          "close": 161200,
+          "value": 101820
+        },
+        {
+          "name": "이수페타시스",
+          "change_pct": 5.39,
+          "close": 68400,
+          "value": 52804
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "자동차",
+      "industry": "은행",
       "direction": "down",
       "reasons": [
         "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "현대차",
-          "change_pct": -3.9,
-          "close": 259000,
-          "value": 95257
+          "name": "신한지주",
+          "change_pct": -0.94,
+          "close": 83900,
+          "value": 53483
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "자동차부품",
+      "industry": "담배",
       "direction": "down",
       "reasons": [
-        "지수 기여 하위",
-        "이상 등락"
+        "지수 기여 하위"
       ],
       "members": [
         {
-          "name": "현대모비스",
-          "change_pct": -5.72,
-          "close": 329500,
-          "value": 68970
+          "name": "KT&G",
+          "change_pct": -1.84,
+          "close": 176200,
+          "value": 61739
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "항공사",
-      "direction": "down",
-      "reasons": [
-        "이상 등락"
-      ],
-      "members": [
-        {
-          "name": "대한항공",
-          "change_pct": -6.16,
-          "close": 29700,
-          "value": 93042
-        }
-      ]
-    },
-    {
-      "id": "g5",
-      "industry": "화학",
+      "industry": "전기제품",
       "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "OCI홀딩스",
-          "change_pct": 5.55,
-          "close": 165400,
-          "value": 44467
+          "name": "삼성SDI",
+          "change_pct": 8.25,
+          "close": 452500,
+          "value": 247851
+        }
+      ]
+    },
+    {
+      "id": "g5",
+      "industry": "우주항공과국방",
+      "direction": "up",
+      "reasons": [
+        "이상 등락"
+      ],
+      "members": [
+        {
+          "name": "한화에어로스페이스",
+          "change_pct": 5.74,
+          "close": 663000,
+          "value": 93954
+        },
+        {
+          "name": "LIG디펜스앤에어로스페이스",
+          "change_pct": 7.31,
+          "close": 418500,
+          "value": 93534
+        },
+        {
+          "name": "한화시스템",
+          "change_pct": 13.76,
+          "close": 55800,
+          "value": 47391
         }
       ]
     }
   ],
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-26",
-    "collected_at": "2026-11-26T18:10:44+09:00",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-27T18:10:41+09:00",
     "source": "Naver 거래대금 상위 + yfinance KRX 일봉",
     "response": "ok",
     "required_ok": true,
     "missing": [],
     "empty": "has_data",
-    "checked": 58,
+    "checked": 56,
     "expected": 60
   }
 }
