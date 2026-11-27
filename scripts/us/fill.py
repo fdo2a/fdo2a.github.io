@@ -356,10 +356,12 @@ def _fill_head(html, meta, book, terms, date):
     h1 = _H1.search(html)
     d = _DESC.search(html)
     if h1 and d:
-        from common import post_shell as PS
-        plain = PS.plain(re.sub(r'<span data-asof="[^"]*">[^<]*</span>', '', h1.group(1)))
+        # post_shell.plain 과 같은 규칙(그 모듈은 레포 뿌리 경로로만 불러진다)
+        frag = re.sub(r'<span data-asof="[^"]*">[^<]*</span>', '', h1.group(1))
+        plain = re.sub(r'\s+', ' ', _html.unescape(re.sub(r'<[^>]+>', '', frag))).strip()
         tail = _html.unescape(d.group('text'))
         k = tail.rfind(f'. {date} ')
         if k >= 0:
-            html = html[:d.start()] + f'<meta name="description" content="{PS.escape(plain + tail[k:])}">' + html[d.end():]
+            html = (html[:d.start()] + f'<meta name="description" content="{_html.escape(plain + tail[k:], quote=True)}">'
+                    + html[d.end():])
     return html, rows

@@ -166,7 +166,7 @@ class Classifier:
         items, marker_q = [], {}
         per_block = []
         for b in blocks:
-            qs = S.quantities(b.text, self.inp.terms)
+            qs = _quantities(b.text, self.inp)
             if getattr(self.inp, 'blocking', False):
                 qs = sorted(qs + S.korean_quantities(b.text), key=lambda q: q.start)
             per_block.append((b, qs))
@@ -206,7 +206,7 @@ class Classifier:
         for where, text in doc.extra:
             text = S.norm(text)
             self.run_count += len(S.runs(text))
-            qs = S.quantities(text, self.inp.terms)
+            qs = _quantities(text, self.inp)
             refs = head.get((where, text)) if where in ('title', 'meta') else None
             if refs is not None:
                 qs = sorted(qs + S.korean_quantities(text), key=lambda q: q.start)
@@ -676,6 +676,13 @@ def _strict_ok(q, f, flags):
     if q.sign and want != 0 and (q.sign == '-') != (exp < 0):
         return False
     return written == want
+
+
+def _quantities(text, inp):
+    """끈 판은 지금 문법 그대로, 막는 판은 기간 이름(「1주 전」「3개월」)도 세지 않는 숫자로."""
+    if getattr(inp, 'blocking', False):
+        return S.quantities(text, inp.terms, periods=True)
+    return S.quantities(text, inp.terms)
 
 
 def _code_node(stack):

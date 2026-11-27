@@ -389,3 +389,10 @@ def test_record_fails_on_violations_and_keeps_fills(w18, modname, stuck):
     assert R._classify(spec, 1, out, '', {'html': '/x/p.html', 'datadir': '/w', 'repo': '/r'}, {}) == stuck
     out = json.dumps({'skipped': False, 'warnings': [], 'violations': [], 'sources': src})
     assert R._classify(spec, 1, out, '', {'html': '/x/p.html', 'datadir': '/w', 'repo': '/r'}, {}) == stuck
+
+
+def test_period_names_are_not_counted_in_blocking_mode(w18):
+    """11/25 시운전에서 나온 꼴 — 「1주 전」「1개월 수익률」「최근 2년」은 기간 이름(세지 않는 숫자 ④), 「504거래일」은 센 값."""
+    body = section('채권', '<p>1주 전보다 낮고, 레벨은 최근 2년(504거래일) 가운데 높은 쪽이다. 3개월 상대수익률과 20거래일 전.</p>')
+    res = check(w18, D18, page(body, D18))
+    assert [v.split(' — ')[0] for v in res['violations']] == ['표식 없음 [금리] 504거래일']
