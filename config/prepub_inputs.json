@@ -536,6 +536,24 @@
      "note": "오케스트레이터가 작업 중에 남긴 임시 파일(2026-11-25 기록, workspace-only) — 발행본은 --html 로 받은 글이고 검사기는 이 파일을 읽지 않는다"
     },
     {
+     "path": "<datadir>/body_template.html",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 본문 틀 사본",
+     "note": "오케스트레이터가 작업 중에 남긴 임시 파일(2026-11-24 기록 — 11/27 늦은 발행, workspace-only) — 발행본은 --html 로 받은 글이고 검사기는 이 파일을 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/late_cycle.json",
+     "class": "unused",
+     "name": "늦은 발행의 연구 장부 덧붙임 파일",
+     "note": "ORCHESTRATOR 늦은 발행 절차의 research_ledger.py late-cycle 출력(2026-11-24 기록 — 11/27 늦은 발행, workspace-only). 연구 장부(research/us)에 덧붙이는 입력이고 발행 전 검사기는 읽지 않는다"
+    },
+    {
+     "path": "<datadir>/ledger_summary.txt",
+     "class": "unused",
+     "name": "루틴이 작업 공간에 남긴 장부 요약 메모",
+     "note": "2026-11-24 기록(11/27 늦은 발행)에 처음 나온 임시 파일, workspace-only — 지시문에 없는 이름이라 작성 세션의 메모로 본다. 발행 전 검사기는 읽지 않는다"
+    },
+    {
      "path": "<datadir>/prepub_dir",
      "class": "unused",
      "name": "루틴이 적어 둔 발행 전 검토 폴더 경로",
