@@ -1,0 +1,900 @@
+{
+ "code": {
+  "dirty": false,
+  "dirty_sha256": null,
+  "head": "c6b676c9daa9020cb91d88d85fa04a30e76ead5a",
+  "python": "3.11.18"
+ },
+ "created_at": {
+  "kst": "2026-11-27T18:29:16+09:00",
+  "utc": "2026-11-27T09:29:16+00:00"
+ },
+ "date": "2026-11-27",
+ "disabled": [
+  {
+   "name": "check_news",
+   "since": "2026-11-06",
+   "why": "KR 뉴스가 /kr/news/ 로 분리돼 마감브리프에는 뉴스 블록이 없다(KR_ORCHESTRATOR)"
+  },
+  {
+   "name": "check_contested",
+   "since": "2026-11-06",
+   "why": "쟁점 분석이 KR 뉴스 글로 옮겨 갔다(KR_ORCHESTRATOR)"
+  }
+ ],
+ "format": "prepub-record/1",
+ "gates": [
+  {
+   "argv": [],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "structure",
+   "name": "unconfirmed",
+   "note": null,
+   "output_sha256": null,
+   "reason": "",
+   "required": true,
+   "script_sha256": null,
+   "seconds": 0.0,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_session.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [
+    "session gate: OK"
+   ],
+   "kind": "numbers",
+   "name": "check_session",
+   "note": null,
+   "output_sha256": "b48111753af34051b1878f227f883fe95706998e0b3dadd74250368fddf2aa45",
+   "reason": "",
+   "required": true,
+   "script_sha256": "fda357035a1ec614464521cb006200a2b229ef4798a0f1229db9ed7d71da99c6",
+   "seconds": 0.04,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_weight.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [
+    "분량: 본문 6292자 · 뉴스 요약 0자 · 전체 6292자 (공백 제외)",
+    "경고: 시황군 1552자 < 판단군 1737자 — 중요한 분석이 몰린 날이 아니면 주요 자산의 움직임·큰 변동의 원인·자산 간 연결이 빠졌는지 점검한다(비율을 맞추려고 시황을 덧붙이지 않는다)",
+    "OK — 무게중심 게이트 통과 (발표일)"
+   ],
+   "kind": "structure",
+   "name": "check_weight",
+   "note": null,
+   "output_sha256": "a501060ba517f0c73f5d9e0dca333c63b321ac330a165bf8f089282f42908184",
+   "reason": "",
+   "required": true,
+   "script_sha256": "7c5c74d79a6db1e9b794874489b42f98b503c3a8152ae69be246900aa7dc07cc",
+   "seconds": 0.07,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 1
+  },
+  {
+   "argv": [
+    "scripts/check_kr_stance.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--next",
+    "{stance_next}"
+   ],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [
+    "§2·판단 원장 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_kr_stance",
+   "note": null,
+   "output_sha256": "88006a7279532bd7aab973571bbac8585b759c21749cbbd7922e552029c9be91",
+   "reason": "",
+   "required": true,
+   "script_sha256": "62837816d4c8b5ceacf0d838cf014ff214244a8e098522e85f4b978279073e9e",
+   "seconds": 0.16,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_movers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [
+    "움직인 종목 이상 없음 — <html>"
+   ],
+   "kind": "numbers",
+   "name": "check_movers",
+   "note": null,
+   "output_sha256": "fabfaa35f7b759eb6f9e444c3fd0cb9d2b06957b7a391a27b59472f2a9ae773f",
+   "reason": "",
+   "required": true,
+   "script_sha256": "3bb587c6d26bb4ecdbfb2ec7407513474d10b51d7ba13a65a6ef600f7049b522",
+   "seconds": 0.07,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_telegram.py",
+    "--html",
+    "{html}",
+    "--tg",
+    "{tg}",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [
+    "텔레그램 인용 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_telegram",
+   "note": null,
+   "output_sha256": "22e43b68f76b3f72e30391fd76de8577e63f35ef0f96d9e1c7bcbbbf9cb949f2",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d021abadb1a5efdd7133fad9a15568cee40be1d675d1336edbf304ca77ad5805",
+   "seconds": 0.47,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_fund.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr"
+   ],
+   "ended": "2026-11-27T18:29:15+09:00",
+   "exit": 0,
+   "items": [
+    "펀드 섹션 이상 없음 — <html>"
+   ],
+   "kind": "structure",
+   "name": "check_fund",
+   "note": null,
+   "output_sha256": "4b54fb640a47e57791189717205d486fc99072675fd82a4eb95619f4c3b77e62",
+   "reason": "",
+   "required": true,
+   "script_sha256": "61e0d1336497161684c1b7c81f3e81314f4e3239a51e9a8bf892eb4d2c17e4cd",
+   "seconds": 0.1,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_numbers.py",
+    "--html",
+    "{html}",
+    "--datadir",
+    "{datadir}",
+    "--market",
+    "kr",
+    "--date",
+    "{date}"
+   ],
+   "ended": "2026-11-27T18:29:16+09:00",
+   "exit": 0,
+   "items": [],
+   "kind": "numbers",
+   "name": "check_numbers",
+   "note": null,
+   "numbers": {
+    "delegated": 47,
+    "excluded": 36,
+    "prose_judged": 0,
+    "table_cells": 55,
+    "tokens_seen": 387,
+    "unverified": 249,
+    "unverified_by": {
+     "KR 문장": 159,
+     "KR 업종 멀티기간": 75,
+     "KR 표(지도 밖)": 15
+    }
+   },
+   "output_sha256": "e7e3804295bfd2c358fb2a361e915582ebb001e9e659411deafacb2890a87167",
+   "reason": "",
+   "required": true,
+   "script_sha256": "b3c40a2c664d647bb1756a4b00d830f1e0f126a4b6d6c787cb46a03d00b01472",
+   "seconds": 0.14,
+   "started": "2026-11-27T18:29:15+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_research.py",
+    "check",
+    "--span",
+    "daily",
+    "--html",
+    "{html}",
+    "--root",
+    "research/kr",
+    "--market",
+    "kr",
+    "--date",
+    "{date}",
+    "--cycle",
+    "{cycle}"
+   ],
+   "ended": "2026-11-27T18:29:16+09:00",
+   "exit": 0,
+   "items": [
+    "RESEARCH_OK"
+   ],
+   "kind": "structure",
+   "name": "check_research",
+   "note": null,
+   "output_sha256": "b07ae556f94f4f1cfa887f6909d5974d37234606485396e81f20c0f23646bbde",
+   "reason": "",
+   "required": true,
+   "script_sha256": "d54dcf4ef6d44931fe5fc7bb03f625616884aa4bda1f649ed69f9fcfe7c96afd",
+   "seconds": 0.08,
+   "started": "2026-11-27T18:29:16+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  },
+  {
+   "argv": [
+    "scripts/check_style.py",
+    "{html}"
+   ],
+   "ended": "2026-11-27T18:29:16+09:00",
+   "exit": 0,
+   "items": [
+    "경고 1건(발행은 막지 않는다) — <html>",
+    "· 문장 안에 매체 출처가 있다 — 「연합뉴스」 — 다시 읽어 보고, 자연스러우면 그대로 둔다"
+   ],
+   "kind": "format",
+   "name": "check_style",
+   "note": null,
+   "output_sha256": "7c3ea78b93f733a44a83fd63e4c2bdef2f290a03776c1102cc4419affa46e2eb",
+   "reason": "",
+   "required": true,
+   "script_sha256": "4ffd7ef01b1b78a44d60afab21a10479758e3b54404214f30baf75077484a4a9",
+   "seconds": 0.06,
+   "started": "2026-11-27T18:29:16+09:00",
+   "status": "warn",
+   "timed_out": false,
+   "warn_count": 1
+  },
+  {
+   "argv": [
+    "scripts/check_readability.py",
+    "--strict",
+    "--no-inline-images",
+    "{html}"
+   ],
+   "ended": "2026-11-27T18:29:16+09:00",
+   "exit": 0,
+   "items": [
+    "== <html>",
+    "문장 145 · 중앙 57자 · P90 93자 · 120자 초과 1문장 · 수치 중앙 1개/P90 4개 · 문단 P90 375자",
+    "note 수치 9개 문장 (6개 넘음 — 읽기 어려우면 표로) · 증권(+8.67%, 39종목 중 38종목 상승)·기계(+8.39%, 107종목 중 95종목)·전기장비(+7.30%, 35종목 중 33종목)도 거래대금이 받친 폭넓…",
+    "note 수치 7개 문장 (6개 넘음 — 읽기 어려우면 표로) · (3.832 − 3.685) × 100 = 14.7bp, 변화 4.2 − 6.3 = −2.1bp.",
+    "note 수치 7개 문장 (6개 넘음 — 읽기 어려우면 표로) · (4.340 − 3.685) × 100 = 65.5bp, 변화 4.6 − 6.3 = −1.7bp.",
+    "note 수치 7개 문장 (6개 넘음 — 읽기 어려우면 표로) · 삼성전자 183,100원 → 179,100원 −2.18%, SK하이닉스 1,113,000원 → 1,110,000원 −0.27%, 차 −1.91%포인트.",
+    "note 수치 7개 문장 (6개 넘음 — 읽기 어려우면 표로) · SK하이닉스 1,030,000원 → 1,110,000원 +7.77%, 코스피 4,697.51 → 4,915.68 +4.64%, 차 +3.12%포인트.",
+    "note 산문 과잉 정밀 1,336.34원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 과잉 정밀 1,336.42원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 과잉 정밀 1,346.98원 — 판정 경계 값이 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,336.34 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,336.42 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 1,346.98 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,682.43 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,697.51 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,711.21 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,728.80 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,809.41 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,915.68 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 4,922.94 — 호가가 아니면 반올림을 생각해 본다",
+    "note 산문 소수점 5,006.03 — 호가가 아니면 반올림을 생각해 본다",
+    "info 128자 문장 · 사전에 정한 기간 검증인 12월 2일 종가 기준 SK하이닉스와 코스피의 수익률 차(11월 25일 대비 ±3%포인트)는 이날 중간값이 +3.12%포인트로 시장 전반…",
+    "기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.",
+    "수치: 숫자 토큰(%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, 「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.",
+    "note(문체 참고): 문장당 수치 6개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·천 단위+소수, 헤드라인 80자 초과·수치 4개 초과.",
+    "note 는 발행을 막지 않는다(--strict 도 세지 않는다) — 다시 읽어 보고, 자연스러우면 그대로 둔다.",
+    "FAIL 은 조판이 깨지는 구조 문제뿐이다: 섹션 경계를 넘는 div, 인라인 이미지(--no-inline-images), 조판 미적용."
+   ],
+   "kind": "structure",
+   "name": "check_readability",
+   "note": null,
+   "output_sha256": "e9e58fdf47540e113b5942c95bd07eceacc0b7c3049d49290ac27b7ccae50ec8",
+   "reason": "",
+   "required": true,
+   "script_sha256": "598b53a1ce723bbe540de1f7a343401e23f57eef23ae7dd05f91455f170a3628",
+   "seconds": 0.07,
+   "started": "2026-11-27T18:29:16+09:00",
+   "status": "pass",
+   "timed_out": false,
+   "warn_count": 0
+  }
+ ],
+ "generator": {
+  "prepub_gates.json": "f3eae4269dcd57c433c82ee80b825133f4577d4df0f95f16d4741714e92711db",
+  "record.py": "b406297dcd9eeb2259f02322d6e91010ca98e1993ee0eaf66aa885c963f931bb",
+  "run_gates.py": "8bb19b524cadaad6cf0aad78cba3050600f6cad866ea9ec468b57c550464e698"
+ },
+ "inputs": {
+  "capped": false,
+  "count": 97,
+  "files": [
+   {
+    "path": "<datadir>/_collect_status.json",
+    "ref": "repo:kr/data/_collect_status.json",
+    "sha256": "90aa08d8304cd98fb45dd4ebe7968228a9bf3ba3e5b6088c6851355002266ece"
+   },
+   {
+    "path": "<datadir>/kr_charts_manifest.json",
+    "ref": "repo:kr/data/kr_charts_manifest.json",
+    "sha256": "16f4d2e0da37035939a79930bae0b4fb2c60d35211cb2ccbae6239a5f1587c22"
+   },
+   {
+    "path": "<datadir>/kr_econ.json",
+    "ref": "repo:kr/data/kr_econ.json",
+    "sha256": "15ed7ce3c43e1b00444c432093ebd64eff55ad4682fedc1413eddf4f28900c8c"
+   },
+   {
+    "path": "<datadir>/kr_flows.json",
+    "ref": "repo:kr/data/kr_flows.json",
+    "sha256": "fbb2cd52c354cddd3410af1ab8890553311dd1939ace2eebfec715754a8e3474"
+   },
+   {
+    "path": "<datadir>/kr_flows_intraday.json",
+    "ref": "repo:kr/data/kr_flows_intraday.json",
+    "sha256": "593f2fce8c019b1ca78a0e7d5f5204910058a4a270bccff116ae2ae750c3c054"
+   },
+   {
+    "path": "<datadir>/kr_fund_view.html",
+    "ref": "repo:kr/data/kr_fund_view.html",
+    "sha256": "a78934e0911d9a1de61853ee27f568e5b79772efb1181f12a58d769c390f0366"
+   },
+   {
+    "path": "<datadir>/kr_fund_view.json",
+    "ref": "repo:kr/data/kr_fund_view.json",
+    "sha256": "dd91d01748a902567cda05f160e0133ee49edf54b94833e68891a0e84c685690"
+   },
+   {
+    "path": "<datadir>/kr_index_etf.json",
+    "ref": "repo:kr/data/kr_index_etf.json",
+    "sha256": "a0631664382c4325fcb53845288f7e7f4cc54e7f18404130256bf91de07b0a50"
+   },
+   {
+    "path": "<datadir>/kr_industry.json",
+    "ref": "repo:kr/data/kr_industry.json",
+    "sha256": "82ea7702472d49cbc01b0900dc81bbb8678fdf186848899bf9bf312aef5fe213"
+   },
+   {
+    "path": "<datadir>/kr_intraday.json",
+    "ref": "repo:kr/data/kr_intraday.json",
+    "sha256": "6753a6990c1267ef26339c38aec0234ae489c44e6b59e858640a2ca5b6d2d24c"
+   },
+   {
+    "path": "<datadir>/kr_market_data.json",
+    "ref": "repo:kr/data/kr_market_data.json",
+    "sha256": "9ab345fcb784f564a3e0638172886a34b094194594dbc54dc6b2a775bf59d62c"
+   },
+   {
+    "path": "<datadir>/kr_movers.json",
+    "ref": "repo:kr/data/kr_movers.json",
+    "sha256": "c8069fba936dde849eb3ca0dc6ff0e648e0f0160fe6a7dc8e6b3f835f6b511e3"
+   },
+   {
+    "path": "<datadir>/kr_program.json",
+    "ref": "repo:kr/data/kr_program.json",
+    "sha256": "f4e9ba2fe1eacef0815dd13217fc82f6f03f965f6cc7e8d468032230b3617b40"
+   },
+   {
+    "path": "<datadir>/kr_sector.html",
+    "ref": "repo:kr/data/kr_sector.html",
+    "sha256": "44941f27aa8192ea03ef92ed0926eca0adc351457b4ab83f7f8e60affb74809b"
+   },
+   {
+    "path": "<datadir>/kr_session.json",
+    "ref": "repo:kr/data/kr_session.json",
+    "sha256": "72e3b08ba95e3c5305356b947cdcd1b023581c259459041ab64a6f57c7df36f7"
+   },
+   {
+    "path": "<datadir>/kr_stance.json",
+    "ref": "repo:kr/data/kr_stance.json",
+    "sha256": "de90f44dbeae826fe9048f88e1cefc78445ffeaaf072b741b80786f3419764a7"
+   },
+   {
+    "path": "<datadir>/kr_stance_eval.json",
+    "ref": "repo:kr/data/kr_stance_eval.json",
+    "sha256": "9ad0d6ab487a9b1c3a30ce22db67c318cfd3101cfa24e27918cf60443ed27d3d"
+   },
+   {
+    "path": "<datadir>/kr_stock_moves.json",
+    "ref": "repo:kr/data/kr_stock_moves.json",
+    "sha256": "afc55ce2ac77b2b71e010c9060c0e4c53c961fed97ba92e8ad5546591ca3e076"
+   },
+   {
+    "path": "<datadir>/kr_technical.json",
+    "ref": "repo:kr/data/kr_technical.json",
+    "sha256": "73cadca44303f5f72c0531cb20e327c6d1ae5de6b85d29c69493c606710380cd"
+   },
+   {
+    "path": "<datadir>/kr_theme.json",
+    "ref": "repo:kr/data/kr_theme.json",
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+   },
+   {
+    "path": "<datadir>/kr_top_value.json",
+    "ref": "repo:kr/data/kr_top_value.json",
+    "sha256": "05b8b2c3b58072ac05377f1ab9cdc60056c91714c0c37de5f3bd4885e7b9df5a"
+   },
+   {
+    "path": "<datadir>/history/kr_market.jsonl",
+    "ref": "repo:kr/data/history/kr_market.jsonl",
+    "sha256": "b493de62df561996130a8873ac713f2fee91102e9d25d108258d572e4797a9e7"
+   },
+   {
+    "path": "<datadir>/news/2026-09-23.json",
+    "ref": "repo:kr/data/news/2026-09-23.json",
+    "sha256": "8f72450df5e20fa1e7d5ce2a88de232f899d601d0cf60c143ca4ae87b74b6899"
+   },
+   {
+    "path": "<datadir>/news/2026-09-28.json",
+    "ref": "repo:kr/data/news/2026-09-28.json",
+    "sha256": "81708755319628ba04f035d749e060887a5dd716ca9e6a41ae47c3ce9b61542a"
+   },
+   {
+    "path": "<datadir>/news/2026-09-29.json",
+    "ref": "repo:kr/data/news/2026-09-29.json",
+    "sha256": "4d435c5a468a056d3bdbe82eb672efda6b53d8d3e476fb32b4fa9a1d689f76be"
+   },
+   {
+    "path": "<datadir>/news/2026-09-30.json",
+    "ref": "repo:kr/data/news/2026-09-30.json",
+    "sha256": "9c85d7719043511683e1dd37c39f215effbf05fad942a3e01fec83065bd774b8"
+   },
+   {
+    "path": "<datadir>/news/2026-10-01.json",
+    "ref": "repo:kr/data/news/2026-10-01.json",
+    "sha256": "4699bc0797e2712e4a6162e0cd00332d148dd2d3dd854d076671586ecb1b0ab3"
+   },
+   {
+    "path": "<datadir>/news/2026-10-02.json",
+    "ref": "repo:kr/data/news/2026-10-02.json",
+    "sha256": "569433220ef1352a1b29fd79cc455fe292279301e049b191c9323f4b3e466fc6"
+   },
+   {
+    "path": "<datadir>/news/2026-10-06.json",
+    "ref": "repo:kr/data/news/2026-10-06.json",
+    "sha256": "58846176f3a0ff2179812a7c73a004ba531fde9749c5c497587ea64d68a14c52"
+   },
+   {
+    "path": "<datadir>/news/2026-10-07.json",
+    "ref": "repo:kr/data/news/2026-10-07.json",
+    "sha256": "463efa9bde1bd27fa188b2b48f0267271424781eda64d09f163a94d5a361de9c"
+   },
+   {
+    "path": "<datadir>/news/2026-10-08.json",
+    "ref": "repo:kr/data/news/2026-10-08.json",
+    "sha256": "a8230b2eeb94d6bed9fc5f389abd660cd384d848859e78173db14f5474cc9303"
+   },
+   {
+    "path": "<datadir>/news/2026-10-12.json",
+    "ref": "repo:kr/data/news/2026-10-12.json",
+    "sha256": "cd86abc7028c9a8c6777d578f65af9b68470ca02f455ecfe8a421d008559397f"
+   },
+   {
+    "path": "<datadir>/news/2026-10-13.json",
+    "ref": "repo:kr/data/news/2026-10-13.json",
+    "sha256": "518efbc5e067fe323cc0cf4d1d0152fad684cb297cb1342108dd0ea5a821175e"
+   },
+   {
+    "path": "<datadir>/news/2026-10-14.json",
+    "ref": "repo:kr/data/news/2026-10-14.json",
+    "sha256": "20e03efe0ad82f6d08cc3acb4b6f747237552ba5b876e4361f6dfac492750057"
+   },
+   {
+    "path": "<datadir>/news/2026-10-15.json",
+    "ref": "repo:kr/data/news/2026-10-15.json",
+    "sha256": "de37f33bb229599bcb0f1759bc750eaa915589287cc625e0137815841e6e49a4"
+   },
+   {
+    "path": "<datadir>/news/2026-10-16.json",
+    "ref": "repo:kr/data/news/2026-10-16.json",
+    "sha256": "c50d58ecbe5d3b9e0cb4034baa1898672a2e0d758ab92f2ff7f72e1950f12b6d"
+   },
+   {
+    "path": "<datadir>/news/2026-10-19.json",
+    "ref": "repo:kr/data/news/2026-10-19.json",
+    "sha256": "ab791f25b41c27232f70253abae51e49e981ab97a1a1c1c1038ce14ac27a050b"
+   },
+   {
+    "path": "<datadir>/news/2026-10-20.json",
+    "ref": "repo:kr/data/news/2026-10-20.json",
+    "sha256": "95b7575e4f92893e7c7cb8d6720bc8aad002950808d08ad21b05e84c60b5bbf6"
+   },
+   {
+    "path": "<datadir>/news/2026-10-21.json",
+    "ref": "repo:kr/data/news/2026-10-21.json",
+    "sha256": "ee24ba1908ec27c7eeeb6810fa7f61469f14771cbcde2a8fbec29d597162d928"
+   },
+   {
+    "path": "<datadir>/news/2026-10-22.json",
+    "ref": "repo:kr/data/news/2026-10-22.json",
+    "sha256": "5481f5f525da3b3b2eae378a47483379a8a340d6e97590b7644ddf4c6e5f14ba"
+   },
+   {
+    "path": "<datadir>/news/2026-10-23.json",
+    "ref": "repo:kr/data/news/2026-10-23.json",
+    "sha256": "d651ffa26df22039baa954bcf7d9adeaca3f0aca04102e669cda5f6ff1d98926"
+   },
+   {
+    "path": "<datadir>/news/2026-10-26.json",
+    "ref": "repo:kr/data/news/2026-10-26.json",
+    "sha256": "35924d9977177a9b60af35fb2d92952a547c16d50fbd90aa0fec52eb426739d7"
+   },
+   {
+    "path": "<datadir>/news/2026-10-27.json",
+    "ref": "repo:kr/data/news/2026-10-27.json",
+    "sha256": "e8c96ff2aa0b7878105a7d0eb22a430621d9d48b9cd45108b74b798dd1162bdb"
+   },
+   {
+    "path": "<datadir>/news/2026-10-28.json",
+    "ref": "repo:kr/data/news/2026-10-28.json",
+    "sha256": "fff3de93dbb45d3712afc872497e7a89c10207da1fce135d5dafb98dca5208fa"
+   },
+   {
+    "path": "<datadir>/news/2026-10-29.json",
+    "ref": "repo:kr/data/news/2026-10-29.json",
+    "sha256": "ea99deb6dd33687a8f641255c71549310e88835f524ec85e6afde0ea78e5f1cf"
+   },
+   {
+    "path": "<datadir>/news/2026-10-30.json",
+    "ref": "repo:kr/data/news/2026-10-30.json",
+    "sha256": "91bec997933a2c39942126b3d13c7f316317e25686b6ae272c92a3e38d13afb5"
+   },
+   {
+    "path": "<datadir>/news/2026-11-02.json",
+    "ref": "repo:kr/data/news/2026-11-02.json",
+    "sha256": "1c083b0a4df3542db9be798d8be8eab342c27c5f754977b5d49823c78216a7d0"
+   },
+   {
+    "path": "<datadir>/news/2026-11-03.json",
+    "ref": "repo:kr/data/news/2026-11-03.json",
+    "sha256": "8a225b07a57daf0fd9094710c7301d8e003a97f76825ec4a65328b12c0c21621"
+   },
+   {
+    "path": "<datadir>/news/2026-11-04.json",
+    "ref": "repo:kr/data/news/2026-11-04.json",
+    "sha256": "5719fc96e4ad44178883c815e735d51ee1752ac9b8ddda4ad2f910227a908344"
+   },
+   {
+    "path": "<datadir>/news/2026-11-05.json",
+    "ref": "repo:kr/data/news/2026-11-05.json",
+    "sha256": "1b53f5c9d88acbd37f327fc1d943d9960562ad81dbe9fc6fef24db4e2134a982"
+   },
+   {
+    "path": "<datadir>/news/2026-11-06.json",
+    "ref": "repo:kr/data/news/2026-11-06.json",
+    "sha256": "374a3ff26e4562e657e4adb5f465798d934a2f77ce4060922c2d86d61bdf2810"
+   },
+   {
+    "path": "<datadir>/news/2026-11-09.json",
+    "ref": "repo:kr/data/news/2026-11-09.json",
+    "sha256": "16e987a5e66aedeb85e36744f7bdfa07d79e142a97bbe120bf9a5768ad706d0c"
+   },
+   {
+    "path": "<datadir>/news/2026-11-10.json",
+    "ref": "repo:kr/data/news/2026-11-10.json",
+    "sha256": "221dddb0c2200051ecd461ee86cd36167ae8c3963c90ad02125e37b2be9131a6"
+   },
+   {
+    "path": "<datadir>/news/2026-11-11.json",
+    "ref": "repo:kr/data/news/2026-11-11.json",
+    "sha256": "e7b404fb4ca67731fdf6858b357e5b42bedea08b72d266a1abfe32101bec6d0b"
+   },
+   {
+    "path": "<datadir>/news/2026-11-12.json",
+    "ref": "repo:kr/data/news/2026-11-12.json",
+    "sha256": "771245359cf443a4de64fbee65808d559ca63bb959125f7c930c4a11de8c1b16"
+   },
+   {
+    "path": "<datadir>/news/2026-11-13.json",
+    "ref": "repo:kr/data/news/2026-11-13.json",
+    "sha256": "48c16ec0493c172b5f9380fa361aa9393b883f960586b3e06a9e5e8fc42d2da4"
+   },
+   {
+    "path": "<datadir>/news/2026-11-16.json",
+    "ref": "repo:kr/data/news/2026-11-16.json",
+    "sha256": "7466507b739138288485b931abac80a79f399eb4f68b794aec9f3f38b39700b2"
+   },
+   {
+    "path": "<datadir>/news/2026-11-17.json",
+    "ref": "repo:kr/data/news/2026-11-17.json",
+    "sha256": "1c02f52bd0484f9ad43276490b2c91b9f596dfb8bbe8dd56d07432de6a32bf7d"
+   },
+   {
+    "path": "<datadir>/news/2026-11-18.json",
+    "ref": "repo:kr/data/news/2026-11-18.json",
+    "sha256": "9ddd4cd3b29238cf7daf66608ff842422ff105fb232d23d19b5ff93e751e33ea"
+   },
+   {
+    "path": "<datadir>/news/2026-11-19.json",
+    "ref": "repo:kr/data/news/2026-11-19.json",
+    "sha256": "edda01c66d8bb2fc26bb53b13c027485192db1f5e852e10f7ad752b670ae71c1"
+   },
+   {
+    "path": "<datadir>/news/2026-11-20.json",
+    "ref": "repo:kr/data/news/2026-11-20.json",
+    "sha256": "9a53c70151519401af6c5c7cb8daf409fc0e4a42e0ae4d5cdaf511597eeba7c4"
+   },
+   {
+    "path": "<datadir>/news/2026-11-23.json",
+    "ref": "repo:kr/data/news/2026-11-23.json",
+    "sha256": "306378d73d5fd45e94c206dde8bb50ff1e327092271de664404ca0daca638a3e"
+   },
+   {
+    "path": "<datadir>/news/2026-11-24.json",
+    "ref": "repo:kr/data/news/2026-11-24.json",
+    "sha256": "7485aa97ced2c7165543b036872e3b0b9ec4ddb94d23a6444c134fa957601a5e"
+   },
+   {
+    "path": "<datadir>/news/2026-11-25.json",
+    "ref": "repo:kr/data/news/2026-11-25.json",
+    "sha256": "1abfb97503ca4a01fbd2f340d040a545e103b2d707a3643ba0c029b25974aa25"
+   },
+   {
+    "path": "<datadir>/news/2026-11-26.json",
+    "ref": "repo:kr/data/news/2026-11-26.json",
+    "sha256": "037124b6a9902ffa654d55ba10ec056babc8e22e6967cc0e5299527ea8d5f5a8"
+   },
+   {
+    "path": "<datadir>/news/2026-11-27.json",
+    "ref": "repo:kr/data/news/2026-11-27.json",
+    "sha256": "a180cf2cd66db5b7c3f3726ba07e6dcbf284f356988dbe8ddc46805788677b2f"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-06.json",
+    "ref": "repo:kr/data/telegram/2026-11-06.json",
+    "sha256": "753967fec8dc81c2441f47cf12e6aaa8bb73f19b184420e8b732d6de978eea33"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-09.json",
+    "ref": "repo:kr/data/telegram/2026-11-09.json",
+    "sha256": "5a58ecd942416a155f7d3c2271b872fdfb18130ea6d7d969661bee80618bc71a"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-10.json",
+    "ref": "repo:kr/data/telegram/2026-11-10.json",
+    "sha256": "0f8c2d321bf15e8a748659ce4f517c5e1ef89836c9648e33bb881f34bc909a50"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-11.json",
+    "ref": "repo:kr/data/telegram/2026-11-11.json",
+    "sha256": "aca0b95a1900dca576e5ed61ba2b81665367b38c5977f6167e0804b13d54c340"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-12.json",
+    "ref": "repo:kr/data/telegram/2026-11-12.json",
+    "sha256": "13a7c5b1930021a6fbd72f90751bd7ec2a9a323b4d8d5cf9f6b1a2849488e6ea"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-13.json",
+    "ref": "repo:kr/data/telegram/2026-11-13.json",
+    "sha256": "14cc94929d884021f23884d63ddea78f500d4d11d34a97342cc1d8667b75de9d"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-16.json",
+    "ref": "repo:kr/data/telegram/2026-11-16.json",
+    "sha256": "cc60613d30d571730610fe44528e644dc210cccd922b8cf9a3e300ce46eca41d"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-17.json",
+    "ref": "repo:kr/data/telegram/2026-11-17.json",
+    "sha256": "0cbd3a4624c8f3c4ea8dc166cab0f4fd3fd6caca5d7c0a3815b4bb7bb1611029"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-18.json",
+    "ref": "repo:kr/data/telegram/2026-11-18.json",
+    "sha256": "3f3bcbe0ca45b1be135bf11879edb8e62f01ffe285a7e1bd040592ca4f15f2ec"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-19.json",
+    "ref": "repo:kr/data/telegram/2026-11-19.json",
+    "sha256": "3f1c111a2d4c495992d6635901dc361599c5cb48db428dfa5ed91ad435aebba3"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-20.json",
+    "ref": "repo:kr/data/telegram/2026-11-20.json",
+    "sha256": "5252de81b5556f5438825f31b5cc63ea907e46bef8ebb97fc13b408fcc17bafe"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-23.json",
+    "ref": "repo:kr/data/telegram/2026-11-23.json",
+    "sha256": "16482374ade96cc810df33657cbd86d473696f1516523293aa0bccec85b2231a"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-24.json",
+    "ref": "repo:kr/data/telegram/2026-11-24.json",
+    "sha256": "8b937b70e53848da6fe507bbca7797313269d0be6dbf35c1bf7d19abb3a6308c"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-25.json",
+    "ref": "repo:kr/data/telegram/2026-11-25.json",
+    "sha256": "41245230bf689c31c6b2e8a8b001f8d0b2c8961bbd6d07b9c3c0d191bb0574c2"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-26.json",
+    "ref": "repo:kr/data/telegram/2026-11-26.json",
+    "sha256": "6fe4c58dbcf2ffc77d9252caaf4d461f72dd614b7fec38a968a22bced6d568a9"
+   },
+   {
+    "path": "<datadir>/telegram/2026-11-27.json",
+    "ref": "repo:kr/data/telegram/2026-11-27.json",
+    "sha256": "dd9b0ec6491bf154af409988ff9f4d883f1b265598e3574ac9c569b41b0d5ba0"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W36.json",
+    "ref": "repo:kr/data/weekly/2026-W36.json",
+    "sha256": "5469d2562d3f155d4ba07648b8c78918f1b40d0b489e72bad3a32acfa73cdf7c"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W37.json",
+    "ref": "repo:kr/data/weekly/2026-W37.json",
+    "sha256": "28413910d7c247eecdb6ee4fbe6368c4c8090a04ccc108ea0092b32d8bce9c32"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W38.json",
+    "ref": "repo:kr/data/weekly/2026-W38.json",
+    "sha256": "7310027486d5cd6cd8f6ca70c7b57a0f95605da41c625e342bb39a5532288f22"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W39.json",
+    "ref": "repo:kr/data/weekly/2026-W39.json",
+    "sha256": "2a8010077101c7e7d5aaf313db1d727d69462c9c76c61b242c63cc7b594fac85"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W40.json",
+    "ref": "repo:kr/data/weekly/2026-W40.json",
+    "sha256": "352debe99586768d3c38a135fd221926aef207c42cab1a21228a6df7f3380be8"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W41.json",
+    "ref": "repo:kr/data/weekly/2026-W41.json",
+    "sha256": "aabde9086c754da739195b02e0c090577cc765b8a1d2cccf8a19bf8a7bc99143"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W42.json",
+    "ref": "repo:kr/data/weekly/2026-W42.json",
+    "sha256": "5ecae4eda20c532da47596ab72ec71f5782f946c35fe07ee17bc40c91e32ad49"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W43.json",
+    "ref": "repo:kr/data/weekly/2026-W43.json",
+    "sha256": "a9c44182878fb864a426861512367d5d538da27b0b684d45cc83f9fe1fd18736"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W44.json",
+    "ref": "repo:kr/data/weekly/2026-W44.json",
+    "sha256": "700187ea48268bfc81b13f9642082870010e7c99a20ff742cc740be3960b654e"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W45.json",
+    "ref": "repo:kr/data/weekly/2026-W45.json",
+    "sha256": "a2508cfb240e0f72edc14492e8283333e0f6dbc7849b8010e95637cf5cbe3d89"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W46.json",
+    "ref": "repo:kr/data/weekly/2026-W46.json",
+    "sha256": "9b2053f564bd294c68e1094cb9e72c7c59d5a14c1944017d670b5a5230765e82"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W47.json",
+    "ref": "repo:kr/data/weekly/2026-W47.json",
+    "sha256": "28033665a42c3d66aae96dbc71b201e0c998a8386adf2552f1e32b5d7feb96a5"
+   },
+   {
+    "path": "<datadir>/weekly/2026-W48.json",
+    "ref": "repo:kr/data/weekly/2026-W48.json",
+    "sha256": "8b491874e4eade917663accd151b0b7858017e3d17a05e0e527a1111b0dbba1c"
+   },
+   {
+    "path": "<tg>/kr_telegram.json",
+    "ref": "repo:kr/data/telegram/2026-11-27.json",
+    "sha256": "dd9b0ec6491bf154af409988ff9f4d883f1b265598e3574ac9c569b41b0d5ba0"
+   },
+   {
+    "path": "<stance_next>/kr_stance_next.json",
+    "ref": "repo:kr/data/kr_stance.json",
+    "sha256": "de90f44dbeae826fe9048f88e1cefc78445ffeaaf072b741b80786f3419764a7"
+   }
+  ],
+  "incomplete": false,
+  "unreadable": 0
+ },
+ "manual": "수기 대조(문장 수치 표본 등)는 자동 기록 대상이 아니다 — 이 기록에 들어 있지 않다",
+ "market": "kr",
+ "post": {
+  "blob": "f78f57baf0ca931e22ed82dd2af4b62fd51ee760",
+  "path": "kr/posts/2026-11-27.html",
+  "sha256": "a4a6c5e63a099c44aed688740416c7be8ce76d61763060b8c0a3b393860b296f"
+ },
+ "preservation": {
+  "note": "같은 바이트가 이 커밋의 레포 경로에 있으면 repo:<경로>, 로컬 origin/main 추적 이력의 앞 커밋에 있으면 git:<커밋>:<경로> 로 참조한다(복원 가능성 — 그 파일을 원본으로 썼다는 증거는 아니다). workspace-only 는 해시만 남는다 — 원본은 보관하지 않았다",
+  "workspace_only": 0,
+  "workspace_only_files": []
+ },
+ "repo_inputs": {
+  "digest": "84748c684f87c7517b5c33f2eb54b2e6fcf3c974a21d26d15764d165dc02e57e",
+  "files": 945,
+  "paths": [
+   "scripts",
+   "config",
+   "research/kr"
+  ]
+ },
+ "summary": {
+  "blocking": [],
+  "integrity": [],
+  "not_run": [],
+  "note_format": [],
+  "note_numbers": [],
+  "publish_ok": true,
+  "status": "pass_with_warnings",
+  "verified": true,
+  "warned": [
+   "check_weight",
+   "check_style"
+  ]
+ }
+}
