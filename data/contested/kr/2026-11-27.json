@@ -1,0 +1,64 @@
+{
+ "schema_version": 1,
+ "market": "kr",
+ "span": "daily",
+ "report_date": "2026-11-27",
+ "status": "error",
+ "reason": "model_extract_is_error_429",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-27T11:02:38+00:00",
+ "cutoff_at": "2026-11-27T20:00:00+09:00",
+ "model": {
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "kr/data/kr_market_data.json",
+  "commit": "0bec772c90b385e67fd470347eb48691d6513b5b",
+  "sha256": "9ab345fcb784f564a3e0638172886a34b094194594dbc54dc6b2a775bf59d62c",
+  "extra": {
+   "kr_econ.json": "15ed7ce3c43e1b00444c432093ebd64eff55ad4682fedc1413eddf4f28900c8c",
+   "kr_flows.json": "fbb2cd52c354cddd3410af1ab8890553311dd1939ace2eebfec715754a8e3474",
+   "kr_session.json": "72e3b08ba95e3c5305356b947cdcd1b023581c259459041ab64a6f57c7df36f7"
+  }
+ },
+ "counts": {
+  "harvest": 540,
+  "candidates": 1,
+  "articles": [
+   6
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "discovery": "truncated",
+  "hosts": {
+   "joongang": "ok",
+   "mt": "ok",
+   "news1": "short",
+   "mk": "ok",
+   "khan": "ok",
+   "hankyung": "ok",
+   "kmib": "ok"
+  },
+  "notes": [
+   "discover:540",
+   "model_error: You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from=cc_cli_limit_message · your weekly limit resets 9am (Asia/Seoul)"
+  ],
+  "source": "naver",
+  "source_switch": "",
+  "tokens": {
+   "in": 0,
+   "out": 0
+  }
+ },
+ "event": {
+  "topic_ko": "",
+  "query": "",
+  "trigger": []
+ },
+ "content_hash": "5ec5367cd1d68b9b"
+}
