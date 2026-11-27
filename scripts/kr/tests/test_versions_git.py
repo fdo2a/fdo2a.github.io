@@ -532,3 +532,19 @@ def test_commit_runs_in_actions_without_scratch_flag(world, tmp_path):
     assert r.returncode == 0, r.stderr.decode()
     assert (tmp_path / 'rt' / 'versions' / 'kr' / D / 'runs').exists()        # artifact 원본
     assert manifests(tmp, origin)[-1]['run_id'].endswith('-gh7.1')
+
+
+@pytest.mark.parametrize('mode', ['shadow', 'enforce'])
+def test_bok_documents_ride_the_commit_even_on_a_published_day(world, mode):
+    """한국은행 금통위 원문(kr/data/bok/, 2026-11-27) — 하위 폴더라 발행된 날에도 동결 대상이 아니고 커밋에 실린다."""
+    tmp, origin, seed = world
+    publish(seed)
+    c = clone(tmp, origin)
+    night(c)
+    wj(c, 'kr/data/bok/events.json', {'report_date': D, 'events': [{'key': 'bok-minutes-20261022'}]})
+    os.makedirs(c / 'kr' / 'data' / 'bok', exist_ok=True)
+    (c / 'kr' / 'data' / 'bok' / 'bok-minutes-20261022.txt').write_text('의사록 원문', encoding='utf-8')
+    r = run(c, 'commit', '--mode', mode, '--message', 'data: kr market data for 2026-11-06')
+    assert r.returncode == 0, r.stderr.decode()
+    assert remote(tmp, origin, 'kr/data/bok/events.json')['events'][0]['key'] == 'bok-minutes-20261022'
+    assert (tmp / 'view' / 'kr' / 'data' / 'bok' / 'bok-minutes-20261022.txt').read_text(encoding='utf-8') == '의사록 원문'

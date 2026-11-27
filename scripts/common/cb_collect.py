@@ -95,17 +95,38 @@ def corpus_text(row):
     return '\n\n'.join(f'# {s["label"]}\n# 원문: {s["url"]}\n\n{s["text"]}' for s in row['sources'] if s['ok'])
 
 
+def _earlier(outdir, report_date):
+    """같은 날 앞 실행의 행 {KEY: 행} — 원문을 받았고 원문 파일이 남아 있는 것만.
+
+    KR 수집은 하루 두 번(17:00·17:30) 돌고 events.json 은 덮어쓴다. 뒤 실행이 원천 하나(RSS·자막)를 못 읽으면 앞
+    실행이 받아 둔 원문이 「원문 없음」이 되거나 corpus 가 줄어든다 — 앞 판이 받은 원문이 더 많으면 앞 판을 지킨다."""
+    prev = load(os.path.join(outdir, 'events.json'))
+    if not isinstance(prev, dict) or prev.get('report_date') != report_date:
+        return {}
+    return {e['key']: e for e in prev.get('events') or []
+            if isinstance(e, dict) and CE.has_text(e) and os.path.exists(os.path.join(outdir, f'{e["key"]}.txt'))}
+
+
+def _got(row):
+    return sum(1 for s in row.get('sources') or [] if s.get('ok'))
+
+
 def write_all(outdir, report_date, rows, extra_texts, seen, statements, diff, failed, source_name, outlook_diff=None):
     """산출 파일을 쓴다. `rows` 의 원문은 `<key>.txt` 로, events.json 에는 원문을 뺀 행만."""
     os.makedirs(outdir, exist_ok=True)
+    earlier = _earlier(outdir, report_date)
+    keep = {k for k, e in earlier.items()
+            if _got(e) > max((_got(r) for r in rows if r['key'] == k), default=0)}
     for row in rows:
-        if any(s['ok'] for s in row['sources']):
+        if row['key'] not in keep and any(s['ok'] for s in row['sources']):
             with open(os.path.join(outdir, f'{row["key"]}.txt'), 'w', encoding='utf-8') as fh:
                 fh.write(corpus_text(row))
     for key, text in (extra_texts or {}).items():
         with open(os.path.join(outdir, f'{key}.txt'), 'w', encoding='utf-8') as fh:
             fh.write(text)
     events = [dict(r, sources=[{k: v for k, v in s.items() if k != 'text'} for s in r['sources']]) for r in rows]
+    events = [earlier[e['key']] if e['key'] in keep else e for e in events]
+    events += [earlier[k] for k in sorted(keep) if k not in {e['key'] for e in events}]
     has = any(any(s['ok'] for s in r['sources']) for r in rows)
     if failed and not has and not rows:
         collect = C.failed(report_date, source_name, '; '.join(failed)[:180], missing=list(failed))

@@ -405,8 +405,12 @@ CB_UNREAD = '한국은행·일본은행 일정표를 읽지 못했어요'
 
 
 def cb_missing_notes(files, today):
-    """{은행 이름: (schedule dict | None, events dict | None)} → 줄 목록. 일정 파일을 못 읽으면 CB_UNREAD."""
+    """{은행 이름: (schedule dict | None, events dict | None)} → 줄 목록. 일정 파일을 못 읽으면 CB_UNREAD.
+
+    기준은 **어제까지**다 — 알림은 매시 돈다(launchd 매시 20분). 한은 의사록은 16:00, 일본은행 공표문은 정오께
+    공개되고 수집은 그 뒤라, 오늘 예정분을 오늘 아침에 「못 받았다」고 하면 헛알림이다."""
     from common import cb_events as CE
+    today = today - timedelta(days=1)
     notes = []
     for bank, _dir in CB_BANKS:
         if bank not in (files or {}):

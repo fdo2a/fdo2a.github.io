@@ -108,3 +108,23 @@ def test_real_schedules_parse_and_start_is_set():
         boj = {m['meeting']: m for m in json.load(fh)['meetings']}
     assert boj['2026-12-18']['presser'] == '2026-12-21' and boj['2026-10-30']['minutes'] == '2026-12-23'
     assert 'minutes' not in boj['2027-12-17']           # 일정표가 「未定」 — 비워 둔다
+
+
+def test_same_day_rerun_keeps_text_the_earlier_run_received(tmp_path):
+    from common import cb_collect as CC
+    out = str(tmp_path)
+    full = CC.event_row('bok_presser', '2026-11-26', '2026-11-26', 't', 'u',
+                        [CC.source('opening', '모두발언', 'a', '모두발언 글', 'ok'),
+                         CC.source('subtitle', '자막', 'b', '자막 글', 'ok')], {}, '2026-11-26')
+    CC.write_all(out, '2026-11-26', [full], {}, {}, [], None, [], 's')
+    # 17:30 재실행 — 자막을 못 받고 결정문 RSS 도 실패했다
+    part = CC.event_row('bok_presser', '2026-11-26', '2026-11-26', 't', 'u',
+                        [CC.source('opening', '모두발언', 'a', '모두발언 글', 'ok'),
+                         CC.source('subtitle', '자막', 'b', None, 'HTTP 500')], {}, '2026-11-26')
+    book = CC.write_all(out, '2026-11-26', [part], {}, {}, [], None, ['presser:x'], 's')
+    row = book['events'][0]
+    assert [s['ok'] for s in row['sources']] == [True, True]
+    assert '자막 글' in open(os.path.join(out, 'bok-presser-20261126.txt'), encoding='utf-8').read()
+    # 다른 날 판은 지키지 않는다
+    book = CC.write_all(out, '2026-11-27', [part], {}, {}, [], None, [], 's')
+    assert [s['ok'] for s in book['events'][0]['sources']] == [True, False]

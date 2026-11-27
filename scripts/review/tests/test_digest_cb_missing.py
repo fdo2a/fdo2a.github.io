@@ -15,7 +15,7 @@ BOJ = {'bank': 'boj', 'start': '2026-11-28', 'meetings': [
 
 def test_missing_minutes_line_keeps_its_text_through_the_note_filter():
     book = {'report_date': '2026-12-15', 'events': [], 'collect': {'status': 'ok', 'missing': ['/fileSrc/secret']}}
-    notes = D.cb_missing_notes({'한국은행': (BOK, book)}, date(2026, 12, 15))
+    notes = D.cb_missing_notes({'한국은행': (BOK, book)}, date(2026, 12, 16))
     assert notes == ['한국은행 12/15 예정된 금통위 의사록 원문을 못 받았다 — 공개 목록에 아직 없음']
     assert D.safe_notes(notes) == notes
     assert [c for _n, c in D._classified_notes(notes)] == ['must']
@@ -24,20 +24,22 @@ def test_missing_minutes_line_keeps_its_text_through_the_note_filter():
 def test_reason_comes_from_a_closed_list():
     stale = {'report_date': '2026-12-17', 'events': [], 'collect': {'status': 'ok'}}
     failed = {'report_date': '2026-12-21', 'events': [], 'collect': {'status': 'failed'}}
-    assert D.cb_missing_notes({'일본은행': (BOJ, stale)}, date(2026, 12, 18)) == [
+    assert D.cb_missing_notes({'일본은행': (BOJ, stale)}, date(2026, 12, 19)) == [
         '일본은행 12/18 예정된 금융정책 결정 공표문 원문을 못 받았다 — 수집 기록 없음']
-    got = D.cb_missing_notes({'일본은행': (BOJ, failed)}, date(2026, 12, 21))
+    got = D.cb_missing_notes({'일본은행': (BOJ, failed)}, date(2026, 12, 22))
     assert got == ['일본은행 12/18 예정된 금융정책 결정 공표문 원문을 못 받았다 — 수집 실패',
                    '일본은행 12/21 예정된 총재 정례 기자회견 원문을 못 받았다 — 수집 실패']
     assert D.safe_notes(got) == got
-    assert D.cb_missing_notes({'일본은행': (BOJ, None)}, date(2026, 12, 18))[0].endswith('수집 기록 없음')
+    assert D.cb_missing_notes({'일본은행': (BOJ, None)}, date(2026, 12, 19))[0].endswith('수집 기록 없음')
 
 
 def test_received_docs_and_days_before_start_are_quiet():
     got = {'report_date': '2026-12-15', 'events': [
         {'key': 'bok-minutes-20261126', 'date': '2026-12-15', 'sources': [{'ok': True}]}], 'collect': {'status': 'ok'}}
-    assert D.cb_missing_notes({'한국은행': (BOK, got)}, date(2026, 12, 15)) == []
-    assert D.cb_missing_notes({'한국은행': (BOK, None)}, date(2026, 11, 27)) == []
+    assert D.cb_missing_notes({'한국은행': (BOK, got)}, date(2026, 12, 16)) == []
+    assert D.cb_missing_notes({'한국은행': (BOK, None)}, date(2026, 11, 28)) == []
+    # 공개 당일(수집 전)에는 알리지 않는다 — 기준은 어제까지
+    assert D.cb_missing_notes({'한국은행': (BOK, None)}, date(2026, 12, 15)) == []
 
 
 def test_unreadable_schedule_is_one_fixed_line():

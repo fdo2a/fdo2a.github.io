@@ -212,3 +212,26 @@ def test_pin_writes_the_covered_ledger_and_boj_state_reads_only_the_pinned_root(
     with pytest.raises(BojInputError):
         boj_state(str(d / 'root'), '2026-12-21')
     assert boj_state(str(d / 'root'), '2026-11-26')['due'] == []              # 켜기 전 세션은 장부 없이 해당 없음
+
+
+def test_outlook_redline_on_real_july_and_october_basic_views():
+    d = B.outlook_redline(_read('boj_gor2607a_head.txt'), _read('boj_gor2610a_head.txt'))
+    assert d is not None and d['changed']
+    assert any('前回の見通しと比べると' in c['after'] for c in d['changed']) or d['added']
+    assert B.outlook_redline('짧다。', _read('boj_gor2610a_head.txt')) is None
+
+
+def test_v2_body_with_boj_section_validates_and_assembles_with_quote_css_only_that_day():
+    from japan.tests.test_daily_v2_render import body, v2
+    d = v2()
+    order = R.order(None, boj=True)
+    boj_inner = ('<div class="cb-quote" data-cb-quote="boj-statement-20261030"><blockquote>無担保コールレート</blockquote>'
+                 '<p class="cb-trans">무담보 콜레이트</p><p class="caption">출처</p></div>')
+    b = body(order=order, extra={'boj': boj_inner})
+    assert R.validate_body(b, order, schema=2) == []
+    assert any('절 순서' in e for e in R.validate_body(b, R.SECTIONS, schema=2))    # 이벤트 없는 날 boj 절 = 순서 위반
+    html = R.assemble(b, {'title': '제목', 'summary': '요약'}, d)
+    assert re.search(r'<section id="read-2" class="card" data-section="boj">', html)
+    assert '.cb-quote blockquote' in html
+    plain = R.assemble(body(), {'title': '제목', 'summary': '요약'}, d)
+    assert '.cb-quote' not in plain

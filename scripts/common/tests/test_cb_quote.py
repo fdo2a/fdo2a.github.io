@@ -98,3 +98,28 @@ def test_source_numbers_take_unit_values_from_the_korean_text():
 
 def test_ja_source_text_maps_oku_and_cho():
     assert CQ.ja_source_text('年間２兆 4,600億円') == '年間2조 4,600억円'
+
+
+def test_quotes_from_every_other_real_document_kind():
+    """한은 의사록(PDF 줄 끝 띄어쓰기 없음)·모두발언 PDF, 일본은행 主な意見·議事要旨(글자 사이 공백)."""
+    cases = [
+        ('bok_minutes_1022_excerpt.txt', 'ko',
+         '주식시장 및 AI 투자의 밸류에이션에 대한 우려가 높은 상황인 만큼 작은 충격에도 불안이 증폭되고 관련 리스크가 '
+         '금융시장 전반으로 전이될 수 있다는 점에 유의하여 관련 동향을 살펴봐야 한다는 견해를 밝혔음',
+         ('우려가 낮은 상황인', '우려가 높은 상황인')),
+        ('bok_opening_1126_excerpt.txt', 'ko',
+         '미국은 견조한 AI 투자와 소비 회복세가 이어지면서 2%를 웃도는 성장세를 이어갈 것으로 예상됩니다',
+         ('2%를 밑도는', '2%를 웃도는')),
+        ('boj_opinions_1030_excerpt.txt', 'ja',
+         'ＡＩ関連需要は景気・物価の押し上げ要因になっているが、わが国への影響は半導体の原材料や製造設備、'
+         'データセンターが中心となっており、将来に亘る持続性には留意が必要である。',
+         ('持続性には問題がない', '持続性には留意が必要である')),
+        ('boj_minutes_0918_excerpt.txt', 'ja',
+         '欧州経済について、委員は、総じてみれば底堅さを維持しているものの、中東情勢の影響を受けて内需に下押し圧力が'
+         'みられているとの認識を共有した。',
+         ('底堅さを失っている', '底堅さを維持している')),
+    ]
+    for name, lang, quote, (bad, good) in cases:
+        corpus = _read(name)
+        assert CQ.verify_quote(quote, corpus, lang) is None, name
+        assert '원문에 없는 조각' in CQ.verify_quote(quote.replace(good, bad), corpus, lang), name
