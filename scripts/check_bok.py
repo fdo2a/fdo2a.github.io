@@ -78,7 +78,15 @@ def diff_for(book, due):
     return diff if diff and diff.get('key') in keys else None
 
 
+def _before_feature(args):
+    """켜기 전 날짜이고 자료 폴더에 일정 파일이 없다(발행 커밋 재연) — 일정 파일이 있으면 그 start 가 정한다."""
+    return args.date < bok_gate.START and not os.path.exists(os.path.join(args.datadir, 'bok', 'schedule.json'))
+
+
 def diag(args):
+    if _before_feature(args):
+        print(f'한국은행 금통위: {bok_gate.START} 전 날짜 — 칸을 쓰지 않는다')
+        return 0
     book, schedule, due, covered = book_and_due(args.datadir, args.repo, args.date)
     bokdir = os.path.join(args.datadir, 'bok')
     if not due:
@@ -122,6 +130,13 @@ def main(argv=None):
             html = fh.read()
     except OSError as e:
         fatal(f'{args.html} 을 읽을 수 없다: {e}')
+    if _before_feature(args):
+        # 켜기 전 날짜의 재연(일정 파일이 아직 없던 커밋) — 그날 글에는 이 칸이 없었다. 칸이 있으면 막는다
+        if G.sections(html, bok_gate.SECTION):
+            print(f'{bok_gate.START} 전 날짜인데 「{bok_gate.TITLE}」 칸이 실렸다')
+            return 1
+        print(f'한국은행 금통위: {bok_gate.START} 전 날짜 — 해당 없음 (OK)')
+        return 0
     book, _schedule, due, _covered = book_and_due(args.datadir, args.repo, args.date)
     blobs = [b for b in (_load(os.path.join(args.datadir, n), required=False) for n in DATA_BLOBS) if b]
     errs = bok_gate.check(html, due, args.date, diff=diff_for(book, due), data_blobs=blobs)

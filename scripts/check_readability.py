@@ -46,7 +46,7 @@ H1_FIG_WARN = 4
 # 상수를 바꾸면 이 문장도 같이 바뀐다 — 값은 전부 위 상수에서 온다.
 LEGEND = (
     "   기준 — 세는 대상: 본문 <p> 가운데 20자 넘는 문단의 문장. 표·차트, 그리고 caption·sub·"
-    "muted·footer-note·source(s)·note·disclaimer·fed-trans 클래스 문단은 세지 않는다.\n"
+    "muted·footer-note·source(s)·note·disclaimer·fed-trans·cb-trans 클래스 문단은 세지 않는다.\n"
     "        수치: 숫자 토큰(%%·bp·원·억원·조원·달러·엔·건·배 단위 포함). 연도·날짜·시각, "
     "「20일선·10년물·30분봉」 같은 기간 표기, 한 자리 수는 빼고 센다.\n"
     "        note(문체 참고): 문장당 수치 %d개 초과, 산문의 과잉 정밀(원 단위 소수·백만 이상 값의 소수)·"

@@ -450,6 +450,24 @@
      ]
     },
     {
+     "name": "check_bok",
+     "argv": [
+      "scripts/check_bok.py",
+      "--html",
+      "{html}",
+      "--date",
+      "{date}",
+      "--datadir",
+      "{datadir}",
+      "--repo",
+      "{repo}"
+     ],
+     "kind": "structure",
+     "required": true,
+     "_why": "「한국은행 금통위」 칸(2026-11-27) — 인용은 kr/data/bok 원문과 글자 대조, 이벤트 없는 날 칸 금지. 수집 실패는 발행을 막지 않는다(결정일 의무는 손으로 채운 schedule.json) — 그래서 inputs 를 두지 않고, 일정 파일이 없거나 원문 파일이 빠지면 검사기가 exit 2",
+     "inputs": []
+    },
+    {
      "name": "check_movers",
      "argv": [
       "scripts/check_movers.py",

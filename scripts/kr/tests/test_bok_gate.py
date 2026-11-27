@@ -185,12 +185,18 @@ def test_cli_uses_committed_posts_and_the_real_schedule_start(tmp_path):
     _git(repo, 'commit', '-qm', 'post')
     r = _run('--diag', '--date', '2026-11-27', '--datadir', dd, '--repo', repo)
     assert '실을 이벤트 없음' in r.stdout
-    # 일정 파일이 없으면 멈춘다(빈 의무로 읽지 않는다)
+    # 켠 뒤 날짜에 일정 파일이 없으면 멈춘다(빈 의무로 읽지 않는다). 켜기 전 날짜(옛 발행 커밋 재연)는 해당 없음
     os.remove(os.path.join(dd, 'bok', 'schedule.json'))
-    assert _run('--diag', '--date', '2026-11-27', '--datadir', dd, '--repo', repo).returncode == 2
+    assert _run('--diag', '--date', '2026-12-01', '--datadir', dd, '--repo', repo).returncode == 2
+    assert _run('--html', html, '--date', '2026-11-26', '--datadir', dd, '--repo', repo).returncode == 1   # 칸이 있다
+    with open(html, 'w', encoding='utf-8') as fh:
+        fh.write(post(''))
+    assert _run('--html', html, '--date', '2026-11-26', '--datadir', dd, '--repo', repo).returncode == 0
 
 
 def test_key_names_match_between_schedule_and_collector():
     with open(os.path.join(ROOT, 'kr', 'data', 'bok', 'schedule.json'), encoding='utf-8') as fh:
-        keys = {d['key'] for d in CE.schedule_docs(json.load(fh))}
+        sched = json.load(fh)
+    assert sched['start'] == BG.START
+    keys = {d['key'] for d in CE.schedule_docs(sched)}
     assert {'bok-decision-20261126', 'bok-presser-20261126', 'bok-minutes-20261126'} <= keys

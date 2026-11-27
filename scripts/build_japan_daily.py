@@ -71,10 +71,90 @@ def load_telegram(root, session):
 
 from common.jsonfile import load_json_path as _load  # noqa: E402 — 공용 JSON 읽기(2026-11-22)
 
+# ── 일본은행 절(2026-11-27) ─────────────────────────────────────────────────────────
+# 이 칸을 켠 첫 세션 — `japan/data/boj/schedule.json` 의 start 와 같아야 한다(시험이 묶는다). 그 앞 세션(옛 글 재검사·
+# 일정 파일이 없던 커밋)은 「해당 없음」.
+BOJ_START = '2026-11-28'
+
+
+class BojInputError(Exception):
+    """일본은행 칸 입력을 판정할 수 없다 — 조용히 「이벤트 없음」으로 읽지 않는다."""
+
+
+def boj_state(root, session):
+    """-> {'due', 'diff', 'outlook_diff', 'missing', 'schedule'}. `--root` 아래의 고정 입력만 읽는다.
+
+    발행본 장부는 입력을 고정할 때 만든 `japan/data/boj/covered.json`(같은 커밋의 발행본에서 뽑은 KEY) — 없으면 멈춘다.
+    """
+    from common import cb_events as CE
+    base = Path(root) / 'japan' / 'data' / 'boj'
+    empty = {'due': [], 'diff': None, 'outlook_diff': None, 'missing': [], 'schedule': None}
+    sp = base / 'schedule.json'
+    if not sp.exists():
+        if session < BOJ_START:
+            return empty
+        raise BojInputError(f'{sp} 이 없다 — 일본은행 일정 파일 없이 판정하지 않는다')
+    schedule = _load(sp)
+    if session < str(schedule.get('start') or BOJ_START):
+        return dict(empty, schedule=schedule)
+    cp = base / 'covered.json'
+    if not cp.exists():
+        raise BojInputError(f'{cp} 이 없다 — 발행본 장부가 고정되지 않았다(jp_daily_gates.py --pin 이 만든다)')
+    cov = _load(cp)
+    if cov.get('session') != session or not isinstance(cov.get('keys'), list):
+        raise BojInputError(f'{cp} 가 세션 {session} 의 장부가 아니다({cov.get("session")})')
+    ep = base / 'events.json'
+    book = _load(ep) if ep.exists() else None
+    events = (book or {}).get('events')
+    try:
+        due = CE.due_events(events, schedule, set(cov['keys']), session)
+        missing = CE.missing_scheduled(schedule, events, session)
+    except CE.ScheduleError as e:
+        raise BojInputError(str(e))
+    for e in due:
+        if not CE.has_text(e):
+            continue
+        tp = base / f'{e["key"]}.txt'
+        if not tp.exists():
+            raise BojInputError(f'원문을 받았다고 한 이벤트 {e["key"]} 의 원문 파일 {tp} 이 없다')
+        text = tp.read_text(encoding='utf-8')
+        e['sources'] = [dict(x, text=text) if x.get('ok') else x for x in e.get('sources') or []]
+    keys = {e['key'] for e in due}
+    pick = lambda d: d if d and d.get('key') in keys else None  # noqa: E731
+    return {'due': due, 'diff': pick((book or {}).get('diff')), 'outlook_diff': pick((book or {}).get('outlook_diff')),
+            'missing': missing, 'schedule': schedule}
+
+
+def boj_lines(state, root):
+    """진단 출력 줄 — 작성자에게 넘긴다."""
+    out = []
+    base = Path(root) / 'japan' / 'data' / 'boj'
+    if not state['due']:
+        out.append('일본은행: 실을 이벤트 없음 — 「일본은행」 절을 쓰지 않는다')
+    else:
+        out.append(f'일본은행: 실을 이벤트 {len(state["due"])}건 — 전략 코멘트 바로 뒤에 '
+                   '<section class="card" data-section="boj"> 절을 연다')
+        for e in state['due']:
+            where = ('원문 없음 — 인용·수치·아이디어 금지, 결정 사실만 기사 귀속으로' if not e.get('sources')
+                     or not any(x.get('ok') for x in e['sources']) else f'원문 {base / (e["key"] + ".txt")}')
+            out.append(f'  - {e["key"]} · {e["kind_ko"]} · 공개 {e["date"]} · {where}')
+        for name, d in (('공표문 금리·표결 문장', state['diff']), ('전망 기본 견해 문장', state['outlook_diff'])):
+            if d:
+                out.append(f'  변경점({name}, 직전 {d.get("previous")}): 바뀐 {len(d["changed"])} · 추가 '
+                           f'{len(d.get("added") or [])} · 삭제 {len(d.get("removed") or [])} — {base / "events.json"}')
+    for m in state['missing']:
+        out.append(f'  ! 예정된 {m["kind_ko"]}({m["date"]}) 원문을 못 받았다 — 절을 요구하지 않는다(알림)')
+    return out
+
 
 def cmd_diag(args):
     d = _load(snapshot_path(args.root, args.session))
-    want = R.order(d['calendar'].get('event_day'))
+    try:
+        boj = boj_state(args.root, args.session)
+    except BojInputError as e:
+        print(f'  ! 일본은행: {e}')
+        return 1
+    want = R.order(d['calendar'].get('event_day'), boj=bool(boj['due']))
     news = _load(news_path(args.root, args.session)) if news_path(args.root, args.session).exists() else {}
     print(f'{args.session} complete={d["complete"]} 직전 세션={d["prev_session"]}')
     print('절 순서: ' + ' → '.join(want))
@@ -95,6 +175,8 @@ def cmd_diag(args):
     bad = {k: v for k, v in d.get('fetch_status', {}).items() if v != 'ok'}
     for k, v in bad.items():
         print(f'  ! {k}: {v}')
+    for line in boj_lines(boj, args.root):
+        print(line)
     prev = Path(args.root) / 'japan' / 'daily' / f'{d["prev_session"]}.html'
     print(f'직전 일간: {prev if prev.exists() else "없음(첫 회)"}')
     # 이른(16:30 예약) 후보나 필드가 없는 옛 형식 후보는 네이버 당일 JGB 를 놓쳤을 수 있다 — 다시 수집할 때까지
@@ -135,7 +217,12 @@ def cmd_assemble(args):
     body = Path(args.body).read_text(encoding='utf-8')
     meta = _load(args.meta)
     d = _load(snapshot_path(args.root, args.session))
-    errs = R.validate_body(body, R.order(d['calendar'].get('event_day')), schema=d.get('schema'))
+    try:
+        boj = bool(boj_state(args.root, args.session)['due'])
+        errs = []
+    except BojInputError as e:
+        boj, errs = False, [f'일본은행: {e}']
+    errs += R.validate_body(body, R.order(d['calendar'].get('event_day'), boj=boj), schema=d.get('schema'))
     for k in ('title', 'summary'):
         if not str(meta.get(k, '')).strip():
             errs.append(f'meta.json 에 {k} 가 없다')

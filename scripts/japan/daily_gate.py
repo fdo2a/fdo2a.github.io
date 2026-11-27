@@ -19,6 +19,8 @@ import math
 import re
 import unicodedata
 
+from common import cb_gate as CBG
+from common import cb_quote as CBQ
 from common import movers as CM
 from common import telegram_gate as TG
 from common.numbers import strip_comments
@@ -474,9 +476,49 @@ def _check_v2_prose(html, snap, news, exempt, verified, invented):
     return v
 
 
-def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
-    """`tg` = 쓸 수 있는(`usable`) 텔레그램 파일 내용 또는 None, `pairs` 는 (id, 문단, 요약)을 받는다."""
+def _check_boj(html, boj, session, invented):
+    """일본은행 절 — 공용 칸 검사 + 수치(무효화 블록 밖): 스냅샷 ∪ 그날 원문의 숫자 토큰. 원문이 없는 날은 숫자 금지."""
+    due = boj['due']
+    extra = _boj_figures(due)
+
+    def numbers(scope, _due):
+        if not extra:
+            out = []
+            for n in sorted(_figures_of(scope)):
+                try:
+                    x = abs(float(n))
+                except ValueError:
+                    continue
+                if (x <= 12 and x == int(x)) or (2020 <= x <= 2035 and x == int(x)):
+                    continue
+                out.append(f'일본은행: 원문을 받지 못한 날의 절에 수치 {n} 을 썼다 — 결정 사실만 기사 귀속으로 쓴다')
+            return out
+        return [x.replace('어느 원본에도 없는 수치가 본문에 있다', '일본은행 절: 스냅샷에도 원문에도 없는 수치가 있다')
+                for x in invented(scope, extra)]
+    return CBG.check(html, 'boj', due, session, diffs=(boj.get('diff'), boj.get('outlook_diff')), numbers=numbers)
+
+
+def _boj_figures(due):
+    """그날 실을 일본은행 이벤트 원문의 숫자 토큰 전부 — 이 게이트와 같은 정규화(`_text_figures`)로. PDF 는 글자
+    사이에 공백이 들어가(「１． ５％」) 공백을 둔 판과 지운 판을 둘 다 넣는다. 兆·億 은 조·억으로 바꿔 번역문
+    (「8,600억 엔」·「2조 4,600억 엔」)과 같은 꼴이 되게 한다(설계 2절 v4 — 10/30 공표문의 1.25%·約8,600億円)."""
+    out = set()
+    for e in due:
+        text = CBG.corpus(e)
+        if not text:
+            continue
+        body = '\n'.join(line for line in text.split('\n') if not line.startswith('# '))   # 수집기 머리줄(주소) 제외
+        ja = CBQ.ja_source_text(body)
+        out |= _text_figures(ja) | _text_figures(re.sub(r'\s+', '', ja))
+    return out
+
+
+def check(html, snap, session, filename=None, news=None, tg=None, pairs=None, boj=None):
+    """`tg` = 쓸 수 있는(`usable`) 텔레그램 파일 내용 또는 None, `pairs` 는 (id, 문단, 요약)을 받는다.
+    `boj` = `build_japan_daily.boj_state` 결과(None 이면 실을 이벤트 없음 — 일본은행 절이 있으면 막힌다)."""
     v = []
+    boj = boj or {'due': [], 'diff': None, 'outlook_diff': None}
+    boj_secs = [m.group(0) for m in _SEC.finditer(html) if m.group(1) == 'boj']
     if not snap.get('complete'):
         v.append('스냅샷 complete 가 거짓이다 — 닛케이 공식 종가를 확인하지 못한 세션은 발행하지 않는다')
     if snap.get('session') != session:
@@ -495,8 +537,8 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
 
     found = _SEC.findall(html)
     names = [n for n, _ in found]
-    want = list(R.order((snap.get('calendar') or {}).get('event_day')))
-    if [n for n in names if n in R.SECTIONS] != want:
+    want = list(R.order((snap.get('calendar') or {}).get('event_day'), boj=bool(boj['due'])))
+    if [n for n in names if n in R.SECTIONS or n == 'boj'] != want:
         v.append(f'절 순서가 다르다: {" → ".join(names)} (기대 {" → ".join(want)})')
     for s in R.SECTIONS:
         if names.count(s) != 1:
@@ -509,7 +551,10 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
         v += gen_v
     tg_v, exempt = _views(html, tg, news, session, pairs, skip=tuple(verified))
     v += tg_v
-    prose_secs = [(n, b) for n, b in found if n != 'news' and not (n == TG.VIEWS and exempt)]
+    # 일본은행 절은 작성자 산문 어휘 검사(컨센서스·신호·「오늘+콜」·「오늘+JGB」)와 data-ref 묶기에서 뺀다 — 번역은
+    # 「전망치」「무담보 콜금리」를 그대로 옮겨야 한다(codex 설계 5회차 #6, 10/30 실제 요약 문장). 대신 아래에서
+    # 일본은행 칸 검사(common/cb_gate)와 원문 숫자를 더한 수치 검사만 받는다.
+    prose_secs = [(n, b) for n, b in found if n not in ('news', 'boj') and not (n == TG.VIEWS and exempt)]
     paras, movers, mover_src = [], [], []
     for _, b in prose_secs:
         for m in _P.finditer(_TABLE.sub(' ', b)):
@@ -573,7 +618,7 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
     # 빼는 것은 **검사한 것만** — 견해·의견 절은 텔레그램 게이트가, 움직인 종목 문단은 아래에서 본 문단만.
     # 그 밖의 자리에 data-mover 를 단 문단은 수치 검사를 피하는 구멍이었다(2026-11-15 설계 검토).
     rest = html.replace(exempt, ' ', 1) if exempt else html
-    for frag in verified:
+    for frag in verified + boj_secs:
         rest = rest.replace(frag, ' ', 1)
     rest = re.sub(r'<section\b[^>]*\bdata-section="news"[^>]*>.*?</section>', ' ', rest, flags=re.S)
     for src in mover_src:
@@ -584,7 +629,7 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
     v += _invented(rest)
     if v2:
         v += _invented(' '.join(_head_texts(html)))      # <title>·meta description 도 작성자 글이다
-        v += _check_v2_prose(html, snap, news, exempt, verified, _invented)
+        v += _check_v2_prose(html, snap, news, exempt, verified + boj_secs, _invented)
     # 움직인 종목 — 원인은 인용한 기사(data-cite) 요약에서만, 아니면 「확인된 재료 없음」(codex 구현 검토 #8)
     for attrs, inner in movers:
         cite = re.search(r'data-cite="([^"]+)"', attrs)
@@ -600,6 +645,7 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None):
             if '확인된 재료 없음' not in t:
                 v.append(f'움직인 종목 문단에 원인 근거가 없다 — data-cite="guid" 를 달거나 「확인된 재료 없음」: 「{t[:40]}」')
             v += _invented(inner)
+    v += _check_boj(html, boj, session, _invented)
     v += CM.check(html, snap.get('movers'), session)
     low = body_text(html).lower()
     for word in BANNED_LABELS:

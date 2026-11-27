@@ -146,6 +146,12 @@ def build(state, now, args, notes):
     except Exception as exc:  # noqa: BLE001 — 읽기 실패는 조용히 넘기지 않는다
         print(f'일본 일정표 확인 실패: {exc}', file=sys.stderr)
         notes.append(D.JP_CAL_UNREAD)
+    # 한국은행·일본은행 예정 문서 못 받음 — 일정표와 커밋된 수집 결과로(2026-11-27). 읽기 실패는 조용히 넘기지 않는다
+    try:
+        notes.extend(D.cb_missing_notes(D.cb_files(root), today))
+    except Exception as exc:  # noqa: BLE001
+        print(f'한국은행·일본은행 일정 확인 실패: {exc}', file=sys.stderr)
+        notes.append(D.CB_UNREAD)
     return posts, numbers, dict(published)
 
 

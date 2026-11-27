@@ -33,6 +33,7 @@ git add kr/data/history 2>/dev/null || true
 git add kr/data/weekly 2>/dev/null || true
 git add kr/data/news 2>/dev/null || true
 git add kr/data/telegram 2>/dev/null || true
+git add kr/data/bok 2>/dev/null || true
 """
 
 SESSION_INPUTS = ('kr/data/kr_market_data.json', 'kr/data/kr_flows.json',

@@ -84,6 +84,45 @@ def _blob(root, commit, rel):
     return r.stdout
 
 
+BOJ = 'japan/data/boj'
+BOJ_COVERED = f'{BOJ}/covered.json'
+
+
+def boj_blobs(root, commit, session):
+    """일본은행 칸 입력(2026-11-27) — 같은 커밋의 일정 파일(필수)·수집 결과·원문과, 같은 커밋의 일본 일간 발행본
+    (파일 이름 날짜 < S)에서 뽑은 「이미 다룬 KEY」 장부 `covered.json`. 원문 파일 이름이 날마다 달라 `inputs()` 고정
+    목록에 못 넣는다 — events.json 을 읽어 목록을 만든다."""
+    from common import cb_events as CE
+    out = {}
+    sched = _blob(root, commit, f'{BOJ}/schedule.json')
+    if sched is None:
+        raise GateError(f'{commit[:10]}:{BOJ}/schedule.json 이 없다 — 일본은행 일정 파일 없이 입력을 고정하지 않는다')
+    out[f'{BOJ}/schedule.json'] = sched
+    for name in ('events.json', 'statements.json'):
+        b = _blob(root, commit, f'{BOJ}/{name}')
+        if b is not None:
+            out[f'{BOJ}/{name}'] = b
+    book = out.get(f'{BOJ}/events.json')
+    if book is not None:
+        try:
+            events = json.loads(book.decode('utf-8')).get('events') or []
+        except (ValueError, AttributeError) as e:
+            raise GateError(f'{BOJ}/events.json 을 읽지 못했다: {e}')
+        for e in events:
+            key = (e or {}).get('key') if isinstance(e, dict) else None
+            if key and re.fullmatch(r'[a-z0-9-]+', key):
+                b = _blob(root, commit, f'{BOJ}/{key}.txt')
+                if b is not None:
+                    out[f'{BOJ}/{key}.txt'] = b
+    try:
+        keys = sorted(CE.covered_from_posts(root, 'japan/daily', session, rev=commit))
+    except RuntimeError as e:
+        raise GateError(f'발행본 장부를 읽지 못했다: {e}')
+    out[BOJ_COVERED] = (json.dumps({'input_commit': commit, 'session': session, 'keys': keys}, ensure_ascii=False,
+                                   indent=1) + '\n').encode('utf-8')
+    return out
+
+
 def pin(root, run_dir, session):
     """HEAD 의 입력을 D/root 에 한 번 꺼낸다 -> inputs 기록."""
     run_id = check_run_id(run_dir, session)
@@ -91,6 +130,7 @@ def pin(root, run_dir, session):
         raise GateError(f'{run_dir} 이 이미 있다 — 실행마다 새 run_id 로 고정한다')
     commit = _commit(root)
     blobs = {rel: _blob(root, commit, rel) for rel in inputs(session)}
+    blobs.update(boj_blobs(root, commit, session))
     os.makedirs(os.path.join(run_dir, 'root'))
     for rel, b in blobs.items():
         if b is None:
@@ -127,15 +167,17 @@ def gate_commands(run_dir, session, html):
     ]
 
 
-def _input_hashes(run_dir, session):
+def _input_hashes(run_dir, rels):
     return {rel: (sha256(b) if (b := _read(os.path.join(run_dir, 'root', rel))) is not None else None)
-            for rel in inputs(session)}
+            for rel in rels}
 
 
 def _moved(run_dir, session, rec):
-    """D/root 의 입력 가운데 고정할 때 적은 해시(inputs.json)와 다른 것."""
-    now = _input_hashes(run_dir, session)
-    return [rel for rel in inputs(session) if now[rel] != (rec.get('files') or {}).get(rel)]
+    """D/root 의 입력 가운데 고정할 때 적은 해시(inputs.json)와 다른 것. 목록은 `inputs.json` 의 `files` 키 —
+    일본은행 원문 파일은 실행마다 달라 `inputs(session)` 고정 목록으로는 못 본다(2026-11-27)."""
+    rels = sorted(set(inputs(session)) | set(rec.get('files') or {}))
+    now = _input_hashes(run_dir, rels)
+    return [rel for rel in rels if now[rel] != (rec.get('files') or {}).get(rel)]
 
 
 def invalidate(run_dir, reason, lines=()):

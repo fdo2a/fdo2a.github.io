@@ -21,8 +21,19 @@ TITLES = {'comment': '전략 코멘트', 'today': '오늘의 장', 'equity': '�
           'yen': '엔화', 'macro': '매크로', 'news': '일본 경제 뉴스', 'next': '향후 확인 일정'}
 # 텔레그램 한 채널의 일본 관련 메모(2026-11-15) — 실을 것이 있는 날만, 뉴스 절 바로 뒤에 하나.
 # 모양·내용은 common/telegram_gate.py (layout 'jp') 가 본다. 제목은 그쪽 NEWS_TITLE 과 같다.
-OPTIONAL = ('views',)
+OPTIONAL = ('views', 'boj')
 TITLES['views'] = '증권사 견해·시장 의견'
+# 일본은행 결정회의 문서가 새로 나온 날만(2026-11-27) — 전략 코멘트 바로 뒤. 의무는 common/cb_events.due_events,
+# 내용은 japan/daily_gate.py 의 boj 절 검사(common/cb_gate)가 본다.
+TITLES['boj'] = '일본은행'
+CB_CSS = ('\n.cb-quote { border-left: 3px solid #0064FF; background: #F7F9FC; border-radius: 0 12px 12px 0;'
+          ' padding: 14px 16px; margin: 14px 0; }\n'
+          '.cb-quote blockquote { margin: 0 0 8px; font-size: 14px; line-height: 1.65; color: #333D4B;'
+          ' font-style: normal; }\n'
+          '.cb-quote .cb-trans { margin: 0 0 6px; font-weight: 600; color: #191F28; }\n'
+          '.cb-quote .caption { margin: 0; }\n'
+          '.cb-idea { border: 1px solid #E5E8EB; border-radius: 12px; padding: 14px 16px; margin: 12px 0; }\n'
+          '.cb-idea [data-invalidation] { margin-bottom: 0; color: #6B7684; }\n')
 _VIEWS_OPEN = re.compile(r'<section\b[^>]*\bdata-section="views"[^>]*>')
 PLACEHOLDERS = {'equity': ('indices', 'sectors'), 'bonds': ('jgb',), 'yen': ('fx',),
                 'macro': ('macro',), 'next': ('next',)}
@@ -35,11 +46,13 @@ _SEC = re.compile(r'<section\b[^>]*\bdata-section="([a-z]+)"[^>]*>(.*?)</section
 _H2 = re.compile(r'<h2\b[^>]*>(.*?)</h2>', re.S)
 
 
-def order(event_days):
+def order(event_days, boj=False):
+    """절 순서. `boj` = 그날 실을 일본은행 이벤트가 있다 — 전략 코멘트 바로 뒤에 일본은행 절."""
     if not event_days:
-        return SECTIONS
-    rest = tuple(s for s in SECTIONS if s not in ('comment', 'macro'))
-    return ('comment', 'macro') + rest
+        out = SECTIONS
+    else:
+        out = ('comment', 'macro') + tuple(s for s in SECTIONS if s not in ('comment', 'macro'))
+    return out[:1] + ('boj',) + out[1:] if boj else out
 
 
 def day_ko(iso):
@@ -392,7 +405,7 @@ def validate_body(body, want, schema=None):
     for s in SECTIONS:
         if names.count(s) != 1:
             errs.append(f'data-section="{s}" 절이 {names.count(s)}번 있다 — 한 번')
-    if [n for n in names if n in SECTIONS] != list(want):
+    if [n for n in names if n in SECTIONS or n == 'boj'] != list(want):
         errs.append(f'절 순서가 다르다: {" → ".join(names)} (기대 {" → ".join(want)})')
     if names.count('views') > 1:
         errs.append(f'data-section="views" 절이 {names.count("views")}번 있다 — 실을 메모가 있는 날만 한 번')
@@ -498,6 +511,8 @@ def assemble(body, meta, d):
     if not v2:
         body = _SEC.sub(_id, body)
     s = d['session']
+    # 일본은행 절이 있는 날만 인용 카드 조판을 더한다 — 없는 날의 조립본은 바이트 그대로(옛 판 재연 시험)
+    cb_css = CB_CSS if re.search(r'data-section="boj"', body) else ''
     url = f'https://fdo2a.github.io/japan/daily/{s}.html'
     title, summary = S.escape(meta['title'].strip()), S.escape(meta['summary'].strip())
     wd = S.WEEKDAYS[date.fromisoformat(s).weekday()]
@@ -509,7 +524,7 @@ def assemble(body, meta, d):
         f'<link rel="canonical" href="{url}">\n<meta property="og:type" content="article">\n'
         f'<meta property="og:title" content="{BRAND} — {s}">\n'
         f'<meta property="og:url" content="{url}">\n<meta property="og:description" content="{summary}">\n'
-        f'{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}\n</style>\n{S.ANALYTICS}\n</head>\n'
+        f'{S.FONT_LINK}\n<style>\n{S.css("us")}{signcolor.CSS}{cb_css}\n</style>\n{S.ANALYTICS}\n</head>\n'
         '<body data-layout="prose" data-register="da">\n'
         f'<div class="topbar"><span class="brand">{BRAND}</span>'
         f'<span class="date">일본 시장 마감 · {day_ko(s)}({wd})</span></div>\n{back}\n'

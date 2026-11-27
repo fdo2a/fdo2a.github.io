@@ -14,7 +14,7 @@ def _read(name):
 
 KR = _read('bok_presser_1126_excerpt.txt')
 JA = _read('boj_kaiken_1102_excerpt.txt')
-STMT = _read('boj_stmt_1030_excerpt.txt')
+STMT = _read('boj_stmt_1030.txt')
 
 
 def test_normalize_strips_every_space_and_folds_fullwidth():

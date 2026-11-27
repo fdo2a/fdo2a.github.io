@@ -90,6 +90,16 @@ jobs:
           S: ${{ steps.when.outputs.session }}
           P: ${{ steps.when.outputs.prev }}
         run: python scripts/fetch_telegram_jp.py --session "$S" --prev "$P" --datadir japan/data --bodydir _workspace/telegram_jp
+      - name: Fetch Bank of Japan MPM documents
+        # 일본은행 결정회의 공표문·전망 기본 견해·총재 회견 기록·主な意見·議事要旨(일본어 PDF) → japan/data/boj/
+        # (2026-11-27). 무엇을 찾을지는 손으로 채운 japan/data/boj/schedule.json 이 정한다(세션으로부터 10일 창).
+        # 발행 게이트가 「일본은행」 절의 인용을 이 원문과 대조한다. 실패해도 일간은 그대로 — 결정일 절 의무는 일정 파일에서.
+        # 설계: docs/superpowers/specs/2026-11-27-central-bank-events.md
+        continue-on-error: true
+        timeout-minutes: 6
+        env:
+          S: ${{ steps.when.outputs.session }}
+        run: python scripts/collect_boj_events.py --session "$S" --datadir japan/data
       - name: Commit data
         if: always()
         env:
@@ -100,5 +110,6 @@ jobs:
           git add japan/data/daily japan/data/news/daily 2>/dev/null || true
           # 견해·의견 파일 — *.json 만: 시간 초과가 남긴 .tmp 와 발행 단계의 published/ 는 여기서 올리지 않는다
           git add japan/data/telegram/*.json 2>/dev/null || true
+          git add japan/data/boj 2>/dev/null || true
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
           bash scripts/ci/push_with_retry.sh "data: japan daily ${S}"

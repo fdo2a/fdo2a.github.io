@@ -113,7 +113,7 @@ _PROTECT_TAGS = frozenset(('blockquote', 'q', 'li', 'figcaption', 'table',
 _PROTECT_ATTRS = ('data-contested', 'data-research-summary', 'data-editor-note', 'data-summary',
                   'data-fed-quote', 'data-fed-change', 'data-fund-board', 'data-fund-kr', 'data-news')
 _PROTECT_CLASSES = frozenset(('caption', 'sub', 'muted', 'footer-note', 'source', 'sources', 'src',
-                              'note', 'disclaimer', 'fed-trans', 'news-head'))
+                              'note', 'disclaimer', 'fed-trans', 'cb-trans', 'news-head'))
 _VOID = frozenset(('br', 'hr', 'img', 'meta', 'link', 'input', 'source', 'wbr', 'area', 'base',
                    'embed', 'param', 'track', 'col'))
 

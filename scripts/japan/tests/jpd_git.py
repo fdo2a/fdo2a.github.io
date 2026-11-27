@@ -7,6 +7,8 @@ SCRIPTS = Path(__file__).resolve().parents[2]
 RUN_LOCK = SCRIPTS / 'ci' / 'run_lock.sh'
 S = '2026-11-18'
 KEY = f'jpd-{S}'
+BOJ_SCHEDULE = ('{"bank": "boj", "start": "2026-11-28", "meetings": [{"meeting": "2026-12-18", '
+                '"statement": "2026-12-18", "presser": "2026-12-21"}]}\n')
 ENV_ID = ['-c', 'user.name=t', '-c', 'user.email=t@example.invalid', '-c', 'commit.gpgsign=false']
 
 
@@ -35,7 +37,9 @@ def setup(tmp_path, files=None):
     subprocess.run(['git', 'init', '-q', '-b', 'main', str(seed)], check=True)
     base = {'plan.md': '# plan\n', 'scripts/x.py': 'x = 1\n', 'japan/daily.json': '[]\n',
             'sitemap.xml': '<urlset></urlset>\n', '.gitignore': '/_workspace/\n',
-            'japan/data/history/jp_daily.jsonl': ''}
+            'japan/data/history/jp_daily.jsonl': '',
+            # 일본은행 칸 일정 파일(2026-11-27) — 입력 고정이 늘 요구한다. S 는 start 앞이라 의무는 없다
+            'japan/data/boj/schedule.json': BOJ_SCHEDULE}
     base.update(files or {})
     for rel, text in base.items():
         write(seed, rel, text)

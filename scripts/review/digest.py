@@ -395,6 +395,54 @@ def jp_calendars(root, rev='origin/main'):
     return out
 
 
+# ── 한국은행·일본은행 예정 문서 못 받음(2026-11-27) ─────────────────────────────────────────────
+# 일정표(손 채움)에 오늘까지 나오기로 한 문서 가운데 받은 원문이 없는 것 — 수집기 실행 기록이 아니라 커밋된 일정 파일과
+# events.json 으로 계산한다(`common/cb_events.missing_scheduled`, 진단과 같은 함수). 실패 이유는 고정 목록에서만 붙인다 —
+# 수집기의 자유 문장은 알림으로 새지 않는다. 결정일은 칸이 원문 없이 열리고, 그 밖의 문서는 알림만 간다.
+CB_BANKS = (('한국은행', 'kr/data/bok'), ('일본은행', 'japan/data/boj'))
+CB_REASONS = ('수집 기록 없음', '수집 실패', '일부 수집 실패', '공개 목록에 아직 없음')
+CB_UNREAD = '한국은행·일본은행 일정표를 읽지 못했어요'
+
+
+def cb_missing_notes(files, today):
+    """{은행 이름: (schedule dict | None, events dict | None)} → 줄 목록. 일정 파일을 못 읽으면 CB_UNREAD."""
+    from common import cb_events as CE
+    notes = []
+    for bank, _dir in CB_BANKS:
+        if bank not in (files or {}):
+            continue
+        schedule, book = files[bank]
+        if not isinstance(schedule, dict):
+            notes.append(CB_UNREAD)
+            continue
+        events = (book or {}).get('events') if isinstance(book, dict) else None
+        try:
+            missing = CE.missing_scheduled(schedule, events, today.isoformat())
+        except CE.ScheduleError:
+            notes.append(CB_UNREAD)
+            continue
+        status = ((book or {}).get('collect') or {}).get('status') if isinstance(book, dict) else None
+        for m in missing:
+            if not isinstance(book, dict) or str(book.get('report_date') or '') < m['date']:
+                why = '수집 기록 없음'
+            elif status == 'failed':
+                why = '수집 실패'
+            elif status == 'partial':
+                why = '일부 수집 실패'
+            else:
+                why = '공개 목록에 아직 없음'
+            notes.append(f'{bank} {_md(m["date"])} 예정된 {m["kind_ko"]} 원문을 못 받았다 — {why}')
+    return list(dict.fromkeys(notes))
+
+
+def cb_files(root, rev='origin/main'):
+    """원격 판의 일정 파일·수집 결과 — 못 읽으면 None."""
+    out = {}
+    for bank, base in CB_BANKS:
+        out[bank] = (_show_json(root, rev, f'{base}/schedule.json'), _show_json(root, rev, f'{base}/events.json'))
+    return out
+
+
 def _git_bytes(root, *args):
     return subprocess.run(['git', '-C', root, *args], capture_output=True, timeout=60)
 
@@ -1030,7 +1078,16 @@ def _jp_cov_pattern():
     return re.compile(re.escape(JP_COV_PREFIX) + rf'(?:{names})(?:·(?:{names}))*' + re.escape(JP_COV_SUFFIX))
 
 
-_MUST_NOTES = _MUST_NOTES + (_JP_CAL_NOTE, _jp_cov_pattern())      # 고정 문구 — 이름도 고정 목록 16개뿐
+def _cb_pattern():
+    from common import cb_events as CE
+    banks = '|'.join(re.escape(b) for b, _d in CB_BANKS)
+    kinds = '|'.join(re.escape(v[0]) for v in CE.KINDS.values())
+    whys = '|'.join(re.escape(w) for w in CB_REASONS)
+    return re.compile(rf'(?:{banks}) {_MD} 예정된 (?:{kinds}) 원문을 못 받았다 — (?:{whys})')
+
+
+_MUST_NOTES = _MUST_NOTES + (_JP_CAL_NOTE, _jp_cov_pattern(), _cb_pattern(),
+                             re.compile(re.escape(CB_UNREAD)))   # 고정 문구 — 이름도 고정 목록뿐
 NOTE_PATTERNS = _MUST_NOTES + _NAME_NOTES + (_KR_NOTE, _KR_CHECK_NOTE)
 
 

@@ -157,10 +157,11 @@ MAX_SAME_ENDING_RUN = 3
 # 클래스는 **토큰 단위**로 본다. 부분 문자열로 보면 `class="my-note-widget"`이
 # 각주로 빠지고, 진짜 `class="src"`는 안 빠진다(codex 검토 2026-08-26).
 # `fed-trans` 는 연준 발언의 번역이다. 충실도로 판단할 글이지 문체로 판단할 글이
-# 아니다 — 「말하듯이」 고치는 순간 의장이 하지 않은 말투가 된다.
+# 아니다 — 「말하듯이」 고치는 순간 의장이 하지 않은 말투가 된다. `cb-trans` 는 같은 자리의
+# 한국은행·일본은행 원문 번역이다(2026-11-27).
 _META_CLASSES = frozenset((
     'caption', 'sub', 'muted', 'footer-note', 'source', 'sources', 'src',
-    'note', 'disclaimer', 'fed-trans',
+    'note', 'disclaimer', 'fed-trans', 'cb-trans',
 ))
 _CLASS_ATTR = re.compile(r'\bclass\s*=\s*["\']([^"\']*)["\']', re.I)
 

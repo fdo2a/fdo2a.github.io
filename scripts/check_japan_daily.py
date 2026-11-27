@@ -8,6 +8,8 @@
 「증권사 견해·시장 의견」 절(2026-11-15)의 근거는 `build_japan_daily.telegram_path` — 발행 전이면 수집기 파일,
 발행 뒤면 발행 단계가 고정한 사본. `usable: true` 가 아니면 없는 것으로 본다. 통과하면 문단과 요약을
 나란히 찍는다 — 뜻이 같은지는 루틴이 읽는다.
+「일본은행」 절(2026-11-27)의 의무는 `--root` 아래 고정 입력(`japan/data/boj/` + 입력 고정이 만든 `covered.json`)으로
+`build_japan_daily.boj_state` 가 정한다. 켠 뒤 세션인데 장부가 없으면 위반(빈 집합으로 읽지 않는다).
 """
 import argparse
 import json
@@ -16,7 +18,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from build_japan_daily import load_telegram, news_path, snapshot_path  # noqa: E402
+from build_japan_daily import BojInputError, boj_state, load_telegram, news_path, snapshot_path  # noqa: E402
 from japan import daily_gate  # noqa: E402
 
 
@@ -37,7 +39,14 @@ def main(argv=None):
     if why:
         print(f'경고: 견해·의견 파일을 없는 것으로 본다 — {why}')
     pairs = []
-    v = daily_gate.check(html, snap, args.session, filename=os.path.basename(path), news=news, tg=tg, pairs=pairs)
+    try:
+        boj, boj_err = boj_state(args.root, args.session), None
+    except BojInputError as e:
+        boj, boj_err = None, f'일본은행 절을 판정할 수 없다 — {e}'
+    v = daily_gate.check(html, snap, args.session, filename=os.path.basename(path), news=news, tg=tg, pairs=pairs,
+                         boj=boj)
+    if boj_err:
+        v = [boj_err] + v
     if v:
         print(f'일본 일간 게이트 위반 {len(v)}건 ({path}):', file=sys.stderr)
         for m in v:

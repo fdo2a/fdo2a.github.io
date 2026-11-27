@@ -11,6 +11,9 @@ from common.numbers import measure_numbers, numeric_tokens, text_of
 
 SECTION = 'bok'
 TITLE = G.CONFIG['bok']['title']
+# 이 칸을 켠 첫 발행일 — `kr/data/bok/schedule.json` 의 start 와 같아야 한다(시험이 묶는다). 그 앞 날짜의 글(옛 글
+# 재검사·발행 커밋 재연)은 일정 파일·원문 없이 「해당 없음」이다 — 그때는 이 칸이 없었다.
+START = '2026-11-28'
 
 
 def numbers_check(data_blobs):

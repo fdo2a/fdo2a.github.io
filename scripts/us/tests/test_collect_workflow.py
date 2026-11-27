@@ -123,6 +123,19 @@ def test_kr_stamp_runs_right_before_the_versions_commit():
     assert versions_kr.is_dateless('kr/data/_collect_status.json')  # 발행된 날 동결 대상(원격 판 유지)
 
 
+def test_kr_bok_documents_are_collected_non_core_and_committed():
+    """한국은행 금통위 원문(2026-11-27) — 비-코어 단계, 커밋 단계가 새 폴더를 담는다."""
+    kr = os.path.join(os.path.dirname(WF), 'collect-kr-data.yml')
+    names, steps = _steps(kr)
+    i = names.index('Fetch Bank of Korea MPB documents (non-core)')
+    assert steps[i]['continue-on-error'] is True and 'collect_bok_events.py --datadir kr/data' in steps[i]['run']
+    assert names.index('Collect') < i < names.index('Stamp collection status') < names.index('Commit data')
+    from kr import versions_kr
+    assert 'git add kr/data/bok 2>/dev/null || true' in versions_kr.STAGE_SH
+    # 발행된 날의 고정 경로 동결은 kr/data 바로 아래 파일만 — bok/ 는 다음 실행이 갱신한다
+    assert not versions_kr.is_frozen('kr/data/bok/events.json', '2026-11-26', '2026-W48')
+
+
 # ── 수익률만 고치는 재실행(2026-11-19) ───────────────────────────────────────
 
 def _step(name):

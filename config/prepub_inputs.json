@@ -905,6 +905,43 @@
      "note": "2026-07-29 테마 섹션 폐지 — 작성자가 읽지 않는다"
     },
     {
+     "path": "<datadir>/bok/schedule.json",
+     "class": "writer",
+     "name": "한국은행 금통위 일정(손 채움)",
+     "produced_by": "reference",
+     "risk": "결정일·문서 공개 예정일 — 틀리면 칸 의무가 하루 밀리거나 빠진다(원출처 한국은행 일정 보도자료·listYear.do)",
+     "covered_by": "check_bok(인용을 원문과 글자 대조·의무는 일정 파일과 발행본 장부로 판정)",
+     "why": "수집 실패·묵은 파일은 발행을 막지 않는다(설계 2026-11-27 — 결정일 칸 의무는 schedule.json 에서 나온다). 그래서 gate 가 아니라 writer 로 둔다 — gate 분류는 날짜·수집 상태가 어긋나면 브리프 전체를 세운다"
+    },
+    {
+     "path": "<datadir>/bok/events.json",
+     "class": "writer",
+     "name": "한국은행 금통위 문서 수집 결과",
+     "risk": "오늘 실을 이벤트·원문 수집 결과·결정문 변경점",
+     "covered_by": "check_bok(인용을 원문과 글자 대조·의무는 일정 파일과 발행본 장부로 판정)",
+     "why": "수집 실패·묵은 파일은 발행을 막지 않는다(설계 2026-11-27 — 결정일 칸 의무는 schedule.json 에서 나온다). 그래서 gate 가 아니라 writer 로 둔다 — gate 분류는 날짜·수집 상태가 어긋나면 브리프 전체를 세운다"
+    },
+    {
+     "path": "<datadir>/bok/*.txt",
+     "class": "writer",
+     "name": "한국은행 금통위 원문",
+     "risk": "「한국은행 금통위」 칸 인용의 대조 원문",
+     "covered_by": "check_bok(인용을 원문과 글자 대조·의무는 일정 파일과 발행본 장부로 판정)",
+     "why": "수집 실패·묵은 파일은 발행을 막지 않는다(설계 2026-11-27 — 결정일 칸 의무는 schedule.json 에서 나온다). 그래서 gate 가 아니라 writer 로 둔다 — gate 분류는 날짜·수집 상태가 어긋나면 브리프 전체를 세운다"
+    },
+    {
+     "path": "<datadir>/bok/seen.json",
+     "class": "unused",
+     "name": "한국은행 수집기 내부 상태",
+     "note": "처음 받은 날 기록 — 의무는 정하지 않는다"
+    },
+    {
+     "path": "<datadir>/bok/statements.json",
+     "class": "unused",
+     "name": "한국은행 결정문 목록",
+     "note": "수집기 내부 목록 — 직전 결정문 찾기"
+    },
+    {
      "path": "<datadir>/news/*.json",
      "class": "unused",
      "name": "KR 뉴스 수집분(지난 날)",

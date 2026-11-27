@@ -105,7 +105,7 @@ def css(market):
 LEGACY_CSS = {'us': ('legacy/us-2026-10-20.css', 'legacy/us-2026-10-21.css', 'legacy/us-2026-10-31.css', 'legacy/us-2026-11-04.css',
               'legacy/us-2026-11-05.css'),
               'kr': ('legacy/kr-2026-10-20.css', 'legacy/kr-2026-10-21.css', 'legacy/kr-2026-10-31.css', 'legacy/kr-2026-11-04.css',
-              'legacy/kr-2026-11-05.css')}
+              'legacy/kr-2026-11-05.css', 'legacy/kr-2026-11-27.css')}
 
 
 def legacy_css(market):

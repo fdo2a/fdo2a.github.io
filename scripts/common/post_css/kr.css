@@ -60,3 +60,12 @@ img.chart { width:100%; display:block; border-radius:10px; }
 .news-item p:last-child { margin-bottom:0; }
 .card h3 + .news-item { margin-top:10px; }
 .news-item + h3 { margin-top:30px; }
+
+/* 한국은행 금통위 — 원문 인용 카드(2026-11-27). 미국 연준 칸 .fed-quote 와 같은 모양 */
+.cb-quote { border-left: 3px solid #0064FF; background: #F7F9FC; border-radius: 0 12px 12px 0;
+            padding: 14px 16px; margin: 14px 0; }
+.cb-quote blockquote { margin: 0 0 8px; font-size: 14px; line-height: 1.65; color: #333D4B; font-style: normal; }
+.cb-quote .cb-trans { margin: 0 0 6px; font-weight: 600; color: #191F28; }
+.cb-quote .caption { margin: 0; }
+.cb-idea { border: 1px solid #E5E8EB; border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.cb-idea [data-invalidation] { margin-bottom: 0; color: #6B7684; }
