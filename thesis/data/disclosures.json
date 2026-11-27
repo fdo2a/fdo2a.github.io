@@ -10,6 +10,114 @@
       "corp_code": "00126380",
       "events": [
         {
+          "rcept_no": "20261127001284",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "하찬효",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127001284",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127001233",
+          "date": "2026-11-27",
+          "title": "[기재정정]임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "이응규",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127001233",
+          "axis": null,
+          "kind": null,
+          "correction": true,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000959",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "김현진",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000959",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000388",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "문창성",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000388",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000031",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "이응규",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000031",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000021",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "김봉수",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000021",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000008",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "김지훈",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000008",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000007",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "이윤수",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000007",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000004",
+          "date": "2026-11-27",
+          "title": "임원ㆍ주요주주특정증권등소유상황보고서",
+          "corp": "삼성전자",
+          "filer": "정민용",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000004",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
           "rcept_no": "20261126000250",
           "date": "2026-11-26",
           "title": "임원ㆍ주요주주특정증권등소유상황보고서",
@@ -28,6 +136,30 @@
     "000660.KS": {
       "corp_code": "00164779",
       "events": [
+        {
+          "rcept_no": "20261127000377",
+          "date": "2026-11-27",
+          "title": "특수관계인에대한증여",
+          "corp": "SK하이닉스",
+          "filer": "SK하이닉스",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000377",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
+        {
+          "rcept_no": "20261127000257",
+          "date": "2026-11-27",
+          "title": "대규모기업집단현황공시[분기별공시(개별회사용)]",
+          "corp": "SK하이닉스",
+          "filer": "SK하이닉스",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261127000257",
+          "axis": null,
+          "kind": null,
+          "correction": false,
+          "confirmed": false
+        },
         {
           "rcept_no": "20261125800766",
           "date": "2026-11-25",
