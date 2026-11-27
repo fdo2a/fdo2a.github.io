@@ -158,7 +158,7 @@ class Classifier:
         per_block = []
         for b in blocks:
             qs = S.quantities(b.text, self.inp.terms)
-            if self.inp.blocking:
+            if getattr(self.inp, 'blocking', False):
                 qs = sorted(qs + S.korean_quantities(b.text), key=lambda q: q.start)
             per_block.append((b, qs))
             for q in qs:
