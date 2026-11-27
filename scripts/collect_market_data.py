@@ -74,8 +74,10 @@ def retry(fn, attempts=3, base_sleep=3):
 ANCHOR_TICKER = '^GSPC'
 
 
-def collect_daily():
+def collect_daily(bars=None):
     """One batched download for every daily ticker; returns ({group: {name: row|None}}, anchor).
+
+    `bars` 를 주면 티커마다 (날짜들, 종가들, 배당·분할 날짜 집합)을 채운다 — 이력 종가 비교(`us/close_check.py`) 몫.
 
     모든 행이 **S&P 500 이 닫힌 날 이하**의 마지막 봉을 쓴다. 종목마다 마지막 봉을
     각자 집으면 24시간 도는 통화쌍이 다음 날짜 봉을 이미 열어 둔 채 표에 섞인다 —
@@ -87,7 +89,7 @@ def collect_daily():
 
     def dl():
         df = yf.download(tickers, period='7d', interval='1d', group_by='ticker',
-                         auto_adjust=True, progress=False, threads=False)
+                         auto_adjust=True, actions=True, progress=False, threads=False)
         return df if df is not None and len(df) else None
 
     df = retry(dl)
@@ -99,6 +101,15 @@ def collect_daily():
                 closes[t] = ([str(i.date()) for i in s.index], [float(v) for v in s.values])
             except Exception:
                 closes[t] = ([], [])
+            if bars is not None and closes[t][0]:
+                acts = set()
+                for col in ('Dividends', 'Stock Splits'):
+                    try:
+                        a = df[t][col].fillna(0)
+                        acts |= {str(i.date()) for i, v in a.items() if v}
+                    except Exception:
+                        pass
+                bars[t] = (closes[t][0], closes[t][1], acts)
     anchor = anchor_date({t: d for t, (d, _) in closes.items()}, ANCHOR_TICKER)
     if anchor is None:
         # 배치에서 앵커 종목이 빠지면 나머지가 전부 「마지막 봉」으로 떨어져 통화쌍이
@@ -1481,6 +1492,32 @@ def load_ledger_or_exit(path):
         sys.exit(3)
 
 
+def close_check_step(hdir, data, bars, repo='.'):
+    """이력 종가 비교(`us/close_check.py`) — 결과를 `history/close_check.jsonl` 에 그날 한 행으로, 불일치는 Actions 경고로.
+    알림만이다: 어떤 실패도 수집을 멈추지 않는다(경고 한 줄을 남긴다)."""
+    try:
+        from us import close_check as CC
+        from us.history import append_jsonl, read_jsonl
+        today = data.get('report_date')
+        if not today:
+            return
+        row = CC.previous_row(read_jsonl(os.path.join(hdir, 'market.jsonl')), today)
+        if row is None:
+            print('close check: 관측일이 기록된 어제 이력 행이 없다 — 견주지 않는다')
+            return
+        tickers = {g: dict(pairs) for g, pairs in GROUPS}
+        mism, checked, skipped = CC.compare(row, bars or {}, tickers)
+        unreadable = CC.find_posts(repo, mism, today) if mism else []
+        rec, lines = CC.report(today, mism, checked, skipped, unreadable)
+        rec['compared_row'] = row.get('report_date')
+        append_jsonl(os.path.join(hdir, 'close_check.jsonl'), rec, upsert=True)
+        print(f"close check: {row.get('report_date')} 행 {checked}개 견줌 · 불일치 {len(mism)} · 건너뜀 {skipped}")
+        for line in lines:
+            print(line)
+    except Exception as e:  # noqa: BLE001 — 알림 몫이 수집을 죽이지 않는다
+        print(f'::warning::이력 종가 비교를 돌리지 못했다: {str(e)[:160]}')
+
+
 def market_history(hdir, data, ledger, ledger_ok, bond_closed=(), equity_closed=()):
     """시세 이력(`history/market.jsonl`) 한 행 + 국채 16:00 컷 소급.
 
@@ -1540,7 +1577,8 @@ def main():
     md_path = os.path.join(args.outdir, 'market_data.json')
 
     print('collecting daily closes (batched)...')
-    daily, anchor = collect_daily()
+    daily_bars = {}
+    daily, anchor = collect_daily(bars=daily_bars)
     daily = fill_daily_gaps(daily, anchor)
     # 환율·원자재는 일봉 대신 16:00 ET 컷으로 덮는다 — 일봉 행이 남으면 completeness 가
     # basis 로 막는다.
@@ -1886,6 +1924,8 @@ def main():
     try:
         from us.history import append_jsonl, macro_record
         hdir = os.path.join(args.outdir, 'history')
+        # 어제 저장한 종가 ↔ 오늘 받은 같은 날짜 일봉(알림만 — 막지 않는다). 오늘 행을 쓰기 전에 본다
+        close_check_step(hdir, data, daily_bars)
         # 시세 원장이 먼저다 — 기간 집계가 이 행을 읽는다.
         market_history(hdir, data, ledger, ledger_ok, bond_closed, equity_closed)
         for name, fn, out in (('macro.json', macro_record, 'macro.jsonl'),):

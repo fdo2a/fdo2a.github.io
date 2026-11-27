@@ -62,6 +62,16 @@ def market_record(data):
         basis['yields'] = ykinds.pop()
     if basis:
         row['basis'] = basis
+    # 자산별 관측일(2026-11-27) — 다음 수집이 같은 날짜의 일봉과 종가를 견준다(`us/close_check.py`, 알림만).
+    # 값 칸(묶음별 이름 → 종가)은 그대로 두고 옆 칸으로만 더한다
+    dates = {}
+    for group in MARKET_GROUPS:
+        got = {name: r['date'] for name, r in ((data or {}).get(group) or {}).items()
+               if isinstance(r, dict) and r.get('last') is not None and isinstance(r.get('date'), str)}
+        if got:
+            dates[group] = got
+    if dates:
+        row['dates'] = dates
     row['yields'] = {tenor: float(r['level'])
                      for tenor, r in ((data or {}).get('yields') or {}).items()
                      if isinstance(r, dict) and r.get('level') is not None}
