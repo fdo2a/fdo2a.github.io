@@ -1,0 +1,80 @@
+{
+  "report_date": "2026-11-27",
+  "complete": true,
+  "missing": [
+    "flows_intraday"
+  ],
+  "collect": {
+    "status": "ok",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-27T18:10:56+09:00",
+    "source": "Naver + yfinance",
+    "response": "ok",
+    "required_ok": true,
+    "missing": [
+      "flows_intraday"
+    ],
+    "empty": "has_data"
+  },
+  "indices": {
+    "KOSPI": {
+      "close": 4915.68,
+      "change_pct": 4.34
+    },
+    "KOSDAQ": {
+      "close": 708.99,
+      "change_pct": 8.13
+    }
+  },
+  "flows_date": {
+    "KOSPI": "2026-11-27",
+    "KOSDAQ": "2026-11-27"
+  },
+  "flows_provisional": {
+    "KOSPI": true,
+    "KOSDAQ": true
+  },
+  "checks": {
+    "index_pct": {
+      "mode": "warn",
+      "config_status": "ok",
+      "KOSPI": {
+        "status": "ok",
+        "naver_pct": 4.34,
+        "derived_pct": 4.3401,
+        "prev_close": 4711.21,
+        "prev_source": "basic",
+        "integ_prev": 4711.21,
+        "matched": true,
+        "cross_note": false
+      },
+      "KOSDAQ": {
+        "status": "ok",
+        "naver_pct": 8.13,
+        "derived_pct": 8.1255,
+        "prev_close": 655.71,
+        "prev_source": "basic",
+        "integ_prev": 655.71,
+        "matched": true,
+        "cross_note": false
+      }
+    },
+    "flows": {
+      "KOSPI": {
+        "state": "ok",
+        "faults": []
+      },
+      "KOSDAQ": {
+        "state": "ok",
+        "faults": []
+      }
+    },
+    "top_value": {
+      "rows": 2488,
+      "dash": 264,
+      "bad": 0,
+      "dash_top100": 0,
+      "positive_rows": 10
+    }
+  }
+}

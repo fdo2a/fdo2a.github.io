@@ -1495,7 +1495,6 @@
       }
     },
     "2026-11-27": {
-      "flows": {},
       "industry": {
         "생명과학도구및서비스": 11.73,
         "생물공학": 11.41,
@@ -1732,7 +1731,31 @@
         "출판",
         "식품과기본식료품소매",
         "광고"
-      ]
+      ],
+      "flows": {}
+    }
+  },
+  "_provenance": {
+    "2026-11-27": {
+      "industry": "published",
+      "top_value": "published",
+      "flows": "published_or_remote"
+    },
+    "2026-11-23": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
+    },
+    "2026-11-24": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
+    },
+    "2026-11-25": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
+    },
+    "2026-11-26": {
+      "flows.KOSPI": "next_session_observed",
+      "flows.KOSDAQ": "next_session_observed"
     }
   }
 }

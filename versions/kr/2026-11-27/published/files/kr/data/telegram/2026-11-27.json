@@ -1,0 +1,287 @@
+{
+ "report_date": "2026-11-27",
+ "market": "kr",
+ "collected_utc": "2026-11-27T09:15:13+00:00",
+ "window_from": {
+  "hedgecat0301": "2026-11-25T22:38:54+00:00",
+  "kwusa": "2026-11-25T23:02:26+00:00",
+  "lim_econ": "2026-11-26T01:38:06+00:00",
+  "d_ticker": "2026-11-26T07:27:09+00:00",
+  "aethersemiconductor": "2026-11-26T08:54:53+00:00",
+  "FastStockNews": "2026-11-26T08:01:54+00:00",
+  "FastStockNewsUSA": "2026-11-26T06:18:48+00:00",
+  "insidertracking": "2026-11-26T08:41:46+00:00"
+ },
+ "window_note": [],
+ "channels": {
+  "hedgecat0301": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-25T22:38:54+00:00",
+   "last_id": 3013,
+   "last_dt": "2026-11-26T22:38:28+00:00",
+   "read": 1
+  },
+  "kwusa": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-25T23:02:26+00:00",
+   "last_id": 61826,
+   "last_dt": "2026-11-27T08:44:40+00:00",
+   "read": 10
+  },
+  "lim_econ": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-26T01:38:06+00:00",
+   "last_id": 2147,
+   "last_dt": "2026-11-26T22:38:12+00:00",
+   "read": 1
+  },
+  "d_ticker": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-26T07:27:09+00:00",
+   "last_id": 4253,
+   "last_dt": "2026-11-26T10:46:40+00:00",
+   "read": 5
+  },
+  "aethersemiconductor": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-26T08:54:53+00:00",
+   "last_id": 27287,
+   "last_dt": "2026-11-27T07:53:46+00:00",
+   "read": 13
+  },
+  "FastStockNews": {
+   "status": "ok",
+   "pages": 3,
+   "truncated": false,
+   "from_dt": "2026-11-26T08:01:54+00:00",
+   "last_id": 128636,
+   "last_dt": "2026-11-27T08:49:27+00:00",
+   "read": 57
+  },
+  "FastStockNewsUSA": {
+   "status": "ok",
+   "pages": 1,
+   "truncated": false,
+   "from_dt": "2026-11-26T06:18:48+00:00",
+   "last_id": 24868,
+   "last_dt": "2026-11-27T09:05:05+00:00",
+   "read": 13
+  },
+  "insidertracking": {
+   "status": "ok",
+   "pages": 4,
+   "truncated": false,
+   "from_dt": "2026-11-26T08:41:46+00:00",
+   "last_id": 70344,
+   "last_dt": "2026-11-27T09:15:11+00:00",
+   "read": 64
+  }
+ },
+ "items": [
+  {
+   "id": "d_ticker/4249",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-26T09:59:42+00:00",
+   "url": "https://t.me/d_ticker/4249",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "오하이오 전력입지위원회가 11월 19일 엣지커넥스 데이터센터에 전력을 공급할 800MW 가스발전소를 승인했다. 이 사업은 이달 주민투표에서 81%가 반대한 사업이었다. 위원회는 주민 반대 결과를 인정하면서도 경제 효과와 마을 의회의 지지를 근거로 허가 권한이 위원회에 있다는 입장을 밝혔다. 같은 날 1,350MW 규모의 데이터센터용 가스발전소도 추가로 승인됐으며, 클린뷰 집계에 따르면 오하이오가 데이터센터용으로 허가한 자체 가스발전 용량은 1.3GW에서 3.5GW로 두 배 넘게 늘었다. 주민 뜻보다 지역 경제와 행정 권한이 우선됐다는 시각이 함께 제기된다."
+  },
+  {
+   "id": "d_ticker/4250",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-26T09:59:42+00:00",
+   "url": "https://t.me/d_ticker/4250",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "OPSB(오하이오전력입지위원회)가 주민 투표 부결 2주쯤 뒤 월례 회의에서 데센 가스발전 800MW 건설안을 8분 만에 만장일치로 승인했다는 소식이 전해졌다. 위원 7명 가운데 6명은 공화당 마이크 드와인 주지사가 임명한 행정부처 관계자이며, 이 결정은 취임 전 차기 행정부의 힘이 미치지 않는 시점에 내려졌다. 이를 두고 규제 병목을 푸는 조치라기보다 새 주정부 출범을 앞둔 '레임덕 러시'라는 시각이 제시됐다. 한편 11월 중간선거에서 당선된 민주당 에이미 액턴 차기 주지사는 데센이 공공 전력망에 부담을 주거나 주민 전기요금을 올리지 않도록 자체 발전에 직접 투자하되, 화석연료가 아닌 무탄소·청정에너지와 ESS 중심으로 해야 한다는 입장을 밝혔다."
+  },
+  {
+   "id": "d_ticker/4251",
+   "channel": "d_ticker",
+   "group": "individual",
+   "dt_utc": "2026-11-26T10:37:20+00:00",
+   "url": "https://t.me/d_ticker/4251",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "오하이오가 승인한 것은 데센 부지 안에 설치되는 온사이트 발전이 아니라는 지적이 나왔다. 독립발전사업자(IPP)가 데센 인접 부지에 800MW급 가스 발전소를 짓고 데센 사업자와 전력구매계약(PPA)을 맺어 전기를 공급하는 이른바 '제3 BTM(비하인드더미터) 모델'이라는 설명이다. 이런 독립 발전은 PJM 등 기존 전력망과 연결하지 않을 뿐, 주정부의 엄격한 심사를 받아야 하는 점은 같다는 시각이다."
+  },
+  {
+   "id": "aethersemiconductor/27274",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-26T10:40:51+00:00",
+   "url": "https://t.me/aethersemiconductor/27274",
+   "market_basis": "default",
+   "kind": "report",
+   "firm": null,
+   "analyst": null,
+   "source": {
+    "name": "연합뉴스",
+    "url": "https://www.yna.co.kr/view/AKR20261126188000009",
+    "basis": "link"
+   },
+   "article_date": null,
+   "summary_ko": "AI 인프라 투자 붐으로 메모리 반도체 공급난이 심해지면서 글로벌 전자 업계가 메모리 칩 확보 경쟁을 벌이고 있다고 미국 월스트리트저널(WSJ)이 25일(현지시간) 보도했다. 머스크 테슬라 최고경영자(CEO)조차 삼성전자에 장기 구매계약을 제안했다가 이재용 회장에게 \"더 해줄 게 있느냐\"는 되물음을 듣고 애를 먹었다는 일화도 소개됐다. 이 회장은 머스크가 신규 반도체 공장 건설에 금융보증을 제안하자 같은 질문을 되풀이했다고 한다. 씨티그룹 애널리스트에 따르면 공급사와 고객사 모두 최장 5년의 구속력 있는 장기 계약을 원하고 있으며, 고객사는 구매대금의 25~30%를 선지급하거나 공장 투자비를 분담하기도 한다. 구매 기업들은 담당 직원을 한국에 상주시키고, 일부 거대 AI 기업은 삼성전자 공장 인근에 숙소를 잡아 납기를 점검하고 있다. WSJ은 데이터센터 확산으로 메모리 반도체가 한 세대에 한 번 있을 법한 공급난을 겪고 있다고 진단했다."
+  },
+  {
+   "id": "aethersemiconductor/27275",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-26T11:28:49+00:00",
+   "url": "https://t.me/aethersemiconductor/27275",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "중국 AI 기업 즈푸는 차기 모델 'GLM-5.5'를 연내 내놓을 계획이었으나, 미국의 새 컴퓨팅 규제 이후 출시가 내년 1분기 이후로 밀릴 수 있다는 것이 소식통들의 전언이다. 경쟁사 문샷AI 역시 해외 데이터센터 접속이 막히면 주요 모델 출시 간격이 기존 6개월에서 1년 이상으로 늘어날 수 있다고 내부적으로 보고 있으며, 주력 모델 '키미 K4'도 내년 중반으로 늦어질 가능성이 있다는 시각이 제시됐다."
+  },
+  {
+   "id": "FastStockNews/128584",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-26T22:32:31+00:00",
+   "url": "https://t.me/FastStockNews/128584",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "유럽 증시는 미국 관세 부담이 예상보다 크지 않을 것이라는 평가와 자동차 산업에 대한 긍정 전망, 영국 중앙은행의 은행 자본규제 완화 발표에 힘입어 반도체·자동차·금융 중심으로 상승했다는 시각이다. 미국 무역대표부가 기존 무역협정 관세율을 상한으로 적용하겠다고 밝히면서 EU 관세율이 15%를 크게 넘지 않으리라는 기대가 형성됐다는 해석이다. 한편 ECB 의사록에서는 다수 위원이 금리 인상을 지지했고 추가 인상 필요성에 공감했다는 점이 부각됐으나, 차기 총재로 비둘기파 성향의 데코스가 선정되며 국채금리 상승은 제한됐다는 의견이다. 영국 중앙은행은 금융안정보고서에서 AI 관련 기업에 대한 투자 쏠림과 과도한 레버리지가 시장 충격을 키울 수 있다고 경고했지만, 현재로서는 위험 전이가 제한적이라고 평가했다는 시각이다."
+  },
+  {
+   "id": "hedgecat0301/3013",
+   "channel": "hedgecat0301",
+   "group": "firm",
+   "dt_utc": "2026-11-26T22:38:28+00:00",
+   "url": "https://t.me/hedgecat0301/3013",
+   "market_basis": "keyword",
+   "kind": "view",
+   "firm": "키움증권",
+   "analyst": "한지영",
+   "source": null,
+   "summary_ko": "필자는 미국 추수감사절 휴장에도 독일 등 유럽 증시가 관세 우려 완화로 오르고 나스닥 선물이 양호했던 점을 근거로, 국내 증시가 오늘 회복세를 이어갈 것으로 봤다. 코스피가 10월과 11월 각각 10% 넘게 급락해 연초 대비 누적 수익률이 크게 줄어든 상황에서, 증안펀드 증액 가능성과 당국의 실무적 정책 대응이 반등 재료가 될 수 있다고 진단했다. 필자는 가용 재원을 선제적으로 확보하는 증액이 실현될 가능성에 무게를 싣고, 과거 두 차례 증안펀드 투입 후 낙폭과대 업종이 초과수익을 낸 사례를 표본은 적지만 참고할 만하다고 덧붙였다. 다만 매수 주체 제약으로 반등 탄력은 제한될 수 있다고 봤다."
+  },
+  {
+   "id": "FastStockNews/128613",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-27T04:07:30+00:00",
+   "url": "https://t.me/FastStockNews/128613",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "일본의 10월 MLCC 수출액은 9월과 달리 수출 물량이 줄었지만 단가(ASP)가 전월보다 7.0% 오르면서 전월 대비 증가세를 이어갔다. 특히 중국향 수출단가가 전월보다 12.0% 뛰어 레거시 제품군까지 가격 강세가 번지고 있을 수 있다는 시각이다. 한편 AI 서버 수요가 몰린 대만향은 단가가 전년 대비 101.5% 높은 수준을 유지했고 수출 물량도 전월보다 8.6% 늘어나, 고부가 MLCC 중심의 수요가 견조하다는 의견이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/27280",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-27T05:10:22+00:00",
+   "url": "https://t.me/aethersemiconductor/27280",
+   "market_basis": "keyword",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "주식 교육 카페 게시글은 코스닥이 상승추세로 전환됐고 대형주들이 크게 오르고 있다고 보고, 코스닥 대형주 20종목을 가격과 상관없이 각 5%씩 매수하라고 권한다. 이후 10% 이상 오르는 종목에는 추가로 자금을 나눠 싣는 이른바 '불타기'를 하라고 권하며, 이를 30~50% 수익을 낼 수 있는 대박 기회라고 주장한다. 다만 이는 글쓴이의 주관적 판단과 권유일 뿐이며, 근거로 제시된 내용은 확인되지 않은 주장이라는 시각으로 보는 것이 필요하다."
+  },
+  {
+   "id": "FastStockNews/128619",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-27T05:11:53+00:00",
+   "url": "https://t.me/FastStockNews/128619",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "그린생명과학이 그린케미칼과 AI반도체 소재 공급계약을 체결했다는 공시 내용이다. 계약총액은 168억원이며 매출대비 41.52%에 해당한다고 적혔다. 계약 기간은 2026년 11월 27일부터 2027년 4월 30일까지 약 5개월이다. 공시에는 시가총액 421억원과 현재가 2,105원도 함께 표시됐으나, 이를 이번 계약의 영향과 연결하는 해석은 제시되지 않았다."
+  },
+  {
+   "id": "FastStockNews/128620",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-27T05:17:38+00:00",
+   "url": "https://t.me/FastStockNews/128620",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "중국과 홍콩 증시가 오후장에 상승폭을 키웠고, 반도체 관련 지수인 과창50은 10%, 창업판은 7% 올랐다고 전해졌다. 반도체와 CPO, 광모듈, 증권주가 급등했으며, 기관 포지션이 역대 최저 수준이라 매수 여력이 큰 상태에서 자금이 들어왔다는 해석이 붙었다. 국무원 상무회의에서 국가대표팀(CIC 등)의 시장 부양 역할이 강조된 점도 언급됐다. 이번 반등을 두고는 수급에 따른 과매도 되돌림이라는 시각이 제시됐다."
+  },
+  {
+   "id": "aethersemiconductor/27287",
+   "channel": "aethersemiconductor",
+   "group": "individual",
+   "dt_utc": "2026-11-27T07:53:46+00:00",
+   "url": "https://t.me/aethersemiconductor/27287",
+   "market_basis": "default",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "summary_ko": "AAOI가 티어1 하이퍼스케일러와 4년 기간의 두 번째 LTA를 체결했다는 소식이 전해졌다. 계약은 2026년 12월부터 2030년 12월까지 800G 트랜시버와 레이저 다이오드를 대상으로 하며, 2027년 800G 최소 약정 물량은 약 15억 달러, 2028~2029년 레이저 다이오드는 7억 달러로 제시됐다. 경영진은 계약 기간 전체 수요가 100억 달러를 웃돈다고 밝혔지만, 약정 규모를 넘어서는 매출은 생산능력 가동과 고객사의 추가 약정에 달려 있다는 점이 함께 언급됐다. 이 시각은 이번 계약이 AAOI의 가시성과 강한 수요를 보여주는 신호이며 공격적인 생산능력 확장을 뒷받침한다고 보고, 회사의 과제는 생산능력을 얼마나 빨리 구축하느냐에 있다고 평가한다. 다만 이 계약을 통해 수요 하단이 견고해지고 생산 증대 속도에 따라 추정치를 웃돌 가능성이 있다는 견해도 덧붙여졌다."
+  },
+  {
+   "id": "FastStockNews/128633",
+   "channel": "FastStockNews",
+   "group": "relay",
+   "dt_utc": "2026-11-27T08:28:46+00:00",
+   "url": "https://t.me/FastStockNews/128633",
+   "market_basis": "channel",
+   "kind": "opinion",
+   "firm": null,
+   "analyst": null,
+   "source": null,
+   "article_date": null,
+   "summary_ko": "엑시콘이 최대주주의 특수관계인인 샘씨엔에스 지분을 745억 원에 양도하는 결정을 공시했다. 양도 후 지분은 10.03%이며, 양도 목적은 사업규모 확대와 신제품 개발을 위한 연구개발 자금 확보로 제시됐다. 양도 상대는 와이씨 및 전략적 투자자이고, 대금은 KRX 시간외 대량매매를 통해 정산되며 양도예정일은 2026년 12월 30일이다. 이번 거래 규모가 자본의 38.06%, 시가총액의 10.91%에 해당한다는 점에서, 이번 지분 양도가 회사의 재무 여력을 확충하는 의미를 가진다는 시각이 나온다."
+  }
+ ],
+ "collect": {
+  "status": "ok",
+  "as_of": "2026-11-27",
+  "collected_at": "2026-11-27T18:16:10+09:00",
+  "source": "t.me/s public channels",
+  "response": "ok",
+  "required_ok": true,
+  "missing": [],
+  "empty": "has_data"
+ },
+ "stats": {
+  "items": 13,
+  "summarized": 13,
+  "summary_failed": 0,
+  "stale_dropped": 0,
+  "channels_failed": [],
+  "holes": []
+ }
+}
