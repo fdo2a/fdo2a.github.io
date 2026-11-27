@@ -408,6 +408,28 @@
    "status": "sent",
    "text": "[발행] KR 일간 11/26 · 발행 통과\n\n■ 발행 상태\n필수 검사 11/11 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조)\n\n■ 검증 범위\n표 55칸 자동 대조 · 숫자 255개 범위 밖(문장 170 · 업종 기간별 72 · 기타 표 13). 오류 255건이라는 뜻은 아님\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
    "tries": 0
+  },
+  {
+   "base": "1bf47da542f5c7d43905e8afde0d3031",
+   "created": "2026-11-27T17:10:04.027109+09:00",
+   "hash": "5af931bed053d6b50e7f72a8b86b9c57325f0bef67104d863cfd1468a8c9ee18",
+   "id": "925f158e812b82a6f2fa4477c2ba03dd",
+   "key": "us:2026-11-24",
+   "kind": "resolved",
+   "status": "pending",
+   "text": "[미발행 해소] US 일간 11/24 · 해결\n글이 올라왔어요 — 앞서 생성된 미발행 경고(기준 11/25 12:00 KST)가 풀렸어요",
+   "tries": 0
+  },
+  {
+   "base": "e80cadd8f8464f214201855f84e7389e",
+   "created": "2026-11-27T17:10:04.027109+09:00",
+   "hash": "06579c97486f7da303648b3b15151e98ce31340af8d71f2c76751e26ee97e5df",
+   "id": "e80cadd8f8464f214201855f84e7389e",
+   "key": "posts/2026-11-24.html",
+   "kind": "publish",
+   "status": "pending",
+   "text": "[발행] US 일간 11/24 · 발행 통과 · 검토 1건\n\n■ 발행 상태\n필수 검사 18/18 기록상 통과 · 발행본과 검사 기록 일치(GitHub 대조, 작업 공간 입력 제외)\n\n■ 볼 것\n1. [검토 권고] 숫자 대조: (문장): [채권] 「내려 명목으로는 움직이지 않았고, 5년물 3bp 상승은 실질금」 — 5Y 전일 변화 데이터 -0.2\n\n■ 검증 범위\n숫자: 숫자 1297개 = 자료로 확인 705 · 어림선 0 · 기사와 일치 0 · 텔레그램 글과 일치 12 · 검색 발췌와 일치 0 · 세지 않은 숫자 243 · 확인 불가 337\n · 부호 뺀 칸 10 · 문장째 사라짐 8 · 그대로 확인 불가 254 · 이력 확인 불가 75 · 첫 판 확인 불가 337개 기준\n · 확인 불가 이유: 자료와 다름 2 · 칸 없음 1 · 코드 블록(표식 없음) 136 · 표식 없음 195 · 표식 오류 3\n · 확인 불가: 1.48% — 황 복귀 이튿날 AI 하드웨어 되밀려 나스닥 · 하락…업종 · 중 ·는 올라 매도는 기술주에 (이하 기록 파일); 11개 — 황 복귀 이튿날 AI 하드웨어 되밀려 나스닥 · 하락…업종 · 중 ·는 올라 매도는 기술주에 (이하 기록 파일); 9개 — 황 복귀 이튿날 AI 하드웨어 되밀려 나스닥 · 하락…업종 · 중 ·는 올라 매도는 기술주에 몰렸다; 11개 — 기술 업종(XLK)이 · 내리고 엔비디아가 · 밀렸지만 (이하 기록 파일); 9개 — 기술 업종(XLK)이 · 내리고 엔비디아가 · 밀렸지만 (이하 기록 파일); 5년 — 코어위브의 · CDS가 ·를 넘고 오라클·메타·아마존의 CDS도 벌어졌다는 보도가 나왔고 (이하 기록 파일); 1,200bp — 코어위브의 · CDS가 ·를 넘고 오라클·메타·아마존의 CDS도 벌어졌다는 보도가 나왔고 (이하 기록 파일); -3.44%p — 11월 23일 종가 대비 12월 4일 종가의 XLK 누적 등락률에서 S&P 500 누적 (이하 기록 파일) (외 329개)\n · 프로그램이 보지 못하는 것: 숫자의 주어·방향, 기사 자체의 오류\n · 작업 공간 전용 입력 35개는 원본을 보관하지 않아 대조 못 함(지문만 남음): _collect_status.json, auction_table.html, auctions.json, body_template.html, calendar.json, econ_indicators.json, fomc_dates.json, fund_board.html (외 27개)\n\n※ GitHub은 기록 일치만 확인. 검사 재실행이나 전체 내용의 사실 검증은 아님",
+   "tries": 0
   }
  ],
  "fetch": {},
@@ -419,13 +441,13 @@
    "sig": "submit_failed|retry"
   },
   "hold:us:2026-11-24": {
-   "live": true,
+   "live": false,
    "n": 1,
    "sig": "style_abort|person"
   }
  },
- "last_ok": "2026-11-27T10:54:11.456878+09:00",
- "last_seen": "d3314f3a53565876ecefcf804494237dc0ecf905",
+ "last_ok": "2026-11-27T17:10:04.027109+09:00",
+ "last_seen": "095bc97c0c3c3a22262b5e819be0fd350b4e3b07",
  "posts": {
   "kr/posts/2026-11-09.html": {
    "first_seen": "d4d49cbce7898ba40ab343215acccd3d4c061e7d",
@@ -535,6 +557,10 @@
    "first_seen": "bb8dcb9cb0cf69a4ee4c5867853ea880a51287ad",
    "fp": "[\"ok\", \"bb8dcb9cb0cf69a4ee4c5867853ea880a51287ad\", \"일부 확인\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"대조 불가\"]], \"pass_with_warnings\", true, true, true]"
   },
+  "posts/2026-11-24.html": {
+   "first_seen": "095bc97c0c3c3a22262b5e819be0fd350b4e3b07",
+   "fp": "[\"ok\", \"095bc97c0c3c3a22262b5e819be0fd350b4e3b07\", \"일부 확인\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"대조 불가\"]], \"pass_with_warnings\", true, true, true]"
+  },
   "posts/2026-11-25.html": {
    "first_seen": "cb666b559c216247b72621a9f8a38527cb38e271",
    "fp": "[\"ok\", \"cb666b559c216247b72621a9f8a38527cb38e271\", \"일부 확인\", [[\"gates\", \"일치\"], [\"post\", \"일치\"], [\"repo_digest\", \"일치\"], [\"repo_inputs\", \"일치\"], [\"scripts\", \"일치\"], [\"workspace_inputs\", \"대조 불가\"]], \"pass_with_warnings\", true, true, true]"
@@ -568,7 +594,7 @@
   "us:2026-11-19": "ok",
   "us:2026-11-20": "resolved",
   "us:2026-11-23": "late",
-  "us:2026-11-24": "missing",
+  "us:2026-11-24": "resolved",
   "us:2026-11-25": "ok"
  }
 }
