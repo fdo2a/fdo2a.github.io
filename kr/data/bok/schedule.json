@@ -1,0 +1,71 @@
+{
+  "bank": "bok",
+  "start": "2026-11-28",
+  "source": "2027 회의일 = 한국은행 보도자료 「Monetary Policy Board’s policy-setting meeting dates for 2027」(2026-10-29). 2026-11-26 = listYear.do(2026) 행. 결정문·기자간담회 = 회의 당일. 의사록 = listYear.do 각주 「의사록은 회의일로부터 2주 경과 후 첫 화요일에 게시」로 계산한 예정일(minutes_basis: rule — 2026-07~10 의사록 RSS 6건과 일치). 공휴일과 겹치면 밀릴 수 있다.",
+  "note": "손으로 채운다 — 원출처에서 확인한 날만 넣는다. start = 이 칸을 켠 첫 발행일(그 앞에 나온 문서는 의무가 아니다). 2028 일정이 나오면 더한다.",
+  "meetings": [
+    {
+      "meeting": "2026-11-26",
+      "decision": "2026-11-26",
+      "presser": "2026-11-26",
+      "minutes": "2026-12-15",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-01-14",
+      "decision": "2027-01-14",
+      "presser": "2027-01-14",
+      "minutes": "2027-02-02",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-02-25",
+      "decision": "2027-02-25",
+      "presser": "2027-02-25",
+      "minutes": "2027-03-16",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-04-09",
+      "decision": "2027-04-09",
+      "presser": "2027-04-09",
+      "minutes": "2027-04-27",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-05-27",
+      "decision": "2027-05-27",
+      "presser": "2027-05-27",
+      "minutes": "2027-06-15",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-07-15",
+      "decision": "2027-07-15",
+      "presser": "2027-07-15",
+      "minutes": "2027-08-03",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-08-26",
+      "decision": "2027-08-26",
+      "presser": "2027-08-26",
+      "minutes": "2027-09-14",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-10-15",
+      "decision": "2027-10-15",
+      "presser": "2027-10-15",
+      "minutes": "2027-11-02",
+      "minutes_basis": "rule"
+    },
+    {
+      "meeting": "2027-11-25",
+      "decision": "2027-11-25",
+      "presser": "2027-11-25",
+      "minutes": "2027-12-14",
+      "minutes_basis": "rule"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "bank": "boj",
+  "start": "2026-11-28",
+  "source": "일본은행 「金融政策決定会合の運営」 일정표 /mopo/mpmsche_minu/index.htm (2026-11-27 확인) — 회의일·공표문(회의 마지막 날)·전망 기본 견해·主な意見·議事要旨 공개일. 2027-12 회의의 議事要旨 는 「未定」이라 비워 둔다. 총재 회견 기록은 일정표 주석 「翌営業日（時間未定）」 — presser_basis: next_business_day 는 회의 마지막 날의 다음 도쿄 영업일(data/market_holidays.json 의 jp, JPX 휴장일)로 계산한 날이고, 2026-10-30 회의분(11-02)만 실제 공개일이다.",
+  "note": "손으로 채운다 — 원출처에서 확인한 날만 넣는다. start = 이 칸을 켠 첫 발행 세션(그 앞에 나온 문서는 의무가 아니다). 2028 일정과 2027-12 議事要旨 공개일이 나오면 더한다.",
+  "meetings": [
+    {
+      "meeting_start": "2026-10-29",
+      "meeting": "2026-10-30",
+      "statement": "2026-10-30",
+      "outlook": "2026-10-30",
+      "presser": "2026-11-02",
+      "presser_basis": "published",
+      "opinions": "2026-11-10",
+      "minutes": "2026-12-23"
+    },
+    {
+      "meeting_start": "2026-12-17",
+      "meeting": "2026-12-18",
+      "statement": "2026-12-18",
+      "presser": "2026-12-21",
+      "presser_basis": "next_business_day",
+      "opinions": "2026-12-28",
+      "minutes": "2027-01-27"
+    },
+    {
+      "meeting_start": "2027-01-21",
+      "meeting": "2027-01-22",
+      "statement": "2027-01-22",
+      "outlook": "2027-01-22",
+      "presser": "2027-01-25",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-02-01",
+      "minutes": "2027-03-24"
+    },
+    {
+      "meeting_start": "2027-03-17",
+      "meeting": "2027-03-18",
+      "statement": "2027-03-18",
+      "presser": "2027-03-19",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-03-29",
+      "minutes": "2027-05-07"
+    },
+    {
+      "meeting_start": "2027-04-27",
+      "meeting": "2027-04-28",
+      "statement": "2027-04-28",
+      "outlook": "2027-04-28",
+      "presser": "2027-04-30",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-05-12",
+      "minutes": "2027-06-16"
+    },
+    {
+      "meeting_start": "2027-06-10",
+      "meeting": "2027-06-11",
+      "statement": "2027-06-11",
+      "presser": "2027-06-14",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-06-21",
+      "minutes": "2027-07-27"
+    },
+    {
+      "meeting_start": "2027-07-21",
+      "meeting": "2027-07-22",
+      "statement": "2027-07-22",
+      "outlook": "2027-07-22",
+      "presser": "2027-07-23",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-07-30",
+      "minutes": "2027-09-28"
+    },
+    {
+      "meeting_start": "2027-09-21",
+      "meeting": "2027-09-22",
+      "statement": "2027-09-22",
+      "presser": "2027-09-24",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-10-01",
+      "minutes": "2027-11-04"
+    },
+    {
+      "meeting_start": "2027-10-28",
+      "meeting": "2027-10-29",
+      "statement": "2027-10-29",
+      "outlook": "2027-10-29",
+      "presser": "2027-11-01",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-11-09",
+      "minutes": "2027-12-22"
+    },
+    {
+      "meeting_start": "2027-12-16",
+      "meeting": "2027-12-17",
+      "statement": "2027-12-17",
+      "presser": "2027-12-20",
+      "presser_basis": "next_business_day",
+      "opinions": "2027-12-27"
+    }
+  ]
+}
