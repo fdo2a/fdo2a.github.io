@@ -30,7 +30,10 @@ kr/data/kr_brief_*.html
 /stance_next.json
 /releases/
 /fed/
-/news/
+# 작업 공간(레포 꼭대기)의 그날 뉴스 자료만 가린다 — `/news/` 통째로 가리면 발행 폴더 news/ 의 새 글도 가려져
+# STEP 3.5 의 `git add news/` 가 새 글을 못 올린다(2026-11-27 늦은 11/24 뉴스 글에서 verify 「글 없음」).
+/news/*.json
+/news/numbers/
 /portfolio.json
 /calendar.json
 /movers.json
