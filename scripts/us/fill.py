@@ -12,8 +12,8 @@
 - 관측일이 글 날짜와 다른 칸(stale)은 채우고 바로 뒤에 기준일을 찍는다(`<span data-asof="D">(M월 D일 기준)</span>`).
   표 칸(td·th) 안은 찍지 않는다 — 표는 기준일 열과 표 대조(`check_numbers`)가 맡는다.
 - invalid·풀 수 없는 칸·표식 하나에 수량이 정확히 하나가 아닌 것은 채우지 않고 되돌린다.
-- 제목·og 설명: meta.json 의 `title_refs`·`summary_refs`(숫자 순서대로의 칸 이름) → `<title data-refs>`·
-  `<meta property="og:description" data-refs>` 로 옮겨 적고 본문 칸과 똑같이 채운다. meta 설명은 h1 에서 다시 만든다.
+- 제목·og 설명: meta.json 의 `title_refs`·`summary_refs`(숫자 순서대로의 칸 이름) → og:title·og:description meta 의
+  `data-refs` 로 옮겨 적고(`<title>` 태그는 맨 꼴 그대로) 본문 칸과 똑같이 채운다. meta 설명은 h1 에서 다시 만든다.
 
 두 번 돌려도 결과가 같다. 설계: docs/superpowers/specs/2026-11-20-number-sources.md 「2026-11-27 숫자는 코드가 채운다」
 """
@@ -199,7 +199,7 @@ def fill(html, datadir, date, repo, meta=None, ledger=None, terms=None, zones=No
         try:
             new_inner, fact = _fill_one(ref, inner, book, terms)
             slot.update(_fact_row(fact))
-            if fact.status == 'stale' and not _in_cell(masked, s):
+            if fact.status == 'stale' and fact.date[:10] != date and not _in_cell(masked, s):
                 asof = fact.date[:10]
             slot['filled'] = _html.unescape(new_inner)
         except Shape as x:
@@ -263,6 +263,7 @@ def _fill_one(ref, inner, book, terms):
 
 _TITLE = re.compile(r'<title(?P<attrs>[^>]*)>(?P<text>.*?)</title>', re.S)
 _OGD = re.compile(r'<meta property="og:description" content="(?P<text>[^"]*)"(?P<attrs>[^>]*)>')
+_OGT = re.compile(r'<meta property="og:title" content="(?P<text>[^"]*)"(?P<attrs>[^>]*)>')
 _DESC = re.compile(r'<meta name="description" content="(?P<text>[^"]*)">')
 _H1 = re.compile(r'<h1\b[^>]*>(.*?)</h1>', re.S)
 _REFS_ATTR = re.compile(r'\sdata-refs="([^"]*)"')
@@ -300,7 +301,7 @@ def fill_text(text, refs, book, terms):
             sub = S.korean_quantities(piece) if q.korean else [x for x in S.quantities(piece, terms) if not x.code]
             new = render(sub[0], piece, f, set(flags))
             row.update(_fact_row(f), filled=new)
-            if f.status == 'stale':
+            if f.status == 'stale' and f.date[:10] != book.date:
                 new += asof_text(f.date[:10])
                 row['asof'] = f.date[:10]
             out.append(new)
@@ -323,18 +324,24 @@ def _fill_head(html, meta, book, terms, date):
     rows = []
     title_refs = (meta or {}).get('title_refs')
     summary_refs = (meta or {}).get('summary_refs')
-    m = _TITLE.search(html)
+    # 제목 이름표는 og:title meta 의 data-refs 에 둔다 — `<title>` 은 맨 꼴 그대로(다른 검사기가 `<title>(.*?)</title>` 로 읽는다)
+    m, ogt = _TITLE.search(html), _OGT.search(html)
     if m:
-        refs = title_refs if isinstance(title_refs, list) else head_refs(m.group('attrs'))
+        refs = title_refs if isinstance(title_refs, list) else head_refs(ogt.group('attrs') if ogt else '')
         text = _strip_asof(_html.unescape(m.group('text')))
         if refs is not None:      # 이름표를 적지 않은 제목은 채우지 않는다(제목은 warn 구역 — 검사가 목록만 낸다)
             new, got = fill_text(text, refs, book, terms)
             for g in got:
                 g['where'] = 'title'
+            if ogt is None:
+                got = [{'ref': '', 'written': text, 'problem': '표식 오류', 'why': 'og:title meta 가 없어 이름표를 적을 곳이 없다'}]
             rows += got
-            attrs = _REFS_ATTR.sub('', m.group('attrs'))
-            attr = f' data-refs="{_html.escape(json.dumps(refs, ensure_ascii=False))}"'
-            html = html[:m.start()] + f'<title{attrs}{attr}>{_html.escape(new, quote=False)}</title>' + html[m.end():]
+            html = html[:m.start()] + f'<title{m.group("attrs")}>{_html.escape(new, quote=False)}</title>' + html[m.end():]
+            ogt = _OGT.search(html)
+            if ogt:
+                attr = f' data-refs="{_html.escape(json.dumps(refs, ensure_ascii=False))}"'
+                html = (html[:ogt.start()] + f'<meta property="og:title" content="{ogt.group("text")}"'
+                        f'{attr}{_REFS_ATTR.sub("", ogt.group("attrs"))}>' + html[ogt.end():])
     m = _OGD.search(html)
     if m:
         refs = summary_refs if isinstance(summary_refs, list) else head_refs(m.group('attrs'))

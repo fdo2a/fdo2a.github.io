@@ -116,7 +116,9 @@ def test_us_news_repo_paths():
 def test_real_config_has_both_markets():
     cfg = R.load_config(os.path.join(ROOT, 'config', 'prepub_gates.json'))
     us = {g['name']: g for g in R.gates_of(cfg, 'us')}
-    assert us['check_number_sources']['required'] is False and us['check_number_sources']['result'] == 'sources'
+    # US 일간은 필수(2026-11-27 「숫자는 코드가 채운다」 1차 — 막는 판은 numsrc.FILL_EFFECTIVE 뒤), 뉴스 글은 참고 그대로
+    assert us['check_number_sources']['required'] is True and us['check_number_sources']['result'] == 'sources'
+    assert {g['name']: g for g in R.gates_of(cfg, 'us-news')}['check_number_sources']['required'] is False
     news = [g['name'] for g in R.gates_of(cfg, 'us-news')]
     assert news[-1] == 'check_number_sources' and 'check_news' in news and 'check_contested' in news
     assert R.post_path(cfg, 'us-news', D) == f'news/{D}.html'

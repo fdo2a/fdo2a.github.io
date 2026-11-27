@@ -77,7 +77,8 @@ ANCHOR_TICKER = '^GSPC'
 def collect_daily(bars=None):
     """One batched download for every daily ticker; returns ({group: {name: row|None}}, anchor).
 
-    `bars` 를 주면 티커마다 (날짜들, 종가들, 배당·분할 날짜 집합)을 채운다 — 이력 종가 비교(`us/close_check.py`) 몫.
+    `bars` 를 주면 티커마다 (날짜들, 종가들, None)을 채운다 — 이력 종가 비교(`us/close_check.py`) 몫. 이 내려받기는
+    바꾸지 않는다(배당·분할은 비교 단계가 알림 몫 안에서 따로 받는다 — 실패해도 수집이 멈추지 않게).
 
     모든 행이 **S&P 500 이 닫힌 날 이하**의 마지막 봉을 쓴다. 종목마다 마지막 봉을
     각자 집으면 24시간 도는 통화쌍이 다음 날짜 봉을 이미 열어 둔 채 표에 섞인다 —
@@ -89,7 +90,7 @@ def collect_daily(bars=None):
 
     def dl():
         df = yf.download(tickers, period='7d', interval='1d', group_by='ticker',
-                         auto_adjust=True, actions=True, progress=False, threads=False)
+                         auto_adjust=True, progress=False, threads=False)
         return df if df is not None and len(df) else None
 
     df = retry(dl)
@@ -102,14 +103,7 @@ def collect_daily(bars=None):
             except Exception:
                 closes[t] = ([], [])
             if bars is not None and closes[t][0]:
-                acts = set()
-                for col in ('Dividends', 'Stock Splits'):
-                    try:
-                        a = df[t][col].fillna(0)
-                        acts |= {str(i.date()) for i, v in a.items() if v}
-                    except Exception:
-                        pass
-                bars[t] = (closes[t][0], closes[t][1], acts)
+                bars[t] = (closes[t][0], closes[t][1], None)     # 배당·분할은 비교 단계가 따로 받는다
     anchor = anchor_date({t: d for t, (d, _) in closes.items()}, ANCHOR_TICKER)
     if anchor is None:
         # 배치에서 앵커 종목이 빠지면 나머지가 전부 「마지막 봉」으로 떨어져 통화쌍이
@@ -1492,6 +1486,21 @@ def load_ledger_or_exit(path):
         sys.exit(3)
 
 
+def _fetch_actions(tickers):
+    """티커 → 배당·분할 날짜 집합(최근 7일 일봉). 못 받으면 예외 — 부르는 쪽(알림 몫)이 받는다."""
+    import yfinance as yf
+    df = yf.download(list(tickers), period='7d', interval='1d', group_by='ticker', auto_adjust=True, actions=True,
+                     progress=False, threads=False)
+    out = {}
+    for t in tickers:
+        acts = set()
+        for col in ('Dividends', 'Stock Splits'):
+            a = df[t][col].fillna(0)
+            acts |= {str(i.date()) for i, v in a.items() if v}
+        out[t] = acts
+    return out
+
+
 def close_check_step(hdir, data, bars, repo='.'):
     """이력 종가 비교(`us/close_check.py`) — 결과를 `history/close_check.jsonl` 에 그날 한 행으로, 불일치는 Actions 경고로.
     알림만이다: 어떤 실패도 수집을 멈추지 않는다(경고 한 줄을 남긴다)."""
@@ -1506,7 +1515,8 @@ def close_check_step(hdir, data, bars, repo='.'):
             print('close check: 관측일이 기록된 어제 이력 행이 없다 — 견주지 않는다')
             return
         tickers = {g: dict(pairs) for g, pairs in GROUPS}
-        mism, checked, skipped = CC.compare(row, bars or {}, tickers)
+        bars = CC.with_actions(bars or {}, _fetch_actions)
+        mism, checked, skipped = CC.compare(row, bars, tickers)
         unreadable = CC.find_posts(repo, mism, today) if mism else []
         rec, lines = CC.report(today, mism, checked, skipped, unreadable)
         rec['compared_row'] = row.get('report_date')

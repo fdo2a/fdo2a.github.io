@@ -204,11 +204,12 @@ def test_fill_title_and_summary_refs(w18):
     meta = {'title_refs': ['md:indices.SP500.pct|abs'], 'summary_refs': ['md:indices.SP500.pct|abs']}
     html = page(section('주식', f'<p>{span("md:indices.SP500.pct|abs", "0.23%")} 내렸다.</p>'), D18,
                 '미국 증시 마감 시황 — S&amp;P 500 0.24% 하락 | 2026-11-18')
-    html = html.replace('</title>', '</title><meta property="og:description" content="지수가 0.23% 내렸다.">')
+    html = html.replace('</title>', '</title><meta property="og:title" content="미국 증시 모닝브리프 — 11월 18일">'
+                                    '<meta property="og:description" content="지수가 0.23% 내렸다.">')
     new, rep = FL.fill(html, str(w18), D18, REPO, meta=meta, ledger=[])
     heads = [s for s in rep['slots'] if s['where'] in ('title', 'meta')]
     assert [(h['where'], h.get('problem')) for h in heads] == [('title', '자료와 다름'), ('meta', None)]
-    assert 'data-refs="[&quot;md:indices.SP500.pct|abs&quot;]"' in new
+    assert 'data-refs="[&quot;md:indices.SP500.pct|abs&quot;]"' in new and '<title>' in new     # <title> 은 맨 꼴
     # 다시 돌릴 때는 글에 적힌 이름표를 쓴다
     again, rep2 = FL.fill(new, str(w18), D18, REPO, ledger=[])
     assert [h.get('problem') for h in rep2['slots'] if h['where'] != 'body'] == ['자료와 다름', None]
@@ -333,6 +334,7 @@ def test_check_ambiguous_sentence_needs_removed_only_when_number_is_gone(w18):
 def test_check_title_refs(w18):
     html = page(section('주식', f'<p>{span("md:indices.SP500.pct|abs", "0.23%")} 내렸다.</p>'), D18,
                 '미국 증시 마감 시황 — S&amp;P 500 0.23% 하락 | 2026-11-18')
+    html = html.replace('</title>', '</title><meta property="og:title" content="미국 증시 모닝브리프 — 11월 18일">')
     filled, _ = FL.fill(html, str(w18), D18, REPO, meta={'title_refs': ['md:indices.SP500.pct|abs']}, ledger=[])
     assert check(w18, D18, filled)['violations'] == []
     bad = filled.replace('0.23% 하락', '0.24% 하락')
@@ -396,3 +398,95 @@ def test_period_names_are_not_counted_in_blocking_mode(w18):
     body = section('채권', '<p>1주 전보다 낮고, 레벨은 최근 2년(504거래일) 가운데 높은 쪽이다. 3개월 상대수익률과 20거래일 전.</p>')
     res = check(w18, D18, page(body, D18))
     assert [v.split(' — ')[0] for v in res['violations']] == ['표식 없음 [금리] 504거래일']
+
+
+# ── 구현 검토 전 자체 점검(advisor) 에서 나온 것 ──
+
+def test_filled_stale_stamp_does_not_count_as_deletion(tmp_path):
+    """첫 판 = 채우기 전 초안. 코드가 찍은 기준일이 문장 열쇠를 바꿔 「사라짐」이 되면 안 된다."""
+    wd, d = wd_from(tmp_path, '2026-11-17_market_data.json')
+    body = section('오늘의 장', f'<p>닛케이225가 {span("md:session.global_close.asia.rows[닛케이].pct|abs", "2.42%")} 내렸고 '
+                              f'FTSE100은 {span("md:session.global_close.europe.rows[FTSE100].pct|abs", "1.76%")} 내렸다.</p>')
+    first = page(body, d)
+    final, _ = FL.fill(first, str(wd), d, REPO, ledger=[])
+    assert '(11월 16일 기준)' in final
+    res = check(wd, d, final, first=first)
+    assert res['violations'] == [] and res['removal']['gone'] == 0
+
+
+def test_removed_pairs_are_printed_for_the_writer_but_not_recorded(w18):
+    from verification import record as R
+    first = page(section('주식', '<p>기술주는 2.5% 올랐다는 보도가 있었다.</p>'), D18)
+    final = page(section('주식', '<p>장은 조용했다.</p>'), D18)
+    res = check(w18, D18, final, first=first)
+    assert res['removal']['wanted'] == [{'number': '2.5%', 'sentence': '기술주는 2.5% 올랐다는 보도가 있었다.'}]
+    rec = R._blocking_fields(res, {'html': '/x', 'datadir': '/w', 'repo': '/r'}, res['violations'])
+    assert 'wanted' not in rec['removal'] and '보도' not in json.dumps(rec, ensure_ascii=False)
+    # 그 짝을 그대로 옮기면 풀린다
+    rm = [dict(w, reason='출처 없음') for w in res['removal']['wanted']]
+    assert check(w18, D18, final, first=first, removed=rm)['violations'] == []
+
+
+def test_dv_with_post_date_is_not_stamped(w18):
+    """계산값은 첫 칸의 날짜를 지닌다 — 그 날짜가 글 날짜면 기준일을 찍지도 요구하지도 않는다."""
+    md = json.loads((w18 / 'market_data.json').read_text())
+    md['yields'] = {'10Y': {'level': 4.9, 'bp': -1.0, 'date': D18, 'week_ago': 5.0, 'week_ago_date': '2026-11-11'}}
+    (w18 / 'market_data.json').write_text(json.dumps(md), encoding='utf-8')
+    body = section('채권', f'<p>1주 전보다 {span("dv:diff(md:yields.10Y.level,md:yields.10Y.week_ago)", "-10.0bp")} 낮다.</p>')
+    new, rep = do_fill(w18, D18, body)
+    assert rep['problems'] == [] and 'data-asof' not in new
+    assert check(w18, D18, new)['violations'] == []
+
+
+@pytest.mark.parametrize('text,code', [('3주째', ''), ('3주 연속', ''), ('5개월 만에', ''), ('3개월 수익률', 'period')])
+def test_period_names_exclude_counted_runs(text, code):
+    assert [q.code for q in S.quantities(text, (), periods=True)][0] == code
+
+
+def test_enum_accepts_korean_without_count_word(w18):
+    got = check(w18, D18, page(section('주식', '<p>이유는 <span data-nx="enum">둘</span>이고 <span data-nx="enum">세 업종</span>이다.</p>'), D18))
+    assert got['violations'] == []
+
+
+def test_efe2d787_sector_period_row_from_another_session_is_stamped(w18):
+    """efe2d787(10/12 섹터 기간 표의 10/9 값) 꼴 — 그날 자료에는 행 날짜가 없어(수집기가 그 뒤로 남긴다) **만든 자료**다."""
+    md = json.loads((w18 / 'market_data.json').read_text())
+    md['sector_performance'] = {'Communication Services': {'date': '2026-11-17', '1D': -1.51, '1W': 1.0, '1M': 2.0,
+                                                           '6M': 3.0, '1Y': 4.0}}
+    (w18 / 'market_data.json').write_text(json.dumps(md), encoding='utf-8')
+    body = section('섹터 기간별 수익률', f'<p>커뮤니케이션은 하루 {span("md:sector_performance.CommunicationServices.1D", "-1.51%")}였다.</p>')
+    html = page(body, D18)
+    assert kinds(check(w18, D18, html)) == ['기준일 없음']
+    new, _ = do_fill(w18, D18, body)
+    assert '(11월 17일 기준)' in new and check(w18, D18, new)['violations'] == []
+
+
+def test_filled_markers_survive_publish_transforms(tmp_path):
+    """채운 글이 조판(apply_readability → apply_colors)을 지나도 기준일 표지·제목 이름표가 남고 검사가 같은 판정을 낸다.
+    실제 발행본 꼴(11/05 고정 글)에 묵은 칸 하나를 넣는다 — 그날 자료의 S&P 500 행 날짜를 하루 앞으로 바꾼 **만든 자료**다."""
+    import subprocess
+    import sys
+    from us.tests import test_number_sources as T
+    html, _ = T._fix()
+    d = T._fixture_wd(tmp_path)
+    md = json.load(open(d / 'market_data.json'))
+    rd = md['report_date']
+    md['indices']['S&P 500']['date'] = '2026-11-04'
+    (d / 'market_data.json').write_text(json.dumps(md), encoding='utf-8')
+    pct = md['indices']['S&P 500']['pct']
+    body = f'<p>지수는 <span data-ref="md:indices.SP500.pct">{pct:+.2f}%</span> 움직였다.</p>'
+    p = tmp_path / f'{rd}.html'
+    src = html.replace('</main>', body + '</main>', 1) if '</main>' in html else html.replace('</body>', body + '</body>')
+    filled, rep = FL.fill(src, str(d), rd, REPO, ledger=[], meta={'summary_refs': []})
+    assert rep['counts']['stale_stamped'] == 1
+    p.write_text(filled, encoding='utf-8')
+    for tool in ('apply_readability.py', 'apply_colors.py'):
+        r = subprocess.run([sys.executable, os.path.join(SCRIPTS, tool), str(p)], capture_output=True, text=True)
+        assert r.returncode in (0, 1), r.stderr
+    out = p.read_text(encoding='utf-8')
+    assert '<span data-asof="2026-11-04">(11월 4일 기준)</span>' in out
+    assert ('data-refs="[]"' in out) == ('data-refs="[]"' in filled)
+    inp = U.Inputs('us', rd, str(d), REPO, ledger=[], fill_effective=ON)
+    items_ = U.classify(inp, out)[1]
+    got = [i for i in items_ if i.detail.get('fill', {}).get('ref') == 'md:indices.SP500.pct']
+    assert len(got) == 1 and got[0].cls == 'data' and not got[0].detail.get('no_asof')

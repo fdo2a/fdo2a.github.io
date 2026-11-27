@@ -101,6 +101,8 @@ def main(argv=None):
         if rm:
             print(f"  지운 숫자: 따라간 숫자 {rm['followed']} · 사라짐 {rm['gone']} · 어디에도 없음(가를 수 없음) "
                   f"{rm['ambiguous_absent']} · removed 목록 {rm['listed']}(맞음 {rm['matched']})")
+            for w in rm.get('wanted') or []:
+                print('  removed 에 적을 것: ' + json.dumps(w, ensure_ascii=False))
         print(f"  막는 판: 위반 {len(viols)}")
         for v in viols:
             print(f'위반: {v}')

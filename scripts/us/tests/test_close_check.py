@@ -60,15 +60,28 @@ def test_no_post_used_the_value():
     assert '그 값을 쓴 글 없음(최근 14일 기록 기준)' in lines[0]
 
 
-def test_collector_step_never_raises(tmp_path, capsys):
+def test_collector_step_never_raises(tmp_path, capsys, monkeypatch):
     import collect_market_data as cmd
+    monkeypatch.setattr(cmd, '_fetch_actions', lambda ts: {t: set() for t in ts})
     h = tmp_path / 'history'
     h.mkdir()
     (h / 'market.jsonl').write_text(json.dumps(ROW) + '\n', encoding='utf-8')
-    bars = {'^GSPC': (['2026-11-24'], [7210.5], set())}
+    bars = {'^GSPC': (['2026-11-24'], [7210.5], None)}
     cmd.close_check_step(str(h), {'report_date': '2026-11-25'}, bars, repo=str(tmp_path))
     out = capsys.readouterr().out
     assert '불일치 1' in out and '::warning::이력 종가 불일치 S&P 500' in out
     row = json.loads((h / 'close_check.jsonl').read_text(encoding='utf-8').strip())
     assert row['report_date'] == '2026-11-25' and row['compared_row'] == '2026-11-24'
     cmd.close_check_step(str(h), {'report_date': '2026-11-25'}, None, repo=str(tmp_path))     # 봉 없음 — 죽지 않는다
+
+
+def test_actions_fetch_failure_skips_comparison():
+    bars = {'^GSPC': (['2026-11-24'], [7210.5], None)}
+
+    def boom(tickers):
+        raise RuntimeError('network')
+    got = CC.with_actions(bars, boom)
+    mism, checked, skipped = CC.compare(ROW, got, TICK)
+    assert mism == [] and checked == 0 and skipped['배당·분할 확인 못 함'] == 1
+    got = CC.with_actions(bars, lambda ts: {t: set() for t in ts})
+    assert len(CC.compare(ROW, got, TICK)[0]) == 1

@@ -188,9 +188,8 @@ class Classifier:
                 self._fact = None
                 cls, why = self._one(b, q, kinds, marker_q)
                 a, e = next(((x, y) for x, y in sents if x <= q.start < y), (0, len(b.text)))
-                in_sent = [x for x in qs if a <= x.start < e]
-                it = S.Item(q, cls, why, 'body', S.mask_sentence(b.text, a, e, in_sent),
-                            next(i for i, x in enumerate(in_sent) if x is q),
+                key, idx = _sent_key(b.text, a, e, [x for x in qs if a <= x.start < e], q, self.blocking)
+                it = S.Item(q, cls, why, 'body', key, idx,
                             full_sentence=' '.join(b.text[a:e].split()), in_code=_in_code(b, q))
                 if self.blocking:
                     self._annotate(it, b, q, titles)
@@ -224,10 +223,8 @@ class Classifier:
                     c = shown.get(q.raw.strip())
                     cls, why = (c, '본문과 같은 수량') if c else ('unknown', '표식 없음')
                 a, e = next(((x, y) for x, y in sents if x <= q.start < y), (0, len(text)))
-                in_sent = [x for x in qs if a <= x.start < e]
-                it = S.Item(q, cls, why, where, S.mask_sentence(text, a, e, in_sent),
-                            next(i for i, x in enumerate(in_sent) if x is q),
-                            full_sentence=' '.join(text[a:e].split()))
+                key, idx = _sent_key(text, a, e, [x for x in qs if a <= x.start < e], q, self.blocking)
+                it = S.Item(q, cls, why, where, key, idx, full_sentence=' '.join(text[a:e].split()))
                 if self.blocking:
                     it.detail.update(zone=self._head_zone(), ref=refs is not None and not q.code)
                     self._take_fact(it)
@@ -263,7 +260,8 @@ class Classifier:
         it.detail['fill'] = {'ref': name, 'asset': f.asset, 'group': '.'.join(str(x) for x in f.group[1:2]),
                              'field': f.fld, 'date': f.date[:10] if isinstance(f.date, str) else None,
                              'value': f.value, 'text': it.q.raw}
-        if f.status == 'stale' and isinstance(f.date, str):
+        # 기준일은 관측일이 글 날짜와 다를 때만 — 계산값(dv)은 첫 칸의 날짜를 지니므로 그 날짜가 글 날짜면 찍지 않는다
+        if f.status == 'stale' and isinstance(f.date, str) and f.date[:10] != self.inp.date:
             it.detail['stale'] = f.date[:10]
 
     def _head_zone(self):
@@ -271,12 +269,12 @@ class Classifier:
         return Z.zone_of(self.zones, '')
 
     def _head_refs(self):
-        """(자리, 글) → 이름표 목록 — fill_numbers 가 `<title data-refs>`·og:description `data-refs` 에 적은 것."""
+        """(자리, 글) → 이름표 목록 — fill_numbers 가 og:title·og:description meta 의 `data-refs` 에 적은 것."""
         from us import fill as FL
         out = {}
-        m = FL._TITLE.search(self.html)
-        if m:
-            refs = FL.head_refs(m.group('attrs'))
+        m, ogt = FL._TITLE.search(self.html), FL._OGT.search(self.html)
+        if m and ogt:
+            refs = FL.head_refs(ogt.group('attrs'))
             if refs is not None:
                 out[('title', S.norm(S.unescape(m.group('text'))))] = refs
         m = FL._OGD.search(self.html)
@@ -433,7 +431,8 @@ class Classifier:
 
     def _enum(self, kind, q):
         # 배율(천·만·억·조, K·M·B)이 붙은 값은 나열 수가 아니다(codex 구현 1회 #7 — 「0천개」)
-        ok = (kind == 'enum' and q.value is not None and not q.code and q.unit in S.COUNT_WORDS
+        ok = (kind == 'enum' and q.value is not None and not q.code
+              and (q.unit in S.COUNT_WORDS or (q.korean and q.unit in S.KO_COUNTERS + ('',)))
               and float(q.value).is_integer() and 0 <= q.value <= 99 and not q.sign and q.scale == 1.0
               and (len(q.runs) == 1 or q.korean) and not re.search(r'[,.%천만억조KMB]', q.raw))
         if not ok:
@@ -547,7 +546,7 @@ def violations(items, c, f_items=None, removed=()):
     removal = None
     if f_items is not None:
         removal = {'followed': 0, 'gone': 0, 'ambiguous_absent': 0, 'listed': len(removed), 'matched': 0,
-                   'unlisted': [], 'reasons': {}}
+                   'unlisted': [], 'reasons': {}, 'wanted': []}
         for x in removed:
             removal['reasons'][x['reason']] = removal['reasons'].get(x['reason'], 0) + 1
         pool = {}
@@ -568,6 +567,8 @@ def violations(items, c, f_items=None, removed=()):
                 removal['matched'] += 1
                 continue
             removal['unlisted'].append(S.clip(it.q.raw, 20))
+            # 작성자가 removed.json 에 그대로 옮길 짝(첫 판 문장 — 검사 출력에만, 기록기는 옮기지 않는다)
+            removal['wanted'].append({'number': it.q.raw, 'sentence': it.full_sentence})
             # 첫 판 문장은 싣지 않는다(공개된 적 없는 초안 — 설계 2026-11-20 §7.3). 숫자와 구역만
             zone = (it.detail.get('zone') or ('', ''))[0]
             out.append(f'적지 않은 삭제 [{zone}] {it.q.raw} — 첫 판에 있던 숫자가 사라졌는데 removed 목록에 없다')
@@ -635,6 +636,22 @@ def _zone_counts(items):
         z['unknown'] += it.cls == 'unknown'
         z['data'] += it.cls in ('data', 'level')
     return out
+
+
+_ASOF_RX = re.compile(r'\(\d{1,2}월 \d{1,2}일 기준\)')
+
+
+def _sent_key(text, a, e, in_sent, q, blocking):
+    """(가린 문장, 문장 안 몇째 수량) — 수정 이력 대응 열쇠. 막는 판에서는 코드가 찍은 기준일 「(M월 D일 기준)」을 문장
+    열쇠와 순번에서 뺀다 — 첫 판(채우기 전 초안)과 채운 최종본이 같은 문장으로 짝지어지게."""
+    if not blocking:
+        return S.mask_sentence(text, a, e, in_sent), next(i for i, x in enumerate(in_sent) if x is q)
+
+    def stamp(x):
+        return x.code == 'date' and x.start > 0 and _ASOF_RX.match(text, x.start - 1) is not None
+    kept = [x for x in in_sent if not stamp(x)]
+    key = _ASOF_RX.sub('', S.mask_sentence(text, a, e, kept))
+    return ' '.join(key.split()), next((i for i, x in enumerate(kept) if x is q), -1)
 
 
 def _asof_text(date):

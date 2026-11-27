@@ -30,6 +30,19 @@ def previous_row(rows, today):
     return row if isinstance(row.get('dates'), dict) else None
 
 
+def with_actions(bars, fetch):
+    """bars 의 배당·분할 칸(None)을 `fetch(티커들)` 로 채운다. 못 받으면 None 그대로 — 그 티커는 견주지 않는다."""
+    need = [t for t, v in bars.items() if v[2] is None]
+    if not need:
+        return bars
+    try:
+        acts = fetch(need)
+    except Exception as e:  # noqa: BLE001 — 알림 몫
+        print(f'::warning::이력 종가 비교: 배당·분할을 받지 못해 견주지 않는다 — {str(e)[:120]}')
+        acts = {}
+    return {t: (v[0], v[1], acts.get(t) if v[2] is None else v[2]) for t, v in bars.items()}
+
+
 def compare(row, bars, tickers):
     """→ (mismatches, 견준 수, 건너뛴 이유별 수). bars = {티커: (날짜들, 종가들, 배당·분할 날짜 집합)},
     tickers = {묶음: {이름: 티커}}."""
@@ -49,6 +62,9 @@ def compare(row, bars, tickers):
                 skip('일봉 없음')
                 continue
             dates, closes, actions = got
+            if actions is None:
+                skip('배당·분할 확인 못 함')
+                continue
             if d not in dates:
                 skip('같은 날짜 봉 없음')
                 continue
