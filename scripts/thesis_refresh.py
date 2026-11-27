@@ -3,7 +3,7 @@
 
     python3 scripts/thesis_refresh.py
 
-The publisher runs at 16:00 KST; the scheduled collection arrives 7.5-10 hours late and
+The publisher runs at 16:10 KST; the scheduled collection arrives 7.5-10 hours late and
 reads MU mid-session, and the old «force only when as_of is not today» rule fired on
 some days and not others (2026-11-23 investigation). So the publisher always asks for a
 fresh collection of its own. `consumer=publisher` is also what lets that run write the

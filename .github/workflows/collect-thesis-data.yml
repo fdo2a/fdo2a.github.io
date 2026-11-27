@@ -1,5 +1,5 @@
 name: Collect thesis watch data
-# 발행 점검(로컬 codex 자동화, 매일 16:00 KST)이 scripts/thesis_refresh.py 로 이 워크플로를
+# 발행 점검(로컬 codex 자동화, 매일 16:10 KST)이 scripts/thesis_refresh.py 로 이 워크플로를
 # consumer=publisher·request=<ID> 로 부르고 그 실행을 기다린다. 예약 실행은 백업이다 —
 # 2026-11 실측으로 7.5-10시간 늦게(다음날 01-04시 KST) 온다. 이름표는 시각이 아니라
 # 세션이라(scripts/thesis/fresh.py) 늦게 와도 같은 세션 행을 받고, 뉴스룸은 쓰지 않는다.

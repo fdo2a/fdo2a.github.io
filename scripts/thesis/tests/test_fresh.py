@@ -162,7 +162,7 @@ def test_calendar_gap_is_stale_not_a_crash():
 
 
 def test_replay_now_is_that_day_at_publish_time():
-    assert F.now_for('2026-11-20') == at('2026-11-20T16:00:00+09:00')
+    assert F.now_for('2026-11-20') == at('2026-11-20T16:10:00+09:00')
 
 
 def test_refresh_picks_the_run_carrying_its_request_id():

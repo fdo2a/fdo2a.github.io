@@ -27,7 +27,10 @@ NY = ZoneInfo('America/New_York')
 CUTOFF = {'kr': (SEOUL, time(16, 0)), 'us': (NY, time(17, 0))}
 MARKET = {'005930.KS': 'kr', '000660.KS': 'kr', 'MU': 'us'}
 STALE_AFTER = timedelta(hours=3)
-PUBLISH_AT = time(16, 0)          # the local publisher's daily slot (codex automation)
+# The local publisher's daily slot (codex automation). 16:10, not 16:00: on 2026-11-27 the
+# automation fired at 15:59 and collected at 15:59:49 — before the KR cut-off — so the
+# snapshot was labelled with the previous session and that day's numbers were deferred.
+PUBLISH_AT = time(16, 10)
 # Carried as one block: they all come from the same bar series.
 PRICE_FIELDS = ('price', 'price_date', 'observed_at', 'chg_20d_pct', 'pct_from_52w_high')
 
