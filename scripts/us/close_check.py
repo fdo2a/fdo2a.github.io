@@ -100,11 +100,33 @@ def find_posts(repo, mismatches, today, days=WINDOW_DAYS):
             continue
         records[d] = fills
     for m in mismatches:
-        m['posts'] = [{'post': f'posts/{d}.html', 'ref': f.get('ref'), 'text': f.get('text')}
-                      for d, fills in sorted(records.items()) for f in fills
-                      if isinstance(f, dict) and f.get('group') == m['group'] and f.get('asset') == m['asset']
-                      and f.get('date') == m['date']]
+        m['posts'] = []
+        for d, fills in sorted(records.items()):
+            for f in fills:
+                if not (isinstance(f, dict) and f.get('group') == m['group'] and f.get('asset') == m['asset']
+                        and f.get('date') == m['date']):
+                    continue
+                # 저장된 그 종가를 그대로 실은 칸(last, 값이 저장 값과 같다)과, 그 종가로 계산된 같은 날 칸(chg·pct)만.
+                # 같은 자산·날짜의 다른 필드는 이 종가와 무관하다(11/27 codex 구현 검토 1회차 8)
+                fld = f.get('field')
+                if fld == 'last' and _same(f.get('value'), m['stored']):
+                    kind = '저장 종가'
+                elif fld in CLOSE_DERIVED:
+                    kind = '이 종가로 계산'
+                else:
+                    continue
+                m['posts'].append({'post': f'posts/{d}.html', 'ref': f.get('ref'), 'text': f.get('text'), 'kind': kind})
     return unreadable
+
+
+CLOSE_DERIVED = ('chg', 'pct')
+
+
+def _same(a, b):
+    try:
+        return abs(float(a) - float(b)) <= 1e-9 * max(1.0, abs(float(b)))
+    except (TypeError, ValueError):
+        return False
 
 
 def report(today, mismatches, checked, skipped, unreadable):
@@ -113,7 +135,7 @@ def report(today, mismatches, checked, skipped, unreadable):
            'unreadable': unreadable}
     lines = []
     for m in mismatches:
-        used = ', '.join(f"{p['post']} 「{p['text']}」" for p in m.get('posts') or []) or \
+        used = ', '.join(f"{p['post']} 「{p['text']}」({p.get('kind', '저장 종가')})" for p in m.get('posts') or []) or \
             f'그 값을 쓴 글 없음(최근 {WINDOW_DAYS}일 기록 기준)'
         lines.append(f"::warning::이력 종가 불일치 {m['asset']} {m['date']}: 저장 {m['stored']:.4f} · 다시 받은 값 "
                      f"{m['fresh']:.4f} — {used}")

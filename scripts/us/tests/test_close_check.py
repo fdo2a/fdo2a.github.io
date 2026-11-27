@@ -40,18 +40,24 @@ def test_find_posts_uses_fills_and_says_what_it_could_not_read(tmp_path):
     for d in ('2026-11-24', '2026-11-25', '2026-11-20'):
         (tmp_path / 'posts' / f'{d}.html').write_text('x', encoding='utf-8')
     fills = [{'ref': 'md:indices.SP500.last', 'asset': 'S&P 500', 'group': 'indices', 'field': 'last',
-              'date': '2026-11-24', 'value': 7200.0, 'text': '7,200.00'}]
+              'date': '2026-11-24', 'value': 7200.0, 'text': '7,200.00'},
+             {'ref': 'md:indices.SP500.pct', 'asset': 'S&P 500', 'group': 'indices', 'field': 'pct',
+              'date': '2026-11-24', 'value': 0.25, 'text': '0.25%'},
+             {'ref': 'md:indices.SP500.last', 'asset': 'S&P 500', 'group': 'indices', 'field': 'last',
+              'date': '2026-11-24', 'value': 7199.0, 'text': '7,199.00'}]   # 다른 값 — 저장 종가가 아니다
     rec = {'gates': [{'name': 'check_number_sources', 'sources': {'fills': fills}}]}
     (tmp_path / 'verification' / 'us' / '2026-11-24.json').write_text(json.dumps(rec), encoding='utf-8')
     (tmp_path / 'verification' / 'us' / '2026-11-25.json').write_text(json.dumps({'gates': []}), encoding='utf-8')
     mism = [{'group': 'indices', 'asset': 'S&P 500', 'date': '2026-11-24', 'stored': 7200.0, 'fresh': 7210.5}]
     unreadable = CC.find_posts(str(tmp_path), mism, '2026-11-25')
-    assert mism[0]['posts'] == [{'post': 'posts/2026-11-24.html', 'ref': 'md:indices.SP500.last', 'text': '7,200.00'}]
+    assert mism[0]['posts'] == [
+        {'post': 'posts/2026-11-24.html', 'ref': 'md:indices.SP500.last', 'text': '7,200.00', 'kind': '저장 종가'},
+        {'post': 'posts/2026-11-24.html', 'ref': 'md:indices.SP500.pct', 'text': '0.25%', 'kind': '이 종가로 계산'}]
     assert unreadable == [{'post': 'posts/2026-11-20.html', 'why': '레포에 검증 기록이 없다'},
                           {'post': 'posts/2026-11-25.html', 'why': '기록에 fills 없음'}]
     row, lines = CC.report('2026-11-25', mism, 3, {}, unreadable)
     assert lines[0].startswith('::warning::이력 종가 불일치 S&P 500 2026-11-24: 저장 7200.0000 · 다시 받은 값 7210.5000')
-    assert 'posts/2026-11-24.html 「7,200.00」' in lines[0] and '조회 불가' in lines[1]
+    assert 'posts/2026-11-24.html 「7,200.00」(저장 종가)' in lines[0] and '조회 불가' in lines[1]
 
 
 def test_no_post_used_the_value():
