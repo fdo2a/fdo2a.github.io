@@ -365,3 +365,27 @@ def test_check_cli_exit_1_with_violations(w18, tmp_path):
     (w18 / 'removed.json').write_text('[{"number": "1"}]', encoding='utf-8')
     bad = subprocess.run(base + ['--fill-effective', ON], capture_output=True, text=True)
     assert bad.returncode == 2 and 'removed' in bad.stderr
+
+
+# ── 기록 ──
+
+@pytest.mark.parametrize('modname,stuck', [('record', 'indeterminate'), ('record2', 'incomplete')])
+def test_record_fails_on_violations_and_keeps_fills(w18, modname, stuck):
+    import importlib
+    R = importlib.import_module(f'verification.{modname}')
+    html = page(section('주식', f'<p>{span("md:indices.SP500.pct|abs", "0.23%")} 내렸고 나스닥은 0.25% 올랐다.</p>'), D18)
+    src = check(w18, D18, html)
+    spec = {'name': 'check_number_sources', 'json': True, 'result': 'sources'}
+    out = json.dumps({'skipped': False, 'warnings': [], 'violations': src['violations'], 'sources': src})
+    res = {}
+    assert R._classify(spec, 1, out, '', {'html': '/x/p.html', 'datadir': '/w', 'repo': '/r'}, res) == 'fail'
+    assert res['sources']['blocking'] is True and res['sources']['violations'] == 1
+    assert res['sources']['fills'] == [{'ref': 'md:indices.SP500.pct|abs', 'asset': 'S&P 500', 'group': 'indices',
+                                        'field': 'pct', 'date': D18, 'value': -0.2302, 'text': '0.23%'}]
+    assert res['items'][0].startswith('표식 없음 [세계 지수·업종] 0.25%')
+    # 끈 판(blocking 없음)에서 exit 1 이면 지금처럼 판정 불가
+    off = check(w18, D18, html, on=False)
+    out = json.dumps({'skipped': False, 'warnings': [], 'violations': ['x'], 'sources': off})
+    assert R._classify(spec, 1, out, '', {'html': '/x/p.html', 'datadir': '/w', 'repo': '/r'}, {}) == stuck
+    out = json.dumps({'skipped': False, 'warnings': [], 'violations': [], 'sources': src})
+    assert R._classify(spec, 1, out, '', {'html': '/x/p.html', 'datadir': '/w', 'repo': '/r'}, {}) == stuck
