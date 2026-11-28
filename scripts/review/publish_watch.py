@@ -63,7 +63,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ── 글 막힘(즉시 알림, 2026-11-22 — 설계 instant_telegram v1.4, spec 2026-11-22-prepub-hold.md 「글 막힘 알림」) ──
 # 대상 섹션. 발행 전 검토가 붙는 섹션이 생기면 여기에 한 줄을 더한다 — key·이름표·글 경로는 섹션 공통이다.
-HOLD_SECTIONS = ('us',)
+HOLD_SECTIONS = ('us', 'us-news')            # us-news = US 뉴스·산업 브리프 news/<D>.html (2026-11-28)
 HOLD_DIR = 'reviews/prepublish/{section}'
 HOLD_WINDOW = timedelta(days=7)               # 파일 이름의 날짜가 오늘(KST)에서 7일 안인 것만 본다
 HOLD_SHIP = '_hold_ship'                      # 이번 실행이 살아 있다고 확인한 막힘 사건 id — 상태 파일에 저장하지 않는다

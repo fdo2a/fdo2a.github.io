@@ -243,3 +243,15 @@ def test_a_private_reason_is_not_guessed_when_two_lines_share_the_recorded_quote
     out = capsys.readouterr().out
     assert '첫째 이유' not in out and '둘째 이유' not in out
     assert '원문에서 이유를 찾지 못한 지적 1건' in out
+
+
+def test_the_news_brief_request_id_reaches_the_private_result(monkeypatch):
+    """US 뉴스·산업 브리프의 요청 ID(us-news-…, 2026-11-28)도 비공개 결과를 읽는다 — 그 밖의 꼴은 부르지 않는다."""
+    calls = []
+
+    class R:
+        returncode = 1
+        stdout = ''
+    monkeypatch.setattr(d.subprocess, 'run', lambda cmd, **k: calls.append(cmd) or R())
+    assert d.fetch_review('us-news-2026-11-25-0123456789ab') is None and len(calls) == 1
+    assert d.fetch_review('kr-news-2026-11-25-0123456789ab') is None and len(calls) == 1

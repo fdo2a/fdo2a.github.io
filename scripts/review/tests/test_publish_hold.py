@@ -317,7 +317,7 @@ def test_the_text_comes_only_from_closed_tables(tmp_path, rec):
 def test_the_reason_table_is_exactly_the_eighteen_codes():
     assert set(W.HOLD_REASON) == set(P.NOT_RUN) | set(P.HOLD_CODES) and len(W.HOLD_REASON) == 18
     assert set(W.HOLD_NEXT_TEXT) == set(P.NEXT_VALUES)
-    assert W.HOLD_SECTIONS == ('us',)
+    assert W.HOLD_SECTIONS == ('us', 'us-news')          # us-news = US 뉴스·산업 브리프(2026-11-28)
 
 
 def test_the_kst_overflow_is_an_unknown_time_not_a_crash(tmp_path):
@@ -906,3 +906,53 @@ def test_damage_outside_the_hold_fields_is_still_a_corrupt_state(tmp_path, damag
     with pytest.raises(W.StateError) as err:
         W.loads_state(damage(raw))
     assert isinstance(err.value.__cause__, (ValueError, UnicodeDecodeError)) and not str(err.value).startswith('상태 파일 내용이')
+
+
+# ── US 뉴스·산업 브리프(2026-11-28, 설계 news_prepub v1.3 §2.7) ─────────────────────────────────────
+
+NEWS_KEY = f'hold:us-news:{D}'
+
+
+def put_news(repo, rec):
+    F.write(repo, f'reviews/prepublish/us-news/{D}.json', P._dumps(dict(rec, section='us-news')))
+    return F.commit(repo, f'Hold {D} news-industry brief')
+
+
+def test_a_news_hold_makes_its_own_event_beside_a_published_brief(tmp_path):
+    """브리프는 나갔고 뉴스 글만 세웠다 — 뉴스 막힘 사건 하나, 브리프 쪽 막힘은 없다."""
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', D)
+    st = base_state(repo)
+    put_news(repo, hold_rec('limit', 'retry', attempt=0))
+    run(st, repo, at(11, 11, 8))
+    ev = holds(st)
+    assert [e['key'] for e in ev] == [NEWS_KEY] and ev[0]['kind'] == 'missing'
+    assert ev[0]['text'].startswith('[글 막힘] US 뉴스·산업 11/10 · 자동 재시도 예정\n')
+    assert [e['id'] for e in shipped(st, at(11, 11, 8))] == [ev[0]['id']]
+    assert W._key_label(NEWS_KEY) == 'US 뉴스·산업 11/10 글 막힘'
+
+
+def test_publishing_the_held_news_brief_cancels_its_hold(tmp_path):
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', D)
+    st = base_state(repo)
+    put_news(repo, hold_rec())
+    run(st, repo, at(11, 11, 8))
+    F.write(repo, f'news/{D}.html', '<p>뉴스</p>')
+    F.commit(repo, f'Add {D} news-industry brief')
+    run(st, repo, at(11, 11, 9))
+    assert [e['status'] for e in holds(st)] == ['cancelled'] and st['holds'][NEWS_KEY]['live'] is False
+
+
+def test_the_news_hold_event_passes_the_worker_outbox_key_rule(tmp_path):
+    """알림 서버 계약(alerts-worker outbox.js validateOutbox): key 는 1-200 코드포인트, 제어 문자 없음, kind 는 missing.
+    Worker 의 HOLD_KEY_RE(`^hold:us:`)에는 들지 않는다 — 글 보고서가 대신하지 않고 이 글자 그대로 나간다."""
+    import re as _re
+    repo = F.init(tmp_path)
+    F.publish(repo, 'us', D)
+    st = base_state(repo)
+    put_news(repo, hold_rec())
+    run(st, repo, at(11, 11, 8))
+    (ev,) = [e for e in W.build_outbox(st, at(11, 11, 8))['events'] if e['key'] == NEWS_KEY]
+    assert 1 <= len(ev['key']) <= 200 and not _re.search(r'[\x00-\x1f\x7f]', ev['key']) and ev['kind'] == 'missing'
+    assert not _re.fullmatch(r'hold:us:(\d{4}-\d{2}-\d{2})', ev['key'])
