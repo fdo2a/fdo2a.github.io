@@ -1,0 +1,114 @@
+{
+ "schema_version": 1,
+ "market": "us",
+ "span": "daily",
+ "report_date": "2026-11-27",
+ "status": "none",
+ "reason": "analysis_unverified",
+ "retryable": true,
+ "attempts": 1,
+ "collected_at": "2026-11-28T03:20:52+00:00",
+ "cutoff_at": "2026-11-28T03:20:52+00:00",
+ "model": {
+  "pick": "sonnet",
+  "extract": "opus",
+  "verify": "opus"
+ },
+ "prompt_version": "2026-11-04.1",
+ "market_snapshot": {
+  "path": "data/market_data.json",
+  "commit": "bf99956390b5c6cfc3413c250d771121525ce3b5",
+  "sha256": "7902c0cb0d836a095f90c2c69363ae9218130a4be75a041b79f6b9ced2edd79b"
+ },
+ "counts": {
+  "harvest": 179,
+  "candidates": 1,
+  "articles": [
+   3
+  ]
+ },
+ "diagnostics": {
+  "runner": "local",
+  "runs": 1,
+  "tokens": {
+   "in": 28598,
+   "out": 9787
+  },
+  "discovery": "ok",
+  "hosts": {
+   "cnbc.com": "ok",
+   "aljazeera.com": "short",
+   "japantoday.com": "short",
+   "dw.com": "ok",
+   "economictimes.indiatimes.com": "out_of_window",
+   "euronews.com": "ok"
+  },
+  "notes": [],
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "5/5",
+   "pairs": "2/2",
+   "obs": "8/8"
+  },
+  "verified": {
+   "pairs": 2,
+   "claims": 4,
+   "obs": 7,
+   "strict_pairs": 1,
+   "same_statistic_dropped": 0,
+   "topic": true
+  },
+  "repair": {
+   "paths": [
+    "edges[0]",
+    "edges[1]",
+    "edges[2]",
+    "memo[0]",
+    "memo[1]",
+    "memo[2]",
+    "structure",
+    "variables[1]",
+    "worry.moderate[0]",
+    "worry.most[0]",
+    "worry.unlikely[0]"
+   ],
+   "outcome": "skipped_ratio",
+   "remaining": [
+    "structure:unverified",
+    "structure:dangling",
+    "variables[1]:dangling",
+    "edges[0]:unverified",
+    "edges[1]:unverified",
+    "edges[2]:unverified",
+    "edges[2]:dangling",
+    "memo[0]:unverified",
+    "memo[1]:dangling",
+    "memo[2]:unverified",
+    "worry.most[0]:dangling",
+    "worry.moderate[0]:dangling",
+    "worry.unlikely[0]:dangling"
+   ]
+  }
+ },
+ "event": {
+  "topic_ko": "쿠웨이트 이탈리아인 사망 사건의 책임 공방과 걸프 긴장",
+  "query": "kuwait iran attack",
+  "trigger": []
+ },
+ "problems": [
+  "structure:unverified",
+  "structure:dangling",
+  "variables[1]:dangling",
+  "edges[0]:unverified",
+  "edges[1]:unverified",
+  "edges[2]:unverified",
+  "edges[2]:dangling",
+  "memo[0]:unverified",
+  "memo[1]:dangling",
+  "memo[2]:unverified",
+  "worry.most[0]:dangling",
+  "worry.moderate[0]:dangling",
+  "worry.unlikely[0]:dangling"
+ ],
+ "content_hash": "aa5528e5392da6ca"
+}
