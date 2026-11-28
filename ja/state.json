@@ -351,6 +351,7 @@
     "japan/data/news/2026-11-24.json": "0df5f091948d40186ef5237c2891f06b94644cd6",
     "japan/data/news/2026-11-25.json": "055821fea03c69fb2a4dc1e633c7f2bcd326f4d4",
     "japan/data/news/2026-11-26.json": "4f6acc9162107e9cf6b7bc4f38c968db76f74e3d",
+    "japan/data/news/2026-11-27.json": "476147ac488124238a247398d1d49a74e72d0333",
     "japan/data/news/daily/2026-11-13.json": "b4980a1ec3912a9af019a695e6aeaeda61725a19",
     "japan/data/news/daily/2026-11-16.json": "ae8f073e188ebf4dc87bda11d4e45cf12a6f1380",
     "japan/data/news/daily/2026-11-17.json": "435e14c97bb3650937ea1c677966fe698501041b",
@@ -365,11 +366,11 @@
    },
    "reason": "확인 안 된 인명: 우에다",
    "renderer": "r2",
-   "rounds": 2,
+   "rounds": 3,
    "source_blob": "9b1685eb8642c65e2e88228c66c8036b5f8b11d1",
    "status": "held",
    "text_hash": "4565b23b48f4f8a6",
-   "updated": "2026-11-28T12:25:17+09:00"
+   "updated": "2026-11-28T12:56:39+09:00"
   },
   "news/2026-11-16.html": {
    "deps": {
