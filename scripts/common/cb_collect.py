@@ -115,6 +115,14 @@ def write_all(outdir, report_date, rows, extra_texts, seen, statements, diff, fa
     """산출 파일을 쓴다. `rows` 의 원문은 `<key>.txt` 로, events.json 에는 원문을 뺀 행만."""
     os.makedirs(outdir, exist_ok=True)
     earlier = _earlier(outdir, report_date)
+    # 같은 날 앞 실행이 계산한 변경점도 지킨다 — 뒤 실행이 결정문을 못 읽어 diff 를 못 냈을 뿐이면 앞 판이 맞다
+    # (codex 구현 검토 1회차 #5: 17:00 성공 → 17:30 RSS 실패에서 원문은 남고 변경점 블록 의무만 사라졌다).
+    prev = load(os.path.join(outdir, 'events.json'))
+    if isinstance(prev, dict) and prev.get('report_date') == report_date:
+        if diff is None:
+            diff = prev.get('diff')
+        if outlook_diff is None:
+            outlook_diff = prev.get('outlook_diff')
     keep = {k for k, e in earlier.items()
             if _got(e) > max((_got(r) for r in rows if r['key'] == k), default=0)}
     for row in rows:

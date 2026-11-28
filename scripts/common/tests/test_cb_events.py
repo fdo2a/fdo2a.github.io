@@ -128,3 +128,22 @@ def test_same_day_rerun_keeps_text_the_earlier_run_received(tmp_path):
     # 다른 날 판은 지키지 않는다
     book = CC.write_all(out, '2026-11-27', [part], {}, {}, [], None, [], 's')
     assert [s['ok'] for s in book['events'][0]['sources']] == [True, False]
+
+
+def test_same_day_rerun_keeps_diff_the_earlier_run_computed(tmp_path):
+    # codex 구현 검토 1회차 #5 — 17:00 결정문 수집이 변경점을 계산하고 17:30 RSS 가 실패하면
+    # 원문 행은 지켜지는데 diff 는 None 으로 덮여 변경점 블록이 요구되지 않았다.
+    from common import cb_collect as CC
+    out = str(tmp_path)
+    row = CC.event_row('bok_decision', '2026-11-26', '2026-11-26', 't', 'u',
+                       [CC.source('primary', '결정문', 'a', '결정문 글', 'ok')], {}, '2026-11-26')
+    diff = {'changed': [{'para': 2, 'before': '앞', 'after': '뒤'}]}
+    CC.write_all(out, '2026-11-26', [row], {}, {}, [], diff, [], 's', outlook_diff={'x': 1})
+    book = CC.write_all(out, '2026-11-26', [], {}, {}, [], None, ['decision:rss'], 's')
+    assert book['diff'] == diff and book['outlook_diff'] == {'x': 1}
+    # 뒤 실행이 새로 계산한 diff 는 그대로 쓴다
+    book = CC.write_all(out, '2026-11-26', [row], {}, {}, [], {'changed': []}, [], 's')
+    assert book['diff'] == {'changed': []}
+    # 다른 날 판의 diff 는 이어받지 않는다
+    book = CC.write_all(out, '2026-11-27', [], {}, {}, [], None, [], 's')
+    assert book['diff'] is None
