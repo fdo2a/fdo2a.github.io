@@ -14,7 +14,12 @@ import subprocess
 
 import review_gate as gate
 
-POST_PATH = {'us': 'posts/{date}.html', 'kr': 'kr/posts/{date}.html'}
+POST_PATH = {'us': 'posts/{date}.html', 'kr': 'kr/posts/{date}.html', 'us-news': 'news/{date}.html'}
+# 근거 폴더 — 일간은 발행 뒤 검토와 같은 표(`review_gate.SNAPSHOT`). US 뉴스·산업 브리프(2026-11-28)는 일간과 같은 data/ 다.
+# review_gate.SNAPSHOT 에는 넣지 않는다 — 발행 뒤 러너가 그 표의 열쇠를 시장으로 읽는다.
+DATA_DIR = dict(gate.SNAPSHOT, **{'us-news': 'data'})
+# 뉴스 글 — 작업 공간에서 작성자가 읽은 두 파일. 묶기 전에 data_commit 의 판과 바이트를 맞댄다(설계 v1.3 §2.3).
+NEWS_WS_FILES = ('news/{date}.json', 'market_data.json')
 DATE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 
 
@@ -83,6 +88,42 @@ PREPUB_STYLE_PROMPT = """
 """
 
 
+# US 뉴스·산업 브리프(설계 news_prepub v1.3 §2.5) — 정확성만 묻는다. 이 글에는 윤문을 하지 않는다(ORCHESTRATOR STEP 3.5-3).
+# 답 끝 표식은 러너가 요구한다(review-runner run_review.FINDINGS_HEAD — 없으면 not_reviewed) — 그 아래 「없음」 한 줄.
+NEWS_PROMPT = """읽기 전용으로 검토만 해 줘. 파일을 고치지 말고 지적만 목록으로 돌려줘.
+
+대상: `{post}` (한국어 미국 증시 뉴스·산업 브리프 — 발행 전 초안)
+근거 데이터: 같은 디렉터리의 `data/` — 작성자가 읽은 판과 같은 커밋에서 그대로 꺼낸 것이다.
+- `data/news/{date}.json` — 기사마다 영문 제목(`title`)·게시 시각(`published`)·매체(`source`)·한국어 요약(`summary_ko`).
+  글의 기사 블록 `data-news="<guid>"` 는 그 guid 기사의 `summary_ko` 를 옮긴 것이다.
+- `data/telegram/{date}.json` — 텔레그램 채널 글. 「증권사 견해·시장 의견」 섹션의 근거다.
+- `data/market_data.json` — `memory`·`ai_infra`·`mlcc`·`price_context`. 메모리/DRAM·AI 인프라·MLCC 세 섹션의 표·수치의 근거다.
+기사 본문은 없다 — 요약이 원문과 맞는지는 볼 수 없으니 묻지 않는다.
+
+정확성만 본다. 세 가지다.
+1. 기사 문장의 날짜·요일·인명·사명·단위·수치가 **요약 안에서**, 그리고 **영문 제목·게시 시각·같은 날 다른 기사·텔레그램과**
+   어긋나는 곳. 예: 게시 시각보다 뒤의 날짜에 일이 이미 일어났다고 쓴 곳, 영문 제목의 이름과 다른 음역, 자릿수가 어긋난
+   단위, 「연말」처럼 기준일이 바뀐 곳, 깨진 글자.
+2. 산업 세 섹션의 표·투자 관점과 잇는 말의 수치·날짜가 `data/market_data.json` 과 어긋나는 곳 — 다른 날의 값을 「이날」로
+   쓴 곳 포함.
+3. 「증권사 견해·시장 의견」 섹션에서 말의 주인이 근거와 다른 곳, 근거 없는 원인 단정.
+
+문체·번역투·문장 구조는 보지 마. 레이아웃·HTML·CSS도 보지 마.
+지적마다 «위치(섹션과 기사 블록의 guid 또는 첫 문장) / 무엇이 틀렸나 / 무엇이 맞나(근거 파일과 값)»으로.
+지적이 없으면 목록 자리에 「지적 없음」이라고만 적는다.
+답의 **맨 끝**에 `{head}` 한 줄을 쓰고, 그 아래 한 줄에 `없음` 이라고만 쓴다 — 이 글은 문체 지적을 묻지 않는다.
+"""
+
+
+def news_prompt(post_path, date, notes=False):
+    """뉴스 글 — 정확성만. 리서치 노트가 있으면(같은 런) 그 자리를 알린다."""
+    body = NEWS_PROMPT.format(post=post_path, date=date, head=gate.STYLE_FINDINGS_HEAD)
+    if notes:
+        head, tail = body.split('\n\n정확성만 본다.', 1)
+        body = head + '\n' + NOTES_LINE + '\n정확성만 본다.' + tail
+    return body
+
+
 def prompt(section, post_path, notes=False):
     """발행 뒤 검토와 같은 사실 검토 + 발행 전 문체 지적(확신도·번역투·명료성). 리서치 노트가 있으면 그 자리를 알린다."""
     body = gate.PROMPT.format(post=post_path, market=gate.MARKET_NAME.get(section, section),
@@ -94,19 +135,49 @@ def prompt(section, post_path, notes=False):
         head=gate.STYLE_FINDINGS_HEAD)
 
 
-def build(root, section, date, html_path, out_dir, rid=None, notes_path=None, data_commit=None):
+def _blob(root, commit, path):
+    """`commit` 의 `path` 바이트 그대로 — 없으면 None. `_git` 은 글자로 읽고 다듬어서 쓰지 않는다."""
+    if subprocess.run(['git', '-C', root, 'cat-file', '-e', f'{commit}:{path}'], capture_output=True).returncode:
+        return None
+    out = subprocess.run(['git', '-C', root, 'cat-file', 'blob', f'{commit}:{path}'], capture_output=True)
+    if out.returncode:
+        raise BundleError(f'git cat-file 실패: {path}')
+    return out.stdout
+
+
+def _same_as_commit(root, commit, data_dir, workspace, date):
+    """뉴스 글 — 작업 공간의 두 파일이 근거 커밋의 판과 바이트까지 같은가(설계 v1.3 §2.3, 2회차 #2).
+
+    다르면 검토기가 작성자가 읽은 것과 다른 자료와 맞댄다 — 조용히 넘기지 않고 묶지 않는다. 일어난 적은 없다.
+    두 쪽 다 없으면 같다(그날 뉴스 수집분이 없다), 한쪽만 없으면 다르다.
+    """
+    for rel in NEWS_WS_FILES:
+        rel = rel.format(date=date)
+        ws = os.path.join(workspace, rel)
+        mine = open(ws, 'rb').read() if os.path.isfile(ws) else None
+        if mine != _blob(root, commit, f'{data_dir}/{rel}'):
+            raise BundleError(f'작업 공간 {rel} 이 근거 커밋 {commit[:8]} 의 판과 다르다 — 검토기가 다른 자료와 맞댄다')
+
+
+def build(root, section, date, html_path, out_dir, rid=None, notes_path=None, data_commit=None, workspace=None):
     """→ manifest dict. `out_dir` 에 manifest.json·post.html·prompt.txt(·research_notes.md)를 쓴다.
 
     `notes_path` 는 작성자가 읽은 워크스페이스의 `research_notes.md` — 검토자가 같은 근거를 보게 한다(codex 구현 #2).
     `data_commit` 은 늦은 글만(2026-11-27) — 작업 공간을 꺼낸 그날 수집 커밋 C(`scripts/ci/late_workspace.py`). HEAD 는
     다음 날 자료라 검토기가 맞는 숫자를 오류로 짚는다. 작업 공간이 C 의 `data/` 를 그대로 푼 것이라 HEAD 대조는 하지 않는다.
+    뉴스 글(`us-news`)은 `data_commit`(브리프 발행 커밋 P, 늦은 글은 C)과 `workspace`(작성자가 읽은 작업 공간)가 둘 다
+    있어야 하고, 작업 공간의 `news/<D>.json`·`market_data.json` 을 그 커밋의 판과 맞댄다.
     """
     if section not in POST_PATH or not DATE.match(date or ''):
         raise BundleError(f'모르는 시장이나 날짜: {section} {date}')
-    data_dir = gate.SNAPSHOT[section]
+    data_dir = DATA_DIR[section]
+    if section == 'us-news' and not (data_commit and workspace):
+        raise BundleError('뉴스 글은 근거 커밋(--data-commit)과 작업 공간(--datadir)이 둘 다 있어야 한다')
     if data_commit:
         commit = _git(root, 'rev-parse', '--verify', f'{data_commit}^{{commit}}')
         _git(root, 'cat-file', '-e', f'{commit}:{data_dir.rstrip("/")}')
+        if section == 'us-news':
+            _same_as_commit(root, commit, data_dir.rstrip('/'), workspace, date)
     else:
         commit = _git(root, 'rev-parse', 'HEAD')
         if _git(root, 'status', '--porcelain', '--', data_dir):
@@ -120,7 +191,8 @@ def build(root, section, date, html_path, out_dir, rid=None, notes_path=None, da
         fh.write(html)
     gate._drop_contested(post)   # 발행 뒤 검토와 같게 — 쟁점 섹션은 별도 검증을 거친 생성물
     entries = [('post.html', open(post, 'rb').read(), False),
-               ('prompt.txt', prompt(section, post_path, notes=bool(notes_path)).encode('utf-8'), True)]
+               ('prompt.txt', (news_prompt(post_path, date, notes=bool(notes_path)) if section == 'us-news'
+                               else prompt(section, post_path, notes=bool(notes_path))).encode('utf-8'), True)]
     if notes_path:
         with open(notes_path, 'rb') as fh:
             entries.append(('research_notes.md', fh.read(), True))

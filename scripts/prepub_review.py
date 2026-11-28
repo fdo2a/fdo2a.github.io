@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """발행 전 codex 검토 — 루틴이 부르는 진입점(절차: `.claude/PREPUB_REVIEW.md`).
 
-  prepub_review.py submit --section us|kr --date D --html H --notes research_notes.md --out DIR [--deadline-min 25]
+  prepub_review.py submit --section us|kr|us-news --date D --html H --notes research_notes.md --out DIR [--deadline-min 25]
+      [--data-commit C] [--datadir WS]   (us-news 는 둘 다 — 브리프 발행 커밋 P(늦은 글은 C)와 작업 공간)
       묶음 → review-drafts push → 비공개 워크플로 기동. `prepub: submitted rid=…` (exit 0) 또는
       `prepub: fallback submit_failed …` (exit 10). 마감 시각(절대)을 DIR/status.json 에 적는다.
   prepub_review.py wait --dir DIR [--minutes 9]
@@ -20,6 +21,8 @@
   prepub_review.py record --dir DIR --html posts/D.html --section us|kr --date D [--style-applied N] …
       → reviews/prepublish/<section>/<date>.json (발행 커밋에 함께 넣는다). **facts-done 이 없거나 올릴 파일이 판정을 마친
       판(또는 봉인한 판)과 다르면 exit 10** — 쓰지 않는다.
+  prepub_review.py check-fixes --fixes WS/news_fixes.json --news WS/news/D.json --html H
+      뉴스 글(us-news)만 — 받아들인 요약 정정이 작업 공간 요약과 글 두 쪽에 다 들어갔나. exit 0 이어야 facts-done.
   prepub_review.py hold --dir DIR --section us|kr --date D [--state …] [--html H] [--push]
       글을 세운다 — 닫힌 칸만 든 보류 기록을 쓰고, 잠금을 어떻게 놓을지 마지막 줄로 알린다:
       `lock=release`(검토가 아예 돌지 않았다 — 재시도가 처음부터 다시 써도 잃는 것이 없다) ·
@@ -41,6 +44,7 @@ from prepub import submit as submit_mod  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FALLBACK = 10
 WAITING = 11
+SECTIONS = ('us', 'kr', 'us-news')    # us-news = US 뉴스·산업 브리프 news/<D>.html (2026-11-28)
 
 
 def _dumps(obj):
@@ -67,6 +71,8 @@ def cmd_submit(a):
         notes = a.notes if a.notes and os.path.isfile(a.notes) else None
         status['notes'] = bool(notes)
         kw = {'data_commit': a.data_commit} if a.data_commit else {}
+        if a.datadir:
+            kw['workspace'] = a.datadir                # 뉴스 글 — 작업 공간 두 파일을 근거 커밋과 맞댄다
         man = bundle_mod.build(ROOT, a.section, a.date, a.html, os.path.join(a.out, 'bundle'),
                                notes_path=notes, **kw)
         status['request_id'] = rid = man['request_id']
@@ -344,7 +350,7 @@ HOLD_ORDER = HOLD_ORDER_M + ('attempt', 'last_counted')            # 11/22 선�
 HOLD_ORDER_N = HOLD_ORDER + ('next',)
 HOLD_KEYS_M, HOLD_KEYS, HOLD_KEYS_N = frozenset(HOLD_ORDER_M), frozenset(HOLD_ORDER), frozenset(HOLD_ORDER_N)
 NEXT_VALUES = ('retry', 'person')                  # retry = lock=release, person = lock=hold:…
-RID_RE = __import__('re').compile(r'[a-z]{2}-[0-9-]{10}-[0-9a-f]{12}')
+RID_RE = __import__('re').compile(r'(?:[a-z]{2}|us-news)-[0-9-]{10}-[0-9a-f]{12}')   # us-news = bundle.request_id('us-news', …)
 STAMP_RE = __import__('re').compile(r'[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z')
 
 
@@ -492,7 +498,7 @@ def cmd_hold(a):
     pushed = 'skipped'
     if a.push:
         try:
-            if push_record(ROOT, os.path.relpath(path, ROOT), f'Hold {a.date} brief (prepub {state})', build=build):
+            if push_record(ROOT, os.path.relpath(path, ROOT), f"Hold {a.date} {'news-industry brief' if a.section == 'us-news' else 'brief'} (prepub {state})", build=build):
                 pushed = 'ok'
         except Exception as exc:
             # 받기·올리기의 어떤 실패든(git 시간 초과·실행 실패 포함) 여기서 멈추면 재료 저장과 lock= 줄에 닿지 못한다
@@ -592,6 +598,67 @@ def push_record(root, rel, message, tries=3, run=None, build=None):
     raise RecordPushError('push')
 
 
+def _squeeze(text):
+    import re
+    return re.sub(r'\s+', '', text or '')
+
+
+def cmd_check_fixes(a):
+    """받아들인 요약 정정이 요약과 글 **두 쪽에** 다 들어갔나(설계 news_prepub v1.3 §2.6) — 뉴스 글의 facts-done 앞.
+
+    `--fixes` 는 한 줄에 하나 `{"guid", "wrong", "right"}`(루틴이 요약에서 온 오류를 받아들일 때마다 적는다). 줄마다
+    작업 공간 요약(`summary_ko`, 그 guid)과 글의 `data-news="<guid>"` 블록 둘 다에 틀린 글자가 없고 맞는 글자가 있어야 한다.
+    블록을 뺀 기사는 요약만 본다. 글자는 공백을 뺀 채 견준다 — 블록 글자를 `check_news` 와 같은 읽기(`news_gate._read`,
+    출처 줄 `.sub` 제외)로 모으기 때문이다. 파일이 없으면 받아들인 정정이 없다. 어긋나거나 읽을 수 없는 줄 → exit 10.
+    """
+    from us import news_gate
+    rows = []
+    if os.path.isfile(a.fixes):
+        with open(a.fixes, encoding='utf-8') as fh:
+            for n, line in enumerate(fh, 1):
+                if not line.strip():
+                    continue
+                try:
+                    row = json.loads(line)
+                    if not (isinstance(row, dict) and all(isinstance(row.get(k), str) for k in ('guid', 'wrong', 'right'))):
+                        raise ValueError('guid·wrong·right 문자열이 아니다')
+                except ValueError as exc:
+                    print(f'prepub: fallback fixes_unreadable line {n} — {str(exc)[:80]}')
+                    return FALLBACK
+                rows.append((n, row))
+    try:
+        with open(a.news, encoding='utf-8') as fh:
+            items = (json.load(fh) or {}).get('items') or []
+        with open(a.html, encoding='utf-8') as fh:
+            blocks = [it for it in news_gate._read(fh.read()).items if it.get('guid')]
+    except (OSError, ValueError, AttributeError) as exc:
+        print(f'prepub: fallback fixes_unreadable — {str(exc)[:120]}')
+        return FALLBACK
+    summary = {}
+    for it in items:                                 # news_gate.check 의 known 과 같다 — 같은 guid 는 첫 기사
+        if isinstance(it, dict) and isinstance(it.get('guid'), str):
+            summary.setdefault(it['guid'], it.get('summary_ko') or '')
+    bad = []
+    for n, row in rows:
+        wrong, right, guid = _squeeze(row['wrong']), _squeeze(row['right']), row['guid']
+        if guid not in summary:
+            bad.append(f'line {n} guid {guid[:40]} — 작업 공간 요약에 없는 기사')
+            continue
+        places = [('summary', _squeeze(summary[guid]))]
+        places += [('post', b['text']) for b in blocks if b['guid'] == guid]
+        for where, text in places:
+            if not wrong or wrong in text or not right or right not in text:
+                bad.append(f'line {n} guid {guid[:40]} — {where}: '
+                           + ('틀린 글자가 남았다' if wrong and wrong in text else '맞는 글자가 없다'))
+    if bad:
+        for b in bad:
+            print(f'prepub: fix {b}')
+        print(f'prepub: fallback fixes_mismatch {len(bad)} — 고친 요약과 글을 다시 맞추거나 §5 recovery_needed')
+        return FALLBACK
+    print(f'prepub: fixes ok {len(rows)}')
+    return 0
+
+
 def cmd_record(a):
     import hashlib
     status = _status(a.dir)
@@ -656,21 +723,24 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog='prepub_review.py')
     sub = ap.add_subparsers(dest='cmd', required=True)
     p = sub.add_parser('submit')
-    p.add_argument('--section', required=True, choices=('us', 'kr'))
+    p.add_argument('--section', required=True, choices=SECTIONS)
     p.add_argument('--date', required=True)
     p.add_argument('--html', required=True)
     p.add_argument('--notes', default=None, help='작성자가 읽은 research_notes.md')
     p.add_argument('--out', required=True)
     p.add_argument('--deadline-min', type=int, default=25)
     p.add_argument('--data-commit', default=None,
-                   help='늦은 글만 — 근거를 꺼낼 그날 수집 커밋(late_workspace.py 가 찍은 C). 없으면 HEAD')
+                   help='늦은 글 — 근거를 꺼낼 그날 수집 커밋(late_workspace.py 가 찍은 C). 없으면 HEAD. '
+                        '뉴스 글(us-news)은 늘 — 브리프 발행 커밋 P, 늦은 글은 C')
+    p.add_argument('--datadir', default=None,
+                   help='뉴스 글(us-news)만 — 작성자가 읽은 작업 공간. news/<D>.json·market_data.json 을 근거 커밋과 맞댄다')
     p = sub.add_parser('wait')
     p.add_argument('--dir', required=True)
     p.add_argument('--minutes', type=float, default=9)
     p = sub.add_parser('split')
     p.add_argument('--review', required=True)
     p.add_argument('--html', required=True)
-    p.add_argument('--section', required=True, choices=('us', 'kr'))
+    p.add_argument('--section', required=True, choices=SECTIONS)
     p.add_argument('--date', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--after-fixes', action='store_true',
@@ -683,7 +753,7 @@ def main(argv=None):
     p = sub.add_parser('record')
     p.add_argument('--dir', required=True)
     p.add_argument('--html', required=True, help='실제로 올릴 파일(posts/[DATE].html) — 판정을 마친 판과 같아야 한다')
-    p.add_argument('--section', required=True, choices=('us', 'kr'))
+    p.add_argument('--section', required=True, choices=SECTIONS)
     p.add_argument('--date', required=True)
     for k in ('style-applied', 'style-rejected', 'skeleton-rejected', 'checker-rejected'):
         p.add_argument(f'--{k}', type=int, default=0)
@@ -694,11 +764,15 @@ def main(argv=None):
     p.add_argument('--rejected', type=int, default=0)
     p = sub.add_parser('hold')
     p.add_argument('--dir', required=True)
-    p.add_argument('--section', required=True, choices=('us', 'kr'))
+    p.add_argument('--section', required=True, choices=SECTIONS)
     p.add_argument('--date', required=True, type=_iso_date)   # 공개 기록의 경로·칸·커밋 제목에 실린다
     p.add_argument('--state', default=None, choices=('recovery_needed', 'style_abort', 'stale_html', 'mark_failed'))
     p.add_argument('--html', default=None, help='지금 고치던 판 — 판정을 시작한 글이면 비공개 레포에 함께 둔다')
     p.add_argument('--push', action='store_true', help='보류 기록 한 파일만 든 커밋을 origin/main 위에 지어 민다')
+    p = sub.add_parser('check-fixes')
+    p.add_argument('--fixes', required=True, help='<ws>/news_fixes.json — 한 줄에 {"guid","wrong","right"} 하나')
+    p.add_argument('--news', required=True, help='작업 공간 news/<D>.json(고친 요약)')
+    p.add_argument('--html', required=True, help='판정을 마친 뉴스 글')
     p = sub.add_parser('seal')
     p.add_argument('--dir', required=True)
     p.add_argument('--html', required=True)
@@ -706,7 +780,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     return {'submit': cmd_submit, 'wait': cmd_wait, 'split': cmd_split,
             'merge-verdicts': cmd_merge, 'record': cmd_record, 'facts-done': cmd_facts_done,
-            'hold': cmd_hold, 'seal': cmd_seal}[a.cmd](a)
+            'hold': cmd_hold, 'seal': cmd_seal, 'check-fixes': cmd_check_fixes}[a.cmd](a)
 
 
 if __name__ == '__main__':

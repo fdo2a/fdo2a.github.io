@@ -119,3 +119,119 @@ def test_the_post_publish_prompt_is_unchanged():
     # 발행 뒤 검토(맥 러너)는 명료성 분류를 묻지도 읽지도 않는다
     assert '용어' not in gate.STYLE_KINDS and '「지시 대상 불명확」' not in text
     assert gate.STYLE_FINDINGS_MAX == 8
+
+
+# ── US 뉴스·산업 브리프(2026-11-28, 설계 news_prepub v1.3) ─────────────────────────────────────────
+
+D = '2026-11-25'
+NEWS = '{"report_date": "2026-11-25", "items": [{"guid": "g1", "summary_ko": "요약"}]}'
+
+
+@pytest.fixture
+def news_repo(tmp_path):
+    """브리프 발행 커밋 P 의 꼴 — data/market_data.json·data/news/<D>.json·data/telegram/<D>.json."""
+    r = tmp_path / 'nrepo'
+    (r / 'data/news').mkdir(parents=True)
+    (r / 'data/telegram').mkdir(parents=True)
+    (r / 'data/market_data.json').write_text('{"mlcc": 1}\n')
+    (r / 'data/news' / f'{D}.json').write_text(NEWS)
+    (r / 'data/telegram' / f'{D}.json').write_text('{}')
+    git(tmp_path, 'init', '-q', str(r))
+    git(r, 'add', '-A')
+    git(r, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'brief')
+    return r, git(r, 'rev-parse', 'HEAD')
+
+
+def workspace(tmp_path, market='{"mlcc": 1}\n', news=NEWS):
+    ws = tmp_path / 'ws'
+    (ws / 'news').mkdir(parents=True, exist_ok=True)
+    (ws / 'market_data.json').write_text(market)
+    if news is None:
+        (ws / 'news' / f'{D}.json').unlink(missing_ok=True)
+    else:
+        (ws / 'news' / f'{D}.json').write_text(news)
+    return ws
+
+
+def news_draft(tmp_path):
+    return draft(tmp_path, '<html><body><div class="news-item" data-news="g1"><p>요약</p></div></body></html>')
+
+
+def test_a_news_brief_bundle_names_its_post_and_the_brief_commit(news_repo, tmp_path):
+    r, p = news_repo
+    man = bundle.build(str(r), 'us-news', D, news_draft(tmp_path), tmp_path / 'b', data_commit=p,
+                       workspace=workspace(tmp_path))
+    assert man['post_path'] == f'news/{D}.html' and man['data_commit'] == p and man['section'] == 'us-news'
+    assert man['request_id'].startswith(f'us-news-{D}-')
+    import re
+    assert re.fullmatch(r'(us|kr|jp|us-news)-\d{4}-\d{2}-\d{2}-[0-9a-f]{12}', man['request_id'])
+
+
+def test_the_news_prompt_asks_only_for_accuracy_and_ends_with_the_empty_style_marker(news_repo, tmp_path):
+    r, p = news_repo
+    bundle.build(str(r), 'us-news', D, news_draft(tmp_path), tmp_path / 'b', data_commit=p,
+                 workspace=workspace(tmp_path))
+    text = (tmp_path / 'b/prompt.txt').read_text(encoding='utf-8')
+    assert f'news/{D}.html' in text and '뉴스·산업 브리프' in text
+    for src in (f'data/news/{D}.json', f'data/telegram/{D}.json', 'data/market_data.json', 'summary_ko'):
+        assert src in text
+    # 문체 분류를 묻지 않는다 — 발행 전 문체 프롬프트가 붙지 않는다
+    for kind in bundle.PREPUB_KINDS:
+        assert f'「{kind}」' not in text
+    assert '지적 없음' in text and '무엇이 맞나' in text
+    # 러너가 답에 표식이 없으면 버린다(run_review FINDINGS_HEAD) — 표식 한 줄과 「없음」을 쓰게 한다
+    assert gate.STYLE_FINDINGS_HEAD in text and '`없음`' in text.split(gate.STYLE_FINDINGS_HEAD, 1)[1]
+
+
+def test_the_daily_prompts_are_unchanged():
+    import hashlib
+    want = {('us', False): 'a6b9372a82596cba36c7f5179c69d96c0b4e0c254f61a10cb1dec58171d5cf31',
+            ('us', True): 'af0941221fd0d743caa52792bdcc0284f0df7ac2a9b061ffcc3a9beb7cf93072'}
+    for (sec, notes), sha in want.items():
+        assert hashlib.sha256(bundle.prompt(sec, 'posts/2026-11-07.html', notes=notes).encode()).hexdigest() == sha
+    assert hashlib.sha256(bundle.prompt('kr', 'kr/posts/2026-11-07.html', notes=True).encode()).hexdigest() == \
+        'cd36052fc1021308afa30a3b8aab246e4d6677cff863b170eac436d505311549'
+
+
+@pytest.mark.parametrize('kw', [{'market': '{"mlcc": 2}\n'}, {'news': NEWS + ' '}, {'news': None}])
+def test_a_workspace_that_differs_from_the_evidence_commit_is_not_bundled(news_repo, tmp_path, kw):
+    """§2.3 — 작업 공간 두 파일이 data_commit 의 판과 바이트가 다르면 묶지 않는다(한쪽만 없어도 다르다)."""
+    r, p = news_repo
+    with pytest.raises(bundle.BundleError):
+        bundle.build(str(r), 'us-news', D, news_draft(tmp_path), tmp_path / 'b', data_commit=p,
+                     workspace=workspace(tmp_path, **kw))
+
+
+def test_a_day_without_a_news_file_on_both_sides_is_bundled(tmp_path):
+    r = tmp_path / 'nrepo'
+    (r / 'data').mkdir(parents=True)
+    (r / 'data/market_data.json').write_text('{"mlcc": 1}\n')
+    git(tmp_path, 'init', '-q', str(r))
+    git(r, 'add', '-A')
+    git(r, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'brief')
+    p = git(r, 'rev-parse', 'HEAD')
+    man = bundle.build(str(r), 'us-news', D, news_draft(tmp_path), tmp_path / 'b', data_commit=p,
+                       workspace=workspace(tmp_path, news=None))
+    assert man['data_commit'] == p
+
+
+def test_a_news_bundle_needs_the_evidence_commit_and_the_workspace(news_repo, tmp_path):
+    r, p = news_repo
+    with pytest.raises(bundle.BundleError):
+        bundle.build(str(r), 'us-news', D, news_draft(tmp_path), tmp_path / 'b', workspace=workspace(tmp_path))
+    with pytest.raises(bundle.BundleError):
+        bundle.build(str(r), 'us-news', D, news_draft(tmp_path), tmp_path / 'c', data_commit=p)
+
+
+def test_submit_passes_the_workspace_for_the_news_brief(monkeypatch, tmp_path):
+    import prepub_review as cli
+    seen = []
+
+    def build(*a, **k):
+        seen.append((a[1], k.get('data_commit'), k.get('workspace')))
+        raise bundle.BundleError('stop here')
+    monkeypatch.setattr(bundle, 'build', build)
+    html = draft(tmp_path)
+    assert cli.main(['submit', '--section', 'us-news', '--date', D, '--html', str(html), '--out', str(tmp_path / 'o'),
+                     '--data-commit', 'abc123', '--datadir', str(tmp_path / 'ws')]) == cli.FALLBACK
+    assert seen == [('us-news', 'abc123', str(tmp_path / 'ws'))]
