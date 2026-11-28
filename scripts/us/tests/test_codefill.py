@@ -102,6 +102,31 @@ def test_enum_accepts_korean_count(tmp_path):
 from us import fill as FL  # noqa: E402
 from us import zones as Z  # noqa: E402
 
+# 시험은 운영 구역 설정(config/number_fill.json — 켠 구역이 바뀐다)에 기대지 않는다: 가격 구역 일곱을 block 으로 고정한다.
+_TEST_BLOCK = ('오늘의 장', '주식', '섹터 기간별 수익률', '채권', 'FX', '원자재', '트렌드 유닛 점검')
+_LIVE_LOAD = Z.load
+
+
+def _test_zones(path=Z.CONFIG):
+    d = _LIVE_LOAD(path)
+    if path == Z.CONFIG:
+        d = dict(d, zones=[dict(z, mode='block' if z['title'] in _TEST_BLOCK else z['mode']) for z in d['zones']])
+    return d
+
+
+@pytest.fixture(autouse=True)
+def _pin_zones(monkeypatch):
+    monkeypatch.setattr(Z, 'load', _test_zones)
+
+
+def test_live_block_zones_are_the_three_switched_on():
+    """2026-11-28 사용자 「그 셋을 켜」 — 막는 구역을 바꾸면 이 시험도 함께 고친다(사용자에게 먼저 알린다)."""
+    d = _LIVE_LOAD()
+    assert [z['title'] for z in d['zones'] if z['mode'] == 'block'] == ['섹터 기간별 수익률', 'FX', '원자재']
+    from common import numsrc
+    assert numsrc.FILL_EFFECTIVE == '2026-11-30'
+
+
 D18 = '2026-11-18'
 MD18 = {'report_date': D18, 'complete': True, 'missing': [],
         'indices': {'S&P 500': {'last': 7323.6298828125, 'chg': -16.9, 'pct': -0.2302, 'date': D18},

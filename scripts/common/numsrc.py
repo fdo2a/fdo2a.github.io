@@ -19,9 +19,9 @@ from dataclasses import dataclass, field
 
 EFFECTIVE = '2026-11-23'          # 첫 검사 발행일(US 11/23 거래일 글). 그 전 글은 not_run(설계 §7.1)
 # 「숫자는 코드가 채운다」 1차(2026-11-27, US 일간만)를 켜는 날 — 이날 글부터 채우기(fill_numbers)가 칸을 다시 쓰고
-# 숫자 출처 검사가 위반을 내며(막는다), 한글 개수를 수량으로 센다. 자리표시 2099-12-31 = 아직 켜지 않았다 —
-# 병합 뒤 첫 발행일로 바꾼다(EFFECTIVE 와 같은 꼴, 설계 §7.1). 그 전 글은 지금 판정 그대로(정정기 재검사 포함).
-FILL_EFFECTIVE = '2099-12-31'
+# 숫자 출처 검사가 위반을 내며(막는다), 한글 개수를 수량으로 센다. 2026-11-28 사용자 「그 셋을 켜」 — US 11/30 거래일
+# 글부터, block 구역은 config/number_fill.json(섹터 기간별 수익률·FX·원자재). 그 전 글은 지금 판정 그대로(정정기 재검사 포함).
+FILL_EFFECTIVE = '2026-11-30'
 FORMAT = 'numsrc/1'
 
 CLASSES = ('table', 'data', 'level', 'article', 'telegram', 'web', 'excluded', 'unknown')
