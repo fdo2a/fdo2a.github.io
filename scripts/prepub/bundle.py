@@ -96,7 +96,8 @@ NEWS_PROMPT = """읽기 전용으로 검토만 해 줘. 파일을 고치지 말�
 근거 데이터: 같은 디렉터리의 `data/` — 작성자가 읽은 판과 같은 커밋에서 그대로 꺼낸 것이다.
 - `data/news/{date}.json` — 기사마다 영문 제목(`title`)·게시 시각(`published`)·매체(`source`)·한국어 요약(`summary_ko`).
   글의 기사 블록 `data-news="<guid>"` 는 그 guid 기사의 `summary_ko` 를 옮긴 것이다.
-- `data/telegram/{date}.json` — 텔레그램 채널 글. 「증권사 견해·시장 의견」 섹션의 근거다.
+- `data/telegram/{date}.json` — 텔레그램 채널 글. 「증권사 견해·시장 의견」 섹션의 근거다. 이 파일이 없는 날은 그 섹션도 없다 —
+  그 대조만 건너뛰고 나머지를 본다.
 - `data/market_data.json` — `memory`·`ai_infra`·`mlcc`·`price_context`. 메모리/DRAM·AI 인프라·MLCC 세 섹션의 표·수치의 근거다.
 기사 본문은 없다 — 요약이 원문과 맞는지는 볼 수 없으니 묻지 않는다.
 

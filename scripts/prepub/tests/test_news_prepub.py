@@ -157,3 +157,21 @@ def test_a_line_that_cannot_be_checked_stops(tmp_path, capsys, line):
     f = tmp_path / 'news_fixes.json'
     f.write_text(line + '\n', encoding='utf-8')
     assert cli.main(['check-fixes', '--fixes', str(f), '--news', str(n), '--html', str(h)]) == cli.FALLBACK
+
+
+# ── 지시문의 순서(PREPUB_REVIEW §6·ORCHESTRATOR STEP 3.5) ─────────────────────────────────────────
+
+def test_the_news_procedure_keeps_its_order():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[3]
+    prepub = (root / '.claude' / 'PREPUB_REVIEW.md').read_text(encoding='utf-8')
+    orch = (root / '.claude' / 'ORCHESTRATOR.md').read_text(encoding='utf-8')
+    sec = prepub.split('## 6. US 뉴스·산업 브리프', 1)[1]
+    assert '--section us-news' in sec and '--data-commit "$DC" --datadir "$WS"' in sec
+    assert sec.index('prepub_review.py check-fixes') < sec.index('facts-done --dir "$NEWS_PREPUB_DIR"')
+    step35 = orch.split('## STEP 3.5', 1)[1].split('## STEP 4', 1)[0]
+    rec = step35.index('prepub_review.py record --dir "$NEWS_PREPUB_DIR" --html news/[DATE].html --section us-news')
+    assert rec < step35.index('run_gates.py record --market us-news')
+    assert 'reviews/prepublish/us-news/' in step35.split('그리고 `git add', 1)[1].split('`', 1)[0]
+    late8 = orch.split('8. **STEP 3.5**', 1)[1].split('\n', 1)[0]
+    assert '--data-commit "$(cat /tmp/us-late-commit)"' in late8
