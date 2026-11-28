@@ -1,0 +1,38 @@
+{
+ "section": "us",
+ "date": "2026-11-27",
+ "request_id": "us-2026-11-27-d29b4fcbe4d5",
+ "draft_sha": "0637ffb6d93af411bf59922018560053a3d45456",
+ "state": "reviewed",
+ "reason": "",
+ "auth_saved": true,
+ "accuracy_findings": 1,
+ "style_candidates": 0,
+ "style_excluded": 0,
+ "style_unplaced": 0,
+ "style_dropped": 0,
+ "facts_applied": 3,
+ "facts_rejected": 0,
+ "style_applied": 0,
+ "style_rejected": 0,
+ "skeleton_rejected": 0,
+ "checker_rejected": 0,
+ "style_findings": [],
+ "recorded_at": "2026-11-28T06:31:46Z",
+ "facts_done": true,
+ "final_sha256": "bc47de05b30dbeb916a863d0cdc32f9af1f05959122cd92a0781086e8e345dc4",
+ "clarity": [
+  {
+   "kind": "문장 구조",
+   "quote": "",
+   "cannot_tell": "나",
+   "route": "record_only",
+   "placed": ""
+  }
+ ],
+ "clarity_meta": {
+  "marker": true,
+  "lines_skipped": 0,
+  "over_cap": 0
+ }
+}
