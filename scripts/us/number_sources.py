@@ -576,8 +576,9 @@ def violations(items, c, f_items=None, removed=()):
     return out, removal
 
 
-def result(inp, html, first_html=None, removed=()):
-    """게이트 결과(사전) — `sources` 칸. InvariantError·InputError 는 그대로 올린다."""
+def result(inp, html, first_html=None, removed=(), correction=False):
+    """게이트 결과(사전) — `sources` 칸. InvariantError·InputError 는 그대로 올린다.
+    `correction` = 무인 정정 재검사(첫 판이 없다 — 지운 숫자 추적·「첫 판 확인 불가」 위반을 하지 않는다, 2026-11-28)."""
     c, items = classify(inp, html)
     q, r = S.tally(items)
     if r['total'] != c.run_count:
@@ -606,7 +607,11 @@ def result(inp, html, first_html=None, removed=()):
         why_hist = '첫 판이 없다'
     extra = {}
     if c.blocking:
-        viols, removal = violations(items, c, first_items, removed)
+        viols, removal = violations(items, c, None if correction else first_items, () if correction else removed)
+        # 막는 판의 발행 경로에서 첫 판을 못 쓰면 지운 숫자를 따라갈 수 없다 — 「unverifiable」로 통과시키지 않고 멈춘다
+        # (2026-11-28, KR 설계 §11.2 를 US 에도). 발행 경로(run_gates)는 늘 --first 를 넘긴다
+        if not correction and first_items is None:
+            viols.append(f'첫 판 확인 불가 — {why_hist}')
         extra = {'blocking': True, 'violations': viols, 'removal': removal,
                  'declared_set': c.declared_set[:40],
                  'fills': [it.detail['fill'] for it in items if it.detail.get('fill')],

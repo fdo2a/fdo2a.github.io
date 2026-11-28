@@ -41,6 +41,8 @@ def main(argv=None):
     ap.add_argument('--cycle')
     ap.add_argument('--first')
     ap.add_argument('--removed', help='작성자가 뺀 숫자 목록(기본 <datadir>/removed.json, 없으면 빈 목록)')
+    ap.add_argument('--correction', action='store_true',
+                    help='무인 정정 재검사 — 첫 판·removed 를 보지 않는다(정정에는 첫 판이 없다)')
     ap.add_argument('--json', action='store_true')
     ap.add_argument('--effective', help=argparse.SUPPRESS)
     ap.add_argument('--fill-effective', help=argparse.SUPPRESS)
@@ -68,8 +70,9 @@ def main(argv=None):
                 first = None
         inp = U.Inputs(a.market, a.date, os.path.abspath(a.datadir), os.path.abspath(a.repo), tg=a.tg, cycle=a.cycle,
                        fill_effective=a.fill_effective)
-        removed = S.load_removed(a.removed or os.path.join(a.datadir, 'removed.json')) if inp.blocking else []
-        res = U.result(inp, html, first, removed)
+        removed = S.load_removed(a.removed or os.path.join(a.datadir, 'removed.json')) \
+            if inp.blocking and not a.correction else []
+        res = U.result(inp, html, None if a.correction else first, removed, correction=a.correction)
     except OSError as e:
         print(f'FATAL: 입력을 읽지 못했다: {e}', file=sys.stderr)
         return 2

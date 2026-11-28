@@ -53,9 +53,9 @@ def asof_span(date):
     return f'<span data-asof="{date}">{asof_text(date)}</span>'
 
 
-def value_quantities(text, terms):
-    """표식 안 글의 값 수량(X-코드 제외) + 한글 개수."""
-    qs = [q for q in S.quantities(text, terms) if not q.code]
+def value_quantities(text, terms, before=None):
+    """표식 안 글의 값 수량(X-코드 제외) + 한글 개수. before = 표식 바로 앞 글(「날이 」 뒤 「12일」은 날수 — numsrc)."""
+    qs = [q for q in S.quantities(text, terms, before=before) if not q.code]
     return sorted(qs + S.korean_quantities(text), key=lambda q: q.start)
 
 
@@ -189,6 +189,13 @@ def fill(html, datadir, date, repo, meta=None, ledger=None, terms=None, zones=No
         raw = html[s:e]
         mm = _REF.match(raw)
         ref, inner = _html.unescape(mm.group('ref')), mm.group('inner')
+        moved = _trailing_unit(html, e, inner, terms)
+        if moved:
+            # 칸 밖에 붙여 쓴 단위(「<span…>3,674.60</span>달러」 — 11/27 글 4건)를 칸 안으로 — 검사기가 보는 수량과 칸을 맞춘다
+            inner = inner + moved
+            raw = raw[:mm.start('inner')] + inner + raw[mm.end('inner'):]
+            mm = _REF.match(raw)
+            e += len(moved)
         sec = _section_at(sections, s)
         zname, mode = Z.zone_of(zones, sec)
         slot = {'where': 'body', 'section': sec, 'zone': zname, 'mode': mode, 'ref': ref,
@@ -197,7 +204,7 @@ def fill(html, datadir, date, repo, meta=None, ledger=None, terms=None, zones=No
         pos = e
         new_inner, asof = inner, None
         try:
-            new_inner, fact = _fill_one(ref, inner, book, terms)
+            new_inner, fact = _fill_one(ref, inner, book, terms, before=_html.unescape(masked[max(0, s - 8):s]))
             slot.update(_fact_row(fact))
             if fact.status == 'stale' and fact.date[:10] != date and not _in_cell(masked, s):
                 asof = fact.date[:10]
@@ -235,17 +242,30 @@ def fill(html, datadir, date, repo, meta=None, ledger=None, terms=None, zones=No
     return new, rep
 
 
+def _trailing_unit(html, end, inner, terms):
+    """`</span>` 바로 뒤(빈칸 없이)에 붙은 단위 글자 — 안쪽 값 수량이 정확히 하나이고 단위가 없을 때만. 아니면 ''."""
+    if '<' in inner:
+        return ''
+    mu = S._UNIT_RE.match(html, end)
+    if not mu or mu.group(1):
+        return ''
+    qs = value_quantities(_html.unescape(inner), terms)
+    if len(qs) != 1 or qs[0].unit or qs[0].end != len(_html.unescape(inner).rstrip()):
+        return ''
+    return mu.group(0)
+
+
 def _fact_row(f):
     return {'asset': f.asset, 'group': '.'.join(str(x) for x in f.group[1:2]) if f.group else '', 'field': f.fld,
             'date': f.date[:10] if isinstance(f.date, str) else None, 'status': f.status, 'value': f.value}
 
 
-def _fill_one(ref, inner, book, terms):
+def _fill_one(ref, inner, book, terms, before=None):
     """표식 하나 → (새 안쪽 html, 칸). 안쪽에 태그가 있거나 수량이 하나가 아니면 Shape."""
     if '<' in inner:
         raise Shape('표식 오류', '칸 표식 안에 태그가 있다 — 숫자 하나만 감싼다')
     text = _html.unescape(inner)
-    qs = value_quantities(text, terms)
+    qs = value_quantities(text, terms, before)
     if len(qs) != 1:
         raise Shape('표식 오류', f'칸 표식 하나에 값 수량이 {len(qs)}개다')
     name, *flags = ref.split('|')

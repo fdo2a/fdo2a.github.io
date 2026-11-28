@@ -124,14 +124,15 @@ def _sig_digits(s):
     return len(d.rstrip('0')) if d else 0
 
 
-def quantities(text, terms=(), periods=False):
-    """보이는 글 → [Q]. 숫자열마다 정확히 한 수량. terms = 고정 이름(「10년물」「S&P 500」) — 그 안 숫자열은 X-코드."""
+def quantities(text, terms=(), periods=False, before=None):
+    """보이는 글 → [Q]. 숫자열마다 정확히 한 수량. terms = 고정 이름(「10년물」「S&P 500」) — 그 안 숫자열은 X-코드.
+    before = 이 글 바로 앞의 보이는 글(채우기가 칸 안 글자만 읽을 때 넘긴다 — 「날이 」 뒤 「12일」은 날수)."""
     t = norm(text)
     rs = runs(t)
     taken = [False] * len(rs)
     out = []
     # X-코드 먼저 — 고정 이름·날짜·시각·식별자. 숫자열 단위로 덮는다
-    spans = _code_spans(t, terms, periods)
+    spans = _code_spans(t, terms, periods, before)
     for kind, s, e in spans:
         idx = [i for i, (a, b) in enumerate(rs) if not taken[i] and a >= s and b <= e]
         if not idx:
@@ -322,17 +323,35 @@ _VALUE_SUFFIX = re.compile(r'^[\d.,]+(?:[KMBx]|bp|p|bps)$')
 # 기간 이름(「1주 전」「3개월 상대수익률」「최근 2년」「20거래일 전」) — 세지 않는 숫자 ④(2026-11-27 「숫자는 코드가 채운다」
 # §4). 막는 판에서만 켠다(끈 판의 집계는 그대로). 「8거래일째」「504거래일」처럼 센 값은 기간 이름이 아니다
 # 「3주째」「3주 연속」「5개월 만에」는 센 값이라 기간 이름이 아니다
+# 11/28 기간·방법 설명 넓힘(11/27 글 실제 17건): 「(504거래일)」 창 길이를 괄호로 푼 것 · 「최근/직전/지난 60거래일」 ·
+# 「5거래일로는」 · 「첫 30분」 · 「4분의 1」(분수 설명, 두 숫자열 모두). 「9거래일째」「3거래일 연속」은 여전히 센 값
 _PERIOD = re.compile(r'(?<![\d.,])(?:\d{1,2}\s?(?:주|개월|년)(?![가-힣]*물)(?!\s?(?:째|연속|만에|만의|만이))'
-                     r'|\d{1,3}\s?거래일(?=\s?(?:전|동안|사이|간)))')
+                     r'|\d{1,3}\s?거래일(?=\s?(?:전|동안|사이|간|로는|로(?![가-힣])))'
+                     r'|(?<=\()\d{1,3}\s?거래일(?=\))'
+                     r'|(?<=최근 |직전 |지난 )\d{1,3}\s?거래일(?!\s?(?:째|연속))'
+                     r'|(?<=첫 )\d{1,3}\s?분(?!기|의)'
+                     r'|\d{1,2}분의\s?\d{1,2}(?![\d.,]))')
 
 
-def _code_spans(t, terms, periods=False):
+# 「이보다 낮았던 날이 12일뿐」(11/27 글, 칸 `…plain.days` = 12) — 「날이 N일」은 날수(값 수량, 단위 일)이지 날짜가 아니다.
+# 막는 판(검사 periods=True, 채우기 before=…)에서만 — 끈 판 집계는 그대로 날짜로 센다
+# 「날은」은 작성자 지시문의 예시 꼴(「이보다 높았던 날은 20일뿐」) — 같은 날수다(설계 3회차 범위 밖 제안, 받음)
+_DAY_COUNT_LEAD = re.compile(r'날[이은]\s?$')
+_BARE_DAY = re.compile(r'\d{1,2}일')
+
+
+def _code_spans(t, terms, periods=False, before=None):
     out = []
+    days = periods or before is not None
+    lead = norm(before) if before else ''
     for term in sorted({x for x in terms if x}, key=len, reverse=True):
         for m in re.finditer(re.escape(norm(term)), t):
             out.append(('term', m.start(), m.end()))
     for kind, rx in _CODE:
         for m in rx.finditer(t):
+            if days and kind == 'date' and _BARE_DAY.fullmatch(m.group(0)) and \
+                    _DAY_COUNT_LEAD.search(lead + t[:m.start()]):
+                continue
             out.append((kind, m.start(), m.end()))
     if periods:
         for m in _PERIOD.finditer(t):

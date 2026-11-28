@@ -239,9 +239,13 @@ def test_fill_cli_is_off_before_the_switch(w18, tmp_path):
 
 # ── 막는 검사 ──
 
-def check(wd, date, html, first=None, removed=(), on=True):
+_SAME = object()
+
+
+def check(wd, date, html, first=_SAME, removed=(), on=True, correction=False):
+    """first 를 주지 않으면 글 자신을 첫 판으로 넘긴다(발행 경로는 늘 첫 판을 준다 — 2026-11-28 첫 판 없음 = 위반)."""
     inp = U.Inputs('us', date, str(wd), REPO, ledger=[], fill_effective=ON if on else '2099-12-31')
-    return U.result(inp, html, first, list(removed))
+    return U.result(inp, html, html if first is _SAME else first, list(removed), correction=correction)
 
 
 def kinds(res):
@@ -394,10 +398,41 @@ def test_record_fails_on_violations_and_keeps_fills(w18, modname, stuck):
 
 
 def test_period_names_are_not_counted_in_blocking_mode(w18):
-    """11/25 시운전에서 나온 꼴 — 「1주 전」「1개월 수익률」「최근 2년」은 기간 이름(세지 않는 숫자 ④), 「504거래일」은 센 값."""
-    body = section('채권', '<p>1주 전보다 낮고, 레벨은 최근 2년(504거래일) 가운데 높은 쪽이다. 3개월 상대수익률과 20거래일 전.</p>')
+    """11/25 시운전에서 나온 꼴 — 「1주 전」「1개월 수익률」「최근 2년」은 기간 이름(세지 않는 숫자 ④). 「(504거래일)」은 11/25 에는
+    센 값으로 셌지만 11/28 부터 기간 이름이다 — 「최근 2년」의 창 길이를 괄호로 풀어 쓴 것(11/27 글 3건). 「9거래일째」는 센 값."""
+    body = section('채권', '<p>1주 전보다 낮고, 레벨은 최근 2년(504거래일) 가운데 높은 쪽이다. 3개월 상대수익률과 20거래일 전. '
+                         '국면은 9거래일째다.</p>')
     res = check(w18, D18, page(body, D18))
-    assert [v.split(' — ')[0] for v in res['violations']] == ['표식 없음 [금리] 504거래일']
+    assert [v.split(' — ')[0] for v in res['violations']] == ['표식 없음 [금리] 9거래일']
+
+
+# 11/27 글(ee21bcd)의 실제 문장 — 기간·방법 설명 숫자는 세지 않고, 같은 문장의 값 수량은 그대로 센다
+@pytest.mark.parametrize('text,period,values', [
+    ('VIX는 최근 2년(504거래일) 가운데 높은 쪽 13% 안에 남았다.', ['2년', '504거래일'], ['13%']),
+    ('30년물의 하루 움직임은 최근 60거래일 평균 하루 변동 대비 1.59배, 10년물은 1.3배다.', ['60거래일'], ['1.59배', '1.3배']),
+    ('최근 60거래일 두 자산은 같은 방향으로 움직여, 반대로 움직이던 직전 60거래일과 부호가 바뀌었다.', ['60거래일', '60거래일'], []),
+    ('상관계수는 최근 60거래일 0.227, 직전 60거래일 -0.30이다.', ['60거래일', '60거래일'], ['0.227', '-0.30']),
+    ('최근 252거래일 지수·업종 수익률로 추정한 비중이다.', ['252거래일'], []),
+    ('5거래일로는 22bp 하락 가운데 15bp가 실질금리, 7bp가 기대인플레였다.', ['5거래일'], ['22bp', '15bp', '7bp']),
+    ('장중에는 개장 갭 뒤 첫 30분에 한 번 되밀렸다.', ['30분'], []),
+    ('아래에서 4분의 1 지점과 위에서 4분의 1 지점을 경계로 삼았다.', ['4분의 1', '4분의 1'], []),
+    ('하이일드는 5거래일 동안 25bp 넓어졌다.', ['5거래일'], ['25bp']),
+])
+def test_period_and_method_descriptors_1127(text, period, values):
+    qs = S.quantities(text, ('30년물', '10년물'), periods=True)
+    assert [q.raw for q in qs if q.code == 'period'] == period
+    assert [q.raw for q in qs if not q.code] == values
+
+
+@pytest.mark.parametrize('text', ['9거래일째 단기 약세다.', '3거래일 연속 올랐다.', '지수 3개의 관측값이다.'])
+def test_counted_values_stay_quantities(text):
+    assert all(q.code != 'period' for q in S.quantities(text, (), periods=True))
+
+
+def test_period_descriptors_only_in_blocking_mode():
+    """끈 판 집계는 그대로 — 「(504거래일)」「첫 30분」「4분의 1」은 지금처럼 값 수량."""
+    qs = S.quantities('최근 2년(504거래일)·첫 30분·4분의 1', ())
+    assert [q.code for q in qs] == ['', '', '', '', '']
 
 
 # ── 구현 검토 전 자체 점검(advisor) 에서 나온 것 ──
@@ -490,3 +525,207 @@ def test_filled_markers_survive_publish_transforms(tmp_path):
     items_ = U.classify(inp, out)[1]
     got = [i for i in items_ if i.detail.get('fill', {}).get('ref') == 'md:indices.SP500.pct']
     assert len(got) == 1 and got[0].cls == 'data' and not got[0].detail.get('no_asof')
+
+
+# ── 펀드 점검판 SPY 대비 상대수익률의 단위(11/27 발행본 ee21bcd) ──
+
+def test_fund_board_relative_return_accepts_pp_as_written_on_1127(tmp_path):
+    """11/27 글은 rel_3m 을 「-15.34%p」「+5.58%p」로 썼다(자료 값 그대로). % 만 받는 칸이라 「자료와 다름」이 났다."""
+    wd, d = wd_from(tmp_path, '2026-11-04_market_data.json')
+    units = [{'id': 'semis', 'status': 'ok', 'rel_3m': -15.34, 'rel_3m_5d': -13.87, 'rel_3m_chg_pp': -1.47, 'as_of': d},
+             {'id': 'homebuilders', 'status': 'ok', 'rel_3m': 5.58, 'rel_3m_chg_pp': 6.87, 'as_of': d}]
+    (wd / 'fund_board.json').write_text(json.dumps({'report_date': d, 'status': 'ok', 'missing': [], 'units': units}), encoding='utf-8')
+    body = ('<p>반도체는 <span data-ref="fb:units[semis].rel_3m">-15.34%p</span>로 5거래일 전'
+            '(<span data-ref="fb:units[semis].rel_3m_5d">-13.87%p</span>)보다 나빠졌고, 주택건설은 '
+            '<span data-ref="fb:units[homebuilders].rel_3m">+5.58%p</span>다. 3개월 수익률 '
+            '<span data-ref="fb:units[semis].rel_3m">-15.34%</span> 꼴도 받는다.</p>')
+    got = [(i.q.raw, i.cls) for i in classify(wd, d, body) if i.q.raw.startswith(('-', '+'))]
+    assert got == [('-15.34%p', 'data'), ('-13.87%p', 'data'), ('+5.58%p', 'data'), ('-15.34%', 'data')], got
+
+
+# ── 11/28 칸 넓히기·칸 밖 단위 — 11/27 글(ee21bcd)의 실제 문장과 그 발행 커밋 자료 ──
+
+D27 = '2026-11-27'
+
+
+@pytest.fixture()
+def w27(tmp_path):
+    d = tmp_path / 'w27'
+    d.mkdir()
+    for f in ('market_data', 'intraday', 'fund_board'):
+        with open(os.path.join(FIX, f'2026-11-27_{f}.json'), encoding='utf-8') as fh:
+            (d / f'{f}.json').write_text(fh.read(), encoding='utf-8')
+    return d
+
+
+SENT_1127 = [
+    ('주식', '추정 기여도로 기술이 {} 보태 지수 상승 가운데 가장 컸고, 경기소비재 {}다.',
+     [('md:price_context.sector_contribution.rows[Technology].contribution', '+0.95%p'),
+      ('md:price_context.sector_contribution.rows[Consumer Discretionary].contribution', '+0.28%p')]),
+    ('주식', '유틸리티·헬스케어(각 {})와 필수소비재({})가 가장 덜 올랐다.',
+     [('md:price_context.sector_contribution.rows[Utilities].change', '0.28%'),
+      ('md:price_context.sector_contribution.rows[Consumer Staples].change', '0.41%')]),
+    ('트렌드 유닛 점검', '52주 고점 대비 단기 약세 기준({})을 넘어 있다.', [('fb:market_regime.rules.drawdown_pct', '-5%')]),
+    ('주식', 'S&P 500은 시가 {}에서 10시 무렵 {}까지 밀렸다.',
+     [('id:S&P 500.open', '7,263'), ('id:S&P 500.low', '7,211')]),
+    ('주식', '엔비디아는 시가 {}에서 {}까지 {} 밀렸다.',
+     [('id:Nvidia.open', '151.94달러'), ('id:Nvidia.low', '145.39달러'), ('id:Nvidia.open_to_low_pct|abs', '4.31%')]),
+    ('원자재', '금은 {} 저점에서 반등했고 WTI는 개장 무렵의 {}대가 고점이었다.',
+     [('id:Gold.low', '3,643달러'), ('id:WTI.open|lvl', '84달러')]),
+    ('오늘의 장', 'S&P 500 선물은 {}에서 {} 사이, 나스닥100 선물은 {}에서 {} 사이에서 움직였다.',
+     [('md:session.futures.contracts.ES.low', '7,183'), ('md:session.futures.contracts.ES.high', '7,254'),
+      ('md:session.futures.contracts.NQ.low', '25,983'), ('md:session.futures.contracts.NQ.high', '26,436')]),
+    ('오늘의 장', 'VIX는 최근 2년(504거래일) 가운데 높은 쪽 {} 안에 남았다.', [('md:price_context.levels.VIX.plain.share_pct', '13%')]),
+    ('채권', '10년물은 최근 2년 가운데 이보다 높았던 날이 {}뿐이고, 30년물은 {}뿐이다.',
+     [('md:price_context.levels.10Y.plain.days', '45일'), ('md:price_context.levels.30Y.plain.days', '37일')]),
+    ('채권', '상관계수는 최근 60거래일 {}, 직전 60거래일 {}이다.',
+     [('md:price_context.correlations[equity_rates].value', '0.227'),
+      ('md:price_context.correlations[equity_rates].prior', '-0.30')]),
+]
+
+
+@pytest.mark.parametrize('title,tmpl,refs', SENT_1127)
+def test_new_slots_fill_and_pass_on_1127_sentences(w27, title, tmpl, refs):
+    body = section(title, '<p>' + tmpl.format(*[span(r, t) for r, t in refs]) + '</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert rep['problems'] == [], rep['problems']
+    assert [s['filled'] for s in rep['slots']] == [t for _, t in refs]
+    assert check(w27, D27, new)['violations'] == []
+
+
+def test_5y5y_is_stale_and_stamped(w27):
+    body = section('채권', f'<p>5년 뒤 5년 명목금리는 {span("md:price_context.forward_5y5y.nominal", "5.05%")}, '
+                         f'실질 {span("md:price_context.forward_5y5y.real", "2.94%")}다.</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert rep['problems'] == [] and new.count('(11월 25일 기준)') == 2
+    assert check(w27, D27, new)['violations'] == []
+
+
+@pytest.mark.parametrize('mutate', [
+    lambda d: d.pop('collect'),
+    lambda d: d['collect'].update(status='partial'),
+    lambda d: d['collect'].update(required_ok=False),
+    lambda d: d['collect'].update(missing=['Nvidia']),
+])
+def test_intraday_slot_invalid_without_ok_collect(w27, mutate):
+    p = w27 / 'intraday.json'
+    d = json.loads(p.read_text())
+    mutate(d)
+    p.write_text(json.dumps(d), encoding='utf-8')
+    body = section('주식', f'<p>엔비디아는 시가 {span("id:Nvidia.open", "151.94달러")}였다.</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert [x['problem'] for x in rep['problems']] == ['칸 무효']
+    assert kinds(check(w27, D27, new)) == ['칸 무효']
+
+
+def test_intraday_unknown_asset_or_time_field_is_not_a_slot(w27):
+    from us import facts as F
+    b = F.Book(str(w27), D27, [])
+    for ref in ('id:Nvidia.low_t', 'id:collect.as_of', 'id:Dow.open'):
+        with pytest.raises(F.Miss) as e:
+            b.resolve(ref)
+        assert e.value.kind == '칸 없음', ref
+
+
+# 칸 밖 단위(11/27 실제 4건 — 금·WTI·브렌트·엔비디아 종가): 채우기가 단위를 칸 안으로 옮긴다
+def test_fill_moves_trailing_unit_into_span(w27):
+    body = section('원자재', f'<p>금은 {span("md:commodities.Gold.pct", "2.00%")} 오른 '
+                           f'{span("md:commodities.Gold.last", "3,674.60")}달러다.</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert rep['problems'] == []
+    assert '<span data-ref="md:commodities.Gold.last">3,674.60달러</span>다' in new
+    assert check(w27, D27, new)['violations'] == []
+    again, rep2 = FL.fill(new, str(w27), D27, REPO, ledger=[])
+    assert again == new and rep2['problems'] == []
+
+
+def test_fill_does_not_move_unit_after_a_space_or_when_inside_has_unit(w27):
+    body = section('원자재', f'<p>금은 {span("md:commodities.Gold.last", "3,674.60")} 달러, '
+                           f'다시 {span("md:commodities.Gold.last", "3,674.60달러")}다.</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert '3,674.60</span> 달러' in new and '3,674.60달러</span>다' in new
+    assert rep['problems'] == []
+    assert kinds(check(w27, D27, new)) == ['표식 오류']       # 빈칸 뒤 단위는 옮기지 않는다 — 검사는 지금처럼 표식 오류
+
+
+def test_moved_unit_keeps_stale_stamp_after_the_unit(w27):
+    body = section('채권', f'<p>5년 뒤 5년 명목금리는 {span("md:price_context.forward_5y5y.nominal", "5.05")}%다.</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert rep['problems'] == []
+    assert '5.05%</span><span data-asof="2026-11-25">(11월 25일 기준)</span>다' in new
+    again, _ = FL.fill(new, str(w27), D27, REPO, ledger=[])
+    assert again == new
+    assert check(w27, D27, new)['violations'] == []
+
+
+# ── 설계 검토 2회차 #3 — 「날이 12일뿐」(11/27 글 505행): 「12일」이 날짜로 읽혀 칸을 달 수 없었다 ──
+
+SENT_12 = '원/달러는 같은 기간 가운데 이보다 낮았던 날이 {}뿐인 수준까지 내려왔다.'
+REF_12 = 'md:price_context.levels.USD/KRW.plain.days'
+
+
+def test_day_count_after_nari_is_a_value_in_blocking_mode_1127(w27):
+    body = section('환율', '<p>' + SENT_12.format(span(REF_12, '12일')) + '</p>')
+    new, rep = do_fill(w27, D27, body)
+    assert rep['problems'] == [], rep['problems']
+    assert [s['filled'] for s in rep['slots']] == ['12일']
+    assert check(w27, D27, new)['violations'] == []
+    again, rep2 = FL.fill(new, str(w27), D27, REPO, ledger=[])
+    assert again == new and rep2['problems'] == []
+
+
+def test_day_count_wrong_value_is_reported_1127(w27):
+    body = section('환율', '<p>' + SENT_12.format(span(REF_12, '13일')) + '</p>')
+    _, rep = do_fill(w27, D27, body)
+    assert [p['problem'] for p in rep['problems']] == ['자료와 다름']
+
+
+@pytest.mark.parametrize('text,periods,codes', [
+    (SENT_12.format('12일'), True, ['']),               # 막는 판 — 날수(값, 단위 일)
+    (SENT_12.format('12일'), False, ['date']),          # 끈 판 — 지금처럼 날짜
+    ('높았던 날이 45일뿐이고, 다른 쪽은 37일뿐이다.', True, ['', '']),
+    ('11월 12일 발표였고 12일 기준 값이다.', True, ['date', 'date']),   # 진짜 날짜는 막는 판에서도 날짜
+    ('발표한 날이 11월 12일이다.', True, ['date']),
+    ('이보다 높았던 날은 20일뿐이다.', True, ['']),      # 작성자 지시문 예시 꼴
+    ('이보다 높았던 날은 20일뿐이다.', False, ['date']),
+])
+def test_day_count_rule_scope(text, periods, codes):
+    qs = S.quantities(text, (), periods=periods)
+    assert [q.code for q in qs] == codes
+    if text.startswith('원/달러') and periods:
+        assert (qs[0].raw, qs[0].unit, qs[0].value) == ('12일', '일', 12.0)
+
+
+
+
+# ── 11/28 막는 판에서 첫 판이 없으면 위반 / 무인 정정 재검사는 첫 판을 보지 않는다 ──
+
+def test_blocking_without_first_draft_is_a_violation(w18):
+    html = page(section('주식', f'<p>{span("md:indices.SP500.pct", "-0.23%")}</p>'), D18)
+    assert check(w18, D18, html, first=None)['violations'] == ['첫 판 확인 불가 — 첫 판이 없다']
+    other = page(section('주식', '<p>x</p>'), '2026-11-17')
+    assert check(w18, D18, html, first=other)['violations'] == ['첫 판 확인 불가 — 첫 판이 이 글의 날짜·시장이 아니다']
+    assert 'violations' not in check(w18, D18, html, first=None, on=False)      # 끈 판은 지금 그대로
+
+
+def test_correction_mode_skips_first_draft_and_removal(w18):
+    html = page(section('주식', f'<p>{span("md:indices.SP500.pct", "-0.23%")}</p>'), D18)
+    first = page(section('주식', f'<p>{span("md:indices.SP500.pct", "-0.23%")} 그리고 2.5% 보도.</p>'), D18)
+    assert set(kinds(check(w18, D18, html, first=first))) == {'적지 않은 삭제'}
+    assert check(w18, D18, html, first=None, correction=True)['violations'] == []
+    bad = page(section('주식', f'<p>{span("md:indices.SP500.pct", "-0.24%")}</p>'), D18)
+    assert kinds(check(w18, D18, bad, first=None, correction=True)) == ['자료와 다름']   # 값 위반은 그대로
+
+
+def test_cli_correction_flag(w18, tmp_path):
+    import subprocess, sys
+    html = page(section('주식', f'<p>{span("md:indices.SP500.pct", "-0.23%")}</p>'), D18)
+    p = tmp_path / 'p.html'
+    p.write_text(html, encoding='utf-8')
+    cli = os.path.join(REPO, 'scripts', 'check_number_sources.py')
+    base = [sys.executable, cli, '--market', 'us', '--date', D18, '--html', str(p), '--datadir', str(w18), '--repo', REPO,
+            '--fill-effective', ON, '--effective', ON]
+    r = subprocess.run(base, capture_output=True, text=True)
+    assert r.returncode == 1 and '위반: 첫 판 확인 불가' in r.stdout
+    r = subprocess.run(base + ['--correction'], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr

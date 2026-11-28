@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 ALIASES = {'md': 'market_data.json', 'id': 'intraday.json', 'ei': 'econ_indicators.json', 'mm': 'macro_metrics.json',
            'mv': 'movers.json', 'fb': 'fund_board.json', 'au': 'auctions.json', 'lq': 'liquidity/liquidity.json',
            'cal': 'calendar.json'}
-NO_STATUS = frozenset({'id', 'ei', 'mv'})       # 상태 칸이 없는 파일 — 늘 U(설계 §3.1)
+NO_STATUS = frozenset({'ei', 'mv'})       # 상태 칸이 없는 파일 — 늘 U(설계 §3.1). intraday 는 11/23 부터 collect 도장(11/28 뺌)
 OPS2 = ('diff', 'sum', 'ratio', 'pctchg')
 OPS_HIST = ('ret', 'chgbp', 'streak')
 DATE_PAIRS = {frozenset({'last', 'prev'}), frozenset({'level', 'week_ago'})}
@@ -390,6 +390,31 @@ def _md(keys, parents, data):
     if k[:2] == ('price_context', 'sector_contribution') and k[-1] in ('index_change', 'residual') and len(k) == 3:
         return PCT if k[2] == 'index_change' else PP, True, ('md', 'contrib', k[2]), '', k[2], 1.0, {}, \
             data.get('report_date')
+    # 11/28 칸 넓히기 — 11/27 글에 실제로 쓰인 꼴만(업종 기여도 행·선물 밤사이 고저·위치 문구 숫자·상관계수·5y5y)
+    if k[:3] == ('price_context', 'sector_contribution', 'rows') and len(k) == 5 and k[4] in ('change', 'contribution'):
+        name = row.get('name', '')
+        return (PCT if k[4] == 'change' else PP), True, ('md', 'contrib_row', k[4]), name, k[4], 1.0, {}, \
+            data.get('report_date')
+    if k[:3] == ('session', 'futures', 'contracts') and len(k) == 5:
+        if k[4] in ('high', 'low'):
+            return IDX, False, ('md', 'futures', k[4]), k[3], k[4], 1.0, {}, data.get('report_date')
+        if k[4] == 'range_pct':
+            return PCT, False, ('md', 'futures', 'range_pct'), k[3], 'range_pct', 1.0, {}, data.get('report_date')
+        return None
+    if len(k) == 5 and k[:2] == ('price_context', 'levels') and k[3] == 'plain':
+        if k[4] == 'share_pct':
+            return PCT, False, ('md', 'levels', 'share_pct'), k[2], 'share_pct', 1.0, {}, data.get('report_date')
+        if k[4] == 'days':
+            return frozenset({'', '일'}), False, ('md', 'levels', 'days'), k[2], 'days', 1.0, {}, data.get('report_date')
+        return None
+    if k[:2] == ('price_context', 'correlations') and len(k) == 4 and k[3] in ('value', 'prior'):
+        return NUM, True, ('md', 'corr', k[3]), row.get('key', ''), k[3], 1.0, {}, data.get('report_date')
+    if k[:2] == ('price_context', 'forward_5y5y') and len(k) == 3:
+        if k[2] in ('nominal', 'real'):
+            return PCT, False, ('md', '5y5y', k[2]), '', k[2], 1.0, {}, row.get('date') or data.get('report_date')
+        if k[2] == 'chg_1d_bp':
+            return BP, True, ('md', '5y5y', k[2]), '', k[2], 1.0, {}, row.get('date') or data.get('report_date')
+        return None
     if k[:3] == ('session', 'global_close', 'asia') or k[:3] == ('session', 'global_close', 'europe'):
         if len(k) == 6 and k[3] == 'rows' and k[5] in ('close', 'pct'):
             name = row.get('name', '')
@@ -442,8 +467,11 @@ def _fb(keys, parents, data):
     if len(k) == 3 and k[0] == 'units' and k[1] == '[]':
         u = parents[1] if len(parents) > 1 else {}
         f = k[2]
-        if f in ('ret_1m', 'ret_3m', 'ret_6m', 'ret_12m', 'rel_3m', 'mom_12_1', 'drawdown_52w', 'rel_3m_5d'):
+        if f in ('ret_1m', 'ret_3m', 'ret_6m', 'ret_12m', 'mom_12_1', 'drawdown_52w'):
             return PCT, True, ('fb', 'units', f), u.get('id', ''), f, 1.0, {}, u.get('as_of') or rd
+        # SPY 대비 초과수익 — 작성자는 %p 로 쓴다(11/27 글 -15.34%p·+5.58%p 가 % 만 받는 칸에서 「자료와 다름」)
+        if f in ('rel_3m', 'rel_3m_5d'):
+            return PCT | PP, True, ('fb', 'units', f), u.get('id', ''), f, 1.0, {}, u.get('as_of') or rd
         if f in ('vol_60', 'var_1d_90', 'var_1d_95'):
             return PCT, False, ('fb', 'units', f), u.get('id', ''), f, 1.0, {}, u.get('as_of') or rd
         if f == 'rel_3m_chg_pp':
@@ -459,6 +487,8 @@ def _fb(keys, parents, data):
         if k[2] in ('close', 'sma50', 'sma200', 'sma200_prev'):
             return USD, False, ('fb', 'regime', 'price'), k[2], 'price', 1.0, {}, parents[-1].get('as_of') or rd
         return None
+    if k == ('market_regime', 'rules', 'drawdown_pct'):      # 국면 규칙 상수(「단기 약세 기준(-5%)」 — 11/27 글)
+        return PCT, True, ('fb', 'rules', 'drawdown_pct'), '', 'drawdown_pct', 1.0, {}, rd
     if k == ('market_regime', 'sessions_held'):
         return frozenset({'', '거래일', '일'}), False, ('fb', 'regime', 'held'), '', 'held', 1.0, {}, rd
     if k[:2] == ('liquidity', 'net') and len(k) == 3 and k[2] in ('level_bn', 'chg_4w_bn'):
@@ -510,11 +540,27 @@ def _lq(keys, parents, data):
     return None          # 유동성 표·문단은 기존 게이트가 맞춰 본다(T) — 문장용 칸은 아직 두지 않는다
 
 
+# 장중 30분봉(intraday.json) — 11/23 수집부터 `collect` 도장이 있다(그 전 파일은 상태 칸 없음 → 칸 무효)
+ID_UNITS = {'Nasdaq': IDX, 'S&P 500': IDX, 'Russell 2000': IDX, 'Nvidia': USD, 'WTI': USD, 'Gold': USD, 'USD/JPY': JPY}
+
+
+def _id(keys, parents, data):
+    k = tuple(keys)
+    if len(k) != 2 or k[0] not in ID_UNITS:
+        return None
+    col = data.get('collect') if isinstance(data.get('collect'), dict) else {}
+    if k[1] in ('open', 'low', 'high', 'close'):
+        return ID_UNITS[k[0]], False, ('id', 'bar', k[1]), k[0], k[1], 1.0, {}, col.get('as_of')
+    if k[1] in ('open_to_low_pct', 'open_to_high_pct'):
+        return PCT, True, ('id', 'bar', k[1]), k[0], k[1], 1.0, {}, col.get('as_of')
+    return None
+
+
 def _none(keys, parents, data):
     return (NUM, True, (), '', '', 1.0, {}, data.get('report_date')) if keys else None
 
 
-SCHEMA = {'md': _md, 'mm': _mm, 'fb': _fb, 'au': _au, 'cal': _cal, 'lq': _lq, 'id': _none, 'ei': _none, 'mv': _none}
+SCHEMA = {'md': _md, 'mm': _mm, 'fb': _fb, 'au': _au, 'cal': _cal, 'lq': _lq, 'id': _id, 'ei': _none, 'mv': _none}
 
 
 # ── 상태(설계 §3.1) ───────────────────────────────────────────────────────
@@ -582,12 +628,26 @@ def _st_lq(keys, parents, data, date):
     return '' if data.get('status') == 'complete' else 'liquidity status 가 complete 가 아니다'
 
 
+def _st_id(keys, parents, data, date):
+    col = data.get('collect')
+    if not isinstance(col, dict):
+        return 'intraday 에 collect 도장이 없다'
+    if col.get('status') != 'ok' or col.get('required_ok') is not True:
+        return 'intraday collect 가 ok 가 아니다'
+    miss = col.get('missing')
+    if not isinstance(miss, list):
+        return 'intraday collect.missing 을 읽지 못했다'
+    if keys[0] in miss:
+        return f'missing 에 {keys[0]} 가 있다'
+    return ''
+
+
 def _st_none(keys, parents, data, date):
     return '상태 칸이 없다'
 
 
 STATUS = {'md': _st_md, 'mm': _st_mm, 'fb': _st_fb, 'au': _st_au, 'cal': _st_cal, 'lq': _st_lq,
-          'id': _st_none, 'ei': _st_none, 'mv': _st_none}
+          'id': _st_id, 'ei': _st_none, 'mv': _st_none}
 
 
 def load_ledger(repo):

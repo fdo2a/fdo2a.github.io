@@ -121,15 +121,33 @@ NEVER_TOLERATE = frozenset(['check_fund.py', 'check_sector_perf.py', 'check_cont
                             'check_sources.py'])
 # 원본에서 실패해도 정정을 막지 않되 **위반 줄 단위로** 비교하는 게이트(2026-11-07). 이름으로 허용하면
 # 원본의 위반 하나가 정정본의 새 틀린 숫자를 덮는다(codex 설계 검토 #5). exit 2(판정 불가)는 허용하지 않는다.
-VIOLATION_DIFF = frozenset(['check_numbers.py'])
+VIOLATION_DIFF = frozenset(['check_numbers.py', 'check_number_sources.py'])
 
 
-def _violation_lines(output):
-    """게이트 출력에서 위반 줄만 — 경고·집계·FATAL 은 뺀다."""
+def _violation_lines(output, name=None):
+    """게이트 출력에서 위반 줄만 — 경고·집계·FATAL 은 뺀다.
+    숫자 출처 검사(2026-11-28)는 `위반: ` 줄만, 열쇠는 「종류 [구역] 숫자」(문장 뺌) — 집계·확인 불가 목록·이력 줄은 정정마다
+    바뀌고, 위반 줄의 문장은 같은 문장의 다른 숫자를 고쳐도 바뀐다(codex 설계 1·2회차 #4)."""
+    if name == 'check_number_sources.py':
+        return [x.strip()[4:].split(' — ')[0].strip() for x in output.splitlines() if x.strip().startswith('위반: ')]
     return [x.strip() for x in output.splitlines()
             if x.strip() and not x.startswith(('경고', 'number audit:', 'FATAL'))]
+
+
+def _number_sources_gate(item, post, data, clone):
+    """US 일간 글이 「숫자는 코드가 채운다」 막는 판(글 날짜 >= `numsrc.FILL_EFFECTIVE`)이면 숫자 출처 재검사 — 정정이 칸 숫자를
+    칸 값과 다르게 바꾸거나 block 구역에 칸 없는 숫자를 새로 쓰면 막는다. 정정에는 첫 판이 없다(`--correction`).
+    그 전 글은 게이트 목록이 그대로다(KR 설계 §11.3, US 에도)."""
+    m = re.fullmatch(r'posts/(\d{4}-\d{2}-\d{2})\.html', str(item.path))
+    if item.section != 'us' or not m:
+        return None
+    from common import numsrc
+    if m.group(1) < numsrc.FILL_EFFECTIVE:
+        return None
+    return ('check_number_sources.py', ['--market', 'us', '--date', m.group(1), '--html', post,
+                                        '--datadir', str(data), '--repo', str(clone), '--correction'])
 _ALL_GATES = frozenset(['check_macro.py', 'check_readability.py', 'check_style.py', 'check_contested.py',
-                        'check_sources.py',
+                        'check_sources.py', 'check_number_sources.py',
                         'verify_post.py', *(f'check_{n}.py' for n in
                                             US_DATADIR_GATES + KR_DATADIR_GATES
                                             + (KR_STANCE_GATE,))])
@@ -197,6 +215,9 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
         # commit never fetched. The evidence snapshot is that commit's data, hence legacy.
         gates.append(('check_sources.py', ['--html', post, '--datadir', str(data),
                                            '--legacy-releases']))
+        ns = _number_sources_gate(item, post, data, clone)
+        if ns:
+            gates.append(ns)
     else:
         for name in KR_DATADIR_GATES:
             gates.append((f'check_{name}.py', _kr_datadir_args(name, post, data, item.path)))
@@ -231,7 +252,7 @@ def _gates(root, clone, item, evidence, timeout, allowed=(), record=None, baseli
             if name in VIOLATION_DIFF:
                 if code != 1:
                     raise RuntimeError(f'{name} exited {code} (cannot judge): {result[-4000:]}')
-                lines = _violation_lines(result)
+                lines = _violation_lines(result, name)
                 if record is not None:
                     record[name] = lines
                 if baseline is not None and name in allowed:
