@@ -117,8 +117,8 @@
  },
  "notes": [],
  "today": true,
- "run_id": "46103423915-1",
- "generated": "2026-11-28 12:34 KST",
+ "run_id": "46105898895-1",
+ "generated": "2026-11-28 13:06 KST",
  "checked": {
   "h41": false,
   "qra": false
@@ -134,7 +134,7 @@
  "collect": {
   "status": "ok",
   "as_of": "2026-11-27",
-  "collected_at": "2026-11-28T12:34:15+09:00",
+  "collected_at": "2026-11-28T13:06:20+09:00",
   "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
   "response": "ok",
   "required_ok": true,
