@@ -2,13 +2,13 @@
  "format": "collect-status/1",
  "market": "us",
  "report_date": "2026-11-27",
- "stamped_at": "2026-11-28T12:06:48+09:00",
- "run_id": "46100551002-1",
+ "stamped_at": "2026-11-28T12:34:15+09:00",
+ "run_id": "46103423915-1",
  "run": {
-  "started_at": "2026-11-28T11:58:14+09:00",
+  "started_at": "2026-11-28T12:33:59+09:00",
   "open": false,
   "checked": true,
-  "run_id": "46100551002-1",
+  "run_id": "46103423915-1",
   "steps_known": true
  },
  "files": {
@@ -28,7 +28,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "calendar.json": {
    "present": true,
@@ -43,7 +43,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "econ_indicators.json": {
    "present": true,
@@ -85,7 +85,7 @@
     }
    },
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/chair-speech-20261116.txt": {
    "present": true,
@@ -100,7 +100,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/events.json": {
    "present": true,
@@ -115,7 +115,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/fomc-minutes-20261007.txt": {
    "present": true,
@@ -130,7 +130,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/fomc-minutes-20261118.txt": {
    "present": true,
@@ -145,7 +145,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/fomc-projections-20260916.txt": {
    "present": true,
@@ -160,7 +160,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/fomc-statement-20260916.txt": {
    "present": true,
@@ -175,7 +175,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/fomc-statement-20261028.txt": {
    "present": true,
@@ -190,7 +190,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/jackson-hole-20260828.txt": {
    "present": true,
@@ -205,7 +205,7 @@
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fed/seen.json": {
    "present": true,
@@ -241,7 +241,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "producer:fund_board.json",
-   "run": "written"
+   "run": "skipped"
   },
   "fund_board.json": {
    "present": true,
@@ -256,7 +256,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "fund_factors.json": {
    "present": true,
@@ -278,15 +278,15 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "liquidity/liquidity.json": {
    "present": true,
-   "sha256": "38b378fb565f8547b2ac4736da9dd27f9b5ac21a9040f337bc03dc84ee3739d6",
-   "bytes": 2831,
+   "sha256": "6b3ae78ec98aded73ccb6739305a4cdff6f1d050cc803219680d15c4cd59bc14",
+   "bytes": 2832,
    "status": "ok",
    "as_of": "2026-11-27",
-   "collected_at": "2026-11-28T12:06:48+09:00",
+   "collected_at": "2026-11-28T12:34:15+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
@@ -301,7 +301,7 @@
    "bytes": 3882,
    "status": "ok",
    "as_of": "2026-11-27",
-   "collected_at": "2026-11-28T12:06:48+09:00",
+   "collected_at": "2026-11-28T12:34:15+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
@@ -316,7 +316,7 @@
    "bytes": 6930,
    "status": "ok",
    "as_of": "2026-11-27",
-   "collected_at": "2026-11-28T12:06:48+09:00",
+   "collected_at": "2026-11-28T12:34:15+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
@@ -331,7 +331,7 @@
    "bytes": 13384,
    "status": "ok",
    "as_of": "2026-11-27",
-   "collected_at": "2026-11-28T12:06:48+09:00",
+   "collected_at": "2026-11-28T12:34:15+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
@@ -342,7 +342,7 @@
   },
   "liquidity/state.json": {
    "present": true,
-   "sha256": "33489e343c50b1de0f350650a0ec6550a7efdaa7b46409b2bb542bc6ca386079",
+   "sha256": "0644c1fd8d0dae8bef0adea63e2e5b9737b5901a67031b3ead53389a64fdc605",
    "bytes": 113332,
    "collect_in": "none",
    "run": "untracked"
@@ -353,7 +353,7 @@
    "bytes": 2339,
    "status": "ok",
    "as_of": "2026-11-27",
-   "collected_at": "2026-11-28T12:06:48+09:00",
+   "collected_at": "2026-11-28T12:34:15+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
@@ -402,7 +402,7 @@
     }
    },
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "macro_metrics.json": {
    "present": true,
@@ -444,7 +444,7 @@
     }
    },
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "market_data.json": {
    "present": true,
@@ -459,7 +459,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "movers.json": {
    "present": true,
@@ -476,7 +476,7 @@
    "checked": 502,
    "expected": 503,
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "news/2026-11-27.json": {
    "present": true,
@@ -491,7 +491,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "releases/index.json": {
    "present": true,
@@ -533,14 +533,14 @@
     }
    },
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "scorecard.json": {
    "present": true,
    "sha256": "59cc6dec54a3429f71833b6abfadb7889b0f0cfcb78a64c601b5a46ce9afa442",
    "bytes": 211,
    "collect_in": "none",
-   "run": "written"
+   "run": "skipped"
   },
   "sector_performance.html": {
    "present": true,
@@ -555,7 +555,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "producer:market_data.json",
-   "run": "written"
+   "run": "skipped"
   },
   "telegram/2026-11-27.json": {
    "present": true,
@@ -571,7 +571,7 @@
    "empty": "has_data",
    "detail": "요약 실패 2건",
    "collect_in": "file",
-   "run": "written"
+   "run": "skipped"
   },
   "yield_curve.png": {
    "present": true,
@@ -586,7 +586,7 @@
    "missing": [],
    "empty": "has_data",
    "collect_in": "producer:market_data.json",
-   "run": "written"
+   "run": "skipped"
   }
  }
 }
