@@ -1,5 +1,5 @@
 {
-  "report_date": "2026-11-25",
+  "report_date": "2026-11-27",
   "events": [
     {
       "key": "fomc-minutes-20261118",
@@ -23,36 +23,13 @@
           "chars": 9413
         }
       ]
-    },
-    {
-      "key": "chair-speech-20261116",
-      "kind": "chair_speech",
-      "kind_ko": "의장 연설",
-      "tier": 1,
-      "date": "2026-11-16",
-      "title": "Warsh, Opening Remarks",
-      "url": "https://www.federalreserve.gov/newsevents/speech/warsh20261116a.htm",
-      "speaker": "Kevin Warsh",
-      "role": "Chairman",
-      "first_seen": "2026-11-16",
-      "fresh": false,
-      "sources": [
-        {
-          "role": "primary",
-          "label": "의장 연설",
-          "url": "https://www.federalreserve.gov/newsevents/speech/warsh20261116a.htm",
-          "ok": true,
-          "note": "prefetched",
-          "chars": 20037
-        }
-      ]
     }
   ],
   "diff": null,
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-25",
-    "collected_at": "2026-11-26T07:00:04+09:00",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-28T12:06:35+09:00",
     "source": "federalreserve.gov RSS",
     "response": "ok",
     "required_ok": true,

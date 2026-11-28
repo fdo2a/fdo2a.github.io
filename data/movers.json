@@ -1,99 +1,137 @@
 {
-  "report_date": "2026-11-25",
+  "report_date": "2026-11-27",
   "universe": "S&P 500 중 달러 거래대금 상위 60",
   "threshold_pct": 5.0,
   "groups": [
     {
       "id": "g1",
-      "industry": "Semiconductors",
-      "direction": "down",
+      "industry": "Broadline Retail",
+      "direction": "up",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 상위"
       ],
       "members": [
         {
-          "name": "Nvidia (NVDA)",
-          "change_pct": -3.91,
-          "close": 149.3,
-          "value": 53263473469.03
+          "name": "Amazon (AMZN)",
+          "change_pct": 3.96,
+          "close": 254.12,
+          "value": 6928098838.88
         }
       ]
     },
     {
       "id": "g2",
-      "industry": "Broadline Retail",
-      "direction": "down",
+      "industry": "Automobile Manufacturers",
+      "direction": "up",
       "reasons": [
-        "지수 기여 하위"
+        "지수 기여 상위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Amazon (AMZN)",
-          "change_pct": -3.12,
-          "close": 244.43,
-          "value": 14925852051.77
+          "name": "Tesla, Inc. (TSLA)",
+          "change_pct": 5.22,
+          "close": 400.0,
+          "value": 10653840000.0
         }
       ]
     },
     {
       "id": "g3",
-      "industry": "Interactive Media & Services",
-      "direction": "up",
+      "industry": "Biotechnology",
+      "direction": "down",
       "reasons": [
-        "지수 기여 상위"
+        "지수 기여 하위",
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Meta Platforms (META)",
-          "change_pct": 3.4,
-          "close": 609.89,
-          "value": 11184059407.32
+          "name": "Vertex Pharmaceuticals (VRTX)",
+          "change_pct": -5.24,
+          "close": 534.57,
+          "value": 1139115228.61
+        },
+        {
+          "name": "AbbVie (ABBV)",
+          "change_pct": -0.88,
+          "close": 291.88,
+          "value": 1214454324.32
         }
       ]
     },
     {
       "id": "g4",
-      "industry": "Technology Hardware, Storage & Peripherals",
+      "industry": "Semiconductors",
       "direction": "up",
       "reasons": [
-        "지수 기여 상위"
+        "이상 등락"
       ],
       "members": [
         {
-          "name": "Apple Inc. (AAPL)",
-          "change_pct": 0.43,
-          "close": 355.58,
-          "value": 18767975367.59
+          "name": "Micron Technology (MU)",
+          "change_pct": 7.6,
+          "close": 646.95,
+          "value": 17406125383.43
+        },
+        {
+          "name": "Intel (INTC)",
+          "change_pct": 5.38,
+          "close": 57.4,
+          "value": 4395353456.84
+        },
+        {
+          "name": "Marvell Technology (MRVL)",
+          "change_pct": 7.34,
+          "close": 140.54,
+          "value": 2579288334.78
+        },
+        {
+          "name": "Qualcomm (QCOM)",
+          "change_pct": 6.29,
+          "close": 179.27,
+          "value": 1751055620.73
         }
       ]
     },
     {
       "id": "g5",
       "industry": "Technology Hardware, Storage & Peripherals",
-      "direction": "down",
+      "direction": "up",
       "reasons": [
         "이상 등락"
       ],
       "members": [
         {
-          "name": "Sandisk (SNDK)",
-          "change_pct": -22.02,
-          "close": 73.61,
-          "value": 8921244332.48
+          "name": "Dell Technologies (DELL)",
+          "change_pct": 6.7,
+          "close": 316.96,
+          "value": 2933369632.92
+        },
+        {
+          "name": "Western Digital (WDC)",
+          "change_pct": 7.22,
+          "close": 292.11,
+          "value": 1388340338.38
+        },
+        {
+          "name": "Seagate Technology (STX)",
+          "change_pct": 7.9,
+          "close": 509.66,
+          "value": 1300550397.34
         }
       ]
     }
   ],
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-25",
-    "collected_at": "2026-11-26T06:54:22+09:00",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-28T12:00:36+09:00",
     "source": "Wikipedia S&P 500 constituents + yfinance",
     "response": "ok",
     "required_ok": true,
     "missing": [],
     "empty": "has_data",
-    "checked": 503,
+    "checked": 502,
     "expected": 503
   }
 }

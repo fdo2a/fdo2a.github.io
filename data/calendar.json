@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-11-25",
-  "generated": "2026-11-26 07:01 KST",
+  "report_date": "2026-11-27",
+  "generated": "2026-11-28 12:06 KST",
   "horizon_days": 10,
   "events": [
     {
@@ -228,66 +228,6 @@
       "bid_to_cover": 2.6,
       "indirect_pct": 50.7,
       "dealer_pct": 39.2
-    },
-    {
-      "date": "2026-11-19",
-      "term": "10-Year",
-      "type": "Note",
-      "offering_amt": 19000000000.0,
-      "high_yield": 2.903,
-      "bid_to_cover": 2.43,
-      "indirect_pct": 68.6,
-      "dealer_pct": 6.0
-    },
-    {
-      "date": "2026-11-19",
-      "term": "9-Day",
-      "type": "Bill",
-      "offering_amt": 15000000000.0,
-      "high_yield": 3.968,
-      "bid_to_cover": 3.97,
-      "indirect_pct": 45.9,
-      "dealer_pct": 52.1
-    },
-    {
-      "date": "2026-11-19",
-      "term": "4-Week",
-      "type": "Bill",
-      "offering_amt": 115000000000.0,
-      "high_yield": 4.119,
-      "bid_to_cover": 2.55,
-      "indirect_pct": 59.3,
-      "dealer_pct": 36.4
-    },
-    {
-      "date": "2026-11-19",
-      "term": "8-Week",
-      "type": "Bill",
-      "offering_amt": 110000000000.0,
-      "high_yield": 4.194,
-      "bid_to_cover": 2.72,
-      "indirect_pct": 67.8,
-      "dealer_pct": 27.9
-    },
-    {
-      "date": "2026-11-18",
-      "term": "20-Year",
-      "type": "Bond",
-      "offering_amt": 16000000000.0,
-      "high_yield": 5.459,
-      "bid_to_cover": 2.63,
-      "indirect_pct": 60.2,
-      "dealer_pct": 13.1
-    },
-    {
-      "date": "2026-11-18",
-      "term": "17-Week",
-      "type": "Bill",
-      "offering_amt": 75000000000.0,
-      "high_yield": 4.35,
-      "bid_to_cover": 3.05,
-      "indirect_pct": 56.8,
-      "dealer_pct": 37.5
     }
   ],
   "blackout": {
@@ -319,8 +259,8 @@
   },
   "collect": {
     "status": "ok",
-    "as_of": "2026-11-25",
-    "collected_at": "2026-11-26T07:01:33+09:00",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-28T12:06:47+09:00",
     "source": "FRED release calendar + Census + TreasuryDirect TA_WS + fomc_dates.json",
     "response": "ok",
     "required_ok": true,

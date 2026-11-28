@@ -1,6 +1,6 @@
 {
-  "report_date": "2026-11-25",
-  "macro_date": "2026-11-23",
+  "report_date": "2026-11-27",
+  "macro_date": "2026-11-25",
   "horizon": "3-6개월",
   "scores": {
     "growth_score": 0.093,
@@ -13,442 +13,12 @@
     "inflation": 1,
     "name": "비용압박"
   },
-  "new_releases": [
-    "Initial Jobless Claims",
-    "Initial Claims 4-wk MA",
-    "Continuing Jobless Claims",
-    "Durable Goods Orders MoM",
-    "New Home Sales",
-    "Real GDP Growth QoQ (ann.)",
-    "PCE Price Index YoY",
-    "Core PCE YoY"
-  ],
-  "headline_releases": [
-    {
-      "key": "pce",
-      "label": "개인소비지출(PCE)",
-      "tier": 1,
-      "agency": "BEA",
-      "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index",
-      "role": "scored",
-      "primary": "Core PCE YoY",
-      "max_abs_z": 0.231,
-      "indicators": [
-        {
-          "name": "PCE Price Index YoY",
-          "axis": "Inflation",
-          "actual": 3.84,
-          "previous": 3.67,
-          "ref_period": "2026-10-01",
-          "momentum_z": 0.191,
-          "fred_id": "PCEPI",
-          "transform": "yoy_pct",
-          "units": "%"
-        },
-        {
-          "name": "Core PCE YoY",
-          "axis": "Inflation",
-          "actual": 3.26,
-          "previous": 3.14,
-          "ref_period": "2026-10-01",
-          "momentum_z": 0.231,
-          "fred_id": "PCEPILFE",
-          "transform": "yoy_pct",
-          "units": "%"
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-11-25",
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "text",
-      "anatomy_reason": "no_registry"
-    },
-    {
-      "key": "gdp",
-      "label": "GDP",
-      "tier": 1,
-      "agency": "BEA",
-      "url": "https://www.bea.gov/data/gdp/gross-domestic-product",
-      "role": "scored",
-      "primary": "Real GDP Growth QoQ (ann.)",
-      "max_abs_z": 0.214,
-      "indicators": [
-        {
-          "name": "Real GDP Growth QoQ (ann.)",
-          "axis": "Activity",
-          "actual": 4.3,
-          "previous": 2.2,
-          "ref_period": "2026-07-01",
-          "momentum_z": 0.214,
-          "fred_id": "A191RL1Q225SBEA",
-          "transform": "level",
-          "units": "%"
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-11-25",
-        "round": "no_registry",
-        "candidates": []
-      },
-      "anatomy_status": "text",
-      "anatomy_reason": "no_registry"
-    },
-    {
-      "key": "durable-goods",
-      "label": "내구재 주문",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-      "role": "scored",
-      "primary": "Durable Goods Orders MoM",
-      "max_abs_z": 0.787,
-      "indicators": [
-        {
-          "name": "Durable Goods Orders MoM",
-          "axis": "Activity",
-          "actual": 0.22,
-          "previous": 1.99,
-          "ref_period": "2026-10-01",
-          "momentum_z": 0.787,
-          "fred_id": "DGORDER",
-          "transform": "mom_pct",
-          "units": "%"
-        }
-      ],
-      "components": [
-        {
-          "label": "운송 제외",
-          "fred_id": "ADXTNO",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "운송 제외",
-            "수송 제외",
-            "운송장비 제외"
-          ],
-          "actual": 0.5,
-          "cite_values": [
-            0.5
-          ],
-          "cite_forms": [
-            [
-              0.5,
-              ""
-            ]
-          ],
-          "text_value": 0.5,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "국방 제외",
-          "fred_id": "ADXDNO",
-          "transform": "mom_pct",
-          "unit": "%",
-          "aliases": [
-            "국방 제외",
-            "방산 제외"
-          ],
-          "actual": 0.4,
-          "cite_values": [
-            0.4
-          ],
-          "cite_forms": [
-            [
-              0.4,
-              ""
-            ]
-          ],
-          "text_value": 0.4,
-          "ref_period": "2026-10-01"
-        }
-      ],
-      "anatomy": {
-        "release_date": "2026-11-25",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "운송 제외",
-            "fred_id": "ADXTNO",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": 0.4853056539216638,
-            "text_ok": true,
-            "text_value": 0.5
-          },
-          {
-            "label": "국방 제외",
-            "fred_id": "ADXDNO",
-            "transform": "mom_pct",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current",
-              "previous"
-            ],
-            "fred_value": 0.42104151065343043,
-            "text_ok": true,
-            "text_value": 0.4
-          }
-        ]
-      },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
-    },
-    {
-      "key": "claims",
-      "label": "신규 실업수당 청구",
-      "tier": 2,
-      "agency": "DOL",
-      "url": "https://www.dol.gov/ui/data.pdf",
-      "role": "scored",
-      "primary": "Continuing Jobless Claims",
-      "max_abs_z": 0.675,
-      "indicators": [
-        {
-          "name": "Initial Jobless Claims",
-          "axis": "Labor",
-          "actual": 189000.0,
-          "previous": 202000.0,
-          "ref_period": "2026-11-21",
-          "momentum_z": -0.112,
-          "fred_id": "ICSA",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Initial Claims 4-wk MA",
-          "axis": "Labor",
-          "actual": 196000.0,
-          "previous": 197500.0,
-          "ref_period": "2026-11-21",
-          "momentum_z": -0.264,
-          "fred_id": "IC4WSA",
-          "transform": "level",
-          "units": ""
-        },
-        {
-          "name": "Continuing Jobless Claims",
-          "axis": "Labor",
-          "actual": 1697000.0,
-          "previous": 1792000.0,
-          "ref_period": "2026-11-14",
-          "momentum_z": 0.675,
-          "fred_id": "CCSA",
-          "transform": "level",
-          "units": ""
-        }
-      ],
-      "components": [],
-      "anatomy": {
-        "release_date": "2026-11-25",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "계절조정 전 청구",
-            "fred_id": "ICNSA",
-            "transform": "level",
-            "unit": "건",
-            "round_ok": true,
-            "reason": "not_in_text",
-            "observation": "2026-11-14",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 197051.0,
-            "text_ok": false
-          },
-          {
-            "label": "보험 실업률",
-            "fred_id": "IURSA",
-            "transform": "level",
-            "unit": "%",
-            "round_ok": true,
-            "reason": "not_in_text",
-            "observation": "2026-11-07",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 1.2,
-            "text_ok": false
-          }
-        ]
-      },
-      "anatomy_status": "text",
-      "anatomy_reason": "components_short"
-    },
-    {
-      "key": "new-home-sales",
-      "label": "신규주택 판매",
-      "tier": 2,
-      "agency": "Census",
-      "url": "https://www.census.gov/construction/nrs/pdf/newressales.pdf",
-      "role": "scored",
-      "primary": "New Home Sales",
-      "max_abs_z": 0.235,
-      "indicators": [
-        {
-          "name": "New Home Sales",
-          "axis": "Activity",
-          "actual": 701.0,
-          "previous": 614.0,
-          "ref_period": "2026-10-01",
-          "momentum_z": 0.235,
-          "fred_id": "HSN1F",
-          "transform": "level",
-          "units": "K"
-        }
-      ],
-      "components": [
-        {
-          "label": "재고 개월 수",
-          "fred_id": "MSACSR",
-          "transform": "level",
-          "unit": "개월",
-          "aliases": [
-            "개월",
-            "재고 소진"
-          ],
-          "actual": 8,
-          "cite_values": [
-            8
-          ],
-          "cite_forms": [
-            [
-              8,
-              ""
-            ]
-          ],
-          "text_value": 8.0,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "판매가격 중위값",
-          "fred_id": "MSPNHSUS",
-          "transform": "level",
-          "unit": "달러",
-          "aliases": [
-            "중위",
-            "중간값"
-          ],
-          "actual": 391300,
-          "cite_values": [
-            391300
-          ],
-          "cite_forms": [
-            [
-              391300,
-              ""
-            ]
-          ],
-          "text_value": 391300.0,
-          "ref_period": "2026-10-01"
-        },
-        {
-          "label": "판매 대기 재고",
-          "fred_id": "HNFSEPUSSA",
-          "transform": "level",
-          "unit": "채",
-          "aliases": [
-            "판매 대기",
-            "매물",
-            "판매용 재고"
-          ],
-          "actual": 470000,
-          "cite_values": [
-            470000,
-            470,
-            47
-          ],
-          "cite_forms": [
-            [
-              470000,
-              ""
-            ],
-            [
-              470,
-              "천"
-            ],
-            [
-              47,
-              "만"
-            ]
-          ],
-          "text_value": 470000.0,
-          "ref_period": "2026-10-01"
-        }
-      ],
-      "anatomy": {
-        "release_date": "2026-11-25",
-        "round": "ok",
-        "candidates": [
-          {
-            "label": "재고 개월 수",
-            "fred_id": "MSACSR",
-            "transform": "level",
-            "unit": "개월",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 8.0,
-            "text_ok": true,
-            "text_value": 8.0
-          },
-          {
-            "label": "판매가격 중위값",
-            "fred_id": "MSPNHSUS",
-            "transform": "level",
-            "unit": "달러",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 391300.0,
-            "text_ok": true,
-            "text_value": 391300.0
-          },
-          {
-            "label": "판매 대기 재고",
-            "fred_id": "HNFSEPUSSA",
-            "transform": "level",
-            "unit": "채",
-            "round_ok": true,
-            "reason": "ok",
-            "observation": "2026-10-01",
-            "changed": [
-              "current"
-            ],
-            "fred_value": 470.0,
-            "text_ok": true,
-            "text_value": 470000.0
-          }
-        ]
-      },
-      "anatomy_status": "complete",
-      "anatomy_reason": null
-    }
-  ],
+  "new_releases": [],
+  "headline_releases": [],
   "anatomy_gaps": [],
   "stale": false,
-  "abbreviated": false,
-  "abbreviated_reason": "tier 1 발표가 있는 날",
+  "abbreviated": true,
+  "abbreviated_reason": null,
   "axis_directions": {
     "Labor": "개선",
     "Activity": "악화",
@@ -463,11 +33,11 @@
     "inflation_label": "재가속",
     "name": "비용압박",
     "since": "2026-11-10",
-    "days_held": 12,
-    "thesis": "비용압박 유지(11월 10일부터, 10일째). 11월 23일에는 새 FRED 지표가 없었고(S&P Global 11월 속보 PMI는 점수 밖, 종합 54.6, 10월 55.9) 성장 점수 0.073(보합)·물가 점수 0.722(재가속, 물가 축은 8개 중 6개 가용 지표 기준)로 점수가 현재 국면을 가리킨다. 다음 점검은 11월 25일 PCE 물가·GDP다."
+    "days_held": 14,
+    "thesis": "비용압박 유지(11월 10일부터, 12일째). 11월 25일 PCE 물가·3분기 GDP 2차·내구재 주문·신규주택 판매·실업수당 청구 다섯 건이 새로 나왔다. 10월 근원 PCE 전년비 3.26%(9월 3.14%)가 물가 점수를 0.722에서 0.85(재가속, 8개 중 6개 가용 지표 기준)로 끌어올렸고, 3분기 GDP 4.3% 상향에도 성장 점수는 0.093(보합)이라 점수가 현재 국면을 가리킨다. 10월 실질 소비 보합과 소프트웨어 투자 측정 수정이 성장 상향의 질을 낮춘다. 다음 점검은 12월 4일 11월 고용보고서다."
   },
   "regime_change_allowed": false,
-  "regime_block": "scores_agree",
+  "regime_block": "no_new_release",
   "allowed_regimes": [
     [
       0,
@@ -476,36 +46,34 @@
   ],
   "policy": {
     "stance": "인상 리스크 우위 — 12월 인상이 중심, 10월 CPI로 50bp 가능성까지 열림",
-    "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 10일 10월 CPI 뒤 CME FedWatch 기준 25bp 인상 89%·50bp 인상 11%로 보도됐다(IBTimes). 발표 전 12월 인상 확률은 11월 9일 84%(Reuters via Yahoo)로 보도됐으나 같은 상품·같은 시각의 쌍은 아니다.",
+    "timing": "9월 16일 FOMC가 25bp 인상했고 10월 28일은 10대2로 동결했다. 다음 추가 25bp 인상 시점은 12월 9일 FOMC로 본다. 11월 25일 10월 근원 PCE 전년비가 3.3%(BEA 반올림, ING가 전한 예상 3.2%)로 예상을 웃돈 뒤 CME FedWatch 12월 인상 확률이 98%(Investing.com)·97.8%로 보도됐다.",
     "prob_pct": null,
     "prob_status": "unverified",
-    "prob_note": "11월 23일 장 마감 뒤 CME FedWatch 값은 측정 시각이 확인된 것을 구하지 못했다. 집계 사이트(gate.com)는 11월 23일 공개 자료로 12월 인상 91.4%·동결 8.6%를, Bloomingbit은 12월 50bp 인상 확률 0%를 전했고, Investing.com 칼럼(11월 22일 기준)은 동결 확률이 11.4%에서 6.5%로 낮아졌다고 썼다. 관측 시각·기준이 서로 달라 비교하지 않는다.",
-    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 11월 23일 주식이 4.73% 급반등한 날 16:00 ET 기준 2년물은 3.8bp 오른 4.672%로 베어 플래트닝했고, 트레이더가 더 매파적인 연준에 베팅했다는 보도가 나왔다. 윌리엄스 뉴욕 연은 총재는 장 마감 뒤 추가 조치가 시간을 두고 이뤄질 수 있다고 했지만 12월 회의 기대에는 답하지 않았다. 같은 상품의 확률 변화가 15%p 이상 확인되지 않아 시점은 그대로다. 물가 판단은 가용 지표(8개 중 6개) 기준이다.",
-    "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 11월 25일 10월 PCE 물가가 예상을 밑돌고 CME FedWatch 12월 인상 확률이 소비자물가 발표 전 보도치(84%) 아래로 내려가면 12월 인상 중심 판단을 수정한다.",
-    "change_allowed": true,
-    "change_block": null
+    "prob_note": "11월 25일 CME FedWatch 12월 인상 확률은 Investing.com 칼럼(11월 25일 19:53 UTC 게재) 98%, 공개 마감 정리 97.8%로 보도됐으나 원 페이지의 관측 시각을 확인하지 못했다. 11월 23일 집계 사이트 보도치(91.4%)와는 관측 시각·기준이 달라 비교하지 않는다.",
+    "thesis": "12월 인상이 중심이라는 판단을 유지한다. 10월 근원 PCE가 예상을 웃돌아 인상 근거는 강해졌고, 11월 25일 PCE가 예상을 밑돌고 확률이 84% 아래로 내려가면 수정한다는 조건은 충족되지 않았다. 같은 날 16:00 ET 기준 2년물은 3.9bp 내려 지표가 단기 금리를 더 끌어올리지 못했는데, 12월 인상이 거의 다 가격에 들어갔기 때문일 수 있다. 같은 상품의 확률 변화가 15%p 이상 확인되지 않아 시점은 그대로다. 물가 판단은 가용 지표(8개 중 6개) 기준이다.",
+    "falsifier": "12월 9일 FOMC 전까지 연준 성명이나 의장 발언이 추가 인상 여지를 닫으면 12월 인상 중심 판단을 철회한다. 12월 4일 11월 고용보고서에서 비농업 고용이 감소로 돌아서고 실업률이 10월 4.1%보다 오르면 12월 인상 중심 판단을 수정한다.",
+    "change_allowed": false,
+    "change_block": "no_new_release"
   },
   "transmission": {
     "equities": {
       "direction": 0,
       "label": "중립",
-      "channel": "성장 쪽 점수가 둔화에 머물지만 물가 둔화 흐름도 함께 진행돼 두 힘이 상쇄된다. 실질금리와 밸류에이션 압박, 완만한 이익 성장 기대가 맞서는 구간이라 방향성 베팅이 어렵다.",
+      "channel": "성장 점수는 3분기 GDP 상향에도 보합 범위이고 물가는 가용 지표 기준 재가속이라, 이익 성장 기대가 밸류에이션을 받치는 힘과 높은 실질금리·인상 경로의 할인율 압박이 맞선다. 10월 실질 소비 보합이 4분기 둔화 쪽 근거를 더해 방향성 베팅의 근거가 어느 쪽으로도 충분하지 않다.",
       "confirm": "ISM 제조업 PMI 재가속(50 상회 지속) 또는 10Y가 4.5% 하회",
       "since": "2026-08-17",
-      "days_held": 73,
+      "days_held": 75,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "bonds": {
       "direction": -1,
       "label": "비우호",
-      "channel": "물가 재가속이 생산자물가로 굳고 12월 인상 뒤 1·3월 추가 인상까지 거론되면서 실질금리 정점 통과와 완화 재개 기대가 더 뒤로 밀렸다. 30년물이 5.4% 위에서 이틀 연속 마감했고 10년·30년물 입찰 응찰이 평균보다 얇아 장기물 공급 부담이 더해졌다.",
+      "channel": "물가 재가속(가용 지표 기준)이 생산자물가에 이어 10월 근원 PCE로 이어지고 12월 인상이 사실상 가격에 들어가, 실질금리 정점 통과와 완화 재개 기대가 여전히 멀다. 30년물은 11월 20일부터 4거래일째 5.4% 아래에 있지만 중립 복귀 조건(5거래일)은 아직 채우지 못했다.",
       "confirm": "30Y가 5.4% 아래로 내려와 5거래일 머물거나 근원 CPI 전월비가 0.2% 이하로 내려오면 중립 복귀, 30Y가 5.05% 하회하면 우호",
       "since": "2026-11-13",
-      "days_held": 9,
+      "days_held": 11,
       "allowed_directions": [
         -1,
         0
@@ -517,11 +85,9 @@
       "channel": "물가 둔화가 실질금리 차를 좁혀 달러를 약하게 한다는 경로가 물가 재가속과 12월 인상 경로로 막혔다. 미국 정책금리 경로가 위로 옮겨 가 달러 강세 쪽을 받치지만, 금리차 자체와 다른 중앙은행 경로는 재지 않았고 달러 레벨도 이미 높아 우호까지는 올리지 않는다.",
       "confirm": "DXY 20일 -3% 이상 하락 또는 FedWatch 인하 확률 재등장 시 비우호, 12월 50bp 인상 확률 50% 상회 시 우호",
       "since": "2026-11-10",
-      "days_held": 12,
+      "days_held": 14,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "energy": {
@@ -530,11 +96,9 @@
       "channel": "지정학 리스크 프리미엄은 3-6개월 구조축이 아니라 이벤트성 변수라, 수급 펀더멘털(OPEC+ 증산 여력 vs 이란 리스크)이 상쇄된다. 구조적으로는 중립이지만 이벤트 리스크가 계속 겹칠 경우 이 판단을 다시 열어야 한다.",
       "confirm": "호르무즈 통항과 공급 차질 지속 여부, 운송 정상화 확인",
       "since": "2026-08-17",
-      "days_held": 73,
+      "days_held": 75,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "metals": {
@@ -543,11 +107,9 @@
       "channel": "물가 재가속과 인상 경로가 실질금리 하락 기대를 늦춰 금 보유비용 하락 경로가 약해졌다. 지정학·재정 헤지 수요가 남아 비우호까지는 내리지 않는다.",
       "confirm": "10Y 실질금리(TIPS) 추가 하락 또는 금 20일 수익률 +15% 상회",
       "since": "2026-11-10",
-      "days_held": 12,
+      "days_held": 14,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     },
     "memory": {
@@ -556,7 +118,7 @@
       "channel": "소비축 부진과 무관하게 기업 AI 데이터센터 투자 사이클이 D램·낸드 수급을 견인하는 독립적 성장경로다. 반도체 업종 전반의 단기 위험회피 흐름과는 별개로 이 구조는 유지된다.",
       "confirm": "Micron 등 주요업체의 FY 가이던스 상향 지속 또는 DRAM 현물가 추세",
       "since": "2026-08-17",
-      "days_held": 73,
+      "days_held": 75,
       "allowed_directions": [
         0,
         1
@@ -568,18 +130,16 @@
       "channel": "캐펙스 사이클 자체는 구조적으로 우호적이지만, 장기금리 레벨이 높은 구간의 할인율 압박과 발주자의 자금 조달 부담이 이를 상쇄한다. 10월 28~29일 알파벳·아마존의 현금흐름 악화에 이어 11월 10일 소프트뱅크의 발전설비 선급금 손상(37억 달러)과 조달 재검토가 고객 쪽 부담을 더했다.",
       "confirm": "30Y가 5.4% 상회로 추가 상승하는지 또는 하이퍼스케일러 4분기 capex 가이던스",
       "since": "2026-08-17",
-      "days_held": 73,
+      "days_held": 75,
       "allowed_directions": [
-        -1,
-        0,
-        1
+        0
       ]
     }
   },
   "collect": {
     "status": "partial",
-    "as_of": "2026-11-25",
-    "collected_at": "2026-11-26T06:54:26+09:00",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-28T12:00:36+09:00",
     "source": "macro_metrics.json + macro.json",
     "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
     "required_ok": false,
@@ -613,5 +173,5 @@
       }
     }
   },
-  "collection_run": "45708111588-1"
+  "collection_run": "46100551002-1"
 }

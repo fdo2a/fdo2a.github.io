@@ -1,69 +1,57 @@
 {
  "format": "collect-status/1",
  "market": "us",
- "report_date": "2026-11-25",
- "stamped_at": "2026-11-27T13:26:02+09:00",
- "run_id": "45939828324-1",
+ "report_date": "2026-11-27",
+ "stamped_at": "2026-11-28T12:06:48+09:00",
+ "run_id": "46100551002-1",
  "run": {
-  "started_at": "2026-11-27T13:25:42+09:00",
+  "started_at": "2026-11-28T11:58:14+09:00",
   "open": false,
   "checked": true,
-  "run_id": "45939828324-1",
+  "run_id": "46100551002-1",
   "steps_known": true
  },
  "files": {
   "auction_table.html": {
-   "present": true,
-   "sha256": "20acbc8cd13419ec4960c1bac98ee82bfbd918ff0f456ce0b569394ca66e682d",
-   "bytes": 872,
-   "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:01:35+09:00",
-   "source": "TreasuryDirect TA_WS",
-   "response": "ok",
-   "required_ok": true,
-   "missing": [],
-   "empty": "has_data",
-   "collect_in": "producer:auctions.json",
-   "run": "skipped"
+   "present": false
   },
   "auctions.json": {
    "present": true,
-   "sha256": "862d6eee84e1561876942df8d266407b50538c2c8270e2cea1e8a2a77fb04f9f",
-   "bytes": 6389,
+   "sha256": "47257b9edf35c9deb92e65c4466f2412e307da2222f828e3e5a42b9eacc7a775",
+   "bytes": 4577,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:01:35+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:48+09:00",
    "source": "TreasuryDirect TA_WS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
-   "empty": "has_data",
+   "empty": "confirmed_none",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "calendar.json": {
    "present": true,
-   "sha256": "5a2a8de59562d7fcb838e30210581c4e854461f26f073ccacfd23531199397d9",
-   "bytes": 8032,
+   "sha256": "0cfb3d247e0272ea3cfab7ce5b0ab93f05b9efcb1a7b9518563d2359adff27ce",
+   "bytes": 6638,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:01:33+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:47+09:00",
    "source": "FRED release calendar + Census + TreasuryDirect TA_WS + fomc_dates.json",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "econ_indicators.json": {
    "present": true,
-   "sha256": "15d45dc7b9bfabd33fc0526efdea54624b7d1d63f1634d4cc43a9e2a9f0aee25",
+   "sha256": "45242b7ddefeecfc16a92e4314e1340bd861f3629df0bf767695572e187ed99f",
    "bytes": 8361,
    "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:52:51+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:18+09:00",
    "source": "FRED",
    "response": "missing: no_value:CPI YoY, no_value:Core CPI YoY",
    "required_ok": false,
@@ -97,127 +85,127 @@
     }
    },
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/chair-speech-20261116.txt": {
    "present": true,
    "sha256": "7aee9676b2a3404dc1ff44a075dfc7635ffb7a5cb025bc3135561f9233060300",
    "bytes": 20176,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/events.json": {
    "present": true,
-   "sha256": "30ba36c857191f15a19ebbbd29c1ad321972439166c18ae41281dd4e9a9de933",
-   "bytes": 1732,
+   "sha256": "6c7fd6d03b75d66ff800ff6f9592a2bb1db076a22f70020025344eaceb594c68",
+   "bytes": 1054,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/fomc-minutes-20261007.txt": {
    "present": true,
    "sha256": "21b33f7348abbb4fd60d957210117d63e95d98e794661d499755d4d321811a01",
    "bytes": 9532,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/fomc-minutes-20261118.txt": {
    "present": true,
    "sha256": "1eaa28f4177e5971ff07fe49620ff47a32b0ac01c3d7446fe633aec0389fa374",
    "bytes": 9527,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/fomc-projections-20260916.txt": {
    "present": true,
    "sha256": "49ce913fe9d12178a38a93c724009e20d4e959320ffe6c0bd7c8d40f921cb02d",
    "bytes": 9293,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/fomc-statement-20260916.txt": {
    "present": true,
    "sha256": "407288109f9ca0f6358730a94e7f0258e16559d53fe6f28d7501c72c7c3b3be4",
    "bytes": 81633,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/fomc-statement-20261028.txt": {
    "present": true,
    "sha256": "6450a2171d74f47ac85da4f6825d8e8ad71468d109d817e1b425d405d180c72a",
    "bytes": 53346,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/jackson-hole-20260828.txt": {
    "present": true,
    "sha256": "a0ff7e424cd11b039af1c4304eb77b1c7ce7189147c3e9298af9af59f94a5b9f",
    "bytes": 36256,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:04+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:35+09:00",
    "source": "federalreserve.gov RSS",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "confirmed_none",
    "collect_in": "producer:fed/events.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fed/seen.json": {
    "present": true,
@@ -235,75 +223,75 @@
   },
   "fomc_dates.json": {
    "present": true,
-   "sha256": "c680c8f09d6f96130c395010aa6e7882adbb28cc640c60c9f7ac557a8ffe5119",
+   "sha256": "f01750d0a96251900169c7b62c9606984fdf48ddfddea88f8c1569ae21ca8b5f",
    "bytes": 1700,
    "collect_in": "none",
    "run": "untracked"
   },
   "fund_board.html": {
    "present": true,
-   "sha256": "4cc392d18799720523e3547643e9f61de29d1b735139c3213fdda2a493fef960",
-   "bytes": 14369,
+   "sha256": "08f823543671bd78a4971d2b7989857173e29f2f658c7931c6da3b0e44b6484c",
+   "bytes": 14343,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:53:39+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:51+09:00",
    "source": "yfinance + FRED (fund board)",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "producer:fund_board.json",
-   "run": "skipped"
+   "run": "written"
   },
   "fund_board.json": {
    "present": true,
-   "sha256": "eb153f5de39679ff924f59bbe881d39a06b11b35fc96e1e627268b53c34cd1f8",
-   "bytes": 21093,
+   "sha256": "6c4b6a0fd8bbae2ef43085c7d3d81edb1f5ec620407d5d14bfb4e1f9f1e22e84",
+   "bytes": 21074,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:53:39+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:51+09:00",
    "source": "yfinance + FRED (fund board)",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "fund_factors.json": {
    "present": true,
-   "sha256": "ff3b8859628b2e602290c563bf84eb94ce98eae19877b17aaa33f7e91929bb29",
-   "bytes": 50378,
+   "sha256": "c794309f7d52571d5967d4f6c0a2c5c3aaecd3cb012d24f49997de72d43ecc92",
+   "bytes": 50400,
    "collect_in": "none",
    "run": "untracked"
   },
   "intraday.json": {
    "present": true,
-   "sha256": "427d46e93c2aac04dd8723c2ae012de679ecab64ba1af9b5caa39b97e92ccba2",
-   "bytes": 2123,
+   "sha256": "1865efe43b172723344a60d06c42e9326506c8886af7e937969fb114ff5ac0ce",
+   "bytes": 2133,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:22+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:00:36+09:00",
    "source": "yfinance 30m",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "liquidity/liquidity.json": {
    "present": true,
-   "sha256": "7b3656a3422641965c1f4efca464aa5343f00b9a9be602c542c606a2fca982c9",
-   "bytes": 1326,
+   "sha256": "38b378fb565f8547b2ac4736da9dd27f9b5ac21a9040f337bc03dc84ee3739d6",
+   "bytes": 2831,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-27T13:26:02+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:48+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
    "missing": [],
-   "empty": "confirmed_none",
+   "empty": "has_data",
    "collect_in": "file",
    "run": "written"
   },
@@ -312,13 +300,13 @@
    "sha256": "6e68303d9a23af00f69514852a38445d9bb3493e17a28347fbd4c7e00d46cc80",
    "bytes": 3882,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-27T13:26:02+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:48+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
    "missing": [],
-   "empty": "confirmed_none",
+   "empty": "has_data",
    "collect_in": "producer:liquidity/liquidity.json",
    "run": "written"
   },
@@ -327,13 +315,13 @@
    "sha256": "f553e5b9c3875ed9ba1f8030745c20cb1ea7738048093cc47d0cd7f7d38895a8",
    "bytes": 6930,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-27T13:26:02+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:48+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
    "missing": [],
-   "empty": "confirmed_none",
+   "empty": "has_data",
    "collect_in": "producer:liquidity/liquidity.json",
    "run": "written"
   },
@@ -342,33 +330,45 @@
    "sha256": "81b285c9d68d029aaaf8bd2dc5d6ce8f663f0d47e1cf533707cc1648302b3b2f",
    "bytes": 13384,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-27T13:26:02+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:48+09:00",
    "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
    "response": "ok",
    "required_ok": true,
    "missing": [],
-   "empty": "confirmed_none",
+   "empty": "has_data",
    "collect_in": "producer:liquidity/liquidity.json",
    "run": "written"
   },
   "liquidity/state.json": {
    "present": true,
-   "sha256": "58f61766d008b0be622941eded3806969a0bf929ca08ecda57bbbe3c1e81b98c",
-   "bytes": 112768,
+   "sha256": "33489e343c50b1de0f350650a0ec6550a7efdaa7b46409b2bb542bc6ca386079",
+   "bytes": 113332,
    "collect_in": "none",
    "run": "untracked"
   },
   "liquidity/table.html": {
-   "present": false
+   "present": true,
+   "sha256": "3d1f6794d538333485301e1678bcaec9f95880d9f7a2edf07a0e7443dff15cb0",
+   "bytes": 2339,
+   "status": "ok",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:48+09:00",
+   "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
+   "response": "ok",
+   "required_ok": true,
+   "missing": [],
+   "empty": "has_data",
+   "collect_in": "producer:liquidity/liquidity.json",
+   "run": "written"
   },
   "macro_eval.json": {
    "present": true,
-   "sha256": "c7e8f989ff0137864c8b9f31351e8fb7e40cdd72eb1745a57a0de36b7d14584e",
-   "bytes": 19757,
+   "sha256": "a33f007d70acd7eaecf589c27903661cc8bb23ebb9bfe17247672046a6383976",
+   "bytes": 8863,
    "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:26+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:00:36+09:00",
    "source": "macro_metrics.json + macro.json",
    "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
    "required_ok": false,
@@ -402,15 +402,15 @@
     }
    },
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "macro_metrics.json": {
    "present": true,
-   "sha256": "9016ce379ec450347177d77f2750a7c0db468d9fe49ff4ce7e3d4192f7370a16",
-   "bytes": 36939,
+   "sha256": "b9ff14e0341cc365807ebf90d44abbf3f618373c3a8604ebd3743d395355bb0d",
+   "bytes": 25962,
    "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:53:24+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:37+09:00",
    "source": "FRED (macro_metrics)",
    "response": "missing: econ:no_value:CPI YoY, econ:no_value:Core CPI YoY",
    "required_ok": false,
@@ -444,188 +444,62 @@
     }
    },
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "market_data.json": {
    "present": true,
-   "sha256": "932709a515e5371ef1cede4d1f906c931fed19d20f048ce1d311112a97e04714",
-   "bytes": 32841,
+   "sha256": "7902c0cb0d836a095f90c2c69363ae9218130a4be75a041b79f6b9ced2edd79b",
+   "bytes": 32962,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:53:39+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:51+09:00",
    "source": "yfinance + Naver 국채 + FRED",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "movers.json": {
    "present": true,
-   "sha256": "0ee3684bce846976351eb547dd5b570474edbab14291b6b677e61f951a88182c",
-   "bytes": 2144,
+   "sha256": "60dd116fd6fa6826b89ba2d209948692841706e18991b833dd092504cc4ba73c",
+   "bytes": 3078,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:22+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:00:36+09:00",
    "source": "Wikipedia S&P 500 constituents + yfinance",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
-   "checked": 503,
+   "checked": 502,
    "expected": 503,
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
-  "news/2026-11-25.json": {
+  "news/2026-11-27.json": {
    "present": true,
-   "sha256": "23255190ebd2e9515ec88a44e76a172e93b4004e1d030b69e10900fd25c7d84c",
-   "bytes": 108391,
+   "sha256": "889adaf0ffcf75ccd98ef6948ca9185de28af39ef430bde510eca1f6e1afba6f",
+   "bytes": 113193,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:58:29+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:04:28+09:00",
    "source": "news feeds (fetch_news.py)",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "file",
-   "run": "skipped"
-  },
-  "releases/claims.txt": {
-   "present": true,
-   "sha256": "22352bf2c574f31209dd44c697adf2ea141cf709c47b6421b445177e9ec920f4",
-   "bytes": 20562,
-   "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:25+09:00",
-   "source": "agency press releases (BLS·BEA·Census·DOL …)",
-   "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
-   "required_ok": false,
-   "missing": [
-    "metrics:econ:no_value:CPI YoY",
-    "metrics:econ:no_value:Core CPI YoY"
-   ],
-   "empty": "has_data",
-   "missing_ref": {
-    "metrics:econ:no_value:CPI YoY": {
-     "fred_id": "CPIAUCSL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    },
-    "metrics:econ:no_value:Core CPI YoY": {
-     "fred_id": "CPILFESL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    }
-   },
-   "collect_in": "producer:releases/index.json",
-   "run": "skipped"
-  },
-  "releases/durable-goods.txt": {
-   "present": true,
-   "sha256": "4946984d16928ced78a49a71e47d3b60d390e796607d186008f854ca37afe232",
-   "bytes": 26463,
-   "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:25+09:00",
-   "source": "agency press releases (BLS·BEA·Census·DOL …)",
-   "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
-   "required_ok": false,
-   "missing": [
-    "metrics:econ:no_value:CPI YoY",
-    "metrics:econ:no_value:Core CPI YoY"
-   ],
-   "empty": "has_data",
-   "missing_ref": {
-    "metrics:econ:no_value:CPI YoY": {
-     "fred_id": "CPIAUCSL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    },
-    "metrics:econ:no_value:Core CPI YoY": {
-     "fred_id": "CPILFESL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    }
-   },
-   "collect_in": "producer:releases/index.json",
-   "run": "skipped"
-  },
-  "releases/gdp.txt": {
-   "present": true,
-   "sha256": "bebf852fc02a213721468b72202c025139199ddcb8476b992d4a536356165483",
-   "bytes": 7138,
-   "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:25+09:00",
-   "source": "agency press releases (BLS·BEA·Census·DOL …)",
-   "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
-   "required_ok": false,
-   "missing": [
-    "metrics:econ:no_value:CPI YoY",
-    "metrics:econ:no_value:Core CPI YoY"
-   ],
-   "empty": "has_data",
-   "missing_ref": {
-    "metrics:econ:no_value:CPI YoY": {
-     "fred_id": "CPIAUCSL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    },
-    "metrics:econ:no_value:Core CPI YoY": {
-     "fred_id": "CPILFESL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    }
-   },
-   "collect_in": "producer:releases/index.json",
-   "run": "skipped"
+   "run": "written"
   },
   "releases/index.json": {
    "present": true,
-   "sha256": "6cca0bdb08895c5a4d5928c49249b968ea021bb458efa927d15c162cc999ca32",
-   "bytes": 4041,
+   "sha256": "030afdf53308ee7605017cc88e91dc9cc3e7f50683c41b2925a7b92ebcc5d3b0",
+   "bytes": 1113,
    "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:25+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:00:36+09:00",
    "source": "agency press releases (BLS·BEA·Census·DOL …)",
    "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
    "required_ok": false,
@@ -633,7 +507,7 @@
     "metrics:econ:no_value:CPI YoY",
     "metrics:econ:no_value:Core CPI YoY"
    ],
-   "empty": "has_data",
+   "empty": "unknown",
    "missing_ref": {
     "metrics:econ:no_value:CPI YoY": {
      "fred_id": "CPIAUCSL",
@@ -659,144 +533,60 @@
     }
    },
    "collect_in": "file",
-   "run": "skipped"
-  },
-  "releases/new-home-sales.txt": {
-   "present": true,
-   "sha256": "1c6f9ca12ddda476cc463d3debc84476fe993a60f8a965a97aef2e7dcad3d0a6",
-   "bytes": 18153,
-   "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:25+09:00",
-   "source": "agency press releases (BLS·BEA·Census·DOL …)",
-   "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
-   "required_ok": false,
-   "missing": [
-    "metrics:econ:no_value:CPI YoY",
-    "metrics:econ:no_value:Core CPI YoY"
-   ],
-   "empty": "has_data",
-   "missing_ref": {
-    "metrics:econ:no_value:CPI YoY": {
-     "fred_id": "CPIAUCSL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    },
-    "metrics:econ:no_value:Core CPI YoY": {
-     "fred_id": "CPILFESL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    }
-   },
-   "collect_in": "producer:releases/index.json",
-   "run": "skipped"
-  },
-  "releases/pce.txt": {
-   "present": true,
-   "sha256": "0a7957b318b8ace79fcbd14d984a5711f34c7665a6ee45500b4c1eda906a3c98",
-   "bytes": 5457,
-   "status": "partial",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:54:25+09:00",
-   "source": "agency press releases (BLS·BEA·Census·DOL …)",
-   "response": "missing: metrics:econ:no_value:CPI YoY, metrics:econ:no_value:Core CPI YoY",
-   "required_ok": false,
-   "missing": [
-    "metrics:econ:no_value:CPI YoY",
-    "metrics:econ:no_value:Core CPI YoY"
-   ],
-   "empty": "has_data",
-   "missing_ref": {
-    "metrics:econ:no_value:CPI YoY": {
-     "fred_id": "CPIAUCSL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    },
-    "metrics:econ:no_value:Core CPI YoY": {
-     "fred_id": "CPILFESL",
-     "transform": "yoy_pct",
-     "ref_period": "2026-10",
-     "lacking": [
-      "2025-10"
-     ],
-     "lacking_why": {
-      "2025-10": "not_published"
-     }
-    }
-   },
-   "collect_in": "producer:releases/index.json",
-   "run": "skipped"
+   "run": "written"
   },
   "scorecard.json": {
    "present": true,
-   "sha256": "1fbf376438ca8d055061aa92de2a3d761f4afdd32241bce184cb7537eb6443cc",
+   "sha256": "59cc6dec54a3429f71833b6abfadb7889b0f0cfcb78a64c601b5a46ce9afa442",
    "bytes": 211,
    "collect_in": "none",
-   "run": "skipped"
+   "run": "written"
   },
   "sector_performance.html": {
    "present": true,
-   "sha256": "d444c0c1f1ce9fae53bf8717e8fdc74323eb2524545f604391e3d398f0696900",
-   "bytes": 11717,
+   "sha256": "10adda5d333ee29209ea80eb664d53b7328105897423c3ab8e825eb4b1fb492d",
+   "bytes": 11723,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:53:39+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:51+09:00",
    "source": "yfinance + Naver 국채 + FRED",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "producer:market_data.json",
-   "run": "skipped"
+   "run": "written"
   },
-  "telegram/2026-11-25.json": {
+  "telegram/2026-11-27.json": {
    "present": true,
-   "sha256": "140a393b021067176a4fff09d6a41c06d360a4b08819ca6d599e14e55f1b1d78",
-   "bytes": 29773,
+   "sha256": "4c51f825a035100f0c430818aac7418d7ae9bf082faf4600ab2e4d199e039255",
+   "bytes": 36200,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T07:00:02+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T12:06:33+09:00",
    "source": "t.me/s public channels",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
-   "detail": "요약 실패 1건",
+   "detail": "요약 실패 2건",
    "collect_in": "file",
-   "run": "skipped"
+   "run": "written"
   },
   "yield_curve.png": {
    "present": true,
-   "sha256": "2518cc553c99c1765e1365f4261743eeb1f9659b678b92558879f8f029c751cb",
-   "bytes": 71617,
+   "sha256": "1d1955f46828c7b4dcd27090d8bcdb80d4796d60c6928f9a9648352e040430be",
+   "bytes": 67502,
    "status": "ok",
-   "as_of": "2026-11-25",
-   "collected_at": "2026-11-26T06:53:39+09:00",
+   "as_of": "2026-11-27",
+   "collected_at": "2026-11-28T11:59:51+09:00",
    "source": "yfinance + Naver 국채 + FRED",
    "response": "ok",
    "required_ok": true,
    "missing": [],
    "empty": "has_data",
    "collect_in": "producer:market_data.json",
-   "run": "skipped"
+   "run": "written"
   }
  }
 }

@@ -1,11 +1,92 @@
 {
- "report_date": "2026-11-25",
+ "report_date": "2026-11-27",
  "effective": "2026-11-06T17:30:00-05:00",
  "h41": {
-  "candidates": [],
+  "candidates": [
+   {
+    "release_date": "2026-11-27",
+    "week_ended": "2026-11-25",
+    "wednesday": "2026-11-25",
+    "url": "https://www.federalreserve.gov/releases/h41/20261127/",
+    "rows": {
+     "reserves": {
+      "avg": 2963667,
+      "chg_wk": -15989,
+      "chg_yr": 67081,
+      "wed": 2928659
+     },
+     "tga": {
+      "avg": 902038,
+      "chg_wk": -14575,
+      "chg_yr": -1356,
+      "wed": 923563
+     },
+     "rrp_others": {
+      "avg": 366,
+      "chg_wk": 68,
+      "chg_yr": -2439,
+      "wed": 300
+     },
+     "rrp_foreign": {
+      "avg": 319666,
+      "chg_wk": -4458,
+      "chg_yr": -5787,
+      "wed": 326828
+     },
+     "treasuries": {
+      "avg": 4589732,
+      "chg_wk": 2793,
+      "chg_yr": 398630,
+      "wed": 4592998
+     },
+     "mbs": {
+      "avg": 1879552,
+      "chg_wk": -3945,
+      "chg_yr": -183301,
+      "wed": 1869590
+     }
+    },
+    "late": false,
+    "flags": {
+     "rows": {
+      "reserves": {
+       "wed_chg": -73131,
+       "z": -1.01,
+       "big": false
+      },
+      "tga": {
+       "wed_chg": 31253,
+       "z": 0.45,
+       "big": false
+      },
+      "rrp_others": {
+       "wed_chg": -31,
+       "z": 0.14,
+       "big": false
+      },
+      "rrp_foreign": {
+       "wed_chg": 10116
+      },
+      "treasuries": {
+       "wed_chg": 5866
+      },
+      "mbs": {
+       "wed_chg": -13875
+      }
+     },
+     "window": {
+      "first": "2025-11-12",
+      "last": "2026-11-18",
+      "n": 52
+     },
+     "prior_mismatch": []
+    }
+   }
+  ],
   "pool": [
    "2026-11-12",
-   "2026-11-19"
+   "2026-11-19",
+   "2026-11-27"
   ],
   "pending": [],
   "overdue": []
@@ -35,11 +116,11 @@
   "qra": []
  },
  "notes": [],
- "today": false,
- "run_id": "45939828324-1",
- "generated": "2026-11-27 13:26 KST",
+ "today": true,
+ "run_id": "46100551002-1",
+ "generated": "2026-11-28 12:06 KST",
  "checked": {
-  "h41": false,
+  "h41": true,
   "qra": false
  },
  "schedule": {
@@ -47,17 +128,17 @@
    "borrowing": "2027-02-01",
    "refunding": "2027-02-03"
   },
-  "h41_next": "2026-11-27"
+  "h41_next": "2026-12-03"
  },
  "status": "complete",
  "collect": {
   "status": "ok",
-  "as_of": "2026-11-25",
-  "collected_at": "2026-11-27T13:26:02+09:00",
+  "as_of": "2026-11-27",
+  "collected_at": "2026-11-28T12:06:48+09:00",
   "source": "federalreserve.gov H.4.1 + home.treasury.gov QRA",
   "response": "ok",
   "required_ok": true,
   "missing": [],
-  "empty": "confirmed_none"
+  "empty": "has_data"
  }
 }
