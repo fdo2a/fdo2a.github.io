@@ -6,9 +6,9 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 2,
- "collected_at": "2026-11-28T03:38:23+00:00",
- "cutoff_at": "2026-11-28T03:38:23+00:00",
+ "attempts": 3,
+ "collected_at": "2026-11-28T04:42:43+00:00",
+ "cutoff_at": "2026-11-28T04:42:43+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,27 +21,25 @@
   "sha256": "7902c0cb0d836a095f90c2c69363ae9218130a4be75a041b79f6b9ced2edd79b"
  },
  "counts": {
-  "harvest": 178,
+  "harvest": 175,
   "candidates": 3,
   "articles": [
-   2,
    1,
+   2,
    4
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 2,
+  "runs": 3,
   "tokens": {
-   "in": 19399,
-   "out": 4922
+   "in": 19500,
+   "out": 4736
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "ok",
-   "japantoday.com": "short",
-   "dw.com": "ok",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
@@ -50,8 +48,8 @@
  },
  "event": {
   "topic_ko": "노르세 아틀란틱 항공 파산과 이란 전쟁발 제트유 비용 충격",
-  "query": "norse atlantic bankruptcy",
+  "query": "atlantic norse bankruptcy",
   "trigger": []
  },
- "content_hash": "43bf7720c673b118"
+ "content_hash": "e27f80298a1c406c"
 }
