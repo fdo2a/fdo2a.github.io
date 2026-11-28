@@ -129,3 +129,44 @@ STYLE_CLOSE A 가 끝나 `$H` 가 정해지면(approved 든 Z 든) `python3 scri
 사람이 푸는 법(로컬): 비공개 `holds` 가지의 재료로 받아들인 수정을 살려 손으로 마무리하거나, 버리기로 정하면
 `bash scripts/ci/run_lock.sh unhold <키>` — 그 뒤 재시도가 처음부터 쓴다. 검토가 돌지 않아 세운 것(`attempt=`)을 풀 때는
 원인을 고친 뒤 main 의 `reviews/prepublish/us/<D>.json` 도 지운다 — 남겨 두면 다음 실패가 곧바로 다시 세움이 된다.
+
+## 6. US 뉴스·산업 브리프 (STEP 3.5, 2026-11-28)
+
+뉴스 글(`news/[DATE].html`)도 검토를 끝내야 올린다. 위 1-5 를 섹션 `us-news` 로 그대로 하되 아래만 다르다. 설계:
+`../plans/attachments/2026-11-17-prepub-all/news_prepub_design_v1.md` v1.3(로컬). 브리프는 이미 나가 있다 — 세워도 이 글만 안 낸다.
+
+- **자리**: ORCHESTRATOR STEP 3.5 의 2-1(다시 읽기) 뒤, 4(발행) 앞. `H` = `news_industry_[DATE].html`, `WS` = 작업 공간,
+  폴더는 `export NEWS_PREPUB_DIR=$(mktemp -d /tmp/prepub-news.XXXXXX)`(브리프의 `$PREPUB_DIR` 와 따로).
+- **근거 커밋**: `P=$(git log -1 --diff-filter=A --format=%H -- "posts/$D.html")` — 같은 런·뉴스만 이어 쓰기는 `DC=$P`,
+  늦은 글은 `DC=$(cat /tmp/us-late-commit)`.
+  `python3 scripts/prepub_review.py submit --section us-news --date "$D" --html "$H" --notes research_notes.md --out "$NEWS_PREPUB_DIR" --data-commit "$DC" --datadir "$WS"`
+  (`--notes` 는 그 파일이 있을 때만). 작업 공간의 `news/[DATE].json`·`market_data.json` 이 `DC` 의 판과 바이트가 다르면 묶지
+  않는다 — exit 10 이면 → §5(`--section us-news`). `wait` 는 1-3 그대로.
+- **판정 표시를 달지 않는다** — `judging`·`fixing` 없이, 기다리는 동안과 고치는 동안 9분마다 표시 없는
+  `bash scripts/ci/run_lock.sh renew "$(cat /tmp/us-lock-key)"` 만 한다(브리프 push 뒤 `clear` 했다).
+- **묻는 것은 정확성뿐이다** — 문체(3)를 하지 않는다. `split --section us-news` 는 늘 `style candidates 0` 이고 `seal` 도 없다.
+- **판정**은 2 의 표 그대로 근거 파일(`WS/news/[DATE].json` 의 제목·게시 시각·`summary_ko`, 텔레그램, `market_data.json`)을
+  직접 열어 가른다. 고치는 법은 블록마다 다르다:
+
+| 블록 | 받아들인 지적 |
+|---|---|
+| 기사 블록(`data-news`) 문장 — 요약에서 온 오류(어느 섹션이든, `data-summary` 문단이든 직접 쓴 문단이든) | `WS/news/[DATE].json` 의 그 기사 `summary_ko` 를 같은 글자로 고치고, 작성자가 그 문장만 고친다. 그리고 `WS/news_fixes.json` 에 한 줄 `{"guid": …, "wrong": …, "right": …}`(틀린 글자는 그 기사 안에서 그 자리만 가리키게 앞뒤 낱말을 붙인다). 근거가 둘로 갈려 정할 수 없으면 그 기사 블록을 뺀다 |
+| 「오늘의 뉴스」의 잇는 말·묶음 문장, 산업 세 섹션의 표·투자 관점·블록 밖 문장 | 작성자가 그 문장(문단)만 고친다 |
+| 「증권사 견해·시장 의견」 | 고쳐 쓰지 않고 지운다(STEP 3.5 2-1 의 다시 읽기 규칙) |
+
+  고친 뒤 STEP 3.5-2 의 게이트 전부 → 2-1 다시 읽기. 작성자가 실패하거나 게이트가 끝내 통과하지 못하면 → §5 `--state recovery_needed`.
+- **facts-done 앞에 정정 대조**: `python3 scripts/prepub_review.py check-fixes --fixes "$WS/news_fixes.json" --news "$WS/news/$D.json" --html "$H"`
+  — 줄마다 요약과 글의 그 블록 둘 다에 틀린 글자가 없고 맞는 글자가 있어야 한다(뺀 블록은 요약만). exit 10 이면 → §5
+  `--state recovery_needed`(그 전에 다시 고쳐 대조를 통과하면 세우지 않는다). exit 0 이면 `facts-done --dir "$NEWS_PREPUB_DIR" --html "$H" --applied <n> --rejected <n>`.
+  판정 뒤 글이 또 바뀌면(다시 읽기의 지우기, `render_contested --omit`, `tg_news strip`, 기록 exit 1 의 수리) 받아들인 지적을
+  그 판에서 다시 대조하고 `check-fixes` 와 `facts-done` 을 다시 한다.
+- **기록·발행**(STEP 3.5-4): `news/[DATE].html` 복사·`update_archives` 뒤
+  `python3 scripts/prepub_review.py record --dir "$NEWS_PREPUB_DIR" --html news/[DATE].html --section us-news --date "$D"`
+  — exit 10 이면 → §5. 요약을 고쳤으면(`news_fixes.json` 에 줄이 있다) 그다음 `cp "$WS/news/$D.json" data/news/$D.json`,
+  고치지 않았으면 레포 파일을 건드리지 않는다. `git add` 에 `reviews/prepublish/us-news/` 와 (고쳤으면) `data/news/[DATE].json`.
+  add 뒤 `cmp "$WS/news/$D.json" data/news/$D.json` 이 다르면(고친 날) 커밋하지 않고 → §5 `--state recovery_needed`.
+- **세우기**: §5 그대로 `--dir "$NEWS_PREPUB_DIR" --section us-news --html "$H"` — 기록은 `reviews/prepublish/us-news/[DATE].json`
+  하나만 밀린다(브리프 기록은 건드리지 않는다). 잠금도 §5-3 그대로. 다른 점은 둘: PushNotification 은
+  `[US 뉴스 막힘] [DATE] · <기록의 reason> · 다음: …`, 그리고 STEP 3.5 의 나머지만 하지 않고 STEP 4 로 간다(브리프 알림에 뉴스 글을
+  내지 않은 사유로 적는다). 사람이 풀 때 지우는 기록은 `reviews/prepublish/us-news/<D>.json`.
+- **보고**: 최종 보고·알림에 `발행 전 검토(뉴스) — <reviewed|fallback 이유> · 정확성 지적 n(반영 n·기각 n) · 요약 정정 n`.
