@@ -3,12 +3,12 @@
  "market": "us",
  "span": "daily",
  "report_date": "2026-11-27",
- "status": "error",
- "reason": "fetch_incomplete",
- "retryable": true,
- "attempts": 4,
- "collected_at": "2026-11-28T05:46:17+00:00",
- "cutoff_at": "2026-11-28T05:46:17+00:00",
+ "status": "none",
+ "reason": "verify_rejected",
+ "retryable": false,
+ "attempts": 5,
+ "collected_at": "2026-11-28T06:55:07+00:00",
+ "cutoff_at": "2026-11-28T06:55:07+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,34 +21,47 @@
   "sha256": "7902c0cb0d836a095f90c2c69363ae9218130a4be75a041b79f6b9ced2edd79b"
  },
  "counts": {
-  "harvest": 174,
-  "candidates": 2,
+  "harvest": 173,
+  "candidates": 1,
   "articles": [
-   1,
-   4
+   3
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 4,
+  "runs": 5,
   "tokens": {
-   "in": 19436,
-   "out": 4518
+   "in": 27397,
+   "out": 7218
   },
-  "discovery": "throttled",
+  "discovery": "ok",
   "hosts": {
    "cnbc.com": "ok",
    "aljazeera.com": "short",
-   "theguardian.com": "ok",
-   "bbc.co.uk": "ok"
+   "japantoday.com": "short",
+   "dw.com": "ok",
+   "euronews.com": "ok"
   },
   "notes": [],
-  "gdelt": "throttled"
+  "gdelt": "ok",
+  "grounded": {
+   "claims": "3/3",
+   "pairs": "1/1",
+   "obs": "4/4"
+  },
+  "verified": {
+   "pairs": 0,
+   "claims": 0,
+   "obs": 3,
+   "strict_pairs": 0,
+   "same_statistic_dropped": 0,
+   "topic": true
+  }
  },
  "event": {
-  "topic_ko": "노르세 아틀란틱 항공 파산과 이란 전쟁발 제트유 비용 충격",
-  "query": "atlantic norse bankruptcy",
+  "topic_ko": "쿠웨이트 이탈리아인 사망 공격의 책임 공방과 미국의 이란 항만 봉쇄",
+  "query": "kuwait iran attack",
   "trigger": []
  },
- "content_hash": "e06488edb0f7ffb0"
+ "content_hash": "a8b997606811eab6"
 }
