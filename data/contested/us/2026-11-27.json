@@ -6,9 +6,9 @@
  "status": "error",
  "reason": "fetch_incomplete",
  "retryable": true,
- "attempts": 3,
- "collected_at": "2026-11-28T04:42:43+00:00",
- "cutoff_at": "2026-11-28T04:42:43+00:00",
+ "attempts": 4,
+ "collected_at": "2026-11-28T05:46:17+00:00",
+ "cutoff_at": "2026-11-28T05:46:17+00:00",
  "model": {
   "pick": "sonnet",
   "extract": "opus",
@@ -21,25 +21,24 @@
   "sha256": "7902c0cb0d836a095f90c2c69363ae9218130a4be75a041b79f6b9ced2edd79b"
  },
  "counts": {
-  "harvest": 175,
-  "candidates": 3,
+  "harvest": 174,
+  "candidates": 2,
   "articles": [
    1,
-   2,
    4
   ]
  },
  "diagnostics": {
   "runner": "local",
-  "runs": 3,
+  "runs": 4,
   "tokens": {
-   "in": 19500,
-   "out": 4736
+   "in": 19436,
+   "out": 4518
   },
   "discovery": "throttled",
   "hosts": {
    "cnbc.com": "ok",
-   "aljazeera.com": "ok",
+   "aljazeera.com": "short",
    "theguardian.com": "ok",
    "bbc.co.uk": "ok"
   },
@@ -51,5 +50,5 @@
   "query": "atlantic norse bankruptcy",
   "trigger": []
  },
- "content_hash": "e27f80298a1c406c"
+ "content_hash": "e06488edb0f7ffb0"
 }
