@@ -19,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'scripts'))
 sys.path.insert(0, str(ROOT))
+from japan import daily_b as B  # noqa: E402
 from japan import daily_render as R  # noqa: E402
 from us.news_expand import expand  # noqa: E402
 
@@ -188,6 +189,12 @@ def cmd_diag(args):
         print(f'생성 문장 — TOPIX {b.get("topix")} · 업종 {b.get("sectors")} · '
               f'스프레드 2~10년 {curve.get("s2s10")} / 10~30년 {curve.get("s10s30")} '
               '(본문에는 <!--G:topix-->·<!--G:sectors-->·<!--G:curve--> 자리만 둔다)')
+        if B.has_b(d):
+            print(B.status_line(d) + ' — 주식 절 바로 아래에 <!--G:usual--> 자리를 하나 더 둔다(평소 대비 문장). '
+                  '%·bp 수는 data-ref 로 묶거나 종목·닛케이의 그날 등락률 그대로만 쓴다 — 기간 변화·배수·어림수는 '
+                  '표와 생성 문장이 말한다')
+            for line in (d.get('facts') or {}).get('b_diag') or []:
+                print(f'  ! {line}')
         miss = ((d.get('calendar') or {}).get('coverage') or {}).get('today_missing') or []
         if miss:
             print(f'일정표 미확인 계열: {"·".join(miss)} — 「오늘 발표가 없다」를 쓰지 않는다(캡션이 말한다)')
@@ -222,7 +229,8 @@ def cmd_assemble(args):
         errs = []
     except BojInputError as e:
         boj, errs = False, [f'일본은행: {e}']
-    errs += R.validate_body(body, R.order(d['calendar'].get('event_day'), boj=boj), schema=d.get('schema'))
+    errs += R.validate_body(body, R.order(d['calendar'].get('event_day'), boj=boj), schema=d.get('schema'),
+                            b=B.has_b(d))
     for k in ('title', 'summary'):
         if not str(meta.get(k, '')).strip():
             errs.append(f'meta.json 에 {k} 가 없다')

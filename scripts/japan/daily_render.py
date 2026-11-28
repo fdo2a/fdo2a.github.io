@@ -8,6 +8,7 @@
 import re
 from datetime import date
 
+from japan import daily_b as B
 from japan import daily_calendar as CAL
 from japan import daily_facts as FX
 from japan import daily_rates as RT
@@ -200,8 +201,14 @@ def _t_indices_v2(d):
     rows = [['닛케이 225', _num(nk.get('value')), _c(nk.get('chg_pct'), '%')],
             ['TOPIX', _num(close.get('value')) if ok else '—',
              _cd(chg.get('value'), chg.get('direction'), '%', 2) if ok else '—']]
-    return _table(['', f'{day_ko(d["session"])} 종가', f'{day_ko(d["prev_session"])} 대비'], rows,
-                  '닛케이 225 는 일본경제신문사, TOPIX 는 일본거래소그룹(JPX) 공표 종가(네이버증권과 대조).')
+    head = ['', f'{day_ko(d["session"])} 종가', f'{day_ko(d["prev_session"])} 대비']
+    cap = '닛케이 225 는 일본경제신문사, TOPIX 는 일본거래소그룹(JPX) 공표 종가(네이버증권과 대조).'
+    if B.has_b(d):
+        head += [f'{n}거래일' for n in B.RET_N] + ['평소 대비']
+        for row, a in zip(rows, ('nikkei', 'topix')):
+            row += [_b_cell(d, f'b.{a}.ret{n}', '%', 2) for n in B.RET_N] + [_b_usual(d, f'b.{a}.usual')]
+        cap += B_IDX_CAPTION
+    return _table(head, rows, cap)
 
 
 def _t_sectors_v2(d):
@@ -212,33 +219,65 @@ def _t_sectors_v2(d):
     if not rows:
         return ''          # 업종 블록이 무효면 표를 싣지 않는다 — 생성 문장이 「확인하지 못해 싣지 않는다」를 말한다
     body = [[_e(r['name_ko']), _num(r['close']), _cd(r['chg_pct'], r['direction'], '%', 2)] for r in rows]
-    return _table(['업종', f'{day_ko(d["session"])} 종가', f'{day_ko(d["prev_session"])} 대비'], body,
-                  'TOPIX-17 업종지수(일본거래소그룹 공표) 기준.')
+    head = ['업종', f'{day_ko(d["session"])} 종가', f'{day_ko(d["prev_session"])} 대비']
+    cap = 'TOPIX-17 업종지수(일본거래소그룹 공표) 기준.'
+    if B.has_b(d):
+        head += [f'TOPIX 대비 {n}거래일' for n in B.RET_N]
+        for row, r in zip(body, rows):
+            row += [_b_cell(d, f'b.sector.{r["key"]}.rel{n}', '%p', 2) for n in B.RET_N]
+        cap += B_SEC_CAPTION
+    return _table(head, body, cap)
 
 
 def _t_jgb_v2(d):
     rows = []
+    has_b = B.has_b(d)
     for t in RT.TENORS:
         r = (d.get('jgb') or {}).get(t)
         if not r:
             continue
         rows.append([f'JGB {t[:-1]}년', _num(r['value'], 3, '%'),
-                     _c(r.get('chg_bp'), 'bp', 1, invert=True), _e(day_ko(r['period']))])
+                     _c(r.get('chg_bp'), 'bp', 1, invert=True), _e(day_ko(r['period']))]
+                    + ([_b_cell(d, f'b.jgb.{t}.chg{n}', 'bp', 1, invert=True) for n in B.BP_N] if has_b else []))
     call = d.get('call_rate')
     if call:
-        rows.append(['무담보 콜 O/N', _num(call['value'], 3, '%'), '—', _e(day_ko(call['period']))])
+        rows.append(['무담보 콜 O/N', _num(call['value'], 3, '%'), '—', _e(day_ko(call['period']))]
+                    + (['—'] * len(B.BP_N) if has_b else []))
     if not rows:
         return '<p class="caption">JGB·콜금리 기준 값을 확인하지 못했다.</p>'
     it, b = FX.items(d), FX.blocks(d).get('curve') or {}
     for seg, _, _ in RT.SEGMENTS:
         lvl, chg = it.get(f'curve.{seg}.spread_bp') or {}, it.get(f'curve.{seg}.chg_bp') or {}
         st = b.get(seg, 'invalid')
+        extra = [_b_cell(d, f'b.curve.{seg}.chg{n}', 'bp', 1, color=False) for n in B.BP_N] if has_b else []
         if st == 'invalid' or lvl.get('value') is None:
-            rows.append([f'{RT.SEGMENT_KO[seg]} 스프레드', '—', '—', '—'])
+            rows.append([f'{RT.SEGMENT_KO[seg]} 스프레드', '—', '—', '—'] + extra)
             continue
         move = _cd(chg.get('value'), chg.get('direction'), 'bp', 1, color=False) if st == 'current' else '—'
-        rows.append([f'{RT.SEGMENT_KO[seg]} 스프레드', f'{lvl["value"]:.1f}bp', move, _e(day_ko(lvl['observation_date']))])
-    return _table(['', '금리', '변화', '기준일'], rows, JGB_CAPTION[jgb_source(d)])
+        rows.append([f'{RT.SEGMENT_KO[seg]} 스프레드', f'{lvl["value"]:.1f}bp', move, _e(day_ko(lvl['observation_date']))]
+                    + extra)
+    head, cap = ['', '금리', '변화', '기준일'], JGB_CAPTION[jgb_source(d)]
+    if has_b:
+        head += [f'{n}거래일 변화' for n in B.BP_N]
+        cap += B_JGB_CAPTION
+    return _table(head, rows, cap)
+
+
+# ── B(평소와의 차이) 열 — `daily_b.has_b` 인 스냅샷에서만. 값은 수집기가 `facts` 에 고정한 것만 읽는다 ──────
+B_IDX_CAPTION = (' 거래일 열은 휴장일을 뺀 N거래일 전 종가 대비 등락률, 평소 대비는 그날 등락폭을 직전 20거래일 '
+                 '평균 등락폭으로 나눈 배수. 계산할 종가가 없는 칸은 「—」.')
+B_SEC_CAPTION = ' TOPIX 대비는 업종의 N거래일 등락률에서 TOPIX 의 같은 기간 등락률을 뺀 값(%p). 업종 종가는 11월 19일부터 쌓았다.'
+B_JGB_CAPTION = ' N거래일 변화는 네이버증권 지표물 같은 정의끼리의 차(bp). 끝점 값이 없으면 「—」.'
+
+
+def _b_cell(d, fid, unit, digits, invert=False, color=True):
+    it = B.get(d, fid)
+    return _cd(it['value'], it.get('direction'), unit, digits, invert=invert, color=color) if it else '—'
+
+
+def _b_usual(d, fid):
+    it = B.get(d, fid)
+    return f'{it["value"]:.1f}배' if it else '—'
 
 
 def _missing_caption(names, ahead=False):
@@ -289,6 +328,7 @@ def _t_next_v2(d):
 
 # ── 구조(2판) — 생성 요소를 넣는 자리를 조립기가 통제한다(11·12회차) ─────────────────────────
 GEN_PLACEHOLDERS = {'equity': ('topix', 'sectors'), 'bonds': ('curve',)}
+B_GEN_PLACEHOLDERS = {'equity': ('usual',)}      # B 가 있는 스냅샷만(`daily_b.has_b`) — 옛 글의 요구는 그대로
 _TOKEN = re.compile(r'<!--.*?-->|<(/?)([a-zA-Z][\w-]*)((?:"[^"]*"|\'[^\']*\'|[^>"\'])*)>', re.S)
 _RAW = re.compile(r'(?is)<(script|style)\b')
 
@@ -339,7 +379,7 @@ def open_tokens(html):
     return {start: (stack[-1][1] if stack else None) for kind, _, start, _, stack in walk(html) if kind == 'open'}
 
 
-def validate_v2(body):
+def validate_v2(body, b=False):
     """2판 본문의 구조 — 자리표시자는 그 절 <section> 의 바로 아래 자식, 맨 바깥은 <section> 만,
     숨기는 속성·style·script·data-gen 금지(11회차 (b)2·12회차). 오류 목록."""
     errs = []
@@ -364,8 +404,10 @@ def validate_v2(body):
             errs.append(f'본문의 맨 바깥에 <{name}> 가 있다 — 머리 카드와 절 <section> 만 나열한다')
     wanted = {}
     for sec, names in GEN_PLACEHOLDERS.items():
-        for n in names:
+        for n in names + (B_GEN_PLACEHOLDERS.get(sec, ()) if b else ()):
             wanted[f'<!--G:{n}-->'] = sec
+    for tag in sorted(set(re.findall(r'<!--G:[^>]*?-->', body)) - set(wanted)):
+        errs.append(f'{tag} 는 오늘 쓸 수 없는 생성 문장 자리다 — 진단의 「생성 문장」 줄에 나온 것만 둔다')
     for sec, names in PLACEHOLDERS.items():
         for n in names:
             wanted[f'<!--T:{n}-->'] = sec
@@ -390,7 +432,7 @@ def _plain_text(fragment):
     return re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', fragment)).strip()
 
 
-def validate_body(body, want, schema=None):
+def validate_body(body, want, schema=None, b=False):
     errs = []
     low = body.lower()
     for tag in ('<!doctype', '<html', '<head', '<body'):
@@ -426,7 +468,7 @@ def validate_body(body, want, schema=None):
             elif sec in inner and tag not in inner[sec]:
                 errs.append(f'{tag} 가 {sec} 절 밖에 있다')
     if schema == FX.SCHEMA:
-        errs += [e for e in validate_v2(body) if e not in errs]
+        errs += [e for e in validate_v2(body, b=b) if e not in errs]
         errs += [e for e in _v2_section_opens(body) if e not in errs]
     return errs
 

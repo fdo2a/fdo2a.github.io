@@ -15,12 +15,14 @@ Pure — 네트워크 없음. 설계: design-drafts/jp-daily-v2/jp_daily_v2_desi
 """
 import html as _html
 
+from japan import daily_b as B
 from japan import daily_index as IX
 from japan import daily_rates as RT
 
 SCHEMA = 2
 GEN_KINDS = ('topix', 'sectors', 'curve')
-GEN_SECTION = {'topix': 'equity', 'sectors': 'equity', 'curve': 'bonds'}
+GEN_SECTION = {'topix': 'equity', 'sectors': 'equity', 'curve': 'bonds', 'usual': 'equity'}
+B_KINDS = ('usual',)        # B 가 있는 스냅샷(`daily_b.has_b`)에서만 — 옛 글은 세 종류 그대로(바이트 동일)
 MINUS = '−'
 
 # 문구 틀 — 바꾸면 게이트의 바이트 대조도 같이 바뀐다(같은 함수를 부른다).
@@ -41,6 +43,9 @@ TPL = {
     'curve_flat': '{seg} 금리 스프레드는 {level}bp로 전 거래일과 같았다.',
     'curve_stale': 'JGB 는 {day} 기준 값이라 당일 스프레드 변화를 싣지 않는다.',
     'curve_invalid': '{seg} 금리 스프레드를 확인하지 못했다.',
+    'usual_both': 'TOPIX 하루 등락폭은 직전 20거래일 평균의 약 {t}배다. 닛케이 225는 약 {n}배다.',
+    'usual_topix': 'TOPIX 하루 등락폭은 직전 20거래일 평균의 약 {t}배다.',
+    'usual_nikkei': '닛케이 225 하루 등락폭은 직전 20거래일 평균의 약 {n}배다.',
 }
 UNDER_PCT, UNDER_BP = '0.01% 미만', '0.1bp 미만'
 
@@ -292,9 +297,30 @@ def gen_curve(d):
     return ' '.join(out)
 
 
-GENERATORS = {'topix': gen_topix, 'sectors': gen_sectors, 'curve': gen_curve}
+def gen_usual(d):
+    """평소 대비 배수(B) — 둘 다 계산 못 하면 빈 글자(조립·게이트 모두 요소 0개를 기대한다)."""
+    t, n = B.get(d, 'b.topix.usual'), B.get(d, 'b.nikkei.usual')
+    if t and n:
+        return TPL['usual_both'].format(t=f'{t["value"]:.1f}', n=f'{n["value"]:.1f}')
+    if t:
+        return TPL['usual_topix'].format(t=f'{t["value"]:.1f}')
+    if n:
+        return TPL['usual_nikkei'].format(n=f'{n["value"]:.1f}')
+    return ''
+
+
+GENERATORS = {'topix': gen_topix, 'sectors': gen_sectors, 'curve': gen_curve, 'usual': gen_usual}
+
+
+def kinds(d):
+    """이 스냅샷의 생성 문장 종류 — B 가 있을 때만 `usual` 이 붙는다."""
+    return GEN_KINDS + (B_KINDS if B.has_b(d) else ())
 
 
 def generated(d):
-    """{종류: `<p data-gen="종류">…</p>`} — 조립과 게이트가 같은 함수를 부른다."""
-    return {k: f'<p data-gen="{k}">{_html.escape(GENERATORS[k](d), quote=False)}</p>' for k in GEN_KINDS}
+    """{종류: `<p data-gen="종류">…</p>` | ''} — 조립과 게이트가 같은 함수를 부른다. 빈 글자 = 그 요소 없음."""
+    out = {}
+    for k in kinds(d):
+        text = GENERATORS[k](d)
+        out[k] = f'<p data-gen="{k}">{_html.escape(text, quote=False)}</p>' if text else ''
+    return out

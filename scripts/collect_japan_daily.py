@@ -29,6 +29,7 @@ from urllib.parse import quote
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from common import weekly_sources as WS  # noqa: E402
+from japan import daily_b as BD  # noqa: E402
 from japan import daily_calendar as CAL  # noqa: E402
 from japan import daily_facts as JF  # noqa: E402
 from japan import daily_index as IX  # noqa: E402
@@ -301,6 +302,18 @@ def _jp_holidays(root):
         return ()
 
 
+def _add_b(snap, root, session):
+    """B(평소와의 차이)를 `facts` 에 더한다 — 예외는 B 전체 invalid + 진단 한 줄, A 는 그대로(설계 B §6)."""
+    try:
+        with open(os.path.join(root, 'data', 'market_holidays.json'), encoding='utf-8') as fh:
+            hd = json.load(fh)
+        items, diag = BD.compute(session, snap, root, hd)
+    except Exception as e:  # noqa: BLE001 — B 는 발행을 막지 않는다
+        items, diag = BD.all_invalid(session, f'계산 실패: {_why(e)}'), [f'B 계산 실패 — {_why(e)}']
+    snap['facts']['items'] += items
+    snap['facts']['b_diag'] = diag
+
+
 def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=None, holidays=None):
     if os.path.exists(os.path.join(root, DAILY_DIR, f'{session}.json')):
         raise AlreadyPublished(f'{session} 은 이미 발행됐다 — 수집 후보를 덮지 않는다')
@@ -342,6 +355,7 @@ def collect(session, prev, fetch, now, root='.', calendar=None, scheduled_at=Non
         'news_file': f'japan/data/news/daily/{session}.json',
         'facts': JF.build(session, prev, index, jgb, raw, curve),
     }
+    _add_b(snap, root, session)
     path = os.path.join(root, DAILY_DIR, 'candidate', f'{session}.json')
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8') as fh:

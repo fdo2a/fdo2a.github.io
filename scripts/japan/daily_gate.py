@@ -24,13 +24,14 @@ from common import cb_quote as CBQ
 from common import movers as CM
 from common import telegram_gate as TG
 from common.numbers import strip_comments
+from japan import daily_b as B
 from japan import daily_facts as FX
 from japan import daily_render as R
 from japan.gate import _jo_eok, _text_figures, title_source
 from us.news_expand import caption as news_caption
 from us.macro_gate import BANNED_LABELS
-from us.period_gate import _numbers, _united_numbers
-from us.post_check import body_text
+from us.period_gate import _canon, _numbers, _united_numbers
+from us.post_check import body_text, mask_dates
 
 _SEC = re.compile(r'<section\b[^>]*\bdata-section="([a-z]+)"[^>]*>(.*?)</section>', re.S)
 _P = re.compile(r'<p\b(?![^>]*class="caption")([^>]*)>(.*?)</p>', re.S)
@@ -154,7 +155,9 @@ def _unit_of(text):
     return next((u for u in _UNITS if t.startswith(u)), None)
 
 
-def _check_refs(paras, snap, session):
+def _check_refs(paras, snap, session, exact=False):
+    """`exact` = B 가 있는 날 — 단위가 %·bp 인 경로에 묶은 수는 원값과 반올림 없이 같아야 한다(B 설계 §5 가,
+    5회 #6: 닛케이 5일 −1.23% 를 콜금리 1.227 에 묶으면 표시 반올림으로 통과했다)."""
     v = []
     for p in paras:
         for m in _REF.finditer(p):
@@ -167,6 +170,8 @@ def _check_refs(paras, snap, session):
             n = _SIGNED.search(text)
             if not n or not _matches(n.group(2), value):
                 v.append(f'data-ref="{path}" 값이 다르다 — 본문 「{text}」, 스냅샷 {value}')
+            elif exact and _b_path_unit(path, snap) in ('%', 'bp') and _canon_abs(n.group(2)) != _canon(abs(value)):
+                v.append(f'data-ref="{path}" 값을 반올림해 썼다 — 본문 「{text}」, 스냅샷 {value}(이 경로는 원값 그대로)')
             elif n.group(1) and value != 0 and (n.group(1) == '+') != (value > 0):
                 v.append(f'data-ref="{path}" 부호가 반대다 — 본문 「{text}」, 스냅샷 {value}')
             after = _plain(p[m.end():m.end() + 40])
@@ -335,6 +340,10 @@ def verify_generated(html, snap):
         seen.setdefault(kind, []).append(m.start())
     for kind, frag in want.items():
         at = seen.get(kind, [])
+        if not frag:
+            if at:
+                v.append(f'생성 문장 data-gen="{kind}" 은 오늘 싣지 않는다(계산하지 못했다) — {len(at)}번 있다')
+            continue
         if len(at) != 1:
             v.append(f'생성 문장 data-gen="{kind}" 가 {len(at)}번 있다 — 정확히 한 번(조립이 넣는다)')
             continue
@@ -513,6 +522,118 @@ def _boj_figures(due):
     return out
 
 
+# ── B(평소와의 차이)가 있는 날의 작성자 수치 — 「집합에 있는 수인가」 가 아니라 「어느 값인가」 (2026-11-28) ──────
+# 전역 허용 집합(스냅샷의 모든 수 + 반올림)은 작은 B 값을 못 막는다 — 11/27 일정 이름 「GDP 2차 속보(7-9월기)」 의
+# 9 가 「5거래일 동안 9.0bp」 를 통과시켰다(codex B 설계 2회 재현). 단위(%·%p·bp·배)가 붙었거나 소수점이 있는 수는
+# (가) data-ref 로 같은 단위 경로에 묶었거나 (나) 그날 하루 등락률 원값(%) 이거나 (다) 인용한 기사의 같은 단위 수일
+# 때만 통과한다. 단위 없는 정수는 기존 대조 그대로다. 설계: design-drafts/jp-daily-v2/B_design_v6.md §5.
+_B_UNIT = r'%p|%|bp|배'
+_B_NUM = re.compile(r'(?<![\d.,])([+\-−]?\d[\d,]*(?:\.\d+)?)(\s*(?:' + _B_UNIT + r'))?')
+_B_MARK = re.compile(r'⟦REF:([^⟧]+)⟧\s*(' + _B_UNIT + r')?')
+_B_MOVER = re.compile(r'<p\b([^>]*\bdata-mover\b[^>]*)>(.*?)</p>', re.S)
+
+
+def _b_norm(t):
+    """단위 표기를 가장 긴 꼴부터 넷(%p·bp·%·배)으로 — 「%포인트」 를 「%」 까지만 읽으면 다른 단위다(4회 #6)."""
+    t = unicodedata.normalize('NFKC', t or '').replace('倍', '배')
+    t = re.sub(r'%\s*포인트|퍼센트\s*포인트|%\s*[pP](?![A-Za-z])', '%p', t)
+    t = re.sub(r'베이시스\s*포인트|[bB][pP][sS]?(?![A-Za-z])', 'bp', t)
+    t = t.replace('퍼센트', '%')
+    return _TIME.sub(' ', mask_dates(_jo_eok(t)))
+
+
+def _canon_abs(text):
+    return _canon(abs(float(text.replace(',', '').replace('−', '-'))))
+
+
+def _b_pairs(text):
+    out = []
+    for num, unit in _B_NUM.findall(_b_norm(text)):
+        unit = unit.strip()
+        if unit or '.' in num:
+            out.append((_canon_abs(num), unit))
+    return out
+
+
+def _b_path_unit(path, snap):
+    """경로마다 붙일 수 있는 단위 하나(%·bp) 또는 '' — 지수·환율·주가 수준에는 %·%p·bp·배 를 붙이지 않는다."""
+    last, head = path.split('.')[-1], path.split('.')[0]
+    if last == 'chg_bp':
+        return 'bp'
+    if last in ('chg_pct', 'change_pct', 'yoy'):
+        return '%'
+    if head in ('jgb', 'call_rate') and last == 'value':
+        return '%'
+    if head == 'macro' and last == 'value':
+        unit = ((resolve(snap, '.'.join(path.split('.')[:2])) or {}).get('unit') or '')
+        return '%' if '%' in unit else ''
+    return ''
+
+
+def _day_changes(snap):
+    out = set()
+    for x in ([((snap.get('indices') or {}).get('nikkei') or {}).get('chg_pct')]
+              + [r.get('chg_pct') for r in snap.get('stocks') or []]
+              + [m.get('change_pct') for g in (snap.get('movers') or {}).get('groups') or []
+                 for m in g.get('members') or []]):
+        if _finite(x):
+            out.add(_canon(abs(x)))
+    return out
+
+
+def _check_b_numbers(html, snap, news, exempt, skip):
+    v = []
+    day = _day_changes(snap)
+    by = {str(it.get('guid')): it for it in (news or {}).get('items') or []}
+
+    def unbind(fragment):
+        def one(m):
+            path, inner = m.group(1), m.group(2)
+            t = _b_norm(_plain(inner))
+            f = _B_NUM.search(t)
+            if not f:
+                return ' ' + inner + ' '
+            return ' ' + t[:f.start()] + ' ⟦REF:' + path.replace('.', '/') + '⟧' + (f.group(2) or '') + t[f.end():] + ' '
+        return _REF.sub(one, fragment)
+
+    def scan(fragment, own=None, where=''):
+        for sent in _units(unbind(fragment)):
+            s2 = _b_norm(sent)
+            for m in _B_MARK.finditer(s2):
+                unit = m.group(2) or ''
+                path = m.group(1).replace('/', '.')
+                if unit and unit != _b_path_unit(path, snap):
+                    v.append(f'{where}data-ref="{path}" 에 단위 {unit} 를 붙였다 — 그 경로의 단위가 아니다: 「{sent[:60]}」')
+            for c, unit in _b_pairs(_B_MARK.sub(' ', s2)):
+                if own is not None and (c, unit) in own:
+                    continue
+                if unit == '%' and c in day:
+                    continue
+                v.append(f'{where}「{c}{unit or ""}」 는 어느 값인지 묶이지 않았다 — %·bp 수는 data-ref 로 묶거나 그날 '
+                         f'등락률 그대로만, 기간 변화·배수·어림수는 표와 생성 문장이 말한다: 「{sent[:60]}」')
+
+    rest = html.replace(exempt, ' ', 1) if exempt else html
+    for frag in skip:
+        rest = rest.replace(frag, ' ', 1)
+    sec = re.search(r'<section\b[^>]*\bdata-section="news"[^>]*>.*?</section>', rest, re.S)
+    if sec:
+        pieces, outside = _news_writer_pieces(sec.group(0), news)
+        for frag, it in pieces:
+            own = set(_b_pairs(((it or {}).get('summary_ko') or '') + ' ' + title_source((it or {}).get('title'))))
+            scan(frag, own, '뉴스 블록 — ')
+        scan(outside, None, '뉴스 절 — ')
+        rest = rest.replace(sec.group(0), ' ', 1)
+    rest = re.sub(r'<(script|style|head)\b.*?</\1>', ' ', rest, flags=re.S)
+    for m in _B_MOVER.finditer(rest):
+        cite = re.search(r'data-cite="([^"]+)"', m.group(1))
+        it = by.get(cite.group(1)) if cite else None
+        scan(m.group(2), set(_b_pairs((it or {}).get('summary_ko') or '')) if it else None, '움직인 종목 — ')
+    scan(_B_MOVER.sub(' ', rest))
+    for t in _head_texts(html):
+        scan(html_mod.escape(t), where='제목·요약 — ')
+    return v
+
+
 def check(html, snap, session, filename=None, news=None, tg=None, pairs=None, boj=None):
     """`tg` = 쓸 수 있는(`usable`) 텔레그램 파일 내용 또는 None, `pairs` 는 (id, 문단, 요약)을 받는다.
     `boj` = `build_japan_daily.boj_state` 결과(None 이면 실을 이벤트 없음 — 일본은행 절이 있으면 막힌다)."""
@@ -573,7 +694,8 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None, bo
     for h in re.findall(r'<h1\b[^>]*>(.*?)</h1>', head_html, re.S):
         paras.append(('', h))
     allp = [inner for _, inner in paras + movers]
-    v += _check_refs(allp, snap, session)
+    has_b = v2 and B.has_b(snap)
+    v += _check_refs(allp, snap, session, exact=has_b)
     v += _check_unbound(allp, snap)
     rows = [r for r in (snap.get('jgb') or {}).values() if isinstance(r, dict)]
     jgb_today = bool(rows) and all(r.get('period') == session for r in rows)
@@ -630,6 +752,8 @@ def check(html, snap, session, filename=None, news=None, tg=None, pairs=None, bo
     if v2:
         v += _invented(' '.join(_head_texts(html)))      # <title>·meta description 도 작성자 글이다
         v += _check_v2_prose(html, snap, news, exempt, verified + boj_secs, _invented)
+    if has_b:
+        v += _check_b_numbers(html, snap, news, exempt, verified + boj_secs)
     # 움직인 종목 — 원인은 인용한 기사(data-cite) 요약에서만, 아니면 「확인된 재료 없음」(codex 구현 검토 #8)
     for attrs, inner in movers:
         cite = re.search(r'data-cite="([^"]+)"', attrs)
