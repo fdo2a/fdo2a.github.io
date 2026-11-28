@@ -1,0 +1,22 @@
+{
+  "verdict": "유효",
+  "prior_date": "2026-11-27",
+  "prior_exposure": "유지",
+  "prior_horizon": "다음 세션",
+  "prior_thesis": "미국 현물시장이 추수감사절로 쉰 날 외국인이 코스피를 1조1,591억원 순매수했고(당일 잠정) 코스피는 4.34% 오른 4,915.68로 마감했다. 매수는 반도체 대형주에 몰렸고(SK하이닉스 +5.41%, 삼성전자 +4.55%), 증안펀드는 검토 단계라 외국인 방향 전환의 이유로 보기 어렵다. 이날 매수는 미국 휴장 중 선물 강세와 정책 기대가 겹친 하루 매수로 본다.",
+  "metric": "KOSPI",
+  "level": 5154.0,
+  "side": "above",
+  "observed": 4915.68,
+  "note": "KOSPI 종가 4,915.68 로 5,154.00 를 위로 깨지 않았다",
+  "collect": {
+    "status": "ok",
+    "as_of": "2026-11-27",
+    "collected_at": "2026-11-28T20:02:17+09:00",
+    "source": "kr_stance.json + 그날 지수 종가",
+    "response": "ok",
+    "required_ok": true,
+    "missing": [],
+    "empty": "has_data"
+  }
+}
