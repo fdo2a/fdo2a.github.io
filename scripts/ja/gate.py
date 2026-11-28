@@ -196,6 +196,12 @@ def _currency_problem(ko, ja):
 # 통화가 붙었든 아니든(「3만 명」) 모든 숫자에서 본다.
 _KO_SCALE = re.compile(r"[십백천만억조]+")
 _JA_SCALE = re.compile(r"[十百千万億兆]+")
+# 원문 쪽에서 뒤 글자가 규모가 아닌 숫자(2026-11-25 실제 보류 3편):
+# · 이름에 붙은 숫자 — 「러셀2000만」(만 = 조사), 「FTSE100만」, 「제1조」. 숫자 바로 앞이 규모 글자가 아닌 한글·라틴이다
+#   (「1조5100억」「3억8000만」처럼 앞이 규모 글자면 규모다).
+# · 법 조항 — 「무역법 301조」(조 = 조항).
+_KO_NAMED = re.compile(r"[A-Za-z&가-힣](?<![십백천만억조])$")
+_KO_ARTICLE = re.compile(r"법\s?$")
 
 
 def scaled_numbers(s: str, ja: bool = False) -> list:
@@ -207,6 +213,10 @@ def scaled_numbers(s: str, ja: bool = False) -> list:
         sc = (_JA_SCALE if ja else _KO_SCALE).match(t, m.end())
         if sc is None and not ja:
             sc = _JA_SCALE.match(t, m.end())
+        if sc is not None and not ja:
+            head = t[max(0, m.start() - 3):m.start()]
+            if _KO_NAMED.search(head) or (sc.group(0) == "조" and _KO_ARTICLE.search(head)):
+                sc = None
         out.append((m.group(0).replace(",", ""), _scale(sc.group(0)) if sc else ""))
     return out
 

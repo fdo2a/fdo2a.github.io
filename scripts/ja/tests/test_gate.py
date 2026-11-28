@@ -215,3 +215,27 @@ def test_number_before_a_currency_pair_or_index_is_not_an_amount(ko, ja):
 def test_currency_counts_per_currency():
     assert "currency" in codes("100달러와 200달러", "100ドルと200円", soft=False)
     assert "currency" in codes("100달러, 150엔", "100円, 150ドル", soft=False)       # 숫자별로도 본다
+
+
+# ── 규모 글자가 아닌 「만·조」(2026-11-25·11-18·11-23 실제 보류 3편) ──────────────────────
+
+@pytest.mark.parametrize("ko,ja", [
+    ("미국 무역대표부가 무역법 301조에 따라 14개 경제권에 새 관세를 제안했다.",
+     "米通商代表部が通商法301条に基づき14の経済圏に新たな関税を提案した。"),
+    ("관세 추가 부과는 무역법 301조 조사의 연장선이다.", "追加関税は通商法301条調査の延長線上だ。"),
+    ("현물은 높게 출발했고, 러셀2000만 전일 종가보다 낮게 열었다.", "現物は高く始まり、ラッセル2000だけが前日終値を下回って始まった。"),
+    ("FTSE100만 올랐다.", "FTSE100だけが上昇した。"),
+    ("제1조는 그대로다.", "第1条はそのままだ。"),
+])
+def test_names_and_articles_are_not_scales(ko, ja):
+    assert [p for p in GT.check_unit(ko, ja) if p.code == "scale"] == []
+
+
+@pytest.mark.parametrize("ko,ja,wrong", [
+    ("거래대금은 1조5100억 원이다.", "売買代金は1兆5100億ウォンだ。", "売買代金は1億5100億ウォンだ。"),
+    ("매출은 301조 원이다.", "売上高は301兆ウォンだ。", "売上高は301ウォンだ。"),
+    ("3억8000만 달러다.", "3億8000万ドルだ。", "3億8000ドルだ。"),
+])
+def test_real_scales_still_count(ko, ja, wrong):
+    assert [p for p in GT.check_unit(ko, ja) if p.code == "scale"] == []
+    assert [p for p in GT.check_unit(ko, wrong) if p.code == "scale"] != []

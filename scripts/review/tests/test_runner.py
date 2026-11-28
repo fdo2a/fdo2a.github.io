@@ -196,3 +196,15 @@ def test_claude_limit_reset_times():
     # A post body quoting the phrase is not the CLI's own failure.
     assert not is_claude_limit("gate failed: 본문에 You've hit your weekly limit 인용")
     assert claude_retry_at('no reset here', now) is None
+
+
+def test_claude_monthly_spend_limit_is_a_limit():
+    # 2026-11-27 일본어판 러너가 실제로 받은 문구 — 모델 오류로 세어 하루 재시도를 다 썼다
+    from datetime import datetime, timezone
+    from scripts.review.runner import claude_retry_at, is_claude_limit
+    real = ("claude exited 1: You've hit your monthly spend limit · raise it at "
+            "https://claude.ai/settings/usage?from=cc_cli_limit_message · your weekly limit resets 9am (Asia/Seoul)")
+    assert is_claude_limit(real)
+    at = datetime.fromisoformat(claude_retry_at(real, datetime(2026, 11, 27, 14, 0, tzinfo=timezone.utc)))
+    assert at == datetime(2026, 11, 28, 0, 0, tzinfo=timezone.utc)       # 9am Seoul
+    assert not is_claude_limit("gate failed: 본문에 You've hit your monthly spend limit 인용")

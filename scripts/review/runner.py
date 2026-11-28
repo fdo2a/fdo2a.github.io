@@ -322,7 +322,9 @@ def _horizon(when, now):
 # 지평으로는 버려진다. 한도 거부는 0 초에 끝나 토큰을 안 쓰지만, 회차로 세면 멀쩡한 글이
 # 세 번 만에 사람검토로 넘어간다(2026-09-24 posts/2026-09-22.html).
 CLAUDE_BLOCK_HORIZON_HOURS = 24 * 8
-_CLAUDE_LIMIT = re.compile(r"claude exited \d+: You\W?ve hit your [\w-]+ limit")
+# 「weekly limit」「session limit」, 그리고 2026-11-27 처음 본 「monthly spend limit」(낱말 둘) — 일본어판 러너가 이 꼴을
+# 모델 오류로 세어 하루 재시도 3번을 다 썼다.
+_CLAUDE_LIMIT = re.compile(r"claude exited \d+: You\W?ve hit your [\w-]+(?: [\w-]+)? limit")
 _CLAUDE_RESET = re.compile(
     r"resets\s+(?:(?P<mon>[A-Z][a-z]{2})\s+(?P<day>\d{1,2}),?\s+(?:at\s+)?)?"
     r"(?P<h>\d{1,2})(?::(?P<m>\d{2}))?\s*(?P<ap>am|pm)\s*\((?P<tz>[^)]+)\)", re.I)

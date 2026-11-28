@@ -602,7 +602,7 @@ def roster_misuse(ko: str, ja, strong=frozenset(), checked=()) -> list:
     `roster_strong(그 글의 모든 문단)`, `checked` 는 `ROSTER_CHECKED[그 글]`(사람이 확인한 한자 성).
     통하는 자리 = 성(+이름)에 그 사람의 직함이 붙었고,
       · 그 문단이 일본은행을 말한다(별칭은 이 경우만), 또는
-      · 그 자리가 문장 머리이고(앞에 소속을 달 자리가 없다) 그 글의 다른 문단이 같은 사람을 위처럼 가리켰다.
+      · 그 글의 다른 문단이 같은 사람을 위처럼 가리켰다(문장 어디에 있든).
     세 가지를 센다 — 한글 문단의 통하는 자리 수 A, 일본어의 닫힌 꼴 수 C(`_ja_forms`: 풀네임, 성+그 사람의 직함,
     성+氏), 일본어의 맨 성 수 B. 일본어에 그 성 한자가 하나라도 있으면 아래가 **전부** 참이어야 통과한다.
       · B = 0 — 명단 한자는 닫힌 꼴로만 놓인다(「佐藤社長」「田村を」「高田工業」는 걸린다).
@@ -627,7 +627,9 @@ def roster_misuse(ko: str, ja, strong=frozenset(), checked=()) -> list:
         if org:
             accepted = std + alias
         else:
-            accepted = std if (std == opening and not alias and m.family + m.given in strong) else 0
+            # 문장 머리 조건(4회차 codex)은 2026-11-28 뺐다 — 「11월 30일 우에다 총재의 발언」「다무라 위원의 조기 인상론」
+            # 같은 정상 문장이 일본 일간 6편 중 3편을 멈췄고, 막으려던 「같은 성·같은 직함의 다른 사람」은 일어난 적이 없다.
+            accepted = std if (not alias and m.family + m.given in strong) else 0
         if not bare and not loose and closed <= accepted:
             continue
         seen = [kf for kf in (m.ko_family,) + tuple(m.ko_alias) if kf in ko]

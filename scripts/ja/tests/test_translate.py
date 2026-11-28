@@ -265,3 +265,18 @@ def test_prompt_does_not_push_gyakko_for_standing_alone():
     assert "逆行安" not in tail and "「突出して下落した」" in tail
     assert "反対に動いたと原文にあるときだけ" in T.PROMPT
     assert "「마감브리프」は「大引けブリーフ」" in T.PROMPT            # C5
+
+
+def test_monthly_spend_limit_reply_is_limit_not_model_error():
+    """2026-11-27 실제 응답 — subtype success·is_error 에 한도 문구. 한도로 봐야 브레이크가 풀릴 때 다시 한다."""
+    import json as _json
+    import subprocess as _sp
+    from scripts.ja import translate as T
+    msg = ("You've hit your monthly spend limit · raise it at https://claude.ai/settings/usage?from=cc_cli_limit_message"
+           " · your weekly limit resets 9am (Asia/Seoul)")
+
+    def run(args, **k):
+        return _sp.CompletedProcess(args, 1, stdout=_json.dumps({"type": "result", "subtype": "success",
+                                                                 "is_error": True, "result": msg}), stderr="")
+    with pytest.raises(T.LimitReached):
+        T.call("p", {}, {"type": "object"}, "sonnet", run=run)
